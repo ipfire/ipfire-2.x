@@ -1,0 +1,13 @@
+diff -ruN ppp-2.4.2.old/pppd/main.c ppp-2.4.2/pppd/main.c
+--- ppp-2.4.2.old/pppd/main.c	2004-01-13 05:00:34.000000000 +0100
++++ ppp-2.4.2/pppd/main.c	2004-02-19 13:41:17.000000000 +0100
+@@ -1338,8 +1338,8 @@
+ 
+     act.sa_handler = SIG_IGN;
+     act.sa_flags = 0;
+-    sigaction(sig, &act, &oldact);
+     kill(0, sig);
++    sigaction(sig, &act, &oldact);
+     sigaction(sig, &oldact, NULL);
+ }
+ 

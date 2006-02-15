@@ -1,0 +1,154 @@
+#!/bin/sh
+#
+# $Id: rc.updatered,v 1.11.2.15 2005/12/01 16:20:37 franck78 Exp $
+#
+
+if [ ! -e /var/lock/rc.updatered.lock ]; then
+	/bin/touch /var/lock/rc.updatered.lock
+	/usr/bin/logger -s -p local0.info -t rc.updatered "$0 locking for $$"
+else
+	count=0
+	while [ ! $count = 5 ]; do
+		sleep 3
+		if [ ! -e /var/lock/rc.updatered.lock ]; then
+			break
+		else
+			/usr/bin/logger -s -p local0.info -t rc.updatered "$0 $$ waiting unlock"
+		fi
+		((++count))
+	done
+fi
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/vpn/settings)
+eval $(/usr/local/bin/readhash CONFIG_ROOT/dhcp/settings)
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ethernet/settings)
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ppp/settings)
+
+IFACE=`/bin/cat CONFIG_ROOT/red/iface 2>/dev/null | /usr/bin/tr -d '\012'`
+REMOTE=`/bin/cat CONFIG_ROOT/red/remote-ipaddress 2>/dev/null | /usr/bin/tr -d '\012'`
+
+###
+### Retrieve DHCP Settings
+###
+if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3"  -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+	if [ "$RED_TYPE" = "DHCP" ]; then
+		unset DNS1 DNS2
+		eval $(/usr/local/bin/readhash CONFIG_ROOT/ethernet/settings)
+		if [ "$DNS1" = "" ]; then
+			echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > CONFIG_ROOT/red/dns1
+			echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > CONFIG_ROOT/red/dns2
+		else 
+			echo "$DNS1" > CONFIG_ROOT/red/dns1
+			echo "$DNS2" > CONFIG_ROOT/red/dns2
+		fi
+		. CONFIG_ROOT/dhcpc/dhcpcd-${RED_DEV}.info
+		echo "$IPADDR"  > CONFIG_ROOT/red/local-ipaddress
+		echo "$GATEWAY" > CONFIG_ROOT/red/remote-ipaddress
+	fi
+else
+	if [ "$PROTOCOL" = "RFC1483" -a "$METHOD" = "DHCP" ]; then
+		unset DNS1 DNS2
+		eval $(/usr/local/bin/readhash CONFIG_ROOT/ppp/settings)
+		if [ "$DNS" = "Automatic" ]; then
+			echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > CONFIG_ROOT/red/dns1
+			echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > CONFIG_ROOT/red/dns2
+		else 
+			echo "$DNS1" > CONFIG_ROOT/red/dns1
+			echo "$DNS2" > CONFIG_ROOT/red/dns2
+		fi
+		. CONFIG_ROOT/dhcpc/dhcpcd-${IFACE}.info
+		echo $IPADDR  > CONFIG_ROOT/red/local-ipaddress
+		echo $GATEWAY > CONFIG_ROOT/red/remote-ipaddress
+	fi
+fi
+
+###
+### Retrieve DNS settings
+###
+DNS1=`/bin/cat CONFIG_ROOT/red/dns1 2>/dev/null | /usr/bin/tr -d '\012'`
+DNS2=`/bin/cat CONFIG_ROOT/red/dns2 2>/dev/null | /usr/bin/tr -d '\012'`
+echo > CONFIG_ROOT/red/resolv.conf    #clear it
+[ "$DNS1" != "" ] && echo "nameserver $DNS1" >  CONFIG_ROOT/red/resolv.conf
+[ "$DNS2" != "" ] && echo "nameserver $DNS2" >> CONFIG_ROOT/red/resolv.conf
+
+
+###
+### Restart DNSMASQ
+###
+/bin/killall -KILL dnsmasq 2> /dev/null
+sleep 1
+
+DOMopt=""
+[ "$DOMAIN_NAME_GREEN" ] && DOMopt="-s $DOMAIN_NAME_GREEN"
+if [ -e "CONFIG_ROOT/red/dial-on-demand" -a "$DIALONDEMANDDNS" == "on" -a ! -e "CONFIG_ROOT/red/active" ]; then
+    /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $DOMopt -r CONFIG_ROOT/ppp/fake-resolv.conf
+else
+    /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $DOMopt -r CONFIG_ROOT/red/resolv.conf
+fi
+unset DOMopt
+
+
+# Reset default route to ippp0 for dial on demand
+if [ -e "CONFIG_ROOT/red/dial-on-demand" -a "$TYPE" == "isdn" -a ! -e "CONFIG_ROOT/red/active" ]; then
+	/sbin/route del default 2> /dev/null
+	if [ ! -z "$REMOTE" ]; then
+		/sbin/route add default gw $REMOTE 2> /dev/null
+	else
+		/sbin/route add default dev ippp0  2> /dev/null
+	fi
+fi
+
+if ( echo $0 | /bin/grep -q 'dhcpcd.exe' ); then
+	eval $(/usr/local/bin/readhash "$1")
+	case "$2" in
+	 up) 	/usr/bin/logger -s -p local0.info -t dhcpcd.exe "${INTERFACE} has been configured with old IP=${IPADDR}"
+		if [ "$RED_TYPE" != 'PPTP' ]; then
+			/bin/touch CONFIG_ROOT/red/active
+		fi
+		;;
+	 new)	/usr/bin/logger -s -p local0.info -t dhcpcd.exe "${INTERFACE} has been configured with new IP=${IPADDR}"
+		if [ -e "CONFIG_ROOT/red/active" ]; then
+			/usr/local/bin/setfilters
+			/usr/local/bin/setportfw
+			/usr/local/bin/setxtaccess
+			/usr/local/bin/setddns.pl -f
+			/usr/local/bin/restartsnort red
+			sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
+			/bin/rm -f /var/lock/rc.updatered.lock
+			/usr/bin/logger -s -p local0.info -t rc.updatered "unlocking from $$"
+			exit 0
+		else
+			if [ "$RED_TYPE" != 'PPTP' ]; then
+				/bin/touch CONFIG_ROOT/red/active
+			fi
+		fi
+		;;
+	 down)	/usr/bin/logger -s -p local0.info -t dhcpcd.exe "${INTERFACE} has been brought down"
+		rm -f CONFIG_ROOT/red/active
+		;;
+	esac
+fi
+
+if [ -e "CONFIG_ROOT/red/active" ]; then
+	[ "$IFACE" != "" ] && /sbin/ifconfig $IFACE -multicast
+	/etc/rc.d/rc.firewall reload
+	/usr/local/bin/setfilters
+	/usr/local/bin/updatelists.pl &
+	/usr/local/bin/restartsnort red
+	unset ENABLE
+	eval $(/usr/local/bin/readhash CONFIG_ROOT/shaping/settings)
+	if [ "$ENABLE" == "on" ]; then
+		/usr/local/bin/restartshaping
+	fi
+	/usr/local/bin/setportfw
+	/usr/local/bin/setxtaccess
+	/usr/local/bin/setddns.pl -f
+	/etc/rc.d/helper/writeipac.pl
+	/usr/sbin/fetchipac -S
+	sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
+else
+	/usr/local/bin/ipsecctrl D
+	/etc/rc.d/rc.firewall reload
+fi
+/bin/rm -f /var/lock/rc.updatered.lock
+/usr/bin/logger -s -p local0.info -t rc.updatered "unlocking from $$"

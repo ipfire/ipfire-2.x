@@ -1,0 +1,36 @@
+#
+# $Id: crontab,v 1.9.2.5 2005/08/16 05:39:23 gespinasse Exp $
+#
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+HOME=/
+
+# Log rotation
+01 * * * *	/usr/sbin/logrotate /etc/logrotate.conf
+
+# Backup logs to flashdisk
+01 * * * *	[ -f "/etc/FLASH" ] && /etc/rc.d/rc.flash.down
+
+# Set time
+*/5 * * * *	/usr/local/bin/timecheck > /dev/null 2>&1
+
+# Summarize ip accounting info:
+2 1 * * * 	/usr/sbin/ipacsum -r -H `/bin/hostname` -t "the day 2 days ago" >/dev/null
+3 1 * * 0 	/usr/sbin/ipacsum -r -H `/bin/hostname` -t "the week 4 weeks ago" >/dev/null
+4 1 1 2 * 	/usr/sbin/ipacsum -r -H `/bin/hostname` -t "the year 2 years ago" >/dev/null
+
+# Make some nice graphs
+*/5 * * * * 	/usr/local/bin/makegraphs >/dev/null
+
+# Force update the dynamic dns registration once a week
+# Force update even if IP has not changed once a month if 'minimize update' selected in GUI
+# to avoid account declared as dead
+*/5 * * * *	[ -f "/var/ipcop/red/active" ] && /usr/local/bin/setddns.pl
+9 2 * * 0	[ -f "/var/ipcop/red/active" ] && /usr/local/bin/setddns.pl -f
+3 2 1 * *	[ -f "/var/ipcop/red/active" ] && /usr/local/bin/setddns.pl -f -m
+
+# Logwatch
+01 0 * * *	/usr/local/bin/logwatch > /var/log/logwatch/`date -I -d yesterday`; \
+		LOGWATCH_KEEP=$(sed -ne 's/^LOGWATCH_KEEP=\([0-9]\+\)$/\1/p' /var/ipcop/logging/settings); \
+		find /var/log/logwatch/ -ctime +${LOGWATCH_KEEP=56} -exec rm -f '{}' ';'

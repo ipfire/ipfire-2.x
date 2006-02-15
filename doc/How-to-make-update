@@ -1,0 +1,51 @@
+Prerequisites
+- have release right on sourceforge to be able to affect uploaded files to a release
+- have 'IPCop development Group' private gpg key (and password) to sign the patch, import the key with gpg --import (private key file name)
+- you can create your own key with whatever name you want and replace (temporarily!) the pub key in 
+  your box (/root/.gnupg/*) for testing your patch
+
+Build
+- ./make.sh changelog and commit : update doc/Changelog (include in the .iso)
+- ./make.sh build
+- ./make.sh dist :
+	build source package by exporting from CVS,
+	create a check-list of modified files in doc/updated-sources.txt
+- manually check all necessary files are include in updates/1.4.x/ROOTFILES.*.1.4.x comparing with /doc/updated-sources.txt
+- sign the patch with gpg --local-user "IPCop Development Group" --sign ipcop-update-1.4.x.tgz (or with another name given to the key)
+- for the announce, files md5 are obtained with md5sum ipcop-*
+
+Sourceforge
+- in case of test files, rename them with rename 1.4.x 1.4.xtest *1.4.x*
+- upload files via ftp to upload.sourceforge.net in incoming directory
+ (may need to have more than 30s inactivity timeout to be able to connect on sourceforge)
+- add a new release
+	for test file, status active under "IPCop test versions" package
+	for official release, status active under "IPCop" package
+	affect uploaded files (web interface Files Release System) on the release
+	add Changelog and text abstract at the release
+- control file size under Files web page once files are affected to the package
+- with ssh, update every patch list on shell.sourceforge.net /home/groups/i/ip/ipcop/htdocs/patches preceding the previous v1.4.x version with :
+	the content of updates/1.4x/information (and add the link to the release on sourceforge at the end of the line)
+- add a new entry corresponding to the next version number in the patch list with only "----START LIST----" inside
+  chmod 664 the file
+- In Tracker, Tracker administration, bugs, add a new group corresponding to the version number
+
+Update CVS :
+- with the tag of the release
+ cvs tag IPCOP_v1_4_(x)_FINAL
+
+- bump VERSION and PREVIOUSTAG in make.sh
+- ./make.sh newupdate
+  will add a new directory in updates corresponding to the new version number with files:
+	information (Id number should be 003 for VERSION=1.4.3)
+	ROOTFILES.alpha-1.4.x
+	ROOTFILES.i386-1.4.x
+	setup
+	.cvsignore (containing patch.tar.gz )
+
+www.ipcop.org
+- update with doc/packages-list.txt
+  http://www.ipcop.org/modules.php?op=modload&name=phpWiki&file=index&pagename=IPCopSoftwares
+
+News
+- send news on user devel announce lists (subscribe to announce before if necessary)

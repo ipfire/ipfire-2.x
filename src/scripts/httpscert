@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# $Id: httpscert,v 1.1.2.2 2005/12/15 21:59:57 eoberlander Exp $
+# new : generate new certificate
+# read: read issuer in certificate and verify if it is the same as hostname
+
+# See how we were called.
+case "$1" in
+  new)
+	# set temporary random file
+	export RANDFILE=/root/.rnd
+	if [ ! -f /etc/httpd/server.key ]; then
+		echo "Generating https server key."
+		/usr/bin/openssl genrsa -rand \
+			/boot/vmlinuz:CONFIG_ROOT/ethernet/settings -out \
+			/etc/httpd/server.key 1024
+	fi
+	echo "Generating CSR"
+	/bin/cat /etc/certparams | sed "s/HOSTNAME/`hostname -f`/" | /usr/bin/openssl \
+		req -new -key /etc/httpd/server.key -out /etc/httpd/server.csr
+	echo "Signing certificate"
+	/usr/bin/openssl x509 -req -days 999999 -in \
+		/etc/httpd/server.csr -signkey /etc/httpd/server.key -out \
+		/etc/httpd/server.crt
+	# unset and remove random file
+	export -n RANDFILE
+	rm -f /root/.rnd
+ 	;;
+  read)
+	if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
+		ISSUER=`openssl x509 -in /etc/httpd/server.crt -text -noout | grep Issuer | /usr/bin/cut -f2 -d '='`
+		HOSTNAME=`/bin/hostname -f`
+		if [ "$ISSUER" != "$HOSTNAME" ]; then
+			echo "Certificate issuer '$ISSUER' is not the same as the hostname'$HOSTNAME'"
+			echo "Probably host or domain name has been changed in setup"
+			echo "You could remake server certificate with '/usr/local/bin/httpscert new'"
+			exit 1
+		else
+			echo "https certificate issuer match $HOSTNAME"
+		fi
+	else
+		echo "Certificate not found"
+		exit 1
+	fi
+	;;
+  *)
+	/bin/echo "Usage: $0 {read|new}"
+	exit 1
+	;;
+esac

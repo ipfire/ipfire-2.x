@@ -1,0 +1,58 @@
+#!/usr/bin/perl
+#
+# SmoothWall CGIs
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) The SmoothWall Team
+#
+# $Id: ip-up,v 1.3.2.3 2005/01/26 12:23:26 riddles Exp $
+#
+
+use strict;
+require 'CONFIG_ROOT/general-functions.pl';
+
+&General::log("PPP has gone up on $ARGV[0]");
+umask 022;
+
+my %pppsettings;
+
+# read vars back from file.
+&General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
+
+if ( ( $pppsettings{'TYPE'} eq 'isdn') &&
+		( $pppsettings{'COMPORT'} eq 'isdn2')  && 
+		( $pppsettings{'USEIBOD'} eq 'off') ) {
+	system('/usr/sbin/isdnctrl', 'dial', 'ippp1');
+}
+
+my $dns = $pppsettings{'DNS'};
+my $primarydns = $pppsettings{'DNS1'};
+my $secondarydns = $pppsettings{'DNS2'};
+if ($dns eq 'Automatic') {
+	if (!($pppsettings{'TYPE'} =~ /^isdn/))
+	{
+		if (open(FILE, ">${General::swroot}/red/dns1")) { print FILE $ENV{'DNS1'}; close FILE; }
+		if (open(FILE, ">${General::swroot}/red/dns2")) { print FILE $ENV{'DNS2'}; close FILE; }
+	}
+	else
+	{
+		if (open(FILE, ">${General::swroot}/red/dns1")) { print FILE $ENV{'MS_DNS1'}; close FILE; }
+		if (open(FILE, ">${General::swroot}/red/dns2")) { print FILE $ENV{'MS_DNS2'}; close FILE; }
+	}
+} else {
+	if (open(FILE, ">${General::swroot}/red/dns1")) { print FILE $pppsettings{'DNS1'}; close FILE; }
+	if (open(FILE, ">${General::swroot}/red/dns2")) { print FILE $pppsettings{'DNS2'}; close FILE; }
+}
+
+if (open(FILE, ">${General::swroot}/red/iface")) { print FILE $ARGV[0]; close (FILE); }
+if (open(FILE, ">${General::swroot}/red/local-ipaddress"))  { print FILE $ARGV[3]; close (FILE); }
+if (open(FILE, ">${General::swroot}/red/remote-ipaddress")) { print FILE $ARGV[4]; close (FILE); }
+
+system('/bin/touch', "${General::swroot}/red/active");
+system('/etc/rc.d/rc.updatered');
+
+# Beep when ppp goes up or down. Silence if 'nobeeps' file exists.
+if ( ! -e "${General::swroot}/ppp/nobeeps") {
+	system "/bin/echo -en '\a' >/dev/console";
+}

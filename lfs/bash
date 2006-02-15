@@ -1,0 +1,110 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: bash,v 1.5.2.2 2005/02/05 15:38:14 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 2.05b
+
+THISAPP    = bash-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_GNU)/bash
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  EXTRA_CONFIG = --prefix=/usr --bindir=/bin --disable-nls
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  EXTRA_CONFIG = --prefix=/tools --disable-nls
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects = $(DL_FILE) $(THISAPP)-2.patch
+
+$(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
+$(THISAPP)-2.patch     = $(URL_LFS)/bash/$(THISAPP)-2.patch
+
+$(DL_FILE)_MD5         = 5238251b4926d778dfe162f6ce729733
+$(THISAPP)-2.patch_MD5 = dfc7399bb57798e18fbb99f9edce4da0
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-2.patch
+	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
+	cd $(DIR_APP) && make $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	ln -sf bash /bin/sh
+ifneq "$(ROOT)" ""
+	-mkdir -p $(ROOT)/bin
+	-mkdir -p $(ROOT)/usr/bin
+	ln -sf bash /tools/bin/sh
+	-ln -sf /tools/bin/bash $(ROOT)/bin/sh
+	echo "#!/bin/sh"	>  $(ROOT)/usr/bin/which
+	echo "type -p \$$1"	>> $(ROOT)/usr/bin/which
+	chmod 755 $(ROOT)/usr/bin/which
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

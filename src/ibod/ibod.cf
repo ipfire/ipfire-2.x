@@ -1,0 +1,58 @@
+# $Id: ibod.cf,v 1.1.1.1 2001/11/27 08:08:03 riddles Exp $
+# $Symbol$
+#
+#
+#
+# Configuration file for ibod (ISDN Bandwidth On Demand)
+#
+# This file contain the initial configuration values for the
+# ibod daemon. Each line contain a keyword and a value.
+#
+# Boolean attributes are set with 0 or 1 which corresponds to
+# false and true respectively. A boolean attribute not specified
+# at all is allways false.
+#
+# Lines beginning with # are treated as comments and are ignored.
+#
+# IMPORTANT RULES!
+#
+#	1. Keywords are case sensitive.
+#	2. Kewords must begin at first column.
+#	3. Keyword and value must be separated by exctly one (1)
+#	   space ot tab chracter.
+#
+# This file is re-read every time ibod receives SIGHUP (1) signal.
+#
+# DEVICE	<name>	Name of ISDN PPP device.
+#			Default is ippp0.
+#
+# ENABLE	1|0	Enable/disable bandwidth-on-demand.
+#			Default is enable (1).
+#
+# INTERVAL	<n>	Specify the sample time interval in ms.
+#			Default is 500 ms.
+#
+# FILTER	<n>	Defines "filtering factor". A value of 10 means
+#			that the average bytes/sec value measured over 10
+#			intervals must pass the limit defined by LIMIT
+#			to bring up or down the slave link.
+#			Default is 5.
+#
+# LIMIT		<n>	Transfer rate limit in bytes/sec for bringing
+#			up or down isdn slave channel.
+#			Default is 5000.
+#
+# STAYUP	0|1	Enable/disable slave channel stay up function.
+#			If enabled the 2:nd cannel (slave link) will stay
+#			up even if the average bytes/sec decrease the value
+#			defined by LIMIT. In this case the slave link will
+#			stay up until hangup time is reached.
+#			(Example: isdnctrl huptimeout ippp1 60)
+#			If disabled the slave link will be brought down in
+#			the same way it is brought up.
+#			Default is 0.
+#
+# STAYUP_TIME	<n>	Defines the minimum time in seconds the 2:nd
+#			channel will unconditionally stay up after it has
+#			been brought up. Default value is 30.
+#

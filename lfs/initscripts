@@ -1,0 +1,72 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: initscripts,v 1.6.2.2 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = initscripts
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+	-mkdir -p /etc/rc.d/helper
+	for i in $(DIR_SRC)/src/rc.d/* ; do \
+	    if [ -f $$i ]; then \
+	        sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /etc/rc.d/`basename $$i`; \
+	    fi; \
+	done
+	for i in $(DIR_SRC)/src/rc.d/helper/* ; do \
+	    if [ -f $$i ]; then \
+	        sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /etc/rc.d/helper/`basename $$i`; \
+	    fi; \
+	done
+	chmod -R 755 /etc/rc.d
+	chgrp nobody /etc/rc.d/rc.red
+	chmod 4750 /etc/rc.d/rc.red
+
+	@$(POSTBUILD)

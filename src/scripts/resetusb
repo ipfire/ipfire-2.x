@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+#
+
+aliases=`/sbin/modprobe -c | awk '/^alias usb-controller/ { print $3 }'`
+if [ -n "$aliases" -a "$aliases" != "off" ] ; then
+	for alias in $aliases ; do
+		[ "$alias" != "off" ] && /sbin/modprobe -r $alias
+	done
+	/bin/sleep 2
+	for alias in $aliases ; do
+		[ "$alias" != "off" ] && /sbin/modprobe $alias
+	done
+fi
+/bin/sleep 6

@@ -1,0 +1,47 @@
+# /etc/bashrc
+
+umask 022
+unset i
+
+# are we an interactive shell?
+if [ "$PS1" ]; then
+    if [ -x /usr/bin/tput ]; then
+      if [ "x`tput kbs`" != "x" ]; then # We can't do this with "dumb" terminal
+        stty erase `tput kbs`
+      elif [ -x /usr/bin/wc ]; then
+        if [ "`tput kbs|wc -c `" -gt 0 ]; then # We can't do this with "dumb" terminal
+          stty erase `tput kbs`
+        fi
+      fi
+    fi
+fi
+
+# Path manipulation
+PATH="/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin"
+
+# No core files by default
+ulimit -S -c 0 > /dev/null 2>&1
+
+USER=`id -un`
+LOGNAME=$USER
+
+HOSTNAME=`/bin/hostname`
+HISTSIZE=250
+
+if [ -z "$INPUTRC" -a ! -f "$HOME/.inputrc" ]; then
+    INPUTRC=/etc/inputrc
+fi
+
+export PATH USER LOGNAME HOSTNAME HISTSIZE INPUTRC 
+
+# LS Colors
+alias dir='ls'
+alias ll='ls -l --color=tty'
+alias ls='ls --color=tty'
+
+# IPCop language settings
+LANG=en_US.utf8
+PS1='\[\033[1;33m\]\u\[\033[1;37m\]@\[\033[1;32m\]\h\[\033[1;37m\]:\[\033[1;31m\]\w \[\033[1;36m\]\$ \[\033[0m\]'
+echo -n -e '\033%G'
+
+export LANG PS1

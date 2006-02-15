@@ -1,0 +1,98 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: iptables,v 1.5.2.4 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.3.5
+
+THISAPP    = iptables-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = http://ftp.netfilter.org/pub/iptables
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = 	$(DL_FILE) \
+			iptables-1.3.0-imq1.diff \
+			netfilter-layer7-v2.1.tar.gz
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+iptables-1.3.0-imq1.diff 		= http://www.linuximq.net/patchs/iptables-1.3.0-imq1.diff
+netfilter-layer7-v2.1.tar.gz 	= http://mesh.dl.sourceforge.net/sourceforge/l7-filter/netfilter-layer7-v2.1.tar.gz
+
+$(DL_FILE)_MD5 = 00fb916fa8040ca992a5ace56d905ea5
+iptables-1.3.0-imq1.diff_MD5 		= 9adae8be9562775a176fc1b275b3cb29
+netfilter-layer7-v2.1.tar.gz_MD5 	= 551626a158c2a2cbfd937d27ecc7fac1
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	# iptables-fixed.tar.gz is made in the linux kernel build process
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/iptables-fixed.tar.gz
+	@rm -rf $(DIR_DL)/netfilter-layer7-v2.1 && cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.1.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.1/iptables-layer7-2.1.patch
+	# Appears that libipt_set/SET maybe a little broken, fix it for now...
+	cd $(DIR_APP)/extensions && sed -i -e 's/#include\ \"..\/ipset\/libipt_set.h\"//' libipt_set.c
+	cd $(DIR_APP)/extensions && sed -i -e 's/#include\ \"..\/ipset\/libipt_set.h\"//' libipt_SET.c
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/iptables-1.3.0-imq1.diff
+	chmod +x $(DIR_APP)/extensions/.IMQ-test*  $(DIR_APP)/extensions/.layer7-test*
+	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib
+	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib install
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

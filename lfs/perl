@@ -1,0 +1,108 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: perl,v 1.9.2.13 2005/02/27 15:23:03 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 5.8.5
+
+THISAPP    = perl-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = http://www.cpan.org/src
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) perl-5.8.4-libc-1.patch
+
+$(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
+perl-5.8.4-libc-1.patch     = $(URL_LFS)/perl/perl-5.8.4-libc-1.patch
+
+$(DL_FILE)_MD5              = 49baa8d7d29b4a9713c06edeb81e6b1b
+perl-5.8.4-libc-1.patch_MD5 = f033161efa8b4b174ec6667e4e739efa
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/perl-5.8.4-libc-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl-5.8.5-perlio_debug_security.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl-5.8.5-tempfiles.patch
+ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dpager="/bin/less -isR" -Dd_dosuid -Ui_db -Ui_gdbm -Ui_ndbm -Ui_dbm -Dmyhostname=localhost
+	cd $(DIR_APP) && make depend
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+else
+	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='IO Fcntl POSIX' -Dd_dosuid -Ui_db -Ui_gdbm -Ui_ndbm -Ui_dbm -Dmyhostname=localhost
+	cd $(DIR_APP) && make depend
+	cd $(DIR_APP) && make 
+	cd $(DIR_APP) && cp -f perl pod/pod2man /tools/bin
+	-mkdir -p /tools/lib/perl5/$(VER)
+	cd $(DIR_APP) && cp -Rf lib/* /tools/lib/perl5/$(VER)
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

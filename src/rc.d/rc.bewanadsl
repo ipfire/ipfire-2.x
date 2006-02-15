@@ -1,0 +1,77 @@
+#!/bin/bash
+#
+# $Id: rc.bewanadsl,v 1.5.2.6 2005/07/07 20:11:58 franck78 Exp $
+#
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ppp/settings)
+
+# Debugging. Comment it out to stop logging
+DEBUG="yes"
+msg() {
+	if [ "z$DEBUG" != "z" ] ; then
+		/usr/bin/logger -t red "BEWAN ADSL: $*"
+	fi
+	/bin/echo "$*"
+}
+
+function wait_for_showtime() {
+  count=0
+  while [ ! $count = 45 ]; do
+	/bin/sleep 2
+	if ( /bin/cat /proc/net/atm/UNICORN:* | /bin/grep -q "SHOWTIME" ); then
+		return 0
+	fi
+	((++count))
+  done
+  return 1
+}
+
+if [ "$MODEM" = "PCIST" ]; then
+	UNICORN="unicorn_pci_atm"
+else
+	UNICORN="unicorn_usb_atm"
+	if [ ! -f "/proc/bus/usb/devices" ]; then
+		msg "No USB enabled"
+		exit 1
+	fi
+# commented because actually cat /proc/bus/usb/devices may trigger some verbose error until pppd session start
+#	if ( ! /bin/cat /proc/bus/usb/devices | /bin/grep -q 'Vendor=07fa' ); then
+#		msg "No ST chip : not supported by this driver"
+#		exit 1
+#	fi
+fi
+# See how we were called.
+case "$1" in
+  start)
+	# ActivationMode : ANSI=1,G.lite=2,MULTI=3,G.dmt=4
+	case "$MODULATION" in
+		GDMT)	ActivationMode=4 ;;
+		ANSI)	ActivationMode=1 ;;
+		GLITE)	ActivationMode=2 ;;
+		AUTO)	ActivationMode=3 ;;
+	esac
+	msg "Loading $UNICORN, Modulation=$MODULATION, may take time to uncompress..."
+	/sbin/modprobe "$UNICORN" ActivationMode="$ActivationMode"
+	if [ ! $? = 0 ]; then
+		msg "Loading fail, is the modem plugged in?"
+		exit 1
+	fi
+	wait_for_showtime
+	if [ $? = 1 ]; then
+		 exit 1
+	fi
+	;;
+stop)
+	msg "stop"
+	;;
+cleanup)
+	msg "cleanup"
+	/sbin/modprobe -r "$UNICORN"
+	;;
+  *)
+	/bin/echo "Usage: $0 {start|stop|cleanup}"
+	exit 1
+	;;
+esac
+
+exit 0

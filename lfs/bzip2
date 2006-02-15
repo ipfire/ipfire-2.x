@@ -1,0 +1,109 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: bzip2,v 1.4.2.9 2005/07/15 08:13:35 alanh Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.0.3
+
+THISAPP    = bzip2-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = http://www.bzip.org/$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects = $(DL_FILE) bzip2-1.0.2-use_mktemp-1.patch
+
+$(DL_FILE)                        = $(DL_FROM)/$(DL_FILE)
+bzip2-1.0.2-use_mktemp-1.patch     = $(URL_LFS)/bzip2/bzip2-1.0.2-use_mktemp-1.patch
+
+$(DL_FILE)_MD5                    = 8a716bebecb6e647d2e8a29ea5d8447f
+bzip2-1.0.2-use_mktemp-1.patch_MD5 = d8f29ca8b25c48e16dc2f7a093df21ef
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/bzip2-1.0.2-use_mktemp-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bzip2-1.0.2-chmod.patch
+ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && make -f Makefile-libbz2_so
+	cd $(DIR_APP) && make clean
+	cd $(DIR_APP) && make
+	rm -f /usr/bin/{bzgrep,bzegrep,bzfgrep,bzcmp,bzless}
+	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && cp bzip2-shared /bin/bzip2
+	cd $(DIR_APP) && cp -a libbz2.so* /lib
+	ln -sf ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so
+	rm /usr/bin/{bunzip2,bzcat,bzip2}
+	mv /usr/bin/{bzip2recover,bzless,bzmore} /bin
+	ln -sf bzip2 /bin/bunzip2
+	ln -sf bzip2 /bin/bzcat
+else
+	rm -f /tools/bin/{bzgrep,bzegrep,bzfgrep,bzcmp,bzless}
+	cd $(DIR_APP) && make PREFIX=/tools install
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

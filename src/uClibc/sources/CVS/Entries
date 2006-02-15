@@ -1,0 +1,13 @@
+/binutils-001-debian.patch/1.1.2.1/Thu Jul  1 22:24:28 2004//TIPCOP_v1_4_0
+/binutils-002-uclibc.patch/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/codesets.txt/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/gcc-001-disable-mathf.patch/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/gcc-006-include-search.patch/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/gcc-810-libstd++-locale.patch/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/gcc-830-nonhidden.patch/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/gcc-840-abi_check.patch/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/i386-gcc-soft-float.patch/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/locales.txt/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/patch-kernel.sh/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+/uClibc.config/1.1/Thu Jan 15 11:23:40 2004//TIPCOP_v1_4_0
+D

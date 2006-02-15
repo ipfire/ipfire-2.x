@@ -1,0 +1,10 @@
+--- drivers/scsi/libata-core.c.old	2004-07-01 15:21:15.000000000 +0100
++++ drivers/scsi/libata-core.c	2004-07-01 15:22:06.000000000 +0100
+@@ -28,6 +28,7 @@
+ #include <linux/pci.h>
+ #include <linux/init.h>
+ #include <linux/list.h>
++#include <linux/mm.h>
+ #include <linux/highmem.h>
+ #include <linux/spinlock.h>
+ #include <linux/blkdev.h>

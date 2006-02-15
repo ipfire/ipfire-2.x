@@ -1,0 +1,76 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: boot.img,v 1.8.2.4 2005/10/30 18:19:16 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = boot-$(VERSION).img
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	if [ "$(MACHINE)" = "i386" ]; then \
+		dd if=/dev/zero of=/install/images/boot-$(VERSION).img bs=1024 count=1440; \
+		mkdosfs -f 1 -r 16 /install/images/boot-$(VERSION).img; \
+		syslinux -s /install/images/boot-$(VERSION).img; \
+		for i in `seq 0 7`; do \
+		    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
+		        LOOPNUM=$$i; \
+		        LOOPDEV="/dev/loop$${i}"; \
+		        break; \
+		    fi; \
+		done; \
+		losetup $$LOOPDEV /install/images/boot-$(VERSION).img; \
+		mount -t msdos $$LOOPDEV /install/mnt; \
+		sed -e 's/boot IPCop/boot IPCop $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
+			> /install/mnt/message; \
+		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/mnt/syslinux.cfg; \
+		cp /boot/vmlinuz-installer                  /install/mnt/vmlinuz; \
+		cp /install/images/fdinitrd.gz              /install/mnt/instroot.gz; \
+		umount /install/mnt; \
+		losetup -d $$LOOPDEV; \
+	fi
+

@@ -1,0 +1,148 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: initrd,v 1.26.2.8 2005/12/03 21:28:44 franck78 Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = initrd
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+	rm -f /install/images/{cdinitrd,cdinitrd.gz,fdinitrd,fdinitrd.gz}
+	-strip --strip-all   /install/misc/bin/*
+	-strip --strip-all   /install/initrd/bin/*
+	-strip --strip-debug /install/initrd/lib/*
+
+	# Finish up initrd directory
+	-mkdir -p /install/initrd/{etc,lib/modules/$(KVER)/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run} && \
+	ln -sf /bin /install/initrd/sbin
+	cd /install/initrd/dev && /dev/make_devices 
+	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
+	rm -rf /install/initrd/etc/CVS/
+	cd /install/initrd/dev && ln -sf fd0 floppy
+	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
+	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l
+
+	if [ "$(MACHINE)" = "alpha" ]; then \
+		tar cvzf /tmp/libc.tgz /usr/share/locale /lib/libc.* /lib/libc-* /lib/libdl* /lib/libnsl* /lib/libresolv* /lib/libutil* /lib/ld* /lib/libcrypt*; \
+		tar xvzf /tmp/libc.tgz -C /install/initrd; \
+		strip /install/initrd/lib/*; \
+		rm -f /tmp/libc.tgz; \
+	fi
+
+	# Extra modules
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi
+	cp -f /lib/modules/$(KVER)/kernel/drivers/scsi/{scsi_mod.o.gz,sd_mod.o.gz,sr_mod.o.gz} \
+	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi/
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
+	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/storage/*.o.gz \
+	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
+
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/host/
+	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/host/{usb-*,ehci*} \
+	      /lib/modules/$(KVER)/kernel/drivers/usb/hid.o.gz \
+	      /lib/modules/$(KVER)/kernel/drivers/usb/*core.o.gz \
+	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/
+
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/input
+	cp -f /lib/modules/$(KVER)/kernel/drivers/input/{input.o.gz,keybdev.o.gz} \
+	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/input/
+
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp
+	cp -f /lib/modules/$(KVER)/kernel/drivers/pnp/* \
+	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp/
+
+	cp -f /lib/modules/$(KVER)/modules.* /install/initrd/lib/modules/$(KVER)/
+
+	# Floppy initrd
+	-mkdir -p /install/{images,mnt}
+	RAMDISK_SIZE=`grep CONFIG_BLK_DEV_RAM_SIZE $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) | sed -e 's/CONFIG_BLK_DEV_RAM_SIZE=//'` && \
+	    dd if=/dev/zero of=/install/images/fdinitrd bs=1k count=$${RAMDISK_SIZE}
+	for i in `seq 0 7`; do \
+	    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
+	        LOOPDEV="/dev/loop$${i}" \
+                break; \
+	    fi; \
+	    done && \
+	    losetup $$LOOPDEV /install/images/fdinitrd && \
+	    mke2fs -m 0 -N 1024 $$LOOPDEV && \
+	    mount -t ext2 $$LOOPDEV /install/mnt && \
+	    rm -rf /install/mnt/lost+found && \
+	    cp -aR /install/initrd/* /install/mnt/ && \
+	    umount /install/mnt && \
+	    losetup -d $$LOOPDEV
+	gzip -9 /install/images/fdinitrd
+
+	# CDRom initrd, add vfat modules
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/fs
+	cp -fR /lib/modules/$(KVER)/kernel/fs/* \
+	    /install/initrd/lib/modules/$(KVER)/kernel/fs/
+
+	RAMDISK_SIZE=`grep CONFIG_BLK_DEV_RAM_SIZE $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) | sed -e 's/CONFIG_BLK_DEV_RAM_SIZE=//'` && \
+	    dd if=/dev/zero of=/install/images/cdinitrd bs=1k count=$${RAMDISK_SIZE}
+	for i in `seq 0 7`; do \
+	    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
+	        LOOPDEV="/dev/loop$${i}" \
+                break; \
+	    fi; \
+	    done && \
+	    losetup $$LOOPDEV /install/images/cdinitrd && \
+	    mke2fs -m 0 -N 1024 $$LOOPDEV && \
+	    mount -t ext2 $$LOOPDEV /install/mnt && \
+	    rm -rf /install/mnt/lost+found && \
+	    cp -aR /install/initrd/* /install/mnt/ && \
+	    cd /install/mnt && tar xfz /install/images/drivers-$(VERSION).img && \
+	    cd /install/mnt && tar xfz /install/images/scsidrv-$(VERSION).img && \
+	    cp -a  /install/misc/bin/* /install/mnt/bin && \
+	    touch /install/mnt/CDROMBOOT && \
+	    cd / && umount /install/mnt && \
+	    losetup -d $$LOOPDEV
+	gzip -9 /install/images/cdinitrd
+
+	@$(POSTBUILD)

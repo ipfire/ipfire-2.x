@@ -1,0 +1,9 @@
+#!/bin/sh
+/bin/cp -f /usr/share/grub/i386-pc/* /boot/grub
+/usr/sbin/grub --no-floppy --batch <<EOT > /dev/null 2> /dev/null
+device (hd0) DEVICE
+root (hd0,0)
+setup (hd0,0)
+setup (hd0)
+quit
+EOT

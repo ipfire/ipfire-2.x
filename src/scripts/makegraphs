@@ -1,0 +1,487 @@
+#!/usr/bin/perl
+
+############################################################################
+#                                                                          #
+# This file is part of the IPCop Firewall.                                 #
+#                                                                          #
+# IPCop is free software; you can redistribute it and/or modify            #
+# it under the terms of the GNU General Public License as published by     #
+# the Free Software Foundation; either version 2 of the License, or        #
+# (at your option) any later version.                                      #
+#                                                                          #
+# IPCop is distributed in the hope that it will be useful,                 #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+# GNU General Public License for more details.                             #
+#                                                                          #
+# You should have received a copy of the GNU General Public License        #
+# along with IPCop; if not, write to the Free Software                     #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
+#                                                                          #
+# Copyright (C) 2004-01-19 Mark Wormgoor <mark@wormgoor.com>.              #
+#                                                                          #
+############################################################################
+#
+# $Id: makegraphs,v 1.19.2.18 2006/01/08 13:41:04 eoberlander Exp $
+#
+use strict;
+#use warnings;
+
+use RRDs;
+require "CONFIG_ROOT/general-functions.pl";
+require "${General::swroot}/lang.pl";
+
+my (%settings, @ipacsum, $iface, $ERROR);
+&General::readhash("${General::swroot}/ethernet/settings", \%settings);
+
+# Added for conversion of utf-8 characters
+use Encode 'from_to';
+my %tr=();
+
+# Force language back to English (ugly hack!)
+# Modified to only force if we are unable to convert charset 
+# from utf-8
+if ((${Lang::language} eq 'el') || 
+    (${Lang::language} eq 'fa') ||
+    (${Lang::language} eq 'ru') ||
+    (${Lang::language} eq 'th') || 
+    (${Lang::language} eq 'vi') ||
+    (${Lang::language} eq 'zh') ||
+    (${Lang::language} eq 'zt')) {
+	eval `/bin/cat "${General::swroot}/langs/en.pl"`;
+} else {
+	%tr=%Lang::tr;		# use translated version for other languages
+}
+
+# Settings
+my $rrdlog = "/var/log/rrd";
+my $graphs = "/home/httpd/html/graphs";
+$ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
+
+sub gettraffic {
+	my $interface = $_[0];
+
+	my $bytesin=0;
+	my $bytesout=0;
+
+	foreach (@ipacsum)
+	{
+		# Incoming...
+		$bytesin += $1 if (/^[\* ]\s+incoming\s+${interface}.+\:\s+(\d+)/);
+
+		# Forwarded Incoming...
+		$bytesin += $1 if (/^[\* ]\s+forwarded\s+incoming\s+${interface}.+\:\s+(\d+)/);
+
+		# Outgoing...
+		$bytesout += $1 if (/^[* ]\s+outgoing\s+${interface}.+\:\s+(\d+)/);
+
+		# Forwarded Outgoing...
+		$bytesout += $1 if (/^[* ]\s+forwarded\s+outgoing\s+${interface}.+\:\s+(\d+)/);
+	}
+	return "$bytesin:$bytesout";
+}
+
+sub updatecpugraph {
+	my $period    = $_[0];
+
+	RRDs::graph ("$graphs/cpu-$period.png",
+		"--start", "-1$period", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-t $tr{'cpu usage per'} $tr{$period}",
+		"DEF:user=$rrdlog/cpu.rrd:user:AVERAGE",
+		"DEF:system=$rrdlog/cpu.rrd:system:AVERAGE",
+		"DEF:idle=$rrdlog/cpu.rrd:idle:AVERAGE",
+		"CDEF:total=user,system,idle,+,+",
+		"CDEF:userpct=100,user,total,/,*",
+		"CDEF:systempct=100,system,total,/,*",
+		"CDEF:idlepct=100,idle,total,/,*",
+		"AREA:userpct#0000FF:$tr{'user cpu usage'}\\j",
+		"STACK:systempct#FF0000:$tr{'system cpu usage'}\\j",
+		"STACK:idlepct#00FF00:$tr{'idle cpu usage'}\\j",
+		"GPRINT:userpct:MAX:$tr{'maximal'} $tr{'user cpu'}\\:%3.2lf%%",
+		"GPRINT:userpct:AVERAGE:$tr{'average'} $tr{'user cpu'}\\:%3.2lf%%",
+		"GPRINT:userpct:LAST:$tr{'current'} $tr{'user cpu'}\\:%3.2lf%%\\j",
+		"GPRINT:systempct:MAX:$tr{'maximal'} $tr{'system cpu'}\\:%3.2lf%%",
+		"GPRINT:systempct:AVERAGE:$tr{'average'} $tr{'system cpu'}\\:%3.2lf%%",
+		"GPRINT:systempct:LAST:$tr{'current'} $tr{'system cpu'}\\:%3.2lf%%\\j",
+		"GPRINT:idlepct:MAX:$tr{'maximal'} $tr{'idle cpu'}\\:%3.2lf%%",
+		"GPRINT:idlepct:AVERAGE:$tr{'average'} $tr{'idle cpu'}\\:%3.2lf%%",
+		"GPRINT:idlepct:LAST:$tr{'current'} $tr{'idle cpu'}\\:%3.2lf%%\\j");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
+}
+
+sub updatecpudata {
+	if ( ! -e "$rrdlog/cpu.rrd") {
+		RRDs::create ("$rrdlog/cpu.rrd", "--step=300",
+			"DS:user:COUNTER:600:0:500000000",
+			"DS:system:COUNTER:600:0:500000000",
+			"DS:idle:COUNTER:600:0:500000000",
+			"RRA:AVERAGE:0.5:1:576",
+			"RRA:AVERAGE:0.5:6:672",
+			"RRA:AVERAGE:0.5:24:732",
+			"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+	}
+
+	my ($cpu, $user, $nice, $system, $idle);
+
+	open STAT, "/proc/stat";
+	while(<STAT>) {
+		chomp;
+		/^cpu\s/ or next;
+		($cpu, $user, $nice, $system, $idle) = split /\s+/;
+		last;
+	}
+	close STAT;
+	$user += $nice;
+
+	RRDs::update ("$rrdlog/cpu.rrd",
+		"-t", "user:system:idle", 
+		"N:$user:$system:$idle");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for cpu: $ERROR\n" if $ERROR;
+
+}
+
+sub updatememgraph {
+	my $period    = $_[0];
+
+	RRDs::graph ("$graphs/memory-$period.png",
+		"--start", "-1$period", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-t $tr{'memory usage per'} $tr{$period}",
+		"DEF:used=$rrdlog/mem.rrd:memused:AVERAGE",
+		"DEF:free=$rrdlog/mem.rrd:memfree:AVERAGE",
+		"DEF:shared=$rrdlog/mem.rrd:memshared:AVERAGE",
+		"DEF:buffer=$rrdlog/mem.rrd:membuffers:AVERAGE",
+		"DEF:cache=$rrdlog/mem.rrd:memcache:AVERAGE",
+		"CDEF:total=used,free,+",
+		"CDEF:used2=used,buffer,cache,shared,+,+,-",
+		"CDEF:usedpct=100,used2,total,/,*",
+		"CDEF:sharedpct=100,shared,total,/,*",
+		"CDEF:bufferpct=100,buffer,total,/,*",
+		"CDEF:cachepct=100,cache,total,/,*",
+		"CDEF:freepct=100,free,total,/,*",
+		"AREA:usedpct#0000FF:$tr{'used memory'}\\j",
+		"STACK:sharedpct#FF0000:$tr{'shared memory'}\\j",
+		"STACK:bufferpct#FF00FF:$tr{'buffered memory'}\\j",
+		"STACK:cachepct#FFFF00:$tr{'cached memory'}\\j",
+		"STACK:freepct#00FF00:$tr{'free memory'}\\j",
+		"GPRINT:usedpct:MAX:$tr{'maximal'} $tr{'used memory'}\\:%3.2lf%%",
+		"GPRINT:usedpct:AVERAGE:$tr{'average'} $tr{'used memory'}\\:%3.2lf%%",
+		"GPRINT:usedpct:LAST:$tr{'current'} $tr{'used memory'}\\:%3.2lf%%\\j",
+		"GPRINT:sharedpct:MAX:$tr{'maximal'} $tr{'shared memory'}\\:%3.2lf%%",
+		"GPRINT:sharedpct:AVERAGE:$tr{'average'} $tr{'shared memory'}\\:%3.2lf%%",
+		"GPRINT:sharedpct:LAST:$tr{'current'} $tr{'shared memory'}\\:%3.2lf%%\\j",
+		"GPRINT:bufferpct:MAX:$tr{'maximal'} $tr{'buffered memory'}\\:%3.2lf%%",
+		"GPRINT:bufferpct:AVERAGE:$tr{'average'} $tr{'buffered memory'}\\:%3.2lf%%",
+		"GPRINT:bufferpct:LAST:$tr{'current'} $tr{'buffered memory'}\\:%3.2lf%%\\j",
+		"GPRINT:cachepct:MAX:$tr{'maximal'} $tr{'cached memory'}\\:%3.2lf%%",
+		"GPRINT:cachepct:AVERAGE:$tr{'average'} $tr{'cached memory'}\\:%3.2lf%%",
+		"GPRINT:cachepct:LAST:$tr{'current'} $tr{'cached memory'}\\:%3.2lf%%\\j",
+		"GPRINT:freepct:MAX:$tr{'maximal'} $tr{'free memory'}\\:%3.2lf%%",
+		"GPRINT:freepct:AVERAGE:$tr{'average'} $tr{'free memory'}\\:%3.2lf%%",
+		"GPRINT:freepct:LAST:$tr{'current'} $tr{'free memory'}\\:%3.2lf%%\\j");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for mem: $ERROR\n" if $ERROR;
+
+	RRDs::graph ("$graphs/swap-$period.png",
+		"--start", "-1$period", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-t $tr{'swap usage per'} $tr{$period}",
+		"DEF:used=$rrdlog/mem.rrd:swapused:AVERAGE",
+		"DEF:free=$rrdlog/mem.rrd:swapfree:AVERAGE",
+		"CDEF:total=used,free,+",
+		"CDEF:usedpct=100,used,total,/,*",
+		"CDEF:freepct=100,free,total,/,*",
+		"AREA:usedpct#0000FF:$tr{'used swap'}\\j",
+		"STACK:freepct#00FF00:$tr{'free swap'}\\j",
+		"GPRINT:usedpct:MAX:$tr{'maximal'} $tr{'used swap'}\\:%3.2lf%%",
+		"GPRINT:usedpct:AVERAGE:$tr{'average'} $tr{'used swap'}\\:%3.2lf%%",
+		"GPRINT:usedpct:LAST:$tr{'current'} $tr{'used swap'}\\:%3.2lf%%\\j",
+		"GPRINT:freepct:MAX:$tr{'maximal'} $tr{'free swap'}\\:%3.2lf%%",
+		"GPRINT:freepct:AVERAGE:$tr{'average'} $tr{'free swap'}\\:%3.2lf%%",
+		"GPRINT:freepct:LAST:$tr{'current'} $tr{'free swap'}\\:%3.2lf%%\\j");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for swap: $ERROR\n" if $ERROR;
+}
+
+sub updatememdata {
+	my ($memused, $memfree, $memshared, $membuffers, $memcache, $swapused, $swapfree);
+	if ( ! -e "$rrdlog/mem.rrd") {
+		RRDs::create ("$rrdlog/mem.rrd", "--step=300",
+			"DS:memused:ABSOLUTE:600:0:5000000000",
+			"DS:memfree:ABSOLUTE:600:0:5000000000",
+			"DS:memshared:ABSOLUTE:600:0:5000000000",
+			"DS:membuffers:ABSOLUTE:600:0:5000000000",
+			"DS:memcache:ABSOLUTE:600:0:5000000000",
+			"DS:swapused:ABSOLUTE:600:0:5000000000",
+			"DS:swapfree:ABSOLUTE:600:0:5000000000",
+			"RRA:AVERAGE:0.5:1:576",
+			"RRA:AVERAGE:0.5:6:672",
+			"RRA:AVERAGE:0.5:24:732",
+			"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for mem: $ERROR\n" if $ERROR;
+	}
+
+	open MEM, "/proc/meminfo";
+	while(<MEM>) {
+		chomp;
+		if ($_ =~ /^Mem:/) {
+			my @temp = split (/\s+/, $_);
+			$memused    = $temp[2];
+			$memfree    = $temp[3];
+			$memshared  = $temp[4];
+			$membuffers = $temp[5];
+			$memcache   = $temp[6];
+		} elsif ($_ =~ /^Swap:/) {
+			my @temp = split (/\s+/, $_);
+			$swapused = $temp[2];
+			$swapfree = $temp[3];
+		}
+	}
+	close MEM;
+
+	RRDs::update ("$rrdlog/mem.rrd",
+		"-t", "memused:memfree:memshared:membuffers:memcache:swapused:swapfree",
+		"N:$memused:$memfree:$memshared:$membuffers:$memcache:$swapused:$swapfree");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for mem: $ERROR\n" if $ERROR;
+}
+
+sub updatediskgraph {
+	my $period    = $_[0];
+
+	RRDs::graph ("$graphs/disk-$period.png",
+		"--start", "-1$period", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-t $tr{'disk access per'} $tr{$period}",
+		"DEF:read=$rrdlog/disk.rrd:readsect:AVERAGE",
+		"DEF:write=$rrdlog/disk.rrd:writesect:AVERAGE",
+		"AREA:read#0000FF:$tr{'sectors read from disk per second'}\\j",
+		"STACK:write#00FF00:$tr{'sectors written to disk per second'}\\j",
+		"GPRINT:read:MAX:$tr{'maximal'} $tr{'read sectors'}\\:%8.0lf",
+		"GPRINT:read:AVERAGE:$tr{'average'} $tr{'read sectors'}\\:%8.0lf",
+		"GPRINT:read:LAST:$tr{'current'} $tr{'read sectors'}\\:%8.0lf\\j",
+		"GPRINT:write:MAX:$tr{'maximal'} $tr{'written sectors'}\\:%8.0lf",
+		"GPRINT:write:AVERAGE:$tr{'average'} $tr{'written sectors'}\\:%8.0lf",
+		"GPRINT:write:LAST:$tr{'current'} $tr{'written sectors'}\\:%8.0lf\\j");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for disk: $ERROR\n" if $ERROR;
+}
+
+sub updatediskdata {
+	my ($readwritereq, $readreq, $readsect, $writereq, $writesect);
+	if ( ! -e "$rrdlog/disk.rrd") {
+		RRDs::create ("$rrdlog/disk.rrd", "--step=300",
+			"DS:readsect:COUNTER:600:0:5000000000",
+			"DS:writesect:COUNTER:600:0:5000000000",
+			"RRA:AVERAGE:0.5:1:576",
+			"RRA:AVERAGE:0.5:6:672",
+			"RRA:AVERAGE:0.5:24:732",
+			"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for disk: $ERROR\n" if $ERROR;
+	}
+
+	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
+		$atime, $mtime, $ctime, $blksize, $blocks) = stat("/dev/harddisk");
+
+	my $major = $rdev >> 8;
+	my $minor = $rdev & 0xFF;
+
+	open STAT, "/proc/stat";
+	my @diskstat = <STAT>;
+	close (STAT);
+	foreach my $line (@diskstat)
+	{
+		chomp ($line);
+		my @temp = split(/\:\ /,$line);
+		if ($temp[1]) {
+			my @devicestat = split(/\ /,$temp[1]);
+			foreach my $stats (@devicestat)
+			{
+				chomp ($stats);
+				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
+				if ($major eq $fields[1] and $minor eq $fields[2])
+				{
+					$readwritereq = $fields[3];
+					$readreq      = $fields[4];
+					$readsect     = $fields[5];
+					$writereq     = $fields[6];
+					$writesect    = $fields[7];
+				}
+			}
+		}
+	}
+
+	if ($readsect && $writesect) {
+		RRDs::update ("$rrdlog/disk.rrd",
+			"-t", "readsect:writesect",
+			"N:$readsect:$writesect");
+		$ERROR = RRDs::error;
+		print "Error in RRD::update for disk: $ERROR\n" if $ERROR;
+	} else {
+		print "Error in RRD::update for disk: no data available\n";
+	}
+}
+
+sub updateifgraph {
+	my $interface = $_[0];
+	my $period    = $_[1];
+
+	RRDs::graph ("$graphs/$interface-$period.png",
+		"--start", "-1$period", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 100",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-t $tr{'traffic on'} $interface ($tr{'graph per'} $tr{$period})",
+		"-v$tr{'bytes per second'}",
+		"DEF:incoming=$rrdlog/$interface.rrd:incoming:AVERAGE",
+		"DEF:outgoing=$rrdlog/$interface.rrd:outgoing:AVERAGE",
+		"AREA:incoming#00FF00:$tr{'incoming traffic in bytes per second'}\\j",
+		"LINE1:outgoing#0000FF:$tr{'outgoing traffic in bytes per second'}\\j",
+		"GPRINT:incoming:MAX:$tr{'maximal'} $tr{'in'}\\:%8.3lf %sBps",
+		"GPRINT:incoming:AVERAGE:$tr{'average'} $tr{'in'}\\:%8.3lf %sBps",
+		"GPRINT:incoming:LAST:$tr{'current'} $tr{'in'}\\:%8.3lf %sBps\\j",
+		"GPRINT:outgoing:MAX:$tr{'maximal'} $tr{'out'}\\:%8.3lf %sBps",
+		"GPRINT:outgoing:AVERAGE:$tr{'average'} $tr{'out'}\\:%8.3lf %sBps",
+		"GPRINT:outgoing:LAST:$tr{'current'} $tr{'out'}\\:%8.3lf %sBps\\j");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for $interface: $ERROR\n" if $ERROR;
+}
+
+sub updateifdata {
+	my $interface = $_[0];
+
+	if ( ! -e "$rrdlog/$interface.rrd") {
+		RRDs::create ("$rrdlog/$interface.rrd", "--step=300",
+			"DS:incoming:ABSOLUTE:600:0:12500000",
+			"DS:outgoing:ABSOLUTE:600:0:12500000",
+			"RRA:AVERAGE:0.5:1:576",
+			"RRA:AVERAGE:0.5:6:672",
+			"RRA:AVERAGE:0.5:24:732",
+			"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for $interface: $ERROR\n" if $ERROR;
+	}
+
+	my $traffic = gettraffic ($interface);
+	RRDs::update ("$rrdlog/$interface.rrd",
+		"-t", "incoming:outgoing", 
+		"N:$traffic");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for $interface: $ERROR\n" if $ERROR;
+}
+
+## Update ipac logs
+system ('/usr/sbin/fetchipac');
+sleep 8;
+
+###
+### Squid Graphs
+###
+if ( -e "/var/log/squid/access.log") {
+	system ("/usr/bin/squid-graph -o=/home/httpd/html/sgraph --tcp-only < /var/log/squid/access.log >/dev/null 2>&1");
+}
+
+###
+### utf8 conversion
+###
+if ((${Lang::language} eq 'cs') || 
+    (${Lang::language} eq 'hu') || 
+    (${Lang::language} eq 'pl') || 
+    (${Lang::language} eq 'sk')) {
+	# Czech, Hungarian, Polish and Slovak character set
+	foreach my $key(keys %Lang::tr) {
+		from_to($tr{$key}, "utf-8", "iso-8859-2");
+	}
+} elsif (${Lang::language} eq 'tr') {
+	# Turkish
+	foreach my $key(keys %Lang::tr) {
+		from_to($tr{$key}, "utf-8", "iso-8859-9");
+	}
+} else {
+	foreach my $key(keys %Lang::tr) {
+		from_to($tr{$key}, "utf-8", "iso-8859-1"); 
+	}
+}
+
+###
+### System graphs
+###
+updatecpudata();
+updatecpugraph ("day");
+updatecpugraph ("week");
+updatecpugraph ("month");
+updatecpugraph ("year");
+
+updatememdata();
+updatememgraph ("day");
+updatememgraph ("week");
+updatememgraph ("month");
+updatememgraph ("year");
+
+updatediskdata();
+updatediskgraph ("day");
+updatediskgraph ("week");
+updatediskgraph ("month");
+updatediskgraph ("year");
+
+###
+### Network Graphs
+###
+@ipacsum = `/usr/sbin/ipacsum --exact -s 5m 2>/dev/null`;
+if (@ipacsum) {
+	updateifdata  ("GREEN");
+	updateifdata  ("RED");
+	if ($settings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/ ) {
+		updateifdata  ("ORANGE");
+	}
+	if ($settings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/ ) {
+		updateifdata  ("BLUE");
+	}
+}
+if ( -e "$rrdlog/GREEN.rrd") {
+	updateifgraph ("GREEN", "day");
+	updateifgraph ("GREEN", "week");
+	updateifgraph ("GREEN", "month");
+	updateifgraph ("GREEN", "year");
+}
+
+if ( -e "$rrdlog/RED.rrd") {
+	updateifgraph ("RED", "day");
+	updateifgraph ("RED", "week");
+	updateifgraph ("RED", "month");
+	updateifgraph ("RED", "year");
+}
+
+if ($settings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/ && -e "$rrdlog/ORANGE.rrd") {
+	updateifgraph ("ORANGE", "day");
+	updateifgraph ("ORANGE", "week");
+	updateifgraph ("ORANGE", "month");
+	updateifgraph ("ORANGE", "year");
+}
+
+if ($settings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/ && -e "$rrdlog/BLUE.rrd") {
+	updateifgraph ("BLUE", "day");
+	updateifgraph ("BLUE", "week");
+	updateifgraph ("BLUE", "month");
+	updateifgraph ("BLUE", "year");
+}

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+UPGRADEVERSION="1.4.x" # configured by ./make.sh newupdate
+PREVIOUSVERSION="1.4."$((`echo $UPGRADEVERSION | /usr/bin/cut -f3 -d '.'`-1))
+echo "This is the $UPGRADEVERSION update patch for IPCop $PREVIOUSVERSION installing."
+
+CURRENTVERSION=`perl -e "require '/var/ipcop/general-functions.pl';print \\$General::version;"`
+if [ "$CURRENTVERSION" != "$PREVIOUSVERSION" ]; then
+	echo "You are not running IPCop v$PREVIOUSVERSION for this patch to install."
+	echo "Aborting installation."
+	exit -1
+fi
+
+# general-functions might not be overwrited by patch...
+/bin/sed -i -e "s+= '1.4.*$+= '$UPGRADEVERSION';+" /var/ipcop/general-functions.pl
+
+/bin/tar -zxpf patch.tar.gz -C /
+
+#build cachelang file after all "lang/*.pl" updates
+perl -e "require '/var/ipcop/lang.pl'; &Lang::BuildCacheLang"
+
+killall mingetty  #redisplay correct version
+echo "end of $UPGRADEVERSION update"

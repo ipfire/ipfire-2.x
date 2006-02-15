@@ -1,0 +1,13 @@
+#!nash
+
+# this is a comment
+echo "hello"
+echo "hello world" > foo
+echo "hi" "there" everyone
+
+insmod /lib/modules/2.4.0-0.36/kernel/drivers/usb/storage/usb-storage.o   'foo=bar'  "bell=hops"
+
+mount -t ext2 /dev/hda1 /boot    
+
+losetup /dev/loop0 /tmp/bootnet.img
+

@@ -1,0 +1,109 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: net-tools,v 1.5.2.8 2005/08/13 08:09:10 eoberlander Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.60
+
+THISAPP    = net-tools-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = http://www.tazenda.demon.co.uk/phil/net-tools
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects = $(DL_FILE) $(THISAPP)-miitool_gcc33-1.patch
+
+$(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
+$(THISAPP)-miitool_gcc33-1.patch      = $(URL_LFS)/net-tools/$(THISAPP)-miitool_gcc33-1.patch
+
+$(DL_FILE)_MD5                        = 888774accab40217dde927e21979c165
+$(THISAPP)-miitool_gcc33-1.patch_MD5  = fc629313c10ebd75abd2750aafbaa0be
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-miitool_gcc33-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-get_name.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/$(THISAPP)-cleanup-list-handling.patch
+	# correct bits to Bytes in output from /sbin/ifconfig
+	cd $(DIR_APP)/lib && sed -i \
+	    -e 's/"Mb"/"MB"/g' \
+	    -e 's/"Kb"/"KB"/g' interface.c 
+	cd $(DIR_APP) && sed -i \
+	    -e 's/HAVE_AFIPX y/HAVE_AFIPX n/' \
+	    -e 's/HAVE_AFATALK y/HAVE_AFATALK n/' \
+	    -e 's/HAVE_AFAX25 y/HAVE_AFAX25 n/' \
+	    -e 's/HAVE_AFNETROM y/HAVE_AFNETROM n/' \
+	    -e 's/HAVE_AFX25 y/HAVE_AFX25 n/' \
+	    -e 's/HAVE_HWSTRIP y/HAVE_HWSTRIP n/' \
+	    -e 's/HAVE_HWX25 y/HAVE_HWX25 n/' \
+	    -e 's/HAVE_HWNETROM y/HAVE_HWNETROM n/' \
+	    -e 's/HAVE_HWARC y/HAVE_HWARC n/' \
+	    -e 's/HAVE_HWTR y/HAVE_HWTR n/' \
+	    -e 's/HAVE_HWAX25 y/HAVE_HWAX25 n/' \
+	    -e 's/HAVE_HWFR y/HAVE_HWFR n/' \
+	    -e 's/HAVE_HWIRDA y/HAVE_HWIRDA n/' \
+	    -e 's/HAVE_MII n/HAVE_MII y/' config.in
+	cd $(DIR_APP) && sed -i -e 's/DNLIB = -ldnet/DNLIB =/' Makefile
+	cd $(DIR_APP) && yes '' | make config
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make update
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

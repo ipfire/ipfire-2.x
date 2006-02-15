@@ -1,0 +1,126 @@
+.TH NASH 8 "Sat Mar 27 1999"
+.UC 4
+.SH NAME
+nash \- script interpretor to interpret linuxrc images
+.SH SYNOPSIS
+\fBnash\fR [--quiet] [--force] \fIscript\fR
+
+.SH DESCRIPTION
+\fBnash\fR is a very simple script interpretor designed to be as small as
+possible. It is primarily designed to run simple linuxrc scripts on an initrd
+image. Arguments to commands may be enclosed in either single or double
+quotes to allow spaces to be included in the arguments. Spaces outside of
+quotations always delineate arguments, and so backslash escaping is supported.
+
+Additionally, if nash is invoked as \fBmodprobe\fR, it will immediately
+exit with a return code of zero. This is to allow initrd's to prevent some
+extraneous kernel error messages during startup.
+
+There are two types of commands, built in and external. External commands
+are run from the filesystem via execve(). If commands names are given without
+a path, nash will search it's builtin PATH, which is /usr/bin, /bin,
+/sbin, /usr/sbin.
+
+Currently, \fBnash\fR supports the following built in commands.
+
+.TP
+\fBaccess -[r][w][x][f] \fIpath\fR
+Tells whether the current user has sufficient permissions to read, write, or
+execture \fIpath\fR, or if the file exists (see \fBaccess(2)\fR for more
+information).
+
+.TP
+\fBecho [item]* [> \fIfilename\fR]\fR
+Echos the text strings given to a file, with a space in between each
+item. The output may be optionally redirected to a file.
+
+\fBexec\fR \fI<command>\fR
+The command given is execed, overlaying the nash process.
+
+.TP
+\fBfind \fIdir\fR -name \fIname\fR
+Display the path to files named \fIname\fR in or below directory \fIdir\FR.
+This is a \fBvery\fR limited implementation of find(1).
+
+.TP
+\fBfindlodev\fR
+Prints the full path to the first unused loopback block device on the
+system. If none is available, no output is displayed.
+
+.TP
+\fBlosetup \fI/dev/loopdev\fR \fIfile\fR
+Binds \fIfile\fR to the loopback device \fI/dev/loopdev\fR. See
+\fBlosetup(8)\fR for information on loopback devices.
+
+.TP
+\fBmkdevices\fR \fIpath\fR
+Creates device files for all of the block devices listed in 
+\fB/proc/partitions\fR in the directory specfied by \fIpath\fR.
+
+.TP
+\fBmkdir\fR \fI[-p]\fR \fIpath\fR
+Creates the directory \fIpath\fR. If \fI-p\fR is specified, this command
+will not complain if the directory exists. Note this is a subset of the
+standard \fBmkdir\fR \fI-p\fR behavior.
+
+.TP
+\fBmknod\fR \fIpath\fR \fI[c|b]\fR \fImajor\fR \fIminor\fR 
+Creates a device inode for \fIpath\fR. This is identical to \fBmkdev\fR(1)
+which the exceptions that it will not create named pipes and if the directories
+in \fIpath\fR do not exist they will be automatically created.
+
+.TP
+\fBmkrootdev \fIpath\fR
+Makes \fIpath\fR a block inode for the device which should be mounted
+as root. To determine this device nash uses 
+the device suggested by the root= kernel command line argument (if
+root=LABEL is used devices are probed to find one with that label). If
+no root= argument is available, /proc/sys/kernel/real-root-dev provides
+the device number.
+
+.TP
+\fBmount \fI[--ro]\fR -o \fIopts\fR -t \fItype\fR \fIdevice\fR \fImntpoint\fR
+Mounts a filesystem. It does not support NFS, and it must be used in
+the form given above (arguments must go first).  If \fIdevice\fR is of the form
+\fBLABEL=\fIfoo\fR the devices listed in /fB/proc/partitions\fR will
+be searched, and the first device with a volume label of \fIfoo\fR will
+be mounted. Normal \fBmount\fR(2) options are supported, and \fB--ro\fR will
+mount the filesystem read only for compatibility with older versions of nash.
+The \fBdefaults\fR mount option is silently ignored.
+
+.TP
+\fBpivot_root \fInewrootpath\fR \fIoldrootpath\fR
+Makes the filesystem mounted at \fInewrootpath\fR the new root filesystem,
+and mounts the current root filesystem as \fIoldrootpath\fR.
+
+.TP
+\fBraidautorun \fImddevice\fR
+Runs raid autodetection on all raid-typed partitions. \fImddevice\fR must
+be a raid device (any will do).
+
+.TP
+\fBshowlabels\fR
+Display a table of devices, their filesystem labels, and their uuids.
+
+.TP
+\fBumount \fIpath\fR
+Unmounts the filesystem mounted at \fIpath\fR.
+
+.SH RETURN VALUE
+Returns 0 is the last command succeeded or 1 if it failed.
+
+.SH OPTIONS
+.TP
+\fB-\-force\fR
+Allows \fBforce\fR really execute the script, even though \fBnash\fR doesn't 
+appear to be running from an initrd image.
+
+.SH BUGS
+Probably many. \fBnash\fR is \fbnot a shell\fR, and it shouldn't be thought of
+as one. It isn't entirely different from a shell, but that's mostly by
+accident.
+
+.SH AUTHOR
+.nf
+Erik Troan <ewt@redhat.com>
+.fi

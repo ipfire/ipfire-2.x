@@ -1,0 +1,24 @@
+diff -ruN kudzu-0.99.50.old/updfstab.conf.default kudzu-0.99.50/updfstab.conf.default
+--- kudzu-0.99.50.old/updfstab.conf.default	2002-01-16 04:32:17.000000000 +0100
++++ kudzu-0.99.50/updfstab.conf.default	2004-01-04 13:04:18.000000000 +0100
+@@ -1,4 +1,4 @@
+-symlink	    false
++symlink true
+ partition   0
+ 
+ device cdrom {
+@@ -73,9 +73,11 @@
+     match   hd ImageMate
+ }
+ 
+-device floppy {
+-    match   hd USB-FDU
+-    match   floppy "floppy drive"
++device floppy {
++    match   hd USB-FDU
++    match   floppy USB-FDU
++    match   floppy FD
++    match   floppy "floppy drive"
+ }
+ 
+ device diskonkey {

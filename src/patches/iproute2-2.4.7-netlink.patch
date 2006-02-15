@@ -1,0 +1,22 @@
+--- iproute2/lib/libnetlink.c.orig	2003-08-10 15:02:10.000000000 +1000
++++ iproute2/lib/libnetlink.c	2003-10-13 19:36:41.000000000 +1000
+@@ -169,7 +169,8 @@
+ 		while (NLMSG_OK(h, status)) {
+ 			int err;
+ 
+-			if (h->nlmsg_pid != rth->local.nl_pid ||
++			if (nladdr.nl_pid != 0 ||
++			    h->nlmsg_pid != rth->local.nl_pid ||
+ 			    h->nlmsg_seq != rth->dump) {
+ 				if (junk) {
+ 					err = junk(&nladdr, h, arg2);
+@@ -277,7 +278,8 @@
+ 				exit(1);
+ 			}
+ 
+-			if (h->nlmsg_pid != rtnl->local.nl_pid ||
++			if (nladdr.nl_pid != peer ||
++			    h->nlmsg_pid != rtnl->local.nl_pid ||
+ 			    h->nlmsg_seq != seq) {
+ 				if (junk) {
+ 					err = junk(&nladdr, h, jarg);

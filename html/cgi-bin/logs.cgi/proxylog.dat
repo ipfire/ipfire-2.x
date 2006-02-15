@@ -1,0 +1,494 @@
+#!/usr/bin/perl
+#
+# SmoothWall CGIs
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) The SmoothWall Team
+#
+# $Id: proxylog.dat,v 1.4.2.25 2005/07/07 17:32:24 eoberlander Exp $
+#
+
+use strict;
+
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
+require 'CONFIG_ROOT/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/header.pl";
+
+use POSIX();
+
+#workaround to suppress a warning when a variable is used only once
+my @dummy = ( ${Header::table2colour} );
+undef (@dummy);
+
+my %cgiparams=();
+my %logsettings=();
+my %ips=();
+my %selected=();
+my %checked=();
+my @log=();
+my $errormessage = '';
+
+my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+	'Sep', 'Oct', 'Nov', 'Dec' );
+my @longmonths = ( $Lang::tr{'january'}, $Lang::tr{'february'}, $Lang::tr{'march'},
+	$Lang::tr{'april'}, $Lang::tr{'may'}, $Lang::tr{'june'}, $Lang::tr{'july'}, $Lang::tr{'august'},
+	$Lang::tr{'september'}, $Lang::tr{'october'}, $Lang::tr{'november'},
+	$Lang::tr{'december'} );
+
+my @now = localtime();
+my $dow = $now[6];	# day of week
+my $doy = $now[7];	# day of year (0..364)
+my $tdoy = $now[7];
+my $year = $now[5]+1900;
+
+$cgiparams{'DAY'} = $now[3]; 
+$cgiparams{'MONTH'} = $now[4];
+$cgiparams{'SOURCE_IP'} = 'ALL';
+$cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|css|js)\$";
+$cgiparams{'ENABLE_FILTER'} = 'off';
+$cgiparams{'ACTION'} = '';
+
+&Header::getcgihash(\%cgiparams);
+$logsettings{'LOGVIEW_REVERSE'} = 'off';
+&General::readhash("${General::swroot}/logging/settings", \%logsettings);
+${Header::viewsize} = defined ($logsettings{'LOGVIEW_VIEWSIZE'}) ? $logsettings{'LOGVIEW_VIEWSIZE'} : 150;
+
+if ($cgiparams{'ACTION'} eq '')
+{
+	$cgiparams{'ENABLE_FILTER'} = 'on';
+}
+
+if ($cgiparams{'ACTION'} eq $Lang::tr{'restore defaults'})
+{
+	$cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|css|js)\$";
+	$cgiparams{'ENABLE_FILTER'} = 'off'; 
+}
+
+{
+    my %save=();
+    $save{'FILTER'} = $cgiparams{'FILTER'};
+    $save{'ENABLE_FILTER'} = $cgiparams{'ENABLE_FILTER'};
+    &General::writehash("${General::swroot}/proxy/viewersettings", \%save);
+    &General::readhash("${General::swroot}/proxy/viewersettings", \%save);
+}
+
+my $start = ($logsettings{'LOGVIEW_REVERSE'} eq 'on') ? 0x7FFFF000 : 0;	#index of first line number to display
+
+if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
+{
+	my @temp = split(',',$ENV{'QUERY_STRING'});
+ 	$start = $temp[0];
+ 	$cgiparams{'MONTH'} = $temp[1];
+ 	$cgiparams{'DAY'} = $temp[2];  
+	$cgiparams{'SOURCE_IP'} = $temp[3];
+}
+
+if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
+        !($cgiparams{'DAY'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)$/))
+{
+        $cgiparams{'DAY'} = $now[3];
+        $cgiparams{'MONTH'} = $now[4];
+}
+elsif($cgiparams{'ACTION'} eq '>>')
+{
+        my @temp_then=();
+        my @temp_now = localtime(time);
+        $temp_now[4] = $cgiparams{'MONTH'};
+        $temp_now[3] = $cgiparams{'DAY'};
+	if ($cgiparams{'DAY'}) {
+    	    @temp_then = localtime(POSIX::mktime(@temp_now) + 86400);
+            ## Retrieve the same time on the next day +
+            ## 86400 seconds in a day
+    	    $cgiparams{'MONTH'} = $temp_then[4];
+    	    $cgiparams{'DAY'} = $temp_then[3];
+	} else {
+    	    $temp_now[3] = 1;
+    	    $temp_now[4] = ($temp_now[4]+1) %12;
+    	    @temp_then = localtime(POSIX::mktime(@temp_now) );
+	    @temp_then[3] = 0;
+	}
+        $cgiparams{'MONTH'} = $temp_then[4];
+        $cgiparams{'DAY'} = $temp_then[3];
+}
+elsif($cgiparams{'ACTION'} eq '<<')
+{
+        my @temp_then=();
+        my @temp_now = localtime(time);
+        $temp_now[4] = $cgiparams{'MONTH'};
+        $temp_now[3] = $cgiparams{'DAY'};
+	if ($cgiparams{'DAY'}) {
+    	    @temp_then = localtime(POSIX::mktime(@temp_now) - 86400);
+            ## Retrieve the same time on the next day -
+            ## 86400 seconds in a day
+    	    $cgiparams{'MONTH'} = $temp_then[4];
+    	    $cgiparams{'DAY'} = $temp_then[3];
+	} else {
+    	    $temp_now[3] = 1;
+    	    $temp_now[4] = ($temp_now[4]-1) %12;
+    	    @temp_then = localtime(POSIX::mktime(@temp_now) );
+	    @temp_then[3] = 0;
+	}
+        $cgiparams{'MONTH'} = $temp_then[4];
+        $cgiparams{'DAY'} = $temp_then[3];
+}
+
+# Find in which file.gz is the log. Can be calculated because WEEKLY ROTATING of *.log
+my $gzindex;
+my $daystr = $cgiparams{'DAY'} == 0 ? '' :$cgiparams{'DAY'} <= 9 ? "0$cgiparams{'DAY'}" : "$cgiparams{'DAY'}";
+
+{
+    my $xday;
+
+    # Calculate time. If future date, calculate for past year !!!
+    if (( $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
+	( $cgiparams{'MONTH'}  > $now[4] ) ) {  
+	$xday = POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1901 );
+	$daystr = "$longmonths[$cgiparams{'MONTH'}] $daystr, ". int($year-1);
+    } else {
+	$xday = POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1900 );
+	$daystr = "$longmonths[$cgiparams{'MONTH'}] $daystr, $year";
+    }
+
+    # calculate end of active week (saturday 23H59)
+    my @then = ();
+    @then = localtime(time());
+    my $sunday = POSIX::mktime( 0, 0, 0, @then[3], @then[4], @then[5]);
+       $sunday += (6-$then[6]) * 86400;
+
+    # Convert delta in second to full weeks
+    $gzindex = int (($sunday-$xday)/604800 );
+}
+
+
+my $filter = $cgiparams{'ENABLE_FILTER'} eq 'on' ? $cgiparams{'FILTER'} : '';
+my $sourceip = $cgiparams{'SOURCE_IP'};
+my $sourceall =  $cgiparams{'SOURCE_IP'} eq 'ALL' ? 1 : 0;
+
+my $lines = 0;
+my $temp = ();
+my $thiscode = '$temp =~ /$filter/;';
+eval($thiscode);
+if ($@ ne '')
+{
+    $errormessage = "$Lang::tr{'bad ignore filter'}.$@<P>";
+    $filter = '';
+} else {
+    my $loop = 1;
+    my $filestr = 0;
+    my $lastdatetime;		# for debug
+
+    while ($gzindex >=0 && $loop) {
+	# calculate file name
+	if ($gzindex == 0) {
+	    $filestr = "/var/log/squid/access.log";
+	} else {
+	    $filestr = "/var/log/squid/access.log.$gzindex";
+	    $filestr = "$filestr.gz" if -f "$filestr.gz";
+	}
+	# now read file if existing
+	if (open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr))) {
+	    #&General::log("reading $filestr");
+    	    my @temp_now = localtime(time);
+    	    $temp_now[4] = $cgiparams{'MONTH'};
+    	    $temp_now[3] = $cgiparams{'DAY'};
+	    if ( (  $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
+	          ( $cgiparams{'MONTH'} > $now[4] ) ) {
+		$temp_now[5]--;  	# past year
+	    }
+
+    	    $temp_now[2] = $temp_now[1] = $temp_now[0] = 0; # start at 00:00:00
+	    $temp_now[3] = 1 if ($cgiparams{'DAY'}==0); # All days selected, start at '1'
+            my $mintime = POSIX::mktime(@temp_now); 
+	    my $maxtime;
+	    if ($cgiparams{'DAY'}==0) {			# full month
+	        if ($temp_now[4]++ == 12){
+		    $temp_now[4] = 0;
+		    $temp_now[5]++;
+		};
+        	$maxtime = POSIX::mktime(@temp_now); 
+	    } else {
+		$maxtime = $mintime + 86400;		# full day
+	    }
+	    READ:while (<FILE>) {
+		my ($datetime,$do,$ip,$ray,$me,$far,$url,$so) = split;
+		$ips{$ip}++;
+		# for debug
+		#$lastdatetime = $datetime;
+
+		# collect lines between date && filter
+		if (( ($datetime>$mintime)&&($datetime<$maxtime)) && !($url =~ /$filter/) &&
+		   ((($ip eq $sourceip) || $sourceall)))
+		{
+		    # when standart viewing, just keep in memory the correct slices
+		    # it starts a '$start' and size is $viewport
+		    # If export, then keep all lines...
+		    if ($cgiparams{'ACTION'} eq $Lang::tr{'export'}){
+		        $log[$lines++] = "$datetime $ip $url";
+		    } else {
+			if ($lines++ < ($start + $Header::viewsize)) {
+			    push(@log,"$datetime $ip $url");
+			    if (@log > $Header::viewsize) {
+				shift (@log);
+			    }
+			#} else { dont do this optimisation, need to count lines !
+			#    $datetime = $maxtime; # we have read viewsize lines, stop main loop
+			#    last READ;		  # exit read file
+			}
+		    }	
+		}
+
+		# finish loop when date of lines are past maxtime
+		$loop = ($datetime < $maxtime);
+	    }
+	    close (FILE);
+	}
+	$gzindex--;	# will try next gz file eg 40,39,38,.... because it may have holes when ipcop stopped
+			# for a long time
+
+    }
+
+    #$errormessage="$errormessage$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
+    if (0) { # print last date record read
+	my ($SECdt, $MINdt, $HOURdt, $DAYdt, $MONTHdt, $YEARdt) = localtime($lastdatetime);
+	$SECdt = sprintf ("%.02d",$SECdt);
+	$MINdt = sprintf ("%.02d",$MINdt);
+	$HOURdt = sprintf ("%.02d",$HOURdt);
+	$DAYdt = sprintf ("%.02d",$DAYdt);
+	$MONTHdt = sprintf ("%.02d",$MONTHdt+1);
+	$YEARdt = sprintf ("%.04d",$YEARdt+1900);
+	&General::log ("$HOURdt:$MINdt:$SECdt, $DAYdt/$MONTHdt/$YEARdt--");
+    }
+}
+
+if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
+{
+	print "Content-type: text/plain\n\n";
+	print "IPCop proxy log\r\n";
+	print "$Lang::tr{'date'}: $daystr\r\n"; 
+	print "Source IP: $cgiparams{'SOURCE_IP'}\r\n";
+	if ($cgiparams{'ENABLE_FILTER'} eq 'on') {
+		print "Ignore filter: $cgiparams{'FILTER'}\r\n"; }
+	print "\r\n";
+
+	if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
+
+	foreach $_ (@log) {
+	    my ($datetime,$ip,$url) = split;
+	    my ($SECdt, $MINdt, $HOURdt, $DAYdt, $MONTHdt, $YEARdt) = localtime($datetime);
+	    $SECdt = sprintf ("%.02d",$SECdt);
+	    $MINdt = sprintf ("%.02d",$MINdt);
+	    $HOURdt = sprintf ("%.02d",$HOURdt);
+	    if ($cgiparams{'DAY'}==0) {			# full month
+		$DAYdt = sprintf ("%.02d",$DAYdt);
+		print "$DAYdt/$HOURdt:$MINdt:$SECdt $ip $url\n";
+	    } else {
+		print "$HOURdt:$MINdt:$SECdt $ip $url\n";
+	    }
+	}
+	exit;
+}
+
+$selected{'SOURCE_IP'}{$cgiparams{'SOURCE_IP'}} = "selected='selected'";
+
+$checked{'ENABLE_FILTER'}{'off'} = '';
+$checked{'ENABLE_FILTER'}{'on'} = '';
+$checked{'ENABLE_FILTER'}{$cgiparams{'ENABLE_FILTER'}} = "checked='checked'";
+
+&Header::showhttpheaders();
+
+&Header::openpage($Lang::tr{'proxy log viewer'}, 1, '');
+
+&Header::openbigbox('100%', 'left', '', $errormessage);
+
+if ($errormessage) {
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	print "<font class='base'>$errormessage&nbsp;</font>\n";
+	&Header::closebox();
+}
+
+&Header::openbox('100%', 'left', "$Lang::tr{'settings'}:");
+
+print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<table width='100%'>
+<tr>
+	<td width='10%' class='base'>$Lang::tr{'month'}:</td>
+	<td width='20%'>
+	<select name='MONTH'>
+END
+;
+
+for (my $month = 0; $month < 12; $month++)
+{
+	print "\t<option ";
+	if ($month == $cgiparams{'MONTH'}) {
+		print "selected='selected' "; }
+	print "value='$month'>$longmonths[$month]</option>\n";
+}
+print <<END
+	</select>
+	</td>
+	<td width='10%' class='base' align='right'>$Lang::tr{'day'}:&nbsp;</td>
+	<td width='10%'>
+	<select name='DAY'>
+END
+;
+print "<option value='0'>$Lang::tr{'all'}</option>";
+for (my $day = 1; $day <= 31; $day++) 
+{
+	print "\t<option ";
+	if ($day == $cgiparams{'DAY'}) {
+		print "selected='selected' "; }
+	print "value='$day'>$day</option>\n";
+}
+print <<END
+	</select>
+	</td>
+	<td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day before'}' value='&lt;&lt;' /></td>
+	<td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day after'}' value='&gt;&gt;' /></td>
+	<td width='25%' class='base'>$Lang::tr{'source ip'}:</td>
+	<td width='15%'>
+	<select name='SOURCE_IP'>
+	<option value='ALL' $selected{'SOURCE_IP'}{'ALL'}>$Lang::tr{'caps all'}</option>
+END
+;
+foreach my $ip (keys %ips) {
+	print "<option value='$ip' $selected{'SOURCE_IP'}{$ip}>$ip</option>\n"; }
+print <<END
+	</select>
+	</td>
+</tr>
+<tr>
+	<td class='base'>$Lang::tr{'ignore filter'}:</td>
+	<td colspan='5'><input type='text' name='FILTER' value='$cgiparams{'FILTER'}' size='40' /></td>
+	<td class='base'>$Lang::tr{'enable ignore filter'}:</td>
+	<td><input type='checkbox' name='ENABLE_FILTER' value='on' $checked{'ENABLE_FILTER'}{'on'} /></td>
+</tr>
+</table>
+<div align='center'>
+<table width='50%'>
+<tr>
+	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'restore defaults'}' /></td>
+	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'export'}' /></td>
+</tr>
+</table>
+</div>
+</form>
+END
+;
+
+&Header::closebox();
+&Header::openbox('100%', 'left', $Lang::tr{'log'});
+
+
+$start = $lines - ${Header::viewsize} if ($start >= $lines - ${Header::viewsize});
+$start = 0 if ($start < 0);
+
+my $prev;
+    if ($start == 0) {
+	$prev = -1;
+    } else {
+	$prev = $start - ${Header::viewsize};
+	$prev = 0 if ( $prev < 0);
+    }
+
+my $next;
+    if ($start == $lines - ${Header::viewsize}) {
+	$next = -1;
+    } else {
+	$next = $start + ${Header::viewsize};
+	$next = $lines - ${Header::viewsize} if ($next >= $lines - ${Header::viewsize});
+    }
+
+if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
+
+print "<p><b>$Lang::tr{'web hits'} $daystr: $lines</b></p>";
+if ($lines != 0) { &oldernewer(); }
+print <<END
+<table width='100%'>
+<tr>
+<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
+<td width='15%' align='center' class='boldbase'><b>$Lang::tr{'source ip'}</b></td>
+<td width='75%' align='center' class='boldbase'><b>$Lang::tr{'website'}</b></td>
+</tr>
+END
+;
+my $ll = 0;
+foreach $_ (@log)
+{
+	if ($ll % 2) {
+		print "<tr bgcolor='${Header::table1colour}'>\n"; }
+	else {
+		print "<tr bgcolor='${Header::table2colour}'>\n"; }
+	my ($datetime,$ip,$url) = split;
+        my ($SECdt, $MINdt, $HOURdt, $DAYdt, $MONTHdt, $YEARdt) = localtime($datetime);
+	$SECdt = sprintf ("%.02d",$SECdt);
+	$MINdt = sprintf ("%.02d",$MINdt);
+	$HOURdt = sprintf ("%.02d",$HOURdt);
+
+	$url =~ /(^.{0,60})/;
+	my $part = $1;
+	unless (length($part) < 60) { $part = "${part}..."; }  
+	$url = &Header::cleanhtml($url,"y");
+	$part = &Header::cleanhtml($part,"y");
+	if ($cgiparams{'DAY'}==0) {			# full month
+	    $DAYdt = sprintf ("%.02d/",$DAYdt);
+	} else {
+	    $DAYdt='';
+	}
+	print <<END
+	<td align='center'>$DAYdt$HOURdt:$MINdt:$SECdt</td>
+	<td align='center'>$ip</td>
+	<td align='left'><a href='$url' title='$url' target='_new'>$part</a></td>
+</tr>
+END
+	;
+	$ll++;
+}
+
+print "</table>";
+
+&oldernewer();
+
+&Header::closebox();
+
+&Header::closebigbox();
+
+&Header::closepage();
+
+
+sub oldernewer
+{
+print <<END
+<table width='100%'>
+<tr>
+END
+;
+
+print "<td align='center' width='50%'>";
+if ($prev != -1) {
+        print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>$Lang::tr{'older'}</a>"; }
+else {
+        print "$Lang::tr{'older'}"; }
+print "</td>\n";
+
+print "<td align='center' width='50%'>";
+if ($next >= 0 ) {
+        print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>$Lang::tr{'newer'}</a>"; }
+else {
+        print "$Lang::tr{'newer'}"; }
+print "</td>\n";
+
+print <<END
+</tr>
+</table>
+END
+;
+}
+

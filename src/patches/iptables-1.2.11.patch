@@ -1,0 +1,31 @@
+Index: iptables.c
+===================================================================
+RCS file: /cvspublic/iptables/iptables.c,v
+retrieving revision 1.68
+retrieving revision 1.71
+diff -u -r1.68 -r1.71
+--- iptables.c	26 May 2004 16:04:48 -0000	1.68
++++ iptables.c	30 Aug 2004 16:00:09 -0000	1.71
+@@ -551,7 +551,7 @@
+ 
+ 		while (host->h_addr_list[*naddr] != (char *) NULL)
+ 			(*naddr)++;
+-		addr = fw_calloc(*naddr, sizeof(struct in_addr));
++		addr = fw_calloc(*naddr, sizeof(struct in_addr) * *naddr);
+ 		for (i = 0; i < *naddr; i++)
+ 			inaddrcpy(&(addr[i]),
+ 				  (struct in_addr *) host->h_addr_list[i]);
+@@ -2339,11 +2339,8 @@
+ 		e = NULL;
+ 	}
+ 
+-	for (c = 0; c < nsaddrs; c++)
+-		free(&saddrs[c]);
+-
+-	for (c = 0; c < ndaddrs; c++)
+-		free(&daddrs[c]);
++	free(saddrs);
++	free(daddrs);
+ 
+ 	if (opts != original_opts) {
+ 		free(opts);

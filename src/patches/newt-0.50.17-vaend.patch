@@ -1,0 +1,20 @@
+--- windows.c.old	2004-02-04 00:03:38.000000000 +0000
++++ windows.c	2004-02-04 00:04:59.000000000 +0000
+@@ -168,7 +168,7 @@
+ 	buttonName = va_arg(args, char *);
+     }
+ 
+-    va_end(button1);
++    va_end(args);
+ 
+     buttonBar = newtCreateGrid(numButtons, 1);
+     for (i = 0; i < numButtons; i++) {
+@@ -225,7 +225,7 @@
+ 	buttonName = va_arg(args, char *);
+     }
+ 
+-    va_end(button1);
++    va_end(args);
+ 
+     buttonBar = newtCreateGrid(numButtons, 1);
+     for (i = 0; i < numButtons; i++) {

@@ -1,0 +1,70 @@
+--- header.pl.old	Sat Aug 27 02:22:18 2005
++++ header.pl	Sat Sep 17 15:53:34 2005
+@@ -544,6 +544,11 @@
+     &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
+     &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+ 
++    my $profileused='';
++    if ( ! ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
++    	$profileused="- $pppsettings{'PROFILENAME'}";
++    }
++
+     if ( ( $pppsettings{'METHOD'} eq 'DHCP' && $netsettings{'RED_TYPE'} ne 'PPTP') 
+ 						|| $netsettings{'RED_TYPE'} eq 'DHCP' ) {
+ 		if (open(IFACE, "${General::swroot}/red/iface")) {
+@@ -593,24 +598,24 @@
+ 
+ 	if (-e "${General::swroot}/red/active") {
+ 		$timestr = &General::age("${General::swroot}/red/active");
+-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} - $number channel (<span class='ipcop_StatusBigRed'>$timestr</span>) - $pppsettings{'PROFILENAME'}</span>";
++		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} - $number channel (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+ 	} else {
+ 		if ($count == 0) {
+ 			if (-e "${General::swroot}/red/dial-on-demand") {
+-				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} - $pppsettings{'PROFILENAME'}</span>";
++				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
+ 			} else {
+-				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} - $pppsettings{'PROFILENAME'}</span>";
++				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+ 			}
+ 		} else {
+-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} - $pppsettings{'PROFILENAME'}</span>";
++			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
+ 		}
+ 	}
+     } elsif ($netsettings{'RED_TYPE'} eq "STATIC" || $pppsettings {'METHOD'} eq 'STATIC') {
+ 	if (-e "${General::swroot}/red/active") {
+ 		$timestr = &General::age("${General::swroot}/red/active");
+-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) - $pppsettings{'PROFILENAME'}</span>";
++		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+ 	} else {
+-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} - $pppsettings{'PROFILENAME'}</span>";
++		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+ 	}
+     } elsif ( ( (-e "${General::swroot}/dhcpc/dhcpcd-$iface.pid") && $netsettings{'RED_TYPE'} ne 'PPTP' ) || 
+ 	!system("/bin/ps -ef | /bin/grep -q '[p]ppd'") || !system("/bin/ps -ef | /bin/grep -q '[c]onnectioncheck'")) {
+@@ -633,19 +638,19 @@
+ 			} elsif ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
+ 				$speed = `/usr/sbin/eaglestat | /bin/grep Rate`;
+ 			}
+-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) - $pppsettings{'PROFILENAME'} (\@$speed)</span>";
++			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused (\@$speed)</span>";
+ 		} else {
+-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) - $pppsettings{'PROFILENAME'}</span>";
++			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+ 		}
+ 	} else {
+ 		if (-e "${General::swroot}/red/dial-on-demand") {
+-		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} - $pppsettings{'PROFILENAME'}</span>";
++		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
+ 		} else {
+-		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} - $pppsettings{'PROFILENAME'}</span>";
++		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
+ 		}
+ 	}
+     } else {
+-	$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} - $pppsettings{'PROFILENAME'}</span>";
++	$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+     }
+     return $connstate;
+ }

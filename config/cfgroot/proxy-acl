@@ -1,0 +1,49 @@
+# Do not modify '/var/ipcop/proxy/squid.conf' directly since any changes
+# you make will be overwritten whenever you resave proxy settings using the
+# web interface! Instead, modify the file '/var/ipcop/proxy/acl' and then
+# restart squid using the web interface. Changes made to the 'acl' file
+# will propagate to the 'squid.conf' file at that time.
+# [Scott Tregear, 22 Feb 2005]
+
+# Uncomment the following line to enable logging of User-Agent header:
+#useragent_log      /var/log/squid/user_agent.log
+
+# Uncomment the following line to enable logging of Referer header:
+#referer_log        /var/log/squid/referer.log
+
+acl all src 0.0.0.0/0.0.0.0
+acl localhost src 127.0.0.1/255.255.255.255
+acl SSL_ports port 443 563 
+acl Safe_ports port 80 # http 
+acl Safe_ports port 21 # ftp 
+acl Safe_ports port 443 563 # https, snews 
+acl Safe_ports port 70 # gopher 
+acl Safe_ports port 210 # wais 
+acl Safe_ports port 1025-65535 # unregistered ports 
+acl Safe_ports port 280 # http-mgmt 
+acl Safe_ports port 488 # gss-http 
+acl Safe_ports port 591 # filemaker 
+acl Safe_ports port 777 # multiling http 
+acl Safe_ports port __PROXY_PORT__ # Squid port (for icons) 
+
+acl IPCop_http  port 81
+acl IPCop_https port 445
+acl IPCop_ips  dst __GREEN_IP__ __BLUE_IP__
+acl IPCop_networks src __GREEN_NET__ __BLUE_NET__
+acl CONNECT method CONNECT 
+
+##Access to squid:
+#local machine, no restriction
+http_access allow         localhost
+
+#GUI admin if local machine connects
+http_access allow         IPCop_ips IPCop_networks IPCop_http
+http_access allow CONNECT IPCop_ips IPCop_networks IPCop_https
+
+#Deny not web services
+http_access deny          !Safe_ports
+http_access deny  CONNECT !SSL_ports
+
+#Finally allow IPCop_networks clients
+http_access allow         IPCop_networks
+http_access deny          all

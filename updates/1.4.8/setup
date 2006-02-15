@@ -1,0 +1,127 @@
+#!/bin/bash
+
+UPGRADEVERSION="1.4.8"
+PREVIOUSVERSION="1.4.7"
+echo "This is the $UPGRADEVERSION update patch for IPCop $PREVIOUSVERSION installing."
+
+CURRENTVERSION=`perl -e "require '/var/ipcop/general-functions.pl';print \\$General::version;"`
+if [ "$CURRENTVERSION" != "$PREVIOUSVERSION" ]; then
+	echo "You are not running IPCop v$PREVIOUSVERSION for this patch to install."
+	echo "Aborting installation."
+	exit -1
+fi
+
+# general-functions might not be overwrited by patch...
+/bin/sed -i -e "s+= '1.4.*$+= '$UPGRADEVERSION';+" /var/ipcop/general-functions.pl
+
+BOOT=`/bin/df | grep "/boot" | /usr/bin/awk '{ print $2 }'`
+KVER=`uname -r`
+
+# /boot is too small on flash disk with only 5MB size
+# because smp files are bigger, we can't support upgrade from smp kernel with flash on small /boot
+if [ "$BOOT" -le 7000 ]; then
+	if [ "$KVER" = "2.4.27-smp" -o "$KVER" = "2.4.29-smp" ]; then
+		echo "can't support kernel upgrade on smp machine with only 5MB on /boot"
+		echo "have 8MB on /boot with flash if you really need to use -smp during upgrade"
+		exit 1
+	else
+		rm -rf 	/boot/{vmlinuz,System.map}-2.4.27-smp	\
+			/boot/{vmlinuz,System.map}-2.4.29-smp	\
+			/boot/System.map-2.4.29-smp		\
+			/boot/System.map-2.4.29-smp		\
+			/boot/ipcoprd-smp-2.4.{27,29}.img
+	fi
+fi
+# make files really be erased or new files write may fail with flash on boot with 5MB
+/bin/sync
+
+# Install kernel 2.4.31 modules & k dependants files
+# kernel modules are necessary to rebuild initrd
+/bin/tar -zxpf patch.tar.gz -C /
+
+ROOTDEV=`/bin/ls -l /dev/harddisk4 | /usr/bin/awk '{ print $NF }'`
+# for IPCop without a kernel upgrade
+if ( ! /bin/grep -q '2.4.27' /boot/grub/grub.conf ); then
+	echo "title IPCop old (2.4.27)"						>> /boot/grub/grub.conf
+	echo "  root (hd0,0)"							>> /boot/grub/grub.conf
+	echo "  kernel /vmlinuz-2.4.27 root=${ROOTDEV} panic=10 acpi=off ro"	>> /boot/grub/grub.conf
+	if [ -f /boot/ipcoprd.img ]; then
+		echo "  initrd /ipcoprd-2.4.27.img"				>> /boot/grub/grub.conf
+	fi
+	echo "  savedefault"							>> /boot/grub/grub.conf
+fi
+
+# fix grub missing smp menu entries for old kernel on non flash /boot
+if [ "$BOOT" -gt 7000 ]; then
+	echo "title IPCop old (2.4.27-smp)"					>> /boot/grub/grub.conf
+	echo "  root (hd0,0)"							>> /boot/grub/grub.conf
+	echo "  kernel /vmlinuz-2.4.27-smp root=${ROOTDEV} panic=10 acpi=off ro">> /boot/grub/grub.conf
+	if [ -f /boot/ipcoprd-smp.img ]; then
+		echo "  initrd /ipcoprd-smp-2.4.27.img"				>> /boot/grub/grub.conf
+	fi
+	echo "  savedefault"							>> /boot/grub/grub.conf
+fi
+echo "title IPCop old (2.4.27 ACPI enabled)"				>> /boot/grub/grub.conf
+echo "  root (hd0,0)"							>> /boot/grub/grub.conf
+echo "  kernel /vmlinuz-2.4.27 root=${ROOTDEV} panic=10 ro"		>> /boot/grub/grub.conf
+if [ -f /boot/ipcoprd.img ]; then
+	echo "  initrd /ipcoprd-2.4.27.img"				>> /boot/grub/grub.conf
+fi
+echo "  savedefault"							>> /boot/grub/grub.conf
+# only on non flash /boot
+if [ "$BOOT" -gt 7000 ]; then
+	echo "title IPCop old (2.4.27-smp ACPI HT enabled)"			>> /boot/grub/grub.conf
+	echo "  root (hd0,0)"							>> /boot/grub/grub.conf
+	echo "  kernel /vmlinuz-2.4.27-smp root=${ROOTDEV} panic=10 acpi=ht ro"	>> /boot/grub/grub.conf
+	if [ -f /boot/ipcoprd.img ]; then
+		echo "  initrd /ipcoprd-smp-2.4.27.img"				>> /boot/grub/grub.conf
+	fi
+	echo "  savedefault"							>> /boot/grub/grub.conf
+fi
+
+# Upgrade grub and fix strange looking smp version name
+sed -i -e 's/ipcoprd-smp-2.4.27/ipcoprd-2.4.27-smp/' \
+	-e 's/2.4.27/2.4.29/' /boot/grub/grub.conf
+
+# Fix initrd
+if [ -f /boot/ipcoprd.img ]; then
+	# Find out scsi module
+	IMAGE=`/usr/bin/mktemp /tmp/ipcoprd.img.XXXXXX`
+	MNTPOINT=`/usr/bin/mktemp -d /tmp/ipcoprd.mnt.XXXXXX`
+	/bin/gzip -d -c /boot/ipcoprd.img > $IMAGE
+	/bin/mount -o loop $IMAGE $MNTPOINT
+	SCSIDRIVER=`/bin/ls -1 $MNTPOINT/lib | \
+		/bin/grep -v sd_mod.o.gz |\
+		/bin/grep -v sg.o.gz |\
+		/bin/grep -v sr_mod.o.gz |\
+		/bin/grep -v 53c700.o.gz |\
+		/bin/grep -v NCR53C9x.o.gz |\
+		/bin/grep -v libata.o.gz  |\
+		/bin/grep -v scsi_mod.o.gz |\
+		/bin/grep -v ataraid.o.gz |\
+		/bin/grep -v mptbase.o.gz |\
+		/bin/grep -v isa-pnp.o |\
+		/bin/grep -v ds.o.gz |\
+		/bin/grep -v pcmcia_core.o.gz |\
+		/bin/sed 's/.o.gz//'`
+	/bin/umount -d $MNTPOINT
+	/bin/rm -rf $MNTPOINT $IMAGE	
+	/bin/mv -f /boot/ipcoprd.img /boot/ipcoprd-2.4.29.img
+	/bin/mv -f /boot/ipcoprd-smp.img /boot/ipcoprd-2.4.29-smp.img
+	if [ "$SCSIDRIVER" ]; then
+		if [ ! -f ipcoprd-2.4.29-smp.img ]; then
+			# on 1.4.3/1.4.4 update, ipcoprd-smp.img has failed, so do it now
+			/sbin/mkinitrd --with=scsi_mod --with=${SCSIDRIVER} --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipcoprd-2.4.29-smp.img 2.4.29-smp
+		fi
+		/sbin/mkinitrd --with=scsi_mod --with=${SCSIDRIVER} --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipcoprd.img 2.4.31
+		/sbin/mkinitrd --with=scsi_mod --with=${SCSIDRIVER} --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipcoprd-smp.img 2.4.31-smp
+	fi
+fi
+
+# fix etc/modules.conf is more recent than ...modules.dep for 2.4.29 and 2.4.31
+touch /lib/modules/*/modules.dep
+
+echo "IPCop v$UPGRADEVERSION - The Bad Packets Stop Here">/etc/issue
+killall mingetty  #redisplay correct version
+echo "end of $UPGRADEVERSION update"
+exit 0

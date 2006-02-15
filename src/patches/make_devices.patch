@@ -1,0 +1,410 @@
+--- make_devices.old	2004-08-16 11:43:04.071634753 +0100
++++ make_devices	2004-08-16 11:38:51.096251388 +0100
+@@ -137,10 +137,10 @@
+ mknod -m $MODE tty6 c 4 6 ; chgrp $GROUP tty6
+ mknod -m $MODE tty7 c 4 7 ; chgrp $GROUP tty7
+ mknod -m $MODE tty8 c 4 8 ; chgrp $GROUP tty8
+-    # mknod -m $MODE tty9 c 4 9 ; chgrp $GROUP tty9
+-    # mknod -m $MODE tty10 c 4 10 ; chgrp $GROUP tty10
+-    # mknod -m $MODE tty11 c 4 11 ; chgrp $GROUP tty11
+-    # mknod -m $MODE tty12 c 4 12 ; chgrp $GROUP tty12
++mknod -m $MODE tty9 c 4 9 ; chgrp $GROUP tty9
++mknod -m $MODE tty10 c 4 10 ; chgrp $GROUP tty10
++mknod -m $MODE tty11 c 4 11 ; chgrp $GROUP tty11
++mknod -m $MODE tty12 c 4 12 ; chgrp $GROUP tty12
+     # mknod -m $MODE tty13 c 4 13 ; chgrp $GROUP tty13
+     # mknod -m $MODE tty14 c 4 14 ; chgrp $GROUP tty14
+     # mknod -m $MODE tty15 c 4 15 ; chgrp $GROUP tty15
+@@ -295,8 +295,8 @@
+ mknod -m $MODE ram0 b 1 0 ; chgrp $GROUP ram0
+     # Second RAM disk
+ mknod -m $MODE ram1 b 1 1 ; chgrp $GROUP ram1
+-    # mknod -m $MODE ram2 b 1 2 ; chgrp $GROUP ram2
+-    # mknod -m $MODE ram3 b 1 3 ; chgrp $GROUP ram3
++mknod -m $MODE ram2 b 1 2 ; chgrp $GROUP ram2
++mknod -m $MODE ram3 b 1 3 ; chgrp $GROUP ram3
+     # ...
+ 
+     # Initial RAM disk {2.6} 
+@@ -324,6 +324,8 @@
+ mknod -m $MODE loop0 b 7 0 ; chgrp $GROUP loop0
+     # Second loopback device 
+ mknod -m $MODE loop1 b 7 1 ; chgrp $GROUP loop1
++mknod -m $MODE loop2 b 7 2 ; chgrp $GROUP loop2
++mknod -m $MODE loop3 b 7 3 ; chgrp $GROUP loop3
+     # ...
+ 
+ #****************************************************************************
+@@ -357,36 +359,52 @@
+     # ...
+ 
+     # Third IDE disk whole disk (or CD-ROM)
+-    # mknod -m $MODE hdc b 22 0 ; chgrp $GROUP hdc
++mknod -m $MODE hdc b 22 0 ; chgrp $GROUP hdc
+     # First partition on hdc
+-    # mknod -m $MODE hdc1 b 22 1 ; chgrp $GROUP hdc1
++mknod -m $MODE hdc1 b 22 1 ; chgrp $GROUP hdc1
+     # Second partition on hdc
+-    # mknod -m $MODE hdc2 b 22 2 ; chgrp $GROUP hdc2
+-    # ...
++mknod -m $MODE hdc2 b 22 2 ; chgrp $GROUP hdc2
++mknod -m $MODE hdc3 b 22 3 ; chgrp $GROUP hdc3
++mknod -m $MODE hdc4 b 22 4 ; chgrp $GROUP hdc4
++mknod -m $MODE hdc5 b 22 5 ; chgrp $GROUP hdc5
++mknod -m $MODE hdc6 b 22 6 ; chgrp $GROUP hdc6
++mknod -m $MODE hdc7 b 22 7 ; chgrp $GROUP hdc7
+ 
+     # Fourth IDE disk whole disk (or CD-ROM)
+-    # mknod -m $MODE hdd b 22 64 ; chgrp $GROUP hdd
++mknod -m $MODE hdd b 22 64 ; chgrp $GROUP hdd
+     # First partition on hdd
+-    # mknod -m $MODE hdd1 b 22 65 ; chgrp $GROUP hdd1
++mknod -m $MODE hdd1 b 22 65 ; chgrp $GROUP hdd1
+     # Second partition on hdd
+-    # mknod -m $MODE hdd2 b 22 66 ; chgrp $GROUP hdd2
+-    # ...
++mknod -m $MODE hdd2 b 22 66 ; chgrp $GROUP hdd2
++mknod -m $MODE hdd3 b 22 67 ; chgrp $GROUP hdd3
++mknod -m $MODE hdd4 b 22 68 ; chgrp $GROUP hdd4
++mknod -m $MODE hdd5 b 22 69 ; chgrp $GROUP hdd5
++mknod -m $MODE hdd6 b 22 70 ; chgrp $GROUP hdd6
++mknod -m $MODE hdd7 b 22 71 ; chgrp $GROUP hdd7
+ 
+     # Fifth IDE disk whole disk (or CD-ROM)
+-    # mknod -m $MODE hde b 33 0 ; chgrp $GROUP hde
++mknod -m $MODE hde b 33 0 ; chgrp $GROUP hde
+     # First partition on hde
+-    # mknod -m $MODE hde1 b 33 1 ; chgrp $GROUP hde1
++mknod -m $MODE hde1 b 33 1 ; chgrp $GROUP hde1
+     # Second partition on hde
+-    # mknod -m $MODE hde2 b 33 2 ; chgrp $GROUP hde2
+-    # ...
++mknod -m $MODE hde2 b 33 2 ; chgrp $GROUP hde2
++mknod -m $MODE hde3 b 33 3 ; chgrp $GROUP hde3
++mknod -m $MODE hde4 b 33 4 ; chgrp $GROUP hde4
++mknod -m $MODE hde5 b 33 5 ; chgrp $GROUP hde5
++mknod -m $MODE hde6 b 33 6 ; chgrp $GROUP hde6
++mknod -m $MODE hde7 b 33 7 ; chgrp $GROUP hde7
+ 
+     # Sixth IDE disk whole disk (or CD-ROM)
+-    # mknod -m $MODE hdf b 33 64 ; chgrp $GROUP hdf
++mknod -m $MODE hdf b 33 64 ; chgrp $GROUP hdf
+     # First partition on hdf
+-    # mknod -m $MODE hdf1 b 33 65 ; chgrp $GROUP hdf1
++mknod -m $MODE hdf1 b 33 65 ; chgrp $GROUP hdf1
+     # Second partition on hdf
+-    # mknod -m $MODE hdf2 b 33 66 ; chgrp $GROUP hdf2
+-    # ...
++mknod -m $MODE hdf2 b 33 66 ; chgrp $GROUP hdf2
++mknod -m $MODE hdf3 b 33 67 ; chgrp $GROUP hdf3
++mknod -m $MODE hdf4 b 33 68 ; chgrp $GROUP hdf4
++mknod -m $MODE hdf5 b 33 69 ; chgrp $GROUP hdf5
++mknod -m $MODE hdf6 b 33 70 ; chgrp $GROUP hdf6
++mknod -m $MODE hdf7 b 33 71 ; chgrp $GROUP hdf7
+ 
+     # Seventh IDE disk whole disk (or CD-ROM)
+     # mknod -m $MODE hdg b 34 0 ; chgrp $GROUP hdg
+@@ -435,20 +453,26 @@
+     # ...
+ 
+     # Third SCSI disk whole disk
+-    # mknod -m $MODE sdc b 8 32 ; chgrp $GROUP sdc
++mknod -m $MODE sdc b 8 32 ; chgrp $GROUP sdc
+     # First partition on sdc
+-    # mknod -m $MODE sdc1 b 8 33 ; chgrp $GROUP sdc1
++mknod -m $MODE sdc1 b 8 33 ; chgrp $GROUP sdc1
+     # Second partition on sdc
+-    # mknod -m $MODE sdc2 b 8 34 ; chgrp $GROUP sdc2
+-    # mknod -m $MODE sdc3 b 8 35 ; chgrp $GROUP sdc3
+-    # mknod -m $MODE sdc4 b 8 36 ; chgrp $GROUP sdc4
+-    # mknod -m $MODE sdc5 b 8 37 ; chgrp $GROUP sdc5
+-    # mknod -m $MODE sdc6 b 8 38 ; chgrp $GROUP sdc6
+-    # mknod -m $MODE sdc7 b 8 39 ; chgrp $GROUP sdc7
+-    # ...
+-
+-    # mknod -m $MODE sdd b 8 48 ; chgrp $GROUP sdd
+-    # mknod -m $MODE sdd1 b 8 49 ; chgrp $GROUP sdd1
++mknod -m $MODE sdc2 b 8 34 ; chgrp $GROUP sdc2
++mknod -m $MODE sdc3 b 8 35 ; chgrp $GROUP sdc3
++mknod -m $MODE sdc4 b 8 36 ; chgrp $GROUP sdc4
++mknod -m $MODE sdc5 b 8 37 ; chgrp $GROUP sdc5
++mknod -m $MODE sdc6 b 8 38 ; chgrp $GROUP sdc6
++mknod -m $MODE sdc7 b 8 39 ; chgrp $GROUP sdc7
++    # ...
++
++mknod -m $MODE sdd b 8 48 ; chgrp $GROUP sdd
++mknod -m $MODE sdd1 b 8 49 ; chgrp $GROUP sdd1
++mknod -m $MODE sdd2 b 8 50 ; chgrp $GROUP sdd2
++mknod -m $MODE sdd3 b 8 51 ; chgrp $GROUP sdd3
++mknod -m $MODE sdd4 b 8 52 ; chgrp $GROUP sdd4
++mknod -m $MODE sdd5 b 8 53 ; chgrp $GROUP sdd5
++mknod -m $MODE sdd6 b 8 54 ; chgrp $GROUP sdd6
++mknod -m $MODE sdd7 b 8 55 ; chgrp $GROUP sdd7
+     # ...
+     
+     # mknod -m $MODE sde b 8 64 ; chgrp $GROUP sde
+@@ -471,6 +495,35 @@
+     # mknod -m $MODE sdp15 b 8 255 ; chgrp $GROUP sdp15
+ 
+ #****************************************************************************
++#                         Raid Array disk devices
++#****************************************************************************
++
++mkdir -p ida
++mknod -m $MODE ida/c0d0 b 72 0 ; chgrp $GROUP ida/c0d0
++mknod -m $MODE ida/c0d0p1 b 72 1 ; chgrp $GROUP ida/c0d0p1
++mknod -m $MODE ida/c0d0p2 b 72 2 ; chgrp $GROUP ida/c0d0p2
++mknod -m $MODE ida/c0d0p3 b 72 3 ; chgrp $GROUP ida/c0d0p3
++mknod -m $MODE ida/c0d0p4 b 72 4 ; chgrp $GROUP ida/c0d0p4
++mkdir -p cciss
++mknod -m $MODE cciss/c0d0 b 104 0 ; chgrp $GROUP cciss/c0d0
++mknod -m $MODE cciss/c0d0p1 b 104 1 ; chgrp $GROUP cciss/c0d0p1
++mknod -m $MODE cciss/c0d0p2 b 104 2 ; chgrp $GROUP cciss/c0d0p2
++mknod -m $MODE cciss/c0d0p3 b 104 3 ; chgrp $GROUP cciss/c0d0p3
++mknod -m $MODE cciss/c0d0p4 b 104 4 ; chgrp $GROUP cciss/c0d0p4
++mkdir -p rd
++mknod -m $MODE rd/c0d0 b 48 0 ; chgrp $GROUP rd/c0d0
++mknod -m $MODE rd/c0d0p1 b 48 1 ; chgrp $GROUP rd/c0d0p1
++mknod -m $MODE rd/c0d0p2 b 48 2 ; chgrp $GROUP rd/c0d0p2
++mknod -m $MODE rd/c0d0p3 b 48 3 ; chgrp $GROUP rd/c0d0p3
++mknod -m $MODE rd/c0d0p4 b 48 4 ; chgrp $GROUP rd/c0d0p4
++mkdir -p ataraid
++mknod -m $MODE ataraid/d0 b 114 0 ; chgrp $GROUP ataraid/d0
++mknod -m $MODE ataraid/d0p1 b 114 1 ; chgrp $GROUP ataraid/d0p1
++mknod -m $MODE ataraid/d0p2 b 114 2 ; chgrp $GROUP ataraid/d0p2
++mknod -m $MODE ataraid/d0p3 b 114 3 ; chgrp $GROUP ataraid/d0p3
++mknod -m $MODE ataraid/d0p4 b 114 4 ; chgrp $GROUP ataraid/d0p4
++
++#****************************************************************************
+ #                         Parallel port IDE disk devices
+ #****************************************************************************
+ 
+@@ -810,9 +863,9 @@
+ #****************************************************************************
+ 
+     # First generic SCSI device
+-    # mknod -m $MODE sg0 c 21 0 ; chgrp $GROUP sg0
++mknod -m $MODE sg0 c 21 0 ; chgrp $GROUP sg0
+     # Second generic SCSI device 
+-    # mknod -m $MODE sg1 c 21 1 ; chgrp $GROUP sg1
++mknod -m $MODE sg1 c 21 1 ; chgrp $GROUP sg1
+     # mknod -m $MODE sg2 c 21 2 ; chgrp $GROUP sg2
+     # mknod -m $MODE sg3 c 21 3 ; chgrp $GROUP sg3
+     # ...
+@@ -832,11 +885,15 @@
+ mknod -m $MODE scd0 b 11 0 ; chgrp $GROUP scd0
+     # Second SCSI CD-ROM
+ mknod -m $MODE scd1 b 11 1 ; chgrp $GROUP scd1
++mknod -m $MODE scd2 b 11 2 ; chgrp $GROUP scd2
++mknod -m $MODE scd3 b 11 3 ; chgrp $GROUP scd3
+     # ...
+     
+     # Alternative names for SCSI CD-ROMs (_hard_ links)
+ ln -fn scd0 sr0 ; chgrp $GROUP sr0
+ ln -fn scd1 sr1 ; chgrp $GROUP sr1
++ln -fn scd1 sr2 ; chgrp $GROUP sr2
++ln -fn scd1 sr3 ; chgrp $GROUP sr3
+     # ...
+ 
+ #****************************************************************************
+@@ -1027,6 +1084,7 @@
+ mknod -m $MODE ttyS1 c 4 65 ; chgrp $GROUP ttyS1
+ mknod -m $MODE ttyS2 c 4 66 ; chgrp $GROUP ttyS2
+ mknod -m $MODE ttyS3 c 4 67 ; chgrp $GROUP ttyS3
++mknod -m $MODE ttyS4 c 4 68 ; chgrp $GROUP ttyS4
+     # ...
+     # 192nd UART serial port 
+     # mknod -m $MODE ttyS191 c 4 255 ; chgrp $GROUP ttyS191
+@@ -1036,16 +1094,16 @@
+ #****************************************************************************
+ 
+     # Device independent PPP interface 
+-    # mknod -m $MODE ppp c 108 0 ; chgrp $GROUP ppp    
++mknod -m $MODE ppp c 108 0 ; chgrp $GROUP ppp    
+ 
+ #****************************************************************************
+ #                         isdn4linux virtual modem
+ #****************************************************************************
+ 
+     # First virtual modem
+-    # mknod -m $MODE ttyI0 c 43 0 ; chgrp $GROUP ttyI0
++mknod -m $MODE ttyI0 c 43 0 ; chgrp $GROUP ttyI0
+     # Second virtual modem
+-    # mknod -m $MODE ttyI1 c 43 1 ; chgrp $GROUP ttyI1
++mknod -m $MODE ttyI1 c 43 1 ; chgrp $GROUP ttyI1
+     # ...
+     # 64th virtual modem 
+     # mknod -m $MODE ttyI63 c 43 63 ; chgrp $GROUP ttyI63
+@@ -1055,37 +1113,37 @@
+ #****************************************************************************
+ 
+     # First virtual B channel raw data
+-    # mknod -m $MODE isdn0 c 45 0 ; chgrp $GROUP isdn0
+-    # mknod -m $MODE isdn1 c 45 1 ; chgrp $GROUP isdn1
++mknod -m $MODE isdn0 c 45 0 ; chgrp $GROUP isdn0
++mknod -m $MODE isdn1 c 45 1 ; chgrp $GROUP isdn1
+     # ...
+     # 64th virtual B channel raw data
+     # mknod -m $MODE isdn63 c 45 63 ; chgrp $GROUP isdn63
+ 
+     # First channel control/debug
+-    # mknod -m $MODE isdnctrl0 c 45 64 ; chgrp $GROUP isdnctrl0
+-    # mknod -m $MODE isdnctrl1 c 45 65 ; chgrp $GROUP isdnctrl1
++mknod -m $MODE isdnctrl0 c 45 64 ; chgrp $GROUP isdnctrl0
++mknod -m $MODE isdnctrl1 c 45 65 ; chgrp $GROUP isdnctrl1
+     # ...
+     # 64th channel control/debug
+     # mknod -m $MODE isdnctrl63 c 45 127 ; chgrp $GROUP isdnctrl63
+ 
+     # First SyncPPP device
+-    # mknod -m $MODE ippp0 c 45 128 ; chgrp $GROUP ippp0
+-    # mknod -m $MODE ippp1 c 45 129 ; chgrp $GROUP ippp1
++mknod -m $MODE ippp0 c 45 128 ; chgrp $GROUP ippp0
++mknod -m $MODE ippp1 c 45 129 ; chgrp $GROUP ippp1
+     # ...
+     # 64th SyncPPP device
+     # mknod -m $MODE ippp63 c 45 191 ; chgrp $GROUP ippp63
+ 
+     # ISDN monitor interface 
+-    # mknod -m $MODE isdninfo c 45 255 ; chgrp $GROUP isdninfo
++mknod -m $MODE isdninfo c 45 255 ; chgrp $GROUP isdninfo
+ 
+ #****************************************************************************
+ #                         USB serial converters
+ #****************************************************************************
+ 
+     # First USB serial converter
+-    # mknod -m $MODE ttyUSB0 c 188 0 ; chgrp $GROUP ttyUSB0
++mknod -m $MODE ttyUSB0 c 188 0 ; chgrp $GROUP ttyUSB0
+     # Second USB serial converter 
+-    # mknod -m $MODE ttyUSB1 c 188 1 ; chgrp $GROUP ttyUSB1
++mknod -m $MODE ttyUSB1 c 188 1 ; chgrp $GROUP ttyUSB1
+     # ...
+ 
+ #****************************************************************************
+@@ -1093,9 +1151,9 @@
+ #****************************************************************************
+ 
+     # First ACM modem
+-    # mknod -m $MODE ttyACM0 c 166 0 ; chgrp $GROUP ttyACM0
++mknod -m $MODE ttyACM0 c 166 0 ; chgrp $GROUP ttyACM0
+     # Second ACM modem 
+-    # mknod -m $MODE ttyACM1 c 166 1 ; chgrp $GROUP ttyACM1
++mknod -m $MODE ttyACM1 c 166 1 ; chgrp $GROUP ttyACM1
+     # ...
+ 
+ #****************************************************************************
+@@ -1123,9 +1181,9 @@
+ #****************************************************************************
+ 
+     # First DataComm card
+-    # mknod -m $MODE dcbri0 c 52 0 ; chgrp $GROUP dcbri0
++mknod -m $MODE dcbri0 c 52 0 ; chgrp $GROUP dcbri0
+     # Second DataComm card
+-    # mknod -m $MODE dcbri1 c 52 1 ; chgrp $GROUP dcbri1
++mknod -m $MODE dcbri1 c 52 1 ; chgrp $GROUP dcbri1
+     # Third DataComm card
+     # mknod -m $MODE dcbri2 c 52 2 ; chgrp $GROUP dcbri2
+     # Fourth DataComm card 
+@@ -2144,10 +2202,10 @@
+ #****************************************************************************
+ 
+     # Control device
+-    # mknod -m $MODE capi20 c 68 0 ; chgrp $GROUP capi20
++mknod -m $MODE capi20 c 68 0 ; chgrp $GROUP capi20
+ 
+     # First CAPI 2.0 application
+-    # mknod -m $MODE capi20.00 c 68 1 ; chgrp $GROUP capi20.00
++mknod -m $MODE capi20.00 c 68 1 ; chgrp $GROUP capi20.00
+     # Second CAPI 2.0 application
+     # mknod -m $MODE capi20.01 c 68 2 ; chgrp $GROUP capi20.01
+     # ...
+@@ -2169,16 +2227,16 @@
+ #****************************************************************************
+ 
+     # Filter control device/log file
+-    # mknod -m $MODE ipl c 95 0 ; chgrp $GROUP ipl
++mknod -m $MODE ipl c 95 0 ; chgrp $GROUP ipl
+ 
+     # NAT control device/log file
+-    # mknod -m $MODE ipnat c 95 1 ; chgrp $GROUP ipnat
++mknod -m $MODE ipnat c 95 1 ; chgrp $GROUP ipnat
+ 
+     # State information log file
+-    # mknod -m $MODE ipstate c 95 2 ; chgrp $GROUP ipstate
++mknod -m $MODE ipstate c 95 2 ; chgrp $GROUP ipstate
+ 
+     # Authentication control device/log file 
+-    # mknod -m $MODE ipauth c 95 3 ; chgrp $GROUP ipauth
++mknod -m $MODE ipauth c 95 3 ; chgrp $GROUP ipauth
+ 
+ #****************************************************************************
+ #                         Raw keyboard device
+@@ -2316,51 +2374,51 @@
+ #****************************************************************************
+ 
+     # First SCSI tape, mode 0
+-    # mknod -m $MODE st0 c 9 0 ; chgrp $GROUP st0
++mknod -m $MODE st0 c 9 0 ; chgrp $GROUP st0
+     # Second SCSI tape, mode 0
+-    # mknod -m $MODE st1 c 9 1 ; chgrp $GROUP st1
++mknod -m $MODE st1 c 9 1 ; chgrp $GROUP st1
+     # ...
+ 
+     # First SCSI tape, mode 1
+-    # mknod -m $MODE st0l c 9 32 ; chgrp $GROUP st0l
++mknod -m $MODE st0l c 9 32 ; chgrp $GROUP st0l
+     # Second SCSI tape, mode 1
+-    # mknod -m $MODE st1l c 9 33 ; chgrp $GROUP st1l
++mknod -m $MODE st1l c 9 33 ; chgrp $GROUP st1l
+     # ...
+ 
+     # First SCSI tape, mode 2
+-    # mknod -m $MODE st0m c 9 64 ; chgrp $GROUP st0m
++mknod -m $MODE st0m c 9 64 ; chgrp $GROUP st0m
+     # Second SCSI tape, mode 2
+-    # mknod -m $MODE st1m c 9 65 ; chgrp $GROUP st1m
++mknod -m $MODE st1m c 9 65 ; chgrp $GROUP st1m
+     # ...
+ 
+     # First SCSI tape, mode 3
+-    # mknod -m $MODE st0a c 9 96 ; chgrp $GROUP st0a
++mknod -m $MODE st0a c 9 96 ; chgrp $GROUP st0a
+     # Second SCSI tape, mode 3
+-    # mknod -m $MODE st1a c 9 97 ; chgrp $GROUP st1a
++mknod -m $MODE st1a c 9 97 ; chgrp $GROUP st1a
+     # ...
+ 
+     # First SCSI tape, mode 0, no rewind
+-    # mknod -m $MODE nst0 c 9 128 ; chgrp $GROUP nst0
++mknod -m $MODE nst0 c 9 128 ; chgrp $GROUP nst0
+     # Second SCSI tape, mode 0, no rewind
+-    # mknod -m $MODE nst1 c 9 129 ; chgrp $GROUP nst1
++mknod -m $MODE nst1 c 9 129 ; chgrp $GROUP nst1
+     # ...
+ 
+     # First SCSI tape, mode 1, no rewind
+-    # mknod -m $MODE nst0l c 9 160 ; chgrp $GROUP nst0l
++mknod -m $MODE nst0l c 9 160 ; chgrp $GROUP nst0l
+     # Second SCSI tape, mode 1, no rewind
+-    # mknod -m $MODE nst1l c 9 161 ; chgrp $GROUP nst1l
++mknod -m $MODE nst1l c 9 161 ; chgrp $GROUP nst1l
+     # ...
+ 
+     # First SCSI tape, mode 2, no rewind
+-    # mknod -m $MODE nst0m c 9 192 ; chgrp $GROUP nst0m
++mknod -m $MODE nst0m c 9 192 ; chgrp $GROUP nst0m
+     # Second SCSI tape, mode 2, no rewind
+-    # mknod -m $MODE nst1m c 9 193 ; chgrp $GROUP nst1m
++mknod -m $MODE nst1m c 9 193 ; chgrp $GROUP nst1m
+     # ...
+ 
+     # First SCSI tape, mode 3, no rewind
+-    # mknod -m $MODE nst0a c 9 224 ; chgrp $GROUP nst0a
++mknod -m $MODE nst0a c 9 224 ; chgrp $GROUP nst0a
+     # Second SCSI tape, mode 3, no rewind 
+-    # mknod -m $MODE nst1a c 9 225 ; chgrp $GROUP nst1a
++mknod -m $MODE nst1a c 9 225 ; chgrp $GROUP nst1a
+     # ...
+ 
+ #****************************************************************************

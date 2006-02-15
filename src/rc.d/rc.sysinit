@@ -1,0 +1,267 @@
+#!/bin/sh
+#
+# $Id: rc.sysinit,v 1.18.2.36 2005/12/01 20:13:08 eoberlander Exp $
+#
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/main/settings)
+
+umask 022
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH
+
+echo "Mounting /proc filesystem"
+mount -n -t proc /proc /proc
+
+# Unmount the initrd, if necessary
+if grep -q /initrd /proc/mounts && ! grep -q /initrd/loopfs /proc/mounts ; then
+   umount /initrd >/dev/null 2>&1
+   blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
+fi
+
+echo "Setting hostname"
+if [ -z "$DOMAINNAME" ]; then
+	hostname $HOSTNAME
+else
+	hostname ${HOSTNAME}.${DOMAINNAME}
+fi
+
+if [ "$KEYMAP" != "" ]; then
+	loadkeys $KEYMAP
+fi
+
+# Initializing Power Management ACPI first, then APM.
+# APM won't load if ACPI is initialized anyway.
+echo "Initializing Power Management"
+modprobe ac > /dev/null 2>&1
+modprobe battery > /dev/null 2>&1
+modprobe button > /dev/null 2>&1
+modprobe fan > /dev/null 2>&1
+modprobe processor > /dev/null 2>&1
+modprobe thermal > /dev/null 2>&1
+modprobe apm > /dev/null 2>&1
+
+# Initialize USB controllers
+echo "Initializing USB controllers"
+aliases=`/sbin/modprobe -c | awk '/^alias usb-controller/ { print $3 }'`
+if [ -n "$aliases" -a "$aliases" != "off" ] ; then
+    modprobe usbcore
+    mount -n -t usbdevfs usbdevfs /proc/bus/usb
+    for alias in $aliases ; do
+        [ "$alias" != "off" ] && modprobe $alias
+    done
+
+    echo "Initializing USB storage devices"
+    modprobe usb-storage
+    modprobe sd_mod
+
+    echo "Initializing USB keyboard"
+    modprobe hid
+    modprobe keybdev
+
+    echo "Initializing USB modems"
+    modprobe acm
+fi
+
+STRING="Checking root filesystem"
+
+fsck -R -T -a -C /
+RC=$?  
+
+if [ "$RC" = "0" ]; then
+	echo "$STRING: Success"
+elif [ "$RC" = "1" ]; then
+	echo "$STRING: Passed"
+fi
+
+# A return of 2 or higher means there were serious problems.
+if [ $RC -gt 1 ]; then
+	echo "$STRING: Failed"
+	echo "*** An error occurred during the file system check."
+	echo "*** Dropping you to a shell; the system will reboot"
+	echo "*** when you leave the shell."
+	export PS1="(Repair filesystem) \# # "
+	sulogin
+	echo "Unmounting filesystems"
+	umount -a
+	mount -n -o remount,ro /
+	echo "Automatic reboot in progress."
+	reboot -f
+fi
+
+echo "Mounting root read/write"
+mount -n -o remount,rw /
+
+STRING="Checking other filesystems"
+fsck -R -T -a -C -A
+RC=$?  
+
+if [ "$RC" = "0" ]; then
+        echo "$STRING: Success"
+elif [ "$RC" = "1" ]; then
+        echo "$STRING: Passed"
+fi
+  
+# A return of 2 or higher means there were serious problems.
+if [ $RC -gt 1 ]; then
+        echo "$STRING: Failed"
+        echo "*** An error occurred during the file system check."
+  	echo "*** Dropping you to a shell; the system will reboot"
+  	echo "*** when you leave the shell."
+  	export PS1="(Repair filesystem) \# # "
+  	sulogin
+  	echo "Unmounting filesystems"
+  	umount -n -a
+  	mount -n -o remount,ro /
+	echo "Automatic reboot in progress."
+  	reboot -f
+fi
+
+echo "Mounting other filesystems"
+mount -a -n
+
+if [ -e /swapfile ]; then
+	echo "Turning on swap"
+	chmod 600 /swapfile
+	swapon /swapfile
+fi
+
+echo "Updating System.map file location"
+if [ -L /boot/System.map -a -r /boot/System.map-`uname -r` -a \
+	! /boot/System.map -ef /boot/System.map-`uname -r` ]; then
+	ln -s -f System.map-`uname -r` /boot/System.map
+fi
+if [ ! -e /boot/System.map -a -r /boot/System.map-`uname -r` ]; then
+	ln -s -f System.map-`uname -r` /boot/System.map
+fi
+
+echo "Updating /etc/fstab to reflect removable devices"
+/usr/sbin/updfstab
+
+echo "Setting kernel settings"
+/sbin/sysctl -e -p /etc/sysctl.conf >/dev/null
+
+if [ -e /etc/FLASH ]; then
+	if [ -e /etc/rc.d/rc.flash.up ]; then
+		echo "Decompressing Flash"
+		. /etc/rc.d/rc.flash.up
+	fi
+fi
+
+echo "Setting locale"
+LANG=en_US.utf8
+export LANG
+
+echo "Setting consolefonts"
+eval $(/usr/local/bin/readhash CONFIG_ROOT/main/settings)
+for i in 2 3 4 5 6; do
+	> /dev/tty$i
+done
+if [ "$LANGUAGE" = "el" ]; then
+	/usr/bin/unicode_start iso07u-16
+elif [ "$LANGUAGE" = "pt" -o "$LANGUAGE" = "bz" ]; then
+	/usr/bin/unicode_start lat1-16
+elif [ "$LANGUAGE" = "cs" -o "$LANGUAGE" = "hu" -o "$LANGUAGE" = "pl" -o "$LANGUAGE" = "sk" ]; then
+	/usr/bin/unicode_start lat2-16
+elif [ "$LANGUAGE" = "tr" ]; then
+	/usr/bin/unicode_start lat5-16
+elif [ "$LANGUAGE" = "vi" ]; then
+	/usr/bin/unicode_start viscii10-8x16
+else
+	/usr/bin/unicode_start lat0-16
+fi
+
+echo "Update modules dependencies when necessary"
+if [ -e /var/run/need-depmod-`uname -r` ]; then
+	/sbin/depmod -a
+	/bin/rm -f /var/run/need-depmod-`uname -r`
+fi
+
+echo "Clearing old files"
+rm -f /var/run/{*.pid,*.sem,*.tdb}
+rm -f /var/run/dhcpcd-*.pid
+rm -f /var/lock/{LCK..tty*,rc.updatered.lock}
+rm -f CONFIG_ROOT/dhcpc/{*.pid,*.cache,*.info}
+rm -f CONFIG_ROOT/red/{active,eciadsl-synch-done}
+
+echo "Setting the clock"
+/sbin/hwclock --hctosys
+
+# Cleaning up wtmp/utmp files
+>/var/run/utmp
+touch /var/log/wtmp
+chgrp utmp /var/run/utmp /var/log/wtmp
+chmod 0664 /var/run/utmp /var/log/wtmp
+
+if [ -x /usr/sbin/isapnp -a -f CONFIG_ROOT/isapnp/isapnp.conf -a ! -f /proc/isapnp ]; then
+	echo "Running isapnp"
+	/usr/sbin/isapnp CONFIG_ROOT/isapnp/isapnp.conf 2>/dev/null
+fi
+
+if [ ! -e /etc/ssh/ssh_host_key ]; then
+	echo "Generating SSH RSA1 key.  This may take several minutes."
+	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N ""
+fi
+if [ ! -e /etc/ssh/ssh_host_rsa_key ]; then
+	echo "Generating SSH RSA key.  This may take several minutes."
+	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ""
+fi
+if [ ! -e /etc/ssh/ssh_host_dsa_key ]; then
+	echo "Generating SSH DSA key.  This may take several minutes."
+	/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N "" 
+fi
+
+# https certificate
+if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
+	/usr/local/bin/httpscert read
+else
+	/usr/local/bin/httpscert new
+fi
+
+echo "Rotating logs"
+/usr/sbin/logrotate /etc/logrotate.conf
+
+echo "Starting syslogd"
+/usr/sbin/syslogd -m 0
+echo "Starting klogd"
+/usr/sbin/klogd -u klogd -j /var/empty
+
+echo "Running /etc/rc.d/rc.network"
+. /etc/rc.d/rc.network
+
+echo "Dumping boot messages"
+dmesg > /var/log/dmesg
+
+if [ -e /var/log/rrd/disk.rrd ]; then
+	echo "Adjusting graphs to compensate for boot"
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk.rrd","-t","readsect:writesect","N:U:U");'
+fi
+
+echo "Starting crond"
+/usr/sbin/fcron
+echo "Starting Snort (if enabled)"
+/usr/local/bin/restartsnort red blue orange green
+echo "Starting httpd"
+/usr/sbin/httpd
+echo "Starting dhcpd (if enabled)"
+/usr/local/bin/restartdhcp
+echo "Starting sshd (if enabled)"
+/usr/local/bin/restartssh
+echo "Starting ntpd (if enabled)"
+/usr/local/bin/restartntpd
+
+if [ -e "CONFIG_ROOT/proxy/squid.conf" ]; then
+	echo "Starting squid (if enabled)"
+	/usr/local/bin/restartsquid
+fi
+
+echo "Running rc.local"
+. /etc/rc.d/rc.local
+
+logger -t ipcop "IPCop started."
+
+# Send nice startup beep now
+/usr/bin/beep -l 75 -f 500
+/usr/bin/beep -l 75 -f 1000
+/usr/bin/beep -l 75 -f 2000
+/usr/bin/beep -l 75 -f 3000

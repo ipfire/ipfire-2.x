@@ -1,0 +1,106 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: kbd,v 1.5.2.10 2005/10/03 22:49:44 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.12
+
+THISAPP    = kbd-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_KERNEL)/linux/utils/kbd
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+ifeq "$(LFS_PASS)" "install"
+  TARGET     = $(DIR_INFO)/$(THISAPP)-install
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects = $(DL_FILE) $(THISAPP)-more-programs-1.patch
+
+$(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
+$(THISAPP)-more-programs-1.patch      = $(URL_LFS)/kbd/$(THISAPP)-more_programs-1.patch
+
+$(DL_FILE)_MD5                        = 069d1175b4891343b107a8ac2b4a39f6
+$(THISAPP)-more-programs-1.patch_MD5  = dc70180a6bc0afa2b741cd38e3cc2e18
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-more-programs-1.patch
+	# copy patched Vietnamese font
+	cd $(DIR_APP) && cp -f $(DIR_SRC)/src/patches/viscii10-8x16-new.psfu data/consolefonts/viscii10-8x16.psfu
+ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" CC=/usr/bin/gcc ./configure --disable-nls
+	cd $(DIR_APP)/src && make CFLAGS="-Os -fomit-frame-pointer" DATA_DIR=/lib/kbd BINDIR=/bin setfont kbd_mode dumpkeys loadkeys loadunimap showconsolefont
+	cd $(DIR_APP)/src && install -m 0755 setfont loadunimap kbd_mode dumpkeys loadkeys showconsolefont unicode_start unicode_stop /install/initrd/bin
+	mkdir -p /install/initrd/lib/kbd/consolefonts
+	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat0-16.psfu /install/initrd/lib/kbd/consolefonts
+	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat1-16.psfu /install/initrd/lib/kbd/consolefonts
+	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat2-16.psfu /install/initrd/lib/kbd/consolefonts
+	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat5-16.psfu /install/initrd/lib/kbd/consolefonts
+	cd $(DIR_APP) && install -m 0644 data/consolefonts/iso07u-16.psfu /install/initrd/lib/kbd/consolefonts
+	cd $(DIR_APP) && install -m 0644 data/consolefonts/viscii10-8x16.psfu /install/initrd/lib/kbd/consolefonts
+else
+	cd $(DIR_APP) && ./configure --disable-nls
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

@@ -1,0 +1,551 @@
+Submitted By: Robert Connolly <robert at linuxfromscratch dot org> (ashes)
+Date: 2004-11-03
+Initial Package Version: Linux 2.4.27
+Upstream Status: Rejected Upstream
+Origin: http://frandom.sourceforge.net/ - frandom-0.8
+Description: This is usefull for smashing stack protector, wiping
+discs, mktemp, arc4random, and more.
+This source was modified for 2.4.26, and is enabled by default in
+arch/i386/defconfig. A define was added to sysctl.h too.
+
+To get character devices do this:
+mknod /dev/frandom c 235 11
+mknod /dev/erandom c 235 12
+
+Thanks to Eli Billauer
+http://www.billauer.co.il/
+http://frandom.sourceforge.net/
+
+Also see:
+http://www.linuxfromscratch.org/hlfs/
+http://www.linuxfromscratch.org/hints/downloads/files/entropy.txt
+http://www.linuxfromscratch.org/~robert/hlfs/hints/attachments/entropy/\
+        frandom-0.8.tar.gz
+
+diff -Naur linux-2.4.27.orig/Documentation/Configure.help linux-2.4.27.frandom/Documentation/Configure.help
+--- linux-2.4.27.orig/Documentation/Configure.help	2004-08-07 23:26:04.000000000 +0000
++++ linux-2.4.27.frandom/Documentation/Configure.help	2004-11-04 01:11:24.126837840 +0000
+@@ -18447,6 +18447,17 @@
+   input/output character sets. Say Y here for the UTF-8 encoding of
+   the Unicode/ISO9646 universal character set.
+ 
++Fast random data generator suite (/dev/frandom and /dev/erandom)
++CONFIG_FRANDOM
++  Fast random data/number generator support in kernel. This random
++  generator is 10-50 times faster than /dev/urandom, and saves kernel
++  entropy.
++
++  If unsure, say Y unless you're tight on kernel size. This module is
++  small and harmless otherwise.
++
++  If you choose M, the sysctl interface will be disabled.
++
+ Virtual terminal
+ CONFIG_VT
+   If you say Y here, you will get support for terminal devices with
+diff -Naur linux-2.4.27.orig/arch/i386/defconfig linux-2.4.27.frandom/arch/i386/defconfig
+--- linux-2.4.27.orig/arch/i386/defconfig	2004-08-07 23:26:04.000000000 +0000
++++ linux-2.4.27.frandom/arch/i386/defconfig	2004-11-04 01:11:24.150834192 +0000
+@@ -579,6 +579,7 @@
+ #
+ CONFIG_VT=y
+ CONFIG_VT_CONSOLE=y
++CONFIG_FRANDOM=y
+ CONFIG_SERIAL=y
+ # CONFIG_SERIAL_CONSOLE is not set
+ # CONFIG_SERIAL_EXTENDED is not set
+diff -Naur linux-2.4.27.orig/drivers/char/Config.in linux-2.4.27.frandom/drivers/char/Config.in
+--- linux-2.4.27.orig/drivers/char/Config.in	2004-08-07 23:26:04.000000000 +0000
++++ linux-2.4.27.frandom/drivers/char/Config.in	2004-11-04 01:11:24.201826440 +0000
+@@ -25,6 +25,7 @@
+       tristate '   Dual serial port support' CONFIG_DUALSP_SERIAL
+    fi
+ fi
++tristate 'Fast random data generator suite (/dev/frandom and /dev/erandom)' CONFIG_FRANDOM
+ dep_mbool 'Extended dumb serial driver options' CONFIG_SERIAL_EXTENDED $CONFIG_SERIAL
+ if [ "$CONFIG_SERIAL_EXTENDED" = "y" ]; then
+    bool '  Support more than 4 serial ports' CONFIG_SERIAL_MANY_PORTS
+diff -Naur linux-2.4.27.orig/drivers/char/Makefile linux-2.4.27.frandom/drivers/char/Makefile
+--- linux-2.4.27.orig/drivers/char/Makefile	2004-08-07 23:26:04.000000000 +0000
++++ linux-2.4.27.frandom/drivers/char/Makefile	2004-11-04 01:11:24.209825224 +0000
+@@ -25,7 +25,7 @@
+ 			misc.o pty.o random.o selection.o serial.o \
+ 			sonypi.o tty_io.o tty_ioctl.o generic_serial.o \
+ 			au1000_gpio.o vac-serial.o hp_psaux.o nvram.o \
+-			scx200.o fetchop.o
++			scx200.o fetchop.o frandom.o
+ 
+ mod-subdirs	:=	joystick ftape drm drm-4.0 pcmcia
+ 
+@@ -334,6 +334,8 @@
+   obj-y += ipmi/ipmi.o
+ endif
+ 
++obj-$(CONFIG_FRANDOM) += frandom.o
++
+ include $(TOPDIR)/Rules.make
+ 
+ fastdep:
+diff -Naur linux-2.4.27.orig/drivers/char/frandom.c linux-2.4.27.frandom/drivers/char/frandom.c
+--- linux-2.4.27.orig/drivers/char/frandom.c	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.4.27.frandom/drivers/char/frandom.c	2004-11-04 01:11:24.213824616 +0000
+@@ -0,0 +1,362 @@
++/*
++** frandom.c
++**      Fast pseudo-random generator 
++**
++**      (c) Copyright 2003 Eli Billauer
++**      http://www.billauer.co.il
++**
++** This program is free software; you can redistribute it and/or modify
++** it under the terms of the GNU General Public License as published by
++** the Free Software Foundation; either version 2 of the License, or
++** (at your option) any later version.
++**
++** Usage: mknod /dev/frandom c 235 11
++**        mknod /dev/erandom c 235 12
++**        insmod frandom
++**
++** This code is highly based upon the examples given in the book "Linux
++** Device Drivers" by Alessandro Rubini and Jonathan Corbet, published
++** by O'Reilly & Associates.
++** O'Reilly's release of this book on the web for free is highly
++** appreciated.
++**
++*/
++
++#include <linux/version.h>
++#include <linux/config.h>
++#include <linux/module.h>
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/slab.h> 
++#include <linux/fs.h> 
++#include <linux/errno.h>
++#include <linux/types.h> 
++#include <linux/random.h>
++
++#include <asm/uaccess.h>
++
++#if (LINUX_VERSION_CODE>=KERNEL_VERSION(2,6,0))
++#include <linux/moduleparam.h>
++#endif
++
++#define INTERNAL_SEED 0
++#define EXTERNAL_SEED 1
++
++#define FRANDOM_MAJOR 235
++#define FRANDOM_MINOR 11 
++#define ERANDOM_MINOR 12 
++
++static struct file_operations frandom_fops; /* Values assigned below */
++
++static int erandom_seeded = 0; /* Internal flag */
++
++static int frandom_major = FRANDOM_MAJOR;
++static int frandom_minor = FRANDOM_MINOR;
++static int erandom_minor = ERANDOM_MINOR;
++static int frandom_bufsize = 256;
++static int frandom_chunklimit = 0; /* =0 means unlimited */
++
++MODULE_DESCRIPTION("Fast pseudo-random number generator");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Eli Billauer");
++MODULE_PARM(frandom_major,"i");
++MODULE_PARM_DESC(frandom_major,"Major number of /dev/frandom and /dev/erandom");
++MODULE_PARM(frandom_minor,"i");
++MODULE_PARM_DESC(frandom_minor,"Minor number of /dev/frandom");
++MODULE_PARM(erandom_minor,"i");
++MODULE_PARM_DESC(erandom_minor,"Minor number of /dev/erandom");
++MODULE_PARM(frandom_bufsize,"i");
++MODULE_PARM_DESC(frandom_bufsize,"Internal buffer size in bytes. Default is 256. Must be >= 256");
++MODULE_PARM(frandom_chunklimit,"i");
++MODULE_PARM_DESC(frandom_chunklimit,"Limit for read() blocks size. 0 (default) is unlimited, otherwise must be >= 256");
++
++struct frandom_state
++{
++	struct semaphore sem; /* Semaphore on the state structure */
++
++	u8 S[256]; /* The state array */
++	u8 i;        
++	u8 j;
++
++	char *buf;
++};
++
++static struct frandom_state *erandom_state;
++
++static inline void swap_byte(u8 *a, u8 *b)
++{
++	u8 swapByte; 
++  
++	swapByte = *a; 
++	*a = *b;      
++	*b = swapByte;
++}
++
++static void init_rand_state(struct frandom_state *state, int seedflag);
++
++void erandom_get_random_bytes(char *buf, size_t count)
++{
++	struct frandom_state *state = erandom_state;
++	int k;
++
++	unsigned int i;
++	unsigned int j;
++	u8 *S;
++  
++	/* If we fail to get the semaphore, we revert to external random data.
++	   Since semaphore blocking is expected to be very rare, and interrupts
++	   during these rare and very short periods of time even less frequent,
++	   we take the better-safe-than-sorry approach, and fill the buffer
++	   some expensive random data, in case the caller wasn't aware of this
++	   possibility, and expects random data anyhow.
++	*/
++
++	if (down_interruptible(&state->sem)) {
++		get_random_bytes(buf, count);
++		return;
++	}
++
++	/* We seed erandom as late as possible, hoping that the kernel's main
++	   RNG is already restored in the boot sequence (not critical, but
++	   better.
++	*/
++	
++	if (!erandom_seeded) {
++		erandom_seeded = 1;
++		init_rand_state(state, EXTERNAL_SEED);
++		printk(KERN_INFO "frandom: Seeded global generator now (used by erandom)\n");
++	}
++
++	i = state->i;     
++	j = state->j;
++	S = state->S;  
++
++	for (k=0; k<count; k++) {
++		i = (i + 1) & 0xff;
++		j = (j + S[i]) & 0xff;
++		swap_byte(&S[i], &S[j]);
++		*buf++ = S[(S[i] + S[j]) & 0xff];
++	}
++ 
++	state->i = i;     
++	state->j = j;
++
++	up(&state->sem);
++}
++
++static void init_rand_state(struct frandom_state *state, int seedflag)
++{
++	unsigned int i, j, k;
++	u8 *S;
++	u8 *seed = state->buf;
++
++	if (seedflag == INTERNAL_SEED)
++		erandom_get_random_bytes(seed, 256);
++	else
++		get_random_bytes(seed, 256);
++
++	S = state->S;
++	for (i=0; i<256; i++)
++		*S++=i;
++
++	j=0;
++	S = state->S;
++
++	for (i=0; i<256; i++) {
++		j = (j + S[i] + *seed++) & 0xff;
++		swap_byte(&S[i], &S[j]);
++	}
++
++	/* It's considered good practice to discard the first 256 bytes
++	   generated. So we do it:
++	*/
++
++	i=0; j=0;
++	for (k=0; k<256; k++) {
++		i = (i + 1) & 0xff;
++		j = (j + S[i]) & 0xff;
++		swap_byte(&S[i], &S[j]);
++	}
++
++	state->i = i; /* Save state */
++	state->j = j;
++}
++
++static int frandom_open(struct inode *inode, struct file *filp)
++{
++  
++	struct frandom_state *state;
++
++	int num =MINOR(inode->i_rdev);
++	if ((num != frandom_minor) && (num != erandom_minor)) return -ENODEV;
++  
++	state = kmalloc(sizeof(struct frandom_state), GFP_KERNEL);
++	if (!state)
++		return -ENOMEM;
++
++	state->buf = kmalloc(frandom_bufsize, GFP_KERNEL);
++	if (!state->buf) {
++		kfree(state);
++		return -ENOMEM;
++	}
++
++	sema_init(&state->sem, 1); /* Init semaphore as a mutex */
++
++	if (num == frandom_minor)
++		init_rand_state(state, EXTERNAL_SEED);
++	else
++		init_rand_state(state, INTERNAL_SEED);
++
++	filp->private_data = state;
++
++#if (LINUX_VERSION_CODE<KERNEL_VERSION(2,4,0))
++	MOD_INC_USE_COUNT; 
++#endif
++  
++	return 0; /* Success */
++}
++
++static int frandom_release(struct inode *inode, struct file *filp)
++{
++
++	struct frandom_state *state = filp->private_data;
++
++	kfree(state->buf);
++	kfree(state);
++  
++#if (LINUX_VERSION_CODE<KERNEL_VERSION(2,4,0))
++	MOD_DEC_USE_COUNT;
++#endif
++
++	return 0;
++}
++
++static ssize_t frandom_read(struct file *filp, char *buf, size_t count,
++			    loff_t *f_pos)
++{
++	struct frandom_state *state = filp->private_data;
++	ssize_t ret;
++	int dobytes, k;
++	char *localbuf;
++
++	unsigned int i;
++	unsigned int j;
++	u8 *S;
++  
++	if (down_interruptible(&state->sem))
++		return -ERESTARTSYS;
++  
++	if ((frandom_chunklimit > 0) && (count > frandom_chunklimit))
++		count = frandom_chunklimit;
++
++	ret = count; /* It's either everything or an error... */
++  
++	i = state->i;     
++	j = state->j;
++	S = state->S;  
++
++	while (count) {
++		if (count > frandom_bufsize)
++			dobytes = frandom_bufsize;
++		else
++			dobytes = count;
++
++		localbuf = state->buf;
++
++		for (k=0; k<dobytes; k++) {
++			i = (i + 1) & 0xff;
++			j = (j + S[i]) & 0xff;
++			swap_byte(&S[i], &S[j]);
++			*localbuf++ = S[(S[i] + S[j]) & 0xff];
++		}
++ 
++		if (copy_to_user(buf, state->buf, dobytes)) {
++			ret = -EFAULT;
++			goto out;
++		}
++
++		buf += dobytes;
++		count -= dobytes;
++	}
++
++ out:
++	state->i = i;     
++	state->j = j;
++
++	up(&state->sem);
++	return ret;
++}
++
++static struct file_operations frandom_fops = {
++	read:       frandom_read,
++	open:       frandom_open,
++	release:    frandom_release,
++};
++
++static void frandom_cleanup_module(void) {
++	kfree(erandom_state->buf);
++	kfree(erandom_state);
++ 
++	unregister_chrdev(frandom_major, "frandom");
++}
++
++
++static int frandom_init_module(void)
++{
++	int result;
++
++	/* The buffer size MUST be at least 256 bytes, because we assume that
++	   minimal length in init_rand_state().
++	*/       
++	if (frandom_bufsize < 256) {
++		printk(KERN_ERR "frandom: Refused to load because frandom_bufsize=%d < 256\n",frandom_bufsize);
++		return -EINVAL;
++	}
++	if ((frandom_chunklimit != 0) && (frandom_chunklimit < 256)) {
++		printk(KERN_ERR "frandom: Refused to load because frandom_chunklimit=%d < 256 and != 0\n",frandom_chunklimit);
++		return -EINVAL;
++	}
++
++	erandom_state = kmalloc(sizeof(struct frandom_state), GFP_KERNEL);
++	if (!erandom_state)
++		return -ENOMEM;
++
++	/* This specific buffer is only used for seeding, so we need
++	   256 bytes exactly */
++	erandom_state->buf = kmalloc(256, GFP_KERNEL);
++	if (!erandom_state->buf) {
++		kfree(erandom_state);
++		return -ENOMEM;
++	}
++
++	sema_init(&erandom_state->sem, 1); /* Init semaphore as a mutex */
++
++	erandom_seeded = 0;
++
++#ifdef SET_MODULE_OWNER
++	SET_MODULE_OWNER(&frandom_fops);
++#endif
++	/*
++	 * Register your major, and accept a dynamic number. This is the
++	 * first thing to do, in order to avoid releasing other module's
++	 * fops in frandom_cleanup_module()
++	 */
++	result = register_chrdev(frandom_major, "frandom", &frandom_fops);
++	if (result < 0) {
++		printk(KERN_WARNING "frandom: can't get major %d\n",frandom_major);
++
++		kfree(erandom_state->buf);
++		kfree(erandom_state);
++	
++		return result;
++	}
++	if (frandom_major == 0) frandom_major = result; /* dynamic */
++    
++	return 0; /* succeed */
++}
++
++module_init(frandom_init_module);
++module_exit(frandom_cleanup_module);
++
++EXPORT_SYMBOL(erandom_get_random_bytes);
+diff -Naur linux-2.4.27.orig/drivers/char/random.c linux-2.4.27.frandom/drivers/char/random.c
+--- linux-2.4.27.orig/drivers/char/random.c	2004-02-18 13:36:31.000000000 +0000
++++ linux-2.4.27.frandom/drivers/char/random.c	2004-11-04 01:11:24.260817472 +0000
+@@ -1870,6 +1870,60 @@
+ 	return 1;
+ }
+ 
++#ifdef CONFIG_FRANDOM
++/* We don't really want to create a header file for frandom
++   at this stage, so here's the prototype: */
++
++void erandom_get_random_bytes(char *buf, size_t count);
++
++static int proc_do_erandom(ctl_table *table, int write, struct file *filp,
++			void *buffer, size_t *lenp)
++{
++	ctl_table	fake_table;
++	unsigned char	buf[64], random[16], *p;
++	int i;
++	
++	erandom_get_random_bytes(random, 16);
++	
++	p=buf;
++	
++	for (i=0; i<16; i++) {
++     		sprintf(p, "%02x", random[i]);
++		p+=2;
++	}
++
++	fake_table.data = buf;
++	fake_table.maxlen = sizeof(buf);
++
++	return proc_dostring(&fake_table, write, filp, buffer, lenp);
++}
++
++
++static int erandom_strategy(ctl_table *table, int *name, int nlen,
++			 void *oldval, size_t *oldlenp,
++			 void *newval, size_t newlen, void **context)
++{
++	unsigned char	random[16];
++	unsigned int	len;
++
++	if (!oldval || !oldlenp)
++		return 1;
++
++	erandom_get_random_bytes(random, 16);
++
++	if (get_user(len, oldlenp))
++		return -EFAULT;
++	if (len) {
++		if (len > 16)
++			len = 16;
++		if (copy_to_user(oldval, random, len) ||
++		    put_user(len, oldlenp))
++			return -EFAULT;
++	}
++	return 1;
++}
++#endif
++
+ ctl_table random_table[] = {
+ 	{RANDOM_POOLSIZE, "poolsize",
+ 	 &sysctl_poolsize, sizeof(int), 0644, NULL,
+@@ -1888,6 +1942,11 @@
+ 	{RANDOM_BOOT_ID, "boot_id",
+ 	 &sysctl_bootid, 16, 0444, NULL,
+ 	 &proc_do_uuid, &uuid_strategy},
++#ifdef CONFIG_FRANDOM
++	{RANDOM_ERANDOM, "erandom",
++	 NULL, 16, 0444, NULL,
++	 &proc_do_erandom, &erandom_strategy},
++#endif
+ 	{RANDOM_UUID, "uuid",
+ 	 NULL, 16, 0444, NULL,
+ 	 &proc_do_uuid, &uuid_strategy},
+diff -Naur linux-2.4.27.orig/include/linux/sysctl.h linux-2.4.27.frandom/include/linux/sysctl.h
+--- linux-2.4.27.orig/include/linux/sysctl.h	2004-08-07 23:26:06.000000000 +0000
++++ linux-2.4.27.frandom/include/linux/sysctl.h	2004-11-04 01:13:02.000000000 +0000
+@@ -184,6 +184,7 @@
+ };
+ 
+ /* /proc/sys/kernel/random */
++#define SYSCTL_ERANDOM
+ enum
+ {
+ 	RANDOM_POOLSIZE=1,
+@@ -191,7 +192,8 @@
+ 	RANDOM_READ_THRESH=3,
+ 	RANDOM_WRITE_THRESH=4,
+ 	RANDOM_BOOT_ID=5,
+-	RANDOM_UUID=6
++	RANDOM_UUID=6,
++	RANDOM_ERANDOM=7
+ };
+ 
+ /* /proc/sys/bus/isa */

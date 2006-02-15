@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# $Id: rc.3cp4218usbadsl,v 1.4.2.3 2005/07/07 20:11:57 franck78 Exp $
+#
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ppp/settings)
+
+# Debugging. Comment it out to stop logging
+DEBUG="yes"
+msg() {
+	if [ "z$DEBUG" != "z" ] ; then
+		/usr/bin/logger -t red "3Com AccessRunner USB: $*"
+	fi
+	echo "$*"
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	if [ -f "/proc/bus/usb/devices" ]; then
+		if ( ! /bin/cat /proc/bus/usb/devices | /bin/grep -q 'Vendor=0506 ProdID=F002' ); then
+			echo "3Cload"
+			/usr/sbin/3cload /usr/sbin/ez-usb.bin
+			if [ $? -ne 0 ]; then
+				msg "3Cload1 failed"
+				exit 1
+			fi
+			/bin/sleep 5
+			# OPEN_MODE=: 5 = ANSI T1.413, 7 = ITU-T G.992.2 (G.LITE), 6 = ITU-T G.992.1 (G.DMT), 8 = multimode, 3 = other
+			case "$MODULATION" in
+				GDMT)	OPEN_MODE=6 ;;
+				ANSI)	OPEN_MODE=5 ;;
+				GLITE)	OPEN_MODE=7 ;;
+				AUTO)	OPEN_MODE=8 ;;
+			esac
+			/usr/sbin/3cload 2 /usr/sbin/3cinit.bin /usr/sbin/3cmain.bin $OPEN_MODE
+			if [ $? -ne 0 ]; then
+				msg "3Cload2 failed"
+				exit 1
+			fi
+		fi
+
+		/sbin/modprobe 3cp4218 speed=1 open=$OPEN_MODE
+		/bin/sleep 5
+		if [ $? -ne 0 ]; then
+			msg "3cp4218 loading failed"
+			exit 2
+		fi
+		/bin/sleep 3
+		/usr/sbin/3cioctl 1
+		if [ $? -ne 0 ]; then
+			msg "3cioctl failed"
+			exit 3
+		fi
+		/bin/sleep 3
+	fi
+	exit 0
+	;;
+stop)
+	msg "stop"
+	/usr/sbin/3cioctl 2
+	;;
+cleanup)
+	msg "driver cleanup and restarting USB Bus"
+	/usr/sbin/3cioctl 5
+	/sbin/modprobe -r 3cp4218
+	/bin/sleep 4
+	/usr/local/bin/resetusb
+	;;
+  *)
+	echo "Usage: $0 {start|stop|cleanup}"
+	exit 1
+	;;
+esac
+
+exit 0

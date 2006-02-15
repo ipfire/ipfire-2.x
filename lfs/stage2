@@ -1,0 +1,105 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: stage2,v 1.14.2.5 2006/02/08 23:53:37 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = stage2
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+
+	# Create directories
+	-mkdir -p /{bin,boot,dev/{pts,shm,net},etc/opt,home,lib,mnt,proc} 
+	-mkdir -p /{root,sbin,tmp,usr/local,var,opt}
+	-for dirname in /usr /usr/local; do \
+	    mkdir $$dirname/{bin,etc,include,lib,sbin,share,src}; \
+	    ln -sf share/{man,doc,info} $$dirname; \
+	    mkdir $$dirname/share/{dict,doc,info,locale,man}; \
+	    mkdir $$dirname/share/{nls,misc,terminfo,zoneinfo}; \
+	    mkdir $$dirname/share/man/man{1,2,3,4,5,6,7,8}; \
+	done
+	-mkdir -p /var/{lock/subsys,log,mail,run,spool}
+	-mkdir -p /var/{tmp,opt,cache,lib/misc,local,empty}
+	-mkdir /opt/{bin,doc,include,info}
+	-mkdir -p /opt/{lib,man/man{1,2,3,4,5,6,7,8}}
+
+	# Permissions
+	chmod 0750 /root
+	chmod 1777 /tmp /var/tmp
+	chmod 0711 /var/empty
+	
+	# Symlinks
+	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
+	-ln -sf /tools/bin/{bash,cat,pwd,stty} /bin
+	-ln -sf /tools/bin/perl /usr/bin
+	-ln -sf /tools/lib/libgcc_s.so.1 /usr/lib
+	-ln -sf bash /bin/sh
+
+	# Config files
+	for i in $(DIR_SRC)/config/etc/*; do \
+	    [ -f $$i ] && cp $$i /etc; \
+	done
+	ln -sf /proc/mounts /etc/mtab
+	echo "$(NAME) v$(VERSION) - $(SLOGAN)" > /etc/issue
+
+	# Scripts
+	for i in `find $(DIR_SRC)/src/scripts -maxdepth 1 -type f`; do \
+	    sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /usr/local/bin/`basename $$i`; \
+	    chmod 755 /usr/local/bin/`basename $$i`; \
+	done
+
+	# Nobody user
+	-mkdir -p /home/nobody
+	chown -R nobody:nobody /home/nobody
+
+	# Patches directory
+	-mkdir -m 1775 -p /var/patches
+	chown -R root:nobody /var/patches
+
+	@$(POSTBUILD)

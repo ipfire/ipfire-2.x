@@ -1,0 +1,124 @@
+Dateien IPCOP_v1_4_10_FINAL/config/cfgroot/general-functions.pl und ipfire-1.4.11/config/cfgroot/general-functions.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/cfgroot/header-menu.pl und ipfire-1.4.11/config/cfgroot/header-menu.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/cfgroot/proxy-acl und ipfire-1.4.11/config/cfgroot/proxy-acl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/etc/inittab und ipfire-1.4.11/config/etc/inittab sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/kernel/kernel.config.alpha und ipfire-1.4.11/config/kernel/kernel.config.alpha sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/kernel/kernel.config.i386 und ipfire-1.4.11/config/kernel/kernel.config.i386 sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/kernel/kernel.config.i386.installer und ipfire-1.4.11/config/kernel/kernel.config.i386.installer sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/kernel/kernel.config.i386.smp und ipfire-1.4.11/config/kernel/kernel.config.i386.smp sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/config/ssl/openssl.cnf und ipfire-1.4.11/config/ssl/openssl.cnf sind verschieden.
+Nur in ipfire-1.4.11/doc: make.sh-usage.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/aliases.cgi und ipfire-1.4.11/html/cgi-bin/aliases.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/backup.cgi und ipfire-1.4.11/html/cgi-bin/backup.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/credits.cgi und ipfire-1.4.11/html/cgi-bin/credits.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/ddns.cgi und ipfire-1.4.11/html/cgi-bin/ddns.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/dhcp.cgi und ipfire-1.4.11/html/cgi-bin/dhcp.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/logs.cgi/log.dat und ipfire-1.4.11/html/cgi-bin/logs.cgi/log.dat sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/pppsetup.cgi und ipfire-1.4.11/html/cgi-bin/pppsetup.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/proxy.cgi und ipfire-1.4.11/html/cgi-bin/proxy.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/shutdown.cgi und ipfire-1.4.11/html/cgi-bin/shutdown.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/updates.cgi und ipfire-1.4.11/html/cgi-bin/updates.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/home/httpd/cgi-bin/vpnmain.cgi und ipfire-1.4.11/html/cgi-bin/vpnmain.cgi sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/bz/install/lang_bz.c und ipfire-1.4.11/langs/bz/install/lang_bz.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/cs/install/lang_cs.c und ipfire-1.4.11/langs/cs/install/lang_cs.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/da/cgi-bin/da.pl und ipfire-1.4.11/langs/da/cgi-bin/da.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/da/install/lang_da.c und ipfire-1.4.11/langs/da/install/lang_da.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/de/cgi-bin/de.pl und ipfire-1.4.11/langs/de/cgi-bin/de.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/de/install/lang_de.c und ipfire-1.4.11/langs/de/install/lang_de.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/el/cgi-bin/el.pl und ipfire-1.4.11/langs/el/cgi-bin/el.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/el/install/lang_el.c und ipfire-1.4.11/langs/el/install/lang_el.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/en/cgi-bin/en.pl und ipfire-1.4.11/langs/en/cgi-bin/en.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/en/install/lang_en.c und ipfire-1.4.11/langs/en/install/lang_en.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/es/cgi-bin/es.pl und ipfire-1.4.11/langs/es/cgi-bin/es.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/es/install/lang_es.c und ipfire-1.4.11/langs/es/install/lang_es.c sind verschieden.
+Nur in ipfire-1.4.11/langs: fa.
+Dateien IPCOP_v1_4_10_FINAL/langs/fi/cgi-bin/fi.pl und ipfire-1.4.11/langs/fi/cgi-bin/fi.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/fi/install/lang_fi.c und ipfire-1.4.11/langs/fi/install/lang_fi.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/fr/cgi-bin/fr.pl und ipfire-1.4.11/langs/fr/cgi-bin/fr.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/fr/install/lang_fr.c und ipfire-1.4.11/langs/fr/install/lang_fr.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/hu/install/lang_hu.c und ipfire-1.4.11/langs/hu/install/lang_hu.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/it/install/lang_it.c und ipfire-1.4.11/langs/it/install/lang_it.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/la/install/lang_la.c und ipfire-1.4.11/langs/la/install/lang_la.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/list und ipfire-1.4.11/langs/list sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/nl/cgi-bin/nl.pl und ipfire-1.4.11/langs/nl/cgi-bin/nl.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/nl/install/lang_nl.c und ipfire-1.4.11/langs/nl/install/lang_nl.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/no/cgi-bin/no.pl und ipfire-1.4.11/langs/no/cgi-bin/no.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/no/install/lang_no.c und ipfire-1.4.11/langs/no/install/lang_no.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/pl/install/lang_pl.c und ipfire-1.4.11/langs/pl/install/lang_pl.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/pt/install/lang_pt.c und ipfire-1.4.11/langs/pt/install/lang_pt.c sind verschieden.
+Nur in ipfire-1.4.11/langs: sk.
+Dateien IPCOP_v1_4_10_FINAL/langs/so/install/lang_so.c und ipfire-1.4.11/langs/so/install/lang_so.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/sv/cgi-bin/sv.pl und ipfire-1.4.11/langs/sv/cgi-bin/sv.pl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/sv/install/lang_sv.c und ipfire-1.4.11/langs/sv/install/lang_sv.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/tr/install/lang_tr.c und ipfire-1.4.11/langs/tr/install/lang_tr.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/langs/vi/install/lang_vi.c und ipfire-1.4.11/langs/vi/install/lang_vi.c sind verschieden.
+Nur in ipfire-1.4.11/lfs: as86.
+Dateien IPCOP_v1_4_10_FINAL/lfs/boot.img und ipfire-1.4.11/lfs/boot.img sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/cdrom und ipfire-1.4.11/lfs/cdrom sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/Config und ipfire-1.4.11/lfs/Config sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/configroot und ipfire-1.4.11/lfs/configroot sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/coreutils und ipfire-1.4.11/lfs/coreutils sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/driver.img und ipfire-1.4.11/lfs/driver.img sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/eciadsl und ipfire-1.4.11/lfs/eciadsl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/gcc und ipfire-1.4.11/lfs/gcc sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/hdparm und ipfire-1.4.11/lfs/hdparm sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/iana-etc und ipfire-1.4.11/lfs/iana-etc sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/initrd und ipfire-1.4.11/lfs/initrd sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/installer und ipfire-1.4.11/lfs/installer sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/ipac-ng und ipfire-1.4.11/lfs/ipac-ng sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/iptables und ipfire-1.4.11/lfs/iptables sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/linux und ipfire-1.4.11/lfs/linux sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/man-pages und ipfire-1.4.11/lfs/man-pages sind verschieden.
+Nur in ipfire-1.4.11/lfs: mbr.
+Nur in ipfire-1.4.11/lfs: ndiswrapper.
+Dateien IPCOP_v1_4_10_FINAL/lfs/openssl und ipfire-1.4.11/lfs/openssl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/openswan und ipfire-1.4.11/lfs/openswan sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/rrdtool und ipfire-1.4.11/lfs/rrdtool sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/scsi.img und ipfire-1.4.11/lfs/scsi.img sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/setup und ipfire-1.4.11/lfs/setup sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/stage2 und ipfire-1.4.11/lfs/stage2 sind verschieden.
+Nur in ipfire-1.4.11/lfs: strip.
+Dateien IPCOP_v1_4_10_FINAL/lfs/tar und ipfire-1.4.11/lfs/tar sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/tcl und ipfire-1.4.11/lfs/tcl sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/util-linux und ipfire-1.4.11/lfs/util-linux sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/vlan und ipfire-1.4.11/lfs/vlan sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/lfs/wireless und ipfire-1.4.11/lfs/wireless sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/make.sh und ipfire-1.4.11/make.sh sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/config.c und ipfire-1.4.11/src/install+setup/install/config.c sind verschieden.
+Nur in ipfire-1.4.11/src/install+setup/install: install2.c.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/install.h und ipfire-1.4.11/src/install+setup/install/install.h sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/main.c und ipfire-1.4.11/src/install+setup/install/main.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/Makefile und ipfire-1.4.11/src/install+setup/install/Makefile sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/nic.c und ipfire-1.4.11/src/install+setup/install/nic.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/pcmcia.c und ipfire-1.4.11/src/install+setup/install/pcmcia.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/scsi.c und ipfire-1.4.11/src/install+setup/install/scsi.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/install/usb.c und ipfire-1.4.11/src/install+setup/install/usb.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/libsmooth/main.c und ipfire-1.4.11/src/install+setup/libsmooth/main.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/libsmooth/Makefile und ipfire-1.4.11/src/install+setup/libsmooth/Makefile sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/setup/main.c und ipfire-1.4.11/src/install+setup/setup/main.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/install+setup/setup/networking.c und ipfire-1.4.11/src/install+setup/setup/networking.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/misc-progs/ipcopbackup.c und ipfire-1.4.11/src/misc-progs/ipcopbackup.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/misc-progs/ipcopbkcfg.c und ipfire-1.4.11/src/misc-progs/ipcopbkcfg.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/misc-progs/ipcoprscfg.c und ipfire-1.4.11/src/misc-progs/ipcoprscfg.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/misc-progs/Makefile und ipfire-1.4.11/src/misc-progs/Makefile sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/misc-progs/setfilters.c und ipfire-1.4.11/src/misc-progs/setfilters.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/misc-progs/setuid.c und ipfire-1.4.11/src/misc-progs/setuid.c sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/misc-progs/setuid.h und ipfire-1.4.11/src/misc-progs/setuid.h sind verschieden.
+Nur in ipfire-1.4.11/src/patches: ipac-ng-1.31-fetchcounter.patch.
+Nur in ipfire-1.4.11/src/patches: ipac-ng-1.31-iptables-1.3.1.patch.
+Nur in ipfire-1.4.11/src/patches: iptables-1.3.4-old-string.patch.
+Nur in ipfire-1.4.11/src/patches: linux-2.4-seg-4.patch.
+Dateien IPCOP_v1_4_10_FINAL/src/patches/patch-o-matic-ng-20040621_nf-log_2.4.29.patch und ipfire-1.4.11/src/patches/patch-o-matic-ng-20040621_nf-log_2.4.29.patch sind verschieden.
+Nur in IPCOP_v1_4_10_FINAL/src/patches: pomng.fix.
+Nur in ipfire-1.4.11/src/patches: pom-ng_proc-net-conntrack-permissions.patch.
+Dateien IPCOP_v1_4_10_FINAL/etc/rc.d/rc.firewall und ipfire-1.4.11/src/rc.d/rc.firewall sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/etc/rc.d/rc.red und ipfire-1.4.11/src/rc.d/rc.red sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/etc/rc.d/rc.sysinit und ipfire-1.4.11/src/rc.d/rc.sysinit sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/etc/rc.d/rc.updatered und ipfire-1.4.11/src/rc.d/rc.updatered sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/ROOTFILES.alpha und ipfire-1.4.11/src/ROOTFILES.alpha sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/ROOTFILES.i386 und ipfire-1.4.11/src/ROOTFILES.i386 sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/scripts/httpscert und ipfire-1.4.11/src/scripts/httpscert sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/scripts/makegraphs und ipfire-1.4.11/src/scripts/makegraphs sind verschieden.
+Dateien IPCOP_v1_4_10_FINAL/src/scripts/setddns.pl und ipfire-1.4.11/src/scripts/setddns.pl sind verschieden.
+Nur in ipfire-1.4.11/src/scripts: upgrade.
+Nur in ipfire-1.4.11/updates: 1.4.11.

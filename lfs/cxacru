@@ -1,0 +1,117 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: cxacru,v 1.13.2.6 2005/02/05 15:38:14 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 2003-10-05
+
+THISAPP    = cxacru-$(VER)
+DL_FILE    = $(THISAPP)-src.tgz
+DL_FROM    = $(URL_SFNET)/accessrunner
+DIR_APP    = $(DIR_SRC)/cxacru
+ifeq "$(SMP)" ""
+  TARGET     = $(DIR_INFO)/$(THISAPP)
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)-smp
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = e1b42c77ee51dd58e2f93c83625ea3ff
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(SMP)" ""
+	cd $(DIR_APP) && for i in Makefile */Makefile; do \
+	    sed -i \
+	      -e 's/$$(shell uname -m)/$(MACHINE)/' \
+	      -e 's/$$(shell uname -r)/$(KVER)/' \
+	      -e 's%^.*DEST_KERNEL_MAIN =.*$$%DEST_KERNEL_MAIN = 2.4%' \
+	      -e 's/depmod -a//' $$i; \
+	    done
+else
+	cd $(DIR_APP) && for i in Makefile */Makefile; do \
+	    sed -i \
+	      -e 's/$$(shell uname -m)/$(MACHINE)/' \
+	      -e 's/$$(shell uname -r)/$(KVER)-smp/' \
+	      -e 's%^.*DEST_KERNEL_MAIN =.*$$%DEST_KERNEL_MAIN = 2.4%' \
+	      -e 's/depmod -a//' $$i; \
+	    done
+endif
+	if [ "$(MACHINE)" = "alpha" ]; then \
+		cd $(DIR_APP) && for i in Makefile */Makefile; do \
+		sed -i -e 's/-march=$$(DEST_MACHINE)//' $$i; \
+		done; \
+	fi
+	cd $(DIR_APP) && make CC="$(KGCC)" CX_MODULE2
+ifeq "$(SMP)" ""
+	rm -f /lib/modules/$(KVER)/kernel/drivers/usb/cxacrudbg.o
+	find /lib/modules/$(KVER)/ -name '*.o' -a -type f | xargs gzip -f9
+	cd $(DIR_APP) && make CX_INIT CX_FIRMWARE
+else
+	rm -f /lib/modules/$(KVER)-smp/kernel/drivers/usb/cxacrudbg.o
+	find /lib/modules/$(KVER)-smp/ -name '*.o' -a -type f | xargs gzip -f9
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

@@ -1,0 +1,174 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: gcc,v 1.18.2.9 2006/01/22 21:58:23 franck78 Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 3.3.3
+
+THISAPP    = gcc-$(VER)
+DL_FILE    = gcc-core-$(VER).tar.bz2
+DL_FROM    = $(URL_GNU)/gcc/releases/gcc-$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+CFLAGS     =
+CXXFLAGS   =
+
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  EXTRA_CONFIG = --prefix=/usr \
+    --enable-shared --enable-threads=posix \
+    --enable-__cxa_atexit --enable-clocale=gnu \
+    --enable-languages=c,c++ --disable-nls
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
+else
+ifeq "$(LFS_PASS)" "1"
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools1
+  EXTRA_CONFIG = --prefix=/tools --with-local-prefix=/tools \
+    --disable-nls --enable-shared --enable-languages=c
+  EXTRA_MAKE = BOOT_LDFLAGS="-static" bootstrap
+  EXTRA_INSTALL = 
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools2
+  EXTRA_CONFIG = --prefix=/tools --with-local-prefix=/tools \
+    --enable-clocale=gnu --enable-shared \
+    --enable-threads=posix --enable-__cxa_atexit \
+    --enable-languages=c,c++ --disable-nls
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
+endif
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects = $(DL_FILE) \
+	gcc-g++-$(VER).tar.bz2 \
+	$(THISAPP)-specs-1.patch \
+	$(THISAPP)-no_fixincludes-1.patch \
+	gcc-3.3-ssp-4.patch
+
+$(DL_FILE)                             = $(DL_FROM)/$(DL_FILE)
+gcc-g++-$(VER).tar.bz2                 = $(URL_GNU)/gcc/releases/gcc-$(VER)/gcc-g++-$(VER).tar.bz2
+$(THISAPP)-specs-1.patch               = $(URL_LFS)/gcc/$(THISAPP)-specs-1.patch
+$(THISAPP)-no_fixincludes-1.patch      = $(URL_LFS)/gcc/$(THISAPP)-no_fixincludes-1.patch
+gcc-3.3-ssp-4.patch                    = $(URL_LFS)/gcc/gcc-3.3-ssp-4.patch
+
+$(DL_FILE)_MD5                         = f878a455b14b3830aaf2da0a17f003c0
+gcc-g++-$(VER).tar.bz2_MD5             = 29830b52f2c112fc660d662427660641
+$(THISAPP)-specs-1.patch_MD5           = 74cb9822f21774ae1c9a8ef1fa133f49
+$(THISAPP)-no_fixincludes-1.patch_MD5  = 5f764c74b3e9c36252fe4f9a14598ee4
+gcc-3.3-ssp-4.patch_MD5                = d31cccd0afbaaeeb95264164360ea135
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/gcc-g++-$(VER).tar.bz2
+	# fix a macro in gcc3.3.3 hurting gcc4.x !
+	cd $(DIR_APP) && sed -i "s/\*((void \*\*)__o.*;/*((void **)__o->next_free) = ((void *)datum); __o->next_free += sizeof(void *);/" include/obstack.h
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/gcc-3.3-ssp-4.patch
+	cd $(DIR_APP) && sed -i -e 's|^\(LIBGCC2_CFLAGS.*\)$$|\1 -D_LIBC_PROVIDES_SSP_|' gcc/Makefile.in
+ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-no_fixincludes-1.patch
+else
+ifeq "$(LFS_PASS)" "2"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-no_fixincludes-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-specs-1.patch
+endif
+endif
+	@mkdir $(DIR_SRC)/gcc-build
+	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/gcc-build && make -j 3 $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
+ifeq "$(ROOT)" ""
+	GCC_SPECS_DIR="`/usr/bin/gcc --print-libgcc-file-name`"; \
+	    GCC_SPECS="`dirname $$GCC_SPECS_DIR`/specs"; \
+	    if [ "$(MACHINE)" = "i386" ]; then \
+	    	SSP_PROT_ALL_STRING="%(cc1_cpu) %{!fno-stack-protector: %{!fno-stack-protector-all: %{!D__KERNEL__: -fstack-protector %{!nostartfiles: %{!nodefaultlibs: %{!nostdlib: %{!nostdinc: -fstack-protector-all} } } } } } } %{profile:-p}"; \
+	    elif [ "$(MACHINE)" = "alpha" ]; then \
+	    	SSP_PROT_ALL_STRING="%{G*} %{!fno-stack-protector: %{!fno-stack-protector-all: %{!D__KERNEL__: -fstack-protector %{!nostartfiles: %{!nodefaultlibs: %{!nostdlib: %{!nostdinc: -fstack-protector-all} } } } } } }"; \
+	    fi; \
+	    mv -f $${GCC_SPECS} $${GCC_SPECS}.noprot; \
+	    sed "/cc1:/{n;d}" $${GCC_SPECS}.noprot > $${GCC_SPECS}.tmp; \
+	    sed "s/cc1:/cc1:\n$${SSP_PROT_ALL_STRING}/" $${GCC_SPECS}.tmp > $${GCC_SPECS}.prot; \
+	    rm -f $${GCC_SPECS}.tmp; \
+	    cp -f $${GCC_SPECS}.prot $${GCC_SPECS}
+else
+ifeq "$(LFS_PASS)" "2"
+	GCC_SPECS_DIR="`/tools/bin/gcc --print-libgcc-file-name`"; \
+	    GCC_SPECS="`dirname $$GCC_SPECS_DIR`/specs"; \
+	    if [ "$(MACHINE)" = "i386" ]; then \
+	    	SSP_PROT_ALL_STRING="%(cc1_cpu) %{!fno-stack-protector: %{!fno-stack-protector-all: %{!D__KERNEL__: -fstack-protector %{!nostartfiles: %{!nodefaultlibs: %{!nostdlib: %{!nostdinc: -fstack-protector-all} } } } } } } %{profile:-p}"; \
+	    elif [ "$(MACHINE)" = "alpha" ]; then \
+	    	SSP_PROT_ALL_STRING="%{G*} %{!fno-stack-protector: %{!fno-stack-protector-all: %{!D__KERNEL__: -fstack-protector %{!nostartfiles: %{!nodefaultlibs: %{!nostdlib: %{!nostdinc: -fstack-protector-all} } } } } } }"; \
+	    fi; \
+	    mv -f $${GCC_SPECS} $${GCC_SPECS}.noprot; \
+	    sed "/cc1:/{n;d}" $${GCC_SPECS}.noprot > $${GCC_SPECS}.tmp; \
+	    sed "s/cc1:/cc1:\n$${SSP_PROT_ALL_STRING}/" $${GCC_SPECS}.tmp > $${GCC_SPECS}.prot; \
+	    rm -f $${GCC_SPECS}.tmp; \
+	    cp -f $${GCC_SPECS}.prot $${GCC_SPECS}
+endif
+endif
+ifeq "$(ROOT)" ""
+	ln -sf ../usr/bin/cpp /lib
+	ln -sf gcc /usr/bin/cc
+else
+	ln -sf gcc /tools/bin/cc
+endif
+	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build
+	@$(POSTBUILD)

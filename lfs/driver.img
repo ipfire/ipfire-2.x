@@ -1,0 +1,117 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: driver.img,v 1.24.2.7 2006/01/29 20:17:30 franck78 Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = driver-$(VERSION).img
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+	-strip --strip-all   /install/misc/bin/*
+
+	# make new dependencies 
+	depmod -a -F /boot/System.map-$(KVER) $(KVER)
+	if [ "$(MACHINE)" = "i386" ]; then \
+		depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp; \
+	fi
+
+	# Create drivers floppy
+	cd /tmp && rm -rf drivers.tgz drivers.tar bin lib etc var
+	cd / && tar -cf /tmp/drivers.tar  \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/acpi/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/block/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/char/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/ide/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/isdn/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/ppp*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slip*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slhc*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/tun*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/scsi/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/message/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/input/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/usb/storage/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/usb/host/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/arch/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/fs/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/atm/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/ipsec/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/ipv4/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/sched/*' \
+	    --exclude='lib/modules/$(KVER)/*map' \
+	    --exclude='lib/modules/$(KVER)/misc/*' \
+	    --exclude='lib/modules/$(KVER)/extra/*' \
+	    --exclude='lib/modules/$(KVER)/pcmcia/*' \
+	    --exclude='lib/modules/$(KVER)/build' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/atm/*' \
+	    --exclude=lib/modules/$(KVER)/kernel/drivers/usb/{3cp4218.o.gz,acm.o.gz,amedyn.o.gz,cxacru.o.gz,speedtch.o.gz,hid.o.gz,usbcore.o.gz} \
+	    --exclude='lib/modules/$(KVER)/modules.*' \
+	    lib/modules/$(KVER)
+	cd /tmp && tar xf drivers.tar
+	cd /tmp && mkdir -p {bin,etc/pcmcia,var/lib/pcmcia,var/run}
+	cd /tmp && cp -aR /install/misc/bin/* bin
+	cd /tmp && cp -r /etc/pcmcia/{config*,net*} etc/pcmcia
+	# cardmgr wants to execute these to bring up the card, we'll
+	# create blank ones as we'll bring them up ourselves
+	cd /tmp/etc/pcmcia && rm -f network 
+	cd /tmp/etc/pcmcia && touch network
+	cd /tmp/etc/pcmcia && chmod +x network
+	cd /tmp && tar -cf - bin/ etc/pcmcia var lib/modules/$(KVER) | gzip -9 -c > drivers.tgz
+
+	if [ "$(MACHINE)" = "alpha" ]; then \
+		cp /tmp/drivers.tgz /install/images/drivers-$(VERSION).img; \
+	else \
+		dd if=/tmp/drivers.tgz of=/install/images/drivers-$(VERSION).img bs=1440k count=1 conv=sync; \
+	fi
+	rm -rf /tmp/drivers.tgz /tmp/drivers.tar /tmp/bin /tmp/lib
+
+	### If this fails, the disk is TOO FULL !!!!
+	tar tzf /install/images/drivers-$(VERSION).img >/dev/null 2>&1
+
+	@$(POSTBUILD)

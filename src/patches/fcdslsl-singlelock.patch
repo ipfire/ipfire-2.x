@@ -1,0 +1,92 @@
+# patch found at http://freiburg.linux.de/~zeisberg/howtos/fritzcarddsl.html
+--- fritz.old/src.drv/driver.c.orig	Sun Dec  7 17:46:27 2003
++++ fritz/src.drv/driver.c	Wed Dec 17 23:46:53 2003
+@@ -18,6 +18,11 @@
+  * http://www.opensource.org/licenses/lgpl-license.html
+  * 
+  * Contact: AVM GmbH, Alt-Moabit 95, 10559 Berlin, Germany, email: info@avm.de
++ *
++ * Sunday Dec 07 18:10 2003
++ * Modified by Christian 'greeny' Heckhoff to improve locking
++ * based on modifications by Joerg Lehrke for Fritz!Card DSL
++ *
+  */
+ 
+ #include <asm/io.h>
+@@ -53,6 +58,8 @@
+ #include "devif.h"
+ #include "driver.h"
+ 
++#undef SINGLE_LOCK
++
+ #if defined (LOG_MESSAGES)
+ # define mlog		log
+ #else
+@@ -108,7 +115,11 @@
+ static bundle_t			ctrl_context[2];
+ static per_ctrl_t		ctrl_params[2];
+ static unsigned long		qt_flags;
++#if defined (SINGLE_LOCK)
++# define stack_lock qt_lock
++#else
+ static spinlock_t		qt_lock			= SPIN_LOCK_UNLOCKED;
++#endif
+ static atomic_t			thread_flag		= ATOMIC_INIT (0);
+ static atomic_t			thread_capi_flag	= ATOMIC_INIT (0);
+ static int			thread_pid		= -1;
+@@ -1128,7 +1139,7 @@
+ } /* remove_ctrl */
+ 
+ /*---------------------------------------------------------------------------*\
+-\*-L-------------------------------------------------------------------------*/
++\*---------------------------------------------------------------------------*/
+ void lock (void) {
+ 	unsigned long	local_flags;
+ 	
+@@ -1146,15 +1157,14 @@
+ } /* unlock */
+ 
+ /*---------------------------------------------------------------------------*\
+-\*-C-------------------------------------------------------------------------*/
++\*---------------------------------------------------------------------------*/
+ static inline void check (void) {
+ 	unsigned long	flags;
+-	spinlock_t	chk_lock = SPIN_LOCK_UNLOCKED;
+ 
+ 	if (atomic_xchg (&xfer_flag, 0)) {
+-		spin_lock_irqsave (&chk_lock, flags);
++		spin_lock_irqsave (&stack_lock, flags);
+ 		xfer_handler (capi_card);
+-		spin_unlock_irqrestore (&chk_lock, flags);
++		spin_unlock_irqrestore (&stack_lock, flags);
+ 	}
+ } /* check */
+ 
+@@ -1687,9 +1697,10 @@
+ 	return ncci_data_buffer (capi_card->appls, appp, ncci, handle);
+ } /* data_block */
+ 
+-/*-S-------------------------------------------------------------------------*\
++/*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+ static int sched_thread (void * arg) {
++	unsigned long flags;
+ 
+ 	UNUSED_ARG (arg);
+ 	daemonize ();
+@@ -1721,6 +1732,7 @@
+ 			continue;
+ 		}
+ 		/* Body of thread, invoke scheduler */
++		local_irq_save(flags);
+ 		if (spin_trylock (&stack_lock)) {
+ 			os_timer_poll ();
+ 			assert (capi_lib->cm_schedule);
+@@ -1729,6 +1741,7 @@
+ 			}
+ 			spin_unlock (&stack_lock);
+ 		}
++		local_irq_restore(flags);
+ 	}
+ 	log ("Scheduler thread stopped.\n");
+ 	up (&thread_sync);

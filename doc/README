@@ -1,0 +1,22 @@
+General
+-------
+This is the first version of IPCop.  It was originally based on Smoothwall, 
+but the distribution is actually built from source.
+
+License
+-------
+All of the code included in this release has been distributed under the GPL. 
+You should find a copy of the GPL included.  
+
+Building
+------------
+First, do    :	chmod 755 make.sh
+Build using  :	./make.sh build
+Cleanup using:	./make.sh clean
+
+The building will also rebuild the Linux kernel.  With the ipsec patches
+applied, I have only managed to build the kernel using kgcc.  gcc 2.9.6 and
+gcc 3.0.1 failed to build the kernel!!!
+
+If you have any questions, remarks or patches, please send me an e-mail.
+Mark Wormgoor <mark@wormgoor.com>

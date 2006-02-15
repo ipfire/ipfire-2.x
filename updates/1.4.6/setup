@@ -1,0 +1,42 @@
+#!/bin/bash
+
+UPGRADEVERSION="1.4.6"
+PREVIOUSVERSION="1.4.5"
+echo "This is the $UPGRADEVERSION update patch for IPCop $PREVIOUSVERSION installing."
+
+CURRENTVERSION=`cat /etc/issue | awk '{ print $2 }' | sed -e 's/v//'`
+
+if [ "$CURRENTVERSION" != "$PREVIOUSVERSION" ]; then
+	echo "You are not running IPCop v$PREVIOUSVERSION for this patch to install."
+	echo "Aborting installation."
+	exit -1
+fi
+
+
+/bin/sed -i -e "s+= '1.4.*$+= '$UPGRADEVERSION';+" /var/ipcop/general-functions.pl
+
+/bin/tar -zxpf patch.tar.gz -C /
+/usr/local/bin/restartsnort
+
+# Fix for SF Bug 1174069
+# "Invalid fixed MAC address" error message appears when trying to 
+# add or edit fixed leases in dhcp.cgi. Bug introduced in v1.4.4.
+sed -i -e '/FIX_/d' /var/ipcop/dhcp/settings
+chown 99:99 /var/ipcop/dhcp/settings
+
+#DHCP need 2 new files. advoptions-list is in the patch
+#			advoptions created empty 
+touch /var/ipcop/dhcp/advoptions
+chown nobody:nobody /var/ipcop/dhcp/advoptions
+chown nobody:nobody /var/ipcop/dhcp/advoptions-list
+chmod 644 /var/ipcop/dhcp/advoptions
+chmod 444 /var/ipcop/dhcp/advoptions-list
+
+# create a file in the update allow to remove the touch in setddns.pl
+touch /var/ipcop/ddns/settings
+chown nobody:nobody /var/ipcop/ddns/settings
+chmod 644 /var/ipcop/ddns/settings
+
+# Stop redirection in crontab
+# this file is always empty and serve nothing
+rm /var/log/dynupdate.log

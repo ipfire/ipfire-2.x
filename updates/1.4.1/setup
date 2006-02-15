@@ -1,0 +1,62 @@
+#!/bin/sh
+
+echo "This is the 1.4.1 update patch for IPCop 1.4.0 installing."
+
+CURRENTVERSION=`cat /etc/issue | awk '{ print $2 }' | sed -e 's/v//'`
+UPGRADEVERSION="1.4.1"
+
+if [ "$CURRENTVERSION" != "1.4.0" ]; then
+	echo "You are not running IPCop v1.4.0 for this patch to install."
+	echo "Aborting installation."
+	exit -1
+fi
+
+/bin/rm -rf 	/etc/capi.conf \
+		/var/ipcop/{pulsardsl,fritzdsl} \
+		/usr/lib/libcapi20.so* \
+		/usr/bin/{pppoeci,eci-load1,eci-load2} \
+		/usr/sbin/cnxadslautolog
+/bin/tar -zxpf patch.tar.gz -C /
+
+# Fix the graphs heartbeat
+/usr/local/bin/tunerrd.pl
+rm -f /usr/local/bin/tunerrd.pl
+
+# update linker cache
+/sbin/ldconfig
+
+# Fix dhcpd.conf for bootp problem
+if grep -q "range dynamic-bootp" /var/ipcop/dhcp/dhcpd.conf; then
+	sed -i -e 's/range\ dynamic-bootp/range/g' /var/ipcop/dhcp/dhcpd.conf
+	chown 99:99 /var/ipcop/dhcp/dhcpd.conf
+fi
+
+if [ -e /var/ipcop/dhcp/enable ]; then
+	mv /var/ipcop/dhcp/enable /var/ipcop/dhcp/enable_green
+fi
+
+sed -i -e 's/START_ADDR=/START_ADDR_GREEN=/' \
+       -e 's/END_ADDR=/END_ADDR_GREEN=/' \
+       -e 's/DOMAIN_NAME=/DOMAIN_NAME_GREEN=/' \
+       -e 's/DEFAULT_LEASE_TIME=/DEFAULT_LEASE_TIME_GREEN=/' \
+       -e 's/MAX_LEASE_TIME=/MAX_LEASE_TIME_GREEN=/' \
+       -e 's/DNS1=/DNS1_GREEN=/' \
+       -e 's/DNS2=/DNS2_GREEN=/' \
+       -e 's/WINS1=/WINS1_GREEN=/' \
+       -e 's/WINS2=/WINS2_GREEN=/' \
+       -e 's/ENABLE=/ENABLE_GREEN=/' /var/ipcop/dhcp/settings
+chown 99:99 /var/ipcop/dhcp/settings
+
+if [ -e /var/ipcop/eagle-usb/eagle-usb.conf ]; then
+	sed -i -e 's/Linetype=00000001/Linetype=0A/' /var/ipcop/eagle-usb/eagle-usb.conf
+	chown 99:99 /var/ipcop/eagle-usb/eagle-usb.conf
+fi
+
+mkdir -p /var/ipcop/isapnp
+chown 99:99 /var/ipcop/isapnp
+if [ -e /etc/isapnp.conf ]; then
+	mv /etc/isapnp.conf /var/ipcop/isapnp/isapnp.conf
+else
+	touch /var/ipcop/isapnp/isapnp.conf
+	chown 99:99 /var/ipcop/isapnp/isapnp.conf
+fi

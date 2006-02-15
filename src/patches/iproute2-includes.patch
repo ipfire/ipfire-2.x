@@ -1,0 +1,251 @@
+diff -ruN iproute2.old/Makefile iproute2/Makefile
+--- iproute2.old/Makefile	Thu Aug  2 08:37:03 2001
++++ iproute2/Makefile	Mon Dec  1 22:31:11 2003
+@@ -18,14 +18,14 @@
+ #options for ipx
+ ADDLIB+=ipx_ntop.o ipx_pton.o
+ 
+-ifeq ($(LIBC_INCLUDE)/socketbits.h,$(wildcard $(LIBC_INCLUDE)/socketbits.h))
+-  ifeq ($(LIBC_INCLUDE)/net/if_packet.h,$(wildcard $(LIBC_INCLUDE)/net/if_packet.h))
+-    GLIBCFIX=-I../include-glibc -include ../include-glibc/glibc-bugs.h
+-  endif
+-endif
+-ifeq ($(LIBC_INCLUDE)/bits/socket.h,$(wildcard $(LIBC_INCLUDE)/bits/socket.h))
+-  GLIBCFIX=-I../include-glibc -include ../include-glibc/glibc-bugs.h
+-endif
++#ifeq ($(LIBC_INCLUDE)/socketbits.h,$(wildcard $(LIBC_INCLUDE)/socketbits.h))
++#  ifeq ($(LIBC_INCLUDE)/net/if_packet.h,$(wildcard $(LIBC_INCLUDE)/net/if_packet.h))
++#    GLIBCFIX=-I../include-glibc -include ../include-glibc/glibc-bugs.h
++#  endif
++#endif
++#ifeq ($(LIBC_INCLUDE)/bits/socket.h,$(wildcard $(LIBC_INCLUDE)/bits/socket.h))
++#  GLIBCFIX=-I../include-glibc -include ../include-glibc/glibc-bugs.h
++#endif
+ 
+ CC = gcc
+ CCOPTS = -D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -Werror -g
+diff -ruN iproute2.old/include/utils.h iproute2/include/utils.h
+--- iproute2.old/include/utils.h	Sun Apr 16 19:42:50 2000
++++ iproute2/include/utils.h	Mon Dec  1 22:31:11 2003
+@@ -3,8 +3,9 @@
+ 
+ #include <asm/types.h>
+ #include <asm/bitops.h>
++#include <netinet/in.h>
+ #include <linux/inetdevice.h>
+-#include <resolv.h>
++#include <stdio.h>
+ 
+ #include "libnetlink.h"
+ #include "ll_map.h"
+diff -ruN iproute2.old/ip/ipaddress.c iproute2/ip/ipaddress.c
+--- iproute2.old/ip/ipaddress.c	Thu Aug 23 06:07:46 2001
++++ iproute2/ip/ipaddress.c	Mon Dec  1 22:31:20 2003
+@@ -23,8 +23,6 @@
+ #include <linux/netdevice.h>
+ #include <linux/if_arp.h>
+ #include <linux/sockios.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+ #include <string.h>
+ #include <fnmatch.h>
+ 
+diff -ruN iproute2.old/ip/ipmaddr.c iproute2/ip/ipmaddr.c
+--- iproute2.old/ip/ipmaddr.c	Sun Apr 16 19:42:51 2000
++++ iproute2/ip/ipmaddr.c	Mon Dec  1 22:31:11 2003
+@@ -21,12 +21,10 @@
+ #include <linux/if.h>
+ #include <linux/if_arp.h>
+ #include <linux/sockios.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+ #include <string.h>
+ 
+-#include "rt_names.h"
+ #include "utils.h"
++#include "rt_names.h"
+ 
+ static struct {
+ 	char *dev;
+diff -ruN iproute2.old/ip/ipmroute.c iproute2/ip/ipmroute.c
+--- iproute2.old/ip/ipmroute.c	Fri Aug 24 19:19:20 2001
++++ iproute2/ip/ipmroute.c	Mon Dec  1 22:31:11 2003
+@@ -21,8 +21,6 @@
+ #include <linux/if.h>
+ #include <linux/if_arp.h>
+ #include <linux/sockios.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+ #include <string.h>
+ 
+ #include "utils.h"
+diff -ruN iproute2.old/ip/ipneigh.c iproute2/ip/ipneigh.c
+--- iproute2.old/ip/ipneigh.c	Sun Apr 16 19:42:51 2000
++++ iproute2/ip/ipneigh.c	Mon Dec  1 22:31:11 2003
+@@ -26,8 +26,8 @@
+ #include <netinet/in.h>
+ #include <netinet/ip.h>
+ 
+-#include "rt_names.h"
+ #include "utils.h"
++#include "rt_names.h"
+ #include "ip_common.h"
+ 
+ #define NUD_VALID	(NUD_PERMANENT|NUD_NOARP|NUD_REACHABLE|NUD_PROBE|NUD_STALE|NUD_DELAY)
+diff -ruN iproute2.old/ip/iproute.c iproute2/ip/iproute.c
+--- iproute2.old/ip/iproute.c	Mon Aug  6 02:31:52 2001
++++ iproute2/ip/iproute.c	Mon Dec  1 22:31:11 2003
+@@ -28,8 +28,8 @@
+ #include <arpa/inet.h>
+ #include <linux/in_route.h>
+ 
+-#include "rt_names.h"
+ #include "utils.h"
++#include "rt_names.h"
+ #include "ip_common.h"
+ 
+ #ifndef RTAX_RTTVAR
+diff -ruN iproute2.old/ip/iprule.c iproute2/ip/iprule.c
+--- iproute2.old/ip/iprule.c	Thu Aug  2 05:43:29 2001
++++ iproute2/ip/iprule.c	Mon Dec  1 22:31:11 2003
+@@ -25,8 +25,8 @@
+ #include <arpa/inet.h>
+ #include <string.h>
+ 
+-#include "rt_names.h"
+ #include "utils.h"
++#include "rt_names.h"
+ 
+ static void usage(void) __attribute__((noreturn));
+ 
+diff -ruN iproute2.old/ip/rtacct.c iproute2/ip/rtacct.c
+--- iproute2.old/ip/rtacct.c	Sun Apr 16 19:42:51 2000
++++ iproute2/ip/rtacct.c	Mon Dec  1 22:31:11 2003
+@@ -19,7 +19,9 @@
+ #include <sys/time.h>
+ #include <net/if.h>
+ #include <string.h>
++#include <netinet/in.h>
+ 
++#include "utils.h"
+ #include "rt_names.h"
+ 
+ int main(int argc, char **argv)
+diff -ruN iproute2.old/ip/rtm_map.c iproute2/ip/rtm_map.c
+--- iproute2.old/ip/rtm_map.c	Sun Apr 16 19:42:51 2000
++++ iproute2/ip/rtm_map.c	Mon Dec  1 22:31:11 2003
+@@ -19,8 +19,8 @@
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ 
+-#include "rt_names.h"
+ #include "utils.h"
++#include "rt_names.h"
+ 
+ char *rtnl_rtntype_n2a(int id, char *buf, int len)
+ {
+diff -ruN iproute2.old/lib/dnet_ntop.c iproute2/lib/dnet_ntop.c
+--- iproute2.old/lib/dnet_ntop.c	Sun Apr 16 19:42:52 2000
++++ iproute2/lib/dnet_ntop.c	Mon Dec  1 22:31:11 2003
+@@ -1,5 +1,6 @@
+ #include <errno.h>
+ #include <sys/types.h>
++#include <stdio.h>
+ #include <netinet/in.h>
+ 
+ #include "utils.h"
+diff -ruN iproute2.old/lib/ll_proto.c iproute2/lib/ll_proto.c
+--- iproute2.old/lib/ll_proto.c	Thu Aug  2 04:41:41 2001
++++ iproute2/lib/ll_proto.c	Mon Dec  1 22:31:11 2003
+@@ -20,8 +20,6 @@
+ #include <linux/netdevice.h>
+ #include <linux/if_arp.h>
+ #include <linux/sockios.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+ #include <string.h>
+ 
+ #include "utils.h"
+diff -ruN iproute2.old/lib/ll_types.c iproute2/lib/ll_types.c
+--- iproute2.old/lib/ll_types.c	Thu Aug  2 05:18:33 2001
++++ iproute2/lib/ll_types.c	Mon Dec  1 22:31:11 2003
+@@ -9,6 +9,7 @@
+  * Authors:	Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
+  */
+ 
++#include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -16,12 +17,9 @@
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+ #include <sys/socket.h>
+-#include <sys/ioctl.h>
+ #include <linux/netdevice.h>
+ #include <linux/if_arp.h>
+ #include <linux/sockios.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+ #include <string.h>
+ 
+ char * ll_type_n2a(int type, char *buf, int len)
+diff -ruN iproute2.old/lib/rt_names.c iproute2/lib/rt_names.c
+--- iproute2.old/lib/rt_names.c	Sun Apr 16 19:42:52 2000
++++ iproute2/lib/rt_names.c	Mon Dec  1 22:31:11 2003
+@@ -16,6 +16,7 @@
+ #include <fcntl.h>
+ #include <string.h>
+ #include <sys/time.h>
++#include <asm/types.h>
+ 
+ static void rtnl_tab_initialize(char *file, char **tab, int size)
+ {
+diff -ruN iproute2.old/lib/utils.c iproute2/lib/utils.c
+--- iproute2.old/lib/utils.c	Fri Aug 24 19:09:54 2001
++++ iproute2/lib/utils.c	Mon Dec  1 22:31:11 2003
+@@ -25,7 +25,6 @@
+ #include <netdb.h>
+ #include <arpa/inet.h>
+ #include <resolv.h>
+-#include <linux/pkt_sched.h>
+ 
+ #include "utils.h"
+ 
+diff -ruN iproute2.old/tc/f_rsvp.c iproute2/tc/f_rsvp.c
+--- iproute2.old/tc/f_rsvp.c	Thu Aug  2 06:19:40 2001
++++ iproute2/tc/f_rsvp.c	Mon Dec  1 22:31:11 2003
+@@ -20,8 +20,8 @@
+ #include <arpa/inet.h>
+ #include <string.h>
+ 
+-#include "rt_names.h"
+ #include "utils.h"
++#include "rt_names.h"
+ #include "tc_util.h"
+ 
+ static void explain(void)
+diff -ruN iproute2.old/tc/q_htb.c iproute2/tc/q_htb.c
+--- iproute2.old/tc/q_htb.c	Mon Dec  1 22:30:53 2003
++++ iproute2/tc/q_htb.c	Mon Dec  1 22:31:11 2003
+@@ -19,6 +19,7 @@
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
+ #include <string.h>
++#include <linux/param.h>
+ 
+ #include "utils.h"
+ #include "tc_util.h"
+diff -ruN iproute2.old/tc/tc_filter.c iproute2/tc/tc_filter.c
+--- iproute2.old/tc/tc_filter.c	Fri Aug 24 19:19:19 2001
++++ iproute2/tc/tc_filter.c	Mon Dec  1 22:31:11 2003
+@@ -23,8 +23,8 @@
+ #include <string.h>
+ #include <linux/if_ether.h>
+ 
+-#include "rt_names.h"
+ #include "utils.h"
++#include "rt_names.h"
+ #include "tc_util.h"
+ #include "tc_common.h"
+ 

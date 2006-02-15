@@ -1,0 +1,60 @@
+#!/bin/bash
+
+UPGRADEVERSION="1.4.4"
+PREVIOUSVERSION="1.4.3"
+echo "This is the $UPGRADEVERSION update patch for IPCop $PREVIOUSVERSION installing."
+
+CURRENTVERSION=`cat /etc/issue | awk '{ print $2 }' | sed -e 's/v//'`
+
+if [ "$CURRENTVERSION" != "$PREVIOUSVERSION" ]; then
+	echo "You are not running IPCop v$PREVIOUSVERSION for this patch to install."
+	echo "Aborting installation."
+	exit -1
+fi
+
+/bin/rm -rf /var/patches/patch-*.tar.gz.gpg
+
+# Fix grub
+ROOTDEV=`/bin/ls -l /dev/harddisk4 | /usr/bin/awk '{ print $NF }'`
+echo "title IPCop old (2.4.27)"						>> /boot/grub/grub.conf
+echo "  root (hd0,0)"							>> /boot/grub/grub.conf
+echo "  kernel /vmlinuz-2.4.27 root=${ROOTDEV} panic=10 acpi=off ro"	>> /boot/grub/grub.conf
+if [ -f /boot/ipcoprd.img ]; then
+	echo "  initrd /ipcoprd-2.4.27.img"				>> /boot/grub/grub.conf
+fi
+echo "  savedefault"							>> /boot/grub/grub.conf
+
+# Fix initrd
+if [ -f /boot/ipcoprd.img ]; then
+	# Find out scsi module
+	IMAGE=`/usr/bin/mktemp /tmp/ipcoprd.img.XXXXXX`
+	MNTPOINT=`/usr/bin/mktemp -d /tmp/ipcoprd.mnt.XXXXXX`
+	/bin/gzip -d -c /boot/ipcoprd.img > $IMAGE
+	/bin/mount -o loop $IMAGE $MNTPOINT
+	SCSIDRIVER=`/bin/ls -1 $MNTPOINT/lib | \
+		/bin/grep -v sd_mod.o.gz |\
+		/bin/grep -v sg.o.gz |\
+		/bin/grep -v sr_mod.o.gz |\
+		/bin/grep -v 53c700.o.gz |\
+		/bin/grep -v NCR53C9x.o.gz |\
+		/bin/grep -v libata.o.gz  |\
+		/bin/grep -v scsi_mod.o.gz |\
+		/bin/grep -v ataraid.o.gz |\
+		/bin/grep -v mptbase.o.gz |\
+		/bin/grep -v isa-pnp.o |\
+		/bin/grep -v ds.o.gz |\
+		/bin/grep -v pcmcia_core.o.gz |\
+		/bin/sed 's/.o.gz//'`
+	/bin/umount $MNTPOINT
+	/bin/rm -rf $MNTPOINT $IMAGE	
+	/bin/mv -f /boot/ipcoprd.img /boot/ipcoprd-2.4.27.img
+	/bin/mv -f /boot/ipcoprd-smp.img /boot/ipcoprd-smp-2.4.27.img
+	if [ "$SCSIDRIVER" ]; then
+		/sbin/mkinitrd --with=scsi_mod --with=${SCSIDRIVER} --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipcoprd.img 2.4.29
+		/sbin/mkinitrd --with=scsi_mod --with=${SCSIDRIVER} --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipcoprd-smp.img 2.4.29-smp
+	fi
+fi
+
+/bin/sed -i -e "s+= '1.4.*$+= '$UPGRADEVERSION';+" /var/ipcop/header.pl
+/bin/tar -zxpf patch.tar.gz -C /
+

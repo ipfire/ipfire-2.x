@@ -1,0 +1,36 @@
+--- ppp/pppd/plugins/pppoatm.c~	2003-07-19 15:35:24.000000000 +0200
++++ ppp/pppd/plugins/pppoatm.c	2003-07-19 15:42:26.000000000 +0200
+@@ -32,6 +32,7 @@
+ static bool vc_encaps = 0;
+ static int device_got_set = 0;
+ static int pppoatm_max_mtu, pppoatm_max_mru;
++static int pppoatmfd = -1;
+ static int setdevname_pppoatm(const char *cp, const char **argv, int doit);
+ struct channel pppoa_channel;
+ 
+@@ -173,9 +174,16 @@
+ 	pppoatm_max_mru = lcp_wantoptions[0].mru;
+ 	set_line_discipline_pppoatm(fd);
+ 	strlcpy(ppp_devnam, devnam, sizeof(ppp_devnam));
++	pppoatmfd = fd; /* need to save it for disconnect */
+ 	return fd;
+ }
+ 
++static void disconnect_pppoatm(void)
++{
++	close(pppoatmfd);
++	pppoatmfd = -1;
++}
++
+ static void send_config_pppoa(int mtu,
+ 			      u_int32_t asyncmap,
+ 			      int pcomp,
+@@ -222,7 +230,7 @@
+     process_extra_options: NULL,
+     check_options: NULL,
+     connect: &connect_pppoatm,
+-    disconnect: NULL,
++    disconnect: &disconnect_pppoatm,
+     establish_ppp: &generic_establish_ppp,
+     disestablish_ppp: &generic_disestablish_ppp,
+     send_config: &send_config_pppoa,

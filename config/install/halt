@@ -1,0 +1,19 @@
+#!/bin/sh
+echo "Shutting down..."
+echo "Sending all processes the TERM signal..." 
+/sbin/killall5 -15
+sleep 3
+echo "Sending all processes the KILL signal..."
+/sbin/killall5 -9
+sleep 3
+echo "Unmounting /cdrom, /harddisk/boot, /harddisk/var/log and /harddisk"
+/sbin/umount /cdrom
+/sbin/umount /harddisk/boot
+/sbin/umount /harddisk/var/log
+/sbin/umount /harddisk
+echo "Unmounting /proc"
+/sbin/umount /proc/bus/usb
+/sbin/umount /proc
+echo "Unmounting root"
+/sbin/mount -n -o remount,ro /
+/sbin/reboot -i -d -p

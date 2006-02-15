@@ -1,0 +1,102 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: slang,v 1.7.2.3 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.4.5
+
+THISAPP    = slang-$(VER)-mini
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = http://www.uclibc.org
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+ifeq "$(LFS_PASS)" "install"
+  TARGET     = $(DIR_INFO)/$(THISAPP)-install
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 6c893e52347533225866242700a3cd07
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && sed -i 's/^#undef UTF8.*$$/#define UTF8 1/' slang.h
+	cd $(DIR_APP) && sed -i 's/^#undef UTF8.*$$/#define UTF8 1/' config.h
+
+ifeq "$(LFS_PASS)" "install"
+	-mkdir -p /install/lib
+	cd $(DIR_APP) && sed -i -e 's/libslang.a:/libslang.a:\ $$(OBJS)/' Makefile
+	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer -Wall -fPIC" make -e libslang.a
+	cd $(DIR_APP) && install -m 0644 libslang.a /install/lib
+	-mkdir -p /install/include/slang
+	cd $(DIR_APP) && install -m 0644 slang.h slcurses.h /install/include/slang
+else
+	cd $(DIR_APP) && DESTDIR=/usr/lib CFLAGS="-Wall -fPIC $(CFLAGS)" make -e
+	cd $(DIR_APP) && install -m 0644 libslang.a /usr/lib
+	-mkdir -p /usr/include/slang
+	cd $(DIR_APP) && install -m 0644 slang.h slcurses.h /usr/include/slang
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

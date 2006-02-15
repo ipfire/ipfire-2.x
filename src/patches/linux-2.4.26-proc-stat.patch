@@ -1,0 +1,269 @@
+diff -ur g/linux-2.4.26/drivers/block/ll_rw_blk.c h/linux-2.4.26/drivers/block/ll_rw_blk.c
+--- g/linux-2.4.26/drivers/block/ll_rw_blk.c	2004-04-14 14:05:29.000000000 +0100
++++ h/linux-2.4.26/drivers/block/ll_rw_blk.c	2004-06-07 19:36:15.000000000 +0100
+@@ -696,20 +696,26 @@
+ {
+ 	unsigned int major = MAJOR(dev);
+ 	unsigned int index;
++	dk_stat_t * ds;
+ 
++	ds = kstat.dk_drive_info[major];
++	if (ds == NULL) 
++		return;
++	
+ 	index = disk_index(dev);
+-	if ((index >= DK_MAX_DISK) || (major >= DK_MAX_MAJOR))
++	if (index >= DK_MAX_DISK)
+ 		return;
+-
+-	kstat.dk_drive[major][index] += new_io;
++	
++	ds += index;
+ 	if (rw == READ) {
+-		kstat.dk_drive_rio[major][index] += new_io;
+-		kstat.dk_drive_rblk[major][index] += nr_sectors;
++		ds->dk_drive_rio += new_io;
++		ds->dk_drive_rblk += nr_sectors;
+ 	} else if (rw == WRITE) {
+-		kstat.dk_drive_wio[major][index] += new_io;
+-		kstat.dk_drive_wblk[major][index] += nr_sectors;
+-	} else
++		ds->dk_drive_wio += new_io;
++		ds->dk_drive_wblk += nr_sectors;
++	} else {
+ 		printk(KERN_ERR "drive_stat_acct: cmd not R/W?\n");
++	}
+ }
+ 
+ #ifdef CONFIG_BLK_STATS
+diff -ur g/linux-2.4.26/drivers/md/md.c h/linux-2.4.26/drivers/md/md.c
+--- g/linux-2.4.26/drivers/md/md.c	2003-08-25 12:44:42.000000000 +0100
++++ h/linux-2.4.26/drivers/md/md.c	2004-06-07 19:36:15.000000000 +0100
+@@ -3381,12 +3381,15 @@
+ 	ITERATE_RDEV(mddev,rdev,tmp) {
+ 		int major = MAJOR(rdev->dev);
+ 		int idx = disk_index(rdev->dev);
++		dk_stat_t * ds;
+ 
+ 		if ((idx >= DK_MAX_DISK) || (major >= DK_MAX_MAJOR))
+ 			continue;
+ 
+-		curr_events = kstat.dk_drive_rblk[major][idx] +
+-						kstat.dk_drive_wblk[major][idx] ;
++        	if ((ds = kstat.dk_drive_info[major]) == NULL) 
++			continue;
++		ds += idx;
++		curr_events = ds->dk_drive_rblk + ds->dk_drive_wblk;
+ 		curr_events -= sync_io[major][idx];
+ 		if ((curr_events - rdev->last_events) > 32) {
+ 			rdev->last_events = curr_events;
+diff -ur g/linux-2.4.26/fs/block_dev.c h/linux-2.4.26/fs/block_dev.c
+--- g/linux-2.4.26/fs/block_dev.c	2003-06-13 15:51:37.000000000 +0100
++++ h/linux-2.4.26/fs/block_dev.c	2004-06-07 19:36:15.000000000 +0100
+@@ -13,6 +13,7 @@
+ #include <linux/slab.h>
+ #include <linux/kmod.h>
+ #include <linux/major.h>
++#include <linux/kernel_stat.h>
+ #include <linux/devfs_fs_kernel.h>
+ #include <linux/smp_lock.h>
+ #include <linux/iobuf.h>
+@@ -465,11 +466,52 @@
+ 	return ret;
+ }
+ 
++/*
++ *        Allocate a statistics structure for the give device
++ */
++
++static int alloc_dk_stat(unsigned int major)
++{
++	dk_stat_t * new; 
++	
++	/*allocate space for statistics */
++	if (kstat.dk_drive_info[major] != NULL) {
++		printk(KERN_WARNING "register_blkdev: stat struct"
++			" for device %d exists before register\n",
++			major);
++	} else {
++		int size = sizeof(dk_stat_t) * DK_MAX_DISK;
++		new = (dk_stat_t *)kmalloc(size, GFP_KERNEL);
++		if (new == NULL) {
++			return -ENOMEM;
++		}
++		memset(new, 0, size);
++		kstat.dk_drive_info[major] = new;
++	}
++	return 0;
++}
++
++static void free_dk_stat(unsigned int major)
++{
++	dk_stat_t * ds;
++	
++	ds = kstat.dk_drive_info[major];
++	kstat.dk_drive_info[major] = NULL;
++	
++	if (ds != NULL)
++		kfree(ds);
++}
++
+ int register_blkdev(unsigned int major, const char * name, struct block_device_operations *bdops)
+ {
++	int err;
++	
+ 	if (major == 0) {
+ 		for (major = MAX_BLKDEV-1; major > 0; major--) {
+ 			if (blkdevs[major].bdops == NULL) {
++				err = alloc_dk_stat(major);
++				if (err != 0)
++					return err;
+ 				blkdevs[major].name = name;
+ 				blkdevs[major].bdops = bdops;
+ 				return major;
+@@ -481,8 +523,13 @@
+ 		return -EINVAL;
+ 	if (blkdevs[major].bdops && blkdevs[major].bdops != bdops)
+ 		return -EBUSY;
++
++	err = alloc_dk_stat(major);
++	if (err != 0)
++		return err;
+ 	blkdevs[major].name = name;
+ 	blkdevs[major].bdops = bdops;
++	
+ 	return 0;
+ }
+ 
+@@ -496,6 +543,9 @@
+ 		return -EINVAL;
+ 	blkdevs[major].name = NULL;
+ 	blkdevs[major].bdops = NULL;
++
++	/* free statistic structure */
++	free_dk_stat(major);
+ 	return 0;
+ }
+ 
+diff -ur g/linux-2.4.26/fs/proc/proc_misc.c h/linux-2.4.26/fs/proc/proc_misc.c
+--- g/linux-2.4.26/fs/proc/proc_misc.c	2003-11-28 18:26:21.000000000 +0000
++++ h/linux-2.4.26/fs/proc/proc_misc.c	2004-06-07 19:37:08.000000000 +0100
+@@ -355,23 +355,28 @@
+ 
+ 	proc_sprintf(page, &off, &len, "\ndisk_io: ");
+ 
+-	for (major = 0; major < DK_MAX_MAJOR; major++) {
+-		for (disk = 0; disk < DK_MAX_DISK; disk++) {
+-			int active = kstat.dk_drive[major][disk] +
+-				kstat.dk_drive_rblk[major][disk] +
+-				kstat.dk_drive_wblk[major][disk];
++ 	for (major = 0; major < MAX_BLKDEV; major++) {
++ 		if ( kstat.dk_drive_info[major] == NULL)
++ 			continue;
++  		for (disk = 0; disk < DK_MAX_DISK; disk++) {
++ 			dk_stat_t * ds;
++ 			int active;
++ 
++ 			ds = kstat.dk_drive_info[major] + disk;
++ 			active = ds->dk_drive_rio + ds->dk_drive_wio +
++ 				ds->dk_drive_rblk + ds->dk_drive_wblk;
+ 			if (active)
+ 				proc_sprintf(page, &off, &len,
+ 					"(%u,%u):(%u,%u,%u,%u,%u) ",
+-					major, disk,
+-					kstat.dk_drive[major][disk],
+-					kstat.dk_drive_rio[major][disk],
+-					kstat.dk_drive_rblk[major][disk],
+-					kstat.dk_drive_wio[major][disk],
+-					kstat.dk_drive_wblk[major][disk]
+-			);
+-		}
+-	}
++  					major, disk,
++ 					ds->dk_drive_rio + ds->dk_drive_wio,
++ 					ds->dk_drive_rio,
++ 					ds->dk_drive_rblk,
++ 					ds->dk_drive_wio,
++ 					ds->dk_drive_wblk
++ 				);
++  		}
++  	}
+ 
+ 	proc_sprintf(page, &off, &len,
+ 		"\nctxt %u\n"
+diff -ur g/linux-2.4.26/include/linux/genhd.h h/linux-2.4.26/include/linux/genhd.h
+--- g/linux-2.4.26/include/linux/genhd.h	2002-11-28 23:53:15.000000000 +0000
++++ h/linux-2.4.26/include/linux/genhd.h	2004-06-07 19:36:15.000000000 +0100
+@@ -294,21 +294,30 @@
+ 	unsigned int index;
+ 
+ 	switch (major) {
+-		case DAC960_MAJOR+0:
+-			index = (minor & 0x00f8) >> 3;
+-			break;
+ 		case SCSI_DISK0_MAJOR:
+ 			index = (minor & 0x00f0) >> 4;
+ 			break;
+ 		case IDE0_MAJOR:	/* same as HD_MAJOR */
+ 		case XT_DISK_MAJOR:
++		case IDE1_MAJOR:
++		case IDE2_MAJOR:
++		case IDE3_MAJOR:
++		case IDE4_MAJOR:
++		case IDE5_MAJOR:
+ 			index = (minor & 0x0040) >> 6;
+ 			break;
+-		case IDE1_MAJOR:
+-			index = ((minor & 0x0040) >> 6) + 2;
++		case SCSI_CDROM_MAJOR:
++			index = minor & 0x000f;
+ 			break;
+ 		default:
+-			return 0;
++			if (major >= SCSI_DISK1_MAJOR && major <= SCSI_DISK7_MAJOR)
++				index = (minor & 0x00f0) >> 4;
++			else if (major >= DAC960_MAJOR && major <= DAC960_MAJOR + 7)
++				index = (minor & 0x00f8) >> 3;
++			else if (major >= IDE6_MAJOR && major <= IDE9_MAJOR)
++				index = (minor & 0x0040) >> 6;
++			else
++				return 0;
+ 	}
+ 	return index;
+ }
+diff -ur g/linux-2.4.26/include/linux/kernel_stat.h h/linux-2.4.26/include/linux/kernel_stat.h
+--- g/linux-2.4.26/include/linux/kernel_stat.h	2003-06-13 15:51:38.000000000 +0100
++++ h/linux-2.4.26/include/linux/kernel_stat.h	2004-06-07 19:36:15.000000000 +0100
+@@ -5,6 +5,7 @@
+ #include <asm/irq.h>
+ #include <linux/smp.h>
+ #include <linux/threads.h>
++#include <linux/major.h>
+ 
+ /*
+  * 'kernel_stat.h' contains the definitions needed for doing
+@@ -15,15 +15,19 @@
+ #define DK_MAX_MAJOR 16
+ #define DK_MAX_DISK 16
+ 
++struct dk_stat{
++	unsigned int dk_drive_rio;
++	unsigned int dk_drive_wio;
++	unsigned int dk_drive_rblk;
++	unsigned int dk_drive_wblk;
++};
++
++typedef struct dk_stat dk_stat_t;
+ struct kernel_stat {
+ 	unsigned int per_cpu_user[NR_CPUS],
+ 	             per_cpu_nice[NR_CPUS],
+ 	             per_cpu_system[NR_CPUS];
+-	unsigned int dk_drive[DK_MAX_MAJOR][DK_MAX_DISK];
+-	unsigned int dk_drive_rio[DK_MAX_MAJOR][DK_MAX_DISK];
+-	unsigned int dk_drive_wio[DK_MAX_MAJOR][DK_MAX_DISK];
+-	unsigned int dk_drive_rblk[DK_MAX_MAJOR][DK_MAX_DISK];
+-	unsigned int dk_drive_wblk[DK_MAX_MAJOR][DK_MAX_DISK];
++	dk_stat_t *dk_drive_info[MAX_BLKDEV];	     
+ 	unsigned int pgpgin, pgpgout;
+ 	unsigned int pswpin, pswpout;
+ #if defined (__hppa__) 

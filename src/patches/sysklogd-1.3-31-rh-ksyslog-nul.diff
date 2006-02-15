@@ -1,0 +1,12 @@
+diff -ur sysklogd-1.3-31.orig/klogd.c sysklogd-1.3-31/klogd.c
+--- sysklogd-1.3-31.orig/klogd.c	Tue Jan 19 03:09:12 1999
++++ sysklogd-1.3-31/klogd.c	Tue Sep 12 20:08:57 2000
+@@ -856,7 +856,7 @@
+ 	 * messages into this fresh buffer.
+ 	 */
+ 	memset(log_buffer, '\0', sizeof(log_buffer));
+-	if ( (rdcnt = ksyslog(2, log_buffer, sizeof(log_buffer))) < 0 )
++	if ( (rdcnt = ksyslog(2, log_buffer, sizeof(log_buffer)-1)) < 0 )
+ 	{
+ 		if ( errno == EINTR )
+ 			return;

@@ -1,0 +1,165 @@
+#!/usr/bin/perl
+#
+# IPCop CGIs
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) The IPCop Team
+#
+# $Id: config.dat,v 1.2.2.10 2005/06/14 12:32:07 eoberlander Exp $
+#
+
+use strict;
+
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
+require 'CONFIG_ROOT/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/header.pl";
+
+my %logsettings=();
+my %checked=();
+my %selected=();
+my $errormessage='';
+
+&Header::showhttpheaders();
+
+$logsettings{'LOGVIEW_REVERSE'} = 'off';
+$logsettings{'LOGVIEW_VIEWSIZE'} = '150';
+$logsettings{'LOGWATCH_LEVEL'} = 'Low';
+$logsettings{'LOGWATCH_KEEP'} = '56';
+my @VS = ('15','50','100','150','250','500');
+$logsettings{'ENABLE_REMOTELOG'} = 'off';
+$logsettings{'REMOTELOG_ADDR'} = '';
+$logsettings{'ACTION'} = '';
+&Header::getcgihash(\%logsettings);
+
+if ($logsettings{'ACTION'} eq $Lang::tr{'save'})
+{
+  if ($logsettings{'ENABLE_REMOTELOG'} eq 'on')
+  {
+    unless ( &General::validfqdn($logsettings{'REMOTELOG_ADDR'}) ||
+             &General::validip  ($logsettings{'REMOTELOG_ADDR'}))
+    {
+      $errormessage = $Lang::tr{'invalid logserver address'};
+    }
+  }
+  unless ($logsettings{'LOGWATCH_KEEP'} =~ /^\d+$/)
+  {
+    $errormessage = $Lang::tr{'invalid keep time'};
+  }
+  unless ($logsettings{'LOGWATCH_LEVEL'} =~ /^Low|Med|High$/)
+  {
+    $errormessage = $Lang::tr{'invalid input'};
+  }
+  unless ($errormessage)
+  {
+    &General::writehash("${General::swroot}/logging/settings", \%logsettings);
+    system('/usr/local/bin/restartsyslogd') == 0
+      or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
+  }
+
+}
+
+&General::readhash("${General::swroot}/logging/settings", \%logsettings);
+
+$checked{'ENABLE_REMOTELOG'}{'off'} = '';
+$checked{'ENABLE_REMOTELOG'}{'on'} = '';
+$checked{'ENABLE_REMOTELOG'}{$logsettings{'ENABLE_REMOTELOG'}} = "checked='checked'";
+
+$checked{'LOGVIEW_REVERSE'}{'off'} = '';
+$checked{'LOGVIEW_REVERSE'}{'on'} = '';
+$checked{'LOGVIEW_REVERSE'}{$logsettings{'LOGVIEW_REVERSE'}} = "checked='checked'";
+
+$selected{'LOGWATCH_LEVEL'}{'Low'} = '';
+$selected{'LOGWATCH_LEVEL'}{'Med'} = '';
+$selected{'LOGWATCH_LEVEL'}{'High'} = '';
+$selected{'LOGWATCH_LEVEL'}{$logsettings{'LOGWATCH_LEVEL'}} = "selected='selected'";
+
+map ($selected{'LOGVIEW_VIEWSIZE'}{$_} = '', @VS);
+$selected{'LOGVIEW_VIEWSIZE'}{$logsettings{'LOGVIEW_VIEWSIZE'}} = "selected='selected'";
+
+&Header::openpage($Lang::tr{'log settings'}, 1, '');
+
+&Header::openbigbox('100%', 'left', '', $errormessage);
+
+if ($errormessage) {
+  &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+  print "<font class='base'>$errormessage&nbsp;</font>\n";
+  &Header::closebox();
+}
+
+print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
+
+&Header::openbox('100%', 'left', $Lang::tr{'log viewing options'});
+print <<END
+<table width='100%'>
+<tr>
+	<td><input type='checkbox' name='LOGVIEW_REVERSE' $checked{'LOGVIEW_REVERSE'}{'on'} /></td>
+	<td class='base' width='50%'>$Lang::tr{'reverse sort'}</td>
+	<td class='base' width='25%' align='right'>$Lang::tr{'log lines per page'}:&nbsp;</td>
+	<td width='25%'><select name='LOGVIEW_VIEWSIZE'>
+END
+;
+foreach my $vs (@VS) {
+    print "\t<option value='$vs' $selected{'LOGVIEW_VIEWSIZE'}{$vs}>$vs</option>\n";
+}
+print <<END
+	</select></td>
+</tr>
+</table>
+END
+;
+&Header::closebox();
+
+&Header::openbox('100%', 'left', $Lang::tr{'log summaries'});
+print <<END
+<table width='100%'>
+<tr>
+  <td class='base' width='50%'>$Lang::tr{'summaries kept'}&nbsp;
+  <input type='text' name='LOGWATCH_KEEP'
+  value='$logsettings{'LOGWATCH_KEEP'}' size='4' />&nbsp;$Lang::tr{'days'}</td>
+  <td>$Lang::tr{'detail level'}:</td><td>
+  <select name='LOGWATCH_LEVEL'>
+  <option value='Low' $selected{'LOGWATCH_LEVEL'}{'Low'}>$Lang::tr{'low'}</option>
+  <option value='Med' $selected{'LOGWATCH_LEVEL'}{'Med'}>$Lang::tr{'medium'}</option>
+  <option value='High' $selected{'LOGWATCH_LEVEL'}{'High'}>$Lang::tr{'high'}</option>
+  </select></td>
+</tr>
+</table>
+END
+;
+&Header::closebox();
+
+&Header::openbox('100%', 'left', $Lang::tr{'remote logging'});
+print <<END
+<table width='100%'>
+<tr>
+  <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ENABLE_REMOTELOG' $checked{'ENABLE_REMOTELOG'}{'on'} /></td>
+  <td>$Lang::tr{'log server address'}</td><td><input type='text' name='REMOTELOG_ADDR' value='$logsettings{'REMOTELOG_ADDR'}' /></td>
+</tr>
+</table>
+END
+;
+&Header::closebox();
+
+
+
+print <<END
+<div align='center'>
+<table width='60%'>
+<tr>
+  <td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+</tr>
+</table>
+</div>
+END
+;
+
+print "</form>\n";
+
+&Header::closebigbox();
+
+&Header::closepage();

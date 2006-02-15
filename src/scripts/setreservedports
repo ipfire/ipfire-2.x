@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# $Id: setreservedports,v 1.1.2.3 2005/09/07 21:38:50 eoberlander Exp $
+# Change https server port only at this time,
+# it will be integrate in web interface later
+# suggested port for https interface could be 5445
+
+SSH=222
+
+if [ $# -lt 1 ]; then
+	echo "Give an https port number, recommended value is non-assigned port 5445"
+else
+	if [ "$1" -lt "445" -o "$1" -gt "65535" ]; then
+		echo "support only a port value from 445 to 65535"
+		echo "recommended value is non-assigned port 5445"
+	else
+		HTTPS=$1
+		/bin/sed -i -e "s+# TCP 67,68,81.*$+# TCP 67,68,81,$SSH,$HTTPS+" \
+		-e "s+my @tcp_reserved = (81.*$+my @tcp_reserved = (81,$SSH,$HTTPS);+" \
+		/home/httpd/cgi-bin/portfw.cgi
+		
+		# only the second Listen only has {3,5} digits if the first is 81
+		/bin/sed -i -e "+s+Listen [0-9]\{3,5\}$+Listen $HTTPS+" \
+		-e "s+<VirtualHost _default_.*$+<VirtualHost _default_:$HTTPS>+" \
+		/etc/httpd/conf/httpd.conf
+		
+		/bin/sed -i -e "s+:[0-9]\{3,5\}/\$ENV{'PATH_INFO'}+:$HTTPS/\$ENV{'PATH_INFO'}+" \
+		/var/ipcop/header.pl
+		
+		/bin/sed -i -e "s+acl IPCop_https port.*$+acl IPCop_https port $HTTPS+" \
+		/var/ipcop/proxy/acl
+		/bin/chown nobody:nobody /var/ipcop/proxy/acl
+		
+		/bin/sed -i -e "s+acl IPCop_https port.*$+acl IPCop_https port $HTTPS+" \
+		/var/ipcop/proxy/squid.conf
+		/bin/chown nobody:nobody /var/ipcop/proxy/squid.conf
+		
+		# restart everything impacted
+		/bin/killall httpd
+		sleep 2
+		/usr/sbin/httpd
+		/usr/local/bin/restartsquid
+		/usr/bin/logger -s -p local0.info "$0 :https port shift to $HTTPS"
+	fi
+fi

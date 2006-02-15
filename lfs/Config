@@ -1,0 +1,130 @@
+###############################################################################
+#                                   LFSMake                                   #
+#                    by Rod Roark <rod@sunsetsystems.com>                     #
+#                                                                             #
+#                        Copyright (C) 2002 Rod Roark                         #
+#                                                                             #
+# See http://www.lfsmake.org/ for the most current standard version.          #
+#                                                                             #
+# These Makefiles are made available under the terms of the Artistic License, #
+# found at http://www.opensource.org/licenses/artistic-license.html.          #
+###############################################################################
+
+# URLs that are common sources of downloads.  If you're having trouble with
+# a site you should change its URL to that of a suitable mirror site.
+#
+URL_CPAN    = http://www.cpan.org/modules/by-module
+URL_AGNU    = ftp://alpha.gnu.org/gnu
+URL_DEBIAN  = http://http.us.debian.org/debian/pool/main
+URL_GNU     = http://ftp.gnu.org/gnu
+URL_KERNEL  = http://www.kernel.org/pub
+URL_TUE     = ftp://ftp.win.tue.nl/pub
+URL_LFS_FTP = http://ftp.at.linuxfromscratch.org/pub/lfs/lfs-packages/5.1.1
+URL_LFS     = http://www.linuxfromscratch.org/patches/downloads
+URL_SFNET   = http://switch.dl.sourceforge.net/sourceforge
+
+# Default compiler optimizations.
+#
+FLAGS_OPT   = -O2
+FLAGS_CPU   = -mcpu=$(MACHINE)
+FLAGS_ARCH  = -march=$(MACHINE)
+
+# Don't change this; it will be overridden by other makefiles where necessary.
+#
+ROOT =
+
+# For most packages tarballs are unpacked here and then deleted after
+# installation.
+#
+DIR_SRC = $(ROOT)/usr/src
+
+# Files are downloaded into DIR_TMP and then moved to DIR_DL, to avoid
+# messes with partially retrieved files.  DIR_DL is where we will
+# save all the files that are downloaded.  DIR_INFO contains the
+# file lists of installed packages.
+#
+DIR_DL      = $(LFS_BASEDIR)/cache
+DIR_CHK     = $(LFS_BASEDIR)/cache/check
+DIR_INFO    = $(LFS_BASEDIR)/log
+DIR_TMP     = /tmp
+
+KGCC = ccache /usr/bin/gcc
+
+###############################################################################
+# Common Macro Definitions
+###############################################################################
+
+# For each package we create a list of files that it installed under 
+# log/<TARGET> name. Modified files are not identified
+#
+define FIND_FILES
+	cd $(ROOT)/ && find -mount \
+	-not -path './tools*' -not -path './tmp*' -not -path './usr/src*' \
+	-not -path './dev*' -not -path './proc*' -not -path './install*'
+endef
+
+# This is common starting logic for builds.
+#
+ifeq "$(ROOT)" ""
+define PREBUILD
+	echo "====================================== Installing $(THISAPP) ..."
+	@echo "Install started; saving file list to $(DIR_SRC)/lsalr ..."
+	@if [ ! -f $(DIR_SRC)/lsalr ]; then $(FIND_FILES) > $(DIR_SRC)/lsalr; fi
+endef
+else
+define PREBUILD
+	echo "====================================== Installing $(THISAPP) ..."
+endef
+endif
+
+# Common end-of-installation logic for Stage 2 and beyond.
+#
+ifeq "$(ROOT)" ""
+define POSTBUILD
+	@echo "Install done; saving file list to $(DIR_INFO)/$(THISAPP) ..."
+	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
+	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' | sort > $(TARGET)_1
+	@cp -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr
+	@rm -f $(DIR_SRC)/lsalrnew
+	sed -i -e 's+.\/++' $(TARGET)_1
+	# compare roofile ( same name as lfs script) with the list of installed files
+	# special cases
+	# - on a partial rebuild without a new file inside TARGET_1, just touch TARGET
+	if [ -s "$(TARGET)_1" ]; then \
+		ROOTFILE=$(DIR_SRC)/src/ROOTFILES.$(MACHINE); \
+		for line in `cat $(TARGET)_1`; do \
+			if grep -qE "^#$$line$$" $$ROOTFILE ; then echo "#$$line" >> $(TARGET); \
+			elif grep -qE "^$$line$$" $$ROOTFILE ; then echo "$$line" >> $(TARGET); \
+			else echo "+$$line" >> $(TARGET); \
+			fi; \
+		done; \
+	else \
+		touch $(TARGET); \
+	fi
+	@rm -f $(TARGET)_1
+endef
+else
+define POSTBUILD
+	@echo "===================================== Install done for $(THISAPP)."
+	touch $(TARGET)
+endef
+endif
+
+define CHECK
+	@echo -e "$(MESSAGE)Check: $($(notdir $@))"
+	wget -T 120 -t 1 --spider -nv $($(notdir $@)) -O /dev/null
+	@touch $(DIR_CHK)/$(notdir $@)
+endef
+
+define LOAD
+	@echo -e "$(MESSAGE)Download: $($(notdir $@))"
+	wget -T 120 -t 1 -c -nv $($(notdir $@)) -O $(DIR_TMP)/$(notdir $@)
+	[ "$($(notdir $@)_MD5)" = `md5sum $(DIR_TMP)/$(notdir $@) | awk '{ print $$1 }'` ] # detect page not found answer
+	mv $(DIR_TMP)/$(notdir $@) $(DIR_DL)
+endef
+
+define MD5
+	# error mean file signature don't match the one in lfs script
+	[ "$($@_MD5)" = `md5sum $(DIR_DL)/$@ | awk '{ print $$1 }'` ]
+	echo "$@ checksum OK"
+endef

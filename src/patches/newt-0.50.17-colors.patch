@@ -1,0 +1,103 @@
+diff -ruN newt-0.50.17.old/newt.c newt-0.50.17/newt.c
+--- newt-0.50.17.old/newt.c	Wed Dec  3 10:37:02 2003
++++ newt-0.50.17/newt.c	Wed Dec  3 10:38:00 2003
+@@ -65,31 +65,31 @@
+ "  <Tab>/<Alt-Tab> between elements   |  <Space> selects   |  <F12> next screen"
+ ;
+ 
+-const struct newtColors newtDefaultColorPalette = {
+-	"white", "blue", 			/* root fg, bg */
+-	"black", "lightgray",			/* border fg, bg */
+-	"black", "lightgray",			/* window fg, bg */
+-	"white", "black",			/* shadow fg, bg */
+-	"red", "lightgray",			/* title fg, bg */
+-	"black", "lightgray",			/* button fg, bg */
+-	"red", "lightgray",			/* active button fg, bg */
+-	"yellow", "blue",			/* checkbox fg, bg */
+-	"blue", "brown",			/* active checkbox fg, bg */
+-	"yellow", "blue",			/* entry box fg, bg */
+-	"blue", "lightgray",			/* label fg, bg */
+-	"black", "lightgray",			/* listbox fg, bg */
+-	"black", "lightgray",			/* active listbox fg, bg */
+-	"black", "lightgray",			/* textbox fg, bg */
+-	"lightgray", "black",			/* active textbox fg, bg */
+-	"white", "blue",			/* help line */
+-	"yellow", "blue",			/* root text */
+-	"blue",					/* scale empty */
+-	"yellow",				/* scale full */
+-	"blue", "lightgray",			/* disabled entry fg, bg */
+-	"white", "blue",			/* compact button fg, bg */
+-	"yellow", "red",			/* active & sel listbox */
+-	"yellow", "blue",			/* selected listbox */
+-	"white", "lightgray"			/* 3D box */
++const struct newtColors newtDefaultColorPalette = { 
++	"white", "blue",			/* root fg, bg */ 
++	"black", "lightgray",			/* border fg, bg */ 
++	"black", "lightgray",			/* window fg, bg */ 
++	"white", "black",			/* shadow fg, bg */ 
++	"red", "lightgray",			/* title fg, bg */ 
++	"lightgray", "red",			/* button fg, bg */ 
++	"red", "lightgray",			/* active button fg, bg */ 
++	"yellow", "blue",			/* checkbox fg, bg */ 
++	"blue", "brown",			/* active checkbox fg, bg */ 
++	"yellow", "blue",			/* entry box fg, bg */ 
++	"blue", "lightgray",			/* label fg, bg */ 
++	"black", "lightgray",			/* listbox fg, bg */ 
++	"black", "lightgray",			/* active listbox fg, bg */ 
++	"black", "lightgray",			/* textbox fg, bg */ 
++	"lightgray", "black",			/* active textbox fg, bg */ 
++	"white", "blue",			/* help line */ 
++	"yellow", "blue",			/* root text */ 
++	"blue",					/* scale empty */ 
++	"red",					/* scale full */ 
++	"blue", "lightgray",			/* disabled entry fg, bg */ 
++	"white", "blue",			/* compact button fg, bg */ 
++	"yellow", "blue",			/* active & sel listbox */ 
++	"yellow", "blue",			/* selected listbox */ 
++	"white", "lightgray"			/* 3D box */ 
+ };
+ 
+ static const int color_to_mono[NEWT_COLORSET_MAX+1] = {
+diff -ruN newt-0.50.17.old/scrollbar.c newt-0.50.17/scrollbar.c
+--- newt-0.50.17.old/scrollbar.c	Wed Dec  3 10:37:02 2003
++++ newt-0.50.17/scrollbar.c	Wed Dec  3 10:38:00 2003
+@@ -48,7 +48,7 @@
+     co->data = sb;
+ 
+     if (!strcmp(getenv("TERM"), "linux") && height >= 2) {
+-	sb->arrows = 1;
++	sb->arrows = 0;
+ 	sb->curr = 1;
+     } else {
+ 	sb->arrows = 0;
+@@ -79,17 +79,17 @@
+     SLsmg_set_char_set(1);
+     if (sb->arrows) {
+ 	newtGotorc(co->top, co->left);
+- 	SLsmg_write_char('\x2d');
++ 	SLsmg_write_char(SLSMG_UARROW_CHAR);
+ 	for (i = 1; i < co->height - 1; i++) {
+ 	    newtGotorc(i + co->top, co->left);
+-	    SLsmg_write_char('\x61');
++	    SLsmg_write_char(SLSMG_CKBRD_CHAR);
+ 	}
+ 	newtGotorc(co->top + co->height - 1, co->left);
+- 	SLsmg_write_char('\x2e');
++ 	SLsmg_write_char(SLSMG_DARROW_CHAR);
+     } else {
+ 	for (i = 0; i < co->height; i++) {
+ 	    newtGotorc(i + co->top, co->left);
+-	    SLsmg_write_char('\x61');
++	    SLsmg_write_char(SLSMG_CKBRD_CHAR);
+ 	}
+     }
+ 
+@@ -100,7 +100,7 @@
+ 
+ static void sbDrawThumb(newtComponent co, int isOn) {
+     struct scrollbar * sb = co->data;
+-    char ch = isOn ? '#' : '\x61';
++    char ch = isOn ? '#' : SLSMG_CKBRD_CHAR;
+ 
+     if (!co->isMapped) return;
+ 

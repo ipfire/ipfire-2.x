@@ -1,0 +1,8 @@
+#
+# $Id: fstab,v 1.4 2006/02/11 15:42 ms Exp $
+#
+/dev/harddisk1		/boot			ext3	nodev,nosuid,noatime,data=journal		1 2
+/dev/harddisk2		/var/log		ext3	nodev,nosuid,noatime,data=journal		1 2
+/dev/harddisk4          /                       ext3    noatime	        1 1
+none                    /proc                   proc    defaults        0 0
+none			/dev/pts		devpts	gid=5,mode=620	0 0

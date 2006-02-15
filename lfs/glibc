@@ -1,0 +1,144 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: glibc,v 1.17.2.12 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 2.3.3
+
+THISAPP    = glibc-$(VER)-lfs-5.1
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_LFS_FTP)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+CFLAGS     =
+CXXFLAGS   =
+
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  EXTRA_CONFIG = --prefix=/usr \
+    --disable-profile --enable-add-ons=linuxthreads \
+    --libexecdir=/usr/lib --with-headers=/usr/include \
+    --without-cvs --disable-nls
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  EXTRA_CONFIG = --prefix=/tools \
+    --disable-profile --enable-add-ons=linuxthreads \
+    --with-headers=/tools/include \
+    --with-binutils=/tools/bin --without-gd \
+    --without-cvs --disable-nls
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = cd11fabdf5162ad68329e7b28b308278
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.3.3-ssp_frandom-2.patch
+	@mkdir $(DIR_SRC)/glibc-build
+	cd $(DIR_SRC)/glibc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
+ifeq "$(ROOT)" ""
+	touch /etc/ld.so.conf
+	cd $(DIR_SRC)/glibc-build && make $(EXTRA_MAKE)
+	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
+else
+	-mkdir /tools/etc
+	touch /tools/etc/ld.so.conf
+	cd $(DIR_SRC)/glibc-build && make $(EXTRA_MAKE) AUTOCONF=no
+	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) AUTOCONF=no install
+endif
+
+	# Locking in the toolchain
+ifeq "$(ROOT)" ""
+	SPECFILE=/tools/lib/gcc-lib/*/*/specs && \
+	sed -e 's@/tools/lib/ld-linux.so.2@/lib/ld-linux.so.2@g' \
+	    $$SPECFILE > newspecfile && mv -f newspecfile $$SPECFILE
+else
+	SPECFILE=/tools/lib/gcc-lib/*/*/specs && \
+	sed -e 's@/lib/ld-linux.so.2@/tools/lib/ld-linux.so.2@g' \
+	    $$SPECFILE > tempspecfile && mv -f tempspecfile $$SPECFILE
+	rm -f /tools/lib/gcc-lib/*/*/include/{pthread.h,bits/sigthread.h}
+endif
+
+	# Creating the locales
+ifeq "$(ROOT)" ""
+	mkdir -p /usr/lib/locale
+else
+	mkdir -p /tools/lib/locale
+endif
+	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f ISO-8859-1 en_US
+	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f UTF-8      en_US.utf8
+
+	# Configuring Glibc
+ifeq "$(ROOT)" ""
+	cp -f /usr/share/zoneinfo/GMT /etc/localtime 
+endif
+	# Cleanup
+	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
+	@$(POSTBUILD)

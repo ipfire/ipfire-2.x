@@ -1,0 +1,190 @@
+# patch found at http://freiburg.linux.de/~zeisberg/howtos/fritzcarddsl.html
+diff -u -r fritz.old/src.drv/driver.c fritz/src.drv/driver.c
+--- fritz.old/src.drv/driver.c	Tue Jul  8 00:02:00 2003
++++ fritz/src.drv/driver.c	Fri Nov  7 14:21:49 2003
+@@ -18,6 +18,10 @@
+  * http://www.opensource.org/licenses/lgpl-license.html
+  * 
+  * Contact: AVM GmbH, Alt-Moabit 95, 10559 Berlin, Germany, email: info@avm.de
++ *
++ * Mon Oct 20 22:43:31 2003
++ * Modified by Joerg Lehrke to improve locking 
++ *
+  */
+ 
+ #include <asm/io.h>
+@@ -57,6 +61,8 @@
+ #include "dbgif.h"
+ #endif
+ 
++#undef SINGLE_LOCK
++
+ #if defined (LOG_MESSAGES)
+ # define mlog		log
+ #else
+@@ -107,7 +113,11 @@
+ struct capi_ctr *		capi_controller[2]	= { NULL, NULL } ;
+ static bundle_t			ctrl_context[2];
+ static per_ctrl_t		ctrl_params[2];
++#if defined (SINGLE_LOCK)
++# define stack_lock qt_lock
++#else
+ static spinlock_t		stack_lock		= SPIN_LOCK_UNLOCKED;
++#endif
+ static atomic_t			rx_flag			= ATOMIC_INIT (0);
+ static atomic_t			tx_flag			= ATOMIC_INIT (0);
+ static unsigned long		qt_flags;
+@@ -1080,7 +1090,7 @@
+ } /* remove_ctrl */
+ 
+ /*---------------------------------------------------------------------------*\
+-\*-L-------------------------------------------------------------------------*/
++\*---------------------------------------------------------------------------*/
+ void lock (void) {
+ 	unsigned long	local_flags;
+ 	
+@@ -1098,7 +1108,7 @@
+ } /* unlock */
+ 
+ /*---------------------------------------------------------------------------*\
+-\*-C-------------------------------------------------------------------------*/
++\*---------------------------------------------------------------------------*/
+ static inline int in_critical (void) {
+ 
+ 	return (0 < atomic_read (&crit_count));
+@@ -1108,17 +1118,16 @@
+ \*---------------------------------------------------------------------------*/
+ static inline void check (void) {
+ 	unsigned long	flags;
+-	spinlock_t	chk_lock = SPIN_LOCK_UNLOCKED;
+ 
+ 	if (atomic_xchg (&rx_flag, 0)) {
+-		spin_lock_irqsave (&chk_lock, flags);
++		spin_lock_irqsave (&stack_lock, flags);
+ 		rx_handler (capi_card);
+-		spin_unlock_irqrestore (&chk_lock, flags);
++		spin_unlock_irqrestore (&stack_lock, flags);
+ 	}
+ 	if (atomic_xchg (&tx_flag, 0)) {
+-		spin_lock_irqsave (&chk_lock, flags);
++		spin_lock_irqsave (&stack_lock, flags);
+ 		tx_handler (capi_card);
+-		spin_unlock_irqrestore (&chk_lock, flags);
++		spin_unlock_irqrestore (&stack_lock, flags);
+ 	}
+ } /* check */
+ 
+@@ -1640,7 +1649,7 @@
+ 	return ncci_data_buffer (capi_card->appls, appp, ncci, handle);
+ } /* data_block */
+ 
+-/*-S-------------------------------------------------------------------------*\
++/*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+ static void scheduler_control (unsigned ena) {
+ 	int	enabled = (int) ena;
+@@ -1662,6 +1671,7 @@
+ /*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/ 
+ static int sched_thread (void * arg) {
++        unsigned long	flags;
+ 
+ 	UNUSED_ARG (arg);
+ 	daemonize ();
+@@ -1692,6 +1702,7 @@
+ 			continue;
+ 		}
+ 		/* Body of thread, invoke scheduler */
++		local_irq_save(flags);
+ 		if (spin_trylock (&stack_lock)) {
+ 			os_timer_poll ();
+ 			assert (capi_lib->cm_schedule);
+@@ -1700,6 +1711,7 @@
+ 			}
+ 			spin_unlock (&stack_lock);
+ 		}
++		local_irq_restore(flags);
+ 	}
+ 	log ("Scheduler thread stopped.\n");
+ 	up (&hotplug);
+@@ -1802,17 +1814,22 @@
+ /*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+ static void tx_task (unsigned long data) {
+-	
++        unsigned long	flags;
++
+ 	UNUSED_ARG (data);
+ 	if (in_critical ()) {
+ 		atomic_set (&tx_flag, 1);
+ 		kick_scheduler ();
+-	} else if (spin_trylock (&stack_lock)) {
+-		tx_handler (capi_card);
+-		spin_unlock (&stack_lock);
+ 	} else {
+-		atomic_set (&tx_flag, 1);
+-		kick_scheduler ();
++		local_irq_save(flags);
++		if (spin_trylock (&stack_lock)) {
++			tx_handler (capi_card);
++			spin_unlock (&stack_lock);
++		} else {
++			atomic_set (&tx_flag, 1);
++			kick_scheduler ();
++		}
++		local_irq_restore(flags);
+ 	}
+ } /* tx_task */
+ 
+@@ -1865,17 +1882,22 @@
+ /*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+ static void rx_task (unsigned long data) {
++        unsigned long	flags;
+ 	
+ 	UNUSED_ARG (data);
+ 	if (in_critical ()) {
+ 		atomic_set (&rx_flag, 1);
+ 		kick_scheduler ();
+-	} else if (spin_trylock (&stack_lock)) {
+-		rx_handler (capi_card);
+-		spin_unlock (&stack_lock);
+ 	} else {
+-		atomic_set (&rx_flag, 1);
+-		kick_scheduler ();
++		local_irq_save(flags);
++		if (spin_trylock (&stack_lock)) {
++			rx_handler (capi_card);
++			spin_unlock (&stack_lock);
++		} else {
++			atomic_set (&rx_flag, 1);
++			kick_scheduler ();
++		}
++		local_irq_restore(flags);
+ 	}
+ } /* rx_task */
+ 
+@@ -1894,6 +1916,7 @@
+ 	if (capi_card != (card_p) args) {
+ 		return;
+ 	}
++	spin_lock (&stack_lock);
+ 	while (0 != ((flags = PEEK (capi_card->io_base + INT_CTL)) & CARD_PCI_INT_ASSERT)) {
+ #if !defined (NDEBUG)
+ 		++count;
+@@ -1906,6 +1929,7 @@
+ 		assert ((PEEK (capi_card->io_base + INT_CTL) 
+ 				& ~(CARD_PCI_INT_ASSERT | CARD_PCI_INT_ISASSERTED)) != 0);
+ 		if (!atomic_read (&link_open)) {
++			spin_unlock (&stack_lock);
+ 			return;
+ 		}
+ 		tx_flag = PEEK (capi_card->io_base + XFER_TOTM_STATUS) == TM_READY;
+@@ -1920,6 +1944,7 @@
+ 		}
+ 	}
+ 	info (0 == (PEEK (capi_card->io_base + INT_CTL) & CARD_PCI_INT_ASSERT));
++	spin_unlock (&stack_lock);
+ } /* irq_handler */
+ 
+ /*---------------------------------------------------------------------------*\

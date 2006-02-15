@@ -1,0 +1,92 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: uClibc,v 1.9.2.4 2005/02/05 15:38:16 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 0.9.26
+
+THISAPP    = uClibc-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_KERNEL)/linux/libs/uclibc
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) gcc-3.3.1.tar.gz
+
+$(DL_FILE)           = $(DL_FROM)/$(DL_FILE)
+gcc-3.3.1.tar.gz     = $(URL_GNU)/gcc/gcc-3.3.1.tar.gz
+
+$(DL_FILE)_MD5       = b63183651a1b13456c20387ea88b018f
+gcc-3.3.1.tar.gz_MD5 = 46d58197212818b5f7c403267ff24e4e
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP)
+	@rm -rf /opt/$(MACHINE)-uClibc
+	@mkdir -p $(DIR_APP)
+	cd $(DIR_APP) && cp -R $(DIR_SRC)/src/uClibc/* .
+	cd $(DIR_APP) && sed -i -e 's/ARCH:=i386/ARCH:=$(MACHINE)/' Makefile
+	cd $(DIR_APP) && chmod +x sources/patch-kernel.sh
+	cd $(DIR_APP) && make
+	-mkdir -p /install/initrd/bin
+	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) && make PREFIX=/install/initrd install_runtime
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

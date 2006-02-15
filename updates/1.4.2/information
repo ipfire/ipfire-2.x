@@ -1,0 +1,1 @@
+001|1.4.2 update|Fix KA Advisory 0411291 in proxylog.dat. Fix dhcp.cgi bug in header.pl. Fix insecure dependency with fritzdsl modems in rc.red. Upgrade fcdsl2, pulsardsl and fcron. Change log size from 10 to 30MB with 256MB flash. Fix snort log rotation. Others changes in the announce or Changelog. Rebooting or unloading module is necessary for fcdls2, pulsardsl.|2004-12-10

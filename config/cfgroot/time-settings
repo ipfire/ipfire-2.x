@@ -1,0 +1,7 @@
+NTP_ADDR_2=pool.ntp.org
+UPDATE_PERIOD=daily
+UPDATE_VALUE=1
+UPDATE_METHOD=manually
+ENABLENTP=off
+NTP_ADDR_1=pool.ntp.org
+VALID=yes

@@ -1,0 +1,123 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: fcdsl2,v 1.1.2.6 2005/02/05 15:38:14 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = suse9.0-03.11.04
+
+THISAPP    = fcdsl2-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = ftp://ftp.avm.de/cardware/fritzcrd.dsl_v20/linux/suse.90/
+DIR_APP    = $(DIR_SRC)/fritz
+ifeq "$(SMP)" ""
+  TARGET     = $(DIR_INFO)/$(THISAPP)
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)-smp
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 5e3a4cbd542ba298a4ce2ad58d789c49
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fcdslx-irqreturn.patch
+ifeq "$(SMP)" ""
+	cd $(DIR_APP) && sed -i \
+	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
+	    -e 's/$$(shell uname -r)/$(KVER)/' \
+	    -e 's/`uname -r`/$(KVER)/' \
+	    -e 's/^\(CCFLAGS.*\)$$/\1 \\/' \
+	    -e '\+^CCFLAGS+a\ \
+	          -include \$$(KRNLINCL)/linux/modversions.h' \
+	    -e '/^DEFINES/a\ \
+	          -DMODVERSIONS \\' src.drv/makefile
+else
+	cd $(DIR_APP) && sed -i \
+	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
+	    -e 's/$$(shell uname -r)/$(KVER)-smp/' \
+	    -e 's/`uname -r`/$(KVER)-smp/' \
+	    -e 's/^\(CCFLAGS.*\)$$/\1 \\/' \
+	    -e '\+^CCFLAGS+a\ \
+	          -include \$$(KRNLINCL)/linux/modversions.h' \
+	    -e '/^DEFINES/a\ \
+	          -DMODVERSIONS \\' src.drv/makefile
+endif
+	cd $(DIR_APP) && CC="$(KGCC)" make
+	cd $(DIR_APP) && CC="$(KGCC)" make install
+ifeq "$(SMP)" ""
+	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
+	-mkdir /usr/lib/isdn
+	cd $(DIR_APP) && install -m 0644 fds2base.bin /usr/lib/isdn
+	-mkdir /etc/fcdsl
+	echo "# card          file            proto   io      irq     mem     cardnr  options"	>  /etc/fcdsl/fcdsl2.conf
+	echo "fcdsl2           fds2base.bin    -       -       -       -       -"		>> /etc/fcdsl/fcdsl2.conf
+	-mkdir /etc/drdsl # install drdsl.ini from a 3.11.4 version as it has more lines than previous versions
+	cd $(DIR_APP) && install -m 0644 drdsl.ini /etc/drdsl
+	cd $(DIR_APP) && install -m 0755 drdsl /etc/drdsl
+else
+	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

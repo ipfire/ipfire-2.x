@@ -1,0 +1,460 @@
+#!/bin/bash
+#
+# This file is part of the IPCop Firewall.
+#
+# IPCop is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# IPCop is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with IPCop; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+# Originally by Guy Ellis and Steve Bauer
+# Copyright 2001 Traverse Technologies Australia - http://www.traverse.com.au/
+#
+# Copyright (C) 2002-04-08 Mark Wormgoor <mark@wormgoor.com>
+#               - Modified to use loopback filesystem
+#		- Modified to easily change partition sizes
+# Copyright (C) 2003-04-04 Nick Shore <nick.shore@multithread.co.uk>
+#		- Added disksize calculations
+# Copyright (C) 2003-04-09 Simon Turner <simont@angledata.co.uk>
+#		- Modified to easily change partition sizes and fix
+#		  some bugs.
+# Copyright (C) 2004-01-29 Mark Wormgoor <mark@wormgoor.com>
+#               - Modified for IPCop 1.4 (grub, etc)
+# Copyright (C) 2004-08-17 Dale Haag <dhaag@net-defender.net>
+#               - Fixed grub stage2 problem for CF disks
+#               - Added command line option to select target CF drive
+#               - Modified for creating 256mb, 512mb and 1gb CF disks
+#               - Modified routines for building sym links
+#               - Added ability to define kernel loading parameters needed for large CF disks
+#               - Added ability to define grub install parameters needed for large CF disks
+#               - Flash file is created as /tmp/[size]flash.img to allow storing multiple development images
+# Copyright (C) 2004-08-30 Dale Haag <dhaag@net-defender.net>        
+#               - Fixed issue with ramdisk sym link not properly being created for rc.flash.up
+#               - Added ability to configure ethernet settings for a LEX with 3 RTL8139 during flash build
+# Copyright (C) 2005-08-13 Gilles Espinasse <g.esp.ipcop@free.fr>
+#               - Use a bigger /boot partition to allow easier kernel upgrade and support smp kernel
+#               - Define zlog_MB at 30MB for 512 and 1gb like with 256 flash
+# Features
+# - ext3 file system
+# - auto grub install to CF
+# - compressed logs on flash + log to ramdisk
+#
+#   Some SiS chipset don't like ide=nodma parameter (bug SF 1098510), remove in case of problem
+
+VERSION="0.4.3"
+SIZE="$1"
+CF="$2"
+
+# See what we're supposed to do
+# 32 & 64 are too small now for this current script and IPCop 1.4.0
+case "$SIZE" in
+#32)
+#	echo "`date '+%b %e %T'`: Creating 32MB Compact Flash"
+#	flash_MB=30
+#	ramdisk_MB=64
+#	boot_MB=3
+#	zlog_MB=4
+#	root_MB=$(( $flash_MB - $boot_MB - $zlog_MB ))
+#	heads=8
+#	sectors=32
+#	;;
+#64)
+#	echo "`date '+%b %e %T'`: Creating 64MB Compact Flash"
+#	flash_MB=61
+#	ramdisk_MB=64
+#	boot_MB=3
+#	zlog_MB=4
+#	root_MB=$(( $flash_MB - $boot_MB - $zlog_MB ))
+#	heads=8
+#	sectors=32
+#	;;
+128)
+	echo "`date '+%b %e %T'`: Creating 128MB Compact Flash"
+	flash_MB=122
+	ramdisk_MB=64
+	boot_MB=8
+	zlog_MB=10
+	root_MB=$(( $flash_MB - $boot_MB - $zlog_MB ))
+	heads=8
+	sectors=32
+	;;
+256)
+	echo "`date '+%b %e %T'`: Creating 256MB Compact Flash"
+	flash_MB=222
+	ramdisk_MB=64
+	boot_MB=8
+	zlog_MB=30
+	root_MB=$(( $flash_MB - $boot_MB - $zlog_MB ))
+	heads=16
+	sectors=32
+	#kernel_PARMS="idebus=100 ide=nodma ide0=0x177-0x177,0x376" #specific to LEX with CF on secondary master
+	#kernel_PARMS=""		# Sis chipset workaround, don't use nodma
+	kernel_PARMS="ide=nodma"	# Generic
+	grub_PARMS="--force-lba"
+	;;
+512)
+	echo "`date '+%b %e %T'`: Creating 512MB Compact Flash"
+	flash_MB=485
+	ramdisk_MB=64
+	boot_MB=8
+	zlog_MB=30
+	root_MB=$(( $flash_MB - $boot_MB - $zlog_MB ))
+	heads=16
+	sectors=32
+	#kernel_PARMS="idebus=100 ide=nodma ide0=0x177-0x177,0x376" #specific to LEX with CF on secondary master
+	#kernel_PARMS=""		# Sis chipset workaround, don't use nodma
+	kernel_PARMS="ide=nodma"	# Generic
+	grub_PARMS="--force-lba"
+	;;
+1gb)
+	echo "`date '+%b %e %T'`: Creating 1 Gigabyte Compact Flash"
+	flash_MB=978
+	ramdisk_MB=64
+	boot_MB=8
+	zlog_MB=30
+	root_MB=$(( $flash_MB - $boot_MB - $zlog_MB ))
+	heads=16
+	sectors=32
+	#kernel_PARMS="idebus=100 ide=nodma ide0=0x177-0x177,0x376" #specific to LEX with CF on secondary master
+	#kernel_PARMS=""		# Sis chipset workaround, don't use nodma
+	kernel_PARMS="ide=nodma"	Generic
+	grub_PARMS="--force-lba"
+	;;
+
+*)
+#	echo "Usage: $0 {32|64|128|256|512|1gb} {hda|hdb|hdc|hdd}"
+	echo "Usage: $0 {128|256|512|1gb} {hda|hdb|hdc|hdd}"
+	exit 1
+	;;
+esac
+
+case "$CF" in
+hda)
+	echo "`date '+%b %e %T'`: Creating hda Compact Flash"
+	drive_ID=hda4
+	;;
+hdb)
+	echo "`date '+%b %e %T'`: Creating hdb Compact Flash"
+	drive_ID=hdb4
+	;;
+hdc)
+	echo "`date '+%b %e %T'`: Creating hdc Compact Flash"
+	drive_ID=hdc4
+	;;
+hdd)
+	echo "`date '+%b %e %T'`: Creating hdd Compact Flash"
+	drive_ID=hdd4
+	;;
+*)
+	echo "Usage: $0 {32|64|128|256|512|1gb} {hda|hdb|hdc|hdd}"
+	exit 1
+	;;
+esac
+
+
+# Calculate all the required derived variables...
+bs=512		# do not change!
+
+flash_blocks=$(( $flash_MB * 1024 * 1024 / $bs ))
+
+boot_blocks=$(( $boot_MB * 1024 * 1024 / $bs - 1 ))
+zlog_blocks=$(( $zlog_MB * 1024 * 1024 / $bs ))
+root_blocks=$(( $root_MB * 1024 * 1024 / $bs ))
+
+boot_block_offset=1
+zlog_block_offset=$(( $boot_block_offset + $boot_blocks ))
+root_block_offset=$(( $zlog_block_offset + $zlog_blocks ))
+
+boot_byte_offset=$(( $boot_block_offset * $bs ))
+zlog_byte_offset=$(( $zlog_block_offset * $bs ))
+root_byte_offset=$(( $root_block_offset * $bs ))
+
+cylinders=$(( $flash_blocks / $heads / $sectors ))
+
+# RAM Disk
+ramdisk_KB=$(( $ramdisk_MB * 1024 ))
+
+############################################################################
+#                                                                          #
+# Loading loopback kernel module                                           #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Loading loopback kernel module"
+modprobe loop
+
+
+############################################################################
+#                                                                          #
+# Creating empty flash image in /tmp/cf-image                              #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Creating empty flash image in /tmp"
+dd if=/dev/zero of=/tmp/flash.img bs=$bs count=$flash_blocks >/dev/null
+dd if=/dev/zero of=/var/log/part1.img bs=$bs count=$boot_blocks  >/dev/null
+dd if=/dev/zero of=/var/log/part2.img bs=$bs count=$zlog_blocks  >/dev/null
+dd if=/dev/zero of=/var/log/part3.img bs=$bs count=$root_blocks  >/dev/null
+
+
+############################################################################
+#                                                                          #
+# Making filesystems                                                       #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Making filesystems"
+mke2fs -F -j -m 0 -b 1024 /var/log/part1.img >/dev/null
+mke2fs -F -j -m 0 -b 1024 /var/log/part2.img >/dev/null
+mke2fs -F -j -m 0 -b 1024 /var/log/part3.img >/dev/null
+
+
+############################################################################
+#                                                                          #
+# Creating and partitioning Compact Flash image                            #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Creating and partitioning Compact Flash image"
+sfdisk -H $heads -S $sectors -C $cylinders -uM /tmp/flash.img <<EOF >/dev/null 2>&1
+# Start Size    Type    Bootable
+,$boot_MB,,*			# /boot
+,$zlog_MB,,			# /var/log_compressed
+,0,,				# Unused
+,$root_MB,,			# /
+EOF
+dd if=/var/log/part1.img of=/tmp/flash.img seek=$boot_block_offset  bs=$bs
+dd if=/var/log/part2.img of=/tmp/flash.img seek=$zlog_block_offset  bs=$bs
+dd if=/var/log/part3.img of=/tmp/flash.img seek=$root_block_offset  bs=$bs
+rm -f /var/log/part?.img
+
+
+############################################################################
+#                                                                          #
+# Mounting loopback flash image under /mnt                                 #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Mounting loopback flash image under /mnt"
+rm -rf /mnt/flash
+mkdir -p /mnt/flash
+mount -o loop,offset=$root_byte_offset /tmp/flash.img /mnt/flash
+mkdir -p /mnt/flash/boot
+mount -o loop,offset=$boot_byte_offset /tmp/flash.img /mnt/flash/boot
+mkdir -p /mnt/flash/var/log_compressed
+mount -o loop,offset=$zlog_byte_offset /tmp/flash.img /mnt/flash/var/log_compressed
+
+
+############################################################################
+#                                                                          #
+# Creating flash image directory structure                                 #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Creating flash image directory structure"
+mkdir -p /mnt/flash/{ram/,proc/,mnt/}
+
+
+############################################################################
+#                                                                          #
+# Copying files into flash image                                           #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Copying files into flash image"
+# /boot
+cp -a /boot /mnt/flash/
+
+# /var
+mkdir -p /mnt/flash/var/{log,log_compressed,spool,www/icons}
+cp -a /var/ipcop /var/lib /var/state /var/lock /var/log /mnt/flash/var
+
+#######################################################################################
+# Configure flash image ethernet settings                                             #
+# this allows you to stage on one system and build flash for LEX with 3 RTL8139 NIC's #
+# if a settings file named settings.8139 is placed in your /root directory it will be #
+# used to configure the flash image with the correct ethernet settings for the LEX    #
+# a default settings.8139 file is provided for your use                               # 
+#######################################################################################
+if [ -f /root/settings.8139 ]
+then
+	/bin/echo ""    
+    /bin/echo "Configuring Flash With LEX RTL8139 Ethernet Settings"
+    /bin/echo ""
+    /bin/echo ""
+    cat /root/settings.8139 > /mnt/flash/var/ipcop/ethernet/settings
+else
+    /bin/echo ""    
+    /bin/echo "Flash Is Using Build System Ethernet Settings"
+    /bin/echo ""
+    /bin/echo ""
+
+fi
+
+rm -rf /mnt/flash/var/log/lost+found
+cp -a  /var/run /var/empty /mnt/flash/var
+cp -a  /var/spool/cron /mnt/flash/var/spool
+ln -s  /tmp /mnt/flash/var/patches
+ln -sf /ram/squid /var/log/cache
+rm -f  /mnt/flash/var/lib/logrotate.status
+rm -f  /mnt/flash/var/state/dhcp/*
+touch  /mnt/flash/var/state/dhcp/dhcpd.leases
+find /mnt/flash/var/run \( -type f -o -type s \) -exec rm -f {} \;
+touch /mnt/flash/var/run/utmp
+chmod 644 /mnt/flash/var/run/utmp
+chown root:utmp /mnt/flash/var/run/utmp
+touch /mnt/flash/var/log/wtmp
+chmod 664 /mnt/flash/var/log/wtmp
+chown root:utmp /mnt/flash/var/log/wtmp
+
+# /var/log
+rm -rf /mnt/flash/var/log/snort/*
+find /mnt/flash/var/log -type f -exec rm -f {} \;
+tar -C /mnt/flash -czf /mnt/flash/var/log_compressed/log.tgz var/log/
+rm -rf /mnt/flash/var/log/
+ln -sf /ram/log /mnt/flash/var/log
+
+# Other files
+cp -a  /sbin /mnt/flash/
+cp -a  /bin  /mnt/flash/
+cp -a  /lib  /mnt/flash/
+cp -a  /dev  /mnt/flash/
+
+# create the symlinks
+echo "`date '+%b %e %T'`: Creating $CF Sym Link"
+ln -sf /dev/"$CF" /mnt/flash/dev/harddisk
+
+echo "`date '+%b %e %T'`: Creating "$CF'1'" Sym Link"
+ln -sf /dev/$CF'1' /mnt/flash/dev/harddisk1
+
+echo "`date '+%b %e %T'`: Creating "$CF'2'" Sym Link"
+ln -sf /dev/$CF'2' /mnt/flash/dev/harddisk2
+
+echo "`date '+%b %e %T'`: Creating "$CF'3'" Sym Link"
+ln -sf /dev/$CF'3' /mnt/flash/dev/harddisk3
+
+echo "`date '+%b %e %T'`: Creating "$CF'4'" Sym Link"
+ln -sf /dev/$CF'4' /mnt/flash/dev/harddisk4
+
+
+cp -a  /root /mnt/flash/
+rm -f  /mnt/flash/root/.bash_history
+cp -a  /etc  /mnt/flash/
+rm -rf /mnt/flash/etc/{httpd/conf/ssl*,makedev.d/}
+rm -f  /mnt/flash/etc/ssh/*key
+rm -f  /mnt/flash/etc/httpd/server.*
+cp -a  /home /mnt/flash/
+rm -f  /home/httpd/html/graphs/*
+rm -f  /home/httpd/html/sgraph/*
+cp -a  /usr /mnt/flash
+rm -rf /mnt/flash/{tmp/,usr/tmp/,var/tmp/}
+ln -sf /ram/tmp/ /mnt/flash/tmp
+ln -sf /ram/tmp/ /mnt/flash/usr/tmp
+ln -sf /ram/tmp/ /mnt/flash/var/tmp
+ln -sf /dev/ram0 /mnt/flash/dev/ramdisk
+
+############################################################################
+#                                                                          #
+# Installing log backup cron job                                           #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Installing log backup cron job"
+cat >> /mnt/flash/var/spool/cron/root.orig <<EOF
+
+# Backup logs to flash
+02 * * * *     /etc/rc.d/rc.flash.down
+EOF
+chroot /mnt/flash /usr/bin/fcrontab -z >/dev/null 2>&1
+
+
+############################################################################
+#                                                                          #
+# Reconfiguring logrotate                                                  #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Reconfiguring logrotate"
+cp -pf logrotate.conf /mnt/flash/etc/
+
+
+############################################################################
+#                                                                          #
+# Installing new fstab                                                     #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Installing new fstab"
+cat /etc/fstab | sed -e 's/log\t/log_compressed/' > /mnt/flash/etc/fstab
+df | grep /mnt/flash
+
+
+############################################################################
+#                                                                          #
+# Touching /etc/FLASH                                                      #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Touching /etc/FLASH"
+touch /mnt/flash/etc/FLASH
+
+############################################################################
+#                                                                          #
+# Create the Grub.conf file with our parameters                            #
+#                                                                          #
+############################################################################
+cat > /mnt/flash/boot/grub/grub.conf <<EOF
+timeout 5
+default saved
+foreground = 16064e
+background = ffffff
+splashimage (hd0,0)/grub/ipcop.xpm.gz
+title IPCop
+  root (hd0,0)
+  kernel /vmlinuz root=/dev/$drive_ID panic=10 acpi=off ro $kernel_PARMS ramdisk_size=$ramdisk_KB
+  savedefault
+title IPCop SMP
+  root (hd0,0)
+  kernel /vmlinuz-smp root=/dev/$drive_ID panic=10 acpi=off ro $kernel_PARMS ramdisk_size=$ramdisk_KB
+  savedefault
+title IPCop (ACPI enabled)
+  root (hd0,0)
+  kernel /vmlinuz root=/dev/$drive_ID panic=10 ro $kernel_PARMS ramdisk_size=$ramdisk_KB
+  savedefault
+title IPCop SMP (ACPI HT enabled)
+  root (hd0,0)
+  kernel /vmlinuz-smp root=/dev/$drive_ID panic=10 acpi=ht ro $kernel_PARMS ramdisk_size=$ramdisk_KB
+  savedefault
+EOF
+
+
+############################################################################
+#                                                                          #
+# Installing grub                                                          #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Installing Grub"
+
+/usr/sbin/grub --batch <<EOF >/dev/null 2>&1
+device (hd0) /tmp/flash.img
+geometry (hd0)
+root (hd0,0)
+makeactive
+install $grub_PARMS (hd0,0)/grub/stage1 (hd0) (hd0,0)/grub/stage2 0x8000 p /grub/grub.conf
+quit
+EOF
+
+############################################################################
+#                                                                          #
+# Cleaning up                                                              #
+#                                                                          #
+############################################################################
+echo "`date '+%b %e %T'`: Cleaning up"
+rm -f verinfo
+umount /mnt/flash/var/log_compressed
+umount /mnt/flash/boot
+umount /mnt/flash
+losetup -d /dev/loop0
+losetup -d /dev/loop1
+losetup -d /dev/loop2
+mv /tmp/flash.img /tmp/$SIZE'flash.img'
+
+echo "`date '+%b %e %T'`: Mkflash For $SIZE Flash Drive On $CF Complete"

@@ -1,0 +1,133 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: configroot,v 1.9.2.23 2006/02/04 11:04:36 franck78 Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = configroot
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+
+	# Create all directories
+	for i in addon-lang alcatelusb auth backup backup/sets ca certs cnx_pci crls ddns dhcp dhcpc dmzholes \
+	    eagle-usb eciadsl ethernet isdn key langs logging main modem optionsfw patches portfw \
+	    ppp private proxy red remote shaping snort time vpn wireless xtaccess ; do \
+	        mkdir -p $(CONFIG_ROOT)/$$i; \
+	done
+
+	# Touch empty files
+	for i in auth/users backup/include.user backup/exclude.user \
+	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
+	    dhcp/fixleases dhcp/advoptions dmzholes/config ethernet/aliases ethernet/settings \
+	    isdn/settings main/hosts main/settings optionsfw/settings patches/available patches/installed \
+	    portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
+	    ppp/settings-5 ppp/settings proxy/settings remote/settings shaping/settings \
+	    shaping/config snort/settings vpn/config vpn/settings vpn/ipsec.conf \
+	    vpn/ipsec.secrets vpn/caconfig wireless/config wireless/settings; do \
+	        touch $(CONFIG_ROOT)/$$i; \
+	done
+
+	# Copy initial configfiles
+	cp $(DIR_SRC)/config/cfgroot/header.pl			$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/general-functions.pl	$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/backup-exclude  		$(CONFIG_ROOT)/backup/exclude.system
+	cp $(DIR_SRC)/config/cfgroot/backup-include		$(CONFIG_ROOT)/backup/include.system
+	cp $(DIR_SRC)/config/cfgroot/backup-exclude.hardware	$(CONFIG_ROOT)/backup/exclude.hardware
+	cp $(DIR_SRC)/config/cfgroot/advoptions-list		$(CONFIG_ROOT)/dhcp/advoptions-list
+	cp $(DIR_SRC)/config/cfgroot/modem-defaults		$(CONFIG_ROOT)/modem/defaults
+	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
+	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
+	cp $(DIR_SRC)/config/cfgroot/xtaccess-config		$(CONFIG_ROOT)/xtaccess/config
+	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
+	cp $(DIR_SRC)/config/cfgroot/logging-settings		$(CONFIG_ROOT)/logging/settings
+	cp $(DIR_SRC)/config/cfgroot/ipcop.gpg			$(CONFIG_ROOT)/key/
+	cp $(DIR_SRC)/langs/list				$(CONFIG_ROOT)/langs/
+
+	# Oneliner configfiles
+	echo  "ENABLED=off"		> $(CONFIG_ROOT)/vpn/settings
+	echo  "VPN_DELAYED_START=0"	>>$(CONFIG_ROOT)/vpn/settings
+	echo  "01"			> $(CONFIG_ROOT)/certs/serial
+	echo  "nameserver    1.2.3.4"	> $(CONFIG_ROOT)/ppp/fake-resolv.conf
+	echo "DISABLEPING=NO"		> $(CONFIG_ROOT)/optionsfw/settings
+
+	# Symbolic links
+	ln -sf /etc/rc.d/rc.updatered $(CONFIG_ROOT)/dhcpc/dhcpcd.exe
+
+	# Modify variables in header.pl
+	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
+	    -e "s+VERSION+$(VERSION)+g" \
+	    $(CONFIG_ROOT)/header.pl
+
+	# Modify variables in general-functions.pl
+	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
+	    -e "s+VERSION+$(VERSION)+g" \
+	    $(CONFIG_ROOT)/general-functions.pl
+
+	# Modify CONFIG_ROOT in lang.pl
+	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
+	    $(CONFIG_ROOT)/lang.pl
+
+	# Language files
+	for i in $(DIR_SRC)/langs/*/cgi-bin/*.pl ; do \
+	    cp $$i $(CONFIG_ROOT)/langs/; \
+	done
+
+	# Configroot permissions
+	chown -R nobody:nobody $(CONFIG_ROOT)
+	chown      root:root   $(CONFIG_ROOT)
+	for i in backup/ header.pl general-functions.pl lang.pl addon-lang/ langs/ red/ ; do \
+            chown -R root:root $(CONFIG_ROOT)/$$i; \
+	done
+	chown nobody:nobody $(CONFIG_ROOT)/backup/sets
+	chown root:nobody $(CONFIG_ROOT)/dhcpc
+
+	@$(POSTBUILD)

@@ -1,0 +1,12 @@
+#!/bin/ash
+echo "Mounting proc" 
+mount /proc
+
+echo "Starting syslogd"
+syslogd -L -O /dev/tty2
+
+echo "Silencing kernel"
+echo >/proc/sys/kernel/printk "1 4 1 7"
+
+echo "Disabling screen blanking"
+echo -n -e "\033[9;0]"

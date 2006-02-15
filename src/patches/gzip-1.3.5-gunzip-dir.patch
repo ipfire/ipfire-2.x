@@ -1,0 +1,14 @@
+fix CAN-2005-1228 directory traversal bug
+borrowed from fedora
+
+--- gzip-1.3.5/gzip.c.pom	2005-04-29 14:25:23.000000000 +0200
++++ gzip-1.3.5/gzip.c	2005-04-29 14:24:42.000000000 +0200
+@@ -1344,6 +1344,8 @@
+ 			error("corrupted input -- file name too large");
+ 		    }
+ 		}
++		char *base2 = base_name (base);   /* there should be problem with file name */
++		strcpy(base, base2);              /* in this name there can't be path */
+                 /* If necessary, adapt the name to local OS conventions: */
+                 if (!list) {
+                    MAKE_LEGAL_NAME(base);

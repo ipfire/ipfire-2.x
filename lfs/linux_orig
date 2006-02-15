@@ -1,0 +1,310 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: linux,v 1.42.2.63 2006/01/30 12:51:21 franck78 Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 2.4.31
+
+THISAPP    = linux-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_KERNEL)/linux/kernel/v2.4
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+CFLAGS     =
+CXXFLAGS   =
+
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+ifeq "$(LFS_PASS)" "ipcop"
+ifeq "$(SMP)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop
+endif
+ifeq "$(SMP)" "1"
+  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop-smp
+endif
+ifeq "$(SMP)" "installer"
+  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop-installer
+endif
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)
+endif
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+endif
+
+# make a kernel/iptables diff in build/usr/src to control patch system when DIFFCONTROL = yes
+DIFFCONTROL = yes
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects =$(DL_FILE) \
+	openswan-1.0.10.tar.gz \
+	iptables-1.3.4.tar.bz2 \
+	patch-o-matic-ng-20050918.tar.bz2 \
+	patch-o-matic-ng-20051229.tar.bz2
+
+$(DL_FILE)				= $(DL_FROM)/$(DL_FILE)
+openswan-1.0.10.tar.gz			= http://www.openswan.org/download/openswan-1.0.10.tar.gz
+iptables-1.3.4.tar.bz2			= http://www.netfilter.org/projects/iptables/files/iptables-1.3.4.tar.bz2
+patch-o-matic-ng-20050918.tar.bz2	= http://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-20050918.tar.bz2
+patch-o-matic-ng-20051229.tar.bz2	= http://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-20051229.tar.bz2
+
+$(DL_FILE)_MD5				= ea3f99fc82617886059d58d0644dab26
+openswan-1.0.10.tar.gz_MD5		= 3767814e3c080d146a8c7233dc31e0a9
+iptables-1.3.4.tar.bz2_MD5		= fdff8abe890807968226b0c374335305
+patch-o-matic-ng-20050918.tar.bz2_MD5	= 5af06b5d1430a8ce6f2c6d8ead2f8365
+patch-o-matic-ng-20051229.tar.bz2_MD5	= f68169268dbfc30acfeab159be279752
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC) && ln -sf linux-$(VER) linux
+	cd $(DIR_APP) && sed -i -e 's/-Werror//' drivers/scsi/aic7xxx/Makefile
+	# fix 2.4.31 invalid assembler code. Patch is included in 2.4.32 kernel source
+	cd $(DIR_SRC) && patch -p0  < $(DIR_SRC)/src/patches/linux-2.4-seg-4.patch
+
+	# Openswan
+	cd $(DIR_SRC) && rm -rf openswan-*
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-1.0.10.tar.gz
+	cd $(DIR_SRC)/openswan-1.0.10 && patch -Np1 < $(DIR_SRC)/src/patches/openswan-1.0.1-plutoctl.patch
+	cd $(DIR_SRC)/openswan-1.0.10 && patch -Np1 < $(DIR_SRC)/src/patches/openswan-1.0.6-numif.patch
+	cd $(DIR_SRC)/openswan-1.0.10 && sed -i 's+^KERNELSRC.*$$+KERNELSRC=$(ROOT)/usr/src/linux-$(VER)+' Makefile.inc
+	cd $(DIR_SRC)/openswan-1.0.10 && sed -i -e 's/local\/sbin/local\/sbin:\/tools\/bin/' utils/patcher
+	cd $(DIR_SRC)/openswan-1.0.10 && make insert
+
+	# Iptables
+	cd $(DIR_SRC) && rm -rf iptables-* $(DIR_SRC)/iptables
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.4.tar.bz2
+	cd $(DIR_SRC) && ln -sf iptables-1.3.4 iptables
+	
+ifeq "$(DIFFCONTROL)" "yes"
+	# optional control of patching system
+	cd $(DIR_APP) && make distclean 	# After patching, distclean remove .c~ .h~ but add .config.default
+	cd $(DIR_SRC) && rm -rf linux-$(VER)-origin iptables-1.3.4-origin
+	cd $(DIR_SRC) && cp -rf linux-$(VER) linux-$(VER)-origin
+	cd $(DIR_SRC) && cp -rf iptables-1.3.4 iptables-1.3.4-origin
+endif
+	# Used to revert to old 'string' implementation as it is the only one know by pom for kernel 2.4
+	cd $(DIR_SRC)/iptables-1.3.4 && patch -Np1 -R < $(DIR_SRC)/src/patches/iptables-1.3.4-old-string.patch
+
+	# Patch-o-matic
+	cd $(DIR_SRC) && rm -rf patch-o-matic*
+
+	# Install extensions no more available on later pom snapshots,
+	# 20050918 is the last with old extensions
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20050918.tar.bz2
+	cd $(DIR_SRC)/patch-o-matic-ng-20050918/patchlets && \
+		cp -f $(DIR_SRC)/src/patches/patch-o-matic-ng-20040621_nf-log_2.4.29.patch nf-log/linux-2.4.patch
+
+	cd $(DIR_SRC)/patch-o-matic-ng-20050918 && ./runme --batch \
+						--kernel-path=$(ROOT)/usr/src/linux/ \
+						--iptables-path=$(ROOT)/usr/src/iptables/ \
+			IPV4OPTSSTRIP NETLINK NETMAP REJECT SAME TARPIT TTL connlimit cuseeme-nat dstlimit \
+			fuzzy h323-conntrack-nat iprange mms-conntrack-nat mport nf-log nth pool \
+			pptp-conntrack-nat psd quake3-conntrack-nat quota random raw realm rtsp-conntrack \
+			set string time u32
+
+	# More recent pom-ng snapshot with updates for
+	# ipv4options, osf
+	cd $(DIR_SRC) && rm -rf patch-o-matic*
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20051229.tar.bz2
+
+	cd $(DIR_SRC)/patch-o-matic-ng-20051229 && ./runme --batch \
+						--kernel-path=$(ROOT)/usr/src/linux/ \
+						--iptables-path=$(ROOT)/usr/src/iptables/ \
+						ipv4options osf
+
+	# This patch changes /proc/net/ip_conntrack to mode 0440
+	# and messes up the connections.cgi page. So remove it for now.
+	# As of 2.4.27 it's in as standard, use the patch to reverse the change.
+	cd $(DIR_APP) && patch -Np1 -R < $(DIR_SRC)/src/patches/pom-ng_proc-net-conntrack-permissions.patch
+
+
+ifeq "$(DIFFCONTROL)" "yes"
+	# optional control of patching system
+	cd $(DIR_APP) && make distclean				# remove .c~ .h~ due to patches
+	cd $(DIR_SRC)/iptables-1.3.4 && make distclean
+	# ignore error on difference as we patch for that
+	-cd $(DIR_SRC) && diff -Nur linux-$(VER)-origin linux-$(VER) > pom-ng.diff
+	-cd $(DIR_SRC) && diff -Nur iptables-1.3.4-origin iptables-1.3.4 >> pom-ng.diff
+	cd $(DIR_SRC) && rm -rf linux-$(VER)-origin iptables-1.3.4-origin
+endif
+
+ifeq "$(SMP)" ""
+	# Only do this once on the non-SMP pass
+	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.4
+endif
+
+	# Olitec isdn gazel patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/linux-2.4.23-olitec-isdn.patch
+
+	# Fix /proc/stat output
+	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/linux-2.4.26-proc-stat.patch
+
+	# Fix libata-core.c
+	# cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/linux-2.4.26-scsi.patch
+
+	# frandom patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.27-frandom-2.patch
+
+	# Propolice
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.27-ssp-1.patch
+
+	# Support ppp-2.4.3 multilink behavior (terminate when no channel is connected)
+	# need updated libpcap older than 0.8.3
+	# cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp_generic-ppp-2.4.3_multilink.patch
+
+	# R8169 clone D-link GSE-528T
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.29_r8169clone.patch
+
+	# Cleanup kernel source
+	cd $(DIR_APP) && make mrproper
+ifeq "$(ROOT)" ""
+ifeq "$(LFS_PASS)" "ipcop"
+ifeq "$(SMP)" ""
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
+endif
+ifeq "$(SMP)" "1"
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).smp $(DIR_APP)/.config
+endif
+ifeq "$(SMP)" "installer"
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).installer $(DIR_APP)/.config
+	cd $(DIR_APP) && sed -i -e 's/-O2/-Os/g' Makefile
+endif
+
+	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
+	cd $(DIR_APP) && make CC="$(KGCC)" dep
+	cd $(DIR_APP) && make CC="$(KGCC)" clean
+	if [ "$(MACHINE)" = "i386" -a "$(SMP)" = "" ]; then \
+		cd $(DIR_APP) && make -j 3 CC="$(KGCC)" bzImage; \
+		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-$(VER); \
+		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER); \
+		ln -sf vmlinuz-$(VER) /boot/vmlinuz; \
+		ln -sf System.map-$(VER) /boot/System.map; \
+		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
+		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
+	elif [ "$(MACHINE)" = "i386" -a "$(SMP)" = "1" ]; then \
+		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -smp/' Makefile; \
+		cd $(DIR_APP) && make -j 3 CC="$(KGCC)" bzImage; \
+		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-$(VER)-smp; \
+		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER)-smp; \
+		ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-smp; \
+		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
+		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
+	elif [ "$(MACHINE)" = "i386" -a "$(SMP)" = "installer" ]; then \
+		cd $(DIR_APP) && make -j 3 CC="$(KGCC)" bzImage; \
+		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-installer; \
+	elif [ "$(MACHINE)" = "alpha" ]; then \
+		cd $(DIR_APP) && make -j 3 CC="$(KGCC)" vmlinux; \
+		cd $(DIR_APP) && gzip -9c vmlinux > /boot/vmlinuz-$(VER); \
+		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER); \
+		ln -sf vmlinuz-$(VER) /boot/vmlinuz; \
+		ln -sf System.map-$(VER) /boot/System.map; \
+		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
+		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
+	fi
+	# remove symlinked pcmcia directory
+ifeq "$(SMP)" ""
+	rm -rf /lib/modules/$(VER)/pcmcia
+	find /lib/modules/$(VER)/ -name '*.o' -a -type f | xargs gzip -f9
+
+	# Move these SCSI drivers into same directory for probescsi.sh
+	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/aic7xxx/*     /lib/modules/$(VER)/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/aic7xxx
+	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/aacraid/*     /lib/modules/$(VER)/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/aacraid
+	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2
+endif
+ifeq "$(SMP)" "1"
+	rm -rf /lib/modules/$(VER)-smp/pcmcia
+	find /lib/modules/$(VER)-smp/ -name '*.o' -a -type f | xargs gzip -f9
+
+	# Move these SCSI drivers into same directory for probescsi.sh
+	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/aic7xxx/*     /lib/modules/$(VER)-smp/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/aic7xxx
+	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/aacraid/*     /lib/modules/$(VER)-smp/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/aacraid
+	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)-smp/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/sym53c8xx_2
+endif
+
+ifeq "$(SMP)" ""
+	# Only do this once on the non-SMP pass
+	cd $(DIR_APP) && make mandocs
+	-mkdir -p /usr/share/man/man9/
+	cd $(DIR_APP) && cp -af Documentation/man/* /usr/share/man/man9/
+endif
+else
+	cd $(DIR_APP) && make include/linux/version.h
+	cd $(DIR_APP) && make symlinks
+	cd $(DIR_APP) && cp -HRf include/asm /usr/include
+	cd $(DIR_APP) && cp -Rf include/asm-generic /usr/include
+	cd $(DIR_APP) && cp -Rf include/linux /usr/include
+	touch /usr/include/linux/autoconf.h
+endif
+else
+	cd $(DIR_APP) && make include/linux/version.h
+	cd $(DIR_APP) && make symlinks
+	-mkdir -p /tools/include/asm
+	cd $(DIR_APP) && cp -f include/asm/* /tools/include/asm
+	cd $(DIR_APP) && cp -Rf include/asm-generic /tools/include
+	cd $(DIR_APP) && cp -Rf include/linux /tools/include
+	cd $(DIR_APP) && touch /tools/include/linux/autoconf.h
+endif
+	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables*
+	@$(POSTBUILD)

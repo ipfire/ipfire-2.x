@@ -1,0 +1,126 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: coreutils,v 1.5.2.8 2006/01/21 15:01:58 franck78 Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 5.93
+
+THISAPP    = coreutils-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_GNU)/coreutils
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  EXTRA_CONFIG = --prefix=/usr --disable-nls
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  EXTRA_CONFIG = --prefix=/tools --disable-nls --host=$(MACHINE)
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects =$(DL_FILE) $(THISAPP)-uname-1.patch
+
+$(DL_FILE)                      = $(DL_FROM)/$(DL_FILE)
+$(THISAPP)-uname-1.patch        = $(URL_LFS)/coreutils/$(THISAPP)-uname-1.patch
+
+$(DL_FILE)_MD5                  = 955d8abfd3dd8af2ca3af51480f1f9af
+$(THISAPP)-uname-1.patch_MD5    = c05b735710fbd62239588c07084852a0
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-uname-1.patch
+ifneq "$(ROOT)" ""
+	#previous patch of uname implies rebuild of doc/uname.1 which fails; remove doc&man build from toolchain
+	cd $(DIR_APP) && sed -i "s/SUBDIRS = lib src doc man po tests/SUBDIRS = lib src po tests/g" Makefile.in
+endif
+	cd $(DIR_APP) && DEFAULT_POSIX2_VERSION=199209 ./configure $(EXTRA_CONFIG)
+	cd $(DIR_APP) && make -j 3 $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	#use hostname from inet-tools
+ifeq "$(ROOT)" ""
+	rm /usr/bin/hostname
+	mv -f /usr/bin/{basename,cat,chgrp,chmod,chown,cp,dd,df} /bin
+	mv -f /usr/bin/{dir,dircolors,du,date,echo,false,head} /bin
+	mv -f /usr/bin/{install,ln,ls,mkdir,mkfifo,mknod,mv,pwd} /bin
+	mv -f /usr/bin/{rm,rmdir,shred,sync,sleep,stty,su,test} /bin
+	mv -f /usr/bin/{touch,true,uname,vdir} /bin
+	mv -f /usr/bin/chroot /usr/sbin
+	ln -sf test /bin/[
+	ln -sf ../../bin/install /usr/bin
+	mv -f /bin/uname /bin/uname.bak
+	echo '#!/bin/bash'				>  /bin/uname
+	echo '/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g'' >> /bin/uname
+	chmod 755 /bin/uname
+else
+	rm /tools/bin/hostname
+	mv -f /tools/bin/uname /tools/bin/uname.bak
+	echo '#!/bin/bash'					>  /tools/bin/uname
+	echo '/tools/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g''	>> /tools/bin/uname
+	chmod 755 /tools/bin/uname
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

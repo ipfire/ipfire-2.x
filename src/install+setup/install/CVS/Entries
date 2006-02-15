@@ -1,0 +1,18 @@
+/Makefile/1.6.2.2/Wed Jan 11 01:01:38 2006//TIPCOP_v1_4_0
+/cdrom.c/1.6.2.1/Wed Apr 14 22:05:39 2004//TIPCOP_v1_4_0
+/config.c/1.6.2.3/Wed Dec  7 20:42:48 2005//TIPCOP_v1_4_0
+/grubbatch/1.1.2.5/Mon Sep 13 17:00:53 2004//TIPCOP_v1_4_0
+/ide.c/1.4/Thu Dec 11 11:25:53 2003//TIPCOP_v1_4_0
+/install.h/1.10.2.4/Wed Jan 11 01:01:38 2006//TIPCOP_v1_4_0
+/install2.c/1.1.2.3/Tue Jan 31 00:51:50 2006//TIPCOP_v1_4_0
+/main.c/1.63.2.64/Wed Jan 11 01:01:38 2006//TIPCOP_v1_4_0
+/net.c/1.8.2.2/Wed Apr 14 22:05:40 2004//TIPCOP_v1_4_0
+/nic.c/1.8.2.2/Sat Dec 24 09:08:26 2005//TIPCOP_v1_4_0
+/pcmcia.c/1.6.2.4/Thu Dec  8 02:12:28 2005//TIPCOP_v1_4_0
+/pcmcia.h/1.1/Sun Jan 25 09:34:59 2004//TIPCOP_v1_4_0
+/probescsi.sh/1.8.2.4/Mon Sep 20 19:42:32 2004//TIPCOP_v1_4_0
+/scsi.c/1.2.2.1/Tue Dec  6 18:26:36 2005//TIPCOP_v1_4_0
+/upgrade-v12-v13.c/1.2.2.3/Thu Nov 11 09:39:25 2004//TIPCOP_v1_4_0
+/upgrade-v130-v140.c/1.12.2.35/Thu Nov 11 09:40:03 2004//TIPCOP_v1_4_0
+/usb.c/1.9.2.8/Sat Dec 10 00:18:23 2005//TIPCOP_v1_4_0
+D

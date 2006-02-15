@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# $Id: rc.eagleusbadsl,v 1.5.2.11 2005/07/07 20:11:58 franck78 Exp $
+#
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ppp/settings)
+
+# Debugging. Comment it out to stop logging
+DEBUG="yes"
+msg() {
+	if [ "z$DEBUG" != "z" ] ; then
+		/usr/bin/logger -t red "EAGLE-USB: $*"
+	fi
+	/bin/echo "$*"
+}
+IFACE="eth3"
+DSPstr="Please send DSP (eaglectrl -d)"
+
+# See how we were called.
+case "$1" in
+  start)
+	if [ ! -f "/proc/bus/usb/devices" ]; then
+		msg "No USB enabled"
+		exit 1
+	fi
+	
+	if [ "$LINE" != "WO" -a "$LINE" != "FR" -a "$LINE" != "IT" -a "$LINE" != "ES" ]; then
+		LINE='WO' # default CMV value
+	fi
+	
+	/bin/ln -f -s /etc/eagle-usb/CMVep$LINE.txt /etc/eagle-usb/CMVep.txt
+	/bin/ln -f -s /etc/eagle-usb/CMVeiWO.txt /etc/eagle-usb/CMVei.txt
+
+	if ( /sbin/ifconfig | /bin/grep -q "$IFACE" ); then
+		/sbin/ifconfig "$IFACE" down
+	fi
+	if ( ! /sbin/lsmod | /bin/grep -q [e]agle-usb ); then
+		/sbin/modprobe eagle-usb if_name="$IFACE"
+		# let some time to load firmware
+		/bin/sleep 8
+	fi
+	if [[ ( -e CONFIG_ROOT/ppp/updatesettings) ||
+			( `/usr/sbin/eaglestat | /bin/grep "$DSPstr"` = "$DSPstr" ) ]]; then
+		/usr/sbin/eaglectrl -d -oCONFIG_ROOT/eagle-usb/eagle-usb.conf
+		if [ $? -ne 0 ]; then
+			msg "init fail"
+			exit 1
+		fi
+	fi
+	/usr/sbin/eaglectrl -s90
+	if [ $? -ne 0 ]; then
+		msg "synchronisation fail"
+		exit 1
+	fi
+	/sbin/ifconfig `/usr/sbin/eaglectrl -i` 10.0.0.139 netmask 255.255.255.254 up
+	if [ $? -ne 0 ]; then
+		msg "ifconfig fail"
+		exit 1
+	fi
+	;;
+  stop)
+	msg "stop"
+	;;
+  cleanup)
+	msg "driver cleanup"
+	/sbin/ifconfig "$IFACE" down
+	/sbin/modprobe -r eagle-usb
+	;;
+  *)
+	/bin/echo "Usage: $0 {start|stop|cleanup}"
+	exit 1
+	;;
+esac
+
+exit 0

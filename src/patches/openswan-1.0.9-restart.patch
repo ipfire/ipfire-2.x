@@ -1,0 +1,73 @@
+diff -rNu pluto.orig/constants.h pluto/constants.h
+--- pluto.orig/constants.h	2004-07-21 16:33:16.000000000 +0200
++++ pluto/constants.h	2004-08-22 22:45:59.000000000 +0200
+@@ -298,8 +298,9 @@
+ /* Dead Peer Detection actions */
+ 
+ enum dpd_action {
+-  DPD_ACTION_CLEAR = 0,
+-  DPD_ACTION_HOLD  = 1
++  DPD_ACTION_CLEAR    = 0,
++  DPD_ACTION_HOLD     = 1,
++  DPD_ACTION_RESTART  = 2
+ };
+ 
+ /* Timer events */
+diff -rNu pluto.orig/ipsec_doi.c pluto/ipsec_doi.c
+--- pluto.orig/ipsec_doi.c	2004-04-03 18:48:10.000000000 +0200
++++ pluto/ipsec_doi.c	2004-08-22 22:32:15.000000000 +0200
+@@ -5504,7 +5528,7 @@
+ 
+     action = st->st_connection->dpd_action;
+ 
+-    passert(action == DPD_ACTION_HOLD || action == DPD_ACTION_CLEAR);
++    passert(action == DPD_ACTION_HOLD || action == DPD_ACTION_CLEAR || action == DPD_ACTION_RESTART);
+ 
+     loglog(RC_LOG_SERIOUS, "DPD: Info: No response from peer - declaring peer dead");
+ 
+@@ -5521,11 +5545,20 @@
+ 	   force an initiation of the conn again.  */
+ 	loglog(RC_LOG_SERIOUS, "DPD: Info: Putting connection into %%trap");
+ 
+-    } else {
++    } else if(action == DPD_ACTION_CLEAR) {
+ 	/* dpdaction=clear - Wipe the SA, eroute - everything */
+ 
+ 	loglog(RC_LOG_SERIOUS, "DPD: Info: Clearing Connection");
+ 	unroute_connection(c);
++    } else {
++	/* dpdaction=clear - Wipe the SA, eroute - everything, then restart */
++
++	loglog(RC_LOG_SERIOUS, "DPD: Info: Restarting Connection");
++	unroute_connection(c);
++        if (c->kind == CK_PERMANENT) {
++            c->initiated = TRUE;
++            ipsecdoi_initiate(NULL_FD, c, c->policy, 1, SOS_NOBODY);
++        }
+     }
+ }
+ #endif
+diff -rNu pluto.orig/whack.c pluto/whack.c
+--- pluto.orig/whack.c	2004-03-01 13:54:10.000000000 +0100
++++ pluto/whack.c	2004-08-22 22:34:56.000000000 +0200
+@@ -1033,6 +1033,9 @@
+ 	    if( strcmp(optarg, "hold") == 0) {
+ 		    msg.dpd_action = DPD_ACTION_HOLD;
+ 	    }
++	    if( strcmp(optarg, "restart") == 0) {
++		    msg.dpd_action = DPD_ACTION_RESTART;
++	    }
+ 	    continue;
+ 
+ #endif
+@@ -1235,8 +1238,8 @@
+ 	    diag("dpddelay specified, but dpdtimeout is zero, both should be specified");
+     if(!msg.dpd_delay && msg.dpd_timeout)
+ 	    diag("dpdtimeout specified, but dpddelay is zero, both should be specified");
+-    if(msg.dpd_action != DPD_ACTION_CLEAR && msg.dpd_action != DPD_ACTION_HOLD) {
+-	    diag("dpdaction can only be \"clear\" or \"hold\", defaulting to \"hold\"");
++    if(msg.dpd_action != DPD_ACTION_CLEAR && msg.dpd_action != DPD_ACTION_HOLD && msg.dpd_action != DPD_ACTION_RESTART) {
++	    diag("dpdaction can only be \"restart\", \"clear\" or \"hold\", defaulting to \"hold\"");
+ 	    msg.dpd_action = DPD_ACTION_HOLD;
+     }
+ #endif

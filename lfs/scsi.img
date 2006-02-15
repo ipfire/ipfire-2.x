@@ -1,0 +1,84 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: scsi.img,v 1.19.2.4 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = scsi-$(VERSION).img
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+
+	# Create SCSI drivers
+	-mkdir -p /install/images
+	cd /tmp && rm -rf scsi.tgz scsi.tar bin etc lib var
+
+	cd / && tar -cf /tmp/scsi.tar lib/modules/$(KVER)/kernel/drivers/{scsi,pcmcia,message/fusion} lib/modules/$(KVER)/kernel/drivers/block/{DAC960.o.gz,cpqarray.o.gz,cciss.o.gz} lib/modules/$(KVER)/kernel/drivers/ide
+	cd /tmp && tar xf scsi.tar
+	cd /tmp && rm -f lib/modules/$(KVER)/kernel/drivers/message/fusion/mptlan*
+	cd /tmp && mkdir -p {bin,etc/pcmcia/scsi,var/lib/pcmcia,var/run}
+	cd /tmp && cp -aR /install/misc/bin/* bin
+	cd /tmp && cp -r /etc/pcmcia/{config*,scsi*} etc/pcmcia/scsi
+	# cardmgr wants to execute these to bring up the card, we'll
+	# create blank ones as we'll bring them up ourselves
+	cd /tmp/etc/pcmcia/scsi && rm -f scsi
+	cd /tmp/etc/pcmcia/scsi && touch scsi
+	cd /tmp/etc/pcmcia/scsi && chmod +x scsi
+	cd /tmp && tar -cf - bin/ etc/pcmcia var lib/modules/$(KVER) | gzip -9 -c > scsi.tgz
+
+	if [ "$(MACHINE)" = "alpha" ]; then \
+		cp /tmp/scsi.tgz /install/images/scsidrv-$(VERSION).img; \
+	else \
+		dd if=/tmp/scsi.tgz of=/install/images/scsidrv-$(VERSION).img bs=1440k count=1 conv=sync; \
+	fi
+	rm -f /tmp/scsi.tgz
+
+	### If this fails, the disk is TOO FULL !!!!
+	tar tfz /install/images/scsidrv-$(VERSION).img >/dev/null 2>&1
+
+	@$(POSTBUILD)

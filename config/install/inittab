@@ -1,0 +1,10 @@
+# System initialization.
+::sysinit:/etc/rc
+
+# Run gettys in standard runlevels
+tty1::respawn:/bin/iowrap /dev/tty1 /bin/ash --login -c "/bin/install /dev/tty2"
+tty3::respawn:/bin/iowrap /dev/tty3 /bin/ash --login
+
+# Stuff to do before rebooting
+::ctrlaltdel:/etc/halt
+::shutdown:/etc/halt

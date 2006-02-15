@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# $Id: rc.netaddress.down,v 1.3.2.1 2005/07/07 20:11:58 franck78 Exp $
+#
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ethernet/settings)
+eval $(/usr/local/bin/readhash CONFIG_ROOT/dhcp/settings)
+
+# GREEN
+if [ "$1" != "NOTGREEN" ]; then
+	ifconfig $GREEN_DEV down 2> /dev/null
+fi
+
+# ORANGE
+if [ "$ORANGE_DEV" != "" ]; then
+	ifconfig $ORANGE_DEV down 2> /dev/null
+fi
+
+# BLUE
+if [ "$BLUE_DEV" != "" ]; then
+	ifconfig $BLUE_DEV down 2> /dev/null
+fi
+
+# RED
+/etc/rc.d/rc.red stop
+sleep 3
+/etc/rc.d/rc.red clear

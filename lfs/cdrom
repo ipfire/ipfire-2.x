@@ -1,0 +1,165 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: cdrom,v 1.1.2.30 2006/01/30 22:54:33 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = cdrom
+DL_FILE    = rawrite.exe
+DL_FROM    = http://www.tux.org/pub/dos/rawrite
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) \
+	rawwritewin-0.7.zip \
+	install-en-1.4.0.pdf.zip \
+	install-fr-1.4.0.pdf.zip \
+	quickstart-en.pdf.zip \
+	quickstart-fr-1.4.0.pdf.zip
+
+$(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
+rawwritewin-0.7.zip         = http://uranus.it.swin.edu.au/~jn/linux/rawwritewin-0.7.zip
+install-en-1.4.0.pdf.zip    = $(URL_SFNET)/ipcop/install-en-1.4.0.pdf.zip
+install-fr-1.4.0.pdf.zip    = $(URL_SFNET)/ipcop/install-fr-1.4.0.pdf.zip
+quickstart-en.pdf.zip       = http://www.ipcop.org/1.4.0/en/quickstart/quickstart-en.pdf.zip
+quickstart-fr-1.4.0.pdf.zip = http://www.ipcop.org/1.4.0/fr/quickstart/quickstart-fr-1.4.0.pdf.zip
+
+$(DL_FILE)_MD5                  = 7dac6ea496014d32dbce6c50feb254ca
+rawwritewin-0.7.zip_MD5         = 0130b497c8c3bc7d136a4236b0d9fbf6
+install-en-1.4.0.pdf.zip_MD5    = 07e0b5131f1434010d8a00571f9acd81
+install-fr-1.4.0.pdf.zip_MD5    = 2deb9d3bc46779cff18b681625fc4418
+quickstart-en.pdf.zip_MD5       = ca77ef5f1efca6bc519cc42acfd69aa4
+quickstart-fr-1.4.0.pdf.zip_MD5 = 7ec474aea03acba10371eb92579b0dec
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	rm -rf /install/cdrom /tmp/*
+
+	# Compress root filesystem
+	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
+	mkdir -p /install/cdrom/{doc,dosutils,images}
+	tar -c -C / --files-from=$(DIR_SRC)/src/ROOTFILES.$(MACHINE) \
+	    -f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
+	    --exclude='proc/*'
+	tar -x -C /tmp -f /$(SNAME).tar
+	rm -f /$(SNAME).tar
+	cd /tmp && tar zcf /install/cdrom/$(SNAME)-$(VERSION).tgz * && rm -rf *
+	# Other files
+	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt \
+		> /install/cdrom/README.txt
+	cp $(DIR_SRC)/doc/COPYING             /install/cdrom/
+	cp /install/images/*.img              /install/cdrom/images
+	unzip $(DIR_DL)/install-en-1.4.0.pdf.zip -d /install/cdrom/doc/english
+	unzip $(DIR_DL)/quickstart-en.pdf.zip -d /install/cdrom/doc/english
+	unzip $(DIR_DL)/install-fr-1.4.0.pdf.zip -d /install/cdrom/doc/francais
+	unzip $(DIR_DL)/quickstart-fr-1.4.0.pdf.zip -d /install/cdrom/doc/francais
+	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt} /install/cdrom/doc
+	cp $(DIR_DL)/rawrite.exe              /install/cdrom/dosutils
+	unzip -j -L $(DIR_DL)/rawwritewin*.zip -x "*.txt" -d /install/cdrom/dosutils
+
+	# make the CDROM iso, USB(superfloppy&partionned) iso
+	if [ "$(MACHINE)" == "i386" ]; then \
+		mkdir -p /install/cdrom/boot/isolinux; \
+		dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
+		cp /install/images/cdinitrd.gz              /install/cdrom/boot/isolinux/instroot.gz; \
+		cp /boot/vmlinuz-installer                    /install/cdrom/boot/isolinux/vmlinuz; \
+		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/cdrom/boot/isolinux/isolinux.cfg; \
+		cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
+		sed -e 's/boot IPCop/boot IPCop $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
+			> /install/message; \
+		cp /install/message /install/cdrom/boot/isolinux/message; \
+		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
+			-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
+			-c boot/isolinux/boot.catalog \
+			. > /install/images/$(SNAME)-install-$(VERSION).$(MACHINE).iso; \
+		echo "compute size +32 blocks for bootsector/fat/etc..." && \
+		dd bs=1024 count=$$((`du -k -s ../cdrom|awk '{print $$1}'` + 32)) if=/dev/zero of=/install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso; \
+		echo "move boot files on top of disk" && \
+		rm -rf boot && \
+		mkdosfs -n IPCOPBOOT -F 16 -I /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
+		mount -t vfat -o loop /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso /install/mnt && \
+		cp -R ../cdrom/* /install/mnt && \
+		cp /install/images/cdinitrd.gz              /install/mnt/instroot.gz && \
+		cp /boot/vmlinuz-installer                  /install/mnt/vmlinuz && \
+		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/mnt/syslinux.cfg && \
+		cp /install/message /install/mnt/message && \
+		umount /install/mnt && echo "and make the isofile a bootable system ready for dd" && \
+		syslinux /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
+		echo "# Build the USB-partitionned scheme ISO (cover majority of BIOS)" && \
+		ISOs=/install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
+		ISOp=/install/images/$(SNAME)-install-usbp-$(VERSION).$(MACHINE).iso && \
+		dd bs=1k if=/dev/zero of=$$ISOp count=$$((`du -k -s $$ISOs | awk '{print $$1}'` + 10 )) && \
+		echo "# Partitionning with 32 sectors geometry." && \
+		echo "# If less, some (my) bios do not recognize the key as a bootable disk." && \
+		echo -e "0,,6,*\n;\n;\n;" > /tmp/sdisk.txt && \
+		sfdisk -qLDH 256 -S 32 $$ISOp < /tmp/sdisk.txt && \
+		echo "#Just put a mbr and superfloppy at the right place. seek=32 is due to -D & 32 sectors" && \
+		echo "#in sfdisk. If you ever change partitionning, adjust also here." && \
+		/usr/local/sbin/install-mbr $$ISOp && \
+		dd if=$$ISOs of=$$ISOp bs=512 seek=32; \
+	elif [ "$(MACHINE)" == "alpha" ]; then \
+		mkdir -p /install/cdrom/etc; \
+		cp /boot/vmlinuz-$(KVER) /install/cdrom/vmlinuz; \
+		cp /install/images/cdinitrd.gz  /install/cdrom/instroot.gz; \
+		cp /boot/bootlx /install/cdrom; \
+		cp $(DIR_SRC)/config/kernel/aboot.conf /install/cdrom/etc/aboot.conf; \
+		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
+			. > /install/images/$(SNAME)-install-$(VERSION).$(MACHINE).iso; \
+		isomarkboot /install/images/$(SNAME)-install-$(VERSION).$(MACHINE).iso bootlx; \
+	fi
+

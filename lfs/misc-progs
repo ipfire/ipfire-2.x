@@ -1,0 +1,78 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: misc-progs,v 1.5.2.3 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+THISAPP    = misc-progs
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+ifeq "$(LFS_PASS)" "install"
+  TARGET     = $(DIR_INFO)/$(THISAPP)-install
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/install+setup && cp -R $(DIR_SRC)/src/misc-progs/ $(DIR_SRC)
+ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP) && make CFLAGS="-Os -fomit-frame-pointer" iowrap
+	cd $(DIR_APP) && install -m 0755 iowrap /install/initrd/bin
+else
+	cp -R $(DIR_SRC)/src/install+setup/ $(DIR_SRC)
+	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
+	    cp $$i $(DIR_SRC)/install+setup/libsmooth; \
+	done
+	cd $(DIR_SRC)/install+setup/libsmooth && chmod 755 makelangs.pl
+	cd $(DIR_SRC)/install+setup/libsmooth && make CFLAGS="$(CFLAGS) -Wall \
+	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
+	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'" 
+	cd $(DIR_APP) && make CFLAGS="$(CFLAGS) -Wall -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DSNAME='\"$(SNAME)\"'"
+	cd $(DIR_APP) && make install
+endif
+	@rm -rf $(DIR_APP) $(DIR_SRC)/install+setup
+	@$(POSTBUILD)

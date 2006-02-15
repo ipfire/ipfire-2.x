@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# $Id: rc.pulsardsl,v 1.3.2.8 2005/07/07 20:11:58 franck78 Exp $
+#
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ppp/settings)
+
+# Debugging. Comment it out to stop logging
+DEBUG="yes"
+msg() {
+	if [ "z$DEBUG" != "z" ] ; then
+		/usr/bin/logger -t red "Pulsar DSL: $*"
+	fi
+	echo "$*"
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	if ( ! /sbin/lsmod | /bin/grep -q pulsar ); then
+		/sbin/modprobe pulsar
+		if [ $? -ne 0 ]; then
+			msg "Pulsar loading failed"
+			exit 2
+		else
+			# arbitrary fixed time until the driver support a way to know that the modem is synchronised
+			/bin/sleep 60
+		fi
+	fi
+	exit 0
+	;;
+stop)
+	msg "stop"
+	;;
+cleanup)
+	msg "driver cleanup"
+	/sbin/modprobe -r pulsar
+	;;
+  *)
+	echo "Usage: $0 {start|stop|cleanup}"
+	exit 1
+	;;
+esac
+
+exit 0

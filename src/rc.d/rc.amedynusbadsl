@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# $Id: rc.amedynusbadsl,v 1.3.2.5 2005/07/07 20:11:57 franck78 Exp $
+#
+
+eval $(/usr/local/bin/readhash CONFIG_ROOT/ppp/settings)
+
+# Debugging. Comment it out to stop logging
+DEBUG="yes"
+msg() {
+	if [ "z$DEBUG" != "z" ] ; then
+		/usr/bin/logger -t red "Zyxel 630-11/Asus AAM6000UG: $*"
+	fi
+	/bin/echo "$*"
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	if [ -f "/proc/bus/usb/devices" ]; then
+		if ( ! /bin/cat /proc/bus/usb/devices | /bin/grep -q 'ADSL USB modem' ); then
+			echo "amload"
+			/usr/sbin/amload
+			if [ $? -ne 0 ]; then
+				msg "amload failed"
+#				exit 1
+			fi
+		fi
+
+		/sbin/modprobe amedyn
+		if [ $? -ne 0 ]; then
+			msg "amedyn loading failed"
+#			exit 2
+		fi
+		/bin/sleep 3
+		/usr/sbin/amioctl 1
+		if [ $? -ne 0 ]; then
+			msg "amioctl failed"
+#			exit 3
+		fi
+		/bin/sleep 3
+	fi
+	exit 0
+	;;
+stop)
+	msg "stop"
+	/usr/sbin/amioctl 2
+	;;
+cleanup)
+	msg "driver cleanup and USB Bus reset"
+	/usr/sbin/amioctl 5
+	/sbin/modprobe -r amedyn
+	/bin/sleep 4
+	/usr/local/bin/resetusb
+	;;
+  *)
+	/bin/echo "Usage: $0 {start|stop|cleanup}"
+	exit 1
+	;;
+esac
+
+exit 0

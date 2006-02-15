@@ -1,0 +1,89 @@
+#!/usr/bin/perl
+#
+# SmoothWall CGIs
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) The SmoothWall Team
+#
+# $Id: dialer,v 1.3.2.2 2005/01/26 12:23:26 riddles Exp $
+#
+
+use strict;
+require 'CONFIG_ROOT/general-functions.pl';
+
+my %pppsettings;
+my %modemsettings;
+
+&General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
+&General::readhash("${General::swroot}/modem/settings", \%modemsettings);
+
+if ($modemsettings{'INIT'} eq '') {
+	$modemsettings{'INIT'} = 'AT'; }
+if ($modemsettings{'HANGUP'} eq '') {
+	$modemsettings{'HANGUP'} = 'AT'; }
+if ($modemsettings{'SPEAKER_ON'} eq '') {
+	$modemsettings{'SPEAKER_ON'} = 'AT'; }
+if ($modemsettings{'SPEAKER_OFF'} eq '') {
+	$modemsettings{'SPEAKER_OFF'} = 'AT'; }
+if ($modemsettings{'TONE_DIAL'} eq '') {
+	$modemsettings{'TONE_DIAL'} = 'ATD'; }
+if ($modemsettings{'PULSE_DIAL'} eq '') {
+	$modemsettings{'PULSE_DIAL'} = 'ATD'; }
+ 
+my $telephone = $pppsettings{'TELEPHONE'};
+my $username = $pppsettings{'USERNAME'};
+my $password = $pppsettings{'PASSWORD'};
+
+my ($loginscript, $speaker, $dial, $btfudge);
+
+if ($pppsettings{'AUTH'} eq 'standard-login-script') {
+	$loginscript = 'standardloginscript'; }
+elsif ($pppsettings{'AUTH'} eq 'demon-login-script') {
+	$loginscript = 'demonloginscript'; }
+else {
+	$loginscript = $pppsettings{'LOGINSCRIPT'}; }
+if ($pppsettings{'SPEAKER'} eq 'on') {
+	$speaker = $modemsettings{'SPEAKER_ON'}; }
+else {
+	$speaker = $modemsettings{'SPEAKER_OFF'}; }
+if ($pppsettings{'DIALMODE'} eq 'T') {
+	$dial = $modemsettings{'TONE_DIAL'} }
+else {
+	$dial = $modemsettings{'PULSE_DIAL'} }
+if ($pppsettings{'SENDCR'} eq 'off') {
+	$btfudge = '\\c'; }
+else {
+	$btfudge = ''; }
+
+unlink('/var/log/connect.log');
+
+my $com = "/usr/sbin/chat -v -r /var/log/connect.log			\
+	TIMEOUT			3					\
+	REPORT			CONNECT					\
+	ABORT			'\\nBUSY\\r'				\
+	ABORT			'\\nNO ANSWER\\r'			\
+	ABORT			'\\nRINGING\\r\\n\\r\\nRINGING\\r'	\
+	ABORT			'\\nNO CARRIER\\r'			\
+	''			'$modemsettings{'INIT'}'		\
+	OK			'$modemsettings{'HANGUP'}'		\
+	OK			'$speaker'				\
+	TIMEOUT			'$modemsettings{'TIMEOUT'}'		\
+	OK			'${dial}${telephone}'			\
+	CONNECT			'${btfudge}'				";
+
+if ($loginscript)
+{
+	if (open(FILE, "/etc/ppp/${loginscript}"))
+	{
+		while (<FILE>) {
+			$com = "$com $_ "; }
+		close FILE;
+	}
+	$com =~ s/USERNAME/$username/;
+	$com =~ s/PASSWORD/$password/;
+}
+
+$com =~ s/\n//g;
+
+exec $com;

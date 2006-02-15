@@ -1,0 +1,117 @@
+Submitted By: Jim Gifford (patches at jg555 dot com)
+Date: 2003-09-10
+Initial Package Version: 1.4.2
+Origin: inetutils CVS
+Description: Fixes Ping Errors
+	     If you try to only send one ping, it will not stop
+	     until it gets a response.
+
+diff -Naur inetutils-1.4.2.orig/ping/ping.c inetutils-1.4.2/ping/ping.c
+--- inetutils-1.4.2.orig/ping/ping.c	2002-12-11 12:38:00.000000000 +0000
++++ inetutils-1.4.2/ping/ping.c	2003-09-10 16:13:14.000000000 +0000
+@@ -338,7 +338,8 @@
+   struct timeval last, intvl, now;
+   struct timeval *t = NULL;
+   int finishing = 0;
+-  
++  int nresp = 0;
++
+   signal (SIGINT, sig_int);
+   
+   fdmax = ping->ping_fd+1;
+@@ -387,23 +388,24 @@
+       if ((n = select (fdmax, &fdset, NULL, NULL, &timeout)) < 0)
+ 	{
+ 	  if (errno != EINTR)
+-	    perror ("ping: select");
++	    perror ("select");
+ 	  continue;
+ 	}
+       else if (n == 1)
+ 	{
+-	  len = ping_recv (ping);
++	  if (ping_recv (ping) == 0)
++	    nresp++;
+ 	  if (t == 0)
+ 	    {
+ 	      gettimeofday (&now, NULL);
+ 	      t = &now;
+ 	    }
+-	  if (ping->ping_count && ping->ping_num_recv >= ping->ping_count)
++	  if (ping->ping_count && nresp >= ping->ping_count)
+ 	    break;
+ 	}
+       else
+ 	{
+-	  if (!ping->ping_count || ping->ping_num_recv < ping->ping_count)
++	  if (!ping->ping_count || ping->ping_num_xmit < ping->ping_count)
+ 	    {
+ 	      send_echo (ping);
+ 	      if (!(options & OPT_QUIET) && options & OPT_FLOOD)
+@@ -414,7 +416,7 @@
+ 	  else if (finishing)
+ 	    break;
+ 	  else
+-	    {
++ 	    {
+ 	      finishing = 1;
+ 
+ 	      intvl.tv_sec = MAXWAIT;
+diff -Naur inetutils-1.4.2.orig/ping/ping_echo.c inetutils-1.4.2/ping/ping_echo.c
+--- inetutils-1.4.2.orig/ping/ping_echo.c	2002-06-26 03:15:06.000000000 +0000
++++ inetutils-1.4.2/ping/ping_echo.c	2003-09-10 16:19:11.000000000 +0000
+@@ -43,7 +43,6 @@
+ #include <stdio.h>
+ #include <ctype.h>
+ #include <errno.h>
+-#include <math.h>
+ #include <limits.h>
+ 
+ #include "getopt.h"
+@@ -583,6 +582,31 @@
+ 	out->tv_sec -= in->tv_sec;
+ }
+ 
++double
++nabs (double a)
++{
++  return (a < 0) ? -a : a;
++}
++
++double
++nsqrt (double a, double prec)
++{
++  double x0, x1;
++  
++  if (a < 0)
++    return 0; 
++  if (a < prec)
++    return 0;
++  x1 = a/2;
++  do
++    {
++      x0 = x1;
++      x1 = (x0 + a/x0) / 2;
++    }
++  while (nabs (x1 - x0) > prec);
++
++  return x1;
++}
+ 
+ int
+ echo_finish ()
+@@ -596,10 +620,10 @@
+       double vari = ping_stat->tsumsq / total - avg * avg;
+ 
+       printf ("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\n",
+-	     ping_stat->tmin,
+-	     avg,
+-	     ping_stat->tmax,
+-	     sqrt (vari));
++	      ping_stat->tmin,
++	      avg,
++	      ping_stat->tmax,
++	      nsqrt (vari, 0.0005));
+     }
+   exit (ping->ping_num_recv == 0);
+ }

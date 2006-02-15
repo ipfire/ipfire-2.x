@@ -1,0 +1,122 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    background: url(/images/header.png) no-repeat;
+    background-color: #D7D8E8;
+    color: #000000;
+    font-family: Verdana, Tahoma, Arial, Sans-serif;
+    font-size: 11px;
+}
+
+td {
+    font-size: 11px;
+}
+
+img {
+    border: 0;
+    border-width : 0; 
+    border-style : none; 
+    border-color : inherit; 
+}
+
+pre {
+    font-size: 12px;
+}
+
+a {
+    color: #000000;
+}
+
+form {
+    margin: 0;
+    padding: 0;
+}
+
+td.ipcop_menuLocationMain {
+    color: #FFFFFF;
+    font-family: Verdana, Tahoma, Arial, Sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+td.ipcop_menuLocationSub {
+    color: #FFFFFF;
+    font-family: Verdana, Tahoma, Arial, Sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+td.ipcop_Version {
+    color: #10044A;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Dommenu */
+.ipcop_menuElementTD {
+    border: 0;
+    color: #DEDFEF;
+    font-size: 11px;
+    font-weight: bold;
+    text-decoration: none;
+    width: 90px;
+    padding: 0px 0px 5px 0px;
+    margin: 0px 10px 0px 10px;
+}
+
+.ipcop_menuElementNoJS {
+    color: #DEDFEF;
+    font-size: 11px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0px 0px 5px 0px;
+    margin: 0px 10px 0px 10px;
+}
+
+div.ipcop_menuBar {
+    margin-bottom: 1px;
+}
+
+div.ipcop_subMenuBar {
+    border: 0;
+    background-color: #6B69AD;
+}
+
+div.ipcop_menuElement, div.ipcop_subMenuElement {
+    border: 0;
+    color: #DEDFEF;
+    font-variant: small-caps;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+div.ipcop_menuElement {
+    width: 70px;
+    margin: 4px 10px 4px 10px;
+}
+
+div.ipcop_menuElementHover {
+    color: #FFFFFF;
+}
+
+div.ipcop_subMenuElement {
+    padding: 3px;
+    color: #DEDFEF;
+}
+div.ipcop_subMenuElementHover {
+    padding: 3px;
+    color: #FFFFFF;
+}
+
+/* Connection Status */
+span.ipcop_StatusBig {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+span.ipcop_StatusBigRed {
+    color: #FF0000;
+    font-weight: bold;
+}

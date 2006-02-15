@@ -1,0 +1,211 @@
+#!/bin/bash
+
+UPGRADEVERSION="1.4.7"
+PREVIOUSVERSION="1.4.6"
+echo "This is the $UPGRADEVERSION update patch for IPCop $PREVIOUSVERSION installing."
+
+CURRENTVERSION=`perl -e "require '/var/ipcop/general-functions.pl';print \\$General::version;"`
+if [ "$CURRENTVERSION" != "$PREVIOUSVERSION" ]; then
+	echo "You are not running IPCop v$PREVIOUSVERSION for this patch to install."
+	echo "Aborting installation."
+	exit -1
+fi
+
+KVER=`uname -r`
+
+#we could have supported removing the 'not running' kernel but it will be much harder with each new kernel
+#so be simple and update only from the last one
+if [ "$KVER" = "2.4.27" -o "$KVER" = "2.4.27-smp" ]; then
+		echo "Kernel-2.4.29 is required to install this update"
+		echo "Old kernel 2.4.27 need to be removed to make place for kernel 2.4.31"
+		exit 1
+fi
+#cleanup /boot/grub of unused files (necessary for flash with only 5Mb on /boot)
+rm -f /boot/grub/{fat,ffs,iso9660,jfs,vstafs,minix,reiserfs,ufs2,xfs}_stage1_5 \
+	/boot/grub/stage2_eltorito \
+	/boot/grub/{scsigrub.conf,grubbatch}
+
+#suppress the kernel not in use to make place for a new kernel
+rm -rf	/lib/modules/2.4.27{,-smp}	\
+	/boot/vmlinuz-2.4.27{,-smp}	\
+	/boot/System.map-2.4.27{,-smp}	\
+	/boot/ipcoprd-2.4.27.img	\
+	/boot/ipcoprd-smp-2.4.27.img
+
+#save active crontab
+mv /var/spool/cron/root.orig /tmp/root.orig
+
+# install udpated files
+/bin/tar -zxpf patch.tar.gz -C /
+
+# general-functions might not be overwrited by patch
+/bin/sed -i -e "s+= '1.4.*$+= '$UPGRADEVERSION';+" /var/ipcop/general-functions.pl
+
+# unneeded,updated, unified (old eci driver)
+/bin/rm -f /lib{libbz2.so.1.0.2,libz.so.1.2.2,libproc.so.3.2.1} /usr/bin/eciadsl-{firmware,synch,pppoeci}
+
+# update linker cache
+/sbin/ldconfig
+
+# Adjust limits in traffic RRDs to support 100Mbit uplinks
+for i in /var/log/rrd/{RED,GREEN,ORANGE,BLUE}.rrd; do
+	if [ -e $i ]; then
+		/usr/bin/perl -e "use RRDs;RRDs::tune('$i','--maximum','incoming:12500000');"
+		/usr/bin/perl -e "use RRDs;RRDs::tune('$i','--maximum','outgoing:12500000');"
+	fi
+done
+
+# optionsfw (ping disable, logging limitation
+mkdir -p		/var/ipcop/optionsfw
+chmod 550		/var/ipcop/optionsfw
+touch 			/var/ipcop/optionsfw/settings
+chown nobody:nobody 	/var/ipcop/optionsfw
+chown nobody:nobody 	/var/ipcop/optionsfw/settings
+chmod 644 /var/ipcop/optionsfw/settings
+
+#Add a directory for language files installed by addons
+mkdir -p		/var/ipcop/addon-lang
+chmod 550		/var/ipcop/addon-lang
+chown nobody:nobody /var/ipcop/addon-lang
+
+# Strip colon from end of 'section' string in all language files.
+for file in /var/ipcop/langs/*.pl
+do
+	sed -i -e '/section/s/://' $file
+done
+
+# Start of patch update to header.pl
+#
+# Use patch -N switch to apply patches only once
+#
+# First, upgrade to match v1.4.6 iso, if required 
+patch -N /var/ipcop/header.pl <<\END
+105c105,107
+< 				[ $Lang::tr{'blue access'} , '/cgi-bin/wireless.cgi', "IPCop $Lang::tr{'blue access'}" ]]
+---
+> 				[ $Lang::tr{'blue access'} , '/cgi-bin/wireless.cgi', "IPCop $Lang::tr{'blue access'}" ]
+> 		#	       ,[ $Lang::tr{'options fw'} , '/cgi-bin/optionsfw.cgi', "IPCop $Lang::tr{'options fw'}" ]
+> 			       ]
+END
+
+# Uncomment firewall options menu item
+patch -N /var/ipcop/header.pl <<\END
+106c106
+< 		#	       ,[ $Lang::tr{'options fw'} , '/cgi-bin/optionsfw.cgi', "IPCop $Lang::tr{'options fw'}" ]
+---
+> 			       ,[ $Lang::tr{'options fw'} , '/cgi-bin/optionsfw.cgi', "IPCop $Lang::tr{'options fw'}" ]
+END
+
+# Apply 'ends never' patch to PrintActualLeases subroutine
+patch -N /var/ipcop/header.pl <<\END
+752,754c752,754
+< 	}
+< 
+< 	if ($line =~ /^\s*ends/) {
+---
+> 	} elsif ($line =~ /^\s*ends never;/) {
+> 	    $endtime = 'never';
+> 	} elsif ($line =~ /^\s*ends/) {
+757,759c757
+< 	}
+< 
+< 	if ($line =~ /^\s*hardware ethernet/) {
+---
+> 	} elsif ($line =~ /^\s*hardware ethernet/) {
+762,766c760,762
+< 	}
+< 
+< 	if ($line =~ /^\s*client-hostname/) {
+< 	     shift (@temp);
+< 	     $hostname = join (' ',@temp);
+---
+> 	} elsif ($line =~ /^\s*client-hostname/) {
+> 	    shift (@temp);
+> 	    $hostname = join (' ',@temp);
+769,771c765
+< 	}
+< 
+< 	if ($line eq "}") {
+---
+> 	} elsif ($line eq "}") {
+776c770
+< 	}
+---
+> 	} #unknown format line...
+803,808c797,798
+< 	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst);
+< 	($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime ($entries{$key}->{ENDTIME});
+< 	my $enddate = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
+< 
+< 	if ($entries{$key}->{ENDTIME} < time() ){
+< 	    print "<strike>$enddate</strike>";
+---
+> 	if ($entries{$key}->{ENDTIME} eq 'never') {
+> 	    print "$Lang::tr{'no time limit'}";
+810c800,808
+< 	    print "$enddate";
+---
+> 	    my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst);
+> 	    ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime ($entries{$key}->{ENDTIME});
+> 	    my $enddate = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
+> 
+> 	    if ($entries{$key}->{ENDTIME} < time() ){
+> 		print "<strike>$enddate</strike>";
+> 	    } else {
+> 		print "$enddate";
+> 	    }
+END
+
+# Clean up any rejects
+rm -f /var/ipcop/header.pl.rej
+
+# End of update to header.pl
+
+# removing optionsfw.cgi from the menu because it is not ready
+/bin/sed -i -e 'optionsfw.cgi/       ,[ /#       ,[ /' /var/ipcop/header.pl
+#
+# new crontab (supporting minimize ddns updates)
+#
+sum=`md5sum /tmp/root.orig | awk '{print $1}' `
+# if version 1.9.2.1 or 1.9.2.2 is untouched, just replace it else add the new entry only
+if [ "$sum" == "918ec891f5436c0e34ce4ba213a9fbe1" ] || 
+   [ "$sum" == "b18e7567915e576655815fb409145f1a" ] ;  then
+	echo "Upgrade original crontab"
+	#file come from the update
+else
+	cat<<END>>/var/spool/cron/root.orig
+
+# ipcop update 1.4.7 addition to not original crontab
+# force update (even if name match IP) once a month if minimize option selected
+
+3 2 1 * *     [ -f "/var/ipcop/red/active" ] && /usr/local/bin/setddns.pl -f -m
+END
+fi
+/usr/bin/fcrontab -z
+
+/bin/rm -f /tmp/root.orig
+
+#change in service name to conform to real name
+sed -i -e 's/freedns-afraid/freedns.afraid/' /var/ipcop/ddns/config
+chown nobody:nobody /var/ipcop/ddns/config
+
+#build cachelang file   use this call after all "lang/*.pl" updates !
+perl -e "require '/var/ipcop/lang.pl'; &Lang::BuildCacheLang"
+
+cd /bin
+ln -s gzip zcat #logwatch.pl may use it
+ln -s bzip2 bzcat
+
+#fix init update : no more / is busy during shutdown
+/sbin/telinit u
+
+# adjust vpn config for new options DPD_ACTION & PFS
+# if config is 'host' set dpd_action=clear else set hold. Add always yes for PFS
+cp /var/ipcop/vpn/config /var/ipcop/vpn/config.old
+perl -e "while (<>) { chomp; \$V=(/,host,/?'clear':'hold'); print \"\$_,\$V,yes\n\"; }" /var/ipcop/vpn/config.old > /var/ipcop/vpn/config
+chown nobody:nobody /var/ipcop/vpn/config
+
+echo "IPCop v$UPGRADEVERSION - The Bad Packets Stop Here">/etc/issue
+killall mingetty  #redisplay correct version
+echo "end of $UPGRADEVERSION update"
+exit 0
