@@ -27,11 +27,11 @@ else
 		/bin/sed -i -e "s+:[0-9]\{3,5\}/\$ENV{'PATH_INFO'}+:$HTTPS/\$ENV{'PATH_INFO'}+" \
 		/var/ipcop/header.pl
 		
-		/bin/sed -i -e "s+acl IPCop_https port.*$+acl IPCop_https port $HTTPS+" \
+		/bin/sed -i -e "s+acl IPFire_https port.*$+acl IPCop_https port $HTTPS+" \
 		/var/ipcop/proxy/acl
 		/bin/chown nobody:nobody /var/ipcop/proxy/acl
 		
-		/bin/sed -i -e "s+acl IPCop_https port.*$+acl IPCop_https port $HTTPS+" \
+		/bin/sed -i -e "s+acl IPFire_https port.*$+acl IPCop_https port $HTTPS+" \
 		/var/ipcop/proxy/squid.conf
 		/bin/chown nobody:nobody /var/ipcop/proxy/squid.conf
 		
