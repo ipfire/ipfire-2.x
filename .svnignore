@@ -1,8 +1,0 @@
-build
-cache
-ccache
-log
-*.img
-*.iso
-*.tgz
-*.gpg
