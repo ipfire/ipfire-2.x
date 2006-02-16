@@ -688,11 +688,11 @@ buildpackages() {
   fi
 
   # Create update for this version
-  echo "`date -u '+%b %e %T'`: Building update $VERSION tgz" | tee -a $LOGFILE
-  tar -cz -C $BASEDIR/build --files-from=$BASEDIR/updates/$VERSION/ROOTFILES.$MACHINE-$VERSION -f $BASEDIR/updates/$VERSION/patch.tar.gz --exclude='#*'; 
-  chmod 755 $BASEDIR/updates/$VERSION/setup
-  tar -cz -C $BASEDIR/updates/$VERSION -f $LFS/install/images/$SNAME-update-$VERSION.$MACHINE.tgz patch.tar.gz setup information
-  rm -f $LFS/var/run/{need-depmod-$KVER,need-depmod-$KVER-smp}
+#  echo "`date -u '+%b %e %T'`: Building update $VERSION tgz" | tee -a $LOGFILE
+#  tar -cz -C $BASEDIR/build --files-from=$BASEDIR/updates/$VERSION/ROOTFILES.$MACHINE-$VERSION -f $BASEDIR/updates/$VERSION/patch.tar.gz --exclude='#*'; 
+#  chmod 755 $BASEDIR/updates/$VERSION/setup
+#  tar -cz -C $BASEDIR/updates/$VERSION -f $LFS/install/images/$SNAME-update-$VERSION.$MACHINE.tgz patch.tar.gz setup information
+#  rm -f $LFS/var/run/{need-depmod-$KVER,need-depmod-$KVER-smp}
   
   # Generating list of packages used
   echo "`date -u '+%b %e %T'`: Generating packages list from logs" | tee -a $LOGFILE
