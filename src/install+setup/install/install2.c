@@ -7,7 +7,7 @@
  * (c) Franck Bourdonnec, 2006
  * Contains update/restore code
  * 
- * $Id: install2.c,v 1.1.2.3 2006/01/31 00:51:50 franck78 Exp $
+ * $Id: install2.c,v 1.1.2.5 2006/02/10 06:53:57 gespinasse Exp $
  * 
  */
 #include "install.h"
@@ -118,16 +118,16 @@ int mountbackup (char *testfile, char *destination_device) {
 
 int floppy_locate() {
 	/* Temporarily mount /proc under /harddisk/proc,
-           run updfstab to locate the floppy, and unmount /harddisk/proc
-           again.  This should be run each time the user tries to restore
-           so it can properly detect removable devices */
+	   run updfstab to locate the floppy, and unmount /harddisk/proc
+	   again.  This should be run each time the user tries to restore
+	   so it can properly detect removable devices */
 	if (mysystem("/bin/mount -n -t proc /proc /harddisk/proc")) {
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_PROC_FILESYSTEM]);
 		return 1;
 	}
 	if (mysystem("/bin/chroot /harddisk /usr/sbin/updfstab")) {
 		errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_FSTAB]);
-	    	return 1;
+		return 1;
 	}
 	mysystem("/bin/umount /harddisk/proc");
 	return 0;
@@ -151,12 +151,12 @@ void fixup_initrd() {
 	char line[STRING_SIZE];
 	char commandstring[STRING_SIZE];
 	
-        if (!(handle = fopen("/scsidriver", "r"))) 
+	if (!(handle = fopen("/scsidriver", "r"))) 
 	    return;
 
 	char *driver;
-       	fgets(line, STRING_SIZE-1, handle);
-    	fclose(handle);
+	fgets(line, STRING_SIZE-1, handle);
+	fclose(handle);
 	line[strlen(line) - 1] = 0;
 	driver = strtok(line, ".");
 	fprintf(flog, "Detected SCSI driver %s\n", driver);
@@ -166,7 +166,7 @@ void fixup_initrd() {
 	fprintf(flog, "Fixing up ipcoprd.img\n");
 	mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
 	mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-  	sprintf(commandstring, "/bin/chroot /harddisk /sbin/mkinitrd"
+	sprintf(commandstring, "/bin/chroot /harddisk /sbin/mkinitrd"
 				" --with=scsi_mod --with=%s --with=sd_mod"
 				" --with=sr_mod --with=libata"
 				" --with=ataraid /boot/ipcoprd.img "KERNEL_VERSION,
@@ -186,17 +186,13 @@ void fixup_initrd() {
 #endif
 }
 /* when backup is ready in tmpdir, move files to definitive location */
-void do_copy_files(int upgrade_level) {
+void do_copy_files() {
 	mysystem("/bin/chroot /harddisk /bin/cp -af "TMP_EXTRACT_CH"/. /");
 	/* Upgrade necessary files from v1.2 to v1.3 to v1.4 */
-	switch (upgrade_level) {
-	case 1:
-		upgrade_v12_v13();
-		upgrade_v130_v140();
-	case 2: //some 1.4 files format changed
-		//between 1.4.0 & 1.4.11  If possible de determine backup/version
-		//the update code should go here
-	}
+	upgrade_v12_v13();
+	upgrade_v130_v140();
+	/* Upgrade configuration files starting from 1.4.11 */
+	mysystem("/bin/chroot /harddisk /usr/local/bin/upgrade");
 }
 
 int main(int argc, char *argv[]) {
@@ -205,7 +201,7 @@ int main(int argc, char *argv[]) {
 #define WGET argv[3]
 
 #ifdef	LANG_EN_ONLY
-        char **langtrs[] = { en_tr, NULL };
+	char **langtrs[] = { en_tr, NULL };
 #else
 	char **langtrs[] = { bz_tr, cs_tr, da_tr, de_tr, en_tr, es_tr, fr_tr, el_tr, it_tr, la_tr, hu_tr, nl_tr, no_tr, pl_tr, pt_tr, sk_tr, so_tr, fi_tr, sv_tr, tr_tr, vi_tr, NULL };
 #endif
@@ -229,16 +225,9 @@ int main(int argc, char *argv[]) {
 	strcpy (title, NAME " v" VERSION " - " SLOGAN);
 	newtDrawRootText(14, 0, title);
 	newtPushHelpLine(ctr[TR_HELPLINE]);
-/*
-	// build now the device node
-	runcommandwithstatus("echo 'cd /dev; ./make_devices'>/harddisk/X;" 
-				    "chroot /harddisk chmod +x /X;"
-				    "chroot /harddisk /X;"
-				    "chroot /harddisk rm /X"				    
-				    , ctr[TR_INSTALLING_FILES]);
-*/
+
 	/* working dirs... */
-    	mkdir(MOUNT_BACKUP, S_IRWXU|S_IRWXG|S_IRWXO);
+	mkdir(MOUNT_BACKUP, S_IRWXU|S_IRWXG|S_IRWXO);
 
 	//create the GUI screen and objects
 	newtComponent form, header, labelfile, labelkey, file, key, radio0, radio1, radio2, radio3, radio4, ok;
@@ -250,36 +239,36 @@ int main(int argc, char *argv[]) {
 	header = newtTextboxReflowed (2,1,message,51,0,0,0);
 	newtFormAddComponent(form, header);
 
-        // The four method of restauration
-        int start1=1, start2=0, start3=0, start4=0;
-        radio1 = newtRadiobutton (17, 5, ctr[TR_SKIP], start1, NULL);
-        radio2 = newtRadiobutton (17, 6, "Floppy (legacy)", start2, radio1);
-        radio3 = newtRadiobutton (17, 7, "Usb-storage/CDROM", start3, radio2);
-        if (strcmp(WGET,"none"))
-            radio4 = newtRadiobutton (17, 8, "HTTP/FTP", start4, radio3);
+	// The four method of restauration
+	int start1=1, start2=0, start3=0, start4=0;
+	radio1 = newtRadiobutton (17, 5, ctr[TR_SKIP], start1, NULL);
+	radio2 = newtRadiobutton (17, 6, "Floppy (legacy)", start2, radio1);
+	radio3 = newtRadiobutton (17, 7, "Usb-storage/CDROM", start3, radio2);
+	if (strcmp(WGET,"none"))
+	    radio4 = newtRadiobutton (17, 8, "HTTP/FTP", start4, radio3);
 	else
-            radio4 = NULL;
-        newtFormAddComponents(form, radio1, radio2, radio3, radio4, NULL);
+	    radio4 = NULL;
+	newtFormAddComponents(form, radio1, radio2, radio3, radio4, NULL);
 
-        // The optionnal filename for 'backup'
-        labelfile=newtTextbox(12, 10, 35, 1, 0);
-        newtTextboxSetText (labelfile, "Filename");
+	// The optionnal filename for 'backup'
+	labelfile=newtTextbox(12, 10, 35, 1, 0);
+	newtTextboxSetText (labelfile, "Filename");
 	newtFormAddComponent(form, labelfile);
-        char *filevalue;
-        char fileinit[STRING_SIZE] = "backup";
-        file = newtEntry (17, 11, fileinit, 20, &filevalue, 0);
+	char *filevalue;
+	char fileinit[STRING_SIZE] = "backup";
+	file = newtEntry (17, 11, fileinit, 20, &filevalue, 0);
 	newtFormAddComponent(form, file);
 
-        // The optionnal password for the key
-        labelkey=newtTextbox(12, 13, 35, 1, 0);
-        newtTextboxSetText (labelkey, "Backup key password");
+	// The optionnal password for the key
+	labelkey=newtTextbox(12, 13, 35, 1, 0);
+	newtTextboxSetText (labelkey, "Backup key password");
 	newtFormAddComponent(form, labelkey);
-        char *keyvalue;
-        char keyinit[STRING_SIZE] = "";
-        key = newtEntry (17, 14, keyinit, 20, &keyvalue, 0);
+	char *keyvalue;
+	char keyinit[STRING_SIZE] = "";
+	key = newtEntry (17, 14, keyinit, 20, &keyvalue, 0);
 	newtFormAddComponent(form, key);
 
-        // The OK button
+	// The OK button
 	ok=newtButton (23, 16, ctr[TR_OK]);
 	newtFormAddComponent(form, ok);
 
@@ -291,10 +280,10 @@ int main(int argc, char *argv[]) {
 	    struct newtExitStruct reponse;
 	    newtFormRun (form, &reponse);
 	    radio0 = newtRadioGetCurrent(radio1);
-            int radio;
-            radio = radio0 == radio1 ? 1 : radio0 == radio2 ? 2 :  radio0 == radio3 ? 3 : radio0 == radio4 ? 4 : 0;
-            strcpy(keyinit,keyvalue);	//reuse actual value
-            strcpy(fileinit,filevalue);
+	    int radio;
+	    radio = radio0 == radio1 ? 1 : radio0 == radio2 ? 2 :  radio0 == radio3 ? 3 : radio0 == radio4 ? 4 : 0;
+	    strcpy(keyinit,keyvalue);	//reuse actual value
+	    strcpy(fileinit,filevalue);
 
 	    if (radio==1) {
 		    retcode = 1;	// no restore: nothing special
@@ -309,13 +298,13 @@ int main(int argc, char *argv[]) {
 		    mysystem (commandstring);
 		    sprintf(commandstring,"/bin/wget -P " TMP_EXTRACT " %s/%s.key", WGET, filevalue);
 		    if (mysystem (commandstring)) {
-	    		    errorbox(ctr[TR_FAILED_TO_FIND]);
+			    errorbox(ctr[TR_FAILED_TO_FIND]);
 			    break;
 		    };
 		    goto COMMON;
 	    case 3:	// normal backup
 		    if (mountbackup( filevalue, DEST_DEV )) {
-	    		    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);//mess=no device with backup found
+			    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);//mess=no device with backup found
 			    break;
 		    };
 		    // link files to a COMMON location
@@ -327,14 +316,14 @@ int main(int argc, char *argv[]) {
 	COMMON:	    // DECRYPT THE TARBALL
 		    // Copy the key to a new location because we decrypt it!	
 		    if (strcmp(keyvalue, "")) { // password provided: decrypt the key
-    			    sprintf(commandstring,   "/bin/chroot /harddisk /usr/bin/openssl enc"
+			    sprintf(commandstring,   "/bin/chroot /harddisk /usr/bin/openssl enc"
 						    " -a -d -aes256 -salt"
 						    " -pass pass:%s"
 						    " -in " TMP_EXTRACT_CH "/%s.key"
 						    " -out " TMP_EXTRACT_CH "/__tmp.key",
 						    keyvalue, filevalue);
 		    } else {			//just copy to new name
-    			    sprintf(commandstring,  "/bin/chroot /harddisk cp"
+			    sprintf(commandstring,  "/bin/chroot /harddisk cp"
 						    " " TMP_EXTRACT_CH "/%s.key"
 						    " " TMP_EXTRACT_CH "/__tmp.key",
 						    filevalue);
@@ -349,7 +338,7 @@ int main(int argc, char *argv[]) {
 					    filevalue);
 
 		    if (mysystem (commandstring)) {
-	    		    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);//mess=decrypt error:invalid key?
+			    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);//mess=decrypt error:invalid key?
 			    break;
 		    }
 		    strcpy(commandstring,   "/bin/chroot /harddisk /bin/tar"
@@ -358,18 +347,18 @@ int main(int argc, char *argv[]) {
 					    " -xzf " TMP_EXTRACT_CH "/backup.tgz");
 
 		    if (mysystem(commandstring)) {
-	    		    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
+			    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
 			    break;
 		    }
 		    sprintf(commandstring, TMP_EXTRACT "/%s.dat", filevalue);
-	    	    unlink(commandstring ); //dont need them anymore
-	    	    unlink( TMP_EXTRACT "/backup.tgz");
+		    unlink(commandstring ); //dont need them anymore
+		    unlink( TMP_EXTRACT "/backup.tgz");
 		    sprintf(commandstring, TMP_EXTRACT "/%s.key", filevalue);
-	    	    unlink(commandstring );
-	    	    unlink( TMP_EXTRACT "/__tmp.key");
+		    unlink(commandstring );
+		    unlink( TMP_EXTRACT "/__tmp.key");
 
-	      	    /* Now copy to correct location */
-		    do_copy_files(0);
+		    /* Now copy to correct location */
+		    do_copy_files();
 		    retcode = 0; /* successfully restored */
 		    break;
 	    case 2:
@@ -380,32 +369,32 @@ int main(int argc, char *argv[]) {
 		    }
 
 		    /* Always extract to /tmp/ipcop for temporary extraction
-	    	       just in case floppy fails.
+		       just in case floppy fails.
 		       try a compressed backup first because it's quicker to fail.
-	    	       In exclude.system, files name must be without leading / or 
-	    	       on extraction, name will never match
+		       In exclude.system, files name must be without leading / or 
+		       on extraction, name will never match
 		    */
 		    sprintf(commandstring,
 		     "/bin/chroot /harddisk /bin/tar -X " CONFIG_ROOT "/backup/exclude.system -C "TMP_EXTRACT_CH" -xvzf /dev/floppy > %s 2> /dev/null", mylog);
 		    if (system(commandstring)) {
-	    	    /* if it's not compressed, try uncompressed first before failing*/
-	    		sprintf(commandstring,
+		    /* if it's not compressed, try uncompressed first before failing*/
+			sprintf(commandstring,
 		     "/bin/chroot /harddisk /bin/tar -X " CONFIG_ROOT "/backup/exclude.system -C "TMP_EXTRACT_CH" -xvf /dev/floppy > %s 2> /dev/null", mylog);
-	    		if (system(commandstring)) {
-	    		    /* command failed trying to read from floppy */
-	    		    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
+			if (system(commandstring)) {
+			    /* command failed trying to read from floppy */
+			    errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
 			    break;
-	    		} 
-	    	    }
-	      	    /* Now copy to correct location */
-		    do_copy_files(1);
+			} 
+		    }
+		    /* Now copy to correct location */
+		    do_copy_files();
 		    retcode = 0; /* successfully restored */
 	    }//switch
 	    /* remove possible badly restored files */
 	    mysystem("/bin/chroot /harddisk /bin/rm -rf " TMP_EXTRACT_CH );
 	    newtPopWindow(); // close windows
 	}//while
-        newtFormDestroy(form);
+	newtFormDestroy(form);
 
 	/* cleanup */
 	mysystem("/bin/umount " MOUNT_BACKUP);
