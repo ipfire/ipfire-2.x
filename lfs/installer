@@ -22,7 +22,7 @@
 # ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
 #          - Modified Makefile for IPCop build                                #
 #                                                                             #
-# $Id: installer,v 1.6.2.5 2006/01/11 01:01:38 franck78 Exp $
+# $Id: installer,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
 #                                                                             #
 ###############################################################################
 
@@ -55,16 +55,16 @@ md5 :
 $(TARGET) :
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/install+setup/* $(DIR_APP)
-	
+	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
+	    cp $$i $(DIR_APP)/libsmooth; \
+	done
+	cd $(DIR_APP)/libsmooth && chmod 755 makelangs.pl
 	cd $(DIR_APP)/libsmooth && make CFLAGS="-Os -fomit-frame-pointer -Wall \
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'"
-
+	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'" 
 	cd $(DIR_APP)/install && make CFLAGS="-Os -fomit-frame-pointer -Wall \
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
-
 	cd $(DIR_APP)/install && install -m 0755 install probescsi.sh /install/initrd/bin
-	cd $(DIR_APP)/install && install -m 0755 install2  /usr/local/bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
