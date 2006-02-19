@@ -7,7 +7,7 @@
  * Contains stuff related to firing up the network card, including a crude
  * autodector.
  * 
- * $Id: nic.c,v 1.8.2.2 2005/12/24 09:08:26 franck78 Exp $
+ * $Id: nic.c,v 1.8.2.1 2004/04/14 22:05:40 gespinasse Exp $
  * 
  */
 
@@ -19,7 +19,9 @@
 
 extern FILE *flog;
 extern char *mylog;
+
 extern char **ctr;
+
 extern struct nic nics[];
 
 int networkmenu(struct keyvalue *ethernetkv)
@@ -27,6 +29,7 @@ int networkmenu(struct keyvalue *ethernetkv)
 	int rc;
 	char driver[STRING_SIZE] = "";
 	char driveroptions[STRING_SIZE] = "";
+	struct keyvalue *kv = initkeyvalues();
 	int result = 0;
 	char commandstring[STRING_SIZE];
 	char address[STRING_SIZE], netmask[STRING_SIZE];
@@ -92,6 +95,7 @@ int networkmenu(struct keyvalue *ethernetkv)
 	result = 1;
 	
 EXIT:
+	freekeyvalues(kv);
 	
 	return result;
 }

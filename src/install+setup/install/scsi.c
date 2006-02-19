@@ -23,6 +23,6 @@ try_scsi(char *disk_device)
 		return 0;
 
 	close(fd);
-	// remove usb scsi
-	return ( checkusb(disk_device) ? 0:1 );
+
+	return 1;
 }

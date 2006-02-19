@@ -6,46 +6,74 @@
  * (c) Lawrence Manning, 2001
  * Write the config and get password stuff.
  * 
- * $Id: config.c,v 1.6.2.3 2005/12/07 20:42:48 franck78 Exp $
+ * $Id: config.c,v 1.6.2.2 2004/08/23 21:09:44 alanh Exp $
  * 
  */
 
 #include "install.h"
-extern char **ctr;	// text translation table
+
+extern FILE *flog;
+extern char *mylog;
+
+extern char **ctr;
+
+extern int raid_disk;
 
 /* called to write out all config files using the keyvalue interface. */
 int write_disk_configs(struct devparams *dp)
 {
 	char devnode[STRING_SIZE];
-	char partition[STRING_SIZE];
-	char *messages[5] = {   NULL,
-				ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK1],
-				ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK2],
-				ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK3],
-				ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK4] 
-		        };
+	
 	/* dev node links. */
-	sprintf(devnode, "%s", dp->devnode_disk_run);
+	snprintf(devnode, STRING_SIZE, "%s", dp->devnode);
 	if (symlink(devnode, "/harddisk/dev/harddisk"))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK]);
 		return 0;
 	}
-	
-	int j;
-	for (j=1; j<5; j++) {
-		sprintf(devnode, "%s%d", dp->devnode_part_run,j);
-		sprintf(partition,"/harddisk/dev/harddisk%d",j);
-		if (symlink(devnode, partition))
-		{
-			errorbox( messages[j] );
-			return 0;
-		}
+	if (raid_disk)
+		snprintf(devnode, STRING_SIZE, "%sp1", dp->devnode);
+	else
+		snprintf(devnode, STRING_SIZE, "%s1", dp->devnode);
+	if (symlink(devnode, "/harddisk/dev/harddisk1"))
+	{
+		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK1]);
+		return 0;
+	}
+	if (raid_disk)
+		snprintf(devnode, STRING_SIZE, "%sp2", dp->devnode);
+	else
+		snprintf(devnode, STRING_SIZE, "%s2", dp->devnode);
+	if (symlink(devnode, "/harddisk/dev/harddisk2"))
+	{
+		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK2]);
+		return 0;
+	}
+	if (raid_disk)
+		snprintf(devnode, STRING_SIZE, "%sp3", dp->devnode);
+	else
+		snprintf(devnode, STRING_SIZE, "%s3", dp->devnode);
+	if (symlink(devnode, "/harddisk/dev/harddisk3"))
+	{
+		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK3]);
+		return 0;
+	}
+	if (raid_disk)
+		snprintf(devnode, STRING_SIZE, "%sp4", dp->devnode);
+	else
+		snprintf(devnode, STRING_SIZE, "%s4", dp->devnode);
+	if (symlink(devnode, "/harddisk/dev/harddisk4"))
+	{
+		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK4]);
+		return 0;
 	}
 
 	/* Add /dev/root symlink linking to the root filesystem to 
 	 * keep updfstab happy */
-	sprintf(devnode, "%s4", dp->devnode_part_run);
+	if (raid_disk)
+		snprintf(devnode, STRING_SIZE, "%sp4", dp->devnode);
+	else
+		snprintf(devnode, STRING_SIZE, "%s4", dp->devnode);
 	if (symlink(devnode, "/harddisk/dev/root"))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_ROOT]);
@@ -123,3 +151,4 @@ int getpassword(char *password, char *text)
 
 	return rc;
 }
+	

@@ -21,7 +21,7 @@
  * <dahinds@users.sourceforge.net>.  Portions created by David A. Hinds
  * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.
  *
- * $Id: pcmcia.c,v 1.6.2.4 2005/12/08 02:12:28 franck78 Exp $
+ * $Id: pcmcia.c,v 1.6.2.2 2005/01/31 15:49:43 alanh Exp $
  *
  */
 
@@ -35,7 +35,6 @@
 #endif
 
 extern FILE *flog;
-extern int modprobe(char *);
 
 /*====================================================================*/
 
@@ -141,8 +140,6 @@ static u_char i365_get(u_short sock, u_short reg)
     return val;
 }
 
-#if 0    // the following code do nothing usefull, it ends with return 0 anyway
-
 static void i365_set(u_short sock, u_short reg, u_char data)
 {
     u_char val = I365_REG(sock, reg);
@@ -162,12 +159,11 @@ static void i365_bclr(u_short sock, u_short reg, u_char mask)
     d &= ~mask;
     i365_set(sock, reg, d);
 }
-#endif
 
 int i365_probe()
 {
     int val, slot, sock, done;
-//   char *name = "i82365sl";
+    char *name = "i82365sl";
 
     ioperm(i365_base, 4, 1);
     ioperm(0x80, 1, 1);
@@ -176,17 +172,17 @@ int i365_probe()
 	    val = i365_get(sock, I365_IDENT);
 	    switch (val) {
 	    case 0x82:
-//		name = "i82365sl A step";
-//		break;
+		name = "i82365sl A step";
+		break;
 	    case 0x83:
-//		name = "i82365sl B step";
-//	    break;
+		name = "i82365sl B step";
+	    break;
 	    case 0x84:
-//		name = "VLSI 82C146";
-//		break;
+		name = "VLSI 82C146";
+		break;
 	    case 0x88: case 0x89: case 0x8a:
-//		name = "IBM Clone";
-//	    break;
+		name = "IBM Clone";
+	    break;
 	    case 0x8b: case 0x8c:
 		break;
 	    default:
@@ -202,7 +198,6 @@ int i365_probe()
 	return -1;
     }
 
-#if 0    // the following code do nothing usefull, it ends with return 0 anyway
     if ((sock == 2) && (strcmp(name, "VLSI 82C146") == 0))
 	name = "i82365sl DF";
 
@@ -236,7 +231,7 @@ int i365_probe()
 		name = "VIA VT83C469";
 	}
     }
-#endif
+
     return 0;
     
 } /* i365_probe */
@@ -303,30 +298,38 @@ int tcic_probe(ioaddr_t base)
 #endif
 
 /*====================================================================*/
+
 char * initialize_pcmcia (void)
 {
 #ifndef __alpha__
     ioaddr_t tcic_base = TCIC_BASE;
 #endif
-    char* pcmcia;
-    
-    if ((pcmcia = pci_probe()))
-	return pcmcia; /* we're all done */
+    int len;
+    char *pcmcia = NULL;
+
+    if ((pcmcia = pci_probe())) {
+	/* we're all done */
 #ifndef __alpha__
-    else if (i365_probe() == 0)
-	return "i82365";
-    else if (tcic_probe(tcic_base) == 0)
-	return "tcic";
+    } else if (i365_probe() == 0) {
+	len = strlen("i82365") + 1;
+	pcmcia = calloc(1, len);
+	strncpy(pcmcia, "i82365", len);
+    } else if (tcic_probe(tcic_base) == 0) {
+	len = strlen("tcic") + 1;
+	pcmcia = calloc(1, len);
+	strncpy(pcmcia, "tcic", len);
 #endif
-    else {
+    } else {
     	/* Detect ISAPNP based i82365 controllers */
     	FILE *f;
-        modprobe("i82365");
+        mysystem("modprobe i82365");
 	if ((f = fopen("/proc/bus/pccard/00/info", "r"))) {
+		len = strlen("i82365") + 1;
+		pcmcia = calloc(1, len);
+		strncpy(pcmcia, "i82365", len);
 		fclose(f);
-		return "i82365";
 	}
     }
 
-    return NULL;
+    return pcmcia;
 }
