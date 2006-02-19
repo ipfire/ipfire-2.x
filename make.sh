@@ -30,7 +30,7 @@
 
   NAME="IPFire"					# Software name
   SNAME="ipfire"					# Short name
-  VERSION="1.4.11"				# Version number
+  VERSION="1.4"				# Version number
   PREVIOUSTAG=IPCOP_v1_4_10_FINAL
   SLOGAN="We save your network"		# Software slogan
   CONFIG_ROOT=/var/ipfire			# Configuration rootdir

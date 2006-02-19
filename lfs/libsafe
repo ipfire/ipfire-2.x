@@ -34,14 +34,14 @@ include Config
 
 VER        = 2.0-16
 
-#THISAPP    = libsafe-$(VER)
-THISAPP    = libsafe_$(VER)
-#DL_FILE    = $(THISAPP).tgz
-DL_FILE    = $(THISAPP).orig.tar.gz
-#DL_FROM    = http://www.research.avayalabs.com/project/libsafe/src
-DL_FROM    = $(URL_DEBIAN)/libs/libsafe
-#DIR_APP    = $(DIR_SRC)/$(THISAPP)
-DIR_APP    = $(DIR_SRC)/libsafe-$(VER)
+THISAPP    = libsafe-$(VER)
+#THISAPP    = libsafe_$(VER)
+DL_FILE    = $(THISAPP).tgz
+#DL_FILE    = $(THISAPP).orig.tar.gz
+DL_FROM    = http://www.research.avayalabs.com/project/libsafe/src
+#DL_FROM    = $(URL_DEBIAN)/libs/libsafe
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+#DIR_APP    = $(DIR_SRC)/libsafe-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
