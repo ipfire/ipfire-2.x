@@ -1263,7 +1263,7 @@ lib/modules/2.4.31-smp/modules.usbmap
 #boot/grub
 boot/grub/grub.conf
 boot/grub/grubbatch
-boot/grub/ipcop.xpm.gz
+boot/grub/ipfire.xpm.gz
 boot/grub/scsigrub.conf
 #usr/bin/mbchk
 usr/sbin/grub
