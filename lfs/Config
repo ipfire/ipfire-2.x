@@ -49,6 +49,7 @@ DIR_INFO    = $(LFS_BASEDIR)/log
 DIR_TMP     = /tmp
 
 KGCC = ccache /usr/bin/gcc
+KVER = 2.4.31
 
 ###############################################################################
 # Common Macro Definitions
