@@ -568,7 +568,7 @@ buildipcop() {
   ipcopmake ethtool
   ipcopmake ez-ipupdate
   ipcopmake fcron
-  ipcopmake GD
+  ipcopmake perl-GD
   ipcopmake gnupg
   ipcopmake hdparm
   ipcopmake ibod
