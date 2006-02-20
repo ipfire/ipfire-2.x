@@ -48,10 +48,10 @@ ifeq "$(LFS_PASS)" "ipcop"
 ifeq "$(EMB)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)-ipcop
 endif
-ifeq "$(EMB)" "1"
-  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop-EMB
+ifeq "$(SMP)" "1"
+  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop-smp
 endif
-ifeq "$(EMB)" "installer"
+ifeq "$(SMP)" "installer"
   TARGET = $(DIR_INFO)/$(THISAPP)-ipcop-installer
 endif
 else
@@ -165,9 +165,9 @@ ifeq "$(EMB)" "1"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/net4801.kernel.patch_2.4.31
 endif
 
-ifeq "$(EMB)" ""
-	# Only do this once on the non-EMB pass
-	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.5
+ifeq "$(SMP)" ""
+	# Only do this once on the non-SMP pass
+	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.2.11
 endif
 
 	# Olitec isdn gazel patch
@@ -196,13 +196,13 @@ endif
 	cd $(DIR_APP) && make mrproper
 ifeq "$(ROOT)" ""
 ifeq "$(LFS_PASS)" "ipcop"
-ifeq "$(EMB)" ""
+ifeq "$(SMP)" ""
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
 endif
-ifeq "$(EMB)" "1"
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).EMB $(DIR_APP)/.config
+ifeq "$(SMP)" "1"
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).smp $(DIR_APP)/.config
 endif
-ifeq "$(EMB)" "installer"
+ifeq "$(SMP)" "installer"
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).installer $(DIR_APP)/.config
 	cd $(DIR_APP) && sed -i -e 's/-O2/-Os/g' Makefile
 endif
@@ -239,7 +239,7 @@ endif
 		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
 	fi
 	# remove symlinked pcmcia directory
-ifeq "$(EMB)" ""
+ifeq "$(SMP)" ""
 	rm -rf /lib/modules/$(VER)/pcmcia
 	find /lib/modules/$(VER)/ -name '*.o' -a -type f | xargs gzip -f9
 
@@ -251,21 +251,21 @@ ifeq "$(EMB)" ""
 	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)/kernel/drivers/scsi
 	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2
 endif
-ifeq "$(EMB)" "1"
-	rm -rf /lib/modules/$(VER)-EMB/pcmcia
-	find /lib/modules/$(VER)-EMB/ -name '*.o' -a -type f | xargs gzip -f9
+ifeq "$(SMP)" "1"
+	rm -rf /lib/modules/$(VER)-smp/pcmcia
+	find /lib/modules/$(VER)-smp/ -name '*.o' -a -type f | xargs gzip -f9
 
 	# Move these SCSI drivers into same directory for probescsi.sh
-	mv -f  /lib/modules/$(VER)-EMB/kernel/drivers/scsi/aic7xxx/*     /lib/modules/$(VER)-EMB/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)-EMB/kernel/drivers/scsi/aic7xxx
-	mv -f  /lib/modules/$(VER)-EMB/kernel/drivers/scsi/aacraid/*     /lib/modules/$(VER)-EMB/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)-EMB/kernel/drivers/scsi/aacraid
-	mv -f  /lib/modules/$(VER)-EMB/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)-EMB/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)-EMB/kernel/drivers/scsi/sym53c8xx_2
+	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/aic7xxx/*     /lib/modules/$(VER)-smp/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/aic7xxx
+	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/aacraid/*     /lib/modules/$(VER)-smp/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/aacraid
+	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)-smp/kernel/drivers/scsi
+	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/sym53c8xx_2
 endif
 
-ifeq "$(EMB)" ""
-	# Only do this once on the non-EMB pass
+ifeq "$(SMP)" ""
+	# Only do this once on the non-SMP pass
 	cd $(DIR_APP) && make mandocs
 	-mkdir -p /usr/share/man/man9/
 	cd $(DIR_APP) && cp -af Documentation/man/* /usr/share/man/man9/

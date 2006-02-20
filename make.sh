@@ -500,27 +500,27 @@ buildipcop() {
   ipcopmake rp-pppoe
   ipcopmake unzip
   # Do SMP now
-#  if [ 'i386' = $MACHINE ]; then 
-#  	# abuse the SMP flag, and make an minimal installer kernel first
-#	# so that the boot floppy always works.....
-#  	ipcopmake linux 	LFS_PASS=ipcop SMP=installer
-#  	ipcopmake linux 	LFS_PASS=ipcop SMP=1
-#  	ipcopmake 3cp4218 	SMP=1
-#  	ipcopmake amedyn 	SMP=1
-#  	ipcopmake cxacru 	SMP=1
-#  	ipcopmake eagle 	SMP=1
-#
-#  	# These are here because they have i386 only binary libraries
-#	# included in the package.
-#  	ipcopmake cnx_pci 	SMP=1
-# 	ipcopmake fcdsl 	SMP=1
-# 	ipcopmake fcdsl2 	SMP=1
-# 	ipcopmake fcdslsl 	SMP=1
-# 	ipcopmake fcdslusb 	SMP=1
-# 	ipcopmake fcdslslusb 	SMP=1
-#	ipcopmake pulsar 	SMP=1
-#  	ipcopmake unicorn 	SMP=1
-#  fi
+  if [ 'i386' = $MACHINE ]; then 
+  	# abuse the SMP flag, and make an minimal installer kernel first
+	# so that the boot floppy always works.....
+  	ipcopmake linux 	LFS_PASS=ipcop SMP=installer
+  	ipcopmake linux 	LFS_PASS=ipcop SMP=1
+  	ipcopmake 3cp4218 	SMP=1
+  	ipcopmake amedyn 	SMP=1
+  	ipcopmake cxacru 	SMP=1
+  	ipcopmake eagle 	SMP=1
+
+  	# These are here because they have i386 only binary libraries
+	# included in the package.
+  	ipcopmake cnx_pci 	SMP=1
+ 	ipcopmake fcdsl 	SMP=1
+ 	ipcopmake fcdsl2 	SMP=1
+ 	ipcopmake fcdslsl 	SMP=1
+ 	ipcopmake fcdslusb 	SMP=1
+ 	ipcopmake fcdslslusb 	SMP=1
+	ipcopmake pulsar 	SMP=1
+  	ipcopmake unicorn 	SMP=1
+  fi
 
   ipcopmake linux	LFS_PASS=ipcop
   ipcopmake 3cp4218 	
