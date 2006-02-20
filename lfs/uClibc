@@ -35,8 +35,8 @@ include Config
 VER        = 0.9.26
 
 THISAPP    = uClibc-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://uclibc.org/downloads
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = http://ipcop.ath.cx
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -49,7 +49,7 @@ objects = $(DL_FILE) gcc-3.3.1.tar.gz
 $(DL_FILE)           = $(DL_FROM)/$(DL_FILE)
 gcc-3.3.1.tar.gz     = $(URL_GNU)/gcc/gcc-3.3.1.tar.gz
 
-$(DL_FILE)_MD5       = 7212713c432dd0de6ec2140c2a6212e4
+$(DL_FILE)_MD5       = b63183651a1b13456c20387ea88b018f
 gcc-3.3.1.tar.gz_MD5 = 46d58197212818b5f7c403267ff24e4e
 
 install : $(TARGET)

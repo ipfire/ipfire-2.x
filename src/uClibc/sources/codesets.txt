@@ -1,2 +1,3 @@
 ./charmaps/ASCII.pairs
 ./charmaps/ISO-8859-1.pairs
+
