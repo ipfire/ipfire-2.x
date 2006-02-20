@@ -57,9 +57,9 @@ $(TARGET) :
 
 	# make new dependencies 
 	depmod -a -F /boot/System.map-$(KVER) $(KVER)
-	if [ "$(MACHINE)" = "i386" ]; then \
-		depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp; \
-	fi
+#	if [ "$(MACHINE)" = "i386" ]; then \
+#		depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp; \
+#	fi
 
 	# Create drivers floppy
 	cd /tmp && rm -rf drivers.tgz drivers.tar bin lib etc var
