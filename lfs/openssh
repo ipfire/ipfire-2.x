@@ -98,5 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    -e 's/^#\?X11Forwarding .*$$/X11Forwarding no/' \
 	    -e 's/^#\?AllowTcpForwarding .*$$/AllowTcpForwarding no/' \
 	    /etc/ssh/sshd_config
+	touch /var/ipfire/remote/enable
+	chown nobody:nobody /var/ipfire/remote/enable
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -45,7 +45,7 @@ CXXFLAGS   =
 #
 ifeq "$(ROOT)" ""
 ifeq "$(LFS_PASS)" "ipcop"
-ifeq "$(EMB)" ""
+ifeq "$(SMP)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)-ipcop
 endif
 ifeq "$(SMP)" "1"
@@ -73,19 +73,19 @@ objects =$(DL_FILE) \
 	netfilter-layer7-v2.1.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-openswan-1.0.10rc2.tar.gz            	= ftp://ftp.man.szczecin.pl/disks/disk0/security/network-security/ipsec/openswan/openswan-1.0.10rc2.tar.gz
+openswan-1.0.10rc2.tar.gz            	= http://www.openswan.org/download/openswan-1.0.10rc2.tar.gz
 patch-o-matic-ng-20060206.tar.bz2    	= ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-20060206.tar.bz2
 iptables-1.3.5.tar.bz2              	= http://www.netfilter.org/files/iptables-1.3.5.tar.bz2
-kbc_option_2420.patch                   = http://developer.osdl.org/rddunlap/patches/kbc_option_2420.patch
-net4801.kernel.patch_2.4.31             = http://www.sk-tech.net/support/net4801.kernel.patch_2.4.31
-netfilter-layer7-v2.1.tar.gz			= http://belnet.dl.sourceforge.net/sourceforge/l7-filter/netfilter-layer7-v2.1.tar.gz
+kbc_option_2420.patch                    = http://developer.osdl.org/rddunlap/patches/kbc_option_2420.patch
+net4801.kernel.patch_2.4.31              = http://www.sk-tech.net/support/net4801.kernel.patch_2.4.31
+netfilter-layer7-v2.1.tar.gz		= http://belnet.dl.sourceforge.net/sourceforge/l7-filter/netfilter-layer7-v2.1.tar.gz
 
 $(DL_FILE)_MD5                       	= ea3f99fc82617886059d58d0644dab26
 openswan-1.0.10rc2.tar.gz_MD5        	= 20d51ff963da78f826f4e0f0ebc4bcef
 patch-o-matic-ng-20060206.tar.bz2_MD5	= eca9893afb753e331caddfe63142b566
 iptables-1.3.5.tar.bz2_MD5          	= 00fb916fa8040ca992a5ace56d905ea5
-kbc_option_2420.patch_MD5               = 6d37870344f7fcf97ace1fbf43323c60
-net4801.kernel.patch_2.4.31_MD5         = c7d64e3caedb2f2b10e1c11db7f73a04
+kbc_option_2420.patch_MD5                = 6d37870344f7fcf97ace1fbf43323c60
+net4801.kernel.patch_2.4.31_MD5          = c7d64e3caedb2f2b10e1c11db7f73a04
 netfilter-layer7-v2.1.tar.gz_MD5		= 551626a158c2a2cbfd937d27ecc7fac1
 
 install : $(TARGET)
@@ -127,14 +127,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/openswan-1.0.10rc2 && sed -i 's+^KERNELSRC.*$$+KERNELSRC=$(ROOT)/usr/src/linux-$(VER)+' Makefile.inc
 	cd $(DIR_SRC)/openswan-1.0.10rc2 && sed -i -e 's/local\/sbin/local\/sbin:\/tools\/bin/' utils/patcher
 	cd $(DIR_SRC)/openswan-1.0.10rc2 && make insert
-	
+
 	# Patch-o-matic
 	cd $(DIR_SRC) && rm -rf iptables-*
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.5.tar.bz2 
 	cd $(DIR_SRC) && ln -sf iptables-1.3.5 iptables
 	cd $(DIR_SRC) && rm -rf patch-o-matic*
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20060206.tar.bz2
-	
+
 	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(ROOT)/usr/src/linux/ --iptables-path=$(ROOT)/usr/src/iptables/ pending
 	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(ROOT)/usr/src/linux/ --iptables-path=$(ROOT)/usr/src/iptables/ base
 	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(ROOT)/usr/src/linux/ --iptables-path=$(ROOT)/usr/src/iptables/ h323-conntrack-nat
@@ -159,15 +159,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.1.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.1/kernel-2.4-layer7-2.1.patch
 
-ifeq "$(EMB)" "1"
-	#Emb-patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/kbc_option_2420.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/net4801.kernel.patch_2.4.31
-endif
-
 ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass
-	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.2.11
+	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.5
 endif
 
 	# Olitec isdn gazel patch
@@ -210,7 +204,7 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
 	cd $(DIR_APP) && make CC="$(KGCC)" dep
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
-	if [ "$(MACHINE)" = "i386" -a "$(EMB)" = "" ]; then \
+	if [ "$(MACHINE)" = "i386" -a "$(SMP)" = "" ]; then \
 		cd $(DIR_APP) && make -j 3 CC="$(KGCC)" bzImage; \
 		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-$(VER); \
 		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER); \
@@ -218,15 +212,15 @@ endif
 		ln -sf System.map-$(VER) /boot/System.map; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
-	elif [ "$(MACHINE)" = "i386" -a "$(EMB)" = "1" ]; then \
-		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -EMB/' Makefile; \
+	elif [ "$(MACHINE)" = "i386" -a "$(SMP)" = "1" ]; then \
+		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -smp/' Makefile; \
 		cd $(DIR_APP) && make -j 3 CC="$(KGCC)" bzImage; \
-		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-$(VER)-EMB; \
-		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER)-EMB; \
-		ln -sf vmlinuz-$(VER)-EMB /boot/vmlinuz-EMB; \
+		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-$(VER)-smp; \
+		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER)-smp; \
+		ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-smp; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
-	elif [ "$(MACHINE)" = "i386" -a "$(EMB)" = "installer" ]; then \
+	elif [ "$(MACHINE)" = "i386" -a "$(SMP)" = "installer" ]; then \
 		cd $(DIR_APP) && make -j 3 CC="$(KGCC)" bzImage; \
 		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-installer; \
 	elif [ "$(MACHINE)" = "alpha" ]; then \

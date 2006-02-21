@@ -6,6 +6,7 @@
 * Digest-1.08
 * Digest-HMAC-1.01
 * Digest-SHA1-2.10
+* GD-2.12
 * HTML-Parser-3.45
 * HTML-Tagset-3.04
 * LPRng-3.8.28
