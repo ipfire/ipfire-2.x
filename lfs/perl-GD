@@ -22,7 +22,7 @@
 # ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
 #          - Modified Makefile for IPCop build                                #
 #                                                                             #
-# $Id: gd,v 1.5.2.4 2005/03/04 19:26:50 gespinasse Exp $
+# $Id: GD,v 1.5.2.3 2005/02/05 15:38:14 gespinasse Exp $
 #                                                                             #
 ###############################################################################
 
@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 2.0.20
+VER        = 2.12
 
-THISAPP    = gd-$(VER)
+THISAPP    = GD-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.boutell.com/gd/http
+DL_FROM    = $(URL_CPAN)/GD
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3e513bf438a8d797b508a4fbf52c9bd1
+$(DL_FILE)_MD5 = 84de3734fb32947d08c0d3d1e68201a6
 
 install : $(TARGET)
 
@@ -78,10 +78,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && sed -i \
-	    -e 's%^#include "jpeglib.h".*$$%%' \
-	    -e 's%^#include "jerror.h".*$$%%' gd_jpeg.c
+	cd $(DIR_APP) && sed -i "s%,'y'%,'n'%" Makefile.PL
+	cd $(DIR_APP) && yes 'n' | perl Makefile.PL
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
