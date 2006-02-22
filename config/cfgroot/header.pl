@@ -9,278 +9,757 @@
 # Copyright (c) 2002/08/23 Mark Wormgoor <mark@wormgoor.com> validfqdn()
 # Copyright (c) 2003/09/11 Darren Critchley <darrenc@telus.net> srtarray()
 #
-# $Id: header.pl,v 1.34.2.67 2005/10/03 20:01:05 gespinasse Exp $
+# $Id: header.pl,v 1.34.2.39 2004/11/26 15:51:27 alanh Exp $
 #
-
 package Header;
 
-use strict;
 use CGI();
+use Socket;
 use Time::Local;
 
-# enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+$|=1; # line buffering
 
+sub get_version() {
+    my $read_ver = `cat /etc/ipfire-release`;
+    if ($read_ver =~ /^$/) {
+	return "IPFire (unknown version)";
+    }
+    return $read_ver;
+}
 
-$Header::pagecolour = '#ffffff';	# never used, will be removed
-$Header::tablecolour = '#FFFFFF';	# never used, will be removed
-$Header::bigboxcolour = '#F6F4F4';	# never used, will be removed
-$Header::boxcolour = '#EAE9EE';		# only header.pl, ? move in css ?
-$Header::bordercolour = '#000000';	# never used, will be removed
-$Header::table1colour = '#C0C0C0';
-$Header::table2colour = '#F2F2F2';
+$Header::version = get_version();
+$Header::revision = 'final';
+$Header::swroot = '/var/ipfire';
+$Header::pagecolour = '#ffffff';
+#$Header::tablecolour = '#a0a0a0';
+$Header::tablecolour = '#FFFFFF';
+$Header::bigboxcolour = '#F6F4F4';
+$Header::boxcolour = '#EAE9EE';
+$Header::bordercolour = '#000000';
+$Header::table1colour = '#E0E0E0';
+$Header::table2colour = '#F0F0F0';
 $Header::colourred = '#993333';
 $Header::colourorange = '#FF9933';
 $Header::colouryellow = '#FFFF00';
 $Header::colourgreen = '#339933';
 $Header::colourblue = '#333399';
-$Header::colourfw = '#000000';		# only connections.cgi
-$Header::colourvpn = '#990099';		# only connections.cgi
-$Header::colourerr = '#FF0000';		# only header.pl, many scripts use colourred for warnings messages
+$Header::colourfw = '#000000';
+$Header::colourvpn = '#990099';
+$Header::colourerr = '#FF0000';
 $Header::viewsize = 150;
-my %menu = ();
-my $hostnameintitle = 0;
-our $javascript = 1;
+$Header::errormessage = '';
+my %menuhash = ();
+my $menu = \%menuhash;
+%settings = ();
+%ethsettings = ();
+@URI = ();
+$Header::supported=0;
+
+### Make sure this is an SSL request
+if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
+    print "Status: 302 Moved\r\n";
+    print "Location: https://$ENV{'SERVER_ADDR'}:10443/$ENV{'PATH_INFO'}\r\n\r\n";
+    exit 0;
+}
+
+### Initialize environment
+&readhash("${swroot}/main/settings", \%settings);
+&readhash("${swroot}/ethernet/settings", \%ethsettings);
+$language = $settings{'LANGUAGE'};
+$hostname = $settings{'HOSTNAME'};
+$hostnameintitle = 0;
+
+### Initialize language
+if ($language =~ /^(\w+)$/) {$language = $1;}
+
+### Read English Files
+if ( -d "/var/ipfire/langs/en/" ) {
+    opendir(DIR, "/var/ipfire/langs/en/");
+    @names = readdir(DIR) or die "Cannot Read Directory: $!\n";
+    foreach $name(@names) {
+        next if ($name eq ".");
+        next if ($name eq "..");
+        next if (!($name =~ /\.pl$/));
+        require "${swroot}/langs/en/${name}";
+    };
+};
+
+
+### Enable Language Files
+if ( -d "/var/ipfire/langs/${language}/" ) {
+    opendir(DIR, "/var/ipfire/langs/${language}/");
+    @names = readdir(DIR) or die "Cannot Read Directory: $!\n";
+    foreach $name(@names) {
+        next if ($name eq ".");
+        next if ($name eq "..");
+        next if (!($name =~ /\.pl$/));
+        require "${swroot}/langs/${language}/${name}";
+    };
+};
+
+
+require "${swroot}/langs/en.pl";
+require "${swroot}/langs/${language}.pl";
+
+sub orange_used () {
+    if ($ethsettings{'CONFIG_TYPE'} =~ /^[1357]$/) {
+	return 1;
+    }
+    return 0;
+}
+
+sub blue_used () {
+    if ($ethsettings{'CONFIG_TYPE'} =~ /^[4567]$/) {
+	return 1;
+    }
+    return 0;
+}
+
+sub is_modem {
+    if ($ethsettings{'CONFIG_TYPE'} =~ /^[0145]$/) {
+	return 1;
+    }
+    return 0;
+}
 
 ### Initialize menu
-sub genmenu
-{
-    ### Initialize environment
-    my %ethsettings = ();
-    &General::readhash("${General::swroot}/ethernet/settings", \%ethsettings);
+sub genmenu {
+    my %subsystemhash = ();
+    my $subsystem = \%subsystemhash;
 
-    %{$menu{'1.system'}}=(
-		'contents' =>  $Lang::tr{'alt system'},
-		'uri' => '',
-		'statusText' => "IPCop $Lang::tr{'alt system'}",
-		'subMenu' =>   [[ $Lang::tr{'alt home'} , '/cgi-bin/index.cgi', "IPCop $Lang::tr{'alt home'}" ],
-				[ $Lang::tr{'updates'} , '/cgi-bin/updates.cgi', "IPCop $Lang::tr{'updates'}" ],
-				[ $Lang::tr{'sspasswords'} , '/cgi-bin/changepw.cgi', "IPCop $Lang::tr{'sspasswords'}" ],
-				[ $Lang::tr{'ssh access'} , '/cgi-bin/remote.cgi', "IPCop $Lang::tr{'ssh access'}" ],
-				[ $Lang::tr{'gui settings'} , '/cgi-bin/gui.cgi', "IPCop $Lang::tr{'gui settings'}" ],
-				[ $Lang::tr{'backup'} , '/cgi-bin/backup.cgi', "IPCop $Lang::tr{'backup'} / $Lang::tr{'restore'}" ],
-				[ $Lang::tr{'shutdown'} , '/cgi-bin/shutdown.cgi', "IPCop $Lang::tr{'shutdown'} / $Lang::tr{'reboot'}" ],
-				[ $Lang::tr{'credits'} , '/cgi-bin/credits.cgi', "IPCop $Lang::tr{'credits'}" ]]
-    );
-    %{$menu{'2.status'}}=(
-		'contents' =>  $Lang::tr{'status'},
-		'uri' => '',
-		'statusText' => "IPCop $Lang::tr{'status information'}",
-		'subMenu' =>   [[ $Lang::tr{'sssystem status'} , '/cgi-bin/status.cgi', "IPCop $Lang::tr{'system status information'}" ],
-				[ $Lang::tr{'ssnetwork status'} , '/cgi-bin/netstatus.cgi', "IPCop $Lang::tr{'network status information'}" ],
-				[ $Lang::tr{'system graphs'} , '/cgi-bin/graphs.cgi', "IPCop $Lang::tr{'system graphs'}" ],
-				[ $Lang::tr{'sstraffic graphs'} , '/cgi-bin/graphs.cgi?graph=network', "IPCop $Lang::tr{'network traffic graphs'}" ],
-				[ $Lang::tr{'ssproxy graphs'} , '/cgi-bin/proxygraphs.cgi', "IPCop $Lang::tr{'proxy access graphs'}" ],
-				[ $Lang::tr{'connections'} , '/cgi-bin/connections.cgi', "IPCop $Lang::tr{'connections'}" ]]
-    );
-    %{$menu{'3.network'}}=(
-		'contents' =>  $Lang::tr{'network'},
-		'uri' => '',
-		'statusText' => "IPCop $Lang::tr{'network configuration'}",
-		'subMenu' =>   [[ $Lang::tr{'alt dialup'} , '/cgi-bin/pppsetup.cgi', "IPCop $Lang::tr{'dialup settings'}" ],
-				[ $Lang::tr{'upload'} , '/cgi-bin/upload.cgi', $Lang::tr{'firmware upload'} ],
-				[ $Lang::tr{'modem'} , '/cgi-bin/modem.cgi', "IPCop $Lang::tr{'modem configuration'}" ],
-				[ $Lang::tr{'aliases'} , '/cgi-bin/aliases.cgi', "IPCop $Lang::tr{'external aliases configuration'}" ]]
-    );
-    %{$menu{'4.services'}}=(
-		'contents' =>  $Lang::tr{'alt services'},
-		'uri' => '',
-		'statusText' => "IPCop $Lang::tr{'alt services'}",
-		'subMenu' =>   [[ $Lang::tr{'proxy'} , '/cgi-bin/proxy.cgi', "IPCop $Lang::tr{'web proxy configuration'}" ],
-				[ $Lang::tr{'dhcp server'} , '/cgi-bin/dhcp.cgi', "IPCop $Lang::tr{'dhcp configuration'}" ],
-				[ $Lang::tr{'dynamic dns'} , '/cgi-bin/ddns.cgi', "IPCop $Lang::tr{'dynamic dns client'}" ],
-				[ $Lang::tr{'edit hosts'} , '/cgi-bin/hosts.cgi', "IPCop $Lang::tr{'host configuration'}" ],
-				[ $Lang::tr{'time server'} , '/cgi-bin/time.cgi', "IPCop $Lang::tr{'time server'}" ],
-				[ $Lang::tr{'traffic shaping'} , '/cgi-bin/shaping.cgi', "IPCop $Lang::tr{'traffic shaping settings'}" ],
-				[ $Lang::tr{'intrusion detection'} , '/cgi-bin/ids.cgi', "IPCop $Lang::tr{'intrusion detection system'} (Snort)" ]]
-    );
-    %{$menu{'5.firewall'}}=(
-		'contents' =>  $Lang::tr{'firewall'},
-		'uri' => '',
-		'statusText' => "IPCop $Lang::tr{'firewall'}",
-		'subMenu' =>   [[ $Lang::tr{'ssport forwarding'} , '/cgi-bin/portfw.cgi', "IPCop $Lang::tr{'port forwarding configuration'}" ],
-				[ $Lang::tr{'external access'} , '/cgi-bin/xtaccess.cgi', "IPCop $Lang::tr{'external access configuration'}" ],
-				[ $Lang::tr{'ssdmz pinholes'} , '/cgi-bin/dmzholes.cgi', "IPCop $Lang::tr{'dmz pinhole configuration'}" ],
-				[ $Lang::tr{'blue access'} , '/cgi-bin/wireless.cgi', "IPCop $Lang::tr{'blue access'}" ]
-				,[ $Lang::tr{'options fw'} , '/cgi-bin/optionsfw.cgi', "IPCop $Lang::tr{'options fw'}" ]
-			       ]
-    );
-    %{$menu{'6.vpns'}}=(
-		'contents' =>  $Lang::tr{'alt vpn'},
-		'uri' => '',
-		'statusText' => "IPCop $Lang::tr{'virtual private networking'}",
-		'subMenu' =>   [[ $Lang::tr{'alt vpn'} , '/cgi-bin/vpnmain.cgi', "IPCop $Lang::tr{'virtual private networking'}"]]
-    );
-    %{$menu{'7.mainlogs'}}=(
-		'contents' =>  $Lang::tr{'alt logs'},
-		'uri' => '',
-		'statusText' => "IPCop $Lang::tr{'alt logs'}",
-		'subMenu' =>   [[ $Lang::tr{'log settings'} , '/cgi-bin/logs.cgi/config.dat', "IPCop $Lang::tr{'log settings'}" ],
-				[ $Lang::tr{'log summary'} , '/cgi-bin/logs.cgi/summary.dat', "IPCop $Lang::tr{'log summary'}" ],
-				[ $Lang::tr{'proxy logs'} , '/cgi-bin/logs.cgi/proxylog.dat', "IPCop $Lang::tr{'proxy log viewer'}" ],
-				[ $Lang::tr{'firewall logs'} , '/cgi-bin/logs.cgi/firewalllog.dat', "IPCop $Lang::tr{'firewall log viewer'}" ],
-				[ $Lang::tr{'ids logs'} , '/cgi-bin/logs.cgi/ids.dat', "IPCop $Lang::tr{'intrusion detection system log viewer'}" ],
-				[ $Lang::tr{'system logs'} , '/cgi-bin/logs.cgi/log.dat', "IPCop $Lang::tr{'system log viewer'}" ]]
-    );
-    if (! $ethsettings{'BLUE_DEV'}) {
-	splice (@{$menu{'5.firewall'}{'subMenu'}}, 3, 1);
+    $subsystem->{'01.home'} = {
+			      'caption' => $tr{'alt home'},
+			      'uri' => '/cgi-bin/index.cgi',
+			      'title' => "$tr{'alt home'}",
+			      'enabled' => 1,
+			      };
+    $subsystem->{'02.netwizard'} = {
+				   'caption' => $tr{'network configuration'},
+				   'uri' => '/cgi-bin/netwizard.cgi',
+				   'title' => "$tr{'network configuration'}",
+				   'enabled' => 1,
+				   };
+    $subsystem->{'03.updates'} = {
+				 'caption' => $tr{'updates'},
+				 'uri' => '/cgi-bin/updates.cgi',
+				 'title' => "$tr{'updates'}",
+				 'enabled' => 0,
+				 };
+    $subsystem->{'04.passwords'} = {
+				   'caption' => $tr{'sspasswords'},
+				   'uri' => '/cgi-bin/changepw.cgi',
+				   'title' => "$tr{'sspasswords'}",
+				   'enabled' => 1,
+				   };
+    $subsystem->{'05.ssh'} = {
+			     'caption' => $tr{'ssh access'},
+			     'uri' => '/cgi-bin/remote.cgi',
+			     'title' => "$tr{'ssh access'}",
+			     'enabled' => 1,
+			     };
+    $subsystem->{'06.gui'} = {
+			      'caption' => $tr{'gui settings'},
+			      'uri' => '/cgi-bin/gui.cgi',
+			      'title' => "$tr{'gui settings'}",
+			      'enabled' => 1,
+			      };
+    $subsystem->{'07.backup'} = {
+				'caption' => $tr{'backup'},
+				'uri' => '/cgi-bin/backup.cgi',
+				'title' => "$tr{'backup'} / $tr{'restore'}",
+				'enabled' => 1,
+				};
+    $subsystem->{'08.shutdown'} = {
+				  'caption' => $tr{'shutdown'},
+				  'uri' => '/cgi-bin/shutdown.cgi',
+				  'title' => "$tr{'shutdown'} / $tr{'reboot'}",
+				  'enabled' => 1,
+				  };
+    $subsystem->{'09.credits'} = {
+				  'caption' => $tr{'credits'},
+				  'uri' => '/cgi-bin/credits.cgi',
+				  'title' => "$tr{'credits'}",
+				  'enabled' => 1,
+				  };
+
+    my %substatushash = ();
+    my $substatus = \%substatushash;
+    $substatus->{'01.systemstatus'} = {
+				 'caption' => $tr{'sssystem status'},
+				 'uri' => '/cgi-bin/status.cgi',
+				 'title' => "$tr{'system status information'}",
+				 'enabled' => 1,
+				 };
+    $substatus->{'02.networkstatus'} = {
+				  'caption' => $tr{'ssnetwork status'},
+				  'uri' => '/cgi-bin/netstatus.cgi',
+				  'title' => "$tr{'network status information'}",
+				  'enabled' => 1,
+				  };
+    $substatus->{'03.systemgraphs'} = {
+				       'caption' => $tr{'system graphs'},
+				       'uri' => '/cgi-bin/graphs.cgi',
+				       'novars' => 1,
+				       'title' => "$tr{'system graphs'}",
+				       'enabled' => 1,
+				       };
+    $substatus->{'04.trafficgraphs'} = {
+					'caption' => $tr{'sstraffic graphs'},
+					'uri' => '/cgi-bin/graphs.cgi',
+					'vars' => 'graph=network',
+					'title' => "$tr{'network traffic graphs'}",
+					'enabled' => 1,
+					};
+    $substatus->{'05.proxygraphs'} = {
+				      'caption' => $tr{'ssproxy graphs'},
+				      'uri' => '/cgi-bin/proxygraphs.cgi',
+				      'title' => "$tr{'proxy access graphs'}",
+				      'enabled' => 1,
+				      };
+    $substatus->{'06.connections'} = {
+				      'caption' => $tr{'connections'},
+				      'uri' => '/cgi-bin/connections.cgi',
+				      'title' => "$tr{'connections'}",
+				      'enabled' => 1,
+				      };
+    $substatus->{'99.iptfilters'} = {
+                                     'caption' => $tr{'iptfilters iptable rules'},
+                                     'uri' => '/cgi-bin/iptfilters.cgi',
+                                     'title' => "$tr{'iptfilters iptable rules'}",
+                                     'enabled' => 1,
+                                     };
+
+    my %subnetworkhash = ();
+    my $subnetwork = \%subnetworkhash;
+
+    $subnetwork->{'01.dialup'} = {
+				  'caption' => $tr{'alt dialup'},
+				  'uri' => '/cgi-bin/pppsetup.cgi',
+				  'title' => "$tr{'dialup settings'}",
+				  'enabled' => 0,
+				  };
+    $subnetwork->{'02.hosts'} = {
+				 'caption' => $tr{'edit hosts'},
+				 'uri' => '/cgi-bin/hosts.cgi',
+				 'title' => "$tr{'host configuration'}",
+				 'enabled' => 1,
+				 };
+    $subnetwork->{'03.upload'} = {
+				  'caption' => $tr{'upload'},
+				  'uri' => '/cgi-bin/upload.cgi',
+				  'title' => "$tr{'firmware upload'}",
+				  'enabled' => 0,
+				  };
+    $subnetwork->{'04.aliases'} = {
+				  'caption' => $tr{'aliases'},
+				  'uri' => '/cgi-bin/aliases.cgi',
+				  'title' => "$tr{'external aliases configuration'}",
+				  'enabled' => 1,
+				  };
+
+
+    my %subserviceshash = ();
+    my $subservices = \%subserviceshash;
+
+    $subservices->{'01.dhcp'} = {
+				 'caption' => $tr{'dhcp server'},
+				 'uri' => '/cgi-bin/dhcp.cgi',
+				 'title' => "$tr{'dhcp configuration'}",
+				 'enabled' => 1,
+				 };
+    $subservices->{'02.dyndns'} = {
+				   'caption' => $tr{'dynamic dns'},
+				   'uri' => '/cgi-bin/ddns.cgi',
+				   'title' => "$tr{'dynamic dns client'}",
+				   'enabled' => 1,
+				 };
+    $subservices->{'03.time'} = {
+				   'caption' => $tr{'time server'},
+				   'uri' => '/cgi-bin/time.cgi',
+				   'title' => "$tr{'time server'}",
+				   'enabled' => 1,
+				 };
+    $subservices->{'04.shaping'} = {
+				    'caption' => $tr{'traffic shaping'},
+				    'uri' => '/cgi-bin/shaping.cgi',
+				    'title' => "$tr{'traffic shaping settings'}",
+				    'enabled' => 1,
+				    };
+    $subservices->{'05.ids'} = {'caption' => $tr{'intrusion detection'},
+				'enabled' => 1,
+				'uri' => '/cgi-bin/ids.cgi',
+				'title' => "$tr{'intrusion detection system'} (Snort)",
+				};
+
+
+    my %subfirewallhash = ();
+    my $subfirewall = \%subfirewallhash;
+
+    
+    $subfirewall->{'01.dnat'} = {
+				 'caption' => $tr{'ssport forwarding'},
+				 'uri' => '/cgi-bin/portfw.cgi',
+				 'title' => "$tr{'port forwarding configuration'}",
+				 'enabled' => 1,
+				 };
+    $subfirewall->{'02.xtaccess'} = {
+				 'caption' => $tr{'external access'},
+				 'uri' => '/cgi-bin/xtaccess.cgi',
+				 'title' => "$tr{'external access configuration'}",
+				 'enabled' => 1,
+				 };
+    $subfirewall->{'03.dmz'} = {
+				'caption' => $tr{'ssdmz pinholes'},
+				'uri' => '/cgi-bin/dmzholes.cgi',
+				'title' => "$tr{'dmz pinhole configuration'}",
+				'enabled' => 1,
+				 };
+    $subfirewall->{'04.outgoing'} = {
+				     'caption' => $tr{'outgoing firewall'},
+				     'uri' => '/cgi-bin/outgoingfw.cgi',
+				     'title' => "$tr{'outgoing firewall'}",
+				     'enabled' => 1,
+				     };
+    
+
+
+    my %subhttphash = ();
+    my $subhttp = \%subhttphash;
+    $subhttp->{'01.proxy'} = {
+			      'caption' => $tr{'proxy'},
+			      'uri' => '/cgi-bin/advproxy.cgi',
+			      'title' => "HTTP: $tr{'web proxy configuration'}",
+			      'enabled' => 1,
+			      };
+    $subhttp->{'02.contentfilter'} = {
+				      'caption' => $tr{'content filter'},
+				      'uri' => '/cgi-bin/dansguardian.cgi',
+				      'title' => "HTTP: $tr{'content filter'}",
+				      'enabled' => 1,
+				      };
+    $subhttp->{'03.antivirus'} = {
+				  'caption' => $tr{'antivirus'},
+				  'uri' => '/cgi-bin/httpantivirus.cgi',
+				  'title' => "HTTP: $tr{'antivirus'}",
+				  'enabled' => 1,
+				  };
+     $subhttp->{'04.proxymanagment'} = {
+                                   'caption' => $tr{'DS Managment'},
+                                   'uri' => '/cgi-bin/proxygm.cgi',
+                                   'title' => "HTTP: $tr{'DS Managment'}",
+                                   'enabled' => 1,
+                                   };
+     $subhttp->{'05.activatedgroups'} = {
+                                   'caption' => $tr{'activated Groups'},
+                                   'uri' => '/cgi-bin/proxyag.cgi',
+                                   'title' => "HTTP: $tr{'activated Groups'}",
+                                   'enabled' => 1,
+                                   };
+     $subhttp->{'06.advancedproxy'} = {
+                                   'caption' => $tr{'Proxy Advanced'},
+                                   'uri' => '/cgi-bin/proxyad.cgi',
+                                   'title' => "HTTP: $tr{'Proxy Advanced'}",
+                                   'enabled' => 1,
+                                   };
+
+
+    my %subproxyhash = ();
+    my $subproxy = \%subproxyhash;
+
+    $subproxy->{'01.http'} = {'caption' => $tr{'HTTP'},
+			      'enabled' => 1,
+			      'subMenu' => $subhttp
+			      };
+    $subproxy->{'02.ftp'} = {'caption' => 'FTP',
+                             'enabled' => 1,
+                             'subMenu' => $subftp
+                             };
+
+
+
+    my %subopenvpnhash = ();
+    my $subopenvpn = \%subopenvpnhash;
+    $subopenvpn->{'01.server'} = {'caption' => $tr{'openvpn'},
+				  'uri' => '/cgi-bin/openvpn.cgi',
+				  'title' => "$tr{'virtual private networking'}",
+				  'enabled' => 1,
+				  };
+    $subopenvpn->{'02.client'} = {'caption' => $tr{'openvpnclient'},
+				  'uri' => '/cgi-bin/openvpnclient.cgi',
+				  'title' => "$tr{'virtual private networking'}",
+				  'enabled' => 1,
+				  };
+
+    my %subvpnhash = ();
+    my $subvpn = \%subvpnhash;
+
+    $subvpn->{'01.openvpn'} = {'caption' => $tr{'openvpn'},
+			       'subMenu' => $subopenvpn,
+			       'enabled' => 1,
+			   };
+    $subvpn->{'02.ipsec'} = {'caption' => $tr{'ipsec'},
+			     'uri' => '/cgi-bin/vpnmain.cgi',
+			     'title' => "$tr{'virtual private networking'}",
+			     'enabled' => 1,
+			 };
+
+    my %sublogshash = ();
+    my $sublogs = \%sublogshash;
+
+    $sublogs->{'01.summary'} = {'caption' => $tr{'log summary'},
+				 'uri' => '/cgi-bin/logs.cgi/summary.dat',
+				 'title' => "$tr{'log summary'}",
+				 'enabled' => 1
+				 };
+    $sublogs->{'02.settings'} = {'caption' => $tr{'log settings'},
+				 'uri' => '/cgi-bin/logs.cgi/config.dat',
+				 'title' => "$tr{'log settings'}",
+				 'enabled' => 1
+				 };
+    $sublogs->{'03.proxy'} = {'caption' => $tr{'proxy logs'},
+				 'uri' => '/cgi-bin/logs.cgi/proxylog.dat',
+				 'title' => "$tr{'proxy log viewer'}",
+				 'enabled' => 1
+				 };
+    $sublogs->{'04.firewall'} = {'caption' => $tr{'firewall logs'},
+				 'uri' => '/cgi-bin/logs.cgi/firewalllog.dat',
+				 'title' => "$tr{'firewall log viewer'}",
+				 'enabled' => 1
+				 };
+    $sublogs->{'05.ids'} = {'caption' => $tr{'ids logs'},
+			    'uri' => '/cgi-bin/logs.cgi/ids.dat',
+			    'title' => "$tr{'intrusion detection system log viewer'}",
+			    'enabled' => 1
+			    };
+    $sublogs->{'06.contentfilter'} = {'caption' => $tr{'content filter logs'},
+				      'uri' => '/cgi-bin/logs.cgi/dansguardian.dat',
+				      'title' => "$tr{'content filter log viewer'}",
+				      'enabled' => 1
+				      };
+    $sublogs->{'07.urlfilter'} = {
+                                     'caption' => $tr{'urlfilter log'},
+	                              'uri' => '/cgi-bin/logs.cgi/urlfilter.dat',
+	                              'title' => "$tr{'urlfilter log'}",
+	                              'enabled' => 1,
+                                      };
+    $sublogs->{'08.openvpn'} = {'caption' => $tr{'openvpn log'},
+				      'uri' => '/cgi-bin/logs.cgi/openvpn.dat',
+				      'title' => "$tr{'openvpn log'}",
+				      'enabled' => 1
+				      };
+    $sublogs->{'09.system'} = {'caption' => $tr{'system logs'},
+				      'uri' => '/cgi-bin/logs.cgi/log.dat',
+				      'title' => "$tr{'system log viewer'}",
+				      'enabled' => 1
+				      };
+    $sublogs->{'10.userlog'} = {'caption' => $tr{'user proxy logs'},
+                                      'uri' => '/cgi-bin/logs.cgi/userlog.dat',
+                                      'title' => "$tr{'user log viewer'}",
+                                      'enabled' => 1
+                                       };
+
+
+    $menu->{'01.system'} = {'caption' => $tr{'alt system'},
+			    'enabled' => 1,
+			    'subMenu' => $subsystem
+			    };
+    $menu->{'02.status'} = {'caption' => $tr{'status'},
+			    'enabled' => 1,
+			    'subMenu' => $substatus
+			    };
+    $menu->{'03.network'} = {'caption' => $tr{'network'},
+			     'enabled' => 1,
+			     'subMenu' => $subnetwork
+			     };
+    $menu->{'04.services'} = {'caption' => $tr{'alt services'},
+			      'enabled' => 1,
+			      'subMenu' => $subservices
+			      };
+    $menu->{'05.firewall'} = {'caption' => $tr{'firewall'},
+			      'enabled' => 1,
+			      'subMenu' => $subfirewall
+			      };
+    $menu->{'06.proxy'} = {'caption' => $tr{'alt proxy'},
+			   'enabled' => 1,
+			   'subMenu' => $subproxy
+			   };
+    $menu->{'07.vpn'} = {'caption' => 'VPN',
+			 'enabled' => 1,
+			 'subMenu' => $subvpn
+			 };
+    $menu->{'08.logs'} = {'caption' => $tr{'alt logs'},
+			  'enabled' => 1,
+			  'subMenu' => $sublogs
+			  };
+
+
+
+    if (! blue_used() && ! orange_used()) {
+	$menu->{'05.firewall'}{'subMenu'}->{'03.dmz'}{'enabled'} = 0;
     }
-    if (! $ethsettings{'BLUE_DEV'} && ! $ethsettings{'ORANGE_DEV'}) {
-	splice (@{$menu{'5.firewall'}{'subMenu'}}, 2, 1);
-    }
-    unless ( $ethsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
-	splice (@{$menu{'3.network'}{'subMenu'}}, 3, 1);
-    }
-    if ( ! -e "${General::swroot}/snort/enable" && ! -e "${General::swroot}/snort/enable_blue" &&
-	! -e "${General::swroot}/snort/enable_green" && ! -e "${General::swroot}/snort/enable_orange") {
-	splice (@{$menu{'7.mainlogs'}{'subMenu'}}, 4, 1);
-    }
-    if ( ! -e "${General::swroot}/proxy/enable" && ! -e "${General::swroot}/proxy/enable_blue" ) {
-	splice (@{$menu{'2.status'}{'subMenu'}}, 4, 1);
-	splice (@{$menu{'7.mainlogs'}{'subMenu'}}, 2, 1);
+    if (-e '/etc/FLASH') {
+	$menu{'06.proxy'}{'subMenu'}->{'01.http'}{'subMenu'}->{'01.proxy'}{'enabled'} = 0;  #disable squid
+	$menu{'04.services'}{'subMenu'}->{'05.ids'}{'enabled'} = 0;  #disable ids
+	$menu{'08.logs'}{'subMenu'}->{'05.ids'}{'enabled'} = 0;  #disable ids
     }
 }
 
 sub showhttpheaders
 {
-    ### Make sure this is an SSL request
-    if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
-	print "Status: 302 Moved\r\n";
-	print "Location: https://$ENV{'SERVER_ADDR'}:445/$ENV{'PATH_INFO'}\r\n\r\n";
-	exit 0;
-    } else {
 	print "Pragma: no-cache\n";
 	print "Cache-control: no-cache\n";
 	print "Connection: close\n";
 	print "Content-type: text/html\n\n";
-    }
 }
 
-sub showjsmenu
-{
-    my $c1 = 1;
+sub is_menu_visible($) {
+    my $link = shift;
+    $link =~ s#\?.*$##;
+    return (-e $ENV{'DOCUMENT_ROOT'}."/../$link");
+}
 
-    print "    <script type='text/javascript'>\n";
-    print "    domMenu_data.setItem('domMenu_main', new domMenu_Hash(\n";
 
-    foreach my $k1 ( sort keys %menu ) {
-	my $c2 = 1;
-	if ($c1 > 1) {
-	    print "    ),\n";
-	}
-	print "    $c1, new domMenu_Hash(\n";
-	print "\t'contents', '" . &cleanhtml($menu{$k1}{'contents'}) . "',\n";
-	print "\t'uri', '$menu{$k1}{'uri'}',\n";
-	$menu{$k1}{'statusText'} =~  s/'/\\\'/g;
-	print "\t'statusText', '$menu{$k1}{'statusText'}',\n";
-	foreach my $k2 ( @{$menu{$k1}{'subMenu'}} ) {
-	    print "\t    $c2, new domMenu_Hash(\n";
-	    print "\t\t'contents', '" . &cleanhtml(@{$k2}[0])  . "',\n";
-	    print "\t\t'uri', '@{$k2}[1]',\n";
-	    @{$k2}[2] =~ s/'/\\\'/g;
-	    print "\t\t'statusText', '@{$k2}[2]'\n";
-	    if ( $c2 <= $#{$menu{$k1}{'subMenu'}} ) {
-		print "\t    ),\n";
-	    } else {
-		print "\t    )\n";
-	    }
-	    $c2++;
-	}
-	$c1++;
+sub getlink($) {
+    my $root = shift;
+    if (! $root->{'enabled'}) {
+	return '';
     }
-    print "    )\n";
-    print "    ));\n\n";
+    if ($root->{'uri'} !~ /^$/) {
+	my $vars = '';
+	if ($root->{'vars'} !~ /^$/) {
+	    $vars = '?'. $root->{'vars'};
+	}
+	if (! is_menu_visible($root->{'uri'})) {
+	    return '';
+	}
+	return $root->{'uri'}.$vars;
+    }
+    my $submenus = $root->{'subMenu'};
+    if (! $submenus) {
+	return '';
+    }
+    foreach my $item (sort keys %$submenus) {
+	my $link = getlink($submenus->{$item});
+	if ($link ne '') {
+	    return $link;
+	}
+    }
+    return '';
+}
+
+
+sub compare_url($) {
+    my $conf = shift;
+
+    my $uri = $conf->{'uri'};
+    my $vars = $conf->{'vars'};
+    my $novars = $conf->{'novars'};
+
+    if ($uri eq '') {
+	return 0;
+    }
+    if ($uri ne $URI[0]) {
+	return 0;
+    }
+    if ($novars) {
+	if ($URI[1] !~ /^$/) {
+	    return 0;
+	}
+    }
+    if (! $vars) {
+	return 1;
+    }
+    return ($URI[1] eq $vars);
+}
+
+
+sub gettitle($) {
+    my $root = shift;
+
+    if (! $root) {
+	return '';
+    }
+    foreach my $item (sort keys %$root) {
+	my $val = $root->{$item};
+	if (compare_url($val)) {
+	    $val->{'selected'} = 1;
+	    if ($val->{'title'} !~ /^$/) {
+		return $val->{'title'};
+	    }
+	    return 'EMPTY TITLE';
+	}
+
+	my $title = gettitle($val->{'subMenu'});
+	if ($title ne '') {
+	    $val->{'selected'} = 1;
+	    return $title;
+	}
+    }
+    return '';
+}
+
+
+sub showmenu() {
+    print <<EOF
+  <div id="menu-top">
+    <ul>
+EOF
+;
+    foreach my $k1 ( sort keys %$menu ) {
+	if (! $menu->{$k1}{'enabled'}) {
+	    next;
+	}
+
+	my $link = getlink($menu->{$k1});
+	if ($link eq '') {
+	    next;
+	}
+	if (! is_menu_visible($link)) {
+	    next;
+	}
+	if ($menu->{$k1}->{'selected'}) {
+	    print '<li class="selected">';
+	} else {
+	    print '<li>';
+	}
+
+	print <<EOF
+    <div class="rcorner">
+      <a href="$link">$menu->{$k1}{'caption'}</a>
+    </div>
+  </li>
+EOF
+;
+    }
 
     print <<EOF
-    domMenu_settings.setItem('domMenu_main', new domMenu_Hash(
-	'menuBarWidth', '0%',
-	'menuBarClass', 'ipcop_menuBar',
-	'menuElementClass', 'ipcop_menuElement',
-	'menuElementHoverClass', 'ipcop_menuElementHover',
-	'menuElementActiveClass', 'ipcop_menuElementHover',
-	'subMenuBarClass', 'ipcop_subMenuBar',
-	'subMenuElementClass', 'ipcop_subMenuElement',
-	'subMenuElementHoverClass', 'ipcop_subMenuElementHover',
-	'subMenuElementActiveClass', 'ipcop_subMenuElementHover',
-	'subMenuMinWidth', 'auto',
-	'distributeSpace', false,
-	'openMouseoverMenuDelay', 0,
-	'openMousedownMenuDelay', 0,
-	'closeClickMenuDelay', 0,
-	'closeMouseoutMenuDelay', -1
-    ));
-    </script>
+    </ul>
+  </div>
 EOF
-    ;
+;    
 }
 
-sub showmenu
-{
-    if ($javascript) {print "<noscript>";}
-    print "<table cellpadding='0' cellspacing='0' border='0'>\n";
-    print "<tr>\n";
-
-    foreach my $k1 ( sort keys %menu ) {
-	print "<td class='ipcop_menuElementTD'><a href='" . @{@{$menu{$k1}{'subMenu'}}[0]}[1] . "' class='ipcop_menuElementNoJS'>";
-	print $menu{$k1}{'contents'} . "</a></td>\n";
+sub getselected($) {
+    my $root = shift;
+    if (!$root) {
+	return 0;
     }
-    print "</tr></table>\n";
-    if ($javascript) {print "</noscript>";}
-}
 
-sub showsubsection
-{
-    my $location = $_[0];
-    my $c1 = 0;
-
-    if ($javascript) {print "<noscript>";}
-    print "<table width='100%' cellspacing='0' cellpadding='5' border='0'>\n";
-    print "<tr><td style='background-color: $Header::boxcolour;' width='53'><img src='/images/null.gif' width='43' height='1' alt='' /></td>\n";
-    print "<td style='background-color: $Header::boxcolour;' align='left' width='100%'>";
-    my @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-
-    foreach my $k1 ( keys %menu ) {
-	
-	if ($menu{$k1}{'contents'} eq $location) {
-	    foreach my $k2 ( @{$menu{$k1}{'subMenu'}} ) {
-		if ($c1 > 0) {
-		    print " | ";
-		}
-		if (@{$k2}[1] eq "$URI[0]\?$URI[1]" || (@{$k2}[1] eq $URI[0] && length($URI[1]) == 0)) {
-		#if (@{$k2}[1] eq "$URI[0]") {
-		    print "<b>@{$k2}[0]</b>";
-		} else {
-		    print "<a href='@{$k2}[1]'>@{$k2}[0]</a>";
-		}
-		$c1++;
-	    }
+    foreach my $item (%$root) {
+	if ($root->{$item}{'selected'}) {
+	    return $root->{$item};
 	}
     }
-    print "</td></tr></table>\n";
-    if ($javascript) { print "</noscript>";}
 }
 
-sub openpage
-{
-    my $title = $_[0];
-    my $menu = $_[1];
-    my $extrahead = $_[2];
-
-    ### Initialize environment
-    my %settings = ();
-    &General::readhash("${General::swroot}/main/settings", \%settings);
-
-    if ($settings{'JAVASCRIPT'} eq 'off') {
-	$javascript = 0;
-    } else {
-	$javascript = 1;
+sub showsubsection($$) {
+    my $root = shift;
+    my $id = shift;
+    if ($id eq '') {
+	$id = 'menu-left';
     }
 
-    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-        $hostnameintitle = 1;
+    if (! $root) {
+	return;
+    }
+    my $selected = getselected($root);
+    if (! $selected) {
+	return;
+    }
+    my $submenus = $selected->{'subMenu'};
+    if (! $submenus) {
+	return;
+    }
+
+    print <<EOF
+  <div id="$id">
+    <ul>
+EOF
+;
+    foreach my $item (sort keys %$submenus) {
+	my $hash = $submenus->{$item};
+	if (! $hash->{'enabled'}) {
+	    next;
+	}
+
+	my $link = getlink($hash);
+	if ($link eq '') {
+	    next;
+	}
+	if (! is_menu_visible($link)) {
+	    next;
+	}
+	if ($hash->{'selected'}) {
+	    print '<li class="selected">';
+	} else {
+	    print '<li>';
+	}
+
+	print <<EOF
+      <a href="$link">$hash->{'caption'}</a>
+  </li>
+EOF
+;
+    }
+
+    print <<EOF
+    </ul>
+  </div>
+EOF
+;    
+
+}
+
+
+sub showsubsubsection($) {
+    my $root = shift;
+    if (!$root) {
+	return;
+    }
+    my $selected = getselected($root);
+    if (! $selected) {
+	return
+    }
+    if (! $selected->{'subMenu'}) {
+	return
+    }
+
+    showsubsection($selected->{'subMenu'}, 'menu-subtop');
+}
+
+
+sub get_helpuri() {
+    my $helpfile = '';
+    if ($URI[0] =~ /.*\/([^\/]+)\.cgi/) {
+	$helpfile = $1;
     } else {
-        $hostnameintitle = 0;
+	return '';
+    }
+    $helpfile .= '.help.html';
+
+    my $helpuri = '/doc/'.$language.'/'.$helpfile;
+    if (! -e $ENV{'DOCUMENT_ROOT'}.$helpuri) {
+	return '';
+    }
+    return $helpuri;
+}
+
+
+sub openpage {
+    my $title = shift;
+    my $boh = shift;
+    my $extrahead = shift;
+
+    @URI=split ('\?',  $ENV{'REQUEST_URI'} );
+    &readhash("${swroot}/main/settings", \%settings);
+    &genmenu();
+
+    my $h2 = gettitle($menu);
+    my $helpuri = get_helpuri();
+
+    $title = "IPFire - $title";
+    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+        $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
     }
 
     print <<END
@@ -288,211 +767,196 @@ sub openpage
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html><head>
-END
-    ;
-    print "    <title>";
-    if ($hostnameintitle) {
-        print "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
-    } else {
-        print "IPCop - $title";
-    }
-    print "</title>\n";
+<html>
+  <head>
+  <title>$title</title>
 
-    print <<END
     $extrahead
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="shortcut icon" href="/favicon.ico" />
-    <style type="text/css">\@import url(/include/ipcop.css);</style>
+    <style type="text/css">\@import url(/include/style.css);</style>
+    <style type="text/css">\@import url(/include/menu.css);</style>
+    <style type="text/css">\@import url(/include/content.css);</style>
+
+    <script language="javascript" type="text/javascript">
+      
+        function swapVisibility(id) {
+            el = document.getElementById(id);
+  	    if(el.style.display != 'block') {
+  	        el.style.display = 'block'
+  	    }
+  	    else {
+  	        el.style.display = 'none'
+  	    }
+        }
+    </script>
+
+  </head>
+  <body>
+<!-- IPFIRE HEADER -->
+
+<div id="main">
+
+<div id="header">
+	<img id="logo-product" src="/images/logo_ipfire.gif">
+	<img id="logo-ipfire" src="/images/logo_ipfire2.gif">	
+   <div id="header-icons">
 END
-    ;
-    if ($javascript) {
-	print "<script type='text/javascript' src='/include/domMenu.js'></script>\n";
-	&genmenu();
-	&showjsmenu();
-    } else {
-	&genmenu();
-    }
+;
 
-    my $location = '';
-    my $sublocation = '';
-    my @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-    foreach my $k1 ( keys %menu ) {
-	my $temp = $menu{$k1}{'contents'};
-	foreach my $k2 ( @{$menu{$k1}{'subMenu'}} ) {
-	    if ( @{$k2}[1] eq $URI[0] ) {
-		$location = $temp;
-		$sublocation = @{$k2}[0];
-	    }
-	}
-    }
-
-    my @cgigraphs = split(/graph=/,$ENV{'QUERY_STRING'});
-    if (defined ($cgigraphs[1])){ 
-	if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|network)/) {
-		$location = $Lang::tr{'status'};
-		$sublocation = $Lang::tr{'sstraffic graphs'};
-	}
-	if ($cgigraphs[1] =~ /(cpu|memory|swap|disk)/) {
-		$location = $Lang::tr{'status'};
-		$sublocation = $Lang::tr{'system graphs'};
-	}
-    }
-    if ($ENV{'QUERY_STRING'} =~ /(ip)/) {
-        $location = $Lang::tr{'alt logs'};
-	$sublocation = "WHOIS";
-    }
-
-    if ($javascript) {
-	    print <<END
-	    <script type="text/javascript">
-	    document.onmouseup = function()
-	    {
-		domMenu_deactivate('domMenu_main');
-	    }
-	    </script>
-	    </head>
-
-	    <body onload="domMenu_activate('domMenu_main');">
+    if ($helpuri ne '') {
+	print <<END
+	    <a href="$helpuri" target="_blank"><img border="0" src="/images/help.gif"></a>
 END
-	    ;
+;
     } else {
-	print "</head>\n\n<body>\n";
+	print '<img src="/images/help.gif">';
     }
+
+print <<END
+   </div>
+</div>
+
+END
+;
+
+    &showmenu();
+
+print <<END
+<div id="content">
+  <table width="90%">
+    <tr>
+      <td valign="top">
+END
+;
+	
+    &showsubsection($menu);
 
     print <<END
-<!-- IPCOP HEADER -->
-    <table width='100%' cellpadding='0' cellspacing='0'>
-    <col width='53' />
-    <col />
-    <tr><td><img src='/images/null.gif' width='53' height='27' alt='' /></td>
-	<td valign='bottom'><table width='100%' cellspacing='0' border='0'>
-	    <col width='5' />
-	    <col width='175' />
-	    <col />
-	    <tr><td><img src='/images/null.gif' width='5' height='1' alt='' /></td>
-		<td class="ipcop_menuLocationMain" valign='bottom'>$location</td>
-		<td class="ipcop_menuLocationSub"  valign='bottom'>$sublocation</td>
-	    </tr></table>
-	</td></tr>
-    <tr><td valign='bottom' class='ipcop_Version'>
-	    <img src='/images/null.gif' width='1' height='29' alt='' />${General::version}</td>
-	<td valign='bottom'>
+
+      </td>
+        <td width="100%" valign="top">
+        <div id="page-content">
+            <h2>$h2</h2>
 END
     ;
-    if ($menu == 1) {
-	if ($javascript) {
-	    print "<div id='domMenu_main'></div>\n";
-	}
-	&showmenu();
-    }
-    print "	</td></tr></table>\n";
-    &showsubsection($location);
-    print "<!-- IPCOP CONTENT -->\n";
+    
+    &showsubsubsection($menu);
+
+    eval {
+	require 'ipfire-network.pl';
+	$supported = check_support();
+	warn_unsupported($supported);
+    };
 }
 
-sub closepage
-{
-	print <<END
-<!-- IPCOP FOOTER -->
-    <table width='100%' border='0'>
-    <tr><td valign='bottom'><img src='/images/bounceback.png' width='248' height='80' alt='' /></td>
-	<td align='center' valign='bottom'>
+sub closepage () {
+    my $status = &connectionstatus();
+    $uptime = `/usr/bin/uptime`;
+	
+    print <<END
+	  <div align="center">
+            <p>
+	      <div style="font-size: 9px"><b>Status:</b> $status <b>Uptime:</b>$uptime</div>
+            </p>
+            <p><a href="http://www.ipfire.org">IPFire</a> $version (c)</p>
+          </div>
+	</body>
+	<meta http-equiv="Page-Enter" content="blendTrans(Duration=1.0,Transition=12)">
+	<meta http-equiv="Page-Exit" content="blendTrans(Duration=1.0,Transition=12)">
+</html>
 END
-	;
-	my $status = &connectionstatus();
-	print "$status<br />\n"; 
-	print `/usr/bin/uptime`;
-
-	print <<END
-	</td>
-	<td valign='bottom'><a href='http://sf.net/projects/ipcop/' target='_blank'><img src='/images/sflogo.png' width='88' height='31' alt='Sourceforge logo' /></a></td>
-    </tr></table>
-</body></html>
-END
-	;
+;
 }
 
 sub openbigbox
 {
-	my $width = $_[0];
-	my $align = $_[1];
-	my $sideimg = $_[2];
-        my $errormessage = $_[3];
-	my $bgcolor;
+    my $width = $_[0];
+    my $align = $_[1];
+    my $sideimg = $_[2];
 
-	if ($errormessage) {
-		$bgcolor = "style='background-color: $Header::colourerr;'";
-	} else {
-		$bgcolor = '';
-	}
-
-	print "<table width='100%' border='0'>\n";
-	if ($sideimg) {
-	    print "<tr><td valign='top'><img src='/images/$sideimg' width='65' height='345' alt='' /></td>\n";
-	} else {
-	    print "<tr>\n";
-	}
-	print "<td valign='top' align='center'><table width='$width' $bgcolor cellspacing='0' cellpadding='10' border='0'>\n";
-        print "<tr><td><img src='/images/null.gif' width='1' height='365' alt='' /></td>\n";
-	print "<td align='$align' valign='top'>\n";
+    if ($errormessage) {
+	$bgcolor = "style='background-color: $colourerr;'";
+    } else {
+	$bgcolor = '';
+    }
 }
 
 sub closebigbox
 {
-	print "</td></tr></table></td></tr></table>\n" 
+#	print "</td></tr></table></td></tr></table>\n" 
 }
 
 sub openbox
 {
-	my $width = $_[0];
-	my $align = $_[1];
-	my $caption = $_[2];
+	$width = $_[0];
+	$align = $_[1];
+	$caption = $_[2];
 
-	print <<END
-	<table cellspacing="0" cellpadding="0" width="$width" border="0">
-	    <col width='12' />
-	    <col width='18' />
-	    <col width='100%' />
-	    <col width='152' />
-	    <col width='11' />
+	if ($caption) { print "<h3>$caption</h3>\n"; } else { print "&nbsp;"; }
 	
-	    <tr><td width='12'  ><img src='/images/null.gif' width='12'  height='1' alt='' /></td>
-		<td width='18'  ><img src='/images/null.gif' width='18'  height='1' alt='' /></td>
-		<td width='100%'><img src='/images/null.gif' width='400' height='1' alt='' /></td>
-		<td width='152' ><img src='/images/null.gif' width='152' height='1' alt='' /></td>
-		<td width='11'  ><img src='/images/null.gif' width='11'   height='1' alt='' /></td></tr>
-	    <tr><td colspan='2' ><img src='/images/boxtop1.png' width='30' height='53' alt='' /></td>
-		<td style='background: url(/images/boxtop2.png);'>
-END
-	;
-	if ($caption) { print "<b>$caption</b>\n"; } else { print "&nbsp;"; }
-	print <<END
-		</td>
-		<td colspan='2'><img src='/images/boxtop3.png' width='163' height='53' alt='' /></td></tr>
-	    <tr><td style='background: url(/images/boxleft.png);'><img src='/images/null.gif' width='12' height='1' alt='' /></td>
-		<td colspan='3' style='background-color: $Header::boxcolour;'>
-		<table width='100%' cellpadding='5'><tr><td align="$align" valign='top'>
-END
-	;
+	print "<table class=\"list\"><tr><td align=\"$align\">\n";
 }
 
 sub closebox
 {
-	print <<END
-		</td></tr></table></td>
-                <td style='background: url(/images/boxright.png);'><img src='/images/null.gif' width='11' height='1' alt='' /></td></tr>
-            <tr><td style='background: url(/images/boxbottom1.png);background-repeat:no-repeat;'><img src='/images/null.gif' width='12' height='14' alt='' /></td>
-                <td style='background: url(/images/boxbottom2.png);background-repeat:repeat-x;' colspan='3'><img src='/images/null.gif' width='1' height='14' alt='' /></td>
-                <td style='background: url(/images/boxbottom3.png);background-repeat:no-repeat;'><img src='/images/null.gif' width='11' height='14' alt='' /></td></tr>
-        </table>
-END
-	;
+	print "</td></tr></table><br><br>";
+}
+
+sub writehash
+{
+	my $filename = $_[0];
+	my $hash = $_[1];
+	
+	# write cgi vars to the file.
+	open(FILE, ">${filename}") or die "Unable to write file $filename";
+	flock FILE, 2;
+	foreach $var (keys %$hash) 
+	{
+		$val = $hash->{$var};
+		# Darren Critchley Jan 17, 2003 added the following because when submitting with a graphic, the x and y
+		# location of the mouse are submitted as well, this was being written to the settings file causing
+		# some serious grief! This skips the variable.x and variable.y
+		if (!($var =~ /(.x|.y)$/)) {
+			if ($val =~ / /) {
+				$val = "\'$val\'"; }
+			if (!($var =~ /^ACTION/)) {
+				print FILE "${var}=${val}\n"; }
+		}
+	}
+	close FILE;
+}
+
+sub readhash
+{
+	my $filename = $_[0];
+	my $hash = $_[1];
+	my ($var, $val);
+
+	open(FILE, $filename) or die "Unable to read file $filename";
+	
+	while (<FILE>)
+	{
+		chop;
+		($var, $val) = split /=/, $_, 2;
+		if ($var)
+		{
+			$val =~ s/^\'//g;
+			$val =~ s/\'$//g;
+
+			# Untaint variables read from hash
+			$var =~ /([A-Za-z0-9_-]*)/;        $var = $1;
+			$val =~ /([\w\W]*)/; $val = $1;
+			$hash->{$var} = $val;
+		}
+	}
+	close FILE;
 }
 
 sub getcgihash {
 	my ($hash, $params) = @_;
 	my $cgi = CGI->new ();
+	$hash->{'__CGI__'} = $cgi;
 	return if ($ENV{'REQUEST_METHOD'} ne 'POST');
 	if (!$params->{'wantfile'}) {
 		$CGI::DISABLE_UPLOADS = 1;
@@ -508,7 +972,7 @@ sub getcgihash {
 	return if ($referer ne $servername);
 
 	### Modified for getting multi-vars, split by |
-	my %temp = $cgi->Vars();
+	%temp = $cgi->Vars();
         foreach my $key (keys %temp) {
 		$hash->{$key} = $temp{$key};
 		$hash->{$key} =~ s/\0/|/g;
@@ -522,6 +986,308 @@ sub getcgihash {
 	return;
 }
 
+sub log
+{
+	my $logmessage = $_[0];
+	$logmessage =~ /([\w\W]*)/;
+	$logmessage = $1;
+	system('/usr/bin/logger', '-t', 'ipfire', $logmessage);
+}
+
+sub age
+{
+	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
+	        $atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
+	my $now = time;
+
+	my $totalsecs = $now - $mtime;
+	my $days = int($totalsecs / 86400);
+	my $totalhours = int($totalsecs / 3600);
+	my $hours = $totalhours % 24;
+	my $totalmins = int($totalsecs / 60);
+	my $mins = $totalmins % 60;
+	my $secs = $totalsecs % 60;
+
+ 	return "${days}d ${hours}h ${mins}m ${secs}s";
+}
+
+sub validip
+{
+	my $ip = $_[0];
+
+	if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
+		return 0; }
+	else 
+	{
+		@octets = ($1, $2, $3, $4);
+		foreach $_ (@octets)
+		{
+			if (/^0./) {
+				return 0; }
+			if ($_ < 0 || $_ > 255) {
+				return 0; }
+		}
+		return 1;
+	}
+}
+
+sub validmask
+{
+	my $mask = $_[0];
+
+	# secord part an ip?
+	if (&validip($mask)) {
+		return 1; }
+	# second part a number?
+	if (/^0/) {
+		return 0; }
+	if (!($mask =~ /^\d+$/)) {
+		return 0; }
+	if ($mask >= 0 && $mask <= 32) {
+		return 1; }
+	return 0;
+}
+
+sub validipormask
+{
+	my $ipormask = $_[0];
+
+	# see if it is a IP only.
+	if (&validip($ipormask)) {
+		return 1; }
+	# split it into number and mask.
+	if (!($ipormask =~ /^(.*?)\/(.*?)$/)) {
+		return 0; }
+	$ip = $1;
+	$mask = $2;
+	# first part not a ip?
+	if (!(&validip($ip))) {
+		return 0; }
+	return &validmask($mask);
+}
+
+sub validipandmask
+{
+	my $ipandmask = $_[0];
+
+	# split it into number and mask.
+	if (!($ipandmask =~ /^(.*?)\/(.*?)$/)) {
+		return 0; }
+	$ip = $1;
+	$mask = $2;
+	# first part not a ip?
+	if (!(&validip($ip))) {
+		return 0; }
+	return &validmask($mask);
+}
+
+sub validport
+{
+	$_ = $_[0];
+
+	if (!/^\d+$/) {
+		return 0; }
+	if (/^0./) {
+		return 0; }
+	if ($_ >= 1 && $_ <= 65535) {
+		return 1; }
+	return 0;
+}
+
+sub validmac
+{
+	my $checkmac = $_[0];
+	my $ot = '[0-9a-f]{2}'; # 2 Hex digits (one octet)
+	if ($checkmac !~ /^$ot:$ot:$ot:$ot:$ot:$ot$/i)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+sub validhostname
+{
+	# Checks a hostname against RFC1035
+        my $hostname = $_[0];
+
+	# Each part should be at least two characters in length
+	# but no more than 63 characters
+	if (length ($hostname) < 2 || length ($hostname) > 63) {
+		return 0;}
+	# Only valid characters are a-z, A-Z, 0-9 and -
+	if ($hostname !~ /^[a-zA-Z0-9-]*$/) {
+		return 0;}
+	# First character can only be a letter or a digit
+	if (substr ($hostname, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
+		return 0;}
+	# Last character can only be a letter or a digit
+	if (substr ($hostname, -1, 1) !~ /^[a-zA-Z0-9]*$/) {
+		return 0;}
+	return 1;
+}
+
+sub validdomainname
+{
+	# Checks a domain name against RFC1035
+        my $domainname = $_[0];
+	my @parts = split (/\./, $domainname);	# Split hostname at the '.'
+
+	foreach $part (@parts) {
+		# Each part should be at least two characters in length
+		# but no more than 63 characters
+		if (length ($part) < 2 || length ($part) > 63) {
+			return 0;}
+		# Only valid characters are a-z, A-Z, 0-9 and -
+		if ($part !~ /^[a-zA-Z0-9-]*$/) {
+			return 0;}
+		# First character can only be a letter or a digit
+		if (substr ($part, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
+			return 0;}
+		# Last character can only be a letter or a digit
+		if (substr ($part, -1, 1) !~ /^[a-zA-Z0-9]*$/) {
+			return 0;}
+	}
+	return 1;
+}
+
+sub validfqdn
+{
+	# Checks a fully qualified domain name against RFC1035
+        my $fqdn = $_[0];
+	my @parts = split (/\./, $fqdn);	# Split hostname at the '.'
+	if (scalar(@parts) < 2) {		# At least two parts should
+		return 0;}			# exist in a FQDN
+						# (i.e. hostname.domain)
+	foreach $part (@parts) {
+		# Each part should be at least two characters in length
+		# but no more than 63 characters
+		if (length ($part) < 2 || length ($part) > 63) {
+			return 0;}
+		# Only valid characters are a-z, A-Z, 0-9 and -
+		if ($part !~ /^[a-zA-Z0-9-]*$/) {
+			return 0;}
+		# First character can only be a letter or a digit
+		if (substr ($part, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
+			return 0;}
+		# Last character can only be a letter or a digit
+		if (substr ($part, -1, 1) !~ /^[a-zA-Z0-9]*$/) {
+			return 0;}
+	}
+	return 1;
+}
+
+sub validportrange # used to check a port range 
+{
+	my $port = $_[0]; # port values
+	$port =~ tr/-/:/; # replace all - with colons just in case someone used -
+	my $srcdst = $_[1]; # is it a source or destination port
+
+	if (!($port =~ /^(\d+)\:(\d+)$/)) {
+	
+		if (!(&validport($port))) {	 
+			if ($srcdst eq 'src'){
+				return $tr{'source port numbers'};
+			} else 	{
+				return $tr{'destination port numbers'};
+			} 
+		}
+	}
+	else 
+	{
+		@ports = ($1, $2);
+		if ($1 >= $2){
+			if ($srcdst eq 'src'){
+				return $tr{'bad source range'};
+			} else 	{
+				return $tr{'bad destination range'};
+			} 
+		}
+		foreach $_ (@ports)
+		{
+			if (!(&validport($_))) {
+				if ($srcdst eq 'src'){
+					return $tr{'source port numbers'}; 
+				} else 	{
+					return $tr{'destination port numbers'};
+				} 
+			}
+		}
+		return;
+	}
+}
+
+# Test if IP is within a subnet
+# Call: IpInSubnet (Addr, Subnet, Subnet Mask)
+#       Subnet can be an IP of the subnet: 10.0.0.0 or 10.0.0.1
+#       Everything in dottted notation
+# Return: TRUE/FALSE
+sub IpInSubnet
+{
+    $ip = unpack('N', inet_aton(shift));
+    $start = unpack('N', inet_aton(shift));
+    $mask  = unpack('N', inet_aton(shift));
+    $start &= $mask;  # base of subnet...
+    $end   = $start + ~$mask;
+    return (($ip >= $start) && ($ip <= $end));
+}
+
+sub validemail {
+    my $mail = shift;
+    return 0 if ( $mail !~ /^[0-9a-zA-Z\.\-\_]+\@[0-9a-zA-Z\.\-]+$/ );
+    return 0 if ( $mail =~ /^[^0-9a-zA-Z]|[^0-9a-zA-Z]$/);
+    return 0 if ( $mail !~ /([0-9a-zA-Z]{1})\@./ );
+    return 0 if ( $mail !~ /.\@([0-9a-zA-Z]{1})/ );
+    return 0 if ( $mail =~ /.\.\-.|.\-\..|.\.\..|.\-\-./g );
+    return 0 if ( $mail =~ /.\.\_.|.\-\_.|.\_\..|.\_\-.|.\_\_./g );
+    return 0 if ( $mail !~ /\.([a-zA-Z]{2,3})$/ );
+    return 1;
+}
+
+sub readhasharray {
+    my ($filename, $hash) = @_;
+
+    open(FILE, $filename) or die "Unable to read file $filename";
+
+    while (<FILE>) {
+	my ($key, $rest, @temp);
+	chomp;
+	($key, $rest) = split (/,/, $_, 2);
+	if ($key =~ /^[0-9]+$/ && $rest) {
+	    @temp = split (/,/, $rest);
+	    $hash->{$key} = \@temp;
+        }
+    }
+    close FILE;
+    return;
+}
+
+sub writehasharray {
+    my ($filename, $hash) = @_;
+    my ($key, @temp);
+
+    open(FILE, ">$filename") or die "Unable to write to file $filename";
+
+    foreach $key (keys %$hash) {
+	if ( $hash->{$key} ) {
+	    print FILE "$key";
+	    foreach $i (0 .. $#{$hash->{$key}}) {
+		print FILE ",$hash->{$key}[$i]";
+	    }
+	}
+	print FILE "\n";
+    }
+    close FILE;
+    return;
+}
+
+sub findhasharraykey {
+    foreach my $i (1 .. 1000000) {
+	if ( ! exists $_[0]{$i}) {
+	     return $i;
+	}
+    }
+}
+
 sub cleanhtml
 {
 	my $outstring =$_[0];
@@ -533,220 +1299,168 @@ sub cleanhtml
 	$outstring =~ s/>/&gt;/g;
 	return $outstring;
 }
-
 sub connectionstatus
 {
-    my %pppsettings = ();
-    my %netsettings = ();
-    my $iface='';
-
-    $pppsettings{'PROFILENAME'} = 'None';
-    &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
-    &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
-
-    my $profileused='';
-    if ( ! ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
-    	$profileused="- $pppsettings{'PROFILENAME'}";
-    }
-
-    if ( ( $pppsettings{'METHOD'} eq 'DHCP' && $netsettings{'RED_TYPE'} ne 'PPTP') 
-						|| $netsettings{'RED_TYPE'} eq 'DHCP' ) {
-		if (open(IFACE, "${General::swroot}/red/iface")) {
-			$iface = <IFACE>;
-			close IFACE;
-			chomp ($iface);
-			$iface =~ /([a-zA-Z0-9]*)/; $iface = $1;
-		}
-    }
-
-    my ($timestr, $connstate);
-    if ($netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/ &&  $pppsettings{'TYPE'} =~ /^isdn/) {
-	# Count ISDN channels
-	my ($idmap, $chmap, $drmap, $usage, $flags, $phone);
-	my @phonenumbers;
-	my $count=0;
-
-	open (FILE, "/dev/isdninfo");
-
-	$idmap = <FILE>; chop $idmap;
-	$chmap = <FILE>; chop $chmap;
-	$drmap = <FILE>; chop $drmap;
-	$usage = <FILE>; chop $usage;
-	$flags = <FILE>; chop $flags;
-	$phone = <FILE>; chop $phone;
-
-	$phone =~ s/^phone(\s*):(\s*)//;
-
-	@phonenumbers = split / /, $phone;
-
-	foreach (@phonenumbers) {
-		if ($_ ne '???') {
-			$count++;
-		}
-	}
-	close (FILE);
-
-	## Connection status
-	my $number;
-	if ($count == 0) {
-		$number = 'none!';
-	} elsif ($count == 1) {
-		$number = 'single';
-	} else {
-		$number = 'dual';
-	}
-
-	if (-e "${General::swroot}/red/active") {
-		$timestr = &General::age("${General::swroot}/red/active");
-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} - $number channel (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
-	} else {
-		if ($count == 0) {
-			if (-e "${General::swroot}/red/dial-on-demand") {
-				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
-			} else {
-				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
-			}
-		} else {
-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
-		}
-	}
-    } elsif ($netsettings{'RED_TYPE'} eq "STATIC" || $pppsettings {'METHOD'} eq 'STATIC') {
-	if (-e "${General::swroot}/red/active") {
-		$timestr = &General::age("${General::swroot}/red/active");
-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
-	} else {
-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
-	}
-    } elsif ( ( (-e "${General::swroot}/dhcpc/dhcpcd-$iface.pid") && $netsettings{'RED_TYPE'} ne 'PPTP' ) || 
-	!system("/bin/ps -ef | /bin/grep -q '[p]ppd'") || !system("/bin/ps -ef | /bin/grep -q '[c]onnectioncheck'")) {
-	if (-e "${General::swroot}/red/active") {
-		$timestr = &General::age("${General::swroot}/red/active");
-		if ($pppsettings{'TYPE'} =~ /^(modem|bewanadsl|conexantpciadsl|eagleusbadsl)$/) {
-			my $speed;
-			if ($pppsettings{'TYPE'} eq 'modem') {
-				open(CONNECTLOG, "/var/log/connect.log");
-				while (<CONNECTLOG>) {
-					if (/CONNECT/) {
-						$speed = (split / /)[6];
-					}
-				}
-				close (CONNECTLOG);
-			} elsif ($pppsettings{'TYPE'} eq 'bewanadsl') {
-				$speed = `/usr/bin/unicorn_status | /bin/grep Rate | /usr/bin/cut -f2 -d ':'`;
-			} elsif ($pppsettings{'TYPE'} eq 'conexantpciadsl') {
-				$speed = `/bin/cat /proc/net/atm/CnxAdsl:* | /bin/grep 'Line Rates' | /bin/sed -e 's+Line Rates:   Receive+Rx+' -e 's+Transmit+Tx+'`;
-			} elsif ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
-				$speed = `/usr/sbin/eaglestat | /bin/grep Rate`;
-			}
-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused (\@$speed)</span>";
-		} else {
-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
-		}
-	} else {
-		if (-e "${General::swroot}/red/dial-on-demand") {
-		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
-		} else {
-		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
-		}
-	}
-    } else {
-	$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
-    }
+        my $status;
+        opendir UPLINKS, "/var/ipfire/uplinks" or die "Cannot read uplinks: $!";
+                foreach my $uplink (sort grep !/^\./, readdir UPLINKS) {
+                    if ( -f "${swroot}/uplinks/${uplink}/active") {
+                        if ( ! $status ) {
+                                $timestr = &age("${swroot}/uplinks/${uplink}/active");
+                                $status = "$tr{'connected'}: $uplink (<span class='ipcop_StatusBigRed'>$timestr</span>) ";
+                        } else {
+                                $timestr = &age("${swroot}/uplinks/${uplink}/active");
+                                $status = "$status , $uplink (<span class='ipcop_StatusBigRed'>$timestr</span>) ";
+                        }
+                    } elsif ( -f "${swroot}/uplinks/${uplink}/connecting") {
+                        if ( ! $status ) {
+                                $status = "$tr{'connecting'} $uplink";
+                        } else {
+                                $status = "$status , $tr{'connecting'} $uplink (<span class='ipcop_StatusBigRed'>$timestr</span>) ";
+                        }
+                    }
+                    $lines++;
+                }
+                closedir(UPLINKS);
+                if ( ! $status ) {
+                        $status = "$tr{'idle'}";
+                }
+                $connstate = "<span class='ipcop_StatusBig'>$status</span>";
     return $connstate;
+}
+
+sub srtarray 
+# Darren Critchley - darrenc@telus.net - (c) 2003
+# &srtarray(SortOrder, AlphaNumeric, SortDirection, ArrayToBeSorted)
+# This subroutine will take the following parameters:
+#   ColumnNumber = the column which you want to sort on, starts at 1
+#   AlphaNumberic = a or n (lowercase) defines whether the sort should be alpha or numberic
+#   SortDirection = asc or dsc (lowercase) Ascending or Descending sort
+#   ArrayToBeSorted = the array that wants sorting
+#
+#   Returns an array that is sorted to your specs
+#
+#   If SortOrder is greater than the elements in array, then it defaults to the first element
+# 
+{
+	my ($colno, $alpnum, $srtdir, @tobesorted) = @_;
+	my @tmparray;
+	my @srtedarray;
+	my $line;
+	my $newline;
+	my $ttlitems = scalar @tobesorted; # want to know the number of rows in the passed array
+	if ($ttlitems < 1){ # if no items, don't waste our time lets leave
+		return (@tobesorted);
+	}
+	my @tmp = split(/\,/,$tobesorted[0]);
+	$ttlitems = scalar @tmp; # this should be the number of elements in each row of the passed in array
+
+	# Darren Critchley - validate parameters
+	if ($colno > $ttlitems){$colno = '1';}
+	$colno--; # remove one from colno to deal with arrays starting at 0
+	if($colno < 0){$colno = '0';}
+	if ($alpnum ne '') { $alpnum = lc($alpnum); } else { $alpnum = 'a'; }
+	if ($srtdir ne '') { $srtdir = lc($srtdir); } else { $srtdir = 'src'; }
+
+	foreach $line (@tobesorted)
+	{
+		chomp($line);
+		if ($line ne '') {
+			my @temp = split(/\,/,$line);
+			# Darren Critchley - juggle the fields so that the one we want to sort on is first
+			my $tmpholder = $temp[0];
+			$temp[0] = $temp[$colno];
+			$temp[$colno] = $tmpholder;
+			$newline = "";
+			for ($ctr=0; $ctr < $ttlitems ; $ctr++) {
+				$newline=$newline . $temp[$ctr] . ",";
+			}
+			chop($newline);
+			push(@tmparray,$newline);
+		}
+	}
+	if ($alpnum eq 'n') {
+		@tmparray = sort {$a <=> $b} @tmparray;
+	} else {
+		@tmparray = (sort @tmparray);
+	}
+	foreach $line (@tmparray)
+	{
+		chomp($line);
+		if ($line ne '') {
+			my @temp = split(/\,/,$line);
+			my $tmpholder = $temp[0];
+			$temp[0] = $temp[$colno];
+			$temp[$colno] = $tmpholder;
+			$newline = "";
+			for ($ctr=0; $ctr < $ttlitems ; $ctr++){
+				$newline=$newline . $temp[$ctr] . ",";
+			}
+			chop($newline);
+			push(@srtedarray,$newline);
+		}
+	}
+
+	if ($srtdir eq 'dsc') {
+		@tmparray = reverse(@srtedarray);
+		return (@tmparray);
+	} else {
+		return (@srtedarray);
+	}
 }
 
 sub speedtouchversion
 {
-	my $speedtouch;
 	if (-f "/proc/bus/usb/devices")
 	{
 		$speedtouch=`/bin/cat /proc/bus/usb/devices | /bin/grep 'Vendor=06b9 ProdID=4061' | /usr/bin/cut -d ' ' -f6`;
 		if ($speedtouch eq '') {
-			$speedtouch= $Lang::tr{'connect the modem'};
+			$speedtouch= $tr{'connect the modem'};
 		}
 	} else {
-		$speedtouch='USB '.$Lang::tr{'not running'};
+		$speedtouch='USB '.$tr{'not running'};
 	}
 	return $speedtouch
 }
 
-#Sorting of allocated leases
 sub CheckSortOrder {
-    my %dhcpsettings = ();
-    &General::readhash("${General::swroot}/dhcp/settings", \%dhcpsettings);
-
+#Sorting of allocated leases
     if ($ENV{'QUERY_STRING'} =~ /^IPADDR|^ETHER|^HOSTNAME|^ENDTIME/ ) {
 	my $newsort=$ENV{'QUERY_STRING'};
-        my $act=$dhcpsettings{'SORT_LEASELIST'};
-        #Default sort if unspecified 
-        $act='IPADDRRev' if !defined ($act); 
+        &readhash("${swroot}/dhcp/settings", \%dhcpsettings);
+        $act=$dhcpsettings{'SORT_LEASELIST'};
         #Reverse actual ?
         if ($act =~ $newsort) {
-            my $Rev='';
             if ($act !~ 'Rev') {$Rev='Rev'};
             $newsort.=$Rev
         };
 
         $dhcpsettings{'SORT_LEASELIST'}=$newsort;
-	&General::writehash("${General::swroot}/dhcp/settings", \%dhcpsettings);
+	&writehash("${swroot}/dhcp/settings", \%dhcpsettings);
+        $dhcpsettings{'ACTION'} = 'SORT';  # avoid the next test "First lauch"
     }
+
 }
 
 sub PrintActualLeases
 {
-    our %dhcpsettings = ();
-    our %entries = ();    
-    
-    sub leasesort {
-	my $qs ='';
-	if (rindex ($dhcpsettings{'SORT_LEASELIST'},'Rev') != -1)
-	{
-	    $qs=substr ($dhcpsettings{'SORT_LEASELIST'},0,length($dhcpsettings{'SORT_LEASELIST'})-3);
-	    if ($qs eq 'IPADDR') {
-		my @a = split(/\./,$entries{$a}->{$qs});
-		my @b = split(/\./,$entries{$b}->{$qs});
-		($b[0]<=>$a[0]) ||
-		($b[1]<=>$a[1]) ||
-		($b[2]<=>$a[2]) ||
-	        ($b[3]<=>$a[3]);
-	    }else {
-	        $entries{$b}->{$qs} cmp $entries{$a}->{$qs};
-	    }
-        }
-        else #not reverse
-        {
-	    $qs=$dhcpsettings{'SORT_LEASELIST'};
-	    if ($qs eq 'IPADDR') {
-		my @a = split(/\./,$entries{$a}->{$qs});
-	        my @b = split(/\./,$entries{$b}->{$qs});
-		($a[0]<=>$b[0]) ||
-	        ($a[1]<=>$b[1]) ||
-	        ($a[2]<=>$b[2]) ||
-	        ($a[3]<=>$b[3]);
-	    }else {
-		$entries{$a}->{$qs} cmp $entries{$b}->{$qs};
-	    }
-	}
-    }
-
-    &Header::openbox('100%', 'left', $Lang::tr{'current dynamic leases'});
+    &openbox('100%', 'left', $tr{'current dynamic leases'});
     print <<END
 <table width='100%'>
 <tr>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$Lang::tr{'ip address'}</b></a></td>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$Lang::tr{'mac address'}</b></a></td>
-<td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$Lang::tr{'hostname'}</b></a></td>
-<td width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$Lang::tr{'lease expires'} (local time d/m/y)</b></a></td>
+<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$tr{'ip address'}</b></a></td>
+<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$tr{'mac address'}</b></a></td>
+<td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$tr{'hostname'}</b></a></td>
+<td width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></td>
 </tr>
 END
     ;
 
-    my ($ip, $endtime, $ether, $hostname, @record, $record);
-    open(LEASES,"/var/state/dhcp/dhcpd.leases") or die "Can't open dhcpd.leases";
-    while (my $line = <LEASES>) {
+    open(LEASES,"/var/lib/dhcp/dhcpd.leases") or die "Can't open dhcpd.leases";
+    while ($line = <LEASES>) {
 	next if( $line =~ /^\s*#/ );
 	chomp($line);
-	my @temp = split (' ', $line);
+	@temp = split (' ', $line);
 
 	if ($line =~ /^\s*lease/) {
 	    $ip = $temp[1];
@@ -754,41 +1468,43 @@ END
 	    $endtime = 0;
 	    $ether = "";
 	    $hostname = "";
-	} elsif ($line =~ /^\s*ends never;/) {
-	    $endtime = 'never';
-	} elsif ($line =~ /^\s*ends/) {
+	}
+
+	if ($line =~ /^\s*ends/) {
 	    $line =~ /(\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+)/;
 	    $endtime = timegm($6, $5, $4, $3, $2 - 1, $1 - 1900);
-	} elsif ($line =~ /^\s*hardware ethernet/) {
+	}
+
+	if ($line =~ /^\s*hardware ethernet/) {
 	    $ether = $temp[2];
 	    $ether =~ s/;//g;
-	} elsif ($line =~ /^\s*client-hostname/) {
-	    shift (@temp);
-	    $hostname = join (' ',@temp);
+	}
+
+	if ($line =~ /^\s*client-hostname/) {
+	    $hostname = "$temp[1] $temp[2] $temp[3]";
 	    $hostname =~ s/;//g;
 	    $hostname =~ s/\"//g;
-	} elsif ($line eq "}") {
+	}
+
+	if ($line eq "}") {
 	    @record = ('IPADDR',$ip,'ENDTIME',$endtime,'ETHER',$ether,'HOSTNAME',$hostname);
-	    $record = {};                        		# create a reference to empty hash
+    	    $record = {};                        		# create a reference to empty hash
 	    %{$record} = @record;                		# populate that hash with @record
 	    $entries{$record->{'IPADDR'}} = $record;   	# add this to a hash of hashes
-	} #unknown format line...
+	}
     }
     close(LEASES);
 
-    #Get sort method
-    $dhcpsettings{'SORT_LEASELIST'}='IPADDR';					#default
-    &General::readhash("${General::swroot}/dhcp/settings", \%dhcpsettings);	#or maybe saved !
     my $id = 0;
     foreach my $key (sort leasesort keys %entries) {
 
-	my $hostname = &Header::cleanhtml($entries{$key}->{HOSTNAME},"y");
+	my $hostname = &cleanhtml($entries{$key}->{HOSTNAME},"y");
 
 	if ($id % 2) {
-	    print "<tr bgcolor='$Header::table1colour'>";
+	    print "<tr bgcolor='$table1colour'>"; 
 	}
 	else {
-	    print "<tr bgcolor='$Header::table2colour'>";
+	    print "<tr bgcolor='$table2colour'>"; 
 	}
 
 	print <<END
@@ -799,25 +1515,119 @@ END
 END
 	;
 
-	if ($entries{$key}->{ENDTIME} eq 'never') {
-	    print "$Lang::tr{'no time limit'}";
-	} else {
-	    my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst);
-	    ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime ($entries{$key}->{ENDTIME});
-	    my $enddate = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
+	($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime ($entries{$key}->{ENDTIME});
+	$enddate = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
 
-	    if ($entries{$key}->{ENDTIME} < time() ){
-		print "<strike>$enddate</strike>";
-	    } else {
-		print "$enddate";
-	    }
+	if ($entries{$key}->{ENDTIME} < time() ){
+	    print "<strike>$enddate</strike>";
+	} else {
+	    print "$enddate";
 	}
 	print "</td></tr>";
 	$id++;
     }
 
     print "</table>";
-    &Header::closebox();
+    &closebox();
 }
 
-1;
+
+# This sub is used during display of actives leases
+sub leasesort {
+    if (rindex ($dhcpsettings{'SORT_LEASELIST'},'Rev') != -1)
+    {
+        $qs=substr ($dhcpsettings{'SORT_LEASELIST'},0,length($dhcpsettings{'SORT_LEASELIST'})-3);
+        if ($qs eq 'IPADDR') {
+            @a = split(/\./,$entries{$a}->{$qs});
+            @b = split(/\./,$entries{$b}->{$qs});
+            ($b[0]<=>$a[0]) ||
+            ($b[1]<=>$a[1]) ||
+            ($b[2]<=>$a[2]) ||
+            ($b[3]<=>$a[3]);
+        }else {
+            $entries{$b}->{$qs} cmp $entries{$a}->{$qs};
+        }
+    }
+    else #not reverse
+    {
+        $qs=$dhcpsettings{'SORT_LEASELIST'};
+        if ($qs eq 'IPADDR') {
+	    @a = split(/\./,$entries{$a}->{$qs});
+    	    @b = split(/\./,$entries{$b}->{$qs});
+    	    ($a[0]<=>$b[0]) ||
+	    ($a[1]<=>$b[1]) ||
+	    ($a[2]<=>$b[2]) ||
+    	    ($a[3]<=>$b[3]);
+	}else {
+    	    $entries{$a}->{$qs} cmp $entries{$b}->{$qs};
+	}
+    }
+}
+
+sub get_uplinks() {
+    my @uplinks = ();
+    opendir(DIR, "${swroot}/uplinks/") || return \@uplinks;
+    foreach my $dir (readdir(DIR)) {
+	next if ($dir =~ /^\./);
+	next if (-f "${swroot}/uplinks/$dir");
+	push(@uplinks, $dir);
+    }
+    closedir(DIR);
+    return \@uplinks;
+}
+
+sub get_iface($) {
+    my $filename = shift;
+    chomp($filename);
+    open (F, $filename) || return "";
+    my $iface = <F>;
+    close(F);
+    chomp($iface);
+    return $iface;
+}
+
+sub get_red_ifaces_by_type($) {
+    my $type=shift;
+    my @gottypeiface = ();
+    my @gottypeuplink = ();
+    my @gottype = ();
+
+    my $ref=get_uplinks();
+    my @uplinks=@$ref;
+    my %set = ();
+    foreach my $link (@uplinks) {
+	eval {
+	    &readhash("${swroot}/uplinks/$link/settings", \%set);
+	};
+	push(@gottype, $link);
+
+	my $iface = $set{'RED_DEV'};
+	if (!$iface) {
+	    $iface = get_iface("${swroot}/uplinks/$link/interface");
+	}
+	next if (!$iface);
+
+	if ($set{'RED_TYPE'} eq $type) {
+	    push(@gottypeiface, $iface);
+	    push(@gottypeuplink, $link);
+	}
+    }
+    return (\@gottypeiface, \@gottypeuplink, \@gottype);
+}
+
+sub get_red_ifaces() {
+    return `cat ${swroot}/uplinks/*/interface 2>/dev/null`;
+}
+
+sub get_zone_devices($) {
+    my $bridge = shift;
+    my @ifaces = ();
+    open (FILE, "${swroot}/ethernet/$bridge") || return "";
+    foreach my $line (<FILE>) {
+	chomp($line);
+	next if (!$line);
+	push(@ifaces, $line);
+    }
+    close(FILE);
+    return \@ifaces;
+}

@@ -1,0 +1,48 @@
+table.list {
+	width: 100%;
+	margin: 0;
+	margin-top: 5px;
+	border: 1px solid #ccc;
+	padding: 10px;
+}
+
+table tr.header {
+	background-image: url(../images/table-header.gif);
+	background-repeat: no-repeat;
+	background-color: #e6e6e6;
+}
+
+table.list tr.header td {
+	font-size: 10px;
+	padding: 4px;
+	margin: 0;
+	font-weight: bold;
+	border-bottom: 1px solid #ccc;		
+}
+
+table.list tr.odd {
+	background: #fff;
+	padding: 0;
+	margin: 0;
+}
+
+table.list tr.even {
+	background: #eeeced;
+	padding: 4px;
+	margin: 0;
+}
+
+table.list tr td {
+	padding: 4px;
+	margin: 0;
+}
+
+#page-content a {
+    text-decoration: underling;
+    color: #ca232b;
+}
+
+#page-content a:hover {
+	text-decoration: underline;
+	color: #000000;
+}
