@@ -624,6 +624,8 @@ buildipcop() {
   ipcopmake lpd
   ipcopmake xampp
   ipcopmake pam
+  ipcopmake pwlib
+  ipcopmake openh323
 }
 
 buildinstaller() {
