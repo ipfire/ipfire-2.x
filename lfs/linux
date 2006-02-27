@@ -36,7 +36,7 @@ VER        = 2.4.31
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_KERNEL)/linux/kernel/v2.4
+DL_FROM    = ftp://ftp.kernel.org/pub/linux/kernel/v2.4
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
@@ -73,20 +73,20 @@ objects =$(DL_FILE) \
 	netfilter-layer7-v2.1.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-openswan-1.0.10rc2.tar.gz            	= http://www.openswan.org/download/openswan-1.0.10rc2.tar.gz
+openswan-1.0.10rc2.tar.gz		= http://ipcop.ath.cx/openswan-1.0.10rc2.tar.gz
 patch-o-matic-ng-20060206.tar.bz2    	= ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-20060206.tar.bz2
 iptables-1.3.5.tar.bz2              	= http://www.netfilter.org/files/iptables-1.3.5.tar.bz2
-kbc_option_2420.patch                    = http://developer.osdl.org/rddunlap/patches/kbc_option_2420.patch
-net4801.kernel.patch_2.4.31              = http://www.sk-tech.net/support/net4801.kernel.patch_2.4.31
+kbc_option_2420.patch                   = http://developer.osdl.org/rddunlap/patches/kbc_option_2420.patch
+net4801.kernel.patch_2.4.31             = http://www.sk-tech.net/support/net4801.kernel.patch_2.4.31
 netfilter-layer7-v2.1.tar.gz		= http://belnet.dl.sourceforge.net/sourceforge/l7-filter/netfilter-layer7-v2.1.tar.gz
 
 $(DL_FILE)_MD5                       	= ea3f99fc82617886059d58d0644dab26
 openswan-1.0.10rc2.tar.gz_MD5        	= 20d51ff963da78f826f4e0f0ebc4bcef
 patch-o-matic-ng-20060206.tar.bz2_MD5	= eca9893afb753e331caddfe63142b566
 iptables-1.3.5.tar.bz2_MD5          	= 00fb916fa8040ca992a5ace56d905ea5
-kbc_option_2420.patch_MD5                = 6d37870344f7fcf97ace1fbf43323c60
-net4801.kernel.patch_2.4.31_MD5          = c7d64e3caedb2f2b10e1c11db7f73a04
-netfilter-layer7-v2.1.tar.gz_MD5		= 551626a158c2a2cbfd937d27ecc7fac1
+kbc_option_2420.patch_MD5               = 6d37870344f7fcf97ace1fbf43323c60
+net4801.kernel.patch_2.4.31_MD5         = c7d64e3caedb2f2b10e1c11db7f73a04
+netfilter-layer7-v2.1.tar.gz_MD5	= 551626a158c2a2cbfd937d27ecc7fac1
 
 install : $(TARGET)
 
@@ -121,12 +121,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Openswan
 	cd $(DIR_SRC) && rm -rf openswan-*
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-1.0.10rc2.tar.gz
-	cd $(DIR_SRC)/openswan-1.0.10rc2 && patch -Np1 < $(DIR_SRC)/src/patches/openswan-1.0.1-plutoctl.patch
-	cd $(DIR_SRC)/openswan-1.0.10rc2 && patch -Np1 < $(DIR_SRC)/src/patches/openswan-1.0.6-numif.patch
-	cd $(DIR_SRC)/openswan-1.0.10rc2 && sed -i 's+^KERNELSRC.*$$+KERNELSRC=$(ROOT)/usr/src/linux-$(VER)+' Makefile.inc
-	cd $(DIR_SRC)/openswan-1.0.10rc2 && sed -i -e 's/local\/sbin/local\/sbin:\/tools\/bin/' utils/patcher
-	cd $(DIR_SRC)/openswan-1.0.10rc2 && make insert
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-1.0.10.tar.gz
+	cd $(DIR_SRC)/openswan-1.0.10 && patch -Np1 < $(DIR_SRC)/src/patches/openswan-1.0.1-plutoctl.patch
+	cd $(DIR_SRC)/openswan-1.0.10 && patch -Np1 < $(DIR_SRC)/src/patches/openswan-1.0.6-numif.patch
+	cd $(DIR_SRC)/openswan-1.0.10 && sed -i 's+^KERNELSRC.*$$+KERNELSRC=$(ROOT)/usr/src/linux-$(VER)+' Makefile.inc
+	cd $(DIR_SRC)/openswan-1.0.10 && sed -i -e 's/local\/sbin/local\/sbin:\/tools\/bin/' utils/patcher
+	cd $(DIR_SRC)/openswan-1.0.10 && make insert
 
 	# Patch-o-matic
 	cd $(DIR_SRC) && rm -rf iptables-*

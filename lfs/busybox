@@ -37,7 +37,8 @@ VER        = 0.60.5
 
 THISAPP    = busybox-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.busybox.net/downloads
+#DL_FROM    = http://www.busybox.net/downloads
+DL_FROM	   = http://ipcop.ath.cx
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
