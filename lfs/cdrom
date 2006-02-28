@@ -120,15 +120,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		cp /boot/vmlinuz-installer                    /install/cdrom/boot/isolinux/vmlinuz; \
 		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/cdrom/boot/isolinux/isolinux.cfg; \
 		cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
-		sed -e 's/boot IPCop/boot IPCop $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
+		sed -e 's/boot IPFire/boot IPFire $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
 			> /install/message; \
 		cp /install/message /install/cdrom/boot/isolinux/message; \
 		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
 			-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
 			-c boot/isolinux/boot.catalog \
 			. > /install/images/$(SNAME)-install-$(VERSION).$(MACHINE).iso; \
-		echo "compute size +32 blocks for bootsector/fat/etc..." && \
-		dd bs=1024 count=$$((`du -k -s ../cdrom|awk '{print $$1}'` + 32)) if=/dev/zero of=/install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso; \
+		echo "compute size +64 blocks for bootsector/fat/etc..." && \
+		dd bs=1024 count=$$((`du -k -s ../cdrom|awk '{print $$1}'` + 64)) if=/dev/zero of=/install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso; \
 		echo "move boot files on top of disk" && \
 		rm -rf boot && \
 		mkdosfs -n IPCOPBOOT -F 16 -I /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \

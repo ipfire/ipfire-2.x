@@ -44,11 +44,14 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	xampp-linux-devel-1.5.1.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+xampp-linux-devel-$(VER).tar.gz 	= http://switch.dl.sourceforge.net/sourceforge/xampp/xampp-linux-devel-$(VER).tar.gz
 
 $(DL_FILE)_MD5 = baefcf7ac3629a641c7b75c547564a3f
+xampp-linux-devel-$(VER).tar.gz_MD5 = e4ab1c867551a831ae6af38fa3c4dfd9
 
 install : $(TARGET)
 
@@ -77,7 +80,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt && tar zxf $(DIR_DL)/xampp-linux-devel-$(VER).tar.gz -C /opt
 	chown -R nobody.nobody /opt/lampp/htdocs
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
