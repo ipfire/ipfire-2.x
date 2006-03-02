@@ -620,12 +620,16 @@ buildipcop() {
   ipcopmake wireless
   ipcopmake libsafe
   ipcopmake 3c5x9setup
+  echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
+  ipcopmake berkeley-DB
   ipcopmake stund
   ipcopmake lpd
   ipcopmake xampp
   ipcopmake pam
+  ipcopmake pammysql
   ipcopmake pwlib
   ipcopmake openh323
+  ipcopmake saslauthd
 }
 
 buildinstaller() {

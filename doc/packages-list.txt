@@ -35,6 +35,8 @@
 * cdrtools-2.01
 * coreutils-5.93
 * cxacru-2003-10-05
+* cyrus-sasl-2.1.21
+* db-4.4.20
 * dhcp-3.0.2
 * dhcpcd-1.3.22-pl4
 * diffutils-2.8.1
@@ -119,6 +121,7 @@
 * openssh-3.9p1
 * openssl-0.9.7i
 * openswan-1.0.10
+* pam_mysql-0.7RC1
 * patch-2.5.4
 * pciutils-2.1.11
 * pcmcia-cs-3.2.8
