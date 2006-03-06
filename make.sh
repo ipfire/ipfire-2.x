@@ -693,7 +693,7 @@ buildpackages() {
 	cd $BASEDIR
   fi
 
-  # Create update for this version
+#  Create update for this version
 #  echo "`date -u '+%b %e %T'`: Building update $VERSION tgz" | tee -a $LOGFILE
 #  tar -cz -C $BASEDIR/build --files-from=$BASEDIR/updates/$VERSION/ROOTFILES.$MACHINE-$VERSION -f $BASEDIR/updates/$VERSION/patch.tar.gz --exclude='#*'; 
 #  chmod 755 $BASEDIR/updates/$VERSION/setup

@@ -4,7 +4,9 @@
 #
 # (c) 2003 Dave Roberts <countzerouk@hotmail.com> - colour coded netfilter/iptables rewrite for 1.3
 #
-# $Id: connections.cgi,v 1.6.2.11 2005/02/24 07:44:35 gespinasse Exp $
+# (c) 2006 Franck - add sorting+filtering capability
+#
+# $Id: connections.cgi,v 1.6.2.12 2006/02/27 19:48:46 franck78 Exp $
 #
 
 # Setup GREEN, ORANGE, IPCOP, VPN CIDR networks, masklengths and colours only once
@@ -39,7 +41,8 @@ my @active = <ACTIVE>;
 close (ACTIVE);
 
 my @vpn = ('none');
-open (ACTIVE, "/proc/net/ipsec_eroute") and @vpn = <ACTIVE>; close (ACTIVE);
+open (ACTIVE, "/proc/net/ipsec_eroute") and @vpn = <ACTIVE>;
+close (ACTIVE);
 
 my $aliasfile = "${General::swroot}/ethernet/aliases";
 open(ALIASES, $aliasfile) or die 'Unable to open aliases file.';
@@ -140,42 +143,37 @@ if (open(IP, "${General::swroot}/red/local-ipaddress")) {
 	push(@colour, ${Header::colourfw} );
 }
 
-&Header::showhttpheaders();
-&Header::openpage($Lang::tr{'connections'}, 1, '');
-&Header::openbigbox('100%', 'left');
-&Header::openbox('100%', 'left', $Lang::tr{'connection tracking'});
 
-print <<END
-<table width='60%'>
-<tr><td align='center'><b>$Lang::tr{'legend'} : </b></td>
-     <td align='center' bgcolor='${Header::colourgreen}'><b><font color='#FFFFFF'>$Lang::tr{'lan'}</font></b></td>
-     <td align='center' bgcolor='${Header::colourred}'><b><font color='#FFFFFF'>$Lang::tr{'internet'}</font></b></td>
-     <td align='center' bgcolor='${Header::colourorange}'><b><font color='#FFFFFF'>$Lang::tr{'dmz'}</font></b></td>
-     <td align='center' bgcolor='${Header::colourblue}'><b><font color='#FFFFFF'>$Lang::tr{'wireless'}</font></b></td>
-     <td align='center' bgcolor='${Header::colourfw}'><b><font color='#FFFFFF'>IPCop</font></b></td>
-     <td align='center' bgcolor='${Header::colourvpn}'><b><font color='#FFFFFF'>$Lang::tr{'vpn'}</font></b></td>
-</tr>
-</table>
-<br />
-<table cellpadding='2'>
-<tr><td align='center'><b>$Lang::tr{'protocol'}</b></td>
-    <td align='center'><b>$Lang::tr{'expires'}<br />($Lang::tr{'seconds'})</b></td>
-    <td align='center'><b>$Lang::tr{'connection'}<br />$Lang::tr{'status'}</b></td>
-    <td align='center'><b>$Lang::tr{'original'}<br />$Lang::tr{'source ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'original'}<br />$Lang::tr{'dest ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'expected'}<br />$Lang::tr{'source ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'expected'}<br />$Lang::tr{'dest ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'marked'}</b></td>
-    <td align='center'><b>$Lang::tr{'use'}</b></td>
-</tr>
-END
-;
+#Establish simple filtering&sorting boxes on top of table
 
-foreach my $line (@active)
-{
+our %cgiparams;
+&Header::getcgihash(\%cgiparams);
+
+my @list_proto = ($Lang::tr{'all'}, 'icmp', 'udp', 'tcp');
+my @list_state = ($Lang::tr{'all'}, 'SYN_SENT', 'SYN_RECV', 'ESTABLISHED', 'FIN_WAIT',
+		    'CLOSE_WAIT', 'LAST_ACK', 'TIME_WAIT', 'CLOSE', 'LISTEN');
+my @list_mark = ($Lang::tr{'all'}, '[ASSURED]', '[UNREPLIED]');
+my @list_sort = ('orgsip','protocol', 'expires', 'status', 'orgdip', 'orgsp',
+		    'orgdp', 'exsip', 'exdip', 'exsp', 'exdp');
+
+# init or silently correct unknown value...
+if ( ! grep ( /^$cgiparams{'SEE_PROTO'}$/ , @list_proto )) { $cgiparams{'SEE_PROTO'} = $list_proto[0] };
+if ( ! grep ( /^$cgiparams{'SEE_STATE'}$/ , @list_state )) { $cgiparams{'SEE_STATE'} = $list_state[0] };
+if ( ! grep ( /^$cgiparams{'SEE_MARK'}$/  , @list_mark ))  { $cgiparams{'SEE_MARK'}  = $list_mark[0] };
+if ( ! grep ( /^$cgiparams{'SEE_SORT'}$/  , @list_sort ))  { $cgiparams{'SEE_SORT'}  = $list_sort[0] };
+# *.*.*.* or a valid IP
+if ( $cgiparams{'SEE_SRC'}  !~ /^(\*\.\*\.\*\.\*\.|\d+\.\d+\.\d+\.\d+)$/) {  $cgiparams{'SEE_SRC'} = '*.*.*.*' };
+if ( $cgiparams{'SEE_DEST'} !~ /^(\*\.\*\.\*\.\*\.|\d+\.\d+\.\d+\.\d+)$/) {  $cgiparams{'SEE_DEST'} = '*.*.*.*' };
+
+
+our %entries = ();	# will hold the lines analyzed correctly
+my $unknownlines = '';	# should be empty all the time...
+my $index = 0;		# just a counter to make unique entryies in entries
+
+foreach my $line (@active) {
 	my $protocol='';
 	my $expires='';
-	my $connstatus='';
+	my $status='';
 	my $orgsip='';
 	my $orgdip='';
 	my $orgsp='';
@@ -186,56 +184,93 @@ foreach my $line (@active)
 	my $exdp='';
 	my $marked='';
 	my $use='';
-	my $orgsipcolour='';
-	my $orgdipcolour='';
-	my $exsipcolour='';
-	my $exdipcolour='';
 
 	chomp($line);
 	my @temp = split(' ',$line);
-	print "<tr bgcolor='${Header::table1colour}'>\n";
+
+   	if ($temp[0] eq 'icmp') {
+        	$protocol  = $temp[0];
+        	$status    = $Lang::tr{'all'};
+        	$orgsip   = substr $temp[3], 4;
+             	$orgdip   = substr $temp[4], 4;
+             	$marked   = $temp[8] eq '[UNREPLIED]' ? '[UNREPLIED]' : ' ';
+      	}
+   	if ($temp[0] eq 'udp') {
+        	$protocol  = $temp[0];
+        	$status  = $Lang::tr{'all'};
+        	$orgsip = substr $temp[3], 4;
+             	$orgdip  = substr $temp[4], 4;
+             	$marked   = $temp[7] eq '[UNREPLIED]' ? '[UNREPLIED]' : defined ($temp[12]) ? $temp[11] : ' ';
+      	}
+	if ($temp[0] eq 'tcp') {
+		$protocol  = $temp[0];
+		$status  = $temp[3];
+		$orgsip = substr $temp[4], 4;
+		$orgdip   = substr $temp[5], 4;
+             	$marked   = $temp[8] eq '[UNREPLIED]' ? '[UNREPLIED]' : defined ($temp[13]) ? $temp[12] : ' ';
+	}
+
+	# filter the line if we found a known proto
+	next if( !(
+		   (($cgiparams{'SEE_PROTO'}  eq $Lang::tr{'all'}) || ($protocol  eq $cgiparams{'SEE_PROTO'} ))
+		&& (($cgiparams{'SEE_STATE'}  eq $Lang::tr{'all'}) || ($status    eq $cgiparams{'SEE_STATE'} ))
+		&& (($cgiparams{'SEE_MARK'}   eq $Lang::tr{'all'}) || ($marked    eq $cgiparams{'SEE_MARK'}  ))
+		&& (($cgiparams{'SEE_SRC'}    eq "*.*.*.*")        || ($orgsip    eq $cgiparams{'SEE_SRC'}   ))
+		&& (($cgiparams{'SEE_DEST'}   eq "*.*.*.*")    	   || ($orgdip    eq $cgiparams{'SEE_DEST'}  ))
+		));
+
+	if ($temp[0] eq 'icmp') {
+		my $offset = 0;
+    		$protocol = $temp[0] . " (" . $temp[1] . ")";
+    		$expires = $temp[2];
+		$status = ' ';
+    		if ($temp[8] eq '[UNREPLIED]' ) {
+			$offset = +1;
+		}	
+    		$orgsip = substr $temp[3], 4;
+    		$orgdip = substr $temp[4], 4;
+    		$orgsp = &General::GetIcmpDescription(substr( $temp[5], 5)) . "/" . substr( $temp[6], 5);;
+    		$orgdp = 'id=' . substr( $temp[7], 3);
+    		$exsip = substr $temp[8 + $offset], 4;
+    		$exdip = substr $temp[9 + $offset], 4;
+	        $exsp = &General::GetIcmpDescription(substr( $temp[10 + $offset], 5)). "/" . substr( $temp[11 + $offset], 5); 
+	        $exdp = 'id=' . substr( $temp[11 + $offset], 5);
+             	$marked   = $temp[8] eq '[UNREPLIED]' ? '[UNREPLIED]' : ' ';
+		$use = substr( $temp[13 + $offset], 4 );
+	}
 	if ($temp[0] eq 'udp') {
 		my $offset = 0;
 		$marked = '';
 		$protocol = $temp[0] . " (" . $temp[1] . ")";
 		$expires = $temp[2];
-		$connstatus = ' ';
+		$status = ' ';
 		$orgsip = substr $temp[3], 4;
 		$orgdip = substr $temp[4], 4;
 		$orgsp = substr $temp[5], 6;
 		$orgdp = substr $temp[6], 6;
 		if ($temp[7] eq '[UNREPLIED]') {
-                        $marked = $temp[7];
-                        $offset = 1;
-                }
-                else {
-                        $connstatus = ' ';
-                }
-
+                    $offset = 1;
+		    $marked = $temp[7];
+		    $use = substr $temp[12], 4;
+                } else {
+		    if ((substr $temp[11], 0, 3) eq 'use' ) {
+			$marked = '';
+			$use = substr $temp[11], 4;
+		    } else {
+                	$marked = $temp[11];
+			$use = substr $temp[12], 4;
+		    }
+		}
 		$exsip = substr $temp[7 + $offset], 4;
 		$exdip = substr $temp[8 + $offset], 4;
 		$exsp = substr $temp[9 + $offset], 6;
 		$exdp = substr $temp[10 + $offset], 6;
-		if ($marked eq '[UNREPLIED]') {
-			$use = substr $temp[11 + $offset], 4;
-                }
-                else {
-                        $marked = $temp[11 + $offset];
-			$use = substr $marked, 0, 3;
-			if ($use eq 'use' ) {
-				$marked = '';
-				$use = substr $temp[11 + $offset], 4;
-			}
-			else {
-				$use = substr $temp[12 + $offset], 4;
-			}
-		}
 	}
 	if ($temp[0] eq 'tcp') {
 		my $offset = 0;
                 $protocol = $temp[0] . " (" . $temp[1] . ")";
                 $expires = $temp[2];
-                $connstatus = $temp[3];
+                $status = $temp[3];
                 $orgsip = substr $temp[4], 4;
                 $orgdip = substr $temp[5], 4;
                 $orgsp = substr $temp[6], 6;
@@ -243,25 +278,22 @@ foreach my $line (@active)
 		if ($temp[8] eq '[UNREPLIED]') {
                         $marked = $temp[8];
                         $offset = 1;
-			$use = substr $temp[13], 4;
-                }
-                else {
+                } else {
                         $marked = $temp[12];
-			$use = substr $temp[13], 4;
                 }
-		
 		$exsip = substr $temp[8 + $offset], 4;
                 $exdip = substr $temp[9 + $offset], 4;
                 $exsp = substr $temp[10 + $offset], 6;
                 $exdp = substr $temp[11 + $offset], 6;
+		$use = substr $temp[13], 4;
         }
 	if ($temp[0] eq 'unknown') {
                 my $offset = 0;
                 $protocol = "??? (" . $temp[1] . ")";
                 $protocol = "esp (" . $temp[1] . ")" if ($temp[1] == 50);
-                $protocol = " ah (" . $temp[1] . ")" if ($temp[1] == 51);
+                $protocol = "ah (" . $temp[1] . ")" if ($temp[1] == 51);
                 $expires = $temp[2];
-                $connstatus = ' ';
+                $status = ' ';
                 $orgsip = substr $temp[3], 4;
                 $orgdip = substr $temp[4], 4;
                 $orgsp = ' ';
@@ -288,24 +320,119 @@ foreach my $line (@active)
 		$marked = $temp[17];
 		$use = $temp[18];
 	}
-	$orgsipcolour = &ipcolour($orgsip);
-	$orgdipcolour = &ipcolour($orgdip);
-	$exsipcolour = &ipcolour($exsip);
-	$exdipcolour = &ipcolour($exdip);
+	# Only from this point, lines have the same known format/field
+	# The floating fields [UNREPLIED] [ASSURED] etc are ok.
+
+	# Store the line in a hash array for sorting
+	if ( $protocol ) { # line is decoded ?
+		my @record = (  'index', $index++,
+			    'protocol', $protocol,
+			    'expires',  $expires,
+			    'status',   $status,
+			    'orgsip',   $orgsip,
+			    'orgdip',   $orgdip,
+			    'orgsp',    $orgsp,
+			    'orgdp',    $orgdp,
+			    'exsip',    $exsip,
+			    'exdip', 	$exdip,
+			    'exsp',	$exsp,
+			    'exdp',	$exdp,
+			    'marked',	$marked,
+			    'use',	$use);
+		my $record = {};                        	# create a reference to empty hash
+		%{$record} = @record;                	# populate that hash with @record
+		$entries{$record->{index}} = $record; 	# add this to a hash of hashes	    
+	} else { # it was not a known line
+		$unknownlines .= "<tr bgcolor='${Header::table1colour}'>";
+		$unknownlines .= "<td colspan='9'> unknown:$line></td></tr>";
+	}
+}
+
+# Build listbox objects
+my $menu_proto = &make_select ('SEE_PROTO', $cgiparams{'SEE_PROTO'}, @list_proto);
+my $menu_state = &make_select ('SEE_STATE', $cgiparams{'SEE_STATE'}, @list_state);
+my $menu_src   = &make_select ('SEE_SRC',   $cgiparams{'SEE_SRC'},   &get_known_ips('orgsip'));
+my $menu_dest  = &make_select ('SEE_DEST',  $cgiparams{'SEE_DEST'},  &get_known_ips('orgdip'));
+my $menu_mark  = &make_select ('SEE_MARK',  $cgiparams{'SEE_MARK'},  @list_mark);
+my $menu_sort  = &make_select ('SEE_SORT',  $cgiparams{'SEE_SORT'},  @list_sort);
+
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'connections'}, 1, '');
+&Header::openbigbox('100%', 'left');
+&Header::openbox('100%', 'left', $Lang::tr{'connection tracking'});
+
+print <<END
+<table width='60%'>
+<tr><td align='center'><b>$Lang::tr{'legend'} : </b></td>
+    <td align='center' bgcolor='${Header::colourgreen}'><b><font color='#FFFFFF'>$Lang::tr{'lan'}</font></b></td>
+    <td align='center' bgcolor='${Header::colourred}'><b><font color='#FFFFFF'>$Lang::tr{'internet'}</font></b></td>
+    <td align='center' bgcolor='${Header::colourorange}'><b><font color='#FFFFFF'>$Lang::tr{'dmz'}</font></b></td>
+    <td align='center' bgcolor='${Header::colourblue}'><b><font color='#FFFFFF'>$Lang::tr{'wireless'}</font></b></td>
+    <td align='center' bgcolor='${Header::colourfw}'><b><font color='#FFFFFF'>IPCop</font></b></td>
+    <td align='center' bgcolor='${Header::colourvpn}'><b><font color='#FFFFFF'>$Lang::tr{'vpn'}</font></b></td>
+</tr>
+</table>
+<br />
+<table cellpadding='2'>
+<tr><td align='center'><b>$Lang::tr{'protocol'}</b></td>
+    <td align='center'><b>$Lang::tr{'expires'}<br />($Lang::tr{'seconds'})</b></td>
+    <td align='center'><b>$Lang::tr{'connection'}<br />$Lang::tr{'status'}</b></td>
+    <td align='center'><b>$Lang::tr{'original'}<br />$Lang::tr{'source ip and port'}</b></td>
+    <td align='center'><b>$Lang::tr{'original'}<br />$Lang::tr{'dest ip and port'}</b></td>
+    <td align='center'><b>$Lang::tr{'expected'}<br />$Lang::tr{'source ip and port'}</b></td>
+    <td align='center'><b>$Lang::tr{'expected'}<br />$Lang::tr{'dest ip and port'}</b></td>
+    <td align='center'><b>$Lang::tr{'marked'}</b></td>
+    <td align='center'><b>$Lang::tr{'use'}</b></td>
+</tr>
+<tr><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+    <td align='center'>$menu_proto</td>
+    <td></td>
+    <td align='center'>$menu_state</td>
+    <td align='center'>$menu_src</td>
+    <td align='center'>$menu_dest</td>
+    <td align='center'colspan='2'>$Lang::tr{'sort ascending'}:$menu_sort </td>
+    <td align='center'>$menu_mark</td>
+    <td align='center'><input type='submit' value='!' /></td>
+    </form>
+</tr>
+END
+;
+
+foreach my $entry (sort sort_entries keys %entries) {
+
+	print "<tr bgcolor='${Header::table1colour}'>";
+	my $orgsipcolour = &ipcolour( $entries{$entry}->{orgsip} );
+	my $orgdipcolour = &ipcolour( $entries{$entry}->{orgdip} );
+	my $exsipcolour  = &ipcolour( $entries{$entry}->{exsip} );
+	my $exdipcolour  = &ipcolour( $entries{$entry}->{exdip} );
 	print <<END
-	<td align='center'>$protocol</td>
-	<td align='center'>$expires</td>
-	<td align='center'>$connstatus</td>
-	<td align='center' bgcolor='$orgsipcolour'><a href='/cgi-bin/ipinfo.cgi?ip=$orgsip'><font color='#FFFFFF'>$orgsip</font></a><font color='#FFFFFF'>:$orgsp</font></td>
-	<td align='center' bgcolor='$orgdipcolour'><a href='/cgi-bin/ipinfo.cgi?ip=$orgdip'><font color='#FFFFFF'>$orgdip</font></a><font color='#FFFFFF'>:$orgdp</font></td>
-	<td align='center' bgcolor='$exsipcolour'><a href='/cgi-bin/ipinfo.cgi?ip=$exsip'><font color='#FFFFFF'>$exsip</font></a><font color='#FFFFFF'>:$exsp</font></td>
-	<td align='center' bgcolor='$exdipcolour'><a href='/cgi-bin/ipinfo.cgi?ip=$exdip'><font color='#FFFFFF'>$exdip</font></a><font color='#FFFFFF'>:$exdp</font></td>
-	<td align='center'>$marked</td><td align='center'>$use</td>
+	<td align='center'>$entries{$entry}->{protocol}</td>
+	<td align='center'>$entries{$entry}->{expires}</td>
+	<td align='center'>$entries{$entry}->{status}</td>
+	<td align='center' bgcolor='$orgsipcolour'>
+	    <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{orgsip}'>
+	    <font color='#FFFFFF'>$entries{$entry}->{orgsip}</font>
+	    </a><font color='#FFFFFF'>:$entries{$entry}->{orgsp}</font></td>
+	<td align='center' bgcolor='$orgdipcolour'>
+	    <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{orgdip}'>
+	    <font color='#FFFFFF'>$entries{$entry}->{orgdip}</font>
+	    </a><font color='#FFFFFF'>:$entries{$entry}->{orgdp}</font></td>
+	<td align='center' bgcolor='$exsipcolour'>
+	    <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{exsip}'>
+	    <font color='#FFFFFF'>$entries{$entry}->{exsip}</font>
+	    </a><font color='#FFFFFF'>:$entries{$entry}->{exsp}</font></td>
+	<td align='center' bgcolor='$exdipcolour'>
+	    <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{exdip}'>
+	    <font color='#FFFFFF'>$entries{$entry}->{exdip}</font>
+	    </a><font color='#FFFFFF'>:$entries{$entry}->{exdp}</font></td>
+	<td align='center'>$entries{$entry}->{marked}</td>
+	<td align='center'>$entries{$entry}->{use}</td>
 	</tr>
 END
-	;
+;
 }
-print "</table>\n";
+
+print "$unknownlines</table>";
 
 &Header::closebox();
 &Header::closebigbox();
@@ -316,10 +443,9 @@ sub ipcolour($) {
 	my $line;
 	my $colour = ${Header::colourred};
 	my ($ip) = $_[0];
-	my $found = 0;
-	foreach $line (@network)
-	{
-		if (!$found && ipv4_in_network( $network[$id] , $masklen[$id], $ip) ) {
+        my $found = 0;
+        foreach $line (@network) {
+    		if (!$found && ipv4_in_network( $network[$id] , $masklen[$id], $ip) ) {
 			$found = 1;
 			$colour = $colour[$id];
 		}
@@ -327,3 +453,55 @@ sub ipcolour($) {
 	}
 	return $colour
 }
+
+# Create a string containing a complete SELECT html object 
+# param1: name
+# param2: current value selected
+# param3: field list
+sub make_select ($,$,$) {
+	my $select_name = shift;
+	my $selected    = shift;
+	my $select = "<select name='$select_name'>";
+
+	foreach my $value (@_) {
+    		my $check = $selected eq $value ? "selected='selected'" : '';
+    		$select .= "<option $check value='$value'>$value";
+	}
+	$select .= "</select>";
+	return $select;
+}
+
+# Build a list of IP obtained from the %entries hash
+# param1: IP field name
+sub get_known_ips ($) {
+	my $field = shift;
+	my $qs = $cgiparams{'SEE_SORT'};	# switch the sort order
+	$cgiparams{'SEE_SORT'} = $field;
+
+	my @liste=('*.*.*.*');
+	foreach my $entry ( sort sort_entries keys %entries) {
+    		push (@liste, $entries{$entry}->{$field}) if (! grep (/^$entries{$entry}->{$field}$/,@liste) );
+	}
+
+	$cgiparams{'SEE_SORT'} = $qs;	#restore sort order
+        return @liste;
+}
+
+# Used to sort the table containing the lines displayed.
+sub sort_entries { #Reverse is not implemented
+        my $qs=$cgiparams{'SEE_SORT'};
+        if ($qs =~ /orgsip|orgdip|exsip|exdip/) {
+		my @a = split(/\./,$entries{$a}->{$qs});
+		my @b = split(/\./,$entries{$b}->{$qs});
+		($a[0]<=>$b[0]) ||
+		($a[1]<=>$b[1]) ||
+		($a[2]<=>$b[2]) ||
+		($a[3]<=>$b[3]);
+	} elsif ($qs =~ /expire|orgsp|orgdp|exsp|exdp/) {
+    		$entries{$a}->{$qs} <=> $entries{$b}->{$qs};
+	} else {
+    		$entries{$a}->{$qs} cmp $entries{$b}->{$qs};
+	}
+}
+
+1;

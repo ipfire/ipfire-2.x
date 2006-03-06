@@ -120,7 +120,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Copy all html/cgi-bin files
 	cp -aR $(DIR_SRC)/html/* /home/httpd
-	-find /home/httpd -name CVS -exec rm -rf {} \;
+	-find /home/httpd -name .svn -exec rm -rf {} \;
 	cp $(DIR_DL)/sflogo.png /home/httpd/html/images/
 
 	# Change CONFIG_ROOT in cgi-scripts

@@ -74,7 +74,7 @@
 * iana-etc-2.00
 * ibod
 * inetutils-1.4.2
-* ipac-ng-1.28
+* ipac-ng-1.31
 * ipaddr-1.2
 * iproute2-2.4.7-now-ss010824
 * iptables-1.3.5
