@@ -79,9 +79,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pam-0.99.3.0-hostname.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr 
+	cd $(DIR_APP) && ./configure --libdir=/usr/lib \
+	            --sbindir=/lib/security \
+	            --enable-securedir=/lib/security \
+       	     --enable-docdir=/usr/share/doc/Linux-PAM-0.99.3.0 \
+	            --enable-read-both-confs 
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make check
 	cd $(DIR_APP) && make install
+	mv -v /lib/security/pam_tally /sbin
+	mv -v /usr/lib/libpam*.so.0* /lib
+	ln -v -sf ../../lib/libpam.so.0.81.1 /usr/lib/libpam.so
+	ln -v -sf ../../lib/libpamc.so.0.81.0 /usr/lib/libpamc.so
+	ln -v -sf ../../lib/libpam_misc.so.0.81.1 /usr/lib/libpam_misc.so
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

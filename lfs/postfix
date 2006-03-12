@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 4.4.20
+VER        = 2.2.9
 
-THISAPP    = db-$(VER)
+THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://downloads.sleepycat.com
+DL_FROM    = ftp://netmirror.org/postfix.org/official
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d84dff288a19186b136b0daf7067ade3
+$(DL_FILE)_MD5 = be78631bd9b6bf7735e43abfa54d69f6
 
 install : $(TARGET)
 
@@ -78,10 +78,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/build_unix && ../dist/configure --prefix=/usr --enable-compat185 --enable-cxx
-	cd $(DIR_APP)/build_unix && make LIBSO_LIBS="-lpthread" LIBXSO_LIBS="-lpthread"
-	cd $(DIR_APP)/build_unix && make docdir=/usr/share/doc/$(THISAPP) install
-	chown root:root /usr/bin/db_* /usr/lib/libdb* /usr/include/db*
-	chown -R root:root /usr/share/doc/$(THISAPP)
+	cd $(DIR_APP) && make -f Makefile.init makefiles \
+				'CCARGS=-DDEF_DAEMON_DIR=\"/usr/lib/postfix\" -DDEF_MANPAGE_DIR=\"/usr/share/man\" -DUSE_TLS -DUSE_SALS_AUTH -DHAS_PGSQL -I/usr/include/openssl -DHAS_MYSQL -I/opt/lampp/include/mysql -I/usr/include/sasl -I/opt/lampp/include' \
+				'AUXLIBS=-L/usr/lib -L/opt/lampp/lib/mysql -L/opt/lampp/lib -lmysqlclient -lz -lm -lssl -lsasl2 -lcrypto -lpq'
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && sh postfix-install -non-interactive
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

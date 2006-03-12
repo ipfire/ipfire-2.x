@@ -28,3 +28,5 @@ dnsmasq:x:103:
 cron:x:104:
 syslogd:x:105:
 klogd:x:106:
+postfix:x:107:
+postdrop:x:108:

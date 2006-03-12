@@ -45,13 +45,16 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 
 objects = $(DL_FILE) \
-	xampp-linux-devel-1.5.1.tar.gz
+	xampp-linux-devel-1.5.1.tar.gz \
+	PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 xampp-linux-devel-$(VER).tar.gz 	= http://switch.dl.sourceforge.net/sourceforge/xampp/xampp-linux-devel-$(VER).tar.gz
+PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz = http://switch.dl.sourceforge.net/sourceforge/xamppaddon/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
 
 $(DL_FILE)_MD5 = baefcf7ac3629a641c7b75c547564a3f
 xampp-linux-devel-$(VER).tar.gz_MD5 = e4ab1c867551a831ae6af38fa3c4dfd9
+PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz_MD5 = 63171afe553fd557032407e1ba6af477
 
 install : $(TARGET)
 
@@ -80,7 +83,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt && tar zxf $(DIR_DL)/xampp-linux-devel-$(VER).tar.gz -C /opt
+	@rm -rf $(DIR_APP) 
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt 
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/xampp-linux-devel-$(VER).tar.gz -C /opt
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz -C /tmp
+	cd /tmp/PostGreSQL-AddOn-1.0-pgsql8.1 && ./INSTALL
+	rm -rf /tmp/PostGreSQL-AddOn-1.0-pgsql8.1
 	chown -R nobody.nobody /opt/lampp/htdocs
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

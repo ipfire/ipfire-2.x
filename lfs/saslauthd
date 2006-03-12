@@ -78,8 +78,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-sql --with-pam=/usr --with-mysql=/opt/lampp
+	cd $(DIR_APP) && ./configure --prefix=/usr --enable-sql --with-pam=/usr --with-mysql=/opt/lampp -sysconfdir=/etc --with-dbpath=/var/lib/sasl/sasldb2 --with-saslauthd=/var/run
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
+#	install -v -m644 saslauthd/saslauthd.8 /usr/share/man/man8
+#	install -v -m755 -d /usr/share/doc/$(THISAPP)
+#	install -v -m644 doc/{*.{html,txt,fig},ONEWS,TODO} saslauthd/LDAP_SASLAUTHD /usr/share/doc/$(THISAPP)
+	install -v -m700 -d /var/lib/sasl
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

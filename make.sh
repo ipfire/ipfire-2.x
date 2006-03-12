@@ -28,14 +28,14 @@
 # $Id: make.sh,v 1.129.2.145 2006/02/01 07:04:09 gespinasse Exp $
 #
 
-  NAME="IPFire"					# Software name
-  SNAME="ipfire"					# Short name
+  NAME="IPFire"				# Software name
+  SNAME="ipfire"				# Short name
   VERSION="1.4"				# Version number
   PREVIOUSTAG=IPCOP_v1_4_10_FINAL
   SLOGAN="We save your network"		# Software slogan
   CONFIG_ROOT=/var/ipfire			# Configuration rootdir
   NICE=10
-  MAX_RETRIES=3					# prefetch/check loop
+  MAX_RETRIES=3				# prefetch/check loop
   KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
   MACHINE=`uname -m`
 
@@ -79,17 +79,17 @@
 # Define immediately
 stdumount() {
 	umount $BASEDIR/build/dev/pts		2>/dev/null;
-	umount $BASEDIR/build/proc		2>/dev/null;
-	umount $BASEDIR/build/install/mnt	2>/dev/null;
+	umount $BASEDIR/build/proc			2>/dev/null;
+	umount $BASEDIR/build/install/mnt		2>/dev/null;
 	umount $BASEDIR/build/usr/src/cache	2>/dev/null;
 	umount $BASEDIR/build/usr/src/ccache	2>/dev/null;
 	umount $BASEDIR/build/usr/src/config	2>/dev/null;
-	umount $BASEDIR/build/usr/src/doc	2>/dev/null;
-	umount $BASEDIR/build/usr/src/html	2>/dev/null;
+	umount $BASEDIR/build/usr/src/doc		2>/dev/null;
+	umount $BASEDIR/build/usr/src/html		2>/dev/null;
 	umount $BASEDIR/build/usr/src/langs	2>/dev/null;
-	umount $BASEDIR/build/usr/src/lfs	2>/dev/null;
-	umount $BASEDIR/build/usr/src/log	2>/dev/null;
-	umount $BASEDIR/build/usr/src/src	2>/dev/null;
+	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
+	umount $BASEDIR/build/usr/src/log		2>/dev/null;
+	umount $BASEDIR/build/usr/src/src		2>/dev/null;
 }
 
 exiterror() {
@@ -622,14 +622,16 @@ buildipcop() {
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
   ipcopmake berkeley-DB
-  ipcopmake stund
-  ipcopmake lpd
   ipcopmake xampp
   ipcopmake pam
   ipcopmake pammysql
+  ipcopmake saslauthd
+  ipcopmake postfix
+  ipcopmake stund
+  ipcopmake lpd
   ipcopmake pwlib
   ipcopmake openh323
-  ipcopmake saslauthd
+
 }
 
 buildinstaller() {
@@ -669,7 +671,7 @@ buildpackages() {
   echo "`date -u '+%b %e %T'`: Stripping files" | tee -a $LOGFILE
   find $LFS/lib $LFS/usr/lib $LFS/usr/share/rrdtool-* $LFS/install ! -type l \( -name '*.so' -o -name '*.so[\.0-9]*' \) \
 	! -name 'libc.so' ! -name 'libpthread.so' ! -name 'libcrypto.so.0.9.7.sha1' \
-	-exec $LFS/tools/bin/strip --strip-all {} \; >> $LOGFILE 2>&1
+	-ls -exec $LFS/tools/bin/strip --strip-all {} \; >> $LOGFILE 2>&1
   # add -ls before -exec if you want to verify what files are stripped
 
   find $LFS/{,s}bin $LFS/usr/{,s}bin $LFS/usr/local/{,s}bin ! -type l \
