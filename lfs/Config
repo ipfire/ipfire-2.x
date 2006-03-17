@@ -46,7 +46,7 @@ DIR_SRC = $(ROOT)/usr/src
 DIR_DL      = $(LFS_BASEDIR)/cache
 DIR_CHK     = $(LFS_BASEDIR)/cache/check
 DIR_INFO    = $(LFS_BASEDIR)/log
-DIR_TMP     = /tmp
+DIR_TMP     = /var/tmp
 
 KGCC = ccache /usr/bin/gcc
 
