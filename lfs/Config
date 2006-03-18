@@ -17,11 +17,13 @@ URL_CPAN    = http://www.cpan.org/modules/by-module
 URL_AGNU    = ftp://alpha.gnu.org/gnu
 URL_DEBIAN  = http://http.us.debian.org/debian/pool/main
 URL_GNU     = http://ftp.gnu.org/gnu
-URL_KERNEL  = ftp://ftp.kernel.org/pub
+URL_KERNEL  = http://www.kernel.org/pub
 URL_TUE     = ftp://ftp.win.tue.nl/pub
 URL_LFS_FTP = http://ftp.at.linuxfromscratch.org/pub/lfs/lfs-packages/5.1.1
 URL_LFS     = http://www.linuxfromscratch.org/patches/downloads
 URL_SFNET   = http://switch.dl.sourceforge.net/sourceforge
+URL_IPFIRE  = http://mirror.ipfire.org/source-packages
+URL_IPCOP   = http://ipcop.ath.cx
 
 # Default compiler optimizations.
 #

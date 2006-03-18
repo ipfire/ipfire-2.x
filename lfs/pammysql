@@ -36,7 +36,7 @@ VER        = 0.7RC1
 
 THISAPP    = pam_mysql-0.7RC1
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://cache.ipfire.org/SOURCES
+DL_FROM    = http://switch.dl.sourceforge.net/sourceforge/pam-mysql
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

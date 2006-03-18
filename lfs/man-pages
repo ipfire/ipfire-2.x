@@ -36,7 +36,7 @@ VER        = 2.17
 
 THISAPP    = man-pages-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_KERNEL)/linux/docs/manpages
+DL_FROM    = $(URL_IPCOP)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
