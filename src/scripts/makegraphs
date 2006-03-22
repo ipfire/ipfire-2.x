@@ -485,3 +485,5 @@ if ($settings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/ && -e "$rrdlog/BLUE.rrd") {
 	updateifgraph ("BLUE", "month");
 	updateifgraph ("BLUE", "year");
 }
+
+chmod 777 /home/httpd/html/{graphs,sgraph} -R

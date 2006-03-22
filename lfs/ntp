@@ -84,8 +84,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	-mkdir /etc/ntp
 	chown -R ntp:ntp /etc/ntp
-	echo "restrict default nomodify noquery" > /etc/ntp.conf
-	echo "server  127.127.1.0"		>> /etc/ntp.conf
+	echo "restrict default nomodify noquery" >  /etc/ntp.conf
+	echo "server  127.127.1.0"			>> /etc/ntp.conf
 	echo "fudge   127.127.1.0 stratum 10"	>> /etc/ntp.conf
 	echo "driftfile /etc/ntp/drift"		>> /etc/ntp.conf
 	@rm -rf $(DIR_APP)

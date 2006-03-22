@@ -458,6 +458,20 @@ sub genmenu {
                                       'enabled' => 1
                                        };
 
+    my %subipfirehash = ();
+    my $subipfire = \%subipfirehash;
+    $subipfire->{'01.pakfire'} = {'caption' => $tr{'pakfire'},
+				  'uri' => '/cgi-bin/pakfire.cgi',
+				  'title' => "$tr{'paketmanager'}",
+				  'enabled' => 1,
+				  };
+    $subipfire->{'02.samba'} = {'caption' => $tr{'samba'},
+				  'uri' => '/cgi-bin/samba.cgi',
+				  'title' => "$tr{'samba'}",
+				  'enabled' => 1,
+				  };
+
+
 
     $menu->{'01.system'} = {'caption' => $tr{'alt system'},
 			    'enabled' => 1,
@@ -490,6 +504,10 @@ sub genmenu {
     $menu->{'08.logs'} = {'caption' => $tr{'alt logs'},
 			  'enabled' => 1,
 			  'subMenu' => $sublogs
+			  };
+    $menu->{'09.ipfire'} = {'caption' => 'IPFire'},
+			  'enabled' => 1,
+			  'subMenu' => $subipfire
 			  };
 
 
@@ -799,7 +817,6 @@ sub openpage {
 
 <div id="header">
 	<img id="logo-product" src="/images/logo_ipfire.gif">
-	<img id="logo-ipfire" src="/images/logo_ipfire2.gif">	
    <div id="header-icons">
 END
 ;

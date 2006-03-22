@@ -29,11 +29,11 @@
 #
 
   NAME="IPFire"				# Software name
-  SNAME="ipfire"				# Short name
+  SNAME="ipfire"			# Short name
   VERSION="1.4"				# Version number
-  PREVIOUSTAG=IPCOP_v1_4_10_FINAL
-  SLOGAN="We save your network"		# Software slogan
-  CONFIG_ROOT=/var/ipfire			# Configuration rootdir
+# PREVIOUSTAG=IPCOP_v1_4_10_FINAL
+  SLOGAN="We secure your network"	# Software slogan
+  CONFIG_ROOT=/var/ipfire		# Configuration rootdir
   NICE=10
   MAX_RETRIES=3				# prefetch/check loop
   KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
@@ -707,10 +707,10 @@ buildpackages() {
   rm -f $BASEDIR/doc/packages-list
   for i in `ls -1tr $BASEDIR/log/[^_]*`; do
 	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
-		echo "* `basename $i`" >>$BASEDIR/doc/packages-list
+		echo "  * `basename $i`" >>$BASEDIR/doc/packages-list
 	fi
   done
-  echo "!!! List of softwares used to build $NAME Version:$VERSION" > $BASEDIR/doc/packages-list.txt
+  echo "====== List of softwares used to build $NAME Version: $VERSION ======" > $BASEDIR/doc/packages-list.txt
   grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipcop$\|setup$\|stage2$\|smp$\|tools$\|tools1$\|tools2$' \
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list

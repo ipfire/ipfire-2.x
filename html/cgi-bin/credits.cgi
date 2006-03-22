@@ -28,7 +28,7 @@ require "${General::swroot}/header.pl";
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
 
 print <<END
-<br /><center><b>Visit us on <a href='http://www.ipcop.org/'>http://www.ipcop.org/</a></b></center>
+<br /><center><b>Besuchen sie uns auf <a href='http://www.ipfire.org/'>http://www.ipfire.org/</a></b></center>
 
 <p><b>Main Credits</b><br />
 Project Member - Mark Wormgoor

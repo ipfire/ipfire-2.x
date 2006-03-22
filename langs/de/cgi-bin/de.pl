@@ -369,7 +369,7 @@
 'graph per' => 'Diagramm pro', 
 'green' => 'GRÜN', 
 'green interface' => 'Grünes Interface', 
-'gui settings' => 'Einstellungen der  Benutzeroberfläche', 
+'gui settings' => 'Benutzeroberfläche', 
 'gz with key' => 'Nur ein verschlüsseltes Archiv kann auf dieser Maschine wiederhergestellt werden.', 
 'hangup' => 'Trennen', 
 'hangup string' => 'Auflegen:', 

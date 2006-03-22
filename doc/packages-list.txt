@@ -90,6 +90,7 @@
 * libpcap-0.8.3
 * libpng-1.2.8
 * libsafe-2.0-16
+* libsafe_2.0-16
 * libtool-1.5.6
 * libusb-0.1.7
 * libwww-perl-5.803

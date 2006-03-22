@@ -117,7 +117,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		mkdir -p /install/cdrom/boot/isolinux; \
 		dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
 		cp /install/images/cdinitrd.gz              /install/cdrom/boot/isolinux/instroot.gz; \
-		cp /boot/vmlinuz-installer                    /install/cdrom/boot/isolinux/vmlinuz; \
+		cp /boot/vmlinuz-installer                  /install/cdrom/boot/isolinux/vmlinuz; \
 		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/cdrom/boot/isolinux/isolinux.cfg; \
 		cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
 		sed -e 's/boot IPFire/boot IPFire $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
