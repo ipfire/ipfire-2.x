@@ -339,6 +339,37 @@ ipcopmake() {
 	return 0
 }
 
+ipfiredist() {
+	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
+		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
+		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/sbin/
+		chroot $LFS /tools/bin/env -i 	HOME=/root \
+						TERM=$TERM PS1='\u:\w\$ ' \
+						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						VERSION=$VERSION \
+						CONFIG_ROOT=$CONFIG_ROOT \
+						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
+						CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
+						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
+						KVER=$KVER \
+						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+		    /bin/bash -x -c "cd /usr/src/lfs && \
+		    make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
+		if [ $? -ne 0 ]; then
+			exiterror "Packaging $1"
+		fi
+	else
+		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
+	fi
+	if [ -e $BASEDIR/packages ]; then
+		mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
+	else
+		mkdir -p $BASEDIR/packages
+		mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
+	fi
+	return 0
+}
+
 
 installmake() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
@@ -719,6 +750,9 @@ buildpackages() {
   # Create ISO for CDRom and USB-superfloppy
   ipcopmake cdrom
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
+  
+  # Build IPFire packages
+  ipfiredist postfix
 
   # Cleanup
   stdumount
