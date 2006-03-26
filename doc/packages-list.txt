@@ -28,6 +28,7 @@
   * bind-9.2.5
   * binutils-2.15.90.0.3
   * bison-1.875
+  * bridge-utils-1.1
   * busybox-0.60.5
   * bzip2-1.0.3
   * capi4k-utils-2004-10-06
@@ -70,6 +71,7 @@
   * groff-1.19
   * grub-0.95
   * gzip-1.3.5
+  * hddtemp-0.3-beta14
   * hdparm-6.3
   * iana-etc-2.00
   * ibod
@@ -145,7 +147,7 @@
   * slang-1.4.5-mini
   * snort-2.3.3
   * speedtouch-1.2
-  * squid-2.5.STABLE12
+  * squid-2.5.STABLE13
   * squid-graph-3.1
   * stund_0.96_Aug13
   * sysklogd-1.4.1
@@ -160,6 +162,7 @@
   * util-linux-2.12r
   * vim-6.3
   * vlan.1.9
+  * wget-1.10.2
   * wireless_tools.27
   * xampp-linux-1.5.1
   * zlib-1.2.3

@@ -309,6 +309,8 @@ lib/modules/2.4.31/kernel
 #lib/modules/2.4.31/kernel/net/atm/pppoatm.o.gz
 #lib/modules/2.4.31/kernel/net/atm/atm.o.gz
 #lib/modules/2.4.31/kernel/net/atm/br2684.o.gz
+#lib/modules/2.4.31/kernel/net/bridge
+#lib/modules/2.4.31/kernel/net/bridge/bridge.o.gz
 #lib/modules/2.4.31/kernel/net/ipsec
 #lib/modules/2.4.31/kernel/net/ipsec/alg
 #lib/modules/2.4.31/kernel/net/ipsec/alg/ipsec_blowfish.o.gz
@@ -32149,3 +32151,10 @@ var/spool/postfix/private
 var/spool/postfix/public
 var/spool/postfix/saved
 var/spool/postfix/trace
+##
+## bridge-utils
+##
+usr/include/libbridge.h
+usr/lib/libbridge.a
+usr/sbin/brctl
+#usr/share/man/man8/brctl.8

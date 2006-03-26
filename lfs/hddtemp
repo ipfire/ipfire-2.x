@@ -22,7 +22,7 @@
 # ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
 #          - Modified Makefile for IPCop build                                #
 #                                                                             #
-# $Id: iptables,v 1.5.2.4 2005/02/05 15:38:15 gespinasse Exp $
+# $Id: ntp,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
 #                                                                             #
 ###############################################################################
 
@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 1.3.5
+VER        = 0.3-beta14
 
-THISAPP    = iptables-$(VER)
+THISAPP    = hddtemp-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://ftp.netfilter.org/pub/iptables
+DL_FROM    = http://www.guzu.net/linux
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -44,17 +44,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = 	$(DL_FILE) \
-			iptables-1.3.0-imq1.diff \
-			netfilter-layer7-v2.1.tar.gz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-iptables-1.3.0-imq1.diff 		= http://www.linuximq.net/patchs/iptables-1.3.0-imq1.diff
-netfilter-layer7-v2.1.tar.gz 	= http://mesh.dl.sourceforge.net/sourceforge/l7-filter/netfilter-layer7-v2.1.tar.gz
 
-$(DL_FILE)_MD5 = 00fb916fa8040ca992a5ace56d905ea5
-iptables-1.3.0-imq1.diff_MD5 		= 9adae8be9562775a176fc1b275b3cb29
-netfilter-layer7-v2.1.tar.gz_MD5 	= 551626a158c2a2cbfd937d27ecc7fac1
+$(DL_FILE)_MD5 = bbf8be4539495e18bec54af77511a680
 
 install : $(TARGET)
 
@@ -63,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	make-packages.sh hddtemp $(THISAPP)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -83,22 +80,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	# iptables-fixed.tar.gz is made in the linux kernel build process
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/iptables-fixed.tar.gz
-	@rm -rf $(DIR_DL)/netfilter-layer7-v2.1 && cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.1.tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.1/iptables-layer7-2.1.patch
-
-#	# Appears that libipt_set/SET maybe a little broken, fix it for now...
-#	cd $(DIR_APP)/extensions && sed -i -e 's/#include\ \"..\/ipset\/libipt_set.h\"//' libipt_set.c
-#	cd $(DIR_APP)/extensions && sed -i -e 's/#include\ \"..\/ipset\/libipt_set.h\"//' libipt_SET.c
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/iptables-1.3.0-imq1.diff
-	chmod +x $(DIR_APP)/extensions/.IMQ-test*  $(DIR_APP)/extensions/.layer7-test*
-	
-	# hack to disable IPv6 compilation as the configuration variable does not work when ip6.h is present
-	cd $(DIR_APP) && sed -i -e 's/DO_IPV6:=1/DO_IPV6:=0/' Makefile
-
-	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib
-	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+#	cd $(DIR_APP) && wget http://www.guzu.net/linux/hddtemp.db && cp hddtemp.db /etc/hddtemp.db
+	cd $(DIR_APP) && ./configure --with-db-path=/etc/hddtemp.db
+	cd $(DIR_APP) && make && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

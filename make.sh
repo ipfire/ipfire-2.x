@@ -652,8 +652,10 @@ buildipcop() {
   ipcopmake libsafe
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
+  ipcopmake wget
   ipcopmake berkeley-DB
   ipcopmake xampp
+  ipcopmake bridge-utils
   ipcopmake pam
   ipcopmake pammysql
   ipcopmake saslauthd
@@ -662,6 +664,8 @@ buildipcop() {
   ipcopmake lpd
   ipcopmake pwlib
   ipcopmake openh323
+  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
+  ipcopmake hddtemp
 
 }
 
