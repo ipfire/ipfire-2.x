@@ -90,5 +90,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd /tmp/PostGreSQL-AddOn-1.0-pgsql8.1 && ./INSTALL
 	rm -rf /tmp/PostGreSQL-AddOn-1.0-pgsql8.1
 	chown -R nobody.nobody /opt/lampp/htdocs
+	ln -s /opt/lampp/lib/mysql/libmysqlclient.* /usr/lib
+	ln -s /opt/lampp/lib/libpq.* /usr/lib
+	ldconfig
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
