@@ -51,7 +51,7 @@ print "</td></tr></table>\n";
 
 print "<a name='interfaces'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'interfaces'});
-$output = `/sbin/ifconfig -a`;
+$output = `/sbin/ifconfig`;
 $output = &Header::cleanhtml($output,"y");
 
 my @itfs = ('ORANGE','BLUE','GREEN');

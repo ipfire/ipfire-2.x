@@ -1045,16 +1045,18 @@ toolchain)
 gettoolchain)
 	BUILDMACHINE=`uname -m`
 	# arbitrary name to be updated in case of new toolchain package upload
-	PACKAGE=$SNAME-1.4.11-toolchain-$BUILDMACHINE
-	URL_SFNET=`grep URL_SFNET lfs/Config | awk '{ print $3 }'`
+	PACKAGE=$SNAME-1.4-toolchain-$BUILDMACHINE
+	URL_IPFIRE=`grep URL_IPFIRE lfs/Config | awk '{ print $3 }'`
 	echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 	cd $BASEDIR/cache
-	wget -c $URL_SFNET/ipcop/$PACKAGE.tar.gz $URL_SFNET/ipcop/$PACKAGE.md5
+	wget -c $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5
 	if [ $? -ne 0 ]; then
 		echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
 	else
 		if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
 			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
+			echo "`date -u '+%b %e %T'`: Uncompressing toolchain" | tee -a $LOGFILE
+			cd $BASEDIR && tar xvfz cache/$PACKAGE.tar.gz -C .
 		else
 			exiterror "$PACKAGE.md5 did not match, check downloaded package"
 		fi
