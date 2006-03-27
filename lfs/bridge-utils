@@ -34,7 +34,7 @@ include Config
 
 VER        = 1.1
 
-THISAPP    = /bridge-utils-$(VER)
+THISAPP    = bridge-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = http://switch.dl.sourceforge.net/sourceforge/bridge
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -57,9 +57,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-#dist: 
-#	make-packages.sh postfix $(THISAPP)
 
 ###############################################################################
 # Downloading, checking, md5sum
