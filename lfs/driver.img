@@ -73,6 +73,9 @@ $(TARGET) :
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slip*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slhc*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/tun*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/imq*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/wireless/*' \
+           --exclude='lib/modules/$(KVER)/kernel/drivers/parport/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/scsi/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/message/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/input/*' \
@@ -81,6 +84,7 @@ $(TARGET) :
 	    --exclude='lib/modules/$(KVER)/kernel/arch/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/fs/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/atm/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/bridge/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/ipsec/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/ipv4/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/sched/*' \
