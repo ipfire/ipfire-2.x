@@ -658,13 +658,15 @@ buildipcop() {
   ipcopmake bridge-utils
   ipcopmake pam
   ipcopmake pammysql
-  ipcopmake saslauthd
+  ipcopmake saslauthd PASS=1
+  ipcopmake openldap
+  ipcopmake saslauthd PASS=2
   ipcopmake postfix
   ipcopmake stund
   ipcopmake lpd
   ipcopmake pwlib
   ipcopmake openh323
-  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
+#  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
   ipcopmake hddtemp
 
 }

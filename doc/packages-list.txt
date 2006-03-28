@@ -37,6 +37,7 @@
   * coreutils-5.93
   * cxacru-2003-10-05
   * cyrus-sasl-2.1.21
+  * cyrus-sasl-2.1.21-ldap
   * db-4.4.20
   * dhcp-3.0.2
   * dhcpcd-1.3.22-pl4
@@ -120,6 +121,7 @@
   * ntp-4.2.0
   * oinkmaster-1.2
   * openh323_1.12.2
+  * openldap-2.3.20
   * openssh-3.9p1
   * openssl-0.9.7i
   * openswan-1.0.10
