@@ -30,7 +30,7 @@ VER        = 2.3.20
 
 THISAPP    = openldap-$(VER)
 DL_FILE    = $(THISAPP).tgz
-DL_FROM    = ftp://sunsite.cnlab-switch.ch/mirror/OpenLDAP/openldap-release
+DL_FROM    = ftp://ftp.linux.pt/pub/mirrors/OpenLDAP/openldap-release
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
