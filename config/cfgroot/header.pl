@@ -505,7 +505,7 @@ sub genmenu {
 			  'enabled' => 1,
 			  'subMenu' => $sublogs
 			  };
-    $menu->{'09.ipfire'} = {'caption' => 'IPFire'},
+    $menu->{'09.ipfire'} = {'caption' => 'IPFire',
 			  'enabled' => 1,
 			  'subMenu' => $subipfire
 			  };
