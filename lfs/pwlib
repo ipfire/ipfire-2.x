@@ -80,6 +80,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	mv /usr/include/ldap.h /
 	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make opt && make install
+	cd $(DIR_APP) && make both && make install
 	mv /ldap.h /usr/include
 	@$(POSTBUILD)

@@ -18,6 +18,12 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: ntp,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -26,11 +32,11 @@
 
 include Config
 
-VER        = 2.3.20
+VER        = 2.9.6
 
-THISAPP    = openldap-$(VER)
-DL_FILE    = $(THISAPP).tgz
-DL_FROM    = ftp://ftp.linux.pt/pub/mirrors/OpenLDAP/openldap-release
+THISAPP    = glib-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = ftp://ftp.gtk.org/pub/gtk/v2.9
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -42,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 49d2c5b9378a7b57e1fb03948acb8e32
+$(DL_FILE)_MD5 = 2ba1146e767454e14ac0788187c35892
 
 install : $(TARGET)
 
@@ -52,8 +58,8 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
-	make-packages.sh openldap $(THISAPP)
+#dist: 
+#	make-packages.sh glib $(THISAPP)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -74,30 +80,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/sbin --sysconfdir=/etc --localstatedir=/srv/ldap \
-				--disable-debug \
-				--enable-dynamic \
-				--enable-crypt \
-				--enable-modules \
-				--enable-ldap \
-				--enable-ldbm \
-				--enable-dyngroup \
-				--enable-dynlist \
-				--enable-ppolicy \
-				--enable-valsort \
-				--disable-nls \
-				--enable-perl \
-				--enable-shell \
-				--with-cyrus-sasl
-	cd $(DIR_APP) && make depend
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
 	cd $(DIR_APP) && make
-#	cd $(DIR_APP) && make test
 	cd $(DIR_APP) && make install
-	chmod -v 755 /usr/lib/libl*-2.3.*
-#	install -v -m755 -d /usr/share/doc/$(THISAPP)/{drafts,guide,rfc}
-#	install -v -m644 doc/drafts/* /usr/share/doc/$(THISAPP)/drafts
-#	install -v -m644 doc/rfc/*    /usr/share/doc/$(THISAPP)/rfc
-#	cp -v -R doc/guide/*          /usr/share/doc/$(THISAPP)/guide
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

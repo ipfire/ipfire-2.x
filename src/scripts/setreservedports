@@ -10,7 +10,7 @@ SSH=222
 if [ $# -lt 1 ]; then
 	echo "Give an https port number, recommended value is non-assigned port 5445"
 else
-	if [ "$1" -lt "445" -o "$1" -gt "65535" ]; then
+	if [ "$1" -lt "444" -o "$1" -gt "65535" ]; then
 		echo "support only a port value from 445 to 65535"
 		echo "recommended value is non-assigned port 5445"
 	else

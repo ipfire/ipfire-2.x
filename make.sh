@@ -2,35 +2,30 @@
 #
 ############################################################################
 #                                                                          #
-# This file is part of the IPCop Firewall.                                 #
+# This file is part of the IPFire Firewall.                                #
 #                                                                          #
-# IPCop is free software; you can redistribute it and/or modify            #
+# IPFire is free software; you can redistribute it and/or modify           #
 # it under the terms of the GNU General Public License as published by     #
 # the Free Software Foundation; either version 2 of the License, or        #
 # (at your option) any later version.                                      #
 #                                                                          #
-# IPCop is distributed in the hope that it will be useful,                 #
+# IPFire is distributed in the hope that it will be useful,                #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of           #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
 # GNU General Public License for more details.                             #
 #                                                                          #
 # You should have received a copy of the GNU General Public License        #
-# along with IPCop; if not, write to the Free Software                     #
+# along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2001 Mark Wormgoor <mark@wormgoor.com>.                    #
-#                                                                          #
-# (c) 2001 Eric S. Johansson <esj@harvee.billerica.ma.us> Check for Bash   #
-# (c) 2002 Thorsten Fischer <frosch@cs.tu-berlin.de> MD5Sum checking       #
+# Copyright (C) 2006 IPFire-Team <entwickler@ipfire.org>.                  #
 #                                                                          #
 ############################################################################
 #
-# $Id: make.sh,v 1.129.2.145 2006/02/01 07:04:09 gespinasse Exp $
-#
 
-  NAME="IPFire"				# Software name
+  NAME="IPFire"			# Software name
   SNAME="ipfire"			# Short name
-  VERSION="1.4"				# Version number
+  VERSION="1.4"			# Version number
 # PREVIOUSTAG=IPCOP_v1_4_10_FINAL
   SLOGAN="We secure your network"	# Software slogan
   CONFIG_ROOT=/var/ipfire		# Configuration rootdir
@@ -652,6 +647,8 @@ buildipcop() {
   ipcopmake libsafe
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
+  ipcopmake pkg-config
+  ipcopmake glib
   ipcopmake wget
   ipcopmake berkeley-DB
   ipcopmake xampp
@@ -661,13 +658,15 @@ buildipcop() {
   ipcopmake saslauthd PASS=1
   ipcopmake openldap
   ipcopmake saslauthd PASS=2
+#  ipcopmake samba
+  ipcopmake mc
   ipcopmake postfix
   ipcopmake stund
   ipcopmake lpd
   ipcopmake pwlib
   ipcopmake openh323
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
-  ipcopmake hddtemp
+#  ipcopmake hddtemp
 
 }
 
@@ -759,7 +758,7 @@ buildpackages() {
   
   # Build IPFire packages
   ipfiredist postfix
-
+  ipfiredist mc
   # Cleanup
   stdumount
   rm -rf $BASEDIR/build/tmp/*
@@ -927,30 +926,50 @@ dist)
 		fi
 	fi
 	;;
-newupdate)
+newpak)
 	# create structure for $VERSION update
-	if [ ! -f "updates/$VERSION" ]; then
-		mkdir -p updates/$VERSION
-		cd updates/$VERSION
-		touch information
-		echo 'etc/issue' > ROOTFILES.alpha-$VERSION
-		echo 'etc/issue' > ROOTFILES.i386-$VERSION
-		echo 'patch.tar.gz' > .cvsignore
-		sed -e "s+^UPGRADEVERSION.*$+UPGRADEVERSION=$VERSION+" $BASEDIR/src/scripts/updatesetup > setup
-		chmod 755 setup
-		cd ..
-		echo "Adding directory $VERSION to cvs"
-		cvs add $VERSION
-		echo "Adding files to cvs"
-		cvs add $VERSION/ROOTFILES.alpha-$VERSION \
-			$VERSION/ROOTFILES.i386-$VERSION \
-			$VERSION/information \
-			$VERSION/setup \
-			$VERSION/.cvsignore
+	echo -e "What is the name of the new package?"
+	read $NAME
+	if [ ! -f "lfs/$NAME" ]; then
+		echo "`date -u '+%b %e %T'`: Creating directory src/paks/$NAME"
+		mkdir -p src/paks/$NAME
+		cd src/paks/$NAME
+		echo "`date -u '+%b %e %T'`: Creating files"
+		cp $BASEDIR/lfs/postfix $BASEDIR/lfs/$NAME
+		touch ROOTFILES
+		touch CONFFILES
+		touch {,un}install.sh
+
+## install.sh
+		echo '#!/bin/bash' > install.sh
+		echo '#' >> install.sh
+		echo '#################################################################' >> install.sh
+		echo '#                                                               #' >> install.sh
+		echo '# This file belongs to IPFire Firewall - GPLv2 - www.ipfire.org #' >> install.sh
+		echo '#                                                               #' >> install.sh
+		echo '#################################################################' >> install.sh
+		echo '#' >> install.sh
+		echo '# Extract the files' >> install.sh
+		echo 'tar xfz files.tgz -C /' >> install.sh
+		echo 'cp -f ROOTFILES /opt/pakfire/installed/ROOTFILES.$NAME' >> install.sh
+
+## uninstall.sh
+		echo '#!/bin/bash' > uninstall.sh
+		echo '#################################################################' >> uninstall.sh
+		echo '#                                                               #' >> uninstall.sh
+		echo '# This file belongs to IPFire Firewall - GPLv2 - www.ipfire.org #' >> uninstall.sh
+		echo '#                                                               #' >> uninstall.sh
+		echo '#################################################################' >> uninstall.sh
+		echo '#' >> uninstall.sh
+		echo '# Delete the files' >> uninstall.sh
+		echo '## Befehl fehlt noch' >> uninstall.sh
+		echo 'rm -f /opt/pakfire/installed/ROOTFILES.$NAME' >> uninstall.sh
+
+		echo "`date -u '+%b %e %T'`: Adding files to SVN"
+		cd - && svn add src/paks/$NAME
 	else
-		echo "update/$VERSION already exist"
+		echo "$NAME already exists"
 	fi
-	cd -
 	exit 0
 	;;
 prefetch)

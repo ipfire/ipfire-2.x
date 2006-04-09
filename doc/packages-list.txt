@@ -65,6 +65,7 @@
   * gd-2.0.20
   * gdbm-1.8.3
   * gettext-0.14.1
+  * glib-2.9.6
   * glibc-2.3.3-lfs-5.1
   * gmp-4.1.2
   * gnupg-1.4.2
@@ -106,6 +107,7 @@
   * man-1.5p
   * man-pages-2.17
   * mbr-1.1.8
+  * mc-4.6.1
   * mingetty-1.06
   * misc-progs
   * mktemp-1.5
@@ -131,6 +133,7 @@
   * pcmcia-cs-3.2.8
   * pcre-4.5
   * perl-5.8.5
+  * pkg-config-0.20
   * popt-1.7
   * postfix-2.2.9
   * ppp-2.4.2
