@@ -101,6 +101,7 @@
   * linux-atm-2.4.1
   * logrotate-3.7
   * logwatch-6.1.2
+  * lzo-2.02
   * m4-1.4
   * make-3.80
   * make_devices-1.2
@@ -127,6 +128,7 @@
   * openssh-3.9p1
   * openssl-0.9.7i
   * openswan-1.0.10
+  * openvpn-2.0.6
   * pam_mysql-0.7RC1
   * patch-2.5.4
   * pciutils-2.1.11

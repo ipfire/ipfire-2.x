@@ -667,6 +667,8 @@ buildipcop() {
   ipcopmake openh323
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
+  ipcopmake lzo
+  ipcopmake openvpn
 
 }
 
@@ -927,20 +929,19 @@ dist)
 	fi
 	;;
 newpak)
-	# create structure for $VERSION update
-	echo -e "What is the name of the new package?"
-	read $NAME
-	if [ ! -f "lfs/$NAME" ]; then
-		echo "`date -u '+%b %e %T'`: Creating directory src/paks/$NAME"
-		mkdir -p src/paks/$NAME
-		cd src/paks/$NAME
+	# create structure for a new package
+	echo -e "Name of the new package: $2"
+	if [ ! -f "lfs/$2" ]; then
+		echo "`date -u '+%b %e %T'`: Creating directory src/paks/$2"
+		mkdir -p src/paks/$2
+		cd src/paks/$2
 		echo "`date -u '+%b %e %T'`: Creating files"
-		cp $BASEDIR/lfs/postfix $BASEDIR/lfs/$NAME
+		cp $BASEDIR/lfs/postfix $BASEDIR/lfs/$2
+
 		touch ROOTFILES
 		touch CONFFILES
 		touch {,un}install.sh
-
-## install.sh
+	## install.sh
 		echo '#!/bin/bash' > install.sh
 		echo '#' >> install.sh
 		echo '#################################################################' >> install.sh
@@ -951,9 +952,8 @@ newpak)
 		echo '#' >> install.sh
 		echo '# Extract the files' >> install.sh
 		echo 'tar xfz files.tgz -C /' >> install.sh
-		echo 'cp -f ROOTFILES /opt/pakfire/installed/ROOTFILES.$NAME' >> install.sh
-
-## uninstall.sh
+		echo 'cp -f ROOTFILES /opt/pakfire/installed/ROOTFILES.$2' >> install.sh
+	## uninstall.sh
 		echo '#!/bin/bash' > uninstall.sh
 		echo '#################################################################' >> uninstall.sh
 		echo '#                                                               #' >> uninstall.sh
@@ -963,12 +963,20 @@ newpak)
 		echo '#' >> uninstall.sh
 		echo '# Delete the files' >> uninstall.sh
 		echo '## Befehl fehlt noch' >> uninstall.sh
-		echo 'rm -f /opt/pakfire/installed/ROOTFILES.$NAME' >> uninstall.sh
-
+		echo 'rm -f /opt/pakfire/installed/ROOTFILES.$2' >> uninstall.sh
 		echo "`date -u '+%b %e %T'`: Adding files to SVN"
-		cd - && svn add src/paks/$NAME
+		cd - && svn add lfs/$2 && svn add src/paks/$2
+
+		echo -n "Do you want to remove the folders? [y/n]"
+		read REM
+		if  [ "$REM" == "y" ]; then
+			echo "Removing the folders..."
+			svn del src/paks/$2 --force
+		else
+			echo "Folders are kept."
+		fi
 	else
-		echo "$NAME already exists"
+		echo "$2 already exists"
 	fi
 	exit 0
 	;;
@@ -1083,8 +1091,12 @@ gettoolchain)
 		fi
 	fi
 	;;
+update)
+	echo "Load the latest source-files:"
+	svn update
+	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|dist|gettoolchain|newupdate|prefetch|rootfiles|shell|toolchain}"
+	echo "Usage: $0 {build|changelog|check|checkclean|clean|dist|gettoolchain|newpak|prefetch|rootfiles|shell|toolchain|update}"
 	cat doc/make.sh-usage
 	exit 1
 	;;
