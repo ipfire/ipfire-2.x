@@ -90,6 +90,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		cd $(DIR_APP) && sed -i -e 's/#define BB_RMMOD//' Config.h; \
 		cd $(DIR_APP) && sed -i -e 's/#define BB_MODPROBE//' Config.h; \
 	fi
+	cd $(DIR_APP) && sed -i -e 's/enum { NAME_SIZE = 100 };/enum { NAME_SIZE = 150 };/' tar.c; \
+	
 	cd $(DIR_APP) && make
 	-mkdir -p /install/initrd/bin
 	cd $(DIR_APP) && install -m 0755 busybox /install/initrd/bin
