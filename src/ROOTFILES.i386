@@ -32163,3 +32163,16 @@ usr/include/libbridge.h
 usr/lib/libbridge.a
 usr/sbin/brctl
 #usr/share/man/man8/brctl.8
+##
+## sudo
+##
+etc/sudoers
+usr/bin/sudo
+usr/bin/sudoedit
+usr/lib/sudo_noexec.la
+usr/lib/sudo_noexec.so
+usr/sbin/visudo
+#usr/share/man/man5/sudoers.5
+#usr/share/man/man8/sudo.8
+#usr/share/man/man8/sudoedit.8
+#usr/share/man/man8/visudo.8

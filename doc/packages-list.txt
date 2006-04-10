@@ -156,6 +156,7 @@
   * squid-2.5.STABLE13
   * squid-graph-3.1
   * stund_0.96_Aug13
+  * sudo-1.6.8p12
   * sysklogd-1.4.1
   * syslinux-2.11
   * sysvinit-2.86
@@ -171,4 +172,5 @@
   * wget-1.10.2
   * wireless_tools.27
   * xampp-linux-1.5.1
+  * xinetd-2.3.14
   * zlib-1.2.3

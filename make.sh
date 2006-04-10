@@ -647,6 +647,8 @@ buildipcop() {
   ipcopmake libsafe
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
+  ipcopmake sudo
+  ipcopmake xinetd
   ipcopmake pkg-config
   ipcopmake glib
   ipcopmake wget
@@ -752,15 +754,17 @@ buildpackages() {
   grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipcop$\|setup$\|stage2$\|smp$\|tools$\|tools1$\|tools2$' \
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list
-  # packages-list.txt is ready to be displayed for wiki page IPCopSoftwares
+  # packages-list.txt is ready to be displayed for wiki page
 
   # Create ISO for CDRom and USB-superfloppy
   ipcopmake cdrom
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
-  
+
   # Build IPFire packages
-  ipfiredist postfix
   ipfiredist mc
+  ipfiredist postfix
+  ipfiredist sudo
+  ipfiredist xinetd
   # Cleanup
   stdumount
   rm -rf $BASEDIR/build/tmp/*
