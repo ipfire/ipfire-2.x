@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 0.99.3.0
+VER        = 4.15
 
-THISAPP    = Linux-PAM-$(VER)
+THISAPP    = stunnel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.kernel.org/pub/linux/libs/pam/pre/library
+DL_FROM    = ftp://stunnel.mirt.net/stunnel
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d1511e4e17746eb2e83ab284cca1204b
+$(DL_FILE)_MD5 = 2c00153ad099a5f9c5609e8d1dbbe470
 
 install : $(TARGET)
 
@@ -57,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	make-packages.sh stunnel $(THISAPP)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -78,19 +81,19 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pam-0.99.3.0-hostname.patch
-	cd $(DIR_APP) && ./configure --libdir=/usr/lib \
-	            --sbindir=/lib/security \
-	            --enable-securedir=/lib/security \
-       	     --enable-docdir=/usr/share/doc/Linux-PAM-0.99.3.0 \
-	            --enable-read-both-confs 
+	cd $(DIR_APP) && install -v -m 1770 -o stunnel -g stunnel -d /var/lib/stunnel/run
+	cd $(DIR_APP) && sed -i -e 's|nogroup|stunnel|' -e 's|$(prefix)/var/lib|$(localstatedir)|' tools/Makefile.in
+	cd $(DIR_APP) && sed -i 's|doc/stunnel|&-$(VERSION)|' {,doc/,tools/}Makefile.in
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var/lib --disable-libwrap
 	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make check
 	cd $(DIR_APP) && make install
-	mv -v /lib/security/pam_tally /sbin
-	mv -v /usr/lib/libpam*.so.0* /lib
-	ln -v -sf ../../lib/libpam.so.0.81.2 /usr/lib/libpam.so
-	ln -v -sf ../../lib/libpamc.so.0.81.0 /usr/lib/libpamc.so
-	ln -v -sf ../../lib/libpam_misc.so.0.81.2 /usr/lib/libpam_misc.so
+	echo "# File: /etc/stunnel/stunnel.conf" 	> /etc/stunnel/stunnel.conf
+	echo "" 					>> /etc/stunnel/stunnel.conf
+	echo "pid = /run/stunnel.pid" 		>> /etc/stunnel/stunnel.conf
+	echo "chroot = /var/lib/stunnel" 		>> /etc/stunnel/stunnel.conf
+	echo "client = no" 				>> /etc/stunnel/stunnel.conf
+	echo "setuid = stunnel" 			>> /etc/stunnel/stunnel.conf
+	echo "setgid = stunnel" 			>> /etc/stunnel/stunnel.conf
+	chmod -v 644 /etc/stunnel/stunnel.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

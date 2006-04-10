@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 0.99.3.0
+VER        = 3.0.22
 
-THISAPP    = Linux-PAM-$(VER)
+THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.kernel.org/pub/linux/libs/pam/pre/library
+DL_FROM    = ftp://ftp.samba.org/pub/samba
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d1511e4e17746eb2e83ab284cca1204b
+$(DL_FILE)_MD5 = 5c39505af17cf5caf3d6ed8bab135036
 
 install : $(TARGET)
 
@@ -57,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	make-packages.sh samba $(THISAPP)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -78,19 +81,45 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pam-0.99.3.0-hostname.patch
-	cd $(DIR_APP) && ./configure --libdir=/usr/lib \
-	            --sbindir=/lib/security \
-	            --enable-securedir=/lib/security \
-       	     --enable-docdir=/usr/share/doc/Linux-PAM-0.99.3.0 \
-	            --enable-read-both-confs 
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make check
-	cd $(DIR_APP) && make install
-	mv -v /lib/security/pam_tally /sbin
-	mv -v /usr/lib/libpam*.so.0* /lib
-	ln -v -sf ../../lib/libpam.so.0.81.2 /usr/lib/libpam.so
-	ln -v -sf ../../lib/libpamc.so.0.81.0 /usr/lib/libpamc.so
-	ln -v -sf ../../lib/libpam_misc.so.0.81.2 /usr/lib/libpam_misc.so
+	cd $(DIR_APP)/source && ./configure \
+				    --prefix=/usr \
+				    --sysconfdir=/etc \
+				    --localstatedir=/var \
+				    --with-piddir=/var/run \
+				    --with-fhs \
+				    --with-smbmount \
+				    --with-winbind \
+				    --with-pam
+	cd $(DIR_APP)/source && make && make nsswitch
+	cd $(DIR_APP)/source && make install
+	cd $(DIR_APP)/source && mv -v /usr/lib/samba/libsmbclient.so /usr/lib
+	cd $(DIR_APP)/source && ln -v -sf ../libsmbclient.so /usr/lib/samba
+	cd $(DIR_APP)/source && ln -v -sf libsmbclient.so /usr/lib/libsmbclient.so.0
+	cd $(DIR_APP)/source && chmod -v 644 /usr/include/lib{smbclient,msrpc}.h
+	cd $(DIR_APP)/source && install -v -m755 nsswitch/libnss_wins.so /lib
+	cd $(DIR_APP)/source && install -v -m755 nsswitch/libnss_winbind.so /lib
+	cd $(DIR_APP)/source && ln -v -sf libnss_winbind.so /lib/libnss_winbind.so.2
+	cd $(DIR_APP)/source && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
+	cd $(DIR_APP)/source && install -v -m755 nsswitch/pam_winbind.so /lib/security
+	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /etc/samba
+	cd $(DIR_APP)/source && install -v -m755 -d /usr/share/doc/samba-3.0.22
+	cd $(DIR_APP)/source && install -v -m644 ../docs/*.pdf /usr/share/doc/samba-3.0.22
+	cd $(DIR_APP)/source && ln -v -s ../../samba/swat  /usr/share/doc/samba-3.0.22
+	echo "swat            901/tcp" >> /etc/services
+	echo "# Begin /etc/xinetd.d/swat"		>> /etc/xinetd.d/swat
+	echo ""					>> /etc/xinetd.d/swat
+	echo "service swat"				>> /etc/xinetd.d/swat
+	echo "{"					>> /etc/xinetd.d/swat
+	echo "    port            = 901"		>> /etc/xinetd.d/swat
+	echo "    socket_type     = stream"	>> /etc/xinetd.d/swat
+	echo "    wait            = no"		>> /etc/xinetd.d/swat
+	echo "    only_from       = 127.0.0.1"	>> /etc/xinetd.d/swat
+	echo "    user            = root"		>> /etc/xinetd.d/swat
+	echo "    server          = /usr/sbin/swat"	>> /etc/xinetd.d/swat
+	echo "    log_on_failure  += USERID"	>> /etc/xinetd.d/swat
+	echo "}"					>> /etc/xinetd.d/swat
+	echo ""					>> /etc/xinetd.d/swat
+	echo "# End /etc/xinetd.d/swat"		>> /etc/xinetd.d/swat
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

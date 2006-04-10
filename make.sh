@@ -648,6 +648,7 @@ buildipcop() {
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
   ipcopmake sudo
+##ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
   ipcopmake xinetd
   ipcopmake pkg-config
   ipcopmake glib
@@ -660,7 +661,7 @@ buildipcop() {
   ipcopmake saslauthd PASS=1
   ipcopmake openldap
   ipcopmake saslauthd PASS=2
-#  ipcopmake samba
+  ipcopmake samba
   ipcopmake mc
   ipcopmake postfix
   ipcopmake stund
