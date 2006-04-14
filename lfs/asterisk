@@ -1,0 +1,145 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.2.4
+
+THISAPP    = asterisk-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = http://www.asterisk-support.de/mirror/asterisk-1.2.4
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ASTERISK   = $(THISAPP)
+ZAPTEL     = zaptel-1.2.3
+BRISTUFF   = bristuff-0.3.0-PRE-1l
+LIBPRI     = libpri-1.2.2
+SPANDSP    = spandsp-0.0.2pre25
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) \
+	   $(ZAPTEL).tar.gz \
+	   $(BRISTUFF).tar.gz \
+          $(LIBPRI).tar.gz \
+	   app_rxfax.c \
+	   app_txfax.c \
+	   apps_Makefile.patch
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+$(ZAPTEL).tar.gz = http://www.asterisk-support.de/mirror/zaptel/$(ZAPTEL).tar.gz
+$(BRISTUFF).tar.gz = http://www.junghanns.net/downloads/$(BRISTUFF).tar.gz
+$(LIBPRI).tar.gz = http://www.asterisk-support.de/mirror/libpri/$(LIBPRI).tar.gz
+app_rxfax.c = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x/app_rxfax.c
+app_txfax.c = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x/app_txfax.c
+apps_Makefile.patch = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x/apps_Makefile.patch
+
+$(DL_FILE)_MD5 = 14721abdc85fc3381db275b61dffce2d
+$(ZAPTEL).tar.gz_MD5 = 9bcb705458f9b20a9644310298a9cd4d
+$(BRISTUFF).tar.gz_MD5 = 81941539b03b6ac8f193b33451e0a740
+$(LIBPRI).tar.gz_MD5 = efce9c3699110588df5e4cf09eae01d9
+app_rxfax.c_MD5 = ab6983b51c412883545b36993d704999
+app_txfax.c_MD5 = 8c8fcb263b76897022b4c28052a7b439
+apps_Makefile.patch_MD5 = 6b0faa7a7cf8613962b17c23ee5a1583
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	make-packages.sh asterisk $(THISAPP)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_SRC)/$(BRISTUFF)
+	# Decompress the source-code
+	cd $(DIR_SRC) && \
+	tar zxf $(DIR_DL)/$(BRISTUFF).tar.gz -C $(DIR_SRC) && \
+	cd $(DIR_SRC)/$(BRISTUFF) && \
+	tar xfz $(DIR_DL)/$(ZAPTEL).tar.gz && \
+	tar xfz $(DIR_DL)/$(LIBPRI).tar.gz && \
+	tar xfz $(DIR_DL)/$(ASTERISK).tar.gz
+	# Build Zaptel
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && \
+	patch -Np1 < $(DIR_SRC)/src/patches/asterisk-1.2.4-zaptel-$(BRISTUFF).patch && \
+	make clean all KVERS=$(KVER) && \
+	make install KVERS=$(KVER)
+	# Build Libpri
+	cd $(DIR_SRC)/$(BRISTUFF)/$(LIBPRI) && \
+	patch -Np1 < $(DIR_SRC)/src/patches/asterisk-1.2.4-libpri-$(BRISTUFF).patch && \
+	make clean all KVERS=$(KVER) && \
+	make install KVERS=$(KVER)
+	# Build qozap
+	cd $(DIR_SRC)/$(BRISTUFF)/qozap && \
+	make clean linux24 && \
+	install -D -m 644 qozap.o /lib/modules/$(KVER)/misc/qozap.o
+	# Build cwain
+	cd $(DIR_SRC)/$(BRISTUFF)/cwain && \
+	make clean linux24 && \
+	install -D -m 644 cwain.o /lib/modules/$(KVER)/misc/cwain.o
+	# Build zaphfc
+	cd $(DIR_SRC)/$(BRISTUFF)/zaphfc && \
+	make clean linux24 && \
+	install -D -m 644 zaphfc.o /lib/modules/$(KVER)/misc/zaphfc.o
+	# Build Asterisk
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && \
+	patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-ipfire-$(BRISTUFF).patch && \
+	patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-iax2-$(BRISTUFF).patch && \
+	cp -fv $(DIR_DL)/app_{r,t}xfax.c $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
+	patch -Np1 < $(DIR_DL)/apps_Makefile.patch && \
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && \
+	make clean && \
+	make all && \
+	make install && \
+	make samples
+	@rm -rf $(DIR_SRC)/$(BRISTUFF)
+	@$(POSTBUILD)
+

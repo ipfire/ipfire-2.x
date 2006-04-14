@@ -20,6 +20,8 @@
   * apache_1.3.34
   * arping-2.05
   * as86-0.16.17
+  * asterisk-1.2.4
+  * asterisk-1.2.4_1st
   * autoconf-2.59
   * automake-1.8.4
   * bash-2.05b
@@ -93,10 +95,12 @@
   * libnet-1.1.2.1
   * libpcap-0.8.3
   * libpng-1.2.8
+  * libpri-1.2.2
   * libsafe_2.0-16
   * libtool-1.5.6
   * libusb-0.1.7
   * libwww-perl-5.803
+  * libxml2-2.6.22
   * linux-2.4.31
   * linux-atm-2.4.1
   * logrotate-3.7
@@ -153,6 +157,7 @@
   * shadow-4.0.4.1
   * slang-1.4.5-mini
   * snort-2.3.3
+  * spandsp-0.0.2pre25
   * speedtouch-1.2
   * squid-2.5.STABLE13
   * squid-graph-3.1
@@ -165,6 +170,7 @@
   * tar-1.13.25
   * tcpdump-3.8.3
   * texinfo-4.7
+  * tiff-3.8.2
   * traceroute-1.4a12
   * uClibc-0.9.26
   * unzip552
@@ -175,4 +181,5 @@
   * wireless_tools.27
   * xampp-linux-1.5.1
   * xinetd-2.3.14
+  * zaptel-1.2.3_1st
   * zlib-1.2.3

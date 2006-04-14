@@ -1,0 +1,167 @@
+diff -ur zaptel-1.2.3.orig/zaptel.c zaptel-1.2.3/zaptel.c
+--- zaptel-1.2.3.orig/zaptel.c	2005-12-17 03:04:05.000000000 +0100
++++ zaptel-1.2.3/zaptel.c	2006-01-31 09:28:29.000000000 +0100
+@@ -4913,11 +4913,40 @@
+ 					*(txb++) = fasthdlc_tx_run_nocheck(&ms->txhdlc);
+ 				}
+ 				bytes -= left;
++#ifdef CONFIG_ZAPATA_BRI_DCHANS
++			} else if (ms->flags & ZT_FLAG_BRIDCHAN) {
++			    /*
++			     * Let's get this right, we want to transmit complete frames only.
++			     * The card driver will do the dirty HDLC work for us.
++			     * txb (transmit buffer) is supposed to be big enough to store one frame
++			     * we will make this as big as the D fifo (1KB or 2KB)
++			     */
++
++			    /* there are 'left' bytes in the user buffer left to transmit */
++			    left = ms->writen[ms->outwritebuf] - ms->writeidx[ms->outwritebuf] - 2;
++			    if (left > ms->maxbytes2transmit) {
++				memcpy(txb, buf + ms->writeidx[ms->outwritebuf], ms->maxbytes2transmit);
++				ms->writeidx[ms->outwritebuf] += ms->maxbytes2transmit;
++				txb += ms->maxbytes2transmit;
++				ms->bytes2transmit = ms->maxbytes2transmit;
++				ms->eoftx = 0;
++			    } else {
++				memcpy(txb, buf + ms->writeidx[ms->outwritebuf], left);
++				ms->writeidx[ms->outwritebuf] += left + 2;
++				txb += left;
++				ms->bytes2transmit = left;
++				ms->eoftx = 1;
++			    }
++			    bytes = 0;
++#endif
+ 			} else {
+ 				memcpy(txb, buf + ms->writeidx[ms->outwritebuf], left);
+ 				ms->writeidx[ms->outwritebuf]+=left;
+ 				txb += left;
+ 				bytes -= left;
++#if defined(CONFIG_ZAPATA_BRI_DCHANS)	
++				ms->bytes2transmit=ZT_CHUNKSIZE;
++#endif
+ 			}
+ 			/* Check buffer status */
+ 			if (ms->writeidx[ms->outwritebuf] >= ms->writen[ms->outwritebuf]) {
+@@ -4962,6 +4991,17 @@
+ 				/* Transmit a flag if this is an HDLC channel */
+ 				if (ms->flags & ZT_FLAG_HDLC)
+ 					fasthdlc_tx_frame_nocheck(&ms->txhdlc);
++#if defined(CONFIG_ZAPATA_BRI_DCHANS)	
++				if(ms->flags & ZT_FLAG_BRIDCHAN) { 
++			//	    if (ms->bytes2transmit > 0) {
++					// txb += 2;
++					// ms->bytes2transmit -= 2;
++					bytes=0;
++					ms->eoftx = 1;
++//					printk(KERN_CRIT "zaptel EOF(%d) bytes2transmit %d\n",ms->eoftx,ms->bytes2transmit);
++			//	    }
++				}
++#endif
+ #ifdef CONFIG_ZAPATA_NET
+ 				if (ms->flags & ZT_FLAG_NETDEV)
+ 					netif_wake_queue(ztchan_to_dev(ms));
+@@ -4972,7 +5012,7 @@
+ 					tasklet_schedule(&ms->ppp_calls);
+ 				}
+ #endif
+-			}
++			} 
+ 		} else if (ms->curtone && !(ms->flags & ZT_FLAG_PSEUDO)) {
+ 			left = ms->curtone->tonesamples - ms->tonep;
+ 			if (left > bytes)
+@@ -5018,6 +5058,10 @@
+ 				memset(txb, 0xFF, bytes);
+ 			}
+ 			bytes = 0;
++#if defined(CONFIG_ZAPATA_BRI_DCHANS)	
++		} else if(ms->flags & ZT_FLAG_BRIDCHAN) { 
++		    bytes = 0;
++#endif
+ 		} else {
+ 			memset(txb, ZT_LIN2X(0, ms), bytes);	/* Lastly we use silence on telephony channels */
+ 			bytes = 0;
+@@ -5743,6 +5787,13 @@
+ 	int left, x;
+ 
+ 	int bytes = ZT_CHUNKSIZE;
++#if defined(CONFIG_ZAPATA_BRI_DCHANS)	
++	if (ms->flags & ZT_FLAG_BRIDCHAN) {
++	    bytes = ms->bytes2receive;
++	    if (bytes < 1) return;
++//	    printk(KERN_CRIT "bytes2receive %d\n",ms->bytes2receive);
++	}
++#endif
+ 
+ 	while(bytes) {
+ #if defined(CONFIG_ZAPATA_NET)  || defined(CONFIG_ZAPATA_PPP)
+@@ -5801,6 +5852,19 @@
+ 						}
+ 					}
+ 				}
++#ifdef CONFIG_ZAPATA_BRI_DCHANS
++			} else if (ms->flags & ZT_FLAG_BRIDCHAN) {
++			    memcpy(buf + ms->readidx[ms->inreadbuf], rxb, left);
++			    rxb += left;
++			    ms->readidx[ms->inreadbuf] += left;
++			    bytes -= left;
++			    if (ms->eofrx == 1) {
++				eof=1;
++			    }
++//			    printk(KERN_CRIT "receiving %d bytes\n",ms->bytes2receive);
++			    ms->bytes2receive = 0;
++			    ms->eofrx = 0;
++#endif
+ 			} else {
+ 				/* Not HDLC */
+ 				memcpy(buf + ms->readidx[ms->inreadbuf], rxb, left);
+diff -ur zaptel-1.2.3.orig/zaptel.h zaptel-1.2.3/zaptel.h
+--- zaptel-1.2.3.orig/zaptel.h	2005-12-17 03:04:05.000000000 +0100
++++ zaptel-1.2.3/zaptel.h	2006-01-31 09:28:29.000000000 +0100
+@@ -994,6 +994,13 @@
+ 	int do_ppp_error;
+ 	struct sk_buff_head ppp_rq;
+ #endif
++#ifdef CONFIG_ZAPATA_BRI_DCHANS
++	int bytes2receive;
++	int maxbytes2transmit; /* size of the tx buffer in the card driver */
++	int bytes2transmit;
++	int eofrx;
++	int eoftx;
++#endif
+ 	spinlock_t lock;
+ 	char name[40];		/* Name */
+ 	/* Specified by zaptel */
+@@ -1068,7 +1075,7 @@
+ 	int		txbufpolicy;			/* Buffer policy */
+ 	int		rxbufpolicy;			/* Buffer policy */
+ 	int		txdisable;				/* Disable transmitter */
+-	int 	rxdisable;				/* Disable receiver */
++	int 		rxdisable;				/* Disable receiver */
+ 	
+ 	
+ 	/* Tone zone stuff */
+@@ -1231,6 +1238,10 @@
+ #define ZT_FLAG_T1PPP			(1 << 15)
+ #define ZT_FLAG_SIGFREEZE		(1 << 16)	/* Freeze signalling */
+ 
++#if defined(CONFIG_ZAPATA_BRI_DCHANS)	
++#define ZT_FLAG_BRIDCHAN		(1 << 17)
++#endif
++
+ struct zt_span {
+ 	spinlock_t lock;
+ 	void *pvt;			/* Private stuff */
+diff -ur zaptel-1.2.3.orig/zconfig.h zaptel-1.2.3/zconfig.h
+--- zaptel-1.2.3.orig/zconfig.h	2005-11-29 19:42:08.000000000 +0100
++++ zaptel-1.2.3/zconfig.h	2006-01-31 09:28:29.000000000 +0100
+@@ -152,4 +152,10 @@
+  */
+ /* #define FXSFLASH */
+ 
++/*
++ * Uncomment the following for BRI D channels
++ *
++ */
++#define CONFIG_ZAPATA_BRI_DCHANS
++
+ #endif

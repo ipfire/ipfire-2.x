@@ -647,32 +647,37 @@ buildipcop() {
   ipcopmake libsafe
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
-  ipcopmake sudo
-##ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
-  ipcopmake xinetd
+## Zuerst die Libs und dann die Programme. Ordnung muss sein!
+  ipcopmake berkeley-DB
+  ipcopmake libtiff
+  ipcopmake libxml2
+  ipcopmake spandsp
+  ipcopmake lzo
   ipcopmake pkg-config
   ipcopmake glib
-  ipcopmake wget
-  ipcopmake berkeley-DB
-  ipcopmake xampp
-  ipcopmake bridge-utils
   ipcopmake pam
   ipcopmake pammysql
+  ipcopmake sudo
+  ipcopmake mc
+  ipcopmake pwlib
+  ipcopmake openh323
+  ipcopmake xinetd
+  ipcopmake wget
+  ipcopmake xampp
+  ipcopmake bridge-utils
   ipcopmake saslauthd PASS=1
   ipcopmake openldap
   ipcopmake saslauthd PASS=2
   ipcopmake samba
-  ipcopmake mc
   ipcopmake postfix
   ipcopmake stund
   ipcopmake lpd
-  ipcopmake pwlib
-  ipcopmake openh323
+  ipcopmake openvpn
+  ipcopmake asterisk
+  ipcopmake edonkeyclc
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
-  ipcopmake lzo
-  ipcopmake openvpn
-
+# ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
 buildinstaller() {
@@ -762,8 +767,11 @@ buildpackages() {
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
   # Build IPFire packages
+  ipfiredist libtiff
+  ipfiredist libxml2
   ipfiredist mc
   ipfiredist postfix
+  ipfiredist spandsp
   ipfiredist sudo
   ipfiredist xinetd
   # Cleanup
