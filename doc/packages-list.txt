@@ -150,6 +150,7 @@
   * psmisc-21.4
   * pulsar-4.0.19
   * pwlib-Mimas_patch2
+  * pwlib-Mimas_patch2-src-tar
   * rp-pppoe-3.5
   * rrdtool-1.0.49
   * samba-3.0.22

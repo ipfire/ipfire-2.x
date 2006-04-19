@@ -22,7 +22,7 @@ URL_TUE     = ftp://ftp.win.tue.nl/pub
 URL_LFS_FTP = http://ftp.at.linuxfromscratch.org/pub/lfs/lfs-packages/5.1.1
 URL_LFS     = http://www.linuxfromscratch.org/patches/downloads
 URL_SFNET   = http://switch.dl.sourceforge.net/sourceforge
-URL_IPFIRE  = http://mirror.ipfire.org/source-packages
+URL_IPFIRE  = http://mirror.ipfire.org/source
 URL_IPCOP   = http://ipcop.ath.cx
 
 # Default compiler optimizations.
