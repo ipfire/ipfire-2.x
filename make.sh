@@ -655,6 +655,7 @@ buildipcop() {
   ipcopmake lzo
   ipcopmake pkg-config
   ipcopmake glib
+  ipcopmake xampp
   ipcopmake pam
   ipcopmake pammysql
   ipcopmake sudo
@@ -663,7 +664,6 @@ buildipcop() {
   ipcopmake openh323
   ipcopmake xinetd
   ipcopmake wget
-  ipcopmake xampp
   ipcopmake bridge-utils
   ipcopmake saslauthd PASS=1
   ipcopmake openldap

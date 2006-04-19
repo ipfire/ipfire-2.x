@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 2.0.7
+VER        = 2.2.9
 
-THISAPP    = openvpn-$(VER)
+THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://openvpn.net/release
+DL_FROM    = ftp://netmirror.org/postfix.org/official
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 93528233f1f6d02fc18e2c00f82e0aca
+$(DL_FILE)_MD5 = be78631bd9b6bf7735e43abfa54d69f6
 
 install : $(TARGET)
 
@@ -58,8 +58,8 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-#dist: 
-#	make-packages.sh postfix $(THISAPP)
+dist: 
+	make-packages.sh postfix $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -81,8 +81,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --enable-pthread
+	cd $(DIR_APP) && make -f Makefile.init makefiles \
+				'CCARGS=-DDEF_DAEMON_DIR=\"/usr/lib/postfix\" -DDEF_MANPAGE_DIR=\"/usr/share/man\" -DUSE_TLS -DUSE_SALS_AUTH -DHAS_PGSQL -I/usr/include/openssl -DHAS_MYSQL -I/opt/lampp/include/mysql -I/usr/include/sasl -I/opt/lampp/include' \
+				'AUXLIBS=-L/usr/lib -L/opt/lampp/lib/mysql -L/opt/lampp/lib -lmysqlclient -lz -lm -lssl -lsasl2 -lcrypto -lpq'
 	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && sh postfix-install -non-interactive
+	cp -v /usr/src/config/etc/aliases /etc/aliases
+	cd /etc/ && postmap aliases
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

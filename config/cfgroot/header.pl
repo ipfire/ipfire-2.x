@@ -167,7 +167,7 @@ sub genmenu {
 				'caption' => $tr{'backup'},
 				'uri' => '/cgi-bin/backup.cgi',
 				'title' => "$tr{'backup'} / $tr{'restore'}",
-				'enabled' => 1,
+				'enabled' => 0,
 				};
     $subsystem->{'08.shutdown'} = {
 				  'caption' => $tr{'shutdown'},

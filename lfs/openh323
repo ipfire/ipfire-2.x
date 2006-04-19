@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 1.12.2
+VER        = Mimas_patch2
 
-THISAPP    = openh323_$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.openh323.org/bin
+THISAPP    = openh323-$(VER)
+DL_FILE    = $(THISAPP)-src-tar.gz
+DL_FROM    = $(URL_SFNET)/openh323
 DIR_APP    = $(DIR_SRC)/openh323
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 15f0b12b60769d03eca9e498050776f3
+$(DL_FILE)_MD5 = 2cf48eb8b8bb3d54843cbf0951f31cbf
 
 install : $(TARGET)
 
@@ -78,8 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	mv -f $(DIR_SRC)/openh323* $(DIR_SRC)/openh323
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make opt PWLIBDIR=/usr/src/pwlib && make install PWLIBDIR=/usr/src/pwlib
-	@rm -rf $(DIR_APP)
-	@rm -rf /usr/src/pwlib
 	@$(POSTBUILD)

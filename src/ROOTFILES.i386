@@ -30350,11 +30350,25 @@ usr/lib/libpt_linux_x86_r.so.1.5.2
 #usr/include/openh323/x880.h
 usr/lib/libh323_linux_x86_r.so
 usr/lib/libh323_linux_x86_r.so.1
-usr/lib/libh323_linux_x86_r.so.1.12
-usr/lib/libh323_linux_x86_r.so.1.12.2
+usr/lib/libh323_linux_x86_r.so.1.15
+usr/lib/libh323_linux_x86_r.so.1.15.6
 usr/lib/libopenh323.so
 #usr/share/openh323
 #usr/share/openh323/openh323u.mak
+#usr/include/openh323/h323pluginmgr.h
+#usr/include/openh323/h4503.h
+#usr/include/openh323/h460.h
+#usr/include/openh323/opalplugin.h
+#usr/include/openh323/rfc2190avcodec.h
+usr/lib/pwlib
+usr/lib/pwlib/codecs
+usr/lib/pwlib/codecs/audio
+usr/lib/pwlib/codecs/audio/g726_audio_pwplugin.so
+usr/lib/pwlib/codecs/audio/gsm0610_audio_pwplugin.so
+usr/lib/pwlib/codecs/audio/ilbc_audio_pwplugin.so
+usr/lib/pwlib/codecs/audio/ima_adpcm_audio_pwplugin.so
+usr/lib/pwlib/codecs/audio/lpc10_audio_pwplugin.so
+usr/lib/pwlib/codecs/audio/speex_audio_pwplugin.so
 ##
 ## CYRUS-SASLAUTHD
 ##
