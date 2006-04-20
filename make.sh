@@ -337,7 +337,7 @@ ipcopmake() {
 ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
-		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/sbin/
+		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/local/bin
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
@@ -356,12 +356,8 @@ ipfiredist() {
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
 	fi
-	if [ -e $BASEDIR/packages ]; then
-		mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
-	else
-		mkdir -p $BASEDIR/packages
-		mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
-	fi
+	test -d $BASEDIR/packages || mkdir $BASEDIR/packages
+	mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
 	return 0
 }
 
@@ -648,7 +644,7 @@ buildipcop() {
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
-  ipcopmake berkeley-DB
+  ipcopmake berkeley
   ipcopmake libtiff
   ipcopmake libxml2
   ipcopmake spandsp
@@ -658,6 +654,10 @@ buildipcop() {
   ipcopmake xampp
   ipcopmake pam
   ipcopmake pammysql
+  ipcopmake saslauthd PASS=1
+  ipcopmake openldap
+  ipcopmake saslauthd PASS=2
+  ipcopmake samba
   ipcopmake sudo
   ipcopmake mc
   ipcopmake pwlib
@@ -665,10 +665,6 @@ buildipcop() {
   ipcopmake xinetd
   ipcopmake wget
   ipcopmake bridge-utils
-  ipcopmake saslauthd PASS=1
-  ipcopmake openldap
-  ipcopmake saslauthd PASS=2
-  ipcopmake samba
   ipcopmake postfix
   ipcopmake stund
   ipcopmake lpd
@@ -763,17 +759,22 @@ buildpackages() {
   # packages-list.txt is ready to be displayed for wiki page
 
   # Create ISO for CDRom and USB-superfloppy
-  ipcopmake cdrom
-  cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
+#  ipcopmake cdrom
+#  cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
   # Build IPFire packages
+  ipfiredist asterisk
   ipfiredist libtiff
   ipfiredist libxml2
   ipfiredist mc
   ipfiredist postfix
+  ipfiredist pwlib
   ipfiredist spandsp
   ipfiredist sudo
   ipfiredist xinetd
+  test -d $BASEDIR/packages || mkdir $BASEDIR/packages
+  cp -f $LFS/paks/* $BASEDIR/packages >> $LOGFILE 2>&1
+
   # Cleanup
   stdumount
   rm -rf $BASEDIR/build/tmp/*

@@ -17,12 +17,8 @@ chmod 755 /paks/$1/{,un}install.sh
 tar cvfz /paks/$1/files.tgz --files=/usr/src/src/paks/$1/ROOTFILES --exclude='#*'
 
 tar cvfz /paks/$1/conf.tgz  --files=/usr/src/src/paks/$1/CONFFILES --exclude='#*'
-cd /paks/$1 && tar cvfz ../$2.tar.gz files.tgz conf.tgz install.sh uninstall.sh && cd ..
 
-md5sum $2.tar.gz >> $2.tar.gz.md5
-
-## Clean up!
-#
-rm -rf /paks
+cd /paks/$1 && tar cvfz ../$2.tar.gz files.tgz conf.tgz install.sh uninstall.sh
+cd .. && md5sum $2.tar.gz >> $2.tar.gz.md5
 
 exit 0
