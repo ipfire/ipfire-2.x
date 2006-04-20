@@ -53,7 +53,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh xinetd $(THISAPP)
+	make-packages.sh xinetd $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum

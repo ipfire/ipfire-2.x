@@ -646,6 +646,7 @@ buildipcop() {
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
   ipcopmake berkeley
   ipcopmake libtiff
+  ipcopmake libjpeg
   ipcopmake libxml2
   ipcopmake spandsp
   ipcopmake lzo
@@ -671,6 +672,7 @@ buildipcop() {
   ipcopmake openvpn
   ipcopmake asterisk
   ipcopmake edonkeyclc
+  ipcopmake sane
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
 # ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
@@ -759,8 +761,8 @@ buildpackages() {
   # packages-list.txt is ready to be displayed for wiki page
 
   # Create ISO for CDRom and USB-superfloppy
-#  ipcopmake cdrom
-#  cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
+  ipcopmake cdrom
+  cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
   # Build IPFire packages
   ipfiredist asterisk

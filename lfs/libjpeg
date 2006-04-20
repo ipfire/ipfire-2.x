@@ -18,7 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -27,12 +26,12 @@
 
 include Config
 
-VER        = ipfire1
+VER        = v6b
 
-THISAPP    = pwlib-$(VER)
+THISAPP    = jpegsrc.$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/pwlib
+DL_FROM    = ftp://ftp.uu.net/graphics/jpeg
+DIR_APP    = $(DIR_SRC)/jpeg-6b
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -43,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2e2eecdc3ba54bdc973892ef9eea45c8
+$(DL_FILE)_MD5 = dbd5f3b47ed13132f04c685d608a7547
 
 install : $(TARGET)
 
@@ -54,7 +53,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh pwlib $(THISAPP)-ipfire-beta-1
+	make-packages.sh libjpeg $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -75,9 +74,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xfz $(DIR_DL)/$(DL_FILE)
-	if [ -f /usr/include/ldap.h ]; then mv -f /usr/include/ldap.h / ; fi
-	cd $(DIR_APP) && ./configure --prefix=/usr
-	if [ -f /ldap.h ]; then mv -f /ldap.h /usr/include/ ; fi
-	cd $(DIR_APP) && make opt && make install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --enable-static --enable-shared && \
+				make
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
