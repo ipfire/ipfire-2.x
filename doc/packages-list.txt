@@ -37,6 +37,7 @@
   * cdrtools-2.01
   * coreutils-5.93
   * cxacru-2003-10-05
+  * cyrus-imapd-2.2.12
   * cyrus-sasl-2.1.21
   * cyrus-sasl-2.1.21-ldap
   * db-4.4.20
@@ -59,6 +60,7 @@
   * fcdslslusb-suse8.2-03.11.04
   * fcdslusb-suse8.2-03.11.02
   * fcron-2.0.2
+  * fetchmail-6.3.4
   * file-4.16
   * findutils-4.1.20
   * flex-2.5.4a
@@ -148,12 +150,10 @@
   * psmisc-21.4
   * pulsar-4.0.19
   * pwlib-ipfire1
-  * pwlib-ipfire1
   * rp-pppoe-3.5
   * rrdtool-1.0.49
   * samba-3.0.22
   * sane-backends-1.0.17
-  * sane-backends-1.0.17_1st
   * sed-4.0.9
   * setserial-2.17
   * shadow-4.0.4.1

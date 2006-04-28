@@ -356,8 +356,8 @@ ipfiredist() {
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
 	fi
-	test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-	mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
+#	test -d $BASEDIR/packages || mkdir $BASEDIR/packages
+#	mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
 	return 0
 }
 
@@ -667,6 +667,8 @@ buildipcop() {
   ipcopmake wget
   ipcopmake bridge-utils
   ipcopmake postfix
+  ipcopmake fetchmail
+  ipcopmake cyrusimap
   ipcopmake stund
   ipcopmake lpd
   ipcopmake openvpn
@@ -766,16 +768,20 @@ buildpackages() {
 
   # Build IPFire packages
   ipfiredist asterisk
+  ipfiredist cyrusimap
+  ipfiredist fetchmail
   ipfiredist libtiff
   ipfiredist libxml2
   ipfiredist mc
   ipfiredist postfix
   ipfiredist pwlib
+  ipfiredist sane
   ipfiredist spandsp
   ipfiredist sudo
+  ipfiredist xampp
   ipfiredist xinetd
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  cp -f $LFS/paks/* $BASEDIR/packages >> $LOGFILE 2>&1
+  cp -f $LFS/paks/*.tar.gz $LFS/paks/*.md5 $BASEDIR/packages >> $LOGFILE 2>&1
 
   # Cleanup
   stdumount
