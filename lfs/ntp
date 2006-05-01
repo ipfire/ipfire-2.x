@@ -36,7 +36,8 @@ VER        = 4.2.0
 
 THISAPP    = ntp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4
+#DL_FROM    = http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4
+DL_FROM    = $(URL_IPCOP)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

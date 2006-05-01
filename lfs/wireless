@@ -36,7 +36,8 @@ VER        = 27
 
 THISAPP    = wireless_tools.$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://pcmcia-cs.sourceforge.net/ftp/contrib
+#DL_FROM    = http://pcmcia-cs.sourceforge.net/ftp/contrib
+DL_FROM    = $(URL_IPCOP)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
