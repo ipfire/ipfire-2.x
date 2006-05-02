@@ -1,0 +1,106 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+# Modifications by:                                                           #
+# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
+#          - Modified Makefile for IPCop build                                #
+#                                                                             #
+# $Id: ntp,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 8.15.1
+
+THISAPP    = espgs-$(VER)-source
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = ftp://ftp3.easysw.com/pub/ghostscript/$(VER)
+DIR_APP    = $(DIR_SRC)/espgs-$(VER)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) \
+          ghostscript-fonts-std-8.11.tar.gz \
+          gnu-gs-fonts-other-6.0.tar.gz
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+ghostscript-fonts-std-8.11.tar.gz = ftp://mirror.cs.wisc.edu/pub/mirrors/ghost/fonts/ghostscript-fonts-std-8.11.tar.gz
+gnu-gs-fonts-other-6.0.tar.gz = http://ftp.gnu.org/pub/gnu/ghostscript/gnu-gs-fonts-other-6.0.tar.gz
+
+$(DL_FILE)_MD5 = 2a21136953c3559e6088522753b06b1f
+ghostscript-fonts-std-8.11.tar.gz_MD5 = 6865682b095f8c4500c54b285ff05ef6
+gnu-gs-fonts-other-6.0.tar.gz_MD5 = 33457d3f37de7ef03d2eea05a9e6aa4f
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	make-packages.sh ghostscript $(THISAPP)-ipfire-beta-1
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+#	cd $(DIR_APP) && sed -i "s/bbox.dev$/x11.dev/" Makefile.in
+	cd $(DIR_APP) && ./configure --prefix=/usr --enable-threads --without-omni
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+	rmdir -v /usr/lib/ghostscript/8.15 /usr/lib/ghostscript
+#	ln -v -s ../ghostscript/8.15/doc /usr/share/doc/espgs-8.15.1
+#	for INSTFILE in `ls doc`
+#	do
+#	  if [ ! -f /usr/share/doc/espgs-8.15.1/$INSTFILE ]; then
+#	    install -v -m644 doc/$INSTFILE /usr/share/doc/espgs-8.15.1/
+#	  fi
+#	done
+	tar xfz $(DIR_SRC)/cache/ghostscript-fonts-std-8.11.tar.gz -C /usr/share/ghostscript
+	tar xfz $(DIR_SRC)/cache/gnu-gs-fonts-other-6.0.tar.gz -C /usr/share/ghostscript
+	chown -v root:root /usr/share/ghostscript/fonts/*
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
