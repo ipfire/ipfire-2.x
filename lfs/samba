@@ -102,9 +102,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/source && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
 	cd $(DIR_APP)/source && install -v -m755 nsswitch/pam_winbind.so /lib/security
 	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /etc/samba
-	cd $(DIR_APP)/source && install -v -m755 -d /usr/share/doc/samba-3.0.22
-	cd $(DIR_APP)/source && install -v -m644 ../docs/*.pdf /usr/share/doc/samba-3.0.22
-	cd $(DIR_APP)/source && ln -v -s ../../samba/swat  /usr/share/doc/samba-3.0.22
+#	cd $(DIR_APP)/source && install -v -m755 -d /usr/share/doc/samba-3.0.22
+#	cd $(DIR_APP)/source && install -v -m644 ../docs/*.pdf /usr/share/doc/samba-3.0.22
+#	cd $(DIR_APP)/source && ln -v -s ../../samba/swat  /usr/share/doc/samba-3.0.22
 	echo "swat            901/tcp" >> /etc/services
 	echo "# Begin /etc/xinetd.d/swat"		>> /etc/xinetd.d/swat
 	echo ""					>> /etc/xinetd.d/swat

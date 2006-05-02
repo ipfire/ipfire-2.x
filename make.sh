@@ -1100,7 +1100,7 @@ gettoolchain)
 	URL_IPFIRE=`grep URL_IPFIRE lfs/Config | awk '{ print $3 }'`
 	echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 	cd $BASEDIR/cache
-	wget -c $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5
+	wget $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5
 	if [ $? -ne 0 ]; then
 		echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
 	else
