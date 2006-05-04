@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i -e "s@pam/pam@security/pam@g" {config-scripts/cups-pam.m4,scheduler/auth.c,configure}
 #	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/patches/cups-1.1.23-testsuite_fix-1.patch
-	cd $(DIR_APP) && ./configure
+	cd $(DIR_APP) && ./configure --disable-nls
 	cd $(DIR_APP) && make
 #	cd $(DIR_APP) && make check
 	cd $(DIR_APP) && make install

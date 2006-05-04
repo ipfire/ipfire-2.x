@@ -9,7 +9,6 @@
   * GD-2.12
   * HTML-Parser-3.45
   * HTML-Tagset-3.04
-  * LPRng-3.8.28
   * Linux-PAM-0.99.3.0
   * Net-DNS-0.47
   * Net-IPv4Addr-0.10
@@ -51,6 +50,7 @@
   * eciadsl-usermode-0.11
   * ed-0.2
   * edonkeyclc_1.3.0_i386
+  * espgs-8.15.1-source
   * ethtool-3
   * expat-1.95.7
   * ez-ipupdate-3.0.11b8

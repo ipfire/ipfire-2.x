@@ -1,0 +1,25 @@
+Submitted By: David Jensen (djensen at linuxfromscratch dot org)
+Date: 2005-07-23
+Initial Package Version: 0.59r
+Origin: Debian
+Upstream Status: not maintained
+Description: Fixes buffer overflow vulnerablity (CAN-2004-0805)
+ 
+$LastChangedBy: djensen $
+$Date: 2005-07-26 21:17:28 -0600 (Tue, 26 Jul 2005) $
+
+diff -Naur mpg123-0.59r.orig/layer2.c mpg123-0.59r/layer2.c
+--- mpg123-0.59r.orig/layer2.c	1999-02-10 06:13:06.000000000 -0600
++++ mpg123-0.59r/layer2.c	2005-07-23 16:44:07.000000000 -0500
+@@ -265,6 +265,11 @@
+   fr->jsbound = (fr->mode == MPG_MD_JOINT_STEREO) ?
+      (fr->mode_ext<<2)+4 : fr->II_sblimit;
+ 
++  if (fr->jsbound > fr->II_sblimit) {
++	  fprintf(stderr, "Truncating stereo boundary to sideband limit.\n");
++	  fr->jsbound=fr->II_sblimit;
++  }
++  
+   if(stereo == 1 || single == 3)
+     single = 0;
+ 
