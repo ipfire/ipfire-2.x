@@ -659,6 +659,8 @@ buildipcop() {
   ipcopmake openldap
   ipcopmake saslauthd PASS=2
   ipcopmake xinetd
+  ipcopmake ghostscript
+  ipcopmake cups
   ipcopmake samba
   ipcopmake sudo
   ipcopmake mc
@@ -675,8 +677,8 @@ buildipcop() {
   ipcopmake asterisk
   ipcopmake edonkeyclc
   ipcopmake sane
-  ipcopmake ghostscript
-  ipcopmake cups
+  ipcopmake lame
+  ipcopmake gnump3d
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
 # ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen

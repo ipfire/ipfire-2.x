@@ -35,6 +35,7 @@
   * ccache-2.3
   * cdrtools-2.01
   * coreutils-5.93
+  * cups-1.1.23-source
   * cxacru-2003-10-05
   * cyrus-imapd-2.2.12
   * cyrus-sasl-2.1.21
@@ -72,6 +73,7 @@
   * glib-2.9.6
   * glibc-2.3.3-lfs-5.1
   * gmp-4.1.2
+  * gnump3d-2.9.8
   * gnupg-1.4.2
   * grep-2.5.1
   * groff-1.19
@@ -92,6 +94,7 @@
   * jpegsrc.v6b
   * kbd-1.12
   * kudzu-0.99.50
+  * lame-3.96.1
   * less-382
   * libcap-1.10
   * libnet-1.1.2.1

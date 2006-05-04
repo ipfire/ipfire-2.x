@@ -36,7 +36,7 @@ VER        = 3.96.1
 
 THISAPP    = lame-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://prdownloads.sourceforge.net/lame
+DL_FROM    = $(URL_SFNET)/lame
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

@@ -36,7 +36,7 @@ VER        = 0.3-beta14
 
 THISAPP    = hddtemp-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://www.guzu.net/linux
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
