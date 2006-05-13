@@ -31,3 +31,5 @@ syslogd:x:105:
 klogd:x:106:
 postfix:x:107:
 postdrop:x:108:
+clamav:x:109:
+rsyncd:x:48:

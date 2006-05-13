@@ -679,6 +679,8 @@ buildipcop() {
   ipcopmake sane
   ipcopmake lame
   ipcopmake gnump3d
+  ipcopmake clamav
+  ipcopmake rsync
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
 # ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
@@ -774,6 +776,7 @@ buildpackages() {
   ipfiredist asterisk
   ipfiredist cyrusimap
   ipfiredist fetchmail
+  ipfiredist gnump3d
   ipfiredist libtiff
   ipfiredist libxml2
   ipfiredist mc
@@ -844,20 +847,9 @@ shell)
 	entershell
 	;;
 changelog)
-	echo "Building doc/Changelog from CVS"
-	# cv2cl script come from http://www.red-bean.com/cvs2cl/
-	if [ ! -s $BASEDIR/doc/CVS/Tag ]; then
-		BRANCHOPTS=""
-	else
-		BRANCH=`cat $BASEDIR/doc/CVS/Tag`
-		BRANCH=${BRANCH:1}
-		BRANCHOPTS="--follow-only $BRANCH"
-	fi
-	
-	$BASEDIR/tools/cvs2cl.pl --gmt --show-dead $BRANCHOPTS -f $BASEDIR/doc/ChangeLog
-	rm -f $BASEDIR/doc/ChangeLog.bak
-	echo
-	echo "Commit the change now to update CVS"
+	echo -n "Loading new Changelog from SVN: "
+	svn log > doc/ChangeLog
+	echo "Finished!"
 	;;
 check)
 	echo "Checking sources files availability on the web"
@@ -1049,40 +1041,6 @@ prefetch)
 		echo "Prefetch : all files md5sum match"
 	fi
 	cd -
-	;;
-rootfiles)
-	PREVIOUSVERSION=`echo $PREVIOUSTAG | sed -e 's/IPCOP_v//' -e 's/_FINAL//' -e 's/_/\./g'`
-	# make md5 list of actual build
-	# some packages include a timestamp (kernel/perl/python/vim and more), so md5 vary at each build
-	# anyway, it is sometime usable after a patch or a minor upgrade to know wich files include in update
-	if [ ! -f "$BASEDIR/build/install/cdrom/$SNAME-$VERSION.tgz" ]; then
-		echo "need cdrom be build to read include files list, use ./make.sh build before."
-	else
-		tar tzf $BASEDIR/build/install/cdrom/$SNAME-$VERSION.tgz > $BASEDIR/updates/$VERSION/FILES.tmp
-		cd $BASEDIR/build
-		rm -f $BASEDIR/updates/$VERSION/FILES-$MACHINE-$VERSION.md5
-		for line in `cat $BASEDIR/updates/$VERSION/FILES.tmp`; do
-			if [ -f "$line" -a ! -L "$line" ]; then
-				md5sum "$line" >> $BASEDIR/updates/$VERSION/FILES-$MACHINE-$VERSION.md5
-			fi
-		done
-		diff $BASEDIR/updates/$PREVIOUSVERSION/FILES-$MACHINE-$PREVIOUSVERSION.md5 \
-			$BASEDIR/updates/$VERSION/FILES-$MACHINE-$VERSION.md5 \
-			> $BASEDIR/updates/$VERSION/FILES-$MACHINE.diff
-		awk '$1==">" {print $3}' $BASEDIR/updates/$VERSION/FILES-$MACHINE.diff \
-			> $BASEDIR/updates/$VERSION/ROOTFILES.add.$MACHINE
-		awk '$1=="<" {print $3}' $BASEDIR/updates/$VERSION/FILES-$MACHINE.diff \
-			> $BASEDIR/updates/$VERSION/ROOTFILES.remove.$MACHINE.tmp
-		rm -f $BASEDIR/updates/$VERSION/ROOTFILES.remove.$MACHINE
-		for line in `cat $BASEDIR/updates/$VERSION/ROOTFILES.remove.$MACHINE.tmp`; do
-			# a file is only removed when not in add file
-			if ( ! grep -q "^$line$" $BASEDIR/updates/$VERSION/ROOTFILES.add.$MACHINE ); then
-				echo $line >> $BASEDIR/updates/$VERSION/ROOTFILES.remove.$MACHINE
-			fi
-		done
-		rm -f $BASEDIR/updates/$VERSION/{FILES.tmp,FILES-*.diff,ROOTFILES.remove.*.tmp}
-	fi
-	exit 0
 	;;
 toolchain)
 	prepareenv

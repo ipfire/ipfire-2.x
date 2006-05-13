@@ -22,7 +22,7 @@
 # ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
 #          - Modified Makefile for IPCop build                                #
 #                                                                             #
-# $Id: iptables,v 1.5.2.5 2006/01/14 16:35:16 gespinasse Exp $
+# $Id: ntp,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
 #                                                                             #
 ###############################################################################
 
@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 1.3.4
+VER        = 2.6.8
 
-THISAPP    = iptables-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://www.netfilter.org/projects/iptables/files
+THISAPP    = rsync-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = ftp://ftp.samba.org/pub/rsync
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fdff8abe890807968226b0c374335305
+$(DL_FILE)_MD5 = 082a9dba1f741e6591e5cd748a1233de
 
 install : $(TARGET)
 
@@ -57,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	make-packages.sh rsync $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -77,13 +80,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	# iptables-fixed.tar.gz is made in the linux kernel build process after netfilter patches
-	# string extension is reverted to the only code usable on 2.4 kernel
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/iptables-fixed.tar.gz
-	# hack to disable IPv6 compilation as the configuration variable does not work when ip6.h is present
-	cd $(DIR_APP) && sed -i -e 's/DO_IPV6:=1/DO_IPV6:=0/' Makefile
-
-	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib
-	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make
+	#cd $(DIR_APP)/doc && docbook2html rsync.sgml
+	cd $(DIR_APP) && make install
+	#cd $(DIR_APP) && install -v -m755 -d /usr/share/doc/rsync-2.6.8 &&
+	#cd $(DIR_APP) && install -v -m644 doc/*.html /usr/share/doc/rsync-2.6.8
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

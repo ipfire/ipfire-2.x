@@ -4,13 +4,13 @@ Standard use commands in the order you may need them.
         clean : erase build and log to recompile everything from scratch
 
 Optional
- gettoolchain : optionally load from sourceforge a precompilated toolchain
+ gettoolchain : optionally load from ipfire.org a precompilated toolchain
 		package. This solve some compilation issues on old or very
 		recent distributions and save 20% of next full building time.
 		If you want to use it, do it before build step
 
 Maintainer / advanced commands
-    changelog : Update doc/Changelog from CVS messages log
+    changelog : Loads the latest changelog from SVN.
         check : Test if packages files are still available for download
 		This is faster on http URL with --spider,but still slow on ftp
 		because of real load.
@@ -18,12 +18,8 @@ Maintainer / advanced commands
 		another time
          dist : Mainly produce a diff from previous version to track wich
 		files have been changed
-    newupdate : Add on CVS structure for new update directory and files
-    rootfiles : Goal is to create update/x/ROOTFILES automatically in the
-		futur. Build md5 of all included files in iso and list of
-		changed or removed files (not yet fully usable at some
-		packages include a compilation timestamp, so md5 change at
-		every compilation)
+newpak <name> : Create a new package with name: <name>.
     toolchain : Create our own toolchain package to save 20% of build time.
         shell : Enter a shell inside the chroot, used to tune lfs script
 		and / or during kernel upgrade to rebuild a new .config
+       update : Loads the latest source files from SVN.
