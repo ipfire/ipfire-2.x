@@ -904,47 +904,10 @@ clean)
 	fi
 	;;
 dist)
-	echo "Building source package from CVS, list of changed files, MD5 of release files"
-	if [ ! -s $BASEDIR/doc/CVS/Tag ]; then
-		BRANCH=""
-		BRANCHOPTS="-D `date +'%Y-%m-%d'`"
-	else
-		BRANCH=`cat $BASEDIR/doc/CVS/Tag`
-		BRANCH=${BRANCH:1}
-		BRANCHOPTS="-r $BRANCH"
-	fi
-
-	rm -rf $BASEDIR/build/tmp/$SNAME-$VERSION $BASEDIR/doc/release.txt
-	cd $BASEDIR/build/tmp
-	# build sources tgz
-	echo "Export tree $BRANCH $SNAME-$VERSION"
-	cvs -z3 -d `cat $BASEDIR/CVS/Root` export $BRANCHOPTS ipcop
-	if [ $? -eq 0 ]; then
-		mv ipcop $SNAME-$VERSION
-		tar cfz $BASEDIR/$SNAME-sources-$VERSION.tgz $SNAME-$VERSION
-		cd $BASEDIR
-
-		if [ ! -d $BASEDIR/build/tmp/$PREVIOUSTAG ]; then
-			# export previous version to be compared with actual, this help to check wich files need to go in update
-			cd $BASEDIR/build/tmp
-			echo "Export tree $PREVIOUSTAG"
-			cvs -z3 -d `cat $BASEDIR/CVS/Root` export -r $PREVIOUSTAG ipcop
-			mv ipcop $PREVIOUSTAG
-		fi
-		if [ -d $BASEDIR/build/tmp/$PREVIOUSTAG -o -d $BASEDIR/build/tmp/$SNAME-$VERSION ]; then
-			cd $BASEDIR/build/tmp
-			echo "diff $PREVIOUSTAG <> $BRANCH $SNAME-$VERSION >doc/updated-sources.txt"
-			diff -rq $PREVIOUSTAG $SNAME-$VERSION > $BASEDIR/doc/updated-sources.txt
-			mv $BASEDIR/doc/updated-sources.txt $BASEDIR/doc/updated-sources.bak
-			sed -e "s+Files $PREVIOUSTAG\/++" \
-				-e "s+ and .*$++" \
-				-e "s+src/rc.d+etc/rc.d+" \
-				-e "s+^langs/+var/ipcop/langs/+" \
-				-e "s+html/cgi-bin+home/httpd/cgi-bin+" $BASEDIR/doc/updated-sources.bak \
-				> $BASEDIR/doc/updated-sources.txt
-			rm -f $BASEDIR/doc/updated-sources.bak
-		fi
-	fi
+	echo "Building source package from SVN: "
+	svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force
+	tar cfz ipfire-source-`date +'%Y-%m-%d'`-r`svn info | grep Revision | cut -c 11-`.tar.gz ipfire-source
+	rm ipfire-source/ -r
 	;;
 newpak)
 	# create structure for a new package
