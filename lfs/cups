@@ -87,5 +87,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make
 #	cd $(DIR_APP) && make check
 	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -680,7 +680,9 @@ buildipcop() {
   ipcopmake lame
   ipcopmake gnump3d
   ipcopmake clamav
+#  ipcopmake spamassassin
   ipcopmake rsync
+  ipcopmake tcpwrapper
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
 # ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
@@ -1042,8 +1044,13 @@ update)
 	echo "Load the latest source-files:"
 	svn update
 	;;
+commit)
+	echo "Upload the changed files:"
+	./make.sh changelog
+	svn commit
+	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|dist|gettoolchain|newpak|prefetch|rootfiles|shell|toolchain|update}"
+	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|dist|gettoolchain|newpak|prefetch|shell|toolchain|update}"
 	cat doc/make.sh-usage
 	exit 1
 	;;
