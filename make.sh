@@ -906,8 +906,9 @@ clean)
 	fi
 	;;
 dist)
-	echo "Building source package from SVN: "
-	svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force
+	echo "Updating & building source package from SVN: "
+	svn up > /dev/null
+	svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
 	tar cfz ipfire-source-`date +'%Y-%m-%d'`-r`svn info | grep Revision | cut -c 11-`.tar.gz ipfire-source
 	rm ipfire-source/ -r
 	;;
@@ -1048,6 +1049,7 @@ commit)
 	echo "Upload the changed files:"
 	./make.sh changelog
 	svn commit
+	svn up
 	;;
 *)
 	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|dist|gettoolchain|newpak|prefetch|shell|toolchain|update}"
