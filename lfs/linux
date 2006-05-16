@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: linux,v 1.42.2.57 2005/07/28 07:01:27 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -158,6 +152,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#layer7-patch
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.1.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.1/kernel-2.4-layer7-2.1.patch
+
+	# ip_conntrack permissions from 440 to 444
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 
 ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass

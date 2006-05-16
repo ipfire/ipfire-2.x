@@ -683,6 +683,8 @@ buildipcop() {
 #  ipcopmake spamassassin
   ipcopmake rsync
   ipcopmake tcpwrapper
+  ipcopmake portmap
+  ipcopmake nfs
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
 # ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
@@ -1047,9 +1049,8 @@ update)
 	;;
 commit)
 	echo "Upload the changed files:"
-	./make.sh changelog
 	svn commit
-	svn up
+	svn up > /dev/null
 	;;
 *)
 	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|dist|gettoolchain|newpak|prefetch|shell|toolchain|update}"

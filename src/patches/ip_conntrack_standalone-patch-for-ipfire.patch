@@ -1,0 +1,11 @@
+--- linux-2.4.31/net/ipv4/netfilter/ip_conntrack_standalone.c~	2006-05-16 09:48:56.555196560 +0200
++++ linux-2.4.31/net/ipv4/netfilter/ip_conntrack_standalone.c	2006-05-16 10:07:04.000000000 +0200
+@@ -356,7 +356,7 @@
+ 	if (ret < 0)
+ 		goto cleanup_nothing;
+ 
+-	proc = proc_net_create("ip_conntrack", 0440, list_conntracks);
++	proc = proc_net_create("ip_conntrack", 0444, list_conntracks);
+ 	if (!proc) goto cleanup_init;
+ 	proc->owner = THIS_MODULE;
+ 

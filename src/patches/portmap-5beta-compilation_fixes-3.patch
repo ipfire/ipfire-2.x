@@ -1,0 +1,705 @@
+Submitted By: Kevin P. Fleming <kpfleming at linuxfromscratch dot org>
+Date: 2004-05-02
+Initial Package Version: 5beta
+Origin: http://archives.linuxfromscratch.org/mail-archives/blfs-dev/2003-January/001960.html
+Description: The patch was created from the portmap modified package by Mark Heerdink.
+This patch provides the following improvements:
+    * Link against dynamic tcp_wrappers.
+    * Create an install target for portmap.
+    * Compilation and security fixes.
+    * Documentation fixes.
+
+Originally created by Tushar Teredesai, updated by kpfleming to ensure
+portmap will compile without tcp_wrappers installed.
+diff -Naur portmap_5beta/BLURB portmap_5beta.gimli/BLURB
+--- portmap_5beta/BLURB	1996-07-06 16:09:46.000000000 -0500
++++ portmap_5beta.gimli/BLURB	2002-01-07 09:13:58.000000000 -0600
+@@ -1,3 +1,6 @@
++
++###############################################################################
++
+ @(#) BLURB 1.5 96/07/06 23:09:45
+ 
+ This is the fifth replacement portmapper release.
+diff -Naur portmap_5beta/Makefile portmap_5beta.gimli/Makefile
+--- portmap_5beta/Makefile	1996-07-06 16:06:19.000000000 -0500
++++ portmap_5beta.gimli/Makefile	2002-07-15 16:00:07.000000000 -0500
+@@ -8,7 +8,7 @@
+ # if you disagree. See `man 3 syslog' for examples. Some syslog versions
+ # do not provide this flexibility.
+ #
+-FACILITY=LOG_MAIL
++FACILITY=LOG_DAEMON
+ 
+ # To disable tcp-wrapper style access control, comment out the following
+ # macro definitions.  Access control can also be turned off by providing
+@@ -16,7 +16,8 @@
+ # daemon, is always treated as an authorized host.
+ 
+ HOSTS_ACCESS= -DHOSTS_ACCESS
+-WRAP_LIB = $(WRAP_DIR)/libwrap.a
++#WRAP_LIB = $(WRAP_DIR)/libwrap.a
++WRAP_LIB = -lwrap
+ 
+ # Comment out if your RPC library does not allocate privileged ports for
+ # requests from processes with root privilege, or the new portmap will
+@@ -71,7 +72,7 @@
+ # With verbose logging on, HP-UX 9.x and AIX 4.1 leave zombies behind when
+ # SIGCHLD is not ignored. Enable next macro for a fix.
+ #
+-# ZOMBIES = -DIGNORE_SIGCHLD	# AIX 4.x, HP-UX 9.x
++ZOMBIES = -DIGNORE_SIGCHLD	# AIX 4.x, HP-UX 9.x
+ 
+ # Uncomment the following macro if your system does not have u_long.
+ #
+@@ -81,7 +82,7 @@
+ # libwrap.a object library. WRAP_DIR should specify the directory with
+ # that library.
+ 
+-WRAP_DIR= ../tcp_wrappers
++WRAP_DIR= $(TCPD_DIR)
+ 
+ # Auxiliary object files that may be missing from your C library.
+ #
+@@ -99,22 +100,31 @@
+ 
+ # Comment out if your compiler talks ANSI and understands const
+ #
+-CONST   = -Dconst=
++#CONST   = -Dconst=
+ 
+ ### End of configurable stuff.
+ ##############################
+ 
++GLIBC=$(shell grep -s -c __GLIBC__ /usr/include/features.h)
++
++ifeq ($(GLIBC),0)
++LIBS   += # -lbsd
++else
++LIBS   += -lnsl
++endif
++
++
+ SHELL	= /bin/sh
+ 
+-COPT	= $(CONST) -Dperror=xperror $(HOSTS_ACCESS) $(CHECK_PORT) \
++COPT	= $(CONST) $(HOSTS_ACCESS) $(CHECK_PORT) \
+ 	$(SYS) -DFACILITY=$(FACILITY) $(ULONG) $(ZOMBIES) $(SA_LEN) \
+ 	$(LOOPBACK) $(SETPGRP)
+-CFLAGS	= $(COPT) -O $(NSARCHS)
++CFLAGS	= -Wall $(COPT) -O2 $(NSARCHS)
+ OBJECTS	= portmap.o pmap_check.o from_local.o $(AUX)
+ 
+ all:	portmap pmap_dump pmap_set
+ 
+-portmap: $(OBJECTS) $(WRAP_DIR)/libwrap.a
++portmap: $(OBJECTS) # $(WRAP_DIR)/libwrap.a
+ 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(WRAP_LIB) $(LIBS)
+ 
+ pmap_dump: pmap_dump.c
+@@ -129,6 +139,17 @@
+ get_myaddress: get_myaddress.c
+ 	cc $(CFLAGS) -DTEST -o $@ get_myaddress.c $(LIBS)
+ 
++install: all
++	install -o root -g root -m 0755 -s portmap ${BASEDIR}/sbin
++	install -o root -g root -m 0755 -s pmap_dump ${BASEDIR}/usr/sbin
++	install -o root -g root -m 0755 -s pmap_set ${BASEDIR}/usr/sbin
++	install -o root -g root -m 0644 portmap.8 ${BASEDIR}/usr/share/man/man8
++	install -o root -g root -m 0644 pmap_dump.8 ${BASEDIR}/usr/share/man/man8
++	install -o root -g root -m 0644 pmap_set.8 ${BASEDIR}/usr/share/man/man8
++#	cat README BLURB >${BASEDIR}/usr/share/doc/portmap/portmapper.txt
++#	gzip -9f ${BASEDIR}/usr/share/doc/portmap/portmapper.txt
++
++
+ lint:	
+ 	lint $(COPT) $(OBJECTS:%.o=%.c)
+ 
+diff -Naur portmap_5beta/daemon.c portmap_5beta.gimli/daemon.c
+--- portmap_5beta/daemon.c	1992-06-11 15:53:12.000000000 -0500
++++ portmap_5beta.gimli/daemon.c	2002-01-07 09:22:24.000000000 -0600
+@@ -36,16 +36,13 @@
+ #endif /* LIBC_SCCS and not lint */
+ 
+ #include <fcntl.h>
+-
+-/* From unistd.h */
+-#define STDIN_FILENO	0
+-#define STDOUT_FILENO	1
+-#define STDERR_FILENO	2
++#include <unistd.h>
++#include <sys/types.h>
+ 
+ /* From paths.h */
+ #define _PATH_DEVNULL	"/dev/null"
+ 
+-daemon(nochdir, noclose)
++int daemon(nochdir, noclose)
+ 	int nochdir, noclose;
+ {
+ 	int cpid;
+diff -Naur portmap_5beta/from_local.c portmap_5beta.gimli/from_local.c
+--- portmap_5beta/from_local.c	1996-05-31 08:52:58.000000000 -0500
++++ portmap_5beta.gimli/from_local.c	2002-01-07 09:25:49.000000000 -0600
+@@ -35,7 +35,7 @@
+  * Mountain View, California  94043
+  */
+ 
+-#ifndef lint
++#ifdef lint
+ static char sccsid[] = "@(#) from_local.c 1.3 96/05/31 15:52:57";
+ #endif
+ 
+@@ -51,6 +51,9 @@
+ #include <net/if.h>
+ #include <sys/ioctl.h>
+ #include <syslog.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
+ 
+ #ifndef TRUE
+ #define	TRUE	1
+@@ -96,7 +99,7 @@
+ 
+ /* find_local - find all IP addresses for this host */
+ 
+-find_local()
++int find_local()
+ {
+     struct ifconf ifc;
+     struct ifreq ifreq;
+@@ -154,7 +157,7 @@
+ 
+ /* from_local - determine whether request comes from the local system */
+ 
+-from_local(addr)
++int from_local(addr)
+ struct sockaddr_in *addr;
+ {
+     int     i;
+diff -Naur portmap_5beta/pmap_check.c portmap_5beta.gimli/pmap_check.c
+--- portmap_5beta/pmap_check.c	1996-07-07 03:49:10.000000000 -0500
++++ portmap_5beta.gimli/pmap_check.c	2002-01-07 09:37:58.000000000 -0600
+@@ -32,7 +32,7 @@
+   * Computing Science, Eindhoven University of Technology, The Netherlands.
+   */
+ 
+-#ifndef lint
++#ifdef lint
+ static char sccsid[] = "@(#) pmap_check.c 1.8 96/07/07 10:49:10";
+ #endif
+ 
+@@ -45,6 +45,11 @@
+ #include <netinet/in.h>
+ #include <rpc/rpcent.h>
+ #endif
++#include <sys/types.h>
++#include <unistd.h>
++#ifdef HOSTS_ACCESS
++#include <tcpd.h>
++#endif
+ 
+ extern char *inet_ntoa();
+ 
+@@ -110,7 +113,7 @@
+ 
+ /* check_default - additional checks for NULL, DUMP, GETPORT and unknown */
+ 
+-check_default(addr, proc, prog)
++int check_default(addr, proc, prog)
+ struct sockaddr_in *addr;
+ u_long  proc;
+ u_long  prog;
+@@ -128,7 +131,7 @@
+ 
+ /* check_privileged_port - additional checks for privileged-port updates */
+ 
+-check_privileged_port(addr, proc, prog, port)
++int check_privileged_port(addr, proc, prog, port)
+ struct sockaddr_in *addr;
+ u_long  proc;
+ u_long  prog;
+@@ -173,7 +176,7 @@
+ 
+ #else
+ 
+-check_setunset(addr, proc, prog, port)
++int check_setunset(addr, proc, prog, port)
+ struct sockaddr_in *addr;
+ u_long  proc;
+ u_long  prog;
+@@ -197,7 +200,7 @@
+ 
+ /* check_callit - additional checks for forwarded requests */
+ 
+-check_callit(addr, proc, prog, aproc)
++int check_callit(addr, proc, prog, aproc)
+ struct sockaddr_in *addr;
+ u_long  proc;
+ u_long  prog;
+@@ -249,13 +252,13 @@
+     };
+     struct proc_map *procp;
+     static struct proc_map procmap[] = {
+-	PMAPPROC_CALLIT, "callit",
+-	PMAPPROC_DUMP, "dump",
+-	PMAPPROC_GETPORT, "getport",
+-	PMAPPROC_NULL, "null",
+-	PMAPPROC_SET, "set",
+-	PMAPPROC_UNSET, "unset",
+-	0, 0,
++	{ PMAPPROC_CALLIT, "callit" },
++	{ PMAPPROC_DUMP, "dump" },
++	{ PMAPPROC_GETPORT, "getport" },
++	{ PMAPPROC_NULL, "null" },
++	{ PMAPPROC_SET, "set" },
++	{ PMAPPROC_UNSET, "unset" },
++	{ 0, 0 }
+     };
+ 
+     /*
+@@ -269,7 +272,7 @@
+ 
+ 	if (prognum == 0) {
+ 	    progname = "";
+-	} else if (rpc = getrpcbynumber((int) prognum)) {
++	} else if ((rpc = getrpcbynumber((int) prognum)) != NULL) {
+ 	    progname = rpc->r_name;
+ 	} else {
+ 	    sprintf(progname = progbuf, "%lu", prognum);
+diff -Naur portmap_5beta/pmap_dump.8 portmap_5beta.gimli/pmap_dump.8
+--- portmap_5beta/pmap_dump.8	1969-12-31 18:00:00.000000000 -0600
++++ portmap_5beta.gimli/pmap_dump.8	2002-01-07 09:13:58.000000000 -0600
+@@ -0,0 +1,24 @@
++.TH PMAP_DUMP 8 "21th June 1997" Linux "Linux Programmer's Manual"
++.SH NAME
++pmap_dump \- print a list of all registered RPC programs
++.SH SYNOPSIS
++.B pmap_dump
++.SH DESCRIPTION
++The
++.B pmap_dump
++command can be used to restart a running portmapper or to print
++a list of all registered RPC programs on the local host. If you
++want to use the program to restart the portmapper you have to
++redirect the output of
++.B pmap_dump
++to a file. After this you can restart the portmapper and restore
++the list of the registered RPC programs by feeding the output
++of
++.B pmap_dump
++to the
++.B pmap_set
++command.
++.SH SEE ALSO
++.BR pmap_set (8),
++.BR rpc.portmap (8)
++
+diff -Naur portmap_5beta/pmap_dump.c portmap_5beta.gimli/pmap_dump.c
+--- portmap_5beta/pmap_dump.c	1992-06-11 15:53:16.000000000 -0500
++++ portmap_5beta.gimli/pmap_dump.c	2002-01-07 09:20:19.000000000 -0600
+@@ -5,7 +5,7 @@
+   * Computing Science, Eindhoven University of Technology, The Netherlands.
+   */
+ 
+-#ifndef lint
++#ifdef lint
+ static char sccsid[] = "@(#) pmap_dump.c 1.1 92/06/11 22:53:15";
+ #endif
+ 
+@@ -23,7 +23,20 @@
+ 
+ static char *protoname();
+ 
+-main(argc, argv)
++#ifndef INADDR_LOOPBACK
++#define INADDR_LOOPBACK ntohl(inet_addr("127.0.0.1"))
++#endif
++
++static void    get_myloopaddress(addrp)
++struct sockaddr_in *addrp;
++{
++    memset((char *) addrp, 0, sizeof(*addrp));
++    addrp->sin_family = AF_INET;
++    addrp->sin_port = htons(PMAPPORT);
++    addrp->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++}
++
++int main(argc, argv)
+ int     argc;
+ char  **argv;
+ {
+@@ -31,7 +44,7 @@
+     register struct pmaplist *list;
+     register struct rpcent *rpc;
+ 
+-    get_myaddress(&addr);
++    get_myloopaddress(&addr);
+ 
+     for (list = pmap_getmaps(&addr); list; list = list->pml_next) {
+ 	rpc = getrpcbynumber((int) list->pml_map.pm_prog);
+diff -Naur portmap_5beta/pmap_set.8 portmap_5beta.gimli/pmap_set.8
+--- portmap_5beta/pmap_set.8	1969-12-31 18:00:00.000000000 -0600
++++ portmap_5beta.gimli/pmap_set.8	2002-01-07 09:13:58.000000000 -0600
+@@ -0,0 +1,24 @@
++.TH PMAP_SET 8 "21th June 1997" Linux "Linux Programmer's Manual"
++.SH NAME
++pmap_set \- set the list of registered RPC programs
++.SH SYNOPSIS
++.B pmap_set
++.SH DESCRIPTION
++The
++.B pmap_set
++command can be used to restart a running portmapper or to set
++the list of registered RPC programs on the local host. If you
++want to use the program to restart the portmapper you have to
++redirect the output of
++.B pmap_dump
++to a file. After this you can restart the portmapper and restore
++the list of the registered RPC programs by feeding the output
++of
++.B pmap_dump
++to the
++.B pmap_set
++command.
++.SH SEE ALSO
++.BR pmap_dump (8),
++.BR rpc.portmap (8)
++
+diff -Naur portmap_5beta/pmap_set.c portmap_5beta.gimli/pmap_set.c
+--- portmap_5beta/pmap_set.c	1996-07-06 16:06:23.000000000 -0500
++++ portmap_5beta.gimli/pmap_set.c	2002-01-07 09:22:10.000000000 -0600
+@@ -5,7 +5,7 @@
+   * Computing Science, Eindhoven University of Technology, The Netherlands.
+   */
+ 
+-#ifndef lint
++#ifdef lint
+ static char sccsid[] = "@(#) pmap_set.c 1.2 96/07/06 23:06:23";
+ #endif
+ 
+@@ -17,7 +17,9 @@
+ #include <rpc/rpc.h>
+ #include <rpc/pmap_clnt.h>
+ 
+-main(argc, argv)
++int parse_line(char *buf, u_long *prog, u_long *vers, int *prot, unsigned *port);
++
++int main(argc, argv)
+ int     argc;
+ char  **argv;
+ {
+@@ -40,16 +42,16 @@
+ 
+ /* parse_line - convert line to numbers */
+ 
+-parse_line(buf, prog, vers, prot, port)
++int parse_line(buf, prog, vers, prot, port)
+ char   *buf;
+ u_long *prog;
+ u_long *vers;
+ int    *prot;
+ unsigned *port;
+ {
+-    char    proto_name[BUFSIZ];
++    char    proto_name[256];
+ 
+-    if (sscanf(buf, "%lu %lu %s %u", prog, vers, proto_name, port) != 4) {
++    if (sscanf(buf, "%lu %lu %255s %u", prog, vers, proto_name, port) != 4) {
+ 	return (0);
+     }
+     if (strcmp(proto_name, "tcp") == 0) {
+diff -Naur portmap_5beta/portmap.8 portmap_5beta.gimli/portmap.8
+--- portmap_5beta/portmap.8	1969-12-31 18:00:00.000000000 -0600
++++ portmap_5beta.gimli/portmap.8	2002-01-07 09:13:58.000000000 -0600
+@@ -0,0 +1,146 @@
++.\" Copyright (c) 1987 Sun Microsystems
++.\" Copyright (c) 1990, 1991 The Regents of the University of California.
++.\" All rights reserved.
++.\"
++.\" Redistribution and use in source and binary forms, with or without
++.\" modification, are permitted provided that the following conditions
++.\" are met:
++.\" 1. Redistributions of source code must retain the above copyright
++.\"    notice, this list of conditions and the following disclaimer.
++.\" 2. Redistributions in binary form must reproduce the above copyright
++.\"    notice, this list of conditions and the following disclaimer in the
++.\"    documentation and/or other materials provided with the distribution.
++.\" 3. All advertising materials mentioning features or use of this software
++.\"    must display the following acknowledgement:
++.\"	This product includes software developed by the University of
++.\"	California, Berkeley and its contributors.
++.\" 4. Neither the name of the University nor the names of its contributors
++.\"    may be used to endorse or promote products derived from this software
++.\"    without specific prior written permission.
++.\"
++.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++.\" SUCH DAMAGE.
++.\"
++.\"     from: @(#)portmap.8	5.3 (Berkeley) 3/16/91
++.\"	$Id: portmap-5beta-compilation_fixes-3.patch,v 1.1 2004/06/08 04:53:09 jim Exp $
++.\"
++.Dd March 16, 1991
++.Dt PORTMAP 8
++.Os BSD 4.3
++.Sh NAME
++.Nm portmap
++.Nd
++.Tn DARPA
++port to
++.Tn RPC
++program number mapper
++.Sh SYNOPSIS
++.Nm portmap
++.Op Fl d
++.Op Fl v
++.Sh DESCRIPTION
++.Nm Portmap
++is a server that converts
++.Tn RPC
++program numbers into
++.Tn DARPA
++protocol port numbers.
++It must be running in order to make
++.Tn RPC
++calls.
++.Pp
++When an
++.Tn RPC
++server is started, it will tell
++.Nm portmap
++what port number it is listening to, and what
++.Tn RPC
++program numbers it is prepared to serve.
++When a client wishes to make an
++.Tn RPC
++call to a given program number,
++it will first contact
++.Nm portmap
++on the server machine to determine
++the port number where
++.Tn RPC
++packets should be sent.
++.Pp
++.Nm Portmap
++must be started before any
++.Tn RPC
++servers are invoked.
++.Pp
++Normally
++.Nm portmap
++forks and dissociates itself from the terminal
++like any other daemon.
++.Nm Portmap
++then logs errors using
++.Xr syslog 3 .
++.Pp
++Option available:
++.Bl -tag -width Ds
++.It Fl d
++(debug) prevents
++.Nm portmap
++from running as a daemon,
++and causes errors and debugging information
++to be printed to the standard error output.
++.It Fl v
++(verbose) run
++.Nm portmap
++in verbose mode.
++.El
++
++This
++.Nm portmap
++version is protected by the
++.Nm tcp_wrapper
++library. You have to give the clients access to
++.Nm portmap
++if they should be allowed to use it. To allow connects from clients of
++the .bar.com domain you could use the following line in /etc/hosts.allow:
++
++portmap: .bar.com
++
++You have to use the daemon name 
++.Nm portmap
++for the daemon name (even if the binary has a different name). For the
++client names you can only use the keyword ALL or IP addresses (NOT
++host or domain names).
++
++For further information please have a look at the
++.Xr tcpd 8 ,
++.Xr hosts_allow 5
++and
++.Xr hosts_access 5
++manual pages.
++
++.Sh SEE ALSO
++.Xr inetd.conf 5 ,
++.Xr rpcinfo 8 ,
++.Xr pmap_set 8 ,
++.Xr pmap_dump 8 ,
++.Xr inetd 8
++.Xr tcpd 8
++.Xr hosts_access 5
++.Xr hosts_options 5
++.Sh BUGS
++If
++.Nm portmap
++crashes, all servers must be restarted.
++.Sh HISTORY
++The
++.Nm
++command appeared in
++.Bx 4.3
+diff -Naur portmap_5beta/portmap.c portmap_5beta.gimli/portmap.c
+--- portmap_5beta/portmap.c	1996-07-06 16:06:24.000000000 -0500
++++ portmap_5beta.gimli/portmap.c	2002-01-07 09:26:41.000000000 -0600
+@@ -37,7 +37,7 @@
+  All rights reserved.\n";
+ #endif /* not lint */
+ 
+-#ifndef lint
++#ifdef lint
+ static char sccsid[] = "@(#) portmap.c 1.6 96/07/06 23:06:23";
+ #endif /* not lint */
+ 
+@@ -80,6 +80,9 @@
+  * Mountain View, California  94043
+  */
+ 
++#if defined(__GLIBC__)
++#include <rpc/xdr.h>
++#endif /* __GLIBC__ */
+ #include <rpc/rpc.h>
+ #include <rpc/pmap_prot.h>
+ #include <stdio.h>
+@@ -94,6 +97,8 @@
+ #ifdef SYSV40
+ #include <netinet/in.h>
+ #endif
++#include <sys/types.h>
++#include <unistd.h>
+ 
+ extern char *strerror();
+ #include <stdlib.h>
+@@ -148,7 +153,7 @@
+ #endif
+ #endif
+ 
+-main(argc, argv)
++int main(argc, argv)
+ 	int argc;
+ 	char **argv;
+ {
+@@ -350,7 +355,7 @@
+ 		 */
+ 		/* remote host authorization check */
+ 		check_default(svc_getcaller(xprt), rqstp->rq_proc, (u_long) 0);
+-		if (!svc_sendreply(xprt, xdr_void, (caddr_t)0) && debugging) {
++		if (!svc_sendreply(xprt, (xdrproc_t) xdr_void, (caddr_t)0) && debugging) {
+ 			abort();
+ 		}
+ 		break;
+@@ -359,7 +364,7 @@
+ 		/*
+ 		 * Set a program,version to port mapping
+ 		 */
+-		if (!svc_getargs(xprt, xdr_pmap, &reg))
++		if (!svc_getargs(xprt, (xdrproc_t) xdr_pmap, (caddr_t) &reg))
+ 			svcerr_decode(xprt);
+ 		else {
+ 			/* reject non-local requests, protect priv. ports */
+@@ -401,7 +406,7 @@
+ 				ans = 1;
+ 			}
+ 		done:
+-			if ((!svc_sendreply(xprt, xdr_int, (caddr_t)&ans)) &&
++			if ((!svc_sendreply(xprt, (xdrproc_t) xdr_int, (caddr_t)&ans)) &&
+ 			    debugging) {
+ 				(void) fprintf(stderr, "svc_sendreply\n");
+ 				abort();
+@@ -413,7 +418,7 @@
+ 		/*
+ 		 * Remove a program,version to port mapping.
+ 		 */
+-		if (!svc_getargs(xprt, xdr_pmap, &reg))
++		if (!svc_getargs(xprt, (xdrproc_t) xdr_pmap, (caddr_t) &reg))
+ 			svcerr_decode(xprt);
+ 		else {
+ 			ans = 0;
+@@ -447,7 +452,7 @@
+ 					prevpml->pml_next = pml;
+ 				free(t);
+ 			}
+-			if ((!svc_sendreply(xprt, xdr_int, (caddr_t)&ans)) &&
++			if ((!svc_sendreply(xprt, (xdrproc_t) xdr_int, (caddr_t)&ans)) &&
+ 			    debugging) {
+ 				(void) fprintf(stderr, "svc_sendreply\n");
+ 				abort();
+@@ -459,7 +464,7 @@
+ 		/*
+ 		 * Lookup the mapping for a program,version and return its port
+ 		 */
+-		if (!svc_getargs(xprt, xdr_pmap, &reg))
++		if (!svc_getargs(xprt, (xdrproc_t) xdr_pmap, (caddr_t) &reg))
+ 			svcerr_decode(xprt);
+ 		else {
+ 			/* remote host authorization check */
+@@ -474,7 +479,7 @@
+ 				port = fnd->pml_map.pm_port;
+ 			else
+ 				port = 0;
+-			if ((!svc_sendreply(xprt, xdr_int, (caddr_t)&port)) &&
++			if ((!svc_sendreply(xprt, (xdrproc_t) xdr_int, (caddr_t)&port)) &&
+ 			    debugging) {
+ 				(void) fprintf(stderr, "svc_sendreply\n");
+ 				abort();
+@@ -486,7 +491,7 @@
+ 		/*
+ 		 * Return the current set of mapped program,version
+ 		 */
+-		if (!svc_getargs(xprt, xdr_void, NULL))
++		if (!svc_getargs(xprt, (xdrproc_t) xdr_void, (caddr_t) NULL))
+ 			svcerr_decode(xprt);
+ 		else {
+ 			/* remote host authorization check */
+@@ -497,7 +502,7 @@
+ 			} else {
+ 				p = pmaplist;
+ 			}
+-			if ((!svc_sendreply(xprt, xdr_pmaplist,
++			if ((!svc_sendreply(xprt, (xdrproc_t) xdr_pmaplist,
+ 			    (caddr_t)&p)) && debugging) {
+ 				(void) fprintf(stderr, "svc_sendreply\n");
+ 				abort();
+@@ -645,7 +650,7 @@
+ 	timeout.tv_sec = 5;
+ 	timeout.tv_usec = 0;
+ 	a.rmt_args.args = buf;
+-	if (!svc_getargs(xprt, xdr_rmtcall_args, &a))
++	if (!svc_getargs(xprt, (xdrproc_t) xdr_rmtcall_args, (caddr_t) &a))
+ 		return;
+ 	/* host and service access control */
+ 	if (!check_callit(svc_getcaller(xprt), 
+@@ -674,9 +679,9 @@
+ 			   au->aup_uid, au->aup_gid, au->aup_len, au->aup_gids);
+ 		}
+ 		a.rmt_port = (u_long)port;
+-		if (clnt_call(client, a.rmt_proc, xdr_opaque_parms, &a,
+-		    xdr_len_opaque_parms, &a, timeout) == RPC_SUCCESS) {
+-			svc_sendreply(xprt, xdr_rmtcall_result, (caddr_t)&a);
++		if (clnt_call(client, a.rmt_proc, (xdrproc_t) xdr_opaque_parms, (char*) &a,
++		    (xdrproc_t) xdr_len_opaque_parms, (char*) &a, timeout) == RPC_SUCCESS) {
++			svc_sendreply(xprt, (xdrproc_t) xdr_rmtcall_result, (caddr_t)&a);
+ 		}
+ 		AUTH_DESTROY(client->cl_auth);
+ 		clnt_destroy(client);

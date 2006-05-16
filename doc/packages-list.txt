@@ -129,6 +129,7 @@
   * ncurses-5.4
   * net-tools-1.60
   * newt-utf8_0.50.17
+  * nfs-utils-1.0.8
   * noip_updater_v1.6
   * ntp-4.2.0
   * oinkmaster-1.2
@@ -146,6 +147,7 @@
   * perl-5.8.5
   * pkg-config-0.20
   * popt-1.7
+  * portmap_5beta
   * postfix-2.2.9
   * ppp-2.4.2
   * pptp-1.6.0

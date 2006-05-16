@@ -1,0 +1,17 @@
+Submitted By: Tushar Teredesai <tushar@linuxfromscratch.org>
+Date: 2003-10-04
+Initial Package Version: 5beta
+Origin: None
+Description: Fix compilation with recent glibc versions.
+--- portmap_5beta/portmap.c	2003-03-10 12:32:26.000000000 -0600
++++ portmap_5beta/portmap.c.new	2003-03-10 12:38:01.000000000 -0600
+@@ -129,7 +129,8 @@
+ static void callit();
+ struct pmaplist *pmaplist;
+ int debugging = 0;
+-extern int errno;
++#include <errno.h>
++/* extern int errno; */
+ 
+ #include "pmap_check.h"
+ 
