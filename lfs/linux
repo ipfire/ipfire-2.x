@@ -36,7 +36,7 @@ VER        = 2.4.31
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.kernel.org/pub/linux/kernel/v2.4
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
@@ -73,7 +73,7 @@ objects =$(DL_FILE) \
 	netfilter-layer7-v2.1.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-openswan-1.0.10rc2.tar.gz		= http://ipcop.ath.cx/openswan-1.0.10rc2.tar.gz
+openswan-1.0.10rc2.tar.gz		= $(URL_IPFIRE)/openswan-1.0.10rc2.tar.gz
 patch-o-matic-ng-20060206.tar.bz2    	= ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-20060206.tar.bz2
 iptables-1.3.5.tar.bz2              	= http://www.netfilter.org/files/iptables-1.3.5.tar.bz2
 kbc_option_2420.patch                   = http://developer.osdl.org/rddunlap/patches/kbc_option_2420.patch

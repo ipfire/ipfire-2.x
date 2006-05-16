@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Alan Hourihane <alanh@fairlite.demon.co.uk>                      #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: wireless,v 1.3.2.5 2006/01/30 22:57:23 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,8 +30,7 @@ VER        = 27
 
 THISAPP    = wireless_tools.$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-#DL_FROM    = http://pcmcia-cs.sourceforge.net/ftp/contrib
-DL_FROM    = $(URL_IPCOP)
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

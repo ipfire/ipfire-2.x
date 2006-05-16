@@ -30,7 +30,7 @@ VER        = 1.5.1
 
 THISAPP    = xampp-linux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://ovh.dl.sourceforge.net/sourceforge/xampp
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 	PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-xampp-linux-devel-$(VER).tar.gz 	= http://switch.dl.sourceforge.net/sourceforge/xampp/xampp-linux-devel-$(VER).tar.gz
-PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz = http://switch.dl.sourceforge.net/sourceforge/xamppaddon/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
+xampp-linux-devel-$(VER).tar.gz 	= $(URL_IPFIRE)/xampp-linux-devel-$(VER).tar.gz
+PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz = $(URL_IPFIRE)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
 
 $(DL_FILE)_MD5 = baefcf7ac3629a641c7b75c547564a3f
 xampp-linux-devel-$(VER).tar.gz_MD5 = e4ab1c867551a831ae6af38fa3c4dfd9

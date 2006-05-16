@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: libusb,v 1.4.2.2 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 0.7RC1
 
 THISAPP    = pam_mysql-0.7RC1
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://switch.dl.sourceforge.net/sourceforge/pam-mysql
+DL_FROM    = $(URL_SFNET)/pam-mysql
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
