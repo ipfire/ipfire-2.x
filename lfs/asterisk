@@ -26,17 +26,17 @@
 
 include Config
 
-VER        = 1.2.4
+VER        = 1.2.7.1
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.asterisk-support.de/mirror/asterisk-1.2.4
+DL_FROM    = http://www.asterisk-support.de/mirror/asterisk-1.2.7.1
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ASTERISK   = $(THISAPP)
-ZAPTEL     = zaptel-1.2.3
-BRISTUFF   = bristuff-0.3.0-PRE-1l
+ZAPTEL     = zaptel-1.2.5
+BRISTUFF   = bristuff-0.3.0-PRE-1o
 LIBPRI     = libpri-1.2.2
 SPANDSP    = spandsp-0.0.2pre25
 OH323      = asterisk-oh323-0.7.3
@@ -63,9 +63,9 @@ app_txfax.c = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x
 apps_Makefile.patch = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x/apps_Makefile.patch
 $(OH323).tar.gz = http://www.inaccessnetworks.com/projects/asterisk-oh323/download/$(OH323).tar.gz
 
-$(DL_FILE)_MD5 = 14721abdc85fc3381db275b61dffce2d
-$(ZAPTEL).tar.gz_MD5 = 9bcb705458f9b20a9644310298a9cd4d
-$(BRISTUFF).tar.gz_MD5 = 81941539b03b6ac8f193b33451e0a740
+$(DL_FILE)_MD5 = 5c4b473eee2fbc2cb9e346f0564ef970
+$(ZAPTEL).tar.gz_MD5 = 8c8561259d29a314aa5a076050124697
+$(BRISTUFF).tar.gz_MD5 = 93bb8a5661aaf3022cf4a102ea061f83
 $(LIBPRI).tar.gz_MD5 = efce9c3699110588df5e4cf09eae01d9
 app_rxfax.c_MD5 = ab6983b51c412883545b36993d704999
 app_txfax.c_MD5 = 8c8fcb263b76897022b4c28052a7b439
@@ -111,40 +111,78 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar xfz $(DIR_DL)/$(LIBPRI).tar.gz && \
 	tar xfz $(DIR_DL)/$(ASTERISK).tar.gz && \
 	tar xfz $(DIR_DL)/$(OH323).tar.gz
+
 	# Build Zaptel
 	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && \
-	patch -Np1 < $(DIR_SRC)/src/patches/asterisk-1.2.4-zaptel-$(BRISTUFF).patch && \
-	make clean all KVERS=$(KVER) && \
+	patch -Np1 < $(DIR_SRC)/src/patches/zaptel.patch && \
+	make clean && \
+	make all KVERS=$(KVER)-smp && \
+	make install KVERS=$(KVER)-smp && \
+	make clean && \
+	make all KVERS=$(KVER) && \
 	make install KVERS=$(KVER)
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 zaptel.h /usr/include/linux/zaptel.h
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 zconfig.h /usr/include/linux/zconfig.h
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 ecdis.h /usr/include/linux/ecdis.h
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 fasthdlc.h /usr/include/linux/fasthdlc.h
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 kb1ec.h /usr/include/linux/kb1ec.h
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 kb1ec_const.h /usr/include/linux/kb1ec_const.h
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 biquad.h /usr/include/linux/biquad.h
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ZAPTEL) && install -D -m 644 arith.h /usr/include/linux/arith.h
+	ln -nf -v /usr/include/linux/zaptel.h /usr/include/zaptel.h
+	ln -nf -v /usr/include/linux/zconfig.h /usr/include/zconfig.h
+	ln -nf -v /usr/include/linux/ecdis.h /usr/include/ecdis.h
+	ln -nf -v /usr/include/linux/fasthdlc.h /usr/include/fasthdlc.h
+	ln -nf -v /usr/include/linux/kb1ec.h /usr/include/kb1ec.h
+	ln -nf -v /usr/include/linux/kb1ec_const.h /usr/include/kb1ec_const.h
+	ln -nf -v /usr/include/linux/biquad.h /usr/include/biquad.h
+	ln -nf -v /usr/include/linux/arith.h /usr/include/arith.h
+
 	# Build Libpri
 	cd $(DIR_SRC)/$(BRISTUFF)/$(LIBPRI) && \
-	patch -Np1 < $(DIR_SRC)/src/patches/asterisk-1.2.4-libpri-$(BRISTUFF).patch && \
+	patch -Np1 < $(DIR_SRC)/src/patches/libpri.patch && \
 	make clean all KVERS=$(KVER) && \
 	make install KVERS=$(KVER)
+
+	# Build libgsmat
+	cd $(DIR_SRC)/$(BRISTUFF)/libgsmat-0.0.1 && \
+	make clean all && \
+	make install
+
+	# Build uno/duo/quad GSM PCI driver
+	cd $(DIR_SRC)/$(BRISTUFF)/ztgsm && \
+	make clean linux24 && \
+	install -D -m 644 ztgsm.o /lib/modules/$(KVER)/misc/ztgsm.o
+
 	# Build qozap
 	cd $(DIR_SRC)/$(BRISTUFF)/qozap && \
 	make clean linux24 && \
 	install -D -m 644 qozap.o /lib/modules/$(KVER)/misc/qozap.o
+
 	# Build cwain
 	cd $(DIR_SRC)/$(BRISTUFF)/cwain && \
 	make clean linux24 && \
 	install -D -m 644 cwain.o /lib/modules/$(KVER)/misc/cwain.o
+
 	# Build zaphfc
 	cd $(DIR_SRC)/$(BRISTUFF)/zaphfc && \
-	make clean linux24 && \
+	patch -Np1 < $(DIR_SRC)/src/patches/zaphfc_0.3.0-PRE-1o_florz-12.diff && \
+	cd $(DIR_SRC)/$(BRISTUFF)/zaphfc && make clean linux24 && \
 	install -D -m 644 zaphfc.o /lib/modules/$(KVER)/misc/zaphfc.o
+
 	# Build Asterisk
 	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && \
-	patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-ipfire-$(BRISTUFF).patch && \
-	patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-iax2-$(BRISTUFF).patch && \
-	cp -fv $(DIR_DL)/app_{r,t}xfax.c $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
-	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
-	patch < $(DIR_DL)/apps_Makefile.patch && \
+	patch -Np1 < $(DIR_SRC)/src/patches/asterisk.patch # && \
+	### FAX geht noch nicht mit Asterisk 1.2.7.1
+	# cp -fv $(DIR_DL)/app_{r,t}xfax.c $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
+	# cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
+	# patch < $(DIR_DL)/apps_Makefile.patch && \
 	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && \
 	make clean && \
 	make all && \
 	make install && \
 	make samples
+
 	# Build OH323
 	cd $(DIR_SRC)/$(BRISTUFF)/$(OH323) && \
 	make ASTERISKINCDIR=$(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/include OH323WRAPLIBDIR=/usr/lib && \

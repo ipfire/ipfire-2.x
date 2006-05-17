@@ -1,4 +1,14 @@
 ------------------------------------------------------------------------
+r118 | ms | 2006-05-16 13:12:49 +0200 (Di, 16 Mai 2006) | 7 lines
+
+Hinzugefügt:
+  * NFS
+  * Portmap - braucht man für NFS
+Geändert:
+  * IP_CONNTRACK-Patch erstellt damit die Verbindungsanzeige im Webinterface ohne Workaround funktioniert. (Noch nicht vollständig getestet!)
+  * ./make.sh commit optimiert
+
+------------------------------------------------------------------------
 r117 | ms | 2006-05-16 13:01:06 +0200 (Di, 16 Mai 2006) | 3 lines
 
 Quellenupdate u.a. wegen Serverausfall bei Sourceforge.net

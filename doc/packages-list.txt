@@ -19,7 +19,7 @@
   * apache_1.3.34
   * arping-2.05
   * as86-0.16.17
-  * asterisk-1.2.4
+  * asterisk-1.2.7.1
   * autoconf-2.59
   * automake-1.8.4
   * bash-2.05b

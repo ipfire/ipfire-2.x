@@ -1,6 +1,8 @@
-diff -ur zaptel-1.2.3.orig/zaptel.c zaptel-1.2.3/zaptel.c
---- zaptel-1.2.3.orig/zaptel.c	2005-12-17 03:04:05.000000000 +0100
-+++ zaptel-1.2.3/zaptel.c	2006-01-31 09:28:29.000000000 +0100
+Only in zaptel-1.2.5: version.h
+Only in zaptel-1.2.5: zaptel
+diff -ur zaptel-1.2.5.orig/zaptel.c zaptel-1.2.5/zaptel.c
+--- zaptel-1.2.5.orig/zaptel.c	2005-12-17 03:04:05.000000000 +0100
++++ zaptel-1.2.5/zaptel.c	2006-04-10 10:39:37.000000000 +0200
 @@ -4913,11 +4913,40 @@
  					*(txb++) = fasthdlc_tx_run_nocheck(&ms->txhdlc);
  				}
@@ -114,9 +116,9 @@ diff -ur zaptel-1.2.3.orig/zaptel.c zaptel-1.2.3/zaptel.c
  			} else {
  				/* Not HDLC */
  				memcpy(buf + ms->readidx[ms->inreadbuf], rxb, left);
-diff -ur zaptel-1.2.3.orig/zaptel.h zaptel-1.2.3/zaptel.h
---- zaptel-1.2.3.orig/zaptel.h	2005-12-17 03:04:05.000000000 +0100
-+++ zaptel-1.2.3/zaptel.h	2006-01-31 09:28:29.000000000 +0100
+diff -ur zaptel-1.2.5.orig/zaptel.h zaptel-1.2.5/zaptel.h
+--- zaptel-1.2.5.orig/zaptel.h	2005-12-17 03:04:05.000000000 +0100
++++ zaptel-1.2.5/zaptel.h	2006-04-10 10:39:37.000000000 +0200
 @@ -994,6 +994,13 @@
  	int do_ppp_error;
  	struct sk_buff_head ppp_rq;
@@ -151,9 +153,9 @@ diff -ur zaptel-1.2.3.orig/zaptel.h zaptel-1.2.3/zaptel.h
  struct zt_span {
  	spinlock_t lock;
  	void *pvt;			/* Private stuff */
-diff -ur zaptel-1.2.3.orig/zconfig.h zaptel-1.2.3/zconfig.h
---- zaptel-1.2.3.orig/zconfig.h	2005-11-29 19:42:08.000000000 +0100
-+++ zaptel-1.2.3/zconfig.h	2006-01-31 09:28:29.000000000 +0100
+diff -ur zaptel-1.2.5.orig/zconfig.h zaptel-1.2.5/zconfig.h
+--- zaptel-1.2.5.orig/zconfig.h	2005-11-29 19:42:08.000000000 +0100
++++ zaptel-1.2.5/zconfig.h	2006-04-10 10:39:37.000000000 +0200
 @@ -152,4 +152,10 @@
   */
  /* #define FXSFLASH */
