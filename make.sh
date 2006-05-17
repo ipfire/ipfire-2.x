@@ -671,6 +671,7 @@ buildipcop() {
   ipcopmake postfix
   ipcopmake fetchmail
   ipcopmake cyrusimap
+  ipcopmake procmail
   ipcopmake stund
 #  ipcopmake lpd
   ipcopmake openvpn
