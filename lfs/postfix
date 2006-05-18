@@ -80,7 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				'AUXLIBS=-L/usr/lib -L/opt/lampp/lib/mysql -L/opt/lampp/lib -lmysqlclient -lz -lm -lssl -lsasl2 -lcrypto -lpq'
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && sh postfix-install -non-interactive
-	cp -v /usr/src/config/etc/aliases /etc/aliases
-	cd /etc/ && postmap aliases
+	## Install configuration
+	rm -vf /etc/postfix/main.cf.default
+	cp -vf $(DIR_CONF)/postfix/* /etc/postfix
+	mv -vf /etc/postfix/aliases /etc/aliases
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
