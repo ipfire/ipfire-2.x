@@ -33,3 +33,4 @@ postfix:x:107:
 postdrop:x:108:
 clamav:x:109:
 rsyncd:x:48:
+amavis:x:110:

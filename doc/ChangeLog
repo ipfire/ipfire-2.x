@@ -1,4 +1,17 @@
 ------------------------------------------------------------------------
+r122 | ms | 2006-05-18 11:14:22 +0200 (Do, 18 Mai 2006) | 10 lines
+
+Hinzugefügt:
+  * Razor - Spamkiller
+  * ./make.sh make - Holt erst die Pakete und kompiliert dann...
+Geändert:
+  * Asterisk - Compiler-Optionen
+  * Postfix - nur optische Änderungen
+  * ROOTFILES.i386 - Wegen saslauthd-Änderungen einige Dateien gestrichen
+  * ./make.sh changelog bearbeitet
+  * ChangeLog-Update
+
+------------------------------------------------------------------------
 r121 | ms | 2006-05-17 19:04:11 +0200 (Mi, 17 Mai 2006) | 3 lines
 
 Hinzugefügt:

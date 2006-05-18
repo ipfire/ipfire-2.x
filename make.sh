@@ -623,6 +623,15 @@ buildipcop() {
   ipcopmake Net-DNS
   ipcopmake Net-IPv4Addr
   ipcopmake Net_SSLeay
+  ipcopmake IO-Stringy
+  ipcopmake Unix-Syslog
+  ipcopmake Mail-Tools
+  ipcopmake MIME-Tools
+  ipcopmake Net-Server
+  ipcopmake Convert-TNEF
+  ipcopmake Convert-UUlib
+  ipcopmake Archive-Tar
+  ipcopmake Archive-Zip
   ipcopmake noip_updater
   ipcopmake ntp
   ipcopmake oinkmaster
@@ -645,6 +654,7 @@ buildipcop() {
   echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
   ipcopmake berkeley
+  ipcopmake BerkeleyDB ## The Perl module
   ipcopmake libtiff
   ipcopmake libjpeg
   ipcopmake libxml2
@@ -676,7 +686,8 @@ buildipcop() {
   ipcopmake procmail
   ipcopmake clamav
   ipcopmake razor
-#  ipcopmake spamassassin
+  ipcopmake spamassassin
+  ipcopmake amavisd
   echo -ne "`date -u '+%b %e %T'`: Building VoIP-Server \n" | tee -a $LOGFILE
   ipcopmake stund
   ipcopmake asterisk
@@ -913,11 +924,12 @@ clean)
 	fi
 	;;
 dist)
-	echo "Updating & building source package from SVN: "
+	echo -ne "Updating & building source package from SVN: "
 	svn up > /dev/null
 	svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
 	tar cfz ipfire-source-`date +'%Y-%m-%d'`-r`svn info | grep Revision | cut -c 11-`.tar.gz ipfire-source
 	rm ipfire-source/ -r
+	echo "Finished!"
 	;;
 newpak)
 	# create structure for a new package
@@ -1060,11 +1072,16 @@ commit)
 	;;
 make)
 	echo "Do a complete compile:"	
-	./make.sh prefetch
-	./make.sh build
+	./make.sh prefetch && ./make.sh build
+	;;
+diff)
+	echo -ne "Make a local diff to last SVN revision: "
+	svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
+	echo "Finished!"
+	echo "Diff was successfully saved to ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff"
 	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|dist|gettoolchain|make|newpak|prefetch|shell|toolchain|update}"
+	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|shell|toolchain|update}"
 	cat doc/make.sh-usage
 	exit 1
 	;;

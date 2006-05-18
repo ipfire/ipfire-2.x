@@ -1,26 +1,37 @@
 ====== List of softwares used to build IPFire Version: 1.4 ======
   * 3c5x9setup-1.00
   * 3cp4218-2003-10-22
+  * Archive-Tar-1.29
+  * Archive-Zip-1.16
+  * BerkeleyDB-0.27
   * CnxADSL-TgrATMcln-20041004
   * Compress-Zlib-1.35
+  * Convert-TNEF-0.17
+  * Convert-UUlib-1.06
   * Digest-1.08
   * Digest-HMAC-1.01
   * Digest-SHA1-2.10
   * GD-2.12
   * HTML-Parser-3.45
   * HTML-Tagset-3.04
+  * IO-stringy-2.110
   * Linux-PAM-0.99.3.0
+  * MIME-tools-5.420
+  * Mail-SpamAssassin-3.1.1
+  * MailTools-1.74
   * Net-DNS-0.47
   * Net-IPv4Addr-0.10
+  * Net-Server-0.93
   * Net_SSLeay.pm-1.25
   * Python-2.3.4
   * URI-1.35
+  * Unix-Syslog-0.100
+  * amavisd-new-2.4.1
   * amedyn-2004-08-04
   * apache_1.3.34
   * arping-2.05
   * as86-0.16.17
   * asterisk-1.2.7.1
-  * asterisk-1.2.7.1_1st
   * autoconf-2.59
   * automake-1.8.4
   * bash-2.05b
@@ -158,6 +169,7 @@
   * psmisc-21.4
   * pulsar-4.0.19
   * pwlib-ipfire1
+  * razor-agents-2.81
   * rp-pppoe-3.5
   * rrdtool-1.0.49
   * rsync-2.6.8
