@@ -661,6 +661,7 @@ buildipcop() {
   ipcopmake xinetd
   ipcopmake ghostscript
   ipcopmake cups
+#  ipcopmake lpd
   ipcopmake samba
   ipcopmake sudo
   ipcopmake mc
@@ -668,20 +669,23 @@ buildipcop() {
   ipcopmake openh323
   ipcopmake wget
   ipcopmake bridge-utils
+  echo -ne "`date -u '+%b %e %T'`: Building Mailserver \n" | tee -a $LOGFILE
   ipcopmake postfix
   ipcopmake fetchmail
   ipcopmake cyrusimap
   ipcopmake procmail
+  ipcopmake clamav
+  ipcopmake razor
+#  ipcopmake spamassassin
+  echo -ne "`date -u '+%b %e %T'`: Building VoIP-Server \n" | tee -a $LOGFILE
   ipcopmake stund
-#  ipcopmake lpd
-  ipcopmake openvpn
   ipcopmake asterisk
+  ipcopmake openvpn
   ipcopmake edonkeyclc
   ipcopmake sane
+  echo -ne "`date -u '+%b %e %T'`: Building MP3-Server \n" | tee -a $LOGFILE
   ipcopmake lame
   ipcopmake gnump3d
-  ipcopmake clamav
-#  ipcopmake spamassassin
   ipcopmake rsync
   ipcopmake tcpwrapper
   ipcopmake portmap
@@ -853,7 +857,7 @@ shell)
 	;;
 changelog)
 	echo -n "Loading new Changelog from SVN: "
-	svn log > doc/ChangeLog
+	svn log http://svn.ipfire.eu/svn/ipfire > doc/ChangeLog
 	echo "Finished!"
 	;;
 check)
@@ -902,8 +906,8 @@ clean)
 	done
 	rm -rf $BASEDIR/build
 	rm -rf $BASEDIR/cdrom
+	rm -rf $BASEDIR/packages
 	rm -rf $BASEDIR/log
-	rm -f $BASEDIR/updates/$VERSION/patch.tar.gz;
 	if [ -h /tools ]; then
 		rm -f /tools
 	fi
@@ -1039,6 +1043,7 @@ gettoolchain)
 			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
 			echo "`date -u '+%b %e %T'`: Uncompressing toolchain" | tee -a $LOGFILE
 			cd $BASEDIR && tar xvfz cache/$PACKAGE.tar.gz -C .
+			rm -vf $BASEDIR/cache/$PACKAGE.{tar.gz,md5}
 		else
 			exiterror "$PACKAGE.md5 did not match, check downloaded package"
 		fi
@@ -1053,8 +1058,13 @@ commit)
 	svn commit
 	svn up > /dev/null
 	;;
+make)
+	echo "Do a complete compile:"	
+	./make.sh prefetch
+	./make.sh build
+	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|dist|gettoolchain|newpak|prefetch|shell|toolchain|update}"
+	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|dist|gettoolchain|make|newpak|prefetch|shell|toolchain|update}"
 	cat doc/make.sh-usage
 	exit 1
 	;;

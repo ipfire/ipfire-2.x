@@ -26,11 +26,11 @@
 
 include Config
 
-VER        = 2.2.9
+VER        = 2.81
 
-THISAPP    = postfix-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://netmirror.org/postfix.org/official
+THISAPP    = razor-agents-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_SFNET)/razor
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -38,11 +38,14 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	razor-agents-sdk-2.07.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+razor-agents-sdk-2.07.tar.bz2 = $(DL_FROM)/razor-agents-sdk-2.07.tar.bz2
 
-$(DL_FILE)_MD5 = be78631bd9b6bf7735e43abfa54d69f6
+$(DL_FILE)_MD5 = 1a21d84f3a8291f73e7f1d3dd36d9d7f
+razor-agents-sdk-2.07.tar.bz2_MD5 = 3b36f65f85400ee5428afae4a15f7673
 
 install : $(TARGET)
 
@@ -53,7 +56,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh postfix $(THISAPP)-ipfire-beta-1
+	make-packages.sh razor $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -74,13 +77,11 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make -f Makefile.init makefiles \
-				'CCARGS=-DDEF_DAEMON_DIR=\"/usr/lib/postfix\" -DDEF_MANPAGE_DIR=\"/usr/share/man\" -DUSE_TLS -DUSE_SALS_AUTH -DHAS_PGSQL -I/usr/include/openssl -DHAS_MYSQL -I/opt/lampp/include/mysql -I/usr/include/sasl -I/opt/lampp/include' \
-				'AUXLIBS=-L/usr/lib -L/opt/lampp/lib/mysql -L/opt/lampp/lib -lmysqlclient -lz -lm -lssl -lsasl2 -lcrypto -lpq'
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && sh postfix-install -non-interactive
-	cp -v /usr/src/config/etc/aliases /etc/aliases
-	cd /etc/ && postmap aliases
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && make && make install
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/razor-agents-sdk-2.07.tar.bz2
+	cd $(DIR_SRC)/razor-agents-sdk-2.07 && perl Makefile.PL
+	cd $(DIR_SRC)/razor-agents-sdk-2.07 && make && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

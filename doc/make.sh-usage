@@ -18,6 +18,7 @@ Maintainer / advanced commands
 		another time
          dist : Mainly produce a diff from previous version to track wich
 		files have been changed
+         make : Does a complete compile with fetching source packages.
 newpak <name> : Create a new package with name: <name>.
     toolchain : Create our own toolchain package to save 20% of build time.
         shell : Enter a shell inside the chroot, used to tune lfs script

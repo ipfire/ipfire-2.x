@@ -171,22 +171,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -D -m 644 zaphfc.o /lib/modules/$(KVER)/misc/zaphfc.o
 
 	# Build Asterisk
-	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && \
-	patch -Np1 < $(DIR_SRC)/src/patches/asterisk.patch # && \
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	patch -Np1 < $(DIR_SRC)/src/patches/asterisk.patch
 	### FAX geht noch nicht mit Asterisk 1.2.7.1
 	# cp -fv $(DIR_DL)/app_{r,t}xfax.c $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
-	# cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
-	# patch < $(DIR_DL)/apps_Makefile.patch && \
-	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && \
-	make clean && \
-	make all && \
-	make install && \
-	make samples
+	# cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && patch < $(DIR_DL)/apps_Makefile.patch
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make clean
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make all
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make install
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make samples
 
 	# Build OH323
 	cd $(DIR_SRC)/$(BRISTUFF)/$(OH323) && \
 	make ASTERISKINCDIR=$(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/include OH323WRAPLIBDIR=/usr/lib && \
 	make install ASTERISKINCDIR=$(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/include OH323WRAPLIBDIR=/usr/lib
-	@rm -rf $(DIR_SRC)/$(BRISTUFF) $(DIR_SRC)/{pwlib,openh323}
+	@rm -rf $(DIR_SRC)/$(BRISTUFF) ## Do not delete any more cause to save time on a recompile: $(DIR_SRC)/{pwlib,openh323}
 	@$(POSTBUILD)
 

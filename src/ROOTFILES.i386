@@ -23266,7 +23266,7 @@ usr/sbin/pppoa3
 ##usr/lib/perl5/site_perl/5.8.5/alpha-linux/auto/CGI/SpeedyCGI/.packlist
 #usr/lib/perl5/site_perl/5.8.5/CGI/SpeedyCGI.pm
 ##
-## squid-2.5.STABLE12
+## squid-2.5.STABLE13
 ##
 #etc/squid
 #etc/squid/cachemgr.conf
@@ -24911,35 +24911,7 @@ usr/lib/libsasl2.la
 usr/lib/libsasl2.so
 usr/lib/libsasl2.so.2
 usr/lib/libsasl2.so.2.0.21
-#usr/lib/sasl2
-usr/lib/sasl2/libanonymous.la
-usr/lib/sasl2/libanonymous.so
-usr/lib/sasl2/libanonymous.so.2
-usr/lib/sasl2/libanonymous.so.2.0.21
-usr/lib/sasl2/libcrammd5.la
-usr/lib/sasl2/libcrammd5.so
-usr/lib/sasl2/libcrammd5.so.2
-usr/lib/sasl2/libcrammd5.so.2.0.21
-usr/lib/sasl2/libdigestmd5.la
-usr/lib/sasl2/libdigestmd5.so
-usr/lib/sasl2/libdigestmd5.so.2
-usr/lib/sasl2/libdigestmd5.so.2.0.21
-usr/lib/sasl2/libotp.la
-usr/lib/sasl2/libotp.so
-usr/lib/sasl2/libotp.so.2
-usr/lib/sasl2/libotp.so.2.0.21
-usr/lib/sasl2/libplain.la
-usr/lib/sasl2/libplain.so
-usr/lib/sasl2/libplain.so.2
-usr/lib/sasl2/libplain.so.2.0.21
-usr/lib/sasl2/libsasldb.la
-usr/lib/sasl2/libsasldb.so
-usr/lib/sasl2/libsasldb.so.2
-usr/lib/sasl2/libsasldb.so.2.0.21
-usr/lib/sasl2/libsql.la
-usr/lib/sasl2/libsql.so
-usr/lib/sasl2/libsql.so.2
-usr/lib/sasl2/libsql.so.2.0.21
+usr/lib/sasl2
 usr/sbin/saslauthd
 usr/sbin/sasldblistusers2
 usr/sbin/saslpasswd2

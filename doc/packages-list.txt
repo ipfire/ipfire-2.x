@@ -20,6 +20,7 @@
   * arping-2.05
   * as86-0.16.17
   * asterisk-1.2.7.1
+  * asterisk-1.2.7.1_1st
   * autoconf-2.59
   * automake-1.8.4
   * bash-2.05b
@@ -38,7 +39,6 @@
   * coreutils-5.93
   * cups-1.1.23-source
   * cxacru-2003-10-05
-  * cyrus-imapd-2.2.12
   * cyrus-imapd-2.2.13
   * cyrus-sasl-2.1.21
   * cyrus-sasl-2.1.21-ldap
