@@ -73,6 +73,7 @@
   * fcdslsl-suse8.2-03.11.02
   * fcdslslusb-suse8.2-03.11.04
   * fcdslusb-suse8.2-03.11.02
+  * fcpci-suse8.2-03.11.02
   * fcron-2.0.2
   * fetchmail-6.3.4
   * file-4.16

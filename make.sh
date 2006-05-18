@@ -540,6 +540,7 @@ buildipcop() {
  	ipcopmake fcdslsl 	SMP=1
  	ipcopmake fcdslusb 	SMP=1
  	ipcopmake fcdslslusb 	SMP=1
+	ipcopmake fcpci	SMP=1
 	ipcopmake pulsar 	SMP=1
   	ipcopmake unicorn 	SMP=1
   fi
@@ -559,7 +560,8 @@ buildipcop() {
  	ipcopmake fcdsl2 	
  	ipcopmake fcdslsl 	
  	ipcopmake fcdslusb 	
- 	ipcopmake fcdslslusb 	
+ 	ipcopmake fcdslslusb 
+  	ipcopmake fcpci	
 	ipcopmake pulsar 	
   	ipcopmake unicorn 	
   fi

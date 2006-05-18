@@ -1,4 +1,20 @@
 ------------------------------------------------------------------------
+r124 | ms | 2006-05-18 13:39:26 +0200 (Do, 18 Mai 2006) | 3 lines
+
+Geändert:
+  * Erste Postfix-Standard-Konfiguration
+
+------------------------------------------------------------------------
+r123 | ms | 2006-05-18 13:14:03 +0200 (Do, 18 Mai 2006) | 7 lines
+
+Hinzugefügt:
+  * Amavisd-new
+  * Spamassassin (geht nun)
+  * Sämtlich Perlmodule für Amavis
+Geändert:
+  * ./make.sh make bearbeitet
+
+------------------------------------------------------------------------
 r122 | ms | 2006-05-18 11:14:22 +0200 (Do, 18 Mai 2006) | 10 lines
 
 Hinzugefügt:
