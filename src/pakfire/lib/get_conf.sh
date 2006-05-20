@@ -1,15 +1,15 @@
 #!/bin/bash
 ############################################################################################
-# Version 0.1a, Copyright (C) 2006  Peter Schaelchli Für IPFire besteht KEINERLEI GARANTIE;#
-# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen;      #
+# Version 0.1a, Copyright (C) 2006  by IPFire.org						  #
+# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
 ############################################################################################
 
 # Conf File festlegen
-CONF_File=/opt/pakfire/pakfire.conf
+CONF_FILE=/opt/pakfire/pakfire.conf
 
-if [ -r $CONF_File ]
+if [ -r $CONF_FILE ]
 then 
- STRI=$(grep $1 $CONF_File)
+ STRI=$(grep $1 $CONF_FILE)
  STRI=${STRI#*=}
 fi
 

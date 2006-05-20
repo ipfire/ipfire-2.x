@@ -653,7 +653,8 @@ buildipcop() {
   ipcopmake wireless
   ipcopmake libsafe
   ipcopmake 3c5x9setup
-  echo -ne "`date -u '+%b %e %T'`: Building IPFire modules \n" | tee -a $LOGFILE
+  echo -ne "`date -u '+%b %e %T'`: Building ### IPFire modules ### \n" | tee -a $LOGFILE
+  ipcopmake pakfire
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
   ipcopmake berkeley
   ipcopmake BerkeleyDB ## The Perl module
@@ -673,7 +674,7 @@ buildipcop() {
   ipcopmake xinetd
   ipcopmake ghostscript
   ipcopmake cups
-#  ipcopmake lpd
+#  ipcopmake lpd ## Im Moment aus, da CUPS vorhanden ist.
   ipcopmake samba
   ipcopmake sudo
   ipcopmake mc
@@ -681,7 +682,7 @@ buildipcop() {
   ipcopmake openh323
   ipcopmake wget
   ipcopmake bridge-utils
-  echo -ne "`date -u '+%b %e %T'`: Building Mailserver \n" | tee -a $LOGFILE
+  echo -ne "`date -u '+%b %e %T'`: Building ### Mailserver ### \n" | tee -a $LOGFILE
   ipcopmake postfix
   ipcopmake fetchmail
   ipcopmake cyrusimap
@@ -690,13 +691,13 @@ buildipcop() {
   ipcopmake razor
   ipcopmake spamassassin
   ipcopmake amavisd
-  echo -ne "`date -u '+%b %e %T'`: Building VoIP-Server \n" | tee -a $LOGFILE
+  echo -ne "`date -u '+%b %e %T'`: Building ### VoIP-Server ### \n" | tee -a $LOGFILE
   ipcopmake stund
   ipcopmake asterisk
   ipcopmake openvpn
   ipcopmake edonkeyclc
   ipcopmake sane
-  echo -ne "`date -u '+%b %e %T'`: Building MP3-Server \n" | tee -a $LOGFILE
+  echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
   ipcopmake lame
   ipcopmake gnump3d
   ipcopmake rsync

@@ -26436,3 +26436,8 @@ usr/sbin/visudo
 #usr/share/man/man8/sudo.8
 #usr/share/man/man8/sudoedit.8
 #usr/share/man/man8/visudo.8
+##
+## pakfire
+##
+/opt/pakfire
+/etc/pakfire.conf

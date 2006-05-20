@@ -1,7 +1,7 @@
 #!/bin/bash
 ############################################################################################
-# Version 0.1a, Copyright (C) 2006  Peter Schaelchli Für IPFire besteht KEINERLEI GARANTIE;#
-# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen;      #
+# Version 0.1a, Copyright (C) 2006  by IPFire.org						  #
+# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
 ############################################################################################
 
 # Source Verzeichnis

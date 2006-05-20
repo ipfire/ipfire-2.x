@@ -6,12 +6,12 @@
 
 case "$1" in
 
-	renewlist) 	$(get_conf.sh HOME)/lib/get_mirror.sh
+	update) 	$(get_conf.sh HOME)/lib/get_mirror.sh
 			$(get_conf.sh HOME)/lib/get_list.sh
 			$(get_conf.sh HOME)/lib/check_pak.sh
-		;;
+	;;
 
-	*) echo -e "pakfire install [Paket]\npakfire update [Paket]\npakfiren remove [Paket]\npakfire renewlist"
+	*) echo -e "IPFire - Pakfire\nHilfe:\npakfire install [Paket]\t- Installiert ein neues Paket.\npakfire update\t\t- Lädt die Liste aller Pakete neu.\npakfire remove [Paket]\t- Deinstalliert ein Paket.\npakfire upgrade\t\t- Überprüft nach neuen Updates."
 
 esac
 

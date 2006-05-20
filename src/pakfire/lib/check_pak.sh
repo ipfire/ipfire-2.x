@@ -1,26 +1,26 @@
 #!/bin/bash
 ############################################################################################
-# Version 0.1a, Copyright (C) 2006  Peter Schaelchli Für IPFire besteht KEINERLEI GARANTIE;#
-# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen;      #
+# Version 0.1a, Copyright (C) 2006  by IPFire.org						  #
+# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
 ############################################################################################
 
 # Verzeichnis von Pakman
 VERZ=$(get_conf.sh HOME)
 
-# Update Verzeichnis
+# Update-Verzeichnis
 UP_DIR=$(get_conf.sh UP_DIR)
 
 # Verzeichnis mit nicht Installierten Paketen
 NIP_DIR=$(get_conf.sh NIP_DIR)
 
 # Verzeichnis mit Installierten Paketen
-IP_DIR=$(get_conf.sh ^IP_DIR)
+IP_DIR=$(get_conf.sh IP_DIR)
 
 # Patchliste
-PATCH_LIST=$(get_conf.sh DEST_DIR)$(get_conf.sh LIST_NAME)
+PATCH_LIST=$(get_conf.sh DEST_DIR)/$(get_conf.sh LIST_NAME)
 
 # Zerlegte Listen
-ZERL_PATCH=$(get_conf.sh DEST_DIR)zerl_
+ZERL_PATCH=$(get_conf.sh DEST_DIR)/zerl_
 
 # Listen Verzeichnis
 LIST_DIR=$(get_conf.sh DEST_DIR)

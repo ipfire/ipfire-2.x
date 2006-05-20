@@ -6,8 +6,6 @@
 #
 # (c) The SmoothWall Team
 #
-# $Id: shutdown.cgi,v 1.5.2.10 2006/01/02 16:21:00 eoberlander Exp $
-#
 
 use strict;
 
@@ -216,7 +214,7 @@ END
 <div align='center'>
 <table width='100%' bgcolor='#ffffff'>
 <tr><td align='center'>
-<br /><br /><img src='/ipcop_big.gif' /><br /><br /><br />
+<br /><br /><img src='/ipfire_big.gif' /><br /><br /><br />
 </td></tr>
 </table>
 <br />
