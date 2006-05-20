@@ -1,0 +1,18 @@
+#!/bin/bash
+############################################################################################
+# Version 0.1a, Copyright (C) 2006  by IPFire.org						  #
+# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
+############################################################################################
+
+case "$1" in
+
+	renewlist) 	$(get_conf.sh HOME)/lib/get_mirror.sh
+			$(get_conf.sh HOME)/lib/get_list.sh
+			$(get_conf.sh HOME)/lib/check_pak.sh
+		;;
+
+	*) echo -e "pakfire install [Paket]\npakfire update [Paket]\npakfiren remove [Paket]\npakfire renewlist"
+
+esac
+
+################################### EOF ####################################################
