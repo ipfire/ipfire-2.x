@@ -9,8 +9,6 @@
 # Copyright (c) 2002/08/23 Mark Wormgoor <mark@wormgoor.com> validfqdn()
 # Copyright (c) 2003/09/11 Darren Critchley <darrenc@telus.net> srtarray()
 #
-# $Id: header.pl,v 1.34.2.39 2004/11/26 15:51:27 alanh Exp $
-#
 package Header;
 
 use CGI();
@@ -19,15 +17,6 @@ use Time::Local;
 
 $|=1; # line buffering
 
-sub get_version() {
-    my $read_ver = `cat /etc/ipfire-release`;
-    if ($read_ver =~ /^$/) {
-	return "IPFire (unknown version)";
-    }
-    return $read_ver;
-}
-
-$Header::version = get_version();
 $Header::revision = 'final';
 $Header::swroot = '/var/ipfire';
 $Header::pagecolour = '#ffffff';
@@ -139,43 +128,37 @@ sub genmenu {
 				   'title' => "$tr{'network configuration'}",
 				   'enabled' => 1,
 				   };
-    $subsystem->{'03.updates'} = {
-				 'caption' => $tr{'updates'},
-				 'uri' => '/cgi-bin/updates.cgi',
-				 'title' => "$tr{'updates'}",
-				 'enabled' => 0,
-				 };
-    $subsystem->{'04.passwords'} = {
+    $subsystem->{'03.passwords'} = {
 				   'caption' => $tr{'sspasswords'},
 				   'uri' => '/cgi-bin/changepw.cgi',
 				   'title' => "$tr{'sspasswords'}",
 				   'enabled' => 1,
 				   };
-    $subsystem->{'05.ssh'} = {
+    $subsystem->{'04.ssh'} = {
 			     'caption' => $tr{'ssh access'},
 			     'uri' => '/cgi-bin/remote.cgi',
 			     'title' => "$tr{'ssh access'}",
 			     'enabled' => 1,
 			     };
-    $subsystem->{'06.gui'} = {
+    $subsystem->{'05.gui'} = {
 			      'caption' => $tr{'gui settings'},
 			      'uri' => '/cgi-bin/gui.cgi',
 			      'title' => "$tr{'gui settings'}",
 			      'enabled' => 1,
 			      };
-    $subsystem->{'07.backup'} = {
+    $subsystem->{'06.backup'} = {
 				'caption' => $tr{'backup'},
 				'uri' => '/cgi-bin/backup.cgi',
 				'title' => "$tr{'backup'} / $tr{'restore'}",
 				'enabled' => 0,
 				};
-    $subsystem->{'08.shutdown'} = {
+    $subsystem->{'07.shutdown'} = {
 				  'caption' => $tr{'shutdown'},
 				  'uri' => '/cgi-bin/shutdown.cgi',
 				  'title' => "$tr{'shutdown'} / $tr{'reboot'}",
 				  'enabled' => 1,
 				  };
-    $subsystem->{'09.credits'} = {
+    $subsystem->{'08.credits'} = {
 				  'caption' => $tr{'credits'},
 				  'uri' => '/cgi-bin/credits.cgi',
 				  'title' => "$tr{'credits'}",
@@ -256,36 +239,61 @@ sub genmenu {
 				  'title' => "$tr{'external aliases configuration'}",
 				  'enabled' => 1,
 				  };
+    $subnetwork->{'05.nettraf'} = {
+				  'caption' => '$tr{'sstraffic'}',
+			     	  'uri' => '/cgi-bin/traffic.cgi',
+			     	  'title' => "$tr{'sstraffic'}",
+			         'enabled' => 1,
+			   	  };
+
+    $subnetwork->{'06.openvpn'} = {
+				  'caption' => 'OpenVPN',
+			     	  'uri' => '/cgi-bin/ovpnmain.cgi',
+			     	  'title' => "$tr{'virtual private networking'}",
+			         'enabled' => 1,
+			   	  };
+    $subnetwork->{'07.ipsec'} = {
+				  'caption' => 'IPSec,
+			     	  'uri' => '/cgi-bin/vpnmain.cgi',
+			     	  'title' => "$tr{'virtual private networking'}",
+			     	  'enabled' => 1,
+			 	  };
 
 
     my %subserviceshash = ();
     my $subservices = \%subserviceshash;
 
-    $subservices->{'01.dhcp'} = {
+    $subservices->{'01.proxy'} = {
+			        'caption' => $tr{'proxy'},
+			        'uri' => '/cgi-bin/proxy.cgi',
+			        'title' => "HTTP: $tr{'web proxy configuration'}",
+			        'enabled' => 1,
+			        };
+    $subservices->{'02.dhcp'} = {
 				 'caption' => $tr{'dhcp server'},
 				 'uri' => '/cgi-bin/dhcp.cgi',
 				 'title' => "$tr{'dhcp configuration'}",
 				 'enabled' => 1,
 				 };
-    $subservices->{'02.dyndns'} = {
+    $subservices->{'03.dyndns'} = {
 				   'caption' => $tr{'dynamic dns'},
 				   'uri' => '/cgi-bin/ddns.cgi',
 				   'title' => "$tr{'dynamic dns client'}",
 				   'enabled' => 1,
 				 };
-    $subservices->{'03.time'} = {
+    $subservices->{'04.time'} = {
 				   'caption' => $tr{'time server'},
 				   'uri' => '/cgi-bin/time.cgi',
 				   'title' => "$tr{'time server'}",
 				   'enabled' => 1,
 				 };
-    $subservices->{'04.shaping'} = {
-				    'caption' => $tr{'traffic shaping'},
-				    'uri' => '/cgi-bin/shaping.cgi',
+    $subservices->{'05.qos'} = {
+				    'caption' => 'Quality of Service',
+				    'uri' => '/cgi-bin/qos.cgi',
 				    'title' => "$tr{'traffic shaping settings'}",
 				    'enabled' => 1,
 				    };
-    $subservices->{'05.ids'} = {'caption' => $tr{'intrusion detection'},
+    $subservices->{'06.ids'} = {'caption' => $tr{'intrusion detection'},
 				'enabled' => 1,
 				'uri' => '/cgi-bin/ids.cgi',
 				'title' => "$tr{'intrusion detection system'} (Snort)",
@@ -321,87 +329,6 @@ sub genmenu {
 				     'enabled' => 1,
 				     };
     
-
-
-    my %subhttphash = ();
-    my $subhttp = \%subhttphash;
-    $subhttp->{'01.proxy'} = {
-			      'caption' => $tr{'proxy'},
-			      'uri' => '/cgi-bin/advproxy.cgi',
-			      'title' => "HTTP: $tr{'web proxy configuration'}",
-			      'enabled' => 1,
-			      };
-    $subhttp->{'02.contentfilter'} = {
-				      'caption' => $tr{'content filter'},
-				      'uri' => '/cgi-bin/dansguardian.cgi',
-				      'title' => "HTTP: $tr{'content filter'}",
-				      'enabled' => 1,
-				      };
-    $subhttp->{'03.antivirus'} = {
-				  'caption' => $tr{'antivirus'},
-				  'uri' => '/cgi-bin/httpantivirus.cgi',
-				  'title' => "HTTP: $tr{'antivirus'}",
-				  'enabled' => 1,
-				  };
-     $subhttp->{'04.proxymanagment'} = {
-                                   'caption' => $tr{'DS Managment'},
-                                   'uri' => '/cgi-bin/proxygm.cgi',
-                                   'title' => "HTTP: $tr{'DS Managment'}",
-                                   'enabled' => 1,
-                                   };
-     $subhttp->{'05.activatedgroups'} = {
-                                   'caption' => $tr{'activated Groups'},
-                                   'uri' => '/cgi-bin/proxyag.cgi',
-                                   'title' => "HTTP: $tr{'activated Groups'}",
-                                   'enabled' => 1,
-                                   };
-     $subhttp->{'06.advancedproxy'} = {
-                                   'caption' => $tr{'Proxy Advanced'},
-                                   'uri' => '/cgi-bin/proxyad.cgi',
-                                   'title' => "HTTP: $tr{'Proxy Advanced'}",
-                                   'enabled' => 1,
-                                   };
-
-
-    my %subproxyhash = ();
-    my $subproxy = \%subproxyhash;
-
-    $subproxy->{'01.http'} = {'caption' => $tr{'HTTP'},
-			      'enabled' => 1,
-			      'subMenu' => $subhttp
-			      };
-    $subproxy->{'02.ftp'} = {'caption' => 'FTP',
-                             'enabled' => 1,
-                             'subMenu' => $subftp
-                             };
-
-
-
-    my %subopenvpnhash = ();
-    my $subopenvpn = \%subopenvpnhash;
-    $subopenvpn->{'01.server'} = {'caption' => $tr{'openvpn'},
-				  'uri' => '/cgi-bin/openvpn.cgi',
-				  'title' => "$tr{'virtual private networking'}",
-				  'enabled' => 1,
-				  };
-    $subopenvpn->{'02.client'} = {'caption' => $tr{'openvpnclient'},
-				  'uri' => '/cgi-bin/openvpnclient.cgi',
-				  'title' => "$tr{'virtual private networking'}",
-				  'enabled' => 1,
-				  };
-
-    my %subvpnhash = ();
-    my $subvpn = \%subvpnhash;
-
-    $subvpn->{'01.openvpn'} = {'caption' => $tr{'openvpn'},
-			       'subMenu' => $subopenvpn,
-			       'enabled' => 1,
-			   };
-    $subvpn->{'02.ipsec'} = {'caption' => $tr{'ipsec'},
-			     'uri' => '/cgi-bin/vpnmain.cgi',
-			     'title' => "$tr{'virtual private networking'}",
-			     'enabled' => 1,
-			 };
 
     my %sublogshash = ();
     my $sublogs = \%sublogshash;
@@ -465,9 +392,19 @@ sub genmenu {
 				  'title' => "$tr{'paketmanager'}",
 				  'enabled' => 1,
 				  };
+    $subipfire->{'02.asterisk'} = {'caption' => $tr{'asterisk'},
+				  'uri' => '/cgi-bin/asterisk.cgi',
+				  'title' => "$tr{'asterisk'}",
+				  'enabled' => 1,
+				  };
     $subipfire->{'02.samba'} = {'caption' => $tr{'samba'},
 				  'uri' => '/cgi-bin/samba.cgi',
 				  'title' => "$tr{'samba'}",
+				  'enabled' => 1,
+				  };
+    $subipfire->{'99.help'} = {'caption' => $tr{'help'},
+				  'uri' => '/cgi-bin/help.cgi',
+				  'title' => "$tr{'help'}",
 				  'enabled' => 1,
 				  };
 
@@ -497,7 +434,7 @@ sub genmenu {
 			   'enabled' => 1,
 			   'subMenu' => $subproxy
 			   };
-    $menu->{'07.vpn'} = {'caption' => 'VPN',
+    $menu->{'07.ipfire'} = {'caption' => 'IPFire',
 			 'enabled' => 1,
 			 'subMenu' => $subvpn
 			 };
@@ -505,12 +442,6 @@ sub genmenu {
 			  'enabled' => 1,
 			  'subMenu' => $sublogs
 			  };
-    $menu->{'09.ipfire'} = {'caption' => 'IPFire',
-			  'enabled' => 1,
-			  'subMenu' => $subipfire
-			  };
-
-
 
     if (! blue_used() && ! orange_used()) {
 	$menu->{'05.firewall'}{'subMenu'}->{'03.dmz'}{'enabled'} = 0;
@@ -876,7 +807,6 @@ sub closepage () {
             <p>
 	      <div style="font-size: 9px"><b>Status:</b> $status <b>Uptime:</b>$uptime</div>
             </p>
-            <p><a href="http://www.ipfire.org">IPFire</a> $version (c)</p>
           </div>
 	</body>
 	<meta http-equiv="Page-Enter" content="blendTrans(Duration=1.0,Transition=12)">

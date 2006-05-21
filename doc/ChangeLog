@@ -1,4 +1,15 @@
 ------------------------------------------------------------------------
+r128 | ms | 2006-05-20 13:34:29 +0200 (Sa, 20 Mai 2006) | 8 lines
+
+Hinzugefügt:
+  * Pakfire in die ISO gepackt. (Welche nocheinmal kleiner geworden ist.)
+  * Neues Shutdown-Bild
+Geändert:
+  * Zahlreiche Schönheitsfehler im Pakfire korrigiert. ^^
+Gelöscht:
+  * Ein kleines Überbleibsel vom IPCop entfernt.
+
+------------------------------------------------------------------------
 r127 | ms | 2006-05-20 11:34:19 +0200 (Sa, 20 Mai 2006) | 3 lines
 
 Hinzugefügt:

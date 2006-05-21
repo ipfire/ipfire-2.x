@@ -24,6 +24,41 @@ my %cgiparams=();
 $cgiparams{'ACTION'} = '';
 &Header::getcgihash(\%cgiparams);
 
+if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
+{
+	my $profile = $cgiparams{'PROFILE'};
+	my %tempcgiparams = ();
+	$tempcgiparams{'PROFILE'} = '';
+	&General::readhash("${General::swroot}/ppp/settings-$cgiparams{'PROFILE'}",
+		\%tempcgiparams);
+
+	# make a link from the selected profile to the "default" one.
+	unlink("${General::swroot}/ppp/settings");
+	link("${General::swroot}/ppp/settings-$cgiparams{'PROFILE'}",
+		"${General::swroot}/ppp/settings");
+	system ("/bin/touch", "${General::swroot}/ppp/updatesettings");
+
+	# read in the new params "early" so we can write secrets.
+	%cgiparams = ();
+	&General::readhash("${General::swroot}/ppp/settings", \%cgiparams);
+	$cgiparams{'PROFILE'} = $profile;
+	$cgiparams{'BACKUPPROFILE'} = $profile;
+	&General::writehash("${General::swroot}/ppp/settings-$cgiparams{'PROFILE'}",
+		\%cgiparams);
+
+	# write secrets file.
+	open(FILE, ">/${General::swroot}/ppp/secrets") or die "Unable to write secrets file.";
+	flock(FILE, 2);
+	my $username = $cgiparams{'USERNAME'};
+	my $password = $cgiparams{'PASSWORD'};
+	print FILE "'$username' * '$password'\n";
+	chmod 0600, "${General::swroot}/ppp/secrets";
+	close FILE;
+
+	&General::log("$Lang::tr{'profile made current'} $tempcgiparams{'PROFILENAME'}"); 
+	$cgiparams{'ACTION'} = "$Lang::tr{'dial'}";
+}
+
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial'}) {
 	system('/etc/rc.d/rc.red','start') == 0
 	or &General::log("Dial failed: $?"); }

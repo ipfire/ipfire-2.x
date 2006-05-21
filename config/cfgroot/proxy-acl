@@ -1,6 +1,6 @@
-# Do not modify '/var/ipcop/proxy/squid.conf' directly since any changes
+# Do not modify '/var/ipfire/proxy/squid.conf' directly since any changes
 # you make will be overwritten whenever you resave proxy settings using the
-# web interface! Instead, modify the file '/var/ipcop/proxy/acl' and then
+# web interface! Instead, modify the file '/var/ipfire/proxy/acl' and then
 # restart squid using the web interface. Changes made to the 'acl' file
 # will propagate to the 'squid.conf' file at that time.
 # [Scott Tregear, 22 Feb 2005]

@@ -973,4 +973,21 @@
 'vpn mtu invalid' => 'MTU must be a numeric value!',
 'squid extension methods'=>'Your <tt>extension_methods</tt> list',
 'squid extension methods invalid' => 'Your \'extension_methods\' list can only contain uppercase words of letters and digits, separated with a space. '
+'dial profile' => 'Connect with Profile',
+'quick control' => 'Quick Control',
+'allmsg' => 'show all',
+'selecttraffic' => 'Select utilization-overview:',
+'sstraffic' => 'net-traffic',
+'trafficblue' => 'WLAN',
+'trafficdate' => 'Date',
+'trafficfrom' => 'From',
+'trafficgreen' => 'Internal net',
+'trafficin' => 'Input',
+'trafficorange' => 'DMZ',
+'trafficout' => 'Output',
+'trafficred' => 'Internet',
+'traffics' => 'Utilization-overview:',
+'trafficsum' => 'Totals',
+'trafficto' => 'To',
+
 );

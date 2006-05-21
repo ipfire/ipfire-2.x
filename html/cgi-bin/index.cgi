@@ -180,24 +180,57 @@ print "</p>\n";
 
 &Header::closebox();
 
-# Test browser, and direct User where to turn off Javascript if necessary
-# only display message if Javascript is currently enabled
-if (${Header::javascript}) {
-print <<END
-<script type='text/javascript'>\n
-if(navigator.platform.indexOf("MacPPC")>(-1)){
-  document.write(
-    "<center><p>"
-    + "$Lang::tr{'javascript menu error1'}"
-    + " <a href='/cgi-bin/gui.cgi'>$Lang::tr{'gui settings'}</a> "
-    + "$Lang::tr{'javascript menu error2'}"
-    + "</p></center>"
-  )
+&Header::openbox('100%', 'left', $Lang::tr{'quick control'});
+# read in the profile names into @profilenames.
+my $c;
+my $maxprofiles = 5;
+my @profilenames = ();
+
+for ($c = 1; $c <= $maxprofiles; $c++)
+{
+	my %temppppsettings = ();
+	$temppppsettings{'PROFILENAME'} = '';
+	&General::readhash("${General::swroot}/ppp/settings-$c", \%temppppsettings);
+	$profilenames[$c] = $temppppsettings{'PROFILENAME'};
 }
-</script>
+my %selected;
+for ($c = 1; $c <= $maxprofiles; $c++) {
+	$selected{'PROFILE'}{$c} = ''; 
+}
+$selected{'PROFILE'}{$pppsettings{'PROFILE'}} = "selected='selected'";
+
+print <<END;
+	<table width='100%'>
+	<tr>
+		<td align='left'>
+			<form method='post' action='/cgi-bin/dial.cgi'>
+				$Lang::tr{'profile'}:
+				<select name='PROFILE'>
 END
-;
+my $dialButtonDisabled = "disabled='disabled'";
+for ($c = 1; $c <= $maxprofiles; $c++)
+{
+	if ($profilenames[$c] ne '') {
+		$dialButtonDisabled = "";
+		print "\t<option value='$c' $selected{'PROFILE'}{$c}>$c. $profilenames[$c]</option>\n";
+	}
 }
+$dialButtonDisabled = "disabled='disabled'" if (-e '/var/run/ppp-ipcop.pid' || -e "${General::swroot}/red/active");
+
+print <<END;
+				</select>
+				<input type='submit' name='ACTION' value='$Lang::tr{'dial profile'}' $dialButtonDisabled />
+			</form>
+		</td>
+		<td align='right'>
+			<form method='post' action='/cgi-bin/shutdown.cgi'>
+				<input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' />
+			</form>
+		</td>
+	</tr>
+	</table>
+END
+&Header::closebox();
 
 &Header::closebigbox();
 

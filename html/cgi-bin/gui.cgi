@@ -56,11 +56,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 		goto SAVE_ERROR;
 	}
 
-	if ($cgiparams{'JAVASCRIPT'} !~ /^(on|off)$/) {
-		$errormessage = $Lang::tr{'invalid input'};
-		goto SAVE_ERROR;
-	}  
-
         # Set flag if index page is to refresh whilst ppp is up.
         # Default is NO refresh.
         if ($cgiparams{'REFRESHINDEX'} ne 'off') {
@@ -79,7 +74,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 
         # write cgi vars to the file.
 	$mainsettings{'LANGUAGE'} = $cgiparams{'lang'};
-	$mainsettings{'JAVASCRIPT'} = $cgiparams{'JAVASCRIPT'};
 	$mainsettings{'WINDOWWITHHOSTNAME'} = $cgiparams{'WINDOWWITHHOSTNAME'};
 	$mainsettings{'PPPUPDOWNBEEP'} = $cgiparams{'PPPUPDOWNBEEP'};
 	$mainsettings{'REFRESHINDEX'} = $cgiparams{'REFRESHINDEX'};
@@ -87,12 +81,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	&Lang::reload($cgiparams{'lang'});
 	SAVE_ERROR:
 } else {
-	if ($mainsettings{'JAVASCRIPT'}) {
-		$cgiparams{'JAVASCRIPT'} = $mainsettings{'JAVASCRIPT'};
-	} else {
-		$cgiparams{'JAVASCRIPT'} = 'on';
-	}
-
 	if ($mainsettings{'WINDOWWITHHOSTNAME'}) {
 		$cgiparams{'WINDOWWITHHOSTNAME'} = $mainsettings{'WINDOWWITHHOSTNAME'};
 	} else {
@@ -115,15 +103,10 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 # Default settings
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 {
-	$cgiparams{'JAVASCRIPT'} = 'on';
 	$cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
 	$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	$cgiparams{'REFRESHINDEX'} = 'off';
 }
-
-$checked{'JAVASCRIPT'}{'off'} = '';
-$checked{'JAVASCRIPT'}{'on'} = '';
-$checked{'JAVASCRIPT'}{$cgiparams{'JAVASCRIPT'}} = "checked='checked'";
 
 $checked{'WINDOWWITHHOSTNAME'}{'off'} = '';
 $checked{'WINDOWWITHHOSTNAME'}{'on'} = '';
@@ -153,10 +136,6 @@ print <<END
 <table width='100%'>
 <tr>
     <td colspan='2'><p><b>$Lang::tr{'display'}</b></td>
-</tr>
-<tr>
-    <td><input type='checkbox' name='JAVASCRIPT' $checked{'JAVASCRIPT'}{'on'} />
-    <td width='100%'>$Lang::tr{'enable javascript'}</td>
 </tr>
 <tr>
     <td><input type='checkbox' name='WINDOWWITHHOSTNAME' $checked{'WINDOWWITHHOSTNAME'}{'on'} /></td>

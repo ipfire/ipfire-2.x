@@ -21022,6 +21022,9 @@ home/httpd/cgi-bin/upload.cgi
 home/httpd/cgi-bin/vpnmain.cgi
 home/httpd/cgi-bin/wireless.cgi
 home/httpd/cgi-bin/xtaccess.cgi
+home/httpd/cgi-bin/traffic.cgi
+home/httpd/cgi-bin/traffics.cgi
+home/httpd/cgi-bin/pakfire.cgi
 #home/httpd/htdocs
 #home/httpd/htdocs/apache_pb.gif
 #home/httpd/htdocs/index.html.ca
@@ -21742,6 +21745,8 @@ usr/lib/libcapi20.so
 #usr/lib/libcapi20.la
 #usr/lib/libcapi20.a
 usr/sbin/capiinit
+usr/bin/capiinfo
+#usr/share/man/man8/capiinfo.8
 #usr/share/man/man8/avmcapictrl.8
 #usr/share/man/man8/capiplugin.8
 #sbin/avmcapictrl

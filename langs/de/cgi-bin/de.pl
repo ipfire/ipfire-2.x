@@ -950,6 +950,22 @@
 'you can only define one roadwarrior connection when using pre-shared key authentication' => 'Sie können nur eine Roadwarrior Verbindung definieren, wenn die Pre-shared Schlüsselauthentifizierung verwendet wird.<br/>Entweder haben Sie bereits eine Roadwarrior Verbindung mit Pre-shared Schlüsselauthentifizierung, oder Sie versuchen gerade eine hinzuzufügen.', 
 'your department' => 'Ihre Abteilung', 
 'your e-mail' => 'Ihre E-mail Adresse', 
- 
+'dial profile' => 'Verbinden mit Profil',
+'quick control' => 'Quick Control',
+'allmsg' => 'zeige alles',
+'selecttraffic' => 'Wähle den Nutzungs Zeitraum:',
+'sstraffic' => 'Net-Traffic',
+'trafficblue' => 'WLAN',
+'trafficdate' => 'Datum',
+'trafficfrom' => 'Von',
+'trafficgreen' => 'Internes Netz',
+'trafficin' => 'Input',
+'trafficorange' => 'DMZ',
+'trafficout' => 'Output',
+'trafficred' => 'Internet',
+'traffics' => 'Nutzungs-überblick:',
+'trafficsum' => 'Gesamt',
+'trafficto' => 'Bis',
+
 ); 
  

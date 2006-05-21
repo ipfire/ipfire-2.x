@@ -53,5 +53,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && cp -fRv src/pakfire $(DIR_APP)
 	cd $(DIR_APP) && mv -vf pakfire.conf /etc
 	cd $(DIR_APP) && chown root.root $(DIR_APP) -R && chmod 755 pakfire lib/*
-	cd $(DIR_APP) && find $(DIR_APP) -name .svn -exec rm -rf {} \;
+	# cd $(DIR_APP) && find $(DIR_APP) -name .svn -exec rm -rf {} \;
 	@$(POSTBUILD)
