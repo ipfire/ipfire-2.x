@@ -30,7 +30,7 @@ VER        = 1.2.7.1
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.asterisk-support.de/mirror/asterisk-1.2.7.1
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -55,13 +55,13 @@ objects = $(DL_FILE) \
 	   apps_Makefile.patch
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-$(ZAPTEL).tar.gz = http://www.asterisk-support.de/mirror/zaptel/$(ZAPTEL).tar.gz
-$(BRISTUFF).tar.gz = http://www.junghanns.net/downloads/$(BRISTUFF).tar.gz
-$(LIBPRI).tar.gz = http://www.asterisk-support.de/mirror/libpri/$(LIBPRI).tar.gz
-app_rxfax.c = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x/app_rxfax.c
-app_txfax.c = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x/app_txfax.c
-apps_Makefile.patch = http://soft-switch.org/downloads/spandsp/$(SPANDSP)/asterisk-1.2.x/apps_Makefile.patch
-$(OH323).tar.gz = http://www.inaccessnetworks.com/projects/asterisk-oh323/download/$(OH323).tar.gz
+$(ZAPTEL).tar.gz = $(URL_IPFIRE)/$(ZAPTEL).tar.gz
+$(BRISTUFF).tar.gz = $(URL_IPFIRE)/$(BRISTUFF).tar.gz
+$(LIBPRI).tar.gz = $(URL_IPFIRE)/$(LIBPRI).tar.gz
+app_rxfax.c = $(URL_IPFIRE)/app_rxfax.c
+app_txfax.c = $(URL_IPFIRE)/app_txfax.c
+apps_Makefile.patch = $(URL_IPFIRE)/apps_Makefile.patch
+$(OH323).tar.gz = $(URL_IPFIRE)/$(OH323).tar.gz
 
 $(DL_FILE)_MD5 = 5c4b473eee2fbc2cb9e346f0564ef970
 $(ZAPTEL).tar.gz_MD5 = 8c8561259d29a314aa5a076050124697

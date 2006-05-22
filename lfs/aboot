@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# 02-02-2004 Alan Hourihane <alanh@fairlite.demon.co.uk>                      #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: aboot,v 1.4.2.2 2005/02/05 15:38:14 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 0.9b
 
 THISAPP    = aboot-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_SFNET)/aboot
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 CFLAGS     =

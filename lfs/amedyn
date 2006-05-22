@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: amedyn,v 1.13.2.10 2005/02/05 15:38:14 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 2004-08-04
 
 THISAPP    = amedyn-$(VER)
 DL_FILE    = $(THISAPP)-src.tgz
-DL_FROM    = $(URL_SFNET)/zyxel630-11
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/amedyn
 ifeq "$(SMP)" ""
   TARGET     = $(DIR_INFO)/$(THISAPP)

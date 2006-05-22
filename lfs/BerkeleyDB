@@ -30,7 +30,7 @@ VER        = 0.27
 
 THISAPP    = BerkeleyDB-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://search.cpan.org/CPAN/authors/id/P/PM/PMQS
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

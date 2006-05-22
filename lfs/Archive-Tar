@@ -30,7 +30,7 @@ VER        = 1.29
 
 THISAPP    = Archive-Tar-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://search.cpan.org/CPAN/authors/id/K/KA/KANE
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

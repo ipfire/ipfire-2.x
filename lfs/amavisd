@@ -30,7 +30,7 @@ VER        = 2.4.1
 
 THISAPP    = amavisd-new-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.ijs.si/software/amavisd
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
