@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP)/source && ./configure \
 				    --prefix=/usr \
-				    --sysconfdir=/etc \
+				    --sysconfdir=/var/ipfire/samba \
 				    --localstatedir=/var \
 				    --with-piddir=/var/run \
 				    --with-fhs \
@@ -101,24 +101,24 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/source && ln -v -sf libnss_winbind.so /lib/libnss_winbind.so.2
 	cd $(DIR_APP)/source && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
 	cd $(DIR_APP)/source && install -v -m755 nsswitch/pam_winbind.so /lib/security
-	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /etc/samba
+	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
 #	cd $(DIR_APP)/source && install -v -m755 -d /usr/share/doc/samba-3.0.22
 #	cd $(DIR_APP)/source && install -v -m644 ../docs/*.pdf /usr/share/doc/samba-3.0.22
 #	cd $(DIR_APP)/source && ln -v -s ../../samba/swat  /usr/share/doc/samba-3.0.22
 	echo "swat            901/tcp" >> /etc/services
-	echo "# Begin /etc/xinetd.d/swat"		>> /etc/xinetd.d/swat
-	echo ""					>> /etc/xinetd.d/swat
-	echo "service swat"				>> /etc/xinetd.d/swat
-	echo "{"					>> /etc/xinetd.d/swat
-	echo "    port            = 901"		>> /etc/xinetd.d/swat
-	echo "    socket_type     = stream"	>> /etc/xinetd.d/swat
-	echo "    wait            = no"		>> /etc/xinetd.d/swat
-	echo "    only_from       = 127.0.0.1"	>> /etc/xinetd.d/swat
-	echo "    user            = root"		>> /etc/xinetd.d/swat
-	echo "    server          = /usr/sbin/swat"	>> /etc/xinetd.d/swat
-	echo "    log_on_failure  += USERID"	>> /etc/xinetd.d/swat
-	echo "}"					>> /etc/xinetd.d/swat
-	echo ""					>> /etc/xinetd.d/swat
-	echo "# End /etc/xinetd.d/swat"		>> /etc/xinetd.d/swat
+	echo "# Begin /var/ipfire/xinetd.d/swat"		>> /var/ipfire/xinetd.d/swat
+	echo ""					>> /var/ipfire/xinetd.d/swat
+	echo "service swat"				>> /var/ipfire/xinetd.d/swat
+	echo "{"					>> /var/ipfire/xinetd.d/swat
+	echo "    port            = 901"		>> /var/ipfire/xinetd.d/swat
+	echo "    socket_type     = stream"	>> /var/ipfire/xinetd.d/swat
+	echo "    wait            = no"		>> /var/ipfire/xinetd.d/swat
+	echo "    only_from       = 127.0.0.1"	>> /var/ipfire/xinetd.d/swat
+	echo "    user            = root"		>> /var/ipfire/xinetd.d/swat
+	echo "    server          = /usr/sbin/swat"	>> /var/ipfire/xinetd.d/swat
+	echo "    log_on_failure  += USERID"	>> /var/ipfire/xinetd.d/swat
+	echo "}"					>> /var/ipfire/xinetd.d/swat
+	echo ""					>> /var/ipfire/xinetd.d/swat
+	echo "# End /var/ipfire/xinetd.d/swat"		>> /var/ipfire/xinetd.d/swat
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

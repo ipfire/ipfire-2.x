@@ -1,4 +1,18 @@
 ------------------------------------------------------------------------
+r129 | ms | 2006-05-21 22:54:29 +0200 (So, 21 Mai 2006) | 11 lines
+
+Hinzugefügt:
+  * Nochmal ein neues Shutdown-Bild.
+  * Schnelle Profilauswahl in der index.cgi
+  * Nettraffic.
+  * Capiinfo.
+Geändert:
+  * Menü komplett neu sortiert.
+  * Javascript-Option aus gui.cgi entfernt.
+  * Pakfire-Fehler beseitigt.
+  * Sämtliche /var/ipcop durch /var/ipfire ersetzt.
+
+------------------------------------------------------------------------
 r128 | ms | 2006-05-20 13:34:29 +0200 (Sa, 20 Mai 2006) | 8 lines
 
 Hinzugefügt:

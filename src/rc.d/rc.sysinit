@@ -258,7 +258,7 @@ fi
 echo "Running rc.local"
 . /etc/rc.d/rc.local
 
-logger -t ipcop "IPCop started."
+logger -t ipfire "IPFire started."
 
 # Send nice startup beep now
 /usr/bin/beep -l 75 -f 500

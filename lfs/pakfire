@@ -26,8 +26,6 @@
 
 include Config
 
-VER        = 
-
 THISAPP    = pakfire
 DIR_APP    = /opt/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -55,3 +53,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && chown root.root $(DIR_APP) -R && chmod 755 pakfire lib/*
 	# cd $(DIR_APP) && find $(DIR_APP) -name .svn -exec rm -rf {} \;
 	@$(POSTBUILD)
+

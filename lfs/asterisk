@@ -170,15 +170,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/$(BRISTUFF)/zaphfc && make clean linux24 && \
 	install -D -m 644 zaphfc.o /lib/modules/$(KVER)/misc/zaphfc.o
 
+	# Compress the Kernelmodules
+	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
+	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
+
 	# Build Asterisk
 	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	patch -Np1 < $(DIR_SRC)/src/patches/asterisk.patch
 	### FAX geht noch nicht mit Asterisk 1.2.7.1
 	# cp -fv $(DIR_DL)/app_{r,t}xfax.c $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && \
 	# cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK)/apps && patch < $(DIR_DL)/apps_Makefile.patch
 	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make clean
-	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make all
-	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make install
-	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make samples
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make all ASTETCDIR=/var/ipfire/asterisk
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make install ASTETCDIR=/var/ipfire/asterisk
+	cd $(DIR_SRC)/$(BRISTUFF)/$(ASTERISK) && 	make samples ASTETCDIR=/var/ipfire/asterisk
 
 	# Build OH323
 	cd $(DIR_SRC)/$(BRISTUFF)/$(OH323) && \

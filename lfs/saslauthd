@@ -96,7 +96,7 @@ else
 					--with-openssl=/usr
 					--without-pgsql \
 					--with-mysql=/opt/lampp \
-					--sysconfdir=/etc \
+					--sysconfdir=/var/ipfire/sasl \
 					--with-dbpath=/var/lib/sasl/sasldb2 \
 					--with-saslauthd=/var/run/saslauthd
 endif

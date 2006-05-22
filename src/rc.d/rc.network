@@ -65,12 +65,12 @@ if [ -d /proc/bus/pccard ]; then
 	modprobe serial_cb
 fi
 
-echo "Setting up IPCOP firewall rules"
+echo "Setting up IPFire firewall rules"
 /etc/rc.d/rc.firewall start
 echo "Setting up IP Accounting"
 /etc/rc.d/helper/writeipac.pl
 /usr/sbin/fetchipac -S
-echo "Setting IPCOP DMZ pinholes"
+echo "Setting IPFire DMZ pinholes"
 /usr/local/bin/setdmzholes
 
 if [ "$BLUE_DEV" != "" ]; then

@@ -75,24 +75,24 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --with-loadavg
+	cd $(DIR_APP) && ./configure --prefix=/usr --with-loadavg --sysconfdir=/var/ipfire/xinetd
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && install -v -d -m755 /etc/xinetd.d
-	echo "# Begin /etc/xinetd" 				> /etc/xinetd.conf
-	echo "# Configuration file for xinetd" 		>> /etc/xinetd.conf
-	echo "#" 						>> /etc/xinetd.conf
-	echo "defaults" 					>> /etc/xinetd.conf
-	echo "{" 						>> /etc/xinetd.conf
-	echo "      instances       = 60" 			>> /etc/xinetd.conf
-	echo "      log_type        = SYSLOG daemon" 	>> /etc/xinetd.conf
-	echo "      log_on_success  = HOST PID USERID" 	>> /etc/xinetd.conf
-	echo "      log_on_failure  = HOST USERID" 	>> /etc/xinetd.conf
-	echo "      cps             = 25 30"	 	>> /etc/xinetd.conf
-	echo "}" 						>> /etc/xinetd.conf
-	echo "# All service files are stored in the /etc/xinetd.d directory" >> /etc/xinetd.conf
-	echo "#" 						>> /etc/xinetd.conf
-	echo "includedir /etc/xinetd.d" 			>> /etc/xinetd.conf
-	echo "# End /etc/xinetd" 				>> /etc/xinetd.conf
+	cd $(DIR_APP) && install -v -d -m755 /var/ipfire/xinetd.d
+	echo "# Begin /var/ipfire/xinetd" 				> /var/ipfire/xinetd.conf
+	echo "# Configuration file for xinetd" 		>> /var/ipfire/xinetd.conf
+	echo "#" 						>> /var/ipfire/xinetd.conf
+	echo "defaults" 					>> /var/ipfire/xinetd.conf
+	echo "{" 						>> /var/ipfire/xinetd.conf
+	echo "      instances       = 60" 			>> /var/ipfire/xinetd.conf
+	echo "      log_type        = SYSLOG daemon" 	>> /var/ipfire/xinetd.conf
+	echo "      log_on_success  = HOST PID USERID" 	>> /var/ipfire/xinetd.conf
+	echo "      log_on_failure  = HOST USERID" 	>> /var/ipfire/xinetd.conf
+	echo "      cps             = 25 30"	 	>> /var/ipfire/xinetd.conf
+	echo "}" 						>> /var/ipfire/xinetd.conf
+	echo "# All service files are stored in the /var/ipfire/xinetd.d directory" >> /var/ipfire/xinetd.conf
+	echo "#" 						>> /var/ipfire/xinetd.conf
+	echo "includedir /var/ipfire/xinetd.d" 			>> /var/ipfire/xinetd.conf
+	echo "# End /var/ipfire/xinetd" 				>> /var/ipfire/xinetd.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

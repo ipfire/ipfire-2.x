@@ -650,7 +650,7 @@ buildipcop() {
   ipcopmake tcpdump
   ipcopmake traceroute
   ipcopmake vlan
-  ipcopmake wireless
+  #ipcopmake wireless
   ipcopmake libsafe
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building ### IPFire modules ### \n" | tee -a $LOGFILE
