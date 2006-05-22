@@ -18,11 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -34,8 +29,7 @@ include Config
 VER        = cln
 THISAPP    = CnxADSL-TgrATM$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-# DL_FROM    = http://gateway.bedroom.gen.nz/~clive/adsl/thefiles/
-DL_FROM    = http://g.esp.free.fr/download
+DL_FROM    = $(URL_IPFIRE)
 # This package was send to me by mail and I have nothing changed to the original .tar.gz.
 # Even it has the same name as the package available for download in his web-site, it is very different
 # I hope it will be available for download in his site a day and that a proper name will allow to clearly differentiate

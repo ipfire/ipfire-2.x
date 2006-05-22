@@ -30,7 +30,7 @@ VER        = 0.17
 
 THISAPP    = Convert-TNEF-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://search.cpan.org/CPAN/authors/id/D/DO/DOUGW
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

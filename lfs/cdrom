@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: cdrom,v 1.1.2.30 2006/01/30 22:54:33 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -34,7 +28,7 @@ include Config
 
 THISAPP    = cdrom
 DL_FILE    = rawrite.exe
-DL_FROM    = http://www.tux.org/pub/dos/rawrite
+DL_FROM    = $(URL_IPFIRE)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################

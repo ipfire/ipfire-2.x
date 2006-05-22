@@ -30,7 +30,7 @@ VER        = 2.2.13
 
 THISAPP    = cyrus-imapd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.andrew.cmu.edu/pub/cyrus-mail
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

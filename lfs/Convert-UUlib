@@ -30,7 +30,7 @@ VER        = 1.06
 
 THISAPP    = Convert-UUlib-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://search.cpan.org/CPAN/authors/id/M/ML/MLEHMANN
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------
+r131 | ms | 2006-05-22 14:14:56 +0200 (Mon, 22 May 2006) | 6 lines
+
+
+Wir beginnen nun ein Migration der Quellcodepakete auf einen unserer
+Server. Habe damit schon begonnen. Bisher aber leider nur die Pakete von
+A bis B einschliesslich. Ich hoffe da macht jemand anderes weiter.
+Hinzu sind die Pakete, deren Mirrors ausgefallen sind, schon umgezogen.
+
+------------------------------------------------------------------------
 r130 | ms | 2006-05-22 12:43:28 +0200 (Mon, 22 May 2006) | 8 lines
 
 Hinzugefügt:
