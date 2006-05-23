@@ -26,12 +26,12 @@
 
 include Config
 
-VER        = 2004-10-06
+VER        = 4.03
 
-THISAPP    = capi4k-utils-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = nmap-$(VER)
+DL_FILE    = $(THISAPP).tgz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/capi4k-utils
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 54992ff362ca44629fdf59773a6864cd
+$(DL_FILE)_MD5 = d1b22268f941f7b94b4c853d73dbc44b
 
 install : $(TARGET)
 
@@ -51,6 +51,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	make-packages.sh nmap $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -72,20 +75,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/capi4k-utils-2004-10-06_ppp-2.4.3.patch
-	cd $(DIR_APP)/avmb1 && ./configure
-	cd $(DIR_APP)/avmb1 && make
-	cd $(DIR_APP)/avmb1 && make install
-	cd $(DIR_APP)/capiinit && ./configure
-	cd $(DIR_APP)/capiinit && make
-	cd $(DIR_APP)/capiinit && make install
-	cd $(DIR_APP)/capi20 && SED=sed ./configure
-	cd $(DIR_APP)/capi20 && SED=sed make
-	cd $(DIR_APP)/capi20 && make install
-	PPPVER=`grep --max-count=1 VER $(DIR_SRC)/lfs/ppp | awk '{ print $$3 }'` && \
-		 cd $(DIR_APP)/pppdcapiplugin && PPPVERSIONS="$$PPPVER" make && PPPVERSIONS="$$PPPVER" make install
-	cd $(DIR_APP)/capiinfo && ./configure
-	cd $(DIR_APP)/capiinfo && make
-	cd $(DIR_APP)/capiinfo && make install
+	cd $(DIR_APP) && ./configure --prefix=/usr --without-nmapfe
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

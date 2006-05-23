@@ -26,7 +26,6 @@
   NAME="IPFire"			# Software name
   SNAME="ipfire"			# Short name
   VERSION="1.4"			# Version number
-# PREVIOUSTAG=IPCOP_v1_4_10_FINAL
   SLOGAN="We secure your network"	# Software slogan
   CONFIG_ROOT=/var/ipfire		# Configuration rootdir
   NICE=10
@@ -505,8 +504,8 @@ buildbase() {
 }
 
 buildipcop() {
-  # Run IPCop make scripts one by one
-  LOGFILE="$BASEDIR/log/_build.ipcop.log"
+  # Run IPFire make scripts one by one
+  LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
   echo -ne "`date -u '+%b %e %T'`: Stage3 $NAME build \n" | tee -a $LOGFILE
 
@@ -694,15 +693,16 @@ buildipcop() {
   echo -ne "`date -u '+%b %e %T'`: Building ### VoIP-Server ### \n" | tee -a $LOGFILE
   ipcopmake stund
   ipcopmake asterisk
-  ipcopmake openvpn
-  ipcopmake edonkeyclc
-  ipcopmake sane
   echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
   ipcopmake lame
   ipcopmake gnump3d
+  ipcopmake openvpn
+  ipcopmake edonkeyclc
+  ipcopmake sane
   ipcopmake rsync
   ipcopmake tcpwrapper
   ipcopmake portmap
+  ipcopmake nmap
   ipcopmake nfs
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp

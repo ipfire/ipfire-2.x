@@ -1,5 +1,11 @@
 ------------------------------------------------------------------------
-r131 | ms | 2006-05-22 14:14:56 +0200 (Mon, 22 May 2006) | 6 lines
+r132 | ms | 2006-05-22 14:47:00 +0200 (Mo, 22 Mai 2006) | 3 lines
+
+Zweiter Teil des dicken Quellenupdates. Diesmal: C bis D.
+Status: 49/230 fertiggestellt.
+
+------------------------------------------------------------------------
+r131 | ms | 2006-05-22 14:14:56 +0200 (Mo, 22 Mai 2006) | 6 lines
 
 
 Wir beginnen nun ein Migration der Quellcodepakete auf einen unserer
@@ -8,352 +14,352 @@ A bis B einschliesslich. Ich hoffe da macht jemand anderes weiter.
 Hinzu sind die Pakete, deren Mirrors ausgefallen sind, schon umgezogen.
 
 ------------------------------------------------------------------------
-r130 | ms | 2006-05-22 12:43:28 +0200 (Mon, 22 May 2006) | 8 lines
+r130 | ms | 2006-05-22 12:43:28 +0200 (Mo, 22 Mai 2006) | 8 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Zaptel Kernelmodule werden gleich komprimiert.
-GeÃ¤ndert:
-  * Konfigurationspfade sÃ¤mtlicher Programme von /etc nach /var/ipfire verschoben.
-  * Einige SchÃ¶nheitsfehler IPCop --> IPFire korrigiert.
-GelÃ¶scht:
+Geändert:
+  * Konfigurationspfade sämtlicher Programme von /etc nach /var/ipfire verschoben.
+  * Einige Schönheitsfehler IPCop --> IPFire korrigiert.
+Gelöscht:
   * wireless herausgenommen. (Bleibt abzuwarten, wann es in IPCop 1.4.11 ist.)
 
 ------------------------------------------------------------------------
-r129 | ms | 2006-05-21 22:54:29 +0200 (Sun, 21 May 2006) | 11 lines
+r129 | ms | 2006-05-21 22:54:29 +0200 (So, 21 Mai 2006) | 11 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Nochmal ein neues Shutdown-Bild.
   * Schnelle Profilauswahl in der index.cgi
   * Nettraffic.
   * Capiinfo.
-GeÃ¤ndert:
-  * MenÃ¼ komplett neu sortiert.
+Geändert:
+  * Menü komplett neu sortiert.
   * Javascript-Option aus gui.cgi entfernt.
   * Pakfire-Fehler beseitigt.
-  * SÃ¤mtliche /var/ipcop durch /var/ipfire ersetzt.
+  * Sämtliche /var/ipcop durch /var/ipfire ersetzt.
 
 ------------------------------------------------------------------------
-r128 | ms | 2006-05-20 13:34:29 +0200 (Sat, 20 May 2006) | 8 lines
+r128 | ms | 2006-05-20 13:34:29 +0200 (Sa, 20 Mai 2006) | 8 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Pakfire in die ISO gepackt. (Welche nocheinmal kleiner geworden ist.)
   * Neues Shutdown-Bild
-GeÃ¤ndert:
-  * Zahlreiche SchÃ¶nheitsfehler im Pakfire korrigiert. ^^
-GelÃ¶scht:
-  * Ein kleines Ãœberbleibsel vom IPCop entfernt.
+Geändert:
+  * Zahlreiche Schönheitsfehler im Pakfire korrigiert. ^^
+Gelöscht:
+  * Ein kleines Überbleibsel vom IPCop entfernt.
 
 ------------------------------------------------------------------------
-r127 | ms | 2006-05-20 11:34:19 +0200 (Sat, 20 May 2006) | 3 lines
+r127 | ms | 2006-05-20 11:34:19 +0200 (Sa, 20 Mai 2006) | 3 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Erste Version des Pakfire von Peter
 
 ------------------------------------------------------------------------
-r126 | ms | 2006-05-19 16:29:15 +0200 (Fri, 19 May 2006) | 3 lines
+r126 | ms | 2006-05-19 16:29:15 +0200 (Fr, 19 Mai 2006) | 3 lines
 
-GeÃ¤ndert:
-  * ÃœberflÃ¼ssige Programme aus der ISO genommen... Postfix, Stund usw...
+Geändert:
+  * Überflüssige Programme aus der ISO genommen... Postfix, Stund usw...
 
 ------------------------------------------------------------------------
-r125 | ms | 2006-05-18 19:33:39 +0200 (Thu, 18 May 2006) | 5 lines
+r125 | ms | 2006-05-18 19:33:39 +0200 (Do, 18 Mai 2006) | 5 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Fritz!PCI Treiber (auch SMP)
-GeÃ¤ndert:
-  * Postfix Konfiguration gekÃ¼rzt
+Geändert:
+  * Postfix Konfiguration gekürzt
 
 ------------------------------------------------------------------------
-r124 | ms | 2006-05-18 13:39:26 +0200 (Thu, 18 May 2006) | 3 lines
+r124 | ms | 2006-05-18 13:39:26 +0200 (Do, 18 Mai 2006) | 3 lines
 
-GeÃ¤ndert:
+Geändert:
   * Erste Postfix-Standard-Konfiguration
 
 ------------------------------------------------------------------------
-r123 | ms | 2006-05-18 13:14:03 +0200 (Thu, 18 May 2006) | 7 lines
+r123 | ms | 2006-05-18 13:14:03 +0200 (Do, 18 Mai 2006) | 7 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Amavisd-new
   * Spamassassin (geht nun)
-  * SÃ¤mtlich Perlmodule fÃ¼r Amavis
-GeÃ¤ndert:
+  * Sämtlich Perlmodule für Amavis
+Geändert:
   * ./make.sh make bearbeitet
 
 ------------------------------------------------------------------------
-r122 | ms | 2006-05-18 11:14:22 +0200 (Thu, 18 May 2006) | 10 lines
+r122 | ms | 2006-05-18 11:14:22 +0200 (Do, 18 Mai 2006) | 10 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Razor - Spamkiller
   * ./make.sh make - Holt erst die Pakete und kompiliert dann...
-GeÃ¤ndert:
+Geändert:
   * Asterisk - Compiler-Optionen
-  * Postfix - nur optische Ã„nderungen
-  * ROOTFILES.i386 - Wegen saslauthd-Ã„nderungen einige Dateien gestrichen
+  * Postfix - nur optische Änderungen
+  * ROOTFILES.i386 - Wegen saslauthd-Änderungen einige Dateien gestrichen
   * ./make.sh changelog bearbeitet
   * ChangeLog-Update
 
 ------------------------------------------------------------------------
-r121 | ms | 2006-05-17 19:04:11 +0200 (Wed, 17 May 2006) | 3 lines
+r121 | ms | 2006-05-17 19:04:11 +0200 (Mi, 17 Mai 2006) | 3 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Procmail
 
 ------------------------------------------------------------------------
-r120 | ms | 2006-05-17 14:44:06 +0200 (Wed, 17 May 2006) | 4 lines
+r120 | ms | 2006-05-17 14:44:06 +0200 (Mi, 17 Mai 2006) | 4 lines
 
-GeÃ¤ndert:
+Geändert:
   * CyrusIMAPd auf den neuesten Stand gebracht.
-  * Saslauthd Ã¼berarbeitet.
+  * Saslauthd überarbeitet.
 
 ------------------------------------------------------------------------
-r119 | ms | 2006-05-17 13:25:29 +0200 (Wed, 17 May 2006) | 3 lines
+r119 | ms | 2006-05-17 13:25:29 +0200 (Mi, 17 Mai 2006) | 3 lines
 
-GeÃ¤ndert:
+Geändert:
   * Asterisk jetzt in der Version 1.2.7.1 mit Bristuff 0.3.0-PRE-1o und Florz-Patch
 
 ------------------------------------------------------------------------
-r118 | ms | 2006-05-16 13:12:49 +0200 (Tue, 16 May 2006) | 7 lines
+r118 | ms | 2006-05-16 13:12:49 +0200 (Di, 16 Mai 2006) | 7 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * NFS
-  * Portmap - braucht man fÃ¼r NFS
-GeÃ¤ndert:
-  * IP_CONNTRACK-Patch erstellt damit die Verbindungsanzeige im Webinterface ohne Workaround funktioniert. (Noch nicht vollstÃ¤ndig getestet!)
+  * Portmap - braucht man für NFS
+Geändert:
+  * IP_CONNTRACK-Patch erstellt damit die Verbindungsanzeige im Webinterface ohne Workaround funktioniert. (Noch nicht vollständig getestet!)
   * ./make.sh commit optimiert
 
 ------------------------------------------------------------------------
-r117 | ms | 2006-05-16 13:01:06 +0200 (Tue, 16 May 2006) | 3 lines
+r117 | ms | 2006-05-16 13:01:06 +0200 (Di, 16 Mai 2006) | 3 lines
 
 Quellenupdate u.a. wegen Serverausfall bei Sourceforge.net
 Wir haben die Absicht den Sourcecode auf eigenen Servern zu hosten!
 
 ------------------------------------------------------------------------
-r116 | ms | 2006-05-15 22:28:30 +0200 (Mon, 15 May 2006) | 5 lines
+r116 | ms | 2006-05-15 22:28:30 +0200 (Mo, 15 Mai 2006) | 5 lines
 
-GeÃ¤ndert:
+Geändert:
   * ./make.sh dist noch optimiert.
   * TCP Wrappers Patch vergessen :)
   * ChangeLog-Update hat auch nicht funktioniert.
 
 ------------------------------------------------------------------------
-r115 | ms | 2006-05-15 22:08:54 +0200 (Mon, 15 May 2006) | 7 lines
+r115 | ms | 2006-05-15 22:08:54 +0200 (Mo, 15 Mai 2006) | 7 lines
 
-HinzugefÃ¼gt:
-  * TCP Wrappers fÃ¼r NFS
+Hinzugefügt:
+  * TCP Wrappers für NFS
   * SpamAssassin - geht noch nicht!
-GeÃ¤ndert:
+Geändert:
   * Cups mit Samba verlinkt.
-  * Neue Prozedur in ./make.sh commit - LÃ¤dt alles ins SVN und aktualisiert vorher den ChangeLog.
+  * Neue Prozedur in ./make.sh commit - Lädt alles ins SVN und aktualisiert vorher den ChangeLog.
 
 ------------------------------------------------------------------------
-r114 | ms | 2006-05-13 19:54:40 +0200 (Sat, 13 May 2006) | 3 lines
+r114 | ms | 2006-05-13 19:54:40 +0200 (Sa, 13 Mai 2006) | 3 lines
 
-GeÃ¤ndert:
+Geändert:
   * ./make.sh dist erstellt von jetzt an einen Tarball mit den letzten Sources im SVN.
 
 ------------------------------------------------------------------------
-r113 | ms | 2006-05-13 18:59:56 +0200 (Sat, 13 May 2006) | 12 lines
+r113 | ms | 2006-05-13 18:59:56 +0200 (Sa, 13 Mai 2006) | 12 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Clamav - Antivirus
   * rsync - Backuptool
-GeÃ¤ndert:
+Geändert:
   * Einige neue Prozeduren in der make.sh
-  * Ein paar Backupdateien gelÃ¶scht/aufgerÃ¤umt
-  * Credits bearbeitet. Noch nicht vollstÃ¤ndig.
+  * Ein paar Backupdateien gelöscht/aufgeräumt
+  * Credits bearbeitet. Noch nicht vollständig.
   * XAMPP jetzt nichtmehr in der ISO sondern als Paket.
   * ISO bedeutend kleiner: 144MB -> 61MB
   * GNUMP3D-Paket erstellt.
-  * Kernel schonmal angepasst fÃ¼r NFS, noch nicht getestet!!
+  * Kernel schonmal angepasst für NFS, noch nicht getestet!!
 
 ------------------------------------------------------------------------
-r112 | ms | 2006-05-04 12:50:41 +0200 (Thu, 04 May 2006) | 3 lines
+r112 | ms | 2006-05-04 12:50:41 +0200 (Do, 04 Mai 2006) | 3 lines
 
-HauptsÃ¤chlich Quellenupdate. Apache - Bind - hddtemp - hdparm - lame
+Hauptsächlich Quellenupdate. Apache - Bind - hddtemp - hdparm - lame
 Ghostscript und CUPS aktiviert. Samba jetzt mit libcups-Support.
 
 ------------------------------------------------------------------------
-r111 | ms | 2006-05-04 12:48:33 +0200 (Thu, 04 May 2006) | 5 lines
+r111 | ms | 2006-05-04 12:48:33 +0200 (Do, 04 Mai 2006) | 5 lines
 
-HinzugefÃ¼gt:
-  * Patch fÃ¼r MPG123
-GeÃ¤ndert:
+Hinzugefügt:
+  * Patch für MPG123
+Geändert:
   * CUPS
 
 ------------------------------------------------------------------------
-r110 | ms | 2006-05-02 22:19:59 +0200 (Tue, 02 May 2006) | 7 lines
+r110 | ms | 2006-05-02 22:19:59 +0200 (Di, 02 Mai 2006) | 7 lines
 
-HinzugefÃ¼gt:
-  * mpg123 - FÃ¼r Wartemusik im Asterisk
+Hinzugefügt:
+  * mpg123 - Für Wartemusik im Asterisk
   * CUPS - Drucker-Daemon
   * Ghostscript - Braucht CUPS
   * GNUmp3d - MP3-Streamer
   * lame - Braucht GNUmp3d
 
 ------------------------------------------------------------------------
-r109 | ms | 2006-05-02 08:06:43 +0200 (Tue, 02 May 2006) | 4 lines
+r109 | ms | 2006-05-02 08:06:43 +0200 (Di, 02 Mai 2006) | 4 lines
 
-GeÃ¤ndert:
+Geändert:
   * Samba wird jetzt ohne Dokumentation installiert
   * Gettoolchain repariert
 
 ------------------------------------------------------------------------
-r108 | ms | 2006-05-01 21:47:04 +0200 (Mon, 01 May 2006) | 2 lines
+r108 | ms | 2006-05-01 21:47:04 +0200 (Mo, 01 Mai 2006) | 2 lines
 
 Quellenupdate! wireless, ntp, shadow, uClibc
 
 ------------------------------------------------------------------------
-r107 | ms | 2006-05-01 21:02:50 +0200 (Mon, 01 May 2006) | 2 lines
+r107 | ms | 2006-05-01 21:02:50 +0200 (Mo, 01 Mai 2006) | 2 lines
 
-EmbCop-Sources gelÃ¶scht!
+EmbCop-Sources gelöscht!
 
 ------------------------------------------------------------------------
-r106 | ms | 2006-04-28 16:57:32 +0200 (Fri, 28 Apr 2006) | 7 lines
+r106 | ms | 2006-04-28 16:57:32 +0200 (Fr, 28 Apr 2006) | 7 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * fetchmail
   * cyrusimap
-GeÃ¤ndert:
+Geändert:
   * xampp
   * pam
 
 ------------------------------------------------------------------------
-r105 | ms | 2006-04-20 16:20:28 +0200 (Thu, 20 Apr 2006) | 7 lines
+r105 | ms | 2006-04-20 16:20:28 +0200 (Do, 20 Apr 2006) | 7 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Sane - Scanning
   * LibJPEG
-GeÃ¤ndert:
+Geändert:
   * pwlib
   * xinetd
 
 ------------------------------------------------------------------------
-r104 | ms | 2006-04-20 16:15:50 +0200 (Thu, 20 Apr 2006) | 2 lines
+r104 | ms | 2006-04-20 16:15:50 +0200 (Do, 20 Apr 2006) | 2 lines
 
-Allgemeine AufrÃ¤umarbeiten und Optimierungen
+Allgemeine Aufräumarbeiten und Optimierungen
 
 ------------------------------------------------------------------------
-r103 | ms | 2006-04-19 18:02:55 +0200 (Wed, 19 Apr 2006) | 4 lines
+r103 | ms | 2006-04-19 18:02:55 +0200 (Mi, 19 Apr 2006) | 4 lines
 
-GeÃ¤ndert:
+Geändert:
   * pwlib wird bei jedem Durchgang kompiliert, auch wenn schon geschehen :(
-  * Mirror-URL geÃ¤ndert
+  * Mirror-URL geändert
 
 ------------------------------------------------------------------------
-r102 | ms | 2006-04-19 15:30:44 +0200 (Wed, 19 Apr 2006) | 9 lines
+r102 | ms | 2006-04-19 15:30:44 +0200 (Mi, 19 Apr 2006) | 9 lines
 
-GeÃ¤ndert:
+Geändert:
   * Asterisk mit H323
 Neue Versionen:
   * OpenVPN
   * pwlib
   * openh323
 Fixed:
-  * MenÃ¼ im Webinterface
+  * Menü im Webinterface
 
 ------------------------------------------------------------------------
-r101 | ms | 2006-04-15 01:12:47 +0200 (Sat, 15 Apr 2006) | 10 lines
+r101 | ms | 2006-04-15 01:12:47 +0200 (Sa, 15 Apr 2006) | 10 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Asterisk - mit Zaptel/LibPRI/BRISTUFF/app_fax
   * Spandsp
   * LibTIFF
   * LibXML2
   * eDonkey-commandline-client
-GeÃ¤ndert:
-  * busybox - tar-parameter zurÃ¼ckgesetzt
+Geändert:
+  * busybox - tar-parameter zurückgesetzt
   * postfix hat Beta-Status-1
 
 ------------------------------------------------------------------------
-r100 | ms | 2006-04-11 00:33:24 +0200 (Tue, 11 Apr 2006) | 6 lines
+r100 | ms | 2006-04-11 00:33:24 +0200 (Di, 11 Apr 2006) | 6 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Samba - Erste Test-Version
-  * STUNNEL - bisher nicht verwendet, aber SWAT sendet das root-Passwort im Klartext Ã¼ber die Leitung
-GeÃ¤ndert:
+  * STUNNEL - bisher nicht verwendet, aber SWAT sendet das root-Passwort im Klartext über die Leitung
+Geändert:
   * Linux-PAM - Libs waren falsch verlinkt
 
 ------------------------------------------------------------------------
-r99 | casemaster | 2006-04-10 23:10:53 +0200 (Mon, 10 Apr 2006) | 2 lines
+r99 | casemaster | 2006-04-10 23:10:53 +0200 (Mo, 10 Apr 2006) | 2 lines
 
-pwlib geÃ¤ndert.
-busybox: tar.c grÃ¶ÃŸe auf 150 gesetzt.
+pwlib geändert.
+busybox: tar.c größe auf 150 gesetzt.
 ------------------------------------------------------------------------
-r98 | ms | 2006-04-10 20:39:59 +0200 (Mon, 10 Apr 2006) | 4 lines
+r98 | ms | 2006-04-10 20:39:59 +0200 (Mo, 10 Apr 2006) | 4 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Xinetd - Super-Daemon
   * Sudo
 
 ------------------------------------------------------------------------
-r97 | ms | 2006-04-09 22:23:54 +0200 (Sun, 09 Apr 2006) | 4 lines
+r97 | ms | 2006-04-09 22:23:54 +0200 (So, 09 Apr 2006) | 4 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * OpenVPN
   * LZO
 
 ------------------------------------------------------------------------
-r96 | ms | 2006-04-09 19:55:27 +0200 (Sun, 09 Apr 2006) | 7 lines
+r96 | ms | 2006-04-09 19:55:27 +0200 (So, 09 Apr 2006) | 7 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
   * Midnight Commander 4.6.1 (GLIB/PKG-CONFIG)
-GeÃ¤ndert:
+Geändert:
   * OpenLDAP
   * PWLib - Compilier-Optionen
   * make-packages - Funktionen erweitert
 
 ------------------------------------------------------------------------
-r95 | ms | 2006-04-04 19:19:54 +0200 (Tue, 04 Apr 2006) | 2 lines
+r95 | ms | 2006-04-04 19:19:54 +0200 (Di, 04 Apr 2006) | 2 lines
 
-Kleine Fixes an den Graphs und dem MenÃ¼!
+Kleine Fixes an den Graphs und dem Menü!
 
 ------------------------------------------------------------------------
-r94 | casemaster | 2006-04-02 14:18:42 +0200 (Sun, 02 Apr 2006) | 2 lines
+r94 | casemaster | 2006-04-02 14:18:42 +0200 (So, 02 Apr 2006) | 2 lines
 
 src fuer openldap geaendert.
 ldap Unterstuetzung bei pwlib entfernt.
 ------------------------------------------------------------------------
-r93 | ms | 2006-03-28 20:54:43 +0200 (Tue, 28 Mar 2006) | 5 lines
+r93 | ms | 2006-03-28 20:54:43 +0200 (Di, 28 Mär 2006) | 5 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
     * OpenLDAP
-GeÃ¤ndert:
+Geändert:
     * SASLAUTHD kann jetzt OpenLDAP.
 
 ------------------------------------------------------------------------
-r92 | ms | 2006-03-28 17:35:56 +0200 (Tue, 28 Mar 2006) | 2 lines
+r92 | ms | 2006-03-28 17:35:56 +0200 (Di, 28 Mär 2006) | 2 lines
 
 Allgemeine FIXES! Das Build sollte nun durchlaufen...
 
 ------------------------------------------------------------------------
-r91 | ms | 2006-03-28 16:16:15 +0200 (Tue, 28 Mar 2006) | 1 line
+r91 | ms | 2006-03-28 16:16:15 +0200 (Di, 28 Mär 2006) | 1 line
 
 SASL-Authd nun ohne PostgreSQL-Support.
 ------------------------------------------------------------------------
-r90 | ms | 2006-03-27 21:50:44 +0200 (Mon, 27 Mar 2006) | 1 line
+r90 | ms | 2006-03-27 21:50:44 +0200 (Mo, 27 Mär 2006) | 1 line
 
 URL von den Bridge-Utils gefixt.
 ------------------------------------------------------------------------
-r89 | casemaster | 2006-03-27 17:06:13 +0200 (Mon, 27 Mar 2006) | 1 line
+r89 | casemaster | 2006-03-27 17:06:13 +0200 (Mo, 27 Mär 2006) | 1 line
 
-Test gelÃ¶scht.
+Test gelöscht.
 ------------------------------------------------------------------------
-r88 | ms | 2006-03-27 16:43:30 +0200 (Mon, 27 Mar 2006) | 3 lines
+r88 | ms | 2006-03-27 16:43:30 +0200 (Mo, 27 Mär 2006) | 3 lines
 
 Toolchain-Download mit ./make.sh gettoolchain
-Beim Netstatus werden ab jetzt nur noch aktive Verbindungen angezeigt. ErhÃ¶ht die Ãœbersichtlichkeit...
+Beim Netstatus werden ab jetzt nur noch aktive Verbindungen angezeigt. Erhöht die Übersichtlichkeit...
 
 ------------------------------------------------------------------------
-r87 | casemaster | 2006-03-27 16:35:38 +0200 (Mon, 27 Mar 2006) | 1 line
+r87 | casemaster | 2006-03-27 16:35:38 +0200 (Mo, 27 Mär 2006) | 1 line
 
 Test 2 Write
 ------------------------------------------------------------------------
-r86 | ms | 2006-03-27 16:02:24 +0200 (Mon, 27 Mar 2006) | 2 lines
+r86 | ms | 2006-03-27 16:02:24 +0200 (Mo, 27 Mär 2006) | 2 lines
 
-Repariert: lib-links fÃ¼r postfix
+Repariert: lib-links für postfix
 
 ------------------------------------------------------------------------
-r85 | ms | 2006-03-26 20:46:32 +0200 (Sun, 26 Mar 2006) | 5 lines
+r85 | ms | 2006-03-26 20:46:32 +0200 (So, 26 Mär 2006) | 5 lines
 
 Update Squid to 2.5STABLE13.
 Added WGET/HDDTEMP/BRIDGE-UTILS.
@@ -361,39 +367,39 @@ SCSI-GRUB-Konfiguration angepasst.
 
 
 ------------------------------------------------------------------------
-r84 | ms | 2006-03-25 16:06:35 +0100 (Sat, 25 Mar 2006) | 4 lines
+r84 | ms | 2006-03-25 16:06:35 +0100 (Sa, 25 Mär 2006) | 4 lines
 
 Erste Version des Paketerstellers.
 Bisher nur Postfix. :(
 
 
 ------------------------------------------------------------------------
-r83 | guest | 2006-03-24 16:47:00 +0100 (Fri, 24 Mar 2006) | 1 line
+r83 | guest | 2006-03-24 16:47:00 +0100 (Fr, 24 Mär 2006) | 1 line
 
 nomsg
 ------------------------------------------------------------------------
-r82 | ms | 2006-03-22 20:11:17 +0100 (Wed, 22 Mar 2006) | 8 lines
+r82 | ms | 2006-03-22 20:11:17 +0100 (Mi, 22 Mär 2006) | 8 lines
 
 Webinterface gefixt.
 Ohne Anmeldung kommt man im Webinterface nichtmehr auf die Index-Seite.
 Berkeley-DB neu implementiert.
 Postfix geht jetzt.
 Graphs gefixt.
-IPCop-Updates gelÃ¶scht.
+IPCop-Updates gelöscht.
 
 
 ------------------------------------------------------------------------
-r81 | ms | 2006-03-18 12:24:42 +0100 (Sat, 18 Mar 2006) | 1 line
+r81 | ms | 2006-03-18 12:24:42 +0100 (Sa, 18 Mär 2006) | 1 line
 
 Quellenupdate
 ------------------------------------------------------------------------
-r80 | ms | 2006-03-17 01:46:51 +0100 (Fri, 17 Mar 2006) | 1 line
+r80 | ms | 2006-03-17 01:46:51 +0100 (Fr, 17 Mär 2006) | 1 line
 
 TEMP-DIR von /tmp nach /var/tmp verschoben.
 ------------------------------------------------------------------------
-r79 | ms | 2006-03-12 22:09:13 +0100 (Sun, 12 Mar 2006) | 11 lines
+r79 | ms | 2006-03-12 22:09:13 +0100 (So, 12 Mär 2006) | 11 lines
 
-HinzugefÃ¼gt:
+Hinzugefügt:
     * Postfix 2.2.9
     * PostGreSQL
 Gefixt und neu implementiert:
@@ -402,131 +408,131 @@ Gefixt und neu implementiert:
     * XAMPP + PostGreSQL
     * SASLAUTHD
 /opt/lampp/lib und /opt/lampp/lib/mysql befinden sich im Lib-Cache
-leichtes aufrÃ¤umen in der make.sh
+leichtes aufräumen in der make.sh
 
 ------------------------------------------------------------------------
-r78 | ms | 2006-03-12 16:52:13 +0100 (Sun, 12 Mar 2006) | 1 line
+r78 | ms | 2006-03-12 16:52:13 +0100 (So, 12 Mär 2006) | 1 line
 
 New Webinterface-Style by benne
 ------------------------------------------------------------------------
-r77 | ms | 2006-03-06 15:30:36 +0100 (Mon, 06 Mar 2006) | 1 line
+r77 | ms | 2006-03-06 15:30:36 +0100 (Mo, 06 Mär 2006) | 1 line
 
 Webinterface-Bilder neu gemacht | IPAC-NG-Patches installiert | Berkeley-DB installiert
 ------------------------------------------------------------------------
-r76 | ms | 2006-03-02 21:55:58 +0100 (Thu, 02 Mar 2006) | 1 line
+r76 | ms | 2006-03-02 21:55:58 +0100 (Do, 02 Mär 2006) | 1 line
 
 PAM-MySQL + BerkeleyDB + SASLauthd hinzugefuegt
 ------------------------------------------------------------------------
-r75 | ms | 2006-02-28 22:11:50 +0100 (Tue, 28 Feb 2006) | 1 line
+r75 | ms | 2006-02-28 22:11:50 +0100 (Di, 28 Feb 2006) | 1 line
 
-ROOTFILES.i386 aufgerÃ¤umt
+ROOTFILES.i386 aufgeräumt
 ------------------------------------------------------------------------
-r74 | ms | 2006-02-28 22:10:58 +0100 (Tue, 28 Feb 2006) | 1 line
+r74 | ms | 2006-02-28 22:10:58 +0100 (Di, 28 Feb 2006) | 1 line
 
-ISO vergÃ¶ÃŸert und XAMPP-1.5.1 DEVEL Paket installiert
+ISO vergößert und XAMPP-1.5.1 DEVEL Paket installiert
 ------------------------------------------------------------------------
-r73 | ms | 2006-02-27 21:13:17 +0100 (Mon, 27 Feb 2006) | 2 lines
+r73 | ms | 2006-02-27 21:13:17 +0100 (Mo, 27 Feb 2006) | 2 lines
 
 Quellenupdate... ipaddr busybox kernel
 
 ------------------------------------------------------------------------
-r72 | ms | 2006-02-27 18:13:57 +0100 (Mon, 27 Feb 2006) | 2 lines
+r72 | ms | 2006-02-27 18:13:57 +0100 (Mo, 27 Feb 2006) | 2 lines
 
-OpenH323 hinzugefÃ¼gt
+OpenH323 hinzugefügt
 
 ------------------------------------------------------------------------
-r71 | ms | 2006-02-22 21:23:30 +0100 (Wed, 22 Feb 2006) | 1 line
+r71 | ms | 2006-02-22 21:23:30 +0100 (Mi, 22 Feb 2006) | 1 line
 
 IPAC-NG ging nicht... mal sehen
 ------------------------------------------------------------------------
-r70 | ms | 2006-02-22 21:21:51 +0100 (Wed, 22 Feb 2006) | 1 line
+r70 | ms | 2006-02-22 21:21:51 +0100 (Mi, 22 Feb 2006) | 1 line
 
 ROOTFILES aktualisiert
 ------------------------------------------------------------------------
-r69 | ms | 2006-02-22 20:52:10 +0100 (Wed, 22 Feb 2006) | 1 line
+r69 | ms | 2006-02-22 20:52:10 +0100 (Mi, 22 Feb 2006) | 1 line
 
 Endlich neues Webinterface
 ------------------------------------------------------------------------
-r68 | ms | 2006-02-21 22:26:55 +0100 (Tue, 21 Feb 2006) | 2 lines
+r68 | ms | 2006-02-21 22:26:55 +0100 (Di, 21 Feb 2006) | 2 lines
 
 SSH von vornherein aktiviert
 
 ------------------------------------------------------------------------
-r67 | ms | 2006-02-21 21:38:06 +0100 (Tue, 21 Feb 2006) | 2 lines
+r67 | ms | 2006-02-21 21:38:06 +0100 (Di, 21 Feb 2006) | 2 lines
 
 SMP-Config angepasst.. CGIs usw. wurden im Windoof-Format gespeichert... muss noch alles korrigiert werden...
 
 ------------------------------------------------------------------------
-r66 | ms | 2006-02-21 19:55:53 +0100 (Tue, 21 Feb 2006) | 1 line
+r66 | ms | 2006-02-21 19:55:53 +0100 (Di, 21 Feb 2006) | 1 line
 
 immernoch das alte Problem...
 ------------------------------------------------------------------------
-r65 | ms | 2006-02-21 17:55:11 +0100 (Tue, 21 Feb 2006) | 1 line
+r65 | ms | 2006-02-21 17:55:11 +0100 (Di, 21 Feb 2006) | 1 line
 
-EmbCop-V0.1-1.4.10 in branches eingefÃ¼gt
+EmbCop-V0.1-1.4.10 in branches eingefügt
 ------------------------------------------------------------------------
-r64 | ms | 2006-02-20 22:23:51 +0100 (Mon, 20 Feb 2006) | 2 lines
+r64 | ms | 2006-02-20 22:23:51 +0100 (Mo, 20 Feb 2006) | 2 lines
 
-Kernel Config fÃ¼r SMP angepasst...
+Kernel Config für SMP angepasst...
 
 ------------------------------------------------------------------------
-r63 | ms | 2006-02-20 21:46:53 +0100 (Mon, 20 Feb 2006) | 2 lines
+r63 | ms | 2006-02-20 21:46:53 +0100 (Mo, 20 Feb 2006) | 2 lines
 
 Windows hat sie wieder zerschossen... :(
 
 ------------------------------------------------------------------------
-r62 | ms | 2006-02-20 21:13:28 +0100 (Mon, 20 Feb 2006) | 1 line
+r62 | ms | 2006-02-20 21:13:28 +0100 (Mo, 20 Feb 2006) | 1 line
 
 SMP wieder aktiviert (Zumindest versucht)
 ------------------------------------------------------------------------
-r61 | ms | 2006-02-20 21:01:45 +0100 (Mon, 20 Feb 2006) | 1 line
+r61 | ms | 2006-02-20 21:01:45 +0100 (Mo, 20 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r60 | ms | 2006-02-20 21:01:31 +0100 (Mon, 20 Feb 2006) | 1 line
+r60 | ms | 2006-02-20 21:01:31 +0100 (Mo, 20 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r59 | ms | 2006-02-20 20:57:20 +0100 (Mon, 20 Feb 2006) | 1 line
+r59 | ms | 2006-02-20 20:57:20 +0100 (Mo, 20 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r58 | ms | 2006-02-20 20:56:37 +0100 (Mon, 20 Feb 2006) | 1 line
+r58 | ms | 2006-02-20 20:56:37 +0100 (Mo, 20 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r57 | ms | 2006-02-20 20:55:36 +0100 (Mon, 20 Feb 2006) | 1 line
+r57 | ms | 2006-02-20 20:55:36 +0100 (Mo, 20 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r56 | ms | 2006-02-20 20:51:27 +0100 (Mon, 20 Feb 2006) | 1 line
+r56 | ms | 2006-02-20 20:51:27 +0100 (Mo, 20 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r55 | ms | 2006-02-20 20:50:08 +0100 (Mon, 20 Feb 2006) | 1 line
+r55 | ms | 2006-02-20 20:50:08 +0100 (Mo, 20 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r54 | ms | 2006-02-20 20:49:08 +0100 (Mon, 20 Feb 2006) | 2 lines
+r54 | ms | 2006-02-20 20:49:08 +0100 (Mo, 20 Feb 2006) | 2 lines
 
 Sicherheits-Update packages-list
 
 ------------------------------------------------------------------------
-r53 | ms | 2006-02-20 02:46:27 +0100 (Mon, 20 Feb 2006) | 2 lines
+r53 | ms | 2006-02-20 02:46:27 +0100 (Mo, 20 Feb 2006) | 2 lines
 
 driver.img ohne SMP
 
 ------------------------------------------------------------------------
-r52 | ms | 2006-02-20 02:39:21 +0100 (Mon, 20 Feb 2006) | 2 lines
+r52 | ms | 2006-02-20 02:39:21 +0100 (Mo, 20 Feb 2006) | 2 lines
 
-GD und gd Konflikt gelÃ¶st...
-make.sh zerstÃ¶rt :(
+GD und gd Konflikt gelöst...
+make.sh zerstört :(
 ------------------------------------------------------------------------
-r51 | ms | 2006-02-20 02:32:51 +0100 (Mon, 20 Feb 2006) | 1 line
+r51 | ms | 2006-02-20 02:32:51 +0100 (Mo, 20 Feb 2006) | 1 line
 
 Removed file/folder gd
 ------------------------------------------------------------------------
-r50 | ms | 2006-02-20 02:10:06 +0100 (Mon, 20 Feb 2006) | 5 lines
+r50 | ms | 2006-02-20 02:10:06 +0100 (Mo, 20 Feb 2006) | 5 lines
 
 ipac-ng fix
 uClibc fix
@@ -534,205 +540,205 @@ pam-patch fix
 
 
 ------------------------------------------------------------------------
-r49 | ms | 2006-02-19 23:25:48 +0100 (Sun, 19 Feb 2006) | 2 lines
+r49 | ms | 2006-02-19 23:25:48 +0100 (So, 19 Feb 2006) | 2 lines
 
-SMP entfernt / gd hinzugefÃ¼gt!
+SMP entfernt / gd hinzugefügt!
 
 ------------------------------------------------------------------------
-r48 | ms | 2006-02-19 18:04:08 +0100 (Sun, 19 Feb 2006) | 2 lines
+r48 | ms | 2006-02-19 18:04:08 +0100 (So, 19 Feb 2006) | 2 lines
 
 Quellen-Update
 
 ------------------------------------------------------------------------
-r47 | ms | 2006-02-19 15:12:52 +0100 (Sun, 19 Feb 2006) | 1 line
+r47 | ms | 2006-02-19 15:12:52 +0100 (So, 19 Feb 2006) | 1 line
 
-Neuer Boot-Screen fÃ¼r GRUB
+Neuer Boot-Screen für GRUB
 ------------------------------------------------------------------------
-r46 | ms | 2006-02-19 14:16:13 +0100 (Sun, 19 Feb 2006) | 2 lines
+r46 | ms | 2006-02-19 14:16:13 +0100 (So, 19 Feb 2006) | 2 lines
 
 Installer repariert
 
 ------------------------------------------------------------------------
-r45 | ms | 2006-02-19 14:12:53 +0100 (Sun, 19 Feb 2006) | 2 lines
+r45 | ms | 2006-02-19 14:12:53 +0100 (So, 19 Feb 2006) | 2 lines
 
 Installer repariert
 
 ------------------------------------------------------------------------
-r44 | ms | 2006-02-19 13:19:49 +0100 (Sun, 19 Feb 2006) | 2 lines
+r44 | ms | 2006-02-19 13:19:49 +0100 (So, 19 Feb 2006) | 2 lines
 
 make.sh gefixt
 
 ------------------------------------------------------------------------
-r43 | ms | 2006-02-19 13:01:48 +0100 (Sun, 19 Feb 2006) | 1 line
+r43 | ms | 2006-02-19 13:01:48 +0100 (So, 19 Feb 2006) | 1 line
 
-IPCOP SOURCE Version 1.4.10 hinzugefÃ¼gt
+IPCOP SOURCE Version 1.4.10 hinzugefügt
 ------------------------------------------------------------------------
-r42 | ms | 2006-02-19 12:34:16 +0100 (Sun, 19 Feb 2006) | 1 line
+r42 | ms | 2006-02-19 12:34:16 +0100 (So, 19 Feb 2006) | 1 line
 
 Renamed File
 ------------------------------------------------------------------------
-r41 | ms | 2006-02-19 12:25:43 +0100 (Sun, 19 Feb 2006) | 2 lines
+r41 | ms | 2006-02-19 12:25:43 +0100 (So, 19 Feb 2006) | 2 lines
 
 Port 445 -> 444 gewechselt und XTAccess-Regeln ausgeschaltet.
 Nach der Installation sind alle Ports geschlossen!
 ------------------------------------------------------------------------
-r40 | ms | 2006-02-18 22:39:37 +0100 (Sat, 18 Feb 2006) | 1 line
+r40 | ms | 2006-02-18 22:39:37 +0100 (Sa, 18 Feb 2006) | 1 line
 
 Ordnerstruktur 3. Teil 
 ------------------------------------------------------------------------
-r39 | ms | 2006-02-18 22:33:11 +0100 (Sat, 18 Feb 2006) | 1 line
+r39 | ms | 2006-02-18 22:33:11 +0100 (Sa, 18 Feb 2006) | 1 line
 
 Ordnerstruktur 2-ter Teil
 ------------------------------------------------------------------------
-r38 | ms | 2006-02-18 22:26:02 +0100 (Sat, 18 Feb 2006) | 1 line
+r38 | ms | 2006-02-18 22:26:02 +0100 (Sa, 18 Feb 2006) | 1 line
 
-VernÃ¼nftige Ordnerstruktur
+Vernünftige Ordnerstruktur
 ------------------------------------------------------------------------
-r37 | ms | 2006-02-16 22:18:00 +0100 (Thu, 16 Feb 2006) | 1 line
+r37 | ms | 2006-02-16 22:18:00 +0100 (Do, 16 Feb 2006) | 1 line
 
-Neuer Installer eingefÃ¼gt...
+Neuer Installer eingefügt...
 ------------------------------------------------------------------------
-r36 | ms | 2006-02-16 20:20:41 +0100 (Thu, 16 Feb 2006) | 1 line
+r36 | ms | 2006-02-16 20:20:41 +0100 (Do, 16 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r35 | ms | 2006-02-16 20:09:00 +0100 (Thu, 16 Feb 2006) | 1 line
+r35 | ms | 2006-02-16 20:09:00 +0100 (Do, 16 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r34 | ms | 2006-02-16 20:07:58 +0100 (Thu, 16 Feb 2006) | 1 line
+r34 | ms | 2006-02-16 20:07:58 +0100 (Do, 16 Feb 2006) | 1 line
 
 Renamed remotely
 ------------------------------------------------------------------------
-r33 | admin | 2006-02-16 20:04:42 +0100 (Thu, 16 Feb 2006) | 1 line
+r33 | admin | 2006-02-16 20:04:42 +0100 (Do, 16 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r32 | admin | 2006-02-16 20:04:37 +0100 (Thu, 16 Feb 2006) | 1 line
+r32 | admin | 2006-02-16 20:04:37 +0100 (Do, 16 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r31 | ipfire | 2006-02-16 13:20:54 +0100 (Thu, 16 Feb 2006) | 1 line
+r31 | ipfire | 2006-02-16 13:20:54 +0100 (Do, 16 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r30 | ipfire | 2006-02-16 13:18:34 +0100 (Thu, 16 Feb 2006) | 1 line
+r30 | ipfire | 2006-02-16 13:18:34 +0100 (Do, 16 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r29 | ipfire | 2006-02-16 13:18:15 +0100 (Thu, 16 Feb 2006) | 1 line
+r29 | ipfire | 2006-02-16 13:18:15 +0100 (Do, 16 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r28 | ipfire | 2006-02-16 13:09:46 +0100 (Thu, 16 Feb 2006) | 1 line
+r28 | ipfire | 2006-02-16 13:09:46 +0100 (Do, 16 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r27 | ipfire | 2006-02-16 13:07:28 +0100 (Thu, 16 Feb 2006) | 1 line
+r27 | ipfire | 2006-02-16 13:07:28 +0100 (Do, 16 Feb 2006) | 1 line
 
 Removed Files
 ------------------------------------------------------------------------
-r26 | ipfire | 2006-02-16 13:06:41 +0100 (Thu, 16 Feb 2006) | 1 line
+r26 | ipfire | 2006-02-16 13:06:41 +0100 (Do, 16 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r25 | ipfire | 2006-02-15 22:36:29 +0100 (Wed, 15 Feb 2006) | 1 line
+r25 | ipfire | 2006-02-15 22:36:29 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r24 | ipfire | 2006-02-15 22:36:15 +0100 (Wed, 15 Feb 2006) | 1 line
+r24 | ipfire | 2006-02-15 22:36:15 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r23 | ipfire | 2006-02-15 22:35:46 +0100 (Wed, 15 Feb 2006) | 1 line
+r23 | ipfire | 2006-02-15 22:35:46 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r22 | ipfire | 2006-02-15 22:33:28 +0100 (Wed, 15 Feb 2006) | 1 line
+r22 | ipfire | 2006-02-15 22:33:28 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Renamed remotely
 ------------------------------------------------------------------------
-r21 | ipfire | 2006-02-15 22:33:06 +0100 (Wed, 15 Feb 2006) | 1 line
+r21 | ipfire | 2006-02-15 22:33:06 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r20 | ipfire | 2006-02-15 22:32:33 +0100 (Wed, 15 Feb 2006) | 1 line
+r20 | ipfire | 2006-02-15 22:32:33 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r19 | ipfire | 2006-02-15 22:31:56 +0100 (Wed, 15 Feb 2006) | 1 line
+r19 | ipfire | 2006-02-15 22:31:56 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r18 | ipfire | 2006-02-15 22:31:26 +0100 (Wed, 15 Feb 2006) | 1 line
+r18 | ipfire | 2006-02-15 22:31:26 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r17 | ipfire | 2006-02-15 22:31:06 +0100 (Wed, 15 Feb 2006) | 1 line
+r17 | ipfire | 2006-02-15 22:31:06 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r16 | ipfire | 2006-02-15 22:15:54 +0100 (Wed, 15 Feb 2006) | 1 line
+r16 | ipfire | 2006-02-15 22:15:54 +0100 (Mi, 15 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r15 | ipfire | 2006-02-15 22:21:38 +0100 (Wed, 15 Feb 2006) | 1 line
+r15 | ipfire | 2006-02-15 22:21:38 +0100 (Mi, 15 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r14 | ipfire | 2006-02-15 22:07:30 +0100 (Wed, 15 Feb 2006) | 1 line
+r14 | ipfire | 2006-02-15 22:07:30 +0100 (Mi, 15 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r13 | ipfire | 2006-02-15 11:46:10 +0100 (Wed, 15 Feb 2006) | 1 line
+r13 | ipfire | 2006-02-15 11:46:10 +0100 (Mi, 15 Feb 2006) | 1 line
 
 
 ------------------------------------------------------------------------
-r12 | ipfire | 2006-02-15 11:31:15 +0100 (Wed, 15 Feb 2006) | 1 line
+r12 | ipfire | 2006-02-15 11:31:15 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Created folder remotely
 ------------------------------------------------------------------------
-r11 | ipfire | 2006-02-15 11:28:40 +0100 (Wed, 15 Feb 2006) | 1 line
+r11 | ipfire | 2006-02-15 11:28:40 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r10 | ipfire | 2006-02-15 11:27:18 +0100 (Wed, 15 Feb 2006) | 1 line
+r10 | ipfire | 2006-02-15 11:27:18 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Added a folder remotely
 ------------------------------------------------------------------------
-r9 | ipfire | 2006-02-15 11:26:47 +0100 (Wed, 15 Feb 2006) | 1 line
+r9 | ipfire | 2006-02-15 11:26:47 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Moved remotely
 ------------------------------------------------------------------------
-r8 | ipfire | 2006-02-15 11:26:18 +0100 (Wed, 15 Feb 2006) | 1 line
+r8 | ipfire | 2006-02-15 11:26:18 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Added a folder remotely
 ------------------------------------------------------------------------
-r7 | ipfire | 2006-02-15 11:25:16 +0100 (Wed, 15 Feb 2006) | 1 line
+r7 | ipfire | 2006-02-15 11:25:16 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Added a file remotely
 ------------------------------------------------------------------------
-r6 | ipfire | 2006-02-15 11:24:03 +0100 (Wed, 15 Feb 2006) | 1 line
+r6 | ipfire | 2006-02-15 11:24:03 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Added a folder remotely
 ------------------------------------------------------------------------
-r5 | ipfire | 2006-02-15 10:27:58 +0100 (Wed, 15 Feb 2006) | 1 line
+r5 | ipfire | 2006-02-15 10:27:58 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Removed file/folder
 ------------------------------------------------------------------------
-r4 | ipfire | 2006-02-15 10:27:47 +0100 (Wed, 15 Feb 2006) | 1 line
+r4 | ipfire | 2006-02-15 10:27:47 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Created folder remotely
 ------------------------------------------------------------------------
-r3 | admin | 2006-02-15 01:27:59 +0100 (Wed, 15 Feb 2006) | 1 line
+r3 | admin | 2006-02-15 01:27:59 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Ordner im Projektarchiv angelegt
 ------------------------------------------------------------------------
-r2 | admin | 2006-02-15 01:14:05 +0100 (Wed, 15 Feb 2006) | 1 line
+r2 | admin | 2006-02-15 01:14:05 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Ordner im Projektarchiv angelegt
 ------------------------------------------------------------------------
-r1 | admin | 2006-02-15 01:13:56 +0100 (Wed, 15 Feb 2006) | 1 line
+r1 | admin | 2006-02-15 01:13:56 +0100 (Mi, 15 Feb 2006) | 1 line
 
 Ordner im Projektarchiv angelegt
 ------------------------------------------------------------------------

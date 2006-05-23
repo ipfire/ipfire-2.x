@@ -24295,29 +24295,6 @@ lib/modules/2.4.31-smp/extra/unicorn_pci_atm.o.gz
 #usr/share/man/man1/zipgrep.1
 #usr/share/man/man1/zipinfo.1
 ##
-## wireless_tools.27
-##
-#usr/include/iwlib.h
-#usr/include/wireless.h
-usr/lib/libiw.so
-usr/lib/libiw.so.27
-usr/sbin/ifrename
-usr/sbin/iwconfig
-usr/sbin/iwevent
-usr/sbin/iwgetid
-usr/sbin/iwlist
-usr/sbin/iwpriv
-usr/sbin/iwspy
-#usr/share/man/man5/iftab.5
-#usr/share/man/man7/wireless.7
-#usr/share/man/man8/ifrename.8
-#usr/share/man/man8/iwconfig.8
-#usr/share/man/man8/iwevent.8
-#usr/share/man/man8/iwgetid.8
-#usr/share/man/man8/iwlist.8
-#usr/share/man/man8/iwpriv.8
-#usr/share/man/man8/iwspy.8
-##
 ## HTML-Tagset-3.04
 ##
 #usr/lib/perl5/site_perl/5.8.5/HTML

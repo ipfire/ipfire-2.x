@@ -143,6 +143,7 @@
   * net-tools-1.60
   * newt-utf8_0.50.17
   * nfs-utils-1.0.8
+  * nmap-4.03
   * noip_updater_v1.6
   * ntp-4.2.0
   * oinkmaster-1.2
@@ -203,7 +204,6 @@
   * vim-6.3
   * vlan.1.9
   * wget-1.10.2
-  * wireless_tools.27
   * xampp-linux-1.5.1
   * xinetd-2.3.14
   * zlib-1.2.3

@@ -30,7 +30,7 @@ VER        = 2.2.9
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://netmirror.org/postfix.org/official
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
