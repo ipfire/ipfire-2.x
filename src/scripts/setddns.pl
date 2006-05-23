@@ -17,7 +17,7 @@ use strict;
 use IO::Socket;
 use Net::SSLeay;
 
-require '/var/ipcop/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 
 #Prototypes functions
 sub encode_base64 ($;$);

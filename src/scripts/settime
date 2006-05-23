@@ -12,64 +12,64 @@
 # /usr/local/bin/settime
 
 ongreen=1
-green=$(cat /var/ipcop/ethernet/settings | grep GREEN_NETADDRESS)
+green=$(cat /var/ipfire/ethernet/settings | grep GREEN_NETADDRESS)
 if [ -z "$green" ]; then
 	:		# no Green subnet
 else
 	green=${green##*=}; green="${green%.*}.[0-9]"
-	if [ -n "$(cat /var/ipcop/time/settime.conf | grep $green)" ]; then
+	if [ -n "$(cat /var/ipfire/time/settime.conf | grep $green)" ]; then
 		ongreen=0	# NTP on Green
 	fi
 fi
 
 onorange=1
-orange=$(cat /var/ipcop/ethernet/settings | grep ORANGE_NETADDRESS)
+orange=$(cat /var/ipfire/ethernet/settings | grep ORANGE_NETADDRESS)
 if [ -z "$orange" ]; then
 	:		# no Orange subnet
 else
 	orange=${orange##*=}; orange="${orange%.*}.[0-9]"
-	if [ -n "$(cat /var/ipcop/time/settime.conf | grep $orange)" ]; then
+	if [ -n "$(cat /var/ipfire/time/settime.conf | grep $orange)" ]; then
 		onorange=0	# NTP on Orange
 	fi
 fi
 
 # find out language
-tlanguage=$(cat /var/ipcop/main/settings | grep LANGUAGE)
+tlanguage=$(cat /var/ipfire/main/settings | grep LANGUAGE)
 tlanguage=${tlanguage##*=}
 
 if [ -n "$1" ]; then
-	if [ -e /var/ipcop/red/active ] || [ "$ongreen" -eq 0 ] || [ "$onorange" -eq 0 ]; then
+	if [ -e /var/ipfire/red/active ] || [ "$ongreen" -eq 0 ] || [ "$onorange" -eq 0 ]; then
 		/usr/bin/ntpdate -su $1 $2
 		ntpdatetest=$?
 
 		if [ "$ntpdatetest" -eq 0 ]; then
 			case $tlanguage in
-				en ) date "+%X %Z on %d %B %Y" > /var/ipcop/time/lastset ;
+				en ) date "+%X %Z on %d %B %Y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP synchronisation event" ;;
-				da ) date "+%k:%M:%S på %d/%m/%y" > /var/ipcop/time/lastset ;
+				da ) date "+%k:%M:%S på %d/%m/%y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP synkronisering" ;;
-				de ) date "+%X Uhr am %d.%m.%Y" > /var/ipcop/time/lastset ;
+				de ) date "+%X Uhr am %d.%m.%Y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP Synchronisierung" ;;
-				fr ) date "+%X le %e/%m/%y" > /var/ipcop/time/lastset ;
+				fr ) date "+%X le %e/%m/%y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "synchronisation NTP" ;;
-				it ) date "+%X il %d-%m-%Y" > /var/ipcop/time/lastset ;
+				it ) date "+%X il %d-%m-%Y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "sincronizzazione NTP" ;;
-				nl ) date "+%X %e-%m-%Y" > /var/ipcop/time/lastset ;
+				nl ) date "+%X %e-%m-%Y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP synchronisatie" ;;
-				no ) date "+%X på %d-%m-%y" > /var/ipcop/time/lastset ;
+				no ) date "+%X på %d-%m-%y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP synkronisering" ;;
-				sv ) date "+%H.%M.%S på %y-%m-%d" > /var/ipcop/time/lastset ;
+				sv ) date "+%H.%M.%S på %y-%m-%d" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP synkronisering" ;;
-				es ) date "+%X %e/%-m/%y" > /var/ipcop/time/lastset ;
+				es ) date "+%X %e/%-m/%y" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP sincronizado" ;;
-				*  ) date "+%X %Z, %Y-%m-%d" > /var/ipcop/time/lastset ;
+				*  ) date "+%X %Z, %Y-%m-%d" > /var/ipfire/time/lastset ;
 					logger -t ipcop "NTP synchronisation" ;;
 			esac
 
 			/sbin/hwclock --systohc
-			rm -f /var/ipcop/time/settimenow
+			rm -f /var/ipfire/time/settimenow
 			# reset counter variable
-			cp /var/ipcop/time/counter.conf /var/ipcop/time/counter
+			cp /var/ipfire/time/counter.conf /var/ipfire/time/counter
 		else
 			case $tlanguage in
 				de ) logger -t ipcop "ntpdate fehlerhaft" ;;

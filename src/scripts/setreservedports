@@ -25,15 +25,15 @@ else
 		/etc/httpd/conf/httpd.conf
 		
 		/bin/sed -i -e "s+:[0-9]\{3,5\}/\$ENV{'PATH_INFO'}+:$HTTPS/\$ENV{'PATH_INFO'}+" \
-		/var/ipcop/header.pl
+		/var/ipfire/header.pl
 		
 		/bin/sed -i -e "s+acl IPFire_https port.*$+acl IPCop_https port $HTTPS+" \
-		/var/ipcop/proxy/acl
-		/bin/chown nobody:nobody /var/ipcop/proxy/acl
+		/var/ipfire/proxy/acl
+		/bin/chown nobody:nobody /var/ipfire/proxy/acl
 		
 		/bin/sed -i -e "s+acl IPFire_https port.*$+acl IPCop_https port $HTTPS+" \
-		/var/ipcop/proxy/squid.conf
-		/bin/chown nobody:nobody /var/ipcop/proxy/squid.conf
+		/var/ipfire/proxy/squid.conf
+		/bin/chown nobody:nobody /var/ipfire/proxy/squid.conf
 		
 		# restart everything impacted
 		/bin/killall httpd

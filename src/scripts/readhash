@@ -4,7 +4,7 @@
 # commands to run to set these as shell environment variables, it is
 # intended to be used as follows:
 #
-#   eval $(readhash /var/ipcop/main/settings)
+#   eval $(readhash /var/ipfire/main/settings)
 #
 
 # shell variables must consist of alphanumeric characters and underscores,

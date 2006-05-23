@@ -26421,5 +26421,5 @@ usr/sbin/visudo
 ##
 ## pakfire
 ##
-/opt/pakfire
-/etc/pakfire.conf
+opt/pakfire
+etc/pakfire.conf
