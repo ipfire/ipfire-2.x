@@ -139,6 +139,7 @@
   * nano-1.2.4
   * nash
   * nasm-0.98.36
+  * ncftp-3.1.9-src
   * ncurses-5.4
   * net-tools-1.60
   * newt-utf8_0.50.17

@@ -704,6 +704,7 @@ buildipcop() {
   ipcopmake portmap
   ipcopmake nmap
   ipcopmake nfs
+  ipcopmake ncftp
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
@@ -1086,6 +1087,7 @@ diff)
 sync)
 	echo -e "Syncing Cache to FTP:"
 	echo -ne "Password for mirror.ipfire.org: "; read PASS
+	rm -f doc/packages-to-remove-from-ftp
 	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/source/ > ftplist
 	for i in `ls -w1 cache/`; do
 		grep $i ftplist
@@ -1095,7 +1097,14 @@ sync)
 				echo -e "$i was successfully uploaded to the ftp server."
 			else
 				echo -e "There was an error while uploading $i to the ftp server."
+		
 			fi
+		fi
+	done
+	for i in `cat ftplist`; do
+		ls -w1 cache/ | grep $i
+		if [ "$?" -eq "1" ]; then
+			echo $i | grep -v toolchain >> doc/packages-to-remove-from-ftp
 		fi
 	done
 	rm -f ftplist
