@@ -29,7 +29,7 @@
   SLOGAN="We secure your network"	# Software slogan
   CONFIG_ROOT=/var/ipfire		# Configuration rootdir
   NICE=10
-  MAX_RETRIES=3				# prefetch/check loop
+  MAX_RETRIES=3			# prefetch/check loop
   KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
   MACHINE=`uname -m`
 
@@ -706,7 +706,7 @@ buildipcop() {
   ipcopmake nfs
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
-# ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
+#  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
 buildinstaller() {
@@ -1083,8 +1083,25 @@ diff)
 	echo "Finished!"
 	echo "Diff was successfully saved to ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff"
 	;;
+sync)
+	echo -e "Syncing Cache to FTP:"
+	echo -ne "Password for mirror.ipfire.org: "; read PASS
+	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/source/ > ftplist
+	for i in `ls -w1 cache/`; do
+		grep $i ftplist
+		if [ "$?" -ne "0" ]; then
+			ncftpput -u web3 -p $PASS mirror.ipfire.org /html/source-packages/source cache/$i
+			if [ "$?" -eq "0" ]; then
+				echo -e "$i was successfully uploaded to the ftp server."
+			else
+				echo -e "There was an error while uploading $i to the ftp server."
+			fi
+		fi
+	done
+	rm -f ftplist
+	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|shell|toolchain|update}"
+	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|shell|sync|toolchain|update}"
 	cat doc/make.sh-usage
 	exit 1
 	;;

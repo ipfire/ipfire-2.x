@@ -1,0 +1,17 @@
+#!/bin/bash
+############################################################################################
+# Copyright (C) 2006  by IPFire.org						  	         #
+# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
+############################################################################################
+
+if [ -f "/opt/confire/paks/$1" ]; then
+
+	echo -e "Configuring $1."
+	. /opt/confire/paks/$1
+	exit 0
+else
+	echo -e "There is no package with name $1. Exiting."
+	exit 1
+fi
+
+################################### EOF ####################################################

@@ -26422,4 +26422,5 @@ usr/sbin/visudo
 ## pakfire
 ##
 opt/pakfire
+opt/confire
 etc/pakfire.conf
