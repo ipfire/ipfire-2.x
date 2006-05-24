@@ -1097,7 +1097,6 @@ sync)
 				echo -e "$i was successfully uploaded to the ftp server."
 			else
 				echo -e "There was an error while uploading $i to the ftp server."
-		
 			fi
 		fi
 	done
