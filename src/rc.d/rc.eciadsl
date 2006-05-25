@@ -66,7 +66,7 @@ case "$1" in
 	# Firmware
 	if [ "$CHIP" = 'GS7070' ]; then
 		if ( /bin/grep -q "^P:  Vendor=$VID1 ProdID=$PID1" /proc/bus/usb/devices ); then
-			/bin/rm -f /var/ipcop/red/eciadsl-synch-done
+			/bin/rm -f /var/ipfire/red/eciadsl-synch-done
 			/bin/sleep 2
 			msg "Loading Firmware for $MODEM"
 			/usr/sbin/eciadsl-firmware 0x$VID1 0x$PID1 0x$VID2 0x$PID2 /etc/eciadsl/firmware00.bin

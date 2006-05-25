@@ -686,6 +686,7 @@ buildipcop() {
   ipcopmake fetchmail
   ipcopmake cyrusimap
   ipcopmake procmail
+  ipcopmake mailx
   ipcopmake clamav
   ipcopmake razor
   ipcopmake spamassassin
@@ -705,6 +706,7 @@ buildipcop() {
   ipcopmake nmap
   ipcopmake nfs
   ipcopmake ncftp
+  ipcopmake ethereal
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen

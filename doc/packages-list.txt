@@ -65,6 +65,7 @@
   * ed-0.2
   * edonkeyclc_1.3.0_i386
   * espgs-8.15.1-source
+  * ethereal-0.99.0
   * ethtool-3
   * expat-1.95.7
   * ez-ipupdate-3.0.11b8
@@ -125,6 +126,7 @@
   * logwatch-6.1.2
   * lzo-2.02
   * m4-1.4
+  * mailx-12.0
   * make-3.80
   * make_devices-1.2
   * man-1.5p

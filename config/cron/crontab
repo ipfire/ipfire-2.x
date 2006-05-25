@@ -26,11 +26,11 @@ HOME=/
 # Force update the dynamic dns registration once a week
 # Force update even if IP has not changed once a month if 'minimize update' selected in GUI
 # to avoid account declared as dead
-*/5 * * * *	[ -f "/var/ipcop/red/active" ] && /usr/local/bin/setddns.pl
-9 2 * * 0	[ -f "/var/ipcop/red/active" ] && /usr/local/bin/setddns.pl -f
-3 2 1 * *	[ -f "/var/ipcop/red/active" ] && /usr/local/bin/setddns.pl -f -m
+*/5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/local/bin/setddns.pl
+9 2 * * 0	[ -f "/var/ipfire/red/active" ] && /usr/local/bin/setddns.pl -f
+3 2 1 * *	[ -f "/var/ipfire/red/active" ] && /usr/local/bin/setddns.pl -f -m
 
 # Logwatch
 01 0 * * *	/usr/local/bin/logwatch > /var/log/logwatch/`date -I -d yesterday`; \
-		LOGWATCH_KEEP=$(sed -ne 's/^LOGWATCH_KEEP=\([0-9]\+\)$/\1/p' /var/ipcop/logging/settings); \
+		LOGWATCH_KEEP=$(sed -ne 's/^LOGWATCH_KEEP=\([0-9]\+\)$/\1/p' /var/ipfire/logging/settings); \
 		find /var/log/logwatch/ -ctime +${LOGWATCH_KEEP=56} -exec rm -f '{}' ';'

@@ -5,10 +5,10 @@ oid_section	= new_oids
 [ new_oids ]
 
 [ ca ]
-default_ca	= IPCop
+default_ca	= IPFire
 
 [ IPCop ]
-dir		= /var/ipcop
+dir		= /var/ipfire
 certs		= $dir/certs
 crl_dir		= $dir/crls
 database	= $dir/certs/index.txt

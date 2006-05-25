@@ -28,11 +28,11 @@ void _convert_ppp_settings() {
 	struct dirent *dp;
 	char filename[STRING_SIZE];
 	
-	dirp = opendir( "/harddisk/var/ipcop/ppp" );
+	dirp = opendir( "/harddisk/var/ipfire/ppp" );
 	while ( (dp = readdir( dirp )) != NULL ) {
 		if ( strstr( dp->d_name, "settings" ) == dp->d_name ) {
 			snprintf (filename, STRING_SIZE-1, "%s/%s", 
-				"/harddisk/var/ipcop/ppp", dp->d_name);
+				"/harddisk/var/ipfire/ppp", dp->d_name);
 
 			/* reduce furthur replacements from commands below */
 			replace (filename, "TYPE=modem", "");
@@ -65,8 +65,8 @@ int _convert_xtaccess() {
 	char xtsrctemp[STRING_SIZE], xtdsttemp[STRING_SIZE];
 	char *xtproto, *xtsrcip, *xtdstip, *xtdstport, *xtenabled;
         
-	if (!(portfw1 = fopen ("/harddisk/var/ipcop/portfw/config", "r"))) return 1;
-	if (!(portfw2 = fopen ("/harddisk/var/ipcop/portfw/config.new", "w"))) 
+	if (!(portfw1 = fopen ("/harddisk/var/ipfire/portfw/config", "r"))) return 1;
+	if (!(portfw2 = fopen ("/harddisk/var/ipfire/portfw/config.new", "w"))) 
 	{
 		fclose(portfw1);
 		return 1;
@@ -82,13 +82,13 @@ int _convert_xtaccess() {
 		portremip   = NULL;
 		portenabled = NULL;
 		
-		if (!(xtaccess1 = fopen ("/harddisk/var/ipcop/xtaccess/config", "r"))) 
+		if (!(xtaccess1 = fopen ("/harddisk/var/ipfire/xtaccess/config", "r"))) 
 		{
 			fclose(portfw1);
 			fclose(portfw2);
 			return 1;
 		}
-		if (!(xtaccess2 = fopen ("/harddisk/var/ipcop/xtaccess/config.new", "w"))) 
+		if (!(xtaccess2 = fopen ("/harddisk/var/ipfire/xtaccess/config.new", "w"))) 
 		{
 			fclose(portfw1);
 			fclose(portfw2);
@@ -170,8 +170,8 @@ int _convert_xtaccess() {
 		fclose (xtaccess2);
 
 		/* Move the new xtaccess file */
-		rename ("/harddisk/var/ipcop/xtaccess/config.new",
-			"/harddisk/var/ipcop/xtaccess/config");
+		rename ("/harddisk/var/ipfire/xtaccess/config.new",
+			"/harddisk/var/ipfire/xtaccess/config");
 
 		/* If no external access line existed, add a no access line */
 		if (count2 == 0) {
@@ -191,10 +191,10 @@ int _convert_xtaccess() {
 	fclose (portfw2);
 
 	/* Move the new portfw file */
-	rename ("/harddisk/var/ipcop/portfw/config.new",
-		"/harddisk/var/ipcop/portfw/config");
-	chown  ("/harddisk/var/ipcop/xtaccess/config", 99, 99);
-	chown  ("/harddisk/var/ipcop/portfw/config", 99, 99);
+	rename ("/harddisk/var/ipfire/portfw/config.new",
+		"/harddisk/var/ipfire/portfw/config");
+	chown  ("/harddisk/var/ipfire/xtaccess/config", 99, 99);
+	chown  ("/harddisk/var/ipfire/portfw/config", 99, 99);
 
 	return 0;
 }
@@ -206,13 +206,13 @@ int _convert_pulsardsl() {
 	FILE *settings, *pulsardsl;
 	char line[STRING_SIZE];
 	
-	if (!(pulsardsl = fopen ("/harddisk/var/ipcop/pciadsl/settings", "r"))) return 1;
+	if (!(pulsardsl = fopen ("/harddisk/var/ipfire/pciadsl/settings", "r"))) return 1;
 	
-	dirp = opendir( "/harddisk/var/ipcop/ppp" );
+	dirp = opendir( "/harddisk/var/ipfire/ppp" );
 	while ( (dp = readdir( dirp )) != NULL ) {
 		if ( strstr( dp->d_name, "settings" ) == dp->d_name ) {
 			snprintf (filename, STRING_SIZE-1, "%s/%s", 
-				"/harddisk/var/ipcop/ppp", dp->d_name);
+				"/harddisk/var/ipfire/ppp", dp->d_name);
         		if (!(settings = fopen (filename, "r+"))) {
 				closedir(dirp);
 				fclose(pulsardsl);
@@ -247,7 +247,7 @@ int _convert_pulsardsl_ethernet() {
 	char ip[STRING_SIZE];
 	char filename[STRING_SIZE];
 	
-	if (!(ethernet = fopen ("/harddisk/var/ipcop/ethernet/settings", "r"))) return 1;
+	if (!(ethernet = fopen ("/harddisk/var/ipfire/ethernet/settings", "r"))) return 1;
 
 	while (fgets (line, STRING_SIZE, ethernet) != NULL) {
 		if (strstr (line, "RED_DRIVER=pciadsl") == line) {
@@ -265,17 +265,17 @@ int _convert_pulsardsl_ethernet() {
 				}
 				fclose (ethernet);
 
-				replace ("/harddisk/var/ipcop/ethernet/settings", "RED_DEV=eth1", "RED_DEV=");
-				replace ("/harddisk/var/ipcop/ethernet/settings", "CONFIG_TYPE=2", "CONFIG_TYPE=0");
-				replace ("/harddisk/var/ipcop/ethernet/settings", "CONFIG_TYPE=3", "CONFIG_TYPE=1");
-				replace ("/harddisk/var/ipcop/ethernet/settings", "RED_DEV=eth2", "RED_DEV=");
-				chown ("/harddisk/var/ipcop/ethernet/settings", 99, 99);
+				replace ("/harddisk/var/ipfire/ethernet/settings", "RED_DEV=eth1", "RED_DEV=");
+				replace ("/harddisk/var/ipfire/ethernet/settings", "CONFIG_TYPE=2", "CONFIG_TYPE=0");
+				replace ("/harddisk/var/ipfire/ethernet/settings", "CONFIG_TYPE=3", "CONFIG_TYPE=1");
+				replace ("/harddisk/var/ipfire/ethernet/settings", "RED_DEV=eth2", "RED_DEV=");
+				chown ("/harddisk/var/ipfire/ethernet/settings", 99, 99);
 				
-				dirp = opendir( "/harddisk/var/ipcop/ppp" );
+				dirp = opendir( "/harddisk/var/ipfire/ppp" );
 				while ( (dp = readdir( dirp )) != NULL ) {
 					if ( strstr( dp->d_name, "settings-" ) == dp->d_name ) {
 						snprintf (filename, STRING_SIZE-1, "%s/%s", 
-							"/harddisk/var/ipcop/ppp", dp->d_name);
+							"/harddisk/var/ipfire/ppp", dp->d_name);
 			        		if (!(settings = fopen (filename, "r+"))) 
 						{
 							closedir(dirp);
@@ -302,36 +302,36 @@ int _convert_pulsardsl_ethernet() {
 
 int upgrade_v12_v13() {
 	struct stat s;
-	replace ("/harddisk/var/ipcop/ethernet/settings", "rtl8139", "8139too");
-	replace ("/harddisk/var/ipcop/vpn/ipsec.conf", "auto=add", "auto=start");
-	chown ("/harddisk/var/ipcop/vpn/ipsec.conf", 99, 99);
-	chown ("/harddisk/var/ipcop/ethernet/settings", 99, 99);
-	chown ("/harddisk/var/ipcop/main/settings", 99, 99);
+	replace ("/harddisk/var/ipfire/ethernet/settings", "rtl8139", "8139too");
+	replace ("/harddisk/var/ipfire/vpn/ipsec.conf", "auto=add", "auto=start");
+	chown ("/harddisk/var/ipfire/vpn/ipsec.conf", 99, 99);
+	chown ("/harddisk/var/ipfire/ethernet/settings", 99, 99);
+	chown ("/harddisk/var/ipfire/main/settings", 99, 99);
 	_convert_ppp_settings();
 	_convert_xtaccess();
 	_convert_pulsardsl();
 	_convert_pulsardsl_ethernet();
 
 	/* Rename usbadsl directory */
-	stat ("/harddisk/var/ipcop/usbadsl", &s);
+	stat ("/harddisk/var/ipfire/usbadsl", &s);
 	if (S_ISDIR(s.st_mode)) {
-		remove ("/harddisk/var/ipcop/usbadsl/settings");
-		if (! system("/bin/chroot /harddisk /bin/rm -rf /var/ipcop/alcatelusb"))
-			rename ("/harddisk/var/ipcop/usbadsl", "/harddisk/var/ipcop/alcatelusb");
+		remove ("/harddisk/var/ipfire/usbadsl/settings");
+		if (! system("/bin/chroot /harddisk /bin/rm -rf /var/ipfire/alcatelusb"))
+			rename ("/harddisk/var/ipfire/usbadsl", "/harddisk/var/ipfire/alcatelusb");
 	}
 	
 	/* Rename pciadsl module and directory */
-	remove ("/harddisk/var/ipcop/pulsar/settings");
-	rename ("/harddisk/var/ipcop/pciadsl/pciadsl.o", "/harddisk/var/ipcop/pciadsl/pulsar.o");
-	stat ("/harddisk/var/ipcop/pciadsl", &s);
+	remove ("/harddisk/var/ipfire/pulsar/settings");
+	rename ("/harddisk/var/ipfire/pciadsl/pciadsl.o", "/harddisk/var/ipfire/pciadsl/pulsar.o");
+	stat ("/harddisk/var/ipfire/pciadsl", &s);
 	if (S_ISDIR(s.st_mode)) {
-		if (! system("/bin/chroot /harddisk /bin/rm -rf /var/ipcop/pulsardsl"))
-			rename ("/harddisk/var/ipcop/pciadsl", "/harddisk/var/ipcop/pulsardsl");
+		if (! system("/bin/chroot /harddisk /bin/rm -rf /var/ipfire/pulsardsl"))
+			rename ("/harddisk/var/ipfire/pciadsl", "/harddisk/var/ipfire/pulsardsl");
 	}
 
 	/* Change squid cache directory */
-	replace ("/harddisk/var/ipcop/proxy/squid.conf", "/var/spool/squid", "/var/log/cache");
-	chown ("/harddisk/var/ipcop/proxy/squid.conf", 99, 99);
+	replace ("/harddisk/var/ipfire/proxy/squid.conf", "/var/spool/squid", "/var/log/cache");
+	chown ("/harddisk/var/ipfire/proxy/squid.conf", 99, 99);
 	
 	/* Change setup user shell */
 	replace ("/harddisk/etc/passwd", ":/usr/local/sbin/setup", ":/bin/bash -c /usr/local/sbin/setup");

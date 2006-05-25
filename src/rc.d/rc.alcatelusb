@@ -3,7 +3,7 @@
 # $Id: rc.alcatelusb,v 1.7.2.12 2005/07/07 20:11:57 franck78 Exp $
 #
 
-eval $(/usr/local/bin/readhash /var/ipcop/ppp/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 
 # Debugging. Comment it out to stop logging
 DEBUG="yes"
@@ -63,13 +63,13 @@ case "$1" in
 	if ( ! /bin/ps -ef | /bin/grep -q [m]odem_run ); then
 		rm -f /var/run/pppoa3-modem*.pid
 		msg "Uploading firmware to modem"
-		/usr/sbin/modem_run -v 1 -t 90 -n 4 -f /var/ipcop/alcatelusb/firmware.$modem.bin
+		/usr/sbin/modem_run -v 1 -t 90 -n 4 -f /var/ipfire/alcatelusb/firmware.$modem.bin
 
 		# Check if Firmware uploaded ok. Reset USB if Failed
 		if [ $? -ne 0 ]; then
 			msg "Firmware upload failed: Retrying"
 			/usr/local/bin/resetusb
-			/usr/sbin/modem_run -v 1 -t 90 -n 4 -f /var/ipcop/alcatelusb/firmware.$modem.bin
+			/usr/sbin/modem_run -v 1 -t 90 -n 4 -f /var/ipfire/alcatelusb/firmware.$modem.bin
 			if [ $? -ne 0 ]; then
 				msg "Firmware upload failed: Exiting"
 				exit 1
