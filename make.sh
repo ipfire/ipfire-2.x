@@ -699,6 +699,7 @@ buildipcop() {
   echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
   ipcopmake lame
   ipcopmake gnump3d
+  ipcopmake java
   ipcopmake openvpn
   ipcopmake edonkeyclc
   ipcopmake sane

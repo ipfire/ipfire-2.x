@@ -109,6 +109,7 @@
   * iputils-ss020927
   * isapnptools-1.26
   * isdn4k-utils.v3.2p1
+  * java-1.5.0_06-for-ipfire
   * jpegsrc.v6b
   * kbd-1.12
   * kudzu-0.99.50
