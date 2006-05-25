@@ -13,6 +13,9 @@
 #
 use strict;
 
+use Geo::IP::PurePerl;
+use Getopt::Std;
+
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -307,6 +310,7 @@ print <<END
 	<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></td>
 	<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></td>
 	<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'source'}</b></td>
+	<td align='center' class='boldbase'><b>Flag</b></td>
 	<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'src port'}</b></td>
 	<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'mac address'}</b></td>
 	<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'destination'}</b></td>
@@ -326,7 +330,6 @@ foreach $_ (@log)
 	my $comment = $3; 
 	my $packet = $4;
 
-
 	$packet =~ /IN=(\w+)/;       my $iface=$1;
 	$packet =~ /SRC=([\d\.]+)/;  my $srcaddr=$1;
 	$packet =~ /DST=([\d\.]+)/;  my $dstaddr=$1;
@@ -334,6 +337,11 @@ foreach $_ (@log)
 	$packet =~ /PROTO=(\w+)/;    my $proto=$1;
 	$packet =~ /SPT=(\d+)/;      my $srcport=$1;
 	$packet =~ /DPT=(\d+)/;      my $dstport=$1;
+
+	my $gi = Geo::IP::PurePerl->new();
+	my $ccode = $gi->country_code_by_name($srcaddr);
+	my $fcode = lc($ccode);
+
 	my $servi = uc(getservbyport($srcport, lc($proto)));
 	if ($servi ne '' && $srcport < 1024) {
 		$srcport = "$srcport($servi)"; }
@@ -352,11 +360,8 @@ foreach $_ (@log)
 	<td align='center'>$comment</td>
 	<td align='center'>$iface</td>
 	<td align='center'>$proto</td>
-	<td align='center'>
-	<table width='100%' cellpadding='0' cellspacing='0'><tr>
 	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
-	</tr></table>
-	</td>
+	<td align='center'><a href='../country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>
 	<td align='center'>$srcport</td>
 	<td align='center'>$macaddr</td>
 	<td align='center'>

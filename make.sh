@@ -633,6 +633,7 @@ buildipcop() {
   ipcopmake Convert-UUlib
   ipcopmake Archive-Tar
   ipcopmake Archive-Zip
+  ipcopmake GeoIP
   ipcopmake noip_updater
   ipcopmake ntp
   ipcopmake oinkmaster
