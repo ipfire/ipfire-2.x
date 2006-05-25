@@ -26641,3 +26641,29 @@ usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/IO/Stringy/.packlist
 #usr/share/man/man3/IO::Stringy.3
 #usr/share/man/man3/IO::Wrap.3
 #usr/share/man/man3/IO::WrapTie.3
+##
+## htop
+##
+usr/bin/htop
+#usr/share/applications
+#usr/share/applications/htop.desktop
+#usr/share/man/man1/htop.1
+#usr/share/pixmaps
+#usr/share/pixmaps/htop.png
+##
+## GeoIP
+##
+usr/bin/geoip-lookup
+usr/lib/perl5/5.8.5/i686-linux/perllocal.pod
+usr/lib/perl5/site_perl/5.8.5/Geo
+usr/lib/perl5/site_perl/5.8.5/Geo/IP
+usr/lib/perl5/site_perl/5.8.5/Geo/IP/PurePerl.pm
+usr/lib/perl5/site_perl/5.8.5/i686-linux/auto
+usr/lib/perl5/site_perl/5.8.5/i686-linux/auto/Geo
+usr/lib/perl5/site_perl/5.8.5/i686-linux/auto/Geo/IP
+usr/lib/perl5/site_perl/5.8.5/i686-linux/auto/Geo/IP/PurePerl
+usr/lib/perl5/site_perl/5.8.5/i686-linux/auto/Geo/IP/PurePerl/.packlist
+usr/local/share/GeoIP
+usr/local/share/GeoIP/GeoIP.dat
+#usr/share/man/man1/geoip-lookup.1
+#usr/share/man/man3/Geo::IP::PurePerl.3

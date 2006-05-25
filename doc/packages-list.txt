@@ -96,6 +96,7 @@
   * grub-0.95
   * gzip-1.3.5
   * hdparm-6.3
+  * htop-0.6.2
   * iana-etc-2.00
   * ibod
   * inetutils-1.4.2

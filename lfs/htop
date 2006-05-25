@@ -26,9 +26,9 @@
 
 include Config
 
-VER        = 1.17
+VER        = 0.6.2
 
-THISAPP    = Geo-IP-PurePerl-$(VER)
+THISAPP    = htop-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -38,13 +38,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) GeoIP.dat
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-GeoIP.dat = $(DL_FROM)/GeoIP.dat
 
-$(DL_FILE)_MD5 = 42a6b9d4dd2563a20c8998556216e1de
-GeoIP.dat_MD5 = 757ef6d020a81dae0db2926c48f4a931
+$(DL_FILE)_MD5 = 995e76b7fd18c05fb7fb5ef10a2166ca
 
 install : $(TARGET)
 
@@ -55,7 +53,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 #dist: 
-#	make-packages.sh GeoIP $(THISAPP)-ipfire-beta-1
+#	make-packages.sh htop $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -77,9 +75,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && mkdir -p /usr/local/share/GeoIP && cp -f $(DIR_DL)/GeoIP.dat /usr/local/share/GeoIP/GeoIP.dat
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

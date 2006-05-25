@@ -705,6 +705,7 @@ buildipcop() {
   ipcopmake tcpwrapper
   ipcopmake portmap
   ipcopmake nmap
+  ipcopmake htop
   ipcopmake nfs
   ipcopmake ncftp
   ipcopmake ethereal
