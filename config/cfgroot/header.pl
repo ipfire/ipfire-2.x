@@ -245,14 +245,19 @@ sub genmenu {
 			     	  'title' => "$tr{'sstraffic'}",
 			         'enabled' => 1,
 			   	  };
-
-    $subnetwork->{'06.openvpn'} = {
+    $subnetwork->{'06.fwhits'} = {
+				  'caption' => 'Firewallhits',
+			     	  'uri' => '/cgi-bin/fwhits.cgi',
+			     	  'title' => "IPFire Firewallhits",
+			         'enabled' => 1,
+			   	  };
+    $subnetwork->{'07.openvpn'} = {
 				  'caption' => 'OpenVPN',
 			     	  'uri' => '/cgi-bin/ovpnmain.cgi',
 			     	  'title' => "$tr{'virtual private networking'}",
 			         'enabled' => 1,
 			   	  };
-    $subnetwork->{'07.ipsec'} = {
+    $subnetwork->{'08.ipsec'} = {
 				  'caption' => 'IPSec,
 			     	  'uri' => '/cgi-bin/vpnmain.cgi',
 			     	  'title' => "$tr{'virtual private networking'}",

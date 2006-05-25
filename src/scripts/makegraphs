@@ -390,6 +390,122 @@ sub updateifdata {
 	print "Error in RRD::update for $interface: $ERROR\n" if $ERROR;
 }
 
+sub updatefwhitsgraph {
+	my $interval = $_[0];
+
+	RRDs::graph ("$graphs/firewallhits-$interval-area.png",
+		"--start", "-1$interval", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 500", "-h 200",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-t firewall hits over the last $interval",
+		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
+		"AREA:amount#6464FF:firewallhits",
+		"GPRINT:amount:MAX:   Max\\: %2.2lf %S",
+		"GPRINT:amount:AVERAGE: Avg\\: %2.2lf %S",
+		"GPRINT:amount:LAST: Current\\: %2.2lf %Shits/5 min\\n",
+		"DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
+		"AREA:portamount#FF6464:portscans",
+		"GPRINT:portamount:MAX:      Max\\: %2.2lf %S",
+		"GPRINT:portamount:AVERAGE: Avg\\: %2.2lf %S",
+		"GPRINT:portamount:LAST: Current\\: %2.2lf %Shits/5 min");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
+
+	RRDs::graph ("$graphs/firewallhits-$interval-line.png",
+		"--start", "-1$interval", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 500", "-h 200",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-t firewall hits over the last $interval",
+		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
+		"LINE2:amount#6464FF:firewallhits",
+		"GPRINT:amount:MAX:   Max\\: %2.2lf %S",
+		"GPRINT:amount:AVERAGE: Avg\\: %2.2lf %S",
+		"GPRINT:amount:LAST: Current\\: %2.2lf %Shits/5 min\\n",
+		"DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
+		"LINE2:portamount#FF6464:portscans",
+		"GPRINT:portamount:MAX:      Max\\: %2.2lf %S",
+		"GPRINT:portamount:AVERAGE: Avg\\: %2.2lf %S",
+		"GPRINT:portamount:LAST: Current\\: %2.2lf %Shits/5 min");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
+}
+
+sub updatefwhitsdata {
+	my $portamount=0;
+	my $alertaktuell=0;
+	my $aktuell=0;
+	my $portaktuell=0;
+	my $skip=0;
+
+	if (! -e "$rrdlog/firewallhits.rrd")
+	{
+		RRDs::create ("$rrdlog/firewallhits.rrd", "--step=300",
+			"DS:amount:GAUGE:600:0:U",
+			"DS:portamount:GAUGE:600:0:U",
+			"RRA:AVERAGE:0.5:1:576",
+			"RRA:AVERAGE:0.5:6:672",
+			"RRA:AVERAGE:0.5:24:732",
+			"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+	}
+
+	system("logtailfwhits /var/log/messages /var/log/fwhits.messages.offset >/tmp/messages.fwhits");
+	if (!(open (FILE,'/tmp/messages.fwhits'))) {
+           $skip=1;
+	}
+	$aktuell = 0;
+	if (!$skip) {
+		while (<FILE>) {
+	 		if (/kernel:.*(IN=.*)$/) {
+				$aktuell++;
+			}
+		}
+		close (FILE);
+	}
+
+	system("logtailfwhits /var/log/snort/alert /var/log/snort/fwhits.alert.offset >/tmp/snort.fwhits");
+	if (!(open (FILE,'/tmp/snort.fwhits'))) {
+           $skip=1;
+	}
+	$alertaktuell = 0;
+	if (!$skip) {
+		while (<FILE>) {
+	 		if (/scan.*$/) {
+				$alertaktuell++;
+			}
+		}
+		close (FILE);
+	}
+
+	if (!(open (FILE,'/tmp/messages.fwhits'))) {
+           $skip=1;
+	}
+	$portaktuell = 0;
+	if (!$skip) {
+		while (<FILE>) {
+	 		if (/kernel:.*(Scan.*)$/) {
+				$portaktuell++;
+			}
+		}
+		close (FILE);
+	}
+
+	system("rm /tmp/messages.fwhits");
+	system("rm /tmp/snort.fwhits");
+
+	$portamount = $portaktuell + $alertaktuell;
+	chomp($portamount);
+	RRDs::update ("$rrdlog/firewallhits.rrd",
+		"N:$aktuell:$portamount");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for Firewallhits: $ERROR\n" if $ERROR;
+}
+
 ## Update ipac logs
 system ('/usr/sbin/fetchipac');
 sleep 8;
@@ -443,6 +559,15 @@ updatediskgraph ("day");
 updatediskgraph ("week");
 updatediskgraph ("month");
 updatediskgraph ("year");
+
+###
+### Firewallhits
+###
+updatefwhitsdata();
+updatefwhitsgraph ("day");
+updatefwhitsgraph ("week");
+updatefwhitsgraph ("month");
+updatefwhitsgraph ("year");
 
 ###
 ### Network Graphs

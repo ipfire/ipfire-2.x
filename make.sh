@@ -634,6 +634,7 @@ buildipcop() {
   ipcopmake Archive-Tar
   ipcopmake Archive-Zip
   ipcopmake GeoIP
+  ipcopmake fwhits
   ipcopmake noip_updater
   ipcopmake ntp
   ipcopmake oinkmaster

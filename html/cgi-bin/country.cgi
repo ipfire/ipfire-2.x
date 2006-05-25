@@ -18,7 +18,7 @@ my @flaglist=();
 my @flaglistfiles=();
 my $flag = '';
 
-require '/var/ipcop/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
