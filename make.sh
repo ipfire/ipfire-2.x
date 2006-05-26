@@ -656,14 +656,17 @@ buildipcop() {
   ipcopmake 3c5x9setup
   echo -ne "`date -u '+%b %e %T'`: Building ### IPFire modules ### \n" | tee -a $LOGFILE
   ipcopmake pakfire
+  ipcopmake startscripts
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
   ipcopmake berkeley
   ipcopmake BerkeleyDB ## The Perl module
+  ipcopmake java
   ipcopmake libtiff
   ipcopmake libjpeg
   ipcopmake libxml2
   ipcopmake spandsp
   ipcopmake lzo
+  ipcopmake openvpn
   ipcopmake pkg-config
   ipcopmake glib
   ipcopmake xampp
@@ -699,13 +702,14 @@ buildipcop() {
   echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
   ipcopmake lame
   ipcopmake gnump3d
-  ipcopmake java
-  ipcopmake openvpn
+  echo -ne "`date -u '+%b %e %T'`: Building ### P2P-Clients ### \n" | tee -a $LOGFILE
+  ipcopmake applejuice
   ipcopmake edonkeyclc
   ipcopmake sane
   ipcopmake rsync
   ipcopmake tcpwrapper
   ipcopmake portmap
+  ipcopmake screen
   ipcopmake nmap
   ipcopmake htop
   ipcopmake nfs
@@ -803,10 +807,12 @@ buildpackages() {
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
   # Build IPFire packages
+  ipfiredist applejuice
   ipfiredist asterisk
   ipfiredist cyrusimap
   ipfiredist fetchmail
   ipfiredist gnump3d
+  ipfiredist lame
   ipfiredist libtiff
   ipfiredist libxml2
   ipfiredist mc

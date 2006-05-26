@@ -30,6 +30,7 @@
   * amavisd-new-2.4.1
   * amedyn-2004-08-04
   * apache_1.3.34
+  * applejuice-0.30
   * arping-2.05
   * as86-0.16.17
   * asterisk-1.2.7.1
@@ -185,6 +186,7 @@
   * rsync-2.6.8
   * samba-3.0.22
   * sane-backends-1.0.17
+  * screen-4.0.2
   * sed-4.0.9
   * setserial-2.17
   * shadow-4.0.4.1
@@ -194,6 +196,7 @@
   * speedtouch-1.2
   * squid-2.5.STABLE13
   * squid-graph-3.1
+  * startscripts
   * stund_0.96_Aug13
   * sudo-1.6.8p12
   * sysklogd-1.4.1

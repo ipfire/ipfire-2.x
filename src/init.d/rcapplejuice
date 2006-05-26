@@ -1,0 +1,29 @@
+#!/bin/bash
+HOME=/opt/applejuice
+JAVA=/usr/bin/java
+. /var/ipfire/applejuice/settings
+
+
+case "$1" in
+  start)
+	chown -R applejuice.applejuice $HOME
+	cd $HOME
+	screen -dmS ajcore $JAVA -Xmx${RAMSIZE}m -Djava.library.path=. -jar ajcore.jar
+	echo -e "Applejuice is running!"; logger -t ipfire "Applejuice started!"
+	;;
+  stop)
+	killall -9 java
+	echo -e "Applejuice is stopped!"; logger -t ipfire "Applejuice stopped!"
+	;;
+  status)
+	if pidof java > /dev/null ; then
+		echo -e "Applejuice is running!"
+		exit 0
+	else
+		echo -e "Applejuice is not running!"
+		exit 1
+	fi
+	;;
+  *)
+	echo -e "Usage: $0 (start|stop|status)"
+esac
