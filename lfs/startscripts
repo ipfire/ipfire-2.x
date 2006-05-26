@@ -48,8 +48,9 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	mkdir /etc/init.d
-	cd $(DIR_SRC)/src/init.d && cp -v * /etc/init.d
+	test -d /etc/init.d || mkdir /etc/init.d
+	cd $(DIR_SRC)/src/init.d && cp -fv * /etc/init.d
 	chown root.root /etc/init.d/*
 	chmod 755 /etc/init.d/*
+	for i in `ls /etc/init.d`; do ln -vfs /etc/init.d/$i /usr/local/bin/rc$i; done
 	@$(POSTBUILD)

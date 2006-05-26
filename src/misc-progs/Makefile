@@ -1,7 +1,3 @@
-#
-# $Id: Makefile,v 1.5.2.7 2005/11/20 23:20:13 franck78 Exp $
-#
-
 CC=gcc 
 CFLAGS=-O2 -Wall
 
@@ -9,11 +5,12 @@ COMPILE=$(CC) $(CFLAGS)
 
 PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setfilters setxtaccess restartdhcp restartsnort \
-	restartsquid restartssh ipcopreboot \
-	ipcopbkcfg ipcoprscfg installpackage installfcdsl ipsecctrl \
-	setaliases ipcopbackup restartshaping restartntpd \
-	restartwireless setdate rebuildhosts \
+	restartsquid restartssh ipfirereboot \
+	ipfirebkcfg ipfirerscfg installpackage installfcdsl ipsecctrl \
+	setaliases ipfirebackup restartntpd \
+	restartapplejuice setdate rebuildhosts \
 	restartsyslogd logwatch
+	# restartwireless
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -54,11 +51,11 @@ setfilters: setfilters.c setuid.o ../install+setup/libsmooth/varval.o
 rebuildhosts: rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
+restartapplejuice: restartapplejuice.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ restartapplejuice.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
 restartdhcp: restartdhcp.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ restartdhcp.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-restartshaping: restartshaping.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ restartshaping.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 restartssh: restartssh.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ restartssh.c setuid.o ../install+setup/libsmooth/varval.o -o $@
@@ -78,5 +75,5 @@ restartwireless: restartwireless.c setuid.o ../install+setup/libsmooth/varval.o
 ipsecctrl: ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-ipcopbackup: ipcopbackup.c setuid.o 
-	$(COMPILE) -lcrypt ipcopbackup.c setuid.o -o $@
+ipfirebackup: ipfirebackup.c setuid.o 
+	$(COMPILE) -lcrypt ipfirebackup.c setuid.o -o $@
