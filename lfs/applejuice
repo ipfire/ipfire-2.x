@@ -77,6 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && mkdir -p /opt/applejuice && mv -fv ajcore.jar /opt/applejuice
 	cd $(DIR_APP) && mv -fv libajnetmask.so /opt/applejuice
-	cd $(DIR_APP) && mv -fv phpaj /opt/lampp/htdocs
+	cd $(DIR_APP) && cp -rfv phpaj /opt/lampp/htdocs
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

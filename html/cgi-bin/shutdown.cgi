@@ -30,13 +30,13 @@ $cgiparams{'ACTION'} = '';
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'}) {
 	$death = 1;
 	&General::log($Lang::tr{'shutting down ipcop'});
-	#system '/usr/local/bin/ipcopdeath';
-	system '/usr/local/bin/ipcopreboot down';
+	#system '/usr/local/bin/ipfiredeath';
+	system '/usr/local/bin/ipfirereboot down';
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$rebirth = 1;
 	&General::log($Lang::tr{'rebooting ipcop'});
-	#system '/usr/local/bin/ipcoprebirth';
-	system '/usr/local/bin/ipcopreboot boot';
+	#system '/usr/local/bin/ipfirerebirth';
+	system '/usr/local/bin/ipfirereboot boot';
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	my $days='';
 	my $n = 1;
@@ -53,10 +53,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'}) {
 	    ($hour,$min) = split (':', $cgiparams{'TIME'});
 	    $days = "'*'" if ($days eq '1,2,3,4,5,6,7');
 	    my $mode = ($cgiparams{'MODE'} eq 'halt') ? '-h' : '-r';
-	    system "/usr/local/bin/ipcopreboot cron+ $min $hour $days $mode"; #reboot checks values of $hour & $min
+	    system "/usr/local/bin/ipfirereboot cron+ $min $hour $days $mode"; #reboot checks values of $hour & $min
 	} else {
 	    &General::log("Remove scheduled reboot");
-	    system '/usr/local/bin/ipcopreboot cron-';
+	    system '/usr/local/bin/ipfirereboot cron-';
 	}
 }
 if ($death == 0 && $rebirth == 0) {
@@ -86,7 +86,7 @@ END
 
 	#decode the shutdown line stored in crontab
 	#get the line
-	open(FILE, "/usr/local/bin/ipcopreboot cron?|");
+	open(FILE, "/usr/local/bin/ipfirereboot cron?|");
 	my $schedule = <FILE>;
 	close (FILE);
 

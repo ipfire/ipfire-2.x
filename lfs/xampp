@@ -31,7 +31,7 @@ VER        = 1.5.1
 THISAPP    = xampp-linux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = /opt/lampp
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -40,15 +40,18 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 objects = $(DL_FILE) \
 	xampp-linux-devel-1.5.1.tar.gz \
-	PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
+	PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz \
+	Python-AddOn-1.3.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 xampp-linux-devel-$(VER).tar.gz 	= $(URL_IPFIRE)/xampp-linux-devel-$(VER).tar.gz
 PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz = $(URL_IPFIRE)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
+Python-AddOn-1.3.tar.gz = $(URL_IPFIRE)/Python-AddOn-1.3.tar.gz
 
 $(DL_FILE)_MD5 = baefcf7ac3629a641c7b75c547564a3f
 xampp-linux-devel-$(VER).tar.gz_MD5 = e4ab1c867551a831ae6af38fa3c4dfd9
 PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz_MD5 = 63171afe553fd557032407e1ba6af477
+Python-AddOn-1.3.tar.gz_MD5 = 5a962ea63c3e502227c8cca30e0ce786
 
 install : $(TARGET)
 
@@ -83,12 +86,24 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) 
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt 
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/xampp-linux-devel-$(VER).tar.gz -C /opt
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/Python-AddOn-1.3.tar.gz -C /tmp
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz -C /tmp
 	cd /tmp/PostGreSQL-AddOn-1.0-pgsql8.1 && ./INSTALL
 	rm -rf /tmp/PostGreSQL-AddOn-1.0-pgsql8.1
+	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/bin /opt/lampp
+	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/cgi-bin /opt/lampp
+	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/etc /opt/lampp
+	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/htdocs /opt/lampp
+	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/include /opt/lampp
+	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/lib /opt/lampp
+	# cd /tmp/Python-AddOn-1.3 && cp -frv lampp/licenses /opt/lampp
+	# cd /tmp/Python-AddOn-1.3 && cp -frv lampp/man /opt/lampp
+	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/modules /opt/lampp
+	# cd /tmp/Python-AddOn-1.3 && cp -frv lampp/share /opt/lampp
+	rm -rf /tmp/Python-AddOn-1.3
+	grep etc/python.conf /opt/lampp/etc/httpd.conf || echo -e "Include etc/python.conf" /opt/lampp/etc/httpd.conf
 	chown -R nobody.nobody /opt/lampp/htdocs
-	ln -s /opt/lampp/lib/mysql/libmysqlclient.* /usr/lib
-	ln -s /opt/lampp/lib/libpq.* /usr/lib
+	ln -fs /opt/lampp/lib/mysql/libmysqlclient.* /usr/lib
+	ln -fs /opt/lampp/lib/libpq.* /usr/lib
 	ldconfig
-	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
