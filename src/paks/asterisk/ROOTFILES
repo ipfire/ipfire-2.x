@@ -153,7 +153,7 @@ usr/lib/asterisk/modules/app_read.so
 usr/lib/asterisk/modules/app_readfile.so
 usr/lib/asterisk/modules/app_realtime.so
 usr/lib/asterisk/modules/app_record.so
-usr/lib/asterisk/modules/app_rxfax.so
+#usr/lib/asterisk/modules/app_rxfax.so
 usr/lib/asterisk/modules/app_sayunixtime.so
 usr/lib/asterisk/modules/app_segfault.so
 usr/lib/asterisk/modules/app_senddtmf.so
@@ -171,7 +171,7 @@ usr/lib/asterisk/modules/app_system.so
 usr/lib/asterisk/modules/app_talkdetect.so
 usr/lib/asterisk/modules/app_test.so
 usr/lib/asterisk/modules/app_transfer.so
-usr/lib/asterisk/modules/app_txfax.so
+#usr/lib/asterisk/modules/app_txfax.so
 usr/lib/asterisk/modules/app_txtcidname.so
 usr/lib/asterisk/modules/app_url.so
 usr/lib/asterisk/modules/app_userevent.so

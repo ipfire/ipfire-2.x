@@ -806,27 +806,6 @@ buildpackages() {
   ipcopmake cdrom
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
-  # Build IPFire packages
-  ipfiredist applejuice
-  ipfiredist asterisk
-  ipfiredist cyrusimap
-  ipfiredist fetchmail
-  ipfiredist gnump3d
-  ipfiredist lame
-  ipfiredist libtiff
-  ipfiredist libxml2
-  ipfiredist mc
-  ipfiredist postfix
-  ipfiredist pwlib
-  ipfiredist sane
-  ipfiredist spandsp
-  ipfiredist sudo
-  ipfiredist xampp
-  ipfiredist xinetd
-  test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  mv -f $LFS/paks/*.tar.gz $LFS/paks/*.md5 $BASEDIR/packages >> $LOGFILE 2>&1
-  rm -rf $LFS/paks
-
   # Cleanup
   stdumount
   rm -rf $BASEDIR/build/tmp/*
@@ -1071,7 +1050,7 @@ gettoolchain)
 		if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
 			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
 			echo "`date -u '+%b %e %T'`: Uncompressing toolchain" | tee -a $LOGFILE
-			cd $BASEDIR && tar xvfz cache/$PACKAGE.tar.gz -C .
+			cd $BASEDIR && tar xfz cache/$PACKAGE.tar.gz -C .
 			rm -vf $BASEDIR/cache/$PACKAGE.{tar.gz,md5}
 		else
 			exiterror "$PACKAGE.md5 did not match, check downloaded package"
@@ -1089,7 +1068,7 @@ commit)
 	;;
 make)
 	echo "Do a complete compile:"	
-	./make.sh prefetch && ./make.sh build
+	./make.sh prefetch && ./make.sh gettoolchain && ./make.sh build && ./make.sh paks
 	;;
 diff)
 	echo -ne "Make a local diff to last SVN revision: "
@@ -1120,6 +1099,30 @@ sync)
 		fi
 	done
 	rm -f ftplist
+	;;
+paks)
+	# Build IPFire packages
+	prepareenv
+	ipfiredist applejuice
+	ipfiredist asterisk
+	ipfiredist cyrusimap
+	ipfiredist fetchmail
+	ipfiredist gnump3d
+	ipfiredist lame
+	ipfiredist libtiff
+	ipfiredist libxml2
+	ipfiredist mc
+	ipfiredist postfix
+	ipfiredist pwlib
+	ipfiredist sane
+	ipfiredist spandsp
+	ipfiredist sudo
+	ipfiredist xampp
+	ipfiredist xinetd
+	test -d $BASEDIR/packages || mkdir $BASEDIR/packages
+	mv -f $LFS/paks/*.tar.gz $LFS/paks/*.md5 $BASEDIR/packages >> $LOGFILE 2>&1
+	rm -rf $LFS/paks
+	rm -rf $BASEDIR/build/tmp/*
 	;;
 *)
 	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|shell|sync|toolchain|update}"
