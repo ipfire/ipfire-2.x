@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
-# IPCop CGIs
+# IPFire CGIs
 #
-# This file is part of the IPCop Project
+# This file is part of the IPFire Project
 # 
 # This code is distributed under the terms of the GPL
 #

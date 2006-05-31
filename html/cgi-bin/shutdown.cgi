@@ -29,12 +29,12 @@ $cgiparams{'ACTION'} = '';
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'}) {
 	$death = 1;
-	&General::log($Lang::tr{'shutting down ipcop'});
+	&General::log($Lang::tr{'shutting down ipfire'});
 	#system '/usr/local/bin/ipfiredeath';
 	system '/usr/local/bin/ipfirereboot down';
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$rebirth = 1;
-	&General::log($Lang::tr{'rebooting ipcop'});
+	&General::log($Lang::tr{'rebooting ipfire'});
 	#system '/usr/local/bin/ipfirerebirth';
 	system '/usr/local/bin/ipfirereboot boot';
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
@@ -202,10 +202,10 @@ END
 	my $refresh = "<meta http-equiv='refresh' content='5; URL=/cgi-bin/index.cgi' />";
 	if ($death) {
 		$title = $Lang::tr{'shutting down'};
-		$message = $Lang::tr{'ipcop has now shutdown'};
+		$message = $Lang::tr{'ipfire has now shutdown'};
 	} else {
 		$title = $Lang::tr{'rebooting'};
-		$message = $Lang::tr{'ipcop has now rebooted'};
+		$message = $Lang::tr{'ipfire has now rebooted'};
 	}
 	&Header::openpage($title, 0, $refresh);
 

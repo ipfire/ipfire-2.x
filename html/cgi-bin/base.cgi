@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# IPCop CGI's - base.cgi
+# IPFire CGI's - base.cgi
 #
 # This code is distributed under the terms of the GPL
 #
@@ -41,8 +41,8 @@ use strict;
 #use Carp ();
 #local $SIG{__WARN__} = \&Carp::cluck;
 
-require '/var/ipcop/general-functions.pl';	# Replace all occurences of </var/ipcop> with CONFIG_ROOT
-						# before updating cvs IPCop file.
+require '/var/ipfire/general-functions.pl';	# Replace all occurences of </var/ipfire> with CONFIG_ROOT
+						# before updating cvs IPFire file.
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 

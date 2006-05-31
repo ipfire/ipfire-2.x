@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #
-# IPCop CGIs
+# IPFire CGIs
 #
 # This code is distributed under the terms of the GPL
 #
-# (c) The IPCop Team
+# (c) The IPFire Team
 #
 # $Id: config.dat,v 1.2.2.10 2005/06/14 12:32:07 eoberlander Exp $
 #

@@ -368,7 +368,7 @@ print <<END
     <td align='center' bgcolor='${Header::colourred}'><b><font color='#FFFFFF'>$Lang::tr{'internet'}</font></b></td>
     <td align='center' bgcolor='${Header::colourorange}'><b><font color='#FFFFFF'>$Lang::tr{'dmz'}</font></b></td>
     <td align='center' bgcolor='${Header::colourblue}'><b><font color='#FFFFFF'>$Lang::tr{'wireless'}</font></b></td>
-    <td align='center' bgcolor='${Header::colourfw}'><b><font color='#FFFFFF'>IPCop</font></b></td>
+    <td align='center' bgcolor='${Header::colourfw}'><b><font color='#FFFFFF'>IPFire</font></b></td>
     <td align='center' bgcolor='${Header::colourvpn}'><b><font color='#FFFFFF'>$Lang::tr{'vpn'}</font></b></td>
 </tr>
 </table>

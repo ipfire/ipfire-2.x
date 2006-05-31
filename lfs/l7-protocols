@@ -26,32 +26,23 @@
 
 include Config
 
-VER        = 1.5.3
+VER        = 2006-05-29
 
-THISAPP    = xampp-linux-$(VER)
+THISAPP    = l7-protocols-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = /opt/lampp
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	xampp-linux-devel-$(VER).tar.gz \
-	PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz \
-	Python-AddOn-1.3.tar.gz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-xampp-linux-devel-$(VER).tar.gz 	= $(URL_IPFIRE)/xampp-linux-devel-$(VER).tar.gz
-PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz = $(URL_IPFIRE)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz
-Python-AddOn-1.3.tar.gz = $(URL_IPFIRE)/Python-AddOn-1.3.tar.gz
 
-$(DL_FILE)_MD5 = 649c1fdc76435e3d5315e1ad86f9bace
-xampp-linux-devel-$(VER).tar.gz_MD5 = fbdc87b3c1d6ee123173d08310baca7a
-PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz_MD5 = 63171afe553fd557032407e1ba6af477
-Python-AddOn-1.3.tar.gz_MD5 = 5a962ea63c3e502227c8cca30e0ce786
+$(DL_FILE)_MD5 = 4c0173dcce3d9c4ee716e39eeecb5b42
 
 install : $(TARGET)
 
@@ -61,8 +52,8 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist:
-	make-packages.sh xampp $(THISAPP)-ipfire-beta-1
+#dist: 
+#	make-packages.sh l7-protocols $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -83,27 +74,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) 
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt 
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/xampp-linux-devel-$(VER).tar.gz -C /opt
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/Python-AddOn-1.3.tar.gz -C /tmp
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz -C /tmp
-	cd /tmp/PostGreSQL-AddOn-1.0-pgsql8.1 && ./INSTALL
-	rm -rf /tmp/PostGreSQL-AddOn-1.0-pgsql8.1
-	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/bin /opt/lampp
-	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/cgi-bin /opt/lampp
-	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/etc /opt/lampp
-	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/htdocs /opt/lampp
-	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/include /opt/lampp
-	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/lib /opt/lampp
-	# cd /tmp/Python-AddOn-1.3 && cp -frv lampp/licenses /opt/lampp
-	# cd /tmp/Python-AddOn-1.3 && cp -frv lampp/man /opt/lampp
-	cd /tmp/Python-AddOn-1.3 && cp -frv lampp/modules /opt/lampp
-	# cd /tmp/Python-AddOn-1.3 && cp -frv lampp/share /opt/lampp
-	rm -rf /tmp/Python-AddOn-1.3
-	grep etc/python.conf /opt/lampp/etc/httpd.conf || echo -e "Include etc/python.conf" /opt/lampp/etc/httpd.conf
-	chown -R nobody.nobody /opt/lampp/htdocs
-	ln -fs /opt/lampp/lib/mysql/libmysqlclient.* /usr/lib
-	ln -fs /opt/lampp/lib/libpq.* /usr/lib
-	ldconfig
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	mkdir -p /etc/l7-protocols && cp -Rfv $(DIR_APP)/* /etc/l7-protocols
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

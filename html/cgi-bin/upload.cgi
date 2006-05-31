@@ -152,7 +152,7 @@ print <<END
 <table width='100%'>
 <tr>
 	<td colspan='4'>$Lang::tr{'fritzdsl help'}<br />
-	URL: <a href='http://www.ipcop.org/'>http://www.ipcop.org/</a>
+	URL: <a href='http://www.ipfire.org/'>http://www.ipfire.org/</a>
 	</td>
 </tr>
 <tr>

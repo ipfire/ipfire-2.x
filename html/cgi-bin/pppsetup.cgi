@@ -637,10 +637,10 @@ END
 ;
 	if ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && ( $netsettings{'RED_TYPE'} eq "DHCP" || $netsettings{'RED_TYPE'} eq "STATIC") ) {
 		$pppsettings{'AUTOCONNECT'} = 'on';
-		print "<tr><td align='right'>$Lang::tr{'connect on ipcop restart'}</td>\n";
+		print "<tr><td align='right'>$Lang::tr{'connect on ipfire restart'}</td>\n";
 		print "<td><input type='checkbox' disabled='disabled' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'} /></td>\n";
 	} else {
-		print "<tr><td align='right'>$Lang::tr{'connect on ipcop restart'}</td>\n";
+		print "<tr><td align='right'>$Lang::tr{'connect on ipfire restart'}</td>\n";
 		print "<td><input type='checkbox' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'} /></td>\n";
 	}
 print <<END

@@ -152,7 +152,7 @@ if ($multifile) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "IPCop IDS snort log\r\n";
+	print "IPFire IDS snort log\r\n";
 	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n"; 
 	print "\r\n";
 

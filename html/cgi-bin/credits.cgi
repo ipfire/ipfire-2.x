@@ -29,7 +29,7 @@ print <<END
 <br /><center><b>Besuchen sie uns auf <a href='http://www.ipfire.org/'>http://www.ipfire.org/</a></b></center>
 <br /><center><b>Visit us on <a href='http://www.ipfire.org/'>http://www.ipfire.org/</a></b></center>
 <p>
-<br /><center><b>IPFire is based on IPCop and Smoothwall. Many thanks to its developers for this great piece of software.</b></center>
+<br /><center><b>IPFire is based on IPFire and Smoothwall. Many thanks to its developers for this great piece of software.</b></center>
 
 <p><b>Credits:</b><br />
 Projektleiter - Michael Tremer

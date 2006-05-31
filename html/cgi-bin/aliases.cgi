@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# IPCop CGI's - aliases.cgi
+# IPFire CGI's - aliases.cgi
 #
 # This code is distributed under the terms of the GPL
 #
@@ -17,7 +17,7 @@ use strict;
 #use Carp ();
 #local $SIG{__WARN__} = \&Carp::cluck;
 
-require 'CONFIG_ROOT/general-functions.pl';	# replace CONFIG_ROOT with /var/ipcop in case of manual install
+require 'CONFIG_ROOT/general-functions.pl';	# replace CONFIG_ROOT with /var/ipfire in case of manual install
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 

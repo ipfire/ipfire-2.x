@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# IPCop CGIs
+# IPFire CGIs
 #
 # This code is distributed under the terms of the GPL
 #

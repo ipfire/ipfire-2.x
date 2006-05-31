@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #
-# IPCop CGI's - backup.cgi: manage import/export of configuration files
+# IPFire CGI's - backup.cgi: manage import/export of configuration files
 #
 # This code is distributed under the terms of the GPL
 #
-# (c) The IPCop Team
+# (c) The IPFire Team
 # 2005	Franck Bourdonnec, major rewrite
 #
 # $Id: backup.cgi,v 1.2.2.15 2006/01/29 15:31:49 eoberlander Exp $
@@ -53,10 +53,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'backup export key'})  {
     if ($settings{'PASSWORD1'} ne '' && $settings{'PASSWORD1'} ne $settings{'PASSWORD2'} ){
 	$errormessage = $Lang::tr{'passwords do not match'}
     } else {
-	my @lines = `/usr/local/bin/ipcopbackup -keycat $settings{'PASSWORD'}`;
+	my @lines = `/usr/local/bin/ipfirebackup -keycat $settings{'PASSWORD'}`;
 	# If previous operation succeded and the key need to be crypted, redo operation with pipe to openssl
 	if (@lines && $settings{'PASSWORD1'}) {
-	    @lines = `/usr/local/bin/ipcopbackup -keycat $settings{'PASSWORD'}|openssl enc -a -e -aes256 -salt -pass pass:$settings{'PASSWORD1'} `;
+	    @lines = `/usr/local/bin/ipfirebackup -keycat $settings{'PASSWORD'}|openssl enc -a -e -aes256 -salt -pass pass:$settings{'PASSWORD1'} `;
 	}
         if (@lines) {
     	    use bytes;
@@ -92,7 +92,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'backup import key'})  {
 		print FILE @lines;
 		close (FILE);
 	    }
-	    $errormessage = &get_bk_error(system ('/usr/local/bin/ipcopbackup -key import')>>8);
+	    $errormessage = &get_bk_error(system ('/usr/local/bin/ipfirebackup -key import')>>8);
 	}
     }
 }
@@ -110,7 +110,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'backup extract key'})  {
 	    	    mv -f /tmp${General::swroot}/backup/backup.key $tmpkeyfile;\
 	    	    rm -rf /tmp${General::swroot};\
 		    rm /tmp/tmptarfile.tgz");
-	    $errormessage = &get_bk_error(system ('/usr/local/bin/ipcopbackup -key import')>>8);
+	    $errormessage = &get_bk_error(system ('/usr/local/bin/ipfirebackup -key import')>>8);
 	}
     }
 }
@@ -118,10 +118,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'backup extract key'})  {
 #  Create the key. Cannot overwrite existing key to avoid difference with exported (saved) key
 #
 if ($settings{'ACTION'} eq $Lang::tr{'backup generate key'})  {
-    $errormessage = &get_bk_error(system('/usr/local/bin/ipcopbackup -key new')>>8);
+    $errormessage = &get_bk_error(system('/usr/local/bin/ipfirebackup -key new')>>8);
 }
 
-my $cryptkeymissing = system ('/usr/local/bin/ipcopbackup -key exist')>>8;
+my $cryptkeymissing = system ('/usr/local/bin/ipfirebackup -key exist')>>8;
 
 &Header::showhttpheaders();
 if ($cryptkeymissing) {  #If no key is present, force creation or import
@@ -157,7 +157,7 @@ if ($cryptkeymissing) {  #If no key is present, force creation or import
 	  <td align='right'>$Lang::tr{'backup protect key password'}:<td><input type = 'password' name='PASSWORD1' size='10' />
           </td>
 	</tr><tr>
-	  <td align='right'>$Lang::tr{'backup clear archive'}:</td><td><input type = 'file' name = 'FH' size = '30' value='your-ipcop.tar.gz' />
+	  <td align='right'>$Lang::tr{'backup clear archive'}:</td><td><input type = 'file' name = 'FH' size = '30' value='your-ipfire.tar.gz' />
 	  </td><td>
 	  <input type = 'submit' name = 'ACTION' value = '$Lang::tr{'backup extract key'}' />
           </td>
@@ -188,7 +188,7 @@ erase_files ($setdir);			#clean up
 # create new archive set
 #
 if ($settings{'ACTION'} eq $Lang::tr{'create'}) {
-    $errormessage = &get_bk_error(system('/usr/local/bin/ipcopbkcfg > /dev/null')>>8);
+    $errormessage = &get_bk_error(system('/usr/local/bin/ipfirebkcfg > /dev/null')>>8);
     &import_set (" ".&Header::cleanhtml ($settings{'COMMENT'})) if (!$errormessage);
 }
 #
@@ -220,7 +220,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'restore'}) {
 	if (!$cryptkeymissing) {   			# if keyfile exists
 	    if (-e "$settings{'KEY'}/$datafile"){   	# encrypted dat is required
     		copy_files($settings{'KEY'}, $setdir);	# to working dir
-        	$errormessage = get_rs_error(system("/usr/local/bin/ipcoprscfg" 
+        	$errormessage = get_rs_error(system("/usr/local/bin/ipfirerscfg" 
 					. ($settings{'RESTOREHW'} eq 'on' ? ' --hardware' : '') 
 					. ' >/dev/null')>>8);
 		if (!$errormessage) {
@@ -274,7 +274,7 @@ END
 
 # Read partitions sizes registered with the system
 my %partitions;
-foreach my $li (`/usr/local/bin/ipcopbackup -proc partitions`) {		# use suid helper...
+foreach my $li (`/usr/local/bin/ipfirebackup -proc partitions`) {		# use suid helper...
     # partitions{'sda1'} = 128M        if         /major minor  blocks name/
     $partitions{$4} = &kmgt($3*1024,4) if ($li =~ /(\d+) +(\d+) +(\d+) +(.*)/);
 }
@@ -282,7 +282,7 @@ foreach my $li (`/usr/local/bin/ipcopbackup -proc partitions`) {		# use suid hel
 # Search usb-storage scsi device
 my %medias;
     
-foreach (`/usr/local/bin/ipcopbackup -glob '/proc/scsi/usb-storage*/*'`) {# use suid helper...
+foreach (`/usr/local/bin/ipfirebackup -glob '/proc/scsi/usb-storage*/*'`) {# use suid helper...
     my $m;
     foreach ( `cat $_` ) {	# list each line of information for the device:
 #	Host scsi0: usb-storage
@@ -315,8 +315,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'mount'})
     # Find what is really mounted under backup. Can be local hard disk or any removable media
     my $mounted = &findmounted();
     #umount previous, even if same device already mouted.
-    system ("/usr/local/bin/ipcopbackup -U $mounted") if ($mounted ne $Lang::tr{'local hard disk'});
-    $errormessage = `/usr/local/bin/ipcopbackup -M $settings{'SELECT'}` if (grep (/$settings{'SELECT'}/,%partitions));
+    system ("/usr/local/bin/ipfirebackup -U $mounted") if ($mounted ne $Lang::tr{'local hard disk'});
+    $errormessage = `/usr/local/bin/ipfirebackup -M $settings{'SELECT'}` if (grep (/$settings{'SELECT'}/,%partitions));
 }
 #
 # Compute a full description of device
@@ -515,7 +515,7 @@ sub floppybox {
 END
 ;
     print   "<b>$Lang::tr{'alt information'}</b><pre>" .
-    	    `/usr/local/bin/ipcopbackup -savecfg floppy` .
+    	    `/usr/local/bin/ipfirebackup -savecfg floppy` .
 	    '&nbsp;</pre>' if ($settings{'ACTION'} eq $Lang::tr{'backup to floppy'} );
 }
 

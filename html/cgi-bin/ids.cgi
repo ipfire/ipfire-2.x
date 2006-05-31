@@ -105,7 +105,7 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 				$errormessage = "$Lang::tr{'invalid md5sum'}";
 			} else {
 				$results = "<b>$Lang::tr{'installed updates'}</b>\n<pre>";
-				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipcop/snort/oinkmaster.conf -o /etc/snort 2>&1`;
+				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort 2>&1`;
 				$results .= "</pre>";
 			}
 			unlink ($filename);

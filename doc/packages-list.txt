@@ -114,6 +114,7 @@
   * jpegsrc.v6b
   * kbd-1.12
   * kudzu-0.99.50
+  * l7-protocols-2006-05-29
   * lame-3.96.1
   * less-382
   * libcap-1.10
@@ -214,6 +215,6 @@
   * vim-6.3
   * vlan.1.9
   * wget-1.10.2
-  * xampp-linux-1.5.1
+  * xampp-linux-1.5.3
   * xinetd-2.3.14
   * zlib-1.2.3

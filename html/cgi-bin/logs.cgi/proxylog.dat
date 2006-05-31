@@ -268,7 +268,7 @@ if ($@ ne '')
 if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "IPCop proxy log\r\n";
+	print "IPFire proxy log\r\n";
 	print "$Lang::tr{'date'}: $daystr\r\n"; 
 	print "Source IP: $cgiparams{'SOURCE_IP'}\r\n";
 	if ($cgiparams{'ENABLE_FILTER'} eq 'on') {

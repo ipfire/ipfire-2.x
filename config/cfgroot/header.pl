@@ -240,7 +240,7 @@ sub genmenu {
 				  'enabled' => 1,
 				  };
     $subnetwork->{'05.nettraf'} = {
-				  'caption' => '$tr{'sstraffic'}',
+				  'caption' => $tr{'sstraffic'},
 			     	  'uri' => '/cgi-bin/traffic.cgi',
 			     	  'title' => "$tr{'sstraffic'}",
 			         'enabled' => 1,
@@ -258,7 +258,7 @@ sub genmenu {
 			         'enabled' => 1,
 			   	  };
     $subnetwork->{'08.ipsec'} = {
-				  'caption' => 'IPSec,
+				  'caption' => 'IPSec',
 			     	  'uri' => '/cgi-bin/vpnmain.cgi',
 			     	  'title' => "$tr{'virtual private networking'}",
 			     	  'enabled' => 1,
@@ -727,11 +727,12 @@ sub openpage {
 
     $extrahead
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)">
+    <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)">
     <link rel="shortcut icon" href="/favicon.ico" />
     <style type="text/css">\@import url(/include/style.css);</style>
     <style type="text/css">\@import url(/include/menu.css);</style>
     <style type="text/css">\@import url(/include/content.css);</style>
-
     <script language="javascript" type="text/javascript">
       
         function swapVisibility(id) {
@@ -814,8 +815,6 @@ sub closepage () {
             </p>
           </div>
 	</body>
-	<meta http-equiv="Page-Enter" content="blendTrans(Duration=1.0,Transition=12)">
-	<meta http-equiv="Page-Exit" content="blendTrans(Duration=1.0,Transition=12)">
 </html>
 END
 ;

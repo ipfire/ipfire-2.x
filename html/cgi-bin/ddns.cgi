@@ -263,7 +263,7 @@ print <<END
         <td class='base'>$Lang::tr{'dyn dns source choice'}</td>
 </tr><tr>
     <td class='base'><input type='radio' name='BEHINDROUTER' value='RED_IP' $checked{'BEHINDROUTER'}{'RED_IP'} />
-    $Lang::tr{'use ipcop red ip'}</td>
+    $Lang::tr{'use ipfire red ip'}</td>
 </tr><tr>
     <td class='base'><input type='radio' name='BEHINDROUTER' value='FETCH_IP' $checked{'BEHINDROUTER'}{'FETCH_IP'} />
     $Lang::tr{'fetch ip from'} <img src='/blob.gif' alt='*' /></td>

@@ -45,10 +45,10 @@ my $year = $now[5]+1900;
 $cgiparams{'DAY'} = $now[3];
 $cgiparams{'MONTH'} = $now[4];
 $cgiparams{'ACTION'} = '';
-$cgiparams{'SECTION'} = 'ipcop';
+$cgiparams{'SECTION'} = 'ipfire';
 
 my %sections = (
-        'ipcop' => '(ipcop)',
+        'ipfire' => '(ipfire)',
         'red' => '(red.*|kernel: usb.*|pppd\[.*\]|chat\[.*\]|pppoe\[.*\]|pptp\[.*\]|pppoa\[.*\]|pppoa3\[.*\]|pppoeci\[.*\]|ipppd|ipppd\[.*\]|kernel: ippp\d|kernel: isdn.*|ibod\[.*\]|kernel: eth.*|dhcpcd\[.*\]|modem_run\[.*\])',
         'dns' => '(dnsmasq\[.*\])',
         'dhcp' => '(dhcpd)',
@@ -64,7 +64,7 @@ my %sections = (
 
 # Translations for the %sections array.
 my %trsections = (
-        'ipcop' => 'IPCop',
+        'ipfire' => 'IPFire',
         'red' => 'RED',
         'dns' => 'DNS',
         'dhcp' => "$Lang::tr{'dhcp server'}",
@@ -229,7 +229,7 @@ while ($gzindex >=0 && $loop) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "IPCop diagnostics\r\n";
+	print "IPFire diagnostics\r\n";
 	print "$Lang::tr{'section'}: $cgiparams{'SECTION'}\n";
 	print "$Lang::tr{'date'}: $date\r\n\r\n";
 

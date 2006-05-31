@@ -88,7 +88,7 @@ if ( ( $pppsettings{'VALID'} eq 'yes'&& $modemsettings{'VALID'} eq 'yes' ) ||
 	    	    close IPADDR;
 	    	    chomp ($fetch_ip);
 	    	    my $host_name = (gethostbyaddr(pack("C4", split(/\./, $fetch_ip)), 2))[0];
-	    	    print "<br />$Lang::tr{'ip address'} (internet): $fetch_ip <br /> $Lang::tr{'ipcops hostname'} (internet): $host_name <br />";
+	    	    print "<br />$Lang::tr{'ip address'} (internet): $fetch_ip <br /> $Lang::tr{'ipfires hostname'} (internet): $host_name <br />";
 		}
 	    }
 	    if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
@@ -97,7 +97,7 @@ if ( ( $pppsettings{'VALID'} eq 'yes'&& $modemsettings{'VALID'} eq 'yes' ) ||
 	    	chomp ($ipaddr);
 		if ($ipaddr ne $fetch_ip){	#do not show info twice
 	    	    my $host_name = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
-	    	    print "<br />$Lang::tr{'ip address'}: $ipaddr <br /> $Lang::tr{'ipcops hostname'}: $host_name <br />";
+	    	    print "<br />$Lang::tr{'ip address'}: $ipaddr <br /> $Lang::tr{'ipfires hostname'}: $host_name <br />";
 		}
 	    }
         }

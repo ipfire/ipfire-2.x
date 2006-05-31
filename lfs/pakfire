@@ -54,7 +54,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd /opt && mkdir -p /opt/confire/paks
 	cd /opt/confire && cp -fRv $(DIR_SRC)/src/confire/* .
 	cd /opt/confire && chown root.root /opt/confire -R && chmod 755 confire /opt/confire/paks -R
-	# cd $(DIR_APP) && find $(DIR_APP) -name .svn -exec rm -rf {} \;
-	# cd $(DIR_APP) && find /opt/confire -name .svn -exec rm -rf {} \;
+	-cd $(DIR_APP) && find $(DIR_APP) -name .svn -exec rm -rf {} \;
+	-cd $(DIR_APP) && find /opt/confire -name .svn -exec rm -rf {} \;
 	@$(POSTBUILD)
 

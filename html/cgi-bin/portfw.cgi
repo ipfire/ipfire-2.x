@@ -1122,10 +1122,10 @@ sub valaddupdate
 		$prtrange2 = 1;
 	}
 	if ($cgiparams{'SRC_IP'} eq '0.0.0.0') { # Dave Roberts - only check if using DEFAULT IP
-		if ($prtrange2 == 1){ # check for destination ports reserved for IPCop
+		if ($prtrange2 == 1){ # check for destination ports reserved for IPFire
 			&disallowreserved($cgiparams{'DEST_PORT'},1,$cgiparams{'PROTOCOL'},"dst");
 			if ($errormessage) { goto EXITSUB; }
-		} else { # check for destination port reserved for IPCop
+		} else { # check for destination port reserved for IPFire
 			&disallowreserved($cgiparams{'DEST_PORT'},0,$cgiparams{'PROTOCOL'},"dst");
 			if ($errormessage) { goto EXITSUB; }
 		}

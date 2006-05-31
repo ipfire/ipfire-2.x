@@ -199,7 +199,7 @@ while ($gzindex >=0 && $loop) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "IPCop firewall log\r\n";
+	print "IPFire firewall log\r\n";
 	print "$Lang::{'date'}: $date\r\n\r\n";
 
 	if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }

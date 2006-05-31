@@ -335,6 +335,7 @@ ipcopmake() {
 
 ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
+	  if [ "`ls -w1 $BASEDIR/packages/ | grep $1; echo $?`" -ne "0" ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
 		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/local/bin
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
@@ -352,11 +353,12 @@ ipfiredist() {
 		if [ $? -ne 0 ]; then
 			exiterror "Packaging $1"
 		fi
+	  else
+		echo "`date -u '+%b %e %T'`: Package $1 already exists" | tee -a $LOGFILE
+	  fi		
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
 	fi
-#	test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-#	mv -f $BASEDIR/build/paks/* $BASEDIR/packages/
 	return 0
 }
 
@@ -602,6 +604,7 @@ buildipcop() {
   ipcopmake iproute2
   ipcopmake iptstate
   ipcopmake iputils
+  ipcopmake l7-protocols
   ipcopmake isapnptools
   ipcopmake isdn4k-utils
   ipcopmake kudzu
@@ -805,6 +808,27 @@ buildpackages() {
   # Create ISO for CDRom and USB-superfloppy
   ipcopmake cdrom
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
+
+  ipfiredist applejuice
+  ipfiredist asterisk
+  ipfiredist cyrusimap
+  ipfiredist fetchmail
+  ipfiredist gnump3d
+  ipfiredist lame
+  ipfiredist libtiff
+  ipfiredist libxml2
+  ipfiredist mc
+  ipfiredist postfix
+  ipfiredist pwlib
+  ipfiredist sane
+  ipfiredist spandsp
+  ipfiredist sudo
+  ipfiredist xampp
+  ipfiredist xinetd
+  test -d $BASEDIR/packages || mkdir $BASEDIR/packages
+  mv -f $LFS/paks/*.tar.gz $LFS/paks/*.md5 $BASEDIR/packages >> $LOGFILE 2>&1
+  rm -rf $LFS/paks
+  rm -rf $BASEDIR/build/tmp/*
 
   # Cleanup
   stdumount
@@ -1057,6 +1081,10 @@ gettoolchain)
 		fi
 	fi
 	;;
+paks)
+	prepareenv
+	buildpackages
+	;;
 update)
 	echo "Load the latest source-files:"
 	svn update
@@ -1064,11 +1092,10 @@ update)
 commit)
 	echo "Upload the changed files:"
 	svn commit
-	svn up > /dev/null
 	;;
 make)
 	echo "Do a complete compile:"	
-	./make.sh prefetch && ./make.sh gettoolchain && ./make.sh build && ./make.sh paks
+	./make.sh prefetch && ./make.sh gettoolchain && ./make.sh build
 	;;
 diff)
 	echo -ne "Make a local diff to last SVN revision: "
@@ -1099,30 +1126,6 @@ sync)
 		fi
 	done
 	rm -f ftplist
-	;;
-paks)
-	# Build IPFire packages
-	prepareenv
-	ipfiredist applejuice
-	ipfiredist asterisk
-	ipfiredist cyrusimap
-	ipfiredist fetchmail
-	ipfiredist gnump3d
-	ipfiredist lame
-	ipfiredist libtiff
-	ipfiredist libxml2
-	ipfiredist mc
-	ipfiredist postfix
-	ipfiredist pwlib
-	ipfiredist sane
-	ipfiredist spandsp
-	ipfiredist sudo
-	ipfiredist xampp
-	ipfiredist xinetd
-	test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-	mv -f $LFS/paks/*.tar.gz $LFS/paks/*.md5 $BASEDIR/packages >> $LOGFILE 2>&1
-	rm -rf $LFS/paks
-	rm -rf $BASEDIR/build/tmp/*
 	;;
 *)
 	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|shell|sync|toolchain|update}"
