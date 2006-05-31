@@ -335,7 +335,8 @@ ipcopmake() {
 
 ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-	  if [ "`ls -w1 $BASEDIR/packages/ | grep $1; echo $?`" -ne "0" ]; then
+	  ls $BASEDIR/packages/$1* >& /dev/null
+         if [ $? -eq 1 ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
 		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/local/bin
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
@@ -354,8 +355,8 @@ ipfiredist() {
 			exiterror "Packaging $1"
 		fi
 	  else
-		echo "`date -u '+%b %e %T'`: Package $1 already exists" | tee -a $LOGFILE
-	  fi		
+		echo -e "`date -u '+%b %e %T'`: Packages with name $1 already exists!" | tee -a $LOGFILE
+	  fi
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
 	fi
@@ -783,13 +784,6 @@ buildpackages() {
 	rm -f $LFS/license.txt >> $LOGFILE 2>&1
 	cd $BASEDIR
   fi
-
-#  Create update for this version
-#  echo "`date -u '+%b %e %T'`: Building update $VERSION tgz" | tee -a $LOGFILE
-#  tar -cz -C $BASEDIR/build --files-from=$BASEDIR/updates/$VERSION/ROOTFILES.$MACHINE-$VERSION -f $BASEDIR/updates/$VERSION/patch.tar.gz --exclude='#*'; 
-#  chmod 755 $BASEDIR/updates/$VERSION/setup
-#  tar -cz -C $BASEDIR/updates/$VERSION -f $LFS/install/images/$SNAME-update-$VERSION.$MACHINE.tgz patch.tar.gz setup information
-#  rm -f $LFS/var/run/{need-depmod-$KVER,need-depmod-$KVER-smp}
   
   # Generating list of packages used
   echo "`date -u '+%b %e %T'`: Generating packages list from logs" | tee -a $LOGFILE
@@ -800,15 +794,39 @@ buildpackages() {
 	fi
   done
   echo "====== List of softwares used to build $NAME Version: $VERSION ======" > $BASEDIR/doc/packages-list.txt
-  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipcop$\|setup$\|stage2$\|smp$\|tools$\|tools1$\|tools2$' \
+  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipcop$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$' \
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
 
   # Create ISO for CDRom and USB-superfloppy
   ipcopmake cdrom
+  rm -f $LFS/install/images/*usb*
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
+  ipfirepackages
+
+  # Cleanup
+  stdumount
+  rm -rf $BASEDIR/build/tmp/*
+
+  # Generating total list of files
+  echo "`date -u '+%b %e %T'`: Generating files list from logs" | tee -a $LOGFILE
+  rm -f $BASEDIR/log/FILES
+  for i in `ls -1tr $BASEDIR/log/[^_]*`; do
+	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
+		echo "##" >>$BASEDIR/log/FILES
+		echo "## `basename $i`" >>$BASEDIR/log/FILES
+		echo "##" >>$BASEDIR/log/FILES
+		cat $i | sed "s%^\./%#%" | sort >> $BASEDIR/log/FILES
+	fi
+  done
+
+  cd $PWD
+
+}
+
+ipfirepackages() {
   ipfiredist applejuice
   ipfiredist asterisk
   ipfiredist cyrusimap
@@ -829,25 +847,6 @@ buildpackages() {
   mv -f $LFS/paks/*.tar.gz $LFS/paks/*.md5 $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf $LFS/paks
   rm -rf $BASEDIR/build/tmp/*
-
-  # Cleanup
-  stdumount
-  rm -rf $BASEDIR/build/tmp/*
-
-  # Generating total list of files
-  echo "`date -u '+%b %e %T'`: Generating files list from logs" | tee -a $LOGFILE
-  rm -f $BASEDIR/log/FILES
-  for i in `ls -1tr $BASEDIR/log/[^_]*`; do
-	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
-		echo "##" >>$BASEDIR/log/FILES
-		echo "## `basename $i`" >>$BASEDIR/log/FILES
-		echo "##" >>$BASEDIR/log/FILES
-		cat $i | sed "s%^\./%#%" | sort >> $BASEDIR/log/FILES
-	fi
-  done
-
-  cd $PWD
-
 }
 
 # See what we're supposed to do
@@ -1084,6 +1083,7 @@ gettoolchain)
 paks)
 	prepareenv
 	buildpackages
+	# ipfirepackages
 	;;
 update)
 	echo "Load the latest source-files:"
@@ -1092,6 +1092,7 @@ update)
 commit)
 	echo "Upload the changed files:"
 	svn commit
+	svn up > /dev/null
 	;;
 make)
 	echo "Do a complete compile:"	
@@ -1127,8 +1128,28 @@ sync)
 	done
 	rm -f ftplist
 	;;
+pub)
+	echo -e "Upload the ISO to the beta-mirror!"
+	echo -ne "Password for mirror.ipfire.org: "; read PASS
+
+	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/beta/ | grep `svn info | grep Revision | cut -c 11-`
+	if [ "$?" -eq "1" ]; then
+			cp $BASEDIR/ipfire-install-1.4.i386.iso $BASEDIR/ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso
+			md5sum ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso > ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso.md5
+			ncftpput -u web3 -p $PASS mirror.ipfire.org /html/source-packages/beta/ ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso
+			ncftpput -u web3 -p $PASS mirror.ipfire.org /html/source-packages/beta/ ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso.md5
+			if [ "$?" -eq "0" ]; then
+				echo -e "The ISO of Revision `svn info | grep Revision | cut -c 11-` was successfully uploaded to the ftp server."
+			else
+				echo -e "There was an error while uploading the ISO to the ftp server."
+			fi
+	else
+		echo -e "File with name ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso already exists on the ftp server!"
+	fi
+	rm -f ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso{,.md5}
+	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|shell|sync|toolchain|update}"
+	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub|shell|sync|toolchain|update}"
 	cat doc/make.sh-usage
 	exit 1
 	;;

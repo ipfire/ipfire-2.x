@@ -162,7 +162,6 @@
   * openssl-0.9.7i
   * openswan-1.0.10
   * openvpn-2.0.7
-  * pakfire
   * pam_mysql-0.7RC1
   * patch-2.5.4
   * pciutils-2.1.11
