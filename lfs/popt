@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: popt,v 1.3.2.2 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 1.7
 
 THISAPP    = popt-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.1.x
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
