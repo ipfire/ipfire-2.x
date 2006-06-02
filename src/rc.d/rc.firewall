@@ -236,6 +236,8 @@ case "$1" in
 		/sbin/iptables -t nat -A POSTROUTING -m mark --mark 3 -j SNAT --to-source $ORANGE_ADDRESS
 	fi
 
+	# run openvpn
+	/usr/local/bin/openvpnctrl --create-chains-and-rules
 
 	# run local firewall configuration, if present
  	if [ -x /etc/rc.d/rc.firewall.local ]; then
@@ -263,6 +265,9 @@ case "$1" in
 		/sbin/iptables -A INPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 		/sbin/iptables -A INPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 	fi
+
+	# stop openvpn
+	/usr/local/bin/openvpnctrl --delete-chains-and-rules
 
 	# run local firewall configuration, if present
  	if [ -x /etc/rc.d/rc.firewall.local ]; then

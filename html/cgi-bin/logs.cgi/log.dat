@@ -59,6 +59,7 @@ my %sections = (
         'kernel' => '(kernel)',
         'ipsec' => '(ipsec_[\w_]+|pluto\[.*\])',
         'snort' => '(snort)',
+        'openvpn' => '(openvpnserver)\[.*\]',
         'installpackage' => '(installpackage\[.*\])'
 	 );
 
@@ -74,6 +75,7 @@ my %trsections = (
         'auth' => "$Lang::tr{'loginlogout'}",
         'kernel' => "$Lang::tr{'kernel'}",
         'ipsec' => 'IPSec',
+        'openvpn' => 'OpenVPN',
         'snort' => 'Snort',
         'installpackage' => "$Lang::tr{'update transcript'}"	
 	);
@@ -350,8 +352,8 @@ print <<END
 <table width='100%'>
 <tr>
 	<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
-	<td width='15%' align='center' class='boldbase'><b>$Lang::tr{'section'}</b></td>
-	<td width='75%'>&nbsp;</td>
+	<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'section'}</b></td>
+	<td width='80%'>&nbsp;</td>
 </tr>
 END
 ;

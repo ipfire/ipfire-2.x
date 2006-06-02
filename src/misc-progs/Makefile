@@ -9,7 +9,7 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess restartdhcp restartsno
 	ipfirebkcfg ipfirerscfg installpackage installfcdsl ipsecctrl \
 	setaliases ipfirebackup restartntpd \
 	restartapplejuice setdate rebuildhosts \
-	restartsyslogd logwatch
+	restartsyslogd logwatch openvpnctrl
 	# restartwireless
 
 install : all
@@ -35,6 +35,9 @@ $(PROGS): setuid.o
 
 logwatch: logwatch.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ logwatch.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+openvpnctrl: openvpnctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ openvpnctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 setaliases: setaliases.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ setaliases.c setuid.o ../install+setup/libsmooth/varval.o -o $@

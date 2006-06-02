@@ -85,8 +85,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sysklogd-1.4.1-owl-syslogd-crunch_list.diff
 	cd $(DIR_APP) && CFLAGS="$(CFLAGS) -DSYSV -fomit-frame-pointer -Wall -fno-strength-reduce" make -e
 	cd $(DIR_APP) && CFLAGS="$(CFLAGS) -DSYSV -fomit-frame-pointer -Wall -fno-strength-reduce" make -e install
-	touch /var/log/{boot.log,dhcpcd.log,messages}
-	chmod 664 /var/log/{boot.log,dhcpcd.log,messages}
-	chown 0:105 /var/log/{boot.log,dhcpcd.log,messages}
+	touch /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
+	chmod 664 /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
+	chown 0:105 /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

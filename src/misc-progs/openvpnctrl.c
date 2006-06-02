@@ -1,0 +1,451 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include "setuid.h"
+#include "libsmooth.h"
+
+/*
+		Version History
+		
+		1.0.0.0		many things happend before ...
+
+		2.0.0.1		2005/06/09	tarralan
+					add. Version History
+					add. deleteChainReference(char*)
+					add. createChainReference(char*)
+					mod. deleteChain(char*)
+					mod. flushChain(char*)
+					add. flushAllChains()
+					del. deletechains()
+					add. consts for chain names
+					del. createchains()
+					add. createAllChains()
+					add. ovpnInit()
+					add. global vars for chain and interface status
+					add. usage of consts for chain names
+					mod. reworked createAllChains()
+
+		2.0.0.2		2005/06/09	horizont
+					change the input + forward chain position index based on active interfaces
+
+		2.0.0.3		2005/06/09	tarralan
+					mod. removed const attribute
+
+		2.0.0.4		2005/06/12	tarralan
+					add. debug condition für output
+					mod. changed definition auf consts
+
+		2.0.0.5-7	2005/06/12	tarralan
+					debugging
+
+		2.0.0.8		2005/06/12	tarralan
+					add. executeCommand()
+
+		2.0.0.9-16	2005/06/12	tarralan
+					debugging
+
+		2.0.0.17	2005/06/12	tarralan
+					mod. createAllChains
+
+		2.0.1.1		2005/06/12	tarralan
+					non-debug build
+
+		2.0.1.2		2005/06/13	tarralan
+					mod. some options renamed
+
+		2.0.1.3		2005/06/13	tarralan
+					mod. startDaemon() to verify if OpenVPN is enabled
+					mod. createAllChains() to verify if OpenVPN is enabled
+					mod. command help
+
+		2.0.1.4		2005/06/13	tarralan
+					mod. bug fixed with the -sdo option
+		2.0.1.5		2005/11/06	Ufuk Altinkaynak
+					mod. bug fixed no need to read blue and orange dev, when they are not enabled
+		2.0.1.6		2005/01/03	Ufuk Altinkaynak
+					mod. bug fixed reported by weizen_42 see http://www.vpnforum.de/viewtopic.php?p=7113#7113					
+					
+# ZERNINA-VERSION:0.9.0b
+# (c) 2005 tarralan + Ufuk Altinkaynak
+#
+# Ipcop and OpenVPN eas as one two three..
+#					
+*/
+#define noovpndebug
+
+// global vars
+	struct keyvalue *kv = NULL;
+	FILE *ifacefile = NULL;
+
+char redif[STRING_SIZE];
+char blueif[STRING_SIZE];
+char orangeif[STRING_SIZE];
+char enablered[STRING_SIZE] = "off";
+char enableblue[STRING_SIZE] = "off";
+char enableorange[STRING_SIZE] = "off";
+
+// consts
+char OVPNRED[STRING_SIZE] = "OVPN";
+char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
+char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
+char WRAPPERVERSION[STRING_SIZE] = "2.0.1.6";
+
+void exithandler(void)
+{
+	if(kv)
+		freekeyvalues(kv);
+	if (ifacefile)
+		fclose(ifacefile);
+}
+
+void usage(void)
+{
+#ifdef ovpndebug
+	printf("Wrapper for OpenVPN v%s-debug\n", WRAPPERVERSION);
+#else
+	printf("Wrapper for OpenVPN v%s\n", WRAPPERVERSION);
+#endif
+	printf("openvpnctrl <option>\n");
+	printf(" Valid options are:\n");
+	printf(" -s   --start\n");
+	printf("      starts OpenVPN (implicitly creates chains and firewall rules)\n");
+	printf(" -k   --kill\n");
+	printf("      kills/stops OpenVPN\n");
+	printf(" -r   --restart\n");
+	printf("      restarts OpenVPN (implicitly creates chains and firewall rules)\n");
+	printf(" -d   --display\n");
+	printf("      displays OpenVPN status to syslog\n");
+	printf(" -fwr --firewall-rules\n");
+	printf("      removes current OpenVPN chains and rules and resets them according to the config\n");
+	printf(" -sdo --start-daemon-only\n");
+	printf("      starts OpenVPN daemon only (useful for rc.local)\n");
+	printf(" -ccr --create-chains-and-rules\n");
+	printf("      creates chains and rules for OpenVPN\n");
+	printf(" -dcr --delete-chains-and-rules\n");
+	printf("      removes all chains for OpenVPN\n");
+	exit(1);
+}
+
+void ovpnInit(void) {
+	
+	// Read OpenVPN configuration
+	kv = initkeyvalues();
+	if (!readkeyvalues(kv, CONFIG_ROOT "/ovpn/settings")) {
+		fprintf(stderr, "Cannot read ovpn settings\n");
+		exit(1);
+	}
+
+	if (!findkey(kv, "ENABLED", enablered)) {
+		fprintf(stderr, "Cannot read ENABLED\n");
+		exit(1);
+	}
+
+	if (!findkey(kv, "ENABLED_BLUE", enableblue)){
+		fprintf(stderr, "Cannot read ENABLED_BLUE\n");
+		exit(1);
+	}
+
+	if (!findkey(kv, "ENABLED_ORANGE", enableorange)){
+		fprintf(stderr, "Cannot read ENABLED_ORANGE\n");
+		exit(1);
+	}
+	freekeyvalues(kv);
+
+	// read interface settings
+
+	// details for the red int
+	memset(redif, 0, STRING_SIZE);
+	if ((ifacefile = fopen(CONFIG_ROOT "/red/iface", "r")))
+	{
+		if (fgets(redif, STRING_SIZE, ifacefile))
+		{
+			if (redif[strlen(redif) - 1] == '\n')
+				redif[strlen(redif) - 1] = '\0';
+		}
+		fclose (ifacefile);
+		ifacefile = NULL;
+
+		if (!VALID_DEVICE(redif))
+		{
+			memset(redif, 0, STRING_SIZE);
+		}
+	}
+
+	kv=initkeyvalues();
+	if (!readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings"))
+	{
+		fprintf(stderr, "Cannot read ethernet settings\n");
+		exit(1);
+	}
+	
+	if (strcmp(enableblue, "on")==0){
+		if (!findkey(kv, "BLUE_DEV", blueif)){
+			fprintf(stderr, "Cannot read BLUE_DEV\n");
+			exit(1);
+		}
+	}
+	if (strcmp(enableorange, "on")==0){
+		if (!findkey(kv, "ORANGE_DEV", orangeif)){
+			fprintf(stderr, "Cannot read ORNAGE_DEV\n");
+			exit(1);
+		}
+	}		
+	freekeyvalues(kv);
+}
+
+void executeCommand(char *command) {
+#ifdef ovpndebug
+	printf(strncat(command, "\n", 2));
+#endif
+	safe_system(strncat(command, " >/dev/null 2>&1", 17));
+}
+
+void setChainRules(char *chain, char *interface, char *protocol, char *port)
+{
+	char str[STRING_SIZE];
+	
+	sprintf(str, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %s -j ACCEPT", chain, interface, protocol, port);
+	executeCommand(str);
+	sprintf(str, "/sbin/iptables -A %sINPUT -i tun+ -j ACCEPT", chain);
+	executeCommand(str);
+	sprintf(str, "/sbin/iptables -A %sFORWARD -i tun+ -j ACCEPT", chain);
+	executeCommand(str);
+}
+
+void flushChain(char *chain) {
+	char str[STRING_SIZE];
+
+	sprintf(str, "/sbin/iptables -F %sINPUT", chain);
+	executeCommand(str);
+	sprintf(str, "/sbin/iptables -F %sFORWARD", chain);
+	executeCommand(str);
+	safe_system(str);
+}
+
+void deleteChainReference(char *chain) {
+	char str[STRING_SIZE];
+
+	sprintf(str, "/sbin/iptables -D INPUT -j %sINPUT", chain);
+	executeCommand(str);
+	safe_system(str);
+	sprintf(str, "/sbin/iptables -D FORWARD -j %sFORWARD", chain);
+	executeCommand(str);
+	safe_system(str);
+}
+
+void deleteChain(char *chain) {
+	char str[STRING_SIZE];
+
+	sprintf(str, "/sbin/iptables -X %sINPUT", chain);
+	executeCommand(str);
+	sprintf(str, "/sbin/iptables -X %sFORWARD", chain);
+	executeCommand(str);
+}
+
+void deleteAllChains(void) {
+	// not an elegant solution, but to avoid timing problems with undeleted chain references
+	deleteChainReference(OVPNRED);
+	deleteChainReference(OVPNBLUE);
+	deleteChainReference(OVPNORANGE);
+	flushChain(OVPNRED);
+	flushChain(OVPNBLUE);
+	flushChain(OVPNORANGE);
+	deleteChain(OVPNRED);
+	deleteChain(OVPNBLUE);
+	deleteChain(OVPNORANGE);
+}
+
+void createChainReference(char *chain) {
+	char str[STRING_SIZE];
+	sprintf(str, "/sbin/iptables -I INPUT %s -j %sINPUT", "14", chain);
+	executeCommand(str);
+	sprintf(str, "/sbin/iptables -I FORWARD %s -j %sFORWARD", "12", chain);
+	executeCommand(str);
+}
+
+void createChain(char *chain) {
+	char str[STRING_SIZE];
+	sprintf(str, "/sbin/iptables -N %sINPUT", chain);
+	executeCommand(str);
+	sprintf(str, "/sbin/iptables -N %sFORWARD", chain);
+	executeCommand(str);
+}
+
+void createAllChains(void) {
+	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
+		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
+		exit(1);
+	} else {
+		// create chain and chain references
+		if (!strcmp(enableorange, "on")) {
+			if (strlen(orangeif)) {
+				createChain(OVPNORANGE);
+				createChainReference(OVPNORANGE);
+			} else {
+				fprintf(stderr, "OpenVPN enabled on orange but no orange interface found\n");
+				//exit(1);
+			}
+		}
+	
+		if (!strcmp(enableblue, "on")) {
+			if (strlen(blueif)) {
+				createChain(OVPNBLUE);
+				createChainReference(OVPNBLUE);
+			} else {
+				fprintf(stderr, "OpenVPN enabled on blue but no blue interface found\n");
+				//exit(1);
+			}
+		}
+	
+		if (!strcmp(enablered, "on")) {
+			if (strlen(redif)) {
+				createChain(OVPNRED);
+				createChainReference(OVPNRED);
+			} else {
+				fprintf(stderr, "OpenVPN enabled on red but no red interface found\n");
+				//exit(1);
+			}
+		}
+	}
+}
+
+void setFirewallRules(void) {
+	char protocol[STRING_SIZE] = "";
+	char dport[STRING_SIZE] = "";
+	char dovpnip[STRING_SIZE] = "";
+
+	/* check if it makes sence to proceed further */
+	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
+		fprintf(stderr, "Config error, at least one device must be enabled\n");
+		exit(1);
+	}
+
+	kv = initkeyvalues();
+	if (!readkeyvalues(kv, CONFIG_ROOT "/ovpn/settings"))
+	{
+		fprintf(stderr, "Cannot read ovpn settings\n");
+		exit(1);
+	}
+
+	/* we got one device, so lets proceed further	*/	
+	if (!findkey(kv, "DDEST_PORT", dport)){
+		fprintf(stderr, "Cannot read DDEST_PORT\n");
+		exit(1);
+	}
+
+	if (!findkey(kv, "DPROTOCOL", protocol)){
+		fprintf(stderr, "Cannot read DPROTOCOL\n");
+		exit(1);
+	}
+
+	if (!findkey(kv, "VPN_IP", dovpnip)){
+		fprintf(stderr, "Cannot read VPN_IP\n");
+//		exit(1); step further as we don't need an ip
+	}
+	freekeyvalues(kv);
+
+	// set firewall rules
+	if (!strcmp(enablered, "on") && strlen(redif))
+		setChainRules(OVPNRED, redif, protocol, dport);
+	if (!strcmp(enableblue, "on") && strlen(blueif))
+		setChainRules(OVPNBLUE, blueif, protocol, dport);
+	if (!strcmp(enableorange, "on") && strlen(orangeif))
+		setChainRules(OVPNORANGE, orangeif, protocol, dport);
+}
+
+void stopDaemon(void) {
+	char command[STRING_SIZE];
+
+	snprintf(command, STRING_SIZE - 1, "/bin/killall openvpn");
+	executeCommand(command);
+	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
+	executeCommand(command);
+}
+
+void startDaemon(void) {
+	char command[STRING_SIZE];
+	
+	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
+		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
+		exit(1);
+	} else {
+		snprintf(command, STRING_SIZE-1, "/usr/bin/openvpn --config /var/ipfire/ovpn/server.conf");
+		executeCommand(command);
+	}
+}
+
+void displayopenvpn(void) {
+	char command[STRING_SIZE];
+
+	snprintf(command, STRING_SIZE - 1, "/bin/killall -sSIGUSR2 openvpn");
+	executeCommand(command);
+}
+
+int main(int argc, char *argv[]) {
+	if (!(initsetuid()))
+	    exit(1);
+	if(argc < 2)
+	    usage();
+	
+	if(argc == 2) {
+		if( (strcmp(argv[1], "-k") == 0) || (strcmp(argv[1], "--kill") == 0) ) {
+			stopDaemon();
+			return 0;
+		}
+		else if( (strcmp(argv[1], "-d") == 0) || (strcmp(argv[1], "--display") == 0) ) {
+			displayopenvpn();
+			return 0;
+		}
+		else if( (strcmp(argv[1], "-dcr") == 0) || (strcmp(argv[1], "--delete-chains-and-rules") == 0) ) {
+			deleteAllChains();
+			return 0;
+		}
+		else {
+			ovpnInit();
+			
+			if( (strcmp(argv[1], "-s") == 0) || (strcmp(argv[1], "--start") == 0) ) {
+				deleteAllChains();
+				createAllChains();
+				setFirewallRules();
+				startDaemon();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-sdo") == 0) || (strcmp(argv[1], "--start-daemon-only") == 0) ) {
+				startDaemon();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-r") == 0) || (strcmp(argv[1], "--restart") == 0) ) {
+				stopDaemon();
+				deleteAllChains();
+				createAllChains();
+				setFirewallRules();
+				startDaemon();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-fwr") == 0) || (strcmp(argv[1], "--firewall-rules") == 0) ) {
+				deleteAllChains();
+				createAllChains();
+				setFirewallRules();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-ccr") == 0) || (strcmp(argv[1], "--create-chains-and-rules") == 0) ) {
+				createAllChains();
+				setFirewallRules();
+				return 0;
+			}
+			else {
+				usage();
+				return 0;
+			}
+		}
+	}
+	else {
+		usage();
+		return 0;
+	}
+return 0;
+}
+

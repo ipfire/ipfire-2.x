@@ -249,6 +249,8 @@ echo "Starting sshd (if enabled)"
 /usr/local/bin/restartssh
 echo "Starting ntpd (if enabled)"
 /usr/local/bin/restartntpd
+echo "Starting openvpn (if enabled)"
+/usr/local/bin/openvpnctrl --start-daemon-only
 
 if [ -e "CONFIG_ROOT/proxy/squid.conf" ]; then
 	echo "Starting squid (if enabled)"

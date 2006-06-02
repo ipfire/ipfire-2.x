@@ -1355,6 +1355,7 @@ tmp
 #usr/local/bin
 usr/local/bin/httpscert
 usr/local/bin/makegraphs
+#usr/local/bin/make-packages.sh
 usr/local/bin/readhash
 usr/local/bin/setddns.pl
 usr/local/bin/setreservedports
@@ -16351,6 +16352,7 @@ usr/sbin/syslogd
 var/log/boot.log
 var/log/dhcpcd.log
 var/log/messages
+var/log/ovpnserver.log
 var/empty
 ##
 ## sysvinit-2.86
@@ -20995,6 +20997,9 @@ home/httpd/cgi-bin/ids.cgi
 home/httpd/cgi-bin/index.cgi
 home/httpd/cgi-bin/ipinfo.cgi
 home/httpd/cgi-bin/fwhits.cgi
+home/httpd/cgi-bin/ovpnfunc.pl
+home/httpd/cgi-bin/ovpnmain.cgi
+home/httpd/html/images/openvpn.gif
 #home/httpd/cgi-bin/logs.cgi
 home/httpd/cgi-bin/logs.cgi/config.dat
 home/httpd/cgi-bin/logs.cgi/firewalllog.dat
@@ -22498,6 +22503,7 @@ usr/local/bin/ipfirereboot
 usr/local/bin/ipfirerscfg
 usr/local/bin/ipsecctrl
 usr/local/bin/logwatch
+usr/local/bin/openvpnctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/restartdhcp
 usr/local/bin/restartntpd

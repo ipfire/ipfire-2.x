@@ -1,0 +1,16 @@
+#!/bin/sh
+if [ $1 -eq 0 ]; then
+    name2=`echo $2`
+    name3=${name2##*/}
+    name4=${name3##*CN=}
+    clientdisabled=`/bin/grep -iwc off,.*,$name4 /var/ipcop/ovpn/ovpnconfig`
+    if [ "$clientdisabled" = "1" ]; then
+    exit 1
+    fi
+    exit 0
+fi
+
+exit 0
+
+
+

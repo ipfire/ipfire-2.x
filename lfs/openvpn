@@ -58,9 +58,6 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-#dist: 
-#	make-packages.sh postfix $(THISAPP)
-
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
@@ -81,8 +78,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --enable-pthread --sysconfdir=/var/ipfire/ovpn
+	cd $(DIR_APP) && ./configure --enable-pthread --sysconfdir=/var/ipfire/ovpn --prefix=/usr
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && cp -Rvf $(DIR_SRC)/config/ovpn /var/ipfire
+	chown -R nobody:nobody /var/ipfire/ovpn
+	chown root.nobody /var/log/ovpnserver.log
+	chmod 755 /var/ipfire/ovpn/verify
+	chmod 660 /var/log/ovpnserver.log
+	chmod 700 /var/ipfire/ovpn/certs
+	chmod 700 /var/ipfire/ovpn/n2nconf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

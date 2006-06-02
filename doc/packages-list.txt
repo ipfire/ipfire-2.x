@@ -215,6 +215,6 @@
   * vim-6.3
   * vlan.1.9
   * wget-1.10.2
-  * xampp-linux-1.5.3
+  * xampp-linux-1.5.3a
   * xinetd-2.3.14
   * zlib-1.2.3

@@ -74,6 +74,48 @@ push(@network, '127.0.0.1');
 push(@masklen, '255.255.255.255' );
 push(@colour, ${Header::colourfw} );
 
+# Add OpenVPN net and RED/BLUE/ORANGE entry (when appropriate)
+if (-e "${General::swroot}/ovpn/settings") {
+    my %ovpnsettings = ();    
+    &General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
+    my @tempovpnsubnet = split("\/",$ovpnsettings{'DOVPN_SUBNET'});
+
+    # add OpenVPN net
+		push(@network, $tempovpnsubnet[0]);
+		push(@masklen, $tempovpnsubnet[1]);
+		push(@colour, ${Header::colourovpn} );
+		push(@ports, '0' );
+		push(@protocols, '' );
+
+    if ( ($ovpnsettings{'ENABLED'} eq 'on') && open(IP, "${General::swroot}/red/local-ipaddress") ) {
+      # add RED:port / proto
+		  my $redip = <IP>;
+	  	close(IP);
+  		chomp $redip;
+		  push(@network, $redip );
+	  	push(@masklen, '255.255.255.255' );
+  		push(@colour, ${Header::colourovpn} );
+	  	push(@ports, $ovpnsettings{'DDEST_PORT'} );
+  		push(@protocols, $ovpnsettings{'DPROTOCOL'} );
+    }
+    if ( ($ovpnsettings{'ENABLED_BLUE'} eq 'on') && $netsettings{'BLUE_DEV'} ) {
+      # add BLUE:port / proto
+    	push(@network, $netsettings{'BLUE_ADDRESS'} );
+    	push(@masklen, '255.255.255.255' );
+  		push(@colour, ${Header::colourovpn} );
+	  	push(@ports, $ovpnsettings{'DDEST_PORT'} );
+  		push(@protocols, $ovpnsettings{'DPROTOCOL'} );
+    }
+    if ( ($ovpnsettings{'ENABLED_ORANGE'} eq 'on') && $netsettings{'ORANGE_DEV'} ) {
+      # add ORANGE:port / proto
+    	push(@network, $netsettings{'ORANGE_ADDRESS'} );
+    	push(@masklen, '255.255.255.255' );
+  		push(@colour, ${Header::colourovpn} );
+	  	push(@ports, $ovpnsettings{'DDEST_PORT'} );
+  		push(@protocols, $ovpnsettings{'DPROTOCOL'} );
+    }
+}
+
 # Add Orange Network
 if ($netsettings{'ORANGE_DEV'}) {
 	push(@network, $netsettings{'ORANGE_NETADDRESS'});
@@ -370,6 +412,7 @@ print <<END
     <td align='center' bgcolor='${Header::colourblue}'><b><font color='#FFFFFF'>$Lang::tr{'wireless'}</font></b></td>
     <td align='center' bgcolor='${Header::colourfw}'><b><font color='#FFFFFF'>IPFire</font></b></td>
     <td align='center' bgcolor='${Header::colourvpn}'><b><font color='#FFFFFF'>$Lang::tr{'vpn'}</font></b></td>
+    <td align='center' bgcolor='${Header::colourovpn}'><b><font color='#FFFFFF'>$Lang::tr{'OpenVPN'}</font></b></td>
 </tr>
 </table>
 <br />
