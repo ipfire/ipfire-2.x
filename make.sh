@@ -355,7 +355,7 @@ ipfiredist() {
 			exiterror "Packaging $1"
 		fi
 	  else
-		echo -e "`date -u '+%b %e %T'`: Packages with name $1 already exists!" | tee -a $LOGFILE
+		echo -e "`date -u '+%b %e %T'`: Package with name $1 already exists!" | tee -a $LOGFILE
 	  fi
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
@@ -832,6 +832,7 @@ ipfirepackages() {
   ipfiredist cyrusimap
   ipfiredist fetchmail
   ipfiredist gnump3d
+  ipfiredist java
   ipfiredist lame
   ipfiredist libtiff
   ipfiredist libxml2
@@ -1128,10 +1129,9 @@ sync)
 	done
 	rm -f ftplist
 	;;
-pub)
+pub-iso)
 	echo -e "Upload the ISO to the beta-mirror!"
 	echo -ne "Password for mirror.ipfire.org: "; read PASS
-
 	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/beta/ | grep `svn info | grep Revision | cut -c 11-`
 	if [ "$?" -eq "1" ]; then
 			cp $BASEDIR/ipfire-install-1.4.i386.iso $BASEDIR/ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso
@@ -1148,8 +1148,18 @@ pub)
 	fi
 	rm -f ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso{,.md5}
 	;;
+pub-paks)
+	echo -e "Upload the packages to the beta-mirror!"
+	echo -ne "Password for mirror.ipfire.org: "; read PASS
+	ncftpput -z -u web3 -p $PASS mirror.ipfire.org /html/source-packages/packages/ packages/*
+	if [ "$?" -eq "0" ]; then
+		echo -e "The packages were successfully uploaded to the ftp server."
+	else
+		echo -e "There was an error while uploading the packages to the ftp server."
+	fi
+	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub|shell|sync|toolchain|update}"
+	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
 	cat doc/make.sh-usage
 	exit 1
 	;;

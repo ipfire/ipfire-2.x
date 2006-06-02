@@ -1,4 +1,143 @@
 ------------------------------------------------------------------------
+r150 | ms | 2006-05-31 22:46:41 +0200 (Mi, 31 Mai 2006) | 4 lines
+
+Quellenupdate:
+  * popt
+  * sane
+
+------------------------------------------------------------------------
+r149 | ms | 2006-05-31 18:29:08 +0200 (Mi, 31 Mai 2006) | 6 lines
+
+Hinzugefügt:
+  * ./make.sh pub lädt die ISO auf den mirror.ipfire.org
+Geändert:
+  * ./make.sh paks verändert. Pakete werden nur noch gebaut, wenn sie noch nicht da sind.
+  Zum neu bauen einfach das File löschen und beim nächsten durchlauf wird es wieder mitgebaut.
+
+------------------------------------------------------------------------
+r148 | ms | 2006-05-31 12:09:27 +0200 (Mi, 31 Mai 2006) | 8 lines
+
+Großes Update:
+Hinzugefügt:
+  * L7-Protokolle
+Geändert:
+  * XAMPP 1.5.1 --> 1.5.3
+  * Sämtliche "IPCops" durch "IPFire" im Webinterface ersetzt
+  * Einige Fixes, wegen Errors im Webinterface. (Im Forum zu finden.)
+
+------------------------------------------------------------------------
+r147 | ms | 2006-05-28 19:57:38 +0200 (So, 28 Mai 2006) | 4 lines
+
+BUILDFIXES:
+  * ROOTFILES überarbeitet. (Ne Menge vergessen.^^)
+  * Packages werden nichtmehr im "build" gepackt, sondern mit dem Parameter "paks".
+
+------------------------------------------------------------------------
+r146 | ms | 2006-05-27 12:38:03 +0200 (Sa, 27 Mai 2006) | 7 lines
+
+Hinzugefügt:
+  * XAMPP mit Python
+Geändert:
+  * Installationsprozess von PHPAJ
+  * shutdown.cgi auf ipfire angepasst
+  * Make-Packages.sh behebt jetzt doppelte Dateien in den Pak-Archiven.
+
+------------------------------------------------------------------------
+r145 | ms | 2006-05-26 14:19:48 +0200 (Fr, 26 Mai 2006) | 6 lines
+
+Geändert:
+  * IPCop -> IPFire bei den misc-progs
+  * Startscripte verschoben und Symlink nach /usr/local/bin/rc*
+Gelöscht:
+  * Restartshaping in den Misc-Progs, weil es durch QoS ersetzt wird.
+
+------------------------------------------------------------------------
+r144 | ms | 2006-05-26 12:51:14 +0200 (Fr, 26 Mai 2006) | 7 lines
+
+Hinzugefügt:
+  * Screen
+  * Applejuice - mit Startscript
+Geändert:
+  * Xampp-Paket verkleinert.
+  * Lame eingepackt.
+
+------------------------------------------------------------------------
+r143 | ms | 2006-05-25 23:49:28 +0200 (Do, 25 Mai 2006) | 3 lines
+
+Hinzugefügt:
+  * Java von SUN
+
+------------------------------------------------------------------------
+r142 | ms | 2006-05-25 23:10:48 +0200 (Do, 25 Mai 2006) | 3 lines
+
+Hinzugefügt:
+  * Firewallhits
+
+------------------------------------------------------------------------
+r141 | ms | 2006-05-25 22:23:12 +0200 (Do, 25 Mai 2006) | 3 lines
+
+Hinzugefügt:
+  * HTOP - http://htop.sourceforge.net
+
+------------------------------------------------------------------------
+r140 | ms | 2006-05-25 21:49:10 +0200 (Do, 25 Mai 2006) | 3 lines
+
+Hinzugefügt:
+  * GeoIP
+
+------------------------------------------------------------------------
+r139 | ms | 2006-05-25 12:52:42 +0200 (Do, 25 Mai 2006) | 6 lines
+
+Hinzugefügt:
+  * ethereal
+  * mailx
+Geändert:
+  * /var/ipcop --> /var/ipfire
+
+------------------------------------------------------------------------
+r138 | ms | 2006-05-24 22:21:07 +0200 (Mi, 24 Mai 2006) | 2 lines
+
+Sourceforge-Mirror wieder geändert.
+
+------------------------------------------------------------------------
+r137 | ms | 2006-05-24 21:47:34 +0200 (Mi, 24 Mai 2006) | 6 lines
+
+Hinzugefügt:
+  * NCFTP - Ein CLI-FTP-Client.
+Geändert:
+  * Versucht das XAMPP-Paket zu verkleinern.
+  * ./make.sh sync erweitert.
+
+------------------------------------------------------------------------
+r136 | ms | 2006-05-24 20:04:26 +0200 (Mi, 24 Mai 2006) | 3 lines
+
+Hinzugefügt:
+  * Amavis-Perl-Module in der ISO.
+
+------------------------------------------------------------------------
+r135 | ms | 2006-05-24 19:42:02 +0200 (Mi, 24 Mai 2006) | 4 lines
+
+Hinzugefügt:
+  * Erste Version von CONFIRE.
+  * ./make.sh sync lädt nun alle neuen Dateien auf den FTP-Server.
+
+------------------------------------------------------------------------
+r134 | ms | 2006-05-23 22:15:26 +0200 (Di, 23 Mai 2006) | 4 lines
+
+Geändert:
+  * CONFIG_ROOT in den Scripts angepasst auf /var/ipfire
+  * Zwei führende "/" in den ROOTFILES entfernt.
+
+------------------------------------------------------------------------
+r133 | ms | 2006-05-23 21:31:40 +0200 (Di, 23 Mai 2006) | 6 lines
+
+Hinzugefügt:
+  * NMAP - Netzwerk-Scanner
+Geändert:
+  * Postfix-Quelle
+  * CAPIINFO war an der falschen Stelle in der Makefile.
+
+------------------------------------------------------------------------
 r132 | ms | 2006-05-22 14:47:00 +0200 (Mo, 22 Mai 2006) | 3 lines
 
 Zweiter Teil des dicken Quellenupdates. Diesmal: C bis D.

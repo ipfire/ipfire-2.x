@@ -171,6 +171,7 @@
   * pkg-config-0.20
   * popt-1.7
   * portmap_5beta
+  * postfix-2.2.10
   * postfix-2.2.9
   * ppp-2.4.2
   * pptp-1.6.0
