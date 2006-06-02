@@ -83,17 +83,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --datadir=/usr/lib/squid \
 	   --mandir=/usr/share/man --libexecdir=/usr/lib/squid \
 	   --localstatedir=/var --sysconfdir=/etc/squid \
-	   --disable-poll --disable-snmp --disable-icmp \
+	   --disable-poll --disable-snmp --disable-icmp --disable-wccp \
 	   --disable-http-violations --disable-ident-lookups \
 	   --enable-storeio="aufs,coss,diskd,ufs" --enable-ssl \
-	   --enable-underscores --enable-ntlm-fail-open \
+	   --enable-underscores --enable-ntlm-fail-open --enable-arp-acl \
+	   --enable-http-violations --enable-auth=basic,ntlm \
 	   --enable-removal-policies="heap,lru" \
 	   --enable-delay-pools --enable-linux-netfilter \
-	   --enable-basic-auth-helpers="NCSA,SMB,MSNT" \
-	   --enable-ntlm-auth-helpers="SMB,winbind" \
+	   --enable-basic-auth-helpers="NCSA,SMB,MSNT,LDAP,multi-domain-NTLM" \
+	   --enable-ntlm-auth-helpers="SMB" \
 	   --enable-useragent-log \
 	   --enable-referer-log \
-	   --with-pthreads
+	   --with-pthreads --with-dl
+
 	cd $(DIR_APP) && make -j 3
 	cd $(DIR_APP) && make install
 

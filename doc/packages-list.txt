@@ -196,6 +196,7 @@
   * spandsp-0.0.2pre25
   * speedtouch-1.2
   * squid-2.5.STABLE13
+  * squid-2.5.STABLE13_1st
   * squid-graph-3.1
   * startscripts
   * stund_0.96_Aug13
