@@ -106,19 +106,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	cd $(DIR_APP)/source && install -v -m644 ../docs/*.pdf /usr/share/doc/samba-3.0.22
 #	cd $(DIR_APP)/source && ln -v -s ../../samba/swat  /usr/share/doc/samba-3.0.22
 	echo "swat            901/tcp" >> /etc/services
-	echo "# Begin /var/ipfire/xinetd.d/swat"		>> /var/ipfire/xinetd.d/swat
-	echo ""					>> /var/ipfire/xinetd.d/swat
-	echo "service swat"				>> /var/ipfire/xinetd.d/swat
-	echo "{"					>> /var/ipfire/xinetd.d/swat
-	echo "    port            = 901"		>> /var/ipfire/xinetd.d/swat
-	echo "    socket_type     = stream"	>> /var/ipfire/xinetd.d/swat
-	echo "    wait            = no"		>> /var/ipfire/xinetd.d/swat
-	echo "    only_from       = 127.0.0.1"	>> /var/ipfire/xinetd.d/swat
-	echo "    user            = root"		>> /var/ipfire/xinetd.d/swat
-	echo "    server          = /usr/sbin/swat"	>> /var/ipfire/xinetd.d/swat
-	echo "    log_on_failure  += USERID"	>> /var/ipfire/xinetd.d/swat
-	echo "}"					>> /var/ipfire/xinetd.d/swat
-	echo ""					>> /var/ipfire/xinetd.d/swat
-	echo "# End /var/ipfire/xinetd.d/swat"		>> /var/ipfire/xinetd.d/swat
+	echo "# Begin /var/ipfire/xinetd/xinetd.d/swat"	>> /var/ipfire/xinetd/xinetd.d/swat
+	echo ""					>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "service swat"				>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "{"					>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "    port            = 901"		>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "    socket_type     = stream"	>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "    wait            = no"		>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "    only_from       = 127.0.0.1"	>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "    user            = root"		>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "    server          = /usr/sbin/swat"	>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "    log_on_failure  += USERID"	>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "}"					>> /var/ipfire/xinetd/xinetd.d/swat
+	echo ""					>> /var/ipfire/xinetd/xinetd.d/swat
+	echo "# End /var/ipfire/xinetd/xinetd.d/swat"	>> /var/ipfire/xinetd/xinetd.d/swat
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

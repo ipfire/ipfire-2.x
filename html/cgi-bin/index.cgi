@@ -6,8 +6,6 @@
 #
 # (c) The SmoothWall Team
 #
-# $Id: index.cgi,v 1.15.2.18 2005/09/17 13:51:47 gespinasse Exp $
-#
 
 use strict;
 
@@ -15,7 +13,7 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -26,6 +24,7 @@ my %netsettings=();
 my %ddnssettings=();
 my $warnmessage = '';
 my $refresh = '';
+my $ipaddr='';
 
 &Header::showhttpheaders();
 
@@ -45,69 +44,139 @@ if ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refr
 	$refresh = "<meta http-equiv='refresh' content='5;'>";
 }
 
+my $c;
+my $maxprofiles = 5;
+my @profilenames = ();
+
+for ($c = 1; $c <= $maxprofiles; $c++)
+{
+	my %temppppsettings = ();
+	$temppppsettings{'PROFILENAME'} = '';
+	&General::readhash("${General::swroot}/ppp/settings-$c", \%temppppsettings);
+	$profilenames[$c] = $temppppsettings{'PROFILENAME'};
+}
+my %selected;
+for ($c = 1; $c <= $maxprofiles; $c++) {
+	$selected{'PROFILE'}{$c} = ''; 
+}
+$selected{'PROFILE'}{$pppsettings{'PROFILE'}} = "selected='selected'";
+my $dialButtonDisabled = "disabled='disabled'";
+
+
 &Header::openpage($Lang::tr{'main page'}, 1, $refresh);
 &Header::openbigbox('', 'center');
 &Header::openbox('100%', 'center', &Header::cleanhtml(`/bin/uname -n`,"y"));
 
-# hide buttons only when pppsettings mandatory used and not valid
-if ( ( $pppsettings{'VALID'} eq 'yes' ) ||
-		( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
-	print <<END
-	<table border='0'>
-	<tr>
-		<td align='center'><form method='post' action='/cgi-bin/dial.cgi'>
-			<input type='submit' name='ACTION' value='$Lang::tr{'dial'}' />
-		</form></td>
-		<td>&nbsp;&nbsp;</td>
-		<td align='center'><form method='post' action='/cgi-bin/dial.cgi'>
-			<input type='submit' name='ACTION' value='$Lang::tr{'hangup'}' />
-		</form></td>
-		<td>&nbsp;&nbsp;</td>
-		<td align='center'><form method='post' action="$ENV{'SCRIPT_NAME'}">
-			<input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' />
-		</form></td>
-	</tr></table>
-END
-	;
-}
-
-print "<font face='Helvetica' size='4'><b>";
-if ( !( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
-	print "<u>$Lang::tr{'current profile'} $pppsettings{'PROFILENAME'}</u><br />\n";
-}
-	
-if ( ( $pppsettings{'VALID'} eq 'yes'&& $modemsettings{'VALID'} eq 'yes' ) ||
-		( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
-	print $connstate;
-	print "</b></font>\n";
+if ( ( $pppsettings{'VALID'} eq 'yes'&& $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
 	if ($connstate =~ /$Lang::tr{'connected'}/) {
-	    my $fetch_ip='nothing';
 	    if ($ddnssettings{'BEHINDROUTER'} eq 'FETCH_IP') {
 	        if (open(IPADDR,"${General::swroot}/ddns/ipcache")) {
-	   	    $fetch_ip = <IPADDR>;
+	   	    $ipaddr = <IPADDR>;
 	    	    close IPADDR;
-	    	    chomp ($fetch_ip);
-	    	    my $host_name = (gethostbyaddr(pack("C4", split(/\./, $fetch_ip)), 2))[0];
-	    	    print "<br />$Lang::tr{'ip address'} (internet): $fetch_ip <br /> $Lang::tr{'ipfires hostname'} (internet): $host_name <br />";
+	    	    chomp ($ipaddr);
 		}
 	    }
 	    if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
 	   	my $ipaddr = <IPADDR>;
 	    	close IPADDR;
 	    	chomp ($ipaddr);
-		if ($ipaddr ne $fetch_ip){	#do not show info twice
-	    	    my $host_name = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
-	    	    print "<br />$Lang::tr{'ip address'}: $ipaddr <br /> $Lang::tr{'ipfires hostname'}: $host_name <br />";
-		}
 	    }
         }
-
 } elsif ($modemsettings{'VALID'} eq 'no') {
 	print "$Lang::tr{'modem settings have errors'}\n </b></font>\n";
 } else {
 	print "$Lang::tr{'profile has errors'}\n </b></font>\n";
 }
 
+if ( $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) {
+	$ipaddr = $netsettings{'RED_ADDRESS'};
+}
+
+print <<END;
+<table border='0'>
+<tr>
+	<td align='center'><form method='post' action="$ENV{'SCRIPT_NAME'}">
+		<input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' />
+	</form></td>
+</tr></table>
+
+<!-- Table of networks -->
+<table border='0' width=80%>
+  <!--  Headline -->
+  <tr>	<th bgcolor='lightgrey'>$Lang::tr{'network'}
+	<th bgcolor='lightgrey'>IP
+	<th bgcolor='lightgrey'>$Lang::tr{'status'}
+  <!-- RED -->
+  <tr>	<td bgcolor='$Header::colourred' width='25%'><font size='2' color='white'><b>$Lang::tr{'internet'}:</b></font><br>
+	<td width='30%'>$ipaddr <td width='45%'>$connstate
+	<tr><td colspan='2'>
+		<form method='post' action='/cgi-bin/dial.cgi'>$Lang::tr{'profile'}:
+			<select name='PROFILE'>
+END
+	for ($c = 1; $c <= $maxprofiles; $c++)
+	{
+		if ($profilenames[$c] ne '') {
+			$dialButtonDisabled = "";
+			print "\t<option value='$c' $selected{'PROFILE'}{$c}>$c. $profilenames[$c]</option>\n";
+		}
+	}
+	$dialButtonDisabled = "disabled='disabled'" if (-e '/var/run/ppp-ipcop.pid' || -e "${General::swroot}/red/active");
+	if ( ( $pppsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
+		print <<END;
+				</select>
+				<input type='submit' name='ACTION' value='$Lang::tr{'dial profile'}' $dialButtonDisabled />
+			</form>
+			<td align='center'>
+				<table width='100%' border='0'>
+					<tr>
+					<td width='50%' align='right'>	<form method='post' action='/cgi-bin/dial.cgi'>
+											<input type='submit' name='ACTION' value='$Lang::tr{'dial'}'>
+										</form>
+					<td width='50%' align='left'>	<form method='post' action='/cgi-bin/dial.cgi'>
+											<input type='submit' name='ACTION' value='$Lang::tr{'hangup'}'>
+										</form>
+				</table>
+END
+	} else {
+	print "$Lang::tr{'profile has errors'}\n </b></font>\n";
+	}
+
+print <<END;
+  <!-- Green -->
+  <tr><td bgcolor='$Header::colourgreen' width='25%'>
+		<font size='2' color='white'><b>$Lang::tr{'lan'}:</b></font>
+  	<td width='30%'>$netsettings{'GREEN_ADDRESS'}
+  	<td width='45%'>
+END
+	if (`ifconfig | grep $netsettings{'GREEN_DEV'}`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
+print <<END;
+  <!-- BLUE -->
+  <tr><td bgcolor='$Header::colourblue' width='25%'><font size='2' color='white'><b>$Lang::tr{'wireless'}:</b></font><br>
+  	<td width='30%'>$netsettings{'BLUE_ADDRESS'}
+  	<td width='45%'>
+END
+	if (`ifconfig | grep $netsettings{'BLUE_DEV'}`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
+print <<END;
+  <tr><td bgcolor='$Header::colourorange' width='25%'><font size='2' color='white'><b>$Lang::tr{'dmz'}:</b></font><br>
+  	<td width='30%'>$netsettings{'ORANGE_ADDRESS'}
+  	<td width='45%'>
+END
+	if (`ifconfig | grep $netsettings{'ORANGE_DEV'}`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
+print <<END;
+  <tr><td bgcolor='$Header::colourvpn' width='25%'><font size='2' color='white'><b>$Lang::tr{'vpn'}:</b></font><br>
+  	<td width='30%'>N/A
+  	<td width='45%'>
+END
+	if (`ifconfig | grep ipsec0`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
+print <<END;
+  <tr><td bgcolor='$Header::colourovpn' width='25%'><font size='2' color='white'><b>OpenVPN:</b></font><br>
+  	<td width='30%'>N/A
+  	<td width='45%'>
+END
+	if (`ifconfig | grep tun0`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
+print <<END;
+</table>
+END
 
 # Memory usage warning
 my @free = `/usr/bin/free`;
@@ -178,58 +247,6 @@ print "<p>";
 system('/usr/bin/uptime');
 print "</p>\n";
 
-&Header::closebox();
-
-&Header::openbox('100%', 'left', $Lang::tr{'quick control'});
-# read in the profile names into @profilenames.
-my $c;
-my $maxprofiles = 5;
-my @profilenames = ();
-
-for ($c = 1; $c <= $maxprofiles; $c++)
-{
-	my %temppppsettings = ();
-	$temppppsettings{'PROFILENAME'} = '';
-	&General::readhash("${General::swroot}/ppp/settings-$c", \%temppppsettings);
-	$profilenames[$c] = $temppppsettings{'PROFILENAME'};
-}
-my %selected;
-for ($c = 1; $c <= $maxprofiles; $c++) {
-	$selected{'PROFILE'}{$c} = ''; 
-}
-$selected{'PROFILE'}{$pppsettings{'PROFILE'}} = "selected='selected'";
-
-print <<END;
-	<table width='100%'>
-	<tr>
-		<td align='left'>
-			<form method='post' action='/cgi-bin/dial.cgi'>
-				$Lang::tr{'profile'}:
-				<select name='PROFILE'>
-END
-my $dialButtonDisabled = "disabled='disabled'";
-for ($c = 1; $c <= $maxprofiles; $c++)
-{
-	if ($profilenames[$c] ne '') {
-		$dialButtonDisabled = "";
-		print "\t<option value='$c' $selected{'PROFILE'}{$c}>$c. $profilenames[$c]</option>\n";
-	}
-}
-$dialButtonDisabled = "disabled='disabled'" if (-e '/var/run/ppp-ipcop.pid' || -e "${General::swroot}/red/active");
-
-print <<END;
-				</select>
-				<input type='submit' name='ACTION' value='$Lang::tr{'dial profile'}' $dialButtonDisabled />
-			</form>
-		</td>
-		<td align='right'>
-			<form method='post' action='/cgi-bin/shutdown.cgi'>
-				<input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' />
-			</form>
-		</td>
-	</tr>
-	</table>
-END
 &Header::closebox();
 
 &Header::closebigbox();

@@ -78,21 +78,21 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-loadavg --sysconfdir=/var/ipfire/xinetd
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && install -v -d -m755 /var/ipfire/xinetd.d
-	echo "# Begin /var/ipfire/xinetd" 				> /var/ipfire/xinetd.conf
-	echo "# Configuration file for xinetd" 		>> /var/ipfire/xinetd.conf
-	echo "#" 						>> /var/ipfire/xinetd.conf
-	echo "defaults" 					>> /var/ipfire/xinetd.conf
-	echo "{" 						>> /var/ipfire/xinetd.conf
-	echo "      instances       = 60" 			>> /var/ipfire/xinetd.conf
-	echo "      log_type        = SYSLOG daemon" 	>> /var/ipfire/xinetd.conf
-	echo "      log_on_success  = HOST PID USERID" 	>> /var/ipfire/xinetd.conf
-	echo "      log_on_failure  = HOST USERID" 	>> /var/ipfire/xinetd.conf
-	echo "      cps             = 25 30"	 	>> /var/ipfire/xinetd.conf
-	echo "}" 						>> /var/ipfire/xinetd.conf
-	echo "# All service files are stored in the /var/ipfire/xinetd.d directory" >> /var/ipfire/xinetd.conf
-	echo "#" 						>> /var/ipfire/xinetd.conf
-	echo "includedir /var/ipfire/xinetd.d" 			>> /var/ipfire/xinetd.conf
-	echo "# End /var/ipfire/xinetd" 				>> /var/ipfire/xinetd.conf
+	cd $(DIR_APP) && install -v -d -m755 /var/ipfire/xinetd/xinetd.d
+	echo "# Begin /var/ipfire/xinetd/xinetd.conf"	>  /var/ipfire/xinetd/xinetd.conf
+	echo "# Configuration file for xinetd" 		>> /var/ipfire/xinetd/xinetd.conf
+	echo "#" 						>> /var/ipfire/xinetd/xinetd.conf
+	echo "defaults" 					>> /var/ipfire/xinetd/xinetd.conf
+	echo "{" 						>> /var/ipfire/xinetd/xinetd.conf
+	echo "      instances       = 60" 			>> /var/ipfire/xinetd/xinetd.conf
+	echo "      log_type        = SYSLOG daemon" 	>> /var/ipfire/xinetd/xinetd.conf
+	echo "      log_on_success  = HOST PID USERID" 	>> /var/ipfire/xinetd/xinetd.conf
+	echo "      log_on_failure  = HOST USERID" 	>> /var/ipfire/xinetd/xinetd.conf
+	echo "      cps             = 25 30"	 	>> /var/ipfire/xinetd/xinetd.conf
+	echo "}" 						>> /var/ipfire/xinetd/xinetd.conf
+	echo "# All service files are stored in the /var/ipfire/xinetd/xinetd.d directory" >> /var/ipfire/xinetd/xinetd.conf
+	echo "#" 						>> /var/ipfire/xinetd/xinetd.conf
+	echo "includedir /var/ipfire/xinetd/xinetd.d" 	>> /var/ipfire/xinetd/xinetd.conf
+	echo "# End /var/ipfire/xinetd/xinetd.conf"	>> /var/ipfire/xinetd/xinetd.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

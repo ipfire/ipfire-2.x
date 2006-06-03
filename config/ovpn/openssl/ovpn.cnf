@@ -1,5 +1,5 @@
 HOME		= .
-RANDFILE	= /var/ipcop/ovpn/ca/.rnd
+RANDFILE	= /var/ipfire/ovpn/ca/.rnd
 oid_section	= new_oids
 
 [ new_oids ]
@@ -8,7 +8,7 @@ oid_section	= new_oids
 default_ca	= openvpn
 
 [ openvpn ]
-dir		= /var/ipcop/ovpn
+dir		= /var/ipfire/ovpn
 certs		= $dir/certs
 crl_dir		= $dir/crl
 database	= $dir/certs/index.txt

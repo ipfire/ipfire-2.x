@@ -88,5 +88,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 660 /var/log/ovpnserver.log
 	chmod 700 /var/ipfire/ovpn/certs
 	chmod 700 /var/ipfire/ovpn/n2nconf
+	-cd $(DIR_APP) && find /var/ipfire/ovpn -name .svn -exec rm -rf {} \;
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
