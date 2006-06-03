@@ -639,6 +639,8 @@ buildipcop() {
   ipcopmake Archive-Zip
   ipcopmake GeoIP
   ipcopmake fwhits
+  ipcopmake berkeley
+  ipcopmake BerkeleyDB ## The Perl module
   ipcopmake noip_updater
   ipcopmake ntp
   ipcopmake oinkmaster
@@ -650,6 +652,9 @@ buildipcop() {
   ipcopmake setup
   ipcopmake snort
   #ipcopmake speedycgi
+  ipcopmake saslauthd PASS=1
+  ipcopmake openldap
+  ipcopmake saslauthd PASS=2
   ipcopmake squid
   ipcopmake squid-graph
   ipcopmake tcpdump
@@ -662,8 +667,6 @@ buildipcop() {
   ipcopmake pakfire
   ipcopmake startscripts
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
-  ipcopmake berkeley
-  ipcopmake BerkeleyDB ## The Perl module
   ipcopmake java
   ipcopmake libtiff
   ipcopmake libjpeg
@@ -676,9 +679,6 @@ buildipcop() {
   ipcopmake xampp
   ipcopmake pam
   ipcopmake pammysql
-  ipcopmake saslauthd PASS=1
-  ipcopmake openldap
-  ipcopmake saslauthd PASS=2
   ipcopmake xinetd
   ipcopmake ghostscript
   ipcopmake cups
@@ -1075,7 +1075,7 @@ gettoolchain)
 			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
 			echo "`date -u '+%b %e %T'`: Uncompressing toolchain" | tee -a $LOGFILE
 			cd $BASEDIR && tar xfz cache/$PACKAGE.tar.gz -C .
-			rm -vf $BASEDIR/cache/$PACKAGE.{tar.gz,md5}
+			rm -f $BASEDIR/cache/$PACKAGE.{tar.gz,md5}
 		else
 			exiterror "$PACKAGE.md5 did not match, check downloaded package"
 		fi

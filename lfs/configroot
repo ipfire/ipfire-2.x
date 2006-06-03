@@ -60,7 +60,7 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dmzholes/config ethernet/aliases ethernet/settings \
-	    isdn/settings main/hosts main/settings optionsfw/settings patches/available patches/installed \
+	    isdn/settings main/hosts main/settings optionsfw/settings pakfire/settings patches/available patches/installed \
 	    portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings remote/settings shaping/settings \
 	    shaping/config snort/settings vpn/config vpn/settings vpn/ipsec.conf \

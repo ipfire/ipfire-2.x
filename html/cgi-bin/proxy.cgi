@@ -803,18 +803,6 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-if (($advproxyversion lt $latest) && (-e $sysupdflagfile)) { unlink($sysupdflagfile); }
-
-if (!-e $sysupdflagfile) {
-	&Header::openbox('100%', 'left', $Lang::tr{'advproxy update notification'});
-	print "<table width='100%' cellpadding='5'>\n";
-	print "<tr>\n";
-	print "<td bgcolor='$hintcolour' class='base'>$Lang::tr{'advproxy update information'}</td>";
-	print "</tr>\n";
-	print "</table>\n";
-	&Header::closebox();
-}
-
 # ===================================================================
 #  Main settings
 # ===================================================================

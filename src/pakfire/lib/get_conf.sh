@@ -5,7 +5,7 @@
 ############################################################################################
 
 # Conf File festlegen
-CONF_FILE=/opt/pakfire/pakfire.conf
+CONF_FILE=/etc/pakfire.conf
 
 if [ -r $CONF_FILE ]
 then 

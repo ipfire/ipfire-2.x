@@ -102,4 +102,7 @@ $(TARGET) :
 	-mkdir -m 1775 -p /var/patches
 	chown -R root:nobody /var/patches
 
+	# Versionsfile
+	echo -n "$(VERSION)" > /etc/ipfire_vers
+
 	@$(POSTBUILD)

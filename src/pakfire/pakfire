@@ -6,9 +6,9 @@
 
 case "$1" in
 
-	update) 	$(get_conf.sh HOME)/lib/get_mirror.sh
-			$(get_conf.sh HOME)/lib/get_list.sh
-			$(get_conf.sh HOME)/lib/check_pak.sh
+	update) 	$(lib/get_conf.sh HOME)/lib/get_mirror.sh
+			$(lib/get_conf.sh HOME)/lib/get_list.sh
+			$(lib/get_conf.sh HOME)/lib/check_pak.sh
 	;;
 
 	*) echo -e "IPFire - Pakfire\nHilfe:\npakfire install [Paket]\t- Installiert ein neues Paket.\npakfire update\t\t- Lädt die Liste aller Pakete neu.\npakfire remove [Paket]\t- Deinstalliert ein Paket.\npakfire upgrade\t\t- Überprüft nach neuen Updates."

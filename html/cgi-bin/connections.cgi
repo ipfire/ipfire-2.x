@@ -84,8 +84,6 @@ if (-e "${General::swroot}/ovpn/settings") {
 		push(@network, $tempovpnsubnet[0]);
 		push(@masklen, $tempovpnsubnet[1]);
 		push(@colour, ${Header::colourovpn} );
-		push(@ports, '0' );
-		push(@protocols, '' );
 
     if ( ($ovpnsettings{'ENABLED'} eq 'on') && open(IP, "${General::swroot}/red/local-ipaddress") ) {
       # add RED:port / proto
@@ -95,24 +93,18 @@ if (-e "${General::swroot}/ovpn/settings") {
 		  push(@network, $redip );
 	  	push(@masklen, '255.255.255.255' );
   		push(@colour, ${Header::colourovpn} );
-	  	push(@ports, $ovpnsettings{'DDEST_PORT'} );
-  		push(@protocols, $ovpnsettings{'DPROTOCOL'} );
     }
     if ( ($ovpnsettings{'ENABLED_BLUE'} eq 'on') && $netsettings{'BLUE_DEV'} ) {
       # add BLUE:port / proto
     	push(@network, $netsettings{'BLUE_ADDRESS'} );
     	push(@masklen, '255.255.255.255' );
   		push(@colour, ${Header::colourovpn} );
-	  	push(@ports, $ovpnsettings{'DDEST_PORT'} );
-  		push(@protocols, $ovpnsettings{'DPROTOCOL'} );
     }
     if ( ($ovpnsettings{'ENABLED_ORANGE'} eq 'on') && $netsettings{'ORANGE_DEV'} ) {
       # add ORANGE:port / proto
     	push(@network, $netsettings{'ORANGE_ADDRESS'} );
     	push(@masklen, '255.255.255.255' );
   		push(@colour, ${Header::colourovpn} );
-	  	push(@ports, $ovpnsettings{'DDEST_PORT'} );
-  		push(@protocols, $ovpnsettings{'DPROTOCOL'} );
     }
 }
 
