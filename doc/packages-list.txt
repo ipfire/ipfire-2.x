@@ -71,6 +71,7 @@
   * ethtool-3
   * expat-1.95.7
   * ez-ipupdate-3.0.11b8
+  * fcclassic-suse8.2-03.11.02
   * fcdsl-suse8.2-03.11.02
   * fcdsl2-suse9.0-03.11.04
   * fcdslsl-suse8.2-03.11.02
@@ -194,6 +195,7 @@
   * snort-2.3.3
   * spandsp-0.0.2pre25
   * speedtouch-1.2
+  * squid-2.5.STABLE13_1st
   * squid-2.5.STABLE14
   * squid-graph-3.1
   * startscripts

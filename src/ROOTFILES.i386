@@ -22115,6 +22115,16 @@ usr/bin/ez-ipupdate
 ##
 #lib/modules/2.4.31-smp/misc/fcdslslusb.o.gz
 ##
+## fcpci
+##
+lib/modules/2.4.31/misc/fcpci.o.gz
+lib/modules/2.4.31-smp/misc/fcpci.o.gz
+##
+## fcclassic
+##
+lib/modules/2.4.31/misc/fcclassic.o.gz
+lib/modules/2.4.31-smp/misc/fcclassic.o.gz
+##
 ## fcron-2.0.2
 ##
 etc/fcron.allow

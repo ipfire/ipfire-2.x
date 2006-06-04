@@ -543,6 +543,7 @@ buildipcop() {
  	ipcopmake fcdslusb 	SMP=1
  	ipcopmake fcdslslusb 	SMP=1
 	ipcopmake fcpci	SMP=1
+	ipcopmake fcclassic	SMP=1
 	ipcopmake pulsar 	SMP=1
   	ipcopmake unicorn 	SMP=1
   fi
@@ -563,7 +564,8 @@ buildipcop() {
  	ipcopmake fcdslsl 	
  	ipcopmake fcdslusb 	
  	ipcopmake fcdslslusb 
-  	ipcopmake fcpci	
+  	ipcopmake fcpci
+  	ipcopmake fcclassic
 	ipcopmake pulsar 	
   	ipcopmake unicorn 	
   fi
@@ -1093,6 +1095,7 @@ update)
 commit)
 	echo "Upload the changed files:"
 	svn commit
+	./make.sh sync
 	svn up > /dev/null
 	;;
 make)
