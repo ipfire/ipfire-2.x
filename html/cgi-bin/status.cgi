@@ -40,7 +40,8 @@ my %servicenames =
 	$Lang::tr{'ntp server'} => 'ntpd',
 	$Lang::tr{'secure shell server'} => 'sshd',
 	$Lang::tr{'vpn'} => 'pluto',
-	$Lang::tr{'web proxy'} => 'squid'
+	$Lang::tr{'web proxy'} => 'squid',
+	$Lang::tr{'openvpn'} => 'openvpn'
 );
 
 my $iface = '';

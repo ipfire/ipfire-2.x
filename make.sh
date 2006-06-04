@@ -720,6 +720,7 @@ buildipcop() {
   ipcopmake htop
   ipcopmake nfs
   ipcopmake ncftp
+  ipcopmake cftp
   ipcopmake ethereal
 #  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
 #  ipcopmake hddtemp

@@ -48,6 +48,7 @@
   * capi4k-utils-2004-10-06
   * ccache-2.3
   * cdrtools-2.01
+  * cftp-0.12
   * clamav-0.88.2
   * coreutils-5.93
   * cups-1.1.23-source
