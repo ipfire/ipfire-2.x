@@ -305,13 +305,19 @@ sub genmenu {
 				 'title' => "$tr{'external access configuration'}",
 				 'enabled' => 1,
 				 };
-    $subfirewall->{'03.dmz'} = {
+    $subfirewall->{'03.wireless'} = {
+				'caption' => $tr{'blue access'},
+				'uri' => '/cgi-bin/wireless.cgi',
+				'title' => "$tr{'blue access'}",
+				'enabled' => 1,
+				 };
+    $subfirewall->{'04.dmz'} = {
 				'caption' => $tr{'ssdmz pinholes'},
 				'uri' => '/cgi-bin/dmzholes.cgi',
 				'title' => "$tr{'dmz pinhole configuration'}",
 				'enabled' => 1,
 				 };
-    $subfirewall->{'04.outgoing'} = {
+    $subfirewall->{'05.outgoing'} = {
 				'caption' => $tr{'outgoing firewall'},
 				'uri' => '/cgi-bin/outgoingfw.cgi',
 				'title' => "$tr{'outgoing firewall'}",
@@ -427,7 +433,13 @@ sub genmenu {
 			  	};
 
     if (! blue_used() && ! orange_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'03.dmz'}{'enabled'} = 0;
+	$menu->{'05.firewall'}{'subMenu'}->{'04.dmz'}{'enabled'} = 0;
+    }
+    if (! blue_used()) {
+	$menu->{'05.firewall'}{'subMenu'}->{'03.wireless'}{'enabled'} = 0;
+    }
+    if (! $ethsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
+	$menu->{'03.network'}{'subMenu'}->{'04.aliases'}{'enabled'} = 0;
     }
 }
 
@@ -728,19 +740,7 @@ sub openpage {
 <div id="header">
 	<img id="logo-product" src="/images/logo_ipfire.gif">
    <div id="header-icons">
-END
-;
-
-    if ($helpuri ne '') {
-	print <<END
-	    <a href="$helpuri" target="_blank"><img border="0" src="/images/help.gif"></a>
-END
-;
-    } else {
-	print '<img src="/images/help.gif">';
-    }
-
-print <<END
+	    <a href="http://users.ipfire.eu/" target="_blank"><img border="0" src="/images/help.gif"></a>
    </div>
 </div>
 

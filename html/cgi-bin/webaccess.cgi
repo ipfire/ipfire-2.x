@@ -6,7 +6,7 @@
 
 use CGI;
 
-my $swroot = "/var/ipcop";
+my $swroot = "/var/ipfire";
 my $apdir  = "$swroot/proxy/advanced";
 my $group_def_file = "$apdir/cre/classrooms";
 my $svhosts_file = "$apdir/cre/supervisors";
