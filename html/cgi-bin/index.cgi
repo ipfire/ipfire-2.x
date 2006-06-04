@@ -141,39 +141,58 @@ END
 	print "$Lang::tr{'profile has errors'}\n </b></font>\n";
 	}
 
-print <<END;
-  <!-- Green -->
-  <tr><td bgcolor='$Header::colourgreen' width='25%'>
-		<font size='2' color='white'><b>$Lang::tr{'lan'}:</b></font>
-  	<td width='30%'>$netsettings{'GREEN_ADDRESS'}
-  	<td width='45%'>
+	if ( $netsettings{'GREEN_DEV'} ) { print <<END;
+		<tr><td bgcolor='$Header::colourgreen' width='25%'><font size='2' color='white'><b>$Lang::tr{'lan'}:</b></font>
+	  	<td width='30%'>$netsettings{'GREEN_ADDRESS'}
+  		<td width='45%'>
 END
-	if (`ifconfig | grep $netsettings{'GREEN_DEV'}`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
-print <<END;
-  <!-- BLUE -->
-  <tr><td bgcolor='$Header::colourblue' width='25%'><font size='2' color='white'><b>$Lang::tr{'wireless'}:</b></font><br>
-  	<td width='30%'>$netsettings{'BLUE_ADDRESS'}
-  	<td width='45%'>
+		if ( `cat /var/ipfire/proxy/advanced/settings | grep ^ENABLE=on` ) { 
+			print "Proxy an"; 
+			if ( `cat /var/ipfire/proxy/advanced/settings | grep ^TRANSPARENT=on` ) { print " (transparent)"; }
+		}	else { print "Proxy aus"; }
+	}
+	if ( $netsettings{'BLUE_DEV'} ) { print <<END;
+		<tr><td bgcolor='$Header::colourblue' width='25%'><font size='2' color='white'><b>$Lang::tr{'wireless'}:</b></font><br>
+	  	<td width='30%'>$netsettings{'BLUE_ADDRESS'}
+  		<td width='45%'>
 END
-	if (`ifconfig | grep $netsettings{'BLUE_DEV'}`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
-print <<END;
-  <tr><td bgcolor='$Header::colourorange' width='25%'><font size='2' color='white'><b>$Lang::tr{'dmz'}:</b></font><br>
-  	<td width='30%'>$netsettings{'ORANGE_ADDRESS'}
-  	<td width='45%'>
+		if ( `cat /var/ipfire/proxy/advanced/settings | grep ^ENABLE_BLUE=on` ) { 
+			print "Proxy an"; 
+			if ( `cat /var/ipfire/proxy/advanced/settings | grep ^TRANSPARENT_BLUE=on` ) { print " (transparent)"; }
+		}	else { print "Proxy aus"; }
+	}
+	if (`ifconfig | grep $netsettings{'ORANGE_DEV'}`) { print <<END;
+		<tr><td bgcolor='$Header::colourorange' width='25%'><font size='2' color='white'><b>$Lang::tr{'dmz'}:</b></font><br>
+	  	<td width='30%'>$netsettings{'ORANGE_ADDRESS'}
+  		<td width='45%'><font color=$Header::colourgreen>Online</font>
 END
-	if (`ifconfig | grep $netsettings{'ORANGE_DEV'}`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
-print <<END;
-  <tr><td bgcolor='$Header::colourvpn' width='25%'><font size='2' color='white'><b>$Lang::tr{'vpn'}:</b></font><br>
-  	<td width='30%'>N/A
-  	<td width='45%'>
+	}
+	if ( `cat /var/ipfire/vpn/settings | grep ^ENABLED=on` ) { 
+		my $ipsecip = `cat /var/ipfire/vpn/settings | grep ^VPN_IP= | cut -c 8-`;
+		print <<END;
+		<tr><td bgcolor='$Header::colourvpn' width='25%'><font size='2' color='white'><b>$Lang::tr{'vpn'}:</b></font><br>
+	  	<td width='30%'>$ipsecip
+  		<td width='45%'><font color=$Header::colourgreen>Online</font>
 END
-	if (`ifconfig | grep ipsec0`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
-print <<END;
-  <tr><td bgcolor='$Header::colourovpn' width='25%'><font size='2' color='white'><b>OpenVPN:</b></font><br>
-  	<td width='30%'>N/A
-  	<td width='45%'>
+	}
+	if ( `cat /var/ipfire/ovpn/settings | grep ^ENABLED=on` || 
+	     `cat /var/ipfire/ovpn/settings | grep ^ENABLED_BLUE=on` || 
+	     `cat /var/ipfire/ovpn/settings | grep ^ENABLED_ORANGE=on`) { 
+		my $ovpnip = `cat /var/ipfire/ovpn/settings | grep ^DOVPN_SUBNET= | cut -c 14- | sed -e 's\/\\/255.255.255.0\/\/'`;
+		print <<END;
+		<tr><td bgcolor='$Header::colourovpn' width='25%'><font size='2' color='white'><b>OpenVPN:</b></font><br>
+	  	<td width='30%'>$ovpnip
+  		<td width='45%'><font color=$Header::colourgreen>Online</font>
 END
-	if (`ifconfig | grep tun0`) { print "<font color=$Header::colourgreen>Online</font>"; } else { print "<font color=$Header::colourred>Offline</font>"; }
+	}
+	if ( $netsettings{'DNS1'} ) { print <<END;
+	<tr><td>DNS-Server: <td>$netsettings{'DNS1'}
+END
+	}
+	if ( $netsettings{'DNS2'} ) { print <<END;
+	<td>$netsettings{'DNS2'}
+END
+	}
 print <<END;
 </table>
 END
@@ -215,37 +234,9 @@ foreach my $line (@df) {
 	}
 }
 
-# Patches warning
-open(AV, "<${General::swroot}/patches/available") or die "Could not open available patches database ($!)";
-my @av = <AV>;
-close(AV);
-open(PF, "<${General::swroot}/patches/installed") or die "Could not open installed patches file. ($!)<br />";
-while(<PF>)
-{
-        next if $_ =~ m/^#/;
-        @temp = split(/\|/,$_);
-        @av = grep(!/^$temp[0]/, @av);
-}
-close(PF);
-
-if ($#av != -1) 
-{
-	$warnmessage .= "<li> $Lang::tr{'there are updates'}</li>";
-}
-my $age = &General::age("/${General::swroot}/patches/available");
-if ($age =~ m/(\d{1,3})d/) {
-	if ($1 >= 7) {
-		$warnmessage .= "<li>$Lang::tr{'updates is old1'} $age $Lang::tr{'updates is old2'}</li>\n";
-	}
-}
-
 if ($warnmessage) {
-	print "<ol>$warnmessage</ol>";
+	print "<table border='0'><tr><td align='center' bgcolor=$Header::colourred>$warnmessage</table>";
 }
-
-print "<p>";
-system('/usr/bin/uptime');
-print "</p>\n";
 
 &Header::closebox();
 

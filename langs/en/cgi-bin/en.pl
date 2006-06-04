@@ -1298,5 +1298,6 @@
 'advproxy chgwebpwd ERROR' => 'E R R O R :',
 'advproxy update notification' => 'Update notification!',
 'advproxy update information' => 'There is an updated version available for download. Visit <a href="http://www.advproxy.net" target="_blank">http://www.advproxy.net</a> for more information.',
+'linkq' => 'Link Quality',
 
 );

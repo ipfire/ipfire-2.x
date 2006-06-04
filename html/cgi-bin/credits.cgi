@@ -38,10 +38,6 @@ Projektmitglied &amp; Sponsor - Detlef Lampart
 (<a href='mailto:info\@delaco.de'>info\@delaco.de</a>)<br />
 Projektmitglied &amp; Supporter - Silvio Rechenbach
 (<a href='mailto:sr\@tne.de'>sr\@tne.de</a>)<br />
-<!--
-Webinterfacedesign &amp; Inspiration - Benedikt Correll
-(<a href='mailto:benedikt_correll\@hotmail.com'>benedikt_correll\@hotmail.com</a>)<br />
--->
 Sponsor - Karsten Rechenbach
 (<a href='mailto:email\@fehlt.com'>email\@fehlt.com</a>)<br />
 Betatester - Sebastian Winter

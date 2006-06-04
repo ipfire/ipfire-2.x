@@ -395,7 +395,7 @@ sub updatefwhitsgraph {
 
 	RRDs::graph ("$graphs/firewallhits-$interval-area.png",
 		"--start", "-1$interval", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 500", "-h 200",
+		"--alt-y-grid", "-w 600", "-h 200",
 		"--color", "SHADEA#EAE9EE",
 		"--color", "SHADEB#EAE9EE",
 		"--color", "BACK#EAE9EE",
@@ -415,7 +415,7 @@ sub updatefwhitsgraph {
 
 	RRDs::graph ("$graphs/firewallhits-$interval-line.png",
 		"--start", "-1$interval", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 500", "-h 200",
+		"--alt-y-grid", "-w 600", "-h 200",
 		"--color", "SHADEA#EAE9EE",
 		"--color", "SHADEB#EAE9EE",
 		"--color", "BACK#EAE9EE",
@@ -506,6 +506,73 @@ sub updatefwhitsdata {
 	print "Error in RRD::update for Firewallhits: $ERROR\n" if $ERROR;
 }
 
+# Creates and updates a link quality database
+# -------------------------------------------
+sub updatelq {
+	if ( ! -e "$rrdlog/lq.rrd") {
+		RRDs::create ("$rrdlog/lq.rrd", "--step=300",
+			"DS:loss:GAUGE:600:0:100",
+			"DS:roundtrip:GAUGE:600:0:10000",
+			"RRA:AVERAGE:0.5:1:576",
+			"RRA:AVERAGE:0.5:6:672",
+			"RRA:AVERAGE:0.5:24:732",
+			"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for link: $ERROR\n" if $ERROR;
+	}
+	my $packetloss=0;
+	my $roundtrip=0;
+	my $test=0;
+#	LQ_GATEWAY is the ip of your isp's public ip facing you
+       my $LQ_GATEWAY=`netstat -r | grep ^default | awk '{print \$2}'`;
+	my $NUMPINGS=10;
+	my $pingoutput = `ping -c $NUMPINGS -q $LQ_GATEWAY`;
+	chomp;
+	my @temp = split (/\/|\%|\s/, $pingoutput);
+	$packetloss   = $temp[17];
+	$roundtrip    = $temp[28];
+	RRDs::update ("$rrdlog/lq.rrd", "N:$packetloss:$roundtrip");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for line quality: $ERROR\n" if $ERROR;
+} 
+
+sub updatelqgraph {
+	my $period    = $_[0];
+	RRDs::graph ("$graphs/lq-$period.png",
+		"--start", "-1$period", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
+		"-t $tr{'linkq'} ($tr{'graph per'} $tr{$period})",
+		"--lazy", 
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#EAE9EE",
+		"-v ms / pkts (% x10)",
+		"DEF:roundtrip=$rrdlog/lq.rrd:roundtrip:AVERAGE",
+		"DEF:loss=$rrdlog/lq.rrd:loss:AVERAGE",
+		"CDEF:roundavg=roundtrip,PREV(roundtrip),+,2,/",
+		"CDEF:loss10=loss,10,*",
+		"CDEF:r0=roundtrip,30,MIN",
+		"CDEF:r1=roundtrip,70,MIN",
+		"CDEF:r2=roundtrip,150,MIN",
+		"CDEF:r3=roundtrip,300,MIN",
+		"AREA:roundtrip#EE7000:>300 ms",
+		"AREA:r3#D88E1B:150-300 ms",
+		"AREA:r2#B9B63F:70-150 ms",
+		"AREA:r1#99E064:30-70 ms",
+		"AREA:r0#80FF80:<30 ms",
+		"AREA:loss10#800000:Packet loss (x10)",
+		"LINE1:roundtrip#707070:",
+		"GPRINT:roundtrip:MAX:$tr{'maximal'} $tr{'linkq'}\\:%3.2lf ms",
+		"GPRINT:roundtrip:AVERAGE:$tr{'average'} $tr{'linkq'}\\:%3.2lf ms",
+		"GPRINT:roundtrip:LAST:$tr{'current'} $tr{'linkq'}\\:%3.2lf ms\\j",
+		"GPRINT:loss:MAX:$tr{'maximal'} Loss\\:%3.2lf%%",
+		"GPRINT:loss:AVERAGE:$tr{'average'} Loss\\:%3.2lf%%",
+		"GPRINT:loss:LAST:$tr{'current'} Loss\\:%3.2lf%%\\j"
+		);
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for Link Quality: $ERROR\n" if $ERROR;
+}
+
 ## Update ipac logs
 system ('/usr/sbin/fetchipac');
 sleep 8;
@@ -568,6 +635,16 @@ updatefwhitsgraph ("day");
 updatefwhitsgraph ("week");
 updatefwhitsgraph ("month");
 updatefwhitsgraph ("year");
+
+###
+### Link Quality
+###
+updatelq();
+sleep 2;
+updatelqgraph("day");
+updatelqgraph("week");
+updatelqgraph("month");
+updatelqgraph("year");
 
 ###
 ### Network Graphs

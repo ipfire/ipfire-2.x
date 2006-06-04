@@ -372,7 +372,7 @@ void startDaemon(void) {
 		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
 		exit(1);
 	} else {
-		snprintf(command, STRING_SIZE-1, "/usr/bin/openvpn --config /var/ipfire/ovpn/server.conf");
+		snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config /var/ipfire/ovpn/server.conf");
 		executeCommand(command);
 	}
 }

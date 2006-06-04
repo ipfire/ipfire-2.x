@@ -35,14 +35,14 @@ $ENV{'QUERY_STRING'} =~ s/&//g;
 @cgigraphs = split(/graph=/,$ENV{'QUERY_STRING'});
 $cgigraphs[1] = '' unless defined $cgigraphs[1];
 
-if ($cgigraphs[1] =~ /(network|GREEN|BLUE|ORANGE|RED)/) {
+if ($cgigraphs[1] =~ /(network|GREEN|BLUE|ORANGE|RED|lq)/) {
 	&Header::openpage($Lang::tr{'network traffic graphs'}, 1, '');
 } else {
 	&Header::openpage($Lang::tr{'system graphs'}, 1, '');
 }
 &Header::openbigbox('100%', 'left');
 
-if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|cpu|memory|swap|disk)/) {
+if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk)/) {
 	my $graph = $cgigraphs[1];
 	my $graphname = ucfirst(lc($cgigraphs[1]));
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
@@ -60,7 +60,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|cpu|memory|swap|disk)/) {
 	}
 	&Header::closebox();
 	print "<div align='center'><table width='80%'><tr><td align='center'>";
-	if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED)/) {
+	if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq)/) {
 		print "<a href='/cgi-bin/graphs.cgi?graph=network'>";
 	} else {
 		print "<a href='/cgi-bin/graphs.cgi'>";
@@ -74,6 +74,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|cpu|memory|swap|disk)/) {
 	if ($netsettings{'ORANGE_DEV'}) {
 		push (@graphs, ('ORANGE')); }
 	push (@graphs, ("RED"));
+	push (@graphs, ('lq'));
 
 	foreach my $graphname (@graphs) {
 		&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
