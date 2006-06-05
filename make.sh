@@ -722,8 +722,7 @@ buildipcop() {
   ipcopmake ncftp
   ipcopmake cftp
   ipcopmake ethereal
-#  wget http://www.guzu.net/linux/hddtemp.db && mv hddtemp.db $BASEDIR/build/etc/hddtemp.db
-#  ipcopmake hddtemp
+  ipcopmake hddtemp
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
@@ -857,7 +856,7 @@ ipfirepackages() {
 case "$1" in 
 build)
 	BUILDMACHINE=`uname -m`
-	PACKAGE=`ls -v -r $BASEDIR/cache/$SNAME-1.4.*-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
+	PACKAGE=`ls -v -r $BASEDIR/cache/$SNAME-1.4-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/perl-*-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -1070,18 +1069,18 @@ gettoolchain)
 	URL_IPFIRE=`grep URL_IPFIRE lfs/Config | awk '{ print $3 }'`
 	echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 	cd $BASEDIR/cache
-	wget $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5
+	wget $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5 >& /dev/null
 	if [ $? -ne 0 ]; then
 		echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
-	else
-		if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
-			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
-			echo "`date -u '+%b %e %T'`: Uncompressing toolchain" | tee -a $LOGFILE
-			cd $BASEDIR && tar xfz cache/$PACKAGE.tar.gz -C .
-			rm -f $BASEDIR/cache/$PACKAGE.{tar.gz,md5}
-		else
-			exiterror "$PACKAGE.md5 did not match, check downloaded package"
-		fi
+#	else
+#		if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
+#			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
+#			echo "`date -u '+%b %e %T'`: Uncompressing toolchain" | tee -a $LOGFILE
+#			cd $BASEDIR && tar xfz cache/$PACKAGE.tar.gz -C .
+#			rm -f $BASEDIR/cache/$PACKAGE.{tar.gz,md5}
+#		else
+#			exiterror "$PACKAGE.md5 did not match, check downloaded package"
+#		fi
 	fi
 	;;
 paks)

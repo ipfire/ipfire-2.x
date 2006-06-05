@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: ntp,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -44,11 +38,14 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+		hddtemp.db
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+hddtemp.db = $(DL_FROM)/hddtemp.db
 
 $(DL_FILE)_MD5 = bbf8be4539495e18bec54af77511a680
+hddtemp.db_MD5 = 5321858f8c028d4b1a91a8a5f951f2f8
 
 install : $(TARGET)
 
@@ -81,7 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-#	cd $(DIR_APP) && wget http://www.guzu.net/linux/hddtemp.db && cp hddtemp.db /etc/hddtemp.db
+	cd $(DIR_APP) && cp -fv $(DIR_DL)/hddtemp.db /etc/hddtemp.db
 	cd $(DIR_APP) && ./configure --with-db-path=/etc/hddtemp.db
 	cd $(DIR_APP) && make && make install
 	@rm -rf $(DIR_APP)
