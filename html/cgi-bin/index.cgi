@@ -102,13 +102,12 @@ print <<END;
 
 <!-- Table of networks -->
 <table border='0' width=80%>
-  <!--  Headline -->
   <tr>	<th bgcolor='lightgrey'>$Lang::tr{'network'}
 	<th bgcolor='lightgrey'>IP
 	<th bgcolor='lightgrey'>$Lang::tr{'status'}
-  <!-- RED -->
   <tr>	<td bgcolor='$Header::colourred' width='25%'><font size='2' color='white'><b>$Lang::tr{'internet'}:</b></font><br>
-	<td width='30%'>$ipaddr <td width='45%'>$connstate
+	<td width='30%'>$ipaddr 
+	<td width='45%'>$connstate
 	<tr><td colspan='2'>
 		<form method='post' action='/cgi-bin/dial.cgi'>$Lang::tr{'profile'}:
 			<select name='PROFILE'>
@@ -161,13 +160,14 @@ END
 			if ( `cat /var/ipfire/proxy/advanced/settings | grep ^TRANSPARENT_BLUE=on` ) { print " (transparent)"; }
 		}	else { print "Proxy aus"; }
 	}
-	if (`ifconfig | grep $netsettings{'ORANGE_DEV'}`) { print <<END;
+	if ( $netsettings{'ORANGE_DEV'} ) { print <<END;
 		<tr><td bgcolor='$Header::colourorange' width='25%'><font size='2' color='white'><b>$Lang::tr{'dmz'}:</b></font><br>
 	  	<td width='30%'>$netsettings{'ORANGE_ADDRESS'}
   		<td width='45%'><font color=$Header::colourgreen>Online</font>
 END
 	}
-	if ( `cat /var/ipfire/vpn/settings | grep ^ENABLED=on` ) { 
+	if ( `cat /var/ipfire/vpn/settings | grep ^ENABLED=on` ||
+	     `cat /var/ipfire/vpn/settings | grep ^ENABLED_BLUE=on` ) { 
 		my $ipsecip = `cat /var/ipfire/vpn/settings | grep ^VPN_IP= | cut -c 8-`;
 		print <<END;
 		<tr><td bgcolor='$Header::colourvpn' width='25%'><font size='2' color='white'><b>$Lang::tr{'vpn'}:</b></font><br>

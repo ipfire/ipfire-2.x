@@ -714,9 +714,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'}){
 	}
 }
 print <<END
-	<td width='5%' align='right'>
-		<a href='${General::adminmanualurl}/section-firewall.html#section-port-forwarding' target='_blank'>
-		<img src='/images/web-support.png' alt='$Lang::tr{'online help en'}' title='$Lang::tr{'online help en'}' /></a></td>
+	<td width='5%' align='right'>&nbsp;</td>
 	</tr>
 </table>
 END

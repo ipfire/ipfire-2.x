@@ -1361,8 +1361,9 @@ usr/local/bin/setddns.pl
 usr/local/bin/setreservedports
 usr/local/bin/settime
 usr/local/bin/timecheck
+usr/local/bin/timecheckctrl
 #usr/local/bin/tunerrd.pl
-usr/local/bin/updatelists.pl
+#usr/local/bin/updatelists.pl
 usr/local/bin/resetusb
 #usr/local/doc
 #usr/local/etc

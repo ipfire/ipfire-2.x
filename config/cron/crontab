@@ -9,9 +9,6 @@ HOME=/
 # Log rotation
 01 * * * *	/usr/sbin/logrotate /etc/logrotate.conf
 
-# Backup logs to flashdisk
-01 * * * *	[ -f "/etc/FLASH" ] && /etc/rc.d/rc.flash.down
-
 # Set time
 */5 * * * *	/usr/local/bin/timecheck > /dev/null 2>&1
 

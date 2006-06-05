@@ -186,9 +186,7 @@ END
     <td width='30%' align='center'>
         <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
     </td>
-    <td width='10%' align='right'>
-        <a href='${General::adminmanualurl}/system.html#shutdown' target='_blank'>
-        <img src='/images/web-support.png' title='$Lang::tr{'online help en'}' /></a></td>
+    <td width='10%' align='right'>&nbsp;
 </tr>
 </table>
 

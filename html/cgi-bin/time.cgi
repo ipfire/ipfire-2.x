@@ -19,7 +19,7 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -45,49 +45,6 @@ $timesettings{'SETMONTH'} = '';
 $timesettings{'SETYEAR'} = '';
 
 &Header::getcgihash(\%timesettings);
-
-if ($timesettings{'ACTION'} eq $Lang::tr{'instant update'})
-{
-	if ($timesettings{'SETHOUR'} eq '' || $timesettings{'SETHOUR'} < 0 || $timesettings{'SETHOUR'} > 23) {
-		$errormessage = $Lang::tr{'invalid time entered'};
-		goto UPDTERROR;
-	}
-	if ($timesettings{'SETMINUTES'} eq '' || $timesettings{'SETMINUTES'} < 0 || $timesettings{'SETMINUTES'} > 59) {
-		$errormessage = $Lang::tr{'invalid time entered'};
-		goto UPDTERROR;
-	}
-	if ($timesettings{'SETDAY'} eq '' || $timesettings{'SETDAY'} < 1 || $timesettings{'SETDAY'} > 31) {
-		$errormessage = $Lang::tr{'invalid date entered'};
-		goto UPDTERROR;
-	}
-	if ($timesettings{'SETMONTH'} eq '' || $timesettings{'SETMONTH'} < 1 || $timesettings{'SETMONTH'} > 12) {
-		$errormessage = $Lang::tr{'invalid date entered'};
-		goto UPDTERROR;
-	}
-	if ($timesettings{'SETYEAR'} eq '' || $timesettings{'SETYEAR'} < 2003 || $timesettings{'SETYEAR'} > 2030) {
-		$errormessage = $Lang::tr{'invalid date entered'};
-		goto UPDTERROR;
-	}
-
-UPDTERROR:
-	if ($errormessage) {
-		$timesettings{'VALID'} = 'no'; }
-	else {
-       	$timesettings{'VALID'} = 'yes'; }
-
-	if ($timesettings{'VALID'} eq 'yes') {
-		# we want date in YYYY-MM-DD HH:MM format for date command
-		# EAO changed datestring to ISO 6801 format 2003-08-11
-		my $datestring = "$timesettings{'SETYEAR'}-$timesettings{'SETMONTH'}-$timesettings{'SETDAY'}";
-		my $timestring = "$timesettings{'SETHOUR'}:$timesettings{'SETMINUTES'}";
-		# EAO setdate.c also revised for ISO 6801 date format 2003-08-11
-		system ('/usr/local/bin/setdate', $datestring, $timestring);
-		&General::log("$Lang::tr{'time date manually reset'} $datestring $timestring");
-	}
-	unless ($errormessage) {
-		undef %timesettings;
-	}
-}
 
 if ($timesettings{'ACTION'} eq $Lang::tr{'save'})
 { 
@@ -203,6 +160,7 @@ $timesettings{'ACTION'} = &Header::cleanhtml ($timesettings{'ACTION'});
 if ($timesettings{'ACTION'} eq $Lang::tr{'set time now'} && $timesettings{'ENABLENTP'} eq 'on')
 {
 	system ('/bin/touch', "${General::swroot}/time/settimenow");
+	system ('/usr/local/bin/timecheckctrl >& /dev/null');
 }
 
 &General::readhash("${General::swroot}/time/settings", \%timesettings);
@@ -213,7 +171,7 @@ if ($timesettings{'VALID'} eq '')
 	$timesettings{'UPDATE_METHOD'} = 'manually';
 	$timesettings{'UPDATE_VALUE'} = '1';
 	$timesettings{'UPDATE_PERIOD'} = 'daily';
-	$timesettings{'NTP_ADDR_1'} = 'pool.ntp.org';
+	$timesettings{'NTP_ADDR_1'} = 'de.pool.ntp.org';
 	$timesettings{'NTP_ADDR_2'} = 'pool.ntp.org';
 }
 
@@ -345,42 +303,12 @@ print <<END
 	<td width='30%'><img src='/blob.gif' alt='*' /> $Lang::tr{'this field may be blank'}</td>
 	<td width='40%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'set time now'}' /></td>
 	<td width='25%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-	<td width='5%' align='right'>
-		<a href='${General::adminmanualurl}/services.html#services_time' target='_blank'><img src='/images/web-support.png' title='$Lang::tr{'online help en'}' /></a>
-	</td>
+	<td width='5%' align='right'>&nbsp;</td>
 </tr>
 </table>
 END
 ;
 
-&Header::closebox();
-
-&Header::openbox('100%', 'left', $Lang::tr{'update time'});
-
-print <<END
-<table width='100%'>
-<tr>
-	<td width='65%' class='base'>
-	<table>	
-	<tr>
-		<td>$Lang::tr{'year'}:&nbsp;</td>
-		<td><input type='text' name='SETYEAR' size='4' maxlength='4' value='$timesettings{'SETYEAR'}' /></td>
-		<td>&nbsp;$Lang::tr{'month'}:&nbsp;</td>
-		<td><input type='text' name='SETMONTH' size='2' maxlength='2' value='$timesettings{'SETMONTH'}' /></td>
-		<td>&nbsp;$Lang::tr{'day'}:&nbsp;</td>
-		<td><input type='text' name='SETDAY' size='2' maxlength='2' value='$timesettings{'SETDAY'}' /></td>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;$Lang::tr{'hours2'}:&nbsp;</td>
-		<td><input type='text' name='SETHOUR' size='2' maxlength='2' value='$timesettings{'SETHOUR'}' /></td>
-		<td>&nbsp;$Lang::tr{'minutes'}:&nbsp;</td>
-		<td><input type='text' name='SETMINUTES' size='2' maxlength='2' value='$timesettings{'SETMINUTES'}' /></td>
-	</tr>	
-	</table>
-	</td>
-	<td width='35%' align='center' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'instant update'}' /></td>
-</tr>
-</table>
-END
-;
 &Header::closebox();
 
 print "</form>\n";

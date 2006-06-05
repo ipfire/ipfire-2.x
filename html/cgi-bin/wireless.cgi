@@ -225,9 +225,7 @@ print <<END
       <input type='hidden' name='ACTION' value='add' />
       <input type='submit' name='SUBMIT' value='$buttontext' />
     </td>
-    <td width='5%' align='right'>
-    <a href='${General::adminmanualurl}/section-firewall.html#section-blue-access' target='_blank'>
-    <img src='/images/web-support.png' alt='$Lang::tr{'online help en'}' title='$Lang::tr{'online help en'}' /></a></td>
+    <td width='5%' align='right'>&nbsp;</td>
 </tr>
 </table>
 END

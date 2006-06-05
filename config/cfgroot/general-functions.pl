@@ -23,14 +23,14 @@ $|=1; # line buffering
 $General::version = 'VERSION';
 $General::swroot = 'CONFIG_ROOT';
 $General::noipprefix = 'noipg-';
-$General::adminmanualurl = 'http://www.ipcop.org/1.4.0/en/admin/html';
+$General::adminmanualurl = 'http://users.ipfire.eu';
 
 sub log
 {
 	my $logmessage = $_[0];
 	$logmessage =~ /([\w\W]*)/;
 	$logmessage = $1;
-	system('/usr/bin/logger', '-t', 'ipcop', $logmessage);
+	system('/usr/bin/logger', '-t', 'ipfire', $logmessage);
 }
 
 sub readhash
@@ -481,7 +481,7 @@ sub FetchPublicIp {
     my ($out, $response) = Net::SSLeay::get_http(  'checkip.dyndns.org',
                 				    80,
         					    "/",
-						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 						);
     if ($response =~ m%HTTP/1\.. 200 OK%) {
 	$out =~ /Current IP Address: (\d+.\d+.\d+.\d+)/;

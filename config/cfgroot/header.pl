@@ -760,7 +760,7 @@ END
     &showsubsection($menu);
 
     print <<END
-
+      <p><center><img src="/images/iptux.png" width='160px' height='160px'></center></p>
       </td>
         <td width="100%" valign="top">
         <div id="page-content">

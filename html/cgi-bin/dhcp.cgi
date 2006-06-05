@@ -576,9 +576,7 @@ print <<END
     <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
     <td class='base' width='30%'>$warnNTPmessage</td>
     <td width='40%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-    <td width='5%' align='right'>
-        <a href='${General::adminmanualurl}/services.html#services_dhcp' target='_blank'>
-        <img src='/images/web-support.png' alt='$Lang::tr{'online help en'}' title='$Lang::tr{'online help en'}' /></a></td>
+    <td width='5%' align='right'>&nbsp;</td>
 </tr>
 </table>
 </form>

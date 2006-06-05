@@ -3,5 +3,5 @@ UPDATE_PERIOD=daily
 UPDATE_VALUE=1
 UPDATE_METHOD=manually
 ENABLENTP=off
-NTP_ADDR_1=pool.ntp.org
+NTP_ADDR_1=de.pool.ntp.org
 VALID=yes
