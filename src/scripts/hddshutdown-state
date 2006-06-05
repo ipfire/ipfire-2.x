@@ -1,0 +1,63 @@
+#!/usr/bin/perl
+#
+# IPFire HDD Shutdown state reader
+#
+# This code is distributed under the terms of the GPL
+#
+# 11.05.2006 Arne Fitzenreiter
+#
+
+# begin
+
+my $hdd = @ARGV[0];
+my $hdddev = "/dev/$hdd";
+
+my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
+	$atime, $mtime, $ctime, $blksize, $blocks) = stat($hdddev);
+
+my $major = $rdev >> 8;
+my $minor = ($rdev & 0xFF) >> 6;
+
+	open STAT, "/proc/stat";
+	my @diskstat = <STAT>;
+	close (STAT);
+	foreach my $line (@diskstat)
+	{
+		chomp ($line);
+		my @temp = split(/\:\ /,$line);
+		if ($temp[1]) {
+			my @devicestat = split(/\ /,$temp[1]);
+			foreach my $stats (@devicestat)
+			{
+				chomp ($stats);
+				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
+				if ($major eq $fields[1] and $minor eq $fields[2])
+				{
+					$readwritereq = $fields[3];
+				}
+			}
+		}
+	}
+
+	if (! -e "/tmp/hddshutdown-$hdd" ) { 
+		print"<B>Disk $hdddev status:</B> unknown"
+		
+	}
+
+	if ( -e "/tmp/hddshutdown-$hdd" ) {
+		open STAT,"/tmp/hddshutdown-$hdd";
+		my $lastsleepstate = <STAT>;
+		close (STAT);
+		my $ftime = localtime((stat("/tmp/hddshutdown-$hdd"))[9]);
+		if (! ($lastsleepstate==$readwritereq)) {
+			print"<B>Disk $hdddev status: <font color=#FF0000>active</font></B>";
+		}
+		if ( ($lastsleepstate==$readwritereq)) {
+			print"<B>Disk $hdddev status: <font color=#00FF00>standby</font></B> (since $ftime)";
+		}
+	       
+}		
+	
+
+
+# end

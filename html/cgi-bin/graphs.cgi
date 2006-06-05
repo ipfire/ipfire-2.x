@@ -40,6 +40,25 @@ if ($cgigraphs[1] =~ /(network|GREEN|BLUE|ORANGE|RED|lq)/) {
 } else {
 	&Header::openpage($Lang::tr{'system graphs'}, 1, '');
 }
+
+sub diskbox {
+ my $disk = $_[0];
+    if (-e "$graphdir/disk-$disk-day.png") {
+  
+ 	  &Header::openbox('100%', 'center', "Disk /dev/$disk $Lang::tr{'graph'}");
+	  my $ftime = localtime((stat("$graphdir/disk-$disk-day.png"))[9]);
+	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	  print "<a href='/cgi-bin/graphs.cgi?graph=disk-$disk'>";
+	  print "<img src='/graphs/disk-$disk-day.png' border='0' />";
+	  print "</a>";
+	  print "<br />\n";
+	  if (-e "/usr/local/bin/hddshutdown-state") {
+	    system("/usr/local/bin/hddshutdown-state $disk");
+	  }	
+        &Header::closebox();
+  }
+}
+
 &Header::openbigbox('100%', 'left');
 
 if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk)/) {
@@ -143,6 +162,15 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk)/) {
 	}
 	print "<br />\n";
 	&Header::closebox();
+
+    diskbox("hda");
+    diskbox("hdb");
+    diskbox("hdc");
+    diskbox("hdd");
+    diskbox("hde");
+    diskbox("hdf");
+    diskbox("hdg");
+    diskbox("hdh");
 }
 
 &Header::closebigbox();

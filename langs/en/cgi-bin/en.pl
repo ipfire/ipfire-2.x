@@ -1299,5 +1299,6 @@
 'advproxy update notification' => 'Update notification!',
 'advproxy update information' => 'There is an updated version available for download. Visit <a href="http://www.advproxy.net" target="_blank">http://www.advproxy.net</a> for more information.',
 'linkq' => 'Link Quality',
+'empty profile' => 'empty',
 
 );

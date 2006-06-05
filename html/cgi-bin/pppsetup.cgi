@@ -64,7 +64,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 	if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|usb\/ttyACM0|usb\/ttyACM1|usb\/ttyACM2|usb\/ttyACM3|isdn1|isdn2)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
-	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400)$/) {
+	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400|460800)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
 	if ($pppsettings{'TYPE'} eq 'modem' && $pppsettings{'DIALMODE'} !~ /^(T|P)$/) {
@@ -321,7 +321,7 @@ my $c=0;
 for ($c = 1; $c <= $maxprofiles; $c++)
 {
 	%temppppsettings = ();
-	$temppppsettings{'PROFILENAME'} = $Lang::tr{'empty'};
+	$temppppsettings{'PROFILENAME'} = $Lang::tr{'empty profile'};
 	&General::readhash("${General::swroot}/ppp/settings-$c", \%temppppsettings);
 	$profilenames[$c] = $temppppsettings{'PROFILENAME'};
 }
@@ -381,6 +381,7 @@ $selected{'DTERATE'}{'38400'} = '';
 $selected{'DTERATE'}{'57600'} = '';
 $selected{'DTERATE'}{'115200'} = '';
 $selected{'DTERATE'}{'230400'} = '';
+$selected{'DTERATE'}{'460800'} = '';
 $selected{'DTERATE'}{$pppsettings{'DTERATE'}} = "selected='selected'";
 
 $checked{'SPEAKER'}{'off'} = '';
@@ -594,6 +595,7 @@ END
 		<option value='57600' $selected{'DTERATE'}{'57600'}>57600</option>
 		<option value='115200' $selected{'DTERATE'}{'115200'}>115200</option>
 		<option value='230400' $selected{'DTERATE'}{'230400'}>230400</option>
+		<option value='460800' $selected{'DTERATE'}{'460800'}>460800</option>
 	</select></td>
 </tr>
 END

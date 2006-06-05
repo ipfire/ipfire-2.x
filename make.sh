@@ -694,9 +694,9 @@ buildipcop() {
   ipcopmake bridge-utils
   echo -ne "`date -u '+%b %e %T'`: Building ### Mailserver ### \n" | tee -a $LOGFILE
   ipcopmake postfix
+  ipcopmake procmail
   ipcopmake fetchmail
   ipcopmake cyrusimap
-  ipcopmake procmail
   ipcopmake mailx
   ipcopmake clamav
   ipcopmake razor

@@ -1363,7 +1363,7 @@ usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timecheckctrl
 #usr/local/bin/tunerrd.pl
-#usr/local/bin/updatelists.pl
+usr/local/bin/logtailfwhits
 usr/local/bin/resetusb
 #usr/local/doc
 #usr/local/etc
@@ -22522,6 +22522,7 @@ usr/local/bin/restartsnort
 usr/local/bin/restartsquid
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd
+usr/local/bin/restartwireless
 usr/local/bin/setaliases
 usr/local/bin/setdate
 usr/local/bin/setdmzholes

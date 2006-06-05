@@ -9,8 +9,7 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess restartdhcp restartsno
 	ipfirebkcfg ipfirerscfg installpackage installfcdsl ipsecctrl \
 	setaliases ipfirebackup restartntpd \
 	restartapplejuice setdate rebuildhosts \
-	restartsyslogd logwatch openvpnctrl timecheckctrl
-	# restartwireless
+	restartsyslogd logwatch openvpnctrl timecheckctrl restartwireless
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin

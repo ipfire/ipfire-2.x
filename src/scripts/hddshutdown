@@ -1,0 +1,117 @@
+#!/usr/bin/perl
+#
+# IPFire HDD Shutdown
+#
+# This code is distributed under the terms of the GPL
+#
+# 13.05.2006 Arne Fitzenreiter
+#
+
+# begin
+
+sub shutdown_hdd {
+
+	my $hdd = $_[0];
+	my $hdddev = "/dev/$_[0]";
+
+	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
+		$atime, $mtime, $ctime, $blksize, $blocks) = stat($hdddev);
+
+	my $major = $rdev >> 8;
+	my $minor = ($rdev & 0xFF) >> 6;
+
+       open STAT, "/tmp/hddshutdown-stat";
+	my @diskstat = <STAT>;
+	close (STAT);
+	foreach my $line (@diskstat)
+	{
+		chomp ($line);
+		my @temp = split(/\:\ /,$line);
+		if ($temp[1]) {
+			my @devicestat = split(/\ /,$temp[1]);
+			foreach my $stats (@devicestat)
+			{
+				chomp ($stats);
+				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
+				if ($major eq $fields[1] and $minor eq $fields[2])
+				{
+					$lastreadwritereq = $fields[3];
+				}
+			}
+		}
+	}
+
+	open STAT, "/proc/stat";
+	my @diskstat = <STAT>;
+	close (STAT);
+	foreach my $line (@diskstat)
+	{
+		chomp ($line);
+		my @temp = split(/\:\ /,$line);
+		if ($temp[1]) {
+			my @devicestat = split(/\ /,$temp[1]);
+			foreach my $stats (@devicestat)
+			{
+				chomp ($stats);
+				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
+				if ($major eq $fields[1] and $minor eq $fields[2])
+				{
+					$readwritereq = $fields[3];
+				}
+			}
+		}
+	}
+
+	if (! -e "/tmp/hddshutdown-$hdd" ) { system("echo 0 > /tmp/hddshutdown-$hdd"); }
+
+	if ($readwritereq==$lastreadwritereq) {
+		open STAT,"/tmp/hddshutdown-$hdd";
+		my $lastsleepstate = <STAT>;
+		close (STAT);
+		if (! ($lastsleepstate==$readwritereq)) { 
+			system("hdparm -y $hdddev");
+			system("logger -t ipcop Shuting down $hdddev !");
+			system("echo $readwritereq > /tmp/hddshutdown-$hdd");
+		}       
+	}		
+	
+}
+
+if ( -e "/tmp/hddshutdown-stat" ) {
+  if (open STAT,"/dev/hda") {
+     close STAT; 
+  shutdown_hdd("hda");
+  }
+  if (open STAT,"/dev/hdb") {
+     close STAT; 
+  shutdown_hdd("hdb");
+  }
+  if (open STAT,"/dev/hdc") {
+     close STAT; 
+  shutdown_hdd("hdc");
+  }
+  if (open STAT,"/dev/hdd") {
+     close STAT; 
+  shutdown_hdd("hdd");
+  }
+  if (open STAT,"/dev/hde") {
+     close STAT; 
+  shutdown_hdd("hde");
+  }
+  if (open STAT,"/dev/hdf") {
+     close STAT; 
+  shutdown_hdd("hdf");
+  }
+  if (open STAT,"/dev/hdg") {
+     close STAT; 
+  shutdown_hdd("hdg");
+  }
+  if (open STAT,"/dev/hdh") {
+     close STAT; 
+  shutdown_hdd("hdh");
+  }
+
+}
+
+system("cp /proc/stat /tmp/hddshutdown-stat");
+# end
