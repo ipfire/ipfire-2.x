@@ -67,21 +67,17 @@ my $dialButtonDisabled = "disabled='disabled'";
 &Header::openbigbox('', 'center');
 &Header::openbox('100%', 'center', &Header::cleanhtml(`/bin/uname -n`,"y"));
 
-if ( ( $pppsettings{'VALID'} eq 'yes'&& $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
-	if ($connstate =~ /$Lang::tr{'connected'}/) {
-	    if ($ddnssettings{'BEHINDROUTER'} eq 'FETCH_IP') {
-	        if (open(IPADDR,"${General::swroot}/ddns/ipcache")) {
-	   	    $ipaddr = <IPADDR>;
-	    	    close IPADDR;
-	    	    chomp ($ipaddr);
-		}
-	    }
-	    if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
-	   	my $ipaddr = <IPADDR>;
-	    	close IPADDR;
-	    	chomp ($ipaddr);
-	    }
-        }
+if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
+	if (open(IPADDR,"${General::swroot}/ddns/ipcache")) {
+   	    $ipaddr = <IPADDR>;
+    	    close IPADDR;
+    	    chomp ($ipaddr);
+	}
+	if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
+	    my $ipaddr = <IPADDR>;
+	    close IPADDR;
+	    chomp ($ipaddr);
+	}
 } elsif ($modemsettings{'VALID'} eq 'no') {
 	print "$Lang::tr{'modem settings have errors'}\n </b></font>\n";
 } else {

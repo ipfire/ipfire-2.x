@@ -28,7 +28,7 @@ use strict;
 #use warnings;
 
 use RRDs;
-require "CONFIG_ROOT/general-functions.pl";
+require "/var/ipfire/general-functions.pl";
 require "${General::swroot}/lang.pl";
 
 my (%settings, @ipacsum, $iface, $ERROR);
@@ -625,7 +625,7 @@ sub updatelq {
 	my $roundtrip=0;
 	my $test=0;
 #	LQ_GATEWAY is the ip of your isp's public ip facing you
-       my $LQ_GATEWAY=`netstat -r | grep ^default | awk '{print \$2}'`;
+       my $LQ_GATEWAY='www.heise.de';
 	my $NUMPINGS=10;
 	my $pingoutput = `ping -c $NUMPINGS -q $LQ_GATEWAY`;
 	chomp;

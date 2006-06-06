@@ -17,7 +17,7 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -50,7 +50,7 @@ $checked{'AUTOUPD'}{'off'} = '';
 $checked{'AUTOUPD'}{'on'} = '';
 $checked{'AUTOUPD'}{$pakfiresettings{'AUTOUPD'}} = "checked='checked'";
 
-&Header::openpage($Lang::tr{'pakfire configuration'}, 1, $refresh);
+&Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 

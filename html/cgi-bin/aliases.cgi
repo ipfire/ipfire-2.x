@@ -17,7 +17,7 @@ use strict;
 #use Carp ();
 #local $SIG{__WARN__} = \&Carp::cluck;
 
-require 'CONFIG_ROOT/general-functions.pl';	# replace CONFIG_ROOT with /var/ipfire in case of manual install
+require '/var/ipfire/general-functions.pl';	# replace /var/ipfire with /var/ipfire in case of manual install
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 

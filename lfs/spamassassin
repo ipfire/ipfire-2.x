@@ -27,11 +27,11 @@
 
 include Config
 
-VER        = 3.1.1
+VER        = 3.1.3
 
 THISAPP    = Mail-SpamAssassin-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.artfiles.org/apache.org/spamassassin/source
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f7844cbc149de3d7b09a4310f4ab6739
+$(DL_FILE)_MD5 = 32ad78f3cdaddb02cdf0f55572604d07
 
 install : $(TARGET)
 

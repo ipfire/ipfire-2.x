@@ -15,7 +15,7 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -41,7 +41,7 @@ my %servicenames =
 	$Lang::tr{'secure shell server'} => 'sshd',
 	$Lang::tr{'vpn'} => 'pluto',
 	$Lang::tr{'web proxy'} => 'squid',
-	$Lang::tr{'openvpn'} => 'openvpn'
+	'OpenVPN' => 'openvpn'
 );
 
 my $iface = '';

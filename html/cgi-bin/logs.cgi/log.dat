@@ -15,7 +15,7 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -250,7 +250,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 
 &Header::showhttpheaders();
 
-&Header::openpage($Lang::tr{'firewall log'}, 1, '');
+&Header::openpage($Lang::tr{'system logs'}, 1, '');
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 

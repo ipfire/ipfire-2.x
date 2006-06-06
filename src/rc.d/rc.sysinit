@@ -3,7 +3,7 @@
 # $Id: rc.sysinit,v 1.18.2.36 2005/12/01 20:13:08 eoberlander Exp $
 #
 
-eval $(/usr/local/bin/readhash CONFIG_ROOT/main/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 
 umask 022
 
@@ -153,7 +153,7 @@ LANG=en_US.utf8
 export LANG
 
 echo "Setting consolefonts"
-eval $(/usr/local/bin/readhash CONFIG_ROOT/main/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 for i in 2 3 4 5 6; do
 	> /dev/tty$i
 done
@@ -181,8 +181,8 @@ echo "Clearing old files"
 rm -f /var/run/{*.pid,*.sem,*.tdb}
 rm -f /var/run/dhcpcd-*.pid
 rm -f /var/lock/{LCK..tty*,rc.updatered.lock}
-rm -f CONFIG_ROOT/dhcpc/{*.pid,*.cache,*.info}
-rm -f CONFIG_ROOT/red/{active,eciadsl-synch-done}
+rm -f /var/ipfire/dhcpc/{*.pid,*.cache,*.info}
+rm -f /var/ipfire/red/{active,eciadsl-synch-done}
 
 echo "Setting the clock"
 /sbin/hwclock --hctosys
@@ -193,9 +193,9 @@ touch /var/log/wtmp
 chgrp utmp /var/run/utmp /var/log/wtmp
 chmod 0664 /var/run/utmp /var/log/wtmp
 
-if [ -x /usr/sbin/isapnp -a -f CONFIG_ROOT/isapnp/isapnp.conf -a ! -f /proc/isapnp ]; then
+if [ -x /usr/sbin/isapnp -a -f /var/ipfire/isapnp/isapnp.conf -a ! -f /proc/isapnp ]; then
 	echo "Running isapnp"
-	/usr/sbin/isapnp CONFIG_ROOT/isapnp/isapnp.conf 2>/dev/null
+	/usr/sbin/isapnp /var/ipfire/isapnp/isapnp.conf 2>/dev/null
 fi
 
 if [ ! -e /etc/ssh/ssh_host_key ]; then
@@ -232,38 +232,40 @@ echo "Running /etc/rc.d/rc.network"
 echo "Dumping boot messages"
 dmesg > /var/log/dmesg
 
-if [ -e /var/log/rrd/disk.rrd ]; then
-	echo "Adjusting graphs to compensate for boot"
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk.rrd","-t","readsect:writesect","N:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hda.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hda.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hdb.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdb.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hdc.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdc.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hdd.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdd.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hde.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hde.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hdf.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdf.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hdg.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdg.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /var/log/rrd/disk-hdh.rrd ]; then
-	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdh.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-fi
-if [ -e /tmp/hddshutdown-stat ] ; then
-  rm /tmp/hddshutdown-*"
-fi
-/usr/local/bin/hddshutdown
+echo 7200 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established
+
+#if [ -e /var/log/rrd/disk.rrd ]; then
+#	echo "Adjusting graphs to compensate for boot"
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk.rrd","-t","readsect:writesect","N:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hda.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hda.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hdb.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdb.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hdc.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdc.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hdd.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdd.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hde.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hde.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hdf.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdf.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hdg.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdg.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /var/log/rrd/disk-hdh.rrd ]; then
+#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdh.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
+#fi
+#if [ -e /tmp/hddshutdown-stat ] ; then
+#  rm /tmp/hddshutdown-*"
+#fi
+#/usr/local/bin/hddshutdown
 
 echo "Starting crond"
 /usr/sbin/fcron
@@ -280,7 +282,7 @@ echo "Starting ntpd (if enabled)"
 echo "Starting openvpn (if enabled)"
 /usr/local/bin/openvpnctrl --start-daemon-only
 
-if [ -e "CONFIG_ROOT/proxy/squid.conf" ]; then
+if [ -e "/var/ipfire/proxy/squid.conf" ]; then
 	echo "Starting squid (if enabled)"
 	/usr/local/bin/restartsquid
 fi

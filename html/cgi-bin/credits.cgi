@@ -13,7 +13,7 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -36,6 +36,8 @@ Projektleiter - Michael Tremer
 (<a href='mailto:m.s.tremer\@gmail.com'>m.s.tremer\@gmail.com</a>)<br />
 Projektmitglied &amp; Sponsor - Detlef Lampart
 (<a href='mailto:info\@delaco.de'>info\@delaco.de</a>)<br />
+Projektmitglied &amp; Developer - Heiner Irgendwas...
+(<a href='mailto:email\@fehlt.com'>email\@fehlt.com</a>)<br />
 Projektmitglied &amp; Supporter - Silvio Rechenbach
 (<a href='mailto:sr\@tne.de'>sr\@tne.de</a>)<br />
 Sponsor - Karsten Rechenbach

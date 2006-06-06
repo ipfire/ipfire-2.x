@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# IPFire SCRIPTs
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) The IPFire Team
+
+# begin
+
+if [ -e "/var/ipfire/morningreconnect/enable" ]; then
+		logger -t ipfire MorningReconnect executed!
+		/etc/rc.d/rc.red stop
+		/bin/sleep 10
+		/etc/rc.d/rc.red start
+fi
+
+# end

@@ -189,9 +189,9 @@ sub genmenu {
 				'enabled' => 1,
 				};
     $substatus->{'06.fwhits'} = {
-				  'caption' => 'Firewallhits',
+				  'caption' => 'Firewall-Diagramme',
 			     	  'uri' => '/cgi-bin/fwhits.cgi',
-			     	  'title' => "IPFire Firewallhits",
+			     	  'title' => "Firewall-Diagramme",
 			         'enabled' => 1,
 			   	  };
     $substatus->{'07.connections'} = {
@@ -290,7 +290,7 @@ sub genmenu {
     $subservices->{'06.ids'} = {'caption' => $tr{'intrusion detection'},
 				'enabled' => 1,
 				'uri' => '/cgi-bin/ids.cgi',
-				'title' => "$tr{'intrusion detection system'} (Snort)",
+				'title' => "$tr{'intrusion detection system'}",
 				};
 
 
@@ -320,7 +320,7 @@ sub genmenu {
     $subfirewall->{'04.dmz'} = {
 				'caption' => $tr{'ssdmz pinholes'},
 				'uri' => '/cgi-bin/dmzholes.cgi',
-				'title' => "$tr{'ssdmz pinhole'}",
+				'title' => "$tr{'dmz pinhole configuration'}",
 				'enabled' => 1,
 				 };
     $subfirewall->{'05.outgoing'} = {
@@ -351,7 +351,7 @@ sub genmenu {
 				 };
     $sublogs->{'03.proxy'} = {'caption' => $tr{'proxy logs'},
 				 'uri' => '/cgi-bin/logs.cgi/proxylog.dat',
-				 'title' => "$tr{'proxy log'}",
+				 'title' => "$tr{'proxy logs'}",
 				 'enabled' => 1
 				 };
     $sublogs->{'04.firewall'} = {'caption' => $tr{'firewall logs'},
@@ -377,7 +377,7 @@ sub genmenu {
 				};
     $sublogs->{'09.system'} = {'caption' => $tr{'system logs'},
 				'uri' => '/cgi-bin/logs.cgi/log.dat',
-				'title' => "$tr{'system log'}",
+				'title' => "$tr{'system logs'}",
 				'enabled' => 1
 				};
     $sublogs->{'10.userlog'} = {'caption' => $tr{'user proxy logs'},
@@ -388,19 +388,19 @@ sub genmenu {
 
     my %subipfirehash = ();
     my $subipfire = \%subipfirehash;
-    $subipfire->{'01.pakfire'} = {'caption' => $tr{'pakfire'},
+    $subipfire->{'01.pakfire'} = {'caption' => 'Pakfire',
 				  'uri' => '/cgi-bin/pakfire.cgi',
-				  'title' => "$tr{'paketmanager'}",
+				  'title' => "Pakfire",
 				  'enabled' => 1,
 				  };
-    $subipfire->{'02.asterisk'} = {'caption' => $tr{'asterisk'},
+    $subipfire->{'02.asterisk'} = {'caption' => 'Asterisk',
 				  'uri' => '/cgi-bin/asterisk.cgi',
-				  'title' => "$tr{'asterisk'}",
+				  'title' => "Asterisk",
 				  'enabled' => 1,
 				  };
-    $subipfire->{'02.samba'} = {'caption' => $tr{'samba'},
+    $subipfire->{'02.samba'} = {'caption' => 'Samba',
 				  'uri' => '/cgi-bin/samba.cgi',
-				  'title' => "$tr{'samba'}",
+				  'title' => "Samba",
 				  'enabled' => 1,
 				  };
     $subipfire->{'99.help'} = {'caption' => $tr{'help'},
@@ -1235,33 +1235,125 @@ sub cleanhtml
 	$outstring =~ s/>/&gt;/g;
 	return $outstring;
 }
+
 sub connectionstatus
 {
-        my $status;
-        opendir UPLINKS, "/var/ipfire/uplinks" or die "Cannot read uplinks: $!";
-                foreach my $uplink (sort grep !/^\./, readdir UPLINKS) {
-                    if ( -f "${swroot}/uplinks/${uplink}/active") {
-                        if ( ! $status ) {
-                                $timestr = &age("${swroot}/uplinks/${uplink}/active");
-                                $status = "$tr{'connected'}: $uplink (<span class='ipcop_StatusBigRed'>$timestr</span>) ";
-                        } else {
-                                $timestr = &age("${swroot}/uplinks/${uplink}/active");
-                                $status = "$status , $uplink (<span class='ipcop_StatusBigRed'>$timestr</span>) ";
-                        }
-                    } elsif ( -f "${swroot}/uplinks/${uplink}/connecting") {
-                        if ( ! $status ) {
-                                $status = "$tr{'connecting'} $uplink";
-                        } else {
-                                $status = "$status , $tr{'connecting'} $uplink (<span class='ipcop_StatusBigRed'>$timestr</span>) ";
-                        }
-                    }
-                    $lines++;
-                }
-                closedir(UPLINKS);
-                if ( ! $status ) {
-                        $status = "$tr{'idle'}";
-                }
-                $connstate = "<span class='ipcop_StatusBig'>$status</span>";
+    my %pppsettings = ();
+    my %netsettings = ();
+    my $iface='';
+
+    $pppsettings{'PROFILENAME'} = 'None';
+    &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
+    &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+    my $profileused='';
+    if ( ! ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
+    	$profileused="- $pppsettings{'PROFILENAME'}";
+    }
+
+    if ( ( $pppsettings{'METHOD'} eq 'DHCP' && $netsettings{'RED_TYPE'} ne 'PPTP') 
+						|| $netsettings{'RED_TYPE'} eq 'DHCP' ) {
+		if (open(IFACE, "${General::swroot}/red/iface")) {
+			$iface = <IFACE>;
+			close IFACE;
+			chomp ($iface);
+			$iface =~ /([a-zA-Z0-9]*)/; $iface = $1;
+		}
+    }
+
+    my ($timestr, $connstate);
+    if ($netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/ &&  $pppsettings{'TYPE'} =~ /^isdn/) {
+	# Count ISDN channels
+	my ($idmap, $chmap, $drmap, $usage, $flags, $phone);
+	my @phonenumbers;
+	my $count=0;
+
+	open (FILE, "/dev/isdninfo");
+
+	$idmap = <FILE>; chop $idmap;
+	$chmap = <FILE>; chop $chmap;
+	$drmap = <FILE>; chop $drmap;
+	$usage = <FILE>; chop $usage;
+	$flags = <FILE>; chop $flags;
+	$phone = <FILE>; chop $phone;
+
+	$phone =~ s/^phone(\s*):(\s*)//;
+
+	@phonenumbers = split / /, $phone;
+
+	foreach (@phonenumbers) {
+		if ($_ ne '???') {
+			$count++;
+		}
+	}
+	close (FILE);
+
+	## Connection status
+	my $number;
+	if ($count == 0) {
+		$number = 'none!';
+	} elsif ($count == 1) {
+		$number = 'single';
+	} else {
+		$number = 'dual';
+	}
+
+	if (-e "${General::swroot}/red/active") {
+		$timestr = &General::age("${General::swroot}/red/active");
+		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} - $number channel (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+	} else {
+		if ($count == 0) {
+			if (-e "${General::swroot}/red/dial-on-demand") {
+				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
+			} else {
+				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+			}
+		} else {
+			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
+		}
+	}
+    } elsif ($netsettings{'RED_TYPE'} eq "STATIC" || $pppsettings {'METHOD'} eq 'STATIC') {
+	if (-e "${General::swroot}/red/active") {
+		$timestr = &General::age("${General::swroot}/red/active");
+		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+	} else {
+		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+	}
+    } elsif ( ( (-e "${General::swroot}/dhcpc/dhcpcd-$iface.pid") && $netsettings{'RED_TYPE'} ne 'PPTP' ) || 
+	!system("/bin/ps -ef | /bin/grep -q '[p]ppd'") || !system("/bin/ps -ef | /bin/grep -q '[c]onnectioncheck'")) {
+	if (-e "${General::swroot}/red/active") {
+		$timestr = &General::age("${General::swroot}/red/active");
+		if ($pppsettings{'TYPE'} =~ /^(modem|bewanadsl|conexantpciadsl|eagleusbadsl)$/) {
+			my $speed;
+			if ($pppsettings{'TYPE'} eq 'modem') {
+				open(CONNECTLOG, "/var/log/connect.log");
+				while (<CONNECTLOG>) {
+					if (/CONNECT/) {
+						$speed = (split / /)[6];
+					}
+				}
+				close (CONNECTLOG);
+			} elsif ($pppsettings{'TYPE'} eq 'bewanadsl') {
+				$speed = `/usr/bin/unicorn_status | /bin/grep Rate | /usr/bin/cut -f2 -d ':'`;
+			} elsif ($pppsettings{'TYPE'} eq 'conexantpciadsl') {
+				$speed = `/bin/cat /proc/net/atm/CnxAdsl:* | /bin/grep 'Line Rates' | /bin/sed -e 's+Line Rates:   Receive+Rx+' -e 's+Transmit+Tx+'`;
+			} elsif ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
+				$speed = `/usr/sbin/eaglestat | /bin/grep Rate`;
+			}
+			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused (\@$speed)</span>";
+		} else {
+			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+		}
+	} else {
+		if (-e "${General::swroot}/red/dial-on-demand") {
+		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
+		} else {
+		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
+		}
+	}
+    } else {
+	$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+    }
     return $connstate;
 }
 
@@ -1392,7 +1484,7 @@ sub PrintActualLeases
 END
     ;
 
-    open(LEASES,"/var/lib/dhcp/dhcpd.leases") or die "Can't open dhcpd.leases";
+    open(LEASES,"/var/state/dhcp/dhcpd.leases") or die "Can't open dhcpd.leases";
     while ($line = <LEASES>) {
 	next if( $line =~ /^\s*#/ );
 	chomp($line);

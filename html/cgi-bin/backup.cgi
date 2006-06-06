@@ -22,7 +22,7 @@ use strict;
 use File::Copy;
 use Sys::Hostname;
 
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
