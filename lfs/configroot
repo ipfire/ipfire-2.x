@@ -112,9 +112,8 @@ $(TARGET) :
 	    $(CONFIG_ROOT)/lang.pl
 
 	# Language files
-	for i in $(DIR_SRC)/langs/*/cgi-bin/*.pl ; do \
-	    cp $$i $(CONFIG_ROOT)/langs/; \
-	done
+	cp $(DIR_SRC)/langs/de/cgi-bin/de.pl $(CONFIG_ROOT)/langs/
+	cp $(DIR_SRC)/langs/en/cgi-bin/en.pl $(CONFIG_ROOT)/langs/
 
 	# Configroot permissions
 	chown -R nobody:nobody $(CONFIG_ROOT)

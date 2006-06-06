@@ -6,7 +6,6 @@ JAVA=/usr/bin/java
 
 case "$1" in
   start)
-	chown -R applejuice.applejuice $HOME
 	cd $HOME
 	screen -dmS ajcore $JAVA -Xmx${RAMSIZE}m -Djava.library.path=. -jar ajcore.jar
 	echo -e "Applejuice is running!"; logger -t ipfire "Applejuice started!"
@@ -24,6 +23,10 @@ case "$1" in
 		exit 1
 	fi
 	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
   *)
-	echo -e "Usage: $0 (start|stop|status)"
+	echo -e "Usage: $0 (start|stop|restart|status)"
 esac
