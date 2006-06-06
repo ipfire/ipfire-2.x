@@ -133,7 +133,6 @@ if [ -e "CONFIG_ROOT/red/active" ]; then
 	[ "$IFACE" != "" ] && /sbin/ifconfig $IFACE -multicast
 	/etc/rc.d/rc.firewall reload
 	/usr/local/bin/setfilters
-	/usr/local/bin/updatelists.pl &
 	/usr/local/bin/restartsnort red
 	unset ENABLE
 	eval $(/usr/local/bin/readhash CONFIG_ROOT/shaping/settings)

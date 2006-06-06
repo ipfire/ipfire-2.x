@@ -81,5 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && mkdir -p /usr/local/share/GeoIP && cp -f $(DIR_DL)/GeoIP.dat /usr/local/share/GeoIP/GeoIP.dat
+	cd $(DIR_APP) && chmod 777 /home/httpd/html/images/flags
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

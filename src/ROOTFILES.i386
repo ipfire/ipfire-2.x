@@ -26693,6 +26693,17 @@ usr/local/share/GeoIP
 usr/local/share/GeoIP/GeoIP.dat
 #usr/share/man/man1/geoip-lookup.1
 #usr/share/man/man3/Geo::IP::PurePerl.3
+usr/lib/perl5/site_perl/5.8.5/Locale
+usr/lib/perl5/site_perl/5.8.5/Locale/Constants.pm
+usr/lib/perl5/site_perl/5.8.5/Locale/Constants.pod
+usr/lib/perl5/site_perl/5.8.5/Locale/Country.pm
+usr/lib/perl5/site_perl/5.8.5/Locale/Country.pod
+usr/lib/perl5/site_perl/5.8.5/Locale/Currency.pm
+usr/lib/perl5/site_perl/5.8.5/Locale/Currency.pod
+usr/lib/perl5/site_perl/5.8.5/Locale/Language.pm
+usr/lib/perl5/site_perl/5.8.5/Locale/Language.pod
+usr/lib/perl5/site_perl/5.8.5/Locale/Script.pm
+usr/lib/perl5/site_perl/5.8.5/Locale/Script.pod
 ##
 ## Screen
 ##
@@ -26988,3 +26999,8 @@ usr/lib/liblzo2.la
 usr/lib/liblzo2.so
 usr/lib/liblzo2.so.2
 usr/lib/liblzo2.so.2.0.0
+##
+## wget
+##
+usr/bin/wget
+usr/etc/wgetrc

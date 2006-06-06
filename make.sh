@@ -639,6 +639,7 @@ buildipcop() {
   ipcopmake Convert-UUlib
   ipcopmake Archive-Tar
   ipcopmake Archive-Zip
+  ipcopmake Locale-Country
   ipcopmake GeoIP
   ipcopmake fwhits
   ipcopmake berkeley
@@ -763,7 +764,7 @@ buildpackages() {
   echo "`date -u '+%b %e %T'`: Stripping files" | tee -a $LOGFILE
   find $LFS/lib $LFS/usr/lib $LFS/usr/share/rrdtool-* $LFS/install ! -type l \( -name '*.so' -o -name '*.so[\.0-9]*' \) \
 	! -name 'libc.so' ! -name 'libpthread.so' ! -name 'libcrypto.so.0.9.7.sha1' \
-	-ls -exec $LFS/tools/bin/strip --strip-all {} \; >> $LOGFILE 2>&1
+	 -exec $LFS/tools/bin/strip --strip-all {} \; >> $LOGFILE 2>&1
   # add -ls before -exec if you want to verify what files are stripped
 
   find $LFS/{,s}bin $LFS/usr/{,s}bin $LFS/usr/local/{,s}bin ! -type l \
@@ -841,6 +842,7 @@ ipfirepackages() {
   ipfiredist mc
   ipfiredist postfix
   ipfiredist pwlib
+  ipfiredist samba
   ipfiredist sane
   ipfiredist spandsp
   ipfiredist sudo

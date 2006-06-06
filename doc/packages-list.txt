@@ -17,6 +17,7 @@
   * HTML-Tagset-3.04
   * IO-stringy-2.110
   * Linux-PAM-0.99.3.0
+  * Locale-Codes-2.07
   * MIME-tools-5.420
   * Mail-SpamAssassin-3.1.1
   * MailTools-1.74
