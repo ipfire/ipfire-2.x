@@ -335,8 +335,7 @@ ipcopmake() {
 
 ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-	  ls $BASEDIR/packages/$1* >& /dev/null
-         if [ $? -eq 1 ]; then
+	   if [ ! `ls -w1 $BASEDIR/packages/*.tar.gz | grep $1` ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
 		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/local/bin
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
@@ -354,9 +353,9 @@ ipfiredist() {
 		if [ $? -ne 0 ]; then
 			exiterror "Packaging $1"
 		fi
-	  else
-		echo -e "`date -u '+%b %e %T'`: Package with name $1 already exists!" | tee -a $LOGFILE
-	  fi
+	   else
+		echo "`date -u '+%b %e %T'`: Packaging: The package $1 already exists"
+	   fi
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
 	fi
@@ -527,8 +526,8 @@ buildipcop() {
   if [ 'i386' = $MACHINE ]; then 
   	# abuse the SMP flag, and make an minimal installer kernel first
 	# so that the boot floppy always works.....
-  	ipcopmake linux 	LFS_PASS=ipcop SMP=installer
-  	ipcopmake linux 	LFS_PASS=ipcop SMP=1
+  	ipcopmake linux 	LFS_PASS=ipfire SMP=installer
+  	ipcopmake linux 	LFS_PASS=ipfire SMP=1
   	ipcopmake 3cp4218 	SMP=1
   	ipcopmake amedyn 	SMP=1
   	ipcopmake cxacru 	SMP=1
@@ -548,7 +547,7 @@ buildipcop() {
   	ipcopmake unicorn 	SMP=1
   fi
 
-  ipcopmake linux	LFS_PASS=ipcop
+  ipcopmake linux	LFS_PASS=ipfire
   ipcopmake 3cp4218 	
   ipcopmake amedyn 	
   ipcopmake cxacru 	
@@ -693,6 +692,10 @@ buildipcop() {
   ipcopmake openh323
   ipcopmake wget
   ipcopmake bridge-utils
+  ipcopmake screen
+  ipcopmake hddtemp
+  ipcopmake htop
+  ipcopmake lynx
   echo -ne "`date -u '+%b %e %T'`: Building ### Mailserver ### \n" | tee -a $LOGFILE
   ipcopmake postfix
   ipcopmake procmail
@@ -713,17 +716,17 @@ buildipcop() {
   ipcopmake applejuice
   ipcopmake edonkeyclc
   ipcopmake sane
+  echo -ne "`date -u '+%b %e %T'`: Building ### Net-Tools ### \n" | tee -a $LOGFILE
+  ipcopmake ntop
   ipcopmake rsync
   ipcopmake tcpwrapper
   ipcopmake portmap
-  ipcopmake screen
   ipcopmake nmap
-  ipcopmake htop
+  ipcopmake iftop
   ipcopmake nfs
   ipcopmake ncftp
   ipcopmake cftp
   ipcopmake ethereal
-  ipcopmake hddtemp
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
@@ -840,6 +843,7 @@ ipfirepackages() {
   ipfiredist libtiff
   ipfiredist libxml2
   ipfiredist mc
+  ipfiredist ntop
   ipfiredist postfix
   ipfiredist pwlib
   ipfiredist samba

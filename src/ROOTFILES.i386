@@ -8018,7 +8018,7 @@ usr/bin/gawk
 lib/libncurses.so.5
 lib/libncurses.so.5.4
 #usr/bin/captoinfo
-#usr/bin/clear
+usr/bin/clear
 #usr/bin/infocmp
 #usr/bin/infotocap
 #usr/bin/reset
