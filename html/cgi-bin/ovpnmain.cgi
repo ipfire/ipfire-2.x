@@ -6,7 +6,7 @@
 # ZERNINA-VERSION:0.9.7a7
 # (c) 2005 Ufuk Altinkaynak
 #
-# Ipcop and OpenVPN eas as one two three..
+# Ipcop and OpenVPN easy as one two three..
 #
 
 use CGI;
@@ -73,7 +73,6 @@ $cgiparams{'DCOMPLZO'} = 'off';
 if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'} ||
     $cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'} ||
     $cgiparams{'ACTION'} eq $Lang::tr{'restart ovpn server'}) {
-	my $serveractive = `/bin/ps ax|grep server.conf|grep -v grep|awk \'{print \$1}\'`;
     #start openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}){
     	&Ovpnfunc::emptyserverlog();
@@ -81,23 +80,18 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'} ||
     }   
     #stop openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}){
-		if ($serveractive ne ''){
-			system('/usr/local/bin/openvpnctrl', '-kn2n', $serveractive);
-		}
     	system('/usr/local/bin/openvpnctrl', '-k');
-		&Ovpnfunc::emptyserverlog();	
+	&Ovpnfunc::emptyserverlog();	
     }   
 #    #restart openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'restart ovpn server'}){
 #workarund, till SIGHUP also works when running as nobody    
-		if ($serveractive ne ''){
-			system('/usr/local/bin/openvpnctrl', '-kn2n', $serveractive);
-		}
-		system('/usr/local/bin/openvpnctrl', '-k');    	
-		&Ovpnfunc::emptyserverlog();
-		system('/usr/local/bin/openvpnctrl', '-s');
+    	system('/usr/local/bin/openvpnctrl', '-r');	
+	&Ovpnfunc::emptyserverlog();	
     }       
 }
+
+
 
 ###
 ### Save Advanced options
@@ -1789,7 +1783,8 @@ END
 		if ($cgiparams{'ZERINA_CLIENT'} eq ''){
 			$cgiparams{'ZERINA_CLIENT'} = 'no';
 		}
-    } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {#ab hiere error uebernehmen
+#ab hiere error uebernehmen
+    } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 		$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 		# n2n error
 		if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {

@@ -7,7 +7,7 @@ oid_section	= new_oids
 [ ca ]
 default_ca	= IPFire
 
-[ IPCop ]
+[ IPFire ]
 dir		= /var/ipfire
 certs		= $dir/certs
 crl_dir		= $dir/crls

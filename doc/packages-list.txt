@@ -199,6 +199,7 @@
   * shadow-4.0.4.1
   * slang-1.4.5-mini
   * snort-2.3.3
+  * snort-2.4.5
   * spandsp-0.0.2pre25
   * speedtouch-1.2
   * squid-2.5.STABLE14

@@ -8,7 +8,7 @@
 
 # begin
 
-if [ -e "/var/ipfire/morningreconnect/enable" ]; then
+if [ -e "/var/ipfire/ppp/morningreconnect" ]; then
 		logger -t ipfire MorningReconnect executed!
 		/etc/rc.d/rc.red stop
 		/bin/sleep 10

@@ -38,15 +38,15 @@ CXXFLAGS   =
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
-ifeq "$(LFS_PASS)" "ipcop"
+ifeq "$(LFS_PASS)" "ipfire"
 ifeq "$(SMP)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop
+  TARGET = $(DIR_INFO)/$(THISAPP)-ipfire
 endif
 ifeq "$(SMP)" "1"
-  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop-smp
+  TARGET = $(DIR_INFO)/$(THISAPP)-ipfire-smp
 endif
 ifeq "$(SMP)" "installer"
-  TARGET = $(DIR_INFO)/$(THISAPP)-ipcop-installer
+  TARGET = $(DIR_INFO)/$(THISAPP)-ipfire-installer
 endif
 else
   TARGET = $(DIR_INFO)/$(THISAPP)

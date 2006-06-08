@@ -1046,7 +1046,7 @@
 'invalid input for max clients' => 'Ungültige Eingabe für Max Clients',
 'invalid input for keepalive 1' => 'Ungültige Eingabe für Keepalive ping',
 'invalid input for keepalive 2' => 'Ungültige Eingabe für Keepalive ping-restart',
-'valid till' => 'Güig bis',
+'valid till' => 'Gültig bis',
 'ovpn_processprio' => 'Prozesspriorität',
 'ovpn_fastio' => 'Fast-IO',
 'ovpn_mtudisc' => 'MTU-Discovery',
