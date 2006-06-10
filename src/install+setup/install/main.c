@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         char *langnames[] = { "English", NULL };
         char *shortlangnames[] = { "en", NULL };
         char **langtrs[] = { en_tr, NULL };
-#elif	LANG_DE_EN
+#elifdef	LANG_DE_EN
 	char *langnames[] = { "Deutsch", "English", NULL };
 	char *shortlangnames[] = { "de", "en", NULL };
 	char **langtrs[] = { de_tr, en_tr, NULL };
@@ -753,6 +753,7 @@ int main(int argc, char *argv[])
 	  error and go back to the restore/skip question. This gives
 	  the user the chance to have another go. */
 
+#ifdef OLD_RESTORECFG	
 RESTORE:
 	/* set status variables to nonsense values */
 	allok_fastexit = 0;
@@ -847,6 +848,19 @@ RESTORE:
 		      set up and user is notrestarting from floppy*/
 	  }
 	}
+#else	
+	if (installtype == CDROM_INSTALL){
+	 /* if we installed from CD ROM then we didn't set up the
+	    network interface yet.  Therefore, set up Network
+	    driver and params just before we need them. */
+
+	if (!(networkmenu(ethernetkv))){
+	/* network setup failed, tell the world */
+	  errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
+	  goto EXIT;
+	  }
+	}
+#endif
 	
 	/* Check the SQUID acl file exists, if not use our 1.4 copy */
 	{
