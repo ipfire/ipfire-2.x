@@ -1274,6 +1274,10 @@
 'advproxy update information' => 'Eine aktualisierte Version steht zum Download bereit. Besuchen Sie <a href="http://www.advproxy.net" target="_blank">http://www.advproxy.net</a> für weitere Informationen.',
 'linkq' => 'Verbindungsqualität',
 'empty profile' => 'Unbenannt',
+'HDD temperature' => 'HDD-Temperatur',
+'harddisk temperature' => 'Festplattentemperatur',
+'harddisk temperature graphs' => 'Festplattentemperatur-Diagramme',
+'hdd temperature in' => 'Festplattentemperatur in',
 
 ); 
 

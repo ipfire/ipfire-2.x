@@ -26,7 +26,11 @@
 
 include Config
 
-THISAPP    = startscripts
+VER        = 1.2.0
+
+THISAPP    = squidGuard-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -34,13 +38,32 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = c6e2e9112fdbda0602656f94c1ce31fd
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
@@ -48,10 +71,14 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	test -d /etc/init.d || mkdir /etc/init.d
-	cd $(DIR_SRC)/src/init.d && cp -fv * /etc/init.d
-	chown root.root /etc/init.d/*
-	chmod 755 /etc/init.d/*
-	for i in applejuice asterisk cups cyrus-sasl gnump3d nfs-server postfix samba winbind xinetd; do ln -vfs /etc/init.d/$$i /usr/local/bin/rc$$i; done
-	rm -f /usr/local/bin/rcinit-functions
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidGuard-$(VER)-ipfire.patch
+	cd $(DIR_APP) && ./configure --prefix=/usr --datadir=/usr/share \
+       	--sysconfdir=/etc --localstatedir=/var --infodir=/usr/info --mandir=/usr/man  \
+		--with-sg-config=/var/ipfire/proxy/squidguard.conf \
+		--with-sg-logdir=/var/log/squidguard --with-sg-dbhome=/var/lib/squidguard \
+        	--with-db=/usr --with-db-inc=/usr/include --with-db-lib=/usr/lib
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

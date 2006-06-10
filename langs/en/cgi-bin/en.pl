@@ -1307,5 +1307,9 @@
 'advproxy update information' => 'There is an updated version available for download. Visit <a href="http://www.advproxy.net" target="_blank">http://www.advproxy.net</a> for more information.',
 'linkq' => 'Link Quality',
 'empty profile' => 'empty',
+'HDD temperature' => 'HDD temperature',
+'harddisk temperature' => 'Harddisk temperature',
+'harddisk temperature graphs' => 'harddisk temperature graphs',
+'hdd temperature in' => 'Harddisk temperature in',
 
 );

@@ -19,9 +19,6 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-my $advproxyversion = `cat ${General::swroot}/proxy/advanced/version`;
-my $sysupdflagfile = "${General::swroot}/proxy/advanced/.up2date";
-
 my %proxysettings=();
 my %netsettings=();
 my %filtersettings=();
@@ -1974,7 +1971,7 @@ print <<END
 	<font class='base'>$Lang::tr{'this field may be blank'}</font>
 	</td>
 	<td align='right'>
-	<sup><small><a href='http://www.advproxy.net' target='_blank'>Advanced Proxy $advproxyversion</a></small></sup>
+	&nbsp;
 	</td>
 </tr>
 </table>

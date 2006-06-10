@@ -70,6 +70,7 @@
   * edonkeyclc_1.3.0_i386
   * espgs-8.15.1-source
   * ethereal-0.99.0
+  * etherwake-1.09
   * ethtool-3
   * expat-1.95.7
   * ez-ipupdate-3.0.11b8
@@ -132,6 +133,7 @@
   * libwww-perl-5.803
   * libxml2-2.6.22
   * linux-2.4.31
+  * linux-2.4.31-ipfire
   * linux-atm-2.4.1
   * logrotate-3.7
   * logwatch-6.1.2
@@ -198,12 +200,12 @@
   * setserial-2.17
   * shadow-4.0.4.1
   * slang-1.4.5-mini
-  * snort-2.3.3
   * snort-2.4.5
   * spandsp-0.0.2pre25
   * speedtouch-1.2
   * squid-2.5.STABLE14
   * squid-graph-3.1
+  * squidGuard-1.2.0
   * startscripts
   * stund_0.96_Aug13
   * sudo-1.6.8p12
@@ -222,6 +224,7 @@
   * vim-6.3
   * vlan.1.9
   * wget-1.10.2
+  * wput-0.6
   * xampp-linux-1.5.3a
   * xinetd-2.3.14
   * zlib-1.2.3

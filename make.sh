@@ -659,6 +659,7 @@ buildipcop() {
   ipcopmake saslauthd PASS=2
   ipcopmake squid
   ipcopmake squid-graph
+  ipcopmake squidguard
   ipcopmake tcpdump
   ipcopmake traceroute
   ipcopmake vlan
@@ -691,6 +692,7 @@ buildipcop() {
   ipcopmake pwlib
   ipcopmake openh323
   ipcopmake wget
+  ipcopmake wput
   ipcopmake bridge-utils
   ipcopmake screen
   ipcopmake hddtemp
@@ -726,6 +728,7 @@ buildipcop() {
   ipcopmake nfs
   ipcopmake ncftp
   ipcopmake cftp
+  ipcopmake etherwake
   ipcopmake ethereal
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }

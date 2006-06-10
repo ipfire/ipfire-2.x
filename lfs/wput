@@ -26,21 +26,44 @@
 
 include Config
 
-THISAPP    = startscripts
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+VER        = 0.6
+
+THISAPP    = wput-$(VER)
+DL_FILE    = $(THISAPP).tgz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/wput
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 7ddb03154262df66e0e33f0676373ceb
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
@@ -48,10 +71,9 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	test -d /etc/init.d || mkdir /etc/init.d
-	cd $(DIR_SRC)/src/init.d && cp -fv * /etc/init.d
-	chown root.root /etc/init.d/*
-	chmod 755 /etc/init.d/*
-	for i in applejuice asterisk cups cyrus-sasl gnump3d nfs-server postfix samba winbind xinetd; do ln -vfs /etc/init.d/$$i /usr/local/bin/rc$$i; done
-	rm -f /usr/local/bin/rcinit-functions
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

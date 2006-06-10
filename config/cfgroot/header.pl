@@ -117,31 +117,31 @@ sub genmenu {
     my %subsystemhash = ();
     my $subsystem = \%subsystemhash;
 
-    $subsystem->{'01.home'} = {
+    $subsystem->{'10.home'} = {
 				'caption' => $tr{'alt home'},
 				'uri' => '/cgi-bin/index.cgi',
 				'title' => "$tr{'alt home'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'02.passwords'} = {
+    $subsystem->{'20.passwords'} = {
 				'caption' => $tr{'sspasswords'},
 				'uri' => '/cgi-bin/changepw.cgi',
 				'title' => "$tr{'sspasswords'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'03.ssh'} = {
+    $subsystem->{'30.ssh'} = {
 				'caption' => $tr{'ssh access'},
 				'uri' => '/cgi-bin/remote.cgi',
 				'title' => "$tr{'ssh access'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'04.gui'} = {
+    $subsystem->{'40.gui'} = {
 				'caption' => $tr{'gui settings'},
 				'uri' => '/cgi-bin/gui.cgi',
 				'title' => "$tr{'gui settings'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'05.shutdown'} = {
+    $subsystem->{'50.shutdown'} = {
 				'caption' => $tr{'shutdown'},
 				'uri' => '/cgi-bin/shutdown.cgi',
 				'title' => "$tr{'shutdown'} / $tr{'reboot'}",
@@ -156,51 +156,57 @@ sub genmenu {
 
     my %substatushash = ();
     my $substatus = \%substatushash;
-    $substatus->{'01.systemstatus'} = {
+    $substatus->{'10.systemstatus'} = {
 				 'caption' => $tr{'sssystem status'},
 				 'uri' => '/cgi-bin/status.cgi',
 				 'title' => "$tr{'sssystem status'}",
 				 'enabled' => 1,
 				 };
-    $substatus->{'02.networkstatus'} = {
+    $substatus->{'20.networkstatus'} = {
 				'caption' => $tr{'ssnetwork status'},
 				'uri' => '/cgi-bin/netstatus.cgi',
 				'title' => "$tr{'ssnetwork status'}",
 				'enabled' => 1,
 				};
-    $substatus->{'03.systemgraphs'} = {
+    $substatus->{'30.systemgraphs'} = {
 				'caption' => $tr{'system graphs'},
 				'uri' => '/cgi-bin/graphs.cgi',
 				'novars' => 1,
 				'title' => "$tr{'system graphs'}",
 				'enabled' => 1,
 				};
-    $substatus->{'04.trafficgraphs'} = {
+    $substatus->{'40.trafficgraphs'} = {
 				'caption' => $tr{'sstraffic graphs'},
 				'uri' => '/cgi-bin/graphs.cgi',
 				'vars' => 'graph=network',
 				'title' => "$tr{'sstraffic graphs'}",
 				'enabled' => 1,
 				};
-    $substatus->{'05.proxygraphs'} = {
+    $substatus->{'50.proxygraphs'} = {
 				'caption' => $tr{'ssproxy graphs'},
 				'uri' => '/cgi-bin/proxygraphs.cgi',
 				'title' => "$tr{'ssproxy graphs'}",
 				'enabled' => 1,
 				};
-    $substatus->{'06.fwhits'} = {
+    $substatus->{'60.fwhits'} = {
 				  'caption' => 'Firewall-Diagramme',
 			     	  'uri' => '/cgi-bin/fwhits.cgi',
 			     	  'title' => "Firewall-Diagramme",
 			         'enabled' => 1,
 			   	  };
-    $substatus->{'07.connections'} = {
+    $substatus->{'70.hddtemp'} = {
+				  'caption' => '$tr{'HDD temperature graphs'}',
+			     	  'uri' => '/cgi-bin/hddgraph.cgi',
+			     	  'title' => "$tr{'HDD temperature graphs'}",
+			         'enabled' => 1,
+			   	  };
+    $substatus->{'80.connections'} = {
 				'caption' => $tr{'connections'},
 				'uri' => '/cgi-bin/connections.cgi',
 				'title' => "$tr{'connections'}",
 				'enabled' => 1,
 				};
-    $substatus->{'08.nettraf'} = {
+    $substatus->{'90.nettraf'} = {
 				  'caption' => $tr{'sstraffic'},
 			     	  'uri' => '/cgi-bin/traffic.cgi',
 			     	  'title' => "$tr{'sstraffic'}",
@@ -216,40 +222,40 @@ sub genmenu {
     my %subnetworkhash = ();
     my $subnetwork = \%subnetworkhash;
 
-    $subnetwork->{'01.proxy'} = {'caption' => 'Webproxy',
+    $subnetwork->{'10.proxy'} = {'caption' => 'Webproxy',
 			        'uri' => '/cgi-bin/proxy.cgi',
 			        'title' => "Webproxy",
 			        'enabled' => 1,
 			        };
-    $subnetwork->{'02.urlfilter'} = {'caption' => 'URL-Filter',
+    $subnetwork->{'20.urlfilter'} = {'caption' => 'URL-Filter',
 			        'uri' => '/cgi-bin/urlfilter.cgi',
 			        'title' => "URL-Filter",
 			        'enabled' => 1,
 			        };
-    $subnetwork->{'03.dhcp'} = {'caption' => $tr{'dhcp server'},
+    $subnetwork->{'30.dhcp'} = {'caption' => $tr{'dhcp server'},
 				 'uri' => '/cgi-bin/dhcp.cgi',
 				 'title' => "$tr{'dhcp server'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'04.dialup'} = {
+    $subnetwork->{'40.dialup'} = {
 				  'caption' => $tr{'alt dialup'},
 				  'uri' => '/cgi-bin/pppsetup.cgi',
 				  'title' => "$tr{'alt dialup'}",
 				  'enabled' => 1,
 				  };
-    $subnetwork->{'05.hosts'} = {
+    $subnetwork->{'50.hosts'} = {
 				 'caption' => $tr{'edit hosts'},
 				 'uri' => '/cgi-bin/hosts.cgi',
 				 'title' => "$tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'06.upload'} = {
+    $subnetwork->{'60.upload'} = {
 				  'caption' => $tr{'upload'},
 				  'uri' => '/cgi-bin/upload.cgi',
 				  'title' => "$tr{'upload'}",
 				  'enabled' => 0,
 				  };
-    $subnetwork->{'07.aliases'} = {
+    $subnetwork->{'70.aliases'} = {
 				  'caption' => $tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$tr{'aliases'}",
@@ -260,34 +266,34 @@ sub genmenu {
     my $subservices = \%subserviceshash;
 
 
-    $subservices->{'01.openvpn'} = {
+    $subservices->{'10.openvpn'} = {
 				'caption' => 'OpenVPN',
 			     	'uri' => '/cgi-bin/ovpnmain.cgi',
 			     	'title' => "$tr{'virtual private networking'}",
 			       'enabled' => 1,
 			   	};
-    $subservices->{'02.ipsec'} = {
+    $subservices->{'20.ipsec'} = {
 				'caption' => 'IPSec',
 			     	'uri' => '/cgi-bin/vpnmain.cgi',
 			     	'title' => "$tr{'virtual private networking'}",
 			     	'enabled' => 1,
 			 	};
-    $subservices->{'03.dyndns'} = {'caption' => $tr{'dynamic dns'},
+    $subservices->{'30.dyndns'} = {'caption' => $tr{'dynamic dns'},
 				'uri' => '/cgi-bin/ddns.cgi',
 				'title' => "$tr{'dynamic dns'}",
 				'enabled' => 1,
 				};
-    $subservices->{'04.time'} = {'caption' => $tr{'time server'},
+    $subservices->{'40.time'} = {'caption' => $tr{'time server'},
 				'uri' => '/cgi-bin/time.cgi',
 				'title' => "$tr{'time server'}",
 				'enabled' => 1,
 				};
-    $subservices->{'05.qos'} = {'caption' => 'Quality of Service',
+    $subservices->{'50.qos'} = {'caption' => 'Quality of Service',
 				'uri' => '/cgi-bin/qos.cgi',
 				'title' => "Quality of Service",
 				'enabled' => 1,
 				};
-    $subservices->{'06.ids'} = {'caption' => $tr{'intrusion detection'},
+    $subservices->{'60.ids'} = {'caption' => $tr{'intrusion detection'},
 				'enabled' => 1,
 				'uri' => '/cgi-bin/ids.cgi',
 				'title' => "$tr{'intrusion detection system'}",
@@ -299,37 +305,37 @@ sub genmenu {
     my $subfirewall = \%subfirewallhash;
 
     
-    $subfirewall->{'01.dnat'} = {
+    $subfirewall->{'10.dnat'} = {
 				 'caption' => $tr{'ssport forwarding'},
 				 'uri' => '/cgi-bin/portfw.cgi',
 				 'title' => "$tr{'ssport forwarding'}",
 				 'enabled' => 1,
 				 };
-    $subfirewall->{'02.xtaccess'} = {
+    $subfirewall->{'20.xtaccess'} = {
 				 'caption' => $tr{'external access'},
 				 'uri' => '/cgi-bin/xtaccess.cgi',
 				 'title' => "$tr{'external access'}",
 				 'enabled' => 1,
 				 };
-    $subfirewall->{'03.wireless'} = {
+    $subfirewall->{'30.wireless'} = {
 				'caption' => $tr{'blue access'},
 				'uri' => '/cgi-bin/wireless.cgi',
 				'title' => "$tr{'blue access'}",
 				'enabled' => 1,
 				 };
-    $subfirewall->{'04.dmz'} = {
+    $subfirewall->{'40.dmz'} = {
 				'caption' => $tr{'ssdmz pinholes'},
 				'uri' => '/cgi-bin/dmzholes.cgi',
 				'title' => "$tr{'dmz pinhole configuration'}",
 				'enabled' => 1,
 				 };
-    $subfirewall->{'05.outgoing'} = {
+    $subfirewall->{'50.outgoing'} = {
 				'caption' => $tr{'outgoing firewall'},
 				'uri' => '/cgi-bin/outgoingfw.cgi',
 				'title' => "$tr{'outgoing firewall'}",
 				'enabled' => 1,
 				};
-    $subfirewall->{'06.fwopts'} = {
+    $subfirewall->{'60.fwopts'} = {
 				'caption' => $tr{'options fw'},
 				'uri' => '/cgi-bin/optionsfw.cgi',
 				'title' => "$tr{'options fw'}",
@@ -339,48 +345,48 @@ sub genmenu {
     my %sublogshash = ();
     my $sublogs = \%sublogshash;
 
-    $sublogs->{'01.summary'} = {'caption' => $tr{'log summary'},
+    $sublogs->{'10.summary'} = {'caption' => $tr{'log summary'},
 				 'uri' => '/cgi-bin/logs.cgi/summary.dat',
 				 'title' => "$tr{'log summary'}",
 				 'enabled' => 1
 				 };
-    $sublogs->{'02.settings'} = {'caption' => $tr{'log settings'},
+    $sublogs->{'20.settings'} = {'caption' => $tr{'log settings'},
 				 'uri' => '/cgi-bin/logs.cgi/config.dat',
 				 'title' => "$tr{'log settings'}",
 				 'enabled' => 1
 				 };
-    $sublogs->{'03.proxy'} = {'caption' => $tr{'proxy logs'},
+    $sublogs->{'30.proxy'} = {'caption' => $tr{'proxy logs'},
 				 'uri' => '/cgi-bin/logs.cgi/proxylog.dat',
 				 'title' => "$tr{'proxy logs'}",
 				 'enabled' => 1
 				 };
-    $sublogs->{'04.firewall'} = {'caption' => $tr{'firewall logs'},
+    $sublogs->{'40.firewall'} = {'caption' => $tr{'firewall logs'},
 				 'uri' => '/cgi-bin/logs.cgi/firewalllog.dat',
 				 'title' => "$tr{'firewall logs'}",
 				 'enabled' => 1
 				 };
-    $sublogs->{'05.ids'} = {'caption' => $tr{'ids logs'},
+    $sublogs->{'50.ids'} = {'caption' => $tr{'ids logs'},
 				'uri' => '/cgi-bin/logs.cgi/ids.dat',
 				'title' => "$tr{'ids logs'}",
 				'enabled' => 1
 				};
-    $sublogs->{'07.urlfilter'} = {
+    $sublogs->{'60.urlfilter'} = {
 				'caption' => $tr{'urlfilter log'},
 				'uri' => '/cgi-bin/logs.cgi/urlfilter.dat',
 				'title' => "$tr{'urlfilter log'}",
 				'enabled' => 1,
 				};
-    $sublogs->{'08.openvpn'} = {'caption' => $tr{'openvpn log'},
+    $sublogs->{'70.openvpn'} = {'caption' => $tr{'openvpn log'},
 				'uri' => '/cgi-bin/logs.cgi/openvpn.dat',
 				'title' => "$tr{'openvpn log'}",
 				'enabled' => 1
 				};
-    $sublogs->{'09.system'} = {'caption' => $tr{'system logs'},
+    $sublogs->{'80.system'} = {'caption' => $tr{'system logs'},
 				'uri' => '/cgi-bin/logs.cgi/log.dat',
 				'title' => "$tr{'system logs'}",
 				'enabled' => 1
 				};
-    $sublogs->{'10.userlog'} = {'caption' => $tr{'user proxy logs'},
+    $sublogs->{'90.userlog'} = {'caption' => $tr{'user proxy logs'},
 				'uri' => '/cgi-bin/logs.cgi/userlog.dat',
 				'title' => "$tr{'user log'}",
 				'enabled' => 1
@@ -388,17 +394,17 @@ sub genmenu {
 
     my %subipfirehash = ();
     my $subipfire = \%subipfirehash;
-    $subipfire->{'01.pakfire'} = {'caption' => 'Pakfire',
+    $subipfire->{'10.pakfire'} = {'caption' => 'Pakfire',
 				  'uri' => '/cgi-bin/pakfire.cgi',
 				  'title' => "Pakfire",
 				  'enabled' => 1,
 				  };
-    $subipfire->{'02.asterisk'} = {'caption' => 'Asterisk',
+    $subipfire->{'20.asterisk'} = {'caption' => 'Asterisk',
 				  'uri' => '/cgi-bin/asterisk.cgi',
 				  'title' => "Asterisk",
 				  'enabled' => 1,
 				  };
-    $subipfire->{'02.samba'} = {'caption' => 'Samba',
+    $subipfire->{'30.samba'} = {'caption' => 'Samba',
 				  'uri' => '/cgi-bin/samba.cgi',
 				  'title' => "Samba",
 				  'enabled' => 1,

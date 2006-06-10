@@ -1365,6 +1365,16 @@ usr/local/bin/timecheckctrl
 #usr/local/bin/tunerrd.pl
 usr/local/bin/logtailfwhits
 usr/local/bin/resetusb
+usr/local/bin/rcasterisk
+usr/local/bin/rcsamba
+usr/local/bin/rcapplejuice
+usr/local/bin/rcxinetd
+usr/local/bin/rccups
+usr/local/bin/rccyrus-sasl
+usr/local/bin/rcgnump3d
+usr/local/bin/rcnfs-server
+usr/local/bin/rcpostfix
+usr/local/bin/rcwinbind
 #usr/local/doc
 #usr/local/etc
 #usr/local/include
@@ -15941,7 +15951,7 @@ bin/zcat
 #usr/bin/zegrep
 #usr/bin/zfgrep
 #usr/bin/zforce
-#usr/bin/zgrep
+usr/bin/zgrep
 #usr/bin/zless
 #usr/bin/zmore
 #usr/bin/znew
@@ -20982,10 +20992,12 @@ etc/httpd/conf/httpd.conf
 #home/httpd
 #home/httpd/cgi-bin
 home/httpd/cgi-bin/aliases.cgi
-home/httpd/cgi-bin/backup.cgi
+#home/httpd/cgi-bin/backup.cgi
 #home/httpd/cgi-bin/base.cgi
 home/httpd/cgi-bin/changepw.cgi
+home/httpd/cgi-bin/chpasswd.cgi
 home/httpd/cgi-bin/connections.cgi
+home/httpd/cgi-bin/country.cgi
 home/httpd/cgi-bin/credits.cgi
 home/httpd/cgi-bin/ddns.cgi
 home/httpd/cgi-bin/dhcp.cgi
@@ -20994,13 +21006,13 @@ home/httpd/cgi-bin/dmzholes.cgi
 home/httpd/cgi-bin/graphs.cgi
 home/httpd/cgi-bin/gui.cgi
 home/httpd/cgi-bin/hosts.cgi
+home/httpd/cgi-bin/hddgraph.cgi
 home/httpd/cgi-bin/ids.cgi
 home/httpd/cgi-bin/index.cgi
 home/httpd/cgi-bin/ipinfo.cgi
 home/httpd/cgi-bin/fwhits.cgi
 home/httpd/cgi-bin/ovpnfunc.pl
 home/httpd/cgi-bin/ovpnmain.cgi
-home/httpd/html/images/openvpn.gif
 #home/httpd/cgi-bin/logs.cgi
 home/httpd/cgi-bin/logs.cgi/config.dat
 home/httpd/cgi-bin/logs.cgi/firewalllog.dat
@@ -21027,6 +21039,7 @@ home/httpd/cgi-bin/time.cgi
 #home/httpd/cgi-bin/updates.cgi
 home/httpd/cgi-bin/upload.cgi
 home/httpd/cgi-bin/vpnmain.cgi
+home/httpd/cgi-bin/webaccess.cgi
 home/httpd/cgi-bin/wireless.cgi
 home/httpd/cgi-bin/xtaccess.cgi
 home/httpd/cgi-bin/traffic.cgi
@@ -22198,7 +22211,7 @@ sbin/hdparm
 etc/ppp/ibod.cf
 usr/sbin/ibod
 ##
-## initscripts
+## initscripts & startscripts
 ##
 #etc/rc.d
 #etc/rc.d/helper
@@ -22229,6 +22242,7 @@ etc/rc.d/rc.pulsardsl
 etc/rc.d/rc.red
 etc/rc.d/rc.sysinit
 etc/rc.d/rc.updatered
+etc/init.d
 ##
 ## iptables-1.3.4
 ##

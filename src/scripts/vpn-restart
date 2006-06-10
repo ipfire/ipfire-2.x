@@ -1,0 +1,66 @@
+#!/bin/sh 
+# VPN Restart/Checker by Figo 
+
+##################################################### 
+part=xxxx #partner frei Wählbar 
+net=xxxx.homeip.net #Partner DYNDNS Adresse 
+vpn=xxxx #VPN Name wie unter GUI 
+iplocal=192.168.x.x #Lokale IP 
+ipremote=192.168.x.x #Partner IP 
+LOGFILE=/var/log/vpn_$vpn.log 
+maxlog=2000 #Max groesse des Logfiles in Byte 
+##################################################### 
+ping -c 3 $net 
+if [ $? != 0 ] ; then 
+clear 
+echo "##############################################" 
+echo "# $part ist offline #" 
+echo "# Verbindung zu $part nicht moeglich #" 
+echo "$(date) $part ist offline #" >> $LOGFILE 
+echo "$(date) Verbindung zu $part nicht moeglich #" >> $LOGFILE 
+echo "##############################################" 
+else 
+clear 
+echo "##############################################" 
+echo "# Na ein Glueck $part is online #" 
+echo "##############################################" 
+/usr/bin/ping -i 2 -c 2 -n -I $iplocal $ipremote 
+if test $? -ne 0; then 
+clear 
+echo "##############################################" 
+echo "# `grep -c ms $LOGFILE` #" 
+echo "# $(date) #" 
+echo "##############################################" 
+echo "$(date) Tunnel zu $part ist NICHT da #" >> $LOGFILE 
+echo "$(date) Starte Tunnel $vpn neu #" >> $LOGFILE 
+echo "# Tunnel zu $part ist NICHT da #" 
+echo "# Starte Tunnel $vpn neu #" 
+echo "##############################################" 
+ipsec auto --replace $vpn 
+ipsec auto --rereadsecrets 
+ipsec auto --up $vpn 
+else 
+clear 
+echo "###############################################" 
+echo "$(date) Tunnel zu $part steht #" >> $LOGFILE 
+echo "# $(date) #" 
+echo "# Tunnel zu $part steht #" 
+echo " seine WAN IP ist `host $net | cut -d" " -f4` " 
+echo "# seine Lokale IP ist $ipremote #" 
+echo "###############################################" 
+
+
+if test `stat -c %s $LOGFILE` -lt $maxlog; then 
+echo "# $LOGFILE < $maxlog Bytes #" 
+else 
+echo "##############################################" 
+echo "# $LOGFILE > $maxlog Bytes #" 
+echo "# Maximale groesse des Logfile #" 
+echo "# Logfile wird geloescht #" 
+echo "##############################################" 
+rm $LOGFILE 
+fi 
+
+fi 
+fi 
+exit 0 

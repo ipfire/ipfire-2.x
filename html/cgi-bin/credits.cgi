@@ -41,7 +41,7 @@ Projektmitglied &amp; Developer - Heiner Schmeling
 Projektmitglied &amp; Supporter - Silvio Rechenbach
 (<a href='mailto:sr\@tne.de'>sr\@tne.de</a>)<br />
 Sponsor - Karsten Rechenbach
-(<a href='mailto:email\@fehlt.com'>email\@fehlt.com</a>)<br />
+(<a href='mailto:space\@devilboard.net'>space\@devilboard.net</a>)<br />
 Betatester - Sebastian Winter
 (<a href='mailto:sebastian.winter\@gmail.com'>sebastian.winter\@gmail.com</a>)<br />
 </p>

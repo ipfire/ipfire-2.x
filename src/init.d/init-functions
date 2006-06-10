@@ -1,0 +1,348 @@
+
+#*******************************************************************************
+# Function - start_daemon [-f] [-n nicelevel] [-p pidfile] pathname [args]
+#
+# Purpose: This runs the specified program as a daemon
+#
+# Inputs: -f, run the program even if it is already running
+#         -n nicelevel, specifies a nice level. See nice(1).
+#         -p pidfile, uses the specified pidfile
+#         pathname, pathname to the specified program
+#         args, arguments to pass to specified program
+#
+# Outputs: return 0 - Success
+#          return 2 - Invalid or excessive number of arguments, 
+#                     warning in stdout
+#          return 4 - Program or service status is unknown
+#
+# Dependencies: nice
+#
+# Todo: none
+#
+#*******************************************************************************
+start_daemon()
+{
+  local pidfile=""
+	local forcestart=""
+	local nicelevel="0"
+
+	while true
+	do
+	  case "${1}" in
+			-f)
+				forcestart="1"
+				shift 1
+				;;
+			-n)
+				nicelevel="${2}"
+				shift 2
+				;;
+	    -p)
+				pidfile="${2}"
+				shift 2
+				;;
+			-*)
+				log_failure_msg "Unknown Option: ${1}"
+				return 2
+				;;
+			*)
+				break
+				;;
+		esac
+	done
+
+	if [ -z "${forcestart}" ]; then
+		if [ -z "${pidfile}" ]; then
+			pidofproc "${1}" > /dev/null
+		else
+			pidofproc -p "${pidfile}" "${1}" > /dev/null
+		fi
+
+		case "${?}" in
+			0)
+				log_warning_msg "Unable to continue: ${1} is running"
+				return 4
+				;;
+			1)
+				log_warning_msg "Unable to continue: ${pidfile} exists"
+				return 4
+				;;
+			3)
+				;;
+			*)
+				log_failure_msg "Unknown error code from pidofproc: ${?}"
+				return 4
+				;;
+		esac
+	fi
+
+	nice -n "${nicelevel}" "${@}"
+}
+
+#*******************************************************************************
+# Function - killproc  [-p pidfile] pathname [signal]
+#
+# Purpose:
+#
+# Inputs: -p pidfile, uses the specified pidfile
+#         pathname, pathname to the specified program
+#         signal, send this signal to pathname
+#
+# Outputs: return 0 - Success
+#          return 1 - Invalid or excessive number of arguments, 
+#                     warning in stdout
+#          return 4 - Unknown Status
+#
+# Dependencies: kill
+#
+# Todo: test
+#
+#*******************************************************************************
+killproc()
+{
+	local pidfile=""
+	local killsig=""
+	local pidlist=""
+	while true
+	do
+		case "${1}" in
+			-p)
+				pidfile="${2}"
+				shift 2
+				;;
+			-*)
+				log_failure_msg "Unknown Option: ${1}"
+				return 1
+				;;
+			*)
+				break
+				;;
+		esac
+	done
+
+	if [ "${#}" = "2" ]; then
+		killsig="${2}"
+	elif [ "${#}" != "1" ]; then
+		shift 2
+		log_failure_msg "Excess Arguments: $@"
+		return 1
+	fi
+
+	if [ -z "${pidfile}" ]; then
+		pidlist=`pidofproc "${1}"`
+	else
+		pidlist=`pidofproc -p "${pidfile}" "${1}"`
+	fi
+
+	for pid in ${pidlist}
+	do
+		kill -${killsig:-TERM} ${pid} 2> /dev/null
+		if [ -z "${killsig}" ]; then
+			# Wait up to 3 seconds, for ${pid} to terminate
+			local dtime=3
+			while [ "${dtime}" != "0" ]
+			do
+				kill -0 ${pid} 2> /dev/null || break
+				sleep 1
+				dtime=$(( ${dtime} - 1))
+			done
+			# If ${pid} is still running, kill it
+			kill -0 ${pid} 2> /dev/null && kill -KILL ${pid} 2> /dev/null
+		fi
+	done
+
+	if [ -z "${killsig}" ]; then
+		pidofproc "${1}" 2>&1 > /dev/null
+	
+		# Program was terminated
+		if [ "$?" != "0" ]; then
+			# Pidfile Exists
+			if [ -f "${pidfile}" ];	then
+				rm -f "${pidfile}" 2>&1 > /dev/null
+			fi
+			return 0
+		else # Program is still running
+			return 4 # Unknown Status
+		fi
+	else
+		if [ -z "${pidfile}" ]; then
+			pidofproc "${1}" 2> /dev/null
+		else
+			pidofproc -p "${pidfile}" "${1}" 2> /dev/null
+		fi
+	fi
+}
+
+#*******************************************************************************
+# Function - pidofproc [-p pidfile] pathname
+#
+# Purpose: This function returns one or more pid(s) for a particular daemon
+#
+# Inputs: -p pidfile, use the specified pidfile instead of pidof
+#         pathname, path to the specified program
+#
+# Outputs: return 0 - Success, pid's in stdout
+#          return 1 - Invalid or excessive number of arguments, 
+#                     warning in stdout
+#          return 1 - Program is dead, pidfile exists
+#          return 3 - Program is not running
+#
+# Dependencies: pidof, echo
+#
+# Todo: - Invalid or excessive argments, and program is dead pidfile exists
+#         conflict with eachother
+#
+#*******************************************************************************
+pidofproc()
+{
+	local pidfile=""
+	local lpids=""
+	local pidlist=""
+	while true
+	do
+		case "${1}" in
+			-p)
+				pidfile="${2}"
+				shift 2
+				;;
+			-*)
+				log_failure_msg "Unknown Option: ${1}"
+				return 1
+				;;
+			*)
+				break
+				;;
+		esac
+	done
+
+	if [ "${#}" != "1" ]; then
+		shift 1
+		log_failure_msg "Excess Arguments: $@"
+		return 1
+	fi
+
+	if [ -n "${pidfile}" ]; then
+		if [ ! -r "${pidfile}" ]; then
+			return 3 # Program is not running
+		fi
+
+		lpids=`head -n 1 ${pidfile}`
+		for pid in ${lpids}
+		do
+			if [ "${pid}" -ne "$$" -a "${pid}" -ne "${PPID}" ]; then
+				kill -0 "${pid}" 2> /dev/null &&
+				pidlist="${pidlist} ${pid}"
+			fi
+			echo ${pidlist}
+			test -z "${pidlist}" && return 1 # Program is dead, pidfile exists
+			return 0
+		done
+		
+	else
+		pidof "${1}"
+	fi
+
+	if [ "$?" != "0" ]; then
+		return 3 # Program is not running
+	fi
+}
+
+# Screen Dimentions
+if [ -z "${COLUMNS}" ]; then
+  COLUMNS=$(stty size)
+  COLUMNS=${COLUMNS##* }
+fi
+
+# When using remote connections, such as a serial port, stty size returns 0
+if [ "${COLUMNS}" = "0" ]; then
+  COLUMNS=80
+fi
+
+# Measurements for positioning result messages
+COL=$((${COLUMNS} - 8))
+WCOL=$((${COL} - 2))
+
+# Set Cursur Position Commands, used via echo -e
+SET_COL="\\033[${COL}G"      # at the $COL char
+SET_WCOL="\\033[${WCOL}G"    # at the $WCOL char
+CURS_UP="\\033[1A\\033[0G"   # Up one line, at the 0'th char
+
+# Set color commands, used via echo -e
+# Please consult `man console_codes` for more information
+# under the "Set Graphics Resolution" section
+#
+# Warning, when switching from a 8bit to a 9bit font,
+# the linux console will reinterpret the bold (1;) to
+# the top 256 glyphs of the 9bit font.  This does
+# not affect framebuffer consoles
+NORMAL="\\033[0;39m"         # Standard console grey
+SUCCESS="\\033[1;32m"        # Success is green
+WARNING="\\033[1;33m"        # Warnings are yellow
+FAILURE="\\033[1;31m"        # Failures are red
+INFO="\\033[1;36m"           # Information is light cyan
+BRACKET="\\033[1;34m"        # Brackets are blue
+
+BOOTMESG_PREFIX=" * "        # Text at the beginning of every line
+
+
+#*******************************************************************************
+# Function - log_success_msg "message"
+#
+# Purpose: Print a success message
+#
+# Inputs:
+#
+# Outputs:
+#
+# Dependencies: echo
+#
+# Todo: logging
+#
+#*******************************************************************************
+log_success_msg()
+{
+	echo -n -e "${BOOTMESG_PREFIX}${@}"
+	echo -e "${SET_COL}""${BRACKET}""[""${SUCCESS}""  OK  ""${BRACKET}""]""${NORMAL}"
+	return 0
+}
+
+#*******************************************************************************
+# Function - log_failure_msg "message"
+#
+# Purpose: Print a failure message
+#
+# Inputs: $@ - Message
+#
+# Outputs: Text output to screen
+#
+# Dependencies: echo
+#
+# Todo: logging
+#
+#*******************************************************************************
+log_failure_msg() {
+	echo -n -e "${BOOTMESG_PREFIX}${@}"
+	echo -e "${SET_COL}""${BRACKET}""[""${FAILURE}"" FAIL ""${BRACKET}""]""${NORMAL}"
+	return 0
+}
+
+#*******************************************************************************
+# Function - log_warning_msg "message"
+#
+# Purpose: print a warning message
+#
+# Inputs: $@ - Message
+#
+# Outputs: Text output to screen
+#
+# Dependencies: echo
+#
+# Todo: logging
+#
+#*******************************************************************************
+log_warning_msg() {
+	echo -n -e "${BOOTMESG_PREFIX}${@}"
+	echo -e "${SET_COL}""${BRACKET}""[""${WARNING}"" WARN ""${BRACKET}""]""${NORMAL}"
+	return 0
+}
+
