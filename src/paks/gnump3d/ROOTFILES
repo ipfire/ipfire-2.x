@@ -1,3 +1,6 @@
+etc/gnump3d
+etc/gnump3d/gnump3d.conf
+etc/gnump3d/mime.types
 usr/bin/gnump3d
 usr/bin/gnump3d-index
 usr/bin/gnump3d-top

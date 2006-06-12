@@ -838,6 +838,7 @@ buildpackages() {
 ipfirepackages() {
   ipfiredist applejuice
   ipfiredist asterisk
+  ipfiredist clamav
   ipfiredist cyrusimap
   ipfiredist fetchmail
   ipfiredist gnump3d
@@ -847,7 +848,6 @@ ipfirepackages() {
   ipfiredist libxml2
   ipfiredist ntop
   ipfiredist postfix
-  ipfiredist pwlib
   ipfiredist samba
   ipfiredist xampp
   ipfiredist xinetd
@@ -1090,8 +1090,8 @@ gettoolchain)
 	;;
 paks)
 	prepareenv
-	buildpackages
-	# ipfirepackages
+	# buildpackages
+	ipfirepackages
 	;;
 update)
 	echo "Load the latest source-files:"

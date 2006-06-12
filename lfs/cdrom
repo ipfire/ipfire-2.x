@@ -125,7 +125,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		dd bs=1024 count=$$((`du -k -s ../cdrom|awk '{print $$1}'` + 64)) if=/dev/zero of=/install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso; \
 		echo "move boot files on top of disk" && \
 		rm -rf boot && \
-		mkdosfs -n IPCOPBOOT -F 16 -I /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
+		mkdosfs -n IPFIREBOOT -F 16 -I /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
 		mount -t vfat -o loop /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso /install/mnt && \
 		cp -R ../cdrom/* /install/mnt && \
 		cp /install/images/cdinitrd.gz              /install/mnt/instroot.gz && \

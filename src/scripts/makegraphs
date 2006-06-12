@@ -503,14 +503,14 @@ sub updatefwhitsgraph {
 		"-t firewall hits over the last $interval",
 		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
 		"AREA:amount#6464FF:firewallhits",
-		"GPRINT:amount:MAX:   Max\\: %2.2lf %S",
-		"GPRINT:amount:AVERAGE: Avg\\: %2.2lf %S",
-		"GPRINT:amount:LAST: Current\\: %2.2lf %Shits/5 min\\n",
+		"GPRINT:amount:MAX:   $tr{'maximal'}\\: %2.2lf %S",
+		"GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
+		"GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min\\n",
 		"DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
 		"AREA:portamount#FF6464:portscans",
-		"GPRINT:portamount:MAX:      Max\\: %2.2lf %S",
-		"GPRINT:portamount:AVERAGE: Avg\\: %2.2lf %S",
-		"GPRINT:portamount:LAST: Current\\: %2.2lf %Shits/5 min");
+		"GPRINT:portamount:MAX:      $tr{'maximal'}\\: %2.2lf %S",
+		"GPRINT:portamount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
+		"GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
 
@@ -523,14 +523,14 @@ sub updatefwhitsgraph {
 		"-t firewall hits over the last $interval",
 		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
 		"LINE2:amount#6464FF:firewallhits",
-		"GPRINT:amount:MAX:   Max\\: %2.2lf %S",
-		"GPRINT:amount:AVERAGE: Avg\\: %2.2lf %S",
+		"GPRINT:amount:MAX:   $tr{'maximal'}\\: %2.2lf %S",
+		"GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
 		"GPRINT:amount:LAST: Current\\: %2.2lf %Shits/5 min\\n",
 		"DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
 		"LINE2:portamount#FF6464:portscans",
-		"GPRINT:portamount:MAX:      Max\\: %2.2lf %S",
-		"GPRINT:portamount:AVERAGE: Avg\\: %2.2lf %S",
-		"GPRINT:portamount:LAST: Current\\: %2.2lf %Shits/5 min");
+		"GPRINT:portamount:MAX:      $tr{'maximal'}\\: %2.2lf %S",
+		"GPRINT:portamount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
+		"GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
 }
@@ -663,9 +663,9 @@ sub updatelqgraph {
 		"AREA:r0#80FF80:<30 ms",
 		"AREA:loss10#800000:Packet loss (x10)",
 		"LINE1:roundtrip#707070:",
-		"GPRINT:roundtrip:MAX:$tr{'maximal'} $tr{'linkq'}\\:%3.2lf ms",
-		"GPRINT:roundtrip:AVERAGE:$tr{'average'} $tr{'linkq'}\\:%3.2lf ms",
-		"GPRINT:roundtrip:LAST:$tr{'current'} $tr{'linkq'}\\:%3.2lf ms\\j",
+		"GPRINT:roundtrip:MAX:$tr{'maximal'}\\:%3.2lf ms",
+		"GPRINT:roundtrip:AVERAGE:$tr{'average'}\\:%3.2lf ms",
+		"GPRINT:roundtrip:LAST:$tr{'current'}\\:%3.2lf ms\\j",
 		"GPRINT:loss:MAX:$tr{'maximal'} Loss\\:%3.2lf%%",
 		"GPRINT:loss:AVERAGE:$tr{'average'} Loss\\:%3.2lf%%",
 		"GPRINT:loss:LAST:$tr{'current'} Loss\\:%3.2lf%%\\j"

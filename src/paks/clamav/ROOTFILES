@@ -3,13 +3,13 @@ usr/bin/clamdscan
 usr/bin/clamscan
 usr/bin/freshclam
 usr/bin/sigtool
-usr/include/clamav.h
-usr/lib/libclamav.a
-usr/lib/libclamav.la
+#usr/include/clamav.h
+#usr/lib/libclamav.a
+#usr/lib/libclamav.la
 usr/lib/libclamav.so
 usr/lib/libclamav.so.1
 usr/lib/libclamav.so.1.0.17
-usr/lib/pkgconfig/libclamav.pc
+#usr/lib/pkgconfig/libclamav.pc
 usr/sbin/clamd
 usr/share/clamav
 usr/share/clamav/daily.cvd
@@ -22,3 +22,6 @@ usr/share/clamav/main.cvd
 #usr/share/man/man5/freshclam.conf.5
 #usr/share/man/man8/clamav-milter.8
 #usr/share/man/man8/clamd.8
+etc/clamav
+etc/clamav/clamd.conf
+etc/clamav/freshclam.conf
