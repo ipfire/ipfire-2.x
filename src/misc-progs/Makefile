@@ -9,7 +9,8 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess restartdhcp restartsno
 	ipfirebkcfg ipfirerscfg installpackage installfcdsl ipsecctrl \
 	setaliases ipfirebackup restartntpd \
 	restartapplejuice setdate rebuildhosts \
-	restartsyslogd logwatch openvpnctrl timecheckctrl restartwireless
+	restartsyslogd logwatch openvpnctrl timecheckctrl \
+	restartwireless getipstat
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -79,6 +80,9 @@ ipsecctrl: ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 timecheckctrl: timecheckctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ timecheckctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+getipstat: getipstat.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ getipstat.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 ipfirebackup: ipfirebackup.c setuid.o 
 	$(COMPILE) -lcrypt ipfirebackup.c setuid.o -o $@

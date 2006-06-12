@@ -26,7 +26,7 @@ cd /paks/$1/ROOT && tar cvfz /paks/$1/files.tgz *
 cd /paks/$1/CONF && tar cvfz /paks/$1/conf.tgz *
 
 cd /paks/$1 && tar cvfz ../$2.tar.gz files.tgz conf.tgz install.sh uninstall.sh
-cd .. && md5sum $2.tar.gz >> $2.tar.gz.md5
+cd .. && md5sum $2.tar.gz > $2.tar.gz.md5
 
 rm -fr /paks/$1
 

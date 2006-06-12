@@ -56,6 +56,7 @@ my $rrdlog = "/var/log/rrd";
 my $graphs = "/home/httpd/html/graphs";
 $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 my $hdd_device = "/dev/harddisk";
+my $temp = '';
 
 sub gettraffic {
 	my $interface = $_[0];

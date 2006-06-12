@@ -36,7 +36,7 @@ VER        = 1.6.8p12
 
 THISAPP    = sudo-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.courtesan.com/sudo/dist
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -57,9 +57,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	make-packages.sh sudo $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum

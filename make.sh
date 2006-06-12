@@ -335,7 +335,7 @@ ipcopmake() {
 
 ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-	   if [ ! `ls -w1 $BASEDIR/packages/*.tar.gz | grep $1` ]; then
+#	   if [ ! `ls -w1 $BASEDIR/packages/*.tar.gz | grep $1` ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
 		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/local/bin
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
@@ -353,9 +353,9 @@ ipfiredist() {
 		if [ $? -ne 0 ]; then
 			exiterror "Packaging $1"
 		fi
-	   else
-		echo "`date -u '+%b %e %T'`: Packaging: The package $1 already exists"
-	   fi
+#	   else
+#		echo "`date -u '+%b %e %T'`: Packaging: The package $1 already exists"
+#	   fi
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
 	fi
@@ -845,14 +845,10 @@ ipfirepackages() {
   ipfiredist lame
   ipfiredist libtiff
   ipfiredist libxml2
-  ipfiredist mc
   ipfiredist ntop
   ipfiredist postfix
   ipfiredist pwlib
   ipfiredist samba
-  ipfiredist sane
-  ipfiredist spandsp
-  ipfiredist sudo
   ipfiredist xampp
   ipfiredist xinetd
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
@@ -1119,7 +1115,11 @@ diff)
 	;;
 sync)
 	echo -e "Syncing Cache to FTP:"
-	echo -ne "Password for mirror.ipfire.org: "; read PASS
+	if [ -f .pass ]; then
+		PASS="`cat .pass`"
+	else
+		echo -ne "Password for mirror.ipfire.org: "; read PASS
+	fi
 	rm -f doc/packages-to-remove-from-ftp
 	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/source/ > ftplist
 	for i in `ls -w1 cache/`; do
@@ -1143,7 +1143,11 @@ sync)
 	;;
 pub-iso)
 	echo -e "Upload the ISO to the beta-mirror!"
-	echo -ne "Password for mirror.ipfire.org: "; read PASS
+	if [ -f .pass ]; then
+		PASS="`cat .pass`"
+	else
+		echo -ne "Password for mirror.ipfire.org: "; read PASS
+	fi
 	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/beta/ | grep `svn info | grep Revision | cut -c 11-`
 	if [ "$?" -eq "1" ]; then
 			cp $BASEDIR/ipfire-install-1.4.i386.iso $BASEDIR/ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso
@@ -1162,7 +1166,11 @@ pub-iso)
 	;;
 pub-paks)
 	echo -e "Upload the packages to the beta-mirror!"
-	echo -ne "Password for mirror.ipfire.org: "; read PASS
+	if [ -f .pass ]; then
+		PASS="`cat .pass`"
+	else
+		echo -ne "Password for mirror.ipfire.org: "; read PASS
+	fi
 	ncftpput -z -u web3 -p $PASS mirror.ipfire.org /html/source-packages/packages/ packages/*
 	if [ "$?" -eq "0" ]; then
 		echo -e "The packages were successfully uploaded to the ftp server."

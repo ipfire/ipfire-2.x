@@ -21010,6 +21010,7 @@ home/httpd/cgi-bin/hddgraph.cgi
 home/httpd/cgi-bin/ids.cgi
 home/httpd/cgi-bin/index.cgi
 home/httpd/cgi-bin/ipinfo.cgi
+home/httpd/cgi-bin/iptables.cgi
 home/httpd/cgi-bin/fwhits.cgi
 home/httpd/cgi-bin/ovpnfunc.pl
 home/httpd/cgi-bin/ovpnmain.cgi
@@ -22519,6 +22520,7 @@ sbin/mingetty
 ##
 ## misc-progs
 ##
+usr/local/bin/getipstat
 usr/local/bin/installfcdsl
 usr/local/bin/installpackage
 usr/local/bin/iowrap

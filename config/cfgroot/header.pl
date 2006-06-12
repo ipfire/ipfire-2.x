@@ -195,9 +195,9 @@ sub genmenu {
 			         'enabled' => 1,
 			   	  };
     $substatus->{'70.hddtemp'} = {
-				  'caption' => '$tr{'HDD temperature graphs'}',
+				  'caption' => "$tr{'harddisk temperature graphs'}",
 			     	  'uri' => '/cgi-bin/hddgraph.cgi',
-			     	  'title' => "$tr{'HDD temperature graphs'}",
+			     	  'title' => "$tr{'harddisk temperature graphs'}",
 			         'enabled' => 1,
 			   	  };
     $substatus->{'80.connections'} = {
@@ -212,10 +212,10 @@ sub genmenu {
 			     	  'title' => "$tr{'sstraffic'}",
 			         'enabled' => 1,
 			   	  };
-    $substatus->{'99.iptfilters'} = {
-				'caption' => $tr{'iptfilters iptable rules'},
-				'uri' => '/cgi-bin/iptfilters.cgi',
-				'title' => "$tr{'iptfilters iptable rules'}",
+    $substatus->{'99.iptable'} = {
+				'caption' => $tr{'iptable rules'},
+				'uri' => '/cgi-bin/iptables.cgi',
+				'title' => "$tr{'iptable rules'}",
 				'enabled' => 1,
 				};
 
@@ -259,7 +259,7 @@ sub genmenu {
 				  'caption' => $tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$tr{'aliases'}",
-				  'enabled' => 1,
+				  'enabled' => 0,
 				  };
 
     my %subserviceshash = ();
@@ -451,13 +451,13 @@ sub genmenu {
 			  	};
 
     if (! blue_used() && ! orange_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'04.dmz'}{'enabled'} = 0;
+	$menu->{'05.firewall'}{'subMenu'}->{'40.dmz'}{'enabled'} = 0;
     }
     if (! blue_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'03.wireless'}{'enabled'} = 0;
+	$menu->{'05.firewall'}{'subMenu'}->{'30.wireless'}{'enabled'} = 0;
     }
     if (! $ethsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
-	$menu->{'03.network'}{'subMenu'}->{'04.aliases'}{'enabled'} = 0;
+	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;
     }
 }
 

@@ -1278,6 +1278,10 @@
 'harddisk temperature' => 'Festplattentemperatur',
 'harddisk temperature graphs' => 'Festplattentemperatur-Diagramme',
 'hdd temperature in' => 'Festplattentemperatur in',
+'ipts' => 'IPTables',
+'iptable rules' => 'IPTable-Regeln',
+'iptmangles' => 'IPTable Mangles',
+'iptnats' => 'IPTable Network Address Translation',
 
 ); 
 
