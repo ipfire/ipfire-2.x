@@ -69,7 +69,7 @@ int handlekeymap(void)
 		return 0;
 	}	
 	
-	strcpy(keymap, "/usr/share/kbd/keymaps/i386/qwerty/us.map.gz");
+	strcpy(keymap, "/usr/share/kbd/keymaps/i386/qwertz/de.map.gz");
 	findkey(kv, "KEYMAP", keymap);
 	
 	choice = 0;

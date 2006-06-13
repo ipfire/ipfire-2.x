@@ -48,9 +48,12 @@ int main(int argc, char *argv[])
 #ifdef  LANG_EN_ONLY
 	char *shortlangnames[] = { "en", NULL };
 	char **langtrs[] = { en_tr, NULL };
-#else
+#elifdef LANG_ALL
 	char *shortlangnames[] = { "bz", "cs", "da", "de", "en", "es", "fr", "el", "it", "la", "hu", "nl", "no", "pl", "pt", "sk", "so", "fi", "sv", "tr", "vi", NULL };
 	char **langtrs[] = { bz_tr, cs_tr, da_tr, de_tr, en_tr, es_tr, fr_tr, el_tr, it_tr, la_tr, hu_tr, nl_tr, no_tr, pl_tr, pt_tr, sk_tr, so_tr, fi_tr, sv_tr, tr_tr, vi_tr, NULL };
+#else
+	char *shortlangnames[] = { "de", "en", NULL };
+	char **langtrs[] = { de_tr, en_tr, NULL };
 #endif
 	int choice;
 	char *sections[11]; /* need to fill this out AFTER knowning lang */

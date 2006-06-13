@@ -284,7 +284,7 @@ int replace(char filename1[], char *from, char *to)
 /* Include enabled languages */
 #ifdef  LANG_EN_ONLY
         #include "lang_en.c"
-#else
+#elifdef	LANG_ALL
 	#include "lang_bz.c"
 	#include "lang_cs.c"
 	#include "lang_da.c"
@@ -306,6 +306,9 @@ int replace(char filename1[], char *from, char *to)
 	#include "lang_sv.c"
 	#include "lang_tr.c"
 	#include "lang_vi.c"
+#else
+	#include "lang_de.c"
+	#include "lang_en.c"
 
 #endif
 // returns a pointer to the actual running version number of IPCop.

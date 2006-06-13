@@ -62,7 +62,7 @@ int handletimezone(void)
 		return 0;
 	}	
 	
-	strcpy(timezone, ZONEFILES "/CET");
+	strcpy(timezone, ZONEFILES "/Europe/Berlin");
 	findkey(kv, "TIMEZONE", timezone);
 	
 	choice = 0;

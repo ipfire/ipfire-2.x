@@ -14,7 +14,6 @@
 
 #define CDROM_INSTALL 0
 #define URL_INSTALL 1
-#define LANG_DE_EN
 
 int raid_disk = 0;
 FILE *flog = NULL;
@@ -52,15 +51,14 @@ int main(int argc, char *argv[])
         char *langnames[] = { "English", NULL };
         char *shortlangnames[] = { "en", NULL };
         char **langtrs[] = { en_tr, NULL };
-#elifdef	LANG_DE_EN
+#elifdef	LANG_ALL
+	char *langnames[] = { "Brasil", "Cestina", "Dansk", "Deutsch", "English", "Español", "Français", "Hellenic", "Italiano", "Spanish Latino", "Magyar", "Nederlands", "Norsk", "Polski", "Português", "Soomali", "Suomi", "Svenska", "Türkçe", "Tieng Viet", NULL };
+	char *shortlangnames[] = { "bz", "cs", "da", "de", "en", "es", "fr", "el", "it", "la", "hu", "nl", "no", "pl", "pt", "so", "fi", "sv", "tr", "vi", NULL };
+	char **langtrs[] = { bz_tr, cs_tr, da_tr, de_tr, en_tr, es_tr, fr_tr, el_tr, it_tr, la_tr, hu_tr, nl_tr, no_tr, pl_tr, pt_tr, so_tr, fi_tr, sv_tr, tr_tr, vi_tr, NULL };	
+#else
 	char *langnames[] = { "Deutsch", "English", NULL };
 	char *shortlangnames[] = { "de", "en", NULL };
 	char **langtrs[] = { de_tr, en_tr, NULL };
-#else
-	char *langnames[] = { "Brasil", "Cestina", "Dansk", "Deutsch", "English", "Español", "Français", "Hellenic", "Italiano", "Spanish Latino", "Magyar", "Nederlands", "Norsk", "Polski", "Português", "Soomali", "Suomi", "Svenska", "Türkçe", "Tieng Viet", NULL };
-	char *shortlangnames[] = { "bz", "cs", "da", "de", "en", "es", "fr", "el", "it", "la", "hu", "nl", "no", "pl", "pt", "so", "fi", "sv", "tr", "vi", NULL };
-	char **langtrs[] = { bz_tr, cs_tr, da_tr, de_tr, en_tr, es_tr, fr_tr, el_tr, it_tr, la_tr, hu_tr, nl_tr, no_tr, pl_tr, pt_tr, so_tr, fi_tr, sv_tr, tr_tr, vi_tr, NULL };
-
 #endif
 	char hdletter, cdletter;
 	char harddrive[5], cdromdrive[5];	/* Device holder. */

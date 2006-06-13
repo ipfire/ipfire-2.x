@@ -202,8 +202,10 @@ int main(int argc, char *argv[]) {
 
 #ifdef	LANG_EN_ONLY
 	char **langtrs[] = { en_tr, NULL };
-#else
+#elifdef	LANG_ALL
 	char **langtrs[] = { bz_tr, cs_tr, da_tr, de_tr, en_tr, es_tr, fr_tr, el_tr, it_tr, la_tr, hu_tr, nl_tr, no_tr, pl_tr, pt_tr, sk_tr, so_tr, fi_tr, sv_tr, tr_tr, vi_tr, NULL };
+#else
+	char **langtrs[] = { de_tr, en_tr, NULL };
 #endif
 	char message[1000];
 	char title[STRING_SIZE];
