@@ -15,7 +15,7 @@ cp -f /usr/src/src/paks/$1/{,un}install.sh /paks/$1
 chmod 755 /paks/$1/{,un}install.sh
 
 # This tar+untar+tar is for removing files compressed twice
-tar -c -C / --files-from=/usr/src/src/paks/$1/ROOTFILES -f /paks/$1/filestmp.tar --exclude='#*'
+tar -c -C / --files-from=/usr/src/src/paks/$1/ROOTFILES -f /paks/$1/filestmp.tar --exclude=#*
 tar -x -C /paks/$1/ROOT -f /paks/$1/filestmp.tar
 rm -f /paks/$1/filestmp.tar
 cd /paks/$1/ROOT && tar zcf /paks/$1/files.tgz *

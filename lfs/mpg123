@@ -81,7 +81,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/patch/mpg123-0.59r-security-1.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/mpg123-0.59r-security-1.patch
 	cd $(DIR_APP) && make PREFIX=/usr linux
 	cd $(DIR_APP) && make PREFIX=/usr install
 	@rm -rf $(DIR_APP)

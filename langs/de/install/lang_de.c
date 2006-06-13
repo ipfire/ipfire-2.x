@@ -66,7 +66,7 @@ char *de_tr[] = {
 /* TR_CONGRATULATIONS */
 "Herzlichen Glückwunsch!",
 /* TR_CONGRATULATIONS_LONG */
-"%s wurde erfolgreich installiert. Entfernen Sie bitte alle Disketten oder CDs aus dem Computer. Nun wird das Setup-Programm gestartet, in dem Sie ISDN, Netzwerkkarten und die Systempasswörter konfigurieren können. Wenn dies fertiggestellt ist, rufen Sie in Ihrem Webbrowser die Box mit http://%s:81 oder https://%s:445 (oder welchen Namen Sie Ihrem %s auch immer gegeben haben) auf und konfigurieren die Wählverbindung und (falls nötig) die Fernwartung. Denken Sie daran, für den %s-'dial'-Benutzer ein Passwort zu vergeben, falls auch andere Benutzer als der %s-'admin' die Internet-Einwahlverbindung kontrollieren können sollen.",
+"%s wurde erfolgreich installiert. Entfernen Sie bitte alle Disketten oder CDs aus dem Computer. Nun wird das Setup-Programm gestartet, in dem Sie ISDN, Netzwerkkarten und die Systempasswörter konfigurieren können. Wenn dies fertiggestellt ist, rufen Sie in Ihrem Webbrowser die Box mit http://%s:81 oder https://%s:444 (oder welchen Namen Sie Ihrem %s auch immer gegeben haben) auf und konfigurieren die Wählverbindung und (falls nötig) die Fernwartung. Denken Sie daran, für den %s-'dial'-Benutzer ein Passwort zu vergeben, falls auch andere Benutzer als der %s-'admin' die Internet-Einwahlverbindung kontrollieren können sollen.",
 /* TR_CONTINUE_NO_SWAP */
 "Ihre Festplatte ist sehr klein, aber sie können ohne Auslagerungsdatei weitermachen. (Mit Vorsicht benutzen).",
 /* TR_CURRENT_CONFIG */

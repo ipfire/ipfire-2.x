@@ -151,6 +151,7 @@
   * misc-progs
   * mktemp-1.5
   * modutils-2.4.27
+  * mpg123-0.59r
   * mtools-3.9.9
   * nano-1.2.4
   * nash

@@ -666,7 +666,7 @@ buildipcop() {
   #ipcopmake wireless
   ipcopmake libsafe
   ipcopmake 3c5x9setup
-  echo -ne "`date -u '+%b %e %T'`: Building ### IPFire modules ### \n" | tee -a $LOGFILE
+#  echo -ne "`date -u '+%b %e %T'`: Building ### IPFire modules ### \n" | tee -a $LOGFILE
   ipcopmake pakfire
   ipcopmake startscripts
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
@@ -711,21 +711,22 @@ buildipcop() {
   echo -ne "`date -u '+%b %e %T'`: Building ### VoIP-Server ### \n" | tee -a $LOGFILE
   ipcopmake stund
   ipcopmake asterisk
+  ipcopmake mpg123
   echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
   ipcopmake lame
   ipcopmake gnump3d
   echo -ne "`date -u '+%b %e %T'`: Building ### P2P-Clients ### \n" | tee -a $LOGFILE
   ipcopmake applejuice
   ipcopmake edonkeyclc
-  ipcopmake sane
+#  ipcopmake sane
   echo -ne "`date -u '+%b %e %T'`: Building ### Net-Tools ### \n" | tee -a $LOGFILE
   ipcopmake ntop
-  ipcopmake rsync
+#  ipcopmake rsync
   ipcopmake tcpwrapper
   ipcopmake portmap
+  ipcopmake nfs
   ipcopmake nmap
   ipcopmake iftop
-  ipcopmake nfs
   ipcopmake ncftp
   ipcopmake cftp
   ipcopmake etherwake

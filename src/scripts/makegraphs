@@ -525,7 +525,7 @@ sub updatefwhitsgraph {
 		"LINE2:amount#6464FF:firewallhits",
 		"GPRINT:amount:MAX:   $tr{'maximal'}\\: %2.2lf %S",
 		"GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-		"GPRINT:amount:LAST: Current\\: %2.2lf %Shits/5 min\\n",
+		"GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min\\n",
 		"DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
 		"LINE2:portamount#FF6464:portscans",
 		"GPRINT:portamount:MAX:      $tr{'maximal'}\\: %2.2lf %S",
