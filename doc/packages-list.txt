@@ -201,7 +201,7 @@
   * setserial-2.17
   * shadow-4.0.4.1
   * slang-1.4.5-mini
-  * snort-2.4.5
+  * snort-2.3.3
   * spandsp-0.0.2pre25
   * speedtouch-1.2
   * squid-2.5.STABLE14
@@ -227,5 +227,6 @@
   * wget-1.10.2
   * wput-0.6
   * xampp-linux-1.5.3a
+  * xampp-linux-1.5.3a_old
   * xinetd-2.3.14
   * zlib-1.2.3

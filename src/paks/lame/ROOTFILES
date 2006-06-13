@@ -2,8 +2,8 @@ usr/bin/lame
 usr/bin/mp3rtp
 #usr/include/lame
 #usr/include/lame/lame.h
-usr/lib/libmp3lame.a
-usr/lib/libmp3lame.la
+#usr/lib/libmp3lame.a
+#usr/lib/libmp3lame.la
 usr/lib/libmp3lame.so
 usr/lib/libmp3lame.so.0
 usr/lib/libmp3lame.so.0.0.0

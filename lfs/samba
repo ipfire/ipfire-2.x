@@ -39,6 +39,8 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = ftp://ftp.samba.org/pub/samba
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = samba
+PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
@@ -59,7 +61,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh samba $(THISAPP)
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

@@ -337,7 +337,6 @@ ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
 #	   if [ ! `ls -w1 $BASEDIR/packages/*.tar.gz | grep $1` ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
-		cp -f $BASEDIR/src/scripts/make-packages.sh $BASEDIR/build/usr/local/bin
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
@@ -850,12 +849,10 @@ ipfirepackages() {
   ipfiredist ntop
   ipfiredist postfix
   ipfiredist samba
-  ipfiredist xampp
+  # ipfiredist xampp
   ipfiredist xinetd
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  mv -f $LFS/paks/*.tar.gz $LFS/paks/*.md5 $BASEDIR/packages >> $LOGFILE 2>&1
-  rm -rf $LFS/paks
-  rm -rf $BASEDIR/build/tmp/*
+  mv -f $LFS/install/packages/*.{tar.gz,md5} $BASEDIR/packages >> $LOGFILE 2>&1
 }
 
 # See what we're supposed to do

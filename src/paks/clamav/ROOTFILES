@@ -22,6 +22,6 @@ usr/share/clamav/main.cvd
 #usr/share/man/man5/freshclam.conf.5
 #usr/share/man/man8/clamav-milter.8
 #usr/share/man/man8/clamd.8
-etc/clamav
-etc/clamav/clamd.conf
-etc/clamav/freshclam.conf
+var/ipfire/clamav
+var/ipfire/clamav/clamd.conf
+var/ipfire/clamav/freshclam.conf

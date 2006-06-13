@@ -30,9 +30,11 @@ VER        = 2.3.14
 
 THISAPP    = xinetd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.fu-berlin.de/unix/linux/mirrors/gentoo/distfiles
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = xinetd
+PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +55,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh xinetd $(THISAPP)-ipfire-beta-1
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

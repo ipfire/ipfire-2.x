@@ -33,6 +33,8 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = cyrusimap
+PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +55,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh cyrusimap cyrusimap-$(VER)-ipfire-beta-1
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
