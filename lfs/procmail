@@ -36,9 +36,11 @@ VER        = 3.22
 
 THISAPP    = procmail-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.procmail.net/pub/procmail
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = procmail
+PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
@@ -59,7 +61,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh procmail $(THISAPP)-ipfire-beta-1
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -84,5 +86,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make LOCKINGTEST=/tmp install
 	# cd $(DIR_APP) && make install-suid   ### Dunno what's better
 	cd $(DIR_APP) && make install
+	cp -f $(DIR_SRC)/config/procmail/* /etc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

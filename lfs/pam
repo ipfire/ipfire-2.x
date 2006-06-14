@@ -92,5 +92,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -v -sf ../../lib/libpam.so.0.81.2 /usr/lib/libpam.so
 	ln -v -sf ../../lib/libpamc.so.0.81.0 /usr/lib/libpamc.so
 	ln -v -sf ../../lib/libpam_misc.so.0.81.2 /usr/lib/libpam_misc.so
+	-mkdir -p /etc/pam.d
+	cp $(DIR_SRC)/config/pam/* /etc/pam.d
+	chown root.root -R /etc/pam.d
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

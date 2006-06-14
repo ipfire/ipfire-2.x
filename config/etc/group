@@ -17,6 +17,7 @@ utmp:x:22:
 squid:x:23:
 ntp:x:38:
 dip:x:40:
+rsyncd:x:48:
 stunnel:x:51:
 lock:x:54:
 sshd:x:74:
@@ -32,5 +33,4 @@ klogd:x:106:
 postfix:x:107:
 postdrop:x:108:
 clamav:x:109:
-rsyncd:x:48:
 amavis:x:110:

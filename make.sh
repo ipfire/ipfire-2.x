@@ -655,7 +655,6 @@ buildipcop() {
   #ipcopmake speedycgi
   ipcopmake saslauthd PASS=1
   ipcopmake openldap
-  ipcopmake saslauthd PASS=2
   ipcopmake squid
   ipcopmake squid-graph
   ipcopmake squidguard
@@ -681,6 +680,7 @@ buildipcop() {
   ipcopmake xampp
   ipcopmake pam
   ipcopmake pammysql
+  ipcopmake saslauthd PASS=2
   ipcopmake xinetd
   ipcopmake ghostscript
   ipcopmake cups
@@ -852,6 +852,7 @@ ipfirepackages() {
   ipfiredist libxml2
   ipfiredist ntop
   ipfiredist postfix
+  ipfiredist procmail
   ipfiredist samba
   ipfiredist xampp
   ipfiredist xinetd

@@ -108,6 +108,7 @@ endif
 ifeq "$(PASS)" "2"
 	install -v -m700 -d /var/lib/sasl
 	mkdir -p /var/run/saslauthd
+	mkdir -p /var/state/saslauthd
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

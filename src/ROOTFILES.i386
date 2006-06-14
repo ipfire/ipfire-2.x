@@ -24894,6 +24894,8 @@ usr/sbin/saslpasswd2
 #usr/share/man/man8/sasldblistusers2.8
 #usr/share/man/man8/saslpasswd2.8
 var/lib/sasl
+var/run/saslauthd
+var/state/saslauthd
 ##
 ## BERKELEY-DB
 ##

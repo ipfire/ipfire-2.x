@@ -1,0 +1,13 @@
+# Host der Datenbank
+hosts = localhost 
+# Benutzername und Passwort der Datenbank
+user = mail
+password = ipfire
+
+# Der Datenbankname
+dbname = mail
+table = virtual
+
+select_field = dest
+where_field = alias
+additional_conditions = and status = '1'

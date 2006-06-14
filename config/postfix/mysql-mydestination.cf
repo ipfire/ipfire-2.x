@@ -1,0 +1,15 @@
+# Host der Datenbank
+hosts = localhost 
+
+# Benutzername und Passwort der Datenbank
+user = mail
+password = ipfire
+
+# Der Datenbankname
+dbname = mail
+
+# Der Tabellenname
+table = domain
+
+select_field = domain_name
+where_field = domain_name

@@ -81,5 +81,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
+	-mkdir /var/imap
+	chown cyrus:mail /var/imap
+	chmod 750 /var/imap
+	-mkdir /var/log/imap
+	chown cyrus:mail /var/log/imap
+	chmod 750 /var/log/imap
+	-mkdir /usr/sieve
+	chown cyrus:mail /usr/sieve
+	chmod 750 /usr/sieve
+	-mkdir -p /var/ipfire/cyrusimap
+	cp -f $(DIR_SRC)/config/cyrusimap/* /var/ipfire/cyrusimap
+	cp -f $(DIR_APP)/tools/mkimap /usr/bin
+	/usr/bin/mkimap # Diese Funktion ist noch nicht getestet.
+	# Wenn das Dateisystem ext2 ist...
+	# cd /var/imap && chattr +S user quota user/* quota/* && chattr +S /var/spool/imap /var/spool/imap/*
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
