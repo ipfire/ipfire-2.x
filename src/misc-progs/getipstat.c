@@ -21,6 +21,7 @@ int main(void)
 	safe_system("/sbin/iptables -L -v -n > /home/httpd/html/iptables.txt");
 	safe_system("/sbin/iptables -L -v -n -t nat > /home/httpd/html/iptablesnat.txt");
 	safe_system("/sbin/iptables -t mangle -L -v -n > /home/httpd/html/iptablesmangle.txt");
+	safe_system("chown nobody.nobody /home/httpd/html/iptables.txt /home/httpd/html/iptablesnat.txt /home/httpd/html/iptablesmangle.txt");
 	
 	return 0;
 }

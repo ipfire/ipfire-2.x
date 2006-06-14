@@ -113,6 +113,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	grep etc/python.conf /opt/lampp/etc/httpd.conf || echo -e "Include etc/python.conf" /opt/lampp/etc/httpd.conf
 	chown -R nobody.nobody /opt/lampp/htdocs
 	ln -fs /opt/lampp/lib/mysql/libmysqlclient.* /usr/lib
-	ln -fs /opt/lampp/lib/libpq.* /usr/lib
 	ldconfig
 	@$(POSTBUILD)

@@ -133,19 +133,5 @@ define MD5
 endef
 
 define PAK
-	@rm -rf /install/packages/package /tmp/* /packagetmp.tar
-	cd /
-	mkdir -p  /install/packages/package
-	cp -f $(DIR_SRC)/src/paks/$(PROG)/{,un}install.sh /install/packages/package
-	cp -f $(DIR_SRC)/src/paks/$(PROG)/ROOTFILES       /install/packages/package
-	chmod 755 /install/packages/package/{,un}install.sh
-	tar --create -C / --files-from=/install/packages/package/ROOTFILES -f /packagetmp.tar --exclude='#*'
-	tar -x -C /tmp -f /packagetmp.tar
-	@rm -f /packagetmp.tar
-	@cd /tmp
-	tar zvcf /install/packages/package/files.tgz * -C /tmp
-	rm -rf /tmp/*
-	cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES && tar cfz ../$(PROG)-$(VER)-$(PAK_VER).tar.gz files.tgz install.sh uninstall.sh ROOTFILES
-	cd /install/packages && md5sum $(THISAPP)-$(PAK_VER).tar.gz > $(PROG)-$(VER)-$(PAK_VER).tar.gz.md5
-	@rm -rf /install/packages/package
+	/usr/local/bin/packager $(PROG) $(VER) $(PAK_VER)
 endef

@@ -836,9 +836,13 @@ buildpackages() {
 }
 
 ipfirepackages() {
+  for i in `ls $BASEDIR/packages`; do
+	touch $BASEDIR/build/install/packages/$i.empty
+  done
   ipfiredist applejuice
   ipfiredist asterisk
   ipfiredist clamav
+  ipfiredist cups
   ipfiredist cyrusimap
   ipfiredist fetchmail
   ipfiredist gnump3d
@@ -849,10 +853,11 @@ ipfirepackages() {
   ipfiredist ntop
   ipfiredist postfix
   ipfiredist samba
-  # ipfiredist xampp
+  ipfiredist xampp
   ipfiredist xinetd
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/*.{tar.gz,md5} $BASEDIR/packages >> $LOGFILE 2>&1
+  rm -rf  $BASEDIR/build/install/packages/*
 }
 
 # See what we're supposed to do

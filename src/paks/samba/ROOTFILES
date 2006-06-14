@@ -33,10 +33,10 @@ usr/bin/wbinfo
 #usr/include/libsmbclient.h
 usr/lib/libsmbclient.so
 usr/lib/libsmbclient.so.0
-usr/lib/samba
-usr/lib/samba/auth
+#usr/lib/samba
+#usr/lib/samba/auth
 usr/lib/samba/auth/script.so
-usr/lib/samba/charset
+#usr/lib/samba/charset
 usr/lib/samba/charset/CP437.so
 usr/lib/samba/charset/CP850.so
 usr/lib/samba/de.msg
@@ -126,7 +126,7 @@ usr/share/samba/swat/help/Samba3-ByExample/ch14.html
 usr/share/samba/swat/help/Samba3-ByExample/go01.html
 usr/share/samba/swat/help/Samba3-ByExample/gpl.html
 usr/share/samba/swat/help/Samba3-ByExample/happy.html
-usr/share/samba/swat/help/Samba3-ByExample/images
+#usr/share/samba/swat/help/Samba3-ByExample/images
 usr/share/samba/swat/help/Samba3-ByExample/images/AccountingNetwork.png
 usr/share/samba/swat/help/Samba3-ByExample/images/Charity-Network.png
 usr/share/samba/swat/help/Samba3-ByExample/images/HostAnnouncment.png
@@ -544,8 +544,8 @@ usr/share/samba/swat/images/wizard.gif
 usr/share/samba/swat/include/footer.html
 usr/share/samba/swat/include/header.html
 #usr/share/samba/swat/lang
-usr/share/samba/swat/lang/ja
-usr/share/samba/swat/lang/ja/help
+#usr/share/samba/swat/lang/ja
+#usr/share/samba/swat/lang/ja/help
 usr/share/samba/swat/lang/ja/help/welcome.html
 usr/share/samba/swat/lang/ja/images
 usr/share/samba/swat/lang/ja/include

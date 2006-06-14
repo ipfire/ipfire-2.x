@@ -78,8 +78,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make -f Makefile.init makefiles \
-				'CCARGS=-DDEF_DAEMON_DIR=\"/usr/lib/postfix\" -DDEF_MANPAGE_DIR=\"/usr/share/man\" -DUSE_TLS -DUSE_SALS_AUTH -DHAS_PGSQL -I/usr/include/openssl -DHAS_MYSQL -I/opt/lampp/include/mysql -I/usr/include/sasl -I/opt/lampp/include' \
-				'AUXLIBS=-L/usr/lib -L/opt/lampp/lib/mysql -L/opt/lampp/lib -lmysqlclient -lz -lm -lssl -lsasl2 -lcrypto -lpq'
+				'CCARGS=-DDEF_DAEMON_DIR=\"/usr/lib/postfix\" \
+				-DDEF_MANPAGE_DIR=\"/usr/share/man\" \
+				-DUSE_TLS -I/usr/include/openssl \
+				-DUSE_SALS_AUTH -I/usr/include/sasl \
+				-DHAS_PGSQL -I/opt/lampp/include \
+				-DHAS_MYSQL -I/opt/lampp/include/mysql' \
+				'AUXLIBS=-L/usr/lib -lz -lm  -lssl -lcrypto \
+				-lmysqlclient -L/opt/lampp/lib/mysql -lsasl2 -lpq -L/opt/lampp/lib'
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && sh postfix-install -non-interactive
 	## Install configuration

@@ -102,3 +102,7 @@ END
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
+
+unlink /home/httpd/html/iptables.txt;
+unlink /home/httpd/html/iptablesmangle.txt;
+unlink /home/httpd/html/iptablesnat.txt;
