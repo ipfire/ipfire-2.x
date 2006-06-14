@@ -1354,8 +1354,9 @@ tmp
 #usr/local
 #usr/local/bin
 usr/local/bin/httpscert
+usr/local/bin/hddshutdown
+usr/local/bin/hddshutdown-state
 usr/local/bin/makegraphs
-#usr/local/bin/make-packages.sh
 usr/local/bin/readhash
 usr/local/bin/setddns.pl
 usr/local/bin/setreservedports
@@ -21014,6 +21015,7 @@ home/httpd/cgi-bin/iptables.cgi
 home/httpd/cgi-bin/fwhits.cgi
 home/httpd/cgi-bin/ovpnfunc.pl
 home/httpd/cgi-bin/ovpnmain.cgi
+home/httpd/cgi-bin/qos.cgi
 #home/httpd/cgi-bin/logs.cgi
 home/httpd/cgi-bin/logs.cgi/config.dat
 home/httpd/cgi-bin/logs.cgi/firewalllog.dat

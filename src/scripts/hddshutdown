@@ -70,7 +70,7 @@ sub shutdown_hdd {
 		close (STAT);
 		if (! ($lastsleepstate==$readwritereq)) { 
 			system("hdparm -y $hdddev");
-			system("logger -t ipcop Shuting down $hdddev !");
+			system("logger -t ipfire Shuting down $hdddev !");
 			system("echo $readwritereq > /tmp/hddshutdown-$hdd");
 		}       
 	}		

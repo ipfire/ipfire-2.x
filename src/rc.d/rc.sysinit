@@ -234,38 +234,26 @@ dmesg > /var/log/dmesg
 
 echo 7200 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established
 
-#if [ -e /var/log/rrd/disk.rrd ]; then
-#	echo "Adjusting graphs to compensate for boot"
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk.rrd","-t","readsect:writesect","N:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hda.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hda.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hdb.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdb.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hdc.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdc.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hdd.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdd.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hde.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hde.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hdf.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdf.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hdg.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdg.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /var/log/rrd/disk-hdh.rrd ]; then
-#	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdh.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'
-#fi
-#if [ -e /tmp/hddshutdown-stat ] ; then
-#  rm /tmp/hddshutdown-*"
-#fi
-#/usr/local/bin/hddshutdown
+if [ -e /var/log/rrd/disk.rrd ]; then echo "Adjusting graphs to compensate for boot"; \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk.rrd","-t","readsect:writesect","N:U:U");'; fi
+if [ -e /var/log/rrd/disk-hda.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hda.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+if [ -e /var/log/rrd/disk-hdb.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdb.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+if [ -e /var/log/rrd/disk-hdc.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdc.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+if [ -e /var/log/rrd/disk-hdd.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdd.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+if [ -e /var/log/rrd/disk-hde.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hde.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+if [ -e /var/log/rrd/disk-hdf.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdf.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+if [ -e /var/log/rrd/disk-hdg.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdg.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+if [ -e /var/log/rrd/disk-hdh.rrd ]; then \
+	/usr/bin/perl -e 'use RRDs;RRDs::update("/var/log/rrd/disk-hdh.rrd","-t","readsect:writesect:sleeping","N:U:U:U");'; fi
+rm -rf /tmp/hddshutdown-*
+/usr/local/bin/hddshutdown
 
 echo "Starting crond"
 /usr/sbin/fcron
@@ -280,7 +268,7 @@ echo "Starting sshd (if enabled)"
 echo "Starting ntpd (if enabled)"
 /usr/local/bin/restartntpd
 echo "Starting openvpn (if enabled)"
-/usr/local/bin/openvpnctrl --start-daemon-only
+/usr/local/bin/openvpnctrl --start-daemon-only >& /dev/null
 
 if [ -e "/var/ipfire/proxy/squid.conf" ]; then
 	echo "Starting squid (if enabled)"

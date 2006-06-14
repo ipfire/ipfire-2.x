@@ -142,8 +142,10 @@ define PAK
 	tar --create -C / --files-from=/install/packages/package/ROOTFILES -f /packagetmp.tar --exclude='#*'
 	tar -x -C /tmp -f /packagetmp.tar
 	@rm -f /packagetmp.tar
-	@cd /tmp && tar zcf /install/packages/package/files.tgz * && rm -rf *
-	cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES && tar cfz ../$(THISAPP)-$(PAK_VER).tar.gz files.tgz install.sh uninstall.sh ROOTFILES
-	cd /install/packages && md5sum $(THISAPP)-$(PAK_VER).tar.gz > $(THISAPP)-$(PAK_VER).tar.gz.md5
+	@cd /tmp
+	tar zvcf /install/packages/package/files.tgz * -C /tmp
+	rm -rf /tmp/*
+	cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES && tar cfz ../$(PROG)-$(VER)-$(PAK_VER).tar.gz files.tgz install.sh uninstall.sh ROOTFILES
+	cd /install/packages && md5sum $(THISAPP)-$(PAK_VER).tar.gz > $(PROG)-$(VER)-$(PAK_VER).tar.gz.md5
 	@rm -rf /install/packages/package
 endef
