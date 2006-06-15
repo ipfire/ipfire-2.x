@@ -24688,6 +24688,11 @@ etc/security/group.conf
 etc/security/limits.conf
 etc/security/pam_env.conf
 etc/security/time.conf
+#etc/pam.d
+etc/pam.d/imap
+etc/pam.d/pop
+etc/pam.d/sieve
+etc/pam.d/smtp
 lib/libpam.so.0
 lib/libpam.so.0.81.2
 lib/libpam_misc.so.0

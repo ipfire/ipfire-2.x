@@ -137,3 +137,6 @@ usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/Cyrus/SIEVE/managesieve/managesiev
 #usr/share/man/man8/syncnews.8
 #usr/share/man/man8/timsieved.8
 #usr/share/man/man8/tls_prune.8
+var/imap
+var/log/imap
+usr/sieve

@@ -1309,7 +1309,7 @@
 'empty profile' => 'empty',
 'HDD temperature' => 'HDD temperature',
 'harddisk temperature' => 'Harddisk temperature',
-'harddisk temperature graphs' => 'harddisk temperature graphs',
+'harddisk temperature graphs' => 'hdd temperature graphs',
 'hdd temperature in' => 'Harddisk temperature in',
 'ipts' => 'IPTables',
 'iptable rules' => 'IPTable rules',

@@ -1,3 +1,4 @@
+etc/procmailrc
 usr/bin/formail
 usr/bin/lockfile
 usr/bin/mailstat

@@ -82,10 +82,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				-DDEF_MANPAGE_DIR=\"/usr/share/man\" \
 				-DUSE_TLS -I/usr/include/openssl \
 				-DUSE_SALS_AUTH -I/usr/include/sasl \
-				-DHAS_PGSQL -I/opt/lampp/include \
+				-I/opt/lampp/include \
 				-DHAS_MYSQL -I/opt/lampp/include/mysql' \
 				'AUXLIBS=-L/usr/lib -lz -lm  -lssl -lcrypto \
-				-lmysqlclient -L/opt/lampp/lib/mysql -lsasl2 -lpq -L/opt/lampp/lib'
+				-lmysqlclient -L/opt/lampp/lib/mysql -lsasl2 -L/opt/lampp/lib'
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && sh postfix-install -non-interactive
 	## Install configuration

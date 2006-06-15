@@ -1,5 +1,5 @@
 etc/aliases
-etc/postfix
+#etc/postfix
 etc/postfix/LICENSE
 etc/postfix/TLS_LICENSE
 etc/postfix/access
@@ -15,6 +15,9 @@ etc/postfix/postfix-script
 etc/postfix/relocated
 etc/postfix/transport
 etc/postfix/virtual
+etc/postfix/mysql-canonical.cf
+etc/postfix/mysql-mydestination.cf
+etc/postfix/mysql-virtual.cf
 usr/bin/mailq
 usr/bin/newaliases
 #usr/lib/postfix

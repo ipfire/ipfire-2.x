@@ -1276,7 +1276,7 @@
 'empty profile' => 'Unbenannt',
 'HDD temperature' => 'HDD-Temperatur',
 'harddisk temperature' => 'Festplattentemperatur',
-'harddisk temperature graphs' => 'Festplattentemperatur-Diagramme',
+'harddisk temperature graphs' => 'HDD-Temperatur-Diagramme',
 'hdd temperature in' => 'Festplattentemperatur in',
 'ipts' => 'IPTables',
 'iptable rules' => 'IPTable-Regeln',

@@ -93,7 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /var/ipfire/cyrusimap
 	cp -f $(DIR_SRC)/config/cyrusimap/* /var/ipfire/cyrusimap
 	cp -f $(DIR_APP)/tools/mkimap /usr/bin
-	/usr/bin/mkimap # Diese Funktion ist noch nicht getestet.
+	#/usr/bin/mkimap # Diese Funktion ist noch nicht getestet.
 	# Wenn das Dateisystem ext2 ist...
 	# cd /var/imap && chattr +S user quota user/* quota/* && chattr +S /var/spool/imap /var/spool/imap/*
 	@rm -rf $(DIR_APP)

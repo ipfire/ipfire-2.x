@@ -193,9 +193,7 @@
   * razor-agents-2.81
   * rp-pppoe-3.5
   * rrdtool-1.0.49
-  * rsync-2.6.8
   * samba-3.0.22
-  * sane-backends-1.0.17
   * screen-4.0.2
   * sed-4.0.9
   * setserial-2.17
@@ -227,6 +225,5 @@
   * wget-1.10.2
   * wput-0.6
   * xampp-linux-1.5.3a
-  * xampp-linux-1.5.3a_old
   * xinetd-2.3.14
   * zlib-1.2.3
