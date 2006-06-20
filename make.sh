@@ -839,6 +839,7 @@ ipfirepackages() {
   for i in `ls $BASEDIR/packages`; do
 	touch $BASEDIR/build/install/packages/$i.empty
   done
+  ipfiredist amavisd
   ipfiredist applejuice
   ipfiredist asterisk
   ipfiredist clamav
@@ -850,10 +851,14 @@ ipfirepackages() {
   ipfiredist lame
   ipfiredist libtiff
   ipfiredist libxml2
+  ipfiredist mailx
+  ipfiredist nfs
+  ipfiredist nmap
   ipfiredist ntop
   ipfiredist postfix
   ipfiredist procmail
   ipfiredist samba
+  ipfiredist spamassassin
   ipfiredist xampp
   ipfiredist xinetd
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages

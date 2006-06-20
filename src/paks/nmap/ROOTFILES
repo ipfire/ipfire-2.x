@@ -1,0 +1,11 @@
+usr/bin/nmap
+#usr/share/man/man1/nmap.1
+#usr/share/nmap
+usr/share/nmap/nmap-mac-prefixes
+usr/share/nmap/nmap-os-fingerprints
+usr/share/nmap/nmap-protocols
+usr/share/nmap/nmap-rpc
+usr/share/nmap/nmap-service-probes
+usr/share/nmap/nmap-services
+usr/share/nmap/nmap.dtd
+usr/share/nmap/nmap.xsl

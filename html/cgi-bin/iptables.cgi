@@ -103,6 +103,6 @@ END
 &Header::closebigbox();
 &Header::closepage();
 
-unlink /home/httpd/html/iptables.txt;
-unlink /home/httpd/html/iptablesmangle.txt;
-unlink /home/httpd/html/iptablesnat.txt;
+system(rm -f "/home/httpd/html/iptables.txt");
+system(rm -f "/home/httpd/html/iptablesmangle.txt");
+system(rm -f "/home/httpd/html/iptablesnat.txt");

@@ -1,0 +1,5 @@
+etc/nail.rc
+usr/bin/mail
+usr/bin/mailx
+usr/bin/nail
+#usr/share/man/man1/mailx.1

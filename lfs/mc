@@ -58,9 +58,6 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
-	make-packages.sh mc $(THISAPP)-ipfire-beta-1
-
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
@@ -84,10 +81,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-screen=mcslang --without-x --disable-nls --with-samba
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	mv /usr/bin/mc /usr/bin/mcc
-	echo -e "#!/bin/bash" > /usr/bin/mc
-	echo -e "# Start MC in color-mode" >> /usr/bin/mc
-	echo -e "/usr/bin/mcc -c" >> /usr/bin/mc
-	chmod 755 /usr/bin/mc
+	# mv /usr/bin/mc /usr/bin/mcc
+	# echo -e "#!/bin/bash" > /usr/bin/mc
+	# echo -e "# Start MC in color-mode" >> /usr/bin/mc
+	# echo -e "/usr/bin/mcc -c" >> /usr/bin/mc
+	# chmod 755 /usr/bin/mc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

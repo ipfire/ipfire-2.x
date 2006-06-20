@@ -93,8 +93,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /var/ipfire/cyrusimap
 	cp -f $(DIR_SRC)/config/cyrusimap/* /var/ipfire/cyrusimap
 	cp -f $(DIR_APP)/tools/mkimap /usr/bin
-	#/usr/bin/mkimap # Diese Funktion ist noch nicht getestet.
-	# Wenn das Dateisystem ext2 ist...
+	sudo -u cyrus /usr/bin/mkimap /var/ipfire/cyrusimap/imapd.conf
+	chown cyrus.mail /var/imap/socket
+	# Wenn das Dateisystem ext2 wäre...
 	# cd /var/imap && chattr +S user quota user/* quota/* && chattr +S /var/spool/imap /var/spool/imap/*
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
