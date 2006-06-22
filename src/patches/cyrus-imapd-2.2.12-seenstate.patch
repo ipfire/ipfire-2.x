@@ -1,0 +1,163 @@
+# Small patch to Cyrus IMAP 2.2.12 which modifies \Seen state handling to
+# make it compatible with Outlook Express. OE makes two connections to a
+# given mailfolder: one generates indexes while the other fetches messages.
+# Unfortunately it gets confused if \Seen updates caused by the message
+# stream aren't immediately flushed and picked up by the index stream.
+#
+# Apparently Mozilla Thunderbird has the same problem.
+#
+# This patch is a 2.2.12 port from the patch found here:
+# http://www-uxsup.csx.cam.ac.uk/~dpc22/cyrus/patches/2.1.16/seenstate.patch
+#
+diff -Naur cyrus-imapd-2.2.12.orig/imap/imapd.c cyrus-imapd-2.2.12/imap/imapd.c
+--- cyrus-imapd-2.2.12.orig/imap/imapd.c	2005-02-14 07:39:55.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/imapd.c	2006-01-04 07:41:45.000000000 +0100
+@@ -3095,6 +3095,10 @@
+     snprintf(mytime, sizeof(mytime), "%2.3f", 
+ 	     (clock() - start) / (double) CLOCKS_PER_SEC);
+ 
++    /* Checkpoint \Seen immediately after each FETCH completes. Checks for
++     * changes from other processes at the same time */
++    index_check_existing(imapd_mailbox, usinguid, 1);
++
+     if (r) {
+ 	prot_printf(imapd_out, "%s NO %s (%s sec)\r\n", tag,
+ 		    error_message(r), mytime);
+@@ -3219,7 +3223,8 @@
+ 
+     index_fetch(imapd_mailbox, msgno, 0, &fetchargs, &fetchedsomething);
+ 
+-    index_check(imapd_mailbox, 0, 0);
++    /* Vanilla index_check() can generate illegal EXPUNGE events */
++    index_check_existing(imapd_mailbox, 0, 1);
+ 
+     if (fetchedsomething) {
+ 	prot_printf(imapd_out, "%s OK %s\r\n", tag,
+@@ -3352,7 +3357,9 @@
+ 		    flag, nflags);
+ 
+     if (usinguid) {
+-	index_check(imapd_mailbox, 1, 0);
++	index_check(imapd_mailbox, 1, 1);   /* Check \Seen too */
++    } else {
++        index_check_existing(imapd_mailbox, 0, 1);
+     }
+ 
+     if (r) {
+diff -Naur cyrus-imapd-2.2.12.orig/imap/imapd.h cyrus-imapd-2.2.12/imap/imapd.h
+--- cyrus-imapd-2.2.12.orig/imap/imapd.h	2004-06-22 23:36:18.000000000 +0200
++++ cyrus-imapd-2.2.12/imap/imapd.h	2006-01-04 07:41:45.000000000 +0100
+@@ -232,6 +232,8 @@
+ extern void index_operatemailbox(struct mailbox *mailbox);
+ extern void index_check(struct mailbox *mailbox, int usinguid,
+ 			   int checkseen);
++extern void
++index_check_existing(struct mailbox *mailbox, int usinguid, int checkseen);
+ extern void index_checkseen(struct mailbox *mailbox, int quiet,
+ 			       int usinguid, int oldexists);
+ 
+diff -Naur cyrus-imapd-2.2.12.orig/imap/index.c cyrus-imapd-2.2.12/imap/index.c
+--- cyrus-imapd-2.2.12.orig/imap/index.c	2005-02-14 17:42:08.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/index.c	2006-01-04 08:08:51.000000000 +0100
+@@ -425,6 +425,53 @@
+     }
+ }
+ 
++/* Nasty hack to report system + user flags updates without checking for
++ * new mail or expunge (relies on index atomic rewrite+rename for expunge).
++ *
++ * Needed to keep Outlook Express happy without breaking IMAP concurrent
++ * access regime which (quite correctly) prohibits unsolicited EXPUNGE and
++ * EXIST responses for non-UID versions of FETCH and STORE. Otherwise you
++ * can end up with hilarous situations such as:
++ *
++ *   . FETCH 2 fast
++ *   * EXPUNGE 1          <-- from concurrent session.
++ *   . FETCH (data relating to previous message _3_, if it exists)
++ *
++ */
++
++void
++index_check_existing(struct mailbox *mailbox, int usinguid, int checkseen)
++{
++    struct stat sbuf;
++    int msgno, i;
++    bit32 user_flags[MAX_USER_FLAGS/32];
++
++    if (imapd_exists == -1)
++	return;
++
++    /* Bail out if the mailbox was rotated under our feet */
++    if ((index_len > 0) &&
++	((stat(FNAME_INDEX+1, &sbuf) != 0) ||
++	(sbuf.st_ino != mailbox->index_ino) ||
++	(index_ino != mailbox->index_ino)))
++	return;
++
++    if (checkseen)
++	index_checkseen(mailbox, 0, usinguid, imapd_exists);
++
++    for (msgno = 1; msgno <= imapd_exists; msgno++) {
++	if (flagreport[msgno] < LAST_UPDATED(msgno)) {
++	    for (i = 0; i < VECTOR_SIZE(user_flags); i++) {
++		user_flags[i] = USER_FLAGS(msgno, i);
++	    }
++	    index_fetchflags(mailbox, msgno, SYSTEM_FLAGS(msgno), user_flags,
++			    LAST_UPDATED(msgno));
++	    if (usinguid) prot_printf(imapd_out, " UID %u", UID(msgno));
++	    prot_printf(imapd_out, ")\r\n");
++	}
++    }
++}
++
+ /*
+  * Checkpoint the user's \Seen state
+  *
+@@ -458,6 +505,7 @@
+     char *saveseenuids, *save;
+     int savealloced;
+     unsigned start, newallseen, inrange, usecomma;
++    mailbox_notifyproc_t *updatenotifier;
+ 
+     if (!keepingseen || !seendb) return;
+     if (imapd_exists == 0) {
+@@ -731,6 +779,9 @@
+ 
+     free(newseenuids);
+     seenuids = saveseenuids;
++
++    updatenotifier = mailbox_get_updatenotifier();
++    if (updatenotifier) updatenotifier(mailbox);
+ }
+ 
+ 
+diff -Naur cyrus-imapd-2.2.12.orig/imap/mailbox.c cyrus-imapd-2.2.12/imap/mailbox.c
+--- cyrus-imapd-2.2.12.orig/imap/mailbox.c	2005-02-14 07:39:57.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/mailbox.c	2006-01-04 07:41:45.000000000 +0100
+@@ -230,6 +230,14 @@
+ }
+ 
+ /*
++ * Get the updatenotifier function
++ */
++mailbox_notifyproc_t *mailbox_get_updatenotifier(void)
++{
++    return updatenotifier;
++}
++
++/*
+  * Create connection to acappush (obsolete)
+  */
+ int mailbox_initialize(void)
+diff -Naur cyrus-imapd-2.2.12.orig/imap/mailbox.h cyrus-imapd-2.2.12/imap/mailbox.h
+--- cyrus-imapd-2.2.12.orig/imap/mailbox.h	2004-01-22 22:17:09.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/mailbox.h	2006-01-04 07:41:45.000000000 +0100
+@@ -224,6 +224,8 @@
+ 
+ extern void mailbox_set_updatenotifier(mailbox_notifyproc_t *notifyproc);
+ 
++extern mailbox_notifyproc_t *mailbox_get_updatenotifier(void);
++
+ extern int mailbox_initialize(void);
+ 
+ extern char *mailbox_message_fname(struct mailbox *mailbox,

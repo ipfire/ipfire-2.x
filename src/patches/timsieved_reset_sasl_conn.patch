@@ -1,0 +1,19 @@
+--- timsieved/parser.c
++++ timsieved/parser.c	2005/08/24 09:14:42
+@@ -664,8 +664,14 @@
+       
+       if(r) {
+ 	  /* mboxlist_detail error */
+-	  *errmsg = "mailbox unknown";
+-	  return FALSE;
++	  syslog(LOG_ERR, error_message(r));
++
++	  if(reset_saslconn(&sieved_saslconn, ssf, authid) != SASL_OK)
++	    fatal("could not reset the sasl_conn_t after failure",
++	    EC_TEMPFAIL);
++	  
++	  ret = FALSE;
++	  goto cleanup;
+       }
+ 
+       if(type & MBTYPE_REMOTE) {

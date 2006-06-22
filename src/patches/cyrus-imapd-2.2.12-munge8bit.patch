@@ -1,0 +1,133 @@
+diff -Naur cyrus-imapd-2.2.12/doc/man/deliver.8.html cyrus-imapd-2.2.12.munge8bit/doc/man/deliver.8.html
+--- cyrus-imapd-2.2.12/doc/man/deliver.8.html	2005-02-14 19:02:17.000000000 +0100
++++ cyrus-imapd-2.2.12.munge8bit/doc/man/deliver.8.html	2005-06-18 19:02:39.000000000 +0200
+@@ -223,13 +223,15 @@
+ <td width="10%"></td>
+ <td width="89%">
+ <p>Depending on the setting of <b>reject8bit</b> in
+-<b>imapd.conf(5)</b>, deliver either rejects messages with
+-8-bit-set characters in the headers or changes these
+-characters to &lsquo;X&rsquo;. This is because such
+-characters can&rsquo;t be interpreted since the character
+-set is not known, although some communities not well-served
+-by US-ASCII assume that those characters can be used to
+-represent characters not present in US-ASCII.</p>
++<b>imapd.conf(5)</b>, deliver either rejects/accepts
++messages with 8-bit-set characters in the headers. If we
++accept messages with 8-bit-set characters in the headers,
++then depending on the setting of <b>munge8bit</b>, these
++characters are either left un-touched or changed to &lsquo;X&rsquo;. This
++is because such characters can&rsquo;t be interpreted since
++the character set is not known, although some communities
++not well-served by US-ASCII assume that those characters can
++be used to represent characters not present in US-ASCII.</p>
+ <!-- INDENTATION -->
+ <p>A method for encoding 8-bit-set characters is provided by
+ RFC 2047.</p>
+diff -Naur cyrus-imapd-2.2.12/doc/man/imapd.conf.5.html cyrus-imapd-2.2.12.munge8bit/doc/man/imapd.conf.5.html
+--- cyrus-imapd-2.2.12/doc/man/imapd.conf.5.html	2005-02-14 19:02:18.000000000 +0100
++++ cyrus-imapd-2.2.12.munge8bit/doc/man/imapd.conf.5.html	2005-06-18 18:59:46.000000000 +0200
+@@ -2562,7 +2562,7 @@
+ <td width="80%">
+ <p>If enabled, lmtpd rejects messages with 8-bit characters
+ in the headers. Otherwise, 8-bit characters are changed to
+-&lsquo;X&rsquo;. (A proper soultion to non-ASCII characters
++&lsquo;X&rsquo;. (A proper solution to non-ASCII characters
+ in headers is offered by RFC 2047 and its predecessors.)</p>
+ </td>
+ </table>
+diff -Naur cyrus-imapd-2.2.12/imap/message.c cyrus-imapd-2.2.12.munge8bit/imap/message.c
+--- cyrus-imapd-2.2.12/imap/message.c	2004-09-16 19:58:54.000000000 +0200
++++ cyrus-imapd-2.2.12.munge8bit/imap/message.c	2005-06-18 18:58:33.000000000 +0200
+@@ -227,6 +227,7 @@
+     int n;
+     int sawcr = 0, sawnl;
+     int reject8bit = config_getswitch(IMAPOPT_REJECT8BIT);
++    int munge8bit = config_getswitch(IMAPOPT_MUNGE8BIT);
+     int inheader = 1, blankline = 1;
+ 
+     while (size) {
+@@ -262,7 +263,7 @@
+ 			/* We have been configured to reject all mail of this
+ 			   form. */
+ 			if (!r) r = IMAP_MESSAGE_CONTAINS8BIT;
+-		    } else {
++		    } else if (munge8bit) {
+ 			/* We have been configured to munge all mail of this
+ 			   form. */
+ 			*p = 'X';
+diff -Naur cyrus-imapd-2.2.12/imap/spool.c cyrus-imapd-2.2.12.munge8bit/imap/spool.c
+--- cyrus-imapd-2.2.12/imap/spool.c	2004-10-27 22:40:50.000000000 +0200
++++ cyrus-imapd-2.2.12.munge8bit/imap/spool.c	2005-06-18 18:58:33.000000000 +0200
+@@ -140,6 +140,7 @@
+     state s = NAME_START;
+     int r = 0;
+     int reject8bit = config_getswitch(IMAPOPT_REJECT8BIT);
++    int munge8bit = config_getswitch(IMAPOPT_MUNGE8BIT);
+     const char **skip = NULL;
+ 
+     if (namelen == 0) {
+@@ -266,7 +267,7 @@
+ 			   form. */
+ 			r = IMAP_MESSAGE_CONTAINS8BIT;
+ 			goto ph_error;
+-		    } else {
++		    } else if (munge8bit) {
+ 			/* We have been configured to munge all mail of this
+ 			   form. */
+ 			c = 'X';
+diff -Naur cyrus-imapd-2.2.12/lib/imapoptions cyrus-imapd-2.2.12.munge8bit/lib/imapoptions
+--- cyrus-imapd-2.2.12/lib/imapoptions	2004-07-21 21:07:45.000000000 +0200
++++ cyrus-imapd-2.2.12.munge8bit/lib/imapoptions	2005-06-18 18:58:33.000000000 +0200
+@@ -458,6 +458,12 @@
+ { "mboxlist_db", "skiplist", STRINGLIST("flat", "berkeley", "skiplist")}
+ /* The cyrusdb backend to use for the mailbox list. */
+ 
++{ "munge8bit", 1, SWITCH }
++/* If enabled, lmtpd munges messages with 8-bit characters.  These characters
++   are changed to `X'.  If \fBreject8bit\fR is enabled, setting \fBmunge8bit\fR
++   has no effect.  (A proper solution to non-ASCII characters in headers is
++   offered by RFC 2047 and its predecessors.) */
++
+ # xxx badly worded
+ { "mupdate_connections_max", 128, INT }
+ /* The max number of connections that a mupdate process will allow, this
+@@ -670,9 +676,7 @@
+ 
+ { "reject8bit", 0, SWITCH }
+ /* If enabled, lmtpd rejects messages with 8-bit characters in the
+-   headers.  Otherwise, 8-bit characters are changed to `X'.  (A
+-   proper soultion to non-ASCII characters in headers is offered by  
+-   RFC 2047 and its predecessors.) */
++   headers. */
+ 
+ { "rfc2046_strict", 0, SWITCH }
+ /* If enabled, imapd will be strict (per RFC 2046) when matching MIME
+diff -Naur cyrus-imapd-2.2.12/man/deliver.8 cyrus-imapd-2.2.12.munge8bit/man/deliver.8
+--- cyrus-imapd-2.2.12/man/deliver.8	2004-06-21 20:40:10.000000000 +0200
++++ cyrus-imapd-2.2.12.munge8bit/man/deliver.8	2005-06-18 18:58:33.000000000 +0200
+@@ -147,8 +147,10 @@
+ Accept messages using the LMTP protocol.
+ .SH NOTES
+ Depending on the setting of \fBreject8bit\fR in \fBimapd.conf(5)\fR, deliver
+-either rejects messages with 8-bit-set characters in the headers or 
+-changes these characters to `X'.
++either rejects/accepts messages with 8-bit-set characters in the headers.
++If we accept messages with 8-bit-set characters in the headers, then depending
++on the setting of \fBmunge8bit\fR, these characters are either left un-touched
++or changed to .
+ This is because such characters can't be interpreted since the
+ character set is not known, although some communities not well-served by
+ US-ASCII assume that those characters can be used to represent characters not
+diff -Naur cyrus-imapd-2.2.12/man/imapd.conf.5 cyrus-imapd-2.2.12.munge8bit/man/imapd.conf.5
+--- cyrus-imapd-2.2.12/man/imapd.conf.5	2005-02-14 19:02:16.000000000 +0100
++++ cyrus-imapd-2.2.12.munge8bit/man/imapd.conf.5	2005-06-18 18:59:08.000000000 +0200
+@@ -551,7 +551,7 @@
+ .IP "\fBreject8bit:\fR 0" 5
+ If enabled, lmtpd rejects messages with 8-bit characters in the
+ headers.  Otherwise, 8-bit characters are changed to `X'.  (A
+-proper soultion to non-ASCII characters in headers is offered by  
++proper solution to non-ASCII characters in headers is offered by  
+ RFC 2047 and its predecessors.) 
+ .IP "\fBrfc2046_strict:\fR 0" 5
+ If enabled, imapd will be strict (per RFC 2046) when matching MIME

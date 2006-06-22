@@ -1,0 +1,647 @@
+diff -Naur cyrus-imapd-2.2.12.orig/configure.in cyrus-imapd-2.2.12/configure.in
+--- cyrus-imapd-2.2.12.orig/configure.in	2005-01-19 00:46:00.000000000 +0100
++++ cyrus-imapd-2.2.12/configure.in	2006-04-25 07:35:25.000000000 +0200
+@@ -100,6 +100,15 @@
+ fi
+ AC_C_INLINE
+ 
++dnl Check if `long long int' is available
++AC_CHECK_SIZEOF(long long int)
++AC_CHECK_SIZEOF(unsigned long long int)
++if test "$ac_cv_sizeof_long_long_int" -eq 8 -a \
++        "$ac_cv_sizeof_unsigned_long_long_int" -eq 8; then
++  AC_DEFINE(HAVE_LONG_LONG_INT,[],[Does the compiler support long long int?])
++  AC_C_BIGENDIAN
++fi
++
+ CMU_C___ATTRIBUTE__
+ CMU_C_FPIC
+ 
+diff -Naur cyrus-imapd-2.2.12.orig/imap/append.c cyrus-imapd-2.2.12/imap/append.c
+--- cyrus-imapd-2.2.12.orig/imap/append.c	2004-05-22 05:45:48.000000000 +0200
++++ cyrus-imapd-2.2.12/imap/append.c	2006-04-25 07:35:25.000000000 +0200
+@@ -140,7 +140,7 @@
+     if (!r) {
+ 	if (m.quota.limit >= 0 && quotacheck >= 0 &&
+ 	    m.quota.used + quotacheck > 
+-	    ((unsigned) m.quota.limit * QUOTA_UNITS)) {
++	    ((uquota_t) m.quota.limit * QUOTA_UNITS)) {
+ 	    r = IMAP_QUOTA_EXCEEDED;
+ 	}
+     }
+@@ -208,7 +208,7 @@
+     if (!r) {
+ 	if (as->m.quota.limit >= 0 && quotacheck >= 0 &&
+ 	    as->m.quota.used + quotacheck > 
+-	    ((unsigned) as->m.quota.limit * QUOTA_UNITS)) {
++	    ((uquota_t) as->m.quota.limit * QUOTA_UNITS)) {
+ 	    quota_abort(&as->tid);
+ 	    mailbox_close(&as->m);
+ 	    r = IMAP_QUOTA_EXCEEDED;
+diff -Naur cyrus-imapd-2.2.12.orig/imap/imapd.c cyrus-imapd-2.2.12/imap/imapd.c
+--- cyrus-imapd-2.2.12.orig/imap/imapd.c	2005-02-14 07:39:55.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/imapd.c	2006-04-25 07:35:25.000000000 +0200
+@@ -2626,10 +2626,10 @@
+  	     */
+  	    int warnsize = config_getint(IMAPOPT_QUOTAWARNKB);
+  	    if (warnsize <= 0 || warnsize >= imapd_mailbox->quota.limit ||
+- 	        (int)((imapd_mailbox->quota.limit * QUOTA_UNITS) -
+-		      imapd_mailbox->quota.used) < (warnsize * QUOTA_UNITS)) {
++ 	        ((uquota_t) (imapd_mailbox->quota.limit - warnsize)) * QUOTA_UNITS < 
++		imapd_mailbox->quota.used) {
+ 		usage = ((double) imapd_mailbox->quota.used * 100.0) / (double)
+-		    (imapd_mailbox->quota.limit * QUOTA_UNITS);
++		    ((uquota_t) imapd_mailbox->quota.limit * QUOTA_UNITS);
+ 		if (usage >= 100.0) {
+ 		    prot_printf(imapd_out, "* NO [ALERT] %s\r\n",
+ 				error_message(IMAP_NO_OVERQUOTA));
+@@ -4626,7 +4626,7 @@
+ 	printastring(name);
+ 	prot_printf(imapd_out, " (");
+ 	if (quota.limit >= 0) {
+-	    prot_printf(imapd_out, "STORAGE %lu %d",
++	    prot_printf(imapd_out, "STORAGE " UQUOTA_T_FMT " %d",
+ 			quota.used/QUOTA_UNITS, quota.limit);
+ 	}
+ 	prot_printf(imapd_out, ")\r\n");
+@@ -4688,7 +4688,7 @@
+ 		printastring(mailboxname);
+ 		prot_printf(imapd_out, " (");
+ 		if (mailbox.quota.limit >= 0) {
+-		    prot_printf(imapd_out, "STORAGE %lu %d",
++		    prot_printf(imapd_out, "STORAGE " UQUOTA_T_FMT " %d",
+ 				mailbox.quota.used/QUOTA_UNITS,
+ 				mailbox.quota.limit);
+ 		}
+diff -Naur cyrus-imapd-2.2.12.orig/imap/mailbox.c cyrus-imapd-2.2.12/imap/mailbox.c
+--- cyrus-imapd-2.2.12.orig/imap/mailbox.c	2005-02-14 07:39:57.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/mailbox.c	2006-04-25 07:36:13.000000000 +0200
+@@ -84,6 +84,7 @@
+ #include "seen.h"
+ #include "util.h"
+ #include "xmalloc.h"
++#include "byteorder64.h"
+ 
+ static int mailbox_doing_reconstruct = 0;
+ #define zeromailbox(m) { memset(&m, 0, sizeof(struct mailbox)); \
+@@ -788,8 +789,17 @@
+     mailbox->last_uid =
+ 	ntohl(*((bit32 *)(mailbox->index_base+OFFSET_LAST_UID)));
+ 
+-    mailbox->quota_mailbox_used =
+-	ntohl(*((bit32 *)(mailbox->index_base+OFFSET_QUOTA_MAILBOX_USED-quota_upgrade_offset)));
++#ifdef HAVE_LONG_LONG_INT
++    if (mailbox->minor_version > 5) {
++	/* newer versions may use 64bit quotas now */
++        mailbox->quota_mailbox_used =
++            ntohll(*((bit64 *)(mailbox->index_base+OFFSET_QUOTA_MAILBOX_USED64)));
++    } else
++#endif
++    {
++	mailbox->quota_mailbox_used =
++	    ntohl(*((bit32 *)(mailbox->index_base+OFFSET_QUOTA_MAILBOX_USED-quota_upgrade_offset)));
++    }
+ 
+     if (mailbox->start_offset < OFFSET_POP3_LAST_LOGIN-quota_upgrade_offset+sizeof(bit32)) {
+ 	mailbox->pop3_last_login = 0;
+@@ -1183,9 +1193,18 @@
+     *((bit32 *)(buf+OFFSET_EXISTS)) = htonl(mailbox->exists);
+     *((bit32 *)(buf+OFFSET_LAST_APPENDDATE)) = htonl(mailbox->last_appenddate);
+     *((bit32 *)(buf+OFFSET_LAST_UID)) = htonl(mailbox->last_uid);
+-    *((bit32 *)(buf+OFFSET_QUOTA_RESERVED_FIELD)) = htonl(0); /* RESERVED */
++
++    /* quotas may be 64bit now */
++#ifdef HAVE_LONG_LONG_INT
++    *((bit64 *)(buf+OFFSET_QUOTA_MAILBOX_USED64)) =
++	htonll(mailbox->quota_mailbox_used);
++#else	
++    /* zero the unused 32bits */
++    *((bit32 *)(buf+OFFSET_QUOTA_MAILBOX_USED64)) = htonl(0);
+     *((bit32 *)(buf+OFFSET_QUOTA_MAILBOX_USED)) =
+ 	htonl(mailbox->quota_mailbox_used);
++#endif
++
+     *((bit32 *)(buf+OFFSET_POP3_LAST_LOGIN)) = htonl(mailbox->pop3_last_login);
+     *((bit32 *)(buf+OFFSET_UIDVALIDITY)) = htonl(mailbox->uidvalidity);
+     *((bit32 *)(buf+OFFSET_DELETED)) = htonl(mailbox->deleted);
+@@ -1430,9 +1449,18 @@
+     *((bit32 *)(buf+OFFSET_EXISTS)) = htonl(mailbox->exists);
+     *((bit32 *)(buf+OFFSET_LAST_APPENDDATE)) = htonl(mailbox->last_appenddate);
+     *((bit32 *)(buf+OFFSET_LAST_UID)) = htonl(mailbox->last_uid);
+-    /* OFFSET_QUOTA_RESERVED_FIELD left as zero */
++
++    /* newer versions may use 64bit quotas */
++#ifdef HAVE_LONG_LONG_INT
++    *((bit64 *)(buf+OFFSET_QUOTA_MAILBOX_USED64)) =
++	htonll(mailbox->quota_mailbox_used);
++#else	
++    /* zero the unused 32bits */
++    *((bit32 *)(buf+OFFSET_QUOTA_MAILBOX_USED64)) = htonl(0);
+     *((bit32 *)(buf+OFFSET_QUOTA_MAILBOX_USED)) =
+ 	htonl(mailbox->quota_mailbox_used);
++#endif
++
+     *((bit32 *)(buf+OFFSET_POP3_LAST_LOGIN)) = htonl(mailbox->pop3_last_login);
+     *((bit32 *)(buf+OFFSET_UIDVALIDITY)) = htonl(mailbox->uidvalidity);
+     *((bit32 *)(buf+OFFSET_DELETED)) = htonl(mailbox->deleted);
+@@ -1608,7 +1636,8 @@
+     size_t fnamebuf_len;
+     FILE *newindex = NULL, *newcache = NULL;
+     unsigned long *deleted;
+-    unsigned numdeleted = 0, quotadeleted = 0;
++    unsigned numdeleted = 0;
++    uquota_t quotadeleted = 0;
+     unsigned numansweredflag = 0;
+     unsigned numdeletedflag = 0;
+     unsigned numflaggedflag = 0;
+@@ -1829,8 +1858,13 @@
+     *((bit32 *)(buf+OFFSET_FLAGGED)) = htonl(newflagged);
+ 
+     /* Fix up quota_mailbox_used */
++#ifdef HAVE_LONG_LONG_INT
++    *((bit64 *)(buf+OFFSET_QUOTA_MAILBOX_USED64)) =
++	htonll(ntohll(*((bit64 *)(buf+OFFSET_QUOTA_MAILBOX_USED64)))-quotadeleted);
++#else
+     *((bit32 *)(buf+OFFSET_QUOTA_MAILBOX_USED)) =
+       htonl(ntohl(*((bit32 *)(buf+OFFSET_QUOTA_MAILBOX_USED)))-quotadeleted);
++#endif
+     /* Fix up start offset if necessary */
+     if (mailbox->start_offset < INDEX_HEADER_SIZE) {
+ 	*((bit32 *)(buf+OFFSET_START_OFFSET)) = htonl(INDEX_HEADER_SIZE);
+@@ -1862,7 +1896,7 @@
+ 	if (!r) quota_commit(&tid);
+ 	else {
+ 	    syslog(LOG_ERR,
+-		   "LOSTQUOTA: unable to record free of %u bytes in quota %s",
++		   "LOSTQUOTA: unable to record free of " UQUOTA_T_FMT " bytes in quota %s",
+ 		   quotadeleted, mailbox->quota.root);
+ 	}
+     }
+@@ -2250,7 +2284,7 @@
+ 	    strcmp(oldmailbox->quota.root, newmailbox->quota.root) != 0) {
+ 	    if (!r && newmailbox->quota.limit >= 0 &&
+ 		newmailbox->quota.used + oldmailbox->quota_mailbox_used >
+-		((unsigned) newmailbox->quota.limit * QUOTA_UNITS)) {
++		((uquota_t) newmailbox->quota.limit * QUOTA_UNITS)) {
+ 		r = IMAP_QUOTA_EXCEEDED;
+ 	    }
+ 	}
+@@ -2464,7 +2498,7 @@
+ 	    strcmp(oldmailbox.quota.root, newmailbox.quota.root) != 0) {
+ 	    if (!r && newmailbox.quota.limit >= 0 &&
+ 		newmailbox.quota.used + oldmailbox.quota_mailbox_used >
+-		((unsigned) newmailbox.quota.limit * QUOTA_UNITS)) {
++		((uquota_t) newmailbox.quota.limit * QUOTA_UNITS)) {
+ 		r = IMAP_QUOTA_EXCEEDED;
+ 	    }
+ 	}
+@@ -2617,7 +2651,7 @@
+ 	else if (r2 == IMAP_QUOTAROOT_NONEXISTENT) r2 = 0;
+ 	if (r2) {
+ 	    syslog(LOG_ERR,
+-	      "LOSTQUOTA: unable to record use of %lu bytes in quota %s",
++	      "LOSTQUOTA: unable to record use of " UQUOTA_T_FMT " bytes in quota %s",
+ 		   newmailbox.quota_mailbox_used, newmailbox.quota.root);
+ 	}
+     }
+diff -Naur cyrus-imapd-2.2.12.orig/imap/mailbox.h cyrus-imapd-2.2.12/imap/mailbox.h
+--- cyrus-imapd-2.2.12.orig/imap/mailbox.h	2004-01-22 22:17:09.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/mailbox.h	2006-04-25 07:35:25.000000000 +0200
+@@ -45,6 +45,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <limits.h>
++#include <config.h>
+ 
+ #include "auth.h"
+ #include "quota.h"
+@@ -61,6 +62,10 @@
+ #error dont know what to use for bit32
+ #endif
+ 
++#ifdef HAVE_LONG_LONG_INT
++typedef unsigned long long int bit64;
++#endif
++
+ #define MAX_MAILBOX_NAME 490
+ #define MAX_MAILBOX_PATH 4096
+ 
+@@ -126,7 +131,7 @@
+     unsigned long exists;
+     time_t last_appenddate;
+     unsigned long last_uid;
+-    unsigned long quota_mailbox_used;
++    uquota_t quota_mailbox_used;
+     unsigned long pop3_last_login;
+     unsigned long uidvalidity;
+ 
+@@ -168,8 +173,8 @@
+ #define OFFSET_EXISTS 20
+ #define OFFSET_LAST_APPENDDATE 24
+ #define OFFSET_LAST_UID 28
+-#define OFFSET_QUOTA_RESERVED_FIELD 32  /* Reserved for 64bit quotas */
+-#define OFFSET_QUOTA_MAILBOX_USED 36
++#define OFFSET_QUOTA_MAILBOX_USED64 32  /* offset for 64bit quotas */
++#define OFFSET_QUOTA_MAILBOX_USED 36    /* offset for 32bit quotas */
+ #define OFFSET_POP3_LAST_LOGIN 40
+ #define OFFSET_UIDVALIDITY 44
+ #define OFFSET_DELETED 48      /* added for ACAP */
+diff -Naur cyrus-imapd-2.2.12.orig/imap/mbdump.c cyrus-imapd-2.2.12/imap/mbdump.c
+--- cyrus-imapd-2.2.12.orig/imap/mbdump.c	2004-05-22 05:45:51.000000000 +0200
++++ cyrus-imapd-2.2.12/imap/mbdump.c	2006-04-25 07:35:25.000000000 +0200
+@@ -507,7 +507,7 @@
+ {
+     struct buf file, data;
+     char c;
+-    int quotaused = 0;
++    uquota_t quotaused = 0;
+     int r = 0;
+     int curfile = -1;
+     const char *userid = NULL;
+diff -Naur cyrus-imapd-2.2.12.orig/imap/mbexamine.c cyrus-imapd-2.2.12/imap/mbexamine.c
+--- cyrus-imapd-2.2.12.orig/imap/mbexamine.c	2004-12-17 17:32:16.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/mbexamine.c	2006-04-25 07:35:25.000000000 +0200
+@@ -266,7 +266,7 @@
+     printf("  Minor Version: %d\n", mailbox.minor_version);
+     printf("  Header Size: %ld bytes  Record Size: %ld bytes\n",
+ 	   mailbox.start_offset, mailbox.record_size);
+-    printf("  Number of Messages: %lu  Mailbox Size: %lu bytes\n",
++    printf("  Number of Messages: %lu  Mailbox Size: " UQUOTA_T_FMT " bytes\n",
+ 	   mailbox.exists, mailbox.quota_mailbox_used);
+     printf("  Last Append Date: (%ld) %s", mailbox.last_appenddate,
+ 	   ctime(&mailbox.last_appenddate));
+diff -Naur cyrus-imapd-2.2.12.orig/imap/quota.c cyrus-imapd-2.2.12/imap/quota.c
+--- cyrus-imapd-2.2.12.orig/imap/quota.c	2004-06-30 21:23:26.000000000 +0200
++++ cyrus-imapd-2.2.12/imap/quota.c	2006-04-25 07:35:25.000000000 +0200
+@@ -120,7 +120,7 @@
+     struct quota quota;
+     int refcount;
+     int deleted;
+-    unsigned long newused;
++    uquota_t newused;
+ };
+ 
+ #define QUOTAGROW 300
+@@ -251,7 +251,7 @@
+     }
+     memset(&quota[quota_num], 0, sizeof(struct quotaentry));
+     quota[quota_num].quota.root = xstrndup(key, keylen);
+-    sscanf(data, "%lu %d",
++    sscanf(data, UQUOTA_T_FMT " %d",
+ 	   &quota[quota_num].quota.used, &quota[quota_num].quota.limit);
+   
+     quota_num++;
+@@ -422,7 +422,7 @@
+ 	(*count)++;
+     }
+     if (quota[thisquota].quota.used != quota[thisquota].newused) {
+-	printf("%s: usage was %lu, now %lu\n", quota[thisquota].quota.root,
++	printf("%s: usage was " UQUOTA_T_FMT ", now " UQUOTA_T_FMT "\n", quota[thisquota].quota.root,
+ 	       quota[thisquota].quota.used, quota[thisquota].newused);
+ 	quota[thisquota].quota.used = quota[thisquota].newused;
+ 	r = quota_write(&quota[thisquota].quota, tid);
+@@ -489,12 +489,12 @@
+     int i;
+     char buf[MAX_MAILBOX_PATH+1];
+ 
+-    printf("   Quota  %% Used    Used Root\n");
++    printf("   Quota   %% Used     Used Root\n");
+ 
+     for (i = 0; i < quota_num; i++) {
+ 	if (quota[i].deleted) continue;
+ 	if (quota[i].quota.limit > 0) {
+-	    printf(" %7d %7ld", quota[i].quota.limit,
++	    printf(" %7d " QUOTA_REPORT_FMT , quota[i].quota.limit,
+ 		   ((quota[i].quota.used / QUOTA_UNITS) * 100) / quota[i].quota.limit);
+ 	}
+ 	else if (quota[i].quota.limit == 0) {
+@@ -507,6 +507,6 @@
+ 	(*quota_namespace.mboxname_toexternal)(&quota_namespace,
+ 					       quota[i].quota.root,
+ 					       "cyrus", buf);
+-	printf(" %7ld %s\n", quota[i].quota.used / QUOTA_UNITS, buf);
++	printf(" " QUOTA_REPORT_FMT " %s\n", quota[i].quota.used / QUOTA_UNITS, buf);
+     }
+ }
+diff -Naur cyrus-imapd-2.2.12.orig/imap/quota_db.c cyrus-imapd-2.2.12/imap/quota_db.c
+--- cyrus-imapd-2.2.12.orig/imap/quota_db.c	2004-05-22 05:45:52.000000000 +0200
++++ cyrus-imapd-2.2.12/imap/quota_db.c	2006-04-25 07:35:25.000000000 +0200
+@@ -89,7 +89,7 @@
+ 
+     switch (r) {
+     case CYRUSDB_OK:
+-	sscanf(data, "%lu %d", &quota->used, &quota->limit);
++	sscanf(data, UQUOTA_T_FMT " %d", &quota->used, &quota->limit);
+ 	break;
+ 
+     case CYRUSDB_AGAIN:
+@@ -151,7 +151,7 @@
+     if (!qrlen) return IMAP_QUOTAROOT_NONEXISTENT;
+ 
+     len = snprintf(buf, sizeof(buf) - 1,
+-		   "%lu %d", quota->used, quota->limit);
++		   UQUOTA_T_FMT " %d", quota->used, quota->limit);
+     r = QDB->store(qdb, quota->root, qrlen, buf, len, tid);
+     
+     switch (r) {
+diff -Naur cyrus-imapd-2.2.12.orig/imap/quota.h cyrus-imapd-2.2.12/imap/quota.h
+--- cyrus-imapd-2.2.12.orig/imap/quota.h	2004-02-27 18:44:56.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/quota.h	2006-04-25 07:35:25.000000000 +0200
+@@ -45,18 +45,37 @@
+ #define INCLUDED_QUOTA_H
+ 
+ #include "cyrusdb.h"
++#include <config.h>
+ 
+ #define FNAME_QUOTADB "/quotas.db"
+ 
+ #define QUOTA_UNITS (1024)
+ 
++/* Define the proper quota type, it should either be a
++ * long or a long long int depending upon what the
++ * the compiler supports.
++ */
++#ifdef HAVE_LONG_LONG_INT
++typedef unsigned long long int uquota_t;
++typedef long long int quota_t;
++#define UQUOTA_T_FMT     "%llu"
++#define QUOTA_T_FMT      "%lld"
++#define QUOTA_REPORT_FMT "%8llu"
++#else
++typedef unsigned long uquota_t;
++typedef long quota_t;
++#define UQUOTA_T_FMT     "%lu"
++#define QUOTA_T_FMT      "%ld"
++#define QUOTA_REPORT_FMT "%8lu"
++#endif
++
+ extern struct db *qdb;
+ 
+ struct quota {
+     char *root;
+ 
+     /* Information in quota entry */
+-    unsigned long used;
++    uquota_t used;
+     int limit;			/* in QUOTA_UNITS */
+ };
+ 
+diff -Naur cyrus-imapd-2.2.12.orig/imap/reconstruct.c cyrus-imapd-2.2.12/imap/reconstruct.c
+--- cyrus-imapd-2.2.12.orig/imap/reconstruct.c	2004-10-11 16:01:24.000000000 +0200
++++ cyrus-imapd-2.2.12/imap/reconstruct.c	2006-04-25 07:35:25.000000000 +0200
+@@ -93,6 +93,7 @@
+ #include "retry.h"
+ #include "convert_code.h"
+ #include "util.h"
++#include "byteorder64.h"
+ 
+ extern int optind;
+ extern char *optarg;
+@@ -434,7 +435,7 @@
+     char *list_acl, *list_part;
+     int list_type;
+ 
+-    unsigned long new_quota = 0;
++    uquota_t new_quota = 0;
+ 
+     struct index_record message_index, old_index;
+     static struct index_record zero_index;
+@@ -690,7 +691,14 @@
+     *((bit32 *)(buf+OFFSET_EXISTS)) = htonl(new_exists);
+     *((bit32 *)(buf+OFFSET_LAST_APPENDDATE)) = htonl(mailbox.last_appenddate);
+     *((bit32 *)(buf+OFFSET_LAST_UID)) = htonl(mailbox.last_uid);
++
++    /* quotas may be 64bit now */
++#ifdef HAVE_LONG_LONG_INT
++    *((bit64 *)(buf+OFFSET_QUOTA_MAILBOX_USED64)) = htonll(new_quota);
++#else
+     *((bit32 *)(buf+OFFSET_QUOTA_MAILBOX_USED)) = htonl(new_quota);
++#endif
++
+     *((bit32 *)(buf+OFFSET_POP3_LAST_LOGIN)) = htonl(mailbox.pop3_last_login);
+     *((bit32 *)(buf+OFFSET_UIDVALIDITY)) = htonl(mailbox.uidvalidity);
+     *((bit32 *)(buf+OFFSET_DELETED)) = htonl(new_deleted);
+diff -Naur cyrus-imapd-2.2.12.orig/lib/byteorder64.c cyrus-imapd-2.2.12/lib/byteorder64.c
+--- cyrus-imapd-2.2.12.orig/lib/byteorder64.c	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-imapd-2.2.12/lib/byteorder64.c	2006-04-25 07:35:25.000000000 +0200
+@@ -0,0 +1,95 @@
++/* byteorder64.c -- convert 64-bit values between host and network byte order
++ * 
++ * Copyright (c) 2004 Carnegie Mellon University.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer. 
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * 3. The name "Carnegie Mellon University" must not be used to
++ *    endorse or promote products derived from this software without
++ *    prior written permission. For permission or any other legal
++ *    details, please contact  
++ *      Office of Technology Transfer
++ *      Carnegie Mellon University
++ *      5000 Forbes Avenue
++ *      Pittsburgh, PA  15213-3890
++ *      (412) 268-4387, fax: (412) 268-7395
++ *      tech-transfer@andrew.cmu.edu
++ *
++ * 4. Redistributions of any form whatsoever must retain the following
++ *    acknowledgment:
++ *    "This product includes software developed by Computing Services
++ *     at Carnegie Mellon University (http://www.cmu.edu/computing/)."
++ *
++ * CARNEGIE MELLON UNIVERSITY DISCLAIMS ALL WARRANTIES WITH REGARD TO
++ * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
++ * AND FITNESS, IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE
++ * FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
++ * AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
++ * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ *
++ * $Id: byteorder64.c,v 1.1.2.1 2004/08/09 18:51:21 ken3 Exp $
++ */
++
++#include <config.h>
++
++#if defined(HAVE_LONG_LONG_INT) && !defined(WORDS_BIGENDIAN)
++
++#include <netinet/in.h>
++
++/* Structure used to swap the bytes in a 64-bit unsigned long long. */
++union byteswap_64_u {
++    unsigned long long a;
++    uint32_t b[2];
++};
++
++/* Function to byteswap 64bit unsigned integers on
++ * little endian machines to big endian network order. 
++ * On big endian machines this will be a null macro.
++ * The macro htonll() is defined in byteorder64.h,
++ * and if needed refers to _htonll() here.
++ */
++unsigned long long _htonll(unsigned long long x)
++{
++    union byteswap_64_u u1;
++    union byteswap_64_u u2;
++
++    u1.a = x;
++
++    u2.b[0] = htonl(u1.b[1]);
++    u2.b[1] = htonl(u1.b[0]);
++
++    return u2.a;
++}
++
++
++/* Function to byteswap big endian 64bit unsigned integers
++ * back to little endian host order on little endian machines. 
++ * As above, on big endian machines this will be a null macro.
++ * The macro ntohll() is defined in byteorder64.h, and if needed,
++ * refers to _ntohll() here.
++ */
++unsigned long long _ntohll(unsigned long long x)
++{
++    union byteswap_64_u u1;
++    union byteswap_64_u u2;
++
++    u1.a = x;
++
++    u2.b[1] = ntohl(u1.b[0]);
++    u2.b[0] = ntohl(u1.b[1]);
++
++    return u2.a;
++}
++
++#endif /* defined(HAVE_LONG_LONG_INT) && !defined(WORDS_BIGENDIAN) */
+diff -Naur cyrus-imapd-2.2.12.orig/lib/byteorder64.h cyrus-imapd-2.2.12/lib/byteorder64.h
+--- cyrus-imapd-2.2.12.orig/lib/byteorder64.h	1970-01-01 01:00:00.000000000 +0100
++++ cyrus-imapd-2.2.12/lib/byteorder64.h	2006-04-25 07:35:25.000000000 +0200
+@@ -0,0 +1,65 @@
++/* byteorder64.h -- convert 64-bit values between host and network byte order
++ *
++ * Copyright (c) 2004 Carnegie Mellon University.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer. 
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * 3. The name "Carnegie Mellon University" must not be used to
++ *    endorse or promote products derived from this software without
++ *    prior written permission. For permission or any other legal
++ *    details, please contact  
++ *      Office of Technology Transfer
++ *      Carnegie Mellon University
++ *      5000 Forbes Avenue
++ *      Pittsburgh, PA  15213-3890
++ *      (412) 268-4387, fax: (412) 268-7395
++ *      tech-transfer@andrew.cmu.edu
++ *
++ * 4. Redistributions of any form whatsoever must retain the following
++ *    acknowledgment:
++ *    "This product includes software developed by Computing Services
++ *     at Carnegie Mellon University (http://www.cmu.edu/computing/)."
++ *
++ * CARNEGIE MELLON UNIVERSITY DISCLAIMS ALL WARRANTIES WITH REGARD TO
++ * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
++ * AND FITNESS, IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE
++ * FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
++ * AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
++ * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ *
++ * $Id: byteorder64.h,v 1.1.2.2 2004/08/16 11:44:34 ken3 Exp $
++ */
++
++#ifndef _BYTEORDER64_H
++#define _BYTEORDER64_H
++
++#include <config.h>
++
++#ifdef HAVE_LONG_LONG_INT
++
++/* 64-bit host/network byte-order swap macros */
++#ifdef WORDS_BIGENDIAN
++#define htonll(x) (x)
++#define ntohll(x) (x)
++#else
++#define htonll(x) _htonll(x)
++#define ntohll(x) _ntohll(x)
++
++/* little-endian 64-bit host/network byte-order swap functions */
++extern unsigned long long _htonll(unsigned long long);
++extern unsigned long long _ntohll(unsigned long long);
++
++#endif /* WORDS_BIGENDIAN */
++#endif /* HAVE_LONG_LONG_INT */
++#endif /* _BYTEORDER64_H */
+diff -Naur cyrus-imapd-2.2.12.orig/lib/Makefile.in cyrus-imapd-2.2.12/lib/Makefile.in
+--- cyrus-imapd-2.2.12.orig/lib/Makefile.in	2004-05-28 20:03:04.000000000 +0200
++++ cyrus-imapd-2.2.12/lib/Makefile.in	2006-04-25 07:35:25.000000000 +0200
+@@ -85,7 +85,7 @@
+ 	$(srcdir)/lsort.h $(srcdir)/stristr.h \
+ 	$(srcdir)/util.h $(srcdir)/xmalloc.h $(srcdir)/imapurl.h \
+ 	$(srcdir)/cyrusdb.h $(srcdir)/iptostring.h $(srcdir)/rfc822date.h \
+-	$(srcdir)/libcyr_cfg.h
++	$(srcdir)/libcyr_cfg.h $(srcdir)/byteorder64.h
+ 
+ LIBCYR_OBJS = acl.o bsearch.o charset.o glob.o retry.o util.o \
+ 	libcyr_cfg.o mkgmtime.o prot.o parseaddr.o imclient.o imparse.o \
+@@ -93,7 +93,7 @@
+ 	chartable.o imapurl.o nonblock_@WITH_NONBLOCK@.o lock_@WITH_LOCK@.o \
+ 	gmtoff_@WITH_GMTOFF@.o map_@WITH_MAP@.o $(ACL) $(AUTH) \
+ 	@LIBOBJS@ @CYRUSDB_OBJS@ \
+-	iptostring.o xmalloc.o wildmat.o
++	iptostring.o xmalloc.o wildmat.o byteorder64.o
+ 
+ LIBCYRM_HDRS = $(srcdir)/hash.h $(srcdir)/mpool.h $(srcdir)/xmalloc.h \
+ 	$(srcdir)/strhash.o $(srcdir)/libconfig.h $(srcdir)/assert.h \
+diff -Naur cyrus-imapd-2.2.12.orig/lib/prot.c cyrus-imapd-2.2.12/lib/prot.c
+--- cyrus-imapd-2.2.12.orig/lib/prot.c	2004-02-27 23:08:56.000000000 +0100
++++ cyrus-imapd-2.2.12/lib/prot.c	2006-04-25 07:35:25.000000000 +0200
+@@ -894,6 +894,31 @@
+ 		prot_write(s, buf, strlen(buf));
+ 		break;
+ 
++#ifdef HAVE_LONG_LONG_INT
++            case 'l': {
++		long long int ll;
++		unsigned long long int ull;
++
++	        switch (*++percent) {
++		case 'd':
++		    ll = va_arg(pvar, long long int);
++		    snprintf(buf, sizeof(buf), "%lld", ll);
++		    prot_write(s, buf, strlen(buf));
++		    break;
++
++		case 'u':
++		    ull = va_arg(pvar, unsigned long long int);
++		    snprintf(buf, sizeof(buf), "%llu", ull);
++		    prot_write(s, buf, strlen(buf));
++		    break;
++
++	        default:
++		    abort();
++		}
++		break;
++	    }
++#endif
++
+ 	    default:
+ 		abort();
+ 	    }

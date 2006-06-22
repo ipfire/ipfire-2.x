@@ -78,4 +78,4 @@ ifmail    unix  -       n       n       -       -       pipe
 bsmtp     unix  -       n       n       -       -       pipe
   flags=Fq. user=foo argv=/usr/local/sbin/bsmtp -f $sender $nexthop $recipient
 procmail  unix  -       n       n       -       20      pipe
-flags=R user=cyrus argv=/usr/bin/procmail -r SENDER=${sender} -t -m USER=${user} EXTENSION=${extension} /etc/procmailrc
+  flags=R user=cyrus argv=/usr/bin/procmail -r SENDER=${sender} -t -m USER=${user} EXTENSION=${extension} /etc/procmailrc

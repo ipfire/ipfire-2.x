@@ -1,0 +1,24 @@
+diff -urN cyrus-imapd-2.2.12~/imap/mailbox.c cyrus-imapd-2.2.12/imap/mailbox.c
+--- cyrus-imapd-2.2.12~/imap/mailbox.c	2005-02-14 07:39:57.000000000 +0100
++++ cyrus-imapd-2.2.12/imap/mailbox.c	2005-08-30 12:13:34.000000000 +0200
+@@ -2132,7 +2165,7 @@
+ 	r = quota_write(&mailbox->quota, &tid);
+ 	if (r) {
+ 	    syslog(LOG_ERR,
+-		   "LOSTQUOTA: unable to record free of %lu bytes in quota %s",
++		   "LOSTQUOTA: unable to record free of " UQUOTA_T_FMT " bytes in quota %s",
+ 		   mailbox->quota_mailbox_used, mailbox->quota.root);
+ 	}
+ 	else
+diff -urN cyrus-imapd-2.2.12~/imap/mboxlist.c cyrus-imapd-2.2.12/imap/mboxlist.c
+--- cyrus-imapd-2.2.12~/imap/mboxlist.c	2004-07-26 20:08:03.000000000 +0200
++++ cyrus-imapd-2.2.12/imap/mboxlist.c	2005-08-30 12:09:28.000000000 +0200
+@@ -2540,7 +2540,7 @@
+ 	r = quota_write(&mailbox.quota, tid);
+ 	if (r) {
+ 	    syslog(LOG_ERR,
+-		   "LOSTQUOTA: unable to record free of %lu bytes in quota %s",
++		   "LOSTQUOTA: unable to record free of " UQUOTA_T_FMT " bytes in quota %s",
+ 		   mailbox.quota_mailbox_used, mailbox.quota.root);
+ 	}
+ 	free(mailbox.quota.root);

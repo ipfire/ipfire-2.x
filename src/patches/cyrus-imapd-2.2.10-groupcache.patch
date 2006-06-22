@@ -1,0 +1,43 @@
+diff -Naur cyrus-imapd-2.2.10.orig/lib/auth_unix.c cyrus-imapd-2.2.10/lib/auth_unix.c
+--- cyrus-imapd-2.2.10.orig/lib/auth_unix.c	Tue Sep 14 00:49:29 2004
++++ cyrus-imapd-2.2.10/lib/auth_unix.c	Thu Dec 16 08:36:32 2004
+@@ -48,6 +48,7 @@
+ #include <stdlib.h>
+ #include <pwd.h>
+ #include <grp.h>
++#include <stdio.h>
+ #include <ctype.h>
+ #include <string.h>
+ 
+@@ -226,6 +227,10 @@
+     struct passwd *pwd;
+     struct group *grp;
+     char **mem;
++    FILE *groupcache;
++    char fnamebuf[1024];
++    const char *config_dir =
++        libcyrus_config_getstring(CYRUSOPT_CONFIG_DIR);
+ 
+     identifier = auth_canonifyid(identifier, 0);
+     if (!identifier) return 0;
+@@ -242,8 +247,11 @@
+ 
+     pwd = getpwnam(identifier);
+ 	
++    strcpy(fnamebuf, config_dir);
++    strcat(fnamebuf, "/group.cache");
++    groupcache = fopen(fnamebuf, "r");
+     setgrent();
+-    while ((grp = getgrent())) {
++    while (grp = ( (groupcache) ? fgetgrent(groupcache) : getgrent() )) {
+ 	for (mem = grp->gr_mem; *mem; mem++) {
+ 	    if (!strcmp(*mem, identifier)) break;
+ 	}
+@@ -256,6 +264,7 @@
+ 	}
+     }
+     endgrent();
++    if (groupcache) fclose(groupcache);
+     return newstate;
+ }
+ 

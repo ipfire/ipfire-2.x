@@ -1,0 +1,77 @@
+--- lib/auth_unix.c
++++ lib/auth_unix.c	2004/05/31 11:32:50
+@@ -159,10 +159,12 @@
+ size_t len;
+ {
+     static char retbuf[81];
++    char backup[81];
+     struct group *grp;
+     char sawalpha;
+     char *p;
+     int username_tolower = 0;
++    int ic,rbc;
+ 
+     if(!len) len = strlen(identifier);
+     if(len >= sizeof(retbuf)) return NULL;
+@@ -210,6 +212,22 @@
+ 
+     if (!sawalpha) return NULL;  /* has to be one alpha char */
+ 
++    if( (libcyrus_config_getswitch(CYRUSOPT_NORMALIZEUID) == 1) ) {
++        strcpy(backup,retbuf);
++       /* remove leading blanks */
++       for(ic=0; isblank(backup[ic]); ic++);
++       for(rbc=0; backup[ic]; ic++) {
++            retbuf[rbc] = ( isalpha(backup[ic]) ?
++                 tolower(backup[ic]) : backup[ic] );
++            rbc++;
++       }
++       retbuf[rbc] = '\0';
++       /* remove trailing blanks */
++       for(--rbc; isblank(retbuf[rbc]); rbc--) {
++            retbuf[rbc] = '\0';
++       }
++    }
++
+     return retbuf;
+ }
+ 
+--- lib/imapoptions
++++ lib/imapoptions	2004/05/31 11:32:50
+@@ -832,6 +832,11 @@
+    interface, otherwise the user is assumed to be in the default
+    domain (if set). */
+ 
++{ "normalizeuid", 0, SWITCH }
++/* Lowercase uid and strip leading and trailing blanks. It is recommended
++   to set this to yes, especially if OpenLDAP is used as authentication
++   source. */
++
+ /*
+ .SH SEE ALSO
+ .PP
+--- lib/libcyr_cfg.c
++++ lib/libcyr_cfg.c	2004/05/31 11:32:50
+@@ -118,6 +118,11 @@
+       CFGVAL(int, 100),
+       CYRUS_OPT_INT },
+ 
++    { CYRUSOPT_NORMALIZEUID,
++      (union cyrus_config_value)((int)1),
++      CYRUS_OPT_SWITCH },
++
++
+     { CYRUSOPT_LAST, { NULL }, CYRUS_OPT_NOTOPT }
+ };
+ 
+--- lib/libcyr_cfg.h
++++ lib/libcyr_cfg.h	2004/05/31 11:33:10
+@@ -97,6 +97,8 @@
+     CYRUSOPT_BERKELEY_LOCKS_MAX,
+     /* BDB max txns (100) */
+     CYRUSOPT_BERKELEY_TXNS_MAX,
++    /* Lowercase uid and strip leading and trailing blanks (OFF) */
++    CYRUSOPT_NORMALIZEUID,
+ 
+     CYRUSOPT_LAST
+     

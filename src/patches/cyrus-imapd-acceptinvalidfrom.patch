@@ -1,0 +1,34 @@
+--- cyrus-imapd-2.2.6/imap/message.c.acceptinvalidfrom	2004-10-30 15:03:02.220642392 -0700
++++ cyrus-imapd-2.2.6/imap/message.c	2004-10-30 15:06:01.838336352 -0700
+@@ -229,6 +229,8 @@
+     int reject8bit = config_getswitch(IMAPOPT_REJECT8BIT);
+     int munge8bit = config_getswitch(IMAPOPT_MUNGE8BIT);
+     int inheader = 1, blankline = 1;
++    char is_from;
++    static const char * from_header = "From ";
+ 
+     while (size) {
+ 	n = prot_read(from, buf, size > 4096 ? 4096 : size);
+@@ -294,8 +296,20 @@
+ 	/* Check for valid header name */
+ 	if (sawnl && buf[0] != ' ' && buf[0] != '\t') {
+ 	    if (buf[0] == ':') return IMAP_MESSAGE_BADHEADER;
+-	    for (p = (unsigned char *)buf; *p != ':'; p++) {
+-		if (*p <= ' ') return IMAP_MESSAGE_BADHEADER;
++            p = (unsigned char *) buf;
++            if (*p == '>')
++                p++;
++            if (*p == from_header[0])
++                is_from = 0;
++            else
++                is_from = -1;
++            for (; *p != ':' && is_from < 5; p++) {
++                if (is_from > 0 && *p != from_header[is_from])
++                    is_from = -1;
++                if (is_from >= 0)
++                    is_from++;
++                else
++                    if (*p <= ' ') return IMAP_MESSAGE_BADHEADER;
+ 	    }
+ 	}
+ 

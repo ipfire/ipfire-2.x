@@ -1,0 +1,23 @@
+--- cyrus-imapd-2.1.16/master/master.c.getrlimit	2003-12-28 17:32:46.000000000 +0100
++++ cyrus-imapd-2.1.16/master/master.c	2003-12-28 17:43:56.000000000 +0100
+@@ -1208,12 +1208,10 @@
+     rl.rlim_cur = x;
+     rl.rlim_max = x;
+     if (setrlimit(RLIMIT_NUMFDS, &rl) < 0) {
+-	syslog(LOG_ERR, "setrlimit: Unable to set file descriptors limit to %ld: %m", x);
+ 
+ #ifdef HAVE_GETRLIMIT
+ 
+ 	if (!getrlimit(RLIMIT_NUMFDS, &rl)) {
+-	    syslog(LOG_ERR, "retrying with %ld (current max)", rl.rlim_max);
+ 	    rl.rlim_cur = rl.rlim_max;
+ 	    if (setrlimit(RLIMIT_NUMFDS, &rl) < 0) {
+ 		syslog(LOG_ERR, "setrlimit: Unable to set file descriptors limit to %ld: %m", x);
+@@ -1228,6 +1226,7 @@
+ 	       rl.rlim_max);
+     }
+ #else
++	syslog(LOG_ERR, "setrlimit: Unable to set file descriptors limit to %ld: %m", x);
+     }
+ #endif /* HAVE_GETRLIMIT */
+ }
