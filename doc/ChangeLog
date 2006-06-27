@@ -1,4 +1,19 @@
 ------------------------------------------------------------------------
+r182 | ms | 2006-06-24 23:57:29 +0200 (Sa, 24 Jun 2006) | 4 lines
+
+Hinzugefügt:
+  * Viele Schritte weiter im QoS-GUI...
+  * Alten IPCop-Shaper aus den Startscripts entfernt.
+
+------------------------------------------------------------------------
+r181 | ms | 2006-06-22 13:54:33 +0200 (Do, 22 Jun 2006) | 5 lines
+
+Geändert:
+  * Cyrus-IMAP downgrade auf 2.2.12 mit einer Menge Patches,
+    doch die Probleme bleiben bestehen...
+  * SSH-Schönheitsfehler im Webinterface behoben.
+
+------------------------------------------------------------------------
 r180 | ms | 2006-06-20 20:31:22 +0200 (Di, 20 Jun 2006) | 7 lines
 
 Hinzugefügt:
