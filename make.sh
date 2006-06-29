@@ -637,6 +637,7 @@ buildipcop() {
   ipcopmake Convert-UUlib
   ipcopmake Archive-Tar
   ipcopmake Archive-Zip
+  ipcopmake Text-Tabs+Wrap
   ipcopmake Locale-Country
   ipcopmake GeoIP
   ipcopmake fwhits
@@ -702,11 +703,12 @@ buildipcop() {
   ipcopmake procmail
   ipcopmake fetchmail
   ipcopmake cyrusimap
+  ipcopmake web-cyradm
   ipcopmake mailx
   ipcopmake clamav
   ipcopmake razor
   ipcopmake spamassassin
-  ipcopmake amavisd
+#  ipcopmake amavisd
   echo -ne "`date -u '+%b %e %T'`: Building ### VoIP-Server ### \n" | tee -a $LOGFILE
   ipcopmake stund
   ipcopmake asterisk
@@ -859,6 +861,7 @@ ipfirepackages() {
   ipfiredist procmail
   ipfiredist samba
   ipfiredist spamassassin
+  ipfiredist web-cyradm
   ipfiredist xampp
   ipfiredist xinetd
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
@@ -978,7 +981,6 @@ newpak)
 		cp $BASEDIR/lfs/postfix $BASEDIR/lfs/$2
 
 		touch ROOTFILES
-		touch CONFFILES
 		touch {,un}install.sh
 	## install.sh
 		echo '#!/bin/bash' > install.sh

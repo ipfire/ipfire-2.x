@@ -26,6 +26,7 @@
   * Net-Server-0.93
   * Net_SSLeay.pm-1.25
   * Python-2.3.4
+  * Text-Tabs+Wrap-2005.0824
   * URI-1.35
   * Unix-Syslog-0.100
   * amavisd-new-2.4.1
@@ -55,7 +56,6 @@
   * cups-1.1.23-source
   * cxacru-2003-10-05
   * cyrus-imapd-2.2.12
-  * cyrus-imapd-2.2.13
   * cyrus-sasl-2.1.21
   * cyrus-sasl-2.1.21-ldap
   * db-4.4.20
@@ -94,6 +94,7 @@
   * gdbm-1.8.3
   * gettext-0.14.1
   * glib-2.9.6
+  * glib-2.9.6_old
   * glibc-2.3.3-lfs-5.1
   * gmp-4.1.2
   * gnump3d-2.9.8
@@ -183,6 +184,7 @@
   * popt-1.7
   * portmap_5beta
   * postfix-2.2.10
+  * postfix-2.2.10_old
   * ppp-2.4.2
   * pptp-1.6.0
   * procinfo-18
@@ -223,6 +225,7 @@
   * util-linux-2.12r
   * vim-6.3
   * vlan.1.9
+  * web-cyradm-0.5.5-CVS-for-ipfire
   * wget-1.10.2
   * wput-0.6
   * xampp-linux-1.5.3a

@@ -26698,6 +26698,8 @@ usr/lib/perl5/site_perl/5.8.5/IO/WrapTie.pm
 #usr/share/man/man3/IO::Stringy.3
 #usr/share/man/man3/IO::Wrap.3
 #usr/share/man/man3/IO::WrapTie.3
+usr/lib/perl5/5.8.5/i386-linux/auto/Text
+#usr/lib/perl5/5.8.5/i386-linux/auto/Text/.packlist
 ##
 ## htop
 ##

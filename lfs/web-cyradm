@@ -26,23 +26,27 @@
 
 include Config
 
-VER        = 2.9.6
+VER        = 0.5.5-CVS-for-ipfire
 
-THISAPP    = glib-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = web-cyradm-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = web-cyradm
+PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) mail-db-mysql.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+mail-db-mysql.tar.gz = $(DL_FROM)/mail-db-mysql.tar.gz
 
-$(DL_FILE)_MD5 = 2ba1146e767454e14ac0788187c35892
+$(DL_FILE)_MD5 = 4764e91fd422edc9bbe9d63ed9f07d01
+mail-db-mysql.tar.gz_MD5 = 789ebf5ab48a430c77ca7c1a47a04281
 
 install : $(TARGET)
 
@@ -51,6 +55,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -71,9 +78,6 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install
-	@rm -rf $(DIR_APP)
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt/lampp/htdocs
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/mail-db-mysql.tar.gz -C /opt/lampp/var/mysql
 	@$(POSTBUILD)

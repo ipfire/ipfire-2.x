@@ -90,7 +90,7 @@ usr/lib/perl5/site_perl/5.8.5/Mail/SpamAssassin/Util.pm
 usr/lib/perl5/site_perl/5.8.5/Mail/SpamAssassin/Util/DependencyInfo.pm
 usr/lib/perl5/site_perl/5.8.5/Mail/SpamAssassin/Util/Progress.pm
 usr/lib/perl5/site_perl/5.8.5/Mail/SpamAssassin/Util/RegistrarBoundaries.pm
-#usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/Mail/SpamAssassin
+usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/Mail/SpamAssassin
 #usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/Mail/SpamAssassin/.packlist
 usr/lib/perl5/site_perl/5.8.5/spamassassin-run.pod
 #usr/share/man/man1/sa-learn.1
@@ -198,3 +198,17 @@ usr/share/spamassassin/languages
 usr/share/spamassassin/sa-update-pubkey.txt
 usr/share/spamassassin/triplets.txt
 usr/share/spamassassin/user_prefs.template
+usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/Digest/SHA1/SHA1.so
+usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/Digest/SHA1/SHA1.bs
+usr/lib/perl5/5.8.5/IPC
+usr/lib/perl5/5.8.5/Text
+usr/lib/perl5/site_perl/5.8.5/i386-linux/HTML
+usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/HTML/Parser/Parser.bs
+usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/HTML/Parser/Parser.so
+usr/lib/perl5/5.8.5/Pod/Usage.pm
+usr/lib/perl5/5.8.5/Pod/Text
+usr/lib/perl5/5.8.5/Pod/Text.pm
+usr/lib/perl5/5.8.5/Pod/ParseLink.pm
+usr/lib/perl5/5.8.5/Pod/Select.pm
+usr/lib/perl5/5.8.5/Pod/Parser.pm
+usr/lib/perl5/5.8.5/Pod/InputObjects.pm
