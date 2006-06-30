@@ -52,7 +52,7 @@ $(TARGET) :
 	# Create all directories
 	for i in addon-lang alcatelusb auth backup backup/sets ca certs cnx_pci crls ddns dhcp dhcpc dmzholes \
 	    eagle-usb eciadsl ethernet isdn key langs logging main modem net-traffic nfs optionsfw patches pakfire portfw \
-	    ppp private proxy/advanced qos red remote snort time uplinks vpn wireless xtaccess ; do \
+	    ppp private proxy/advanced qos red remote snort time urlfilter/autoupdate urlfilter/bin vpn wireless xtaccess ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
 	done
 

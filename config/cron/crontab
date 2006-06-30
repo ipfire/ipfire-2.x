@@ -34,3 +34,8 @@ HOME=/
 
 # hddshutdown
 00 * * * * 	/usr/local/bin/hddshutdown >/dev/null
+
+# URL Filter
+%nightly * 3-5   /var/ipfire/urlfilter/autoupdate/cron.daily
+%weekly  * 3-5   /var/ipfire/urlfilter/autoupdate/cron.weekly
+%monthly * 3-5 * /var/ipfire/urlfilter/autoupdate/cron.monthly

@@ -130,6 +130,12 @@ open FILE, $browserdb;
 @useragentlist = sort { reverse(substr(reverse(substr($a,index($a,',')+1)),index(reverse(substr($a,index($a,','))),',')+1)) cmp reverse(substr(reverse(substr($b,index($b,',')+1)),index(reverse(substr($b,index($b,','))),',')+1))} grep !/(^$)|(^\s*#)/,<FILE>;
 close(FILE);
 
+my %filtersettings=();
+$filtersettings{'CHILDREN'} = '5';
+if (-e "${General::swroot}/urlfilter/settings") {
+	&General::readhash("${General::swroot}/urlfilter/settings", \%filtersettings);
+}
+
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
@@ -152,6 +158,7 @@ if ($updacclrtr_addon) {
 
 &Header::showhttpheaders();
 
+$proxysettings{'ENABLE_FILTER'} = 'off';
 $proxysettings{'ACTION'} = '';
 $proxysettings{'VALID'} = '';
 
@@ -337,6 +344,15 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	{
 		$errormessage = $Lang::tr{'invalid maximum outgoing size'};
 		goto ERROR;
+	}
+	if ($proxysettings{'ENABLE_FILTER'} eq 'on')
+	{
+		print FILE <<END
+redirect_program /usr/bin/squidGuard
+redirect_children $filtersettings{'CHILDREN'}
+
+END
+		;
 	}
 	if (!($proxysettings{'TIME_TO_HOUR'}.$proxysettings{'TIME_TO_MINUTE'} gt $proxysettings{'TIME_FROM_HOUR'}.$proxysettings{'TIME_FROM_MINUTE'}))
 	{
@@ -715,6 +731,10 @@ $checked{'ENABLE_BROWSER_CHECK'}{'off'} = '';
 $checked{'ENABLE_BROWSER_CHECK'}{'on'} = '';
 $checked{'ENABLE_BROWSER_CHECK'}{$proxysettings{'ENABLE_BROWSER_CHECK'}} = "checked='checked'";
 
+$checked{'ENABLE_FILTER'}{'off'} = '';
+$checked{'ENABLE_FILTER'}{'on'} = '';
+$checked{'ENABLE_FILTER'}{$proxysettings{'ENABLE_FILTER'}} = "checked='checked'";
+
 foreach (@useragentlist) {
 	@useragent = split(/,/);
 	$checked{'UA_'.@useragent[0]}{'off'} = '';
@@ -864,6 +884,14 @@ END
 print <<END
 	</select>
 	</td>
+</tr>
+<tr>
+	<td colspan='4'><hr /><b>$Lang::tr{'urlfilter url filter'}</b></td>
+</tr>
+<tr>
+	<td width='25%' class='base'>$Lang::tr{'urlfilter enabled'}</td>
+	<td><input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
+	<td colspan='2'>&nbsp;</td>
 </tr>
 </table>
 <hr size='1'>
@@ -3414,7 +3442,7 @@ END
         	if ($proxysettings{'ENABLE_FILTER'} eq 'on')
 	        {
         	        print FILE <<END
-redirect_program /usr/sbin/squidGuard
+redirect_program /usr/bin/squidGuard
 redirect_children $filtersettings{'CHILDREN'}
 
 END

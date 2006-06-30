@@ -157,7 +157,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 
 	# give kernel the name ipfire
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/linux-2.4.31-ipfire.patch
+	# cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/linux-2.4.31-ipfire.patch
 
 ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass

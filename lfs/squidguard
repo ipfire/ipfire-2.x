@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidGuard-$(VER)-ipfire.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --datadir=/usr/share \
        	--sysconfdir=/etc --localstatedir=/var --infodir=/usr/info --mandir=/usr/man  \
-		--with-sg-config=/var/ipfire/proxy/squidguard.conf \
+		--with-sg-config=/var/ipfire/urlfilter/squidGuard.conf \
 		--with-sg-logdir=/var/log/squidguard --with-sg-dbhome=/var/lib/squidguard \
         	--with-db=/usr --with-db-inc=/usr/include --with-db-lib=/usr/lib
 	cd $(DIR_APP) && make
