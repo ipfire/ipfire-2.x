@@ -25,7 +25,7 @@ my %checked=();
 my $errormessage='';
 
 
-$cgiparams{'JAVASCRIPT'} = 'off';
+$cgiparams{'FX'} = 'off';
 $cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
 $cgiparams{'REFRESHINDEX'} = 'off';
 $cgiparams{'ACTION'} = '';
@@ -76,6 +76,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	$mainsettings{'LANGUAGE'} = $cgiparams{'lang'};
 	$mainsettings{'WINDOWWITHHOSTNAME'} = $cgiparams{'WINDOWWITHHOSTNAME'};
 	$mainsettings{'PPPUPDOWNBEEP'} = $cgiparams{'PPPUPDOWNBEEP'};
+	$mainsettings{'FX'} = $cgiparams{'FX'};
 	$mainsettings{'REFRESHINDEX'} = $cgiparams{'REFRESHINDEX'};
 	&General::writehash("${General::swroot}/main/settings", \%mainsettings);
 	&Lang::reload($cgiparams{'lang'});
@@ -93,6 +94,12 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 		$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	}
 
+	if ($mainsettings{'FX'}) {
+		$cgiparams{'FX'} = $mainsettings{'FX'};
+	} else {
+		$cgiparams{'FX'} = 'on';
+	}
+
 	if($mainsettings{'REFRESHINDEX'}) {
 		$cgiparams{'REFRESHINDEX'} = $mainsettings{'REFRESHINDEX'};
 	} else {
@@ -106,6 +113,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 	$cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
 	$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	$cgiparams{'REFRESHINDEX'} = 'off';
+	$cgiparams{'FX'} = 'on';
 }
 
 $checked{'WINDOWWITHHOSTNAME'}{'off'} = '';
@@ -119,6 +127,10 @@ $checked{'PPPUPDOWNBEEP'}{$cgiparams{'PPPUPDOWNBEEP'}} = "checked='checked'";
 $checked{'REFRESHINDEX'}{'off'} = '';
 $checked{'REFRESHINDEX'}{'on'} = '';
 $checked{'REFRESHINDEX'}{$cgiparams{'REFRESHINDEX'}} = "checked='checked'";
+
+$checked{'FX'}{'off'} = '';
+$checked{'FX'}{'on'} = '';
+$checked{'FX'}{$cgiparams{'FX'}} = "checked='checked'";
 
 &Header::openpage($Lang::tr{'gui settings'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -136,6 +148,10 @@ print <<END
 <table width='100%'>
 <tr>
     <td colspan='2'><p><b>$Lang::tr{'display'}</b></td>
+</tr>
+<tr>
+    <td><input type='checkbox' name='FX' $checked{'FX'}{'on'} /></td>
+    <td>$Lang::tr{'display webinterface effects'}</td>
 </tr>
 <tr>
     <td><input type='checkbox' name='WINDOWWITHHOSTNAME' $checked{'WINDOWWITHHOSTNAME'}{'on'} /></td>

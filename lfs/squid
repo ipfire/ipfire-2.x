@@ -103,27 +103,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	touch /var/log/squid/access.log
 	chown -R squid:squid /var/log/squid /var/log/cache
 
-	# URL-Filter
-	-mkdir /etc/squidGuard /home/httpd/html/repository
-	cp -f  $(DIR_CONF)/urlfilter/autoupdate.urls /var/ipfire/urlfilter/autoupdate/autoupdate.urls
-	ln -fs /bin/false /var/ipfire/urlfilter/autoupdate/cron.daily
-	ln -fs /bin/false /var/ipfire/urlfilter/autoupdate/cron.weekly
-	ln -fs /bin/false /var/ipfire/urlfilter/autoupdate/cron.monthly
-	cp -f  $(DIR_CONF)/urlfilter/squidGuard.conf /var/ipfire/urlfilter/squidGuard.conf
-	ln -fs /var/ipfire/urlfilter/squidGuard.conf /etc/squidGuard/squidGuard.conf
-	cp -f  $(DIR_CONF)/urlfilter/prebuild.pl /var/ipfire/urlfilter/bin/prebuild.pl
-	chmod 755 /var/ipfire/urlfilter/bin/prebuild.pl
-	cp -f  $(DIR_CONF)/urlfilter/autoupdate.pl /var/ipfire/urlfilter/bin/autoupdate.pl
-	chmod 755 /var/ipfire/urlfilter/bin/autoupdate.pl
-	echo "1.7.1" > /var/ipfire/urlfilter/version
-
-	/bin/tar --no-same-owner -xzf $(DIR_CONF)/urlfilter/blacklists.tar.gz -C /var/ipfire/urlfilter
-	/usr/bin/perl $(DIR_CONF)/urlfilter/makeconf.pl
-	chown -R nobody:nobody /var/ipfire/urlfilter
-	chown -R nobody:nobody /home/httpd/html/images/urlfilter
-	chown -R nobody:nobody /home/httpd/html/repository
-	touch /var/log/squidGuard
-	chown -R squid:squid /var/log/squidGuard
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

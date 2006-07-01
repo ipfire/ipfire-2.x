@@ -29,7 +29,6 @@
   * Text-Tabs+Wrap-2005.0824
   * URI-1.35
   * Unix-Syslog-0.100
-  * amavisd-new-2.4.1
   * amedyn-2004-08-04
   * apache_1.3.34
   * applejuice-0.30
@@ -94,7 +93,6 @@
   * gdbm-1.8.3
   * gettext-0.14.1
   * glib-2.9.6
-  * glib-2.9.6_old
   * glibc-2.3.3-lfs-5.1
   * gmp-4.1.2
   * gnump3d-2.9.8
@@ -184,7 +182,6 @@
   * popt-1.7
   * portmap_5beta
   * postfix-2.2.10
-  * postfix-2.2.10_old
   * ppp-2.4.2
   * pptp-1.6.0
   * procinfo-18

@@ -1507,5 +1507,6 @@
 'urlfilter export error' => 'Unable to create export file',
 'urlfilter update notification' => 'Update notification!',
 'urlfilter update information' => 'There is an updated version available for download. Visit <a href="http://www.urlfilter.net" target="_blank">http://www.urlfilter.net</a> for more information.',
+'display webinterface effects' => 'Activate effects',
 
 );
