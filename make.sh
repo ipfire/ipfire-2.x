@@ -55,6 +55,7 @@
   mkdir $BASEDIR/log/ 2>/dev/null
 
   if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE -o 'i486' = $MACHINE -o 'i386' = $MACHINE ]; then
+
 	echo "`date -u '+%b %e %T'`: Machine is ix86 (or equivalent)" | tee -a $LOGFILE
 	MACHINE=i386
 	BUILDTARGET=i386-pc-linux-gnu
@@ -894,8 +895,17 @@ build)
 		echo "`date -u '+%b %e %T'`: Using installed toolchain" | tee -a $LOGFILE
 		prepareenv
 	fi
+
 	buildbase
 	buildipcop
+
+	# Setzen des IPFire Builds
+	if [ -e ./.svn ]; then
+		cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p' > $LFS/home/httpd/html/firebuild
+	else
+		echo "_(OvO)_" > $LFS/home/httpd/html/firebuild
+	fi
+
 	buildinstaller
 	buildpackages
 	;;
