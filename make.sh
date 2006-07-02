@@ -33,6 +33,12 @@
   KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
   MACHINE=`uname -m`
 
+  # Setzen des IPFire Builds
+  if [ -e ./.svn ]; then
+    FIREBUILD=`cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p'`
+#    VERSION="$VERSION (Build:$FIREBUILD)"
+  fi
+
   # Debian specific settings
   if [ ! -e /etc/debian_version ]; then
 	FULLPATH=`which $0`
@@ -900,10 +906,10 @@ build)
 	buildipcop
 
 	# Setzen des IPFire Builds
-	if [ -e ./.svn ]; then
-		cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p' > $LFS/home/httpd/html/firebuild
+	if [ $FIREBUILD ]; then
+		echo "$FIREBUILD" > $CONFIG_ROOT/firebuild
 	else
-		echo "_(OvO)_" > $LFS/home/httpd/html/firebuild
+		echo "_(OvO)_" > $CONFIG_ROOT/firebuild
 	fi
 
 	buildinstaller

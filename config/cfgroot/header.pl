@@ -87,6 +87,13 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
     };
 };
 
+### Read IPFire Buildversion
+$FIREBUILD = "Datei firebuild nicht gefunden\n";
+if (open(MYFile, "<${swroot}/firebuild")) {
+    $FIREBUILD = <MYFile>;
+    $FIREBUILD = "(Build: $FIREBUILD)";
+    close(_File);
+};
 
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
@@ -714,7 +721,7 @@ sub openpage {
     my $h2 = gettitle($menu);
     my $helpuri = get_helpuri();
 
-    $title = "IPFire - $title";
+    $title = "IPFire - $title $FIREBUILD";
     if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
         $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
     }
