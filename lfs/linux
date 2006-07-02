@@ -187,7 +187,7 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.29_r8169clone.patch
 
 	# bootsplash
-	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/bootsplash-3.0.7-2.4.31-vanilla.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bootsplash-3.0.7-2.4.31-vanilla.diff
 
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper

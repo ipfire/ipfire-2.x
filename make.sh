@@ -679,6 +679,10 @@ buildipcop() {
   ipcopmake java
   ipcopmake libtiff
   ipcopmake libjpeg
+  ipcopmake lcms
+  ipcopmake libmng
+  ipcopmake freetype
+  ipcopmake bootsplash
   ipcopmake libxml2
   ipcopmake spandsp
   ipcopmake lzo
