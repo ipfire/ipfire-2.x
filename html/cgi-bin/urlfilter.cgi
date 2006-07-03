@@ -1433,8 +1433,7 @@ print <<END
 	<img src='/blob.gif' align='top' alt='*' />&nbsp;
 	<font class='base'>$Lang::tr{'this field may be blank'}</font>
 	</td>
-	<td align='right'>
-<sup><small><a href='http://www.urlfilter.net' target='_blank'>URL filter</a></small></sup>
+	<td align='right'>&nbsp;
 </td>
 </tr>
 </table>

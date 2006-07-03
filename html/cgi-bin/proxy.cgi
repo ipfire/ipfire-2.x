@@ -731,10 +731,6 @@ $checked{'ENABLE_BROWSER_CHECK'}{'off'} = '';
 $checked{'ENABLE_BROWSER_CHECK'}{'on'} = '';
 $checked{'ENABLE_BROWSER_CHECK'}{$proxysettings{'ENABLE_BROWSER_CHECK'}} = "checked='checked'";
 
-$checked{'ENABLE_FILTER'}{'off'} = '';
-$checked{'ENABLE_FILTER'}{'on'} = '';
-$checked{'ENABLE_FILTER'}{$proxysettings{'ENABLE_FILTER'}} = "checked='checked'";
-
 foreach (@useragentlist) {
 	@useragent = split(/,/);
 	$checked{'UA_'.@useragent[0]}{'off'} = '';
@@ -1441,23 +1437,6 @@ print <<END
 <hr size='1'>
 END
 ;
-
-if ($urlfilter_addon) {
-	print <<END
-<table width='100%'>
-<tr>
-        <td colspan='4'><b>$Lang::tr{'advproxy url filter'}</b></td>
-</tr>
-<tr>
-        <td class='base' width='25%'>$Lang::tr{'advproxy enabled'}:</td>
-        <td><input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-</tr>
-</table>
-<hr size='1'>
-END
-; }
 
 if (($updacclrtr_addon) && (!($urlfilter_addon))) {
 	print <<END
