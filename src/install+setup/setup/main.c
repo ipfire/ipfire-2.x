@@ -9,7 +9,7 @@
  * modified 16/11/2002 eoberlander - French language added
  *
  * $Id: main.c,v 1.4.2.7 2005/12/01 20:13:08 eoberlander Exp $
- * 
+ *
  */
 
 #include "setup.h"
@@ -63,10 +63,10 @@ int main(int argc, char *argv[])
 	char title[STRING_SIZE];
 	int langcounter;
 	int autook = 0;
-	
+
 	/* Log file/terminal stuff. */
 	if (argc >= 2)
-		mylog = argv[1];	
+		mylog = argv[1];
 	else
 		mylog = strdup("/root/setup.log");
 
@@ -75,12 +75,12 @@ int main(int argc, char *argv[])
 		printf("Couldn't open log terminal\n");
 		return 1;
 	}
-	
+
 	if (argc >= 3)
 		automode = 1;
-	
+
 	fprintf(flog, "Setup program started.\n");
-		
+
 	kv = initkeyvalues();
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	findkey(kv, "LANGUAGE", selectedshortlang);
-	
+
 	for (langcounter = 0; langtrs[langcounter]; langcounter++)
 	{
 		if (strcmp(selectedshortlang, shortlangnames[langcounter]) == 0)
@@ -116,20 +116,20 @@ int main(int argc, char *argv[])
 	sections[2] = ctr[TR_HOSTNAME];
 	sections[3] = ctr[TR_DOMAINNAME];
 	sections[4] = ctr[TR_ISDN_CONFIGURATION];
-	sections[5] = ctr[TR_NETWORKING];	
+	sections[5] = ctr[TR_NETWORKING];
 	sections[6] = ctr[TR_ROOT_PASSWORD];
 	sections[7] = ctr[TR_ADMIN_PASSWORD];
 	sections[8] = NULL;
-	
+
 	newtInit();
 	newtCls();
 	FILE *f_title;
-	if ((f_title = fopen ("/etc/issue", "r"))) 
+	if ((f_title = fopen ("/etc/issue", "r")))
 	{
 	    fgets (title, STRING_SIZE, f_title);
 	    if (title[strlen(title) - 1] == '\n')
 		title[strlen(title) - 1] = '\0';
-	    fclose (f_title);	
+	    fclose (f_title);
 	} else {
 	    sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
 	}
@@ -144,24 +144,24 @@ int main(int argc, char *argv[])
 			rc = newtWinMenu(ctr[TR_SECTION_MENU],
 				ctr[TR_SELECT_THE_ITEM], 50, 5, 5, 11,
 				sections, &choice, ctr[TR_OK], ctr[TR_QUIT], NULL);
-			
+
 			if (rc == 2)
 				break;
-			
+
 			switch (choice)
 			{
 				case 0:
 					handlekeymap();
 					break;
-				
+
 				case 1:
 					handletimezone();
 					break;
-					
+
 				case 2:
 					handlehostname();
 					break;
-				
+
 				case 3:
 					handledomainname();
 					break;
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 				case 5:
 					handlenetworking();
 					break;
-									
+
 				case 6:
 					handlerootpassword();
 					break;
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
 		if (!(handlekeymap()))
 			goto EXIT;
 		if (!(handletimezone()))
-			goto EXIT;	
+			goto EXIT;
 		if (!(handlehostname()))
 			goto EXIT;
 		if (!(handledomainname()))

@@ -912,7 +912,7 @@ build)
 	buildipcop
 
 	# Setzen des IPFire Builds
-	if [ $FIREBUILD ]; then
+	if [ "$FIREBUILD" ]; then
 		echo "$FIREBUILD" > $CONFIG_ROOT/firebuild
 	else
 		echo "_(OvO)_" > $CONFIG_ROOT/firebuild
