@@ -78,5 +78,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /etc/bootsplash/themes/current
 	cd $(DIR_APP) && cp -Rf $(DIR_CONF)/bootsplash/* /etc/bootsplash/themes
 	-find /etc/bootsplash/themes -name .svn -exec rm -rf {} \;
+	ln -fs /etc/bootsplash/themes/ipfire1 /etc/bootsplash/themes/current
+	# Set screens for console... Maybe this doesn't work and has to be done at each boot?!
+	for i in `seq 0 5`; do \
+		splash -s -n -u $1 /etc/bootsplash/themes/current/config/bootsplash-1024x768.cfg \
+	done
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
