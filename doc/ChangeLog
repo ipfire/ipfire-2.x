@@ -1,4 +1,81 @@
 ------------------------------------------------------------------------
+r193 | ms | 2006-07-03 20:50:48 +0200 (Mo, 03 Jul 2006) | 5 lines
+
+Geändert:
+  * Umfassende Fixes beim URL-Filter. - Erfolgreich getestet.
+  * Falsche MD5-Sum in lfs/freetype
+  * Dateien in ISO geschoben und noch überflüssige gelöscht.
+
+------------------------------------------------------------------------
+r192 | ms | 2006-07-02 13:54:34 +0200 (So, 02 Jul 2006) | 4 lines
+
+Hinzugefügt:
+  * Libs und Fonts für Bootsplash
+  * Bootsplash-Binaries selber
+
+------------------------------------------------------------------------
+r191 | casemaster | 2006-07-02 11:16:40 +0200 (So, 02 Jul 2006) | 2 lines
+
+Das Build wird jetzt im Browserkopf angezeigt
+
+------------------------------------------------------------------------
+r190 | casemaster | 2006-07-02 00:15:17 +0200 (So, 02 Jul 2006) | 2 lines
+
+Änderung am Linux-Kernel (BootSplash)
+
+------------------------------------------------------------------------
+r189 | casemaster | 2006-07-01 21:50:22 +0200 (Sa, 01 Jul 2006) | 3 lines
+
+Fehlende Datei für Bootsplash nachgereicht.
+
+
+------------------------------------------------------------------------
+r188 | ms | 2006-07-01 16:36:04 +0200 (Sa, 01 Jul 2006) | 5 lines
+
+Geändert:
+  * URL-Filter gefixt.
+  * Überblendungen sind an- und ausschaltbar.
+  * GLIB in ISO für MC.
+
+------------------------------------------------------------------------
+r187 | casemaster | 2006-07-01 13:46:39 +0200 (Sa, 01 Jul 2006) | 3 lines
+
+Fehlerbereinigung beim URL-Filter
+Anfang für Bootsplash integriert
+
+------------------------------------------------------------------------
+r186 | ms | 2006-06-30 16:31:17 +0200 (Fr, 30 Jun 2006) | 3 lines
+
+Geändert:
+  * Leider wurden die CGIs 3x hintereinander in die Datei geschrieben. :(
+
+------------------------------------------------------------------------
+r185 | ms | 2006-06-30 16:25:35 +0200 (Fr, 30 Jun 2006) | 3 lines
+
+Hinzugefügt:
+  * URL-Filter
+
+------------------------------------------------------------------------
+r184 | ms | 2006-06-29 22:38:22 +0200 (Do, 29 Jun 2006) | 8 lines
+
+Hinzugefügt:
+  * Kernel trägt den Namen ipfire.
+  * Perl-Modul für Spamassassin
+  * Web-Cyradm
+Geändert:
+  * Postfix kompilierte nicht mit SASL2-Support
+  * GLIB ohne NLS.
+
+------------------------------------------------------------------------
+r183 | ms | 2006-06-27 13:49:06 +0200 (Di, 27 Jun 2006) | 6 lines
+
+Hinzugefügt:
+  * Weitere Fortschritte im QoS-GUI
+  * Cyrus-Konfiguration bearbeitet.
+Update:
+  * Changelog aktualisiert
+
+------------------------------------------------------------------------
 r182 | ms | 2006-06-24 23:57:29 +0200 (Sa, 24 Jun 2006) | 4 lines
 
 Hinzugefügt:

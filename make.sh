@@ -849,9 +849,11 @@ buildpackages() {
 }
 
 ipfirepackages() {
-  for i in `ls $BASEDIR/packages`; do
-	touch $BASEDIR/build/install/packages/$i.empty
-  done
+  if [ -d "$BASEDIR/packages" ]; then
+	  for i in `ls $BASEDIR/packages`; do
+		touch $BASEDIR/build/install/packages/$i.empty
+	  done
+  fi
   ipfiredist amavisd
   ipfiredist applejuice
   ipfiredist asterisk

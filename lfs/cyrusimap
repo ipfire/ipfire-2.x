@@ -122,5 +122,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown cyrus.mail /var/imap/socket
 	# Wenn das Dateisystem ext2 waere...
 	# cd /var/imap && chattr +S user quota user/* quota/* && chattr +S /var/spool/imap /var/spool/imap/*
+	# Give user cyrus a password
+	echo cyrus:ipfire | /usr/sbin/chpasswd
 	@rm -rf $(DIR_APP) /usr/include/com_err.h
 	@$(POSTBUILD)

@@ -26583,14 +26583,7 @@ usr/lib/libfreetype.so.6.3.8
 ## bootsplash 3.0.7
 ##
 sbin/splash
-#etc/bootsplash
-#etc/bootsplash/themes
-#etc/bootsplash/themes/current
-#etc/bootsplash/themes/current/config
-etc/bootsplash/themes/current/config/bootsplash-1024x768.cfg
-#etc/bootsplash/themes/current/images
-etc/bootsplash/themes/current/images/bootsplash-1024x768.jpg
-etc/bootsplash/themes/current/images/silent-1024x768.jpg
+etc/bootsplash
 ##
 ## lcms
 ##

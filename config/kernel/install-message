@@ -1,21 +1,21 @@
 
-        Welcome to IPFire, Licensed under GNU GPL version 2. 
+        Willkommen bei IPFire - GNU GPL version 2.
 
-        PLEASE BEWARE!  This installation process will kill all 
-        existing partitions on your PC or server. Please be aware
-        of this before continuing this installation.  
+        ACHTUNG! Dieser Installationsprozess löscht alle
+        vorhandenen Partitionen auf der Festplatte.
 
         --------------------------------------------------
-        ----                                          ----
+        ---- ALLE EXISTIERENDEN DATEN WERDEN GELÖSCHT ----
         ---- ALL YOUR EXISTING DATA WILL BE DESTROYED ----
-        ----                                          ----
         --------------------------------------------------
 
-        Press RETURN to boot IPFire default installation.
+        Drücken Sie ENTER um die IPFire-Installation 
+        zu starten.
 
-        Or, if you are having trouble you can try these options....
-        Type:   nopcmcia to disable PCMCIA detection
-                nousb to disable USB detection
-                nousborpcmcia to disable both PCMCIA & USB detection
-                dma to enable ide dma (SiS chipset workaround)
+        Gibt es Probleme, so versuchen Sie diese Optionen...
+                nopcmcia um die PCMCIA-Detektierung 
+                         zu deaktivieren.
+                nousb    um die USB-Unterstützung auszuschalten.
+                nousborpcmcia schaltet USB & PCMCIA aus.
+                dma      schaltet IDE-DMA ein (SiS chipset workaround)
 
