@@ -26,19 +26,23 @@ my $direntry = "";
 my $classentry = "";
 my $subclassentry = "";
 my $l7ruleentry = "";
+my $portruleentry = "";
 my @tmp = ();
 my @classes = ();
 my @subclasses = ();
 my @l7rules = ();
+my @portrules = ();
 my @tmpline = ();
 my @classline = ();
 my @subclassline = ();
 my @l7ruleline = ();
+my @portruleline = ();
 my @proto = ();
 my %selected= () ;
 my $classfile = "/var/ipfire/qos/classes";
 my $subclassfile = "/var/ipfire/qos/subclasses";
 my $level7file = "/var/ipfire/qos/level7config";
+my $portfile = "/var/ipfire/qos/portconfig";
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 &Header::showhttpheaders();
@@ -47,17 +51,46 @@ $qossettings{'ENABLED'} = 'off';
 $qossettings{'EDIT'} = 'no';
 $qossettings{'OUT_SPD'} = '';
 $qossettings{'INC_SPD'} = '';
+$qossettings{'DEF_OUT_SPD'} = '';
+$qossettings{'DEF_INC_SPD'} = '';
 $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
 $qossettings{'ACK'} = '';
+$qossettings{'MTU'} = '1492';
+$qossettings{'QLENGTH'} = '30';
 $qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'VALID'} = 'yes';
+### Values that have to be initialized
+$qossettings{'ACTION'} = '';
+$qossettings{'ACTIONDEF'} = '';
+$qossettings{'ACTIONBW'} = '';
+$qossettings{'PRIO'} = '';
+$qossettings{'SPD'} = '';
+$qossettings{'CLASS'} = '';
+$qossettings{'SCLASS'} = '';
+$qossettings{'QPORT'} = '';
+$qossettings{'DPORT'} = '';
+$qossettings{'QIP'} = '';
+$qossettings{'DIP'} = '';
+$qossettings{'PPROT'} = '';
+$qossettings{'L7PROT'} = '';
+$qossettings{'DEVICE'} = '';
+$qossettings{'MINBWDTH'} = '';
+$qossettings{'MAXBWDTH'} = '';
+$qossettings{'BURST'} = '';
+$qossettings{'CBURST'} = '';
+$qossettings{'DOCLASS'} = '';
+$qossettings{'DOSCLASS'} = '';
+$qossettings{'DOLEVEL7'} = '';
+$qossettings{'DOPORT'} = '';
+
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 &Header::getcgihash(\%qossettings);
 
 &Header::openpage('QoS', 1, '');
+
 print <<END
 <script type="text/javascript">
 <!--
@@ -90,7 +123,10 @@ END
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if ($qossettings{'DO_CLASS'} eq $Lang::tr{'save'})
+############################################################################################################################
+############################################################################################################################
+
+if ($qossettings{'DOCLASS'} eq $Lang::tr{'save'})
 {
 	&validclass();
 	&validminbwdth();
@@ -106,7 +142,7 @@ END
 		$qossettings{'ACTION'} = 'Parentklasse hinzufuegen';
 	}
 }
-elsif ($qossettings{'DO_CLASS'} eq 'Bearbeiten')
+elsif ($qossettings{'DOCLASS'} eq 'Bearbeiten')
 {
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@classes = <FILE>;
@@ -133,7 +169,7 @@ elsif ($qossettings{'DO_CLASS'} eq 'Bearbeiten')
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'DO_CLASS'} eq 'Loeschen')
+elsif ($qossettings{'DOCLASS'} eq 'Loeschen')
 {
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@tmp = <FILE>;
@@ -148,9 +184,26 @@ elsif ($qossettings{'DO_CLASS'} eq 'Loeschen')
 		}
 	}
 	close FILE;
-	$message = "Klasse $qossettings{'CLASS'} wurde geloescht.";
+	open( FILE, "< $subclassfile" ) or die "Unable to read $classfile";
+	@tmp = <FILE>;
+	close FILE;
+	open( FILE, "> $subclassfile" ) or die "Unable to write $classfile";
+	foreach $subclassentry (sort @tmp)
+	{
+		@tmpline = split( /\;/, $subclassentry );
+		if ( $tmpline[1] ne $qossettings{'CLASS'} )
+		{
+			print FILE $subclassentry;
+		}
+	}
+	close FILE;
+	$message = "Klasse $qossettings{'CLASS'} wurde mit eventuell vorhandenen Unterklassen geloescht.";
 }
-if ($qossettings{'DO_SCLASS'} eq $Lang::tr{'save'})
+
+############################################################################################################################
+############################################################################################################################
+
+if ($qossettings{'DOSCLASS'} eq $Lang::tr{'save'})
 {
 	if ($qossettings{'SCLASS'} >= 1000 && $qossettings{'CLASS'} < 1021) {
 		$qossettings{'DEVICE'} = $qossettings{'RED_DEV'};
@@ -169,7 +222,7 @@ END
 	} else {
 		$qossettings{'ACTION'} = 'Unterklasse hinzufuegen';
 	}
-} elsif ($qossettings{'DO_SCLASS'} eq 'Loeschen')
+} elsif ($qossettings{'DOSCLASS'} eq 'Loeschen')
 {
 	open( FILE, "< $subclassfile" ) or die "Unable to read $classfile";
 	@tmp = <FILE>;
@@ -186,7 +239,11 @@ END
 	close FILE;
 	$message = "Unterklasse $qossettings{'CLASS'} wurde geloescht.";
 }
-if ($qossettings{'DO_LEVEL7'} eq $Lang::tr{'save'})
+
+############################################################################################################################
+############################################################################################################################
+
+if ($qossettings{'DOLEVEL7'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
 		unless ( &General::validip($qossettings{'QIP'}) ) { 
@@ -220,7 +277,7 @@ END
 		$qossettings{'ACTION'} = 'Level7-Regel hinzufuegen';
 	}
 } 
-elsif ($qossettings{'DO_LEVEL7'} eq 'Loeschen')
+elsif ($qossettings{'DOLEVEL7'} eq 'Loeschen')
 {
 	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 	@l7rules = <FILE>;
@@ -237,20 +294,92 @@ elsif ($qossettings{'DO_LEVEL7'} eq 'Loeschen')
 	close FILE;
 	$message = "Level7-Regel ($qossettings{'CLASS'} - $qossettings{'L7PROT'}) wurde geloescht.";
 }
+
+############################################################################################################################
+############################################################################################################################
+
+if ($qossettings{'DOPORT'} eq $Lang::tr{'save'})
+{
+	if ( $qossettings{'QIP'} ne '' ) {
+		unless ( &General::validip($qossettings{'QIP'}) ) { 
+			$qossettings{'VALID'} = 'no';
+			$message = "Die Quell-IP-Adresse ist ungueltig."; 
+		}
+	}
+	if ( $qossettings{'DIP'} ne '' ) {
+		unless ( &General::validip($qossettings{'DIP'}) ) { 
+			$qossettings{'VALID'} = 'no';
+			$message = "Die Ziel-IP-Adresse ist ungueltig."; 
+		}
+	}
+	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
+		$qossettings{'DEVICE'} = $qossettings{'RED_DEV'};
+	} elsif ($qossettings{'CLASS'} >= 1000 && $qossettings{'CLASS'} < 1021) {
+		$qossettings{'DEVICE'} = $qossettings{'RED_DEV'};
+	} elsif ($qossettings{'CLASS'} >= 200 && $qossettings{'CLASS'} < 221) {
+		$qossettings{'DEVICE'} = $qossettings{'IMQ_DEV'};
+	} elsif ($qossettings{'CLASS'} >= 2000 && $qossettings{'CLASS'} < 2021) {
+		$qossettings{'DEVICE'} = $qossettings{'IMQ_DEV'};
+	}
+	if ( $qossettings{'VALID'} eq 'yes' ) {
+		open( FILE, ">> $portfile" ) or die "Unable to write $portfile";
+		print FILE <<END
+$qossettings{'CLASS'};$qossettings{'DEVICE'};$qossettings{'PPROT'};$qossettings{'QIP'};$qossettings{'QPORT'};$qossettings{'DIP'};$qossettings{'DPORT'};
+END
+;
+		close FILE;
+	} else {
+		$qossettings{'ACTION'} = 'Port-Regel hinzufuegen';
+	}
+} elsif ($qossettings{'DOPORT'} eq 'Loeschen')
+{
+	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
+	@portrules = <FILE>;
+	close FILE;
+	open( FILE, "> $portfile" ) or die "Unable to read $portfile";
+  	foreach $portruleentry (sort @portrules)
+  	{
+  		@portruleline = split( /\;/, $portruleentry );
+  		unless ( ($portruleline[0] eq $qossettings{'CLASS'}) && ($portruleline[2] eq $qossettings{'PPROT'}) && ($portruleline[3] eq $qossettings{'QIP'}) && ($portruleline[4] eq $qossettings{'QPORT'}) && ($portruleline[5] eq $qossettings{'DIP'}) && ($portruleline[6] eq $qossettings{'DPORT'}))
+  		{
+			print FILE $portruleentry;
+		}
+	}
+	close FILE;
+	$message = "Port-Regel ($qossettings{'CLASS'} - $qossettings{'PPROT'}) wurde geloescht.";
+}
+
+############################################################################################################################
+############################################################################################################################
+
 if ($qossettings{'ACTION'} eq 'Start')
 {
+	system("sleep 2 && /usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh &");
 	system("/bin/touch /var/ipfire/qos/enable");
 	$qossettings{'ENABLED'} = 'on';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 }
 elsif ($qossettings{'ACTION'} eq 'Stop')
 {
+	unlink "/var/ipfire/qos/bin/qos.sh";
 	unlink "/var/ipfire/qos/enable";
 	$qossettings{'ENABLED'} = 'off';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 }
+elsif ($qossettings{'ACTION'} eq 'Neustart')
+{
+	if ($qossettings{'ENABLED'} eq 'on'){
+		system("sleep 2 && /usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh &");
+	}
+}
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'save'})
 {
+	if ($qossettings{'DEF_INC_SPD'} eq '') {
+		$qossettings{'DEF_INC_SPD'} = int($qossettings{'INC_SPD'} * 0.9);
+	}
+	if ($qossettings{'DEF_OUT_SPD'} eq '') {
+		$qossettings{'DEF_OUT_SPD'} = int($qossettings{'OUT_SPD'} * 0.9);
+	}
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 }
 elsif ($qossettings{'ACTION'} eq 'Parentklasse hinzufuegen')
@@ -281,14 +410,21 @@ elsif ($qossettings{'ACTION'} eq 'Port-Regel hinzufuegen')
 	&Header::closepage();
 	exit
 }
-if ($qossettings{'ACTION_BW'} eq 'Andern')
+elsif ($qossettings{'ACTION'} eq 'Erweiterte Einstellungen')
+{
+	&expert();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit
+}
+if ($qossettings{'ACTIONBW'} eq 'Andern')
 {
 	&changebandwidth();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
 }
-if ($qossettings{'ACTION_DEF'} eq 'Andern')
+if ($qossettings{'ACTIONDEF'} eq 'Andern')
 {
 	&changedefclasses();
 	&Header::closebigbox();
@@ -299,10 +435,10 @@ if ($qossettings{'ACTION_DEF'} eq 'Andern')
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 
 my $status = $Lang::tr{'stopped'};
-my $statuscolor = $Header::colourred;
+my $statuscolor = '#993333';
 if ( $qossettings{'ENABLED'} eq 'on' ) {
   $status = $Lang::tr{'running'};
-  $statuscolor = $Header::colourgreen;
+  $statuscolor = '#339933';
 }
 
 if ( $netsettings{'RED_TYPE'} ne 'PPPOE' ) {
@@ -341,7 +477,7 @@ END
 		print <<END
 		<tr><td colspan='3'>&nbsp;
 		<tr><td width='40%' align='right'>Downloadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'INC_SPD'} kbps
-		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTION_BW' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Andern'>
+		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='Andern'>
 		<tr><td width='40%' align='right'>Uploadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'OUT_SPD'} kbps
 END
 ;
@@ -350,11 +486,11 @@ END
 		print <<END
 		<tr><td colspan='3'><hr>
 		<tr><td width='40%' align='right'>Downloadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_INC'}	
-		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTION_DEF' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Andern'>
+		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern'>
 		<tr><td width='40%' align='right'>Uploadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr>
-		<tr><td colspan='3' width='100%' align='center'><input type='submit' name='ACTION' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Parentklasse hinzufuegen'>
+		<tr><td colspan='3' width='100%' align='center'><input type='submit' name='ACTION' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Parentklasse hinzufuegen'><input type='submit' name='ACTION' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Erweiterte Einstellungen'>
 	</form>
 END
 ;
@@ -379,6 +515,7 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 
 &showclasses();
 &showl7rules();
+&showportrules();
 
 &Header::closebigbox();
 &Header::closepage();
@@ -444,6 +581,7 @@ sub changebandwidth {
 	} else {
 		print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='hidden' name='DEF_OUT_SPD' value=''><input type='hidden' name='DEF_INC_SPD' value=''>
 		<table width='66%'>
 		<tr><td width='100%' colspan='3'>Geben Sie bitte hier ihre Download- bzw. Upload-Geschwindigkeit ein <br> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='33%' align='right'>Download-Geschwindigkeit:
@@ -539,7 +677,7 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ceilburst:
 		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value=$qossettings{'CBURST'}>
-		    <td width='33%' align='center'><input type='submit' name='DO_CLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
+		    <td width='33%' align='center'><input type='submit' name='DOCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
 		</table></form>
 END
 ;
@@ -604,13 +742,12 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ceilburst:
 		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value=$qossettings{'CBURST'}>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DO_SCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DOSCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
 		</table></form>
 END
 ;
 	&Header::closebox();
 }
-
 
 sub level7rule {
 	&Header::openbox('100%', 'center', 'Level7-Regel');
@@ -650,7 +787,7 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
 		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'}>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DO_LEVEL7' value=$Lang::tr{'save'} />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DOLEVEL7' value=$Lang::tr{'save'} />
 		</table></form>
 END
 ;
@@ -663,9 +800,6 @@ sub portrule {
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='33%' align='right'>Name:
-		    <td width='33%' align='left'><input type='text' name='NAME' maxlength='20' value=$qossettings{'NAME'}>
-		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Protokoll:
 		    <td width='33%' align='left'><select name='PPROT'>
 END
@@ -696,7 +830,7 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
 		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'}>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}'><input type='submit' name='DOPORT' value=$Lang::tr{'save'} />
 		</table></form>
 END
 ;
@@ -739,11 +873,11 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
 				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$classline[1]'>
-					<button type='submit' name='DO_CLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+					<button type='submit' name='DOCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
 					<button type='submit' name='ACTION' value='Unterklasse hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addblue.gif' width="20" height="20" alt="Unterklasse hinzufuegen"></button>&nbsp;
 					<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
 					<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-					<button type='submit' name='DO_CLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+					<button type='submit' name='DOCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
 				</form>
 END
 ;
@@ -761,10 +895,10 @@ END
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
 							    <td align='right'  bgcolor='#FAFAFA'><input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<button type='submit' name='DO_SCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+								<button type='submit' name='DOSCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
 								<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
 								<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-								<button type='submit' name='DO_SCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+								<button type='submit' name='DOSCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
 						</form>
 END
 ;
@@ -788,11 +922,11 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
 				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$classline[1]'>
-					<button type='submit' name='DO_CLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+					<button type='submit' name='DOCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
 					<button type='submit' name='ACTION' value='Unterklasse hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addblue.gif' width="20" height="20" alt="Unterklasse hinzufuegen"></button>&nbsp;
 					<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
 					<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-					<button type='submit' name='DO_CLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+					<button type='submit' name='DOCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
 				</form>
 END
 ;
@@ -810,10 +944,10 @@ END
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
 							    <td align='right'  bgcolor='#FAFAFA'><input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<button type='submit' name='DO_SCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+								<button type='submit' name='DOSCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
 								<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
 								<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-								<button type='submit' name='DO_SCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+								<button type='submit' name='DOSCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
 						</form>
 END
 ;
@@ -821,7 +955,11 @@ END
 				}
 	  		}
 	  	}
-		print "\t</table>\n";
+		print <<END
+		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Klasse bearbeiten | <img src='/images/addblue.gif'>&nbsp;Unterklasse hinzufuegen | <img src='/images/addgreen.gif'>&nbsp;Level7-Regel hinzufuegen | <img src='/images/add.gif'>&nbsp;Port-Regel hinzufuegen | <img src='/images/delete.gif'>&nbsp;Klasse loeschen &nbsp;
+		</table>
+END
+;
 		&Header::closebox();
 	}
 }
@@ -855,8 +993,8 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[3]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[4]
 				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$l7ruleline[0]'><input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-					<button type='submit' name='DO_LEVEL7' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='DO_LEVEL7' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+					<button type='submit' name='DOLEVEL7' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+					<button type='submit' name='DOLEVEL7' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
 				</form>
 END
 ;
@@ -876,18 +1014,137 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[3]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[4]
 				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$l7ruleline[0]'><input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-					<button type='submit' name='DO_LEVEL7' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='DO_LEVEL7' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+					<button type='submit' name='DOLEVEL7' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+					<button type='submit' name='DOLEVEL7' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
 				</form>
 END
 ;
 	  		}
 	  	}
-		print "\t</table>\n";
+		print <<END
+		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Regel bearbeiten | <img src='/images/delete.gif'>&nbsp;Regel loeschen &nbsp;
+		</table>
+END
+;
 		&Header::closebox();
 	}
 }
 
+sub showportrules {
+	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
+	@portrules = <FILE>;
+	close FILE;
+	if (@portrules) {
+		&Header::openbox('100%', 'center', 'Port-Regeln');
+		print <<END
+		<table border='0' width='100%' cellspacing='0'>
+		<tr><td bgcolor='lightgrey' width='10%'>Interface
+		    <td bgcolor='lightgrey' width='10%'>Klasse
+		    <td bgcolor='lightgrey' width='10%'>Protokoll
+		    <td bgcolor='lightgrey' width='10%'>Quell-IP-Adresse
+		    <td bgcolor='lightgrey' width='10%'>Quell-Port
+		    <td bgcolor='lightgrey' width='10%'>Ziel-IP-Adresse
+		    <td bgcolor='lightgrey' width='10%'>Ziel-Port
+		    <td bgcolor='lightgrey' width='30%'>Aktionen
+END
+;
+	  	foreach $portruleentry (sort @portrules)
+	  	{
+	  		@portruleline = split( /\;/, $portruleentry );
+	  		if ( $portruleline[1] eq $qossettings{'RED_DEV'} )
+	  		{
+	  			print <<END
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<tr><td align='center' bgcolor='#EAEAEA'>$portruleline[1]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[0]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[2]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[3]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[4]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[5]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[6]
+				    <td align='right'  bgcolor='#EAEAEA'>
+					<input type='hidden' name='CLASS' value='$portruleline[0]'>
+					<input type='hidden' name='PPROT' value='$portruleline[2]'>
+					<input type='hidden' name='QIP' value='$portruleline[3]'>
+					<input type='hidden' name='QPORT' value='$portruleline[4]'>
+					<input type='hidden' name='DIP' value='$portruleline[5]'>
+					<input type='hidden' name='DPORT' value='$portruleline[6]'>
+					<button type='submit' name='DOPORT' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+					<button type='submit' name='DOPORT' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+				</form>
+END
+;
+	  		}
+	  	}
+		print "\t<tr><td colspan='8' bgcolor='lightgrey' height='2'>";
+	  	foreach $portruleentry (sort @portrules)
+	  	{
+	  		@portruleline = split( /\;/, $portruleentry );
+	  		if ( $portruleline[1] eq $qossettings{'IMQ_DEV'} )
+	  		{
+	  			print <<END
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<tr><td align='center' bgcolor='#EAEAEA'>$portruleline[1]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[0]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[2]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[3]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[4]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[5]
+				    <td align='center' bgcolor='#EAEAEA'>$portruleline[6]
+				    <td align='right'  bgcolor='#EAEAEA'>
+					<input type='hidden' name='CLASS' value='$portruleline[0]'>
+					<input type='hidden' name='PPROT' value='$portruleline[2]'>
+					<input type='hidden' name='QIP' value='$portruleline[3]'>
+					<input type='hidden' name='QPORT' value='$portruleline[4]'>
+					<input type='hidden' name='DIP' value='$portruleline[5]'>
+					<input type='hidden' name='DPORT' value='$portruleline[6]'>
+					<button type='submit' name='DOPORT' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
+					<button type='submit' name='DOPORT' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+				</form>
+END
+;
+	  		}
+	  	}
+		print <<END
+		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Regel bearbeiten | <img src='/images/delete.gif'>&nbsp;Regel loeschen &nbsp;
+		</table>
+END
+;
+		&Header::closebox();
+	}
+}
+
+sub expert
+{
+	&Header::openbox('100%', 'center', 'Expertenoptionen:');
+	print <<END
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='66%'>
+		<tr><td width='100%' colspan='3'>Diese Einstellungen sollten sie nur veraendern, wenn sie wirklich wissen, was sie tun.
+		<tr><td width='33%' align='right'>Download-Rate 90\%:<td width='33%' align='left'>
+			<input type='text' name='DEF_INC_SPD' maxlength='8' required='4' value=$qossettings{'DEF_INC_SPD'}>
+		    <td width='33%' align='center'>&nbsp;
+		<tr><td width='33%' align='right'>Upload-Rate 90\%:<td width='33%' align='left'>
+			<input type='text' name='DEF_OUT_SPD' maxlength='8' required='4' value=$qossettings{'DEF_OUT_SPD'}>
+		    <td width='33%' align='center'>&nbsp;
+		</table>
+		<hr>
+		<table width='66%'>
+		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
+			<input type='text' name='MTU' maxlength='8' required='4' value=$qossettings{'MTU'}>
+		    <td width='33%' align='center'>Diese Einstellung aendert die MTU nicht global sondern nur fuer das QoS.
+		<tr><td width='33%' align='right'>Queue Laenge:<td width='33%' align='left'>
+			<input type='text' name='QLENGTH' maxlength='8' required='2' value=$qossettings{'QLENGTH'}>
+		    <td width='33%' align='center'>&nbsp;
+		<tr><td width='33%' align='right'>SFQ Perturb:<td width='33%' align='left'>
+			<input type='text' name='SFQ_PERTUB' maxlength='8' required='1' value=$qossettings{'SFQ_PERTUB'}>
+		    <td width='33%' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+		</table>
+		</form>
+END
+;
+	&Header::closebox();
+}
 
 sub validminbwdth {
 	if ( $qossettings{'VALID'} eq 'yes' ) {
@@ -903,6 +1160,7 @@ sub validminbwdth {
 		$qossettings{'SPD'} = '';
 	}
 }
+
 sub validmaxbwdth {
 	if ( $qossettings{'VALID'} eq 'yes' ) {
 		if ( $qossettings{'DEVICE'} eq $qossettings{'RED_DEV'} ) {
@@ -946,6 +1204,7 @@ sub validclass {
 		}
 	}
 }
+
 sub validsubclass {
 	if ( $qossettings{'VALID'} eq 'yes' ) {
 		open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
