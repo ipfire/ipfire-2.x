@@ -721,7 +721,7 @@ sub openpage {
     my $h2 = gettitle($menu);
     my $helpuri = get_helpuri();
 
-    $title = "IPFire - $title $FIREBUILD";
+    $title = "IPFire - $title";
     if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
         $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
     }
@@ -737,8 +737,15 @@ sub openpage {
 
     $extrahead
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+END
+;
+    if ($settings{'FX'} eq 'on') {
+	print <<END
     <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)">
     <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)">
+    } else { 
+	print <<END 
+    }
     <link rel="shortcut icon" href="/favicon.ico" />
     <style type="text/css">\@import url(/include/style.css);</style>
     <style type="text/css">\@import url(/include/menu.css);</style>
@@ -809,7 +816,7 @@ sub closepage () {
     print <<END
 	  <div align="center">
             <p>
-	      <div style="font-size: 9px"><b>Status:</b> $status <b>Uptime:</b>$uptime</div>
+	      <div style="font-size: 9px"><b>Status:</b> $status <b>Uptime:</b>$uptime <b>Version:</b> $FIREBUILD</div> 
             </p>
           </div>
 	</body>

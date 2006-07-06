@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: initscripts,v 1.6.2.2 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -68,5 +62,8 @@ $(TARGET) :
 	chmod -R 755 /etc/rc.d
 	chgrp nobody /etc/rc.d/rc.red
 	chmod 4750 /etc/rc.d/rc.red
+
+	-mkdir -p /etc/boot.d
+	cp -f $(DIR_SRC)/src/boot.d/* /etc/boot.d
 
 	@$(POSTBUILD)

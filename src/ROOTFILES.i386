@@ -19620,6 +19620,28 @@ usr/lib/libpng.so.3.1.2.8
 #usr/share/man/man3/libpngpf.3
 #usr/share/man/man5/png.5
 ##
+## jpegsrc.v6b
+##
+usr/bin/cjpeg
+usr/bin/djpeg
+usr/bin/jpegtran
+usr/bin/rdjpgcom
+usr/bin/wrjpgcom
+#usr/include/jconfig.h
+#usr/include/jerror.h
+#usr/include/jmorecfg.h
+#usr/include/jpeglib.h
+usr/lib/libjpeg.a
+usr/lib/libjpeg.la
+usr/lib/libjpeg.so
+usr/lib/libjpeg.so.62
+usr/lib/libjpeg.so.62.0.0
+#usr/share/man/man1/cjpeg.1
+#usr/share/man/man1/djpeg.1
+#usr/share/man/man1/jpegtran.1
+#usr/share/man/man1/rdjpgcom.1
+#usr/share/man/man1/wrjpgcom.1
+##
 ## libsafe-2.0-16
 ##
 etc/ld.so.preload
@@ -22252,6 +22274,7 @@ etc/rc.d/rc.red
 etc/rc.d/rc.sysinit
 etc/rc.d/rc.updatered
 etc/init.d
+etc/boot.d
 ##
 ## iptables-1.3.4
 ##
@@ -26586,6 +26609,7 @@ sbin/splash
 sbin/bootanim
 sbin/fbmngplay
 sbin/fbresolution
+sbin/fbtruetype
 boot/splash
 ##
 ## lcms

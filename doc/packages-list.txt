@@ -43,7 +43,6 @@
   * bind-9.2.5
   * binutils-2.15.90.0.3
   * bison-1.875
-  * bootsplash-3.0.7
   * bootsplash-3.2
   * bridge-utils-1.1
   * busybox-0.60.5

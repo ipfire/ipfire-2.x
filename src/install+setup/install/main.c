@@ -954,9 +954,9 @@ RESTORE:
 	}
 	/* Set Bootsplash */
 	if ((handle = fopen("/scsidriver", "r")))
-		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf >> /boot/ipfirerd.img");
+		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf >> /harddisk/boot/ipfirerd.img");
 	else
-		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf > /boot/initrd.splash");
+		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf > /harddisk/boot/initrd.splash");
 	mysystem("/bin/chroot /harddisk /bin/umount -n /proc");
 #endif
 #ifdef __alpha__
