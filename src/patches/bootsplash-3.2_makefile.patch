@@ -1,0 +1,21 @@
+--- bootsplash-3.2/Utilities/Makefile	2004-09-23 18:28:38.000000000 +0200
++++ bootsplash-3.2/Utilities/Makefile	2005-04-13 14:04:19.000000000 +0200
+@@ -22,7 +22,7 @@
+ LIBSS_FT2    = $(LIBDIR)/libfreetype.a $(LIBDIR)/libz.a -lm
+ LIBSD_FT2    = -lfreetype -lm
+ 
+-LIBSS_MNG    = $(LIBDIR)/libmng-mini.a $(LIBDIR)/libz.a -lm
++LIBSS_MNG    = $(LIBDIR)/libmng.a $(LIBDIR)/libz.a -lm
+ LIBSD_MNG    = -lmng -lz -lm
+ 
+ CFLAGS   = -Os -Wall -I/usr/include/freetype2
+@@ -40,7 +40,7 @@
+ 	-rm -f $(PROGRAMS) $(PROGRAMS_STATIC)
+ 
+ splash: splash.o
+-	$(LINKD) $(LDFLAGS) splash.o $(LIBDIR)/libmng-mini.a -lz -lm
++	$(LINKD) $(LDFLAGS) splash.o $(LIBDIR)/libmng.a -lz -lm -ljpeg -llcms
+ 
+ fbtruetype: $(OBJECTS_FT2) 
+ 	@rm -f fbtruetype
+

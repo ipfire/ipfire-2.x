@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 3.0.7
+VER        = 3.2
 
 THISAPP    = bootsplash-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d7c7cdab692fb2edc5cf5ebb554f20a1
+$(DL_FILE)_MD5 = b74c104372fd182d0442b3ed63210e29
 
 install : $(TARGET)
 
@@ -72,16 +72,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/Utilities && patch -Np0 < /usr/src/src/patches/bootsplash-3.0.7-include-fix.patch
+	cd $(DIR_APP) && patch -Np1 < /usr/src/src/patches/bootsplash-3.2_makefile.patch
 	cd $(DIR_APP)/Utilities && make
-	cd $(DIR_APP)/Utilities && cp -f splash /sbin
-	-mkdir -p /etc/bootsplash/themes/current
-	cd $(DIR_APP) && cp -Rf $(DIR_CONF)/bootsplash/* /etc/bootsplash/themes
-	-find /etc/bootsplash/themes -name .svn -exec rm -rf {} \;
-	ln -fs /etc/bootsplash/themes/ipfire1 /etc/bootsplash/themes/current
-	# Set screens for console... Maybe this doesn't work and has to be done at each boot?!
-	for i in `seq 0 5`; do \
-		splash -s -n -u $1 /etc/bootsplash/themes/current/config/bootsplash-1024x768.cfg \
-	done
+	cd $(DIR_APP)/Utilities && cp -f splash fbresolution fbmngplay /sbin
+	cd $(DIR_APP)/Scripts && cp -f bootanim /sbin
+	cd $(DIR_APP)/Scripts && chmod +x /sbin/bootanim
+	-mkdir -p /boot/splash
+	cd $(DIR_APP) && cp -Rf $(DIR_CONF)/bootsplash/* /boot/splash
+	-find /boot/splash -name .svn -exec rm -rf {} \;
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
