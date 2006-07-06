@@ -1,0 +1,7 @@
+#!/bin/sh
+echo "Setting hostname"
+if [ -z "$DOMAINNAME" ]; then
+	hostname $HOSTNAME
+else
+	hostname ${HOSTNAME}.${DOMAINNAME}
+fi

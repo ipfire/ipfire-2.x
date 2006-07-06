@@ -1,0 +1,6 @@
+#!/bin/sh
+# Cleaning up wtmp/utmp files
+>/var/run/utmp
+touch /var/log/wtmp
+chgrp utmp /var/run/utmp /var/log/wtmp
+chmod 0664 /var/run/utmp /var/log/wtmp

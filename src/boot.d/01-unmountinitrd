@@ -1,0 +1,6 @@
+#!/bin/sh
+# Unmount the initrd, if necessary
+if grep -q /initrd /proc/mounts && ! grep -q /initrd/loopfs /proc/mounts ; then
+   umount /initrd >/dev/null 2>&1
+   blockdev --flushbufs /dev/ram0 >/dev/null 2>&1
+fi

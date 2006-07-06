@@ -121,4 +121,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# necessary, but it must be present if it appears in /etc/mtab
 	cd /dev && ln -sf fd0 floppy
 
+	# Nodes for Framebuffer
+	for i in 0 1 2 3 4 5 6 7; do
+		mknod /dev/fb$i c 29 $[$i * 32]
+	done
+
 	@$(POSTBUILD)

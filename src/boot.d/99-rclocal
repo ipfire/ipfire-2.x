@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Running rc.local"
+. /etc/rc.d/rc.local

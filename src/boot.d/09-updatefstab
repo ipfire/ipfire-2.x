@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Updating /etc/fstab to reflect removable devices"
+/usr/sbin/updfstab

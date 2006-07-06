@@ -1,0 +1,7 @@
+#!/bin/sh
+# https certificate
+if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
+	/usr/local/bin/httpscert read
+else
+	/usr/local/bin/httpscert new
+fi

@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Setting the clock"
+/sbin/hwclock --hctosys

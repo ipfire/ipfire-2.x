@@ -1,0 +1,7 @@
+#!/bin/sh
+echo "Clearing old files"
+rm -f /var/run/{*.pid,*.sem,*.tdb}
+rm -f /var/run/dhcpcd-*.pid
+rm -f /var/lock/{LCK..tty*,rc.updatered.lock}
+rm -f /var/ipfire/dhcpc/{*.pid,*.cache,*.info}
+rm -f /var/ipfire/red/{active,eciadsl-synch-done}

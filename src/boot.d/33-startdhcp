@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Starting dhcpd (if enabled)"
+/usr/local/bin/restartdhcp

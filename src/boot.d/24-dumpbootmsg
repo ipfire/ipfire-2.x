@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Dumping boot messages"
+dmesg > /var/log/dmesg

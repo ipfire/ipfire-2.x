@@ -897,13 +897,13 @@ RESTORE:
 		driver = strtok(line, ".");
 		fprintf(flog, "Detected SCSI driver %s\n",driver);
 		if (strlen(driver) > 1) {
-			fprintf(flog, "Fixing up ipcoprd.img\n");
+			fprintf(flog, "Fixing up ipfirerd.img\n");
 			mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
 			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-  			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipcoprd.img %s", driver, KERNEL_VERSION);
+  			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 #ifdef __i386__
-  			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipcoprd-smp.img %s-smp", driver, KERNEL_VERSION);
+  			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 			mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
 #endif
@@ -918,10 +918,10 @@ RESTORE:
  	if (pcmcia_disk)
 	{
 		fprintf(flog, "Detected SCSI driver PCMCIA\n");
-		fprintf(flog, "Fixing up ipcoprd.img\n");
+		fprintf(flog, "Fixing up ipfirerd.img\n");
 		mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
 		mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-  		snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/pcinitrd -r %s /boot/ipcoprd.img", KERNEL_VERSION);
+  		snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/pcinitrd -r %s /boot/ipfirerd.img", KERNEL_VERSION);
 		mysystem(commandstring);
 #ifdef __i386__
 		mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
@@ -952,6 +952,11 @@ RESTORE:
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
 	}
+	/* Set Bootsplash */
+	if ((handle = fopen("/scsidriver", "r")))
+		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf >> /boot/ipfirerd.img");
+	else
+		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf > /boot/initrd.splash");
 	mysystem("/bin/chroot /harddisk /bin/umount -n /proc");
 #endif
 #ifdef __alpha__

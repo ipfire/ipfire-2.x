@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Starting sshd (if enabled)"
+/usr/local/bin/restartssh

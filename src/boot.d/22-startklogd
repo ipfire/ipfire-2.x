@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Starting klogd"
+/usr/sbin/klogd -u klogd -j /var/empty

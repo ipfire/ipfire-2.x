@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Starting syslogd"
+/usr/sbin/syslogd -m 0

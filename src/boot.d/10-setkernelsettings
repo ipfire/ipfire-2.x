@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Setting kernel settings"
+/sbin/sysctl -e -p /etc/sysctl.conf >/dev/null
