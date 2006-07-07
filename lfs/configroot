@@ -51,7 +51,7 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang alcatelusb auth backup backup/sets ca certs cnx_pci crls ddns dhcp dhcpc dmzholes \
-	    eagle-usb eciadsl ethernet isdn key langs logging main modem net-traffic nfs optionsfw patches pakfire portfw \
+	    eagle-usb eciadsl ethernet isdn key langs logging main modem net-traffic nfs optionsfw outgoing patches pakfire portfw \
 	    ppp private proxy/advanced qos/bin red remote snort time urlfilter/autoupdate urlfilter/bin vpn wireless xtaccess ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
 	done
@@ -60,7 +60,7 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dmzholes/config ethernet/aliases ethernet/settings \
-	    isdn/settings main/hosts main/settings optionsfw/settings pakfire/settings patches/available patches/installed \
+	    isdn/settings main/hosts main/settings optionsfw/settings outgoing/settings outgoing/rules pakfire/settings patches/available patches/installed \
 	    portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    snort/settings vpn/config vpn/settings vpn/ipsec.conf \
@@ -81,6 +81,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-lib.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-lib.pl
 	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
+	cp $(DIR_SRC)/config/cfgroot/p2protocols			$(CONFIG_ROOT)/outgoing/p2protocols
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
 	cp $(DIR_SRC)/config/qos/makeqosscripts.pl		$(CONFIG_ROOT)/qos/bin/makeqosscripts.pl
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings			$(CONFIG_ROOT)/remote/settings

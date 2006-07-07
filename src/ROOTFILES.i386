@@ -21054,6 +21054,7 @@ home/httpd/cgi-bin/modem.cgi
 home/httpd/cgi-bin/netstatus.cgi
 #home/httpd/cgi-bin/networks.cgi
 home/httpd/cgi-bin/optionsfw.cgi
+home/httpd/cgi-bin/outgoingfw.cgi
 home/httpd/cgi-bin/portfw.cgi
 home/httpd/cgi-bin/pppsetup.cgi
 #home/httpd/cgi-bin/printenv

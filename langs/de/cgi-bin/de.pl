@@ -1475,6 +1475,7 @@
 'urlfilter update notification' => 'Update-Benachrichtigung!',
 'urlfilter update information' => 'Eine aktualisierte Version steht zum Download bereit. Besuchen Sie <a href="http://www.urlfilter.net" target="_blank">http://www.urlfilter.net</a> für weitere Informationen.',
 'display webinterface effects' => 'Überblendeffekte einschalten',
+'outgoing firewall' => 'Ausgehende Firewall',
 
 ); 
 
