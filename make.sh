@@ -913,9 +913,9 @@ build)
 
 	# Setzen des IPFire Builds
 	if [ "$FIREBUILD" ]; then
-		echo "$FIREBUILD" > $CONFIG_ROOT/firebuild
+		echo "$FIREBUILD" > $BASEDIR/build/var/ipfire/firebuild
 	else
-		echo "_(OvO)_" > $CONFIG_ROOT/firebuild
+		echo "_(OvO)_" > $BASEDIR/build/var/ipfire/firebuild
 	fi
 
 	buildinstaller

@@ -1,4 +1,75 @@
 ------------------------------------------------------------------------
+r202 | ms | 2006-07-06 22:51:35 +0200 (Do, 06 Jul 2006) | 4 lines
+
+Bugfixes:
+  * SCSI-SMP-Kernel vergessen.
+  * scsigrub.conf war fehlerhaft und nicht komplett.
+
+------------------------------------------------------------------------
+r201 | ms | 2006-07-06 22:15:31 +0200 (Do, 06 Jul 2006) | 8 lines
+
+Bugfixes:
+  * Framebufferdevices
+  * Bootscripts vergessen ;-)
+  * Hoffentlich den Doppel-Anmelde-Fehler behoben.
+  * Jetzt Tux im Konsolensplash.
+  * Libjpeg in ISO enthalten.
+  * Installer gefixt.
+
+------------------------------------------------------------------------
+r200 | ms | 2006-07-06 15:38:27 +0200 (Do, 06 Jul 2006) | 3 lines
+
+Geändert:
+  * Bootsplash im SVN verschoben, da nur noch einer vorhanden ist.
+
+------------------------------------------------------------------------
+r199 | ms | 2006-07-06 15:33:16 +0200 (Do, 06 Jul 2006) | 7 lines
+
+Hinzugefügt:
+  * Nodes für Framebuffer.
+Geändert:
+  * Bootvorgang für Laufbalken bearbeitet.
+  * Installer sollte Bootsplash in initrd installieren.
+  * Neue Boot-Bilder.
+
+------------------------------------------------------------------------
+r198 | ms | 2006-07-06 12:24:53 +0200 (Do, 06 Jul 2006) | 3 lines
+
+Geändert:
+  * Bootsplash-Software-Update.
+
+------------------------------------------------------------------------
+r197 | ms | 2006-07-05 23:22:59 +0200 (Mi, 05 Jul 2006) | 6 lines
+
+Hinzugefügt:
+  * Fehlende Grafik.
+  * QoS-Script, das aus den Einstellungen ein Bashscript generiert.
+Geändert:
+  * QoS-CGI-Update.
+
+------------------------------------------------------------------------
+r196 | casemaster | 2006-07-04 20:10:48 +0200 (Di, 04 Jul 2006) | 2 lines
+
+Korrekturen
+
+------------------------------------------------------------------------
+r195 | ms | 2006-07-04 18:00:11 +0200 (Di, 04 Jul 2006) | 4 lines
+
+Geändert:
+  * Paar Pfade in den Bootsplash-Configs verbogen.
+  * Hintergundbilder für die Konsolen gesetzt. (Ich hoffe das klappt so.)
+
+------------------------------------------------------------------------
+r194 | ms | 2006-07-04 16:44:19 +0200 (Di, 04 Jul 2006) | 7 lines
+
+Hinzugefügt:
+  * Neuer Bootsplash. - Anders organisiert.
+  * Passwort für User Cyrus.
+Geändert:
+  * Install-Message in deutsch.
+  * Grub.conf angepasst für Bootsplash (nur IDE).
+
+------------------------------------------------------------------------
 r193 | ms | 2006-07-03 20:50:48 +0200 (Mo, 03 Jul 2006) | 5 lines
 
 Geändert:

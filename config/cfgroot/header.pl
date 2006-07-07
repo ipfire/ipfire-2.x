@@ -740,12 +740,13 @@ sub openpage {
 END
 ;
     if ($settings{'FX'} eq 'on') {
-	print <<END
+    print <<END
     <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)">
     <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)">
-    } else { 
-	print <<END 
+END
+;
     }
+    print <<END
     <link rel="shortcut icon" href="/favicon.ico" />
     <style type="text/css">\@import url(/include/style.css);</style>
     <style type="text/css">\@import url(/include/menu.css);</style>
