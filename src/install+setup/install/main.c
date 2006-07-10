@@ -193,16 +193,13 @@ int main(int argc, char *argv[])
 	sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
 	newtWinMessage(title, ctr[TR_OK], message);
 
-	/* sprintf(message, ctr[TR_SELECT_INSTALLATION_MEDIA_LONG], NAME);
-	 * rc = newtWinMenu(ctr[TR_SELECT_INSTALLATION_MEDIA], message,
-	 *	50, 5, 5, 6, installtypes, &installtype, ctr[TR_OK],
-	 *	ctr[TR_CANCEL], NULL); 
-	 *
-	 * 	if (rc == 2)
-	 *	goto EXIT;
-	 * This is for avoiding the question for a network installation. Set to cdrom.
-	 */
-	sprintf(installtype, CDROM_INSTALL, NAME);
+	sprintf(message, ctr[TR_SELECT_INSTALLATION_MEDIA_LONG], NAME);
+	rc = newtWinMenu(ctr[TR_SELECT_INSTALLATION_MEDIA], message,
+		50, 5, 5, 6, installtypes, &installtype, ctr[TR_OK],
+		ctr[TR_CANCEL], NULL);
+
+	if (rc == 2)
+		goto EXIT;
 					
 	if (installtype == CDROM_INSTALL)
 	{	
@@ -963,12 +960,7 @@ RESTORE:
 		goto EXIT;
 	}
 	/* Set Bootsplash */
-	if ((handle = fopen("/scsidriver", "r")))
-		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf >> /harddisk/boot/ipfirerd.img");
-	else
-		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf > /harddisk/boot/initrd.splash");
-	if ((handle = fopen("/scsidriver", "r")))
-		mysystem("/bin/chroot /harddisk /sbin/splash -s -f /boot/splash/config/bootsplash-1024x768.cgf >> /harddisk/boot/ipfirerd-smp.img");
+	mysystem("/bin/installbootsplash.sh");
 	mysystem("/bin/chroot /harddisk /bin/umount -n /proc");
 #endif
 #ifdef __alpha__

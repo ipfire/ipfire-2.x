@@ -147,7 +147,6 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter save and restart'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload file'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter remove file'}) ||
-    ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload background'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload blacklist'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter backup'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter restore'}))
@@ -185,17 +184,6 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 			}
 		}
 
-	}
-	
-	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload background'})
-	{
-		&Header::getcgihash(\%filtersettings, {'wantfile' => 1, 'filevar' => 'BACKGROUND'});
-
-		if (copy($filtersettings{'BACKGROUND'}, "/home/httpd/html/images/urlfilter/background.jpg") != 1)
-		{
-			$errormessage = $!;
-			goto ERROR;
-		}
 	}
 	
 	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload blacklist'})
@@ -1377,17 +1365,6 @@ print <<END
 	<td><input type='checkbox' name='ENABLE_JPEG' $checked{'ENABLE_JPEG'}{'on'} /></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-</tr>
-</table>
-<table width='100%'>
-<tr>
-	<td class='base'><b>$Lang::tr{'urlfilter background image'}</b></td>
-</tr>
-<tr>
-	<td><br>$Lang::tr{'urlfilter background text'}:</td>
-</tr>
-<tr>
-	<td><input type='file' name='BACKGROUND' size='40' /> &nbsp; <input type='submit' name='ACTION' value='$Lang::tr{'urlfilter upload background'}' /></td>
 </tr>
 </table>
 <hr size='1'>

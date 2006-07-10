@@ -6,10 +6,8 @@
 #
 # (c) 2006 Franck - add sorting+filtering capability
 #
-# $Id: connections.cgi,v 1.6.2.12 2006/02/27 19:48:46 franck78 Exp $
-#
 
-# Setup GREEN, ORANGE, IPCOP, VPN CIDR networks, masklengths and colours only once
+# Setup GREEN, ORANGE, IPFIRE, VPN CIDR networks, masklengths and colours only once
 
 my @network=();
 my @masklen=();
@@ -20,8 +18,8 @@ use Net::IPv4Addr qw( :all );
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -74,6 +72,38 @@ push(@network, '127.0.0.1');
 push(@masklen, '255.255.255.255' );
 push(@colour, ${Header::colourfw} );
 
+# Add Orange Network
+if ($netsettings{'ORANGE_DEV'}) {
+	push(@network, $netsettings{'ORANGE_NETADDRESS'});
+	push(@masklen, $netsettings{'ORANGE_NETMASK'} );
+	push(@colour, ${Header::colourorange} );
+	# Add Orange Routes to Array
+	@routes = `/sbin/route -n | /bin/grep $netsettings{'ORANGE_DEV'}`;
+	foreach my $route (@routes) {
+  		chomp($route);
+		my @temp = split(/[\t ]+/, $route);
+		push(@network, $temp[0]);
+		push(@masklen, $temp[2]);
+		push(@colour, ${Header::colourorange} );
+	}
+}
+
+# Add Blue Network
+if ($netsettings{'BLUE_DEV'}) {
+	push(@network, $netsettings{'BLUE_NETADDRESS'});
+	push(@masklen, $netsettings{'BLUE_NETMASK'} );
+	push(@colour, ${Header::colourblue} );
+	# Add Blue Routes to Array
+	@routes = `/sbin/route -n | /bin/grep $netsettings{'BLUE_DEV'}`;
+	foreach my $route (@routes) {
+  		chomp($route);
+		my @temp = split(/[\t ]+/, $route);
+		push(@network, $temp[0]);
+		push(@masklen, $temp[2]);
+		push(@colour, ${Header::colourblue} );
+	}
+}
+
 # Add OpenVPN net and RED/BLUE/ORANGE entry (when appropriate)
 if (-e "${General::swroot}/ovpn/settings") {
     my %ovpnsettings = ();    
@@ -106,38 +136,6 @@ if (-e "${General::swroot}/ovpn/settings") {
     	push(@masklen, '255.255.255.255' );
   		push(@colour, ${Header::colourovpn} );
     }
-}
-
-# Add Orange Network
-if ($netsettings{'ORANGE_DEV'}) {
-	push(@network, $netsettings{'ORANGE_NETADDRESS'});
-	push(@masklen, $netsettings{'ORANGE_NETMASK'} );
-	push(@colour, ${Header::colourorange} );
-	# Add Orange Routes to Array
-	@routes = `/sbin/route -n | /bin/grep $netsettings{'ORANGE_DEV'}`;
-	foreach my $route (@routes) {
-  		chomp($route);
-		my @temp = split(/[\t ]+/, $route);
-		push(@network, $temp[0]);
-		push(@masklen, $temp[2]);
-		push(@colour, ${Header::colourorange} );
-	}
-}
-
-# Add Blue Network
-if ($netsettings{'BLUE_DEV'}) {
-	push(@network, $netsettings{'BLUE_NETADDRESS'});
-	push(@masklen, $netsettings{'BLUE_NETMASK'} );
-	push(@colour, ${Header::colourblue} );
-	# Add Blue Routes to Array
-	@routes = `/sbin/route -n | /bin/grep $netsettings{'BLUE_DEV'}`;
-	foreach my $route (@routes) {
-  		chomp($route);
-		my @temp = split(/[\t ]+/, $route);
-		push(@network, $temp[0]);
-		push(@masklen, $temp[2]);
-		push(@colour, ${Header::colourblue} );
-	}
 }
 
 # Add STATIC RED aliases
@@ -188,12 +186,15 @@ my @list_state = ($Lang::tr{'all'}, 'SYN_SENT', 'SYN_RECV', 'ESTABLISHED', 'FIN_
 		    'CLOSE_WAIT', 'LAST_ACK', 'TIME_WAIT', 'CLOSE', 'LISTEN');
 my @list_mark = ($Lang::tr{'all'}, '[ASSURED]', '[UNREPLIED]');
 my @list_sort = ('orgsip','protocol', 'expires', 'status', 'orgdip', 'orgsp',
-		    'orgdp', 'exsip', 'exdip', 'exsp', 'exdp');
+		    'orgdp', 'exsip', 'exdip', 'exsp', 'exdp', 'marked');
 
 # init or silently correct unknown value...
 if ( ! grep ( /^$cgiparams{'SEE_PROTO'}$/ , @list_proto )) { $cgiparams{'SEE_PROTO'} = $list_proto[0] };
 if ( ! grep ( /^$cgiparams{'SEE_STATE'}$/ , @list_state )) { $cgiparams{'SEE_STATE'} = $list_state[0] };
-if ( ! grep ( /^$cgiparams{'SEE_MARK'}$/  , @list_mark ))  { $cgiparams{'SEE_MARK'}  = $list_mark[0] };
+if ( ($cgiparams{'SEE_MARK'} ne $Lang::tr{'all'}) &&	# ok the grep should work but it doesn't because of
+     ($cgiparams{'SEE_MARK'} ne '[ASSURED]') &&		# the '[' & ']' interpreted as list separator.
+     ($cgiparams{'SEE_MARK'} ne '[UNREPLIED]')		# So, explicitly enumerate items.
+   )  { $cgiparams{'SEE_MARK'}  = $list_mark[0] };
 if ( ! grep ( /^$cgiparams{'SEE_SORT'}$/  , @list_sort ))  { $cgiparams{'SEE_SORT'}  = $list_sort[0] };
 # *.*.*.* or a valid IP
 if ( $cgiparams{'SEE_SRC'}  !~ /^(\*\.\*\.\*\.\*\.|\d+\.\d+\.\d+\.\d+)$/) {  $cgiparams{'SEE_SRC'} = '*.*.*.*' };
@@ -396,6 +397,7 @@ my $menu_sort  = &make_select ('SEE_SORT',  $cgiparams{'SEE_SORT'},  @list_sort)
 &Header::openbox('100%', 'left', $Lang::tr{'connection tracking'});
 
 print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='60%'>
 <tr><td align='center'><b>$Lang::tr{'legend'} : </b></td>
     <td align='center' bgcolor='${Header::colourgreen}'><b><font color='#FFFFFF'>$Lang::tr{'lan'}</font></b></td>
@@ -419,28 +421,26 @@ print <<END
     <td align='center'><b>$Lang::tr{'marked'}</b></td>
     <td align='center'><b>$Lang::tr{'use'}</b></td>
 </tr>
-<tr><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<tr>
     <td align='center'>$menu_proto</td>
-    <td></td>
+    <td>&nbsp;</td>
     <td align='center'>$menu_state</td>
     <td align='center'>$menu_src</td>
     <td align='center'>$menu_dest</td>
     <td align='center'colspan='2'>$Lang::tr{'sort ascending'}:$menu_sort </td>
     <td align='center'>$menu_mark</td>
     <td align='center'><input type='submit' value='!' /></td>
-    </form>
 </tr>
 END
 ;
 
 foreach my $entry (sort sort_entries keys %entries) {
-
-	print "<tr bgcolor='${Header::table1colour}'>";
 	my $orgsipcolour = &ipcolour( $entries{$entry}->{orgsip} );
 	my $orgdipcolour = &ipcolour( $entries{$entry}->{orgdip} );
 	my $exsipcolour  = &ipcolour( $entries{$entry}->{exsip} );
 	my $exdipcolour  = &ipcolour( $entries{$entry}->{exdip} );
 	print <<END
+	<tr bgcolor='${Header::table1colour}'>
 	<td align='center'>$entries{$entry}->{protocol}</td>
 	<td align='center'>$entries{$entry}->{expires}</td>
 	<td align='center'>$entries{$entry}->{status}</td>
@@ -467,7 +467,7 @@ END
 ;
 }
 
-print "$unknownlines</table>";
+print "$unknownlines</table></form>";
 
 &Header::closebox();
 &Header::closebigbox();
@@ -500,7 +500,7 @@ sub make_select ($,$,$) {
 
 	foreach my $value (@_) {
     		my $check = $selected eq $value ? "selected='selected'" : '';
-    		$select .= "<option $check value='$value'>$value";
+    		$select .= "<option $check value='$value'>$value</option>";
 	}
 	$select .= "</select>";
 	return $select;

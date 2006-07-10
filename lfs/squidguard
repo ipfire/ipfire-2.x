@@ -98,7 +98,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	/bin/tar --no-same-owner -xzf $(DIR_CONF)/urlfilter/blacklists.tar.gz -C /var/ipfire/urlfilter
 	/usr/bin/perl $(DIR_CONF)/urlfilter/makeconf.pl
 	chown -R nobody:nobody /var/ipfire/urlfilter
-	chown -R nobody:nobody /home/httpd/html/images/urlfilter
+	chmod 755 /home/httpd/html/images/urlfilter
+	chmod 644 /home/httpd/html/images/urlfilter/*
 	chown -R nobody:nobody /home/httpd/html/repository
 	chown -R squid:squid /var/log/squidGuard
 
