@@ -163,20 +163,20 @@ void fixup_initrd() {
 	if (!strlen(driver) > 1) 
 		return;
 		
-	fprintf(flog, "Fixing up ipcoprd.img\n");
+	fprintf(flog, "Fixing up ipfirerd.img\n");
 	mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
 	mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
 	sprintf(commandstring, "/bin/chroot /harddisk /sbin/mkinitrd"
 				" --with=scsi_mod --with=%s --with=sd_mod"
 				" --with=sr_mod --with=libata"
-				" --with=ataraid /boot/ipcoprd.img "KERNEL_VERSION,
+				" --with=ataraid /boot/ipfirerd.img "KERNEL_VERSION,
 				driver );
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 #ifdef __i386__
 	sprintf(commandstring, "/bin/chroot /harddisk /sbin/mkinitrd"
 				" --with=scsi_mod --with=%s --with=sd_mod"
 				" --with=sr_mod --with=libata"
-				" --with=ataraid /boot/ipcoprd-smp.img "KERNEL_VERSION"-smp",
+				" --with=ataraid /boot/ipfirerd-smp.img "KERNEL_VERSION"-smp",
 				driver );
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 	mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
