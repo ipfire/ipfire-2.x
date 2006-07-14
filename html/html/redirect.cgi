@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# $Id: redirect.cgi,v 0.1 2004/09/26 00:00:00 marco Exp $
+# $Id: redirect.cgi,v 0.2 2006/06/12 00:00:00 modyfy bye linuxadmin
 #
 
 use CGI qw(param);
@@ -36,10 +36,12 @@ print "Connection: close\n";
 print "Content-type: text/html\n\n";
 
 print <<END
+
 <html>
 <head>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
-<title></title>
+<title>ACCESS MESSAGE</title>
 </head>
 
 END
@@ -53,30 +55,31 @@ END
 ;
 } else {
 print <<END
-<body bgcolor="#FFFFFF">
+<img src="http://$netsettings{'GREEN_ADDRESS'}:81//images/logo_ipfire.gif" ALT="IPFire-Logo">
+<body bgcolor="#455B72">
 END
 ;
 }
 
 print <<END
 
+
 <center>
 
-<table width="80%" cellspacing="10" cellpadding="5" border="0">
-
+<table width="80%" cellspacing="10" cellpadding="5" border="1">
 <tr>
-	<td bgcolor="#C0C0C0" align="right">
-		<font face="verdana, arial, sans serif" color="#000000" size="1">
-		<b>$category</b>
+		<td nowrap align="right" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bgcool.gif">
+		<font face="verdana, arial, sans serif" color="#CC000000" size="1">
+		<b> INFO: $category</b>
 		</font>
 	</td>
 </tr>
 <tr>
 	<td bgcolor="#F4F4F4" align="center">
-		<table width="100%" cellspacing="20" cellpadding="20" border="0">
+		<table width="100%" cellspacing="20" cellpadding="18" border="1">
 			<tr>
-				<td nowrap bgcolor="#FF0000" align="center">
-					<font face="verdana, arial, sans serif" color="#FFFFFF" size="6">
+				<td nowrap align="center" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bgcool.gif">
+					<font face="verdana, arial, sans serif" color="#CC000000" size="5">
 					<b>$msgtext1</b>
 					</font>
 				</td>
@@ -116,19 +119,20 @@ print <<END
 </table>
 
 <tr>
-	<td bgcolor="#C0C0C0" align="right">
-		<font face="verdana,arial,sans serif" color="#FFFFFF" size="1">Web Filtering by
+	<td nowrap align="right" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bgcool.gif">
+		<font face="verdana,arial,sans serif" color="#656565" size="1">Web Filtering by
 		</font>
-		<a href="http://www.ipcop.org" target="_blank"><b>
-		<font face="verdana,arial,sans serif" color="#FFFFFF" size="1">IPCop</b></a> and
+		<a href="http://www.ipfire.eu" target="_blank"><b>
+		<font face="verdana,arial,sans serif" color="#656565" size="1">IPFire</b></a> and
 		<a href="http://www.squidguard.org" target="_blank"><b>
-		<font face="verdana,arial,sans serif" color="#FFFFFF" size="1">SquidGuard
+		<font face="verdana,arial,sans serif" color="#656565" size="1">SquidGuard
 		</font></b></a>
 	</td>
 </tr>
 
 </table>
 
+<img src="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bg_cool_tux.jpg">
 </center>
 
 </body>

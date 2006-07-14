@@ -700,8 +700,8 @@ buildipcop() {
   ipcopmake samba
   ipcopmake sudo
   ipcopmake mc
-  ipcopmake pwlib
-  ipcopmake openh323
+#  ipcopmake pwlib
+#  ipcopmake openh323
   ipcopmake wget
   ipcopmake wput
   ipcopmake bridge-utils
@@ -725,7 +725,7 @@ buildipcop() {
   ipcopmake zaptel
   ipcopmake libpri
   ipcopmake bristuff
-#  ipcopmake asterisk
+  ipcopmake asterisk
   ipcopmake mpg123
   echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
   ipcopmake lame
@@ -1113,15 +1113,12 @@ gettoolchain)
 	wget $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5 >& /dev/null
 	if [ $? -ne 0 ]; then
 		echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
-#	else
-#		if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
-#			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
-#			echo "`date -u '+%b %e %T'`: Uncompressing toolchain" | tee -a $LOGFILE
-#			cd $BASEDIR && tar xfz cache/$PACKAGE.tar.gz -C .
-#			rm -f $BASEDIR/cache/$PACKAGE.{tar.gz,md5}
-#		else
-#			exiterror "$PACKAGE.md5 did not match, check downloaded package"
-#		fi
+	else
+		if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
+			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
+		else
+			exiterror "$PACKAGE.md5 did not match, check downloaded package"
+		fi
 	fi
 	;;
 paks)
@@ -1137,7 +1134,7 @@ commit)
 	echo "Upload the changed files:"
 	svn commit
 	./make.sh sync
-	svn up > /dev/null
+	svn up
 	;;
 make)
 	echo "Do a complete compile:"	
