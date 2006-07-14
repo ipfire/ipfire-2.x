@@ -26,34 +26,25 @@
 
 include Config
 
-VER        = 1.2.9.1
+VER        = 1.2.6
 
-THISAPP    = asterisk-$(VER)
+THISAPP    = zaptel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = asterisk
+PROG       = zaptel
 PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	   app_rxfax.c \
-	   app_txfax.c \
-	   apps_Makefile.patch
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-app_rxfax.c = $(URL_IPFIRE)/app_rxfax.c
-app_txfax.c = $(URL_IPFIRE)/app_txfax.c
-apps_Makefile.patch = $(URL_IPFIRE)/apps_Makefile.patch
 
-$(DL_FILE)_MD5 = d98fc3dc5ee8df691ca2b0bd309bb251
-app_rxfax.c_MD5 = ab6983b51c412883545b36993d704999
-app_txfax.c_MD5 = 8c8fcb263b76897022b4c28052a7b439
-apps_Makefile.patch_MD5 = 6b0faa7a7cf8613962b17c23ee5a1583
+$(DL_FILE)_MD5 = c6058b74f43ae12a29e486cf1e919562
 
 install : $(TARGET)
 
@@ -86,13 +77,31 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/asterisk.patch
-	### FAX geht noch nicht mit Asterisk 1.2.9.1
-	# cp -fv $(DIR_DL)/app_{r,t}xfax.c $(DIR_APP)/apps && \
-	# cd $(DIR_APP)/apps && patch < $(DIR_DL)/apps_Makefile.patch
+	# Build Zaptel
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zaptel.patch
 	cd $(DIR_APP) && make clean
-	cd $(DIR_APP) && make all ASTETCDIR=/var/ipfire/asterisk
-	cd $(DIR_APP) && make install ASTETCDIR=/var/ipfire/asterisk
-	cd $(DIR_APP) && make samples ASTETCDIR=/var/ipfire/asterisk
+	cd $(DIR_APP) && make all KVERS=$(KVER)-smp
+	cd $(DIR_APP) && make install KVERS=$(KVER)-smp
+	cd $(DIR_APP) && make clean
+	cd $(DIR_APP) && make all KVERS=$(KVER)
+	cd $(DIR_APP) && make install KVERS=$(KVER)
+	cd $(DIR_APP) && install -D -m 644 zaptel.h /usr/include/linux/zaptel.h
+	cd $(DIR_APP) && install -D -m 644 zconfig.h /usr/include/linux/zconfig.h
+	cd $(DIR_APP) && install -D -m 644 ecdis.h /usr/include/linux/ecdis.h
+	cd $(DIR_APP) && install -D -m 644 fasthdlc.h /usr/include/linux/fasthdlc.h
+	cd $(DIR_APP) && install -D -m 644 kb1ec.h /usr/include/linux/kb1ec.h
+	cd $(DIR_APP) && install -D -m 644 kb1ec_const.h /usr/include/linux/kb1ec_const.h
+	cd $(DIR_APP) && install -D -m 644 biquad.h /usr/include/linux/biquad.h
+	cd $(DIR_APP) && install -D -m 644 arith.h /usr/include/linux/arith.h
+	ln -nf -v /usr/include/linux/zaptel.h /usr/include/zaptel.h
+	ln -nf -v /usr/include/linux/zconfig.h /usr/include/zconfig.h
+	ln -nf -v /usr/include/linux/ecdis.h /usr/include/ecdis.h
+	ln -nf -v /usr/include/linux/fasthdlc.h /usr/include/fasthdlc.h
+	ln -nf -v /usr/include/linux/kb1ec.h /usr/include/kb1ec.h
+	ln -nf -v /usr/include/linux/kb1ec_const.h /usr/include/kb1ec_const.h
+	ln -nf -v /usr/include/linux/biquad.h /usr/include/biquad.h
+	ln -nf -v /usr/include/linux/arith.h /usr/include/arith.h
+	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
+	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

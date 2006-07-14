@@ -722,7 +722,10 @@ buildipcop() {
 #  ipcopmake amavisd
   echo -ne "`date -u '+%b %e %T'`: Building ### VoIP-Server ### \n" | tee -a $LOGFILE
   ipcopmake stund
-  ipcopmake asterisk
+  ipcopmake zaptel
+  ipcopmake libpri
+  ipcopmake bristuff
+#  ipcopmake asterisk
   ipcopmake mpg123
   echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
   ipcopmake lame
@@ -856,7 +859,7 @@ ipfirepackages() {
   fi
   ipfiredist amavisd
   ipfiredist applejuice
-  ipfiredist asterisk
+  # ipfiredist asterisk
   ipfiredist clamav
   ipfiredist cups
   ipfiredist cyrusimap

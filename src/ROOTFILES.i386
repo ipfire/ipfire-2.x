@@ -24384,11 +24384,11 @@ lib/modules/2.4.31-smp/extra/unicorn_pci_atm.o.gz
 ##
 ## unzip552
 ##
-#usr/bin/funzip
-#usr/bin/unzip
-#usr/bin/unzipsfx
-#usr/bin/zipgrep
-#usr/bin/zipinfo
+usr/bin/funzip
+usr/bin/unzip
+usr/bin/unzipsfx
+usr/bin/zipgrep
+usr/bin/zipinfo
 #usr/share/man/man1/funzip.1
 #usr/share/man/man1/unzip.1
 #usr/share/man/man1/unzipsfx.1

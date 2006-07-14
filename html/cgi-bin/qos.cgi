@@ -57,6 +57,7 @@ $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
 $qossettings{'ACK'} = '';
 $qossettings{'MTU'} = '1492';
+$qossettings{'SFQ_PERTUB'} = '10';
 $qossettings{'QLENGTH'} = '30';
 $qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 $qossettings{'IMQ_DEV'} = 'imq0';
