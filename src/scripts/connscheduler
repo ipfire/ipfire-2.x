@@ -1,0 +1,214 @@
+#!/usr/bin/perl
+#
+# IPFire Connection Scheduler (F)Cron Job
+#
+# This code is distributed under the terms of the GPL
+#
+
+use strict;
+
+require '/var/ipfire/general-functions.pl';
+require '/var/ipfire/connscheduler/lib.pl';
+
+
+# seems to be necessary
+my $sleep_after_profile = 5;
+
+my ($second, $minute, $hour, $day, $month ,$year, $weekday) = localtime(time);
+# correction for weekday, I am used to weeks starting with Monday (= 0) ;-)
+$weekday = ($weekday + 6) % 7;
+# get the closest thing possible
+$minute = int($minute / 5) * 5;
+
+
+if ( $ARGV[0] eq 'hangup' )
+{
+  &hangup();
+}
+elsif ( $ARGV[0] eq 'dial' )
+{
+  &dial();
+}
+elsif ( $ARGV[0] eq 'reconnect' )
+{
+  &reconnect();
+}
+elsif ( $ARGV[0] eq 'profile' )
+{
+  &profile($ARGV[1]);
+}
+elsif ( $ARGV[0] eq 'timer' )
+{
+  &timer();
+}
+elsif ( $ARGV[0] eq 'test' )
+{
+  &test();
+}
+else
+{
+  print "Usage: $0 {dial | hangup | reconnect | profile nr# }\n";
+}
+
+exit 0;
+
+
+#   __                  _   _
+#  / _|                | | (_)
+# | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+# |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+# | | | |_| | | | | (__| |_| | (_) | | | \__ \
+# |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+#
+sub hangup
+{
+  unless ( -e "${General::swroot}/red/active" )
+  {
+    &General::log("ConnSched already disconnected");
+    return;
+  }
+
+  &General::log("ConnSched disconnect");
+  unless ( system('/etc/rc.d/rc.red', 'stop') == 0 )
+  {
+    &General::log("ConnSched disconnect failed: $?");
+    return;
+  }
+
+  # now wait for active triggerfile and ppp daemon to disappear 
+  sleep 1;
+  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipcop.pid' ) 
+  {
+    sleep 1;
+  }
+}
+
+
+sub dial
+{
+  if ( -e "${General::swroot}/red/active" )
+  {
+    &General::log("ConnSched already connected");
+    return;
+  }
+
+  &General::log("ConnSched connect");
+  unless ( system('/etc/rc.d/rc.red', 'start') == 0 )
+  {
+    &General::log("ConnSched connect failed: $?");
+    return;
+  }
+
+  # wait maximum 60 seconds for active triggerfile
+  my $counter = 60;
+  until ( -e "${General::swroot}/red/active" || $counter == 0 )
+  {
+    sleep 1;
+    $counter--;
+  }
+}
+
+
+sub reconnect
+{
+  &hangup() if ( -e "${General::swroot}/red/active" );
+  &dial();
+}
+
+
+sub profile
+{
+  my $profile = shift;
+  my $restart_red = 0;
+
+  unless ( ($profile > 0) and ($profile < $CONNSCHED::maxprofiles) )
+  {
+    &General::log("ConnSched invalid profile: $profile");
+    return;
+  }
+
+  unless ( -e "${General::swroot}/ppp/settings-$profile" )
+  {
+    &General::log("ConnSched profile file does not exist: $profile");
+    return;
+  }
+
+  if ( -e "${General::swroot}/red/active" )
+  {
+    # remember to restart red after changing profile
+    $restart_red = 1;
+    &hangup();
+  }
+
+  &General::log("ConnSched select profile: $profile");
+
+  # Method to change Profile from pppsetup.cgi
+	unlink("${General::swroot}/ppp/settings");
+	link("${General::swroot}/ppp/settings-$profile", "${General::swroot}/ppp/settings");
+	system ("/bin/touch", "${General::swroot}/ppp/updatesettings");
+
+  if ( $restart_red == 1 )
+  {
+    ## FIXME: do we need to do this ?
+    sleep($sleep_after_profile);
+    &dial();
+  }  
+}
+
+
+# fcronjob entry
+sub timer
+{
+  for my $i ( 0 .. $#CONNSCHED::config )
+  {
+    next if ( $CONNSCHED::config[$i]{'ACTIVE'} ne 'on' );
+
+    my $action_hour = substr($CONNSCHED::config[$i]{'TIME'},0,2);
+    my $action_minute = substr($CONNSCHED::config[$i]{'TIME'},3,2);
+
+    next if ( $action_hour != $hour );
+    next if ( $action_minute != $minute );
+
+    if ( $CONNSCHED::config[$i]{'DAYSTYPE'} eq 'days' )
+    {
+      my @temp = split(/-/,$CONNSCHED::config[$i]{'DAYS'},2);
+
+      my $daystart = substr($temp[0], 0, -1);
+      my $dayend = substr($temp[1], 1);
+
+      next if ( ($day < $daystart) || ($day > $dayend) );
+    }
+    else
+    {
+      next if ( index($CONNSCHED::config[$i]{'WEEKDAYS'}, $CONNSCHED::weekdays[$weekday]) == -1 );
+    }
+
+
+    if ( $CONNSCHED::config[$i]{'ACTION'} eq 'reconnect' )    
+    {
+      &reconnect()
+    }
+    elsif ( $CONNSCHED::config[$i]{'ACTION'} eq 'dial' )
+    {
+      &dial();
+    }
+    elsif ( $CONNSCHED::config[$i]{'ACTION'} eq 'hangup' )
+    {
+      &hangup();
+    }
+    elsif ( $CONNSCHED::config[$i]{'ACTION'} eq 'select profile' )
+    {
+      &profile($CONNSCHED::config[$i]{'PROFILENR'});
+    }
+    elsif ( $CONNSCHED::config[$i]{'ACTION'} eq 'reboot' )
+    {
+      &General::log("ConnSched reboot");
+    	system ("/usr/local/bin/ipfirereboot", "boot");
+    }
+    elsif ( $CONNSCHED::config[$i]{'ACTION'} eq 'shutdown' )
+    {
+      &General::log("ConnSched shutdown");
+    	system ("/usr/local/bin/ipfirereboot", "down");
+    }
+  }
+}

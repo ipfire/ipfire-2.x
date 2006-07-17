@@ -268,6 +268,12 @@ sub genmenu {
 				  'title' => "$tr{'aliases'}",
 				  'enabled' => 0,
 				  };
+    $subnetwork->{'80.wakeonlan'} = {
+				  'caption' => $tr{'WakeOnLan'},
+				  'uri' => '/cgi-bin/wakeonlan.cgi',
+				  'title' => "$tr{'WakeOnLan'}",
+				  'enabled' => 1,
+				  };
 
     my %subserviceshash = ();
     my $subservices = \%subserviceshash;
@@ -463,7 +469,7 @@ sub genmenu {
     if (! blue_used()) {
 	$menu->{'05.firewall'}{'subMenu'}->{'30.wireless'}{'enabled'} = 0;
     }
-    if (! $ethsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
+    if ( $ethsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;
     }
 }

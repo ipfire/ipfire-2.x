@@ -1135,6 +1135,7 @@ commit)
 	echo "Upload the changed files:"
 	svn commit
 	./make.sh sync
+	clear
 	svn up
 	;;
 make)

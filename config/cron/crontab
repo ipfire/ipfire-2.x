@@ -1,5 +1,5 @@
 #
-# $Id: crontab,v 1.9.2.5 2005/08/16 05:39:23 gespinasse Exp $
+# crontab for ipfire
 #
 SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
@@ -33,9 +33,12 @@ HOME=/
 		find /var/log/logwatch/ -ctime +${LOGWATCH_KEEP=56} -exec rm -f '{}' ';'
 
 # hddshutdown
-00 * * * * 	/usr/local/bin/hddshutdown >/dev/null
+02 * * * * 	/usr/local/bin/hddshutdown >/dev/null
 
 # URL Filter
 %nightly * 3-5   /var/ipfire/urlfilter/autoupdate/cron.daily
 %weekly  * 3-5   /var/ipfire/urlfilter/autoupdate/cron.weekly
 %monthly * 3-5 * /var/ipfire/urlfilter/autoupdate/cron.monthly
+
+# connection-scheduler
+*/5 * * * *	/usr/local/bin/connscheduler timer > /dev/null

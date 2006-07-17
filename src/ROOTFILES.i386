@@ -1353,6 +1353,7 @@ tmp
 #usr/lib
 #usr/local
 #usr/local/bin
+usr/local/bin/connscheduler
 usr/local/bin/httpscert
 usr/local/bin/hddshutdown
 usr/local/bin/hddshutdown-state
@@ -21077,6 +21078,8 @@ home/httpd/cgi-bin/xtaccess.cgi
 home/httpd/cgi-bin/traffic.cgi
 home/httpd/cgi-bin/traffics.cgi
 home/httpd/cgi-bin/pakfire.cgi
+home/httpd/cgi-bin/wakeonlan.cgi
+home/httpd/cgi-bin/connscheduler.cgi
 #home/httpd/htdocs
 #home/httpd/htdocs/apache_pb.gif
 #home/httpd/htdocs/index.html.ca
@@ -22561,6 +22564,7 @@ usr/local/bin/ipfirebkcfg
 usr/local/bin/ipfirereboot
 usr/local/bin/ipfirerscfg
 usr/local/bin/ipsecctrl
+usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
 usr/local/bin/openvpnctrl
 usr/local/bin/rebuildhosts
