@@ -741,6 +741,7 @@ buildipcop() {
   ipcopmake portmap
   ipcopmake nfs
   ipcopmake nmap
+  ipcopmake mbmon
   ipcopmake iftop
   ipcopmake ncftp
   ipcopmake cftp
@@ -1210,6 +1211,12 @@ pub-paks)
 	else
 		echo -e "There was an error while uploading the packages to the ftp server."
 	fi
+	;;
+build-only)
+	rm -f $BASEDIR/log/$2*
+	BUILDMACHINE=`uname -m`
+	prepareenv
+	ipcopmake $2
 	;;
 *)
 	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"

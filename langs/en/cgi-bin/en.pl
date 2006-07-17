@@ -1509,5 +1509,15 @@
 'urlfilter update information' => 'There is an updated version available for download. Visit <a href="http://www.urlfilter.net" target="_blank">http://www.urlfilter.net</a> for more information.',
 'display webinterface effects' => 'Activate effects',
 'outgoing firewall' => 'Outgoing Firewall',
+'mbmon graphs' => 'mbmon Graphs',
+'mbmon settings' => 'mbmongraph Settings',
+'mbmon display' => 'Display',
+'mbmon value' => 'Value',
+'mbmon label' => 'Label',
+'mbmon fan' => 'Fan Speed',
+'mbmon fan in' => 'Fan Speed in',
+'mbmon temp' => 'Temperature',
+'mbmon temp in' => 'Temperature in',
+'mbmon volt' => 'Voltage',
 
 );

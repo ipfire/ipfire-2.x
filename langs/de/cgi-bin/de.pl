@@ -1476,6 +1476,16 @@
 'urlfilter update information' => 'Eine aktualisierte Version steht zum Download bereit. Besuchen Sie <a href="http://www.urlfilter.net" target="_blank">http://www.urlfilter.net</a> für weitere Informationen.',
 'display webinterface effects' => 'Überblendeffekte einschalten',
 'outgoing firewall' => 'Ausgehende Firewall',
+'mbmon graphs' => 'mbmon-Diagramme',
+'mbmon settings' => 'mbmongraph Einstellungen',
+'mbmon display' => 'Anzeigen',
+'mbmon value' => 'Wert',
+'mbmon label' => 'Label',
+'mbmon fan' => 'Fan Speed',
+'mbmon fan in' => 'Fan Speed in',
+'mbmon temp' => 'Temperature',
+'mbmon temp in' => 'Temperature in',
+'mbmon volt' => 'Voltage',
 
 ); 
 

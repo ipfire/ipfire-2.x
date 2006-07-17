@@ -27204,6 +27204,10 @@ usr/lib/liblzo2.so.2.0.0
 usr/bin/wget
 usr/etc/wgetrc
 ##
+## xmbmon205
+/usr/bin/mbmon
+##
+##
 ## mc
 ##
 usr/bin/mc
@@ -27736,3 +27740,38 @@ usr/lib/libgthread-2.0.so.0.902.4
 #usr/share/man/man1/glib-gettextize.1
 #usr/share/man/man1/glib-mkenums.1
 #usr/share/man/man1/gobject-query.1
+##
+## hddtemp
+##
+etc/hddtemp.db
+usr/sbin/hddtemp
+#usr/share/locale/fr/LC_MESSAGES/hddtemp.mo
+#usr/share/locale/ru/LC_MESSAGES/hddtemp.mo
+#usr/share/man/man8/hddtemp.8
+##
+## smartmontools-5.36
+##
+#usr/etc/rc.d
+#usr/etc/rc.d/init.d
+#usr/etc/rc.d/init.d/smartd
+#usr/etc/smartd.conf
+usr/sbin/smartctl
+#usr/sbin/smartd
+#usr/share/doc/smartmontools-5.36
+#usr/share/doc/smartmontools-5.36/AUTHORS
+#usr/share/doc/smartmontools-5.36/CHANGELOG
+#usr/share/doc/smartmontools-5.36/COPYING
+#usr/share/doc/smartmontools-5.36/INSTALL
+#usr/share/doc/smartmontools-5.36/NEWS
+#usr/share/doc/smartmontools-5.36/README
+#usr/share/doc/smartmontools-5.36/TODO
+#usr/share/doc/smartmontools-5.36/WARNINGS
+#usr/share/doc/smartmontools-5.36/examplescripts
+#usr/share/doc/smartmontools-5.36/examplescripts/Example1
+#usr/share/doc/smartmontools-5.36/examplescripts/Example2
+#usr/share/doc/smartmontools-5.36/examplescripts/Example3
+#usr/share/doc/smartmontools-5.36/examplescripts/README
+#usr/share/doc/smartmontools-5.36/smartd.conf
+#usr/share/man/man5/smartd.conf.5
+#usr/share/man/man8/smartctl.8
+#usr/share/man/man8/smartd.8

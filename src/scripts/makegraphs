@@ -31,6 +31,10 @@ require "${General::swroot}/lang.pl";
 
 my (%settings, @ipacsum, $iface, $ERROR);
 &General::readhash("${General::swroot}/ethernet/settings", \%settings);
+my %mbmon_settings = ();
+&General::readhash("${General::swroot}/mbmon/settings", \%mbmon_settings);
+
+
 
 # Added for conversion of utf-8 characters
 use Encode 'from_to';
@@ -57,6 +61,41 @@ my $graphs = "/home/httpd/html/graphs";
 $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 my $hdd_device = "/dev/harddisk";
 my $temp = '';
+my %mbmon_values = ();
+my $key;
+my $value;
+my @args = ();
+my $count = 0;
+my $ERROR;
+my $dbg = 0;
+my $path_rrd = "/var/log/rrd";
+my $path_graphs = "/home/httpd/html/graphs";
+my $path_smartctl = "/usr/sbin/smartctl";
+
+my %colors = ();
+$colors{"1"} = "#0000FF";
+$colors{"2"} = "#00FF00";
+$colors{"3"} = "#FF0000";
+$colors{"4"} = "#FFD700";
+$colors{"5"} = "#CCCCCC";
+$colors{"6"} = "#40E0D0";
+$colors{"7"} = "#90EE90";
+$colors{"8"} = "#F4A460";
+
+open(MBMON_OUT, ">/var/log/mbmon-values");
+open(FD, "/usr/bin/mbmon -rc1|" ) || die "ERROR: Cannot run mbmon\n" ;
+
+while( $_ = <FD> ) 
+{
+  next unless( /^([A-Za-z][^:\s]+)\s*:\s*([+\-]{0,1}[\d\.]+)/ ) ;
+  $key = $1 ;
+  $value = $2 ;
+  $key =~ y/A-Z/a-z/ ;
+  $mbmon_values{$key} = $value;
+  print(MBMON_OUT "$key=$value\n");
+}
+close(FD);
+close(MBMON_OUT);
 
 sub gettraffic {
 	my $interface = $_[0];
@@ -676,10 +715,10 @@ sub updatelqgraph {
 
 sub updatehdddata 
 {
-  if ( ! -e "$rrdlog/hddtemp.rrd") 
+  if ( ! -e "$path_rrd/hddtemp.rrd") 
   {
     # database did not exist -> create
-    RRDs::create ("$rrdlog/hddtemp.rrd", "--step=300",
+    RRDs::create ("$path_rrd/hddtemp.rrd", "--step=300",
       "DS:temperature:GAUGE:600:0:100",
       "RRA:AVERAGE:0.5:1:576",
       "RRA:AVERAGE:0.5:6:672",
@@ -689,35 +728,60 @@ sub updatehdddata
     print "Error in RRD::create for hdd: $ERROR\n" if $ERROR;
   }
 
-  my $hdd_output = `/usr/sbin/hddtemp -qn $hdd_device`;
+  $temp = 0;
+  my $hdd_output = '';
+  my $smart_output = '';
 
-  # I know 4 response possible responses:
-  #
-  # /dev/harddisk: harddisk type: S.M.A.R.T. not available
-  # /dev/harddisk: harddisk type: no sensor
-  # /dev/harddisk: harddisk type: 37°C or °F
-  # 37
+  if ( -e "$path_smartctl" )
+  {
+    system("$path_smartctl -iHA $hdd_device > /var/log/hddgraph_smartctl_out");
+  }
 
-  if ( index($hdd_output, "S.M.A.R.T.") != -1 )
+  if ( -e "$path_hddtemp" )
   {
-    $temp = 0;
+    $hdd_output = `$path_hddtemp -qn $hdd_device`;
+
+    # I know 4 response possible responses:
+    #
+    # /dev/harddisk: harddisk type: S.M.A.R.T. not available
+    # /dev/harddisk: harddisk type: no sensor
+    # /dev/harddisk: harddisk type: 37°C or °F
+    # 37
+
+    if ( index($hdd_output, "S.M.A.R.T.") != -1 )
+    {
+      $temp = 0;
+    }
+    elsif ( index($hdd_output, "no sensor") != -1 )
+    {
+      $temp = 1;
+    }
+    elsif ( index($hdd_output, "$hdd_device") != -1 )
+    {
+      $hdd_output =~ /.*:.*:\s*(\d+).*\s/;
+      $temp = $1;
+    }
+    else
+    {
+      $hdd_output =~ /(\d+)\s/;
+      $temp = $1;
+    }
   }
-  elsif ( index($hdd_output, "no sensor") != -1 )
+  elsif ( -e "/var/log/hddgraph_smartctl_out" )
   {
-    $temp = 1;
-  }
-  elsif ( index($hdd_output, "$hdd_device") != -1 )
-  {
-    $hdd_output =~ /.*:.*:\s*(\d+).*\s/;
-    $temp = $1;
+    $hdd_output = `cat /var/log/hddgraph_smartctl_out | grep Temperature_`;
+    my @t = split(/\s+/,$hdd_output);
+    $temp = $t[9];
   }
   else
   {
-    $hdd_output =~ /(\d+)\s/;
-    $temp = $1;
+    $temp = 0;
   }
 
-  RRDs::update ("$rrdlog/hddtemp.rrd", "-t", "temperature", "N:$temp");
+#  print "hdd  $hdd_output \n";
+#  print "temp $temp \n";
+
+  RRDs::update ("$path_rrd/hddtemp.rrd", "-t", "temperature", "N:$temp");
 
   $ERROR = RRDs::error;
   print "Error in RRD::update for hdd: $ERROR\n" if $ERROR;
@@ -741,6 +805,173 @@ sub updatehddgraph {
   );
   $ERROR = RRDs::error;
   print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
+}
+
+sub updatembmondata 
+{
+  if ( ! -e "$path_rrd/mbmon.rrd" )
+  {
+    # database did not exist -> create
+
+    @args = ("$path_rrd/mbmon.rrd");
+
+    push(@args, "--step=300");
+    foreach $key ( sort(keys %mbmon_values) ) 
+    {
+      push(@args, "DS:$key:GAUGE:600:U:U");
+    }
+    push(@args, "RRA:AVERAGE:0.5:1:576");
+    push(@args, "RRA:AVERAGE:0.5:6:672");
+    push(@args, "RRA:AVERAGE:0.5:24:732");
+    push(@args, "RRA:AVERAGE:0.5:144:1460");
+
+    print("create ". join( ", ", @args)) if ( $dbg );
+   
+    RRDs::create (@args);
+    $ERROR = RRDs::error;
+    print("Error in RRD::create for mbmon: $ERROR\n") if $ERROR;
+  }
+
+  my @ds;
+  my @val;
+  my $template;
+
+  foreach $key ( sort(keys %mbmon_values) )
+  {
+    push(@ds, $key);
+    push(@val, $mbmon_values{$key});
+  }
+
+  $template = join(':', @ds);
+  $value    = "N:".join(':', @val);
+
+  print("update template = '$template'\n") if ( $dbg );
+  print("update value    = '$value'\n") if ( $dbg );
+
+  RRDs::update("$path_rrd/mbmon.rrd", "-t", $template, $value);
+  $ERROR = RRDs::error;
+  print("Error in RRD::update for mbmon: $ERROR\n") if $ERROR;
+}
+
+sub updatetempgraph
+{
+  my $type   = "temp";
+  my $period = $_[0];
+
+  @args = ("$path_graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+    "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
+    "--color", "SHADEA#EAE9EE",
+    "--color", "SHADEB#EAE9EE",
+    "--color", "BACK#EAE9EE",
+    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
+
+  $count = 1;
+  foreach $key ( sort(keys %mbmon_values) ) 
+  {
+    if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
+    {
+      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
+      {
+        $mbmon_settings{'LABEL-'.$key} = $key;
+      }
+
+      push(@args, "DEF:$key=$path_rrd/mbmon.rrd:$key:AVERAGE");
+      push(@args, "LINE2:$key$colors{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} °C");
+      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.1lf °C");
+      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.1lf °C");
+      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.1lf °C\\j");
+
+      $count++;
+    }
+  }
+
+  if ( $count > 1 )
+  {
+    RRDs::graph ( @args );
+    $ERROR = RRDs::error;
+    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
+  }
+}
+
+sub updatefangraph
+{
+  my $type   = "fan";
+  my $period = $_[0];
+
+  @args = ("$path_graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+    "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
+    "--color", "SHADEA#EAE9EE",
+    "--color", "SHADEB#EAE9EE",
+    "--color", "BACK#EAE9EE",
+    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
+
+  $count = 1;
+  foreach $key ( sort(keys %mbmon_values) ) 
+  {
+    if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
+    {
+      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
+      {
+        $mbmon_settings{'LABEL-'.$key} = $key;
+      }
+
+      push(@args, "DEF:$key=$path_rrd/mbmon.rrd:$key:AVERAGE");
+      push(@args, "LINE2:$key$colors{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
+      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.0lf rpm");
+      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.0lf rpm");
+      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.0lf rpm\\j");
+
+      $count++;
+    }
+  }
+
+  if ( $count > 1 )
+  {
+    RRDs::graph ( @args );
+    $ERROR = RRDs::error;
+    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
+  }
+}
+
+sub updatevoltgraph
+{
+  my $type   = "volt";
+  my $period = $_[0];
+
+  @args = ("$path_graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+    "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
+    "--color", "SHADEA#EAE9EE",
+    "--color", "SHADEB#EAE9EE",
+    "--color", "BACK#EAE9EE",
+    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
+
+  $count = 1;
+  foreach $key ( sort(keys %mbmon_values) ) 
+  {
+    my $v = substr($key,0,1);
+    if ( ($v eq 'v') && ($mbmon_settings{'LINE-'.$key} eq 'on') )
+    {
+      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
+      {
+        $mbmon_settings{'LABEL-'.$key} = $key;
+      }
+
+      push(@args, "DEF:$key=$path_rrd/mbmon.rrd:$key:AVERAGE");
+      push(@args, "LINE2:$key$colors{$count}:$mbmon_settings{'LABEL-'.$key} V");
+      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.2lf V");
+      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.2lf V");
+      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.2lf V\\j");
+
+      $count++;
+    }
+  }
+
+  if ( $count > 1 )
+  {
+    RRDs::graph ( @args );
+    $ERROR = RRDs::error;
+    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
+  }
 }
 
 ## Update ipac logs
@@ -929,6 +1160,30 @@ updatehddgraph ("week");
 updatehddgraph ("month");
 updatehddgraph ("year");
 
+updatembmondata();
+
+if ( $mbmon_settings{'GRAPH_TEMP'} == 1 )
+{
+  updatetempgraph ("day");
+  updatetempgraph ("week");
+  updatetempgraph ("month");
+  updatetempgraph ("year");
+}
+if ( $mbmon_settings{'GRAPH_TEMP'} == 1 )
+{
+  updatefangraph ("day");
+  updatefangraph ("week");
+  updatefangraph ("month");
+  updatefangraph ("year");
+}
+if ( $mbmon_settings{'GRAPH_VOLT'} == 1 )
+{
+  updatevoltgraph ("day");
+  updatevoltgraph ("week");
+  updatevoltgraph ("month");
+  updatevoltgraph ("year");
+}
+
 ###
 ### Network Graphs
 ###
@@ -971,7 +1226,6 @@ if ($settings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/ && -e "$rrdlog/BLUE.rrd") {
 	updateifgraph ("BLUE", "year");
 }
 
-#chmod 777 /home/httpd/html/{graphs,sgraph} -R
 system("chmod -R 0777 /home/httpd/html/graphs");
 system("chmod -R 0777 /home/httpd/html/sgraph");
 

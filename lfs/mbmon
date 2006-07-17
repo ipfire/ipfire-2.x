@@ -26,10 +26,10 @@
 
 include Config
 
-VER        = 0.3-beta14
+VER        = 205
 
-THISAPP    = hddtemp-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = xmbmon$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -38,14 +38,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-		hddtemp.db
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-hddtemp.db = $(DL_FROM)/hddtemp.db
 
-$(DL_FILE)_MD5 = bbf8be4539495e18bec54af77511a680
-hddtemp.db_MD5 = 5321858f8c028d4b1a91a8a5f951f2f8
+$(DL_FILE)_MD5 = ab6614c785f5b653fcc69fb9c02058f0
 
 install : $(TARGET)
 
@@ -74,9 +71,10 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp -fv $(DIR_DL)/hddtemp.db /etc/hddtemp.db
-	cd $(DIR_APP) && ./configure --prefix=/usr --with-db-path=/etc/hddtemp.db
-	cd $(DIR_APP) && make && make install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make PROGRAM=mbmon
+	cd $(DIR_APP) && install -o root -g wheel -m 4555 -c -p mbmon /usr/bin
+	cd $(DIR_APP) && install -o root -g wheel -m 444 -c -p mbmon.1 /usr/man/man1
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

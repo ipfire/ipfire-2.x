@@ -51,7 +51,7 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang alcatelusb auth backup backup/sets ca certs cnx_pci crls ddns dhcp dhcpc dmzholes \
-	    eagle-usb eciadsl ethernet isdn key langs logging main modem net-traffic nfs optionsfw outgoing patches pakfire portfw \
+	    eagle-usb eciadsl ethernet isdn key langs logging main mbmon modem net-traffic nfs optionsfw outgoing patches pakfire portfw \
 	    ppp private proxy/advanced qos/bin red remote snort time urlfilter/autoupdate urlfilter/bin vpn wireless xtaccess ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
 	done
@@ -77,6 +77,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/backup-include		$(CONFIG_ROOT)/backup/include.system
 	cp $(DIR_SRC)/config/cfgroot/backup-exclude.hardware	$(CONFIG_ROOT)/backup/exclude.hardware
 	cp $(DIR_SRC)/config/cfgroot/advoptions-list		$(CONFIG_ROOT)/dhcp/advoptions-list
+	cp $(DIR_SRC)/config/cfgroot/mbmon-settings		$(CONFIG_ROOT)/mbmon/settings
 	cp $(DIR_SRC)/config/cfgroot/modem-defaults		$(CONFIG_ROOT)/modem/defaults
 	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-lib.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-lib.pl
