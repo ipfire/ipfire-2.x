@@ -52,6 +52,7 @@ $outfwsettings{'DISPLAY_DIP'} = '';
 $outfwsettings{'DISPLAY_DPORT'} = '';
 $outfwsettings{'DISPLAY_SMAC'} = '';
 $outfwsettings{'DISPLAY_SIP'} = '';
+$outfwsettings{'POLICY'} = 'MODE0';
 
 &General::readhash("${General::swroot}/outgoing/settings", \%outfwsettings);
 &Header::getcgihash(\%outfwsettings);

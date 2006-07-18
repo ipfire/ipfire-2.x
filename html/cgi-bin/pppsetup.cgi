@@ -55,9 +55,6 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 {
-	if ($pppsettings{'MORNINGRECONNECT'} eq 'on')
-		{ system("/bin/touch /var/ipfire/ppp/morningreconnect"); }
-		else { unlink "/var/ipfire/ppp/morningreconnect"; }
 	if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|usb\/ttyACM0|usb\/ttyACM1|usb\/ttyACM2|usb\/ttyACM3|isdn1|isdn2)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
@@ -398,10 +395,6 @@ $checked{'DIALONDEMANDDNS'}{'off'} = '';
 $checked{'DIALONDEMANDDNS'}{'on'} = '';
 $checked{'DIALONDEMANDDNS'}{$pppsettings{'DIALONDEMANDDNS'}} = "checked='checked'";
 
-$checked{'MORNINGRECONNECT'}{'off'} = '';
-$checked{'MORNINGRECONNECT'}{'on'} = '';
-$checked{'MORNINGRECONNECT'}{$pppsettings{'MORNINGRECONNECT'}} = "checked='checked'";
-
 $checked{'AUTOCONNECT'}{'off'} = '';
 $checked{'AUTOCONNECT'}{'on'} = ''; 
 $checked{'AUTOCONNECT'}{$pppsettings{'AUTOCONNECT'}} = "checked='checked'";
@@ -691,12 +684,6 @@ print <<END
 	<td><input type='text' size='5' name='HOLDOFF' value='$pppsettings{'HOLDOFF'}' /></td>
 	<td align='right'>$Lang::tr{'maximum retries'}</td>
 	<td><input type='text' size='5' name='MAXRETRIES' value='$pppsettings{'MAXRETRIES'}' /></td>
-</tr>
-<tr>
-	<td align='right'>Morning Reconnect:</td>
-	<td><input type='checkbox' name='MORNINGRECONNECT' $checked{'MORNINGRECONNECT'}{'on'} /></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
 </tr>
 END
 ;

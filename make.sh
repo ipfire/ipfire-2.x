@@ -551,6 +551,7 @@ buildipcop() {
 	ipcopmake fcclassic	SMP=1
 	ipcopmake pulsar 	SMP=1
   	ipcopmake unicorn 	SMP=1
+  	ipcopmake promise-sata-300-tx SMP=1
   fi
 
   ipcopmake linux	LFS_PASS=ipfire
@@ -571,8 +572,9 @@ buildipcop() {
  	ipcopmake fcdslslusb 
   	ipcopmake fcpci
   	ipcopmake fcclassic
-	ipcopmake pulsar 	
-  	ipcopmake unicorn 	
+	ipcopmake pulsar	
+  	ipcopmake unicorn
+  	ipcopmake promise-sata-300-tx
   fi
 
   ipcopmake pcmcia-cs
@@ -707,6 +709,7 @@ buildipcop() {
   ipcopmake bridge-utils
   ipcopmake screen
   ipcopmake hddtemp
+  ipcopmake smartmontools
   ipcopmake htop
   ipcopmake lynx
   echo -ne "`date -u '+%b %e %T'`: Building ### Mailserver ### \n" | tee -a $LOGFILE

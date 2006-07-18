@@ -157,7 +157,7 @@ if ( $cgiparams{'ACTION'} eq 'wakeup' )
   # make a box with info, 'refresh' to normal screen after 5 seconds
   if ( $refresh eq 'yes' )
   {
-    &Header::openpage($Lang::tr{'WakeOnLan'}, 1, "<meta http-equiv='refresh' content='3;url=/cgi-bin/wakeonlan-gui.cgi'");
+    &Header::openpage($Lang::tr{'WakeOnLan'}, 1, "<meta http-equiv='refresh' content='3;url=/cgi-bin/wakeonlan.cgi'");
     &Header::openbigbox('100%', 'left');
   }
   &Header::openbox('100%', 'left', $Lang::tr{'WakeOnLan'});

@@ -250,25 +250,31 @@ sub genmenu {
 				  'title' => "$tr{'alt dialup'}",
 				  'enabled' => 1,
 				  };
-    $subnetwork->{'50.hosts'} = {
+    $subnetwork->{'50.scheduler'} = {
+				  'caption' => $tr{'scheduler'},
+				  'uri' => '/cgi-bin/connscheduler.cgi',
+				  'title' => "$tr{'scheduler'}",
+				  'enabled' => 1,
+				  };
+    $subnetwork->{'60.hosts'} = {
 				 'caption' => $tr{'edit hosts'},
 				 'uri' => '/cgi-bin/hosts.cgi',
 				 'title' => "$tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'60.upload'} = {
+    $subnetwork->{'70.upload'} = {
 				  'caption' => $tr{'upload'},
 				  'uri' => '/cgi-bin/upload.cgi',
 				  'title' => "$tr{'upload'}",
 				  'enabled' => 0,
 				  };
-    $subnetwork->{'70.aliases'} = {
+    $subnetwork->{'80.aliases'} = {
 				  'caption' => $tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$tr{'aliases'}",
 				  'enabled' => 0,
 				  };
-    $subnetwork->{'80.wakeonlan'} = {
+    $subnetwork->{'90.wakeonlan'} = {
 				  'caption' => $tr{'WakeOnLan'},
 				  'uri' => '/cgi-bin/wakeonlan.cgi',
 				  'title' => "$tr{'WakeOnLan'}",

@@ -34,7 +34,7 @@
   * applejuice-0.30
   * arping-2.05
   * as86-0.16.17
-  * asterisk-1.2.7.1
+  * asterisk-1.2.9.1
   * autoconf-2.59
   * automake-1.8.4
   * bash-2.05b
@@ -45,6 +45,7 @@
   * bison-1.875
   * bootsplash-3.2
   * bridge-utils-1.1
+  * bristuff-0.3.0-PRE-1q
   * busybox-0.60.5
   * bzip2-1.0.3
   * capi4k-utils-2004-10-06
@@ -131,6 +132,7 @@
   * libnet-1.1.2.1
   * libpcap-0.8.3
   * libpng-1.2.8
+  * libpri-1.2.3
   * libsafe_2.0-16
   * libtool-1.5.6
   * libusb-0.1.7
@@ -170,7 +172,6 @@
   * ntop-3.2
   * ntp-4.2.0
   * oinkmaster-1.2
-  * openh323-Mimas_patch2
   * openldap-2.3.20
   * openssh-3.9p1
   * openssl-0.9.7i
@@ -193,16 +194,17 @@
   * procps-3.2.5
   * psmisc-21.4
   * pulsar-4.0.19
-  * pwlib-ipfire1
   * razor-agents-2.81
   * rp-pppoe-3.5
   * rrdtool-1.0.49
   * samba-3.0.22
+  * sata300_sataii150_tx_series_linux2.4_open_source_1.00.0.15
   * screen-4.0.2
   * sed-4.0.9
   * setserial-2.17
   * shadow-4.0.4.1
   * slang-1.4.5-mini
+  * smartmontools-5.36
   * snort-2.3.3
   * spandsp-0.0.2pre25
   * speedtouch-1.2
@@ -231,4 +233,6 @@
   * wput-0.6
   * xampp-linux-1.5.3a
   * xinetd-2.3.14
+  * xmbmon205
+  * zaptel-1.2.6
   * zlib-1.2.3
