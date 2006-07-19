@@ -25,7 +25,7 @@
 
   NAME="IPFire"			# Software name
   SNAME="ipfire"			# Short name
-  VERSION="1.4"			# Version number
+  VERSION="2.0"			# Version number
   SLOGAN="We secure your network"	# Software slogan
   CONFIG_ROOT=/var/ipfire		# Configuration rootdir
   NICE=10

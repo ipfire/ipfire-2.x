@@ -10,7 +10,7 @@ default_ca	= IPFire
 [ IPFire ]
 dir		= /var/ipfire
 certs		= $dir/certs
-crl_dir		= $dir/crls
+crl_dir	= $dir/crls
 database	= $dir/certs/index.txt
 new_certs_dir	= $dir/certs
 certificate	= $dir/ca/cacert.pem
@@ -44,9 +44,9 @@ string_mask = nombstr
 
 [ req_distinguished_name ]
 countryName			= Country Name (2 letter code)
-countryName_default		= GB
-countryName_min			= 2
-countryName_max			= 2
+countryName_default		= DE
+countryName_min		= 2
+countryName_max		= 2
 
 stateOrProvinceName		= State or Province Name (full name)
 stateOrProvinceName_default	= 
@@ -55,21 +55,21 @@ localityName			= Locality Name (eg, city)
 #localityName_default		= 
 
 0.organizationName		= Organization Name (eg, company)
-0.organizationName_default	= My Company Ltd
+0.organizationName_default	= IPFire
 
 organizationalUnitName		= Organizational Unit Name (eg, section)
 #organizationalUnitName_default	=
 
 commonName			= Common Name (eg, your name or your server\'s hostname)
-commonName_max			= 64
+commonName_max		= 64
 
 emailAddress			= Email Address
 emailAddress_max		= 40
 
 [ req_attributes ]
 challengePassword		= A challenge password
-challengePassword_min		= 4
-challengePassword_max		= 20
+challengePassword_min	= 4
+challengePassword_max	= 20
 unstructuredName		= An optional company name
 
 [ usr_cert ]

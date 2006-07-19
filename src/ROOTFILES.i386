@@ -21025,6 +21025,7 @@ home/httpd/cgi-bin/country.cgi
 home/httpd/cgi-bin/credits.cgi
 home/httpd/cgi-bin/ddns.cgi
 home/httpd/cgi-bin/dhcp.cgi
+home/httpd/cgi-bin/dial
 home/httpd/cgi-bin/dial.cgi
 home/httpd/cgi-bin/dmzholes.cgi
 home/httpd/cgi-bin/graphs.cgi
@@ -27209,7 +27210,7 @@ usr/bin/wget
 usr/etc/wgetrc
 ##
 ## xmbmon205
-/usr/bin/mbmon
+usr/bin/mbmon
 ##
 ##
 ## mc

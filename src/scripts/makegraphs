@@ -34,8 +34,6 @@ my (%settings, @ipacsum, $iface, $ERROR);
 my %mbmon_settings = ();
 &General::readhash("${General::swroot}/mbmon/settings", \%mbmon_settings);
 
-
-
 # Added for conversion of utf-8 characters
 use Encode 'from_to';
 my %tr=();
@@ -68,9 +66,8 @@ my @args = ();
 my $count = 0;
 my $ERROR;
 my $dbg = 0;
-my $path_rrd = "/var/log/rrd";
-my $path_graphs = "/home/httpd/html/graphs";
 my $path_smartctl = "/usr/sbin/smartctl";
+my $path_hddtemp = "/usr/sbin/hddtemp";
 
 my %colors = ();
 $colors{"1"} = "#0000FF";
@@ -715,10 +712,10 @@ sub updatelqgraph {
 
 sub updatehdddata 
 {
-  if ( ! -e "$path_rrd/hddtemp.rrd") 
+  if ( ! -e "$rrdlog/hddtemp.rrd") 
   {
     # database did not exist -> create
-    RRDs::create ("$path_rrd/hddtemp.rrd", "--step=300",
+    RRDs::create ("$rrdlog/hddtemp.rrd", "--step=300",
       "DS:temperature:GAUGE:600:0:100",
       "RRA:AVERAGE:0.5:1:576",
       "RRA:AVERAGE:0.5:6:672",
@@ -781,7 +778,7 @@ sub updatehdddata
 #  print "hdd  $hdd_output \n";
 #  print "temp $temp \n";
 
-  RRDs::update ("$path_rrd/hddtemp.rrd", "-t", "temperature", "N:$temp");
+  RRDs::update ("$rrdlog/hddtemp.rrd", "-t", "temperature", "N:$temp");
 
   $ERROR = RRDs::error;
   print "Error in RRD::update for hdd: $ERROR\n" if $ERROR;
@@ -809,11 +806,11 @@ sub updatehddgraph {
 
 sub updatembmondata 
 {
-  if ( ! -e "$path_rrd/mbmon.rrd" )
+  if ( ! -e "$rrdlog/mbmon.rrd" )
   {
     # database did not exist -> create
 
-    @args = ("$path_rrd/mbmon.rrd");
+    @args = ("$rrdlog/mbmon.rrd");
 
     push(@args, "--step=300");
     foreach $key ( sort(keys %mbmon_values) ) 
@@ -848,7 +845,7 @@ sub updatembmondata
   print("update template = '$template'\n") if ( $dbg );
   print("update value    = '$value'\n") if ( $dbg );
 
-  RRDs::update("$path_rrd/mbmon.rrd", "-t", $template, $value);
+  RRDs::update("$rrdlog/mbmon.rrd", "-t", $template, $value);
   $ERROR = RRDs::error;
   print("Error in RRD::update for mbmon: $ERROR\n") if $ERROR;
 }
@@ -858,7 +855,7 @@ sub updatetempgraph
   my $type   = "temp";
   my $period = $_[0];
 
-  @args = ("$path_graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA#EAE9EE",
     "--color", "SHADEB#EAE9EE",
@@ -875,7 +872,7 @@ sub updatetempgraph
         $mbmon_settings{'LABEL-'.$key} = $key;
       }
 
-      push(@args, "DEF:$key=$path_rrd/mbmon.rrd:$key:AVERAGE");
+      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
       push(@args, "LINE2:$key$colors{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} °C");
       push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.1lf °C");
       push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.1lf °C");
@@ -898,7 +895,7 @@ sub updatefangraph
   my $type   = "fan";
   my $period = $_[0];
 
-  @args = ("$path_graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA#EAE9EE",
     "--color", "SHADEB#EAE9EE",
@@ -915,7 +912,7 @@ sub updatefangraph
         $mbmon_settings{'LABEL-'.$key} = $key;
       }
 
-      push(@args, "DEF:$key=$path_rrd/mbmon.rrd:$key:AVERAGE");
+      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
       push(@args, "LINE2:$key$colors{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
       push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.0lf rpm");
       push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.0lf rpm");
@@ -938,7 +935,7 @@ sub updatevoltgraph
   my $type   = "volt";
   my $period = $_[0];
 
-  @args = ("$path_graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA#EAE9EE",
     "--color", "SHADEB#EAE9EE",
@@ -956,7 +953,7 @@ sub updatevoltgraph
         $mbmon_settings{'LABEL-'.$key} = $key;
       }
 
-      push(@args, "DEF:$key=$path_rrd/mbmon.rrd:$key:AVERAGE");
+      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
       push(@args, "LINE2:$key$colors{$count}:$mbmon_settings{'LABEL-'.$key} V");
       push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.2lf V");
       push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.2lf V");
