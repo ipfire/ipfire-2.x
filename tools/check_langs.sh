@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [ ! -d ./langs/ ]; then
 	echo "Script can only be started from IPCop Source base directory"
 	exit 1
@@ -8,7 +9,7 @@ fi
 cat ./langs/en/cgi-bin/en.pl | grep \'.*\' | awk -F\' '{print $2}'| sort > /tmp/en_cgi-bin.$$
 cat ./langs/en/install/lang_en.c | grep TR_ | awk -F\  '{print $2}' > /tmp/en_install.$$
 
-for i in ./langs/[a-z]*; do
+for i in ./langs/de; do
     if [ "$i" == "./langs/CVS" ] ; then continue; fi
     language=`echo "$i" | awk -F/  '{ print $3 }'`
 

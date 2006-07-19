@@ -1,36 +1,58 @@
 #!/bin/sh
 #
-# $Id: rc.halt,v 1.4.2.2 2005/07/07 20:11:58 franck78 Exp $
+# rc.halt for ipfire 2006
 #
+
+progressbar()
+{
+	if [ $# != 1 ]
+		then
+			echo "Usage: progressbar {progress}"
+			exit 1
+		fi
+	echo "show $(( 65534 * $1 / 9 ))" > /proc/splash
+}
+# Set bootsplash
+progressbar 0
+echo "silent" > /proc/splash
+
 echo "Stopping the RED interface..."
+progressbar 1
 /etc/rc.d/rc.red stop 2>/dev/null
 /etc/rc.d/rc.red clear 2>/dev/null
+
 echo "Shutting down..."
+progressbar 2
 sleep 3
+
 echo "Saving the clock"
+progressbar 3
 /sbin/hwclock --systohc
+
 echo "Sending all processes the TERM signal..." 
+progressbar 4
 /sbin/killall5 -15
 sleep 3
+
 echo "Sending all processes the KILL signal..."
+progressbar 5
 /sbin/killall5 -9
 sleep 3
 
-if [ -e /etc/FLASH ]; then
-	if [ -e /etc/rc.d/rc.flash.down ]; then
-		echo "Compressing logs"
-		. /etc/rc.d/rc.flash.down
-	fi
-fi
-
 echo "Turning off swap"
+progressbar 6
 swapoff -a
+
 echo "Unmounting others"
+progressbar 7
 umount -n -a
+
 echo "Unmounting root"
+progressbar 8
 mount -n -o remount,ro /
 
 # Send nice shutdown beep now
+progressbar 9
 /usr/bin/beep -l 75 -f 3000
 /usr/bin/beep -l 75 -f 2000
 /usr/bin/beep -l 75 -f 1000

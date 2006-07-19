@@ -74,7 +74,7 @@ $(TARGET) :
 	if [ "$(MACHINE)" = "alpha" ]; then \
 		cp /tmp/scsi.tgz /install/images/scsidrv-$(VERSION).img; \
 	else \
-		dd if=/tmp/scsi.tgz of=/install/images/scsidrv-$(VERSION).img bs=1440k count=1 conv=sync; \
+		dd if=/tmp/scsi.tgz of=/install/images/scsidrv-$(VERSION).img bs=2880k count=1 conv=sync; \
 	fi
 	rm -f /tmp/scsi.tgz
 
