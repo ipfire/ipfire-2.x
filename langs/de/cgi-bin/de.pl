@@ -1503,7 +1503,8 @@
 'scheduled actions' => 'Geplante Aktionen',
 'scheduler' => 'Scheduler',
 'select profile' => 'Wähle Profil',
-'up' => 'Hoch', 
+'up' => 'Hoch',
+'hardware graphs' => 'Hardware-Diagramme',
 
 ); 
 

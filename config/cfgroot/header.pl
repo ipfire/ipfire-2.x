@@ -130,25 +130,31 @@ sub genmenu {
 				'title' => "$tr{'alt home'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'20.passwords'} = {
+    $subsystem->{'20.dialup'} = {
+				'caption' => $tr{'alt dialup'},
+				'uri' => '/cgi-bin/pppsetup.cgi',
+				'title' => "$tr{'alt dialup'}",
+				'enabled' => 1,
+				};
+    $subsystem->{'30.passwords'} = {
 				'caption' => $tr{'sspasswords'},
 				'uri' => '/cgi-bin/changepw.cgi',
 				'title' => "$tr{'sspasswords'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'30.ssh'} = {
+    $subsystem->{'40.ssh'} = {
 				'caption' => $tr{'ssh access'},
 				'uri' => '/cgi-bin/remote.cgi',
 				'title' => "$tr{'ssh access'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'40.gui'} = {
+    $subsystem->{'50.gui'} = {
 				'caption' => $tr{'gui settings'},
 				'uri' => '/cgi-bin/gui.cgi',
 				'title' => "$tr{'gui settings'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'50.shutdown'} = {
+    $subsystem->{'60.shutdown'} = {
 				'caption' => $tr{'shutdown'},
 				'uri' => '/cgi-bin/shutdown.cgi',
 				'title' => "$tr{'shutdown'} / $tr{'reboot'}",
@@ -201,10 +207,10 @@ sub genmenu {
 			     	  'title' => "Firewall-Diagramme",
 			         'enabled' => 1,
 			   	  };
-    $substatus->{'70.hddtemp'} = {
-				  'caption' => "$tr{'harddisk temperature graphs'}",
-			     	  'uri' => '/cgi-bin/hddgraph.cgi',
-			     	  'title' => "$tr{'harddisk temperature graphs'}",
+    $substatus->{'70.hardwaregraphs'} = {
+				  'caption' => "$tr{'hardware graphs'}",
+			     	  'uri' => '/cgi-bin/hardwaregraphs.cgi',
+			     	  'title' => "$tr{'hardware graphs'}",
 			         'enabled' => 1,
 			   	  };
     $substatus->{'80.connections'} = {
@@ -244,37 +250,31 @@ sub genmenu {
 				 'title' => "$tr{'dhcp server'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'40.dialup'} = {
-				  'caption' => $tr{'alt dialup'},
-				  'uri' => '/cgi-bin/pppsetup.cgi',
-				  'title' => "$tr{'alt dialup'}",
-				  'enabled' => 1,
-				  };
-    $subnetwork->{'50.scheduler'} = {
-				  'caption' => $tr{'scheduler'},
-				  'uri' => '/cgi-bin/connscheduler.cgi',
-				  'title' => "$tr{'scheduler'}",
-				  'enabled' => 1,
-				  };
-    $subnetwork->{'60.hosts'} = {
+    $subnetwork->{'40.scheduler'} = {
+				 'caption' => $tr{'scheduler'},
+				 'uri' => '/cgi-bin/connscheduler.cgi',
+				 'title' => "$tr{'scheduler'}",
+				 'enabled' => 1,
+				 };
+    $subnetwork->{'50.hosts'} = {
 				 'caption' => $tr{'edit hosts'},
 				 'uri' => '/cgi-bin/hosts.cgi',
 				 'title' => "$tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'70.upload'} = {
+    $subnetwork->{'60.upload'} = {
 				  'caption' => $tr{'upload'},
 				  'uri' => '/cgi-bin/upload.cgi',
 				  'title' => "$tr{'upload'}",
 				  'enabled' => 0,
 				  };
-    $subnetwork->{'80.aliases'} = {
+    $subnetwork->{'70.aliases'} = {
 				  'caption' => $tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$tr{'aliases'}",
 				  'enabled' => 0,
 				  };
-    $subnetwork->{'90.wakeonlan'} = {
+    $subnetwork->{'80.wakeonlan'} = {
 				  'caption' => $tr{'WakeOnLan'},
 				  'uri' => '/cgi-bin/wakeonlan.cgi',
 				  'title' => "$tr{'WakeOnLan'}",
@@ -751,7 +751,7 @@ sub openpage {
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 END
 ;
-    if ($settings{'FX'} eq 'on') {
+    if ($settings{'FX'} ne 'off') {
     print <<END
     <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)">
     <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)">
@@ -820,6 +820,90 @@ END
 	$supported = check_support();
 	warn_unsupported($supported);
     };
+}
+
+sub openpagewithoutmenu {
+    my $title = shift;
+    my $boh = shift;
+    my $extrahead = shift;
+
+    @URI=split ('\?',  $ENV{'REQUEST_URI'} );
+    &readhash("${swroot}/main/settings", \%settings);
+    &genmenu();
+
+    my $h2 = gettitle($menu);
+    my $helpuri = get_helpuri();
+
+    $title = "IPFire - $title";
+    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+        $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
+    }
+
+    print <<END
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+  <head>
+  <title>$title</title>
+
+    $extrahead
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+END
+;
+    if ($settings{'FX'} eq 'on') {
+    print <<END
+    <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)">
+    <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)">
+END
+;
+    }
+    print <<END
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <style type="text/css">\@import url(/include/style.css);</style>
+    <style type="text/css">\@import url(/include/menu.css);</style>
+    <style type="text/css">\@import url(/include/content.css);</style>
+    <script language="javascript" type="text/javascript">
+      
+        function swapVisibility(id) {
+            el = document.getElementById(id);
+  	    if(el.style.display != 'block') {
+  	        el.style.display = 'block'
+  	    }
+  	    else {
+  	        el.style.display = 'none'
+  	    }
+        }
+    </script>
+
+  </head>
+  <body>
+<!-- IPFIRE HEADER -->
+
+<div id="main">
+
+<div id="header">
+	<img id="logo-product" src="/images/logo_ipfire.gif">
+   <div id="header-icons">
+	    <a href="http://users.ipfire.eu/" target="_blank"><img border="0" src="/images/help.gif"></a>
+   </div>
+</div>
+
+END
+;
+print <<END
+<div id="content">
+  <table width="90%">
+    <tr>
+      <td valign="top">
+      <p><center><img src="/images/iptux.png" width='160px' height='160px'></center></p>
+      </td>
+        <td width="100%" valign="top">
+        <div id="page-content">
+            <h2>$h2</h2>
+END
+    ;
 }
 
 sub closepage () {

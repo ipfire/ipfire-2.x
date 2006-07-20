@@ -1,4 +1,4 @@
-====== List of softwares used to build IPFire Version: 1.4 ======
+====== List of softwares used to build IPFire Version: 2.0 ======
   * 3c5x9setup-1.00
   * 3cp4218-2003-10-22
   * Archive-Tar-1.29

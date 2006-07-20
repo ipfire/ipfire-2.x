@@ -859,7 +859,7 @@ sub updatetempgraph
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA#EAE9EE",
     "--color", "SHADEB#EAE9EE",
-    "--color", "BACK#EAE9EE",
+    "--color", "BACK#FFFFFF",
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
   $count = 1;
@@ -899,7 +899,7 @@ sub updatefangraph
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA#EAE9EE",
     "--color", "SHADEB#EAE9EE",
-    "--color", "BACK#EAE9EE",
+    "--color", "BACK#FFFFFF",
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
   $count = 1;
@@ -939,7 +939,7 @@ sub updatevoltgraph
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA#EAE9EE",
     "--color", "SHADEB#EAE9EE",
-    "--color", "BACK#EAE9EE",
+    "--color", "BACK#FFFFFF",
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
   $count = 1;

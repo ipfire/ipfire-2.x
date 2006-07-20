@@ -126,7 +126,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -R root:root /home/httpd
 	chmod -R 755 /home/httpd/cgi-bin
 	chmod -R 644 /home/httpd/html
-	chmod 755 /home/httpd/html /home/httpd/html/{index.cgi,images,include}
+	chmod 755 /home/httpd/html /home/httpd/html/{index.cgi,redirect.cgi,dial.cgi,images,include}
 
 
 	# backup directory needs nobody:nobody permissions

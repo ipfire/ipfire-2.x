@@ -21030,8 +21030,8 @@ home/httpd/cgi-bin/dial.cgi
 home/httpd/cgi-bin/dmzholes.cgi
 home/httpd/cgi-bin/graphs.cgi
 home/httpd/cgi-bin/gui.cgi
+home/httpd/cgi-bin/hardwaregraphs.cgi
 home/httpd/cgi-bin/hosts.cgi
-home/httpd/cgi-bin/hddgraph.cgi
 home/httpd/cgi-bin/ids.cgi
 home/httpd/cgi-bin/index.cgi
 home/httpd/cgi-bin/ipinfo.cgi

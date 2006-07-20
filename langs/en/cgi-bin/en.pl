@@ -1536,6 +1536,7 @@
 'scheduled actions' => 'Scheduled actions',
 'scheduler' => 'Scheduler',
 'select profile' => 'Select profile',
-'up' => 'Up', 
+'up' => 'Up',
+'hardware graphs' => 'hardware graphs',
 
 );

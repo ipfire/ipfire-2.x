@@ -46,4 +46,4 @@ echo -n -e '\033%G'
 
 export LANG PS1
 # Enable colors for applications like mc....
-export TERM=xterm-color
+export TERM=linux
