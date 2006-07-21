@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# $Id: redirect.cgi,v 0.2 2006/06/12 00:00:00 modyfy bye linuxadmin
+# $Id: redirect.cgi,v 0.3 2006/07/18 00:00:00 modyfy bye linuxadmin
 #
 
 use CGI qw(param);
@@ -47,10 +47,10 @@ print <<END
 END
 ;
 
-if (($filtersettings{'ENABLE_JPEG'} eq 'on') && (-e "/home/httpd/html/images/urlfilter/background.jpg"))
+if (($filtersettings{'ENABLE_JPEG'} eq 'on') && (-e "/home/httpd/html/images/urlfilter/logo_ipfire.gif"))
 {
 print <<END
-<body background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/background.jpg" bgcolor="#FFFFFF">
+<body background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/logo_ipfire.gif" bgcolor="#FFFFFF">
 END
 ;
 } else {

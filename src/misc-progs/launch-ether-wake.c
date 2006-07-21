@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	if (!(initsetuid()))
 		exit(1);
 
-  snprintf(command, BUFFER_SIZE-1, "/usr/bin/ether-wake -i %s %s", argv[2], argv[1]);
+  snprintf(command, BUFFER_SIZE-1, "/usr/sbin/etherwake -i %s %s", argv[2], argv[1]);
   safe_system(command);
 
   return(0);

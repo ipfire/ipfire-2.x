@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 4.6.1
+VER        = 4.6.0
 
 THISAPP    = mc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.ibiblio.org/pub/Linux/utils/file/managers/mc
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 18b20db6e40480a53bac2870c56fc3c4
+$(DL_FILE)_MD5 = 70804dc9e2049e24f294ff7090a82a12
 
 install : $(TARGET)
 
@@ -81,10 +81,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-screen=mcslang --without-x --disable-nls --with-samba
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	# mv /usr/bin/mc /usr/bin/mcc
-	# echo -e "#!/bin/bash" > /usr/bin/mc
-	# echo -e "# Start MC in color-mode" >> /usr/bin/mc
-	# echo -e "/usr/bin/mcc -c" >> /usr/bin/mc
-	# chmod 755 /usr/bin/mc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
