@@ -19,7 +19,9 @@ progressbar()
 			echo "Usage: progressbar {progress}"
 			exit 1
 		fi
-	echo "show $(( 65534 * $1 / $NUMBEROFSCRIPTS ))" > /proc/splash
+	if [ -e /proc/splash ]; then
+		echo "show $(( 65534 * $1 / $NUMBEROFSCRIPTS ))" > /proc/splash
+	fi
 }
 
 echo "Mounting /proc filesystem"

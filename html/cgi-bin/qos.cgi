@@ -873,13 +873,34 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$classline[4]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
-				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$classline[1]'>
-					<button type='submit' name='DOCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='ACTION' value='Unterklasse hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addblue.gif' width="20" height="20" alt="Unterklasse hinzufuegen"></button>&nbsp;
-					<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
-					<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-					<button type='submit' name='DOCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
-				</form>
+				    <td align='right'  bgcolor='#EAEAEA'>
+					<table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen'>
+						<input type='image' alt='Unterklasse hinzufuegen' src='/images/addblue.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
+						<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
+						<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='DOCLASS' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+					</table>
 END
 ;
 			  	foreach $subclassentry (sort @subclasses)
@@ -922,13 +943,34 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$classline[4]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
-				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$classline[1]'>
-					<button type='submit' name='DOCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='ACTION' value='Unterklasse hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addblue.gif' width="20" height="20" alt="Unterklasse hinzufuegen"></button>&nbsp;
-					<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
-					<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-					<button type='submit' name='DOCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
-				</form>
+				    <td align='right'  bgcolor='#EAEAEA'>
+					<table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen'>
+						<input type='image' alt='Unterklasse hinzufuegen' src='/images/addblue.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
+						<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
+						<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$classline[1]'>
+						<input type='hidden' name='DOCLASS' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+					</table>
 END
 ;
 			  	foreach $subclassentry (sort @subclasses)
@@ -987,16 +1029,26 @@ END
 	  		if ( $l7ruleline[1] eq $qossettings{'RED_DEV'} )
 	  		{
 	  			print <<END
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<tr><td align='center' bgcolor='#EAEAEA'>$l7ruleline[1]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[0]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[2]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[3]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[4]
-				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$l7ruleline[0]'><input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-					<button type='submit' name='DOLEVEL7' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='DOLEVEL7' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
-				</form>
+				    <td align='right'  bgcolor='#EAEAEA'>
+					<table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
+						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
+						<input type='hidden' name='DOLEVEL7' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
+						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
+						<input type='hidden' name='DOLEVEL7' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+					</table>
 END
 ;
 	  		}
@@ -1014,10 +1066,21 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[2]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[3]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[4]
-				    <td align='right'  bgcolor='#EAEAEA'><input type='hidden' name='CLASS' value='$l7ruleline[0]'><input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-					<button type='submit' name='DOLEVEL7' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='DOLEVEL7' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
-				</form>
+				    <td align='right'  bgcolor='#EAEAEA'>
+					<table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
+						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
+						<input type='hidden' name='DOLEVEL7' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
+						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
+						<input type='hidden' name='DOLEVEL7' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+					</table>
 END
 ;
 	  		}

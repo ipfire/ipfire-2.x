@@ -1377,6 +1377,7 @@ usr/local/bin/rcgnump3d
 usr/local/bin/rcnfs-server
 usr/local/bin/rcpostfix
 usr/local/bin/rcwinbind
+usr/local/bin/run-parts
 #usr/local/doc
 #usr/local/etc
 #usr/local/include
@@ -14138,6 +14139,7 @@ usr/lib/perl5/5.8.5/unicore/Name.pl
 #usr/lib/perl5/5.8.5/unicore/PropValueAliases.txt
 #usr/lib/perl5/5.8.5/unicore/Properties
 #usr/lib/perl5/5.8.5/unicore/PropertyAliases.txt
+usr/lib/perl5/5.8.5/unicore/PVA.pl
 #usr/lib/perl5/5.8.5/unicore/README.perl
 #usr/lib/perl5/5.8.5/unicore/ReadMe.txt
 #usr/lib/perl5/5.8.5/unicore/Scripts.txt

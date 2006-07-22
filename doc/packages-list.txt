@@ -35,6 +35,7 @@
   * arping-2.05
   * as86-0.16.17
   * asterisk-1.2.9.1
+  * asterisk-1.2.9.1
   * autoconf-2.59
   * automake-1.8.4
   * bash-2.05b

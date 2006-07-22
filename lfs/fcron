@@ -87,6 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "root" > /etc/fcron.allow
 	echo "all"  > /etc/fcron.deny
 	chmod u-s /usr/bin/fcrontab /usr/bin/fcronsighup
+	mkdir -p /etc/fcron.minutely /etc/fcron.cyclic /etc/fcron.hourly \
+		/etc/fcron.daily /etc/fcron.weekly /etc/fcron.monthly
 	/usr/bin/fcrontab $(DIR_SRC)/config/cron/crontab
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
