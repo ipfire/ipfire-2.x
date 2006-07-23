@@ -138,7 +138,7 @@
 'connecting' => 'Baue Verbindung auf...', 
 'connection debugging' => 'Verbindungs-Debugging', 
 'connections are associated with this ca.  deleting the ca will delete these connections as well.' => 'Es sind noch Verbindungen mit dieser CA verknüpft.  Das Löschen dieser CA wird diese Verbindungen ebenfalls löschen.', 
-'connection status and controlc' => 'Verbindungsstatus und -kontrolle', 
+'connection status and controlc' => 'Verbindungsstatus und Konfiguration', 
 'connections' => 'Verbindungen', 
 'connection tracking' => 'IPTables-Verbindungsverfolgung', 
 'connection type is invalid' => 'Verbindungstyp ist ungültig', 
