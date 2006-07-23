@@ -1227,7 +1227,7 @@ build-only)
 	svn info
 	#echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
 	#cat doc/make.sh-usage
-	select name in "Build IPFire" "Prefetch" "Get Toolchain" "Update SVN Version" "End" "sync to Server" "End"
+	select name in "End" "Build IPFire" "Prefetch" "Get Toolchain" "Update SVN Version" "sync to Server" 
 	do
 	case $name in
         "Update SVN Version")
@@ -1251,8 +1251,8 @@ build-only)
                 $0 gettoolchain
                 ;;
 	"sync to Server")
-		echo "$0 commit"
-		$0 commit
+		echo "svn commit"
+		svn commit
 		;;
         "End")
                 break
