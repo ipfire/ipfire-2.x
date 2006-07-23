@@ -1223,8 +1223,37 @@ build-only)
 	ipcopmake $2
 	;;
 *)
-	echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
-	cat doc/make.sh-usage
-	exit 1
+	clear
+	svn info
+	#echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
+	#cat doc/make.sh-usage
+	select name in "Build IPFire" "Prefetch" "Get Toolchain" "Update SVN Version"  "Create Diff"  "End"
+	do
+	case $name in
+        "Update SVN Version")
+                echo "### SVN UPDATE ###"
+                svn update
+                ;;
+        "Prefetch")
+                echo "### MAKE.SH PREFETCH ###"
+                $0 prefetch
+                ;;
+        "Create Diff")
+                echo "### MAKE.SH DIFF ###"
+                $0 diff
+                ;;
+        "Build IPFire")
+                echo "### MAKE.SH BUILD ###"
+                $0 build
+                ;;
+        "Get Toolchain")
+                echo "### MAKE.SH GETTOOLCHAIN ###"
+                $0 gettoolchain
+                ;;
+        "End")
+                break
+                ;;
+	esac
+	done
 	;;
 esac
