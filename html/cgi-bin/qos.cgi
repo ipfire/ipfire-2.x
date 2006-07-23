@@ -91,37 +91,6 @@ $qossettings{'DOPORT'} = '';
 &Header::getcgihash(\%qossettings);
 
 &Header::openpage('QoS', 1, '');
-
-print <<END
-<script type="text/javascript">
-<!--
-function BorderOn (id) { id.className='btnOn'  }
-function BorderOff(id) { id.className='btnOff' }
-//-->
-</script>
-<style type=text/css>
-.btnOn {
-	border-right: #D5F0FF 2px Inset;
-	border-top: #D5F0FF 2px Inset;
-	border-left: #D5F0FF 2px Inset;
-	border-bottom: #D5F0FF 2px Inset;
-       text-align: Center;
-       text-decoration: None;
-	background-color: #FFFFFF;
-}
-.btnOff {
-	border-right: #D5F0FF 2px Outset;
-	border-top: #D5F0FF 2px Outset;
-	border-left: #D5F0FF 2px Outset;
-	border-bottom: #D5F0FF 2px Outset;
-	text-align: Center;
-	text-decoration: None;
-	background-color: #FFFFFF;
-}
-</style>
-END
-;
-
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
@@ -491,7 +460,7 @@ END
 		<tr><td width='40%' align='right'>Uploadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr>
-		<tr><td colspan='3' width='100%' align='center'><input type='submit' name='ACTION' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Parentklasse hinzufuegen'><input type='submit' name='ACTION' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Erweiterte Einstellungen'>
+		<tr><td colspan='3' width='100%' align='center'><input type='submit' name='ACTION' value='Parentklasse hinzufuegen'><input type='submit' name='ACTION' value='Erweiterte Einstellungen'>
 	</form>
 END
 ;
@@ -865,7 +834,6 @@ END
 	  		if ( $classline[0] eq $qossettings{'RED_DEV'} )
 	  		{
 	  			print <<END
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<tr><td align='center' bgcolor='#EAEAEA'>$classline[0]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[1]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[2]
@@ -908,7 +876,6 @@ END
 	  				@subclassline = split( /\;/, $subclassentry );
 		  			if ( $subclassline[1] eq $classline[1] ) {
 						print <<END
-						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<tr><td align='center' bgcolor='#FFFFFF'>Subklasse:
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[2]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[3]
@@ -916,12 +883,29 @@ END
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[5]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
-							    <td align='right'  bgcolor='#FAFAFA'><input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<button type='submit' name='DOSCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-								<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
-								<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-								<button type='submit' name='DOSCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
+							    <td align='right'  bgcolor='#FAFAFA'>
+						<table border='0'><tr>
+						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]'>
+							<input type='hidden' name='DOSCLASS' value='Bearbeiten'>
+							<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
 						</form>
+						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]'>
+							<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
+							<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
+						</form>
+						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]'>
+							<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
+							<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
+						</form>
+						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]'>
+							<input type='hidden' name='DOSCLASS' value='Loeschen'>
+							<input type='image' alt='Loeschen' src='/images/delete.gif'>
+						</form>
+						</table>
 END
 ;
 					}
@@ -935,7 +919,6 @@ END
 	  		if ( $classline[0] eq $qossettings{'IMQ_DEV'} )
 	  		{
 	  			print <<END
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<tr><td align='center' bgcolor='#EAEAEA'>$classline[0]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[1]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[2]
@@ -978,7 +961,6 @@ END
 	  				@subclassline = split( /\;/, $subclassentry );
 		  			if ( $subclassline[1] eq $classline[1] ) {
 						print <<END
-						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<tr><td align='center' bgcolor='#FFFFFF'>Subklasse:
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[2]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[3]
@@ -986,12 +968,29 @@ END
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[5]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
-							    <td align='right'  bgcolor='#FAFAFA'><input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<button type='submit' name='DOSCLASS' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-								<button type='submit' name='ACTION' value='Level7-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/addgreen.gif' width="20" height="20" alt="Level7-Regel hinzufuegen"></button>&nbsp;
-								<button type='submit' name='ACTION' value='Port-Regel hinzufuegen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/add.gif' width="20" height="20" alt="Port-Regel hinzufuegen"></button>&nbsp;
-								<button type='submit' name='DOSCLASS' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
-						</form>
+							    <td align='right'  bgcolor='#FAFAFA'>
+							<table border='0'><tr>
+							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='CLASS' value='$subclassline[2]'>
+								<input type='hidden' name='DOSCLASS' value='Bearbeiten'>
+								<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+							</form>
+							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='CLASS' value='$subclassline[2]'>
+								<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
+								<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
+							</form>
+							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='CLASS' value='$subclassline[2]'>
+								<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
+								<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
+							</form>
+							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='CLASS' value='$subclassline[2]'>
+								<input type='hidden' name='DOSCLASS' value='Loeschen'>
+								<input type='image' alt='Loeschen' src='/images/delete.gif'>
+							</form>
+							</table>
 END
 ;
 					}
@@ -1060,7 +1059,6 @@ END
 	  		if ( $l7ruleline[1] eq $qossettings{'IMQ_DEV'} )
 	  		{
 	  			print <<END
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<tr><td align='center' bgcolor='#EAEAEA'>$l7ruleline[1]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[0]
 				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[2]
@@ -1118,7 +1116,6 @@ END
 	  		if ( $portruleline[1] eq $qossettings{'RED_DEV'} )
 	  		{
 	  			print <<END
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<tr><td align='center' bgcolor='#EAEAEA'>$portruleline[1]
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[0]
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[2]
@@ -1127,15 +1124,28 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[6]
 				    <td align='right'  bgcolor='#EAEAEA'>
-					<input type='hidden' name='CLASS' value='$portruleline[0]'>
-					<input type='hidden' name='PPROT' value='$portruleline[2]'>
-					<input type='hidden' name='QIP' value='$portruleline[3]'>
-					<input type='hidden' name='QPORT' value='$portruleline[4]'>
-					<input type='hidden' name='DIP' value='$portruleline[5]'>
-					<input type='hidden' name='DPORT' value='$portruleline[6]'>
-					<button type='submit' name='DOPORT' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='DOPORT' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
-				</form>
+				    <table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]'>
+						<input type='hidden' name='PPROT' value='$portruleline[2]'>
+						<input type='hidden' name='QIP' value='$portruleline[3]'>
+						<input type='hidden' name='QPORT' value='$portruleline[4]'>
+						<input type='hidden' name='DIP' value='$portruleline[5]'>
+						<input type='hidden' name='DPORT' value='$portruleline[6]'>
+						<input type='hidden' name='DOPORT' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]'>
+						<input type='hidden' name='PPROT' value='$portruleline[2]'>
+						<input type='hidden' name='QIP' value='$portruleline[3]'>
+						<input type='hidden' name='QPORT' value='$portruleline[4]'>
+						<input type='hidden' name='DIP' value='$portruleline[5]'>
+						<input type='hidden' name='DPORT' value='$portruleline[6]'>
+						<input type='hidden' name='DOPORT' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+				    </table>
 END
 ;
 	  		}
@@ -1147,7 +1157,6 @@ END
 	  		if ( $portruleline[1] eq $qossettings{'IMQ_DEV'} )
 	  		{
 	  			print <<END
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<tr><td align='center' bgcolor='#EAEAEA'>$portruleline[1]
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[0]
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[2]
@@ -1156,15 +1165,28 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$portruleline[6]
 				    <td align='right'  bgcolor='#EAEAEA'>
-					<input type='hidden' name='CLASS' value='$portruleline[0]'>
-					<input type='hidden' name='PPROT' value='$portruleline[2]'>
-					<input type='hidden' name='QIP' value='$portruleline[3]'>
-					<input type='hidden' name='QPORT' value='$portruleline[4]'>
-					<input type='hidden' name='DIP' value='$portruleline[5]'>
-					<input type='hidden' name='DPORT' value='$portruleline[6]'>
-					<button type='submit' name='DOPORT' value='Bearbeiten' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt="Klasse bearbeiten"></button>&nbsp;
-					<button type='submit' name='DOPORT' value='Loeschen' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt="Klasse loeschen"></button>
-				</form>
+				    <table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]'>
+						<input type='hidden' name='PPROT' value='$portruleline[2]'>
+						<input type='hidden' name='QIP' value='$portruleline[3]'>
+						<input type='hidden' name='QPORT' value='$portruleline[4]'>
+						<input type='hidden' name='DIP' value='$portruleline[5]'>
+						<input type='hidden' name='DPORT' value='$portruleline[6]'>
+						<input type='hidden' name='DOPORT' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]'>
+						<input type='hidden' name='PPROT' value='$portruleline[2]'>
+						<input type='hidden' name='QIP' value='$portruleline[3]'>
+						<input type='hidden' name='QPORT' value='$portruleline[4]'>
+						<input type='hidden' name='DIP' value='$portruleline[5]'>
+						<input type='hidden' name='DPORT' value='$portruleline[6]'>
+						<input type='hidden' name='DOPORT' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+				    </table>
 END
 ;
 	  		}

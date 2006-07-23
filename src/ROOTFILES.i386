@@ -22182,6 +22182,12 @@ lib/modules/2.4.31-smp/misc/fcclassic.o.gz
 etc/fcron.allow
 etc/fcron.conf
 etc/fcron.deny
+etc/fcron.cyclic
+etc/fcron.daily
+etc/fcron.hourly
+etc/fcron.minutely
+etc/fcron.monthly
+etc/fcron.weekly
 usr/bin/fcronsighup
 usr/bin/fcrontab
 usr/sbin/fcron

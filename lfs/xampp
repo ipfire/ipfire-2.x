@@ -95,10 +95,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /opt 
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/xampp-linux-devel-$(VER).tar.gz -C /opt
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/Python-AddOn-1.3.tar.gz -C /tmp
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz -C /tmp
+#	cd $(DIR_SRC) && tar zxf $(DIR_DL)/PostGreSQL-AddOn-1.0-pgsql8.1.tar.gz -C /tmp
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/wwget-beta-for-ipfire.tar.gz -C /opt/lampp/htdocs
-	cd /tmp/PostGreSQL-AddOn-1.0-pgsql8.1 && ./INSTALL
-	rm -rf /tmp/PostGreSQL-AddOn-1.0-pgsql8.1
+#	cd /tmp/PostGreSQL-AddOn-1.0-pgsql8.1 && ./INSTALL
+#	rm -rf /tmp/PostGreSQL-AddOn-1.0-pgsql8.1
 	cd /tmp/Python-AddOn-1.3 && cp -fr lampp/bin /opt/lampp
 	cd /tmp/Python-AddOn-1.3 && cp -fr lampp/cgi-bin /opt/lampp
 	cd /tmp/Python-AddOn-1.3 && cp -fr lampp/etc /opt/lampp
@@ -110,7 +110,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd /tmp/Python-AddOn-1.3 && cp -fr lampp/modules /opt/lampp
 	# cd /tmp/Python-AddOn-1.3 && cp -fr lampp/share /opt/lampp
 	rm -rf /tmp/Python-AddOn-1.3
-	grep etc/python.conf /opt/lampp/etc/httpd.conf || echo -e "Include etc/python.conf" /opt/lampp/etc/httpd.conf
+	grep etc/python.conf /opt/lampp/etc/httpd.conf || echo -e "Include etc/python.conf" >> /opt/lampp/etc/httpd.conf
 	chown -R nobody.nobody /opt/lampp/htdocs
 	ln -fs /opt/lampp/lib/mysql/libmysqlclient.* /usr/lib
 	ldconfig
