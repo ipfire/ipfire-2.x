@@ -161,7 +161,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_http(  'www.cjb.net',
 									    80,
 									    "/cgi-bin/dynip.cgi?username=$settings{'LOGIN'}&password=$settings{'PASSWORD'}&ip=$ip",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
 
 			    if ($response =~ m%HTTP/1\.. 200 OK%) {
@@ -187,7 +187,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_https(  'carol.selfhost.de',
 									    443,
 									    "/update?username=$settings{'LOGIN'}&password=$settings{'PASSWORD'}&textmodi=1",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
 
 			    if ($response =~ m%HTTP/1\.. 200 OK%) {
@@ -220,7 +220,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_https(  "www.dnspark.net",
 									    443,
 									    "/api/dynamic/update.php?hostname=$settings{'HOSTDOMAIN'}&ip=$ip",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop',
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire',
 												      'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}")
 									     )
 									 );
@@ -254,7 +254,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_http(  'dynamic.name-services.com',
 									    80,
 									    "/interface.asp?Command=SetDNSHost&Zone=$settings{'DOMAIN'}&DomainPassword=$settings{'PASSWORD'}&Address=$ip",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
 
 			    if ($response =~ m%HTTP/1\.. 200 OK%) {
@@ -347,7 +347,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_https(  'freedns.afraid.org',
 									    443,
 									    "/dynamic/update.php?$settings{'LOGIN'}",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
 			    #Valid responses from service are:
                             #Updated n host(s) <domain>
@@ -377,7 +377,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_https(  'www.regfish.com',
 									    443,
 									    "/dyndns/2/?fqdn=$settings{'DOMAIN'}&ipv4=$ip&forcehost=1&authtype=secure&token=$settings{'LOGIN'}",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
 			    #Valid responses from service are:
 			    #success|100|update succeeded!
@@ -421,7 +421,7 @@ if ($ip ne $ipcache) {
 				$GET_CMD .= "Host: www.ovh.com\r\n";
 				chomp($code64 = encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}"));
 				$GET_CMD .= "Authorization: Basic $code64\r\n";
-			        $GET_CMD .= "User-Agent: ipcop\r\n";
+			        $GET_CMD .= "User-Agent: ipfire\r\n";
 			       #$GET_CMD .= "Content-Type: application/x-www-form-urlencoded\r\n";
 				$GET_CMD .= "\r\n";
 				print $sock "$GET_CMD";
@@ -465,7 +465,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_http(  'www.dtdns.com',
 									    80,
 									    "/api/autodns.cfm?id=$settings{'HOSTDOMAIN'}&pw=$settings{'PASSWORD'}",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
 			    #Valid responses from service are:
 			    #   now points to
@@ -499,7 +499,7 @@ if ($ip ne $ipcache) {
 			    my ($out, $response) = Net::SSLeay::get_http(  'dynserv.ca',
 									    80,
 									    "/dyn/dynengine.cgi?func=set&name=$settings{'LOGIN'}&pass=$settings{'PASSWORD'}&ip=$ip&domain=$settings{'DOMAIN'}",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'Ipcop' )
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
 			    #Valid responses from service are:
 			    # 02 == Domain already exists, refreshing data for ... => xxx.xxx.xxx.xxx
@@ -601,7 +601,7 @@ old code for selfhost.de
 			        my $GET_CMD;
 				$GET_CMD  = "GET https://carol.selfhost.de/update?username=$settings{'LOGIN'}&password=$settings{'PASSWORD'}&myip=$ip&textmodi=1 HTTP/1.1\r\n";
 				$GET_CMD .= "Host: carol.selfhost.de\r\n";
-			        $GET_CMD .= "User-Agent: ipcop\r\n";
+			        $GET_CMD .= "User-Agent: ipfire\r\n";
 				$GET_CMD .= "Connection: close\r\n\r\n";
 				print $sock "$GET_CMD";
 

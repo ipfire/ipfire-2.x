@@ -93,24 +93,39 @@ print <<END
 case "\$1" in
 
   status)
-	echo "[qdisc]"
-	tc -s qdisc show dev $qossettings{'RED_DEV'}
-	tc -s qdisc show dev $qossettings{'IMQ_DEV'}
-	echo "[class]"
-	tc -s class show dev $qossettings{'RED_DEV'}
-	tc -s class show dev $qossettings{'IMQ_DEV'}
-	echo "[filter]"
-	tc -s filter show dev $qossettings{'RED_DEV'}
-	tc -s filter show dev $qossettings{'IMQ_DEV'}
-	echo "[iptables]"
-	iptables -t mangle -L QOS-OUT -v -x 2> /dev/null
-	iptables -t mangle -L QOS-INC -v -x 2> /dev/null
+	case "\$2" in
+	  qdisc)
+		echo "[qdisc]"
+		tc -s qdisc show dev $qossettings{'RED_DEV'}
+		tc -s qdisc show dev $qossettings{'IMQ_DEV'}
+		exit 0
+	  ;;
+	  class)
+		echo "[class]"
+		tc -s class show dev $qossettings{'RED_DEV'}
+		tc -s class show dev $qossettings{'IMQ_DEV'}
+		exit 0
+	  ;;
+	  filter)
+		echo "[filter]"
+		tc -s filter show dev $qossettings{'RED_DEV'}
+		tc -s filter show dev $qossettings{'IMQ_DEV'}
+		exit 0
+	  ;;
+	  iptables)
+		echo "[iptables]"
+		iptables -t mangle -L QOS-OUT -v -x 2> /dev/null
+		iptables -t mangle -L QOS-INC -v -x 2> /dev/null
+		exit 0
+	  ;;
+	esac
+	\$0 \$1 qdisc
+	\$0 \$1 class
+	\$0 \$1 filter
+	\$0 \$1 iptables
 	exit 0
   ;;
   start)
-	### FIRST CLEAR EVERYTHING
-	\$0 clear
-
 	###
 	### $qossettings{'RED_DEV'}
 	###
@@ -143,7 +158,7 @@ foreach $classentry (sort @classes)
 		$qossettings{'BURST'} = $classline[5];
 		$qossettings{'CBURST'} = $classline[6];
 		print "\ttc class add dev $qossettings{'DEVICE'} parent 1:1 classid 1:$qossettings{'CLASS'} htb rate $qossettings{'RATE'}kbit ceil $qossettings{'CEIL'}kbit prio $qossettings{'PRIO'} ";
-		if ($qossettings{'BURST'} > 0) {
+		if (($qossettings{'BURST'} ne '') && ($qossettings{'BURST'} ne 0)) {
 			print "burst $qossettings{'BURST'}k ";
 		}
 		if (($qossettings{'CBURST'} ne '') && ($qossettings{'CBURST'} ne 0)) {
@@ -260,7 +275,7 @@ END
 			$qossettings{'L7PROT'} = $l7ruleline[2];
 			$qossettings{'QIP'} = $l7ruleline[3];
 			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'DEVICE'} ";
+  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -268,7 +283,7 @@ END
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'DEVICE'} ";
+  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -292,7 +307,7 @@ print "\n\t### SET PORT-RULES\n";
 			$qossettings{'QPORT'} = $portruleline[4];
 			$qossettings{'DIP'} = $portruleline[5];
 			$qossettings{'DPORT'} = $portruleline[6];
-			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'DEVICE'} ";
+			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -310,7 +325,7 @@ print "\n\t### SET PORT-RULES\n";
 				print "--dport $qossettings{'DPORT'} ";
 			}
 			print "-j MARK --set-mark $qossettings{'CLASS'}\n";
-			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'DEVICE'} ";
+			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -350,7 +365,7 @@ print <<END
 
 	### SET QUEUE LENGTH & MTU - has just to be tested!!! IMPORTANT
 	ip link set dev $qossettings{'IMQ_DEV'} qlen $qossettings{'QLENGTH'}
-	ip link set dev $qossettings{'IMQ_DEV'} mtu $qossettings{'MTU'}
+	# ip link set dev $qossettings{'IMQ_DEV'} mtu $qossettings{'MTU'}
 
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}
 	tc qdisc add dev $qossettings{'IMQ_DEV'} root handle 2: htb default $qossettings{'DEFCLASS_INC'}
@@ -373,10 +388,10 @@ foreach $classentry (sort @classes)
 		$qossettings{'BURST'} = $classline[5];
 		$qossettings{'CBURST'} = $classline[6];
 		print "\ttc class add dev $qossettings{'DEVICE'} parent 2:1 classid 2:$qossettings{'CLASS'} htb rate $qossettings{'RATE'}kbit ceil $qossettings{'CEIL'}kbit prio $qossettings{'PRIO'} ";
-		if ($qossettings{'BURST'} > 0) {
+		if (($qossettings{'BURST'} ne '') && ($qossettings{'BURST'} ne 0)) {
 			print "burst $qossettings{'BURST'}k ";
 		}
-		if (($qossettings{'CBURST'} ne '') || ($qossettings{'CBURST'} ne 0)) {
+		if (($qossettings{'CBURST'} ne '') && ($qossettings{'CBURST'} ne 0)) {
 			print "cburst $qossettings{'CBURST'}k";
 		}
 		print "\n";
@@ -397,7 +412,7 @@ foreach $subclassentry (sort @subclasses) {
 		if ($qossettings{'SBURST'} > 0) {
 			print "burst $qossettings{'SBURST'}k ";
 		}
-		if (($qossettings{'SCBURST'} ne '') || ($qossettings{'SCBURST'} ne 0)) {
+		if (($qossettings{'SCBURST'} ne '') && ($qossettings{'SCBURST'} ne 0)) {
 			print "cburst $qossettings{'CBURST'}k";
 		}
 		print "\n";
@@ -443,11 +458,10 @@ foreach $subclassentry (sort @subclasses) {
 }
 print <<END
 
-	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
+	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-INC
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0
 	iptables -t mangle -I PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
-
 
 	### SET LEVEL7-RULES
 END
@@ -462,7 +476,7 @@ END
 			$qossettings{'L7PROT'} = $l7ruleline[2];
 			$qossettings{'QIP'} = $l7ruleline[3];
 			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'DEVICE'} ";
+  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -470,7 +484,7 @@ END
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'DEVICE'} ";
+  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -494,7 +508,7 @@ print "\n\t### SET PORT-RULES\n";
 			$qossettings{'QPORT'} = $portruleline[4];
 			$qossettings{'DIP'} = $portruleline[5];
 			$qossettings{'DPORT'} = $portruleline[6];
-			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'DEVICE'} ";
+			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -512,7 +526,7 @@ print "\n\t### SET PORT-RULES\n";
 				print "--dport $qossettings{'DPORT'} ";
 			}
 			print "-j MARK --set-mark $qossettings{'CLASS'}\n";
-			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'DEVICE'} ";
+			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -534,38 +548,43 @@ print "\n\t### SET PORT-RULES\n";
 	}
 
 print <<END
-
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
-	iptables -t mangle -A QOS-INC -i $qossettings{'IMQ_DEV'} -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
+	iptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
 
 	echo "Quality of Service was successfully started!"
 	exit 0
   ;;
-  clear)
+  clear|stop)
 	### RESET EVERYTHING TO A KNOWN STATE
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root
-	# REMOVE & FLUSH CHAINS
-	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
-	iptables -t mangle --flush  QOS-OUT
-	iptables -t mangle --delete-chain QOS-OUT
-	iptables -t mangle --delete PREROUTING -i $qossettings{'IMQ_DEV'} -j QOS-INC
-	iptables -t mangle --flush  QOS-INC
-	iptables -t mangle --delete-chain QOS-INC
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0
 	rmmod imq
+	# REMOVE & FLUSH CHAINS
+	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
+	iptables -t mangle --flush  QOS-OUT
+	iptables -t mangle --delete-chain QOS-OUT
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle --flush  QOS-INC
+	iptables -t mangle --delete-chain QOS-INC
 	rmmod sch_htb
-	## rmmod ipt_IMQ # Doesn't work :(
 	echo "Quality of Service was successfully cleared!"
   ;;
-  gen)
+  gen|generate)
 	echo -n "Generateing the QoS-Scripts..."
 	/usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh
 	echo ".Done!"
 	exit 0
+	;;
+  restart)
+	### FIRST CLEAR EVERYTHING
+	\$0 clear
+
+	### THEN START
+	\$0 start
 	;;
 esac
 ### EOF
