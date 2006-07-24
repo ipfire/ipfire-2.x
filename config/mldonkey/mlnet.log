@@ -1,0 +1,18 @@
+2006/07/18 05:18:03 Started logging...
+2006/07/18 05:18:03 [cCO] Options correctly saved
+2006/07/18 05:18:03 [dMain] Check http://www.mldonkey.net/ for updates
+2006/07/18 05:18:03 enabling networks: Donkey (loading sources ... completed) BitTorrent FileTP 
+2006/07/18 05:18:03 disabled networks: none
+2006/07/18 05:18:03 [eDThieves] Updating options to version 1
+2006/07/18 05:18:03 [dMain] To command: telnet 127.0.0.1 4000
+2006/07/18 05:18:03 [dMain] Or with browser: http://127.0.0.1:4080
+2006/07/18 05:18:03 [dMain] For a GUI check out http://sancho-gui.sourceforge.net
+2006/07/18 05:18:03 [dMain] Connect to IP 127.0.0.1, port 4001
+2006/07/18 05:18:03 [dMain] If you connect from a remote machine adjust allowed_ips
+2006/07/18 05:18:03 [cCO] Options correctly saved
+2006/07/18 05:18:03 [dMain] Core started
+2006/07/18 05:18:04 [dMain] Received SIGINT, stopping MLDonkey...
+2006/07/18 05:18:04 [cCO] Options correctly saved
+2006/07/18 05:18:04 [cCO] Sources correctly saved
+2006/07/18 05:18:04 [cCO] Options backup as .tar.gz correctly saved
+2006/07/18 05:18:04 [dMain] Core stopped

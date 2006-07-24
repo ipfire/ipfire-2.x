@@ -1505,6 +1505,10 @@
 'select profile' => 'Wähle Profil',
 'up' => 'Hoch',
 'hardware graphs' => 'Hardware-Diagramme',
+'net config' => 'Netzwerk-Konfiguration',
+'net config type' => 'Netzwerk-Konfigurations-Typ',
+'net config type help' => 'GREEN ist das lokale Netzwerk, RED ist das Internet, BLUE ist WLAN, ORANGE ist die DMZ.',
+'net address' => 'Netzadresse',
 
 ); 
 

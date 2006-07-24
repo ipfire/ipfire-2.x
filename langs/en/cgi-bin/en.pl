@@ -1538,5 +1538,9 @@
 'select profile' => 'Select profile',
 'up' => 'Up',
 'hardware graphs' => 'hardware graphs',
+'net config' => 'Network configuration',
+'net config type' => 'kind of network configuration',
+'net config type help' => 'GREEN is the local network, RED is the internet, BLUE is WLAN, ORANGE is the DMZ.',
+'net address' => 'net address',
 
 );

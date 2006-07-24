@@ -189,9 +189,7 @@ END
 	<td>$netsettings{'DNS2'}
 END
 	}
-print <<END;
-</table>
-END
+
 
 # Memory usage warning
 my @free = `/usr/bin/free`;
@@ -216,7 +214,7 @@ foreach my $line (@df) {
 		if ($1<5) {
 			# available:plain value in MB, and not %used as 10% is too much to waste on small disk
 			# and root size should not vary during time
-			$warnmessage .= "<li> $Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b> !</li>\n";
+			$warnmessage .= "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b> !\n";
 		}
 		
 	} else {
@@ -225,15 +223,17 @@ foreach my $line (@df) {
 		if ($1>90) {
 			@temp = split(/ /,$line);
 			$temp2=int(100-$1);
-			$warnmessage .= "<li> $Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b> !</li>\n";
+			$warnmessage .= "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b> !\n";
 		}
 	}
 }
 
 if ($warnmessage) {
-	print "<table border='0'><tr><td align='center' bgcolor=$Header::colourred>$warnmessage</table>";
+	print "<tr><td align='center' bgcolor=$Header::colourred colspan='3'><font color='white'>$warnmessage</font></table>";
 }
-
+print <<END;
+</table>
+END
 &Header::closebox();
 
 &Header::closebigbox();

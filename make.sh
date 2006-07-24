@@ -735,7 +735,9 @@ buildipcop() {
   ipcopmake gnump3d
   echo -ne "`date -u '+%b %e %T'`: Building ### P2P-Clients ### \n" | tee -a $LOGFILE
   ipcopmake applejuice
-  ipcopmake edonkeyclc
+  ipcopmake ocaml
+  ipcopmake mldonkey
+#  ipcopmake edonkeyclc
 #  ipcopmake sane
   echo -ne "`date -u '+%b %e %T'`: Building ### Net-Tools ### \n" | tee -a $LOGFILE
   ipcopmake ntop
@@ -1227,7 +1229,7 @@ build-only)
 	svn info
 	#echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
 	#cat doc/make.sh-usage
-	select name in "End" "Build IPFire" "Prefetch" "Get Toolchain" "Update SVN Version" "sync to Server" 
+	select name in "End" "Build IPFire" "Prefetch" "Create Diff" "Get Toolchain" "Update SVN Version" "Sync to Server" 
 	do
 	case $name in
         "Update SVN Version")
@@ -1250,7 +1252,7 @@ build-only)
                 echo "### MAKE.SH GETTOOLCHAIN ###"
                 $0 gettoolchain
                 ;;
-	"sync to Server")
+	"Sync to Server")
 		echo "svn commit"
 		svn commit
 		;;
