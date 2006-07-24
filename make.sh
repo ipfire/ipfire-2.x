@@ -876,6 +876,7 @@ ipfirepackages() {
   ipfiredist libtiff
   ipfiredist libxml2
   ipfiredist mailx
+  ipfiredist mldonkey
   ipfiredist nfs
   ipfiredist nmap
   ipfiredist ntop
@@ -1229,7 +1230,7 @@ build-only)
 	svn info
 	#echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
 	#cat doc/make.sh-usage
-	select name in "End" "Build IPFire" "Prefetch" "Create Diff" "Get Toolchain" "Update SVN Version" "Sync to Server" 
+	select name in "End" "Build IPFire" "Prefetch" "Create Diff" "Get Toolchain" "Update SVN Version" "Sync to Server" "Show last log lines"
 	do
 	case $name in
         "Update SVN Version")
@@ -1255,6 +1256,9 @@ build-only)
 	"Sync to Server")
 		echo "svn commit"
 		svn commit
+		;;
+	"Show last log lines")
+		tail log/_*
 		;;
         "End")
                 break

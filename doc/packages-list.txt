@@ -156,6 +156,7 @@
   * mingetty-1.06
   * misc-progs
   * mktemp-1.5
+  * mldonkey-2.7.7
   * modutils-2.4.27
   * mpg123-0.59r
   * mtools-3.9.9
@@ -171,6 +172,7 @@
   * noip_updater_v1.6
   * ntop-3.2
   * ntp-4.2.0
+  * ocaml-3.09.2
   * oinkmaster-1.2
   * openldap-2.3.20
   * openssh-3.9p1
