@@ -34,11 +34,11 @@
 # something around 5 seconds for the entire test.
 #
 ## Basic settings
-CGI_HOST=192.168.1.1
-CGI_PORT=445
+CGI_HOST=192.168.0.100
+CGI_PORT=444
 CGI_URL="https://$CGI_HOST:$CGI_PORT/cgi-bin"
 USER=admin
-PASS=password
+PASS=test
 CMD="wget -q -O /dev/null --http-user=$USER --http-passwd=$PASS"
 
 doTest() {

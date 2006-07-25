@@ -26,7 +26,7 @@
   NAME="IPFire"			# Software name
   SNAME="ipfire"			# Short name
   VERSION="2.0"			# Version number
-  SLOGAN="We secure your network"	# Software slogan
+  SLOGAN="www.ipfire.org"		# Software slogan
   CONFIG_ROOT=/var/ipfire		# Configuration rootdir
   NICE=10
   MAX_RETRIES=3			# prefetch/check loop
@@ -1230,7 +1230,7 @@ build-only)
 	svn info
 	#echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
 	#cat doc/make.sh-usage
-	select name in "End" "Build IPFire" "Prefetch" "Create Diff" "Get Toolchain" "Update SVN Version" "Sync to Server" "Show last log lines"
+	select name in "End" "Build IPFire (silent)" "Watch IPFire Build" "Prefetch" "Create Diff" "Get Toolchain" "Update SVN Version" "Sync To Server" "Show Last Log Lines" "Make Clean"
 	do
 	case $name in
         "Update SVN Version")
@@ -1245,21 +1245,32 @@ build-only)
                 echo "### MAKE.SH DIFF ###"
                 $0 diff
                 ;;
-        "Build IPFire")
+        "Build IPFire (silent)")
                 echo "### MAKE.SH BUILD ###"
-                $0 build
+                screen -dmS ipfire $0 build
+                echo "You can see the status with 'screen -x ipfire'."
                 ;;
         "Get Toolchain")
                 echo "### MAKE.SH GETTOOLCHAIN ###"
                 $0 gettoolchain
                 ;;
 	"Sync to Server")
-		echo "svn commit"
-		svn commit
-		;;
+		  echo "svn commit"
+		  svn commit
+		  ;;
 	"Show last log lines")
-		tail log/_*
-		;;
+		  tail log/_*
+		  ;;
+	"Watch IPFire Build")
+                echo "### MAKE.SH BUILD ###"
+                echo "Exit with Ctrl+A, Ctrl+D."
+                sleep 1
+                screen -x ipfire
+                ;;
+	"Make Clean")
+                echo "### MAKE.SH CLEAN ###"
+                $0 clean
+                ;;
         "End")
                 break
                 ;;
