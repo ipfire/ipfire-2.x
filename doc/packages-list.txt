@@ -69,7 +69,6 @@
   * eagle-usb-2.3.2
   * eciadsl-usermode-0.11
   * ed-0.2
-  * edonkeyclc_1.3.0_i386
   * espgs-8.15.1-source
   * ethereal-0.99.0
   * etherwake-1.09
