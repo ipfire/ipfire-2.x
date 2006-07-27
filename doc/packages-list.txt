@@ -198,7 +198,7 @@
   * razor-agents-2.81
   * rp-pppoe-3.5
   * rrdtool-1.0.49
-  * samba-3.0.22
+  * samba-3.0.23a
   * sata300_sataii150_tx_series_linux2.4_open_source_1.00.0.15
   * screen-4.0.2
   * sed-4.0.9

@@ -44,7 +44,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 GeoIP.dat = $(DL_FROM)/GeoIP.dat
 
 $(DL_FILE)_MD5 = 42a6b9d4dd2563a20c8998556216e1de
-GeoIP.dat_MD5 = 757ef6d020a81dae0db2926c48f4a931
+GeoIP.dat_MD5 = 55aa4d51f7920241296f2fc215d9e559
 
 install : $(TARGET)
 

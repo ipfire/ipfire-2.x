@@ -51,7 +51,6 @@
 	fi
   fi
 
-
   PWD=`pwd`
   BASENAME=`basename $0`
   BASEDIR=`echo $FULLPATH | sed "s/\/$BASENAME//g"`
@@ -61,19 +60,18 @@
   mkdir $BASEDIR/log/ 2>/dev/null
 
   if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE -o 'i486' = $MACHINE -o 'i386' = $MACHINE ]; then
-
-	echo "`date -u '+%b %e %T'`: Machine is ix86 (or equivalent)" | tee -a $LOGFILE
+	echo "`date -u '+%b %e %T'`: Machine is ix86 (or equivalent)" >> $LOGFILE
 	MACHINE=i386
 	BUILDTARGET=i386-pc-linux-gnu
 	CFLAGS="-O2 -mcpu=i386 -march=i386 -pipe -fomit-frame-pointer"
 	CXXFLAGS="-O2 -mcpu=i386 -march=i386 -pipe -fomit-frame-pointer"
   elif [ 'alpha' = $MACHINE ]; then
-	echo "`date -u '+%b %e %T'`: Machine is Alpha AXP" | tee -a $LOGFILE
+	echo "`date -u '+%b %e %T'`: Machine is Alpha AXP" >> $LOGFILE
 	BUILDTARGET=alpha-unknown-linux-gnu
 	CFLAGS="-O2 -mcpu=ev4 -mieee -pipe"
 	CXXFLAGS="-O2 -mcpu=ev4 -mieee -pipe"
   else
-	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" | tee -a $LOGFILE
+	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" >> $LOGFILE
 	exit 1
   fi
 
@@ -896,7 +894,7 @@ ipfirepackages() {
 case "$1" in 
 build)
 	BUILDMACHINE=`uname -m`
-	PACKAGE=`ls -v -r $BASEDIR/cache/$SNAME-1.4-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
+	PACKAGE=`ls -v -r $BASEDIR/cache/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/perl-*-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -993,14 +991,6 @@ clean)
 	if [ -h /tools ]; then
 		rm -f /tools
 	fi
-	;;
-dist)
-	echo -ne "Updating & building source package from SVN: "
-	svn up > /dev/null
-	svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
-	tar cfz ipfire-source-`date +'%Y-%m-%d'`-r`svn info | grep Revision | cut -c 11-`.tar.gz ipfire-source
-	rm ipfire-source/ -r
-	echo "Finished!"
 	;;
 newpak)
 	# create structure for a new package
@@ -1113,7 +1103,7 @@ toolchain)
 gettoolchain)
 	BUILDMACHINE=`uname -m`
 	# arbitrary name to be updated in case of new toolchain package upload
-	PACKAGE=$SNAME-1.4-toolchain-$BUILDMACHINE
+	PACKAGE=$SNAME-$VERSION-toolchain-$BUILDMACHINE
 	URL_IPFIRE=`grep URL_IPFIRE lfs/Config | awk '{ print $3 }'`
 	echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 	cd $BASEDIR/cache
@@ -1128,31 +1118,73 @@ gettoolchain)
 		fi
 	fi
 	;;
-paks)
-	prepareenv
-	# buildpackages
-	ipfirepackages
-	;;
-update)
-	echo "Load the latest source-files:"
-	svn update
-	;;
-commit)
-	echo "Upload the changed files:"
-	svn commit
-	./make.sh sync
-	clear
-	svn up
-	;;
-make)
-	echo "Do a complete compile:"	
-	./make.sh prefetch && ./make.sh gettoolchain && ./make.sh build
-	;;
-diff)
-	echo -ne "Make a local diff to last SVN revision: "
-	svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
-	echo "Finished!"
-	echo "Diff was successfully saved to ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff"
+svn)
+	case "$2" in
+	  update|up)
+		clear
+		echo -n "Load the latest source files..."
+		svn update >> $PWD/log/_build.svn.update.log
+		if [ $? -eq 0 ]; then
+			echo ".Done!"
+		else
+			echo ".Fail!"
+			exit 1
+		fi
+		echo -n "Write the svn info to a file..."
+		svn info > $PWD/svn_status
+		if [ "$?" -eq "0" ]; then
+			echo ".Done!"
+		else
+			echo ".Fail!"
+			exit 1
+		fi
+	  ;;
+	  commit|ci)
+		clear
+		echo "Upload the changed files..."
+		sleep 1
+		svn commit
+		$0 svn up
+	  ;;
+	  dist)
+		$0 svn up
+		echo -ne "Download source package from svn..."
+		svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
+		if [ "$?" -eq "0" ]; then
+			echo ".Done!"
+		else
+			echo ".Fail!"
+			exit 1
+		fi
+		echo -n "Compress files..."
+		tar cfz ipfire-source-`date +'%Y-%m-%d'`-r`svn info | grep Revision | cut -c 11-`.tar.gz ipfire-source
+		if [ "$?" -eq "0" ]; then
+			echo ".Done!"
+		else
+			echo ".Fail!"
+			exit 1
+		fi
+		echo -n "Cleanup..."
+		rm ipfire-source/ -r
+		if [ "$?" -eq "0" ]; then
+			echo ".Done!"
+		else
+			echo ".Fail!"
+			exit 1
+		fi
+	  ;;
+	  diff)
+		echo -ne "Make a local diff to last svn revision..."
+		svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
+		if [ "$?" -eq "0" ]; then
+			echo ".Done!"
+		else
+			echo ".Fail!"
+			exit 1
+		fi
+		echo "Diff was successfully saved to ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff"
+	  ;;
+	esac
 	;;
 sync)
 	echo -e "Syncing Cache to FTP:"
@@ -1225,55 +1257,55 @@ build-only)
 	prepareenv
 	ipcopmake $2
 	;;
+build-silent)
+	screen -dmS ipfire $0 build
+	echo "Build started... This will take a while!"
+	echo "You can see the status with 'screen -x ipfire'."
+	;;
 *)
 	clear
 	svn info
-	#echo "Usage: $0 {build|changelog|check|checkclean|clean|commit|diff|dist|gettoolchain|make|newpak|prefetch|pub-iso|pub-paks|shell|sync|toolchain|update}"
-	#cat doc/make.sh-usage
-	select name in "End" "Build IPFire (silent)" "Watch IPFire Build" "Prefetch" "Create Diff" "Get Toolchain" "Update SVN Version" "Sync To Server" "Show Last Log Lines" "Make Clean"
+	select name in "Exit" "IPFIRE: Prefetch" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Clean" "SVN: Commit" "SVN: Update" "SVN: Status" "SVN: Diff" "Help"
 	do
 	case $name in
-        "Update SVN Version")
-                echo "### SVN UPDATE ###"
-                svn update
-                ;;
-        "Prefetch")
-                echo "### MAKE.SH PREFETCH ###"
-                $0 prefetch
-                ;;
-        "Create Diff")
-                echo "### MAKE.SH DIFF ###"
-                $0 diff
-                ;;
-        "Build IPFire (silent)")
-                echo "### MAKE.SH BUILD ###"
-                screen -dmS ipfire $0 build
-                echo "You can see the status with 'screen -x ipfire'."
-                ;;
-        "Get Toolchain")
-                echo "### MAKE.SH GETTOOLCHAIN ###"
-                $0 gettoolchain
-                ;;
-	"Sync to Server")
-		  echo "svn commit"
-		  svn commit
-		  ;;
-	"Show last log lines")
-		  tail log/_*
-		  ;;
-	"Watch IPFire Build")
-                echo "### MAKE.SH BUILD ###"
-                echo "Exit with Ctrl+A, Ctrl+D."
-                sleep 1
-                screen -x ipfire
-                ;;
-	"Make Clean")
-                echo "### MAKE.SH CLEAN ###"
-                $0 clean
-                ;;
-        "End")
-                break
-                ;;
+	"IPFIRE: Prefetch")
+		$0 prefetch
+		;;
+	"IPFIRE: Build (silent)")
+		$0 build-silent
+		;;
+	"IPFIRE: Watch Build")
+		echo "Exit with Ctrl+A, Ctrl+D."
+		echo -n "Preparing..."
+		for i in `seq 10`; do
+			sleep 0.1; echo -n "."
+		done
+		echo ".Ready!"
+		sleep 0.5
+		screen -x ipfire
+		;;
+	"IPFIRE: Clean")
+		$0 clean
+		;;
+	"SVN: Commit")
+		$0 svn commit
+		;;
+	"SVN: Update")
+		$0 svn update
+		;;
+	"SVN: Status")
+		svn status # | grep -v ^?
+		;;
+	"SVN: Diff")
+		$0 svn diff
+		;;
+	"Help")
+		echo "Usage: $0 {build|changelog|check|checkclean|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
+		cat doc/make.sh-usage
+		;;
+	"Exit")
+		break
+		;;
 	esac
 	done
 	;;
