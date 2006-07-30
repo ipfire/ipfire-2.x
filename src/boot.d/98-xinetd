@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Starting xinetd"
+/usr/sbin/xinetd -f /var/ipfire/xinetd/xinetd.conf
