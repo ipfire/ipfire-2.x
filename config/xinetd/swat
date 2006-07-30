@@ -12,17 +12,3 @@ service swat
 }
 
 # End /var/ipfire/xinetd/xinetd.d/swat
-# Begin /var/ipfire/xinetd/xinetd.d/swat
-
-service swat
-{
-    port            = 901
-    socket_type     = stream
-    wait            = no
-#    only_from       = 127.0.0.1
-    user            = root
-    server          = /usr/sbin/swat
-    log_on_failure  += USERID
-}
-
-# End /var/ipfire/xinetd/xinetd.d/swat
