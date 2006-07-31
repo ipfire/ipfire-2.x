@@ -32,11 +32,11 @@
   MAX_RETRIES=3			# prefetch/check loop
   KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
   MACHINE=`uname -m`
+  SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
   # Setzen des IPFire Builds
   if [ -e ./.svn ]; then
     FIREBUILD=`cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p'`
-#    VERSION="$VERSION (Build:$FIREBUILD)"
   fi
 
   # Debian specific settings
@@ -58,6 +58,10 @@
   export BASEDIR LOGFILE
   DIR_CHK=$BASEDIR/cache/check
   mkdir $BASEDIR/log/ 2>/dev/null
+
+  if [ -f .config ]; then
+	. .config
+  fi
 
   if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE -o 'i486' = $MACHINE -o 'i386' = $MACHINE ]; then
 	echo "`date -u '+%b %e %T'`: Machine is ix86 (or equivalent)" >> $LOGFILE
@@ -890,6 +894,11 @@ ipfirepackages() {
   rm -rf  $BASEDIR/build/install/packages/*
 }
 
+update_logs() {
+	tar cfz log/ipfire-logs-`date +'%Y-%m-%d-%H:%M'`.tgz log/_build.*
+	rm -f log/_build.*
+}
+
 # See what we're supposed to do
 case "$1" in 
 build)
@@ -1121,7 +1130,7 @@ gettoolchain)
 svn)
 	case "$2" in
 	  update|up)
-		clear
+		# clear
 		echo -n "Load the latest source files..."
 		svn update >> $PWD/log/_build.svn.update.log
 		if [ $? -eq 0 ]; then
@@ -1138,6 +1147,7 @@ svn)
 			echo ".Fail!"
 			exit 1
 		fi
+		exit 0
 	  ;;
 	  commit|ci)
 		clear
@@ -1186,19 +1196,104 @@ svn)
 	  ;;
 	esac
 	;;
-sync)
-	echo -e "Syncing Cache to FTP:"
-	if [ -f .pass ]; then
-		PASS="`cat .pass`"
+make-config)
+	echo -e "This is for creating your configuration..."
+	echo -e "ATTENTION: Even your password will be shown when typed!"
+	echo -e "We will need some input:"
+	echo -e ""
+	echo -n "FTP-DOMAIN FOR THE ISO: "
+	read IPFIRE_FTP_URL_EXT
+	echo -n "PATH FOR $IPFIRE_FTP_URL_EXT: "
+	read IPFIRE_FTP_PATH_EXT
+	echo -n "USERNAME FOR $IPFIRE_FTP_URL_EXT: "
+	read IPFIRE_FTP_USER_EXT
+	echo -n "PASSWORD FOR $IPFIRE_FTP_URL_EXT: "
+	read IPFIRE_FTP_PASS_EXT
+	echo ""
+	echo "(You can leave this empty if the cache-server is the same as your iso-server.)"
+	echo -n "FTP-DOMAIN FOR THE CACHE: "
+	read IPFIRE_FTP_URL_INT
+	echo -n "PATH FOR $IPFIRE_FTP_URL_INT: "
+	read IPFIRE_FTP_PATH_INT
+	if [ $IPFIRE_FTP_URL_INT ]; then
+		echo -n "USERNAME FOR $IPFIRE_FTP_URL_INT: "
+		read IPFIRE_FTP_USER_INT
+		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_INT: "
+		read IPFIRE_FTP_PASS_INT
 	else
-		echo -ne "Password for mirror.ipfire.org: "; read PASS
+		IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_EXT
+		IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_EXT
+		IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_EXT
+		echo "USERNAME FOR $IPFIRE_FTP_URL_INT: $IPFIRE_FTP_USER_INT"
+		echo "PASSWORD FOR $IPFIRE_FTP_URL_INT: $IPFIRE_FTP_PASS_INT"
 	fi
+	echo ""
+	echo "(You can leave this empty if the pak-server is the same as your iso-server.)"
+	echo -n "FTP-DOMAIN FOR THE PAKS: "
+	read IPFIRE_FTP_URL_PAK
+	echo -n "PATH FOR $IPFIRE_FTP_URL_PAK: "
+	read IPFIRE_FTP_PATH_PAK
+	if [ $IPFIRE_FTP_URL_PAK ]; then
+		echo -n "USERNAME FOR $IPFIRE_FTP_URL_PAK: "
+		read IPFIRE_FTP_USER_PAK
+		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_PAK: "
+		read IPFIRE_FTP_PASS_PAK
+	else
+		IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_EXT
+		IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_EXT
+		IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_EXT
+		echo "USERNAME FOR $IPFIRE_FTP_URL_PAK: $IPFIRE_FTP_USER_PAK"
+		echo "PASSWORD FOR $IPFIRE_FTP_URL_PAK: $IPFIRE_FTP_PASS_PAK"
+	fi
+	echo ""
+	echo -e "ONE OR MORE EMAIL ADDRESS(ES) TO WHICH THE REPORTS WILL BE SENT"
+	echo -e "(seperated by comma)"
+	read IPFIRE_MAIL_REPORT
+	echo -n "EMAIL FROM: "
+	read IPFIRE_MAIL_FROM
+	echo -n "EMAIL SERVER: "
+	read IPFIRE_MAIL_SERVER
+	echo -n "LOGIN TO MAIL SERVER: "
+	read IPFIRE_MAIL_USER
+	echo -n "MAIL PASSWORD: "
+	read IPFIRE_MAIL_PASS
+	echo -n "Saving..."
+	for i in `seq 20`; do
+		sleep 0.1; echo -n "."
+	done
+	echo ".Finished!"
+	cat <<END > .config
+### ISO server
+IPFIRE_FTP_URL_EXT=$IPFIRE_FTP_URL_EXT
+IPFIRE_FTP_PATH_EXT=$IPFIRE_FTP_PATH_EXT
+IPFIRE_FTP_USER_EXT=$IPFIRE_FTP_USER_EXT
+IPFIRE_FTP_PASS_EXT=$IPFIRE_FTP_PASS_EXT
+### cache server
+IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_INT
+IPFIRE_FTP_PATH_INT=$IPFIRE_FTP_PATH_INT
+IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_INT
+IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_INT
+### paks server
+IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_PAK
+IPFIRE_FTP_PATH_PAK=$IPFIRE_FTP_PATH_PAK
+IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_PAK
+IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_PAK
+### mail reports
+IPFIRE_MAIL_REPORT=$IPFIRE_MAIL_REPORT
+IPFIRE_MAIL_FROM=$IPFIRE_MAIL_FROM
+IPFIRE_MAIL_SERVER=$IPFIRE_MAIL_SERVER
+IPFIRE_MAIL_USER=$IPFIRE_MAIL_USER
+IPFIRE_MAIL_PASS=$IPFIRE_MAIL_PASS
+END
+	;;
+sync)
+	echo -e "Syncing cache to ftp:"
 	rm -f doc/packages-to-remove-from-ftp
-	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/source/ > ftplist
+	ncftpls -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT ftp://$IPFIRE_FTP_URL_INT$IPFIRE_FTP_PATH_INT/ > ftplist
 	for i in `ls -w1 cache/`; do
 		grep $i ftplist
 		if [ "$?" -ne "0" ]; then
-			ncftpput -u web3 -p $PASS mirror.ipfire.org /html/source-packages/source cache/$i
+			ncftpput -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT $IPFIRE_FTP_URL_INT $IPFIRE_FTP_PATH_INT/ cache/$i
 			if [ "$?" -eq "0" ]; then
 				echo -e "$i was successfully uploaded to the ftp server."
 			else
@@ -1214,42 +1309,35 @@ sync)
 	done
 	rm -f ftplist
 	;;
-pub-iso)
-	echo -e "Upload the ISO to the beta-mirror!"
-	if [ -f .pass ]; then
-		PASS="`cat .pass`"
-	else
-		echo -ne "Password for mirror.ipfire.org: "; read PASS
-	fi
-	ncftpls -u web3 -p $PASS ftp://mirror.ipfire.org/html/source-packages/beta/ | grep `svn info | grep Revision | cut -c 11-`
-	if [ "$?" -eq "1" ]; then
-			cp $BASEDIR/ipfire-install-1.4.i386.iso $BASEDIR/ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso
-			md5sum ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso > ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso.md5
-			ncftpput -u web3 -p $PASS mirror.ipfire.org /html/source-packages/beta/ ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso
-			ncftpput -u web3 -p $PASS mirror.ipfire.org /html/source-packages/beta/ ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso.md5
-			if [ "$?" -eq "0" ]; then
-				echo -e "The ISO of Revision `svn info | grep Revision | cut -c 11-` was successfully uploaded to the ftp server."
-			else
-				echo -e "There was an error while uploading the ISO to the ftp server."
-			fi
-	else
-		echo -e "File with name ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso already exists on the ftp server!"
-	fi
-	rm -f ipfire-install-1.4.i386-r`svn info | grep Revision | cut -c 11-`.iso{,.md5}
-	;;
-pub-paks)
-	echo -e "Upload the packages to the beta-mirror!"
-	if [ -f .pass ]; then
-		PASS="`cat .pass`"
-	else
-		echo -ne "Password for mirror.ipfire.org: "; read PASS
-	fi
-	ncftpput -z -u web3 -p $PASS mirror.ipfire.org /html/source-packages/packages/ packages/*
-	if [ "$?" -eq "0" ]; then
-		echo -e "The packages were successfully uploaded to the ftp server."
-	else
-		echo -e "There was an error while uploading the packages to the ftp server."
-	fi
+upload)
+	case "$2" in
+	  iso)
+		echo -e "Uploading the iso to $IPFIRE_FTP_URL_EXT."
+		ncftpls -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT ftp://$IPFIRE_FTP_URL_EXT$IPFIRE_FTP_PATH_EXT/ | grep $SVN_REVISION
+		if [ "$?" -eq "1" ]; then
+				cp $BASEDIR/ipfire-install-$VERSION.i386.iso $BASEDIR/ipfire-install-$VERSION.i386-r`svn info | grep Revision | cut -c 11-`.iso
+				md5sum ipfire-install-$VERSION.i386-r$SVN_REVISION.iso > ipfire-install-$VERSION.i386-r$SVN_REVISION.iso.md5
+				ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386-r$SVN_REVISION.iso
+				ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386-r$SVN_REVISION.iso.md5
+				if [ "$?" -eq "0" ]; then
+					echo -e "The ISO of Revision $SVN_REVISION was successfully uploaded to the ftp server."
+				else
+					echo -e "There was an error while uploading the iso to the ftp server."
+				fi
+		else
+			echo -e "File with name ipfire-install-$VERSION.i386-r$SVN_REVISION.iso already exists on the ftp server!"
+		fi
+		rm -f ipfire-install-$VERSION.i386-r$SVN_REVISION.iso{,.md5}
+		;;
+	  paks)
+		ncftpput -z -u $IPFIRE_FTP_USER_PAK -p $IPFIRE_FTP_PASS_PAK $IPFIRE_FTP_URL_PAK $IPFIRE_FTP_PATH_PAK/ packages/*
+		if [ "$?" -eq "0" ]; then
+			echo -e "The packages were successfully uploaded to the ftp server."
+		else
+			echo -e "There was an error while uploading the packages to the ftp server."
+		fi
+	  ;;
+	esac
 	;;
 build-only)
 	rm -f $BASEDIR/log/$2*
@@ -1261,6 +1349,155 @@ build-silent)
 	screen -dmS ipfire $0 build
 	echo "Build started... This will take a while!"
 	echo "You can see the status with 'screen -x ipfire'."
+	;;
+mail)
+	chmod 755 tools/sendEmail
+	ATTACHMENT=/tmp/ipfire-build-logs-R$SVN_REVISION.tar.gz
+	if [ "$2" = "ERROR" ]; then
+		SUBJECT="ERROR: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+		echo "ERROR: $0 build!"
+		cat <<END > /tmp/ipfire_mail_body
+When I was building IPFire on `hostname`, I have found an ERROR!
+Here you can see the logs and detect the reason for this error.
+
+Best Regards
+Your IPFire-Build-Script
+END
+	fi
+	if [ "$2" = "SUCCESS" ]; then
+		SUBJECT="SUCCESS: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+		cat <<END > /tmp/ipfire_mail_body
+Building IPFire on `hostname` in Revision $SVN_REVISION was successfull!
+You can find the ISO on your ftp server.
+
+Statistics:
+-----------
+Started:	$IPFIRE_START_TIME
+Finished:	`date`
+
+Best Regards
+Your IPFire-Build-Script
+END
+	fi
+	if [ "$2" = "SVNUPDATE" ]; then
+		SUBJECT="SVNUPDATE: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+		echo "ERROR: $0 svn up!"
+		cat <<END > /tmp/ipfire_mail_body
+When I was downloading the latest svn source,
+I have found an ERROR!
+Here you can see the logs and detect the reason for this error.
+
+Best Regards
+Your IPFire-Build-Script
+END
+	fi
+	if [ "$2" = "PREFETCH" ]; then
+		SUBJECT="PREFETCH: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+		echo "ERROR: $0 prefetch!"
+		cat <<END > /tmp/ipfire_mail_body
+When I was downloading the source packages,
+I have found an ERROR!
+Here you can see the logs and detect the reason for this error.
+
+Best Regards
+Your IPFire-Build-Script
+END
+	fi
+
+	if [ "$2" = "ISO" ]; then
+		SUBJECT="ISO: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+		echo "ERROR: $0 upload iso!"
+		cat <<END > /tmp/ipfire_mail_body
+When I was uploading the iso image,
+I have found an ERROR!
+Here you can see the logs and detect the reason for this error.
+
+Best Regards
+Your IPFire-Build-Script
+END
+	fi
+
+	if [ "$2" = "PAKS" ]; then
+		SUBJECT="PAKS: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+		echo "ERROR: $0 upload paks!"
+		cat <<END > /tmp/ipfire_mail_body
+When I was uploading the packages,
+I have found an ERROR!
+Here you can see the logs and detect the reason for this error.
+
+Best Regards
+Your IPFire-Build-Script
+END
+	fi
+
+	tar cfz $ATTACHMENT log/_build*
+	cat <<END >> /tmp/ipfire_mail_body
+
+Here is a summary... The full logs are in the attachment.
+---------------------------------------------------------
+
+`tail log/_*`
+END
+	cat /tmp/ipfire_mail_body | tools/sendEmail -q \
+		-f $IPFIRE_MAIL_FROM \
+		-t $IPFIRE_MAIL_REPORT \
+		-u $SUBJECT \
+		-s $IPFIRE_MAIL_SERVER:25 \
+		-xu $IPFIRE_MAIL_USER \
+		-xp $IPFIRE_MAIL_PASS \
+		-l log/_build.mail.log \
+		-a $ATTACHMENT # -v
+	rm -f /tmp/ipfire_mail_body $ATTACHMENT
+	;;
+unattended)
+	### This is our procedure that will compile the IPFire by herself...
+	echo "### UPDATE LOGS"
+	update_logs
+	echo "### SAVING TIME"
+	export IPFIRE_START_TIME=`date`
+
+	echo "### RUNNING SVN-UPDATE"
+	$0 svn update > /dev/null
+	if [ $? -ne 0 ]; then
+		$0 mail SVNUPDATE
+		exit 1
+	fi
+	chmod 755 $0
+
+	echo "### RUNNING PREFETCH"
+	$0 prefetch | grep -q "md5 difference"
+	if [ $? -eq 0 ]; then
+		$0 mail PREFETCH
+		exit 1
+	fi
+
+	echo "### RUNNING BUILD"
+	$0 build
+	if [ $? -ne 0 ]; then
+		$0 mail ERROR
+		exit 1
+	fi
+
+	echo "### UPLOADING ISO"
+	$0 upload iso
+	if [ $? -ne 0 ]; then
+		$0 mail ISO
+		exit 1
+	fi
+	
+	echo "### UPLOADING PAKS"
+	$0 upload paks
+	if [ $? -ne 0 ]; then
+		$0 mail PAKS
+		exit 1
+	fi
+
+	echo "### SUCCESS!"
+	$0 mail SUCCESS
+	;;
+batch)
+	screen -dmS batch $0 unattended
+	exit 0
 	;;
 *)
 	clear
@@ -1281,7 +1518,7 @@ build-silent)
 			sleep 0.1; echo -n "."
 		done
 		echo ".Ready!"
-		sleep 0.5
+		sleep 0.3
 		screen -x ipfire
 		;;
 	"IPFIRE: Clean")

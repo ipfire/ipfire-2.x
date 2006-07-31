@@ -2913,7 +2913,7 @@ acl Safe_ports port 777 # multiling http
 acl Safe_ports port 800 # Squids port (for icons)
 
 acl IPCop_http  port 81
-acl IPCop_https port 445
+acl IPCop_https port 444
 acl IPCop_ips              dst $netsettings{'GREEN_ADDRESS'}
 acl IPCop_networks         src "$acl_src_subnets"
 acl IPCop_green_network    src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
