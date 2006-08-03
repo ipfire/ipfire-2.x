@@ -754,6 +754,7 @@ buildipcop() {
   ipcopmake cftp
   ipcopmake etherwake
   ipcopmake ethereal
+  ipcopmake tftp-hpa
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
@@ -827,7 +828,7 @@ buildpackages() {
 	fi
   done
   echo "====== List of softwares used to build $NAME Version: $VERSION ======" > $BASEDIR/doc/packages-list.txt
-  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipcop$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$' \
+  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipfire$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$\|^ipfire-logs' \
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
@@ -903,7 +904,7 @@ update_logs() {
 case "$1" in 
 build)
 	BUILDMACHINE=`uname -m`
-	PACKAGE=`ls -v -r $BASEDIR/cache/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
+	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/perl-*-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -1101,30 +1102,36 @@ toolchain)
 	buildtoolchain
 	BUILDMACHINE=`uname -m`
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
-	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz \
+	test -d $BASEDIR/cache/toolchains || mkdir $BASEDIR/cache/toolchains
+	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz \
 		build/{bin,etc,usr/bin,usr/local} \
 		build/tools/{bin,etc,*-linux-gnu,include,lib,libexec,sbin,share,var} \
 		log >> $LOGFILE
-	md5sum cache/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz \
-		> cache/$SNAME-$VERSION-toolchain-$BUILDMACHINE.md5
+	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz \
+		> cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.md5
 	stdumount
 	;;
 gettoolchain)
 	BUILDMACHINE=`uname -m`
 	# arbitrary name to be updated in case of new toolchain package upload
 	PACKAGE=$SNAME-$VERSION-toolchain-$BUILDMACHINE
-	URL_IPFIRE=`grep URL_IPFIRE lfs/Config | awk '{ print $3 }'`
-	echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
-	cd $BASEDIR/cache
-	wget $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5 >& /dev/null
-	if [ $? -ne 0 ]; then
-		echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
-	else
-		if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
-			echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
+	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then
+		URL_IPFIRE=`grep URL_IPFIRE lfs/Config | awk '{ print $3 }'`
+		test -d $BASEDIR/cache/toolchains || mkdir $BASEDIR/cache/toolchains
+		echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
+		cd $BASEDIR/cache/toolchains
+		wget $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5 >& /dev/null
+		if [ $? -ne 0 ]; then
+			echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
 		else
-			exiterror "$PACKAGE.md5 did not match, check downloaded package"
+			if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
+				echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
+			else
+				exiterror "$PACKAGE.md5 did not match, check downloaded package"
+			fi
 		fi
+	else
+		echo "Toolchain is already downloaded. Exiting..."
 	fi
 	;;
 svn)
@@ -1147,10 +1154,12 @@ svn)
 			echo ".Fail!"
 			exit 1
 		fi
+		chmod 755 $0
 		exit 0
 	  ;;
 	  commit|ci)
 		clear
+		$0 changelog
 		echo "Upload the changed files..."
 		sleep 1
 		svn commit
@@ -1198,7 +1207,6 @@ svn)
 	;;
 make-config)
 	echo -e "This is for creating your configuration..."
-	echo -e "ATTENTION: Even your password will be shown when typed!"
 	echo -e "We will need some input:"
 	echo -e ""
 	echo -n "FTP-DOMAIN FOR THE ISO: "
@@ -1208,7 +1216,7 @@ make-config)
 	echo -n "USERNAME FOR $IPFIRE_FTP_URL_EXT: "
 	read IPFIRE_FTP_USER_EXT
 	echo -n "PASSWORD FOR $IPFIRE_FTP_URL_EXT: "
-	read IPFIRE_FTP_PASS_EXT
+	read -s IPFIRE_FTP_PASS_EXT
 	echo ""
 	echo "(You can leave this empty if the cache-server is the same as your iso-server.)"
 	echo -n "FTP-DOMAIN FOR THE CACHE: "
@@ -1219,13 +1227,13 @@ make-config)
 		echo -n "USERNAME FOR $IPFIRE_FTP_URL_INT: "
 		read IPFIRE_FTP_USER_INT
 		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_INT: "
-		read IPFIRE_FTP_PASS_INT
+		read -s IPFIRE_FTP_PASS_INT
 	else
 		IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_EXT
 		IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_EXT
 		IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_EXT
 		echo "USERNAME FOR $IPFIRE_FTP_URL_INT: $IPFIRE_FTP_USER_INT"
-		echo "PASSWORD FOR $IPFIRE_FTP_URL_INT: $IPFIRE_FTP_PASS_INT"
+		echo "PASSWORD FOR $IPFIRE_FTP_URL_INT: !HIDDEN!"
 	fi
 	echo ""
 	echo "(You can leave this empty if the pak-server is the same as your iso-server.)"
@@ -1237,13 +1245,13 @@ make-config)
 		echo -n "USERNAME FOR $IPFIRE_FTP_URL_PAK: "
 		read IPFIRE_FTP_USER_PAK
 		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_PAK: "
-		read IPFIRE_FTP_PASS_PAK
+		read -s IPFIRE_FTP_PASS_PAK
 	else
 		IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_EXT
 		IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_EXT
 		IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_EXT
 		echo "USERNAME FOR $IPFIRE_FTP_URL_PAK: $IPFIRE_FTP_USER_PAK"
-		echo "PASSWORD FOR $IPFIRE_FTP_URL_PAK: $IPFIRE_FTP_PASS_PAK"
+		echo "PASSWORD FOR $IPFIRE_FTP_URL_PAK: !HIDDEN!"
 	fi
 	echo ""
 	echo -e "ONE OR MORE EMAIL ADDRESS(ES) TO WHICH THE REPORTS WILL BE SENT"
@@ -1256,7 +1264,7 @@ make-config)
 	echo -n "LOGIN TO MAIL SERVER: "
 	read IPFIRE_MAIL_USER
 	echo -n "MAIL PASSWORD: "
-	read IPFIRE_MAIL_PASS
+	read -s IPFIRE_MAIL_PASS
 	echo -n "Saving..."
 	for i in `seq 20`; do
 		sleep 0.1; echo -n "."
@@ -1317,12 +1325,14 @@ upload)
 		if [ "$?" -eq "1" ]; then
 				cp $BASEDIR/ipfire-install-$VERSION.i386.iso $BASEDIR/ipfire-install-$VERSION.i386-r`svn info | grep Revision | cut -c 11-`.iso
 				md5sum ipfire-install-$VERSION.i386-r$SVN_REVISION.iso > ipfire-install-$VERSION.i386-r$SVN_REVISION.iso.md5
-				ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386-r$SVN_REVISION.iso
-				ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386-r$SVN_REVISION.iso.md5
+				ncftpput -V -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386-r$SVN_REVISION.iso
+				ncftpput -V -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386-r$SVN_REVISION.iso.md5
+				ncftpput -V -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-source-*-r$SVN_REVISION.tar.gz
 				if [ "$?" -eq "0" ]; then
 					echo -e "The ISO of Revision $SVN_REVISION was successfully uploaded to the ftp server."
 				else
 					echo -e "There was an error while uploading the iso to the ftp server."
+					exit 1
 				fi
 		else
 			echo -e "File with name ipfire-install-$VERSION.i386-r$SVN_REVISION.iso already exists on the ftp server!"
@@ -1335,6 +1345,7 @@ upload)
 			echo -e "The packages were successfully uploaded to the ftp server."
 		else
 			echo -e "There was an error while uploading the packages to the ftp server."
+			exit 1
 		fi
 	  ;;
 	esac
@@ -1391,6 +1402,20 @@ Best Regards
 Your IPFire-Build-Script
 END
 	fi
+
+	if [ "$2" = "SVNDIST" ]; then
+		SUBJECT="SVNDIST: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+		echo "ERROR: $0 svn dist!"
+		cat <<END > /tmp/ipfire_mail_body
+When I was exporting the latest svn source,
+I have found an ERROR!
+Here you can see the logs and detect the reason for this error.
+
+Best Regards
+Your IPFire-Build-Script
+END
+	fi
+
 	if [ "$2" = "PREFETCH" ]; then
 		SUBJECT="PREFETCH: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
 		echo "ERROR: $0 prefetch!"
@@ -1450,6 +1475,9 @@ END
 	rm -f /tmp/ipfire_mail_body $ATTACHMENT
 	;;
 unattended)
+	if [ ! -f .config ]; then
+		echo "No configuration found. Try ./make.sh make-config."
+	fi
 	### This is our procedure that will compile the IPFire by herself...
 	echo "### UPDATE LOGS"
 	update_logs
@@ -1457,12 +1485,18 @@ unattended)
 	export IPFIRE_START_TIME=`date`
 
 	echo "### RUNNING SVN-UPDATE"
-	$0 svn update > /dev/null
+	$0 svn update
 	if [ $? -ne 0 ]; then
 		$0 mail SVNUPDATE
 		exit 1
 	fi
-	chmod 755 $0
+	
+	echo "### EXPORT SOURCES"
+	$0 svn dist
+	if [ $? -ne 0 ]; then
+		$0 mail SVNDIST
+		exit 1
+	fi
 
 	echo "### RUNNING PREFETCH"
 	$0 prefetch | grep -q "md5 difference"
@@ -1494,15 +1528,33 @@ unattended)
 
 	echo "### SUCCESS!"
 	$0 mail SUCCESS
+	exit 0
 	;;
 batch)
-	screen -dmS batch $0 unattended
-	exit 0
+	if [ `screen -ls | grep batch` ]; then
+		echo "Build is already running, sorry!"
+		exit 1
+	else
+		echo -n "IPFire-Batch-Build is starting..."
+		screen -dmS ipfire $0 unattended
+		if [ "$?" -eq "0" ]; then
+			echo ".Done!"
+		else
+			echo ".ERROR!"
+			exit 1
+		fi
+		#if [ "$2" -eq "-v" ]; then
+		#	screen -x ipfire
+		#else
+		#	echo "You may attach you with '-v'."
+		#fi
+		exit 0
+	fi
 	;;
 *)
 	clear
 	svn info
-	select name in "Exit" "IPFIRE: Prefetch" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Clean" "SVN: Commit" "SVN: Update" "SVN: Status" "SVN: Diff" "Help"
+	select name in "Exit" "IPFIRE: Prefetch" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "SVN: Commit" "SVN: Update" "SVN: Status" "SVN: Diff" "LOG: Tail" "Help"
 	do
 	case $name in
 	"IPFIRE: Prefetch")
@@ -1520,6 +1572,9 @@ batch)
 		echo ".Ready!"
 		sleep 0.3
 		screen -x ipfire
+		;;
+	"IPFIRE: Batch")
+		$0 batch
 		;;
 	"IPFIRE: Clean")
 		$0 clean
@@ -1539,6 +1594,9 @@ batch)
 	"Help")
 		echo "Usage: $0 {build|changelog|check|checkclean|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
 		cat doc/make.sh-usage
+		;;
+	"LOG: Tail")
+		tail -f log/_*
 		;;
 	"Exit")
 		break

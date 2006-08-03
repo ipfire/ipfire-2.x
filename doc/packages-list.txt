@@ -112,20 +112,15 @@
   * inetutils-1.4.2
   * ipac-ng-1.31
   * ipaddr-1.2
-  * ipfire-logs-2006-07-31-12:30.tgz
-  * ipfire-logs-2006-07-31-12:48.tgz
-  * ipfire-logs-2006-07-31-12:51.tgz
-  * ipfire-logs-2006-07-31-12:53.tgz
-  * ipfire-logs-2006-07-31-12:55.tgz
-  * ipfire-logs-2006-07-31-13:06.tgz
-  * ipfire-logs-2006-07-31-17:33.tgz
+  * ipfire-logs-2006-08-02-19:12.tgz
+  * ipfire-logs-2006-08-02-23:31.tgz
+  * ipfire-logs-2006-08-02-23:33.tgz
   * iproute2-2.4.7-now-ss010824
   * iptables-1.3.5
   * iptstate-1.4
   * iputils-ss020927
   * isapnptools-1.26
   * isdn4k-utils.v3.2p1
-  * java-1.5.0_06-for-ipfire
   * jpegsrc.v6b
   * kbd-1.12
   * kudzu-0.99.50
@@ -145,7 +140,6 @@
   * libwww-perl-5.803
   * libxml2-2.6.22
   * linux-2.4.31
-  * linux-2.4.31-ipfire
   * linux-atm-2.4.1
   * logrotate-3.7
   * logwatch-6.1.2
@@ -229,6 +223,7 @@
   * tcp_wrappers_7.6
   * tcpdump-3.8.3
   * texinfo-4.7
+  * tftp-hpa-0.42
   * tiff-3.8.2
   * traceroute-1.4a12
   * uClibc-0.9.26
@@ -236,7 +231,6 @@
   * util-linux-2.12r
   * vim-6.3
   * vlan.1.9
-  * web-cyradm-0.5.5-CVS-for-ipfire
   * wget-1.10.2
   * wput-0.6
   * xampp-linux-1.5.3a
