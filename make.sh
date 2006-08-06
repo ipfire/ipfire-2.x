@@ -889,7 +889,7 @@ ipfirepackages() {
   ipfiredist spamassassin
   ipfiredist web-cyradm
   ipfiredist xampp
-  ipfiredist xinetd
+#  ipfiredist xinetd
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/*.{tar.gz,md5} $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*

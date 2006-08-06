@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 2.4.31
+VER        = 2.4.32
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -73,17 +73,16 @@ iptables-1.3.5.tar.bz2              	= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
 kbc_option_2420.patch                   = $(URL_IPFIRE)/kbc_option_2420.patch
 net4801.kernel.patch_2.4.31             = $(URL_IPFIRE)/net4801.kernel.patch_2.4.31
 netfilter-layer7-v2.1.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.1.tar.gz
+#bootsplash-3.0.7-2.4.31-vanilla.diff	= $(URL_IPFIRE)/bootsplash-3.0.7-2.4.31-vanilla.diff
 
-bootsplash-3.0.7-2.4.31-vanilla.diff	= $(URL_IPFIRE)/bootsplash-3.0.7-2.4.31-vanilla.diff
-
-$(DL_FILE)_MD5                       	= ea3f99fc82617886059d58d0644dab26
+$(DL_FILE)_MD5                       	= f01163f627f47030a50dab6976df2eb7
 openswan-1.0.10rc2.tar.gz_MD5        	= 20d51ff963da78f826f4e0f0ebc4bcef
 patch-o-matic-ng-20060206.tar.bz2_MD5	= eca9893afb753e331caddfe63142b566
 iptables-1.3.5.tar.bz2_MD5          	= 00fb916fa8040ca992a5ace56d905ea5
 kbc_option_2420.patch_MD5               = 6d37870344f7fcf97ace1fbf43323c60
 net4801.kernel.patch_2.4.31_MD5         = c7d64e3caedb2f2b10e1c11db7f73a04
 netfilter-layer7-v2.1.tar.gz_MD5	= 551626a158c2a2cbfd937d27ecc7fac1
-bootsplash-3.0.7-2.4.31-vanilla.diff    = 767c263d1d28827d51abc83945e4b893
+#bootsplash-3.0.7-2.4.31-vanilla.diff    = 767c263d1d28827d51abc83945e4b893
 
 install : $(TARGET)
 
