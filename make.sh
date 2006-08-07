@@ -1134,6 +1134,17 @@ gettoolchain)
 		echo "Toolchain is already downloaded. Exiting..."
 	fi
 	;;
+sources-iso)
+	prepareenv
+	echo "`date -u '+%b %e %T'`: Build sources iso for $MACHINE" | tee -a $LOGFILE
+	chroot $LFS /tools/bin/env -i   HOME=/root \
+	TERM=$TERM PS1='\u:\w\$ ' \
+	PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+	VERSION=$VERSION NAME="$NAME" SNAME="$SNAME" MACHINE=$MACHINE \
+	/bin/bash -x -c "cd /usr/src/lfs && make -f sources-iso LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+	mv $LFS/install/images/ipfire-* $BASEDIR >> $LOGFILE 2>&1
+	stdumount
+	;;
 svn)
 	case "$2" in
 	  update|up)
@@ -1296,7 +1307,7 @@ END
 	;;
 sync)
 	echo -e "Syncing cache to ftp:"
-	rm -f doc/packages-to-remove-from-ftp
+#	rm -f doc/packages-to-remove-from-ftp
 	ncftpls -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT ftp://$IPFIRE_FTP_URL_INT$IPFIRE_FTP_PATH_INT/ > ftplist
 	for i in `ls -w1 cache/`; do
 		grep $i ftplist
@@ -1309,12 +1320,12 @@ sync)
 			fi
 		fi
 	done
-	for i in `cat ftplist`; do
-		ls -w1 cache/ | grep $i
-		if [ "$?" -eq "1" ]; then
-			echo $i | grep -v toolchain >> doc/packages-to-remove-from-ftp
-		fi
-	done
+#	for i in `cat ftplist`; do
+#		ls -w1 cache/ | grep $i
+#		if [ "$?" -eq "1" ]; then
+#			echo $i | grep -v toolchain >> doc/packages-to-remove-from-ftp
+#		fi
+#	done
 	rm -f ftplist
 	;;
 upload)
@@ -1484,6 +1495,9 @@ unattended)
 	echo "### SAVING TIME"
 	export IPFIRE_START_TIME=`date`
 
+	echo "### GETTING TOOLCHAIN"
+	$0 gettoolchain
+
 	echo "### RUNNING SVN-UPDATE"
 	$0 svn update
 	if [ $? -ne 0 ]; then
@@ -1511,6 +1525,9 @@ unattended)
 		$0 mail ERROR
 		exit 1
 	fi
+
+	echo "### MAKING SOURCES-ISO"
+	$0 sources-iso
 
 	echo "### UPLOADING ISO"
 	$0 upload iso

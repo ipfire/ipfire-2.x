@@ -1,0 +1,13 @@
+--- linux/drivers/ide/pci/sis5513.c.old	2004-08-08 01:26:04.000000000 +0200
++++ linux/drivers/ide/pci/sis5513.c	2006-07-16 02:00:51.000000000 +0200
+@@ -789,6 +789,10 @@
+ 				printk(KERN_INFO "SIS5513: SiS 962/963 MuTIOL IDE UDMA133 controller\n");
+ 				chipset_family = ATA_133;
+ 			}
++			if (trueid == 0x180) { /* sis965L */
++				printk(KERN_INFO "SIS5513: SiS 965L IDE UDMA133 controller\n");
++				chipset_family = ATA_133;
++			}
+ 	}
+ 
+ 	if (!chipset_family) { /* Belongs to pci-quirks */

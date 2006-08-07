@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------
+r238 | ms | 2006-08-06 22:07:18 +0200 (So, 06 Aug 2006) | 5 lines
+
+Geändert:
+  * NEUER KERNEL 2.4.31 --> 2.4.32... EXPERIMENTAL!!!
+  * Fix für mldonkey...
+  * Bootsplash-Patch gefixt. Unsinnige Sache entfernt.
+
+------------------------------------------------------------------------
 r237 | delaco | 2006-08-03 12:03:21 +0200 (Do, 03 Aug 2006) | 3 lines
 
 Geaendert:

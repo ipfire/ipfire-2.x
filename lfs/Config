@@ -130,6 +130,7 @@ define MD5
 	# error mean file signature don't match the one in lfs script
 	[ "$($@_MD5)" = `md5sum $(DIR_DL)/$@ | awk '{ print $$1 }'` ]
 	echo "$@ checksum OK"
+	echo "$@" >>$(DIR_INFO)/_build.packages-list.log
 endef
 
 define PAK

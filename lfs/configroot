@@ -50,7 +50,7 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create all directories
-	for i in addon-lang alcatelusb auth backup backup/sets ca certs cnx_pci connscheduler crls ddns dhcp dhcpc dmzholes \
+	for i in addon-lang alcatelusb auth backup ca certs cnx_pci connscheduler crls ddns dhcp dhcpc dmzholes \
 	    eagle-usb eciadsl ethernet isdn key langs logging main mbmon modem net-traffic nfs optionsfw outgoing patches pakfire portfw \
 	    ppp private proxy/advanced qos/bin red remote snort time urlfilter/autoupdate urlfilter/bin vpn wakeonlan wireless xtaccess ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
@@ -128,7 +128,6 @@ $(TARGET) :
 	for i in backup/ header.pl general-functions.pl lang.pl addon-lang/ langs/ red/ ; do \
             chown -R root:root $(CONFIG_ROOT)/$$i; \
 	done
-	chown nobody:nobody $(CONFIG_ROOT)/backup/sets
 	chown root:nobody $(CONFIG_ROOT)/dhcpc
 
 	@$(POSTBUILD)

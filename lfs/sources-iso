@@ -26,57 +26,34 @@
 
 include Config
 
-VER        = 1.4.5
-
-THISAPP    = gnupg-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+THISAPP    = sources-iso
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+check :
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+download :
 
-$(DL_FILE)_MD5 = 811525965b4c0987e6418a7729a6444d
-
-install : $(TARGET)
-
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
-
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
-
-md5 : $(subst %,%_MD5,$(objects))
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+md5 :
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
-$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	rm -rf /home/nobody/.gnupg /root/.gnupg
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-minimal --disable-nls \
-		--disable-dns-srv --disable-dns-pka --disable-dns-cert
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install
-	gpg --import $(DIR_SRC)/config/cfgroot/ipcop.gpg
-	@rm -rf $(DIR_APP)
-	@$(POSTBUILD)
+install : $(DIR_INFO)/_build.packages-list.log
+	rm -rf /install/cdrom/*
+	for i in `cat $(DIR_INFO)/_build.packages-list.log`; do \
+		cp $(DIR_DL)/$$i /install/cdrom; \
+	done
+	
+	# make the sources CDROM iso
+	if [ "$(MACHINE)" == "i386" ]; then \
+		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
+			. > /install/images/$(SNAME)-sources-cd-$(VERSION).$(MACHINE).iso; \
+	elif [ "$(MACHINE)" == "alpha" ]; then \
+		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
+			. > /install/images/$(SNAME)-sources-cd-$(VERSION).$(MACHINE).iso; \
+	fi
+	rm -rf /install/cdrom/*

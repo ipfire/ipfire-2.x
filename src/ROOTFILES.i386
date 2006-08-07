@@ -1323,7 +1323,7 @@ etc/securetty
 etc/sysctl.conf
 etc/syslog.conf
 #home
-#home/nobody
+home/nobody
 #lib
 mnt
 #opt
@@ -13005,7 +13005,7 @@ bin/ping
 #usr/bin/rlogin
 #usr/bin/rsh
 #usr/bin/talk
-#usr/bin/telnet
+usr/bin/telnet
 #usr/bin/tftp
 #usr/share/info/inetutils.info
 #usr/share/info/inetutils.info-1
@@ -22224,7 +22224,7 @@ usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/GD/GD.so
 #usr/share/man/man3/GD.3
 #usr/share/man/man3/GD::Polyline.3
 ##
-## gnupg-1.4.2
+## gnupg-1.4.5
 ##
 #root/.gnupg
 root/.gnupg/gpg.conf

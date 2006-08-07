@@ -115,6 +115,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && ln -sf linux-$(VER) linux
 	cd $(DIR_APP) && sed -i -e 's/-Werror//' drivers/scsi/aic7xxx/Makefile
 
+	# add IDE SiS 965L support to SiS driver. Request sf#1517522
+	cd $(DIR_SRC) && patch -p0  < $(DIR_SRC)/src/patches/linux-sis-965l.patch
+
 	# Openswan
 	cd $(DIR_SRC) && rm -rf openswan-*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-1.0.10.tar.gz
