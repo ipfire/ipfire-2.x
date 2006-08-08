@@ -1597,7 +1597,10 @@ batch)
 		$0 clean
 		;;
 	"SVN: Commit")
-		$0 svn commit
+		echo "Are your sure to Update all Files to the Server (write: yes)?"; read input
+		if [ "$input" == "yes" ]; then
+			$0 svn commit
+		fi
 		;;
 	"SVN: Update")
 		$0 svn update
