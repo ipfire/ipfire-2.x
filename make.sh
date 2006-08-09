@@ -733,7 +733,10 @@ buildipcop() {
   ipcopmake asterisk
   ipcopmake mpg123
   echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
+  ipcopmake libogg
+  ipcopmake libvorbis
   ipcopmake lame
+  ipcopmake sox
   ipcopmake gnump3d
   echo -ne "`date -u '+%b %e %T'`: Building ### P2P-Clients ### \n" | tee -a $LOGFILE
   ipcopmake applejuice
@@ -868,7 +871,7 @@ ipfirepackages() {
   fi
   ipfiredist amavisd
   ipfiredist applejuice
-  # ipfiredist asterisk
+  ipfiredist asterisk
   ipfiredist clamav
   ipfiredist cups
   ipfiredist cyrusimap
@@ -1170,8 +1173,8 @@ svn)
 	  ;;
 	  commit|ci)
 		clear
-		$0 changelog
-		echo "Upload the changed files..."
+		#$0 changelog
+		#echo "Upload the changed files..."
 		sleep 1
 		svn commit
 		$0 svn up

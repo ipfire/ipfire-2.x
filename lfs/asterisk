@@ -43,17 +43,20 @@ PAK_VER    = ipfire-beta1
 objects = $(DL_FILE) \
 	   app_rxfax.c \
 	   app_txfax.c \
-	   apps_Makefile.patch
+	   apps_Makefile.patch \
+	   asterisk-sounds-de-1.2.5.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 app_rxfax.c = $(URL_IPFIRE)/app_rxfax.c
 app_txfax.c = $(URL_IPFIRE)/app_txfax.c
 apps_Makefile.patch = $(URL_IPFIRE)/apps_Makefile.patch
+asterisk-sounds-de-1.2.5.tar.gz = $(URL_IPFIRE)/asterisk-sounds-de-1.2.5.tar.gz
 
 $(DL_FILE)_MD5 = d98fc3dc5ee8df691ca2b0bd309bb251
 app_rxfax.c_MD5 = ab6983b51c412883545b36993d704999
 app_txfax.c_MD5 = 8c8fcb263b76897022b4c28052a7b439
 apps_Makefile.patch_MD5 = 6b0faa7a7cf8613962b17c23ee5a1583
+asterisk-sounds-de-1.2.5.tar.gz_MD5 = 3793735c44de899dbacb8c192501aa14
 
 install : $(TARGET)
 
@@ -94,5 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make all ASTETCDIR=/var/ipfire/asterisk
 	cd $(DIR_APP) && make install ASTETCDIR=/var/ipfire/asterisk
 	cd $(DIR_APP) && make samples ASTETCDIR=/var/ipfire/asterisk
+	tar xfz $(DIR_DL)/asterisk-sounds-de-1.2.5.tar.gz -C /var/lib/asterisk/sounds/
+	rm -f /var/lib/asterisk/sounds/README.txt
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

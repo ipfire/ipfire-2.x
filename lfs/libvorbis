@@ -26,14 +26,14 @@
 
 include Config
 
-VER        = 0.88.4
+VER        = 1.1.2
 
-THISAPP    = clamav-$(VER)
+THISAPP    = libvorbis-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = clamav
+PROG       = libvorbis
 PAK_VER    = ipfire-beta1
 
 ###############################################################################
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7759784aa4506b314e6543e0f2a8587b
+$(DL_FILE)_MD5 = 37847626b8e1b53ae79a34714c7b3211
 
 install : $(TARGET)
 
@@ -77,8 +77,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/clamav
+	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make
+	#cd $(DIR_APP) && sed -i.bak -e 's/-mno-ieee-fp//' lib/Makefile
 	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && install -v -m644 doc/Vorbis* /usr/share/doc/libvorbis-1.1.2
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

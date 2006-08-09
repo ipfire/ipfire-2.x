@@ -37,7 +37,7 @@ start_daemon()
 				nicelevel="${2}"
 				shift 2
 				;;
-	    -p)
+			-p)
 				pidfile="${2}"
 				shift 2
 				;;
