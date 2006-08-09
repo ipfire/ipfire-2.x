@@ -200,15 +200,15 @@ sub portchecks
 	return;
 }
 
-# Darren Critchley - certain ports are reserved for ipfire 
-# TCP 67,68,81,222,445
+# Darren Critchley - certain ports are reserved for IPFire 
+# TCP 67,68,81,222,444
 # UDP 67,68
 # Params passed in -> port, rangeyn, protocol
 sub disallowreserved
 {
 	# port 67 and 68 same for tcp and udp, don't bother putting in an array
 	my $msg = "";
-	my @tcp_reserved = (81,222,445);
+	my @tcp_reserved = (81,222,444);
 	my $prt = $_[0]; # the port or range
 	my $ryn = $_[1]; # tells us whether or not it is a port range
 	my $prot = $_[2]; # protocol
@@ -260,7 +260,11 @@ sub writeserverconf {
     print CONF ";local $sovpnsettings{'VPN_IP'}\n";
     print CONF "dev $sovpnsettings{'DDEVICE'}\n";
     print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n";
-    print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
+	if ($sovpnsettings{'DPROTOCOL'} eq 'tcp') {
+		print CONF "proto $sovpnsettings{'DPROTOCOL'}-server\n";
+	} else {	
+		print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
+	}	
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
     print CONF "tls-server\n";
     print CONF "ca /var/ipfire/ovpn/ca/cacert.pem\n";
@@ -395,9 +399,15 @@ sub writenet2netconf {
 			open(CONF, ">$tempdir/$clientovpn") or die "Unable to open $tempdir/$clientovpn: $!";						
 		}		
 		flock CONF, 2;		
-		print CONF "dev tun\n";
+		print CONF "dev tun\n";		
 		print CONF "tun-mtu $n2nconfighash{$n2nkey}[17]\n";
-		print CONF "proto $n2nconfighash{$n2nkey}[14]\n";
+		if ($n2nconfighash{$n2nkey}[14] eq 'udp') {
+			print CONF "proto $n2nconfighash{$n2nkey}[14]\n";
+		} elsif ((($zerinaclient eq '') && ($n2nconfighash{$n2nkey}[6] eq 'server'))) {
+			print CONF "proto $n2nconfighash{$n2nkey}[14]-server\n";
+		} else {
+			print CONF "proto $n2nconfighash{$n2nkey}[14]-client\n";
+		}
 		print CONF "port $n2nconfighash{$n2nkey}[15]\n";
 		my @tempovpnsubnet = split("\/",$n2nconfighash{$n2nkey}[13]);
 		my @ovpnip = split /\./,$tempovpnsubnet[0];
@@ -775,4 +785,361 @@ sub ovelapplausi {
 sub emptyarray {
 	@subnets2 = ();
 	@subnets = ();
+}
+sub rwclientstatus {
+	my $activeonrun = $_[0];
+	my @status = `/bin/cat /var/log/ovpnserver.log`;
+	my %confighash = ();
+	my $dis = ''
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
+		$dis = '';
+	} else {
+		$dis = "disabled='disabled'";
+	}	
+		
+		&Header::openbox('100%', 'LEFT', "Roadwarrior $Lang::tr{'Client status and controlc'}");
+		print <<END
+		<table width='100%' border='0' cellspacing='1' cellpadding='0'>
+		<tr>
+		<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
+		<td width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></td>
+		<td width='18%' class='boldbase' align='center'><b>$Lang::tr{'common name'}</b></td>
+		<td width='17%' class='boldbase' align='center'><b>$Lang::tr{'valid till'}</b></td>
+		<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b><br /><img src='/images/null.gif' width='125' height='1' border='0' alt='L2089' /></td>
+		<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></td>
+		<td width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></td>
+		</tr>
+END
+		;
+		my $id = 0;
+		my $gif;
+		foreach my $key (keys %confighash) {
+			if ($confighash{$key}[3] eq 'host') {
+				if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
+					if ($id % 2) {
+						print "<tr bgcolor='${Header::table1colour}'>\n";
+					} else {
+						print "<tr bgcolor='${Header::table2colour}'>\n";
+					}
+				print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";		
+				print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";			
+				if ($confighash{$key}[4] eq 'cert') {
+					print "<td align='left' nowrap='nowrap'>$confighash{$key}[2]</td>";
+				} else {
+					print "<td align='left'>&nbsp;</td>";
+				}
+				if ($confighash{$key}[19] ne 'yes') {
+					my $cavalid = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem`;
+					$cavalid    =~ /Not After : (.*)[\n]/;
+					$cavalid    = $1;
+					print "<td align='center'>$cavalid</td>";
+				} else {
+					print "<td>&nbsp;</td>";
+				}	
+				print "<td align='center'>$confighash{$key}[25]</td>";
+				my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+				if ($confighash{$key}[0] eq 'off') {
+					$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+				} else {				
+					my $cn;
+					my @match = ();	
+					foreach my $line (@status) {
+						chomp($line);
+						if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
+							@match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
+							if ($match[1] ne "Common Name") {
+								$cn = $match[1];
+							}	    
+							$cn =~ s/[_]/ /g;
+							if ($cn eq "$confighash{$key}[2]") {
+								$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+							}
+						}    
+					}				
+				}				
+				print "<td align='center'>$active</td>";
+				my $disable_clientdl = "";
+				if ($confighash{$key}[6] ne 'client') {			
+					print <<END		
+					<form method='post' name='frm${key}a'><td align='center'>
+					<input type='image'  name='$Lang::tr{'dl client arch'}' $disable_clientdl src='/images/openvpn.gif' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' $disable_clientdl />
+					<input type='hidden' name='KEY' value='$key' $disable_clientdl />
+					</td></form>
+END
+		;		} else {
+					print "<td>&nbsp;</td>";	
+				}	
+				if ($confighash{$key}[4] eq 'cert' && $confighash{$key}[19] ne 'yes') {
+					print <<END
+					<form method='post' name='frm${key}b'><td align='center'>
+					<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif' alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
+					<input type='hidden' name='KEY' value='$key' />
+					</td></form>
+END
+		; 		} else {
+					print "<td>&nbsp;</td>";
+				}
+				if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") { 
+					print <<END
+					<form method='post' name='frm${key}c'><td align='center'>
+					<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/floppy.gif' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
+					<input type='hidden' name='KEY' value='$key' />
+					</td></form>
+END
+		; 		} elsif ($confighash{$key}[4] eq 'cert' && $confighash{$key}[19] ne 'yes') {
+					print <<END
+					<form method='post' name='frm${key}c'><td align='center'>
+					<input type='image' name='$Lang::tr{'download certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
+					<input type='hidden' name='KEY' value='$key' />
+					</td></form>
+END
+		; 		} else {
+					print "<td>&nbsp;</td>";
+				}
+				print <<END
+				<form method='post' name='frm${key}d'><td align='center'>
+				<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' border='0' />
+				<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
+				<input type='hidden' name='KEY' value='$key' />
+				</td></form>
+				<form method='post' name='frm${key}e'><td align='center'>
+				<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
+				<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' width='20' height='20' border='0'/>
+				<input type='hidden' name='KEY' value='$key' />
+				</td></form>
+				<form method='post' name='frm${key}f'><td align='center'>
+				<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
+				<input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' width='20' height='20' border='0' />
+				<input type='hidden' name='KEY' value='$key' />
+				</td></form>
+				</tr>
+END
+		;
+				$id++;
+			}
+		}
+	    ;
+	    # If the config file contains entries, print Key to action icons
+	    if ( $id ) {
+			print <<END
+			<table>
+			<tr>
+			<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
+			<td>&nbsp; <img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
+			<td class='base'>$Lang::tr{'click to disable'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/info.gif' alt='$Lang::tr{'show certificate'}' /></td>
+			<td class='base'>$Lang::tr{'show certificate'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
+			<td class='base'>$Lang::tr{'edit'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
+			<td class='base'>$Lang::tr{'remove'}</td>
+			</tr>
+			<tr>
+			<td>&nbsp; </td>
+			<td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
+			<td class='base'>$Lang::tr{'click to enable'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/floppy.gif' alt='?FLOPPY' /></td>
+			<td class='base'>$Lang::tr{'download certificate'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/openvpn.gif' alt='?RELOAD'/></td>
+			<td class='base'>$Lang::tr{'dl client arch'}</td>
+			</tr>
+			</table>
+END
+	    ;
+	    }
+	    print <<END
+	    <table width='100%'>
+	    <form method='post'>
+	    <tr><td width='50%' ><input type='submit' name='ACTION' value='$Lang::tr{'add'}' $dis />
+				             <input type='hidden' name='TYPE' value='host' /></td>				
+	    	<td width='50%' ><input type='submit' name='ACTION' value='$Lang::tr{'ovpn con stat'}' $activeonrun /></td></tr>
+	    </form>
+	    </table>
+END
+	    ;    
+	    &Header::closebox();
+	#}
+}
+sub net2netstatus {
+#net2net connections
+	my $activeonrun = $_[0];
+	my @status = `/bin/cat /var/log/ovpnserver.log`;
+	my %confighash = ();
+	my $dis = ''
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
+		$dis = '';
+	} else {
+		$dis = "disabled='disabled'";
+	}
+		&Header::openbox('100%', 'LEFT', "Net to Net Connection status and control:");
+		print <<END
+		<table width='100%' border='0' cellspacing='1' cellpadding='0'>
+		<tr>
+		<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
+		<td width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></td>
+		<td width='18%' class='boldbase' align='center'><b>$Lang::tr{'common name'}</b></td>
+		<td width='17%' class='boldbase' align='center'><b>$Lang::tr{'valid till'}</b></td>
+		<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b><br /><img src='/images/null.gif' width='125' height='1' border='0' alt='L2089' /></td>
+		<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></td>
+		<td width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></td>
+		</tr>
+END
+		;
+		my $id = 0;
+		my $gif;
+		foreach my $key (keys %confighash) {
+			if ($confighash{$key}[3] eq 'net') {
+				if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
+				if ($id % 2) {
+					print "<tr bgcolor='${Header::table1colour}'>\n";
+				} else {
+					print "<tr bgcolor='${Header::table2colour}'>\n";
+				}
+				print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
+				print "<td align='center' nowrap='nowrap'>" . $confighash{$key}[6] . "-" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";		
+				if ($confighash{$key}[4] eq 'cert') {
+					print "<td align='left' nowrap='nowrap'>$confighash{$key}[2]</td>";
+				} else {
+					print "<td align='left'>&nbsp;</td>";
+				}
+				if ($confighash{$key}[19] ne 'yes') {
+					my $cavalid = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem`;
+					$cavalid    =~ /Not After : (.*)[\n]/;
+					$cavalid    = $1;
+					print "<td align='center'>$cavalid</td>";
+				} else {
+					print "<td>&nbsp;</td>";
+				}	
+				print "<td align='center'>$confighash{$key}[25]</td>";
+				my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+				if ($confighash{$key}[0] eq 'off') {
+					$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+				} else {
+					my @tempovpnsubnet = split("\/",$confighash{$key}[13]);
+					my @ovpnip = split /\./,$tempovpnsubnet[0];
+					my $pingip = "";
+					if ($confighash{$key}[6] eq 'server') {
+						$pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].2";
+					} else {
+						$pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].1";
+					}
+					my $p = Net::Ping->new("udp",1);
+					if ($p->ping($pingip)) {
+						$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+					}	
+					$p->close();				
+				}				
+				print "<td align='center'>$active</td>";
+				my $disable_clientdl = "";
+				if ($confighash{$key}[6] ne 'client') {			
+					print <<END		
+					<form method='post' name='frm${key}a'><td align='center'>
+					<input type='image'  name='$Lang::tr{'dl client arch'}' $disable_clientdl src='/images/openvpn.gif' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' $disable_clientdl />
+					<input type='hidden' name='KEY' value='$key' $disable_clientdl />
+					</td></form>
+END
+					;		} else {
+					print "<td>&nbsp;</td>";	
+				}	
+				if ($confighash{$key}[4] eq 'cert' && $confighash{$key}[19] ne 'yes') {
+					print <<END
+					<form method='post' name='frm${key}b'><td align='center'>
+					<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif' alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
+					<input type='hidden' name='KEY' value='$key' />
+					</td></form>
+END
+					; 		} else {
+					print "<td>&nbsp;</td>";
+				}
+				if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") { 
+					print <<END
+					<form method='post' name='frm${key}c'><td align='center'>
+					<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/floppy.gif' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
+					<input type='hidden' name='KEY' value='$key' />
+					</td></form>
+END
+					; 		} elsif ($confighash{$key}[4] eq 'cert' && $confighash{$key}[19] ne 'yes') {
+					print <<END
+					<form method='post' name='frm${key}c'><td align='center'>
+					<input type='image' name='$Lang::tr{'download certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
+					<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
+					<input type='hidden' name='KEY' value='$key' />
+					</td></form>
+END
+					; 		} else {
+					print "<td>&nbsp;</td>";
+				}
+				
+				print <<END
+				<form method='post' name='frm${key}d'><td align='center'>
+				<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' border='0' />
+				<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
+				<input type='hidden' name='KEY' value='$key' />
+				</td></form>
+				<form method='post' name='frm${key}e'><td align='center'>
+				<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
+				<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' width='20' height='20' border='0'/>
+				<input type='hidden' name='KEY' value='$key' />
+				</td></form>
+				<form method='post' name='frm${key}f'><td align='center'>
+				<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
+				<input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' width='20' height='20' border='0' />
+				<input type='hidden' name='KEY' value='$key' />
+				</td></form>
+				</tr>
+END
+				;
+				$id++;
+			}
+		}
+		;
+
+		# If the config file contains entries, print Key to action icons
+		if ( $id ) {
+			print <<END
+			<table>
+			<tr>
+			<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
+			<td>&nbsp; <img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
+			<td class='base'>$Lang::tr{'click to disable'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/info.gif' alt='$Lang::tr{'show certificate'}' /></td>
+			<td class='base'>$Lang::tr{'show certificate'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
+			<td class='base'>$Lang::tr{'edit'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
+			<td class='base'>$Lang::tr{'remove'}</td>
+			</tr>
+			<tr>
+			<td>&nbsp; </td>
+			<td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
+			<td class='base'>$Lang::tr{'click to enable'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/floppy.gif' alt='?FLOPPY' /></td>
+			<td class='base'>$Lang::tr{'download certificate'}</td>
+			<td>&nbsp; &nbsp; <img src='/images/openvpn.gif' alt='?RELOAD'/></td>
+			<td class='base'>$Lang::tr{'dl client arch'}</td>
+			</tr>
+			</table>
+END
+			;
+		}
+		print <<END
+		<table width='100%'>
+		<form method='post'>
+		<tr><td width='50%' ><input type='submit' name='ACTION' value='$Lang::tr{'add'}' $ dis /></td></tr>    	
+		</form>
+		</table>
+END
+		;    
+		&Header::closebox();
+	#}	
+#net2net connections
 }

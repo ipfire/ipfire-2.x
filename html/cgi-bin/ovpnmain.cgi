@@ -3,10 +3,10 @@
 # 
 # This code is distributed under the terms of the GPL
 # Main idea from zeroconcept
-# ZERNINA-VERSION:0.9.7a7
+# ZERNINA-VERSION:0.9.7a9
 # (c) 2005 Ufuk Altinkaynak
 #
-# Ipcop and OpenVPN easy as one two three..
+# Ipcop and OpenVPN eas as one two three..
 #
 
 use CGI;
@@ -73,6 +73,7 @@ $cgiparams{'DCOMPLZO'} = 'off';
 if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'} ||
     $cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'} ||
     $cgiparams{'ACTION'} eq $Lang::tr{'restart ovpn server'}) {
+	my $serveractive = `/bin/ps ax|grep server.conf|grep -v grep|awk \'{print \$1}\'`;
     #start openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}){
     	&Ovpnfunc::emptyserverlog();
@@ -80,18 +81,23 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'} ||
     }   
     #stop openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}){
+		if ($serveractive ne ''){
+			system('/usr/local/bin/openvpnctrl', '-kn2n', $serveractive);
+		}
     	system('/usr/local/bin/openvpnctrl', '-k');
-	&Ovpnfunc::emptyserverlog();	
+		&Ovpnfunc::emptyserverlog();	
     }   
 #    #restart openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'restart ovpn server'}){
 #workarund, till SIGHUP also works when running as nobody    
-    	system('/usr/local/bin/openvpnctrl', '-r');	
-	&Ovpnfunc::emptyserverlog();	
+		if ($serveractive ne ''){
+			system('/usr/local/bin/openvpnctrl', '-kn2n', $serveractive);
+		}
+		system('/usr/local/bin/openvpnctrl', '-k');    	
+		&Ovpnfunc::emptyserverlog();
+		system('/usr/local/bin/openvpnctrl', '-s');
     }       
 }
-
-
 
 ###
 ### Save Advanced options
@@ -947,9 +953,17 @@ END
     my $file = '';
     my $clientovpn = '';
     my @fileholder;
+	my $uhost3 = '';
+	my $uhost = `/bin/uname -n`;
+	if ($uhost ne '') {
+		my @uhost2 = split /\./, $uhost;
+		$uhost3 = $uhost2[0];
+	} else {
+		$uhost3 = "IPFire";
+	}	
     my $tempdir = tempdir( CLEANUP => 1 );
     my $zippath = "$tempdir/";
-    my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.zip";
+    my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-TO-$uhost3.zip";
     my $zippathname = "$zippath$zipname";
     #anna
     if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
@@ -957,17 +971,21 @@ END
 		&Ovpnfunc::writenet2netconf($cgiparams{'KEY'},$zerinaclient);
 		exit(0);
 	}
-    $clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.ovpn";
-    open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
+    $clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-$uhost3.ovpn";
+    open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $clientovpn $!";
     flock CLIENTCONF, 2;
     
     my $zip = Archive::Zip->new();
     
-    print CLIENTCONF "#OpenVPN Server conf\r\n";
+    print CLIENTCONF "#OpenVPN Client conf\r\n";
     print CLIENTCONF "tls-client\r\n";
     print CLIENTCONF "client\r\n";
     print CLIENTCONF "dev $vpnsettings{'DDEVICE'}\r\n";
-    print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
+	if ($vpnsettings{'DPROTOCOL'} eq 'tcp') {
+		print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}-client\r\n";
+	} else {	
+		print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
+	}	
     print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu $vpnsettings{'DMTU'}\r\n";
     if ( $vpnsettings{'ENABLED'} eq 'on'){
     	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
@@ -1506,13 +1524,11 @@ END
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', '');
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'connection type'});
+	&Header::openbox('100%', 'LEFT', "Net to Net $Lang::tr{'connection type'}");
 	print <<END
 	    <b>$Lang::tr{'connection type'}:</b><br />
 	    <table><form method='post' enctype='multipart/form-data'>		
-	    <tr><td><input type='radio' name='TYPE' value='host' checked /></td>
-		<td class='base'>$Lang::tr{'host to net vpn'}</td></tr>
-	    <tr><td><input type='radio' name='TYPE' value='net' /></td>
+	    <tr><td><input type='radio' name='TYPE' value='net' checked /></td>
 		<td class='base'>$Lang::tr{'net to net vpn'}</td></tr>
 		<tr><td><input type='radio' name='TYPE' value='zerinan2n' /></td>		
 			<td class='base'>upload a ZERINA Net-to-Net package</td>
@@ -1594,6 +1610,9 @@ END
 	push(@confdetails, substr($zerinaconf[0],4));#dev tun 0
 	push(@confdetails, substr($zerinaconf[1],8));#mtu value 1
 	push(@confdetails, substr($zerinaconf[2],6));#protocol 2
+	if ($confdetails[2] eq 'tcp-client' || $confdetails[2] eq 'tcp-server') {
+		$confdetails[2] = 'tcp';
+	}	
 	push(@confdetails, substr($zerinaconf[3],5));#port 3
 	push(@confdetails, substr($zerinaconf[4],9));#ovpn subnet 4
 	push(@confdetails, substr($zerinaconf[5],7));#remote ip 5
@@ -1653,17 +1672,18 @@ END
 	$confighash{$key}[16] = $complzoactive;
 	$confighash{$key}[17] = $confdetails[1];
 	$confighash{$key}[18] = '';# nn2nvpn_ip
-	$confighash{$key}[19] = 'yes';# nn2nvpn_ip	
+	$confighash{$key}[19] = 'yes';# nn2nvpn_ip
+	$confighash{$key}[20] = $confdetails[10];
 	$cgiparams{'KEY'} = $key;
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	mkdir("${General::swroot}/ovpn/n2nconf/$confdetails[14]", 0770);
-	move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$confdetails[14]/$uplconffilename");
+	mkdir("${General::swroot}/ovpn/n2nconf/$confdetails[$ufuk]", 0770);
+	move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$confdetails[$ufuk]/$uplconffilename");
 	if ($? ne 0) {
 	    $errormessage = "*.conf move failed: $!";
 	    unlink ($filename);
 	    goto ZERINA_ERROR;
 	}
-	move("$tempdir/$uplp12name", "${General::swroot}/ovpn/n2nconf/$confdetails[14]/$uplp12name");
+	move("$tempdir/$uplp12name", "${General::swroot}/ovpn/n2nconf/$confdetails[$ufuk]/$uplp12name");
 	if ($? ne 0) {
 	    $errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 	    unlink ($filename);
@@ -1783,8 +1803,7 @@ END
 		if ($cgiparams{'ZERINA_CLIENT'} eq ''){
 			$cgiparams{'ZERINA_CLIENT'} = 'no';
 		}
-#ab hiere error uebernehmen
-    } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
+    } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {#ab hiere error uebernehmen
 		$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 		# n2n error
 		if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
@@ -2319,7 +2338,6 @@ END
 	if ($cgiparams{'KEY'}) {
 	    print "<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />";
 	    print "<input type='hidden' name='AUTH' value='$cgiparams{'AUTH'}' />";
-			print "<input type='hidden' name='ZERINA_CLIENT' value='$cgiparams{'ZERINA_CLIENT'}' />";			
 	}
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'connection'}:");
 	print "<table width='100%'>\n";
@@ -2463,7 +2481,9 @@ END
 	}
 	print "<div align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />";
 	if ($cgiparams{'KEY'}) {
-	    print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced'}' />";
+		if ($cgiparams{'TYPE'} ne 'host') { 
+			print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced'}' />";
+		}	
 	}
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' /></div></form>";
 	&Header::closebigbox();
@@ -2834,87 +2854,12 @@ if ( -e "/var/run/openvpn.pid"){
 } else {
 	$activeonrun = "disabled='disabled'";
 }	
-&Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});
-print "<div align='center'><strong>ZERINA-0.9.7a7</strong></div>";	
-print <<END	
-<table width='100%'>
-<form method='post'>
-<td width='25%'>&nbsp;</td>
-<td width='25%'>&nbsp;</td>
-<td width='25%'>&nbsp;</td></tr>
-<tr><td class='boldbase'>$Lang::tr{'ovpn server status'}</td>
-<td align='left'>$sactive</td>
-<tr><td class='boldbase'>$Lang::tr{'ovpn on red'}</td>
-    <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
-END
-;
-if (&Ovpnfunc::haveBlueNet()) {
-	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on blue'}</td>";
-	print "<td><input type='checkbox' name='ENABLED_BLUE' $checked{'ENABLED_BLUE'}{'on'} /></td>";
-}
-if (&Ovpnfunc::haveOrangeNet()) {    
-	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on orange'}</td>";
-	print "<td><input type='checkbox' name='ENABLED_ORANGE' $checked{'ENABLED_ORANGE'}{'on'} /></td>";
-}	
-print <<END    	
-<tr><td class='base' nowrap='nowrap'>$Lang::tr{'local vpn hostname/ip'}:</td>
-    <td><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
-	<td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
-	<td><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
-<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn device'}</td>
-    <td><select name='DDEVICE' ><option value='tun' $selected{'DDEVICE'}{'tun'}>TUN</option>
-                                <option value='tap' $selected{'DDEVICE'}{'tap'}>TAP</option></select></td>				    
-<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
-    <td><select name='DPROTOCOL'><option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
-                                 <option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option></select></td>				    
-    <td class='boldbase'>$Lang::tr{'destination port'}:</td>
-    <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
-<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
-    <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}'size='5' /></TD>
-<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
-    <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
-    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
-    <td><select name='DCIPHER'><option value='DES-CBC' $selected{'DCIPHER'}{'DES-CBC'}>DES-CBC</option>
-				               <option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC</option>
-				               <option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC</option>
-				               <option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC</option>
-				               <option value='RC2-CBC' $selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC</option>				  				    
-				               <option value='RC2-40-CBC' $selected{'DCIPHER'}{'RC2-40-CBC'}>RC2-40-CBC</option>
-				               <option value='RC2-64-CBC' $selected{'DCIPHER'}{'RC2-64-CBC'}>RC2-64-CBC</option>
-				               <option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC</option>
-				               <option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC</option>
-				               <option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-128-CBC</option>
-				               <option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-192-CBC</option>
-				               <option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-256-CBC</option></select></td>
-END
-;				   
-    
-if ( $srunning eq "yes" ) {
-	print "<tr><td align='left'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' disabled='disabled' /></td>";
-	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' disabled='disabled'/></td>";	
-	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'stop ovpn server'}' /></td>";
-	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'restart ovpn server'}' /></td></tr>";	
-} else{
-	print "<tr><td align='left'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>";
-	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' /></td>";
-	if (( -e "${General::swroot}/ovpn/ca/cacert.pem" &&
-	      -e "${General::swroot}/ovpn/ca/dh1024.pem" &&
-          -e "${General::swroot}/ovpn/certs/servercert.pem" &&
-          -e "${General::swroot}/ovpn/certs/serverkey.pem") &&
-	   (( $cgiparams{'ENABLED'} eq 'on') || 
-        ( $cgiparams{'ENABLED_BLUE'} eq 'on') ||
-        ( $cgiparams{'ENABLED_ORANGE'} eq 'on'))){
-		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' /></td>";
-		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'restart ovpn server'}' /></td></tr>";	
-	} else {
-		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' disabled='disabled' /></td>";    
-		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'restart ovpn server'}' disabled='disabled' /></td></tr>";		    
-	}    
-}
-print "</form></table>";
-&Header::closebox();
+#ufuk
+#CERT
 &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}:");
-print <<EOF#'
+print "<div align='center'><strong>ZERINA-0.9.7a9</strong></div>";	
+print "&nbsp";
+print <<EOF
 <table width='100%' border='0' cellspacing='1' cellpadding='0'>
 <tr>
     <td width='25%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
@@ -3054,189 +2999,88 @@ if ( $srunning eq "yes" ) {
 }else{
    	print "<div align='center'><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /></div></form>\n";
 }	    
-if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'Client status and controlc' });
-	print <<END
-	<table width='100%' border='0' cellspacing='1' cellpadding='0'>
-	<tr>
-	<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
-	<td width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></td>
-	<td width='18%' class='boldbase' align='center'><b>$Lang::tr{'common name'}</b></td>
-	<td width='17%' class='boldbase' align='center'><b>$Lang::tr{'valid till'}</b></td>
-	<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b><br /><img src='/images/null.gif' width='125' height='1' border='0' alt='L2089' /></td>
-	<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></td>
-	<td width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></td>
-	</tr>
+#CERT
+#RWSERVER
+#&Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});
+&Header::openbox('100%', 'LEFT', 'Roadwarrior Server');
+print <<END	
+<table width='100%'>
+<form method='post'>
+<td width='25%'>&nbsp;</td>
+<td width='25%'>&nbsp;</td>
+<td width='25%'>&nbsp;</td></tr>
+<tr><td class='boldbase'>$Lang::tr{'ovpn server status'}</td>
+<td align='left'>$sactive</td>
+<tr><td class='boldbase'>$Lang::tr{'ovpn on red'}</td>
+    <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 END
-	;
-	my $id = 0;
-	my $gif;
-	foreach my $key (keys %confighash) {
-		if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
-			if ($id % 2) {
-				print "<tr bgcolor='${Header::table1colour}'>\n";
-			} else {
-				print "<tr bgcolor='${Header::table2colour}'>\n";
-			}
-		print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
-		if ($confighash{$key}[3] ne 'host') {
-			print "<td align='center' nowrap='nowrap'>" . $confighash{$key}[6] . "-" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
-		} else {
-			print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
-		}	
-		if ($confighash{$key}[4] eq 'cert') {
-			print "<td align='left' nowrap='nowrap'>$confighash{$key}[2]</td>";
-		} else {
-			print "<td align='left'>&nbsp;</td>";
-		}
-		if ($confighash{$key}[19] ne 'yes') {
-			my $cavalid = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem`;
-			$cavalid    =~ /Not After : (.*)[\n]/;
-			$cavalid    = $1;
-			print "<td align='center'>$cavalid</td>";
-		} else {
-			print "<td>&nbsp;</td>";
-		}	
-		print "<td align='center'>$confighash{$key}[25]</td>";
-		my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
-		if ($confighash{$key}[0] eq 'off') {
-			$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
-		} else {
-			if ($confighash{$key}[3] eq 'host') { 
-				my $cn;
-				my @match = ();	
-				foreach my $line (@status) {
-					chomp($line);
-					if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
-						@match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
-						if ($match[1] ne "Common Name") {
-							$cn = $match[1];
-						}	    
-						$cn =~ s/[_]/ /g;
-						if ($cn eq "$confighash{$key}[2]") {
-							$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
-						}
-					}    
-				}
-			} else {
-				my @tempovpnsubnet = split("\/",$confighash{$key}[13]);
-				my @ovpnip = split /\./,$tempovpnsubnet[0];
-				my $pingip = "";
-				if ($confighash{$key}[6] eq 'server') {
-					$pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].2";
-				} else {
-					$pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].1";
-				}
-				my $p = Net::Ping->new("udp",1);
-				if ($p->ping($pingip)) {
-					$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
-				}	
-				$p->close();
-			}	
-		}				
-		print "<td align='center'>$active</td>";
-		my $disable_clientdl = "";
-		if ($confighash{$key}[6] ne 'client') {			
-			print <<END		
-			<form method='post' name='frm${key}a'><td align='center'>
-			<input type='image'  name='$Lang::tr{'dl client arch'}' $disable_clientdl src='/images/openvpn.gif' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
-			<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' $disable_clientdl />
-			<input type='hidden' name='KEY' value='$key' $disable_clientdl />
-			</td></form>
+;
+if (&Ovpnfunc::haveBlueNet()) {
+	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on blue'}</td>";
+	print "<td><input type='checkbox' name='ENABLED_BLUE' $checked{'ENABLED_BLUE'}{'on'} /></td>";
+}
+if (&Ovpnfunc::haveOrangeNet()) {    
+	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on orange'}</td>";
+	print "<td><input type='checkbox' name='ENABLED_ORANGE' $checked{'ENABLED_ORANGE'}{'on'} /></td>";
+}	
+print <<END    	
+<tr><td class='base' nowrap='nowrap'>$Lang::tr{'local vpn hostname/ip'}:</td>
+    <td><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
+	<td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
+	<td><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
+<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn device'}</td>
+    <td><select name='DDEVICE' ><option value='tun' $selected{'DDEVICE'}{'tun'}>TUN</option>
+                                <option value='tap' $selected{'DDEVICE'}{'tap'}>TAP</option></select></td>				    
+<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
+    <td><select name='DPROTOCOL'><option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
+                                 <option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option></select></td>				    
+    <td class='boldbase'>$Lang::tr{'destination port'}:</td>
+    <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
+<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
+    <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}'size='5' /></TD>
+<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
+    <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
+    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
+    <td><select name='DCIPHER'><option value='DES-CBC' $selected{'DCIPHER'}{'DES-CBC'}>DES-CBC</option>
+				               <option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC</option>
+				               <option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC</option>
+				               <option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC</option>
+				               <option value='RC2-CBC' $selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC</option>				  				    
+				               <option value='RC2-40-CBC' $selected{'DCIPHER'}{'RC2-40-CBC'}>RC2-40-CBC</option>
+				               <option value='RC2-64-CBC' $selected{'DCIPHER'}{'RC2-64-CBC'}>RC2-64-CBC</option>
+				               <option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC</option>
+				               <option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC</option>
+				               <option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-128-CBC</option>
+				               <option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-192-CBC</option>
+				               <option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-256-CBC</option></select></td>
 END
-	;	} else {
-			print "<td>&nbsp;</td>";	
-		}	
-		if ($confighash{$key}[4] eq 'cert' && $confighash{$key}[19] ne 'yes') {
-			print <<END
-			<form method='post' name='frm${key}b'><td align='center'>
-			<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif' alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' border='0' />
-			<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
-			<input type='hidden' name='KEY' value='$key' />
-			</td></form>
-END
-	; 	} else {
-			print "<td>&nbsp;</td>";
-		}
-		if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") { 
-			print <<END
-			<form method='post' name='frm${key}c'><td align='center'>
-			<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/floppy.gif' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
-			<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
-			<input type='hidden' name='KEY' value='$key' />
-			</td></form>
-END
-	; 	} elsif ($confighash{$key}[4] eq 'cert' && $confighash{$key}[19] ne 'yes') {
-			print <<END
-			<form method='post' name='frm${key}c'><td align='center'>
-			<input type='image' name='$Lang::tr{'download certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
-			<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
-			<input type='hidden' name='KEY' value='$key' />
-			</td></form>
-END
-	; 	} else {
-			print "<td>&nbsp;</td>";
-		}
-		print <<END
-		<form method='post' name='frm${key}d'><td align='center'>
-		<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' border='0' />
-		<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
-		<input type='hidden' name='KEY' value='$key' />
-		</td></form>
-		<form method='post' name='frm${key}e'><td align='center'>
-		<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
-		<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' width='20' height='20' border='0'/>
-		<input type='hidden' name='KEY' value='$key' />
-		</td></form>
-		<form method='post' name='frm${key}f'><td align='center'>
-		<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
-		<input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' width='20' height='20' border='0' />
-		<input type='hidden' name='KEY' value='$key' />
-		</td></form>
-		</tr>
-END
-	;
-		$id++;
-	}
-    ;
-
-    # If the config file contains entries, print Key to action icons
-    if ( $id ) {
-		print <<END
-		<table>
-		<tr>
-		<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
-		<td>&nbsp; <img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
-		<td class='base'>$Lang::tr{'click to disable'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/info.gif' alt='$Lang::tr{'show certificate'}' /></td>
-		<td class='base'>$Lang::tr{'show certificate'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
-		<td class='base'>$Lang::tr{'edit'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
-		<td class='base'>$Lang::tr{'remove'}</td>
-		</tr>
-		<tr>
-		<td>&nbsp; </td>
-		<td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
-		<td class='base'>$Lang::tr{'click to enable'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/floppy.gif' alt='?FLOPPY' /></td>
-		<td class='base'>$Lang::tr{'download certificate'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/openvpn.gif' alt='?RELOAD'/></td>
-		<td class='base'>$Lang::tr{'dl client arch'}</td>
-		</tr>
-		</table>
-END
-    ;
-    }
-    print <<END
-    <table width='100%'>
-    <form method='post'>
-    <tr><td width='50%' ><input type='submit' name='ACTION' value='$Lang::tr{'add'}' /></td>
-    	<td width='50%' ><input type='submit' name='ACTION' value='$Lang::tr{'ovpn con stat'}' $activeonrun /></td></tr>
-    </form>
-    </table>
-END
-    ;    
-    &Header::closebox();
-}    
+;				   
+    
+if ( $srunning eq "yes" ) {
+	print "<tr><td align='left'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' disabled='disabled' /></td>";
+	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' disabled='disabled'/></td>";	
+	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'stop ovpn server'}' /></td>";
+	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'restart ovpn server'}' /></td></tr>";	
+} else{
+	print "<tr><td align='left'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>";
+	print "<td><input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' /></td>";
+	if (( -e "${General::swroot}/ovpn/ca/cacert.pem" &&
+	      -e "${General::swroot}/ovpn/ca/dh1024.pem" &&
+          -e "${General::swroot}/ovpn/certs/servercert.pem" &&
+          -e "${General::swroot}/ovpn/certs/serverkey.pem") &&
+	   (( $cgiparams{'ENABLED'} eq 'on') || 
+        ( $cgiparams{'ENABLED_BLUE'} eq 'on') ||
+        ( $cgiparams{'ENABLED_ORANGE'} eq 'on'))){
+		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' /></td>";
+		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'restart ovpn server'}' /></td></tr>";	
+	} else {
+		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' disabled='disabled' /></td>";    
+		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'restart ovpn server'}' disabled='disabled' /></td></tr>";		    
+	}    
+}
+print "</form></table>";
+&Header::closebox();
+#RWSERVER
+&Ovpnfunc::rwclientstatus($activeonrun);
+&Ovpnfunc::net2netstatus($activeonrun);
 &Header::closepage();
