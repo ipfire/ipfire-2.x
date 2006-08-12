@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 0.3.0-PRE-1q
+VER        = 0.3.0-PRE-1s
 
 THISAPP    = bristuff-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9b3ef09eca7166b7277e8519a11844bf
+$(DL_FILE)_MD5 = 760eba19b03d03cd1dc8648d6239b4af
 
 install : $(TARGET)
 

@@ -32,8 +32,47 @@ diff -urN zaptel-1.2.6.orig/Makefile zaptel-1.2.6/Makefile
  
 diff -urN zaptel-1.2.6.orig/zaptel.c zaptel-1.2.6/zaptel.c
 --- zaptel-1.2.6.orig/zaptel.c	2005-12-17 03:04:05.000000000 +0100
-+++ zaptel-1.2.6/zaptel.c	2006-06-06 14:54:33.000000000 +0200
-@@ -4913,11 +4913,40 @@
++++ zaptel-1.2.6/zaptel.c	2006-07-31 14:12:08.000000000 +0200
+@@ -139,6 +139,7 @@
+ EXPORT_SYMBOL(zt_qevent_lock);
+ EXPORT_SYMBOL(zt_hooksig);
+ EXPORT_SYMBOL(zt_alarm_notify);
++EXPORT_SYMBOL(zt_alarm_notify_no_master_change);
+ EXPORT_SYMBOL(zt_set_dynamic_ioctl);
+ EXPORT_SYMBOL(zt_ec_chunk);
+ EXPORT_SYMBOL(zt_ec_span);
+@@ -2685,6 +2686,30 @@
+ 	}
+ }
+ 
++void zt_alarm_notify_no_master_change(struct zt_span *span)
++{
++	int j;
++	int x;
++
++	span->alarms &= ~ZT_ALARM_LOOPBACK;
++	/* Determine maint status */
++	if (span->maintstat || span->mainttimer)
++		span->alarms |= ZT_ALARM_LOOPBACK;
++	/* DON'T CHANGE THIS AGAIN. THIS WAS DONE FOR A REASON.
++ 	   The expression (a != b) does *NOT* do the same thing
++	   as ((!a) != (!b)) */
++	/* if change in general state */
++	if ((!span->alarms) != (!span->lastalarms)) {
++		if (span->alarms)
++			j = ZT_EVENT_ALARM;
++		else
++			j = ZT_EVENT_NOALARM;
++		span->lastalarms = span->alarms;
++		for (x=0;x < span->channels;x++)
++			zt_qevent_lock(&span->chans[x], j);
++	}
++}
++
+ #define VALID_SPAN(j) do { \
+ 	if ((j >= ZT_MAX_SPANS) || (j < 1)) \
+ 		return -EINVAL; \
+@@ -4913,11 +4938,40 @@
  					*(txb++) = fasthdlc_tx_run_nocheck(&ms->txhdlc);
  				}
  				bytes -= left;
@@ -74,7 +113,7 @@ diff -urN zaptel-1.2.6.orig/zaptel.c zaptel-1.2.6/zaptel.c
  			}
  			/* Check buffer status */
  			if (ms->writeidx[ms->outwritebuf] >= ms->writen[ms->outwritebuf]) {
-@@ -4962,6 +4991,17 @@
+@@ -4962,6 +5016,17 @@
  				/* Transmit a flag if this is an HDLC channel */
  				if (ms->flags & ZT_FLAG_HDLC)
  					fasthdlc_tx_frame_nocheck(&ms->txhdlc);
@@ -92,7 +131,7 @@ diff -urN zaptel-1.2.6.orig/zaptel.c zaptel-1.2.6/zaptel.c
  #ifdef CONFIG_ZAPATA_NET
  				if (ms->flags & ZT_FLAG_NETDEV)
  					netif_wake_queue(ztchan_to_dev(ms));
-@@ -4972,7 +5012,7 @@
+@@ -4972,7 +5037,7 @@
  					tasklet_schedule(&ms->ppp_calls);
  				}
  #endif
@@ -101,7 +140,7 @@ diff -urN zaptel-1.2.6.orig/zaptel.c zaptel-1.2.6/zaptel.c
  		} else if (ms->curtone && !(ms->flags & ZT_FLAG_PSEUDO)) {
  			left = ms->curtone->tonesamples - ms->tonep;
  			if (left > bytes)
-@@ -5018,6 +5058,10 @@
+@@ -5018,6 +5083,10 @@
  				memset(txb, 0xFF, bytes);
  			}
  			bytes = 0;
@@ -112,7 +151,7 @@ diff -urN zaptel-1.2.6.orig/zaptel.c zaptel-1.2.6/zaptel.c
  		} else {
  			memset(txb, ZT_LIN2X(0, ms), bytes);	/* Lastly we use silence on telephony channels */
  			bytes = 0;
-@@ -5743,6 +5787,13 @@
+@@ -5743,6 +5812,13 @@
  	int left, x;
  
  	int bytes = ZT_CHUNKSIZE;
@@ -126,7 +165,7 @@ diff -urN zaptel-1.2.6.orig/zaptel.c zaptel-1.2.6/zaptel.c
  
  	while(bytes) {
  #if defined(CONFIG_ZAPATA_NET)  || defined(CONFIG_ZAPATA_PPP)
-@@ -5801,6 +5852,19 @@
+@@ -5801,6 +5877,19 @@
  						}
  					}
  				}
@@ -148,7 +187,7 @@ diff -urN zaptel-1.2.6.orig/zaptel.c zaptel-1.2.6/zaptel.c
  				memcpy(buf + ms->readidx[ms->inreadbuf], rxb, left);
 diff -urN zaptel-1.2.6.orig/zaptel.h zaptel-1.2.6/zaptel.h
 --- zaptel-1.2.6.orig/zaptel.h	2005-12-17 03:04:05.000000000 +0100
-+++ zaptel-1.2.6/zaptel.h	2006-06-06 14:54:33.000000000 +0200
++++ zaptel-1.2.6/zaptel.h	2006-07-31 12:58:04.000000000 +0200
 @@ -994,6 +994,13 @@
  	int do_ppp_error;
  	struct sk_buff_head ppp_rq;
@@ -183,9 +222,33 @@ diff -urN zaptel-1.2.6.orig/zaptel.h zaptel-1.2.6/zaptel.h
  struct zt_span {
  	spinlock_t lock;
  	void *pvt;			/* Private stuff */
+@@ -1404,6 +1415,9 @@
+ /* Notify a change possible change in alarm status */
+ extern void zt_alarm_notify(struct zt_span *span);
+ 
++/* Notify a change possible change in alarm status, DONT change the zaptel master! */
++extern void zt_alarm_notify_no_master_change(struct zt_span *span);
++
+ /* Initialize a tone state */
+ extern void zt_init_tone_state(struct zt_tone_state *ts, struct zt_tone *zt);
+ 
 diff -urN zaptel-1.2.6.orig/zconfig.h zaptel-1.2.6/zconfig.h
 --- zaptel-1.2.6.orig/zconfig.h	2005-11-29 19:42:08.000000000 +0100
-+++ zaptel-1.2.6/zconfig.h	2006-06-06 14:54:33.000000000 +0200
++++ zaptel-1.2.6/zconfig.h	2006-08-02 20:34:43.000000000 +0200
+@@ -49,11 +49,11 @@
+ /* #define ECHO_CAN_MARK */
+ /* #define ECHO_CAN_MARK2 */
+ /* #define ECHO_CAN_MARK3 */
+-#define ECHO_CAN_KB1
++/* #define ECHO_CAN_KB1 */
+ /* MG2 is a version of KB1 that has some changes to it that are
+  * supposed to improve how it performs.  If you have echo problems,
+  * try it out! */
+-/* #define ECHO_CAN_MG2 */
++#define ECHO_CAN_MG2
+ 
+ /*
+  * Uncomment for aggressive residual echo supression under 
 @@ -152,4 +152,10 @@
   */
  /* #define FXSFLASH */

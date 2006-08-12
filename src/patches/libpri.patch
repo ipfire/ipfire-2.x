@@ -1,22 +1,26 @@
 diff -urN libpri-1.2.3.orig/Makefile libpri-1.2.3/Makefile
 --- libpri-1.2.3.orig/Makefile	2006-04-30 17:17:47.000000000 +0200
-+++ libpri-1.2.3/Makefile	2006-06-09 10:18:25.000000000 +0200
-@@ -27,6 +27,9 @@
++++ libpri-1.2.3/Makefile	2006-07-27 17:45:09.000000000 +0200
+@@ -27,6 +27,13 @@
  # Uncomment if you want libpri to count number of Q921/Q931 sent/received
  #LIBPRI_COUNTERS=-DLIBPRI_COUNTERS
  
 +# Uncomment if you want libpri to always keep layer 2 up
 +#LAYER2ALWAYSUP=-DLAYER2ALWAYSUP
 +
++# Uncomment if you want libpri to hangup a call to an NT (p2mp) port if one
++# device sends a RELEASE COMPLETE with cause 17
++#FASTBUSYONBUSY=-DFASTBUSYONBUSY
++
  CC=gcc
  
  OSARCH=$(shell uname -s)
-@@ -38,7 +41,7 @@
+@@ -38,7 +45,7 @@
  DYNAMIC_LIBRARY=libpri.so.1.0
  STATIC_OBJS=copy_string.o pri.o q921.o prisched.o q931.o pri_facility.o
  DYNAMIC_OBJS=copy_string.lo pri.lo q921.lo prisched.lo q931.lo pri_facility.lo
 -CFLAGS=-Wall -Werror -Wstrict-prototypes -Wmissing-prototypes -g $(ALERTING) $(LIBPRI_COUNTERS)
-+CFLAGS=-Wall -Wstrict-prototypes -Wmissing-prototypes -g $(ALERTING) $(LIBPRI_COUNTERS) $(LAYER2ALWAYSUP) -DRELAX_TRB
++CFLAGS=-Wall -Wstrict-prototypes -Wmissing-prototypes -g $(ALERTING) $(LIBPRI_COUNTERS) $(LAYER2ALWAYSUP) $(FASTBUSYONBUSY) -DRELAX_TRB
  INSTALL_PREFIX=$(DESTDIR)
  INSTALL_BASE=/usr
  SOFLAGS = -Wl,-hlibpri.so.1.0
@@ -72,7 +76,7 @@ diff -urN libpri-1.2.3.orig/TODO libpri-1.2.3/TODO
 +-- more facilities
 diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
 --- libpri-1.2.3.orig/libpri.h	2006-04-27 18:08:39.000000000 +0200
-+++ libpri-1.2.3/libpri.h	2006-06-06 14:28:32.000000000 +0200
++++ libpri-1.2.3/libpri.h	2006-07-11 11:34:59.000000000 +0200
 @@ -5,6 +5,8 @@
   *
   * Copyright (C) 2001, Linux Support Services, Inc.
@@ -109,10 +113,14 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  
  /* Simple states */
  #define PRI_STATE_DOWN		0
-@@ -250,11 +262,13 @@
+@@ -250,11 +262,17 @@
  #define PRI_NSF_ATT_MULTIQUEST         0xF0
  #define PRI_NSF_CALL_REDIRECTION_SERVICE       0xF7
  
++#ifdef RELAX_TRB
++#define PRI_RELAX_TRB
++#endif
++
 +typedef struct q921_call q921_call;
  typedef struct q931_call q931_call;
  
@@ -123,7 +131,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  } pri_event_generic;
  
  typedef struct pri_event_error {
-@@ -273,18 +287,19 @@
+@@ -273,18 +291,19 @@
  	int cref;
  	int progress;
  	int progressmask;
@@ -145,7 +153,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  } pri_event_answer;
  
  typedef struct pri_event_facname {
-@@ -302,32 +317,37 @@
+@@ -302,32 +321,37 @@
  	int e;
  	int channel;				/* Channel requested */
  	int callingpres;			/* Presentation of Calling CallerID */
@@ -192,7 +200,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  } pri_event_ring;
  
  typedef struct pri_event_hangup {
-@@ -335,6 +355,8 @@
+@@ -335,6 +359,8 @@
  	int channel;				/* Channel requested */
  	int cause;
  	int cref;
@@ -201,7 +209,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  	q931_call *call;			/* Opaque call pointer */
  	long aoc_units;				/* Advise of Charge number of charged units */
  	char useruserinfo[260];		/* User->User info */
-@@ -375,20 +397,80 @@
+@@ -375,20 +401,80 @@
  	char digits[64];
  } pri_event_keypad_digit;
  
@@ -283,7 +291,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  	pri_event_keypad_digit digit;			/* Digits that come during a call */
  } pri_event;
  
-@@ -403,7 +485,9 @@
+@@ -403,7 +489,9 @@
     channel operating in HDLC mode with FCS computed by the fd's driver.  Also it
     must be NON-BLOCKING! Frames received on the fd should include FCS.  Nodetype 
     must be one of PRI_NETWORK or PRI_CPE.  switchtype should be PRI_SWITCH_* */
@@ -294,7 +302,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  
  /* Create D-channel just as above with user defined I/O callbacks and data */
  extern struct pri *pri_new_cb(int fd, int nodetype, int switchtype, pri_io_cb io_read, pri_io_cb io_write, void *userdata);
-@@ -427,6 +511,9 @@
+@@ -427,6 +515,9 @@
  /* Enable transmission support of Facility IEs on the pri */
  extern void pri_facility_enable(struct pri *pri);
  
@@ -304,7 +312,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  /* Run PRI on the given D-channel, taking care of any events that
     need to be handled.  If block is set, it will block until an event
     occurs which needs to be handled */
-@@ -463,6 +550,12 @@
+@@ -463,6 +554,12 @@
  /* Send a digit in overlap mode */
  extern int pri_information(struct pri *pri, q931_call *call, char digit);
  
@@ -317,7 +325,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  /* Answer the incomplete(call without called number) call on the given channel.
     Set non-isdn to non-zero if you are not connecting to ISDN equipment */
  extern int pri_need_more_info(struct pri *pri, q931_call *call, int channel, int nonisdn);
-@@ -471,6 +564,35 @@
+@@ -471,6 +568,35 @@
     Set non-isdn to non-zero if you are not connecting to ISDN equipment */
  extern int pri_answer(struct pri *pri, q931_call *call, int channel, int nonisdn);
  
@@ -353,7 +361,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  /* Set CRV reference for GR-303 calls */
  
  
-@@ -479,14 +601,14 @@
+@@ -479,14 +605,14 @@
  
  /* backwards compatibility for those who don't use asterisk with libpri */
  #define pri_release(a,b,c) \
@@ -371,7 +379,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  
  #define PRI_DESTROYCALL
  extern void pri_destroycall(struct pri *pri, q931_call *call);
-@@ -519,14 +641,13 @@
+@@ -519,14 +645,13 @@
  extern void pri_sr_free(struct pri_sr *sr);
  
  extern int pri_sr_set_channel(struct pri_sr *sr, int channel, int exclusive, int nonisdn);
@@ -387,7 +395,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  extern void pri_call_set_useruser(q931_call *sr, char *userchars);
  
  extern int pri_setup(struct pri *pri, q931_call *call, struct pri_sr *req);
-@@ -547,8 +668,8 @@
+@@ -547,8 +672,8 @@
  
  /* Override message and error stuff */
  #define PRI_NEW_SET_API
@@ -400,7 +408,7 @@ diff -urN libpri-1.2.3.orig/libpri.h libpri-1.2.3/libpri.h
  #define PRI_SET_OVERLAPDIAL
 diff -urN libpri-1.2.3.orig/pri.c libpri-1.2.3/pri.c
 --- libpri-1.2.3.orig/pri.c	2005-11-29 19:39:18.000000000 +0100
-+++ libpri-1.2.3/pri.c	2006-06-09 10:17:29.000000000 +0200
++++ libpri-1.2.3/pri.c	2006-07-11 12:39:20.000000000 +0200
 @@ -1,24 +1,14 @@
  /*
   * libpri: An implementation of Primary Rate ISDN
@@ -773,7 +781,7 @@ diff -urN libpri-1.2.3.orig/pri.c libpri-1.2.3/pri.c
  	return 0;
  }
  
-@@ -851,3 +979,12 @@
+@@ -851,3 +979,14 @@
  	sr->redirectingreason = reason;
  	return 0;
  }
@@ -781,9 +789,11 @@ diff -urN libpri-1.2.3.orig/pri.c libpri-1.2.3/pri.c
 +void pri_shutdown(struct pri *pri)
 +{
 +#ifndef LAYER2ALWAYSUP
++#ifndef RELAX_TRB
 +    if ((pri->localtype == BRI_NETWORK) || (pri->localtype == BRI_CPE) || (pri->localtype == BRI_CPE_PTMP)) {
 +	q921_reset(pri, pri->tei, 1);
 +    }
++#endif
 +#endif
 +}
 diff -urN libpri-1.2.3.orig/pri_facility.c libpri-1.2.3/pri_facility.c
@@ -1910,7 +1920,7 @@ diff -urN libpri-1.2.3.orig/pritest.c libpri-1.2.3/pritest.c
  	}
 diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
 --- libpri-1.2.3.orig/q921.c	2005-12-06 22:35:50.000000000 +0100
-+++ libpri-1.2.3/q921.c	2006-06-15 14:55:46.000000000 +0200
++++ libpri-1.2.3/q921.c	2006-08-01 09:55:53.000000000 +0200
 @@ -1,10 +1,12 @@
  /*
   * libpri: An implementation of Primary Rate ISDN
@@ -1935,13 +1945,14 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  #include <stdio.h>
  #include <string.h>
  #include <stdlib.h>
-@@ -50,19 +52,23 @@
+@@ -50,19 +52,24 @@
  	(hf).h.tei = (pri)->tei; \
  } while(0)
  
 -static void reschedule_t203(struct pri *pri);
 +static void reschedule_t203(struct pri *pri, int tei);
 +static void q921_flush_txqueue(struct pri *pri, int tei, int devnull);
++static void q921_send_teiverify(struct pri *pri,int tei);
  
 -static void q921_discard_retransmissions(struct pri *pri)
 +static void q921_discard_retransmissions(struct pri *pri, int tei)
@@ -1967,7 +1978,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  }
  
  static int q921_transmit(struct pri *pri, q921_h *h, int len) 
-@@ -88,11 +94,15 @@
+@@ -88,11 +95,15 @@
  		pri_error(pri, "Short write: %d/%d (%s)\n", res, len + 2, strerror(errno));
  		return -1;
  	}
@@ -1985,7 +1996,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  {
  	q921_h h;
  	Q921_INIT(pri, h);
-@@ -100,6 +110,7 @@
+@@ -100,6 +111,7 @@
  	h.u.m2 = 0;		/* M2 = 0 */
  	h.u.p_f = pfbit;	/* Final bit on */
  	h.u.ft = Q921_FRAMETYPE_U;
@@ -1993,7 +2004,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	switch(pri->localtype) {
  	case PRI_NETWORK:
  		h.h.c_r = 0;
-@@ -107,6 +118,19 @@
+@@ -107,6 +119,19 @@
  	case PRI_CPE:
  		h.h.c_r = 1;
  		break;
@@ -2013,7 +2024,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	default:
  		pri_error(pri, "Don't know how to U/A on a type %d node\n", pri->localtype);
  		return;
-@@ -116,18 +140,359 @@
+@@ -116,18 +141,364 @@
  	q921_transmit(pri, &h, 3);
  }
  
@@ -2118,7 +2129,10 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
 +	pri->ev.gen.e = PRI_EVENT_DCHAN_DOWN;
 +	pri->ev.gen.tei = 0;
 +	pri->sabme_retrans[0] = 0;
-+	/* dont try again, they are gone */
++	q921_send_teiverify(pri, 127);
++#ifdef RELAX_TRB
++	pri->t202_timer[0] = pri_schedule_event(pri, pri->timers[PRI_TIMER_T202] + 3000, q921_send_teireq, pri);
++#endif
 +	return;
 +    }
 + 
@@ -2369,7 +2383,9 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
 +	    pri->ev.gen.e = PRI_EVENT_DCHAN_DOWN;
 +	    pri->ev.gen.tei = tei;
 +	    pri->sabme_retrans[teio] = 0;
-+	    /* dont try again, they are gone */
++#ifdef RELAX_TRB
++  	    pri->sabme_timer[teio] = pri_schedule_event2(pri, pri->timers[PRI_TIMER_T200] + 3000, q921_send_sabme_now, pri, tei);
++#endif
 +	    return;
 +	}
  	Q921_INIT(pri, h);
@@ -2378,7 +2394,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	h.u.m3 = 3;	/* M3 = 3 */
  	h.u.m2 = 3;	/* M2 = 3 */
  	h.u.p_f = 1;	/* Poll bit set */
-@@ -139,25 +504,42 @@
+@@ -139,25 +510,42 @@
  	case PRI_CPE:
  		h.h.c_r = 0;
  		break;
@@ -2427,7 +2443,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	while(f) {
  		if (f->h.n_s == num) {
  			/* Cancel each packet as necessary */
-@@ -165,26 +547,26 @@
+@@ -165,26 +553,26 @@
  			if (prev)
  				prev->next = f->next;
  			else
@@ -2462,7 +2478,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  					q921_transmit(pri, (q921_h *)(&f->h), f->len);
  					break;
  				}
-@@ -198,77 +580,136 @@
+@@ -198,77 +586,136 @@
  	return 0;
  }
  
@@ -2631,7 +2647,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	h.s.p_f = pf;	
  	switch(pri->localtype) {
  	case PRI_NETWORK:
-@@ -277,23 +718,38 @@
+@@ -277,23 +724,38 @@
  	case PRI_CPE:
  		h.h.c_r = 1;
  		break;
@@ -2675,7 +2691,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	h.s.p_f = pbit;		/* Poll/Final set appropriately */
  	switch(pri->localtype) {
  	case PRI_NETWORK:
-@@ -308,81 +764,192 @@
+@@ -308,81 +770,192 @@
  		else
  			h.h.c_r = 1;
  		break;
@@ -2906,7 +2922,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	f = malloc(sizeof(q921_frame) + len + 2);
  	if (f) {
  		memset(f,0,sizeof(q921_frame) + len + 2);
-@@ -400,47 +967,80 @@
+@@ -400,47 +973,80 @@
  			else
  				f->h.h.c_r = 1;
  		break;
@@ -3007,7 +3023,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  		
  	} else {
  		pri_error(pri, "!! Out of memory for Q.921 transmit\n");
-@@ -449,49 +1049,86 @@
+@@ -449,49 +1055,86 @@
  	return 0;
  }
  
@@ -3117,7 +3133,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  		if (res == -1) {
  			return NULL;
  		}
-@@ -500,10 +1137,10 @@
+@@ -500,10 +1143,10 @@
  	} else {
  		/* If we haven't already sent a reject, send it now, otherwise
  		   we are obliged to RR */
@@ -3131,7 +3147,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	}
  	return NULL;
  }
-@@ -641,75 +1278,152 @@
+@@ -641,75 +1284,158 @@
  	};
  }
  
@@ -3184,6 +3200,12 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
 + 	if (pri->t202_timer[teio]) {
 + 	    pri_schedule_del(pri, pri->t202_timer[teio]);
 + 	    pri->t202_timer[teio] = 0;
++ 	}
++ 	
++/* neonova test */
++ 	if (pri->t203_timer[teio]) {
++ 	    pri_schedule_del(pri, pri->t203_timer[teio]);
++ 	    pri->t203_timer[teio] = 0;
 + 	}
  	
  	/* Reset any rejects */
@@ -3322,7 +3344,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  			return NULL;
  		}
  		/* Informational frame */
-@@ -720,8 +1434,10 @@
+@@ -720,8 +1446,10 @@
  		return q921_handle_iframe(pri, &h->i, len);	
  		break;
  	case 1:
@@ -3334,7 +3356,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  			return NULL;
  		}
  		if (len < 4) {
-@@ -731,80 +1447,128 @@
+@@ -731,80 +1459,128 @@
  		switch(h->s.ss) {
  		case 0:
  			/* Receiver Ready */
@@ -3500,7 +3522,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  		}
  		break;
  	case 3:
-@@ -821,8 +1585,16 @@
+@@ -821,8 +1597,16 @@
  					if (pri->debug & PRI_DEBUG_Q921_STATE)
  						pri_message(pri, "-- Got DM Mode from peer.\n");
  					/* Disconnected mode, try again after T200 */
@@ -3519,7 +3541,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  					return ev;
  						
  				} else {
-@@ -830,21 +1602,148 @@
+@@ -830,21 +1614,153 @@
  						pri_message(pri, "-- Ignoring unsolicited DM with p/f set to 0\n");
  #if 0
  					/* Requesting that we start */
@@ -3563,7 +3585,6 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
 + 						}
 + 					    break;
 + 					    case Q921_TEI_ID_REMOVE:
-+ 						pri_error(pri, "TEI remove TEI = %d\n",(h->u.data[4] >> 1));
 + 					    	if (pri->localtype != BRI_CPE_PTMP)
 + 						    break;
 + 						if (((h->u.data[4] >> 1) == Q921_TEI_GROUP) || (pri->tei == (h->u.data[4] >> 1))){ 
@@ -3650,31 +3671,37 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  		case 2:
  			if (pri->debug &  PRI_DEBUG_Q921_STATE)
  				pri_message(pri, "-- Got Disconnect from peer.\n");
++#ifndef RELAX_TRB
 +			if (pri->q921_state[teio] != Q921_LINK_CONNECTION_ESTABLISHED) {
 + 			    q921_send_dm(pri, 1, h->h.tei);
 +			    return NULL;
 +			}
++#endif
  			/* Acknowledge */
 -			q921_send_ua(pri, h->u.p_f);
 -			ev = q921_dchannel_down(pri);
 -			q921_start(pri, 0);
 +			q921_send_ua(pri, h->u.p_f, h->h.tei);
 +			ev = q921_dchannel_down(pri, h->h.tei);
-+#ifndef LAYER2ALWAYSUP
 +			if ((pri->localtype == BRI_CPE_PTMP) || (pri->localtype == BRI_CPE) || (pri->localtype == BRI_NETWORK)) {
++#ifndef LAYER2ALWAYSUP
 +    			    /* release layer 2 */
 +			    return NULL;
++#else
++			    /* keep layer 2 up */
++			    if (pri->t203_timer[teio])
++				pri_schedule_del(pri, pri->t203_timer[teio]);
++			    pri->t203_timer[teio] = 0;
++			    q921_send_sabme(pri, 1, pri->tei);
++#endif
 + 			}
 + 			if ((pri->localtype == PRI_NETWORK) || (pri->localtype == PRI_CPE)){
-+#endif
 +     			    q921_start(pri, 0, 0);
-+#ifndef LAYER2ALWAYSUP
 + 			}
-+#endif
  			return ev;
  		case 3:
  			if (h->u.m2 == 3) {
-@@ -866,17 +1765,28 @@
+@@ -866,17 +1782,28 @@
  					}
  				}
  				/* Send Unnumbered Acknowledgement */
@@ -3709,7 +3736,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  			} else 
  				pri_error(pri, "!! Weird frame received (m3=3, m2 = %d)\n", h->u.m2);
  			break;
-@@ -901,19 +1811,42 @@
+@@ -901,19 +1828,42 @@
  	/* Discard FCS */
  	len -= 2;
  	
@@ -3759,7 +3786,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  #ifdef PROCESS_SUBCHANNELS
  		/* If it's not us, try any subchannels we have */
  		if (pri->subchannel)
-@@ -921,10 +1854,16 @@
+@@ -921,10 +1871,16 @@
  		else 
  #endif
  			return NULL;
@@ -3778,7 +3805,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  	return ev;
  }
  
-@@ -938,14 +1877,58 @@
+@@ -938,14 +1894,58 @@
  	return e;
  }
  
@@ -3847,7 +3874,7 @@ diff -urN libpri-1.2.3.orig/q921.c libpri-1.2.3/q921.c
  }
 diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
 --- libpri-1.2.3.orig/q931.c	2006-04-27 18:08:39.000000000 +0200
-+++ libpri-1.2.3/q931.c	2006-06-13 10:53:33.000000000 +0200
++++ libpri-1.2.3/q931.c	2006-08-01 10:55:05.000000000 +0200
 @@ -1,10 +1,12 @@
  /*
   * libpri: An implementation of Primary Rate ISDN
@@ -5321,7 +5348,8 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	c->ourcallstate = Q931_CALL_STATE_CALL_RECEIVED;
  	c->peercallstate = Q931_CALL_STATE_CALL_DELIVERED;
 +	c->alert = 1;
-+	c->alive = 1;
+ 	c->alive = 1;
+-	return send_message(pri, c, Q931_ALERTING, alerting_ies);
 +	if ((pri->localtype == PRI_NETWORK) || (pri->localtype == PRI_CPE)) {
 +	    return send_message(pri, c, Q931_ALERTING, alerting_ies);
 +	} else {
@@ -5367,8 +5395,9 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
 +int q931_retrieve_reject(struct pri *pri, q931_call *c)
 +{
 +	return send_message(pri, c, Q931_RETRIEVE_REJECT, retrieve_reject_ies);
-+}
-+
+ }
+ 
+-static int connect_ies[] = {  Q931_CHANNEL_IDENT, Q931_PROGRESS_INDICATOR, -1 };
 +static int suspend_acknowledge_ies[] = { Q931_DISPLAY, -1 };
 +
 +int q931_suspend_acknowledge(struct pri *pri, q931_call *c, char *display)
@@ -5427,8 +5456,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
 +		c->channelno = channel;
 +	c->chanflags &= ~FLAG_PREFERRED;
 +	c->chanflags |= FLAG_EXCLUSIVE;
- 	c->alive = 1;
--	return send_message(pri, c, Q931_ALERTING, alerting_ies);
++	c->alive = 1;
 +	c->ourcallstate = Q931_CALL_STATE_ACTIVE;
 +	c->peercallstate = Q931_CALL_STATE_ACTIVE;
 +	strncpy(tempcallername,c->callername,sizeof(tempcallername));
@@ -5436,9 +5464,8 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
 +	res = send_message(pri, c, Q931_RESUME_ACKNOWLEDGE, resume_acknowledge_ies);
 +	strncpy(c->callername,tempcallername,sizeof(c->callername));
 +	return res;
- }
- 
--static int connect_ies[] = {  Q931_CHANNEL_IDENT, Q931_PROGRESS_INDICATOR, -1 };
++}
++
 +
 +static int connect_ies[] = {  Q931_CHANNEL_IDENT, Q931_PROGRESS_INDICATOR, Q931_DISPLAY, -1 };
 +static int connect_NET_ies[] = {  Q931_CHANNEL_IDENT, Q931_PROGRESS_INDICATOR, Q931_IE_TIME_DATE, -1 };
@@ -5449,11 +5476,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	if (channel) { 
  		c->ds1no = (channel & 0xff00) >> 8;
  		c->ds1explicit = (channel & 0x10000) >> 16;
-@@ -2566,12 +3348,40 @@
- 		c->progressmask = PRI_PROG_CALLED_NOT_ISDN;
- 	} else
- 		c->progressmask = 0;
-+c->progressmask = PRI_PROG_INBAND_AVAILABLE;
+@@ -2569,9 +3351,39 @@
  	c->ourcallstate = Q931_CALL_STATE_OVERLAP_RECEIVING;
  	c->peercallstate = Q931_CALL_STATE_OVERLAP_SENDING;
  	c->alive = 1;
@@ -5481,8 +5504,11 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
 +	pri->ev.hangup.channel = c->channelno;
 +	pri->ev.hangup.cref = c->cr;
 +	pri->ev.hangup.aoc_units = -1;
-+//	pri->ev.hangup.cause = c->cause;
-+	pri->ev.hangup.cause = PRI_CAUSE_SWITCH_CONGESTION;
++	if (c->cause == -1) {
++	    pri->ev.hangup.cause = PRI_CAUSE_SWITCH_CONGESTION;
++	} else {
++	    pri->ev.hangup.cause = c->cause;
++	}
 +	pri->ev.hangup.call = c;
 +	q931_hangup(pri, c, c->cause);
 +}
@@ -5490,7 +5516,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  static void pri_connect_timeout(void *data)
  {
  	struct q931_call *c = data;
-@@ -2624,6 +3434,7 @@
+@@ -2624,6 +3436,7 @@
  
  int q931_connect(struct pri *pri, q931_call *c, int channel, int nonisdn)
  {
@@ -5498,7 +5524,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	if (channel) { 
  		c->ds1no = (channel & 0xff00) >> 8;
  		c->ds1explicit = (channel & 0x10000) >> 16;
-@@ -2638,22 +3449,37 @@
+@@ -2638,22 +3451,37 @@
  		c->progressmask = PRI_PROG_CALLED_NOT_ISDN;
  	} else
  		c->progressmask = 0;
@@ -5539,7 +5565,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	c->ourcallstate = Q931_CALL_STATE_RELEASE_REQUEST;
  	/* c->peercallstate stays the same */
  	if (c->alive) {
-@@ -2669,7 +3495,14 @@
+@@ -2669,7 +3497,14 @@
  			} else {
  				c->retranstimer = pri_schedule_event(pri, pri->timers[PRI_TIMER_T308], pri_release_finaltimeout, c);
  			}
@@ -5555,7 +5581,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		} else
  			return send_message(pri, c, Q931_RELEASE_COMPLETE, release_ies); /* Yes, release_ies, not release_complete_ies */
  	} else
-@@ -2681,7 +3514,7 @@
+@@ -2681,7 +3516,7 @@
  int q931_restart(struct pri *pri, int channel)
  {
  	struct q931_call *c;
@@ -5564,7 +5590,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	if (!c)
  		return -1;
  	if (!channel)
-@@ -2698,10 +3531,12 @@
+@@ -2698,10 +3533,12 @@
  	return send_message(pri, c, Q931_RESTART, restart_ies);
  }
  
@@ -5577,7 +5603,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	c->ourcallstate = Q931_CALL_STATE_DISCONNECT_REQUEST;
  	c->peercallstate = Q931_CALL_STATE_DISCONNECT_INDICATION;
  	if (c->alive) {
-@@ -2713,14 +3548,27 @@
+@@ -2713,14 +3550,27 @@
  		if (c->retranstimer)
  			pri_schedule_del(pri, c->retranstimer);
  		c->retranstimer = pri_schedule_event(pri, pri->timers[PRI_TIMER_T305], pri_disconnect_timeout, c);
@@ -5606,7 +5632,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  static int gr303_setup_ies[] =  { Q931_BEARER_CAPABILITY, Q931_CHANNEL_IDENT, -1 };
  
  static int cis_setup_ies[] = { Q931_BEARER_CAPABILITY, Q931_CHANNEL_IDENT, Q931_IE_FACILITY, Q931_CALLED_PARTY_NUMBER, -1 };
-@@ -2728,7 +3576,12 @@
+@@ -2728,7 +3578,12 @@
  int q931_setup(struct pri *pri, q931_call *c, struct pri_sr *req)
  {
  	int res;
@@ -5620,7 +5646,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	
  	c->transcapability = req->transmode;
  	c->transmoderate = TRANS_MODE_64_CIRCUIT;
-@@ -2753,6 +3606,7 @@
+@@ -2753,6 +3608,7 @@
  		c->chanflags = FLAG_EXCLUSIVE;
  	else if (c->channelno)
  		c->chanflags = FLAG_PREFERRED;
@@ -5628,7 +5654,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	if (req->caller) {
  		libpri_copy_string(c->callernum, req->caller, sizeof(c->callernum));
  		c->callerplan = req->callerplan;
-@@ -2812,14 +3666,19 @@
+@@ -2812,14 +3668,19 @@
  		res = send_message(pri, c, Q931_SETUP, gr303_setup_ies);
  	else if (c->justsignalling)
  		res = send_message(pri, c, Q931_SETUP, cis_setup_ies);
@@ -5648,7 +5674,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	}
  	return res;
  	
-@@ -2835,7 +3694,11 @@
+@@ -2835,7 +3696,11 @@
  	if (cause > -1) {
  		c->cause = cause;
  		c->causecode = CODE_CCITT;
@@ -5661,7 +5687,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		/* release_ies has CAUSE in it */
  		res = send_message(pri, c, Q931_RELEASE_COMPLETE, release_ies);
  	} else
-@@ -2860,6 +3723,117 @@
+@@ -2860,6 +3725,125 @@
  	return 0;
  }
  
@@ -5761,6 +5787,13 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
 +     }
 +     
 +     // if all phones have signalled busy AND the timer is not running anymore!
++#ifdef FASTBUSYONBUSY
++    if ((c->cause == PRI_CAUSE_USER_BUSY) && (c->t303timer)) {
++ 	    c->t303running = 0;
++ 	    pri_schedule_del(pri, c->t303timer);
++    }
++#endif
++
 +     if ((left==0) && (c->cause == PRI_CAUSE_USER_BUSY) && (c->t303running == 0)) {
 + //	pri_error(pri, "q921_handle_hangup(%d, %d, %d)\n", c->cr, tei, c->tei);
 + 	// make sure * frees the channel
@@ -5769,6 +5802,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
 + 	pri->ev.hangup.channel = c->channelno | (c->ds1no << 8);
 + 	pri->ev.hangup.cref = c->cr;          		
 + 	pri->ev.hangup.call = c;
++	pri->ev.hangup.aoc_units = 0;
 + 	pri->ev.e = PRI_EVENT_HANGUP; 
 +     } 
 +     return res; 
@@ -5779,7 +5813,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  int q931_hangup(struct pri *pri, q931_call *c, int cause)
  {
  	int disconnect = 1;
-@@ -2871,7 +3845,7 @@
+@@ -2871,7 +3855,7 @@
  	/* If mandatory IE was missing, insist upon that cause code */
  	if (c->cause == PRI_CAUSE_MANDATORY_IE_MISSING)
  		cause = c->cause;
@@ -5788,7 +5822,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		/* We'll send RELEASE_COMPLETE with these causes */
  		disconnect = 0;
  		release_compl = 1;
-@@ -2885,7 +3859,7 @@
+@@ -2885,7 +3869,7 @@
  	case Q931_CALL_STATE_NULL:
  		if (c->peercallstate == Q931_CALL_STATE_NULL)
  			/* free the resources if we receive or send REL_COMPL */
@@ -5797,7 +5831,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		else if (c->peercallstate == Q931_CALL_STATE_RELEASE_REQUEST)
  			q931_release_complete(pri,c,cause);
  		break;
-@@ -2911,6 +3885,11 @@
+@@ -2911,6 +3895,11 @@
  		/* received SETUP_ACKNOWLEDGE */
  		/* send DISCONNECT in general */
  		if (c->peercallstate != Q931_CALL_STATE_NULL && c->peercallstate != Q931_CALL_STATE_DISCONNECT_REQUEST && c->peercallstate != Q931_CALL_STATE_DISCONNECT_INDICATION && c->peercallstate != Q931_CALL_STATE_RELEASE_REQUEST && c->peercallstate != Q931_CALL_STATE_RESTART_REQUEST && c->peercallstate != Q931_CALL_STATE_RESTART) {
@@ -5809,7 +5843,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  			if (disconnect)
  				q931_disconnect(pri,c,cause);
  			else if (release_compl)
-@@ -2926,8 +3905,14 @@
+@@ -2926,8 +3915,14 @@
  		break;
  	case Q931_CALL_STATE_DISCONNECT_INDICATION:
  		/* received DISCONNECT */
@@ -5824,7 +5858,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  			q931_release(pri,c,cause);
  		}
  		break;
-@@ -2941,19 +3926,17 @@
+@@ -2941,19 +3936,17 @@
  		pri_error(pri, "q931_hangup shouldn't be called in this state, ourstate %s, peerstate %s\n",callstate2str(c->ourcallstate),callstate2str(c->peercallstate));
  		break;
  	default:
@@ -5847,7 +5881,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	q931_call *c;
  	q931_ie *ie;
  	unsigned int x;
-@@ -2965,6 +3948,7 @@
+@@ -2965,6 +3958,7 @@
  	int codeset, cur_codeset;
  	int last_ie[8];
  	struct apdu_event *cur = NULL;
@@ -5855,7 +5889,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  
  	memset(last_ie, 0, sizeof(last_ie));
  	if (pri->debug & PRI_DEBUG_Q931_DUMP)
-@@ -2978,13 +3962,13 @@
+@@ -2978,13 +3972,13 @@
  		   KLUDGE this by changing byte 4 from a 0xf (SERVICE) 
  		   to a 0x7 (SERVICE ACKNOWLEDGE) */
  		h->raw[h->crlen + 2] -= 0x8;
@@ -5871,7 +5905,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	if (!c) {
  		pri_error(pri, "Unable to locate call %d\n", q931_cr(h));
  		return -1;
-@@ -3007,6 +3991,7 @@
+@@ -3007,6 +4001,7 @@
  	case Q931_SETUP:
  		if (pri->debug & PRI_DEBUG_Q931_STATE)
  			pri_message(pri, "-- Processing Q.931 Call Setup\n");
@@ -5879,7 +5913,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		c->channelno = -1;
  		c->slotmap = -1;
  		c->chanflags = 0;
-@@ -3027,28 +4012,44 @@
+@@ -3027,28 +4022,44 @@
  		c->callername[0] = '\0';
  		c->callerani[0] = '\0';
  		c->callerplanani = -1;
@@ -5934,7 +5968,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		c->progress = -1;
  		c->progressmask = 0;
  		break;
-@@ -3059,20 +4060,22 @@
+@@ -3059,20 +4070,22 @@
  		break;
  	case Q931_RELEASE:
  	case Q931_DISCONNECT:
@@ -5964,7 +5998,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	case Q931_STATUS:
  		c->cause = -1;
  		c->causecode = -1;
-@@ -3089,22 +4092,32 @@
+@@ -3089,22 +4102,32 @@
  	case Q931_STATUS_ENQUIRY:
  		break;
  	case Q931_SETUP_ACKNOWLEDGE:
@@ -6001,7 +6035,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	case Q931_SUSPEND_ACKNOWLEDGE:
  	case Q931_SUSPEND_REJECT:
  		pri_error(pri, "!! Not yet handling pre-handle message type %s (%d)\n", msg2str(mh->msg), mh->msg);
-@@ -3113,7 +4126,7 @@
+@@ -3113,7 +4136,7 @@
  		pri_error(pri, "!! Don't know how to post-handle message type %s (%d)\n", msg2str(mh->msg), mh->msg);
  		q931_status(pri,c, PRI_CAUSE_MESSAGE_TYPE_NONEXIST);
  		if (c->newcall) 
@@ -6010,7 +6044,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		return -1;
  	}
  	memset(mandies, 0, sizeof(mandies));
-@@ -3193,12 +4206,19 @@
+@@ -3193,12 +4216,19 @@
  	missingmand = 0;
  	for (x=0;x<MAX_MAND_IES;x++) {
  		if (mandies[x]) {
@@ -6035,7 +6069,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		}
  	}
  	
-@@ -3207,7 +4227,7 @@
+@@ -3207,7 +4237,7 @@
  	case Q931_RESTART:
  		if (missingmand) {
  			q931_status(pri, c, PRI_CAUSE_MANDATORY_IE_MISSING);
@@ -6044,7 +6078,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  			break;
  		}
  		c->ourcallstate = Q931_CALL_STATE_RESTART;
-@@ -3225,6 +4245,7 @@
+@@ -3225,6 +4255,7 @@
  		}
  		/* Must be new call */
  		if (!c->newcall) {
@@ -6052,7 +6086,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  			break;
  		}
  		if (c->progressmask & PRI_PROG_CALLER_NOT_ISDN)
-@@ -3242,16 +4263,20 @@
+@@ -3242,16 +4273,20 @@
  		pri->ev.ring.channel = c->channelno | (c->ds1no << 8) | (c->ds1explicit << 16);
  		pri->ev.ring.callingpres = c->callerpres;
  		pri->ev.ring.callingplan = c->callerplan;
@@ -6075,7 +6109,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		libpri_copy_string(pri->ev.ring.origcalledname, c->origcalledname, sizeof(pri->ev.ring.origcalledname));
  		libpri_copy_string(pri->ev.ring.origcallednum, c->origcallednum, sizeof(pri->ev.ring.origcallednum));
                  libpri_copy_string(pri->ev.ring.redirectingnum, c->redirectingnum, sizeof(pri->ev.ring.redirectingnum));
-@@ -3261,11 +4286,13 @@
+@@ -3261,11 +4296,13 @@
  		pri->ev.ring.redirectingreason = c->redirectingreason;
  		pri->ev.ring.origredirectingreason = c->origredirectingreason;
  		pri->ev.ring.flexible = ! (c->chanflags & FLAG_EXCLUSIVE);
@@ -6090,7 +6124,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		pri->ev.ring.redirectingreason = c->redirectingreason;
  		pri->ev.ring.progress = c->progress;
  		pri->ev.ring.progressmask = c->progressmask;
-@@ -3275,6 +4302,9 @@
+@@ -3275,6 +4312,9 @@
  			q931_release_complete(pri,c,PRI_CAUSE_INVALID_CALL_REFERENCE);
  			break;
  		}
@@ -6100,7 +6134,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		c->ourcallstate = Q931_CALL_STATE_CALL_DELIVERED;
  		c->peercallstate = Q931_CALL_STATE_CALL_RECEIVED;
  		pri->ev.e = PRI_EVENT_RINGING;
-@@ -3295,17 +4325,24 @@
+@@ -3295,17 +4335,24 @@
  			q931_status(pri, c, PRI_CAUSE_WRONG_MESSAGE);
  			break;
  		}
@@ -6125,7 +6159,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		if (c->justsignalling) {  /* Make sure WE release when we initiatie a signalling only connection */
  			q931_release(pri, c, PRI_CAUSE_NORMAL_CLEARING);
  			break;
-@@ -3313,23 +4350,43 @@
+@@ -3313,23 +4360,43 @@
  			return Q931_RES_HAVEEVENT;
  	case Q931_FACILITY:
  		if (c->newcall) {
@@ -6182,7 +6216,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  			break;
  		}
  		pri->ev.e = PRI_EVENT_PROGRESS;
-@@ -3347,6 +4404,11 @@
+@@ -3347,6 +4414,11 @@
  			q931_status(pri,c,PRI_CAUSE_WRONG_MESSAGE);
  			break;
  		}
@@ -6194,7 +6228,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		pri->ev.proceeding.channel = c->channelno | (c->ds1no << 8) | (c->ds1explicit << 16);
  		if (mh->msg == Q931_CALL_PROCEEDING) {
  			pri->ev.e = PRI_EVENT_PROCEEDING;
-@@ -3364,16 +4426,21 @@
+@@ -3364,16 +4436,21 @@
  			break;
  		}
  		if (c->ourcallstate != Q931_CALL_STATE_CONNECT_REQUEST) {
@@ -6218,14 +6252,15 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  			break;
  		}
  		if (c->newcall) {
-@@ -3410,31 +4477,69 @@
+@@ -3410,31 +4487,70 @@
  			if (res)
  				return res;
  		}
 -		break;
 +		if (c->peercallstate != c->sugcallstate) {
 +            	    pri_error(pri, "updating callstate, peercallstate %d to %d\n", c->peercallstate, c->sugcallstate);
-+        	    c->peercallstate = c->sugcallstate;
++//        	    c->peercallstate = c->sugcallstate;
++        	    c->ourcallstate = c->sugcallstate;
 +            	    if (c->sugcallstate != Q931_CALL_STATE_ACTIVE) {
 +                        /* pass hangup to upper layer! */
 +                        if (c->alive) {
@@ -6312,7 +6347,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		break;
  	case Q931_RELEASE:
  		if (missingmand) {
-@@ -3450,6 +4555,7 @@
+@@ -3450,6 +4566,7 @@
  		pri->ev.e = PRI_EVENT_HANGUP;
  		pri->ev.hangup.channel = c->channelno | (c->ds1no << 8) | (c->ds1explicit << 16);
  		pri->ev.hangup.cref = c->cr;
@@ -6320,7 +6355,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		pri->ev.hangup.cause = c->cause;
  		pri->ev.hangup.call = c;
  		pri->ev.hangup.aoc_units = c->aoc_units;
-@@ -3478,9 +4584,16 @@
+@@ -3478,9 +4595,16 @@
  		pri->ev.e = PRI_EVENT_HANGUP_REQ;
  		pri->ev.hangup.channel = c->channelno | (c->ds1no << 8) | (c->ds1explicit << 16);
  		pri->ev.hangup.cref = c->cr;
@@ -6337,7 +6372,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		if (c->alive)
  			return Q931_RES_HAVEEVENT;
  		else
-@@ -3511,7 +4624,7 @@
+@@ -3511,7 +4635,7 @@
  		pri->ev.e = PRI_EVENT_INFO_RECEIVED;
  		pri->ev.ring.call = c;
  		pri->ev.ring.channel = c->channelno | (c->ds1no << 8) | (c->ds1explicit << 16);
@@ -6346,7 +6381,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		libpri_copy_string(pri->ev.ring.callingsubaddr, c->callingsubaddr, sizeof(pri->ev.ring.callingsubaddr));
  		pri->ev.ring.complete = c->complete; 	/* this covers IE 33 (Sending Complete) */
  		return Q931_RES_HAVEEVENT;
-@@ -3531,7 +4644,6 @@
+@@ -3531,7 +4655,6 @@
  		pri->ev.e = PRI_EVENT_SETUP_ACK;
  		pri->ev.setup_ack.channel = c->channelno | (c->ds1no << 8) | (c->ds1explicit << 16);
  		pri->ev.setup_ack.call = c;
@@ -6354,7 +6389,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  		cur = c->apdus;
  		while (cur) {
  			if (!cur->sent && cur->message == Q931_FACILITY) {
-@@ -3547,19 +4659,53 @@
+@@ -3547,19 +4670,53 @@
  		pri->ev.notify.channel = c->channelno;
  		pri->ev.notify.info = c->notify;
  		return Q931_RES_HAVEEVENT;
@@ -6412,7 +6447,7 @@ diff -urN libpri-1.2.3.orig/q931.c libpri-1.2.3/q931.c
  	case Q931_SUSPEND_ACKNOWLEDGE:
  	case Q931_SUSPEND_REJECT:
  		pri_error(pri, "!! Not yet handling post-handle message type %s (%d)\n", msg2str(mh->msg), mh->msg);
-@@ -3569,7 +4715,7 @@
+@@ -3569,7 +4726,7 @@
  		pri_error(pri, "!! Don't know how to post-handle message type %s (%d)\n", msg2str(mh->msg), mh->msg);
  		q931_status(pri,c, PRI_CAUSE_MESSAGE_TYPE_NONEXIST);
  		if (c->newcall) 

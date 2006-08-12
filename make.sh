@@ -879,7 +879,9 @@ ipfirepackages() {
   ipfiredist gnump3d
   ipfiredist java
   ipfiredist lame
+  ipfiredist libogg
   ipfiredist libtiff
+  ipfiredist libvorbis
   ipfiredist libxml2
   ipfiredist mailx
   ipfiredist mldonkey
@@ -889,6 +891,7 @@ ipfirepackages() {
   ipfiredist postfix
   ipfiredist procmail
   ipfiredist samba
+  ipfiredist sox
   ipfiredist spamassassin
   ipfiredist web-cyradm
   ipfiredist xampp

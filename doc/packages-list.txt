@@ -34,6 +34,7 @@
   * applejuice-0.30
   * arping-2.05
   * as86-0.16.17
+  * asterisk-1.2.10
   * asterisk-1.2.9.1
   * autoconf-2.59
   * automake-1.8.4
@@ -46,13 +47,13 @@
   * bootsplash-3.2
   * bridge-utils-1.1
   * bristuff-0.3.0-PRE-1q
+  * bristuff-0.3.0-PRE-1s
   * busybox-0.60.5
   * bzip2-1.0.3
   * capi4k-utils-2004-10-06
   * ccache-2.3
   * cdrtools-2.01
   * cftp-0.12
-  * clamav-0.88.3
   * clamav-0.88.4
   * coreutils-5.93
   * cups-1.1.23-source
@@ -99,7 +100,6 @@
   * glibc-2.3.3-lfs-5.1
   * gmp-4.1.2
   * gnump3d-2.9.8
-  * gnupg-1.4.2
   * gnupg-1.4.5
   * grep-2.5.1
   * groff-1.19
@@ -114,6 +114,7 @@
   * inetutils-1.4.2
   * ipac-ng-1.31
   * ipaddr-1.2
+  * ipfire-logs-2006-08-09-18:56.tgz
   * iproute2-2.4.7-now-ss010824
   * iptables-1.3.5
   * iptstate-1.4
@@ -140,7 +141,6 @@
   * libvorbis-1.1.2
   * libwww-perl-5.803
   * libxml2-2.6.22
-  * linux-2.4.31
   * linux-2.4.32
   * linux-atm-2.4.1
   * logrotate-3.7
@@ -201,7 +201,6 @@
   * razor-agents-2.81
   * rp-pppoe-3.5
   * rrdtool-1.0.49
-  * samba-3.0.22
   * samba-3.0.23a
   * sata300_sataii150_tx_series_linux2.4_open_source_1.00.0.15
   * screen-4.0.2
@@ -241,4 +240,5 @@
   * xinetd-2.3.14
   * xmbmon205
   * zaptel-1.2.6
+  * zaptel-1.2.7
   * zlib-1.2.3

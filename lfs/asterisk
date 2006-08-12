@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 1.2.9.1
+VER        = 1.2.10
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,19 +44,28 @@ objects = $(DL_FILE) \
 	   app_rxfax.c \
 	   app_txfax.c \
 	   apps_Makefile.patch \
-	   asterisk-sounds-de-1.2.5.tar.gz
+	   asterisk-sounds-de-1.2.5.tar.gz \
+	   asterisk-sounds-1.2.1.tar.gz \
+	   asterisk-addons-1.2.3.tar.gz \
+	   asterisk-perl-0.08.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 app_rxfax.c = $(URL_IPFIRE)/app_rxfax.c
 app_txfax.c = $(URL_IPFIRE)/app_txfax.c
 apps_Makefile.patch = $(URL_IPFIRE)/apps_Makefile.patch
 asterisk-sounds-de-1.2.5.tar.gz = $(URL_IPFIRE)/asterisk-sounds-de-1.2.5.tar.gz
+asterisk-sounds-1.2.1.tar.gz = $(URL_IPFIRE)/asterisk-sounds-1.2.1.tar.gz
+asterisk-addons-1.2.3.tar.gz = $(URL_IPFIRE)/asterisk-addons-1.2.3.tar.gz
+asterisk-perl-0.08.tar.gz = $(URL_IPFIRE)/asterisk-perl-0.08.tar.gz
 
-$(DL_FILE)_MD5 = d98fc3dc5ee8df691ca2b0bd309bb251
+$(DL_FILE)_MD5 = ec52095bb5cfe583df1dd5f98366797a
 app_rxfax.c_MD5 = ab6983b51c412883545b36993d704999
 app_txfax.c_MD5 = 8c8fcb263b76897022b4c28052a7b439
 apps_Makefile.patch_MD5 = 6b0faa7a7cf8613962b17c23ee5a1583
+asterisk-sounds-1.2.1.tar.gz_MD5 = bed4259905a7d7bc070c6319142b2075
 asterisk-sounds-de-1.2.5.tar.gz_MD5 = 3793735c44de899dbacb8c192501aa14
+asterisk-addons-1.2.3.tar.gz_MD5 = 2089e119985508b5a4a1916e2242184d
+asterisk-perl-0.08.tar.gz_MD5 = 73a47caaff8cafbf78053692f408ceb6
 
 install : $(TARGET)
 
@@ -99,5 +108,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make samples ASTETCDIR=/var/ipfire/asterisk
 	tar xfz $(DIR_DL)/asterisk-sounds-de-1.2.5.tar.gz -C /var/lib/asterisk/sounds/
 	rm -f /var/lib/asterisk/sounds/README.txt
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/asterisk-sounds-1.2.1.tar.gz
+	cd $(DIR_SRC)/asterisk-sounds-1.2.1/ && make all install
+	rm -rf $(DIR_SRC)/asterisk-sounds-1.2.1
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/asterisk-addons-1.2.3.tar.gz
+	cd $(DIR_SRC)/asterisk-addons-1.2.3/ && make all install
+	rm -rf $(DIR_SRC)/asterisk-addons-1.2.3
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/asterisk-perl-0.08.tar.gz
+	cd $(DIR_SRC)/asterisk-perl-0.08/ && perl Makefile.PL
+	cd $(DIR_SRC)/asterisk-perl-0.08/ && make
+	cd $(DIR_SRC)/asterisk-perl-0.08/ && make install
+	rm -rf $(DIR_SRC)/asterisk-perl-0.08
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
