@@ -1,0 +1,94 @@
+diff -Nur grub-0.97-ori/lib/device.c grub-0.97-misc/lib/device.c
+--- grub-0.97-ori/lib/device.c	2005-03-28 02:14:25.000000000 +0300
++++ grub-0.97-misc/lib/device.c	2005-08-21 20:22:30.000000000 +0300
+@@ -831,9 +831,11 @@
+ is_disk_device (char **map, int drive)
+ {
+   struct stat st;
++  int retval;
+   
+   assert (map[drive] != 0);
+-  assert (stat (map[drive], &st) == 0);
++  retval = stat (map[drive], &st);
++  assert (retval == 0);
+   /* For now, disk devices under Linux are all block devices.  */
+   return S_ISBLK (st.st_mode);
+ }
+diff -Nur grub-0.97-ori/stage2/boot.c grub-0.97-misc/stage2/boot.c
+--- grub-0.97-ori/stage2/boot.c	2004-03-30 14:44:08.000000000 +0300
++++ grub-0.97-misc/stage2/boot.c	2005-08-21 20:22:30.000000000 +0300
+@@ -824,8 +824,11 @@
+     moveto = (mbi.mem_upper + 0x400) << 10;
+   
+   moveto = (moveto - len) & 0xfffff000;
+-  max_addr = (lh->header == LINUX_MAGIC_SIGNATURE && lh->version >= 0x0203
+-	      ? lh->initrd_addr_max : LINUX_INITRD_MAX_ADDRESS);
++  max_addr = LINUX_INITRD_MAX_ADDRESS;
++  if (lh->header == LINUX_MAGIC_SIGNATURE &&
++      lh->version >= 0x0203 &&
++      lh->initrd_addr_max < max_addr)
++    max_addr = lh->initrd_addr_max;
+   if (moveto + len >= max_addr)
+     moveto = (max_addr - len) & 0xfffff000;
+   
+diff -Nur grub-0.97-ori/stage2/builtins.c grub-0.97-misc/stage2/builtins.c
+--- grub-0.97-ori/stage2/builtins.c	2005-02-15 23:58:23.000000000 +0200
++++ grub-0.97-misc/stage2/builtins.c	2005-08-21 20:22:30.000000000 +0300
+@@ -1842,9 +1842,23 @@
+ #ifdef GRUB_UTIL
+       else if (grub_memcmp ("--stage2=", arg, sizeof ("--stage2=") - 1) == 0)
+ 	{
++	  int fd;
+ 	  stage2_os_file = arg + sizeof ("--stage2=") - 1;
+ 	  arg = skip_to (0, arg);
+ 	  nul_terminate (stage2_os_file);
++
++#if defined(__linux__) && defined (FSYS_REISERFS)
++	  if ((fd=open(stage2_os_file, O_RDONLY)) >= 0)
++	    {
++	      struct statfs buf;
++	      /* see if the file sits on a reiserfs,
++		 and try do defragment it if so. */
++	      fstatfs(fd, &buf);
++	      if (buf.f_type == REISERFS_SUPER_MAGIC)
++		ioctl (fd, REISERFS_IOC_UNPACK, 1);
++	    }
++#endif	/* __linux__ && FSYS_REISERFS */
++
+ 	}
+ #endif /* GRUB_UTIL */
+       else
+diff -Nur grub-0.97-ori/stage2/filesys.h grub-0.97-misc/stage2/filesys.h
+--- grub-0.97-ori/stage2/filesys.h	2004-05-14 22:36:43.000000000 +0300
++++ grub-0.97-misc/stage2/filesys.h	2005-08-21 20:22:30.000000000 +0300
+@@ -73,6 +73,16 @@
+ int reiserfs_read (char *buf, int len);
+ int reiserfs_dir (char *dirname);
+ int reiserfs_embed (int *start_sector, int needed_sectors);
++#if defined(__linux__) && defined (GRUB_UTIL)
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++#include <sys/statfs.h>
++#include <fcntl.h>
++/* from <linux/reiserfs_fs.h> */
++#define REISERFS_SUPER_MAGIC 0x52654973
++#define REISERFS_IOC_UNPACK  _IOW(0xCD,1,long)
++#endif
+ #else
+ #define FSYS_REISERFS_NUM 0
+ #endif
+diff -Nur grub-0.97-ori/util/mbchk.c grub-0.97-misc/util/mbchk.c
+--- grub-0.97-ori/util/mbchk.c	2003-10-19 18:36:45.000000000 +0300
++++ grub-0.97-misc/util/mbchk.c	2005-08-21 20:22:30.000000000 +0300
+@@ -59,7 +59,9 @@
+   int i;
+   char buf[8192];
+ 
+-  if (fread (buf, 1, 8192, fp) < 0)
++  fread (buf, 1, 8192, fp);
++  
++  if (ferror(fp))
+     {
+       fprintf (stderr, "%s: Read error.\n", filename);
+       return 0;

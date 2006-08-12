@@ -1,0 +1,1188 @@
+diff -Nur grub-0.97-dirs/docs/grub.texi grub-0.97-wildcards/docs/grub.texi
+--- grub-0.97-dirs/docs/grub.texi	2005-08-21 20:31:12.000000000 +0300
++++ grub-0.97-wildcards/docs/grub.texi	2005-08-21 20:32:45.000000000 +0300
+@@ -2121,6 +2121,7 @@
+ * gfxmenu::                     Use graphical menu interface
+ * timeout::                     Set the timeout
+ * title::                       Start a menu entry
++* wildcard::                    Define a wildcard boot entry
+ @end menu
+ 
+ 
+@@ -2190,6 +2191,42 @@
+ @end deffn
+ 
+ 
++@node wildcard
++@subsection wildcard
++
++@deffn Command wildcard pathname
++Treat this boot entry as a wildcard entry: The
++wildcard, title, kernel, and initrd commands (see @ref{Menu-specific
++commands} and @ref{Command-line and menu entry commands}) each have an
++asterisk (*) in their value. A filename match is performed on the
++@var{pathname} of the wildcard command. For each match, the entire boot
++entry is duplicated. The part of the filename whcih matches the asterisk
++in the wildcard command replaces the asterisks in the title, kernel, and
++initrd commands. For example, with the files vmlinuz-2.6.5-1 and
++vmlinuz-2.6.8-8 below (hd0,7)/boot, the following entry in the stage 2
++configuration file:
++
++@example
++title Linux-*
++    wildcard (hd0,7)/boot/vmlinuz-*
++    kernel (hd0,7)/boot/vmlinuz-* root=/dev/hda8
++    initrd (hd0,7)/boot/initrd-*
++@end example
++
++would expand as follows:
++
++@example
++title Linux-2.6.5-1
++    wildcard (hd0,7)/boot/vmlinuz-2.6.5-1
++    kernel (hd0,7)/boot/vmlinuz-2.6.5-1 root=/dev/hda8
++    initrd (hd0,7)/boot/initrd-2.6.5-1
++title Linux-2.6.8-8
++    wildcard (hd0,7)/boot/vmlinuz-2.6.8-8
++    kernel (hd0,7)/boot/vmlinuz-2.6.8-8 root=/dev/hda8
++    initrd (hd0,7)/boot/initrd-2.6.8-8
++@end example
++@end deffn
++
+ @node General commands
+ @section The list of general commands
+ 
+diff -Nur grub-0.97-dirs/netboot/fsys_tftp.c grub-0.97-wildcards/netboot/fsys_tftp.c
+--- grub-0.97-dirs/netboot/fsys_tftp.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/netboot/fsys_tftp.c	2005-08-21 20:32:45.000000000 +0300
+@@ -409,7 +409,7 @@
+ /* Check if the file DIRNAME really exists. Get the size and save it in
+    FILEMAX.  */
+ int
+-tftp_dir (char *dirname)
++tftp_dir (char *dirname, void (*handle)(char *))
+ {
+   int ch;
+ 
+@@ -418,7 +418,7 @@
+ #endif
+   
+   /* In TFTP, there is no way to know what files exist.  */
+-  if (print_possibilities)
++  if (handle)
+     return 1;
+ 
+   /* Don't know the size yet.  */
+diff -Nur grub-0.97-dirs/stage2/builtins.c grub-0.97-wildcards/stage2/builtins.c
+--- grub-0.97-dirs/stage2/builtins.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/builtins.c	2005-08-21 20:32:45.000000000 +0300
+@@ -4828,6 +4828,49 @@
+ };
+   
+ 
++/* wildcard */
++ static int
++wildcard_func (char *arg, int flags)
++{
++#ifdef DEBUG_WILDCARD
++  char *w = wildcard (arg);
++
++  if (w)
++    {
++      while (*w)
++       {
++         grub_printf("%s  ", w);
++         w += strlen (w) + 1;
++        }
++      grub_printf("\n");
++      return 1;
++    }
++  else
++    print_error();
++#endif
++
++  /* This special command is interpreted in the config file parser. */
++  return 0;
++}
++
++static struct builtin builtin_wildcard =
++ {
++  "wildcard",
++  wildcard_func,
++#ifndef DEBUG_WILDCARD
++  BUILTIN_MENU,
++#else
++  BUILTIN_CMDLINE | BUILTIN_MENU | BUILTIN_HELP_LIST,
++  "wildcard GLOB",
++  "Declare this menu entry as a wildcard entry. GLOB is a path containing"
++  " one asterisk. All files matching this expression are looked up; the"
++  " menu entry is duplicated for each match with asterisks in other"
++  " commands replaced by the string matching the asterisk in the wildcard"
++  " command."
++#endif
++};
++
++
+ /* The table of builtin commands. Sorted in dictionary order.  */
+ struct builtin *builtin_table[] =
+ {
+@@ -4917,5 +4960,6 @@
+   &builtin_unhide,
+   &builtin_uppermem,
+   &builtin_vbeprobe,
++  &builtin_wildcard,
+   0
+ };
+diff -Nur grub-0.97-dirs/stage2/disk_io.c grub-0.97-wildcards/stage2/disk_io.c
+--- grub-0.97-dirs/stage2/disk_io.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/disk_io.c	2005-08-21 20:32:45.000000000 +0300
+@@ -36,7 +36,6 @@
+ void (*disk_read_func) (int, int, int) = NULL;
+ 
+ #ifndef STAGE1_5
+-int print_possibilities;
+ 
+ static int do_completion;
+ static int unique;
+@@ -1479,7 +1478,7 @@
+ 	  if (! is_completion)
+ 	    grub_printf (" Possible files are:");
+ 	  
+-	  dir (buf);
++	  dir (buf, print_a_completion);
+ 	  
+ 	  if (is_completion && *unique_string)
+ 	    {
+@@ -1498,7 +1497,7 @@
+ 		  *ptr = '/';
+ 		  *(ptr + 1) = 0;
+ 		  
+-		  dir (buf);
++		  dir (buf, print_a_completion);
+ 		  
+ 		  /* Restore the original unique value.  */
+ 		  unique = 1;
+@@ -1626,12 +1625,7 @@
+   if (!errnum && fsys_type == NUM_FSYS)
+     errnum = ERR_FSYS_MOUNT;
+ 
+-# ifndef STAGE1_5
+-  /* set "dir" function to open a file */
+-  print_possibilities = 0;
+-# endif
+-
+-  if (!errnum && (*(fsys_table[fsys_type].dir_func)) (filename))
++  if (!errnum && (*(fsys_table[fsys_type].dir_func)) (filename, NULL))
+     {
+ #ifndef NO_DECOMPRESSION
+       return gunzip_test_header ();
+@@ -1752,7 +1746,7 @@
+ }
+ 
+ int
+-dir (char *dirname)
++dir (char *dirname, void (*handle)(char *))
+ {
+ #ifndef NO_DECOMPRESSION
+   compressed_file = 0;
+@@ -1761,19 +1755,18 @@
+   if (!(dirname = setup_part (dirname)))
+     return 0;
+ 
++  errnum = 0;
+   if (*dirname != '/')
+     errnum = ERR_BAD_FILENAME;
+-
+-  if (fsys_type == NUM_FSYS)
++  else if (fsys_type == NUM_FSYS)
+     errnum = ERR_FSYS_MOUNT;
+-
+-  if (errnum)
+-    return 0;
+-
+-  /* set "dir" function to list completions */
+-  print_possibilities = 1;
+-
+-  return (*(fsys_table[fsys_type].dir_func)) (dirname);
++  else
++    {
++      fsys_table[fsys_type].dir_func (dirname, handle);
++      if (errnum == ERR_FILE_NOT_FOUND)
++	errnum = 0;
++    }
++  return errnum == 0;
+ }
+ #endif /* STAGE1_5 */
+ 
+diff -Nur grub-0.97-dirs/stage2/filesys.h grub-0.97-wildcards/stage2/filesys.h
+--- grub-0.97-dirs/stage2/filesys.h	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/filesys.h	2005-08-21 20:32:45.000000000 +0300
+@@ -24,7 +24,7 @@
+ #define FSYS_FFS_NUM 1
+ int ffs_mount (void);
+ int ffs_read (char *buf, int len);
+-int ffs_dir (char *dirname);
++int ffs_dir (char *dirname, void (*handle)(char *));
+ int ffs_embed (int *start_sector, int needed_sectors);
+ #else
+ #define FSYS_FFS_NUM 0
+@@ -34,7 +34,7 @@
+ #define FSYS_UFS2_NUM 1
+ int ufs2_mount (void);
+ int ufs2_read (char *buf, int len);
+-int ufs2_dir (char *dirname);
++int ufs2_dir (char *dirname, void (*handle)(char *));
+ int ufs2_embed (int *start_sector, int needed_sectors);
+ #else
+ #define FSYS_UFS2_NUM 0
+@@ -44,7 +44,7 @@
+ #define FSYS_FAT_NUM 1
+ int fat_mount (void);
+ int fat_read (char *buf, int len);
+-int fat_dir (char *dirname);
++int fat_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_FAT_NUM 0
+ #endif
+@@ -53,7 +53,7 @@
+ #define FSYS_EXT2FS_NUM 1
+ int ext2fs_mount (void);
+ int ext2fs_read (char *buf, int len);
+-int ext2fs_dir (char *dirname);
++int ext2fs_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_EXT2FS_NUM 0
+ #endif
+@@ -62,7 +62,7 @@
+ #define FSYS_MINIX_NUM 1
+ int minix_mount (void);
+ int minix_read (char *buf, int len);
+-int minix_dir (char *dirname);
++int minix_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_MINIX_NUM 0
+ #endif
+@@ -71,7 +71,7 @@
+ #define FSYS_REISERFS_NUM 1
+ int reiserfs_mount (void);
+ int reiserfs_read (char *buf, int len);
+-int reiserfs_dir (char *dirname);
++int reiserfs_dir (char *dirname, void (*handle)(char *));
+ int reiserfs_embed (int *start_sector, int needed_sectors);
+ #if defined(__linux__) && defined (GRUB_UTIL)
+ #include <sys/types.h>
+@@ -91,7 +91,7 @@
+ #define FSYS_VSTAFS_NUM 1
+ int vstafs_mount (void);
+ int vstafs_read (char *buf, int len);
+-int vstafs_dir (char *dirname);
++int vstafs_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_VSTAFS_NUM 0
+ #endif
+@@ -100,7 +100,7 @@
+ #define FSYS_JFS_NUM 1
+ int jfs_mount (void);
+ int jfs_read (char *buf, int len);
+-int jfs_dir (char *dirname);
++int jfs_dir (char *dirname, void (*handle)(char *));
+ int jfs_embed (int *start_sector, int needed_sectors);
+ #else
+ #define FSYS_JFS_NUM 0
+@@ -110,7 +110,7 @@
+ #define FSYS_XFS_NUM 1
+ int xfs_mount (void);
+ int xfs_read (char *buf, int len);
+-int xfs_dir (char *dirname);
++int xfs_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_XFS_NUM 0
+ #endif
+@@ -119,7 +119,7 @@
+ #define FSYS_TFTP_NUM 1
+ int tftp_mount (void);
+ int tftp_read (char *buf, int len);
+-int tftp_dir (char *dirname);
++int tftp_dir (char *dirname, void (*handle)(char *));
+ void tftp_close (void);
+ #else
+ #define FSYS_TFTP_NUM 0
+@@ -129,7 +129,7 @@
+ #define FSYS_ISO9660_NUM 1
+ int iso9660_mount (void);
+ int iso9660_read (char *buf, int len);
+-int iso9660_dir (char *dirname);
++int iso9660_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_ISO9660_NUM 0
+ #endif
+@@ -160,16 +160,10 @@
+   char *name;
+   int (*mount_func) (void);
+   int (*read_func) (char *buf, int len);
+-  int (*dir_func) (char *dirname);
++  int (*dir_func) (char *dirname, void (*print_one)(char *));
+   void (*close_func) (void);
+   int (*embed_func) (int *start_sector, int needed_sectors);
+ };
+ 
+-#ifdef STAGE1_5
+-# define print_possibilities 0
+-#else
+-extern int print_possibilities;
+-#endif
+-
+ extern int fsmax;
+ extern struct fsys_entry fsys_table[NUM_FSYS + 1];
+diff -Nur grub-0.97-dirs/stage2/fsys_ext2fs.c grub-0.97-wildcards/stage2/fsys_ext2fs.c
+--- grub-0.97-dirs/stage2/fsys_ext2fs.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_ext2fs.c	2005-08-21 20:32:45.000000000 +0300
+@@ -495,7 +495,7 @@
+  * side effects: messes up GROUP_DESC buffer area
+  */
+ int
+-ext2fs_dir (char *dirname)
++ext2fs_dir (char *dirname, void (*handle)(char *))
+ {
+   int current_ino = EXT2_ROOT_INO;	/* start at the root */
+   int updir_ino = current_ino;	/* the parent of the current directory */
+@@ -521,7 +521,6 @@
+ #ifdef E2DEBUG
+   unsigned char *i;
+ #endif	/* E2DEBUG */
+-
+   /* loop invariants:
+      current_ino = inode to lookup
+      dirname = pointer to filename component we are cur looking up within
+@@ -713,18 +712,9 @@
+ 	     give up */
+ 	  if (loc >= INODE->i_size)
+ 	    {
+-	      if (print_possibilities < 0)
+-		{
+-# if 0
+-		  putchar ('\n');
+-# endif
+-		}
+-	      else
+-		{
+-		  errnum = ERR_FILE_NOT_FOUND;
+-		  *rest = ch;
+-		}
+-	      return (print_possibilities < 0);
++	      errnum = ERR_FILE_NOT_FOUND;
++	      *rest = ch;
++	      return 0;
+ 	    }
+ 
+ 	  /* else, find the (logical) block component of our location */
+@@ -765,20 +755,15 @@
+ 	      str_chk = substring (dirname, dp->name);
+ 
+ # ifndef STAGE1_5
+-	      if (print_possibilities && ch != '/'
+-		  && (!*dirname || str_chk <= 0))
+-		{
+-		  if (print_possibilities > 0)
+-		    print_possibilities = -print_possibilities;
+-		  print_a_completion (dp->name);
+-		}
++	      if (handle && ch != '/' && (!*dirname || str_chk <= 0))
++		handle (dp->name);
+ # endif
+ 
+ 	      dp->name[dp->name_len] = saved_c;
+ 	    }
+ 
+ 	}
+-      while (!dp->inode || (str_chk || (print_possibilities && ch != '/')));
++      while (!dp->inode || (str_chk || (handle && ch != '/')));
+ 
+       current_ino = dp->inode;
+       *(dirname = rest) = ch;
+diff -Nur grub-0.97-dirs/stage2/fsys_fat.c grub-0.97-wildcards/stage2/fsys_fat.c
+--- grub-0.97-dirs/stage2/fsys_fat.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_fat.c	2005-08-21 20:32:45.000000000 +0300
+@@ -289,7 +289,7 @@
+ }
+ 
+ int
+-fat_dir (char *dirname)
++fat_dir (char *dirname, void (*handle)(char *))
+ {
+   char *rest, ch, dir_buf[FAT_DIRENTRY_LENGTH];
+   char *filename = (char *) NAME_BUF;
+@@ -345,7 +345,7 @@
+   *rest = 0;
+   
+ # ifndef STAGE1_5
+-  if (print_possibilities && ch != '/')
++  if (handle && ch != '/')
+     do_possibilities = 1;
+ # endif
+   
+@@ -356,16 +356,6 @@
+ 	{
+ 	  if (!errnum)
+ 	    {
+-# ifndef STAGE1_5
+-	      if (print_possibilities < 0)
+-		{
+-#if 0
+-		  putchar ('\n');
+-#endif
+-		  return 1;
+-		}
+-# endif /* STAGE1_5 */
+-	      
+ 	      errnum = ERR_FILE_NOT_FOUND;
+ 	      *rest = ch;
+ 	    }
+@@ -460,11 +450,7 @@
+ 	{
+ 	print_filename:
+ 	  if (substring (dirname, filename) <= 0)
+-	    {
+-	      if (print_possibilities > 0)
+-		print_possibilities = -print_possibilities;
+-	      print_a_completion (filename);
+-	    }
++	    handle (filename);
+ 	  continue;
+ 	}
+ # endif /* STAGE1_5 */
+diff -Nur grub-0.97-dirs/stage2/fsys_ffs.c grub-0.97-wildcards/stage2/fsys_ffs.c
+--- grub-0.97-dirs/stage2/fsys_ffs.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_ffs.c	2005-08-21 20:32:45.000000000 +0300
+@@ -180,7 +180,7 @@
+ 
+ 
+ int
+-ffs_dir (char *dirname)
++ffs_dir (char *dirname, void (*handle)(char *))
+ {
+   char *rest, ch;
+   int block, off, loc, map, ino = ROOTINO;
+@@ -236,13 +236,6 @@
+     {
+       if (loc >= INODE->i_size)
+ 	{
+-#if 0
+-	  putchar ('\n');
+-#endif
+-
+-	  if (print_possibilities < 0)
+-	    return 1;
+-
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  *rest = ch;
+ 	  return 0;
+@@ -267,18 +260,13 @@
+       loc += dp->d_reclen;
+ 
+ #ifndef STAGE1_5
+-      if (dp->d_ino && print_possibilities && ch != '/'
++      if (dp->d_ino && handle && ch != '/'
+ 	  && (!*dirname || substring (dirname, dp->d_name) <= 0))
+-	{
+-	  if (print_possibilities > 0)
+-	    print_possibilities = -print_possibilities;
+-
+-	  print_a_completion (dp->d_name);
+-	}
++	handle (dp->d_name);
+ #endif /* STAGE1_5 */
+     }
+   while (!dp->d_ino || (substring (dirname, dp->d_name) != 0
+-			|| (print_possibilities && ch != '/')));
++			|| (handle && ch != '/')));
+ 
+   /* only get here if we have a matching directory entry */
+ 
+diff -Nur grub-0.97-dirs/stage2/fsys_iso9660.c grub-0.97-wildcards/stage2/fsys_iso9660.c
+--- grub-0.97-dirs/stage2/fsys_iso9660.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_iso9660.c	2005-08-21 20:32:45.000000000 +0300
+@@ -133,7 +133,7 @@
+ }
+ 
+ int
+-iso9660_dir (char *dirname)
++iso9660_dir (char *dirname, void (*handle)(char *))
+ {
+   struct iso_directory_record *idr;
+   RR_ptr_t rr_ptr;
+@@ -346,7 +346,7 @@
+ 	      if (name_len >= pathlen
+ 		  && !memcmp(name, dirname, pathlen))
+ 		{
+-		  if (dirname[pathlen] == '/' || !print_possibilities)
++		  if (dirname[pathlen] == '/' || !handle)
+ 		    {
+ 		      /*
+ 		       *  DIRNAME is directory component of pathname,
+@@ -377,11 +377,9 @@
+ 		  else	/* Completion */
+ 		    {
+ #ifndef STAGE1_5
+-		      if (print_possibilities > 0)
+-			print_possibilities = -print_possibilities;
+ 		      memcpy(NAME_BUF, name, name_len);
+ 		      NAME_BUF[name_len] = '\0';
+-		      print_a_completion (NAME_BUF);
++		      handle (NAME_BUF);
+ #endif
+ 		    }
+ 		}
+@@ -390,7 +388,7 @@
+ 	  size -= ISO_SECTOR_SIZE;
+ 	} /* size>0 */
+ 
+-      if (dirname[pathlen] == '/' || print_possibilities >= 0)
++      if (dirname[pathlen] == '/' || handle)
+ 	{
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  return 0;
+diff -Nur grub-0.97-dirs/stage2/fsys_jfs.c grub-0.97-wildcards/stage2/fsys_jfs.c
+--- grub-0.97-dirs/stage2/fsys_jfs.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_jfs.c	2005-08-21 20:32:45.000000000 +0300
+@@ -270,7 +270,7 @@
+ }
+ 
+ int
+-jfs_dir (char *dirname)
++jfs_dir (char *dirname, void (*handle)(char *))
+ {
+ 	char *ptr, *rest, ch;
+ 	ldtentry_t *de;
+@@ -357,12 +357,9 @@
+ 
+ 			cmp = (!*dirname) ? -1 : substring (dirname, namebuf);
+ #ifndef STAGE1_5
+-			if (print_possibilities && ch != '/'
+-			    && cmp <= 0) {
+-				if (print_possibilities > 0)
+-					print_possibilities = -print_possibilities;
+-				print_a_completion (namebuf);
+-			} else
++			if (handle && ch != '/' && cmp <= 0)
++				handle (namebuf);
++			else
+ #endif
+ 			if (cmp == 0) {
+ 				parent_inum = inum;
+@@ -372,9 +369,6 @@
+ 			}
+ 			de = next_dentry ();
+ 			if (de == NULL) {
+-				if (print_possibilities < 0)
+-					return 1;
+-
+ 				errnum = ERR_FILE_NOT_FOUND;
+ 				*rest = ch;
+ 				return 0;
+diff -Nur grub-0.97-dirs/stage2/fsys_minix.c grub-0.97-wildcards/stage2/fsys_minix.c
+--- grub-0.97-dirs/stage2/fsys_minix.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_minix.c	2005-08-21 20:32:45.000000000 +0300
+@@ -294,7 +294,7 @@
+      inode of the file we were trying to look up
+    side effects: none yet  */
+ int
+-minix_dir (char *dirname)
++minix_dir (char *dirname, void (*handle)(char *))
+ {
+   int current_ino = MINIX_ROOT_INO;  /* start at the root */
+   int updir_ino = current_ino;	     /* the parent of the current directory */
+@@ -457,18 +457,9 @@
+ 	     give up */
+ 	  if (loc >= INODE->i_size)
+ 	    {
+-	      if (print_possibilities < 0)
+-		{
+-#if 0
+-		  putchar ('\n');
+-#endif
+-		}
+-	      else
+-		{
+-		  errnum = ERR_FILE_NOT_FOUND;
+-		  *rest = ch;
+-		}
+-	      return (print_possibilities < 0);
++	      errnum = ERR_FILE_NOT_FOUND;
++	      *rest = ch;
++	      return 0;
+ 	    }
+ 
+ 	  /* else, find the (logical) block component of our location */
+@@ -510,20 +501,15 @@
+ 	      str_chk = substring (dirname, dp->name);
+ 
+ # ifndef STAGE1_5
+-	      if (print_possibilities && ch != '/'
+-		  && (!*dirname || str_chk <= 0))
+-		{
+-		  if (print_possibilities > 0)
+-		    print_possibilities = -print_possibilities;
+-		  print_a_completion (dp->name);
+-		}
++	      if (handle && ch != '/' && (!*dirname || str_chk <= 0))
++		handle (dp->name);
+ # endif
+ 
+ 	      dp->name[namelen] = saved_c;
+ 	    }
+ 
+ 	}
+-      while (!dp->inode || (str_chk || (print_possibilities && ch != '/')));
++      while (!dp->inode || (str_chk || (handle && ch != '/')));
+ 
+       current_ino = dp->inode;
+       *(dirname = rest) = ch;
+diff -Nur grub-0.97-dirs/stage2/fsys_reiserfs.c grub-0.97-wildcards/stage2/fsys_reiserfs.c
+--- grub-0.97-dirs/stage2/fsys_reiserfs.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_reiserfs.c	2005-08-21 20:32:45.000000000 +0300
+@@ -991,7 +991,7 @@
+  *   the size of the file.
+  */
+ int
+-reiserfs_dir (char *dirname)
++reiserfs_dir (char *dirname, void (*handle)(char *))
+ {
+   struct reiserfs_de_head *de_head;
+   char *rest, ch;
+@@ -1123,7 +1123,7 @@
+       *rest = 0;
+       
+ # ifndef STAGE1_5
+-      if (print_possibilities && ch != '/')
++      if (handle && ch != '/')
+ 	do_possibilities = 1;
+ # endif /* ! STAGE1_5 */
+       
+@@ -1170,10 +1170,8 @@
+ 		    {
+ 		      if (cmp <= 0)
+ 			{
+-			  if (print_possibilities > 0)
+-			    print_possibilities = -print_possibilities;
+ 			  *name_end = 0;
+-			  print_a_completion (filename);
++			  handle (filename);
+ 			  *name_end = tmp;
+ 			}
+ 		    }
+@@ -1189,12 +1187,6 @@
+ 	      num_entries--;
+ 	    }
+ 	}
+-      
+-# ifndef STAGE1_5
+-      if (print_possibilities < 0)
+-	return 1;
+-# endif /* ! STAGE1_5 */
+-      
+       errnum = ERR_FILE_NOT_FOUND;
+       *rest = ch;
+       return 0;
+diff -Nur grub-0.97-dirs/stage2/fsys_ufs2.c grub-0.97-wildcards/stage2/fsys_ufs2.c
+--- grub-0.97-dirs/stage2/fsys_ufs2.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_ufs2.c	2005-08-21 20:32:45.000000000 +0300
+@@ -204,7 +204,7 @@
+ }
+ 
+ int
+-ufs2_dir (char *dirname)
++ufs2_dir (char *dirname, void (*handle)(char *))
+ {
+   char *rest, ch;
+   int block, off, loc, ino = ROOTINO;
+@@ -261,9 +261,6 @@
+     {
+       if (loc >= INODE_UFS2->di_size)
+ 	{
+-	  if (print_possibilities < 0)
+-	    return 1;
+-
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  *rest = ch;
+ 	  return 0;
+@@ -288,18 +285,13 @@
+       loc += dp->d_reclen;
+ 
+ #ifndef STAGE1_5
+-      if (dp->d_ino && print_possibilities && ch != '/'
++      if (dp->d_ino && handle && ch != '/'
+ 	  && (!*dirname || substring (dirname, dp->d_name) <= 0))
+-	{
+-	  if (print_possibilities > 0)
+-	    print_possibilities = -print_possibilities;
+-
+-	  print_a_completion (dp->d_name);
+-	}
++	handle (dp->d_name);
+ #endif /* STAGE1_5 */
+     }
+   while (!dp->d_ino || (substring (dirname, dp->d_name) != 0
+-			|| (print_possibilities && ch != '/')));
++			|| (handle && ch != '/')));
+ 
+   /* only get here if we have a matching directory entry */
+ 
+diff -Nur grub-0.97-dirs/stage2/fsys_vstafs.c grub-0.97-wildcards/stage2/fsys_vstafs.c
+--- grub-0.97-dirs/stage2/fsys_vstafs.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_vstafs.c	2005-08-21 20:32:45.000000000 +0300
+@@ -115,7 +115,7 @@
+ }
+ 
+ int 
+-vstafs_dir (char *dirname)
++vstafs_dir (char *dirname, void (*handle)(char *))
+ {
+   char *fn, ch;
+   struct dir_entry *d;
+@@ -146,14 +146,9 @@
+ 	    continue;
+ 	  
+ #ifndef STAGE1_5
+-	  if (print_possibilities && ch != '/'
++	  if (handle && ch != '/'
+ 	      && (! *dirname || strcmp (dirname, d->name) <= 0))
+-	    {
+-	      if (print_possibilities > 0)
+-		print_possibilities = -print_possibilities;
+-	      
+-	      printf ("  %s", d->name);
+-	    }
++	    handle(d->name);
+ #endif
+ 	  if (! grub_strcmp (dirname, d->name))
+ 	    {
+@@ -168,12 +163,6 @@
+       *(dirname = fn) = ch;
+       if (! d)
+ 	{
+-	  if (print_possibilities < 0)
+-	    {
+-	      putchar ('\n');
+-	      return 1;
+-	    }
+-	  
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  return 0;
+ 	}
+diff -Nur grub-0.97-dirs/stage2/fsys_xfs.c grub-0.97-wildcards/stage2/fsys_xfs.c
+--- grub-0.97-dirs/stage2/fsys_xfs.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/fsys_xfs.c	2005-08-21 20:32:45.000000000 +0300
+@@ -534,7 +534,7 @@
+ }
+ 
+ int
+-xfs_dir (char *dirname)
++xfs_dir (char *dirname, void (*handle)(char *))
+ {
+ 	xfs_ino_t ino, parent_ino, new_ino;
+ 	xfs_fsize_t di_size;
+@@ -595,11 +595,9 @@
+ 		for (;;) {
+ 			cmp = (!*dirname) ? -1 : substring (dirname, name);
+ #ifndef STAGE1_5
+-			if (print_possibilities && ch != '/' && cmp <= 0) {
+-				if (print_possibilities > 0)
+-					print_possibilities = -print_possibilities;
+-				print_a_completion (name);
+-			} else
++			if (handle && ch != '/' && cmp <= 0)
++				handle (name);
++			else
+ #endif
+ 			if (cmp == 0) {
+ 				parent_ino = ino;
+@@ -610,9 +608,6 @@
+ 			}
+ 			name = next_dentry (&new_ino);
+ 			if (name == NULL) {
+-				if (print_possibilities < 0)
+-					return 1;
+-
+ 				errnum = ERR_FILE_NOT_FOUND;
+ 				*rest = ch;
+ 				return 0;
+diff -Nur grub-0.97-dirs/stage2/shared.h grub-0.97-wildcards/stage2/shared.h
+--- grub-0.97-dirs/stage2/shared.h	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/shared.h	2005-08-21 20:32:45.000000000 +0300
+@@ -1012,9 +1012,11 @@
+ /* Close a file.  */
+ void grub_close (void);
+ 
+-/* List the contents of the directory that was opened with GRUB_OPEN,
+-   printing all completions. */
+-int dir (char *dirname);
++/* List the contents of DIRECTORY. */
++int dir (char *dirname, void (*handle)(char *));
++ 
++/* Wildcard expand the last pathname component of GLOB. */
++char *wildcard (char *glob, int *len);
+ 
+ int set_bootdev (int hdbias);
+ 
+diff -Nur grub-0.97-dirs/stage2/stage2.c grub-0.97-wildcards/stage2/stage2.c
+--- grub-0.97-dirs/stage2/stage2.c	2005-08-21 20:31:02.000000000 +0300
++++ grub-0.97-wildcards/stage2/stage2.c	2005-08-21 20:33:24.000000000 +0300
+@@ -1243,6 +1243,230 @@
+ }
+ 
+ 
++char *wildcard_prefix, *wildcard_suffix;
++char wildcard_matches[1024], *end_wildcard_matches;
++
++static void wildcard_handler(char *name);
++
++/* Match one directory entry against the current wildcard. If the entry
++   matches, store it in WILDCARD_MATCHES. Silently ignore entries that
++   don't fit into WILDCARD_MATCHES anymore. */
++static void
++wildcard_handler(char *name)
++{
++  char *n = name, *p = wildcard_prefix;
++
++  while (*p && *p == *n)
++    {
++      p++;
++      n++;
++    }
++  if (*p)
++    return; /* prefix mismatch */
++
++  p = name + grub_strlen (name) - grub_strlen (wildcard_suffix);
++  /* [n .. p) is the part matching the asterisk */
++
++  if (p < n || grub_strcmp (p, wildcard_suffix) != 0)
++    return; /* suffix mismatch */
++
++  /* store this match */
++  if (p - n + 1 > sizeof (wildcard_matches) -
++		  (end_wildcard_matches - wildcard_matches))
++    return; /* out of space */
++  while (n < p)
++    *end_wildcard_matches++ = *n++;
++  *end_wildcard_matches++ = 0;
++}
++
++/* Wildcard expand the GLOB argument. Return NULL upon failure, or
++   a list of 0-terminated expansions, terminated by a zero-length string. */
++char *
++wildcard (char *glob, int *len)
++{
++  char path[128], *p;
++  int ret;
++
++  end_wildcard_matches = wildcard_matches;
++  if (grub_strlen (glob) + 1 > sizeof (path)) {
++    errnum = ERR_FILELENGTH;
++    return NULL;  /* cannot handle pathnames this long */
++  }
++  grub_strcpy (path, glob);
++  p = path;
++  while (*p)
++    p++;
++  wildcard_suffix = p;
++  while (p > path && *p != '/')
++    p--;
++  if (*p != '/')
++    {
++      errnum = ERR_BAD_FILETYPE;
++      return NULL; /* Cannot wildcard device names */
++    }
++  *(++p) = 0;
++  wildcard_prefix = glob + (p - path);
++  for (p = wildcard_prefix;; p++)
++    {
++      if (*p == 0)
++	{
++	  /* We cannot do exact matches: this cannot be represented in the
++	     result list. */
++	  return NULL;
++	}
++      else if (*p == '*')
++	{
++	  *p++ = 0;
++	  wildcard_suffix = p;
++	  break;
++	}
++    }
++
++  ret = dir (path, wildcard_handler);
++  /* restore original argument */
++  wildcard_prefix[grub_strlen (wildcard_prefix)] = '*';
++  if (!ret)
++    return NULL;
++  *len = end_wildcard_matches - wildcard_matches;
++  return wildcard_matches;
++}
++
++static int inplace_sort_nextint(char **p);
++
++static int inplace_sort_nextint(char **p)
++{
++  int i = 0;
++
++  while (**p && **p < '0' && **p > '9') *p++;
++  if (!**p) return -1;
++  while (**p && **p >= '0' && **p <= '9')
++    {
++      i = i * 10 + **p - '0';
++      *p++;
++    }
++  return i;
++}
++
++static int inplace_sort_strcmp(char *l, char *r);
++
++static int
++inplace_sort_strcmp(char *l, char *r)
++{
++  char *lp = l;
++  char *rp = r;
++  int li, ri;
++
++  do
++    {
++      li = inplace_sort_nextint(&lp);
++      ri = inplace_sort_nextint(&rp);
++      if (li > ri) return 1;
++      if (ri > li) return -1;
++    }
++  while (li != -1 || ri != -1);
++  return 0;
++}
++
++#define skip(str) ((str) + grub_strlen (str) + 1)
++
++static void inplace_sort (char *str, int len);
++
++static void
++inplace_sort (char *str, int len)
++{
++  int m, n = 0;
++  char *s, *t;
++
++  /* we use x as temporary storage */
++  char *x = str + len;
++
++  for (s = str; s < x; s = skip (s))
++    n++;
++
++  for (; n >= 2; n--)
++    {
++      s = str;
++      t = skip (s);
++
++      for (m = n; m >= 2; m--)
++	{
++	  if (inplace_sort_strcmp (s, t) < 0)
++	    {
++	      int ls = skip (s) - s;
++	      int lt = skip (t) - t;
++
++	      memcpy (x, s, ls);
++	      grub_memmove (s + ls, s + lt, t - (s + ls));
++	      memcpy (s, t, lt);
++	      t = t + lt - ls;
++	      memcpy (t, x, ls);
++	    }
++	  s = t;
++	  t = skip (t);
++	}
++    }
++}
++
++#undef skip
++
++static int this_config_len (const char *config);
++static int
++this_config_len (const char *config)
++{
++  const char *c = config;
++  while (*c)
++    {
++      while (*c)
++	c++;
++      c++;
++    }
++  c++;
++  return c - config;
++}
++
++static const char * expand_asterisks (const char *str, int *len,
++				      const char *subst);
++
++/* Expand all asterisks (*) in a menu entry or commands section with its
++   substitution. Use a backslash as escape character. */
++static const char *
++expand_asterisks (const char *str, int *len, const char *subst)
++{
++  static char buffer[1024];
++  char *b = buffer, escaped = 0;
++  const char *end = str + *len;
++
++  while (str < end)
++    {
++      if (*str == '*' && !escaped)
++        {
++	  if (b - buffer + grub_strlen (subst) > sizeof (buffer))
++	    {
++	      errnum = ERR_FILELENGTH;
++	      return NULL;
++	    }
++	  grub_strcpy (b, subst);
++	  b += grub_strlen (subst);
++	}
++      else if (*str == '\\' && !escaped)
++	escaped = 1;
++      else
++        {
++	  escaped = 0;
++	  if (b - buffer + 1 > sizeof (buffer))
++	    {
++	      errnum = ERR_FILELENGTH;
++	      return NULL;
++	    }
++	  *b++ = *str;
++	}
++      str++;
++    }
++    *len = b - buffer;
++
++    return buffer;
++}
++
+ /* This is the starting function in C.  */
+ void
+ cmain (void)
+@@ -1262,6 +1486,97 @@
+       menu_entries = (char *) MENU_BUF;
+       init_config ();
+     }
++
++  auto void expand_wildcard_entries (void);
++  void expand_wildcard_entries (void)
++    {
++      char *config_entry = config_entries;
++      char *menu_entry = menu_entries;
++
++      while (*menu_entry)
++        {
++	  char *command = config_entry;
++
++	  do
++	    {
++	      char *c = command;
++	      const char *w = "wildcard";
++
++	      while (*w && *c == *w)
++		{
++		  c++;
++		  w++;
++		}
++	      if (*w == 0 && (*c == ' ' || *c == '\t' || *c == '='))
++		{
++		  int len, wlen;
++
++		  /* This is a wildcard command. Advance to the argument. */
++		  while (*c == ' ' || *c == '\t' || *c == '=')
++		    c++;
++
++		  /* Expand wildcard entry. */
++		  w = wildcard (c, &wlen);
++		  if (w)
++		    inplace_sort (w, wlen);
++
++		  /* Remove the wildcard command from the command section;
++		     it has no meaning beyond the wildcard expansion just
++		     performed. */
++		  len = grub_strlen (command) + 1;
++		  grub_memmove (command, command + len,
++		  		config_len - (command - config_entries));
++		  config_len -= len;
++
++		  while (w && wlen)
++		    {
++		      /* Insert expansion before the wildcard entry in the
++		         list of entry names. */
++		      len = grub_strlen (menu_entry) + 1;
++		      const char *x = expand_asterisks (menu_entry, &len, w);
++		      grub_memmove (menu_entry + len, menu_entry,
++		      		    menu_len - (menu_entry - menu_entries));
++		      memcpy (menu_entry, x, len);
++		      menu_entry += len;
++		      menu_len += len;
++		      
++		      /* Insert expansion before the wildcard command section
++		         in the list of command sections. */
++		      len = this_config_len (config_entry);
++		      x = expand_asterisks (config_entry, &len, w);
++		      grub_memmove (config_entry + len, config_entry,
++		      		    config_len - (config_entry -
++				    		  config_entries));
++		      memcpy (config_entry, x, len);
++		      config_entry += len;
++		      config_len += len;
++
++		      num_entries++;
++		      wlen -= grub_strlen (w) + 1;
++		      w += grub_strlen (w) + 1;
++		    }
++
++		  /* Remove the wildcard command section; it has just
++		     been expanded. */
++		  len = grub_strlen (menu_entry) + 1;
++		  grub_memmove (menu_entry, menu_entry + len,
++		  		menu_len - (menu_entry - menu_entries));
++		  menu_len -= len;
++
++		  len = this_config_len(config_entry);
++		  grub_memmove (config_entry, config_entry + len,
++		  		config_len - (config_entry - config_entries));
++		  config_len -= len;
++
++		  num_entries--;
++		}
++	      command += grub_strlen (command) + 1;
++	    }
++	  while (*command);
++	  menu_entry += grub_strlen (menu_entry) + 1;
++	  config_entry += this_config_len(config_entry);
++	}
++    }
+   
+   /* Initialize the environment for restarting Stage 2.  */
+   grub_setjmp (restart_env);
+@@ -1414,8 +1729,16 @@
+ 		  config_len = prev_config_len;
+ 		}
+ 	      
++	      if (is_preset)
++		close_preset_menu ();
++	      else
++		grub_close ();
++	      
+ 	      menu_entries[menu_len++] = 0;
+ 	      config_entries[config_len++] = 0;
++
++	      expand_wildcard_entries();
++
+ 	      grub_memmove (config_entries + config_len, menu_entries,
+ 			    menu_len);
+ 	      menu_entries = config_entries + config_len;
+@@ -1456,11 +1779,6 @@
+ 		  else
+ 		    default_entry = 0;
+ 		}
+-	      
+-	      if (is_preset)
+-		close_preset_menu ();
+-	      else
+-		grub_close ();
+ 	    }
+ 	  while (is_preset);
+ 	}

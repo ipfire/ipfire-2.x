@@ -1,0 +1,78 @@
+diff -Nur grub-0.97-splash/docs/grub.texi grub-0.97-dirs/docs/grub.texi
+--- grub-0.97-splash/docs/grub.texi	2005-08-21 20:29:22.000000000 +0300
++++ grub-0.97-dirs/docs/grub.texi	2005-08-21 20:31:12.000000000 +0300
+@@ -479,13 +479,13 @@
+ if, by any chance, your hard drive becomes unusable (unbootable).
+ 
+ GRUB comes with boot images, which are normally put in the directory
+-@file{/usr/lib/grub/i386-pc}. If you do not use grub-install, then
++@file{/usr/share/grub/i386-pc}. If you do not use grub-install, then
+ you need to copy the files @file{stage1}, @file{stage2}, and
+ @file{*stage1_5} to the directory @file{/boot/grub}, and run the
+ @command{grub-set-default} (@pxref{Invoking grub-set-default}) if you
+ intend to use @samp{default saved} (@pxref{default}) in your
+ configuration file. Hereafter, the directory where GRUB images are
+-initially placed (normally @file{/usr/lib/grub/i386-pc}) will be
++initially placed (normally @file{/usr/share/grub/i386-pc}) will be
+ called the @dfn{image directory}, and the directory where the boot
+ loader needs to find them (usually @file{/boot/grub}) will be called
+ the @dfn{boot directory}.
+@@ -513,7 +513,7 @@
+ 
+ @example
+ @group
+-# @kbd{cd /usr/lib/grub/i386-pc}
++# @kbd{cd /usr/share/grub/i386-pc}
+ # @kbd{dd if=stage1 of=/dev/fd0 bs=512 count=1}
+ 1+0 records in
+ 1+0 records out
+@@ -707,7 +707,7 @@
+ Copy the file @file{stage2_eltorito}:
+ 
+ @example
+-$ @kbd{cp /usr/lib/grub/i386-pc/stage2_eltorito iso/boot/grub}
++$ @kbd{cp /usr/share/grub/i386-pc/stage2_eltorito iso/boot/grub}
+ @end example
+ 
+ If desired, make the config file @file{menu.lst} under @file{iso/boot/grub}
+diff -Nur grub-0.97-splash/Makefile.am grub-0.97-dirs/Makefile.am
+--- grub-0.97-splash/Makefile.am	2005-08-21 20:29:14.000000000 +0300
++++ grub-0.97-dirs/Makefile.am	2005-08-21 20:31:12.000000000 +0300
+@@ -2,3 +2,4 @@
+ AUTOMAKE_OPTIONS = 1.7 gnu
+ SUBDIRS = netboot stage2 stage1 lib grub util docs
+ EXTRA_DIST = BUGS MAINTENANCE
++pkgdatadir=$(datadir)
+diff -Nur grub-0.97-splash/stage1/Makefile.am grub-0.97-dirs/stage1/Makefile.am
+--- grub-0.97-splash/stage1/Makefile.am	2005-08-21 20:29:14.000000000 +0300
++++ grub-0.97-dirs/stage1/Makefile.am	2005-08-21 20:31:12.000000000 +0300
+@@ -1,4 +1,4 @@
+-pkglibdir = $(libdir)/$(PACKAGE)/$(host_cpu)-$(host_vendor)
++pkglibdir = /usr/share/grub/i386-pc
+ nodist_pkglib_DATA = stage1
+ 
+ CLEANFILES = $(nodist_pkglib_DATA)
+diff -Nur grub-0.97-splash/stage2/Makefile.am grub-0.97-dirs/stage2/Makefile.am
+--- grub-0.97-splash/stage2/Makefile.am	2005-08-21 20:29:14.000000000 +0300
++++ grub-0.97-dirs/stage2/Makefile.am	2005-08-21 20:31:12.000000000 +0300
+@@ -27,7 +27,7 @@
+ 	-DUSE_MD5_PASSWORDS=1 -DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1
+ 
+ # Stage 2 and Stage 1.5's.
+-pkglibdir = $(libdir)/$(PACKAGE)/$(host_cpu)-$(host_vendor)
++pkglibdir = /usr/share/grub/i386-pc
+ 
+ EXTRA_PROGRAMS = nbloader.exec pxeloader.exec diskless.exec
+ 
+diff -Nur grub-0.97-splash/util/grub-install.in grub-0.97-dirs/util/grub-install.in
+--- grub-0.97-splash/util/grub-install.in	2005-08-21 20:29:14.000000000 +0300
++++ grub-0.97-dirs/util/grub-install.in	2005-08-21 20:31:12.000000000 +0300
+@@ -27,7 +27,7 @@
+ host_cpu=@host_cpu@
+ host_os=@host_os@
+ host_vendor=@host_vendor@
+-pkglibdir=${libdir}/${PACKAGE}/${host_cpu}-${host_vendor}
++pkglibdir=/usr/share/grub/i386-pc
+ 
+ grub_shell=${sbindir}/grub
+ grub_set_default=${sbindir}/grub-set-default

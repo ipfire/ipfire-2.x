@@ -1,0 +1,30 @@
+This file describes the patches in the patchsets:
+
+001_all_grub-0.97-misc.patch
+	Several simple fixes
+
+002_all_grub-0.97-splash.patch
+	Port of the SuSE's gfxboot patch
+
+003_all_grub-0.97-dirs.patch
+	FHS compilance
+
+004_all_grub-0.97-wildcards.patch
+	Port of the SuSE's wildcards patch with custom nice sorting addon	
+
+005_all_grub-0.96-PIC.patch:
+	a patch to fix PIC issues by psm and Kevin F. Quinn in Gentoo bug #80693
+
+010_all_grub-0.96-bounced-checks.patch:
+	Disables testing of FFS and UFS2 images (which always fail). See Gentoo bug
+	#71811
+
+020_all_grub-0.96-i2o-raid.patch:
+	Support i2o RAID. See Gentoo bug #76143
+
+040_all_grub-0.96-nxstack.patch:
+	Fix NX segfaulting on amd64 and x86_64.  The patch is by Peter Jones.
+	See: http://lists.gnu.org/archive/html/bug-grub/2005-03/msg00011.html
+
+060_all_grub-0.96-netboot-pic.patch
+	Fix PIC issues in netboot code.  See Gentoo bug #85566

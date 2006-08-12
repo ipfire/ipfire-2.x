@@ -32,7 +32,7 @@
 
 include Config
 
-VER        = 0.95
+VER        = 0.97
 
 THISAPP    = grub-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4ca8e4363d5f1980f2c63b7f5cdbe0d1
+$(DL_FILE)_MD5 = cd3f3eb54446be6003156158d51f4884
 
 install : $(TARGET)
 
@@ -80,21 +80,45 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-configfile.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-symlinkmenulst.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-endedit.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-append.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-bootonce.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-splashimagehelp.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
+
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-configfile.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-symlinkmenulst.patch
+#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-endedit.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-append.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-bootonce.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-splashimagehelp.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-special-device-names.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-i2o.patch
+#	cd $(DIR_APP)/netboot && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-rtl8139.patch
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-configfile.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-symlinkmenulst.patch
+#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-endedit.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-append.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-bootonce.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-misc.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-dirs.patch	    
+
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-splashimagehelp.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-splash.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-wildcards.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-PIC.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-bounced-checks.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-special-device-names.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-i2o-raid.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-i2o.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-nxstack.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-netboot-pic.patch
 	cd $(DIR_APP)/netboot && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-rtl8139.patch
+
 	cd $(DIR_APP) && autoreconf --install --force
 	cd $(DIR_APP) && CFLAGS="-Os -fno-stack-protector" \
 	    STAGE2_CFLAGS="-Os -fno-stack-protector" \
-	    ./configure --prefix=/usr \
+	    ./configure --prefix=/usr --datadir=/usr/share \
 			--enable-rtl8139 \
 			--enable-ne --enable-ne-scan=0x300 \
 			--disable-nls \

@@ -1,0 +1,14 @@
+diff -ur grub-0.97/util/grub-install.in grub-0.97-old/util/grub-install.in
+--- grub-0.97/util/grub-install.in	2006-08-05 16:46:33.505226176 +0200
++++ grub-0.97-old/util/grub-install.in	2004-07-24 20:57:31.000000000 +0200
+@@ -447,6 +447,10 @@
+ rm -f $img_file
+ rm -f $log_file
+ 
++if ! test -e ${grubdir}/grub.conf ; then
++    test -e ${grubdir}/menu.lst && ln -s ./menu.lst ${grubdir}/grub.conf
++fi
++
+ # Create a safe temporary file.
+ test -n "$mklog" && log_file=`$mklog`
+ 

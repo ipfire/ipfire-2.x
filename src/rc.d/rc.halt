@@ -15,48 +15,48 @@ progressbar()
 	fi
 }
 # Set bootsplash
-progressbar 9
+progressbar 0
 if [ -e /proc/splash ]; then
 	echo "silent" > /proc/splash
 fi
 
 echo "Stopping the RED interface..."
-progressbar 8
+progressbar 1
 /etc/rc.d/rc.red stop 2>/dev/null
 /etc/rc.d/rc.red clear 2>/dev/null
 
 echo "Shutting down..."
-progressbar 7
+progressbar 2
 sleep 3
 
 echo "Saving the clock"
-progressbar 6
+progressbar 3
 /sbin/hwclock --systohc
 
 echo "Sending all processes the TERM signal..." 
-progressbar 5
+progressbar 4
 /sbin/killall5 -15
 sleep 3
 
 echo "Sending all processes the KILL signal..."
-progressbar 4
+progressbar 5
 /sbin/killall5 -9
 sleep 3
 
 echo "Turning off swap"
-progressbar 3
+progressbar 6
 swapoff -a
 
 echo "Unmounting others"
-progressbar 2
+progressbar 7
 umount -n -a
 
 echo "Unmounting root"
-progressbar 1
+progressbar 8
 mount -n -o remount,ro /
 
 # Send nice shutdown beep now
-progressbar 0
+progressbar 9
 /usr/bin/beep -l 75 -f 3000
 /usr/bin/beep -l 75 -f 2000
 /usr/bin/beep -l 75 -f 1000
