@@ -93,6 +93,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -D -m 644 kb1ec_const.h /usr/include/linux/kb1ec_const.h
 	cd $(DIR_APP) && install -D -m 644 biquad.h /usr/include/linux/biquad.h
 	cd $(DIR_APP) && install -D -m 644 arith.h /usr/include/linux/arith.h
+	cd $(DIR_APP) && install -D -m 644 mg2ec.h /usr/include/linux/mg2ec.h
+	cd $(DIR_APP) && install -D -m 644 mg2ec_const.h /usr/include/linux/mg2ec_const.h
 	ln -nf -v /usr/include/linux/zaptel.h /usr/include/zaptel.h
 	ln -nf -v /usr/include/linux/zconfig.h /usr/include/zconfig.h
 	ln -nf -v /usr/include/linux/ecdis.h /usr/include/ecdis.h
@@ -101,6 +103,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -nf -v /usr/include/linux/kb1ec_const.h /usr/include/kb1ec_const.h
 	ln -nf -v /usr/include/linux/biquad.h /usr/include/biquad.h
 	ln -nf -v /usr/include/linux/arith.h /usr/include/arith.h
+	ln -nf -v /usr/include/linux/mg2ec.h /usr/include/mg2ec.h
+	ln -nf -v /usr/include/linux/mg2ec_const.h /usr/include/mg2ec_const.h
 	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
 	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
 	@rm -rf $(DIR_APP)

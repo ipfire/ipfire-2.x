@@ -888,6 +888,7 @@ ipfirepackages() {
   ipfiredist nfs
   ipfiredist nmap
   ipfiredist ntop
+  ipfiredist portmap
   ipfiredist postfix
   ipfiredist procmail
   ipfiredist samba
@@ -1506,31 +1507,34 @@ unattended)
 	### This is our procedure that will compile the IPFire by herself...
 	echo "### UPDATE LOGS"
 	update_logs
-	echo "### SAVING TIME"
-	export IPFIRE_START_TIME=`date`
 
-	echo "### GETTING TOOLCHAIN"
-	$0 gettoolchain
+	if [ "$IPFIRE_REBUILD" -eq "0" ]; then
+		echo "### SAVING TIME"
+		export IPFIRE_START_TIME=`date`
 
-	echo "### RUNNING SVN-UPDATE"
-	$0 svn update
-	if [ $? -ne 0 ]; then
-		$0 mail SVNUPDATE
-		exit 1
-	fi
+		echo "### GETTING TOOLCHAIN"
+		$0 gettoolchain
+
+		echo "### RUNNING SVN-UPDATE"
+		$0 svn update
+		if [ $? -ne 0 ]; then
+			$0 mail SVNUPDATE
+			exit 1
+		fi
 	
-	echo "### EXPORT SOURCES"
-	$0 svn dist
-	if [ $? -ne 0 ]; then
-		$0 mail SVNDIST
-		exit 1
-	fi
+		echo "### EXPORT SOURCES"
+		$0 svn dist
+		if [ $? -ne 0 ]; then
+			$0 mail SVNDIST
+			exit 1
+		fi
 
-	echo "### RUNNING PREFETCH"
-	$0 prefetch | grep -q "md5 difference"
-	if [ $? -eq 0 ]; then
-		$0 mail PREFETCH
-		exit 1
+		echo "### RUNNING PREFETCH"
+		$0 prefetch | grep -q "md5 difference"
+		if [ $? -eq 0 ]; then
+			$0 mail PREFETCH
+			exit 1
+		fi
 	fi
 
 	echo "### RUNNING BUILD"
@@ -1562,10 +1566,16 @@ unattended)
 	exit 0
 	;;
 batch)
-	if [ `screen -ls | grep batch` ]; then
+	if [ `screen -ls | grep -q ipfire` ]; then
 		echo "Build is already running, sorry!"
 		exit 1
 	else
+		if [ "$2" = "--rebuild" ]; then
+			export IPFIRE_REBUILD=1
+			echo "REBUILD!"
+		else
+			export IPFIRE_REBUILD=0
+		fi
 		echo -n "IPFire-Batch-Build is starting..."
 		screen -dmS ipfire $0 unattended
 		if [ "$?" -eq "0" ]; then
@@ -1574,11 +1584,6 @@ batch)
 			echo ".ERROR!"
 			exit 1
 		fi
-		#if [ "$2" -eq "-v" ]; then
-		#	screen -x ipfire
-		#else
-		#	echo "You may attach you with '-v'."
-		#fi
 		exit 0
 	fi
 	;;

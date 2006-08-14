@@ -1,0 +1,6 @@
+sbin/portmap
+usr/sbin/pmap_dump
+usr/sbin/pmap_set
+#usr/share/man/man8/pmap_dump.8
+#usr/share/man/man8/pmap_set.8
+#usr/share/man/man8/portmap.8
