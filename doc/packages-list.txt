@@ -35,7 +35,6 @@
   * arping-2.05
   * as86-0.16.17
   * asterisk-1.2.10
-  * asterisk-1.2.9.1
   * autoconf-2.59
   * automake-1.8.4
   * bash-2.05b
@@ -46,7 +45,6 @@
   * bison-1.875
   * bootsplash-3.2
   * bridge-utils-1.1
-  * bristuff-0.3.0-PRE-1q
   * bristuff-0.3.0-PRE-1s
   * busybox-0.60.5
   * bzip2-1.0.3
@@ -103,7 +101,6 @@
   * gnupg-1.4.5
   * grep-2.5.1
   * groff-1.19
-  * grub-0.95
   * grub-0.97
   * gzip-1.3.5
   * hddtemp-0.3-beta14
@@ -115,7 +112,10 @@
   * inetutils-1.4.2
   * ipac-ng-1.31
   * ipaddr-1.2
-  * ipfire-logs-2006-08-09-18:56.tgz
+  * ipfire-logs-2006-08-14-15:42.tgz
+  * ipfire-logs-2006-08-14-19:12.tgz
+  * ipfire-logs-2006-08-14-19:15.tgz
+  * ipfire-logs-2006-08-14-19:21.tgz
   * iproute2-2.4.7-now-ss010824
   * iptables-1.3.5
   * iptstate-1.4
@@ -142,7 +142,7 @@
   * libvorbis-1.1.2
   * libwww-perl-5.803
   * libxml2-2.6.22
-  * linux-2.4.32
+  * linux-2.4.33
   * linux-atm-2.4.1
   * logrotate-3.7
   * logwatch-6.1.2
@@ -240,6 +240,6 @@
   * xampp-linux-1.5.3a
   * xinetd-2.3.14
   * xmbmon205
-  * zaptel-1.2.6
   * zaptel-1.2.7
+  * zaptel-1.2.7_fix
   * zlib-1.2.3
