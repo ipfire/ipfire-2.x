@@ -1350,12 +1350,15 @@ EOF
 		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386.iso
 		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386.iso.md5
 		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-source-r$SVN_REVISION.tar.gz
-		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-sources-cd-$VERSION.$MACHINE.iso
+		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ svn_status
 		if [ "$?" -eq "0" ]; then
 			echo -e "The iso of Revision $SVN_REVISION was successfully uploaded to $IPFIRE_FTP_URL_EXT$IPFIRE_FTP_PATH_EXT/."
 		else
 			echo -e "There was an error while uploading the iso to the ftp server."
 			exit 1
+		fi
+		if [ "$3" = "--with-sources-cd" ]; then
+			ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-sources-cd-$VERSION.$MACHINE.iso
 		fi
 		;;
 	  paks)
