@@ -4,12 +4,9 @@
 # IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
 ############################################################################################
 
-# URL Zerleger
-URL_ZERL=$(get_conf.sh URL_ZERL)
-
-# Zählen wie viele Host übergeben wurden
+# Zählen wie viele Hosts übergeben wurden
 i=0
-for host in $1
+for host in $PURL
 do
  ((i++))
 done
@@ -29,9 +26,9 @@ do
  ((i++))
  if [ $i -eq $rand ]
   then
-   if ping $($URL_ZERL $host get_host) -c 1 -s 0 >/dev/null 2>&1
+   if ping $($PAKHOME/lib/url_zerl.sh $host get_host) -c 1 -s 0 >/dev/null 2>&1
     then echo $host
-     exit 0
+     return 0
    fi
  fi
  if [ $i -gt $rand ]
@@ -42,13 +39,13 @@ done
 
 for host in $1
 do
- if ping $($URL_ZERL $host get_host) -c 1 -s 0 >/dev/null 2>&1
+ if ping $($PAKHOME/lib/url_zerl.sh $host get_host) -c 1 -s 0 >/dev/null 2>&1
   then
    echo $host
-   exit 0
+   return 0
  fi
 done
 
-exit 1
+return 1
 
 ################################### EOF ####################################################

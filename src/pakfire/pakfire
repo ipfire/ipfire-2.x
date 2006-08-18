@@ -5,15 +5,53 @@
 ############################################################################################
 
 . /etc/pakfire.conf
-. $HOME/lib/get_mirror.sh
+. $PAKHOME/lib/get_mirror.sh
+. $PAKHOME/lib/get_list.sh
+. $PAKHOME/lib/check_pak.sh
+. $PAKHOME/lib/get_upgrade.sh
+. $PAKHOME/lib/get_base.sh
+. $PAKHOME/lib/get_pak.sh
 
 case "$1" in
-	update) 	get_mirror
+	update)
+			get_mirror
 			get_list
 			check_pak
 	;;
 
-	*) echo -e "IPFire - Pakfire\nHilfe:\npakfire install [Paket]\t- Installiert ein neues Paket.\npakfire update\t\t- Lädt die Liste aller Pakete neu.\npakfire remove [Paket]\t- Deinstalliert ein Paket.\npakfire upgrade\t\t- Überprüft nach neuen Updates."
+	upgrade)
+			get_upgrade
+			get_base
+	;;
+
+	install)
+		case "$2" in
+			BASE-*)
+				echo $2
+			;;
+			*)
+				if [ -e $DB_DIR/$2 ]; then
+					if [ -e $IP_DIR/$2 ]; then
+						pakfire_logger "$2 is already installed on this system."
+					else
+						get_pak $2
+					fi
+				else
+					pakfire_logger "There is no paket with this name: $2"
+				fi
+			;;
+		esac
+	;;
+
+	*)
+		echo -e "IPFire - Pakfire $PAKVER:"
+		echo -e "===\t===\t===\t===\t===\t===\t===\t==="
+		echo -e "pakfire install [packet]\t- Installs a new packet."
+		echo -e "pakfire remove [paket]\t\t- Uninstalls a paket."
+		echo -e "pakfire update\t\t\t- Reloads the package list."
+		echo -e "pakfire upgrade\t\t\t- Searches for new updates."
+		echo -e "===\t===\t===\t===\t===\t===\t===\t==="
+	;;
 
 esac
 
