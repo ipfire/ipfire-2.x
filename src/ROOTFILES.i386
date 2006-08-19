@@ -19599,7 +19599,7 @@ usr/lib/libpcap.so.0
 usr/lib/libpcap.so.0.8
 #usr/share/man/man3/pcap.3
 ##
-## libpng-1.2.8
+## libpng-1.2.12
 ##
 #usr/bin/libpng-config
 #usr/bin/libpng12-config
@@ -19610,12 +19610,15 @@ usr/lib/libpcap.so.0.8
 #usr/include/png.h
 #usr/include/pngconf.h
 #usr/lib/libpng.a
+#usr/lib/libpng.la
+#usr/lib/libpng12.la
 usr/lib/libpng.so
 usr/lib/libpng.so.3
 usr/lib/libpng.so.3.1.2.8
 #usr/lib/libpng12.a
 #usr/lib/libpng12.so
 #usr/lib/libpng12.so.0
+#usr/lib/libpng12.so.0.12.0
 #usr/lib/libpng12.so.0.1.2.8
 #usr/lib/pkgconfig
 #usr/lib/pkgconfig/libpng.pc
@@ -24713,19 +24716,6 @@ usr/lib/perl5/site_perl/5.8.5/i386-linux/auto/Net/SSLeay/want_write.al
 ## vlan.1.9
 ##
 sbin/vconfig
-##
-## PARPORT & PRINTER modules
-##
-lib/modules/2.4.33/kernel/drivers/char/lp.o.gz
-lib/modules/2.4.33/kernel/drivers/char/parport_serial.o.gz
-lib/modules/2.4.33/kernel/drivers/char/ppdev.o.gz
-lib/modules/2.4.33/kernel/drivers/char/tipar.o.gz
-lib/modules/2.4.33/kernel/drivers/parport
-lib/modules/2.4.33/kernel/drivers/parport/parport.o.gz
-lib/modules/2.4.33/kernel/drivers/parport/parport_pc.o.gz
-lib/modules/2.4.33/kernel/drivers/scsi/imm.o.gz
-lib/modules/2.4.33/kernel/drivers/scsi/ppa.o.gz
-lib/modules/2.4.33/kernel/drivers/usb/printer.o.gz
 ##
 ## LINUX-PAM ++ pam_mysql
 ##

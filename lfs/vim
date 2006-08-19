@@ -36,7 +36,7 @@ VER        = 6.3
 
 THISAPP    = vim-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = ftp://ftp.vim.org/pub/vim/unix
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/vim63
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE) \
 	vim-6.3-security_fix-1.patch
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-vim-6.3-security_fix-1.patch = $(URL_LFS)/vim/vim-6.3-security_fix-1.patch
+vim-6.3-security_fix-1.patch = $(URL_IPFIRE)/vim-6.3-security_fix-1.patch
 
 $(DL_FILE)_MD5 = 821fda8f14d674346b87e3ef9cb96389
 vim-6.3-security_fix-1.patch_MD5 = ef9a421f1d29993ce5bbd709cece4624

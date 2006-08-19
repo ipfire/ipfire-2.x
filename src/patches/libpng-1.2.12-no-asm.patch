@@ -1,0 +1,62 @@
+backport from current 1.4 beta's to handle the bug where the
+PNG_NO_ASSEMBLER_CODE define is not exported properly
+
+http://bugs.gentoo.org/136346
+
+--- libpng-1.2.12/configure.ac
++++ libpng-1.2.12/configure.ac
+@@ -62,15 +62,12 @@
+ AC_TRY_COMPILE(
+   [#include "pnggccrd.c"],
+   [return 0;],
+-  LIBPNG_DEFINES=,
+-  LIBPNG_DEFINES=-DPNG_CONFIGURE_LIBPNG\ -DPNG_NO_ASSEMBLER_CODE)
+-if test "$LIBPNG_DEFINES"; then
+-    AC_MSG_RESULT(no)
+-else
+-    AC_MSG_RESULT(yes)
+-    LIBPNG_DEFINES=-DPNG_CONFIGURE_LIBPNG
+-fi
++  [LIBPNG_NO_ASSEMBLER=yes; LIBPNG_DEFINES=""],
++  [LIBPNG_NO_ASSEMBLER=no ; LIBPNG_DEFINES="-DPNG_NO_ASSEMBLER_CODE=1"])
++LIBPNG_DEFINES="$LIBPNG_DEFINES -DPNG_CONFIGURE_LIBPNG"
++AC_MSG_RESULT($LIBPNG_NO_ASSEMBLER)
+ AC_SUBST(LIBPNG_DEFINES)
++AM_CONDITIONAL(LIBPNG_NO_ASSEMBLER, test "x$LIBPNG_NO_ASSEMBLER" = "xno")
+ 
+ AC_MSG_CHECKING([if libraries can be versioned])
+ GLD=`$LD --help < /dev/null 2>/dev/null | grep version-script`
+--- libpng-1.2.12/Makefile.am
++++ libpng-1.2.12/Makefile.am
+@@ -87,6 +87,14 @@
+ 
+ CLEANFILES= pngout.png libpng12.pc libpng12-config libpng.vers libpng.sym
+
++pngconf.h: pngconf.h.in
++	sed "/Makefile-supplied defines go here:/q" pngconf.h.in > pngconf.h.tmp
++if LIBPNG_NO_ASSEMBLER
++	echo "#define PNG_NO_ASSEMBLER_CODE 1" >> pngconf.h.tmp
++endif
++	sed "1,/Makefile-supplied defines go here:/d" pngconf.h.in >> pngconf.h.tmp
++	mv pngconf.h.tmp pngconf.h
++
+ $(PNGLIB_BASENAME).pc: libpng.pc
+ 	cp libpng.pc $@
+ 
+--- libpng-1.2.12/pngconf.h
++++ libpng-1.2.12/pngconf.h
+@@ -19,6 +19,13 @@
+ 
+ #define PNG_1_2_X
+ 
++/* Backported no-assembler fix from libpng-1.4.0beta8 */
++
++/* Makefile-supplied defines go here: */
++/* End of Makefile-supplied defines. */
++
++/* End of backported no-assembler fix */
++
+ /* 
+  * PNG_USER_CONFIG has to be defined on the compiler command line. This
+  * includes the resource compiler for Windows DLL configurations.
+

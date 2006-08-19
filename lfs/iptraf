@@ -26,29 +26,25 @@
 
 include Config
 
-VER        = 2.5.STABLE14
+VER        = 3.0.0
 
-THISAPP    = squid-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = iptraf-$(VER)
+DL_FILE    = $(THISAPP).bin.i386.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = iptraf
+PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	$(THISAPP)-httpReplyDestroy.patch \
-	$(THISAPP)-hierarchy_tag.patch
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-httpReplyDestroy.patch = $(URL_IPFIRE)/$(THISAPP)-httpReplyDestroy.patch
-$(THISAPP)-hierarchy_tag.patch = $(URL_IPFIRE)/$(THISAPP)-hierarchy_tag.patch
 
-$(DL_FILE)_MD5 = f413e0b887a5f9b2a75350243ed5564c
-$(THISAPP)-httpReplyDestroy.patch_MD5 = 1529f8b0170e24b26353578778435bd4
-$(THISAPP)-hierarchy_tag.patch_MD5 = 9abe563ca3d01dc58502737edc6f3c60
+$(DL_FILE)_MD5 = 0b022f233731ca09a7c16d659c769dad
 
 install : $(TARGET)
 
@@ -57,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -77,39 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-httpReplyDestroy.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-hierarchy_tag.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-	   --datadir=/usr/lib/squid \
-	   --mandir=/usr/share/man --libexecdir=/usr/lib/squid \
-	   --localstatedir=/var --sysconfdir=/etc/squid \
-	   --disable-poll --disable-snmp --disable-icmp --disable-wccp \
-	   --disable-http-violations --disable-ident-lookups \
-	   --enable-storeio="aufs,coss,diskd,ufs" --enable-ssl \
-	   --enable-underscores --enable-ntlm-fail-open --enable-arp-acl \
-	   --enable-http-violations --enable-auth=basic,ntlm \
-	   --enable-removal-policies="heap,lru" \
-	   --enable-delay-pools --enable-linux-netfilter \
-	   --enable-basic-auth-helpers="NCSA,SMB,MSNT,LDAP,multi-domain-NTLM" \
-	   --enable-ntlm-auth-helpers="SMB" \
-	   --enable-useragent-log \
-	   --enable-referer-log \
-	   --with-pthreads --with-dl
-
-	cd $(DIR_APP) && make -j 3
-	cd $(DIR_APP) && make install
-
-	rm -f /etc/squid/squid.conf
-	ln -sf $(CONFIG_ROOT)/proxy/squid.conf /etc/squid/squid.conf
-	rm -f /etc/squid/errors
-	ln -sf /usr/lib/squid/errors/English /etc/squid/errors
-
-	-mkdir -p /var/log/cache
-	-mkdir -p /var/log/squid
-	touch /var/log/squid/access.log
-	chown -R squid:squid /var/log/squid /var/log/cache
-
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP).bin.i386/src && yes 'n' | make install TARGET=/usr/bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

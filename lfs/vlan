@@ -18,11 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-#     2005-jul  Gilles Espinasse                                              #
-#                                                                             #
-# $Id: vlan,v 1.1.2.3 2006/01/15 08:55:50 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -35,8 +30,7 @@ VER        = 1.9
 
 THISAPP    = vlan.$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-#DL_FROM    = http://www.candelatech.com/~greear/vlan
-DL_FROM    = http://fresh.t-systems-sfr.com/linux/src
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/vlan
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

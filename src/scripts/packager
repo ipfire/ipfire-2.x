@@ -24,7 +24,7 @@ else
 
 	cd /    && rm -rf /tmp/*
 	cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES
-	tar cfz ../$PROG-$VER-$PAK_VER.tar.gz files.tgz install.sh uninstall.sh ROOTFILES
+	tar cfz ../$PROG-${VER}_$PAK_VER.tar.gz files.tgz install.sh uninstall.sh ROOTFILES
 
 	cd /install/packages && md5sum $PROG*.tar.gz > $PROG-$VER-$PAK_VER.tar.gz.md5
 	cd /install/packages && md5sum $PROG*.tar.gz >> all-progs.md5

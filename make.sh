@@ -758,6 +758,8 @@ buildipcop() {
   ipcopmake etherwake
   ipcopmake ethereal
   ipcopmake tftp-hpa
+  ipcopmake subversion
+  ipcopmake iptraf
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
@@ -877,6 +879,7 @@ ipfirepackages() {
   ipfiredist cyrusimap
   ipfiredist fetchmail
   ipfiredist gnump3d
+  ipfiredist iptraf
   ipfiredist java
   ipfiredist lame
   ipfiredist libogg
@@ -894,6 +897,7 @@ ipfirepackages() {
   ipfiredist samba
   ipfiredist sox
   ipfiredist spamassassin
+  ipfiredist subversion
   ipfiredist web-cyradm
   ipfiredist xampp
 #  ipfiredist xinetd
