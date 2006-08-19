@@ -19603,7 +19603,6 @@ usr/lib/libpcap.so.0.8
 ##
 #usr/bin/libpng-config
 #usr/bin/libpng12-config
-#usr/include/libpng
 #usr/include/libpng12
 #usr/include/libpng12/png.h
 #usr/include/libpng12/pngconf.h
@@ -19611,16 +19610,11 @@ usr/lib/libpcap.so.0.8
 #usr/include/pngconf.h
 #usr/lib/libpng.a
 #usr/lib/libpng.la
-#usr/lib/libpng12.la
 usr/lib/libpng.so
-usr/lib/libpng.so.3
-usr/lib/libpng.so.3.1.2.8
-#usr/lib/libpng12.a
+#usr/lib/libpng12.la
 #usr/lib/libpng12.so
 #usr/lib/libpng12.so.0
 #usr/lib/libpng12.so.0.12.0
-#usr/lib/libpng12.so.0.1.2.8
-#usr/lib/pkgconfig
 #usr/lib/pkgconfig/libpng.pc
 #usr/lib/pkgconfig/libpng12.pc
 #usr/share/man/man3/libpng.3

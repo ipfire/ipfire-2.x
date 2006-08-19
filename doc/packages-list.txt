@@ -54,7 +54,7 @@
   * cftp-0.12
   * clamav-0.88.4
   * coreutils-5.93
-  * cups-1.1.23-source
+  * cups-1.2.2-source
   * cxacru-2003-10-05
   * cyrus-imapd-2.2.12
   * cyrus-sasl-2.1.21
@@ -112,9 +112,14 @@
   * inetutils-1.4.2
   * ipac-ng-1.31
   * ipaddr-1.2
-  * ipfire-logs-2006-08-18-15:38.tgz
-  * ipfire-logs-2006-08-18-15:42.tgz
-  * ipfire-logs-2006-08-18-23:26.tgz
+  * ipfire-logs-2006-08-19-14:02.tgz
+  * ipfire-logs-2006-08-19-17:47.tgz
+  * ipfire-logs-2006-08-19-17:54.tgz
+  * ipfire-logs-2006-08-19-18:34.tgz
+  * ipfire-logs-2006-08-19-19:00.tgz
+  * ipfire-logs-2006-08-19-21:02.tgz
+  * ipfire-logs-2006-08-19-21:11.tgz
+  * ipfire-logs-2006-08-19-21:21.tgz
   * iproute2-2.4.7-now-ss010824
   * iptables-1.3.5
   * iptraf-3.0.0
@@ -135,7 +140,7 @@
   * libogg-1.1.3
   * libpcap-0.8.3
   * libpng-1.2.12
-  * libpng-1.2.8
+  * libpng-1.2.12_fix
   * libpri-1.2.3
   * libsafe_2.0-16
   * libtool-1.5.6
@@ -216,7 +221,6 @@
   * spandsp-0.0.2pre25
   * speedtouch-1.2
   * squid-2.5.STABLE14
-  * squid-2.5.STABLE14_fix
   * squid-graph-3.1
   * squidGuard-1.2.0
   * startscripts

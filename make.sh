@@ -1181,10 +1181,16 @@ svn)
 	  ;;
 	  commit|ci)
 		clear
-		#$0 changelog
-		#echo "Upload the changed files..."
+		if [ -e /sbin/yast ]; then
+			$0 changelog
+		fi
+		echo "Upload the changed files..."
 		sleep 1
-		svn commit
+		IPFIRE_SVN_MESSAGE=/tmp/ipfire-svn-co-message.txt
+		rm -f $IPFIRE_SVN_MESSAGE
+		mcedit $IPFIRE_SVN_MESSAGE
+		svn commit -F $IPFIRE_SVN_MESSAGE
+		rm -f $IPFIRE_SVN_MESSAGE
 		$0 svn up
 	  ;;
 	  dist)
