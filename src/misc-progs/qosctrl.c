@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 
 	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\nqosctrl (start|clear|status)\n\n");
+		fprintf(stderr, "\nNo argument given.\n\nqosctrl (start|stop|restart|status)\n\n");
 		exit(1);
 	}
 
@@ -38,12 +38,14 @@ int main(int argc, char *argv[]) {
 			{
 				safe_system("/var/ipfire/qos/bin/qos.sh start");
 			}	
-		} else if (strcmp(argv[1], "clear") == 0) {
+		} else if (strcmp(argv[1], "stop") == 0) {
 			safe_system("/var/ipfire/qos/bin/qos.sh clear");
 		} else if (strcmp(argv[1], "status") == 0) {
 			safe_system("/var/ipfire/qos/bin/qos.sh status");
+		} else if (strcmp(argv[1], "restart") == 0) {
+			safe_system("/var/ipfire/qos/bin/qos.sh restart");
 		} else {
-			fprintf(stderr, "\nBad argument given.\n\nqosctrl (start|clear|status)\n\n");
+			fprintf(stderr, "\nBad argument given.\n\nqosctrl (start|stop|restart|status)\n\n");
 			exit(1);
 		}
 

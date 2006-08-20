@@ -352,6 +352,20 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'save'})
 	}
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 }
+elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
+{
+	&Header::openbox('100%', 'left', 'QoS Status');
+	if ($qossettings{'ENABLED'} eq 'on'){
+		my $output = "";
+		$output = `/usr/local/bin/qosctrl status`;
+		$output = &Header::cleanhtml($output,"y");
+		print "<pre>$output</pre>\n";
+	} else { print "QoS ist nicht aktiviert!"; }
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit
+}
 elsif ($qossettings{'ACTION'} eq 'Parentklasse hinzufuegen')
 {
 	&parentclass();
@@ -460,7 +474,7 @@ END
 		<tr><td width='40%' align='right'>Uploadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr>
-		<tr><td colspan='3' width='100%' align='center'><input type='submit' name='ACTION' value='Parentklasse hinzufuegen'><input type='submit' name='ACTION' value='Erweiterte Einstellungen'>
+		<tr><td colspan='3' width='100%' align='center'><input type='submit' name='ACTION' value='Parentklasse hinzufuegen'><input type='submit' name='ACTION' value='Erweiterte Einstellungen'><input type='submit' name='ACTION' value='Statusinformationen'>
 	</form>
 END
 ;

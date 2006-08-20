@@ -19612,9 +19612,9 @@ usr/lib/libpcap.so.0.8
 #usr/lib/libpng.la
 usr/lib/libpng.so
 #usr/lib/libpng12.la
-#usr/lib/libpng12.so
-#usr/lib/libpng12.so.0
-#usr/lib/libpng12.so.0.12.0
+usr/lib/libpng12.so
+usr/lib/libpng12.so.0
+usr/lib/libpng12.so.0.12.0
 #usr/lib/pkgconfig/libpng.pc
 #usr/lib/pkgconfig/libpng12.pc
 #usr/share/man/man3/libpng.3
@@ -22575,6 +22575,7 @@ usr/local/bin/ipsecctrl
 usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
 usr/local/bin/openvpnctrl
+usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/restartdhcp
 usr/local/bin/restartntpd

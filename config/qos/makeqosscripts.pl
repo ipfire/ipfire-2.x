@@ -169,22 +169,24 @@ foreach $classentry (sort @classes)
 }
 foreach $subclassentry (sort @subclasses) {
 	@subclassline = split( /\;/, $subclassentry );
-	$qossettings{'DEVICE'} = $subclassline[0];
-	$qossettings{'CLASS'} = $subclassline[1];
-	$qossettings{'SCLASS'} = $subclassline[2];
-	$qossettings{'SPRIO'} = $subclassline[3];
-	$qossettings{'SRATE'} = $subclassline[4];
-	$qossettings{'SCEIL'} = $subclassline[5];
-	$qossettings{'SBURST'} = $subclassline[6];
-	$qossettings{'SCBURST'} = $subclassline[7];
-	print "\ttc class add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} classid 1:$qossettings{'SCLASS'} htb rate $qossettings{'SRATE'}kbit ceil $qossettings{'SCEIL'}kbit prio $qossettings{'SPRIO'} ";
-	if ($qossettings{'SBURST'} > 0) {
-		print "burst $qossettings{'SBURST'}k ";
+	if ($qossettings{'RED_DEV'} eq $subclassline[0]) {
+		$qossettings{'DEVICE'} = $subclassline[0];
+		$qossettings{'CLASS'} = $subclassline[1];
+		$qossettings{'SCLASS'} = $subclassline[2];
+		$qossettings{'SPRIO'} = $subclassline[3];
+		$qossettings{'SRATE'} = $subclassline[4];
+		$qossettings{'SCEIL'} = $subclassline[5];
+		$qossettings{'SBURST'} = $subclassline[6];
+		$qossettings{'SCBURST'} = $subclassline[7];
+		print "\ttc class add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} classid 1:$qossettings{'SCLASS'} htb rate $qossettings{'SRATE'}kbit ceil $qossettings{'SCEIL'}kbit prio $qossettings{'SPRIO'} ";
+		if ($qossettings{'SBURST'} > 0) {
+			print "burst $qossettings{'SBURST'}k ";
+		}
+		if (($qossettings{'SCBURST'} ne '') && ($qossettings{'SCBURST'} ne 0)) {
+			print "cburst $qossettings{'CBURST'}k";
+		}
+		print "\n";
 	}
-	if (($qossettings{'SCBURST'} ne '') && ($qossettings{'SCBURST'} ne 0)) {
-		print "cburst $qossettings{'CBURST'}k";
-	}
-	print "\n";
 }
 
 print "\n\t### ATTACH QDISC TO LEAF CLASSES\n";
@@ -221,7 +223,7 @@ foreach $subclassentry (sort @subclasses) {
 		$qossettings{'DEVICE'} = $subclassline[0];
 		$qossettings{'CLASS'} = $subclassline[1];
 		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc filter add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} prio 0 protocol ip handle $qossettings{'SCLASS'} fw flowid 1:$qossettings{'SCLASS'}\n";
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 1:0 prio 0 protocol ip handle $qossettings{'SCLASS'} fw flowid 1:$qossettings{'SCLASS'}\n";
 	}
 }
 print <<END
@@ -453,7 +455,7 @@ foreach $subclassentry (sort @subclasses) {
 		$qossettings{'DEVICE'} = $subclassline[0];
 		$qossettings{'CLASS'} = $subclassline[1];
 		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc filter add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} prio 0 protocol ip handle $qossettings{'SCLASS'} fw flowid 2:$qossettings{'SCLASS'}\n";
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 2:0 prio 0 protocol ip handle $qossettings{'SCLASS'} fw flowid 2:$qossettings{'SCLASS'}\n";
 	}
 }
 print <<END
@@ -593,4 +595,3 @@ END
 
 ############################################################################################################################
 ############################################################################################################################
-

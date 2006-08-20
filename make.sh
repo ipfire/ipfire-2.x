@@ -1558,7 +1558,8 @@ unattended)
 	fi
 
 	echo "### MAKING SOURCES-ISO"
-	$0 sources-iso
+	echo "DISABLED by Delaco!"
+	#$0 sources-iso
 
 	echo "### UPLOADING ISO"
 	$0 upload iso
