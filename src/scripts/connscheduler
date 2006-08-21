@@ -210,5 +210,19 @@ sub timer
       &General::log("ConnSched shutdown");
     	system ("/usr/local/bin/ipfirereboot", "down");
     }
+    elsif ( $CONNSCHED::config[$i]{'ACTION'} eq 'ipsecstart' )
+    {
+      &General::log("ConnSched ipsecstart");
+       system ("/usr/local/bin/ipsecctrl", "S");
+    }
+    elsif ( $CONNSCHED::config[$i]{'ACTION'} eq 'ipsecstop' )
+    {
+      &General::log("ConnSched ipsecstop");
+       system ("/usr/local/bin/ipsecctrl", "D");
+    }
+    else
+    {
+      # okay ? an event we don't know about
+    }
   }
 }

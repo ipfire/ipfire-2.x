@@ -4,19 +4,24 @@
 #
 # This code is distributed under the terms of the GPL
 #
+#
+# 2006-04-xx created by weizen_42 at ipcop-forum dot de
+# 2006-06-xx added reboot and shutdown
+# 2006-08-20 added ipsecctrl
+#
 
 
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-require '/var/ipfire/connscheduler/lib.pl';
+require '/var/ipcop/connscheduler/lib.pl';
 
 my $buttontext = $Lang::tr{'add'};
 my $hiddenvalue = 'add';
@@ -40,6 +45,8 @@ $selected{'dial'} = '';
 $selected{'hangup'} = '';
 $selected{'reboot'} = '';
 $selected{'shutdown'} = '';
+$selected{'ipsecstart'} = '';
+$selected{'ipsecstop'} = '';
 my $selected_profile = 1;
 my $checked_days = "checked='checked'";
 my $selected_daystart = 1;
@@ -249,13 +256,13 @@ if ( ($cgiparams{'ACTION'} eq 'down') || ($cgiparams{'ACTION'} eq 'up') )
 # Add / Edit Box
 #
 
-&Header::openbox('100%', 'left', $Lang::tr{'add action'});
+&Header::openbox('100%', 'left', $Lang::tr{'ConnSched add action'});
 
 print <<END
 <form method='post' name='addevent' action='$ENV{'SCRIPT_NAME'}'>
 <table width='100%' border='0' cellspacing='6' cellpadding='0'>
 <tr>
-<td width='15%' class='base'>$Lang::tr{'connscheduler time'}</td>
+<td width='15%' class='base'>$Lang::tr{'ConnSched time'}</td>
 <td><select name='ACTION_HOUR'>
 END
 ;
@@ -288,16 +295,18 @@ for ($minute = 0; $minute <= 55; $minute += 5)
 print <<END
 </select></td></tr>
 <tr><td colspan='2'><hr /></td></tr>
-<tr><td width='15%' class='base'>$Lang::tr{'connscheduler action'}</td><td>
+<tr><td width='15%' class='base'>$Lang::tr{'ConnSched action'}</td><td>
 <input type='radio' value='CONNECT' name='ACTION_ACTION' $checked_connect />&nbsp;<select name='ACTION_CONNECT'>
-<option value='reconnect' $selected{'reconnect'}>$Lang::tr{'reconnect'}</option>
+<option value='reconnect' $selected{'reconnect'}>$Lang::tr{'ConnSched reconnect'}</option>
 <option value='dial' $selected{'dial'}>$Lang::tr{'dial'}</option>
 <option value='hangup' $selected{'hangup'}>$Lang::tr{'hangup'}</option>
 <option value='reboot' $selected{'reboot'}>$Lang::tr{'reboot'}</option>
 <option value='shutdown' $selected{'shutdown'}>$Lang::tr{'shutdown'}</option>
+<option value='ipsecstart' $selected{'ipsecstart'}>$Lang::tr{'ConnSched ipsecstart'}</option>
+<option value='ipsecstop' $selected{'ipsecstop'}>$Lang::tr{'ConnSched ipsecstop'}</option>
 </select></td></tr>
 <tr><td width='15%' class='base'>&nbsp;</td>
-<td><input type='radio' value='PROFILE' name='ACTION_ACTION' $checked_profile />&nbsp;$Lang::tr{'change profile title'}&nbsp;<select name='ACTION_PROFILENR'>
+<td><input type='radio' value='PROFILE' name='ACTION_ACTION' $checked_profile />&nbsp;$Lang::tr{'ConnSched change profile title'}&nbsp;<select name='ACTION_PROFILENR'>
 END
 ;
 for ($i = 1; $i <= $CONNSCHED::maxprofiles; $i++)
@@ -314,7 +323,7 @@ for ($i = 1; $i <= $CONNSCHED::maxprofiles; $i++)
 print <<END
 </select></td></tr>
 <tr><td colspan='2'><hr /></td></tr>
-<tr><td width='15%' class='base'>$Lang::tr{'connscheduler days'}</td>
+<tr><td width='15%' class='base'>$Lang::tr{'ConnSched days'}</td>
 <td><input type='radio' value='DAYS' name='ACTION_DAYSTYPE' $checked_days />&nbsp;<select name='ACTION_DAYSTART'>
 END
 ;
@@ -344,7 +353,7 @@ for ($day = 1; $day <= 31; $day++)
 
 print <<END
 </select></td></tr>
-<tr><td width='15%' class='base'>&nbsp;</td><td><input type='radio' value='WEEKDAYS' name='ACTION_DAYSTYPE' $checked_weekdays />&nbsp;$Lang::tr{'connsched weekdays'}<br />
+<tr><td width='15%' class='base'>&nbsp;</td><td><input type='radio' value='WEEKDAYS' name='ACTION_DAYSTYPE' $checked_weekdays />&nbsp;$Lang::tr{'ConnSched weekdays'}<br />
 &nbsp;&nbsp;<input type='checkbox' name='Mon' $checked_mon />$Lang::tr{'monday'}<br />
 &nbsp;&nbsp;<input type='checkbox' name='Tue' $checked_tue />$Lang::tr{'tuesday'}<br />
 &nbsp;&nbsp;<input type='checkbox' name='Wed' $checked_wed />$Lang::tr{'wednesday'}<br />
@@ -375,7 +384,7 @@ END
 # Box with List of events
 #
 
-&Header::openbox('100%', 'left', $Lang::tr{'scheduled actions'});
+&Header::openbox('100%', 'left', $Lang::tr{'ConnSched scheduled actions'});
 print <<END
 <table width='100%' border='0' cellspacing='1' cellpadding='0'>
 <tr>
@@ -407,7 +416,7 @@ for my $id ( 0 .. $#CONNSCHED::config )
 print <<END
 $trcolor
 <td align='center'>$CONNSCHED::config[$id]{'TIME'}</td>
-<td>$Lang::tr{"$CONNSCHED::config[$id]{'ACTION'}"}&nbsp;$CONNSCHED::config[$id]{'PROFILENR'}</td>
+<td>$Lang::tr{"ConnSched $CONNSCHED::config[$id]{'ACTION'}"}&nbsp;$CONNSCHED::config[$id]{'PROFILENR'}</td>
 <td>$CONNSCHED::config[$id]{'COMMENT'}</td>
 <td align='center'>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
@@ -433,14 +442,14 @@ $trcolor
 <td align='center'>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='up' />
-  <input type='image' name='$Lang::tr{'up'}' src='/images/up.gif' alt='$Lang::tr{'up'}' title='$Lang::tr{'up'}' />
+  <input type='image' name='$Lang::tr{'up'}' src='/images/up.gif' alt='$Lang::tr{'ConnSched up'}' title='$Lang::tr{'ConnSched up'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>
 <td align='center'>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='down' />
-  <input type='image' name='$Lang::tr{'down'}' src='/images/down.gif' alt='$Lang::tr{'down'}' title='$Lang::tr{'down'}' />
+  <input type='image' name='$Lang::tr{'down'}' src='/images/down.gif' alt='$Lang::tr{'ConnSched down'}' title='$Lang::tr{'ConnSched down'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>

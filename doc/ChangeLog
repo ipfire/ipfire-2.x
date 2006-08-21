@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------
+r253 | ms | 2006-08-20 22:12:57 +0200 (Sun, 20 Aug 2006) | 5 lines
+
+Fixes:
+  * libPNG12 fehlte für makegraphs
+  * md5sums erhielten den falschen Namen (ohne Unterstrich)
+Geändert:
+  * QoS leicht erweitert.
+------------------------------------------------------------------------
 r252 | ms | 2006-08-19 22:26:47 +0200 (Sat, 19 Aug 2006) | 2 lines
 
 Geaendert:
