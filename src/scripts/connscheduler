@@ -3,13 +3,14 @@
 # IPFire Connection Scheduler (F)Cron Job
 #
 # This code is distributed under the terms of the GPL
+# The original code is taken from weizen_42.
+# See /home/httpd/cgi-bin/connscheduler.cgi
 #
 
 use strict;
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/connscheduler/lib.pl';
-
 
 # seems to be necessary
 my $sleep_after_profile = 5;

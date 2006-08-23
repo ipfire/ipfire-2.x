@@ -1,4 +1,11 @@
 ------------------------------------------------------------------------
+r255 | ms | 2006-08-23 21:19:22 +0200 (Wed, 23 Aug 2006) | 4 lines
+
+Update:
+  * QoS ist funktionsfig (hoffentlich).
+  * "Aktualisieren" aus Log entfernt.
+  * In der header.pl aufgeraeumt.
+------------------------------------------------------------------------
 r254 | ms | 2006-08-21 21:15:32 +0200 (Mon, 21 Aug 2006) | 4 lines
 
 Programmupdate:

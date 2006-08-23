@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 #
+# IPFire CGI
+# based on:
+#
 # IPCop Connection Scheduler Web-Iface
 #
 # This code is distributed under the terms of the GPL
-#
 #
 # 2006-04-xx created by weizen_42 at ipcop-forum dot de
 # 2006-06-xx added reboot and shutdown

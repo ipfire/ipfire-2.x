@@ -1,6 +1,9 @@
 #!/usr/bin/perl
 #
 # IPFire WakeOnLan-AddOn CGI
+# This code is based on the wol-gui addon
+# for ipcop written by weizen_42.
+# http://www.ban-solms.de/t/IPCop-wolgui.html
 #
 # This code is distributed under the terms of the GPL
 #

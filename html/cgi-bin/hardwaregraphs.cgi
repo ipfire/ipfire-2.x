@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #
-# SmoothWall CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# (c) The SmoothWall Team
+# This code is based on hddGraph and mbmongraph
+# written by weizen_42 and distributed under the
+# terms of the GPLv2.
+# http://www.ban-solms.de/t/IPCop-mbmongraph.html
+# http://www.ban-solms.de/t/IPCop-hddgraph.html
 #
 
 use strict;
