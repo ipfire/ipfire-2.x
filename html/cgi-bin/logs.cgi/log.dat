@@ -59,8 +59,7 @@ my %sections = (
         'kernel' => '(kernel)',
         'ipsec' => '(ipsec_[\w_]+|pluto\[.*\])',
         'snort' => '(snort)',
-        'openvpn' => '(openvpnserver)\[.*\]',
-        'installpackage' => '(installpackage\[.*\])'
+        'openvpn' => '(openvpnserver)\[.*\]'
 	 );
 
 # Translations for the %sections array.
@@ -76,8 +75,7 @@ my %trsections = (
         'kernel' => "$Lang::tr{'kernel'}",
         'ipsec' => 'IPSec',
         'openvpn' => 'OpenVPN',
-        'snort' => 'Snort',
-        'installpackage' => "$Lang::tr{'update transcript'}"	
+        'snort' => 'Snort'
 	);
 
 

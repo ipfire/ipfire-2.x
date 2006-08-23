@@ -1194,7 +1194,7 @@ svn)
 		$0 svn up
 	  ;;
 	  dist)
-		$0 svn up
+		#$0 svn up
 		echo -ne "Download source package from svn..."
 		svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
 		if [ "$?" -eq "0" ]; then

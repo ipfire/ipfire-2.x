@@ -88,11 +88,12 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
 };
 
 ### Read IPFire Buildversion
-$FIREBUILD = "Datei firebuild nicht gefunden\n";
+$FIREBUILD = "File not found: firebuild\n";
 if (open(MYFile, "<${swroot}/firebuild")) {
     $FIREBUILD = <MYFile>;
+    chomp($FIREBUILD);
     $FIREBUILD = "(Build: $FIREBUILD)";
-    close(_File);
+    close(MYFile);
 };
 
 require "${swroot}/langs/en.pl";
@@ -819,12 +820,6 @@ END
     ;
     
     &showsubsubsection($menu);
-
-    eval {
-	require 'ipfire-network.pl';
-	$supported = check_support();
-	warn_unsupported($supported);
-    };
 }
 
 sub openpagewithoutmenu {

@@ -26,28 +26,27 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-
-		if (strcmp(argv[1], "start") == 0) {
-       		 if ((fd = open("/var/ipfire/qos/enable", O_RDONLY)) != -1)
-			{
-				close(fd);
-				enable = 1;
-			}
-
-			if (enable)
-			{
-				safe_system("/var/ipfire/qos/bin/qos.sh start");
-			}	
-		} else if (strcmp(argv[1], "stop") == 0) {
-			safe_system("/var/ipfire/qos/bin/qos.sh clear");
-		} else if (strcmp(argv[1], "status") == 0) {
-			safe_system("/var/ipfire/qos/bin/qos.sh status");
-		} else if (strcmp(argv[1], "restart") == 0) {
-			safe_system("/var/ipfire/qos/bin/qos.sh restart");
-		} else {
-			fprintf(stderr, "\nBad argument given.\n\nqosctrl (start|stop|restart|status)\n\n");
-			exit(1);
+	safe_system("chmod 755 /var/ipfire/qos/bin/qos.sh");
+	if (strcmp(argv[1], "start") == 0) {
+      		 if ((fd = open("/var/ipfire/qos/bin/qos.sh", O_RDONLY)) != -1)
+		{
+			close(fd);
+			enable = 1;
 		}
+			if (enable)
+		{
+			safe_system("/var/ipfire/qos/bin/qos.sh start");
+		}	
+	} else if (strcmp(argv[1], "stop") == 0) {
+		safe_system("/var/ipfire/qos/bin/qos.sh clear");
+	} else if (strcmp(argv[1], "status") == 0) {
+		safe_system("/var/ipfire/qos/bin/qos.sh status");
+	} else if (strcmp(argv[1], "restart") == 0) {
+		safe_system("/var/ipfire/qos/bin/qos.sh restart");
+	} else {
+		fprintf(stderr, "\nBad argument given.\n\nqosctrl (start|stop|restart|status)\n\n");
+		exit(1);
+	}
 
 	return 0;
 }

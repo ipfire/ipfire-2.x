@@ -1359,6 +1359,7 @@ usr/local/bin/httpscert
 usr/local/bin/hddshutdown
 usr/local/bin/hddshutdown-state
 usr/local/bin/makegraphs
+usr/local/bin/qosd
 usr/local/bin/readhash
 usr/local/bin/setddns.pl
 usr/local/bin/setreservedports

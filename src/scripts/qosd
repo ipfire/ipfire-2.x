@@ -1,0 +1,116 @@
+#!/usr/bin/perl -w 
+use strict;
+
+##########################################
+##
+## DESCRIPTION
+##
+##   The tc-graph daemon script: "tc-collector"
+##   Which is part of the ADSL-optimizer.
+##
+##   The script will become a daemon and periodically collect data
+##   from the Linux traffic control system.  The collected data is
+##   stored in some RRD-data files, which is created automatically by
+##   the script if they don't exist.
+##
+## GRAPHs
+##
+##   How the RRD-data is displayed as graphs is not part of the
+##   tc-collector tool.  But we recommend using the RRD-frontend 'ddraw'.
+##   We have included some 'ddraw' examples (which is hardcoded to use
+##   files from '/var/spool/rrdqueues').
+##
+##      drraw:  http://web.taranis.org/drraw/
+##
+##
+## REQUIRES
+##
+##   RRDtools Perl interface RRDs
+##   The "tc" command.
+##
+##
+## AUTHOR
+##   Jesper Dangaard Brouer <hawk@diku.dk>, d.16/4-2004
+##
+## CHANGELOG
+##   2004-04-16:  Initial version.
+##   2004-05-27:  Daemon version.
+##
+## $Id: tc-collector.pl,v 1.12 2005/03/19 19:31:08 hawk Exp $
+##########################################
+
+# TODO:
+#  * Calc time used to parse, use to make time steps more precise
+#  * Device list support
+#  * Detecting the correct devices
+
+# Configuration options:
+#
+my  $device        = "imq0";
+our $rrd_datadir   = "/var/log/rrd";
+our $event_datadir = $rrd_datadir;
+our $STEP          = 10;
+our $tc_command    = "/sbin/tc";
+
+# A trick is to set the environment PERL5LIB to include $GRAPHDIR
+#  This is done by the init-script
+# ($GRAPHDIR is obtained from /usr/local/etc/ADSL-optimizer.conf)
+my $include_dir = '/var/ipfire/qos/bin';
+
+
+# Create the $rrd_datadir if it doesn't exists
+if ( ! -d $rrd_datadir ) {
+    print "RRD-datadir not found, creating it: $rrd_datadir \n";
+    my $status = system("mkdir $rrd_datadir");
+    die "\nERROR cannot create \"$rrd_datadir\"\n" unless $status == 0;
+}
+
+# use POSIX;
+#
+#POSIX::setsid() 
+#    or die "Can't become a daemon: $!";
+
+# The init scripts will do the right "daemon" thing...
+# Become a daemon  
+print "Becoming a daemon...\n";
+my $pid = fork;
+exit if $pid;
+die "Couldn't fork: $!" unless defined($pid);
+
+my $time_to_die = 0;
+sub signal_handler {
+    $time_to_die = 1;
+}
+# Trap signals
+$SIG{INT} = $SIG{TERM} = $SIG{HUP} = \&signal_handler;
+$SIG{PIPE} = 'IGNORE';
+
+our %classes_data;
+our %classes_info;
+require "$include_dir/parse-func.pl";
+require "$include_dir/event-func.pl";
+require "$include_dir/RRD-func.pl";
+
+until ($time_to_die) {
+
+    #print "Parsing tc statistics on $device\n";
+    my $res = parse_class($device);
+    if ( ! $res ) {
+	print " Error when parsing classes on $device\n";
+    }
+
+    #print "Updating RRD data-files\n";
+    $res = update_rrds();
+    #if ( $res ) {
+    #	print " Error updating RRDs: \"$res\"\n";
+    #}
+    
+    process_events();
+
+#    my $timestamp = time;
+#    print "$timestamp\n";
+   
+    sleep($STEP);
+}
+
+print "tc-collector daemon exiting ... bye bye!\n";
