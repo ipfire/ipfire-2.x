@@ -1,24 +1,27 @@
+#!/bin/bash
 ############################################################################################
 # Version 0.1a, Copyright (C) 2006  by IPFire.org						  #
 # IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
 ############################################################################################
 
-get_mirror() {
+install_pak() {
 
-cd $PAKHOME/cache
+cd $CACHE_DIR
 
-if [ -e $PAKHOME/cache/$SERVERS_LIST ]
- then rm -f $PAKHOME/cache/$SERVERS_LIST
-fi
+. $DB_DIR/$1
+FILE="$1-${VER}_${IPFVER}.tar.gz"
 
-if /usr/bin/wget -q $H_MIRROR >/dev/null 2>&1
- then
-  cd -
-  return 0
- else
-  cd -
-  return 1
-fi
+pakfire_logger "Unpaking $FILE..."
+mkdir $TMP_DIR/$1
+tar xfz $CACHE_DIR/$FILE -C $TMP_DIR/$1
+
+$PAKHOME/lib/resolv_deps.sh $TMP_DIR/$1/$DEPS
+
+cd $TMP_DIR/$1
+$TMP_DIR/$1/$INSTALL
+
+cp -f ROOTFILES $IP_DIR/$1
 
 }
+
 ################################### EOF ####################################################

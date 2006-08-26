@@ -23,7 +23,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-require '/var/ipcop/connscheduler/lib.pl';
+require '/var/ipfire/connscheduler/lib.pl';
 
 my $buttontext = $Lang::tr{'add'};
 my $hiddenvalue = 'add';

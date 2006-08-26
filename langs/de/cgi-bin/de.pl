@@ -1474,6 +1474,7 @@
 'urlfilter export error' => 'Kann Exportdatei nicht erstellen',
 'urlfilter update notification' => 'Update-Benachrichtigung!',
 'urlfilter update information' => 'Eine aktualisierte Version steht zum Download bereit. Besuchen Sie <a href="http://www.urlfilter.net" target="_blank">http://www.urlfilter.net</a> für weitere Informationen.',
+'urlfilter logs' => 'URL-Filter-Logdateien',
 'display webinterface effects' => 'Überblendeffekte einschalten',
 'outgoing firewall' => 'Ausgehende Firewall',
 'mbmon graphs' => 'mbmon-Diagramme',

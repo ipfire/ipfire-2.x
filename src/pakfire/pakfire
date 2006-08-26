@@ -5,27 +5,31 @@
 ############################################################################################
 
 . /etc/pakfire.conf
-. $PAKHOME/lib/get_mirror.sh
-. $PAKHOME/lib/get_list.sh
-. $PAKHOME/lib/check_pak.sh
-. $PAKHOME/lib/get_upgrade.sh
-. $PAKHOME/lib/get_base.sh
-. $PAKHOME/lib/get_pak.sh
 
 case "$1" in
 	update)
+			. $PAKHOME/lib/get_mirror.sh
+			. $PAKHOME/lib/get_list.sh
+			. $PAKHOME/lib/check_pak.sh
 			get_mirror
 			get_list
 			check_pak
 	;;
 
 	upgrade)
+			. $PAKHOME/lib/get_upgrade.sh
+			. $PAKHOME/lib/get_base.sh
 			get_upgrade
 			get_base
 	;;
 
 	install)
+		. $PAKHOME/lib/get_pak.sh
+		. $PAKHOME/lib/install_pak.sh
 		case "$2" in
+			"")
+				pakfire_logger "No package name given. Exiting..."
+			;;
 			BASE-*)
 				echo $2
 			;;
@@ -35,6 +39,8 @@ case "$1" in
 						pakfire_logger "$2 is already installed on this system."
 					else
 						get_pak $2
+						install_pak $2
+						rm -rf $TMP_DIR/*
 					fi
 				else
 					pakfire_logger "There is no paket with this name: $2"
@@ -43,6 +49,9 @@ case "$1" in
 		esac
 	;;
 
+	clean)
+		rm -rf $CACHE_DIR/* $TMP_DIR/* $DB_DIR/*
+	;;
 	*)
 		echo -e "IPFire - Pakfire $PAKVER:"
 		echo -e "===\t===\t===\t===\t===\t===\t===\t==="

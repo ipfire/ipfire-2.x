@@ -6,31 +6,38 @@
 
 get_pak() {
 
-# Alle URLs durcharbeiten bis erste per ping erreichbar erreichbar
 URL=$(. $HOST_TEST "$PURL")
 
-# Falls URL nicht gesetzt wurde abbruch des Scripts
 if [ -z $URL ]
- then pakfire_logger "Kann keinen Patchserver finden"
+ then pakfire_logger "Cannot find a mirror."
   exit 1
 fi
-
-# Verzeichnis in Zielverzeichnis wechseln für Download
-cd $CACHE_DIR
 
 . $DB_DIR/$1
 
 FILE="$1-${VER}_${IPFVER}.tar.gz"
 
-# Paket Downloaden
-if /usr/bin/wget $URL/packages/$FILE{,.md5} >> $LOG 2>&1
- then
-  cd -
-  exit 0
- else
-  cd -
-  pakfire_logger "Cannot download $URL/packages/$FILE"
-  exit 1
+if [ ! -f $CACHE_DIR/$FILE ]; then
+  cd /var/tmp
+  pakfire_logger "Downloading $FILE from $URL..."
+  if /usr/bin/wget $URL/packages/$FILE{,.md5} >> $LOG 2>&1
+   then
+      if [ "`md5sum $FILE`" = "`cat ${FILE}.md5`" ]; then
+      mv -f /var/tmp/$FILE{,.md5} $CACHE_DIR
+      pakfire_logger "MD5 sum OK!"
+    else
+      pakfire_logger "Wrong MD5 sum in $FILE."
+      rm -f /var/tmp/$FILE{,.md5}
+      exit 1
+    fi
+    cd -
+   else
+    cd -
+    pakfire_logger "Cannot download $URL/packages/$FILE"
+    exit 1
+  fi
+else
+  pakfire_logger "No need to download $FILE."
 fi
 
 }

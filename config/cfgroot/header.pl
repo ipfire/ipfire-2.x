@@ -257,9 +257,9 @@ sub genmenu {
 				 'enabled' => 1,
 				 };
     $subnetwork->{'50.scheduler'} = {
-				 'caption' => $tr{'scheduler'},
+				 'caption' => $tr{'connscheduler'},
 				 'uri' => '/cgi-bin/connscheduler.cgi',
-				 'title' => "$tr{'scheduler'}",
+				 'title' => "$tr{'connscheduler'}",
 				 'enabled' => 1,
 				 };
     $subnetwork->{'60.hosts'} = {
@@ -396,7 +396,7 @@ sub genmenu {
 				'enabled' => 1
 				};
     $sublogs->{'60.urlfilter'} = {
-				'caption' => $tr{'urlfilter log'},
+				'caption' => $tr{'urlfilter logs'},
 				'uri' => '/cgi-bin/logs.cgi/urlfilter.dat',
 				'title' => "$tr{'urlfilter log'}",
 				'enabled' => 1,

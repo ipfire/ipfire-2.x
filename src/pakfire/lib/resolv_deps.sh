@@ -1,24 +1,16 @@
+#!/bin/bash
 ############################################################################################
 # Version 0.1a, Copyright (C) 2006  by IPFire.org						  #
 # IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
 ############################################################################################
 
-get_mirror() {
+. /etc/pakfire.conf
 
-cd $PAKHOME/cache
-
-if [ -e $PAKHOME/cache/$SERVERS_LIST ]
- then rm -f $PAKHOME/cache/$SERVERS_LIST
-fi
-
-if /usr/bin/wget -q $H_MIRROR >/dev/null 2>&1
- then
-  cd -
-  return 0
- else
-  cd -
-  return 1
-fi
-
-}
-################################### EOF ####################################################
+for i in `cat $1`; do
+	if [ ! -f $IP_DIR/$i ]; then
+		pakfire_logger "Dependency $i is not installed yet. Trying..."
+		$PAKHOME/pakfire install $i
+	else
+		pakfire_logger "Dependency $i is already installed."
+	fi
+done

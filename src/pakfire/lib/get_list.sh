@@ -6,27 +6,29 @@
 
 get_list () {
 
-# Alle URLs durcharbeiten bis erste per ping erreichbar erreichbar
-url=$(. $HOST_TEST "$PURL")
-if [ -n $url ]
- then URL=${url}
+PURL=`cat $CACHE_DIR/$SERVERS_LIST`
+
+if [ "$PURL" ]; then
+  url=$(. $HOST_TEST "$PURL")
+  if [ -n $url ]
+   then URL=${url}
+  fi
+else
+  echo "No server-address available. Exiting..."
+  exit 1
 fi
 
-# Falls URL nicht gesetzt wurde abbruch des Scripts
 if [ -z $URL ]
- then pakfire_logger "Kann keinen Listenserver finden."
+ then pakfire_logger "Cannot find a working mirror."
   return 1
 fi
 
-# Verzeichnis in Zielverzeichnis wechseln für Download
 cd $PAKHOME/cache
 
-# Pruefen ob bereits ein File vorhanden ist - falls ja, dann wird sie nun gelöscht
 if [ -f $PACKAGE_LIST ]
  then rm $PACKAGE_LIST
 fi
 
-# Download der Liste
 if /usr/bin/wget $URL/$PACKAGE_LIST > /dev/null 2>&1
  then
   cd -

@@ -60,7 +60,7 @@ do
 done
 
 # Löschen der Hilfslisten
-/bin/rm -f ${ZERL_PATCH}*
+/bin/rm -f ${ZERL_PATCH}* >/dev/null 2>&1
 
 }
 
