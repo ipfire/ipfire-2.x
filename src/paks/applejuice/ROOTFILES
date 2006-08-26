@@ -1,3 +1,4 @@
+etc/init.d/applejuice
 opt/applejuice
 opt/applejuice/ajcore.jar
 opt/applejuice/libajnetmask.so
@@ -133,3 +134,4 @@ opt/lampp/htdocs/phpaj/style/tango/icons/warning.png
 opt/lampp/htdocs/phpaj/style/tango/icons/x.png
 opt/lampp/htdocs/phpaj/style/tango/tango.css
 opt/lampp/htdocs/phpaj/vars.php
+var/ipfire/applejuice

@@ -46,8 +46,8 @@ use strict;
 
 # Configuration options:
 #
-my  $device        = "imq0";
-our $rrd_datadir   = "/var/log/rrd";
+my  $device        = "$ARGV[0]";
+our $rrd_datadir   = "/var/log/rrd/";
 our $event_datadir = $rrd_datadir;
 our $STEP          = 10;
 our $tc_command    = "/sbin/tc";

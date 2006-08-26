@@ -7,6 +7,7 @@
 # (c) The IPFire Team
 #
 
+use RRDs;
 use strict;
 # enable only the following on debugging purpose
 use warnings;
@@ -85,6 +86,9 @@ $qossettings{'DOCLASS'} = '';
 $qossettings{'DOSCLASS'} = '';
 $qossettings{'DOLEVEL7'} = '';
 $qossettings{'DOPORT'} = '';
+$qossettings{'CLASS'} = '';
+$qossettings{'CLASSPRFX'} = '';
+$qossettings{'DEV'} = '';
 
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
@@ -373,6 +377,39 @@ elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
 	&Header::closepage();
 	exit
 }
+elsif ($qossettings{'ACTION'} eq 'Grafische Auswertung')
+{
+	&Header::openbox('100%', 'left', 'QoS Graphen');
+	print <<END
+	<table width='100%'><tr><td colspan='2' align='center'><font color='red'>Diese Seite braucht je nach Geschwindigkeit des Computers laenger zum Laden.</font>
+END
+;
+	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
+	@classes = <FILE>;
+	close FILE;
+  	foreach $classentry (sort @classes)
+  	{
+  		@classline = split( /\;/, $classentry );
+		$qossettings{'DEV'}=$classline[0];
+		$qossettings{'CLASS'}=$classline[1];
+		&gengraph($qossettings{'DEV'},$qossettings{'CLASS'});
+		print <<END
+		<tr><td colspan='2' align='center'><font color='darkblue'><b>$qossettings{'CLASS'} ($qossettings{'DEV'})</b></font>
+		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png'>
+		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png'>
+		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png'>
+END
+;
+	}
+print <<END
+	</table>
+END
+;
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit
+}
 elsif ($qossettings{'ACTION'} eq 'Parentklasse hinzufuegen')
 {
 	&parentclass();
@@ -481,7 +518,13 @@ END
 		<tr><td width='40%' align='right'>Uploadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr>
-		<tr><td colspan='3' width='100%' align='center'><input type='submit' name='ACTION' value='Parentklasse hinzufuegen'><input type='submit' name='ACTION' value='Erweiterte Einstellungen'><input type='submit' name='ACTION' value='Statusinformationen'>
+		<tr><td colspan='3' width='100%' align='center'>
+		<table boder='0' cellpadding='0' cellspacing='0'>
+			<tr><td><input type='submit' name='ACTION' value='Parentklasse hinzufuegen'>
+			    <td><input type='submit' name='ACTION' value='Erweiterte Einstellungen'>
+			<tr><td><input type='submit' name='ACTION' value='Statusinformationen'>
+			    <td><input type='submit' name='ACTION' value='Grafische Auswertung'>
+		</table>
 	</form>
 END
 ;
@@ -1328,4 +1371,75 @@ sub validsubclass {
 			}
 		}
 	}
+}
+
+sub gengraph {
+	$qossettings{'DEV'} = shift;
+	$qossettings{'CLASS'} = shift;
+	my $ERROR="";
+	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
+		$qossettings{'CLASSPRFX'} = '1'; 
+	} else { 
+		$qossettings{'CLASSPRFX'} = '2'; 
+	}
+
+	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png",
+		"--start", "-3240", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 800", "-h 150", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#FFFFFF",
+		"-t $qossettings{'CLASS'} ($qossettings{'DEV'})",
+		"DEF:pkts=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:pkts:AVERAGE",
+		"DEF:dropped=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:dropped:AVERAGE",
+		"DEF:overlimits=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:overlimits:AVERAGE",
+		"AREA:pkts#00FFFF:packets",
+		"GPRINT:pkts:LAST:total packets\\:%8.3lf %s packets\\j",
+		"LINE3:dropped#FF0000:dropped",
+		"GPRINT:dropped:LAST:dropped packets\\:%8.3lf %s packets\\j",
+		"LINE3:overlimits#0000FF:overlimits",
+		"GPRINT:overlimits:LAST:overlimits\\:%8.3lf %s packets\\j",
+	);
+		$ERROR = RRDs::error;
+		print "$ERROR";
+
+	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png",
+		"--start", "-3240", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 800", "-h 150", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#FFFFFF",
+		"-t $qossettings{'CLASS'} ($qossettings{'DEV'})",
+		"DEF:lended=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:lended:AVERAGE",
+		"DEF:borrowed=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:borrowed:AVERAGE",
+		"DEF:giants=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:giants:AVERAGE",
+		"AREA:lended#99ff99:lended",
+		"GPRINT:lended:LAST:lended\\:%8.3lf %s packets\\j",
+		"LINE3:borrowed#f70566:borrowed",
+		"GPRINT:borrowed:LAST:borrowed\\:%8.3lf %s packets\\j",
+		"LINE3:giants#05ad05:giants",
+		"GPRINT:giants:LAST:giants\\:%8.3lf %s packets\\j",
+	);
+		$ERROR = RRDs::error;
+		print "$ERROR";
+
+	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png",
+		"--start", "-3240", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 800", "-h 150", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#FFFFFF",
+		"-t $qossettings{'CLASS'} ($qossettings{'DEV'})",
+		"DEF:bits=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:bits:AVERAGE",
+		"DEF:bytes=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:bytes:AVERAGE",
+		"CDEF:kbytes=bytes,1024,/",
+		"CDEF:kbits=bits,1024,/,8,/",
+		"AREA:kbytes#FFBE7D:kbytes",
+		"GPRINT:kbytes:LAST:rate\\: %8.3lf kbytes\\j",
+		"GPRINT:kbits:LAST:rate\\:%8.2lf kbits\\r",
+	);
+		$ERROR = RRDs::error;
+		print "$ERROR";
+
+
 }

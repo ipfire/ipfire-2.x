@@ -20,10 +20,6 @@
 
 use RRDs;
 
-if (not defined $rrd_datadir) {
-    our $rrd_datadir = "/var/spool/rrdqueues/";
-}
-
 if (not defined $STEP) {
     my $STEP=10;
 }

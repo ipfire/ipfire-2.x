@@ -6,5 +6,3 @@
 #################################################################
 #
 # Delete the files
-## Befehl fehlt noch
-rm -f /opt/pakfire/installed/ROOTFILES.$2

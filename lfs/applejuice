@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = applejuice
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -80,5 +80,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && mkdir -p /opt/applejuice && mv -fv ajcore.jar /opt/applejuice
 	cd $(DIR_APP) && mv -fv libajnetmask.so /opt/applejuice
 	cd $(DIR_APP) && cp -rfv phpaj /opt/lampp/htdocs
+	-mkdir /var/ipfire/applejuice
+	echo "RAMSIZE=64" > /var/ipfire/applejuice/settings
+	chown nobody.nobody /var/ipfire/applejuice -R
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
