@@ -61,7 +61,7 @@ sub diskbox {
 
 &Header::openbigbox('100%', 'left');
 
-if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk)/) {
+if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 	my $graph = $cgigraphs[1];
 	my $graphname = ucfirst(lc($cgigraphs[1]));
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
@@ -117,6 +117,19 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk)/) {
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<a href='/cgi-bin/graphs.cgi?graph=cpu'>";
 		print "<img src='/graphs/cpu-day.png' border='0' />";
+		print "</a>";
+	} else {
+		print $Lang::tr{'no information available'};
+	}
+	print "<br />\n";
+	&Header::closebox();
+
+	&Header::openbox('100%', 'center', "Load $Lang::tr{'graph'}");
+	if (-e "$graphdir/load-day.png") {
+		my $ftime = localtime((stat("$graphdir/load-day.png"))[9]);
+		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+		print "<a href='/cgi-bin/graphs.cgi?graph=load'>";
+		print "<img src='/graphs/load-day.png' border='0' />";
 		print "</a>";
 	} else {
 		print $Lang::tr{'no information available'};

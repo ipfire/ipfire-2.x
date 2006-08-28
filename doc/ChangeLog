@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------
+r258 | ms | 2006-08-26 15:20:12 +0200 (Sat, 26 Aug 2006) | 6 lines
+
+Hinzugefuegt:
+  * QoS-Graphen - Erste Version!
+Pakete:
+  * Applejuice bearbeitet
+  * Depends.txt in alle eingefuegt
+  * Clamav bearbeitet
+------------------------------------------------------------------------
 r257 | ms | 2006-08-26 10:42:48 +0200 (Sat, 26 Aug 2006) | 5 lines
 
 Update:

@@ -184,6 +184,47 @@ sub updatecpudata {
 
 }
 
+sub updateloadgraph {
+	my $period    = $_[0];
+
+	RRDs::graph ("$graphs/load-$period.png",
+		"--start", "-1$period", "-aPNG",
+		"-w 600", "-h 100", "-i", "-z", "-l 0", "-r", "--alt-y-grid",
+		"-t Load Average",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#FFFFFF",
+		"DEF:load1=$rrdlog/load.rrd:load1:AVERAGE",
+		"DEF:load5=$rrdlog/load.rrd:load5:AVERAGE",
+		"DEF:load15=$rrdlog/load.rrd:load15:AVERAGE",
+		"AREA:load1#ff0000:1 Minute, letzter\:",
+		"GPRINT:load1:LAST:%5.2lf\n",
+		"AREA:load5#ff9900:5 Minuten, letzter\:",
+		"GPRINT:load5:LAST:%5.2lf\n",
+		"AREA:load15#ffff00:15 Minuten, letzter\:",
+		"GPRINT:load15:LAST:%5.2lf",
+		"LINE1:load5#ff9900:",
+		"LINE1:load1#ff0000:");
+	$ERROR = RRDs::error;
+	print "Error in RRD::graph for load: $ERROR\n" if $ERROR;
+}
+
+sub updateloaddata {
+	if ( ! -e "$rrdlog/load.rrd") {
+		RRDs::create ("$rrdlog/load.rrd", "--step=60",
+			"DS:load1:GAUGE:120:0:U",
+			"DS:load5:GAUGE:120:0:U",
+			"DS:load15:GAUGE:120:0:U",
+			"RRA:AVERAGE:0.5:1:2160",
+			"RRA:AVERAGE:0.5:5:2016",
+			"RRA:AVERAGE:0.5:15:2880",
+			"RRA:AVERAGE:0.5:60:8760");
+
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+	}
+}
+
 sub updatememgraph {
 	my $period    = $_[0];
 
@@ -1012,6 +1053,12 @@ updatecpugraph ("day");
 updatecpugraph ("week");
 updatecpugraph ("month");
 updatecpugraph ("year");
+
+updateloaddata();
+updateloadgraph ("day");
+updateloadgraph ("week");
+updateloadgraph ("month");
+updateloadgraph ("year");
 
 updatememdata();
 updatememgraph ("day");
