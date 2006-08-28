@@ -30,7 +30,7 @@ VER        = v6b
 
 THISAPP    = jpegsrc.$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.uu.net/graphics/jpeg
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/jpeg-6b
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libjpeg
@@ -77,8 +77,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-static --enable-shared && \
-				make
+	cd $(DIR_APP) && ./configure --prefix=/usr --enable-static --enable-shared
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

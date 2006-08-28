@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: gd,v 1.5.2.4 2005/03/04 19:26:50 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,23 +26,28 @@
 
 include Config
 
-VER        = 2.0.33
+VER        = 2.5
 
-THISAPP    = gd-$(VER)
+THISAPP    = nagios-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = nagios
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	nagios-plugins-1.4.3.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+nagios-plugins-1.4.3.tar.gz = $(URL_IPFIRE)/nagios-plugins-1.4.3.tar.gz
 
-$(DL_FILE)_MD5 = be0a6d326cd8567e736fbc75df0a5c45
+$(DL_FILE)_MD5 = 1a77528f6797bd3c0320da5e4fae2b1a
+nagios-plugins-1.4.3.tar.gz_MD5 = 2c40fc69d51cc979e85150870a1daa93
 
 install : $(TARGET)
 
@@ -57,6 +56,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -78,9 +80,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && ./configure --prefix=/usr/nagios --with-cgiurl=/nagios/cgi-bin \
+				--with-htmurl=/nagios --with-nagios-user=nobody \
+				--with-nagios-group=nobody
+	cd $(DIR_APP) && make all
 	cd $(DIR_APP) && make install
+	### Plugins
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/nagios-plugins-1.4.3.tar.gz
+	cd $(DIR_SRC)/nagios-plugins-1.4.3 && ./configure --prefix=/usr/nagios --with-ping-command="-n %s -c %d"
+	cd $(DIR_SRC)/nagios-plugins-1.4.3 && make
+	cd $(DIR_SRC)/nagios-plugins-1.4.3 && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
-

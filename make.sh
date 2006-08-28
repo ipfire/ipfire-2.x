@@ -587,6 +587,11 @@ buildipcop() {
   ipcopmake python
   ipcopmake libnet
   ipcopmake libpng
+  ipcopmake libtiff
+  ipcopmake libjpeg
+  ipcopmake lcms
+  ipcopmake libmng
+  ipcopmake freetype
   ipcopmake gd
   ipcopmake popt
   ipcopmake slang
@@ -681,11 +686,6 @@ buildipcop() {
   ipcopmake startscripts
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
   ipcopmake java
-  ipcopmake libtiff
-  ipcopmake libjpeg
-  ipcopmake lcms
-  ipcopmake libmng
-  ipcopmake freetype
   ipcopmake bootsplash
   ipcopmake libxml2
   ipcopmake spandsp
@@ -760,6 +760,7 @@ buildipcop() {
   ipcopmake tftp-hpa
   ipcopmake subversion
   ipcopmake iptraf
+  ipcopmake nagios
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
@@ -890,6 +891,7 @@ ipfirepackages() {
   ipfiredist libxml2
   ipfiredist mailx
   ipfiredist mldonkey
+  ipfiredist nagios
   ipfiredist nfs
   ipfiredist nmap
   ipfiredist ntop
