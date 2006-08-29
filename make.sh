@@ -732,12 +732,17 @@ buildipcop() {
   ipcopmake bristuff
   ipcopmake asterisk
   ipcopmake mpg123
-  echo -ne "`date -u '+%b %e %T'`: Building ### MP3-Server ### \n" | tee -a $LOGFILE
+  echo -ne "`date -u '+%b %e %T'`: Building ### Multimedia-Server ### \n" | tee -a $LOGFILE
+  ipcopamke libmad
   ipcopmake libogg
   ipcopmake libvorbis
   ipcopmake lame
+  ipcopmake xvid
+  ipcopmake mpeg2dec
+  ipcopmake ffmpeg
   ipcopmake sox
   ipcopmake gnump3d
+  ipcopmake videolan
   echo -ne "`date -u '+%b %e %T'`: Building ### P2P-Clients ### \n" | tee -a $LOGFILE
   ipcopmake applejuice
   ipcopmake ocaml
@@ -881,16 +886,19 @@ ipfirepackages() {
   ipfiredist cups
   ipfiredist cyrusimap
   ipfiredist fetchmail
+  ipfiredist ffmpeg
   ipfiredist gnump3d
   ipfiredist iptraf
   ipfiredist java
   ipfiredist lame
+  ipfiredist libmad
   ipfiredist libogg
   ipfiredist libtiff
   ipfiredist libvorbis
   ipfiredist libxml2
   ipfiredist mailx
   ipfiredist mldonkey
+  ipfiredist mpeg2dec
   ipfiredist nagios
   ipfiredist nfs
   ipfiredist nmap
@@ -902,9 +910,11 @@ ipfirepackages() {
   ipfiredist sox
   ipfiredist spamassassin
   ipfiredist subversion
+  ipfiredist videolan
   ipfiredist web-cyradm
   ipfiredist xampp
 #  ipfiredist xinetd
+  ipfiredist xvid
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/*.{tar.gz,md5} $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
@@ -1638,6 +1648,7 @@ batch)
 		if [ "$input" == "yes" ]; then
 			$0 svn commit
 		fi
+		$0 sync
 		;;
 	"SVN: Update")
 		$0 svn update

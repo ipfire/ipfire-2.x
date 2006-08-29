@@ -34,7 +34,7 @@
 # something around 5 seconds for the entire test.
 #
 ## Basic settings
-CGI_HOST=192.168.0.100
+CGI_HOST=$1
 CGI_PORT=444
 CGI_URL="https://$CGI_HOST:$CGI_PORT/cgi-bin"
 USER=admin
