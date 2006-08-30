@@ -733,7 +733,7 @@ buildipcop() {
   ipcopmake asterisk
   ipcopmake mpg123
   echo -ne "`date -u '+%b %e %T'`: Building ### Multimedia-Server ### \n" | tee -a $LOGFILE
-  ipcopamke libmad
+  ipcopmake libmad
   ipcopmake libogg
   ipcopmake libvorbis
   ipcopmake lame
