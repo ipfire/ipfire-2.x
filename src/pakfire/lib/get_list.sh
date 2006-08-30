@@ -6,7 +6,7 @@
 
 get_list () {
 
-PURL=`cat $CACHE_DIR/$SERVERS_LIST`
+PURL=`cat ${CACHE_DIR}$SERVERS_LIST`
 
 if [ "$PURL" ]; then
   url=$(. $HOST_TEST "$PURL")

@@ -1543,7 +1543,7 @@
 'ConnSched scheduler' => 'Scheduler',
 'ConnSched select profile' => 'Select profile',
 'ConnSched up' => 'Up',
-'ConnSched ipsecstart' => 'VPN (re)start',
-'ConnSched ipsecstop' => 'VPN stop',
+'ConnSched ipsecstart' => 'IPSec (re)start',
+'ConnSched ipsecstop' => 'IPSec stop',
 
 );

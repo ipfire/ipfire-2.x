@@ -7,15 +7,17 @@ get_mirror() {
 
 cd $PAKHOME/cache
 
-if [ -e $PAKHOME/cache/$SERVERS_LIST ]
- then rm -f $PAKHOME/cache/$SERVERS_LIST
-fi
+#if [ -e $PAKHOME/cache/$SERVERS_LIST ]
+# then rm -f $PAKHOME/cache/$SERVERS_LIST
+#fi
 
-if /usr/bin/wget -q $H_MIRROR >/dev/null 2>&1
+if /usr/bin/wget $H_MIRROR >$LOG 2>&1
  then
+  pakfire_logger "Got servers!"
   cd -
   return 0
  else
+  pakfire_logger "Got no servers!"
   cd -
   return 1
 fi

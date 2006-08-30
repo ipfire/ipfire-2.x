@@ -916,7 +916,7 @@ ipfirepackages() {
 #  ipfiredist xinetd
   ipfiredist xvid
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  mv -f $LFS/install/packages/*.{tar.gz,md5} $BASEDIR/packages >> $LOGFILE 2>&1
+  mv -f $LFS/install/packages/*.{ipfire,md5} $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
 }
 

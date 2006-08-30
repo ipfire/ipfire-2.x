@@ -3,6 +3,7 @@
 PROG="$1"
 VER="$2"
 PAK_VER="$3"
+EXT=ipfire
 
 if [ -f /install/packages/$PROG-$VER-$PAK_VER.tar.gz.empty ]; then
 
@@ -25,10 +26,10 @@ else
 
 	cd /    && rm -rf /tmp/*
 	cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES
-	tar cfz ../$PROG-${VER}_$PAK_VER.tar.gz files.tgz install.sh uninstall.sh ROOTFILES depends.txt
+	tar cvz ../$PROG-${VER}_$PAK_VER.$EXT files.tgz install.sh uninstall.sh ROOTFILES depends.txt
 
-	cd /install/packages && md5sum $PROG*.tar.gz > $PROG-${VER}_$PAK_VER.tar.gz.md5
-	cd /install/packages && md5sum $PROG*.tar.gz >> all-progs.md5
+	cd /install/packages && md5sum $PROG*.$EXT > $PROG-${VER}_$PAK_VER.$EXT.md5
+	cd /install/packages && md5sum $PROG*.$EXT >> all-progs.md5
 	rm -rf /install/packages/package
 	exit 0
 fi

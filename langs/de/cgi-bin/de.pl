@@ -1510,8 +1510,8 @@
 'ConnSched scheduler' => 'Scheduler',
 'ConnSched select profile' => 'Wähle Profil',
 'ConnSched up' => 'Hoch',
-'ConnSched ipsecstart' => 'VPN (re)start',
-'ConnSched ipsecstop' => 'VPN stop',
+'ConnSched ipsecstart' => 'IPSec (neu)starten',
+'ConnSched ipsecstop' => 'IPSec stop',
 
 ); 
 

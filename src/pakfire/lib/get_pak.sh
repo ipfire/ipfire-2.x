@@ -15,7 +15,7 @@ fi
 
 . $DB_DIR/$1
 
-FILE="$1-${VER}_${IPFVER}.tar.gz"
+FILE="$1-${VER}_${IPFVER}.ipfire"
 
 if [ ! -f $CACHE_DIR/$FILE ]; then
   cd /var/tmp
@@ -24,7 +24,7 @@ if [ ! -f $CACHE_DIR/$FILE ]; then
    then
       if [ "`md5sum $FILE`" = "`cat ${FILE}.md5`" ]; then
       mv -f /var/tmp/$FILE{,.md5} $CACHE_DIR
-      pakfire_logger "MD5 sum OK!"
+      pakfire_logger "MD5 sum OK in $FILE!"
     else
       pakfire_logger "Wrong MD5 sum in $FILE."
       rm -f /var/tmp/$FILE{,.md5}
