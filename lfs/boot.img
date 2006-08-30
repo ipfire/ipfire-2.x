@@ -59,7 +59,7 @@ $(TARGET) :
 		done; \
 		losetup $$LOOPDEV /install/images/boot-$(VERSION).img; \
 		mount -t msdos $$LOOPDEV /install/mnt; \
-		sed -e 's/boot IPCop/boot IPCop $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
+		sed -e 's/boot IPFire/boot IPFire $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
 			> /install/mnt/message; \
 		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/mnt/syslinux.cfg; \
 		cp /boot/vmlinuz-installer                  /install/mnt/vmlinuz; \

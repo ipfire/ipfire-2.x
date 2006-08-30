@@ -1,4 +1,10 @@
 ------------------------------------------------------------------------
+r264 | ms | 2006-08-30 20:29:15 +0200 (Wed, 30 Aug 2006) | 3 lines
+
+Geaendert:
+  * Pakete haben jetzt die Endung .ipfire
+  * Kleiner Logikfehler im ConnScheduler
+------------------------------------------------------------------------
 r263 | delaco | 2006-08-30 15:10:09 +0200 (Wed, 30 Aug 2006) | 1 line
 
 Typo in der Make.sh, die die LibMAD nicht bauen lies. Sorry :(

@@ -344,7 +344,7 @@ ipcopmake() {
 
 ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-#	   if [ ! `ls -w1 $BASEDIR/packages/*.tar.gz | grep $1` ]; then
+#	   if [ ! `ls -w1 $BASEDIR/packages/*.ipfire | grep $1` ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
@@ -866,7 +866,7 @@ buildpackages() {
 		cat $i | sed "s%^\./%#%" | sort >> $BASEDIR/log/FILES
 	fi
   done
-  cd $BASEDIR/packages; ls -w1 *.tar.gz | awk -F ".tar.gz" '{ print $1 }' > $BASEDIR/packages/packages_list.txt
+  cd $BASEDIR/packages; ls -w1 *.ipfire | awk -F ".ipfire" '{ print $1 }' > $BASEDIR/packages/packages_list.txt
   echo "###EOF###" >> $BASEDIR/packages/packages_list.txt
 
   cd $PWD
@@ -1191,6 +1191,7 @@ svn)
 			exit 1
 		fi
 		chmod 755 $0
+		tail log/_build.svn.update.log
 		exit 0
 	  ;;
 	  commit|ci)

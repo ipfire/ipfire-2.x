@@ -7,9 +7,9 @@ get_mirror() {
 
 cd $PAKHOME/cache
 
-#if [ -e $PAKHOME/cache/$SERVERS_LIST ]
-# then rm -f $PAKHOME/cache/$SERVERS_LIST
-#fi
+if [ -e $PAKHOME/cache/$SERVERS_LIST ]
+ then rm -f $PAKHOME/cache/$SERVERS_LIST
+fi
 
 if /usr/bin/wget $H_MIRROR >$LOG 2>&1
  then
