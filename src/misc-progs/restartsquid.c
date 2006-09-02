@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	safe_system("/sbin/iptables -t nat -F SQUID");
 	safe_system("/usr/sbin/squid -k shutdown >/dev/null 2>/dev/null");
 	sleep(5);
-	safe_system("/bin/killall -9 squid >/dev/null 2>/dev/null");
+	safe_system("/bin/killall -9 squid squidGuard >/dev/null 2>/dev/null");
 	
 	/* See if proxy is enabled and / or transparent */
 	if ((fd = open(CONFIG_ROOT "/proxy/enable", O_RDONLY)) != -1)

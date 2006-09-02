@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------
+r266 | ms | 2006-09-02 14:21:49 +0200 (Sat, 02 Sep 2006) | 6 lines
+
+Geaendert:
+  * redirect-Seite
+  * Grub Savedefault und Bootoptionen
+  * Pakfire - Fix
+Hinzugefuegt:
+  * Samba.cgi - experimental
+------------------------------------------------------------------------
 r265 | ms | 2006-08-30 20:56:53 +0200 (Wed, 30 Aug 2006) | 1 line
 
 Direkt ein Fix fuer eben genannte Sachen...

@@ -131,7 +131,7 @@ sub parse_class($) {
 	my $line=$tc_output[$i];
 	# Parsing HTB:
 	# ------------
-	if ( $line =~ m/class htb (\d+):(\d+)( root| parent )?(\d+:\d?)?( leaf )?(\d+)?:?( prio )?(\d+)? rate (.*) ceil (.*) burst (.*) cburst (.*)/ ) {
+	if ( $line =~ m/class htb (\d+):(\d+)( root| parent )?(\d+:\d+)?( leaf )?(\d+)?:?( prio )?(\d+)? rate (.*) ceil (.*) burst (.*) cburst (.*)/ ) {
 	    my $type  = "htb";
 	    my $major = $1;
 	    my $minor = $2;
