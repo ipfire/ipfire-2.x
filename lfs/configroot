@@ -86,7 +86,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
 	cp $(DIR_SRC)/config/cfgroot/p2protocols			$(CONFIG_ROOT)/outgoing/p2protocols
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
-	cp $(DIR_SRC)/config/qos/makeqosscripts.pl		$(CONFIG_ROOT)/qos/bin/makeqosscripts.pl
+	cp $(DIR_SRC)/config/qos/*					$(CONFIG_ROOT)/qos/bin/
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings			$(CONFIG_ROOT)/remote/settings
 	cp $(DIR_SRC)/config/cfgroot/xtaccess-config		$(CONFIG_ROOT)/xtaccess/config
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings

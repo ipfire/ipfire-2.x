@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = /opt/lampp
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = xampp
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules

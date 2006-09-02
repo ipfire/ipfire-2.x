@@ -1268,6 +1268,7 @@ boot/grub/grubbatch
 boot/grub/ipfire.xpm.gz
 boot/grub/scsigrub.conf
 boot/grub/message
+boot/grub/default
 #usr/bin/mbchk
 usr/sbin/grub
 usr/sbin/grub-install

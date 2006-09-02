@@ -139,6 +139,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	done
 
 	install -m 0755 $(DIR_SRC)/src/install+setup/install/grubbatch /boot/grub
+	/usr/sbin/grub-set-default 0
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

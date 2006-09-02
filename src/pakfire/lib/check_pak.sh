@@ -52,11 +52,10 @@ do
  vers=${vers%%_*}
  vers=${vers%% *}
  ipfver=${zeile#*_*}
- # Testen ob aktuelle Verson schon installiert ist
- # Erst alte Paket Vorschläge löschen
  /bin/rm -f $DB_DIR/${name}
- /bin/echo "VER=${vers}" > $DB_DIR/${name}
- /bin/echo "IPFVER=${ipfver}" >> $DB_DIR/${name}
+ /bin/echo -e VER=\"${vers}\" > $DB_DIR/${name}
+ /bin/echo -e IPFVER=\"${ipfver}\" >> $DB_DIR/${name}
+ cat $DB_DIR/${name} | tr -d "\015" > $DB_DIR/${name}
 done
 
 # Löschen der Hilfslisten

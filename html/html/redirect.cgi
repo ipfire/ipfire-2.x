@@ -42,54 +42,37 @@ print <<END
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <title>ACCESS MESSAGE</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 
+<body>
+<table width="100%" height='100%' border="0">
+<tr>
+		<td colspan='3' width='100%' height='130' align="center" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/background.gif">
+<tr>		<td width='10%'><td align='center' bgcolor='#CC000000' width='80%'><font face="verdana, arial, sans serif" color="#FFFFFF" size="5">
+					<b>$msgtext1</b>
+					</font>
+		<td width='10%'>
 END
 ;
 
-if (($filtersettings{'ENABLE_JPEG'} eq 'on') && (-e "/home/httpd/html/images/urlfilter/logo_ipfire.gif"))
+if (!($category eq ""))
 {
-print <<END
-<body background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/logo_ipfire.gif" bgcolor="#FFFFFF">
-END
-;
-} else {
-print <<END
-<img src="http://$netsettings{'GREEN_ADDRESS'}:81//images/logo_ipfire.gif" ALT="IPFire-Logo">
-<body bgcolor="#455B72">
+	print <<END
+	<tr>		<td colspan='3' align='center'>
+				<font face="verdana, arial, sans serif" color="#CC000000" size="1">
+					<b>$category</b>
+				</font>
 END
 ;
 }
-
 print <<END
-
-
-<center>
-
-<table width="80%" cellspacing="10" cellpadding="5" border="1">
 <tr>
-		<td nowrap align="right" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bgcool.gif">
-		<font face="verdana, arial, sans serif" color="#CC000000" size="1">
-		<b> INFO: $category</b>
-		</font>
-	</td>
-</tr>
-<tr>
-	<td bgcolor="#F4F4F4" align="center">
-		<table width="100%" cellspacing="20" cellpadding="18" border="1">
-			<tr>
-				<td nowrap align="center" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bgcool.gif">
-					<font face="verdana, arial, sans serif" color="#CC000000" size="5">
-					<b>$msgtext1</b>
-					</font>
-				</td>
-			</tr>
-			<tr>
-				<td bgcolor="#E2E2E2" align="center">
-					<font face="verdana, arial, sans serif" color="#000000" size="4">
-					<b>$msgtext2</b>
-					</font>
-					<font face="verdana,arial,sans serif" color="#000000" size="2">
+			<td colspan='3' align="center">
+				<font face="verdana, arial, sans serif" color="#000000" size="4">
+				<b>$msgtext2</b>
+				</font>
+				<font face="verdana,arial,sans serif" color="#000000" size="2">
 END
 ;
 
@@ -112,29 +95,16 @@ END
 print <<END
 					<br><p>$msgtext3
 					</font>
-				</td>
-			</tr>
-	</td>
-</tr>
-</table>
 
 <tr>
-	<td nowrap align="right" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bgcool.gif">
+	<td colspan='3' height='60%' valign="bottom" align="right">
 		<font face="verdana,arial,sans serif" color="#656565" size="1">Web Filtering by
 		</font>
 		<a href="http://www.ipfire.eu" target="_blank"><b>
-		<font face="verdana,arial,sans serif" color="#656565" size="1">IPFire</b></a> and
-		<a href="http://www.squidguard.org" target="_blank"><b>
-		<font face="verdana,arial,sans serif" color="#656565" size="1">SquidGuard
-		</font></b></a>
-	</td>
-</tr>
+		<font face="verdana,arial,sans serif" color="#656565" size="1">IPFire</b></a>
+		</font>
 
 </table>
-
-<img src="http://$netsettings{'GREEN_ADDRESS'}:81//images/urlfilter/bg_cool_tux.jpg">
-</center>
-
 </body>
 
 </html>

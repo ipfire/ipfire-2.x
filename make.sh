@@ -867,7 +867,7 @@ buildpackages() {
 	fi
   done
   cd $BASEDIR/packages; ls -w1 *.ipfire | awk -F ".ipfire" '{ print $1 }' > $BASEDIR/packages/packages_list.txt
-  echo "###EOF###" >> $BASEDIR/packages/packages_list.txt
+  echo -n "###EOF###" >> $BASEDIR/packages/packages_list.txt
 
   cd $PWD
 
