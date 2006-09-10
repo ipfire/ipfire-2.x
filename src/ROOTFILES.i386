@@ -1381,6 +1381,7 @@ usr/local/bin/rcnfs-server
 usr/local/bin/rcpostfix
 usr/local/bin/rcwinbind
 usr/local/bin/run-parts
+usr/local/bin/updatelang
 #usr/local/doc
 #usr/local/etc
 #usr/local/include

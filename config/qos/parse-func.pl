@@ -157,8 +157,8 @@ sub parse_class($) {
 #		print "bytes: $bytes\n"."pkts: $pkts\n";
 #		print "dropped: $dropped\n"."overlimits: $overlimits\n";
 	    } else { 
-		print "$timestamp: ERROR(+1) - Unable to parse (class ${class}_$device): ";
-		print "\"$tc_output[$i + 1]\"\n";
+#		print "$timestamp: ERROR(+1) - Unable to parse (class ${class}_$device): ";
+#		print "\"$tc_output[$i + 1]\"\n";
 		$return_val="";
 		next;
 	    } 

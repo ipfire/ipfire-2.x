@@ -20,7 +20,7 @@ require "${General::swroot}/header.pl";
 my %qossettings = ();
 my %checked = ();
 my %netsettings = ();
-my $message = "";
+my $message = '';
 my $errormessage = "";
 my $c = "";
 my $direntry = "";
@@ -179,11 +179,6 @@ elsif ($qossettings{'DOCLASS'} eq 'Loeschen')
 
 if ($qossettings{'DOSCLASS'} eq $Lang::tr{'save'})
 {
-	if ($qossettings{'SCLASS'} >= 1000 && $qossettings{'CLASS'} < 1021) {
-		$qossettings{'DEVICE'} = $qossettings{'RED_DEV'};
-	} elsif ($qossettings{'SCLASS'} >= 2000 && $qossettings{'CLASS'} < 2021) {
-		$qossettings{'DEVICE'} = $qossettings{'IMQ_DEV'};
-	}
 	&validsubclass();
 	&validminbwdth();
 	if ( $qossettings{'VALID'} eq 'yes' ) {
@@ -382,10 +377,15 @@ elsif ($qossettings{'ACTION'} eq 'Grafische Auswertung')
 	&Header::openbox('100%', 'left', 'QoS Graphen');
 	print <<END
 	<table width='100%'><tr><td colspan='2' align='center'><font color='red'>Diese Seite braucht je nach Geschwindigkeit des Computers laenger zum Laden.</font>
+	</table>
 END
 ;
+	&Header::closebox();
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@classes = <FILE>;
+	close FILE;
+	open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
+	@subclasses = <FILE>;
 	close FILE;
   	foreach $classentry (sort @classes)
   	{
@@ -393,13 +393,31 @@ END
 		$qossettings{'DEV'}=$classline[0];
 		$qossettings{'CLASS'}=$classline[1];
 		&gengraph($qossettings{'DEV'},$qossettings{'CLASS'});
+		&Header::openbox('100%', 'center', "$qossettings{'CLASS'} ($qossettings{'DEV'})");
 		print <<END
-		<tr><td colspan='2' align='center'><font color='darkblue'><b>$qossettings{'CLASS'} ($qossettings{'DEV'})</b></font>
+		<table>
 		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png'>
 		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png'>
 		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png'>
 END
 ;
+	  	foreach $subclassentry (sort @subclasses)
+  		{
+	  		@subclassline = split( /\;/, $subclassentry );
+			if ($subclassline[1] eq $classline[1]) {
+				$qossettings{'DEV'}=$subclassline[0];
+				$qossettings{'SCLASS'}=$subclassline[2];
+				&gengraph($qossettings{'DEV'},$qossettings{'SCLASS'});
+				print <<END
+				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-packets.png'>
+				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-borrowed.png'>
+				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-bytes.png'>
+END
+;
+			}
+		}
+	print "\t\t</table>";
+	&Header::closebox();	
 	}
 print <<END
 	</table>
@@ -776,7 +794,9 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ceilburst:
 		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value=$qossettings{'CBURST'}>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DOSCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}>
+							<input type='hidden' name='DEVICE' value=$qossettings{'DEVICE'}>
+							<input type='submit' name='DOSCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
 		</table></form>
 END
 ;
@@ -1269,7 +1289,7 @@ sub expert
 	&Header::openbox('100%', 'center', 'Expertenoptionen:');
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
+<!--		<table width='66%'>
 		<tr><td width='100%' colspan='3'>Diese Einstellungen sollten sie nur veraendern, wenn sie wirklich wissen, was sie tun.
 		<tr><td width='33%' align='right'>Download-Rate 90\%:<td width='33%' align='left'>
 			<input type='text' name='DEF_INC_SPD' maxlength='8' required='4' value=$qossettings{'DEF_INC_SPD'}>
@@ -1278,7 +1298,7 @@ sub expert
 			<input type='text' name='DEF_OUT_SPD' maxlength='8' required='4' value=$qossettings{'DEF_OUT_SPD'}>
 		    <td width='33%' align='center'>&nbsp;
 		</table>
-		<hr>
+		<hr> -->
 		<table width='66%'>
 		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
 			<input type='text' name='MTU' maxlength='8' required='4' value=$qossettings{'MTU'}>
@@ -1303,7 +1323,7 @@ sub validminbwdth {
 		} elsif ( $qossettings{'DEVICE'} eq $qossettings{'IMQ_DEV'} ) {
 			$qossettings{'SPD'} = $qossettings{'INC_SPD'};
 		}
-		unless ( ( $qossettings{'MINBDWTH'} >= 0 ) && ( $qossettings{'MINBDWTH'} <= $qossettings{'SPD'} ) ) {
+		unless ( ( $qossettings{'MINBWDTH'} >= 1 ) && ( $qossettings{'MINBWDTH'} <= $qossettings{'SPD'} ) ) {
 			$qossettings{'VALID'} = 'no';
 			$message = "Mindestbandbreite ist ungueltig.";
 		}
@@ -1378,9 +1398,9 @@ sub gengraph {
 	$qossettings{'CLASS'} = shift;
 	my $ERROR="";
 	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
-		$qossettings{'CLASSPRFX'} = '1'; 
+		$qossettings{'CLASSPRFX'} = '1';
 	} else { 
-		$qossettings{'CLASSPRFX'} = '2'; 
+		$qossettings{'CLASSPRFX'} = '2';
 	}
 
 	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png",
@@ -1436,7 +1456,6 @@ sub gengraph {
 		"CDEF:kbits=bits,1024,/,8,/",
 		"AREA:kbytes#FFBE7D:kbytes",
 		"GPRINT:kbytes:LAST:rate\\: %8.3lf kbytes\\j",
-		"GPRINT:kbits:LAST:rate\\:%8.2lf kbits\\r",
 	);
 		$ERROR = RRDs::error;
 		print "$ERROR";

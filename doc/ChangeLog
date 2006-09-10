@@ -1,4 +1,11 @@
 ------------------------------------------------------------------------
+r267 | ms | 2006-09-02 22:18:51 +0200 (Sat, 02 Sep 2006) | 4 lines
+
+Hinzugefuegt:
+  * QoS-Graphen jetzt auch für Unterklassen.
+Fix:
+  * restartsquid killt jetzt auch squidGuard.
+------------------------------------------------------------------------
 r266 | ms | 2006-09-02 14:21:49 +0200 (Sat, 02 Sep 2006) | 6 lines
 
 Geaendert:

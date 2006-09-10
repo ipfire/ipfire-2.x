@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 2.5.STABLE14
+VER        = 2.6.STABLE3
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -38,17 +38,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	$(THISAPP)-httpReplyDestroy.patch \
-	$(THISAPP)-hierarchy_tag.patch
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-httpReplyDestroy.patch = $(URL_IPFIRE)/$(THISAPP)-httpReplyDestroy.patch
-$(THISAPP)-hierarchy_tag.patch = $(URL_IPFIRE)/$(THISAPP)-hierarchy_tag.patch
 
-$(DL_FILE)_MD5 = f413e0b887a5f9b2a75350243ed5564c
-$(THISAPP)-httpReplyDestroy.patch_MD5 = 1529f8b0170e24b26353578778435bd4
-$(THISAPP)-hierarchy_tag.patch_MD5 = 9abe563ca3d01dc58502737edc6f3c60
+$(DL_FILE)_MD5 = 5b181e9c08f35d098e53e54b01fbd092
 
 install : $(TARGET)
 
@@ -79,8 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-httpReplyDestroy.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-hierarchy_tag.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
 	   --datadir=/usr/lib/squid \
 	   --mandir=/usr/share/man --libexecdir=/usr/lib/squid \

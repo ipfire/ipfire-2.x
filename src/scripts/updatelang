@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# IPFire! GPLv2
+#
+
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"

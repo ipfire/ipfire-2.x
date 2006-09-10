@@ -6,8 +6,6 @@
 #
 # (c) The SmoothWall Team
 #
-# $Id: proxylog.dat,v 1.4.2.25 2005/07/07 17:32:24 eoberlander Exp $
-#
 
 use strict;
 
@@ -28,6 +26,7 @@ undef (@dummy);
 my %cgiparams=();
 my %logsettings=();
 my %ips=();
+my %users=();
 my %selected=();
 my %checked=();
 my @log=();
@@ -86,6 +85,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
  	$cgiparams{'MONTH'} = $temp[1];
  	$cgiparams{'DAY'} = $temp[2];  
 	$cgiparams{'SOURCE_IP'} = $temp[3];
+	$cgiparams{'USERNAME'} = $temp[4];
 }
 
 if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
@@ -168,6 +168,8 @@ my $daystr = $cgiparams{'DAY'} == 0 ? '' :$cgiparams{'DAY'} <= 9 ? "0$cgiparams{
 my $filter = $cgiparams{'ENABLE_FILTER'} eq 'on' ? $cgiparams{'FILTER'} : '';
 my $sourceip = $cgiparams{'SOURCE_IP'};
 my $sourceall =  $cgiparams{'SOURCE_IP'} eq 'ALL' ? 1 : 0;
+my $username = $cgiparams{'USERNAME'};
+my $usersall =  $cgiparams{'USERNAME'} eq 'ALL' ? 1 : 0;
 
 my $lines = 0;
 my $temp = ();
@@ -217,21 +219,23 @@ if ($@ ne '')
 	    READ:while (<FILE>) {
 		my ($datetime,$do,$ip,$ray,$me,$far,$url,$so) = split;
 		$ips{$ip}++;
+		$users{$so}++;
 		# for debug
 		#$lastdatetime = $datetime;
 
 		# collect lines between date && filter
 		if (( ($datetime>$mintime)&&($datetime<$maxtime)) && !($url =~ /$filter/) &&
-		   ((($ip eq $sourceip) || $sourceall)))
+		   ((($ip eq $sourceip) || $sourceall)) &&
+		   ((($so eq $username) || $usersall)))
 		{
 		    # when standart viewing, just keep in memory the correct slices
 		    # it starts a '$start' and size is $viewport
 		    # If export, then keep all lines...
 		    if ($cgiparams{'ACTION'} eq $Lang::tr{'export'}){
-		        $log[$lines++] = "$datetime $ip $url";
+		        $log[$lines++] = "$datetime $ip $so $url";
 		    } else {
 			if ($lines++ < ($start + $Header::viewsize)) {
-			    push(@log,"$datetime $ip $url");
+			    push(@log,"$datetime $ip $so $url");
 			    if (@log > $Header::viewsize) {
 				shift (@log);
 			    }
@@ -247,7 +251,7 @@ if ($@ ne '')
 	    }
 	    close (FILE);
 	}
-	$gzindex--;	# will try next gz file eg 40,39,38,.... because it may have holes when ipcop stopped
+	$gzindex--;	# will try next gz file eg 40,39,38,.... because it may have holes when ipfire stopped
 			# for a long time
 
     }
@@ -271,6 +275,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	print "IPFire proxy log\r\n";
 	print "$Lang::tr{'date'}: $daystr\r\n"; 
 	print "Source IP: $cgiparams{'SOURCE_IP'}\r\n";
+	print "Username: $cgiparams{'USERNAME'}\r\n";
 	if ($cgiparams{'ENABLE_FILTER'} eq 'on') {
 		print "Ignore filter: $cgiparams{'FILTER'}\r\n"; }
 	print "\r\n";
@@ -278,22 +283,23 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
 
 	foreach $_ (@log) {
-	    my ($datetime,$ip,$url) = split;
+	    my ($datetime,$ip,$so,$url) = split;
 	    my ($SECdt, $MINdt, $HOURdt, $DAYdt, $MONTHdt, $YEARdt) = localtime($datetime);
 	    $SECdt = sprintf ("%.02d",$SECdt);
 	    $MINdt = sprintf ("%.02d",$MINdt);
 	    $HOURdt = sprintf ("%.02d",$HOURdt);
 	    if ($cgiparams{'DAY'}==0) {			# full month
 		$DAYdt = sprintf ("%.02d",$DAYdt);
-		print "$DAYdt/$HOURdt:$MINdt:$SECdt $ip $url\n";
+		print "$DAYdt/$HOURdt:$MINdt:$SECdt $ip $so $url\n";
 	    } else {
-		print "$HOURdt:$MINdt:$SECdt $ip $url\n";
+		print "$HOURdt:$MINdt:$SECdt $ip $so $url\n";
 	    }
 	}
 	exit;
 }
 
 $selected{'SOURCE_IP'}{$cgiparams{'SOURCE_IP'}} = "selected='selected'";
+$selected{'USERNAME'}{$cgiparams{'USERNAME'}} = "selected='selected'";
 
 $checked{'ENABLE_FILTER'}{'off'} = '';
 $checked{'ENABLE_FILTER'}{'on'} = '';
@@ -357,8 +363,22 @@ print <<END
 	<option value='ALL' $selected{'SOURCE_IP'}{'ALL'}>$Lang::tr{'caps all'}</option>
 END
 ;
-foreach my $ip (keys %ips) {
+foreach my $ip (sort keys %ips) {
 	print "<option value='$ip' $selected{'SOURCE_IP'}{$ip}>$ip</option>\n"; }
+print <<END
+	</select>
+	</td>
+</tr>
+<tr>
+	<td width='60%' colspan='6'>&nbsp;</td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy NCSA username'}:</td>
+	<td width='15%'>
+	<select name='USERNAME'>
+	<option value='ALL' $selected{'USERNAME'}{'ALL'}>$Lang::tr{'caps all'}</option>
+END
+;
+foreach my $so (sort keys %users) {
+	print "<option value='$so' $selected{'USERNAME'}{$so}>$so</option>\n"; }
 print <<END
 	</select>
 	</td>
@@ -415,7 +435,8 @@ print <<END
 <tr>
 <td width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
 <td width='15%' align='center' class='boldbase'><b>$Lang::tr{'source ip'}</b></td>
-<td width='75%' align='center' class='boldbase'><b>$Lang::tr{'website'}</b></td>
+<td width='12%' align='center' class='boldbase'><b>$Lang::tr{'advproxy NCSA username'}</b></td>
+<td width='63%' align='center' class='boldbase'><b>$Lang::tr{'website'}</b></td>
 </tr>
 END
 ;
@@ -426,7 +447,7 @@ foreach $_ (@log)
 		print "<tr bgcolor='${Header::table1colour}'>\n"; }
 	else {
 		print "<tr bgcolor='${Header::table2colour}'>\n"; }
-	my ($datetime,$ip,$url) = split;
+	my ($datetime,$ip,$so,$url) = split;
         my ($SECdt, $MINdt, $HOURdt, $DAYdt, $MONTHdt, $YEARdt) = localtime($datetime);
 	$SECdt = sprintf ("%.02d",$SECdt);
 	$MINdt = sprintf ("%.02d",$MINdt);
@@ -445,6 +466,7 @@ foreach $_ (@log)
 	print <<END
 	<td align='center'>$DAYdt$HOURdt:$MINdt:$SECdt</td>
 	<td align='center'>$ip</td>
+	<td align='center'>$so</td>
 	<td align='left'><a href='$url' title='$url' target='_new'>$part</a></td>
 </tr>
 END
@@ -473,14 +495,14 @@ END
 
 print "<td align='center' width='50%'>";
 if ($prev != -1) {
-        print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>$Lang::tr{'older'}</a>"; }
+        print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'},$cgiparams{'USERNAME'}'>$Lang::tr{'older'}</a>"; }
 else {
         print "$Lang::tr{'older'}"; }
 print "</td>\n";
 
 print "<td align='center' width='50%'>";
 if ($next >= 0 ) {
-        print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>$Lang::tr{'newer'}</a>"; }
+        print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'},$cgiparams{'USERNAME'}'>$Lang::tr{'newer'}</a>"; }
 else {
         print "$Lang::tr{'newer'}"; }
 print "</td>\n";

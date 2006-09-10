@@ -553,11 +553,16 @@ print <<END
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
 	iptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
 
+	## STARTING COLLECTOR
+	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1
+	/usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1
+
 	echo "Quality of Service was successfully started!"
 	exit 0
   ;;
   clear|stop)
 	### RESET EVERYTHING TO A KNOWN STATE
+	killall -9 qosd
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root

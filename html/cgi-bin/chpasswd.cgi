@@ -6,7 +6,7 @@
 
 use CGI qw(param);
 
-$swroot = "/var/ipcop";
+$swroot = "/var/ipfire";
 
 my %cgiparams;
 my %mainsettings;
