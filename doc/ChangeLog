@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------
+r268 | ms | 2006-09-10 21:52:20 +0200 (Sun, 10 Sep 2006) | 5 lines
+
+Geaendert:
+  * Squid auf neuesten Stand gebracht.
+  * QoS-Fortschritt.
+  * Kleines Script fuer Sprachdateiupdates.
+
+------------------------------------------------------------------------
 r267 | ms | 2006-09-02 22:18:51 +0200 (Sat, 02 Sep 2006) | 4 lines
 
 Hinzugefuegt:

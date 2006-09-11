@@ -323,9 +323,9 @@ END
 
 if ($qossettings{'ACTION'} eq 'Start')
 {
-	system("sleep 1 && /usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh &");
+	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
 	system("/bin/touch /var/ipfire/qos/enable");
-	system("sleep 2 && /usr/local/bin/qosctrl start >/dev/null 2>&1");
+	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
 	system("logger -t ipfire 'QoS started'");
 	$qossettings{'ENABLED'} = 'on';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
@@ -343,8 +343,8 @@ elsif ($qossettings{'ACTION'} eq 'Neustart')
 {
 	if ($qossettings{'ENABLED'} eq 'on'){
 		system("/usr/local/bin/qosctrl stop >/dev/null 2>&1");
-		system("sleep 1 && /usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh &");
-		system("sleep 5 && /usr/local/bin/qosctrl start >/dev/null 2>&1");
+		system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
+		system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
 		system("logger -t ipfire 'QoS restarted'");
 	}
 }
