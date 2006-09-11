@@ -599,6 +599,9 @@ buildipcop() {
   ipcopmake libcap
   ipcopmake pciutils
   ipcopmake pcre
+  ipcopmake berkeley
+  ipcopmake BerkeleyDB ## The Perl module
+  ipcopmake mysql
   ipcopmake apache
   ipcopmake arping
   ipcopmake beep
@@ -657,8 +660,6 @@ buildipcop() {
   ipcopmake Locale-Country
   ipcopmake GeoIP
   ipcopmake fwhits
-  ipcopmake berkeley
-  ipcopmake BerkeleyDB ## The Perl module
   ipcopmake noip_updater
   ipcopmake ntp
   ipcopmake oinkmaster
