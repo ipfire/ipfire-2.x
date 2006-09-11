@@ -35,3 +35,4 @@ postdrop:x:108:
 clamav:x:109:
 amavis:x:110:
 mldonkey:x:111:
+mysql:x:41:
