@@ -19803,7 +19803,7 @@ usr/sbin/atmtcp
 #usr/share/man/man8/mpcd.8
 #usr/share/man/man8/zeppelin.8
 ##
-## openssl-0.9.7i
+## openssl-0.9.7k
 ##
 #etc/ssl
 #etc/ssl/certs
@@ -20875,6 +20875,9 @@ usr/lib/libssl.so.0.9.7
 #usr/share/man/man5/config.5
 #usr/share/man/man7/Modes_of_DES.7
 #usr/share/man/man7/des_modes.7
+#usr/bin/fipsld
+#usr/lib/fips_premain.c
+#usr/lib/fips_premain.c.sha1
 ##
 ## pciutils-2.1.11
 ##

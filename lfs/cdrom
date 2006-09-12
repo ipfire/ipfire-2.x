@@ -87,9 +87,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
 	mkdir -p /install/cdrom/{doc,dosutils,images}
-	tar -c -C / --files-from=$(DIR_SRC)/src/ROOTFILES.$(MACHINE) \
+	sed -e "s/KVER/$(KVER)/g" $(DIR_SRC)/src/ROOTFILES.$(MACHINE) > /tmp/ROOTFILES
+	tar -c -C / --files-from=/tmp/ROOTFILES \
 	    -f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
 	    --exclude='proc/*'
+	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	cd /tmp && tar zcf /install/cdrom/$(SNAME)-$(VERSION).tgz * && rm -rf *
