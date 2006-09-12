@@ -107,6 +107,7 @@
   * hddtemp-0.3-beta14
   * hdparm-6.3
   * htop-0.6.2
+  * httpd-2.2.2
   * iana-etc-2.00
   * ibod
   * iftop-0.17
@@ -164,6 +165,7 @@
   * mpeg2dec-20050802
   * mpg123-0.59r
   * mtools-3.9.9
+  * mysql-5.0.24a
   * nagios-2.5
   * nano-1.2.4
   * nash
@@ -190,10 +192,12 @@
   * pcmcia-cs-3.2.8
   * pcre-4.5
   * perl-5.8.5
+  * php-5.1.4
   * pkg-config-0.20
   * popt-1.7
   * portmap_5beta
   * postfix-2.2.10
+  * postfix-2.2.11
   * ppp-2.4.2
   * pptp-1.6.0
   * procinfo-18
@@ -202,6 +206,7 @@
   * psmisc-21.4
   * pulsar-4.0.19
   * razor-agents-2.81
+  * readline-5.1
   * rp-pppoe-3.5
   * rrdtool-1.0.49
   * samba-3.0.23b
@@ -216,7 +221,7 @@
   * sox-12.18.1
   * spandsp-0.0.2pre25
   * speedtouch-1.2
-  * squid-2.5.STABLE14
+  * squid-2.6.STABLE3
   * squid-graph-3.1
   * squidGuard-1.2.0
   * startscripts

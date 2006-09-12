@@ -26,25 +26,28 @@
 
 include Config
 
-VER        = 5.0.24a
+VER        = 2.2.2
 
-THISAPP    = mysql-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = httpd-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = mysql
+PROG       = apache2
 PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	httpd-2.2.2-config-1.patch
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+httpd-2.2.2-config-1.patch = $(DL_FROM)/httpd-2.2.2-config-1.patch
 
-$(DL_FILE)_MD5 = 6b07546389f75c52611adb7af38c3667
+$(DL_FILE)_MD5 = 9c759a9744436de6a6aa2ddbc49d6e81
+httpd-2.2.2-config-1.patch_MD5 = e02a3ec5925eb9e111400b9aa229f822
 
 install : $(TARGET)
 
@@ -76,29 +79,15 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && C_EXTRA_FLAGS=-fno-strict-aliasing
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-		            --sysconfdir=/etc \
-		            --libexecdir=/usr/sbin \
-		            --localstatedir=/srv/mysql \
-		            --enable-thread-safe-client \
-		            --enable-assembler \
-		            --enable-local-infile \
-		            --with-unix-socket-path=/var/run/mysql/mysql.sock \
-		            --without-debug \
-		            --without-bench \
-		            --without-readline \
-		            --with-berkeley-db \
-		            --with-extra-charsets=all
-	cd $(DIR_APP) && make testdir=/tmp/mysql
-	cd $(DIR_APP) && make testdir=/tmp/mysql install
-	rm -rf /tmp/mysql
-	cd /usr/lib && ln -v -sf mysql/libmysqlclient{,_r}.so* .
-	install -v -m644 /usr/share/mysql/my-medium.cnf /etc/my.cnf
-	mkdir -p /srv/mysql
-	mysql_install_db --user=mysql --force
-	chgrp -v mysql /srv/mysql{,/test,/mysql}
-	install -v -m755 -o mysql -g mysql -d /var/run/mysql
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
+	cd $(DIR_APP) && ./configure --enable-layout=FHS --enable-mods-shared=all
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+	chown -v root:root /usr/lib/apache/httpd.exp \
+	    /usr/sbin/{apxs,apachectl,dbmmanage,envvars{,-std}} \
+	    /usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd}}.1 \
+	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
+	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

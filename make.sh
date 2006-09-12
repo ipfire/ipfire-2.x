@@ -599,10 +599,15 @@ buildipcop() {
   ipcopmake libcap
   ipcopmake pciutils
   ipcopmake pcre
+  ipcopmake readline
   ipcopmake berkeley
   ipcopmake BerkeleyDB ## The Perl module
   ipcopmake mysql
+  ipcopmake saslauthd PASS=1
+  ipcopmake openldap
   ipcopmake apache
+  ipcopmake apache2
+  ipcopmake php
   ipcopmake arping
   ipcopmake beep
   ipcopmake bind
@@ -671,8 +676,6 @@ buildipcop() {
   ipcopmake setup
   ipcopmake snort
   #ipcopmake speedycgi
-  ipcopmake saslauthd PASS=1
-  ipcopmake openldap
   ipcopmake squid
   ipcopmake squid-graph
   ipcopmake squidguard
