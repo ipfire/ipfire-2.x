@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------
+r273 | ms | 2006-09-12 19:56:44 +0200 (Tue, 12 Sep 2006) | 5 lines
+
+Hinzugefuegt:
+  * PHP 5.1.4
+  * HTTPD-2.2.2
+  * GNU readline 5.1
+DAS WEBINTERFACE ARBEITET MOEGLICHERWEISE NICHT!
+------------------------------------------------------------------------
 r272 | delaco | 2006-09-12 19:51:12 +0200 (Tue, 12 Sep 2006) | 1 line
 
 MySQL Build-Fix.
