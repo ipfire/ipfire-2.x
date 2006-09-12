@@ -72,7 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/readline-5.1-fixes-3.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/patches/readline-5.1-fixes-3.patch
 	cd $(DIR_APP) && sed -i '/MV.*old/d' Makefile.in
 	cd $(DIR_APP) && sed -i '/{OLDSUFF}/c:' support/shlib-install
 	cd $(DIR_APP) && ./configure --prefix=/usr --libdir=/lib

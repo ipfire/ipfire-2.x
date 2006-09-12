@@ -1,4 +1,10 @@
 ------------------------------------------------------------------------
+r275 | ms | 2006-09-12 22:23:29 +0200 (Tue, 12 Sep 2006) | 3 lines
+
+Geaendert:
+  * OpenSSL-Update wegen Sicherheitluecke.
+  * Mache ROOTFILES passend um weniger zu aendern bei Kernelupdate.
+------------------------------------------------------------------------
 r274 | ms | 2006-09-12 20:51:47 +0200 (Tue, 12 Sep 2006) | 1 line
 
 Neues Bild fuers Bootmenue!

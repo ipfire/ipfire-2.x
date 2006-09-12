@@ -22,7 +22,7 @@
 # ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
 #          - Modified Makefile for IPCop build                                #
 #                                                                             #
-# $Id: fcron,v 1.5.2.4 2005/02/05 15:38:14 gespinasse Exp $
+# $Id: fcron,v 1.5.2.5 2006/09/07 00:27:44 franck78 Exp $
 #                                                                             #
 ###############################################################################
 
@@ -32,7 +32,7 @@
 
 include Config
 
-VER        = 2.0.2
+VER        = 3.0.1
 
 THISAPP    = fcron-$(VER)
 DL_FILE    = $(THISAPP).src.tar.gz
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 416c55d8a484eb6c9907828009fd649c
+$(DL_FILE)_MD5 = 8e5dcb3a646c11294294895954ef0a48
 
 install : $(TARGET)
 
@@ -78,12 +78,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-	    --without-sendmail \
-	    --with-spooldir=/var/spool/cron \
-	    --with-username=cron --with-groupname=cron
-	cd $(DIR_APP) && yes 'n' | make
-	cd $(DIR_APP) && yes 'n' | make install
+	cd $(DIR_APP) && ./configure		\
+	    --prefix=/usr			\
+	    --disable-nls			\
+	    --without-sendmail			\
+	    --with-spooldir=/var/spool/cron 	\
+	    --with-fifodir=/var/run	 	\
+	    --with-username=cron		\
+	    --with-groupname=cron		\
+	    --with-run-non-privileged=no	\
+	    --with-fcrondyn=no			\
+	    --with-sysfcrontab=no		\
+	    --with-boot-install=no		\
+	    --with-pam=no			\
+	    --with-selinux=no
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
 	echo "root" > /etc/fcron.allow
 	echo "all"  > /etc/fcron.deny
 	chmod u-s /usr/bin/fcrontab /usr/bin/fcronsighup

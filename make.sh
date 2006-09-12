@@ -682,7 +682,7 @@ buildipcop() {
   ipcopmake tcpdump
   ipcopmake traceroute
   ipcopmake vlan
-  #ipcopmake wireless
+  ipcopmake wireless
   ipcopmake libsafe
   ipcopmake 3c5x9setup
 #  echo -ne "`date -u '+%b %e %T'`: Building ### IPFire modules ### \n" | tee -a $LOGFILE
@@ -770,6 +770,7 @@ buildipcop() {
   ipcopmake subversion
   ipcopmake iptraf
   ipcopmake nagios
+  ipcopmake yasuc
 #  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
@@ -919,6 +920,7 @@ ipfirepackages() {
   ipfiredist xampp
 #  ipfiredist xinetd
   ipfiredist xvid
+  ipfiredist yasuc
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/*.{ipfire,md5} $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*

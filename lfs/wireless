@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 27
+VER        = 28
 
 THISAPP    = wireless_tools.$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 29891b66f23565e7e381d28404abb29a
+$(DL_FILE)_MD5 = 599c94497f9c9073c7b052d3dcb7cd16
 
 install : $(TARGET)
 

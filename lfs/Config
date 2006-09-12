@@ -86,25 +86,27 @@ ifeq "$(ROOT)" ""
 define POSTBUILD
 	@echo "Install done; saving file list to $(DIR_INFO)/$(THISAPP) ..."
 	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
-	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' | sort > $(TARGET)_1
+	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' | sort > $(TARGET)_diff
 	@cp -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr
 	@rm -f $(DIR_SRC)/lsalrnew
-	sed -i -e 's+.\/++' $(TARGET)_1
+	sed -i -e 's+.\/++' $(TARGET)_diff
 	# compare roofile ( same name as lfs script) with the list of installed files
 	# special cases
-	# - on a partial rebuild without a new file inside TARGET_1, just touch TARGET
-	if [ -s "$(TARGET)_1" ]; then \
+	# - on a partial rebuild without a new file inside TARGET_diff, just touch TARGET
+	if [ -s "$(TARGET)_diff" ]; then \
 		ROOTFILE=$(DIR_SRC)/src/ROOTFILES.$(MACHINE); \
-		for line in `cat $(TARGET)_1`; do \
-			if grep -qE "^#$$line$$" $$ROOTFILE ; then echo "#$$line" >> $(TARGET); \
-			elif grep -qE "^$$line$$" $$ROOTFILE ; then echo "$$line" >> $(TARGET); \
+		sed "s/KVER/$(KVER)/g" $$ROOTFILE > $(TARGET)_rootfile; \
+		for line in `cat $(TARGET)_diff`; do \
+			if grep -qE "^#$$line$$" $(TARGET)_rootfile ; then echo "#$$line" >> $(TARGET); \
+			elif grep -qE "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
 			else echo "+$$line" >> $(TARGET); \
 			fi; \
 		done; \
+		rm -f $(TARGET)_rootfile; \
 	else \
 		touch $(TARGET); \
 	fi
-	@rm -f $(TARGET)_1
+	@rm -f $(TARGET)_diff
 endef
 else
 define POSTBUILD
@@ -130,7 +132,7 @@ define MD5
 	# error mean file signature don't match the one in lfs script
 	[ "$($@_MD5)" = `md5sum $(DIR_DL)/$@ | awk '{ print $$1 }'` ]
 	echo "$@ checksum OK"
-	echo "$@" >>$(DIR_INFO)/_build.packages-list.log
+	echo "$@" >>$(DIR_INFO)/_build.othersrc-list.log
 endef
 
 define PAK
