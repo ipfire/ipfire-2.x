@@ -600,6 +600,7 @@ buildipcop() {
   ipcopmake pciutils
   ipcopmake pcre
   ipcopmake readline
+  ipcopmake libxml2
   ipcopmake berkeley
   ipcopmake BerkeleyDB ## The Perl module
   ipcopmake mysql
@@ -691,7 +692,6 @@ buildipcop() {
 ## Zuerst die Libs und dann die Programme. Ordnung muss sein!
   ipcopmake java
   ipcopmake bootsplash
-  ipcopmake libxml2
   ipcopmake spandsp
   ipcopmake lzo
   ipcopmake openvpn

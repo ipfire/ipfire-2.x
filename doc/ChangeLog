@@ -1,4 +1,17 @@
 ------------------------------------------------------------------------
+r276 | delaco | 2006-09-12 23:47:37 +0200 (Tue, 12 Sep 2006) | 10 lines
+
+Hinzugefuegt:
+  * Yasuc
+  * Wireless Tools (reanimiert)
+Updates:
+  * fcron
+  * pulsar
+  * unicorn
+Fixes:
+  * readline
+  * lfs/Config
+------------------------------------------------------------------------
 r275 | ms | 2006-09-12 22:23:29 +0200 (Tue, 12 Sep 2006) | 3 lines
 
 Geaendert:
