@@ -62,37 +62,6 @@ if ($outfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'select
 if ($outfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
 
 &Header::openpage('Ausgehende Firewall', 1, '');
-
-print <<END
-<script type="text/javascript">
-<!--
-function BorderOn (id) { id.className='btnOn'  }
-function BorderOff(id) { id.className='btnOff' }
-//-->
-</script>
-<style type=text/css>
-.btnOn {
-	border-right: #D5F0FF 2px Inset;
-	border-top: #D5F0FF 2px Inset;
-	border-left: #D5F0FF 2px Inset;
-	border-bottom: #D5F0FF 2px Inset;
-       text-align: Center;
-       text-decoration: None;
-	background-color: #FFFFFF;
-}
-.btnOff {
-	border-right: #D5F0FF 2px Outset;
-	border-top: #D5F0FF 2px Outset;
-	border-left: #D5F0FF 2px Outset;
-	border-bottom: #D5F0FF 2px Outset;
-	text-align: Center;
-	text-decoration: None;
-	background-color: #FFFFFF;
-}
-</style>
-END
-;
-
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
@@ -166,6 +135,8 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'edit'})
 		}
 	}
 	close FILE;
+	$selected{'SNET'}{"$outfwsettings{'SNET'}"} = 'selected';
+	$selected{'PROT'}{"$outfwsettings{'PROT'}"} = 'selected';
 	&addrule();
 	&Header::closebigbox();
 	&Header::closepage();
@@ -205,10 +176,10 @@ END
 ;
 		close FILE;
 	} else {
-		$outfwsettings{'ACTION'} = 'Regel hinzufuegen';
+		$outfwsettings{'ACTION'} = 'Add rule';
 	}
 }
-if ($outfwsettings{'ACTION'} eq 'Regel hinzufuegen')
+if ($outfwsettings{'ACTION'} eq 'Add rule')
 {
 	&addrule();
 	exit
@@ -230,7 +201,8 @@ if ($outfwsettings{'POLICY'} ne 'MODE0'){
 	&Header::openbox('100%', 'center', 'Rules');
 		print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<input type='submit' name='ACTION' class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)' value='Regel hinzufuegen'>
+		<input type='submit' name='ACTION' value='Add rule'>
+	</form>
 END
 ;
 	open( FILE, "< $configfile" ) or die "Unable to read $configfile";
@@ -240,12 +212,13 @@ END
 		print <<END
 		<hr>
 		<table border='0' width='100%' cellspacing='0'>
-		<tr><td bgcolor='lightgrey' width='14%'>Protokoll
-		    <td bgcolor='lightgrey' width='14%'>Netzwerk
-		    <td bgcolor='lightgrey' width='14%'>Ziel
-		    <td bgcolor='lightgrey' width='14%'>Anmerkung
-		    <td bgcolor='lightgrey' width='14%'>Politik
-		    <td bgcolor='lightgrey' width='30%'>Aktionen
+		<tr bgcolor='white'>
+		    <td width='14%'><b>Protokoll</b>
+		    <td width='14%'><b>Netzwerk</b>
+		    <td width='14%'><b>Ziel</b>
+		    <td width='14%'><b>Anmerkung</b>
+		    <td width='14%'><b>Politik</b>
+		    <td width='30%'><b>Aktionen</b>
 END
 ;
 		foreach $configentry (sort @configs)
@@ -266,35 +239,51 @@ END
 				if ($outfwsettings{'STATE'} eq 'ALLOW'){ $outfwsettings{'DISPLAY_STATE'} = "<img src='/images/stock_ok.png' alt='ALLOW'>"; }
 				if ((($outfwsettings{'POLICY'} eq 'MODE1') && ($outfwsettings{'STATE'} eq 'ALLOW')) || (($outfwsettings{'POLICY'} eq 'MODE2') && ($outfwsettings{'STATE'} eq 'DENY'))){
 			  		print <<END
-					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='hidden' name='PROT' value=$outfwsettings{'PROT'}>
-					<input type='hidden' name='STATE' value=$outfwsettings{'STATE'}>
-					<input type='hidden' name='SNET' value=$outfwsettings{'SNET'}>
-					<input type='hidden' name='DPORT' value=$outfwsettings{'DPORT'}>
-					<input type='hidden' name='DIP' value=$outfwsettings{'DIP'}>
-					<input type='hidden' name='SIP' value=$outfwsettings{'SIP'}>
-					<input type='hidden' name='NAME' value=$outfwsettings{'NAME'}>
-					<input type='hidden' name='SMAC' value=$outfwsettings{'SMAC'}>
-					<input type='hidden' name='ENABLED' value=$outfwsettings{'ENABLED'}>
-					<tr><td align='center' bgcolor='#EAEAEA'>$outfwsettings{'PROT'}
-					    <td align='center' bgcolor='#EAEAEA'>$outfwsettings{'SNET'}
-					    <td align='center' bgcolor='#EAEAEA'>$outfwsettings{'DISPLAY_DIP'}:$outfwsettings{'DISPLAY_DPORT'}
-					    <td align='center' bgcolor='#EAEAEA'>$outfwsettings{'NAME'}
-					    <td align='center' bgcolor='#EAEAEA'>$outfwsettings{'DISPLAY_STATE'}
-					    <td align='right'  bgcolor='#EAEAEA'>
-						<button type='submit' name='ACTION' value=$Lang::tr{'edit'} class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/edit.gif' width="20" height="20" alt=$Lang::tr{'edit'}></button>&nbsp;
-						<button type='submit' name='ACTION' value=$Lang::tr{'delete'} class='btnOff' onmouseover='BorderOn(this)' onmouseout='BorderOff(this)'><img src='/images/delete.gif' width="20" height="20" alt=$Lang::tr{'delete'}></button>
+					<tr bgcolor='#F0F0F0'>
+					    <td align='center'>$outfwsettings{'PROT'}
+					    <td align='center'>$outfwsettings{'SNET'}
+					    <td align='center'>$outfwsettings{'DISPLAY_DIP'}:$outfwsettings{'DISPLAY_DPORT'}
+					    <td align='center'>$outfwsettings{'NAME'}
+					    <td align='center'>$outfwsettings{'DISPLAY_STATE'}
+					    <td align='right'>
+					     <table border='0' cellpadding='0' cellspacing='0'><tr>
+						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='PROT' value=$outfwsettings{'PROT'}>
+							<input type='hidden' name='STATE' value=$outfwsettings{'STATE'}>
+							<input type='hidden' name='SNET' value=$outfwsettings{'SNET'}>
+							<input type='hidden' name='DPORT' value=$outfwsettings{'DPORT'}>
+							<input type='hidden' name='DIP' value=$outfwsettings{'DIP'}>
+							<input type='hidden' name='SIP' value=$outfwsettings{'SIP'}>
+							<input type='hidden' name='NAME' value=$outfwsettings{'NAME'}>
+							<input type='hidden' name='SMAC' value=$outfwsettings{'SMAC'}>
+							<input type='hidden' name='ENABLED' value=$outfwsettings{'ENABLED'}>
+							<input type='hidden' name='ACTION' value=$Lang::tr{'edit'}>
+							<input type='image' src='/images/edit.gif' width="20" height="20" alt=$Lang::tr{'edit'}>
+						</form>
+						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='PROT' value=$outfwsettings{'PROT'}>
+							<input type='hidden' name='STATE' value=$outfwsettings{'STATE'}>
+							<input type='hidden' name='SNET' value=$outfwsettings{'SNET'}>
+							<input type='hidden' name='DPORT' value=$outfwsettings{'DPORT'}>
+							<input type='hidden' name='DIP' value=$outfwsettings{'DIP'}>
+							<input type='hidden' name='SIP' value=$outfwsettings{'SIP'}>
+							<input type='hidden' name='NAME' value=$outfwsettings{'NAME'}>
+							<input type='hidden' name='SMAC' value=$outfwsettings{'SMAC'}>
+							<input type='hidden' name='ENABLED' value=$outfwsettings{'ENABLED'}>
+							<input type='hidden' name='ACTION' value=$Lang::tr{'delete'}>
+							<input type='image' src='/images/delete.gif' width="20" height="20" alt=$Lang::tr{'delete'}>
+						</form></table>
 END
 ;
 					if (($outfwsettings{'SIP'}) || ($outfwsettings{'SMAC'})) {
-						unless ($outfwsettings{'SIP'}) { $outfwsettings{'DISPLAY_SIP'} = '---'; } else { $outfwsettings{'DISPLAY_SIP'} = $outfwsettings{'SIP'}; }
-						unless ($outfwsettings{'SMAC'}) { $outfwsettings{'DISPLAY_SMAC'} = '---'; } else { $outfwsettings{'DISPLAY_SMAC'} = $outfwsettings{'SMAC'}; }
+						unless ($outfwsettings{'SIP'}) { $outfwsettings{'DISPLAY_SIP'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SIP'} = $outfwsettings{'SIP'}; }
+						unless ($outfwsettings{'SMAC'}) { $outfwsettings{'DISPLAY_SMAC'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SMAC'} = $outfwsettings{'SMAC'}; }
 						print <<END
-						<tr><td width='14%' align='right' bgcolor='#FAFAFA'>Quell-IP-Adresse: 
-						    <td width='14%' align='left' bgcolor='#FAFAFA'>$outfwsettings{'DISPLAY_SIP'}
-						    <td width='14%' align='right' bgcolor='#FAFAFA'>Quell-MAC-Adresse:
-						    <td width='14%' align='left' bgcolor='#FAFAFA'>$outfwsettings{'DISPLAY_SMAC'}
-						    <td width='44%' colspan='2' align='center' bgcolor='#FAFAFA'>
+						<tr><td width='14%' align='right'>Quell-IP-Adresse: 
+						    <td width='14%' align='left'>$outfwsettings{'DISPLAY_SIP'}
+						    <td width='14%' align='right'>Quell-MAC-Adresse:
+						    <td width='14%' align='left'>$outfwsettings{'DISPLAY_SMAC'}
+						    <td width='44%' colspan='2' align='center'>
 END
 ;
 					}
@@ -310,10 +299,6 @@ END
 ;
 
 	}
-	print <<END
-	</form>
-END
-;
 	&Header::closebox();
 }
 
@@ -324,17 +309,28 @@ if ($outfwsettings{'POLICY'} eq 'MODE2'){
 	&Header::openbox('100%', 'center', 'P2P-Block');
 	print <<END
 	<table width='40%'>
-		<tr><td bgcolor='lightgrey' width='66%'>Protokoll
-		    <td bgcolor='lightgrey' width='33%'>Status
+		<tr bgcolor='#FFFFFF'><td width='66%'><b>Protokoll</b>
+		    <td width='33%'><b>Status</b>
 END
 ;
+	my $id = 1;
 	foreach $p2pentry (sort @p2ps)
   	{
   		@p2pline = split( /\;/, $p2pentry );
 		print <<END
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<tr><td width='66%' align='center'>$p2pline[0]:	
-			    <td width='33%' align='center'><input type='hidden' name='P2PROT' value=$p2pline[1]>
+END
+;
+		if ($id % 2) {
+			print "\t\t\t<tr bgcolor='#F0F0F0'>\n"; 
+		}
+		else {
+			print "\t\t\t<tr bgcolor='#FAFAFA'>\n";
+		}
+		$id++;
+		print <<END
+			<td width='66%' align='center'>$p2pline[0]:	
+			<td width='33%' align='center'><input type='hidden' name='P2PROT' value=$p2pline[1]>
 END
 ;
 		if ($p2pline[2] eq 'on') {
@@ -407,7 +403,7 @@ sub addrule
 		    <td width='20%' align='right'>Aktiviert:
 		    <td width='30%' align='left'><input type='checkbox' name='ENABLED' $selected{'ENABLED'}>
 		<tr><td width='20%' align='right'>Protokoll:
-		    <td width='30%' align='left'><select name='PROT'><option value='tcp' $selected{'PROT'}{'TCP'}>TCP</option><option value='udp' $selected{'PROT'}{'UDP'}>UDP</option></select>
+		    <td width='30%' align='left'><select name='PROT'><option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option><option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option><option value='udp' $selected{'PROT'}{'udp'}>UDP</option></select>
 		    <td width='20%' align='right'>Sicherheitspolitik:
 		    <td width='30%' align='left'>
 END
@@ -421,14 +417,15 @@ END
 		<tr><td width='20%' align='right'>Quellnetz:
 		    <td width='30%' align='left'><select name='SNET'>
 			<option value='all' $selected{'SNET'}{'ALL'}>alle</option>
-			<option value='green' $selected{'SNET'}{'GREEN'}>Gruen</option>
+			<option value='ip' $selected{'SNET'}{'ip'}>Quell-IP/MAC benutzen</option>
+			<option value='green' $selected{'SNET'}{'green'}>Gruen</option>
 END
 ;
 	if (&Header::blue_used()){
-		print "\t\t\t<option value='blue' $selected{'SNET'}{'BLUE'}>Blau</option>\n";
+		print "\t\t\t<option value='blue' $selected{'SNET'}{'blue'}>Blau</option>\n";
 	}
 	if (&Header::orange_used()){
-		print "\t\t\t<option value='orange' $selected{'SNET'}{'ORANGE'}>Orange</option>\n";
+		print "\t\t\t<option value='orange' $selected{'SNET'}{'orange'}>Orange</option>\n";
 	}
 	print <<END
 			</select>
@@ -440,7 +437,7 @@ END
 		<tr><td width='20%' align='right'>Ziel-IP-Adresse: <img src='/blob.gif'>
 		    <td width='30%' align='left'><input type='text' name='DIP' maxlength='15' value='$outfwsettings{'DIP'}'>
 		    <td width='20%' align='right'>Ziel-Port: <img src='/blob.gif'>
-		    <td width='30%' align='left'><input type='text' name='DPORT' maxlength='5' value='$outfwsettings{'DPORT'}'>
+		    <td width='30%' align='left'><input type='text' name='DPORT' maxlength='11' value='$outfwsettings{'DPORT'}'>
 		<tr><td colspan='4'>
 		<tr><td width='40%' align='right' colspan='2'><img src='/blob.gif'> $Lang::tr{'this field may be blank'}
 		    <td width='60%' align='left' colspan='2'><input type='submit' name='ACTION' value=$Lang::tr{'add'}>
