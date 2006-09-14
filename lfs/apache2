@@ -81,7 +81,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
-	cd $(DIR_APP) && ./configure --enable-layout=FHS --enable-mods-shared=all
+	cd $(DIR_APP) && ./configure --enable-layout=FHS \
+				--prefix=/home/httpd --exec-prefix=/usr \
+				--sysconfdir=/etc/httpd/conf \
+				--includedir=/usr/include/apache --mandir=/usr/share/man \
+				--localstatedir=/var \
+				--enable-rewrite --enable-ssl \
+				--enable-mods-shared=all
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	chown -v root:root /usr/lib/apache/httpd.exp \

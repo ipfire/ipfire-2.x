@@ -606,7 +606,7 @@ buildipcop() {
   ipcopmake mysql
   ipcopmake saslauthd PASS=1
   ipcopmake openldap
-  ipcopmake apache
+  #ipcopmake apache
   ipcopmake apache2
   ipcopmake php
   ipcopmake arping
