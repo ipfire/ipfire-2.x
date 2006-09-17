@@ -26,7 +26,7 @@
   NAME="IPFire"			# Software name
   SNAME="ipfire"			# Short name
   VERSION="2.0"			# Version number
-  SLOGAN="www.ipfire.org"		# Software slogan
+  SLOGAN="www.ipfire.eu"		# Software slogan
   CONFIG_ROOT=/var/ipfire		# Configuration rootdir
   NICE=10
   MAX_RETRIES=3			# prefetch/check loop
@@ -1180,30 +1180,31 @@ svn)
 	case "$2" in
 	  update|up)
 		# clear
-		echo -n "Load the latest source files..."
-		svn update >> $PWD/log/_build.svn.update.log
+		echo "Loading the latest source files..."
+		svn update | tee -a $PWD/log/_build.svn.update.log
 		if [ $? -eq 0 ]; then
-			echo ".Done!"
+			echo "Finished!"
 		else
-			echo ".Fail!"
+			echo "Failure!"
 			exit 1
 		fi
-		echo -n "Write the svn info to a file..."
+		echo -n "Writing the svn-info to a file..."
 		svn info > $PWD/svn_status
 		if [ "$?" -eq "0" ]; then
-			echo ".Done!"
+			echo ".Finished!"
 		else
-			echo ".Fail!"
+			echo ".Failure!"
 			exit 1
 		fi
 		chmod 755 $0
-		tail log/_build.svn.update.log
 		exit 0
 	  ;;
 	  commit|ci)
 		clear
 		if [ -e /sbin/yast ]; then
-			$0 changelog
+			if [ "`echo $SVN_REVISION | cut -c 3`" -eq "0" ]; then
+				$0 changelog
+			fi
 		fi
 		echo "Upload the changed files..."
 		sleep 1
@@ -1241,7 +1242,7 @@ svn)
 			exit 1
 		fi
 	  ;;
-	  diff)
+	  diff|di)
 		echo -ne "Make a local diff to last svn revision..."
 		svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
 		if [ "$?" -eq "0" ]; then
@@ -1622,6 +1623,16 @@ batch)
 		exit 0
 	fi
 	;;
+watch)
+	echo "Exit with Ctrl+A, Ctrl+D."
+	echo -n "Preparing..."
+	for i in `seq 5`; do
+		sleep 0.1; echo -n "."
+	done
+	echo ".Ready!"
+	sleep 0.3
+	screen -x ipfire
+	;;
 *)
 	clear
 	svn info
@@ -1635,14 +1646,7 @@ batch)
 		$0 build-silent
 		;;
 	"IPFIRE: Watch Build")
-		echo "Exit with Ctrl+A, Ctrl+D."
-		echo -n "Preparing..."
-		for i in `seq 10`; do
-			sleep 0.1; echo -n "."
-		done
-		echo ".Ready!"
-		sleep 0.3
-		screen -x ipfire
+		$0 watch
 		;;
 	"IPFIRE: Batch")
 		$0 batch
