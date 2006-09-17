@@ -30,7 +30,6 @@
   * URI-1.35
   * Unix-Syslog-0.100
   * amedyn-2004-08-04
-  * apache_1.3.34
   * applejuice-0.30
   * arping-2.05
   * as86-0.16.17
@@ -114,7 +113,7 @@
   * inetutils-1.4.2
   * ipac-ng-1.31
   * ipaddr-1.2
-  * ipfire-logs-2006-09-13-22:31.tgz
+  * ipfire-logs-2006-09-16-21:02.tgz
   * iproute2-2.4.7-now-ss010824
   * iptables-1.3.5
   * iptraf-3.0.0
@@ -225,7 +224,6 @@
   * squidGuard-1.2.0
   * startscripts
   * stund_0.96_Aug13
-  * subversion-1.3.1
   * sudo-1.6.8p12
   * sysklogd-1.4.1
   * syslinux-2.11

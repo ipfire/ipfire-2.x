@@ -767,7 +767,7 @@ buildipcop() {
   ipcopmake etherwake
   ipcopmake ethereal
   ipcopmake tftp-hpa
-  ipcopmake subversion
+  #ipcopmake subversion
   ipcopmake iptraf
   ipcopmake nagios
   ipcopmake yasuc

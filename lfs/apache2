@@ -81,12 +81,33 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
-	cd $(DIR_APP) && ./configure --enable-layout=FHS \
-				--prefix=/home/httpd --exec-prefix=/usr \
-				--sysconfdir=/etc/httpd/conf \
-				--includedir=/usr/include/apache --mandir=/usr/share/man \
-				--localstatedir=/var \
-				--enable-rewrite --enable-ssl \
+
+	### Add IPFire's layout, too
+	echo "# IPFire layout" >> $(DIR_APP)/config.layout
+	echo "<Layout IPFire>" >> $(DIR_APP)/config.layout
+	echo "    prefix:             /usr" >> $(DIR_APP)/config.layout
+	echo "    exec_prefix:        /usr" >> $(DIR_APP)/config.layout
+	echo "    bindir:             /usr/bin" >> $(DIR_APP)/config.layout
+	echo "    sbindir:            /usr/sbin" >> $(DIR_APP)/config.layout
+	echo "    libdir:             /usr/lib" >> $(DIR_APP)/config.layout
+	echo "    libexecdir:         /usr/lib/apache" >> $(DIR_APP)/config.layout
+	echo "    mandir:             /usr/share/man" >> $(DIR_APP)/config.layout
+	echo "    sysconfdir:         /etc/httpd/conf" >> $(DIR_APP)/config.layout
+	echo "    datadir:            /home/httpd" >> $(DIR_APP)/config.layout
+	echo "    installbuilddir:    /usr/lib/apache/build" >> $(DIR_APP)/config.layout
+	echo "    errordir:           /home/httpd/error" >> $(DIR_APP)/config.layout
+	echo "    iconsdir:           /home/httpd/icons" >> $(DIR_APP)/config.layout
+	echo "    htdocsdir:          /home/httpd/htdocs" >> $(DIR_APP)/config.layout
+	echo "    manualdir:          /home/httpd/manual" >> $(DIR_APP)/config.layout
+	echo "    cgidir:             /home/httpd/cgi-bin" >> $(DIR_APP)/config.layout
+	echo "    includedir:         /usr/include/apache" >> $(DIR_APP)/config.layout
+	echo "    localstatedir:      /home/httpd" >> $(DIR_APP)/config.layout
+	echo "    runtimedir:         /var/run" >> $(DIR_APP)/config.layout
+	echo "    logfiledir:         /var/log/httpd" >> $(DIR_APP)/config.layout
+	echo "    proxycachedir:      /var/cache/apache/proxy" >> $(DIR_APP)/config.layout
+	echo "</Layout>" >> $(DIR_APP)/config.layout
+
+	cd $(DIR_APP) && ./configure --enable-layout=IPFire \
 				--enable-mods-shared=all
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
@@ -95,5 +116,25 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    /usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd}}.1 \
 	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
 	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
+
+	#sed 's+CONFIG_ROOT+$(CONFIG_ROOT)+g' $(DIR_SRC)/config/httpd/httpd.conf > /etc/httpd/conf/httpd.conf
+	#ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
+
+	# Copy all html/cgi-bin files
+	mkdir -p /home/httpd/{cgi-bin,html}
+	cp -aR $(DIR_SRC)/html/* /home/httpd
+	-find /home/httpd -name .svn -exec rm -rf {} \;
+	cp $(DIR_DL)/sflogo.png /home/httpd/html/images/
+
+	# Change CONFIG_ROOT in cgi-scripts
+	for i in /home/httpd/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
+	    if [ -f $$i ]; then \
+	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
+	    fi; \
+	done
+	chown -R root:root /home/httpd
+	chmod -R 755 /home/httpd/cgi-bin
+	chmod -R 644 /home/httpd/html
+	chmod 755 /home/httpd/html /home/httpd/html/{index.cgi,redirect.cgi,dial.cgi,images,include}
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
