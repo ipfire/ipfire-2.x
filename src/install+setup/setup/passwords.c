@@ -54,7 +54,7 @@ int handleadminpassword(void)
 		return 0;
 	
 	snprintf(commandstring, STRING_SIZE,
-		"/usr/bin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", password);
+		"/usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", password);
 	sprintf(message, ctr[TR_SETTING_ADMIN_PASSWORD], NAME);
 	if (runhiddencommandwithstatus(commandstring, message))
 	{

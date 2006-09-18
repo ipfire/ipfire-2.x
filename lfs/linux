@@ -27,6 +27,7 @@
 include Config
 
 VER        = 2.4.33
+PATCHLEVEL = 2.4.33.3
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,19 +41,19 @@ CXXFLAGS   =
 ifeq "$(ROOT)" ""
 ifeq "$(LFS_PASS)" "ipfire"
 ifeq "$(SMP)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)-ipfire
+  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire
 endif
 ifeq "$(SMP)" "1"
-  TARGET = $(DIR_INFO)/$(THISAPP)-ipfire-smp
+  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-smp
 endif
 ifeq "$(SMP)" "installer"
-  TARGET = $(DIR_INFO)/$(THISAPP)-ipfire-installer
+  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-installer
 endif
 else
-  TARGET = $(DIR_INFO)/$(THISAPP)
+  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)
 endif
 else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-tools
 endif
 
 ###############################################################################
@@ -64,25 +65,26 @@ objects =$(DL_FILE) \
 	patch-o-matic-ng-20060206.tar.bz2 \
 	kbc_option_2420.patch \
 	net4801.kernel.patch_2.4.31 \
-	netfilter-layer7-v2.1.tar.gz
+	netfilter-layer7-v2.1.tar.gz \
+	patch-$(PATCHLEVEL).bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+patch-$(PATCHLEVEL).bz2                 = $(DL_FROM)/patch-$(PATCHLEVEL).bz2
 openswan-1.0.10rc2.tar.gz		= $(URL_IPFIRE)/openswan-1.0.10rc2.tar.gz
 patch-o-matic-ng-20060206.tar.bz2    	= $(URL_IPFIRE)/patch-o-matic-ng-20060206.tar.bz2
 iptables-1.3.5.tar.bz2              	= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
 kbc_option_2420.patch                   = $(URL_IPFIRE)/kbc_option_2420.patch
 net4801.kernel.patch_2.4.31             = $(URL_IPFIRE)/net4801.kernel.patch_2.4.31
 netfilter-layer7-v2.1.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.1.tar.gz
-#bootsplash-3.0.7-2.4.31-vanilla.diff	= $(URL_IPFIRE)/bootsplash-3.0.7-2.4.31-vanilla.diff
 
 $(DL_FILE)_MD5                       	= 4d258d4267de64f0a22e23f6ab026990
+patch-$(PATCHLEVEL).bz2_MD5             = 3597da59e82a495d97e1f0ecd8fc5d4d
 openswan-1.0.10rc2.tar.gz_MD5        	= 20d51ff963da78f826f4e0f0ebc4bcef
 patch-o-matic-ng-20060206.tar.bz2_MD5	= eca9893afb753e331caddfe63142b566
 iptables-1.3.5.tar.bz2_MD5          	= 00fb916fa8040ca992a5ace56d905ea5
 kbc_option_2420.patch_MD5               = 6d37870344f7fcf97ace1fbf43323c60
 net4801.kernel.patch_2.4.31_MD5         = c7d64e3caedb2f2b10e1c11db7f73a04
 netfilter-layer7-v2.1.tar.gz_MD5	= 551626a158c2a2cbfd937d27ecc7fac1
-#bootsplash-3.0.7-2.4.31-vanilla.diff    = 767c263d1d28827d51abc83945e4b893
 
 install : $(TARGET)
 
@@ -112,6 +114,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && bzcat $(DIR_DL)/patch-$(PATCHLEVEL).bz2 | patch -p1
+	# Remove patch level in EXTRAVERSION.
+	# We want to avoid the need to supply a full kernel
+	# (installed in a different place) if only one part could be updated
+	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =/' Makefile
 	cd $(DIR_SRC) && ln -sf linux-$(VER) linux
 	cd $(DIR_APP) && sed -i -e 's/-Werror//' drivers/scsi/aic7xxx/Makefile
 

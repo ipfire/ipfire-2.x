@@ -89,8 +89,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /install/cdrom/{doc,dosutils,images}
 	sed -e "s/KVER/$(KVER)/g" $(DIR_SRC)/src/ROOTFILES.$(MACHINE) > /tmp/ROOTFILES
 	tar -c -C / --files-from=/tmp/ROOTFILES \
-	    -f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
-	    --exclude='proc/*'
+		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
+		--exclude='proc/*' --exclude='tmp/ROOTFILES'
 	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar

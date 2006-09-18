@@ -72,11 +72,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf /etc/ssl
 	cd $(DIR_APP) && sed -i -e 's/-O3/-O2/' -e 's/-m486/-mcpu=i386/' Configure
 	cd $(DIR_APP) && chmod 755 Configure
 	cd $(DIR_APP) && ./config --openssldir=/etc/ssl --prefix=/usr 386 \
 	    no-idea no-threads no-mdc2 no-rc5 no-ec zlib-dynamic shared
-	cd $(DIR_APP) && sed -i 's%SHLIBDIRS= fips crypto ssl%SHLIBDIRS= crypto ssl%g' Makefile
+	cd $(DIR_APP) && sed -i 's/^PROCESSOR= 386/PROCESSOR=386/g' Makefile
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make MANDIR=/usr/share/man
 	cd $(DIR_APP) && make MANDIR=/usr/share/man install

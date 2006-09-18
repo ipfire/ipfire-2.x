@@ -117,7 +117,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
 	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
 
-	sed 's+CONFIG_ROOT+$(CONFIG_ROOT)+g' $(DIR_SRC)/config/httpd/httpd.conf > /etc/httpd/conf/httpd.conf
+	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
 	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
 
 	# Copy all html/cgi-bin files
