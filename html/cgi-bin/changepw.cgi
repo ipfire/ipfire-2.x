@@ -40,7 +40,7 @@ if ($cgiparams{'ACTION_ADMIN'} eq $Lang::tr{'save'})
 		}
 		elsif (length($password1) >= 6)
 		{
-			system('/usr/bin/htpasswd', '-m', '-b', "${General::swroot}/auth/users", 'admin', "${password1}");
+			system('/usr/sbin/htpasswd', '-m', '-b', "${General::swroot}/auth/users", 'admin', "${password1}");
 			&General::log($Lang::tr{'admin user password has been changed'});
 		}
 		else {
@@ -61,7 +61,7 @@ if ($cgiparams{'ACTION_DIAL'} eq $Lang::tr{'save'})
                 }
 		elsif (length($password1) >= 6)
 		{
-			system('/usr/bin/htpasswd', '-m', '-b', "${General::swroot}/auth/users", 'dial', "${password1}");
+			system('/usr/sbin/htpasswd', '-m', '-b', "${General::swroot}/auth/users", 'dial', "${password1}");
 			&General::log($Lang::tr{'dial user password has been changed'});
 		}
 		else {
