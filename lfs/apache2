@@ -108,7 +108,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "</Layout>" >> $(DIR_APP)/config.layout
 
 	cd $(DIR_APP) && ./configure --enable-layout=IPFire \
-				--enable-mods-shared=all
+				--enable-ssl --enable-mods-shared=all
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	chown -v root:root /usr/lib/apache/httpd.exp \
@@ -117,8 +117,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
 	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
 
-	#sed 's+CONFIG_ROOT+$(CONFIG_ROOT)+g' $(DIR_SRC)/config/httpd/httpd.conf > /etc/httpd/conf/httpd.conf
-	#ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
+	sed 's+CONFIG_ROOT+$(CONFIG_ROOT)+g' $(DIR_SRC)/config/httpd/httpd.conf > /etc/httpd/conf/httpd.conf
+	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
 
 	# Copy all html/cgi-bin files
 	mkdir -p /home/httpd/{cgi-bin,html}
