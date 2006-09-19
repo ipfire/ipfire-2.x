@@ -1,0 +1,477 @@
+#!/bin/bash
+#
+# installgrub
+#
+# Program to automatically install GNU/GrUB under Linux
+#
+# Copyright: (c) SuSE GmbH, Nuernberg, Germany
+# 
+# Authors: Thorsten Wandersmann <tw@suse.de>
+#          Philipp Thomas <pthomas@suse.de>
+#
+# $Id: installgrub,v 0.15 2002/01/22 18:06:14 pthomas Exp $
+#
+
+
+################################################################################
+#
+# Name: funct_see
+#
+# Synopsis: funct_see
+#
+# Description: sets -x
+
+function funct_see () {
+    set -x
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name:        funct_help
+#
+# Synopsis:    funct_help help
+#              funct_help "message"
+#
+# Description: funct_help will print out the help for the programm if 
+#              the keyword "help" is passed to it and will exit with "0".
+#              In other cases it will print out the "message" as error, print
+#              out the help and then exit with "1".
+
+function funct_help () {
+    if [ "$1" = "help" ]; then
+	funct_print_help
+	exit 0
+    fi
+ 
+    echo "WARNING: $1"
+    echo ""
+    funct_print_help
+    exit 1
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name:        funct_print_help
+#
+# Synopsis:    funct_help 
+#
+# Description: funct_print_help only prints out the helpscreen and then
+#              returns.
+#
+
+function funct_print_help () {
+    funct_version
+    echo ""
+    echo "NAME:     installgrub"
+    echo "Synopsis: $0 help"
+    echo "          $0 ide|scsi [debug]"
+    echo "          $0 version"
+    echo "Description:"
+    echo "$0 will install grub on your system and, hopefully, will correctly"
+    echo "find all things needed."
+    echo "Usage: help     - will print out this screen"
+    echo "       ide|scsi - GRUB enumerates all drives, ide and scsi, beginning"
+    echo "                  with '0', just like the BIOS will report them."
+    echo "                  What it does not regard is SCSI/IDE boot order."
+    echo "                  If you have SCSI and IDE hard disks installed,"
+    echo "                  GRUB will start enumeration with the SCSI drives."
+    echo "                  So in order to correctly install GRUB, you"
+    echo "                  have to tell it whether booting starts with IDE"
+    echo "                  or SCSI"
+    echo "       debug    - causes a lot of messages to be written to"
+    echo "                  /var/log/installgrub.msg"
+    echo "       version  - prints out the version"
+    echo ""
+    echo "Send bugreports to 'pthomas@suse.de'"
+    echo ""
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name:        funct_version
+# 
+# Synopsios:   funct_version
+#
+# Description: Extract version info from RCS tag.
+#
+
+function funct_version () {
+
+    VERSION=`cat $0 | grep "^#.*Id" | gawk '{print $4" checked in on "$5}'`
+    echo "This is 'installgrub' version $VERSION."
+return
+}
+#-------------------------------------------------------------------------------
+
+################################################################################
+#
+# Name: funct_entry
+#
+# Description: Prepare an entry
+#
+
+function funct_entry() {
+    DESCR=$1
+    O_ROOT=`echo $CASE | cut -d"-" -f2`
+    O_ROOT_NR=`echo $O_ROOT | cut -c 9-10`
+    O_ROOT_HD=`echo $O_ROOT | cut -c 1-8`
+    G_O_HD=`grep $O_ROOT_HD /boot/grub/device.map | cut -c 2-4`
+    G_O_NR=`expr $O_ROOT_NR - 1`
+    G_O="($G_O_HD,$G_O_NR)"
+
+    ENTRY="$ENTRY\n\n# Entry -- $DESCR\ntitle $DESCR on $O_ROOT\nroot $G_O\nmakeaktive\nchainloader +1"
+    
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name: funct_options
+#
+# Description: Sort the options given at the command-line.
+#
+
+function funct_options() {
+
+    if [ "$1" = "debug" -o "$2" = "debug" ]; then
+	DEB="yes"
+    fi
+
+    if [ "$1" = "help" -o "$2" = "help" ]; then
+	funct_help help
+	exit 0
+    fi
+
+    if [ "$1" = "version" -o "$2" = "version" ]; then
+	funct_version
+	exit 0
+    fi
+
+    if [ "$1" = "scsi" -o "$2" = "scsi" ]; then
+	DEVICE="scsi"
+    fi
+
+    if [ "$1" = "ide" -o "$2" = "ide" ]; then
+	DEVICE="ide"
+    fi
+
+    test "$DEVICE" || funct_help "No device specified"
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name: funct_parts
+#
+# Synopsis: funct_parts
+#
+# Descriptiuon: Searches the root-partition for GrUB (the Partition
+#               that inhabits /boot) and the Linux Root Partition.
+#
+
+function funct_parts () {
+
+    L_BOOT=`grep "[[:space:]]/boot[[:space:]]" /etc/fstab | cut -d" " -f1`
+    L_ROOT=`grep "[[:space:]]/[[:space:]]" /etc/fstab | cut -d" " -f1`
+
+    test -d "/boot" -a -z "$L_BOOT" && BOOT="d"
+    test -L "/boot" -a -z "$L_BOOT" && BOOT="l"
+
+    case "$BOOT" in 
+	d)
+	    L_BOOT="$L_ROOT"
+  	;;
+	l)
+	    BO_LINK=`ls -l /boot | gawk '{sub(/\/$/, "");print $NF}'`
+	    L_BOOT=`grep "[[:space:]]$BO_LINK[[:space:]]" /etc/fstab | gawk '{print $1}'`
+	    test "$L_BOOT" || L_BOOT="$L_ROOT"
+	;;
+	*)
+	    test -e "/boot" || \
+	    funct_help \
+	    "No /boot found! If you use another Directory, please make a Link."
+	;;
+    esac
+
+    L_BOOT_NR=`echo $L_BOOT | cut -c 9-10`
+    L_BOOT_HD=`echo $L_BOOT | cut -c 1-8`
+    G_ROOT_HD=`grep $L_BOOT_HD /boot/grub/device.map | cut -c 2-4`
+    G_ROOT_NR=`expr $L_BOOT_NR - 1`
+    G_ROOT="($G_ROOT_HD,$G_ROOT_NR)"
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name: funct_ide
+#
+# Synopsis: funct_ide
+#
+# Description: Serches the first IDE-HD-Drive.
+#
+
+function funct_ide () {
+
+    FDISK=`sfdisk -l | grep "^Disk" | grep "/dev/hd" | cut -c 6-13`
+    COUNTER=0
+
+    for i in $FDISK; do
+	eval FDISK_$COUNTER="$i"
+	COUNTER=`expr $COUNTER + 1`
+    done
+
+    echo $FDISK_0
+
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name funct_ginst
+#
+# Synopsis: funct_ginst
+#
+# Description: "Installs" GrUB, that means, generates the /boot/grub/device.map
+#              file.
+#
+
+function funct_ginst () {
+
+
+    case "$DEVICE" in
+	scsi)
+	    grub-install --recheck --root-directory=/boot /dev/sda
+	;;
+	ide) 
+	    IDE=`funct_ide`
+	    grub-install --recheck --root-directory=/boot $IDE
+	;;
+    esac
+    # Seems, that the documentation is not right anymore. IDE seems to be
+    # always the first disk in grub. So its better to always do IDE as
+    # first boot in mix-systems. So you can say, use always (hd0)
+    I_ROOT="hd0"
+    # This is kind of a test.
+
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name: funct_oses
+# 
+# Synopsis:
+#
+# Description: Searches all partitions and add those found to the menu
+#
+
+function funct_oses () {
+
+    KERNELS=`file /boot/* | grep Kernel | cut -d":" -f1 | cut -d"/" -f3`
+
+    for i in $KERNELS; do
+INITRD=""
+INITRD_FILE=""
+
+	SUFFIX=`echo $i | gawk 'BEGIN {FS="vmlinuz"}{print $2}'`
+	
+	test -e /boot/initrd && INITRD_FILE="initrd"
+	test -e "/boot/initrd$SUFFIX" && INITRD_FILE="initrd$SUFFIX"
+
+	test "$INITRD_FILE" && INITRD="initrd /$INITRD_FILE"
+	test "$INITRD" || INITRD_FILE="<no initrd found>"
+
+	ENTRY="$ENTRY\n\n# Entry -- $i with initrd: $INITRD_FILE\ntitle Linux on $L_ROOT -- \"$i\", \"$INITRD_FILE\", \"$G_ROOT\"\nroot $G_ROOT\nkernel /$i root=$L_ROOT\n$INITRD"
+    done
+
+    PARTITIONS=`sfdisk -d | grep "^/dev" | gawk 'BEGIN {FIELDWIDTHS = "10 37 2"}{print $3"-"$1}'`
+
+    for CASE in $PARTITIONS; do
+        case "$CASE" in
+            "1-"*  | "4-"*  | "6-"*  | "b-"*  | "c-"*  | "e-"*  | "1-"* | \
+            "11-"* | "14-"* | "16-"* | "1b-"* | "1c-"* | "1e-"* |         \
+            "24-"* | "c1-"* | "c4-"* | "c6-"* | "e1-"* | "e3-"*           )
+            funct_entry "DOS/Win"
+        ;;
+        "7-"* | "17-"* | "84-"* )
+            funct_entry "OS/2"
+        ;;
+        "a-"* )
+            funct_entry "OS/2 BootManager"
+        ;;
+        "17-"* | "84-"* )
+            funct_entry "WinNT"
+        ;;
+        "82-"* )
+            SWAPP=`echo $CASE | cut -d"-" -f2`
+            SWAPT=`mount $SWAPP /tmp 2>&1 | grep swapspace ;
+                   umount /tmp 2>/dev/null`
+            test "$SWAPT" || funct_entry "Solaris or SWAP !!!"                          ;;
+        esac
+    done
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name: funct_build
+#
+# Synopsis: funct_build
+#
+# Description: Builds the menu.lst file.
+#
+
+function funct_build () {
+    DATE=`date`
+    ENTRY="# Automatic generated on $DATE\ntimeout 30\ndefault 0\ncolor green/light-gray black/cyan"
+    funct_oses
+    ENTRY="$ENTRY\n\n# Automatic End\n# Inserting Menu.own\n\n"
+
+    test -e /boot/grub/menu.lst && cp /boot/grub/menu.lst /boot/grub/menu.old
+    echo -e "$ENTRY" > /boot/grub/menu.lst
+    test -e /boot/grub/menu.own && cat /boot/grub/menu.own >> /boot/grub/menu.lst
+    ENTRY="$ENTRY\n\n# Inserting Menu.own end\n\n# Have a lot of fun ..."
+return
+}
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# Name: funct_write
+#
+# Synopsis: funct_write
+#
+# Description: Writes GrUB to MBR
+#              
+# Notice: Because of "EOF" there is no format.
+#
+
+function funct_write () {
+
+grub << EOF 
+root $G_ROOT
+install /boot/grub/stage1 d ($I_ROOT) ($I_ROOT)1+16 p $G_ROOT/boot/grub/stage2 /boot/grub/menu.lst
+quit
+EOF
+
+return
+}
+#-------------------------------------------------------------------------------
+
+################################################################################
+#
+# This is the Main-Programm ;-)
+#
+
+
+test "$1" = "see" -o "$2" = "see" -o "$3" = "see" && funct_see
+
+funct_options $1 $2
+funct_ginst
+funct_parts
+funct_build
+funct_write
+
+exit 0
+#-------------------------------------------------------------------------------
+
+
+################################################################################
+#
+# End Of INSTALLGRUB
+#
+# $Log: installgrub,v $
+# Revision 0.15  2002/01/22 18:06:14  pthomas
+# - Output bugreport address in help, not in version.
+# - Reformat help output a bit.
+#
+# Revision 0.14  2002/01/22 18:00:02  pthomas
+# Correct typo.
+#
+# Revision 0.13  2002/01/22 14:58:14  pthomas
+# Correct spelling and comments.
+# Change bugreport address to pthomas@suse.de
+#
+# Revision 0.12  2000/12/19 12:14:46  root
+# - fixed the version information in help
+# - rewrote the part, the scripts looks for the patitions.
+#   that means, now its a case, and all partitions will go throug it.
+# - droped funct_debug its useless now.
+#
+# Revision 0.11  2000/09/23 13:19:40  root
+# found kind of a bug
+# the manuel of grub says, that your hd-order depends on the bios.
+# that means: is the first thing to boot ide or scsi.
+# well in single-systems this do nithing, but it seems, that
+# against the manuel, the ide-drive is always the first one in grub.
+# even if the bios says something else.
+# so i got an error to boot from scsi. after booting in bios from scsi
+# all went well.
+#
+# Revision 0.10  2000/09/23 12:05:06  root
+# did a fix for scsi ide mix-systems
+# rerun grub-install with an existing device.map can couse nothing.
+# so if a hd is added, it could be, that it will not be found.
+# better to remove the file first and then run grub-install
+#
+# Revision 0.9  2000/09/23 11:06:27  root
+# enterd the possibility to have an menu.own file.
+# menu.own will be appand below the automatic entrys.
+# old menu.lst will be saved to menu.old
+#
+# Revision 0.8  2000/09/23 08:33:29  root
+# make os/2 and nt detection ready.
+# build in detection of /boot, if /boot is not SuSE-Standard
+# fixed initrd-Entry
+# todo: description fixing of the functions
+#       will rebuild the detection of the OSes -> going throug all partitions
+#       and than go through a case.
+#
+# Revision 0.7  2000/09/18 11:53:22  root
+# fixed debug-messages
+# added option see for set -x
+# todo: correct the descriptions of the functions
+#
+# Revision 0.6  2000/09/18 07:22:59  root
+# minor bug fixed
+#
+# Revision 0.5  2000/09/18 07:18:55  root
+# made it nicer
+# mor functions, structure for other OS
+# all kernels, with different initrds
+#
+# Revision 0.4  2000/09/15 13:42:26  root
+# minor bug fixed
+#
+# Revision 0.3  2000/09/15 13:37:02  root
+# First Version that really installs grub, but only linux
+#
+# Revision 0.2  2000/09/15 12:16:12  root
+# ok, now it works as i wanted it
+#
+# Revision 0.1  2000/09/15 11:54:37  root
+# First little try, only for testing.
+# It will do nothing, because GrUB is disabled in this version.
+# Lets see if the idea is working.
+#
+

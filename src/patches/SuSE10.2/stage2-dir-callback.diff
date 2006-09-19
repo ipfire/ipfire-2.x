@@ -1,0 +1,708 @@
+Index: grub-0.95/stage2/fsys_jfs.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_jfs.c
++++ grub-0.95/stage2/fsys_jfs.c
+@@ -270,7 +270,7 @@ jfs_read (char *buf, int len)
+ }
+ 
+ int
+-jfs_dir (char *dirname)
++jfs_dir (char *dirname, void (*handle)(char *))
+ {
+ 	char *ptr, *rest, ch;
+ 	ldtentry_t *de;
+@@ -357,12 +357,9 @@ jfs_dir (char *dirname)
+ 
+ 			cmp = (!*dirname) ? -1 : substring (dirname, namebuf);
+ #ifndef STAGE1_5
+-			if (print_possibilities && ch != '/'
+-			    && cmp <= 0) {
+-				if (print_possibilities > 0)
+-					print_possibilities = -print_possibilities;
+-				print_a_completion (namebuf);
+-			} else
++			if (handle && ch != '/' && cmp <= 0)
++				handle (namebuf);
++			else
+ #endif
+ 			if (cmp == 0) {
+ 				parent_inum = inum;
+@@ -372,9 +369,6 @@ jfs_dir (char *dirname)
+ 			}
+ 			de = next_dentry ();
+ 			if (de == NULL) {
+-				if (print_possibilities < 0)
+-					return 1;
+-
+ 				errnum = ERR_FILE_NOT_FOUND;
+ 				*rest = ch;
+ 				return 0;
+Index: grub-0.95/stage2/fsys_minix.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_minix.c
++++ grub-0.95/stage2/fsys_minix.c
+@@ -294,7 +294,7 @@ minix_read (char *buf, int len)
+      inode of the file we were trying to look up
+    side effects: none yet  */
+ int
+-minix_dir (char *dirname)
++minix_dir (char *dirname, void (*handle)(char *))
+ {
+   int current_ino = MINIX_ROOT_INO;  /* start at the root */
+   int updir_ino = current_ino;	     /* the parent of the current directory */
+@@ -457,18 +457,9 @@ minix_dir (char *dirname)
+ 	     give up */
+ 	  if (loc >= INODE->i_size)
+ 	    {
+-	      if (print_possibilities < 0)
+-		{
+-#if 0
+-		  putchar ('\n');
+-#endif
+-		}
+-	      else
+-		{
+-		  errnum = ERR_FILE_NOT_FOUND;
+-		  *rest = ch;
+-		}
+-	      return (print_possibilities < 0);
++	      errnum = ERR_FILE_NOT_FOUND;
++	      *rest = ch;
++	      return 0;
+ 	    }
+ 
+ 	  /* else, find the (logical) block component of our location */
+@@ -510,20 +501,15 @@ minix_dir (char *dirname)
+ 	      str_chk = substring (dirname, dp->name);
+ 
+ # ifndef STAGE1_5
+-	      if (print_possibilities && ch != '/'
+-		  && (!*dirname || str_chk <= 0))
+-		{
+-		  if (print_possibilities > 0)
+-		    print_possibilities = -print_possibilities;
+-		  print_a_completion (dp->name);
+-		}
++	      if (handle && ch != '/' && (!*dirname || str_chk <= 0))
++		handle (dp->name);
+ # endif
+ 
+ 	      dp->name[namelen] = saved_c;
+ 	    }
+ 
+ 	}
+-      while (!dp->inode || (str_chk || (print_possibilities && ch != '/')));
++      while (!dp->inode || (str_chk || (handle && ch != '/')));
+ 
+       current_ino = dp->inode;
+       *(dirname = rest) = ch;
+Index: grub-0.95/stage2/fsys_reiserfs.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_reiserfs.c
++++ grub-0.95/stage2/fsys_reiserfs.c
+@@ -991,7 +991,7 @@ reiserfs_read (char *buf, int len)
+  *   the size of the file.
+  */
+ int
+-reiserfs_dir (char *dirname)
++reiserfs_dir (char *dirname, void (*handle)(char *))
+ {
+   struct reiserfs_de_head *de_head;
+   char *rest, ch;
+@@ -1123,7 +1123,7 @@ reiserfs_dir (char *dirname)
+       *rest = 0;
+       
+ # ifndef STAGE1_5
+-      if (print_possibilities && ch != '/')
++      if (handle && ch != '/')
+ 	do_possibilities = 1;
+ # endif /* ! STAGE1_5 */
+       
+@@ -1170,10 +1170,8 @@ reiserfs_dir (char *dirname)
+ 		    {
+ 		      if (cmp <= 0)
+ 			{
+-			  if (print_possibilities > 0)
+-			    print_possibilities = -print_possibilities;
+ 			  *name_end = 0;
+-			  print_a_completion (filename);
++			  handle (filename);
+ 			  *name_end = tmp;
+ 			}
+ 		    }
+@@ -1189,12 +1187,6 @@ reiserfs_dir (char *dirname)
+ 	      num_entries--;
+ 	    }
+ 	}
+-      
+-# ifndef STAGE1_5
+-      if (print_possibilities < 0)
+-	return 1;
+-# endif /* ! STAGE1_5 */
+-      
+       errnum = ERR_FILE_NOT_FOUND;
+       *rest = ch;
+       return 0;
+Index: grub-0.95/stage2/fsys_iso9660.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_iso9660.c
++++ grub-0.95/stage2/fsys_iso9660.c
+@@ -133,7 +133,7 @@ iso9660_mount (void)
+ }
+ 
+ int
+-iso9660_dir (char *dirname)
++iso9660_dir (char *dirname, void (*handle)(char *))
+ {
+   struct iso_directory_record *idr;
+   RR_ptr_t rr_ptr;
+@@ -346,7 +346,7 @@ iso9660_dir (char *dirname)
+ 	      if (name_len >= pathlen
+ 		  && !memcmp(name, dirname, pathlen))
+ 		{
+-		  if (dirname[pathlen] == '/' || !print_possibilities)
++		  if (dirname[pathlen] == '/' || !handle)
+ 		    {
+ 		      /*
+ 		       *  DIRNAME is directory component of pathname,
+@@ -377,11 +377,9 @@ iso9660_dir (char *dirname)
+ 		  else	/* Completion */
+ 		    {
+ #ifndef STAGE1_5
+-		      if (print_possibilities > 0)
+-			print_possibilities = -print_possibilities;
+ 		      memcpy(NAME_BUF, name, name_len);
+ 		      NAME_BUF[name_len] = '\0';
+-		      print_a_completion (NAME_BUF);
++		      handle (NAME_BUF);
+ #endif
+ 		    }
+ 		}
+@@ -390,7 +388,7 @@ iso9660_dir (char *dirname)
+ 	  size -= ISO_SECTOR_SIZE;
+ 	} /* size>0 */
+ 
+-      if (dirname[pathlen] == '/' || print_possibilities >= 0)
++      if (dirname[pathlen] == '/' || handle)
+ 	{
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  return 0;
+Index: grub-0.95/stage2/fsys_fat.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_fat.c
++++ grub-0.95/stage2/fsys_fat.c
+@@ -286,7 +286,7 @@ fat_read (char *buf, int len)
+ }
+ 
+ int
+-fat_dir (char *dirname)
++fat_dir (char *dirname, void (*handle)(char *))
+ {
+   char *rest, ch, dir_buf[FAT_DIRENTRY_LENGTH];
+   char *filename = (char *) NAME_BUF;
+@@ -342,7 +342,7 @@ fat_dir (char *dirname)
+   *rest = 0;
+   
+ # ifndef STAGE1_5
+-  if (print_possibilities && ch != '/')
++  if (handle && ch != '/')
+     do_possibilities = 1;
+ # endif
+   
+@@ -353,16 +353,6 @@ fat_dir (char *dirname)
+ 	{
+ 	  if (!errnum)
+ 	    {
+-# ifndef STAGE1_5
+-	      if (print_possibilities < 0)
+-		{
+-#if 0
+-		  putchar ('\n');
+-#endif
+-		  return 1;
+-		}
+-# endif /* STAGE1_5 */
+-	      
+ 	      errnum = ERR_FILE_NOT_FOUND;
+ 	      *rest = ch;
+ 	    }
+@@ -457,11 +447,7 @@ fat_dir (char *dirname)
+ 	{
+ 	print_filename:
+ 	  if (substring (dirname, filename) <= 0)
+-	    {
+-	      if (print_possibilities > 0)
+-		print_possibilities = -print_possibilities;
+-	      print_a_completion (filename);
+-	    }
++	    handle (filename);
+ 	  continue;
+ 	}
+ # endif /* STAGE1_5 */
+Index: grub-0.95/stage2/filesys.h
+===================================================================
+--- grub-0.95.orig/stage2/filesys.h
++++ grub-0.95/stage2/filesys.h
+@@ -24,7 +24,7 @@
+ #define FSYS_FFS_NUM 1
+ int ffs_mount (void);
+ int ffs_read (char *buf, int len);
+-int ffs_dir (char *dirname);
++int ffs_dir (char *dirname, void (*handle)(char *));
+ int ffs_embed (int *start_sector, int needed_sectors);
+ #else
+ #define FSYS_FFS_NUM 0
+@@ -34,7 +34,7 @@ int ffs_embed (int *start_sector, int ne
+ #define FSYS_UFS2_NUM 1
+ int ufs2_mount (void);
+ int ufs2_read (char *buf, int len);
+-int ufs2_dir (char *dirname);
++int ufs2_dir (char *dirname, void (*handle)(char *));
+ int ufs2_embed (int *start_sector, int needed_sectors);
+ #else
+ #define FSYS_UFS2_NUM 0
+@@ -44,7 +44,7 @@ int ufs2_embed (int *start_sector, int n
+ #define FSYS_FAT_NUM 1
+ int fat_mount (void);
+ int fat_read (char *buf, int len);
+-int fat_dir (char *dirname);
++int fat_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_FAT_NUM 0
+ #endif
+@@ -53,7 +53,7 @@ int fat_dir (char *dirname);
+ #define FSYS_EXT2FS_NUM 1
+ int ext2fs_mount (void);
+ int ext2fs_read (char *buf, int len);
+-int ext2fs_dir (char *dirname);
++int ext2fs_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_EXT2FS_NUM 0
+ #endif
+@@ -62,7 +62,7 @@ int ext2fs_dir (char *dirname);
+ #define FSYS_MINIX_NUM 1
+ int minix_mount (void);
+ int minix_read (char *buf, int len);
+-int minix_dir (char *dirname);
++int minix_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_MINIX_NUM 0
+ #endif
+@@ -71,7 +71,7 @@ int minix_dir (char *dirname);
+ #define FSYS_REISERFS_NUM 1
+ int reiserfs_mount (void);
+ int reiserfs_read (char *buf, int len);
+-int reiserfs_dir (char *dirname);
++int reiserfs_dir (char *dirname, void (*handle)(char *));
+ int reiserfs_embed (int *start_sector, int needed_sectors);
+ #else
+ #define FSYS_REISERFS_NUM 0
+@@ -81,7 +81,7 @@ int reiserfs_embed (int *start_sector, i
+ #define FSYS_VSTAFS_NUM 1
+ int vstafs_mount (void);
+ int vstafs_read (char *buf, int len);
+-int vstafs_dir (char *dirname);
++int vstafs_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_VSTAFS_NUM 0
+ #endif
+@@ -90,7 +90,7 @@ int vstafs_dir (char *dirname);
+ #define FSYS_JFS_NUM 1
+ int jfs_mount (void);
+ int jfs_read (char *buf, int len);
+-int jfs_dir (char *dirname);
++int jfs_dir (char *dirname, void (*handle)(char *));
+ int jfs_embed (int *start_sector, int needed_sectors);
+ #else
+ #define FSYS_JFS_NUM 0
+@@ -100,7 +100,7 @@ int jfs_embed (int *start_sector, int ne
+ #define FSYS_XFS_NUM 1
+ int xfs_mount (void);
+ int xfs_read (char *buf, int len);
+-int xfs_dir (char *dirname);
++int xfs_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_XFS_NUM 0
+ #endif
+@@ -109,7 +109,7 @@ int xfs_dir (char *dirname);
+ #define FSYS_TFTP_NUM 1
+ int tftp_mount (void);
+ int tftp_read (char *buf, int len);
+-int tftp_dir (char *dirname);
++int tftp_dir (char *dirname, void (*handle)(char *));
+ void tftp_close (void);
+ #else
+ #define FSYS_TFTP_NUM 0
+@@ -119,7 +119,7 @@ void tftp_close (void);
+ #define FSYS_ISO9660_NUM 1
+ int iso9660_mount (void);
+ int iso9660_read (char *buf, int len);
+-int iso9660_dir (char *dirname);
++int iso9660_dir (char *dirname, void (*handle)(char *));
+ #else
+ #define FSYS_ISO9660_NUM 0
+ #endif
+@@ -150,16 +150,10 @@ struct fsys_entry
+   char *name;
+   int (*mount_func) (void);
+   int (*read_func) (char *buf, int len);
+-  int (*dir_func) (char *dirname);
++  int (*dir_func) (char *dirname, void (*print_one)(char *));
+   void (*close_func) (void);
+   int (*embed_func) (int *start_sector, int needed_sectors);
+ };
+ 
+-#ifdef STAGE1_5
+-# define print_possibilities 0
+-#else
+-extern int print_possibilities;
+-#endif
+-
+ extern int fsmax;
+ extern struct fsys_entry fsys_table[NUM_FSYS + 1];
+Index: grub-0.95/stage2/fsys_ext2fs.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_ext2fs.c
++++ grub-0.95/stage2/fsys_ext2fs.c
+@@ -491,7 +491,7 @@ int ext2_is_fast_symlink (void)
+  * side effects: messes up GROUP_DESC buffer area
+  */
+ int
+-ext2fs_dir (char *dirname)
++ext2fs_dir (char *dirname, void (*handle)(char *))
+ {
+   int current_ino = EXT2_ROOT_INO;	/* start at the root */
+   int updir_ino = current_ino;	/* the parent of the current directory */
+@@ -517,7 +517,6 @@ ext2fs_dir (char *dirname)
+ #ifdef E2DEBUG
+   unsigned char *i;
+ #endif	/* E2DEBUG */
+-
+   /* loop invariants:
+      current_ino = inode to lookup
+      dirname = pointer to filename component we are cur looking up within
+@@ -709,18 +708,9 @@ ext2fs_dir (char *dirname)
+ 	     give up */
+ 	  if (loc >= INODE->i_size)
+ 	    {
+-	      if (print_possibilities < 0)
+-		{
+-# if 0
+-		  putchar ('\n');
+-# endif
+-		}
+-	      else
+-		{
+-		  errnum = ERR_FILE_NOT_FOUND;
+-		  *rest = ch;
+-		}
+-	      return (print_possibilities < 0);
++	      errnum = ERR_FILE_NOT_FOUND;
++	      *rest = ch;
++	      return 0;
+ 	    }
+ 
+ 	  /* else, find the (logical) block component of our location */
+@@ -761,20 +751,15 @@ ext2fs_dir (char *dirname)
+ 	      str_chk = substring (dirname, dp->name);
+ 
+ # ifndef STAGE1_5
+-	      if (print_possibilities && ch != '/'
+-		  && (!*dirname || str_chk <= 0))
+-		{
+-		  if (print_possibilities > 0)
+-		    print_possibilities = -print_possibilities;
+-		  print_a_completion (dp->name);
+-		}
++	      if (handle && ch != '/' && (!*dirname || str_chk <= 0))
++		handle (dp->name);
+ # endif
+ 
+ 	      dp->name[dp->name_len] = saved_c;
+ 	    }
+ 
+ 	}
+-      while (!dp->inode || (str_chk || (print_possibilities && ch != '/')));
++      while (!dp->inode || (str_chk || (handle && ch != '/')));
+ 
+       current_ino = dp->inode;
+       *(dirname = rest) = ch;
+Index: grub-0.95/stage2/fsys_ffs.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_ffs.c
++++ grub-0.95/stage2/fsys_ffs.c
+@@ -180,7 +180,7 @@ ffs_read (char *buf, int len)
+ 
+ 
+ int
+-ffs_dir (char *dirname)
++ffs_dir (char *dirname, void (*handle)(char *))
+ {
+   char *rest, ch;
+   int block, off, loc, map, ino = ROOTINO;
+@@ -236,13 +236,6 @@ loop:
+     {
+       if (loc >= INODE->i_size)
+ 	{
+-#if 0
+-	  putchar ('\n');
+-#endif
+-
+-	  if (print_possibilities < 0)
+-	    return 1;
+-
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  *rest = ch;
+ 	  return 0;
+@@ -267,18 +260,13 @@ loop:
+       loc += dp->d_reclen;
+ 
+ #ifndef STAGE1_5
+-      if (dp->d_ino && print_possibilities && ch != '/'
++      if (dp->d_ino && handle && ch != '/'
+ 	  && (!*dirname || substring (dirname, dp->d_name) <= 0))
+-	{
+-	  if (print_possibilities > 0)
+-	    print_possibilities = -print_possibilities;
+-
+-	  print_a_completion (dp->d_name);
+-	}
++	handle (dp->d_name);
+ #endif /* STAGE1_5 */
+     }
+   while (!dp->d_ino || (substring (dirname, dp->d_name) != 0
+-			|| (print_possibilities && ch != '/')));
++			|| (handle && ch != '/')));
+ 
+   /* only get here if we have a matching directory entry */
+ 
+Index: grub-0.95/stage2/fsys_vstafs.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_vstafs.c
++++ grub-0.95/stage2/fsys_vstafs.c
+@@ -115,7 +115,7 @@ vstafs_nextdir (void)
+ }
+ 
+ int 
+-vstafs_dir (char *dirname)
++vstafs_dir (char *dirname, void (*handle)(char *))
+ {
+   char *fn, ch;
+   struct dir_entry *d;
+@@ -146,14 +146,9 @@ vstafs_dir (char *dirname)
+ 	    continue;
+ 	  
+ #ifndef STAGE1_5
+-	  if (print_possibilities && ch != '/'
++	  if (handle && ch != '/'
+ 	      && (! *dirname || strcmp (dirname, d->name) <= 0))
+-	    {
+-	      if (print_possibilities > 0)
+-		print_possibilities = -print_possibilities;
+-	      
+-	      printf ("  %s", d->name);
+-	    }
++	    handle(d->name);
+ #endif
+ 	  if (! grub_strcmp (dirname, d->name))
+ 	    {
+@@ -168,12 +163,6 @@ vstafs_dir (char *dirname)
+       *(dirname = fn) = ch;
+       if (! d)
+ 	{
+-	  if (print_possibilities < 0)
+-	    {
+-	      putchar ('\n');
+-	      return 1;
+-	    }
+-	  
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  return 0;
+ 	}
+Index: grub-0.95/stage2/fsys_ufs2.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_ufs2.c
++++ grub-0.95/stage2/fsys_ufs2.c
+@@ -204,7 +204,7 @@ ufs2_read (char *buf, int len)
+ }
+ 
+ int
+-ufs2_dir (char *dirname)
++ufs2_dir (char *dirname, void (*handle)(char *))
+ {
+   char *rest, ch;
+   int block, off, loc, ino = ROOTINO;
+@@ -261,9 +261,6 @@ loop:
+     {
+       if (loc >= INODE_UFS2->di_size)
+ 	{
+-	  if (print_possibilities < 0)
+-	    return 1;
+-
+ 	  errnum = ERR_FILE_NOT_FOUND;
+ 	  *rest = ch;
+ 	  return 0;
+@@ -288,18 +285,13 @@ loop:
+       loc += dp->d_reclen;
+ 
+ #ifndef STAGE1_5
+-      if (dp->d_ino && print_possibilities && ch != '/'
++      if (dp->d_ino && handle && ch != '/'
+ 	  && (!*dirname || substring (dirname, dp->d_name) <= 0))
+-	{
+-	  if (print_possibilities > 0)
+-	    print_possibilities = -print_possibilities;
+-
+-	  print_a_completion (dp->d_name);
+-	}
++	handle (dp->d_name);
+ #endif /* STAGE1_5 */
+     }
+   while (!dp->d_ino || (substring (dirname, dp->d_name) != 0
+-			|| (print_possibilities && ch != '/')));
++			|| (handle && ch != '/')));
+ 
+   /* only get here if we have a matching directory entry */
+ 
+Index: grub-0.95/stage2/disk_io.c
+===================================================================
+--- grub-0.95.orig/stage2/disk_io.c
++++ grub-0.95/stage2/disk_io.c
+@@ -36,7 +36,6 @@ void (*disk_read_hook) (int, int, int) =
+ void (*disk_read_func) (int, int, int) = NULL;
+ 
+ #ifndef STAGE1_5
+-int print_possibilities;
+ 
+ static int do_completion;
+ static int unique;
+@@ -1479,7 +1478,7 @@ print_completions (int is_filename, int 
+ 	  if (! is_completion)
+ 	    grub_printf (" Possible files are:");
+ 	  
+-	  dir (buf);
++	  dir (buf, print_a_completion);
+ 	  
+ 	  if (is_completion && *unique_string)
+ 	    {
+@@ -1498,7 +1497,7 @@ print_completions (int is_filename, int 
+ 		  *ptr = '/';
+ 		  *(ptr + 1) = 0;
+ 		  
+-		  dir (buf);
++		  dir (buf, print_a_completion);
+ 		  
+ 		  /* Restore the original unique value.  */
+ 		  unique = 1;
+@@ -1626,12 +1625,7 @@ grub_open (char *filename)
+   if (!errnum && fsys_type == NUM_FSYS)
+     errnum = ERR_FSYS_MOUNT;
+ 
+-# ifndef STAGE1_5
+-  /* set "dir" function to open a file */
+-  print_possibilities = 0;
+-# endif
+-
+-  if (!errnum && (*(fsys_table[fsys_type].dir_func)) (filename))
++  if (!errnum && (*(fsys_table[fsys_type].dir_func)) (filename, NULL))
+     {
+ #ifndef NO_DECOMPRESSION
+       return gunzip_test_header ();
+@@ -1752,7 +1746,7 @@ grub_seek (int offset)
+ }
+ 
+ int
+-dir (char *dirname)
++dir (char *dirname, void (*handle)(char *))
+ {
+ #ifndef NO_DECOMPRESSION
+   compressed_file = 0;
+@@ -1761,19 +1755,18 @@ dir (char *dirname)
+   if (!(dirname = setup_part (dirname)))
+     return 0;
+ 
++  errnum = 0;
+   if (*dirname != '/')
+     errnum = ERR_BAD_FILENAME;
+-
+-  if (fsys_type == NUM_FSYS)
++  else if (fsys_type == NUM_FSYS)
+     errnum = ERR_FSYS_MOUNT;
+-
+-  if (errnum)
+-    return 0;
+-
+-  /* set "dir" function to list completions */
+-  print_possibilities = 1;
+-
+-  return (*(fsys_table[fsys_type].dir_func)) (dirname);
++  else
++    {
++      fsys_table[fsys_type].dir_func (dirname, handle);
++      if (errnum == ERR_FILE_NOT_FOUND)
++	errnum = 0;
++    }
++  return errnum == 0;
+ }
+ #endif /* STAGE1_5 */
+ 
+Index: grub-0.95/stage2/fsys_xfs.c
+===================================================================
+--- grub-0.95.orig/stage2/fsys_xfs.c
++++ grub-0.95/stage2/fsys_xfs.c
+@@ -534,7 +534,7 @@ xfs_read (char *buf, int len)
+ }
+ 
+ int
+-xfs_dir (char *dirname)
++xfs_dir (char *dirname, void (*handle)(char *))
+ {
+ 	xfs_ino_t ino, parent_ino, new_ino;
+ 	xfs_fsize_t di_size;
+@@ -595,11 +595,9 @@ xfs_dir (char *dirname)
+ 		for (;;) {
+ 			cmp = (!*dirname) ? -1 : substring (dirname, name);
+ #ifndef STAGE1_5
+-			if (print_possibilities && ch != '/' && cmp <= 0) {
+-				if (print_possibilities > 0)
+-					print_possibilities = -print_possibilities;
+-				print_a_completion (name);
+-			} else
++			if (handle && ch != '/' && cmp <= 0)
++				handle (name);
++			else
+ #endif
+ 			if (cmp == 0) {
+ 				parent_ino = ino;
+@@ -610,9 +608,6 @@ xfs_dir (char *dirname)
+ 			}
+ 			name = next_dentry (&new_ino);
+ 			if (name == NULL) {
+-				if (print_possibilities < 0)
+-					return 1;
+-
+ 				errnum = ERR_FILE_NOT_FOUND;
+ 				*rest = ch;
+ 				return 0;
+Index: grub-0.95/netboot/fsys_tftp.c
+===================================================================
+--- grub-0.95.orig/netboot/fsys_tftp.c
++++ grub-0.95/netboot/fsys_tftp.c
+@@ -409,7 +409,7 @@ tftp_read (char *addr, int size)
+ /* Check if the file DIRNAME really exists. Get the size and save it in
+    FILEMAX.  */
+ int
+-tftp_dir (char *dirname)
++tftp_dir (char *dirname, void (*handle)(char *))
+ {
+   int ch;
+ 
+@@ -418,7 +418,7 @@ tftp_dir (char *dirname)
+ #endif
+   
+   /* In TFTP, there is no way to know what files exist.  */
+-  if (print_possibilities)
++  if (handle)
+     return 1;
+ 
+   /* Don't know the size yet.  */

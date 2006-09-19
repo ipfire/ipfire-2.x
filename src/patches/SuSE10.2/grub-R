@@ -1,0 +1,61 @@
+--- grub-0.96/stage2/builtins.c.orig	2004-06-20 15:33:04.000000000 +0200
++++ grub-0.96/stage2/builtins.c	2005-09-02 14:38:53.000000000 +0200
+@@ -762,11 +762,11 @@
+ default_func (char *arg, int flags)
+ {
+ #ifndef SUPPORT_DISKLESS
+-  if (grub_strcmp (arg, "saved") == 0)
++  if (grub_strcmp (arg, "saved") == 0 || (saved_entryno & 0x4000))
+     {
+-      default_entry = saved_entryno;
+-      return 0;
++      default_entry = saved_entryno & 0x3fff;
+     }
++  else
+ #endif /* SUPPORT_DISKLESS */
+   
+   if (! safe_parse_maxint (&arg, &default_entry))
+@@ -787,6 +787,22 @@
+ #endif
+ };
+ 
++#ifndef SUPPORT_DISKLESS
++static int savedefault_func (char *arg, int flags);
++void __savedefault_once_reset()
++{
++  if (saved_entryno & 0x4000)
++    {
++      int saved_current_entryno = current_entryno;
++      grub_timeout = 0;
++      current_entryno = default_entry;
++      savedefault_func("\0", BUILTIN_SCRIPT);
++      current_entryno = saved_current_entryno;
++      saved_entryno &= 0x3fff;
++    }
++}
++#endif /* SUPPORT_DISKLESS */
++
+ 
+ #ifdef GRUB_UTIL
+ /* device */
+--- grub-0.96/stage2/stage2.c~	2004-07-24 20:53:47.000000000 +0200
++++ grub-0.96/stage2/stage2.c	2005-09-02 14:45:04.000000000 +0200
+@@ -827,6 +827,7 @@
+   return pos;
+ }
+ 
++extern void __savedefault_once_reset();
+ 
+ /* This is the starting function in C.  */
+ void
+@@ -1048,7 +1049,9 @@
+ 	    }
+ 	  while (is_preset);
+ 	}
+-
++#ifndef SUPPORT_DISKLESS
++      __savedefault_once_reset();
++#endif
+       if (! num_entries)
+ 	{
+ 	  /* If no acceptable config file, goto command-line, starting

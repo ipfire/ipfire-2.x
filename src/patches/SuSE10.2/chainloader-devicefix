@@ -1,0 +1,13 @@
+--- grub-0.97/stage2/builtins.c.orig	2005-02-15 22:58:23.000000000 +0100
++++ grub-0.97/stage2/builtins.c	2006-04-19 16:26:33.000000000 +0200
+@@ -455,6 +455,10 @@ chainloader_func (char *arg, int flags)
+     *((unsigned long *) (BOOTSEC_LOCATION + BOOTSEC_BPB_HIDDEN_SECTORS))
+       = part_start;
+ 
++  /* if a new device was specified, make sure DX is passed correctly */
++  if ('(' == *file)
++    set_device(file);
++
+   errnum = ERR_NONE;
+   
+   return 0;

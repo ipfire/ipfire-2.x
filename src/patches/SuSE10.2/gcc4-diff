@@ -1,0 +1,160 @@
+--- grub-0.96/netboot/main.c
++++ grub-0.96/netboot/main.c
+@@ -54,9 +54,9 @@
+ 
+ static int vendorext_isvalid;
+ static unsigned long netmask;
+-static struct bootpd_t bootp_data;
++struct bootpd_t bootp_data;
+ static unsigned long xid;
+-static unsigned char *end_of_rfc1533 = NULL;
++unsigned char *end_of_rfc1533 = NULL;
+ 
+ #ifndef	NO_DHCP_SUPPORT
+ #endif /* NO_DHCP_SUPPORT */
+--- grub-0.96/stage2/disk_io.c
++++ grub-0.96/stage2/disk_io.c
+@@ -128,7 +128,7 @@
+ int filemax;
+ 
+ static inline unsigned long
+-log2 (unsigned long word)
++grub_log2 (unsigned long word)
+ {
+   asm volatile ("bsfl %1,%0"
+ 		: "=r" (word)
+@@ -140,7 +140,7 @@
+ rawread (int drive, int sector, int byte_offset, int byte_len, char *buf)
+ {
+   int slen, sectors_per_vtrack;
+-  int sector_size_bits = log2 (buf_geom.sector_size);
++  int sector_size_bits = grub_log2 (buf_geom.sector_size);
+ 
+   if (byte_len <= 0)
+     return 1;
+@@ -163,7 +163,7 @@
+ 	    }
+ 	  buf_drive = drive;
+ 	  buf_track = -1;
+-	  sector_size_bits = log2 (buf_geom.sector_size);
++	  sector_size_bits = grub_log2 (buf_geom.sector_size);
+ 	}
+ 
+       /* Make sure that SECTOR is valid.  */
+--- grub-0.96/stage2/fsys_ext2fs.c
++++ grub-0.96/stage2/fsys_ext2fs.c
+@@ -193,7 +193,7 @@
+ 
+ 
+ /* ext2/super.c */
+-#define log2(n) ffz(~(n))
++#define grub_log2(n) ffz(~(n))
+ 
+ #define EXT2_SUPER_MAGIC      0xEF53	/* include/linux/ext2_fs.h */
+ #define EXT2_ROOT_INO              2	/* include/linux/ext2_fs.h */
+@@ -216,7 +216,7 @@
+ 
+ /* linux/ext2_fs.h */
+ #define EXT2_ADDR_PER_BLOCK(s)          (EXT2_BLOCK_SIZE(s) / sizeof (__u32))
+-#define EXT2_ADDR_PER_BLOCK_BITS(s)		(log2(EXT2_ADDR_PER_BLOCK(s)))
++#define EXT2_ADDR_PER_BLOCK_BITS(s)		(grub_log2(EXT2_ADDR_PER_BLOCK(s)))
+ 
+ /* linux/ext2_fs.h */
+ #define EXT2_BLOCK_SIZE_BITS(s)        ((s)->s_log_block_size + 10)
+@@ -537,7 +537,7 @@
+ 
+       /* look up an inode */
+       group_id = (current_ino - 1) / (SUPERBLOCK->s_inodes_per_group);
+-      group_desc = group_id >> log2 (EXT2_DESC_PER_BLOCK (SUPERBLOCK));
++      group_desc = group_id >> grub_log2 (EXT2_DESC_PER_BLOCK (SUPERBLOCK));
+       desc = group_id & (EXT2_DESC_PER_BLOCK (SUPERBLOCK) - 1);
+ #ifdef E2DEBUG
+       printf ("ipg=%d, dpb=%d\n", SUPERBLOCK->s_inodes_per_group,
+@@ -553,7 +553,7 @@
+       gdp = GROUP_DESC;
+       ino_blk = gdp[desc].bg_inode_table +
+ 	(((current_ino - 1) % (SUPERBLOCK->s_inodes_per_group))
+-	 >> log2 (EXT2_BLOCK_SIZE (SUPERBLOCK) / sizeof (struct ext2_inode)));
++	 >> grub_log2 (EXT2_BLOCK_SIZE (SUPERBLOCK) / sizeof (struct ext2_inode)));
+ #ifdef E2DEBUG
+       printf ("inode table fsblock=%d\n", ino_blk);
+ #endif /* E2DEBUG */
+--- grub-0.96/stage2/fsys_fat.c
++++ grub-0.96/stage2/fsys_fat.c
+@@ -55,7 +55,7 @@
+ #define FAT_CACHE_SIZE 2048
+ 
+ static __inline__ unsigned long
+-log2 (unsigned long word)
++grub_log2 (unsigned long word)
+ {
+   __asm__ ("bsfl %1,%0"
+ 	   : "=r" (word)
+@@ -84,9 +84,9 @@
+   if (bpb.sects_per_clust == 0)
+     return 0;
+   
+-  FAT_SUPER->sectsize_bits = log2 (FAT_CVT_U16 (bpb.bytes_per_sect));
++  FAT_SUPER->sectsize_bits = grub_log2 (FAT_CVT_U16 (bpb.bytes_per_sect));
+   FAT_SUPER->clustsize_bits
+-    = FAT_SUPER->sectsize_bits + log2 (bpb.sects_per_clust);
++    = FAT_SUPER->sectsize_bits + grub_log2 (bpb.sects_per_clust);
+   
+   /* Fill in info about super block */
+   FAT_SUPER->num_sectors = FAT_CVT_U16 (bpb.short_sectors) 
+--- grub-0.96/stage2/fsys_iso9660.c
++++ grub-0.96/stage2/fsys_iso9660.c
+@@ -57,7 +57,7 @@
+ 
+ 
+ static inline unsigned long
+-log2 (unsigned long word)
++grub_log2 (unsigned long word)
+ {
+   asm volatile ("bsfl %1,%0"
+ 		:          "=r" (word)
+@@ -68,7 +68,7 @@
+ static int
+ iso9660_devread (int sector, int byte_offset, int byte_len, char *buf)
+ {
+-  unsigned short sector_size_lg2 = log2(buf_geom.sector_size);
++  unsigned short sector_size_lg2 = grub_log2(buf_geom.sector_size);
+ 
+   /*
+    * We have to use own devread() function since BIOS return wrong geometry
+--- grub-0.96/stage2/fsys_reiserfs.c
++++ grub-0.96/stage2/fsys_reiserfs.c
+@@ -367,7 +367,7 @@
+ 
+ 
+ static __inline__ unsigned long
+-log2 (unsigned long word)
++grub_log2 (unsigned long word)
+ {
+   __asm__ ("bsfl %1,%0"
+ 	   : "=r" (word)
+@@ -609,7 +609,7 @@
+   
+   INFO->version = super.s_version;
+   INFO->blocksize = super.s_blocksize;
+-  INFO->fullblocksize_shift = log2 (super.s_blocksize);
++  INFO->fullblocksize_shift = grub_log2 (super.s_blocksize);
+   INFO->blocksize_shift = INFO->fullblocksize_shift - SECTOR_BITS;
+   INFO->cached_slots = 
+     (FSYSREISER_CACHE_SIZE >> INFO->fullblocksize_shift) - 1;
+--- grub-0.96/stage2/iso9660.h
++++ grub-0.96/stage2/iso9660.h
+@@ -73,11 +73,11 @@
+ 
+ typedef	struct __iso_16bit {
+   u_int16_t l, b;
+-} iso_16bit_t __attribute__ ((packed));
++} iso_16bit_t;
+ 
+ typedef	struct __iso_32bit {
+   u_int32_t l, b;
+-} iso_32bit_t __attribute__ ((packed));
++} iso_32bit_t;
+ 
+ typedef u_int8_t		iso_date_t[7];
+ 

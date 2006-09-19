@@ -1,0 +1,45 @@
+--- grub-0.95/stage2/filesys.h.orig	2004-05-14 21:36:43.000000000 +0200
++++ grub-0.95/stage2/filesys.h	2004-09-30 17:16:20.741176364 +0200
+@@ -73,6 +73,16 @@
+ int reiserfs_read (char *buf, int len);
+ int reiserfs_dir (char *dirname);
+ int reiserfs_embed (int *start_sector, int needed_sectors);
++#if defined(__linux__) && defined (GRUB_UTIL)
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++#include <sys/statfs.h>
++#include <fcntl.h>
++/* from <linux/reiserfs_fs.h> */
++#define REISERFS_SUPER_MAGIC 0x52654973
++#define REISERFS_IOC_UNPACK  _IOW(0xCD,1,long)
++#endif
+ #else
+ #define FSYS_REISERFS_NUM 0
+ #endif
+--- grub-0.95/stage2/builtins.c.orig	2004-05-14 21:30:52.000000000 +0200
++++ grub-0.95/stage2/builtins.c	2004-09-30 17:18:52.342818812 +0200
+@@ -1807,9 +1807,23 @@
+ #ifdef GRUB_UTIL
+       else if (grub_memcmp ("--stage2=", arg, sizeof ("--stage2=") - 1) == 0)
+ 	{
++	  int fd;
+ 	  stage2_os_file = arg + sizeof ("--stage2=") - 1;
+ 	  arg = skip_to (0, arg);
+ 	  nul_terminate (stage2_os_file);
++
++#if defined(__linux__) && defined (FSYS_REISERFS)
++	  if ((fd=open(stage2_os_file, O_RDONLY)) >= 0)
++	    {
++	      struct statfs buf;
++	      /* see if the file sits on a reiserfs,
++		 and try do defragment it if so. */
++	      fstatfs(fd, &buf);
++	      if (buf.f_type == REISERFS_SUPER_MAGIC)
++		ioctl (fd, REISERFS_IOC_UNPACK, 1);
++	    }
++#endif	/* __linux__ && FSYS_REISERFS */
++
+ 	}
+ #endif /* GRUB_UTIL */
+       else

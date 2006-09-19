@@ -32,6 +32,7 @@
 
 include Config
 
+#VER        = 0.95
 VER        = 0.97
 
 THISAPP    = grub-$(VER)
@@ -81,46 +82,29 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-configfile.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-symlinkmenulst.patch
-#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-endedit.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-append.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-bootonce.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-splashimagehelp.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-special-device-names.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-i2o.patch
-#	cd $(DIR_APP)/netboot && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-rtl8139.patch
+# Patch SuSE 10.2
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-path-patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/SuSE10.2/use_ferror.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-R
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/bad-assert-sideeffect
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/SuSE10.2/grub-gfxmenu-v8.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-devicemap.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-linux-setup-fix
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/fix-uninitialized
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/force-LBA-off.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-initrdaddr.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-protexec.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-path-cfg.diff
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-configfile.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-symlinkmenulst.patch
-#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-endedit.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-append.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-bootonce.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-misc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-dirs.patch	    
-
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-splashimagehelp.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-splash.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-wildcards.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-PIC.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-bounced-checks.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-special-device-names.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-i2o-raid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-i2o.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-nxstack.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.96-netboot-pic.patch
-	cd $(DIR_APP)/netboot && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-rtl8139.patch
+	cd $(DIR_APP) && perl -pi -e 's,/usr/lib/grub/i386-pc,/usr/share/grub/i386-pc,' docs/grub.texi
 
 	cd $(DIR_APP) && autoreconf --install --force
-	cd $(DIR_APP) && CFLAGS="-Os -fno-stack-protector" \
-	    STAGE2_CFLAGS="-Os -fno-stack-protector" \
+	cd $(DIR_APP) && CFLAGS="-0s -fno-stack-protector" \
+	    STAGE2_CFLAGS="-0s -fno-stack-protector" \
 	    ./configure --prefix=/usr --datadir=/usr/share \
-			--enable-rtl8139 \
-			--enable-ne --enable-ne-scan=0x300 \
+			--disable-rtl8139 \
+			--disable-auto-linux-mem-opt \
+			--disable-ne \
 			--disable-nls \
 			--disable-fat \
 			--disable-ffs \
@@ -129,6 +113,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--disable-vstafs \
 			--disable-jfs \
 			--disable-xfs
+
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 

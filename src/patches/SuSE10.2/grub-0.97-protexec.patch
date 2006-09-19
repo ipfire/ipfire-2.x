@@ -1,0 +1,56 @@
+--- grub-0.96/grub/asmstub.c
++++ grub-0.96/grub/asmstub.c
+@@ -43,6 +43,8 @@
+ #include <termios.h>
+ #include <signal.h>
+ 
++#include <sys/mman.h>
++
+ #ifdef __linux__
+ # include <sys/ioctl.h>		/* ioctl */
+ # if !defined(__GLIBC__) || \
+@@ -140,14 +142,30 @@
+   }
+ 
+   assert (grub_scratch_mem == 0);
+-  scratch = malloc (0x100000 + EXTENDED_MEMSIZE + 15);
++#ifdef MAP_32BIT
++#define MY_MAP_SET MAP_PRIVATE | MAP_GROWSDOWN | MAP_ANONYMOUS | MAP_32BIT
++#else
++#define MY_MAP_SET MAP_PRIVATE | MAP_GROWSDOWN | MAP_ANONYMOUS
++#endif
++  scratch = mmap(NULL,
++                 0x100000 + EXTENDED_MEMSIZE + 15,
++                 PROT_EXEC | PROT_READ | PROT_WRITE,
++                 MY_MAP_SET,
++                 -1,
++                 0);
++
+   assert (scratch);
+   grub_scratch_mem = (char *) ((((int) scratch) >> 4) << 4);
+ 
+   /* FIXME: simulate the memory holes using mprot, if available. */
+ 
+   assert (disks == 0);
+-  disks = malloc (NUM_DISKS * sizeof (*disks));
++  disks = mmap(NULL,
++               NUM_DISKS * sizeof (*disks),
++               PROT_EXEC | PROT_READ | PROT_WRITE,
++               MY_MAP_SET,
++               -1,
++               0);
+   assert (disks);
+   /* Initialize DISKS.  */
+   for (i = 0; i < NUM_DISKS; i++)
+@@ -213,9 +231,9 @@
+   /* Release memory. */
+   restore_device_map (device_map);
+   device_map = 0;
+-  free (disks);
++  munmap(disks, NUM_DISKS * sizeof (*disks));
+   disks = 0;
+-  free (scratch);
++  munmap(scratch, 0x100000 + EXTENDED_MEMSIZE + 15);
+   grub_scratch_mem = 0;
+ 
+   if (serial_device)

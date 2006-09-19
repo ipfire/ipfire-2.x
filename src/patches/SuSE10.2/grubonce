@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+# Keep this sort of configurable for the future.
+$GRUBDIR="/boot/grub";
+
+# Parse the menu file, and see if we can get a match for a maybe given arg.
+open(MENU, "<$GRUBDIR/menu.lst") || die "no menu.lst in $GRUBDIR";
+$gotit = 0;
+$titleno = -1;
+$global_default = undef;
+while(<MENU>) {
+  m,\s*default\s+(.+), && $titleno == -1 && ($global_default = $1);
+  next unless m,\s*title\s+(.*),i;
+  $title_name = $1;
+  $titleno++;
+
+  if (@ARGV > 0) {
+    # Argument may be entirely numerical, in which case it is an index,
+    # or a perl RE that leads to the first title matching.
+    if (( $ARGV[0] =~ m,[0-9]+, && $titleno    eq   $ARGV[0] ) ||
+	( $ARGV[0] !~ m,[0-9]+, && $title_name =~ m,$ARGV[0],i) ) {
+      $gotit = 1;
+      last;
+    }
+  } else {
+    print "$titleno: $title_name\n";
+  }
+}
+close(MENU);
+
+print "Warning: you haven't set a global default!\n" if !defined($global_default);
+
+# Without a command line argument, we have now listet the titles and are done.
+exit 0 if @ARGV < 1;
+
+# Else the user wants to write the default file. We have better found a match!
+if ($gotit > 0) {
+  print "Warning: your global default is 'saved'; changing default permanently!"
+    if $global_default eq "saved";
+
+  print "Using entry #$titleno: $title_name\n";
+
+  # set the magic one-time flag
+  $titleno |= 0x4000;
+
+  open(DEFFILE, ">$GRUBDIR/default") ||
+    die "Cannot open default file for writing";
+  $buf = $titleno . "\0" .  "\n" x 9;
+  syswrite(DEFFILE, $buf, 10);
+  close(DEFFILE);
+
+  exit 0;
+} else {
+  print $ARGV[0] . " not found in $GRUBDIR/menu.lst\n";
+  exit 1;
+}
+

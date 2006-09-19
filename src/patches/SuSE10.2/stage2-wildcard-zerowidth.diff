@@ -1,0 +1,121 @@
+Index: grub-0.95/stage2/stage2.c
+===================================================================
+--- grub-0.95.orig/stage2/stage2.c
++++ grub-0.95/stage2/stage2.c
+@@ -1264,11 +1264,11 @@ wildcard_handler(char *name)
+   p = name + grub_strlen (name) - grub_strlen (wildcard_suffix);
+   /* [n .. p) is the part matching the asterisk */
+ 
+-  if (p <= n || grub_strcmp (p, wildcard_suffix) != 0)
+-    return; /* zero-length match or suffix mismatch */
++  if (p < n || grub_strcmp (p, wildcard_suffix) != 0)
++    return; /* suffix mismatch */
+ 
+   /* store this match */
+-  if (p - n + 2 > sizeof (wildcard_matches) -
++  if (p - n + 1 > sizeof (wildcard_matches) -
+ 		  (end_wildcard_matches - wildcard_matches))
+     return; /* out of space */
+   while (n < p)
+@@ -1279,7 +1279,7 @@ wildcard_handler(char *name)
+ /* Wildcard expand the GLOB argument. Return NULL upon failure, or
+    a list of 0-terminated expansions, terminated by a zero-length string. */
+ char *
+-wildcard (char *glob)
++wildcard (char *glob, int *len)
+ {
+   char path[128], *p;
+   int ret;
+@@ -1324,25 +1324,25 @@ wildcard (char *glob)
+   wildcard_prefix[grub_strlen (wildcard_prefix)] = '*';
+   if (!ret)
+     return NULL;
+-  *end_wildcard_matches++ = 0;
++  *len = end_wildcard_matches - wildcard_matches;
+   return wildcard_matches;
+ }
+ 
+ #define skip(str) ((str) + grub_strlen (str) + 1)
+ 
+-static void inplace_sort (char *str);
++static void inplace_sort (char *str, int len);
+ 
+ static void
+-inplace_sort (char *str)
++inplace_sort (char *str, int len)
+ {
+   int m, n = 0;
+-  char *s, *t, *x;
++  char *s, *t;
+ 
+-  for (s = str; *s; s = skip (s))
+-    n++;
+-  
+   /* we use x as temporary storage */
+-  x = s + 1;
++  char *x = str + len;
++
++  for (s = str; s < x; s = skip (s))
++    n++;
+ 
+   for (; n >= 2; n--)
+     {
+@@ -1368,6 +1368,8 @@ inplace_sort (char *str)
+     }
+ }
+ 
++#undef skip
++
+ static int this_config_len (const char *config);
+ static int
+ this_config_len (const char *config)
+@@ -1468,16 +1470,16 @@ cmain (void)
+ 		}
+ 	      if (*w == 0 && (*c == ' ' || *c == '\t' || *c == '='))
+ 		{
+-		  int len;
++		  int len, wlen;
+ 
+ 		  /* This is a wildcard command. Advance to the argument. */
+ 		  while (*c == ' ' || *c == '\t' || *c == '=')
+ 		    c++;
+ 
+ 		  /* Expand wildcard entry. */
+-		  w = wildcard (c);
++		  w = wildcard (c, &wlen);
+ 		  if (w)
+-		    inplace_sort (w);
++		    inplace_sort (w, wlen);
+ 
+ 		  /* Remove the wildcard command from the command section;
+ 		     it has no meaning beyond the wildcard expansion just
+@@ -1487,7 +1489,7 @@ cmain (void)
+ 		  		config_len - (command - config_entries));
+ 		  config_len -= len;
+ 
+-		  while (w && *w)
++		  while (w && wlen)
+ 		    {
+ 		      /* Insert expansion before the wildcard entry in the
+ 		         list of entry names. */
+@@ -1511,6 +1513,7 @@ cmain (void)
+ 		      config_len += len;
+ 
+ 		      num_entries++;
++		      wlen -= grub_strlen (w) + 1;
+ 		      w += grub_strlen (w) + 1;
+ 		    }
+ 
+Index: grub-0.95/stage2/shared.h
+===================================================================
+--- grub-0.95.orig/stage2/shared.h
++++ grub-0.95/stage2/shared.h
+@@ -1012,7 +1012,7 @@ void grub_close (void);
+ int dir (char *dirname, void (*handle)(char *));
+  
+ /* Wildcard expand the last pathname component of GLOB. */
+-char *wildcard (char *glob);
++char *wildcard (char *glob, int *len);
+ 
+ int set_bootdev (int hdbias);
+ 

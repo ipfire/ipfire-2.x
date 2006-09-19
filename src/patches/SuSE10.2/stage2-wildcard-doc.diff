@@ -1,0 +1,55 @@
+Index: grub-0.95/docs/grub.texi
+===================================================================
+--- grub-0.95.orig/docs/grub.texi
++++ grub-0.95/docs/grub.texi
+@@ -1933,6 +1933,7 @@ These commands can only be used in the m
+ * gfxmenu::                     Use graphical menu interface
+ * timeout::                     Set the timeout
+ * title::                       Start a menu entry
++* wildcard::                    Define a wildcard boot entry
+ @end menu
+ 
+ 
+@@ -2001,6 +2002,42 @@ the line, starting with the first non-sp
+ @end deffn
+ 
+ 
++@node wildcard
++@subsection wildcard
++
++@deffn Command wildcard pathname
++Treat this boot entry as a wildcard entry: The
++wildcard, title, kernel, and initrd commands (see @ref{Menu-specific
++commands} and @ref{Command-line and menu entry commands}) each have an
++asterisk (*) in their value. A filename match is performed on the
++@var{pathname} of the wildcard command. For each match, the entire boot
++entry is duplicated. The part of the filename whcih matches the asterisk
++in the wildcard command replaces the asterisks in the title, kernel, and
++initrd commands. For example, with the files vmlinuz-2.6.5-1 and
++vmlinuz-2.6.8-8 below (hd0,7)/boot, the following entry in the stage 2
++configuration file:
++
++@example
++title Linux-*
++    wildcard (hd0,7)/boot/vmlinuz-*
++    kernel (hd0,7)/boot/vmlinuz-* root=/dev/hda8
++    initrd (hd0,7)/boot/initrd-*
++@end example
++
++would expand as follows:
++
++@example
++title Linux-2.6.5-1
++    wildcard (hd0,7)/boot/vmlinuz-2.6.5-1
++    kernel (hd0,7)/boot/vmlinuz-2.6.5-1 root=/dev/hda8
++    initrd (hd0,7)/boot/initrd-2.6.5-1
++title Linux-2.6.8-8
++    wildcard (hd0,7)/boot/vmlinuz-2.6.8-8
++    kernel (hd0,7)/boot/vmlinuz-2.6.8-8 root=/dev/hda8
++    initrd (hd0,7)/boot/initrd-2.6.8-8
++@end example
++@end deffn
++
+ @node General commands
+ @section The list of general commands
+ 

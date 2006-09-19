@@ -1,0 +1,11 @@
+--- grub-0.97/netboot/i82586.c.orig	2003-07-09 13:45:37.000000000 +0200
++++ grub-0.97/netboot/i82586.c	2006-04-20 18:50:20.000000000 +0200
+@@ -735,7 +735,7 @@ static unsigned char exos_i186_init[] =
+ static int exos205_probe2(void)
+ {
+ 	unsigned short		i;
+-	unsigned short		shmem[10];
++	unsigned short		shmem[10] = { 0,0,0,0,0,0,0,0,0,0 };
+ 
+ 	/* Fix the ISCP address and base. */
+ 	init_words[3] = scb_base;

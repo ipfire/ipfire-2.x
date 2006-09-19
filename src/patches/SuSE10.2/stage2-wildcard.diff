@@ -1,0 +1,403 @@
+Index: grub-0.95/stage2/shared.h
+===================================================================
+--- grub-0.95.orig/stage2/shared.h
++++ grub-0.95/stage2/shared.h
+@@ -1008,9 +1008,11 @@ int grub_seek (int offset);
+ /* Close a file.  */
+ void grub_close (void);
+ 
+-/* List the contents of the directory that was opened with GRUB_OPEN,
+-   printing all completions. */
+-int dir (char *dirname);
++/* List the contents of DIRECTORY. */
++int dir (char *dirname, void (*handle)(char *));
++ 
++/* Wildcard expand the last pathname component of GLOB. */
++char *wildcard (char *glob);
+ 
+ int set_bootdev (int hdbias);
+ 
+Index: grub-0.95/stage2/stage2.c
+===================================================================
+--- grub-0.95.orig/stage2/stage2.c
++++ grub-0.95/stage2/stage2.c
+@@ -1240,6 +1240,192 @@ get_line_from_config (char *cmdline, int
+ }
+ 
+ 
++char *wildcard_prefix, *wildcard_suffix;
++char wildcard_matches[1024], *end_wildcard_matches;
++
++static void wildcard_handler(char *name);
++
++/* Match one directory entry against the current wildcard. If the entry
++   matches, store it in WILDCARD_MATCHES. Silently ignore entries that
++   don't fit into WILDCARD_MATCHES anymore. */
++static void
++wildcard_handler(char *name)
++{
++  char *n = name, *p = wildcard_prefix;
++
++  while (*p && *p == *n)
++    {
++      p++;
++      n++;
++    }
++  if (*p)
++    return; /* prefix mismatch */
++
++  p = name + grub_strlen (name) - grub_strlen (wildcard_suffix);
++  /* [n .. p) is the part matching the asterisk */
++
++  if (p <= n || grub_strcmp (p, wildcard_suffix) != 0)
++    return; /* zero-length match or suffix mismatch */
++
++  /* store this match */
++  if (p - n + 2 > sizeof (wildcard_matches) -
++		  (end_wildcard_matches - wildcard_matches))
++    return; /* out of space */
++  while (n < p)
++    *end_wildcard_matches++ = *n++;
++  *end_wildcard_matches++ = 0;
++}
++
++/* Wildcard expand the GLOB argument. Return NULL upon failure, or
++   a list of 0-terminated expansions, terminated by a zero-length string. */
++char *
++wildcard (char *glob)
++{
++  char path[128], *p;
++  int ret;
++
++  end_wildcard_matches = wildcard_matches;
++  if (grub_strlen (glob) + 1 > sizeof (path)) {
++    errnum = ERR_FILELENGTH;
++    return NULL;  /* cannot handle pathnames this long */
++  }
++  grub_strcpy (path, glob);
++  p = path;
++  while (*p)
++    p++;
++  wildcard_suffix = p;
++  while (p > path && *p != '/')
++    p--;
++  if (*p != '/')
++    {
++      errnum = ERR_BAD_FILETYPE;
++      return NULL; /* Cannot wildcard device names */
++    }
++  *(++p) = 0;
++  wildcard_prefix = glob + (p - path);
++  for (p = wildcard_prefix;; p++)
++    {
++      if (*p == 0)
++	{
++	  /* We cannot do exact matches: this cannot be represented in the
++	     result list. */
++	  return NULL;
++	}
++      else if (*p == '*')
++	{
++	  *p++ = 0;
++	  wildcard_suffix = p;
++	  break;
++	}
++    }
++
++  ret = dir (path, wildcard_handler);
++  /* restore original argument */
++  wildcard_prefix[grub_strlen (wildcard_prefix)] = '*';
++  if (!ret)
++    return NULL;
++  *end_wildcard_matches++ = 0;
++  return wildcard_matches;
++}
++
++#define skip(str) ((str) + grub_strlen (str) + 1)
++
++static void inplace_sort (char *str);
++
++static void
++inplace_sort (char *str)
++{
++  int m, n = 0;
++  char *s, *t, *x;
++
++  for (s = str; *s; s = skip (s))
++    n++;
++  
++  /* we use x as temporary storage */
++  x = s + 1;
++
++  for (; n >= 2; n--)
++    {
++      s = str;
++      t = skip (s);
++
++      for (m = n; m >= 2; m--)
++	{
++	  if (grub_strcmp (s, t) > 0)
++	    {
++	      int ls = skip (s) - s;
++	      int lt = skip (t) - t;
++
++	      memcpy (x, s, ls);
++	      grub_memmove (s + ls, s + lt, t - (s + ls));
++	      memcpy (s, t, lt);
++	      t = t + lt - ls;
++	      memcpy (t, x, ls);
++	    }
++	  s = t;
++	  t = skip (t);
++	}
++    }
++}
++
++static int this_config_len (const char *config);
++static int
++this_config_len (const char *config)
++{
++  const char *c = config;
++  while (*c)
++    {
++      while (*c)
++	c++;
++      c++;
++    }
++  c++;
++  return c - config;
++}
++
++static const char * expand_asterisks (const char *str, int *len,
++				      const char *subst);
++
++/* Expand all asterisks (*) in a menu entry or commands section with its
++   substitution. Use a backslash as escape character. */
++static const char *
++expand_asterisks (const char *str, int *len, const char *subst)
++{
++  static char buffer[1024];
++  char *b = buffer, escaped = 0;
++  const char *end = str + *len;
++
++  while (str < end)
++    {
++      if (*str == '*' && !escaped)
++        {
++	  if (b - buffer + grub_strlen (subst) > sizeof (buffer))
++	    {
++	      errnum = ERR_FILELENGTH;
++	      return NULL;
++	    }
++	  grub_strcpy (b, subst);
++	  b += grub_strlen (subst);
++	}
++      else if (*str == '\\' && !escaped)
++	escaped = 1;
++      else
++        {
++	  escaped = 0;
++	  if (b - buffer + 1 > sizeof (buffer))
++	    {
++	      errnum = ERR_FILELENGTH;
++	      return NULL;
++	    }
++	  *b++ = *str;
++	}
++      str++;
++    }
++    *len = b - buffer;
++
++    return buffer;
++}
++
+ /* This is the starting function in C.  */
+ void
+ cmain (void)
+@@ -1260,6 +1446,96 @@ cmain (void)
+       init_config ();
+     }
+       
++  auto void expand_wildcard_entries (void);
++  void expand_wildcard_entries (void)
++    {
++      char *config_entry = config_entries;
++      char *menu_entry = menu_entries;
++
++      while (*menu_entry)
++        {
++	  char *command = config_entry;
++
++	  do
++	    {
++	      char *c = command;
++	      const char *w = "wildcard";
++
++	      while (*w && *c == *w)
++		{
++		  c++;
++		  w++;
++		}
++	      if (*w == 0 && (*c == ' ' || *c == '\t' || *c == '='))
++		{
++		  int len;
++
++		  /* This is a wildcard command. Advance to the argument. */
++		  while (*c == ' ' || *c == '\t' || *c == '=')
++		    c++;
++
++		  /* Expand wildcard entry. */
++		  w = wildcard (c);
++		  if (w)
++		    inplace_sort (w);
++
++		  /* Remove the wildcard command from the command section;
++		     it has no meaning beyond the wildcard expansion just
++		     performed. */
++		  len = grub_strlen (command) + 1;
++		  grub_memmove (command, command + len,
++		  		config_len - (command - config_entries));
++		  config_len -= len;
++
++		  while (w && *w)
++		    {
++		      /* Insert expansion before the wildcard entry in the
++		         list of entry names. */
++		      len = grub_strlen (menu_entry) + 1;
++		      const char *x = expand_asterisks (menu_entry, &len, w);
++		      grub_memmove (menu_entry + len, menu_entry,
++		      		    menu_len - (menu_entry - menu_entries));
++		      memcpy (menu_entry, x, len);
++		      menu_entry += len;
++		      menu_len += len;
++		      
++		      /* Insert expansion before the wildcard command section
++		         in the list of command sections. */
++		      len = this_config_len (config_entry);
++		      x = expand_asterisks (config_entry, &len, w);
++		      grub_memmove (config_entry + len, config_entry,
++		      		    config_len - (config_entry -
++				    		  config_entries));
++		      memcpy (config_entry, x, len);
++		      config_entry += len;
++		      config_len += len;
++
++		      num_entries++;
++		      w += grub_strlen (w) + 1;
++		    }
++
++		  /* Remove the wildcard command section; it has just
++		     been expanded. */
++		  len = grub_strlen (menu_entry) + 1;
++		  grub_memmove (menu_entry, menu_entry + len,
++		  		menu_len - (menu_entry - menu_entries));
++		  menu_len -= len;
++
++		  len = this_config_len(config_entry);
++		  grub_memmove (config_entry, config_entry + len,
++		  		config_len - (config_entry - config_entries));
++		  config_len -= len;
++
++		  num_entries--;
++		}
++	      command += grub_strlen (command) + 1;
++	    }
++	  while (*command);
++	  menu_entry += grub_strlen (menu_entry) + 1;
++	  config_entry += this_config_len(config_entry);
++	}
++    }
++
+   /* Initialize the environment for restarting Stage 2.  */
+   grub_setjmp (restart_env);
+   
+@@ -1379,8 +1655,16 @@ cmain (void)
+ 		  config_len = prev_config_len;
+ 		}
+ 	      
++	      if (is_preset)
++		close_preset_menu ();
++	      else
++		grub_close ();
++	      
+ 	      menu_entries[menu_len++] = 0;
+ 	      config_entries[config_len++] = 0;
++
++	      expand_wildcard_entries();
++
+ 	      grub_memmove (config_entries + config_len, menu_entries,
+ 			    menu_len);
+ 	      menu_entries = config_entries + config_len;
+@@ -1395,11 +1679,6 @@ cmain (void)
+ 		  else
+ 		    default_entry = fallback_entry;
+ 		}
+-	      
+-	      if (is_preset)
+-		close_preset_menu ();
+-	      else
+-		grub_close ();
+ 	    }
+ 	  while (is_preset);
+ 	}
+Index: grub-0.95/stage2/builtins.c
+===================================================================
+--- grub-0.95.orig/stage2/builtins.c
++++ grub-0.95/stage2/builtins.c
+@@ -4831,6 +4831,49 @@ static struct builtin builtin_vbeprobe =
+ };
+   
+ 
++/* wildcard */
++ static int
++wildcard_func (char *arg, int flags)
++{
++#ifdef DEBUG_WILDCARD
++  char *w = wildcard (arg);
++
++  if (w)
++    {
++      while (*w)
++       {
++         grub_printf("%s  ", w);
++         w += strlen (w) + 1;
++        }
++      grub_printf("\n");
++      return 1;
++    }
++  else
++    print_error();
++#endif
++
++  /* This special command is interpreted in the config file parser. */
++  return 0;
++}
++
++static struct builtin builtin_wildcard =
++ {
++  "wildcard",
++  wildcard_func,
++#ifndef DEBUG_WILDCARD
++  BUILTIN_MENU,
++#else
++  BUILTIN_CMDLINE | BUILTIN_MENU | BUILTIN_HELP_LIST,
++  "wildcard GLOB",
++  "Declare this menu entry as a wildcard entry. GLOB is a path containing"
++  " one asterisk. All files matching this expression are looked up; the"
++  " menu entry is duplicated for each match with asterisks in other"
++  " commands replaced by the string matching the asterisk in the wildcard"
++  " command."
++#endif
++};
++
++
+ /* The table of builtin commands. Sorted in dictionary order.  */
+ struct builtin *builtin_table[] =
+ {
+@@ -4920,5 +4963,6 @@ struct builtin *builtin_table[] =
+   &builtin_unhide,
+   &builtin_uppermem,
+   &builtin_vbeprobe,
++  &builtin_wildcard,
+   0
+ };

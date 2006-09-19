@@ -1,0 +1,118 @@
+diff -Burbp grub-0.93.orig/grub/main.c grub-0.93/grub/main.c
+--- grub-0.93.orig/grub/main.c	2003-06-10 18:29:37.000000000 +0200
++++ grub-0.93/grub/main.c	2003-06-10 18:30:36.000000000 +0200
+@@ -44,7 +44,7 @@ int use_curses = 0;
+ int verbose = 0;
+ int read_only = 0;
+ int floppy_disks = 1;
+-char *device_map_file = 0;
++char *device_map_file = "/boot/grub/device.map";
+ static int default_boot_drive;
+ static int default_install_partition;
+ static char *default_config_file;
+diff -Burbp grub-0.93.orig/lib/device.c grub-0.93/lib/device.c
+--- grub-0.93.orig/lib/device.c	2003-06-10 18:29:37.000000000 +0200
++++ grub-0.93/lib/device.c	2003-06-10 18:30:36.000000000 +0200
+@@ -382,6 +382,7 @@ read_device_map (FILE *fp, char **map, c
+      probing devices.  */
+   char buf[1024];		/* XXX */
+   int line_number = 0;
++  int retval = 0;		/* default to failure */
+   
+   while (fgets (buf, sizeof (buf), fp))
+     {
+@@ -408,14 +409,14 @@ read_device_map (FILE *fp, char **map, c
+       if (*ptr != '(')
+ 	{
+ 	  show_error (line_number, "No open parenthesis found");
+-	  return 0;
++	  continue;
+ 	}
+       
+       ptr++;
+       if ((*ptr != 'f' && *ptr != 'h') || *(ptr + 1) != 'd')
+ 	{
+ 	  show_error (line_number, "Bad drive name");
+-	  return 0;
++	  continue;
+ 	}
+       
+       if (*ptr == 'f')
+@@ -426,7 +427,7 @@ read_device_map (FILE *fp, char **map, c
+       if (drive < 0 || drive > 8)
+ 	{
+ 	  show_error (line_number, "Bad device number");
+-	  return 0;
++	  continue;
+ 	}
+       
+       if (! is_floppy)
+@@ -435,7 +436,7 @@ read_device_map (FILE *fp, char **map, c
+       if (*ptr != ')')
+ 	{
+ 	  show_error (line_number, "No close parenthesis found");
+-	  return 0;
++	  continue;
+ 	}
+       
+       ptr++;
+@@ -446,7 +447,7 @@ read_device_map (FILE *fp, char **map, c
+       if (! *ptr)
+ 	{
+ 	  show_error (line_number, "No filename found");
+-	  return 0;
++	  continue;
+ 	}
+       
+       /* Terminate the filename.  */
+@@ -464,9 +465,11 @@ read_device_map (FILE *fp, char **map, c
+       
+       map[drive] = strdup (ptr);
+       assert (map[drive]);
++
++      retval = 1;	/* at least 1 drive configured successfully */
+     }
+   
+-  return 1;
++  return retval;
+ }
+ 
+ /* Initialize the device map MAP. *MAP will be allocated from the heap
+@@ -671,7 +674,7 @@ write_to_partition (char **map, int driv
+ 		    int sector, int size, const char *buf)
+ {
+   char dev[PATH_MAX];	/* XXX */
+-  int fd;
++  int fd, len, pnum;
+   
+   if ((partition & 0x00FF00) != 0x00FF00)
+     {
+@@ -689,7 +692,16 @@ write_to_partition (char **map, int driv
+       if (strcmp (dev + strlen(dev) - 5, "/disc") == 0)
+ 	strcpy (dev + strlen(dev) - 5, "/part");
+     }
+-  sprintf (dev + strlen(dev), "%d", ((partition >> 16) & 0xFF) + 1);
++
++  len = strlen(dev);
++  pnum = ((partition >> 16) & 0xFF);
++  if (isdigit(dev[len-1]))
++    {
++      /* It is obviously some RAID disk: "/dev/<dsk>/c0d0" . "p1" */
++      sprintf (dev + len, "p%d",  pnum + 1);
++    }
++  else
++    sprintf (dev + len, "%d",  pnum + 1);
+   
+   /* Open the partition.  */
+   fd = open (dev, O_RDWR);
+--- grub-0.94/util/grub-md5-crypt.in.orig	2003-07-09 04:45:51.000000000 -0700
++++ grub-0.94/util/grub-md5-crypt.in	2004-05-11 09:26:31.943224317 -0700
+@@ -88,7 +88,7 @@
+ fi
+ 
+ # Run the grub shell.
+-$grub_shell --batch --device-map=/dev/null <<EOF \
++$grub_shell --batch <<EOF \
+     | grep "^Encrypted: " | sed 's/^Encrypted: //'
+ md5crypt
+ $password
