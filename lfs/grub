@@ -83,18 +83,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
 # Patch SuSE 10.2
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-path-patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/SuSE10.2/use_ferror.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-R
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/bad-assert-sideeffect
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/SuSE10.2/grub-gfxmenu-v8.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-devicemap.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-linux-setup-fix
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/fix-uninitialized
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/force-LBA-off.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-initrdaddr.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-0.97-protexec.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SuSE10.2/grub-path-cfg.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-path-patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.97/use_ferror.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-R
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/bad-assert-sideeffect
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.97/grub-gfxmenu-v8.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-devicemap.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-linux-setup-fix
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/fix-uninitialized
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/force-LBA-off.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-initrdaddr.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-protexec.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-path-cfg.diff
 
 	cd $(DIR_APP) && perl -pi -e 's,/usr/lib/grub/i386-pc,/usr/share/grub/i386-pc,' docs/grub.texi
 
