@@ -1,0 +1,12 @@
+--- grub-0.95/stage2/builtins.c.orig	2004-05-14 21:30:52.000000000 +0200
++++ grub-0.95/stage2/builtins.c	2005-03-02 17:01:27.568051824 +0100
+@@ -3884,6 +3884,9 @@
+ 	}
+   }
+ 
++  /* force buffer cache invalidation after embedding */
++  buf_drive = -1;
++
+   /* Construct a string that is used by the command "install" as its
+      arguments.  */
+   sprint_device (installed_drive, installed_partition);

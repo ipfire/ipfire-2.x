@@ -1,0 +1,143 @@
+diff -ur grub-0.93~/docs/grub.texi grub-0.93/docs/grub.texi
+--- grub-0.93~/docs/grub.texi	2003-02-06 12:30:12.000000000 +0100
++++ grub-0.93/docs/grub.texi	2003-02-06 14:15:30.000000000 +0100
+@@ -2632,7 +2632,7 @@
+ @node install
+ @subsection install
+ 
+-@deffn Command install [@option{--force-lba}] [@option{--stage2=os_stage2_file}] stage1_file [@option{d}] dest_dev stage2_file [addr] [@option{p}] [config_file] [real_config_file]
++@deffn Command install [@option{--force-lba[=off]}] [@option{--stage2=os_stage2_file}] stage1_file [@option{d}] dest_dev stage2_file [addr] [@option{p}] [config_file] [real_config_file]
+ This command is fairly complex, and you should not use this command
+ unless you are familiar with GRUB. Use @command{setup} (@pxref{setup})
+ instead.
+@@ -2679,6 +2679,13 @@
+ bitmap even if they do have the support. So GRUB provides a solution to
+ ignore the wrong bitmap, that is, the option @option{--force-lba}. Don't
+ use this option if you know that your BIOS doesn't have LBA support.
++On the other hand there is at least one known BIOS that does the opposite,
++it claims to support LBA and then fails to provide it. Iff you have an
++Adaptec 2940 with BIOS revision 1.21 ( newer ones just work and older ones
++don't make the false claim ), or otherwise experience grub hanging
++after stage1, you can try to use the option @option{--force-lba=off},
++as long as all disk blocks involved in booting reside
++within the first 1024 cylinders.
+ 
+ @strong{Caution3:} You must specify the option @option{--stage2} in the
+ grub shell, if you cannot unmount the filesystem where your stage2 file
+diff -ur grub-0.93~/stage1/stage1.S grub-0.93/stage1/stage1.S
+--- grub-0.93~/stage1/stage1.S	2002-09-08 03:58:08.000000000 +0200
++++ grub-0.93/stage1/stage1.S	2003-02-06 13:19:50.000000000 +0100
+@@ -163,7 +163,11 @@
+ 	/* check if AH=0x42 is supported if FORCE_LBA is zero */
+ 	MOV_MEM_TO_AL(ABS(force_lba))	/* movb	ABS(force_lba), %al */
+ 	testb	%al, %al
++	/* check if LBA is forced OFF 0x80 <= %al <= 0xff */
++	js	chs_mode
++	/* or forced ON 0x01 <= %al <= 0x7f */
+ 	jnz	lba_mode
++	/* otherwise trust BIOS int's result */
+ 	andw	$1, %cx
+ 	jz	chs_mode
+ 	
+diff -ur grub-0.93~/stage2/asm.S grub-0.93/stage2/asm.S
+--- grub-0.93~/stage2/asm.S	2003-02-06 12:30:12.000000000 +0100
++++ grub-0.93/stage2/asm.S	2003-02-06 13:35:32.000000000 +0100
+@@ -1083,7 +1083,11 @@
+ 	/* check if AH=0x42 is supported if FORCE_LBA is zero */
+ 	movb	EXT_C(force_lba), %al
+ 	testb	%al, %al
++	/* check if LBA is forced OFF 0x80 <= %al <= 0xff */
++	js	1f
++	/* or forced ON 0x01 <= %al <= 0x7f */
+ 	jnz	2f
++	/* otherwise trust BIOS int's result */
+ 	andw	$1, %cx
+ 	jnz	2f
+ 	
+diff -ur grub-0.93~/stage2/builtins.c grub-0.93/stage2/builtins.c
+--- grub-0.93~/stage2/builtins.c	2003-02-06 12:30:12.000000000 +0100
++++ grub-0.93/stage2/builtins.c	2003-02-06 13:56:01.000000000 +0100
+@@ -1832,7 +1832,12 @@
+   /* First, check the GNU-style long option.  */
+   while (1)
+     {
+-      if (grub_memcmp ("--force-lba", arg, sizeof ("--force-lba") - 1) == 0)
++      if (grub_memcmp ("--force-lba=off", arg, sizeof ("--force-lba=off") - 1) == 0)
++	{
++	  is_force_lba = 0xff;
++	  arg = skip_to (0, arg);
++	}
++      else if (grub_memcmp ("--force-lba", arg, sizeof ("--force-lba") - 1) == 0)
+ 	{
+ 	  is_force_lba = 1;
+ 	  arg = skip_to (0, arg);
+@@ -2253,7 +2258,7 @@
+   "install",
+   install_func,
+   BUILTIN_CMDLINE,
+-  "install [--stage2=STAGE2_FILE] [--force-lba] STAGE1 [d] DEVICE STAGE2 [ADDR] [p] [CONFIG_FILE] [REAL_CONFIG_FILE]",
++  "install [--stage2=STAGE2_FILE] [--force-lba[=off]] STAGE1 [d] DEVICE STAGE2 [ADDR] [p] [CONFIG_FILE] [REAL_CONFIG_FILE]",
+   "Install STAGE1 on DEVICE, and install a blocklist for loading STAGE2"
+   " as a Stage 2. If the option `d' is present, the Stage 1 will always"
+   " look for the disk where STAGE2 was installed, rather than using"
+@@ -2266,8 +2271,9 @@
+   " 1.5 and REAL_CONFIG_FILE is present, then the Stage 2 CONFIG_FILE is"
+   " patched with the configuration filename REAL_CONFIG_FILE."
+   " If the option `--force-lba' is specified, disable some sanity checks"
+-  " for LBA mode. If the option `--stage2' is specified, rewrite the Stage"
+-  " 2 via your OS's filesystem instead of the raw device."
++  " for LBA mode, `--force-lba=off' will disable it completely. If the"
++  " option `--stage2' is specified, rewrite the Stage 2 via your OS's"
++  " filesystem instead of the raw device."
+ };
+ 
+ 
+@@ -3898,7 +3904,12 @@
+   /* Check if the user specifies --force-lba.  */
+   while (1)
+     {
+-      if (grub_memcmp ("--force-lba", arg, sizeof ("--force-lba") - 1) == 0)
++      if (grub_memcmp ("--force-lba=off", arg, sizeof ("--force-lba=off") - 1) == 0)
++	{
++	  is_force_lba = 0xff;
++	  arg = skip_to (0, arg);
++	}
++      else if (grub_memcmp ("--force-lba", arg, sizeof ("--force-lba") - 1) == 0)
+ 	{
+ 	  is_force_lba = 1;
+ 	  arg = skip_to (0, arg);
+@@ -4026,7 +4037,9 @@
+ #if 1
+   /* Don't embed a drive number unnecessarily.  */
+   grub_sprintf (cmd_arg, "%s%s%s%s %s%s %s p %s %s",
+-		is_force_lba? "--force-lba " : "",
++		is_force_lba ?
++		 (is_force_lba == 0xff ? "--force-lba=off " : "--force-lba ")
++		 : "",
+ 		stage2_arg? stage2_arg : "",
+ 		stage2_arg? " " : "",
+ 		stage1,
+@@ -4079,17 +4092,18 @@
+   "setup",
+   setup_func,
+   BUILTIN_CMDLINE | BUILTIN_HELP_LIST,
+-  "setup [--prefix=DIR] [--stage2=STAGE2_FILE] [--force-lba] INSTALL_DEVICE [IMAGE_DEVICE]",
++  "setup [--prefix=DIR] [--stage2=STAGE2_FILE] [--force-lba[=off]] INSTALL_DEVICE [IMAGE_DEVICE]",
+   "Set up the installation of GRUB automatically. This command uses"
+   " the more flexible command \"install\" in the backend and installs"
+   " GRUB into the device INSTALL_DEVICE. If IMAGE_DEVICE is specified,"
+   " then find the GRUB images in the device IMAGE_DEVICE, otherwise"
+   " use the current \"root device\", which can be set by the command"
+   " \"root\". If you know that your BIOS should support LBA but GRUB"
+-  " doesn't work in LBA mode, specify the option `--force-lba'."
+-  " If you install GRUB under the grub shell and you cannot unmount the"
+-  " partition where GRUB images reside, specify the option `--stage2'"
+-  " to tell GRUB the file name under your OS."
++  " doesn't work in LBA mode, specify the option `--force-lba'. If the"
++  " BIOS claims to support LBA mode but really doesn't, use"
++  " `--force-lba=off'. If you install GRUB under the grub shell and"
++  " you cannot unmount the partition where GRUB images reside, specify"
++  " the option `--stage2' to tell GRUB the file name under your OS."
+ };
+ 
+ 

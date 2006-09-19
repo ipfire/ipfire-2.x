@@ -1,0 +1,15 @@
+Fread doesn't return -1 on error, so use ferror().
+
+--- util/mbchk.c.old	Tue Jan 22 18:36:17 2002
++++ util/mbchk.c	Tue Jan 22 18:28:54 2002
+@@ -59,7 +59,9 @@ check_multiboot (const char *filename, F
+   int i;
+   char buf[8192];
+ 
+-  if (fread (buf, 1, 8192, fp) < 0)
++  fread (buf, 1, 8192, fp);
++  
++  if (ferror(fp))
+     {
+       fprintf (stderr, "%s: Read error.\n", filename);
+       return 0;

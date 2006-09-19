@@ -1,0 +1,15 @@
+--- grub-0.95/lib/device.c.orig	2004-05-23 18:34:29.000000000 +0200
++++ grub-0.95/lib/device.c	2004-09-21 18:15:23.785137837 +0200
+@@ -828,9 +828,11 @@ int
+ is_disk_device (char **map, int drive)
+ {
+   struct stat st;
++  int retval;
+   
+   assert (map[drive] != 0);
+-  assert (stat (map[drive], &st) == 0);
++  retval = stat (map[drive], &st);
++  assert (retval == 0);
+   /* For now, disk devices under Linux are all block devices.  */
+   return S_ISBLK (st.st_mode);
+ }

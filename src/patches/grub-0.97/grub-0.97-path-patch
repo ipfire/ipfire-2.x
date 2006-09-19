@@ -1,0 +1,70 @@
+diff -ur grub-0.93/Makefile.am grub-0.93.new/Makefile.am
+--- grub-0.93/Makefile.am	2002-07-01 16:15:36.000000000 +0200
++++ grub-0.93.new/Makefile.am	2003-02-04 13:03:36.000000000 +0100
+@@ -2,3 +2,4 @@
+ AUTOMAKE_OPTIONS = 1.5
+ SUBDIRS = netboot stage2 stage1 lib grub util docs
+ EXTRA_DIST = BUGS MAINTENANCE
++pkgdatadir=$(datadir)
+diff -ur grub-0.93/stage1/Makefile.am grub-0.93.new/stage1/Makefile.am
+--- grub-0.93/stage1/Makefile.am	2002-09-08 03:58:08.000000000 +0200
++++ grub-0.93.new/stage1/Makefile.am	2003-02-04 13:03:36.000000000 +0100
+@@ -1,4 +1,4 @@
+-pkglibdir = $(libdir)/$(PACKAGE)/$(host_cpu)-$(host_vendor)
++pkglibdir = /usr/lib/grub
+ nodist_pkglib_DATA = stage1
+ 
+ CLEANFILES = $(nodist_pkglib_DATA)
+diff -ur grub-0.93/stage2/Makefile.am grub-0.93.new/stage2/Makefile.am
+--- grub-0.93/stage2/Makefile.am	2002-11-29 19:00:53.000000000 +0100
++++ grub-0.93.new/stage2/Makefile.am	2003-02-04 13:03:36.000000000 +0100
+@@ -26,7 +26,7 @@
+ 	-DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1 -fwritable-strings
+ 
+ # Stage 2 and Stage 1.5's.
+-pkglibdir = $(libdir)/$(PACKAGE)/$(host_cpu)-$(host_vendor)
++pkglibdir = /usr/lib/grub
+ 
+ EXTRA_PROGRAMS = nbloader.exec pxeloader.exec diskless.exec
+ 
+diff -ur grub-0.93/util/grub-install.in grub-0.93.new/util/grub-install.in
+--- grub-0.93/util/grub-install.in	2002-05-20 13:21:50.000000000 +0200
++++ grub-0.93.new/util/grub-install.in	2003-02-04 13:03:36.000000000 +0100
+@@ -27,7 +27,7 @@
+ host_cpu=@host_cpu@
+ host_os=@host_os@
+ host_vendor=@host_vendor@
+-pkglibdir=${libdir}/${PACKAGE}/${host_cpu}-${host_vendor}
++pkglibdir=${libdir}/${PACKAGE}/
+ 
+ grub_shell=${sbindir}/grub
+ grub_set_default=${sbindir}/grub-set-default
+@@ -378,14 +378,19 @@
+     exit 1
+ fi
+ 
+-# Copy the GRUB images to the GRUB directory.
+-for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
+-    rm -f $file || exit 1
+-done
+-for file in \
+-    ${pkglibdir}/stage1 ${pkglibdir}/stage2 ${pkglibdir}/*stage1_5; do
+-    cp -f $file ${grubdir} || exit 1
+-done
++# FHS says that /usr/share is used for architecture independent data,
++# so all stage-files are directly installed to /usr/lib/grub.
++# Therefor this part is no longer needed.
++# <--cut_here--> 
++## Copy the GRUB images to the GRUB directory.
++#for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
++#    rm -f $file || exit 1
++#done
++#for file in \
++#    ${pkglibdir}/stage1 ${pkglibdir}/stage2 ${pkglibdir}/*stage1_5; do
++#    cp -f $file ${grubdir} || exit 1
++#done
++# <--uncut-->
+ 
+ # Make sure that GRUB reads the same images as the host OS.
+ test -n "$mkimg" && img_file=`$mkimg`
+Only in grub-0.93.new/util: grub-install.in.orig
