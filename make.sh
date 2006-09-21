@@ -751,7 +751,6 @@ buildipcop() {
   ipcopmake applejuice
   ipcopmake ocaml
   ipcopmake mldonkey
-#  ipcopmake edonkeyclc
 #  ipcopmake sane
   echo -ne "`date -u '+%b %e %T'`: Building ### Net-Tools ### \n" | tee -a $LOGFILE
   ipcopmake ntop
@@ -771,7 +770,6 @@ buildipcop() {
   ipcopmake iptraf
   ipcopmake nagios
   ipcopmake yasuc
-#  ipcopmake stunnel # Ausgeschaltet, weil wir es doch nicht nutzen
 }
 
 buildinstaller() {
