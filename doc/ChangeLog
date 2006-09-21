@@ -1,4 +1,62 @@
 ------------------------------------------------------------------------
+r290 | delaco | 2006-09-21 20:48:19 +0200 (Thu, 21 Sep 2006) | 5 lines
+
+Make.sh:
+  * svn dist ueberarbeitet.
+  * svn dist und svn update koennen nun mit einer Revisionsangabe umgehen.
+  * svn ad packt alle Sources in ein Archiv mit Changelog und svn_status
+  * packages_list fuer Mediawiki umgemodelt.
+------------------------------------------------------------------------
+r289 | casemaster | 2006-09-19 22:06:50 +0200 (Tue, 19 Sep 2006) | 1 line
+
+SVN ist durcheinandergekommen bei Pfad-Anpassung Part 2 (Ende)
+------------------------------------------------------------------------
+r288 | casemaster | 2006-09-19 22:04:44 +0200 (Tue, 19 Sep 2006) | 1 line
+
+SVN ist durcheinandergekommen bei Pfad-Anpassung Part 1
+------------------------------------------------------------------------
+r287 | casemaster | 2006-09-19 21:54:40 +0200 (Tue, 19 Sep 2006) | 2 lines
+
+Anpassung der Pfadangaben für GRUB.
+Überflüssige Dateien entfernt.
+------------------------------------------------------------------------
+r286 | delaco | 2006-09-19 21:46:43 +0200 (Tue, 19 Sep 2006) | 3 lines
+
+Hinzugefuegt:
+  * SysLinux Patch vergessen.
+  * Workaround um PHP5 zu kompilieren.
+------------------------------------------------------------------------
+r285 | casemaster | 2006-09-19 08:53:10 +0200 (Tue, 19 Sep 2006) | 2 lines
+
+Update des GFXBoot-Patches für GRUB aus SuSE 10.2 v8.
+Startbild aktualisiert.
+------------------------------------------------------------------------
+r284 | ms | 2006-09-18 21:28:58 +0200 (Mon, 18 Sep 2006) | 1 line
+
+Nochn Fix fuer die Passwoerter.
+------------------------------------------------------------------------
+r283 | ms | 2006-09-18 21:05:20 +0200 (Mon, 18 Sep 2006) | 8 lines
+
+Hinzugefuegt:
+  * Konfiguration fuer Apache2
+Kernelupgrade auf 2.4.33.3
+Syslinux-Upgrade
+Gefixt:
+  * /tmp/ROOTFILES hat nichts in der ISO zu suchen.
+  * Fehler im Installer wegen Apache2.
+
+------------------------------------------------------------------------
+r282 | delaco | 2006-09-18 20:23:50 +0200 (Mon, 18 Sep 2006) | 3 lines
+
+Hinzugefuegt:
+  * LibXML2 in ISO, da Abhaengigkeit von PHP5.
+  * Mod_ssl.so fuer Apache2.
+------------------------------------------------------------------------
+r281 | ms | 2006-09-17 15:10:56 +0200 (Sun, 17 Sep 2006) | 2 lines
+
+Einige Aenderungen an der make.sh.
+Das war mal noetig.
+------------------------------------------------------------------------
 r280 | delaco | 2006-09-17 15:03:38 +0200 (Sun, 17 Sep 2006) | 3 lines
 
 Geaendert:
