@@ -840,11 +840,11 @@ buildpackages() {
   rm -f $BASEDIR/doc/packages-list
   for i in `ls -1tr $BASEDIR/log/[^_]*`; do
 	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
-		echo "  * `basename $i`" >>$BASEDIR/doc/packages-list
+		echo "* `basename $i`" >>$BASEDIR/doc/packages-list
 	fi
   done
-  echo "====== List of softwares used to build $NAME Version: $VERSION ======" > $BASEDIR/doc/packages-list.txt
-  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipfire$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$\|^ipfire-logs' \
+  echo "== List of softwares used to build $NAME Version: $VERSION ==" > $BASEDIR/doc/packages-list.txt
+  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipfire$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$\|.tgz$' \
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
@@ -1181,7 +1181,11 @@ svn)
 	  update|up)
 		# clear
 		echo "Loading the latest source files..."
-		svn update | tee -a $PWD/log/_build.svn.update.log
+		if [ $3 ]; then
+			svn update -r $3 | tee -a $PWD/log/_build.svn.update.log
+		else
+			svn update | tee -a $PWD/log/_build.svn.update.log
+		fi
 		if [ $? -eq 0 ]; then
 			echo "Finished!"
 		else
@@ -1216,31 +1220,48 @@ svn)
 		$0 svn up
 	  ;;
 	  dist)
-		#$0 svn up
-		echo -ne "Download source package from svn..."
+		if [ $3 ]; then
+			SVN_REVISION=$3
+		fi
+		if [ -f ipfire-source-r$SVN_REVISION.tar.gz ]; then
+			echo -ne "REV $SVN_REVISION: SKIPPED!\n"
+			exit 0
+		fi
+		echo -en "REV $SVN_REVISION: Downloading..."
 		svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
+		svn log http://svn.ipfire.eu/svn/ipfire -r 1:$SVN_REVISION > ipfire-source/Changelog
+		svn info http://svn.ipfire.eu/svn/ipfire -r $SVN_REVISION > ipfire-source/svn_status
 		if [ "$?" -eq "0" ]; then
-			echo ".Done!"
+			echo -en "\r"
 		else
-			echo ".Fail!"
+			echo -en "\n"
 			exit 1
 		fi
-		echo -n "Compress files..."
+		echo -en "REV $SVN_REVISION: Compressing files..."
+		if [ -e ipfire-source/trunk/make.sh ]; then
+			chmod 755 ipfire-source/trunk/make.sh
+		fi
 		tar cfz ipfire-source-r$SVN_REVISION.tar.gz ipfire-source
 		if [ "$?" -eq "0" ]; then
-			echo ".Done!"
+			echo -ne "\r"
 		else
-			echo ".Fail!"
+			echo -ne "\n"
 			exit 1
 		fi
-		echo -n "Cleanup..."
+		echo -en "REV $SVN_REVISION: Cleaning up..."
 		rm ipfire-source/ -r
 		if [ "$?" -eq "0" ]; then
-			echo ".Done!"
+			echo -ne "\rREV $SVN_REVISION: ##### FINISHED! #####\n"
 		else
-			echo ".Fail!"
+			echo -ne "\n"
 			exit 1
 		fi
+	  ;;
+	  alldist|ad)
+		echo -e "### THIS WILL TAKE A LONG TIME!\nDOING A FETCH FROM REV 1 TO REV $SVN_REVISION!\n"
+		for i in `seq 1 $SVN_REVISION`; do
+			$0 svn dist $i
+		done
 	  ;;
 	  diff|di)
 		echo -ne "Make a local diff to last svn revision..."
@@ -1359,12 +1380,6 @@ sync)
 			fi
 		fi
 	done
-#	for i in `cat ftplist`; do
-#		ls -w1 cache/ | grep $i
-#		if [ "$?" -eq "1" ]; then
-#			echo $i | grep -v toolchain >> doc/packages-to-remove-from-ftp
-#		fi
-#	done
 	rm -f ftplist
 	;;
 upload)
