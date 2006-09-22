@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: ntp,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 2.1.21
 
 THISAPP    = cyrus-sasl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://ftp.andrew.cmu.edu/pub/cyrus-mail
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(PASS)" "1"
 	TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -83,28 +77,30 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(PASS)" "1"
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --with-dblib=berkeley --with-dbpath=/var/lib/sasl/sasldb2 --with-saslauthd=/var/run/saslauthd
+	cd $(DIR_APP) && ./configure --prefix=/usr \
+					--sysconfdir=/etc \
+					--with-dblib=berkeley \
+					--with-dbpath=/var/lib/sasl/sasldb2 \
+					--with-saslauthd=/var/run/saslauthd
 else
 	# WITH LDAP SUPPORT AT THIS TIME
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 					--enable-anon --enable-plain \
-					--disable-krb4 --disable-otp --disable-cram --disable-digest \
+					--disable-krb4 --disable-otp \
+					--disable-cram --disable-digest \
 					--with-dblib=berkeley
 					--with-ldap=/usr \
 					--enable-sql \
 					--with-pam=/lib/security \
 					--with-openssl=/usr
 					--without-pgsql \
-					--with-mysql=/opt/lampp \
+					--with-mysql=/usr \
 					--sysconfdir=/var/ipfire/sasl \
 					--with-dbpath=/var/lib/sasl/sasldb2 \
 					--with-saslauthd=/var/run/saslauthd
 endif
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-#	install -v -m644 saslauthd/saslauthd.8 /usr/share/man/man8
-#	install -v -m755 -d /usr/share/doc/$(THISAPP)
-#	install -v -m644 doc/{*.{html,txt,fig},ONEWS,TODO} saslauthd/LDAP_SASLAUTHD /usr/share/doc/$(THISAPP)
 ifeq "$(PASS)" "2"
 	install -v -m700 -d /var/lib/sasl
 	mkdir -p /var/run/saslauthd

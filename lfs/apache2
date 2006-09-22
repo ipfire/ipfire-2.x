@@ -32,9 +32,11 @@ THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = apache2
-PAK_VER    = 1
+ifeq "$(PASS)" "CONFIG"
+	TARGET     = $(DIR_INFO)/$(THISAPP)-config
+else
+	TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -57,9 +59,6 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
-	@$(PAK)
-
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
@@ -79,6 +78,30 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
+ifeq "$(PASS)" "CONFIG"
+	# DO THIS IN AN EXTRA STEP BECAUSE PHP AND SUBVERSION WILL FAIL.
+
+	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
+	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
+	-find /etc/httpd/conf -name .svn -exec rm -rf {} \;
+
+	# Copy all html/cgi-bin files
+	mkdir -p /home/httpd/{cgi-bin,html}
+	cp -aR $(DIR_SRC)/html/* /home/httpd
+	-find /home/httpd -name .svn -exec rm -rf {} \;
+	cp $(DIR_DL)/sflogo.png /home/httpd/html/images/
+
+	# Change CONFIG_ROOT in cgi-scripts
+	for i in /home/httpd/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
+	    if [ -f $$i ]; then \
+	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
+	    fi; \
+	done
+	chown -R root:root /home/httpd
+	chmod -R 755 /home/httpd/cgi-bin
+	chmod -R 644 /home/httpd/html
+	chmod 755 /home/httpd/html /home/httpd/html/{index.cgi,redirect.cgi,dial.cgi,images,include}
+else
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
 
@@ -116,25 +139,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    /usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd}}.1 \
 	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
 	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
-
-	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
-	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
-
-	# Copy all html/cgi-bin files
-	mkdir -p /home/httpd/{cgi-bin,html}
-	cp -aR $(DIR_SRC)/html/* /home/httpd
-	-find /home/httpd -name .svn -exec rm -rf {} \;
-	cp $(DIR_DL)/sflogo.png /home/httpd/html/images/
-
-	# Change CONFIG_ROOT in cgi-scripts
-	for i in /home/httpd/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
-	    if [ -f $$i ]; then \
-	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
-	    fi; \
-	done
-	chown -R root:root /home/httpd
-	chmod -R 755 /home/httpd/cgi-bin
-	chmod -R 644 /home/httpd/html
-	chmod 755 /home/httpd/html /home/httpd/html/{index.cgi,redirect.cgi,dial.cgi,images,include}
 	@rm -rf $(DIR_APP)
+endif
 	@$(POSTBUILD)

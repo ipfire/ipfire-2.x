@@ -107,6 +107,7 @@
 * hdparm-6.3
 * htop-0.6.2
 * httpd-2.2.2
+* httpd-2.2.2-config
 * iana-etc-2.00
 * ibod
 * iftop-0.17
@@ -206,6 +207,7 @@
 * readline-5.1
 * rp-pppoe-3.5
 * rrdtool-1.0.49
+* rsync-2.6.8
 * samba-3.0.23b
 * sata300_sataii150_tx_series_linux2.4_open_source_1.00.0.15
 * screen-4.0.2
@@ -223,6 +225,7 @@
 * squidGuard-1.2.0
 * startscripts
 * stund_0.96_Aug13
+* subversion-1.3.1
 * sudo-1.6.8p12
 * sysklogd-1.4.1
 * syslinux-3.20

@@ -30,7 +30,7 @@ VER        = 0.7RC1
 
 THISAPP    = pam_mysql-0.7RC1
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_SFNET)/pam-mysql
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -72,8 +72,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --with-pam=/usr --with-pam-mods-dir=/lib/security --with-mysql=/opt/lampp --with-openssl=/usr    # --with-cyrus-sasl2=/usr
-	#cd $(DIR_APP) && make
+	cd $(DIR_APP) && ./configure --with-pam=/usr --with-pam-mods-dir=/lib/security --with-mysql=/usr --with-openssl=/usr    # --with-cyrus-sasl2=/usr
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

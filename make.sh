@@ -606,7 +606,6 @@ buildipcop() {
   ipcopmake mysql
   ipcopmake saslauthd PASS=1
   ipcopmake openldap
-  #ipcopmake apache
   ipcopmake apache2
   ipcopmake php
   ipcopmake arping
@@ -676,7 +675,6 @@ buildipcop() {
   ipcopmake setserial
   ipcopmake setup
   ipcopmake snort
-  #ipcopmake speedycgi
   ipcopmake squid
   ipcopmake squid-graph
   ipcopmake squidguard
@@ -686,10 +684,8 @@ buildipcop() {
   ipcopmake wireless
   ipcopmake libsafe
   ipcopmake 3c5x9setup
-#  echo -ne "`date -u '+%b %e %T'`: Building ### IPFire modules ### \n" | tee -a $LOGFILE
   ipcopmake pakfire
   ipcopmake startscripts
-## Zuerst die Libs und dann die Programme. Ordnung muss sein!
   ipcopmake java
   ipcopmake bootsplash
   ipcopmake spandsp
@@ -697,19 +693,15 @@ buildipcop() {
   ipcopmake openvpn
   ipcopmake pkg-config
   ipcopmake glib
-  ipcopmake xampp
   ipcopmake pam
   ipcopmake pammysql
   ipcopmake saslauthd PASS=2
   ipcopmake xinetd
   ipcopmake ghostscript
   ipcopmake cups
-#  ipcopmake lpd ## Im Moment aus, da CUPS vorhanden ist.
   ipcopmake samba
   ipcopmake sudo
   ipcopmake mc
-#  ipcopmake pwlib
-#  ipcopmake openh323
   ipcopmake wget
   ipcopmake wput
   ipcopmake bridge-utils
@@ -723,7 +715,7 @@ buildipcop() {
   ipcopmake procmail
   ipcopmake fetchmail
   ipcopmake cyrusimap
-  ipcopmake web-cyradm
+  ipcopmake webcyradm
   ipcopmake mailx
   ipcopmake clamav
   ipcopmake razor
@@ -751,10 +743,9 @@ buildipcop() {
   ipcopmake applejuice
   ipcopmake ocaml
   ipcopmake mldonkey
-#  ipcopmake sane
   echo -ne "`date -u '+%b %e %T'`: Building ### Net-Tools ### \n" | tee -a $LOGFILE
   ipcopmake ntop
-#  ipcopmake rsync
+  ipcopmake rsync
   ipcopmake tcpwrapper
   ipcopmake portmap
   ipcopmake nfs
@@ -766,10 +757,11 @@ buildipcop() {
   ipcopmake etherwake
   ipcopmake ethereal
   ipcopmake tftp-hpa
-  #ipcopmake subversion
+  ipcopmake subversion
   ipcopmake iptraf
   ipcopmake nagios
   ipcopmake yasuc
+  ipcopmake apache2 PASS=CONFIG
 }
 
 buildinstaller() {
@@ -882,7 +874,7 @@ ipfirepackages() {
 		touch $BASEDIR/build/install/packages/$i.empty
 	  done
   fi
-  ipfiredist amavisd
+#  ipfiredist amavisd
   ipfiredist applejuice
   ipfiredist asterisk
   ipfiredist clamav
@@ -898,7 +890,6 @@ ipfirepackages() {
   ipfiredist libogg
   ipfiredist libtiff
   ipfiredist libvorbis
-  ipfiredist libxml2
   ipfiredist mailx
   ipfiredist mldonkey
   ipfiredist mpeg2dec
@@ -914,9 +905,7 @@ ipfirepackages() {
   ipfiredist spamassassin
   ipfiredist subversion
   ipfiredist videolan
-  ipfiredist web-cyradm
-  ipfiredist xampp
-#  ipfiredist xinetd
+  ipfiredist webcyradm
   ipfiredist xvid
   ipfiredist yasuc
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages

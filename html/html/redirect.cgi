@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# $Id: redirect.cgi,v 0.3 2006/07/18 00:00:00 modyfy bye linuxadmin
+# redirect.cgi - By IPFire-Team (C)
 #
 
 use CGI qw(param);
@@ -42,13 +42,12 @@ print <<END
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <title>ACCESS MESSAGE</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 
 <body>
 <table width="100%" height='100%' border="0">
 <tr>
-		<td colspan='3' width='100%' height='130' align="center" background="http://$netsettings{'GREEN_ADDRESS'}:81//images/background.gif">
+		<td colspan='3' width='100%' height='130' align="center" background="http://$netsettings{'GREEN_ADDRESS'}:81/images/background.gif">
 <tr>		<td width='10%'><td align='center' bgcolor='#CC000000' width='80%'><font face="verdana, arial, sans serif" color="#FFFFFF" size="5">
 					<b>$msgtext1</b>
 					</font>

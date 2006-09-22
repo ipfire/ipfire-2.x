@@ -87,8 +87,8 @@ my $cre_svhosts = "${General::swroot}/proxy/advanced/cre/supervisors";
 
 my $identhosts = "$identdir/hosts";
 
-my $authdir  = "/usr/lib/squid/advproxy/auth";
-my $errordir = "/usr/lib/squid/advproxy/errors";
+my $authdir  = "/usr/lib/squid/auth";
+my $errordir = "/usr/lib/squid/errors";
 
 my $acl_src_subnets = "$acldir/src_subnets.acl";
 my $acl_src_banned_ip  = "$acldir/src_banned_ip.acl";
@@ -3643,7 +3643,7 @@ END
 			if ($proxysettings{'ENABLE_FILTER'} eq 'on')
 			{
 				print FILE <<END
-url_rewrite_program /usr/sbin/squidGuard
+url_rewrite_program /usr/bin/squidGuard
 url_rewrite_children $filtersettings{'CHILDREN'}
 
 END
