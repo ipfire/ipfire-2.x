@@ -9,7 +9,7 @@
 
 use strict;
 # enable only the following on debugging purpose
-use warnings;
+# use warnings;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -26,14 +26,17 @@ my $classentry = "";
 my $subclassentry = "";
 my $l7ruleentry = "";
 my $portruleentry = "";
+my $tosruleentry = "";
 my @tmp = ();
 my @classes = ();
 my @subclasses = ();
 my @l7rules = ();
 my @portrules = ();
+my @tosrules = ();
 my @tmpline = ();
 my @classline = ();
 my @subclassline = ();
+my @tosruleline = ();
 my @l7ruleline = ();
 my @portruleline = ();
 my @proto = ();
@@ -42,6 +45,7 @@ my $classfile = "/var/ipfire/qos/classes";
 my $subclassfile = "/var/ipfire/qos/subclasses";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
+my $tosfile = "/var/ipfire/qos/tosconfig";
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
@@ -57,6 +61,7 @@ $qossettings{'ACK'} = '';
 $qossettings{'MTU'} = '1492';
 $qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 $qossettings{'IMQ_DEV'} = 'imq0';
+$qossettings{'TOS'} = '';
 $qossettings{'VALID'} = 'yes';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
@@ -72,6 +77,9 @@ open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 close FILE;
 open( FILE, "< $portfile" ) or die "Unable to read $portfile";
 @portrules = <FILE>;
+close FILE;
+open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
+@tosrules = <FILE>;
 close FILE;
 
 ############################################################################################################################
@@ -116,6 +124,7 @@ case "\$1" in
 		echo "[iptables]"
 		iptables -t mangle -L QOS-OUT -v -x 2> /dev/null
 		iptables -t mangle -L QOS-INC -v -x 2> /dev/null
+		iptables -t mangle -L QOS-TOS -v -x 2> /dev/null
 		exit 0
 	  ;;
 	esac
@@ -230,7 +239,9 @@ print <<END
 
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
+	iptables -t mangle -N QOS-TOS
 	iptables -t mangle -I POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
+	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS
 
 	### MARK ACKs
 	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags SYN,RST SYN -j TOS --set-tos 4
@@ -263,6 +274,23 @@ print <<END
 	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,FIN -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,FIN -j MARK --set-mark $qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,FIN -j RETURN
+
+	### SET TOS
+END
+;
+  	foreach $tosruleentry (sort @tosrules)
+  	{
+  		@tosruleline = split( /\;/, $tosruleentry );
+		$qossettings{'CLASS'} = $tosruleline[0];
+		$qossettings{'TOS'} = abs $tosruleline[2] * 2;
+  		if ( $tosruleline[1] eq $qossettings{'RED_DEV'} )
+  		{
+			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j RETURN\n";
+		}
+	}
+
+print <<END
 
 	### SET LEVEL7-RULES
 END
@@ -464,6 +492,25 @@ print <<END
 	iptables -t mangle -N QOS-INC
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0
 	iptables -t mangle -I PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
+
+	### SET TOS
+END
+;
+  	foreach $tosruleentry (sort @tosrules)
+  	{
+  		@tosruleline = split( /\;/, $tosruleentry );
+		$qossettings{'CLASS'} = $tosruleline[0];
+		$qossettings{'TOS'} = abs $tosruleline[2] * 2;
+  		if ( $tosruleline[1] eq $qossettings{'IMQ_DEV'} )
+  		{
+			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j RETURN\n";
+		}
+
+	}
+
+print <<END
 
 	### SET LEVEL7-RULES
 END
@@ -553,6 +600,33 @@ print <<END
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
 	iptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
 
+	### SETTING TOS BITS
+END
+;
+	foreach $classentry (sort @classes)
+	{
+		@classline = split( /\;/, $classentry );
+		$qossettings{'CLASS'} = $classline[1];
+		$qossettings{'TOS'} = abs $classline[7] * 2;
+		if ($qossettings{'TOS'} ne "0") {
+			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'CLASS'} -j TOS --set-tos $qossettings{'TOS'}\n";
+			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'CLASS'} -j RETURN\n";
+		}
+	}
+	foreach $subclassentry (sort @subclasses)
+	{
+		@subclassline = split( /\;/, $subclassentry );
+		$qossettings{'SUBCLASS'} = $subclassline[1];
+		$qossettings{'TOS'} = $subclassline[8];
+		$qossettings{'TOS'} = abs $qossettings{'TOS'} * 2;
+		if ($qossettings{'TOS'} ne "0") {
+			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'SUBCLASS'} -j TOS --set-tos $qossettings{'TOS'}\n";
+			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'SUBCLASS'} -j RETURN\n";
+		}
+	}
+
+print <<END
+
 	## STARTING COLLECTOR
 	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1
 	/usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1
@@ -572,11 +646,15 @@ print <<END
 	rmmod imq
 	# REMOVE & FLUSH CHAINS
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
+	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS
 	iptables -t mangle --flush  QOS-OUT
 	iptables -t mangle --delete-chain QOS-OUT
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
 	iptables -t mangle --flush  QOS-INC
 	iptables -t mangle --delete-chain QOS-INC
+	iptables -t mangle --flush  QOS-TOS
+	iptables -t mangle --delete-chain QOS-TOS
 	rmmod sch_htb
 	echo "Quality of Service was successfully cleared!"
   ;;

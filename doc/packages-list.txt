@@ -246,7 +246,6 @@
 * wget-1.10.2
 * wireless_tools.28
 * wput-0.6
-* xampp-linux-1.5.3a
 * xinetd-2.3.14
 * xmbmon205
 * xvidcore-1.1.0

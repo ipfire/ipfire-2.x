@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "restart") == 0) {
 		safe_system("/var/ipfire/qos/bin/qos.sh restart");
 	} else if (strcmp(argv[1], "generate") == 0) {
-		safe_system("/usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh 2>/dev/null");
+		safe_system("/usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh");
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\nqosctrl (start|stop|restart|status|generate)\n\n");
 		exit(1);

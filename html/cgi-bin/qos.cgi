@@ -10,7 +10,7 @@
 use RRDs;
 use strict;
 # enable only the following on debugging purpose
-use warnings;
+# use warnings;
 use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
@@ -28,22 +28,27 @@ my $classentry = "";
 my $subclassentry = "";
 my $l7ruleentry = "";
 my $portruleentry = "";
+my $tosruleentry = "";
 my @tmp = ();
 my @classes = ();
 my @subclasses = ();
 my @l7rules = ();
 my @portrules = ();
+my @tosrules = ();
 my @tmpline = ();
 my @classline = ();
 my @subclassline = ();
 my @l7ruleline = ();
 my @portruleline = ();
+my @tosruleline = ();
 my @proto = ();
-my %selected= () ;
+my %selected= ();
+my @checked = ();
 my $classfile = "/var/ipfire/qos/classes";
 my $subclassfile = "/var/ipfire/qos/subclasses";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
+my $tosfile = "/var/ipfire/qos/tosconfig";
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 &Header::showhttpheaders();
@@ -67,6 +72,8 @@ $qossettings{'VALID'} = 'yes';
 $qossettings{'ACTION'} = '';
 $qossettings{'ACTIONDEF'} = '';
 $qossettings{'ACTIONBW'} = '';
+$qossettings{'RED_DEV_SEL'} = '';
+$qossettings{'IMQ_DEV_SEL'} = '';
 $qossettings{'PRIO'} = '';
 $qossettings{'SPD'} = '';
 $qossettings{'CLASS'} = '';
@@ -89,6 +96,7 @@ $qossettings{'DOPORT'} = '';
 $qossettings{'CLASS'} = '';
 $qossettings{'CLASSPRFX'} = '';
 $qossettings{'DEV'} = '';
+$qossettings{'TOS'} = '';
 
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
@@ -108,7 +116,7 @@ if ($qossettings{'DOCLASS'} eq $Lang::tr{'save'})
 	if ( $qossettings{'VALID'} eq 'yes' ) {
 		open( FILE, ">> $classfile" ) or die "Unable to write $classfile";
 		print FILE <<END
-$qossettings{'DEVICE'};$qossettings{'CLASS'};$qossettings{'PRIO'};$qossettings{'MINBWDTH'};$qossettings{'MAXBWDTH'};$qossettings{'BURST'};$qossettings{'CBURST'};
+$qossettings{'DEVICE'};$qossettings{'CLASS'};$qossettings{'PRIO'};$qossettings{'MINBWDTH'};$qossettings{'MAXBWDTH'};$qossettings{'BURST'};$qossettings{'CBURST'};$qossettings{'TOS'};
 END
 ;
 		close FILE;
@@ -184,7 +192,7 @@ if ($qossettings{'DOSCLASS'} eq $Lang::tr{'save'})
 	if ( $qossettings{'VALID'} eq 'yes' ) {
 		open( FILE, ">> $subclassfile" ) or die "Unable to write $subclassfile";
 		print FILE <<END
-$qossettings{'DEVICE'};$qossettings{'CLASS'};$qossettings{'SCLASS'};$qossettings{'PRIO'};$qossettings{'MINBWDTH'};$qossettings{'MAXBWDTH'};$qossettings{'BURST'};$qossettings{'CBURST'};
+$qossettings{'DEVICE'};$qossettings{'CLASS'};$qossettings{'SCLASS'};$qossettings{'PRIO'};$qossettings{'MINBWDTH'};$qossettings{'MAXBWDTH'};$qossettings{'BURST'};$qossettings{'CBURST'};$qossettings{'TOS'};
 END
 ;
 		close FILE;
@@ -321,6 +329,68 @@ END
 ############################################################################################################################
 ############################################################################################################################
 
+if ($qossettings{'DOTOS'} eq $Lang::tr{'save'})
+{
+	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
+		$qossettings{'DEVICE'} = $qossettings{'RED_DEV'};
+	} elsif ($qossettings{'CLASS'} >= 1000 && $qossettings{'CLASS'} < 1021) {
+		$qossettings{'DEVICE'} = $qossettings{'RED_DEV'};
+	} elsif ($qossettings{'CLASS'} >= 200 && $qossettings{'CLASS'} < 221) {
+		$qossettings{'DEVICE'} = $qossettings{'IMQ_DEV'};
+	} elsif ($qossettings{'CLASS'} >= 2000 && $qossettings{'CLASS'} < 2021) {
+		$qossettings{'DEVICE'} = $qossettings{'IMQ_DEV'};
+	}
+	open( FILE, ">> $tosfile" ) or die "Unable to write $tosfile";
+	print FILE <<END
+$qossettings{'CLASS'};$qossettings{'DEVICE'};$qossettings{'TOS'};
+END
+;
+	close FILE;
+} 
+elsif ($qossettings{'DOTOS'} eq 'Loeschen')
+{
+	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
+	@tosrules = <FILE>;
+	close FILE;
+	open( FILE, "> $tosfile" ) or die "Unable to read $tosfile";
+  	foreach $tosruleentry (sort @tosrules)
+  	{
+  		@tosruleline = split( /\;/, $tosruleentry );
+  		unless ( ($tosruleline[0] eq $qossettings{'CLASS'}) && ($tosruleline[2] eq $qossettings{'TOS'}))
+  		{
+			print FILE $tosruleentry;
+		}
+	}
+	close FILE;
+	$message = "TOS-Regel ($qossettings{'CLASS'} - $qossettings{'TOS'}) wurde geloescht.";
+} elsif ($qossettings{'DOTOS'} eq 'Bearbeiten')
+{
+	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
+	@tosrules = <FILE>;
+	close FILE;
+	open( FILE, "> $tosfile" ) or die "Unable to write $tosfile";
+	foreach $tosruleentry (sort @tosrules)
+	{
+		@tosruleline = split( /\;/, $tosruleentry );
+		if (( $tosruleline[0] eq $qossettings{'CLASS'} ) && ( $tosruleline[2] eq $qossettings{'TOS'} )) {
+			$qossettings{'DEVICE'} = $tosruleline[1];
+			$qossettings{'CLASS'} = $tosruleline[0];
+			$qossettings{'TOS'} = $tosruleline[2];
+			$qossettings{'EDIT'} = 'yes';
+		} else {
+			print FILE $tosruleentry;
+		}
+	}
+	close FILE;
+	&tosrule();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit
+}
+
+############################################################################################################################
+############################################################################################################################
+
 if ($qossettings{'ACTION'} eq 'Start')
 {
 	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
@@ -374,25 +444,39 @@ elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
 }
 elsif ($qossettings{'ACTION'} eq 'Grafische Auswertung')
 {
-	&Header::openbox('100%', 'left', 'QoS Graphen');
-	print <<END
-	<table width='100%'><tr><td colspan='2' align='center'><font color='red'>Diese Seite braucht je nach Geschwindigkeit des Computers laenger zum Laden.</font>
-	</table>
-END
-;
-	&Header::closebox();
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@classes = <FILE>;
 	close FILE;
 	open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
 	@subclasses = <FILE>;
 	close FILE;
+	&Header::openbox('100%', 'left', 'QoS Graphen');
+	print <<END
+	<table width='100%'>	<tr><td align='center'><font color='red'>Diese Seite braucht je nach Geschwindigkeit des Computers laenger zum Laden.</font>
+				<tr><td align='center'><b>Klasse:</b> 
+END
+;
+  	foreach $classentry (sort @classes)
+  	{
+  		@classline = split( /\;/, $classentry );
+		$qossettings{'CLASS'}=$classline[1];
+		print <<END
+		<input type="button" onClick="swapVisibility('$qossettings{'CLASS'}')" value='$qossettings{'CLASS'}'>
+END
+;
+	}
+	print <<END
+	</table>
+END
+;
+	&Header::closebox();
   	foreach $classentry (sort @classes)
   	{
   		@classline = split( /\;/, $classentry );
 		$qossettings{'DEV'}=$classline[0];
 		$qossettings{'CLASS'}=$classline[1];
 		&gengraph($qossettings{'DEV'},$qossettings{'CLASS'});
+		print "<div id='$qossettings{'CLASS'}' style='display: none'>";
 		&Header::openbox('100%', 'center', "$qossettings{'CLASS'} ($qossettings{'DEV'})");
 		print <<END
 		<table>
@@ -416,8 +500,9 @@ END
 ;
 			}
 		}
-	print "\t\t</table>";
-	&Header::closebox();	
+		print "\t\t</table>";
+		&Header::closebox();	
+		print "</div>\n";
 	}
 print <<END
 	</table>
@@ -442,16 +527,41 @@ elsif ($qossettings{'ACTION'} eq 'Unterklasse hinzufuegen')
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq 'Level7-Regel hinzufuegen')
+elsif ($qossettings{'ACTION'} eq 'Regel hinzufuegen')
 {
-	&level7rule();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit
-}
-elsif ($qossettings{'ACTION'} eq 'Port-Regel hinzufuegen')
-{
-	&portrule();
+	&Header::openbox('100%', 'center', 'Regel hinzufuegen');
+	print <<END
+		<table>
+		<tr><td align='center'>Waehlen sie <u>eine</u> der untenstehenden Regeln aus.
+		<tr><td align='center'>
+			<input type="button" onClick="swapVisibility('l7rule')" value='Level7-Regel'>
+			<input type="button" onClick="swapVisibility('portrule')" value='Port-Regel'>
+			<input type="button" onClick="swapVisibility('tosrule')" value='TOS-Regel'>
+		</table>
+END
+;
+	&Header::closebox();
+	print <<END
+		<div id='l7rule' style='display: none'>
+END
+;
+		&level7rule();
+	print <<END
+		</div>
+		<div id='portrule' style='display: none'>
+END
+;
+		&portrule();
+	print <<END
+		</div>
+		<div id='tosrule' style='display: none'>
+END
+;
+		&tosrule();
+	print <<END
+		</div>
+END
+;
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
@@ -567,6 +677,7 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 
 &showclasses();
 &showl7rules();
+&showtosrules();
 &showportrules();
 
 &Header::closebigbox();
@@ -729,6 +840,14 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ceilburst:
 		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value=$qossettings{'CBURST'}>
+		    <td width='33%' align='center'>&nbsp;
+		<tr><td width='33%' align='right'>TOS-Bit:
+		    <td width='33%' align='left'><select name='TOS'>
+				<option value='0'>Ausgeschaltet (0)</option>
+				<option value='8'>Minimale Verzoegerung (8)</option>
+				<option value='4'>Maximaler Durchsatz (4)</option>
+				<option value='2'>Maximale Zuverlaessigkeit (2)</option>
+				<option value='1'>Minimale Kosten (1)</option></select>
 		    <td width='33%' align='center'><input type='submit' name='DOCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
 		</table></form>
 END
@@ -794,6 +913,14 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ceilburst:
 		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value=$qossettings{'CBURST'}>
+		    <td width='33%' align='center'>&nbsp;
+		<tr><td width='33%' align='right'>TOS-Bit:
+		    <td width='33%' align='left'><select name='TOS'>
+				<option value='0'>Ausgeschaltet (0)</option>
+				<option value='8'>Minimale Verzoegerung (8)</option>
+				<option value='4'>Maximaler Durchsatz (4)</option>
+				<option value='2'>Maximale Zuverlaessigkeit (2)</option>
+				<option value='1'>Minimale Kosten (1)</option></select>
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}>
 							<input type='hidden' name='DEVICE' value=$qossettings{'DEVICE'}>
 							<input type='submit' name='DOSCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
@@ -891,6 +1018,33 @@ END
 	&Header::closebox();
 }
 
+sub tosrule {
+	&Header::openbox('100%', 'center', 'TOS-Regel');
+	if ($qossettings{'TOS'}) {
+		$checked[$qossettings{'TOS'}] = "checked";
+	}
+	print <<END
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='66%'>
+END
+;
+	if ( $message ne "" ) {
+		print "<tr><td colspan='3' align='center'><font color='red'>$message</font>";
+	}
+	print <<END
+		<tr><td colspan='2' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
+		<tr><td width='100%' colspan='2'>Aktivieren oder deaktivieren sie die TOS-Bits <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='50%' align='left'>Minimale Verzoegerung (8)		<td width='50%'><input type="radio" name="TOS" value="8" $checked[8]>
+		<tr><td width='50%' align='left'>Maximaler Durchsatz (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4]>
+		<tr><td width='50%' align='left'>Maximale Zuverlaessigkeit (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2]>
+		<tr><td width='50%' align='left'>Minimale Kosten (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1]>
+		<tr><td width='100%' align='right' colspan='2'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DOTOS' value=$Lang::tr{'save'} />
+		</table></form>
+END
+;
+	&Header::closebox();
+}
+
 sub showclasses {
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@classes = <FILE>;
@@ -909,7 +1063,8 @@ sub showclasses {
 		    <td bgcolor='lightgrey' width='10%'>Maximale Bandbreite
 		    <td bgcolor='lightgrey' width='10%'>Burst
 		    <td bgcolor='lightgrey' width='10%'>Ceil Burst
-		    <td bgcolor='lightgrey' width='30%'>Aktionen
+		    <td bgcolor='lightgrey' width='10%'>TOS
+		    <td bgcolor='lightgrey' width='20%'>Aktionen
 END
 ;
 	  	foreach $classentry (sort @classes)
@@ -925,13 +1080,9 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$classline[4]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
+				    <td align='center' bgcolor='#EAEAEA'>$classline[7]
 				    <td align='right'  bgcolor='#EAEAEA'>
 					<table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
 						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen'>
@@ -939,13 +1090,13 @@ END
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
-						<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
+						<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
+						<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
-						<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
+						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
@@ -967,22 +1118,18 @@ END
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[5]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
+							    <td align='center' bgcolor='#FAFAFA'>$subclassline[8]
 							    <td align='right'  bgcolor='#FAFAFA'>
 						<table border='0'><tr>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]'>
+							<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
+							<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
+						</form>
+						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]'>
 							<input type='hidden' name='DOSCLASS' value='Bearbeiten'>
 							<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-						</form>
-						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]'>
-							<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
-							<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
-						</form>
-						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]'>
-							<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
-							<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
 						</form>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]'>
@@ -996,7 +1143,7 @@ END
 				}
 	  		}
 	  	}
-		print "\t<tr><td colspan='8' bgcolor='lightgrey' height='2'>";
+		print "\t<tr><td colspan='9' bgcolor='lightgrey' height='2'>";
 	  	foreach $classentry (sort @classes)
 	  	{
 	  		@classline = split( /\;/, $classentry );
@@ -1010,13 +1157,9 @@ END
 				    <td align='center' bgcolor='#EAEAEA'>$classline[4]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
 				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
+				    <td align='center' bgcolor='#EAEAEA'>$classline[7]
 				    <td align='right'  bgcolor='#EAEAEA'>
 					<table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
 						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen'>
@@ -1024,13 +1167,13 @@ END
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
-						<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
+						<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
+						<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
-						<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
+						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>
@@ -1052,22 +1195,18 @@ END
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[5]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
+							    <td align='center' bgcolor='#FAFAFA'>$subclassline[8]
 							    <td align='right'  bgcolor='#FAFAFA'>
 							<table border='0'><tr>
 							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 								<input type='hidden' name='CLASS' value='$subclassline[2]'>
+								<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
+								<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
+							</form>
+							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='CLASS' value='$subclassline[2]'>
 								<input type='hidden' name='DOSCLASS' value='Bearbeiten'>
 								<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-							</form>
-							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-								<input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<input type='hidden' name='ACTION' value='Level7-Regel hinzufuegen'>
-								<input type='image' alt='Level7-Regel hinzufuegen' src='/images/addgreen.gif'>
-							</form>
-							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-								<input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<input type='hidden' name='ACTION' value='Port-Regel hinzufuegen'>
-								<input type='image' alt='Port-Regel hinzufuegen' src='/images/add.gif'>
 							</form>
 							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 								<input type='hidden' name='CLASS' value='$subclassline[2]'>
@@ -1082,7 +1221,8 @@ END
 	  		}
 	  	}
 		print <<END
-		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Klasse bearbeiten | <img src='/images/addblue.gif'>&nbsp;Unterklasse hinzufuegen | <img src='/images/addgreen.gif'>&nbsp;Level7-Regel hinzufuegen | <img src='/images/add.gif'>&nbsp;Port-Regel hinzufuegen | <img src='/images/delete.gif'>&nbsp;Klasse loeschen &nbsp;
+		<tr><td colspan='9' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/addblue.gif'>&nbsp;Unterklasse hinzufuegen | <img src='/images/addgreen.gif'>&nbsp;Regel hinzufuegen | <img src='/images/edit.gif'>&nbsp;Klasse bearbeiten | <img src='/images/delete.gif'>&nbsp;Klasse loeschen &nbsp;
+		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
 		</table>
 END
 ;
@@ -1284,21 +1424,122 @@ END
 	}
 }
 
+sub showtosrules {
+	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
+	@tosrules = <FILE>;
+	close FILE;
+	if (@tosrules) {
+		&Header::openbox('100%', 'center', 'TOS-Regeln');
+		print <<END
+		<table border='0' width='100%' cellspacing='0'>
+		<tr><td bgcolor='lightgrey' width='10%'>Interface
+		    <td bgcolor='lightgrey' width='10%'>Klasse
+		    <td bgcolor='lightgrey' width='10%'>TOS-Bit
+		    <td bgcolor='lightgrey' width='50%'>TOS-Beschreibung
+		    <td bgcolor='lightgrey' width='20%'>Aktionen
+END
+;
+	  	foreach $tosruleentry (sort @tosrules)
+	  	{
+	  		@tosruleline = split( /\;/, $tosruleentry );
+	  		if ( $tosruleline[1] eq $qossettings{'RED_DEV'} )
+	  		{
+	  			print <<END
+				<tr><td align='center' bgcolor='#EAEAEA'>$tosruleline[1]
+				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[0]
+				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[2]
+				    <td align='center' bgcolor='#EAEAEA'>
+END
+;
+				if ( $tosruleline[2] eq "8") {
+					print "Minimale Verzoegerung\n";
+				} elsif ( $tosruleline[2] eq "4") {
+					print "Maximaler Durchsatz\n";
+				} elsif ( $tosruleline[2] eq "2") {
+					print "Maximaler Durchsatz\n";
+				} elsif ( $tosruleline[2] eq "1") {
+					print "Minimale Kosten\n";
+				} else { print "&nbsp;\n"; }
+				print <<END
+				    <td align='right'  bgcolor='#EAEAEA'>
+				    <table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
+						<input type='hidden' name='DEV' value='$tosruleline[1]'>
+						<input type='hidden' name='TOS' value='$tosruleline[2]'>
+						<input type='hidden' name='DOTOS' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
+						<input type='hidden' name='DEV' value='$tosruleline[1]'>
+						<input type='hidden' name='TOS' value='$tosruleline[2]'>
+						<input type='hidden' name='DOTOS' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+				    </table>
+END
+;
+	  		}
+	  	}
+		print "\t<tr><td colspan='8' bgcolor='lightgrey' height='2'>";
+	  	foreach $tosruleentry (sort @tosrules)
+	  	{
+	  		@tosruleline = split( /\;/, $tosruleentry );
+	  		if ( $tosruleline[1] eq $qossettings{'IMQ_DEV'} )
+	  		{
+	  			print <<END
+				<tr><td align='center' bgcolor='#EAEAEA'>$tosruleline[1]
+				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[0]
+				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[2]
+				    <td align='center' bgcolor='#EAEAEA'>
+END
+;
+				if ( $tosruleline[2] eq "8") {
+					print "Minimale Verzoegerung\n";
+				} elsif ( $tosruleline[2] eq "4") {
+					print "Maximaler Durchsatz\n";
+				} elsif ( $tosruleline[2] eq "2") {
+					print "Maximaler Durchsatz\n";
+				} elsif ( $tosruleline[2] eq "1") {
+					print "Minimale Kosten\n";
+				} else { print "&nbsp;\n"; }
+				print <<END
+				    <td align='right'  bgcolor='#EAEAEA'>
+				    <table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
+						<input type='hidden' name='DEV' value='$tosruleline[1]'>
+						<input type='hidden' name='TOS' value='$tosruleline[2]'>
+						<input type='hidden' name='DOTOS' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
+						<input type='hidden' name='DEV' value='$tosruleline[1]'>
+						<input type='hidden' name='TOS' value='$tosruleline[2]'>
+						<input type='hidden' name='DOTOS' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+				    </table>
+END
+;
+	  		}
+	  	}
+		print <<END
+		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Regel bearbeiten | <img src='/images/delete.gif'>&nbsp;Regel loeschen &nbsp;
+		</table>
+END
+;
+		&Header::closebox();
+	}
+}
+
 sub expert
 {
 	&Header::openbox('100%', 'center', 'Expertenoptionen:');
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<!--		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Diese Einstellungen sollten sie nur veraendern, wenn sie wirklich wissen, was sie tun.
-		<tr><td width='33%' align='right'>Download-Rate 90\%:<td width='33%' align='left'>
-			<input type='text' name='DEF_INC_SPD' maxlength='8' required='4' value=$qossettings{'DEF_INC_SPD'}>
-		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Upload-Rate 90\%:<td width='33%' align='left'>
-			<input type='text' name='DEF_OUT_SPD' maxlength='8' required='4' value=$qossettings{'DEF_OUT_SPD'}>
-		    <td width='33%' align='center'>&nbsp;
-		</table>
-		<hr> -->
 		<table width='66%'>
 		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
 			<input type='text' name='MTU' maxlength='8' required='4' value=$qossettings{'MTU'}>
@@ -1405,7 +1646,7 @@ sub gengraph {
 
 	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png",
 		"--start", "-3240", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 800", "-h 150", "-r",
+		"--alt-y-grid", "-w 600", "-h 150", "-r",
 		"--color", "SHADEA#EAE9EE",
 		"--color", "SHADEB#EAE9EE",
 		"--color", "BACK#FFFFFF",
@@ -1425,7 +1666,7 @@ sub gengraph {
 
 	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png",
 		"--start", "-3240", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 800", "-h 150", "-r",
+		"--alt-y-grid", "-w 600", "-h 150", "-r",
 		"--color", "SHADEA#EAE9EE",
 		"--color", "SHADEB#EAE9EE",
 		"--color", "BACK#FFFFFF",
@@ -1445,7 +1686,7 @@ sub gengraph {
 
 	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png",
 		"--start", "-3240", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 800", "-h 150", "-r",
+		"--alt-y-grid", "-w 600", "-h 150", "-r",
 		"--color", "SHADEA#EAE9EE",
 		"--color", "SHADEB#EAE9EE",
 		"--color", "BACK#FFFFFF",

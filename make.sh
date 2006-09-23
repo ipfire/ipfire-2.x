@@ -608,6 +608,8 @@ buildipcop() {
   ipcopmake openldap
   ipcopmake apache2
   ipcopmake php
+  ipcopmake subversion
+  ipcopmake apache2 PASS=CONFIG
   ipcopmake arping
   ipcopmake beep
   ipcopmake bind
@@ -757,11 +759,9 @@ buildipcop() {
   ipcopmake etherwake
   ipcopmake ethereal
   ipcopmake tftp-hpa
-  ipcopmake subversion
   ipcopmake iptraf
   ipcopmake nagios
   ipcopmake yasuc
-  ipcopmake apache2 PASS=CONFIG
 }
 
 buildinstaller() {
