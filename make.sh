@@ -834,12 +834,12 @@ buildpackages() {
 	fi
   done
   echo "== List of softwares used to build $NAME Version: $VERSION ==" > $BASEDIR/doc/packages-list.txt
-  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipfire$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$\|.tgz$' \
+  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipfire$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$\|.tgz$\|-config$' \
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
 
-  # Create ISO for CDRom and USB-superfloppy
+  # Create ISO for CDROM
   ipcopmake cdrom
   rm -f $LFS/install/images/*usb*
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1

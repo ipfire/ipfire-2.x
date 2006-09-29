@@ -107,7 +107,6 @@
 * hdparm-6.3
 * htop-0.6.2
 * httpd-2.2.2
-* httpd-2.2.2-config
 * iana-etc-2.00
 * ibod
 * iftop-0.17
