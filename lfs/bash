@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 2.05b
+VER        = 3.1
 
 THISAPP    = bash-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -37,12 +37,14 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --bindir=/bin --disable-nls
+  EXTRA_CONFIG = --prefix=/usr --bindir=/bin \
+    --without-bash-malloc --with-installed-readline \
+    --disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
+  EXTRA_CONFIG = --prefix=/tools --without-bash-malloc --disable-nls
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -50,13 +52,12 @@ endif
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = $(DL_FILE) $(THISAPP)-2.patch
+
+objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-2.patch     = $(URL_LFS)/bash/$(THISAPP)-2.patch
 
-$(DL_FILE)_MD5         = 5238251b4926d778dfe162f6ce729733
-$(THISAPP)-2.patch_MD5 = dfc7399bb57798e18fbb99f9edce4da0
+$(DL_FILE)_MD5         = ef5304c4b22aaa5088972c792ed45d72
 
 install : $(TARGET)
 
@@ -86,9 +87,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-3.1-fixes-8.patch
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	ln -sf bash /bin/sh
 ifneq "$(ROOT)" ""

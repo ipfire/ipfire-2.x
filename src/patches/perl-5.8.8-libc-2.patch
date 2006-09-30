@@ -1,0 +1,32 @@
+Submitted By: Anderson Lizardo <andersonlizardo(at)yahoo(dot)com(dot)br>
+Date: 2006-02-15
+Initial Package Version: 5.8.8
+Origin: based on current LFS-BOOK patch (perl-5.8.0-libc-2.patch)
+Description: this patch adapts some hard-wired paths to the C library.
+             It uses the $prefix variable to locate the correct libc.
+
+diff -Naur perl-5.8.8.orig/hints/linux.sh perl-5.8.8/hints/linux.sh
+--- perl-5.8.8.orig/hints/linux.sh	2005-11-18 01:18:45.000000000 +0000
++++ perl-5.8.8/hints/linux.sh	2006-02-12 12:20:32.000000000 +0000
+@@ -52,9 +52,9 @@
+ # We don't use __GLIBC__ and  __GLIBC_MINOR__ because they
+ # are insufficiently precise to distinguish things like
+ # libc-2.0.6 and libc-2.0.7.
+-if test -L /lib/libc.so.6; then
+-    libc=`ls -l /lib/libc.so.6 | awk '{print $NF}'`
+-    libc=/lib/$libc
++if test -L ${prefix}/lib/libc.so.6; then
++    libc=`ls -l ${prefix}/lib/libc.so.6 | awk '{print $NF}'`
++    libc=${prefix}/lib/$libc
+ fi
+ 
+ # Configure may fail to find lstat() since it's a static/inline
+@@ -330,3 +330,8 @@
+     libswanted="$*"
+     ;;
+ esac
++
++locincpth=""
++loclibpth=""
++glibpth="${prefix}/lib"
++usrinc="${prefix}/include"

@@ -1,0 +1,44 @@
+Submitted By: Alexander E. Patrakov
+Date: 2005-07-12
+Initial Package Version: 4.8
+Upstream Status: Hack, won't submit
+Origin: Alexander E. Patrakov
+Description: Info assumes that a string width in character cells is the
+same as its length in bytes. This patch avoids cases when this assumption
+is not true.
+
+diff -ur texinfo-4.8/info/info.c texinfo-4.8.hacked/info/info.c
+--- texinfo-4.8/info/info.c	2004-04-11 23:56:45.000000000 +0600
++++ texinfo-4.8.hacked/info/info.c	2005-07-12 12:11:34.852485776 +0600
+@@ -154,6 +154,10 @@
+ #ifdef HAVE_SETLOCALE
+   /* Set locale via LC_ALL.  */
+   setlocale (LC_ALL, "");
++  /* But don't use translated messages in the case when
++     string width and length can differ */
++  if (MB_CUR_MAX > 1)
++    setlocale(LC_MESSAGES, "C");
+ #endif
+ 
+ #ifdef ENABLE_NLS
+diff -ur texinfo-4.8/info/man.c texinfo-4.8.hacked/info/man.c
+--- texinfo-4.8/info/man.c	2004-04-11 23:56:46.000000000 +0600
++++ texinfo-4.8.hacked/info/man.c	2005-07-12 12:08:40.267026800 +0600
+@@ -325,6 +325,17 @@
+       freopen (NULL_DEVICE, "r", stdin);
+       dup2 (pipes[1], fileno (stdout));
+ 
++      if (MB_CUR_MAX > 1)
++        {
++          /* Info has trouble wrapping man output if it contains
++             multibyte characters */
++          setenv("LANGUAGE", "C", 1);
++          setenv("LANG", "C", 1);
++          setenv("LC_MESSAGES", "C", 1);
++          setenv("LC_CTYPE", "C", 1);
++          setenv("LC_ALL", "C", 1);
++        }
++
+       execv (formatter_args[0], formatter_args);
+ 
+       /* If we get here, we couldn't exec, so close out the pipe and

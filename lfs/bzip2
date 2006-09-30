@@ -80,22 +80,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/bzip2-1.0.2-use_mktemp-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bzip2-1.0.2-chmod.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bzip2-1.0.3-bzgrep_security-1.patch
 ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && sed -i 's@tempfile -d /tmp -p bz@mktemp -p /tmp@' bzdiff
 	cd $(DIR_APP) && make -f Makefile-libbz2_so
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && make
 	rm -f /usr/bin/{bzgrep,bzegrep,bzfgrep,bzcmp,bzless}
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && cp bzip2-shared /bin/bzip2
-	cd $(DIR_APP) && cp -a libbz2.so* /lib
-	ln -sf ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so
-	rm /usr/bin/{bunzip2,bzcat,bzip2}
-	mv /usr/bin/{bzip2recover,bzless,bzmore} /bin
-	ln -sf bzip2 /bin/bunzip2
-	ln -sf bzip2 /bin/bzcat
+	cp -v bzip2-shared /bin/bzip2
+	cp -av libbz2.so* /lib
+	ln -sv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so
+	rm -v /usr/bin/{bunzip2,bzcat,bzip2}
+	ln -sv bzip2 /bin/bunzip2
+	ln -sv bzip2 /bin/bzcat
 else
+	cd $(DIR_APP) && make
 	rm -f /tools/bin/{bzgrep,bzegrep,bzfgrep,bzcmp,bzless}
 	cd $(DIR_APP) && make PREFIX=/tools install
 endif

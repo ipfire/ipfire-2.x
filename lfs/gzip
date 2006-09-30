@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: gzip,v 1.3.2.4 2005/07/18 20:40:37 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 1.3.5
 
 THISAPP    = gzip-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_AGNU)/gzip
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 # Normal build or /tools build.
@@ -91,24 +85,20 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	#only gzip is include, so fix only this part
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gzip-1.3.5-asm-execstack.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gzip-1.3.3-window-size.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gzip-1.3.5-perm.patch		# CAN-2005-0988
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gzip-1.3.5-gunzip-dir.patch	# CAN-2005-1228
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gzip-1.3.5-security_fixes-1.patch
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && cp gzexe.in{,.backup}
-	cd $(DIR_APP) && sed 's%"BINDIR"%/bin%' gzexe.in.backup > gzexe.in
+	cd $(DIR_APP) && sed -i 's@"BINDIR"@/bin@g' gzexe.in
 endif
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
-	mv /usr/bin/gzip /bin
-	rm /usr/bin/{gunzip,zcat}
-	ln -sf gzip /bin/gunzip
-	ln -sf gzip /bin/zcat
-	ln -sf gunzip /bin/uncompress
+	mv -v /usr/bin/gzip /bin
+	rm -v /usr/bin/{gunzip,zcat}
+	ln -sv gzip /bin/gunzip
+	ln -sv gzip /bin/zcat
+	ln -sv gzip /bin/compress
+	ln -sv gunzip /bin/uncompress
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -26,9 +26,9 @@
 
 include Config
 
-VER        = 2.3.3
+VER        = 2.3.6
 
-THISAPP    = glibc-$(VER)-lfs-5.1
+THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -40,18 +40,17 @@ CXXFLAGS   =
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr \
-    --disable-profile --enable-add-ons=linuxthreads \
-    --libexecdir=/usr/lib --with-headers=/usr/include \
-    --without-cvs --disable-nls
+    --disable-profile --enable-add-ons \
+    --enable-kernel=2.6.0 --libexecdir=/usr/lib/glibc
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = --prefix=/tools \
-    --disable-profile --enable-add-ons=linuxthreads \
-    --with-headers=/tools/include \
-    --with-binutils=/tools/bin --without-gd \
-    --without-cvs --disable-nls
+    --disable-profile --enable-add-ons \
+    --enable-kernel=2.6.0 --with-binutils=/tools/bin \
+    --without-gd --with-headers=/tools/include \
+    --without-selinux
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -60,11 +59,14 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	glibc-libidn-$(VER).tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+glibc-libidn-$(VER).tar.bz2 = $(DL_FROM)/glibc-libidn-$(VER).tar.bz2
 
-$(DL_FILE)_MD5 = cd11fabdf5162ad68329e7b28b308278
+$(DL_FILE)_MD5 = bfdce99f82d6dbcb64b7f11c05d6bc96
+glibc-libidn-$(VER).tar.bz2_MD5 = 49dbe06ce830fc73874d6b38bdc5b4db
 
 install : $(TARGET)
 
@@ -94,30 +96,25 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.3.3-ssp_frandom-2.patch
 	@mkdir $(DIR_SRC)/glibc-build
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-2.3.6-linux_types-1.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-2.3.6-inotify-1.patch
+	# This locale causes a loop on bash login - exclude it
+	cd $(DIR_APP) && sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
+	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.2 -o|' \
+		scripts/test-installation.pl
+
 	cd $(DIR_SRC)/glibc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
 ifeq "$(ROOT)" ""
 	touch /etc/ld.so.conf
-	cd $(DIR_SRC)/glibc-build && make $(EXTRA_MAKE)
+	cd $(DIR_SRC)/glibc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
+	cp -v $(DIR_APP)/sysdeps/unix/sysv/linux/inotify.h /usr/include/sys
 else
 	-mkdir /tools/etc
 	touch /tools/etc/ld.so.conf
-	cd $(DIR_SRC)/glibc-build && make $(EXTRA_MAKE) AUTOCONF=no
-	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) AUTOCONF=no install
-endif
-
-	# Locking in the toolchain
-ifeq "$(ROOT)" ""
-	SPECFILE=/tools/lib/gcc-lib/*/*/specs && \
-	sed -e 's@/tools/lib/ld-linux.so.2@/lib/ld-linux.so.2@g' \
-	    $$SPECFILE > newspecfile && mv -f newspecfile $$SPECFILE
-else
-	SPECFILE=/tools/lib/gcc-lib/*/*/specs && \
-	sed -e 's@/lib/ld-linux.so.2@/tools/lib/ld-linux.so.2@g' \
-	    $$SPECFILE > tempspecfile && mv -f tempspecfile $$SPECFILE
-	rm -f /tools/lib/gcc-lib/*/*/include/{pthread.h,bits/sigthread.h}
+	cd $(DIR_SRC)/glibc-build && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
 endif
 
 	# Creating the locales
@@ -128,6 +125,7 @@ else
 endif
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f ISO-8859-1 en_US
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f UTF-8      en_US.utf8
+	cd $(DIR_SRC)/glibc-build && make localedata/install-locales
 
 	# Configuring Glibc
 ifeq "$(ROOT)" ""

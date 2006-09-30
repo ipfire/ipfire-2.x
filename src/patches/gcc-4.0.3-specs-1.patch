@@ -1,0 +1,336 @@
+Submitted By: Robert Connolly <robert at linuxfromscratch dot org> (ashes)
+Date: 2006-01-16
+Initial Package Version: 4.0.0
+Upstream Status: Not Sent - LFS Specfic
+Origin: Idea originally developed by Ryan Oliver and Greg Schafer for
+	the Pure LFS project.
+	More architectures added by Zack Winkles.
+	Further fine tunings by Greg Schafer.
+	Modified for gcc 3.3.2 by Oliver Brakmann.
+Rediffed against gcc 3.4.0 by Zack Winkles.
+	Rediffed against gcc 3.4.3 by Jim Gifford.
+	Rediffed against gcc 4.0.0 by Robert Connolly.
+Description: This patch modifies the location of the dynamic linker for
+	the GCC Pass 2 build in LFS Chapter 5.
+
+diff -Naur gcc-20050116.orig/gcc/config/alpha/linux-elf.h gcc-20050116/gcc/config/alpha/linux-elf.h
+--- gcc-20050116.orig/gcc/config/alpha/linux-elf.h	2005-01-17 00:45:16.000000000 +0000
++++ gcc-20050116/gcc/config/alpha/linux-elf.h	2005-01-17 00:46:14.560651027 +0000
+@@ -27,7 +27,7 @@
+ #define SUBTARGET_EXTRA_SPECS \
+ { "elf_dynamic_linker", ELF_DYNAMIC_LINKER },
+ 
+-#define ELF_DYNAMIC_LINKER	"/lib/ld-linux.so.2"
++#define ELF_DYNAMIC_LINKER	"/tools/lib/ld-linux.so.2"
+ 
+ #define LINK_SPEC "-m elf64alpha %{G*} %{relax:-relax}		\
+   %{O*:-O3} %{!O*:-O1}						\
+diff -Naur gcc-20050116.orig/gcc/config/arm/linux-elf.h gcc-20050116/gcc/config/arm/linux-elf.h
+--- gcc-20050116.orig/gcc/config/arm/linux-elf.h	2005-01-17 00:45:16.000000000 +0000
++++ gcc-20050116/gcc/config/arm/linux-elf.h	2005-01-17 00:46:50.538578614 +0000
+@@ -87,7 +87,7 @@
+    %{shared:-shared} \
+    %{symbolic:-Bsymbolic} \
+    %{rdynamic:-export-dynamic} \
+-   %{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2} \
++   %{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux.so.2} \
+    -X \
+    %{mbig-endian:-EB}" \
+    SUBTARGET_EXTRA_LINK_SPEC
+diff -Naur gcc-20050116.orig/gcc/config/frv/linux.h gcc-20050116/gcc/config/frv/linux.h
+--- gcc-20050116.orig/gcc/config/frv/linux.h	2005-01-17 00:45:16.000000000 +0000
++++ gcc-20050116/gcc/config/frv/linux.h	2005-01-17 01:33:50.600805260 +0000
+@@ -41,7 +41,7 @@
+   %{mfdpic: -m elf32frvfd -z text} %{shared} %{pie} \
+   %{!shared: %{!static: \
+    %{rdynamic:-export-dynamic} \
+-   %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}} \
++   %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}} \
+    %{static}}"
+ 
+ /* Support for compile-time default CPU.  */
+diff -Naur gcc-20050116.orig/gcc/config/i386/gnu.h gcc-20050116/gcc/config/i386/gnu.h
+--- gcc-20050116.orig/gcc/config/i386/gnu.h	2005-01-17 00:45:16.000000000 +0000
++++ gcc-20050116/gcc/config/i386/gnu.h	2005-01-17 01:34:11.142021939 +0000
+@@ -27,7 +27,7 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{!dynamic-linker:-dynamic-linker /lib/ld.so}} \
++      %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so}} \
+     %{static:-static}}"
+ 
+ #undef	STARTFILE_SPEC
+diff -Naur gcc-20050116.orig/gcc/config/i386/linux.h gcc-20050116/gcc/config/i386/linux.h
+--- gcc-20050116.orig/gcc/config/i386/linux.h	2005-01-17 00:45:16.000000000 +0000
++++ gcc-20050116/gcc/config/i386/linux.h	2005-01-17 00:49:27.412667132 +0000
+@@ -105,7 +105,7 @@
+ /* If ELF is the default format, we should not use /lib/elf.  */
+ 
+ #define LINK_EMULATION "elf_i386"
+-#define DYNAMIC_LINKER "/lib/ld-linux.so.2"
++#define DYNAMIC_LINKER "/tools/lib/ld-linux.so.2"
+ 
+ #undef  SUBTARGET_EXTRA_SPECS
+ #define SUBTARGET_EXTRA_SPECS \
+diff -Naur gcc-20050116.orig/gcc/config/i386/linux64.h gcc-20050116/gcc/config/i386/linux64.h
+--- gcc-20050116.orig/gcc/config/i386/linux64.h	2005-01-17 00:45:16.000000000 +0000
++++ gcc-20050116/gcc/config/i386/linux64.h	2005-01-17 00:50:23.055094690 +0000
+@@ -60,8 +60,8 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{m32:%{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
+-      %{!m32:%{!dynamic-linker:-dynamic-linker /lib64/ld-linux-x86-64.so.2}}} \
++      %{m32:%{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux.so.2}} \
++      %{!m32:%{!dynamic-linker:-dynamic-linker /tools/lib64/ld-linux-x86-64.so.2}}} \
+     %{static:-static}}"
+ 
+ #define MULTILIB_DEFAULTS { "m64" }
+diff -Naur gcc-20050116.orig/gcc/config/ia64/linux.h gcc-20050116/gcc/config/ia64/linux.h
+--- gcc-20050116.orig/gcc/config/ia64/linux.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/ia64/linux.h	2005-01-17 00:50:43.146472133 +0000
+@@ -43,7 +43,7 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{!dynamic-linker:-dynamic-linker /lib/ld-linux-ia64.so.2}} \
++      %{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux-ia64.so.2}} \
+       %{static:-static}}"
+ 
+ 
+diff -Naur gcc-20050116.orig/gcc/config/linux.h gcc-20050116/gcc/config/linux.h
+--- gcc-20050116.orig/gcc/config/linux.h	2005-01-17 00:45:16.000000000 +0000
++++ gcc-20050116/gcc/config/linux.h	2005-01-17 00:51:14.101809663 +0000
+@@ -104,3 +104,7 @@
+ #define TARGET_C99_FUNCTIONS 1
+ 
+ #define TARGET_HAS_F_SETLKW
++
++/* Remove /usr/include from the end of the include search path.  */
++#undef STANDARD_INCLUDE_DIR
++#define STANDARD_INCLUDE_DIR 0
+diff -Naur gcc-20050116.orig/gcc/config/m32r/linux.h gcc-20050116/gcc/config/m32r/linux.h
+--- gcc-20050116.orig/gcc/config/m32r/linux.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/m32r/linux.h	2005-01-17 00:51:39.720640870 +0000
+@@ -66,7 +66,7 @@
+     %{!ibcs: \
+       %{!static: \
+ 	%{rdynamic:-export-dynamic} \
+-	%{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++	%{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux.so.2}} \
+ 	%{static:-static}}}"
+ #else
+ #define LINK_SPEC "%(link_cpu) -m m32relf_linux %{shared:-shared} \
+@@ -74,7 +74,7 @@
+     %{!ibcs: \
+       %{!static: \
+ 	%{rdynamic:-export-dynamic} \
+-	%{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++	%{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux.so.2}} \
+ 	%{static:-static}}}"
+ #endif
+ 
+diff -Naur gcc-20050116.orig/gcc/config/m68k/linux.h gcc-20050116/gcc/config/m68k/linux.h
+--- gcc-20050116.orig/gcc/config/m68k/linux.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/m68k/linux.h	2005-01-17 00:52:07.633830392 +0000
+@@ -132,7 +132,7 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{!dynamic-linker*:-dynamic-linker /lib/ld.so.1}} \
++      %{!dynamic-linker*:-dynamic-linker /tools/lib/ld.so.1}} \
+     %{static}}"
+ 
+ /* For compatibility with linux/a.out */
+diff -Naur gcc-20050116.orig/gcc/config/mips/linux.h gcc-20050116/gcc/config/mips/linux.h
+--- gcc-20050116.orig/gcc/config/mips/linux.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/mips/linux.h	2005-01-17 00:52:28.348034505 +0000
+@@ -115,7 +115,7 @@
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}} \
++        %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}} \
+         %{static:-static}}}"
+ 
+ #undef SUBTARGET_ASM_SPEC
+diff -Naur gcc-20050116.orig/gcc/config/mips/linux64.h gcc-20050116/gcc/config/mips/linux64.h
+--- gcc-20050116.orig/gcc/config/mips/linux64.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/mips/linux64.h	2005-01-17 00:53:04.645878728 +0000
+@@ -60,9 +60,9 @@
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+         %{!dynamic-linker: \
+-	  %{mabi=n32: -dynamic-linker /lib32/ld.so.1} \
+-	  %{mabi=64: -dynamic-linker /lib64/ld.so.1} \
+-	  %{mabi=32: -dynamic-linker /lib/ld.so.1}}} \
++	  %{mabi=n32: -dynamic-linker /tools/lib32/ld.so.1} \
++	  %{mabi=64: -dynamic-linker /tools/lib64/ld.so.1} \
++	  %{mabi=32: -dynamic-linker /tools/lib/ld.so.1}}} \
+       %{static:-static}}} \
+ %{mabi=n32:-melf32%{EB:b}%{EL:l}tsmipn32} \
+ %{mabi=64:-melf64%{EB:b}%{EL:l}tsmip} \
+diff -Naur gcc-20050116.orig/gcc/config/mn10300/linux.h gcc-20050116/gcc/config/mn10300/linux.h
+--- gcc-20050116.orig/gcc/config/mn10300/linux.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/mn10300/linux.h	2005-01-17 00:53:23.477610026 +0000
+@@ -37,7 +37,7 @@
+ #define LINK_SPEC "%{mrelax:--relax} %{shared:-shared} \
+    %{!static: \
+      %{rdynamic:-export-dynamic} \
+-     %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}} \
++     %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}} \
+    %{static:-static}"
+ 
+ #undef  LIB_SPEC
+diff -Naur gcc-20050116.orig/gcc/config/pa/pa-linux.h gcc-20050116/gcc/config/pa/pa-linux.h
+--- gcc-20050116.orig/gcc/config/pa/pa-linux.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/pa/pa-linux.h	2005-01-17 00:53:45.334495141 +0000
+@@ -88,7 +88,7 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}} \
++      %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}} \
+       %{static:-static}}"
+ 
+ /* glibc's profiling functions don't need gcc to allocate counters.  */
+diff -Naur gcc-20050116.orig/gcc/config/rs6000/linux64.h gcc-20050116/gcc/config/rs6000/linux64.h
+--- gcc-20050116.orig/gcc/config/rs6000/linux64.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/rs6000/linux64.h	2005-01-17 00:54:28.524412534 +0000
+@@ -351,11 +351,11 @@
+ 
+ #define LINK_OS_LINUX_SPEC32 "-m elf32ppclinux %{!shared: %{!static: \
+   %{rdynamic:-export-dynamic} \
+-  %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}}}"
++  %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}}}"
+ 
+ #define LINK_OS_LINUX_SPEC64 "-m elf64ppc %{!shared: %{!static: \
+   %{rdynamic:-export-dynamic} \
+-  %{!dynamic-linker:-dynamic-linker /lib64/ld64.so.1}}}"
++  %{!dynamic-linker:-dynamic-linker /tools/lib64/ld64.so.1}}}"
+ 
+ #undef  TOC_SECTION_ASM_OP
+ #define TOC_SECTION_ASM_OP \
+diff -Naur gcc-20050116.orig/gcc/config/rs6000/sysv4.h gcc-20050116/gcc/config/rs6000/sysv4.h
+--- gcc-20050116.orig/gcc/config/rs6000/sysv4.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/rs6000/sysv4.h	2005-01-17 01:26:39.126999460 +0000
+@@ -1131,7 +1131,7 @@
+ 
+ #define LINK_OS_LINUX_SPEC "-m elf32ppclinux %{!shared: %{!static: \
+   %{rdynamic:-export-dynamic} \
+-  %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}}}"
++  %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}}}"
+ 
+ #if defined(HAVE_LD_EH_FRAME_HDR)
+ # define LINK_EH_SPEC "%{!static:--eh-frame-hdr} "
+@@ -1162,7 +1162,7 @@
+ 
+ #define LINK_OS_GNU_SPEC "-m elf32ppclinux %{!shared: %{!static: \
+   %{rdynamic:-export-dynamic} \
+-  %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}}}"
++  %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}}}"
+ 
+ #define CPP_OS_GNU_SPEC "-D__unix__ -D__gnu_hurd__ -D__GNU__	\
+ %{!undef:					                \
+diff -Naur gcc-20050116.orig/gcc/config/s390/linux.h gcc-20050116/gcc/config/s390/linux.h
+--- gcc-20050116.orig/gcc/config/s390/linux.h	2005-01-17 00:45:17.000000000 +0000
++++ gcc-20050116/gcc/config/s390/linux.h	2005-01-17 01:26:58.672523211 +0000
+@@ -86,8 +86,8 @@
+       %{!static: \
+ 	%{rdynamic:-export-dynamic} \
+ 	%{!dynamic-linker: \
+-          %{m31:-dynamic-linker /lib/ld.so.1} \
+-          %{m64:-dynamic-linker /lib/ld64.so.1}}}}"
++          %{m31:-dynamic-linker /tools/lib/ld.so.1} \
++          %{m64:-dynamic-linker /tools/lib/ld64.so.1}}}}"
+ 
+ 
+ #define TARGET_ASM_FILE_END file_end_indicate_exec_stack
+diff -Naur gcc-20050116.orig/gcc/config/sh/linux.h gcc-20050116/gcc/config/sh/linux.h
+--- gcc-20050116.orig/gcc/config/sh/linux.h	2005-01-17 00:45:18.000000000 +0000
++++ gcc-20050116/gcc/config/sh/linux.h	2005-01-17 01:27:19.588663163 +0000
+@@ -70,7 +70,7 @@
+   "%{shared:-shared} \
+    %{!static: \
+      %{rdynamic:-export-dynamic} \
+-     %{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++     %{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux.so.2}} \
+    %{static:-static}"
+ 
+ #undef LIB_SPEC
+diff -Naur gcc-20050116.orig/gcc/config/sparc/linux.h gcc-20050116/gcc/config/sparc/linux.h
+--- gcc-20050116.orig/gcc/config/sparc/linux.h	2005-01-17 00:45:18.000000000 +0000
++++ gcc-20050116/gcc/config/sparc/linux.h	2005-01-17 01:30:07.282688639 +0000
+@@ -131,13 +131,13 @@
+ /* If ELF is the default format, we should not use /lib/elf.  */
+ 
+ #undef  LINK_SPEC
+-#define LINK_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_SPEC "-m elf32_sparc -Y P,/tools/lib %{shared:-shared} \
+   %{!mno-relax:%{!r:-relax}} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux.so.2}} \
+         %{static:-static}}}"
+ 
+ /* The sun bundled assembler doesn't accept -Yd, (and neither does gas).
+diff -Naur gcc-20050116.orig/gcc/config/sparc/linux64.h gcc-20050116/gcc/config/sparc/linux64.h
+--- gcc-20050116.orig/gcc/config/sparc/linux64.h	2005-01-17 00:45:18.000000000 +0000
++++ gcc-20050116/gcc/config/sparc/linux64.h	2005-01-17 01:31:18.242712476 +0000
+@@ -167,21 +167,21 @@
+   { "link_arch_default", LINK_ARCH_DEFAULT_SPEC },	  \
+   { "link_arch",	 LINK_ARCH_SPEC },
+     
+-#define LINK_ARCH32_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_ARCH32_SPEC "-m elf32_sparc -Y P,/tools/lib %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /tools/lib/ld-linux.so.2}} \
+         %{static:-static}}} \
+ "
+ 
+-#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/tools/lib64 %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib64/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /tools/lib64/ld-linux.so.2}} \
+         %{static:-static}}} \
+ "
+ 
+@@ -257,12 +257,12 @@
+ #else /* !SPARC_BI_ARCH */
+ 
+ #undef LINK_SPEC
+-#define LINK_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_SPEC "-m elf64_sparc -Y P,/tools/lib64 %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib64/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /tools/lib64/ld-linux.so.2}} \
+         %{static:-static}}} \
+ %{mlittle-endian:-EL} \
+ %{!mno-relax:%{!r:-relax}} \
+diff -Naur gcc-20050116.orig/gcc/config/xtensa/linux.h gcc-20050116/gcc/config/xtensa/linux.h
+--- gcc-20050116.orig/gcc/config/xtensa/linux.h	2005-01-17 00:45:18.000000000 +0000
++++ gcc-20050116/gcc/config/xtensa/linux.h	2005-01-17 01:32:08.951429623 +0000
+@@ -50,7 +50,7 @@
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}} \
++        %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}} \
+       %{static:-static}}}"
+ 
+ #undef LOCAL_LABEL_PREFIX

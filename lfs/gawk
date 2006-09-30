@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: gawk,v 1.3.2.5 2005/02/05 15:38:14 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,18 +26,18 @@
 
 include Config
 
-VER        = 3.1.3
+VER        = 3.1.5
 
 THISAPP    = gawk-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_GNU)/gawk
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --libexecdir=/usr/bin --disable-nls
+  EXTRA_CONFIG = --prefix=/usr --libexecdir=/usr/lib --disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
@@ -57,13 +51,11 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(THISAPP)-libexecdir-1.patch
+objects = $(DL_FILE)
 
 $(DL_FILE)                        = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-libexecdir-1.patch     = $(URL_LFS)/gawk/$(THISAPP)-libexecdir-1.patch
 
-$(DL_FILE)_MD5                    = b637b454005f9e72a9a8eecfacd07ca0
-$(THISAPP)-libexecdir-1.patch_MD5 = af3f30cc056f7959cbbfd0341e7b0146
+$(DL_FILE)_MD5                    = 5703f72d0eea1d463f735aad8222655f
 
 install : $(TARGET)
 
@@ -92,13 +84,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-libexecdir-1.patch
-endif
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-segfault_fix-1.patch
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_MAKE) check
+	cd $(DIR_APP) && echo "#define HAVE_LANGINFO_CODESET 1"	>> config.h
+	cd $(DIR_APP) && echo "#define HAVE_LC_MESSAGES 1"		>> config.h
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

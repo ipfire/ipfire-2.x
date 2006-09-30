@@ -26,59 +26,22 @@
 
 include Config
 
-VER        = 1.4.4
-
-THISAPP    = m4-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
-
-# Normal build or /tools build.
-#
-ifeq "$(ROOT)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --disable-nls
-  EXTRA_LDFLAGS =
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_LDFLAGS = -static
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-endif
+THISAPP    = cleanup-toolchain
+TARGET     = $(DIR_INFO)/$(THISAPP)-tools
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
-
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-
-$(DL_FILE)_MD5 = 8d1d64dbecf1494690a0f3ba8db4482a
+objects = 
 
 install : $(TARGET)
 
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+check : 
 
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
+download :
 
-md5 : $(subst %,%_MD5,$(objects))
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+md5 :
 
 ###############################################################################
 # Installation Details
@@ -86,9 +49,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && LDFLAGS="$(EXTRA_LDFLAGS)" ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
-	@rm -rf $(DIR_APP)
+	-strip --strip-debug /tools/lib/*
+	-strip --strip-unneeded /tools/{,s}bin/*
+	rm -rfv /tools/{info,man}
+	chown -R root:root /tools
 	@$(POSTBUILD)

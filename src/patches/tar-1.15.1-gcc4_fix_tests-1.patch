@@ -1,0 +1,25 @@
+Submitted By: Matthew Burgess <matthew@linuxfromscratch.org>
+Date: 2005-07-15
+Initial Package Version: 1.15.1
+Upstream Status: From Upstream
+Origin: Ryan Oliver
+Description: Fixes a compilation problem with gcc-4.0.x that results in:
+
+genfile.c:63: error: static declaration of 'argp_program_version' follows non-static declaration
+../lib/argp.h:428: error: previous declaration of 'argp_program_version' was here
+genfile.c:64: error: static declaration of 'argp_program_bug_address' follows non-static declaration
+../lib/argp.h:444: error: previous declaration of 'argp_program_bug_address' was here
+
+--- tar-1.15.1/tests/genfile.c-orig	2005-04-25 15:23:47.000000000 +1000
++++ tar-1.15.1/tests/genfile.c	2005-04-25 15:24:08.000000000 +1000
+@@ -60,8 +60,8 @@
+ /* Block buffer for sparse file */
+ char *buffer;
+ 
+-static const char *argp_program_version = "genfile (" PACKAGE ") " VERSION;
+-static const char *argp_program_bug_address = "<" PACKAGE_BUGREPORT ">";
++const char *argp_program_version = "genfile (" PACKAGE ") " VERSION;
++const char *argp_program_bug_address = "<" PACKAGE_BUGREPORT ">";
+ static char doc[] = N_("genfile generates data files for GNU paxutils test suite");
+ 
+ static struct argp_option options[] = {

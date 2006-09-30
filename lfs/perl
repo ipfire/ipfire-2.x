@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: perl,v 1.9.2.13 2005/02/27 15:23:03 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 5.8.5
+VER        = 5.8.8
 
 THISAPP    = perl-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.cpan.org/src
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 # Normal build or /tools build.
@@ -51,13 +45,11 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) perl-5.8.4-libc-1.patch
+objects = $(DL_FILE)
 
 $(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
-perl-5.8.4-libc-1.patch     = $(URL_LFS)/perl/perl-5.8.4-libc-1.patch
 
-$(DL_FILE)_MD5              = 49baa8d7d29b4a9713c06edeb81e6b1b
-perl-5.8.4-libc-1.patch_MD5 = f033161efa8b4b174ec6667e4e739efa
+$(DL_FILE)_MD5              = a377c0c67ab43fd96eeec29ce19e8382
 
 install : $(TARGET)
 
@@ -86,23 +78,19 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/perl-5.8.4-libc-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl-5.8.5-perlio_debug_security.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl-5.8.5-tempfiles.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-libc-2.patch
 ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dpager="/bin/less -isR" -Dd_dosuid -Ui_db -Ui_gdbm -Ui_ndbm -Ui_dbm -Dmyhostname=localhost
-	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 -Dman3dir=/usr/share/man/man3 \
+		-Dpager="/usr/bin/less -isR" -Dmyhostname=localhost
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='IO Fcntl POSIX' -Dd_dosuid -Ui_db -Ui_gdbm -Ui_ndbm -Ui_dbm -Dmyhostname=localhost
-	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make 
-	cd $(DIR_APP) && cp -f perl pod/pod2man /tools/bin
-	-mkdir -p /tools/lib/perl5/$(VER)
-	cd $(DIR_APP) && cp -Rf lib/* /tools/lib/perl5/$(VER)
+	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='Data/Dumper Fcntl IO POSIX' -Dmyhostname=localhost
+	cd $(DIR_APP) && make $(MAKETUNING) perl utilities
+	cd $(DIR_APP) && cp -v perl pod/pod2man /tools/bin
+	cd $(DIR_APP) && mkdir -pv /tools/lib/perl5/$(VER)
+	cd $(DIR_APP) && cp -Rv lib/* /tools/lib/perl5/$(VER)
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

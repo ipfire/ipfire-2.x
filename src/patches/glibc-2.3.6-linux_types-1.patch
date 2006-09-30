@@ -1,0 +1,33 @@
+Submitted By: DJ Lucas <dj at linuxfromscratch dot org>
+Date: 2006-04-05
+Initial Package Version: 2.3.6
+Upstream Status: Committed
+Origin: Glibc CVS
+Description: Fixes build errors where linux/types.h is included after sys/kd.h.
+
+diff -Naur glibc-2.3.6-orig/sysdeps/unix/sysv/linux/sys/kd.h glibc-2.3.6/sysdeps/unix/sysv/linux/sys/kd.h
+--- glibc-2.3.6-orig/sysdeps/unix/sysv/linux/sys/kd.h	2001-07-05 23:56:21.000000000 -0500
++++ glibc-2.3.6/sysdeps/unix/sysv/linux/sys/kd.h	2006-04-04 21:40:50.000000000 -0500
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1996, 1997 Free Software Foundation, Inc.
++/* Copyright (C) 1996, 1997, 2005 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -21,9 +21,15 @@
+ 
+ /* Make sure the <linux/types.h> header is not loaded.  */
+ #ifndef _LINUX_TYPES_H
+-# define _LINUX_TYPES_H	1
++# define _LINUX_TYPES_H		1
++# define __undef_LINUX_TYPES_H
+ #endif
+ 
+ #include <linux/kd.h>
+ 
++#ifdef __undef_LINUX_TYPES_H
++# undef _LINUX_TYPES_H
++# undef __undef_LINUX_TYPES_H
++#endif
++
+ #endif	/* sys/kd.h */

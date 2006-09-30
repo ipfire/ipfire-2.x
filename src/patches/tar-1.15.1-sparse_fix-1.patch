@@ -1,0 +1,26 @@
+Submitted By: Jim Gifford (patches at jg555 dot com)
+Date: 2005-03-19
+Initial Package Version: 1.15.1
+Origin: Tar Bug Reports List
+Upstream Status: Applied
+Description: Fixes large file corruptions using option -S
+	http://lists.gnu.org/archive/html/bug-tar/2005-03/msg00004.html
+--- tar-1.15.1/src/sparse.c.orig	2005-03-20 04:23:34.144506120 +0000
++++ tar-1.15.1/src/sparse.c	2005-03-20 04:23:56.842055568 +0000
+@@ -1,6 +1,6 @@
+ /* Functions for dealing with sparse files
+ 
+-   Copyright (C) 2003, 2004 Free Software Foundation, Inc.
++   Copyright (C) 2003, 2004, 2005 Free Software Foundation, Inc.
+ 
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+@@ -182,7 +182,7 @@
+ {
+   static char buffer[BLOCKSIZE];
+   size_t count;
+-  size_t offset = 0;
++  off_t offset = 0;
+   struct sp_array sp = {0, 0};
+ 
+   if (!lseek_or_error (file, 0, SEEK_SET))

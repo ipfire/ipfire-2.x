@@ -64,16 +64,11 @@
   fi
 
   if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE -o 'i486' = $MACHINE -o 'i386' = $MACHINE ]; then
-	echo "`date -u '+%b %e %T'`: Machine is ix86 (or equivalent)" >> $LOGFILE
-	MACHINE=i386
-	BUILDTARGET=i386-pc-linux-gnu
-	CFLAGS="-O2 -mcpu=i386 -march=i386 -pipe -fomit-frame-pointer"
-	CXXFLAGS="-O2 -mcpu=i386 -march=i386 -pipe -fomit-frame-pointer"
-  elif [ 'alpha' = $MACHINE ]; then
-	echo "`date -u '+%b %e %T'`: Machine is Alpha AXP" >> $LOGFILE
-	BUILDTARGET=alpha-unknown-linux-gnu
-	CFLAGS="-O2 -mcpu=ev4 -mieee -pipe"
-	CXXFLAGS="-O2 -mcpu=ev4 -mieee -pipe"
+	echo "`date -u '+%b %e %T'`: Machine is i486 (or equivalent)" >> $LOGFILE
+	MACHINE=i486
+	BUILDTARGET=i486-pc-linux-gnu
+	CFLAGS="-O2 -mcpu=i486 -march=i486 -pipe -fomit-frame-pointer"
+	CXXFLAGS="-O2 -mcpu=i486 -march=i486 -pipe -fomit-frame-pointer"
   else
 	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" >> $LOGFILE
 	exit 1
@@ -217,7 +212,8 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    export LFS LC_ALL CFLAGS CXXFLAGS
+    MAKETUNING="-j8"
+    export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
     # Make some extra directories
@@ -268,6 +264,7 @@ lfsmake1() {
 						LFS_BASEDIR=$BASEDIR \
 						ROOT=$LFS \
 						KVER=$KVER \
+						MAKETUNING=$MAKETUNING \
 						install >> $LOGFILE 2>&1
 		if [ $? -ne 0 ]; then
 			exiterror "Building $*";
@@ -297,7 +294,7 @@ lfsmake2() {
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
-						KVER=$KVER \
+						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 		    /tools/bin/bash -x -c "cd /usr/src/lfs && \
 		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
@@ -329,7 +326,7 @@ ipcopmake() {
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
-						KVER=$KVER \
+						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 		    /bin/bash -x -c "cd /usr/src/lfs && \
 		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
@@ -344,7 +341,6 @@ ipcopmake() {
 
 ipfiredist() {
 	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-#	   if [ ! `ls -w1 $BASEDIR/packages/*.ipfire | grep $1` ]; then
 		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
@@ -361,9 +357,6 @@ ipfiredist() {
 		if [ $? -ne 0 ]; then
 			exiterror "Packaging $1"
 		fi
-#	   else
-#		echo "`date -u '+%b %e %T'`: Packaging: The package $1 already exists"
-#	   fi
 	else
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
 	fi
@@ -412,42 +405,37 @@ buildtoolchain() {
     ORG_PATH=$PATH
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
+    echo -ne "`date -u '+%b %e %T'`: Native GCC: $NATIVEGCC\n"
     lfsmake1 ccache
-    lfsmake1 sed	LFS_PASS=1
-    lfsmake1 m4		LFS_PASS=1
-    lfsmake1 bison	LFS_PASS=1
-    lfsmake1 flex	LFS_PASS=1
-    lfsmake1 binutils   LFS_PASS=1
-    lfsmake1 gcc        LFS_PASS=1
+    lfsmake1 binutils	LFS_PASS=1
+    lfsmake1 gcc		LFS_PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    
-    lfsmake1 linux
+    lfsmake1 linux-libc-header
+    lfsmake1 glibc
     lfsmake1 tcl
     lfsmake1 expect
-    lfsmake1 glibc
     lfsmake1 dejagnu
-    lfsmake1 gcc        LFS_PASS=2
-    lfsmake1 binutils   LFS_PASS=2
-    lfsmake1 gawk
-    lfsmake1 coreutils
+    lfsmake1 gcc		LFS_PASS=2
+    lfsmake1 binutils	LFS_PASS=2
+    lfsmake1 ncurses
+    lfsmake1 bash
     lfsmake1 bzip2
-    lfsmake1 gzip
+    lfsmake1 coreutils
     lfsmake1 diffutils
     lfsmake1 findutils
-    lfsmake1 make
-    lfsmake1 grep
-    lfsmake1 sed	LFS_PASS=2
-    lfsmake1 m4		LFS_PASS=2
-    lfsmake1 bison	LFS_PASS=2
-    lfsmake1 flex	LFS_PASS=2
+    lfsmake1 gawk
     lfsmake1 gettext
-    lfsmake1 ncurses
+    lfsmake1 grep
+    lfsmake1 gzip
+    lfsmake1 m4
+    lfsmake1 make
     lfsmake1 patch
+    lfsmake1 perl
+    lfsmake1 sed
     lfsmake1 tar
     lfsmake1 texinfo
-    lfsmake1 bash
     lfsmake1 util-linux
-    lfsmake1 perl
+    lfsmake1 cleanup-toolchain
     export PATH=$ORG_PATH
 }
 
@@ -924,7 +912,7 @@ build)
 	BUILDMACHINE=`uname -m`
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
-	if [ ! -f log/perl-*-tools ]; then
+	if [ ! -f log/cleanup-toolchain-*-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
 			echo "`date -u '+%b %e %T'`: Full toolchain compilation" | tee -a $LOGFILE
 			prepareenv
@@ -1549,8 +1537,8 @@ unattended)
 		echo "### SAVING TIME"
 		export IPFIRE_START_TIME=`date`
 
-		echo "### GETTING TOOLCHAIN"
-		$0 gettoolchain
+		#echo "### GETTING TOOLCHAIN"
+		#$0 gettoolchain
 
 		echo "### RUNNING SVN-UPDATE"
 		$0 svn update

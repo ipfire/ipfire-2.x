@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: tar,v 1.3.2.5 2006/01/30 19:46:45 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 1.13.25
+VER        = 1.15.1
 
 THISAPP    = tar-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_AGNU)/tar
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 # Normal build or /tools build.
@@ -44,7 +38,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --bindir=/bin \
-    --libexecdir=/usr/bin --disable-nls
+	--libexecdir=/usr/sbin --disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
@@ -58,14 +52,11 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	tar-1.13.25-dot_dot-1.patch
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-tar-1.13.25-dot_dot-1.patch        = $(URL_LFS)/tar/tar-1.13.25-dot_dot-1.patch
 
-$(DL_FILE)_MD5 = 6ef8c906e81eee441f8335652670ac4a
-tar-1.13.25-dot_dot-1.patch_MD5    = 56ab09592243847e7410c4fde8d37f62
+$(DL_FILE)_MD5 = 57da3c38f8e06589699548a34d5a5d07
 
 install : $(TARGET)
 
@@ -94,10 +85,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/tar-1.13.25-dot_dot-1.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fix_tests-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-sparse_fix-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-security_fixes-1.patch
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

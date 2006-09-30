@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 5.93
+VER        = 5.96
 
 THISAPP    = coreutils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -50,13 +50,12 @@ endif
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects =$(DL_FILE) $(THISAPP)-uname-1.patch
+
+objects =$(DL_FILE)
 
 $(DL_FILE)                      = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-uname-1.patch        = $(URL_LFS)/coreutils/$(THISAPP)-uname-1.patch
 
-$(DL_FILE)_MD5                  = 955d8abfd3dd8af2ca3af51480f1f9af
-$(THISAPP)-uname-1.patch_MD5    = c05b735710fbd62239588c07084852a0
+$(DL_FILE)_MD5                  = bf55d069d82128fd754a090ce8b5acff
 
 install : $(TARGET)
 
@@ -86,23 +85,23 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-uname-1.patch
-ifneq "$(ROOT)" ""
-	#previous patch of uname implies rebuild of doc/uname.1 which fails; remove doc&man build from toolchain
-	cd $(DIR_APP) && sed -i "s/SUBDIRS = lib src doc man po tests/SUBDIRS = lib src po tests/g" Makefile.in
-endif
-	cd $(DIR_APP) && DEFAULT_POSIX2_VERSION=199209 ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make -j 3 $(EXTRA_MAKE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-uname-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-suppress_uptime_kill_su-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-i18n-1.patch
+	cd $(DIR_APP) && chmod +x tests/sort/sort-mb-tests
+	cd $(DIR_APP) && sed -i 's/_LEN 6/_LEN 20/' src/who.c
+
+	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	#use hostname from inet-tools
 ifeq "$(ROOT)" ""
 	rm /usr/bin/hostname
-	mv -f /usr/bin/{basename,cat,chgrp,chmod,chown,cp,dd,df} /bin
-	mv -f /usr/bin/{dir,dircolors,du,date,echo,false,head} /bin
-	mv -f /usr/bin/{install,ln,ls,mkdir,mkfifo,mknod,mv,pwd} /bin
-	mv -f /usr/bin/{rm,rmdir,shred,sync,sleep,stty,su,test} /bin
-	mv -f /usr/bin/{touch,true,uname,vdir} /bin
-	mv -f /usr/bin/chroot /usr/sbin
+	mv -v /usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} /bin
+	mv -v /usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} /bin
+	mv -v /usr/bin/{rmdir,stty,sync,true,uname} /bin
+	mv -v /usr/bin/chroot /usr/sbin
+	mv -v /usr/bin/{head,sleep,nice} /bin
 	ln -sf test /bin/[
 	ln -sf ../../bin/install /usr/bin
 	mv -f /bin/uname /bin/uname.bak

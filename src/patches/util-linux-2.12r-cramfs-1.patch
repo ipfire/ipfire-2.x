@@ -1,0 +1,93 @@
+Submitted by: Jeremy Utley <jeremy@linuxfromscratch.org>
+Date: 2004-12-25
+Initial Package Version: 2.12p (should apply to versions back to at least k)
+Upstream Status: Not Submitted - Test Version
+Origin: Alexander Patrakov, adapted from debian build of cramfs utilities
+Description: Util-Linux fails in cramfs compilation due to changes in the
+linux-libc-headers package 2.6.9 and after.  This patch is a proper fix to the
+problem, but may in fact not be accepted upstream.
+
+
+diff -Naur util-linux-2.12p/disk-utils/fsck.cramfs.c util-linux-2.12p-new/disk-utils/fsck.cramfs.c
+--- util-linux-2.12p/disk-utils/fsck.cramfs.c	2004-12-11 14:53:16.000000000 +0000
++++ util-linux-2.12p-new/disk-utils/fsck.cramfs.c	2004-12-26 00:53:10.665199086 +0000
+@@ -76,16 +76,7 @@
+ 
+ #define PAD_SIZE 512
+ 
+-#include <asm/page.h>
+-#ifdef PAGE_SIZE
+-#define PAGE_CACHE_SIZE ((int) PAGE_SIZE)
+-#elif defined __ia64__
+-#define PAGE_CACHE_SIZE (16384)
+-#elif defined __alpha__
+-#define PAGE_CACHE_SIZE (8192)
+-#else
+-#define PAGE_CACHE_SIZE (4096)
+-#endif
++#define PAGE_CACHE_SIZE  page_size
+ 
+ /* Guarantee access to at least 8kB at a time */
+ #define ROMBUFFER_BITS	13
+@@ -95,11 +86,13 @@
+ static unsigned long read_buffer_block = ~0UL;
+ 
+ /* Uncompressing data structures... */
+-static char outbuffer[PAGE_CACHE_SIZE*2];
++static char *outbuffer;
+ z_stream stream;
+ 
+ #endif /* INCLUDE_FS_TESTS */
+ 
++static size_t page_size;
++
+ /* Input status of 0 to print help and exit without an error. */
+ static void usage(int status)
+ {
+@@ -464,9 +457,17 @@
+ 	int c;			/* for getopt */
+ 	int start = 0;
+ 
++	page_size = sysconf(_SC_PAGESIZE);
++	
+ 	if (argc)
+ 		progname = argv[0];
+ 
++	outbuffer = malloc(page_size * 2);
++	if (!outbuffer) {
++		fprintf(stderr, _("failed to allocate outbuffer\n"));
++		exit(8);
++	}
++
+ 	/* command line options */
+ 	while ((c = getopt(argc, argv, "hx:v")) != EOF) {
+ 		switch (c) {
+diff -Naur util-linux-2.12p/disk-utils/mkfs.cramfs.c util-linux-2.12p-new/disk-utils/mkfs.cramfs.c
+--- util-linux-2.12p/disk-utils/mkfs.cramfs.c	2004-12-11 14:56:01.000000000 +0000
++++ util-linux-2.12p-new/disk-utils/mkfs.cramfs.c	2004-12-26 00:53:10.666198928 +0000
+@@ -46,16 +46,8 @@
+ static const char *progname = "mkcramfs";
+ static int verbose = 0;
+ 
+-#ifdef __ia64__
+-#define PAGE_CACHE_SIZE (16384)
+-#elif defined __alpha__
+-#define PAGE_CACHE_SIZE (8192)
+-#else
+-#define PAGE_CACHE_SIZE (4096)
+-#endif
+-
+ /* The kernel assumes PAGE_CACHE_SIZE as block size. */
+-static unsigned int blksize = PAGE_CACHE_SIZE; /* settable via -b option */
++static unsigned int blksize;                   /* settable via -b option */
+ static long total_blocks = 0, total_nodes = 1; /* pre-count the root node */
+ static int image_length = 0;
+ 
+@@ -730,6 +722,7 @@
+ 	u32 crc = crc32(0L, Z_NULL, 0);
+ 	int c;
+ 
++	blksize = sysconf(_SC_PAGESIZE);
+ 	total_blocks = 0;
+ 
+ 	if (argc) {
