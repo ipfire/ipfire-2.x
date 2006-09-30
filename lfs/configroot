@@ -26,6 +26,8 @@
 
 include Config
 
+VER        = ipfire
+
 THISAPP    = configroot
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)

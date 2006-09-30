@@ -1,5 +1,4 @@
 #!/bin/bash
-#
 ############################################################################
 #                                                                          #
 # This file is part of the IPFire Firewall.                                #
@@ -18,112 +17,55 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2006 IPFire-Team <entwickler@ipfire.org>.                  #
+# Copyright (C) 2006 IPFire-Team <info@ipfire.eu>.                         #
 #                                                                          #
 ############################################################################
 #
 
-  NAME="IPFire"			# Software name
-  SNAME="ipfire"			# Short name
-  VERSION="2.0"			# Version number
-  SLOGAN="www.ipfire.eu"		# Software slogan
-  CONFIG_ROOT=/var/ipfire		# Configuration rootdir
-  NICE=10
-  MAX_RETRIES=3			# prefetch/check loop
-  KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
-  MACHINE=`uname -m`
-  SVN_REVISION=`svn info | grep Revision | cut -c 11-`
+NAME="IPFire"				# Software name
+SNAME="ipfire"			# Short name
+VERSION="2.0"				# Version number
+SLOGAN="www.ipfire.eu"		# Software slogan
+CONFIG_ROOT=/var/ipfire		# Configuration rootdir
+NICE=10				# Nice level
+MAX_RETRIES=3				# prefetch/check loop
+KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
+MACHINE=`uname -m`
+SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
-  # Setzen des IPFire Builds
-  if [ -e ./.svn ]; then
-    FIREBUILD=`cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p'`
-  fi
+# Setzen des IPFire Builds
+if [ -e ./.svn ]; then
+	FIREBUILD=`cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p'`
+fi
 
-  # Debian specific settings
-  if [ ! -e /etc/debian_version ]; then
+# Debian specific settings
+if [ ! -e /etc/debian_version ]; then
 	FULLPATH=`which $0`
-  else
+else
 	if [ -x /usr/bin/realpath ]; then
 		FULLPATH=`/usr/bin/realpath $0`
 	else
 		echo "ERROR: Need to do apt-get install realpath"
 		exit 1
 	fi
-  fi
+fi
 
-  PWD=`pwd`
-  BASENAME=`basename $0`
-  BASEDIR=`echo $FULLPATH | sed "s/\/$BASENAME//g"`
-  LOGFILE=$BASEDIR/log/_build.preparation.log
-  export BASEDIR LOGFILE
-  DIR_CHK=$BASEDIR/cache/check
-  mkdir $BASEDIR/log/ 2>/dev/null
+PWD=`pwd`
+BASENAME=`basename $0`
+BASEDIR=`echo $FULLPATH | sed "s/\/$BASENAME//g"`
+LOGFILE=$BASEDIR/log/_build.preparation.log
+export BASEDIR LOGFILE
+DIR_CHK=$BASEDIR/cache/check
+mkdir $BASEDIR/log/ 2>/dev/null
 
-  if [ -f .config ]; then
+# Include funtions
+. tools/make-functions
+
+if [ -f .config ]; then
 	. .config
-  fi
-
-  if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE -o 'i486' = $MACHINE -o 'i386' = $MACHINE ]; then
-	echo "`date -u '+%b %e %T'`: Machine is i486 (or equivalent)" >> $LOGFILE
-	MACHINE=i486
-	BUILDTARGET=i486-pc-linux-gnu
-	CFLAGS="-O2 -mcpu=i486 -march=i486 -pipe -fomit-frame-pointer"
-	CXXFLAGS="-O2 -mcpu=i486 -march=i486 -pipe -fomit-frame-pointer"
-  else
-	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" >> $LOGFILE
-	exit 1
-  fi
-
-# Define immediately
-stdumount() {
-	umount $BASEDIR/build/dev/pts		2>/dev/null;
-	umount $BASEDIR/build/proc			2>/dev/null;
-	umount $BASEDIR/build/install/mnt		2>/dev/null;
-	umount $BASEDIR/build/usr/src/cache	2>/dev/null;
-	umount $BASEDIR/build/usr/src/ccache	2>/dev/null;
-	umount $BASEDIR/build/usr/src/config	2>/dev/null;
-	umount $BASEDIR/build/usr/src/doc		2>/dev/null;
-	umount $BASEDIR/build/usr/src/html		2>/dev/null;
-	umount $BASEDIR/build/usr/src/langs	2>/dev/null;
-	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
-	umount $BASEDIR/build/usr/src/log		2>/dev/null;
-	umount $BASEDIR/build/usr/src/src		2>/dev/null;
-}
-
-exiterror() {
-	stdumount
-	for i in `seq 0 7`; do
-	    if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
-		losetup -d /dev/loop${i} 2>/dev/null
-	    fi;
-	done
-	echo "ERROR: $*"
-	echo "       Check $LOGFILE for errors if applicable"
-	exit 1
-}
-
-entershell() {
-	if [ ! -e $BASEDIR/build/usr/src/lfs/ ]; then
-		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/"
-	fi
-	echo "Entering to a shell inside LFS chroot, go out with exit"
-	chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
-		PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
-		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
-		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-		CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
-		CCACHE_DIR=/usr/src/ccache \
-		CCACHE_HASHDIR=1 \
-		KVER=$KVER \
-		BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-		KGCC="ccache /usr/bin/gcc" \
-		/tools/bin/bash
-	if [ $? -ne 0 ]; then
-			exiterror "chroot error"
-	else
-		stdumount
-	fi
-}
+else
+	make_config
+fi
 
 prepareenv() {
     ############################################################################
@@ -153,20 +95,27 @@ prepareenv() {
     # Resetting our nice level                                                 #
     #                                                                          #
     ############################################################################
-    echo "`date -u '+%b %e %T'`: Resetting our nice level to $NICE" | tee -a $LOGFILE
+    echo -ne "`date -u '+%b %e %T'`: Resetting our nice level to $NICE" | tee -a $LOGFILE
     renice $NICE $$ > /dev/null
     if [ `nice` != "$NICE" ]; then
+	beautify message FAIL
 	exiterror "Failed to set correct nice level"
+    else
+	beautify message DONE
     fi
+
 
     ############################################################################
     #                                                                          #
     # Checking if running as root user                                         #
     #                                                                          #
     ############################################################################
-    echo "`date -u '+%b %e %T'`: Checking if we're running as root user" | tee -a $LOGFILE
+    echo -ne "`date -u '+%b %e %T'`: Checking if we're running as root user" | tee -a $LOGFILE
     if [ `id -u` != 0 ]; then
+	beautify message FAIL
 	exiterror "Not building as root"
+    else
+	beautify message DONE
     fi
 
 
@@ -175,14 +124,17 @@ prepareenv() {
     # Checking for necessary temporary space                                   #
     #                                                                          #
     ############################################################################
-    echo "`date -u '+%b %e %T'`: Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
+    echo -ne "`date -u '+%b %e %T'`: Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
     BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
     BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
     if (( 2202000 > $BASE_ASPACE )); then
 	BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
 	if (( 2202000 - $BASE_USPACE > $BASE_ASPACE )); then
+		beautify message FAIL
 		exiterror "Not enough temporary space available, need at least 2.1GB on $BASE_DEV"
 	fi
+    else
+	beautify message DONE
     fi
 
     ############################################################################
@@ -242,181 +194,23 @@ prepareenv() {
     rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
 }
 
-
-############################################################################
-#                                                                          #
-# Necessary shell functions                                                #
-#                                                                          #
-############################################################################
-lfsmake1() {
-	if [ -f $BASEDIR/lfs/$1 ]; then
-		echo "`date -u '+%b %e %T'`: Building $*" | tee -a $LOGFILE
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Download error in $1"
-		fi
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "md5sum error in $1, check file in cache or signature"
-		fi
-		cd $BASEDIR/lfs && make -f $* 	BUILDTARGET=$BUILDTARGET \
-						MACHINE=$MACHINE \
-						LFS_BASEDIR=$BASEDIR \
-						ROOT=$LFS \
-						KVER=$KVER \
-						MAKETUNING=$MAKETUNING \
-						install >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Building $*";
-		fi
-	else
-		exiterror "No such file or directory: $BASEDIR/$1"
-	fi
-	return 0
-}
-
-lfsmake2() {
-	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-		echo "`date -u '+%b %e %T'`: Building $*" | tee -a $LOGFILE
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Download error in $1"
-		fi
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "md5sum error in $1, check file in cache or signature"
-		fi
-		chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
-						VERSION=$VERSION \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
-						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-		    /tools/bin/bash -x -c "cd /usr/src/lfs && \
-		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Building $*"
-		fi
-	else
-		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
-	fi
-	return 0
-}
-
-ipcopmake() {
-	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-		echo "`date -u '+%b %e %T'`: Building $*" | tee -a $LOGFILE
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Download error in $1"
-		fi
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "md5sum error in $1, check file in cache or signature"
-		fi
-		chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-						VERSION=$VERSION \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
-						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-		    /bin/bash -x -c "cd /usr/src/lfs && \
-		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Building $*"
-		fi
-	else
-		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
-	fi
-	return 0
-}
-
-ipfiredist() {
-	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
-		chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-						VERSION=$VERSION \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
-						KVER=$KVER \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-		    /bin/bash -x -c "cd /usr/src/lfs && \
-		    make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Packaging $1"
-		fi
-	else
-		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
-	fi
-	return 0
-}
-
-
-installmake() {
-	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-		echo "`date -u '+%b %e %T'`: Building $*" | tee -a $LOGFILE
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Download error in $1"
-		fi
-		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "md5sum error in $1, check file in cache or signature"
-		fi
-		chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/opt/$MACHINE-uClibc/usr/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-						VERSION=$VERSION \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						LFS_PASS="install" \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="-Os" CXXFLAGS="-Os" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
-						KVER=$KVER \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-		    /bin/bash -x -c "cd /usr/src/lfs && \
-		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Building $*"
-		fi
-	else
-		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
-	fi
-	return 0
-}
-
 buildtoolchain() {
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
-    echo -ne "`date -u '+%b %e %T'`: Stage1 toolchain build \n" | tee -a $LOGFILE
-    # Build sed now, as we use some extensions
     ORG_PATH=$PATH
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
-    echo -ne "`date -u '+%b %e %T'`: Native GCC: $NATIVEGCC\n"
     lfsmake1 ccache
-    lfsmake1 binutils	LFS_PASS=1
-    lfsmake1 gcc		LFS_PASS=1
+    lfsmake1 binutils	PASS=1
+    lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
     lfsmake1 linux-libc-header
     lfsmake1 glibc
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
-    lfsmake1 gcc		LFS_PASS=2
-    lfsmake1 binutils	LFS_PASS=2
+    lfsmake1 gcc		PASS=2
+    lfsmake1 binutils	PASS=2
     lfsmake1 ncurses
     lfsmake1 bash
     lfsmake1 bzip2
@@ -442,8 +236,6 @@ buildtoolchain() {
 buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
-    echo -ne "`date -u '+%b %e %T'`: Stage2 linux base build \n" | tee -a $LOGFILE
-    # Run LFS dynamic binary creation scripts one by one
     lfsmake2 stage2
     lfsmake2 makedev
     lfsmake2 linux
@@ -481,11 +273,7 @@ buildbase() {
     lfsmake2 kbd
     lfsmake2 e2fsprogs
     lfsmake2 grep
-    if [ 'i386' = $MACHINE ]; then 
-  	lfsmake2 grub
-    elif [ 'alpha' = $MACHINE ]; then 
-  	lfsmake2 aboot
-    fi
+    lfsmake2 grub
     lfsmake2 gzip
     lfsmake2 man
     lfsmake2 make
@@ -501,268 +289,241 @@ buildbase() {
     lfsmake2 util-linux
 }
 
-buildipcop() {
-  # Run IPFire make scripts one by one
+buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
-  echo -ne "`date -u '+%b %e %T'`: Stage3 $NAME build \n" | tee -a $LOGFILE
-
-  # Build these first as some of the kernel packages below rely on 
-  # these for some of their client program functionality 
-  ipcopmake configroot
-  ipcopmake dhcp
-  ipcopmake dhcpcd
-  ipcopmake libusb
-  ipcopmake libpcap
-  ipcopmake linux-atm
-  ipcopmake ppp
-  ipcopmake rp-pppoe
-  ipcopmake unzip
-  # Do SMP now
-  if [ 'i386' = $MACHINE ]; then 
-  	# abuse the SMP flag, and make an minimal installer kernel first
-	# so that the boot floppy always works.....
-  	ipcopmake linux 	LFS_PASS=ipfire SMP=installer
-  	ipcopmake linux 	LFS_PASS=ipfire SMP=1
-  	ipcopmake 3cp4218 	SMP=1
-  	ipcopmake amedyn 	SMP=1
-  	ipcopmake cxacru 	SMP=1
-  	ipcopmake eagle 	SMP=1
-
-  	# These are here because they have i386 only binary libraries
-	# included in the package.
-  	ipcopmake cnx_pci 	SMP=1
- 	ipcopmake fcdsl 	SMP=1
- 	ipcopmake fcdsl2 	SMP=1
- 	ipcopmake fcdslsl 	SMP=1
- 	ipcopmake fcdslusb 	SMP=1
- 	ipcopmake fcdslslusb 	SMP=1
-	ipcopmake fcpci	SMP=1
-	ipcopmake fcclassic	SMP=1
-	ipcopmake pulsar 	SMP=1
-  	ipcopmake unicorn 	SMP=1
-  	ipcopmake promise-sata-300-tx SMP=1
-  fi
-
-  ipcopmake linux	LFS_PASS=ipfire
-  ipcopmake 3cp4218 	
-  ipcopmake amedyn 	
-  ipcopmake cxacru 	
-  ipcopmake eciadsl 	
-  ipcopmake eagle 	
-  ipcopmake speedtouch 	
-  if [ 'i386' = $MACHINE ]; then 
-  	# These are here because they have i386 only binary libraries
-	# included in the package.
-  	ipcopmake cnx_pci 	
- 	ipcopmake fcdsl 	
- 	ipcopmake fcdsl2 	
- 	ipcopmake fcdslsl 	
- 	ipcopmake fcdslusb 	
- 	ipcopmake fcdslslusb 
-  	ipcopmake fcpci
-  	ipcopmake fcclassic
-	ipcopmake pulsar	
-  	ipcopmake unicorn
-  	ipcopmake promise-sata-300-tx
-  fi
-
-  ipcopmake pcmcia-cs
-  ipcopmake expat
-  ipcopmake gdbm
-  ipcopmake gmp
-  ipcopmake openssl
-  ipcopmake python
-  ipcopmake libnet
-  ipcopmake libpng
-  ipcopmake libtiff
-  ipcopmake libjpeg
-  ipcopmake lcms
-  ipcopmake libmng
-  ipcopmake freetype
-  ipcopmake gd
-  ipcopmake popt
-  ipcopmake slang
-  ipcopmake newt
-  ipcopmake libcap
-  ipcopmake pciutils
-  ipcopmake pcre
-  ipcopmake readline
-  ipcopmake libxml2
-  ipcopmake berkeley
-  ipcopmake BerkeleyDB ## The Perl module
-  ipcopmake mysql
-  ipcopmake saslauthd PASS=1
-  ipcopmake openldap
-  ipcopmake apache2
-  ipcopmake php
-  ipcopmake subversion
-  ipcopmake apache2 PASS=CONFIG
-  ipcopmake arping
-  ipcopmake beep
-  ipcopmake bind
-  ipcopmake capi4k-utils
-  ipcopmake cdrtools
-  ipcopmake dnsmasq
-  ipcopmake dosfstools
-  ipcopmake ethtool
-  ipcopmake ez-ipupdate
-  ipcopmake fcron
-  ipcopmake perl-GD
-  ipcopmake gnupg
-  ipcopmake hdparm
-  ipcopmake ibod
-  ipcopmake initscripts
-  ipcopmake iptables
-  ipcopmake ipac-ng
-  ipcopmake ipaddr
-  ipcopmake iproute2
-  ipcopmake iptstate
-  ipcopmake iputils
-  ipcopmake l7-protocols
-  ipcopmake isapnptools
-  ipcopmake isdn4k-utils
-  ipcopmake kudzu
-  ipcopmake logrotate
-  ipcopmake logwatch
-  ipcopmake mingetty
-  ipcopmake misc-progs
-  ipcopmake mtools
-  ipcopmake nano
-  ipcopmake nash
-  ipcopmake nasm
-  ipcopmake URI
-  ipcopmake HTML-Tagset
-  ipcopmake HTML-Parser
-  ipcopmake Compress-Zlib
-  ipcopmake Digest
-  ipcopmake Digest-SHA1
-  ipcopmake Digest-HMAC
-  ipcopmake libwww-perl
-  ipcopmake Net-DNS
-  ipcopmake Net-IPv4Addr
-  ipcopmake Net_SSLeay
-  ipcopmake IO-Stringy
-  ipcopmake Unix-Syslog
-  ipcopmake Mail-Tools
-  ipcopmake MIME-Tools
-  ipcopmake Net-Server
-  ipcopmake Convert-TNEF
-  ipcopmake Convert-UUlib
-  ipcopmake Archive-Tar
-  ipcopmake Archive-Zip
-  ipcopmake Text-Tabs+Wrap
-  ipcopmake Locale-Country
-  ipcopmake GeoIP
-  ipcopmake fwhits
-  ipcopmake noip_updater
-  ipcopmake ntp
-  ipcopmake oinkmaster
-  ipcopmake openssh
-  ipcopmake openswan
-  ipcopmake pptpclient
-  ipcopmake rrdtool
-  ipcopmake setserial
-  ipcopmake setup
-  ipcopmake snort
-  ipcopmake squid
-  ipcopmake squid-graph
-  ipcopmake squidguard
-  ipcopmake tcpdump
-  ipcopmake traceroute
-  ipcopmake vlan
-  ipcopmake wireless
-  ipcopmake libsafe
-  ipcopmake 3c5x9setup
-  ipcopmake pakfire
-  ipcopmake startscripts
-  ipcopmake java
-  ipcopmake bootsplash
-  ipcopmake spandsp
-  ipcopmake lzo
-  ipcopmake openvpn
-  ipcopmake pkg-config
-  ipcopmake glib
-  ipcopmake pam
-  ipcopmake pammysql
-  ipcopmake saslauthd PASS=2
-  ipcopmake xinetd
-  ipcopmake ghostscript
-  ipcopmake cups
-  ipcopmake samba
-  ipcopmake sudo
-  ipcopmake mc
-  ipcopmake wget
-  ipcopmake wput
-  ipcopmake bridge-utils
-  ipcopmake screen
-  ipcopmake hddtemp
-  ipcopmake smartmontools
-  ipcopmake htop
-  ipcopmake lynx
-  echo -ne "`date -u '+%b %e %T'`: Building ### Mailserver ### \n" | tee -a $LOGFILE
-  ipcopmake postfix
-  ipcopmake procmail
-  ipcopmake fetchmail
-  ipcopmake cyrusimap
-  ipcopmake webcyradm
-  ipcopmake mailx
-  ipcopmake clamav
-  ipcopmake razor
-  ipcopmake spamassassin
-#  ipcopmake amavisd
-  echo -ne "`date -u '+%b %e %T'`: Building ### VoIP-Server ### \n" | tee -a $LOGFILE
-  ipcopmake stund
-  ipcopmake zaptel
-  ipcopmake libpri
-  ipcopmake bristuff
-  ipcopmake asterisk
-  ipcopmake mpg123
-  echo -ne "`date -u '+%b %e %T'`: Building ### Multimedia-Server ### \n" | tee -a $LOGFILE
-  ipcopmake libmad
-  ipcopmake libogg
-  ipcopmake libvorbis
-  ipcopmake lame
-  ipcopmake xvid
-  ipcopmake mpeg2dec
-  ipcopmake ffmpeg
-  ipcopmake sox
-  ipcopmake gnump3d
-  ipcopmake videolan
-  echo -ne "`date -u '+%b %e %T'`: Building ### P2P-Clients ### \n" | tee -a $LOGFILE
-  ipcopmake applejuice
-  ipcopmake ocaml
-  ipcopmake mldonkey
-  echo -ne "`date -u '+%b %e %T'`: Building ### Net-Tools ### \n" | tee -a $LOGFILE
-  ipcopmake ntop
-  ipcopmake rsync
-  ipcopmake tcpwrapper
-  ipcopmake portmap
-  ipcopmake nfs
-  ipcopmake nmap
-  ipcopmake mbmon
-  ipcopmake iftop
-  ipcopmake ncftp
-  ipcopmake cftp
-  ipcopmake etherwake
-  ipcopmake ethereal
-  ipcopmake tftp-hpa
-  ipcopmake iptraf
-  ipcopmake nagios
-  ipcopmake yasuc
+  ipfiremake configroot
+  ipfiremake dhcp
+  ipfiremake dhcpcd
+  ipfiremake libusb
+  ipfiremake libpcap
+  ipfiremake linux-atm
+  ipfiremake ppp
+  ipfiremake rp-pppoe
+  ipfiremake unzip
+  ipfiremake linux			PASS=ipfire SMP=installer
+  ipfiremake linux			PASS=ipfire SMP=1
+  ipfiremake 3cp4218			SMP=1
+  ipfiremake amedyn			SMP=1
+  ipfiremake cxacru			SMP=1
+  ipfiremake eagle			SMP=1
+  ipfiremake cnx_pci			SMP=1
+  ipfiremake fcdsl			SMP=1
+  ipfiremake fcdsl2			SMP=1
+  ipfiremake fcdslsl			SMP=1
+  ipfiremake fcdslusb		SMP=1
+  ipfiremake fcdslslusb		SMP=1
+  ipfiremake fcpci			SMP=1
+  ipfiremake fcclassic		SMP=1
+  ipfiremake pulsar			SMP=1
+  ipfiremake unicorn			SMP=1
+  ipfiremake promise-sata-300-tx	SMP=1
+  ipfiremake linux			PASS=ipfire
+  ipfiremake 3cp4218 	
+  ipfiremake amedyn 	
+  ipfiremake cxacru 	
+  ipfiremake eciadsl 	
+  ipfiremake eagle 	
+  ipfiremake speedtouch 	
+  ipfiremake cnx_pci 	
+  ipfiremake fcdsl 	
+  ipfiremake fcdsl2 	
+  ipfiremake fcdslsl 	
+  ipfiremake fcdslusb 	
+  ipfiremake fcdslslusb 
+  ipfiremake fcpci
+  ipfiremake fcclassic
+  ipfiremake pulsar	
+  ipfiremake unicorn
+  ipfiremake promise-sata-300-tx
+  ipfiremake pcmcia-cs
+  ipfiremake expat
+  ipfiremake gdbm
+  ipfiremake gmp
+  ipfiremake openssl
+  ipfiremake python
+  ipfiremake libnet
+  ipfiremake libpng
+  ipfiremake libtiff
+  ipfiremake libjpeg
+  ipfiremake lcms
+  ipfiremake libmng
+  ipfiremake freetype
+  ipfiremake gd
+  ipfiremake popt
+  ipfiremake slang
+  ipfiremake newt
+  ipfiremake libcap
+  ipfiremake pciutils
+  ipfiremake pcre
+  ipfiremake readline
+  ipfiremake libxml2
+  ipfiremake berkeley
+  ipfiremake BerkeleyDB ## The Perl module
+  ipfiremake mysql
+  ipfiremake saslauthd PASS=1
+  ipfiremake openldap
+  ipfiremake apache2
+  ipfiremake php
+  ipfiremake subversion
+  ipfiremake apache2 PASS=CONFIG
+  ipfiremake arping
+  ipfiremake beep
+  ipfiremake bind
+  ipfiremake capi4k-utils
+  ipfiremake cdrtools
+  ipfiremake dnsmasq
+  ipfiremake dosfstools
+  ipfiremake ethtool
+  ipfiremake ez-ipupdate
+  ipfiremake fcron
+  ipfiremake perl-GD
+  ipfiremake gnupg
+  ipfiremake hdparm
+  ipfiremake ibod
+  ipfiremake initscripts
+  ipfiremake iptables
+  ipfiremake ipac-ng
+  ipfiremake ipaddr
+  ipfiremake iproute2
+  ipfiremake iptstate
+  ipfiremake iputils
+  ipfiremake l7-protocols
+  ipfiremake isapnptools
+  ipfiremake isdn4k-utils
+  ipfiremake kudzu
+  ipfiremake logrotate
+  ipfiremake logwatch
+  ipfiremake mingetty
+  ipfiremake misc-progs
+  ipfiremake mtools
+  ipfiremake nano
+  ipfiremake nash
+  ipfiremake nasm
+  ipfiremake URI
+  ipfiremake HTML-Tagset
+  ipfiremake HTML-Parser
+  ipfiremake Compress-Zlib
+  ipfiremake Digest
+  ipfiremake Digest-SHA1
+  ipfiremake Digest-HMAC
+  ipfiremake libwww-perl
+  ipfiremake Net-DNS
+  ipfiremake Net-IPv4Addr
+  ipfiremake Net_SSLeay
+  ipfiremake IO-Stringy
+  ipfiremake Unix-Syslog
+  ipfiremake Mail-Tools
+  ipfiremake MIME-Tools
+  ipfiremake Net-Server
+  ipfiremake Convert-TNEF
+  ipfiremake Convert-UUlib
+  ipfiremake Archive-Tar
+  ipfiremake Archive-Zip
+  ipfiremake Text-Tabs+Wrap
+  ipfiremake Locale-Country
+  ipfiremake GeoIP
+  ipfiremake fwhits
+  ipfiremake noip_updater
+  ipfiremake ntp
+  ipfiremake oinkmaster
+  ipfiremake openssh
+  ipfiremake openswan
+  ipfiremake pptpclient
+  ipfiremake rrdtool
+  ipfiremake setserial
+  ipfiremake setup
+  ipfiremake snort
+  ipfiremake squid
+  ipfiremake squid-graph
+  ipfiremake squidguard
+  ipfiremake tcpdump
+  ipfiremake traceroute
+  ipfiremake vlan
+  ipfiremake wireless
+  ipfiremake libsafe
+  ipfiremake 3c5x9setup
+  ipfiremake pakfire
+  ipfiremake startscripts
+  ipfiremake java
+  ipfiremake bootsplash
+  ipfiremake spandsp
+  ipfiremake lzo
+  ipfiremake openvpn
+  ipfiremake pkg-config
+  ipfiremake glib
+  ipfiremake pam
+  ipfiremake pammysql
+  ipfiremake saslauthd PASS=2
+  ipfiremake xinetd
+  ipfiremake ghostscript
+  ipfiremake cups
+  ipfiremake samba
+  ipfiremake sudo
+  ipfiremake mc
+  ipfiremake wget
+  ipfiremake wput
+  ipfiremake bridge-utils
+  ipfiremake screen
+  ipfiremake hddtemp
+  ipfiremake smartmontools
+  ipfiremake htop
+  ipfiremake lynx
+  ipfiremake postfix
+  ipfiremake procmail
+  ipfiremake fetchmail
+  ipfiremake cyrusimap
+  ipfiremake webcyradm
+  ipfiremake mailx
+  ipfiremake clamav
+  ipfiremake razor
+  ipfiremake spamassassin
+#  ipfiremake amavisd
+  ipfiremake stund
+  ipfiremake zaptel
+  ipfiremake libpri
+  ipfiremake bristuff
+  ipfiremake asterisk
+  ipfiremake mpg123
+  ipfiremake libmad
+  ipfiremake libogg
+  ipfiremake libvorbis
+  ipfiremake lame
+  ipfiremake xvid
+  ipfiremake mpeg2dec
+  ipfiremake ffmpeg
+  ipfiremake sox
+  ipfiremake gnump3d
+  ipfiremake videolan
+  ipfiremake applejuice
+  ipfiremake ocaml
+  ipfiremake mldonkey
+  ipfiremake ntop
+  ipfiremake rsync
+  ipfiremake tcpwrapper
+  ipfiremake portmap
+  ipfiremake nfs
+  ipfiremake nmap
+  ipfiremake mbmon
+  ipfiremake iftop
+  ipfiremake ncftp
+  ipfiremake cftp
+  ipfiremake etherwake
+  ipfiremake ethereal
+  ipfiremake tftp-hpa
+  ipfiremake iptraf
+  ipfiremake nagios
+  ipfiremake yasuc
 }
 
 buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  echo -ne "`date -u '+%b %e %T'`: Stage4 installer build \n" | tee -a $LOGFILE
-  if [ 'i386' = $MACHINE ]; then 
-  	ipcopmake syslinux
-	ipcopmake as86
-	ipcopmake mbr
-  	ipcopmake uClibc
-  fi
+  ipfiremake syslinux
+  ipfiremake as86
+  ipfiremake mbr
+  ipfiremake uClibc
   installmake busybox
   installmake sysvinit
   installmake e2fsprogs
@@ -828,7 +589,7 @@ buildpackages() {
   # packages-list.txt is ready to be displayed for wiki page
 
   # Create ISO for CDROM
-  ipcopmake cdrom
+  ipfiremake cdrom
   rm -f $LFS/install/images/*usb*
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
@@ -901,25 +662,20 @@ ipfirepackages() {
   rm -rf  $BASEDIR/build/install/packages/*
 }
 
-update_logs() {
-	tar cfz log/ipfire-logs-`date +'%Y-%m-%d-%H:%M'`.tgz log/_build.*
-	rm -f log/_build.*
-}
-
 # See what we're supposed to do
 case "$1" in 
 build)
 	BUILDMACHINE=`uname -m`
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
-	if [ ! -f log/cleanup-toolchain-*-tools ]; then
+	if [ ! -f log/cleanup-toolchain-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
-			echo "`date -u '+%b %e %T'`: Full toolchain compilation" | tee -a $LOGFILE
+			beautify build_stage "Full toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 			prepareenv
 			buildtoolchain
 		else
 			PACKAGENAME=${PACKAGE%.tar.gz}
-			echo "`date -u '+%b %e %T'`: Restore from $PACKAGE" | tee -a $LOGFILE
+			beautify build_stage "Packaged toolchain compilation"
 			if [ `md5sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.md5 | awk '{print $1}'` ]; then
 				tar zxf $PACKAGE
 				prepareenv
@@ -932,8 +688,11 @@ build)
 		prepareenv
 	fi
 
+	beautify build_stage "Building base"
 	buildbase
-	buildipcop
+
+	beautify build_stage "Building IPFire"
+	buildipfire
 
 	# Setzen des IPFire Builds
 	if [ "$FIREBUILD" ]; then
@@ -942,7 +701,10 @@ build)
 		echo "_(OvO)_" > $BASEDIR/build/var/ipfire/firebuild
 	fi
 
+	beautify build_stage "Building installer"
 	buildinstaller
+
+	beautify build_stage "Building packages"
 	buildpackages
 	;;
 shell)
@@ -955,36 +717,6 @@ changelog)
 	echo -n "Loading new Changelog from SVN: "
 	svn log http://svn.ipfire.eu/svn/ipfire > doc/ChangeLog
 	echo "Finished!"
-	;;
-check)
-	echo "Checking sources files availability on the web"
-	if [ ! -d $DIR_CHK ]; then
-		mkdir -p $DIR_CHK
-	fi
-	FINISHED=0
-	cd $BASEDIR/lfs
-	for c in `seq $MAX_RETRIES`; do
-		if (( FINISHED==1 )); then
-			break
-		fi
-		FINISHED=1
-		cd $BASEDIR/lfs
-		for i in *; do
-			if [ -f "$i" -a "$i" != "Config" ]; then
-				make -s -f $i MACHINE=$MACHINE LFS_BASEDIR=$BASEDIR ROOT=$BASEDIR/build \
-					MESSAGE="$i\t ($c/$MAX_RETRIES)" check
-				if [ $? -ne 0 ]; then
-					echo "Check : wget error in lfs/$i"
-					FINISHED=0
-				fi
-			fi
-		done
-	done
-	cd -
-	;;
-checkclean)
-	echo "Erasing sources files availability tags"
-	rm -rf $DIR_CHK/*
 	;;
 clean)
 	for i in `mount | grep $BASEDIR | sed 's/^.*loop=\(.*\))/\1/'`; do
@@ -1105,6 +837,7 @@ prefetch)
 	;;
 toolchain)
 	prepareenv
+	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 	buildtoolchain
 	BUILDMACHINE=`uname -m`
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
@@ -1140,39 +873,44 @@ gettoolchain)
 		echo "Toolchain is already downloaded. Exiting..."
 	fi
 	;;
-sources-iso)
+othersrc)
 	prepareenv
-	echo "`date -u '+%b %e %T'`: Build sources iso for $MACHINE" | tee -a $LOGFILE
+	echo -ne "`date -u '+%b %e %T'`: Build sources iso for $MACHINE" | tee -a $LOGFILE
 	chroot $LFS /tools/bin/env -i   HOME=/root \
 	TERM=$TERM PS1='\u:\w\$ ' \
 	PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 	VERSION=$VERSION NAME="$NAME" SNAME="$SNAME" MACHINE=$MACHINE \
 	/bin/bash -x -c "cd /usr/src/lfs && make -f sources-iso LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 	mv $LFS/install/images/ipfire-* $BASEDIR >> $LOGFILE 2>&1
+	if [ $? -eq "0" ]; then
+		beautify message DONE
+	else
+		beautify message FAIL
+	fi
 	stdumount
 	;;
 svn)
 	case "$2" in
 	  update|up)
 		# clear
-		echo "Loading the latest source files..."
+		echo -ne "Loading the latest source files...\n"
 		if [ $3 ]; then
 			svn update -r $3 | tee -a $PWD/log/_build.svn.update.log
 		else
 			svn update | tee -a $PWD/log/_build.svn.update.log
 		fi
-		if [ $? -eq 0 ]; then
-			echo "Finished!"
+		if [ $? -eq "0" ]; then
+			beautify message DONE
 		else
-			echo "Failure!"
+			beautify message FAIL
 			exit 1
 		fi
-		echo -n "Writing the svn-info to a file..."
+		echo -ne "Writing the svn-info to a file"
 		svn info > $PWD/svn_status
-		if [ "$?" -eq "0" ]; then
-			echo ".Finished!"
+		if [ $? -eq "0" ]; then
+			beautify message DONE
 		else
-			echo ".Failure!"
+			beautify message FAIL
 			exit 1
 		fi
 		chmod 755 $0
@@ -1187,11 +925,7 @@ svn)
 		fi
 		echo "Upload the changed files..."
 		sleep 1
-		IPFIRE_SVN_MESSAGE=/tmp/ipfire-svn-co-message.txt
-		rm -f $IPFIRE_SVN_MESSAGE
-		mcedit $IPFIRE_SVN_MESSAGE
-		svn commit -F $IPFIRE_SVN_MESSAGE
-		rm -f $IPFIRE_SVN_MESSAGE
+		svn commit
 		$0 svn up
 	  ;;
 	  dist)
@@ -1206,156 +940,58 @@ svn)
 		svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
 		svn log http://svn.ipfire.eu/svn/ipfire -r 1:$SVN_REVISION > ipfire-source/Changelog
 		#svn info http://svn.ipfire.eu/svn/ipfire -r $SVN_REVISION > ipfire-source/svn_status
-		if [ "$?" -eq "0" ]; then
-			echo -en "\r"
-		else
-			echo -en "\n"
-			exit 1
-		fi
+		evaluate 1
+
 		echo -en "REV $SVN_REVISION: Compressing files..."
 		if [ -e ipfire-source/trunk/make.sh ]; then
 			chmod 755 ipfire-source/trunk/make.sh
 		fi
 		tar cfz ipfire-source-r$SVN_REVISION.tar.gz ipfire-source
-		if [ "$?" -eq "0" ]; then
-			echo -ne "\r"
-		else
-			echo -ne "\n"
-			exit 1
-		fi
+		evaluate 1
 		echo -en "REV $SVN_REVISION: Cleaning up..."
 		rm ipfire-source/ -r
-		if [ "$?" -eq "0" ]; then
-			echo -ne "\rREV $SVN_REVISION: ##### FINISHED! #####\n"
-		else
-			echo -ne "\n"
-			exit 1
-		fi
-	  ;;
-	  alldist|ad)
-		echo -e "### THIS WILL TAKE A LONG TIME!\nDOING A FETCH FROM REV 1 TO REV $SVN_REVISION!\n"
-		for i in `seq 1 $SVN_REVISION`; do
-			$0 svn dist $i
-		done
+		evaluate 1
 	  ;;
 	  diff|di)
-		echo -ne "Make a local diff to last svn revision..."
+		echo -ne "Make a local diff to last svn revision"
 		svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
-		if [ "$?" -eq "0" ]; then
-			echo ".Done!"
-		else
-			echo ".Fail!"
-			exit 1
-		fi
+		evaluate 1
 		echo "Diff was successfully saved to ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff"
 	  ;;
 	esac
 	;;
-make-config)
-	echo -e "This is for creating your configuration..."
-	echo -e "We will need some input:"
-	echo -e ""
-	echo -n "FTP-DOMAIN FOR THE ISO: "
-	read IPFIRE_FTP_URL_EXT
-	echo -n "PATH FOR $IPFIRE_FTP_URL_EXT: "
-	read IPFIRE_FTP_PATH_EXT
-	echo -n "USERNAME FOR $IPFIRE_FTP_URL_EXT: "
-	read IPFIRE_FTP_USER_EXT
-	echo -n "PASSWORD FOR $IPFIRE_FTP_URL_EXT: "
-	read -s IPFIRE_FTP_PASS_EXT
-	echo ""
-	echo "(You can leave this empty if the cache-server is the same as your iso-server.)"
-	echo -n "FTP-DOMAIN FOR THE CACHE: "
-	read IPFIRE_FTP_URL_INT
-	echo -n "PATH FOR $IPFIRE_FTP_URL_INT: "
-	read IPFIRE_FTP_PATH_INT
-	if [ $IPFIRE_FTP_URL_INT ]; then
-		echo -n "USERNAME FOR $IPFIRE_FTP_URL_INT: "
-		read IPFIRE_FTP_USER_INT
-		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_INT: "
-		read -s IPFIRE_FTP_PASS_INT
-	else
-		IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_EXT
-		IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_EXT
-		IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_EXT
-		echo "USERNAME FOR $IPFIRE_FTP_URL_INT: $IPFIRE_FTP_USER_INT"
-		echo "PASSWORD FOR $IPFIRE_FTP_URL_INT: !HIDDEN!"
-	fi
-	echo ""
-	echo "(You can leave this empty if the pak-server is the same as your iso-server.)"
-	echo -n "FTP-DOMAIN FOR THE PAKS: "
-	read IPFIRE_FTP_URL_PAK
-	echo -n "PATH FOR $IPFIRE_FTP_URL_PAK: "
-	read IPFIRE_FTP_PATH_PAK
-	if [ $IPFIRE_FTP_URL_PAK ]; then
-		echo -n "USERNAME FOR $IPFIRE_FTP_URL_PAK: "
-		read IPFIRE_FTP_USER_PAK
-		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_PAK: "
-		read -s IPFIRE_FTP_PASS_PAK
-	else
-		IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_EXT
-		IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_EXT
-		IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_EXT
-		echo "USERNAME FOR $IPFIRE_FTP_URL_PAK: $IPFIRE_FTP_USER_PAK"
-		echo "PASSWORD FOR $IPFIRE_FTP_URL_PAK: !HIDDEN!"
-	fi
-	echo ""
-	echo -e "ONE OR MORE EMAIL ADDRESS(ES) TO WHICH THE REPORTS WILL BE SENT"
-	echo -e "(seperated by comma)"
-	read IPFIRE_MAIL_REPORT
-	echo -n "EMAIL FROM: "
-	read IPFIRE_MAIL_FROM
-	echo -n "EMAIL SERVER: "
-	read IPFIRE_MAIL_SERVER
-	echo -n "LOGIN TO MAIL SERVER: "
-	read IPFIRE_MAIL_USER
-	echo -n "MAIL PASSWORD: "
-	read -s IPFIRE_MAIL_PASS
-	echo -n "Saving..."
-	for i in `seq 20`; do
-		sleep 0.1; echo -n "."
-	done
-	echo ".Finished!"
-	cat <<END > .config
-### ISO server
-IPFIRE_FTP_URL_EXT=$IPFIRE_FTP_URL_EXT
-IPFIRE_FTP_PATH_EXT=$IPFIRE_FTP_PATH_EXT
-IPFIRE_FTP_USER_EXT=$IPFIRE_FTP_USER_EXT
-IPFIRE_FTP_PASS_EXT=$IPFIRE_FTP_PASS_EXT
-### cache server
-IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_INT
-IPFIRE_FTP_PATH_INT=$IPFIRE_FTP_PATH_INT
-IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_INT
-IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_INT
-### paks server
-IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_PAK
-IPFIRE_FTP_PATH_PAK=$IPFIRE_FTP_PATH_PAK
-IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_PAK
-IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_PAK
-### mail reports
-IPFIRE_MAIL_REPORT=$IPFIRE_MAIL_REPORT
-IPFIRE_MAIL_FROM=$IPFIRE_MAIL_FROM
-IPFIRE_MAIL_SERVER=$IPFIRE_MAIL_SERVER
-IPFIRE_MAIL_USER=$IPFIRE_MAIL_USER
-IPFIRE_MAIL_PASS=$IPFIRE_MAIL_PASS
-END
-	;;
-sync)
-	echo -e "Syncing cache to ftp:"
-#	rm -f doc/packages-to-remove-from-ftp
-	ncftpls -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT ftp://$IPFIRE_FTP_URL_INT$IPFIRE_FTP_PATH_INT/ > ftplist
-	for i in `ls -w1 cache/`; do
-		grep $i ftplist
+uploadsrc)
+	PWD=`pwd`
+	cd $BASEDIR/cache/
+	echo -e "Uploading cache to ftp server:"
+	ncftpls -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT ftp://$IPFIRE_FTP_URL_INT$IPFIRE_FTP_PATH_INT/ > /var/tmp/ftplist
+	for i in *; do
+		grep -q $i /var/tmp/ftplist
 		if [ "$?" -ne "0" ]; then
-			ncftpput -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT $IPFIRE_FTP_URL_INT $IPFIRE_FTP_PATH_INT/ cache/$i
+			echo -ne "$i"
+			ncftpput -bb -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT $IPFIRE_FTP_URL_INT $IPFIRE_FTP_PATH_INT/ $i > /dev/null 2>&1
 			if [ "$?" -eq "0" ]; then
-				echo -e "$i was successfully uploaded to the ftp server."
+				beautify message DONE
 			else
-				echo -e "There was an error while uploading $i to the ftp server."
+				beautify message FAIL
 			fi
+		else
+			echo -ne "$i"
+			beautify message SKIP
 		fi
 	done
-	rm -f ftplist
+	rm -f /var/tmp/ftplist
+	UL_TIME_START=`date +'%s'`
+	ncftpbatch -d > /dev/null 2>&1
+	while ps acx | grep -q ncftpbatch
+	do
+		UL_TIME=$(expr `date +'%s'` - $UL_TIME_START)
+		echo -ne "\r ${UL_TIME}s : Upload is running..."
+		sleep 1
+	done
+	beautify message DONE
+	cd $PWD
+	exit 0
 	;;
 upload)
 	case "$2" in
@@ -1401,197 +1037,11 @@ EOF
 	  ;;
 	esac
 	;;
-build-only)
-	rm -f $BASEDIR/log/$2*
-	BUILDMACHINE=`uname -m`
-	prepareenv
-	ipcopmake $2
-	;;
-build-silent)
-	screen -dmS ipfire $0 build
-	echo "Build started... This will take a while!"
-	echo "You can see the status with 'screen -x ipfire'."
-	;;
-mail)
-	chmod 755 tools/sendEmail
-	ATTACHMENT=/tmp/ipfire-build-logs-R$SVN_REVISION.tar.gz
-	if [ "$2" = "ERROR" ]; then
-		SUBJECT="ERROR: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-		echo "ERROR: $0 build!"
-		cat <<END > /tmp/ipfire_mail_body
-When I was building IPFire on `hostname`, I have found an ERROR!
-Here you can see the logs and detect the reason for this error.
-
-Best Regards
-Your IPFire-Build-Script
-END
-	fi
-	if [ "$2" = "SUCCESS" ]; then
-		SUBJECT="SUCCESS: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-		cat <<END > /tmp/ipfire_mail_body
-Building IPFire on `hostname` in Revision $SVN_REVISION was successfull!
-You can find the ISO on your ftp server.
-
-Statistics:
------------
-Started:	$IPFIRE_START_TIME
-Finished:	`date`
-
-Best Regards
-Your IPFire-Build-Script
-END
-	fi
-	if [ "$2" = "SVNUPDATE" ]; then
-		SUBJECT="SVNUPDATE: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-		echo "ERROR: $0 svn up!"
-		cat <<END > /tmp/ipfire_mail_body
-When I was downloading the latest svn source,
-I have found an ERROR!
-Here you can see the logs and detect the reason for this error.
-
-Best Regards
-Your IPFire-Build-Script
-END
-	fi
-
-	if [ "$2" = "SVNDIST" ]; then
-		SUBJECT="SVNDIST: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-		echo "ERROR: $0 svn dist!"
-		cat <<END > /tmp/ipfire_mail_body
-When I was exporting the latest svn source,
-I have found an ERROR!
-Here you can see the logs and detect the reason for this error.
-
-Best Regards
-Your IPFire-Build-Script
-END
-	fi
-
-	if [ "$2" = "PREFETCH" ]; then
-		SUBJECT="PREFETCH: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-		echo "ERROR: $0 prefetch!"
-		cat <<END > /tmp/ipfire_mail_body
-When I was downloading the source packages,
-I have found an ERROR!
-Here you can see the logs and detect the reason for this error.
-
-Best Regards
-Your IPFire-Build-Script
-END
-	fi
-
-	if [ "$2" = "ISO" ]; then
-		SUBJECT="ISO: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-		echo "ERROR: $0 upload iso!"
-		cat <<END > /tmp/ipfire_mail_body
-When I was uploading the iso image,
-I have found an ERROR!
-Here you can see the logs and detect the reason for this error.
-
-Best Regards
-Your IPFire-Build-Script
-END
-	fi
-
-	if [ "$2" = "PAKS" ]; then
-		SUBJECT="PAKS: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-		echo "ERROR: $0 upload paks!"
-		cat <<END > /tmp/ipfire_mail_body
-When I was uploading the packages,
-I have found an ERROR!
-Here you can see the logs and detect the reason for this error.
-
-Best Regards
-Your IPFire-Build-Script
-END
-	fi
-
-	tar cfz $ATTACHMENT log/_build*
-	cat <<END >> /tmp/ipfire_mail_body
-
-Here is a summary... The full logs are in the attachment.
----------------------------------------------------------
-
-`tail log/_*`
-END
-	cat /tmp/ipfire_mail_body | tools/sendEmail -q \
-		-f $IPFIRE_MAIL_FROM \
-		-t $IPFIRE_MAIL_REPORT \
-		-u $SUBJECT \
-		-s $IPFIRE_MAIL_SERVER:25 \
-		-xu $IPFIRE_MAIL_USER \
-		-xp $IPFIRE_MAIL_PASS \
-		-l log/_build.mail.log \
-		-a $ATTACHMENT # -v
-	rm -f /tmp/ipfire_mail_body $ATTACHMENT
-	;;
-unattended)
-	if [ ! -f .config ]; then
-		echo "No configuration found. Try ./make.sh make-config."
-	fi
-	### This is our procedure that will compile the IPFire by herself...
-	echo "### UPDATE LOGS"
-	update_logs
-
-	if [ "$IPFIRE_REBUILD" -eq "0" ]; then
-		echo "### SAVING TIME"
-		export IPFIRE_START_TIME=`date`
-
-		#echo "### GETTING TOOLCHAIN"
-		#$0 gettoolchain
-
-		echo "### RUNNING SVN-UPDATE"
-		$0 svn update
-		if [ $? -ne 0 ]; then
-			$0 mail SVNUPDATE
-			exit 1
-		fi
-	
-		echo "### EXPORT SOURCES"
-		$0 svn dist
-		if [ $? -ne 0 ]; then
-			$0 mail SVNDIST
-			exit 1
-		fi
-
-		echo "### RUNNING PREFETCH"
-		$0 prefetch | grep -q "md5 difference"
-		if [ $? -eq 0 ]; then
-			$0 mail PREFETCH
-			exit 1
-		fi
-	fi
-
-	echo "### RUNNING BUILD"
-	$0 build
-	if [ $? -ne 0 ]; then
-		$0 mail ERROR
-		exit 1
-	fi
-
-	echo "### MAKING SOURCES-ISO"
-	echo "DISABLED by Delaco!"
-	#$0 sources-iso
-
-	echo "### UPLOADING ISO"
-	$0 upload iso
-	if [ $? -ne 0 ]; then
-		$0 mail ISO
-		exit 1
-	fi
-	
-	echo "### UPLOADING PAKS"
-	$0 upload paks
-	if [ $? -ne 0 ]; then
-		$0 mail PAKS
-		exit 1
-	fi
-
-	echo "### SUCCESS!"
-	$0 mail SUCCESS
-	exit 0
-	;;
 batch)
+	if [ "$2" -eq "--background" ]; then
+		batch_script
+		exit $?
+	fi
 	if [ `screen -ls | grep -q ipfire` ]; then
 		echo "Build is already running, sorry!"
 		exit 1
@@ -1602,26 +1052,14 @@ batch)
 		else
 			export IPFIRE_REBUILD=0
 		fi
-		echo -n "IPFire-Batch-Build is starting..."
-		screen -dmS ipfire $0 unattended
-		if [ "$?" -eq "0" ]; then
-			echo ".Done!"
-		else
-			echo ".ERROR!"
-			exit 1
-		fi
+		echo -en "${BOLD}***IPFire-Batch-Build is starting...${NORMAL}"
+		screen -dmS ipfire $0 batch --background
+		evaluate 1
 		exit 0
 	fi
 	;;
 watch)
-	echo "Exit with Ctrl+A, Ctrl+D."
-	echo -n "Preparing..."
-	for i in `seq 5`; do
-		sleep 0.1; echo -n "."
-	done
-	echo ".Ready!"
-	sleep 0.3
-	screen -x ipfire
+	watch_screen
 	;;
 *)
 	clear
@@ -1645,11 +1083,11 @@ watch)
 		$0 clean
 		;;
 	"SVN: Commit")
-		echo "Are your sure to Update all Files to the Server (write: yes)?"; read input
-		if [ "$input" == "yes" ]; then
-			$0 svn commit
+		if [ -f /usr/bin/mcedit ]; then
+			export EDITOR=/usr/sbin/mcedit
 		fi
-		$0 sync
+		$0 svn commit
+		$0 uploadsrc
 		;;
 	"SVN: Update")
 		$0 svn update

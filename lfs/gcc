@@ -46,7 +46,7 @@ ifeq "$(ROOT)" ""
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
-ifeq "$(LFS_PASS)" "1"
+ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = --prefix=/tools \
     --with-local-prefix=/tools --disable-nls --enable-shared \
@@ -106,7 +106,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(ROOT)" ""
 
 else
-ifeq "$(LFS_PASS)" "1"
+ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install

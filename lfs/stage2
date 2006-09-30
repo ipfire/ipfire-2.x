@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: stage2,v 1.14.2.5 2006/02/08 23:53:37 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -31,6 +25,8 @@
 ###############################################################################
 
 include Config
+
+VER        = ipfire
 
 THISAPP    = stage2
 TARGET     = $(DIR_INFO)/$(THISAPP)

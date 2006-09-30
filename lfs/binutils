@@ -41,7 +41,7 @@ ifeq "$(ROOT)" ""
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
-ifeq "$(LFS_PASS)" "1"
+ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = --prefix=/tools --disable-nls
   EXTRA_MAKE = LDFLAGS="-all-static"
@@ -98,7 +98,7 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 else
-ifeq "$(LFS_PASS)" "1"
+ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING)
 	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING) clean
 	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING) $(EXTRA_MAKE)
@@ -107,7 +107,7 @@ else
 endif
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 	cd $(DIR_SRC)/binutils-build && make -C ld clean
-ifeq "$(LFS_PASS)" "1"
+ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/tools/lib
 else
 	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib

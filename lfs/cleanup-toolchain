@@ -26,6 +26,8 @@
 
 include Config
 
+VER        = ipfire
+
 THISAPP    = cleanup-toolchain
 TARGET     = $(DIR_INFO)/$(THISAPP)-tools
 

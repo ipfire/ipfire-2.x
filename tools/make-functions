@@ -1,0 +1,627 @@
+#!/bin/bash
+############################################################################
+#
+# Beautifying variables & presentation & input output interface
+#
+############################################################################
+
+## Screen Dimentions
+# Find current screen size
+if [ -z "${COLUMNS}" ]; then
+	COLUMNS=$(stty size)
+	COLUMNS=${COLUMNS##* }
+fi
+
+# When using remote connections, such as a serial port, stty size returns 0
+if [ "${COLUMNS}" = "0" ]; then
+	COLUMNS=80
+fi
+
+## Measurements for positioning result messages
+RESULT_WIDTH=4
+TIME_WIDTH=8
+OPT_WIDTH=6
+VER_WIDTH=10
+RESULT_COL=$((${COLUMNS} - $RESULT_WIDTH - 4))
+TIME_COL=$((${RESULT_COL} - $TIME_WIDTH - 5))
+OPT_COL=$((${TIME_COL} - $OPT_WIDTH - 5))
+VER_COL=$((${OPT_COL} - $VER_WIDTH - 5))
+
+## Set Cursur Position Commands, used via echo -e
+SET_RESULT_COL="\\033[${RESULT_COL}G"
+SET_TIME_COL="\\033[${TIME_COL}G"
+SET_OPT_COL="\\033[${OPT_COL}G"
+SET_VER_COL="\\033[${VER_COL}G"
+
+# Define color for messages
+BOLD="\\033[1;39m"
+DONE="\\033[1;32m"
+SKIP="\\033[1;34m"
+WARN="\\033[1;35m"
+FAIL="\\033[1;31m"
+NORMAL="\\033[0;39m"
+
+evaluate() {
+	if [ "$?" -eq "0" ]; then
+		beautify message DONE
+	else
+		EXITCODE=$1
+		shift 1
+		beautify message FAIL
+		$*
+		if [ $EXITCODE -ne "0" ]; then
+			exit $EXITCODE
+		fi
+	fi
+}
+
+position_cursor()
+{
+	# ARG1=starting position on screen
+	# ARG2=string to be printed
+	# ARG3=offset, negative for left movement, positive for right movement, relative to ARG1
+	# For example if your starting position is column 50 and you want to print Hello three columns to the right
+	# of your starting position, your call will look like this:
+	# position_cursor 50 "Hello" 3 (you'll get the string Hello at position 53 (= 50 + 3)
+	# If on the other hand you want your string "Hello" to end three columns to the left of position 50,
+	# your call will look like this:
+	# position_cursor 50 "Hello" -3 (you'll get the string Hello at position 42 (= 50 - 5 -3)
+	# If you want to start printing at the exact starting location, use offset 0
+
+	START=$1
+	STRING=$2
+	OFFSET=$3
+
+	STRING_LENGTH=${#STRING}
+
+	if [ ${OFFSET} -lt 0 ]; then
+		COL=$((${START} + ${OFFSET} - ${STRING_LENGTH}))
+	else
+		COL=$((${START} + ${OFFSET}))
+	fi
+
+	SET_COL="\\033[${COL}G"
+
+	echo $SET_COL
+} # End of position_cursor()
+
+
+beautify()
+{
+	# Commands: build_stage, make_pkg, message, result
+	case "$1" in
+		message)
+			case "$2" in
+				DONE)
+					echo -ne "${SET_RESULT_COL}[${DONE} DONE ${NORMAL}]\n"
+					;;
+				WARN)
+					echo -ne "${WARN}${3}${NORMAL}${SET_RESULT_COL}[${WARN} WARN ${NORMAL}]\n"
+					;;	
+				FAIL)
+					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
+					;;
+				SKIP)
+					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
+					;;
+			esac
+			;;
+		build_stage)
+			MESSAGE=$2
+			echo -ne "${BOLD}*** ${MESSAGE}${SET_VER_COL}      version${SET_OPT_COL} options"
+			echo -ne "${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
+			;;
+		make_pkg)
+			echo "$2" | while read PKG_VER PROGRAM OPTIONS
+			do
+				SET_VER_COL_REAL=`position_cursor $OPT_COL $PKG_VER -3`
+
+				if [ "$OPTIONS" == "" ]; then
+					echo -ne "${PROGRAM}${SET_VER_COL}[ ${BOLD}${SET_VER_COL_REAL}${PKG_VER}"
+					echo -ne "${NORMAL} ]${SET_RESULT_COL}"
+				else
+					echo -ne "${PROGRAM}${SET_VER_COL}[ ${BOLD}${SET_VER_COL_REAL}${PKG_VER}"
+					echo -ne "${NORMAL} ]${SET_OPT_COL}[ ${BOLD}${OPTIONS}"
+					echo -ne "${NORMAL} ]${SET_RESULT_COL}"
+				fi
+			done
+			;;
+		result)
+			RESULT=$2
+
+			if [ ! $3 ]; then
+				PKG_TIME=0
+			else
+				PKG_TIME=$3
+			fi
+
+			SET_TIME_COL_REAL=`position_cursor $RESULT_COL $PKG_TIME -3`
+			case "$RESULT" in
+				DONE)
+					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
+					echo -ne "${SET_RESULT_COL}[${DONE} DONE ${NORMAL}]\n"
+					;;
+				FAIL)
+					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
+					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
+					;;
+				SKIP)
+					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
+					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
+					;;
+			esac
+			;;
+	esac
+} # End of beautify()
+
+
+get_pkg_ver()
+{
+	PKG_VER=`grep ^VER $1 | awk '{print $3}'`
+
+	if [ -z $PKG_VER ]; then
+		PKG_VER=`grep "Exp " $1 | awk '{print $4}'`
+	fi
+
+	if [ ${#PKG_VER} -gt $VER_WIDTH ]; then
+		# If a package version number is greater than $VER_WIDTH, we keep the first 4 characters
+		# and replace enough characters to fit the resulting string on the screen.  We'll replace
+		# the extra character with .. (two dots).  That's why the "+ 2" in the formula below.
+		# Example: if we have a 21-long version number that we want to fit into a 10-long space,
+		# we have to remove 11 characters.  But if we replace 11 characters with 2 characters, we'll
+		# end up with a 12-character long string.  That's why we replace 12 characters with ..
+		REMOVE=`expr substr "$PKG_VER" 4 $[ ${#PKG_VER} - $VER_WIDTH + 2 ]`
+		PKG_VER=`echo ${PKG_VER/$REMOVE/..}`
+	fi
+
+	echo "$PKG_VER"
+} # End of get_pkg_ver()
+
+if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
+	echo "`date -u '+%b %e %T'`: Machine is iX86 (or equivalent)" >> $LOGFILE
+	MACHINE=i586
+	BUILDTARGET=i586-pc-linux-gnu
+	C2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
+	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
+else
+	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" >> $LOGFILE
+	exit 1
+fi
+
+# Define immediately
+stdumount() {
+	umount $BASEDIR/build/dev/pts		2>/dev/null;
+	umount $BASEDIR/build/proc			2>/dev/null;
+	umount $BASEDIR/build/install/mnt		2>/dev/null;
+	umount $BASEDIR/build/usr/src/cache	2>/dev/null;
+	umount $BASEDIR/build/usr/src/ccache	2>/dev/null;
+	umount $BASEDIR/build/usr/src/config	2>/dev/null;
+	umount $BASEDIR/build/usr/src/doc		2>/dev/null;
+	umount $BASEDIR/build/usr/src/html		2>/dev/null;
+	umount $BASEDIR/build/usr/src/langs	2>/dev/null;
+	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
+	umount $BASEDIR/build/usr/src/log		2>/dev/null;
+	umount $BASEDIR/build/usr/src/src		2>/dev/null;
+}
+
+exiterror() {
+	stdumount
+	for i in `seq 0 7`; do
+	    if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
+		losetup -d /dev/loop${i} 2>/dev/null
+	    fi;
+	done
+	echo -e "\nERROR: $*"
+	echo "       Check $LOGFILE for errors if applicable"
+	exit 1
+}
+
+entershell() {
+	if [ ! -e $BASEDIR/build/usr/src/lfs/ ]; then
+		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/"
+	fi
+	echo "Entering to a shell inside LFS chroot, go out with exit"
+	chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
+		PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
+		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
+		CFLAGS="$CF2LAGS" CXXFLAGS="$CXX2FLAGS" \
+		CCACHE_DIR=/usr/src/ccache \
+		CCACHE_HASHDIR=1 \
+		KVER=$KVER \
+		BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+		KGCC="ccache /usr/bin/gcc" \
+		/tools/bin/bash
+	if [ $? -ne 0 ]; then
+			beautify message FAIL
+			exiterror "chroot error"
+	else
+		stdumount
+	fi
+}
+
+############################################################################
+#                                                                          #
+# Necessary shell functions                                                #
+#                                                                          #
+############################################################################
+#
+# Common checking before entering the chroot and compilling
+#
+# Return:0 caller can continue
+#	:1 skip (nothing to do)
+#	or fail if no script file found
+#
+lfsmakecommoncheck()
+{
+
+	# Script present?
+	if [ ! -f $BASEDIR/lfs/$1 ]; then
+		exiterror "No such file or directory: $BASEDIR/$1"
+	fi
+
+	local PKG_VER=`get_pkg_ver $BASEDIR/lfs/$1`
+	beautify make_pkg "$PKG_VER $*"
+
+	# Script slipped?
+	local i
+	for i in $SKIP_PACKAGE_LIST
+	do
+		if [ "$i" == "$1" ]; then  
+			beautify result SKIP
+			return 1;
+		fi 
+	done
+
+	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
+
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
+	if [ $? -ne 0 ]; then
+		exiterror "Download error in $1"
+	fi
+
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
+	if [ $? -ne 0 ]; then
+		exiterror "md5sum error in $1, check file in cache or signature"
+	fi
+
+	return 0	# pass all!
+} # End of lfsmakecommoncheck()
+
+lfsmake1() {
+	lfsmakecommoncheck $*
+	[ $? == 1 ] && return 0
+
+	local PKG_TIME_START=`date +%s`
+
+	cd $BASEDIR/lfs && make -f $* 	BUILDTARGET=$BUILDTARGET \
+						MACHINE=$MACHINE \
+						LFS_BASEDIR=$BASEDIR \
+						ROOT=$LFS \
+						KVER=$KVER \
+						MAKETUNING=$MAKETUNING \
+						install >> $LOGFILE 2>&1
+	local COMPILE_SUCCESS=$?
+	local PKG_TIME_END=`date +%s`
+
+	if [ $COMPILE_SUCCESS -ne 0 ]; then
+		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
+		exiterror "Building $*";
+	else
+		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	fi
+
+	return 0
+}
+
+lfsmake2() {
+	lfsmakecommoncheck $*
+	[ $? == 1 ] && return 0
+
+	local PKG_TIME_START=`date +%s`
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
+						TERM=$TERM PS1='\u:\w\$ ' \
+						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+						VERSION=$VERSION \
+						CONFIG_ROOT=$CONFIG_ROOT \
+						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
+						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
+						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
+						KVER=$KVER MAKETUNING=$MAKETUNING \
+						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						/tools/bin/bash -x -c "cd /usr/src/lfs && \
+						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+	local COMPILE_SUCCESS=$?
+	local PKG_TIME_END=`date +%s`
+
+	if [ $COMPILE_SUCCESS -ne 0 ]; then
+		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
+		exiterror "Building $*";
+	else
+		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	fi
+
+	return 0
+}
+
+ipfiremake() {
+	lfsmakecommoncheck $*
+	[ $? == 1 ] && return 0
+
+	local PKG_TIME_START=`date +%s`
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
+						TERM=$TERM PS1='\u:\w\$ ' \
+						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						VERSION=$VERSION \
+						CONFIG_ROOT=$CONFIG_ROOT \
+						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
+						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
+						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
+						KVER=$KVER MAKETUNING=$MAKETUNING \
+						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						/bin/bash -x -c "cd /usr/src/lfs && \
+						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+
+	local COMPILE_SUCCESS=$?
+	local PKG_TIME_END=`date +%s`
+
+	if [ $COMPILE_SUCCESS -ne 0 ]; then
+		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
+		exiterror "Building $*";
+	else
+		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	fi
+	return 0
+}
+
+ipfiredist() {
+	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
+		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
+		chroot $LFS /tools/bin/env -i 	HOME=/root \
+						TERM=$TERM PS1='\u:\w\$ ' \
+						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						VERSION=$VERSION \
+						CONFIG_ROOT=$CONFIG_ROOT \
+						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
+						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
+						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
+						KVER=$KVER \
+						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+		    /bin/bash -x -c "cd /usr/src/lfs && \
+		    make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
+		if [ $? -ne 0 ]; then
+			exiterror "Packaging $1"
+		fi
+	else
+		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
+	fi
+	return 0
+}
+
+installmake() {
+	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
+		echo "`date -u '+%b %e %T'`: Building $*" | tee -a $LOGFILE
+		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
+		if [ $? -ne 0 ]; then
+			exiterror "Download error in $1"
+		fi
+		cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
+		if [ $? -ne 0 ]; then
+			exiterror "md5sum error in $1, check file in cache or signature"
+		fi
+		chroot $LFS /tools/bin/env -i 	HOME=/root \
+						TERM=$TERM PS1='\u:\w\$ ' \
+						PATH=/usr/local/bin:/opt/$MACHINE-uClibc/usr/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						VERSION=$VERSION \
+						CONFIG_ROOT=$CONFIG_ROOT \
+						LFS_PASS="install" \
+						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
+						CFLAGS="-Os" CXXFLAGS="-Os" \
+						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
+						KVER=$KVER \
+						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+		    /bin/bash -x -c "cd /usr/src/lfs && \
+		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+		if [ $? -ne 0 ]; then
+			exiterror "Building $*"
+		fi
+	else
+		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
+	fi
+	return 0
+}
+
+update_logs() {
+	tar cfz log/ipfire-logs-`date +'%Y-%m-%d-%H:%M'`.tgz log/_build.*
+	rm -f log/_build.*
+}
+
+batch_script() {
+	echo -ne "### UPDATE LOGS"
+	update_logs
+	evaluate 1
+
+	if [ "$IPFIRE_REBUILD" -eq "0" ]; then
+		echo -ne "### SAVING TIME"
+		export IPFIRE_START_TIME=`date`
+		evaluate 1
+
+		echo "### RUNNING SVN-UPDATE"
+		$0 svn update
+		evaluate 1 mail SVNUPDATE
+
+		echo "### EXPORT SOURCES"
+		$0 svn dist
+		evaluate 1 mail SVNDIST
+
+		echo "### RUNNING PREFETCH"
+		$0 prefetch | grep -q "md5 difference"
+		evaluate 1 mail PREFETCH
+	fi
+
+	echo "### RUNNING BUILD"
+	$0 build
+	evaluate 1 mail ERROR
+
+	echo "### UPLOADING ISO"
+	$0 upload iso
+	evaluate 1 mail ISO
+	
+	echo -ne "### UPLOADING PAKS"
+	$0 upload paks
+	evaluate 1 mail PAKS
+
+	echo -n "${BOLD}***SUCCESS!${NORMAL}"
+	evaluate 0 mail SUCCESS
+	exit 0
+}
+
+watch_screen() {
+	echo -e "${BOLD}Exit with Ctrl+A, Ctrl+D.${NORMAL}"
+	sleep 0.5
+	screen -x ipfire
+}
+
+mail() {
+	chmod 755 tools/sendEmail
+	ATTACHMENT=/tmp/ipfire-build-logs-R$SVN_REVISION.tar.gz
+	case "$1" in
+		success)
+			SUBJECT="SUCCESS: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+			cat <<END > /tmp/ipfire_mail_body
+Building IPFire on `hostname` in Revision $SVN_REVISION was successfull!
+You can find the ISO on your ftp server.
+
+Statistics:
+-----------
+Started:	$IPFIRE_START_TIME
+Finished:	`date`
+
+Best Regards
+Your IPFire-Build-Script
+
+END
+		echo -ne "${BOLD}***Sending success message${NORMAL}"
+		;;
+		*)
+			SUBJECT="ERROR $1: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
+			cat <<END > /tmp/ipfire_mail_body
+When I was building IPFire on `hostname`, I have found an ERROR with name $1!
+Here you can see the logs and detect the reason for this error.
+
+Best Regards
+Your IPFire-Build-Script
+
+
+Here is a summary... The full logs are in the attachment.
+---------------------------------------------------------
+
+`tail log/_*`
+END
+		echo -ne "${BOLD}***Sending error message${NORMAL}"
+		;;
+	esac
+	tar cfz $ATTACHMENT log/_build*
+	cat /tmp/ipfire_mail_body | tools/sendEmail -q \
+		-f $IPFIRE_MAIL_FROM \
+		-t $IPFIRE_MAIL_REPORT \
+		-u $SUBJECT \
+		-s $IPFIRE_MAIL_SERVER:25 \
+		-xu $IPFIRE_MAIL_USER \
+		-xp $IPFIRE_MAIL_PASS \
+		-l log/_build.mail.log \
+		-a $ATTACHMENT # -v
+	if [ "$?" -eq "0" ]; then
+		beautify message DONE
+	else
+		beautify message FAIL
+	fi
+	rm -f /tmp/ipfire_mail_body $ATTACHMENT
+}
+
+make_config() {
+	echo -e "This is for creating your configuration..."
+	echo -e "We will need some input:"
+	echo -e ""
+	echo -n "FTP-DOMAIN FOR THE ISO: "
+	read IPFIRE_FTP_URL_EXT
+	echo -n "PATH FOR $IPFIRE_FTP_URL_EXT: "
+	read IPFIRE_FTP_PATH_EXT
+	echo -n "USERNAME FOR $IPFIRE_FTP_URL_EXT: "
+	read IPFIRE_FTP_USER_EXT
+	echo -n "PASSWORD FOR $IPFIRE_FTP_URL_EXT: "
+	read -s IPFIRE_FTP_PASS_EXT
+	echo ""
+	echo "(You can leave this empty if the cache-server is the same as your iso-server.)"
+	echo -n "FTP-DOMAIN FOR THE CACHE: "
+	read IPFIRE_FTP_URL_INT
+	echo -n "PATH FOR $IPFIRE_FTP_URL_INT: "
+	read IPFIRE_FTP_PATH_INT
+	if [ $IPFIRE_FTP_URL_INT ]; then
+		echo -n "USERNAME FOR $IPFIRE_FTP_URL_INT: "
+		read IPFIRE_FTP_USER_INT
+		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_INT: "
+		read -s IPFIRE_FTP_PASS_INT
+	else
+		IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_EXT
+		IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_EXT
+		IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_EXT
+		echo "USERNAME FOR $IPFIRE_FTP_URL_INT: $IPFIRE_FTP_USER_INT"
+		echo "PASSWORD FOR $IPFIRE_FTP_URL_INT: !HIDDEN!"
+	fi
+	echo ""
+	echo "(You can leave this empty if the pak-server is the same as your iso-server.)"
+	echo -n "FTP-DOMAIN FOR THE PAKS: "
+	read IPFIRE_FTP_URL_PAK
+	echo -n "PATH FOR $IPFIRE_FTP_URL_PAK: "
+	read IPFIRE_FTP_PATH_PAK
+	if [ $IPFIRE_FTP_URL_PAK ]; then
+		echo -n "USERNAME FOR $IPFIRE_FTP_URL_PAK: "
+		read IPFIRE_FTP_USER_PAK
+		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_PAK: "
+		read -s IPFIRE_FTP_PASS_PAK
+	else
+		IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_EXT
+		IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_EXT
+		IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_EXT
+		echo "USERNAME FOR $IPFIRE_FTP_URL_PAK: $IPFIRE_FTP_USER_PAK"
+		echo "PASSWORD FOR $IPFIRE_FTP_URL_PAK: !HIDDEN!"
+	fi
+	echo ""
+	echo -e "ONE OR MORE EMAIL ADDRESS(ES) TO WHICH THE REPORTS WILL BE SENT"
+	echo -e "(seperated by comma)"
+	read IPFIRE_MAIL_REPORT
+	echo -n "EMAIL FROM: "
+	read IPFIRE_MAIL_FROM
+	echo -n "EMAIL SERVER: "
+	read IPFIRE_MAIL_SERVER
+	echo -n "LOGIN TO MAIL SERVER: "
+	read IPFIRE_MAIL_USER
+	echo -n "MAIL PASSWORD: "
+	read -s IPFIRE_MAIL_PASS
+	echo -n "Saving..."
+	cat <<END > .config
+### ISO server
+IPFIRE_FTP_URL_EXT=$IPFIRE_FTP_URL_EXT
+IPFIRE_FTP_PATH_EXT=$IPFIRE_FTP_PATH_EXT
+IPFIRE_FTP_USER_EXT=$IPFIRE_FTP_USER_EXT
+IPFIRE_FTP_PASS_EXT=$IPFIRE_FTP_PASS_EXT
+### cache server
+IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_INT
+IPFIRE_FTP_PATH_INT=$IPFIRE_FTP_PATH_INT
+IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_INT
+IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_INT
+### paks server
+IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_PAK
+IPFIRE_FTP_PATH_PAK=$IPFIRE_FTP_PATH_PAK
+IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_PAK
+IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_PAK
+### mail reports
+IPFIRE_MAIL_REPORT=$IPFIRE_MAIL_REPORT
+IPFIRE_MAIL_FROM=$IPFIRE_MAIL_FROM
+IPFIRE_MAIL_SERVER=$IPFIRE_MAIL_SERVER
+IPFIRE_MAIL_USER=$IPFIRE_MAIL_USER
+IPFIRE_MAIL_PASS=$IPFIRE_MAIL_PASS
+END
+	beautify message DONE
+}
