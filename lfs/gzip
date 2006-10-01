@@ -85,7 +85,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gzip-1.3.5-security_fixes-1.patch
+ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-security_fixes-1.patch
+endif
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && sed -i 's@"BINDIR"@/bin@g' gzexe.in

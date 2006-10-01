@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: sysklogd,v 1.3.2.7 2005/10/17 21:15:49 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 1.4.1
 
 THISAPP    = sysklogd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_LFS_FTP)
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -78,13 +72,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sysklogd-1.3-31-rh-ksyslog-nul.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sysklogd-1.4.1-caen-owl-klogd-drop-root.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sysklogd-1.4.1-caen-owl-syslogd-bind.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sysklogd-1.4.1-caen-owl-syslogd-drop-root.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sysklogd-1.4.1-owl-syslogd-crunch_list.diff
-	cd $(DIR_APP) && CFLAGS="$(CFLAGS) -DSYSV -fomit-frame-pointer -Wall -fno-strength-reduce" make -e
-	cd $(DIR_APP) && CFLAGS="$(CFLAGS) -DSYSV -fomit-frame-pointer -Wall -fno-strength-reduce" make -e install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fixes-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-1.4.1-8bit-1.patch
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 	touch /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
 	chmod 664 /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
 	chown 0:105 /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}

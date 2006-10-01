@@ -72,11 +72,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/db-4.4.20-fixes-1.patch
 	cd $(DIR_APP)/build_unix && ../dist/configure --prefix=/usr --enable-compat185 --enable-cxx
-	cd $(DIR_APP)/build_unix && make
+	cd $(DIR_APP)/build_unix && make $(MAKETUNING)
 	cd $(DIR_APP)/build_unix && make docdir=/usr/share/doc/$(THISAPP) install
 	chown -v root:root /usr/bin/db_* /usr/lib/libdb* /usr/include/db*
-#	chown -v root:root /usr/bin/berkeley_db_svc
-	chown -v -R root:root /usr/share/doc/$(THISAPP)
+	chown -Rv root:root /usr/share/doc/$(THISAPP)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

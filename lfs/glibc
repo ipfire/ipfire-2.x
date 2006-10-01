@@ -97,14 +97,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-2.3.6-linux_types-1.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-2.3.6-inotify-1.patch
+ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-linux_types-1.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-inotify-1.patch
 	# This locale causes a loop on bash login - exclude it
 	cd $(DIR_APP) && sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.2 -o|' \
 		scripts/test-installation.pl
-
+endif
 	cd $(DIR_SRC)/glibc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
+
 ifeq "$(ROOT)" ""
 	touch /etc/ld.so.conf
 	cd $(DIR_SRC)/glibc-build && make $(MAKETUNING) $(EXTRA_MAKE)
@@ -120,17 +122,9 @@ endif
 	# Creating the locales
 ifeq "$(ROOT)" ""
 	mkdir -p /usr/lib/locale
-else
-	mkdir -p /tools/lib/locale
-endif
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f ISO-8859-1 en_US
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f UTF-8      en_US.utf8
-	cd $(DIR_SRC)/glibc-build && make localedata/install-locales
-
-	# Configuring Glibc
-ifeq "$(ROOT)" ""
-	cp -f /usr/share/zoneinfo/GMT /etc/localtime 
+	cp -f /usr/share/zoneinfo/GMT /etc/localtime
 endif
-	# Cleanup
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
 	@$(POSTBUILD)

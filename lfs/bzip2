@@ -44,13 +44,12 @@ endif
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = $(DL_FILE) bzip2-1.0.2-use_mktemp-1.patch
+
+objects = $(DL_FILE)
 
 $(DL_FILE)                        = $(DL_FROM)/$(DL_FILE)
-bzip2-1.0.2-use_mktemp-1.patch     = $(URL_LFS)/bzip2/bzip2-1.0.2-use_mktemp-1.patch
 
 $(DL_FILE)_MD5                    = 8a716bebecb6e647d2e8a29ea5d8447f
-bzip2-1.0.2-use_mktemp-1.patch_MD5 = d8f29ca8b25c48e16dc2f7a093df21ef
 
 install : $(TARGET)
 
@@ -80,13 +79,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bzip2-1.0.3-bzgrep_security-1.patch
 ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-bzgrep_security-1.patch
 	cd $(DIR_APP) && sed -i 's@tempfile -d /tmp -p bz@mktemp -p /tmp@' bzdiff
 	cd $(DIR_APP) && make -f Makefile-libbz2_so
 	cd $(DIR_APP) && make clean
-	cd $(DIR_APP) && make
-	rm -f /usr/bin/{bzgrep,bzegrep,bzfgrep,bzcmp,bzless}
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cp -v bzip2-shared /bin/bzip2
 	cp -av libbz2.so* /lib
@@ -95,8 +93,7 @@ ifeq "$(ROOT)" ""
 	ln -sv bzip2 /bin/bunzip2
 	ln -sv bzip2 /bin/bzcat
 else
-	cd $(DIR_APP) && make
-	rm -f /tools/bin/{bzgrep,bzegrep,bzfgrep,bzcmp,bzless}
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make PREFIX=/tools install
 endif
 	@rm -rf $(DIR_APP)

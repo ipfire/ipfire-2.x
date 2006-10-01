@@ -51,37 +51,33 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create directories
-	-mkdir -p /{bin,boot,dev/{pts,shm,net},etc/opt,home,lib,mnt,proc} 
-	-mkdir -p /{root,sbin,tmp,usr/local,var,opt}
-	-for dirname in /usr /usr/local; do \
-	    mkdir $$dirname/{bin,etc,include,lib,sbin,share,src}; \
-	    ln -sf share/{man,doc,info} $$dirname; \
-	    mkdir $$dirname/share/{dict,doc,info,locale,man}; \
-	    mkdir $$dirname/share/{nls,misc,terminfo,zoneinfo}; \
-	    mkdir $$dirname/share/man/man{1,2,3,4,5,6,7,8}; \
+	-mkdir -pv /{bin,boot,etc/opt,home,lib,mnt,opt}
+	-mkdir -pv /{media/{floppy,cdrom},sbin,srv,var}
+	-install -dv -m 0750 /root
+	-install -dv -m 1777 /tmp /var/tmp
+	-mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src}
+	-mkdir -pv /usr/{,local/}share/{doc,info,locale,man}
+	-mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
+	-mkdir -pv /usr/{,local/}share/man/man{1..8}
+	-for dir in /usr /usr/local; do \
+	  ln -sv share/{man,doc,info} $$dir; \
 	done
-	-mkdir -p /var/{lock/subsys,log,mail,run,spool}
-	-mkdir -p /var/{tmp,opt,cache,lib/misc,local,empty}
-	-mkdir /opt/{bin,doc,include,info}
-	-mkdir -p /opt/{lib,man/man{1,2,3,4,5,6,7,8}}
 
 	# Permissions
-	chmod 0750 /root
-	chmod 1777 /tmp /var/tmp
 	chmod 0711 /var/empty
 	
 	# Symlinks
 	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
-	-ln -sf /tools/bin/{bash,cat,pwd,stty} /bin
-	-ln -sf /tools/bin/perl /usr/bin
-	-ln -sf /tools/lib/libgcc_s.so.1 /usr/lib
-	-ln -sf bash /bin/sh
+	-ln -sv /tools/bin/{bash,cat,grep,pwd,stty} /bin
+	-ln -sv /tools/bin/perl /usr/bin
+	-ln -sv /tools/lib/libgcc_s.so{,.1} /usr/lib
+	-ln -sv bash /bin/sh
 
 	# Config files
 	for i in $(DIR_SRC)/config/etc/*; do \
 	    [ -f $$i ] && cp $$i /etc; \
 	done
-	ln -sf /proc/mounts /etc/mtab
+	touch /etc/mtab
 	echo "$(NAME) v$(VERSION) - $(SLOGAN)" > /etc/issue
 
 	# Scripts
@@ -94,11 +90,11 @@ $(TARGET) :
 	-mkdir -p /home/nobody
 	chown -R nobody:nobody /home/nobody
 
-	# Patches directory
-	-mkdir -m 1775 -p /var/patches
-	chown -R root:nobody /var/patches
-
-	# Versionsfile
-	echo -n "$(VERSION)" > /etc/ipfire_vers
+	# Create /var dirs and files
+	-mkdir -v /var/{lock,log,mail,run,spool,empty}
+	-mkdir -pv /var/{opt,cache,lib/{misc,locate},local}
+	touch /var/run/utmp /var/log/{btmp,lastlog,wtmp}
+	chgrp -v utmp /var/run/utmp /var/log/lastlog
+	chmod -v 664 /var/run/utmp /var/log/lastlog
 
 	@$(POSTBUILD)

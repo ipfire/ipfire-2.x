@@ -1,0 +1,116 @@
+Submitted By: Greg Schafer <gschafer at zip dot com dot au>
+Date: 2003-12-11
+Initial Package Version: 1.4.2
+Origin: Greg Schafer
+Description: Prevent installation of unwanted server man pages.
+
+diff -Naur inetutils-1.4.2.orig/ftpd/Makefile.in inetutils-1.4.2/ftpd/Makefile.in
+--- inetutils-1.4.2.orig/ftpd/Makefile.in	2002-12-23 04:30:12.000000000 +0000
++++ inetutils-1.4.2/ftpd/Makefile.in	2003-12-11 02:21:24.222010104 +0000
+@@ -177,7 +177,6 @@
+ 
+ noinst_HEADERS = extern.h
+ 
+-man_MANS = ftpd.8
+ 
+ INCLUDES = $(PATHDEF_FTPWELCOME) $(PATHDEF_FTPUSERS) \
+            $(PATHDEF_FTPLOGINMESG) $(PATHDEF_FTPCHROOT) $(PATHDEF_FTPDPID) \
+diff -Naur inetutils-1.4.2.orig/inetd/Makefile.in inetutils-1.4.2/inetd/Makefile.in
+--- inetutils-1.4.2.orig/inetd/Makefile.in	2002-12-23 04:30:13.000000000 +0000
++++ inetutils-1.4.2/inetd/Makefile.in	2003-12-11 02:21:24.223009952 +0000
+@@ -172,7 +172,6 @@
+ 
+ inetd_SOURCES = inetd.c
+ 
+-man_MANS = inetd.8
+ 
+ INCLUDES = $(PATHDEF_INETDCONF) $(PATHDEF_INETDDIR) -I$(top_builddir)/include
+ 
+diff -Naur inetutils-1.4.2.orig/logger/Makefile.in inetutils-1.4.2/logger/Makefile.in
+--- inetutils-1.4.2.orig/logger/Makefile.in	2002-12-23 04:30:16.000000000 +0000
++++ inetutils-1.4.2/logger/Makefile.in	2003-12-11 02:21:24.224009800 +0000
+@@ -175,7 +175,6 @@
+ 
+ logger_SOURCES = logger.c
+ 
+-man_MANS = logger.1
+ 
+ EXTRA_DIST = $(man_MANS)
+ subdir = logger
+diff -Naur inetutils-1.4.2.orig/rexecd/Makefile.in inetutils-1.4.2/rexecd/Makefile.in
+--- inetutils-1.4.2.orig/rexecd/Makefile.in	2002-12-23 04:30:17.000000000 +0000
++++ inetutils-1.4.2/rexecd/Makefile.in	2003-12-11 02:21:24.225009648 +0000
+@@ -173,7 +173,6 @@
+ 
+ rexecd_SOURCES = rexecd.c
+ 
+-man_MANS = rexecd.8
+ 
+ INCLUDES = $(PATHDEF_DEFPATH) $(PATHDEF_BSHELL) -I$(top_builddir)/include
+ 
+diff -Naur inetutils-1.4.2.orig/rlogind/Makefile.in inetutils-1.4.2/rlogind/Makefile.in
+--- inetutils-1.4.2.orig/rlogind/Makefile.in	2002-12-23 04:30:18.000000000 +0000
++++ inetutils-1.4.2/rlogind/Makefile.in	2003-12-11 02:21:24.225009648 +0000
+@@ -173,7 +173,6 @@
+ 
+ rlogind_SOURCES = rlogind.c
+ 
+-man_MANS = rlogind.8
+ 
+ INCLUDES = $(PATHDEF_DEV) $(PATHDEF_LOGIN) -I$(top_builddir)/include
+ 
+diff -Naur inetutils-1.4.2.orig/rshd/Makefile.in inetutils-1.4.2/rshd/Makefile.in
+--- inetutils-1.4.2.orig/rshd/Makefile.in	2002-12-23 04:30:19.000000000 +0000
++++ inetutils-1.4.2/rshd/Makefile.in	2003-12-11 02:21:24.226009496 +0000
+@@ -172,7 +172,6 @@
+ 
+ rshd_SOURCES = rshd.c
+ 
+-man_MANS = rshd.8
+ 
+ INCLUDES = $(PATHDEF_BSHELL) $(PATHDEF_NOLOGIN) $(PATHDEF_DEFPATH) -I$(top_builddir)/include
+ 
+diff -Naur inetutils-1.4.2.orig/syslogd/Makefile.in inetutils-1.4.2/syslogd/Makefile.in
+--- inetutils-1.4.2.orig/syslogd/Makefile.in	2002-12-23 04:30:19.000000000 +0000
++++ inetutils-1.4.2/syslogd/Makefile.in	2003-12-11 02:21:24.226009496 +0000
+@@ -172,7 +172,6 @@
+ 
+ syslogd_SOURCES = syslogd.c
+ 
+-man_MANS = syslog.conf.5 syslogd.8
+ 
+ INCLUDES = $(PATHDEF_LOG) $(PATHDEF_LOGCONF) $(PATHDEF_LOGPID) \
+ 	$(PATHDEF_CONSOLE) -I$(top_builddir)/include
+diff -Naur inetutils-1.4.2.orig/talkd/Makefile.in inetutils-1.4.2/talkd/Makefile.in
+--- inetutils-1.4.2.orig/talkd/Makefile.in	2002-12-23 04:30:20.000000000 +0000
++++ inetutils-1.4.2/talkd/Makefile.in	2003-12-11 02:21:24.227009344 +0000
+@@ -180,7 +180,6 @@
+  intalkd.h
+ 
+ 
+-man_MANS = talkd.8
+ 
+ INCLUDES = $(PATHDEF_DEV) -I${top_srcdir}/libinetutils -I$(top_builddir)/include
+ 
+diff -Naur inetutils-1.4.2.orig/telnetd/Makefile.in inetutils-1.4.2/telnetd/Makefile.in
+--- inetutils-1.4.2.orig/telnetd/Makefile.in	2002-12-23 04:30:21.000000000 +0000
++++ inetutils-1.4.2/telnetd/Makefile.in	2003-12-11 02:21:24.228009192 +0000
+@@ -176,7 +176,6 @@
+ 
+ noinst_HEADERS = telnetd.h
+ 
+-man_MANS = telnetd.8
+ 
+ INCLUDES = $(PATHDEF_DEV) $(PATHDEF_TTY) $(PATHDEF_LOGIN) -I$(top_builddir)/include \
+  -I$(top_srcdir) @INCAUTH@
+diff -Naur inetutils-1.4.2.orig/tftpd/Makefile.in inetutils-1.4.2/tftpd/Makefile.in
+--- inetutils-1.4.2.orig/tftpd/Makefile.in	2002-12-23 04:30:22.000000000 +0000
++++ inetutils-1.4.2/tftpd/Makefile.in	2003-12-11 02:21:24.229009040 +0000
+@@ -174,7 +174,6 @@
+ 
+ tftpd_SOURCES = tftpd.c
+ 
+-man_MANS = tftpd.8
+ 
+ LDADD = -L../libinetutils -linetutils
+ 

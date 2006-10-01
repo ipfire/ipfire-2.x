@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: flex,v 1.4.2.5 2005/02/05 15:38:14 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,36 +26,13 @@
 
 include Config
 
-VER        = 2.5.4a
+VER        = 2.5.33
 
 THISAPP    = flex-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_GNU)/non-gnu/flex
-DIR_APP    = $(DIR_SRC)/flex-2.5.4
-
-# Normal build or /tools build.
-#
-ifeq "$(ROOT)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --disable-nls
-  EXTRA_LDFLAGS =
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
-else
-ifeq "$(LFS_PASS)" "1"
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools1
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_LDFLAGS = -static
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools2
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_LDFLAGS =
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-endif
-endif
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -71,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = bd8753d0b22e1f4ec87a553a73021adf
+$(DL_FILE)_MD5 = 343374a00b38d9e39d1158b71af37150
 
 install : $(TARGET)
 
@@ -101,11 +72,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && LDFLAGS="$(EXTRA_LDFLAGS)" ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
-	ln -sf libfl.a /usr/lib/libl.a
+	ln -sv libfl.a /usr/lib/libl.a
 	echo "#!/bin/sh"			>  /usr/bin/lex
 	echo "exec /usr/bin/flex -l \"\$$@\""	>> /usr/bin/lex
 	chmod 755 /usr/bin/lex

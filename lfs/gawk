@@ -53,9 +53,9 @@ endif
 
 objects = $(DL_FILE)
 
-$(DL_FILE)                        = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                    = 5703f72d0eea1d463f735aad8222655f
+$(DL_FILE)_MD5 = 5703f72d0eea1d463f735aad8222655f
 
 install : $(TARGET)
 
@@ -85,7 +85,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-segfault_fix-1.patch
+endif
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && echo "#define HAVE_LANGINFO_CODESET 1"	>> config.h
 	cd $(DIR_APP) && echo "#define HAVE_LC_MESSAGES 1"		>> config.h

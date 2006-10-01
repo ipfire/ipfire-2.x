@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: e2fsprogs,v 1.7.2.4 2005/02/05 15:38:14 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,13 +26,13 @@
 
 include Config
 
-VER      = 1.35
+VER      = 1.39
 
 THISAPP    = e2fsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_SFNET)/e2fsprogs
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
+ifeq "$(PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
 else
   TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -52,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8d25ffd60d405ef32d341704a2323807
+$(DL_FILE)_MD5 = 06f7806782e357797fad1d34b7ced0c6
 
 install : $(TARGET)
 
@@ -82,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/e2fsprogs-build && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(LFS_PASS)" "install"
+ifeq "$(PASS)" "install"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-install.patch
 	-mkdir -p /install/misc/bin
 	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" ./configure --disable-nls
@@ -90,20 +84,20 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make lib/blkid/blkid_types.h
 	cd $(DIR_APP) && make lib/ext2fs/ext2_types.h
 	cd $(DIR_APP) && make lib/uuid/uuid_types.h
-	cd $(DIR_APP)/lib/blkid && make
-	cd $(DIR_APP)/lib/et && make
-	cd $(DIR_APP)/lib/ext2fs && make
-	cd $(DIR_APP)/lib/e2p && make
-	cd $(DIR_APP)/lib/uuid && make
-	cd $(DIR_APP)/misc && make mke2fs
+	cd $(DIR_APP)/lib/blkid && make $(MAKETUNING)
+	cd $(DIR_APP)/lib/et && make $(MAKETUNING)
+	cd $(DIR_APP)/lib/ext2fs && make $(MAKETUNING)
+	cd $(DIR_APP)/lib/e2p && make $(MAKETUNING)
+	cd $(DIR_APP)/lib/uuid && make $(MAKETUNING)
+	cd $(DIR_APP)/misc && make $(MAKETUNING) mke2fs
 	cd $(DIR_APP) && install -m 0755 misc/mke2fs /install/misc/bin
 else
-	cd $(DIR_SRC) && mkdir e2fsprogs-build
-	cd $(DIR_SRC)/e2fsprogs-build && $(DIR_APP)/configure --prefix=/usr --disable-nls \
-	    --with-root-prefix="" --enable-elf-shlibs --disable-evms
-	cd $(DIR_SRC)/e2fsprogs-build && make
-	cd $(DIR_SRC)/e2fsprogs-build && make install
-	cd $(DIR_SRC)/e2fsprogs-build && make install-libs
+	cd $(DIR_SRC) && mkdir build
+	cd $(DIR_SRC)/build && $(DIR_APP)/configure --prefix=/usr --with-root-prefix="" \
+						--enable-elf-shlibs --disable-evms --disable-nls
+	cd $(DIR_SRC)/build && make $(MAKETUNING)
+	cd $(DIR_SRC)/build && make install
+	cd $(DIR_SRC)/build && make install-libs
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/e2fsprogs-build
 	@$(POSTBUILD)

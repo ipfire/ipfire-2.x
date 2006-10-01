@@ -181,6 +181,8 @@ if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	echo "`date -u '+%b %e %T'`: Machine is iX86 (or equivalent)" >> $LOGFILE
 	MACHINE=i586
 	BUILDTARGET=i586-pc-linux-gnu
+	CFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
+	CXX2FLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
 	C2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 else

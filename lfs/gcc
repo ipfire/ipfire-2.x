@@ -40,9 +40,10 @@ CXXFLAGS   =
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr \
-    --enable-shared --enable-threads=posix \
-    --enable-__cxa_atexit --enable-clocale=gnu \
-    --enable-languages=c,c++ --disable-nls
+    --libexecdir=/usr/lib --enable-shared \
+    --enable-threads=posix --enable-__cxa_atexit \
+    --enable-clocale=gnu --enable-languages=c,c++ \
+    --disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
@@ -104,19 +105,28 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 ifeq "$(ROOT)" ""
+	cd $(DIR_APP) && sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
+	#cd $(DIR_APP) && sed -i 's/^XCFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in
+	cd $(DIR_APP) && sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
+	cd $(DIR_APP) && sed -i 's/@have_mktemp_command@/yes/' gcc/gccbug.in
 
+	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING)
+	cd $(DIR_SRC)/gcc-build && make install
+	ln -sfv ../usr/bin/cpp /lib
+	ln -sfv gcc /usr/bin/cc
 else
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
-	ln -vs gcc /tools/bin/cc
+	ln -sfv gcc /tools/bin/cc
 else
 	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.orig}
 	cd $(DIR_APP) && sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig > gcc/Makefile.in
 	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.tmp}
 	#cd $(DIR_APP) && sed 's/^XCFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in.tmp > gcc/Makefile.in
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.0.3-specs-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-specs-1.patch
 	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install

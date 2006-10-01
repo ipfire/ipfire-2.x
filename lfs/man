@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: man,v 1.4.2.5 2005/07/05 15:11:12 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 1.5p
+VER        = 2.4.3
 
-THISAPP    = man-$(VER)
+THISAPP    = man-db-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_KERNEL)/linux/utils/man
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -44,14 +38,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	man-1.5m2-pager-1.patch
+objects = $(DL_FILE)
 
 $(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
-man-1.5m2-pager-1.patch    = http://www.linuxfromscratch.org/patches/downloads/man/man-1.5m2-pager-1.patch
 
 $(DL_FILE)_MD5                  = 037d5644f8ef9ea0ef22b271bae0297d
-man-1.5m2-pager-1.patch_MD5    = e5ffe77f8ce0115dcf4b498ed0b6e8ca
 
 install : $(TARGET)
 
@@ -81,9 +72,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/man-1.5m2-pager-1.patch
-	cd $(DIR_APP) && ./configure -default -confdir=/etc +lang none
-	cd $(DIR_APP) && make CFLAGS="-fno-stack-protector"
+	cd $(DIR_APP) && mv man/de{_DE.88591,}
+	cd $(DIR_APP) && mv man/es{_ES.88591,}
+	cd $(DIR_APP) && mv man/it{_IT.88591,}
+	cd $(DIR_APP) && mv man/ja{_JP.eucJP,}
+	cd $(DIR_APP) && sed -i 's,\*_\*,??,' man/Makefile.in
+	cd $(DIR_APP) && sed -i '/\t\/usr\/man/d' src/man_db.conf.in
+	cd $(DIR_APP) && echo -e "#define WEB_BROWSER \"exec /usr/bin/lynx\"" >> include/manconfig.h.in
+	cd $(DIR_APP) && echo -e "#define COL \"/usr/bin/col\"" >> include/manconfig.h.in
+	cd $(DIR_APP) && echo -e "#define VGRIND \"/usr/bin/vgrind\"" >> include/manconfig.h.in
+	cd $(DIR_APP) && echo -e "#define GRAP \"/usr/bin/grap\"" >> include/manconfig.h.in
+	cd $(DIR_APP) && ./configure --prefix=/usr --enable-mb-groff --disable-setuid
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

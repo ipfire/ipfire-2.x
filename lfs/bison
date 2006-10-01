@@ -26,47 +26,23 @@
 
 include Config
 
-VER        = 1.875
+VER        = 2.2
 
 THISAPP    = bison-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-
-# Normal build or /tools build.
-#
-ifeq "$(ROOT)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --disable-nls
-  EXTRA_LDFLAGS =
-  EXTRA_MAKE = 
-  EXTRA_INSTALL =
-else
-ifeq "$(LFS_PASS)" "1"
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools1
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_LDFLAGS = -static
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools2
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_LDFLAGS =
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-endif
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects =$(DL_FILE) $(THISAPP)-attribute-1.patch
+
+objects =$(DL_FILE)
 
 $(DL_FILE)                       = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-attribute-1.patch     = $(URL_LFS)/bison/$(THISAPP)-attribute-1.patch
 
 $(DL_FILE)_MD5                   = 278515c1195194cad633bf40c892f512
-$(THISAPP)-attribute-1.patch_MD5 = 599a35b0a76fc4335e640389acdaffbe
 
 install : $(TARGET)
 
@@ -96,9 +72,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-attribute-1.patch
-	cd $(DIR_APP) && LDFLAGS="$(EXTRA_LDFLAGS)" ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	# Disable NLS
+	#cd $(DIR_APP) && echo '#define YYENABLE_NLS 1' >> config.h
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -1,0 +1,41 @@
+Submitted By: Bruce Dubbs (bdubbs at linuxfromscratch dot org)
+Date: 2006-07-15
+Initial Package Version: 3.2.2
+Origin: 
+Upstream Status: This is fixed in 3.3-pre1
+Description: Updates modprobe functionality to fix problem where 
+aliases don't quite work properly 
+	     
+--- module-init-tools-3.2.2/modprobe.c  2005-12-01 15:42:09.000000000 -0800
++++ module-init-tools-3.3-pre1/modprobe.c   2006-02-04 15:18:07.000000000 -0800
+@@ -990,13 +990,27 @@
+ 	return ret;
+ }
+ 
++/* Careful!  Don't munge - in [ ] as per Debian Bug#350915 */
+ static char *underscores(char *string)
+ {
+ 	if (string) {
+ 		unsigned int i;
+-		for (i = 0; string[i]; i++)
+-			if (string[i] == '-')
+-				string[i] = '_';
++        int inbracket = 0;
++        for (i = 0; string[i]; i++) {
++            switch (string[i]) {
++            case '[':
++                inbracket++;
++                break;
++            case ']':
++                inbracket--;
++                break;
++            case '-':
++                if (!inbracket)
++                    string[i] = '_';
++        }
++    }
++    if (inbracket)
++        warn("Unmatched bracket in %s\n", string);
+ 	}
+ 	return string;
+ }

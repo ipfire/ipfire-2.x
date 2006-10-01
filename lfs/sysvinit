@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: sysvinit,v 1.6.2.4 2005/07/28 00:32:46 franck78 Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 2.86
 
 THISAPP    = sysvinit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.cistron.nl/pub/people/miquels/sysvinit
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
@@ -88,9 +82,9 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP)/src && install -m 0755 killall5 /install/initrd/bin
 else
 	cd $(DIR_APP) && cp src/init.c{,.backup}
-	cd $(DIR_APP) && sed 's/Sending processes/Sending processes started by init/g' \
-	    src/init.c.backup > src/init.c
-	cd $(DIR_APP) && make -C src 
+	cd $(DIR_APP) && sed -i 's@Sending processes@& started by init@g' \
+				src/init.c
+	cd $(DIR_APP) && make $(MAKETUNING) -C src 
 	cd $(DIR_APP) && make -C src install
 endif
 	@rm -rf $(DIR_APP)

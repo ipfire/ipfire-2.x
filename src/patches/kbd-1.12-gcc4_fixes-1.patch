@@ -1,0 +1,54 @@
+Submitted By: Matthew Burgess <matthew@linuxfromscratch.org>
+Date: 2005-07-28
+Initial Package Version: 1.12
+Upstream Status: Unknown
+Origin: http://cvs.fedora.redhat.com/viewcvs/devel/kbd/kbd-1.12-alias.patch?rev=1.2&view=markup
+Description: Fix violations of C aliasing rules, triggered by gcc4.
+
+diff -Naur kbd-1.12.orig/src/psffontop.c kbd-1.12/src/psffontop.c
+--- kbd-1.12.orig/src/psffontop.c	2004-01-16 19:45:31.000000000 +0000
++++ kbd-1.12/src/psffontop.c	2005-07-28 20:33:57.946088984 +0000
+@@ -59,7 +59,6 @@
+ 
+ static unsigned int
+ assemble_ucs2(char **inptr, int cnt) {
+-	unsigned char **in = (unsigned char **) inptr;
+ 	unsigned int u1, u2;
+ 
+ 	if (cnt < 2) {
+@@ -68,8 +67,8 @@
+ 		exit(EX_DATAERR);
+ 	}
+ 
+-	u1 = *(*in)++;
+-	u2 = *(*in)++;
++	u1 = (unsigned char)*(*inptr)++;
++	u2 = (unsigned char)*(*inptr)++;
+ 	return (u1 | (u2 << 8));
+ }
+ 
+@@ -110,7 +109,6 @@
+  */
+ static void
+ get_uni_entry(char **inptr, char **endptr, struct unicode_list *up, int utf8) {
+-	unsigned char **in = (unsigned char **) inptr;
+ 	unsigned char uc;
+ 	unicode unichar;
+ 	int inseq = 0;
+@@ -126,14 +124,14 @@
+ 			exit(EX_DATAERR);
+ 		}
+ 		if (utf8) {
+-			uc = *(*in)++;
++			uc = *(*inptr)++;
+ 			if (uc == PSF2_SEPARATOR)
+ 				break;
+ 			if (uc == PSF2_STARTSEQ) {
+ 				inseq = 1;
+ 				continue;
+ 			}
+-			--(*in);
++			--(*inptr);
+ 			unichar = assemble_utf8(inptr, *endptr - *inptr);
+ 		} else {
+ 			unichar = assemble_ucs2(inptr, *endptr - *inptr);

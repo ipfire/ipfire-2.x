@@ -77,7 +77,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(ROOT)" ""
-
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-inotify-3.patch
+	cd $(DIR_APP) && install -dv /usr/include/asm
+	cd $(DIR_APP) && cp -Rv include/asm-i386/* /usr/include/asm
+	cd $(DIR_APP) && cp -Rv include/linux /usr/include
+	cd $(DIR_APP) && chown -Rv root:root /usr/include/{asm,linux}
+	cd $(DIR_APP) && find /usr/include/{asm,linux} -type d -exec chmod -v 755 {} \;
+	cd $(DIR_APP) && find /usr/include/{asm,linux} -type f -exec chmod -v 644 {} \;
 else
 	cd $(DIR_APP) && cp -Rv include/asm-i386 /tools/include/asm
 	cd $(DIR_APP) && cp -Rv include/linux /tools/include

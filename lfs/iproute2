@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: iproute2,v 1.6.2.4 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 2.4.7-now-ss010824
+VER        = 2.6.16-060323
 
 THISAPP    = iproute2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.funet.fi/pub/mirrors/ftp.inr.ac.ru/ip-routing
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/iproute2
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -46,9 +40,9 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 objects = $(DL_FILE) htb3.6-020525.tgz
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
-htb3.6-020525.tgz      = http://luxik.cdi.cz/~devik/qos/htb/v3/htb3.6-020525.tgz
+htb3.6-020525.tgz      = $(DL_FROM)/htb3.6-020525.tgz
 
-$(DL_FILE)_MD5         = b05a4e375d9468be3a1dd3f0e83daee8
+$(DL_FILE)_MD5         = f31d4516b35bbfeaa72c762f5959e97c
 htb3.6-020525.tgz_MD5  = 3064fd8642ce6a7e155a29c5205b99d4
 
 install : $(TARGET)
@@ -81,10 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar xfz $(DIR_DL)/htb3.6-020525.tgz *.diff
 	cd $(DIR_APP) && for i in htb3*tc.diff ; do patch -Np1 < $$i; done
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iproute2-includes.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iproute2-2.4.7-netlink.patch
-	cd $(DIR_APP) && sed -i -e 's/-Werror//' Makefile
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && install -m 0755 ip/ip ip/rtmon tc/tc /sbin
+	cd $(DIR_APP) && make $(MAKETUNING) SBINDIR=/sbin
+	cd $(DIR_APP) && make SBINDIR=/sbin install
+	cd $(DIR_APP) && mv -v /sbin/arpd /usr/sbin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

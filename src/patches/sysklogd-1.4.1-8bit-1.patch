@@ -1,0 +1,23 @@
+Submitted By: Alexander E. Patrakov
+Date: 2004-05-09
+Initial Package Version: 1.4.1
+Origin: Alexander E. Patrakov
+Upstream status: not submitted yet, probably will not be accepted
+Description: Weakens rules for determining whether a character is printable.
+Now only bytes < 0x20 and the 0x7f byte are considered to be unprintable.
+The original rules were valid for ISO-8859-* and KOI*.
+
+Without this fix, logging meaningful Russian messages in UTF-8 is impossible.
+
+diff -u sysklogd-1.4.1/syslogd.c sysklogd-1.4.1.fixed/syslogd.c
+--- sysklogd-1.4.1/syslogd.c	2001-03-12 00:40:10.000000000 +0500
++++ sysklogd-1.4.1.fixed/syslogd.c	2004-05-09 09:05:42.972864104 +0600
+@@ -1449,7 +1449,7 @@
+ 		else if (c < 040) {
+ 			*q++ = '^';
+ 			*q++ = c ^ 0100;
+-		} else if (c == 0177 || (c & 0177) < 040) {
++		} else if (c == 0177) {
+ 			*q++ = '\\';
+ 			*q++ = '0' + ((c & 0300) >> 6);
+ 			*q++ = '0' + ((c & 0070) >> 3);

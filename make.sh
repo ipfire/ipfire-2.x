@@ -95,7 +95,7 @@ prepareenv() {
     # Resetting our nice level                                                 #
     #                                                                          #
     ############################################################################
-    echo -ne "`date -u '+%b %e %T'`: Resetting our nice level to $NICE" | tee -a $LOGFILE
+    echo -ne "Resetting our nice level to $NICE" | tee -a $LOGFILE
     renice $NICE $$ > /dev/null
     if [ `nice` != "$NICE" ]; then
 	beautify message FAIL
@@ -110,7 +110,7 @@ prepareenv() {
     # Checking if running as root user                                         #
     #                                                                          #
     ############################################################################
-    echo -ne "`date -u '+%b %e %T'`: Checking if we're running as root user" | tee -a $LOGFILE
+    echo -ne "Checking if we're running as root user" | tee -a $LOGFILE
     if [ `id -u` != 0 ]; then
 	beautify message FAIL
 	exiterror "Not building as root"
@@ -124,7 +124,7 @@ prepareenv() {
     # Checking for necessary temporary space                                   #
     #                                                                          #
     ############################################################################
-    echo -ne "`date -u '+%b %e %T'`: Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
+    echo -ne "Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
     BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
     BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
     if (( 2202000 > $BASE_ASPACE )); then
@@ -142,8 +142,6 @@ prepareenv() {
     # Building Linux From Scratch system                                       #
     #                                                                          #
     ############################################################################
-    echo "`date -u '+%b %e %T'`: Building Linux From Scratch system" | tee -a $LOGFILE
-
     # Set umask
     umask 022
 
@@ -206,6 +204,7 @@ buildtoolchain() {
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
     lfsmake1 linux-libc-header
     lfsmake1 glibc
+    lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
@@ -229,7 +228,7 @@ buildtoolchain() {
     lfsmake1 tar
     lfsmake1 texinfo
     lfsmake1 util-linux
-    lfsmake1 cleanup-toolchain
+    lfsmake1 cleanup-toolchain	PASS=2
     export PATH=$ORG_PATH
 }
 
@@ -237,54 +236,61 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 makedev
-    lfsmake2 linux
+#    lfsmake2 makedev
+    lfsmake2 linux-libc-header
     lfsmake2 man-pages
     lfsmake2 glibc
+    lfsmake2 cleanup-toolchain	PASS=3
     lfsmake2 binutils
     lfsmake2 gcc
+    lfsmake2 berkeley
     lfsmake2 coreutils
-    lfsmake2 zlib
-    lfsmake2 mktemp
     lfsmake2 iana-etc
-    lfsmake2 findutils
-    lfsmake2 gawk
-    lfsmake2 ncurses
-    lfsmake2 vim
     lfsmake2 m4
     lfsmake2 bison
-    lfsmake2 less
-    lfsmake2 groff
+    lfsmake2 ncurses
+    lfsmake2 procps
     lfsmake2 sed
-    lfsmake2 flex
-    lfsmake2 gettext
-    lfsmake2 net-tools
-    lfsmake2 inetutils
+    lfsmake2 libtool
     lfsmake2 perl
-    lfsmake2 texinfo
+    lfsmake2 readline
+    lfsmake2 zlib
     lfsmake2 autoconf
     lfsmake2 automake
     lfsmake2 bash
-    lfsmake2 file
-    lfsmake2 libtool
     lfsmake2 bzip2
     lfsmake2 diffutils
-    lfsmake2 ed
-    lfsmake2 kbd
     lfsmake2 e2fsprogs
-    lfsmake2 grep
+    lfsmake2 file
+    lfsmake2 findutils
+    lfsmake2 flex
     lfsmake2 grub
+    lfsmake2 gawk
+    lfsmake2 gettext
+    lfsmake2 grep
+    lfsmake2 groff
     lfsmake2 gzip
-    lfsmake2 man
+    lfsmake2 inetutils
+    lfsmake2 iproute2
+    lfsmake2 kbd
+    lfsmake2 less
     lfsmake2 make
+    lfsmake2 man
+    lfsmake2 mktemp
     lfsmake2 modutils
     lfsmake2 patch
-    lfsmake2 procinfo
-    lfsmake2 procps
     lfsmake2 psmisc
     lfsmake2 shadow
     lfsmake2 sysklogd
     lfsmake2 sysvinit
+####
+    lfsmake2 vim
+    lfsmake2 net-tools
+    lfsmake2 inetutils
+    lfsmake2 texinfo
+    lfsmake2 ed
+    lfsmake2 procinfo
+
     lfsmake2 tar
     lfsmake2 util-linux
 }
@@ -668,7 +674,7 @@ build)
 	BUILDMACHINE=`uname -m`
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
-	if [ ! -f log/cleanup-toolchain-tools ]; then
+	if [ ! -f log/cleanup-toolchain-2-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
 			beautify build_stage "Full toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 			prepareenv
@@ -975,9 +981,6 @@ uploadsrc)
 			else
 				beautify message FAIL
 			fi
-		else
-			echo -ne "$i"
-			beautify message SKIP
 		fi
 	done
 	rm -f /var/tmp/ftplist
@@ -1084,7 +1087,10 @@ watch)
 		;;
 	"SVN: Commit")
 		if [ -f /usr/bin/mcedit ]; then
-			export EDITOR=/usr/sbin/mcedit
+			export EDITOR=/usr/bin/mcedit
+		fi
+		if [ -f /usr/bin/nano ]; then
+			export EDITOR=/usr/bin/nano
 		fi
 		$0 svn commit
 		$0 uploadsrc
@@ -1099,7 +1105,7 @@ watch)
 		$0 svn diff
 		;;
 	"Help")
-		echo "Usage: $0 {build|changelog|check|checkclean|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
+		echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
 		cat doc/make.sh-usage
 		;;
 	"LOG: Tail")

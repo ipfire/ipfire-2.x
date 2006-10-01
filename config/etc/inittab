@@ -1,5 +1,5 @@
 #
-# $Id: inittab,v 1.6.2.1 2006/01/24 15:25:35 franck78 Exp $
+# IPFire inittab
 #
 id:3:initdefault:
 
@@ -9,15 +9,17 @@ l6:6:wait:/etc/rc.d/rc.halt reboot
 si::sysinit:/etc/rc.d/rc.sysinit
 
 # Trap CTRL-ALT-DELETE
-ca::ctrlaltdel:/sbin/shutdown -r now
+ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
+
+su:S016:once:/sbin/sulogin
 
 # Run gettys in standard runlevels
-1:2345:respawn:/sbin/mingetty tty1
-2:2345:respawn:/sbin/mingetty tty2
-3:2345:respawn:/sbin/mingetty tty3
-4:2345:respawn:/sbin/mingetty tty4
-5:2345:respawn:/sbin/mingetty tty5
-6:2345:respawn:/sbin/mingetty tty6
+1:2345:respawn:/sbin/agetty tty1 9600
+2:2345:respawn:/sbin/agetty tty2 9600
+3:2345:respawn:/sbin/agetty tty3 9600
+4:2345:respawn:/sbin/agetty tty4 9600
+5:2345:respawn:/sbin/agetty tty5 9600
+6:2345:respawn:/sbin/agetty tty6 9600
 
 # Going single user mode for maintenance
 xx:S1:respawn:/bin/bash
