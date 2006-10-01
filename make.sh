@@ -168,12 +168,20 @@ prepareenv() {
 
     # Make some extra directories
     mkdir -p $BASEDIR/build/{tools,etc,usr/src} 2>/dev/null
+    mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
     mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
-    mkdir -p $BASEDIR/build/dev/pts $BASEDIR/build/proc $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
+    mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
+
+    mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
+    mknod -m 666 $BASEDIR/build/dev/null c 1 3 2>/dev/null
 
     # Make all sources and proc available under lfs build
-    mount --bind /dev/pts        $BASEDIR/build/dev/pts
+    mount --bind /dev            $BASEDIR/build/dev
     mount --bind /proc           $BASEDIR/build/proc
+    mount  -vt   devpts devpts   $BASEDIR/build/dev/pts
+    mount  -vt   tmpfs  shm      $BASEDIR/build/dev/shm
+    mount  -vt   proc   proc     $BASEDIR/build/proc
+    mount  -vt   sysfs  sysfs    $BASEDIR/build/sys
     mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
     mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
     mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
@@ -283,16 +291,16 @@ buildbase() {
     lfsmake2 shadow
     lfsmake2 sysklogd
     lfsmake2 sysvinit
-####
-    lfsmake2 vim
-    lfsmake2 net-tools
-    lfsmake2 inetutils
-    lfsmake2 texinfo
-    lfsmake2 ed
-    lfsmake2 procinfo
-
     lfsmake2 tar
+    lfsmake2 texinfo
+    lfsmake2 udev
     lfsmake2 util-linux
+    lfsmake2 vim
+####
+#    lfsmake2 net-tools
+#    lfsmake2 inetutils
+#    lfsmake2 ed
+#    lfsmake2 procinfo
 }
 
 buildipfire() {

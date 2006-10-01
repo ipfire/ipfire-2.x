@@ -106,7 +106,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@mkdir $(DIR_SRC)/gcc-build
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
-	#cd $(DIR_APP) && sed -i 's/^XCFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in
+	cd $(DIR_APP) && sed 's/^XCFLAGS =$\/& -fomit-frame-pointer/' gcc/Makefile.in.tmp \
+				> gcc/Makefile.in
 	cd $(DIR_APP) && sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
 	cd $(DIR_APP) && sed -i 's/@have_mktemp_command@/yes/' gcc/gccbug.in
 
@@ -125,7 +126,8 @@ else
 	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.orig}
 	cd $(DIR_APP) && sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig > gcc/Makefile.in
 	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.tmp}
-	#cd $(DIR_APP) && sed 's/^XCFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in.tmp > gcc/Makefile.in
+	cd $(DIR_APP) && sed 's/^XCFLAGS =$\/& -fomit-frame-pointer/' gcc/Makefile.in.tmp \
+				> gcc/Makefile.in
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-specs-1.patch
 	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)

@@ -59,12 +59,9 @@ $(TARGET) :
 	-mkdir -pv /usr/{,local/}share/{doc,info,locale,man}
 	-mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
 	-mkdir -pv /usr/{,local/}share/man/man{1..8}
-	-for dir in /usr /usr/local; do \
-	  ln -sv share/{man,doc,info} $$dir; \
-	done
-
-	# Permissions
-	chmod 0711 /var/empty
+	#-for dir in /usr /usr/local; do \
+	#  ln -sv share/{man,doc,info} $$dir; \
+	#done
 	
 	# Symlinks
 	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
@@ -96,5 +93,8 @@ $(TARGET) :
 	touch /var/run/utmp /var/log/{btmp,lastlog,wtmp}
 	chgrp -v utmp /var/run/utmp /var/log/lastlog
 	chmod -v 664 /var/run/utmp /var/log/lastlog
+
+	# Permissions
+	chmod 0711 /var/empty
 
 	@$(POSTBUILD)

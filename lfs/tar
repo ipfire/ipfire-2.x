@@ -87,8 +87,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fix_tests-1.patch
+ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-sparse_fix-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-security_fixes-1.patch
+endif
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install

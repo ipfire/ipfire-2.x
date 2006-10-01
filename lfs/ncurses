@@ -90,7 +90,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ncurses-5.5-fixes-1.patch
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(EXTRA_MAKE)  #$(MAKETUNING) # Causes an error!
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
 	chmod -v 755 /usr/lib/*.5.5

@@ -70,6 +70,7 @@ ifeq "$(PASS)" "2"
 	-strip --strip-debug /tools/lib/*
 	-strip --strip-unneeded /tools/{,s}bin/*
 	rm -rfv /tools/{info,man} /usr/local/man
+	cp -fv /tools/bin/{ld-old.bak,ld}
 	chown -R root:root /tools
 endif
 ifeq "$(PASS)" "3"

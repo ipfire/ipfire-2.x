@@ -38,8 +38,8 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
+  EXTRA_MAKE = tooldir=/usr
+  EXTRA_INSTALL = tooldir=/usr
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
@@ -94,25 +94,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/binutils-build
 	cd $(DIR_SRC)/binutils-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-ifeq "$(ROOT)" ""
 	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
+ifeq "$(ROOT) ""
+	cd $(DIR_APP)/binutils-build && cp -v ../$(THISAPP)/include/libiberty.h /usr/include
 else
 ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING)
-	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING) clean
-	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING) $(EXTRA_MAKE)
-else
-	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING) $(EXTRA_MAKE)
-endif
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 	cd $(DIR_SRC)/binutils-build && make -C ld clean
-ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/tools/lib
-else
-	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib
-endif
 	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
+else
+	cd $(DIR_SRC)/binutils-build && make -C ld clean
+	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib
+	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
+endif
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build
 	@$(POSTBUILD)

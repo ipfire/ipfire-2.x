@@ -1,0 +1,29 @@
+Submitted By: Alexander E. Patrakov
+Date: 2006-07-25
+Initial Package Version: 7.0
+Origin: Alexander E. Patrakov
+Upstream Status: Sent
+Description: Allows downloading spellfiles via HTTP,
+thus reverting the negative effect of ftp://ftp.vim.org/pub/vim/patches/7.0/7.0.010
+
+--- vim70/runtime/autoload/spellfile.vim.orig	2006-07-25 19:05:38.000000000 +0600
++++ vim70/runtime/autoload/spellfile.vim	2006-07-25 19:39:32.000000000 +0600
+@@ -110,9 +110,14 @@
+   endif
+ endfunc
+ 
+-" Read "fname" from the ftp server.
++" Read "fname" from the server.
+ function! spellfile#Nread(fname)
+-  let machine = substitute(g:spellfile_URL, 'ftp://\([^/]*\).*', '\1', '')
+-  let dir = substitute(g:spellfile_URL, 'ftp://[^/]*/\(.*\)', '\1', '')
+-  exe 'Nread "' . machine . ' anonymous vim7user ' . dir . '/' . a:fname . '"'
++  if strpart(g:spellfile_URL, 0, 6) == 'ftp://'
++    " Avoid the password prompt by providing the default username and password
++    let machine = substitute(g:spellfile_URL, 'ftp://\([^/]*\).*', '\1', '')
++    let dir = substitute(g:spellfile_URL, 'ftp://[^/]*/\(.*\)', '\1', '')
++    exe 'Nread "' . machine . ' anonymous vim7user ' . dir . '/' . a:fname . '"'
++  else
++     exe 'Nread "' . g:spellfile_URL . '/' . a:fname . '"'
++  endif
+ endfunc
