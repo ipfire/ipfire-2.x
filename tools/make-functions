@@ -182,7 +182,7 @@ if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	MACHINE=i586
 	BUILDTARGET=i586-pc-linux-gnu
 	CFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
-	CXX2FLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
+	CXXFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
 	C2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 else
@@ -192,7 +192,10 @@ fi
 
 # Define immediately
 stdumount() {
+	umount $BASEDIR/build/sys			2>/dev/null;
+	umount $BASEDIR/build/dev/shm		2>/dev/null;
 	umount $BASEDIR/build/dev/pts		2>/dev/null;
+	umount $BASEDIR/build/dev			2>/dev/null;
 	umount $BASEDIR/build/proc			2>/dev/null;
 	umount $BASEDIR/build/install/mnt		2>/dev/null;
 	umount $BASEDIR/build/usr/src/cache	2>/dev/null;

@@ -26,33 +26,13 @@
 
 include Config
 
-VER        = 2.16.1
+VER        = 2.0.2
 
-THISAPP    = binutils-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = mod_perl-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-
-# Normal build or /tools build.
-#
-ifeq "$(ROOT)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls
-  EXTRA_MAKE = tooldir=/usr
-  EXTRA_INSTALL = tooldir=/usr
-else
-ifeq "$(PASS)" "1"
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools1
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_MAKE = #LDFLAGS="-all-static"
-  EXTRA_INSTALL = 
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools2
-  EXTRA_CONFIG = --prefix=/tools --with-lib-path=/tools/lib --disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-endif
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -62,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6a9d529efb285071dad10e1f3d2b2967
+$(DL_FILE)_MD5 = ad0a509fd34e3b8452887d80a1d45dea
 
 install : $(TARGET)
 
@@ -91,23 +71,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	@mkdir $(DIR_SRC)/binutils-build
-	cd $(DIR_SRC)/binutils-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/binutils-build && make  $(EXTRA_MAKE) #$(MAKETUNING)
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
-ifeq "$(ROOT)" ""
-	cd $(DIR_APP)/binutils-build && cp -v ../$(THISAPP)/include/libiberty.h /usr/include
-else
-ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/binutils-build && make -C ld clean
-	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/tools/lib
-	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
-else
-	cd $(DIR_SRC)/binutils-build && make -C ld clean
-	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib
-	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
-endif
-endif
-	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL PREFIX=/usr MP_APXS=/usr/sbin/apxs
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

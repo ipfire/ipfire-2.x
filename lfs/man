@@ -40,9 +40,9 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 objects = $(DL_FILE)
 
-$(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                  = 037d5644f8ef9ea0ef22b271bae0297d
+$(DL_FILE)_MD5 = 30814a47f209f43b152659ba51fc7937
 
 install : $(TARGET)
 

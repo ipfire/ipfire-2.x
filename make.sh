@@ -177,11 +177,10 @@ prepareenv() {
 
     # Make all sources and proc available under lfs build
     mount --bind /dev            $BASEDIR/build/dev
-    mount --bind /proc           $BASEDIR/build/proc
-    mount  -vt   devpts devpts   $BASEDIR/build/dev/pts
-    mount  -vt   tmpfs  shm      $BASEDIR/build/dev/shm
-    mount  -vt   proc   proc     $BASEDIR/build/proc
-    mount  -vt   sysfs  sysfs    $BASEDIR/build/sys
+    mount  -t   devpts devpts    $BASEDIR/build/dev/pts
+    mount  -t   tmpfs  shm       $BASEDIR/build/dev/shm
+    mount  -t   proc   proc      $BASEDIR/build/proc
+    mount  -t   sysfs  sysfs     $BASEDIR/build/sys
     mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
     mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
     mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
