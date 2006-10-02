@@ -51,8 +51,8 @@ else
     --enable-kernel=2.6.0 --with-binutils=/tools/bin \
     --without-gd --with-headers=/tools/include \
     --without-selinux
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 endif
 
 ###############################################################################

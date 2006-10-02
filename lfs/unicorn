@@ -36,7 +36,7 @@ VER        = 0.9.3
 
 THISAPP    = bast-$(VER)
 DL_FILE    = A1012-A1006-A904-A888-A983-$(VER).tgz
-DL_FROM    = http://www.bewan.com/bewan/drivers
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/unicorn
 ifeq "$(SMP)" ""
   TARGET     = $(DIR_INFO)/$(THISAPP)

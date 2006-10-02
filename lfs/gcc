@@ -52,7 +52,7 @@ ifeq "$(PASS)" "1"
   EXTRA_CONFIG = --prefix=/tools \
     --with-local-prefix=/tools --disable-nls --enable-shared \
     --enable-languages=c
-  EXTRA_MAKE = BOOT_LDFLAGS="-static" bootstrap
+  EXTRA_MAKE = bootstrap #BOOT_LDFLAGS="-static"
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2

@@ -820,33 +820,39 @@ prefetch)
 		cd $BASEDIR/lfs
 		for i in *; do
 			if [ -f "$i" -a "$i" != "Config" ]; then
+				echo -ne "Loading $i"
 				make -s -f $i LFS_BASEDIR=$BASEDIR MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
 				if [ $? -ne 0 ]; then
-					echo "Prefetch : wget error in lfs/$i"
+					beautify message FAIL
 					FINISHED=0
 				else
 					if [ $c -eq 1 ]; then
-						echo "Prefetch : lfs/$i files loaded"
+					beautify message DONE
 					fi
 				fi
 			fi
 		done
 	done
-	echo "Prefetch : verifying md5sum"
+	echo -e "${BOLD}***Verifying md5sums${NORMAL}"
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
 			make -s -f $i LFS_BASEDIR=$BASEDIR MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
-				echo "md5 difference in lfs/$i"
+				echo -ne "MD5 difference in lfs/$i"
+				beautify message FAIL
 				ERROR=1
 			fi
 		fi
 	done
 	if [ $ERROR -eq 0 ]; then
-		echo "Prefetch : all files md5sum match"
+		echo -ne "${BOLD}all files md5sum match${NORMAL}"
+		beautify message DONE
+	else
+		echo -ne "${BOLD}not all files were correctly download${NORMAL}"
+		beautify message FAIL
 	fi
-	cd -
+	cd - >/dev/null 2>&1
 	;;
 toolchain)
 	prepareenv

@@ -44,7 +44,7 @@ else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_MAKE = #LDFLAGS="-all-static"
+  EXTRA_MAKE = LDFLAGS="-all-static"
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
@@ -94,7 +94,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/binutils-build
 	cd $(DIR_SRC)/binutils-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/binutils-build && make  $(EXTRA_MAKE) #$(MAKETUNING)
+ifeq "$(PASS)" "1"
+	cd $(DIR_SRC)/binutils-build && make configure-host
+#	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING)
+#	cd $(DIR_SRC)/binutils-build && make clean
+endif
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) #$(MAKETUNING)
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP)/binutils-build && cp -v ../$(THISAPP)/include/libiberty.h /usr/include
