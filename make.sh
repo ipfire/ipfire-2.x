@@ -678,6 +678,7 @@ ipfirepackages() {
 # See what we're supposed to do
 case "$1" in 
 build)
+	clear
 	BUILDMACHINE=`uname -m`
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
@@ -697,7 +698,8 @@ build)
 			fi
 		fi
 	else
-		echo "`date -u '+%b %e %T'`: Using installed toolchain" | tee -a $LOGFILE
+		echo -n "Using installed toolchain" | tee -a $LOGFILE
+		beautify message SKIP
 		prepareenv
 	fi
 
@@ -855,6 +857,7 @@ prefetch)
 	cd - >/dev/null 2>&1
 	;;
 toolchain)
+	clear
 	prepareenv
 	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 	buildtoolchain
@@ -956,9 +959,9 @@ svn)
 			exit 0
 		fi
 		echo -en "REV $SVN_REVISION: Downloading..."
-		svn export http://svn.ipfire.eu/svn/ipfire ipfire-source/ --force > /dev/null
-		svn log http://svn.ipfire.eu/svn/ipfire -r 1:$SVN_REVISION > ipfire-source/Changelog
-		#svn info http://svn.ipfire.eu/svn/ipfire -r $SVN_REVISION > ipfire-source/svn_status
+		svn export http://svn.ipfire.eu/svn/ipfire/trunk ipfire-source/ --force > /dev/null
+		svn log http://svn.ipfire.eu/svn/ipfire/trunk -r 1:$SVN_REVISION > ipfire-source/Changelog
+		#svn info http://svn.ipfire.eu/svn/ipfire/trunk -r $SVN_REVISION > ipfire-source/svn_status
 		evaluate 1
 
 		echo -en "REV $SVN_REVISION: Compressing files..."

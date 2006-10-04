@@ -38,8 +38,8 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls
-  EXTRA_MAKE = tooldir=/usr
-  EXTRA_INSTALL = tooldir=/usr
+  EXTRA_MAKE = tooldir=/usr LD_LIBRARY_PATH=/usr/lib
+  EXTRA_INSTALL = tooldir=/usr LD_LIBRARY_PATH=/usr/lib
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
@@ -96,10 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/binutils-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make configure-host
-#	cd $(DIR_SRC)/binutils-build && make $(MAKETUNING)
-#	cd $(DIR_SRC)/binutils-build && make clean
 endif
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) #$(MAKETUNING)
+	# $(MAKETUNING) stil is disabled here
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) 
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP)/binutils-build && cp -v ../$(THISAPP)/include/libiberty.h /usr/include
