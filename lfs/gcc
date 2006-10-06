@@ -43,9 +43,13 @@ ifeq "$(ROOT)" ""
     --libexecdir=/usr/lib --enable-shared \
     --enable-threads=posix --enable-__cxa_atexit \
     --enable-clocale=gnu --enable-languages=c,c++ \
-    --disable-nls
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
+    --disable-nls \
+    --host=i686-pc-linux-gnu \
+    --target=$(BUILDTARGET)
+# This is not taken from the LFS but a fix, 
+# because the compiler tries to do a cross-compile.
+  EXTRA_MAKE = LD_LIBRARY_PATH=/usr/lib
+  EXTRA_INSTALL = LD_LIBRARY_PATH=/usr/lib
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
@@ -105,20 +109,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
-	cd $(DIR_APP) && sed 's/^XCFLAGS =$\/& -fomit-frame-pointer/' gcc/Makefile.in.tmp \
-				> gcc/Makefile.in
+	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
+	cd $(DIR_APP) && sed -i 's/^XCFLAGS =$$/& -fomit-frame-pointer/' gcc/Makefile.in
 	cd $(DIR_APP) && sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
 	cd $(DIR_APP) && sed -i 's/@have_mktemp_command@/yes/' gcc/gccbug.in
 
-	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING)
-	cd $(DIR_SRC)/gcc-build && make install
+	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 	ln -sfv ../usr/bin/cpp /lib
 	ln -sfv gcc /usr/bin/cc
 else
 ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 	ln -sfv gcc /tools/bin/cc
@@ -129,7 +132,7 @@ else
 	cd $(DIR_APP) && sed 's/^XCFLAGS =$\/& -fomit-frame-pointer/' gcc/Makefile.in.tmp \
 				> gcc/Makefile.in
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-specs-1.patch
-	cd $(DIR_SRC)/gcc-build && /bin/bash $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 endif

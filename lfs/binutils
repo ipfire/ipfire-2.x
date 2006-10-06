@@ -101,7 +101,7 @@ endif
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) 
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
-	cd $(DIR_APP)/binutils-build && cp -v ../$(THISAPP)/include/libiberty.h /usr/include
+	cp -v $(DIR_APP)/include/libiberty.h /usr/include
 else
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make -C ld clean
