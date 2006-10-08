@@ -191,6 +191,9 @@ prepareenv() {
     mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
     mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
 
+    # This is a temporary hack!!!
+    cp -f /bin/hostname /tools/bin/hostname 2>/dev/null
+
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
     export CCACHE_HASHDIR=1

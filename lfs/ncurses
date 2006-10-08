@@ -98,9 +98,9 @@ ifeq "$(ROOT)" ""
 	mv -v /usr/lib/libncursesw.so.5* /lib
 	ln -sfv ../../lib/libncursesw.so.5 /usr/lib/libncursesw.so
 	cd $(DIR_APP) && for lib in curses ncurses form panel menu ; do \
-	    rm -vf /usr/lib/lib${lib}.so ; \
-	    echo "INPUT(-l${lib}w)" >/usr/lib/lib${lib}.so ; \
-	    ln -sfv lib${lib}w.a /usr/lib/lib${lib}.a ; \
+	    rm -vf /usr/lib/lib$${lib}.so ; \
+	    echo "INPUT(-l$${lib}w)" >/usr/lib/lib$${lib}.so ; \
+	    ln -sfv lib$${lib}w.a /usr/lib/lib$${lib}.a ; \
 	done
 	ln -sfv libncurses++w.a /usr/lib/libncurses++.a4
 	echo "INPUT(-lncursesw)" >/usr/lib/libcursesw.so
