@@ -31,7 +31,7 @@ VER        = 2.6.16-060323
 THISAPP    = iproute2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/iproute2
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -73,8 +73,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && tar xfz $(DIR_DL)/htb3.6-020525.tgz *.diff
-	cd $(DIR_APP) && for i in htb3*tc.diff ; do patch -Np1 < $$i; done
+#	cd $(DIR_APP) && tar xfz $(DIR_DL)/htb3.6-020525.tgz *.diff
+#	cd $(DIR_APP) && for i in htb3*tc.diff ; do patch -Np1 < $$i; done
 	cd $(DIR_APP) && make $(MAKETUNING) SBINDIR=/sbin
 	cd $(DIR_APP) && make SBINDIR=/sbin install
 	cd $(DIR_APP) && mv -v /sbin/arpd /usr/sbin

@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e 's/2010/002D/' -e 's/2212/002D/' \
 				-e 's/2018/0060/' -e 's/2019/0027/' font/devutf8/R.proto
 	cd $(DIR_APP) && PAGE=A4 ./configure --prefix=/usr --enable-multibyte --disable-nls
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	ln -sv eqn /usr/bin/geqn
 	ln -sv tbl /usr/bin/gtbl
