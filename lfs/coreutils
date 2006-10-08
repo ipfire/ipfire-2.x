@@ -104,7 +104,7 @@ ifeq "$(ROOT)" ""
 	mv -v /usr/bin/chroot /usr/sbin
 	mv -v /usr/bin/{head,sleep,nice} /bin
 	ln -sf test /bin/[
-	ln -sf ../../bin/install /usr/bin
+	#ln -sf ../../bin/install /usr/bin
 	mv -f /bin/uname /bin/uname.bak
 	echo '#!/bin/bash'				>  /bin/uname
 	echo '/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g'' >> /bin/uname

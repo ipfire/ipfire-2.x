@@ -28,7 +28,7 @@ VERSION="2.0"				# Version number
 SLOGAN="www.ipfire.eu"		# Software slogan
 CONFIG_ROOT=/var/ipfire		# Configuration rootdir
 NICE=10				# Nice level
-MAX_RETRIES=3				# prefetch/check loop
+MAX_RETRIES=1				# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 SVN_REVISION=`svn info | grep Revision | cut -c 11-`
@@ -177,10 +177,10 @@ prepareenv() {
 
     # Make all sources and proc available under lfs build
     mount --bind /dev            $BASEDIR/build/dev
-    mount  -t   devpts devpts    $BASEDIR/build/dev/pts
-    mount  -t   tmpfs  shm       $BASEDIR/build/dev/shm
-    mount  -t   proc   proc      $BASEDIR/build/proc
-    mount  -t   sysfs  sysfs     $BASEDIR/build/sys
+    mount --bind /dev/pts        $BASEDIR/build/dev/pts
+    mount --bind /dev/shm        $BASEDIR/build/dev/shm
+    mount --bind /proc           $BASEDIR/build/proc
+    mount --bind /sys            $BASEDIR/build/sys
     mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
     mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
     mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
@@ -811,7 +811,7 @@ prefetch)
 		mkdir $BASEDIR/cache
 	fi
 	mkdir -p $BASEDIR/log
-	echo "`date -u '+%b %e %T'`:Preload all source files" | tee -a $LOGFILE
+	echo -e "${BOLD}Preload all source files${NORMAL}" | tee -a $LOGFILE
 	FINISHED=0
 	cd $BASEDIR/lfs
 	for c in `seq $MAX_RETRIES`; do

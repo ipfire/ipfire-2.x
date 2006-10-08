@@ -36,7 +36,7 @@ VER        = 6.1.2
 
 THISAPP    = logwatch-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    =  ftp://ftp.kaybee.org/pub/old/linux
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

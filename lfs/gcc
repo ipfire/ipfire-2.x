@@ -43,20 +43,16 @@ ifeq "$(ROOT)" ""
     --libexecdir=/usr/lib --enable-shared \
     --enable-threads=posix --enable-__cxa_atexit \
     --enable-clocale=gnu --enable-languages=c,c++ \
-    --disable-nls \
-    --host=i686-pc-linux-gnu \
-    --target=$(BUILDTARGET)
-# This is not taken from the LFS but a fix, 
-# because the compiler tries to do a cross-compile.
-  EXTRA_MAKE = LD_LIBRARY_PATH=/usr/lib
-  EXTRA_INSTALL = LD_LIBRARY_PATH=/usr/lib
+    --disable-nls
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = --prefix=/tools \
     --with-local-prefix=/tools --disable-nls --enable-shared \
     --enable-languages=c
-  EXTRA_MAKE = bootstrap #BOOT_LDFLAGS="-static"
+  EXTRA_MAKE = bootstrap BOOT_LDFLAGS="-static"
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
@@ -75,9 +71,9 @@ endif
 ###############################################################################
 objects = $(DL_FILE)
 
-$(DL_FILE)                             = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                         = 6ff1af12c53cbb3f79b27f2d6a9a3d50
+$(DL_FILE)_MD5 = 6ff1af12c53cbb3f79b27f2d6a9a3d50
 
 install : $(TARGET)
 

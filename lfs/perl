@@ -84,13 +84,14 @@ ifneq "$(ROOT)" ""
 endif
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
-		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" \
-		-Dmyhostname=localhost
+		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='Data/Dumper Fcntl IO POSIX' -Dmyhostname=localhost
-	cd $(DIR_APP) && make $(MAKETUNING) perl utilities
+	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='Data/Dumper Fcntl IO POSIX'
+	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
+	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
+	cd $(DIR_APP) && make perl utilities
 	cd $(DIR_APP) && cp -v perl pod/pod2man /tools/bin
 	cd $(DIR_APP) && mkdir -pv /tools/lib/perl5/$(VER)
 	cd $(DIR_APP) && cp -Rv lib/* /tools/lib/perl5/$(VER)

@@ -30,11 +30,11 @@ VER        = 6.3.4
 
 THISAPP    = fetchmail-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://download2.berlios.de/fetchmail
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fetchmail
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules

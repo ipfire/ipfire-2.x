@@ -103,9 +103,9 @@ ifeq "$(ROOT)" ""
 	    ln -sfv lib${lib}w.a /usr/lib/lib${lib}.a ; \
 	done
 	ln -sfv libncurses++w.a /usr/lib/libncurses++.a4
-	echo "INPUT(-lncursesw)" >/usr/lib/libcursesw.so &&
-	ln -sfv libncurses.so /usr/lib/libcurses.so &&
-	ln -sfv libncursesw.a /usr/lib/libcursesw.a &&
+	echo "INPUT(-lncursesw)" >/usr/lib/libcursesw.so
+	ln -sfv libncurses.so /usr/lib/libcurses.so
+	ln -sfv libncursesw.a /usr/lib/libcursesw.a
 	ln -sfv libncurses.a /usr/lib/libcurses.a
 endif
 	@rm -rf $(DIR_APP)
