@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: unzip,v 1.5.2.8 2005/10/03 22:49:44 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,8 +30,7 @@ VER        = 552
 
 THISAPP    = unzip$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-#DL_FROM    = ftp://ftp.info-zip.org/pub/infozip/src
-DL_FROM    = http://fresh.t-systems-sfr.com/unix/src/misc
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/unzip-5.52
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -79,11 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	if [ "$(MACHINE)" = "i386" ]; then \
-		cd $(DIR_APP) && make -f unix/Makefile linux; \
-	else \
-		cd $(DIR_APP) && make -f unix/Makefile linux_noasm; \
-	fi
-	cd $(DIR_APP) && make -f unix/Makefile prefix=/usr install
+	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux
+	cd $(DIR_APP) && make prefix=/usr install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

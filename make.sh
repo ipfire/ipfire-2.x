@@ -313,7 +313,8 @@ buildipfire() {
   ipfiremake dhcpcd
   ipfiremake libusb
   ipfiremake libpcap
-  ipfiremake linux-atm
+# Temporary disabled.
+#  ipfiremake linux-atm
   ipfiremake ppp
   ipfiremake rp-pppoe
   ipfiremake unzip

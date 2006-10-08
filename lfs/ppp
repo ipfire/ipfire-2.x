@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: ppp,v 1.20.2.8 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 2.4.2
+VER        = 2.4.4
 
 THISAPP    = ppp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.samba.org/pub/ppp
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 362bcf218fba8afbb9afbee7471e5dac
+$(DL_FILE)_MD5 = 183800762e266132218b204dfb428d29
 
 install : $(TARGET)
 
@@ -79,19 +73,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && rm -f include/pcap-int.h
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm-persist.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.1-oedod.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm-modprobe.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-signal.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-printstats.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-close.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm-persist.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.1-oedod.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm-modprobe.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-signal.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-printstats.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-close.patch
 	cd $(DIR_APP) && sed -i -e "s+/etc/ppp/connect-errors+/var/log/connect-errors+" pppd/pathnames.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP)/pppd && sed -i -e 's/#include <net\/bpf.h>/#include <pcap.h>/' sys-linux.c
-	cd $(DIR_APP)/pppd && sed -i -e 's/#include <net\/bpf.h>/#include <pcap.h>/' demand.c
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install-etcppp
 	touch /var/log/connect-errors
 	-mkdir -p /etc/ppp
 	for i in $(DIR_SRC)/src/ppp/* ; do \

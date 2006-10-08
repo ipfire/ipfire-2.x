@@ -32,11 +32,11 @@
 
 include Config
 
-VER        = 3.5
+VER        = 3.8
 
 THISAPP    = rp-pppoe-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://www.roaringpenguin.com/penguin/pppoe
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 97972f8f8f6a3ab9b7070333a6a29c4b
+$(DL_FILE)_MD5 = 0e32760f498f9cde44081ee6aafc823b
 
 install : $(TARGET)
 
@@ -78,8 +78,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/src && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP)/src && make
+	cd $(DIR_APP) && sed -i s%/usr/bin/logger%/bin/logger% scripts/pppoe-{connect,setup,stop}.in
+	cd $(DIR_APP)/src && ./configure --disable-nls
+	cd $(DIR_APP)/src && make $(MAKETUNING)
 	cd $(DIR_APP)/src && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
