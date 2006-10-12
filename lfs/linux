@@ -38,13 +38,13 @@ CXXFLAGS   =
 
 # Normal build or /tools build.
 #
-ifeq "$(SMP)" ""
+ifeq "$(PASS)" ""
   TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire
 endif
-ifeq "$(SMP)" "1"
+ifeq "$(PASS)" "SMP"
   TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-smp
 endif
-ifeq "$(SMP)" "installer"
+ifeq "$(PASS)" "installer"
   TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-installer
 endif
 
@@ -57,7 +57,7 @@ objects =$(DL_FILE) \
 	patch-o-matic-ng-20060206.tar.bz2 \
 	kbc_option_2420.patch \
 	net4801.kernel.patch_2.4.31 \
-	netfilter-layer7-v2.1.tar.gz \
+	netfilter-layer7-v2.6.tar.gz \
 	patch-$(PATCHLEVEL).gz
 
 $(DL_FILE)					= $(DL_FROM)/$(DL_FILE)
@@ -67,7 +67,7 @@ patch-o-matic-ng-20060206.tar.bz2    	= $(URL_IPFIRE)/patch-o-matic-ng-20060206.
 iptables-1.3.5.tar.bz2			= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
 kbc_option_2420.patch			= $(URL_IPFIRE)/kbc_option_2420.patch
 net4801.kernel.patch_2.4.31			= $(URL_IPFIRE)/net4801.kernel.patch_2.4.31
-netfilter-layer7-v2.1.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.1.tar.gz
+netfilter-layer7-v2.6.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.6.tar.gz
 
 $(DL_FILE)_MD5					= 50695965725367f39007023feac5e256
 patch-$(PATCHLEVEL).gz_MD5				= 4b09dd018286850c20c0f051ced7b583
@@ -76,7 +76,7 @@ patch-o-matic-ng-20060206.tar.bz2_MD5		= eca9893afb753e331caddfe63142b566
 iptables-1.3.5.tar.bz2_MD5				= 00fb916fa8040ca992a5ace56d905ea5
 kbc_option_2420.patch_MD5				= 6d37870344f7fcf97ace1fbf43323c60
 net4801.kernel.patch_2.4.31_MD5			= c7d64e3caedb2f2b10e1c11db7f73a04
-netfilter-layer7-v2.1.tar.gz_MD5			= 551626a158c2a2cbfd937d27ecc7fac1
+netfilter-layer7-v2.6.tar.gz_MD5			= 58135cd1aafaf4ae2fa478159206f064
 
 install : $(TARGET)
 
@@ -140,9 +140,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ipsec-03-policy-lookup
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ipsec-04-policy-checks
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ TARPIT
-
-	# imq-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16-imq2.diff
 	
 	#layer7-patch
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.6.tar.gz
@@ -151,7 +148,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# ip_conntrack permissions from 440 to 444
 	# cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 
-ifeq "$(SMP)" ""
+ifeq "$(PASS)" ""
 	# Only do this once on the non-SMP pass
 	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.5
 endif
@@ -179,17 +176,17 @@ endif
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.29_r8169clone.patch
 
 	# bootsplash
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bootsplash-3.0.7-2.4.31-vanilla.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bootsplash-3.1.6-2.6.15.diff
 
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
-ifeq "$(SMP)" ""
+ifeq "$(PASS)" ""
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
 endif
-ifeq "$(SMP)" "1"
+ifeq "$(PASS)" "SMP"
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).smp $(DIR_APP)/.config
 endif
-ifeq "$(SMP)" "installer"
+ifeq "$(PASS)" "installer"
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).installer $(DIR_APP)/.config
 	cd $(DIR_APP) && sed -i -e 's/-O2/-Os/g' Makefile
 endif
@@ -197,28 +194,31 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
 	cd $(DIR_APP) && make CC="$(KGCC)" dep
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
-	if [ "$(SMP)" = "" ]; then \
+	if [ "$(PASS)" = "" ]; then \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
-		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-$(VER); \
-		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER); \
+		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER); \
+		cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER); \
+		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
 		ln -sf vmlinuz-$(VER) /boot/vmlinuz; \
 		ln -sf System.map-$(VER) /boot/System.map; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
-	elif [ "$(SMP)" = "1" ]; then \
+	elif [ "$(PASS)" = "1" ]; then \
 		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -smp/' Makefile; \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
-		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-$(VER)-smp; \
-		cd $(DIR_APP) && cp System.map /boot/System.map-$(VER)-smp; \
+		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-smp; \
+		cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-smp; \
+		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
 		ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-smp; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
 		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
-	elif [ "$(SMP)" = "installer" ]; then \
+	elif [ "$(PASS)" = "installer" ]; then \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
-		cd $(DIR_APP) && cp arch/$(MACHINE)/boot/bzImage /boot/vmlinuz-installer; \
+		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-installer; \
+		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
 	fi
 	# remove symlinked pcmcia directory
-ifeq "$(SMP)" ""
+ifeq "$(PASS)" ""
 	rm -rf /lib/modules/$(VER)/pcmcia
 	find /lib/modules/$(VER)/ -name '*.o' -a -type f | xargs gzip -f9
 
@@ -230,7 +230,7 @@ ifeq "$(SMP)" ""
 	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)/kernel/drivers/scsi
 	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2
 endif
-ifeq "$(SMP)" "1"
+ifeq "$(PASS)" "SMP"
 	rm -rf /lib/modules/$(VER)-smp/pcmcia
 	find /lib/modules/$(VER)-smp/ -name '*.o' -a -type f | xargs gzip -f9
 
@@ -243,7 +243,7 @@ ifeq "$(SMP)" "1"
 	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/sym53c8xx_2
 endif
 
-ifeq "$(SMP)" ""
+ifeq "$(PASS)" ""
 	# Only do this once on the non-SMP pass
 	cd $(DIR_APP) && make mandocs
 	-mkdir -p /usr/share/man/man9/

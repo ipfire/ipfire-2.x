@@ -320,24 +320,24 @@ buildipfire() {
   ipfiremake ppp
   ipfiremake rp-pppoe
   ipfiremake unzip
-  ipfiremake linux			PASS=ipfire SMP=installer
-  ipfiremake linux			PASS=ipfire SMP=1
-#  ipfiremake 3cp4218			SMP=1
-#  ipfiremake amedyn			SMP=1
-#  ipfiremake cxacru			SMP=1
-#  ipfiremake eagle			SMP=1
-#  ipfiremake cnx_pci			SMP=1
-#  ipfiremake fcdsl			SMP=1
-#  ipfiremake fcdsl2			SMP=1
-#  ipfiremake fcdslsl			SMP=1
-#  ipfiremake fcdslusb		SMP=1
-#  ipfiremake fcdslslusb		SMP=1
-#  ipfiremake fcpci			SMP=1
-#  ipfiremake fcclassic		SMP=1
-#  ipfiremake pulsar			SMP=1
-#  ipfiremake unicorn			SMP=1
-#  ipfiremake promise-sata-300-tx	SMP=1
-  ipfiremake linux			PASS=ipfire
+  ipfiremake linux			PASS=installer
+  ipfiremake linux			PASS=SMP
+#  ipfiremake 3cp4218		PASS=SMP
+#  ipfiremake amedyn			PASS=SMP
+#  ipfiremake cxacru			PASS=SMP
+#  ipfiremake eagle			PASS=SMP
+#  ipfiremake cnx_pci		PASS=SMP
+#  ipfiremake fcdsl			PASS=SMP
+#  ipfiremake fcdsl2			PASS=SMP
+#  ipfiremake fcdslsl		PASS=SMP
+#  ipfiremake fcdslusb		PASS=SMP
+#  ipfiremake fcdslslusb		PASS=SMP
+#  ipfiremake fcpci			PASS=SMP
+#  ipfiremake fcclassic		PASS=SMP
+#  ipfiremake pulsar			PASS=SMP
+#  ipfiremake unicorn		PASS=SMP
+#  ipfiremake promise-sata-300-tx	PASS=SMP
+  ipfiremake linux
 #  ipfiremake 3cp4218 	
 #  ipfiremake amedyn 	
 #  ipfiremake cxacru 	
