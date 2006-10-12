@@ -41,10 +41,10 @@ CXXFLAGS   =
 ifeq "$(PASS)" ""
   TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire
 endif
-ifeq "$(PASS)" "SMP"
+ifeq "$(PASS)" "S"
   TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-smp
 endif
-ifeq "$(PASS)" "installer"
+ifeq "$(PASS)" "I"
   TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-installer
 endif
 
@@ -183,10 +183,10 @@ endif
 ifeq "$(PASS)" ""
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
 endif
-ifeq "$(PASS)" "SMP"
+ifeq "$(PASS)" "S"
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).smp $(DIR_APP)/.config
 endif
-ifeq "$(PASS)" "installer"
+ifeq "$(PASS)" "I"
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).installer $(DIR_APP)/.config
 	cd $(DIR_APP) && sed -i -e 's/-O2/-Os/g' Makefile
 endif
@@ -201,18 +201,18 @@ endif
 		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
 		ln -sf vmlinuz-$(VER) /boot/vmlinuz; \
 		ln -sf System.map-$(VER) /boot/System.map; \
-		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
-		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
-	elif [ "$(PASS)" = "1" ]; then \
+		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules; \
+		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install; \
+	elif [ "$(PASS)" = "S" ]; then \
 		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -smp/' Makefile; \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
 		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-smp; \
 		cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-smp; \
 		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
 		ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-smp; \
-		cd $(DIR_APP) && make CC="$(KGCC)" modules; \
-		cd $(DIR_APP) && make CC="$(KGCC)" modules_install; \
-	elif [ "$(PASS)" = "installer" ]; then \
+		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules; \
+		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install; \
+	elif [ "$(PASS)" = "I" ]; then \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
 		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-installer; \
 		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
@@ -230,7 +230,7 @@ ifeq "$(PASS)" ""
 	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)/kernel/drivers/scsi
 	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2
 endif
-ifeq "$(PASS)" "SMP"
+ifeq "$(PASS)" "S"
 	rm -rf /lib/modules/$(VER)-smp/pcmcia
 	find /lib/modules/$(VER)-smp/ -name '*.o' -a -type f | xargs gzip -f9
 
@@ -245,9 +245,9 @@ endif
 
 ifeq "$(PASS)" ""
 	# Only do this once on the non-SMP pass
-	cd $(DIR_APP) && make mandocs
-	-mkdir -p /usr/share/man/man9/
-	cd $(DIR_APP) && cp -af Documentation/man/* /usr/share/man/man9/
+	# cd $(DIR_APP) && make mandocs
+	#-mkdir -p /usr/share/man/man9/
+	#cd $(DIR_APP) && cp -af Documentation/man/* /usr/share/man/man9/
 endif
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables*
 	@$(POSTBUILD)

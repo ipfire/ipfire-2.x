@@ -66,7 +66,13 @@ mkdir $BASEDIR/log/ 2>/dev/null
 if [ -f .config ]; then
 	. .config
 else
-	make_config
+	echo -e  "${BOLD}No configuration found!${NORMAL}"
+	echo -ne "Do you want to create one (y/N)?"
+	read CREATE_CONFIG
+	echo ""
+	if [ "$CREATE_CONFIG" == "y" ]; then
+		make_config
+	fi
 fi
 
 prepareenv() {
@@ -194,7 +200,9 @@ prepareenv() {
     mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
 
     # This is a temporary hack!!!
-    cp -f /bin/hostname /tools/bin/hostname 2>/dev/null
+    if [ ! -f /tools/bin/hostname ]; then
+      cp -f /bin/hostname /tools/bin/hostname 2>/dev/null
+    fi
 
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
@@ -318,8 +326,8 @@ buildipfire() {
   ipfiremake ppp
   ipfiremake rp-pppoe
   ipfiremake unzip
-  ipfiremake linux			PASS=installer
-  ipfiremake linux			PASS=SMP
+  ipfiremake linux			PASS=I
+  ipfiremake linux			PASS=S
 #  ipfiremake 3cp4218		PASS=SMP
 #  ipfiremake amedyn			PASS=SMP
 #  ipfiremake cxacru			PASS=SMP
@@ -336,24 +344,24 @@ buildipfire() {
 #  ipfiremake unicorn		PASS=SMP
 #  ipfiremake promise-sata-300-tx	PASS=SMP
   ipfiremake linux
-#  ipfiremake 3cp4218 	
-#  ipfiremake amedyn 	
-#  ipfiremake cxacru 	
-#  ipfiremake eciadsl 	
-#  ipfiremake eagle 	
-#  ipfiremake speedtouch 	
-#  ipfiremake cnx_pci 	
-#  ipfiremake fcdsl 	
-#  ipfiremake fcdsl2 	
-#  ipfiremake fcdslsl 	
-#  ipfiremake fcdslusb 	
-#  ipfiremake fcdslslusb 
+#  ipfiremake 3cp4218
+#  ipfiremake amedyn
+#  ipfiremake cxacru
+#  ipfiremake eciadsl
+#  ipfiremake eagle
+#  ipfiremake speedtouch
+#  ipfiremake cnx_pci
+#  ipfiremake fcdsl
+#  ipfiremake fcdsl2
+#  ipfiremake fcdslsl
+#  ipfiremake fcdslusb
+#  ipfiremake fcdslslusb
 #  ipfiremake fcpci
 #  ipfiremake fcclassic
-#  ipfiremake pulsar	
+#  ipfiremake pulsar
 #  ipfiremake unicorn
 #  ipfiremake promise-sata-300-tx
-  ipfiremake pcmcia-cs
+#  ipfiremake pcmciautils
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp
@@ -373,10 +381,8 @@ buildipfire() {
   ipfiremake libcap
   ipfiremake pciutils
   ipfiremake pcre
-  ipfiremake readline
   ipfiremake libxml2
-  ipfiremake berkeley
-  ipfiremake BerkeleyDB ## The Perl module
+  ipfiremake BerkeleyDB
   ipfiremake mysql
   ipfiremake saslauthd PASS=1
   ipfiremake openldap
@@ -944,15 +950,23 @@ svn)
 	  ;;
 	  commit|ci)
 		clear
+		if [ -f /usr/bin/mcedit ]; then
+			export EDITOR=/usr/bin/mcedit
+		else
+			if [ -f /usr/bin/nano ]; then
+				export EDITOR=/usr/bin/nano
+			fi
+		fi
+		echo -ne "Selecting editor $EDITOR..."
+		beautify message DONE
 		if [ -e /sbin/yast ]; then
 			if [ "`echo $SVN_REVISION | cut -c 3`" -eq "0" ]; then
 				$0 changelog
 			fi
 		fi
-		echo "Upload the changed files..."
-		sleep 1
 		svn commit
 		$0 svn up
+		$0 uploadsrc
 	  ;;
 	  dist)
 		if [ $3 ]; then
@@ -1085,7 +1099,7 @@ batch)
 watch)
 	watch_screen
 	;;
-*)
+"")
 	clear
 	svn info
 	select name in "Exit" "IPFIRE: Prefetch" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "SVN: Commit" "SVN: Update" "SVN: Status" "SVN: Diff" "LOG: Tail" "Help"
@@ -1106,24 +1120,8 @@ watch)
 	"IPFIRE: Clean")
 		$0 clean
 		;;
-	"SVN: Commit")
-		if [ -f /usr/bin/mcedit ]; then
-			export EDITOR=/usr/bin/mcedit
-		fi
-		if [ -f /usr/bin/nano ]; then
-			export EDITOR=/usr/bin/nano
-		fi
-		$0 svn commit
-		$0 uploadsrc
-		;;
 	"SVN: Update")
 		$0 svn update
-		;;
-	"SVN: Status")
-		svn status # | grep -v ^?
-		;;
-	"SVN: Diff")
-		$0 svn diff
 		;;
 	"Help")
 		echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
@@ -1137,5 +1135,9 @@ watch)
 		;;
 	esac
 	done
+	;;
+*)
+	echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
+	cat doc/make.sh-usage
 	;;
 esac

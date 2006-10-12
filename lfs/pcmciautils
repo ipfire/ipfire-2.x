@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Alan Hourihane <alanh@fairlite.demon.co.uk>                      #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: pcmcia-cs,v 1.10.2.6 2005/07/05 15:11:12 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,10 +26,10 @@
 
 include Config
 
-VER        = 3.2.8
+VER        = 014
 
-THISAPP    = pcmcia-cs-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = pcmciautils-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_SFNET)/pcmcia-cs
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
@@ -52,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0d6d65be8896eff081aee996049afaa5
+$(DL_FILE)_MD5 = 3f07c926875f6c5dcb83240f39725177
 
 install : $(TARGET)
 
@@ -81,20 +75,23 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && ./Configure -n --kernel=/usr/src/linux --notrust --cardbus --pnp --apm --nox11 --srctree --ucc=gcc --kcc="$(KGCC)"
-	cd $(DIR_APP) && make -C cardmgr
-	cd $(DIR_APP) && mkdir -p /install/misc/bin
-	cd $(DIR_APP) && install -s -m 0755 cardmgr/cardmgr /install/misc/bin
-	cd $(DIR_APP) && install -s -m 0755 cardmgr/cardctl /install/misc/bin
-else
-	cd $(DIR_APP) && ./Configure -n --kernel=/usr/src/linux --notrust --cardbus --pnp --apm --nox11 --srctree --ucc=gcc --kcc="$(KGCC)"
-	cd $(DIR_APP) && make all
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && make #$(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-	# Install our own extra pcmcia configs
-	cp $(DIR_SRC)/src/pcmcia/*.conf /etc/pcmcia
-endif
+## This is saved...
+#ifeq "$(LFS_PASS)" "install"
+#	cd $(DIR_APP) && ./Configure -n --kernel=/usr/src/linux --notrust --cardbus --pnp --apm --nox11 --srctree --ucc=gcc --kcc="$(KGCC)"
+#	cd $(DIR_APP) && make -C cardmgr
+#	cd $(DIR_APP) && mkdir -p /install/misc/bin
+#	cd $(DIR_APP) && install -s -m 0755 cardmgr/cardmgr /install/misc/bin
+#	cd $(DIR_APP) && install -s -m 0755 cardmgr/cardctl /install/misc/bin
+#else
+#	cd $(DIR_APP) && ./Configure -n --kernel=/usr/src/linux --notrust --cardbus --pnp --apm --nox11 --srctree --ucc=gcc --kcc="$(KGCC)"
+#	cd $(DIR_APP) && make all
+#	cd $(DIR_APP) && make install
+#
+#	# Install our own extra pcmcia configs
+#	cp $(DIR_SRC)/src/pcmcia/*.conf /etc/pcmcia
+#endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

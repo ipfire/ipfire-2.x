@@ -65,6 +65,13 @@ my $dialButtonDisabled = "disabled='disabled'";
 
 &Header::openpage($Lang::tr{'main page'}, 1, $refresh);
 &Header::openbigbox('', 'center');
+&Header::openbox('100%', 'center', "Willkommen");
+print <<END
+	<h2>Willkommen in ihrem Administrationsmenue</h2>
+	<p>In diesem Menue koennen Sie ihren IPFire administrieren.</p>
+END
+;
+&Header::closebox();
 &Header::openbox('100%', 'center', &Header::cleanhtml(`/bin/uname -n`,"y"));
 
 if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
