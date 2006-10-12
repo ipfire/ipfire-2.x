@@ -51,7 +51,7 @@ DIR_CONF    = $(LFS_BASEDIR)/config
 DIR_INFO    = $(LFS_BASEDIR)/log
 DIR_TMP     = /var/tmp
 
-KGCC = ccache /usr/bin/gcc
+KGCC = gcc
 
 ###############################################################################
 # Common Macro Definitions
@@ -73,6 +73,17 @@ define PREBUILD
 	echo "====================================== Installing $(THISAPP) ..."
 	@echo "Install started; saving file list to $(DIR_SRC)/lsalr ..."
 	@if [ ! -f $(DIR_SRC)/lsalr ]; then $(FIND_FILES) > $(DIR_SRC)/lsalr; fi
+	# Fix installation on partial rebuild, so modules install where they should
+	# and not everytime on the last compiled kernel
+	if [ -f $(DIR_SRC)/linux-$(KVER) ]; then \
+		if [ "$(SMP)" = "" ]; then \
+			cd $(DIR_SRC)/linux-$(KVER) && \
+				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))+' Makefile; \
+		else \
+			cd $(DIR_SRC)/linux-$(KVER) && \
+				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-smp+' Makefile; \
+		fi; \
+	fi
 endef
 else
 define PREBUILD
@@ -84,7 +95,7 @@ endif
 #
 ifeq "$(ROOT)" ""
 define POSTBUILD
-	@echo "Install done; saving file list to $(DIR_INFO)/$(THISAPP) ..."
+	@echo "Install done; saving file list to $(TARGET) ..."
 	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
 	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' | sort > $(TARGET)_diff
 	@cp -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr
@@ -92,12 +103,29 @@ define POSTBUILD
 	sed -i -e 's+.\/++' $(TARGET)_diff
 	# compare roofile ( same name as lfs script) with the list of installed files
 	# special cases
+	# - if the corresponding rootfile is not found, touch $(TARGET)_missing_rootfile
 	# - on a partial rebuild without a new file inside TARGET_diff, just touch TARGET
+	# $(TARGET)_diff : result of the diff
+	# ROOTFILE : reference of include/exclude files
+	# $(TARGET)_rootfile : ROOTFILE with KVER replacement
+	# $(TARGET) : log result with {commented|include|added} files
 	if [ -s "$(TARGET)_diff" ]; then \
-		ROOTFILE=$(DIR_SRC)/src/ROOTFILES.$(MACHINE); \
+		if [ "$(PASS)" = "SMP" ]; then LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))-smp; \
+		else LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
+		fi; \
+		echo $(LFS_SCRIPT); \
+		ROOTFILE=`find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f -name $$LFS_SCRIPT`; \
+		if [ "$$ROOTFILE" = "" ]; then \
+			ROOTFILE=`find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -type f -name $$LFS_SCRIPT`; \
+		fi; \
+		if [ "$$ROOTFILE" = "" ]; then \
+			touch $(TARGET)_missing_rootfile; \
+			ROOTFILE=$(TARGET)_missing_rootfile ; \
+			echo "error $$LFS_SCRIPT not found in config/rootfiles"; \
+		fi; \
 		sed "s/KVER/$(KVER)/g" $$ROOTFILE > $(TARGET)_rootfile; \
 		for line in `cat $(TARGET)_diff`; do \
-			if grep -qE "^#$$line$$" $(TARGET)_rootfile ; then echo "#$$line" >> $(TARGET); \
+			if grep -qE "^#$$line$$" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
 			elif grep -qE "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
 			else echo "+$$line" >> $(TARGET); \
 			fi; \

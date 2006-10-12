@@ -33,7 +33,9 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
-# Setzen des IPFire Builds
+IPFVER="full"				# Which version should be compiled? (full|light|voice)
+
+# Set an information about the build number
 if [ -e ./.svn ]; then
 	FIREBUILD=`cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p'`
 fi

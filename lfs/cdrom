@@ -38,23 +38,17 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 objects = $(DL_FILE) \
 	rawwritewin-0.7.zip \
 	install-en-1.4.0.pdf.zip \
-	install-fr-1.4.0.pdf.zip \
-	quickstart-en.pdf.zip \
-	quickstart-fr-1.4.0.pdf.zip
+	quickstart-en.pdf.zip
 
 $(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
 rawwritewin-0.7.zip         = http://uranus.it.swin.edu.au/~jn/linux/rawwritewin-0.7.zip
 install-en-1.4.0.pdf.zip    = $(URL_SFNET)/ipcop/install-en-1.4.0.pdf.zip
-install-fr-1.4.0.pdf.zip    = $(URL_SFNET)/ipcop/install-fr-1.4.0.pdf.zip
 quickstart-en.pdf.zip       = http://www.ipcop.org/1.4.0/en/quickstart/quickstart-en.pdf.zip
-quickstart-fr-1.4.0.pdf.zip = http://www.ipcop.org/1.4.0/fr/quickstart/quickstart-fr-1.4.0.pdf.zip
 
 $(DL_FILE)_MD5                  = 7dac6ea496014d32dbce6c50feb254ca
 rawwritewin-0.7.zip_MD5         = 0130b497c8c3bc7d136a4236b0d9fbf6
 install-en-1.4.0.pdf.zip_MD5    = 07e0b5131f1434010d8a00571f9acd81
-install-fr-1.4.0.pdf.zip_MD5    = 2deb9d3bc46779cff18b681625fc4418
 quickstart-en.pdf.zip_MD5       = ca77ef5f1efca6bc519cc42acfd69aa4
-quickstart-fr-1.4.0.pdf.zip_MD5 = 7ec474aea03acba10371eb92579b0dec
 
 install : $(TARGET)
 
@@ -87,75 +81,34 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
 	mkdir -p /install/cdrom/{doc,dosutils,images}
-	sed -e "s/KVER/$(KVER)/g" $(DIR_SRC)/src/ROOTFILES.$(MACHINE) > /tmp/ROOTFILES
+	find $(DIR_SRC)/config/rootfiles -type f -maxdepth 1 | xargs cat >> /tmp/ROOTFILES
+	find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -type f -maxdepth 1 | xargs cat >> /tmp/ROOTFILES
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
 		--exclude='proc/*' --exclude='tmp/ROOTFILES'
 	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
-	cd /tmp && tar zcf /install/cdrom/$(SNAME)-$(VERSION).tgz * && rm -rf *
+	cd /tmp && tar jcf /install/cdrom/$(SNAME)-$(VERSION).tbz2 * && rm -rf *
+
 	# Other files
-	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt \
-		> /install/cdrom/README.txt
-	cp $(DIR_SRC)/doc/COPYING             /install/cdrom/
-	cp /install/images/*.img              /install/cdrom/images
-	unzip $(DIR_DL)/install-en-1.4.0.pdf.zip -d /install/cdrom/doc/english
-	unzip $(DIR_DL)/quickstart-en.pdf.zip -d /install/cdrom/doc/english
-	unzip $(DIR_DL)/install-fr-1.4.0.pdf.zip -d /install/cdrom/doc/francais
-	unzip $(DIR_DL)/quickstart-fr-1.4.0.pdf.zip -d /install/cdrom/doc/francais
-	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt} /install/cdrom/doc
-	cp $(DIR_DL)/rawrite.exe              /install/cdrom/dosutils
+	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt
+	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
+	cp /install/images/*.img				/install/cdrom/images
+	unzip $(DIR_DL)/install-en-1.4.0.pdf.zip -d	/install/cdrom/doc
+	unzip $(DIR_DL)/quickstart-en.pdf.zip -d		/install/cdrom/doc
+	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
+	cp $(DIR_DL)/rawrite.exe				/install/cdrom/dosutils
 	unzip -j -L $(DIR_DL)/rawwritewin*.zip -x "*.txt" -d /install/cdrom/dosutils
 
-	# make the CDROM iso, USB(superfloppy&partionned) iso
-	if [ "$(MACHINE)" == "i386" ]; then \
-		mkdir -p /install/cdrom/boot/isolinux; \
-		dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
-		cp /install/images/cdinitrd.gz              /install/cdrom/boot/isolinux/instroot.gz; \
-		cp /boot/vmlinuz-installer                  /install/cdrom/boot/isolinux/vmlinuz; \
-		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/cdrom/boot/isolinux/isolinux.cfg; \
-		cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
-		sed -e 's/boot IPFire/boot IPFire $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
-			> /install/message; \
-		cp /install/message /install/cdrom/boot/isolinux/message; \
-		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-			-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-			-c boot/isolinux/boot.catalog \
-			. > /install/images/$(SNAME)-install-$(VERSION).$(MACHINE).iso; \
-		echo "compute size +64 blocks for bootsector/fat/etc..." && \
-		dd bs=1024 count=$$((`du -k -s ../cdrom|awk '{print $$1}'` + 64)) if=/dev/zero of=/install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso; \
-		echo "move boot files on top of disk" && \
-		rm -rf boot && \
-		mkdosfs -n IPFIREBOOT -F 16 -I /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
-		mount -t vfat -o loop /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso /install/mnt && \
-		cp -R ../cdrom/* /install/mnt && \
-		cp /install/images/cdinitrd.gz              /install/mnt/instroot.gz && \
-		cp /boot/vmlinuz-installer                  /install/mnt/vmlinuz && \
-		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/mnt/syslinux.cfg && \
-		cp /install/message /install/mnt/message && \
-		umount /install/mnt && echo "and make the isofile a bootable system ready for dd" && \
-		syslinux /install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
-		echo "# Build the USB-partitionned scheme ISO (cover majority of BIOS)" && \
-		ISOs=/install/images/$(SNAME)-install-usb-$(VERSION).$(MACHINE).iso && \
-		ISOp=/install/images/$(SNAME)-install-usbp-$(VERSION).$(MACHINE).iso && \
-		dd bs=1k if=/dev/zero of=$$ISOp count=$$((`du -k -s $$ISOs | awk '{print $$1}'` + 10 )) && \
-		echo "# Partitionning with 32 sectors geometry." && \
-		echo "# If less, some (my) bios do not recognize the key as a bootable disk." && \
-		echo -e "0,,6,*\n;\n;\n;" > /tmp/sdisk.txt && \
-		sfdisk -qLDH 256 -S 32 $$ISOp < /tmp/sdisk.txt && \
-		echo "#Just put a mbr and superfloppy at the right place. seek=32 is due to -D & 32 sectors" && \
-		echo "#in sfdisk. If you ever change partitionning, adjust also here." && \
-		/usr/local/sbin/install-mbr $$ISOp && \
-		dd if=$$ISOs of=$$ISOp bs=512 seek=32; \
-	elif [ "$(MACHINE)" == "alpha" ]; then \
-		mkdir -p /install/cdrom/etc; \
-		cp /boot/vmlinuz-$(KVER) /install/cdrom/vmlinuz; \
-		cp /install/images/cdinitrd.gz  /install/cdrom/instroot.gz; \
-		cp /boot/bootlx /install/cdrom; \
-		cp $(DIR_SRC)/config/kernel/aboot.conf /install/cdrom/etc/aboot.conf; \
-		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-			. > /install/images/$(SNAME)-install-$(VERSION).$(MACHINE).iso; \
-		isomarkboot /install/images/$(SNAME)-install-$(VERSION).$(MACHINE).iso bootlx; \
-	fi
-
+	# make the ISO
+	mkdir -p /install/cdrom/boot/isolinux; \
+	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
+	cp /install/images/cdinitrd.gz              /install/cdrom/boot/isolinux/instroot.gz; \
+	cp /boot/vmlinuz-installer                  /install/cdrom/boot/isolinux/vmlinuz; \
+	cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/cdrom/boot/isolinux/isolinux.cfg; \
+	cp $(DIR_SRC)/config/kernel/install-message /install/cdrom/boot/isolinux/message; \
+	cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
+	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
+    	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
+    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE).iso
