@@ -300,16 +300,14 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 util-linux
     lfsmake2 vim
-####
-#    lfsmake2 net-tools
-#    lfsmake2 inetutils
-#    lfsmake2 ed
-#    lfsmake2 procinfo
 }
 
 buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
+  ipfiremake inetutils
+  ipfiremake net-tools
+  ipfiremake ed
   ipfiremake configroot
   ipfiremake dhcp
   ipfiremake dhcpcd

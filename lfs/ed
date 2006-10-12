@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: ed,v 1.3.2.2 2005/02/05 15:38:14 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 0.2
 
 THISAPP    = ed-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_GNU)/ed
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -80,9 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-mkstemp-1.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	cd $(DIR_APP) && ./configure --prefix=/usr --exec-prefix="" --disable-nls
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	mv -f /usr/bin/{ed,red} /bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -1,0 +1,166 @@
+Submitted By:            Randy McMurchy <randy_at_linuxfromscratch_dot_org>
+Date:                    2005-03-23
+Initial Package Version: 1.4.2
+Upstream Status:         Not sure
+Origin:                  Internet (URL's are now lost)
+Description:             Fix the rexecd daemon so that it understands shadow
+                         passwords. Fix the rshd daemon so that it properly
+                         resolves hostnames.
+
+diff -Naur inetutils-1.4.2-orig/rexecd/rexecd.c inetutils-1.4.2/rexecd/rexecd.c
+--- inetutils-1.4.2-orig/rexecd/rexecd.c	2002-12-11 12:38:00.000000000 +0000
++++ inetutils-1.4.2/rexecd/rexecd.c	2005-02-22 19:53:44.146962264 +0000
+@@ -79,6 +79,10 @@
+ #include <varargs.h>
+ #endif
+ 
++#ifdef HAVE_SHADOW_H
++#include <shadow.h>
++#endif
++
+ void error __P ((const char *fmt, ...));
+ /*
+  * remote execute server:
+@@ -127,6 +131,10 @@
+ 	char *cmdbuf, *cp, *namep;
+ 	char *user, *pass;
+ 	struct passwd *pwd;
++#ifdef HAVE_SHADOW_H
++      struct spwd *spwd;
++      char *pw_field;
++#endif
+ 	int s;
+ 	u_short port;
+ 	int pv[2], pid, cc;
+@@ -186,6 +194,24 @@
+ 		exit(1);
+ 	}
+ 	endpwent();
++
++#ifdef HAVE_SHADOW_H
++      // Get encrypted password from /etc/shadow if possible,
++      // else from /etc/passwd.
++      spwd = getspnam(user);
++      if (spwd) {
++              pw_field = spwd->sp_pwdp;
++      } else {
++              pw_field = pwd->pw_passwd;
++      }
++      if (*pw_field != '\0') {
++              namep = CRYPT (pass, pw_field);
++              if (strcmp(namep, pw_field)) {
++                      error("Password incorrect.\n");
++                      exit(1);
++              }
++      }
++#else
+ 	if (*pwd->pw_passwd != '\0') {
+ 		namep = CRYPT (pass, pwd->pw_passwd);
+ 		if (strcmp(namep, pwd->pw_passwd)) {
+@@ -193,6 +219,7 @@
+ 			exit(1);
+ 		}
+ 	}
++#endif
+ 	write(STDERR_FILENO, "\0", 1);
+ 	if (port) {
+ 		pipe(pv);
+diff -Naur inetutils-1.4.2-orig/rshd/rshd.c inetutils-1.4.2/rshd/rshd.c
+--- inetutils-1.4.2-orig/rshd/rshd.c	2002-12-11 12:38:00.000000000 +0000
++++ inetutils-1.4.2/rshd/rshd.c	2005-02-22 19:54:33.162510768 +0000
+@@ -443,7 +443,7 @@
+       dup2 (sockfd, STDERR_FILENO);
+     }
+ 
+-  /* Get the "name" of the clent form its Internet address.
++  /* Get the "name" of the client form its Internet address.
+    * This is used for the autentication below
+    */
+   errorstr = NULL;
+@@ -457,52 +457,49 @@
+        * in a remote net; look up the name and check that this
+        * address corresponds to the name.
+        */
+-      hostname = strdup (hp->h_name);
++      const char *remotehost = strdup(hp->h_name);
+ #ifdef	KERBEROS
+       if (!use_kerberos)
+ #endif
+-	if (check_all || local_domain (hp->h_name))
++       if (! remotehost)
++           errorstr = "Out of memory\n";
++       else if (check_all || local_domain (remotehost))
+ 	  {
+-	    char *remotehost = (char *) alloca (strlen (hp->h_name) + 1);
+-	    if (! remotehost)
+-	      errorstr = "Out of memory\n";
+-	    else
++           errorhost = remotehost;
++           hp = gethostbyname (remotehost);
++           if (hp == NULL)
+ 	      {
+-		strcpy (remotehost, hp->h_name);
+-		errorhost = remotehost;
+-		hp = gethostbyname (remotehost);
+-		if (hp == NULL)
++               syslog (LOG_INFO,
++                       "Couldn't look up address for %s", remotehost);
++                       errorstr = "Couldn't look up address for your host (%s)\n";
++                       hostname = strdup(inet_ntoa(fromp->sin_addr));
++             }
++           else
++              {
++               for (; ; hp->h_addr_list++)
+ 		  {
+-		    syslog (LOG_INFO,
+-			    "Couldn't look up address for %s", remotehost);
+-		    errorstr = "Couldn't look up address for your host (%s)\n";
+-		    hostname = inet_ntoa (fromp->sin_addr);
++                   if (hp->h_addr_list[0] == NULL)
++                     {
++                       syslog (LOG_NOTICE,
++                               "Host addr %s not listed for host %s",
++                               inet_ntoa (fromp->sin_addr), hp->h_name);
++                       errorstr = "Host address mismatch for %s\n";
++                       hostname = strdup(inet_ntoa(fromp->sin_addr));
++                       break;
++                     }
++                   if (!memcmp (hp->h_addr_list[0],
++                               (caddr_t)&fromp->sin_addr,
++                               sizeof fromp->sin_addr))
++                     {
++                       hostname = strdup(hp->h_name);
++                       break; /* equal, OK */
++                     }
+ 		  }
+-		else
+-		  for (; ; hp->h_addr_list++)
+-		    {
+-		      if (hp->h_addr_list[0] == NULL)
+-			{
+-			  syslog (LOG_NOTICE,
+-				  "Host addr %s not listed for host %s",
+-				  inet_ntoa (fromp->sin_addr), hp->h_name);
+-			  errorstr = "Host address mismatch for %s\n";
+-			  hostname = inet_ntoa (fromp->sin_addr);
+-			  break;
+-			}
+-		      if (!memcmp (hp->h_addr_list[0],
+-				   (caddr_t)&fromp->sin_addr,
+-				   sizeof fromp->sin_addr))
+-			{
+-			  hostname = hp->h_name;
+-			  break; /* equal, OK */
+-			}
+-		    }
+-	      }
++              }
+ 	  }
+     }
+   else
+-    errorhost = hostname = inet_ntoa (fromp->sin_addr);
++    errorhost = hostname = strdup(inet_ntoa(fromp->sin_addr));
+ 
+ #ifdef	KERBEROS
+   if (use_kerberos)
+

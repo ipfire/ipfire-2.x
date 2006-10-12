@@ -73,11 +73,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fixes-3.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-no_server_man_pages-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-daemon_fixes-1.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/sbin \
-					--sysconfdir=/etc --localstatedir=/var \
-					--disable-logger --disable-syslogd \
-					--disable-whois --disable-servers
+				--sysconfdir=/etc --localstatedir=/var \
+				--mandir=/usr/share/man --infodir=/usr/share/info \
+				--disable-logger --disable-syslogd
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mv -v /usr/bin/ping /bin

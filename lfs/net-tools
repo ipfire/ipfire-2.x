@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: net-tools,v 1.5.2.8 2005/08/13 08:09:10 eoberlander Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,20 +30,18 @@ VER        = 1.60
 
 THISAPP    = net-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://www.tazenda.demon.co.uk/phil/net-tools
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = $(DL_FILE) $(THISAPP)-miitool_gcc33-1.patch
+objects = $(DL_FILE)
 
 $(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-miitool_gcc33-1.patch      = $(URL_LFS)/net-tools/$(THISAPP)-miitool_gcc33-1.patch
 
 $(DL_FILE)_MD5                        = 888774accab40217dde927e21979c165
-$(THISAPP)-miitool_gcc33-1.patch_MD5  = fc629313c10ebd75abd2750aafbaa0be
 
 install : $(TARGET)
 
@@ -79,30 +71,14 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-miitool_gcc33-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-get_name.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/$(THISAPP)-cleanup-list-handling.patch
-	# correct bits to Bytes in output from /sbin/ifconfig
-	cd $(DIR_APP)/lib && sed -i \
-	    -e 's/"Mb"/"MB"/g' \
-	    -e 's/"Kb"/"KB"/g' interface.c 
-	cd $(DIR_APP) && sed -i \
-	    -e 's/HAVE_AFIPX y/HAVE_AFIPX n/' \
-	    -e 's/HAVE_AFATALK y/HAVE_AFATALK n/' \
-	    -e 's/HAVE_AFAX25 y/HAVE_AFAX25 n/' \
-	    -e 's/HAVE_AFNETROM y/HAVE_AFNETROM n/' \
-	    -e 's/HAVE_AFX25 y/HAVE_AFX25 n/' \
-	    -e 's/HAVE_HWSTRIP y/HAVE_HWSTRIP n/' \
-	    -e 's/HAVE_HWX25 y/HAVE_HWX25 n/' \
-	    -e 's/HAVE_HWNETROM y/HAVE_HWNETROM n/' \
-	    -e 's/HAVE_HWARC y/HAVE_HWARC n/' \
-	    -e 's/HAVE_HWTR y/HAVE_HWTR n/' \
-	    -e 's/HAVE_HWAX25 y/HAVE_HWAX25 n/' \
-	    -e 's/HAVE_HWFR y/HAVE_HWFR n/' \
-	    -e 's/HAVE_HWIRDA y/HAVE_HWIRDA n/' \
-	    -e 's/HAVE_MII n/HAVE_MII y/' config.in
-	cd $(DIR_APP) && sed -i -e 's/DNLIB = -ldnet/DNLIB =/' Makefile
-	cd $(DIR_APP) && yes '' | make config
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-gcc34-3.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-kernel_headers-2.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-mii_ioctl-1.patch
+	cd $(DIR_APP) && yes "" | make config
+	cd $(DIR_APP) && sed -i	-e 's|HAVE_IP_TOOLS 0|HAVE_IP_TOOLS 1|g' \
+					-e 's|HAVE_MII 0|HAVE_MII 1|g' config.h
+	cd $(DIR_APP) && sed -i	-e 's|# HAVE_IP_TOOLS=0|HAVE_IP_TOOLS=1|g' \
+					-e 's|# HAVE_MII=0|HAVE_MII=1|g' config.make
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make update
 	@rm -rf $(DIR_APP)

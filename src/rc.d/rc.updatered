@@ -134,7 +134,7 @@ if [ -e "CONFIG_ROOT/red/active" ]; then
 	/etc/rc.d/rc.firewall reload
 	/usr/local/bin/setfilters
 	/usr/local/bin/restartsnort red
-	/usr/local/bin/qosctrl start
+	/usr/local/bin/qosctrl restart
 	/usr/local/bin/setportfw
 	/usr/local/bin/setxtaccess
 	/usr/local/bin/setddns.pl -f
