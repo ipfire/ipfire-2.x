@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# 23-4-2004 Mark Wormgoor <mark@wormgoor.com>                                 #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# 
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 1.1.2.1
 
 THISAPP    = libnet-$(VER)
 DL_FILE    = libnet.tar.gz
-DL_FROM    = http://www.packetfactory.net/libnet/dist
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/libnet
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -79,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

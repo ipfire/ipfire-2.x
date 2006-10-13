@@ -72,9 +72,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libpng-1.2.12-no-asm.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static --without-libpng-compat
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

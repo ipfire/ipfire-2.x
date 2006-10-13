@@ -72,11 +72,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp makefiles/makefile.linux Makefile && make
+	cd $(DIR_APP) && cp makefiles/makefile.linux Makefile
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make prefix=/usr install
-	# cd $(DIR_APP) && install -v -m644 doc/man/*.3 /usr/share/man/man3
-	# cd $(DIR_APP) && install -v -m644 doc/man/*.5 /usr/share/man/man5
-	# cd $(DIR_APP) && install -v -m755 -d /usr/share/doc/libmng-1.0.9
-	# cd $(DIR_APP) && install -v -m644 doc/*.{png,txt} /usr/share/doc/libmng-1.0.9
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

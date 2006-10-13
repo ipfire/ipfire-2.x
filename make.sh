@@ -368,14 +368,15 @@ buildipfire() {
   ipfiremake openssl
   ipfiremake python
   ipfiremake libnet
+  ipfiremake libjpeg
   ipfiremake libpng
   ipfiremake libtiff
-  ipfiremake libjpeg
   ipfiremake lcms
   ipfiremake libmng
   ipfiremake freetype
   ipfiremake gd
   ipfiremake popt
+exit 1 # Bis hierhin läufts :D
   ipfiremake slang
   ipfiremake newt
   ipfiremake libcap
@@ -660,7 +661,6 @@ ipfirepackages() {
   ipfiredist lame
   ipfiredist libmad
   ipfiredist libogg
-  ipfiredist libtiff
   ipfiredist libvorbis
   ipfiredist mailx
   ipfiredist mldonkey
