@@ -32,7 +32,7 @@ THISAPP    = cyrus-sasl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(PASS)" "1"
+ifeq "$(PASS)" ""
 	TARGET     = $(DIR_INFO)/$(THISAPP)
 else
 	TARGET     = $(DIR_INFO)/$(THISAPP)-ldap
@@ -76,35 +76,26 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(PASS)" "1"
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-					--sysconfdir=/etc \
-					--with-dblib=berkeley \
-					--with-dbpath=/var/lib/sasl/sasldb2 \
-					--with-saslauthd=/var/run/saslauthd
+	cd $(DIR_APP) && sed -i '/sasl_global/s/^static //' lib/client.c
+	cd $(DIR_APP) && sed -i 's/cat8/man8/' saslauthd/Makefile.in
+
+ifeq "$(PASS)" ""
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
+		            --with-dbpath=/var/lib/sasl/sasldb2 \
+		            --with-saslauthd=/var/run
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+	install -v -m700 -d /var/lib/sasl
 else
 	# WITH LDAP SUPPORT AT THIS TIME
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-					--enable-anon --enable-plain \
-					--disable-krb4 --disable-otp \
-					--disable-cram --disable-digest \
-					--with-dblib=berkeley
-					--with-ldap=/usr \
-					--enable-sql \
-					--with-pam=/lib/security \
-					--with-openssl=/usr
-					--without-pgsql \
-					--with-mysql=/usr \
-					--sysconfdir=/var/ipfire/sasl \
-					--with-dbpath=/var/lib/sasl/sasldb2 \
-					--with-saslauthd=/var/run/saslauthd
-endif
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install
-ifeq "$(PASS)" "2"
-	install -v -m700 -d /var/lib/sasl
-	mkdir -p /var/run/saslauthd
-	mkdir -p /var/state/saslauthd
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
+		            --with-dbpath=/var/lib/sasl/sasldb2 \
+		            --with-saslauthd=/var/run \
+			     --with-ldap --enable-ldapdb
+	cd $(DIR_APP) && make -C include
+	cd $(DIR_APP) && make -C sasldb
+	cd $(DIR_APP) && make -C plugins
+	cd $(DIR_APP) && libtool --mode=install install plugins/libldapdb.la /usr/lib/sasl2
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -96,7 +96,7 @@ ifeq "$(LFS_PASS)" "install"
 else
 	cd $(DIR_APP) && RPM_OPT_FLAGS="$(CFLAGS) -DUTF8" ./configure --without-gpm-support
 	cd $(DIR_APP) && sed -i \
-	    -e 's/^PYVER.*$$/PYVER = 2.3/' \
+	    -e 's/^PYVER.*$$/PYVER = 2.4/' \
 	    -e 's/^all:.*$$/all: _snackmodule.so/' Makefile
 	cd $(DIR_APP) && echo 'install-snack: _snackmodule.so'					>> Makefile
 	cd $(DIR_APP) && echo '	install -s -m 644 _snackmodule.so $$(instroot)/$$(pythonbindir)'>> Makefile

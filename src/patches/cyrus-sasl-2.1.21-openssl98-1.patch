@@ -1,0 +1,44 @@
+Submitted By: Dan Nicholson <dnicholson_at_linuxfromscratch_dot_org>
+Date: 2006-04-25
+Initial Package Version: 2.1.21
+Upstream Status: Applied
+Origin: Upstream CVS
+	http://asg.web.cmu.edu/archive/message.php?mailbox=org.acs.asg.project.sasl.commits&msg=1519
+	http://asg.web.cmu.edu/archive/message.php?mailbox=org.acs.asg.project.sasl.commits&msg=1578
+Description: Adds needed headers for plugins when compiled with OpenSSL-0.9.8
+
+diff -pNur cyrus-sasl-2.1.21.orig/plugins/ntlm.c cyrus-sasl-2.1.21/plugins/ntlm.c
+--- cyrus-sasl-2.1.21.orig/plugins/ntlm.c	2004-12-24 16:06:14.000000000 +0000
++++ cyrus-sasl-2.1.21/plugins/ntlm.c	2006-04-25 18:46:24.433487794 +0000
+@@ -74,6 +74,7 @@
+ #endif /* WIN32 */
+ 
+ #include <openssl/md4.h>
++#include <openssl/md5.h>
+ #include <openssl/hmac.h>
+ #include <openssl/des.h>
+ #include <openssl/opensslv.h>
+diff -pNur cyrus-sasl-2.1.21.orig/plugins/passdss.c cyrus-sasl-2.1.21/plugins/passdss.c
+--- cyrus-sasl-2.1.21.orig/plugins/passdss.c	2004-11-27 16:17:43.000000000 +0000
++++ cyrus-sasl-2.1.21/plugins/passdss.c	2006-04-25 18:46:36.131787252 +0000
+@@ -67,6 +67,9 @@
+ /* for digest and cipher support */
+ #include <openssl/evp.h>
+ #include <openssl/hmac.h>
++#include <openssl/md5.h>
++#include <openssl/sha.h>
++#include <openssl/dsa.h>
+ 
+ #include <sasl.h>
+ #define MD5_H  /* suppress internal MD5 */
+diff -pNur cyrus-sasl-2.1.21.orig/plugins/srp.c cyrus-sasl-2.1.21/plugins/srp.c
+--- cyrus-sasl-2.1.21.orig/plugins/srp.c	2004-06-23 18:43:37.000000000 +0000
++++ cyrus-sasl-2.1.21/plugins/srp.c	2006-04-25 18:46:36.135785645 +0000
+@@ -87,6 +87,7 @@ typedef unsigned short uint32;
+ /* for digest and cipher support */
+ #include <openssl/evp.h>
+ #include <openssl/hmac.h>
++#include <openssl/md5.h>
+ 
+ #include <sasl.h>
+ #define MD5_H  /* suppress internal MD5 */

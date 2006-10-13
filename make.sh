@@ -376,16 +376,16 @@ buildipfire() {
   ipfiremake freetype
   ipfiremake gd
   ipfiremake popt
-exit 1 # Bis hierhin läufts :D
+  ipfiremake pcre
   ipfiremake slang
   ipfiremake newt
-  ipfiremake libcap
+# ipfiremake libcap
   ipfiremake pciutils
-  ipfiremake pcre
   ipfiremake libxml2
   ipfiremake BerkeleyDB
   ipfiremake mysql
-  ipfiremake saslauthd PASS=1
+  ipfiremake cyrus-sasl
+exit 1
   ipfiremake openldap
   ipfiremake apache2
   ipfiremake php

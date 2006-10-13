@@ -91,7 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		            --without-readline \
 		            --with-berkeley-db \
 		            --with-extra-charsets=all
-	cd $(DIR_APP) && make testdir=/tmp/mysql
+	cd $(DIR_APP) && make testdir=/tmp/mysql $(MAKETUNING)
 	cd $(DIR_APP) && make testdir=/tmp/mysql install
 	rm -rf /tmp/mysql
 	cd /usr/lib && ln -v -sf mysql/libmysqlclient{,_r}.so* .

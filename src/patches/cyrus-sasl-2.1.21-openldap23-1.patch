@@ -1,0 +1,28 @@
+Submitted By: Dan Nicholson <dnicholson_at_linuxfromscratch_dot_org>
+Date: 2006-04-25
+Initial Package Version: 2.1.21
+Upstream Status: Applied
+Origin: Upstream CVS
+	$ cvs log cmulocal/openldap.m4
+	...
+	RCS file: /cvs/src/cmulocal/openldap.m4,v
+	Working file: cmulocal/openldap.m4
+	...
+	----------------------------
+	revision 1.2
+	date: 2006/03/13 19:16:11;  author: mel;  state: Exp;  lines: +3 -1
+	Allow for OpenLDAP 2.3+
+Description: Allow OpenLDAP => 2.3
+
+diff -pur cyrus-sasl-2.1.21.orig/configure cyrus-sasl-2.1.21/configure
+--- cyrus-sasl-2.1.21.orig/configure	2006-03-30 14:24:55.000000000 +0000
++++ cyrus-sasl-2.1.21/configure	2006-03-30 21:00:35.388580365 +0000
+@@ -12253,6 +12253,8 @@ cat >>conftest.$ac_ext <<_ACEOF
+ char *__openldap_compat = "2.1.27 or better okay";
+ #elif LDAP_VENDOR_VERSION_MAJOR == 2  && LDAP_VENDOR_VERSION_MINOR == 2 && LDAP_VENDOR_VERSION_PATCH > 5
+ char *__openldap_compat = "2.2.6 or better okay";
++#elif LDAP_VENDOR_VERSION_MAJOR == 2  && LDAP_VENDOR_VERSION_MINOR > 2
++char *__openldap_compat = "2.3 or better okay"
+ #endif
+ 
+ _ACEOF

@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: slang,v 1.7.2.3 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 1.4.5
+VER        = 2.0.6
 
-THISAPP    = slang-$(VER)-mini
+THISAPP    = slang-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://www.uclibc.org
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
@@ -52,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6c893e52347533225866242700a3cd07
+$(DL_FILE)_MD5 = efb055000636f312d5c3de56f3c70d12
 
 install : $(TARGET)
 
@@ -82,9 +76,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && sed -i 's/^#undef UTF8.*$$/#define UTF8 1/' slang.h
-	cd $(DIR_APP) && sed -i 's/^#undef UTF8.*$$/#define UTF8 1/' config.h
-
 ifeq "$(LFS_PASS)" "install"
 	-mkdir -p /install/lib
 	cd $(DIR_APP) && sed -i -e 's/libslang.a:/libslang.a:\ $$(OBJS)/' Makefile
@@ -93,10 +84,11 @@ ifeq "$(LFS_PASS)" "install"
 	-mkdir -p /install/include/slang
 	cd $(DIR_APP) && install -m 0644 slang.h slcurses.h /install/include/slang
 else
-	cd $(DIR_APP) && DESTDIR=/usr/lib CFLAGS="-Wall -fPIC $(CFLAGS)" make -e
-	cd $(DIR_APP) && install -m 0644 libslang.a /usr/lib
-	-mkdir -p /usr/include/slang
-	cd $(DIR_APP) && install -m 0644 slang.h slcurses.h /usr/include/slang
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make elf
+	cd $(DIR_APP) && make install-elf
+	cd $(DIR_APP) && chmod -v 755 /usr/lib/libslang.so.2.0.6
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

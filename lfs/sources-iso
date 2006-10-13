@@ -49,11 +49,6 @@ install : $(DIR_INFO)/_build.packages-list.log
 	done
 	
 	# make the sources CDROM iso
-	if [ "$(MACHINE)" == "i386" ]; then \
-		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-			. > /install/images/$(SNAME)-sources-cd-$(VERSION).$(MACHINE).iso; \
-	elif [ "$(MACHINE)" == "alpha" ]; then \
-		cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-			. > /install/images/$(SNAME)-sources-cd-$(VERSION).$(MACHINE).iso; \
-	fi
+	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
+		. > /install/images/$(SNAME)-sources-cd-$(VERSION).$(MACHINE).iso
 	rm -rf /install/cdrom/*
