@@ -30,7 +30,7 @@ VER        = 2.3.20
 
 THISAPP    = openldap-$(VER)
 DL_FILE    = $(THISAPP).tgz
-DL_FROM    = ftp://ftp.linux.pt/pub/mirrors/OpenLDAP/openldap-release
+DL_FROM    = $(UTL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -52,9 +52,6 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
-	make-packages.sh openldap $(THISAPP)
-
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
@@ -75,29 +72,23 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/sbin --sysconfdir=/var/ipfire --localstatedir=/srv/ldap \
-				--disable-debug \
-				--enable-dynamic \
-				--enable-crypt \
-				--enable-modules \
-				--enable-ldap \
-				--enable-ldbm \
-				--enable-dyngroup \
-				--enable-dynlist \
-				--enable-ppolicy \
-				--enable-valsort \
-				--disable-nls \
-				--enable-perl \
-				--enable-shell \
-				--with-cyrus-sasl
+	cd $(DIR_APP) && ./configure --prefix=/usr \
+		            --libexecdir=/usr/sbin \
+		            --sysconfdir=/etc \
+		            --localstatedir=/srv/ldap \
+		            --disable-debug \
+		            --enable-dynamic \
+		            --enable-crypt \
+		            --enable-modules \
+		            --enable-ldap \
+		            --enable-ldbm \
+		            --enable-dyngroup \
+		            --enable-dynlist \
+		            --enable-ppolicy \
+		            --enable-valsort
 	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make
-#	cd $(DIR_APP) && make test
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	chmod -v 755 /usr/lib/libl*-2.3.*
-#	install -v -m755 -d /usr/share/doc/$(THISAPP)/{drafts,guide,rfc}
-#	install -v -m644 doc/drafts/* /usr/share/doc/$(THISAPP)/drafts
-#	install -v -m644 doc/rfc/*    /usr/share/doc/$(THISAPP)/rfc
-#	cp -v -R doc/guide/*          /usr/share/doc/$(THISAPP)/guide
+	chmod -v 755 /usr/lib/libl*-2.3.so.0.2.8
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 9.2.5
+VER        = 9.3.2
 
 THISAPP    = bind-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 35a265fb97a068c066e22306ea32fd1f
+$(DL_FILE)_MD5 = 55e709501a7780233c36e25ccd15ece2
 
 install : $(TARGET)
 
@@ -73,12 +73,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP)/lib/isc && make
-	cd $(DIR_APP)/lib/dns && make
-	cd $(DIR_APP)/lib/lwres && make
-	cd $(DIR_APP)/bin/nsupdate && make
-	cd $(DIR_APP)/bin/dig && make
-	cd $(DIR_APP) && install -m 0755 bin/nsupdate/nsupdate /usr/bin
-	cd $(DIR_APP) && install -m 0755 bin/dig/host /usr/bin
+	cd $(DIR_APP) && make -C lib/dns $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/isc $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/bind9 $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/isccfg $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/lwres $(MAKETUNING)
+	cd $(DIR_APP) && make -C bin/dig $(MAKETUNING)
+	cd $(DIR_APP) && make -C bin/dig install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

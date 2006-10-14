@@ -72,6 +72,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./Gmake.linux GCCOPTOPT="-fno-stack-protector" INS_BASE=/usr install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-mkisofs_iconv-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-ascii-2.patch
+	cd $(DIR_APP) && make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root $(MAKETUNING)
+	cd $(DIR_APP) && make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -1,4 +1,61 @@
 ------------------------------------------------------------------------
+r320 | ms | 2006-10-13 17:35:24 +0200 (Fri, 13 Oct 2006) | 2 lines
+
+Zwischencommit fuer LFS.
+
+------------------------------------------------------------------------
+r319 | ms | 2006-10-13 15:01:14 +0200 (Fri, 13 Oct 2006) | 2 lines
+
+Kleiner Fehler in Python.
+
+------------------------------------------------------------------------
+r318 | ms | 2006-10-13 13:51:11 +0200 (Fri, 13 Oct 2006) | 2 lines
+
+Zwischencommit fuer LFS.
+
+------------------------------------------------------------------------
+r317 | ms | 2006-10-12 22:44:44 +0200 (Thu, 12 Oct 2006) | 3 lines
+
+Zwischencommit fuer LFS.
+EXPERIMENTELLE KERNEL-KONFIGURATION.
+
+------------------------------------------------------------------------
+r316 | ms | 2006-10-12 19:34:35 +0200 (Thu, 12 Oct 2006) | 5 lines
+
+Hinzugefuegt:
+  * Net-Tools
+  * Inetutils
+  * Ed
+
+------------------------------------------------------------------------
+r315 | ms | 2006-10-12 17:57:24 +0200 (Thu, 12 Oct 2006) | 3 lines
+
+EXPERIMENTELLE Konfiguration fuer den Installer-Kernel.
+Die genaue Konfiguration wird am Entwicklertreffen festgelegt.
+
+------------------------------------------------------------------------
+r314 | ms | 2006-10-12 17:52:06 +0200 (Thu, 12 Oct 2006) | 4 lines
+
+Neues Verfahren fuer die Rootfiles.
+Alle liegen in einer einzelnen Datei und die 3 verschiedenen Version koennen unterschiedlich zusammengestellt werden.
+USB-Stick-Images mangels Notwendigkeit entfernt.
+
+------------------------------------------------------------------------
+r313 | ms | 2006-10-12 13:17:13 +0200 (Thu, 12 Oct 2006) | 2 lines
+
+Mehrere Tippfehler in lfs/linux beseitigt.
+
+------------------------------------------------------------------------
+r312 | ms | 2006-10-09 15:09:55 +0200 (Mon, 09 Oct 2006) | 2 lines
+
+Zwischencommit fuer LFS.
+
+------------------------------------------------------------------------
+r311 | ms | 2006-10-09 14:16:52 +0200 (Mon, 09 Oct 2006) | 2 lines
+
+Zwischencommit fuer LFS. Bis Kernel.
+
+------------------------------------------------------------------------
 r310 | ms | 2006-10-09 00:55:09 +0200 (Mon, 09 Oct 2006) | 2 lines
 
 Zwischencommit fuer LFS.

@@ -1,0 +1,139 @@
+Submitted By: Alexander E. Patrakov
+Date: 2006-06-05
+Initial Package Version: 2.01
+Upstream Status: Knows about a similar RedHat patch, ignores the issue
+Origin: Alexander E. Patrakov; RedHat does something very similar
+        Modified by Andy Benton to fix an issue with it not applying properly
+Description: Replaces hard-coded ISO-8859-1 with ASCII approximations
+To regenerate:
+
+for F in cdrecord/cdrecord.c cdrecord/diskid.c cdrecord/sector.c \
+    readcd/readcd.c scgcheck/scgcheck.c scgskeleton/skel.c ; do
+    LC_ALL=de_DE iconv -f ISO-8859-1 -t US-ASCII//TRANSLIT $F >tmp
+    mv tmp $F
+done
+
+and remove hunks that modify comments.
+
+RedHat converts to UTF-8 instead, but this is unacceptable for LFS because
+not everyone uses UTF-8 based locales.
+
+$Id: cdrtools-2.01-ascii-2.patch 1553 2006-06-05 12:05:57Z randy $
+
+
+diff -urN cdrtools-2.01.orig/cdrecord/cdrecord.c cdrtools-2.01/cdrecord/cdrecord.c
+--- cdrtools-2.01.orig/cdrecord/cdrecord.c	2004-09-08 23:26:35.000000000 +0600
++++ cdrtools-2.01/cdrecord/cdrecord.c	2006-02-13 10:17:29.000000000 +0500
+@@ -297,7 +297,7 @@
+ 	 *
+ 	 * Warning: you are not allowed to modify or to remove the
+ 	 * Copyright and version printing code below!
+-	 * See also GPL § 2 subclause c)
++	 * See also GPL paragraph 2 subclause c)
+ 	 *
+ 	 * If you modify cdrecord you need to include additional version
+ 	 * printing code that:
+@@ -349,7 +349,7 @@
+ #	define	CLONE_TITLE	""
+ #endif
+ 	if ((flags & F_MSINFO) == 0 || lverbose || flags & F_VERSION) {
+-		printf("Cdrecord%s%s %s (%s-%s-%s) Copyright (C) 1995-2004 Jörg Schilling\n",
++		printf("Cdrecord%s%s %s (%s-%s-%s) Copyright (C) 1995-2004 Joerg Schilling\n",
+ 								PRODVD_TITLE,
+ 								CLONE_TITLE,
+ 								cdr_version,
+@@ -1651,7 +1651,7 @@
+ 	error("\t-xamix		Subsequent tracks are CD-ROM XA mode 2 form 1/2 - 2332 bytes\n");
+ 	error("\t-cdi		Subsequent tracks are CDI tracks\n");
+ 	error("\t-isosize	Use iso9660 file system size for next data track\n");
+-	error("\t-preemp		Audio tracks are mastered with 50/15 µs preemphasis\n");
++	error("\t-preemp		Audio tracks are mastered with 50/15 us preemphasis\n");
+ 	error("\t-nopreemp	Audio tracks are mastered with no preemphasis (default)\n");
+ 	error("\t-copy		Audio tracks have unlimited copy permission\n");
+ 	error("\t-nocopy		Audio tracks may only be copied once for personal use (default)\n");
+diff -urN cdrtools-2.01.orig/cdrecord/diskid.c cdrtools-2.01/cdrecord/diskid.c
+--- cdrtools-2.01.orig/cdrecord/diskid.c	2004-03-02 06:14:38.000000000 +0500
++++ cdrtools-2.01/cdrecord/diskid.c	2006-02-13 10:17:35.000000000 +0500
+@@ -112,8 +112,8 @@
+ LOCAL	char	m_grandadv[]	= "Grand Advance Technology Ltd.";
+ LOCAL	char	m_digitalstor[]	= "DIGITAL STORAGE TECHNOLOGY CO.,LTD";
+ LOCAL	char	m_matsushita[]	= "Matsushita Electric Industrial Co.,Ltd.";
+-LOCAL	char	m_albrechts[]	= "CDA Datenträger Albrechts GmbH.";
+-LOCAL	char	m_xalbrechts[]	= "??? CDA Datenträger Albrechts GmbH.";
++LOCAL	char	m_albrechts[]	= "CDA Datentraeger Albrechts GmbH.";
++LOCAL	char	m_xalbrechts[]	= "??? CDA Datentraeger Albrechts GmbH.";
+ 
+ LOCAL	char	m_prodisc[]	= "Prodisc Technology Inc.";
+ LOCAL	char	m_postech[]	= "POSTECH Corporation";
+@@ -150,7 +150,7 @@
+ 	{{97, 27, 00}, 81, "ILLEGAL OLD CODE: Old Ritek Co.???" },
+ 	{{97, 27, 25},  0, m_ill },
+ 	{{97, 30, 00},  0, m_ill },
+-	{{97, 33, 00}, 82, "ILLEGAL OLD CODE: Old CDA Datenträger Albrechts GmbH." },
++	{{97, 33, 00}, 82, "ILLEGAL OLD CODE: Old CDA Datentraeger Albrechts GmbH." },
+ 	{{97, 35, 44},  0, m_ill },
+ 	{{97, 39, 00},  0, m_ill },
+ 	{{97, 45, 36}, 83, "ILLEGAL OLD CODE: Old Kodak Photo CD" },
+ 
+diff -urN cdrtools-2.01.orig/cdrecord/sector.c cdrtools-2.01/cdrecord/sector.c
+--- cdrtools-2.01.orig/cdrecord/sector.c	2004-03-01 14:19:13.000000000 +0500
++++ cdrtools-2.01/cdrecord/sector.c	2006-02-13 10:17:36.000000000 +0500
+@@ -125,7 +125,7 @@
+ 			break;
+ 	}
+ 	if (be_verbose) {
+-		printf("Encoding speed : %dx (%d sectors/s) for libedc from Heiko Eißfeldt\n",
++		printf("Encoding speed : %dx (%d sectors/s) for libedc from Heiko Eissfeldt\n",
+ 				(i+74)/75, i);
+ 	}
+ 	return ((i+74)/75);
+diff -urN cdrtools-2.01.orig/readcd/readcd.c cdrtools-2.01/readcd/readcd.c
+--- cdrtools-2.01.orig/readcd/readcd.c	2004-09-08 23:24:14.000000000 +0600
++++ cdrtools-2.01/readcd/readcd.c	2006-02-13 10:17:37.000000000 +0500
+@@ -296,7 +296,7 @@
+ 	if (help)
+ 		usage(0);
+ 	if (pversion) {
+-		printf("readcd %s (%s-%s-%s) Copyright (C) 1987, 1995-2003 Jörg Schilling\n",
++		printf("readcd %s (%s-%s-%s) Copyright (C) 1987, 1995-2003 Joerg Schilling\n",
+ 								cdr_version,
+ 								HOST_CPU, HOST_VENDOR, HOST_OS);
+ 		exit(0);
+diff -urN cdrtools-2.01.orig/scgcheck/scgcheck.c cdrtools-2.01/scgcheck/scgcheck.c
+--- cdrtools-2.01.orig/scgcheck/scgcheck.c	2004-09-08 23:49:48.000000000 +0600
++++ cdrtools-2.01/scgcheck/scgcheck.c	2006-02-13 10:17:38.000000000 +0500
+@@ -129,7 +129,7 @@
+ 	if (help)
+ 		usage(0);
+ 	if (pversion) {
+-		printf("scgckeck %s (%s-%s-%s) Copyright (C) 1998-2002 Jörg Schilling\n",
++		printf("scgckeck %s (%s-%s-%s) Copyright (C) 1998-2002 Joerg Schilling\n",
+ 								scgc_version,
+ 								HOST_CPU, HOST_VENDOR, HOST_OS);
+ 		exit(0);
+@@ -153,11 +153,11 @@
+ 		comerr("Cannot open logfile.\n");
+ 
+ 	printf("Scgcheck %s (%s-%s-%s) SCSI user level transport library ABI checker.\n\
+-Copyright (C) 1998,2001 Jörg Schilling\n",
++Copyright (C) 1998,2001 Joerg Schilling\n",
+ 						scgc_version,
+ 						HOST_CPU, HOST_VENDOR, HOST_OS);
+ 	fprintf(logfile, "Scgcheck %s (%s-%s-%s) SCSI user level transport library ABI checker.\n\
+-Copyright (C) 1998,2001 Jörg Schilling\n",
++Copyright (C) 1998,2001 Joerg Schilling\n",
+ 						scgc_version,
+ 						HOST_CPU, HOST_VENDOR, HOST_OS);
+ 	/*
+diff -urN cdrtools-2.01.orig/scgskeleton/skel.c cdrtools-2.01/scgskeleton/skel.c
+--- cdrtools-2.01.orig/scgskeleton/skel.c	2004-07-11 04:57:27.000000000 +0600
++++ cdrtools-2.01/scgskeleton/skel.c	2006-02-13 10:17:39.000000000 +0500
+@@ -155,7 +155,7 @@
+ 	if (help)
+ 		usage(0);
+ 	if (pversion) {
+-		printf("scgskeleton %s (%s-%s-%s) Copyright (C) 1987, 1995-2003 Jörg Schilling\n",
++		printf("scgskeleton %s (%s-%s-%s) Copyright (C) 1987, 1995-2003 Joerg Schilling\n",
+ 								skel_version,
+ 								HOST_CPU, HOST_VENDOR, HOST_OS);
+ 		exit(0);

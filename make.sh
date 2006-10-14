@@ -365,6 +365,7 @@ buildipfire() {
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp
+  ipfiremake pam
   ipfiremake openssl
   ipfiremake python
   ipfiremake libnet
@@ -385,12 +386,12 @@ buildipfire() {
   ipfiremake BerkeleyDB
   ipfiremake mysql
   ipfiremake cyrus-sasl
-exit 1
   ipfiremake openldap
+#  ipfiremake cyrus-sasl PASS=L # Doesn't work yet. Thereby there's the question: Do we really need this?
   ipfiremake apache2
   ipfiremake php
   ipfiremake subversion
-  ipfiremake apache2 PASS=CONFIG
+  ipfiremake apache2 PASS=C
   ipfiremake arping
   ipfiremake beep
   ipfiremake bind
@@ -398,6 +399,7 @@ exit 1
   ipfiremake cdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
+exit 1
   ipfiremake ethtool
   ipfiremake ez-ipupdate
   ipfiremake fcron
@@ -476,7 +478,6 @@ exit 1
   ipfiremake openvpn
   ipfiremake pkg-config
   ipfiremake glib
-  ipfiremake pam
   ipfiremake pammysql
   ipfiremake saslauthd PASS=2
   ipfiremake xinetd

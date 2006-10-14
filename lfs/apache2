@@ -32,7 +32,7 @@ THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(PASS)" "CONFIG"
+ifeq "$(PASS)" "C"
 	TARGET     = $(DIR_INFO)/$(THISAPP)-config
 else
 	TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -78,7 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-ifeq "$(PASS)" "CONFIG"
+ifeq "$(PASS)" "C"
 	# DO THIS IN AN EXTRA STEP BECAUSE PHP AND SUBVERSION WILL FAIL.
 
 	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
@@ -132,7 +132,7 @@ else
 
 	cd $(DIR_APP) && ./configure --enable-layout=IPFire \
 				--enable-ssl --enable-mods-shared=all
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	chown -v root:root /usr/lib/apache/httpd.exp \
 	    /usr/sbin/{apxs,apachectl,dbmmanage,envvars{,-std}} \

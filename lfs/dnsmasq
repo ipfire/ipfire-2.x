@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/src && sed -i \
 		-e 's|^\/\* #define HAVE_ISC_READER .*$$|#define HAVE_ISC_READER\n#define NO_IPV6|' \
 		-e 's/^#define CHUSER .*$$/#define CHUSER "dnsmasq"/' config.h
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && PREFIX=/usr make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

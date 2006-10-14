@@ -1,0 +1,629 @@
+Submitted By: Alexander E. Patrakov
+Date: 2005-09-30
+Initial Package Version: 2.01
+Origin: RedHat (but maybe they initially obtained the patch from elsewhere)
+Upstream Status: Not applied
+Description: Allows one to specify any glibc-supported source charset
+for Joliet filenames, instead of the very limited choice offered by mkisofs
+itself. Required for writing Windows-readable data CDs in UTF-8 locales when
+filenames contain national characters.
+
+diff -urN --exclude-from=- cdrtools-2.01/include/unls.h cdrtools-2.01-jh/include/unls.h
+--- cdrtools-2.01/include/unls.h	2003-06-16 00:41:23.000000000 +0300
++++ cdrtools-2.01-jh/include/unls.h	2004-02-02 18:31:22.000000000 +0200
+@@ -30,6 +30,10 @@
+ #include <prototyp.h>
+ #endif
+ 
++#ifdef USE_ICONV
++#include <iconv.h>
++#endif
++
+ #ifdef	__cplusplus
+ extern "C" {
+ #endif
+@@ -43,6 +47,9 @@
+ 	char *charset;
+ 	unsigned char **page_uni2charset;
+ 	struct nls_unicode *charset2uni;
++#ifdef USE_ICONV
++	iconv_t iconv_d;
++#endif
+ 
+ 	void (*inc_use_count) 	__PR((void));
+ 	void (*dec_use_count) 	__PR((void));
+@@ -58,6 +65,9 @@
+ extern void 		unload_nls		__PR((struct nls_table *));
+ extern struct nls_table *load_nls_default	__PR((void));
+ extern int		init_nls_file		__PR((char * name));
++#ifdef USE_ICONV
++extern int		init_nls_iconv		__PR((char * name));
++#endif
+ 
+ #ifdef	__cplusplus
+ }
+diff -urN --exclude-from=- cdrtools-2.01/libunls/libunls.mk cdrtools-2.01-jh/libunls/libunls.mk
+--- cdrtools-2.01/libunls/libunls.mk	2000-03-25 14:51:56.000000000 +0200
++++ cdrtools-2.01-jh/libunls/libunls.mk	2004-02-02 18:31:22.000000000 +0200
+@@ -8,6 +8,7 @@
+ INSDIR=		lib
+ TARGETLIB=	unls
+ #CPPOPTS +=	-Istdio
++CPPOPTS +=	-DUSE_ICONV
+ include		Targets
+ LIBS=		
+ 
+diff -urN --exclude-from=- cdrtools-2.01/libunls/nls.h cdrtools-2.01-jh/libunls/nls.h
+--- cdrtools-2.01/libunls/nls.h	2002-12-03 02:34:27.000000000 +0200
++++ cdrtools-2.01-jh/libunls/nls.h	2004-02-02 18:31:22.000000000 +0200
+@@ -111,5 +111,8 @@
+ extern int init_nls_cp10079	__PR((void));
+ extern int init_nls_cp10081	__PR((void));
+ extern int init_nls_file	__PR((char * name));
++#ifdef USE_ICONV
++extern int init_nls_iconv	__PR((char * name));
++#endif
+ 
+ #endif	/* _NLS_H */
+diff -urN --exclude-from=- cdrtools-2.01/libunls/nls_iconv.c cdrtools-2.01-jh/libunls/nls_iconv.c
+--- cdrtools-2.01/libunls/nls_iconv.c	1970-01-01 02:00:00.000000000 +0200
++++ cdrtools-2.01-jh/libunls/nls_iconv.c	2004-02-02 18:31:22.000000000 +0200
+@@ -0,0 +1,96 @@
++/* @(#)nls_iconv.c	1.0 02/04/20 2002 J. Schilling  */
++#ifndef lint
++static	char sccsid[] =
++	"@(#)nls_iconv.c	1.0 02/01/20 2002 J. Schilling";
++#endif
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2, or (at your option)
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; see the file COPYING.  If not, write to
++ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
++ */
++/*
++ *	Modifications to make the code portable Copyright (c) 2000 J. Schilling
++ *
++ * nls_iconv: create a pseudo-charset table to use iconv() provided by C
++ * library or libiconv by Bruno Haible
++ * The Unicode to charset table has only exact mappings.
++ *
++ *
++ * Jungshik Shin (jshin@mailaps.org) 04-Feb-2002
++ */
++
++#ifdef USE_ICONV
++#include <mconfig.h>
++#include <stdio.h>
++#include <stdxlib.h>
++#include <strdefs.h>
++#include "nls.h"
++#include <iconv.h>
++
++static void	inc_use_count	__PR((void));
++static void	dec_use_count	__PR((void));
++
++
++static void
++inc_use_count()
++{
++	MOD_INC_USE_COUNT;
++}
++
++static void
++dec_use_count()
++{
++	MOD_DEC_USE_COUNT;
++}
++
++int
++init_nls_iconv(charset)
++	char	*charset;
++{
++	iconv_t iconv_d;  /* iconv conversion descriptor */
++	struct nls_table *table;
++
++	/* give up if no charset is given */
++	if (charset == NULL)
++		return -1;
++
++	/* see if we already have a table with this name - built in tables
++	   have precedence over iconv() - i.e. can't have the name of an
++	   existing table. Also, we may have already registered this file
++	   table */
++	if (find_nls(charset) != NULL)
++		return -1;
++
++	if ((iconv_d = iconv_open("UCS-2BE", charset)) == (iconv_t) -1)
++		return -1;
++
++
++	/* set up the table */
++	if ((table = (struct nls_table *)malloc(sizeof (struct nls_table)))
++							== NULL) {
++		return -1;
++	}
++
++	/* give the table the file name, so we can find it again if needed */
++	table->charset = strdup(charset);
++	table->iconv_d = iconv_d;
++	table->page_uni2charset = NULL;
++	table->charset2uni = NULL;
++	table->inc_use_count = inc_use_count;
++	table->dec_use_count = dec_use_count;
++	table->next = NULL;
++
++	/* register the table */
++	return register_nls(table);
++}
++#endif
+diff -urN --exclude-from=- cdrtools-2.01/libunls/Targets cdrtools-2.01-jh/libunls/Targets
+--- cdrtools-2.01/libunls/Targets	2002-12-03 02:34:27.000000000 +0200
++++ cdrtools-2.01-jh/libunls/Targets	2004-02-02 18:31:22.000000000 +0200
+@@ -39,4 +39,5 @@
+ 	nls_cp10029.c \
+ 	nls_cp10079.c \
+ 	nls_cp10081.c \
+-	nls_file.c
++	nls_file.c \
++	nls_iconv.c
+diff -urN --exclude-from=- cdrtools-2.01/mkisofs/joliet.c cdrtools-2.01-jh/mkisofs/joliet.c
+--- cdrtools-2.01/mkisofs/joliet.c	2003-04-28 01:36:08.000000000 +0300
++++ cdrtools-2.01-jh/mkisofs/joliet.c	2004-02-03 14:15:17.000000000 +0200
+@@ -90,6 +90,11 @@
+ #include <unls.h>	/* For UNICODE translation */
+ #include <schily.h>
+ 
++#ifdef USE_ICONV
++#include <iconv.h>
++#include <errno.h>
++#endif
++
+ static Uint	jpath_table_index;
+ static struct directory **jpathlist;
+ static int	next_jpath_index = 1;
+@@ -103,13 +108,23 @@
+ };
+ 
+ #ifdef	UDF
+-	void	convert_to_unicode	__PR((unsigned char *buffer,
++#	ifdef USE_ICONV
++	size_t
++#	else
++	void
++#	endif
++		convert_to_unicode	__PR((unsigned char *buffer,
+ 		int size, char *source, struct nls_table *inls));
+-	int	joliet_strlen		__PR((const char *string));
++	int	joliet_strlen		__PR((const char *string, struct nls_table *inls));
+ #else
+-static void	convert_to_unicode	__PR((unsigned char *buffer,
++#	ifdef USE_ICONV
++	static size_t
++#	else
++	static void
++#endif
++		convert_to_unicode	__PR((unsigned char *buffer,
+ 		int size, char *source, struct nls_table *inls));
+-static int	joliet_strlen		__PR((const char *string));
++static int	joliet_strlen		__PR((const char *string, struct nls_table *inls));
+ #endif
+ static void	get_joliet_vol_desc	__PR((struct iso_primary_descriptor *jvol_desc));
+ static void	assign_joliet_directory_addresses __PR((struct directory *node));
+@@ -161,6 +176,20 @@
+ 	if (inls == onls)
+ 		return (c);
+ 
++#ifdef USE_ICONV
++	if(inls->charset2uni == NULL || onls->page_uni2charset == NULL) {
++		/*
++		 * This shouldn't be reached
++		 */
++		static BOOL iconv_warned = FALSE;
++		if(!iconv_warned) {
++			error("Warning: Iconv conversion not supported in conv_charset.\n");
++			iconv_warned = TRUE;
++		}
++		return (c);
++	}
++#endif
++
+ 	/* get high and low UNICODE bytes */
+ 	uh = inls->charset2uni[c].uni2;
+ 	ul = inls->charset2uni[c].uni1;
+@@ -186,10 +215,18 @@
+  *
+  * Notes:
+  */
+-#ifdef	UDF
+-void
++#ifdef USE_ICONV
++#	if	UDF
++size_t
++#	else
++static size_t
++#	endif
+ #else
++#	if	UDF
++void
++#	else
+ static void
++#	endif
+ #endif
+ convert_to_unicode(buffer, size, source, inls)
+ 	unsigned char	*buffer;
+@@ -216,6 +253,51 @@
+ 		tmpbuf = (Uchar *) source;
+ 	}
+ 
++#ifdef USE_ICONV
++	if (inls->iconv_d && inls->charset2uni==NULL &&
++			inls->page_uni2charset==NULL) {
++		char *inptr = tmpbuf;
++		char *outptr = buffer;
++		size_t inleft = strlen(tmpbuf);
++		size_t inlen = inleft;
++		size_t outleft = size;
++
++		iconv(inls->iconv_d, NULL, NULL, NULL, NULL);
++		if(iconv(inls->iconv_d, &inptr, &inleft, &outptr, &outleft) ==
++				(size_t)-1 && errno == EILSEQ) {
++			fprintf(stderr, "Incorrectly encoded string (%s) "
++				"encountered.\nPossibly creating an invalid "
++				"Joliet extension. Aborting.\n", source);
++			exit(1);
++		}
++
++	  	for (i = 0; (i + 1) < size - outleft; i += 2) {	/* Size may be odd!!!*/
++			if (buffer[i]=='\0') {
++				switch (buffer[i+1]) {   /* Invalid characters for Joliet */
++					case '*':
++					case '/':
++					case ':':
++					case ';':
++					case '?':
++					case '\\':
++						buffer[i+1]='_';
++					default:
++						if (buffer[i+1] == 0x7f ||
++							    buffer[i+1] < 0x20)
++							buffer[i+1]='_';
++				}
++			}
++		}
++		if (size & 1) {	/* beautification */
++	  		buffer[size - 1] = 0;
++		}
++		if (source == NULL) {
++			free(tmpbuf);
++		}
++		return (inlen - inleft);
++	}
++#endif
++
+ 	/*
+ 	 * Now start copying characters.  If the size was specified to be 0,
+ 	 * then assume the input was 0 terminated.
+@@ -271,6 +353,9 @@
+ 	if (source == NULL) {
+ 		free(tmpbuf);
+ 	}
++#ifdef USE_ICONV
++	return j;
++#endif
+ }
+ 
+ /*
+@@ -287,12 +372,50 @@
+ #else
+ static int
+ #endif
+-joliet_strlen(string)
++joliet_strlen(string, inls)
+ 	const char	*string;
++	struct nls_table *inls;
+ {
+ 	int		rtn;
+ 
++#ifdef USE_ICONV
++	if (inls->iconv_d && inls->charset2uni==NULL &&
++			inls->page_uni2charset==NULL) {
++		/*
++		 * we const-cast since we're sure iconv won't change
++		 * the string itself
++		 */
++		char *string_ptr = (char *)string;
++		size_t string_len = strlen(string);
++
++		/*
++		 * iconv has no way of finding out the required size
++		 * in the target
++		 */
++
++		char *tmp, *tmp_ptr;
++		/* we assume that the maximum length is 2 * jlen */
++		size_t tmp_len = (size_t)jlen * 2 + 1;
++		tmp = e_malloc(tmp_len);
++		tmp_ptr = tmp;
++
++		iconv(inls->iconv_d, NULL, NULL, NULL, NULL);
++		iconv(inls->iconv_d, &string_ptr, &string_len, &tmp_ptr,
++			&tmp_len);
++
++		/*
++		 * iconv advanced the tmp pointer with as many chars
++		 * as it has written to it, so we add up the delta
++		 */
++		rtn = (tmp_ptr - tmp);
++
++		free(tmp);
++	} else {
++		rtn = strlen(string) << 1;
++	}
++#else
+ 	rtn = strlen(string) << 1;
++#endif
+ 
+ 	/*
+ 	 * We do clamp the maximum length of a Joliet string to be the
+@@ -480,16 +603,33 @@
+ 	/* compare the Unicode names */
+ 
+ 	while (*rpnt && *lpnt) {
++#ifdef USE_ICONV
++		size_t ri, li;
++
++		ri = convert_to_unicode(rtmp, 2, rpnt, rinls);
++		li = convert_to_unicode(ltmp, 2, lpnt, linls);
++		rpnt += ri;
++		lpnt += li;
++		if(!ri && !li)
++			return (0);
++		else if(ri && !li)
++			return (1);
++		else if(!ri && li)
++			return (-1);
++#else
+ 		convert_to_unicode(rtmp, 2, rpnt, rinls);
+ 		convert_to_unicode(ltmp, 2, lpnt, linls);
++#endif
+ 
+ 		if (a_to_u_2_byte(rtmp) < a_to_u_2_byte(ltmp))
+ 			return (-1);
+ 		if (a_to_u_2_byte(rtmp) > a_to_u_2_byte(ltmp))
+ 			return (1);
+ 
++#ifndef USE_ICONV
+ 		rpnt++;
+ 		lpnt++;
++#endif
+ 	}
+ 
+ 	if (*rpnt)
+@@ -574,10 +714,10 @@
+ 		}
+ #ifdef APPLE_HYB
+ 		if (USE_MAC_NAME(de))
+-			namelen = joliet_strlen(de->hfs_ent->name);
++			namelen = joliet_strlen(de->hfs_ent->name, hfs_inls);
+ 		else
+ #endif	/* APPLE_HYB */
+-			namelen = joliet_strlen(de->name);
++			namelen = joliet_strlen(de->name, in_nls);
+ 
+ 		if (dpnt == root) {
+ 			jpath_table_l[jpath_table_index] = 1;
+@@ -742,10 +882,10 @@
+ #ifdef APPLE_HYB
+ 		/* Use the HFS name if it exists */
+ 		if (USE_MAC_NAME(s_entry1))
+-			cvt_len = joliet_strlen(s_entry1->hfs_ent->name);
++			cvt_len = joliet_strlen(s_entry1->hfs_ent->name, hfs_inls);
+ 		else
+ #endif	/* APPLE_HYB */
+-			cvt_len = joliet_strlen(s_entry1->name);
++			cvt_len = joliet_strlen(s_entry1->name, in_nls);
+ 
+ 		/*
+ 		 * Fix the record length
+@@ -891,12 +1031,12 @@
+ 				if (USE_MAC_NAME(s_entry))
+ 					/* Use the HFS name if it exists */
+ 					jpath_table_size +=
+-						joliet_strlen(s_entry->hfs_ent->name) +
++						joliet_strlen(s_entry->hfs_ent->name, hfs_inls) +
+ 						offsetof(struct iso_path_table, name[0]);
+ 				else
+ #endif	/* APPLE_HYB */
+ 					jpath_table_size +=
+-						joliet_strlen(s_entry->name) +
++						joliet_strlen(s_entry->name, in_nls) +
+ 						offsetof(struct iso_path_table, name[0]);
+ 				if (jpath_table_size & 1) {
+ 					jpath_table_size++;
+@@ -918,13 +1058,13 @@
+ 				/* Use the HFS name if it exists */
+ 				s_entry->jreclen =
+ 				offsetof(struct iso_directory_record, name[0])
+-					+ joliet_strlen(s_entry->hfs_ent->name)
++					+ joliet_strlen(s_entry->hfs_ent->name, hfs_inls)
+ 					+ 1;
+ 			else
+ #endif	/* APPLE_HYB */
+ 				s_entry->jreclen =
+ 				offsetof(struct iso_directory_record, name[0])
+-					+ joliet_strlen(s_entry->name)
++					+ joliet_strlen(s_entry->name, in_nls)
+ 					+ 1;
+ 		} else {
+ 			/*
+@@ -1072,6 +1212,9 @@
+ #endif
+ 
+ 	while (*rpnt && *lpnt) {
++#ifdef USE_ICONV
++		size_t ri, li;
++#endif
+ 		if (*rpnt == ';' && *lpnt != ';')
+ 			return (-1);
+ 		if (*rpnt != ';' && *lpnt == ';')
+@@ -1092,16 +1235,32 @@
+ 			return (1);
+ #endif
+ 
++#ifdef USE_ICONV
++
++		ri = convert_to_unicode(rtmp, 2, rpnt, rinls);
++		li = convert_to_unicode(ltmp, 2, lpnt, linls);
++		rpnt += ri;
++		lpnt += li;
++		if(!ri && !li)
++			return (0);
++		else if(ri && !li)
++			return (1);
++		else if(!ri && li)
++			return (-1);
++#else
+ 		convert_to_unicode(rtmp, 2, rpnt, rinls);
+ 		convert_to_unicode(ltmp, 2, lpnt, linls);
++#endif
+ 
+ 		if (a_to_u_2_byte(rtmp) < a_to_u_2_byte(ltmp))
+ 			return (-1);
+ 		if (a_to_u_2_byte(rtmp) > a_to_u_2_byte(ltmp))
+ 			return (1);
+ 
++#ifndef USE_ICONV
+ 		rpnt++;
+ 		lpnt++;
++#endif
+ 	}
+ 	if (*rpnt)
+ 		return (1);
+diff -urN --exclude-from=- cdrtools-2.01/mkisofs/Makefile cdrtools-2.01-jh/mkisofs/Makefile
+--- cdrtools-2.01/mkisofs/Makefile	2004-01-02 17:23:32.000000000 +0200
++++ cdrtools-2.01-jh/mkisofs/Makefile	2004-02-02 18:31:22.000000000 +0200
+@@ -32,6 +32,7 @@
+ CPPOPTS +=	-DUDF
+ CPPOPTS +=	-DDVD_VIDEO
+ CPPOPTS +=	-DSORTING
++CPPOPTS +=	-DUSE_ICONV
+ CPPOPTS +=	-I../libhfs_iso/
+ CPPOPTS	+=	-DHAVE_CONFIG_H -DUSE_LIBSCHILY -DUSE_SCG \
+ 		'-DAPPID_DEFAULT="MKISOFS ISO 9660/HFS FILESYSTEM BUILDER & CDRECORD CD-R/DVD CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING"' \
+diff -urN --exclude-from=- cdrtools-2.01/mkisofs/mkisofs.c cdrtools-2.01-jh/mkisofs/mkisofs.c
+--- cdrtools-2.01/mkisofs/mkisofs.c	2004-01-07 01:23:46.000000000 +0200
++++ cdrtools-2.01-jh/mkisofs/mkisofs.c	2004-02-02 18:31:22.000000000 +0200
+@@ -59,6 +59,11 @@
+ #endif
+ #endif	/* no_more_needed */
+ 
++#ifdef USE_ICONV
++#include <locale.h>
++#include <langinfo.h>
++#endif
++
+ struct directory *root = NULL;
+ int		path_ind;
+ 
+@@ -223,6 +228,10 @@
+ int	do_sort = 0;		/* sort file data */
+ #endif /* SORTING */
+ 
++#ifdef USE_ICONV
++int	iconv_possible;
++#endif
++
+ struct nls_table *in_nls = NULL;  /* input UNICODE conversion table */
+ struct nls_table *out_nls = NULL; /* output UNICODE conversion table */
+ #ifdef APPLE_HYB
+@@ -2235,6 +2244,37 @@
+ 	init_nls_file(hfs_ocharset);
+ #endif /* APPLE_HYB */
+ 
++#ifdef USE_ICONV
++	iconv_possible = !(iso9660_level >= 4 || ((ocharset &&
++		strcmp(ocharset, icharset ? icharset : "")) &&
++		use_RockRidge) || apple_ext || apple_hyb);
++
++	setlocale(LC_CTYPE, "");
++	
++  	if (icharset == NULL && iconv_possible) {
++		char *charset = nl_langinfo(CODESET);
++		/* set to detected value but only if it is not pure US-ASCII */
++		if(strcmp(charset, "ANSI_X3.4-1968") != 0)
++			icharset = charset;
++
++		if(icharset && verbose > 0)
++			fprintf(stderr, "INFO:\t"
++			"%s character encoding detected by locale settings."
++			"\n\tAssuming %s encoded filenames on source "
++			"filesystem,\n"
++			"\tuse -input-charset to override.\n",
++			icharset, icharset);
++	}
++
++	if(iconv_possible) {
++		/*
++		 * don't care if initialization fails
++		 */
++		init_nls_iconv(icharset);
++		init_nls_iconv(ocharset);
++	}
++#endif
++
+ 	if (icharset == NULL) {
+ #if	(defined(__CYGWIN32__) || defined(__CYGWIN__)) && !defined(IS_CYGWIN_1)
+ 		in_nls = load_nls("cp437");
+@@ -2262,6 +2302,12 @@
+ 	if (in_nls == NULL || out_nls == NULL) { /* Unknown charset specified */
+ 		fprintf(stderr, "Unknown charset\nKnown charsets are:\n");
+ 		list_nls();	/* List all known charset names */
++#ifdef USE_ICONV
++		if(!iconv_possible)
++			fprintf(stderr, "Iconv charsets cannot be used with "
++				"Apple extension, HFS, ISO9660 version 2 or\n"
++				"Rock Ridge.\n");
++#endif
+ 		exit(1);
+ 	}
+ 
+diff -urN --exclude-from=- cdrtools-2.01/mkisofs/mkisofs.h cdrtools-2.01-jh/mkisofs/mkisofs.h
+--- cdrtools-2.01/mkisofs/mkisofs.h	2003-12-28 15:38:51.000000000 +0200
++++ cdrtools-2.01-jh/mkisofs/mkisofs.h	2004-02-02 18:31:22.000000000 +0200
+@@ -501,9 +501,14 @@
+ 
+ /* joliet.c */
+ #ifdef	UDF
++#	ifdef USE_ICONV
++extern	size_t	convert_to_unicode	__PR((unsigned char *buffer,
++			int size, char *source, struct nls_table *inls));
++#	else
+ extern	void	convert_to_unicode	__PR((unsigned char *buffer,
+ 			int size, char *source, struct nls_table *inls));
+-extern	int	joliet_strlen		__PR((const char *string));
++#	endif
++extern	int	joliet_strlen		__PR((const char *string, struct nls_table *inls));
+ #endif
+ extern unsigned char conv_charset __PR((unsigned char, struct nls_table *,
+ 				struct nls_table *));
+diff -urN --exclude-from=- cdrtools-2.01/mkisofs/udf.c cdrtools-2.01-jh/mkisofs/udf.c
+--- cdrtools-2.01/mkisofs/udf.c	2003-04-28 01:34:52.000000000 +0300
++++ cdrtools-2.01-jh/mkisofs/udf.c	2004-02-02 18:31:22.000000000 +0200
+@@ -442,7 +442,7 @@
+ 	int i;
+ 	int expanded_length;
+ 
+-	expanded_length = joliet_strlen(src);
++	expanded_length = joliet_strlen(src, in_nls);
+ 	if (expanded_length > 1024)
+ 		expanded_length = 1024;
+ 	if (expanded_length > (dst_size-1)*2)
