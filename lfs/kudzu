@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: kudzu,v 1.9.2.3 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 0.99.50
+VER        = 1.1.67
 
 THISAPP    = kudzu-$(VER)
 DL_FILE    = kudzu_$(VER).orig.tar.gz
-DL_FROM    = $(URL_DEBIAN)/k/kudzu
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
@@ -52,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1f59043bb9b17c1709b4fcd4cae97711
+$(DL_FILE)_MD5 = bfd122f24d3a6a5b3e63a311d1be492d
 
 install : $(TARGET)
 
@@ -82,8 +76,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-pam.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-updfstab.conf.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make CFLAGS="-Os -fomit-frame-pointer -Wall -D_GNU_SOURCE -I. -I/install/include" libkudzu.a
 	cd $(DIR_APP) && install -m 0644 libkudzu.a /install/lib

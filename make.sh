@@ -411,17 +411,17 @@ buildipfire() {
   ipfiremake ipaddr
   ipfiremake iptstate
 #  ipfiremake iputils
-exit 1
   ipfiremake l7-protocols
-  ipfiremake isapnptools
-  ipfiremake isdn4k-utils
-  ipfiremake kudzu
+#  ipfiremake isapnptools # ERROR :(
+#  ipfiremake isdn4k-utils # What about mISDN???
+#  ipfiremake kudzu # ERROR :(
   ipfiremake logrotate
   ipfiremake logwatch
   ipfiremake mingetty
   ipfiremake misc-progs
   ipfiremake mtools
   ipfiremake nano
+exit 1
   ipfiremake nash
   ipfiremake nasm
   ipfiremake URI
