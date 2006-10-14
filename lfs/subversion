@@ -82,7 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--with-installbuilddir=/usr/lib/apr-0 \
 				--with-ssl --disable-nls \
 				--disable-mod-activation
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

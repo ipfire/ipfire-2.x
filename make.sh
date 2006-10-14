@@ -256,7 +256,6 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-#    lfsmake2 makedev
     lfsmake2 linux-libc-header
     lfsmake2 man-pages
     lfsmake2 glibc
@@ -399,11 +398,10 @@ buildipfire() {
   ipfiremake cdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
-exit 1
   ipfiremake ethtool
   ipfiremake ez-ipupdate
   ipfiremake fcron
-  ipfiremake perl-GD
+  ipfiremake GD
   ipfiremake gnupg
   ipfiremake hdparm
   ipfiremake ibod
@@ -411,9 +409,9 @@ exit 1
   ipfiremake iptables
   ipfiremake ipac-ng
   ipfiremake ipaddr
-  ipfiremake iproute2
   ipfiremake iptstate
-  ipfiremake iputils
+#  ipfiremake iputils
+exit 1
   ipfiremake l7-protocols
   ipfiremake isapnptools
   ipfiremake isdn4k-utils

@@ -26,9 +26,11 @@
 
 include Config
 
-VER = ipfire
+VER        = 2.35
 
-THISAPP    = initscripts
+THISAPP    = GD-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -36,36 +38,43 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = dfc3e16e85a17aab7ee1029fbe307fca
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
-$(TARGET) :
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	-mkdir -p /etc/rc.d/helper
-	for i in $(DIR_SRC)/src/rc.d/* ; do \
-	    if [ -f $$i ]; then \
-	        sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /etc/rc.d/`basename $$i`; \
-	    fi; \
-	done
-	for i in $(DIR_SRC)/src/rc.d/helper/* ; do \
-	    if [ -f $$i ]; then \
-	        sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /etc/rc.d/helper/`basename $$i`; \
-	    fi; \
-	done
-	chmod -R 755 /etc/rc.d
-	chgrp nobody /etc/rc.d/rc.red
-	chmod 4750 /etc/rc.d/rc.red
-
-	-mkdir -p /etc/boot.d
-	cp -f $(DIR_SRC)/src/boot.d/* /etc/boot.d
-
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && sed -i "s%,'y'%,'n'%" Makefile.PL
+	cd $(DIR_APP) && yes 'n' | perl Makefile.PL
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
