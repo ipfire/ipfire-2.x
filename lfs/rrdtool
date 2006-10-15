@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: rrdtool,v 1.5.2.6 2005/12/21 09:56:21 eoberlander Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,11 +26,11 @@
 
 include Config
 
-VER        = 1.0.49
+VER        = 1.2.15
 
 THISAPP    = rrdtool-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    =  http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/pub/rrdtool-1.0.x
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -48,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fbe492dbf3d68abb1d86c2322e7ed44a
+$(DL_FILE)_MD5 = bde8b12c202bc4e27fb9a9588a0aaddf
 
 install : $(TARGET)
 
@@ -78,10 +72,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && sh configure --prefix=/usr/share/$(THISAPP) \
+	cd $(DIR_APP) && ./configure --prefix=/usr/share/$(THISAPP) \
 	    --exec-prefix=/usr --mandir=/usr/share/man \
-	    --enable-local-libpng --enable-local-zlib --with-pic --enable-latin2
-	cd $(DIR_APP) && make
+	    --enable-local-libpng --enable-local-zlib --with-pic --enable-latin2 \
+	    --disable-python --disable-tcl
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make site-perl-install
 	-mkdir -p /home/httpd/html/graphs/

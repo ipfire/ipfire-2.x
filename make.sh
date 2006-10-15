@@ -325,7 +325,7 @@ buildipfire() {
   ipfiremake ppp
   ipfiremake rp-pppoe
   ipfiremake unzip
-  ipfiremake linux			PASS=I
+#  ipfiremake linux			PASS=I # Can we remove the installer kernel?
   ipfiremake linux			PASS=S
 #  ipfiremake 3cp4218		PASS=SMP
 #  ipfiremake amedyn			PASS=SMP
@@ -374,12 +374,13 @@ buildipfire() {
   ipfiremake lcms
   ipfiremake libmng
   ipfiremake freetype
+  ipfiremake libart
   ipfiremake gd
   ipfiremake popt
   ipfiremake pcre
   ipfiremake slang
   ipfiremake newt
-# ipfiremake libcap
+  ipfiremake libcap
   ipfiremake pciutils
   ipfiremake libxml2
   ipfiremake BerkeleyDB
@@ -410,7 +411,7 @@ buildipfire() {
   ipfiremake ipac-ng
   ipfiremake ipaddr
   ipfiremake iptstate
-#  ipfiremake iputils
+  ipfiremake iputils
   ipfiremake l7-protocols
 #  ipfiremake isapnptools # ERROR :(
 #  ipfiremake isdn4k-utils # What about mISDN???
@@ -421,9 +422,9 @@ buildipfire() {
   ipfiremake misc-progs
   ipfiremake mtools
   ipfiremake nano
-exit 1
   ipfiremake nash
   ipfiremake nasm
+### The Perl Modules have to be updated! I will skip this now!
   ipfiremake URI
   ipfiremake HTML-Tagset
   ipfiremake HTML-Parser
@@ -447,6 +448,7 @@ exit 1
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
   ipfiremake GeoIP
+###
   ipfiremake fwhits
   ipfiremake noip_updater
   ipfiremake ntp
@@ -461,7 +463,7 @@ exit 1
   ipfiremake squid
   ipfiremake squid-graph
   ipfiremake squidguard
-  ipfiremake tcpdump
+#  ipfiremake tcpdump
   ipfiremake traceroute
   ipfiremake vlan
   ipfiremake wireless
@@ -477,7 +479,6 @@ exit 1
   ipfiremake pkg-config
   ipfiremake glib
   ipfiremake pammysql
-  ipfiremake saslauthd PASS=2
   ipfiremake xinetd
   ipfiremake ghostscript
   ipfiremake cups
@@ -501,8 +502,9 @@ exit 1
   ipfiremake clamav
   ipfiremake razor
   ipfiremake spamassassin
-#  ipfiremake amavisd
+  ipfiremake amavisd
   ipfiremake stund
+exiterror Bis hierhin und nicht weiter!
   ipfiremake zaptel
   ipfiremake libpri
   ipfiremake bristuff

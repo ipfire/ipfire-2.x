@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-isis-dos.patch	#CAN 2005-1278
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-ldp-dos.patch	#CAN 2005-1279
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && make DEFS="-D_U_=\"\" -DHAVE_CONFIG_H"
+	cd $(DIR_APP) && make $(MAKETUNING) DEFS="-D_U_=\"\" -DHAVE_CONFIG_H"
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -52,9 +52,6 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-#dist: 
-#	make-packages.sh screen $(THISAPP)-ipfire-beta-1
-
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
@@ -77,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-socket-dir=/var/run/screen --with-sys-screenrc=/etc/screenrc
 	cd $(DIR_APP) && sed -i -e "s%/usr/local/etc/screenrc%/etc/screenrc%" {etc,doc}/*
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -m 644 etc/etcscreenrc /etc/screenrc
 	@rm -rf $(DIR_APP)

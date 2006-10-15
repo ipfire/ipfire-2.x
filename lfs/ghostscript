@@ -28,8 +28,8 @@ include Config
 
 VER        = 8.15.1
 
-THISAPP    = espgs-$(VER)-source
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = espgs-$(VER)
+DL_FILE    = $(THISAPP)-source.tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/espgs-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -86,13 +86,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	rmdir -v /usr/lib/ghostscript/8.15 /usr/lib/ghostscript
-#	ln -v -s ../ghostscript/8.15/doc /usr/share/doc/espgs-8.15.1
-#	for INSTFILE in `ls doc`
-#	do
-#	  if [ ! -f /usr/share/doc/espgs-8.15.1/$INSTFILE ]; then
-#	    install -v -m644 doc/$INSTFILE /usr/share/doc/espgs-8.15.1/
-#	  fi
-#	done
 	tar xfz $(DIR_SRC)/cache/ghostscript-fonts-std-8.11.tar.gz -C /usr/share/ghostscript
 	tar xfz $(DIR_SRC)/cache/gnu-gs-fonts-other-6.0.tar.gz -C /usr/share/ghostscript
 	chown -v root:root /usr/share/ghostscript/fonts/*

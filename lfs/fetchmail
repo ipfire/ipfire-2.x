@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-ssl --disable-nls --enable-fallback=procmail
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	echo "set logfile /var/log/fetchmail.log" > ~/.fetchmailrc
 	echo "set no bouncemail" >> ~/.fetchmailrc

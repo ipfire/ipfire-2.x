@@ -1,0 +1,21 @@
+Submitted By: Ken Moffat <ken@kenmoffat.uklinux.net>
+Date: 2005-08-08
+Initial Package Version: 0.98.39
+Upstream Status: From upstream cvs
+Origin: Extracted by Ken Moffat
+Description:  This is Jindrich Novy's patch to fix another buffer overrun
+in nasm, CAN-2005-1194 (users who can be persuaded to assemble and run a
+malicious source file can have arbitrary code executed via a buffer
+overflow).
+
+--- nasm-0.98.39/output/outieee.c.orig	2005-01-15 22:16:08.000000000 +0000
++++ nasm-0.98.39/output/outieee.c	2005-08-08 22:12:46.000000000 +0100
+@@ -1120,7 +1120,7 @@
+     va_list ap;
+ 
+     va_start(ap, format);
+-    vsprintf(buffer, format, ap);
++    vsnprintf(buffer, sizeof(buffer), format, ap);
+     l = strlen(buffer);
+     for (i = 0; i < l; i++)
+         if ((buffer[i] & 0xff) > 31)

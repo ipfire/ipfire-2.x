@@ -74,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsafe-functioncaching.diff
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsafe-alpha.diff
-	cd $(DIR_APP) && make libsafe
+	cd $(DIR_APP) && make libsafe $(MAKETUNING)
 	cd $(DIR_APP) && yes | make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

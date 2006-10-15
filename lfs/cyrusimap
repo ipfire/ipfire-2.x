@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cyrusimap
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -89,7 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-acceptinvalidfrom.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.3.3-deleteacl_invalid_identifier_fix.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-notify_sms.patch
-	# cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-gcc4.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-gcc4.patch
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/timsieved_reset_sasl_conn.patch
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/allow_auth_plain_proxying.patch
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/authid_normalize.patch
@@ -104,7 +104,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--with-auth=unix --with-perl --with-sasl --with-idle=idled \
 				--with-syslogfacility=MAIL --enable-listext --without-snmp
 	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	-mkdir /var/imap
 	chown cyrus:mail /var/imap

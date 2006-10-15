@@ -1,0 +1,74 @@
+diff -ru iputils/include-glibc/netinet/in.h iputils-clean/include-glibc/netinet/in.h
+--- iputils/include-glibc/netinet/in.h	2000-06-18 14:57:25.000000000 -0400
++++ iputils-clean/include-glibc/netinet/in.h	2003-09-03 11:21:55.000000000 -0400
+@@ -8,4 +8,45 @@
+ 
+ #define SOL_IP	0
+ 
+-#endif	/* netinet/in.h */
++/* Functions to convert between host and network byte order.
++
++   Please note that these functions normally take `unsigned long int' or
++   `unsigned short int' values as arguments and also return them.  But
++   this was a short-sighted decision since on different systems the types
++   may have different representations but the values are always the same.  */
++
++extern u_int32_t ntohl (u_int32_t __netlong) __THROW __attribute__ ((__const__));
++extern u_int16_t ntohs (u_int16_t __netshort)
++     __THROW __attribute__ ((__const__));
++extern u_int32_t htonl (u_int32_t __hostlong)
++     __THROW __attribute__ ((__const__));
++extern u_int16_t htons (u_int16_t __hostshort)
++     __THROW __attribute__ ((__const__));
++
++#include <endian.h>
++
++/* Get machine dependent optimized versions of byte swapping functions.  */
++#include <bits/byteswap.h>
++
++#ifdef __OPTIMIZE__
++/* We can optimize calls to the conversion functions.  Either nothing has
++   to be done or we are using directly the byte-swapping functions which
++   often can be inlined.  */
++# if __BYTE_ORDER == __BIG_ENDIAN
++/* The host byte order is the same as network byte order,
++   so these functions are all just identity.  */
++# define ntohl(x)	(x)
++# define ntohs(x)	(x)
++# define htonl(x)	(x)
++# define htons(x)	(x)
++# else
++#  if __BYTE_ORDER == __LITTLE_ENDIAN
++#   define ntohl(x)	__bswap_32 (x)
++#   define ntohs(x)	__bswap_16 (x)
++#   define htonl(x)	__bswap_32 (x)
++#   define htons(x)	__bswap_16 (x)
++#  endif
++# endif
++#endif
++
++#endif /* netinet/in.h */
+diff -ru iputils/ping6.c iputils-clean/ping6.c
+--- iputils/ping6.c	2003-09-03 11:22:46.000000000 -0400
++++ iputils-clean/ping6.c	2003-09-03 11:15:42.000000000 -0400
+@@ -879,7 +879,7 @@
+ 	once = 1;
+ 
+ 	/* Patch bpflet for current identifier. */
+-	insns[1] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __constant_htons(ident), 0, 1);
++	insns[1] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, htons(ident), 0, 1);
+ 
+ 	if (setsockopt(icmp_sock, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
+ 		perror("WARNING: failed to install socket filter\n");
+diff -ru iputils/ping.c iputils-clean/ping.c
+--- iputils/ping.c	2003-09-03 11:22:46.000000000 -0400
++++ iputils-clean/ping.c	2003-09-03 11:15:26.000000000 -0400
+@@ -1196,7 +1196,7 @@
+ 	once = 1;
+ 
+ 	/* Patch bpflet for current identifier. */
+-	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __constant_htons(ident), 0, 1);
++	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, htons(ident), 0, 1);
+ 
+ 	if (setsockopt(icmp_sock, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
+ 		perror("WARNING: failed to install socket filter\n");

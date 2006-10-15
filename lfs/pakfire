@@ -26,6 +26,8 @@
 
 include Config
 
+VER = 0.99
+
 THISAPP    = pakfire
 DIR_APP    = /opt/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)

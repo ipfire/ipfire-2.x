@@ -17,7 +17,7 @@
 #                                                                             #
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
-
+#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = xinetd
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-loadavg --sysconfdir=/var/ipfire/xinetd
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -v -d -m755 /var/ipfire/xinetd/xinetd.d
 	echo "# Begin /var/ipfire/xinetd/xinetd.conf"	>  /var/ipfire/xinetd/xinetd.conf

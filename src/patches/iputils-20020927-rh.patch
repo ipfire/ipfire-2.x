@@ -1,0 +1,31 @@
+--- iputils/doc/Makefile.rh7	2002-02-23 01:17:57.000000000 +0100
++++ iputils/doc/Makefile	2004-05-12 14:55:16.724448173 +0200
+@@ -2,7 +2,7 @@
+ HTMLFILES=$(subst .sgml,.html,$(SGMLFILES)) index.html
+ MANFILES=$(subst .sgml,.8,$(SGMLFILES))
+ 
+-all: html
++all:
+ 
+ html: $(HTMLFILES) iputils.html
+ 
+--- iputils/Makefile.rh7	2002-09-20 20:23:55.000000000 +0200
++++ iputils/Makefile	2004-05-12 15:08:25.638310270 +0200
+@@ -24,14 +24,14 @@
+ CC=gcc
+ # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
+ #CCOPT=-D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -g -Werror
+-CCOPT=-D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -g
+-CFLAGS=$(CCOPT) $(GLIBCFIX) -I$(KERNEL_INCLUDE) -I../include $(DEFINES) 
++#CCOPT=-D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -g
++#CFLAGS=$(CCOPT) $(DEFINES) 
+ 
+ IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
+ IPV6_TARGETS=tracepath6 traceroute6 ping6
+ TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
+ 
+-all: check-kernel $(TARGETS)
++all: $(TARGETS)
+ 
+ 
+ tftpd: tftpd.o tftpsubs.o

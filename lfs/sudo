@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: ntp,v 1.6.2.3 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -82,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/lib \
 			    --enable-noargs-shell --with-ignore-dot --with-all-insults \
 			    --enable-shell-sets-home && \
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -26,10 +26,10 @@
 
 include Config
 
-VER        = 4.6.0
+VER        = 2.3.17
 
-THISAPP    = mc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = libart_lgpl-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 70804dc9e2049e24f294ff7090a82a12
+$(DL_FILE)_MD5 = dfca42529393c8a8f59dc4dc10675a46
 
 install : $(TARGET)
 
@@ -71,9 +71,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --without-x --disable-nls \
-				--with-screen=mcslang # --with-samba
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

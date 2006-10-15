@@ -26,6 +26,8 @@
 
 include Config
 
+VER = ipfire
+
 THISAPP    = fwhits
 DL_FILE    = logtailfwhits
 DL_FROM    = $(URL_IPFIRE)
@@ -48,9 +50,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-#dist: 
-#	make-packages.sh fwhits $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum

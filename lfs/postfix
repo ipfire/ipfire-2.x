@@ -80,7 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make -f Makefile.init makefiles \
 				'CCARGS=-DDEF_DAEMON_DIR=\"/usr/lib/postfix\" -DDEF_MANPAGE_DIR=\"/usr/share/man\" -DUSE_TLS -I/usr/include/openssl -DUSE_SALS_AUTH -I/usr/include/sasl -DHAS_MYSQL -I/usr/include/mysql' \
 				'AUXLIBS=-L/usr/lib -L/usr/lib/sasl2 -lz -lm  -lssl -lcrypto -lmysqlclient -L/usr/lib/mysql -lsasl2 -L/usr/lib'
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && sh postfix-install -non-interactive
 	## Install configuration
 	rm -vf /etc/postfix/main.cf.default

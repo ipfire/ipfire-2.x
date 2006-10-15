@@ -77,6 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/hddtemp.db /etc/hddtemp.db
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-db-path=/etc/hddtemp.db
-	cd $(DIR_APP) && make && make install
+	cd $(DIR_APP) && make $(MAKETUNING) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

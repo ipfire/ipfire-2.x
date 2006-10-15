@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# 30-12-2003 Alan Hourihane <alanh@fairlite.demon.co.uk>                      #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: nash,v 1.2.2.2 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -31,6 +25,8 @@
 ###############################################################################
 
 include Config
+
+VER = ipfire
 
 THISAPP    = nash
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
