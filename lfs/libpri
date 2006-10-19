@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 1.2.3
+VER        = 1.2.4
 
 THISAPP    = libpri-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libpri
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f365d9ee29a7253d605729a6d07ebfff
+$(DL_FILE)_MD5 = 2bc348d8363027736ccbf5998d85d317
 
 install : $(TARGET)
 
@@ -77,11 +77,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	# Build Libpri
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libpri.patch
-	cd $(DIR_APP) && make clean all KVERS=$(KVER)
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libpri.patch
+	cd $(DIR_APP) && make $(MAKETUNING) clean all KVERS=$(KVER)
 	cd $(DIR_APP) && make install KVERS=$(KVER)
-	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
-	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
+#	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
+#	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

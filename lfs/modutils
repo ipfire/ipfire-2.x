@@ -72,7 +72,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --disable-nls --enable-zlib
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/module-init-tools-3.2.2-modprobe-1.patch
+	cd $(DIR_APP) && ./configure --prefix=/ --disable-nls --enable-zlib
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make INSTALL=install install
 	@rm -rf $(DIR_APP)

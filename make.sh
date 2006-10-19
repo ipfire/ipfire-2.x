@@ -342,6 +342,7 @@ buildipfire() {
 #  ipfiremake pulsar			PASS=SMP
 #  ipfiremake unicorn		PASS=SMP
 #  ipfiremake promise-sata-300-tx	PASS=SMP
+  ipfiremake zaptel			PASS=SMP
   ipfiremake linux
 #  ipfiremake 3cp4218
 #  ipfiremake amedyn
@@ -360,6 +361,7 @@ buildipfire() {
 #  ipfiremake pulsar
 #  ipfiremake unicorn
 #  ipfiremake promise-sata-300-tx
+  ipfiremake zaptel
 #  ipfiremake pcmciautils
   ipfiremake expat
   ipfiremake gdbm
@@ -504,12 +506,11 @@ buildipfire() {
   ipfiremake spamassassin
   ipfiremake amavisd
   ipfiremake stund
-exiterror Bis hierhin und nicht weiter!
-  ipfiremake zaptel
   ipfiremake libpri
-  ipfiremake bristuff
+# ipfiremake bristuff
   ipfiremake asterisk
   ipfiremake mpg123
+exiterror Bis hierhin und nicht weiter!
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis
