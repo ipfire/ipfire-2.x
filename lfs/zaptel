@@ -32,7 +32,7 @@ THISAPP    = zaptel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(PASS)" "SMP"
+ifeq "$(PASS)" "S"
 	TARGET     = $(DIR_INFO)/$(THISAPP)-smp
 else
 	TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	# Build Zaptel
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zaptel.patch
-ifeq "$(PASS)" "SMP"
+ifeq "$(PASS)" "S"
 	cd $(DIR_APP) && make $(MAKETUNING) linux26 KVERS=$(KVER)-smp
 	cd $(DIR_APP) && make install KVERS=$(KVER)-smp
 else

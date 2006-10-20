@@ -51,7 +51,7 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create directories
-	-mkdir -pv /{bin,boot,etc/opt,home,lib,mnt,opt}
+	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt}
 	-mkdir -pv /{media/{floppy,cdrom},sbin,srv,var}
 	-install -dv -m 0750 /root
 	-install -dv -m 1777 /tmp /var/tmp

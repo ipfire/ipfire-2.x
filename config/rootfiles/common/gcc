@@ -2,12 +2,12 @@
 #usr/bin/c++
 #usr/bin/cc
 #usr/bin/cpp
-#usr/bin/g##
+#usr/bin/g++
 #usr/bin/gcc
 #usr/bin/gccbug
 #usr/bin/gcov
 #usr/bin/i586-pc-linux-gnu-c++
-#usr/bin/i586-pc-linux-gnu-g##
+#usr/bin/i586-pc-linux-gnu-g++
 #usr/bin/i586-pc-linux-gnu-gcc
 #usr/bin/i586-pc-linux-gnu-gcc-4.0.3
 #usr/include/c++
@@ -337,7 +337,7 @@
 #usr/lib/libsupc++.a
 #usr/lib/libsupc++.la
 #usr/man/man1/cpp.1
-#usr/man/man1/g##.1
+#usr/man/man1/g++.1
 #usr/man/man1/gcc.1
 #usr/man/man1/gcov.1
 #usr/man/man7

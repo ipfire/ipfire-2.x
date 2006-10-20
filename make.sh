@@ -342,7 +342,7 @@ buildipfire() {
 #  ipfiremake pulsar			PASS=SMP
 #  ipfiremake unicorn		PASS=SMP
 #  ipfiremake promise-sata-300-tx	PASS=SMP
-  ipfiremake zaptel			PASS=SMP
+  ipfiremake zaptel			PASS=S
   ipfiremake linux
 #  ipfiremake 3cp4218
 #  ipfiremake amedyn
@@ -818,7 +818,7 @@ newpak)
 	fi
 	exit 0
 	;;
-prefetch)
+downloadsrc)
 	if [ ! -d $BASEDIR/cache ]; then
 		mkdir $BASEDIR/cache
 	fi
@@ -1104,11 +1104,11 @@ watch)
 "")
 	clear
 	svn info
-	select name in "Exit" "IPFIRE: Prefetch" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "SVN: Commit" "SVN: Update" "SVN: Status" "SVN: Diff" "LOG: Tail" "Help"
+	select name in "Exit" "IPFIRE: Downloadsrc" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "SVN: Commit" "SVN: Update" "SVN: Status" "SVN: Diff" "LOG: Tail" "Help"
 	do
 	case $name in
-	"IPFIRE: Prefetch")
-		$0 prefetch
+	"IPFIRE: Downloadsrc")
+		$0 downloadsrc
 		;;
 	"IPFIRE: Build (silent)")
 		$0 build-silent
@@ -1126,7 +1126,7 @@ watch)
 		$0 svn update
 		;;
 	"Help")
-		echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
+		echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|downloadsrc|shell|sync|toolchain}"
 		cat doc/make.sh-usage
 		;;
 	"LOG: Tail")
@@ -1139,7 +1139,7 @@ watch)
 	done
 	;;
 *)
-	echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|prefetch|shell|sync|toolchain}"
+	echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|downloadsrc|shell|sync|toolchain}"
 	cat doc/make.sh-usage
 	;;
 esac

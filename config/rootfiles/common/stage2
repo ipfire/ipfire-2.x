@@ -14,6 +14,7 @@ etc/issue
 etc/ld.so.conf
 etc/logrotate.conf
 etc/mime.types
+etc/modprobe.d
 etc/modules.conf
 etc/mtab
 etc/nsswitch.conf
