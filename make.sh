@@ -510,7 +510,6 @@ buildipfire() {
 # ipfiremake bristuff
   ipfiremake asterisk
   ipfiremake mpg123
-exiterror Bis hierhin und nicht weiter!
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis

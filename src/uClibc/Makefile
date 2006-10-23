@@ -27,7 +27,7 @@
 #############################################################
 
 # What sortof target system shall we compile this for?
-ARCH:=i386
+ARCH:=$(MACHINE)
 #ARCH:=arm
 #ARCH:=mips
 #ARCH:=mipsel
@@ -144,14 +144,14 @@ STAGING_DIR=$(BUILD_DIR)
 TOOL_BUILD_DIR=$(BASE_DIR)/toolchain_build_$(ARCH)$(ARCH_FPU_SUFFIX)
 TARGET_PATH=/usr/local/bin:$(STAGING_DIR)/bin:/bin:/sbin:/usr/bin:/usr/sbin
 #TARGET_CROSS=$(STAGING_DIR)/bin/$(ARCH)-uclibc-
-TARGET_CROSS=$(STAGING_DIR)/bin/$(ARCH)-linux-
+TARGET_CROSS=$(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-
 TARGET_CC=$(TARGET_CROSS)gcc$(TARGET_SOFT_FLOAT)
 STRIP=$(TARGET_CROSS)strip --remove-section=.comment --remove-section=.note
 #STRIP:=/bin/true
 IMAGE:=$(BASE_DIR)/root_fs_$(ARCH)$(ARCH_FPU_SUFFIX)
-GNU_TARGET_NAME=$(OPTIMIZE_FOR_CPU)-linux
+GNU_TARGET_NAME=$(OPTIMIZE_FOR_CPU)-linux-uclibc
 #KERNEL_CROSS=$(STAGING_DIR)/bin/$(ARCH)-uclibc-
-KERNEL_CROSS=$(STAGING_DIR)/bin/$(ARCH)-linux-
+KERNEL_CROSS=$(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-
 HOST_ARCH:=$(shell $(HOSTCC) -dumpmachine | sed -e s'/-.*//' \
 	-e 's/sparc.*/sparc/' \
 	-e 's/arm.*/arm/g' \

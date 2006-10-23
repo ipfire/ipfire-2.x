@@ -20,12 +20,12 @@ ifneq ($(GCC_2_95_TOOLCHAIN),true)
 
 # Older stuff...
 #GCC_SITE:=ftp://ftp.gnu.org/gnu/gcc/
-#GCC_SOURCE:=gcc-3.3.tar.gz
+#GCC_SOURCE:=gcc-3.3.tar.bz2
 #GCC_DIR:=$(TOOL_BUILD_DIR)/gcc-3.3
 #GCC_CAT:=zcat
 
 # Shiny new stuff...
-GCC_VERSION:=3.3.1
+GCC_VERSION:=4.0.3
 #GCC_SITE:=ftp://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VERSION)
 #GCC_SITE:=http://www.binarycode.org/gcc/releases/gcc-$(GCC_VERSION)
 GCC_SITE:=http://gcc.get-software.com/releases/gcc-$(GCC_VERSION)
@@ -35,9 +35,9 @@ GCC_SITE:=http://gcc.get-software.com/releases/gcc-$(GCC_VERSION)
 #GCC_VERSION:=3.3-20031013
 #GCC_SITE:=http://gcc.get-software.com/snapshots/$(GCC_VERSION)
 #
-GCC_SOURCE:=gcc-$(GCC_VERSION).tar.gz
+GCC_SOURCE:=gcc-$(GCC_VERSION).tar.bz2
 GCC_DIR:=$(TOOL_BUILD_DIR)/gcc-$(GCC_VERSION)
-GCC_CAT:=gzip -dc
+GCC_CAT:=bzip2 -dc
 
 #############################################################
 #
@@ -56,23 +56,19 @@ endif
 # build the first pass gcc compiler
 #
 #############################################################
-GCC_BUILD_DIR1:=$(TOOL_BUILD_DIR)/gcc-3.3-initial
+GCC_BUILD_DIR1:=$(TOOL_BUILD_DIR)/gcc-$(GCC_VERSION)-initial
 
 $(DL_DIR)/$(GCC_SOURCE):
 #	$(WGET) -P $(DL_DIR) $(GCC_SITE)/$(GCC_SOURCE)
 
 $(GCC_DIR)/.unpacked: $(DL_DIR)/$(GCC_SOURCE)
 	$(GCC_CAT) $(DL_DIR)/$(GCC_SOURCE) | tar -C $(TOOL_BUILD_DIR) -xvf -
+	$(GCC_CAT) $(DL_DIR)/gcc-$(GCC_VERSION).tar.bz2 | tar -C $(TOOL_BUILD_DIR) -xvf -
 	touch $(GCC_DIR)/.unpacked
 
 $(GCC_DIR)/.patched: $(GCC_DIR)/.unpacked
 	# Apply any files named gcc-*.patch from the source directory to gcc
-	$(SOURCE_DIR)/patch-kernel.sh $(GCC_DIR) $(SOURCE_DIR) gcc-*.patch
-ifeq ($(SOFT_FLOAT),true)
-ifeq ("$(strip $(ARCH))","i386")
-	$(SOURCE_DIR)/patch-kernel.sh $(GCC_DIR) $(SOURCE_DIR) i386-gcc-soft-float.patch
-endif
-endif
+	$(SOURCE_DIR)/patch-kernel.sh $(GCC_DIR) $(SOURCE_DIR) gcc/$(GCC_VERSION)/*.patch
 	touch $(GCC_DIR)/.patched
 
 $(GCC_DIR)/.gcc3_3_build_hacks: $(GCC_DIR)/.patched
@@ -148,34 +144,34 @@ $(GCC_BUILD_DIR1)/.configured: $(GCC_DIR)/.gcc3_3_build_hacks
 		--enable-target-optspace $(DISABLE_NLS) --with-gnu-ld \
 		--disable-shared --enable-languages=c --disable-__cxa_atexit \
 		$(SOFT_FLOAT_CONFIG_OPTION) \
-		$(EXTRA_GCC_CONFIG_OPTIONS) --program-prefix=$(ARCH)-linux-);
+		$(EXTRA_GCC_CONFIG_OPTIONS) --program-prefix=$(ARCH)-linux-uclibc-);
 	touch $(GCC_BUILD_DIR1)/.configured
 
 $(GCC_BUILD_DIR1)/.compiled: $(GCC_BUILD_DIR1)/.configured
 	PATH=$(TARGET_PATH) $(MAKE) $(JLEVEL) -C $(GCC_BUILD_DIR1) \
 	    CC="$(HOSTCC)" \
 	    LDFLAGS="$(HOSTLDFLAGS)" \
-	    AR_FOR_TARGET=$(STAGING_DIR)/bin/$(ARCH)-linux-ar \
-	    RANLIB_FOR_TARGET=$(STAGING_DIR)/bin/$(ARCH)-linux-ranlib \
+	    AR_FOR_TARGET=$(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-ar \
+	    RANLIB_FOR_TARGET=$(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-ranlib \
 	    CC_FOR_TARGET=$(GCC_BUILD_DIR1)/target_gcc \
 	    GCC_FOR_TARGET=$(GCC_BUILD_DIR1)/target_gcc
 	touch $(GCC_BUILD_DIR1)/.compiled
 
-$(STAGING_DIR)/bin/$(ARCH)-linux-gcc: $(GCC_BUILD_DIR1)/.compiled
+$(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc: $(GCC_BUILD_DIR1)/.compiled
 	PATH=$(TARGET_PATH) $(MAKE) $(JLEVEL) \
 	    CC="$(HOSTCC)" \
 	    LDFLAGS="$(HOSTLDFLAGS)" \
 	    -C $(GCC_BUILD_DIR1) install;
 	#Cleanup then mess when --program-prefix mysteriously fails 
-	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-cpp $(STAGING_DIR)/bin/$(ARCH)-linux-cpp
-	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-gcc $(STAGING_DIR)/bin/$(ARCH)-linux-gcc
+	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-cpp $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-cpp
+	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-gcc $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc
 	if [ -n "$(strip $(TARGET_SOFT_FLOAT))" ] ; then \
 		for app in gcc c++ g++ ; do \
-			if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-$${app} ] ; then \
+			if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-$${app} ] ; then \
 			    (cd $(STAGING_DIR)/bin; \
-				rm -f $(ARCH)-linux-$${app}$(TARGET_SOFT_FLOAT); \
-				echo -e "#!/bin/sh\nexec $(STAGING_DIR)/bin/$(ARCH)-linux-$${app} -msoft-float \$$@" > $(ARCH)-linux-$${app}$(TARGET_SOFT_FLOAT); \
-				chmod a+x $(ARCH)-linux-$${app}$(TARGET_SOFT_FLOAT); \
+				rm -f $(ARCH)-linux-uclibc-$${app}$(TARGET_SOFT_FLOAT); \
+				echo -e "#!/bin/sh\nexec $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-$${app} -msoft-float \$$@" > $(ARCH)-linux-uclibc-$${app}$(TARGET_SOFT_FLOAT); \
+				chmod a+x $(ARCH)-linux-uclibc-$${app}$(TARGET_SOFT_FLOAT); \
 			    ); \
 			fi; \
 		done; \
@@ -184,7 +180,7 @@ $(STAGING_DIR)/bin/$(ARCH)-linux-gcc: $(GCC_BUILD_DIR1)/.compiled
 	rm -rf $(STAGING_DIR)/info $(STAGING_DIR)/man $(STAGING_DIR)/share/doc \
 		$(STAGING_DIR)/share/locale
 
-gcc3_3_initial: binutils uclibc-configured $(STAGING_DIR)/bin/$(ARCH)-linux-gcc
+gcc3_3_initial: binutils uclibc-configured $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc
 
 gcc3_3_initial-clean:
 	rm -rf $(GCC_BUILD_DIR1)
@@ -199,7 +195,7 @@ gcc3_3_initial-dirclean:
 # the newly built shared uClibc library.
 #
 #############################################################
-GCC_BUILD_DIR2:=$(TOOL_BUILD_DIR)/gcc-3.3-final
+GCC_BUILD_DIR2:=$(TOOL_BUILD_DIR)/gcc-$(GCC_VERSION)-final
 $(GCC_BUILD_DIR2)/.configured: $(GCC_DIR)/.patched
 	mkdir -p $(GCC_BUILD_DIR2)
 	echo -e "#!/bin/sh\nexec $(GCC_BUILD_DIR2)/gcc/xgcc -B$(GCC_BUILD_DIR2)/gcc/ -B$(STAGING_DIR)/$(ARCH)-linux/bin/ -B$(STAGING_DIR)/$(ARCH)-linux/lib/ -isystem $(STAGING_DIR)/$(ARCH)-linux/include $(TARGET_SOFT_FLOAT) \$$@" > $(GCC_BUILD_DIR2)/target_g++
@@ -235,12 +231,12 @@ $(GCC_BUILD_DIR2)/.configured: $(GCC_DIR)/.patched
 		--with-gnu-ld --disable-__cxa_atexit \
 		--enable-languages=$(TARGET_LANGUAGES) \
 		$(EXTRA_GCC_CONFIG_OPTIONS) \
-		--program-prefix=$(ARCH)-linux- \
+		--program-prefix=$(ARCH)-linux-uclibc- \
 	);
 	touch $(GCC_BUILD_DIR2)/.configured
 
 $(GCC_BUILD_DIR2)/.compiled: $(GCC_BUILD_DIR2)/.configured
-	$(SED) 's/\-lc//' $(GCC_BUILD_DIR2)/gcc/Makefile
+	# $(SED) 's/\-lc//' $(GCC_BUILD_DIR2)/gcc/Makefile
 	PATH=$(TARGET_PATH) $(MAKE) $(JLEVEL) \
 	    CC="$(HOSTCC)" \
 	    LDFLAGS="$(HOSTLDFLAGS)" \
@@ -260,33 +256,33 @@ $(GCC_BUILD_DIR2)/.installed: $(GCC_BUILD_DIR2)/.compiled $(STAGING_DIR)/lib/lib
 	-mv $(STAGING_DIR)/bin/gcc $(STAGING_DIR)/usr/bin;
 	-mv $(STAGING_DIR)/bin/protoize $(STAGING_DIR)/usr/bin;
 	-mv $(STAGING_DIR)/bin/unprotoize $(STAGING_DIR)/usr/bin;
-	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-cpp $(STAGING_DIR)/bin/$(ARCH)-linux-cpp
-	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-gcc $(STAGING_DIR)/bin/$(ARCH)-linux-gcc
-	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-c++ $(STAGING_DIR)/bin/$(ARCH)-linux-c++
-	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-g++ $(STAGING_DIR)/bin/$(ARCH)-linux-g++
-	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-c++filt $(STAGING_DIR)/bin/$(ARCH)-linux-c++filt
+	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-cpp $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-cpp
+	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-gcc $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc
+	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-c++ $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-c++
+	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-g++ $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-g++
+	-mv $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-c++filt $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-c++filt
 	rm -f $(STAGING_DIR)/bin/cpp $(STAGING_DIR)/bin/gcov $(STAGING_DIR)/bin/*gccbug
-	rm -f $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-$(ARCH)-linux-*
+	rm -f $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-$(ARCH)-linux-uclibc-*
 	rm -rf $(STAGING_DIR)/info $(STAGING_DIR)/man $(STAGING_DIR)/share/doc \
 		$(STAGING_DIR)/share/locale
 	# Strip the host binaries
 	-strip --strip-all -R .note -R .comment $(STAGING_DIR)/bin/*
 	if [ -n "$(strip $(TARGET_SOFT_FLOAT))" ] ; then \
 		for app in gcc c++ g++ ; do \
-			if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-$${app} ] ; then \
+			if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-$${app} ] ; then \
 			    (cd $(STAGING_DIR)/bin; \
-				rm -f $(ARCH)-linux-$${app}$(TARGET_SOFT_FLOAT); \
-				echo -e "#!/bin/sh\nexec $(STAGING_DIR)/bin/$(ARCH)-linux-$${app} -msoft-float \$$@" > $(ARCH)-linux-$${app}$(TARGET_SOFT_FLOAT); \
-				chmod a+x $(ARCH)-linux-$${app}$(TARGET_SOFT_FLOAT); \
+				rm -f $(ARCH)-linux-uclibc-$${app}$(TARGET_SOFT_FLOAT); \
+				echo -e "#!/bin/sh\nexec $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-$${app} -msoft-float \$$@" > $(ARCH)-linux-uclibc-$${app}$(TARGET_SOFT_FLOAT); \
+				chmod a+x $(ARCH)-linux-uclibc-$${app}$(TARGET_SOFT_FLOAT); \
 			    ); \
 			fi; \
 		done; \
 	fi; \
 	set -e; \
 	for app in cc gcc c89 cpp c++ g++ ; do \
-		if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-$${app} ] ; then \
+		if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-$${app} ] ; then \
 		    (cd $(STAGING_DIR)/usr/bin; \
-			ln -fs ../../bin/$(ARCH)-linux-$${app} $${app}; \
+			ln -fs ../../bin/$(ARCH)-linux-uclibc-$${app} $${app}; \
 		    ); \
 		fi; \
 	done;
@@ -300,10 +296,7 @@ $(TARGET_DIR)/lib/libstdc++.so.5.0.5: $(GCC_BUILD_DIR2)/.installed
 	cp -a $(STAGING_DIR)/lib/libstdc++.so* $(TARGET_DIR)/lib/
 
 $(GCC_BUILD_DIR2)/.shared_libgcc: $(GCC_BUILD_DIR2)/.installed
-	# Make sure a copy of libgcc_s is in the target's /lib.
-	if [ -f $(STAGING_DIR)/lib/libgcc_s.so.0.9.9 ] ; then \
-		cp -a $(STAGING_DIR)/lib/libgcc_s.so* $(TARGET_DIR)/lib/ ; \
-	fi
+	cp -fa $(STAGING_DIR)/lib/libgcc_s.so* $(TARGET_DIR)/lib/ ; \
 	touch $(GCC_BUILD_DIR2)/.shared_libgcc
 
 GCC_TARGETS:=$(GCC_BUILD_DIR2)/.shared_libgcc
@@ -330,7 +323,7 @@ gcc3_3-dirclean:
 # Next build target gcc compiler
 #
 #############################################################
-GCC_BUILD_DIR3:=$(BUILD_DIR)/gcc-3.3-target
+GCC_BUILD_DIR3:=$(BUILD_DIR)/gcc-$(GCC_VERSION)-target
 
 TARGET_GCC_ARGS= $(TARGET_CONFIGURE_OPTS) \
 		AR_FOR_BUILD=ar \
@@ -364,10 +357,7 @@ $(GCC_BUILD_DIR3)/.unpacked: $(DL_DIR)/$(GCC_SOURCE)
 
 $(GCC_BUILD_DIR3)/.patched: $(GCC_BUILD_DIR3)/.unpacked
 	# Apply any files named gcc-*.patch from the source directory to gcc
-	$(SOURCE_DIR)/patch-kernel.sh $(GCC_BUILD_DIR3) $(SOURCE_DIR) gcc-*.patch
-ifeq ("$(strip $(ARCH))","i386")
-	$(SOURCE_DIR)/patch-kernel.sh $(GCC_BUILD_DIR3) $(SOURCE_DIR) i386-gcc-*.patch
-endif
+	$(SOURCE_DIR)/patch-kernel.sh $(GCC_BUILD_DIR3) $(SOURCE_DIR) gcc/$(GCC_VERSION)/*.patch
 	touch $(GCC_BUILD_DIR3)/.patched
 
 $(GCC_BUILD_DIR3)/.gcc3_3_build_hacks: $(GCC_BUILD_DIR3)/.patched
@@ -390,7 +380,7 @@ $(GCC_BUILD_DIR3)/.gcc3_3_build_hacks: $(GCC_BUILD_DIR3)/.patched
 
 $(GCC_BUILD_DIR3)/.configured: $(GCC_BUILD_DIR3)/.gcc3_3_build_hacks
 	mkdir -p $(GCC_BUILD_DIR3)
-	#(cd $(GCC_BUILD_DIR3); ln -fs $(ARCH)-linux build-$(GNU_TARGET_NAME))
+	#(cd $(GCC_BUILD_DIR3); ln -fs $(ARCH)-linux-uclibc- build-$(GNU_TARGET_NAME))
 	(cd $(GCC_BUILD_DIR3); \
 		$(TARGET_GCC_ARGS) \
 		gcc_cv_as_hidden=no \
@@ -402,7 +392,7 @@ $(GCC_BUILD_DIR3)/.configured: $(GCC_BUILD_DIR3)/.gcc3_3_build_hacks
 		--prefix=/usr \
 		--mandir=/usr/man \
 		--infodir=/usr/info \
-		--with-gxx-include-dir=/usr/include/c++/3.3 \
+		--with-gxx-include-dir=/usr/include/c++/$(GCC_VERSION) \
 		--enable-target-optspace \
 		--enable-shared \
 		$(MULTILIB) \
@@ -442,7 +432,7 @@ $(TARGET_DIR)/usr/bin/gcc: $(GCC_BUILD_DIR3)/.compiled
 	# Work around problem of missing syslimits.h
 	cp -f $(STAGING_DIR)/usr/lib/gcc-lib/$(ARCH)-linux/$(GCC_VERSION)/include/syslimits.h  $(TARGET_DIR)/usr/lib/gcc-lib/$(ARCH)-linux/$(GCC_VERSION)/include/
 	# These are in /lib, so...
-	rm -rf $(TARGET_DIR)/usr/lib/libgcc_s.so*
+	# rm -rf $(TARGET_DIR)/usr/lib/libgcc_s.so*
 	touch -c $(TARGET_DIR)/usr/bin/gcc
 
 gcc3_3_target: uclibc_target binutils_target $(TARGET_DIR)/usr/bin/gcc

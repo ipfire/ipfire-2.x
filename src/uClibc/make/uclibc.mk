@@ -9,8 +9,8 @@ UCLIBC_DIR=$(TOOL_BUILD_DIR)/uClibc
 UCLIBC_SOURCE=uClibc-snapshot.tar.gz
 UCLIBC_SITE:=http://www.uclibc.org/downloads/snapshots
 else
-UCLIBC_DIR:=$(TOOL_BUILD_DIR)/uClibc-0.9.26
-UCLIBC_SOURCE:=uClibc-0.9.26.tar.gz
+UCLIBC_DIR:=$(TOOL_BUILD_DIR)/uClibc-0.9.28
+UCLIBC_SOURCE:=uClibc-0.9.28.tar.bz2
 UCLIBC_SITE:=http://www.uclibc.org/downloads
 endif
 LINUX_DIR:=/usr/src/linux
@@ -34,16 +34,18 @@ $(DL_DIR)/$(UCLIBC_SOURCE):
 #	$(WGET) -P $(DL_DIR) $(UCLIBC_SITE)/$(UCLIBC_SOURCE)
 
 $(UCLIBC_DIR)/.unpacked: $(DL_DIR)/$(UCLIBC_SOURCE)
-	gzip -dc $(DL_DIR)/$(UCLIBC_SOURCE) | tar -C $(TOOL_BUILD_DIR) -xvf -
+	bzip2 -dc $(DL_DIR)/$(UCLIBC_SOURCE) | tar -C $(TOOL_BUILD_DIR) -xf -
+	sed -i -e 's/include <sys\/types.h>/include <sys\/types.h>\n#include <pthread.h>/' $(UCLIBC_DIR)/librt/kernel-posix-timers.h
 	touch $(UCLIBC_DIR)/.unpacked
 
 $(UCLIBC_DIR)/.configured: $(UCLIBC_DIR)/.unpacked 
 	$(MAKE) -C $(UCLIBC_DIR) defconfig;
-	cp $(SOURCE_DIR)/uClibc.config $(UCLIBC_DIR)/.config
+	cp $(SOURCE_DIR)/uClibc.config-$(MACHINE) $(UCLIBC_DIR)/.config
 	cp $(SOURCE_DIR)/locales.txt $(UCLIBC_DIR)/extra/locale
 	cp $(SOURCE_DIR)/codesets.txt $(UCLIBC_DIR)/extra/locale
 	$(MAKE) -C $(UCLIBC_DIR) PREFIX=$(STAGING_DIR) headers;
 	(cd $(UCLIBC_DIR)/extra/locale; \
+		patch -Np0 < /usr/src/src/patches/uClibc-gen_wctype-segfault.patch; \
 		$(MAKE); \
 	)
 	$(MAKE) -C $(UCLIBC_DIR) PREFIX=$(STAGING_DIR) install_dev;
@@ -57,6 +59,7 @@ $(UCLIBC_DIR)/lib/libc.a: $(UCLIBC_DIR)/.configured $(LIBFLOAT_TARGET)
 	$(MAKE) -C $(UCLIBC_DIR) headers
 	-$(MAKE) -C $(UCLIBC_DIR) pregen
 	(cd $(UCLIBC_DIR)/extra/locale; \
+		patch -Np0 < /usr/src/src/patches/uClibc-gen_wctype-segfault.patch; \
 		$(MAKE); \
 	)
 	$(MAKE) -C $(UCLIBC_DIR)
@@ -91,7 +94,7 @@ endif
 
 uclibc-configured: $(UCLIBC_DIR)/.configured
 
-uclibc: $(STAGING_DIR)/bin/$(ARCH)-linux-gcc $(STAGING_DIR)/lib/libc.a \
+uclibc: $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc $(STAGING_DIR)/lib/libc.a \
 	$(UCLIBC_TARGETS)
 
 uclibc-source: $(DL_DIR)/$(UCLIBC_SOURCE)

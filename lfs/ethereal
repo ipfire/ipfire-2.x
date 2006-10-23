@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --enable-threads
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	# install -v -m644 FAQ README{,.linux} doc/README.* doc/*.{pod,txt} /usr/share/ethereal
 	# install -v -m644 -D ethereal.desktop /usr/share/applications/ethereal.desktop

@@ -104,7 +104,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--with-auth=unix --with-perl --with-sasl --with-idle=idled \
 				--with-syslogfacility=MAIL --enable-listext --without-snmp
 	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	-mkdir /var/imap
 	chown cyrus:mail /var/imap

@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: uClibc,v 1.9.2.4 2005/02/05 15:38:16 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -32,10 +26,10 @@
 
 include Config
 
-VER        = 0.9.26
+VER        = 0.9.28
 
 THISAPP    = uClibc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -44,13 +38,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) gcc-3.3.1.tar.gz
+objects = $(DL_FILE)
 
 $(DL_FILE)           = $(DL_FROM)/$(DL_FILE)
-gcc-3.3.1.tar.gz     = $(URL_GNU)/gcc/gcc-3.3.1.tar.gz
 
-$(DL_FILE)_MD5       = b63183651a1b13456c20387ea88b018f
-gcc-3.3.1.tar.gz_MD5 = 46d58197212818b5f7c403267ff24e4e
+$(DL_FILE)_MD5       = 1ada58d919a82561061e4741fb6abd29
 
 install : $(TARGET)
 
@@ -83,10 +75,26 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf /opt/$(MACHINE)-uClibc
 	@mkdir -p $(DIR_APP)
 	cd $(DIR_APP) && cp -R $(DIR_SRC)/src/uClibc/* .
-	cd $(DIR_APP) && sed -i -e 's/ARCH:=i386/ARCH:=$(MACHINE)/' Makefile
+	cd $(DIR_APP) && sed -e 's/UCLIBC_HAS_THREADS=y/# UCLIBC_HAS_THREADS is not set/' \
+			-e 's/DO_C99_MATH=y/# DO_C99_MATH is not set/' \
+			-e 's/LDSO_CACHE_SUPPORT=y/# LDSO_CACHE_SUPPORT is not set/' \
+			-e 's/UCLIBC_HAS_FTW=y/# UCLIBC_HAS_FTW is not set/' \
+			-e 's,/usr/src/linux,&-$(KVER),' -i sources/uClibc.config-$(MACHINE)
+	cd $(DIR_APP) && sed -e 's,^LINUX_DIR.*$$,&-$(KVER),' -i make/uclibc.mk
 	cd $(DIR_APP) && chmod +x sources/patch-kernel.sh
 	cd $(DIR_APP) && make
 	-mkdir -p /install/initrd/bin
-	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) && make PREFIX=/install/initrd install_runtime
+	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) && make PREFIX=/opt/$(MACHINE)-uClibc install
+	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) && make RUNTIME_PREFIX=/install/initrd/ install_runtime
+	chmod 755 /install/initrd/lib/libuClibc-$(VER).so
+	rm -f /install/initrd/lib/{libm*,libcrypt*,libutil*,librt*}
+
+	cp -f /opt/$(MACHINE)-uClibc/lib/libgcc_s.so /lib
+	cp -f /opt/$(MACHINE)-uClibc/lib/ld-uClibc-$(VER).so /lib
+	cp -f /opt/$(MACHINE)-uClibc/lib/libuClibc-$(VER).so /lib
+	cd /lib && ln -sf libgcc_s.so libgcc_s.so.1
+	cd /lib && ln -sf ld-uClibc-$(VER).so ld-uClibc.so.0
+	cd /lib && ln -sf libuClibc-$(VER).so libc.so.0
+	cd /lib && ln -sf libc.so.0 libc.so
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

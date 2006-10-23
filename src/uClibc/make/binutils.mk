@@ -4,8 +4,9 @@
 #
 #############################################################
 #BINUTILS_SITE:=http://ftp.kernel.org/pub/linux/devel/binutils
-BINUTILS_SOURCE:=binutils-2.15.90.0.3.tar.bz2
-BINUTILS_DIR:=$(TOOL_BUILD_DIR)/binutils-2.15.90.0.3
+BINUTILS_VER:=2.16.1
+BINUTILS_SOURCE:=binutils-$(BINUTILS_VER).tar.bz2
+BINUTILS_DIR:=$(TOOL_BUILD_DIR)/binutils-$(BINUTILS_VER)
 BINUTILS_CAT:=bzcat
 
 BINUTILS_DIR1:=$(TOOL_BUILD_DIR)/binutils-build
@@ -28,7 +29,7 @@ $(BINUTILS_DIR)/.unpacked: $(DL_DIR)/$(BINUTILS_SOURCE)
 
 $(BINUTILS_DIR)/.patched: $(BINUTILS_DIR)/.unpacked
 	# Apply any files named binutils-*.patch from the source directory to binutils
-	$(SOURCE_DIR)/patch-kernel.sh $(BINUTILS_DIR) $(SOURCE_DIR) binutils-*.patch
+	$(SOURCE_DIR)/patch-kernel.sh $(BINUTILS_DIR) $(SOURCE_DIR) binutils/$(BINUTILS_VER)/*.patch
 	touch $(BINUTILS_DIR)/.patched
 
 $(BINUTILS_DIR1)/.configured: $(BINUTILS_DIR)/.patched
@@ -56,7 +57,7 @@ $(BINUTILS_DIR1)/.configured: $(BINUTILS_DIR)/.patched
 		--with-sysroot=$(STAGING_DIR) \
 		$(MULTILIB) \
 		$(SOFT_FLOAT_CONFIG_OPTION) \
-		--program-prefix=$(ARCH)-linux-);
+		--program-prefix=$(ARCH)-linux-uclibc-);
 	touch $(BINUTILS_DIR1)/.configured
 
 $(BINUTILS_DIR1)/binutils/objdump: $(BINUTILS_DIR1)/.configured
@@ -75,12 +76,12 @@ $(STAGING_DIR)/$(GNU_TARGET_NAME)/bin/ld: $(BINUTILS_DIR1)/binutils/objdump
 	for app in addr2line ar as c++filt gprof ld nm objcopy \
 		    objdump ranlib readelf size strings strip ; \
 	do \
-		if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-$${app} ] ; then \
+		if [ -x $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-$${app} ] ; then \
 		    (cd $(STAGING_DIR)/$(GNU_TARGET_NAME)/bin; \
-			ln -fs ../../bin/$(ARCH)-linux-$${app} $${app}; \
+			ln -fs ../../bin/$(ARCH)-linux-uclibc-$${app} $${app}; \
 		    ); \
 		    (cd $(STAGING_DIR)/usr/bin; \
-			ln -fs ../../bin/$(ARCH)-linux-$${app} $${app}; \
+			ln -fs ../../bin/$(ARCH)-linux-uclibc-$${app} $${app}; \
 		    ); \
 		fi; \
 	done;

@@ -1,0 +1,7 @@
+#usr/include/popt.h
+#usr/lib/libpopt.a
+#usr/lib/libpopt.la
+usr/lib/libpopt.so
+usr/lib/libpopt.so.0
+usr/lib/libpopt.so.0.0.0
+#usr/man/man3/popt.3
