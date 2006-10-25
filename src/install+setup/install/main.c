@@ -553,7 +553,7 @@ int main(int argc, char *argv[])
 		swap_file = 0;
 	}
 
-	boot_partition = 8; /* in MB */
+	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition - swap_file;
 
 	/* Give more place for add-on, extend root to 25% of current_free, upper limit to 8 gigas */

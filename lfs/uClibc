@@ -81,10 +81,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			-e 's/UCLIBC_HAS_FTW=y/# UCLIBC_HAS_FTW is not set/' \
 			-e 's,/usr/src/linux,&-$(KVER),' -i sources/uClibc.config-$(MACHINE)
 	cd $(DIR_APP) && sed -e 's,^LINUX_DIR.*$$,&-$(KVER),' -i make/uclibc.mk
+
+	-mkdir -p /usr/src/$(THISAPP)/toolchain_build_$(MACHINE)/uClibc_dev/usr
+	ln -fs /usr/include /usr/src/$(THISAPP)/toolchain_build_$(MACHINE)/uClibc_dev/usr/include
+
 	cd $(DIR_APP) && chmod +x sources/patch-kernel.sh
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make JLEVEL=$(MAKETUNING)
 	-mkdir -p /install/initrd/bin
-	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) && make PREFIX=/opt/$(MACHINE)-uClibc install
+	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) &&	make PREFIX=/opt/$(MACHINE)-uClibc install
 	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) && make RUNTIME_PREFIX=/install/initrd/ install_runtime
 	chmod 755 /install/initrd/lib/libuClibc-$(VER).so
 	rm -f /install/initrd/lib/{libm*,libcrypt*,libutil*,librt*}

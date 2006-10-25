@@ -94,8 +94,10 @@ endif
 
 uclibc-configured: $(UCLIBC_DIR)/.configured
 
-uclibc: $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc $(STAGING_DIR)/lib/libc.a \
-	$(UCLIBC_TARGETS)
+#uclibc: $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc $(STAGING_DIR)/lib/libc.a \
+#	$(UCLIBC_TARGETS)
+
+uclibc: fix_gcc $(STAGING_DIR)/lib/libc.a $(UCLIBC_TARGETS)
 
 uclibc-source: $(DL_DIR)/$(UCLIBC_SOURCE)
 
@@ -107,9 +109,6 @@ uclibc-clean:
 
 uclibc-dirclean:
 	rm -rf $(UCLIBC_DIR)
-
-
-
 
 #############################################################
 #
@@ -136,7 +135,7 @@ $(TARGET_DIR)/usr/lib/libc.a: $(STAGING_DIR)/lib/libc.a
 ifeq ($(GCC_2_95_TOOLCHAIN),true)
 uclibc_target: gcc2_95 uclibc $(TARGET_DIR)/usr/lib/libc.a
 else
-uclibc_target: gcc3_3 uclibc $(TARGET_DIR)/usr/lib/libc.a
+uclibc_target: gcc uclibc $(TARGET_DIR)/usr/lib/libc.a
 endif
 
 uclibc_target-clean:
@@ -145,3 +144,8 @@ uclibc_target-clean:
 uclibc_target-dirclean:
 	rm -f $(TARGET_DIR)/include
 
+fix_gcc:
+	cd /opt/$(MACHINE)-uClibc/bin && for i in `find . -name "-*" | cut -c 3-`; do \
+		cat < $$i > $(MACHINE)-linux-uclibc$$i; \
+		chmod 755 $(MACHINE)-linux-uclibc$$i; \
+	done
