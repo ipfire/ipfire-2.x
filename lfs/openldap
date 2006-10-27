@@ -30,7 +30,7 @@ VER        = 2.3.20
 
 THISAPP    = openldap-$(VER)
 DL_FILE    = $(THISAPP).tgz
-DL_FROM    = $(UTL_IPFIRE)
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

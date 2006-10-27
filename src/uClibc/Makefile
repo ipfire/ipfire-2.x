@@ -99,7 +99,7 @@ JLEVEL=-j3
 #
 #############################################################
 USE_UCLIBC_TOOLCHAIN:=true
-TARGETS:=uclibc-configured binutils gcc
+TARGETS:=uclibc-configured binutils gcc3_3
 
 # Optimize toolchain for which type of CPU?
 # WARNING!!!  CURRENTLY BROKEN!!! LEAVE IT AS $(ARCH)!!!
@@ -193,9 +193,7 @@ world: $(DL_DIR) $(BUILD_DIR) $(STAGING_DIR) $(TARGETS)
 .PHONY: all world clean dirclean distclean source $(TARGETS) \
 	$(TARGETS_CLEAN) $(TARGETS_DIRCLEAN) $(TARGETS_SOURCE)
 
-include make/binutils.mk
-include make/gcc.mk
-include make/uclibc.mk
+include make/*.mk
 
 #############################################################
 #

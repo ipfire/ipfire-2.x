@@ -38,11 +38,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) buildroot-snapshot-20061026.tar.bz2
 
-$(DL_FILE)           = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+buildroot-snapshot-20061026.tar.bz2 = $(DL_FROM)/buildroot-snapshot-20061026.tar.bz2
 
-$(DL_FILE)_MD5       = 1ada58d919a82561061e4741fb6abd29
+$(DL_FILE)_MD5 = 1ada58d919a82561061e4741fb6abd29
+buildroot-snapshot-20061026.tar.bz2_MD5 = ecc5d48a780e46a56d1d39207d5868bd
 
 install : $(TARGET)
 
@@ -71,28 +73,21 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP)
-	@rm -rf /opt/$(MACHINE)-uClibc
-	@mkdir -p $(DIR_APP)
-	cd $(DIR_APP) && cp -R $(DIR_SRC)/src/uClibc/* .
-	cd $(DIR_APP) && sed -e 's/UCLIBC_HAS_THREADS=y/# UCLIBC_HAS_THREADS is not set/' \
+	@rm -rf $(DIR_APP) /opt/$(MACHINE)-uClibc $(DIR_SRC)/buildroot
+	@cd $(DIR_SRC) && tar xfj $(DIR_DL)/buildroot-snapshot-20061026.tar.bz2
+	sed -e 's/UCLIBC_HAS_THREADS=y/# UCLIBC_HAS_THREADS is not set/' \
 			-e 's/DO_C99_MATH=y/# DO_C99_MATH is not set/' \
 			-e 's/LDSO_CACHE_SUPPORT=y/# LDSO_CACHE_SUPPORT is not set/' \
 			-e 's/UCLIBC_HAS_FTW=y/# UCLIBC_HAS_FTW is not set/' \
-			-e 's,/usr/src/linux,&-$(KVER),' -i sources/uClibc.config-$(MACHINE)
-	cd $(DIR_APP) && sed -e 's,^LINUX_DIR.*$$,&-$(KVER),' -i make/uclibc.mk
-
-	-mkdir -p /usr/src/$(THISAPP)/toolchain_build_$(MACHINE)/uClibc_dev/usr
-	ln -fs /usr/include /usr/src/$(THISAPP)/toolchain_build_$(MACHINE)/uClibc_dev/usr/include
-
-	cd $(DIR_APP) && chmod +x sources/patch-kernel.sh
-	cd $(DIR_APP) && make JLEVEL=$(MAKETUNING)
+			-e 's,/usr/src/linux,&-$(KVER),' -i $(DIR_SRC)/config/uClibc/uClibc.config-$(MACHINE)
+	cp -f $(DIR_SRC)/config/uClibc/uClibc.config-$(MACHINE) $(DIR_SRC)/buildroot/toolchain/uClibc/uClibc.config
+	cp -f $(DIR_SRC)/config/uClibc/buildroot.config-$(MACHINE) $(DIR_SRC)/buildroot/.config
+	cp -f $(DIR_SRC)/config/uClibc/buildroot.config.cmd $(DIR_SRC)/buildroot/.config.cmd
+	cd $(DIR_SRC)/buildroot && make
 	-mkdir -p /install/initrd/bin
-	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) &&	make PREFIX=/opt/$(MACHINE)-uClibc install
-	cd $(DIR_APP)/toolchain_build_$(MACHINE)/$(THISAPP) && make RUNTIME_PREFIX=/install/initrd/ install_runtime
+	cd $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP) && make RUNTIME_PREFIX=/install/initrd/ install_runtime
 	chmod 755 /install/initrd/lib/libuClibc-$(VER).so
 	rm -f /install/initrd/lib/{libm*,libcrypt*,libutil*,librt*}
-
 	cp -f /opt/$(MACHINE)-uClibc/lib/libgcc_s.so /lib
 	cp -f /opt/$(MACHINE)-uClibc/lib/ld-uClibc-$(VER).so /lib
 	cp -f /opt/$(MACHINE)-uClibc/lib/libuClibc-$(VER).so /lib
@@ -100,5 +95,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd /lib && ln -sf ld-uClibc-$(VER).so ld-uClibc.so.0
 	cd /lib && ln -sf libuClibc-$(VER).so libc.so.0
 	cd /lib && ln -sf libc.so.0 libc.so
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_SRC)/buildroot
 	@$(POSTBUILD)

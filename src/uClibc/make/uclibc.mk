@@ -45,7 +45,7 @@ $(UCLIBC_DIR)/.configured: $(UCLIBC_DIR)/.unpacked
 	cp $(SOURCE_DIR)/codesets.txt $(UCLIBC_DIR)/extra/locale
 	$(MAKE) -C $(UCLIBC_DIR) PREFIX=$(STAGING_DIR) headers;
 	(cd $(UCLIBC_DIR)/extra/locale; \
-		patch -Np0 < /usr/src/src/patches/uClibc-gen_wctype-segfault.patch; \
+               patch -Np0 < /usr/src/src/patches/uClibc-gen_wctype-segfault.patch; \
 		$(MAKE); \
 	)
 	$(MAKE) -C $(UCLIBC_DIR) PREFIX=$(STAGING_DIR) install_dev;
@@ -59,7 +59,7 @@ $(UCLIBC_DIR)/lib/libc.a: $(UCLIBC_DIR)/.configured $(LIBFLOAT_TARGET)
 	$(MAKE) -C $(UCLIBC_DIR) headers
 	-$(MAKE) -C $(UCLIBC_DIR) pregen
 	(cd $(UCLIBC_DIR)/extra/locale; \
-		patch -Np0 < /usr/src/src/patches/uClibc-gen_wctype-segfault.patch; \
+               patch -Np0 < /usr/src/src/patches/uClibc-gen_wctype-segfault.patch; \
 		$(MAKE); \
 	)
 	$(MAKE) -C $(UCLIBC_DIR)
@@ -94,10 +94,8 @@ endif
 
 uclibc-configured: $(UCLIBC_DIR)/.configured
 
-#uclibc: $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc $(STAGING_DIR)/lib/libc.a \
-#	$(UCLIBC_TARGETS)
-
-uclibc: fix_gcc $(STAGING_DIR)/lib/libc.a $(UCLIBC_TARGETS)
+uclibc: $(STAGING_DIR)/bin/$(ARCH)-linux-uclibc-gcc $(STAGING_DIR)/lib/libc.a \
+	$(UCLIBC_TARGETS)
 
 uclibc-source: $(DL_DIR)/$(UCLIBC_SOURCE)
 
@@ -109,6 +107,9 @@ uclibc-clean:
 
 uclibc-dirclean:
 	rm -rf $(UCLIBC_DIR)
+
+
+
 
 #############################################################
 #
@@ -135,7 +136,7 @@ $(TARGET_DIR)/usr/lib/libc.a: $(STAGING_DIR)/lib/libc.a
 ifeq ($(GCC_2_95_TOOLCHAIN),true)
 uclibc_target: gcc2_95 uclibc $(TARGET_DIR)/usr/lib/libc.a
 else
-uclibc_target: gcc uclibc $(TARGET_DIR)/usr/lib/libc.a
+uclibc_target: gcc3_3 uclibc $(TARGET_DIR)/usr/lib/libc.a
 endif
 
 uclibc_target-clean:
@@ -144,8 +145,3 @@ uclibc_target-clean:
 uclibc_target-dirclean:
 	rm -f $(TARGET_DIR)/include
 
-fix_gcc:
-	cd /opt/$(MACHINE)-uClibc/bin && for i in `find . -name "-*" | cut -c 3-`; do \
-		cat < $$i > $(MACHINE)-linux-uclibc$$i; \
-		chmod 755 $(MACHINE)-linux-uclibc$$i; \
-	done

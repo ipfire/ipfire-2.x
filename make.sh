@@ -135,11 +135,11 @@ prepareenv() {
     echo -ne "Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
     BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
     BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
-    if (( 5242880 > $BASE_ASPACE )); then
+    if (( 2048000 > $BASE_ASPACE )); then
 	BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
-	if (( 5242880 - $BASE_USPACE > $BASE_ASPACE )); then
+	if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
 		beautify message FAIL
-		exiterror "Not enough temporary space available, need at least 5GB on $BASE_DEV"
+		exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
 	fi
     else
 	beautify message DONE
