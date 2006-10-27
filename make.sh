@@ -545,14 +545,16 @@ buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  ipfiremake syslinux
-  ipfiremake as86
-  ipfiremake mbr
   ipfiremake uClibc
   installmake busybox
+  installmake udev
   installmake sysvinit
   installmake e2fsprogs
   installmake misc-progs
+exiterror STOP HERE!
+  ipfiremake syslinux
+  ipfiremake as86
+  ipfiremake mbr
   installmake slang
   installmake util-linux
   installmake newt

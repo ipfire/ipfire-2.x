@@ -32,7 +32,7 @@ THISAPP    = e2fsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(PASS)" "install"
+ifeq "$(LFS_PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
 else
   TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -76,21 +76,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/e2fsprogs-build && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(PASS)" "install"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-install.patch
-	-mkdir -p /install/misc/bin
-	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" ./configure --disable-nls
-	cd $(DIR_APP)/util && CC=/usr/bin/gcc BUILD_CC=/usr/bin/gcc make -e
-	cd $(DIR_APP) && make lib/blkid/blkid_types.h
-	cd $(DIR_APP) && make lib/ext2fs/ext2_types.h
-	cd $(DIR_APP) && make lib/uuid/uuid_types.h
-	cd $(DIR_APP)/lib/blkid && make $(MAKETUNING)
-	cd $(DIR_APP)/lib/et && make $(MAKETUNING)
-	cd $(DIR_APP)/lib/ext2fs && make $(MAKETUNING)
-	cd $(DIR_APP)/lib/e2p && make $(MAKETUNING)
-	cd $(DIR_APP)/lib/uuid && make $(MAKETUNING)
-	cd $(DIR_APP)/misc && make $(MAKETUNING) mke2fs
-	cd $(DIR_APP) && install -m 0755 misc/mke2fs /install/misc/bin
+ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" ./configure --host=$(BUILDTARGET) --disable-nls \
+		--prefix=/opt/$(MACHINE)-uClibc
+	
+	# build 'mke2fs 1.39' to override version used in busybox.
+	# To be removed when busybox will use also e2fsprogs 1.39
+	# remove link installed by busybox
+	rm /install/initrd/bin/mke2fs
+	cd $(DIR_APP) && make install-libs
+	cd $(DIR_APP) && make progs
+	cd $(DIR_APP)/misc && install -m 755 mke2fs /install/initrd/bin
+	
+	cd $(DIR_APP)/lib/uuid && make
+	cd $(DIR_APP)/lib/uuid && make install
+	cd $(DIR_APP)/lib/uuid && install -m 755 libuuid.a /opt/$(MACHINE)-uClibc/lib
+	cd $(DIR_APP) && unset LD_LIBRARY_PATH
 else
 	cd $(DIR_SRC) && mkdir build
 	cd $(DIR_SRC)/build && $(DIR_APP)/configure --prefix=/usr --with-root-prefix="" \
