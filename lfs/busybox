@@ -27,10 +27,10 @@
 
 include Config
 
-VER        = 0.60.5
+VER        = 1.2.2
 
 THISAPP    = busybox-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1dfe09e0b1db1aab2a5f7d03e47640a6
+$(DL_FILE)_MD5 = ae8a4c65b9464c8ece3483a3d3b9544c
 
 install : $(TARGET)
 
@@ -72,33 +72,21 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/busybox-0.60.5-config.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/busybox-0.60.5-gzip.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/busybox-0.60.5-spider.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/busybox-0.60.5-insmod_gpl_symbols.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/busybox-0.60.5-wget-unlink.patch
-	if [ "$(MACHINE)" = "alpha" ]; then \
-		cd $(DIR_APP) && sed -i -e 's/#define BB_INSMOD//' Config.h; \
-		cd $(DIR_APP) && sed -i -e 's/#define BB_RMMOD//' Config.h; \
-		cd $(DIR_APP) && sed -i -e 's/#define BB_MODPROBE//' Config.h; \
-	fi
-#	cd $(DIR_APP) && sed -i -e 's/enum { NAME_SIZE = 100 };/enum { NAME_SIZE = 150 };/' tar.c; \
-	
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && cp -f $(DIR_SRC)/config/uClibc/busybox.config .config
 	cd $(DIR_APP) && make
 	-mkdir -p /install/initrd/bin
 	cd $(DIR_APP) && install -m 0755 busybox /install/initrd/bin
-	cd /install/initrd/bin && for i in [ ash cat chroot dd df echo gzip \
-	    gunzip halt insmod ifconfig init ls mkswap modprobe mount reboot \
-	    rmmod sed sh sleep swapon swapoff syslogd tar umount wget ping \
-	    sync; do \
-	        ln -sf busybox $$i; \
-	    done
-	if [ "$(MACHINE)" = "alpha" ]; then \
-		cd /install/initrd/bin && rm -f rmmod modprobe insmod; \
-		cp /sbin/insmod.static /install/initrd/bin/insmod; \
-		cd /install/initrd/bin && ln -s insmod modprobe; \
-		cd /install/initrd/bin && ln -s insmod rmmod; \
-	fi
+	mkdir -p /install/initrd/usr/share/udhcpc
+	cd $(DIR_APP) && install -m 0755 examples/udhcp/simple.script \
+		/install/initrd/usr/share/udhcpc/default.script
+	cd /install/initrd/bin && for i in [ ash basename cat chroot cp \
+		date dd df dmesg echo gzip gunzip halt hwclock insmod ifconfig \
+		init ls ln mkdir mkswap modprobe mount reboot rmmod lsmod \
+		e2label mke2fs mkfs.minix tftp \
+		sed sh sleep swapon swapoff syslogd tar umount wget env \
+		ping sync udhcpc grep xargs route test uname wc readlink; do \
+			ln -sf busybox $$i; \
+		done
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
