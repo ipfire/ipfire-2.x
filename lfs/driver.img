@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: driver.img,v 1.24.2.7 2006/01/29 20:17:30 franck78 Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -31,6 +25,8 @@
 ###############################################################################
 
 include Config
+
+VER = ipfire
 
 THISAPP    = driver-$(VERSION).img
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -57,9 +53,7 @@ $(TARGET) :
 
 	# make new dependencies 
 	depmod -a -F /boot/System.map-$(KVER) $(KVER)
-	if [ "$(MACHINE)" = "i386" ]; then \
-		depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp; \
-	fi
+	depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp
 
 	# Create drivers floppy
 	cd /tmp && rm -rf drivers.tgz drivers.tar bin lib etc var
@@ -100,19 +94,15 @@ $(TARGET) :
 	cd /tmp && tar xf drivers.tar
 	cd /tmp && mkdir -p {bin,etc/pcmcia,var/lib/pcmcia,var/run}
 	cd /tmp && cp -aR /install/misc/bin/* bin
-	cd /tmp && cp -r /etc/pcmcia/{config*,net*} etc/pcmcia
+#	cd /tmp && cp -r /etc/pcmcia/{config*,net*} etc/pcmcia
 	# cardmgr wants to execute these to bring up the card, we'll
 	# create blank ones as we'll bring them up ourselves
-	cd /tmp/etc/pcmcia && rm -f network 
-	cd /tmp/etc/pcmcia && touch network
-	cd /tmp/etc/pcmcia && chmod +x network
+#	cd /tmp/etc/pcmcia && rm -f network 
+#	cd /tmp/etc/pcmcia && touch network
+#	cd /tmp/etc/pcmcia && chmod +x network
 	cd /tmp && tar -cf - bin/ etc/pcmcia var lib/modules/$(KVER) | gzip -9 -c > drivers.tgz
 
-	if [ "$(MACHINE)" = "alpha" ]; then \
-		cp /tmp/drivers.tgz /install/images/drivers-$(VERSION).img; \
-	else \
-		dd if=/tmp/drivers.tgz of=/install/images/drivers-$(VERSION).img bs=1440k count=1 conv=sync; \
-	fi
+	dd if=/tmp/drivers.tgz of=/install/images/drivers-$(VERSION).img bs=2880k count=1 conv=sync
 	rm -rf /tmp/drivers.tgz /tmp/drivers.tar /tmp/bin /tmp/lib
 
 	### If this fails, the disk is TOO FULL !!!!

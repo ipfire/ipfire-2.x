@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: initrd,v 1.26.2.8 2005/12/03 21:28:44 franck78 Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -31,6 +25,8 @@
 ###############################################################################
 
 include Config
+
+VER = ipfire
 
 THISAPP    = initrd
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -62,41 +58,34 @@ $(TARGET) :
 	# Finish up initrd directory
 	-mkdir -p /install/initrd/{etc,lib/modules/$(KVER)/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run} && \
 	ln -sf /bin /install/initrd/sbin
-	cd /install/initrd/dev && /dev/make_devices 
+#	cd /install/initrd/dev && /dev/make_devices 
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
 	rm -rf /install/initrd/etc/CVS/
 	cd /install/initrd/dev && ln -sf fd0 floppy
 	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
 	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l
 
-	if [ "$(MACHINE)" = "alpha" ]; then \
-		tar cvzf /tmp/libc.tgz /usr/share/locale /lib/libc.* /lib/libc-* /lib/libdl* /lib/libnsl* /lib/libresolv* /lib/libutil* /lib/ld* /lib/libcrypt*; \
-		tar xvzf /tmp/libc.tgz -C /install/initrd; \
-		strip /install/initrd/lib/*; \
-		rm -f /tmp/libc.tgz; \
-	fi
-
 	# Extra modules
 	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi
-	cp -f /lib/modules/$(KVER)/kernel/drivers/scsi/{scsi_mod.o.gz,sd_mod.o.gz,sr_mod.o.gz} \
+	cp -f /lib/modules/$(KVER)/kernel/drivers/scsi/{scsi_mod.ko,sd_mod.ko,sr_mod.ko} \
 	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi/
 	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
-	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/storage/*.o.gz \
+	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/storage/*.ko \
 	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
 
 	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/host/
-	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/host/{usb-*,ehci*} \
-	      /lib/modules/$(KVER)/kernel/drivers/usb/hid.o.gz \
-	      /lib/modules/$(KVER)/kernel/drivers/usb/*core.o.gz \
+	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/host/ehci* \
+	      /lib/modules/$(KVER)/kernel/drivers/usb/input/usbhid.ko \
+	      /lib/modules/$(KVER)/kernel/drivers/usb/core/usbcore.ko \
 	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/
 
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/input
-	cp -f /lib/modules/$(KVER)/kernel/drivers/input/{input.o.gz,keybdev.o.gz} \
-	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/input/
+#	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/input
+#	cp -f /lib/modules/$(KVER)/kernel/drivers/input/{input.ko,keybdev.ko} \
+#	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/input/
 
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp
-	cp -f /lib/modules/$(KVER)/kernel/drivers/pnp/* \
-	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp/
+#	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp
+#	cp -f /lib/modules/$(KVER)/kernel/drivers/pnp/* \
+#	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp/
 
 	cp -f /lib/modules/$(KVER)/modules.* /install/initrd/lib/modules/$(KVER)/
 

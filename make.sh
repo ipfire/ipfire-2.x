@@ -551,21 +551,23 @@ buildinstaller() {
   installmake sysvinit
   installmake e2fsprogs
   installmake misc-progs
-exiterror STOP HERE!
-  ipfiremake syslinux
-  ipfiremake as86
-  ipfiremake mbr
+  installmake sysfsutils
+#  installmake hwinfo
   installmake slang
   installmake util-linux
   installmake newt
   installmake pciutils
-  installmake pcmcia-cs
-  installmake kbd
+  installmake pcmciautils
   installmake installer
   installmake scsi.img
   installmake driver.img
   installmake initrd
   installmake boot.img
+exiterror STOP HERE!
+  ipfiremake syslinux
+  ipfiremake as86
+  ipfiremake mbr
+  installmake kbd
 }
 
 buildpackages() {

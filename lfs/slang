@@ -78,16 +78,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
 	-mkdir -p /install/lib
-	cd $(DIR_APP) && sed -i -e 's/libslang.a:/libslang.a:\ $$(OBJS)/' Makefile
-	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer -Wall -fPIC" make -e libslang.a
-	cd $(DIR_APP) && install -m 0644 libslang.a /install/lib
-	-mkdir -p /install/include/slang
-	cd $(DIR_APP) && install -m 0644 slang.h slcurses.h /install/include/slang
+	cd $(DIR_APP) && ./configure --prefix=""
+	cd $(DIR_APP) && make $(MAKETUNING) elf
+	cd $(DIR_APP)/src && make $(MAKETUNING) install-elf DESTDIR="/opt/$(MACHINE)-uClibc"
+	rm -vf /opt/$(MACHINE)-uClibc/lib/libslang.so*
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make elf
-	cd $(DIR_APP) && make install-elf
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make elf $(MAKETUNING)
+	cd $(DIR_APP) && make install-elf $(MAKETUNING)
 	cd $(DIR_APP) && chmod -v 755 /usr/lib/libslang.so.2.0.6
 endif
 	@rm -rf $(DIR_APP)

@@ -26,6 +26,8 @@
 
 include Config
 
+VER = ipfire
+
 THISAPP    = boot-$(VERSION).img
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -62,7 +64,7 @@ $(TARGET) :
 		sed -e 's/boot IPFire/boot IPFire $(VERSION)/' $(DIR_SRC)/config/kernel/install-message \
 			> /install/mnt/message; \
 		cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/mnt/syslinux.cfg; \
-		cp /boot/vmlinuz-installer                  /install/mnt/vmlinuz; \
+		cp /boot/vmlinuz-$(KVER)                    /install/mnt/vmlinuz; \
 		cp /install/images/fdinitrd.gz              /install/mnt/instroot.gz; \
 		umount /install/mnt; \
 		losetup -d $$LOOPDEV; \

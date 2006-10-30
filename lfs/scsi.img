@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Mark Wormgoor < mark@wormgoor.com>                               #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: scsi.img,v 1.19.2.4 2005/02/05 15:38:15 gespinasse Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -31,6 +25,8 @@
 ###############################################################################
 
 include Config
+
+VER = ipfire
 
 THISAPP    = scsi-$(VERSION).img
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -58,24 +54,20 @@ $(TARGET) :
 	-mkdir -p /install/images
 	cd /tmp && rm -rf scsi.tgz scsi.tar bin etc lib var
 
-	cd / && tar -cf /tmp/scsi.tar lib/modules/$(KVER)/kernel/drivers/{scsi,pcmcia,message/fusion} lib/modules/$(KVER)/kernel/drivers/block/{DAC960.o.gz,cpqarray.o.gz,cciss.o.gz} lib/modules/$(KVER)/kernel/drivers/ide
+	cd / && tar -cf /tmp/scsi.tar lib/modules/$(KVER)/kernel/drivers/{scsi,pcmcia,message/fusion} lib/modules/$(KVER)/kernel/drivers/block/{DAC960.ko,cpqarray.ko,cciss.ko} lib/modules/$(KVER)/kernel/drivers/ide
 	cd /tmp && tar xf scsi.tar
 	cd /tmp && rm -f lib/modules/$(KVER)/kernel/drivers/message/fusion/mptlan*
 	cd /tmp && mkdir -p {bin,etc/pcmcia/scsi,var/lib/pcmcia,var/run}
 	cd /tmp && cp -aR /install/misc/bin/* bin
-	cd /tmp && cp -r /etc/pcmcia/{config*,scsi*} etc/pcmcia/scsi
+#	cd /tmp && cp -r /etc/pcmcia/{config*,scsi*} etc/pcmcia/scsi
 	# cardmgr wants to execute these to bring up the card, we'll
 	# create blank ones as we'll bring them up ourselves
-	cd /tmp/etc/pcmcia/scsi && rm -f scsi
-	cd /tmp/etc/pcmcia/scsi && touch scsi
-	cd /tmp/etc/pcmcia/scsi && chmod +x scsi
+#	cd /tmp/etc/pcmcia/scsi && rm -f scsi
+#	cd /tmp/etc/pcmcia/scsi && touch scsi
+#	cd /tmp/etc/pcmcia/scsi && chmod +x scsi
 	cd /tmp && tar -cf - bin/ etc/pcmcia var lib/modules/$(KVER) | gzip -9 -c > scsi.tgz
 
-	if [ "$(MACHINE)" = "alpha" ]; then \
-		cp /tmp/scsi.tgz /install/images/scsidrv-$(VERSION).img; \
-	else \
-		dd if=/tmp/scsi.tgz of=/install/images/scsidrv-$(VERSION).img bs=2880k count=1 conv=sync; \
-	fi
+	dd if=/tmp/scsi.tgz of=/install/images/scsidrv-$(VERSION).img bs=2880k count=1 conv=sync
 	rm -f /tmp/scsi.tgz
 
 	### If this fails, the disk is TOO FULL !!!!
