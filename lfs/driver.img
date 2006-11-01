@@ -59,10 +59,14 @@ $(TARGET) :
 	cd /tmp && rm -rf drivers.tgz drivers.tar bin lib etc var
 	cd / && tar -cf /tmp/drivers.tar  \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/acpi/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/base/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/block/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/bluetooth/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/char/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/ide/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/ieee1394/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/isdn/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/md/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/ppp*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slip*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slhc*' \
@@ -72,16 +76,22 @@ $(TARGET) :
            --exclude='lib/modules/$(KVER)/kernel/drivers/parport/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/scsi/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/message/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/drivers/mmc/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/input/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/usb/storage/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/drivers/usb/host/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/arch/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/fs/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/8021q/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/atm/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/bluetooth/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/bridge/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/ieee80211/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/ipsec/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/ipv4/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/key/*' \
 	    --exclude='lib/modules/$(KVER)/kernel/net/sched/*' \
+	    --exclude='lib/modules/$(KVER)/kernel/net/xfrm/*' \
 	    --exclude='lib/modules/$(KVER)/*map' \
 	    --exclude='lib/modules/$(KVER)/misc/*' \
 	    --exclude='lib/modules/$(KVER)/extra/*' \

@@ -26,31 +26,33 @@
 
 include Config
 
-VER = ipfire
+VER        = 1.3.0
 
-THISAPP    = cdrom
-DL_FILE    = rawrite.exe
+THISAPP    = sysfsutils-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ifeq "$(PASS)" "install"
+	EXTRA_CONFIG = --prefix="" --disable-shared
+	EXTRA_MAKE =
+	EXTRA_INSTALL = DESTDIR=/install
+else
+	EXTRA_CONFIG = --prefix=""
+	EXTRA_MAKE =
+	EXTRA_INSTALL =
+endif
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	rawwritewin-0.7.zip \
-	install-en-1.4.0.pdf.zip \
-	quickstart-en.pdf.zip
+objects = $(DL_FILE)
 
-$(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
-rawwritewin-0.7.zip         = http://uranus.it.swin.edu.au/~jn/linux/rawwritewin-0.7.zip
-install-en-1.4.0.pdf.zip    = $(URL_SFNET)/ipcop/install-en-1.4.0.pdf.zip
-quickstart-en.pdf.zip       = http://www.ipcop.org/1.4.0/en/quickstart/quickstart-en.pdf.zip
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                  = 7dac6ea496014d32dbce6c50feb254ca
-rawwritewin-0.7.zip_MD5         = 0130b497c8c3bc7d136a4236b0d9fbf6
-install-en-1.4.0.pdf.zip_MD5    = 07e0b5131f1434010d8a00571f9acd81
-quickstart-en.pdf.zip_MD5       = ca77ef5f1efca6bc519cc42acfd69aa4
+$(DL_FILE)_MD5 = d11c99271531be3c1e6d36b53968cd2b
 
 install : $(TARGET)
 
@@ -78,39 +80,16 @@ $(subst %,%_MD5,$(objects)) :
 ###############################################################################
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	rm -rf /install/cdrom /tmp/*
-
-	# Compress root filesystem
-	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	mkdir -p /install/cdrom/{doc,dosutils,images}
-	find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
-	find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
-	tar -c -C / --files-from=/tmp/ROOTFILES \
-		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
-		--exclude='proc/*' --exclude='tmp/ROOTFILES'
-	rm -f /tmp/ROOTFILES
-	tar -x -C /tmp -f /$(SNAME).tar
-	rm -f /$(SNAME).tar
-	cd /tmp && tar jcf /install/cdrom/$(SNAME)-$(VERSION).tbz2 * && rm -rf *
-
-	# Other files
-	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt
-	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
-	cp /install/images/*.img				/install/cdrom/images
-	unzip $(DIR_DL)/install-en-1.4.0.pdf.zip -d	/install/cdrom/doc
-	unzip $(DIR_DL)/quickstart-en.pdf.zip -d		/install/cdrom/doc
-	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
-	cp $(DIR_DL)/rawrite.exe				/install/cdrom/dosutils
-	unzip -j -L $(DIR_DL)/rawwritewin*.zip -x "*.txt" -d /install/cdrom/dosutils
-
-	# make the ISO
-	mkdir -p /install/cdrom/boot/isolinux; \
-	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
-	cp /install/images/cdinitrd.gz              /install/cdrom/boot/isolinux/instroot.gz; \
-	cp /boot/vmlinuz-installer                  /install/cdrom/boot/isolinux/vmlinuz; \
-	cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/cdrom/boot/isolinux/isolinux.cfg; \
-	cp $(DIR_SRC)/config/kernel/install-message /install/cdrom/boot/isolinux/message; \
-	cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
-	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-    	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE).iso
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP) && ./configure --disable-shared --prefix="" $(EXTRA_CONFIG)
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make DESTDIR=/opt/$(MACHINE)-uClibc install
+else
+	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
+	cd $(DIR_APP) && make $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

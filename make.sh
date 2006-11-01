@@ -563,20 +563,19 @@ buildinstaller() {
   installmake driver.img
   installmake initrd
   installmake boot.img
-exiterror STOP HERE!
-  ipfiremake syslinux
-  ipfiremake as86
-  ipfiremake mbr
   installmake kbd
+# exiterror STOP HERE!
+#  ipfiremake syslinux
+#  ipfiremake as86
+#  ipfiremake mbr
 }
 
 buildpackages() {
   LOGFILE="$BASEDIR/log/_build.packages.log"
   export LOGFILE
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
-  echo -ne "`date -u '+%b %e %T'`: Stage5 packages build \n" | tee -a $LOGFILE
   # Strip files
-  echo "`date -u '+%b %e %T'`: Stripping files" | tee -a $LOGFILE
+  echo -n "Stripping files" | tee -a $LOGFILE
   find $LFS/lib $LFS/usr/lib $LFS/usr/share/rrdtool-* $LFS/install ! -type l \( -name '*.so' -o -name '*.so[\.0-9]*' \) \
 	! -name 'libc.so' ! -name 'libpthread.so' ! -name 'libcrypto.so.0.9.7.sha1' \
 	 -exec $LFS/tools/bin/strip --strip-all {} \; >> $LOGFILE 2>&1
@@ -585,26 +584,25 @@ buildpackages() {
   find $LFS/{,s}bin $LFS/usr/{,s}bin $LFS/usr/local/{,s}bin ! -type l \
 	-exec file {} \; | grep " ELF " | cut -f1 -d ':' | xargs $LFS/tools/bin/strip --strip-all >> $LOGFILE 2>&1
   # there add -v to strip to verify
+  beautify message DONE
 
-  if [ 'i386' = $MACHINE ]; then
-	# Create fcdsl packages
-	echo "`date -u '+%b %e %T'`: Building fcdsl tgz" | tee -a $LOGFILE
-	cp $LFS/install/images/fcdsl/license.txt $LFS  >> $LOGFILE 2>&1
-	touch $LFS/var/run/{need-depmod-$KVER,need-depmod-$KVER-smp}
-	cd $LFS && tar cvfz $LFS/install/images/$SNAME-fcdsl-$VERSION.$MACHINE.tgz \
-		lib/modules/$KVER/misc/fcdsl*.o.gz \
-		lib/modules/$KVER-smp/misc/fcdsl*.o.gz \
-		usr/lib/isdn/{fds?base.bin,fd?ubase.frm} \
-		etc/fcdsl/fcdsl*.conf \
-		etc/drdsl/{drdsl,drdsl.ini} \
-		license.txt \
-		var/run/{need-depmod-$KVER,need-depmod-$KVER-smp} >> $LOGFILE 2>&1
-	rm -f $LFS/license.txt >> $LOGFILE 2>&1
-	cd $BASEDIR
-  fi
+#   Create fcdsl packages
+#  echo "`date -u '+%b %e %T'`: Building fcdsl tgz" | tee -a $LOGFILE
+#  cp $LFS/install/images/fcdsl/license.txt $LFS  >> $LOGFILE 2>&1
+#  touch $LFS/var/run/{need-depmod-$KVER,need-depmod-$KVER-smp}
+#  cd $LFS && tar cvfz $LFS/install/images/$SNAME-fcdsl-$VERSION.$MACHINE.tgz \
+#	lib/modules/$KVER/misc/fcdsl*.o.gz \
+#	lib/modules/$KVER-smp/misc/fcdsl*.o.gz \
+#	usr/lib/isdn/{fds?base.bin,fd?ubase.frm} \
+#	etc/fcdsl/fcdsl*.conf \
+#	etc/drdsl/{drdsl,drdsl.ini} \
+#	license.txt \
+#	var/run/{need-depmod-$KVER,need-depmod-$KVER-smp} >> $LOGFILE 2>&1
+#  rm -f $LFS/license.txt >> $LOGFILE 2>&1
+#  cd $BASEDIR
   
   # Generating list of packages used
-  echo "`date -u '+%b %e %T'`: Generating packages list from logs" | tee -a $LOGFILE
+  echo -n "Generating packages list from logs" | tee -a $LOGFILE
   rm -f $BASEDIR/doc/packages-list
   for i in `ls -1tr $BASEDIR/log/[^_]*`; do
 	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
@@ -612,10 +610,11 @@ buildpackages() {
 	fi
   done
   echo "== List of softwares used to build $NAME Version: $VERSION ==" > $BASEDIR/doc/packages-list.txt
-  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|ipfire$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$\|.tgz$\|-config$' \
+  grep -v 'configroot$\|img$\|initrd$\|initscripts$\|installer$\|install$\|setup$\|pakfire$\|stage2$\|smp$\|tools$\|tools1$\|tools2$\|.tgz$\|-config$\|_missing_rootfile$' \
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
+  beautify message DONE
 
   # Create ISO for CDROM
   ipfiremake cdrom

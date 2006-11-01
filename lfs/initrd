@@ -126,8 +126,8 @@ $(TARGET) :
 	    mount -t ext2 $$LOOPDEV /install/mnt && \
 	    rm -rf /install/mnt/lost+found && \
 	    cp -aR /install/initrd/* /install/mnt/ && \
-	    cd /install/mnt && tar xfz /install/images/drivers-$(VERSION).img && \
-	    cd /install/mnt && tar xfz /install/images/scsidrv-$(VERSION).img && \
+	    cd /install/mnt && tar xfz /install/images/drivers-$(VERSION).img # && \
+#	    cd /install/mnt && tar xfz /install/images/scsidrv-$(VERSION).img && \
 	    cp -a  /install/misc/bin/* /install/mnt/bin && \
 	    touch /install/mnt/CDROMBOOT && \
 	    cd / && umount /install/mnt && \

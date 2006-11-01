@@ -32,7 +32,7 @@ THISAPP    = kbd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(PASS)" "install"
+ifeq "$(LFS_PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
 else
   TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-backspace-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fixes-1.patch
-ifeq "$(PASS)" "install"
+ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" CC=/usr/bin/gcc ./configure --disable-nls
 	cd $(DIR_APP)/src && make CFLAGS="-Os -fomit-frame-pointer" DATA_DIR=/lib/kbd BINDIR=/bin setfont kbd_mode dumpkeys loadkeys loadunimap showconsolefont
 	cd $(DIR_APP)/src && install -m 0755 setfont loadunimap kbd_mode dumpkeys loadkeys showconsolefont unicode_start unicode_stop /install/initrd/bin

@@ -1,0 +1,14 @@
+#usr/bin/ptar
+#usr/bin/ptardiff
+#usr/lib/perl5/site_perl/5.8.8/Archive
+#usr/lib/perl5/site_perl/5.8.8/Archive/Tar
+usr/lib/perl5/site_perl/5.8.8/Archive/Tar.pm
+usr/lib/perl5/site_perl/5.8.8/Archive/Tar/Constant.pm
+usr/lib/perl5/site_perl/5.8.8/Archive/Tar/File.pm
+#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Archive
+#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Archive/Tar
+#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Archive/Tar/.packlist
+#usr/share/man/man1/ptar.1
+#usr/share/man/man1/ptardiff.1
+#usr/share/man/man3/Archive::Tar.3
+#usr/share/man/man3/Archive::Tar::File.3

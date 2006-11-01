@@ -1,0 +1,10 @@
+#usr/include/pcap-bpf.h
+#usr/include/pcap-int.h
+#usr/include/pcap-namedb.h
+#usr/include/pcap.h
+#usr/lib/libpcap.a
+usr/lib/libpcap.so
+usr/lib/libpcap.so.0
+usr/lib/libpcap.so.0.8
+usr/lib/libpcap.so.0.8.3
+#usr/man/man3/pcap.3

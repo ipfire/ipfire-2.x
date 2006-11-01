@@ -1,0 +1,15 @@
+#usr/bin/crc32
+#usr/lib/perl5/site_perl/5.8.8/Archive/Zip
+usr/lib/perl5/site_perl/5.8.8/Archive/Zip.pm
+#usr/lib/perl5/site_perl/5.8.8/Archive/Zip.pod
+usr/lib/perl5/site_perl/5.8.8/Archive/Zip/BufferedFileHandle.pm
+#usr/lib/perl5/site_perl/5.8.8/Archive/Zip/FAQ.pod
+usr/lib/perl5/site_perl/5.8.8/Archive/Zip/MemberRead.pm
+usr/lib/perl5/site_perl/5.8.8/Archive/Zip/MockFileHandle.pm
+usr/lib/perl5/site_perl/5.8.8/Archive/Zip/Tree.pm
+#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Archive/Zip
+#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Archive/Zip/.packlist
+#usr/share/man/man3/Archive::Zip.3
+#usr/share/man/man3/Archive::Zip::FAQ.3
+#usr/share/man/man3/Archive::Zip::MemberRead.3
+#usr/share/man/man3/Archive::Zip::Tree.3

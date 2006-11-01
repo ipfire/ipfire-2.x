@@ -1,0 +1,9 @@
+usr/bin/cmp
+usr/bin/diff
+#usr/bin/diff3
+#usr/bin/sdiff
+#usr/info/diff.info
+#usr/man/man1/cmp.1
+#usr/man/man1/diff.1
+#usr/man/man1/diff3.1
+#usr/man/man1/sdiff.1
