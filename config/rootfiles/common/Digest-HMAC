@@ -1,0 +1,9 @@
+#usr/lib/perl5/site_perl/5.8.8/Digest
+usr/lib/perl5/site_perl/5.8.8/Digest/HMAC.pm
+usr/lib/perl5/site_perl/5.8.8/Digest/HMAC_MD5.pm
+usr/lib/perl5/site_perl/5.8.8/Digest/HMAC_SHA1.pm
+#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Digest/HMAC
+#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Digest/HMAC/.packlist
+#usr/share/man/man3/Digest::HMAC.3
+#usr/share/man/man3/Digest::HMAC_MD5.3
+#usr/share/man/man3/Digest::HMAC_SHA1.3

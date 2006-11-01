@@ -1,6 +1,6 @@
 #usr/bin/dig
-#usr/bin/host
-#usr/bin/nslookup
+usr/bin/host
+usr/bin/nslookup
 #usr/man/man1/dig.1
 #usr/man/man1/host.1
 #usr/man/man1/nslookup.1

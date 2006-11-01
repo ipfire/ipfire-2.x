@@ -1,0 +1,15 @@
+#usr/include/dbm.h
+#usr/include/gdbm.h
+#usr/include/ndbm.h
+#usr/info/gdbm.info
+#usr/lib/libgdbm.a
+#usr/lib/libgdbm.la
+usr/lib/libgdbm.so
+usr/lib/libgdbm.so.3
+usr/lib/libgdbm.so.3.0.0
+#usr/lib/libgdbm_compat.a
+#usr/lib/libgdbm_compat.la
+usr/lib/libgdbm_compat.so
+usr/lib/libgdbm_compat.so.3
+usr/lib/libgdbm_compat.so.3.0.0
+#usr/man/man3/gdbm.3

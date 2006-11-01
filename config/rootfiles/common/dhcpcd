@@ -1,0 +1,4 @@
+#etc/dhcpc
+etc/dhcpc/dhcpcd.exe
+sbin/dhcpcd
+#usr/share/man/man8/dhcpcd.8

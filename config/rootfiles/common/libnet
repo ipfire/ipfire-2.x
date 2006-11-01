@@ -1,0 +1,9 @@
+#usr/include/libnet
+#usr/include/libnet.h
+#usr/include/libnet/libnet-asn1.h
+#usr/include/libnet/libnet-functions.h
+#usr/include/libnet/libnet-headers.h
+#usr/include/libnet/libnet-macros.h
+#usr/include/libnet/libnet-structures.h
+#usr/include/libnet/libnet-types.h
+#usr/lib/libnet.a

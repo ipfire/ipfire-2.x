@@ -2,4 +2,4 @@ bin/tar
 #usr/info/tar.info
 #usr/info/tar.info-1
 #usr/info/tar.info-2
-usr/sbin/rmt
+#usr/sbin/rmt
