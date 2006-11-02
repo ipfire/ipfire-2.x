@@ -73,12 +73,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && make -C lib/dns $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/isc $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/bind9 $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/isccfg $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/lwres $(MAKETUNING)
-	cd $(DIR_APP) && make -C bin/dig $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/dns
+	cd $(DIR_APP) && make -C lib/isc
+	cd $(DIR_APP) && make -C lib/bind9
+	cd $(DIR_APP) && make -C lib/isccfg
+	cd $(DIR_APP) && make -C lib/lwres
+	cd $(DIR_APP) && make -C bin/dig
 	cd $(DIR_APP) && make -C bin/dig install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
