@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.27
-# Sat Oct 21 21:08:41 2006
+# Linux kernel version: 2.6.16
+# Fri Nov  3 04:37:54 2006
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -1533,13 +1533,21 @@ CONFIG_VIDEO_SELECT=y
 CONFIG_VGA_CONSOLE=y
 # CONFIG_MDA_CONSOLE is not set
 CONFIG_DUMMY_CONSOLE=y
-# CONFIG_FRAMEBUFFER_CONSOLE is not set
+CONFIG_FRAMEBUFFER_CONSOLE=m
+# CONFIG_FRAMEBUFFER_CONSOLE_ROTATION is not set
+# CONFIG_FONTS is not set
+CONFIG_FONT_8x8=y
+CONFIG_FONT_8x16=y
 
 #
 # Logo configuration
 #
 # CONFIG_LOGO is not set
 # CONFIG_BACKLIGHT_LCD_SUPPORT is not set
+
+#
+# Bootsplash configuration
+#
 
 #
 # Sound
@@ -1730,7 +1738,11 @@ CONFIG_USB_XUSBATM=m
 #
 # File systems
 #
-# CONFIG_EXT2_FS is not set
+CONFIG_EXT2_FS=y
+CONFIG_EXT2_FS_XATTR=y
+CONFIG_EXT2_FS_POSIX_ACL=y
+CONFIG_EXT2_FS_SECURITY=y
+# CONFIG_EXT2_FS_XIP is not set
 CONFIG_EXT3_FS=y
 CONFIG_EXT3_FS_XATTR=y
 CONFIG_EXT3_FS_POSIX_ACL=y

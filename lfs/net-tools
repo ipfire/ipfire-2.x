@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 					-e 's|HAVE_MII 0|HAVE_MII 1|g' config.h
 	cd $(DIR_APP) && sed -i	-e 's|# HAVE_IP_TOOLS=0|HAVE_IP_TOOLS=1|g' \
 					-e 's|# HAVE_MII=0|HAVE_MII=1|g' config.make
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make update
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

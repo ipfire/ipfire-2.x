@@ -24,7 +24,7 @@
 
 NAME="IPFire"				# Software name
 SNAME="ipfire"			# Short name
-VERSION="2.0"				# Version number
+VERSION="2.0b"			# Version number
 SLOGAN="www.ipfire.eu"		# Software slogan
 CONFIG_ROOT=/var/ipfire		# Configuration rootdir
 NICE=10				# Nice level
@@ -890,11 +890,11 @@ gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
 	PACKAGE=$SNAME-$VERSION-toolchain-$BUILDMACHINE
 	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then
-		URL_IPFIRE=`grep URL_IPFIRE lfs/Config | awk '{ print $3 }'`
+		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
 		test -d $BASEDIR/cache/toolchains || mkdir $BASEDIR/cache/toolchains
 		echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 		cd $BASEDIR/cache/toolchains
-		wget $URL_IPFIRE/toolchains/$PACKAGE.tar.gz $URL_IPFIRE/toolchains/$PACKAGE.md5 >& /dev/null
+		wget $URL_TOOLCHAIN/$PACKAGE.tar.gz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
 		if [ $? -ne 0 ]; then
 			echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
 		else

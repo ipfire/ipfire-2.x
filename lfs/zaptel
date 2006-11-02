@@ -100,7 +100,5 @@ endif
 	cd $(DIR_APP) && install -D -m 644 arith.h /usr/include/arith.h
 	cd $(DIR_APP) && install -D -m 644 mg2ec.h /usr/include/mg2ec.h
 	cd $(DIR_APP) && install -D -m 644 mg2ec_const.h /usr/include/mg2ec_const.h
-#	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
-#	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
