@@ -49,68 +49,29 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
-	-strip --strip-all   /install/misc/bin/*
-
 	# make new dependencies 
 	depmod -a -F /boot/System.map-$(KVER) $(KVER)
 	depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp
 
 	# Create drivers floppy
 	cd /tmp && rm -rf drivers.tgz drivers.tar bin lib etc var
-	cd / && tar -cf /tmp/drivers.tar  \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/acpi/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/base/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/block/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/bluetooth/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/char/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/ide/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/ieee1394/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/isdn/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/md/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/ppp*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slip*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/slhc*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/tun*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/imq*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/net/wireless/*' \
-           --exclude='lib/modules/$(KVER)/kernel/drivers/parport/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/scsi/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/message/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/mmc/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/input/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/usb/storage/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/usb/host/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/arch/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/fs/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/8021q/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/atm/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/bluetooth/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/bridge/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/ieee80211/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/ipsec/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/ipv4/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/key/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/sched/*' \
-	    --exclude='lib/modules/$(KVER)/kernel/net/xfrm/*' \
-	    --exclude='lib/modules/$(KVER)/*map' \
-	    --exclude='lib/modules/$(KVER)/misc/*' \
-	    --exclude='lib/modules/$(KVER)/extra/*' \
-	    --exclude='lib/modules/$(KVER)/pcmcia/*' \
-	    --exclude='lib/modules/$(KVER)/build' \
-	    --exclude='lib/modules/$(KVER)/kernel/drivers/atm/*' \
-	    --exclude=lib/modules/$(KVER)/kernel/drivers/usb/{3cp4218.o.gz,acm.o.gz,amedyn.o.gz,cxacru.o.gz,speedtch.o.gz,hid.o.gz,usbcore.o.gz} \
-	    --exclude='lib/modules/$(KVER)/modules.*' \
-	    lib/modules/$(KVER)
+	cd / && tar -cf /tmp/drivers.tar \
+		--exclude=lib/modules/$(KVER)/kernel/{arch,fs} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/{acpi,atm,bluetooth,block,char,cdrom,hwmon,ide} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/{ieee1394,isdn,mmc,scsi,md,message,video} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/net/{wan,ppp*,slip*,slhc*,tun*,wireless} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{atm,input,storage,host} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{3cp4218.ko,acm.ko,amedyn.ko,cxacru.ko} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{speedtch.ko,hid.ko,usbcore.ko,at76c50*.ko} \
+		--exclude=lib/modules/$(KVER)/kernel/net/{8021q,atm,bluetooth,bridge,ieee80211,ipsec,ipv4} \
+		--exclude=lib/modules/$(KVER)/kernel/net/{wanrouter,netfilter,sched} \
+		--exclude=lib/modules/$(KVER)/{build,extra,misc,modules.*,source} \
+		lib/modules/$(KVER)
 	cd /tmp && tar xf drivers.tar
-	cd /tmp && mkdir -p {bin,etc/pcmcia,var/lib/pcmcia,var/run}
-	cd /tmp && cp -aR /install/misc/bin/* bin
-#	cd /tmp && cp -r /etc/pcmcia/{config*,net*} etc/pcmcia
-	# cardmgr wants to execute these to bring up the card, we'll
-	# create blank ones as we'll bring them up ourselves
-#	cd /tmp/etc/pcmcia && rm -f network 
-#	cd /tmp/etc/pcmcia && touch network
-#	cd /tmp/etc/pcmcia && chmod +x network
-	cd /tmp && tar -cf - bin/ etc/pcmcia var lib/modules/$(KVER) | gzip -9 -c > drivers.tgz
+	cd /tmp && mkdir -p {bin,var/run}
+	cd /tmp && tar -cf - bin var lib/modules/$(KVER) | gzip -9 -c > drivers.tgz
+
+	ls -l /tmp/drivers.tgz
 
 	dd if=/tmp/drivers.tgz of=/install/images/drivers-$(VERSION).img bs=2880k count=1 conv=sync
 	rm -rf /tmp/drivers.tgz /tmp/drivers.tar /tmp/bin /tmp/lib

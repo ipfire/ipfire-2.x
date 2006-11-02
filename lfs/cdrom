@@ -103,11 +103,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_DL)/rawrite.exe				/install/cdrom/dosutils
 	unzip -j -L $(DIR_DL)/rawwritewin*.zip -x "*.txt" -d /install/cdrom/dosutils
 
-	# make the ISO
+	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux; \
 	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
 	cp /install/images/cdinitrd.gz              /install/cdrom/boot/isolinux/instroot.gz; \
-	cp /boot/vmlinuz-installer                  /install/cdrom/boot/isolinux/vmlinuz; \
+	cp /boot/vmlinuz-$(KVER)                    /install/cdrom/boot/isolinux/vmlinuz; \
 	cp $(DIR_SRC)/config/kernel/syslinux.cfg    /install/cdrom/boot/isolinux/isolinux.cfg; \
 	cp $(DIR_SRC)/config/kernel/install-message /install/cdrom/boot/isolinux/message; \
 	cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \

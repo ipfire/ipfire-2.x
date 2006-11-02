@@ -54,18 +54,18 @@ $(TARGET) :
 	-mkdir -p /install/images
 	cd /tmp && rm -rf scsi.tgz scsi.tar bin etc lib var
 
-	cd / && tar -cf /tmp/scsi.tar lib/modules/$(KVER)/kernel/drivers/{scsi,pcmcia,message/fusion} lib/modules/$(KVER)/kernel/drivers/block/{DAC960.ko,cpqarray.ko,cciss.ko} lib/modules/$(KVER)/kernel/drivers/ide
+	cd / && tar -cf /tmp/scsi.tar \
+		lib/modules/$(KVER)/kernel/drivers/{scsi,message/fusion} \
+		lib/modules/$(KVER)/kernel/drivers/block/{DAC960.ko,cpqarray.ko,cciss.ko} \
+		lib/modules/$(KVER)/kernel/drivers/ide \
+		lib/modules/$(KVER)/kernel/drivers/cdrom \
+		lib/modules/$(KVER)/kernel/drivers/ieee1394
 	cd /tmp && tar xf scsi.tar
 	cd /tmp && rm -f lib/modules/$(KVER)/kernel/drivers/message/fusion/mptlan*
-	cd /tmp && mkdir -p {bin,etc/pcmcia/scsi,var/lib/pcmcia,var/run}
-	cd /tmp && cp -aR /install/misc/bin/* bin
-#	cd /tmp && cp -r /etc/pcmcia/{config*,scsi*} etc/pcmcia/scsi
-	# cardmgr wants to execute these to bring up the card, we'll
-	# create blank ones as we'll bring them up ourselves
-#	cd /tmp/etc/pcmcia/scsi && rm -f scsi
-#	cd /tmp/etc/pcmcia/scsi && touch scsi
-#	cd /tmp/etc/pcmcia/scsi && chmod +x scsi
-	cd /tmp && tar -cf - bin/ etc/pcmcia var lib/modules/$(KVER) | gzip -9 -c > scsi.tgz
+	cd /tmp && mkdir -p {bin,var/run}
+	cd /tmp && tar -cf - bin var lib/modules/$(KVER) | gzip -9 -c > scsi.tgz
+
+	ls -l /tmp/scsi.tgz
 
 	dd if=/tmp/scsi.tgz of=/install/images/scsidrv-$(VERSION).img bs=2880k count=1 conv=sync
 	rm -f /tmp/scsi.tgz

@@ -30,7 +30,6 @@
 * amavisd-new-2.4.1
 * applejuice-0.30
 * arping-2.05
-* as86-0.16.17
 * asterisk-1.2.13
 * autoconf-2.59
 * automake-1.9.6
@@ -41,7 +40,6 @@
 * bison-2.2
 * bootsplash-3.2
 * bridge-utils-1.1
-* busybox-0.60.5
 * busybox-1.2.2
 * bzip2-1.0.3
 * capi4k-utils-2005-07-18
@@ -137,7 +135,6 @@
 * make-3.80
 * man-db-2.4.3
 * man-pages-2.34
-* mbr-1.1.8
 * mc-4.6.0
 * mingetty_1.07
 * misc-progs

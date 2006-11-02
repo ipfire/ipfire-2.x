@@ -51,47 +51,62 @@ md5 :
 $(TARGET) :
 	@$(PREBUILD)
 	rm -f /install/images/{cdinitrd,cdinitrd.gz,fdinitrd,fdinitrd.gz}
-	-strip --strip-all   /install/misc/bin/*
-	-strip --strip-all   /install/initrd/bin/*
-	-strip --strip-debug /install/initrd/lib/*
 
 	# Finish up initrd directory
-	-mkdir -p /install/initrd/{etc,lib/modules/$(KVER)/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run} && \
-	ln -sf /bin /install/initrd/sbin
-#	cd /install/initrd/dev && /dev/make_devices 
+	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys} && \
+	cd /install/initrd && ln -sfn bin sbin
+	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
-	rm -rf /install/initrd/etc/CVS/
-	cd /install/initrd/dev && ln -sf fd0 floppy
+	mv -f /install/initrd/etc/fstab /install/initrd/etc/fstab.boot
+	cd /install/initrd/etc && ln -s /tmp/fstab fstab
+	rm -rf /install/initrd/etc{,/udev,/udev/rules.d}/.svn
+	rm -rf /install/initrd/usr/share/man
 	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
 	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l
 
 	# Extra modules
 	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi
 	cp -f /lib/modules/$(KVER)/kernel/drivers/scsi/{scsi_mod.ko,sd_mod.ko,sr_mod.ko} \
-	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi/
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
+		/install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi/
+
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage
 	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/storage/*.ko \
-	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
+		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
 
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/host/
-	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/host/ehci* \
-	      /lib/modules/$(KVER)/kernel/drivers/usb/input/usbhid.ko \
-	      /lib/modules/$(KVER)/kernel/drivers/usb/core/usbcore.ko \
-	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/host
+	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/host/*.ko \
+		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/host
 
-#	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/input
-#	cp -f /lib/modules/$(KVER)/kernel/drivers/input/{input.ko,keybdev.ko} \
-#	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/input/
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/input
+	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/input/usbhid.ko \
+		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/input
 
-#	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp
-#	cp -f /lib/modules/$(KVER)/kernel/drivers/pnp/* \
-#	    /install/initrd/lib/modules/$(KVER)/kernel/drivers/pnp/
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/core
+	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/core/*.ko \
+		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/core
 
-	cp -f /lib/modules/$(KVER)/modules.* /install/initrd/lib/modules/$(KVER)/
+	# File system
+	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/fs
+	cp -rf /lib/modules/$(KVER)/kernel/fs/* /install/initrd/lib/modules/$(KVER)/kernel/fs
 
+	cp -f /lib/modules/$(KVER)/modules.* /install/initrd/lib/modules/$(KVER)
+
+	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
+
+	cd /install/initrd/lib/ && ln -sf libgcc_s.so.1 libgcc_s.so
+	
 	# Floppy initrd
 	-mkdir -p /install/{images,mnt}
-	RAMDISK_SIZE=`grep CONFIG_BLK_DEV_RAM_SIZE $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) | sed -e 's/CONFIG_BLK_DEV_RAM_SIZE=//'` && \
+	rm -rf /install/mnt/*
+
+	cp -aR /install/initrd/* /install/mnt
+	# cp -a /install/misc/bin/* /install/mnt/bin
+
+	# make new dependencies
+	depmod -a -F /boot/System.map-$(KVER) $(KVER)
+	touch /install/mnt/FLOPPYBOOT
+
+	RAMDISK_SIZE=8192 && \
 	    dd if=/dev/zero of=/install/images/fdinitrd bs=1k count=$${RAMDISK_SIZE}
 	for i in `seq 0 7`; do \
 	    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
@@ -104,16 +119,12 @@ $(TARGET) :
 	    mount -t ext2 $$LOOPDEV /install/mnt && \
 	    rm -rf /install/mnt/lost+found && \
 	    cp -aR /install/initrd/* /install/mnt/ && \
-	    umount /install/mnt && \
+	    cd /install/mnt/ && find ./ -ls > $(DIR_INFO)/_build.fdinitrd && \
+	    cd / && umount /install/mnt && \
 	    losetup -d $$LOOPDEV
 	gzip -9 /install/images/fdinitrd
 
-	# CDRom initrd, add vfat modules
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/fs
-	cp -fR /lib/modules/$(KVER)/kernel/fs/* \
-	    /install/initrd/lib/modules/$(KVER)/kernel/fs/
-
-	RAMDISK_SIZE=`grep CONFIG_BLK_DEV_RAM_SIZE $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) | sed -e 's/CONFIG_BLK_DEV_RAM_SIZE=//'` && \
+	RAMDISK_SIZE=11264 && \
 	    dd if=/dev/zero of=/install/images/cdinitrd bs=1k count=$${RAMDISK_SIZE}
 	for i in `seq 0 7`; do \
 	    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
@@ -126,9 +137,9 @@ $(TARGET) :
 	    mount -t ext2 $$LOOPDEV /install/mnt && \
 	    rm -rf /install/mnt/lost+found && \
 	    cp -aR /install/initrd/* /install/mnt/ && \
-	    cd /install/mnt && tar xfz /install/images/drivers-$(VERSION).img # && \
-#	    cd /install/mnt && tar xfz /install/images/scsidrv-$(VERSION).img && \
-	    cp -a  /install/misc/bin/* /install/mnt/bin && \
+	    cd /install/mnt && tar xfz /install/images/drivers-$(VERSION).img && \
+	    cd /install/mnt && tar xfz /install/images/scsidrv-$(VERSION).img && \
+	    cd /install/mnt/ && find ./ -ls > $(DIR_INFO)/_build.cdinitrd && \
 	    touch /install/mnt/CDROMBOOT && \
 	    cd / && umount /install/mnt && \
 	    losetup -d $$LOOPDEV

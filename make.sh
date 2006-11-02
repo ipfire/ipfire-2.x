@@ -170,7 +170,7 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    MAKETUNING="-j8"
+    MAKETUNING="-j4"
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
@@ -545,6 +545,7 @@ buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
+  ipfiremake syslinux
   ipfiremake uClibc
   installmake busybox
   installmake udev
@@ -558,14 +559,12 @@ buildinstaller() {
   installmake newt
   installmake pciutils
   installmake pcmciautils
+  installmake kbd
   installmake installer
   installmake scsi.img
   installmake driver.img
   installmake initrd
   installmake boot.img
-  installmake kbd
-# exiterror STOP HERE!
-#  ipfiremake syslinux
 #  ipfiremake as86
 #  ipfiremake mbr
 }

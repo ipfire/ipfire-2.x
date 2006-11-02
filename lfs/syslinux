@@ -72,8 +72,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-3.11-nossp.patch
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-3.11-nopie.patch
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
