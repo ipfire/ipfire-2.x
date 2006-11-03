@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mailx
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -77,7 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make $(MAKETUNING) SENDMAIL=/usr/sbin/sendmail
+	cd $(DIR_APP) && make SENDMAIL=/usr/sbin/sendmail
 	cd $(DIR_APP) && make PREFIX=/usr UCBINSTALL=/usr/bin/install install
 	cd $(DIR_APP) && ln -v -sf mailx /usr/bin/mail
 	cd $(DIR_APP) && ln -v -sf mailx /usr/bin/nail

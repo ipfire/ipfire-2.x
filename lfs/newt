@@ -85,8 +85,8 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && ./configure --without-gpm-support --host $(MACHINE)-uclibc
 	cd $(DIR_APP) && sed -i 's%^CFLAGS.*$$%CFLAGS = -Os -fomit-frame-pointer -Wall -D_GNU_SOURCE -DUTF8 -I/install/include/slang%' Makefile
 	cd $(DIR_APP) && make libnewt.a
+	-mkdir -p /install/$(MACHINE)-uClibc/{include,lib}
 	cd $(DIR_APP) && install -m 0644 libnewt.a /install/$(MACHINE)-uClibc/lib
-	-mkdir -p /install/$(MACHINE)-uClibc/include
 	cd $(DIR_APP) && install -m 0644 newt.h /install/$(MACHINE)-uClibc/include/newt.h
 else
 	cd $(DIR_APP) && RPM_OPT_FLAGS="$(CFLAGS) -DUTF8" ./configure --without-gpm-support
