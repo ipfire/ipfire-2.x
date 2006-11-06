@@ -57,8 +57,6 @@ $(TARGET) :
 	cd /install/initrd && ln -sfn bin sbin
 	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
-	mv -f /install/initrd/etc/fstab /install/initrd/etc/fstab.boot
-	cd /install/initrd/etc && ln -s /tmp/fstab fstab
 	rm -rf /install/initrd/etc{,/udev,/udev/rules.d}/.svn
 	rm -rf /install/initrd/usr/share/man
 	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
