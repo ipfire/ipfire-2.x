@@ -95,5 +95,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd /lib && ln -sf ld-uClibc-$(VER).so ld-uClibc.so.0
 	cd /lib && ln -sf libuClibc-$(VER).so libc.so.0
 	cd /lib && ln -sf libc.so.0 libc.so
-	@rm -rf $(DIR_SRC)/buildroot
+	@rm -rf $(DIR_APP) $(DIR_SRC)/buildroot
 	@$(POSTBUILD)

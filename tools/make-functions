@@ -412,7 +412,7 @@ installmake() {
 	local PKG_TIME_START=`date +%s`
 		chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/opt/$MACHINE-uClibc/usr/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						PATH=/opt/$MACHINE-uClibc/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						LFS_PASS="install" \

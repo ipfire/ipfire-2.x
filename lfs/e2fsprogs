@@ -90,7 +90,7 @@ ifeq "$(LFS_PASS)" "install"
 	
 	cd $(DIR_APP)/lib/uuid && make
 	cd $(DIR_APP)/lib/uuid && make install
-	cd $(DIR_APP)/lib/uuid && install -m 755 libuuid.a /opt/$(MACHINE)-uClibc/lib
+	cd $(DIR_APP)/lib/uuid && install -m 755 libuuid.a /opt/$(MACHINE)-uClibc/lib/libuuid.a
 	cd $(DIR_APP) && unset LD_LIBRARY_PATH
 else
 	cd $(DIR_SRC) && mkdir build

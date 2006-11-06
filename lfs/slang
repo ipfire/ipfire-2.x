@@ -77,7 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
-	-mkdir -p /install/lib
 	cd $(DIR_APP) && ./configure --prefix=""
 	cd $(DIR_APP) && make $(MAKETUNING) elf
 	cd $(DIR_APP)/src && make install-elf DESTDIR="/opt/$(MACHINE)-uClibc"
