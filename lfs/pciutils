@@ -82,9 +82,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP)/lib && CFLAGS="-Os -fomit-frame-pointer" ./configure
 	cd $(DIR_APP)/lib && CFLAGS="-Os -fomit-frame-pointer" make $(MAKETUNING)
-	-mkdir -p /install/$(MACHINE)-uClibc/include/pci
-	cd $(DIR_APP) && install -m 0644 lib/libpci.a /install/$(MACHINE)-uClibc/lib
-	cd $(DIR_APP) && install -m 0644 lib/{config,header,pci}.h /install/$(MACHINE)-uClibc/include/pci
+	-mkdir -p /opt/$(MACHINE)-uClibc/include/pci
+	cd $(DIR_APP) && install -m 0644 lib/libpci.a /opt/$(MACHINE)-uClibc/lib
+	cd $(DIR_APP) && install -m 0644 lib/{config,header,pci}.h /opt/$(MACHINE)-uClibc/include/pci
 else
 	cd $(DIR_APP) && make PREFIX=/usr $(MAKETUNING)
 	cd $(DIR_APP) && make PREFIX=/usr install

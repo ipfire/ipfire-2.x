@@ -78,9 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && ./configure --prefix=""
-	cd $(DIR_APP) && make $(MAKETUNING) elf
-	cd $(DIR_APP)/src && make install-elf DESTDIR="/opt/$(MACHINE)-uClibc"
-	rm -vf /opt/$(MACHINE)-uClibc/lib/libslang.so*
+	cd $(DIR_APP)/src && patch < $(DIR_SRC)/src/patches/slang-$(VER)-uclibc.patch
+	cd $(DIR_APP)/src && make $(MAKETUNING)
+	cd $(DIR_APP)/src && make install DESTDIR="/opt/$(MACHINE)-uClibc"
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
