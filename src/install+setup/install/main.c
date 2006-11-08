@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Contains main entry point, and misc functions.
  * 
- * $Id: main.c,v 1.63.2.57 2005/09/25 19:57:46 gespinasse Exp $
- * 
  */
 
 #include "install.h"
@@ -24,26 +22,8 @@ char **ctr;
 char *pcmcia = NULL;
 extern char url[STRING_SIZE];
 
-extern char *bz_tr[];
-extern char *cs_tr[];
-extern char *da_tr[];
 extern char *en_tr[];
-extern char *es_tr[];
-extern char *fi_tr[];
-extern char *fr_tr[];
-extern char *hu_tr[];
-extern char *la_tr[];
-extern char *nl_tr[];
 extern char *de_tr[];
-extern char *tr_tr[];
-extern char *it_tr[];
-extern char *el_tr[];
-extern char *pl_tr[];
-extern char *pt_tr[];
-extern char *so_tr[];
-extern char *sv_tr[];
-extern char *no_tr[];
-extern char *vi_tr[];
 
 int main(int argc, char *argv[])
 {
@@ -51,10 +31,6 @@ int main(int argc, char *argv[])
         char *langnames[] = { "English", NULL };
         char *shortlangnames[] = { "en", NULL };
         char **langtrs[] = { en_tr, NULL };
-#elifdef	LANG_ALL
-	char *langnames[] = { "Brasil", "Cestina", "Dansk", "Deutsch", "English", "Español", "Français", "Hellenic", "Italiano", "Spanish Latino", "Magyar", "Nederlands", "Norsk", "Polski", "Português", "Soomali", "Suomi", "Svenska", "Türkçe", "Tieng Viet", NULL };
-	char *shortlangnames[] = { "bz", "cs", "da", "de", "en", "es", "fr", "el", "it", "la", "hu", "nl", "no", "pl", "pt", "so", "fi", "sv", "tr", "vi", NULL };
-	char **langtrs[] = { bz_tr, cs_tr, da_tr, de_tr, en_tr, es_tr, fr_tr, el_tr, it_tr, la_tr, hu_tr, nl_tr, no_tr, pl_tr, pt_tr, so_tr, fi_tr, sv_tr, tr_tr, vi_tr, NULL };	
 #else
 	char *langnames[] = { "Deutsch", "English", NULL };
 	char *shortlangnames[] = { "de", "en", NULL };
@@ -162,29 +138,13 @@ int main(int argc, char *argv[])
 	/* No need to ask.  "choice" already has the index for English */
 #else
 	rc = newtWinMenu("Language selection",
-		"Select the language you wish to use for the " NAME ".", 50, 5, 5, 8,
-		langnames, &choice, "Ok", NULL);
+		"Select the language you wish to use for your " NAME ".", 50, 5, 5, 8,
+		langnames, &choice, "OK", NULL);
 #endif
 	ctr = langtrs[choice];
 	strcpy(shortlangname, shortlangnames[choice]);
-	if (strcmp(shortlangname, "el") == 0)
-		mysystem("/bin/setfont iso07u-16");
-	else if (strcmp(shortlangname, "pt") == 0)
-		mysystem("/bin/setfont lat1-16");
-	else if (strcmp(shortlangname, "bz") == 0)
-		mysystem("/bin/setfont lat1-16");
-	else if (strcmp(shortlangname, "cs") == 0)
-		mysystem("/bin/setfont lat2-16");
-	else if (strcmp(shortlangname, "hu") == 0)
-		mysystem("/bin/setfont lat2-16");
-	else if (strcmp(shortlangname, "pl") == 0)
-		mysystem("/bin/setfont lat2-16");
-	else if (strcmp(shortlangname, "tr") == 0)
-		mysystem("/bin/setfont lat5-16");
-	else if (strcmp(shortlangname, "vi") == 0)
-		mysystem("/bin/setfont viscii10-8x16");
-	else
-		mysystem("/bin/setfont lat0-16");
+
+	mysystem("/bin/setfont lat0-16");
 	
 	newtDrawRootText(14, 0, NAME " v" VERSION " - " SLOGAN );
 	newtPushHelpLine(ctr[TR_HELPLINE]);

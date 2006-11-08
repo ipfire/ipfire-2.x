@@ -1,3 +1,6 @@
 /dev/ram0	/	ext2
 /dev/fd0	/	ext2
 /proc		/proc	proc
+none		/sys	sysfs
+none		/tmp	tmpfs
+none		/dev	tmpfs

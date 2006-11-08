@@ -7,8 +7,6 @@
  * Contains some functs for scanning /proc for ide info on CDROMS and
  * harddisks.
  * 
- * $Id: ide.c,v 1.4 2003/12/11 11:25:53 riddles Exp $
- * 
  */
 
 #include "install.h"

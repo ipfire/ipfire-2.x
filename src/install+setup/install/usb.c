@@ -17,8 +17,6 @@
  *
  * Copyright 2002: Mark Wormgoor <mark@wormgoor.com>
  * 
- * $Id: usb.c,v 1.9.2.3 2004/11/16 22:48:43 alanh Exp $
- * 
  */
 
 #include "install.h"
@@ -37,23 +35,22 @@ int initialize_usb() {
     	ehcihcd = 0;
     }
     if (usbohci) {
-    	mysystem("/sbin/rmmod usb-ohci");
+    	mysystem("/sbin/rmmod ohci-hcd");
     	usbohci = 0;
     }
     if (usbuhci) {
-    	mysystem("/sbin/rmmod usb-uhci");
+    	mysystem("/sbin/rmmod uhci-hcd");
     	usbuhci = 0;
     }
 
     if (mysystem("/sbin/modprobe ehci-hcd") == 0)
     	ehcihcd = 1;
-    if (mysystem("/sbin/modprobe usb-ohci") == 0)
+    if (mysystem("/sbin/modprobe ohci-hcd") == 0)
     	usbohci = 1;
-    if (mysystem("/sbin/modprobe usb-uhci") == 0)
+    if (mysystem("/sbin/modprobe uhci-hcd") == 0)
     	usbuhci = 1;
 
-    mysystem("/sbin/modprobe hid");
-    mysystem("/sbin/modprobe keybdev");
+    mysystem("/sbin/modprobe usbhid");
     return 0;
 }
 
@@ -79,17 +76,17 @@ int write_usb_modules_conf() {
 
     if (usbohci) {
 	if (index)
-		fprintf(handle,"alias usb-controller%d usb-ohci\n",index);
+		fprintf(handle,"alias usb-controller%d ohci-hcd\n",index);
 	else
-		fprintf(handle,"alias usb-controller usb-ohci\n");
+		fprintf(handle,"alias usb-controller ohci-hcd\n");
 	index++;
     }
 
     if (usbuhci) {
 	if (index)
-		fprintf(handle,"alias usb-controller%d usb-uhci\n",index);
+		fprintf(handle,"alias usb-controller%d uhci-hcd\n",index);
 	else
-		fprintf(handle,"alias usb-controller usb-uhci\n");
+		fprintf(handle,"alias usb-controller uhci-hcd\n");
 	index++;
     }
     fclose(handle);

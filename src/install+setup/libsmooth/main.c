@@ -311,7 +311,7 @@ int replace(char filename1[], char *from, char *to)
 	#include "lang_en.c"
 
 #endif
-// returns a pointer to the actual running version number of IPCop.
+// returns a pointer to the actual running version number of IPFire.
 // Successive updates increase effective version but not VERSION !
 char g_title[STRING_SIZE] = "";
 char* get_version(void) {
