@@ -47,6 +47,7 @@
 * cdrtools-2.01
 * cftp-0.12
 * clamav-0.88.5
+* clamav-0.88.6
 * coreutils-5.96
 * cups-1.2.2
 * cyrus-imapd-2.2.12
@@ -165,6 +166,7 @@
 * openssl-0.9.8d
 * openswan-2.4.6
 * openvpn-2.0.7
+* openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4
 * pciutils-2.2.3
