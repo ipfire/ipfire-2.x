@@ -147,7 +147,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     replacekeyvalue(ethernetkv, "GREEN_NETADDRESS", green_netaddress);
     replacekeyvalue(ethernetkv, "GREEN_BROADCAST", green_broadcast);
     replacekeyvalue(ethernetkv, "CONFIG_TYPE", "0");
-    replacekeyvalue(ethernetkv, "GREEN_DEV", "br0");
+    replacekeyvalue(ethernetkv, "GREEN_DEV", "eth0");
     write_ethernet_configs(ethernetkv);
     freekeyvalues(ethernetkv);
 
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
 	char string[STRING_SIZE];
 	long maximum_free = 0, current_free;
 	long memory = 0;
-	long log_partition, boot_partition, root_partition, swap_file;
+	long system_partition, boot_partition, root_partition, swap_file;
 	int scsi_disk = 0;
 	int pcmcia_disk = 0;
 	int pcmcia_cdrom = 0;
@@ -550,11 +550,11 @@ int main(int argc, char *argv[])
 		swap_file = 0;
 	}
 
-	boot_partition = 10; /* in MB */
+	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition - swap_file;
 
-	root_partition = current_free / 3 ;
-	if (current_free < 400) {
+	root_partition = 2048 ;
+	if (current_free < 512) {
 		errorbox(ctr[TR_DISK_TOO_SMALL]);
 		goto EXIT;
 	}
@@ -564,20 +564,20 @@ int main(int argc, char *argv[])
 		root_partition = root_partition + swap_file;
 	}
 
-	log_partition = current_free;
+	system_partition = current_free;
 
 	fprintf(flog, "boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",
-		boot_partition, swap_file, log_partition, root_partition);
+		boot_partition, swap_file, system_partition, root_partition);
 
 	handle = fopen("/tmp/partitiontable", "w");
 
 
 	/* Make swapfile */
 	if (swap_file) {
-		fprintf(handle, ",%ld,L,*\n,%ld,S,\n,%ld,L,\n,,L,\n",
+		fprintf(handle, ",%ld,L,*\n,%ld,S,\n,%ld,L,\n",
 			boot_partition, swap_file, root_partition);
 	} else {
-		fprintf(handle, ",%ld,L,*\n,0,0,\n,%ld,L,\n,,L,\n",
+		fprintf(handle, ",%ld,L,*\n,0,0,\n,%ld,L,\n",
 			boot_partition, root_partition);
 	}
 
@@ -593,9 +593,9 @@ int main(int argc, char *argv[])
 	mysystem("/bin/udevstart");
 
 	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext3 -c %sp1", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %sp1", hdparams.devnode);
 	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext3 -c %s1", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %s1", hdparams.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
@@ -615,9 +615,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext3 %sp3", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %sp3", hdparams.devnode);	
 	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext3 %s3", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %s3", hdparams.devnode);	
 
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
@@ -625,16 +625,16 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext3 %sp4", hdparams.devnode);	
+/*	if (raid_disk)
+		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %sp4", hdparams.devnode);	
 	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext3 %s4", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %s4", hdparams.devnode);	
 
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
 		goto EXIT;
-	}
+	} */
 
 	/* Mount harddisk. */
 	if (raid_disk)
@@ -672,7 +672,7 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		}
 	}
-	if (raid_disk)
+/*	if (raid_disk)
 		snprintf(commandstring, STRING_SIZE, "/sbin/mount %sp4 /harddisk/var", hdparams.devnode);
 	else
 		snprintf(commandstring, STRING_SIZE, "/sbin/mount %s4 /harddisk/var", hdparams.devnode);
@@ -680,498 +680,11 @@ int main(int argc, char *argv[])
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
 		goto EXIT;
-	}
+	} */
 
-
-
-	if (installtype == CDROM_INSTALL)
-	{	
-		/* First look for an IDE CDROM. */
-		if (!(cdletter = findidetype(IDE_CDROM)))
-		{
-			/* If we have a USB attached CDROM then it will
-			 * have already appeared at /dev/scd0, so we
-			 * try to access it first, before asking for the
-			 * SCSI drivers disk.
-			 */
-			if (!(try_scsi("scd0"))) {
-				sprintf(insertmessage, ctr[TR_INSERT_FLOPPY], NAME" SCSI");
-				rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], insertmessage);
-				if (rc != 1)
-				{
-					errorbox(ctr[TR_INSTALLATION_CANCELED]);
-					goto EXIT;
-				}
-				
-				if (runcommandwithstatus("/bin/tar -C / -xvzf /dev/floppy", ctr[TR_EXTRACTING_MODULES]))
-				{
-					errorbox(ctr[TR_UNABLE_TO_EXTRACT_MODULES]);
-					goto EXIT;
-				}
-		
-				if (pcmcia)
-				{
-					/* trying to support SCSI pcmcia :-) */
-					runcommandwithstatus("cardmgr -o -c /etc/pcmcia/scsi", 
-						ctr[TR_LOADING_PCMCIA]);
-					if (try_scsi("scd0"))
-						pcmcia_cdrom = 1;
-				}
+	snprintf(commandstring, STRING_SIZE, "/bin/mount -o ro %s /cdrom", insertdevnode);
 	
-				/* try loading all SCSI modules with default options */
-				/* Should expand this to allow options later though */
-				if (!pcmcia_cdrom)
-				    runcommandwithstatus("/bin/probehw.sh",
-					ctr[TR_PROBING_HARDWARE]);
-	
-				/* If it fails, give up. */
-				if (!(try_scsi("scd0"))) {
-					errorbox(ctr[TR_NO_CDROM]);
-					goto EXIT;
-				}
-			}
-
-			sprintf(sourcedrive, "scd0");
-			scsi_cdrom = 1;
-		} else {
-			sprintf(sourcedrive, "hd%c", cdletter);
-			ide_cdrom = 1;
-		}
-
-		snprintf(cdromparams.devnode, STRING_SIZE, "/dev/%s", sourcedrive);
-		cdromparams.module = 0;
-		
-		sprintf(insertmessage, ctr[TR_INSERT_CDROM], NAME);
-		strcpy (insertdevnode, cdromparams.devnode);
-	}
-	else
-	{
-		/* If we've done a PXE boot, we can skip the Drivers floppy,
-		 * as we've already got the modules in our instroot.gz */
-        	if (!(handle = fopen("/CDROMBOOT", "r"))) {
-			sprintf(insertmessage, ctr[TR_INSERT_FLOPPY], NAME);
-			strcpy (insertdevnode , "/dev/floppy");
-		} else {
-			fclose(handle);
-			cdmounted = 1;
-	      		unmount_before = 1;
-		}
-	}
-
-	if (scsi_cdrom || ide_cdrom) {
-		/* Try to mount /cdrom in a loop. */
-		snprintf(commandstring, STRING_SIZE, "/bin/mount -o ro %s /cdrom", insertdevnode);
-		while (!cdmounted)
-		{
-			rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], insertmessage);
-			if (rc != 1)
-			{
-				errorbox(ctr[TR_INSTALLATION_CANCELED]);
-				goto EXIT;
-			}
-			if (!(mysystem(commandstring))) {
-				handle = fopen ("/cdrom/" SNAME "-" VERSION ".tgz", "r");
-				if (handle != NULL) {
-					fclose (handle);
-       		 			cdmounted = 1;
-					/* If we've booted from CDROM, then
-					 * we've already got the drivers,
-					 * so we can skip this unpack. */
-        				if (!(handle = fopen("/CDROMBOOT", "r"))) {
-						sprintf(string, "/bin/tar -C / -xvzf /cdrom/images/drivers-%s.img", VERSION); 
-						if (runcommandwithprogress(60, 4, title, 
-							string,
-							175, ctr[TR_EXTRACTING_MODULES]))
-						{
-							errorbox(ctr[TR_UNABLE_TO_EXTRACT_MODULES]);
-			
-			 				goto EXIT;
-						}
-					} else 
-						fclose(handle);
-       		 		} else {
-       		 			mysystem ("/bin/umount /cdrom");
-        			}
-			}
-		}
-	} else {
-		snprintf(commandstring, STRING_SIZE, "/bin/tar -C / -xvzf /dev/floppy");
-		while (!cdmounted)
-		{
-			rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], insertmessage);
-			if (rc != 1)
-			{
-				errorbox(ctr[TR_INSTALLATION_CANCELED]);
-				goto EXIT;
-			}
-			if (runcommandwithprogress(60, 4, title, 
-				commandstring,
-				175, ctr[TR_EXTRACTING_MODULES]))
-			{
-#if 0 /* disable this, so we allow for people putting in the wrong disk */
-				errorbox(ctr[TR_UNABLE_TO_EXTRACT_MODULES]);
-				goto EXIT;
-#endif
-			}
-			else
-			{
-				handle = fopen ("/bin/mke2fs", "r");
-				if (handle != NULL) {
-					fclose (handle);
-       		 			cdmounted = 1;
-        			}
-			}
-		}
-	}
-
-	/* PCMCIA controller is already detected
-	 * On Boot floppy, we didn't have the PCMCIA drivers
-	 * so load them now because they are installed from Drivers. */
-	if (!(handle = fopen("/CDROMBOOT", "r"))) {
-		if (strstr (line, "nopcmcia") == NULL) {
-			fprintf(flog,"Floppy boot detected, loading PCMCIA drivers.\n");
-			if (pcmcia) {
-				fprintf (flog, "Detected PCMCIA Controller: %s.\n", pcmcia);
-				sprintf(commandstring, "/sbin/modprobe %s", pcmcia);
-				mysystem("/sbin/modprobe pcmcia_core");
-				mysystem(commandstring);
-				mysystem("/sbin/modprobe ds");
-			} else {
-				fprintf (flog, "Detected No PCMCIA Controller.\n");
-			}
-		} else {
-			fprintf(flog, "Skipping PCMCIA detection.\n");
-		}
-		if (strstr (line, "nousb") == NULL) {
-			fprintf(flog, "Initializing USB controllers.\n");
-			initialize_usb();
-		} else {
-			fprintf(flog, "Skipping USB detection.\n");
-		}
-	} else
-		fclose(handle);
-
- 	/* Configure the network now! */
-	if (installtype == URL_INSTALL)
-	{
-	        /* Network driver and params. */
-	        if (!(networkmenu(ethernetkv)))
-	        {
-		        errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
-		        goto EXIT;
-	        }
-
-		/* Check for ipfire-<VERSION>.tgz */
-		if (!(checktarball(SNAME "-" VERSION ".tgz")))
-		{
-			errorbox(ctr[TR_NO_IPCOP_TARBALL_FOUND]);
-			goto EXIT;
-		}
-	}
-
-	/* Get device for the HD.  This has to succeed. */
-	if (!(hdletter = findidetype(IDE_HD)))
-	{
-		if (installtype == URL_INSTALL)
-		{
-			/* If we've done a PXE boot, we can skip the SCSI
-		 	 * floppy as we've already got the modules in our 
-			 * instroot.gz */
-        		if (!(handle = fopen("/CDROMBOOT", "r"))) 
-			{
-				/* search img where it is on a mounted loop iso */
-				sprintf(string, "images/scsidrv-%s.img", VERSION);
-				if (!(checktarball(string)))
-				{
-					/* Couldn't find the SCSI drivers on the URL page,
-					 * so after 3 failed attempts, ask the user for the
-					 * SCSI drivers floppy disk. */
-					errorbox(ctr[TR_NO_SCSI_IMAGE_FOUND]);
-					sprintf(insertmessage, ctr[TR_INSERT_FLOPPY], NAME" SCSI");
-					rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], insertmessage);
-					if (rc != 1)
-					{
-						errorbox(ctr[TR_INSTALLATION_CANCELED]);
-						goto EXIT;
-					}
-
-					if (runcommandwithstatus("/bin/tar -C / -xvzf /dev/floppy", ctr[TR_EXTRACTING_MODULES]))
-					{
-						errorbox(ctr[TR_UNABLE_TO_EXTRACT_MODULES]);
-						goto EXIT;
-					}
-				} else {
-					/* unpack... */
-					snprintf(commandstring, STRING_SIZE,
-						"/bin/wget -O - %s/%s | /bin/tar -C / -xvzf -",
-						url, string);
-					if (runcommandwithprogress(60, 4, title, commandstring,
-						4500, ctr[TR_INSTALLING_FILES]))
-					{
-						errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
-						goto EXIT;
-					}
-				}
-			} else
-				fclose(handle);
-		} else {
-			if (ide_cdrom) {
-				sprintf(string, "/bin/tar -C / -xvzf /cdrom/images/scsidrv-%s.img", VERSION);
-				if (runcommandwithstatus(string, ctr[TR_EXTRACTING_MODULES]))
-				{
-					errorbox(ctr[TR_UNABLE_TO_EXTRACT_MODULES]);
-					goto EXIT;
-				}
-			}
-		}
-
-		if (!scsi_cdrom) {
-
-#if 0 /* not yet */
-			if (pcmcia)
-			{
-				/* trying to support SCSI pcmcia :-) */
-				runcommandwithstatus("cardmgr -o -c /etc/pcmcia/scsi", 
-					ctr[TR_LOADING_PCMCIA]);
-				if (try_scsi("sda"))
-					pcmcia_disk = 1;
-			}
-#endif
-
-			/* try loading all SCSI modules with default options */
-			/* Should expand this to allow options later though */
-			if (!pcmcia_disk)
-				runcommandwithstatus("/bin/probehw.sh",
-					ctr[TR_PROBING_HARDWARE]);
-		}
-	
-		/* Need to clean this up at some point */
-		if (!try_scsi("sda")) {
-			if (!try_scsi("ida/c0d0")) {
-				if (!try_scsi("cciss/c0d0")) {
-					if (!try_scsi("rd/c0d0")) {
-						if (!try_scsi("ataraid/d0")) {
-							errorbox(ctr[TR_NO_HARDDISK]);
-							goto EXIT;
-						} else {
-							raid_disk = 1;
-							sprintf(harddrive, "ataraid/d0");
-						}
-					} else {
-						raid_disk = 1;
-						sprintf(harddrive, "rd/c0d0");
-					}
-				} else {
-					raid_disk = 1;
-					sprintf(harddrive, "cciss/c0d0");
-				}
-			} else {
-				raid_disk = 1;
-				sprintf(harddrive, "ida/c0d0");
-			}
-		} else {
-			sprintf(harddrive, "sda");
-		}
-		scsi_disk = 1;
-	} else
-		sprintf(harddrive, "hd%c", hdletter);
-
-	/* Make the hdparms struct and print the contents. */
-	snprintf(hdparams.devnode, STRING_SIZE, "/dev/%s", harddrive);
-	hdparams.module = 0;
-
-	rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL],
-		ctr[TR_PREPARE_HARDDISK], hdparams.devnode);
-	if (rc != 1)
-		goto EXIT;
-
-	/* Calculate amount of memory in machine */
-        if ((handle = fopen("/proc/meminfo", "r")))
-        {
-            while (fgets(line, STRING_SIZE-1, handle)) {
-                if (sscanf (line, "MemTotal: %s kB", string)) {
-                    memory = atoi(string) / 1024 ;
-                }
-            }
-            fclose(handle);
-        }
-
-	/* Partition, mkswp, mkfs.
-	 * before partitioning, first determine the sizes of each
-	 * partition.  In order to do that we need to know the size of
-	 * the disk. 
-	 */
-	/* Don't use mysystem here so we can redirect output */
-	sprintf(commandstring, "/bin/sfdisk -s /dev/%s > /disksize 2> /dev/null", harddrive);
-	system(commandstring);
-
-	/* Calculate amount of disk space */
-        if ((handle = fopen("/disksize", "r")))
-        {
-           	fgets(line, STRING_SIZE-1, handle);
-            	if (sscanf (line, "%s", string)) {
-			maximum_free = atoi(string) / 1024;
-            	}
-            	fclose(handle);
-        }
-	
-	fprintf(flog, "maximum_free = %d, memory = %d", 
-		maximum_free, memory);
-	
-	/* If you need more than this, you should really add physical memory */
-	/* Minimum: 192 = 64 real + 128 swap */
-	swap_file = memory < 64 ? 2 * memory : 192 - memory ;
-	swap_file = swap_file < 32 ? 32 : swap_file ;
-
-	if (maximum_free < 135 + swap_file )
-	{
-		if (maximum_free < 135) {
-			errorbox(ctr[TR_DISK_TOO_SMALL]);
-			goto EXIT;
-		}
-
-		rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
-		if (rc != 1)
-			goto EXIT;
-		swap_file = 0;
-	}
-
-	boot_partition = 20; /* in MB */
-	current_free = maximum_free - boot_partition - swap_file;
-
-	/* Give more place for add-on, extend root to 25% of current_free, upper limit to 8 gigas */
-	root_partition = current_free / 4 ;
-	root_partition = root_partition > 8192 ? 8192 : root_partition ;
-	root_partition = current_free < 860 ? 235 : root_partition;
-	root_partition = current_free < 380 ? 110 : root_partition;
-
-	current_free = current_free - root_partition;
-	root_partition = root_partition + swap_file;
-
-	log_partition = current_free;
-
-	fprintf(flog, "boot = %d, swap = %d, mylog = %d, root = %d\n",
-		boot_partition, swap_file, log_partition, root_partition);
-
-
-#ifdef __alpha__
-	fdisk = 1;
-#endif
-
-	if (fdisk) {
-		rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], "NOW FDISK");
-		if (rc != 1)
-			goto EXIT;
-	} else {
-#ifdef __i386__
-		handle = fopen("/tmp/partitiontable", "w");
-
-		fprintf(handle, ",%d,83,*\n,%d,83,\n,0,0,\n,,83,\n",
-			boot_partition, log_partition);
-
-		fclose(handle);		
-
-		snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -uM %s < /tmp/partitiontable", hdparams.devnode);
-		if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_PARTITION]);
-			goto EXIT;
-		}
-#endif
-	}
-
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -m 0 -j %sp1", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -m 0 -j %s1", hdparams.devnode);
-	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
-		goto EXIT;
-	}
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %sp2", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s2", hdparams.devnode);
-	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_LOG_FILESYSTEM]);
-		goto EXIT;
-	}
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -m 1 -j %sp4", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -m 1 -j %s4", hdparams.devnode);
-
-	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
-		goto EXIT;
-	}
-	/* Mount harddisk. */
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount -t ext2 %sp4 /harddisk", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount -t ext2 %s4 /harddisk", hdparams.devnode);
-	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MOUNT_ROOT_FILESYSTEM]);
-		goto EXIT;
-	}
-	/* Make swapfile */
-	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/bin/dd if=/dev/zero of=/harddisk/swapfile bs=1024k count=%d", swap_file);
-		if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
-			goto EXIT;
-		}
-		snprintf(commandstring, STRING_SIZE, "/bin/mkswap /harddisk/swapfile");
-		if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
-			goto EXIT;
-		}
-	}
-	mkdir("/harddisk/boot", S_IRWXU|S_IRWXG|S_IRWXO);
-	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);	
-	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
-	
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount -t ext2 %sp1 /harddisk/boot", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount -t ext2 %s1 /harddisk/boot", hdparams.devnode);
-
-	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MOUNT_BOOT_FILESYSTEM]);
-		goto EXIT;
-	}
-	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/bin/swapon /harddisk/swapfile");
-		if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_SWAP_PARTITION]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_MOUNT_SWAP_PARTITION]);
-			goto EXIT;
-		}
-	}
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount -t ext2 %sp2 /harddisk/var/log", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount -t ext2 %s2 /harddisk/var/log", hdparams.devnode);
-	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
-		goto EXIT;
-	}
-	
- 	/* Either use tarball from cdrom or download. */
-	if (installtype == CDROM_INSTALL)
-		snprintf(commandstring, STRING_SIZE, 
-			"/bin/tar -C /harddisk -xvzf /cdrom/" SNAME "-" VERSION ".tgz");
-	else
-		snprintf(commandstring, STRING_SIZE, 
-			"/bin/wget -O - %s/" SNAME "-" VERSION ".tgz | /bin/tar -C /harddisk -xvzf -", url);
+	snprintf(commandstring, STRING_SIZE, "/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
 	
 	/* if (runcommandwithprogress(60, 4, title, commandstring, 4600,
 	 *	ctr[TR_INSTALLING_FILES]))
@@ -1192,15 +705,13 @@ int main(int argc, char *argv[])
 
 	/* touch the modules.dep files */
 	snprintf(commandstring, STRING_SIZE, 
-		"/bin/chroot /harddisk /bin/touch /lib/modules/%s/modules.dep",
+		"/bin/chroot /harddisk /usr/bin/touch /lib/modules/%s/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
-#ifdef __i386__
 	snprintf(commandstring, STRING_SIZE, 
-		"/bin/chroot /harddisk /bin/touch /lib/modules/%s-smp/modules.dep",
+		"/bin/chroot /harddisk /usr/bin/touch /lib/modules/%s-smp/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
-#endif
 
 	/* Rename uname */
 	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
@@ -1240,253 +751,6 @@ int main(int argc, char *argv[])
 	  It uses tar.  If the tar fails for any reason, show user an
 	  error and go back to the restore/skip question. This gives
 	  the user the chance to have another go. */
-
-#ifdef OLD_RESTORECFG	
-RESTORE:
-	/* set status variables to nonsense values */
-	allok_fastexit = 0;
-	/* loop until floppy succeeds or user skips out */
-	while (1)
-	{
-	  sprintf(message, ctr[TR_RESTORE_CONFIGURATION], NAME);
-	  if (newtWinChoice(title, ctr[TR_RESTORE], ctr[TR_SKIP], message) == 1)
-	  {
-	    /* Temporarily mount /proc under /harddisk/proc,
-	     * run updfstab to locate the floppy, and unmount /harddisk/proc
-	     * again.  This should be run each time the user tries to restore
-	     * so it can properly detect removable devices */
-	    if (mysystem("/bin/mount -n -t proc /proc /harddisk/proc")) {
-	      errorbox(ctr[TR_UNABLE_TO_MOUNT_PROC_FILESYSTEM]);
-	      goto EXIT;
-	    }
-	    if (mysystem("/bin/chroot /harddisk /usr/sbin/updfstab")) {
-	      errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_FSTAB]);
-	      goto EXIT;
-	    }
-	    mysystem("/bin/umount /harddisk/proc");
-
-	    mkdir("/harddisk/tmp/ipcop", S_IRWXU|S_IRWXG|S_IRWXO);
-
-	    /* Always extract to /tmp/ipcop for temporary extraction
-	     * just in case floppy fails */
-
-	    /* try a compressed backup first because it's quicker to fail.
-	     * In exclude.system, files name must be without leading / or 
-	     * on extraction, name will never match */
-	    snprintf(commandstring, STRING_SIZE, 
-		     "/bin/chroot /harddisk /bin/tar -X " CONFIG_ROOT "/backup/exclude.system -C /tmp/ipcop -xvzf /dev/floppy > %s 2> /dev/null", mylog);
-	
-	    statuswindow(45, 4, title, ctr[TR_INSTALLING_FILES]);
-	    rc = system(commandstring);
-	    
-	    if (rc) {
-	      /* if it's not compressed, try uncompressed first before failing*/
-	      snprintf(commandstring, STRING_SIZE, 
-		     "/bin/chroot /harddisk /bin/tar -X " CONFIG_ROOT "/backup/exclude.system -C /tmp/ipcop -xvf /dev/floppy > %s 2> /dev/null", mylog);
-	      rc = system(commandstring);
-	      if (rc) {
-	    	newtPopWindow();
-	        /* command failed trying to read from floppy */
-	        errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
-		
-		/* remove badly restored files */
-	        mysystem("/bin/chroot /harddisk /bin/rm -rf /tmp/ipcop");
-		goto RESTORE;
-	      } else {
-	      	/* Now copy to correct location */
-	    	mysystem("/bin/chroot /harddisk /bin/cp -af /tmp/ipcop/. /");
-	        mysystem("/bin/chroot /harddisk /bin/rm -rf /tmp/ipcop");
-	    	newtPopWindow();
-	        allok_fastexit=1;
-
-	        /* Upgrade necessary files from v1.2 to v1.3 to v1.4 */
-	        upgrade_v12_v13();
-	        upgrade_v130_v140();
-	        break; /* out of loop at this point because floppy has
-			successfully restored */
-	      }
-	    }
-	    else { /* success */
-	      /* Now copy to correct location */
-	      mysystem("/bin/chroot /harddisk /bin/cp -af /tmp/ipcop/. /");
-	      mysystem("/bin/chroot /harddisk /bin/rm -rf /tmp/ipcop");
-	      newtPopWindow();
-	      allok_fastexit=1;
-
-	      /* Upgrade necessary files from v1.2 to v1.3 to v1.4 */
-	      upgrade_v12_v13();
-	      upgrade_v130_v140();
-	      break; /* out of loop at this point because floppy has
-			successfully restored */
-	    }
-	  }
-	  else{  /* user chose to skip install from floppy */
-	    if (installtype == CDROM_INSTALL){
-	      /* if we installed from CD ROM then we didn't set up the
-		 network interface yet.  Therefore, set up Network
-		 driver and params just before we need them. */
-
-	      if (!(networkmenu(ethernetkv))){
-		/* network setup failed, tell the world */
-		errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
-		goto EXIT;
-	      }
-	    }
-	    break; /* out of loop because we succeeded with ethernet
-		      set up and user is notrestarting from floppy*/
-	  }
-	}
-#else	
-	if (installtype == CDROM_INSTALL){
-	 /* if we installed from CD ROM then we didn't set up the
-	    network interface yet.  Therefore, set up Network
-	    driver and params just before we need them. */
-
-	if (!(networkmenu(ethernetkv))){
-	/* network setup failed, tell the world */
-	  errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
-	  goto EXIT;
-	  }
-	}
-#endif
-	
-	/* Check the SQUID acl file exists, if not use our 1.4 copy */
-	{
-		FILE *aclreadfile;
-
-		if (!(aclreadfile = fopen ("/harddisk" CONFIG_ROOT "/proxy/acl", "r"))) {
-			rename ("/harddisk" CONFIG_ROOT "/proxy/acl-1.4",
-				"/harddisk" CONFIG_ROOT "/proxy/acl");
-		} else {
-			unlink ("/harddisk" CONFIG_ROOT "/proxy/acl-1.4");
-			fclose(aclreadfile);
-		}
-		chown  ("/harddisk" CONFIG_ROOT "/proxy/acl", 99, 99);
-	}
-
-	/* Build cache lang file */
-	mysystem("/bin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
-	
-	if (!allok_fastexit){
-	  /* write ethernet and lang configs only if they have not
-	     been restored from floppy already. */
-	  if (!(write_ethernet_configs( ethernetkv))||
-	      !(write_lang_configs(shortlangname))){
-	    errorbox(ctr[TR_ERROR_WRITING_CONFIG]);
-	    goto EXIT;
-	  }
-	}
-
-	/* if we detected SCSI then fixup */
-        if ((handle = fopen("/scsidriver", "r")))
-        {
-		char *driver;
-           	fgets(line, STRING_SIZE-1, handle);
-            	fclose(handle);
-		line[strlen(line) - 1] = 0;
-		driver = strtok(line, ".");
-		fprintf(flog, "Detected SCSI driver %s\n",driver);
-		if (strlen(driver) > 1) {
-			fprintf(flog, "Fixing up ipfirerd.img\n");
-			mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
-			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-  			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
-			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-#ifdef __i386__
-  			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
-			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
-#endif
-#ifdef __alpha__
-			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /bin/mv /boot/etc/scsiaboot.conf /boot/etc/aboot.conf");
-			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-#endif
-		}
-	}
-
-#if 0 /* not yet */
- 	if (pcmcia_disk)
-	{
-		fprintf(flog, "Detected SCSI driver PCMCIA\n");
-		fprintf(flog, "Fixing up ipfirerd.img\n");
-		mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
-		mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-  		snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/pcinitrd -r %s /boot/ipfirerd.img", KERNEL_VERSION);
-		mysystem(commandstring);
-#ifdef __i386__
-		mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
-#endif
-#ifdef __alpha__
-		mysystem("/bin/chroot /harddisk /bin/mv /boot/etc/scsiaboot.conf /boot/etc/aboot.conf");
-#endif
-	}
-#endif
-
-#ifdef __i386__
-	replace( "/harddisk/boot/grub/grubbatch", "DEVICE", hdparams.devnode);
-	/* restore permissions */
-	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
-
-	if (raid_disk)
-		sprintf(string, "root=%sp4", hdparams.devnode);
-	else
-		sprintf(string, "root=%s4", hdparams.devnode);
-	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
-
-	mysystem("/bin/chroot /harddisk /bin/mount -n -t proc none /proc");
-
-	snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /boot/grub/grubbatch");
-
-	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
-		goto EXIT;
-	}
-	/* Set Bootsplash */
-	mysystem("/bin/installbootsplash.sh");
-	mysystem("/bin/chroot /harddisk /bin/umount -n /proc");
-#endif
-#ifdef __alpha__
-	snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/swriteboot -f3 %s /boot/bootlx", hdparams.devnode);
-	mysystem(commandstring);
-	snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/abootconf %s 1", hdparams.devnode);
-	mysystem(commandstring);
-	if (raid_disk)
-		sprintf(string, "root=%sp4", hdparams.devnode);
-	else
-		sprintf(string, "root=%s4", hdparams.devnode);
-	replace( "/harddisk/boot/etc/aboot.conf", "root=ROOT", string);
-#endif
-
-	/* unmounting happens everywhere because there are places
-	   which require device is to be unmounted under certain
-	   circumstances.  This is the last place we can unmount
-	   anything and still succeed. */
-
-	if (!unmount_before && installtype == CDROM_INSTALL){
-	  if (mysystem("/sbin/umount /cdrom"))
-	    {
-	      errorbox(ctr[TR_UNABLE_TO_UNMOUNT_CDROM]);
-	      goto EXIT;
-	    }
-	}
-
-	if (installtype == CDROM_INSTALL)
-	{
-
-		if (!(ejectcdrom(cdromparams.devnode)))
-		{
-			errorbox(ctr[TR_UNABLE_TO_EJECT_CDROM]);
-			// goto EXIT;
-		}
-	}
-	
-	
-	sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
-		NAME, SNAME, SNAME, NAME, NAME, NAME);
-	newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
-		
-	allok = 1;
 				
 EXIT:
 	fprintf(flog, "Install program ended.\n");	
