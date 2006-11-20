@@ -170,7 +170,7 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    MAKETUNING="-j4"
+    MAKETUNING="-j8"
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
@@ -401,6 +401,7 @@ buildipfire() {
   ipfiremake cdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
+  ipfiremake reiserfsprogs
   ipfiremake ethtool
   ipfiremake ez-ipupdate
   ipfiremake fcron
@@ -417,7 +418,7 @@ buildipfire() {
   ipfiremake l7-protocols
 #  ipfiremake isapnptools # ERROR :(
 #  ipfiremake isdn4k-utils # What about mISDN???
-#  ipfiremake kudzu # ERROR :(
+  ipfiremake kudzu
   ipfiremake logrotate
   ipfiremake logwatch
   ipfiremake mingetty
@@ -550,16 +551,20 @@ buildinstaller() {
   installmake busybox
   installmake udev
   installmake sysvinit
+  installmake gettext
   installmake e2fsprogs
   installmake misc-progs
   installmake sysfsutils
-#  installmake hwinfo
+  installmake hwinfo
   installmake slang
   installmake util-linux
+  installmake reiserfsprogs
   installmake newt
   installmake pciutils
   installmake pcmciautils
   installmake kbd
+  installmake popt
+  installmake kudzu
   installmake installer
   installmake scsi.img
   installmake driver.img
@@ -620,7 +625,7 @@ buildpackages() {
   rm -f $LFS/install/images/*usb*
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
-  ipfirepackages
+#  ipfirepackages
 
   # Cleanup
   stdumount
@@ -1013,7 +1018,7 @@ uploadsrc)
 		grep -q $i /var/tmp/ftplist
 		if [ "$?" -ne "0" ]; then
 			echo -ne "$i"
-			ncftpput -bb -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT $IPFIRE_FTP_URL_INT $IPFIRE_FTP_PATH_INT/ $i > /dev/null 2>&1
+			ncftpput -bb -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT $IPFIRE_FTP_URL_INT $IPFIRE_FTP_PATH_INT/ $i >> $BASEDIR/log/_build.uploadsrc.log 2>&1
 			if [ "$?" -eq "0" ]; then
 				beautify message DONE
 			else

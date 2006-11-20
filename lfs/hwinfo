@@ -53,6 +53,6 @@ $(TARGET) :
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/hwinfo/* $(DIR_APP)
 	cd $(DIR_APP) && make tinystatic
-	cd $(DIR_APP) && DESTDIR="/opt/$(MACHINE)-uClibc" make tinystaticinstall
+	cd $(DIR_APP) && DESTDIR="/install/initrd" make tinystaticinstall
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

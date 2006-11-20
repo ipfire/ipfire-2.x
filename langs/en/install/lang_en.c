@@ -319,8 +319,8 @@ char *en_tr[] = {
 "Probe",
 /* TR_PROBE_FAILED */
 "Auto detecting failed.",
-/* TR_PROBING_SCSI */
-"Probing SCSI devices...",
+/* TR_PROBING_HARDWARE */
+"Probing hardware...",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
 "Problem setting %s 'admin' user password.",
 /* TR_PROBLEM_SETTING_ROOT_PASSWORD */

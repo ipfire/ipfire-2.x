@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Write the config and get password stuff.
  * 
- * $Id: config.c,v 1.6.2.2 2004/08/23 21:09:44 alanh Exp $
- * 
  */
 
 #include "install.h"

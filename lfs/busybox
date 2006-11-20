@@ -72,20 +72,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	-mkdir -p /install/initrd/bin
 	cd $(DIR_APP) && cp -f $(DIR_SRC)/config/uClibc/busybox.config .config
 	cd $(DIR_APP) && make
-	-mkdir -p /install/initrd/bin
-	cd $(DIR_APP) && install -m 0755 busybox /install/initrd/bin
+	cd $(DIR_APP) && make install
 	mkdir -p /install/initrd/usr/share/udhcpc
 	cd $(DIR_APP) && install -m 0755 examples/udhcp/simple.script \
 		/install/initrd/usr/share/udhcpc/default.script
-	cd /install/initrd/bin && for i in [ ash basename cat chroot cp \
-		date dd df dmesg echo gzip gunzip halt hwclock insmod ifconfig \
-		init ls ln mkdir mkswap modprobe mount reboot rmmod lsmod \
-		e2label mke2fs mkfs.minix tftp \
-		sed sh sleep swapon swapoff syslogd tar umount wget env \
-		ping sync udhcpc grep xargs route test uname wc readlink; do \
-			ln -sf busybox $$i; \
-		done
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

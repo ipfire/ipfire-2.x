@@ -38,13 +38,15 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) buildroot-snapshot-20061026.tar.bz2
+objects = $(DL_FILE) buildroot-snapshot-20061026.tar.bz2 uClibc-locale-030818.tgz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 buildroot-snapshot-20061026.tar.bz2 = $(DL_FROM)/buildroot-snapshot-20061026.tar.bz2
+uClibc-locale-030818.tgz = $(DL_FROM)/uClibc-locale-030818.tgz
 
 $(DL_FILE)_MD5 = 1ada58d919a82561061e4741fb6abd29
 buildroot-snapshot-20061026.tar.bz2_MD5 = ecc5d48a780e46a56d1d39207d5868bd
+uClibc-locale-030818.tgz_MD5 = d75b2239b4e27c3c9cbed1c8f6eabba6
 
 install : $(TARGET)
 
@@ -75,11 +77,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) /opt/$(MACHINE)-uClibc $(DIR_SRC)/buildroot
 	@cd $(DIR_SRC) && tar xfj $(DIR_DL)/buildroot-snapshot-20061026.tar.bz2
-	sed -e 's/UCLIBC_HAS_THREADS=y/# UCLIBC_HAS_THREADS is not set/' \
-			-e 's/DO_C99_MATH=y/# DO_C99_MATH is not set/' \
-			-e 's/LDSO_CACHE_SUPPORT=y/# LDSO_CACHE_SUPPORT is not set/' \
-			-e 's/UCLIBC_HAS_FTW=y/# UCLIBC_HAS_FTW is not set/' \
-			-e 's,/usr/src/linux,&-$(KVER),' -i $(DIR_SRC)/config/uClibc/uClibc.config-$(MACHINE)
+	mkdir -p $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale/
+	cp -f $(DIR_DL)/uClibc-locale-030818.tgz \
+		$(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale/
 	cp -f $(DIR_SRC)/config/uClibc/uClibc.config-$(MACHINE) $(DIR_SRC)/buildroot/toolchain/uClibc/uClibc.config
 	cp -f $(DIR_SRC)/config/uClibc/buildroot.config-$(MACHINE) $(DIR_SRC)/buildroot/.config
 	cp -f $(DIR_SRC)/config/uClibc/buildroot.config.cmd $(DIR_SRC)/buildroot/.config.cmd

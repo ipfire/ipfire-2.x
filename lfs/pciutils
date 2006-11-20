@@ -76,15 +76,21 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-
 	cd $(DIR_APP) && sed -i 's/null ;/null 2>\&1 ;/' update-pciids.sh
-
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-strip.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.1.10-scan.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-havepread.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-devicetype.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.1-idpath.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.1.99-gcc4.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.3-multilib.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.3-sata.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP)/lib && CFLAGS="-Os -fomit-frame-pointer" ./configure
 	cd $(DIR_APP)/lib && CFLAGS="-Os -fomit-frame-pointer" make $(MAKETUNING)
 	-mkdir -p /opt/$(MACHINE)-uClibc/include/pci
 	cd $(DIR_APP) && install -m 0644 lib/libpci.a /opt/$(MACHINE)-uClibc/lib
-	cd $(DIR_APP) && install -m 0644 lib/{config,header,pci}.h /opt/$(MACHINE)-uClibc/include/pci
+	cd $(DIR_APP) && install -m 0644 lib/*.h /opt/$(MACHINE)-uClibc/include/pci
 else
 	cd $(DIR_APP) && make PREFIX=/usr $(MAKETUNING)
 	cd $(DIR_APP) && make PREFIX=/usr install

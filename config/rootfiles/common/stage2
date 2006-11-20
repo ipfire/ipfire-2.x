@@ -32,10 +32,10 @@ home/nobody
 media/cdrom
 media/floppy
 mnt
-opt
+#opt
 root
 sbin
-srv
+#srv
 #usr/bin/perl
 #usr/include
 #usr/lib

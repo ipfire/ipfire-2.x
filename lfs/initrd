@@ -122,7 +122,7 @@ $(TARGET) :
 	    losetup -d $$LOOPDEV
 	gzip -9 /install/images/fdinitrd
 
-	RAMDISK_SIZE=11264 && \
+	RAMDISK_SIZE=16384 && \
 	    dd if=/dev/zero of=/install/images/cdinitrd bs=1k count=$${RAMDISK_SIZE}
 	for i in `seq 0 7`; do \
 	    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \

@@ -61,6 +61,6 @@ $(TARGET) :
 	cd $(DIR_APP)/install && make CFLAGS="-Os -fomit-frame-pointer -Wall \
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
-	cd $(DIR_APP)/install && install -v -m 0755 install probescsi.sh installbootsplash.sh /install/initrd/bin
+	cd $(DIR_APP)/install && install -v -m 0755 install probehw.sh installbootsplash.sh mountsource.sh /install/initrd/bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

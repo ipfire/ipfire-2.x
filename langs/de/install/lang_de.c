@@ -323,8 +323,8 @@ char *de_tr[] = {
 "Automatische Erkennung",
 /* TR_PROBE_FAILED */
 "Automatische Erkennung fehlgeschlagen.",
-/* TR_PROBING_SCSI */
-"Suche SCSI-Geräte...",
+/* TR_PROBING_HARDWARE */
+"Hardwareerkennung läuft...",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
 "Problem beim Setzen des %s Administrator-Passworts.",
 /* TR_PROBLEM_SETTING_ROOT_PASSWORD */

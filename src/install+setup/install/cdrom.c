@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * CDROM menu. Get "misc" driver name etc. 
  *
- * $Id: cdrom.c,v 1.6.2.1 2004/04/14 22:05:39 gespinasse Exp $
- *
  */
 
 #include "install.h"
@@ -25,7 +23,7 @@ int ejectcdrom(char *dev)
 	if ((fd = open(dev, O_RDONLY|O_NONBLOCK)) == -1)
 		return 0;
 	
-	if (ioctl(fd, CDROMEJECT) == -1)
+	if (ioctl(fd, 0x5309) == -1)
 	{
 		close(fd);
 		return 0;

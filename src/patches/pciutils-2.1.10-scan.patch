@@ -1,0 +1,12 @@
+--- pciutils-2.1.10/lib/access.c.foo	Wed Feb 12 15:44:05 2003
++++ pciutils-2.1.10/lib/access.c	Wed Feb 12 15:44:33 2003
+@@ -180,7 +180,8 @@
+ void
+ pci_scan_bus(struct pci_access *a)
+ {
+-  a->methods->scan(a);
++  if (a->methods)
++    a->methods->scan(a);
+ }
+ 
+ struct pci_dev *

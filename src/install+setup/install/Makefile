@@ -24,7 +24,7 @@ clean :
 ######
 
 OBJS=main.o ide.o cdrom.o nic.o net.o config.o ../libsmooth/libsmooth.o \
-	pcmcia.o upgrade-v12-v13.o upgrade-v130-v140.o usb.o scsi.o
+	pcmcia.o usb.o scsi.o
 
 install: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)

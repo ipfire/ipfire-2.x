@@ -46,7 +46,6 @@
 * ccache-2.4
 * cdrtools-2.01
 * cftp-0.12
-* clamav-0.88.5
 * clamav-0.88.6
 * coreutils-5.96
 * cups-1.2.2
@@ -92,6 +91,7 @@
 * hdparm-6.6
 * htop-0.6.2
 * httpd-2.2.2
+* hwinfo
 * iana-etc-2.10
 * ibod
 * iftop-0.17
@@ -106,6 +106,8 @@
 * java-1.5.0_06-for-ipfire
 * jpegsrc.v6b
 * kbd-1.12
+* kudzu-1.1.95.15
+* kudzu-1.2.60
 * l7-protocols-2006-09-10
 * lame-3.96.1
 * lcms-1.15
@@ -165,7 +167,6 @@
 * openssh-4.3p2
 * openssl-0.9.8d
 * openswan-2.4.6
-* openvpn-2.0.7
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4
@@ -184,6 +185,7 @@
 * psmisc-22.2
 * razor-agents-2.81
 * readline-5.1
+* reiserfsprogs-3.6.19
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rsync-2.6.8

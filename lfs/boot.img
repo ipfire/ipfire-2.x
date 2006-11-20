@@ -48,7 +48,7 @@ md5 :
 ###############################################################################
 
 $(TARGET) :
-	if [ "$(MACHINE)" = "i386" ]; then \
+	if [ "$(MACHINE)" = "i586" ]; then \
 		dd if=/dev/zero of=/install/images/boot-$(VERSION).img bs=1024 count=1440; \
 		mkdosfs -f 1 -r 16 /install/images/boot-$(VERSION).img; \
 		syslinux -s /install/images/boot-$(VERSION).img; \
@@ -69,4 +69,3 @@ $(TARGET) :
 		umount /install/mnt; \
 		losetup -d $$LOOPDEV; \
 	fi
-
