@@ -104,8 +104,8 @@ else
 endif
 else
 	cd $(DIR_APP)/gettext-tools && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP)/gettext-tools && make -C lib $(MAKETUNING)
-	cd $(DIR_APP)/gettext-tools && make -C src msgfmt $(MAKETUNING)
+	cd $(DIR_APP)/gettext-tools && make -C lib
+	cd $(DIR_APP)/gettext-tools && make -C src msgfmt
 	cd $(DIR_APP)/gettext-tools && cp -v src/msgfmt /tools/bin
 endif
 	@rm -rf $(DIR_APP)

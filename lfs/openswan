@@ -76,8 +76,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-e 's%^INC_USRLOCAL.*$$%INC_USRLOCAL=/usr%' \
 		-e 's%^USERCOMPILE.*$$%USERCOMPILE=$(CFLAGS)%' \
 		-e 's%^KLIPSCOMPILE.*$$%KLIPSCOMPILE=$(CFLAGS)%' Makefile.inc
-	cd $(DIR_APP) && make $(MAKETUNING) programs
-	cd $(DIR_APP) && make $(MAKETUNING) install
+	cd $(DIR_APP) && make programs
+	cd $(DIR_APP) && make install
 	#mv -f /etc/rc.d/init.d/ipsec /etc/rc.d/
 	rm -f /etc/ipsec.conf /etc/ipsec.secrets
 	ln -sf $(CONFIG_ROOT)/vpn/ipsec.conf /etc/ipsec.conf

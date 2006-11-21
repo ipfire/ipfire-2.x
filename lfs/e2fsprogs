@@ -79,15 +79,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" ./configure --host=$(BUILDTARGET) --disable-nls \
 		--prefix=/opt/$(MACHINE)-uClibc
-	
 	# build 'mke2fs 1.39' to override version used in busybox.
 	# To be removed when busybox will use also e2fsprogs 1.39
 	# remove link installed by busybox
-	rm /install/initrd/bin/mke2fs
+	-rm -f /install/initrd/bin/mke2fs
 	cd $(DIR_APP) && make install-libs
 	cd $(DIR_APP) && make progs
 	cd $(DIR_APP)/misc && install -m 755 mke2fs /install/initrd/bin
-	
 	cd $(DIR_APP)/lib/uuid && make
 	cd $(DIR_APP)/lib/uuid && make install
 	cd $(DIR_APP)/lib/uuid && install -m 755 libuuid.a /opt/$(MACHINE)-uClibc/lib/libuuid.a

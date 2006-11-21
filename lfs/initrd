@@ -54,7 +54,6 @@ $(TARGET) :
 
 	# Finish up initrd directory
 	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys} && \
-	cd /install/initrd && ln -sfn bin sbin
 	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
 	rm -rf /install/initrd/etc{,/udev,/udev/rules.d}/.svn

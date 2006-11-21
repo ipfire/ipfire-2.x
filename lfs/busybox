@@ -72,12 +72,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	-mkdir -p /install/initrd/bin
+	-mkdir -p /install/initrd/{,s}bin
 	cd $(DIR_APP) && cp -f $(DIR_SRC)/config/uClibc/busybox.config .config
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	mkdir -p /install/initrd/usr/share/udhcpc
 	cd $(DIR_APP) && install -m 0755 examples/udhcp/simple.script \
 		/install/initrd/usr/share/udhcpc/default.script
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP) /install/initrd/linuxrc
 	@$(POSTBUILD)

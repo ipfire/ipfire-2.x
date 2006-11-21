@@ -555,7 +555,7 @@ buildinstaller() {
   installmake e2fsprogs
   installmake misc-progs
   installmake sysfsutils
-  installmake hwinfo
+#  installmake hwinfo
   installmake slang
   installmake util-linux
   installmake reiserfsprogs
