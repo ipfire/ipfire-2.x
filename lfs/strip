@@ -63,7 +63,7 @@ ifeq "$(LFS_PASS)" "install"
 	# Don't use --strip-all on libraries, or they'll be destroyed. Don't use --strip-unneeded, either.
 	-/tools/bin/find /lib /usr/lib /usr/share/rrdtool-* /install/initrd/lib \
 		-type f \( -name '*.so' -o -name '*.so[\.0-9]*' \) \
-		-exec $(TOOLS_DIR)/bin/strip --strip-debug {} \; #2>/dev/null
+		-exec /tools/bin/strip --strip-debug {} \; #2>/dev/null
 
 	-/tools/bin/strip --strip-all /{,usr/}{,local/}{bin,sbin}/* /install/{initrd,misc}/bin/*
 	-/tools/bin/strip --strip-all /usr/lib/awk/{grcat,pwcat}

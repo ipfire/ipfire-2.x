@@ -737,6 +737,28 @@ int main(int argc, char *argv[])
 	  goto EXIT;
 	}
 
+	/* if we detected SCSI then fixup */
+	if ((handle = fopen("/scsidriver", "r")))
+	{
+		char *driver;
+			fgets(line, STRING_SIZE-1, handle);
+			fclose(handle);
+		line[strlen(line) - 1] = 0;
+		driver = strtok(line, ".");
+		fprintf(flog, "Detected SCSI driver %s\n",driver);
+		if (strlen(driver) > 1) {
+			fprintf(flog, "Fixing up ipfirerd.img\n");
+			mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
+			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
+			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
+			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
+			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+			mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
+                }
+        }
+
+
         /* Build cache lang file */  	 	 
         snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
         if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
@@ -768,8 +790,18 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-	mysystem("umount /harddisk/proc/");
-	mysystem("umount /harddisk/dev/");
+	/* Install bootsplash */
+	mysystem("/bin/installbootsplash.sh");
+
+	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
+	mysystem("umount /harddisk/proc");
+	mysystem("umount /harddisk/dev");
+
+	sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
+			NAME, SNAME, SNAME, NAME, NAME, NAME);
+	newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
+	         
+	allok = 1;
 
 EXIT:
 	fprintf(flog, "Install program ended.\n");	

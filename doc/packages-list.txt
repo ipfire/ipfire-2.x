@@ -106,7 +106,6 @@
 * java-1.5.0_06-for-ipfire
 * jpegsrc.v6b
 * kbd-1.12
-* kudzu-1.1.95.15
 * kudzu-1.2.60
 * l7-protocols-2006-09-10
 * lame-3.96.1
