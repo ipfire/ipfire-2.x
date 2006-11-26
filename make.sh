@@ -578,32 +578,8 @@ buildpackages() {
   LOGFILE="$BASEDIR/log/_build.packages.log"
   export LOGFILE
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
-  # Strip files
-  echo -n "Stripping files" | tee -a $LOGFILE
-  find $LFS/lib $LFS/usr/lib $LFS/usr/share/rrdtool-* $LFS/install ! -type l \( -name '*.so' -o -name '*.so[\.0-9]*' \) \
-	! -name 'libc.so' ! -name 'libpthread.so' ! -name 'libcrypto.so.0.9.7.sha1' \
-	 -exec $LFS/tools/bin/strip --strip-all {} \; >> $LOGFILE 2>&1
-  # add -ls before -exec if you want to verify what files are stripped
 
-  find $LFS/{,s}bin $LFS/usr/{,s}bin $LFS/usr/local/{,s}bin ! -type l \
-	-exec file {} \; | grep " ELF " | cut -f1 -d ':' | xargs $LFS/tools/bin/strip --strip-all >> $LOGFILE 2>&1
-  # there add -v to strip to verify
-  beautify message DONE
-
-#   Create fcdsl packages
-#  echo "`date -u '+%b %e %T'`: Building fcdsl tgz" | tee -a $LOGFILE
-#  cp $LFS/install/images/fcdsl/license.txt $LFS  >> $LOGFILE 2>&1
-#  touch $LFS/var/run/{need-depmod-$KVER,need-depmod-$KVER-smp}
-#  cd $LFS && tar cvfz $LFS/install/images/$SNAME-fcdsl-$VERSION.$MACHINE.tgz \
-#	lib/modules/$KVER/misc/fcdsl*.o.gz \
-#	lib/modules/$KVER-smp/misc/fcdsl*.o.gz \
-#	usr/lib/isdn/{fds?base.bin,fd?ubase.frm} \
-#	etc/fcdsl/fcdsl*.conf \
-#	etc/drdsl/{drdsl,drdsl.ini} \
-#	license.txt \
-#	var/run/{need-depmod-$KVER,need-depmod-$KVER-smp} >> $LOGFILE 2>&1
-#  rm -f $LFS/license.txt >> $LOGFILE 2>&1
-#  cd $BASEDIR
+  installmake strip
   
   # Generating list of packages used
   echo -n "Generating packages list from logs" | tee -a $LOGFILE

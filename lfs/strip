@@ -1,0 +1,72 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER = ipfire
+
+THISAPP    = strip
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+
+ifeq "$(LFS_PASS)" "toolchain"
+	-find $(TOOLS_DIR)/lib -type f -exec $(TOOLS_DIR)/bin/strip --strip-debug '{}' ';'
+	-find $(TOOLS_DIR)/{bin,sbin,libexec} -type f -exec $(TOOLS_DIR)/bin/strip --strip-all '{}' ';'
+	rm -rf $(TOOLS_DIR)/{,share/}{doc,info,man}
+endif
+
+ifeq "$(LFS_PASS)" "install"
+	# Add -ls before -exec if you want to verify what files are in the path to be stripped
+	# A running binary can't be stripped, so use the version from /tools
+	# It may fail (signal 11) under circonstance not identified by me (Gilles),
+	# to strip libc again so ignore the error now. Probably need a static strip for libc
+	# Don't use --strip-all on libraries, or they'll be destroyed. Don't use --strip-unneeded, either.
+	-/tools/bin/find /lib /usr/lib /usr/share/rrdtool-* /install/initrd/lib \
+		-type f \( -name '*.so' -o -name '*.so[\.0-9]*' \) \
+		-exec $(TOOLS_DIR)/bin/strip --strip-debug {} \; #2>/dev/null
+
+	-/tools/bin/strip --strip-all /{,usr/}{,local/}{bin,sbin}/* /install/{initrd,misc}/bin/*
+	-/tools/bin/strip --strip-all /usr/lib/awk/{grcat,pwcat}
+	-/tools/bin/strip --strip-all /usr/lib/gcc/*-linux-gnu/4.0.3/{cc1*,collect2}
+endif
+

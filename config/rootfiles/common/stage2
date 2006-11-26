@@ -4,6 +4,8 @@
 #bin/pwd
 #bin/stty
 #boot
+dev/null
+dev/console
 etc/certparams
 etc/fstab
 etc/group
@@ -36,6 +38,7 @@ mnt
 root
 sbin
 #srv
+tmp
 #usr/bin/perl
 #usr/include
 #usr/lib

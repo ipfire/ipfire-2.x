@@ -179,6 +179,8 @@ char *en_tr[] = {
 "Installing files...",
 /* TR_INSTALLING_GRUB */
 "Installing GRUB...",
+/* TR_INSTALLING_LANG_CACHE */
+"Installing language files...",
 /* TR_INTERFACE */
 "%s interface",
 /* TR_INTERFACE_FAILED_TO_COME_UP */
@@ -419,6 +421,8 @@ char *en_tr[] = {
 "Unable to initialise ISDN.",
 /* TR_UNABLE_TO_INSTALL_FILES */
 "Unable to install files.",
+/* TR_UNABLE_TO_INSTALL_LANG_CACHE */
+"Unable to install language files.",
 /* TR_UNABLE_TO_INSTALL_GRUB */
 "Unable to install GRUB.",
 /* TR_UNABLE_TO_LOAD_DRIVER_MODULE */

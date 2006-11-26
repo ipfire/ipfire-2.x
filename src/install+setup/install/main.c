@@ -180,7 +180,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     if (!(file = fopen("/harddisk/etc/hosts.allow", "w")))
     {
 	errorbox("unattended: ERROR writing hosts.allow");
-        return 0;
+	return 0;
     }
     fprintf(file, "sshd : ALL\n");
     fprintf(file, "ALL  : localhost\n");
@@ -681,20 +681,11 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
 		goto EXIT;
 	} */
-
-	snprintf(commandstring, STRING_SIZE, "/bin/mount -o ro %s /cdrom", insertdevnode);
 	
 	snprintf(commandstring, STRING_SIZE, "/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
 	
-	/* if (runcommandwithprogress(60, 4, title, commandstring, 4600,
-	 *	ctr[TR_INSTALLING_FILES]))
-	 * {
-	 *	errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
-	 *	goto EXIT;
-	 * }
-	 */
-
-	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_FILES]))
+	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
+		ctr[TR_INSTALLING_FILES]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
 		goto EXIT;
@@ -746,12 +737,40 @@ int main(int argc, char *argv[])
 	  goto EXIT;
 	}
 
-	/*  
-	  Allow the user to restore their configuration from a floppy.
-	  It uses tar.  If the tar fails for any reason, show user an
-	  error and go back to the restore/skip question. This gives
-	  the user the chance to have another go. */
-				
+        /* Build cache lang file */  	 	 
+        snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
+        if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
+        {
+                errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
+                goto EXIT;
+        }
+
+	if (raid_disk)
+		sprintf(string, "root=%sp3", hdparams.devnode);
+	else
+		sprintf(string, "root=%s3", hdparams.devnode);
+	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
+	mysystem( "sed -i \"s|KVERSION|$(/bin/uname -r)|\" /harddisk/boot/grub/grub.conf" );
+
+	replace( "/harddisk/boot/grub/grubbatch", "DEVICE", hdparams.devnode);
+	/* restore permissions */
+	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
+
+	/* mount proc filesystem */
+	mysystem("mkdir /harddisk/proc");
+	mysystem("/bin/mount -t proc none /harddisk/proc");
+	mysystem("/bin/mount --bind /dev /harddisk/dev");
+
+	snprintf(commandstring, STRING_SIZE, 
+		 "/bin/chroot /harddisk /boot/grub/grubbatch");
+	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
+		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
+		goto EXIT;
+	}
+
+	mysystem("umount /harddisk/proc/");
+	mysystem("umount /harddisk/dev/");
+
 EXIT:
 	fprintf(flog, "Install program ended.\n");	
 	fflush(flog);

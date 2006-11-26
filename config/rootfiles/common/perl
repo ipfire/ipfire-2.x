@@ -588,7 +588,7 @@ usr/lib/perl5/5.8.8/i586-linux/Unicode/Normalize.pm
 #usr/lib/perl5/5.8.8/i586-linux/XS
 #usr/lib/perl5/5.8.8/i586-linux/XS/APItest.pm
 #usr/lib/perl5/5.8.8/i586-linux/XS/Typemap.pm
-#usr/lib/perl5/5.8.8/i586-linux/XSLoader.pm
+usr/lib/perl5/5.8.8/i586-linux/XSLoader.pm
 #usr/lib/perl5/5.8.8/i586-linux/attrs.pm
 #usr/lib/perl5/5.8.8/i586-linux/auto
 #usr/lib/perl5/5.8.8/i586-linux/auto/B

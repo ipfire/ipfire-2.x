@@ -181,6 +181,8 @@ char *de_tr[] = {
 "Installation abgebrochen.",
 /* TR_INSTALLING_FILES */
 "Installiere Dateien...",
+/* TR_INSTALLING_LANG_CACHE */
+"Installiere Sprachunterstützung...",
 /* TR_INSTALLING_GRUB */
 "Installiere GRUB...",
 /* TR_INTERFACE */
@@ -423,6 +425,8 @@ char *de_tr[] = {
 "Kann ISDN nicht initialisieren.",
 /* TR_UNABLE_TO_INSTALL_FILES */
 "Kann die Dateien nicht installieren.",
+/* TR_UNABLE_TO_INSTALL_LANG_CACHE */
+"Kann Sprachunterstützung nicht installieren.",
 /* TR_UNABLE_TO_INSTALL_GRUB */
 "Kann GRUB nicht installieren.",
 /* TR_UNABLE_TO_LOAD_DRIVER_MODULE */
