@@ -7,8 +7,6 @@
  * Contains stuff related to firing up the network card, including a crude
  * autodector.
  * 
- * $Id: nic.c,v 1.8.2.1 2004/04/14 22:05:40 gespinasse Exp $
- * 
  */
 
 #include "install.h"
@@ -34,6 +32,8 @@ int networkmenu(struct keyvalue *ethernetkv)
 	char commandstring[STRING_SIZE];
 	char address[STRING_SIZE], netmask[STRING_SIZE];
 	int done;
+	FILE *handle;
+	char line[STRING_SIZE];
 	char description[1000];
 	char message[1000];
 	char title[STRING_SIZE];
@@ -46,28 +46,34 @@ int networkmenu(struct keyvalue *ethernetkv)
 		
 		if (rc == 0 || rc == 1)
 		{
-			probecards(driver, driveroptions);
-			if (!strlen(driver))
-				errorbox(ctr[TR_PROBE_FAILED]);
-			else
+			sprintf(commandstring, "/bin/probenic.sh 1");
+			sprintf(message, ctr[TR_PROBING_FOR_NICS]);
+			runcommandwithstatus(commandstring, message);
+
+			if ((handle = fopen("/nicdriver", "r")))
 			{
-				findnicdescription(driver, description);
-				sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
-				sprintf(message, ctr[TR_FOUND_NIC], NAME, description);
-				newtWinMessage(title, ctr[TR_OK], message);
-			}		
-		}			
+				char *driver;
+				fgets(line, STRING_SIZE-1, handle);
+				fclose(handle);
+				line[strlen(line) - 1] = 0;
+				driver = strtok(line, ".");
+				fprintf(flog, "Detected NIC driver: %s\n",driver);
+				if (strlen(driver) > 1) {
+					strcpy(driveroptions, "");
+					findnicdescription(driver, description);
+					sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
+					sprintf(message, ctr[TR_FOUND_NIC], NAME, description);
+					newtWinMessage(title, ctr[TR_OK], message);
+				} else {
+					errorbox(ctr[TR_PROBE_FAILED]);
+				}
+			}
+		}
 		else if (rc == 2)
 			choosecards(driver, driveroptions);
 		else
-			done = 1;	
-			
-		if (strlen(driver))
 			done = 1;
 	}
-	
-	if (!strlen(driver))
-		goto EXIT;
 
 	/* Default is a GREEN nic only. */
 	/* Smoothie is not untarred yet, so we have to delay actually writing the

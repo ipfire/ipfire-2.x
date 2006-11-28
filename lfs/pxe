@@ -58,6 +58,7 @@ $(TARGET) :
 		-e "s|instroot|$(VERSION)/instroot|" \
 			/install/cdrom/boot/isolinux/isolinux.cfg \
 			> /tmp/pxelinux.cfg/$(SNAME)-pxe-$(VERSION).model
+	ln -s $(SNAME)-pxe-$(VERSION).model /tmp/pxelinux.cfg/default
 	chmod 444 /tmp/$(VERSION)/instroot.gz
 	cd /tmp && tar cvzf \
 		/install/images/$(SNAME)-$(VERSION)-pxe-$(MACHINE).tgz *
