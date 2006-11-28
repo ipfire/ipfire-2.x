@@ -323,6 +323,8 @@ char *en_tr[] = {
 "Auto detecting failed.",
 /* TR_PROBING_HARDWARE */
 "Probing hardware...",
+/* TR_PROBING_FOR_NICS */
+"Probing for NICs...",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
 "Problem setting %s 'admin' user password.",
 /* TR_PROBLEM_SETTING_ROOT_PASSWORD */

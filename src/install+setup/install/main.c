@@ -394,31 +394,48 @@ int main(int argc, char *argv[])
 	// Starting hardware detection
 	runcommandwithstatus("/bin/probehw.sh", ctr[TR_PROBING_HARDWARE]);
 
-	switch (mysystem("/bin/mountsource.sh")) {
-	    case 0:
-		installtype = CDROM_INSTALL;
-		cdmounted = 1;
-		break;
-	    case 1:
-		installtype = DISK_INSTALL;
-		break;
-	    case 10:
-        	errorbox(ctr[TR_NO_CDROM]);
-		goto EXIT;
+	/* CDROM INSTALL */
+	if (installtype == CDROM_INSTALL) {
+
+		switch (mysystem("/bin/mountsource.sh")) {
+		    case 0:
+			installtype = CDROM_INSTALL;
+			cdmounted = 1;
+			break;
+		    case 1:
+			installtype = DISK_INSTALL;
+			break;
+		    case 10:
+	        	errorbox(ctr[TR_NO_CDROM]);
+			goto EXIT;
+		}
+
+		/* read source drive letter */
+		if ((handle = fopen("/source_device", "r")) == NULL) {
+		    errorbox("ERROR reading source_device");
+		}
+		fgets(sourcedrive, 5, handle);
+		fprintf(flog, "Source drive: %s\n", sourcedrive);
+		fclose(handle);
+
+		snprintf(cdromparams.devnode, STRING_SIZE, "/dev/%s", sourcedrive);
+		cdromparams.module = 0;
+		fprintf(flog, "Source device: %s\n", cdromparams.devnode);
 	}
 
-	/* read source drive letter */
-	if ((handle = fopen("/source_device", "r")) == NULL) {
-	    errorbox("ERROR reading source_device");
-	}
-	fgets(sourcedrive, 5, handle);
-	fprintf(flog, "Source drive: %s\n", sourcedrive);
-	fclose(handle);
-	
-	if (installtype == CDROM_INSTALL) {
-	    snprintf(cdromparams.devnode, STRING_SIZE, "/dev/%s", sourcedrive);
-	    cdromparams.module = 0;
-	    fprintf(flog, "Source device: %s\n", cdromparams.devnode);
+ 	/* Configure the network now! */
+	if (installtype == URL_INSTALL) {
+		/* Network driver and params. */
+		if (!(networkmenu(ethernetkv))) {
+			errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
+			goto EXIT;
+		}
+
+		/* Check for ipcop-<VERSION>.tbz2 */
+		if (checktarball(SNAME "-" VERSION ".tbz2", ctr[TR_ENTER_URL])) {
+			errorbox(ctr[TR_NO_IPCOP_TARBALL_FOUND]);
+			goto EXIT;
+		}
 	}
 
 	/* Get device for the HD.  This has to succeed. */
@@ -467,6 +484,7 @@ int main(int argc, char *argv[])
 	} else
 		sprintf(harddrive, "hd%c", hdletter);
 
+	fprintf(flog, "Destination drive: %s\n", harddrive);
 
 	/* load unattended configuration */
 	if (unattended) {
@@ -571,13 +589,12 @@ int main(int argc, char *argv[])
 
 	handle = fopen("/tmp/partitiontable", "w");
 
-
 	/* Make swapfile */
 	if (swap_file) {
-		fprintf(handle, ",%ld,L,*\n,%ld,S,\n,%ld,L,\n",
+		fprintf(handle, ",%ld,L,*\n,%ld,S,\n,%ld,L,\n,,L,\n",
 			boot_partition, swap_file, root_partition);
 	} else {
-		fprintf(handle, ",%ld,L,*\n,0,0,\n,%ld,L,\n",
+		fprintf(handle, ",%ld,L,*\n,0,0,\n,%ld,L,\n,,L,\n",
 			boot_partition, root_partition);
 	}
 
@@ -625,7 +642,7 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-/*	if (raid_disk)
+	if (raid_disk)
 		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %sp4", hdparams.devnode);	
 	else
 		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %s4", hdparams.devnode);	
@@ -634,7 +651,7 @@ int main(int argc, char *argv[])
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
 		goto EXIT;
-	} */
+	}
 
 	/* Mount harddisk. */
 	if (raid_disk)
@@ -672,7 +689,7 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		}
 	}
-/*	if (raid_disk)
+	if (raid_disk)
 		snprintf(commandstring, STRING_SIZE, "/sbin/mount %sp4 /harddisk/var", hdparams.devnode);
 	else
 		snprintf(commandstring, STRING_SIZE, "/sbin/mount %s4 /harddisk/var", hdparams.devnode);
@@ -680,7 +697,7 @@ int main(int argc, char *argv[])
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
 		goto EXIT;
-	} */
+	}
 	
 	snprintf(commandstring, STRING_SIZE, "/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
 	
@@ -737,8 +754,14 @@ int main(int argc, char *argv[])
 	  goto EXIT;
 	}
 
+	/* mount proc filesystem */
+	mysystem("mkdir /harddisk/proc");
+	mysystem("/bin/mount -t proc none /harddisk/proc");
+	mysystem("/bin/mount --bind /dev /harddisk/dev");
+
 	/* if we detected SCSI then fixup */
-	if ((handle = fopen("/scsidriver", "r")))
+	mysystem("/bin/probecntrl.sh");
+	if ((handle = fopen("/cntrldriver", "r")))
 	{
 		char *driver;
 			fgets(line, STRING_SIZE-1, handle);
@@ -750,22 +773,21 @@ int main(int argc, char *argv[])
 			fprintf(flog, "Fixing up ipfirerd.img\n");
 			mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
 			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
+			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata --with=ataraid /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
+			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 			mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
-                }
-        }
+		}
+	}
 
-
-        /* Build cache lang file */  	 	 
-        snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
-        if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
-        {
-                errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
-                goto EXIT;
-        }
+	/* Build cache lang file */
+	snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
+	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
+		goto EXIT;
+	}
 
 	if (raid_disk)
 		sprintf(string, "root=%sp3", hdparams.devnode);
@@ -777,11 +799,6 @@ int main(int argc, char *argv[])
 	replace( "/harddisk/boot/grub/grubbatch", "DEVICE", hdparams.devnode);
 	/* restore permissions */
 	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
-
-	/* mount proc filesystem */
-	mysystem("mkdir /harddisk/proc");
-	mysystem("/bin/mount -t proc none /harddisk/proc");
-	mysystem("/bin/mount --bind /dev /harddisk/dev");
 
 	snprintf(commandstring, STRING_SIZE, 
 		 "/bin/chroot /harddisk /boot/grub/grubbatch");
@@ -833,7 +850,7 @@ EXIT:
 	fcloseall();
 
 	system("/bin/swapoff /harddisk/swapfile");
-	system("/sbin/umount /harddisk/var/log");
+	system("/sbin/umount /harddisk/var");
 	system("/sbin/umount /harddisk/boot");
 	system("/sbin/umount /harddisk");
 	  

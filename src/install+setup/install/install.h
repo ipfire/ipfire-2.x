@@ -37,7 +37,7 @@ int ejectcdrom(char *dev);
 int networkmenu(struct keyvalue *ethernetkv);
 
 /* net.c */
-int checktarball(char *);
+int checktarball(char *, char *message);
 
 /* config.c */
 int write_disk_configs(struct devparams *dp);
@@ -46,12 +46,6 @@ int write_ethernet_configs(struct keyvalue *ethernetkv);
 
 /* pcmcia.c */
 char * initialize_pcmcia (void);
-
-/* upgrade_v12_v13.c */
-int upgrade_v12_v13();
-
-/* upgrade_v130_v131.c */
-int upgrade_v130_v140();
 
 /* usb.c */
 int initialize_usb();

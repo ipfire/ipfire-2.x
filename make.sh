@@ -596,9 +596,9 @@ buildpackages() {
   # packages-list.txt is ready to be displayed for wiki page
   beautify message DONE
 
-  # Create ISO for CDROM
+  # Create images for install
+  ipfiremake pxe
   ipfiremake cdrom
-  rm -f $LFS/install/images/*usb*
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
 #  ipfirepackages

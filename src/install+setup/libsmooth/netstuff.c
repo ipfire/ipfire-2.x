@@ -413,44 +413,27 @@ struct nic nics[] = {
 /* Funky routine for loading all drivers (cept those are already loaded.). */
 int probecards(char *driver, char *driveroptions)
 {
-	int c = 0;
-	int n = 0;
 	char message[1000];
 	char commandstring[STRING_SIZE];
+	FILE *handle;
+	char line[STRING_SIZE];
 
-	n = countcards();
+	sprintf(commandstring, "/bin/probenic.sh 1");
+	sprintf(message, ctr[TR_PROBING_FOR_NICS]);
+	runcommandwithstatus(commandstring, message);
 
-	/* PCMCIA Detection */
-	runcommandwithstatus("cardmgr -o", 
-		ctr[TR_LOADING_PCMCIA]);
-
-	if (countcards() > n) 
+	if ((handle = fopen("/nicdriver", "r")))
 	{
-		strcpy(driver, "pcmcia");
-		strcpy(driveroptions,"");
-		return 1;
-	}
-
-	/* Regular module detection */
-	while (nics[c].modulename)
-	{
-		/* Skip dummy driver during autoprobe as it always succeeds */
-		if (strncmp(nics[c].modulename, "dummy", strlen("dummy")))
-		{
-			if (!checkformodule(nics[c].modulename)) {
-				sprintf(commandstring, "/sbin/modprobe %s", nics[c].modulename);
-				sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
-				if (runcommandwithstatus(commandstring, message) == 0)
-				{
-					if (countcards() > n) {
-						strcpy(driver, nics[c].modulename);
-						strcpy(driveroptions, "");
-						return 1;
-					}
-				}
-			}
+		char *driver;
+		fgets(line, STRING_SIZE-1, handle);
+		fclose(handle);
+		line[strlen(line) - 1] = 0;
+		driver = strtok(line, ".");
+		fprintf(flog, "Detected NIC driver %s\n",driver);
+		if (strlen(driver) > 1) {
+			strcpy(driveroptions, "");
+			return 1;
 		}
-		c++;
 	}
 	strcpy(driver, "");
 	strcpy(driveroptions, "");

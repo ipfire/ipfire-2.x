@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Stuff for downloading the smoothwall tarball using wget.
  * 
- * $Id: net.c,v 1.8.2.2 2004/04/14 22:05:40 gespinasse Exp $
- * 
  */
  
 #include "install.h"
@@ -19,11 +17,11 @@ extern char **ctr;
 
 static int got_url = 0;
 
-char url[STRING_SIZE];
+char url[STRING_SIZE] = "http://";;
 
-static int gettarballurl();
+static int gettarballurl(char *url, char *message);
 
-int checktarball(char *file)
+int checktarball(char *file, char *message)
 {
 	int done;
 	int tries = 0;
@@ -32,7 +30,7 @@ int checktarball(char *file)
 	done = 0;
 	while (!done)
 	{
-		if (!got_url && gettarballurl() != 1)
+		if (!got_url && gettarballurl(url, message) != 1)
 			return 0;
 
 		/* remove any successive /'s */
@@ -49,24 +47,22 @@ int checktarball(char *file)
 			errorbox(ctr[TR_FAILED_TO_FIND]);
 			got_url = 0;
 			if (tries == 3)
-				return 0;
+				return 1; /* failure */
 		}
 		tries++;
 	}
 
-	return 1;
+	return 0;
 }
 
-static int gettarballurl()
+static int gettarballurl(char *url, char *message)
 {
-	char *values[] = {	NULL, NULL };	/* pointers for the values. */
+	char *values[] = { url, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	char title[STRING_SIZE];
-	char message[1000];
 	int rc;
 
-	sprintf(message, ctr[TR_ENTER_URL]);
 	sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
 	rc = newtWinEntries(title, message,
 		60, 5, 5, 50, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
