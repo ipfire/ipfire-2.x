@@ -149,6 +149,8 @@ char *de_tr[] = {
 "Geben Sie die URL für ipcop-<version>.tgz und die images/scsidrv-<version>.img-Dateien ein. WARNUNG: DNS ist nicht verfügbar! Sie sollten jetzt nur etwas im Format 'http://X.X.X.X/<verzeichnis>' eingeben. ",
 /* TR_ERROR */
 "Fehler",
+/* TR_ERROR_PROBING_CDROM */
+"Kein CDROM-Laufwerk gefunden.",
 /* TR_ERROR_WRITING_CONFIG */
 "Fehler beim Schreiben der Konfigurationsinformationen.",
 /* TR_EURO_EDSS1 */

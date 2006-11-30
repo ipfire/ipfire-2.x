@@ -15,7 +15,7 @@
 #define URL_INSTALL 1
 #define DISK_INSTALL 2
 #define INST_FILECOUNT 6600
-#define UNATTENDED_CONF "/cdrom/data/unattended.conf"
+#define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
 int raid_disk = 0;
 FILE *flog = NULL;
@@ -347,7 +347,7 @@ int main(int argc, char *argv[])
 
 	// make some beeps before wiping the system :)
 	if (unattended) {
-	    runcommandwithstatus("/bin/beep -f 450 -r 10 -D 800 -n -f 900 -l 1000", "WARNING: Unattended installation will start in 10 seconds...");
+	    runcommandwithstatus("/bin/sleep 10", "WARNING: Unattended installation will start in 10 seconds...");
  	}
 	
 	/* German is the default */
@@ -370,7 +370,7 @@ int main(int argc, char *argv[])
 
 	mysystem("/bin/setfont lat0-16");
 
-	newtDrawRootText(14, 0, NAME " v" VERSION " - " SLOGAN );
+	newtDrawRootText(14, 0, NAME " " VERSION " - " SLOGAN );
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 
 	if (!unattended) {
@@ -412,7 +412,8 @@ int main(int argc, char *argv[])
 
 		/* read source drive letter */
 		if ((handle = fopen("/source_device", "r")) == NULL) {
-		    errorbox("ERROR reading source_device");
+			errorbox(ctr[TR_ERROR_PROBING_CDROM]);
+			goto EXIT;
 		}
 		fgets(sourcedrive, 5, handle);
 		fprintf(flog, "Source drive: %s\n", sourcedrive);

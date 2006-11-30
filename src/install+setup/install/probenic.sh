@@ -1,12 +1,15 @@
 #!/bin/sh
 
-NUMBER=$1
-MODULES=`/bin/kudzu -qps  -t 30 -c NETWORK | grep driver | cut -d ' ' -f 2 | sort | uniq`
+MODULES=$(/bin/kudzu -qps  -t 30 -c NETWORK | grep driver | cut -d ' ' -f 2 | sort)
 
-if [ "$NUMBER" ]; then
-	NICS=`echo $MODULES | head -$NUMBER`
+if [ "$1" == "count" ]; then
+	echo $(echo $MODULES | wc -l)
 else
-	NICS=$MODULES
+	NUMBER=$1
 fi
 
-echo "$NICS" > /nicdriver
+if [ "$NUMBER" ]; then
+	echo "$(echo $MODULES | grep -n $NUMBER | cut -c 1-2 )" > /nicdriver
+else
+	echo "$MODULES" > /nicdriver
+fi

@@ -550,28 +550,27 @@ buildinstaller() {
   ipfiremake uClibc
   installmake busybox
   installmake udev
-  installmake sysvinit
-  installmake gettext
-  installmake e2fsprogs
-  installmake misc-progs
-  installmake sysfsutils
-#  installmake hwinfo
   installmake slang
-  installmake util-linux
-  installmake reiserfsprogs
   installmake newt
-  installmake pciutils
-  installmake pcmciautils
+  installmake gettext
   installmake kbd
   installmake popt
   installmake kudzu
+  installmake sysvinit
+  installmake misc-progs
+  installmake e2fsprogs
+  installmake reiserfsprogs
+  installmake sysfsutils
+  installmake util-linux
+  installmake pciutils
+  installmake pcmciautils
   installmake installer
-  installmake scsi.img
-  installmake driver.img
+  installmake scsi.img	# this is to be deleted
+  installmake driver.img	# this is to be deleted
   installmake initrd
-  installmake boot.img
-#  ipfiremake as86
-#  ipfiremake mbr
+  installmake boot.img	# this is to be deleted
+#  ipfiremake as86		# this is to be deleted
+#  ipfiremake mbr		# this is to be deleted
 }
 
 buildpackages() {
@@ -597,8 +596,8 @@ buildpackages() {
   beautify message DONE
 
   # Create images for install
-  ipfiremake pxe
   ipfiremake cdrom
+  ipfiremake pxe
   cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
 #  ipfirepackages
@@ -1082,6 +1081,20 @@ batch)
 	;;
 watch)
 	watch_screen
+	;;
+pxe)
+	case "$2" in
+	  start)
+		start_tftpd
+		;;
+	  stop)
+		stop_tftpd
+		;;
+	  reload)
+		reload_tftpd
+		;;		
+	esac
+	exit 0
 	;;
 "")
 	clear

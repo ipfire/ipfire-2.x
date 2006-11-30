@@ -24,56 +24,89 @@ extern struct nic nics[];
 
 int networkmenu(struct keyvalue *ethernetkv)
 {
-	int rc;
+	int i;
+	int count;
+	char nics;
+	char number;
+	char cbValue;
 	char driver[STRING_SIZE] = "";
 	char driveroptions[STRING_SIZE] = "";
 	struct keyvalue *kv = initkeyvalues();
 	int result = 0;
 	char commandstring[STRING_SIZE];
 	char address[STRING_SIZE], netmask[STRING_SIZE];
-	int done;
 	FILE *handle;
-	char line[STRING_SIZE];
 	char description[1000];
 	char message[1000];
 	char title[STRING_SIZE];
-	done = 0;
 
-	while (!done)
+	/* Detect and count nics */
+	count = mysystem("/bin/probenic.sh count");
+	fprintf(flog, "Number of detected nics: %s\n", count);
+
+/*	sprintf(commandstring, "/bin/probenic.sh");
+	sprintf(message, ctr[TR_PROBING_FOR_NICS]);
+	runcommandwithstatus(commandstring, message); */
+
+/*	handle = fopen("/nicdriver", "r");
+	fgets(nics, STRING_SIZE, handle);
+	fclose(handle); */
+
+/*	fprintf(flog, "Detected NIC drivers: %s\n",driver); */
+
+/*	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
+	sprintf(message, ctr[TR_FOUND_NIC], NAME, description);
+	newtWinMessage(title, ctr[TR_OK], message); */
+
+	newtComponent form, checkbox, rb[count], button;
+	newtOpenWindow(10, 5, 60, 11, "Checkboxes and Radio buttons");
+
+	for (i = 1; i <= 2; i++)
 	{
-		rc = newtWinTernary(ctr[TR_CONFIGURE_NETWORKING], ctr[TR_PROBE], 
-			ctr[TR_SELECT], ctr[TR_CANCEL], ctr[TR_CONFIGURE_NETWORKING_LONG]);
-		
-		if (rc == 0 || rc == 1)
-		{
-			sprintf(commandstring, "/bin/probenic.sh 1");
-			sprintf(message, ctr[TR_PROBING_FOR_NICS]);
-			runcommandwithstatus(commandstring, message);
-
-			if ((handle = fopen("/nicdriver", "r")))
-			{
-				char *driver;
-				fgets(line, STRING_SIZE-1, handle);
-				fclose(handle);
-				line[strlen(line) - 1] = 0;
-				driver = strtok(line, ".");
-				fprintf(flog, "Detected NIC driver: %s\n",driver);
-				if (strlen(driver) > 1) {
-					strcpy(driveroptions, "");
-					findnicdescription(driver, description);
-					sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
-					sprintf(message, ctr[TR_FOUND_NIC], NAME, description);
-					newtWinMessage(title, ctr[TR_OK], message);
-				} else {
-					errorbox(ctr[TR_PROBE_FAILED]);
-				}
-			}
+		fprintf(flog, "Scan: %d\n", i);
+		snprintf(commandstring, STRING_SIZE, "/bin/probenic.sh %i", i);
+		mysystem(commandstring);
+		if ((handle = fopen("/nicdriver", "r")) == NULL) {
+			errorbox(ctr[TR_ERROR]);
+			goto EXIT;
 		}
-		else if (rc == 2)
-			choosecards(driver, driveroptions);
+		fgets(driver, STRING_SIZE, handle);
+		fclose(handle);
+		findnicdescription(driver, description);
+		if ( i == 0 )
+			rb[i] = newtRadiobutton(1, i+2, description, 1, NULL);
 		else
-			done = 1;
+			rb[i] = newtRadiobutton(1, i+2, description, 0, rb[i-1]);
+ 	}
+ 
+	button = newtButton(1, count+3, "OK");
+
+	form = newtForm(NULL, NULL, 0);
+	newtFormAddComponent(form, checkbox);
+	for (i = 1; i <= 2; i++) {
+		fprintf(flog, "Add: %d\n", i);
+		newtFormAddComponent(form, rb[i]);
 	}
+	newtFormAddComponent(form, button);
+
+	newtRunForm(form);
+	newtFinished();
+
+	for (i = 1; i <= 2; i++)
+		if (newtRadioGetCurrent(rb[0]) == rb[i])
+			printf("radio button picked: %d\n", i);
+	newtFormDestroy(form);
+
+
+/*	snprintf(commandstring, STRING_SIZE, "/bin/probenic.sh 1");
+	mysystem(commandstring);	
+	if ((handle = fopen("/nicdriver", "r")) == NULL) {
+		errorbox(ctr[TR_ERROR]);
+		goto EXIT;
+	}
+	fgets(driver, STRING_SIZE, handle);
+	fprintf(flog, "Green nic driver: %s\n", driver);
+	fclose(handle); */
 
 	/* Default is a GREEN nic only. */
 	/* Smoothie is not untarred yet, so we have to delay actually writing the

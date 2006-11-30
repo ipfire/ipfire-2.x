@@ -630,3 +630,47 @@ IPFIRE_MAIL_PASS=$IPFIRE_MAIL_PASS
 END
 	beautify message DONE
 }
+
+compile_tftpd() {
+	mkdir $BASEDIR/tmp
+	tar xvfz $BASEDIR/cache/tftp-hpa-0.42.tar.gz -C $BASEDIR/tmp
+	cd $BASEDIR/tmp/tftp-hpa-0.42
+		./configure --prefix=/ipfire/trunk/tools/ \
+			--sbindir=/ipfire/trunk/tools/ --disable-nls
+		make
+		install -c tftpd/tftpd $BASEDIR/tools/in.tftpd
+	cd -
+	rm -rf $BASEDIR/tmp/tftp-hpa-0.42
+}
+
+start_tftpd() {
+	if [ ! -e $BASEDIR/tools/in.tftpd ]; then
+		compile_tftpd
+	fi
+	reload_tftpd
+	if [ "$?" == "0" ]; then
+		$BASEDIR/tools/in.tftpd -l -s $BASEDIR/tftpboot
+		beautify message DONE
+	else
+		echo -en "You don not have a pxe boot image in your base directory.\nPlease compile first."
+		beautify message FAIL
+		exit 1
+	fi
+}
+
+stop_tftpd() {
+	echo -n "Stopping TFTPD..."
+	killall in.tftpd >/dev/null 2>&1
+	sleep 3
+	killall -9 in.tftp >/dev/null 2>&1
+	beautify message DONE
+}
+
+reload_tftpd() {
+	if [ -e $BASEDIR/ipfire-$VERSION-pxe-$MACHINE.tgz ]; then
+		mkdir -p $BASEDIR/tftpboot
+		tar xvfz $BASEDIR/ipfire-$VERSION-pxe-$MACHINE.tgz -C $BASEDIR/tftpboot
+		return 0
+	fi
+	return 1
+}

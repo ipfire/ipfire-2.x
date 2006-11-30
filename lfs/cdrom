@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	mkdir -p /install/cdrom/{doc,dosutils,images}
+	mkdir -p /install/cdrom/{doc,dosutils}
 	find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
 	find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
 	tar -c -C / --files-from=/tmp/ROOTFILES \
@@ -90,10 +90,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Other files
 	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt
 	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
-	cp /install/images/*.img				/install/cdrom/images
 	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
 	cp $(DIR_DL)/rawrite.exe				/install/cdrom/dosutils
 	unzip -j -L $(DIR_DL)/rawwritewin*.zip -x "*.txt" -d /install/cdrom/dosutils
+
+	# Configuration
+	mkdir -p /install/cdrom/boot
+	cp $(DIR_SRC)/config/kernel/unattended.conf    /install/cdrom/boot/unattended.conf
 
 	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux; \

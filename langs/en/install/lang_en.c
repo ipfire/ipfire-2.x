@@ -145,6 +145,8 @@ char *en_tr[] = {
 "Enter the URL path to the ipcop-<version>.tgz and images/scsidrv-<version>.img files. WARNING: DNS not available! This should now just be http://X.X.X.X/<directory>",
 /* TR_ERROR */
 "Error",
+/* TR_ERROR_PROBING_CDROM */
+"No CDROM drive found.",
 /* TR_ERROR_WRITING_CONFIG */
 "Error writing configuration information.",
 /* TR_EURO_EDSS1 */
