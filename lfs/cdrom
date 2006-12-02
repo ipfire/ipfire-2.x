@@ -85,6 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
+	mkdir /tmp/sys
 	cd /tmp && tar jcf /install/cdrom/$(SNAME)-$(VERSION).tbz2 * && rm -rf *
 
 	# Other files

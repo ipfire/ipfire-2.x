@@ -935,10 +935,9 @@ svn)
 		clear
 		if [ -f /usr/bin/mcedit ]; then
 			export EDITOR=/usr/bin/mcedit
-		else
-			if [ -f /usr/bin/nano ]; then
-				export EDITOR=/usr/bin/nano
-			fi
+		fi
+		if [ -f /usr/bin/nano ]; then
+			export EDITOR=/usr/bin/nano
 		fi
 		echo -ne "Selecting editor $EDITOR..."
 		beautify message DONE

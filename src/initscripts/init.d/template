@@ -1,0 +1,50 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/
+#
+# Description :
+#
+# Authors     :
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting..."
+		loadproc
+		;;
+
+	stop)
+		boot_mesg "Stopping..."
+		killproc
+		;;
+
+	reload)
+		boot_mesg "Reloading..."
+		reloadproc
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/

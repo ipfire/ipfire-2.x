@@ -1,0 +1,44 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/mountkernfs
+#
+# Description : Mount proc and sysfs
+#
+# Authors     : Gerard Beekmans - gerard@linuxfromscratch.org
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg -n "Mounting kernel-based file systems:" ${INFO}
+
+		if ! mountpoint /proc &> /dev/null; then
+			boot_mesg -n " /proc" ${NORMAL}
+			mount -n /proc || failed=1
+		fi
+
+		if ! mountpoint /sys &> /dev/null; then
+			boot_mesg -n " /sys" ${NORMAL}
+			mount -n /sys || failed=1
+		fi
+
+		boot_mesg "" ${NORMAL}
+
+		(exit ${failed})
+		evaluate_retval
+		;;
+
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/mountkernfs

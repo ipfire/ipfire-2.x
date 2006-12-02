@@ -1,8 +1,14 @@
-#
-# $Id: fstab,v 1.4 2006/02/11 15:42 ms Exp $
-#
-/dev/harddisk1		/boot			ext3	nodev,nosuid,noatime,data=journal		1 2
-/dev/harddisk2		/var/log		ext3	nodev,nosuid,noatime,data=journal		1 2
-/dev/harddisk4          /                       ext3    noatime	        1 1
-none                    /proc                   proc    defaults        0 0
-none			/dev/pts		devpts	gid=5,mode=620	0 0
+# Begin /etc/fstab
+
+# file system  mount-point  type     options         dump  fsck
+#                                                        order
+
+DEVICE1        /boot        ext2     defaults        1     2
+DEVICE2        swap         swap     pri=1           0     0
+DEVICE3        /            reiserfs defaults        1     1
+DEVICE4        /var         reiserfs defaults        1     1
+proc           /proc        proc     defaults        0     0
+sysfs          /sys         sysfs    defaults        0     0
+devpts         /dev/pts     devpts   gid=4,mode=620  0     0
+shm            /dev/shm     tmpfs    defaults        0     0
+# End /etc/fstab

@@ -1,0 +1,92 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/modules
+#
+# Description : Module auto-loading script
+#
+# Authors     : Zack Winkles
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Assure that the kernel has module support.
+[ -e /proc/ksyms -o -e /proc/modules ] || exit 0
+
+case "${1}" in
+	start)
+
+		# If proc is mounted, find the current kernel
+		# message level 
+		if [ -f /proc/sys/kernel/printk ]; then
+			prev_msg=`cat /proc/sys/kernel/printk | \
+					sed 'l 1' | sed -n '2~0p' | \
+					sed 's/\\\//'`
+		else 
+			prev_msg="6"
+		fi
+
+		# Now set the message level to 1 so not to make too 
+		# much noise when loading modules
+		dmesg -n 1
+
+		# Only try to load modules if the user has actually given us
+		# some modules to load.
+		if egrep -qv '^(#|$)' /etc/sysconfig/modules 2>/dev/null
+		then
+
+			# Read in the configuration file.
+			exec 9>&0 < /etc/sysconfig/modules
+
+				boot_mesg -n "Loading modules:" ${INFO}
+
+				while read module args
+				do
+					# Ignore comments and blank lines.
+					case "${module}" in
+						""|\#*) continue ;;
+					esac
+
+					# Attempt to load the module, making
+					# sure to pass any arguments provided.
+					modprobe ${module} ${args} 2>&1 > /dev/null
+
+					# Print the module name if successful,
+					# otherwise take note.
+					if [ ${?} -eq 0 ]; then
+						boot_mesg -n " ${module}" ${NORMAL}
+					else
+						failedmod="${failedmod} ${module}"
+					fi
+				done
+
+				boot_mesg "" ${NORMAL}
+				# Print a message about successfully loaded
+				# modules on the correct line.
+				echo_ok
+
+				# Print a failure message with a list of any
+				# modules that may have failed to load.
+				if [ "${failedmod}" ]; then
+					boot_mesg "Failed to load modules:${failedmod}" ${FAILURE}
+					echo_failure
+				fi
+
+			exec 0>&9 9>&-
+
+		fi
+		# Set the kernel message level back to it's previous value.
+		dmesg -n "${prev_msg}"
+		;;
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/modules

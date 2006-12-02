@@ -1,0 +1,39 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/udev_retry
+#
+# Description : Udev cold-plugging script (retry)
+#
+# Authors     : Alexander E. Patrakov
+#
+# Version     : 00.02
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Retrying failed uevents, if any..."
+		# Re-trigger the failed uevents in hope they will succeed now
+		# If there are none, the "No such file or directory" error
+		# goes to /dev/null
+		for file in /dev/.udev/failed/*/uevent ; do
+			echo "add" >"${file}"
+		done 2>/dev/null
+		
+		# Now wait for udevd to process the uevents we triggered
+		/sbin/udevsettle
+		evaluate_retval
+		;;
+
+	*)
+		echo "Usage ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/udev_retry

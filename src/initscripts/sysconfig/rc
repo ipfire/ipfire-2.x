@@ -1,0 +1,18 @@
+########################################################################
+# Begin /etc/sysconfig/rc
+#
+# Description : rc script configuration
+#
+# Authors     :
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+rc_base=/etc/rc.d
+rc_functions=${rc_base}/init.d/functions
+network_devices=/etc/sysconfig/network-devices
+
+# End /etc/sysconfig/rc

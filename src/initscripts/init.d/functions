@@ -1,0 +1,682 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/functions
+#
+# Description : Run Level Control Functions
+#
+# Authors     : Gerard Beekmans - gerard@linuxfromscratch.org
+#
+# Version     : 00.00
+#
+# Notes       : With code based on Matthias Benkmann's simpleinit-msb
+#		http://winterdrache.de/linux/newboot/index.html
+#
+########################################################################
+
+## Environmental setup
+# Setup default values for environment
+umask 022
+export PATH="/bin:/usr/bin:/sbin:/usr/sbin"
+
+# Signal sent to running processes to refresh their configuration
+RELOADSIG="HUP"
+
+# Number of seconds between STOPSIG and FALLBACK when stopping processes
+KILLDELAY="3"
+
+## Screen Dimensions
+# Find current screen size
+if [ -z "${COLUMNS}" ]; then
+	COLUMNS=$(stty size)
+	COLUMNS=${COLUMNS##* }
+fi
+
+# When using remote connections, such as a serial port, stty size returns 0
+if [ "${COLUMNS}" = "0" ]; then 
+	COLUMNS=80
+fi
+
+## Measurements for positioning result messages
+COL=$((${COLUMNS} - 8))
+WCOL=$((${COL} - 2))
+
+## Set Cursor Position Commands, used via echo -e
+SET_COL="\\033[${COL}G"      # at the $COL char
+SET_WCOL="\\033[${WCOL}G"    # at the $WCOL char
+CURS_UP="\\033[1A\\033[0G"   # Up one line, at the 0'th char
+
+## Set color commands, used via echo -e
+# Please consult `man console_codes for more information
+# under the "ECMA-48 Set Graphics Rendition" section
+#
+# Warning: when switching from a 8bit to a 9bit font,
+# the linux console will reinterpret the bold (1;) to
+# the top 256 glyphs of the 9bit font.  This does
+# not affect framebuffer consoles
+NORMAL="\\033[0;39m"         # Standard console grey
+SUCCESS="\\033[1;32m"        # Success is green
+WARNING="\\033[1;33m"        # Warnings are yellow
+FAILURE="\\033[1;31m"        # Failures are red
+INFO="\\033[1;36m"           # Information is light cyan
+BRACKET="\\033[1;34m"        # Brackets are blue
+
+STRING_LENGTH="0"   # the length of the current message
+
+#*******************************************************************************
+# Function - boot_mesg()
+#
+# Purpose:      Sending information from bootup scripts to the console
+#
+# Inputs:       $1 is the message
+#               $2 is the colorcode for the console
+#
+# Outputs:      Standard Output
+#
+# Dependencies: - sed for parsing strings.
+#	        - grep for counting string length.
+#               
+# Todo:         
+#*******************************************************************************
+boot_mesg()
+{
+	local ECHOPARM=""
+
+	while true
+	do
+		case "${1}" in
+			-n)
+				ECHOPARM=" -n "
+				shift 1
+				;;
+			-*)
+				echo "Unknown Option: ${1}"
+				return 1
+				;;
+			*)
+				break
+				;;
+		esac
+	done
+
+	## Figure out the length of what is to be printed to be used
+        ## for warning messges. 
+	STRING_LENGTH="`echo "${1}" | sed \
+		-e 's,.,.,g' -e 'l 1' | grep -c \$`"
+
+	# Print the message to the screen
+	echo ${ECHOPARM} -e "${2}${1}"
+	
+}
+
+boot_mesg_flush()
+{
+	# Reset STRING_LENGTH for next message
+	STRING_LENGTH="0"
+}
+
+boot_log()
+{
+	# Left in for backwards compatibility
+	echo -n ""
+}
+
+echo_ok()
+{
+	echo -n -e "${CURS_UP}${SET_COL}${BRACKET}[${SUCCESS}  OK  ${BRACKET}]"
+	echo -e "${NORMAL}"
+        boot_mesg_flush
+}
+
+echo_failure()
+{
+	echo -n -e "${CURS_UP}${SET_COL}${BRACKET}[${FAILURE} FAIL ${BRACKET}]"
+	echo -e "${NORMAL}"
+        boot_mesg_flush
+}
+
+echo_warning()
+{
+	echo -n -e "${CURS_UP}${SET_COL}${BRACKET}[${WARNING} WARN ${BRACKET}]"
+	echo -e "${NORMAL}"
+        boot_mesg_flush
+}
+
+print_error_msg()
+{
+	echo_failure
+	# $i is inherited by the rc script
+	boot_mesg -n "FAILURE:\n\nYou should not be reading this error message.\n\n" ${FAILURE}
+	boot_mesg -n " It means that an unforeseen error took"
+	boot_mesg -n " place in ${i}, which exited with a return value of"
+	boot_mesg " ${error_value}.\n"
+	boot_mesg_flush
+	boot_mesg -n "If you're able to track this"
+	boot_mesg -n " error down to a bug in one of the files provided by"
+	boot_mesg -n " the LFS book, please be so kind to inform us at"
+	boot_mesg " lfs-dev@linuxfromscratch.org.\n"
+	boot_mesg_flush
+	boot_mesg -n "Press Enter to continue..." ${INFO}
+	boot_mesg "" ${NORMAL}
+	read ENTER
+}
+
+check_script_status()
+{
+	# $i is inherited by the rc script
+	if [ ! -f ${i} ]; then
+		boot_mesg "${i} is not a valid symlink." ${WARNING}
+		echo_warning
+		continue
+	fi
+
+	if [ ! -x ${i} ]; then
+		boot_mesg "${i} is not executable, skipping." ${WARNING}
+		echo_warning
+		continue
+	fi
+}
+
+evaluate_retval()
+{
+	error_value="${?}"
+
+	if [ ${error_value} = 0 ]; then
+		echo_ok
+	else
+		echo_failure
+	fi
+
+	# This prevents the 'An Unexpected Error Has Occurred' from trivial
+	# errors.
+	return 0
+}
+
+print_status()
+{
+	if [ "${#}" = "0" ]; then
+		echo "Usage: ${0} {success|warning|failure}"
+		return 1
+	fi
+
+	case "${1}" in
+
+		success)
+			echo_ok
+			;;
+
+		warning)
+			# Leave this extra case in because old scripts
+			# may call it this way.
+			case "${2}" in
+				running)
+					echo -e -n "${CURS_UP}"
+					echo -e -n "\\033[${STRING_LENGTH}G   "
+					boot_mesg "Already running." ${WARNING}
+					echo_warning
+					;;
+				not_running)
+					echo -e -n "${CURS_UP}"
+					echo -e -n "\\033[${STRING_LENGTH}G   "
+					boot_mesg "Not running." ${WARNING}
+					echo_warning
+					;;
+				not_available)
+					echo -e -n "${CURS_UP}"
+					echo -e -n "\\033[${STRING_LENGTH}G   "
+					boot_mesg "Not available." ${WARNING}
+					echo_warning
+					;;
+				*)
+					# This is how it is supposed to
+					# be called
+					echo_warning
+					;;
+			esac
+		;;
+
+		failure)
+			echo_failure
+		;;
+
+	esac
+
+}
+
+reloadproc()
+{
+	if [ "${#}" = "0" ]; then
+		echo "Usage: reloadproc [{program}]"
+		exit 1
+	fi
+
+	getpids "${1}"
+
+	if [ -n "${pidlist}" ];	then
+		failure="0"
+		for pid in ${pidlist}
+		do
+			kill -"${RELOADSIG}" "${pid}" || failure="1"
+		done
+
+		(exit ${failure})
+		evaluate_retval
+
+	else
+		boot_mesg "Process ${1} not running." ${WARNING}
+		echo_warning
+	fi
+}
+
+statusproc()
+{
+	if [ "${#}" = "0" ]
+	then
+		echo "Usage: statusproc {program}"
+		exit 1
+	fi
+
+	getpids "${1}"
+
+	if [ -n "${pidlist}" ];	then
+		echo -e "${INFO}${base} is running with Process"\
+			"ID(s) ${pidlist}.${NORMAL}"
+	else
+		if [ -n "${base}" -a -e "/var/run/${base}.pid" ]; then
+			echo -e "${WARNING}${1} is not running but"\
+				"/var/run/${base}.pid exists.${NORMAL}"
+		else
+			if [ -n "${PIDFILE}" -a -e "${PIDFILE}" ]; then
+				echo -e "${WARNING}${1} is not running"\
+					"but ${PIDFILE} exists.${NORMAL}"
+			else
+				echo -e "${INFO}${1} is not running.${NORMAL}"
+			fi
+		fi
+	fi
+}
+
+# The below functions are documented in the LSB-generic 2.1.0
+
+#*******************************************************************************
+# Function - pidofproc [-s] [-p pidfile] pathname
+#
+# Purpose: This function returns one or more pid(s) for a particular daemon
+#
+# Inputs: -p pidfile, use the specified pidfile instead of pidof
+#         pathname, path to the specified program
+#
+# Outputs: return 0 - Success, pid's in stdout
+#          return 1 - Program is dead, pidfile exists
+#          return 2 - Invalid or excessive number of arguments, 
+#                     warning in stdout
+#          return 3 - Program is not running
+#
+# Dependencies: pidof, echo, head
+#
+# Todo: Remove dependency on head
+#       This depreciates getpids
+#       Test changes to pidof
+#
+#*******************************************************************************
+pidofproc()
+{
+	local pidfile=""
+	local lpids=""
+	local silent=""
+	pidlist=""
+	while true
+	do
+		case "${1}" in
+			-p)
+				pidfile="${2}"
+				shift 2
+				;;
+
+			-s)
+				# Added for legacy opperation of getpids
+				# eliminates several '> /dev/null'
+				silent="1"
+				shift 1
+				;;
+			-*)
+				log_failure_msg "Unknown Option: ${1}"
+				return 2
+				;;
+			*)
+				break
+				;;
+		esac
+	done
+
+	if [ "${#}" != "1" ]; then
+		shift 1
+		log_failure_msg "Usage: pidofproc [-s] [-p pidfile] pathname"
+		return 2
+	fi
+
+	if [ -n "${pidfile}" ]; then
+		if [ ! -r "${pidfile}" ]; then
+			return 3 # Program is not running
+		fi
+
+		lpids=`head -n 1 ${pidfile}`
+		for pid in ${lpids}
+		do
+			if [ "${pid}" -ne "$$" -a "${pid}" -ne "${PPID}" ]; then
+				kill -0 "${pid}" > /dev/null &&
+				pidlist="${pidlist} ${pid}"
+			fi
+			
+			if [ "${silent}" -ne "1" ]; then
+				echo "${pidlist}"
+			fi
+
+			test -z "${pidlist}" && 
+			# Program is dead, pidfile exists
+			return 1
+			# else
+			return 0
+		done
+
+	else
+		pidlist=`pidof -o $$ -o $PPID -x "$1"`
+		if [ "x${silent}" != "x1" ]; then
+			echo "${pidlist}"
+		fi
+
+		# Get provide correct running status
+		if [ -n "${pidlist}" ]; then
+			return 0
+		else
+			return 3
+		fi
+
+	fi
+
+	if [ "$?" != "0" ]; then
+		return 3 # Program is not running
+	fi
+}
+
+# This will ensure compatibility with previous LFS Bootscripts
+getpids()
+{
+	if [ -z "${PIDFILE}" ]; then
+		pidofproc -s -p "${PIDFILE}" $@
+	else
+		pidofproc -s $@
+	fi
+	base="${1##*/}"
+}
+
+#*******************************************************************************
+# Function - loadproc [-f] [-n nicelevel] [-p pidfile] pathname [args]
+#
+# Purpose: This runs the specified program as a daemon
+#
+# Inputs: -f, run the program even if it is already running
+#         -n nicelevel, specifies a nice level. See nice(1).
+#         -p pidfile, uses the specified pidfile
+#         pathname, pathname to the specified program
+#         args, arguments to pass to specified program
+#
+# Outputs: return 0 - Success
+#          return 2 - Invalid of excessive number of arguments, 
+#                     warning in stdout
+#          return 4 - Program or service status is unknown
+#
+# Dependencies: nice
+#
+# Todo: LSB says this should be called start_daemon
+#       LSB does not say that it should call evaluate_retval
+#       It checks for PIDFILE, which is deprecated.
+#         Will be removed after BLFS 6.0
+#       loadproc returns 0 if program is already running, not LSB compliant
+#
+#*******************************************************************************
+loadproc()
+{
+	local pidfile=""
+	local forcestart=""
+	local nicelevel="10"
+
+# This will ensure compatibility with previous LFS Bootscripts
+	if [ -n "${PIDFILE}" ];	then
+		pidfile="${PIDFILE}"
+	fi
+
+  while true
+	do
+		case "${1}" in
+			-f)
+				forcestart="1"
+				shift 1
+				;;
+			-n)
+				nicelevel="${2}"
+				shift 2
+				;;
+			-p)
+				pidfile="${2}"
+				shift 2
+				;;
+			-*)
+				log_failure_msg "Unknown Option: ${1}"
+				return 2 #invalid or excess argument(s)
+				;;
+			*)
+				break
+				;;
+		esac
+	done
+
+	if [ "${#}" = "0" ]; then
+		log_failure_msg "Usage: loadproc [-f] [-n nicelevel] [-p pidfile] pathname [args]"
+		return 2 #invalid or excess argument(s)
+	fi
+
+	if [ -z "${forcestart}" ]; then
+		if [ -z "${pidfile}" ];	then
+			pidofproc -s "${1}"
+		else
+			pidofproc -s -p "${pidfile}" "${1}"
+		fi
+
+		case "${?}" in
+			0)
+				log_warning_msg "Unable to continue: ${1} is running"
+				return 0 # 4
+				;;
+			1)
+				log_warning_msg "Unable to continue: ${pidfile} exists"
+				return 0 # 4
+				;;
+			3)
+				;;
+			*)
+				log_failure_msg "Unknown error code from pidofproc: ${?}"
+				return 4
+				;;
+		esac
+	fi
+
+	nice -n "${nicelevel}" "${@}"
+	evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
+	return 0
+}
+
+#*******************************************************************************
+# Function - killproc  [-p pidfile] pathname [signal]
+#
+# Purpose:
+#
+# Inputs: -p pidfile, uses the specified pidfile
+#         pathname, pathname to the specified program
+#         signal, send this signal to pathname
+#
+# Outputs: return 0 - Success
+#          return 2 - Invalid of excessive number of arguments, 
+#                     warning in stdout
+#          return 4 - Unknown Status
+#
+# Dependencies: kill
+#
+# Todo: LSB does not say that it should call evaluate_retval
+#       It checks for PIDFILE, which is deprecated.
+#         Will be removed after BLFS 6.0
+#
+#*******************************************************************************
+killproc()
+{
+	local pidfile=""
+	local killsig=""
+	pidlist=""
+
+# This will ensure compatibility with previous LFS Bootscripts
+	if [ -n "${PIDFILE}" ];	then
+		pidfile="${PIDFILE}"
+	fi
+
+	while true
+	do
+		case "${1}" in
+			-p)
+				pidfile="${2}"
+				shift 2
+				;;
+			-*)
+				log_failure_msg "Unknown Option: ${1}"
+				return 2
+			;;
+			*)
+ 				break
+				;;
+		esac
+	done
+
+	if [ "${#}" = "2" ]; then
+		killsig="${2}"
+	elif [ "${#}" != "1" ];	then
+		shift 2
+		log_failure_msg "Usage: killproc  [-p pidfile] pathname [signal]"
+		return 2
+	fi
+
+	if [ -z "${pidfile}" ];	then
+		pidofproc -s "${1}"
+	else
+		pidofproc -s -p "${pidfile}" "${1}"
+	fi
+
+    # Change....
+    if [ -n "${pidlist}" ]; then
+	for pid in ${pidlist}
+	do
+		kill -${killsig:-TERM} ${pid} 2>/dev/null
+		if [ -z "${killsig}" ]; then
+			# Wait up to 3 seconds, for ${pid} to terminate
+			local dtime=${KILLDELAY}
+			while [ "${dtime}" != "0" ]
+			do
+				kill -0 ${pid} 2>/dev/null || break
+				sleep 1
+				dtime=$(( ${dtime} - 1))
+			done
+			# If ${pid} is still running, kill it
+			kill -0 ${pid} 2>/dev/null && kill -KILL ${pid} 2>/dev/null
+		fi
+	done
+
+	if [ -z "${killsig}" ];	then
+		pidofproc -s "${1}"
+
+		# Program was terminated
+		if [ "$?" != "0" ]; then
+			# Pidfile Exists
+			if [ -f "${pidfile}" ];	then
+				rm -f "${pidfile}"
+			fi
+			echo_ok
+			return 0
+		else # Program is still running
+			echo_failure
+			return 4 # Unknown Status
+		fi
+	else
+		if [ -z "${pidfile}" ];	then
+			pidofproc -s "${1}"
+		else
+			pidofproc -s -p "${pidfile}" "${1}"
+		fi
+	fi
+
+	evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
+
+    else
+	print_status warning not_running
+    fi
+}
+
+
+#*******************************************************************************
+# Function - log_success_msg "message"
+#
+# Purpose: Print a success message
+#
+# Inputs: $@ - Message
+#
+# Outputs: Text output to screen
+#
+# Dependencies: echo
+#
+# Todo: logging
+#
+#*******************************************************************************
+log_success_msg()
+{
+	echo -n -e "${BOOTMESG_PREFIX}${@}"
+	echo -e "${SET_COL}""${BRACKET}""[""${SUCCESS}""  OK  ""${BRACKET}""]""${NORMAL}"
+	return 0
+}
+
+#*******************************************************************************
+# Function - log_failure_msg "message"
+#
+# Purpose: Print a failure message
+#
+# Inputs: $@ - Message
+#
+# Outputs: Text output to screen
+#
+# Dependencies: echo
+#
+# Todo: logging
+#
+#*******************************************************************************
+log_failure_msg() {
+	echo -n -e "${BOOTMESG_PREFIX}${@}"
+	echo -e "${SET_COL}""${BRACKET}""[""${FAILURE}"" FAIL ""${BRACKET}""]""${NORMAL}"
+	return 0
+}
+
+#*******************************************************************************
+# Function - log_warning_msg "message"
+#
+# Purpose: print a warning message
+#
+# Inputs: $@ - Message
+#
+# Outputs: Text output to screen
+#
+# Dependencies: echo
+#
+# Todo: logging
+#
+#*******************************************************************************
+log_warning_msg() {
+	echo -n -e "${BOOTMESG_PREFIX}${@}"
+	echo -e "${SET_COL}""${BRACKET}""[""${WARNING}"" WARN ""${BRACKET}""]""${NORMAL}"
+	return 0
+}
+
+# End $rc_base/init.d/functions

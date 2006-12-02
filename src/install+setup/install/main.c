@@ -760,8 +760,11 @@ int main(int argc, char *argv[])
 	mysystem("/bin/mount -t proc none /harddisk/proc");
 	mysystem("/bin/mount --bind /dev /harddisk/dev");
 
+
+
 	/* if we detected SCSI then fixup */
-	mysystem("/bin/probecntrl.sh");
+	/* doesn't really work cause it sometimes creates a ramdisk on ide systems */
+/*	mysystem("/bin/probecntrl.sh");
 	if ((handle = fopen("/cntrldriver", "r")))
 	{
 		char *driver;
@@ -780,7 +783,7 @@ int main(int argc, char *argv[])
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 			mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
 		}
-	}
+	} */
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
@@ -808,6 +811,9 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
+	/* Update /etc/fstab */
+	replace( "/harddisk/etc/fstab", "DEVICE", hdparams.devnode);
+
 	/* Install bootsplash */
 	mysystem("/bin/installbootsplash.sh");
 
@@ -815,9 +821,11 @@ int main(int argc, char *argv[])
 	mysystem("umount /harddisk/proc");
 	mysystem("umount /harddisk/dev");
 
-	sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
-			NAME, SNAME, SNAME, NAME, NAME, NAME);
-	newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
+	if (!unattended) {
+		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
+				NAME, SNAME, SNAME, NAME, NAME, NAME);
+		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
+	}
 	         
 	allok = 1;
 

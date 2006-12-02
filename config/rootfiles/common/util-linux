@@ -4,7 +4,7 @@ bin/more
 bin/mount
 bin/umount
 etc/fdprm
-#sbin/agetty
+sbin/agetty
 sbin/blockdev
 sbin/cfdisk
 sbin/ctrlaltdel

@@ -1,0 +1,39 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/sysctl
+#
+# Description : File uses /etc/sysctl.conf to set kernel runtime
+#               parameters
+#
+# Authors     : Nathan Coulson (nathan@linuxfromscratch.org)
+#               Matthew Burgress (matthew@linuxfromscratch.org)
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		if [ -f "/etc/sysctl.conf" ]; then
+			boot_mesg "Setting kernel runtime parameters..."
+			sysctl -q -p
+			evaluate_retval
+		fi
+		;;
+
+	status)
+		sysctl -a	
+		;;
+
+	*)
+		echo "Usage: ${0} {start|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/sysctl

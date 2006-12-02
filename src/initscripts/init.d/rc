@@ -1,0 +1,99 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/rc
+#
+# Description : Main Run Level Control Script
+#
+# Authors     : Gerard Beekmans  - gerard@linuxfromscratch.org
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# This sets a few default terminal options.
+stty sane
+
+# These 3 signals will not cause our script to exit
+trap "" INT QUIT TSTP
+
+[ "${1}" != "" ] && runlevel=${1}
+
+if [ "${runlevel}" = "" ]; then
+	echo "Usage: ${0} <runlevel>" >&2
+	exit 1
+fi
+
+previous=${PREVLEVEL}
+[ "${previous}" = "" ] && previous=N
+
+if [ ! -d ${rc_base}/rc${runlevel}.d ]; then
+	boot_mesg "${rc_base}/rc${runlevel}.d does not exist." ${WARNING}
+	boot_mesg_flush
+	exit 1
+fi
+
+# Attempt to stop all service started by previous runlevel,
+# and killed in this runlevel
+if [ "${previous}" != "N" ]; then
+	for i in $(ls -v ${rc_base}/rc${runlevel}.d/K* 2> /dev/null)
+	do
+		check_script_status
+
+		suffix=${i#$rc_base/rc$runlevel.d/K[0-9][0-9]}
+		prev_start=$rc_base/rc$previous.d/S[0-9][0-9]$suffix
+		sysinit_start=$rc_base/rcsysinit.d/S[0-9][0-9]$suffix
+
+		if [ "${runlevel}" != "0" ] && [ "${runlevel}" != "6" ]; then
+			if [ ! -f ${prev_start} ] && [ ! -f ${sysinit_start} ]; then
+				boot_mesg -n "WARNING:\n\n${i} can't be" ${WARNING}
+				boot_mesg -n " executed because it was not"
+				boot_mesg -n " not started in the previous"
+				boot_mesg -n " runlevel (${previous})."
+				boot_mesg "" ${NORMAL}
+				boot_mesg_flush
+				continue
+			fi
+		fi
+		${i} stop
+		error_value=${?}
+
+		if [ "${error_value}" != "0" ]; then
+			print_error_msg
+		fi
+	done
+fi
+
+#Start all functions in this runlevel
+for i in $( ls -v ${rc_base}/rc${runlevel}.d/S* 2> /dev/null)
+do
+	if [ "${previous}" != "N" ]; then
+		suffix=${i#$rc_base/rc$runlevel.d/S[0-9][0-9]}
+		stop=$rc_base/rc$runlevel.d/K[0-9][0-9]$suffix
+		prev_start=$rc_base/rc$previous.d/S[0-9][0-9]$suffix
+
+		[ -f ${prev_start} ] && [ ! -f ${stop} ] && continue
+	fi
+
+	check_script_status
+
+	case ${runlevel} in
+		0|6)
+			${i} stop
+			;;
+		*)
+			${i} start
+			;;
+	esac
+	error_value=${?}
+
+	if [ "${error_value}" != "0" ]; then
+		print_error_msg
+	fi
+done
+
+# End $rc_base/init.d/rc

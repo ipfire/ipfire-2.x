@@ -1,0 +1,5 @@
+# Begin /etc/sysconfig/clock
+
+UTC=1
+
+# End /etc/sysconfig/clock

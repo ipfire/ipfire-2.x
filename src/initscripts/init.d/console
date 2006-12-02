@@ -1,0 +1,102 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/console
+#
+# Description : Sets keymap and screen font
+#
+# Authors     : Gerard Beekmans - gerard@linuxfromscratch.org
+#		Alexander E. Patrakov
+#
+# Version     : 00.03
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Native English speakers probably don't have /etc/sysconfig/console at all
+if [ -f /etc/sysconfig/console ]
+then
+	. /etc/sysconfig/console
+else
+        exit 0
+fi
+
+is_true() {
+	[ "$1" = "1" ] || [ "$1" = "yes" ] || [ "$1" = "true" ]
+}
+
+failed=0
+trap failed=1 ERR
+
+case "${1}" in
+	start)
+		boot_mesg "Setting up Linux console..."
+		# There should be no bogus failures below this line!
+		
+		# Figure out if a framebuffer console is used
+		[ -d /sys/class/graphics/fb0 ] && USE_FB=1 || USE_FB=0
+		
+		# Figure out the command to set the console into the
+		# desired mode
+		is_true "${UNICODE}" &&
+			MODE_COMMAND="echo -en '\033%G' && kbd_mode -u" ||
+			MODE_COMMAND="echo -en '\033%@\033(K' && kbd_mode -a"
+		
+		# On framebuffer consoles, font has to be set for each vt in
+		# UTF-8 mode. This doesn't hurt in non-UTF-8 mode also.
+		
+		! is_true "${USE_FB}" || [ -z "${FONT}" ] ||
+			MODE_COMMAND="${MODE_COMMAND} && setfont ${FONT}"
+
+		# Apply that command to all consoles mentioned in
+		# /etc/inittab. Important: in the UTF-8 mode this should
+		# happen before setfont, otherwise a kernel bug will
+		# show up and the unicode map of the font will not be
+		# used.
+		# FIXME: Fedora Core also initializes two spare consoles
+		# - do we want that?
+		
+		for TTY in `grep '^[^#].*respawn:/sbin/agetty' /etc/inittab |
+			grep -o '\btty[[:digit:]]*\b'`
+		do
+			openvt -f -w -c ${TTY#tty} -- \
+				/bin/sh -c "${MODE_COMMAND}"
+		done
+
+		# Set the font (if not already set above) and the keymap
+		is_true "${USE_FB}" || 	[ -z "${FONT}" ] || setfont $FONT
+		[ -z "${KEYMAP}" ] || loadkeys ${KEYMAP} &>/dev/null
+		[ -z "${KEYMAP_CORRECTIONS}" ] ||
+			loadkeys ${KEYMAP_CORRECTIONS} &>/dev/null
+
+		# Linux kernel generates wrong bytes when composing
+		# in Unicode mode. That's why we disable dead keys in Unicode
+		# mode by default. If you need them, download and apply
+		# http://www.linuxfromscratch.org/~alexander/patches/linux-2.6.12.5-utf8_input-2.patch
+		# After patching, add "-m charset_of_your_keymap" to the FONT
+		# variable and set BROKEN_COMPOSE=false
+		# in /etc/sysconfig/console
+
+		[ -n "$BROKEN_COMPOSE" ] || BROKEN_COMPOSE="$UNICODE"
+		! is_true "$BROKEN_COMPOSE" ||
+			echo "" | loadkeys -c &>/dev/null
+		
+		# Convert the keymap from $LEGACY_CHARSET to UTF-8
+		[ -z "$LEGACY_CHARSET" ] ||
+			dumpkeys -c "$LEGACY_CHARSET" | loadkeys -u &>/dev/null
+
+		# If any of the commands above failed, the trap at the
+		# top would set $failed to 1
+		( exit $failed )
+		evaluate_retval
+		;;
+	*)
+		echo $"Usage:" "${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/console

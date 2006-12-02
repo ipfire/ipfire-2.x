@@ -1,0 +1,49 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/setclock
+#
+# Description : Setting Linux Clock
+#
+# Authors     : Gerard Beekmans - gerard@linuxfromscratch.org
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+. /etc/sysconfig/clock
+
+CLOCKPARAMS=
+
+case "${UTC}" in
+	yes|true|1)
+		CLOCKPARAMS="${CLOCKPARAMS} --utc"
+		;;
+
+	no|false|0)
+		CLOCKPARAMS="${CLOCKPARAMS} --localtime"
+		;;
+
+esac
+
+case ${1} in
+	start)
+		boot_mesg "Setting system clock..."
+		hwclock --hctosys ${CLOCKPARAMS} &>/dev/null
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Setting hardware clock..."
+		hwclock --systohc ${CLOCKPARAMS} &>/dev/null
+		evaluate_retval
+		;;
+
+	*)
+		echo "Usage: ${0} {start}"
+		;;
+
+esac

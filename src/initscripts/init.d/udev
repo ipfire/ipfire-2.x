@@ -1,0 +1,77 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/udev
+#
+# Description : Udev cold-plugging script
+#
+# Authors     : Zack Winkles, Alexander E. Patrakov
+#
+# Version     : 00.02
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Populating /dev with device nodes..."
+		if ! grep -q '[[:space:]]sysfs' /proc/mounts; then
+			echo_failure
+			boot_mesg -n "FAILURE:\n\nUnable to create" ${FAILURE}
+			boot_mesg -n " devices without a SysFS filesystem"
+			boot_mesg -n "\n\nAfter you press Enter, this system"
+			boot_mesg -n " will be halted and powered off."
+			boot_mesg -n "\n\nPress Enter to continue..." ${INFO}
+			boot_mesg "" ${NORMAL}
+			read ENTER
+			/etc/rc.d/init.d/halt stop
+		fi
+
+		# Mount a temporary file system over /dev, so that any devices
+		# made or removed during this boot don't affect the next one.
+		# The reason we don't write to mtab is because we don't ever
+		# want /dev to be unavailable (such as by `umount -a').
+		mount -n -t tmpfs tmpfs /dev -o mode=755
+		if [ ${?} != 0 ]; then
+			echo_failure
+			boot_mesg -n "FAILURE:\n\nCannot mount a tmpfs" ${FAILURE}
+			boot_mesg -n " onto /dev, this system will be halted."
+			boot_mesg -n "\n\nAfter you press Enter, this system"
+			boot_mesg -n " will be halted and powered off."
+			boot_mesg -n "\n\nPress Enter to continue..." ${INFO}
+			boot_mesg "" ${NORMAL}
+			read ENTER
+			/etc/rc.d/init.d/halt stop
+		fi
+
+		# Udev handles uevents itself, so we don't need to have
+		# the kernel call out to any binary in response to them
+		echo > /proc/sys/kernel/hotplug
+
+		# Copy static device nodes to /dev
+		cp -a /lib/udev/devices/* /dev
+
+		# Start the udev daemon to continually watch for, and act on,
+		# uevents
+		/sbin/udevd --daemon
+
+		# Now traverse /sys in order to "coldplug" devices that have
+		# already been discovered
+		/sbin/udevtrigger
+
+		# Now wait for udevd to process the uevents we triggered
+		/sbin/udevsettle
+		evaluate_retval
+
+		;;
+
+	*)
+		echo "Usage ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/udev

@@ -1,0 +1,54 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/localnet
+#
+# Description : Loopback device
+#
+# Authors     : Gerard Beekmans  - gerard@linuxfromscratch.org
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+. /etc/sysconfig/network
+
+case "${1}" in
+	start)
+		boot_mesg "Bringing up the loopback interface..."
+		ip addr add 127.0.0.1/8 label lo dev lo
+		ip link set lo up
+		evaluate_retval
+
+		boot_mesg "Setting hostname to ${HOSTNAME}..."
+		hostname ${HOSTNAME}
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Bringing down the loopback interface..."
+		ip link set lo down
+		evaluate_retval
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		echo "Hostname is: $(hostname)"
+		ip link show lo
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/localnet

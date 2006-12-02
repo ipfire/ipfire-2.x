@@ -1,8 +1,8 @@
-#bin/bash
-#bin/cat
-#bin/grep
-#bin/pwd
-#bin/stty
+bin/bash
+bin/cat
+bin/grep
+bin/pwd
+bin/stty
 #boot
 dev/null
 dev/console
@@ -36,8 +36,9 @@ media/floppy
 mnt
 #opt
 root
-sbin
+#sbin
 #srv
+#sys
 tmp
 #usr/bin/perl
 #usr/include
@@ -101,9 +102,9 @@ tmp
 #var
 var/cache
 var/empty
-var/lib
-var/lib/locate
-var/lib/misc
+#var/lib
+#var/lib/locate
+#var/lib/misc
 #var/local
 var/lock
 var/log
