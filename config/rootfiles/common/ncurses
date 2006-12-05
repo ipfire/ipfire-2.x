@@ -53,9 +53,9 @@ usr/lib/libncurses.so
 #usr/lib/libpanel.a
 usr/lib/libpanel.so
 #usr/lib/libpanelw.a
-#usr/lib/libpanelw.so
-#usr/lib/libpanelw.so.5
-#usr/lib/libpanelw.so.5.5
+usr/lib/libpanelw.so
+usr/lib/libpanelw.so.5
+usr/lib/libpanelw.so.5.5
 #usr/lib/terminfo
 #usr/man/man1/captoinfo.1m
 #usr/man/man1/clear.1

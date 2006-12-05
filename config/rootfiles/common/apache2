@@ -1212,7 +1212,7 @@ usr/lib/libaprutil-1.so.0.2.7
 #usr/lib/pkgconfig/apr-1.pc
 #usr/lib/pkgconfig/apr-util-1.pc
 #usr/sbin/ab
-#usr/sbin/apachectl
+usr/sbin/apachectl
 #usr/sbin/apxs
 #usr/sbin/checkgid
 #usr/sbin/dbmmanage
@@ -1240,7 +1240,7 @@ usr/sbin/httpd
 #usr/share/man/man8/suexec.8
 var/log/httpd
 etc/httpd/conf/conf.d
-#etc/httpd/conf/conf.d/php5.conf
+#etc/httpd/conf/conf.d/php4.conf
 etc/httpd/conf/default-server.conf
 etc/httpd/conf/global.conf
 etc/httpd/conf/hostname.conf
