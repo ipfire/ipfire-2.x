@@ -41,7 +41,7 @@ ifeq "$(LFS_PASS)" "install"
 else
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --disable-nls
-  EXTRA_MAKE = $(MAKETUNING)
+  EXTRA_MAKE = 
   EXTRA_INSTALL =
 endif
 else

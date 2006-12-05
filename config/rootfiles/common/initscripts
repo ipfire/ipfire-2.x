@@ -1,4 +1,4 @@
-etc/boot.d
+#etc/boot.d
 #etc/boot.d/01-unmountinitrd
 #etc/boot.d/02-sethostname
 #etc/boot.d/03-loadkeymap

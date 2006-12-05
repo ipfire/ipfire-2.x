@@ -170,7 +170,7 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    MAKETUNING="-j8"
+    MAKETUNING="-j12"
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
@@ -555,7 +555,6 @@ buildinstaller() {
   installmake gettext
   installmake kbd
   installmake popt
-  installmake kudzu
   installmake sysvinit
   installmake misc-progs
   installmake e2fsprogs
@@ -564,6 +563,7 @@ buildinstaller() {
   installmake util-linux
   installmake pciutils
   installmake pcmciautils
+  installmake kudzu
   installmake installer
   installmake scsi.img	# this is to be deleted
   installmake driver.img	# this is to be deleted
@@ -598,7 +598,7 @@ buildpackages() {
   # Create images for install
   ipfiremake cdrom
   ipfiremake pxe
-  cp $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
+  cp -f $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 
 #  ipfirepackages
 
