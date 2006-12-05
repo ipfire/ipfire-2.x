@@ -198,14 +198,14 @@ int unattended_setup(struct keyvalue *unattendedkv) {
 
     if (strcmp(serial_console, "yes") != 0) {
 	    snprintf(commandstring, STRING_SIZE,
-		     "/bin/chroot /harddisk /bin/sed -i -e \"s/^s0/#s0/\" /etc/inittab");
+		     "/sbin/chroot /harddisk /bin/sed -i -e \"s/^s0/#s0/\" /etc/inittab");
 	    if (mysystem(commandstring)) {
 		    errorbox("unattended: ERROR modifying inittab");
 		    return 0;    
 	    }
 
 	    snprintf(commandstring, STRING_SIZE,
-		     "/bin/chroot /harddisk /bin/sed -i -e \"s/^serial/#serial/; s/^terminal/#terminal/\" /boot/grub/grub.conf");
+		     "/sbin/chroot /harddisk /bin/sed -i -e \"s/^serial/#serial/; s/^terminal/#terminal/\" /boot/grub/grub.conf");
 	    if (mysystem(commandstring)) {
 		    errorbox("unattended: ERROR modifying inittab");
 		    return 0;
@@ -221,7 +221,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     fprintf(flog, "unattended: setting root password\n");
     
     snprintf(commandstring, STRING_SIZE,
-	    "/bin/chroot /harddisk /bin/sh -c \"echo 'root:%s' | /usr/sbin/chpasswd\"", root_password);
+	    "/sbin/chroot /harddisk /bin/sh -c \"echo 'root:%s' | /usr/sbin/chpasswd\"", root_password);
     if (mysystem(commandstring)) {
 	errorbox("unattended: ERROR setting root password");
 	return 0;
@@ -230,7 +230,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     /* set admin password */
     fprintf(flog, "unattended: setting admin password\n");
     snprintf(commandstring, STRING_SIZE,
-	    "/bin/chroot /harddisk /usr/bin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
+	    "/sbin/chroot /harddisk /usr/bin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
     if (mysystem(commandstring)) {
 	errorbox("unattended: ERROR setting admin password");
 	return 0;    
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-	mysystem("/bin/udevstart");
+	mysystem("/sbin/udevstart");
 
 	if (raid_disk)
 		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %sp1", hdparams.devnode);
@@ -622,9 +622,9 @@ int main(int argc, char *argv[])
 
 	if (swap_file) {
 		if (raid_disk)
-			snprintf(commandstring, STRING_SIZE, "/bin/mkswap %sp2", hdparams.devnode);	
+			snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %sp2", hdparams.devnode);	
 		else
-			snprintf(commandstring, STRING_SIZE, "/bin/mkswap %s2", hdparams.devnode);
+			snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %s2", hdparams.devnode);
 		if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
 		{
 			errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
@@ -656,9 +656,9 @@ int main(int argc, char *argv[])
 
 	/* Mount harddisk. */
 	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount %sp3 /harddisk", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mount %sp3 /harddisk", hdparams.devnode);
 	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount %s3 /harddisk", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mount %s3 /harddisk", hdparams.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_ROOT_FILESYSTEM]);
@@ -670,9 +670,9 @@ int main(int argc, char *argv[])
 	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
 	
 	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount %sp1 /harddisk/boot", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mount %sp1 /harddisk/boot", hdparams.devnode);
 	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount %s1 /harddisk/boot", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mount %s1 /harddisk/boot", hdparams.devnode);
 
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
 	{
@@ -681,9 +681,9 @@ int main(int argc, char *argv[])
 	}
 	if (swap_file) {
 		if (raid_disk)
-			snprintf(commandstring, STRING_SIZE, "/bin/swapon %sp2", hdparams.devnode);
+			snprintf(commandstring, STRING_SIZE, "/sbin/swapon %sp2", hdparams.devnode);
 		else
-			snprintf(commandstring, STRING_SIZE, "/bin/swapon %s2", hdparams.devnode);
+			snprintf(commandstring, STRING_SIZE, "/sbin/swapon %s2", hdparams.devnode);
 		if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_SWAP_PARTITION]))
 		{
 			errorbox(ctr[TR_UNABLE_TO_MOUNT_SWAP_PARTITION]);
@@ -691,9 +691,9 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount %sp4 /harddisk/var", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mount %sp4 /harddisk/var", hdparams.devnode);
 	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mount %s4 /harddisk/var", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mount %s4 /harddisk/var", hdparams.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
@@ -714,11 +714,11 @@ int main(int argc, char *argv[])
 
 	/* touch the modules.dep files */
 	snprintf(commandstring, STRING_SIZE, 
-		"/bin/chroot /harddisk /usr/bin/touch /lib/modules/%s/modules.dep",
+		"/sbin/chroot /harddisk /usr/bin/touch /lib/modules/%s/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
 	snprintf(commandstring, STRING_SIZE, 
-		"/bin/chroot /harddisk /usr/bin/touch /lib/modules/%s-smp/modules.dep",
+		"/sbin/chroot /harddisk /usr/bin/touch /lib/modules/%s-smp/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
 
@@ -775,18 +775,18 @@ int main(int argc, char *argv[])
 		fprintf(flog, "Detected SCSI driver %s\n",driver);
 		if (strlen(driver) > 1) {
 			fprintf(flog, "Fixing up ipfirerd.img\n");
-			mysystem("/bin/chroot /harddisk /sbin/modprobe loop");
+			mysystem("/sbin/chroot /harddisk /sbin/modprobe loop");
 			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
+			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
+			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			mysystem("/bin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
+			mysystem("/sbin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
 		}
 	} */
 
 	/* Build cache lang file */
-	snprintf(commandstring, STRING_SIZE, "/bin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
@@ -805,7 +805,7 @@ int main(int argc, char *argv[])
 	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
 
 	snprintf(commandstring, STRING_SIZE, 
-		 "/bin/chroot /harddisk /boot/grub/grubbatch");
+		 "/sbin/chroot /harddisk /boot/grub/grubbatch");
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
@@ -845,23 +845,23 @@ EXIT:
 	{
 		/* /proc is needed by the module checker.  We have to mount it
 		 * so it can be seen by setup, which is run chrooted. */
-		if (system("/sbin/mount proc -t proc /harddisk/proc"))
+		if (system("/bin/mount proc -t proc /harddisk/proc"))
 			printf("Unable to mount proc in /harddisk.");
 		else
 		{
-			if (system("/bin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
+			if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
 				printf("Unable to run setup.\n");
-			if (system("/sbin/umount /harddisk/proc"))
+			if (system("/bin/umount /harddisk/proc"))
 				printf("Unable to umount /harddisk/proc.\n");
 		}
 	}
 
 	fcloseall();
 
-	system("/bin/swapoff /harddisk/swapfile");
-	system("/sbin/umount /harddisk/var");
-	system("/sbin/umount /harddisk/boot");
-	system("/sbin/umount /harddisk");
+	system("/sbin/swapoff /harddisk/swapfile");
+	system("/bin/umount /harddisk/var");
+	system("/bin/umount /harddisk/boot");
+	system("/bin/umount /harddisk");
 	  
 	system("/etc/halt");
 
