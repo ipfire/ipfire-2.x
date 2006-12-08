@@ -1,0 +1,122 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/network
+#
+# Description : Network Control Script
+#
+# Authors     : Michael Tremer - m.s.tremer@googlemail.com
+#
+# Version     : 00.00
+#
+# Notes       : Written for IPFire by its team
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+. /var/ipfire/ethernet/settings
+
+case "${1}" in
+	start)
+		boot_mesg "Loading MASQ helper modules"
+		modprobe iptable_nat
+		modprobe ip_conntrack
+		modprobe ip_conntrack_ftp
+		modprobe ip_nat_ftp
+		modprobe ip_conntrack_h323
+		modprobe ip_nat_h323
+		modprobe ip_conntrack_irc
+		modprobe ip_nat_irc
+		modprobe ip_conntrack_mms
+		modprobe ip_nat_mms
+		modprobe ip_conntrack_pptp
+		modprobe ip_nat_pptp
+		modprobe ip_conntrack_proto_gre
+		modprobe ip_nat_proto_gre
+		modprobe ip_conntrack_quake3
+		modprobe ip_nat_quake3
+
+		# Remove possible leftover files
+		rm -f CONFIG_ROOT/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
+
+		# This won't actually do anything unless a PCMCIA controller was
+		# detected at install time, because /etc/pcmcia.conf won't exist.
+		/etc/rc.d/rc.pcmcia start
+		# Now, just in case we found a PCMCIA USB controller, we'll need to reload
+		# the USB here.
+		/usr/local/bin/resetusb
+
+		# The 'for' loop force driver loading order
+		for NIC in 0 1 2 3; do
+		    ETHX="eth${NIC}"
+		    if [ "$GREEN_DEV" == "$ETHX" ]; then
+			if [ "$GREEN_DRIVER" != "" ]; then
+			    modprobe $GREEN_DRIVER $GREEN_DRIVER_OPTIONS
+			    evaluate_retval
+		       fi
+		    fi
+		    if [ "$ORANGE_DEV" == "$ETHX" ]; then
+		        if [ "$ORANGE_DRIVER" != "" ]; then
+			    modprobe $ORANGE_DRIVER $ORANGE_DRIVER_OPTIONS
+			    evaluate_retval
+			fi
+		    fi
+		    if [ "$BLUE_DEV" == "$ETHX" ]; then
+			if [ "$BLUE_DRIVER" != "" ]; then
+			    modprobe $BLUE_DRIVER $BLUE_DRIVER_OPTIONS
+			    evaluate_retval
+			fi
+		    fi
+		    if [ "$RED_DEV" == "$ETHX" ]; then
+			if [ "$RED_DRIVER" != "" ]; then
+			    modprobe $RED_DRIVER $RED_DRIVER_OPTIONS
+			    evaluate_retval
+		    	fi
+		    fi
+		done
+
+		if [ -d /proc/bus/pccard ]; then
+			boot_mesg "Initializing PCMCIA cardbus modems"
+			modprobe serial_cb
+			evaluate_retval
+		fi
+
+		boot_mesg "Setting up IPFire firewall rules"
+		/etc/rc.d/rc.firewall start
+		evaluate_retval
+		boot_mesg "Setting up IP Accounting"
+		/etc/rc.d/helper/writeipac.pl
+		/usr/sbin/fetchipac -S
+		evaluate_retval
+		boot_mesg "Setting IPFire DMZ pinholes"
+		/usr/local/bin/setdmzholes
+		evaluate_retval
+
+		if [ "$BLUE_DEV" != "" ]; then
+			boot_mesg "Setting up wireless firewall rules"
+			/usr/local/bin/restartwireless
+			evaluate_retval
+		fi
+
+		boot_mesg "Bringing network up..."
+		. /etc/rc.d/rc.netaddress.up
+
+		;;
+
+	stop)
+
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart}"
+		exit 1
+		;;
+esac
+
+# End /etc/rc.d/init.d/network
