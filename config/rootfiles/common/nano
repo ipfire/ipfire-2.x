@@ -1,0 +1,7 @@
+#etc/nano
+etc/nano/nanorc.sample
+usr/bin/nano
+usr/bin/pico
+#usr/info/nano.info
+#usr/man/man1/nano.1
+#usr/man/man5/nanorc.5

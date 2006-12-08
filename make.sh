@@ -280,6 +280,7 @@ buildbase() {
     lfsmake2 bzip2
     lfsmake2 diffutils
     lfsmake2 e2fsprogs
+    lfsmake2 ed
     lfsmake2 file
     lfsmake2 findutils
     lfsmake2 flex
@@ -297,6 +298,7 @@ buildbase() {
     lfsmake2 man
     lfsmake2 mktemp
     lfsmake2 modutils
+    lfsmake2 net-tools
     lfsmake2 patch
     lfsmake2 psmisc
     lfsmake2 shadow
@@ -312,9 +314,6 @@ buildbase() {
 buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
-  ipfiremake inetutils
-  ipfiremake net-tools
-  ipfiremake ed
   ipfiremake configroot
   ipfiremake dhcp
   ipfiremake dhcpcd

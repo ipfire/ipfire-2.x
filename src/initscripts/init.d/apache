@@ -4,15 +4,17 @@
 # Based on sysklogd script from LFS-3.1 and earlier.
 # Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
 
-#$LastChangedBy: bdubbs $
-#$Date: 2005-08-01 14:29:19 -0500 (Mon, 01 Aug 2005) $
-
 . /etc/sysconfig/rc
 . $rc_functions
 
 case "$1" in
 	start)
 		boot_mesg "Starting Apache daemon..."
+		if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
+			/usr/local/bin/httpscert read >/dev/null 2>&1
+		else
+			/usr/local/bin/httpscert new  >/dev/null 2>&1
+		fi
 		/usr/sbin/apachectl -k start
 		evaluate_retval
 		;;

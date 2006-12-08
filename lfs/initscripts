@@ -50,14 +50,8 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
-
-	# Make directories
 	install -d -m 755 /etc/rc.d/rc0.d
-	install -d -m 755 /etc/rc.d/rc1.d
-	install -d -m 755 /etc/rc.d/rc2.d
 	install -d -m 755 /etc/rc.d/rc3.d
-	install -d -m 755 /etc/rc.d/rc4.d
-	install -d -m 755 /etc/rc.d/rc5.d
 	install -d -m 755 /etc/rc.d/rc6.d
 	install -d -m 755 /etc/rc.d/rcsysinit.d
 	install -d -m 755 /etc/rc.d/init.d
@@ -68,17 +62,17 @@ $(TARGET) :
 	done
 	chmod 644 /etc/rc.d/init.d/functions
 
+	for i in $(DIR_SRC)/src/initscripts/sysconfig/*; do \
+		install -v -m 644 $$i /etc/sysconfig/; \
+	done
+
 	ln -sf ../init.d/sysklogd    /etc/rc.d/rc0.d/K90sysklogd
 	ln -sf ../init.d/sendsignals /etc/rc.d/rc0.d/S60sendsignals
 	ln -sf ../init.d/mountfs     /etc/rc.d/rc0.d/S70mountfs
 	ln -sf ../init.d/swap        /etc/rc.d/rc0.d/S80swap
 	ln -sf ../init.d/localnet    /etc/rc.d/rc0.d/S90localnet
 	ln -sf ../init.d/halt        /etc/rc.d/rc0.d/S99halt
-	ln -sf ../init.d/sysklogd    /etc/rc.d/rc1.d/K90sysklogd
-	ln -sf ../init.d/sysklogd    /etc/rc.d/rc2.d/K90sysklogd
 	ln -sf ../init.d/sysklogd    /etc/rc.d/rc3.d/S10sysklogd
-	ln -sf ../init.d/sysklogd    /etc/rc.d/rc4.d/S10sysklogd
-	ln -sf ../init.d/sysklogd    /etc/rc.d/rc5.d/S10sysklogd
 	ln -sf ../init.d/sysklogd    /etc/rc.d/rc6.d/K90sysklogd
 	ln -sf ../init.d/sendsignals /etc/rc.d/rc6.d/S60sendsignals
 	ln -sf ../init.d/mountfs     /etc/rc.d/rc6.d/S70mountfs
@@ -86,26 +80,15 @@ $(TARGET) :
 	ln -sf ../init.d/localnet    /etc/rc.d/rc6.d/S90localnet
 	ln -sf ../init.d/reboot      /etc/rc.d/rc6.d/S99reboot
 	ln -sf ../init.d/sshd        /etc/rc.d/rc0.d/K30sshd
-	ln -sf ../init.d/sshd        /etc/rc.d/rc1.d/K30sshd
-	ln -sf ../init.d/sshd        /etc/rc.d/rc2.d/K30sshd
 	ln -sf ../init.d/sshd        /etc/rc.d/rc3.d/S30sshd
-	ln -sf ../init.d/sshd        /etc/rc.d/rc4.d/S30sshd
-	ln -sf ../init.d/sshd        /etc/rc.d/rc5.d/S30sshd
 	ln -sf ../init.d/sshd        /etc/rc.d/rc6.d/K30sshd
 	ln -sf ../init.d/apache      /etc/rc.d/rc0.d/K28apache
-	ln -sf ../init.d/apache      /etc/rc.d/rc1.d/K28apache
-	ln -sf ../init.d/apache      /etc/rc.d/rc2.d/K28apache
 	ln -sf ../init.d/apache      /etc/rc.d/rc3.d/S32apache
-	ln -sf ../init.d/apache      /etc/rc.d/rc4.d/S32apache
-	ln -sf ../init.d/apache      /etc/rc.d/rc5.d/S32apache
 	ln -sf ../init.d/apache      /etc/rc.d/rc6.d/K28apache
 	ln -sf ../init.d/fcron       /etc/rc.d/rc0.d/K08fcron
-	ln -sf ../init.d/fcron       /etc/rc.d/rc1.d/K08fcron
-	ln -sf ../init.d/fcron       /etc/rc.d/rc2.d/S40fcron
 	ln -sf ../init.d/fcron       /etc/rc.d/rc3.d/S40fcron
-	ln -sf ../init.d/fcron       /etc/rc.d/rc4.d/S40fcron
-	ln -sf ../init.d/fcron       /etc/rc.d/rc5.d/S40fcron
 	ln -sf ../init.d/fcron       /etc/rc.d/rc6.d/K08fcron
+
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
@@ -118,12 +101,6 @@ $(TARGET) :
 	ln -sf ../init.d/console     /etc/rc.d/rcsysinit.d/S70console
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
 	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S90sysctl
-
-	install -m 644 $(DIR_SRC)/src/initscripts/sysconfig/createfiles /etc/sysconfig/
-	install -m 644 $(DIR_SRC)/src/initscripts/sysconfig/modules     /etc/sysconfig/
-	install -m 644 $(DIR_SRC)/src/initscripts/sysconfig/rc          /etc/sysconfig/
-	install -m 644 $(DIR_SRC)/src/initscripts/sysconfig/clock       /etc/sysconfig/
-	install -m 644 $(DIR_SRC)/src/initscripts/sysconfig/network     /etc/sysconfig/
 
 #	-mkdir -p /etc/rc.d/helper
 #	for i in $(DIR_SRC)/src/rc.d/* ; do \
@@ -139,5 +116,4 @@ $(TARGET) :
 #	chmod -R 755 /etc/rc.d
 #	chgrp nobody /etc/rc.d/rc.red
 #	chmod 4750 /etc/rc.d/rc.red
-
 	@$(POSTBUILD)

@@ -31,7 +31,7 @@ case "$1" in
 		ISSUER=`openssl x509 -in /etc/httpd/server.crt -text -noout | grep Issuer | /usr/bin/cut -f2 -d '='`
 		HOSTNAME=`/bin/hostname -f`
 		if [ "$ISSUER" != "$HOSTNAME" ]; then
-			echo "Certificate issuer '$ISSUER' is not the same as the hostname'$HOSTNAME'"
+			echo "Certificate issuer '$ISSUER' is not the same as the hostname '$HOSTNAME'"
 			echo "Probably host or domain name has been changed in setup"
 			echo "You could remake server certificate with '/usr/local/bin/httpscert new'"
 			exit 1

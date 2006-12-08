@@ -1,33 +1,42 @@
-# do not bell on tab-completion
-#set bell-style none
+# Begin /etc/inputrc
 
-set meta-flag on
-set input-meta on
-set convert-meta off
-set output-meta on
+# Allow the command prompt to wrap to the next line
+set horizontal-scroll-mode Off
 
-$if mode=emacs
+# Enable 8bit input
+set meta-flag On
+set input-meta On
 
-# for linux console and RH/Debian xterm
+# Turns off 8th bit stripping
+set convert-meta Off
+
+# Keep the 8th bit for display
+set output-meta On
+
+# none, visible or audible
+set bell-style none
+
+# All of the following map the escape sequence of the
+# value contained inside the 1st argument to the
+# readline specific functions
+
+"\eOd": backward-word
+"\eOc": forward-word
+
+# for linux console
 "\e[1~": beginning-of-line
 "\e[4~": end-of-line
 "\e[5~": beginning-of-history
 "\e[6~": end-of-history
 "\e[3~": delete-char
 "\e[2~": quoted-insert
-"\e[5C": forward-word
-"\e[5D": backward-word
-"\e\e[C": forward-word
-"\e\e[D": backward-word
 
-# for rxvt
-"\e[8~": end-of-line
-
-# for non RH/Debian xterm, can't hurt for RH/DEbian xterm
+# for xterm
 "\eOH": beginning-of-line
 "\eOF": end-of-line
 
-# for freebsd console
+# for Konsole
 "\e[H": beginning-of-line
 "\e[F": end-of-line
-$endif
+
+# End /etc/inputrc

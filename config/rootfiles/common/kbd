@@ -1,6 +1,6 @@
 bin/kbd_mode
 bin/loadkeys
-#bin/openvt
+bin/openvt
 bin/setfont
 #lib/kbd
 #lib/kbd/consolefonts
