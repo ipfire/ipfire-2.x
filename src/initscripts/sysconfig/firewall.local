@@ -1,0 +1,20 @@
+#!/bin/sh
+# Used for private firewall rules
+
+# See how we were called.
+case "$1" in
+  start)
+        ## add your 'start' rules here
+        ;;
+  stop)
+        ## add your 'stop' rules here
+        ;;
+  reload)
+        $0 stop
+        $0 start
+        ## add your 'reload' rules here
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|reload}"
+        ;;
+esac

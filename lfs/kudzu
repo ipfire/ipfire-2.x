@@ -83,9 +83,8 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && install -m 0755 kudzu /install/initrd/bin/kudzu
 	cd $(DIR_APP) && install -m 0644 libkudzu.a /install/initrd/lib
 	cd $(DIR_APP) && install -m 0644 libkudzu_loader.a /install/initrd/lib
-#	-mkdir -p /install/include/kudzu
-#	cd $(DIR_APP) && install -m 0644 *.h /install/include/kudzu
 else
+	rm -rf /usr/sbin/kudzu
 	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make
 	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make install
 	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make install-program

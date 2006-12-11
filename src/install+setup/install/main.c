@@ -14,7 +14,7 @@
 #define CDROM_INSTALL 0
 #define URL_INSTALL 1
 #define DISK_INSTALL 2
-#define INST_FILECOUNT 6600
+#define INST_FILECOUNT 5600
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
 int raid_disk = 0;
@@ -108,8 +108,6 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     char green_broadcast[STRING_SIZE];
     char root_password[STRING_SIZE];
     char admin_password[STRING_SIZE];
-    char serial_console[STRING_SIZE];
-    char reversesort[STRING_SIZE];
 
     findkey(unattendedkv, "DOMAINNAME", domainname);
     findkey(unattendedkv, "HOSTNAME", hostname);
@@ -122,8 +120,6 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     findkey(unattendedkv, "GREEN_BROADCAST", green_broadcast);
     findkey(unattendedkv, "ROOT_PASSWORD", root_password);
     findkey(unattendedkv, "ADMIN_PASSWORD", admin_password);
-    findkey(unattendedkv, "SERIAL_CONSOLE", serial_console);
-    findkey(unattendedkv, "REVERSE_NICS", reversesort);
 
     /* write main/settings. */
     replacekeyvalue(mainsettings, "DOMAINNAME", domainname);
@@ -138,7 +134,6 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     fprintf(flog, "unattended: Starting setup\n");
 
     /* network */
-
     fprintf(flog, "unattended: setting up network configuration\n");
 
     (void) readkeyvalues(ethernetkv, "/harddisk" CONFIG_ROOT "/ethernet/settings");
@@ -164,7 +159,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
 	return 0;
     }
     fprintf(file, "ServerName %s\n", hostname);
-    fclose(file);				    
+    fclose(file);
 
     fprintf(flog, "unattended: writing hosts\n");
     if (!(hosts = fopen("/harddisk/etc/hosts", "w")))
@@ -174,7 +169,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     }
     fprintf(hosts, "127.0.0.1\tlocalhost\n");
     fprintf(hosts, "%s\t%s.%s\t%s\n", green_address, hostname, domainname, hostname);
-    fclose(hosts);								
+    fclose(hosts);
 
     fprintf(flog, "unattended: writing hosts.allow\n");
     if (!(file = fopen("/harddisk/etc/hosts.allow", "w")))
@@ -196,47 +191,24 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     fprintf(file, "ALL : ALL\n");
     fclose(file);
 
-    if (strcmp(serial_console, "yes") != 0) {
-	    snprintf(commandstring, STRING_SIZE,
-		     "/sbin/chroot /harddisk /bin/sed -i -e \"s/^s0/#s0/\" /etc/inittab");
-	    if (mysystem(commandstring)) {
-		    errorbox("unattended: ERROR modifying inittab");
-		    return 0;    
-	    }
-
-	    snprintf(commandstring, STRING_SIZE,
-		     "/sbin/chroot /harddisk /bin/sed -i -e \"s/^serial/#serial/; s/^terminal/#terminal/\" /boot/grub/grub.conf");
-	    if (mysystem(commandstring)) {
-		    errorbox("unattended: ERROR modifying inittab");
-		    return 0;
-	    }
-    }
-
-    /* set reverse sorting of interfaces */
-    if (strcmp(reversesort, "yes") == 0) {
-	    mysystem("/bin/touch /harddisk/var/ipfire/ethernet/reverse_nics");
-    }
-
     /* set root password */
     fprintf(flog, "unattended: setting root password\n");
-    
     snprintf(commandstring, STRING_SIZE,
 	    "/sbin/chroot /harddisk /bin/sh -c \"echo 'root:%s' | /usr/sbin/chpasswd\"", root_password);
     if (mysystem(commandstring)) {
 	errorbox("unattended: ERROR setting root password");
 	return 0;
     }
-    
+
     /* set admin password */
     fprintf(flog, "unattended: setting admin password\n");
     snprintf(commandstring, STRING_SIZE,
-	    "/sbin/chroot /harddisk /usr/bin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
+	    "/sbin/chroot /harddisk /usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
     if (mysystem(commandstring)) {
 	errorbox("unattended: ERROR setting admin password");
-	return 0;    
+	return 0;
     }
-    
-    return 1;								
+    return 1;
 }
 
 int main(int argc, char *argv[])
@@ -849,8 +821,18 @@ EXIT:
 			printf("Unable to mount proc in /harddisk.");
 		else
 		{
-			if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
-				printf("Unable to run setup.\n");
+
+			if (!unattended) {
+			    if (system("/bin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
+				    printf("Unable to run setup.\n");
+			}
+			else {
+			    fprintf(flog, "Entering unattended setup\n");
+			    unattended_setup(unattendedkv);
+			    snprintf(commandstring, STRING_SIZE, "/bin/sleep 10");
+			    runcommandwithstatus(commandstring, "Unattended installation finished, system will reboot");
+			}
+
 			if (system("/bin/umount /harddisk/proc"))
 				printf("Unable to umount /harddisk/proc.\n");
 		}
@@ -858,7 +840,15 @@ EXIT:
 
 	fcloseall();
 
-	system("/sbin/swapoff /harddisk/swapfile");
+	if (swap_file) {
+		if (raid_disk)
+			snprintf(commandstring, STRING_SIZE, "/bin/swapoff %sp2", hdparams.devnode);
+		else
+			snprintf(commandstring, STRING_SIZE, "/bin/swapoff %s2", hdparams.devnode);
+	}
+
+	newtFinished();
+
 	system("/bin/umount /harddisk/var");
 	system("/bin/umount /harddisk/boot");
 	system("/bin/umount /harddisk");

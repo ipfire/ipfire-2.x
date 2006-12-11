@@ -82,7 +82,7 @@ case "${1}" in
 		fi
 
 		boot_mesg "Setting up IPFire firewall rules"
-		/etc/rc.d/rc.firewall start
+		/etc/rc.d/init.d/firewall start
 		evaluate_retval
 		boot_mesg "Setting up IP Accounting"
 		/etc/rc.d/helper/writeipac.pl

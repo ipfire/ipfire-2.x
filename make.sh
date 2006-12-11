@@ -324,8 +324,7 @@ buildipfire() {
   ipfiremake ppp
   ipfiremake rp-pppoe
   ipfiremake unzip
-#  ipfiremake linux			PASS=I # Can we remove the installer kernel?
-  ipfiremake linux			PASS=S
+  ipfiremake linux			SMP=1
 #  ipfiremake 3cp4218		PASS=SMP
 #  ipfiremake amedyn			PASS=SMP
 #  ipfiremake cxacru			PASS=SMP

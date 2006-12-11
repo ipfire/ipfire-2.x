@@ -36,25 +36,22 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-# Normal build or /tools build.
+# Normal build or SMP build.
 #
-ifeq "$(PASS)" ""
-  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire
-endif
-ifeq "$(PASS)" "S"
-  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-smp
-endif
-ifeq "$(PASS)" "I"
-  TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-installer
+ifeq "$(SMP)" "1"
+	TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-smp
+else
+	TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire
 endif
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	openswan-2.4.6.kernel-2.6-natt.patch.gz \
+	openswan-2.4.7.kernel-2.6-natt.patch.gz \
+	openswan-2.4.7.kernel-2.6-klips.patch.gz \
 	iptables-1.3.5.tar.bz2 \
-	patch-o-matic-ng-20060206.tar.bz2 \
+	patch-o-matic-ng-20061210.tar.bz2 \
 	kbc_option_2420.patch \
 	net4801.kernel.patch_2.4.31 \
 	netfilter-layer7-v2.6.tar.gz \
@@ -62,8 +59,9 @@ objects =$(DL_FILE) \
 
 $(DL_FILE)					= $(DL_FROM)/$(DL_FILE)
 patch-$(PATCHLEVEL).gz			= $(DL_FROM)/patch-$(PATCHLEVEL).gz
-openswan-2.4.6.kernel-2.6-natt.patch.gz	= $(URL_IPFIRE)/openswan-2.4.6.kernel-2.6-natt.patch.gz
-patch-o-matic-ng-20060206.tar.bz2    	= $(URL_IPFIRE)/patch-o-matic-ng-20060206.tar.bz2
+openswan-2.4.7.kernel-2.6-natt.patch.gz	= $(URL_IPFIRE)/openswan-2.4.7.kernel-2.6-natt.patch.gz
+openswan-2.4.7.kernel-2.6-klips.patch.gz	= $(URL_IPFIRE)/openswan-2.4.7.kernel-2.6-klips.patch.gz
+patch-o-matic-ng-20061210.tar.bz2    	= $(URL_IPFIRE)/patch-o-matic-ng-20061210.tar.bz2
 iptables-1.3.5.tar.bz2			= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
 kbc_option_2420.patch			= $(URL_IPFIRE)/kbc_option_2420.patch
 net4801.kernel.patch_2.4.31			= $(URL_IPFIRE)/net4801.kernel.patch_2.4.31
@@ -71,8 +69,9 @@ netfilter-layer7-v2.6.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.6.tar.gz
 
 $(DL_FILE)_MD5					= 50695965725367f39007023feac5e256
 patch-$(PATCHLEVEL).gz_MD5				= 4b09dd018286850c20c0f051ced7b583
-openswan-2.4.6.kernel-2.6-natt.patch.gz_MD5	= 398110db4372ea3acc45bd66d6d86eac
-patch-o-matic-ng-20060206.tar.bz2_MD5		= eca9893afb753e331caddfe63142b566
+openswan-2.4.7.kernel-2.6-natt.patch.gz_MD5	= 980d8bbdb29a761b7f5aa852f373df62
+openswan-2.4.7.kernel-2.6-klips.patch.gz_MD5	= 5df0ffa2453488a407a23fc4ea4af879
+patch-o-matic-ng-20061210.tar.bz2_MD5		= 76edac76301b45f89e467b41c8cf4393
 iptables-1.3.5.tar.bz2_MD5				= 00fb916fa8040ca992a5ace56d905ea5
 kbc_option_2420.patch_MD5				= 6d37870344f7fcf97ace1fbf43323c60
 net4801.kernel.patch_2.4.31_MD5			= c7d64e3caedb2f2b10e1c11db7f73a04
@@ -106,6 +105,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	# Update kernel to latest patchlevel
 	cd $(DIR_APP) && zcat $(DIR_DL)/patch-$(PATCHLEVEL).gz | patch -p1
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16.27-utf8_input-1.patch
 	# Remove patch level in EXTRAVERSION.
@@ -113,86 +114,67 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# (installed in a different place) if only one part could be updated
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =/' Makefile
 	cd $(DIR_APP) && sed -i -e 's/-Werror//' drivers/scsi/aic7xxx/Makefile
+	cd $(DIR_APP) && sed -i -e 's/gettext//' scripts/kconfig/lkc.h
 
-	# Openswan-2
-	# cd $(DIR_SRC) && zcat $(DIR_DL)/openswan-2.4.6.kernel-2.6-natt.patch.gz | patch -Np0
+	# Openswan 2
+	cd $(DIR_SRC) && rm -rf openswan-*
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-2.4.7.tar.gz
+	cd $(DIR_APP) && gzip -dc $(DIR_DL)/openswan-2.4.7.kernel-2.6-natt.patch.gz | patch -Np1
+	cd $(DIR_APP) && gzip -dc $(DIR_DL)/openswan-2.4.7.kernel-2.6-klips.patch.gz | patch -Np1
+	cd $(DIR_SRC)/openswan-* && sed -i -e 's/INC_USRLOCAL=\/usr\/local/INC_USRLOCAL=\/usr/' Makefile.inc
 
 	# Patch-o-matic
 	cd $(DIR_SRC) && rm -rf iptables-*
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.5.tar.bz2
 	cd $(DIR_SRC) && ln -sf iptables-1.3.5 iptables
 	cd $(DIR_SRC) && rm -rf patch-o-matic*
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20060206.tar.bz2
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20061210.tar.bz2
+
+	cd $(DIR_SRC)/patch-o-matic-ng* && \
+		./runme --batch --kernel-path=$(ROOT)/usr/src/$(THISAPP)/ --iptables-path=$(ROOT)/usr/src/iptables/ \
+			TARPIT h323-conntrack-nat cuseeme-nat \
+			sip-conntrack-nat 
+			# rtsp-conntrack-nat quake3-conntrack-nat mms-conntrack-nat
 
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ pending
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ base
-#	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ h323-conntrack-nat
-#	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ cuseeme-nat
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ mms-conntrack-nat
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ pptp-conntrack-nat
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ rtsp-conntrack
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ quake3-conntrack-nat
-#	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ sip-conntrack-nat
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ip_queue_vwmark
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ipp2p
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ipsec-01-output-hooks
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ipsec-02-input-hooks
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ipsec-03-policy-lookup
 #	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ ipsec-04-policy-checks
-#	cd $(DIR_SRC)/patch-o-matic* && yes 'y' | ./runme --kernel-path=$(DIR_APP) --iptables-path=$(ROOT)/usr/src/iptables/ TARPIT
 	
-	#layer7-patch
+	# Layer7-patch
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.6.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.6/for_older_kernels/kernel-2.6.13-2.6.16-layer7-2.2.patch
 
 	# ip_conntrack permissions from 440 to 444
 	# cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 
-ifeq "$(PASS)" ""
+ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass
 	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.5
 endif
 
-	# Olitec isdn gazel patch
-#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/linux-2.4.23-olitec-isdn.patch
-
-	# Fix /proc/stat output
-#	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/linux-2.4.26-proc-stat.patch
-
-	# Fix libata-core.c
-	# cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/linux-2.4.26-scsi.patch
-
-	# frandom patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.27-frandom-2.patch
-
-	# Propolice
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.27-ssp-1.patch
-
-	# Support ppp-2.4.3 multilink behavior (terminate when no channel is connected)
-	# need updated libpcap older than 0.8.3
-	# cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp_generic-ppp-2.4.3_multilink.patch
-
-	# R8169 clone D-link GSE-528T
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.4.29_r8169clone.patch
-
-	# bootsplash
+	# Bootsplash
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bootsplash-3.1.6-2.6.15.diff
 
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
-ifeq "$(PASS)" ""
+
+ifeq "$(SMP)" ""
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
 endif
-ifeq "$(PASS)" "S"
+ifeq "$(SMP)" "1"
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).smp $(DIR_APP)/.config
-endif
-ifeq "$(PASS)" "I"
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).installer $(DIR_APP)/.config
-	cd $(DIR_APP) && sed -i -e 's/-O2/-Os/g' Makefile
 endif
 
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
-	cd $(DIR_APP) && make CC="$(KGCC)" dep
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
 	if [ "$(PASS)" = "" ]; then \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
@@ -203,6 +185,8 @@ endif
 		ln -sf System.map-$(VER) /boot/System.map; \
 		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules; \
 		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install; \
+		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module; \
+		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall; \
 	elif [ "$(PASS)" = "S" ]; then \
 		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -smp/' Makefile; \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
@@ -212,42 +196,16 @@ endif
 		ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-smp; \
 		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules; \
 		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install; \
-	elif [ "$(PASS)" = "I" ]; then \
-		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
-		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-installer; \
-		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
+		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module; \
+		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall; \
 	fi
+
 	# remove symlinked pcmcia directory
-ifeq "$(PASS)" ""
+ifeq "$(SMP)" ""
 	rm -rf /lib/modules/$(VER)/pcmcia
-	find /lib/modules/$(VER)/ -name '*.o' -a -type f | xargs gzip -f9
-
-	# Move these SCSI drivers into same directory for probescsi.sh
-	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/aic7xxx/*     /lib/modules/$(VER)/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/aic7xxx
-	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/aacraid/*     /lib/modules/$(VER)/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/aacraid
-	mv -f  /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)/kernel/drivers/scsi/sym53c8xx_2
 endif
-ifeq "$(PASS)" "S"
+ifeq "$(SMP)" "1"
 	rm -rf /lib/modules/$(VER)-smp/pcmcia
-	find /lib/modules/$(VER)-smp/ -name '*.o' -a -type f | xargs gzip -f9
-
-	# Move these SCSI drivers into same directory for probescsi.sh
-	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/aic7xxx/*     /lib/modules/$(VER)-smp/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/aic7xxx
-	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/aacraid/*     /lib/modules/$(VER)-smp/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/aacraid
-	mv -f  /lib/modules/$(VER)-smp/kernel/drivers/scsi/sym53c8xx_2/* /lib/modules/$(VER)-smp/kernel/drivers/scsi
-	rm -rf /lib/modules/$(VER)-smp/kernel/drivers/scsi/sym53c8xx_2
-endif
-
-ifeq "$(PASS)" ""
-	# Only do this once on the non-SMP pass
-	# cd $(DIR_APP) && make mandocs
-	#-mkdir -p /usr/share/man/man9/
-	#cd $(DIR_APP) && cp -af Documentation/man/* /usr/share/man/man9/
 endif
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables*
 	@$(POSTBUILD)

@@ -512,7 +512,7 @@ usr/lib/perl5/5.8.8/i586-linux/ByteLoader.pm
 #usr/lib/perl5/5.8.8/i586-linux/CORE/warnings.h
 usr/lib/perl5/5.8.8/i586-linux/Config.pm
 #usr/lib/perl5/5.8.8/i586-linux/Config.pod
-#usr/lib/perl5/5.8.8/i586-linux/Config_heavy.pl
+usr/lib/perl5/5.8.8/i586-linux/Config_heavy.pl
 usr/lib/perl5/5.8.8/i586-linux/Cwd.pm
 usr/lib/perl5/5.8.8/i586-linux/DB_File.pm
 #usr/lib/perl5/5.8.8/i586-linux/Data
@@ -606,7 +606,7 @@ usr/lib/perl5/5.8.8/i586-linux/auto/Cwd/Cwd.so
 #usr/lib/perl5/5.8.8/i586-linux/auto/DB_File
 #usr/lib/perl5/5.8.8/i586-linux/auto/DB_File/DB_File.bs
 usr/lib/perl5/5.8.8/i586-linux/auto/DB_File/DB_File.so
-#usr/lib/perl5/5.8.8/i586-linux/auto/DB_File/autosplit.ix
+usr/lib/perl5/5.8.8/i586-linux/auto/DB_File/autosplit.ix
 #usr/lib/perl5/5.8.8/i586-linux/auto/Data
 #usr/lib/perl5/5.8.8/i586-linux/auto/Data/Dumper
 #usr/lib/perl5/5.8.8/i586-linux/auto/Data/Dumper/Dumper.bs
@@ -626,12 +626,12 @@ usr/lib/perl5/5.8.8/i586-linux/auto/Data/Dumper/Dumper.so
 #usr/lib/perl5/5.8.8/i586-linux/auto/Digest/MD5/MD5.bs
 usr/lib/perl5/5.8.8/i586-linux/auto/Digest/MD5/MD5.so
 #usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader
-#usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/DynaLoader.a
-#usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/autosplit.ix
-#usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/dl_expandspec.al
-#usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/dl_find_symbol_anywhere.al
-#usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/dl_findfile.al
-#usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/extralibs.ld
+usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/DynaLoader.a
+usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/autosplit.ix
+usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/dl_expandspec.al
+usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/dl_find_symbol_anywhere.al
+usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/dl_findfile.al
+usr/lib/perl5/5.8.8/i586-linux/auto/DynaLoader/extralibs.ld
 #usr/lib/perl5/5.8.8/i586-linux/auto/Encode
 #usr/lib/perl5/5.8.8/i586-linux/auto/Encode/Byte
 #usr/lib/perl5/5.8.8/i586-linux/auto/Encode/Byte/Byte.bs
@@ -665,7 +665,7 @@ usr/lib/perl5/5.8.8/i586-linux/auto/Fcntl/Fcntl.so
 #usr/lib/perl5/5.8.8/i586-linux/auto/File
 #usr/lib/perl5/5.8.8/i586-linux/auto/File/Glob
 usr/lib/perl5/5.8.8/i586-linux/auto/File/Glob/Glob.bs
-#usr/lib/perl5/5.8.8/i586-linux/auto/File/Glob/Glob.so
+usr/lib/perl5/5.8.8/i586-linux/auto/File/Glob/Glob.so
 #usr/lib/perl5/5.8.8/i586-linux/auto/Filter
 #usr/lib/perl5/5.8.8/i586-linux/auto/Filter/Util
 #usr/lib/perl5/5.8.8/i586-linux/auto/Filter/Util/Call
