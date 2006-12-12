@@ -705,7 +705,7 @@ usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/POSIX.so
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/atof.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/atoi.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/atol.al
-#usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/autosplit.ix
+usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/autosplit.ix
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/bsearch.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/calloc.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/chdir.al
@@ -774,7 +774,7 @@ usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/POSIX.so
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/labs.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/ldiv.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/link.al
-#usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/load_imports.al
+usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/load_imports.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/localtime.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/log.al
 #usr/lib/perl5/5.8.8/i586-linux/auto/POSIX/longjmp.al

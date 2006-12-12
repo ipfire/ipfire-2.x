@@ -249,7 +249,7 @@ print "<pre>$output</pre>\n";
 
 print "<a name='modules'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'loaded modules'});
-$output = qx+/sbin/lsmod+;
+$output = qx+/bin/lsmod+;
 ($output = &Header::cleanhtml($output,"y")) =~ s/\[.*\]//g;
 print "<pre>\n$output\n</pre>\n";
 &Header::closebox();

@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr/share/$(THISAPP) \
-	    --exec-prefix=/usr --mandir=/usr/share/man \
+	    --exec-prefix=/usr --mandir=/usr/share/man --enable-perl-site-install \
 	    --enable-local-libpng --enable-local-zlib --with-pic --enable-latin2 \
 	    --disable-python --disable-tcl
 	cd $(DIR_APP) && make
