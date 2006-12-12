@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    --exec-prefix=/usr --mandir=/usr/share/man \
 	    --enable-local-libpng --enable-local-zlib --with-pic --enable-latin2 \
 	    --disable-python --disable-tcl
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make site-perl-install
 	-mkdir -p /home/httpd/html/graphs/

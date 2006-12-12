@@ -91,12 +91,10 @@
 * hdparm-6.6
 * htop-0.6.2
 * httpd-2.2.2
-* hwinfo
 * iana-etc-2.10
 * ibod
 * iftop-0.17
 * inetutils-1.4.2
-* initscripts_old
 * ipac-ng-1.31
 * ipaddr-1.2
 * iproute2-2.6.16-060323
@@ -166,7 +164,6 @@
 * openldap-2.3.20
 * openssh-4.3p2
 * openssl-0.9.8d
-* openswan-2.4.6
 * openswan-2.4.7
 * openvpn-2.0.9
 * pam_mysql-0.7RC1

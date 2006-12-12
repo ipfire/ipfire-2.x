@@ -105,6 +105,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	ln -s linux-$(VER) /usr/src/linux
 
 	# Update kernel to latest patchlevel
 	cd $(DIR_APP) && zcat $(DIR_DL)/patch-$(PATCHLEVEL).gz | patch -p1
@@ -176,7 +177,7 @@ endif
 
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
-	if [ "$(PASS)" = "" ]; then \
+	if [ "$(SMP)" = "" ]; then \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
 		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER); \
 		cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER); \
@@ -187,7 +188,7 @@ endif
 		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install; \
 		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module; \
 		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall; \
-	elif [ "$(PASS)" = "S" ]; then \
+	elif [ "$(SMP)" = "1" ]; then \
 		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -smp/' Makefile; \
 		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
 		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-smp; \
