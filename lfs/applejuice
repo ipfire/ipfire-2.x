@@ -79,8 +79,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && mkdir -p /opt/applejuice && mv -fv ajcore.jar /opt/applejuice
 	cd $(DIR_APP) && mv -fv libajnetmask.so /opt/applejuice
-	mkdir -p /home/httpd/phpaj
-	cd $(DIR_APP) && cp -rfv phpaj /home/httpd/phpaj
+	mkdir -p /srv/web/phpaj
+	cd $(DIR_APP) && cp -rfv phpaj /srv/web/phpaj
 	-mkdir /var/ipfire/applejuice
 	echo "RAMSIZE=64" > /var/ipfire/applejuice/settings
 	chown nobody.nobody /var/ipfire/applejuice -R

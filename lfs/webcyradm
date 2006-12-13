@@ -78,7 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	cd $(DIR_SRC) && mkdir -p /home/httpd/webcyradm
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /home/httpd/webcyradm
+	cd $(DIR_SRC) && mkdir -p /srv/web/webcyradm
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /srv/web/webcyradm
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/mail-db-mysql.tar.gz -C /srv/mysql
 	@$(POSTBUILD)

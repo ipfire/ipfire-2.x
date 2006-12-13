@@ -86,21 +86,21 @@ ifeq "$(PASS)" "C"
 	-find /etc/httpd/conf -name .svn -exec rm -rf {} \;
 
 	# Copy all html/cgi-bin files
-	mkdir -p /home/httpd/{cgi-bin,html}
-	cp -aR $(DIR_SRC)/html/* /home/httpd
-	-find /home/httpd -name .svn -exec rm -rf {} \;
-	cp $(DIR_DL)/sflogo.png /home/httpd/html/images/
+	mkdir -p /srv/web/ipfire/{cgi-bin,html}
+	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
+	-find /srv/web/ipfire -name .svn -exec rm -rf {} \;
+	cp $(DIR_DL)/sflogo.png /srv/web/ipfire/html/images/
 
 	# Change CONFIG_ROOT in cgi-scripts
-	for i in /home/httpd/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
+	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
 	    if [ -f $$i ]; then \
 	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
 	    fi; \
 	done
-	chown -R root:root /home/httpd
-	chmod -R 755 /home/httpd/cgi-bin
-	chmod -R 644 /home/httpd/html
-	chmod 755 /home/httpd/html /home/httpd/html/{index.cgi,redirect.cgi,dial.cgi,images,include}
+	chown -R root:root /srv/web/ipfire
+	chmod -R 755 /srv/web/ipfire/cgi-bin
+	chmod -R 644 /srv/web/ipfire/html
+	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include}
 else
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
@@ -116,15 +116,15 @@ else
 	echo "    libexecdir:         /usr/lib/apache" >> $(DIR_APP)/config.layout
 	echo "    mandir:             /usr/share/man" >> $(DIR_APP)/config.layout
 	echo "    sysconfdir:         /etc/httpd/conf" >> $(DIR_APP)/config.layout
-	echo "    datadir:            /home/httpd" >> $(DIR_APP)/config.layout
+	echo "    datadir:            /srv/web/ipfire" >> $(DIR_APP)/config.layout
 	echo "    installbuilddir:    /usr/lib/apache/build" >> $(DIR_APP)/config.layout
-	echo "    errordir:           /home/httpd/error" >> $(DIR_APP)/config.layout
-	echo "    iconsdir:           /home/httpd/icons" >> $(DIR_APP)/config.layout
-	echo "    htdocsdir:          /home/httpd/htdocs" >> $(DIR_APP)/config.layout
-	echo "    manualdir:          /home/httpd/manual" >> $(DIR_APP)/config.layout
-	echo "    cgidir:             /home/httpd/cgi-bin" >> $(DIR_APP)/config.layout
+	echo "    errordir:           /srv/web/ipfire/error" >> $(DIR_APP)/config.layout
+	echo "    iconsdir:           /srv/web/ipfire/icons" >> $(DIR_APP)/config.layout
+	echo "    htdocsdir:          /srv/web/ipfire/htdocs" >> $(DIR_APP)/config.layout
+	echo "    manualdir:          /srv/web/ipfire/manual" >> $(DIR_APP)/config.layout
+	echo "    cgidir:             /srv/web/ipfire/cgi-bin" >> $(DIR_APP)/config.layout
 	echo "    includedir:         /usr/include/apache" >> $(DIR_APP)/config.layout
-	echo "    localstatedir:      /home/httpd" >> $(DIR_APP)/config.layout
+	echo "    localstatedir:      /srv/web/ipfire" >> $(DIR_APP)/config.layout
 	echo "    runtimedir:         /var/run" >> $(DIR_APP)/config.layout
 	echo "    logfiledir:         /var/log/httpd" >> $(DIR_APP)/config.layout
 	echo "    proxycachedir:      /var/cache/apache/proxy" >> $(DIR_APP)/config.layout

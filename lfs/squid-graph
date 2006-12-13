@@ -79,6 +79,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    -e "s/\$$color{'ims'}  .*$$/\$$color{'ims'}  = ['99','33','99']; # graph ims hit line color/" \
 	       bin/squid-graph > /usr/bin/squid-graph
 	chmod 755 /usr/bin/squid-graph
-	-mkdir -p /home/httpd/html/sgraph
+	-mkdir -p /srv/web/ipfire/html/sgraph
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
