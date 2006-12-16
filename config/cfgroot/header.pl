@@ -43,12 +43,11 @@ my $menu = \%menuhash;
 %settings = ();
 %ethsettings = ();
 @URI = ();
-$Header::supported=0;
 
 ### Make sure this is an SSL request
 if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
     print "Status: 302 Moved\r\n";
-    print "Location: https://$ENV{'SERVER_ADDR'}:10443/$ENV{'PATH_INFO'}\r\n\r\n";
+    print "Location: https://$ENV{'SERVER_ADDR'}:444/$ENV{'PATH_INFO'}\r\n\r\n";
     exit 0;
 }
 
@@ -98,6 +97,7 @@ if (open(MYFile, "<${swroot}/firebuild")) {
 
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
+eval `/bin/cat /srv/web/ipfire/html/themes/$settings{'THEME'}/include/functions.pl`;
 
 sub orange_used () {
     if ($ethsettings{'CONFIG_TYPE'} =~ /^[1357]$/) {
@@ -578,382 +578,6 @@ sub gettitle($) {
 	}
     }
     return '';
-}
-
-
-sub showmenu() {
-    print <<EOF
-  <div id="menu-top">
-    <ul>
-EOF
-;
-    foreach my $k1 ( sort keys %$menu ) {
-	if (! $menu->{$k1}{'enabled'}) {
-	    next;
-	}
-
-	my $link = getlink($menu->{$k1});
-	if ($link eq '') {
-	    next;
-	}
-	if (! is_menu_visible($link)) {
-	    next;
-	}
-	if ($menu->{$k1}->{'selected'}) {
-	    print '<li class="selected">';
-	} else {
-	    print '<li>';
-	}
-
-	print <<EOF
-    <div class="rcorner">
-      <a href="$link">$menu->{$k1}{'caption'}</a>
-    </div>
-  </li>
-EOF
-;
-    }
-
-    print <<EOF
-    </ul>
-  </div>
-EOF
-;    
-}
-
-sub getselected($) {
-    my $root = shift;
-    if (!$root) {
-	return 0;
-    }
-
-    foreach my $item (%$root) {
-	if ($root->{$item}{'selected'}) {
-	    return $root->{$item};
-	}
-    }
-}
-
-sub showsubsection($$) {
-    my $root = shift;
-    my $id = shift;
-    if ($id eq '') {
-	$id = 'menu-left';
-    }
-
-    if (! $root) {
-	return;
-    }
-    my $selected = getselected($root);
-    if (! $selected) {
-	return;
-    }
-    my $submenus = $selected->{'subMenu'};
-    if (! $submenus) {
-	return;
-    }
-
-    print <<EOF
-  <div id="$id">
-    <ul>
-EOF
-;
-    foreach my $item (sort keys %$submenus) {
-	my $hash = $submenus->{$item};
-	if (! $hash->{'enabled'}) {
-	    next;
-	}
-
-	my $link = getlink($hash);
-	if ($link eq '') {
-	    next;
-	}
-	if (! is_menu_visible($link)) {
-	    next;
-	}
-	if ($hash->{'selected'}) {
-	    print '<li class="selected">';
-	} else {
-	    print '<li>';
-	}
-
-	print <<EOF
-      <a href="$link">$hash->{'caption'}</a>
-  </li>
-EOF
-;
-    }
-
-    print <<EOF
-    </ul>
-  </div>
-EOF
-;    
-
-}
-
-
-sub showsubsubsection($) {
-    my $root = shift;
-    if (!$root) {
-	return;
-    }
-    my $selected = getselected($root);
-    if (! $selected) {
-	return
-    }
-    if (! $selected->{'subMenu'}) {
-	return
-    }
-
-    showsubsection($selected->{'subMenu'}, 'menu-subtop');
-}
-
-
-sub get_helpuri() {
-    my $helpfile = '';
-    if ($URI[0] =~ /.*\/([^\/]+)\.cgi/) {
-	$helpfile = $1;
-    } else {
-	return '';
-    }
-    $helpfile .= '.help.html';
-
-    my $helpuri = '/doc/'.$language.'/'.$helpfile;
-    if (! -e $ENV{'DOCUMENT_ROOT'}.$helpuri) {
-	return '';
-    }
-    return $helpuri;
-}
-
-
-sub openpage {
-    my $title = shift;
-    my $boh = shift;
-    my $extrahead = shift;
-
-    @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-    &readhash("${swroot}/main/settings", \%settings);
-    &genmenu();
-
-    my $h2 = gettitle($menu);
-    my $helpuri = get_helpuri();
-
-    $title = "IPFire - $title";
-    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-        $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
-    }
-
-    print <<END
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html>
-  <head>
-  <title>$title</title>
-
-    $extrahead
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-END
-;
-    if ($settings{'FX'} ne 'off') {
-    print <<END
-    <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)">
-    <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)">
-END
-;
-    }
-    print <<END
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <style type="text/css">\@import url(/include/style.css);</style>
-    <style type="text/css">\@import url(/include/menu.css);</style>
-    <style type="text/css">\@import url(/include/content.css);</style>
-    <script language="javascript" type="text/javascript">
-      
-        function swapVisibility(id) {
-            el = document.getElementById(id);
-  	    if(el.style.display != 'block') {
-  	        el.style.display = 'block'
-  	    }
-  	    else {
-  	        el.style.display = 'none'
-  	    }
-        }
-    </script>
-
-  </head>
-  <body>
-<!-- IPFIRE HEADER -->
-
-<div id="main">
-
-<div id="header">
-	<img id="logo-product" src="/images/logo_ipfire.gif">
-   <div id="header-icons">
-	    <a href="http://users.ipfire.eu/" target="_blank"><img border="0" src="/images/help.gif"></a>
-   </div>
-</div>
-
-END
-;
-
-    &showmenu();
-
-print <<END
-<div id="content">
-  <table width="90%">
-    <tr>
-      <td valign="top">
-END
-;
-	
-    &showsubsection($menu);
-
-    print <<END
-      <p><center><img src="/images/iptux.png" width='160px' height='160px'></center></p>
-      </td>
-        <td width="100%" valign="top">
-        <div id="page-content">
-            <h2>$h2</h2>
-END
-    ;
-    
-    &showsubsubsection($menu);
-}
-
-sub openpagewithoutmenu {
-    my $title = shift;
-    my $boh = shift;
-    my $extrahead = shift;
-
-    @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-    &readhash("${swroot}/main/settings", \%settings);
-    &genmenu();
-
-    my $h2 = gettitle($menu);
-    my $helpuri = get_helpuri();
-
-    $title = "IPFire - $title";
-    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-        $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
-    }
-
-    print <<END
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html>
-  <head>
-  <title>$title</title>
-
-    $extrahead
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-END
-;
-    if ($settings{'FX'} eq 'on') {
-    print <<END
-    <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)">
-    <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)">
-END
-;
-    }
-    print <<END
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <style type="text/css">\@import url(/include/style.css);</style>
-    <style type="text/css">\@import url(/include/menu.css);</style>
-    <style type="text/css">\@import url(/include/content.css);</style>
-    <script language="javascript" type="text/javascript">
-      
-        function swapVisibility(id) {
-            el = document.getElementById(id);
-  	    if(el.style.display != 'block') {
-  	        el.style.display = 'block'
-  	    }
-  	    else {
-  	        el.style.display = 'none'
-  	    }
-        }
-    </script>
-
-  </head>
-  <body>
-<!-- IPFIRE HEADER -->
-
-<div id="main">
-
-<div id="header">
-	<img id="logo-product" src="/images/logo_ipfire.gif">
-   <div id="header-icons">
-	    <a href="http://users.ipfire.eu/" target="_blank"><img border="0" src="/images/help.gif"></a>
-   </div>
-</div>
-
-END
-;
-print <<END
-<div id="content">
-  <table width="90%">
-    <tr>
-      <td valign="top">
-      <p><center><img src="/images/iptux.png" width='160px' height='160px'></center></p>
-      </td>
-        <td width="100%" valign="top">
-        <div id="page-content">
-            <h2>$h2</h2>
-END
-    ;
-}
-
-sub closepage () {
-    my $status = &connectionstatus();
-    $uptime = `/usr/bin/uptime`;
-	
-    print <<END
-	  <div align="center">
-            <p>
-	      <div style="font-size: 9px"><b>Status:</b> $status <b>Uptime:</b>$uptime <b>Version:</b> $FIREBUILD</div> 
-            </p>
-          </div>
-	</body>
-</html>
-END
-;
-}
-
-sub openbigbox
-{
-    my $width = $_[0];
-    my $align = $_[1];
-    my $sideimg = $_[2];
-
-    if ($errormessage) {
-	$bgcolor = "style='background-color: $colourerr;'";
-    } else {
-	$bgcolor = '';
-    }
-}
-
-sub closebigbox
-{
-#	print "</td></tr></table></td></tr></table>\n" 
-}
-
-sub openbox
-{
-	$width = $_[0];
-	$align = $_[1];
-	$caption = $_[2];
-
-	if ($caption) { print "<h3>$caption</h3>\n"; } else { print "&nbsp;"; }
-	
-	print "<table class=\"list\"><tr><td align=\"$align\">\n";
-}
-
-sub closebox
-{
-	print "</td></tr></table><br><br>";
 }
 
 sub writehash
@@ -1457,19 +1081,19 @@ sub connectionstatus
 			} elsif ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
 				$speed = `/usr/sbin/eaglestat | /bin/grep Rate`;
 			}
-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused (\@$speed)</span>";
+			$connstate = "$Lang::tr{'connected'} ($timestr) $profileused (\@$speed)";
 		} else {
-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+			$connstate = "$Lang::tr{'connected'} ($timestr) $profileused";
 		}
 	} else {
 		if (-e "${General::swroot}/red/dial-on-demand") {
-		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
+		    $connstate = "$Lang::tr{'dod waiting'} $profileused";
 		} else {
-		    $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
+		    $connstate = "$Lang::tr{'connecting'} $profileused";
 		}
 	}
     } else {
-	$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+	$connstate = "$Lang::tr{'idle'} $profileused";
     }
     return $connstate;
 }

@@ -13,7 +13,7 @@ require 'CONFIG_ROOT/general-functions.pl';
 use strict;
 
 ### A cache file to avoid long recalculation
-$Lang::CacheLang = '/var/run/cache-lang.pl';
+$Lang::CacheLang = '/var/ipfire/langs/cache-lang.pl';
 
 # When you want to add your own language strings/entries to the ipcop language file,
 # you should create a file with <PREFIX>.<LANG>.pl into CONFIG_ROOT/addon-lang dir

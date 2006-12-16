@@ -1,4 +1,4 @@
-#home/httpd/html/graphs
+#srv/web/ipfire/html/graphs
 #usr/bin/rrdcgi
 usr/bin/rrdtool
 usr/bin/rrdupdate

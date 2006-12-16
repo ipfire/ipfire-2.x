@@ -1522,6 +1522,7 @@
 'ConnSched up' => 'Hoch',
 'ConnSched ipsecstart' => 'IPSec (neu)starten',
 'ConnSched ipsecstop' => 'IPSec stop',
+'theme' => 'Style',
 
 ); 
 
