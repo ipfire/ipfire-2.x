@@ -325,6 +325,7 @@ buildipfire() {
   ipfiremake rp-pppoe
   ipfiremake unzip
   ipfiremake linux			SMP=1
+  ipfiremake ipp2p			SMP=1
 #  ipfiremake 3cp4218		PASS=SMP
 #  ipfiremake amedyn			PASS=SMP
 #  ipfiremake cxacru			PASS=SMP
@@ -342,6 +343,7 @@ buildipfire() {
 #  ipfiremake promise-sata-300-tx	PASS=SMP
   ipfiremake zaptel			PASS=S
   ipfiremake linux
+  ipfiremake ipp2p
 #  ipfiremake 3cp4218
 #  ipfiremake amedyn
 #  ipfiremake cxacru
@@ -409,6 +411,7 @@ buildipfire() {
   ipfiremake ibod
   ipfiremake initscripts
   ipfiremake iptables
+  ipfiremake ipp2p			IPT=1
   ipfiremake ipac-ng
   ipfiremake ipaddr
   ipfiremake iptstate
