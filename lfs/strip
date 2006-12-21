@@ -65,8 +65,8 @@ ifeq "$(LFS_PASS)" "install"
 		-type f \( -name '*.so' -o -name '*.so[\.0-9]*' \) \
 		-exec /tools/bin/strip --strip-debug {} \; 2>/dev/null
 
-	-/tools/bin/strip --strip-all /{,usr/}{,local/}{bin,sbin}/* /install/{initrd,misc}/bin/*
-	-/tools/bin/strip --strip-all /usr/lib/awk/{grcat,pwcat}
-	-/tools/bin/strip --strip-all /usr/lib/gcc/*-linux-gnu/4.0.3/{cc1*,collect2}
+	-/tools/bin/strip --strip-all /{,usr/}{,local/}{bin,sbin}/* /install/{initrd,misc}/bin/* 2>/dev/null
+	-/tools/bin/strip --strip-all /usr/lib/awk/{grcat,pwcat} 2>/dev/null
+	-/tools/bin/strip --strip-all /usr/lib/gcc/*-linux-gnu/4.0.3/{cc1*,collect2} 2>/dev/null
 endif
 

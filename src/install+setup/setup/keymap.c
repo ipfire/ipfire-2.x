@@ -20,7 +20,7 @@ extern char **ctr;
 extern int automode;
 
 #define MAX_FILENAMES 5000
-#define KEYMAPROOT "/usr/share/kbd/keymaps/i386/"
+#define KEYMAPROOT "/lib/kbd/keymaps/i386/"
 
 static int filenamecount;
 static char *filenames[MAX_FILENAMES];
@@ -69,7 +69,7 @@ int handlekeymap(void)
 		return 0;
 	}	
 	
-	strcpy(keymap, "/usr/share/kbd/keymaps/i386/qwertz/de.map.gz");
+	strcpy(keymap, "/lib/kbd/keymaps/i386/qwertz/de.map.gz");
 	findkey(kv, "KEYMAP", keymap);
 	
 	choice = 0;

@@ -321,13 +321,13 @@ foreach my $line (@active) {
                         $marked = $temp[8];
                         $offset = 1;
                 } else {
-                        $marked = $temp[12];
+                        $marked = $temp[16];
                 }
-                $exsip = substr $temp[8 + $offset], 4;
-                $exdip = substr $temp[9 + $offset], 4;
-                $exsp = substr $temp[10 + $offset], 6;
-                $exdp = substr $temp[11 + $offset], 6;
-                $use = substr $temp[13], 4;
+                $exsip = substr $temp[10 + $offset], 4;
+                $exdip = substr $temp[11 + $offset], 4;
+                $exsp = substr $temp[12 + $offset], 6;
+                $exdp = substr $temp[13 + $offset], 6;
+                $use = substr $temp[18], 4;
         }
         if ($temp[0] eq 'unknown') {
                 my $offset = 0;

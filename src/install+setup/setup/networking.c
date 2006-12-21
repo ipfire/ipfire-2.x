@@ -100,11 +100,11 @@ int handlenetworking(void)
 		/* Restart networking! */	
 		if (netaddresschange)
 		{
-			runcommandwithstatus("/etc/rc.d/rc.netaddress.down",
+			runcommandwithstatus("/etc/rc.d/init.d/network stop",
 				ctr[TR_PUSHING_NETWORK_DOWN]);
-			runcommandwithstatus("/etc/rc.d/rc.netaddress.up",
+			runcommandwithstatus("/etc/rc.d/init.d/network start",
 				ctr[TR_PULLING_NETWORK_UP]);
-			mysystem("/etc/rc.d/rc.pcmcia start");
+//			mysystem("/etc/rc.d/rc.pcmcia start");
 		}
 	}
 	
@@ -245,7 +245,11 @@ int configtypemenu(void)
 
 	if (rc == 0 || rc == 1)
 	{
-		runcommandwithstatus("/etc/rc.d/rc.netaddress.down NOTGREEN",
+		runcommandwithstatus("/etc/rc.d/init.d/network red down",
+			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+		runcommandwithstatus("/etc/rc.d/init.d/network blue down",
+			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+		runcommandwithstatus("/etc/rc.d/init.d/network orange down",
 			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 	
 		sprintf(temp, "%d", choice);
@@ -370,7 +374,11 @@ int changedrivers(void)
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
 
-	runcommandwithstatus("/etc/rc.d/rc.netaddress.down NOTGREEN",
+	runcommandwithstatus("/etc/rc.d/init.d/network red down",
+		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+	runcommandwithstatus("/etc/rc.d/init.d/network blue down",
+		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+	runcommandwithstatus("/etc/rc.d/init.d/network orange down",
 		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 	
 	/* Remove all modules not needed for green networking. */

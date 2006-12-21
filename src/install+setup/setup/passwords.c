@@ -32,7 +32,7 @@ int handlerootpassword(void)
 		return 0;
 	
 	snprintf(commandstring, STRING_SIZE,
-		"/bin/echo 'root:%s' | /usr/sbin/chpasswd",	password);
+		"/bin/echo 'root:%s' | /usr/sbin/chpasswd", password);
 	if (runhiddencommandwithstatus(commandstring, ctr[TR_SETTING_ROOT_PASSWORD]))
 	{
 		errorbox(ctr[TR_PROBLEM_SETTING_ROOT_PASSWORD]);
@@ -83,7 +83,7 @@ int getpassword(char *password, char *text)
 	do
 	{
 		done = 1;
-		sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
+		sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 		rc = newtWinEntries(title, text,
 			50, 5, 5, 20, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
 

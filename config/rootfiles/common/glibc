@@ -1802,7 +1802,7 @@ usr/lib/locale/locale-archive
 #usr/share/zoneinfo/WET
 #usr/share/zoneinfo/Zulu
 #usr/share/zoneinfo/iso3166.tab
-#usr/share/zoneinfo/posix
+usr/share/zoneinfo/posix
 #usr/share/zoneinfo/posix/Africa
 #usr/share/zoneinfo/posix/Africa/Abidjan
 #usr/share/zoneinfo/posix/Africa/Accra

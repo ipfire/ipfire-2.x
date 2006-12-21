@@ -55,6 +55,7 @@ $(TARGET) :
 	install -d -m 755 /etc/rc.d/rc6.d
 	install -d -m 755 /etc/rc.d/rcsysinit.d
 	install -d -m 755 /etc/rc.d/init.d
+	install -d -m 755 /etc/rc.d/helper
 	install -d -m 755 /etc/sysconfig
 
 	for i in $(DIR_SRC)/src/initscripts/init.d/*; do \
@@ -64,6 +65,10 @@ $(TARGET) :
 
 	for i in $(DIR_SRC)/src/initscripts/sysconfig/*; do \
 		install -v -m 644 $$i /etc/sysconfig/; \
+	done
+
+	for i in $(DIR_SRC)/src/initscripts/helper/*; do \
+		install -v -m 755 $$i /etc/rc.d/helper/; \
 	done
 
 	ln -sf ../init.d/sysklogd    /etc/rc.d/rc0.d/K90sysklogd
@@ -105,18 +110,6 @@ $(TARGET) :
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
 	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S90sysctl
 
-#	-mkdir -p /etc/rc.d/helper
-#	for i in $(DIR_SRC)/src/rc.d/* ; do \
-#	    if [ -f $$i ]; then \
-#	        sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /etc/rc.d/`basename $$i`; \
-#	    fi; \
-#	done
-#	for i in $(DIR_SRC)/src/rc.d/helper/* ; do \
-#	    if [ -f $$i ]; then \
-#	        sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /etc/rc.d/helper/`basename $$i`; \
-#	    fi; \
-#	done
-#	chmod -R 755 /etc/rc.d
 #	chgrp nobody /etc/rc.d/rc.red
 #	chmod 4750 /etc/rc.d/rc.red
 	@$(POSTBUILD)

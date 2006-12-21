@@ -72,8 +72,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix="" --mandir=/usr/share/man --disable-nls
+	cd $(DIR_APP) && ./configure --prefix="" --sysconfdir=$(CONFIG_ROOT) \
+				 --mandir=/usr/share/man --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	ln -sf /etc/rc.d/init.d/network $(CONFIG_ROOT)/dhcpc/dhcpcd.exe
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

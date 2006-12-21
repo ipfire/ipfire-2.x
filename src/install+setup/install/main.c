@@ -823,7 +823,7 @@ EXIT:
 		{
 
 			if (!unattended) {
-			    if (system("/bin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
+			    if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
 				    printf("Unable to run setup.\n");
 			}
 			else {

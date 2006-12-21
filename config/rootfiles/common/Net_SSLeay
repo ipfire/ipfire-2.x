@@ -5,8 +5,8 @@ usr/lib/perl5/site_perl/5.8.8/i586-linux/Net/SSLeay/Handle.pm
 #usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay
 #usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/.packlist
 #usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/SSLeay.bs
-#sr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/SSLeay.so
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/autosplit.ix
+usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/SSLeay.so
+usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/autosplit.ix
 #usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/debug_read.al
 #usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/do_https.al
 #usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Net/SSLeay/do_https2.al

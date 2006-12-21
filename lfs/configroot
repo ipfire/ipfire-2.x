@@ -104,9 +104,6 @@ $(TARGET) :
 	echo  "nameserver    1.2.3.4"	> $(CONFIG_ROOT)/ppp/fake-resolv.conf
 	echo  "DISABLEPING=NO"		> $(CONFIG_ROOT)/optionsfw/settings
 
-	# Symbolic links
-	ln -sf /etc/rc.d/rc.updatered $(CONFIG_ROOT)/dhcpc/dhcpcd.exe
-
 	# Modify variables in header.pl
 	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
 	    -e "s+VERSION+$(VERSION)+g" \

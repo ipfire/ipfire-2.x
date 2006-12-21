@@ -43,8 +43,8 @@ tmp
 #usr/bin/perl
 #usr/include
 #usr/lib
-#usr/lib/libgcc_s.so
-#usr/lib/libgcc_s.so.1
+usr/lib/libgcc_s.so
+usr/lib/libgcc_s.so.1
 usr/local/bin/connscheduler
 usr/local/bin/hddshutdown
 usr/local/bin/hddshutdown-state

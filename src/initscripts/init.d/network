@@ -15,6 +15,14 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 . /var/ipfire/ethernet/settings
+. /var/ipfire/dhcp/settings
+. /var/ipfire/ppp/settings
+. /var/ipfire/vpn/settings
+
+# This is a small wrapper for dhcpcd.exe
+if ( echo $0 | /bin/grep -q 'dhcpcd.exe' ); then
+	/etc/rc.d/init.d/network red update $1 $2
+fi
 
 case "${1}" in
 	start)
@@ -82,29 +90,34 @@ case "${1}" in
 		fi
 
 		boot_mesg "Setting up IPFire firewall rules"
-		/etc/rc.d/init.d/firewall start
-		evaluate_retval
+		/etc/rc.d/init.d/firewall start; evaluate_retval
+
 		boot_mesg "Setting up IP Accounting"
 		/etc/rc.d/helper/writeipac.pl
-		/usr/sbin/fetchipac -S
-		evaluate_retval
+		/usr/sbin/fetchipac -S; evaluate_retval
+
 		boot_mesg "Setting IPFire DMZ pinholes"
-		/usr/local/bin/setdmzholes
-		evaluate_retval
+		/usr/local/bin/setdmzholes; evaluate_retval
 
 		if [ "$BLUE_DEV" != "" ]; then
 			boot_mesg "Setting up wireless firewall rules"
-			/usr/local/bin/restartwireless
-			evaluate_retval
+			/usr/local/bin/restartwireless; evaluate_retval
 		fi
 
-		boot_mesg "Bringing network up..."
-		. /etc/rc.d/rc.netaddress.up
+		# Bringing interfaces up...
+		$0 green up
+		$0 orange up
+		$0 blue up
+		$0 red up
 
 		;;
 
 	stop)
-
+		# Stopping all interfaces...
+		$0 red down
+		$0 blue down
+		$0 orange down
+		$0 green down
 		;;
 
 	restart)
@@ -113,8 +126,246 @@ case "${1}" in
 		${0} start
 		;;
 
+	#
+	# Every interface has its own context to start/stop/restart.
+	#
+	green)
+		case "${2}" in
+			up)
+				boot_mesg "Bringing green network up..."
+				if [ "$GREEN_DEV" != "" ]; then
+					ifconfig $GREEN_DEV $GREEN_ADDRESS netmask $GREEN_NETMASK broadcast $GREEN_BROADCAST up
+					evaluate_retval
+				else
+					echo "WARNING: No driver set for GREEN"
+				fi
+				;;
+			down)
+				boot_mesg "Bringing green network down..."
+				ifconfig $GREEN_DEV down 2> /dev/null; evaluate_retval
+				;;
+		esac
+		;;
+
+	orange)
+		case "${2}" in
+			up)
+				if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
+					if [ "$ORANGE_DEV" != "" ]; then
+						boot_mesg "Bringing orange network up..."
+						ifconfig $ORANGE_DEV $ORANGE_ADDRESS netmask $ORANGE_NETMASK broadcast $ORANGE_BROADCAST up
+						evaluate_retval
+					fi
+				fi
+				;;
+			down)
+				if [ "$ORANGE_DEV" != "" ]; then
+					boot_mesg "Bringing orange network down..."
+					ifconfig $ORANGE_DEV down 2> /dev/null; evaluate_retval
+				fi
+				;;
+		esac
+		;;
+
+	blue)
+		case "${2}" in
+			up)
+				if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+					if [ "$BLUE_DEV" != "" ]; then
+						boot_mesg "Bringing blue network up..."
+						ifconfig $BLUE_DEV $BLUE_ADDRESS netmask $BLUE_NETMASK broadcast $BLUE_BROADCAST up
+						evaluate_retval
+					fi
+				fi
+				;;
+			down)
+				if [ "$BLUE_DEV" != "" ]; then
+					boot_mesg "Bringing blue network down..."
+					ifconfig $BLUE_DEV down 2> /dev/null; evaluate_retval
+				fi
+				;;
+		esac
+		;;
+
+	red)
+		case "${2}" in
+			up)
+				boot_mesg "Bringing red network up..."
+				# If RED is ethernet then check furthur...
+				if [ "$CONFIG_TYPE" == "2" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "6" -o "$CONFIG_TYPE" == "7" ]; then
+					# If we are DHCP or STATIC we have to start automatically
+					if [ "$RED_TYPE" == "DHCP" -o "$RED_TYPE" == "STATIC" ]; then
+						AUTOCONNECT="on"
+					fi
+				fi
+
+				# Start DNSMASQ with defaults
+				if [ "$DOMAIN_NAME_GREEN" == "" ]; then
+					/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases
+				else 
+					/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases -s "$DOMAIN_NAME_GREEN"
+				fi
+
+				# Only when AUTOCONNECT is on
+				if [ "$AUTOCONNECT" == "on" ]; then
+					/etc/rc.d/init.d/red start; evaluate_retval
+				fi
+				;;
+			down)
+				boot_mesg "Bringing red network down..."
+				/etc/rc.d/init.d/red stop
+				sleep 3
+				/etc/rc.d/init.d/red clear; evaluate_retval
+				;;
+			update)
+				if [ ! -e /var/lock/rc.updatered.lock ]; then
+					/usr/bin/touch /var/lock/rc.updatered.lock
+					/usr/bin/logger -s -p local0.info -t rc.updatered "$0 locking for $$"
+				else
+					count=0
+					while [ ! $count = 5 ]; do
+						sleep 3
+						if [ ! -e /var/lock/rc.updatered.lock ]; then
+							break
+						else
+							/usr/bin/logger -s -p local0.info -t rc.updatered "$0 $$ waiting unlock"
+						fi
+						((++count))
+					done
+				fi
+
+				IFACE=`/bin/cat /var/ipfire/red/iface 2>/dev/null | /usr/bin/tr -d '\012'`
+				REMOTE=`/bin/cat /var/ipfire/red/remote-ipaddress 2>/dev/null | /usr/bin/tr -d '\012'`
+
+				###
+				### Retrieve DHCP Settings
+				###
+				if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3"  -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+					if [ "$RED_TYPE" = "DHCP" ]; then
+						unset DNS1 DNS2
+						eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+						if [ "$DNS1" = "" ]; then
+							echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
+							echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
+						else 
+							echo "$DNS1" > /var/ipfire/red/dns1
+							echo "$DNS2" > /var/ipfire/red/dns2
+						fi
+						. /var/ipfire/dhcpc/dhcpcd-${RED_DEV}.info
+						echo "$IPADDR"  > /var/ipfire/red/local-ipaddress
+						echo "$GATEWAY" > /var/ipfire/red/remote-ipaddress
+					fi
+				else
+					if [ "$PROTOCOL" = "RFC1483" -a "$METHOD" = "DHCP" ]; then
+						unset DNS1 DNS2
+						eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+						if [ "$DNS" = "Automatic" ]; then
+							echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
+							echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
+						else 
+							echo "$DNS1" > /var/ipfire/red/dns1
+							echo "$DNS2" > /var/ipfire/red/dns2
+						fi
+						. /var/ipfire/dhcpc/dhcpcd-${IFACE}.info
+						echo $IPADDR  > /var/ipfire/red/local-ipaddress
+						echo $GATEWAY > /var/ipfire/red/remote-ipaddress
+					fi
+				fi
+
+				###
+				### Retrieve DNS settings
+				###
+				DNS1=`/bin/cat /var/ipfire/red/dns1 2>/dev/null | /usr/bin/tr -d '\012'`
+				DNS2=`/bin/cat /var/ipfire/red/dns2 2>/dev/null | /usr/bin/tr -d '\012'`
+				echo > /var/ipfire/red/resolv.conf    #clear it
+				[ "$DNS1" != "" ] && echo "nameserver $DNS1" >  /var/ipfire/red/resolv.conf
+				[ "$DNS2" != "" ] && echo "nameserver $DNS2" >> /var/ipfire/red/resolv.conf
+
+
+				###
+				### Restart DNSMASQ
+				###
+				/bin/killall -KILL dnsmasq 2> /dev/null
+				sleep 1
+
+				DOMopt=""
+				[ "$DOMAIN_NAME_GREEN" ] && DOMopt="-s $DOMAIN_NAME_GREEN"
+				if [ -e "/var/ipfire/red/dial-on-demand" -a "$DIALONDEMANDDNS" == "on" -a ! -e "/var/ipfire/red/active" ]; then
+				    /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $DOMopt -r /var/ipfire/ppp/fake-resolv.conf
+				else
+				    /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $DOMopt -r /var/ipfire/red/resolv.conf
+				fi
+				unset DOMopt
+
+				# Reset default route to ippp0 for dial on demand
+				if [ -e "/var/ipfire/red/dial-on-demand" -a "$TYPE" == "isdn" -a ! -e "/var/ipfire/red/active" ]; then
+					/sbin/route del default 2> /dev/null
+					if [ ! -z "$REMOTE" ]; then
+						/sbin/route add default gw $REMOTE 2> /dev/null
+					else
+						/sbin/route add default dev ippp0  2> /dev/null
+					fi
+				fi
+
+				if [ "$3" ]; then
+					eval $(/usr/local/bin/readhash "$3")
+					case "$4" in
+						up)
+							/usr/bin/logger -s -p local0.info -t dhcpcd.exe "${INTERFACE} has been configured with old IP=${IPADDR}"
+							if [ "$RED_TYPE" != 'PPTP' ]; then
+								/usr/bin/touch /var/ipfire/red/active
+							fi
+							;;
+						new)
+							/usr/bin/logger -s -p local0.info -t dhcpcd.exe "${INTERFACE} has been configured with new IP=${IPADDR}"
+							if [ -e "/var/ipfire/red/active" ]; then
+								/usr/local/bin/setfilters
+								/usr/local/bin/setportfw
+								/usr/local/bin/setxtaccess
+								/usr/local/bin/setddns.pl -f
+								/usr/local/bin/restartsnort red
+								sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
+								/bin/rm -f /var/lock/rc.updatered.lock
+								/usr/bin/logger -s -p local0.info -t rc.updatered "unlocking from $$"
+								exit 0
+							else
+								if [ "$RED_TYPE" != 'PPTP' ]; then
+									/usr/bin/touch /var/ipfire/red/active
+								fi
+							fi
+							;;
+						down)
+							/usr/bin/logger -s -p local0.info -t dhcpcd.exe "${INTERFACE} has been brought down"
+							rm -f /var/ipfire/red/active
+							;;
+					esac
+				fi
+
+				if [ -e "/var/ipfire/red/active" ]; then
+					[ "$IFACE" != "" ] && /sbin/ifconfig $IFACE -multicast
+					/etc/rc.d/init.d/firewall reload
+					/usr/local/bin/setfilters
+					/usr/local/bin/restartsnort red
+					/usr/local/bin/qosctrl restart
+					/usr/local/bin/setportfw
+					/usr/local/bin/setxtaccess
+					/usr/local/bin/setddns.pl -f
+					/etc/rc.d/helper/writeipac.pl
+					/usr/sbin/fetchipac -S
+					sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
+				else
+					/usr/local/bin/ipsecctrl D
+					/etc/rc.d/init.d/firewall reload
+				fi
+				/bin/rm -f /var/lock/rc.updatered.lock
+				/usr/bin/logger -s -p local0.info -t rc.updatered "unlocking from $$"
+				;;
+		esac
+		;;
+
 	*)
 		echo "Usage: ${0} {start|stop|restart}"
+		echo "   or: ${0} {green|orange|blue|red} {up|down}"
 		exit 1
 		;;
 esac

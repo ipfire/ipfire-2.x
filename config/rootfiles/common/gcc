@@ -331,9 +331,9 @@
 #usr/lib/libmudflapth.so.0.0.0
 #usr/lib/libstdc++.a
 #usr/lib/libstdc++.la
-#usr/lib/libstdc++.so
-#usr/lib/libstdc++.so.6
-#usr/lib/libstdc++.so.6.0.7
+usr/lib/libstdc++.so
+usr/lib/libstdc++.so.6
+usr/lib/libstdc++.so.6.0.7
 #usr/lib/libsupc++.a
 #usr/lib/libsupc++.la
 #usr/man/man1/cpp.1
