@@ -22,10 +22,10 @@ my @graphs=();
 
 &Header::showhttpheaders();
 
-my $dir = "/home/httpd/html/sgraph";
+my $dir = "/srv/web/ipfire/html/sgraph";
 $cgiparams{'ACTION'} = '';
 &Header::getcgihash(\%cgiparams);
-my $sgraphdir = "/home/httpd/html/sgraph";
+my $sgraphdir = "/srv/web/ipfire/html/sgraph";
 
 &Header::openpage($Lang::tr{'proxy access graphs'}, 1, '');
 

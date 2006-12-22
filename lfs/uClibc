@@ -84,8 +84,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_SRC)/config/uClibc/buildroot.config-$(MACHINE) $(DIR_SRC)/buildroot/.config
 	cp -f $(DIR_SRC)/config/uClibc/buildroot.config.cmd $(DIR_SRC)/buildroot/.config.cmd
 	cd $(DIR_SRC)/buildroot && make
+
+	# Generate locales
+	cp -f $(DIR_SRC)/config/uClibc/{locales,codesets}.txt $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale
+	cd $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale && patch -Np3 < $(DIR_SRC)/src/patches/uClibc-gcc4-genwctype.patch
+	cd $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale && make
+
+#	cd $(DIR_SRC)/buildroot && make # This a second pass to install the locales
 	-mkdir -p /install/initrd/bin
 	cd $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP) && make RUNTIME_PREFIX=/install/initrd/ install_runtime
+
 	chmod 755 /install/initrd/lib/libuClibc-$(VER).so
 	rm -f /install/initrd/lib/{libm*,libcrypt*,libutil*,librt*}
 	cp -f /opt/$(MACHINE)-uClibc/lib/libgcc_s.so /lib

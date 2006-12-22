@@ -18,7 +18,7 @@ use strict;
 use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
 use Net::Ping;
 require '/var/ipfire/general-functions.pl';
-require '/home/httpd/cgi-bin/ovpnfunc.pl';
+require '/srv/web/ipfire/cgi-bin/ovpnfunc.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/countries.pl";

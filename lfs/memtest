@@ -26,64 +26,54 @@
 
 include Config
 
-VER = ipfire
+VER        = 1.65
 
-THISAPP    = cdrom
+THISAPP    = memtest86+-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = b3a18166532ae84aea20425c83626651
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	rm -rf /install/cdrom /tmp/*
-
-	# Compress root filesystem
-	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	mkdir -p /install/cdrom/doc
-	find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
-	find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
-	tar -c -C / --files-from=/tmp/ROOTFILES \
-		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
-		--exclude='proc/*' --exclude='tmp/ROOTFILES'
-	rm -f /tmp/ROOTFILES
-	tar -x -C /tmp -f /$(SNAME).tar
-	rm -f /$(SNAME).tar
-	@mkdir /tmp/sys
-	cd /tmp && tar jcf /install/cdrom/$(SNAME)-$(VERSION).tbz2 * && rm -rf *
-
-	# Other files
-	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt
-	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
-	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
-
-	# Configuration
-	mkdir -p /install/cdrom/boot
-	cp $(DIR_SRC)/config/syslinux/unattended.conf    /install/cdrom/boot/unattended.conf
-
-	# Make the ISO
-	mkdir -p /install/cdrom/boot/isolinux; \
-	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
-	cp /install/images/cdinitrd.gz              /install/cdrom/boot/isolinux/instroot.gz; \
-	cp /boot/vmlinuz-$(KVER)                    /install/cdrom/boot/isolinux/vmlinuz; \
-	cp $(DIR_SRC)/config/syslinux/syslinux.cfg  /install/cdrom/boot/isolinux/isolinux.cfg; \
-	cp $(DIR_SRC)/config/syslinux/boot.msg      /install/cdrom/boot/isolinux/boot.msg; \
-	cp $(DIR_SRC)/config/syslinux/options.msg   /install/cdrom/boot/isolinux/options.msg; \
-	cp $(DIR_SRC)/config/syslinux/splash.lss    /install/cdrom/boot/isolinux/splash.lss; \
-	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest; \
-	cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
-	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-    	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(IPFVER).iso
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && make
+	-mkdir -p /usr/lib/memtest86+
+	cd $(DIR_APP) && cp -f memtest.bin /usr/lib/memtest86+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

@@ -52,11 +52,20 @@ $(TARGET) :
 	rm -rf /tmp/*
 	mkdir -p /tmp/$(VERSION) /tmp/pxelinux.cfg
 	cp /usr/lib/syslinux/pxelinux.0 /tmp
-	cp /install/cdrom/boot/isolinux/{instroot.gz,message,vmlinuz} /tmp/$(VERSION)
-	sed     -e "s|message|$(VERSION)/message|" \
-		-e "s|vmlinuz|$(VERSION)/vmlinuz|" \
+	cp /install/images/cdinitrd.gz              /tmp/$(VERSION)/instroot.gz
+	cp /boot/vmlinuz-$(KVER)                    /tmp/$(VERSION)/vmlinuz
+	cp $(DIR_SRC)/config/syslinux/options.msg   /tmp/$(VERSION)/options.msg
+	cp $(DIR_SRC)/config/syslinux/splash.lss    /tmp/$(VERSION)/splash.lss
+	cp /usr/lib/memtest86+/memtest.bin          /tmp/$(VERSION)/memtest
+	sed	-e "a|splash.lss|$(VERSION)/splash.lss|" \
+			$(DIR_SRC)/config/syslinux/boot.msg \
+			> /tmp/$(VERSION)/boot.msg
+	sed	-e "s|vmlinuz|$(VERSION)/vmlinuz|"   \
 		-e "s|instroot|$(VERSION)/instroot|" \
-			/install/cdrom/boot/isolinux/isolinux.cfg \
+		-e "s|KERNEL memtest|KERNEL $(VERSION)/memtest|" \
+		-e "s|boot.msg|$(VERSION)/boot.msg|" \
+		-e "s|options.msg|$(VERSION)/options.msg|" \
+			$(DIR_SRC)/config/syslinux/syslinux.cfg \
 			> /tmp/pxelinux.cfg/$(SNAME)-pxe-$(VERSION).model
 	ln -s $(SNAME)-pxe-$(VERSION).model /tmp/pxelinux.cfg/default
 	chmod 444 /tmp/$(VERSION)/instroot.gz

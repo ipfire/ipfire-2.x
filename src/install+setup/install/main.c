@@ -770,9 +770,8 @@ int main(int argc, char *argv[])
 	else
 		sprintf(string, "root=%s3", hdparams.devnode);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
-	mysystem( "sed -i \"s|KVERSION|$(/bin/uname -r)|\" /harddisk/boot/grub/grub.conf" );
-
 	replace( "/harddisk/boot/grub/grubbatch", "DEVICE", hdparams.devnode);
+
 	/* restore permissions */
 	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
 

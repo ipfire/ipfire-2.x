@@ -139,6 +139,7 @@
 * man-db-2.4.3
 * man-pages-2.34
 * mc-4.6.0
+* memtest86+-1.65
 * mingetty_1.07
 * misc-progs
 * mktemp-1.5

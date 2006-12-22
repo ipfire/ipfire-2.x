@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && ./configure --prefix=/ --sbindir=/bin
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make DESTDIR=/install/initrd install
+	cd $(DIR_APP) && install -v -m 755 mkreiserfs/mkreiserfs /install/initrd/sbin/mkreiserfs
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin
 	cd $(DIR_APP) && make $(MAKETUNING)

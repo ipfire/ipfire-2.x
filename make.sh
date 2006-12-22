@@ -548,6 +548,7 @@ buildinstaller() {
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
   ipfiremake syslinux
+  ipfiremake memtest
   ipfiremake uClibc
   installmake busybox
   installmake udev
@@ -565,6 +566,7 @@ buildinstaller() {
   installmake pciutils
   installmake pcmciautils
   installmake kudzu
+#  installmake bootsplash
   installmake installer
   installmake scsi.img	# this is to be deleted
   installmake driver.img	# this is to be deleted
@@ -608,7 +610,7 @@ buildpackages() {
   rm -rf $BASEDIR/build/tmp/*
 
   # Generating total list of files
-  echo "`date -u '+%b %e %T'`: Generating files list from logs" | tee -a $LOGFILE
+  echo "Generating files list from logs" | tee -a $LOGFILE
   rm -f $BASEDIR/log/FILES
   for i in `ls -1tr $BASEDIR/log/[^_]*`; do
 	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then

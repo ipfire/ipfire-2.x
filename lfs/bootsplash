@@ -32,7 +32,11 @@ THISAPP    = bootsplash-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+ifeq "$(LFS_PASS)" "install"
+	TARGET     = $(DIR_INFO)/$(THISAPP)-install
+else
+	TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -74,11 +78,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < /usr/src/src/patches/bootsplash-3.2_makefile.patch
 	cd $(DIR_APP)/Utilities && make
+ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP)/Utilities && cp -f splash fbresolution fbmngplay fbtruetype \
+						/install/initrd/sbin
+	cd $(DIR_APP)/Scripts && cp -f bootanim /install/initrd/sbin
+	cd $(DIR_APP)/Scripts && chmod +x /install/initrd/sbin/bootanim
+else
 	cd $(DIR_APP)/Utilities && cp -f splash fbresolution fbmngplay fbtruetype /sbin
 	cd $(DIR_APP)/Scripts && cp -f bootanim /sbin
 	cd $(DIR_APP)/Scripts && chmod +x /sbin/bootanim
 	-mkdir -p /boot/splash
 	cd $(DIR_APP) && cp -Rf $(DIR_CONF)/bootsplash/* /boot/splash
 	-find /boot/splash -name .svn -exec rm -rf {} \;
+endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

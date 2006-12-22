@@ -23,7 +23,7 @@ my @graphs=();
 
 &Header::showhttpheaders();
 
-my $graphdir = "/home/httpd/html/graphs";
+my $graphdir = "/srv/web/ipfire/html/graphs";
 
 &Header::getcgihash(\%cgiparams);
 
