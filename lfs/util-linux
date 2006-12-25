@@ -87,7 +87,7 @@ ifeq "$(ROOT)" ""
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" ./configure
 	cd $(DIR_APP) && echo "HAVE_SLANG=yes" >> make_include
-	cd $(DIR_APP) && echo "SLANGFLAGS=-I/opt/$(MACHINE)-uClibc/include/slang" >> make_include
+	cd $(DIR_APP) && echo "SLANGFLAGS=-I/opt/$(MACHINE)-uClibc/include" >> make_include
 	cd $(DIR_APP)/fdisk && make cfdisk
 	cd $(DIR_APP)/fdisk && make sfdisk
 	cd $(DIR_APP)/fdisk && install -m 0755 cfdisk /install/initrd/bin

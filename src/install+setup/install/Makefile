@@ -4,7 +4,7 @@
 
 CC      = gcc 
 CFLAGS  = -Os -Wall
-INCLUDE = -I/install/include
+INCLUDE = -I/opt/i586-uClibc/include
 
 LD      = gcc
 LDFLAGS = -L/install/lib

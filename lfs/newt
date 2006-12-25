@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/newt-0.50.17-vaend.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && ./configure --without-gpm-support --host $(MACHINE)-uclibc
-	cd $(DIR_APP) && sed -i 's%^CFLAGS.*$$%CFLAGS = -Os -fomit-frame-pointer -Wall -D_GNU_SOURCE -DUTF8 -I/install/include/slang%' Makefile
+	cd $(DIR_APP) && sed -i 's%^CFLAGS.*$$%CFLAGS = -Os -fomit-frame-pointer -Wall -D_GNU_SOURCE -DUTF8 -I/opt/i586-uClibc/include%' Makefile
 	cd $(DIR_APP) && make libnewt.a
 	-mkdir -p /opt/$(MACHINE)-uClibc/{include,lib}
 	cd $(DIR_APP) && install -m 0644 libnewt.a /opt/$(MACHINE)-uClibc/lib/libnewt.a

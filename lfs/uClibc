@@ -32,7 +32,17 @@ THISAPP    = uClibc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+ifeq "$(PASS)" "1"
+	TARGET     = $(DIR_INFO)/$(THISAPP)-pass1
+else
+ifeq "$(PASS)" "2"
+	TARGET     = $(DIR_INFO)/$(THISAPP)-pass2
+else
+	TARGET     = $(DIR_INFO)/$(THISAPP)-pass3
+endif
+endif
+
+STAGING_DIR=/opt/$(MACHINE)-uClibc
 
 ###############################################################################
 # Top-level Rules
@@ -75,33 +85,36 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) /opt/$(MACHINE)-uClibc $(DIR_SRC)/buildroot
-	@cd $(DIR_SRC) && tar xfj $(DIR_DL)/buildroot-snapshot-20061026.tar.bz2
-	mkdir -p $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale/
-	cp -f $(DIR_DL)/uClibc-locale-030818.tgz \
-		$(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale/
-	cp -f $(DIR_SRC)/config/uClibc/uClibc.config-$(MACHINE) $(DIR_SRC)/buildroot/toolchain/uClibc/uClibc.config
-	cp -f $(DIR_SRC)/config/uClibc/buildroot.config-$(MACHINE) $(DIR_SRC)/buildroot/.config
-	cp -f $(DIR_SRC)/config/uClibc/buildroot.config.cmd $(DIR_SRC)/buildroot/.config.cmd
-	cd $(DIR_SRC)/buildroot && make
-
-	# Generate locales
-	cp -f $(DIR_SRC)/config/uClibc/{locales,codesets}.txt $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale
-	cd $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale && patch -Np3 < $(DIR_SRC)/src/patches/uClibc-gcc4-genwctype.patch
-	cd $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP)/extra/locale && make
-
-#	cd $(DIR_SRC)/buildroot && make # This a second pass to install the locales
-	-mkdir -p /install/initrd/bin
-	cd $(DIR_SRC)/buildroot/toolchain_build_$(MACHINE)/$(THISAPP) && make RUNTIME_PREFIX=/install/initrd/ install_runtime
-
-	chmod 755 /install/initrd/lib/libuClibc-$(VER).so
-	rm -f /install/initrd/lib/{libm*,libcrypt*,libutil*,librt*}
-	cp -f /opt/$(MACHINE)-uClibc/lib/libgcc_s.so /lib
+ifeq "$(PASS)" "1"
+	@rm -rf $(DIR_APP)
+	@mkdir -p /opt/$(MACHINE)-uClibc
+	@cd $(DIR_SRC) && tar xfj $(DIR_DL)/$(DL_FILE)
+	cp -f $(DIR_DL)/uClibc-locale-030818.tgz $(DIR_APP)/extra/locale/
+	cp -f $(DIR_SRC)/config/uClibc/{locales,codesets}.txt $(DIR_APP)/extra/locale
+	cd $(DIR_APP)/extra/locale && patch -Np3 < $(DIR_SRC)/src/patches/uClibc-gcc4-genwctype.patch
+	cp -f $(DIR_SRC)/config/uClibc/uClibc.config-$(MACHINE) $(DIR_APP)/.config
+	cd $(DIR_APP) && make CROSS= PREFIX=$(STAGING_DIR) oldconfig
+	cd $(DIR_APP) && make CROSS= PREFIX=$(STAGING_DIR) pregen headers install_dev
+#	cd $(DIR_APP)/extra/locale && make
+else
+ifeq "$(PASS)" "2"
+	cd $(DIR_APP) && CROSS=$(MACHINE)-linux-uclibc- PREFIX=/opt/$(MACHINE)-uClibc make all install
 	cp -f /opt/$(MACHINE)-uClibc/lib/ld-uClibc-$(VER).so /lib
 	cp -f /opt/$(MACHINE)-uClibc/lib/libuClibc-$(VER).so /lib
-	cd /lib && ln -sf libgcc_s.so libgcc_s.so.1
 	cd /lib && ln -sf ld-uClibc-$(VER).so ld-uClibc.so.0
 	cd /lib && ln -sf libuClibc-$(VER).so libc.so.0
 	cd /lib && ln -sf libc.so.0 libc.so
-	@rm -rf $(DIR_APP) $(DIR_SRC)/buildroot
+	ln -sf /opt/$(MACHINE)-uClibc/lib/libm-$(VER).so /lib/libm.so.0
+else
+	cd /opt/$(MACHINE)-uClibc/bin && for i in `ls -w1 $(MACHINE)-linux-uclibc-*`; do \
+		ln -sf $$i $(MACHINE)-linux-`echo $$i | cut -c 19-`; \
+	done
+	ln -sf $(MACHINE)-linux-uclibc /opt/$(MACHINE)-uClibc/$(MACHINE)-linux
+	ln -sf gcc /opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc/bin/cc
+	cd $(DIR_APP) && make RUNTIME_PREFIX=/install/initrd/ install_runtime
+	chmod 755 /install/initrd/lib/libuClibc-$(VER).so
+	rm -f /install/initrd/lib/{libm*,libcrypt*,libutil*,librt*}
+	@rm -rf $(DIR_APP)
+endif
+endif
 	@$(POSTBUILD)

@@ -34,7 +34,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 ifeq "$(ROOT)" ""
+ifeq "$(LFS_PASS)" "install"
+  TARGET = $(DIR_INFO)/$(THISAPP)-install
+else
   TARGET = $(DIR_INFO)/$(THISAPP)
+endif
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
 endif
@@ -77,6 +81,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(ROOT)" ""
+ifeq "$(LFS_PASS)" "install"
+	-mkdir -p /opt/$(MACHINE)-uClibc
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-inotify-3.patch
+	cd $(DIR_APP) && install -dv /opt/$(MACHINE)-uClibc/usr/include/asm
+	cd $(DIR_APP) && cp -Rv include/asm-i386/* /opt/$(MACHINE)-uClibc/usr/include/asm
+	cd $(DIR_APP) && cp -Rv include/linux /opt/$(MACHINE)-uClibc/usr/include
+	cd $(DIR_APP) && chown -Rv root:root /opt/$(MACHINE)-uClibc/usr/include/{asm,linux}
+	cd $(DIR_APP) && find /opt/$(MACHINE)-uClibc/usr/include/{asm,linux} -type d -exec chmod -v 755 {} \;
+	cd $(DIR_APP) && find /opt/$(MACHINE)-uClibc/usr/include/{asm,linux} -type f -exec chmod -v 644 {} \;
+else
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-inotify-3.patch
 	cd $(DIR_APP) && install -dv /usr/include/asm
 	cd $(DIR_APP) && cp -Rv include/asm-i386/* /usr/include/asm
@@ -84,6 +98,7 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && chown -Rv root:root /usr/include/{asm,linux}
 	cd $(DIR_APP) && find /usr/include/{asm,linux} -type d -exec chmod -v 755 {} \;
 	cd $(DIR_APP) && find /usr/include/{asm,linux} -type f -exec chmod -v 644 {} \;
+endif
 else
 	cd $(DIR_APP) && cp -Rv include/asm-i386 /tools/include/asm
 	cd $(DIR_APP) && cp -Rv include/linux /tools/include

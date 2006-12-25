@@ -36,10 +36,18 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
+ifeq "$(LFS_PASS)" "install"
+  TARGET = $(DIR_INFO)/$(THISAPP)-install
+  EXTRA_CONFIG = --target=$(MACHINE)-linux-uclibc --prefix=/opt/$(MACHINE)-uClibc --disable-nls \
+			--with-sysroot=/opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
+else
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls
   EXTRA_MAKE = tooldir=/usr
   EXTRA_INSTALL = tooldir=/usr
+endif
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
@@ -93,6 +101,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/binutils-build
+ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/binutils-uclibc-conf.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/binutils-uclibc-libtool-conf.patch
+endif
 	cd $(DIR_SRC)/binutils-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make configure-host
@@ -100,7 +112,9 @@ endif
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING)
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
+ifneq "$(LFS_PASS)" "install"
 	cp -v $(DIR_APP)/include/libiberty.h /usr/include
+endif
 else
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make -C ld clean

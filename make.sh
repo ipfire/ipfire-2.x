@@ -549,7 +549,13 @@ buildinstaller() {
   export LOGFILE
   ipfiremake syslinux
   ipfiremake memtest
-  ipfiremake uClibc
+  installmake linux-libc-header
+  installmake binutils
+  ipfiremake uClibc			PASS=1
+  ipfiremake gcc			INST=1
+  installmake uClibc			PASS=2
+  installmake gcc			INST=2
+  installmake uClibc			PASS=3
   installmake busybox
   installmake udev
   installmake slang

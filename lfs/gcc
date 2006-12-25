@@ -38,6 +38,28 @@ CXXFLAGS   =
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
+ifeq "$(INST)" "1"
+  TARGET = $(DIR_INFO)/$(THISAPP)-install1
+  EXTRA_CONFIG = --target=$(MACHINE)-linux-uclibc --prefix=/opt/$(MACHINE)-uClibc \
+	--with-local-prefix=/opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc --with-newlib \
+	--with-sysroot=/opt/$(MACHINE)-uClibc --disable-nls \
+	--enable-threads=no --enable-symvers=gnu \
+	--disable-__cxa_atexit --enable-languages=c \
+	--disable-shared --with-gnu-as --with-gnu-ld \
+	--without-headers
+else
+ifeq "$(INST)" "2"
+  TARGET = $(DIR_INFO)/$(THISAPP)-install2
+  EXTRA_CONFIG = --target=$(MACHINE)-linux-uclibc --prefix=/opt/$(MACHINE)-uClibc \
+	--with-local-prefix=/opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc \
+	--with-sysroot=/opt/$(MACHINE)-uClibc \
+	--disable-nls \
+	--enable-threads=posix --enable-symvers=gnu \
+	--disable-__cxa_atexit --enable-languages=c,c++ \
+	--enable-c99 --enable-long-long --with-gnu-as \
+	--with-gnu-ld --enable-shared --enable-clocale \
+	--enable-target-optspace
+else
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr \
     --libexecdir=/usr/lib --enable-shared \
@@ -46,6 +68,8 @@ ifeq "$(ROOT)" ""
     --disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL =
+endif
+endif
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
@@ -105,6 +129,22 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 ifeq "$(ROOT)" ""
+ifeq "$(INST)" "1"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-uclibc-conf.patch
+	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
+override PATH = /opt/$(MACHINE)-uClibc/bin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin
+	cd $(DIR_SRC)/gcc-build && make all-gcc install-gcc
+else
+ifeq "$(INST)" "2"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-uclibc-conf.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-uclibc-locale.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-libstdc++-pic.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-sdk-libstdc++-includes.patch
+	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/gcc-build && make all install
+	cp -f /opt/$(MACHINE)-uClibc/lib/libgcc_s.so /lib
+	cd /lib && ln -sf libgcc_s.so libgcc_s.so.1
+else
 	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
 	cd $(DIR_APP) && sed -i 's/^XCFLAGS =$$/& -fomit-frame-pointer/' gcc/Makefile.in
 	cd $(DIR_APP) && sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
@@ -115,6 +155,8 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 	ln -sfv ../usr/bin/cpp /lib
 	ln -sfv gcc /usr/bin/cc
+endif
+endif
 else
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
