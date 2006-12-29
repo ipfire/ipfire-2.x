@@ -31,6 +31,7 @@
 * applejuice-0.30
 * arping-2.05
 * asterisk-1.2.13
+* asterisk-1.4.0
 * autoconf-2.59
 * automake-1.9.6
 * bash-3.1
@@ -123,6 +124,7 @@
 * libpcap-0.8.3
 * libpng-1.2.12
 * libpri-1.2.4
+* libpri-1.4.0
 * libsafe_2.0-16
 * libtool-1.5.22
 * libusb-0.1.12
@@ -237,4 +239,5 @@
 * xvidcore-1.1.0
 * yasuc-0.4.1
 * zaptel-1.2.10
+* zaptel-1.4.0
 * zlib-1.2.3

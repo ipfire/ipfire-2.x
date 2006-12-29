@@ -70,5 +70,5 @@ $(TARGET) :
 	ln -s $(SNAME)-pxe-$(VERSION).model /tmp/pxelinux.cfg/default
 	chmod 444 /tmp/$(VERSION)/instroot.gz
 	cd /tmp && tar cvzf \
-		/install/images/$(SNAME)-$(VERSION)-pxe-$(MACHINE).tgz *
+		/install/images/$(SNAME)-$(VERSION).$(MACHINE)-pxe.tgz *
 	rm -rf /tmp/*

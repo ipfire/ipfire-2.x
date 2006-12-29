@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 1.2.10
+VER        = 1.4.0
 
 THISAPP    = zaptel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 25f9a78272104efdbd44261e33edb725
+$(DL_FILE)_MD5 = 27b43dfa3f1629f063a20779300f68c8
 
 install : $(TARGET)
 
@@ -82,12 +82,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	# Build Zaptel
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zaptel.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zaptel.patch
 ifeq "$(PASS)" "S"
-	cd $(DIR_APP) && make $(MAKETUNING) linux26 KVERS=$(KVER)-smp
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make linux26 KVERS=$(KVER)-smp
 	cd $(DIR_APP) && make install KVERS=$(KVER)-smp
 else
-	cd $(DIR_APP) && make $(MAKETUNING) linux26 KVERS=$(KVER)
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make linux26 KVERS=$(KVER)
 	cd $(DIR_APP) && make install KVERS=$(KVER)
 endif
 	cd $(DIR_APP) && install -D -m 644 zaptel.h /usr/include/zaptel.h
