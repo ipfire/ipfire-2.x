@@ -85,6 +85,7 @@
 * glibc-2.3.6
 * gmp-4.2
 * gnump3d-2.9.8
+* gnump3d-2.9.9.9
 * gnupg-1.4.5
 * grep-2.5.1a
 * groff-1.18.1.1

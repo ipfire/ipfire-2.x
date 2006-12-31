@@ -26,15 +26,15 @@
 
 include Config
 
-VER        = 2.9.8
+VER        = 2.9.9.9
 
 THISAPP    = gnump3d-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://download.savannah.gnu.org/releases/gnump3d
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = gnump3d
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 329507d7c6b3a05549fc04e223908825
+$(DL_FILE)_MD5 = 61aadff26da4e5539d481e7397ddaf3e
 
 install : $(TARGET)
 
