@@ -106,10 +106,22 @@ beautify()
 					;;
 			esac
 			;;
-		build_stage)
+		build_stage_start)
 			MESSAGE=$2
+			STAGE_TIME_START=`date +%s`
 			echo -ne "${BOLD}*** ${MESSAGE}${SET_VER_COL}      version${SET_OPT_COL} options"
 			echo -ne "${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
+			;;
+		build_stage_end)
+			STAGE_TIME_END=`date +%s`
+			echo -ne "${BOLD}***This stage took:\t\t $[ $STAGE_TIME_END - $STAGE_TIME_START ] (secs)${NORMAL}\n"
+			;;
+		build_start)
+			BUILD_TIME_START=`date +%s`
+			;;
+		build_end)
+			BUILD_TIME_END=`date +%s`
+			echo -ne "${BOLD}***Build is finished now!\nThis took:\t\t\t $[ $BUILD_TIME_END - $BUILD_TIME_START ] (secs)${NORMAL}\n"
 			;;
 		make_pkg)
 			echo "$2" | while read PKG_VER PROGRAM OPTIONS

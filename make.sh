@@ -705,11 +705,14 @@ build)
 		prepareenv
 	fi
 
-	beautify build_stage "Building base"
+	beautify build_start
+	beautify build_stage_start "Building base"
 	buildbase
+	beautify build_stage_end
 
-	beautify build_stage "Building IPFire"
+	beautify build_stage_start "Building IPFire"
 	buildipfire
+	beautify build_stage_end
 
 	# Setzen des IPFire Builds
 	if [ "$FIREBUILD" ]; then
@@ -718,11 +721,14 @@ build)
 		echo "_(OvO)_" > $BASEDIR/build/var/ipfire/firebuild
 	fi
 
-	beautify build_stage "Building installer"
+	beautify build_stage_start "Building installer"
 	buildinstaller
+	beautify build_stage_end
 
-	beautify build_stage "Building packages"
+	beautify build_stage_start "Building packages"
 	buildpackages
+	beautify build_stage_end
+	beautify build_end
 	;;
 shell)
 	# enter a shell inside LFS chroot
