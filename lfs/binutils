@@ -38,10 +38,15 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
 ifeq "$(LFS_PASS)" "install"
   TARGET = $(DIR_INFO)/$(THISAPP)-install
-  EXTRA_CONFIG = --target=$(MACHINE)-linux-uclibc --prefix=/opt/$(MACHINE)-uClibc --disable-nls \
-			--with-sysroot=/opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
+  EXTRA_CONFIG = --prefix=/opt/$(MACHINE)-uClibc \
+		--build=$(MACHINE)-pc-linux-gnu \
+		--host=$(MACHINE)-pc-linux-gnu \
+		--target=$(MACHINE)-linux-uclibc \
+		--disable-nls \
+		--enable-multilib \
+		--disable-werror
+  EXTRA_MAKE = all
+  EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls

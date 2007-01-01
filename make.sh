@@ -739,9 +739,10 @@ shell)
 changelog)
 	echo -n "Loading new Changelog from SVN: "
 	svn log http://svn.ipfire.eu/svn/ipfire > doc/ChangeLog
-	echo "Finished!"
+	beautify message DONE
 	;;
 clean)
+	echo -en "${BOLD}Cleaning build directory...${NORMAL}"
 	for i in `mount | grep $BASEDIR | sed 's/^.*loop=\(.*\))/\1/'`; do
 		$LOSETUP -d $i 2>/dev/null
 	done
@@ -762,57 +763,7 @@ clean)
 	if [ -h /tools ]; then
 		rm -f /tools
 	fi
-	;;
-newpak)
-	# create structure for a new package
-	echo -e "Name of the new package: $2"
-	if [ ! -f "lfs/$2" ]; then
-		echo "`date -u '+%b %e %T'`: Creating directory src/paks/$2"
-		mkdir -p src/paks/$2
-		cd src/paks/$2
-		echo "`date -u '+%b %e %T'`: Creating files"
-		cp $BASEDIR/lfs/postfix $BASEDIR/lfs/$2
-
-		touch ROOTFILES
-		touch {,un}install.sh
-	## install.sh
-		echo '#!/bin/bash' > install.sh
-		echo '#' >> install.sh
-		echo '#################################################################' >> install.sh
-		echo '#                                                               #' >> install.sh
-		echo '# This file belongs to IPFire Firewall - GPLv2 - www.ipfire.org #' >> install.sh
-		echo '#                                                               #' >> install.sh
-		echo '#################################################################' >> install.sh
-		echo '#' >> install.sh
-		echo '# Extract the files' >> install.sh
-		echo 'tar xfz files.tgz -C /' >> install.sh
-		echo 'cp -f ROOTFILES /opt/pakfire/installed/ROOTFILES.$2' >> install.sh
-	## uninstall.sh
-		echo '#!/bin/bash' > uninstall.sh
-		echo '#################################################################' >> uninstall.sh
-		echo '#                                                               #' >> uninstall.sh
-		echo '# This file belongs to IPFire Firewall - GPLv2 - www.ipfire.org #' >> uninstall.sh
-		echo '#                                                               #' >> uninstall.sh
-		echo '#################################################################' >> uninstall.sh
-		echo '#' >> uninstall.sh
-		echo '# Delete the files' >> uninstall.sh
-		echo '## Befehl fehlt noch' >> uninstall.sh
-		echo 'rm -f /opt/pakfire/installed/ROOTFILES.$2' >> uninstall.sh
-		echo "`date -u '+%b %e %T'`: Adding files to SVN"
-		cd - && svn add lfs/$2 && svn add src/paks/$2
-
-		echo -n "Do you want to remove the folders? [y/n]"
-		read REM
-		if  [ "$REM" == "y" ]; then
-			echo "Removing the folders..."
-			svn del src/paks/$2 --force
-		else
-			echo "Folders are kept."
-		fi
-	else
-		echo "$2 already exists"
-	fi
-	exit 0
+	beautify message DONE
 	;;
 downloadsrc)
 	if [ ! -d $BASEDIR/cache ]; then
@@ -1104,7 +1055,7 @@ pxe)
 	  stop)
 		stop_tftpd
 		;;
-	  reload)
+	  reload|restart)
 		reload_tftpd
 		;;		
 	esac
@@ -1135,7 +1086,7 @@ pxe)
 		$0 svn update
 		;;
 	"Help")
-		echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|downloadsrc|shell|sync|toolchain}"
+		echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"
 		cat doc/make.sh-usage
 		;;
 	"LOG: Tail")
@@ -1147,8 +1098,11 @@ pxe)
 	esac
 	done
 	;;
+config)
+	make_config
+	;;
 *)
-	echo "Usage: $0 {build|changelog|clean|gettoolchain|newpak|downloadsrc|shell|sync|toolchain}"
+	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"
 	cat doc/make.sh-usage
 	;;
 esac

@@ -33,8 +33,6 @@ DL_FILE    = $(THISAPP).bin.i386.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = iptraf
-PAK_VER    = ipfire-beta1
 
 ###############################################################################
 # Top-level Rules
@@ -78,5 +76,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP).bin.i386/src && yes 'n' | make install TARGET=/usr/bin
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP).bin.i386
 	@$(POSTBUILD)

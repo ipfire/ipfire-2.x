@@ -30,7 +30,6 @@
 * amavisd-new-2.4.1
 * applejuice-0.30
 * arping-2.05
-* asterisk-1.2.13
 * asterisk-1.4.0
 * autoconf-2.59
 * automake-1.9.6
@@ -48,6 +47,7 @@
 * cdrtools-2.01
 * cftp-0.12
 * clamav-0.88.6
+* clamav-0.88.7
 * coreutils-5.96
 * cups-1.2.2
 * cyrus-imapd-2.2.12
@@ -124,7 +124,6 @@
 * libogg-1.1.3
 * libpcap-0.8.3
 * libpng-1.2.12
-* libpri-1.2.4
 * libpri-1.4.0
 * libsafe_2.0-16
 * libtool-1.5.22
@@ -197,7 +196,6 @@
 * rrdtool-1.2.15
 * rsync-2.6.8
 * samba-3.0.23b
-* samba-3.0.23d
 * screen-4.0.2
 * sed-4.1.5
 * setserial-2.17

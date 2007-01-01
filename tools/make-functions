@@ -271,7 +271,6 @@ entershell() {
 #
 lfsmakecommoncheck()
 {
-
 	# Script present?
 	if [ ! -f $BASEDIR/lfs/$1 ]; then
 		exiterror "No such file or directory: $BASEDIR/$1"
@@ -284,7 +283,7 @@ lfsmakecommoncheck()
 	local i
 	for i in $SKIP_PACKAGE_LIST
 	do
-		if [ "$i" == "$1" ]; then  
+		if [ "$i" == "$1" ]; then
 			beautify result SKIP
 			return 1;
 		fi 
@@ -454,42 +453,41 @@ update_logs() {
 }
 
 batch_script() {
-	echo -ne "### UPDATE LOGS"
+	echo -ne "${BOLD}***This is our auto buildscript! Have fun...${NORMAL}\n"
 	update_logs
 	evaluate 1
 
 	if [ "$IPFIRE_REBUILD" -eq "0" ]; then
-		echo -ne "### SAVING TIME"
 		export IPFIRE_START_TIME=`date`
 		evaluate 1
 
-		echo "### RUNNING SVN-UPDATE"
+		echo -ne "### RUNNING SVN-UPDATE"
 		$0 svn update
-		evaluate 1 mail SVNUPDATE
+		evaluate 1 mail_me SVNUPDATE
 
 		echo "### EXPORT SOURCES"
 		$0 svn dist
-		evaluate 1 mail SVNDIST
+		evaluate 1 mail_me SVNDIST
 
 		echo "### RUNNING PREFETCH"
-		$0 prefetch | grep -q "md5 difference"
-		evaluate 1 mail PREFETCH
+		$0 downloadsrc | grep -q "md5 difference"
+		evaluate 1 mail_me PREFETCH
 	fi
 
 	echo "### RUNNING BUILD"
 	$0 build
-	evaluate 1 mail ERROR
+	evaluate 1 mail_me ERROR
 
 	echo "### UPLOADING ISO"
 	$0 upload iso
-	evaluate 1 mail ISO
+	evaluate 1 mail_me ISO
 	
 	echo -ne "### UPLOADING PAKS"
 	$0 upload paks
-	evaluate 1 mail PAKS
+	evaluate 1 mail_me PAKS
 
 	echo -n "${BOLD}***SUCCESS!${NORMAL}"
-	evaluate 0 mail SUCCESS
+	evaluate 0 mail_me SUCCESS
 	exit 0
 }
 
@@ -499,7 +497,7 @@ watch_screen() {
 	screen -x ipfire
 }
 
-mail() {
+mail_me() {
 	chmod 755 tools/sendEmail
 	ATTACHMENT=/tmp/ipfire-build-logs-R$SVN_REVISION.tar.gz
 	case "$1" in
@@ -557,88 +555,98 @@ END
 }
 
 make_config() {
-	echo -e "This is for creating your configuration..."
-	echo -e "We will need some input:"
-	echo -e ""
-	echo -n "FTP-DOMAIN FOR THE ISO: "
-	read IPFIRE_FTP_URL_EXT
-	echo -n "PATH FOR $IPFIRE_FTP_URL_EXT: "
-	read IPFIRE_FTP_PATH_EXT
-	echo -n "USERNAME FOR $IPFIRE_FTP_URL_EXT: "
-	read IPFIRE_FTP_USER_EXT
-	echo -n "PASSWORD FOR $IPFIRE_FTP_URL_EXT: "
-	read -s IPFIRE_FTP_PASS_EXT
-	echo ""
-	echo "(You can leave this empty if the cache-server is the same as your iso-server.)"
-	echo -n "FTP-DOMAIN FOR THE CACHE: "
-	read IPFIRE_FTP_URL_INT
-	echo -n "PATH FOR $IPFIRE_FTP_URL_INT: "
-	read IPFIRE_FTP_PATH_INT
-	if [ $IPFIRE_FTP_URL_INT ]; then
-		echo -n "USERNAME FOR $IPFIRE_FTP_URL_INT: "
-		read IPFIRE_FTP_USER_INT
-		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_INT: "
-		read -s IPFIRE_FTP_PASS_INT
-	else
-		IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_EXT
-		IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_EXT
-		IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_EXT
-		echo "USERNAME FOR $IPFIRE_FTP_URL_INT: $IPFIRE_FTP_USER_INT"
-		echo "PASSWORD FOR $IPFIRE_FTP_URL_INT: !HIDDEN!"
+	clear
+	echo -e "${BOLD}***This will create your configuration...${NORMAL}"
+	echo -ne "***If your are ready press <ENTER>!"
+	read
+	clear
+	echo -ne "***The buildscript will create a full iso image.\n"
+	echo -ne "***If you want to skip any package please enter its name here seperated with space.\n"
+	echo -ne "Actually in the list are: $SKIP_PACKAGE_LIST\n"
+	echo -ne "Do you want to change this? (y/N) "
+	read YESNO
+	if [ "$YESNO" == "y" ]; then
+		echo -ne "Please type: "
+		read SKIP_PACKAGE_LIST
+		echo -ne "You entered: $SKIP_PACKAGE_LIST\n"
 	fi
-	echo ""
-	echo "(You can leave this empty if the pak-server is the same as your iso-server.)"
-	echo -n "FTP-DOMAIN FOR THE PAKS: "
-	read IPFIRE_FTP_URL_PAK
-	echo -n "PATH FOR $IPFIRE_FTP_URL_PAK: "
-	read IPFIRE_FTP_PATH_PAK
-	if [ $IPFIRE_FTP_URL_PAK ]; then
-		echo -n "USERNAME FOR $IPFIRE_FTP_URL_PAK: "
-		read IPFIRE_FTP_USER_PAK
-		echo -n "PASSWORD FOR $IPFIRE_FTP_URL_PAK: "
-		read -s IPFIRE_FTP_PASS_PAK
-	else
-		IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_EXT
-		IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_EXT
-		IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_EXT
-		echo "USERNAME FOR $IPFIRE_FTP_URL_PAK: $IPFIRE_FTP_USER_PAK"
-		echo "PASSWORD FOR $IPFIRE_FTP_URL_PAK: !HIDDEN!"
+
+	clear
+	echo -ne "***When you have compiled successfully, there is the possibility\n"
+	echo -ne "***to upload the iso image to a ftp server.\n"
+	echo -ne "***If the url is empty there will be no upload.\n"
+	echo -ne "Actually there is: $FTP_ISO_URL\n"
+	echo -ne "Do you want to change this? (y/N) "
+	read YESNO
+	if [ "$YESNO" == "y" ]; then
+		echo -ne "Please type the url: "
+		read FTP_ISO_URL
+		echo -ne "Please type the path: "
+		read FTP_ISO_PATH
+		echo -ne "Please type the username: "
+		read FTP_ISO_USER
+		echo -ne "Please type the password (hidden): "
+		read -s FTP_ISO_PASS
+		
 	fi
-	echo ""
-	echo -e "ONE OR MORE EMAIL ADDRESS(ES) TO WHICH THE REPORTS WILL BE SENT"
-	echo -e "(seperated by comma)"
-	read IPFIRE_MAIL_REPORT
-	echo -n "EMAIL FROM: "
-	read IPFIRE_MAIL_FROM
-	echo -n "EMAIL SERVER: "
-	read IPFIRE_MAIL_SERVER
-	echo -n "LOGIN TO MAIL SERVER: "
-	read IPFIRE_MAIL_USER
-	echo -n "MAIL PASSWORD: "
-	read -s IPFIRE_MAIL_PASS
-	echo -n "Saving..."
-	cat <<END > .config
-### ISO server
-IPFIRE_FTP_URL_EXT=$IPFIRE_FTP_URL_EXT
-IPFIRE_FTP_PATH_EXT=$IPFIRE_FTP_PATH_EXT
-IPFIRE_FTP_USER_EXT=$IPFIRE_FTP_USER_EXT
-IPFIRE_FTP_PASS_EXT=$IPFIRE_FTP_PASS_EXT
+
+	clear
+	echo -ne "***When you add some new software you can easyly\n"
+	echo -ne "***upload the source code to our repository server.\n"
+	echo -ne "***If the url is empty there will be no upload.\n"
+	echo -ne "Actually there is: $FTP_CACHE_URL\n"
+	echo -ne "Do you want to change this? (y/N) "
+	read YESNO
+	if [ "$YESNO" == "y" ]; then
+		echo -ne "Please type the url: "
+		read FTP_CACHE_URL
+		echo -ne "Please type the path: "
+		read FTP_CACHE_PATH
+		echo -ne "Please type the username: "
+		read FTP_CACHE_USER
+		echo -ne "Please type the password (hidden): "
+		read -s FTP_CACHE_PASS
+		
+	fi
+
+	clear
+	echo -ne "***If there are some important messages you\n"
+	echo -ne "***can get a notification mail.\n"
+	echo -ne "***Please type one ore more email adresses (seperated by comma).\n"
+	echo -ne "Actually there is: $MAIL_TO\n"
+	echo -ne "Do you want to change this? (y/N) "
+	read YESNO
+	if [ "$YESNO" == "y" ]; then
+		echo -ne "Please type: "
+		read MAIL_TO
+		echo -ne "You should enter a mail server to login...\n"
+		echo -ne "Please type the url: "
+		read MAIL_SERVER
+		echo -ne "Please type the username: "
+		read MAIL_USER
+		echo -ne "Please type the password (hidden): "
+		read -s MAIL_PASS
+		
+	fi
+	echo -ne "${BOLD}***Saving...${NORMAL}"
+	cat <<END > $BASEDIR/.config
+### iso server
+FTP_ISO_URL=$FTP_ISO_URL
+FTP_ISO_PATH=$FTP_ISO_PATH
+FTP_ISO_USER=$FTP_ISO_USER
+FTP_ISO_PASS=$FTP_ISO_PASS
 ### cache server
-IPFIRE_FTP_URL_INT=$IPFIRE_FTP_URL_INT
-IPFIRE_FTP_PATH_INT=$IPFIRE_FTP_PATH_INT
-IPFIRE_FTP_USER_INT=$IPFIRE_FTP_USER_INT
-IPFIRE_FTP_PASS_INT=$IPFIRE_FTP_PASS_INT
-### paks server
-IPFIRE_FTP_URL_PAK=$IPFIRE_FTP_URL_PAK
-IPFIRE_FTP_PATH_PAK=$IPFIRE_FTP_PATH_PAK
-IPFIRE_FTP_USER_PAK=$IPFIRE_FTP_USER_PAK
-IPFIRE_FTP_PASS_PAK=$IPFIRE_FTP_PASS_PAK
+FTP_CACHE_URL=$FTP_CACHE_URL
+FTP_CACHE_PATH=$FTP_CACHE_PATH
+FTP_CACHE_USER=$FTP_CACHE_USER
+FTP_CACHE_PASS=$FTP_CACHE_PASS
 ### mail reports
-IPFIRE_MAIL_REPORT=$IPFIRE_MAIL_REPORT
-IPFIRE_MAIL_FROM=$IPFIRE_MAIL_FROM
-IPFIRE_MAIL_SERVER=$IPFIRE_MAIL_SERVER
-IPFIRE_MAIL_USER=$IPFIRE_MAIL_USER
-IPFIRE_MAIL_PASS=$IPFIRE_MAIL_PASS
+MAIL_TO="$MAIL_TO"
+MAIL_SERVER=$MAIL_SERVER
+MAIL_USER=$MAIL_USER
+MAIL_PASS=$MAIL_PASS
+### misc
+SKIP_PACKAGE_LIST="$SKIP_PACKAGE_LIST"
 END
 	beautify message DONE
 }
@@ -646,13 +654,13 @@ END
 compile_tftpd() {
 	mkdir $BASEDIR/tmp
 	tar xvfz $BASEDIR/cache/tftp-hpa-0.42.tar.gz -C $BASEDIR/tmp
-	cd $BASEDIR/tmp/tftp-hpa-0.42
+	cd $BASEDIR/tmp/tftp-hpa-*
 		./configure --prefix=/ipfire/trunk/tools/ \
 			--sbindir=/ipfire/trunk/tools/ --disable-nls
 		make
 		install -c tftpd/tftpd $BASEDIR/tools/in.tftpd
 	cd -
-	rm -rf $BASEDIR/tmp/tftp-hpa-0.42
+	rm -rf $BASEDIR/tmp/tftp-hpa-*
 }
 
 start_tftpd() {

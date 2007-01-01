@@ -34,38 +34,56 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
+TARGET_PATH = /opt/$(MACHINE)-uClibc/bin:$(PATH)
 
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
 ifeq "$(INST)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-install1
-  EXTRA_CONFIG = --target=$(MACHINE)-linux-uclibc --prefix=/opt/$(MACHINE)-uClibc \
-	--with-local-prefix=/opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc --with-newlib \
-	--with-sysroot=/opt/$(MACHINE)-uClibc --disable-nls \
-	--enable-threads=no --enable-symvers=gnu \
-	--disable-__cxa_atexit --enable-languages=c \
-	--disable-shared --with-gnu-as --with-gnu-ld \
-	--without-headers
+  EXTRA_CONFIG = --prefix=/opt/$(MACHINE)-uClibc \
+		--build=$(MACHINE)-pc-linux-gnu \
+		--host=$(MACHINE)-pc-linux-gnu \
+		--target=$(MACHINE)-linux-uclibc \
+		--enable-languages=c \
+		--with-sysroot=$(DIR_SRC)/uClibc_dev \
+		--disable-__cxa_atexit \
+		--enable-target-optspace \
+		--with-gnu-ld \
+		--disable-shared \
+		--enable-threads \
+		--enable-multilib \
+		--disable-nls
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
 else
 ifeq "$(INST)" "2"
   TARGET = $(DIR_INFO)/$(THISAPP)-install2
-  EXTRA_CONFIG = --target=$(MACHINE)-linux-uclibc --prefix=/opt/$(MACHINE)-uClibc \
-	--with-local-prefix=/opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc \
-	--with-sysroot=/opt/$(MACHINE)-uClibc \
-	--disable-nls \
-	--enable-threads=posix --enable-symvers=gnu \
-	--disable-__cxa_atexit --enable-languages=c,c++ \
-	--enable-c99 --enable-long-long --with-gnu-as \
-	--with-gnu-ld --enable-shared --enable-clocale \
-	--enable-target-optspace
+  EXTRA_CONFIG = --prefix=/opt/$(MACHINE)-uClibc \
+		--build=$(MACHINE)-pc-linux-gnu \
+		--host=$(MACHINE)-pc-linux-gnu \
+		--target=$(MACHINE)-linux-uclibc \
+		--enable-languages=c,c++ \
+		--with-sysroot=$(DIR_SRC)/uClibc_dev \
+		--disable-__cxa_atexit \
+		--enable-target-optspace \
+		--with-gnu-ld \
+		--enable-shared \
+		--disable-nls \
+		--enable-threads \
+		--enable-multilib
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr \
-    --libexecdir=/usr/lib --enable-shared \
-    --enable-threads=posix --enable-__cxa_atexit \
-    --enable-clocale=gnu --enable-languages=c,c++ \
-    --disable-nls
+		--libexecdir=/usr/lib \
+		--enable-shared \
+		--enable-threads=posix \
+		--enable-__cxa_atexit \
+		--enable-clocale=gnu \
+		--enable-languages=c,c++ \
+		--disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL =
 endif
@@ -74,17 +92,22 @@ else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = --prefix=/tools \
-    --with-local-prefix=/tools --disable-nls --enable-shared \
-    --enable-languages=c
+		--with-local-prefix=/tools \
+		--disable-nls \
+		--enable-shared \
+		--enable-languages=c
   EXTRA_MAKE = bootstrap BOOT_LDFLAGS="-static"
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
   EXTRA_CONFIG = --prefix=/tools \
-    --with-local-prefix=/tools --enable-clocale=gnu \
-    --enable-shared --enable-threads=posix \
-    --enable-__cxa_atexit --enable-languages=c,c++ \
-    --disable-libstdcxx-pch
+		--with-local-prefix=/tools \
+		--enable-clocale=gnu \
+		--enable-shared \
+		--enable-threads=posix \
+		--enable-__cxa_atexit \
+		--enable-languages=c,c++ \
+		--disable-libstdcxx-pch
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -132,16 +155,23 @@ ifeq "$(ROOT)" ""
 ifeq "$(INST)" "1"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-uclibc-conf.patch
 	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-override PATH = /opt/$(MACHINE)-uClibc/bin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin
-	cd $(DIR_SRC)/gcc-build && make all-gcc install-gcc
+	cd $(DIR_SRC)/gcc-build && PATH=$(TARGET_PATH) make $(MAKETUNING) all-gcc
+	cd $(DIR_SRC)/gcc-build && PATH=$(TARGET_PATH) make install-gcc
+	cd /opt/$(MACHINE)-uClibc/bin && for i in `ls -w1 $(MACHINE)-linux-uclibc-*`; do \
+		ln -svf $$i $(MACHINE)-linux-`echo $$i | cut -c 19-`; \
+	done
+	ln -svf $(MACHINE)-linux-uclibc /opt/$(MACHINE)-uClibc/$(MACHINE)-linux
+	ln -svf gcc /opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc/bin/cc
 else
 ifeq "$(INST)" "2"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-uclibc-conf.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-uclibc-locale.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-libstdc++-pic.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-sdk-libstdc++-includes.patch
+	ln -snf ../include /opt/$(MACHINE)-uClibc/$(MACHINE)-linux-uclibc/sys-include
 	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make all install
+	cd $(DIR_SRC)/gcc-build && PATH=$(TARGET_PATH) make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && PATH=$(TARGET_PATH) make install $(EXTRA_INSTALL)
 	cp -f /opt/$(MACHINE)-uClibc/lib/libgcc_s.so /lib
 	cd /lib && ln -sf libgcc_s.so libgcc_s.so.1
 else
