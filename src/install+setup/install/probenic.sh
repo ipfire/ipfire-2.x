@@ -3,7 +3,8 @@
 MODULES=$(/bin/kudzu -qps  -t 30 -c NETWORK | grep driver | cut -d ' ' -f 2 | sort)
 
 if [ "$1" == "count" ]; then
-	echo $(echo $MODULES | wc -l)
+	/bin/kudzu -qps  -t 30 -c NETWORK | grep driver | wc -l | awk '{ print $1 }' > /drivercount
+	exit 0
 else
 	NUMBER=$1
 fi

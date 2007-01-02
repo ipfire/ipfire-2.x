@@ -46,7 +46,6 @@
 * ccache-2.4
 * cdrtools-2.01
 * cftp-0.12
-* clamav-0.88.6
 * clamav-0.88.7
 * coreutils-5.96
 * cups-1.2.2
@@ -84,7 +83,6 @@
 * glib-2.9.6
 * glibc-2.3.6
 * gmp-4.2
-* gnump3d-2.9.8
 * gnump3d-2.9.9.9
 * gnupg-1.4.5
 * grep-2.5.1a
@@ -142,7 +140,6 @@
 * make-3.80
 * man-db-2.4.3
 * man-pages-2.34
-* mc-4.6.0
 * mc-4.6.1
 * memtest86+-1.65
 * mingetty_1.07
@@ -195,7 +192,7 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rsync-2.6.8
-* samba-3.0.23b
+* samba-3.0.23d
 * screen-4.0.2
 * sed-4.1.5
 * setserial-2.17
@@ -239,6 +236,5 @@
 * xmbmon205
 * xvidcore-1.1.0
 * yasuc-0.4.1
-* zaptel-1.2.10
 * zaptel-1.4.0
 * zlib-1.2.3

@@ -413,30 +413,88 @@ struct nic nics[] = {
 /* Funky routine for loading all drivers (cept those are already loaded.). */
 int probecards(char *driver, char *driveroptions)
 {
+	int c;
+	char **sections;
+	char drivercount;
+	int rc;
+	int choice;
+	int done = 0;
 	char message[1000];
 	char commandstring[STRING_SIZE];
 	FILE *handle;
 	char line[STRING_SIZE];
 
-	sprintf(commandstring, "/bin/probenic.sh 1");
-	sprintf(message, ctr[TR_PROBING_FOR_NICS]);
-	runcommandwithstatus(commandstring, message);
-
-	if ((handle = fopen("/nicdriver", "r")))
-	{
-		char *driver;
+	/* Count all nics. */
+	mysystem("/bin/probenic.sh count");
+	if ((handle = fopen("/drivercount", "r")))
 		fgets(line, STRING_SIZE-1, handle);
-		fclose(handle);
-		line[strlen(line) - 1] = 0;
-		driver = strtok(line, ".");
-		fprintf(flog, "Detected NIC driver %s\n",driver);
-		if (strlen(driver) > 1) {
-			strcpy(driveroptions, "");
-			return 1;
-		}
+	fclose(handle);
+	//system("rm -f /drivercount");
+	line[strlen(line) - 1] = 0;
+	drivercount = strtok(line, ".");
+	fprintf(flog, "Detected %s NICs in your system.\n", drivercount);
+	if (!drivercount > 0) {
+		return 1;
 	}
+
+	sections = malloc(drivercount * sizeof(char *));
+
+	struct driver drivers[drivercount];
+	strcpy(drivers[0].modulename, "pcnet32");
+
+	fprintf(flog, "TEST0.\n");
+	c = 0;
+	while (drivers[c - 1].modulename)
+	{
+		sections[c] = drivers[c - 1].description;
+		fprintf(flog, "TEST1.\n");
+		c++;
+	}
+	sections[c] = NULL;
+	fprintf(flog, "TEST2.\n");
+	
 	strcpy(driver, "");
 	strcpy(driveroptions, "");
+
+	done = 0; choice = 1;
+	while (!done)
+	{
+		rc = newtWinMenu(ctr[TR_SELECT_NETWORK_DRIVER],
+			ctr[TR_SELECT_NETWORK_DRIVER_LONG], 50, 5, 5, 6,
+			sections, &choice, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+		if (rc == 0 || rc == 1)
+		{
+			if (choice > 0)
+			{
+				/* Find module number, load module. */
+				c = choice - 1;	
+		
+				if (!checkformodule(nics[c].modulename))
+				{
+					sprintf(commandstring, "/sbin/modprobe %s", nics[c].modulename);
+					sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
+					if (runcommandwithstatus(commandstring, message) == 0)
+					{
+						strcpy(driver, nics[c].modulename);
+						strcpy(driveroptions, "");
+						done = 1;
+					}
+					else
+						errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
+				}
+				else
+					errorbox(ctr[TR_THIS_DRIVER_MODULE_IS_ALREADY_LOADED]);
+			}
+			else
+			{
+				manualdriver(driver, driveroptions);
+				if (strlen(driver))
+					done = 1;
+			}
+		}
+		else
+			done = 1;	
+	}
 	
 	return 0;
 }

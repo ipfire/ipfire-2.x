@@ -58,6 +58,11 @@ struct nic
 	char *description;
 	char *modulename;
 };
+struct driver
+{
+	char *description;
+	char *modulename;
+};
 
 /* libsmooth.c */
 void reboot(void);

@@ -47,13 +47,6 @@ case "${1}" in
 		# Remove possible leftover files
 		rm -f CONFIG_ROOT/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 
-		# This won't actually do anything unless a PCMCIA controller was
-		# detected at install time, because /etc/pcmcia.conf won't exist.
-		/etc/rc.d/rc.pcmcia start
-		# Now, just in case we found a PCMCIA USB controller, we'll need to reload
-		# the USB here.
-		/usr/local/bin/resetusb
-
 		# The 'for' loop force driver loading order
 		for NIC in 0 1 2 3; do
 		    ETHX="eth${NIC}"
@@ -82,12 +75,6 @@ case "${1}" in
 		    	fi
 		    fi
 		done
-
-		if [ -d /proc/bus/pccard ]; then
-			boot_mesg "Initializing PCMCIA cardbus modems"
-			modprobe serial_cb
-			evaluate_retval
-		fi
 
 		boot_mesg "Setting up IPFire firewall rules"
 		/etc/rc.d/init.d/firewall start; evaluate_retval

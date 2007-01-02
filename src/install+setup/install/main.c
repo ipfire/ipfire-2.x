@@ -14,7 +14,7 @@
 #define CDROM_INSTALL 0
 #define URL_INSTALL 1
 #define DISK_INSTALL 2
-#define INST_FILECOUNT 5600
+#define INST_FILECOUNT 6600
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
 int raid_disk = 0;
@@ -287,23 +287,6 @@ int main(int argc, char *argv[])
 		if (strstr (line, "fdisk") != NULL) {
 			fprintf(flog, "Manual FDISK selected.\n");
 			fdisk = 1;
-		}
-		if (strstr (line, "nopcmcia") == NULL) {
-			fprintf(flog, "Initializing PCMCIA controllers.\n");
-			pcmcia = initialize_pcmcia();
-			if (pcmcia) {
-				fprintf (flog, "Detected PCMCIA Controller: %s.\n", pcmcia);
-				sprintf(commandstring, "/sbin/modprobe %s", pcmcia);
-				mysystem("/sbin/modprobe pcmcia_core");
-				mysystem(commandstring);
-				mysystem("/sbin/modprobe ds");
-				/* pcmcia netcard drivers are not available from Boot floppy,
-				 * they will be loaded from Drivers floppy later */
-			} else {
-				fprintf (flog, "Detected No PCMCIA Controller.\n");
-			}
-		} else {
-			fprintf(flog, "Skipping PCMCIA detection.\n");
 		}
 		if (strstr (line, "nousb") == NULL) {
 			fprintf(flog, "Initializing USB controllers.\n");
@@ -696,30 +679,6 @@ int main(int argc, char *argv[])
 
 	/* Rename uname */
 	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
-
-	/* Write PCMCIA Config */
-	if (pcmcia) {
-		handle = fopen("/harddisk/etc/modules.conf", "a");
-		if (handle != NULL) {
-			fprintf (handle, "# PCMCIA Settings\n");
-			fprintf (handle, "alias pcmcia-controller %s\n", pcmcia);
-			fclose(handle);
-		}
-	}
-
-	handle = fopen("/harddisk/etc/pcmcia.conf", "w");
-	if (handle != NULL) {
-		if (pcmcia) {
-			fprintf (handle, "PCMCIA=yes\n");
-			fprintf (handle, "PCIC=%s\n", pcmcia);
-		} else {
-			fprintf (handle, "PCMCIA=no\n");
-			fprintf (handle, "PCIC=\n");
-		}
-		fprintf (handle, "CARDMGR_OPTS=\n");
-		fprintf (handle, "SCHEME=\n");
-        	fclose(handle);
-	}
 
 	/* *always* write disk configuration */
 	if (!(write_disk_configs(&hdparams))){

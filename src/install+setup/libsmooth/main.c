@@ -284,33 +284,11 @@ int replace(char filename1[], char *from, char *to)
 /* Include enabled languages */
 #ifdef  LANG_EN_ONLY
         #include "lang_en.c"
-#elifdef	LANG_ALL
-	#include "lang_bz.c"
-	#include "lang_cs.c"
-	#include "lang_da.c"
-	#include "lang_de.c"
-	#include "lang_en.c"
-	#include "lang_es.c"
-	#include "lang_fi.c"
-	#include "lang_fr.c"
-	#include "lang_el.c"
-	#include "lang_it.c"
-	#include "lang_hu.c"
-	#include "lang_la.c"
-	#include "lang_nl.c"
-	#include "lang_no.c"
-	#include "lang_pl.c"
-	#include "lang_pt.c"
-	#include "lang_sk.c"
-	#include "lang_so.c"
-	#include "lang_sv.c"
-	#include "lang_tr.c"
-	#include "lang_vi.c"
 #else
 	#include "lang_de.c"
 	#include "lang_en.c"
-
 #endif
+
 // returns a pointer to the actual running version number of IPFire.
 // Successive updates increase effective version but not VERSION !
 char g_title[STRING_SIZE] = "";
@@ -321,7 +299,7 @@ char* get_version(void) {
 		fclose (f_title);
 		if (g_title[strlen(g_title) - 1] == '\n') g_title[strlen(g_title) - 1] = '\0';
 	} else {
-	        sprintf (g_title, "%s v%s - %s", NAME, VERSION, SLOGAN);
+	        sprintf (g_title, "%s %s - %s", NAME, VERSION, SLOGAN);
 	}
 	return g_title;
 }
