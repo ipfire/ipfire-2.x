@@ -144,7 +144,7 @@ elsif ($cgigraphs[1] =~ /(hdd)/)
       {
         my $output = `/bin/cat /var/log/hddgraph_smartctl_out`;
         $output = &Header::cleanhtml($output);
-        print "<hr><pre>$output</pre>\n";
+        print "<hr><table border=0><tr><td align=left><pre>$output</pre></table>\n";
       }
     }
     else 
@@ -223,7 +223,7 @@ else
       my $ftime = localtime((stat("$graphdir/hddtemp-day.png"))[9]);
       print "<center>";
       print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
-      print "<a href='/cgi-bin/hddgraph.cgi?graph=hdd'>";
+      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=hdd'>";
       print "<img src='/graphs/hddtemp-day.png' border='0' /><hr />";
       print "</a>";
     }
