@@ -46,40 +46,6 @@ int detect_smp() {
 	return (cpu_count > 1);
 }
 
-int generate_packages_list(char *packages, const char *rpmdir, const char *source) {
-
-	FILE *fd=NULL;
-	char buffer[STRING_SIZE];
-	bzero(buffer, sizeof(buffer));
-
-	if ((fd = fopen(source, "r")) == NULL) {
-		(void) fprintf(flog, "Packages file %s not found\n", source);
-		return -1;
-	}
-	while (fgets(buffer, sizeof(buffer), fd) != NULL) {
-		int length = -1;
-		length = strlen(buffer)-1;
-		if (length<=0) {
-			continue;
-		}
-		if (buffer[length] == '\n') {
-			buffer[length]='\0';
-		}
-		length = snprintf(packages, STRING_SIZE, "%s %s/%s", strdup(packages), rpmdir, buffer);
-		if ((length <0) || (length >STRING_SIZE)) {
-			(void) fprintf(flog, "rpm command line too long: %d\n%s", length, packages);
-			return -1;
-		}
-	}
-	if (ferror(fd)) {
-		(void) fprintf(flog, "Error reading file\n");
-		(void) fclose(fd);
-		return -1;
-	}
-	(void) fclose(fd);
-	return 0;
-}
-
 long calc_swapsize(long memory, long disk) {
 	if (memory < 128) {
 		return 256;
@@ -102,6 +68,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     char keymap[STRING_SIZE];
     char language[STRING_SIZE];
     char timezone[STRING_SIZE];
+    char theme[STRING_SIZE];
     char green_address[STRING_SIZE];
     char green_netmask[STRING_SIZE];
     char green_netaddress[STRING_SIZE];
@@ -114,6 +81,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     findkey(unattendedkv, "KEYMAP", keymap);
     findkey(unattendedkv, "LANGUAGE", language);
     findkey(unattendedkv, "TIMEZONE", timezone);
+    findkey(unattendedkv, "THEME", theme);
     findkey(unattendedkv, "GREEN_ADDRESS", green_address);
     findkey(unattendedkv, "GREEN_NETMASK", green_netmask);
     findkey(unattendedkv, "GREEN_NETADDRESS", green_netaddress);
@@ -127,6 +95,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     replacekeyvalue(mainsettings, "KEYMAP", keymap);
     replacekeyvalue(mainsettings, "LANGUAGE", language);
     replacekeyvalue(mainsettings, "TIMEZONE", timezone);
+    replacekeyvalue(mainsettings, "THEME", theme);
     writekeyvalues(mainsettings, "/harddisk" CONFIG_ROOT "/main/settings");
     freekeyvalues(mainsettings);
 
