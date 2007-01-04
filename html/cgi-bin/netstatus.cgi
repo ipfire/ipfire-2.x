@@ -6,8 +6,6 @@
 #
 # (c) The SmoothWall Team
 #
-# $Id: netstatus.cgi,v 1.9.2.20 2005/11/05 15:46:25 gespinasse Exp $
-#
 
 use strict;
 
@@ -33,23 +31,6 @@ my $output='';
 
 &Header::openbigbox('100%', 'left');
 
-print "<table width='100%' cellspacing='0' cellpadding='5'border='0'>\n";
-print "<tr><td style='background-color: #EAE9EE;' align='left'>\n";
-print "<a href='#interfaces'>$Lang::tr{'interfaces'}</a> |\n";
-if ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/  && $netsettings{'RED_TYPE'} eq "DHCP") {
-    print "<a href='#reddhcp'>RED  $Lang::tr{'dhcp configuration'}</a> |\n";
-}
-if ($dhcpsettings{'ENABLE_GREEN'} eq 'on' || $dhcpsettings{'ENABLE_BLUE'} eq 'on') {
-    print "<a href='#leases'>$Lang::tr{'current dynamic leases'}</a> |\n";
-}
-if ($pppsettings{'TYPE'} =~ /^(bewanadsl|alcatelusbk|conexantpciadsl|eagleusbadsl)$/) {
-    print "<a href='#adsl'>$Lang::tr{'adsl settings'}</a> |\n";
-}
-print "<a href='#routing'>$Lang::tr{'routing table entries'}</a> |\n";
-print "<a href='#arp'> $Lang::tr{'arp table entries'}</a>\n";
-print "</td></tr></table>\n";
-
-print "<a name='interfaces'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'interfaces'});
 $output = `/sbin/ifconfig`;
 $output = &Header::cleanhtml($output,"y");
@@ -203,14 +184,12 @@ if ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
 
 }
 
-print "<a name='routing'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
 $output = `/sbin/route -n`;
 $output = &Header::cleanhtml($output,"y");
 print "<pre>$output</pre>\n";
 &Header::closebox();
 
-print "<a name='arp'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
 $output = `/sbin/arp -n`;
 $output = &Header::cleanhtml($output,"y");

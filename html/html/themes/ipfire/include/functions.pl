@@ -174,7 +174,7 @@ END
 ;
 	&showmenu();
 
-print <<END		
+print <<END	
 	</div>
 </div>
 
@@ -284,7 +284,8 @@ END
 			<b>Status:</b> $status <b>Uptime:</b>$uptime <b>Version:</b> $FIREBUILD
 		</div>
 	</div>
-	</body>
+</div>
+</body>
 </html>
 END
 ;

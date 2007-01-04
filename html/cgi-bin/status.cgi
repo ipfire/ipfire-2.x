@@ -68,20 +68,6 @@ if ($netsettings{'BLUE_DEV'} ne '') {
 
 &Header::openbigbox('100%', 'left');
 
-print <<END
-<table width='100%' cellspacing='0' cellpadding='5'border='0'>
-<tr><td style="background-color: #EAE9EE;" align='left'>
-    <a href='#services'>$Lang::tr{'services'}</a> |
-    <a href='#memory'>$Lang::tr{'memory'}</a> |
-    <a href='#disk'>$Lang::tr{'disk usage'}</a> |
-    <a href='#uptime'>$Lang::tr{'uptime and users'}</a> |
-    <a href='#modules'>$Lang::tr{'loaded modules'}</a> |
-    <a href='#kernel'>$Lang::tr{'kernel version'}</a>
-</td></tr></table>
-END
-;
-
-print "<a name='services'/>\n"; 
 &Header::openbox('100%', 'left', $Lang::tr{'services'});
 
 print <<END
@@ -111,7 +97,6 @@ print "</table></div>\n";
 
 &Header::closebox();
 
-print "<a name='memory'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'memory'});
 print "<table><tr><td><table>";
 my $ram=0;
@@ -194,7 +179,6 @@ END
 ;
 &Header::closebox();
 
-print "<a name='disk'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'disk usage'});
 print "<table>\n";
 open(DF,'/bin/df -B M -x rootfs|');
@@ -240,21 +224,18 @@ close DF;
 print "</table>\n";
 &Header::closebox();
 
-print "<a name='uptime'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'uptime and users'});
 my $output = `/usr/bin/w`;
 $output = &Header::cleanhtml($output,"y");
 print "<pre>$output</pre>\n";
 &Header::closebox();
 
-print "<a name='modules'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'loaded modules'});
 $output = qx+/bin/lsmod+;
 ($output = &Header::cleanhtml($output,"y")) =~ s/\[.*\]//g;
 print "<pre>\n$output\n</pre>\n";
 &Header::closebox();
 
-print "<a name='kernel'/>\n";
 &Header::openbox('100%', 'left', $Lang::tr{'kernel version'});
 print "<pre>\n";
 print `/bin/uname -a`;

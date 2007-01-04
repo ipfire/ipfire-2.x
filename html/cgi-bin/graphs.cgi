@@ -49,7 +49,7 @@ sub diskbox {
 	  my $ftime = localtime((stat("$graphdir/disk-$disk-day.png"))[9]);
 	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 	  print "<a href='/cgi-bin/graphs.cgi?graph=disk-$disk'>";
-	  print "<img src='/graphs/disk-$disk-day.png' border='0' />";
+	  print "<img alt='' src='/graphs/disk-$disk-day.png' border='0' />";
 	  print "</a>";
 	  print "<br />\n";
 	  if (-e "/usr/local/bin/hddshutdown-state") {
@@ -70,10 +70,10 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		my $ftime = localtime((stat("$graphdir/${graph}-day.png"))[9]);
 		print "<center>";
 		print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
-		print "<img src='/graphs/${graph}-day.png' border='0' /><hr />";
-		print "<img src='/graphs/${graph}-week.png' border='0' /><hr />";
-		print "<img src='/graphs/${graph}-month.png' border='0' /><hr />";
-		print "<img src='/graphs/${graph}-year.png' border='0' />";
+		print "<img alt='' src='/graphs/${graph}-day.png' border='0' /><hr />";
+		print "<img alt='' src='/graphs/${graph}-week.png' border='0' /><hr />";
+		print "<img alt='' src='/graphs/${graph}-month.png' border='0' /><hr />";
+		print "<img alt='' src='/graphs/${graph}-year.png' border='0' />";
 	} else {
 		print $Lang::tr{'no information available'};
 	}
@@ -102,7 +102,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 			my $ftime = localtime((stat("$graphdir/${graphname}-day.png"))[9]);
 			print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 			print "<a href='/cgi-bin/graphs.cgi?graph=$graphname'>";
-			print "<img src='/graphs/${graphname}-day.png' border='0' />";
+			print "<img alt='' src='/graphs/${graphname}-day.png' border='0' />";
 			print "</a>";
 		} else {
 			print $Lang::tr{'no information available'};
@@ -116,7 +116,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		my $ftime = localtime((stat("$graphdir/cpu-day.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<a href='/cgi-bin/graphs.cgi?graph=cpu'>";
-		print "<img src='/graphs/cpu-day.png' border='0' />";
+		print "<img alt='' src='/graphs/cpu-day.png' border='0' />";
 		print "</a>";
 	} else {
 		print $Lang::tr{'no information available'};
@@ -129,7 +129,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		my $ftime = localtime((stat("$graphdir/load-day.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<a href='/cgi-bin/graphs.cgi?graph=load'>";
-		print "<img src='/graphs/load-day.png' border='0' />";
+		print "<img alt='' src='/graphs/load-day.png' border='0' />";
 		print "</a>";
 	} else {
 		print $Lang::tr{'no information available'};
@@ -142,7 +142,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		my $ftime = localtime((stat("$graphdir/memory-day.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<a href='/cgi-bin/graphs.cgi?graph=memory'>";
-		print "<img src='/graphs/memory-day.png' border='0' />";
+		print "<img alt='' src='/graphs/memory-day.png' border='0' />";
 		print "</a>";
 	} else {
 		print $Lang::tr{'no information available'};
@@ -155,7 +155,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		my $ftime = localtime((stat("$graphdir/swap-day.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<a href='/cgi-bin/graphs.cgi?graph=swap'>";
-		print "<img src='/graphs/swap-day.png' border='0' />";
+		print "<img alt='' src='/graphs/swap-day.png' border='0' />";
 		print "</a>";
 	} else {
 		print $Lang::tr{'no information available'};
@@ -168,7 +168,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		my $ftime = localtime((stat("$graphdir/disk-day.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<a href='/cgi-bin/graphs.cgi?graph=disk'>";
-		print "<img src='/graphs/disk-day.png' border='0' />";
+		print "<img alt='' src='/graphs/disk-day.png' border='0' />";
 		print "</a>";
 	} else {
 		print $Lang::tr{'no information available'};

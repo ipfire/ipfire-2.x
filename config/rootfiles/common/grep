@@ -1,5 +1,5 @@
 bin/egrep
-#bin/fgrep
+bin/fgrep
 bin/grep
 #usr/info/grep.info
 #usr/man/man1/egrep.1
