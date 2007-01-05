@@ -130,6 +130,7 @@
 * libwww-perl-5.803
 * libxml2-2.6.26
 * linux-2.6.16.29-ipfire
+* linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * logrotate-3.7.1
 * logwatch_7.3.1

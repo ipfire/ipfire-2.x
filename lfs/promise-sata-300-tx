@@ -26,16 +26,16 @@
 
 include Config
 
-VER        = linux2.4_open_source_1.00.0.15
+VER        = linux2.6-src-x86_v1.01.0.20
 
-THISAPP    = sata300_sataii150_tx_series_$(VER)
-DL_FILE    = $(THISAPP).tgz
+THISAPP    = promise_sataii150-300-tx-series-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/pdc-ulsata2
-ifeq "$(SMP)" ""
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-else
+DIR_APP    = $(DIR_SRC)/ut_mod
+ifeq "$(SMP)" "1"
   TARGET     = $(DIR_INFO)/$(THISAPP)-smp
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)
 endif
 
 ###############################################################################
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 369e88bf60321771bfd3ffc1f1d412f5
+$(DL_FILE)_MD5 = 451b836549171756ef85d13db1b85eda
 
 install : $(TARGET)
 
@@ -77,12 +77,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make
-ifeq "$(SMP)" ""
-	cd $(DIR_APP) && install -m 644 -o 0 ulsata2.o /lib/modules/$(KVER)/kernel/drivers/scsi
-	find /lib/modules/$(KVER)/kernel/drivers/scsi -name 'ulsata2.o' -a -type f | xargs gzip -f9
+ifeq "$(SMP)" "1"
+	cd $(DIR_APP) && cp -f ulsata2.ko /lib/modules/$(KVER)-smp/kernel/drivers/scsi/ulsata2.ko
 else
-	cd $(DIR_APP) && install -m 644 -o 0 ulsata2.o /lib/modules/$(KVER)-smp/kernel/drivers/scsi
-	find /lib/modules/$(KVER)-smp/kernel/drivers/scsi -name 'ulsata2.o' -a -type f | xargs gzip -f9
+	cd $(DIR_APP) && cp -f ulsata2.ko /lib/modules/$(KVER)/kernel/drivers/scsi/ulsata2.ko
 endif
-	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

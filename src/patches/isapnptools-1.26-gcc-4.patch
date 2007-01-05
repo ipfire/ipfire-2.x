@@ -1,0 +1,11 @@
+--- src/isapnp_main.l~	2007-01-05 00:56:44.000000000 +0000
++++ src/isapnp_main.l	2007-01-05 01:00:18.000000000 +0000
+@@ -363,7 +363,7 @@
+ 	return 0;
+ }
+ 
+-static unsigned char serial_identifier[NUM_CARDS+1][IDENT_LEN];
++unsigned char serial_identifier[NUM_CARDS+1][IDENT_LEN];
+ static char *boardid[NUM_CARDS+1];
+ static unsigned long serno[NUM_CARDS+1];
+ 

@@ -72,6 +72,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP)/src && sed -i -e 's/#ifdef\ ENABLE_PCI/#ifdef\ ENABLE_PCI\n#define\ __KERNEL__\n#include\ <linux\/mod_devicetable.h>\n#undef __KERNEL__/' resource.c
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/isapnptools-1.26-gcc-4.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
