@@ -568,12 +568,7 @@ buildinstaller() {
   installmake kudzu
 #  installmake bootsplash
   installmake installer
-  installmake scsi.img	# this is to be deleted
-  installmake driver.img	# this is to be deleted
   installmake initrd
-  installmake boot.img	# this is to be deleted
-#  ipfiremake as86		# this is to be deleted
-#  ipfiremake mbr		# this is to be deleted
 }
 
 buildpackages() {

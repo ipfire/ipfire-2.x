@@ -1,7 +1,0 @@
-# Begin /etc/sysconfig/console
-
-KEYMAP="de-latin1-nodeadkeys"
-KEYMAP_CORRECTIONS="euro2"
-FONT="lat0-16 -m 8859-15"
-
-# End /etc/sysconfig/console

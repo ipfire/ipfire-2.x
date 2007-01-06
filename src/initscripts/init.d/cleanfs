@@ -78,6 +78,17 @@ case "${1}" in
 		find . -xdev -mindepth 1 ! -name lost+found \
 			-delete || failed=1
 
+		boot_mesg -n " /var/ipfire/dhcp" ${NORMAL}
+		cd /var/ipfire/dhcpc/ && 
+		find . -name *.pid -exec rm -f {} \; || failed=1
+		cd /var/ipfire/dhcpc/ && 
+		find . -name *.cache -exec rm -f {} \; || failed=1
+		cd /var/ipfire/dhcpc/ && 
+		find . -name *.info -exec rm -f {} \; || failed=1
+
+		boot_mesg -n " /var/ipfire/red" ${NORMAL}
+		cd /var/ipfire/red/ && find . -name active -exec rm -f {} \; || failed=1
+
 		boot_mesg -n " /var/lock" ${NORMAL}
 		cd /var/lock &&
 		find . -type f ! -newer /proc -exec rm -f {} \; || failed=1

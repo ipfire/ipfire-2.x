@@ -18,10 +18,10 @@ int main(void)
 	if (!(initsetuid()))
 		exit(1);
 	
-	safe_system("/sbin/iptables -L -v -n > /home/httpd/html/iptables.txt");
-	safe_system("/sbin/iptables -L -v -n -t nat > /home/httpd/html/iptablesnat.txt");
-	safe_system("/sbin/iptables -t mangle -L -v -n > /home/httpd/html/iptablesmangle.txt");
-	safe_system("chown nobody.nobody /home/httpd/html/iptables.txt /home/httpd/html/iptablesnat.txt /home/httpd/html/iptablesmangle.txt");
+	safe_system("/sbin/iptables -L -v -n > /srv/web/ipfire/html/iptables.txt");
+	safe_system("/sbin/iptables -L -v -n -t nat > /srv/web/ipfire/html/iptablesnat.txt");
+	safe_system("/sbin/iptables -t mangle -L -v -n > /srv/web/ipfire/html/iptablesmangle.txt");
+	safe_system("chown nobody.nobody /srv/web/ipfire/html/iptables.txt /srv/web/ipfire/html/iptablesnat.txt /srv/web/ipfire/html/iptablesmangle.txt");
 	
 	return 0;
 }

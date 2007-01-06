@@ -61,6 +61,33 @@ $(TARGET) :
 	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
 	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l
 
+	# Install SCSI Drivers
+	cp -rf /lib/modules/$(KVER)/kernel/drivers/{scsi,message/fusion} \
+		/lib/modules/$(KVER)/kernel/drivers/block/{DAC960.ko,cpqarray.ko,cciss.ko} \
+		/lib/modules/$(KVER)/kernel/drivers/ide \
+		/lib/modules/$(KVER)/kernel/drivers/cdrom \
+		/lib/modules/$(KVER)/kernel/drivers/ieee1394 \
+		/install/initrd/lib/modules/$(KVER)/kernel/drivers/
+	rm -f	/install/initrd/lib/modules/$(KVER)/kernel/drivers/message/fusion/mptlan*
+
+	# make new dependencies 
+	depmod -a -F /boot/System.map-$(KVER) $(KVER)
+	depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp
+
+	cd / && tar -cvf /tmp/drivers.tar \
+		--exclude=lib/modules/$(KVER)/kernel/{arch,fs} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/{acpi,atm,bluetooth,block,char,cdrom,hwmon,ide} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/{ieee1394,isdn,mmc,scsi,md,message,video} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/net/{wan,ppp*,slip*,slhc*,tun*,wireless} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{atm,input,storage,host} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{3cp4218.ko,acm.ko,amedyn.ko,cxacru.ko} \
+		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{speedtch.ko,hid.ko,usbcore.ko,at76c50*.ko} \
+		--exclude=lib/modules/$(KVER)/kernel/net/{8021q,atm,bluetooth,bridge,ieee80211,ipsec,ipv4} \
+		--exclude=lib/modules/$(KVER)/kernel/net/{wanrouter,netfilter,sched} \
+		--exclude=lib/modules/$(KVER)/{build,extra,misc,modules.*,source} \
+		lib/modules/$(KVER)
+	cd /install/initrd/ && tar -xvf /tmp/drivers.tar && rm -f /tmp/drivers.tar
+
 	# Extra modules
 	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi
 	cp -f /lib/modules/$(KVER)/kernel/drivers/scsi/{scsi_mod.ko,sd_mod.ko,sr_mod.ko} \
@@ -92,34 +119,13 @@ $(TARGET) :
 
 	cd /install/initrd/lib/ && ln -sf libgcc_s.so.1 libgcc_s.so
 	
-	# Floppy initrd
 	-mkdir -p /install/{images,mnt}
 	rm -rf /install/mnt/*
 
 	cp -aR /install/initrd/* /install/mnt
-	# cp -a /install/misc/bin/* /install/mnt/bin
 
 	# make new dependencies
 	depmod -a -F /boot/System.map-$(KVER) $(KVER)
-	touch /install/mnt/FLOPPYBOOT
-
-	RAMDISK_SIZE=8192 && \
-	    dd if=/dev/zero of=/install/images/fdinitrd bs=1k count=$${RAMDISK_SIZE}
-	for i in `seq 0 7`; do \
-	    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
-	        LOOPDEV="/dev/loop$${i}" \
-                break; \
-	    fi; \
-	    done && \
-	    losetup $$LOOPDEV /install/images/fdinitrd && \
-	    mke2fs -m 0 -N 1024 $$LOOPDEV && \
-	    mount -t ext2 $$LOOPDEV /install/mnt && \
-	    rm -rf /install/mnt/lost+found && \
-	    cp -aR /install/initrd/* /install/mnt/ && \
-	    cd /install/mnt/ && find ./ -ls > $(DIR_INFO)/_build.fdinitrd && \
-	    cd / && umount /install/mnt && \
-	    losetup -d $$LOOPDEV
-	gzip -9 /install/images/fdinitrd
 
 	RAMDISK_SIZE=16384 && \
 	    dd if=/dev/zero of=/install/images/cdinitrd bs=1k count=$${RAMDISK_SIZE}
@@ -134,8 +140,6 @@ $(TARGET) :
 	    mount -t ext2 $$LOOPDEV /install/mnt && \
 	    rm -rf /install/mnt/lost+found && \
 	    cp -aR /install/initrd/* /install/mnt/ && \
-	    cd /install/mnt && tar xfz /install/images/drivers-$(VERSION).img && \
-	    cd /install/mnt && tar xfz /install/images/scsidrv-$(VERSION).img && \
 	    cd /install/mnt/ && find ./ -ls > $(DIR_INFO)/_build.cdinitrd && \
 	    touch /install/mnt/CDROMBOOT && \
 	    cd / && umount /install/mnt && \

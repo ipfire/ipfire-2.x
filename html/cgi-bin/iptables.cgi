@@ -28,7 +28,7 @@ print <<END
     <PRE>
 END
 ;
-	open (FILE, '/home/httpd/html/iptables.txt');
+	open (FILE, '/srv/web/ipfire/html/iptables.txt');
 	while (<FILE>)
        {
          	$iplines[$lines] = $_;
@@ -55,7 +55,7 @@ print <<END
     <PRE>
 END
 ;
-	open (FILEMAN, '/home/httpd/html/iptablesmangle.txt');
+	open (FILEMAN, '/srv/web/ipfire/html/iptablesmangle.txt');
 	while (<FILEMAN>)
        {
          	$ipmanlines[$manlines] = $_;
@@ -82,7 +82,7 @@ print <<END
     <PRE>
 END
 ;
-	open (FILENAT, '/home/httpd/html/iptablesnat.txt');
+	open (FILENAT, '/srv/web/ipfire/html/iptablesnat.txt');
 	while (<FILENAT>)
        {
          	$ipnatlines[$natlines] = $_;
@@ -103,6 +103,6 @@ END
 &Header::closebigbox();
 &Header::closepage();
 
-system(rm -f "/home/httpd/html/iptables.txt");
-system(rm -f "/home/httpd/html/iptablesmangle.txt");
-system(rm -f "/home/httpd/html/iptablesnat.txt");
+system(rm -f "/srv/web/ipfire/html/iptables.txt");
+system(rm -f "/srv/web/ipfire/html/iptablesmangle.txt");
+system(rm -f "/srv/web/ipfire/html/iptablesnat.txt");
