@@ -28,14 +28,7 @@ void usage() {
 }
 
 void loadalgmodules() {
-	safe_system("/sbin/modprobe ipsec_3des");
-	safe_system("/sbin/modprobe ipsec_aes");
-	safe_system("/sbin/modprobe ipsec_blowfish");
-	safe_system("/sbin/modprobe ipsec_md5");
-	safe_system("/sbin/modprobe ipsec_serpent");
-	safe_system("/sbin/modprobe ipsec_sha1");
-	safe_system("/sbin/modprobe ipsec_sha2");
-	safe_system("/sbin/modprobe ipsec_twofish");
+	safe_system("/sbin/modprobe ipsec");
 }
 
 void ipsecrules(char *chain, char *interface)
@@ -230,7 +223,7 @@ int main(int argc, char *argv[]) {
 			int fd;
    			/* Get pluto pid */
    			if ((fd = open("/var/run/pluto.pid", O_RDONLY)) != -1) {
-				safe_system("/etc/rc.d/ipsec stop 2> /dev/null >/dev/null");
+				safe_system("/etc/rc.d/init.d/ipsec stop 2> /dev/null >/dev/null");
 				close(fd);
 			}
 		}
@@ -243,7 +236,7 @@ int main(int argc, char *argv[]) {
 		if (strcmp(argv[1], "S") == 0) {
 			loadalgmodules();
 			safe_system("/usr/sbin/ipsec tncfg --clear >/dev/null");
-			safe_system("/etc/rc.d/ipsec restart >/dev/null");
+			safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
 			addaliasinterfaces(configtype, redtype, redif, enablered, enableblue);
 		} else if (strcmp(argv[1], "R") == 0) {
 			safe_system("/usr/sbin/ipsec auto --rereadall");

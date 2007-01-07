@@ -1,3 +1,4 @@
+etc/init.d
 #etc/rc.d
 #etc/rc.d/helper
 etc/rc.d/helper/getdnsfromdhcpc.pl

@@ -26,11 +26,11 @@
 
 include Config
 
-VER        = suse8.2-03.11.02
+VER        = suse93-3.11-07
 
 THISAPP    = fcpci-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = ftp://ftp.avm.de/cardware/fritzcrd.pci/linux/suse.82
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/fritz
 ifeq "$(SMP)" ""
   TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 70821234398c08b1ec09fce16e2bac40
+$(DL_FILE)_MD5 = 3ee301b5d0e8df9e4b915af58b725556
 
 install : $(TARGET)
 
@@ -55,9 +55,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-#dist: 
-#	make-packages.sh fcpci $(THISAPP)-ipfire-beta-1
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -79,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/src.drv && patch -Np1 < $(DIR_SRC)/src/patches/fcpci-suse8.2-03.11.02-compiler.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/fritz-dsl-gcc-4-fix.patch
 ifeq "$(SMP)" ""
 	cd $(DIR_APP) && sed -i \
 	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
@@ -89,7 +86,7 @@ ifeq "$(SMP)" ""
 	    -e '\+^CCFLAGS+a\ \
 	          -include \$$(KRNLINCL)/linux/modversions.h' \
 	    -e '/^DEFINES/a\ \
-	          -DMODVERSIONS \\' src.drv/makefile
+	          -DMODVERSIONS \\' src/Makefile
 else
 	cd $(DIR_APP) && sed -i \
 	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
@@ -99,14 +96,9 @@ else
 	    -e '\+^CCFLAGS+a\ \
 	          -include \$$(KRNLINCL)/linux/modversions.h' \
 	    -e '/^DEFINES/a\ \
-	          -DMODVERSIONS \\' src.drv/makefile
+	          -DMODVERSIONS \\' src/Makefile
 endif
 	cd $(DIR_APP) && CC="$(KGCC)" make
 	cd $(DIR_APP) && CC="$(KGCC)" make install
-ifeq "$(SMP)" ""
-	find /lib/modules/$(KVER)/misc/ -name '*.o' -a -type f | xargs gzip -f9
-else
-	find /lib/modules/$(KVER)-smp/misc/ -name '*.o' -a -type f | xargs gzip -f9
-endif
-#	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

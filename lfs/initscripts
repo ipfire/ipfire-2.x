@@ -57,6 +57,7 @@ $(TARGET) :
 	install -d -m 755 /etc/rc.d/init.d
 	install -d -m 755 /etc/rc.d/helper
 	install -d -m 755 /etc/sysconfig
+	ln -svf rc.d/init.d /etc/init.d
 
 	for i in $(DIR_SRC)/src/initscripts/init.d/*; do \
 		install -v -m 754 $$i /etc/rc.d/init.d/; \

@@ -134,6 +134,7 @@ sub writeipsecfiles {
     open(SECRETS, ">${General::swroot}/vpn/ipsec.secrets") or die "Unable to open ${General::swroot}/vpn/ipsec.secrets: $!";
     flock CONF, 2;
     flock SECRETS, 2;
+    print CONF "version 2\n\n";
     print CONF "config setup\n";
     if ($lvpnsettings{'ENABLED_BLUE'} eq 'on')
     {
@@ -154,8 +155,9 @@ sub writeipsecfiles {
     $plutodebug = 'none' if $plutodebug eq '';  # if nothing selected, use 'none'.
     print CONF "\tklipsdebug=none\n";
     print CONF "\tplutodebug=\"$plutodebug\"\n";
-    print CONF "\tplutoload=%search\n";
-    print CONF "\tplutostart=%search\n";
+    # deprecated in ipsec.conf version 2
+    #print CONF "\tplutoload=%search\n";
+    #print CONF "\tplutostart=%search\n";
     print CONF "\tuniqueids=yes\n";
     print CONF "\tnat_traversal=yes\n";
     print CONF "\toverridemtu=$lvpnsettings{'VPN_OVERRIDE_MTU'}\n" if ($lvpnsettings{'VPN_OVERRIDE_MTU'} ne '');

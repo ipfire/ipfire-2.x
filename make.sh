@@ -325,40 +325,22 @@ buildipfire() {
   ipfiremake unzip
   ipfiremake linux			SMP=1
   ipfiremake ipp2p			SMP=1
-#  ipfiremake 3cp4218		SMP=1
-#  ipfiremake amedyn			SMP=1
-#  ipfiremake cxacru			SMP=1
-#  ipfiremake eagle			SMP=1
-#  ipfiremake cnx_pci		SMP=1
-#  ipfiremake fcdsl			SMP=1
-#  ipfiremake fcdsl2			SMP=1
-#  ipfiremake fcdslsl		SMP=1
-#  ipfiremake fcdslusb		SMP=1
-#  ipfiremake fcdslslusb		SMP=1
-#  ipfiremake fcpci			SMP=1
-#  ipfiremake fcclassic		SMP=1
-#  ipfiremake pulsar			SMP=1
-#  ipfiremake unicorn		SMP=1
+  ipfiremake fcdsl			SMP=1
+  ipfiremake fcdsl2			SMP=1
+  ipfiremake fcdslsl			SMP=1
+  ipfiremake fcdslusb		SMP=1
+  ipfiremake fcdslslusb		SMP=1
+  ipfiremake fcpci			SMP=1
 #  ipfiremake promise-sata-300-tx	SMP=1
   ipfiremake zaptel			PASS=S
   ipfiremake linux
   ipfiremake ipp2p
-#  ipfiremake 3cp4218
-#  ipfiremake amedyn
-#  ipfiremake cxacru
-#  ipfiremake eciadsl
-#  ipfiremake eagle
-#  ipfiremake speedtouch
-#  ipfiremake cnx_pci
-#  ipfiremake fcdsl
-#  ipfiremake fcdsl2
-#  ipfiremake fcdslsl
-#  ipfiremake fcdslusb
-#  ipfiremake fcdslslusb
-#  ipfiremake fcpci
-#  ipfiremake fcclassic
-#  ipfiremake pulsar
-#  ipfiremake unicorn
+  ipfiremake fcdsl
+  ipfiremake fcdsl2
+  ipfiremake fcdslsl
+  ipfiremake fcdslusb
+  ipfiremake fcdslslusb
+  ipfiremake fcpci
 #  ipfiremake promise-sata-300-tx
   ipfiremake zaptel
   ipfiremake expat

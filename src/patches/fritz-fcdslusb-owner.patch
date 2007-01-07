@@ -1,0 +1,19 @@
+--- main.c~	2005-08-05 00:00:00.000000000 +0200
++++ main.c	2007-01-06 19:00:26.000000000 +0100
+@@ -77,8 +77,14 @@
+ 
+ static struct usb_driver usb_driver = {
+ 
+-	.owner =	THIS_MODULE,
+-	.name =		TARGET,
++#ifndef OLD_USB_DRIVER
++       .driver = {
++#endif
++               .owner =        THIS_MODULE,
++               .name =         TARGET,
++#ifndef OLD_USB_DRIVER
++       },
++#endif
+ 	.id_table =	usb_id_table,
+ 	.probe =	usb_probe,
+ 	.disconnect =	usb_disconnect,

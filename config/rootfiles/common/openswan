@@ -20,7 +20,7 @@ etc/ipsec.conf
 #etc/ipsec.d/policies/private-or-clear
 #etc/ipsec.d/private
 etc/ipsec.secrets
-#etc/rc.d/init.d/ipsec
+etc/rc.d/init.d/ipsec
 #etc/rc.d/rc0.d/K76ipsec
 #etc/rc.d/rc1.d
 #etc/rc.d/rc1.d/K76ipsec

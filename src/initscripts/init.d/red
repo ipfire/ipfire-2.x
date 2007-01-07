@@ -18,8 +18,6 @@
 #
 # (c) The SmoothWall Team
 #
-# $Id: rc.red,v 1.29.2.56 2005/12/17 08:49:01 gespinasse Exp $
-
 
 # Clean up our environment (we're running SUID!)
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV PATH)};
@@ -76,20 +74,9 @@ sub doupdatesettings {
 	system('/sbin/modprobe', '-r', 'br2684');
 	system('/sbin/modprobe', '-r', 'clip');
 
-	if ($pppsettings{'TYPE'} ne '3cp4218usbadsl') 	{ system('/sbin/modprobe', '-r', '3cp4218');}
-	if ($pppsettings{'TYPE'} ne 'alcatelusbk') 	{ system('/sbin/modprobe', '-r', 'speedtch');}
-	if ($pppsettings{'TYPE'} ne 'amedynusbadsl') 	{ system('/sbin/modprobe', '-r', 'amedyn');}
-	if ($pppsettings{'TYPE'} ne 'bewanadsl') {
-		system('/sbin/modprobe', '-r', 'unicorn_pci_atm', 'unicorn_usb_atm');}
-	if ($pppsettings{'TYPE'} ne 'conexantpciadsl') 	{ system('/sbin/modprobe', '-r', 'CnxADSL');}
-	if ($pppsettings{'TYPE'} ne 'conexantusbadsl') 	{ system('/sbin/modprobe', '-r', 'cxacru');}
-	if ($pppsettings{'TYPE'} ne 'eagleusbadsl') 	{ system('/sbin/modprobe', '-r', 'eagle-usb');}
 	if ($pppsettings{'TYPE'} ne 'fritzdsl') 	{ 
 		system('/sbin/modprobe', '-r', 'fcdsl', 'fcdsl2', 'fcdslsl', 'fcdslusb', 'fcdslslusb');}
-	if ($pppsettings{'TYPE'} ne 'pulsardsl') 	{ system('/sbin/modprobe', '-r', 'pulsar');}
 	sleep 1;
-	if ($pppsettings{'TYPE'} !=~ /^(3cp4218usbadsl|alcatelusbk|amedynusbadsl|bewanadsl|conexantpciadsl|pulsardsl)$/) {
-		system('/sbin/modprobe', '-r', 'atm');
 
 	# remove existing default route (for static address) if it was been changed from setup or web interface SF1175052
 	system ('/sbin/route del default 2>/dev/null');
@@ -105,7 +92,7 @@ open STDOUT, '>/dev/null' or die "Can't write to /dev/null";
 
 if ($ARGV[0] eq 'start') {
 	if (-e "${General::swroot}/red/active" ||
-	    -e '/var/run/ppp-ipcop.pid')
+	    -e '/var/run/ppp-ipfire.pid')
 	{
 		&General::log ("ERROR: Can't start RED when it's still active");
 		exit 1;
@@ -213,21 +200,11 @@ if ($ARGV[0] eq 'start') {
 	}
 
 	if ($pppsettings{'TYPE'} eq 'modem') 			{ &domodemdial(); }
-	elsif ($pppsettings{'TYPE'} eq 'serial')		{ &doserialdial(); }
+	elsif ($pppsettings{'TYPE'} eq 'serial')			{ &doserialdial(); }
 	elsif ($pppsettings{'TYPE'} eq 'isdn') 			{ &doisdndial(); }
-	elsif ($pppsettings{'TYPE'} eq 'pppoe') 		{ &dopppoedial(); }
+	elsif ($pppsettings{'TYPE'} eq 'pppoe')			{ &dopppoedial(); }
 	elsif ($pppsettings{'TYPE'} eq 'pptp') 			{ &dopptpdial(); }
-	elsif ($pppsettings{'TYPE'} eq 'alcatelusbk') 		{ &doalcatelusbkdial(); }
-	elsif ($pppsettings{'TYPE'} eq 'alcatelusb') 		{ &doalcatelusbdial(); }
-	elsif ($pppsettings{'TYPE'} eq 'pulsardsl') 		{ &dopulsardsldial(); }
-	elsif ($pppsettings{'TYPE'} eq 'eciadsl') 		{ &doeciadsldial(); }
 	elsif ($pppsettings{'TYPE'} eq 'fritzdsl') 		{ &dofritzdsldial(); }
-	elsif ($pppsettings{'TYPE'} eq 'bewanadsl') 		{ &dobewanadsldial(); }
-	elsif ($pppsettings{'TYPE'} eq 'eagleusbadsl') 		{ &doeagleusbadsldial(); }
-	elsif ($pppsettings{'TYPE'} eq 'conexantusbadsl') 	{ &doconexantusbadsldial(); }
-	elsif ($pppsettings{'TYPE'} eq 'conexantpciadsl') 	{ &doconexantpciadsldial(); }
-	elsif ($pppsettings{'TYPE'} eq 'amedynusbadsl') 	{ &doamedynusbadsldial(); }
-	elsif ($pppsettings{'TYPE'} eq '3cp4218usbadsl') 	{ &do3cp4218usbadsldial(); }
 
 	if (-e "${General::swroot}/ppp/updatesettings") {
 		# erase update mark only after specific script had run, allowing specific script to treat the update
@@ -270,7 +247,7 @@ elsif ($ARGV[0] eq 'stop')
 	unlink "${General::swroot}/red/redial";
 
 	# Kill PPPD
-	if (open(FILE, "/var/run/ppp-ipcop.pid")) {
+	if (open(FILE, "/var/run/ppp-ipfire.pid")) {
 		my $pid = <FILE>;
 		close FILE;
 		chomp ($pid);
@@ -305,17 +282,7 @@ elsif ($ARGV[0] eq 'stop')
 	}
 
 	if ($pppsettings{'TYPE'} eq 'isdn') 		{ system('/etc/rc.d/rc.isdn','stop'); }
-	if ($pppsettings{'TYPE'} eq 'eciadsl') 		{ system('/etc/rc.d/rc.eciadsl', 'stop'); }
-	if ($pppsettings{'TYPE'} eq 'alcatelusbk') 	{ system('/etc/rc.d/rc.alcatelusbk', 'stop'); }
-	if ($pppsettings{'TYPE'} eq 'alcatelusb') 	{ system('/etc/rc.d/rc.alcatelusb', 'stop'); }
-	if ($pppsettings{'TYPE'} eq 'amedynusbadsl') 	{ system('/etc/rc.d/rc.amedynusbadsl', 'stop'); }
-	if ($pppsettings{'TYPE'} eq 'bewanadsl') 	{ system('/etc/rc.d/rc.bewanadsl', 'stop'); }
-	if ($pppsettings{'TYPE'} eq 'conexantpciadsl') 	{ system('/etc/rc.d/rc.conexantpciadsl', 'stop'); }
-	if ($pppsettings{'TYPE'} eq 'conexantusbadsl') 	{ system('/etc/rc.d/rc.conexantusbadsl', 'stop'); }
-	if ($pppsettings{'TYPE'} eq 'eagleusbadsl') 	{ system('/etc/rc.d/rc.eagleusbadsl', 'stop'); }
 	if ($pppsettings{'TYPE'} eq 'fritzdsl') 	{ system ('/etc/rc.d/rc.fritzdsl','stop'); }
-	if ($pppsettings{'TYPE'} eq 'pulsardsl') 	{ system('/etc/rc.d/rc.pulsardsl', 'stop'); }
-	if ($pppsettings{'TYPE'} eq '3cp4218usbadsl') 	{ system('/etc/rc.d/rc.3cp4218usbadsl', 'stop'); }
 
 	if ( 	( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} eq 'STATIC') ||
 		( $netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/ && $pppsettings{'PROTOCOL'} eq 'RFC1483' &&
@@ -333,17 +300,7 @@ exit 0;
 
 sub docleanup
 {
-	if ($pppsettings{'TYPE'} eq 'alcatelusbk') 	{ system('/etc/rc.d/rc.alcatelusbk', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'alcatelusb') 	{ system('/etc/rc.d/rc.alcatelusb', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'eciadsl') 		{ system('/etc/rc.d/rc.eciadsl', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'pulsardsl') 	{ system('/etc/rc.d/rc.pulsardsl', 'cleanup'); }
 	if ($pppsettings{'TYPE'} eq 'fritzdsl') 	{ system ('/etc/rc.d/rc.fritzdsl','cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'bewanadsl') 	{ system('/etc/rc.d/rc.bewanadsl', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'eagleusbadsl') 	{ system('/etc/rc.d/rc.eagleusbadsl', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'conexantusbadsl') 	{ system('/etc/rc.d/rc.conexantusbadsl', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'conexantpciadsl') 	{ system('/etc/rc.d/rc.conexantpciadsl', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq 'amedynusbadsl') 	{ system('/etc/rc.d/rc.amedynusbadsl', 'cleanup'); }
-	if ($pppsettings{'TYPE'} eq '3cp4218usbadsl') 	{ system('/etc/rc.d/rc.3cp4218usbadsl', 'cleanup'); }
 }
 
 sub domodemdial
@@ -497,7 +454,7 @@ sub doisdndial
 			'defaultroute','user',$pppsettings{'USERNAME'},
 			'name',$pppsettings{'USERNAME'},
 			'active-filter','outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0',
-			'pidfile','/var/run/ppp-ipcop.pid','/dev/ippp0','/dev/ippp1');
+			'pidfile','/var/run/ppp-ipfire.pid','/dev/ippp0','/dev/ippp1');
 		if ($pppsettings{'DEBUG'} eq 'on') {
 			push(@pppcommand, ('debug'));
 		}
@@ -523,7 +480,7 @@ sub doisdndial
 				'defaultroute','user',$pppsettings{'USERNAME'},
 				'name',$pppsettings{'USERNAME'},
 				'active-filter','outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0',
-				'pidfile','/var/run/ppp-ipcop.pid','/dev/ippp0');
+				'pidfile','/var/run/ppp-ipfire.pid','/dev/ippp0');
 		if ($pppsettings{'DEBUG'} eq 'on') {
 			push(@pppcommand, ('debug'));
 		}
@@ -703,158 +660,6 @@ sub dopptpdial
 	system (@pppcommand);
 }
 
-sub doalcatelusbdial
-{
-	if (system ('/etc/rc.d/rc.alcatelusb','start')) {
-		&General::log( "ERROR: Failed to connect to Alcatel USB modem");
-		exit 1;
-	}
-
-	if ($pppsettings{'PROTOCOL'} eq 'RFC1483') { 
-		if (open(FILE, ">${General::swroot}/red/device")) { print FILE 'tap0'; close FILE; }
-			$netsettings{'RED_DEV'} = 'tap0';
-			&dopppoedial();
-	} else {
-		# PPPoA
-		my @pppcommand = ('/usr/sbin/pppd', 'pty');
-		my @pppoacommand = ('/usr/sbin/pppoa3','-c','-m','1','-vpi',$pppsettings{'VPI'},'-vci',$pppsettings{'VCI'});
-	
-		push(@pppcommand, "@pppoacommand");
-	
-		if ($pppsettings{'DNS'} eq 'Automatic') {
-			push(@pppcommand, ('usepeerdns'));
-		}
-		if ($pppsettings{'AUTH'} eq 'pap') {
-			push(@pppcommand, ('-chap'));
-		} elsif ($pppsettings{'AUTH'} eq 'chap') {
-			push(@pppcommand, ('-pap'));
-		}
-	
-		if ($pppsettings{'RECONNECTION'} ne 'persistent') {
-			if ($pppsettings{'TIMEOUT'} != 0) {
-				my $seconds = $pppsettings{'TIMEOUT'} * 60;  
-				push(@pppcommand, ('idle', "$seconds"));
-			}
-			if ($pppsettings{'RECONNECTION'} eq 'dialondemand') {
-				push (@pppcommand, ('demand','nopersist','connect','/bin/true'));
-			}
-			push (@pppcommand, 
-				('active-filter',
-				 'outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0 ' ));
-		}
-	
-		push(@pppcommand, ('noipdefault', 'defaultroute', 'sync', 'user',
-			$pppsettings{'USERNAME'}, 'ipcp-accept-local', 'ipcp-accept-remote', 'passive',
-			'noaccomp', 'nopcomp', 'noccp', 'novj', 'nobsdcomp',
-			'nodeflate', 'lcp-echo-interval', '20', 'lcp-echo-failure', '3', 
-			'lcp-max-configure', '50', 'maxfail', $pppsettings{'MAXRETRIES'}));
-		if ($pppsettings{'DEBUG'} eq 'on') {
-			push(@pppcommand, ('debug'));
-		}
-	
-		system (@pppcommand);
-	}
-}
-
-sub doeciadsldial
-{
-	if (system ('/etc/rc.d/rc.eciadsl','start')) {
-		&General::log ("ERROR: ECI ADSL failed to start");
-		exit 1;
-	}
-	if ($pppsettings {'PROTOCOL'} eq 'RFC1483') {
-		if ($pppsettings {'ENCAP'} =~ /^(0|1)$/) {
-			 $iface = "tap0";
-		} else {
-			 $iface = "tun0";
-		}
-
-		if (open(FILE, ">${General::swroot}/red/iface")) { print FILE $iface; close FILE; }
-
-		if ($pppsettings {'METHOD'} =~ /^(PPPOE|PPPOE_PLUGIN)$/) {
-			if (open(FILE, ">${General::swroot}/red/device")) { print FILE $iface; close FILE; }
-			$netsettings{'RED_DEV'} = $iface;
-			&dopppoedial();
-		} elsif ($pppsettings{'METHOD'} eq 'STATIC') {
-			my @staticcommand = ('/sbin/ifconfig');
-			push(@staticcommand, ($iface, $pppsettings{'IP'},'netmask', $pppsettings{'NETMASK'}));
-			if ($pppsettings{'BROADCAST'} ne '') {
-				push(@staticcommand, ('broadcast', $pppsettings{'BROADCAST'}));
-			}
-			system (@staticcommand);
-			system ("/sbin/route","add","default","gw",$pppsettings{'GATEWAY'});
-			system ("/bin/touch", "${General::swroot}/red/active");
-			if (open(FILE, ">${General::swroot}/red/iface")) { print FILE $iface; close FILE; }
-		} elsif ($pppsettings {'METHOD'} eq 'DHCP') {
-			# FIXME dhcp does not support tun0 interface (routed IP)
-			dodhcpdial($iface,$pppsettings{'DHCP_HOSTNAME'});
-		}
-	} else {
-		# PPPoA
-		my ($VID2, $PID2, $CHIP, $ALTP, $ECIMODE);
-		open (MODEMS, "/etc/eciadsl/modems.db") or die 'Unable to open modems database.';
-		while (my $line = <MODEMS>) {
-			$line =~ s/\s*\t+\s*/|/g;
-			$line =~ /^(.+)\|(.+)\|(.+)\|(.+)\|(.+)\|(.+)\|(.+)\|(.+)$/;
-			if ( $1 eq $pppsettings{'MODEM'} ) {
-				$VID2=$4 ; $PID2=$5; $CHIP=$6; $ALTP=$8;
-			}
-		}
-		close (MODEMS);
-		if ( $VID2 eq '') {
-			&General::log("$pppsettings{'MODEM'} not found in modems.db");
-			exit 1;
-		}
-		if ( $CHIP eq '' ) {
-			&General::log ("error in modems.db reading for $pppsettings{'MODEM'}");
-			exit 1;
-		}
-		if ($pppsettings {'ENCAP'} eq '1') {
-			$ECIMODE = "LLC_RFC2364";
-		} else {
-			$ECIMODE = "VCM_RFC2364";
-		}
-	
-		my @pppcommand = ('/usr/sbin/pppd', 'pty');
-		my @pppoecicommand = ("/usr/sbin/eciadsl-pppoeci",'-alt', "$ALTP",'-vpi',$pppsettings{'VPI'},'-vci',$pppsettings{'VCI'},
-					'-vendor',"0x$VID2",'-product',"0x$PID2",'-mode',$ECIMODE);
-		push(@pppcommand, "@pppoecicommand");
-	
-		if ($pppsettings{'DNS'} eq 'Automatic') {
-			push(@pppcommand, ('usepeerdns'));
-		}
-		if ($pppsettings{'AUTH'} eq 'pap') {
-			push(@pppcommand, ('-chap'));
-		} elsif ($pppsettings{'AUTH'} eq 'chap') {
-			push(@pppcommand, ('-pap'));
-		}
-	
-		if ($pppsettings{'RECONNECTION'} ne 'persistent') {
-			if ($pppsettings{'TIMEOUT'} != 0) {
-				my $seconds = $pppsettings{'TIMEOUT'} * 60;  
-				push(@pppcommand, ('idle', "$seconds"));
-			}
-			if ($pppsettings{'RECONNECTION'} eq 'dialondemand') {
-				push (@pppcommand, ('demand','nopersist','connect','/bin/true'));
-			}
-			push (@pppcommand, 
-				('active-filter',
-				 'outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0 ' ));
-		}
-	
-		push(@pppcommand, ('noipdefault', 'defaultroute', 'sync', 'user',
-			$pppsettings{'USERNAME'}, 'ipcp-accept-local', 'ipcp-accept-remote', 'passive',
-			'noaccomp', 'nopcomp', 'noccp', 'novj', 'nobsdcomp',
-			'nodeflate', 'lcp-echo-interval', '20', 'lcp-echo-failure', '3', 
-			'lcp-max-configure', '50', 'maxfail', $pppsettings{'MAXRETRIES'}));
-		if ($pppsettings{'DEBUG'} eq 'on') {
-			push(@pppcommand, ('debug'));
-		}
-	
-		system (@pppcommand);
-	}
-}
-
 sub dofritzdsldial
 {
 	my $controller;
@@ -924,140 +729,6 @@ sub dofritzdsldial
 	push(@pppcommand, '/dev/null');
 
 	system (@pppcommand);
-}
-
-sub doeagleusbadsldial
-{
-	if (system ('/etc/rc.d/rc.eagleusbadsl','start')) {
-		&General::log ("ERROR: EAGLE-USB ADSL MODEM failed to start");
-		exit 1;
-	}
-	$iface=`/usr/sbin/eaglectrl -i 2>/dev/null | /usr/bin/tr -d '\012'`;
-	$iface =~ /([a-zA-Z0-9]*)/; $iface = $1;
-
-	if ($pppsettings {'PROTOCOL'} eq 'RFC1483') {
-		if (open(FILE, ">${General::swroot}/red/iface")) { print FILE $iface; close FILE; }
-		if ($pppsettings {'METHOD'} =~ /^(PPPOE|PPPOE_PLUGIN)$/) {
-			if (open(FILE, ">${General::swroot}/red/device")) { print FILE $iface; close FILE; }
-			$netsettings{'RED_DEV'} = $iface;
-			&dopppoedial();
-		} elsif ($pppsettings{'METHOD'} eq 'STATIC') {
-			my @staticcommand = ('/sbin/ifconfig');
-			push(@staticcommand, ($iface, $pppsettings{'IP'},'netmask', $pppsettings{'NETMASK'}));
-			if ($pppsettings{'BROADCAST'} ne '') {
-				push(@staticcommand, ('broadcast', $pppsettings{'BROADCAST'}));
-			}
-			system (@staticcommand);
-			system ("/sbin/route","add","default","gw",$pppsettings{'GATEWAY'});
-			system ("/bin/touch", "${General::swroot}/red/active");
-		} elsif ($pppsettings {'METHOD'} eq 'DHCP') {
-			dodhcpdial($iface,$pppsettings{'DHCP_HOSTNAME'});
-		}
-	} else {
-		# PPPoA
-		if (open(FILE, ">${General::swroot}/red/device")) { print FILE $iface; close FILE; }
-		$netsettings{'RED_DEV'} = $iface;
-		my @pppcommand = ('/usr/sbin/pppd','pty');
-		push(@pppcommand,"/usr/sbin/pppoa -I $iface ");
-	
-		if ($pppsettings{'DNS'} eq 'Automatic') { push(@pppcommand, ('usepeerdns'));}
-	
-		if ($pppsettings{'AUTH'} eq 'pap') {
-			push(@pppcommand, ('-chap'));
-		} elsif ($pppsettings{'AUTH'} eq 'chap') {
-			push(@pppcommand, ('-pap'));
-		}
-	
-		if ($pppsettings{'RECONNECTION'} ne 'persistent') {
-			if ($pppsettings{'TIMEOUT'} != 0) {
-				my $seconds = $pppsettings{'TIMEOUT'} * 60;  
-				push(@pppcommand, ('idle', "$seconds"));
-			}
-			if ($pppsettings{'RECONNECTION'} eq 'dialondemand') {
-				push (@pppcommand, ('demand','nopersist','connect','/bin/true'));
-			}
-			push (@pppcommand, 
-				('active-filter',
-				 'outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0 ' ));
-		}
-		push(@pppcommand, ('noipdefault', 'defaultroute', 'user', 
-			$pppsettings{'USERNAME'}, 'ipcp-accept-local', 'ipcp-accept-remote', 'passive',
-			'noaccomp', 'nopcomp', 'noccp', 'novj', 'nobsdcomp',
-			'nodeflate', 'lcp-echo-interval', '20', 'lcp-echo-failure', '3', 
-			'lcp-max-configure', '50', 'maxfail', $pppsettings{'MAXRETRIES'}));
-	
-		if ($pppsettings{'DEBUG'} eq 'on') {
-			push(@pppcommand, ('debug'));
-		}
-	
-		system (@pppcommand);
-	}
-}
-
-sub dopulsardsldial
-{
-	if (system ('/etc/rc.d/rc.pulsardsl','start')) {
-		&General::log ("ERROR: PULSAR ADSL modem failed to start");
-		exit 1;
-	}
-	doatmdial();
-}
-
-sub dobewanadsldial
-{
-	if (system ('/etc/rc.d/rc.bewanadsl','start')) {
-		&General::log ("ERROR: Bewan ADSL MODEM failed to start");
-		exit 1;
-	}
-	doatmdial();
-}
-
-sub doalcatelusbkdial
-{
-	if (system ('/etc/rc.d/rc.alcatelusbk','start')) {
-		&General::log ("ERROR: Alcatel USB kernel mode driver failed to start");
-		exit 1;
-	}
-	doatmdial();
-}
-
-sub doconexantusbadsldial
-{
-	if (system ('/etc/rc.d/rc.conexantusbadsl','start')) {
-		&General::log ("ERROR: Conexant USB ADSL modem failed to start");
-		exit 1;
-	}
-	doatmdial();
-
-}
-
-sub doconexantpciadsldial
-{
-	if (system ('/etc/rc.d/rc.conexantpciadsl','start')) {
-		&General::log ("ERROR: Conexant PCI ADSL modem failed to start");
-		exit 1;
-	}
-	doatmdial();
-
-}
-
-sub doamedynusbadsldial
-{
-	if (system ('/etc/rc.d/rc.amedynusbadsl','start')) {
-		&General::log ("ERROR: Zyxel 630-11/Asus AAM6000UG USB ADSL modem failed to start");
-		exit 1;
-	}
-	doatmdial();
-
-}
-
-sub do3cp4218usbadsldial
-{
-	if (system ('/etc/rc.d/rc.3cp4218usbadsl','start')) {
-		&General::log ("ERROR: 3Com USB AccessRunner modem failed to start");
-		exit 1;
-	}
-	doatmdial();
 }
 
 sub doatmdial
