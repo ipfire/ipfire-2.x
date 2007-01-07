@@ -444,7 +444,7 @@ buildipfire() {
   ipfiremake squid
   ipfiremake squid-graph
   ipfiremake squidguard
-#  ipfiremake tcpdump
+  ipfiremake tcpdump
   ipfiremake traceroute
   ipfiremake vlan
   ipfiremake wireless

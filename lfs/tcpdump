@@ -77,7 +77,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-bgp-dos-2.patch	#CAN 2005-1279
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-isis-dos.patch	#CAN 2005-1278
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-ldp-dos.patch	#CAN 2005-1279
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls --disable-ipv6
+	cd $(DIR_APP) && sed -i -e 's/#define\ HAVE_PCAP_DEBUG\ 1/#undef\ HAVE_PCAP_DEBUG/' config.h
 	cd $(DIR_APP) && make $(MAKETUNING) DEFS="-D_U_=\"\" -DHAVE_CONFIG_H"
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
