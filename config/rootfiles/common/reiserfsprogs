@@ -1,4 +1,4 @@
-sbin/debugreiserfs
+#sbin/debugreiserfs
 sbin/fsck.reiserfs
 sbin/mkfs.reiserfs
 sbin/mkreiserfs

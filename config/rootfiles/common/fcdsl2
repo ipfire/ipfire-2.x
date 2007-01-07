@@ -1,0 +1,6 @@
+#etc/drdsl/drdsl
+etc/drdsl/drdsl.ini
+etc/fcdsl/fcdsl2.conf
+lib/modules/2.6.16/extra/fcdsl2.ko
+lib/modules/2.6.16-smp/extra/fcdsl2.ko
+usr/lib/isdn/fds2base.bin

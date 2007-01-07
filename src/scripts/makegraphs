@@ -753,17 +753,18 @@ sub updatelqgraph {
 
 sub updatehdddata 
 {
-  if ( ! -e "$rrdlog/hddtemp.rrd") 
+  my $disk = $_[0];
+  if ( ! -e "$rrdlog/hddtemp-$disk.rrd") 
   {
     # database did not exist -> create
-    RRDs::create ("$rrdlog/hddtemp.rrd", "--step=300",
+    RRDs::create ("$rrdlog/hddtemp-$disk.rrd", "--step=300",
       "DS:temperature:GAUGE:600:0:100",
       "RRA:AVERAGE:0.5:1:576",
       "RRA:AVERAGE:0.5:6:672",
       "RRA:AVERAGE:0.5:24:732",
       "RRA:AVERAGE:0.5:144:1460");
     $ERROR = RRDs::error;
-    print "Error in RRD::create for hdd: $ERROR\n" if $ERROR;
+    print "Error in RRD::create for hdd-$disk: $ERROR\n" if $ERROR;
   }
 
   $temp = 0;
@@ -772,12 +773,12 @@ sub updatehdddata
 
   if ( -e "$path_smartctl" )
   {
-    system("$path_smartctl -iHA $hdd_device > /var/log/hddgraph_smartctl_out");
+    system("$path_smartctl -iHA /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
   }
 
   if ( -e "$path_hddtemp" )
   {
-    $hdd_output = `$path_hddtemp -qn $hdd_device`;
+    $hdd_output = `$path_hddtemp -qn /dev/$disk`;
 
     # I know 4 response possible responses:
     #
@@ -794,7 +795,7 @@ sub updatehdddata
     {
       $temp = 1;
     }
-    elsif ( index($hdd_output, "$hdd_device") != -1 )
+    elsif ( index($hdd_output, "$disk") != -1 )
     {
       $hdd_output =~ /.*:.*:\s*(\d+).*\s/;
       $temp = $1;
@@ -805,9 +806,9 @@ sub updatehdddata
       $temp = $1;
     }
   }
-  elsif ( -e "/var/log/hddgraph_smartctl_out" )
+  elsif ( -e "/var/log/smartctl_out_hddtemp-$disk" )
   {
-    $hdd_output = `cat /var/log/hddgraph_smartctl_out | grep Temperature_`;
+    $hdd_output = `cat /var/log/smartctl_out_hddtemp-$disk | grep Temperature_`;
     my @t = split(/\s+/,$hdd_output);
     $temp = $t[9];
   }
@@ -819,30 +820,31 @@ sub updatehdddata
 #  print "hdd  $hdd_output \n";
 #  print "temp $temp \n";
 
-  RRDs::update ("$rrdlog/hddtemp.rrd", "-t", "temperature", "N:$temp");
+  RRDs::update ("$rrdlog/hddtemp-$disk.rrd", "-t", "temperature", "N:$temp");
 
   $ERROR = RRDs::error;
-  print "Error in RRD::update for hdd: $ERROR\n" if $ERROR;
+  print "Error in RRD::update for hdd-$disk: $ERROR\n" if $ERROR;
 }
 
 sub updatehddgraph {
-  my $period    = $_[0];
+  my $disk = $_[0];
+  my $period = $_[1];
 
-  RRDs::graph ("$graphs/hddtemp-$period.png",
+  RRDs::graph ("$graphs/hddtemp-$disk-$period.png",
     "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100",
     "--color", "SHADEA#EAE9EE",
     "--color", "SHADEB#EAE9EE",
     "--color", "BACK#FFFFFF",
     "-t $tr{'harddisk temperature'} ($tr{'graph per'} $tr{$period})",
-    "DEF:temperature=$rrdlog/hddtemp.rrd:temperature:AVERAGE",
+    "DEF:temperature=$rrdlog/hddtemp-$disk.rrd:temperature:AVERAGE",
     "LINE2:temperature#0000FF:$tr{'hdd temperature in'} °C",
     "GPRINT:temperature:MAX:$tr{'maximal'}\\:%3.0lf °C",
     "GPRINT:temperature:AVERAGE:$tr{'average'}\\:%3.0lf °C",
     "GPRINT:temperature:LAST:$tr{'current'}\\:%3.0lf °C",
   );
   $ERROR = RRDs::error;
-  print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
+  print "Error in RRD::graph for hdd-$disk: $ERROR\n" if $ERROR;
 }
 
 sub updatembmondata 
@@ -1198,11 +1200,109 @@ updatelqgraph("year");
 ###
 ### HDDTEMP-Graphs for /dev/harddisk
 ###
-updatehdddata();
-updatehddgraph ("day");
-updatehddgraph ("week");
-updatehddgraph ("month");
-updatehddgraph ("year");
+if (open STAT,"/dev/hda") {
+  close STAT; 
+  updatehdddata ("hda");
+  updatehddgraph ("hda","day");
+  updatehddgraph ("hda","week");
+  updatehddgraph ("hda","month");
+  updatehddgraph ("hda","year");
+} else {
+  if (-e "$graphs/hddtemp-hda-day.png") {
+     system("rm $graphs/hddtemp-hda-day.png");
+  }
+}
+
+if (open STAT,"/dev/hdb") {
+  close STAT; 
+  updatehdddata ("hdb");
+  updatehddgraph ("hdb","day");
+  updatehddgraph ("hdb","week");
+  updatehddgraph ("hdb","month");
+  updatehddgraph ("hdb","year");
+} else {
+  if (-e "$graphs/hddtemp-hdb-day.png") {
+     system("rm $graphs/hddtemp-hdb-day.png");
+  }
+}
+
+if (open STAT,"/dev/hdc") {
+  close STAT; 
+  updatehdddata ("hdc");
+  updatehddgraph ("hdc","day");
+  updatehddgraph ("hdc","week");
+  updatehddgraph ("hdc","month");
+  updatehddgraph ("hdc","year");
+} else {
+  if (-e "$graphs/hddtemp-hdc-day.png") {
+     system("rm $graphs/hddtemp-hdc-day.png");
+  }
+}
+
+if (open STAT,"/dev/hdd") {
+  close STAT; 
+  updatehdddata ("hdd");
+  updatehddgraph ("hdd","day");
+  updatehddgraph ("hdd","week");
+  updatehddgraph ("hdd","month");
+  updatehddgraph ("hdd","year");
+} else {
+  if (-e "$graphs/hddtemp-hdd-day.png") {
+     system("rm $graphs/hddtemp-hdd-day.png");
+  }
+}
+
+if (open STAT,"/dev/hde") {
+  close STAT; 
+  updatehdddata ("hde");
+  updatehddgraph ("hde","day");
+  updatehddgraph ("hde","week");
+  updatehddgraph ("hde","month");
+  updatehddgraph ("hde","year");
+} else {
+  if (-e "$graphs/hddtemp-hde-day.png") {
+     system("rm $graphs/hddtemp-hde-day.png");
+  }
+}
+
+if (open STAT,"/dev/hdf") {
+  close STAT; 
+  updatehdddata ("hdf");
+  updatehddgraph ("hdf","day");
+  updatehddgraph ("hdf","week");
+  updatehddgraph ("hdf","month");
+  updatehddgraph ("hdf","year");
+} else {
+  if (-e "$graphs/hddtemp-hdf-day.png") {
+     system("rm $graphs/hddtemp-hdf-day.png");
+  }
+}
+
+if (open STAT,"/dev/hdg") {
+  close STAT; 
+  updatehdddata ("hdg");
+  updatehddgraph ("hdg","day");
+  updatehddgraph ("hdg","week");
+  updatehddgraph ("hdg","month");
+  updatehddgraph ("hdg","year");
+} else {
+  if (-e "$graphs/hddtemp-hdg-day.png") {
+     system("rm $graphs/hddtemp-hdg-day.png");
+  }
+}
+
+if (open STAT,"/dev/hdh") {
+  close STAT; 
+  updatehdddata ("hdh");
+  updatehddgraph ("hdh","day");
+  updatehddgraph ("hdh","week");
+  updatehddgraph ("hdh","month");
+  updatehddgraph ("hdh","year");
+} else {
+  if (-e "$graphs/hddtemp-hdh-day.png") {
+     system("rm $graphs/hddtemp-hdh-day.png");
+  }
+}
 
 updatembmondata();
 

@@ -95,12 +95,44 @@ foreach $key ( sort(keys %mbmon_values) )
 #  print "$line = $cgiparams{$line}<br />\n";
 #  $debugCount++;
 #}
-#print "&nbsp;Count: $debugCount\n";
+#print "&nbsp;Count: $debugCount<br />\n";
+#print "&nbsp;CGIParams: $cgigraphs[1]\n"; 
 #&Header::closebox();
 # DEBUG DEBUG
 ###############
 
-if ($cgigraphs[1] =~ /(temp|fan|volt)/) 
+if ($cgigraphs[1] =~ /hddtemp/) 
+{
+  my $graph = $cgigraphs[1];
+  my $graphname = $Lang::tr{"harddisk temperature"};
+  &Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
+
+    if (-e "$graphdir/${graph}-day.png")
+     {
+      my $ftime = localtime((stat("$graphdir/${graph}-day.png"))[9]);
+      print "<center>";
+      print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
+      print "<img src='/graphs/${graph}-day.png' border='0' /><hr />";
+      print "<img src='/graphs/${graph}-week.png' border='0' /><hr />";
+      print "<img src='/graphs/${graph}-month.png' border='0' /><hr />";
+      print "<img src='/graphs/${graph}-year.png' border='0' />";
+      if ( -e "/var/log/smartctl_out_${graph}" ) 
+      {
+        my $output = `/bin/cat /var/log/smartctl_out_${graph}`;
+        $output = &Header::cleanhtml($output);
+        print "<hr><table border=0><tr><td align=left><pre>$output</pre></table>\n";
+      }
+    }
+    else 
+    {
+      print $Lang::tr{'no information available'};
+    }
+  &Header::closebox();
+  print "<div align='center'><table width='80%'><tr><td align='center'>";
+  print "<a href='/cgi-bin/hardwaregraphs.cgi'>";
+  print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
+}
+elsif ($cgigraphs[1] =~ /(temp|fan|volt)/) 
 {
   my $graph = $cgigraphs[1];
   my $graphname = $Lang::tr{"mbmon $cgigraphs[1]"};
@@ -120,37 +152,6 @@ if ($cgigraphs[1] =~ /(temp|fan|volt)/)
   {
     print $Lang::tr{'no information available'};
   }
-  &Header::closebox();
-  print "<div align='center'><table width='80%'><tr><td align='center'>";
-  print "<a href='/cgi-bin/mbmongraph.cgi'>";
-  print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
-}
-elsif ($cgigraphs[1] =~ /(hdd)/) 
-{
-  my $graph = $cgigraphs[1];
-  my $graphname = $Lang::tr{"harddisk temperature"};
-  &Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
-
-    if (-e "$graphdir/hddtemp-day.png")
-     {
-      my $ftime = localtime((stat("$graphdir/hddtemp-day.png"))[9]);
-      print "<center>";
-      print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
-      print "<img src='/graphs/hddtemp-day.png' border='0' /><hr />";
-      print "<img src='/graphs/hddtemp-week.png' border='0' /><hr />";
-      print "<img src='/graphs/hddtemp-month.png' border='0' /><hr />";
-      print "<img src='/graphs/hddtemp-year.png' border='0' />";
-      if ( -e "/var/log/hddgraph_smartctl_out" ) 
-      {
-        my $output = `/bin/cat /var/log/hddgraph_smartctl_out`;
-        $output = &Header::cleanhtml($output);
-        print "<hr><table border=0><tr><td align=left><pre>$output</pre></table>\n";
-      }
-    }
-    else 
-    {
-      print $Lang::tr{'no information available'};
-    }
   &Header::closebox();
   print "<div align='center'><table width='80%'><tr><td align='center'>";
   print "<a href='/cgi-bin/mbmongraph.cgi'>";
@@ -217,32 +218,24 @@ else
 
   if ( $mbmon_settings{'GRAPH_HDD'} == 1 )
   {
-    &Header::openbox('100%', 'center', $Lang::tr{'harddisk temperature'});
-    if (-e "$graphdir/hddtemp-day.png")
-     {
-      my $ftime = localtime((stat("$graphdir/hddtemp-day.png"))[9]);
-      print "<center>";
-      print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
-      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=hdd'>";
-      print "<img src='/graphs/hddtemp-day.png' border='0' /><hr />";
-      print "</a>";
-    }
-    else 
-    {
-      print $Lang::tr{'no information available'};
-    }
-    print "<br />\n";
-    &Header::closebox();
+	hddtempbox("hda");
+	hddtempbox("hdb");
+	hddtempbox("hdc");
+	hddtempbox("hdd");
+	hddtempbox("hde");
+	hddtempbox("hdf");
+	hddtempbox("hdg");
+	hddtempbox("hdh");
   }
 
   &Header::openbox('100%', 'center', $Lang::tr{'settings'});
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='100%'>
-<tr><td colspan='2'><input type='checkbox' name='TEMP' $selected_temp />&nbsp;$Lang::tr{'mbmon temp'} $Lang::tr{'graph'}</td></tr>
-<tr><td colspan='2'><input type='checkbox' name='FAN' $selected_fan />&nbsp;$Lang::tr{'mbmon fan'} $Lang::tr{'graph'}</td></tr>
-<tr><td colspan='2'><input type='checkbox' name='VOLT' $selected_volt />&nbsp;$Lang::tr{'mbmon volt'} $Lang::tr{'graph'}</td></tr>
-<tr><td colspan='2'><input type='checkbox' name='HDD' $selected_hdd />&nbsp;$Lang::tr{'harddisk temperature'}-$Lang::tr{'graph'}</td></tr>
+<tr><td colspan='2' align='left'><input type='checkbox' name='TEMP' $selected_temp />&nbsp;$Lang::tr{'mbmon temp'} $Lang::tr{'graph'}</td></tr>
+<tr><td colspan='2' align='left'><input type='checkbox' name='FAN' $selected_fan />&nbsp;$Lang::tr{'mbmon fan'} $Lang::tr{'graph'}</td></tr>
+<tr><td colspan='2' align='left'><input type='checkbox' name='VOLT' $selected_volt />&nbsp;$Lang::tr{'mbmon volt'} $Lang::tr{'graph'}</td></tr>
+<tr><td colspan='2' align='left'><input type='checkbox' name='HDD' $selected_hdd />&nbsp;$Lang::tr{'harddisk temperature'}-$Lang::tr{'graph'}</td></tr>
 </table>
 <hr />
 <table width='100%' border='0' cellspacing='1' cellpadding='0'>
@@ -285,3 +278,18 @@ END
 
 &Header::closebigbox();
 &Header::closepage();
+
+sub hddtempbox {
+ my $disk = $_[0];
+    if (-e "$graphdir/hddtemp-$disk-day.png") {
+  
+ 	  &Header::openbox('100%', 'center', "Disk /dev/$disk $Lang::tr{'graph'}");
+	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-day.png"))[9]);
+	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	  print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=hddtemp-$disk'>";
+	  print "<img src='/graphs/hddtemp-$disk-day.png' border='0' />";
+	  print "</a>";
+	  print "<br />\n";
+        &Header::closebox();
+  }
+}

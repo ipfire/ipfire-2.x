@@ -90,6 +90,8 @@ ifeq "$(SMP)" ""
 	          -include \$$(KRNLINCL)/linux/modversions.h' \
 	    -e '/^DEFINES/a\ \
 	          -DMODVERSIONS \\' src/Makefile
+	cd $(DIR_APP) && sed -i \
+	    -e 's/$$(shell uname -r)/$(KVER)/' Makefile
 else
 	cd $(DIR_APP) && sed -i \
 	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
@@ -100,6 +102,8 @@ else
 	          -include \$$(KRNLINCL)/linux/modversions.h' \
 	    -e '/^DEFINES/a\ \
 	          -DMODVERSIONS \\' src/Makefile
+	cd $(DIR_APP) && sed -i \
+	    -e 's/$$(shell uname -r)/$(KVER)-smp/' Makefile
 endif
 	cd $(DIR_APP) && CC="$(KGCC)" make
 	cd $(DIR_APP) && CC="$(KGCC)" make install
