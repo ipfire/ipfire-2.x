@@ -1220,7 +1220,8 @@ sub PrintActualLeases
 <td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$tr{'ip address'}</b></a></td>
 <td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$tr{'mac address'}</b></a></td>
 <td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$tr{'hostname'}</b></a></td>
-<td width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></td>
+<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></td>
+<td width='5%' align='center'><b>Add to fix leases<b></td>
 </tr>
 END
     ;
@@ -1266,7 +1267,7 @@ END
 
     my $id = 0;
     foreach my $key (sort leasesort keys %entries) {
-
+	print "<form method='post' action='/cgi-bin/dhcp.cgi'>\n";
 	my $hostname = &cleanhtml($entries{$key}->{HOSTNAME},"y");
 
 	if ($id % 2) {
@@ -1277,10 +1278,10 @@ END
 	}
 
 	print <<END
-<td align='center'>$entries{$key}->{IPADDR}</td>
-<td align='center'>$entries{$key}->{ETHER}</td>
-<td align='center'>&nbsp;$hostname </td>
-<td align='center'>
+<td align='center'><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' />$entries{$key}->{IPADDR}</td>
+<td align='center'><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' />$entries{$key}->{ETHER}</td>
+<td align='center'><input type='hidden' name='FIX_REMARK' value='$hostname' />&nbsp;$hostname</td>
+<td align='center'><input type='hidden' name='FIX_ENABLED' value='on' />
 END
 	;
 
@@ -1292,7 +1293,11 @@ END
 	} else {
 	    print "$enddate";
 	}
-	print "</td></tr>";
+	print <<END
+<td><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'add'}' />
+</td></td></tr></form>
+END
+	;
 	$id++;
     }
 
