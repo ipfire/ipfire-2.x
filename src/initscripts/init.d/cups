@@ -1,0 +1,44 @@
+#!/bin/sh
+# Begin $rc_base/init.d/cups
+
+#$LastChangedBy: bdubbs $
+#$Date: 2005-08-01 14:29:19 -0500 (Mon, 01 Aug 2005) $
+
+# Start or stop the CUPS server based upon the first argument to the script.
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case $1 in
+	start)
+		boot_mesg "Starting CUPS Printserver..."
+		loadproc /usr/sbin/cupsd
+		;;
+
+	stop)
+		boot_mesg "Stopping CUPS Printserver..."
+		killproc /usr/sbin/cupsd
+		;;
+
+	reload)
+		boot_mesg "Reloading CUPS Printserver..."
+		reloadproc /usr/sbin/cupsd
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/sbin/cupsd
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/cups
