@@ -7,6 +7,7 @@ etc/rc.d/helper/writeipac.pl
 etc/rc.d/init.d/apache
 etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/cleanfs
+etc/rc.d/init.d/connectioncheck
 etc/rc.d/init.d/console
 etc/rc.d/init.d/fcron
 etc/rc.d/init.d/firewall
@@ -71,10 +72,7 @@ etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S80localnet
 etc/rc.d/rcsysinit.d/S90sysctl
 #etc/sysconfig
-etc/sysconfig/clock
-etc/sysconfig/console
 etc/sysconfig/createfiles
 etc/sysconfig/firewall.local
 etc/sysconfig/modules
-etc/sysconfig/network
 etc/sysconfig/rc

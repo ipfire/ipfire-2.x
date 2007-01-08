@@ -101,7 +101,7 @@ if ($ARGV[0] eq 'start') {
 	if ( ( ( ($netsettings{'RED_TYPE'} =~ /^(PPPOE|PPTP)$/) && ($netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/) ) ||
 		  ( ( ($pppsettings{'METHOD'} =~ /^(PPPOE|PPPOE_PLUGIN)$/) || ($pppsettings{'PROTOCOL'} eq 'RFC2364') ) &&
 		  ($netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/) ) ) && ($pppsettings{'RECONNECTION'} ne 'manual') ) {
-		system ('/etc/rc.d/rc.connectioncheck start &');
+		system ('/etc/rc.d/init.d/connectioncheck start &');
 	}
 
 	###
@@ -240,7 +240,7 @@ elsif ($ARGV[0] eq 'stop')
 	unlink "${General::swroot}/red/resolv.conf";
 	unlink "${General::swroot}/red/device";
 
-	# stay with keepconnected during transitional rc.red stop ordered by rc.connectioncheck
+	# stay with keepconnected during transitional rc.red stop ordered by connectioncheck
 	if ( ! -e "${General::swroot}/red/redial") {
 		unlink "${General::swroot}/red/keepconnected";
 	}
@@ -264,7 +264,7 @@ elsif ($ARGV[0] eq 'stop')
 	}
 
 	my $file;
-	while (($file = glob("${General::swroot}/dhcpc/dhcpcd-*.pid") )) {
+	while (($file = glob("/var/run/dhcpcd-*.pid") )) {
 		if (open(FILE, $file)) {
 			my $pid = <FILE>;
 			close FILE;
@@ -281,8 +281,8 @@ elsif ($ARGV[0] eq 'stop')
 		system ('/sbin/ifconfig', 'atm0', 'down');
 	}
 
-	if ($pppsettings{'TYPE'} eq 'isdn') 		{ system('/etc/rc.d/rc.isdn','stop'); }
-	if ($pppsettings{'TYPE'} eq 'fritzdsl') 	{ system ('/etc/rc.d/rc.fritzdsl','stop'); }
+	if ($pppsettings{'TYPE'} eq 'isdn')		{ system('/etc/rc.d/rc.isdn','stop'); }
+	if ($pppsettings{'TYPE'} eq 'fritzdsl')		{ system ('/etc/rc.d/rc.fritzdsl','stop'); }
 
 	if ( 	( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} eq 'STATIC') ||
 		( $netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/ && $pppsettings{'PROTOCOL'} eq 'RFC1483' &&
