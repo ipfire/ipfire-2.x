@@ -37,9 +37,9 @@ etc/rc.d/rc0.d/K30sshd
 etc/rc.d/rc0.d/K80network
 etc/rc.d/rc0.d/K90sysklogd
 etc/rc.d/rc0.d/S60sendsignals
-etc/rc.d/rc0.d/S70mountfs
-etc/rc.d/rc0.d/S80swap
-etc/rc.d/rc0.d/S90localnet
+etc/rc.d/rc0.d/S70localnet
+etc/rc.d/rc0.d/S80mountfs
+etc/rc.d/rc0.d/S90swap
 etc/rc.d/rc0.d/S99halt
 #etc/rc.d/rc3.d
 etc/rc.d/rc3.d/S10sysklogd
