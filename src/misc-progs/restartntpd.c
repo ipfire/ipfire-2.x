@@ -25,7 +25,7 @@ int main(void)
 	if (!(initsetuid()))
 		exit(1);
 	
-	safe_system("/bin/killall ntpd 2> /dev/null");
+	safe_system("/etc/rc.d/init.d/ntp stop 2> /dev/null");
 	sleep(3);
 
 	if ((fd = open(CONFIG_ROOT "/time/allowclients", O_RDONLY)) != -1)
@@ -36,7 +36,7 @@ int main(void)
 
 	if (enable)
 	{
-		safe_system("/usr/bin/ntpd -Ap /var/run/ntpd.pid -u ntp:ntp");
+		safe_system("/etc/rc.d/init.d/ntp start");
 	}
 	return 0;
 }

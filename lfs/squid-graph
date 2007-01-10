@@ -26,12 +26,12 @@
 
 include Config
 
-VER        = 3.1
+VER        = 3.2
 
 THISAPP    = squid-graph-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/squid-graph
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e9565daabc23599094ed2d0e9a984d5e
+$(DL_FILE)_MD5 = 7ed7d187f87bde1ec9dabe05f07053b5
 
 install : $(TARGET)
 
@@ -77,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    -e "s/\$$color{'hit'}  .*$$/\$$color{'hit'}  = ['99','33','33']; # graph hit line color/" \
 	    -e "s/\$$color{'miss'} .*$$/\$$color{'miss'} = ['33','99','33']; # graph miss line color/" \
 	    -e "s/\$$color{'ims'}  .*$$/\$$color{'ims'}  = ['99','33','99']; # graph ims hit line color/" \
-	       bin/squid-graph > /usr/bin/squid-graph
+	       squid-graph > /usr/bin/squid-graph
 	chmod 755 /usr/bin/squid-graph
 	-mkdir -p /srv/web/ipfire/html/sgraph
 	@rm -rf $(DIR_APP)

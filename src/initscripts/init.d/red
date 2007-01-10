@@ -83,7 +83,6 @@ sub doupdatesettings {
 
 	# erase in case it was created once with 'persistent' selected but rc.red stop never used : SF1171610
 	unlink ("${General::swroot}/red/iface");
-	}
 }
 
 # No output should be sent to the webclient
