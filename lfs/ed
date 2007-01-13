@@ -40,7 +40,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 objects = $(DL_FILE) $(THISAPP)-mkstemp-1.patch
 
 $(DL_FILE)                     = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-mkstemp-1.patch     = $(URL_LFS)/ed/$(THISAPP)-mkstemp-1.patch
+$(THISAPP)-mkstemp-1.patch     = $(DL_FROM)/$(THISAPP)-mkstemp-1.patch
 
 $(DL_FILE)_MD5                 = ddd57463774cae9b50e70cd51221281b
 $(THISAPP)-mkstemp-1.patch_MD5 = e7e2248f9baa76de3db8210298e0d79e

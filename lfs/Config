@@ -13,8 +13,8 @@
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #
-URL_IPFIRE  = http://source.ipfire.eu/othersrc
-URL_TOOLCHAIN = http://source.ipfire.eu/toolchain
+URL_IPFIRE  = http://source.ipfire.org/othersrc
+URL_TOOLCHAIN = http://source.ipfire.org/toolchain
 URL_IPCOP   = http://ipcop.ath.cx
 
 # Default compiler optimizations.

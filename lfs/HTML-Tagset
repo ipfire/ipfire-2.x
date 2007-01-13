@@ -36,7 +36,7 @@ VER        = 3.04
 
 THISAPP    = HTML-Tagset-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_CPAN)/HTML
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

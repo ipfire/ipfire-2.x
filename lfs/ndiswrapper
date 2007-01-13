@@ -18,12 +18,6 @@
 # Makefiles are based on LFSMake, which is                                    #
 # Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
 #                                                                             #
-# Modifications by:                                                           #
-# ??-12-2003 Alan Hourihane <alanh@fairlite.demon.co.uk>                      #
-#          - Modified Makefile for IPCop build                                #
-#                                                                             #
-# $Id: ndiswrapper,v 1.1.2.3 2006/01/30 01:50:14 franck78 Exp $
-#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -36,7 +30,7 @@ VER        = 1.8
 
 THISAPP    = ndiswrapper-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_SFNET)/ndiswrapper
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -80,6 +74,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make KSRC=/usr/src/linux KVERS=$(KVER)
 	cd $(DIR_APP) && make KSRC=/usr/src/linux KVERS=$(KVER) install
-	gzip -f /lib/modules/$(KVER)/misc/ndiswrapper.o
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

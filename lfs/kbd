@@ -44,7 +44,7 @@ endif
 objects = $(DL_FILE) $(THISAPP)-more-programs-1.patch
 
 $(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-more-programs-1.patch      = $(URL_LFS)/kbd/$(THISAPP)-more_programs-1.patch
+$(THISAPP)-more-programs-1.patch      = $(DL_FROM)/kbd-$(VER)-more-programs-1.patch
 
 $(DL_FILE)_MD5                        = 069d1175b4891343b107a8ac2b4a39f6
 $(THISAPP)-more-programs-1.patch_MD5  = dc70180a6bc0afa2b741cd38e3cc2e18

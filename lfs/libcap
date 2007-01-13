@@ -30,7 +30,7 @@ VER        = 1.10
 
 THISAPP    = libcap-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_KERNEL)/linux/libs/security/linux-privs/kernel-2.4
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

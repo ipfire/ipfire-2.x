@@ -371,7 +371,6 @@ buildipfire() {
   ipfiremake openldap
   ipfiremake apache2
   ipfiremake php
-  ipfiremake subversion
   ipfiremake apache2			PASS=C
   ipfiremake arping
   ipfiremake beep
@@ -451,7 +450,6 @@ buildipfire() {
   ipfiremake libsafe
   ipfiremake 3c5x9setup
   ipfiremake pakfire
-  ipfiremake startscripts
   ipfiremake java
   ipfiremake bootsplash
   ipfiremake spandsp

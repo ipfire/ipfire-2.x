@@ -45,7 +45,7 @@ endif
 objects = $(DL_FILE) $(THISAPP)-9.6.diff.gz
 
 $(DL_FILE)                 = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-9.6.diff.gz     = $(URL_DEBIAN)/n/newt-utf8/$(THISAPP)-9.6.diff.gz
+$(THISAPP)-9.6.diff.gz     = $(DL_FROM)/$(THISAPP)-9.6.diff.gz
 
 $(DL_FILE)_MD5             = 4079546c307475ef2508dd2e98ed505e
 $(THISAPP)-9.6.diff.gz_MD5 = 5f1522189bdb16622677ad8e52f93119

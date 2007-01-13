@@ -30,7 +30,7 @@ VER        = 2.4.1
 
 THISAPP    = linux-atm-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_SFNET)/linux-atm
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
