@@ -89,7 +89,6 @@ ifeq "$(PASS)" "C"
 	mkdir -p /srv/web/ipfire/{cgi-bin,html}
 	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
 	-find /srv/web/ipfire -name .svn -exec rm -rf {} \;
-	cp $(DIR_DL)/sflogo.png /srv/web/ipfire/html/images/
 
 	# Change CONFIG_ROOT in cgi-scripts
 	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \

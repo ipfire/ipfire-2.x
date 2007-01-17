@@ -62,7 +62,7 @@ $(TARGET) :
 	@rm -rf $(DIR_APP) && mkdir -p $(DIR_APP)
 	@cp -vf $(DIR_SRC)/src/ipp2p/* $(DIR_APP)
 	cd $(DIR_SRC) && rm -rf iptables-*
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/iptables-fixed.tar.gz
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.5.tar.bz2
 	cd $(DIR_SRC) && ln -sf iptables-* iptables
 ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && make ipt_ipp2p.ko
