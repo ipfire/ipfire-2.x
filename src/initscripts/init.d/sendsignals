@@ -17,7 +17,7 @@
 
 case "${1}" in
 	stop)
-		boot_mesg "Sending all processes the TERM signal..."
+		boot_mesg "Sending all processes the TERM signal..." ${WARN}
 		killall5 -15
 		error_value=${?}
 
@@ -29,7 +29,7 @@ case "${1}" in
 			echo_failure
 		fi
 
-		boot_mesg "Sending all processes the KILL signal..."
+		boot_mesg "Sending all processes the KILL signal..." ${ERR}
 		killall5 -9
 		error_value=${?}
 

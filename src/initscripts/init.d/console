@@ -15,14 +15,10 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
+. /var/ipfire/main/settings
 
-# Native English speakers probably don't have /etc/sysconfig/console at all
-if [ -f /etc/sysconfig/console ]
-then
-	. /etc/sysconfig/console
-else
-        exit 0
-fi
+FONT="lat0-16"
+KEYMAP_CORRECTIONS="euro2"
 
 is_true() {
 	[ "$1" = "1" ] || [ "$1" = "yes" ] || [ "$1" = "true" ]

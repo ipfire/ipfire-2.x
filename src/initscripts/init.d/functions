@@ -679,4 +679,15 @@ log_warning_msg() {
 	return 0
 }
 
+animate()
+{
+	if [ $# = 0 ]
+		then
+		echo "Usage: animate {hook}"
+		exit 1
+	fi
+
+	splash "$*"
+}
+
 # End $rc_base/init.d/functions
