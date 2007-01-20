@@ -52,7 +52,7 @@ $(TARGET) :
 	rm -rf /tmp/*
 	mkdir -p /tmp/$(VERSION) /tmp/pxelinux.cfg
 	cp /usr/lib/syslinux/pxelinux.0 /tmp
-	cp /install/images/cdinitrd.gz              /tmp/$(VERSION)/instroot.gz
+	cp /install/images/initrd                   /tmp/$(VERSION)/instroot
 	cp /boot/vmlinuz-$(KVER)                    /tmp/$(VERSION)/vmlinuz
 	cp $(DIR_SRC)/config/syslinux/options.msg   /tmp/$(VERSION)/options.msg
 	cp $(DIR_SRC)/config/syslinux/splash.lss    /tmp/$(VERSION)/splash.lss
@@ -68,7 +68,7 @@ $(TARGET) :
 			$(DIR_SRC)/config/syslinux/syslinux.cfg \
 			> /tmp/pxelinux.cfg/$(SNAME)-pxe-$(VERSION).model
 	ln -s $(SNAME)-pxe-$(VERSION).model /tmp/pxelinux.cfg/default
-	chmod 444 /tmp/$(VERSION)/instroot.gz
+	chmod 444 /tmp/$(VERSION)/instroot
 	cd /tmp && tar cvzf \
 		/install/images/$(SNAME)-$(VERSION).$(MACHINE)-pxe.tgz *
 	rm -rf /tmp/*

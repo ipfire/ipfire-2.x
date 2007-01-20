@@ -130,6 +130,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# H323 conntrack
 	cd $(DIR_APP) && bunzip2 -cd $(DIR_DL)/patch-2.6.16-nath323-1.3.bz2 | patch -Np1
 
+	# SquashFS
+	cd $(DIR_SRC) && rm -rf squashfs*
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/squashfs3.0.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.0/linux-2.6.15/squashfs3.0-patch
+
 	# Patch-o-matic
 	cd $(DIR_SRC) && rm -rf iptables-*
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.5.tar.bz2
@@ -199,5 +204,5 @@ endif
 ifeq "$(SMP)" "1"
 	rm -rf /lib/modules/$(VER)-smp/pcmcia
 endif
-	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables*
+	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs*
 	@$(POSTBUILD)

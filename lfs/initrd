@@ -127,24 +127,7 @@ $(TARGET) :
 	# make new dependencies
 	depmod -a -F /boot/System.map-$(KVER) $(KVER)
 
-	RAMDISK_SIZE=16384 && \
-	    dd if=/dev/zero of=/install/images/cdinitrd bs=1k count=$${RAMDISK_SIZE}
-	for i in `seq 0 7`; do \
-	    if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
-	        LOOPDEV="/dev/loop$${i}" \
-                break; \
-	    fi; \
-	    done && \
-	    losetup $$LOOPDEV /install/images/cdinitrd && \
-	    mke2fs -m 0 -N 1024 $$LOOPDEV && \
-	    mount -t ext2 $$LOOPDEV /install/mnt && \
-	    rm -rf /install/mnt/lost+found && \
-	    cp -aR /install/initrd/* /install/mnt/ && \
-	    cd /install/mnt/ && find ./ -ls > $(DIR_INFO)/_build.cdinitrd && \
-	    touch /install/mnt/CDROMBOOT && \
-	    cd / && umount /install/mnt && \
-	    losetup -d $$LOOPDEV
-	gzip -9 /install/images/cdinitrd
-	splash -s -f /boot/splash/config/bootsplash-1024x768.cfg >> /install/images/cdinitrd.gz
+	mksquashfs /install/initrd /install/images/initrd
+	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log
 
 	@$(POSTBUILD)

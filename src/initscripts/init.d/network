@@ -39,6 +39,8 @@ case "${1}" in
 		modprobe ip_nat_mms
 		modprobe ip_conntrack_pptp
 		modprobe ip_nat_pptp
+		modprobe ip_conntrack_sip
+		modprobe ip_nat_sip
 
 		# Remove possible leftover files
 		rm -f CONFIG_ROOT/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
@@ -230,7 +232,7 @@ case "${1}" in
 						if [ "$DNS1" = "" ]; then
 							echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
 							echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
-						else 
+						else
 							echo "$DNS1" > /var/ipfire/red/dns1
 							echo "$DNS2" > /var/ipfire/red/dns2
 						fi

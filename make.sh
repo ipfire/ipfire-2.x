@@ -380,6 +380,7 @@ buildipfire() {
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
+  ipfiremake squashfstools
   ipfiremake ethtool
   ipfiremake ez-ipupdate
   ipfiremake fcron

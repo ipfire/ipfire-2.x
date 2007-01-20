@@ -139,6 +139,8 @@
 * linux-2.6.16.29-ipfire
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
+* linux-libc-headers-2.6.12.0_diff
+* linux-libc-headers-2.6.12.0_rootfile
 * logrotate-3.7.1
 * logwatch_7.3.1
 * lynx2.8.5
@@ -210,6 +212,7 @@
 * snort-2.3.3
 * sox-12.18.1
 * spandsp-0.0.3pre24
+* squashfs3.0
 * squid-2.6.STABLE3
 * squid-graph-3.2
 * squidGuard-1.2.0
