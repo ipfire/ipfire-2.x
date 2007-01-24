@@ -139,8 +139,6 @@
 * linux-2.6.16.29-ipfire
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
-* linux-libc-headers-2.6.12.0_diff
-* linux-libc-headers-2.6.12.0_rootfile
 * logrotate-3.7.1
 * logwatch_7.3.1
 * lynx2.8.5

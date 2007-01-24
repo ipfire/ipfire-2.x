@@ -1,6 +1,9 @@
 #!/bin/sh
+# Clear screen
+/bin/clear
+
 echo "Shutting down..."
-echo "Sending all processes the TERM signal..." 
+echo "Sending all processes the TERM signal..."
 /bin/killall5 -15
 sleep 3
 echo "Sending all processes the KILL signal..."

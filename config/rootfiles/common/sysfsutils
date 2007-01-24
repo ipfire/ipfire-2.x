@@ -1,0 +1,15 @@
+#opt/i586-uClibc/bin/dlist_test
+#opt/i586-uClibc/bin/get_bus_devices_list
+#opt/i586-uClibc/bin/get_class_dev
+#opt/i586-uClibc/bin/get_classdev_parent
+#opt/i586-uClibc/bin/get_device
+#opt/i586-uClibc/bin/get_driver
+#opt/i586-uClibc/bin/systool
+#opt/i586-uClibc/bin/testlibsysfs
+#opt/i586-uClibc/bin/write_attr
+#opt/i586-uClibc/lib/libsysfs.a
+#opt/i586-uClibc/lib/libsysfs.la
+#opt/i586-uClibc/man/man1/systool.1
+#opt/i586-uClibc/usr/include/sysfs
+#opt/i586-uClibc/usr/include/sysfs/dlist.h
+#opt/i586-uClibc/usr/include/sysfs/libsysfs.h

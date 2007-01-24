@@ -1,0 +1,3 @@
+#usr/man/man8/logrotate.8
+usr/sbin/logrotate
+var/lib/logrotate.status

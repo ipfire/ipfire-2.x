@@ -1,0 +1,3 @@
+etc/ppp/options.pptp
+usr/sbin/pptp
+#usr/share/man/man8/pptp.8

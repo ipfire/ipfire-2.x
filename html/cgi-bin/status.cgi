@@ -225,7 +225,7 @@ print "</table>\n";
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'uptime and users'});
-my $output = `/usr/bin/w`;
+my $output = `/usr/bin/who`;
 $output = &Header::cleanhtml($output,"y");
 print "<pre>$output</pre>\n";
 &Header::closebox();

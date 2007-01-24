@@ -78,10 +78,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --enable-threads
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	# install -v -m644 FAQ README{,.linux} doc/README.* doc/*.{pod,txt} /usr/share/ethereal
-	# install -v -m644 -D ethereal.desktop /usr/share/applications/ethereal.desktop
-	# install -v -m644 -D image/elogo3d48x48.png /usr/share/pixmaps/ethereal.png 
-	# install -v -m755 -d /usr/share/pixmaps/ethereal 
-	# install -v -m644 image/*.{png,ico,xpm,bmp} /usr/share/pixmaps/ethereal
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

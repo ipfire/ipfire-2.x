@@ -1,0 +1,10 @@
+etc/sudoers
+usr/bin/sudo
+usr/bin/sudoedit
+usr/lib/sudo_noexec.la
+usr/lib/sudo_noexec.so
+#usr/man/man5/sudoers.5
+#usr/man/man8/sudo.8
+#usr/man/man8/sudoedit.8
+#usr/man/man8/visudo.8
+usr/sbin/visudo

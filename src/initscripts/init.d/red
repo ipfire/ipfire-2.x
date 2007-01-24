@@ -55,7 +55,7 @@ sub dodhcpdial($;$) {
 		push(@dhcpcommand, ('-d'));
 	}
 
-	if ($dhcp_name ne '') { push(@dhcpcommand, ('-h', "$dhcp_name")); }
+	if ($dhcp_name ne '') { push(@dhcpcommand, ('-h', "$dhcp_name", "&>/dev/null")); }
 	if ($netsettings{'RED_TYPE'} eq 'PPTP') { push(@dhcpcommand, '-G'); }
 
 	if (system (@dhcpcommand)) {
