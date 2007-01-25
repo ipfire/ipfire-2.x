@@ -1,5 +1,4 @@
-/dev/ram0	/	ext2
-/dev/fd0	/	ext2
+/dev/ram0	/	squashfs
 /proc		/proc	proc
 none		/sys	sysfs
 none		/tmp	tmpfs

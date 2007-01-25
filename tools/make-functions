@@ -106,15 +106,17 @@ beautify()
 					;;
 			esac
 			;;
-		build_stage_start)
+		build_stage)
 			MESSAGE=$2
+			if [ "$STAGE_TIME_START" ]; then
+				LAST_STAGE_TIME=$[ `date +%s` - $STAGE_TIME_START ]
+			fi
 			STAGE_TIME_START=`date +%s`
-			echo -ne "${BOLD}*** ${MESSAGE}${SET_VER_COL}      version${SET_OPT_COL} options"
-			echo -ne "${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
-			;;
-		build_stage_end)
-			STAGE_TIME_END=`date +%s`
-			echo -ne "${BOLD}***This stage took:\t\t $[ $STAGE_TIME_END - $STAGE_TIME_START ] (secs)${NORMAL}\n"
+			echo -ne "${BOLD}*** ${MESSAGE}${NORMAL}"
+			if [ "$LAST_STAGE_TIME" ]; then
+				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}"
+			fi
+			echo -ne "${BOLD}${SET_VER_COL}      version${SET_OPT_COL} options${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
 			;;
 		build_start)
 			BUILD_TIME_START=`date +%s`

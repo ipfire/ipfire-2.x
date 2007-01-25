@@ -11,7 +11,7 @@ echo "Scanning source media"
 for DEVICE in $(kudzu -qps  -t 30 -c CDROM | grep device: | cut -d ' ' -f 2 | sort | uniq); do
     mount /dev/${DEVICE} /cdrom 2> /dev/null
     if [ -e /cdrom/boot ]; then
-	echo -n ${DEVICE} > /source_device
+	echo -n ${DEVICE} > /tmp/source_device
 	exit 0
     fi
     umount /cdrom 2> /dev/null
@@ -21,7 +21,7 @@ done
 for DEVICE in $(kudzu -qps  -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
     mount /dev/${DEVICE}1 /cdrom 2> /dev/null
     if [ -e /cdrom/boot ]; then
-	echo -n ${DEVICE}1 > /source_device
+	echo -n ${DEVICE}1 > /tmp/source_device
 	exit 1
     fi
     umount /cdrom 2> /dev/null

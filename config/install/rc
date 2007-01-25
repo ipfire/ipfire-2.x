@@ -37,6 +37,3 @@ syslogd -O /dev/tty4
 
 echo "Starting udev"
 /sbin/udevstart
-
-# Clearing screen
-/sbin/splash master

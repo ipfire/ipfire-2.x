@@ -75,7 +75,10 @@ $(TARGET) :
 	    [ -f $$i ] && cp $$i /etc; \
 	done
 	touch /etc/mtab
-	echo "$(NAME) v$(VERSION) - $(SLOGAN)" > /etc/issue
+	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
+	echo "===============================" >> /etc/issue
+	echo "\n running on \s \r \m"          >> /etc/issue
+
 
 	# Scripts
 	for i in `find $(DIR_SRC)/src/scripts -maxdepth 1 -type f`; do \

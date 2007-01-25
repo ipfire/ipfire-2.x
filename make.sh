@@ -401,7 +401,6 @@ buildipfire() {
   ipfiremake kudzu
   ipfiremake logrotate
   ipfiremake logwatch
-  ipfiremake mingetty
   ipfiremake misc-progs
   ipfiremake mtools
   ipfiremake nano
@@ -676,13 +675,11 @@ build)
 	fi
 
 	beautify build_start
-	beautify build_stage_start "Building base"
+	beautify build_stage "Building LFS"
 	buildbase
-	beautify build_stage_end
 
-	beautify build_stage_start "Building IPFire"
+	beautify build_stage "Building IPFire"
 	buildipfire
-	beautify build_stage_end
 
 	# Setzen des IPFire Builds
 	if [ "$FIREBUILD" ]; then
@@ -691,13 +688,11 @@ build)
 		echo "_(OvO)_" > $BASEDIR/build/var/ipfire/firebuild
 	fi
 
-	beautify build_stage_start "Building installer"
+	beautify build_stage "Building installer"
 	buildinstaller
-	beautify build_stage_end
 
-	beautify build_stage_start "Building packages"
+	beautify build_stage "Building packages"
 	buildpackages
-	beautify build_stage_end
 	beautify build_end
 	;;
 shell)

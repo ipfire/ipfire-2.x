@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
 		}
 
 		/* read source drive letter */
-		if ((handle = fopen("/source_device", "r")) == NULL) {
+		if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
 			errorbox(ctr[TR_ERROR_PROBING_CDROM]);
 			goto EXIT;
 		}
@@ -457,11 +457,11 @@ int main(int argc, char *argv[])
 	 * the disk. 
 	 */
 	/* Don't use mysystem here so we can redirect output */
-	sprintf(commandstring, "/bin/sfdisk -s /dev/%s > /disksize 2> /dev/null", harddrive);
+	sprintf(commandstring, "/bin/sfdisk -s /dev/%s > /tmp/disksize 2> /dev/null", harddrive);
 	system(commandstring);
 
 	/* Calculate amount of disk space */
-        if ((handle = fopen("/disksize", "r")))
+        if ((handle = fopen("/tmp/disksize", "r")))
         {
            	fgets(line, STRING_SIZE-1, handle);
             	if (sscanf (line, "%s", string)) {

@@ -50,7 +50,7 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
-	rm -f /install/images/{cdinitrd,cdinitrd.gz,fdinitrd,fdinitrd.gz}
+	rm -f /install/images/initrd
 
 	# Finish up initrd directory
 	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys} && \
