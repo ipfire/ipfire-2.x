@@ -97,6 +97,9 @@ $(TARGET) :
 	ln -sf ../init.d/network     /etc/rc.d/rc0.d/K80network
 	ln -sf ../init.d/network     /etc/rc.d/rc3.d/S20network
 	ln -sf ../init.d/network     /etc/rc.d/rc6.d/K80network
+	ln -sf ../init.d/random      /etc/rc.d/rc0.d/K45random
+	ln -sf ../init.d/random      /etc/rc.d/rc3.d/S25random
+	ln -sf ../init.d/random      /etc/rc.d/rc6.d/K45random
 
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules

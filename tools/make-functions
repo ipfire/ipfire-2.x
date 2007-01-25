@@ -123,7 +123,7 @@ beautify()
 			;;
 		build_end)
 			BUILD_TIME_END=`date +%s`
-			echo -ne "${BOLD}***Build is finished now!\nThis took:\t\t\t $[ $BUILD_TIME_END - $BUILD_TIME_START ] (secs)${NORMAL}\n"
+			echo -ne "${DONE}***Build is finished now and took $[ $BUILD_TIME_END - $BUILD_TIME_START ] secs!${NORMAL}\n"
 			;;
 		make_pkg)
 			echo "$2" | while read PKG_VER PROGRAM OPTIONS

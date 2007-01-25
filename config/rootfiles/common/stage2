@@ -6,6 +6,7 @@ bin/stty
 #boot
 dev/null
 dev/console
+etc/bashrc
 etc/certparams
 etc/fstab
 etc/group
@@ -23,6 +24,11 @@ etc/nsswitch.conf
 #etc/opt
 etc/passwd
 etc/profile
+etc/profile.d/dircolors.sh
+etc/profile.d/extra-promt.sh
+etc/profile.d/extrapaths.sh
+etc/profile.d/readline.sh
+etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
 etc/sysctl.conf

@@ -79,6 +79,11 @@ $(TARGET) :
 	echo "===============================" >> /etc/issue
 	echo "\n running on \s \r \m"          >> /etc/issue
 
+	# Bash startup files
+	install --directory --mode=0755 --owner=root --group=root /etc/profile.d
+	for i in $(DIR_SRC)/config/profile.d/*; do \
+	    [ -f $$i ] && cp $$i /etc/profile.d; \
+	done
 
 	# Scripts
 	for i in `find $(DIR_SRC)/src/scripts -maxdepth 1 -type f`; do \

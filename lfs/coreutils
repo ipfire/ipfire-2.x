@@ -109,6 +109,7 @@ ifeq "$(ROOT)" ""
 	echo '#!/bin/bash'				>  /bin/uname
 	echo '/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g'' >> /bin/uname
 	chmod 755 /bin/uname
+	dircolors -p > /etc/dircolors
 else
 	rm /tools/bin/hostname
 	mv -f /tools/bin/uname /tools/bin/uname.bak

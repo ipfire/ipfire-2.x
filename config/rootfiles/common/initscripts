@@ -18,6 +18,7 @@ etc/rc.d/init.d/modules
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/mountkernfs
 etc/rc.d/init.d/network
+etc/rc.d/init.d/random
 etc/rc.d/init.d/rc
 etc/rc.d/init.d/reboot
 etc/rc.d/init.d/red
@@ -34,6 +35,7 @@ etc/rc.d/init.d/udev_retry
 etc/rc.d/rc0.d/K08fcron
 etc/rc.d/rc0.d/K28apache
 etc/rc.d/rc0.d/K30sshd
+etc/rc.d/rc0.d/K45random
 etc/rc.d/rc0.d/K80network
 etc/rc.d/rc0.d/K90sysklogd
 etc/rc.d/rc0.d/S60sendsignals
@@ -44,6 +46,7 @@ etc/rc.d/rc0.d/S99halt
 #etc/rc.d/rc3.d
 etc/rc.d/rc3.d/S10sysklogd
 etc/rc.d/rc3.d/S20network
+etc/rc.d/rc3.d/S25random
 etc/rc.d/rc3.d/S30sshd
 etc/rc.d/rc3.d/S32apache
 etc/rc.d/rc3.d/S40fcron
@@ -51,6 +54,7 @@ etc/rc.d/rc3.d/S40fcron
 etc/rc.d/rc6.d/K08fcron
 etc/rc.d/rc6.d/K28apache
 etc/rc.d/rc6.d/K30sshd
+etc/rc.d/rc6.d/K45random
 etc/rc.d/rc6.d/K80network
 etc/rc.d/rc6.d/K90sysklogd
 etc/rc.d/rc6.d/S60sendsignals

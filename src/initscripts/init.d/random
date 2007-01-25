@@ -1,0 +1,35 @@
+#!/bin/sh
+# Begin $rc_base/init.d/random
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+# Random script elements by Larry Lawrence
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Initializing kernel random number generator..."
+		if [ -f /var/tmp/random-seed ]; then
+			/bin/cat /var/tmp/random-seed >/dev/urandom
+		fi
+		/bin/dd if=/dev/urandom of=/var/tmp/random-seed \
+			count=1 &>/dev/null
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Saving random seed..."
+		/bin/dd if=/dev/urandom of=/var/tmp/random-seed \
+			count=1 &>/dev/null
+		evaluate_retval
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/random

@@ -1,0 +1,32 @@
+# Begin /etc/bashrc
+# Written for Beyond Linux From Scratch
+# by James Robertson <jameswrobertson@earthlink.net>
+# updated by Bruce Dubbs <bdubbs@linuxfromscratch.org>
+
+# Make sure that the terminal is set up properly for each shell
+
+if [ -f /etc/profile.d/tinker-term.sh ]; then
+  source /etc/profile.d/tinker-term.sh
+fi
+
+# System wide aliases and functions.
+
+# System wide environment variables and startup programs should go into
+# /etc/profile.  Personal environment variables and startup programs
+# should go into ~/.bash_profile.  Personal aliases and functions should
+# go into ~/.bashrc
+
+# Provides a colored /bin/ls command.  Used in conjunction with code in
+# /etc/profile.
+
+alias ls='ls --color=auto'
+
+# Provides prompt for non-login shells, specifically shells started
+# in the X environment. [Review the LFS archive thread titled
+# PS1 Environment Variable for a great case study behind this script
+# addendum.]
+
+#export PS1="[\u@\h \w]\\$ "
+export PS1='\u@\h:\w\$ '
+
+# End /etc/bashrc

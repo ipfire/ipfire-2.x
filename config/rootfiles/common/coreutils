@@ -22,6 +22,7 @@ bin/sync
 bin/true
 #bin/uname
 bin/uname.bak
+etc/dircolors
 usr/bin/[
 usr/bin/basename
 #usr/bin/cksum

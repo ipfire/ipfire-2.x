@@ -917,13 +917,13 @@ uploadsrc)
 	PWD=`pwd`
 	cd $BASEDIR/cache/
 	echo -e "Uploading cache to ftp server:"
-	ncftpls -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT ftp://$IPFIRE_FTP_URL_INT$IPFIRE_FTP_PATH_INT/ > /var/tmp/ftplist
+	ncftpls -u $FTP_CACHE_USER -p $FTP_CACHE_PASS ftp://$FTP_CACHE_URL$FTP_CACHE_PATH/ > /var/tmp/ftplist
 	for i in *; do
 		if [ "$i" == "toolchains" ]; then continue; fi
 		grep -q $i /var/tmp/ftplist
 		if [ "$?" -ne "0" ]; then
 			echo -ne "$i"
-			ncftpput -bb -u $IPFIRE_FTP_USER_INT -p $IPFIRE_FTP_PASS_INT $IPFIRE_FTP_URL_INT $IPFIRE_FTP_PATH_INT/ $i >> $BASEDIR/log/_build.uploadsrc.log 2>&1
+			ncftpput -u $FTP_CACHE_USER -p $FTP_CACHE_PASS $FTP_CACHE_URL $FTP_CACHE_PATH/ $i
 			if [ "$?" -eq "0" ]; then
 				beautify message DONE
 			else
@@ -932,15 +932,6 @@ uploadsrc)
 		fi
 	done
 	rm -f /var/tmp/ftplist
-	UL_TIME_START=`date +'%s'`
-	ncftpbatch -d > /dev/null 2>&1
-	while ps acx | grep -q ncftpbatch
-	do
-		UL_TIME=$(expr `date +'%s'` - $UL_TIME_START)
-		echo -ne "\r ${UL_TIME}s : Upload is running..."
-		sleep 1
-	done
-	beautify message DONE
 	cd $PWD
 	exit 0
 	;;
@@ -956,10 +947,10 @@ EOF
 		ncftp -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT < .ftp-commands
 		rm -f .ftp-commands
 		md5sum ipfire-install-$VERSION.i386.iso > ipfire-install-$VERSION.i386.iso.md5
-		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386.iso
-		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-install-$VERSION.i386.iso.md5
-		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-source-r$SVN_REVISION.tar.gz
-		ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ svn_status
+		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH/ ipfire-install-$VERSION.i386.iso
+		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH/ ipfire-install-$VERSION.i386.iso.md5
+		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH/ ipfire-source-r$SVN_REVISION.tar.gz
+		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH/ svn_status
 		if [ "$?" -eq "0" ]; then
 			echo -e "The iso of Revision $SVN_REVISION was successfully uploaded to $IPFIRE_FTP_URL_EXT$IPFIRE_FTP_PATH_EXT/."
 		else
@@ -967,7 +958,7 @@ EOF
 			exit 1
 		fi
 		if [ "$3" = "--with-sources-cd" ]; then
-			ncftpput -u $IPFIRE_FTP_USER_EXT -p $IPFIRE_FTP_PASS_EXT $IPFIRE_FTP_URL_EXT $IPFIRE_FTP_PATH_EXT/ ipfire-sources-cd-$VERSION.$MACHINE.iso
+			ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH/ ipfire-sources-cd-$VERSION.$MACHINE.iso
 		fi
 		;;
 	  paks)
