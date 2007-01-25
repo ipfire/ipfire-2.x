@@ -122,9 +122,9 @@ case "\$1" in
 	  ;;
 	  iptables)
 		echo "[iptables]"
-		iptables -t mangle -L QOS-OUT -v -x 2> /dev/null
-		iptables -t mangle -L QOS-INC -v -x 2> /dev/null
-		iptables -t mangle -L QOS-TOS -v -x 2> /dev/null
+		iptables -t mangle -n -L QOS-OUT -v -x 2> /dev/null
+		iptables -t mangle -n -L QOS-INC -v -x 2> /dev/null
+		iptables -t mangle -n -L QOS-TOS -v -x 2> /dev/null
 		exit 0
 	  ;;
 	esac

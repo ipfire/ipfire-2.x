@@ -332,7 +332,7 @@ buildipfire() {
   ipfiremake fcdslslusb		SMP=1
   ipfiremake fcpci			SMP=1
 #  ipfiremake promise-sata-300-tx	SMP=1
-  ipfiremake zaptel			PASS=S
+  ipfiremake zaptel			SMP=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake fcdsl
@@ -546,7 +546,6 @@ buildinstaller() {
   installmake util-linux
   installmake pciutils
   installmake kudzu
-#  installmake bootsplash
   installmake installer
   installmake initrd
 }
