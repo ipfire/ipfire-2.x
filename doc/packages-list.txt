@@ -150,7 +150,6 @@
 * man-pages-2.34
 * mc-4.6.1
 * memtest86+-1.65
-* mingetty_1.07
 * misc-progs
 * mktemp-1.5
 * mldonkey-2.7.7

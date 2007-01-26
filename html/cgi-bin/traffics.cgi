@@ -23,7 +23,7 @@ my %netsettings;
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-my @years=("2001","2002","2003","2004","2005","2006","2007","2008","2009");
+my @years=("2007","2008","2009","2010","2011","2012","2013","2014","2015");
 
 my @longmonths = ( $Lang::tr{'january'}, $Lang::tr{'february'}, $Lang::tr{'march'},
 	$Lang::tr{'april'}, $Lang::tr{'may'}, $Lang::tr{'june'}, $Lang::tr{'july'}, $Lang::tr{'august'},

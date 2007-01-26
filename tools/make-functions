@@ -630,7 +630,7 @@ make_config() {
 		read -s MAIL_PASS
 		
 	fi
-	echo -ne "${BOLD}***Saving...${NORMAL}"
+	echo -ne "\n${BOLD}***Saving...${NORMAL}"
 	cat <<END > $BASEDIR/.config
 ### iso server
 FTP_ISO_URL=$FTP_ISO_URL

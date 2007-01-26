@@ -40,15 +40,12 @@ $cgiparams{'YEAR'} = $y;
 &Header::showhttpheaders();
 
 my %selectYear;
-$selectYear{'YEAR'}{'2001'} = '';
-$selectYear{'YEAR'}{'2002'} = '';
-$selectYear{'YEAR'}{'2003'} = '';
-$selectYear{'YEAR'}{'2004'} = '';
-$selectYear{'YEAR'}{'2005'} = '';
-$selectYear{'YEAR'}{'2006'} = '';
 $selectYear{'YEAR'}{'2007'} = '';
 $selectYear{'YEAR'}{'2008'} = '';
 $selectYear{'YEAR'}{'2009'} = '';
+$selectYear{'YEAR'}{'2010'} = '';
+$selectYear{'YEAR'}{'2011'} = '';
+$selectYear{'YEAR'}{'2012'} = '';
 $selectYear{'YEAR'}{'????'} = '';
 $selectYear{'YEAR'}{$cgiparams{'YEAR'}} = 'selected=\'selected\'';
 
@@ -98,12 +95,12 @@ print <<END;
 					<option $selected{'MONTH'}{'??'} value='??'>$Lang::tr{'allmsg'}</option>
 				</select>
 				<select name='YEAR'>		
-					<option $selectYear{'YEAR'}{'2001'} value='2001'>2001</option>
-					<option $selectYear{'YEAR'}{'2002'} value='2002'>2002</option>
-					<option $selectYear{'YEAR'}{'2003'} value='2003'>2003</option>
-					<option $selectYear{'YEAR'}{'2004'} value='2004'>2004</option>
-					<option $selectYear{'YEAR'}{'2005'} value='2005'>2005</option>
-					<option $selectYear{'YEAR'}{'2006'} value='2006'>2006</option>
+					<option $selectYear{'YEAR'}{'2007'} value='2007'>2007</option>
+					<option $selectYear{'YEAR'}{'2008'} value='2008'>2008</option>
+					<option $selectYear{'YEAR'}{'2009'} value='2009'>2009</option>
+					<option $selectYear{'YEAR'}{'2010'} value='2010'>2010</option>
+					<option $selectYear{'YEAR'}{'2011'} value='2011'>2011</option>
+					<option $selectYear{'YEAR'}{'2012'} value='2012'>2012</option>
 					<option $selectYear{'YEAR'}{'????'} value='????'>$Lang::tr{'allmsg'}</option>
 				</select>
 				<input type='submit' name='ACTION' value='$Lang::tr{'update'}' />
