@@ -48,6 +48,7 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
+	squashfs3.0.tar.gz \
 	openswan-2.4.7.kernel-2.6-natt.patch.gz \
 	openswan-2.4.7.kernel-2.6-klips.patch.gz \
 	iptables-1.3.5.tar.bz2 \
@@ -68,6 +69,7 @@ kbc_option_2420.patch			= $(URL_IPFIRE)/kbc_option_2420.patch
 net4801.kernel.patch_2.4.31			= $(URL_IPFIRE)/net4801.kernel.patch_2.4.31
 netfilter-layer7-v2.6.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.6.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
+squashfs3.0.tar.gz				= $(URL_IPFIRE)/squashfs3.0.tar.gz
 
 $(DL_FILE)_MD5					= 50695965725367f39007023feac5e256
 patch-$(PATCHLEVEL).gz_MD5				= 1355ebc25ea57df398d20e1c1726ec9b
@@ -79,6 +81,7 @@ kbc_option_2420.patch_MD5				= 6d37870344f7fcf97ace1fbf43323c60
 net4801.kernel.patch_2.4.31_MD5			= c7d64e3caedb2f2b10e1c11db7f73a04
 netfilter-layer7-v2.6.tar.gz_MD5			= 58135cd1aafaf4ae2fa478159206f064
 patch-2.6.16-nath323-1.3.bz2_MD5			= f926409ff703a307baf54b57ab75d138
+squashfs3.0.tar.gz_MD5				= 9fd05d0bfbb712f5fb95edafea5bc733
 
 install : $(TARGET)
 

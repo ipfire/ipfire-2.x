@@ -30,7 +30,7 @@ usr/bin/basename
 #usr/bin/csplit
 usr/bin/cut
 #usr/bin/dir
-#usr/bin/dircolors
+usr/bin/dircolors
 usr/bin/dirname
 usr/bin/du
 usr/bin/env

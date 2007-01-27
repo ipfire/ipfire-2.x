@@ -38,9 +38,9 @@ my %mainsettings=();
 my %timesettings=();
 my $setting = "${General::swroot}/dhcp/settings";
 our $filename1 = "${General::swroot}/dhcp/advoptions"; 	# Field separator is TAB in this file (comma is standart)
-							# because we need commas in the some data
+									# because we need commas in the some data
 our $filename2 = "${General::swroot}/dhcp/fixleases";
-our $filename3 = "${General::swroot}/dhcp/advoptions-list"; # Describe the allowed syntax for dhcp options
+our $filename3 = "${General::swroot}/dhcp/advoptions-list";	# Describe the allowed syntax for dhcp options
 my $errormessage = '';
 my $warnNTPmessage = '';
 my @nosaved=();
@@ -66,6 +66,8 @@ foreach my $itf (@ITFs) {
     $dhcpsettings{"DNS2_${itf}"} = '';
     $dhcpsettings{"NTP1_${itf}"} = '';
     $dhcpsettings{"NTP2_${itf}"} = '';
+    $dhcpsettings{"NEXT_${itf}"} = '';
+    $dhcpsettings{"FILE_${itf}"} = '';
 }
 
 $dhcpsettings{'SORT_FLEASELIST'} = 'FIPADDR';
@@ -206,7 +208,12 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
 			goto ERROR;
 		}		
 	    }
-
+	    if ($dhcpsettings{"NEXT_${itf}"}) {
+		if (!(&General::validip($dhcpsettings{"NEXT_${itf}"}))) {
+			$errormessage = "next-server on ${itf}: " . $Lang::tr{'invalid ip'};
+			goto ERROR;
+		}
+	    }
 	    if ($dhcpsettings{"NTP1_${itf}"}) {
 		if (!(&General::validip($dhcpsettings{"NTP1_${itf}"}))) {
 			$errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid primary ntp'};
@@ -563,6 +570,11 @@ print <<END
     <td><input type='text' name='WINS1_${itf}' value='$dhcpsettings{"WINS1_${itf}"}' /></td>
     <td class='base'>$Lang::tr{'secondary wins server address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='WINS2_${itf}' value='$dhcpsettings{"WINS2_${itf}"}' /></td>
+</tr><tr>
+    <td class='base'>next-server:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td><input type='text' name='NEXT_${itf}' value='$dhcpsettings{"NEXT_${itf}"}' /></td>
+    <td class='base'>filename:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td><input type='text' name='FILE_${itf}' value='$dhcpsettings{"FILE_${itf}"}' /></td>
 </tr>
 </table>
 <hr />
@@ -1136,6 +1148,8 @@ sub buildconf {
 	    print FILE "\toption netbios-name-servers " . $dhcpsettings{"WINS1_${itf}"}     if ($dhcpsettings{"WINS1_${itf}"});
 	    print FILE ", " . $dhcpsettings{"WINS2_${itf}"}                            if ($dhcpsettings{"WINS2_${itf}"});
 	    print FILE ";\n"                                                           if ($dhcpsettings{"WINS1_${itf}"});
+	    print FILE "\tnext-server " . $dhcpsettings{"NEXT_${itf}"} . ";\n" if ($dhcpsettings{"NEXT_${itf}"});
+	    print FILE "\tfilename \"" . $dhcpsettings{"FILE_${itf}"} . "\";\n" if ($dhcpsettings{"FILE_${itf}"});
 	    print FILE "\tdefault-lease-time " . ($dhcpsettings{"DEFAULT_LEASE_TIME_${itf}"} * 60). ";\n";
 	    print FILE "\tmax-lease-time "     . ($dhcpsettings{"MAX_LEASE_TIME_${itf}"} * 60)    . ";\n";
 	    print FILE "\tallow bootp;\n" if ($dhcpsettings{"ENABLEBOOTP_${itf}"} eq 'on');
