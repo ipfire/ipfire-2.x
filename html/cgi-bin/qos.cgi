@@ -116,7 +116,7 @@ if ($qossettings{'DOCLASS'} eq $Lang::tr{'save'})
 	if ( $qossettings{'VALID'} eq 'yes' ) {
 		open( FILE, ">> $classfile" ) or die "Unable to write $classfile";
 		print FILE <<END
-$qossettings{'DEVICE'};$qossettings{'CLASS'};$qossettings{'PRIO'};$qossettings{'MINBWDTH'};$qossettings{'MAXBWDTH'};$qossettings{'BURST'};$qossettings{'CBURST'};$qossettings{'TOS'};
+$qossettings{'DEVICE'};$qossettings{'CLASS'};$qossettings{'PRIO'};$qossettings{'MINBWDTH'};$qossettings{'MAXBWDTH'};$qossettings{'BURST'};$qossettings{'CBURST'};$qossettings{'TOS'};$qossettings{'REMARK'};
 END
 ;
 		close FILE;
@@ -142,6 +142,8 @@ elsif ($qossettings{'DOCLASS'} eq 'Bearbeiten')
 			$qossettings{'MAXBWDTH'} = $classline[4];
 			$qossettings{'BURST'} = $classline[5];
 			$qossettings{'CBURST'} = $classline[6];
+			$qossettings{'TOS'} = $classline[7];
+			$qossettings{'REMARK'} = $classline[8];
 			$qossettings{'EDIT'} = 'yes';
 		}
 	}
@@ -534,9 +536,9 @@ elsif ($qossettings{'ACTION'} eq 'Regel hinzufuegen')
 		<table>
 		<tr><td align='center'>Waehlen sie <u>eine</u> der untenstehenden Regeln aus.
 		<tr><td align='center'>
-			<input type="button" onClick="swapVisibility('l7rule')" value='Level7-Regel'>
-			<input type="button" onClick="swapVisibility('portrule')" value='Port-Regel'>
-			<input type="button" onClick="swapVisibility('tosrule')" value='TOS-Regel'>
+			<input type="button" onClick="swapVisibility('l7rule')" value='Level7-Regel' />
+			<input type="button" onClick="swapVisibility('portrule')" value='Port-Regel' />
+			<input type="button" onClick="swapVisibility('tosrule')" value='TOS-Regel' />
 		</table>
 END
 ;
@@ -612,6 +614,7 @@ if ($errormessage) {
 ############################################################################################################################
 
 &Header::openbox('100%', 'center', 'Quality of Service');
+
 print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='33%'>
@@ -624,9 +627,9 @@ END
 		<tr><td width='50%' align='left'><b>Quality of Service:</b>
 		    <td width='50%' align='center' bgcolor='$statuscolor'><font color='white'>$status</font>
 		<tr><td width='100%' align='center' colspan='2'>
-		<input type='submit' name='ACTION' value='Start' /> 
-		<input type='submit' name='ACTION' value='Stop' /> 
-		<input type='submit' name='ACTION' value='$Lang::tr{'restart'}' />
+		<input type='submit' name='ACTION' value="Start" /> 
+		<input type='submit' name='ACTION' value="Stop" /> 
+		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" />
 END
 ;
 	if (($qossettings{'OUT_SPD'} ne '') && ($qossettings{'INC_SPD'} ne '')) {
@@ -640,12 +643,12 @@ END
 	}
 	if (($qossettings{'DEFCLASS_OUT'} ne '') && ($qossettings{'DEFCLASS_INC'} ne '')&& ($qossettings{'ACK'} ne '')) {
 		print <<END
-		<tr><td colspan='3'><hr>
+		<tr><td colspan='3'><hr />
 		<tr><td width='40%' align='right'>Downloadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_INC'}	
 		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern'>
 		<tr><td width='40%' align='right'>Uploadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
-	 	<tr><td colspan='3' width='100%'><hr>
+	 	<tr><td colspan='3' width='100%'><hr />
 		<tr><td colspan='3' width='100%' align='center'>
 		<table boder='0' cellpadding='0' cellspacing='0'>
 			<tr><td><input type='submit' name='ACTION' value='Parentklasse hinzufuegen'>
@@ -675,10 +678,27 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 	exit
 }
 
-&showclasses();
-&showl7rules();
-&showtosrules();
-&showportrules();
+&Header::openbox('100%', 'center', $Lang::tr{'info'});
+&overviewgraph($qossettings{'RED_DEV'});
+&overviewgraph($qossettings{'IMQ_DEV'});
+print <<END
+	<table>
+		<tr><td colspan='9' align='right' valign='middle'><img src='/images/addblue.gif'>&nbsp;Unterklasse hinzufuegen | <img src='/images/addgreen.gif'>&nbsp;Regel hinzufuegen | <img src='/images/edit.gif'>&nbsp;Bearbeiten | <img src='/images/delete.gif'>&nbsp;Loeschen &nbsp;
+		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
+END
+;
+if (( -e "/home/httpd/html/graphs/qos-graph-$qossettings{'RED_DEV'}.png") && ( -e "/home/httpd/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png")) {
+	print <<END
+		<tr><td colspan='9' align='center'><img src="/graphs/qos-graph-$qossettings{'RED_DEV'}.png">
+		<tr><td colspan='9' align='center'><img src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png">
+END
+;}
+print "\t</table>";
+
+&Header::closebox();
+
+&showclasses($qossettings{'RED_DEV'});
+&showclasses($qossettings{'IMQ_DEV'});
 
 &Header::closebigbox();
 &Header::closepage();
@@ -715,9 +735,9 @@ END
 		print <<END
 		</select><td width='33%' align='center'>&nbsp;
 		</table>
-		<hr>
+		<hr />
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Legen sie hier die ACK-Klasse fest <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='3'>Legen sie hier die ACK-Klasse fest <br /> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='33%' align='right'>ACKs:<td width='33%' align='left'><select name='ACK'>
 END
 ;
@@ -728,7 +748,7 @@ END
 			else {	print "<option selected value='$c'>$c</option>\n"; }
 		}
 		print <<END
-		</select><td width='33%' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+		</select><td width='33%' align='center'><input type='submit' name='ACTION' value="$Lang::tr{'save'}" />
 		</table>
 		</form>
 END
@@ -744,15 +764,15 @@ sub changebandwidth {
 	} else {
 		print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<input type='hidden' name='DEF_OUT_SPD' value=''><input type='hidden' name='DEF_INC_SPD' value=''>
+		<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Geben Sie bitte hier ihre Download- bzw. Upload-Geschwindigkeit ein <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='3'>Geben Sie bitte hier ihre Download- bzw. Upload-Geschwindigkeit ein <br /> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='33%' align='right'>Download-Geschwindigkeit:
-		    <td width='33%' align='left'><input type='text' name='INC_SPD' maxlength='8' value=$qossettings{'INC_SPD'}> &nbsp; kbps
+		    <td width='33%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" /> &nbsp; kbps
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Upload-Geschwindigkeit:
-		    <td width='33%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value=$qossettings{'OUT_SPD'}> &nbsp; kbps
-		    <td width='33%' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />&nbsp;<input type='reset' name='ACTION' value=$Lang::tr{'reset'} />
+		    <td width='33%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" /> &nbsp; kbps
+		    <td width='33%' align='center'><input type='submit' name='ACTION' value="$Lang::tr{'save'}" />&nbsp;<input type='reset' name='ACTION' value="$Lang::tr{'reset'}" />
 		</table>
 		</form>
 END
@@ -776,7 +796,7 @@ END
 		print "<input type='hidden' name='DEVICE' value=$qossettings{'DEVICE'}>";
 	}
 	print <<END
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='33%' align='right'>Interface:
 		    <td width='33%' align='left'>
 END
@@ -827,19 +847,21 @@ END
 			{ print "<option value='$c'>$c</option>\n"; }
 			else { print "<option selected value='$c'>$c</option>\n"; }
 		}
+		if ($qossettings{'MINBWDTH'} eq "") { $qossettings{'MINBWDTH'} = "1"; }
 		print <<END
+		</select>
 		<td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Garantierte Bandbreite:
-		    <td width='33%' align='left'><input type='text' name='MINBWDTH' maxlength='8' required='1' value=$qossettings{'MINBWDTH'} >
+		    <td width='33%' align='left'><input type='text' size='20' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Maximale Bandbreite:
-		    <td width='33%' align='left'><input type='text' name='MAXBWDTH' maxlength='8' required='1' value=$qossettings{'MAXBWDTH'}>
+		    <td width='33%' align='left'><input type='text' size='20' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Burst:
-		    <td width='33%' align='left'><input type='text' name='BURST' maxlength='8' value=$qossettings{'BURST'}>
+		    <td width='33%' align='left'><input type='text' size='20' name='BURST' maxlength='8' value="$qossettings{'BURST'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ceilburst:
-		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value=$qossettings{'CBURST'}>
+		    <td width='33%' align='left'><input type='text' size='20' name='CBURST' maxlength='8' value="$qossettings{'CBURST'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>TOS-Bit:
 		    <td width='33%' align='left'><select name='TOS'>
@@ -848,6 +870,11 @@ END
 				<option value='4'>Maximaler Durchsatz (4)</option>
 				<option value='2'>Maximale Zuverlaessigkeit (2)</option>
 				<option value='1'>Minimale Kosten (1)</option></select>
+		    <td width='33%' align='center'>&nbsp;
+		<tr><td width='33%' align='right'>$Lang::tr{'remark'}:
+		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" /> <img alt='blob' src='/blob.gif' />
+		<tr><td width='33%' align='right'>&nbsp;
+		    <td width='33%' align='left'>&nbsp;
 		    <td width='33%' align='center'><input type='submit' name='DOCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
 		</table></form>
 END
@@ -867,7 +894,7 @@ END
 	}
 	print <<END
 		<tr><td colspan='3' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='33%' align='right'>Unterklasse:<td width='33%' align='left'><select name='SCLASS'>
 END
 ;
@@ -903,16 +930,16 @@ END
 		print <<END
 		<td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Garantierte Bandbreite:
-		    <td width='33%' align='left'><input type='text' name='MINBWDTH' maxlength='8' required='1' value=$qossettings{'MINBWDTH'} >
+		    <td width='33%' align='left'><input type='text' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Maximale Bandbreite:
-		    <td width='33%' align='left'><input type='text' name='MAXBWDTH' maxlength='8' required='1' value=$qossettings{'MAXBWDTH'}>
+		    <td width='33%' align='left'><input type='text' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Burst:
-		    <td width='33%' align='left'><input type='text' name='BURST' maxlength='8' value=$qossettings{'BURST'}>
+		    <td width='33%' align='left'><input type='text' name='BURST' maxlength='8' value="$qossettings{'BURST'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ceilburst:
-		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value=$qossettings{'CBURST'}>
+		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value="$qossettings{'CBURST'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>TOS-Bit:
 		    <td width='33%' align='left'><select name='TOS'>
@@ -921,8 +948,8 @@ END
 				<option value='4'>Maximaler Durchsatz (4)</option>
 				<option value='2'>Maximale Zuverlaessigkeit (2)</option>
 				<option value='1'>Minimale Kosten (1)</option></select>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}>
-							<input type='hidden' name='DEVICE' value=$qossettings{'DEVICE'}>
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value="$qossettings{'CLASS'}" />
+							<input type='hidden' name='DEVICE' value="$qossettings{'DEVICE'}" />
 							<input type='submit' name='DOSCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
 		</table></form>
 END
@@ -942,7 +969,7 @@ END
 	}
 	print <<END
 		<tr><td colspan='3' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='33%' align='right'>Protokoll:
 		    <td width='33%' align='left'><select name='L7PROT'>
 END
@@ -980,7 +1007,7 @@ sub portrule {
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='33%' align='right'>Protokoll:
 		    <td width='33%' align='left'><select name='PPROT'>
 END
@@ -1033,7 +1060,7 @@ END
 	}
 	print <<END
 		<tr><td colspan='2' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
-		<tr><td width='100%' colspan='2'>Aktivieren oder deaktivieren sie die TOS-Bits <br> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='2'>Aktivieren oder deaktivieren sie die TOS-Bits <br /> und klicken Sie danach auf <i>Speichern</i>.
 		<tr><td width='50%' align='left'>Minimale Verzoegerung (8)		<td width='50%'><input type="radio" name="TOS" value="8" $checked[8]>
 		<tr><td width='50%' align='left'>Maximaler Durchsatz (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4]>
 		<tr><td width='50%' align='left'>Maximale Zuverlaessigkeit (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2]>
@@ -1046,6 +1073,7 @@ END
 }
 
 sub showclasses {
+	$qossettings{'DEV'} = shift;
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@classes = <FILE>;
 	close FILE;
@@ -1053,34 +1081,41 @@ sub showclasses {
 		open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
 		@subclasses = <FILE>;
 		close FILE;
-		&Header::openbox('100%', 'center', 'Klassen');
-		print <<END
-		<table border='0' width='100%' cellspacing='0'>
-		<tr><td bgcolor='lightgrey' width='10%'>Interface
-		    <td bgcolor='lightgrey' width='10%'>Klasse
-		    <td bgcolor='lightgrey' width='10%'>Prioritaet
-		    <td bgcolor='lightgrey' width='10%'>Garantierte Bandbreite
-		    <td bgcolor='lightgrey' width='10%'>Maximale Bandbreite
-		    <td bgcolor='lightgrey' width='10%'>Burst
-		    <td bgcolor='lightgrey' width='10%'>Ceil Burst
-		    <td bgcolor='lightgrey' width='10%'>TOS
-		    <td bgcolor='lightgrey' width='20%'>Aktionen
-END
-;
+		open( FILE, "< $level7file" ) or die "Unable to read $level7file";
+		@l7rules = <FILE>;
+		close FILE;
+		open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
+		@tosrules = <FILE>;
+		close FILE;
+		open( FILE, "< $portfile" ) or die "Unable to read $portfile";
+		@portrules = <FILE>;
+		close FILE;
 	  	foreach $classentry (sort @classes)
 	  	{
 	  		@classline = split( /\;/, $classentry );
-	  		if ( $classline[0] eq $qossettings{'RED_DEV'} )
+	  		if ( $classline[0] eq $qossettings{'DEV'} )
 	  		{
+				gengraph($qossettings{'DEV'},$classline[1]);
+				&Header::openbox('100%', 'center', "Klasse: $classline[1]");
 	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$classline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[2]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[3]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[4]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[7]
+				<table border='0' width='100%' cellspacing='0'>
+				<tr><td bgcolor='lightgrey' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
+				    <td bgcolor='lightgrey' width='10%' align='center'><b>Klasse</b>
+				    <td bgcolor='lightgrey' width='10%' align='center'>Prioritaet
+				    <td bgcolor='lightgrey' width='10%' align='center'>Garantierte Bandbreite
+				    <td bgcolor='lightgrey' width='10%' align='center'>Maximale Bandbreite
+				    <td bgcolor='lightgrey' width='10%' align='center'>Burst
+				    <td bgcolor='lightgrey' width='10%' align='center'>Ceil Burst
+				    <td bgcolor='lightgrey' width='10%' align='center'>TOS
+				    <td bgcolor='lightgrey' width='20%' align='center'>Aktionen
+				<tr><td align='center' bgcolor='#EAEAEA'>$classline[0]</td>
+				    <td align='center' bgcolor='#EAEAEA'>$classline[1]</td>
+				    <td align='center' bgcolor='#EAEAEA'>$classline[2]</td>
+				    <td align='center' bgcolor='#EAEAEA'>$classline[3]</td>
+				    <td align='center' bgcolor='#EAEAEA'>$classline[4]</td>
+				    <td align='center' bgcolor='#EAEAEA'>$classline[5]</td>
+				    <td align='center' bgcolor='#EAEAEA'>$classline[6]</td>
+				    <td align='center' bgcolor='#EAEAEA'>$classline[7]</td>
 				    <td align='right'  bgcolor='#EAEAEA'>
 					<table border='0'><tr>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1104,14 +1139,181 @@ END
 						<input type='image' alt='Loeschen' src='/images/delete.gif'>
 					</form>
 					</table>
+				    </td>
+				<tr><td align='right' colspan='2'><b>$Lang::tr{'remark'}:</b>
+				    <td align='center' colspan='6'> $classline[8]
+				    <td align='right'><b>Queueing:</b> $classline[9]
 END
 ;
+
+				if (@l7rules) {
+	  				foreach $l7ruleentry (sort @l7rules)
+	  				{
+	  					@l7ruleline = split( /\;/, $l7ruleentry );
+	  					if ( $l7ruleline[0] eq $classline[1] )
+	  					{
+	  						print <<END
+				<tr><td align='right' colspan='2'><b>Level7-Protokoll:</b>
+				    <td align='center' colspan='6'>$l7ruleline[2]
+				    <td align='right' >
+					<table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$l7ruleline[0]' />
+						<input type='hidden' name='L7PROT' value='$l7ruleline[2]' />
+						<input type='hidden' name='DOLEVEL7' value='Bearbeiten' />
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$l7ruleline[0]' />
+						<input type='hidden' name='L7PROT' value='$l7ruleline[2]' />
+						<input type='hidden' name='DOLEVEL7' value='Loeschen' />
+						<input type='image' alt='Loeschen' src='/images/delete.gif' />
+					</form>
+					</table>
+END
+;
+							if (($l7ruleline[3] ne "") || ($l7ruleline[4] ne "")){
+								print <<END
+				<tr><td align='center'>&nbsp;
+				    <td align='right' colspan='3'><b>Quell-IP:</b> $l7ruleline[3]
+				    <td align='right' colspan='3'><b>Ziel-IP:</b> $l7ruleline[4]
+END
+;
+							}
+
+
+END
+;
+	  					}
+	  				}
+				}
+
+
+				if (@portrules) {
+				  	foreach $portruleentry (sort @portrules)
+				  	{
+				  		@portruleline = split( /\;/, $portruleentry );
+				  		if ( $portruleline[0] eq $classline[1] )
+				  		{
+				  			print <<END
+				<tr><td align='right' colspan='2'><b>Port-Regel:</b>
+				    <td align='center'>($portruleline[2])
+				    <td align='center' colspan='2'>
+END
+;
+						if ($portruleline[4]) {
+							print <<END
+				    <i>Quell-Port:</i> $portruleline[4]
+END
+;
+						}
+						print "<td align='center' colspan='2'>";
+						if ($portruleline[6]) {
+							print <<END
+				    <i>Ziel-Port:</i> $portruleline[6]
+END
+;
+						}
+						print <<END
+				    <td>&nbsp;
+				    <td align='right'>
+				    <table border='0'><tr>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]'>
+						<input type='hidden' name='PPROT' value='$portruleline[2]'>
+						<input type='hidden' name='QIP' value='$portruleline[3]'>
+						<input type='hidden' name='QPORT' value='$portruleline[4]'>
+						<input type='hidden' name='DIP' value='$portruleline[5]'>
+						<input type='hidden' name='DPORT' value='$portruleline[6]'>
+						<input type='hidden' name='DOPORT' value='Bearbeiten'>
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+					</form>
+					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]'>
+						<input type='hidden' name='PPROT' value='$portruleline[2]'>
+						<input type='hidden' name='QIP' value='$portruleline[3]'>
+						<input type='hidden' name='QPORT' value='$portruleline[4]'>
+						<input type='hidden' name='DIP' value='$portruleline[5]'>
+						<input type='hidden' name='DPORT' value='$portruleline[6]'>
+						<input type='hidden' name='DOPORT' value='Loeschen'>
+						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+					</form>
+				    </table>
+END
+;
+							if (($portruleline[3] ne "") || ($portruleline[5] ne "")){
+								print <<END
+				<tr><td align='center'>&nbsp;
+				    <td align='right' colspan='3'><b>Quell-IP:</b> $portruleline[3]
+				    <td align='right' colspan='3'><b>Ziel-IP:</b> $portruleline[5]
+END
+;
+							}
+				  		}
+				  	}
+				}
+
+				if (@tosrules) {
+				  	foreach $tosruleentry (sort @tosrules)
+				  	{
+				  		@tosruleline = split( /\;/, $tosruleentry );
+				  		if ( $tosruleline[0] eq $classline[1] )
+				  		{
+							print <<END
+					<tr><td align='right' colspan='2'>
+						<b>TOS Bit matches:</b>
+					    <td colspan='6' align='center'>
+END
+;
+							if ( $tosruleline[2] eq "8") {
+								print "Minimale Verzoegerung\n";
+							} elsif ( $tosruleline[2] eq "4") {
+								print "Maximaler Durchsatz\n";
+							} elsif ( $tosruleline[2] eq "2") {
+								print "Maximaler Durchsatz\n";
+							} elsif ( $tosruleline[2] eq "1") {
+								print "Minimale Kosten\n";
+							} else { print "&nbsp;\n"; }
+
+							print <<END
+						($tosruleline[2])
+					    <td align='right'>
+				  		  <table border='0'><tr>
+							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='CLASS' value='$tosruleline[0]'>
+								<input type='hidden' name='DEV' value='$tosruleline[1]'>
+								<input type='hidden' name='TOS' value='$tosruleline[2]'>
+								<input type='hidden' name='DOTOS' value='Bearbeiten'>
+								<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+							</form>
+							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='CLASS' value='$tosruleline[0]'>
+								<input type='hidden' name='DEV' value='$tosruleline[1]'>
+								<input type='hidden' name='TOS' value='$tosruleline[2]'>
+								<input type='hidden' name='DOTOS' value='Loeschen'>
+								<input type='image' alt='Loeschen' src='/images/delete.gif'>
+							</form>
+				    		</table>
+END
+;
+	  					}
+	  				}
+				}
+
+				if ( -e "/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png") {
+					print <<END
+					<tr><td colspan='9' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png'>
+END
+;
+				}
+
+
 			  	foreach $subclassentry (sort @subclasses)
 	  			{
 	  				@subclassline = split( /\;/, $subclassentry );
 		  			if ( $subclassline[1] eq $classline[1] ) {
 						print <<END
-							<tr><td align='center' bgcolor='#FFFFFF'>Subklasse:
+							<tr><td align='center' bgcolor='#FAFAFA'>Subklasse:
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[2]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[3]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[4]
@@ -1141,397 +1343,13 @@ END
 ;
 					}
 				}
+			print <<END
+			</table>
+END
+;
+			&Header::closebox();
 	  		}
 	  	}
-		print "\t<tr><td colspan='9' bgcolor='lightgrey' height='2'>";
-	  	foreach $classentry (sort @classes)
-	  	{
-	  		@classline = split( /\;/, $classentry );
-	  		if ( $classline[0] eq $qossettings{'IMQ_DEV'} )
-	  		{
-	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$classline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[2]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[3]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[4]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[5]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[6]
-				    <td align='center' bgcolor='#EAEAEA'>$classline[7]
-				    <td align='right'  bgcolor='#EAEAEA'>
-					<table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen'>
-						<input type='image' alt='Unterklasse hinzufuegen' src='/images/addblue.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
-						<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='DOCLASS' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
-					</form>
-					</table>
-END
-;
-			  	foreach $subclassentry (sort @subclasses)
-	  			{
-	  				@subclassline = split( /\;/, $subclassentry );
-		  			if ( $subclassline[1] eq $classline[1] ) {
-						print <<END
-							<tr><td align='center' bgcolor='#FFFFFF'>Subklasse:
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[2]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[3]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[4]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[5]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[8]
-							    <td align='right'  bgcolor='#FAFAFA'>
-							<table border='0'><tr>
-							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-								<input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
-								<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
-							</form>
-							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-								<input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<input type='hidden' name='DOSCLASS' value='Bearbeiten'>
-								<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-							</form>
-							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-								<input type='hidden' name='CLASS' value='$subclassline[2]'>
-								<input type='hidden' name='DOSCLASS' value='Loeschen'>
-								<input type='image' alt='Loeschen' src='/images/delete.gif'>
-							</form>
-							</table>
-END
-;
-					}
-				}
-	  		}
-	  	}
-		print <<END
-		<tr><td colspan='9' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/addblue.gif'>&nbsp;Unterklasse hinzufuegen | <img src='/images/addgreen.gif'>&nbsp;Regel hinzufuegen | <img src='/images/edit.gif'>&nbsp;Klasse bearbeiten | <img src='/images/delete.gif'>&nbsp;Klasse loeschen &nbsp;
-		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
-		</table>
-END
-;
-		&Header::closebox();
-	}
-}
-
-sub showl7rules {
-	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
-	@l7rules = <FILE>;
-	close FILE;
-	if (@l7rules) {
-		&Header::openbox('100%', 'center', 'Level7-Regeln');
-		print <<END
-		<table border='0' width='100%' cellspacing='0'>
-		<tr><td bgcolor='lightgrey' width='14%'>Interface
-		    <td bgcolor='lightgrey' width='14%'>Klasse
-		    <td bgcolor='lightgrey' width='14%'>Protokoll
-		    <td bgcolor='lightgrey' width='14%'>Quell-IP-Adresse
-		    <td bgcolor='lightgrey' width='14%'>Ziel-IP-Adresse
-		    <td bgcolor='lightgrey' width='30%'>Aktionen
-END
-;
-	  	foreach $l7ruleentry (sort @l7rules)
-	  	{
-	  		@l7ruleline = split( /\;/, $l7ruleentry );
-	  		if ( $l7ruleline[1] eq $qossettings{'RED_DEV'} )
-	  		{
-	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$l7ruleline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[2]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[3]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[4]
-				    <td align='right'  bgcolor='#EAEAEA'>
-					<table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
-						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-						<input type='hidden' name='DOLEVEL7' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
-						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-						<input type='hidden' name='DOLEVEL7' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
-					</form>
-					</table>
-END
-;
-	  		}
-	  	}
-		print "\t<tr><td colspan='8' bgcolor='lightgrey' height='2'>";
-	  	foreach $l7ruleentry (sort @l7rules)
-	  	{
-	  		@l7ruleline = split( /\;/, $l7ruleentry );
-	  		if ( $l7ruleline[1] eq $qossettings{'IMQ_DEV'} )
-	  		{
-	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$l7ruleline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[2]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[3]
-				    <td align='center' bgcolor='#EAEAEA'>$l7ruleline[4]
-				    <td align='right'  bgcolor='#EAEAEA'>
-					<table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
-						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-						<input type='hidden' name='DOLEVEL7' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$l7ruleline[0]'>
-						<input type='hidden' name='L7PROT' value='$l7ruleline[2]'>
-						<input type='hidden' name='DOLEVEL7' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
-					</form>
-					</table>
-END
-;
-	  		}
-	  	}
-		print <<END
-		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Regel bearbeiten | <img src='/images/delete.gif'>&nbsp;Regel loeschen &nbsp;
-		</table>
-END
-;
-		&Header::closebox();
-	}
-}
-
-sub showportrules {
-	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
-	@portrules = <FILE>;
-	close FILE;
-	if (@portrules) {
-		&Header::openbox('100%', 'center', 'Port-Regeln');
-		print <<END
-		<table border='0' width='100%' cellspacing='0'>
-		<tr><td bgcolor='lightgrey' width='10%'>Interface
-		    <td bgcolor='lightgrey' width='10%'>Klasse
-		    <td bgcolor='lightgrey' width='10%'>Protokoll
-		    <td bgcolor='lightgrey' width='10%'>Quell-IP-Adresse
-		    <td bgcolor='lightgrey' width='10%'>Quell-Port
-		    <td bgcolor='lightgrey' width='10%'>Ziel-IP-Adresse
-		    <td bgcolor='lightgrey' width='10%'>Ziel-Port
-		    <td bgcolor='lightgrey' width='30%'>Aktionen
-END
-;
-	  	foreach $portruleentry (sort @portrules)
-	  	{
-	  		@portruleline = split( /\;/, $portruleentry );
-	  		if ( $portruleline[1] eq $qossettings{'RED_DEV'} )
-	  		{
-	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$portruleline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[2]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[3]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[4]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[5]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[6]
-				    <td align='right'  bgcolor='#EAEAEA'>
-				    <table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$portruleline[0]'>
-						<input type='hidden' name='PPROT' value='$portruleline[2]'>
-						<input type='hidden' name='QIP' value='$portruleline[3]'>
-						<input type='hidden' name='QPORT' value='$portruleline[4]'>
-						<input type='hidden' name='DIP' value='$portruleline[5]'>
-						<input type='hidden' name='DPORT' value='$portruleline[6]'>
-						<input type='hidden' name='DOPORT' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$portruleline[0]'>
-						<input type='hidden' name='PPROT' value='$portruleline[2]'>
-						<input type='hidden' name='QIP' value='$portruleline[3]'>
-						<input type='hidden' name='QPORT' value='$portruleline[4]'>
-						<input type='hidden' name='DIP' value='$portruleline[5]'>
-						<input type='hidden' name='DPORT' value='$portruleline[6]'>
-						<input type='hidden' name='DOPORT' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
-					</form>
-				    </table>
-END
-;
-	  		}
-	  	}
-		print "\t<tr><td colspan='8' bgcolor='lightgrey' height='2'>";
-	  	foreach $portruleentry (sort @portrules)
-	  	{
-	  		@portruleline = split( /\;/, $portruleentry );
-	  		if ( $portruleline[1] eq $qossettings{'IMQ_DEV'} )
-	  		{
-	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$portruleline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[2]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[3]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[4]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[5]
-				    <td align='center' bgcolor='#EAEAEA'>$portruleline[6]
-				    <td align='right'  bgcolor='#EAEAEA'>
-				    <table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$portruleline[0]'>
-						<input type='hidden' name='PPROT' value='$portruleline[2]'>
-						<input type='hidden' name='QIP' value='$portruleline[3]'>
-						<input type='hidden' name='QPORT' value='$portruleline[4]'>
-						<input type='hidden' name='DIP' value='$portruleline[5]'>
-						<input type='hidden' name='DPORT' value='$portruleline[6]'>
-						<input type='hidden' name='DOPORT' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$portruleline[0]'>
-						<input type='hidden' name='PPROT' value='$portruleline[2]'>
-						<input type='hidden' name='QIP' value='$portruleline[3]'>
-						<input type='hidden' name='QPORT' value='$portruleline[4]'>
-						<input type='hidden' name='DIP' value='$portruleline[5]'>
-						<input type='hidden' name='DPORT' value='$portruleline[6]'>
-						<input type='hidden' name='DOPORT' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
-					</form>
-				    </table>
-END
-;
-	  		}
-	  	}
-		print <<END
-		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Regel bearbeiten | <img src='/images/delete.gif'>&nbsp;Regel loeschen &nbsp;
-		</table>
-END
-;
-		&Header::closebox();
-	}
-}
-
-sub showtosrules {
-	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
-	@tosrules = <FILE>;
-	close FILE;
-	if (@tosrules) {
-		&Header::openbox('100%', 'center', 'TOS-Regeln');
-		print <<END
-		<table border='0' width='100%' cellspacing='0'>
-		<tr><td bgcolor='lightgrey' width='10%'>Interface
-		    <td bgcolor='lightgrey' width='10%'>Klasse
-		    <td bgcolor='lightgrey' width='10%'>TOS-Bit
-		    <td bgcolor='lightgrey' width='50%'>TOS-Beschreibung
-		    <td bgcolor='lightgrey' width='20%'>Aktionen
-END
-;
-	  	foreach $tosruleentry (sort @tosrules)
-	  	{
-	  		@tosruleline = split( /\;/, $tosruleentry );
-	  		if ( $tosruleline[1] eq $qossettings{'RED_DEV'} )
-	  		{
-	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$tosruleline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[2]
-				    <td align='center' bgcolor='#EAEAEA'>
-END
-;
-				if ( $tosruleline[2] eq "8") {
-					print "Minimale Verzoegerung\n";
-				} elsif ( $tosruleline[2] eq "4") {
-					print "Maximaler Durchsatz\n";
-				} elsif ( $tosruleline[2] eq "2") {
-					print "Maximaler Durchsatz\n";
-				} elsif ( $tosruleline[2] eq "1") {
-					print "Minimale Kosten\n";
-				} else { print "&nbsp;\n"; }
-				print <<END
-				    <td align='right'  bgcolor='#EAEAEA'>
-				    <table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
-						<input type='hidden' name='DEV' value='$tosruleline[1]'>
-						<input type='hidden' name='TOS' value='$tosruleline[2]'>
-						<input type='hidden' name='DOTOS' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
-						<input type='hidden' name='DEV' value='$tosruleline[1]'>
-						<input type='hidden' name='TOS' value='$tosruleline[2]'>
-						<input type='hidden' name='DOTOS' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
-					</form>
-				    </table>
-END
-;
-	  		}
-	  	}
-		print "\t<tr><td colspan='8' bgcolor='lightgrey' height='2'>";
-	  	foreach $tosruleentry (sort @tosrules)
-	  	{
-	  		@tosruleline = split( /\;/, $tosruleentry );
-	  		if ( $tosruleline[1] eq $qossettings{'IMQ_DEV'} )
-	  		{
-	  			print <<END
-				<tr><td align='center' bgcolor='#EAEAEA'>$tosruleline[1]
-				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[0]
-				    <td align='center' bgcolor='#EAEAEA'>$tosruleline[2]
-				    <td align='center' bgcolor='#EAEAEA'>
-END
-;
-				if ( $tosruleline[2] eq "8") {
-					print "Minimale Verzoegerung\n";
-				} elsif ( $tosruleline[2] eq "4") {
-					print "Maximaler Durchsatz\n";
-				} elsif ( $tosruleline[2] eq "2") {
-					print "Maximaler Durchsatz\n";
-				} elsif ( $tosruleline[2] eq "1") {
-					print "Minimale Kosten\n";
-				} else { print "&nbsp;\n"; }
-				print <<END
-				    <td align='right'  bgcolor='#EAEAEA'>
-				    <table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
-						<input type='hidden' name='DEV' value='$tosruleline[1]'>
-						<input type='hidden' name='TOS' value='$tosruleline[2]'>
-						<input type='hidden' name='DOTOS' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
-					</form>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$tosruleline[0]'>
-						<input type='hidden' name='DEV' value='$tosruleline[1]'>
-						<input type='hidden' name='TOS' value='$tosruleline[2]'>
-						<input type='hidden' name='DOTOS' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
-					</form>
-				    </table>
-END
-;
-	  		}
-	  	}
-		print <<END
-		<tr><td colspan='8' align='right' valign='middle'><b>Legende:</b>&nbsp;&nbsp;<img src='/images/edit.gif'>&nbsp;Regel bearbeiten | <img src='/images/delete.gif'>&nbsp;Regel loeschen &nbsp;
-		</table>
-END
-;
-		&Header::closebox();
 	}
 }
 
@@ -1643,6 +1461,7 @@ sub gengraph {
 	} else { 
 		$qossettings{'CLASSPRFX'} = '2';
 	}
+	my $color=random_hex_color(6);
 
 	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png",
 		"--start", "-3240", "-aPNG", "-i", "-z",
@@ -1654,7 +1473,7 @@ sub gengraph {
 		"DEF:pkts=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:pkts:AVERAGE",
 		"DEF:dropped=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:dropped:AVERAGE",
 		"DEF:overlimits=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:overlimits:AVERAGE",
-		"AREA:pkts#00FFFF:packets",
+		"AREA:pkts$color:packets",
 		"GPRINT:pkts:LAST:total packets\\:%8.3lf %s packets\\j",
 		"LINE3:dropped#FF0000:dropped",
 		"GPRINT:dropped:LAST:dropped packets\\:%8.3lf %s packets\\j",
@@ -1663,43 +1482,55 @@ sub gengraph {
 	);
 		$ERROR = RRDs::error;
 		print "$ERROR";
+}
 
-	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png",
+sub overviewgraph {
+	$qossettings{'DEV'} = shift;
+	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
+		$qossettings{'CLASSPRFX'} = '1';
+	} else { 
+		$qossettings{'CLASSPRFX'} = '2';
+	}
+	my $ERROR="";
+	my $count="1";
+	my $color="#000000";
+	my @command=("/home/httpd/html/graphs/qos-graph-$qossettings{'DEV'}.png",
 		"--start", "-3240", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 150", "-r",
 		"--color", "SHADEA#EAE9EE",
 		"--color", "SHADEB#EAE9EE",
 		"--color", "BACK#FFFFFF",
-		"-t $qossettings{'CLASS'} ($qossettings{'DEV'})",
-		"DEF:lended=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:lended:AVERAGE",
-		"DEF:borrowed=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:borrowed:AVERAGE",
-		"DEF:giants=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:giants:AVERAGE",
-		"AREA:lended#99ff99:lended",
-		"GPRINT:lended:LAST:lended\\:%8.3lf %s packets\\j",
-		"LINE3:borrowed#f70566:borrowed",
-		"GPRINT:borrowed:LAST:borrowed\\:%8.3lf %s packets\\j",
-		"LINE3:giants#05ad05:giants",
-		"GPRINT:giants:LAST:giants\\:%8.3lf %s packets\\j",
+		"-t Auslastung auf ($qossettings{'DEV'})"
 	);
-		$ERROR = RRDs::error;
-		print "$ERROR";
+	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
+	@classes = <FILE>;
+	close FILE;
+  	foreach $classentry (sort @classes)
+  	{
+  		@classline = split( /\;/, $classentry );
+  		if ( $classline[0] eq $qossettings{'DEV'} )
+  		{
+			$color=random_hex_color(6);
+			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bits:AVERAGE");
 
-	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png",
-		"--start", "-3240", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 150", "-r",
-		"--color", "SHADEA#EAE9EE",
-		"--color", "SHADEB#EAE9EE",
-		"--color", "BACK#FFFFFF",
-		"-t $qossettings{'CLASS'} ($qossettings{'DEV'})",
-		"DEF:bits=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:bits:AVERAGE",
-		"DEF:bytes=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:bytes:AVERAGE",
-		"CDEF:kbytes=bytes,1024,/",
-		"CDEF:kbits=bits,1024,/,8,/",
-		"AREA:kbytes#FFBE7D:kbytes",
-		"GPRINT:kbytes:LAST:rate\\: %8.3lf kbytes\\j",
-	);
-		$ERROR = RRDs::error;
-		print "$ERROR";
+			if ($count eq "1") {
+				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+			} else {
+				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+			}
+			$count++;
+		}
+	}
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
+}
 
-
+sub random_hex_color {
+    my $size = shift;
+    $size = 6 if $size !~ /^3|6$/;
+    my @hex = ( 0 .. 9, 'a' .. 'f' );
+    my @color;
+    push @color, @hex[rand(@hex)] for 1 .. $size;
+    return join('', '#', @color);
 }

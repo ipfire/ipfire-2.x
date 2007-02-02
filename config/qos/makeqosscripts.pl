@@ -290,40 +290,6 @@ END
 		}
 	}
 
-print <<END
-
-	### SET LEVEL7-RULES
-END
-;
-  	foreach $l7ruleentry (sort @l7rules)
-  	{
-  		@l7ruleline = split( /\;/, $l7ruleentry );
-  		if ( $l7ruleline[1] eq $qossettings{'RED_DEV'} )
-  		{
-			$qossettings{'CLASS'} = $l7ruleline[0];
-			$qossettings{'DEVICE'} = $l7ruleline[1];
-			$qossettings{'L7PROT'} = $l7ruleline[2];
-			$qossettings{'QIP'} = $l7ruleline[3];
-			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j RETURN\n";
-  		}
-  	}
-
 print "\n\t### SET PORT-RULES\n";
   	foreach $portruleentry (sort @portrules)
   	{
@@ -375,6 +341,40 @@ print "\n\t### SET PORT-RULES\n";
 			print "-j RETURN\n\n";
 		}
 	}
+
+print <<END
+
+	### SET LEVEL7-RULES
+END
+;
+  	foreach $l7ruleentry (sort @l7rules)
+  	{
+  		@l7ruleline = split( /\;/, $l7ruleentry );
+  		if ( $l7ruleline[1] eq $qossettings{'RED_DEV'} )
+  		{
+			$qossettings{'CLASS'} = $l7ruleline[0];
+			$qossettings{'DEVICE'} = $l7ruleline[1];
+			$qossettings{'L7PROT'} = $l7ruleline[2];
+			$qossettings{'QIP'} = $l7ruleline[3];
+			$qossettings{'DIP'} = $l7ruleline[4];
+  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
+			if ($qossettings{'QIP'} ne ''){
+				print "-s $qossettings{'QIP'} ";
+			}
+			if ($qossettings{'DIP'} ne ''){
+				print "-d $qossettings{'DIP'} ";
+			}
+			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
+			if ($qossettings{'QIP'} ne ''){
+				print "-s $qossettings{'QIP'} ";
+			}
+			if ($qossettings{'DIP'} ne ''){
+				print "-d $qossettings{'DIP'} ";
+			}
+			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j RETURN\n";
+  		}
+  	}
 
 print <<END
 
@@ -510,40 +510,6 @@ END
 
 	}
 
-print <<END
-
-	### SET LEVEL7-RULES
-END
-;
-  	foreach $l7ruleentry (sort @l7rules)
-  	{
-  		@l7ruleline = split( /\;/, $l7ruleentry );
-  		if ( $l7ruleline[1] eq $qossettings{'IMQ_DEV'} )
-  		{
-			$qossettings{'CLASS'} = $l7ruleline[0];
-			$qossettings{'DEVICE'} = $l7ruleline[1];
-			$qossettings{'L7PROT'} = $l7ruleline[2];
-			$qossettings{'QIP'} = $l7ruleline[3];
-			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j RETURN\n";
-  		}
-  	}
-
 print "\n\t### SET PORT-RULES\n";
   	foreach $portruleentry (sort @portrules)
   	{
@@ -595,6 +561,40 @@ print "\n\t### SET PORT-RULES\n";
 			print "-j RETURN\n\n";
 		}
 	}
+
+print <<END
+
+	### SET LEVEL7-RULES
+END
+;
+  	foreach $l7ruleentry (sort @l7rules)
+  	{
+  		@l7ruleline = split( /\;/, $l7ruleentry );
+  		if ( $l7ruleline[1] eq $qossettings{'IMQ_DEV'} )
+  		{
+			$qossettings{'CLASS'} = $l7ruleline[0];
+			$qossettings{'DEVICE'} = $l7ruleline[1];
+			$qossettings{'L7PROT'} = $l7ruleline[2];
+			$qossettings{'QIP'} = $l7ruleline[3];
+			$qossettings{'DIP'} = $l7ruleline[4];
+  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
+			if ($qossettings{'QIP'} ne ''){
+				print "-s $qossettings{'QIP'} ";
+			}
+			if ($qossettings{'DIP'} ne ''){
+				print "-d $qossettings{'DIP'} ";
+			}
+			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
+			if ($qossettings{'QIP'} ne ''){
+				print "-s $qossettings{'QIP'} ";
+			}
+			if ($qossettings{'DIP'} ne ''){
+				print "-d $qossettings{'DIP'} ";
+			}
+			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j RETURN\n";
+  		}
+  	}
 
 print <<END
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS

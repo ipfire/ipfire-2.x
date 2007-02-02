@@ -14,3 +14,5 @@ if [ "$NUMBER" ]; then
 else
 	echo "$MODULES" > /nicdriver
 fi
+
+# kudzu -qps -c NETWORK | egrep "desc|network.hwaddr|driver" | awk -F': ' '{print $2}' | sed -e '/..:..:..:..:..:../a\\' -e "s/$/\;/g"
