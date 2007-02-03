@@ -390,7 +390,9 @@ buildipfire() {
   ipfiremake ibod
   ipfiremake initscripts
   ipfiremake iptables
+  ipfiremake libupnp
   ipfiremake ipp2p			IPT=1
+  ipfiremake linux-igd
   ipfiremake ipac-ng
   ipfiremake ipaddr
   ipfiremake iptstate

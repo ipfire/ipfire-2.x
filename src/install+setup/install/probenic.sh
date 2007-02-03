@@ -15,4 +15,4 @@ else
 	echo "$MODULES" > /nicdriver
 fi
 
-# kudzu -qps -c NETWORK | egrep "desc|network.hwaddr|driver" | awk -F': ' '{print $2}' | sed -e '/..:..:..:..:..:../a\\' -e "s/$/\;/g"
+#  kudzu -qps -c NETWORK | egrep "desc|network.hwaddr|driver" | awk -F': ' '{print $2}' | sed -e '/..:..:..:..:..:../a\\' -e "s/$/\;/g" | tr "\n" "XX" | sed -e "s/XX/\n/g" -e "s/\;X/\;/g"
