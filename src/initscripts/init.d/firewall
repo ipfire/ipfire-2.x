@@ -218,6 +218,10 @@ case "$1" in
 	/sbin/iptables -t nat -N PORTFW
 	/sbin/iptables -t nat -A PREROUTING -j PORTFW
 
+	# upnp chain for our upnp daemon
+	/sbin/iptables -t nat -N UPNPFW
+	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
+
 
 	# Custom mangle chain (for port fowarding)
 	/sbin/iptables -t mangle -N PORTFWMANGLE
