@@ -1118,7 +1118,7 @@ sub updatesettings
 	unlink("${General::swroot}/ppp/settings");
 	link("${General::swroot}/ppp/settings-$pppsettings{'PROFILE'}",
 		"${General::swroot}/ppp/settings");
-	system ("/bin/touch", "${General::swroot}/ppp/updatesettings");
+	system ("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
 	if ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
 		# eagle-usb.conf is in backup but link DSPcode.bin can't, so the link is created in rc.eagleusbadsl
 		open(FILE, ">/${General::swroot}/eagle-usb/eagle-usb.conf") or die "Unable to write eagle-usb.conf file";

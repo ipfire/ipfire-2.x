@@ -59,7 +59,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
         # Set flag if index page is to refresh whilst ppp is up.
         # Default is NO refresh.
         if ($cgiparams{'REFRESHINDEX'} ne 'off') {
-            system ('/bin/touch', "${General::swroot}/main/refreshindex");
+            system ('/usr/bin/touch', "${General::swroot}/main/refreshindex");
         } else {
             unlink "${General::swroot}/main/refreshindex";
         }
@@ -67,7 +67,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
         # Beep on ip-up or ip-down. Default is ON.
         if ($cgiparams{'PPPUPDOWNBEEP'} ne 'on') {
             $cgiparams{'PPPUPDOWNBEEP'} = 'off';
-            system ('/bin/touch', "${General::swroot}/ppp/nobeeps");
+            system ('/usr/bin/touch', "${General::swroot}/ppp/nobeeps");
         } else {
             unlink "${General::swroot}/ppp/nobeeps";
         }

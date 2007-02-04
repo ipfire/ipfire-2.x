@@ -123,7 +123,7 @@ ERROR:
 
 	if ($timesettings{'ENABLENTP'} eq 'on' && $timesettings{'VALID'} eq 'yes')
 	{
-		system ('/bin/touch', "${General::swroot}/time/enable");
+		system ('/usr/bin/touch', "${General::swroot}/time/enable");
 		&General::log($Lang::tr{'ntp syncro enabled'});
 		unlink "${General::swroot}/time/counter";
 		if ($timesettings{'UPDATE_METHOD'} eq 'periodically')
@@ -135,7 +135,7 @@ ERROR:
 		}
 		if ($timesettings{'ENABLECLNTP'} eq 'on') # DPC added to 1.3.1
 		{
-			system ('/bin/touch', "${General::swroot}/time/allowclients"); # DPC added to 1.3.1
+			system ('/usr/bin/touch', "${General::swroot}/time/allowclients"); # DPC added to 1.3.1
 			&General::log($Lang::tr{'ntpd restarted'}); # DPC added to 1.3.1
 		} else {
 			unlink "${General::swroot}/time/allowclients";
@@ -159,7 +159,7 @@ ERROR:
 $timesettings{'ACTION'} = &Header::cleanhtml ($timesettings{'ACTION'});
 if ($timesettings{'ACTION'} eq $Lang::tr{'set time now'} && $timesettings{'ENABLENTP'} eq 'on')
 {
-	system ('/bin/touch', "${General::swroot}/time/settimenow");
+	system ('/usr/bin/touch', "${General::swroot}/time/settimenow");
 	system ('/usr/local/bin/timecheckctrl >& /dev/null');
 }
 

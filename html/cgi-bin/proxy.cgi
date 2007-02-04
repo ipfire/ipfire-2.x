@@ -600,13 +600,13 @@ ERROR:
 		unlink "${General::swroot}/proxy/transparent_blue";
 
 		if ($proxysettings{'ENABLE'} eq 'on') {
-			system ('/bin/touch', "${General::swroot}/proxy/enable"); }
+			system ('/usr/bin/touch', "${General::swroot}/proxy/enable"); }
 		if ($proxysettings{'TRANSPARENT'} eq 'on') {
-			system ('/bin/touch', "${General::swroot}/proxy/transparent"); }
+			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent"); }
 		if ($proxysettings{'ENABLE_BLUE'} eq 'on') {
-			system ('/bin/touch', "${General::swroot}/proxy/enable_blue"); }
+			system ('/usr/bin/touch', "${General::swroot}/proxy/enable_blue"); }
 		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on') {
-			system ('/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
+			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
 
 		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/restartsquid'); }
 	}

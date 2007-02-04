@@ -396,7 +396,7 @@ elsif ($qossettings{'DOTOS'} eq 'Loeschen')
 if ($qossettings{'ACTION'} eq 'Start')
 {
 	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
-	system("/bin/touch /var/ipfire/qos/enable");
+	system("/usr/bin/touch /var/ipfire/qos/enable");
 	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
 	system("logger -t ipfire 'QoS started'");
 	$qossettings{'ENABLED'} = 'on';
@@ -1480,8 +1480,8 @@ sub gengraph {
 		"LINE3:overlimits#0000FF:overlimits",
 		"GPRINT:overlimits:LAST:overlimits\\:%8.3lf %s packets\\j",
 	);
-		$ERROR = RRDs::error;
-		print "$ERROR";
+	$ERROR = RRDs::error;
+	#print "$ERROR";
 }
 
 sub overviewgraph {
@@ -1523,7 +1523,7 @@ sub overviewgraph {
 	}
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
-	print "$ERROR";
+	#print "$ERROR";
 }
 
 sub random_hex_color {

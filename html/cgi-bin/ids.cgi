@@ -62,25 +62,25 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'})
 	&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
 	if ($snortsettings{'ENABLE_SNORT'} eq 'on')
 	{
-		system ('/bin/touch', "${General::swroot}/snort/enable");
+		system ('/usr/bin/touch', "${General::swroot}/snort/enable");
 	} else {
 		unlink "${General::swroot}/snort/enable";
 	} 
 	if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on')
 	{
-		system ('/bin/touch', "${General::swroot}/snort/enable_green");
+		system ('/usr/bin/touch', "${General::swroot}/snort/enable_green");
 	} else {
 		unlink "${General::swroot}/snort/enable_green";
 	} 
 	if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on')
 	{
-		system ('/bin/touch', "${General::swroot}/snort/enable_blue");
+		system ('/usr/bin/touch', "${General::swroot}/snort/enable_blue");
 	} else {
 		unlink "${General::swroot}/snort/enable_blue";
 	} 
 	if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on')
 	{
-		system ('/bin/touch', "${General::swroot}/snort/enable_orange");
+		system ('/usr/bin/touch', "${General::swroot}/snort/enable_orange");
 	} else {
 		unlink "${General::swroot}/snort/enable_orange";
 	}

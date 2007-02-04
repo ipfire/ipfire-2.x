@@ -1172,7 +1172,7 @@ sub buildconf {
 	    }# foreach line
 	    print FILE "} #$itf\n";
 
-	    system ('/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
+	    system ('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server enabled'})
 	} else {
 	    unlink "${General::swroot}/dhcp/enable_${lc_itf}";

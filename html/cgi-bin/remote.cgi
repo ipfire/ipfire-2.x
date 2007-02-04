@@ -47,7 +47,7 @@ if ($remotesettings{'ACTION'} eq $Lang::tr{'save'})
 		{
 			$errormessage = $Lang::tr{'ssh no auth'};
 		}
-		system ('/bin/touch', "${General::swroot}/remote/enablessh");
+		system ('/usr/bin/touch', "${General::swroot}/remote/enablessh");
 	}
 	else
 	{

@@ -36,7 +36,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
 	unlink("${General::swroot}/ppp/settings");
 	link("${General::swroot}/ppp/settings-$cgiparams{'PROFILE'}",
 		"${General::swroot}/ppp/settings");
-	system ("/bin/touch", "${General::swroot}/ppp/updatesettings");
+	system ("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
 
 	# read in the new params "early" so we can write secrets.
 	%cgiparams = ();

@@ -718,7 +718,7 @@ END
 	(my $state = $cgiparams{'ROOTCERT_STATE'}) =~ s/^\s*$/\./;
 
 	# refresh
-	#system ('/bin/touch', "${General::swroot}/ovpn/gencanow");
+	#system ('/usr/bin/touch', "${General::swroot}/ovpn/gencanow");
 	
 	# Create the CA certificate
 	my $pid = open(OPENSSL, "|-");

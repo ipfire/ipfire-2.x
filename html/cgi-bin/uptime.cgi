@@ -50,7 +50,7 @@ if ($uptimesettings{'ACTION'} eq $Lang::tr{'save'})
 elsif ($uptimesettings{'ACTION'} eq $Lang::tr{'uptime enable'})
 {
 	&save_configuration();
-	system("/bin/touch ${General::swroot}/uptime/enabled");
+	system("/usr/bin/touch ${General::swroot}/uptime/enabled");
 	system("/usr/local/bin/yasucctrl enable");
 }
 elsif ($uptimesettings{'ACTION'} eq $Lang::tr{'uptime disable'})

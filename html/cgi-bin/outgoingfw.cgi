@@ -71,7 +71,7 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 {
 	$outfwsettings{'POLICY'}='MODE0';
 	unlink $configfile;
-	system("/bin/touch $configfile");
+	system("/usr/bin/touch $configfile");
 	&General::writehash("${General::swroot}/outgoing/settings", \%outfwsettings);
 }
 if ($outfwsettings{'ACTION'} eq $Lang::tr{'save'})

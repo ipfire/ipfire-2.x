@@ -14,7 +14,7 @@
 #define CDROM_INSTALL 0
 #define URL_INSTALL 1
 #define DISK_INSTALL 2
-#define INST_FILECOUNT 6600
+#define INST_FILECOUNT 7000
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
 int raid_disk = 0;
