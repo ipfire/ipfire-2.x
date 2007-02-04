@@ -687,7 +687,7 @@ print <<END
 		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
 END
 ;
-if (( -e "/home/httpd/html/graphs/qos-graph-$qossettings{'RED_DEV'}.png") && ( -e "/home/httpd/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png")) {
+if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}.png") && ( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png")) {
 	print <<END
 		<tr><td colspan='9' align='center'><img src="/graphs/qos-graph-$qossettings{'RED_DEV'}.png">
 		<tr><td colspan='9' align='center'><img src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png">
@@ -1300,7 +1300,7 @@ END
 	  				}
 				}
 
-				if ( -e "/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png") {
+				if ( -e "/srv/web/ipfire/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png") {
 					print <<END
 					<tr><td colspan='9' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png'>
 END
@@ -1463,7 +1463,7 @@ sub gengraph {
 	}
 	my $color=random_hex_color(6);
 
-	RRDs::graph ("/home/httpd/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png",
+	RRDs::graph ("/srv/web/ipfire/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png",
 		"--start", "-3240", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 150", "-r",
 		"--color", "SHADEA#EAE9EE",
@@ -1494,7 +1494,7 @@ sub overviewgraph {
 	my $ERROR="";
 	my $count="1";
 	my $color="#000000";
-	my @command=("/home/httpd/html/graphs/qos-graph-$qossettings{'DEV'}.png",
+	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}.png",
 		"--start", "-3240", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 150", "-r",
 		"--color", "SHADEA#EAE9EE",

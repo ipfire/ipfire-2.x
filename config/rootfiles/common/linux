@@ -647,6 +647,8 @@ lib/modules/2.6.16
 #lib/modules/2.6.16/modules.symbols
 #lib/modules/2.6.16/modules.usbmap
 #lib/modules/2.6.16/source
+#lib/modules/2.6.16/kernel/drivers/net/imq.ko
+#lib/modules/2.6.16/kernel/net/ipv4/netfilter/ipt_IMQ.ko
 boot/System.map-2.6.16-smp
 boot/config-2.6.16
 boot/vmlinuz-2.6.16-smp
@@ -1297,3 +1299,5 @@ lib/modules/2.6.16-smp
 #lib/modules/2.6.16-smp/modules.symbols
 #lib/modules/2.6.16-smp/modules.usbmap
 #lib/modules/2.6.16-smp/source
+#lib/modules/2.6.16-smp/kernel/drivers/net/imq.ko
+#lib/modules/2.6.16-smp/kernel/net/ipv4/netfilter/ipt_IMQ.ko

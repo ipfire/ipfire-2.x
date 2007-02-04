@@ -145,20 +145,21 @@ sub parse_class($) {
 	    my $burst = $11;
 	    my $cburst= $12;
 
-#	    print "class: $class\n"."parent: $parent\n"."leaf: $leaf\n"."prio: $prio\n";
-#	    print "rate: $rate\n"."ceil: $ceil\n"."burst: $burst\n"."cburst: $cburst\n";
+	    #print "class: $class\n"."parent: $parent\n"."leaf: $leaf\n"."prio: $prio\n";
+	    #print "rate: $rate\n"."ceil: $ceil\n"."burst: $burst\n"."cburst: $cburst\n";
 	    
 	    my ($bytes, $pkts, $dropped, $overlimits);
-	    if ($tc_output[$i + 1] =~ m/Sent (\d+) bytes (\d+) pkts \(dropped (\d+), overlimits (\d+)\)/ ) {
+	    if ($tc_output[$i + 1] =~ m/Sent (\d+) bytes (\d+) pkt \(dropped (\d+), overlimits (\d+) requeues (\d+)\)/ ) {
 		$bytes      = $1;
 		$pkts       = $2;
 		$dropped    = $3;
 		$overlimits = $4;
-#		print "bytes: $bytes\n"."pkts: $pkts\n";
-#		print "dropped: $dropped\n"."overlimits: $overlimits\n";
+		$requeues   = $5;
+		#print "bytes: $bytes\n"."pkts: $pkts\n";
+		#print "dropped: $dropped\n"."overlimits: $overlimits\n"."requeues: $requeues\n";
 	    } else { 
-#		print "$timestamp: ERROR(+1) - Unable to parse (class ${class}_$device): ";
-#		print "\"$tc_output[$i + 1]\"\n";
+		print "$timestamp: ERROR(+1) - Unable to parse (class ${class}_$device): ";
+		print "\"$tc_output[$i + 1]\"\n";
 		$return_val="";
 		next;
 	    } 

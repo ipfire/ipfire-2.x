@@ -1,10 +1,6 @@
-/* Ipcop helper program - restartntpd
+/* IPFire helper program - restartntpd
  *
  * Starts or stops the ntpd daemon
- *
- * (c) Darren Critchley 2003
- * 
- * $Id: restartntpd.c,v 1.5 2003/12/19 14:29:09 riddles Exp $
  * 
  */
          
@@ -25,7 +21,7 @@ int main(void)
 	if (!(initsetuid()))
 		exit(1);
 	
-	safe_system("/etc/rc.d/init.d/ntp stop 2> /dev/null");
+	safe_system("/etc/rc.d/init.d/ntp stop 2>&1 >/dev/null");
 	sleep(3);
 
 	if ((fd = open(CONFIG_ROOT "/time/allowclients", O_RDONLY)) != -1)
@@ -36,7 +32,7 @@ int main(void)
 
 	if (enable)
 	{
-		safe_system("/etc/rc.d/init.d/ntp start");
+		safe_system("/etc/rc.d/init.d/ntp start 2>&1 >/dev/null");
 	}
 	return 0;
 }
