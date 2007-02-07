@@ -115,7 +115,7 @@ END
 			print "\t<option value='$c' $selected{'PROFILE'}{$c}>$c. $profilenames[$c]</option>\n";
 		}
 	}
-	$dialButtonDisabled = "disabled='disabled'" if (-e '/var/run/ppp-ipcop.pid' || -e "${General::swroot}/red/active");
+	$dialButtonDisabled = "disabled='disabled'" if (-e '/var/run/ppp-ipfire.pid' || -e "${General::swroot}/red/active");
 	if ( ( $pppsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
 		print <<END;
 				</select>
@@ -134,6 +134,23 @@ END
 END
 	} else {
 	print "$Lang::tr{'profile has errors'}\n </b></font>\n";
+	}
+
+	my $DNS1 = `cat /var/ipfire/red/dns1`;
+	my $DNS2 = `cat /var/ipfire/red/dns2`;
+	chomp($DNS1);
+	chomp($DNS1);
+
+	if ( $DNS1 ) { print <<END;
+	<tr><td><b>DNS-Server:</b><td>$DNS1
+END
+	}
+	if ( $DNS2 ) { print <<END;
+	<td>$DNS2
+END
+	} else { print <<END;
+	<td>&nbsp;
+END
 	}
 
 	if ( $netsettings{'GREEN_DEV'} ) { print <<END;
@@ -207,15 +224,6 @@ END
   		<td width='45%'><font color=$Header::colourgreen>Online</font>
 END
 	}
-	if ( $netsettings{'DNS1'} ) { print <<END;
-	<tr><td>DNS-Server: <td>$netsettings{'DNS1'}
-END
-	}
-	if ( $netsettings{'DNS2'} ) { print <<END;
-	<td>$netsettings{'DNS2'}
-END
-	}
-
 
 # Memory usage warning
 my @free = `/usr/bin/free`;

@@ -72,7 +72,7 @@ clear: both;
 img
 {
 padding: 3px;
-border: solid 1px #e1e1e1;
+#border: solid 1px #e1e1e1;
 }
 
 img.floatTL
@@ -295,6 +295,11 @@ text-transform: lowercase;
 }
 
 /* Search */
+
+input
+{
+margin: 0.2em;
+}
 
 input.button
 {
