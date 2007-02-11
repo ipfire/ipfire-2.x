@@ -60,10 +60,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial'}) {
-	system('/etc/rc.d/rc.red','start') == 0
+	system('/etc/rc.d/init.d/red','start') == 0
 	or &General::log("Dial failed: $?"); }
 elsif ($cgiparams{'ACTION'} eq $Lang::tr{'hangup'}) {
-	system('/etc/rc.d/rc.red','stop') == 0
+	system('/etc/rc.d/init.d/red','stop') == 0
 	or &General::log("Hangup failed: $?"); }
 sleep 1;
 
