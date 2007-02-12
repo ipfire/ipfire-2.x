@@ -360,7 +360,13 @@ sub genmenu {
 				'title' => "$tr{'outgoing firewall'}",
 				'enabled' => 1,
 				};
-    $subfirewall->{'60.fwopts'} = {
+    $subfirewall->{'60.upnp'} = {
+				'caption' => 'UPnP',
+				'uri' => '/cgi-bin/upnp.cgi',
+				'title' => "Universal Plug and Play",
+				'enabled' => 1,
+				};
+    $subfirewall->{'70.fwopts'} = {
 				'caption' => $tr{'options fw'},
 				'uri' => '/cgi-bin/optionsfw.cgi',
 				'title' => "$tr{'options fw'}",

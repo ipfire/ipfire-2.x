@@ -1,7 +1,7 @@
 #!/bin/bash
 HOME=/opt/applejuice
 JAVA=/usr/bin/java
-. /var/ipfire/applejuice/settings
+eval $(/usr/local/bin/readhash /var/ipfire/applejuice/settings)
 
 
 case "$1" in

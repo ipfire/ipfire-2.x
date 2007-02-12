@@ -19,7 +19,7 @@
 ALLOW_MULTICAST=no
 
 # configuration
-. /var/ipfire/upnp/settings
+eval $(/usr/local/bin/readhash /var/ipfire/upnp/settings)
 
 case "$1" in
 	start)

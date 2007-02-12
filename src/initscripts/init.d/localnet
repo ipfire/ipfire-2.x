@@ -17,7 +17,7 @@
 
 case "${1}" in
 	start)
-		. /var/ipfire/main/settings
+		eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 		boot_mesg "Bringing up the loopback interface..."
 		ip addr add 127.0.0.1/8 label lo dev lo
 		ip link set lo up
@@ -41,7 +41,7 @@ case "${1}" in
 		;;
 
 	status)
-		. /var/ipfire/main/settings
+		eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 		echo "Hostname is: $(hostname)"
 		ip link show lo
 		;;

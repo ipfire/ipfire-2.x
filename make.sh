@@ -33,7 +33,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
-IPFVER="full"				# Which version should be compiled? (full|light|voice)
+IPFVER="full devel"				# Which version should be compiled? (full|light|voice|devel)
 
 # Set an information about the build number
 if [ -e ./.svn ]; then
@@ -575,7 +575,10 @@ buildpackages() {
   beautify message DONE
 
   # Create images for install
-  ipfiremake cdrom
+  for i in $IPFVER
+  do
+	ipfiremake cdrom ED=$i
+  done
   ipfiremake pxe
   cp -f $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
 

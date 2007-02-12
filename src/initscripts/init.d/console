@@ -15,7 +15,7 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
-. /var/ipfire/main/settings
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 
 FONT="lat0-16"
 KEYMAP_CORRECTIONS="euro2"

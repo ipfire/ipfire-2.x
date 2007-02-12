@@ -14,10 +14,10 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
-. /var/ipfire/ethernet/settings
-. /var/ipfire/dhcp/settings
-. /var/ipfire/ppp/settings
-. /var/ipfire/vpn/settings
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
 
 # This is a small wrapper for dhcpcd.exe
 if ( echo $0 | /bin/grep -q 'dhcpcd.exe' ); then
