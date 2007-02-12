@@ -2,7 +2,7 @@ bin
 boot
 etc
 home
-install
+#install
 lib
 media
 mnt
