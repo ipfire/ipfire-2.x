@@ -707,7 +707,7 @@ shell)
 	;;
 changelog)
 	echo -n "Loading new Changelog from SVN: "
-	svn log http://svn.ipfire.eu/svn/ipfire > doc/ChangeLog
+	svn log http://svn.ipfire.org/svn/ipfire > doc/ChangeLog
 	beautify message DONE
 	;;
 clean)
@@ -894,9 +894,9 @@ svn)
 			exit 0
 		fi
 		echo -en "REV $SVN_REVISION: Downloading..."
-		svn export http://svn.ipfire.eu/svn/ipfire/trunk ipfire-source/ --force > /dev/null
-		svn log http://svn.ipfire.eu/svn/ipfire/trunk -r 1:$SVN_REVISION > ipfire-source/Changelog
-		#svn info http://svn.ipfire.eu/svn/ipfire/trunk -r $SVN_REVISION > ipfire-source/svn_status
+		svn export http://svn.ipfire.org/svn/ipfire/trunk ipfire-source/ --force > /dev/null
+		svn log http://svn.ipfire.org/svn/ipfire/trunk -r 1:$SVN_REVISION > ipfire-source/Changelog
+		#svn info http://svn.ipfire.org/svn/ipfire/trunk -r $SVN_REVISION > ipfire-source/svn_status
 		evaluate 1
 
 		echo -en "REV $SVN_REVISION: Compressing files..."
