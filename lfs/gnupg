@@ -77,6 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-dns-srv --disable-dns-pka --disable-dns-cert
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	gpg --import $(DIR_SRC)/config/cfgroot/ipcop.gpg
+	gpg --import $(DIR_SRC)/config/cfgroot/ipfire.gpg
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
