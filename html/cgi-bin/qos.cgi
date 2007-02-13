@@ -616,7 +616,6 @@ if ($errormessage) {
 &Header::openbox('100%', 'center', 'Quality of Service');
 
 print <<END
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='33%'>
 END
 ;
@@ -636,7 +635,7 @@ END
 		print <<END
 		<tr><td colspan='3'>&nbsp;
 		<tr><td width='40%' align='right'>Downloadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'INC_SPD'} kbps
-		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='Andern'>
+		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='Andern' />
 		<tr><td width='40%' align='right'>Uploadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'OUT_SPD'} kbps
 END
 ;
@@ -665,7 +664,6 @@ print "</table>";
 
 if ( ($qossettings{'OUT_SPD'} eq '') || ($qossettings{'INC_SPD'} eq '') ) {
 	&changebandwidth();
-	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
@@ -753,7 +751,7 @@ END
 		</form>
 END
 ;
-	&Header::closebox();
+		&Header::closebox();
 }
 
 sub changebandwidth {
