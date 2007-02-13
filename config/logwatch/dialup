@@ -1,0 +1,87 @@
+
+##########################################################################
+# $Id: dialup $
+##########################################################################
+
+use Logwatch ':all';
+
+$Debug = ValueOrDefault($ENV{'LOGWATCH_DEBUG'}, 0);
+$Detail = ValueOrDefault($ENV{'LOGWATCH_DETAIL_LEVEL'}, 0);
+
+# Avoid "Use of uninitialized value" warning messages.
+sub ValueOrDefault {
+         my ($value, $default) = @_;
+         return ($value ? $value : $default);
+}
+
+if ( $Debug >= 5 ) {
+	print STDERR "\n\nDEBUG: Inside DIALUP Filter \n\n";
+	$DebugCounter = 1;
+}
+
+while (defined($ThisLine = <STDIN>)) {
+   if ( $Debug >= 5 ) {
+      print STDERR "DEBUG($DebugCounter): $ThisLine";
+      $DebugCounter++;
+   }
+   chomp($ThisLine);
+   
+   if ( $ThisLine =~ /^pppd (\d+).(\d+).(\d+) started by root, uid (\d+)/ )
+   {
+      if ($Debug >= 5) 
+      {
+         print STDERR "DEBUG: Found PPP start\n";
+      }
+      $Starts++
+   }
+   elsif ( $ThisLine =~ /^Connection terminated./ )
+   {
+      if ($Debug >= 5) 
+      {
+         print STDERR "DEBUG: Found PPP down\n";
+      }
+      $Downs++
+   }
+   elsif ( $ThisLine =~ /^PPP session is (\d+)/ )
+   {
+      if ($Debug >= 5) 
+      {
+         print STDERR "DEBUG: Found PPP connect\n";
+      }
+      $Ups++
+   }
+   elsif ( $ThisLine =~ /^Connect time (\d+).(\d+) minutes./ )
+   {
+      if ($Debug >= 5) 
+      {
+         print STDERR "DEBUG: Found PPP connecttime $1\n";
+      }
+      $Uptime += $1 + ($2 / 10);
+   }
+}
+
+###########################################################
+
+if ( $Starts )
+{
+    print "PPP Dial attempts: " . $Starts . " Time(s)\n";
+}
+
+if ( $Ups )
+{
+  print "PPP Connected: " . $Ups . " Time(s)\n";
+}
+
+if ( $Downs )
+{
+  print "PPP Disconnected: " . $Downs . " Time(s)\n";
+}
+
+if ( $Uptime )
+{
+  print "Total connect time: " . $Uptime . " Minutes\n";
+}
+
+exit(0);
+
+# vi: shiftwidth=3 tabstop=3 syntax=perl et

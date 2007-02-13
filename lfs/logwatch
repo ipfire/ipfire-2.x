@@ -86,16 +86,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Strip out some filters for services we don't run - no point wasting log keeping them
 	# cron filter don't support fcron
 	# final selection for remaining files is in rootfile
-	UNNEEDED="afpd amavis arpwatch audit automount autorpm cisco clamav clamav-milter \
-	    clam-update courier cron emerge exim extreme-networks ftpd-messages ftpd-xferlog \
-	    imapd identd in.qpopper ipop3d maillog mailscanner mountd named netopia netscreen \
-	    oidentd pam pam_pwdb pop3 portsentry postfix pound proftpd-messages pureftp \
-	    pureftpd qmail rt314 saslauthd samba sendmail sendmail-largeboxes shaperd smartd \
-	    sonicwall stunnel sudo tac_acc up2date vpopmail vsftpd xferlog yum zz-fortune" && \
+	UNNEEDED="afpd amavis arpwatch audit automount autorpm cisco \
+	    courier emerge exim extreme-networks ftpd-messages ftpd-xferlog \
+	    identd in.qpopper ipop3d mountd named netopia netscreen \
+	    oidentd pam_pwdb portsentry pound pureftp \
+	    pureftpd qmail rt314 sendmail-largeboxes shaperd smartd \
+	    sonicwall stunnel tac_acc up2date vpopmail vsftpd windows xferlog yum zz-fortune" && \
 	  for i in $$UNNEEDED ; do \
 	    rm -f /etc/log.d/{conf,scripts}/services/$$i{,.conf} /etc/log.d/conf/logfiles/$$i.conf; \
 	  done
 	rm -rf /etc/log.d/scripts/logfiles
+	cp -f $(DIR_SRC)/config/logwatch/dialup /etc/log.d/scripts/services/dialup
+	cp -f $(DIR_SRC)/config/logwatch/dialup.conf /etc/log.d/conf/services/dialup.conf
 
 	sed -i 's/df -h/df -h -x rootfs/' /etc/log.d/scripts/services/zz-disk_space
 	for i in `find /etc/log.d -type f`; do \

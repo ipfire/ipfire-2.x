@@ -19,6 +19,7 @@
 * MIME-tools-5.420
 * Mail-SpamAssassin-3.1.3
 * MailTools-1.74
+* MoBlock-0.8
 * Net-DNS-0.47
 * Net-IPv4Addr-0.10
 * Net-Server-0.93
@@ -109,6 +110,7 @@
 * ipp2p-0.8.2-iptables
 * iproute2-2.6.16-060323
 * iptables-1.3.5
+* iptables-1.3.5_old1
 * iptraf-3.0.0
 * iptstate-2.1
 * iputils-ss020927
@@ -143,6 +145,7 @@
 * linuxigd-0.95
 * logrotate-3.7.1
 * logwatch_7.3.1
+* logwatch_7.3.1_old1
 * lynx2.8.5
 * lzo-2.02
 * m4-1.4.4

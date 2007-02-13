@@ -33,7 +33,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
-IPFVER="full devel"				# Which version should be compiled? (full|light|voice|devel)
+IPFVER="full devel"				# Which versions should be compiled? (full|light|voice|devel)
 
 # Set an information about the build number
 if [ -e ./.svn ]; then
@@ -392,6 +392,7 @@ buildipfire() {
   ipfiremake iptables
   ipfiremake libupnp
   ipfiremake ipp2p			IPT=1
+  ipfiremake moblock
   ipfiremake linux-igd
   ipfiremake ipac-ng
   ipfiremake ipaddr
@@ -577,7 +578,13 @@ buildpackages() {
   # Create images for install
   for i in $IPFVER
   do
-	ipfiremake cdrom ED=$i
+	if [ $i == "devel" ]; then
+		if [ ! -f ipfire-$VER.i586-devel.iso ]; then
+			ipfiremake cdrom ED=$i
+		fi
+	else
+		ipfiremake cdrom ED=$i
+	fi
   done
   ipfiremake pxe
   cp -f $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
