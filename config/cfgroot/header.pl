@@ -239,7 +239,7 @@ sub genmenu {
     $subnetwork->{'10.netconf'} = {'caption' => "$tr{'net config'}",
 			        'uri' => '/cgi-bin/netconfig.cgi',
 			        'title' => "$tr{'net config'}",
-			        'enabled' => 1,
+			        'enabled' => 0,
 			        };
     $subnetwork->{'20.proxy'} = {'caption' => 'Webproxy',
 			        'uri' => '/cgi-bin/proxy.cgi',

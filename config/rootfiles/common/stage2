@@ -25,7 +25,6 @@ etc/nsswitch.conf
 etc/passwd
 etc/profile
 etc/profile.d/dircolors.sh
-etc/profile.d/extra-promt.sh
 etc/profile.d/extrapaths.sh
 etc/profile.d/readline.sh
 etc/profile.d/umask.sh

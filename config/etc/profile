@@ -49,8 +49,8 @@ fi
 # Setup some environment variables.
 export HISTSIZE=1000
 export HISTIGNORE="&:[bf]g:exit"
-#export PS1="[\u@\h \w]\\$ "
-export PS1='\u@\h:\w\$ '
+export PS1="[\u@\h \w]\\$ "
+#export PS1='\u@\h:\w\$ '
 
 for script in /etc/profile.d/*.sh ; do
         if [ -r $script ] ; then

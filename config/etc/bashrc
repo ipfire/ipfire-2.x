@@ -26,7 +26,7 @@ alias ls='ls --color=auto'
 # PS1 Environment Variable for a great case study behind this script
 # addendum.]
 
-#export PS1="[\u@\h \w]\\$ "
-export PS1='\u@\h:\w\$ '
+export PS1="[\u@\h \w]\\$ "
+#export PS1='\u@\h:\w\$ '
 
 # End /etc/bashrc
