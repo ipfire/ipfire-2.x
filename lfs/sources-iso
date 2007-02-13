@@ -42,9 +42,9 @@ md5 :
 # Installation Details
 ###############################################################################
 
-install : $(DIR_INFO)/_build.packages-list.log
+install : $(DIR_INFO)/_build.othersrc-list.log
 	rm -rf /install/cdrom/*
-	for i in `cat $(DIR_INFO)/_build.packages-list.log`; do \
+	for i in `cat $(DIR_INFO)/_build.othersrc-list.log`; do \
 		cp $(DIR_DL)/$$i /install/cdrom; \
 	done
 	
