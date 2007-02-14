@@ -1,0 +1,20 @@
+    $subipfire->{'10.pakfire'} = {'caption' => 'Pakfire',
+				  'uri' => '/cgi-bin/pakfire.cgi',
+				  'title' => "Pakfire",
+				  'enabled' => 1,
+				  };
+    $subipfire->{'20.asterisk'} = {'caption' => 'Asterisk',
+				  'uri' => '/cgi-bin/asterisk.cgi',
+				  'title' => "Asterisk",
+				  'enabled' => 1,
+				  };
+    $subipfire->{'30.samba'} = {'caption' => 'Samba',
+				  'uri' => '/cgi-bin/samba.cgi',
+				  'title' => "Samba",
+				  'enabled' => 1,
+				  };
+    $subipfire->{'99.help'} = {'caption' => $tr{'help'},
+				  'uri' => '/cgi-bin/help.cgi',
+				  'title' => "$tr{'help'}",
+				  'enabled' => 1,
+				  };

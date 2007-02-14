@@ -1,0 +1,42 @@
+    $subfirewall->{'10.dnat'} = {
+				 'caption' => $tr{'ssport forwarding'},
+				 'uri' => '/cgi-bin/portfw.cgi',
+				 'title' => "$tr{'ssport forwarding'}",
+				 'enabled' => 1,
+				 };
+    $subfirewall->{'20.xtaccess'} = {
+				 'caption' => $tr{'external access'},
+				 'uri' => '/cgi-bin/xtaccess.cgi',
+				 'title' => "$tr{'external access'}",
+				 'enabled' => 1,
+				 };
+    $subfirewall->{'30.wireless'} = {
+				'caption' => $tr{'blue access'},
+				'uri' => '/cgi-bin/wireless.cgi',
+				'title' => "$tr{'blue access'}",
+				'enabled' => 1,
+				 };
+    $subfirewall->{'40.dmz'} = {
+				'caption' => $tr{'ssdmz pinholes'},
+				'uri' => '/cgi-bin/dmzholes.cgi',
+				'title' => "$tr{'dmz pinhole configuration'}",
+				'enabled' => 1,
+				 };
+    $subfirewall->{'50.outgoing'} = {
+				'caption' => $tr{'outgoing firewall'},
+				'uri' => '/cgi-bin/outgoingfw.cgi',
+				'title' => "$tr{'outgoing firewall'}",
+				'enabled' => 1,
+				};
+    $subfirewall->{'60.upnp'} = {
+				'caption' => 'UPnP',
+				'uri' => '/cgi-bin/upnp.cgi',
+				'title' => "Universal Plug and Play",
+				'enabled' => 1,
+				};
+    $subfirewall->{'70.fwopts'} = {
+				'caption' => $tr{'options fw'},
+				'uri' => '/cgi-bin/optionsfw.cgi',
+				'title' => "$tr{'options fw'}",
+				'enabled' => 1,
+				 };

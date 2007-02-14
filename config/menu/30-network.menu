@@ -1,0 +1,50 @@
+    $subnetwork->{'10.netconf'} = {'caption' => "$tr{'net config'}",
+			        'uri' => '/cgi-bin/netconfig.cgi',
+			        'title' => "$tr{'net config'}",
+			        'enabled' => 0,
+			        };
+    $subnetwork->{'20.proxy'} = {'caption' => 'Webproxy',
+			        'uri' => '/cgi-bin/proxy.cgi',
+			        'title' => "Webproxy",
+			        'enabled' => 1,
+			        };
+    $subnetwork->{'30.urlfilter'} = {'caption' => 'URL-Filter',
+			        'uri' => '/cgi-bin/urlfilter.cgi',
+			        'title' => "URL-Filter",
+			        'enabled' => 1,
+			        };
+    $subnetwork->{'40.dhcp'} = {'caption' => $tr{'dhcp server'},
+				 'uri' => '/cgi-bin/dhcp.cgi',
+				 'title' => "$tr{'dhcp server'}",
+				 'enabled' => 1,
+				 };
+    $subnetwork->{'50.scheduler'} = {
+				 'caption' => $tr{'connscheduler'},
+				 'uri' => '/cgi-bin/connscheduler.cgi',
+				 'title' => "$tr{'connscheduler'}",
+				 'enabled' => 1,
+				 };
+    $subnetwork->{'60.hosts'} = {
+				 'caption' => $tr{'edit hosts'},
+				 'uri' => '/cgi-bin/hosts.cgi',
+				 'title' => "$tr{'edit hosts'}",
+				 'enabled' => 1,
+				 };
+    $subnetwork->{'70.upload'} = {
+				  'caption' => $tr{'upload'},
+				  'uri' => '/cgi-bin/upload.cgi',
+				  'title' => "$tr{'upload'}",
+				  'enabled' => 0,
+				  };
+    $subnetwork->{'80.aliases'} = {
+				  'caption' => $tr{'aliases'},
+				  'uri' => '/cgi-bin/aliases.cgi',
+				  'title' => "$tr{'aliases'}",
+				  'enabled' => 0,
+				  };
+    $subnetwork->{'90.wakeonlan'} = {
+				  'caption' => $tr{'WakeOnLan'},
+				  'uri' => '/cgi-bin/wakeonlan.cgi',
+				  'title' => "$tr{'WakeOnLan'}",
+				  'enabled' => 1,
+				  };

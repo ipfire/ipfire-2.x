@@ -515,6 +515,7 @@ sub doisdndial
 
 sub dopppoedial
 {
+	system("mknod /dev/ppp c 108 0 2>/dev/null");
 	if ($pppsettings{'METHOD'} ne 'PPPOE_PLUGIN') {
 		my @pppcommand = ('/usr/sbin/pppd', 'pty');
 		my @pppoecommand = ('/usr/sbin/pppoe', '-p','/var/run/pppoe.pid','-I',
@@ -604,6 +605,7 @@ sub dopptpdial
 {
 	my %pptpdhcpc;
 	my $routerip = $pppsettings{'ROUTERIP'} ? $pppsettings{'ROUTERIP'} : "10.0.0.138";
+	system("mknod /dev/ppp c 108 0 2>/dev/null");
 	if ( $pppsettings{'METHOD'} eq 'DHCP' && open(FILE, "${General::swroot}/red/device")) {
 		my $device = <FILE>;
 		close FILE;
@@ -682,6 +684,7 @@ sub dofritzdsldial
 			$controller=1; # fcdslslusb
 		}
 	}
+	system("mknod /dev/ppp c 108 0 2>/dev/null");
 	my @pppcommand = ('/usr/sbin/pppd');
 	my @capiplugin;
 
@@ -733,6 +736,7 @@ sub dofritzdsldial
 sub doatmdial
 {
 	my $ENCAP;
+	system("mknod /dev/ppp c 108 0 2>/dev/null");
 	if ($pppsettings {'PROTOCOL'} eq 'RFC2364') {
 		system ('/sbin/modprobe pppoatm');
 		my @pppcommand = ('/usr/sbin/pppd');

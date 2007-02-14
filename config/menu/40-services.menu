@@ -1,0 +1,32 @@
+    $subservices->{'10.ipsec'} = {
+				'caption' => 'IPSec',
+			     	'uri' => '/cgi-bin/vpnmain.cgi',
+			     	'title' => "$tr{'virtual private networking'}",
+			     	'enabled' => 1,
+			 	};
+    $subservices->{'20.openvpn'} = {
+				'caption' => 'OpenVPN',
+			     	'uri' => '/cgi-bin/ovpnmain.cgi',
+			     	'title' => "$tr{'virtual private networking'}",
+			       'enabled' => 1,
+			   	};
+    $subservices->{'30.dyndns'} = {'caption' => $tr{'dynamic dns'},
+				'uri' => '/cgi-bin/ddns.cgi',
+				'title' => "$tr{'dynamic dns'}",
+				'enabled' => 1,
+				};
+    $subservices->{'40.time'} = {'caption' => $tr{'time server'},
+				'uri' => '/cgi-bin/time.cgi',
+				'title' => "$tr{'time server'}",
+				'enabled' => 1,
+				};
+    $subservices->{'50.qos'} = {'caption' => 'Quality of Service',
+				'uri' => '/cgi-bin/qos.cgi',
+				'title' => "Quality of Service",
+				'enabled' => 1,
+				};
+    $subservices->{'60.ids'} = {'caption' => $tr{'intrusion detection'},
+				'enabled' => 1,
+				'uri' => '/cgi-bin/ids.cgi',
+				'title' => "$tr{'intrusion detection system'}",
+				};

@@ -26,20 +26,21 @@ require "${General::swroot}/header.pl";
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
 
 print <<END
-<br /><center><b>Besuchen sie uns auf <a href='http://www.ipfire.org/'>http://www.ipfire.org/</a></b></center>
-<br /><center><b>Visit us on <a href='http://www.ipfire.org/'>http://www.ipfire.org/</a></b></center>
+<br /><center><b><a href='http://www.ipfire.org/'>http://www.ipfire.org/</a></b></center>
 <p>
-<br /><center><b>IPFire is based on IPCop and Smoothwall. Many thanks to its developers for this great piece of software.</b></center>
-
-<p><b>Credits:</b><br />
+<br /><center><b>IPFire is based on IPCop and Smoothwall. Many thanks to its developers.</b></center>
+<br /><center><b>We want to say thank you to all of the developers who ever contributed anything to IPFire.</b></center>
+<p>
+<p><b>Development:</b><br />
 Projektleiter - Michael Tremer
-(<a href='mailto:m.s.tremer\@gmail.com'>m.s.tremer\@gmail.com</a>)<br />
+(<a href='mailto:m.s.tremer\@gmail.com'>mitch\@ipfire.org</a>)<br />
 Projektmitglied &amp; Sponsor - Detlef Lampart
-(<a href='mailto:info\@delaco.de'>info\@delaco.de</a>)<br />
+(<a href='mailto:info\@delaco.de'>delaco\@ipfire.org</a>)<br />
 Projektmitglied &amp; Developer - Heiner Schmeling
-(<a href='mailto:cm\@ipfire.eu'>cm\@ipfire.eu</a>)<br />
+(<a href='mailto:cm\@ipfire.eu'>cm\@ipfire.org</a>)<br />
 Projektmitglied &amp; Supporter - Silvio Rechenbach
 (<a href='mailto:sr\@tne.de'>sr\@tne.de</a>)<br />
+Creative Mind - Benedikt Correll<br />
 Sponsor - Karsten Rechenbach
 (<a href='mailto:space\@devilboard.net'>space\@devilboard.net</a>)<br />
 Betatester - Sebastian Winter
@@ -49,7 +50,7 @@ END
 ;
 &Header::closebox();
 
-&Header::openbox('100%', 'left', 'GPL');
+&Header::openbox('100%', 'left', 'General Public License v2');
 print <<END;
 <pre>
                  GNU GENERAL PUBLIC LICENSE
@@ -391,7 +392,8 @@ This General Public License does not permit incorporating your program into
 proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
-Public License instead of this License.</pre>
+Public License instead of this License.
+</pre>
 END
 &Header::closebox();
 

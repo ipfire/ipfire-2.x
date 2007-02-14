@@ -42,7 +42,7 @@ case "$1" in
 			/etc/rc.d/init.d/red start
 			exit
 		fi
-		# give 5 s more at pppd to be visible  with ps ax after 'rc.red start' end
+		# give 5 s more at pppd to be visible  with ps ax after 'red start' end
 		if [ "$RCREDSTART" = '' ]; then
 			TIMETOSTART=1
 		fi
@@ -83,7 +83,7 @@ case "$1" in
 	# this attempt to connect fail, so retry
 
 	#Don't erase keepconnected because it is used to watch user actions
-	/bin/touch /var/ipfire/red/redial
+	/usr/bin/touch /var/ipfire/red/redial
 	/etc/rc.d/init.d/red stop
 	while ( /bin/ps ax | /bin/grep -q [p]ppd ); do
 		msg "waiting pppd exit"

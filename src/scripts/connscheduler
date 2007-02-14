@@ -146,7 +146,7 @@ sub profile
   # Method to change Profile from pppsetup.cgi
 	unlink("${General::swroot}/ppp/settings");
 	link("${General::swroot}/ppp/settings-$profile", "${General::swroot}/ppp/settings");
-	system ("/bin/touch", "${General::swroot}/ppp/updatesettings");
+	system ("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
 
   if ( $restart_red == 1 )
   {

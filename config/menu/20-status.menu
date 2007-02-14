@@ -1,0 +1,62 @@
+    $substatus->{'10.systemstatus'} = {
+				 'caption' => $tr{'sssystem status'},
+				 'uri' => '/cgi-bin/status.cgi',
+				 'title' => "$tr{'sssystem status'}",
+				 'enabled' => 1,
+				 };
+    $substatus->{'20.networkstatus'} = {
+				'caption' => $tr{'ssnetwork status'},
+				'uri' => '/cgi-bin/netstatus.cgi',
+				'title' => "$tr{'ssnetwork status'}",
+				'enabled' => 1,
+				};
+    $substatus->{'30.systemgraphs'} = {
+				'caption' => $tr{'system graphs'},
+				'uri' => '/cgi-bin/graphs.cgi',
+				'novars' => 1,
+				'title' => "$tr{'system graphs'}",
+				'enabled' => 1,
+				};
+    $substatus->{'40.trafficgraphs'} = {
+				'caption' => $tr{'sstraffic graphs'},
+				'uri' => '/cgi-bin/graphs.cgi',
+				'vars' => 'graph=network',
+				'title' => "$tr{'sstraffic graphs'}",
+				'enabled' => 1,
+				};
+    $substatus->{'50.proxygraphs'} = {
+				'caption' => $tr{'ssproxy graphs'},
+				'uri' => '/cgi-bin/proxygraphs.cgi',
+				'title' => "$tr{'ssproxy graphs'}",
+				'enabled' => 1,
+				};
+    $substatus->{'60.fwhits'} = {
+				  'caption' => 'Firewall-Diagramme',
+			     	  'uri' => '/cgi-bin/fwhits.cgi',
+			     	  'title' => "Firewall-Diagramme",
+			         'enabled' => 1,
+			   	  };
+    $substatus->{'70.hardwaregraphs'} = {
+				  'caption' => "$tr{'hardware graphs'}",
+			     	  'uri' => '/cgi-bin/hardwaregraphs.cgi',
+			     	  'title' => "$tr{'hardware graphs'}",
+			         'enabled' => 1,
+			   	  };
+    $substatus->{'80.connections'} = {
+				'caption' => $tr{'connections'},
+				'uri' => '/cgi-bin/connections.cgi',
+				'title' => "$tr{'connections'}",
+				'enabled' => 1,
+				};
+    $substatus->{'90.nettraf'} = {
+				  'caption' => $tr{'sstraffic'},
+			     	  'uri' => '/cgi-bin/traffic.cgi',
+			     	  'title' => "$tr{'sstraffic'}",
+			         'enabled' => 1,
+			   	  };
+    $substatus->{'99.iptable'} = {
+				'caption' => $tr{'iptable rules'},
+				'uri' => '/cgi-bin/iptables.cgi',
+				'title' => "$tr{'iptable rules'}",
+				'enabled' => 1,
+				};
