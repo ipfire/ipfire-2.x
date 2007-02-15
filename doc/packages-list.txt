@@ -79,6 +79,7 @@
 * findutils-4.2.27
 * flex-2.5.33
 * freetype-2.1.10
+* fuse-2.6.3
 * fwhits
 * gawk-3.1.5
 * gcc-4.0.3
@@ -174,6 +175,7 @@
 * nfs-utils-1.0.8
 * nmap-4.03
 * noip_updater_v1.6
+* ntfs-3g-0.20070207-RC1
 * ntop-3.2
 * ntp-4.2.2
 * ocaml-3.09.2

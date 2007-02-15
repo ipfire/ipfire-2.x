@@ -333,6 +333,7 @@ buildipfire() {
   ipfiremake fcpci			SMP=1
 #  ipfiremake promise-sata-300-tx	SMP=1
   ipfiremake zaptel			SMP=1
+  ipfiremake fuse			SMP=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake fcdsl
@@ -343,6 +344,7 @@ buildipfire() {
   ipfiremake fcpci
 #  ipfiremake promise-sata-300-tx
   ipfiremake zaptel
+  ipfiremake fuse
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp
@@ -381,6 +383,7 @@ buildipfire() {
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake squashfstools
+  ipfiremake ntfs-3g
   ipfiremake ethtool
   ipfiremake ez-ipupdate
   ipfiremake fcron
