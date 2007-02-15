@@ -11,7 +11,7 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess restartdhcp restartsno
 	restartapplejuice setdate rebuildhosts \
 	restartsyslogd logwatch openvpnctrl timecheckctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
-	redctrl
+	redctrl extrahdctrl
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -45,6 +45,9 @@ qosctrl: qosctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 redctrl: redctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ redctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+extrahdctrl: extrahdctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ extrahdctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@

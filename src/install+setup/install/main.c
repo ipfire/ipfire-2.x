@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 	int cdmounted = 0; /* Loop flag for inserting a cd. */
 	int rc = 0;
 	char commandstring[STRING_SIZE];
-	char *installtypes[] = { "CDROM", "HTTP/FTP", NULL };
+	char *installtypes[] = { "CDROM/USB", "HTTP/FTP", NULL };
 	int installtype = CDROM_INSTALL;
 	char insertmessage[STRING_SIZE];
 	char insertdevnode[STRING_SIZE];

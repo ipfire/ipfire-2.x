@@ -53,7 +53,7 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang alcatelusb auth backup ca certs cnx_pci connscheduler crls ddns dhcp dhcpc dmzholes \
-	    eagle-usb eciadsl ethernet isdn key langs logging main mbmon menu.d modem net-traffic nfs optionsfw outgoing/bin patches pakfire portfw \
+	    eagle-usb eciadsl ethernet extrahd/bin isdn key langs logging main mbmon menu.d modem net-traffic nfs optionsfw outgoing/bin patches pakfire portfw \
 	    ppp private proxy/advanced qos/bin red remote snort time urlfilter/autoupdate urlfilter/bin upnp vpn wakeonlan wireless xtaccess ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
 	done
@@ -62,6 +62,7 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dmzholes/config ethernet/aliases ethernet/settings \
+	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings
 	    isdn/settings main/hosts main/settings optionsfw/settings outgoing/settings outgoing/rules pakfire/settings \
 	    portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
@@ -81,6 +82,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/backup-exclude.hardware	$(CONFIG_ROOT)/backup/exclude.hardware
 	cp $(DIR_SRC)/config/cfgroot/connscheduler-lib.pl	$(CONFIG_ROOT)/connscheduler/lib.pl
 	cp $(DIR_SRC)/config/cfgroot/connscheduler.conf		$(CONFIG_ROOT)/connscheduler
+	cp $(DIR_SRC)/config/extrahd/*				$(CONFIG_ROOT)/extrahd/bin/
 	cp $(DIR_SRC)/config/cfgroot/mbmon-settings		$(CONFIG_ROOT)/mbmon/settings
 	cp $(DIR_SRC)/config/menu/*					$(CONFIG_ROOT)/menu.d/
 	cp $(DIR_SRC)/config/cfgroot/modem-defaults		$(CONFIG_ROOT)/modem/defaults

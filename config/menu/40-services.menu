@@ -30,3 +30,8 @@
 				'uri' => '/cgi-bin/ids.cgi',
 				'title' => "$tr{'intrusion detection system'}",
 				};
+    $subservices->{'70.extrahd'} = {'caption' => "ExtraHD"},
+				'enabled' => 1,
+				'uri' => '/cgi-bin/extrahd.cgi',
+				'title' => "ExtraHD",
+				};

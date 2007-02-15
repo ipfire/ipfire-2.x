@@ -582,7 +582,7 @@ buildpackages() {
   for i in $IPFVER
   do
 	if [ $i == "devel" ]; then
-		if [ ! -f ipfire-$VER.i586-devel.iso ]; then
+		if [ ! -e ipfire-$VERSION.i586-devel.iso ]; then
 			ipfiremake cdrom ED=$i
 		fi
 	else
