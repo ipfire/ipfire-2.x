@@ -43,10 +43,13 @@ HOME=/
 # hddshutdown
 02 * * * * 	/usr/local/bin/hddshutdown >/dev/null
 
-# URL Filter
+# connection-scheduler
+*/5 * * * *	/usr/local/bin/connscheduler timer > /dev/null
+
+# URL Filter && Update Accelerator
 %nightly * 3-5   /var/ipfire/urlfilter/autoupdate/cron.daily
 %weekly  * 3-5   /var/ipfire/urlfilter/autoupdate/cron.weekly
 %monthly * 3-5 * /var/ipfire/urlfilter/autoupdate/cron.monthly
-
-# connection-scheduler
-*/5 * * * *	/usr/local/bin/connscheduler timer > /dev/null
+%nightly * 3-5   /var/ipfire/updatexlrator/autocheck/cron.daily
+%weekly  * 3-5   /var/ipfire/updatexlrator/autocheck/cron.weekly
+%monthly * 3-5 * /var/ipfire/updatexlrator/autocheck/cron.monthly

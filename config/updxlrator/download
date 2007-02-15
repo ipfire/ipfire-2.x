@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) 2006 marco.s
+#
+# $Id: download,v 1.0 2006/08/30 00:00:00 marco.s Exp $
+#
+
+use strict;
+
+my $apphome="/var/ipfire/updatexlrator";
+my $logfile="/var/log/updatexlrator/download.log";
+my $debug=(-e "$apphome/debug");
+my $updcachedir="/srv/web/ipfire/html/updatecache";
+my $updfile='';
+my @metadata=();
+
+my $sfOk="1";
+
+my $dsturl=@ARGV[0]; if ($dsturl eq '') { exit; }
+
+$dsturl =~ s@\%2f@/@ig;
+$updfile = substr($dsturl,rindex($dsturl,"/")+1);
+
+# ---------------------------------------------------------------
+#  Retrieve file
+# ---------------------------------------------------------------
+
+if ($debug)
+{
+	&writelog("Retrieving file for local cache: $updfile");
+	`$apphome/bin/wget -nc -nd -nv -P $updcachedir/download $dsturl >>$logfile 2>&1`;
+} else
+{
+	`$apphome/bin/wget -nc -nd -nv -P $updcachedir/download $dsturl 2>&1`;
+}
+
+if ($debug) { &writelog("Moving file into the cache directory -> \"$updcachedir/$updfile\""); }
+system("mv $updcachedir/download/$updfile $updcachedir");
+
+# ---------------------------------------------------------------
+#  Write metadata
+# ---------------------------------------------------------------
+
+if ($debug) { &writelog("Writing metadata \"$updcachedir/metadata/$updfile\""); }
+
+open(FILE,"$updcachedir/metadata/$updfile");
+@metadata = <FILE>;
+close(FILE);
+chomp @metadata;
+$metadata[2]="$sfOk";
+$metadata[3]=time;
+open(FILE,">$updcachedir/metadata/$updfile");
+foreach (@metadata) { print FILE "$_\n"; }
+print FILE time."\n";
+close(FILE);
+
+# ===============================================================
+
+sub writelog
+{
+	open (LOGFILE,">>$logfile");
+	my @now = localtime(time);
+	printf LOGFILE "%02d:%02d:%02d %s\n",$now[2],$now[1],$now[0],$_[0];
+	close LOGFILE;
+}
+
+# ===============================================================
