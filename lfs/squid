@@ -108,9 +108,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 755 /usr/sbin/updxlrator /var/ipfire/updatexlrator/bin/checkup \
 		/var/ipfire/updatexlrator/bin/download
 
-	ln -s /bin/false /var/ipfire/updatexlrator/autocheck/cron.daily
-	ln -s /bin/false /var/ipfire/updatexlrator/autocheck/cron.monthly
-	ln -s /bin/false /var/ipfire/updatexlrator/autocheck/cron.weekly
+	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.daily
+	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.monthly
+	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.weekly
 
 	chown -R nobody:nobody /var/ipfire/updatexlrator
 	chown nobody.squid /srv/web/ipfire/html/updatecache

@@ -48,6 +48,7 @@
 * cdrtools-2.01
 * cftp-0.12
 * clamav-0.88.7
+* clamav-0.90
 * coreutils-5.96
 * cups-1.2.2
 * cyrus-imapd-2.2.12
@@ -218,6 +219,7 @@
 * spandsp-0.0.3pre24
 * squashfs3.0
 * squid-2.6.STABLE3
+* squid-2.6.STABLE9
 * squid-graph-3.2
 * squidGuard-1.2.0
 * stund_0.96_Aug13

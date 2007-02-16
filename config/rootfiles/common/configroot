@@ -38,6 +38,13 @@ var/ipfire/dmzholes
 var/ipfire/ethernet
 #var/ipfire/ethernet/aliases
 #var/ipfire/ethernet/settings
+#var/ipfire/extrahd
+#var/ipfire/extrahd/bin
+var/ipfire/extrahd/bin/extrahd.pl
+var/ipfire/extrahd/devices
+var/ipfire/extrahd/partitions
+var/ipfire/extrahd/scan
+var/ipfire/extrahd/settings
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/isdn
@@ -112,6 +119,9 @@ var/ipfire/time
 var/ipfire/urlfilter
 #var/ipfire/urlfilter/autoupdate
 #var/ipfire/urlfilter/bin
+var/ipfire/updatexlrator
+var/ipfire/updatexlrator/autocheck
+var/ipfire/updatexlrator/bin
 var/ipfire/upnp
 #var/ipfire/upnp/settings
 var/ipfire/vpn
