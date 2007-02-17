@@ -62,6 +62,7 @@ var/ipfire/main
 #var/ipfire/main/settings
 var/ipfire/mbmon
 #var/ipfire/mbmon/settings
+var/ipfire/menu.d
 var/ipfire/modem
 #var/ipfire/modem/defaults
 #var/ipfire/modem/settings
