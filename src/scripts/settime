@@ -46,22 +46,8 @@ if [ -n "$1" ]; then
 			case $tlanguage in
 				en ) date "+%X %Z on %d %B %Y" > /var/ipfire/time/lastset ;
 					logger -t ipfire "NTP synchronisation event" ;;
-				da ) date "+%k:%M:%S på %d/%m/%y" > /var/ipfire/time/lastset ;
-					logger -t ipfire "NTP synkronisering" ;;
 				de ) date "+%X Uhr am %d.%m.%Y" > /var/ipfire/time/lastset ;
 					logger -t ipfire "NTP Synchronisierung" ;;
-				fr ) date "+%X le %e/%m/%y" > /var/ipfire/time/lastset ;
-					logger -t ipfire "synchronisation NTP" ;;
-				it ) date "+%X il %d-%m-%Y" > /var/ipfire/time/lastset ;
-					logger -t ipfire "sincronizzazione NTP" ;;
-				nl ) date "+%X %e-%m-%Y" > /var/ipfire/time/lastset ;
-					logger -t ipfire "NTP synchronisatie" ;;
-				no ) date "+%X på %d-%m-%y" > /var/ipfire/time/lastset ;
-					logger -t ipfire "NTP synkronisering" ;;
-				sv ) date "+%H.%M.%S på %y-%m-%d" > /var/ipfire/time/lastset ;
-					logger -t ipfire "NTP synkronisering" ;;
-				es ) date "+%X %e/%-m/%y" > /var/ipfire/time/lastset ;
-					logger -t ipfire "NTP sincronizado" ;;
 				*  ) date "+%X %Z, %Y-%m-%d" > /var/ipfire/time/lastset ;
 					logger -t ipfire "NTP synchronisation" ;;
 			esac
@@ -73,8 +59,6 @@ if [ -n "$1" ]; then
 		else
 			case $tlanguage in
 				de ) logger -t ipfire "ntpdate fehlerhaft" ;;
-				fr ) logger -t ipfire "ntpdate erreur" ;;
-				it ) logger -t ipfire "ntpdate errato" ;;
 				*  ) logger -t ipfire "ntpdate error" ;;
 			esac
 		fi
