@@ -463,17 +463,13 @@ batch_script() {
 		export IPFIRE_START_TIME=`date`
 		evaluate 1
 
-		echo -ne "### RUNNING SVN-UPDATE"
+		echo "### RUNNING SVN-UPDATE"
 		$0 svn update
 		evaluate 1 mail_me SVNUPDATE
 
 		echo "### EXPORT SOURCES"
 		$0 svn dist
 		evaluate 1 mail_me SVNDIST
-
-		echo "### RUNNING PREFETCH"
-		$0 downloadsrc | grep -q "md5 difference"
-		evaluate 1 mail_me PREFETCH
 	fi
 
 	echo "### RUNNING BUILD"
@@ -488,7 +484,7 @@ batch_script() {
 	$0 upload paks
 	evaluate 1 mail_me PAKS
 
-	echo -n "${BOLD}***SUCCESS!${NORMAL}"
+	echo -ne "${BOLD}***SUCCESS!${NORMAL}"
 	evaluate 0 mail_me SUCCESS
 	exit 0
 }
@@ -540,12 +536,12 @@ END
 	esac
 	tar cfz $ATTACHMENT log/_build*
 	cat /tmp/ipfire_mail_body | tools/sendEmail -q \
-		-f $IPFIRE_MAIL_FROM \
-		-t $IPFIRE_MAIL_REPORT \
+		-f $MAIL_USER \
+		-t $MAIL_TO \
 		-u $SUBJECT \
-		-s $IPFIRE_MAIL_SERVER:25 \
-		-xu $IPFIRE_MAIL_USER \
-		-xp $IPFIRE_MAIL_PASS \
+		-s $MAIL_SERVER:25 \
+		-xu $MAIL_USER \
+		-xp $MAIL_PASS \
 		-l log/_build.mail.log \
 		-a $ATTACHMENT # -v
 	if [ "$?" -eq "0" ]; then

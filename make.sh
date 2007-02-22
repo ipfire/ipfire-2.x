@@ -992,7 +992,7 @@ EOF
 	esac
 	;;
 batch)
-	if [ "$2" -eq "--background" ]; then
+	if [ "$2" = "--background" ]; then
 		batch_script
 		exit $?
 	fi
