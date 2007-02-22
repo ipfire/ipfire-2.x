@@ -33,7 +33,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
-IPFVER="full devel"				# Which versions should be compiled? (full|light|voice|devel)
+IPFVER="full"				# Which versions should be compiled? (full|light|voice|devel)
 
 # Set an information about the build number
 if [ -e ./.svn ]; then
@@ -345,6 +345,7 @@ buildipfire() {
 #  ipfiremake promise-sata-300-tx
   ipfiremake zaptel
   ipfiremake fuse
+  ipfiremake pkg-config
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp
@@ -461,7 +462,6 @@ buildipfire() {
   ipfiremake spandsp
   ipfiremake lzo
   ipfiremake openvpn
-  ipfiremake pkg-config
   ipfiremake glib
   ipfiremake pammysql
   ipfiremake xinetd

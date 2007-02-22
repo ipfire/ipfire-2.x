@@ -17,20 +17,27 @@ package General;
 use strict;
 use Socket;
 use IO::Socket;
+use Net::SSLeay;
 
 $|=1; # line buffering
 
 $General::version = 'VERSION';
 $General::swroot = 'CONFIG_ROOT';
 $General::noipprefix = 'noipg-';
-$General::adminmanualurl = 'http://users.ipfire.eu';
+$General::adminmanualurl = 'http://wiki.ipfire.org';
 
+#
+# log ("message") use default 'ipcop' tag
+# log ("tag","message") use your tag
+#
 sub log
 {
+	my $tag='ipfire';
+	$tag = shift if (@_>1);
 	my $logmessage = $_[0];
 	$logmessage =~ /([\w\W]*)/;
 	$logmessage = $1;
-	system('/usr/bin/logger', '-t', 'ipfire', $logmessage);
+	system('/usr/bin/logger', '-t', $tag, $logmessage);
 }
 
 sub readhash
@@ -332,6 +339,18 @@ sub IpInSubnet
     return (($ip >= $start) && ($ip <= $end));
 }
 
+#
+# Return the following IP (IP+1) in dotted notation.
+# Call: NextIP ('1.1.1.1');
+# Return: '1.1.1.2'
+#
+sub NextIP
+{
+    return &Socket::inet_ntoa( pack("N", 1 +  unpack('N', &Socket::inet_aton(shift))
+				   )
+			     );
+}
+
 sub validemail {
     my $mail = shift;
     return 0 if ( $mail !~ /^[0-9a-zA-Z\.\-\_]+\@[0-9a-zA-Z\.\-]+$/ );
@@ -344,6 +363,11 @@ sub validemail {
     return 1;
 }
 
+#
+# Currently only vpnmain use this three procs (readhasharray, writehasharray, findhasharray)
+# The 'key' used is numeric but is perfectly unneeded! This will to be removed so don't use
+# this code. Vpnmain will be splitted in parts: x509/pki, connection ipsec, connection other,... .
+#
 sub readhasharray {
     my ($filename, $hash) = @_;
     %$hash = ();
@@ -354,7 +378,7 @@ sub readhasharray {
 	my ($key, $rest, @temp);
 	chomp;
 	($key, $rest) = split (/,/, $_, 2);
-	if ($key =~ /^[0-9]+$/ && $rest) {
+	if ($key =~ /^[0-9]+$/) {
 	    @temp = split (/,/, $rest);
 	    $hash->{$key} = \@temp;
         }
@@ -370,13 +394,13 @@ sub writehasharray {
     open(FILE, ">$filename") or die "Unable to write to file $filename";
 
     foreach $key (keys %$hash) {
-	if ( $hash->{$key} ) {
+	if ($key =~ /^[0-9]+$/) {
 	    print FILE "$key";
 	    foreach $i (0 .. $#{$hash->{$key}}) {
 		print FILE ",$hash->{$key}[$i]";
 	    }
+	    print FILE "\n";
 	}
-	print FILE "\n";
     }
     close FILE;
     return;
@@ -550,5 +574,55 @@ sub GetDyndnsRedIP {
 	}
     }
     return $ip;
+}
+
+# Translate ICMP code to text
+# ref: http://www.iana.org/assignments/icmp-parameters
+sub GetIcmpDescription ($) {
+    my $index = shift;
+    my @icmp_description = (
+    'Echo Reply',			#0
+    'Unassigned',
+    'Unassigned',
+    'Destination Unreachable',
+    'Source Quench',
+    'Redirect',
+    'Alternate Host Address',
+    'Unassigned',
+    'Echo',
+    'Router Advertisement',
+    'Router Solicitation',		#10
+    'Time Exceeded',
+    'Parameter Problem',
+    'Timestamp',
+    'Timestamp Reply',
+    'Information Request',
+    'Information Reply',
+    'Address Mask Request',
+    'Address Mask Reply',
+    'Reserved (for Security)',
+    'Reserved (for Robustness Experiment)', #20
+    'Reserved',
+    'Reserved',
+    'Reserved',
+    'Reserved',
+    'Reserved',
+    'Reserved',
+    'Reserved',
+    'Reserved',
+    'Reserved',
+    'Traceroute',				#30
+    'Datagram Conversion Error',
+    'Mobile Host Redirect',
+    'IPv6 Where-Are-You',
+    'IPv6 I-Am-Here',
+    'Mobile Registration Request',
+    'Mobile Registration Reply',
+    'Domain Name Request',
+    'Domain Name Reply',
+    'SKIP',
+    'Photur',				#40
+    'Experimental');
+    if ($index>41) {return 'unknown'} else {return @icmp_description[$index]};
 }
 1;

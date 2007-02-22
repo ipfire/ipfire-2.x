@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "Starting ntpd (if enabled)"
-/usr/local/bin/restartntpd

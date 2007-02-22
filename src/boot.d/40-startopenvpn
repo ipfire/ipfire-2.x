@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "Starting openvpn (if enabled)"
-/usr/local/bin/openvpnctrl --start-daemon-only >& /dev/null

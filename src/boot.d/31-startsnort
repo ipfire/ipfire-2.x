@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "Starting Snort (if enabled)"
-/usr/local/bin/restartsnort red blue orange green

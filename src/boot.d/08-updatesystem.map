@@ -1,9 +1,0 @@
-#!/bin/sh
-echo "Updating System.map file location"
-if [ -L /boot/System.map -a -r /boot/System.map-`uname -r` -a \
-	! /boot/System.map -ef /boot/System.map-`uname -r` ]; then
-	ln -s -f System.map-`uname -r` /boot/System.map
-fi
-if [ ! -e /boot/System.map -a -r /boot/System.map-`uname -r` ]; then
-	ln -s -f System.map-`uname -r` /boot/System.map
-fi

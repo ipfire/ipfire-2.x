@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "Rotating logs"
-/usr/sbin/logrotate /etc/logrotate.conf

@@ -1,5 +1,0 @@
-#!/bin/sh
-if [ -x /usr/sbin/isapnp -a -f /var/ipfire/isapnp/isapnp.conf -a ! -f /proc/isapnp ]; then
-	echo "Running isapnp"
-	/usr/sbin/isapnp /var/ipfire/isapnp/isapnp.conf 2>/dev/null
-fi

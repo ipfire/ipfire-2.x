@@ -10,7 +10,7 @@
 #
 
 use strict;
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 
 &General::log("PPP has gone up on $ARGV[0]");
 umask 022;
@@ -49,8 +49,8 @@ if (open(FILE, ">${General::swroot}/red/iface")) { print FILE $ARGV[0]; close (F
 if (open(FILE, ">${General::swroot}/red/local-ipaddress"))  { print FILE $ARGV[3]; close (FILE); }
 if (open(FILE, ">${General::swroot}/red/remote-ipaddress")) { print FILE $ARGV[4]; close (FILE); }
 
-system('/bin/touch', "${General::swroot}/red/active");
-system('/etc/rc.d/rc.updatered');
+system('/usr/bin/touch', "${General::swroot}/red/active");
+system('/etc/rc.d/init.d/network red update');
 
 # Beep when ppp goes up or down. Silence if 'nobeeps' file exists.
 if ( ! -e "${General::swroot}/ppp/nobeeps") {

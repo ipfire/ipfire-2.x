@@ -1,7 +1,0 @@
-#!/bin/sh
-if [ -e /etc/FLASH ]; then
-	if [ -e /etc/rc.d/rc.flash.up ]; then
-		echo "Decompressing Flash"
-		. /etc/rc.d/rc.flash.up
-	fi
-fi

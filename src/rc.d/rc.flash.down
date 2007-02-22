@@ -1,1 +1,0 @@
-tar -czf /var/log_compressed/log.tgz --exclude=/var/log/cache/* /var/log/*

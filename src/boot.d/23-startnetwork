@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "Running /etc/rc.d/rc.network"
-. /etc/rc.d/rc.network
-echo 7200 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established

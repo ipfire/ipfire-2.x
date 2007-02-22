@@ -1,4 +1,0 @@
-#!/bin/sh
-if [ "$KEYMAP" != "" ]; then
-	loadkeys $KEYMAP
-fi
