@@ -476,16 +476,16 @@ batch_script() {
 	$0 build
 	evaluate 1 mail_me ERROR
 
-	echo "### UPLOADING ISO"
-	$0 upload iso
-	evaluate 1 mail_me ISO
+#	echo "### UPLOADING ISO"
+#	$0 upload iso
+#	evaluate 1 mail_me ISO
 	
-	echo -ne "### UPLOADING PAKS"
-	$0 upload paks
-	evaluate 1 mail_me PAKS
+#	echo -ne "### UPLOADING PAKS"
+#	$0 upload paks
+#	evaluate 1 mail_me PAKS
 
 	echo -ne "${BOLD}***SUCCESS!${NORMAL}"
-	evaluate 0 mail_me SUCCESS
+	mail_me success
 	exit 0
 }
 
@@ -503,7 +503,7 @@ mail_me() {
 			SUBJECT="SUCCESS: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
 			cat <<END > /tmp/ipfire_mail_body
 Building IPFire on `hostname` in Revision $SVN_REVISION was successfull!
-You can find the ISO on your ftp server.
+You can find the ISO on your ftp server if you told the script where it is.
 
 Statistics:
 -----------

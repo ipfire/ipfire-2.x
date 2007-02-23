@@ -38,7 +38,7 @@ CGI_HOST=$1
 CGI_PORT=444
 CGI_URL="https://$CGI_HOST:$CGI_PORT/cgi-bin"
 USER=admin
-PASS=test
+PASS=ipfire
 CMD="wget -q -O /dev/null --http-user=$USER --http-passwd=$PASS"
 
 doTest() {
