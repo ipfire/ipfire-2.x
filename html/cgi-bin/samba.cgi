@@ -22,21 +22,22 @@ my %netsettings = ();
 my %ovpnsettings = ();
 my $message = "";
 my $errormessage = "";
-my $shareentry = "";
-my @shares = ();
-my @shareline = ();
 my $shareconfigentry = "";
 my @sharesconfig = ();
 my @shareconfigline = ();
+my $shareoption = '';
+my $defaultoption= "[Share]\npath = /shares/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\nguest ok = yes\npublic = yes\nforce user = samba";
 my $userentry = "";
 my @user = ();
 my @userline = ();
 my @proto = ();
 my %selected= () ;
-my $sharefile = "/var/ipfire/samba/shares";
 my $userfile = "/var/ipfire/samba/private/smbpasswd";
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
+
+############################################################################################################################
+############################################# Samba Dienste für Statusüberprüfung ##########################################
 
 my %servicenames =
 (
@@ -46,6 +47,27 @@ my %servicenames =
 );
 
 &Header::showhttpheaders();
+
+############################################################################################################################
+#################################### Initialisierung von Samba Sharess für die Verarbeitung ################################
+
+my @Zeilen= ();
+my @Shares= ();
+my $shareentry = "";
+my @shares = ();
+my @shareline = ();
+my $sharefile = "/var/ipfire/samba/shares";
+my $EOF = qx(cat $sharefile | wc -l);
+
+@shares = `grep -n '^\\[' $sharefile`;
+foreach $shareentry (@shares)
+ {
+ @shareline = split( /\:/, $shareentry );
+ push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
+ }
+
+############################################################################################################################
+#################################### Initialisierung von Samba Variablen für global Settings ###############################
 
 $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'NETBIOSNAME'} = 'IPFIRE';
@@ -73,16 +95,17 @@ $sambasettings{'ACTION'} = '';
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
-############################################################################################################################
+############################################# Samba Rootskript aufrufe für SU-Actions ######################################
 
-if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system('/usr/local/bin/sambactrl 1 $sambasettings{"NAME"}');}
-if ($sambasettings{'ACTION'} eq 'smbuserenable'){system('/usr/local/bin/sambactrl 2 $sambasettings{"NAME"}');}
-if ($sambasettings{'ACTION'} eq 'smbuserdelete'){system('/usr/local/bin/sambactrl 3 $sambasettings{"NAME"}');}
-if ($sambasettings{'ACTION'} eq 'smbuseradd'){system('/usr/local/bin/sambactrl 4 $username $password');}
-if ($sambasettings{'ACTION'} eq 'smbchangepw'){system('/usr/local/bin/sambactrl 5 $username $password');}
-if ($sambasettings{'ACTION'} eq 'smbsharechange'){system('/usr/local/bin/sambactrl 7 $sambasettings{"SHARENAME"} $sambasettings{"SHAREOPTION"}');}
-if ($sambasettings{'ACTION'} eq 'smbstart'){system('/usr/local/bin/sambactrl 8');}
-if ($sambasettings{'ACTION'} eq 'smbstop'){system('/usr/local/bin/sambactrl 9');}
+if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system('/usr/local/bin/sambactrl smbuserdisable $sambasettings{"NAME"}');}
+if ($sambasettings{'ACTION'} eq 'smbuserenable'){system('/usr/local/bin/sambactrl smbuserenable $sambasettings{"NAME"}');}
+if ($sambasettings{'ACTION'} eq 'smbuserdelete'){system('/usr/local/bin/sambactrl smbuserdelete $sambasettings{"NAME"}');}
+if ($sambasettings{'ACTION'} eq 'smbuseradd'){system('/usr/local/bin/sambactrl smbuseradd $username $password');}
+if ($sambasettings{'ACTION'} eq 'smbchangepw'){system('/usr/local/bin/sambactrl smbchangepw $username $password');}
+if ($sambasettings{'ACTION'} eq 'smbrestart'){system('/usr/local/bin/sambactrl smbrestart');}
+if ($sambasettings{'ACTION'} eq 'smbstart'){system('/usr/local/bin/sambactrl smbstart');}
+if ($sambasettings{'ACTION'} eq 'smbstop'){system('/usr/local/bin/sambactrl smbstop');}
+# smbsharechange is directly called by the if clause
 
 ############################################################################################################################
 ############################################## Samba Share neu anlegen #####################################################
@@ -90,7 +113,6 @@ if ($sambasettings{'ACTION'} eq 'smbstop'){system('/usr/local/bin/sambactrl 9');
 if ($sambasettings{'ACTION'} eq 'smbshareadd')
 {
   my $emptyline= ""; 
-  system('/usr/local/bin/sambactrl 6');
 	open (FILE, ">>${General::swroot}/samba/shares") or die "Can't save the shares settings: $!";
 	flock (FILE, 2);
 	
@@ -100,10 +122,138 @@ $emptyline
 END
 ;
 close FILE;
+system('/usr/local/bin/sambactrl smbsharechange');
+
+ @Zeilen = ();
+ @Shares = ();
+ @shares = `grep -n '^\\[' $sharefile`;
+ foreach $shareentry (@shares)
+ {
+ @shareline = split( /\:/, $shareentry );
+ push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
+ }
 }
 
 ############################################################################################################################
+################################################## Samba Share löschen #####################################################
+
+if ($sambasettings{'ACTION'} eq 'smbsharedel')
+{
+my $sharebody = '';
+my $sharehead = '';
+my $sharetext = '';
+my $sharename = "$sambasettings{'NAME'}";
+chomp $sharename;
+$sharename=~s/\s//g;
+
+for(my $i = 0; $i <= $#Shares; $i++)
+ {
+ chomp $Shares[$i];
+ $Shares[$i]=~s/\s//g;
+ if ( "$Shares[$i]" eq "$sharename" )
+  {
+  my $Zeilenbegin = $Zeilen[$i]-2;
+  my $Zeilenende =  $EOF-$Zeilen[$i+1]+1;
+  my $Zeilenende2 =  $Zeilenende-1;
+
+  if ( $Zeilen[$i] eq $Zeilen[$#Shares] )
+   {
+   $sharehead = qx(head -$Zeilenbegin $sharefile);
+   $sharetext = $sharehead;
+   }
+  elsif ($Zeilen[$i] eq 1 )
+   {
+   $sharehead = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
+   $sharetext = $sharehead;
+   }
+  else
+   {
+   $sharehead = qx(head -$Zeilenbegin $sharefile);$sharebody = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
+   $sharetext = "$sharehead\n$sharebody";
+   }
+  }
+ }
+ 
+open (FILE, ">${General::swroot}/samba/shares") or die "Can't delete the share settings: $!";
+flock (FILE, 2);
+print FILE <<END
+$sharetext
+END
+;
+close FILE;
+system('/usr/local/bin/sambactrl smbsharechange');
+
+@Zeilen = ();
+@Shares = ();
+@shares = `grep -n '^\\[' $sharefile`;
+foreach $shareentry (@shares)
+ {
+ @shareline = split( /\:/, $shareentry );
+ push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
+ }
+}
 ############################################################################################################################
+################################################## Sambashare ändern #######################################################
+
+if ($sambasettings{'ACTION'} eq 'smbsharechange')
+{
+my $sharebody = '';
+my $sharehead = '';
+my $sharename = "$sambasettings{'NAME'}";
+my $sharetext = '';
+chomp $sharename;
+$sharename=~s/\s//g;
+
+for(my $i = 0; $i <= $#Shares; $i++)
+ {
+ chomp $Shares[$i];
+ $Shares[$i]=~s/\s//g;
+ if ( "$Shares[$i]" eq "$sharename" )
+  {
+  my $Zeilenbegin = $Zeilen[$i]-2;
+  my $Zeilenende =  $EOF-$Zeilen[$i+1]+1;
+  my $Zeilenende2 =  $Zeilenende-1;
+
+  if ( $Zeilen[$i] eq $Zeilen[$#Shares] )
+   {
+   $sharehead = qx(head -$Zeilenbegin $sharefile);
+   $sharetext = $sharehead;
+   }
+  elsif ($Zeilen[$i] eq 1 )
+   {
+   $sharehead = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
+   $sharetext = $sharehead;
+   }
+  else
+   {
+   $sharehead = qx(head -$Zeilenbegin $sharefile);$sharebody = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
+   $sharetext = "$sharehead\n$sharebody";
+   }
+  }
+ }
+ 
+open (FILE, ">${General::swroot}/samba/shares") or die "Can't delete the share settings: $!";
+flock (FILE, 2);
+print FILE <<END
+$sharetext
+$sambasettings{'SHAREOPTION'}
+END
+;
+close FILE;
+system('/usr/local/bin/sambactrl smbsharechange');
+
+ @Zeilen = ();
+ @Shares = ();
+ @shares = `grep -n '^\\[' $sharefile`;
+ foreach $shareentry (@shares)
+ {
+ @shareline = split( /\:/, $shareentry );
+ push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
+ }
+}
+
+############################################################################################################################
+##################################### Umsetzen der Werte von Checkboxen und Dropdowns ######################################
 
 if ($sambasettings{'ACTION'} eq $Lang::tr{'save'})
 {
@@ -115,7 +265,7 @@ if ($checked{'VPN'}){ $sambasettings{'INTERFACES'} = "$sambasettings{'INTERFACES
 if ($sambasettings{'OTHERINTERFACES'} ne ''){ $sambasettings{'INTERFACES'} = "$sambasettings{'INTERFACES'} $sambasettings{'OTHERINTERFACES'}";}
 
 ############################################################################################################################
-############################################################################################################################	
+############################################# Schreiben der Samba globals ##################################################
 
   &General::writehash("${General::swroot}/samba/settings", \%sambasettings);
 
@@ -174,6 +324,9 @@ if ($errormessage) {
         &Header::closebox();
                   }
 
+############################################################################################################################
+########################################## Aktivieren von Checkboxen und Dropdowns #########################################
+
 $checked{'WINSSUPPORT'}{$sambasettings{'WINSSUPPORT'}} = "checked='checked' ";
 $checked{'GREEN'}{$sambasettings{'GREEN'}} = "checked='checked' ";
 $checked{'BLUE'}{$sambasettings{'BLUE'}} = "checked='checked' ";
@@ -184,7 +337,7 @@ $selected{'MAPTOGUEST'}{$sambasettings{'MAPTOGUEST'}} = "selected='selected'";
 $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 
 ############################################################################################################################
-############################################################################################################################
+################################### Aufbau der HTML Seite für globale Sambaeinstellungen ###################################
 
 &Header::openbox('100%', 'center', 'Samba');
 print <<END
@@ -278,6 +431,9 @@ END
 ;
 &Header::closebox();
 
+############################################################################################################################
+########################################## Benutzerverwaltung für Usersecurity #############################################
+
 if ($sambasettings{'SECURITY'} eq 'user')
 {
 &Header::openbox('100%', 'center', 'accounting - user Security');
@@ -290,9 +446,13 @@ print <<END
         <tr><td><u>Benutzername</u></td><td><u>Passwort</u></td><td><u>Status</u></td><td colspan='3' width="5"><u>Optionen</u></td></tr>
 END
 ;
-        open( FILE, "< $userfile") or die "Can't read user file: $!";
+
+        system('/usr/local/bin/sambactrl readsmbpasswd');
+        open(FILE, "</var/ipfire/samba/private/smbpasswd") or die "Can't read user file: $!";
+        flock (FILE, 2);
         @user = <FILE>;
         close(FILE);
+        system('/usr/local/bin/sambactrl locksmbpasswd');
         foreach $userentry (sort @user)
         {
         @userline = split( /\:/, $userentry );
@@ -410,6 +570,9 @@ END
 
 &Header::closebox();
 }
+
+############################################################################################################################
+############################################### Verwalten von Freigaben ####################################################
         
 &Header::openbox('100%', 'center', 'Shares');
 
@@ -420,14 +583,7 @@ print <<END
         <tr><td><u>Names des Shares</u></td><td colspan='2' width="5"><u>Optionen</u></td></tr>
 END
 ;
-        my @Zeilen;
-        my @Shares;
-        @shares = `grep -n '^\\[' $sharefile`;
-        foreach $shareentry (@shares)
-        {
-         @shareline = split( /\:/, $shareentry );
-         push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
-        }
+
         
         foreach $shareentry (sort @Shares)
         {
@@ -440,7 +596,7 @@ END
             </td></form>
             <td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
                  <input type='hidden' name='NAME' value='$shareentry'>
-                 <input type='hidden' name='ACTION' value='Loeschen'>
+                 <input type='hidden' name='ACTION' value='smbsharedel'>
                  <input type='image' alt='Loeschen' src='/images/delete.gif'>
             </td></form><tr>
 END
@@ -475,9 +631,6 @@ END
 
 if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optioncaption' )
 {
-
-my $defaultoption= "[Share]\npath = /shares/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\nguest ok = yes\npublic = yes\nforce user = samba";
-
         print <<END
         <hr>
         <table width='500px' cellspacing='0'><br>
@@ -499,7 +652,6 @@ END
 if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'optioncaption2' )
 {
         my $sharename = "$sambasettings{'NAME'}";
-        my $shareoption = '';
         chomp $sharename;
         $sharename=~s/\s//g;
 
@@ -511,7 +663,6 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
            {
             my $Zeilenbegin = $Zeilen[$i+1]-2;
             my $Zeilenende =  $Zeilen[$i+1]-$Zeilen[$i];
-            my $EOF = qx(cat $sharefile | wc -l);
             if ( $Zeilen[$i] eq $Zeilen[$#Shares] )
              {$Zeilenende =  $EOF-$Zeilen[$#Shares]+1;$Zeilenbegin = $EOF-$Zeilen[$#Shares]; $shareoption = qx(tail -$Zeilenende $sharefile | head -$Zeilenbegin);}
             else{$shareoption = qx(head -$Zeilenbegin $sharefile | tail -$Zeilenende);}
@@ -530,7 +681,9 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
         <tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
         </table>
         <table width='50px' cellspacing='0'><br>
-        <tr><td align='center'><input type='submit' name='ACTION' value='smbsharechange'></td></tr></form>
+        <tr><td align='center'>
+                                <input type='hidden' name='NAME' value='$sharename'>
+                                <input type='submit' name='ACTION' value='smbsharechange'></td></tr></form>
         </table>
 END
 ;
@@ -593,7 +746,7 @@ END
 &Header::closepage();
 
 ############################################################################################################################
-############################################################################################################################
+############################################ Subfunktion für Sambadienste ##################################################
 
 sub isrunning
 {
