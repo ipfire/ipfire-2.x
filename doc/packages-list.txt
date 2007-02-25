@@ -123,6 +123,8 @@
 * lame-3.96.1
 * lcms-1.15
 * less-394
+* libaal-1.0.5
+* libaal-1.0.5-minimal
 * libart_lgpl-2.3.17
 * libcap-1.10
 * libmad-0.15.1b
@@ -200,6 +202,7 @@
 * psmisc-22.2
 * razor-agents-2.81
 * readline-5.1
+* reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
 * rp-pppoe-3.8
 * rrdtool-1.2.15

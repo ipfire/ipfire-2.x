@@ -1,0 +1,604 @@
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/config.h.in grub-0.97-1/config.h.in
+--- grub-0.97/config.h.in	2005-05-08 06:48:19.000000000 +0400
++++ grub-0.97-1/config.h.in	2005-08-05 22:48:24.000000000 +0400
+@@ -27,9 +27,16 @@
+ /* Define to 1 if you have the <inttypes.h> header file. */
+ #undef HAVE_INTTYPES_H
+ 
++/* Define to 1 if you have the `aal-minimal' library (-laal-minimal). */
++#undef HAVE_LIBAAL_MINIMAL
++
+ /* Define if you have a curses library */
+ #undef HAVE_LIBCURSES
+ 
++/* Define to 1 if you have the `reiser4-minimal' library (-lreiser4-minimal).
++   */
++#undef HAVE_LIBREISER4_MINIMAL
++
+ /* Define to 1 if you have the <memory.h> header file. */
+ #undef HAVE_MEMORY_H
+ 
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/configure.ac grub-0.97-1/configure.ac
+--- grub-0.97/configure.ac	2005-05-08 06:36:03.000000000 +0400
++++ grub-0.97-1/configure.ac	2005-08-05 22:48:24.000000000 +0400
+@@ -263,6 +263,77 @@ if test x"$enable_reiserfs" != xno; then
+   FSYS_CFLAGS="$FSYS_CFLAGS -DFSYS_REISERFS=1"
+ fi
+ 
++dnl Checking for reiser4
++REISER4_LIBS=""
++REISER4_CFLAGS=""
++
++OLD_LIBS=$LIBS
++OLD_CFLAGS=$CFLAGS
++LIBS=""
++CFLAGS=""
++
++AC_ARG_ENABLE(reiser4,
++  [  --disable-reiser4       disable Reiser4 support in Stage 2])
++
++if test x"$enable_reiser4" != xno; then
++  AC_CHECK_LIB(aal-minimal, aal_mem_init, , 
++    AC_MSG_WARN(
++Reiser4 support is disabled due to inability find libaal-minimal with 
++memory manager support turned on.)
++    enable_reiser4=no
++  )
++fi
++  
++if test x"$enable_reiser4" != xno; then
++  AC_CHECK_HEADER(aal/libaal.h, ,
++  AC_MSG_WARN(
++Libaal header files are not found. Reiser4 support is disabled
++  )
++  enable_reiser4=no)
++fi
++  
++if test x"$enable_reiser4" != xno; then
++  AC_CHECK_LIB(reiser4-minimal, reiser4_fs_open, , 
++  AC_MSG_WARN(
++Reiser4 support is disabled due to inability find valid libreiser4-minimal.)
++    enable_reiser4=no, 
++    -laal-minimal
++  )
++fi
++
++if test x"$enable_reiser4" != xno; then
++  AC_CHECK_HEADER(reiser4/libreiser4.h, ,
++  AC_MSG_WARN(
++Reiser4 header files are not found. Reiser4 support is disabled.
++  )
++  enable_reiser4=no)
++fi
++
++if test x"$enable_reiser4" != xno; then
++  REISER4_CFLAGS="$REISER4_CFLAGS -DFSYS_REISER4=1"
++  REISER4_LIBS=$LIBS
++fi
++
++if test x"$enable_reiser4" != xno; then
++  AC_CHECK_LIB(reiser4-minimal, __sym40_plug_init, 
++    REISER4_CFLAGS="$REISER4_CFLAGS -DENABLE_SYMLINKS=1",
++AC_MSG_WARN(Reiser4 symlinks support is disabled.), 
++    -laal-minimal
++  )
++fi
++
++LIBS=$OLD_LIBS
++CFLAGS=$OLD_CFLAGS
++
++if test x"$enable_reiser4" != xno; then
++  enable_reiser4_support=yes
++  FSYS_CFLAGS="$FSYS_CFLAGS $REISER4_CFLAGS"
++fi
++
++AC_SUBST(REISER4_LIBS)
++AC_SUBST(REISER4_CFLAGS)
++AM_CONDITIONAL(ENABLE_REISER4_SUPPORT, test x"$enable_reiser4" != xno)
++
+ AC_ARG_ENABLE(vstafs,
+   [  --disable-vstafs        disable VSTa FS support in Stage 2])
+ 
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/docs/grub.texi grub-0.97-1/docs/grub.texi
+--- grub-0.97/docs/grub.texi	2005-05-08 06:59:59.000000000 +0400
++++ grub-0.97-1/docs/grub.texi	2005-08-05 22:48:24.000000000 +0400
+@@ -283,7 +283,7 @@ devices, partitions, and files in a dire
+ Support multiple filesystem types transparently, plus a useful explicit
+ blocklist notation. The currently supported filesystem types are
+ @dfn{BSD FFS}, @dfn{DOS FAT16 and FAT32}, @dfn{Minix fs}, @dfn{Linux
+-ext2fs}, @dfn{ReiserFS}, @dfn{JFS}, @dfn{XFS}, and @dfn{VSTa
++ext2fs}, @dfn{ReiserFS}, @dfn{ReiserFS}, @dfn{JFS}, @dfn{XFS}, and @dfn{VSTa
+ fs}. @xref{Filesystem}, for more information.
+ 
+ @item Support automatic decompression
+@@ -1776,6 +1776,7 @@ itself. Usually, this is put in a filesy
+ @itemx jfs_stage1_5
+ @itemx minix_stage1_5
+ @itemx reiserfs_stage1_5
++@itemx reiser4_stage1_5
+ @itemx vstafs_stage1_5
+ @itemx xfs_stage1_5
+ 
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/grub/Makefile.am grub-0.97-1/grub/Makefile.am
+--- grub-0.97/grub/Makefile.am	2005-02-02 23:38:19.000000000 +0300
++++ grub-0.97-1/grub/Makefile.am	2005-08-05 22:48:24.000000000 +0400
+@@ -16,4 +16,4 @@ AM_CPPFLAGS = -DGRUB_UTIL=1 -DFSYS_EXT2F
+ AM_CFLAGS = $(GRUB_CFLAGS)
+ 
+ grub_SOURCES = main.c asmstub.c
+-grub_LDADD = ../stage2/libgrub.a  ../lib/libcommon.a $(GRUB_LIBS)
++grub_LDADD = ../stage2/libgrub.a  ../lib/libcommon.a $(GRUB_LIBS) $(REISER4_LIBS)
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/INSTALL grub-0.97-1/INSTALL
+--- grub-0.97/INSTALL	2005-05-08 06:43:15.000000000 +0400
++++ grub-0.97-1/INSTALL	2005-08-05 22:48:24.000000000 +0400
+@@ -207,6 +207,9 @@ operates.
+ `--disable-reiserfs'
+      Omit the ReiserFS support in Stage 2.
+ 
++`--disable-reiser4'
++     Omit the Reiser4 support in Stage 2.
++
+ `--disable-vstafs'
+      Omit the VSTa filesystem support in Stage 2.
+ 
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/stage2/builtins.c grub-0.97-1/stage2/builtins.c
+--- grub-0.97/stage2/builtins.c	2005-02-16 00:58:23.000000000 +0300
++++ grub-0.97-1/stage2/builtins.c	2005-08-05 22:48:24.000000000 +0400
+@@ -3880,6 +3880,7 @@ setup_func (char *arg, int flags)
+     {"jfs",      "/jfs_stage1_5"},
+     {"minix",    "/minix_stage1_5"},
+     {"reiserfs", "/reiserfs_stage1_5"},
++    {"reiser4",  "/reiser4_stage1_5"},
+     {"vstafs",   "/vstafs_stage1_5"},
+     {"xfs",      "/xfs_stage1_5"}
+   };
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/stage2/disk_io.c grub-0.97-1/stage2/disk_io.c
+--- grub-0.97/stage2/disk_io.c	2004-05-23 20:35:24.000000000 +0400
++++ grub-0.97-1/stage2/disk_io.c	2005-08-05 22:48:24.000000000 +0400
+@@ -63,6 +63,9 @@ struct fsys_entry fsys_table[NUM_FSYS + 
+ # ifdef FSYS_REISERFS
+   {"reiserfs", reiserfs_mount, reiserfs_read, reiserfs_dir, 0, reiserfs_embed},
+ # endif
++# ifdef FSYS_REISER4
++  {"reiser4", reiser4_mount, reiser4_read, reiser4_dir, 0, reiser4_embed},
++# endif
+ # ifdef FSYS_VSTAFS
+   {"vstafs", vstafs_mount, vstafs_read, vstafs_dir, 0, 0},
+ # endif
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/stage2/filesys.h grub-0.97-1/stage2/filesys.h
+--- grub-0.97/stage2/filesys.h	2004-05-14 23:36:43.000000000 +0400
++++ grub-0.97-1/stage2/filesys.h	2005-08-05 22:48:24.000000000 +0400
+@@ -77,6 +77,16 @@ int reiserfs_embed (int *start_sector, i
+ #define FSYS_REISERFS_NUM 0
+ #endif
+ 
++#ifdef FSYS_REISER4
++#define FSYS_REISER4_NUM 1
++int reiser4_mount (void);
++int reiser4_read (char *buf, int len);
++int reiser4_dir (char *dirname);
++int reiser4_embed (int *start_sector, int needed_sectors);
++#else
++#define FSYS_REISER4_NUM 0
++#endif
++
+ #ifdef FSYS_VSTAFS
+ #define FSYS_VSTAFS_NUM 1
+ int vstafs_mount (void);
+@@ -127,8 +137,8 @@ int iso9660_dir (char *dirname);
+ #ifndef NUM_FSYS
+ #define NUM_FSYS	\
+   (FSYS_FFS_NUM + FSYS_FAT_NUM + FSYS_EXT2FS_NUM + FSYS_MINIX_NUM	\
+-   + FSYS_REISERFS_NUM + FSYS_VSTAFS_NUM + FSYS_JFS_NUM + FSYS_XFS_NUM	\
+-   + FSYS_TFTP_NUM + FSYS_ISO9660_NUM + FSYS_UFS2_NUM)
++   + FSYS_REISERFS_NUM + FSYS_REISER4_NUM + FSYS_VSTAFS_NUM + FSYS_JFS_NUM \
++   + FSYS_XFS_NUM + FSYS_TFTP_NUM + FSYS_ISO9660_NUM + FSYS_UFS2_NUM)
+ #endif
+ 
+ /* defines for the block filesystem info area */
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/stage2/fsys_reiser4.c grub-0.97-1/stage2/fsys_reiser4.c
+--- grub-0.97/stage2/fsys_reiser4.c	1970-01-01 03:00:00.000000000 +0300
++++ grub-0.97-1/stage2/fsys_reiser4.c	2005-08-05 22:48:24.000000000 +0400
+@@ -0,0 +1,260 @@
++/* 
++ *  fsys_reiser4.c -- reiser4 filesystem support.
++ *  Copyright (C) 2000, 2001   Free Software Foundation, Inc.
++ *  
++ *  GRUB  --  GRand Unified Bootloader
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++*/
++
++#ifdef FSYS_REISER4
++#include "shared.h"
++#include "filesys.h"
++
++#define ENABLE_MINIMAL
++#include <reiser4/libreiser4.h>
++
++static reiser4_fs_t *fs = NULL;
++static aal_device_t *dev = NULL;
++static reiser4_object_t *object = NULL;
++
++/* Read callback of grub specific device. It uses devread() for reading passed
++   @count of device blocks starting from @blk to passed @buff. */
++static errno_t grub_dev_read(aal_device_t *device,
++			     void *buff, blk_t blk,
++			     count_t count)
++{
++	unsigned int size;
++	unsigned int factor;
++	unsigned int sector;
++
++	/* Calculating actual sector and size in bytes to be read from
++	   device. */
++	factor = device->blksize / SECTOR_SIZE;
++	sector = (unsigned int)blk << aal_log2(factor);
++	size = (unsigned int)count * (SECTOR_SIZE * factor);
++	
++	/* Reading from the current device */
++        if (!devread(sector, 0, size, buff))
++    	        return -EIO;
++		
++	return 0;
++}
++
++/* Length callback of grub device */
++static count_t grub_dev_len(aal_device_t *device) {
++	unsigned int factor;
++
++	/* Getting partition length in device blocks */
++	factor = device->blksize / SECTOR_SIZE;
++	return (part_length >> aal_log2(factor));
++}
++
++/*
++  Initializing grub device abstraction instance. It will use devread and friends
++  for providing needed functionality.
++*/
++struct aal_device_ops grub_dev_ops = {
++	.read   = grub_dev_read,
++	.len    = grub_dev_len
++};
++
++/* Initializes reiser4 */
++static int reiser4_init(void) {
++	extern aal_hash_table_t *plugins;
++	
++	plugins = NULL;
++
++	/* Initializing memory manager */
++	aal_mem_init((void *)FSYS_BUF, FSYS_BUFLEN);
++
++	/* Initializing device abstraction on current device GRUB uses. */
++	if (!(dev = aal_device_open(&grub_dev_ops, NULL,
++				    SECTOR_SIZE, 0)))
++	{
++		return 0;
++	}
++
++	/* Initializing libreiser4 (plugins, etc) */
++	return !libreiser4_init();
++}
++
++#define MEMORY_WATERMARK 8192
++
++/* Memory pressure detect function. */
++static int mpressure_detect(reiser4_tree_t *tree) {
++	return (aal_mem_free() <= MEMORY_WATERMARK);
++}
++
++/* Reiser4 mount() routine */
++int reiser4_mount(void) {
++	
++	/* Initialize all reiser4 related stuff first */
++	if (!reiser4_init())
++		return 0;
++	
++	/* Open filesystem on @dev. */
++	if (!(fs = reiser4_fs_open(dev)))
++		return 0;
++
++	fs->tree->mpc_func = mpressure_detect;
++	
++	object = NULL;
++	return 1;
++}
++
++/* Reiser4 read() handler */
++int reiser4_read(char *buf, int len) {
++	int64_t read;
++
++	if (object == NULL)
++		return 0;
++
++	/* Seet at current position denoted by @filepos */
++	if (objplug(object)->o.object_ops->seek) {
++		plug_call(objplug(object)->o.object_ops,
++			  seek, object->ent, filepos);
++	}
++	
++	/* Reading current file data starting from @filepos */
++	disk_read_func = disk_read_hook;
++	read = objplug(object)->o.object_ops->read ?
++		plug_call(objplug(object)->o.object_ops, read, 
++			  object->ent, buf, len) : -EINVAL;
++	disk_read_func = NULL;
++
++	if (read < 0) {
++		errnum = ERR_FSYS_CORRUPT;
++		return 0;
++	}
++
++    	filepos += read;
++	return read;
++}
++
++/* Reiser4 file open() routine */
++int reiser4_dir(char *dirname) {
++	char *ch;
++	
++	if (fs == NULL)
++		return 0;
++
++	if (object != NULL) {
++		plug_call(objplug(object)->o.object_ops, 
++			  close, object->ent);
++		aal_free(object);
++		object = NULL;
++	}
++
++	/* Cutting out string after first space character */
++    	if ((ch = aal_strchr(dirname, ' ')))
++		*ch = '\0';
++		
++	/* This function is also called for getting directory list for
++	   maintaining the bash-like completion. */
++#ifndef STAGE1_5
++	if (print_possibilities) {
++		char entry[256];
++		entry_hint_t entry_hint;
++		
++		/* Getting last part of name (jsut after last '/') */
++		if (*(dirname + aal_strlen(dirname) - 1) != '/') {
++		
++			if (!(ch = aal_strrchr(dirname, '/'))) {
++				errnum = ERR_BAD_FILETYPE;
++				return 0;
++			}
++
++			aal_strncpy(entry, ch + 1, sizeof(entry));
++			*(ch + 1) = '\0';
++		} else {
++			aal_memset(entry, 0, sizeof(entry));
++		}
++
++		/* Open obejct by @dirname */
++		if (!(object = reiser4_semantic_open(fs->tree, dirname, 
++						     NULL, 1))) 
++		{
++			errnum = ERR_FILE_NOT_FOUND;
++			return 0;
++		}
++
++		/* Checking if it is a directory object */
++		if (object->ent->opset.plug[OPSET_OBJ]->id.group != DIR_OBJECT)
++		{
++			/* If not, cutting out last '/' character */
++    			if ((ch = aal_strrchr(dirname, '/')))
++				*ch = '\0';
++
++			/* Close current object */
++			plug_call(objplug(object)->o.object_ops, 
++				  close, object->ent);
++			aal_free(object);
++			return 0;
++		}
++		
++		/* Reading the opened directory to build the completion list. */
++		if (objplug(object)->o.object_ops->readdir) {
++			while (plug_call(objplug(object)->o.object_ops, readdir,
++					 object->ent, &entry_hint) > 0) 
++			{
++				if (substring(entry, entry_hint.name) <= 0) {
++					if (print_possibilities > 0)
++						print_possibilities = 
++							-print_possibilities;
++				
++					print_a_completion(entry_hint.name);
++				}
++			}
++		}
++	} else {
++#endif
++		/* This is the case when resier4_dir() is called for open the
++		   file @dirname, not for building completion list. */
++		if (!(object = reiser4_semantic_open(fs->tree, dirname,
++						     NULL, 1))) 
++		{
++			errnum = ERR_FILE_NOT_FOUND;
++			return 0;
++		}
++		
++		if (object->ent->opset.plug[OPSET_OBJ]->id.group != REG_OBJECT)
++		{
++			errnum = ERR_BAD_FILETYPE;
++			return 0;
++		}
++		
++		/* Initializing GRUB global variables @filepos and @filemax. */
++		filepos = 0;
++		filemax = reiser4_object_size(object);
++	
++		return 1;
++#ifndef STAGE1_5
++	}
++
++	return 1;
++#endif
++
++	errnum = ERR_FILE_NOT_FOUND;
++	return 0;
++}
++
++/* Returns how many sectors may be used for embeding reiser4_stage1_5 in teh
++   case of installing GRUB to partition instead of MBR. */
++int reiser4_embed (int *start_sector, int needed_sectors) {
++	*start_sector = 1;
++	return needed_sectors <= ((REISER4_MASTER_OFFSET >> SECTOR_BITS) - 1);
++}
++#endif /* FSYS_REISER4 */
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/stage2/Makefile.am grub-0.97-1/stage2/Makefile.am
+--- grub-0.97/stage2/Makefile.am	2005-02-02 23:37:35.000000000 +0300
++++ grub-0.97-1/stage2/Makefile.am	2005-08-05 22:48:24.000000000 +0400
+@@ -13,17 +13,25 @@ EXTRA_DIST = setjmp.S apm.S $(noinst_SCR
+ # For <stage1.h>.
+ INCLUDES = -I$(top_srcdir)/stage1
+ 
++if ENABLE_REISER4_SUPPORT
++REISER4_STAGE1_5 = reiser4_stage1_5
++REISER4_STAGE1_5_EXEC = reiser4_stage1_5.exec
++else
++REISER4_STAGE1_5 =
++REISER4_STAGE1_5_EXEC =
++endif
++
+ # The library for /sbin/grub.
+ noinst_LIBRARIES = libgrub.a
+ libgrub_a_SOURCES = boot.c builtins.c char_io.c cmdline.c common.c \
+ 	disk_io.c fsys_ext2fs.c fsys_fat.c fsys_ffs.c fsys_iso9660.c \
+-	fsys_jfs.c fsys_minix.c fsys_reiserfs.c fsys_ufs2.c \
++	fsys_jfs.c fsys_minix.c fsys_reiserfs.c fsys_reiser4.c fsys_ufs2.c \
+ 	fsys_vstafs.c fsys_xfs.c gunzip.c md5.c serial.c stage2.c \
+ 	terminfo.c tparm.c
+ libgrub_a_CFLAGS = $(GRUB_CFLAGS) -I$(top_srcdir)/lib \
+ 	-DGRUB_UTIL=1 -DFSYS_EXT2FS=1 -DFSYS_FAT=1 -DFSYS_FFS=1 \
+ 	-DFSYS_ISO9660=1 -DFSYS_JFS=1 -DFSYS_MINIX=1 -DFSYS_REISERFS=1 \
+-	-DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 \
++	$(REISER4_CFLAGS) -DFSYS_UFS2=1 -DFSYS_VSTAFS=1 -DFSYS_XFS=1 \
+ 	-DUSE_MD5_PASSWORDS=1 -DSUPPORT_SERIAL=1 -DSUPPORT_HERCULES=1
+ 
+ # Stage 2 and Stage 1.5's.
+@@ -34,24 +42,26 @@ EXTRA_PROGRAMS = nbloader.exec pxeloader
+ if DISKLESS_SUPPORT
+ pkglib_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
+ 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
+-	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5 \
+-	nbgrub pxegrub
++	reiserfs_stage1_5 $(REISER4_STAGE1_5) ufs2_stage1_5 \
++	vstafs_stage1_5 xfs_stage1_5 nbgrub pxegrub
+ noinst_DATA = pre_stage2 start start_eltorito nbloader pxeloader diskless
+ noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
+ 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
+ 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
+-	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
+-	xfs_stage1_5.exec nbloader.exec pxeloader.exec diskless.exec
++	reiserfs_stage1_5.exec $(REISER4_STAGE1_5_EXEC) ufs2_stage1_5.exec \
++	vstafs_stage1_5.exec xfs_stage1_5.exec nbloader.exec pxeloader.exec \
++	diskless.exec
+ else
+ pkglib_DATA = stage2 stage2_eltorito e2fs_stage1_5 fat_stage1_5 \
+ 	ffs_stage1_5 iso9660_stage1_5 jfs_stage1_5 minix_stage1_5 \
+-	reiserfs_stage1_5 ufs2_stage1_5 vstafs_stage1_5 xfs_stage1_5
++	reiserfs_stage1_5 $(REISER4_STAGE1_5) ufs2_stage1_5 \
++	vstafs_stage1_5 xfs_stage1_5
+ noinst_DATA = pre_stage2 start start_eltorito
+ noinst_PROGRAMS = pre_stage2.exec start.exec start_eltorito.exec \
+ 	e2fs_stage1_5.exec fat_stage1_5.exec ffs_stage1_5.exec \
+ 	iso9660_stage1_5.exec jfs_stage1_5.exec minix_stage1_5.exec \
+-	reiserfs_stage1_5.exec ufs2_stage1_5.exec vstafs_stage1_5.exec \
+-	xfs_stage1_5.exec
++	reiserfs_stage1_5.exec $(REISER4_STAGE1_5_EXEC) ufs2_stage1_5.exec \
++	vstafs_stage1_5.exec xfs_stage1_5.exec
+ endif
+ MOSTLYCLEANFILES = $(noinst_PROGRAMS)
+ 
+@@ -79,7 +89,7 @@ else
+ HERCULES_FLAGS =
+ endif
+ 
+-STAGE2_COMPILE = $(STAGE2_CFLAGS) -fno-builtin -nostdinc \
++STAGE2_COMPILE = $(STAGE2_CFLAGS) -fno-builtin \
+ 	$(NETBOOT_FLAGS) $(SERIAL_FLAGS) $(HERCULES_FLAGS)
+ 
+ STAGE1_5_LINK = -nostdlib -Wl,-N -Wl,-Ttext -Wl,2000
+@@ -89,14 +99,17 @@ STAGE1_5_COMPILE = $(STAGE2_COMPILE) -DN
+ pre_stage2_exec_SOURCES = asm.S bios.c boot.c builtins.c char_io.c \
+ 	cmdline.c common.c console.c disk_io.c fsys_ext2fs.c \
+ 	fsys_fat.c fsys_ffs.c fsys_iso9660.c fsys_jfs.c fsys_minix.c \
+-	fsys_reiserfs.c fsys_ufs2.c fsys_vstafs.c fsys_xfs.c gunzip.c \
+-	hercules.c md5.c serial.c smp-imps.c stage2.c terminfo.c tparm.c
++	fsys_reiserfs.c fsys_reiser4.c fsys_ufs2.c fsys_vstafs.c \
++	fsys_xfs.c gunzip.c hercules.c md5.c serial.c smp-imps.c \
++	stage2.c terminfo.c tparm.c
+ pre_stage2_exec_CFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
+ pre_stage2_exec_CCASFLAGS = $(STAGE2_COMPILE) $(FSYS_CFLAGS)
+ pre_stage2_exec_LDFLAGS = $(PRE_STAGE2_LINK)
+ 
+ if NETBOOT_SUPPORT
+-pre_stage2_exec_LDADD = ../netboot/libdrivers.a
++pre_stage2_exec_LDADD = ../netboot/libdrivers.a $(REISER4_LIBS)
++else
++pre_stage2_exec_LDADD = $(REISER4_LIBS)
+ endif
+ 
+ if DISKLESS_SUPPORT
+@@ -190,6 +203,16 @@ reiserfs_stage1_5_exec_CCASFLAGS = $(STA
+ 	-DNO_BLOCK_FILES=1
+ reiserfs_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
+ 
++# For reiser4_stage1_5 target.
++reiser4_stage1_5_exec_SOURCES = start.S asm.S common.c char_io.c \
++	disk_io.c stage1_5.c fsys_reiser4.c bios.c
++reiser4_stage1_5_exec_CFLAGS = $(STAGE1_5_COMPILE) $(REISER4_CFLAGS) \
++	-DNO_BLOCK_FILES=1
++reiser4_stage1_5_exec_CCASFLAGS = $(STAGE1_5_COMPILE) $(REISER4_CFLAGS) \
++	-DNO_BLOCK_FILES=1
++reiser4_stage1_5_exec_LDFLAGS = $(STAGE1_5_LINK)
++reiser4_stage1_5_exec_LDADD = $(REISER4_LIBS)
++
+ # For vstafs_stage1_5 target.
+ vstafs_stage1_5_exec_SOURCES = start.S asm.S common.c char_io.c \
+ 	disk_io.c stage1_5.c fsys_vstafs.c bios.c
+diff -upNr --exclude=Makefile.in --exclude='*.info' --exclude='*.m4' --exclude='*cache' --exclude=configure --exclude=.deps grub-0.97/stage2/shared.h grub-0.97-1/stage2/shared.h
+--- grub-0.97/stage2/shared.h	2004-06-19 20:40:09.000000000 +0400
++++ grub-0.97-1/stage2/shared.h	2005-08-05 22:48:24.000000000 +0400
+@@ -207,11 +207,12 @@ extern char *grub_scratch_mem;
+ #define STAGE2_ID_FAT_STAGE1_5		3
+ #define STAGE2_ID_MINIX_STAGE1_5	4
+ #define STAGE2_ID_REISERFS_STAGE1_5	5
+-#define STAGE2_ID_VSTAFS_STAGE1_5	6
+-#define STAGE2_ID_JFS_STAGE1_5		7
+-#define STAGE2_ID_XFS_STAGE1_5		8
+-#define STAGE2_ID_ISO9660_STAGE1_5	9
+-#define STAGE2_ID_UFS2_STAGE1_5		10
++#define STAGE2_ID_REISER4_STAGE1_5	6
++#define STAGE2_ID_VSTAFS_STAGE1_5	7
++#define STAGE2_ID_JFS_STAGE1_5		8
++#define STAGE2_ID_XFS_STAGE1_5		9
++#define STAGE2_ID_ISO9660_STAGE1_5	10
++#define STAGE2_ID_UFS2_STAGE1_5		11
+ 
+ #ifndef STAGE1_5
+ # define STAGE2_ID	STAGE2_ID_STAGE2
+@@ -226,6 +227,8 @@ extern char *grub_scratch_mem;
+ #  define STAGE2_ID	STAGE2_ID_MINIX_STAGE1_5
+ # elif defined(FSYS_REISERFS)
+ #  define STAGE2_ID	STAGE2_ID_REISERFS_STAGE1_5
++# elif defined(FSYS_REISER4)
++#  define STAGE2_ID	STAGE2_ID_REISER4_STAGE1_5
+ # elif defined(FSYS_VSTAFS)
+ #  define STAGE2_ID	STAGE2_ID_VSTAFS_STAGE1_5
+ # elif defined(FSYS_JFS)

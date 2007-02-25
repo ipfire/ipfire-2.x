@@ -26,15 +26,17 @@
 
 include Config
 
-VER        = 0.97
+VER      = 1.0.5
 
-THISAPP    = grub-$(VER)
+THISAPP    = libaal-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
-CFLAGS     =
-CXXFLAGS   =
+ifeq "$(LFS_PASS)" "install"
+  TARGET     = $(DIR_INFO)/$(THISAPP)-install
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = cd3f3eb54446be6003156158d51f4884
+$(DL_FILE)_MD5 = 6c55201acd2a2c0a1f46addf248da6a2
 
 install : $(TARGET)
 
@@ -74,45 +76,14 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
-	# Reiser4
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-reiser4-20050808.diff
-
-	# This fails, but doesn't matter
-	-cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-disk_geometry-1.patch
-
-	### WHICH ONE OF THESE PATCHES DO WE REALLY NEED? CAN WE DELETE ANY?
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-path-patch
-	#cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.97/use_ferror.diff
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-R
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/bad-assert-sideeffect
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.97/grub-gfxmenu-v8.diff
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-devicemap.diff
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-linux-setup-fix
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/fix-uninitialized
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/force-LBA-off.diff
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-initrdaddr.diff
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-0.97-protexec.patch
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97/grub-path-cfg.diff
-
-	cd $(DIR_APP) && perl -pi -e 's,/usr/lib/grub/i386-pc,/usr/share/grub/i386-pc,' docs/grub.texi
-	cd $(DIR_APP) && sed -i 's/AM_INIT_AUTOMAKE/&\nAM_PROG_AS/' configure.ac
-
-	cd $(DIR_APP) && autoreconf --install --force
-	cd $(DIR_APP) && CFLAGS="-Os -s -fno-strict-aliasing" ./configure --prefix=/usr
-	    
+ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP) && ./configure --prefix=/opt/$(MACHINE)-uClibc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-	# grub files
-	mkdir -vp /boot/grub
-	cp -v /usr/lib/grub/i386-pc/stage{1,2} /boot/grub
-	for i in $(DIR_SRC)/config/grub/*; do \
-	    [ -f $$i ] && cp -f $$i /boot/grub; \
-	done
-
-	install -m 0755 $(DIR_SRC)/src/install+setup/install/grubbatch /boot/grub
-	/usr/sbin/grub-set-default 1
-
+else
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

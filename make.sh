@@ -284,7 +284,6 @@ buildbase() {
     lfsmake2 file
     lfsmake2 findutils
     lfsmake2 flex
-    lfsmake2 grub
     lfsmake2 gawk
     lfsmake2 gettext
     lfsmake2 grep
@@ -294,6 +293,7 @@ buildbase() {
     lfsmake2 iproute2
     lfsmake2 kbd
     lfsmake2 less
+    lfsmake2 libaal
     lfsmake2 make
     lfsmake2 man
     lfsmake2 mktemp
@@ -301,6 +301,7 @@ buildbase() {
     lfsmake2 net-tools
     lfsmake2 patch
     lfsmake2 psmisc
+    lfsmake2 reiser4progs
     lfsmake2 shadow
     lfsmake2 sysklogd
     lfsmake2 sysvinit
@@ -309,6 +310,7 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 util-linux
     lfsmake2 vim
+    lfsmake2 grub
 }
 
 buildipfire() {
@@ -381,6 +383,7 @@ buildipfire() {
   ipfiremake capi4k-utils
   ipfiremake cdrtools
   ipfiremake dnsmasq
+  ipfiremake libaal
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake squashfstools
@@ -521,7 +524,6 @@ buildipfire() {
   ipfiremake tftp-hpa
   ipfiremake iptraf
   ipfiremake nagios
-  ipfiremake yasuc
 }
 
 buildinstaller() {
@@ -547,7 +549,8 @@ buildinstaller() {
   installmake sysvinit
   installmake misc-progs
   installmake e2fsprogs
-  installmake reiserfsprogs
+  installmake libaal
+  installmake reiser4progs
   installmake sysfsutils
   installmake util-linux
   installmake pciutils

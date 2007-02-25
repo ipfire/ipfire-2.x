@@ -56,7 +56,7 @@ usr/bin/paste
 #usr/bin/pinky
 #usr/bin/pr
 #usr/bin/printenv
-#usr/bin/printf
+usr/bin/printf
 #usr/bin/ptx
 #usr/bin/readlink
 usr/bin/seq

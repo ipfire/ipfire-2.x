@@ -5,7 +5,6 @@
 # This code is distributed under the terms of the GPL
 #
 # (c) The IPFire Team
-#
 
 use strict;
 # enable only the following on debugging purpose
@@ -17,15 +16,12 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my %sambasettings = ();
+my %cgisettings = ();
 my %checked = ();
 my %netsettings = ();
 my %ovpnsettings = ();
 my $message = "";
 my $errormessage = "";
-my $shareconfigentry = "";
-my @sharesconfig = ();
-my @shareconfigline = ();
-my $shareoption = '';
 my $defaultoption= "[Share]\npath = /shares/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\nguest ok = yes\npublic = yes\nforce user = samba";
 my $userentry = "";
 my @user = ();
@@ -54,6 +50,9 @@ my %servicenames =
 my @Zeilen= ();
 my @Shares= ();
 my $shareentry = "";
+my $shareconfigentry = "";
+my @shareconfigline = ();
+my $shareoption = '';
 my @shares = ();
 my @shareline = ();
 my $sharefile = "/var/ipfire/samba/shares";
@@ -86,7 +85,7 @@ $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Never';
 $sambasettings{'BINDINTERFACESONLY'} = 'True';
 ### Values that have to be initialized
-$sambasettings{'ACTION'} = '';
+$cgisettings{'ACTION'} = '';
 
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
 &Header::getcgihash(\%sambasettings);
@@ -97,15 +96,36 @@ $sambasettings{'ACTION'} = '';
 ############################################################################################################################
 ############################################# Samba Rootskript aufrufe für SU-Actions ######################################
 
-if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system('/usr/local/bin/sambactrl smbuserdisable $sambasettings{"NAME"}');}
-if ($sambasettings{'ACTION'} eq 'smbuserenable'){system('/usr/local/bin/sambactrl smbuserenable $sambasettings{"NAME"}');}
-if ($sambasettings{'ACTION'} eq 'smbuserdelete'){system('/usr/local/bin/sambactrl smbuserdelete $sambasettings{"NAME"}');}
-if ($sambasettings{'ACTION'} eq 'smbuseradd'){system('/usr/local/bin/sambactrl smbuseradd $username $password');}
-if ($sambasettings{'ACTION'} eq 'smbchangepw'){system('/usr/local/bin/sambactrl smbchangepw $username $password');}
-if ($sambasettings{'ACTION'} eq 'smbrestart'){system('/usr/local/bin/sambactrl smbrestart');}
-if ($sambasettings{'ACTION'} eq 'smbstart'){system('/usr/local/bin/sambactrl smbstart');}
-if ($sambasettings{'ACTION'} eq 'smbstop'){system('/usr/local/bin/sambactrl smbstop');}
-# smbsharechange is directly called by the if clause
+if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'smbuserdelete'){system("/usr/local/bin/sambactrl smbuserdelete $sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
+if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
+if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");}
+if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");}
+if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");}
+if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");}
+if ($sambasettings{'ACTION'} eq 'globalreset'){system("/usr/local/bin/sambactrl smbglobalreset");}
+
+# smbsafeconf is directly called by the if clause
+
+if ($sambasettings{'ACTION'} eq 'sharesreset')
+{
+system('/usr/local/bin/sambactrl smbsharesreset');
+ @Zeilen = ();
+ @Shares = ();
+ $shareentry = "";
+ @shares = ();
+ @shareline = ();
+ $EOF = qx(cat $sharefile | wc -l);
+ 
+ @shares = `grep -n '^\\[' $sharefile`;
+ foreach $shareentry (@shares)
+ {
+ @shareline = split( /\:/, $shareentry );
+ push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
+ }
+}
 
 ############################################################################################################################
 ############################################## Samba Share neu anlegen #####################################################
@@ -122,10 +142,15 @@ $emptyline
 END
 ;
 close FILE;
-system('/usr/local/bin/sambactrl smbsharechange');
+system("/usr/local/bin/sambactrl smbsafeconf");
 
  @Zeilen = ();
  @Shares = ();
+ $shareentry = "";
+ @shares = ();
+ @shareline = ();
+ $EOF = qx(cat $sharefile | wc -l);
+ 
  @shares = `grep -n '^\\[' $sharefile`;
  foreach $shareentry (@shares)
  {
@@ -181,12 +206,17 @@ $sharetext
 END
 ;
 close FILE;
-system('/usr/local/bin/sambactrl smbsharechange');
+system("/usr/local/bin/sambactrl smbsafeconf");
 
-@Zeilen = ();
-@Shares = ();
-@shares = `grep -n '^\\[' $sharefile`;
-foreach $shareentry (@shares)
+ @Zeilen = ();
+ @Shares = ();
+ $shareentry = "";
+ @shares = ();
+ @shareline = ();
+ $EOF = qx(cat $sharefile | wc -l);
+ 
+ @shares = `grep -n '^\\[' $sharefile`;
+ foreach $shareentry (@shares)
  {
  @shareline = split( /\:/, $shareentry );
  push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
@@ -201,7 +231,6 @@ my $sharebody = '';
 my $sharehead = '';
 my $sharename = "$sambasettings{'NAME'}";
 my $sharetext = '';
-chomp $sharename;
 $sharename=~s/\s//g;
 
 for(my $i = 0; $i <= $#Shares; $i++)
@@ -240,7 +269,7 @@ $sambasettings{'SHAREOPTION'}
 END
 ;
 close FILE;
-system('/usr/local/bin/sambactrl smbsharechange');
+system("/usr/local/bin/sambactrl smbsafeconf");
 
  @Zeilen = ();
  @Shares = ();
@@ -258,11 +287,11 @@ system('/usr/local/bin/sambactrl smbsharechange');
 if ($sambasettings{'ACTION'} eq $Lang::tr{'save'})
 {
 $sambasettings{'INTERFACES'} = '';
-if ($checked{'GREEN'}){ $sambasettings{'INTERFACES'} = "$sambasettings{'INTERFACES'} $netsettings{'GREEN_DEV'}";}
-if ($checked{'BLUE'}){ $sambasettings{'INTERFACES'} = "$sambasettings{'INTERFACES'} $netsettings{'BLUE_DEV'}";}
-if ($checked{'ORANGE'}){ $sambasettings{'INTERFACES'} = "$sambasettings{'INTERFACES'} $netsettings{'ORANGE_DEV'}";}
-if ($checked{'VPN'}){ $sambasettings{'INTERFACES'} = "$sambasettings{'INTERFACES'} $ovpnsettings{'DDEVICE'}";}
-if ($sambasettings{'OTHERINTERFACES'} ne ''){ $sambasettings{'INTERFACES'} = "$sambasettings{'INTERFACES'} $sambasettings{'OTHERINTERFACES'}";}
+if ($sambasettings{'GREEN'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'GREEN_DEV'}";}
+if ($sambasettings{'BLUE'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'BLUE_DEV'}";}
+if ($sambasettings{'ORANGE'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'ORANGE_DEV'}";}
+if ($sambasettings{'VPN'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $ovpnsettings{'DDEVICE'}";}
+if ($sambasettings{'OTHERINTERFACES'} ne ''){ $sambasettings{'INTERFACES'} .= " $sambasettings{'OTHERINTERFACES'}";}
 
 ############################################################################################################################
 ############################################# Schreiben der Samba globals ##################################################
@@ -314,6 +343,7 @@ print FILE <<END
 END
 ;
 	close FILE;
+	system('/usr/local/bin/sambactrl smbsharechange');
 }
   &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
 
@@ -327,11 +357,21 @@ if ($errormessage) {
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
 
-$checked{'WINSSUPPORT'}{$sambasettings{'WINSSUPPORT'}} = "checked='checked' ";
-$checked{'GREEN'}{$sambasettings{'GREEN'}} = "checked='checked' ";
-$checked{'BLUE'}{$sambasettings{'BLUE'}} = "checked='checked' ";
-$checked{'ORANGE'}{$sambasettings{'ORANGE'}} = "checked='checked' ";
-$checked{'VPN'}{$sambasettings{'VPN'}} = "checked='checked' ";
+$checked{'WINSSUPPORT'}{'off'} = '';
+$checked{'WINSSUPPORT'}{'on'} = '';
+$checked{'WINSSUPPORT'}{$sambasettings{'WINSSUPPORT'}} = "checked='checked'";
+$checked{'GREEN'}{'off'} = '';
+$checked{'GREEN'}{'on'} = '';
+$checked{'GREEN'}{$sambasettings{'GREEN'}} = "checked='checked'";
+$checked{'BLUE'}{'off'} = '';
+$checked{'BLUE'}{'on'} = '';
+$checked{'BLUE'}{$sambasettings{'BLUE'}} = "checked='checked'";
+$checked{'ORANGE'}{'off'} = '';
+$checked{'ORANGE'}{'on'} = '';
+$checked{'ORANGE'}{$sambasettings{'ORANGE'}} = "checked='checked'";
+$checked{'VPN'}{'off'} = '';
+$checked{'VPN'}{'on'} = '';
+$checked{'VPN'}{$sambasettings{'VPN'}} = "checked='checked'";
 
 $selected{'MAPTOGUEST'}{$sambasettings{'MAPTOGUEST'}} = "selected='selected'";
 $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
@@ -383,19 +423,28 @@ END
         <tr><td align='left'>Workgroup:</td><td><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30"></td></tr>
         <tr><td align='left'>NetBIOS-Name:</td><td><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30"></td></tr>
         <tr><td align='left'>Server-String:</td><td><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30"></td></tr>
-        <tr><td align='left'>Interfaces:</td><td><input type='checkbox' name='VPN' $checked{'VPN'}{'on'}><font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnsettings{'DDEVICE'}</td></tr>
-        <tr><td align='left'></td><td><input type='checkbox' name='GREEN' $checked{'GREEN'}{'on'}><font size='2' color='$Header::colourgreen'><b>   $Lang::tr{'green'}  -  $netsettings{'GREEN_DEV'}</td></tr>
+        <tr><td align='left'>Interfaces:
+                             </td><td>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'}>/
+                                         <input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'}> off |
+                                         <font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnsettings{'DDEVICE'}</td></tr>
+        <tr><td align='left'></td><td>on <input type='radio' name='GREEN' value='on' $checked{'GREEN'}{'on'}>/
+                                         <input type='radio' name='GREEN' value='off' $checked{'GREEN'}{'off'}> off |
+                                         <font size='2' color='$Header::colourgreen'><b>   $Lang::tr{'green'}  -  $netsettings{'GREEN_DEV'}</td></tr>
 END
 ;
          if (&Header::blue_used()){
          print <<END
-         <tr><td align='left'></td><td><input type='checkbox' name='BLUE' $checked{'BLUE'}{'on'}><font size='2' color='$Header::colourblue'><b>   $Lang::tr{'wireless'}  -  $netsettings{'BLUE_DEV'}</td></tr>
+         <tr><td align='left'></td><td>on <input type='radio' name='BLUE' value='on' $checked{'BLUE'}{'on'}>/
+                                          <input type='radio' name='BLUE' value='off' $checked{'BLUE'}{'off'}> off |
+                                          <font size='2' color='$Header::colourblue'><b>   $Lang::tr{'wireless'}  -  $netsettings{'BLUE_DEV'}</td></tr>
 END
 ;
                                     }
          if (&Header::orange_used()){
          print <<END
-         <tr><td align='left'></td><td><input type='checkbox' name='ORANGE' $checked{'ORANGE'}{'on'}><font size='2' color='$Header::colourorange'><b>   $Lang::tr{'dmz'}  -  $netsettings{'ORANGE_DEV'}</td></tr>
+         <tr><td align='left'></td><td>on <input type='radio' name='ORANGE' value='on' $checked{'ORANGE'}{'on'}>/
+                                          <input type='radio' name='ORANGE' value='off' $checked{'ORANGE'}{'off'}> off |
+                                          <font size='2' color='$Header::colourorange'><b>   $Lang::tr{'dmz'}  -  $netsettings{'ORANGE_DEV'}</td></tr>
 END
 ;
                                     }
@@ -423,12 +472,31 @@ END
         <tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>WINS-Optionen</b></td></tr>
         <tr><td align='left'>WINS-Server:</td><td><input type='text' name='WINSSRV' value='$sambasettings{'WINSSRV'}' size="30"></td></tr>
         <tr><td align='left'>WINS-Support:</td><td>on <input type='radio' name='WINSSUPPORT' value='on' $checked{'WINSSUPPORT'}{'on'}>/
-                                                        <input type='radio' name='WINSSUPPORT' value='off' $checked{'WINSSUPPORT'}{'off'}> off</td></tr>
-        <tr><td colspan='2' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'}></td></tr>
+                                                      <input type='radio' name='WINSSUPPORT' value='off' $checked{'WINSSUPPORT'}{'off'}> off</td></tr>
         </table>
-        </form>
+        <table width='50px' cellspacing='0'><br>
+        <tr><td align='center'><input type='hidden' name='ACTION' value=$Lang::tr{'save'}>
+                               <input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif'></td></form>
+            <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+                               <input type='hidden' name='ACTION' value='globalreset'>
+                               <input type='image' alt='Reset' src='/images/reload.gif'></td></form>
+            <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+                               <input type='hidden' name='ACTION' value='globalcaption'>
+                               <input type='image' alt='Legende' src='/images/info.gif'></td></tr></form>
+        </table>
 END
 ;
+if ($sambasettings{'ACTION'} eq 'globalcaption')
+{
+        print <<END
+        <table width='500px' cellspacing='0'><br>
+        <tr><td><b>Legende:</b></td></tr>
+        <tr><td><img src='/images/floppy.gif'>Einstellungen speichern</td></tr>
+        <tr><td><img src='/images/reload.gif'>Auf default zurueck setzen</td></tr>
+        </table>
+END
+;
+}
 &Header::closebox();
 
 ############################################################################################################################
@@ -449,7 +517,6 @@ END
 
         system('/usr/local/bin/sambactrl readsmbpasswd');
         open(FILE, "</var/ipfire/samba/private/smbpasswd") or die "Can't read user file: $!";
-        flock (FILE, 2);
         @user = <FILE>;
         close(FILE);
         system('/usr/local/bin/sambactrl locksmbpasswd');
@@ -460,7 +527,7 @@ END
         <tr><td align='left'>$userline[0]</td><td>
 END
 ;
-        if ($userline[2] =~ m/N/){
+        if ($userline[4] =~ /N/){
         print <<END
         nicht gesetzt</td><td>
 END
@@ -471,23 +538,23 @@ END
 END
 ;
         }
-        if ($userline[2] =~ m/D/){
+        if ($userline[4] =~ /D/){
         print <<END
-        aktiv</td>
+        inaktiv</td>
         <td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
                                         <input type='hidden' name='NAME' value='$userline[0]'>
-                                        <input type='hidden' name='ACTION' value='userdisable'>
-                                        <input type='image' alt='Deaktivieren' src='/images/off.gif'>
+                                        <input type='hidden' name='ACTION' value='smbuserenable'>
+                                        <input type='image' alt='Aktivieren' src='/images/on.gif'>
                                 </form></td>
 END
 ;
         }else{
         print <<END
-        inaktiv</td>
+        aktiv</td>
         <td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
                                         <input type='hidden' name='NAME' value='$userline[0]'>
-                                        <input type='hidden' name='ACTION' value='userenable'>
-                                        <input type='image' alt='Aktivieren' src='/images/on.gif'>
+                                        <input type='hidden' name='ACTION' value='smbuserdisable'>
+                                        <input type='image' alt='Deaktivieren' src='/images/off.gif'>
                                 </form></td>
 END
 ;
@@ -500,7 +567,7 @@ END
                         </form></td>
         <td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
                                 <input type='hidden' name='NAME' value='$userline[0]'>
-                                <input type='hidden' name='ACTION' value='userdelete'>
+                                <input type='hidden' name='ACTION' value='smbuserdelete'>
                                 <input type='image' alt='Loeschen' src='/images/delete.gif'>
                         </form></td>
         </td></tr>
@@ -528,6 +595,7 @@ if ($sambasettings{'ACTION'} eq 'usercaption')
         <tr><td><img src='/images/add.gif'>Benutzer neu anlegen</td></tr>
         <tr><td><img src='/images/on.gif'>Benutzer aktivieren</td></tr>
         <tr><td><img src='/images/off.gif'>Benutzer deaktivieren</td></tr>
+        <tr><td><img src='/images/floppy.gif'>Einstellungen speichern</td></tr>
         <tr><td><img src='/images/edit.gif'>Passwort wechseln</td></tr>
         <tr><td><img src='/images/delete.gif'>Benutzer loeschen</td></tr>
         </table>
@@ -546,15 +614,21 @@ if ($sambasettings{'ACTION'} eq 'userchangepw')
         <tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>Passwort wechseln</b></td></tr>
         <tr><td align='left'>Benutzername</td><td><input type='text' name='USERNAME' value='$username' size="30"></td></tr>
         <tr><td align='left'>Passwort</td><td><input type='password' name='PASSWORD' value='$password' size="30"></td></tr>
-        <tr><td colspan='2' align='center'><input type='submit' name='ACTION' value='smbchangepw'></td></tr></form>
+        <tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbchangepw'>
+                                           <input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif'></td></tr></form>
+
         </table>
 END
 ;
 }
 if ($sambasettings{'ACTION'} eq 'useradd')
 {
-        my $username = "User";
-        my $password = 'samba';
+        my $username = "user";
+        my $password = "samba";
+        chomp $username;
+        $username=~s/\s//g;
+        chomp $password;
+        $password=~s/\s//g;
         print <<END
         <hr>
         <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -562,7 +636,8 @@ if ($sambasettings{'ACTION'} eq 'useradd')
         <tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>Benutzer neu anlegen</b></td></tr>
         <tr><td align='left'>Benutzername</td><td><input type='text' name='USERNAME' value='$username' size="30"></td></tr>
         <tr><td align='left'>Passwort</td><td><input type='password' name='PASSWORD' value='$password' size="30"></td></tr>
-        <tr><td colspan='2' align='center'><input type='submit' name='ACTION' value='smbuseradd'></td></tr></form>
+        <tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbuseradd'>
+                                           <input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif'></td></tr></form>
         </table>
 END
 ;
@@ -610,6 +685,9 @@ END
                                <input type='hidden' name='ACTION' value='shareadd'>
                                <input type='image' alt='neuen Share anlegen' src='/images/add.gif'></form></td>
             <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+                               <input type='hidden' name='ACTION' value='sharesreset'>
+                               <input type='image' alt='Reset' src='/images/reload.gif'></td></form>
+            <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
                                <input type='hidden' name='ACTION' value='sharecaption'>
                                <input type='image' alt='Legende' src='/images/info.gif'></form>
         </td><tr>
@@ -623,6 +701,8 @@ if ($sambasettings{'ACTION'} eq 'sharecaption')
         <tr><td><b>Legende:</b></td></tr>
         <tr><td><img src='/images/add.gif'>Share neu anlegen</td></tr>
         <tr><td><img src='/images/edit.gif'>Share bearbeiten</td></tr>
+        <tr><td><img src='/images/floppy.gif'>Einstellungen speichern</td></tr>
+        <tr><td><img src='/images/reload.gif'>Shares zurueck setzen</td></tr>
         <tr><td><img src='/images/delete.gif'>Share loeschen</td></tr>
         </table>
 END
@@ -643,7 +723,8 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
         <tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
         </table>
         <table width='50px' cellspacing='0'><br>
-        <tr><td align='center'><input type='submit' name='ACTION' value='smbshareadd'></td></tr></form>
+        <tr><td align='center'><input type='hidden' name='ACTION' value='smbshareadd'>
+                               <input type='image' alt='Share hinzufuegen' src='/images/floppy.gif'></td></tr></form>
         </table>
 END
 ;
@@ -682,7 +763,7 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
         </table>
         <table width='50px' cellspacing='0'><br>
         <tr><td align='center'>
-                                <input type='hidden' name='NAME' value='$sharename'>
+                                <input type='hidden' name='NAME' value='$sambasettings{'NAME'}'>
                                 <input type='submit' name='ACTION' value='smbsharechange'></td></tr></form>
         </table>
 END

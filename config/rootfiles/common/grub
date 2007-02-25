@@ -19,6 +19,7 @@ usr/lib/grub
 #usr/lib/grub/i386-pc/jfs_stage1_5
 #usr/lib/grub/i386-pc/minix_stage1_5
 #usr/lib/grub/i386-pc/reiserfs_stage1_5
+#usr/lib/grub/i386-pc/reiser4_stage1_5
 #usr/lib/grub/i386-pc/stage1
 #usr/lib/grub/i386-pc/stage2
 #usr/lib/grub/i386-pc/stage2_eltorito

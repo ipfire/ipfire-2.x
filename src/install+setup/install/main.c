@@ -557,9 +557,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %sp3", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/sbin/mkfs.reiser4 -f %sp3", hdparams.devnode);	
 	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %s3", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/sbin/mkfs.reiser4 -f %s3", hdparams.devnode);	
 
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
@@ -568,9 +568,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %sp4", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/sbin/mkfs.reiser4 -f %sp4", hdparams.devnode);	
 	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mkreiserfs -f %s4", hdparams.devnode);	
+		snprintf(commandstring, STRING_SIZE, "/sbin/mkfs.reiser4 -f %s4", hdparams.devnode);	
 
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
