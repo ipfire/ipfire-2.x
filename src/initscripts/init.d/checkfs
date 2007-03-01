@@ -30,8 +30,8 @@
 
 case "${1}" in
 	start)
-		if [ -f /fastboot ]; then
-			boot_mesg -n "/fastboot found, will not perform" ${INFO}
+		if [ ! -f /.autofsck ]; then
+			boot_mesg -n "No /.autofsck found, will not perform" ${INFO}
 			boot_mesg " file system checks as requested."
 			echo_ok
 			exit 0

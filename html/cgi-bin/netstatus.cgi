@@ -32,7 +32,7 @@ my $output='';
 &Header::openbigbox('100%', 'left');
 
 &Header::openbox('100%', 'left', $Lang::tr{'interfaces'});
-$output = `/sbin/ifconfig`;
+$output = `/sbin/ip addr show`;
 $output = &Header::cleanhtml($output,"y");
 
 my @itfs = ('ORANGE','BLUE','GREEN');
@@ -143,55 +143,14 @@ if ($dhcpsettings{'ENABLE_GREEN'} eq 'on' || $dhcpsettings{'ENABLE_BLUE'} eq 'on
 	&Header::PrintActualLeases;
 }
 
-if ( $netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/  && (exists($pppsettings{'TYPE'})) ) {
-
-my $output1='';
-my $output2='';
-if ($pppsettings{'TYPE'} eq 'bewanadsl') {
-	print "<a name='adsl'/>\n";
-	&Header::openbox('100%', 'left', $Lang::tr{'adsl settings'});
-	$output1 = `/usr/bin/unicorn_status`;
-	$output1 = &Header::cleanhtml($output1,"y");
-	$output2 = `/bin/cat /proc/net/atm/UNICORN:*`;
-	$output2 = &Header::cleanhtml($output2,"y");
-	print "<pre>$output1$output2</pre>\n";
-	&Header::closebox();
-}
-if ($pppsettings{'TYPE'} eq 'alcatelusbk') {
-	print "<a name='adsl'/>\n";
-	&Header::openbox('100%', 'left', $Lang::tr{'adsl settings'});
-	$output = `/bin/cat /proc/net/atm/speedtch:*`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
-	&Header::closebox();
-}
-if ($pppsettings{'TYPE'} eq 'conexantpciadsl') {
-	print "<a name='adsl'/>\n";
-	&Header::openbox('100%', 'left', $Lang::tr{'adsl settings'});
-	$output = `/bin/cat /proc/net/atm/CnxAdsl:*`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
-	&Header::closebox();
-}
-if ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
-	print "<a name='adsl'/>\n";
-	&Header::openbox('100%', 'left', $Lang::tr{'adsl settings'});
-	$output = `/usr/sbin/eaglestat`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
-	&Header::closebox();
-}
-
-}
-
 &Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
-$output = `/sbin/route -n`;
+$output = `/sbin/ip show show`;
 $output = &Header::cleanhtml($output,"y");
 print "<pre>$output</pre>\n";
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
-$output = `/sbin/arp -n`;
+$output = `/sbin/ip neigh show`;
 $output = &Header::cleanhtml($output,"y");
 print "<pre>$output</pre>\n";
 &Header::closebox();

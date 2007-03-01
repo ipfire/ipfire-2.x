@@ -80,7 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(SMP)" ""
 	cd $(DIR_APP) && sed -i \
 	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
-	    -e 's/$$(shell uname -r)/$(KVER)/' \
+	    -e 's/$$(shell uname -r)/$(KVER)-ipfire/' \
 	    -e 's/`uname -r`/$(KVER)/' \
 	    -e 's/^\(CCFLAGS.*\)$$/\1 \\/' \
 	    -e '\+^CCFLAGS+a\ \
@@ -88,11 +88,11 @@ ifeq "$(SMP)" ""
 	    -e '/^DEFINES/a\ \
 	          -DMODVERSIONS \\' src/Makefile
 	cd $(DIR_APP) && sed -i \
-	    -e 's/$$(shell uname -r)/$(KVER)/' Makefile
+	    -e 's/$$(shell uname -r)/$(KVER)-ipfire/' Makefile
 else
 	cd $(DIR_APP) && sed -i \
 	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
-	    -e 's/$$(shell uname -r)/$(KVER)-smp/' \
+	    -e 's/$$(shell uname -r)/$(KVER)-ipfire-smp/' \
 	    -e 's/`uname -r`/$(KVER)-smp/' \
 	    -e 's/^\(CCFLAGS.*\)$$/\1 \\/' \
 	    -e '\+^CCFLAGS+a\ \
@@ -100,7 +100,7 @@ else
 	    -e '/^DEFINES/a\ \
 	          -DMODVERSIONS \\' src/Makefile
 	cd $(DIR_APP) && sed -i \
-	    -e 's/$$(shell uname -r)/$(KVER)-smp/' Makefile
+	    -e 's/$$(shell uname -r)/$(KVER)-ipfire-smp/' Makefile
 endif
 	cd $(DIR_APP) && CC="$(KGCC)" make
 	cd $(DIR_APP) && CC="$(KGCC)" make install

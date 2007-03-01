@@ -124,7 +124,6 @@
 * lcms-1.15
 * less-394
 * libaal-1.0.5
-* libaal-1.0.5-minimal
 * libart_lgpl-2.3.17
 * libcap-1.10
 * libmad-0.15.1b
@@ -142,6 +141,8 @@
 * libwww-perl-5.803
 * libxml2-2.6.26
 * linux-2.6.16.29-ipfire
+* linux-2.6.16.42
+* linux-2.6.19.5
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
@@ -208,6 +209,7 @@
 * rrdtool-1.2.15
 * rsync-2.6.8
 * samba-3.0.23d
+* samba-3.0.24
 * screen-4.0.2
 * sed-4.1.5
 * setserial-2.17
@@ -250,6 +252,5 @@
 * xinetd-2.3.14
 * xmbmon205
 * xvidcore-1.1.0
-* yasuc-0.4.1
 * zaptel-1.4.0
 * zlib-1.2.3

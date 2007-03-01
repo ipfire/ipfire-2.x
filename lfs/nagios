@@ -79,7 +79,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/nagios* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr/nagios --with-cgiurl=/nagios/cgi-bin \
 				--with-htmurl=/nagios --with-nagios-user=nobody \
 				--with-nagios-group=nobody
@@ -90,5 +90,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/nagios-plugins-1.4.3 && ./configure --prefix=/usr/nagios --with-ping-command="-n %s -c %d"
 	cd $(DIR_SRC)/nagios-plugins-1.4.3 && make
 	cd $(DIR_SRC)/nagios-plugins-1.4.3 && make install
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/nagios*
 	@$(POSTBUILD)

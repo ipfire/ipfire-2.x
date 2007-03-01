@@ -1,9 +1,9 @@
 #etc/rc.d/init.d/fuse
 etc/udev/rules.d/99-fuse.rules
 #lib/modules/2.6.16/kernel/fs/fuse
-lib/modules/2.6.16/kernel/fs/fuse/fuse.ko
+#lib/modules/2.6.16/kernel/fs/fuse/fuse.ko
 #lib/modules/2.6.16-smp/kernel/fs/fuse
-lib/modules/2.6.16-smp/kernel/fs/fuse/fuse.ko
+#lib/modules/2.6.16-smp/kernel/fs/fuse/fuse.ko
 sbin/mount.fuse
 usr/bin/fusermount
 usr/bin/ulockmgr_server

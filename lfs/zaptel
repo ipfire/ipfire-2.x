@@ -85,12 +85,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zaptel.patch
 ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make linux26 KVERS=$(KVER)-smp
-	cd $(DIR_APP) && make install KVERS=$(KVER)-smp
+	cd $(DIR_APP) && make linux26 KVERS=$(KVER)-ipfire-smp
+	cd $(DIR_APP) && make install KVERS=$(KVER)-ipfire-smp
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make linux26 KVERS=$(KVER)
-	cd $(DIR_APP) && make install KVERS=$(KVER)
+	cd $(DIR_APP) && make linux26 KVERS=$(KVER)-ipfire
+	cd $(DIR_APP) && make install KVERS=$(KVER)-ipfire
 endif
 	cd $(DIR_APP) && install -D -m 644 zaptel.h /usr/include/zaptel.h
 	cd $(DIR_APP) && install -D -m 644 zconfig.h /usr/include/zconfig.h

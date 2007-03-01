@@ -55,6 +55,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /install/cdrom/doc
 	find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
 	find $(DIR_SRC)/config/rootfiles/ver_$(ED) -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
+	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
+
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
 		--exclude='proc/*' --exclude='usr/src/ccache/*' --exclude='usr/src/cache/*' \
@@ -78,7 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /install/cdrom/boot/isolinux; \
 	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
 	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot; \
-	cp /boot/vmlinuz-$(KVER)                    /install/cdrom/boot/isolinux/vmlinuz; \
+	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz; \
 	cp $(DIR_SRC)/config/syslinux/syslinux.cfg  /install/cdrom/boot/isolinux/isolinux.cfg; \
 	cp $(DIR_SRC)/config/syslinux/boot.msg      /install/cdrom/boot/isolinux/boot.msg; \
 	cp $(DIR_SRC)/config/syslinux/options.msg   /install/cdrom/boot/isolinux/options.msg; \

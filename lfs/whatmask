@@ -26,15 +26,13 @@
 
 include Config
 
-VER        = 0.4.1
+VER        = 1.2
 
-THISAPP    = yasuc-$(VER)
-DL_FILE    = $(THISAPP)_x86_linux.tar.bz2
+THISAPP    = whatmask-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/dist/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = yasuc
-PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7cdf8534c6b9acba168c14594082d039
+$(DL_FILE)_MD5 = 26aeff74dbba70262ccd426e681dcf4a
 
 install : $(TARGET)
 
@@ -76,8 +74,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp -f yasuc /usr/bin/yasuc
-	chmod 755 /usr/bin/yasuc
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

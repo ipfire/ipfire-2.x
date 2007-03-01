@@ -26,11 +26,11 @@
 
 include Config
 
-VER        = 2.6.16
-PATCHLEVEL = 2.6.16.29
+PATCHLEVEL = .42
+VER        = 2.6.16.42
 
 THISAPP    = linux-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
@@ -39,9 +39,9 @@ CXXFLAGS   =
 # Normal build or SMP build.
 #
 ifeq "$(SMP)" "1"
-	TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire-smp
+	TARGET = $(DIR_INFO)/linux-$(VER)-smp
 else
-	TARGET = $(DIR_INFO)/linux-$(PATCHLEVEL)-ipfire
+	TARGET = $(DIR_INFO)/linux-$(VER)
 endif
 
 ###############################################################################
@@ -50,37 +50,22 @@ endif
 objects =$(DL_FILE) \
 	mISDN-CVS-2007-01-26.tar.bz2 \
 	squashfs3.0.tar.gz \
-	openswan-2.4.7.kernel-2.6-natt.patch.gz \
-	openswan-2.4.7.kernel-2.6-klips.patch.gz \
 	iptables-1.3.5.tar.bz2 \
 	patch-o-matic-ng-20061210.tar.bz2 \
-	kbc_option_2420.patch \
-	net4801.kernel.patch_2.4.31 \
 	netfilter-layer7-v2.6.tar.gz \
-	patch-2.6.16-nath323-1.3.bz2 \
-	patch-$(PATCHLEVEL).gz
+	patch-2.6.16-nath323-1.3.bz2
 
 $(DL_FILE)					= $(DL_FROM)/$(DL_FILE)
-patch-$(PATCHLEVEL).gz			= $(DL_FROM)/patch-$(PATCHLEVEL).gz
-openswan-2.4.7.kernel-2.6-natt.patch.gz	= $(URL_IPFIRE)/openswan-2.4.7.kernel-2.6-natt.patch.gz
-openswan-2.4.7.kernel-2.6-klips.patch.gz	= $(URL_IPFIRE)/openswan-2.4.7.kernel-2.6-klips.patch.gz
 patch-o-matic-ng-20061210.tar.bz2    	= $(URL_IPFIRE)/patch-o-matic-ng-20061210.tar.bz2
 iptables-1.3.5.tar.bz2			= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
-kbc_option_2420.patch			= $(URL_IPFIRE)/kbc_option_2420.patch
-net4801.kernel.patch_2.4.31			= $(URL_IPFIRE)/net4801.kernel.patch_2.4.31
 netfilter-layer7-v2.6.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.6.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.0.tar.gz				= $(URL_IPFIRE)/squashfs3.0.tar.gz
 mISDN-CVS-2007-01-26.tar.bz2		= $(URL_IPFIRE)/mISDN-CVS-2007-01-26.tar.bz2
 
-$(DL_FILE)_MD5					= 50695965725367f39007023feac5e256
-patch-$(PATCHLEVEL).gz_MD5				= 1355ebc25ea57df398d20e1c1726ec9b
-openswan-2.4.7.kernel-2.6-natt.patch.gz_MD5	= 980d8bbdb29a761b7f5aa852f373df62
-openswan-2.4.7.kernel-2.6-klips.patch.gz_MD5	= 5df0ffa2453488a407a23fc4ea4af879
+$(DL_FILE)_MD5					= 87e998bb87839b962702815dd5aecc73
 patch-o-matic-ng-20061210.tar.bz2_MD5		= 76edac76301b45f89e467b41c8cf4393
 iptables-1.3.5.tar.bz2_MD5				= 00fb916fa8040ca992a5ace56d905ea5
-kbc_option_2420.patch_MD5				= 6d37870344f7fcf97ace1fbf43323c60
-net4801.kernel.patch_2.4.31_MD5			= c7d64e3caedb2f2b10e1c11db7f73a04
 netfilter-layer7-v2.6.tar.gz_MD5			= 58135cd1aafaf4ae2fa478159206f064
 patch-2.6.16-nath323-1.3.bz2_MD5			= f926409ff703a307baf54b57ab75d138
 squashfs3.0.tar.gz_MD5				= 9fd05d0bfbb712f5fb95edafea5bc733
@@ -113,24 +98,14 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	ln -s linux-$(VER) /usr/src/linux
-
-	# Update kernel to latest patchlevel
-	cd $(DIR_APP) && zcat $(DIR_DL)/patch-$(PATCHLEVEL).gz | patch -p1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16.27-utf8_input-1.patch
-	# Remove patch level in EXTRAVERSION.
-	# We want to avoid the need to supply a full kernel
-	# (installed in a different place) if only one part could be updated
-	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =/' Makefile
-	cd $(DIR_APP) && sed -i -e 's/-Werror//' drivers/scsi/aic7xxx/Makefile
-	cd $(DIR_APP) && sed -i -e 's/gettext//' scripts/kconfig/lkc.h
 
 	# Openswan 2
 	cd $(DIR_SRC) && rm -rf openswan-*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-2.4.7.tar.gz
-	cd $(DIR_APP) && gzip -dc $(DIR_DL)/openswan-2.4.7.kernel-2.6-natt.patch.gz | patch -Np1
-	cd $(DIR_APP) && gzip -dc $(DIR_DL)/openswan-2.4.7.kernel-2.6-klips.patch.gz | patch -Np1
+	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.7.kernel-2.6-natt.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.7.kernel-2.6-klips.patch
 	cd $(DIR_SRC)/openswan-* && sed -i -e 's/INC_USRLOCAL=\/usr\/local/INC_USRLOCAL=\/usr/' Makefile.inc
 
 	# H323 conntrack
@@ -151,14 +126,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && rm -rf patch-o-matic*
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20061210.tar.bz2
 	cd $(DIR_SRC)/patch-o-matic-ng* && \
-		./runme --batch --kernel-path=$(ROOT)/usr/src/$(THISAPP)/ --iptables-path=$(ROOT)/usr/src/iptables/ \
+		./runme --batch --kernel-path=$(ROOT)/usr/src/$(THISAPP)/ \
+			--iptables-path=$(ROOT)/usr/src/iptables/ \
 			TARPIT sip-conntrack-nat rtsp-conntrack-nat \
 			mms-conntrack-nat
 
 	# Layer7-patch
-	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.6
-	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.6.tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.6/for_older_kernels/kernel-2.6.13-2.6.16-layer7-2.2.patch
+	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.9
+	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.9.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.9/for_older_kernels/kernel-2.6.13-2.6.16-layer7-2.2.patch
 
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16-imq2.diff
@@ -167,7 +143,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 
 	# mISDN
-	cd $(DIR_SRC) && rm -rf mISDN-CVS-2007-01-26
+	cd $(DIR_SRC) && rm -rf mISDN-*
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/mISDN-CVS-2007-01-26.tar.bz2
 	cd $(DIR_SRC)/mISDN-CVS-2007-01-26 && yes 'yes' | ./std2kern -k /usr/src/linux
 
@@ -191,36 +167,34 @@ endif
 
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
-	if [ "$(SMP)" = "" ]; then \
-		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
-		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER); \
-		cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER); \
-		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
-		ln -sf vmlinuz-$(VER) /boot/vmlinuz; \
-		ln -sf System.map-$(VER) /boot/System.map; \
-		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules; \
-		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install; \
-		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module; \
-		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall; \
-	elif [ "$(SMP)" = "1" ]; then \
-		cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =/EXTRAVERSION\ =\ -smp/' Makefile; \
-		cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage; \
-		cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-smp; \
-		cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-smp; \
-		cd $(DIR_APP) && cp -v .config /boot/config-$(VER); \
-		ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-smp; \
-		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules; \
-		cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install; \
-		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module; \
-		cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall; \
-	fi
+
+ifeq "$(SMP)" "1"
+	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire-smp/' Makefile
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
+	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-ipfire-smp
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire-smp
+	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
+	ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-ipfire-smp
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
+	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
+	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
+else
+	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire/' Makefile
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
+	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-ipfire
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire
+	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
+	ln -sf vmlinuz-$(VER)-ipfire /boot/vmlinuz
+	ln -sf System.map-$(VER)-ipfire /boot/System.map
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
+	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
+	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
+endif
 
 	# remove symlinked pcmcia directory
-ifeq "$(SMP)" ""
-	rm -rf /lib/modules/$(VER)/pcmcia
-endif
-ifeq "$(SMP)" "1"
-	rm -rf /lib/modules/$(VER)-smp/pcmcia
-endif
-	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-CVS-2007-01-26 $(DIR_SRC)/netfilter-layer7-v2.6
+	-rm -rf /lib/modules/$(VER)-ipfire{,-smp}/pcmcia
+
+	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

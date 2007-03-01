@@ -53,7 +53,7 @@ $(TARGET) :
 	mkdir -p /tmp/$(VERSION) /tmp/pxelinux.cfg
 	cp /usr/lib/syslinux/pxelinux.0 /tmp
 	cp /install/images/initrd                   /tmp/$(VERSION)/instroot
-	cp /boot/vmlinuz-$(KVER)                    /tmp/$(VERSION)/vmlinuz
+	cp /boot/vmlinuz-$(KVER)-ipfire             /tmp/$(VERSION)/vmlinuz
 	cp $(DIR_SRC)/config/syslinux/options.msg   /tmp/$(VERSION)/options.msg
 	cp $(DIR_SRC)/config/syslinux/splash.lss    /tmp/$(VERSION)/splash.lss
 	cp /usr/lib/memtest86+/memtest.bin          /tmp/$(VERSION)/memtest
