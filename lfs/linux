@@ -174,7 +174,7 @@ ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-ipfire-smp
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire-smp
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
-	ln -sf vmlinuz-$(VER)-smp /boot/vmlinuz-ipfire-smp
+	ln -sf vmlinuz-$(VER)-ipfire-smp /boot/vmlinuz-ipfire-smp
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module

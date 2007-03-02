@@ -53,7 +53,7 @@ $(TARGET) :
 	rm -f /install/images/initrd
 
 	# Finish up initrd directory
-	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys} && \
+	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)-ipfire/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys} && \
 	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
 	rm -rf /install/initrd/etc{,/udev,/udev/rules.d}/.svn
@@ -62,58 +62,56 @@ $(TARGET) :
 	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l
 
 	# Install SCSI Drivers
-	cp -rf /lib/modules/$(KVER)/kernel/drivers/{scsi,message/fusion} \
-		/lib/modules/$(KVER)/kernel/drivers/block/{DAC960.ko,cpqarray.ko,cciss.ko} \
-		/lib/modules/$(KVER)/kernel/drivers/ide \
-		/lib/modules/$(KVER)/kernel/drivers/cdrom \
-		/lib/modules/$(KVER)/kernel/drivers/ieee1394 \
-		/install/initrd/lib/modules/$(KVER)/kernel/drivers/
-	rm -f	/install/initrd/lib/modules/$(KVER)/kernel/drivers/message/fusion/mptlan*
+	cp -rf /lib/modules/$(KVER)-ipfire/kernel/drivers/scsi \
+		/lib/modules/$(KVER)-ipfire/kernel/drivers/block/{DAC960.ko,cpqarray.ko,cciss.ko} \
+		/lib/modules/$(KVER)-ipfire/kernel/drivers/ide \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	rm -f	/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan*
 
 	# make new dependencies 
-	depmod -a -F /boot/System.map-$(KVER) $(KVER)
-	depmod -a -F /boot/System.map-$(KVER)-smp $(KVER)-smp
+	depmod -a -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
+	depmod -a -F /boot/System.map-$(KVER)-ipfire-smp $(KVER)-ipfire-smp
 
 	cd / && tar -cvf /tmp/drivers.tar \
-		--exclude=lib/modules/$(KVER)/kernel/{arch,fs} \
-		--exclude=lib/modules/$(KVER)/kernel/drivers/{acpi,atm,bluetooth,block,char,cdrom,hwmon,ide} \
-		--exclude=lib/modules/$(KVER)/kernel/drivers/{ieee1394,isdn,mmc,scsi,md,message,video} \
-		--exclude=lib/modules/$(KVER)/kernel/drivers/net/{wan,ppp*,slip*,slhc*,tun*,wireless} \
-		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{atm,input,storage,host} \
-		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{3cp4218.ko,acm.ko,amedyn.ko,cxacru.ko} \
-		--exclude=lib/modules/$(KVER)/kernel/drivers/usb/{speedtch.ko,hid.ko,usbcore.ko,at76c50*.ko} \
-		--exclude=lib/modules/$(KVER)/kernel/net/{8021q,atm,bluetooth,bridge,ieee80211,ipsec,ipv4} \
-		--exclude=lib/modules/$(KVER)/kernel/net/{wanrouter,netfilter,sched} \
-		--exclude=lib/modules/$(KVER)/{build,extra,misc,modules.*,source} \
-		lib/modules/$(KVER)
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/{arch,fs} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{acpi,atm,bluetooth,block,char,cdrom,hwmon,ide} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{ieee1394,isdn,mmc,scsi,md,video} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/net/{wan,ppp*,slip*,slhc*,tun*,wireless} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/usb/{atm,input,storage,host} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/usb/{3cp4218.ko,acm.ko,amedyn.ko,cxacru.ko} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/usb/{speedtch.ko,hid.ko,usbcore.ko,at76c50*.ko} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/net/{8021q,atm,bluetooth,bridge,ieee80211,ipsec,ipv4} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/net/{wanrouter,netfilter,sched} \
+		--exclude=lib/modules/$(KVER)-ipfire/{build,extra,misc,modules.*,source} \
+		lib/modules/$(KVER)-ipfire
 	cd /install/initrd/ && tar -xvf /tmp/drivers.tar && rm -f /tmp/drivers.tar
 
 	# Extra modules
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi
-	cp -f /lib/modules/$(KVER)/kernel/drivers/scsi/{scsi_mod.ko,sd_mod.ko,sr_mod.ko} \
-		/install/initrd/lib/modules/$(KVER)/kernel/drivers/scsi/
+	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/scsi
+	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/scsi/{scsi_mod.ko,sd_mod.ko,sr_mod.ko} \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/scsi/
 
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage
-	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/storage/*.ko \
-		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/storage/
+	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/storage
+	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/usb/storage/*.ko \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/storage/
 
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/host
-	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/host/*.ko \
-		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/host
+	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/host
+	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/usb/host/*.ko \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/host
 
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/input
-	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/input/usbhid.ko \
-		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/input
+	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/input
+	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/usb/input/usbhid.ko \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/input
 
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/core
-	cp -f /lib/modules/$(KVER)/kernel/drivers/usb/core/*.ko \
-		/install/initrd/lib/modules/$(KVER)/kernel/drivers/usb/core
+	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/core
+	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/usb/core/*.ko \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/core
 
 	# File system
-	-mkdir -p /install/initrd/lib/modules/$(KVER)/kernel/fs
-	cp -rf /lib/modules/$(KVER)/kernel/fs/* /install/initrd/lib/modules/$(KVER)/kernel/fs
+	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/fs
+	cp -rf /lib/modules/$(KVER)-ipfire/kernel/fs/* /install/initrd/lib/modules/$(KVER)-ipfire/kernel/fs
 
-	cp -f /lib/modules/$(KVER)/modules.* /install/initrd/lib/modules/$(KVER)
+	cp -f /lib/modules/$(KVER)-ipfire/modules.* /install/initrd/lib/modules/$(KVER)-ipfire
 
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
 
@@ -125,7 +123,7 @@ $(TARGET) :
 	cp -aR /install/initrd/* /install/mnt
 
 	# make new dependencies
-	depmod -a -F /boot/System.map-$(KVER) $(KVER)
+	depmod -a -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
 
 	mksquashfs /install/initrd /install/images/initrd
 	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log

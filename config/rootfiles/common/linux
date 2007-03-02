@@ -652,7 +652,7 @@ lib/modules/KVER-ipfire
 boot/System.map-KVER-ipfire-smp
 boot/config-KVER-ipfire
 boot/vmlinuz-KVER-ipfire-smp
-boot/vmlinuz-smp
+boot/vmlinuz-ipfire-smp
 #lib/modules
 lib/modules/KVER-ipfire-smp
 #lib/modules/KVER-ipfire-smp/build

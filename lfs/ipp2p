@@ -66,14 +66,14 @@ $(TARGET) :
 	cd $(DIR_SRC) && ln -sf iptables-* iptables
 ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && make ipt_ipp2p.ko
-	cp -f $(DIR_APP)/ipt_ipp2p.ko /lib/modules/$(KVER)-smp/kernel/net/ipv4/netfilter
+	cp -f $(DIR_APP)/ipt_ipp2p.ko /lib/modules/$(KVER)-ipfire-smp/kernel/net/ipv4/netfilter
 else
 ifeq "$(IPT)" "1"
 	cd $(DIR_APP) && make
 	cp -f $(DIR_APP)/libipt_ipp2p.o /lib/iptables
 else
 	cd $(DIR_APP) && make ipt_ipp2p.ko
-	cp -f $(DIR_APP)/ipt_ipp2p.ko /lib/modules/$(KVER)/kernel/net/ipv4/netfilter
+	cp -f $(DIR_APP)/ipt_ipp2p.ko /lib/modules/$(KVER)-ipfire/kernel/net/ipv4/netfilter
 endif
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/iptables-*
