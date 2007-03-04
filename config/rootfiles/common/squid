@@ -10,7 +10,7 @@ etc/squid/squid.conf
 #usr/bin/RunCache
 #usr/bin/cossdump
 #usr/bin/squidclient
-usr/lib/squid
+#usr/lib/squid
 #usr/lib/squid/cachemgr.cgi
 usr/lib/squid/diskd-daemon
 #usr/lib/squid/errors
@@ -944,7 +944,7 @@ usr/lib/squid/errors/German
 #usr/lib/squid/errors/Turkish/ERR_URN_RESOLVE
 #usr/lib/squid/errors/Turkish/ERR_WRITE_ERROR
 #usr/lib/squid/errors/Turkish/ERR_ZERO_SIZE_OBJECT
-#usr/lib/squid/icons
+usr/lib/squid/icons
 #usr/lib/squid/icons/anthony-binhex.gif
 #usr/lib/squid/icons/anthony-bomb.gif
 #usr/lib/squid/icons/anthony-box.gif
