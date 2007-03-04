@@ -1,6 +1,6 @@
 #etc/drdsl/drdsl
 etc/drdsl/drdsl.ini
 etc/fcdsl/fcdsl2.conf
-lib/modules/KVER-ipfire/extra/fcdsl2.ko
-lib/modules/KVER-ipfire-smp/extra/fcdsl2.ko
+#lib/modules/KVER-ipfire/extra/fcdsl2.ko
+#lib/modules/KVER-ipfire-smp/extra/fcdsl2.ko
 usr/lib/isdn/fds2base.bin

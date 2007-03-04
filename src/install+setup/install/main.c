@@ -661,7 +661,6 @@ int main(int argc, char *argv[])
 	mysystem("/bin/mount --bind /dev /harddisk/dev");
 
 
-
 	/* if we detected SCSI then fixup */
 	/* doesn't really work cause it sometimes creates a ramdisk on ide systems */
 /*	mysystem("/bin/probecntrl.sh");

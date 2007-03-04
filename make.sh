@@ -551,6 +551,7 @@ buildinstaller() {
   installmake e2fsprogs
   installmake libaal
   installmake reiser4progs
+  installmake reiserfsprogs
   installmake sysfsutils
   installmake util-linux
   installmake pciutils

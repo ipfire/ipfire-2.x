@@ -206,6 +206,7 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rsync-2.6.8
+* samba-3.0.23d
 * samba-3.0.24
 * screen-4.0.2
 * sed-4.1.5
@@ -217,6 +218,7 @@
 * sox-12.18.1
 * spandsp-0.0.3pre24
 * squashfs3.0
+* squashfs3.2-r2
 * squid-2.6.STABLE9
 * squid-graph-3.2
 * squidGuard-1.2.0

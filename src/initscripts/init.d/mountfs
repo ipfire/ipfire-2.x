@@ -20,6 +20,7 @@ case "${1}" in
 		boot_mesg "Remounting root file system in read-write mode..."
 		mount -n -o remount,rw / &>/dev/null
 		evaluate_retval
+		sleep 1
 
 		# Remove fsck-related file system watermarks.
 		rm -f /fastboot /forcefsck

@@ -1,6 +1,6 @@
-boot/System.map
+boot/System.map-ipfire
 boot/System.map-KVER-ipfire
-boot/vmlinuz
+boot/vmlinuz-ipfire
 boot/vmlinuz-KVER-ipfire
 lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/build

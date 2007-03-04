@@ -1,7 +1,7 @@
 #etc/fcdsl
 etc/fcdsl/fcdsl.conf
 #lib/modules/KVER-ipfire/extra
-lib/modules/KVER-ipfire/extra/fcdsl.ko
-lib/modules/KVER-ipfire-smp/extra/fcdsl.ko
+#lib/modules/KVER-ipfire/extra/fcdsl.ko
+#lib/modules/KVER-ipfire-smp/extra/fcdsl.ko
 #usr/lib/isdn
 usr/lib/isdn/fdslbase.bin

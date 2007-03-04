@@ -81,7 +81,7 @@ ifeq "$(SMP)" ""
 	cd $(DIR_APP) && sed -i \
 	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
 	    -e 's/$$(shell uname -r)/$(KVER)-ipfire/' \
-	    -e 's/`uname -r`/$(KVER)/' \
+	    -e 's/`uname -r`/$(KVER)-ipfire/' \
 	    -e 's/^\(CCFLAGS.*\)$$/\1 \\/' \
 	    -e '\+^CCFLAGS+a\ \
 	          -include \$$(KRNLINCL)/linux/modversions.h' \
@@ -93,7 +93,7 @@ else
 	cd $(DIR_APP) && sed -i \
 	    -e 's/$$(shell uname -m)/$(MACHINE)/' \
 	    -e 's/$$(shell uname -r)/$(KVER)-ipfire-smp/' \
-	    -e 's/`uname -r`/$(KVER)-smp/' \
+	    -e 's/`uname -r`/$(KVER)-ipfire-smp/' \
 	    -e 's/^\(CCFLAGS.*\)$$/\1 \\/' \
 	    -e '\+^CCFLAGS+a\ \
 	          -include \$$(KRNLINCL)/linux/modversions.h' \

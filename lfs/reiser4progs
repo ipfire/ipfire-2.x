@@ -85,7 +85,7 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin
+	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin --enable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 endif

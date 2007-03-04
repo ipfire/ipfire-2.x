@@ -1,4 +1,4 @@
 etc/fcdsl/fcdslsl.conf
-lib/modules/KVER-ipfire/extra/fcdslsl.ko
-lib/modules/KVER-ipfire-smp/extra/fcdslsl.ko
+#lib/modules/KVER-ipfire/extra/fcdslsl.ko
+#lib/modules/KVER-ipfire-smp/extra/fcdslsl.ko
 usr/lib/isdn/fdssbase.bin

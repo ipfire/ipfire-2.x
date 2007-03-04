@@ -77,9 +77,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && ./configure --prefix=/ --sbindir=/bin
+	cd $(DIR_APP) && ./configure --prefix=/ --sbindir=/sbin
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && install -v -m 755 mkreiserfs/mkreiserfs /install/initrd/bin/mkreiserfs
+	cd $(DIR_APP) && install -v -m 755 mkreiserfs/mkreiserfs /install/initrd/sbin/mkreiserfs
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin
 	cd $(DIR_APP) && make $(MAKETUNING)
