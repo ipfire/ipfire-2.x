@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.42-ipfire
-# Sat Mar  3 20:27:11 2007
+# Sun Mar  4 14:59:47 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -482,6 +482,8 @@ CONFIG_IP_NF_RAW=m
 CONFIG_IP_NF_ARPTABLES=m
 CONFIG_IP_NF_ARPFILTER=m
 CONFIG_IP_NF_ARP_MANGLE=m
+CONFIG_IP_NF_NAT_MMS=m
+CONFIG_IP_NF_MMS=m
 CONFIG_IP_NF_NAT_SIP=m
 CONFIG_IP_NF_SIP=m
 

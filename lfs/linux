@@ -50,14 +50,14 @@ endif
 objects =$(DL_FILE) \
 	mISDN-CVS-2007-01-26.tar.bz2 \
 	squashfs3.2-r2.tar.gz \
-	iptables-1.3.5.tar.bz2 \
+	iptables-1.3.7.tar.bz2 \
 	patch-o-matic-ng-20061210.tar.bz2 \
 	netfilter-layer7-v2.9.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2
 
 $(DL_FILE)					= $(DL_FROM)/$(DL_FILE)
 patch-o-matic-ng-20061210.tar.bz2    	= $(URL_IPFIRE)/patch-o-matic-ng-20061210.tar.bz2
-iptables-1.3.5.tar.bz2			= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
+iptables-1.3.7.tar.bz2			= $(URL_IPFIRE)/iptables-1.3.7.tar.bz2
 netfilter-layer7-v2.9.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.9.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.2-r2.tar.gz			= $(URL_IPFIRE)/squashfs3.2-r2.tar.gz
@@ -65,7 +65,7 @@ mISDN-CVS-2007-01-26.tar.bz2		= $(URL_IPFIRE)/mISDN-CVS-2007-01-26.tar.bz2
 
 $(DL_FILE)_MD5				= 87e998bb87839b962702815dd5aecc73
 patch-o-matic-ng-20061210.tar.bz2_MD5	= 76edac76301b45f89e467b41c8cf4393
-iptables-1.3.5.tar.bz2_MD5			= 00fb916fa8040ca992a5ace56d905ea5
+iptables-1.3.7.tar.bz2_MD5			= dd965bdacbb86ce2a6498829fddda6b7
 netfilter-layer7-v2.9.tar.gz_MD5		= ebf9043a5352ebe6dbd721989ef83dee
 patch-2.6.16-nath323-1.3.bz2_MD5		= f926409ff703a307baf54b57ab75d138
 squashfs3.2-r2.tar.gz_MD5			= bf360b92eba9e6d5610196ce2e02fcd1

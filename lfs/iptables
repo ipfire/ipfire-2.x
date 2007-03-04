@@ -26,11 +26,11 @@
 
 include Config
 
-VER        = 1.3.5
+VER        = 1.3.7
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://ftp.netfilter.org/pub/iptables
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -38,20 +38,17 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 objects = 	$(DL_FILE) \
-			iptables-1.3.0-imq1.diff \
-			netfilter-layer7-v2.6.tar.gz \
+			netfilter-layer7-v2.9.tar.gz \
 			libnfnetlink-0.0.25.tar.bz2 \
 			libnetfilter_queue-0.0.13.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-iptables-1.3.0-imq1.diff 		= $(URL_IPFIRE)/iptables-1.3.0-imq1.diff
-netfilter-layer7-v2.6.tar.gz 	= $(URL_IPFIRE)/netfilter-layer7-v2.6.tar.gz
+netfilter-layer7-v2.9.tar.gz 	= $(URL_IPFIRE)/netfilter-layer7-v2.9.tar.gz
 libnfnetlink-0.0.25.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-0.0.25.tar.bz2
 libnetfilter_queue-0.0.13.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.13.tar.bz2
 
-$(DL_FILE)_MD5 = 00fb916fa8040ca992a5ace56d905ea5
-iptables-1.3.0-imq1.diff_MD5 = 9adae8be9562775a176fc1b275b3cb29
-netfilter-layer7-v2.6.tar.gz_MD5 = 58135cd1aafaf4ae2fa478159206f064
+$(DL_FILE)_MD5 = dd965bdacbb86ce2a6498829fddda6b7
+netfilter-layer7-v2.9.tar.gz_MD5 = ebf9043a5352ebe6dbd721989ef83dee
 libnfnetlink-0.0.25.tar.bz2_MD5 = fc915a2e66d282e524af6ef939042d7d
 libnetfilter_queue-0.0.13.tar.bz2_MD5 = 660cbfd3dc8c10bf9b1803cd2b688256
 
@@ -83,13 +80,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	# iptables-fixed.tar.gz is made in the linux kernel build process
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.25 $(DIR_SRC)/netfilter-layer7-v2.6 $(DIR_SRC)/libnetfilter_queue-0.0.13
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.25 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.13
 
 	@cd $(DIR_SRC) && tar zxf $(DIR_DL)/iptables-fixed.tar.gz
-	@cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.6.tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.6/iptables-layer7-2.6.patch
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.9.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.9/iptables-layer7-2.9.patch
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/iptables-1.3.0-imq1.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.3.6-imq.diff
 	chmod +x $(DIR_APP)/extensions/.IMQ-test*  $(DIR_APP)/extensions/.layer7-test*
 
 	# hack to disable IPv6 compilation as the configuration variable does not work when ip6.h is present
@@ -107,5 +104,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.13 && make
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.13 && make install
 
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.25 $(DIR_SRC)/netfilter-layer7-v2.6 $(DIR_SRC)/libnetfilter_queue-0.0.13
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.25 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.13
 	@$(POSTBUILD)
