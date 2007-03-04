@@ -93,6 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e 's/DO_IPV6:=1/DO_IPV6:=0/' Makefile
 	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib $(MAKETUNING)
 	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib install
+	cd $(DIR_APP) && cp -fva include/* /usr/include
 
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-0.0.25.tar.bz2
 	cd $(DIR_SRC)/libnfnetlink-0.0.25 && ./configure --prefix=/usr

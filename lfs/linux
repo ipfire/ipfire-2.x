@@ -121,8 +121,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Patch-o-matic
 	cd $(DIR_SRC) && rm -rf iptables-* patch-o-matic*
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.5.tar.bz2
-	cd $(DIR_SRC) && ln -sf iptables-1.3.5 iptables
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.7.tar.bz2
+	cd $(DIR_SRC) && ln -sf iptables-1.3.7 iptables
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20061210.tar.bz2
 	cd $(DIR_SRC)/patch-o-matic-ng* && \
 		./runme --batch --kernel-path=$(ROOT)/usr/src/$(THISAPP)/ \
@@ -148,7 +148,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass
-	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.5
+	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.7
 endif
 
 	# Bootsplash
