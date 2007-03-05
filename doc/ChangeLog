@@ -1,4 +1,58 @@
 ------------------------------------------------------------------------
+r440 | ms | 2007-03-05 00:39:47 +0100 (Mon, 05 Mar 2007) | 2 lines
+
+IPTables Fix...
+
+------------------------------------------------------------------------
+r439 | ms | 2007-03-04 20:07:35 +0100 (Sun, 04 Mar 2007) | 2 lines
+
+Squid Error-Seiten brauchen wir nicht in saemtlichen Sprachen
+
+------------------------------------------------------------------------
+r438 | ms | 2007-03-04 19:35:48 +0100 (Sun, 04 Mar 2007) | 2 lines
+
+Busybox wieder einmal aufgebohrt...
+
+------------------------------------------------------------------------
+r437 | ms | 2007-03-04 18:55:55 +0100 (Sun, 04 Mar 2007) | 2 lines
+
+IPTables Update fuer den neuen Kernel.
+
+------------------------------------------------------------------------
+r436 | ms | 2007-03-04 17:45:10 +0100 (Sun, 04 Mar 2007) | 3 lines
+
+Reiser4 Implementation abgeschlossen...
+In memory to Nina Reiser. May she rest in peace...
+
+------------------------------------------------------------------------
+r435 | ms | 2007-03-02 14:23:40 +0100 (Fri, 02 Mar 2007) | 2 lines
+
+Buildfixes...
+
+------------------------------------------------------------------------
+r434 | ms | 2007-03-01 17:44:47 +0100 (Thu, 01 Mar 2007) | 3 lines
+
+Kernel Update
+Netstatusseite mit ip-Befehlen gemacht
+
+------------------------------------------------------------------------
+r433 | ms | 2007-02-25 20:46:08 +0100 (Sun, 25 Feb 2007) | 3 lines
+
+Samba-Update von Maniac...
+Reiser4! Juhuu!
+
+------------------------------------------------------------------------
+r432 | ms | 2007-02-24 23:10:57 +0100 (Sat, 24 Feb 2007) | 2 lines
+
+Sambactrl und samba.cgi von Maniacikarus
+
+------------------------------------------------------------------------
+r431 | ms | 2007-02-23 14:30:56 +0100 (Fri, 23 Feb 2007) | 3 lines
+
+Also irgendwie sind da die Batch-Scripte immernoch inne Wurst... :(
+Kann das einer mal vernuenftig testen??
+
+------------------------------------------------------------------------
 r430 | ms | 2007-02-22 22:18:59 +0100 (Thu, 22 Feb 2007) | 2 lines
 
 Fehlende CGIs in ISO gebaut

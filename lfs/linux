@@ -185,7 +185,7 @@ else
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
 	ln -sf vmlinuz-$(VER)-ipfire /boot/vmlinuz-ipfire
-	ln -sf System.map-$(VER)-ipfire /boot/System-ipfire.map
+	ln -sf System.map-$(VER)-ipfire /boot/System.map-ipfire
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
