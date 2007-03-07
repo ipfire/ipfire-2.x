@@ -32,13 +32,14 @@ THISAPP    = sysfsutils-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ifeq "$(PASS)" "install"
+	TARGET = $(DIR_INFO)/$(THISAPP)-install
 	EXTRA_CONFIG = --prefix="" --disable-shared
 	EXTRA_MAKE =
 	EXTRA_INSTALL = DESTDIR=/install
 else
+	TARGET = $(DIR_INFO)/$(THISAPP)
 	EXTRA_CONFIG = --prefix=""
 	EXTRA_MAKE =
 	EXTRA_INSTALL =

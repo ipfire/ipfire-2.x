@@ -387,6 +387,7 @@ buildipfire() {
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake squashfstools
+  ipfiremake sysfsutils
   ipfiremake ntfs-3g
   ipfiremake ethtool
   ipfiremake ez-ipupdate
@@ -408,6 +409,8 @@ buildipfire() {
   ipfiremake l7-protocols
   ipfiremake isapnptools
 #  ipfiremake isdn4k-utils # What about mISDN???
+  ipfiremake hwdata
+  ipfiremake dbus
   ipfiremake kudzu
   ipfiremake logrotate
   ipfiremake logwatch
@@ -438,6 +441,9 @@ buildipfire() {
   ipfiremake Archive-Zip
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
+  ipfiremake XML-Parser
+  ipfiremake hal
+  ipfiremake hwinfo
   ipfiremake GeoIP
   ipfiremake fwhits
   ipfiremake noip_updater
@@ -555,6 +561,7 @@ buildinstaller() {
   installmake sysfsutils
   installmake util-linux
   installmake pciutils
+  installmake hwdata
   installmake kudzu
   installmake installer
   installmake initrd

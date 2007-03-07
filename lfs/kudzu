@@ -29,7 +29,7 @@ include Config
 VER        = 1.2.64
 
 THISAPP    = kudzu-$(VER)
-DL_FILE    = kudzu-$(VER).tar.bz2
+DL_FILE    = kudzu-$(VER).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
@@ -75,10 +75,10 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && patch -N < $(DIR_SRC)/src/patches/kudzu-link-lintl.diff
-	cd $(DIR_APP) && make RPM_OPT_FLAGS="-Os -fomit-frame-pointer -I/opt/$(MACHINE)-uClibc/include" \
+	cd $(DIR_APP) && make RPM_OPT_FLAGS="$CFLAGS -I/opt/$(MACHINE)-uClibc/include" \
 		ARCH=$(MACHINE)
 	cd $(DIR_APP) && install -m 0755 kudzu /install/initrd/bin/kudzu
 	cd $(DIR_APP) && install -m 0644 libkudzu.a /install/initrd/lib
