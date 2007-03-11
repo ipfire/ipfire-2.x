@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 2.4.7
+VER        = 2.4.8rc1
 
 THISAPP    = openswan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 70f22e8adc39e07a165f75eccb7cd079
+$(DL_FILE)_MD5 = 873613c7e691e1fd8cedfeb6dc71a729
 
 install : $(TARGET)
 

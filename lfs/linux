@@ -103,9 +103,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Openswan 2
 	cd $(DIR_SRC) && rm -rf openswan-*
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-2.4.7.tar.gz
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.7.kernel-2.6-natt.patch
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.7.kernel-2.6-klips.patch
+	cd $(DIR_SRC) && tar xfvz $(DIR_DL)/openswan-2.4.8rc1.tar.gz
+	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan26_netkey.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.8rc1.kernel-2.6-natt.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.8rc1.kernel-2.6-klips.patch
+	
+	
 	cd $(DIR_SRC)/openswan-* && sed -i -e 's/INC_USRLOCAL=\/usr\/local/INC_USRLOCAL=\/usr/' Makefile.inc
 
 	# H323 conntrack
@@ -176,8 +179,9 @@ ifeq "$(SMP)" "1"
 	ln -sf vmlinuz-$(VER)-ipfire-smp /boot/vmlinuz-ipfire-smp
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
-	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
-	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
+	mkdir -p /usr/src/openswan-2.4.8rc1/modobj26/null
+	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
+	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
 else
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire/' Makefile
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
@@ -188,8 +192,9 @@ else
 	ln -sf System.map-$(VER)-ipfire /boot/System.map-ipfire
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
-	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
-	#cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
+	mkdir -p /usr/src/openswan-2.4.8rc1/modobj26/null
+	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
+	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
 endif
 
 	# remove symlinked pcmcia directory

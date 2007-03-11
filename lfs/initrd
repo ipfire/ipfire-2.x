@@ -63,7 +63,7 @@ $(TARGET) :
 
 	# Install SCSI Drivers
 	cp -rf /lib/modules/$(KVER)-ipfire/kernel/drivers/scsi \
-		/lib/modules/$(KVER)-ipfire/kernel/drivers/block/{DAC960.ko,cpqarray.ko,cciss.ko} \
+		/lib/modules/$(KVER)-ipfire/kernel/drivers/block \
 		/lib/modules/$(KVER)-ipfire/kernel/drivers/ide \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
 	rm -f	/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan*
@@ -88,7 +88,7 @@ $(TARGET) :
 
 	# Extra modules
 	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/scsi
-	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/scsi/{scsi_mod.ko,sd_mod.ko,sr_mod.ko} \
+	cp -af /lib/modules/$(KVER)-ipfire/kernel/drivers/scsi/*.ko \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/scsi/
 
 	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/storage
