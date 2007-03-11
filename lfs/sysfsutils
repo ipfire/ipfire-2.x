@@ -33,16 +33,10 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-ifeq "$(PASS)" "install"
+ifeq "$(LFS_PASS)" "install"
 	TARGET = $(DIR_INFO)/$(THISAPP)-install
-	EXTRA_CONFIG = --prefix="" --disable-shared
-	EXTRA_MAKE =
-	EXTRA_INSTALL = DESTDIR=/install
 else
 	TARGET = $(DIR_INFO)/$(THISAPP)
-	EXTRA_CONFIG = --prefix=""
-	EXTRA_MAKE =
-	EXTRA_INSTALL =
 endif
 
 ###############################################################################
@@ -84,13 +78,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && ./configure --disable-shared --prefix="" $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && ./configure --prefix="" --disable-shared
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make DESTDIR=/opt/$(MACHINE)-uClibc install
+	mv -v /opt/$(MACHINE)-uClibc/usr/include/sysfs /opt/$(MACHINE)-uClibc/include
 else
-	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && ./configure --prefix=""
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 12.29
+VER        = ipfire
 
 THISAPP    = hwinfo-$(VER)
 DIR_APP    = $(DIR_SRC)/hwinfo
@@ -56,6 +56,10 @@ $(TARGET) :
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cp -av $(DIR_SRC)/src/hwinfo $(DIR_SRC)
 ifeq "$(LFS_PASS)" "install"
+	cd $(DIR_APP) && make CC="/opt/$(MACHINE)-uClibc/bin/$(MACHINE)-linux-gcc -I/opt/$(MACHINE)-uClibc/include" \
+		EXTRA_FLAGS="-fno-pic -DUCLIBC" \
+		SHARED_FLAGS= LIBS="-lhd -lsysfs"
+	install -m 755 hwinfo /install/initrd/sbin
 else
 	cd $(DIR_APP) && make tinystatic
 	cd $(DIR_APP) && make tinystaticinstall

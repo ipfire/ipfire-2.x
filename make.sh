@@ -410,7 +410,6 @@ buildipfire() {
   ipfiremake isapnptools
 #  ipfiremake isdn4k-utils # What about mISDN???
   ipfiremake hwdata
-  ipfiremake dbus
   ipfiremake kudzu
   ipfiremake logrotate
   ipfiremake logwatch
@@ -442,6 +441,8 @@ buildipfire() {
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
   ipfiremake XML-Parser
+  ipfiremake glib
+  ipfiremake dbus
   ipfiremake hal
   ipfiremake hwinfo
   ipfiremake GeoIP
@@ -471,7 +472,6 @@ buildipfire() {
   ipfiremake spandsp
   ipfiremake lzo
   ipfiremake openvpn
-  ipfiremake glib
   ipfiremake pammysql
   ipfiremake xinetd
   ipfiremake ghostscript
@@ -561,7 +561,12 @@ buildinstaller() {
   installmake sysfsutils
   installmake util-linux
   installmake pciutils
+  installmake zlib
+  installmake libxml2
+  installmake dbus
+  installmake hal
   installmake hwdata
+  installmake hwinfo
   installmake kudzu
   installmake installer
   installmake initrd

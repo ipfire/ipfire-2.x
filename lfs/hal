@@ -77,16 +77,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && patch -N < $(DIR_SRC)/src/patches/kudzu-link-lintl.diff
-	cd $(DIR_APP) && make RPM_OPT_FLAGS="$CFLAGS -I/opt/$(MACHINE)-uClibc/include" \
-		ARCH=$(MACHINE)
-	cd $(DIR_APP) && install -m 0755 kudzu /install/initrd/bin/kudzu
-	cd $(DIR_APP) && install -m 0644 libkudzu.a /install/initrd/lib
-	cd $(DIR_APP) && install -m 0644 libkudzu_loader.a /install/initrd/lib
+	cd $(DIR_APP) && CPPFLAGS="-I/opt/$(MACHINE)-uClibc/include" \
+			   ./configure --prefix=/opt/$(MACHINE)-uClibc \
+			   --disable-shared --disable-glib --disable-policy-kit \
+			   --disable-acpi-proc --disable-acpi-acpid
+	cd $(DIR_APP)/libhal && make $(MAKETUNING)
+	cd $(DIR_APP)/libhal && make install
+	install -v -m755 -d /opt/$(MACHINE)-uClibc/var/run/hald
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 				--libexecdir=/usr/lib/hal --localstatedir=/var
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	install -v -m755 -d /var/run/hald
 endif
