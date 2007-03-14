@@ -81,7 +81,7 @@ int networkmenu(struct keyvalue *ethernetkv)
 	strcpy(address, ""); findkey(ethernetkv, "GREEN_ADDRESS", address);
 	strcpy(netmask, ""); findkey(ethernetkv, "GREEN_NETMASK", netmask);
 
-	snprintf(commandstring, STRING_SIZE, "/bin/ifconfig eth0 %s netmask %s up", 
+	snprintf(commandstring, STRING_SIZE, "/sbin/ifconfig eth0 %s netmask %s up", 
 		address, netmask);
 	if (mysystem(commandstring))
 	{

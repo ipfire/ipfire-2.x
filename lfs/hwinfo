@@ -59,7 +59,7 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make CC="/opt/$(MACHINE)-uClibc/bin/$(MACHINE)-linux-gcc -I/opt/$(MACHINE)-uClibc/include" \
 		EXTRA_FLAGS="-fno-pic -DUCLIBC" \
 		SHARED_FLAGS= LIBS="-lhd -lsysfs"
-	install -m 755 hwinfo /install/initrd/sbin
+	cd $(DIR_APP) && install -m 755 hwinfo /install/initrd/sbin
 else
 	cd $(DIR_APP) && make tinystatic
 	cd $(DIR_APP) && make tinystaticinstall

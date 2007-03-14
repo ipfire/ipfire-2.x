@@ -1,42 +1,39 @@
 #!/bin/ash
 
-echo "Mounting /tmp"
+echo -n "Mounting filesystems: /tmp "
 mount -n -t tmpfs tmpfs /tmp -o mode=1777
 
-echo "Mounting /proc" 
+echo -n "/proc "
 mount -n -t proc none /proc
-
-echo "Mounting /sys"
-mount -n -t sysfs sysfs /sys
-
-echo "Silencing kernel"
 echo >/proc/sys/kernel/printk "1 4 1 7"
 
-echo "Disabling screen blanking"
-echo -n -e "\033[9;0]"
+echo -n "/sys "
+mount -n -t sysfs sysfs /sys
 
-echo "Mounting /dev"
+echo -n "/dev "
 mount -n -t tmpfs tmpfs /dev -o mode=755
+mkdir -p -m 0755 /dev/pts
+mkdir -p -m 0755 /dev/shm
+
+echo -n "/dev/pts "
+mount -n -t devpts devpts /dev/pts
+
+echo "/root"
+mount -n -t ramfs none /root
+
+echo -n -e "\033[9;0]"
 
 ln -snf /proc/self/fd /dev/fd
 ln -snf /proc/self/fd/0 /dev/stdin
 ln -snf /proc/self/fd/1 /dev/stdout
 ln -snf /proc/self/fd/2 /dev/stderr
 ln -s /proc/kcore /dev/core
-mkdir -p -m 0755 /dev/pts
-mkdir -p -m 0755 /dev/shm
-
-echo "Mounting /dev/pts"
-mount -n -t devpts devpts /dev/pts
-
-echo "Mounting /root"
-mount -n -t ramfs none /root
 
 echo "Starting syslogd"
 syslogd -O /dev/tty4
 
-echo "Starting udev"
+echo "Starting udev daemon"
 /sbin/udevstart
 
 echo "Loading installer... Please wait!"
-/bin/sleep 5
+/bin/sleep 2

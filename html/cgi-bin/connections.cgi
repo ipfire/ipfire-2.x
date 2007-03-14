@@ -6,7 +6,7 @@
 #
 # (c) 2006 Franck - add sorting+filtering capability
 #
-# (c) 2006 Peter Sch√§lchli -inetwork (bug)
+# (c) 2006 Peter Sch‰lchli -inetwork (bug)
 #
 
 # Setup GREEN, ORANGE, IPFIRE, VPN CIDR networks, masklengths and colours only once
@@ -405,7 +405,7 @@ my $menu_sort  = &make_select ('SEE_SORT',  $cgiparams{'SEE_SORT'},  @list_sort)
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='60%'>
+<table width='100%'>
 <tr><td align='center'><b>$Lang::tr{'legend'} : </b></td>
     <td align='center' bgcolor='${Header::colourgreen}'><b><font color='#FFFFFF'>$Lang::tr{'lan'}</font></b></td>
     <td align='center' bgcolor='${Header::colourred}'><b><font color='#FFFFFF'>$Lang::tr{'internet'}</font></b></td>
@@ -416,17 +416,16 @@ print <<END
     <td align='center' bgcolor='${Header::colourovpn}'><b><font color='#FFFFFF'>$Lang::tr{'OpenVPN'}</font></b></td>
 </tr>
 </table>
-<br />
-<table cellpadding='2'>
-<tr><td align='center'><b>$Lang::tr{'protocol'}</b></td>
-    <td align='center'><b>$Lang::tr{'expires'}<br />($Lang::tr{'seconds'})</b></td>
-    <td align='center'><b>$Lang::tr{'connection'}<br />$Lang::tr{'status'}</b></td>
-    <td align='center'><b>$Lang::tr{'original'}<br />$Lang::tr{'source ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'original'}<br />$Lang::tr{'dest ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'expected'}<br />$Lang::tr{'source ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'expected'}<br />$Lang::tr{'dest ip and port'}</b></td>
-    <td align='center'><b>$Lang::tr{'marked'}</b></td>
-    <td align='center'><b>$Lang::tr{'use'}</b></td>
+<br></br>
+<table width='100%'>
+<tr><td align='center'><font size=2>$Lang::tr{'protocol'}</font></td>
+    <td align='center'><font size=2>$Lang::tr{'expires'}<br></br>($Lang::tr{'seconds'})</font></td>
+    <td align='center'><font size=2>$Lang::tr{'connection'}<br></br>$Lang::tr{'status'}</font></td>
+    <td align='center'><font size=2>$Lang::tr{'original'}<br></br>$Lang::tr{'source ip and port'}</font></td>
+    <td align='center'><font size=2>$Lang::tr{'original'}<br></br>$Lang::tr{'dest ip and port'}</font></td>
+    <td align='center'><font size=2>$Lang::tr{'expected'}<br></br>$Lang::tr{'source ip and port'}</font></td>
+    <td align='center'><font size=2>$Lang::tr{'expected'}<br></br>$Lang::tr{'dest ip and port'}</font></td>
+    <td align='center'><font size=2>$Lang::tr{'marked'}</font></td>
 </tr>
 <tr>
     <td align='center'>$menu_proto</td>
@@ -434,10 +433,16 @@ print <<END
     <td align='center'>$menu_state</td>
     <td align='center'>$menu_src</td>
     <td align='center'>$menu_dest</td>
-    <td align='center'colspan='2'>$Lang::tr{'sort ascending'}:$menu_sort </td>
+    <td align='center' colspan='2'></td>
     <td align='center'>$menu_mark</td>
-    <td align='center'><input type='submit' value='!' /></td>
 </tr>
+<tr>
+    <td align='center' colspan='8'></td>
+</tr>
+<tr>
+    <td align='center' colspan='8'><input type='submit' value='Aktualisieren' /></td>
+</tr>
+
 END
 ;
 
@@ -448,27 +453,26 @@ foreach my $entry (sort sort_entries keys %entries) {
         my $exdipcolour  = &ipcolour( $entries{$entry}->{exdip} );
 	print <<END
         <tr bgcolor='${Header::table1colour}'>
-        <td align='center'>$entries{$entry}->{protocol}</td>
-        <td align='center'>$entries{$entry}->{expires}</td>
-        <td align='center'>$entries{$entry}->{status}</td>
+        <td align='center'><font size=2>$entries{$entry}->{protocol}</font></td>
+        <td align='center'><font size=2>$entries{$entry}->{expires}</font></td>
+        <td align='center'><font size=2>$entries{$entry}->{status}</font></td>
         <td align='center' bgcolor='$orgsipcolour'>
             <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{orgsip}'>
-            <font color='#FFFFFF'>$entries{$entry}->{orgsip}</font>
-            </a><font color='#FFFFFF'>:$entries{$entry}->{orgsp}</font></td>
+            <font color='#FFFFFF' size=2>$entries{$entry}->{orgsip}</font>
+            </a><font color='#FFFFFF' size=2>:$entries{$entry}->{orgsp}</font></td>
         <td align='center' bgcolor='$orgdipcolour'>
             <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{orgdip}'>
-            <font color='#FFFFFF'>$entries{$entry}->{orgdip}</font>
-            </a><font color='#FFFFFF'>:$entries{$entry}->{orgdp}</font></td>
+            <font color='#FFFFFF' size=2>$entries{$entry}->{orgdip}</font>
+            </a><font color='#FFFFFF' size=2>:$entries{$entry}->{orgdp}</font></td>
         <td align='center' bgcolor='$exsipcolour'>
             <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{exsip}'>
-            <font color='#FFFFFF'>$entries{$entry}->{exsip}</font>
-            </a><font color='#FFFFFF'>:$entries{$entry}->{exsp}</font></td>
+            <font color='#FFFFFF' size=2>$entries{$entry}->{exsip}</font>
+            </a><font color='#FFFFFF' size=2>:$entries{$entry}->{exsp}</font></td>
         <td align='center' bgcolor='$exdipcolour'>
             <a href='/cgi-bin/ipinfo.cgi?ip=$entries{$entry}->{exdip}'>
-            <font color='#FFFFFF'>$entries{$entry}->{exdip}</font>
-            </a><font color='#FFFFFF'>:$entries{$entry}->{exdp}</font></td>
-        <td align='center'>$entries{$entry}->{marked}</td>
-        <td align='center'>$entries{$entry}->{use}</td>
+            <font color='#FFFFFF' size=2>$entries{$entry}->{exdip}</font>
+            </a><font color='#FFFFFF' size=2>:$entries{$entry}->{exdp}</font></td>
+        <td align='center'><font size=2>$entries{$entry}->{marked}</font></td>
         </tr>
 END
 ;

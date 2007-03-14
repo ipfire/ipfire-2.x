@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Main include file.
  * 
- * $Id: install.h,v 1.10 2004/02/24 21:24:10 alanh Exp $
- * 
  */
 
 #include "../libsmooth/libsmooth.h"

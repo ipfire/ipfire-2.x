@@ -253,10 +253,6 @@ int main(int argc, char *argv[])
 		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
 	} else {
 		fgets(line, STRING_SIZE, cmdfile);
-		if (strstr (line, "fdisk") != NULL) {
-			fprintf(flog, "Manual FDISK selected.\n");
-			fdisk = 1;
-		}
 		if (strstr (line, "nousb") == NULL) {
 			fprintf(flog, "Initializing USB controllers.\n");
 			initialize_usb();
@@ -296,10 +292,10 @@ int main(int argc, char *argv[])
 
 	newtDrawRootText(14, 0, NAME " " VERSION " - " SLOGAN );
 	newtPushHelpLine(ctr[TR_HELPLINE]);
+	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 
 	if (!unattended) {
 		sprintf(message, ctr[TR_WELCOME], NAME);
-		sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 		newtWinMessage(title, ctr[TR_OK], message);
 
 		sprintf(message, ctr[TR_SELECT_INSTALLATION_MEDIA_LONG], NAME);

@@ -105,7 +105,6 @@
 * htop-0.6.2
 * httpd-2.2.2
 * hwdata-0.191
-* hwinfo-12.29
 * hwinfo-ipfire
 * iana-etc-2.10
 * ibod
@@ -188,7 +187,7 @@
 * openldap-2.3.20
 * openssh-4.3p2
 * openssl-0.9.8d
-* openswan-2.4.7
+* openswan-2.4.8rc1
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4

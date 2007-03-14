@@ -1,14 +1,10 @@
 #!/bin/sh
 
-#
-# to be banished by kudzu!
-#
-
 echo "Scanning source media"
 
 # scan CDROM devices
 
-for DEVICE in $(kudzu -qps  -t 30 -c CDROM | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+for DEVICE in $(hwinfo --cdrom | grep "Device File" | awk -F: '{ print $2 }' | cut -c 7- | sort | uniq); do
     mount /dev/${DEVICE} /cdrom 2> /dev/null
     if [ -e /cdrom/boot ]; then
 	echo -n ${DEVICE} > /tmp/source_device
@@ -18,7 +14,7 @@ for DEVICE in $(kudzu -qps  -t 30 -c CDROM | grep device: | cut -d ' ' -f 2 | so
 done
 
 # scan HD device (usb sticks, etc.)
-for DEVICE in $(kudzu -qps  -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+for DEVICE in $(hwinfo --usb --disk | grep "Device File" | awk -F: '{ print $2 }' | cut -c 7- | sort | uniq); do
     mount /dev/${DEVICE}1 /cdrom 2> /dev/null
     if [ -e /cdrom/boot ]; then
 	echo -n ${DEVICE}1 > /tmp/source_device

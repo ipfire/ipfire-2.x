@@ -51,6 +51,7 @@ int initialize_usb() {
     	usbuhci = 1;
 
     mysystem("/sbin/modprobe usbhid");
+    mysystem("udevstart");
     return 0;
 }
 
