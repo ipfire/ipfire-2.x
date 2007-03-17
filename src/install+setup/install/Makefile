@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.6 2004/02/24 21:24:10 alanh Exp $
+# Installer Makefile by Michael Tremer for IPFire.org
 #
 
 CC      = gcc 
@@ -24,7 +24,7 @@ clean :
 ######
 
 OBJS=main.o ide.o cdrom.o nic.o net.o config.o ../libsmooth/libsmooth.o \
-	pcmcia.o usb.o scsi.o
+	usb.o scsi.o unattended.o
 
 install: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)

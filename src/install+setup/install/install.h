@@ -42,9 +42,6 @@ int write_disk_configs(struct devparams *dp);
 int write_lang_configs( char *lang);
 int write_ethernet_configs(struct keyvalue *ethernetkv);
 
-/* pcmcia.c */
-char * initialize_pcmcia (void);
-
 /* usb.c */
 int initialize_usb();
 int write_usb_modules_conf();
@@ -52,3 +49,6 @@ int write_usb_modules_conf();
 /* scsi.c */
 int try_scsi(char *dev);
 int get_boot(char *dev);
+
+/* unattended.c */
+int unattended_setup(struct keyvalue *unattendedkv);

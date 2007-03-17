@@ -23,7 +23,6 @@ char *mylog;
 
 char **ctr;
 
-char *pcmcia = NULL;
 extern char url[STRING_SIZE];
 
 extern char *en_tr[];
@@ -57,135 +56,12 @@ long calc_swapsize(long memory, long disk) {
 	return memory*2;
 }
 
-int unattended_setup(struct keyvalue *unattendedkv) {
-    struct keyvalue *mainsettings = initkeyvalues();
-    struct keyvalue *ethernetkv = initkeyvalues();
-    FILE *file, *hosts;
-    char commandstring[STRING_SIZE];
-
-    char domainname[STRING_SIZE];
-    char hostname[STRING_SIZE];
-    char keymap[STRING_SIZE];
-    char language[STRING_SIZE];
-    char timezone[STRING_SIZE];
-    char theme[STRING_SIZE];
-    char green_address[STRING_SIZE];
-    char green_netmask[STRING_SIZE];
-    char green_netaddress[STRING_SIZE];
-    char green_broadcast[STRING_SIZE];
-    char root_password[STRING_SIZE];
-    char admin_password[STRING_SIZE];
-
-    findkey(unattendedkv, "DOMAINNAME", domainname);
-    findkey(unattendedkv, "HOSTNAME", hostname);
-    findkey(unattendedkv, "KEYMAP", keymap);
-    findkey(unattendedkv, "LANGUAGE", language);
-    findkey(unattendedkv, "TIMEZONE", timezone);
-    findkey(unattendedkv, "THEME", theme);
-    findkey(unattendedkv, "GREEN_ADDRESS", green_address);
-    findkey(unattendedkv, "GREEN_NETMASK", green_netmask);
-    findkey(unattendedkv, "GREEN_NETADDRESS", green_netaddress);
-    findkey(unattendedkv, "GREEN_BROADCAST", green_broadcast);
-    findkey(unattendedkv, "ROOT_PASSWORD", root_password);
-    findkey(unattendedkv, "ADMIN_PASSWORD", admin_password);
-
-    /* write main/settings. */
-    replacekeyvalue(mainsettings, "DOMAINNAME", domainname);
-    replacekeyvalue(mainsettings, "HOSTNAME", hostname);
-    replacekeyvalue(mainsettings, "KEYMAP", keymap);
-    replacekeyvalue(mainsettings, "LANGUAGE", language);
-    replacekeyvalue(mainsettings, "TIMEZONE", timezone);
-    replacekeyvalue(mainsettings, "THEME", theme);
-    writekeyvalues(mainsettings, "/harddisk" CONFIG_ROOT "/main/settings");
-    freekeyvalues(mainsettings);
-
-    /* do setup stuff */
-    fprintf(flog, "unattended: Starting setup\n");
-
-    /* network */
-    fprintf(flog, "unattended: setting up network configuration\n");
-
-    (void) readkeyvalues(ethernetkv, "/harddisk" CONFIG_ROOT "/ethernet/settings");
-    replacekeyvalue(ethernetkv, "GREEN_ADDRESS", green_address);
-    replacekeyvalue(ethernetkv, "GREEN_NETMASK", green_netmask);
-    replacekeyvalue(ethernetkv, "GREEN_NETADDRESS", green_netaddress);
-    replacekeyvalue(ethernetkv, "GREEN_BROADCAST", green_broadcast);
-    replacekeyvalue(ethernetkv, "CONFIG_TYPE", "0");
-    replacekeyvalue(ethernetkv, "GREEN_DEV", "eth0");
-    write_ethernet_configs(ethernetkv);
-    freekeyvalues(ethernetkv);
-
-    /* timezone */
-    unlink("/harddisk/etc/localtime");
-    snprintf(commandstring, STRING_SIZE, "/harddisk/%s", timezone);
-    link(commandstring, "/harddisk/etc/localtime");
-
-    /* hostname */
-    fprintf(flog, "unattended: writing hostname.conf\n");
-    if (!(file = fopen("/harddisk" CONFIG_ROOT "/main/hostname.conf", "w")))
-    {
-	errorbox("unattended: ERROR writing hostname.conf");
-	return 0;
-    }
-    fprintf(file, "ServerName %s\n", hostname);
-    fclose(file);
-
-    fprintf(flog, "unattended: writing hosts\n");
-    if (!(hosts = fopen("/harddisk/etc/hosts", "w")))
-    {
-	errorbox("unattended: ERROR writing hosts");
-	return 0;
-    }
-    fprintf(hosts, "127.0.0.1\tlocalhost\n");
-    fprintf(hosts, "%s\t%s.%s\t%s\n", green_address, hostname, domainname, hostname);
-    fclose(hosts);
-
-    fprintf(flog, "unattended: writing hosts.allow\n");
-    if (!(file = fopen("/harddisk/etc/hosts.allow", "w")))
-    {
-	errorbox("unattended: ERROR writing hosts.allow");
-	return 0;
-    }
-    fprintf(file, "sshd : ALL\n");
-    fprintf(file, "ALL  : localhost\n");
-    fprintf(file, "ALL  : %s/%s\n", green_netaddress, green_netmask);
-    fclose(file);
-
-    fprintf(flog, "unattended: writing hosts.deny\n");
-    if (!(file = fopen("/harddisk/etc/hosts.deny", "w")))
-    {
-	errorbox("unattended: ERROR writing hosts.deny");
-        return 0;
-    }
-    fprintf(file, "ALL : ALL\n");
-    fclose(file);
-
-    /* set root password */
-    fprintf(flog, "unattended: setting root password\n");
-    snprintf(commandstring, STRING_SIZE,
-	    "/sbin/chroot /harddisk /bin/sh -c \"echo 'root:%s' | /usr/sbin/chpasswd\"", root_password);
-    if (mysystem(commandstring)) {
-	errorbox("unattended: ERROR setting root password");
-	return 0;
-    }
-
-    /* set admin password */
-    fprintf(flog, "unattended: setting admin password\n");
-    snprintf(commandstring, STRING_SIZE,
-	    "/sbin/chroot /harddisk /usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
-    if (mysystem(commandstring)) {
-	errorbox("unattended: ERROR setting admin password");
-	return 0;
-    }
-    return 1;
-}
-
 int main(int argc, char *argv[])
 {
 	char *langnames[] = { "Deutsch", "English", NULL };
 	char *shortlangnames[] = { "de", "en", NULL };
 	char **langtrs[] = { de_tr, en_tr, NULL };
-	char hdletter, cdletter;
+	char hdletter;
 	char harddrive[5], sourcedrive[5];	/* Device holder. */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
 	int cdmounted = 0; /* Loop flag for inserting a cd. */
@@ -193,15 +69,12 @@ int main(int argc, char *argv[])
 	char commandstring[STRING_SIZE];
 	char *installtypes[] = { "CDROM/USB", "HTTP/FTP", NULL };
 	int installtype = CDROM_INSTALL;
-	char insertmessage[STRING_SIZE];
-	char insertdevnode[STRING_SIZE];
 	int choice;
 	char shortlangname[10];
 	char message[1000];
 	char title[STRING_SIZE];
 	int allok = 0;
 	int allok_fastexit=0;
-	int unmount_before=0;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle, *cmdfile;
 	char line[STRING_SIZE];
@@ -210,20 +83,10 @@ int main(int argc, char *argv[])
 	long memory = 0;
 	long system_partition, boot_partition, root_partition, swap_file;
 	int scsi_disk = 0;
-	int pcmcia_disk = 0;
-	int pcmcia_cdrom = 0;
-	int scsi_cdrom = 0;
-	int ide_cdrom = 0;
-	int fdisk = 0;
-	int hardyn = 0;
 	char *yesnoharddisk[] = { "NO", "YES", NULL };
-	char *yesno[] = { "NO", "YES", NULL };
-	char green[STRING_SIZE];
 	int unattended = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
-	char packages[STRING_SIZE];
-	int serial_console = 0;
-	char megabridge[STRING_SIZE];
+	int hardyn = 0;
 
 	setlocale (LC_ALL, "");
 	sethostname( SNAME , 10);
@@ -619,8 +482,16 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
 		goto EXIT;
 	}
-	
-	snprintf(commandstring, STRING_SIZE, "/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
+
+	if (installtype == URL_INSTALL) {
+		snprintf(commandstring, STRING_SIZE,
+			"/bin/wget -q -O - %s/" SNAME "-" VERSION ".tbz2 | /bin/tar -C /harddisk -xvjf -", url);
+	}
+
+	if (installtype == CDROM_INSTALL) {	
+		snprintf(commandstring, STRING_SIZE,
+			"/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
+	}
 	
 	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
 		ctr[TR_INSTALLING_FILES]))
@@ -634,11 +505,11 @@ int main(int argc, char *argv[])
 
 	/* touch the modules.dep files */
 	snprintf(commandstring, STRING_SIZE, 
-		"/sbin/chroot /harddisk /usr/bin/touch /lib/modules/%s/modules.dep",
+		"/bin/touch /harddisk/lib/modules/%s-ipfire/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
 	snprintf(commandstring, STRING_SIZE, 
-		"/sbin/chroot /harddisk /usr/bin/touch /lib/modules/%s-smp/modules.dep",
+		"/bin/touch /harddisk/lib/modules/%s-ipfire-smp/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
 
@@ -706,7 +577,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Update /etc/fstab */
-	replace( "/harddisk/etc/fstab", "DEVICE", hdparams.devnode);
+	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode);
 
 	/* Install bootsplash */
 	mysystem("/bin/installbootsplash.sh");
@@ -725,13 +596,9 @@ int main(int argc, char *argv[])
 
 EXIT:
 	fprintf(flog, "Install program ended.\n");	
-	fflush(flog);
-	fclose(flog);
 
 	if (!(allok))
 		newtWinMessage(title, ctr[TR_OK], ctr[TR_PRESS_OK_TO_REBOOT]);	
-	
-	newtFinished();
 	
 	freekeyvalues(ethernetkv);
 
@@ -743,23 +610,30 @@ EXIT:
 			printf("Unable to mount proc in /harddisk.");
 		else
 		{
+			if (unattended) {
+			    fprintf(flog, "Entering unattended setup\n");
+			    if (unattended_setup(unattendedkv)) {
+				snprintf(commandstring, STRING_SIZE, "/bin/sleep 10");
+				runcommandwithstatus(commandstring, "Unattended installation finished, system will reboot");
+			    } else {
+				errorbox("Unattended setup failed.");
+				goto EXIT;
+			    }
+			}
+
+			newtFinished();
+			fflush(flog);
+			fclose(flog);
 
 			if (!unattended) {
 			    if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
 				    printf("Unable to run setup.\n");
 			}
-			else {
-			    fprintf(flog, "Entering unattended setup\n");
-			    unattended_setup(unattendedkv);
-			    snprintf(commandstring, STRING_SIZE, "/bin/sleep 10");
-			    runcommandwithstatus(commandstring, "Unattended installation finished, system will reboot");
-			}
 
 			if (system("/bin/umount /harddisk/proc"))
-				printf("Unable to umount /harddisk/proc.\n");
+				printf("Unable to umount /harddisk/proc.\n"); 
 		}
 	}
-
 	fcloseall();
 
 	if (swap_file) {

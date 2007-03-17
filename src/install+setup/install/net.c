@@ -36,7 +36,7 @@ int checktarball(char *file, char *message)
 		/* remove any successive /'s */
 		while (url[strlen(url)-1] == '/') { url[strlen(url)-1] = '\0'; }
 
-		snprintf(commandstring, STRING_SIZE, "/bin/wget -s -O /dev/null %s/%s", url, file);
+		snprintf(commandstring, STRING_SIZE, "/bin/wget -q --spider -O /dev/null %s/%s", url, file);
 		if (!(runcommandwithstatus(commandstring, ctr[TR_CHECKING])))
 		{
 			done = 1;
@@ -63,7 +63,7 @@ static int gettarballurl(char *url, char *message)
 	char title[STRING_SIZE];
 	int rc;
 
-	sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
+	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 	rc = newtWinEntries(title, message,
 		60, 5, 5, 50, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
 		

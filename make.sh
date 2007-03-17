@@ -562,6 +562,7 @@ buildinstaller() {
   installmake util-linux
   installmake pciutils
   installmake zlib
+  installmake wget
   installmake libxml2
   installmake dbus
   installmake hal
