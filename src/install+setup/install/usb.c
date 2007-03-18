@@ -29,6 +29,7 @@ int initialize_usb() {
     mysystem("/sbin/modprobe sd_mod");
     mysystem("/sbin/modprobe sr_mod");
     mysystem("/sbin/modprobe usb-storage");
+    mysystem("/sbin/modprobe vfat");
 
     if (ehcihcd) {
     	mysystem("/sbin/rmmod ehci-hcd");
@@ -51,7 +52,7 @@ int initialize_usb() {
     	usbuhci = 1;
 
     mysystem("/sbin/modprobe usbhid");
-    mysystem("udevstart");
+    mysystem("/sbin/udevstart");
     return 0;
 }
 

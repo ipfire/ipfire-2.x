@@ -1,5 +1,4 @@
-.TH NASH 8 "Sat Mar 27 1999"
-.UC 4
+.TH NASH 8 "Mon Aug 02 2004"
 .SH NAME
 nash \- script interpretor to interpret linuxrc images
 .SH SYNOPSIS
@@ -70,6 +69,12 @@ which the exceptions that it will not create named pipes and if the directories
 in \fIpath\fR do not exist they will be automatically created.
 
 .TP
+\fBmkdmnod\fR
+Creates a device inode for the device mapper control inode as
+\fI/dev/mapper/control\fR.  If it already exists with the correct
+major/minor, it will not be recreated.
+
+.TP
 \fBmkrootdev \fIpath\fR
 Makes \fIpath\fR a block inode for the device which should be mounted
 as root. To determine this device nash uses 
@@ -94,13 +99,31 @@ Makes the filesystem mounted at \fInewrootpath\fR the new root filesystem,
 and mounts the current root filesystem as \fIoldrootpath\fR.
 
 .TP
+\fBreadlink \fIpath\fR
+Displays the value of the symbolic link \fIpath\fR.
+
+.TP
 \fBraidautorun \fImddevice\fR
 Runs raid autodetection on all raid-typed partitions. \fImddevice\fR must
 be a raid device (any will do).
 
 .TP
+\fBsetquiet\fR
+Cause any later echos in this script to not be displayed.
+
+.TP
 \fBshowlabels\fR
 Display a table of devices, their filesystem labels, and their uuids.
+
+.TP
+\fBsleep \fInum\fR
+Sleep for \fInum\fR seconds
+
+.TP
+\fBswitchroot \fInewrootpath\fR
+Makes the filesystem mounted at \fInewrootpath\fR the new root
+filesystem by moving the mountpoint.  This will only work in 2.6 or
+later kernels.
 
 .TP
 \fBumount \fIpath\fR

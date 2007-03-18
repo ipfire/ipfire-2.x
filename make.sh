@@ -393,6 +393,7 @@ buildipfire() {
   ipfiremake ez-ipupdate
   ipfiremake fcron
   ipfiremake GD
+  ipfiremake GD-Graph
   ipfiremake gnupg
   ipfiremake hdparm
   ipfiremake ibod

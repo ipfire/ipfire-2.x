@@ -73,9 +73,9 @@ $(TARGET) :
 	depmod -a -F /boot/System.map-$(KVER)-ipfire-smp $(KVER)-ipfire-smp
 
 	cd / && tar -cvf /tmp/drivers.tar \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/{arch,fs} \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{acpi,atm,bluetooth,block,char,cdrom,hwmon,ide} \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{ieee1394,isdn,mmc,scsi,md,video} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/{arch,crypto} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{acpi,atm,bluetooth,block,char,cdrom,connector,cpufreq,hwmon,ide} \
+		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{ieee1394,isdn,mmc,md,parport,video} \
 		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/net/{wan,ppp*,slip*,slhc*,tun*,wireless} \
 		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/usb/{atm,input,storage,host} \
 		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/usb/{3cp4218.ko,acm.ko,amedyn.ko,cxacru.ko} \
@@ -87,10 +87,6 @@ $(TARGET) :
 	cd /install/initrd/ && tar -xvf /tmp/drivers.tar && rm -f /tmp/drivers.tar
 
 	# Extra modules
-	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/scsi
-	cp -af /lib/modules/$(KVER)-ipfire/kernel/drivers/scsi/*.ko \
-		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/scsi/
-
 	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/storage
 	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/usb/storage/*.ko \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/storage/
@@ -106,10 +102,6 @@ $(TARGET) :
 	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/core
 	cp -f /lib/modules/$(KVER)-ipfire/kernel/drivers/usb/core/*.ko \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/usb/core
-
-	# File system
-	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/fs
-	cp -rf /lib/modules/$(KVER)-ipfire/kernel/fs/* /install/initrd/lib/modules/$(KVER)-ipfire/kernel/fs
 
 	cp -f /lib/modules/$(KVER)-ipfire/modules.* /install/initrd/lib/modules/$(KVER)-ipfire
 

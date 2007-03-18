@@ -1,8 +1,8 @@
 bin/lsmod
 sbin/depmod
-#sbin/generate-modprobe.conf
+sbin/generate-modprobe.conf
 sbin/insmod
-#sbin/insmod.static
+sbin/insmod.static
 sbin/modinfo
 sbin/modprobe
 sbin/rmmod

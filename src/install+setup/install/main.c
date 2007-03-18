@@ -128,7 +128,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	// make some beeps before wiping the system :)
 	if (unattended) {
 	    runcommandwithstatus("/bin/sleep 10", "WARNING: Unattended installation will start in 10 seconds...");
  	}
@@ -165,8 +164,7 @@ int main(int argc, char *argv[])
 		rc = newtWinMenu(ctr[TR_SELECT_INSTALLATION_MEDIA], message,
 			50, 5, 5, 6, installtypes, &installtype, ctr[TR_OK],
 			ctr[TR_CANCEL], NULL);
-	}
-	else {
+	} else {
 	    rc = 1;
 	    installtype = CDROM_INSTALL;
 	}
@@ -179,7 +177,6 @@ int main(int argc, char *argv[])
 
 	/* CDROM INSTALL */
 	if (installtype == CDROM_INSTALL) {
-
 		switch (mysystem("/bin/mountsource.sh")) {
 		    case 0:
 			installtype = CDROM_INSTALL;
@@ -215,7 +212,7 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		}
 
-		/* Check for ipcop-<VERSION>.tbz2 */
+		/* Check for ipfire-<VERSION>.tbz2 */
 		if (checktarball(SNAME "-" VERSION ".tbz2", ctr[TR_ENTER_URL])) {
 			errorbox(ctr[TR_NO_IPCOP_TARBALL_FOUND]);
 			goto EXIT;
@@ -527,36 +524,35 @@ int main(int argc, char *argv[])
 	mysystem("/bin/mount -t proc none /harddisk/proc");
 	mysystem("/bin/mount --bind /dev /harddisk/dev");
 
-
-	/* if we detected SCSI then fixup */
-	/* doesn't really work cause it sometimes creates a ramdisk on ide systems */
-/*	mysystem("/bin/probecntrl.sh");
-	if ((handle = fopen("/cntrldriver", "r")))
-	{
-		char *driver;
-			fgets(line, STRING_SIZE-1, handle);
-			fclose(handle);
-		line[strlen(line) - 1] = 0;
-		driver = strtok(line, ".");
-		fprintf(flog, "Detected SCSI driver %s\n",driver);
-		if (strlen(driver) > 1) {
-			fprintf(flog, "Fixing up ipfirerd.img\n");
-			mysystem("/sbin/chroot /harddisk /sbin/modprobe loop");
-			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd.img %s", driver, KERNEL_VERSION);
-			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod --with=%s --with=sd_mod --with=sr_mod --with=libata /boot/ipfirerd-smp.img %s-smp", driver, KERNEL_VERSION);
-			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			mysystem("/sbin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
-		}
-	} */
-
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
 		goto EXIT;
+	}
+
+	/* Update /etc/fstab */
+	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode);
+
+	/* if we detected SCSI/USB then fixup */
+	mysystem("/bin/probecntrl.sh");
+	if ((handle = fopen("/tmp/cntrldriver", "r")))
+	{
+		char *driver;
+		fgets(line, STRING_SIZE-1, handle);
+		fclose(handle);
+		line[strlen(line) - 1] = 0;
+		driver = strtok(line, ".");
+		if (strlen(driver) > 1) {
+			fprintf(flog, "Fixing up ipfirerd.img\n");
+			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
+			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd.img %s-ipfire", driver, KERNEL_VERSION);
+			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd-smp.img %s-ipfire-smp", driver, KERNEL_VERSION);
+			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+			mysystem("/sbin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
+		}
 	}
 
 	if (raid_disk)
@@ -575,9 +571,6 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
 	}
-
-	/* Update /etc/fstab */
-	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode);
 
 	/* Install bootsplash */
 	mysystem("/bin/installbootsplash.sh");

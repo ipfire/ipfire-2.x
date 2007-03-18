@@ -457,11 +457,10 @@ $checked{'DNS'}{'Manual'} = '';
 $checked{'DNS'}{$pppsettings{'DNS'}} = "checked='checked'";
 
 &Header::openpage($Lang::tr{'ppp setup'}, 1, '');
-
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ($errormessage) {
-	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	&Header::openbox('100%', 'center', $Lang::tr{'error messages'});
 	print "<CLASS name='base'>$errormessage\n";
 	print "&nbsp;</CLASS>\n";
 	&Header::closebox();
@@ -472,13 +471,13 @@ if ($errormessage) {
 ### Box for selecting profile
 ###
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
-&Header::openbox('100%', 'left', $Lang::tr{'profiles'});
+&Header::openbox('100%', 'center', $Lang::tr{'profile'});
 print <<END
-<table width='100%'>
+<table width='95%' cellspacing='0'>
 <tr>
-	<td align='right'>$Lang::tr{'profile'}:</td>
-	<td>
-	<select name='PROFILE'>
+	<td align='left'>$Lang::tr{'profile'}</td>
+	<td align='left'>
+	<select name='PROFILE' style="width: 165px">
 END
 ;
 for ($c = 1; $c <= $maxprofiles; $c++)
@@ -487,21 +486,25 @@ for ($c = 1; $c <= $maxprofiles; $c++)
 }
 print <<END
 	</select></td>
-	<td><input type='submit' name='ACTION' value='$Lang::tr{'select'}' /></td>
-	<td><input type='submit' name='ACTION' value='$Lang::tr{'delete'}' /></td>
-	<td width='30%'><input type='submit' name='ACTION' value='$Lang::tr{'restore'}' /></td>
+	<td align='left'><input type='submit' name='ACTION' value='$Lang::tr{'select'}' /></td>
+	<td align='left'><input type='submit' name='ACTION' value='$Lang::tr{'delete'}' /></td>
+	<td align='left'><input type='submit' name='ACTION' value='$Lang::tr{'restore'}' /></td>
 </tr>
 </table>
+<br></br>
+<hr></hr>
 END
 ;
+
 &Header::closebox();
-&Header::openbox('100%', 'left', $Lang::tr{'connection'}.':');
+&Header::openbox('100%', 'center', $Lang::tr{'connection'});
+
 print <<END
-<table width='100%'>
+<table width='95%' cellspacing='0'>
 <tr>
-	<td align='right'>$Lang::tr{'interface'}:</td>
-	<td>
-	<select name='TYPE'>
+	<td width='25%'>$Lang::tr{'interface'}:</td>
+	<td width='25%'>
+	<select name='TYPE' style="width: 165px">
 	<option value='modem' $selected{'TYPE'}{'modem'}>$Lang::tr{'modem'}</option>
 	<option value='serial' $selected{'TYPE'}{'serial'}>$Lang::tr{'serial'}</option>
 END
@@ -529,32 +532,29 @@ END
 }
 	print <<END
 	<option value='fritzdsl' $selected{'TYPE'}{'fritzdsl'}>Fritz!DSL</option>
-	<option value='pulsardsl' $selected{'TYPE'}{'pulsardsl'}>Pulsar ADSL</option>
-	<option value='bewanadsl' $selected{'TYPE'}{'bewanadsl'}>Bewan ADSL PCI st/USB st</option>
-	<option value='conexantpciadsl' $selected{'TYPE'}{'conexantpciadsl'}>Conexant PCI ADSL</option>
 	</select></td>
-	<td width='50%'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
+	<td colspan='2' width='50%'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}'></td>
 	</tr>
 	<tr>
-	<td align='right'>USB:</td>
+	<td colspan='2' width='50%'>USB:</td>
 END
 ;
 if (-f "/proc/bus/usb/devices") {
 	my $usb=`lsmod | cut -d ' ' -f1 | grep -E "hci"`;
 	if ($usb eq '') {
-		print "\t<td>$Lang::tr{'not running'}</td></tr>\n";
+		print "\t<td colspan='2' width='50%'>$Lang::tr{'not running'}</td></tr>\n";
 	} else {
-		print "\t<td>$usb</td></tr>\n";
+		print "\t<td colspan='2' width='50%'>$usb</td></tr>\n";
 	}
 }
 
 if ($pppsettings{'TYPE'}) {
-	print "</table><table width='100%'>";
+	print "<tr><td colspan='4' width='100%'><br></br></td></tr>";
 	if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/) {
 		print <<END
 <tr>
-	<td align='right'>$Lang::tr{'interface'}:</td>
-	<td><select name='COMPORT'>
+	<td colspan='3' width='75%'>$Lang::tr{'interface'}:</td>
+	<td width='25%'><select name='COMPORT' style="width: 165px">
 END
 ;
 		if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ ) {
@@ -576,13 +576,15 @@ END
 		<option value='isdn1' $selected{'COMPORT'}{'isdn1'}>$Lang::tr{'isdn1'}</option>
 		<option value='isdn2' $selected{'COMPORT'}{'isdn2'}>$Lang::tr{'isdn2'}</option>
 	</select></td>
+ </tr>
 END
 ;
 		}
 		if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ ) {
 			print <<END
-	<td align='right'>$Lang::tr{'computer to modem rate'}</td>
-	<td><select name='DTERATE'>
+  <tr>
+   <td colspan='3' width='75%'>$Lang::tr{'computer to modem rate'}</td>
+	 <td width='25%'><select name='DTERATE' style="width: 165px">
 		<option value='9600' $selected{'DTERATE'}{'9600'}>9600</option>
 		<option value='19200' $selected{'DTERATE'}{'19200'}>19200</option>
 		<option value='38400' $selected{'DTERATE'}{'38400'}>38400</option>
@@ -594,30 +596,28 @@ END
 </tr>
 END
 ;
-		} else {
-			print "<td colspan='2'>&nbsp;</td></tr>\n";
-		}
+		} 
 		if ($pppsettings{'TYPE'} =~ /^(modem|isdn)$/ ) {
-			print "<tr><td align='right'>$Lang::tr{'number'}</td>\n";
-			print "<td><input type='text' name='TELEPHONE' value='$pppsettings{'TELEPHONE'}' /></td>\n";
+			print "<tr><td colspan='3' width='75%'>$Lang::tr{'number'}</td>\n";
+			print "<td width='25%'><input type='text' name='TELEPHONE' value='$pppsettings{'TELEPHONE'}'></td><tr>\n";
 			if ($pppsettings{'TYPE'} eq 'modem' ) {
-				print "<td align='right'>$Lang::tr{'modem speaker on'}</td>\n";
-				print "<td><input type='checkbox' name='SPEAKER' $checked{'SPEAKER'}{'on'} /></td></tr>\n";
-			} else {
-				print "<td colspan='2'>&nbsp;</td></tr>\n";
-			}
+				print "<tr><td colspan='3' width='75%'>$Lang::tr{'modem speaker on'}</td>\n";
+				print "<td width='25%'><input type='checkbox' name='SPEAKER' $checked{'SPEAKER'}{'on'} /></td></tr>\n";
+			} 
 		}
 	}
 	if ($pppsettings{'TYPE'} eq 'modem') {
 		print <<END
 <tr>
-	<td align='right'>$Lang::tr{'dialing mode'}</td>
-	<td><select name='DIALMODE'>
+	<td colspan='3' width='75%'>$Lang::tr{'dialing mode'}</td>
+	<td width='25%'><select name='DIALMODE' style="width: 165px">
 		<option value='T' $selected{'DIALMODE'}{'T'}>$Lang::tr{'tone'}</option>
 		<option value='P' $selected{'DIALMODE'}{'P'}>$Lang::tr{'pulse'}</option>
 	</select></td>
-	<td align='right'>$Lang::tr{'send cr'}</td>
-	<td><input type='checkbox' name='SENDCR' $checked{'SENDCR'}{'on'} /></td>
+</tr>
+<tr>
+  <td colspan='3' width='75%'>$Lang::tr{'send cr'}</td>
+	<td width='50%'><input type='checkbox' name='SENDCR' $checked{'SENDCR'}{'on'} /></td>
 </tr>
 END
 ; 
@@ -625,41 +625,46 @@ END
 
 print <<END
 <tr>
-	<td align='right'>$Lang::tr{'idle timeout'}</td>
-	<td><input type='text' size='5' name='TIMEOUT' value='$pppsettings{'TIMEOUT'}' /></td>
-	<td colspan='2'>&nbsp;</td>
+	<td colspan='3' width='75%'>$Lang::tr{'idle timeout'}</td>
+	<td width='25%'><input type='text' name='TIMEOUT' value='$pppsettings{'TIMEOUT'}' /></td>
 </tr>
 END
 ;
 	if ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && ( $netsettings{'RED_TYPE'} eq "DHCP" || $netsettings{'RED_TYPE'} eq "STATIC") ) {
 		$pppsettings{'AUTOCONNECT'} = 'on';
-		print "<tr><td align='right'>$Lang::tr{'connect on ipfire restart'}</td>\n";
-		print "<td><input type='checkbox' disabled='disabled' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'} /></td>\n";
+		print "<tr><td colspan='3' width='75%'>$Lang::tr{'connect on ipfire restart'}</td>\n";
+		print "<td width='25%'><input type='checkbox' disabled='disabled' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'}></td>\n";
 	} else {
-		print "<tr><td align='right'>$Lang::tr{'connect on ipfire restart'}</td>\n";
-		print "<td><input type='checkbox' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'} /></td>\n";
+		print "<tr><td colspan='3' width='75%'>$Lang::tr{'connect on ipfire restart'}</td>\n";
+		print "<td width='25%'><input type='checkbox' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'}></td>\n";
 	}
 print <<END
-	<td align='right'>$Lang::tr{'connection debugging'}:</td>
-	<td><input type='checkbox' name='DEBUG' $checked{'DEBUG'}{'on'} /></td>
+ </tr>
+ <tr>
+  <td colspan='3' width='75%'>$Lang::tr{'connection debugging'}:</td>
+	<td width='25%'><input type='checkbox' name='DEBUG' $checked{'DEBUG'}{'on'} /></td>
+ </tr>
+ <tr>
+  <td colspan='4' width='100%'><br></br></td></tr>
+<tr>
+	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'reconnection'}:</b></td>
 </tr>
 <tr>
-	<td colspan='5'><br /><hr /><b>$Lang::tr{'reconnection'}:</b></td>
+	<td colspan='4' width='100%'><input type='radio' name='RECONNECTION' value='manual' $checked{'RECONNECTION'}{'manual'}>$Lang::tr{'manual'}</td>
 </tr>
 <tr>
-	<td colspan='4'>
-		<input type='radio' name='RECONNECTION' value='manual' $checked{'RECONNECTION'}{'manual'} />$Lang::tr{'manual'}</td>
-</tr>
+	<td colspan='4' width='100%'><input type='radio' name='RECONNECTION' value='dialondemand' $checked{'RECONNECTION'}{'dialondemand'}>$Lang::tr{'dod'}</td>
+ </tr>
 END
 ;
 if ($pppsettings{'TYPE'} ne 'isdn') {
 print <<END
-<tr>
-	<td>
-		<input type='radio' name='RECONNECTION' value='persistent' $checked{'RECONNECTION'}{'persistent'} />$Lang::tr{'persistent'}</td>
-	<td colspan='2' align='right'>$Lang::tr{'backupprofile'}:</td>
-	<td>
-	<select name='BACKUPPROFILE'>
+ <tr>
+	<td colspan='4' width='100%'><input type='radio' name='RECONNECTION' value='persistent' $checked{'RECONNECTION'}{'persistent'}>$Lang::tr{'persistent'}</td>
+ </tr>
+ <tr>
+  <td colspan='3' width='75%'>$Lang::tr{'backupprofile'}:</td>
+	<td width='25%'><select name='BACKUPPROFILE' style="width: 165px">
 END
 ;
 	for ($c = 1; $c <= $maxprofiles; $c++) {
@@ -672,34 +677,34 @@ END
 ;
 }
 print <<END
-<tr>
-	<td>
-		<input type='radio' name='RECONNECTION' value='dialondemand' $checked{'RECONNECTION'}{'dialondemand'} />$Lang::tr{'dod'}</td>
-	<td colspan='2' align='right'>$Lang::tr{'dod for dns'}</td>
-	<td><input type='checkbox' name='DIALONDEMANDDNS' $checked{'DIALONDEMANDDNS'}{'on'} /></td>
-
+ <tr>
+	<td colspan='3' width='75%'>$Lang::tr{'dod for dns'}</td>
+  <td width='25%'><input type='checkbox' name='DIALONDEMANDDNS' $checked{'DIALONDEMANDDNS'}{'on'} /></td>
 </tr>
 <tr>
-	<td align='right'>$Lang::tr{'holdoff'}:</td>
-	<td><input type='text' size='5' name='HOLDOFF' value='$pppsettings{'HOLDOFF'}' /></td>
-	<td align='right'>$Lang::tr{'maximum retries'}</td>
-	<td><input type='text' size='5' name='MAXRETRIES' value='$pppsettings{'MAXRETRIES'}' /></td>
+	<td colspan='3' width='75%'>$Lang::tr{'holdoff'}:</td>
+	<td width='25%'><input type='text' name='HOLDOFF' value='$pppsettings{'HOLDOFF'}' /></td>
+</tr>
+<tr>
+	<td colspan='3' width='75%'>$Lang::tr{'maximum retries'}</td>
+	<td width='25%'><input type='text' name='MAXRETRIES' value='$pppsettings{'MAXRETRIES'}' /></td>
 </tr>
 END
 ;
 
 if ($pppsettings{'TYPE'} eq 'isdn') {
 	print <<END
-</table>
-<table width='100%'>
+<tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='5'><br /><hr /><b>$Lang::tr{'isdn settings'}</b></td>
+	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'isdn settings'}</b></td>
 </tr>
 <tr>
-	<td align='right'>$Lang::tr{'use ibod'}</td>
-	<td><input type='checkbox' name='USEIBOD' $checked{'USEIBOD'}{'on'} /></td>
-	<td align='right'>$Lang::tr{'use dov'}</td>
-	<td><input type='checkbox' name='USEDOV' $checked{'USEDOV'}{'on'} /></td>
+	<td colspan='3' width='75%'>$Lang::tr{'use ibod'}</td>
+	<td width='25%'><input type='checkbox' name='USEIBOD' $checked{'USEIBOD'}{'on'} /></td>
+</tr>
+<tr>
+	<td colspan='3' width='75%'>$Lang::tr{'use dov'}</td>
+	<td width='25%'><input type='checkbox' name='USEDOV' $checked{'USEDOV'}{'on'} /></td>
 </tr>
 END
 ;
@@ -708,29 +713,24 @@ END
 if ($pppsettings{'TYPE'} eq 'pptp')
 {
 print <<END
-</table>
-
-<table width='100%'>
+<tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='5'><br /><hr /><b>$Lang::tr{'pptp settings'}</b></td>
+	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'pptp settings'}</b></td>
 </tr>
 <tr>
-	<td colspan='2' align='right'>$Lang::tr{'phonebook entry'}</td>
-	<td><input type='text' name='PHONEBOOK' value='$pppsettings{'PHONEBOOK'}' /></td>
+	<td width='25%'>$Lang::tr{'phonebook entry'}</td>
+	<td colspan='2' width='50%'></td>
+	<td width='25%'><input type='text' name='PHONEBOOK' value='$pppsettings{'PHONEBOOK'}' /></td>
 </tr>
 <tr>
-	<td><input type='radio' name='METHOD' value='STATIC' $checked{'METHOD'}{'STATIC'} />$Lang::tr{'static ip'}</td>
-	<td align='right'>$Lang::tr{'router ip'}</td>
-	<td><input type='text' name='ROUTERIP' value='$pppsettings{'ROUTERIP'}' /></td>
+	<td width='25%'><input type='radio' name='METHOD' value='STATIC' $checked{'METHOD'}{'STATIC'} />$Lang::tr{'static ip'}</td>
+	<td colspan='2' width='50%'>$Lang::tr{'router ip'}</td>
+	<td width='25%'><input type='text' name='ROUTERIP' value='$pppsettings{'ROUTERIP'}' /></td>
 </tr>
 <tr>
-	<td>&nbsp;</td>
-	<td colspan='3'><hr /></td>
-</tr>
-<tr>
-	<td><input type='radio' name='METHOD' value='DHCP' $checked{'METHOD'}{'DHCP'} />$Lang::tr{'dhcp mode'}</td>
-	<td align='right'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' name='DHCP_HOSTNAME' value='$pppsettings{'DHCP_HOSTNAME'}' /></td>
+	<td width='25%'><input type='radio' name='METHOD' value='DHCP' $checked{'METHOD'}{'DHCP'} />$Lang::tr{'dhcp mode'}</td>
+	<td colspan='2' width='50%'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='25%'><input type='text' name='DHCP_HOSTNAME' value='$pppsettings{'DHCP_HOSTNAME'}' /></td>
 </tr>
 END
 ;
@@ -738,180 +738,59 @@ END
 if ($pppsettings{'TYPE'} eq 'pppoe')
 {
 print <<END
-</table>
-<table width='100%'>
+<tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='5'><br /><hr /><b>$Lang::tr{'pppoe settings'}</b></td>
-</tr>
-END
-;
-}
-if ($pppsettings{'TYPE'} =~ /^(alcatelusb|alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|fritzdsl|bewanadsl|eagleusbadsl)$/)
-{
-
-print <<END
-</table>
-<table width='100%'>
-<tr>
-	<td colspan='5'><br /><hr /><b>$Lang::tr{'adsl settings'}:</b></td>
+	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'pppoe settings'}</b></td>
 </tr>
 <tr>
-	<td nowrap='nowrap' align='right'>$Lang::tr{'vpi number'}</td>
-	<td><input type='text' size='5' name='VPI' value='$pppsettings{'VPI'}' /></td>
-	<td align='right'>$Lang::tr{'vci number'}</td>
-	<td colspan='2'><input type='text' size='5' name='VCI' value='$pppsettings{'VCI'}' /></td>
+	<td width='25%'><input type='radio' name='METHOD' value='PPPOE_PLUGIN' $checked{'METHOD'}{'PPPOE_PLUGIN'} />PPPoE plugin</td>
+	<td colspan='2' width='50%'>$Lang::tr{'service name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='25%'><input type='text' name='SERVICENAME' value='$pppsettings{'SERVICENAME'}' /></td>
 </tr>
 <tr>
-	<td>&nbsp;</td>
-	<td colspan='4'><hr /></td>
-</tr>
-END
-;
-}
-if ($pppsettings{'TYPE'} eq 'bewanadsl')
-{
-print <<END
-<tr>
-	<td align='right'>$Lang::tr{'modem'}:</td>
-	<td colspan='2' nowrap='nowrap'>
-		<input type='radio' name='MODEM' value='PCIST' $checked{'MODEM'}{'PCIST'} />Bewan ADSL PCI st</td>
-	<td colspan='2'><input type='radio' name='MODEM' value='USB' $checked{'MODEM'}{'USB'} />Bewan ADSL USB st</td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td colspan='4'><hr /></td>
-</tr>
-END
-;
-}
-if ($pppsettings{'TYPE'} =~ /^(3cp4218usbadsl|bewanadsl)$/)
-{
-print <<END
-<tr>
-	<td align='right'>$Lang::tr{'modulation'}:</td>
-	<td><input type='radio' name='MODULATION' value='AUTO' $checked{'MODULATION'}{'AUTO'} />$Lang::tr{'automatic'}</td>
-	<td><input type='radio' name='MODULATION' value='ANSI' $checked{'MODULATION'}{'ANSI'} />ANSI T1.483</td>
-	<td><input type='radio' name='MODULATION' value='GDMT' $checked{'MODULATION'}{'GDMT'} />G.DMT</td>
-	<td><input type='radio' name='MODULATION' value='GLITE' $checked{'MODULATION'}{'GLITE'} />G.Lite</td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td colspan='4'><hr /></td>
+	<td width='25%'><input type='radio' name='METHOD' value='PPPOE' $checked{'METHOD'}{'PPPOE'} />$Lang::tr{'pppoe'}</td>
+	<td colspan='2' width='50%'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='25%'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
 </tr>
 END
 ;
 }
 
-if ($pppsettings{'TYPE'} eq 'eagleusbadsl')
+if ($pppsettings{'TYPE'} eq 'fritzdsl')
 {
 print <<END
+<tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td align='right'>$Lang::tr{'country'}:</td>
-	<td>
-	<select name='LINE'>
-	<option value='WO' $selected{'LINE'}{'WO'}>$Lang::tr{'other countries'}</option>
-	<option value='ES' $selected{'LINE'}{'ES'}>ESPANA</option>
-	<option value='ES03' $selected{'LINE'}{'ES03'}>ESPANA03</option>
-	<option value='FR' $selected{'LINE'}{'FR'}>FRANCE</option>
-	<option value='FR04' $selected{'LINE'}{'FR04'}>FRANCE04</option>
-	<option value='FR10' $selected{'LINE'}{'FR04'}>FRANCE10</option>
-	<option value='IT' $selected{'LINE'}{'IT'}>ITALIA</option>
-	</select></td>
+	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'adsl settings'}:</b></td>
 </tr>
 <tr>
-	<td>&nbsp;</td>
-	<td colspan='4'><hr /></td>
-</tr>
-END
-;
-}
-if ($pppsettings{'TYPE'} eq 'eciadsl')
-{
-print <<END
-<tr>
-	<td align='right'>$Lang::tr{'modem'}:</td>
-	<td colspan='5'>
-		<select name='MODEM'>
-END
-;
-		open (MODEMS, "/etc/eciadsl/modems.db") or die 'Unable to open modems database.';
-		while (my $line = <MODEMS>) {
-			$line =~ /^([\S\ ]+).*$/;
-			my $modem = $1;
-			$modem =~ s/^\s*(.*?)\s*$/$1/;
-			print "<option value='$modem'";
-			if ($pppsettings{'MODEM'} =~ /$modem/) { print " selected";}
-			print ">$modem</option>\n";
-		}
-		close (MODEMS);
-
-print <<END
-		</select>
-	</td>
+	<td colspan='2' width='50%'>$Lang::tr{'vpi number'}</td>
+	<td colspan='2' width='50%'><input type='text' name='VPI' value='$pppsettings{'VPI'}' /></td>
 </tr>
 <tr>
-	<td>&nbsp;</td>
-	<td colspan='4'><hr /></td>
+	<td colspan='2' width='50%'>$Lang::tr{'vci number'}</td>
+	<td colspan='2' width='50%'><input type='text' name='VCI' value='$pppsettings{'VCI'}' /></td>
 </tr>
-END
-;
-}
-if ($pppsettings{'TYPE'} =~ /^(alcatelusb|alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|fritzdsl|bewanadsl|eagleusbadsl)$/)
-{
-print <<END
 <tr>
-	<td valign='top' align='right'>$Lang::tr{'protocol'}:</td>
-	<td nowrap='nowrap'>
-		<input type='radio' name='PROTOCOL' value='RFC2364' $checked{'PROTOCOL'}{'RFC2364'} />RFC2364 PPPoA</td>
-END
-;
-}
-if ($pppsettings{'TYPE'} eq 'alcatelusb')
-{
-	print "<td colspan=3>&nbsp;</td></tr>";
-}
-
-if ($pppsettings{'TYPE'} =~ /^(alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|bewanadsl|eagleusbadsl|fritzdsl)$/)
-{
-print <<END
-	<td align='right'>$Lang::tr{'encapsulation'}:</td>
-	<td colspan='2' width='30%'>
-		<select name='ENCAP_RFC2364'>
+	<td colspan='2' width='50%'>$Lang::tr{'protocol'}:</td>
+	<td colspan='2' width='50%'><input type='radio' name='PROTOCOL' value='RFC2364' $checked{'PROTOCOL'}{'RFC2364'} />RFC2364 PPPoA</td>
+ </tr>
+ 	<td colspan='2' width='50%'></td>
+	<td colspan='2' width='50%'><input type='radio' name='PROTOCOL' value='RFC1483' $checked{'PROTOCOL'}{'RFC1483'} />RFC 1483 / 2684</td>
+ </tr>
+ <tr>		
+	<td colspan='2' width='50%'>$Lang::tr{'encapsulation'}:</td>
+	<td colspan='2' width='50%'>
+		<select name='ENCAP_RFC2364' style="width: 165px">
 		<option value='0' $selected{'ENCAP'}{'0'}>VCmux</option>
 		<option value='1' $selected{'ENCAP'}{'1'}>LLC</option>
 		</select>
 	</td>
 </tr>
-END
-;
-}
-if ($pppsettings{'TYPE'} =~ /^(alcatelusb|alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|fritzdsl|bewanadsl|eagleusbadsl)$/)
-{
-print <<END
 <tr>
-	<td>&nbsp;</td>
-	<td colspan='4'><hr /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td valign='top'>
-		<input type='radio' name='PROTOCOL' value='RFC1483' $checked{'PROTOCOL'}{'RFC1483'} />RFC 1483 / 2684</td>
-END
-;
-}
-if ($pppsettings{'TYPE'} eq 'alcatelusb')
-{
-	print "<td colspan='3'>&nbsp;</td></tr>";
-}
-
-if ($pppsettings{'TYPE'} =~ /^(alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|bewanadsl|eagleusbadsl|fritzdsl)$/)
-{
-	if ($pppsettings{'TYPE'} ne 'fritzdsl')
-	{
-print <<END
-	<td align='right'>$Lang::tr{'encapsulation'}:</td>
-	<td colspan='2'>
-		<select name='ENCAP_RFC1483'>
+	<td colspan='2' width='50%'>$Lang::tr{'encapsulation'}:</td>
+	<td colspan='2' width='50%'>
+		<select name='ENCAP_RFC1483' style="width: 165px">
 		<option value='0' $selected{'ENCAP'}{'0'}>BRIDGED_ETH_LLC</option>
 		<option value='1' $selected{'ENCAP'}{'1'}>BRIDGED_ETH_VC</option>
 		<option value='2' $selected{'ENCAP'}{'2'}>ROUTED_IP_LLC</option>
@@ -919,138 +798,29 @@ print <<END
 		</select>
 	</td>
 </tr>
-<tr>
-	<td colspan='2'>&nbsp;</td>
-	<td colspan='3'><hr /></td>
-</tr>
 END
 ;
-	} else {
-print <<END
-	<td colspan='4'>PPPoE</td>
-</tr>
-END
-;
-	}
-}
-if ($pppsettings{'TYPE'} =~ /^(pppoe|alcatelusb|alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|bewanadsl|eagleusbadsl)$/)
-{
-print <<END
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td><input type='radio' name='METHOD' value='PPPOE_PLUGIN' $checked{'METHOD'}{'PPPOE_PLUGIN'} />PPPoE plugin</td>
-	<td align='right'>$Lang::tr{'service name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' name='SERVICENAME' value='$pppsettings{'SERVICENAME'}' /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td><input type='radio' name='METHOD' value='PPPOE' $checked{'METHOD'}{'PPPOE'} />$Lang::tr{'pppoe'}</td>
-	<td align='right'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
-</tr>
-
-END
-;
-}
-if ($pppsettings{'TYPE'} =~ /^(alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|bewanadsl|eagleusbadsl)$/)
-{
-print <<END
-<tr>
-	<td colspan='2'>&nbsp;</td>
-	<td colspan='3'><hr /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td rowspan='4'><input type='radio' name='METHOD' value='STATIC' $checked{'METHOD'}{'STATIC'} />$Lang::tr{'static ip'}</td>
-	<td align='right'>$Lang::tr{'static ip'}:</td>
-	<td><input type='text' size='16' name='IP' value='$pppsettings{'IP'}' /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td align='right'>$Lang::tr{'gateway ip'}:</td>
-	<td><input type='text' size='16' name='GATEWAY' value='$pppsettings{'GATEWAY'}' /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td align='right'>$Lang::tr{'netmask'}:</td>
-	<td><input type='text' size='16' name='NETMASK' value='$pppsettings{'NETMASK'}' /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td align='right' nowrap='nowrap'>$Lang::tr{'broadcast'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' size='16' name='BROADCAST' value='$pppsettings{'BROADCAST'}' /></td>
-</tr>
-END
-;
-	if ($pppsettings{'TYPE'} =~ /^(eciadsl|eagleusbadsl)$/)
-	{
-print <<END
-<tr>
-	<td colspan='2'>&nbsp;</td>
-	<td colspan='3'><hr /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td><input type='radio' name='METHOD' value='DHCP' $checked{'METHOD'}{'DHCP'} />$Lang::tr{'dhcp mode'}</td>
-	<td align='right'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' name='DHCP_HOSTNAME' value='$pppsettings{'DHCP_HOSTNAME'}' /></td>
-</tr>
-END
-;
-	}
-}
-if ($pppsettings{'TYPE'} =~ /^(alcatelusb|alcatelusbk|eciadsl|fritzdsl)$/) {
-	print "<tr><td>&nbsp;</td><td colspan='4'><hr /></td></tr>";
-}
-if ($pppsettings{'TYPE'} =~ /^(alcatelusb|alcatelusbk)$/) {
-	my $speedtouch = &Header::speedtouchversion;
-	if (($speedtouch >= 0) && ($speedtouch <=4)) {
-		my $modem;
-		if ($speedtouch ==4) { $modem='v4_b'; } else { $modem='v0123'; }
-		print "<tr><td align='right'>$Lang::tr{'firmware'}:</td>";
-		if (-e "${General::swroot}/alcatelusb/firmware.$modem.bin") {
-			print "<td>$Lang::tr{'present'}</td><td colspan='3'>&nbsp;</td></tr>\n";
-		} else {
-			print "<td>$Lang::tr{'not present'}</td><td colspan='3'>&nbsp;</td></tr>\n";
-		}
-	} else {
-		print "<tr><td colspan='5'>$Lang::tr{'unknown'} Rev $speedtouch</td></tr>";
-	}
-} elsif ($pppsettings{'TYPE'} eq 'eciadsl') {
-	print "<tr><td align='right'>$Lang::tr{'driver'}:</td>";
-	if (-e "${General::swroot}/eciadsl/synch.bin") {
-		print "<td>$Lang::tr{'present'}</td><td colspan='3'>&nbsp;</td></tr>\n";
-	} else {
-		print "<td>$Lang::tr{'not present'}</td><td colspan='3'>&nbsp;</td></tr>\n"; }
-} elsif ($pppsettings{'TYPE'} eq 'fritzdsl') {
-	print "<tr><td align='right'>$Lang::tr{'driver'}:</td>";
+	print "<tr><td colspan='2' width='50%'>$Lang::tr{'driver'}:</td>";
 	if (-e "/lib/modules/$kernel/misc/fcdslusb.o.gz") {
-		print "<td>$Lang::tr{'present'}</td><td colspan='3'>&nbsp;</td></tr>\n";
+		print "<td colspan='2' width='50%'>$Lang::tr{'present'}</td></tr>";
 	} else {
-		print "<td>$Lang::tr{'not present'}</td><td colspan='3'>&nbsp;</td></tr>\n"; }
+		print "<td colspan='2' width='50%'>$Lang::tr{'not present'}</td></tr>"; }
 }
+
 print <<END
-</table>
-<table width='100%'>
+<tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='5'><br /><hr /><b>$Lang::tr{'authentication'}</b></td>
+	<td bgcolor='${Header::table1colour}' colspan='4' width='100%'><b>$Lang::tr{'authentication'}</b></td>
 </tr>
 <tr>
-	<td align='right'>$Lang::tr{'username'}</td>
-	<td><input type='text' name='USERNAME' value='$pppsettings{'USERNAME'}' /></td>
-	<td align='right'>$Lang::tr{'password'}</td>
-	<td><input type='password' name='PASSWORD' value='$pppsettings{'PASSWORD'}' /></td>
+	<td width='25%'>$Lang::tr{'username'}</td>
+	<td width='25%'><input type='text' name='USERNAME' value='$pppsettings{'USERNAME'}' /></td>
+	<td width='25%'>$Lang::tr{'password'}</td>
+	<td width='25%'><input type='password' name='PASSWORD' value='$pppsettings{'PASSWORD'}' /></td>
 </tr>
 <tr>
-	<td align='right'>$Lang::tr{'method'}</td>
-	<td><select name='AUTH'>
+	<td width='25%'>$Lang::tr{'method'}</td>
+	<td width='25%'><select name='AUTH' style="width: 165px">
 		<option value='pap-or-chap' $selected{'AUTH'}{'pap-or-chap'}>$Lang::tr{'pap or chap'}</option>
 		<option value='pap' $selected{'AUTH'}{'pap'}>PAP</option>
 		<option value='chap' $selected{'AUTH'}{'chap'}>CHAP</option>
@@ -1066,39 +836,37 @@ END
 }
 print <<END
 	</select></td>
-	<td align='right'>$Lang::tr{'script name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td nowrap='nowrap'><input type='text' name='LOGINSCRIPT' value='$pppsettings{'LOGINSCRIPT'}' /></td>
+	<td width='25%'>$Lang::tr{'script name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='25%'><input type='text' name='LOGINSCRIPT' value='$pppsettings{'LOGINSCRIPT'}' /></td>
 </tr>
-</table>
-<table width='100%'>
+<tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='5'><br /><hr /><b>DNS:</b></td>
-</tr>
-<tr>
-	<td colspan='5'><input type='radio' name='DNS' value='Automatic' $checked{'DNS'}{'Automatic'} />$Lang::tr{'automatic'}</td>
+	<td bgcolor='${Header::table1colour}' colspan='4' width='100%'><b>DNS:</b></td>
 </tr>
 <tr>
-	<td><input type='radio' name='DNS' value='Manual' $checked{'DNS'}{'Manual'} />$Lang::tr{'manual'}</td>
-	<td align='right'>$Lang::tr{'primary dns'}</td>
-	<td><input type='text' size='16' name='DNS1' value='$pppsettings{'DNS1'}' /></td>
-	<td align='right'>$Lang::tr{'secondary dns'}</td>
-	<td><input type='text' size='16' name='DNS2' value='$pppsettings{'DNS2'}' /></td>
+	<td colspan='4' width='100%'><input type='radio' name='DNS' value='Automatic' $checked{'DNS'}{'Automatic'} />$Lang::tr{'automatic'}</td>
 </tr>
 <tr>
-	<td colspan='5'><br /><hr /></td>
+	<td colspan='4' width='100%'><input type='radio' name='DNS' value='Manual' $checked{'DNS'}{'Manual'} />$Lang::tr{'manual'}</td>
 </tr>
 <tr>
-	<td>&nbsp;</td>
-	<td align='right'>$Lang::tr{'profile name'}</td>
-	<td><input type='text' name='PROFILENAME' value='$pppsettings{'PROFILENAME'}' /></td>
-	<td><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	<td width='25%'>$Lang::tr{'primary dns'}</td>
+	<td width='25%'><input type='text' name='DNS1' value='$pppsettings{'DNS1'}'></td>
+	<td width='25%'>$Lang::tr{'secondary dns'}</td>
+	<td width='25%'><input type='text' name='DNS2' value='$pppsettings{'DNS2'}'></td>
+</tr>
+<tr><td colspan='4' width='100%'><br></br><hr></hr><br></br></td></tr>
+<tr>
+	<td width='25%'>$Lang::tr{'profile name'}</td>
+	<td width='25%'><input type='text' name='PROFILENAME' value='$pppsettings{'PROFILENAME'}'>
+	<td colspan='2' width='50%'></td>
 </tr>
 <tr>
-	<td colspan='5'><br /><hr /></td>
+  <td align='center' colspan='4' width='100%'><input type='submit' name='ACTION' value='$Lang::tr{'save'}'></td>
 </tr>
 <tr>
-	<td align='right'>$Lang::tr{'legend'}:</td>
-	<td><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+	<td colspan='2' width='50%'>$Lang::tr{'legend'}:</td>
+	<td colspan='2' width='50%'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
 </tr>
 </table>
 END

@@ -10,6 +10,7 @@
 * Digest-HMAC-1.01
 * Digest-SHA1-2.10
 * GD-2.35
+* GDGraph-1.4308
 * Geo-IP-PurePerl-1.17
 * HTML-Parser-3.45
 * HTML-Tagset-3.04

@@ -64,7 +64,7 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	}
 	else if (lseek(fd, 0, SEEK_SET) == 0
 	    && read(fd, (char *) &xfsb, sizeof(xfsb)) == sizeof(xfsb)
-	    && (strncmp(xfsb.s_magic, XFS_SUPER_MAGIC, 4) == 0)) {
+	    && (strncmp((char *)xfsb.s_magic, XFS_SUPER_MAGIC, 4) == 0)) {
 		memcpy(uuid, xfsb.s_uuid, sizeof(xfsb.s_uuid));
 		namesize = sizeof(xfsb.s_fname);
 		if ((*label = calloc(namesize + 1, 1)) != NULL)
@@ -167,7 +167,7 @@ uuidcache_init(void) {
 
 		if (isdigit(s[-1])) {
 			char * ptr;
-			char * deviceDir;
+			char * deviceDir = NULL;
 			int mustRemove = 0;
 			int mustRemoveDir = 0;
 			int i;
@@ -265,7 +265,7 @@ get_spec_by_uuid(const char *s, int * major, int * minor) {
 	    uuid[i] = ((fromhex(s[0])<<4) | fromhex(s[1]));
 	    s += 2;
 	}
-	return get_spec_by_x(UUID, uuid, major, minor);
+	return get_spec_by_x(UUID, (char *)uuid, major, minor);
 
  bad_uuid:
 	fprintf(stderr, _("mount: bad UUID"));
@@ -279,7 +279,7 @@ get_spec_by_volume_label(const char *s, int * major, int * minor) {
 
 int display_uuid_cache(void) {
 	struct uuidCache_s * u;
-	int i;
+	size_t i;
 
 	uuidcache_init();
 

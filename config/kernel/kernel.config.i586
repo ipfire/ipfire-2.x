@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.42-ipfire
-# Fri Mar 16 12:03:27 2007
+# Sun Mar 18 16:54:28 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -66,7 +66,7 @@ CONFIG_MODULE_UNLOAD=y
 CONFIG_OBSOLETE_MODPARM=y
 CONFIG_MODVERSIONS=y
 # CONFIG_MODULE_SRCVERSION_ALL is not set
-CONFIG_KMOD=y
+# CONFIG_KMOD is not set
 
 #
 # Block layer
