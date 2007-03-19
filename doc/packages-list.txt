@@ -51,6 +51,7 @@
 * cftp-0.12
 * clamav-0.90
 * coreutils-5.96
+* cpio-2.6
 * cups-1.2.2
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21

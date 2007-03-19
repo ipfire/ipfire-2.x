@@ -348,6 +348,7 @@ buildipfire() {
   ipfiremake zaptel
   ipfiremake fuse
   ipfiremake pkg-config
+  ipfiremake cpio
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp

@@ -11,13 +11,13 @@ sbin/ctrlaltdel
 #sbin/elvtune
 sbin/fdisk
 #sbin/fsck.cramfs
-#sbin/fsck.minix
+sbin/fsck.minix
 sbin/hwclock
 sbin/losetup
 sbin/mkfs
 #sbin/mkfs.bfs
 #sbin/mkfs.cramfs
-#sbin/mkfs.minix
+sbin/mkfs.minix
 sbin/mkswap
 #sbin/pivot_root
 sbin/sfdisk

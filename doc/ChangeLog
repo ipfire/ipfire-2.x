@@ -1,4 +1,51 @@
 ------------------------------------------------------------------------
+r450 | ms | 2007-03-18 22:34:35 +0100 (Sun, 18 Mar 2007) | 5 lines
+
+GD-Graph fuer Maniac eingebaut
+Kernel laedt ab jetzt keine Module mehr ungefragt.
+Nash aktualisiert um richtige Ramdisks zu erstellen (noch unstable).
+pppsetup.cgi vom Maniac eingefuegt.
+
+------------------------------------------------------------------------
+r449 | ms | 2007-03-17 22:14:34 +0100 (Sat, 17 Mar 2007) | 4 lines
+
+Alten PCMCIA Code aus dem Installer entfernt.
+Unattended Installation bearbeitet.
+HTTP/FTP-Installation nun moeglich.
+
+------------------------------------------------------------------------
+r448 | ms | 2007-03-14 22:57:20 +0100 (Wed, 14 Mar 2007) | 2 lines
+
+Neue Hardwareerkennung im Installer...
+
+------------------------------------------------------------------------
+r447 | ms | 2007-03-11 21:34:32 +0100 (Sun, 11 Mar 2007) | 2 lines
+
+Firewall-Log-Analyzer by Christian Schmidt
+
+------------------------------------------------------------------------
+r446 | ms | 2007-03-11 21:20:29 +0100 (Sun, 11 Mar 2007) | 3 lines
+
+hwinfo in den Installer gebracht.
+(Erstmal nur in das Image...)
+
+------------------------------------------------------------------------
+r445 | ms | 2007-03-11 21:09:05 +0100 (Sun, 11 Mar 2007) | 3 lines
+
+OpenSwan RC nach den Vorgaben von "affect" installiert.
+Zurueck zu ReiserFS, da wir mit Reiser4 noch ein paar Probleme haben und wir die Prioritaeten noch auf andere Sachen legen muessen. :'(
+
+------------------------------------------------------------------------
+r444 | ms | 2007-03-07 20:09:28 +0100 (Wed, 07 Mar 2007) | 2 lines
+
+Tippfehler im RC Script
+
+------------------------------------------------------------------------
+r443 | ms | 2007-03-07 19:42:02 +0100 (Wed, 07 Mar 2007) | 2 lines
+
+HWInfo wieder eingefuegt, da mit kudzu zu viele Segmentation Faults liefert.
+
+------------------------------------------------------------------------
 r442 | ms | 2007-03-05 14:15:21 +0100 (Mon, 05 Mar 2007) | 2 lines
 
 Neuer Kudzu...

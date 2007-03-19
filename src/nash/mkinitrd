@@ -314,15 +314,15 @@ fi
 
 kernelmajor=`echo $kernel | cut -d . -f 1,2`
 
-#if [ "$kernelmajor" == "2.4" ]; then
+if [ "$kernelmajor" == "2.4" ]; then
     if [ -n "$verbose" ]; then echo "Creating old-style initrd"; fi
     USE_UDEV=
-#else
-#    if [ -n "$verbose" ]; then echo "Creating initramfs"; fi
-#    modulefile=/etc/modprobe.conf
-#    initramfs=1
-#    pivot=""
-#fi
+else
+    if [ -n "$verbose" ]; then echo "Creating initramfs"; fi
+    modulefile=/etc/modprobe.conf
+    initramfs=1
+    pivot=""
+fi
 
 # if we're not using udev, don't set any of the other bits
 [ -z "$USE_UDEV" ] && UDEV_TMPFS= && UDEV_KEEP_DEV=
@@ -588,9 +588,6 @@ ln -s bin $MNTIMAGE/sbin
 
 inst /sbin/nash "$MNTIMAGE/bin/nash"
 inst /sbin/insmod.static "$MNTIMAGE/bin/insmod"
-inst /bin/tar.static "$MNTIMAGE/bin/tar"
-inst /usr/bin/lzmadec "$MNTIMAGE/bin/lzmadec"
-inst /sbin/fsck.minix.static "$MNTIMAGE/bin/fsck.minix"
 ln -s /sbin/nash $MNTIMAGE/sbin/modprobe
 
 if [ -n "$USE_UDEV" ]; then

@@ -547,9 +547,9 @@ int main(int argc, char *argv[])
 		if (strlen(driver) > 1) {
 			fprintf(flog, "Fixing up ipfirerd.img\n");
 			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd.img %s-ipfire", driver, KERNEL_VERSION);
+			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd -v --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd.img %s-ipfire", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd-smp.img %s-ipfire-smp", driver, KERNEL_VERSION);
+			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd -v --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd-smp.img %s-ipfire-smp", driver, KERNEL_VERSION);
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 			mysystem("/sbin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
 		}
