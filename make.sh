@@ -913,7 +913,9 @@ svn)
 		update_langs
 		svn commit
 		$0 svn up
-		$0 uploadsrc
+		if [ -n "$FTP_CACHE_URL" ]; then
+			$0 uploadsrc
+		fi
 	  ;;
 	  dist)
 		if [ $3 ]; then

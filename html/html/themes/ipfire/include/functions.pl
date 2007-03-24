@@ -166,7 +166,7 @@ END
 	<div id="header_inner" class="fixed">
 
 		<div id="logo">
-			<h1><span>IPFire</span></h1>
+			<h1><span>IPFire</span></h1><br />
 			<h2>$h2</h2>
 		</div>
 

@@ -695,7 +695,7 @@ reload_tftpd() {
 
 update_langs() {
 		echo -ne "Checking the translations for missing or obsolete strings..."
-		chmod 755 $BASEDIR/tools/{check_strings.pl,sort_strings.pl}
+		chmod 755 $BASEDIR/tools/{check_strings.pl,sort_strings.pl,check_langs.sh}
 		$BASEDIR/tools/sort_strings.pl en
 		$BASEDIR/tools/sort_strings.pl de
 		$BASEDIR/tools/check_strings.pl en > $BASEDIR/doc/language_issues.en
