@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 ############################################################################
 #                                                                          #
 # This file is part of the IPCop Firewall.                                 #
@@ -21,10 +21,8 @@
 #                                                                          #
 ############################################################################
 
-my (%tr2, $basedir);
-
 use Cwd;
-use File::Find;
+my $basedir = cwd();
 
 my  $lang = "$ARGV[0]";
 if ( $lang eq "") {
@@ -32,34 +30,20 @@ if ( $lang eq "") {
 	exit;
 }
 
-$basedir = cwd();
 require "${basedir}/langs/$lang/cgi-bin/$lang.pl";
 
-sub wanted {
-	if ( -f $File::Find::name && open(FILE, $File::Find::name)) {
-		while (<FILE>) {
-			while ($_ =~ /\$Lang::tr{'([A-Za-z0-9,:_\s\/\.-]+)'}/g) {
-				$tr2{$1} = 'empty string';
-			}
-		}
-		close(FILE);
-	}
-}
+open(FILE,">${basedir}/langs/$lang/cgi-bin/$lang.pl");
 
-## Main
-find (\&wanted, "$basedir/html"  );
-find (\&wanted, "$basedir/src/scripts"  );
+print FILE <<EOF;
+\%tr = ( 
+\%tr,
+
+EOF
 
 for my $key ( sort (keys %tr) ) {
 	my $value = $tr{$key};
-	if (! $tr2{$key}) {
-		print "WARNING: translation string unused: $key\n";
-	}
+	$value =~ s/\'/\\\'/g;
+	print FILE "\'$key\' => \'$value\',\n";
 }
 
-for my $key ( sort(keys %tr2) ) {
-	my $value = $tr2{$key};
-	if (! $tr{$key}) {
-		print "WARNING: untranslated string: $key\n";
-	}
-}
+print FILE ");\n\n#EOF\n";

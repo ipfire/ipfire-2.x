@@ -1,0 +1,322 @@
+WARNING: translation string unused: ConnSched scheduler
+WARNING: translation string unused: ConnSched select profile
+WARNING: translation string unused: HDD temperature
+WARNING: translation string unused: Local VPN IP
+WARNING: translation string unused: Ping
+WARNING: translation string unused: Remote IP
+WARNING: translation string unused: Remote VPN IP
+WARNING: translation string unused: Resolv
+WARNING: translation string unused: Verbose
+WARNING: translation string unused: add new ovpn
+WARNING: translation string unused: advproxy LDAP auth
+WARNING: translation string unused: advproxy NTLM auth
+WARNING: translation string unused: advproxy advanced proxy
+WARNING: translation string unused: advproxy chgwebpwd ERROR
+WARNING: translation string unused: advproxy chgwebpwd SUCCESS
+WARNING: translation string unused: advproxy chgwebpwd change password
+WARNING: translation string unused: advproxy chgwebpwd change web password
+WARNING: translation string unused: advproxy chgwebpwd new password
+WARNING: translation string unused: advproxy chgwebpwd new password confirm
+WARNING: translation string unused: advproxy chgwebpwd old password
+WARNING: translation string unused: advproxy chgwebpwd username
+WARNING: translation string unused: advproxy cre disabled
+WARNING: translation string unused: advproxy errmsg change fail
+WARNING: translation string unused: advproxy errmsg change success
+WARNING: translation string unused: advproxy errmsg invalid user
+WARNING: translation string unused: advproxy errmsg no password
+WARNING: translation string unused: advproxy errmsg password incorrect
+WARNING: translation string unused: advproxy no cre groups
+WARNING: translation string unused: advproxy ssadvanced proxy
+WARNING: translation string unused: advproxy update information
+WARNING: translation string unused: advproxy update notification
+WARNING: translation string unused: aliases
+WARNING: translation string unused: all updates installed
+WARNING: translation string unused: alt dialup
+WARNING: translation string unused: alt home
+WARNING: translation string unused: alt logs
+WARNING: translation string unused: alt ovpn
+WARNING: translation string unused: alt services
+WARNING: translation string unused: alt system
+WARNING: translation string unused: alt vpn
+WARNING: translation string unused: and
+WARNING: translation string unused: ansi t1.483
+WARNING: translation string unused: apply
+WARNING: translation string unused: archive not exist
+WARNING: translation string unused: available updates
+WARNING: translation string unused: average
+WARNING: translation string unused: backup
+WARNING: translation string unused: backup archive
+WARNING: translation string unused: backup config floppy
+WARNING: translation string unused: backup erase key
+WARNING: translation string unused: bad destination range
+WARNING: translation string unused: bad source range
+WARNING: translation string unused: bewan adsl pci st
+WARNING: translation string unused: bewan adsl usb
+WARNING: translation string unused: blue access
+WARNING: translation string unused: blue interface
+WARNING: translation string unused: buffered memory
+WARNING: translation string unused: bytes per second
+WARNING: translation string unused: cache management
+WARNING: translation string unused: cache size
+WARNING: translation string unused: cached memory
+WARNING: translation string unused: choose config
+WARNING: translation string unused: clear cache
+WARNING: translation string unused: comment
+WARNING: translation string unused: compression
+WARNING: translation string unused: connect
+WARNING: translation string unused: connect the modem
+WARNING: translation string unused: connected
+WARNING: translation string unused: could not connect to
+WARNING: translation string unused: could not connect to www ipfire org
+WARNING: translation string unused: could not create directory
+WARNING: translation string unused: could not download latest patch list
+WARNING: translation string unused: could not download the available updates list
+WARNING: translation string unused: could not open available updates file
+WARNING: translation string unused: could not open installed updates file
+WARNING: translation string unused: could not open update information file
+WARNING: translation string unused: cpu usage per
+WARNING: translation string unused: current
+WARNING: translation string unused: current dynamic leases
+WARNING: translation string unused: current ovpn
+WARNING: translation string unused: current profile
+WARNING: translation string unused: daily firewallhits
+WARNING: translation string unused: dat without key
+WARNING: translation string unused: debugme
+WARNING: translation string unused: destination port numbers
+WARNING: translation string unused: dhcp server disabled on blue interface
+WARNING: translation string unused: dhcp server enabled on blue interface
+WARNING: translation string unused: dialup settings
+WARNING: translation string unused: disconnect
+WARNING: translation string unused: disk access per
+WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: dynamic dns client
+WARNING: translation string unused: edit hosts
+WARNING: translation string unused: enable javascript
+WARNING: translation string unused: enabled on
+WARNING: translation string unused: enabledtitle
+WARNING: translation string unused: encrypted
+WARNING: translation string unused: error config
+WARNING: translation string unused: error external access
+WARNING: translation string unused: exportkey
+WARNING: translation string unused: external access
+WARNING: translation string unused: external access rule changed
+WARNING: translation string unused: filename
+WARNING: translation string unused: firewall
+WARNING: translation string unused: firewall log viewer
+WARNING: translation string unused: firewall logs
+WARNING: translation string unused: firmware
+WARNING: translation string unused: force update
+WARNING: translation string unused: free memory
+WARNING: translation string unused: free swap
+WARNING: translation string unused: from
+WARNING: translation string unused: g.dtm
+WARNING: translation string unused: g.lite
+WARNING: translation string unused: gen static key
+WARNING: translation string unused: generate
+WARNING: translation string unused: genkey
+WARNING: translation string unused: graph per
+WARNING: translation string unused: green interface
+WARNING: translation string unused: gz with key
+WARNING: translation string unused: hardware graphs
+WARNING: translation string unused: hdd temperature in
+WARNING: translation string unused: hint
+WARNING: translation string unused: host configuration
+WARNING: translation string unused: hostname and domain already in use
+WARNING: translation string unused: hours2
+WARNING: translation string unused: id
+WARNING: translation string unused: idle
+WARNING: translation string unused: idle cpu
+WARNING: translation string unused: idle cpu usage
+WARNING: translation string unused: ids logs
+WARNING: translation string unused: importkey
+WARNING: translation string unused: in
+WARNING: translation string unused: incoming traffic in bytes per second
+WARNING: translation string unused: install new update
+WARNING: translation string unused: installed
+WARNING: translation string unused: intrusion detection
+WARNING: translation string unused: intrusion detection system log viewer
+WARNING: translation string unused: invalid cache size
+WARNING: translation string unused: invalid date entered
+WARNING: translation string unused: invalid port list
+WARNING: translation string unused: invalid time entered
+WARNING: translation string unused: invalid upstream proxy username or password setting
+WARNING: translation string unused: ip address in use
+WARNING: translation string unused: ipfire side
+WARNING: translation string unused: ipfire side is invalid
+WARNING: translation string unused: iptable rules
+WARNING: translation string unused: javascript menu error1
+WARNING: translation string unused: javascript menu error2
+WARNING: translation string unused: kernel version
+WARNING: translation string unused: key stuff
+WARNING: translation string unused: line
+WARNING: translation string unused: linkq
+WARNING: translation string unused: log enabled
+WARNING: translation string unused: log viewer
+WARNING: translation string unused: ls_dhcpd
+WARNING: translation string unused: ls_disk space
+WARNING: translation string unused: ls_free/swan
+WARNING: translation string unused: ls_httpd
+WARNING: translation string unused: ls_init
+WARNING: translation string unused: ls_kernel
+WARNING: translation string unused: ls_modprobe
+WARNING: translation string unused: ls_pam_unix
+WARNING: translation string unused: ls_sshd
+WARNING: translation string unused: ls_syslogd
+WARNING: translation string unused: manage ovpn
+WARNING: translation string unused: manual control and status
+WARNING: translation string unused: max incoming size
+WARNING: translation string unused: max outgoing size
+WARNING: translation string unused: max size
+WARNING: translation string unused: maximal
+WARNING: translation string unused: mbmon fan in
+WARNING: translation string unused: mbmon graphs
+WARNING: translation string unused: mbmon settings
+WARNING: translation string unused: mbmon temp in
+WARNING: translation string unused: memory usage per
+WARNING: translation string unused: min size
+WARNING: translation string unused: minutes
+WARNING: translation string unused: missing gz
+WARNING: translation string unused: modulation
+WARNING: translation string unused: monthly firewallhits
+WARNING: translation string unused: nat-traversal
+WARNING: translation string unused: network configuration
+WARNING: translation string unused: new optionsfw later
+WARNING: translation string unused: new optionsfw must boot
+WARNING: translation string unused: no set selected
+WARNING: translation string unused: not enough disk space
+WARNING: translation string unused: o-no
+WARNING: translation string unused: o-yes
+WARNING: translation string unused: openvpn client
+WARNING: translation string unused: openvpn server
+WARNING: translation string unused: optional data
+WARNING: translation string unused: optionsfw portlist hint
+WARNING: translation string unused: optionsfw warning
+WARNING: translation string unused: other countries
+WARNING: translation string unused: out
+WARNING: translation string unused: outgoing firewall
+WARNING: translation string unused: outgoing traffic in bytes per second
+WARNING: translation string unused: ovpn
+WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn dl
+WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpnstatus log
+WARNING: translation string unused: ovpnsys log
+WARNING: translation string unused: package failed to install
+WARNING: translation string unused: pots
+WARNING: translation string unused: profiles
+WARNING: translation string unused: proxy logs
+WARNING: translation string unused: psk
+WARNING: translation string unused: quick control
+WARNING: translation string unused: read sectors
+WARNING: translation string unused: reboot schedule
+WARNING: translation string unused: refresh update list
+WARNING: translation string unused: released
+WARNING: translation string unused: requested data
+WARNING: translation string unused: sectors read from disk per second
+WARNING: translation string unused: sectors written to disk per second
+WARNING: translation string unused: shaping add options
+WARNING: translation string unused: shared memory
+WARNING: translation string unused: source port numbers
+WARNING: translation string unused: squid extension methods
+WARNING: translation string unused: squid extension methods invalid
+WARNING: translation string unused: ssdmz pinholes
+WARNING: translation string unused: ssnetwork status
+WARNING: translation string unused: sspasswords
+WARNING: translation string unused: ssport forwarding
+WARNING: translation string unused: ssproxy graphs
+WARNING: translation string unused: sssystem status
+WARNING: translation string unused: sstraffic graphs
+WARNING: translation string unused: successfully refreshed updates list
+WARNING: translation string unused: swap usage per
+WARNING: translation string unused: system cpu
+WARNING: translation string unused: system cpu usage
+WARNING: translation string unused: system log viewer
+WARNING: translation string unused: system status information
+WARNING: translation string unused: test
+WARNING: translation string unused: the following update was successfully installed
+WARNING: translation string unused: there are updates
+WARNING: translation string unused: there are updates available
+WARNING: translation string unused: this is not a valid archive
+WARNING: translation string unused: this is not an authorised update
+WARNING: translation string unused: this update is already installed
+WARNING: translation string unused: time date manually reset
+WARNING: translation string unused: time server
+WARNING: translation string unused: title
+WARNING: translation string unused: to
+WARNING: translation string unused: to install an update
+WARNING: translation string unused: traffic on
+WARNING: translation string unused: transfer limits
+WARNING: translation string unused: transparent on
+WARNING: translation string unused: unencrypted
+WARNING: translation string unused: update transcript
+WARNING: translation string unused: updates
+WARNING: translation string unused: updates is old1
+WARNING: translation string unused: updates is old2
+WARNING: translation string unused: upload fcdsl.o
+WARNING: translation string unused: upload static key
+WARNING: translation string unused: upload update file
+WARNING: translation string unused: upstream password
+WARNING: translation string unused: upstream proxy host:port
+WARNING: translation string unused: upstream username
+WARNING: translation string unused: uptime and users
+WARNING: translation string unused: urlfilter background text
+WARNING: translation string unused: urlfilter logs
+WARNING: translation string unused: urlfilter update information
+WARNING: translation string unused: urlfilter update notification
+WARNING: translation string unused: urlfilter update results
+WARNING: translation string unused: urlfilter upload background
+WARNING: translation string unused: use
+WARNING: translation string unused: used memory
+WARNING: translation string unused: used swap
+WARNING: translation string unused: user cpu
+WARNING: translation string unused: user cpu usage
+WARNING: translation string unused: virtual private networking
+WARNING: translation string unused: vpn on blue
+WARNING: translation string unused: web proxy configuration
+WARNING: translation string unused: week
+WARNING: translation string unused: weekly firewallhits
+WARNING: translation string unused: written sectors
+WARNING: translation string unused: year
+WARNING: translation string unused: yearly firewallhits
+WARNING: translation string unused: yes
+WARNING: untranslated string: IPFires hostname
+WARNING: untranslated string: Number of IPs for the pie chart
+WARNING: untranslated string: Number of Ports for the pie chart
+WARNING: untranslated string: XY add data
+WARNING: untranslated string: XY data
+WARNING: untranslated string: XY edit data
+WARNING: untranslated string: XY settings
+WARNING: untranslated string: XY title
+WARNING: untranslated string: down
+WARNING: untranslated string: network pakfire
+WARNING: untranslated string: network pakfire from
+WARNING: untranslated string: otherip
+WARNING: untranslated string: otherport
+WARNING: untranslated string: pakfire configuration
+WARNING: untranslated string: red
+WARNING: untranslated string: remove x509
+WARNING: untranslated string: settingsc
+WARNING: untranslated string: up
+WARNING: untranslated string: uptime disable
+WARNING: untranslated string: uptime enable
+WARNING: untranslated string: uptime update now
+WARNING: untranslated string: vpn aggrmode
+WARNING: untranslated string: vpn altname syntax
+WARNING: untranslated string: vpn auth-dn
+WARNING: untranslated string: vpn incompatible use of defaultroute
+WARNING: untranslated string: vpn local id
+WARNING: untranslated string: vpn missing remote id
+WARNING: untranslated string: vpn no full pki
+WARNING: untranslated string: vpn payload compression
+WARNING: untranslated string: vpn red name
+WARNING: untranslated string: vpn remote id
+WARNING: untranslated string: vpn subjectaltname
+WARNING: untranslated string: vpn vhost
+WARNING: untranslated string: vpn watch
+WARNING: untranslated string: wday1
+WARNING: untranslated string: wday2
+WARNING: untranslated string: wday3
+WARNING: untranslated string: wday4
+WARNING: untranslated string: wday5
+WARNING: untranslated string: wday6
+WARNING: untranslated string: wday7

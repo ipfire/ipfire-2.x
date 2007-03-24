@@ -910,6 +910,7 @@ svn)
 				$0 changelog
 			fi
 		fi
+		update_langs
 		svn commit
 		$0 svn up
 		$0 uploadsrc
