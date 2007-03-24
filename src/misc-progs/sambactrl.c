@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
         {
             snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -d %s", argv[2]);
             safe_system(command);
-            printf(command);
             return 0;
         }
 
@@ -35,7 +34,6 @@ int main(int argc, char *argv[])
         {
             snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -e %s", argv[2]);
             safe_system(command);
-            printf(command);
             return 0;
         }
 
@@ -43,10 +41,8 @@ int main(int argc, char *argv[])
         {
             snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -x %s", argv[2]);
             safe_system(command);
-            printf(command);
             snprintf(command, BUFFER_SIZE-1, "/usr/sbin/userdel %s", argv[2]);
             safe_system(command);
-            printf(command);
             return 0;
         }
 
@@ -56,10 +52,17 @@ int main(int argc, char *argv[])
             return 0;
         }
 
+        if (strcmp(argv[1], "smbsafeconfpdc")==0)
+        {
+            safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
+            return 0;
+        }
+
         if (strcmp(argv[1], "smbglobalreset")==0)
         {
             safe_system("/bin/cat /var/ipfire/samba/default.global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
             safe_system("/bin/cat /var/ipfire/samba/default.settings > /var/ipfire/samba/settings");
+            safe_system("/bin/cat /var/ipfire/samba/default.global > /var/ipfire/samba/global");
             return 0;
         }
 
@@ -85,12 +88,35 @@ int main(int argc, char *argv[])
             return 0;
         }
 
+        if (strcmp(argv[1], "smbstatus")==0)
+        {
+            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/smbstatus");
+            safe_system(command);
+            printf(command);
+            return 0;
+        }
+
         if (strcmp(argv[1], "smbuseradd")==0)
         {
-            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -d /opt/samba -g 2110 -p %s -s /bin/false %s", argv[3], argv[2]);
+            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/groupadd sambauser");
+            safe_system(command);
+            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -m -g %s -p %s -s %s %s", argv[4], argv[3], argv[5], argv[2]);
             safe_system(command);
             printf(command);
             snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s", argv[3], argv[3], argv[2]);
+            safe_system(command);
+            printf(command);
+            return 0;
+        }
+
+        if (strcmp(argv[1], "smbpcadd")==0)
+        {
+            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/groupadd sambawks");
+            safe_system(command);
+            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba Workstation' -g %s -s %s %s", argv[3], argv[4], argv[2]);
+            safe_system(command);
+            printf(command);
+            snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -a -m %s", argv[2]);
             safe_system(command);
             printf(command);
             return 0;

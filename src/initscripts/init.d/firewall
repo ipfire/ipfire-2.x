@@ -151,6 +151,14 @@ case "$1" in
 	# Accept everything connected
 	/sbin/iptables -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+	
+	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
+	/sbin/iptables -N IPSECVIRTUAL
+	/sbin/iptables -N OPENSSLVIRTUAL
+	/sbin/iptables -A INPUT -j IPSECVIRTUAL
+	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL
+	/sbin/iptables -A FORWARD -j IPSECVIRTUAL
+	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL
 
 	# localhost and ethernet.
 	/sbin/iptables -A INPUT   -i lo          -m state --state NEW -j ACCEPT
@@ -167,19 +175,17 @@ case "$1" in
 	# we end up with orange -> orange traffic passing through IPFire
 	[ "$ORANGE_DEV" != "" ] && /sbin/iptables -A FORWARD -i $ORANGE_DEV -o $ORANGE_DEV -m state --state NEW -j ACCEPT
 
-	# accept all traffic from ipsec interfaces
-	/sbin/iptables -A INPUT   -i ipsec+ -j ACCEPT
-	/sbin/iptables -A FORWARD -i ipsec+ -j ACCEPT
-
 	# allow DHCP on BLUE to be turned on/off
 	/sbin/iptables -N DHCPBLUEINPUT 
 	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
 
-	# IPSec chains
-	/sbin/iptables -N IPSECRED
-	/sbin/iptables -A INPUT -j IPSECRED
-	/sbin/iptables -N IPSECBLUE
-	/sbin/iptables -A INPUT -j IPSECBLUE
+	# IPSec
+	/sbin/iptables -N IPSECPHYSICAL
+	/sbin/iptables -A INPUT -j IPSECPHYSICAL
+
+	# OPenSSL
+	/sbin/iptables -N OPENSSLPHYSICAL
+	/sbin/iptables -A INPUT -j OPENSSLPHYSICAL
 
 	# WIRELESS chains
 	/sbin/iptables -N WIRELESSINPUT
