@@ -38,6 +38,8 @@ Projektmitglied &amp; Sponsor - Detlef Lampart
 (<a href='mailto:info\@delaco.de'>delaco\@ipfire.org</a>)<br />
 Projektmitglied &amp; Developer - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.eu'>cm\@ipfire.org</a>)<br />
+Projektmitglied &amp; Developer - Christian Schmidt
+(<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
 Projektmitglied &amp; Supporter - Silvio Rechenbach
 (<a href='mailto:sr\@tne.de'>sr\@tne.de</a>)<br />
 Creative Mind - Benedikt Correll<br />
