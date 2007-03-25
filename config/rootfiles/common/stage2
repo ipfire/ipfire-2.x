@@ -4,6 +4,8 @@ bin/grep
 bin/pwd
 bin/stty
 #boot
+dev/null
+dev/console
 etc/bashrc
 etc/certparams
 etc/fstab
@@ -42,6 +44,8 @@ mnt
 #root
 #sbin
 #srv
+#sys
+tmp
 #usr/bin/perl
 #usr/include
 #usr/lib

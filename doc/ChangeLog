@@ -1,4 +1,60 @@
 ------------------------------------------------------------------------
+r460 | ms | 2007-03-25 08:43:08 +0200 (Sun, 25 Mar 2007) | 3 lines
+
+Domainkonfiguration neu gemacht.
+USB-Stick Images hinzugefuegt.
+
+------------------------------------------------------------------------
+r459 | ms | 2007-03-25 06:48:58 +0200 (Sun, 25 Mar 2007) | 2 lines
+
+Obsolete Binaerdateien entfernt.
+
+------------------------------------------------------------------------
+r458 | ms | 2007-03-25 06:40:27 +0200 (Sun, 25 Mar 2007) | 3 lines
+
+Squidupdate und QoS-Fix.
+Hostname als Ueberschrift.
+
+------------------------------------------------------------------------
+r457 | ms | 2007-03-25 06:05:41 +0200 (Sun, 25 Mar 2007) | 4 lines
+
+Firewallhitgraphs gefixt.
+Colours.txt fehlt noch fuer unseren Style.
+...und wieder einige Sprachfixes.
+
+------------------------------------------------------------------------
+r456 | ms | 2007-03-24 22:23:57 +0100 (Sat, 24 Mar 2007) | 3 lines
+
+Sprachfix und FTP-Upload-Fix
+und das <br> was der Maniac haben wollte
+
+------------------------------------------------------------------------
+r455 | maniacikarus | 2007-03-24 22:07:43 +0100 (Sat, 24 Mar 2007) | 2 lines
+
+Hallo, ich bin der Christian und das ist mein erster Commit.
+
+------------------------------------------------------------------------
+r454 | ms | 2007-03-24 18:12:26 +0100 (Sat, 24 Mar 2007) | 2 lines
+
+Neue Sprachfunktionen und deutsch Sprachdatei aktualisiert
+
+------------------------------------------------------------------------
+r453 | ms | 2007-03-24 14:30:47 +0100 (Sat, 24 Mar 2007) | 3 lines
+
+upnp.cgi und status.cgi von Maniac eingebaut
+IPSec aktualisiert
+
+------------------------------------------------------------------------
+r452 | ms | 2007-03-22 21:56:22 +0100 (Thu, 22 Mar 2007) | 2 lines
+
+Neue UPNP.CGI vom Christian
+
+------------------------------------------------------------------------
+r451 | ms | 2007-03-19 21:25:01 +0100 (Mon, 19 Mar 2007) | 2 lines
+
+Ramdisk-Arbeit nahezu beendet.
+
+------------------------------------------------------------------------
 r450 | ms | 2007-03-18 22:34:35 +0100 (Sun, 18 Mar 2007) | 5 lines
 
 GD-Graph fuer Maniac eingebaut
