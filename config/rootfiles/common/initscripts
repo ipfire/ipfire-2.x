@@ -17,7 +17,9 @@ etc/rc.d/init.d/localnet
 etc/rc.d/init.d/modules
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/mountkernfs
+etc/rc.d/init.d/net
 etc/rc.d/init.d/network
+etc/rc.d/init.d/ntp
 etc/rc.d/init.d/random
 etc/rc.d/init.d/rc
 etc/rc.d/init.d/reboot

@@ -55,6 +55,9 @@ $(TARGET) :
 	install -d -m 755 /etc/rc.d/rc6.d
 	install -d -m 755 /etc/rc.d/rcsysinit.d
 	install -d -m 755 /etc/rc.d/init.d
+	install -d -m 755 /etc/rc.d/init.d/net
+	install -d -m 755 /etc/rc.d/init.d/net/common
+	install -d -m 755 /etc/rc.d/init.d/net/red
 	install -d -m 755 /etc/rc.d/helper
 	install -d -m 755 /etc/sysconfig
 	ln -svf rc.d/init.d /etc/init.d
@@ -63,6 +66,18 @@ $(TARGET) :
 		install -v -m 754 $$i /etc/rc.d/init.d/; \
 	done
 	chmod 644 /etc/rc.d/init.d/functions
+
+	for i in $(DIR_SRC)/src/initscripts/init.d/net/*; do \
+		install -v -m 754 $$i /etc/rc.d/init.d/net/; \
+	done
+
+	for i in $(DIR_SRC)/src/initscripts/init.d/net/common/*; do \
+		install -v -m 754 $$i /etc/rc.d/init.d/net/common/; \
+	done
+
+	for i in $(DIR_SRC)/src/initscripts/init.d/net/red/*; do \
+		install -v -m 754 $$i /etc/rc.d/init.d/net/red/; \
+	done
 
 	for i in $(DIR_SRC)/src/initscripts/sysconfig/*; do \
 		install -v -m 644 $$i /etc/sysconfig/; \

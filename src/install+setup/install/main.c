@@ -513,12 +513,6 @@ int main(int argc, char *argv[])
 	/* Rename uname */
 	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
 
-	/* *always* write disk configuration */
-	if (!(write_disk_configs(&hdparams))){
-	  errorbox(ctr[TR_ERROR_WRITING_CONFIG]);
-	  goto EXIT;
-	}
-
 	/* mount proc filesystem */
 	mysystem("mkdir /harddisk/proc");
 	mysystem("/bin/mount -t proc none /harddisk/proc");

@@ -1,0 +1,90 @@
+#!/bin/sh
+########################################################################
+# Begin $network_devices/ifup
+#
+# Description : Interface Up
+#
+# Authors     : Nathan Coulson - nathan@linuxfromscratch.org
+#               Kevin P. Fleming - kpfleming@linuxfromscratch.org
+#               Michael Tremer - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       : the variables are passed to the scripts found
+#               in the services directory
+#
+########################################################################
+
+. /etc/sysconfig/rc 
+. ${rc_functions} 
+
+boot_mesg "Bringing up the $name interface..."
+boot_mesg_flush
+
+(
+	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+	# Loading the module if not already done...
+	if [ "$name" == "green" ]; then
+		modprobe ${GREEN_DRIVER} ${GREEN_DRIVER_OPTIONS} > /dev/null 2>&1
+		DEVICE="${GREEN_DEV}"
+	elif [ "$name" == "blue" ]; then
+		modprobe ${BLUE_DRIVER} ${BLUE_DRIVER_OPTIONS} > /dev/null 2>&1
+		DEVICE="${BLUE_DEV}"
+	elif [ "$name" == "orange" ]; then
+		modprobe ${ORANGE_DRIVER} ${ORANGE_DRIVER_OPTIONS} > /dev/null 2>&1
+		DEVICE="${ORANGE_DEV}"
+	elif [ "$name" == "red" ]; then
+		DEVICE="${RED_DEV}"
+	fi
+
+	# Check if interface is there...
+	if ip link show ${DEVICE} > /dev/null 2>&1; then
+		link_status=`ip link show ${DEVICE} 2> /dev/null`
+		if [ -n "${link_status}" ]; then
+			if ! echo "${link_status}" | grep -q UP; then
+				ip link set ${DEVICE} up
+			fi
+		fi
+
+	else
+		boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
+		echo_failure
+		exit 1
+	fi
+
+	# Passing the variables to the script
+	if [ "$name" == "green" ]; then
+		NAME=${name} ADDRESS=${GREEN_ADDRESS} NETMASK=${GREEN_NETMASK}\
+		NETADDRESS=${GREEN_NETADDRESS} BROADCAST=${GREEN_BROADCAST} \
+		/etc/rc.d/init.d/net/common/ipv4-static ${GREEN_DEV} up
+		
+	elif [ "$name" == "blue" ]; then
+		NAME=${name} ADDRESS=${BLUE_ADDRESS} NETMASK=${BLUE_NETMASK}\
+		NETADDRESS=${BLUE_NETADDRESS} BROADCAST=${BLUE_BROADCAST} \
+		/etc/rc.d/init.d/net/common/ipv4-static ${BLUE_DEV} up
+		
+	elif [ "$name" == "orange" ]; then
+		NAME=${name} ADDRESS=${ORANGE_ADDRESS} NETMASK=${ORANGE_NETMASK}\
+		NETADDRESS=${ORANGE_NETADDRESS} BROADCAST=${ORANGE_BROADCAST} \
+		/etc/rc.d/init.d/net/common/ipv4-static ${ORANGE_DEV} up
+		
+	elif [ "$name" == "red" ]; then
+		if [ "${RED_TYPE}" == "PPPOE" ]; then
+			echo
+		elif [ "${RED_TYPE}" == "PPTP" ]; then
+			echo
+		elif [ "${RED_TYPE}" == "DHCP" ]; then
+			NAME=${name} DHCP_HOSTNAME=${RED_DHCP_HOSTNAME} \
+			PRINTIP=yes PRINTALL=yes \
+			/etc/rc.d/init.d/net/red/dhcpcd ${RED_DEV} up
+		elif [ "${RED_TYPE}" == "STATIC" ]; then
+			NAME=${name} ADDRESS=${RED_ADDRESS} NETMASK=${RED_NETMASK}\
+			NETADDRESS=${RED_NETADDRESS} BROADCAST=${RED_BROADCAST} \
+			DNS1=${DNS1} DNS2=${DNS2} GATEWAY=${DEFAULT_GATEWAY}
+			/etc/rc.d/init.d/net/red/ipv4-static ${RED_DEV} up
+		fi
+	fi
+)
+
+# End $network_devices/ifup

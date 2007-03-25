@@ -1,0 +1,120 @@
+#!/bin/sh
+# Begin $network-devices/services/dhcpcd
+
+# Based upon lfs-bootscripts-1.12 $network_devices/if{down,up}
+# Rewritten by Nathan Coulson <nathan@linuxfromscratch.org>
+# Adapted for dhcpcd by DJ Lucas <dj@lucasit.com>
+# Made compatible for ipfire by Michael Tremer mitch@ipfire.org
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+PIDFILE="/var/run/dhcpcd-$1.pid"
+LEASEINFO="/var/ipfire/dhcpc/dhcpcd-$1.info"
+
+case "$2" in
+	up)
+		boot_mesg -n "Starting dhcpcd on the $1 interface..."
+		# Test to see if there is a stale pid file
+		if [ -f "$PIDFILE" ]
+		then
+			ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
+			if [ $? != 0 ]
+			then
+				rm -f /var/run/dhcpcd-$1.pid > /dev/null
+			else
+				boot_mesg "dhcpcd already running!" ${WARNING}
+				echo_warning
+				exit 2
+			fi
+		fi
+		/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${1} -j ACCEPT
+		/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${1} -j ACCEPT
+		DHCP_START="-N -R -L /var/ipfire/dhcpc "
+		if [ -n "${DHCP_HOSTNAME}" ]; then
+			DHCP_START+="-h ${DHCP_HOSTNAME}"
+	  fi
+		/sbin/dhcpcd $1 $DHCP_START
+		# Save the return value
+		RET="$?"
+		# Print the assigned settings if requested
+		if [ "$RET" = "0" -a "$PRINTIP" = "yes" ]; then
+			. /var/ipfire/dhcpc/dhcpcd-$1.info
+			if [ "$PRINTALL" = "yes" ]; then
+				echo ""
+				echo_ok
+				boot_mesg "           DHCP Assigned Settings for $1:"
+				boot_mesg_flush
+				boot_mesg "           IP Address:      $IPADDR"
+				boot_mesg_flush
+				if [ -n "${DHCP_HOSTNAME}" ]; then
+					boot_mesg "           Hostname:        $DHCP_HOSTNAME"
+					boot_mesg_flush
+				fi
+				boot_mesg "           Subnet Mask:     $NETMASK"
+				boot_mesg_flush
+				boot_mesg "           Default Gateway: $GATEWAY"
+				boot_mesg_flush
+				boot_mesg "           DNS Server:      $DNS"
+				boot_mesg_flush
+			else
+				boot_mesg " IP Addresss: ""$IPADDR"
+				echo_ok
+			fi
+		else
+			echo ""
+			$(exit "$RET")
+			evaluate_retval
+		fi
+	;;
+
+	down)
+		boot_mesg -n "Stopping dhcpcd on the $1 interface..."
+		# Do nothing with the client daemon if we have an infinate 
+		# lease time as the client exits when started in this case,
+		# just echo OK.
+		DHCP_STOP="-k"
+		if [ -e $LEASEINFO ]
+		then
+			. $LEASEINFO
+
+			if [ "$LEASETIME" = "4294967295" ]
+			then
+				# do nothing, just echo ok
+				echo ""
+				echo_ok
+			else
+			if [ -n "$DHCP_STOP" ]
+			then
+				/sbin/dhcpcd $1 $DHCP_STOP &> /dev/null
+				RET="$?"
+				if [ "$RET" -eq 0 ]; then
+					echo ""
+					echo_ok
+				elif [ "$RET" -eq 1 ]; then
+					boot_mesg "dhcpcd not running!" ${WARNING}
+					echo_warning
+				else
+					echo ""
+					echo_failure
+				fi
+			else
+				echo ""
+				killproc dhcpcd
+			fi
+		    fi
+		else
+			boot_mesg -n "LEASEINFO Test failed! - " ${WARNING}
+			boot_mesg "dhcpcd is not running!" ${WARNING}
+			echo_warning
+			exit 1
+		fi
+	;;
+
+	*)
+		echo "Usage: $0 [interface] {up|down}"
+		exit 1
+	;;
+esac
+
+# End $network_devices/services/dhcpcd

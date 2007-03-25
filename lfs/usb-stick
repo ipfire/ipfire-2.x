@@ -26,6 +26,8 @@
 
 include Config
 
+VER = ipfire
+
 THISAPP    = usb-stick
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
