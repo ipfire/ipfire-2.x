@@ -540,6 +540,8 @@ buildinstaller() {
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
   ipfiremake syslinux
+  ipfiremake as86
+  ipfiremake mbr
   ipfiremake memtest
   installmake linux-libc-header
   installmake binutils
@@ -609,8 +611,13 @@ buildpackages() {
 		ipfiremake cdrom ED=$i
 	fi
   done
+  
+  # Check if there is a loop device for building in virtual environments
+  if [ -e /dev/loop0 ]; then
+  	ipfiremake usb-stick
+  fi
   ipfiremake pxe
-  cp -f $LFS/install/images/{*.iso,*.tgz} $BASEDIR >> $LOGFILE 2>&1
+  mv $LFS/install/images/{*.iso,*.tgz,*.img.gz} $BASEDIR >> $LOGFILE 2>&1
 
 #  ipfirepackages
 
@@ -633,7 +640,6 @@ buildpackages() {
   echo -n "###EOF###" >> $BASEDIR/packages/packages_list.txt
 
   cd $PWD
-
 }
 
 ipfirepackages() {

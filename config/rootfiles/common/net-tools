@@ -1,5 +1,5 @@
 bin/dnsdomainname
-#bin/domainname
+bin/domainname
 bin/hostname
 bin/netstat
 #bin/nisdomainname

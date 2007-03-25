@@ -34,6 +34,7 @@
 * amavisd-new-2.4.1
 * applejuice-0.30
 * arping-2.05
+* as86-0.16.17
 * asterisk-1.4.0
 * autoconf-2.59
 * automake-1.9.6
@@ -161,6 +162,7 @@
 * make-3.80
 * man-db-2.4.3
 * man-pages-2.34
+* mbr-1.1.8
 * mc-4.6.1
 * memtest86+-1.65
 * misc-progs
@@ -225,6 +227,7 @@
 * sox-12.18.1
 * spandsp-0.0.3pre24
 * squashfs3.2-r2
+* squid-2.6.STABLE12
 * squid-2.6.STABLE9
 * squid-graph-3.2
 * squidGuard-1.2.0

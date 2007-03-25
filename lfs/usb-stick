@@ -26,53 +26,73 @@
 
 include Config
 
-VER        = 0.16.17
-
-THISAPP    = as86-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+THISAPP    = usb-stick
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
-
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-
-$(DL_FILE)_MD5 = 69bca69aec7a272362bc9e050d289d12
-
 install : $(TARGET)
 
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+check :
 
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
+download :
 
-md5 : $(subst %,%_MD5,$(objects))
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+md5 :
 
 ###############################################################################
 # Installation Details
 ###############################################################################
+IMGfdd := /install/images/$(SNAME)-$(VERSION)-install-usb-fdd.$(MACHINE).img
+IMGhdd := /install/images/$(SNAME)-$(VERSION)-install-usb-hdd.$(MACHINE).img
+IMGfs  := /install/images/fs
+
+define COPY_TO_IMG
+	mkdosfs -n IPFIRE -F 16 -I $$IMAGE && \
+	for i in `seq 0 7`; do \
+		if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
+			LOOPDEV="/dev/loop$${i}"; \
+			break; \
+		fi; \
+	done; \
+	losetup $$LOOPDEV $$IMAGE && \
+	mount -t vfat $$LOOPDEV /install/mnt && \
+	cp -fR /install/cdrom/* /install/mnt && \
+	mv /install/mnt/boot/isolinux/{instroot,vmlinuz,*\.msg,memtest} /install/mnt && \
+	rm -rf /install/mnt/boot && \
+	cp $(DIR_SRC)/config/syslinux/syslinux.cfg /install/mnt/syslinux.cfg && \
+	umount /install/mnt && \
+	losetup -d $$LOOPDEV && \
+	syslinux $$IMAGE
+endef
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
-	@rm -rf $(DIR_APP)
-	@$(POSTBUILD)
+
+	# usb-fdd superfloppy (partitionless)
+	# compute size +32 blocks for bootsector/fat/etc...
+	dd bs=1024 count=$$((`du -k -s /install/cdrom | awk '{print $$1}'` + 2048 )) \
+		if=/dev/zero \
+		of=$(IMGfdd)
+	IMAGE=$(IMGfdd); $(COPY_TO_IMG)
+
+	# Partitionned images : make a file system bigger than iso size
+	# that fit on 128MB key to let free space available
+	# on the unique partition. Image will be compressed later
+	dd bs=1k if=/dev/zero of=$(IMGfs) count=120000
+	IMAGE=$(IMGfs); $(COPY_TO_IMG)
+	
+	# usb-hdd (64 heads, 32 sectors geometry, on a partition 1)
+	# use 64 heads as 256 does not work on Award bios (Asus A7V8X-X Gilles)
+	# use 32 sectors a minima or device is not recognised as hard disk (Frank)
+	# add 32 to IMGfs as first partition start at 32
+	COUNT=$$((`du -k -s $(IMGfs) | awk '{print $$1}'` + 32 )); \
+	dd bs=1k if=/dev/zero of=$(IMGhdd) count=$$COUNT
+	# write mbr before partitioning save a 'not msdos fs' warning from sfdisk
+	/usr/local/sbin/install-mbr -f $(IMGhdd)
+	echo -e "0,,6,*\n;\n;\n;" | sfdisk -qLD -H 64 -S 32 $(IMGhdd)
+	# copy the entire partition, make the fs and dd back
+	dd if=$(IMGfs) of=$(IMGhdd) bs=512 seek=32
+
+	gzip -f9 $(IMGfdd) $(IMGhdd)
+	rm -rf $$LFS/tmp/* $(IMGfs)

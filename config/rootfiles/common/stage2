@@ -4,8 +4,6 @@ bin/grep
 bin/pwd
 bin/stty
 #boot
-dev/null
-dev/console
 etc/bashrc
 etc/certparams
 etc/fstab
@@ -24,6 +22,7 @@ etc/nsswitch.conf
 #etc/opt
 etc/passwd
 etc/profile
+#etc/profile.d
 etc/profile.d/dircolors.sh
 etc/profile.d/extrapaths.sh
 etc/profile.d/readline.sh
@@ -43,8 +42,6 @@ mnt
 #root
 #sbin
 #srv
-#sys
-tmp
 #usr/bin/perl
 #usr/include
 #usr/lib
@@ -61,6 +58,7 @@ usr/local/bin/qosd
 usr/local/bin/readhash
 usr/local/bin/resetusb
 usr/local/bin/run-parts
+usr/local/bin/scanhd
 usr/local/bin/setddns.pl
 usr/local/bin/setreservedports
 usr/local/bin/settime

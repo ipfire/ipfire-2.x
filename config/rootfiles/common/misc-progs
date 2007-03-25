@@ -1,12 +1,7 @@
 usr/local/bin/extrahdctrl
 usr/local/bin/getipstat
-#usr/local/bin/installfcdsl
-#usr/local/bin/installpackage
 #usr/local/bin/iowrap
-usr/local/bin/ipfirebackup
-usr/local/bin/ipfirebkcfg
 usr/local/bin/ipfirereboot
-usr/local/bin/ipfirerscfg
 usr/local/bin/ipsecctrl
 usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
