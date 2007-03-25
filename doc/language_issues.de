@@ -32,6 +32,7 @@ WARNING: translation string unused: aliases
 WARNING: translation string unused: all updates installed
 WARNING: translation string unused: alt dialup
 WARNING: translation string unused: alt home
+WARNING: translation string unused: alt information
 WARNING: translation string unused: alt logs
 WARNING: translation string unused: alt ovpn
 WARNING: translation string unused: alt services
@@ -44,7 +45,15 @@ WARNING: translation string unused: available updates
 WARNING: translation string unused: average
 WARNING: translation string unused: backup
 WARNING: translation string unused: backup config floppy
+WARNING: translation string unused: backup configuration
+WARNING: translation string unused: backup export key
+WARNING: translation string unused: backup generate key
+WARNING: translation string unused: backup import dat file
+WARNING: translation string unused: backup key
+WARNING: translation string unused: backup missing key
 WARNING: translation string unused: backup password
+WARNING: translation string unused: backup sets
+WARNING: translation string unused: backup to floppy
 WARNING: translation string unused: bad characters in
 WARNING: translation string unused: blue access
 WARNING: translation string unused: blue access use hint
@@ -54,6 +63,7 @@ WARNING: translation string unused: bytes per second
 WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
 WARNING: translation string unused: cached memory
+WARNING: translation string unused: cfg restart
 WARNING: translation string unused: choose config
 WARNING: translation string unused: clear cache
 WARNING: translation string unused: comment
@@ -69,9 +79,11 @@ WARNING: translation string unused: could not open available updates file
 WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: cpu usage per
+WARNING: translation string unused: create
 WARNING: translation string unused: create new backup
 WARNING: translation string unused: current
 WARNING: translation string unused: current dynamic leases
+WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
 WARNING: translation string unused: dat without key
@@ -79,6 +91,7 @@ WARNING: translation string unused: ddns help dnsmadeeasy
 WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
 WARNING: translation string unused: debugme
+WARNING: translation string unused: description
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -95,7 +108,16 @@ WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enabled on
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
+WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
+WARNING: translation string unused: err bk 2 key
+WARNING: translation string unused: err bk 3 tar
+WARNING: translation string unused: err bk 4 gz
+WARNING: translation string unused: err bk 5 encrypt
+WARNING: translation string unused: err rs 1
+WARNING: translation string unused: err rs 6 decrypt
+WARNING: translation string unused: err rs 7 untartst
+WARNING: translation string unused: err rs 8 untar
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
 WARNING: translation string unused: exportkey
@@ -126,9 +148,12 @@ WARNING: translation string unused: id
 WARNING: translation string unused: idle cpu
 WARNING: translation string unused: idle cpu usage
 WARNING: translation string unused: ids logs
+WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
 WARNING: translation string unused: incoming traffic in bytes per second
+WARNING: translation string unused: incorrect password
+WARNING: translation string unused: insert floppy
 WARNING: translation string unused: install new update
 WARNING: translation string unused: installed
 WARNING: translation string unused: intrusion detection
@@ -148,6 +173,7 @@ WARNING: translation string unused: kernel version
 WARNING: translation string unused: key stuff
 WARNING: translation string unused: line
 WARNING: translation string unused: linkq
+WARNING: translation string unused: local hard disk
 WARNING: translation string unused: log enabled
 WARNING: translation string unused: log viewer
 WARNING: translation string unused: ls_dhcpd
@@ -173,12 +199,15 @@ WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: min size
 WARNING: translation string unused: minutes
+WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modulation
+WARNING: translation string unused: mount
 WARNING: translation string unused: nat-traversal
 WARNING: translation string unused: network configuration
 WARNING: translation string unused: new optionsfw later
 WARNING: translation string unused: new optionsfw must boot
+WARNING: translation string unused: no cfg upload
 WARNING: translation string unused: no set selected
 WARNING: translation string unused: not enough disk space
 WARNING: translation string unused: o-no
@@ -213,8 +242,11 @@ WARNING: translation string unused: refresh update list
 WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: requested data
+WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root path
+WARNING: translation string unused: root user password
 WARNING: translation string unused: safe removal of umounted device
+WARNING: translation string unused: save error
 WARNING: translation string unused: sectors read from disk per second
 WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: select media
@@ -289,35 +321,13 @@ WARNING: translation string unused: yes
 WARNING: untranslated string: IPFires hostname
 WARNING: untranslated string: Number of IPs for the pie chart
 WARNING: untranslated string: Number of Ports for the pie chart
-WARNING: untranslated string: XY add data
-WARNING: untranslated string: XY data
-WARNING: untranslated string: XY edit data
-WARNING: untranslated string: XY settings
-WARNING: untranslated string: XY title
 WARNING: untranslated string: allmsg
-WARNING: untranslated string: backup clear archive
-WARNING: untranslated string: backup explain key
-WARNING: untranslated string: backup explain key li1
-WARNING: untranslated string: backup explain key li2
-WARNING: untranslated string: backup explain key li3
-WARNING: untranslated string: backup explain key no1
-WARNING: untranslated string: backup explain key no2
-WARNING: untranslated string: backup extract key
-WARNING: untranslated string: backup import key
-WARNING: untranslated string: backup key file
-WARNING: untranslated string: backup key info
-WARNING: untranslated string: backup media info
-WARNING: untranslated string: backup protect key password
-WARNING: untranslated string: choose media
 WARNING: untranslated string: dial profile
-WARNING: untranslated string: done
 WARNING: untranslated string: down
 WARNING: untranslated string: firewall graphs
-WARNING: untranslated string: insert removable device
 WARNING: untranslated string: invalid input for keepalive 1:2
 WARNING: untranslated string: network pakfire
 WARNING: untranslated string: network pakfire from
-WARNING: untranslated string: notes
 WARNING: untranslated string: otherip
 WARNING: untranslated string: otherport
 WARNING: untranslated string: pakfire configuration
@@ -339,9 +349,6 @@ WARNING: untranslated string: traffics
 WARNING: untranslated string: trafficsum
 WARNING: untranslated string: trafficto
 WARNING: untranslated string: up
-WARNING: untranslated string: uptime disable
-WARNING: untranslated string: uptime enable
-WARNING: untranslated string: uptime update now
 WARNING: untranslated string: wday1
 WARNING: untranslated string: wday2
 WARNING: untranslated string: wday3

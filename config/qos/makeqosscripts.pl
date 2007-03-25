@@ -628,8 +628,8 @@ END
 print <<END
 
 	## STARTING COLLECTOR
-	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1
-	/usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1
+	( sleep 10 && /usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1) &
+	( sleep 10 && /usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1) &
 
 	echo "Quality of Service was successfully started!"
 	exit 0

@@ -166,7 +166,14 @@ END
 	<div id="header_inner" class="fixed">
 
 		<div id="logo">
-			<h1><span>IPFire</span></h1><br />
+END
+;
+    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+        print "<h1><span>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</span></h1><br />"; 
+    } else {
+				print "<h1><span>IPFire</span></h1><br />";
+		}
+		print <<END
 			<h2>$h2</h2>
 		</div>
 
