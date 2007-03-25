@@ -10,8 +10,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -74,7 +74,7 @@ if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || (
     	    chomp ($ipaddr);
 	}
 	if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
-	    my $ipaddr = <IPADDR>;
+	    $ipaddr = <IPADDR>;
 	    close IPADDR;
 	    chomp ($ipaddr);
 	}
@@ -134,6 +134,21 @@ END
 END
 	} else {
 	print "$Lang::tr{'profile has errors'}\n </b></font>\n";
+	}
+
+	my $HOSTNAME = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
+	if ( "$HOSTNAME" ne "" ) {
+		print <<END;
+	<tr><td><b>Hostname:</b><td>$HOSTNAME<td>&nbsp;
+END
+	}
+
+	if ( -e "/var/ipfire/red/remote-ipaddress" ) {
+		my $GATEWAY = `cat /var/ipfire/red/remote-ipaddress`;
+		chomp($GATEWAY);
+		print <<END;
+	<tr><td><b>Gateway:</b><td>$GATEWAY<td>&nbsp;
+END
 	}
 
 	my $DNS1 = `cat /var/ipfire/red/dns1`;

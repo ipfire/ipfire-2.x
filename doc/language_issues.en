@@ -48,8 +48,6 @@ WARNING: translation string unused: backup
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup config floppy
 WARNING: translation string unused: backup erase key
-WARNING: translation string unused: bad destination range
-WARNING: translation string unused: bad source range
 WARNING: translation string unused: bewan adsl pci st
 WARNING: translation string unused: bewan adsl usb
 WARNING: translation string unused: blue access
@@ -65,7 +63,6 @@ WARNING: translation string unused: comment
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
-WARNING: translation string unused: connected
 WARNING: translation string unused: could not connect to
 WARNING: translation string unused: could not connect to www ipfire org
 WARNING: translation string unused: could not create directory
@@ -82,7 +79,6 @@ WARNING: translation string unused: current profile
 WARNING: translation string unused: daily firewallhits
 WARNING: translation string unused: dat without key
 WARNING: translation string unused: debugme
-WARNING: translation string unused: destination port numbers
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
 WARNING: translation string unused: dialup settings
@@ -124,7 +120,6 @@ WARNING: translation string unused: host configuration
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hours2
 WARNING: translation string unused: id
-WARNING: translation string unused: idle
 WARNING: translation string unused: idle cpu
 WARNING: translation string unused: idle cpu usage
 WARNING: translation string unused: ids logs
@@ -216,7 +211,6 @@ WARNING: translation string unused: sectors read from disk per second
 WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shared memory
-WARNING: translation string unused: source port numbers
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: ssdmz pinholes

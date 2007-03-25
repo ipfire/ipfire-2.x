@@ -1,0 +1,12 @@
+!"R" "G" "B"		"Colour Name"
+ 57  44 187		colour1
+ 79 125 255		colour2
+ 79 185 255		colour3
+ 79 225 255		colour4
+189 225 255		colour5
+195 183 255		colour6
+195 125 255		colour7
+195 241 197		colour8
+195 241 140		colour9
+ 86 202 145		colour10
+ 

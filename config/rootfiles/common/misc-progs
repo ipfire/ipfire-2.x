@@ -1,3 +1,4 @@
+usr/local/bin/extrahdctrl
 usr/local/bin/getipstat
 #usr/local/bin/installfcdsl
 #usr/local/bin/installpackage
@@ -21,6 +22,7 @@ usr/local/bin/restartsquid
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd
 usr/local/bin/restartwireless
+#usr/local/bin/sambactrl
 usr/local/bin/setaliases
 usr/local/bin/setdate
 usr/local/bin/setdmzholes
@@ -28,3 +30,4 @@ usr/local/bin/setfilters
 usr/local/bin/setportfw
 usr/local/bin/setxtaccess
 usr/local/bin/timecheckctrl
+usr/local/bin/upnpctrl

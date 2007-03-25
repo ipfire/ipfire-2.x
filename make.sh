@@ -395,6 +395,7 @@ buildipfire() {
   ipfiremake fcron
   ipfiremake GD
   ipfiremake GD-Graph
+  ipfiremake GD-TextUtil
   ipfiremake gnupg
   ipfiremake hdparm
   ipfiremake ibod

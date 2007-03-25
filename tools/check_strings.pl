@@ -49,6 +49,7 @@ sub wanted {
 ## Main
 find (\&wanted, "$basedir/html"  );
 find (\&wanted, "$basedir/src/scripts"  );
+find (\&wanted, "$basedir/config/cfgroot"  );
 
 for my $key ( sort (keys %tr) ) {
 	my $value = $tr{$key};

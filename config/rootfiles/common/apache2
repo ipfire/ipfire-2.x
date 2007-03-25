@@ -1261,8 +1261,6 @@ srv/web/ipfire/cgi-bin/aliases.cgi
 #srv/web/ipfire/cgi-bin/asterisk.cgi/calls
 #srv/web/ipfire/cgi-bin/asterisk.cgi/conf
 #srv/web/ipfire/cgi-bin/asterisk.cgi/status
-#srv/web/ipfire/cgi-bin/backup.cgi
-#srv/web/ipfire/cgi-bin/base.cgi
 srv/web/ipfire/cgi-bin/changepw.cgi
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/connections.cgi
@@ -1287,11 +1285,16 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
 srv/web/ipfire/cgi-bin/logs.cgi
+#srv/web/ipfire/cgi-bin/logs.cgi/colours.txt
 #srv/web/ipfire/cgi-bin/logs.cgi/config.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
+#srv/web/ipfire/cgi-bin/logs.cgi/firewalllogip.dat
+#srv/web/ipfire/cgi-bin/logs.cgi/firewalllogport.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/proxylog.dat
+#srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromip.dat
+#srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromport.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/summary.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
 srv/web/ipfire/cgi-bin/modem.cgi
@@ -1320,7 +1323,6 @@ srv/web/ipfire/cgi-bin/traffics.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/upload.cgi
 srv/web/ipfire/cgi-bin/upnp.cgi
-#srv/web/ipfire/cgi-bin/uptime.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi

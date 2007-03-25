@@ -183,10 +183,10 @@ char *de_tr[] = {
 "Installation abgebrochen.",
 /* TR_INSTALLING_FILES */
 "Installiere Dateien...",
-/* TR_INSTALLING_LANG_CACHE */
-"Installiere Sprachunterstützung...",
 /* TR_INSTALLING_GRUB */
 "Installiere GRUB...",
+/* TR_INSTALLING_LANG_CACHE */
+"Installiere Sprachunterstützung...",
 /* TR_INTERFACE */
 "%s Schnittstelle",
 /* TR_INTERFACE_FAILED_TO_COME_UP */

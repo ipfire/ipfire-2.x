@@ -46,8 +46,6 @@ WARNING: translation string unused: backup
 WARNING: translation string unused: backup config floppy
 WARNING: translation string unused: backup password
 WARNING: translation string unused: bad characters in
-WARNING: translation string unused: bad destination range
-WARNING: translation string unused: bad source range
 WARNING: translation string unused: blue access
 WARNING: translation string unused: blue access use hint
 WARNING: translation string unused: blue interface
@@ -62,7 +60,6 @@ WARNING: translation string unused: comment
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
-WARNING: translation string unused: connected
 WARNING: translation string unused: could not connect to
 WARNING: translation string unused: could not connect to www ipcop org
 WARNING: translation string unused: could not create directory
@@ -82,7 +79,6 @@ WARNING: translation string unused: ddns help dnsmadeeasy
 WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
 WARNING: translation string unused: debugme
-WARNING: translation string unused: destination port numbers
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -127,7 +123,6 @@ WARNING: translation string unused: host configuration
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hours2
 WARNING: translation string unused: id
-WARNING: translation string unused: idle
 WARNING: translation string unused: idle cpu
 WARNING: translation string unused: idle cpu usage
 WARNING: translation string unused: ids logs
@@ -224,7 +219,6 @@ WARNING: translation string unused: sectors read from disk per second
 WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: select media
 WARNING: translation string unused: shared memory
-WARNING: translation string unused: source port numbers
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: squid fix cache
