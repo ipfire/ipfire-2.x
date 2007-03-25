@@ -4,10 +4,9 @@ CFLAGS=-O2 -Wall
 COMPILE=$(CC) $(CFLAGS)
 
 PROGS = iowrap
-SUID_PROGS = setdmzholes setportfw setfilters setxtaccess restartdhcp restartsnort \
-	restartsquid restartssh ipfirereboot \
-	ipfirebkcfg ipfirerscfg installpackage installfcdsl ipsecctrl \
-	setaliases ipfirebackup restartntpd \
+SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
+	restartsquid restartssh ipfirereboot setaliases \
+	ipsecctrl restartntpd restartdhcp restartsnort \
 	restartapplejuice setdate rebuildhosts \
 	restartsyslogd logwatch openvpnctrl timecheckctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
@@ -102,6 +101,3 @@ timecheckctrl: timecheckctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 getipstat: getipstat.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ getipstat.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-ipfirebackup: ipfirebackup.c setuid.o 
-	$(COMPILE) -lcrypt ipfirebackup.c setuid.o -o $@
