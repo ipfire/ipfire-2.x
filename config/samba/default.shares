@@ -1,0 +1,21 @@
+[Temp]
+path = /var/samba/tmp
+comment = Temp
+browseable = yes
+writeable = yes
+create mask = 0777
+directory mask = 0777
+guest ok = yes
+public = yes
+force user = samba
+
+[P2P]
+path = /var/samba/p2p
+comment = P2P
+browseable = yes
+writeable = yes
+create mask = 0777
+directory mask = 0777
+guest ok = yes
+public = yes
+force user = samba

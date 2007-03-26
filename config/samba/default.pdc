@@ -1,0 +1,19 @@
+[homes]
+path = /home/%u
+comment = Benutzer-Verzeichnisse
+browseable = yes
+writeable = yes
+valid users = %S
+
+[netlogon]
+path = /var/samba/netlogon
+browseable = no
+writeable = no
+comment = NetLogON
+
+[profiles]
+path = /var/samba/profiles
+browseable = no
+writeable = yes
+comment = Benutzerprofile
+valid users = %S

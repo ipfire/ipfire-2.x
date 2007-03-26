@@ -99,5 +99,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	cd $(DIR_APP)/source && install -v -m755 nsswitch/pam_winbind.so /lib/security
 	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
 	cp -f $(DIR_CONF)/xinetd/swat /var/ipfire/xinetd/xinetd.d/
+	mkdir /var/samba	
+	cp -vf $(DIR_SRC)/config/samba /var/ipfire/samba
+	chown nobody:nobody /var/ipfire/samba/default.*
+	chmod 644 /var/ipfire/samba/default.*
+	cp -vfp /var/ipfire/samba/default.global /var/ipfire/samba/global
+	cp -vfp /var/ipfire/samba/default.pdc /var/ipfire/samba/pdc
+	cp -vfp /var/ipfire/samba/default.settings /var/ipfire/samba/settings
+	cp -vfp /var/ipfire/samba/default.shares /var/ipfire/samba/shares
+	cp -vfp /var/ipfire/samba/default.printer /var/ipfire/samba/printer
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

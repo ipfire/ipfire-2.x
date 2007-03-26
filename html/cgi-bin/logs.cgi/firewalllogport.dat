@@ -7,8 +7,7 @@
 # JC HERITIER 
 # page inspired from the initial firewalllog.dat
 #
-# Modified for IPFire by Christian Schmidt
-#	                     and Michael Tremer (www.ipfire.org)
+# modified for ipcop by Markus Hoffmann und Michael Winkler and for ipfire by Christian Schmidt
 
 use strict;
 
@@ -388,16 +387,16 @@ if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
 	$mygraph->set( dclrs => [ "colour1" , "colour2" , "colour3" , "colour4" , "colour5" , "colour6" , "colour7" , "colour8" , "colour9" , "colour10" ] );
 	my $myimage = $mygraph->plot(\@data) or die $mygraph->error;
 
-	my @filenames = glob("/srv/web/ipfire/html/graphs/fwlog-port*.png");
+	my @filenames = glob("/srv/web/ipfire/html/fwlogs/port*.png");
 	unlink(@filenames);
 	my $imagerandom = rand(1000000);
-	my $imagename = "/srv/web/ipfire/html/graphs/fwlog-port$imagerandom.png";
+	my $imagename = "/srv/web/ipfire/html/fwlogs/port$imagerandom.png";
 	open(FILE,">$imagename");
 	print FILE $myimage->png;
 	close(FILE);
 	#####################################################
 	print "<table align='center'><tr><td>";
-	print "<img src='/graphs/fwlog-port$imagerandom.png'>";
+	print "<img src='/fwlogs/port$imagerandom.png'>";
 	print "</td></tr></table>";
 }
 
