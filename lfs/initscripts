@@ -60,6 +60,7 @@ $(TARGET) :
 	install -d -m 755 /etc/rc.d/init.d/net/red
 	install -d -m 755 /etc/rc.d/helper
 	install -d -m 755 /etc/sysconfig
+	-rm -rf /etc/init.d
 	ln -svf rc.d/init.d /etc/init.d
 
 	for i in $(DIR_SRC)/src/initscripts/init.d/*; do \
@@ -68,7 +69,9 @@ $(TARGET) :
 	chmod 644 /etc/rc.d/init.d/functions
 
 	for i in $(DIR_SRC)/src/initscripts/init.d/net/*; do \
-		install -v -m 754 $$i /etc/rc.d/init.d/net/; \
+		if [ -f $$i ]; then \
+			install -v -m 754 $$i /etc/rc.d/init.d/net/; \
+		fi; \
 	done
 
 	for i in $(DIR_SRC)/src/initscripts/init.d/net/common/*; do \

@@ -400,6 +400,7 @@ buildipfire() {
   ipfiremake hdparm
   ipfiremake ibod
   ipfiremake initscripts
+  ipfiremake whatmask
   ipfiremake iptables
   ipfiremake libupnp
   ipfiremake ipp2p			IPT=1

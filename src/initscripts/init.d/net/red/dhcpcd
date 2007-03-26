@@ -14,7 +14,9 @@ LEASEINFO="/var/ipfire/dhcpc/dhcpcd-$1.info"
 
 case "$2" in
 	up)
-		boot_mesg -n "Starting dhcpcd on the $1 interface..."
+		boot_mesg -n "Starting dhcpcd on the $1 interface..."		
+		echo -n "${1}" > /var/ipfire/red/iface
+
 		# Test to see if there is a stale pid file
 		if [ -f "$PIDFILE" ]
 		then
@@ -34,12 +36,13 @@ case "$2" in
 		if [ -n "${DHCP_HOSTNAME}" ]; then
 			DHCP_START+="-h ${DHCP_HOSTNAME}"
 	  fi
-		/sbin/dhcpcd $1 $DHCP_START
+		/sbin/dhcpcd $1 $DHCP_START >/dev/null 2>&1
 		# Save the return value
 		RET="$?"
 		# Print the assigned settings if requested
 		if [ "$RET" = "0" -a "$PRINTIP" = "yes" ]; then
 			. /var/ipfire/dhcpc/dhcpcd-$1.info
+			logger -t ipfire "DHCPCD Success"
 			if [ "$PRINTALL" = "yes" ]; then
 				echo ""
 				echo_ok
@@ -63,6 +66,7 @@ case "$2" in
 			fi
 		else
 			echo ""
+			logger -t ipfire "DHCPCD Fail"
 			$(exit "$RET")
 			evaluate_retval
 		fi

@@ -90,19 +90,19 @@ elsif ($upnpsettings{'ACTION'} eq 'Start')
 {
         $upnpsettings{'ENABLED'} = 'on';
         &General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
-        system('/usr/local/bin/upnpctrl upnpdstart $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}');
+        system("/usr/local/bin/upnpctrl upnpdstart $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}");
 } 
 elsif ($upnpsettings{'ACTION'} eq 'Stop')
 {
         $upnpsettings{'ENABLED'} = 'off';
         &General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
-        system('/usr/local/bin/upnpctrl upnpstop');
+        system("/usr/local/bin/upnpctrl stop");
 } 
 elsif ($upnpsettings{'ACTION'} eq $Lang::tr{'restart'})
 {
         &General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
-        system('/usr/local/bin/upnpctrl upnpstop');
-        system('/usr/local/bin/upnpctrl upnpstart $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}');
+        system("/usr/local/bin/upnpctrl stop");
+        system("/usr/local/bin/upnpctrl start $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}");
 }
 
 &General::readhash("${General::swroot}/upnp/settings", \%upnpsettings);

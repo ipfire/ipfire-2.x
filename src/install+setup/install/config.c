@@ -22,6 +22,7 @@ int write_lang_configs( char *lang)
 	/* default stuff for main/settings. */
 	replacekeyvalue(kv, "LANGUAGE", lang);
 	replacekeyvalue(kv, "HOSTNAME", SNAME);
+	replacekeyvalue(kv, "THEME", "ipfire");
 	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "/main/settings");
 	freekeyvalues(kv);
 	

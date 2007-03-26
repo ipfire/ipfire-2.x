@@ -149,6 +149,7 @@ int main(int argc, char *argv[])
 
 	ctr = langtrs[choice];
 	strcpy(shortlangname, shortlangnames[choice]);
+	fprintf(flog, "Selected language: %s\n", shortlangname);
 
 	mysystem("/bin/setfont lat0-16");
 
@@ -499,6 +500,9 @@ int main(int argc, char *argv[])
 		
 	/* Save USB controller type to modules.conf */
 	write_usb_modules_conf();
+	
+	/* Save language und local settings */
+	write_lang_configs(shortlangname);
 
 	/* touch the modules.dep files */
 	snprintf(commandstring, STRING_SIZE, 
@@ -530,7 +534,7 @@ int main(int argc, char *argv[])
 	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode);
 
 	/* if we detected SCSI/USB then fixup */
-	mysystem("/bin/probecntrl.sh");
+/*	mysystem("/bin/probecntrl.sh");
 	if ((handle = fopen("/tmp/cntrldriver", "r")))
 	{
 		char *driver;
@@ -547,7 +551,7 @@ int main(int argc, char *argv[])
 			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 			mysystem("/sbin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
 		}
-	}
+	} */
 
 	if (raid_disk)
 		sprintf(string, "root=%sp3", hdparams.devnode);

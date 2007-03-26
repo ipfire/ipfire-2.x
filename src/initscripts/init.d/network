@@ -77,9 +77,27 @@ case "${1}" in
 		if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
 			name=red /etc/rc.d/init.d/net/ifup
 		fi
+		;;
 
 	stop)
-
+		# Stopping interfaces...
+		# GREEN
+		name=green /etc/rc.d/init.d/net/ifdown
+		
+		# BLUE
+		if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+			name=blue /etc/rc.d/init.d/net/ifdown
+		fi
+		
+		# ORANGE
+		if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
+			name=orange /etc/rc.d/init.d/net/ifdown
+		fi
+		
+		# RED
+		if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+			name=red /etc/rc.d/init.d/net/ifdown
+		fi
 		;;
 
 	restart)

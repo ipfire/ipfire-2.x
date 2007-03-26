@@ -228,7 +228,6 @@
 * spandsp-0.0.3pre24
 * squashfs3.2-r2
 * squid-2.6.STABLE12
-* squid-2.6.STABLE9
 * squid-graph-3.2
 * squidGuard-1.2.0
 * stund_0.96_Aug13
@@ -255,6 +254,7 @@
 * vlc-0.8.5
 * web-cyradm-0.5.5-CVS-for-ipfire
 * wget-1.10.2
+* whatmask-1.2
 * wireless_tools.28
 * wput-0.6
 * xinetd-2.3.14
