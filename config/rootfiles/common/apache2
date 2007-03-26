@@ -1285,7 +1285,6 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
 srv/web/ipfire/cgi-bin/logs.cgi
-#srv/web/ipfire/cgi-bin/logs.cgi/colours.txt
 #srv/web/ipfire/cgi-bin/logs.cgi/config.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/firewalllogip.dat
@@ -1664,6 +1663,7 @@ srv/web/ipfire/html
 #srv/web/ipfire/html/themes/ipfire/images/n6.gif
 #srv/web/ipfire/html/themes/ipfire/images/spacer.gif
 #srv/web/ipfire/html/themes/ipfire/include
+#srv/web/ipfire/html/themes/ipfire/include/colours.txt
 #srv/web/ipfire/html/themes/ipfire/include/functions.pl
 #srv/web/ipfire/html/themes/ipfire/include/style.css
 #srv/web/ipfire/html/updatecache
