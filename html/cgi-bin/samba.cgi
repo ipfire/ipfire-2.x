@@ -576,7 +576,7 @@ print <<END
 										<input type='image' alt='Reset' src='/images/reload.gif' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='globalcaption' />
-										<input type='image' alt='Legende' src='/images/info.gif'></form></td></tr>
+										<input type='image' alt='Legende' src='/images/info.gif' /></form></td></tr>
 </table>
 END
 ;
@@ -587,8 +587,8 @@ if ($sambasettings{'ACTION'} eq 'globalcaption')
 	<table width='95%' cellspacing='0'>
 	<tr><td colspan='2'><br /></td></tr>
 	<tr><td><b>Legende:</b></td></tr>
-	<tr><td><img src='/images/floppy.gif'>Einstellungen speichern</td></tr>
-	<tr><td><img src='/images/reload.gif'>Auf default zurueck setzen</td></tr>
+	<tr><td><img src='/images/floppy.gif' />Einstellungen speichern</td></tr>
+	<tr><td><img src='/images/reload.gif' />Auf default zurueck setzen</td></tr>
 	</table>
 END
 ;
@@ -628,7 +628,7 @@ END
 		print "<td><u>Typ</u></td>";
 		}
 
-	print "<td><u>Status</u></td><td colspan='3' width="5"><u>Optionen</u></td></tr>";
+	print "<td><u>Status</u></td><td colspan='3' width='5'><u>Optionen</u></td></tr>";
 	system('/usr/local/bin/sambactrl readsmbpasswd');
 	open(FILE, "</var/ipfire/samba/private/smbpasswd") or die "Can't read user file: $!";
 	@user = <FILE>;
@@ -736,7 +736,7 @@ END
 	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 											<input type='hidden' name='ACTION' value='usercaption' />
 											<input type='image' alt='Legende' src='/images/info.gif' /></form>
-	</td><tr>
+	</td></tr>
 	</table>
 END
 ;
@@ -747,13 +747,13 @@ END
 		<table width='95%' cellspacing='0'>
 		<tr><td><br /></td></tr>
 		<tr><td><b>Legende:</b></td></tr>
-		<tr><td><img src='/images/add.gif'>Benutzer neu anlegen</td></tr>
-		<tr><td><img src='/images/comp.blue.gif'>Client Account neu anlegen</td></tr>
-		<tr><td><img src='/images/on.gif'>Benutzer aktivieren</td></tr>
-		<tr><td><img src='/images/off.gif'>Benutzer deaktivieren</td></tr>
-		<tr><td><img src='/images/floppy.gif'>Einstellungen speichern</td></tr>
-		<tr><td><img src='/images/edit.gif'>Passwort wechseln</td></tr>
-		<tr><td><img src='/images/delete.gif'>Benutzer loeschen</td></tr>
+		<tr><td><img src='/images/add.gif' />Benutzer neu anlegen</td></tr>
+		<tr><td><img src='/images/comp.blue.gif' />Client Account neu anlegen</td></tr>
+		<tr><td><img src='/images/on.gif' />Benutzer aktivieren</td></tr>
+		<tr><td><img src='/images/off.gif' />Benutzer deaktivieren</td></tr>
+		<tr><td><img src='/images/floppy.gif' />Einstellungen speichern</td></tr>
+		<tr><td><img src='/images/edit.gif' />Passwort wechseln</td></tr>
+		<tr><td><img src='/images/delete.gif' />Benutzer loeschen</td></tr>
 		</table>
 END
 ;
@@ -772,8 +772,9 @@ END
 		<tr><td align='left'>Benutzername</td><td><input type='text' name='USERNAME' value='$username' size="30" /></td></tr>
 		<tr><td align='left'>Passwort</td><td><input type='password' name='PASSWORD' value='$password' size="30" /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbchangepw' />
-																				<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></form></td></tr>
+																				<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></td></tr>
 		</table>
+		</form>
 END
 ;
 		}
@@ -797,8 +798,9 @@ END
 		<tr><td align='left'>Unix Gruppe</td><td><input type='text' name='GROUP' value='sambauser' size="30" /></td></tr>
 		<tr><td align='left'>Unix Shell</td><td><input type='text' name='SHELL' value='/bin/false' size="30" /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbuseradd' />
-																				<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></form></td></tr>
+																				<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></td></tr>
 		</table>
+		</form>
 END
 ;
 		}
@@ -818,8 +820,9 @@ END
 		<tr><td align='left'>Unix Gruppe</td><td><input type='text' name='GROUP' value='sambawks' size="30" /></td></tr>
 		<tr><td align='left'>Unix Shell</td><td><input type='text' name='SHELL' value='/bin/false' size="30" /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbpcadd' />
-																				<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></form></td></tr>
+																				<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></td></tr>
 		</table>
+		</form>
 END
 ;
 		}
@@ -854,7 +857,7 @@ foreach $shareentry (sort @Shares)
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='smbsharedel' />
 			<input type='image' alt='Loeschen' src='/images/delete.gif' />
-	</form></td><tr>
+	</form></td></tr>
 END
 ;
 	}
@@ -864,17 +867,17 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr><td colspan='3'><br /></td></tr>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value='shareadd'>
-												<input type='image' alt='neuen Share anlegen' src='/images/add.gif'>
+												<input type='hidden' name='ACTION' value='shareadd' />
+												<input type='image' alt='neuen Share anlegen' src='/images/add.gif' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value='sharesreset'>
-												<input type='image' alt='Reset' src='/images/reload.gif'>
+												<input type='hidden' name='ACTION' value='sharesreset' />
+												<input type='image' alt='Reset' src='/images/reload.gif' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value='sharecaption'>
-												<input type='image' alt='Legende' src='/images/info.gif'>
-												</form></td><tr>
+												<input type='hidden' name='ACTION' value='sharecaption' />
+												<input type='image' alt='Legende' src='/images/info.gif' />
+												</form></td></tr>
 </table>
 END
 ;
@@ -885,11 +888,11 @@ if ($sambasettings{'ACTION'} eq 'sharecaption')
 	<table width='95%' cellspacing='0'>
 	<tr><td><br /></td></tr>
 	<tr><td><b>Legende:</b></td></tr>
-	<tr><td><img src='/images/add.gif'>Share neu anlegen</td></tr>
-	<tr><td><img src='/images/edit.gif'>Share bearbeiten</td></tr>
-	<tr><td><img src='/images/floppy.gif'>Einstellungen speichern</td></tr>
-	<tr><td><img src='/images/reload.gif'>Shares zurueck setzen</td></tr>
-	<tr><td><img src='/images/delete.gif'>Share loeschen</td></tr>
+	<tr><td><img src='/images/add.gif' />Share neu anlegen</td></tr>
+	<tr><td><img src='/images/edit.gif' />Share bearbeiten</td></tr>
+	<tr><td><img src='/images/floppy.gif' />Einstellungen speichern</td></tr>
+	<tr><td><img src='/images/reload.gif' />Shares zurueck setzen</td></tr>
+	<tr><td><img src='/images/delete.gif' />Share loeschen</td></tr>
 	</table>
 END
 ;
@@ -904,16 +907,15 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>neuen Share anlegen</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>Anzeige der Optionen fuer Shares<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-																																			<input type='hidden' name='ACTION' value='optioncaption'>
-																																			<input type='image' alt='Legende' src='/images/info.gif'>
+																																			<input type='hidden' name='ACTION' value='optioncaption' />
+																																			<input type='image' alt='Legende' src='/images/info.gif' />
 																																			</form></td></tr>
-	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
 	</table>
 	<table width='10%' cellspacing='0'>
 	<tr><td><br /></td></tr>
-	<tr><td align='center'><input type='hidden' name='ACTION' value='smbshareadd'>
-													<input type='image' alt='Share hinzufuegen' src='/images/floppy.gif'>
-													</form></td></tr>
+	<tr><td align='center'><input type='hidden' name='ACTION' value='smbshareadd' />
+													<input type='image' alt='Share hinzufuegen' src='/images/floppy.gif' /></td></tr></form>
 	</table>
 END
 ;
@@ -946,15 +948,14 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>Share bearbeiten</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>Anzeige der Optionen fuer Shares<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-																																			<input type='hidden' name='ACTION' value='optioncaption2'>
-																																			<input type='image' alt='Legende' src='/images/info.gif'>
-																																			</form></td></tr>
+																																			<input type='hidden' name='ACTION' value='optioncaption2' />
+																																			<input type='image' alt='Legende' src='/images/info.gif' /></td></tr></form>
 	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
 	</table>
 	<table width='10%' cellspacing='0'>
 	<tr><td><br /></td></tr>
-	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}'>
-													<input type='submit' name='ACTION' value='smbsharechange'></td></tr></form>
+	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}' />
+													<input type='submit' name='ACTION' value='smbsharechange' /></td></tr></form>
 	</table>
 END
 ;
