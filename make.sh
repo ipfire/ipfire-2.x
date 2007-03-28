@@ -602,17 +602,11 @@ buildpackages() {
   beautify message DONE
 
   # Create images for install
-  for i in $IPFVER
-  do
-	if [ $i == "devel" ]; then
-		if [ ! -e ipfire-$VERSION.i586-devel.iso ]; then
-			ipfiremake cdrom ED=$i
-		fi
-	else
-		ipfiremake cdrom ED=$i
+  if [ ! -e ipfire-$VERSION.i586-devel.iso ]; then
+		ipfiremake cdrom ED=devel
 	fi
-  done
-  
+	ipfiremake cdrom ED=full
+	
   # Check if there is a loop device for building in virtual environments
   if [ -e /dev/loop0 ]; then
   	ipfiremake usb-stick
