@@ -374,7 +374,7 @@ else{
 
 my @data = (\@ips,\@numb);
 use GD::Graph::colour qw( :files );
-GD::Graph::colour::read_rgb( "/srv/web/ipfire/html/themes/ipfie/include/colours.txt" );
+GD::Graph::colour::read_rgb( "/srv/web/ipfire/html/themes/ipfire/include/colours.txt" );
 
 if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
         my $mygraph = GD::Graph::pie->new(500, 350);

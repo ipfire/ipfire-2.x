@@ -22,8 +22,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -539,7 +539,7 @@ print <<END
     <td width='25%' class='boldbase'><b><font color='${lc_itf}'>$Lang::tr{"$lc_itf interface"}</font></b></td>
     <td class='base'>$Lang::tr{'enabled'}
     <input type='checkbox' name='ENABLE_${itf}' $checked{'ENABLE'}{'on'} /></td>
-    <td width='25%' class='base'>$Lang::tr{'ip address'}/$Lang::tr{'netmask'}:</td><td><b>$netsettings{"${itf}_ADDRESS"}/$netsettings{"${itf}_NETMASK"}</b></td>
+    <td width='25%' class='base'>$Lang::tr{'ip address'}<br />$Lang::tr{'netmask'}:</td><td><b>$netsettings{"${itf}_ADDRESS"}<br />$netsettings{"${itf}_NETMASK"}</b></td>
 </tr><tr>
     <td width='25%' class='base'>$Lang::tr{'start address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='25%'><input type='text' name='START_ADDR_${itf}' value='$dhcpsettings{"START_ADDR_${itf}"}' /></td>
@@ -1008,6 +1008,32 @@ print <<END
 END
 ;
 }
+
+&Header::closebox();
+
+&Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
+my @ip = qx(/sbin/ip neigh show | awk '{print \$1}');
+my @mac = qx(/sbin/ip neigh show | awk '{print \$5}');
+
+print <<END
+<hr />
+<table width='100%'>
+<tr>
+<td width='40%'><b>$Lang::tr{'ip address'}</b></td><td width='40%'><b>$Lang::tr{'mac address'}</b></td><td width='20%'>Optionen</td>
+</tr>
+END
+;
+my $i=0;
+
+foreach my $ip(@ip)
+{
+ print"<tr><form method='post' action='$ENV{'SCRIPT_NAME'}'><td><input type='hidden' name='FIX_ADDR' value='$ip' />$ip</td>";
+ print"<td><input type='hidden' name='FIX_MAC' value='@mac[$i]' />@mac[$i]</td>";
+ print"<td><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$buttontext' /></td></form></tr>";
+}
+
+
+print"</table>";
 
 &Header::closebox();
 
