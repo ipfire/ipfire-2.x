@@ -276,7 +276,7 @@ print "</table>\n";
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'interfaces'});
-$output = `/sbin/ifconfig`;
+$output = `/sbin/ip link show`;
 $output = &Header::cleanhtml($output,"y");
 
 my @itfs = ('ORANGE','BLUE','GREEN');
@@ -303,7 +303,6 @@ print "<pre>$output</pre>\n";
 
 if ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/  && $netsettings{'RED_TYPE'} eq "DHCP") {
 
-	print "<a name='reddhcp'/>\n";
 	&Header::openbox('100%', 'left', "RED $Lang::tr{'dhcp configuration'}");
 	if (-s "${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info") {
 
@@ -381,20 +380,18 @@ END
 }
 
 if ($dhcpsettings{'ENABLE_GREEN'} eq 'on' || $dhcpsettings{'ENABLE_BLUE'} eq 'on') {
-
-	print "<a name='leases'/>";
 	&Header::CheckSortOrder;
 	&Header::PrintActualLeases;
 }
 
 &Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
-$output = `/sbin/route -n`;
+$output = `/sbin/ip route show`;
 $output = &Header::cleanhtml($output,"y");
 print "<pre>$output</pre>\n";
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
-$output = `/sbin/arp -n`;
+$output = `/sbin/ip neigh show`;
 $output = &Header::cleanhtml($output,"y");
 print "<pre>$output</pre>\n";
 &Header::closebox();
