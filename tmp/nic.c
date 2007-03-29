@@ -19,13 +19,48 @@ struct knic
        char macaddr[20];
 };
 
+int write_configs_netudev(char *macaddr, char *colour) {
+	
+	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
+	
+	FILE *fp;
+	char commandstring[STRING_SIZE];
+	
+	if( (fp = fopen(KNOWN_NICS, "a")) == NULL )
+	{
+		fprintf(stderr,"Couldn't open "KNOWN_NICS);
+		return 1;
+	}
+	fprintf(fp,"%s;\n", macaddr);
+	fclose(fp);
+
+	// Make sure that there is no conflict
+	snprintf(commandstring, STRING_SIZE, "/usr/bin/touch "UDEV_NET_CONF" >/dev/null 2>&1");
+  system(commandstring);
+  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF"| /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
+  system(commandstring);
+  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF"| /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", colour);
+	system(commandstring);
+
+	if( (fp = fopen(UDEV_NET_CONF, "a")) == NULL )
+	{
+		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
+		return 1;
+	}
+	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\"\n", macaddr, colour);
+	fclose(fp);	
+	
+	return 0;
+}
+
 int main(void)
 {
 			FILE *fp;
 			char temp_line[STRING_SIZE];
 			struct nic nics[20], *pnics;
-			struct knic knics[20];
 			pnics = nics;
+			struct knic knics[20], *pknics;
+			pknics = knics;
 			int rc, choise, count = 0, kcount = 0, i, found;
 			char macaddr[STRING_SIZE], description[STRING_SIZE];
 			char message[STRING_SIZE];
@@ -64,7 +99,7 @@ int main(void)
 					for (i=0; i < kcount; i++)
 					{
 						// Check if the nic is already in use
-						if ( strcmp(knics[i].macaddr, macaddr) == NULL )
+						if (strcmp(pknics[i].macaddr, macaddr) == NULL )
 						{
 							found = 1;
 						}
@@ -125,38 +160,4 @@ int main(void)
 			printf("Es wurden keine ungenutzen Netzwerkschnittstellen gefunden.\n");
 			return 1;
 		}
-}
-
-int write_configs_netudev(char *macaddr, char *colour) {
-	
-	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
-	
-	FILE *fp;
-	char commandstring[STRING_SIZE];
-	
-	if( (fp = fopen(KNOWN_NICS, "a")) == NULL )
-	{
-		fprintf(stderr,"Couldn't open "KNOWN_NICS);
-		return 1;
-	}
-	fprintf(fp,"%s;\n", macaddr);
-	fclose(fp);
-
-	// Make sure that there is no conflict
-	snprintf(commandstring, STRING_SIZE, "/usr/bin/touch "UDEV_NET_CONF" >/dev/null 2>&1");
-  system(commandstring);
-  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF"| /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
-  system(commandstring);
-  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF"| /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", colour);
-	system(commandstring);
-
-	if( (fp = fopen(UDEV_NET_CONF, "a")) == NULL )
-	{
-		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
-		return 1;
-	}
-	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\"\n", macaddr, colour);
-	fclose(fp);	
-	
-	return 0;
 }
