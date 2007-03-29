@@ -17,17 +17,12 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my %upnpsettings = ();
-my %checked = ();
 my %netsettings = ();
 my $message = "";
 my $errormessage = "";
 my %selected= () ;
-&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-my %servicenames =
-(
-        'UPnP Daemon' => 'upnpd',
-);
+my %servicenames =('UPnP Daemon' => 'upnpd',);
 
 &Header::showhttpheaders();
 ############################################################################################################################
@@ -35,25 +30,17 @@ my %servicenames =
 
 $upnpsettings{'DEBUGMODE'} = '3';
 $upnpsettings{'FORWARDRULES'} = 'yes';
-$upnpsettings{'FORWARDCHAIN'} = 'FORWARD';
-$upnpsettings{'PREROUTINGCHAIN'} = 'PORTFW';
 $upnpsettings{'DOWNSTREAM'} = '900000';
 $upnpsettings{'UPSTREAM'} = '16000000';
 $upnpsettings{'DESCRIPTION'} = 'gatedesc.xml';
 $upnpsettings{'XML'} = '/etc/linuxigd';
 $upnpsettings{'ENABLED'} = 'off';
-$upnpsettings{'GREENi'} = 'on';
-$upnpsettings{'BLUEi'} = 'off';
-$upnpsettings{'REDi'} = 'off';
-$upnpsettings{'ORANGEi'} = 'off';
-$upnpsettings{'GREENe'} = 'off';
-$upnpsettings{'BLUEe'} = 'off';
-$upnpsettings{'REDe'} = 'on';
-$upnpsettings{'ORANGEe'} = 'off';
+$upnpsettings{'friendlyName'} = 'IpFire Upnp Device';
 ### Values that have to be initialized
 $upnpsettings{'ACTION'} = '';
 
 &General::readhash("${General::swroot}/upnp/settings", \%upnpsettings);
+&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &Header::getcgihash(\%upnpsettings);
 
 &Header::openpage('UPnP', 1, '');
@@ -63,20 +50,22 @@ $upnpsettings{'ACTION'} = '';
 ################################################### Speichern der Config ###################################################
 
 if ($upnpsettings{'ACTION'} eq $Lang::tr{'save'})
-{
-&General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
+	{
+	$upnpsettings{'DOWNSTREAM'} = $upnpsettings{'DOWNSTREAM'} * 8;
+	$upnpsettings{'UPSTREAM'} = $upnpsettings{'UPSTREAM'} * 8;
+	&General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
 
 	open (FILE, ">${General::swroot}/upnp/upnpd.conf") or die "Can't save the upnp config: $!";
 	flock (FILE, 2);
-	
-print FILE <<END
+
+	print FILE <<END
 
 # UPnP Config by Ipfire Project
 
 debug_mode = $upnpsettings{'DEBUGMODE'}
 insert_forward_rules = $upnpsettings{'FORWARDRULES'}
-forward_chain_name = $upnpsettings{'FORWARDCHAIN'}
-prerouting_chain_name = $upnpsettings{'PREROUTINGCHAIN'}
+forward_chain_name = FORWARD
+prerouting_chain_name = PORTFW
 upstream_bitrate = $upnpsettings{'DOWNSTREAM'}
 downstream_bitrate = $upnpsettings{'UPSTREAM'}
 description_document_name = $upnpsettings{'DESCRIPTION'}
@@ -84,161 +73,93 @@ xml_document_path = $upnpsettings{'XML'}
 
 END
 ;
-close FILE;
-}
+	close FILE;
+	system("/usr/local/bin/upnpctrl upnpxml $upnpsettings{'XML'} $upnpsettings{'DESCRIPTION'} $upnpsettings{'manufacturer'}");
+	}
 elsif ($upnpsettings{'ACTION'} eq 'Start')
-{
-        $upnpsettings{'ENABLED'} = 'on';
-        &General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
-        system("/usr/local/bin/upnpctrl upnpdstart $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}");
-} 
+	{
+	$upnpsettings{'ENABLED'} = 'on';
+	&General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
+	system("/usr/local/bin/upnpctrl upnpdstart $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}");
+	} 
 elsif ($upnpsettings{'ACTION'} eq 'Stop')
-{
-        $upnpsettings{'ENABLED'} = 'off';
-        &General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
-        system("/usr/local/bin/upnpctrl stop");
-} 
+	{
+	$upnpsettings{'ENABLED'} = 'off';
+	&General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
+	system("/usr/local/bin/upnpctrl stop");
+	} 
 elsif ($upnpsettings{'ACTION'} eq $Lang::tr{'restart'})
-{
-        &General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
-        system("/usr/local/bin/upnpctrl stop");
-        system("/usr/local/bin/upnpctrl start $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}");
-}
+	{
+	&General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
+	system("/usr/local/bin/upnpctrl stop");
+	system("/usr/local/bin/upnpctrl start $netsettings{'RED_DEV'} $netsettings{'GREEN_DEV'}");
+	}
 
 &General::readhash("${General::swroot}/upnp/settings", \%upnpsettings);
+$upnpsettings{'DOWNSTREAM'} = $upnpsettings{'DOWNSTREAM'} / 8;
+$upnpsettings{'UPSTREAM'} = $upnpsettings{'UPSTREAM'} / 8;
 
-if ($errormessage) {
-        &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-        print "<class name='base'>$errormessage\n";
-        print "&nbsp;</class>\n";
-        &Header::closebox();
-}
-
-$checked{'GREENi'}{'on'} = '';
-$checked{'GREENi'}{'off'} = '';
-$checked{'GREENi'}{"$upnpsettings{'GREENi'}"} = 'checked';
-$checked{'BLUEi'}{'on'} = '';
-$checked{'BLUEi'}{'off'} = '';
-$checked{'BLUEi'}{"$upnpsettings{'BLUEi'}"} = 'checked';
-$checked{'REDi'}{'on'} = '';
-$checked{'REDi'}{'off'} = '';
-$checked{'REDi'}{"$upnpsettings{'REDi'}"} = 'checked';
-$checked{'ORANGEi'}{'on'} = '';
-$checked{'ORANGEi'}{'off'} = '';
-$checked{'ORANGEi'}{"$upnpsettings{'ORANGEi'}"} = 'checked';
-$checked{'GREENe'}{'on'} = '';
-$checked{'GREENe'}{'off'} = '';
-$checked{'GREENe'}{"$upnpsettings{'GREENe'}"} = 'checked';
-$checked{'BLUEe'}{'on'} = '';
-$checked{'BLUEe'}{'off'} = '';
-$checked{'BLUEe'}{"$upnpsettings{'BLUEe'}"} = 'checked';
-$checked{'REDe'}{'on'} = '';
-$checked{'REDe'}{'off'} = '';
-$checked{'REDe'}{"$upnpsettings{'REDe'}"} = 'checked';
-$checked{'ORANGEe'}{'on'} = '';
-$checked{'ORANGEe'}{'off'} = '';
-$checked{'ORANGEe'}{"$upnpsettings{'ORANGEe'}"} = 'checked';
+if ($errormessage)
+	{
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	print "<class name='base'>$errormessage\n";
+	print "&nbsp;</class>\n";
+	&Header::closebox();
+	}
 
 ############################################################################################################################
 ############################################################################################################################
 
 &Header::openbox('100%', 'center', 'UPnP');
 print <<END
-        <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-        <table width='95%' cellspacing='0'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<table width='95%' cellspacing='0'>
 END
 ;
-        if ( $message ne "" ) {
-                print "<tr><td colspan='3' align='center'><font color='red'>$message</font>";
-        }
+if ( $message ne "" ) {print "<tr><td colspan='3' align='center'><font color='red'>$message</font>";}
 
-        my $lines = 0;
-        my $key = '';
-        foreach $key (sort keys %servicenames)
-        {
-                if ($lines % 2) {
-                        print "<tr bgcolor='${Header::table1colour}'>\n"; }
-                else {
-                        print "<tr bgcolor='${Header::table2colour}'>\n"; }
-                print "<td align='left'>$key\n";
-                my $shortname = $servicenames{$key};
-                my $status = &isrunning($shortname);
-                print "$status\n";
-                $lines++;
-        }
-        print <<END
-                <tr><td><b>Alle Dienste:</b></td><td colspan='2'>
-                <input type='submit' name='ACTION' value='Start' /> 
-                <input type='submit' name='ACTION' value='Stop' /> 
-                <input type='submit' name='ACTION' value='$Lang::tr{'restart'}' />
-        </table>
-END
-;
-#print <<END
-#        <br></br>
-#        <hr />
-#        <br></br>
-#        
-#        <table width='95%'>
-#        <tr><td colspan='2' align='left' bgcolor='${Header::table1colour}'><b>External Interface</b></td></tr>
-#        <tr><td align='left'>&nbsp;</td><td><input type='radio' name='External' value='$netsettings{'RED_DEV'}' $checked{'REDe'}{'on'}><font size='2' color='$Header::colourred'><b>RED - $netsettings{'RED_DEV'}</b></font><br></br>
-#                                            <input type='radio' name='External' value='$netsettings{'GREEN_DEV'}' $checked{'GREENe'}{'on'}><font size='2' color='$Header::colourgreen'><b>$Lang::tr{'green'} - $netsettings{'GREEN_DEV'}</b></font><br></br>
-#END
-#;
-#         if (&Header::blue_used()){
-#         print <<END
-#                                             <input type='radio' name='External' value='$netsettings{'BLUE_DEV'}' $checked{'BLUEe'}{'on'}><font size='2' color='$Header::colourblue'><b>$Lang::tr{'wireless'} - $netsettings{'BLUE_DEV'}</b></font><br></br>
-#END
-#;
-#                                    }
-#         if (&Header::orange_used()){
-#         print <<END
-#                                             <input type='radio' name='External' value='$netsettings{'ORANGE_DEV'}' $checked{'ORANGEe'}{'on'}><font size='2' color='$Header::colourorange'><b>$Lang::tr{'dmz'} - $netsettings{'ORANGE_DEV'}</b></font><br></br>
-#END
-#;
-#                                    }
-#        print <<END
-#        </td></tr>
-#        <tr><td colspan='2' align='left'><br></br></td></tr>
-#        <tr><td colspan='2' align='left' bgcolor='${Header::table1colour}'><b>Internal Interface</b></td></tr>
-#        <tr><td align='left'>&nbsp;</td><td><input type='radio' name='Internal' value='$netsettings{'RED_DEV'}' $checked{'REDi'}{'on'}><font size='2' color='$Header::colourred'><b>RED - $netsettings{'RED_DEV'}</b></font><br></br>
-#                                            <input type='radio' name='Internal' value='$netsettings{'GREEN_DEV'}' $checked{'GREENi'}{'on'}><font size='2' color='$Header::colourgreen'><b>$Lang::tr{'green'} - $netsettings{'GREEN_DEV'}</b></font><br></br>
-#END
-#;
-#         if (&Header::blue_used()){
-#         print <<END
-#                                            <input type='radio' name='Internal' value='$netsettings{'BLUE_DEV'}' $checked{'BLUEi'}{'on'}><font size='2' color='$Header::colourblue'><b>$Lang::tr{'wireless'} - $netsettings{'BLUE_DEV'}</b></font><br></br>
-#END
-#;
-#                                    }
-#         if (&Header::orange_used()){
-#         print <<END
-#                                            <input type='radio' name='Internal' value='$netsettings{'ORANGE_DEV'}' $checked{'ORANGEi'}{'on'}><font size='2' color='$Header::colourorange'><b>$Lang::tr{'dmz'} - $netsettings{'ORANGE_DEV'}</b></font><br></br>
-#END
-#;
-#                                    }
-#        print <<END
-#        </td></tr></table>
+my $lines = 0;
+my $key = '';
+foreach $key (sort keys %servicenames)
+{
+	if ($lines % 2)
+		{print "<tr bgcolor='${Header::table1colour}'>\n";}
+	else
+		{print "<tr bgcolor='${Header::table2colour}'>\n"; }
+
+	print "<td align='left'>$key\n";
+	my $shortname = $servicenames{$key};
+	my $status = &isrunning($shortname);
+	print "$status\n";
+	$lines++;
+}
+
 print <<END
+<tr><td align='left'>Alle Dienste:</td><td align='center' colspan='2'>
+<input type='submit' name='ACTION' value='Start' /> 
+<input type='submit' name='ACTION' value='Stop' /> 
+<input type='submit' name='ACTION' value='$Lang::tr{'restart'}' />
+</table>
 </form>
-<br></br>
+<br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
 <tr><td colspan='2' align='left' bgcolor='${Header::table1colour}'><b>$Lang::tr{'options'}</b></td></tr>
 <tr><td colspan='2' align='left'><br></br></td></tr>
-<tr><td align='left'>Debug Mode:</td><td><input type='text' name='DEBUGMODE' value='$upnpsettings{'DEBUGMODE'}' size="30"></input></td></tr>
-<tr><td align='left'>Forward Rules:</td><td><input type='text' name='FORWARDRULES' value='$upnpsettings{'FORWARDRULES'}' size="30"></input></td></tr>
-<tr><td align='left'>Forward Chain:</td><td><input type='text' name='FORWARDCHAIN' value='$upnpsettings{'FORWARDCHAIN'}' size="30"></input></td></tr>
-<tr><td align='left'>Prerouting Chain:</td><td><input type='text' name='PREROUTINGCHAIN' value='$upnpsettings{'PREROUTINGCHAIN'}' size="30"></input></td></tr>
-<tr><td align='left'>Down Stream:</td><td><input type='text' name='DOWNSTREAM' value='$upnpsettings{'DOWNSTREAM'}' size="30"></input></td></tr>
-<tr><td align='left'>Up Strean:</td><td><input type='text' name='UPSTREAM' value='$upnpsettings{'UPSTREAM'}' size="30"></input></td></tr>
-<tr><td align='left'>Description Document:</td><td><input type='text' name='DESCRIPTION' value='$upnpsettings{'DESCRIPTION'}' size="30"></input></td></tr>
-<tr><td align='left'>XML Document:</td><td><input type='text' name='XML' value='$upnpsettings{'XML'}' size="30"></input></td></tr>
+<tr><td align='left'>Debug Mode:</td><td><input type='text' name='DEBUGMODE' value='$upnpsettings{'DEBUGMODE'}' size="30" /></td></tr>
+<tr><td align='left'>Forward Rules:</td><td><input type='text' name='FORWARDRULES' value='$upnpsettings{'FORWARDRULES'}' size="30" /></td></tr>
+<tr><td align='left' colspan='2'><br /></td></tr>
+<tr><td align='left'>Down Stream in KB:</td><td><input type='text' name='DOWNSTREAM' value='$upnpsettings{'DOWNSTREAM'}' size="30" /></td></tr>
+<tr><td align='left'>Up Strean in KB:</td><td><input type='text' name='UPSTREAM' value='$upnpsettings{'UPSTREAM'}' size="30" /></td></tr>
+<tr><td align='left' colspan='2'><br /></td></tr>
+<tr><td align='left'>XML Document:</td><td><input type='text' name='XML' value='$upnpsettings{'XML'}' size="30" /></td></tr>
+<tr><td align='left'>Description Document:</td><td><input type='text' name='DESCRIPTION' value='$upnpsettings{'DESCRIPTION'}' size="30" /></td></tr>
+<tr><td align='left'>Upnp Device Name:</td><td><input type='text' name='friendlyName' value='$upnpsettings{'friendlyName'}' size="30" /></td></tr>
 <tr><td colspan='2' align='left'><br></br></td></tr>
 <tr><td colspan='2' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
 </table></form>
-<br></br>
-<hr></hr>
+<br />
+<hr />
 END
 ;
 &Header::closebox();
@@ -250,34 +171,29 @@ END
 ############################################################################################################################
 
 sub isrunning
-{
-        my $cmd = $_[0];
-        my $status = "<td bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
-        my $pid = '';
-        my $testcmd = '';
-        my $exename;
+	{
+	my $cmd = $_[0];
+	my $status = "<td bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
+	my $pid = '';
+	my $testcmd = '';
+	my $exename;
 
-        $cmd =~ /(^[a-z]+)/;
-        $exename = $1;
+	$cmd =~ /(^[a-z]+)/;
+	$exename = $1;
 
-        if (open(FILE, "/var/run/${cmd}.pid"))
-        {
-                $pid = <FILE>; chomp $pid;
-                close FILE;
-                if (open(FILE, "/proc/${pid}/status"))
-                {
-                        while (<FILE>)
-                        {
-                                if (/^Name:\W+(.*)/) {
-                                        $testcmd = $1; }
-                        }
-                        close FILE;
-                        if ($testcmd =~ /$exename/)
-                        {
-                                $status = "<td bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
-                        }
-                }
-        }
+	if (open(FILE, "/var/run/${cmd}.pid"))
+		{
+		$pid = <FILE>; chomp $pid;
+		close FILE;
+		if (open(FILE, "/proc/${pid}/status"))
+			{
+			while (<FILE>)
+				{if (/^Name:\W+(.*)/) {$testcmd = $1; }}
+			close FILE;
+			if ($testcmd =~ /$exename/)
+				{$status = "<td bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";}
+			}
+		}
 
-        return $status;
-}
+		return $status;
+	}
