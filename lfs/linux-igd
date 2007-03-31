@@ -74,6 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING) #HAVE_LIBIPTC=1
 	cd $(DIR_APP) && make install
-	cp -vf $(DIR_SRC)/config/upnp/* /etc/linuigd/
+	cp -vf $(DIR_SRC)/config/upnp/* /etc/linuxigd/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

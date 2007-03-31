@@ -156,7 +156,8 @@ print <<END
 <tr><td align='left'>Description Document:</td><td><input type='text' name='DESCRIPTION' value='$upnpsettings{'DESCRIPTION'}' size="30" /></td></tr>
 <tr><td align='left'>Upnp Device Name:</td><td><input type='text' name='friendlyName' value='$upnpsettings{'friendlyName'}' size="30" /></td></tr>
 <tr><td colspan='2' align='left'><br></br></td></tr>
-<tr><td colspan='2' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
+																		<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></td></tr>
 </table></form>
 <br />
 <hr />
@@ -173,7 +174,7 @@ END
 sub isrunning
 	{
 	my $cmd = $_[0];
-	my $status = "<td bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
+	my $status = "<td bgcolor='${Header::colourred}' align='center'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;

@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
             safe_system("/bin/cat /var/ipfire/samba/default.global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
             safe_system("/bin/cat /var/ipfire/samba/default.settings > /var/ipfire/samba/settings");
             safe_system("/bin/cat /var/ipfire/samba/default.global > /var/ipfire/samba/global");
+            safe_system("/bin/cat /var/ipfire/samba/default.pdc > /var/ipfire/samba/pdc");
             return 0;
         }
 
@@ -85,6 +86,8 @@ int main(int argc, char *argv[])
 
         if (strcmp(argv[1], "smbstart")==0)
         {
+            snprintf(command, BUFFER_SIZE-1, "smbd -D && nmbd -D && winbindd -D",);
+            safe_system(command);
             return 0;
         }
 
@@ -92,7 +95,6 @@ int main(int argc, char *argv[])
         {
             snprintf(command, BUFFER_SIZE-1, "/usr/sbin/smbstatus");
             safe_system(command);
-            printf(command);
             return 0;
         }
 
