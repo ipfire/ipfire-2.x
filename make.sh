@@ -533,6 +533,7 @@ buildipfire() {
   ipfiremake ethereal
   ipfiremake tftp-hpa
   ipfiremake iptraf
+  ipfiremake bwm-ng
   ipfiremake nagios
 }
 
@@ -602,7 +603,7 @@ buildpackages() {
   beautify message DONE
 
   # Create images for install
-  if [ ! -e ipfire-$VERSION.i586-devel.iso ]; then
+  if [ ! -f ipfire-$VERSION.i586-devel.iso ]; then
 		ipfiremake cdrom ED=devel
 	fi
 	ipfiremake cdrom ED=full
