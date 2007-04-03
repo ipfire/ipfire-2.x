@@ -1,0 +1,125 @@
+#!/bin/bash
+########################################################################
+# Begin $network_devices/services/pppoe
+#
+# Description : PPPoE Script
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+case "${2}" in
+	up)
+		boot_mesg "Bringing up the PPPoE interface on ${1}..."
+		ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev ${1}
+		
+		if [ "${METHOD}" != "PPPOE_PLUGIN" ]; then
+			PPPCOMMAND="/usr/sbin/pppd pty"
+			PPPOECOMMAND="/usr/sbin/pppoe -p /var/run/pppoe.pid -I ${1} -T 80 -U -m 1412"
+			if [ -n ${SERVICENAME} ]; then
+				PPPOECOMMAND+=" -S ${SERVICENAME}"
+			fi
+			if [ -n ${CONCENTRATORNAME} ]; then
+				PPPOECOMMAND+=" -C ${CONCENTRATORNAME}"
+			fi
+			
+			if [ "${DNS}" == "Automatic" ]; then
+				ARGS+=" usepeerdns"
+			fi
+		
+			if [ "${AUTH}" == "pap" ]; then
+				ARGS+=" -chap"
+			elif [ "${AUTH}" == "chap" ]; then
+				ARGS+=" -pap"
+			fi
+			
+			if [ "${RECONNECTION}" != "persistent" ]; then
+				if [ "${TIMEOUT}" != "0" ]; then
+					SECONDS=$[${TIMEOUT} * 60]
+					ARGS+=" idle ${SECONDS}"
+				fi
+				if [ "${RECONNECTION}" == "dialondemand" ]; then
+					touch /var/ipfire/red/dial-on-demand
+					ARGS+=" demand nopersist connect /bin/true"
+				fi
+				ARGS+=" active-filter outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0"
+			fi
+			
+			ARGS+=" noipdefault default-asyncmap defaultroute hide-password local mtu 1492"
+			ARGS+=" mru 1492 noaccomp noccp nobsdcomp nodeflate nopcomp novj novjccomp"
+			ARGS+=" user ${USERNAME} lcp-echo-interval 20 lcp-echo-failure 3 lcp-max-configure 50"
+			ARGS+=" maxfail ${MAXRETRIES}"
+			
+			if [ "${DEBUG}" == "on" ]; then
+				ARGS+=" debug"
+			fi
+			
+			$PPPCOMMAND "${PPPOECOMMAND}" $ARGS
+			evaluate_retval
+			
+		else
+			modprobe pppoe
+			PPPCOMMAND="/usr/sbin/pppd plugin rp-pppoe.so ${1}"
+			if [ "${DNS}" == "Automatic" ]; then
+				PPPCOMMAND+=" usepeerdns"
+			fi
+			
+			if [ "${AUTH}" == "pap" ]; then
+				PPPCOMMAND+=" -chap"
+			elif [ "${AUTH}" == "chap" ]; then
+				PPPCOMMAND+=" -pap"
+			fi
+			
+			if [ "${RECONNECTION}" != "persistent" ]; then
+				if [ "${TIMEOUT}" != "0" ]; then
+					SECONDS=$[${TIMEOUT} * 60]
+					PPPCOMMAND+=" idle ${SECONDS}"
+				fi
+				if [ "${RECONNECTION}" == "dialondemand" ]; then
+					touch /var/ipfire/red/dial-on-demand
+					PPPCOMMAND+=" demand nopersist"
+				fi
+				PPPCOMMAND+=" active-filter outbound and not icmp[0] == 3 & not tcp[13] & 4 != 0"
+			fi
+			
+			PPPCOMMAND+=" noipdefault defaultroute hide-password ipcp-accept-local"
+			PPPCOMMAND+=" ipcp-accept-remote passive noccp nopcomp novjccomp"
+			PPPCOMMAND+=" user ${USERNAME} lcp-echo-interval 20 lcp-echo-failure 3"
+			PPPCOMMAND+=" lcp-max-configure 50 maxfail ${MAXRETRIES}"
+
+			if [ "${DEBUG}" == "on" ]; then
+				PPPCOMMAND+=" debug"
+			fi
+			
+			$PPPCOMMAND
+			evaluate_retval
+		fi
+		
+	;;
+
+	down)
+		boot_mesg "Bringing down the PPPoE interface on ${1}..."
+		
+		modprobe -r pppoe >/dev/null 2>&1
+		killall pppd
+		sleep 2
+		ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${1}
+		
+		evaluate_retval
+	;;
+	
+	*)
+		echo "Usage: ${0} [interface] {up|down}"
+		exit 1
+	;;
+esac
+
+# End $network_devices/services/pppoe

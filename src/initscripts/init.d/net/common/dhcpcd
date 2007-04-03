@@ -30,11 +30,15 @@ case "$2" in
 				exit 2
 			fi
 		fi
-		/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${1} -j ACCEPT
-		/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${1} -j ACCEPT
+		if [ "$NAME" == "red" ]; then
+			/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${1} -j ACCEPT
+			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${1} -j ACCEPT
+		fi
+		
 		DHCP_START="-N -R -L /var/ipfire/dhcpc "
+		
 		if [ -n "${DHCP_HOSTNAME}" ]; then
-			DHCP_START+="-h ${DHCP_HOSTNAME}"
+			DHCP_START+="-h ${DHCP_HOSTNAME} "
 	  fi
 		/sbin/dhcpcd $1 $DHCP_START >/dev/null 2>&1
 		# Save the return value
