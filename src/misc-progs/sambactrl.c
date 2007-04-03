@@ -74,20 +74,31 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        if (strcmp(argv[1], "smbrestart")==0)
-        {
-            return 0;
-        }
-
         if (strcmp(argv[1], "smbstop")==0)
         {
+            safe_system("/etc/rc.d/init.d/samba stop");
+            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbstart")==0)
         {
-            snprintf(command, BUFFER_SIZE-1, "smbd -D && nmbd -D && winbindd -D",);
-            safe_system(command);
+            safe_system("/etc/rc.d/init.d/samba start");
+            printf(command);
+            return 0;
+        }
+
+        if (strcmp(argv[1], "smbrestart")==0)
+        {
+            safe_system("/etc/rc.d/init.d/samba restart");
+            printf(command);
+            return 0;
+        }
+
+        if (strcmp(argv[1], "smbreload")==0)
+        {
+            safe_system("/etc/rc.d/init.d/samba reload");
+            printf(command);
             return 0;
         }
 
