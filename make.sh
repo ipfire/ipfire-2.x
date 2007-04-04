@@ -949,6 +949,7 @@ svn)
 		svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
 		evaluate 1
 		echo "Diff was successfully saved to ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff"
+		svn status
 	  ;;
 	esac
 	;;
@@ -1053,6 +1054,9 @@ pxe)
 		;;		
 	esac
 	exit 0
+	;;
+lang)
+	update_langs
 	;;
 "")
 	clear

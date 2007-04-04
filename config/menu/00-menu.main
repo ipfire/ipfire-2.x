@@ -1,24 +1,24 @@
-    $menu->{'01.system'} = {'caption' => $tr{'alt system'},
+    $menu->{'01.system'} = {'caption' => $Lang::tr{'alt system'},
 			    	'enabled' => 1,
 			    	'subMenu' => $subsystem
 			    	};
-    $menu->{'02.status'} = {'caption' => $tr{'status'},
+    $menu->{'02.status'} = {'caption' => $Lang::tr{'status'},
 			    	'enabled' => 1,
 			   	'subMenu' => $substatus
 			    	};
-    $menu->{'03.network'} = {'caption' => $tr{'network'},
+    $menu->{'03.network'} = {'caption' => $Lang::tr{'network'},
 			     	'enabled' => 1,
 			     	'subMenu' => $subnetwork
 			     	};
-    $menu->{'04.services'} = {'caption' => $tr{'alt services'},
+    $menu->{'04.services'} = {'caption' => $Lang::tr{'alt services'},
 			    	'enabled' => 1,
 			    	'subMenu' => $subservices
 			    	};
-    $menu->{'05.firewall'} = {'caption' => $tr{'firewall'},
+    $menu->{'05.firewall'} = {'caption' => $Lang::tr{'firewall'},
 			    	'enabled' => 1,
 			    	'subMenu' => $subfirewall
 			    	};
-    $menu->{'06.proxy'} = {'caption' => $tr{'alt proxy'},
+    $menu->{'06.proxy'} = {'caption' => $Lang::tr{'alt proxy'},
 			   	'enabled' => 1,
 			   	'subMenu' => $subproxy
 			   	};
@@ -26,7 +26,7 @@
 				'enabled' => 1,
 				'subMenu' => $subipfire
 			 	};
-    $menu->{'08.logs'} = {'caption' => $tr{'alt logs'},
+    $menu->{'08.logs'} = {'caption' => $Lang::tr{'alt logs'},
 			  	'enabled' => 1,
 			  	'subMenu' => $sublogs
 			  	};

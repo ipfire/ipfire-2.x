@@ -50,7 +50,7 @@ case "$2" in
 			if [ "$PRINTALL" = "yes" ]; then
 				echo ""
 				echo_ok
-				boot_mesg "           DHCP Assigned Settings for $1:"
+				boot_mesg "           DHCP Assigned Settings for ${1}:"
 				boot_mesg_flush
 				boot_mesg "           IP Address:      $IPADDR"
 				boot_mesg_flush
@@ -68,6 +68,16 @@ case "$2" in
 				boot_mesg " IP Addresss: ""$IPADDR"
 				echo_ok
 			fi
+			if [ "$DNS1" = "" ]; then
+				echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
+				echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
+			else 
+				echo "$DNS1" > /var/ipfire/red/dns1
+				echo "$DNS2" > /var/ipfire/red/dns2
+			fi
+			. /var/ipfire/dhcpc/dhcpcd-${1}.info
+			echo "$IPADDR"  > /var/ipfire/red/local-ipaddress
+			echo "$GATEWAY" > /var/ipfire/red/remote-ipaddress
 		else
 			echo ""
 			logger -t ipfire "DHCPCD Fail"

@@ -13,8 +13,8 @@
 				  'title' => "Samba",
 				  'enabled' => 1,
 				  };
-    $subipfire->{'99.help'} = {'caption' => $tr{'help'},
+    $subipfire->{'99.help'} = {'caption' => $Lang::tr{'help'},
 				  'uri' => '/cgi-bin/help.cgi',
-				  'title' => "$tr{'help'}",
+				  'title' => "$Lang::tr{'help'}",
 				  'enabled' => 1,
 				  };

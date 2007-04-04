@@ -22,7 +22,20 @@ boot_mesg "Bringing up the $name interface..."
 boot_mesg_flush
 
 (
+	eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
+	eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
 	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+	eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+	if [ "$name" == "green" ]; then
+		DEVICE="${GREEN_DEV}"
+	elif [ "$name" == "blue" ]; then
+		DEVICE="${BLUE_DEV}"
+	elif [ "$name" == "orange" ]; then
+		DEVICE="${ORANGE_DEV}"
+	elif [ "$name" == "red" ]; then
+		DEVICE="${RED_DEV}"
+	fi
 
 	# Check if an interface is there...
 	if ip link show ${DEVICE} > /dev/null 2>&1; then
@@ -62,6 +75,7 @@ boot_mesg_flush
 			echo
 		elif [ "${RED_TYPE}" == "DHCP" ]; then
 			NAME=${name} DHCP_HOSTNAME=${RED_DHCP_HOSTNAME} \
+			DNS1=${DNS1} DNS2=${DNS2} \
 			PRINTIP=yes PRINTALL=yes \
 			/etc/rc.d/init.d/net/common/dhcpcd ${RED_DEV} up
 		elif [ "${RED_TYPE}" == "STATIC" ]; then
@@ -70,7 +84,10 @@ boot_mesg_flush
 			DNS1=${DNS1} DNS2=${DNS2} GATEWAY=${DEFAULT_GATEWAY}
 			/etc/rc.d/init.d/net/common/ipv4-static ${RED_DEV} up
 		fi
-	fi
+		
+		/etc/rc.d/init.d/net/red/update
+fi
+
 )
 
 # End $network_devices/ifup

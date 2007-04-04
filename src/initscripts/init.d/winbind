@@ -1,0 +1,50 @@
+#!/bin/bash
+# Begin $rc_base/init.d/winbind
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+
+#$LastChangedBy: bdubbs $
+#$Date: 2005-08-01 14:29:19 -0500 (Mon, 01 Aug 2005) $
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+PIDFILE="/var/run/winbindd.pid"
+KILLDELAY="10"
+
+case "$1" in
+
+        start)
+                boot_mesg "Starting winbind..."
+                loadproc /usr/sbin/winbindd
+                ;;
+
+        stop)
+                boot_mesg "Stopping winbind..."
+		killproc -p ${PIDFILE} /usr/sbin/winbind
+		;;
+
+	reload)
+		boot_mesg "Reloading winbind..."
+		reloadproc /usr/sbin/winbindd
+		;;
+
+        restart)
+                $0 stop
+                sleep 1
+                $0 start
+                ;;
+
+        status)
+                statusproc /usr/sbin/winbindd
+                ;;
+
+        *)
+                echo "Usage: $0 {start|stop|reload|restart|status}"
+                exit 1
+                ;;
+
+esac
+
+# End $rc_base/init.d/winbind

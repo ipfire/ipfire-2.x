@@ -76,6 +76,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				 --mandir=/usr/share/man --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	ln -sf /etc/rc.d/init.d/network $(CONFIG_ROOT)/dhcpc/dhcpcd.exe
+	ln -sf /etc/rc.d/init.d/net/red/update $(CONFIG_ROOT)/dhcpc/dhcpcd.exe
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

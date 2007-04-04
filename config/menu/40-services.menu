@@ -1,23 +1,23 @@
     $subservices->{'10.ipsec'} = {
 				'caption' => 'IPSec',
 			     	'uri' => '/cgi-bin/vpnmain.cgi',
-			     	'title' => "$tr{'virtual private networking'}",
+			     	'title' => "$Lang::tr{'virtual private networking'}",
 			     	'enabled' => 1,
 			 	};
     $subservices->{'20.openvpn'} = {
 				'caption' => 'OpenVPN',
 			     	'uri' => '/cgi-bin/ovpnmain.cgi',
-			     	'title' => "$tr{'virtual private networking'}",
+			     	'title' => "$Lang::tr{'virtual private networking'}",
 			       'enabled' => 1,
 			   	};
-    $subservices->{'30.dyndns'} = {'caption' => $tr{'dynamic dns'},
+    $subservices->{'30.dyndns'} = {'caption' => $Lang::tr{'dynamic dns'},
 				'uri' => '/cgi-bin/ddns.cgi',
-				'title' => "$tr{'dynamic dns'}",
+				'title' => "$Lang::tr{'dynamic dns'}",
 				'enabled' => 1,
 				};
-    $subservices->{'40.time'} = {'caption' => $tr{'time server'},
+    $subservices->{'40.time'} = {'caption' => $Lang::tr{'time server'},
 				'uri' => '/cgi-bin/time.cgi',
-				'title' => "$tr{'time server'}",
+				'title' => "$Lang::tr{'time server'}",
 				'enabled' => 1,
 				};
     $subservices->{'50.qos'} = {'caption' => 'Quality of Service',
@@ -25,10 +25,10 @@
 				'title' => "Quality of Service",
 				'enabled' => 1,
 				};
-    $subservices->{'60.ids'} = {'caption' => $tr{'intrusion detection'},
+    $subservices->{'60.ids'} = {'caption' => $Lang::tr{'intrusion detection'},
 				'enabled' => 1,
 				'uri' => '/cgi-bin/ids.cgi',
-				'title' => "$tr{'intrusion detection system'}",
+				'title' => "$Lang::tr{'intrusion detection system'}",
 				};
     $subservices->{'70.extrahd'} = {'caption' => "ExtraHD",
 				'enabled' => 1,

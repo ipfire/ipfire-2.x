@@ -50,7 +50,7 @@ case "${2}" in
 					touch /var/ipfire/red/dial-on-demand
 					ARGS+=" demand nopersist connect /bin/true"
 				fi
-				ARGS+=" active-filter outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0"
+				DEMAND+=" active-filter outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0"
 			fi
 			
 			ARGS+=" noipdefault default-asyncmap defaultroute hide-password local mtu 1492"
@@ -62,7 +62,7 @@ case "${2}" in
 				ARGS+=" debug"
 			fi
 			
-			$PPPCOMMAND "${PPPOECOMMAND}" $ARGS
+			$PPPCOMMAND "${PPPOECOMMAND}" $ARGS $DEMAND >/dev/null 2>&1
 			evaluate_retval
 			
 		else
@@ -87,7 +87,7 @@ case "${2}" in
 					touch /var/ipfire/red/dial-on-demand
 					PPPCOMMAND+=" demand nopersist"
 				fi
-				PPPCOMMAND+=" active-filter outbound and not icmp[0] == 3 & not tcp[13] & 4 != 0"
+				DEMAND+="active-filter outbound and not icmp[0] == 3 & not tcp[13] & 4 != 0"
 			fi
 			
 			PPPCOMMAND+=" noipdefault defaultroute hide-password ipcp-accept-local"
@@ -99,7 +99,7 @@ case "${2}" in
 				PPPCOMMAND+=" debug"
 			fi
 			
-			$PPPCOMMAND
+			$PPPCOMMAND $DEMAND >/dev/null 2>&1
 			evaluate_retval
 		fi
 		

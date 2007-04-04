@@ -1,42 +1,42 @@
     $subsystem->{'10.home'} = {
-				'caption' => $tr{'alt home'},
+				'caption' => $Lang::tr{'alt home'},
 				'uri' => '/cgi-bin/index.cgi',
-				'title' => "$tr{'alt home'}",
+				'title' => "$Lang::tr{'alt home'}",
 				'enabled' => 1,
 				};
     $subsystem->{'20.dialup'} = {
-				'caption' => $tr{'alt dialup'},
+				'caption' => $Lang::tr{'alt dialup'},
 				'uri' => '/cgi-bin/pppsetup.cgi',
-				'title' => "$tr{'alt dialup'}",
+				'title' => "$Lang::tr{'alt dialup'}",
 				'enabled' => 1,
 				};
     $subsystem->{'30.passwords'} = {
-				'caption' => $tr{'sspasswords'},
+				'caption' => $Lang::tr{'sspasswords'},
 				'uri' => '/cgi-bin/changepw.cgi',
-				'title' => "$tr{'sspasswords'}",
+				'title' => "$Lang::tr{'sspasswords'}",
 				'enabled' => 1,
 				};
     $subsystem->{'40.ssh'} = {
-				'caption' => $tr{'ssh access'},
+				'caption' => $Lang::tr{'ssh access'},
 				'uri' => '/cgi-bin/remote.cgi',
-				'title' => "$tr{'ssh access'}",
+				'title' => "$Lang::tr{'ssh access'}",
 				'enabled' => 1,
 				};
     $subsystem->{'50.gui'} = {
-				'caption' => $tr{'gui settings'},
+				'caption' => $Lang::tr{'gui settings'},
 				'uri' => '/cgi-bin/gui.cgi',
-				'title' => "$tr{'gui settings'}",
+				'title' => "$Lang::tr{'gui settings'}",
 				'enabled' => 1,
 				};
     $subsystem->{'60.shutdown'} = {
-				'caption' => $tr{'shutdown'},
+				'caption' => $Lang::tr{'shutdown'},
 				'uri' => '/cgi-bin/shutdown.cgi',
-				'title' => "$tr{'shutdown'} / $tr{'reboot'}",
+				'title' => "$Lang::tr{'shutdown'} / $Lang::tr{'reboot'}",
 				'enabled' => 1,
 				};
     $subsystem->{'99.credits'} = {
-				'caption' => $tr{'credits'},
+				'caption' => $Lang::tr{'credits'},
 				'uri' => '/cgi-bin/credits.cgi',
-				'title' => "$tr{'credits'}",
+				'title' => "$Lang::tr{'credits'}",
 				'enabled' => 1,
 				};

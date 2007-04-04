@@ -1,0 +1,70 @@
+#!/bin/bash
+########################################################################
+# Begin $network_devices/services/isdn
+#
+# Description : ISDN Script
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+case "${1}" in
+	up)
+		boot_mesg "Bringing up the ISDN interface..."
+
+		if [ "$ENABLED" = "on" ]; then
+			modprobe -r hisax_st5481   2>/dev/null
+			modprobe -r hisax_fcpcipnp 2>/dev/null
+			modprobe -r hisax_isac     2>/dev/null
+			modprobe -r hisax          2>/dev/null
+			
+			if [ "$TYPE" = "998" ]; then
+				modprobe hisax_st5481 protocol=$PROTOCOL $MODULE_PARAMS
+				(exit $?)
+				evaluate_retval
+			elif [ "$TYPE" = "999" ]; then
+				modprobe hisax_fcpcipnp protocol=$PROTOCOL $MODULE_PARAMS
+				(exit $?)
+				evaluate_retval
+			else
+				modprobe hisax protocol=$PROTOCOL type=$TYPE $MODULE_PARAMS
+				(exit $?)
+				evaluate_retval
+			fi
+			
+		else
+			logger -t red "ISDN: "No ISDN enabled"
+			(exit 1)
+			evaluate_retval
+		fi
+	;;
+
+	down)
+		boot_mesg "Bringing down the ISDN interface..."
+		isdnctrl delif ippp1 	2>/dev/null || failed=1
+		isdnctrl delif ippp0 	2>/dev/null || failed=1
+	  killproc ipppd 2>/dev/null || failed=1
+		killproc ibod  2>/dev/null || failed=1
+		modprobe -r hisax_st5481   2>/dev/null || failed=1
+		modprobe -r hisax_fcpcipnp 2>/dev/null || failed=1
+		modprobe -r hisax_isac     2>/dev/null || failed=1
+		modprobe -r hisax          2>/dev/null || failed=1
+		(exit ${failed})
+		evaluate_retval
+	;;
+	
+	*)
+		echo "Usage: ${0} {up|down}"
+		exit 1
+	;;
+esac
+
+# End $network_devices/services/isdn

@@ -29,15 +29,9 @@ WARNING: translation string unused: advproxy no cre groups
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
-WARNING: translation string unused: aliases
 WARNING: translation string unused: all updates installed
-WARNING: translation string unused: alt dialup
-WARNING: translation string unused: alt home
 WARNING: translation string unused: alt information
-WARNING: translation string unused: alt logs
 WARNING: translation string unused: alt ovpn
-WARNING: translation string unused: alt services
-WARNING: translation string unused: alt system
 WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
 WARNING: translation string unused: ansi t1.483
@@ -72,7 +66,6 @@ WARNING: translation string unused: backup sets
 WARNING: translation string unused: backup to floppy
 WARNING: translation string unused: bewan adsl pci st
 WARNING: translation string unused: bewan adsl usb
-WARNING: translation string unused: blue access
 WARNING: translation string unused: blue interface
 WARNING: translation string unused: buffered memory
 WARNING: translation string unused: bytes per second
@@ -83,7 +76,6 @@ WARNING: translation string unused: cfg restart
 WARNING: translation string unused: choose config
 WARNING: translation string unused: choose media
 WARNING: translation string unused: clear cache
-WARNING: translation string unused: comment
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
@@ -114,7 +106,6 @@ WARNING: translation string unused: disk access per
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: done
 WARNING: translation string unused: dynamic dns client
-WARNING: translation string unused: edit hosts
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enabled on
 WARNING: translation string unused: enabledtitle
@@ -131,12 +122,9 @@ WARNING: translation string unused: err rs 8 untar
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
 WARNING: translation string unused: exportkey
-WARNING: translation string unused: external access
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
-WARNING: translation string unused: firewall
 WARNING: translation string unused: firewall log viewer
-WARNING: translation string unused: firewall logs
 WARNING: translation string unused: firmware
 WARNING: translation string unused: force update
 WARNING: translation string unused: free memory
@@ -150,7 +138,6 @@ WARNING: translation string unused: genkey
 WARNING: translation string unused: graph per
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
-WARNING: translation string unused: hardware graphs
 WARNING: translation string unused: hdd temperature in
 WARNING: translation string unused: hint
 WARNING: translation string unused: host configuration
@@ -159,7 +146,6 @@ WARNING: translation string unused: hours2
 WARNING: translation string unused: id
 WARNING: translation string unused: idle cpu
 WARNING: translation string unused: idle cpu usage
-WARNING: translation string unused: ids logs
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
@@ -169,7 +155,6 @@ WARNING: translation string unused: insert floppy
 WARNING: translation string unused: insert removable device
 WARNING: translation string unused: install new update
 WARNING: translation string unused: installed
-WARNING: translation string unused: intrusion detection
 WARNING: translation string unused: intrusion detection system log viewer
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
@@ -179,7 +164,6 @@ WARNING: translation string unused: invalid upstream proxy username or password 
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
 WARNING: translation string unused: ipfire side is invalid
-WARNING: translation string unused: iptable rules
 WARNING: translation string unused: javascript menu error1
 WARNING: translation string unused: javascript menu error2
 WARNING: translation string unused: kernel version
@@ -235,7 +219,6 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: other countries
 WARNING: translation string unused: out
-WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing traffic in bytes per second
 WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
@@ -244,9 +227,9 @@ WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
+WARNING: translation string unused: pc
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
-WARNING: translation string unused: proxy logs
 WARNING: translation string unused: psk
 WARNING: translation string unused: quick control
 WARNING: translation string unused: read sectors
@@ -263,13 +246,8 @@ WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shared memory
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
-WARNING: translation string unused: ssdmz pinholes
 WARNING: translation string unused: ssnetwork status
-WARNING: translation string unused: sspasswords
-WARNING: translation string unused: ssport forwarding
-WARNING: translation string unused: ssproxy graphs
 WARNING: translation string unused: sssystem status
-WARNING: translation string unused: sstraffic graphs
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: swap usage per
 WARNING: translation string unused: system cpu
@@ -284,7 +262,6 @@ WARNING: translation string unused: this is not a valid archive
 WARNING: translation string unused: this is not an authorised update
 WARNING: translation string unused: this update is already installed
 WARNING: translation string unused: time date manually reset
-WARNING: translation string unused: time server
 WARNING: translation string unused: title
 WARNING: translation string unused: to
 WARNING: translation string unused: to install an update
@@ -304,7 +281,6 @@ WARNING: translation string unused: upstream proxy host:port
 WARNING: translation string unused: upstream username
 WARNING: translation string unused: uptime and users
 WARNING: translation string unused: urlfilter background text
-WARNING: translation string unused: urlfilter logs
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
@@ -314,7 +290,7 @@ WARNING: translation string unused: used memory
 WARNING: translation string unused: used swap
 WARNING: translation string unused: user cpu
 WARNING: translation string unused: user cpu usage
-WARNING: translation string unused: virtual private networking
+WARNING: translation string unused: view log
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week
@@ -326,14 +302,21 @@ WARNING: translation string unused: yes
 WARNING: untranslated string: IPFires hostname
 WARNING: untranslated string: Number of IPs for the pie chart
 WARNING: untranslated string: Number of Ports for the pie chart
+WARNING: untranslated string: alt proxy
 WARNING: untranslated string: down
+WARNING: untranslated string: help
+WARNING: untranslated string: openvpn log
 WARNING: untranslated string: otherip
 WARNING: untranslated string: otherport
 WARNING: untranslated string: pakfire configuration
+WARNING: untranslated string: pc add
 WARNING: untranslated string: red
 WARNING: untranslated string: remove x509
 WARNING: untranslated string: settingsc
 WARNING: untranslated string: up
+WARNING: untranslated string: urlfilter log
+WARNING: untranslated string: user log
+WARNING: untranslated string: user proxy logs
 WARNING: untranslated string: vpn aggrmode
 WARNING: untranslated string: vpn altname syntax
 WARNING: untranslated string: vpn auth-dn

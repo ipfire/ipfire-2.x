@@ -14,10 +14,11 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
-eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
 
 case "${1}" in
 	start)
@@ -73,9 +74,22 @@ case "${1}" in
 			name=orange /etc/rc.d/init.d/net/ifup
 		fi
 		
+		# Start DNSMASQ with defaults
+		killall -KILL dnsmasq 2> /dev/null
+		sleep 1
+		if [ "$DOMAIN_NAME_GREEN" == "" ]; then
+			/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases
+		else 
+			/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases -s "$DOMAIN_NAME_GREEN"
+		fi
+		
 		# RED
 		if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
-			name=red /etc/rc.d/init.d/net/ifup
+			if [ "$AUTOCONNECT" == "off" ]; then
+				echo -n		# Do anything
+			else
+				name=red /etc/rc.d/init.d/net/ifup
+			fi
 		fi
 		;;
 

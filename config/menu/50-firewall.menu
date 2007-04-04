@@ -1,31 +1,31 @@
     $subfirewall->{'10.dnat'} = {
-				 'caption' => $tr{'ssport forwarding'},
+				 'caption' => $Lang::tr{'ssport forwarding'},
 				 'uri' => '/cgi-bin/portfw.cgi',
-				 'title' => "$tr{'ssport forwarding'}",
+				 'title' => "$Lang::tr{'ssport forwarding'}",
 				 'enabled' => 1,
 				 };
     $subfirewall->{'20.xtaccess'} = {
-				 'caption' => $tr{'external access'},
+				 'caption' => $Lang::tr{'external access'},
 				 'uri' => '/cgi-bin/xtaccess.cgi',
-				 'title' => "$tr{'external access'}",
+				 'title' => "$Lang::tr{'external access'}",
 				 'enabled' => 1,
 				 };
     $subfirewall->{'30.wireless'} = {
-				'caption' => $tr{'blue access'},
+				'caption' => $Lang::tr{'blue access'},
 				'uri' => '/cgi-bin/wireless.cgi',
-				'title' => "$tr{'blue access'}",
+				'title' => "$Lang::tr{'blue access'}",
 				'enabled' => 1,
 				 };
     $subfirewall->{'40.dmz'} = {
-				'caption' => $tr{'ssdmz pinholes'},
+				'caption' => $Lang::tr{'ssdmz pinholes'},
 				'uri' => '/cgi-bin/dmzholes.cgi',
-				'title' => "$tr{'dmz pinhole configuration'}",
+				'title' => "$Lang::tr{'dmz pinhole configuration'}",
 				'enabled' => 1,
 				 };
     $subfirewall->{'50.outgoing'} = {
-				'caption' => $tr{'outgoing firewall'},
+				'caption' => $Lang::tr{'outgoing firewall'},
 				'uri' => '/cgi-bin/outgoingfw.cgi',
-				'title' => "$tr{'outgoing firewall'}",
+				'title' => "$Lang::tr{'outgoing firewall'}",
 				'enabled' => 1,
 				};
     $subfirewall->{'60.upnp'} = {
@@ -35,8 +35,8 @@
 				'enabled' => 1,
 				};
     $subfirewall->{'70.fwopts'} = {
-				'caption' => $tr{'options fw'},
+				'caption' => $Lang::tr{'options fw'},
 				'uri' => '/cgi-bin/optionsfw.cgi',
-				'title' => "$tr{'options fw'}",
+				'title' => "$Lang::tr{'options fw'}",
 				'enabled' => 1,
 				 };

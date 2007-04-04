@@ -1,0 +1,121 @@
+#!/bin/sh
+########################################################################
+# Begin $network_devices/red/update
+#
+# Description : Update red interface
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       : update the settings if red goes up or down
+#
+########################################################################
+
+eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+if [ ! -e /var/lock/red.lock ]; then
+	touch /var/lock/red.lock
+	logger -p local0.info -t red[$$] "$0 locking for $$"
+else
+	count=0
+	while [ ! $count = 5 ]; do
+		sleep 3
+		if [ ! -e /var/lock/red.lock ]; then
+			break
+		else
+			/usr/bin/logger -p local0.info -t red[$$] "$0 $$ waiting unlock"
+		fi
+		((++count))
+	done
+fi
+
+IFACE=`cat /var/ipfire/red/iface 2>/dev/null | tr -d '\012'`
+REMOTE=`cat /var/ipfire/red/remote-ipaddress 2>/dev/null | tr -d '\012'`
+
+### DNS Settings
+DNS1=`cat /var/ipfire/red/dns1 2>/dev/null | tr -d '\012'`
+DNS2=`cat /var/ipfire/red/dns2 2>/dev/null | tr -d '\012'`
+echo > /var/ipfire/red/resolv.conf		#clear it
+[ "$DNS1" != "" ] && echo "nameserver $DNS1" >  /var/ipfire/red/resolv.conf
+[ "$DNS2" != "" ] && echo "nameserver $DNS2" >> /var/ipfire/red/resolv.conf
+
+### Restart DNSMASQ
+killall -KILL dnsmasq 2> /dev/null
+sleep 1
+ARGS=""
+[ "$DOMAIN_NAME_GREEN" ] && ARGS="-s $DOMAIN_NAME_GREEN"
+if [ -e "/var/ipfire/red/dial-on-demand" -a "$DIALONDEMANDDNS" == "on" -a ! -e "/var/ipfire/red/active" ]; then
+    /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS -r /var/ipfire/ppp/fake-resolv.conf
+else
+    /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS -r /var/ipfire/red/resolv.conf
+fi
+unset ARGS
+
+### Reset default route to ippp0 for dial on demand
+if [ -e "/var/ipfire/red/dial-on-demand" -a "$TYPE" == "isdn" -a ! -e "/var/ipfire/red/active" ]; then
+	ip route del default 2> /dev/null
+	if [ ! -z "$REMOTE" ]; then
+		ip route add default gw $REMOTE 2> /dev/null
+	else
+		ip route add default dev ippp0  2> /dev/null
+	fi
+fi
+
+if ( echo $0 | /bin/grep -q 'dhcpcd.exe' ); then
+	eval $(/usr/local/bin/readhash "$1")
+	case "$2" in
+	 up)
+	 	logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been configured with old IP=${IPADDR}"
+		if [ "$RED_TYPE" != 'PPTP' ]; then
+			touch /var/ipfire/red/active
+		fi
+		;;
+	 new)	
+	 	logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been configured with new IP=${IPADDR}"
+		if [ -e "/var/ipfire/red/active" ]; then
+			/usr/local/bin/setfilters
+			/usr/local/bin/setportfw
+			/usr/local/bin/setxtaccess
+			/usr/local/bin/setddns.pl -f
+			/usr/local/bin/restartsnort red
+			sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
+			/bin/rm -f /var/lock/red.lock
+			logger -p local0.info -t red[$$] "unlocking from $$"
+			exit 0
+		else
+			if [ "$RED_TYPE" != 'PPTP' ]; then
+				touch /var/ipfire/red/active
+			fi
+		fi
+		;;
+	 down)
+	 	logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been brought down"
+		rm -f /var/ipfire/red/active
+		;;
+	esac
+fi
+
+if [ -e "/var/ipfire/red/active" ]; then
+	[ "$IFACE" != "" ] && ifconfig $IFACE -multicast
+	/etc/rc.d/init.d/firewall reload
+	/usr/local/bin/setfilters
+	/usr/local/bin/restartsnort red
+	/usr/local/bin/qosctrl start
+	/usr/local/bin/setportfw
+	/usr/local/bin/setxtaccess
+	/usr/local/bin/setddns.pl -f
+	/etc/rc.d/helper/writeipac.pl
+	/usr/sbin/fetchipac -S
+	sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
+else
+	/usr/local/bin/ipsecctrl D
+	/etc/rc.d/init.d/firewall reload
+fi
+/bin/rm -f /var/lock/red.lock
+/usr/bin/logger -p local0.info -t red[$$] "unlocking from $$"
+
+# End $network_devices/red/update

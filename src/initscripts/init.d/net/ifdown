@@ -8,7 +8,7 @@
 #               Kevin P. Fleming - kpfleming@linuxfromscratch.org
 #               Michael Tremer - mitch@ipfire.org
 #
-# Version     : 00.01
+# Version     : 01.00
 #
 # Notes       : 
 #
@@ -47,19 +47,23 @@ then
 
 	elif [ "$name" == "red" ]; then
 		if [ "${RED_TYPE}" == "PPPOE" ]; then
-			echo
+			NAME=${name} /etc/rc.d/init.d/net/red/pppoe ${RED_DEV} down
 		elif [ "${RED_TYPE}" == "PPTP" ]; then
 			echo
 		elif [ "${RED_TYPE}" == "DHCP" ]; then
 			NAME=${name} DHCP_HOSTNAME=${RED_DHCP_HOSTNAME} \
 			PRINTIP=yes PRINTALL=yes \
-			/etc/rc.d/init.d/net/red/dhcpcd ${RED_DEV} down
+			/etc/rc.d/init.d/net/common/dhcpcd ${RED_DEV} down
 		elif [ "${RED_TYPE}" == "STATIC" ]; then
 			NAME=${name} ADDRESS=${RED_ADDRESS} NETMASK=${RED_NETMASK}\
 			NETADDRESS=${RED_NETADDRESS} BROADCAST=${RED_BROADCAST} \
 			DNS1=${DNS1} DNS2=${DNS2} GATEWAY=${DEFAULT_GATEWAY}
 			/etc/rc.d/init.d/net/red/ipv4-static ${RED_DEV} down
 		fi
+		
+		### Cleanup the system when red goes down ###
+		rm -f /var/ipfire/red/iface
+		
 	fi
 else
 	boot_mesg "Interface ${DEVICE} doesn't exist." ${WARNING}

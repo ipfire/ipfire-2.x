@@ -1,0 +1,171 @@
+#!/bin/sh
+#
+# IPFire script - vpn-watch
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) Daniel Berlin <daniel berlin_itechnology de> - Check for
+#	remote peer with dynamic IPs and restart when change
+#	is detected. Works with DPD which is not perfect!
+#
+# 2006: Franck - adapted original script to fit in IPCop 1.4
+# 2007: Michael Tremer - mitch@ipfire.org - Merged into IPFire
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+#
+# Configuration
+#
+
+VPN_CONFIG='/var/ipfire/vpn/config'		# Location of IPFire's vpn configuration file
+SETTINGS='/var/ipfire/vpn/settings'		# and settings
+
+CHECK_INTERVAL='60'				# Check this often (in seconds)
+DNS_RESOLVE_TRIES='4'			# Try to resolve IPs this often (each try takes max. 2 seconds)
+NICENESS='+5'							# Adjust niceness of child processes: '-20' ... '+19'; '0' is default
+case "$1" in
+	'start' | '--start')
+		eval $(/usr/local/bin/readhash $SETTINGS)
+		test "${VPN_WATCH}" != "on"  && exit 1			# not activated, cannot start!
+
+		if test ! -r "$VPN_CONFIG"; then
+			echo 'Error: cannot read IPFire VPN configuration file; exit.' >&2
+			exit 1
+		fi
+
+		if /bin/test -p /var/run/$(basename $0); then
+			if ps --no-heading axw | grep -v 'grep' | grep -q "$(basename $0) conn: "; then
+				echo "Error: use '$(basename $0) stop' please; exit." >&2
+				exit 1
+                        else
+				rm /var/run/$(basename $0)              # pipe was left alone, correct error condition
+			fi
+		fi
+
+		# the pipe serves for "-status" but is not used yet
+		/bin/mknod -m 0660 "/var/run/$(basename $0)" p >/dev/null 2>&1	# Create pipe for status-information
+
+		#
+		# Read VPN configuration and fork a child process for each VPN connection active, net-to-net & RED 
+		#
+		while read line; do
+			VPN=($(echo $line | cut --delimiter=',' --output-delimiter=' ' -f2,3,5,12,28 ))	# Activated, Name, Host/Net-to-net, Remote, ITF.
+			test  "${VPN[0]}" != "on"  && continue				# Ignore: deactivated connections
+			test  "${VPN[2]}"  = "host"  && continue			# Ignore: roadwarriors
+			## test  "${VPN[4]}" != "RED"  && continue			# Ignore: local vpns needed or not ?
+			echo -n "${VPN[3]}" | grep -q '^[[:digit:]\.]\+$' && continue	#If fixed remote IP, no need to watch!
+			$0 'conn:' "${VPN[1]}" "${VPN[3]}">/dev/null 2>&1 &		#Fork child process (parameters: "conn: NAME RIGHT")
+		done < "$VPN_CONFIG"
+		exit 0									# Parent dies here... RIP
+		;;
+
+	'stop' | '--stop')
+		# Terminate processes
+		for proc in $(pidof -x -o %PPID $(basename $0)); do
+			kill -s SIGTERM -- "$proc"
+		done
+		sleep 1
+
+		# Kill remaining processes
+		for proc in $(/bin/pidof -x -o %PPID $(basename $0)); do
+			kill -s SIGKILL -- "$proc"
+		done
+		rm -f "/var/run/$(basename $0)"			# Remove pipe
+		exit 0
+		;;
+
+	#'status' | '--status')
+	#	echo "VPN-Watch"
+	#	if ps --no-heading axw | grep -v 'grep' | grep -q "$(basename $0) conn: "; then
+	#		trap '' USR1
+	#		killall -q -g -s USR1 -- $(basename $0)
+	#		sleep 1
+	#		cat "/var/run/$(basename $0)" | sort 	# Read children's info from pipe
+	#	else
+	#		echo '     no instance running.'
+	#	fi
+	#	exit 0
+	#	;;
+
+	'conn:')
+		# Children proceed here...
+		renice ${NICENESS:-0} -p $$ >/dev/null 2>&1	# Adjust niceness
+		shift		# Remove the first positional parameter ("conn:"), as we don't need it anymore
+		;;
+	*)
+		/bin/echo "Usage: $0 { start | stop }" >&2
+		exit 1
+		;;
+esac
+
+# Logging, signal handlers
+alias log="logger -t vpn-watch \'${1}\':"
+
+trap 'log "terminated after ${RESTART_COUNT} restarts."' EXIT
+#trap 'echo "connection \"${1}\" restarted ${RESTART_COUNT} times" >>/var/run/$(basename $0)' USR1
+
+#
+# Get IP of a FQDN... using 'host' command. Everything is ok when dns server responds.
+# If no response,
+# -maybe RED is down. The script can terminate. It will restart with rc.updatered.
+# or
+# -the dns server is down. In this case, terminate the script is not a good idea...
+# Thus 4 retries before returning response 'stop'
+#
+function get_ip () {
+	local RESULT=''
+	# delay divided by two for each loop
+	delay=8
+	for ((i=1; ${i} <= ${DNS_RESOLVE_TRIES}; i++)); do
+
+	    	# extract IP address
+		RESULT=$(/usr/bin/host "$1" 2>/dev/null| awk '{ print $4 }')
+		if echo -n $RESULT | /bin/grep -q '^[[:digit:]\.]\+$' ; then 
+			echo -n $RESULT
+			return
+		fi
+
+		sleep $delay
+		delay=$((delay>>1))
+	done
+	# Change 'stop' to something else to let the script running
+	echo -n "stop" # stop: the script will terminate
+
+}
+
+# Infinite loop; checks, whether the IP of FQDN has changed.
+# If so, the affected connection gets restarted.
+#
+RESTART_COUNT=0
+REMOTE_IP_OLD=$(get_ip $2)
+log "start watching $REMOTE_IP_OLD"
+
+while [ $REMOTE_IP_OLD != 'stop' ] ;  do
+	sleep $CHECK_INTERVAL
+	# Skip check until IPSec is running. Update IP_OLD while our ipsec is down
+	/usr/sbin/ipsec auto --status >/dev/null 2>&1 || {
+		REMOTE_IP_OLD=$(get_ip $2)
+		continue
+	}
+
+	REMOTE_IP_NEW=$(get_ip $2)
+
+	if test "${REMOTE_IP_OLD}" != "${REMOTE_IP_NEW}"; then
+		/usr/sbin/ipsec auto --down  $1
+		/usr/sbin/ipsec auto --replace  $1
+		/usr/sbin/ipsec auto --rereadsecrets
+		/usr/sbin/ipsec auto --up  $1
+		let RESTART_COUNT++
+		log "Remote IP has changed from $REMOTE_IP_OLD to $REMOTE_IP_NEW. Connection restarted (#$RESTART_COUNT times)."
+		REMOTE_IP_OLD=$REMOTE_IP_NEW
+	fi
+done

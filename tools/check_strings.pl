@@ -50,6 +50,7 @@ sub wanted {
 find (\&wanted, "$basedir/html"  );
 find (\&wanted, "$basedir/src/scripts"  );
 find (\&wanted, "$basedir/config/cfgroot"  );
+find (\&wanted, "$basedir/config/menu"  );
 
 for my $key ( sort (keys %tr) ) {
 	my $value = $tr{$key};

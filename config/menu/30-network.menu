@@ -1,6 +1,6 @@
-    $subnetwork->{'10.netconf'} = {'caption' => "$tr{'net config'}",
+    $subnetwork->{'10.netconf'} = {'caption' => "$Lang::tr{'net config'}",
 			        'uri' => '/cgi-bin/netconfig.cgi',
-			        'title' => "$tr{'net config'}",
+			        'title' => "$Lang::tr{'net config'}",
 			        'enabled' => 0,
 			        };
     $subnetwork->{'20.proxy'} = {'caption' => 'Webproxy',
@@ -13,38 +13,38 @@
 			        'title' => "URL-Filter",
 			        'enabled' => 1,
 			        };
-    $subnetwork->{'40.dhcp'} = {'caption' => $tr{'dhcp server'},
+    $subnetwork->{'40.dhcp'} = {'caption' => $Lang::tr{'dhcp server'},
 				 'uri' => '/cgi-bin/dhcp.cgi',
-				 'title' => "$tr{'dhcp server'}",
+				 'title' => "$Lang::tr{'dhcp server'}",
 				 'enabled' => 1,
 				 };
     $subnetwork->{'50.scheduler'} = {
-				 'caption' => $tr{'connscheduler'},
+				 'caption' => $Lang::tr{'connscheduler'},
 				 'uri' => '/cgi-bin/connscheduler.cgi',
-				 'title' => "$tr{'connscheduler'}",
+				 'title' => "$Lang::tr{'connscheduler'}",
 				 'enabled' => 1,
 				 };
     $subnetwork->{'60.hosts'} = {
-				 'caption' => $tr{'edit hosts'},
+				 'caption' => $Lang::tr{'edit hosts'},
 				 'uri' => '/cgi-bin/hosts.cgi',
-				 'title' => "$tr{'edit hosts'}",
+				 'title' => "$Lang::tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
     $subnetwork->{'70.upload'} = {
-				  'caption' => $tr{'upload'},
+				  'caption' => $Lang::tr{'upload'},
 				  'uri' => '/cgi-bin/upload.cgi',
-				  'title' => "$tr{'upload'}",
+				  'title' => "$Lang::tr{'upload'}",
 				  'enabled' => 0,
 				  };
     $subnetwork->{'80.aliases'} = {
-				  'caption' => $tr{'aliases'},
+				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
-				  'title' => "$tr{'aliases'}",
+				  'title' => "$Lang::tr{'aliases'}",
 				  'enabled' => 0,
 				  };
     $subnetwork->{'90.wakeonlan'} = {
-				  'caption' => $tr{'WakeOnLan'},
+				  'caption' => $Lang::tr{'WakeOnLan'},
 				  'uri' => '/cgi-bin/wakeonlan.cgi',
-				  'title' => "$tr{'WakeOnLan'}",
+				  'title' => "$Lang::tr{'WakeOnLan'}",
 				  'enabled' => 1,
 				  };
