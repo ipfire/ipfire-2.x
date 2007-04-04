@@ -19,22 +19,18 @@ int main(int argc, char *argv[]) {
 		exit(1);
 
 	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\nredctrl (start|stop|restart|clear)\n\n");
+		fprintf(stderr, "\nNo argument given.\n\nredctrl (start|stop|restart)\n\n");
 		exit(1);
 	}
 
 	if (strcmp(argv[1], "start") == 0) {
-		safe_system("/etc/rc.d/init.d/red start");
+		safe_system("/etc/rc.d/init.d/network start red");
 	} else if (strcmp(argv[1], "stop") == 0) {
-		safe_system("/etc/rc.d/init.d/red stop");
+		safe_system("/etc/rc.d/init.d/network stop red");
 	} else if (strcmp(argv[1], "restart") == 0) {
-		safe_system("/etc/rc.d/init.d/red stop");
-		safe_system("sleep 3");
-		safe_system("/etc/rc.d/init.d/red start");
-	} else if (strcmp(argv[1], "clear") == 0) {
-		safe_system("/etc/rc.d/init.d/red clear");
+		safe_system("/etc/rc.d/init.d/network restart red");
 	} else {
-		fprintf(stderr, "\nBad argument given.\n\nredctrl (start|stop|restart|clear)\n\n");
+		fprintf(stderr, "\nBad argument given.\n\nredctrl (start|stop|restart)\n\n");
 		exit(1);
 	}
 

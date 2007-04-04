@@ -14,81 +14,110 @@
 
 . /etc/sysconfig/rc
 . ${rc_functions}
-eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 
+DO="${1}"
+shift
 
-case "${1}" in
+if [ -n "${1}" ]; then
+	ALL=0
+	for i in green red blue orange; do	
+		eval "${i}=0"
+	done
+else
+	ALL=1
+	for i in green red blue orange; do
+		eval "${i}=1"
+	done
+fi
+
+while [ ! $# = 0 ]; do
+	for i in green red blue orange; do
+		if [ "${i}" == "${1}" ]; then
+			eval "${i}=1"
+			shift
+		fi
+	done
+done
+
+case "${DO}" in
 	start)
-		boot_mesg "Loading iptables helper modules"
-		modprobe iptable_nat || failed=1
-		modprobe ip_conntrack || failed=1
-		modprobe ip_conntrack_ftp || failed=1
-		modprobe ip_nat_ftp || failed=1
-		modprobe ip_conntrack_h323 || failed=1
-		modprobe ip_nat_h323 || failed=1
-		modprobe ip_conntrack_irc || failed=1
-		modprobe ip_nat_irc || failed=1
-		modprobe ip_conntrack_mms || failed=1
-		modprobe ip_nat_mms || failed=1
-		modprobe ip_conntrack_pptp || failed=1
-		modprobe ip_nat_pptp || failed=1
-		modprobe ip_conntrack_sip || failed=1
-		modprobe ip_nat_sip || failed=1
-		(exit ${failed})
-		evaluate_retval
-
-		# Remove possible leftover files
-		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
-		
-		boot_mesg "Setting up IPFire firewall rules"
-		/etc/rc.d/init.d/firewall start; evaluate_retval
-
-		boot_mesg "Setting up IP Accounting"
-		/etc/rc.d/helper/writeipac.pl || failed=1
-		/usr/sbin/fetchipac -S || failed=1 
-		(exit ${failed})
-		evaluate_retval
-
-		boot_mesg "Setting IPFire DMZ pinholes"
-		/usr/local/bin/setdmzholes; evaluate_retval
-
-		if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
-			boot_mesg "Setting up wireless firewall rules"
-			/usr/local/bin/restartwireless; evaluate_retval
+		if [ "${ALL}" == "1" ]; then
+			boot_mesg "Loading iptables helper modules"
+			modprobe iptable_nat || failed=1
+			modprobe ip_conntrack || failed=1
+			modprobe ip_conntrack_ftp || failed=1
+			modprobe ip_nat_ftp || failed=1
+			modprobe ip_conntrack_h323 || failed=1
+			modprobe ip_nat_h323 || failed=1
+			modprobe ip_conntrack_irc || failed=1
+			modprobe ip_nat_irc || failed=1
+			modprobe ip_conntrack_mms || failed=1
+			modprobe ip_nat_mms || failed=1
+			modprobe ip_conntrack_pptp || failed=1
+			modprobe ip_nat_pptp || failed=1
+			modprobe ip_conntrack_sip || failed=1
+			modprobe ip_nat_sip || failed=1
+			(exit ${failed})
+			evaluate_retval
+			
+			boot_mesg "Setting up IPFire firewall rules"
+			/etc/rc.d/init.d/firewall start; evaluate_retval
+	
+			boot_mesg "Setting up IP Accounting"
+			/etc/rc.d/helper/writeipac.pl || failed=1
+			/usr/sbin/fetchipac -S || failed=1 
+			(exit ${failed})
+			evaluate_retval
+	
+			boot_mesg "Setting IPFire DMZ pinholes"
+			/usr/local/bin/setdmzholes; evaluate_retval
+	
+			if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+				boot_mesg "Setting up wireless firewall rules"
+				/usr/local/bin/restartwireless; evaluate_retval
+			fi
+			
+			# Start DNSMASQ with defaults
+			killall -KILL dnsmasq 2> /dev/null
+			sleep 1
+			if [ "$DOMAIN_NAME_GREEN" == "" ]; then
+				/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases
+			else 
+				/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases -s "$DOMAIN_NAME_GREEN"
+			fi
 		fi
 		
 		# Starting interfaces...
 		# GREEN
-		name=green /etc/rc.d/init.d/net/ifup
+		if [ "$green" == "1" ]; then
+			name=green /etc/rc.d/init.d/net/ifup
+		fi
 		
 		# BLUE
-		if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
-			name=blue /etc/rc.d/init.d/net/ifup
+		if [ "$blue" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+				name=blue /etc/rc.d/init.d/net/ifup
+			fi
 		fi
 		
 		# ORANGE
-		if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
-			name=orange /etc/rc.d/init.d/net/ifup
-		fi
-		
-		# Start DNSMASQ with defaults
-		killall -KILL dnsmasq 2> /dev/null
-		sleep 1
-		if [ "$DOMAIN_NAME_GREEN" == "" ]; then
-			/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases
-		else 
-			/usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases -s "$DOMAIN_NAME_GREEN"
+		if [ "$orange" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
+				name=orange /etc/rc.d/init.d/net/ifup
+			fi
 		fi
 		
 		# RED
-		if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
-			if [ "$AUTOCONNECT" == "off" ]; then
-				echo -n		# Do anything
-			else
-				name=red /etc/rc.d/init.d/net/ifup
+		if [ "$red" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+				# Remove possible leftover files
+				rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
+				if [ "$AUTOCONNECT" == "off" ]; then
+					echo -n		# Do anything
+				else
+					name=red /etc/rc.d/init.d/net/ifup
+				fi
 			fi
 		fi
 		;;
@@ -96,28 +125,41 @@ case "${1}" in
 	stop)
 		# Stopping interfaces...
 		# GREEN
-		name=green /etc/rc.d/init.d/net/ifdown
+		if [ "$green" == "1" ]; then
+			name=green /etc/rc.d/init.d/net/ifdown
+		fi
 		
 		# BLUE
-		if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
-			name=blue /etc/rc.d/init.d/net/ifdown
+		if [ "$blue" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+				name=blue /etc/rc.d/init.d/net/ifdown
+			fi
 		fi
 		
 		# ORANGE
-		if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
-			name=orange /etc/rc.d/init.d/net/ifdown
+		if [ "$orange" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
+				name=orange /etc/rc.d/init.d/net/ifdown
+			fi
 		fi
 		
 		# RED
-		if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
-			name=red /etc/rc.d/init.d/net/ifdown
+		if [ "$red" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+				name=red /etc/rc.d/init.d/net/ifdown
+			fi
 		fi
 		;;
 
 	restart)
-		${0} stop
+		for i in green red blue orange; do
+			if [ "${!i}" == "1" ]; then
+				ARGS+=" ${i}"
+			fi
+		done
+		${0} stop ${ARGS}
 		sleep 1
-		${0} start
+		${0} start ${ARGS}
 		;;
 
 	*)
