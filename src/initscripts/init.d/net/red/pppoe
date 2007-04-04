@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ########################################################################
 # Begin $network_devices/services/pppoe
 #

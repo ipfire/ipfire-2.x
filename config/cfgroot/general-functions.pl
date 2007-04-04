@@ -37,7 +37,7 @@ sub log
 	my $logmessage = $_[0];
 	$logmessage =~ /([\w\W]*)/;
 	$logmessage = $1;
-	system('/usr/bin/logger', '-t', $tag, $logmessage);
+	system('logger', '-t', $tag, $logmessage);
 }
 
 sub readhash
@@ -63,8 +63,13 @@ sub readhash
 			$val =~ s/\'$//g;
 
 			# Untaint variables read from hash
-			$var =~ /([A-Za-z0-9_-]*)/;        $var = $1;
-			$val =~ /([\w\W]*)/; $val = $1;
+			# trim space from begin and end
+			$var =~ s/^\s+//;
+			$var =~ s/\s+$//;
+			$var =~ /([A-Za-z0-9_-]*)/;
+			$var = $1;
+			$val =~ /([\w\W]*)/;
+			$val = $1;
 			$hash->{$var} = $val;
 		}
 	}

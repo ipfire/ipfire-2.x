@@ -1,4 +1,62 @@
 ------------------------------------------------------------------------
+r480 | ms | 2007-04-04 14:55:38 +0200 (Wed, 04 Apr 2007) | 3 lines
+
+Netzwerkscripts erweitert.
+Sprachsdateien aktualisiert, Menue fuer Firewallloggraphen hinzugefuegt.
+
+------------------------------------------------------------------------
+r479 | maniacikarus | 2007-04-03 22:53:31 +0200 (Tue, 03 Apr 2007) | 4 lines
+
+Samba CGI 2sprachig DE und ENG
+Anpassung an der Samba Controll Datei
+Tango Icons hinzugefügt
+
+------------------------------------------------------------------------
+r478 | ms | 2007-04-03 21:55:47 +0200 (Tue, 03 Apr 2007) | 2 lines
+
+BWM-NG hinzugefuegt
+
+------------------------------------------------------------------------
+r477 | ms | 2007-04-03 20:58:19 +0200 (Tue, 03 Apr 2007) | 2 lines
+
+Die letzten Quellcodepakete vom IPCop hinzugefuegt.
+
+------------------------------------------------------------------------
+r476 | ms | 2007-04-03 20:52:26 +0200 (Tue, 03 Apr 2007) | 3 lines
+
+Tag von SVN295 erstellt, da das die letzte funktionierende Version mit
+Kernel 2.4 ist.
+
+------------------------------------------------------------------------
+r475 | ms | 2007-04-03 20:41:59 +0200 (Tue, 03 Apr 2007) | 3 lines
+
+Farbiger Bash-Prompt.
+PPPoE-Script zur Einwahl.
+
+------------------------------------------------------------------------
+r474 | maniacikarus | 2007-03-31 15:26:25 +0200 (Sat, 31 Mar 2007) | 4 lines
+
+Samba Status und Logauswertung fertiggestelllt
+ausserdem eine Menge Codefixes
+einige Icons eingefügt
+
+------------------------------------------------------------------------
+r473 | ms | 2007-03-29 22:10:53 +0200 (Thu, 29 Mar 2007) | 2 lines
+
+Netzwerkbeta-Bugfixes...
+
+------------------------------------------------------------------------
+r472 | maniacikarus | 2007-03-29 21:50:28 +0200 (Thu, 29 Mar 2007) | 3 lines
+
+Upnp fast fertig gestellt zumindest was Web
+und Ctrl Datei angeht
+
+------------------------------------------------------------------------
+r471 | ms | 2007-03-29 20:18:27 +0200 (Thu, 29 Mar 2007) | 2 lines
+
+Neue Netzwerkerkennung-Beta
+
+------------------------------------------------------------------------
 r470 | ms | 2007-03-28 20:59:56 +0200 (Wed, 28 Mar 2007) | 2 lines
 
 Devel Version immer bauen lassen...
