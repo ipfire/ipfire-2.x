@@ -77,34 +77,30 @@ int main(int argc, char *argv[])
         if (strcmp(argv[1], "smbstop")==0)
         {
             safe_system("/etc/rc.d/init.d/samba stop");
-            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbstart")==0)
         {
             safe_system("/etc/rc.d/init.d/samba start");
-            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbrestart")==0)
         {
             safe_system("/etc/rc.d/init.d/samba restart");
-            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbreload")==0)
         {
             safe_system("/etc/rc.d/init.d/samba reload");
-            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbstatus")==0)
         {
-            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/smbstatus");
+            snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbstatus");
             safe_system(command);
             return 0;
         }
@@ -115,10 +111,8 @@ int main(int argc, char *argv[])
             safe_system(command);
             snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -m -g %s -p %s -s %s %s", argv[4], argv[3], argv[5], argv[2]);
             safe_system(command);
-            printf(command);
             snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s", argv[3], argv[3], argv[2]);
             safe_system(command);
-            printf(command);
             return 0;
         }
 
@@ -128,10 +122,8 @@ int main(int argc, char *argv[])
             safe_system(command);
             snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba Workstation' -g %s -s %s %s", argv[3], argv[4], argv[2]);
             safe_system(command);
-            printf(command);
             snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -a -m %s", argv[2]);
             safe_system(command);
-            printf(command);
             return 0;
         }
 
@@ -139,7 +131,6 @@ int main(int argc, char *argv[])
         {
             snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s", argv[3], argv[3], argv[2]);
             safe_system(command);
-            printf(command);
             return 0;
         }
 

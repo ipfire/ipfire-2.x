@@ -244,6 +244,7 @@ WARNING: translation string unused: sectors read from disk per second
 WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shared memory
+WARNING: translation string unused: smbreload
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: ssnetwork status
@@ -304,6 +305,8 @@ WARNING: untranslated string: Number of IPs for the pie chart
 WARNING: untranslated string: Number of Ports for the pie chart
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: down
+WARNING: untranslated string: firewall logs ip
+WARNING: untranslated string: firewall logs port
 WARNING: untranslated string: help
 WARNING: untranslated string: openvpn log
 WARNING: untranslated string: otherip
@@ -313,6 +316,7 @@ WARNING: untranslated string: pc add
 WARNING: untranslated string: red
 WARNING: untranslated string: remove x509
 WARNING: untranslated string: settingsc
+WARNING: untranslated string: smbrestart
 WARNING: untranslated string: up
 WARNING: untranslated string: urlfilter log
 WARNING: untranslated string: user log

@@ -19,6 +19,8 @@
 < dns server
 < download
 < err bk 10 password
+< firewall logs ip
+< firewall logs port
 < or
 < password crypting key
 < proxy no proxy extend

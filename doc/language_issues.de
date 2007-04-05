@@ -235,6 +235,7 @@ WARNING: translation string unused: sectors read from disk per second
 WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: select media
 WARNING: translation string unused: shared memory
+WARNING: translation string unused: smbreload
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: squid fix cache
@@ -315,6 +316,7 @@ WARNING: untranslated string: selecttraffic
 WARNING: untranslated string: settingsc
 WARNING: untranslated string: show areas
 WARNING: untranslated string: show lines
+WARNING: untranslated string: smbrestart
 WARNING: untranslated string: sstraffic
 WARNING: untranslated string: trafficblue
 WARNING: untranslated string: trafficdate
