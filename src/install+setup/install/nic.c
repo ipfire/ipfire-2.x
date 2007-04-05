@@ -48,14 +48,12 @@ int networkmenu(struct keyvalue *ethernetkv)
 				errorbox(ctr[TR_PROBE_FAILED]);
 			else
 			{
-				findnicdescription(driver, description);
+				//findnicdescription(driver, description);
 				sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
 				sprintf(message, ctr[TR_FOUND_NIC], NAME, description);
 				newtWinMessage(title, ctr[TR_OK], message);
 			}		
-		}			
-		else if (rc == 2)
-			choosecards(driver, driveroptions);
+		}
 		else
 			done = 1;	
 			
@@ -70,8 +68,6 @@ int networkmenu(struct keyvalue *ethernetkv)
 	/* Smoothie is not untarred yet, so we have to delay actually writing the
 	 * settings till later. */
 	replacekeyvalue(ethernetkv, "CONFIG_TYPE", "0");
-	replacekeyvalue(ethernetkv, "GREEN_DRIVER", driver);
-	replacekeyvalue(ethernetkv, "GREEN_DRIVER_OPTIONS", driveroptions);
 	replacekeyvalue(ethernetkv, "GREEN_DEV", "eth0");
 	replacekeyvalue(ethernetkv, "GREEN_DISPLAYDRIVER", driver);
 	

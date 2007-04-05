@@ -9,8 +9,6 @@
  * 2003-07-27 Robert Kerr - Added cooperative file locking to prevent any
  * clashes between setuid programs reading configuration and cgi scripts
  * trying to write it
- *
- * $Id: varval.c,v 1.4 2003/12/11 11:25:53 riddles Exp $
  * 
  */
  

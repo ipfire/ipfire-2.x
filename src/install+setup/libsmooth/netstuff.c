@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Contains network library functions.
  * 
- * $Id: netstuff.c,v 1.19.2.7 2004/11/05 23:40:17 alanh Exp $
- * 
  */
 
 #include "libsmooth.h"
@@ -322,261 +320,184 @@ int interfacecheck(struct keyvalue *kv, char *colour)
 	}
 	return 1;
 }
-	
-/* Network probing! */
-struct nic nics[] = {
-	{ "100VG-AnyLan Network Adapters, HP J2585B, J2585A, etc", "hp100" },
-	{ "3Com EtherLink III", "3c509" },
-	{ "3Com 3c501", "3c501" },
-	{ "3Com ISA EtherLink XL", "3c515" },
-	{ "3Com 3c503 and 3c503/16", "3c503" },
-	{ "3Com EtherLink MC (3c523)", "3c523" },
-	{ "3Com EtherLink MC/32 (3c527)", "3c527" },
-	{ "3Com EtherLink Plus (3c505)", "3c505" },
-	{ "3Com EtherLink 16", "3c507" },
-	{ "3Com \"Corkscrew\" EtherLink PCI III/XL, etc.", "3c59x" },
-	{ "3Com Typhoon Family (3C990, 3CR990, and variants)", "typhoon" },
-	{ "Adaptec Starfire/DuraLAN", "starfire" },
-	{ "Alteon AceNIC/3Com 3C985/Netgear GA620 Gigabit", "acenic" },
-	{ "AMD8111 based 10/100 Ethernet Controller", "amd8111e" },
-	{ "AMD LANCE/PCnetAllied Telesis AT1500,  J2405A, etc", "lance" },
-	{ "AMD PCnet32 and AMD PCnetPCI", "pcnet32" },
-	{ "Ansel Communications EISA 3200", "ac3200" },
-	{ "Apricot 680x0 VME, 82596 chipset", "82596" },
-	{ "AT1700/1720", "at1700" },
-	{ "Broadcom 4400", "b44" },
-	{ "Broadcom Tigon3", "tg3" },
-	{ "Cabletron E2100 series ethercards", "e2100" },
-	{ "CATC USB NetMate-based Ethernet", "catc" },
-	{ "CDC USB Ethernet", "CDCEther" },
-	{ "Crystal LAN CS8900/CS8920", "cs89x0" },
-	{ "Compaq Netelligent 10/100 TX PCI UTP, etc", "tlan" },
-	{ "D-Link DL2000-based Gigabit Ethernet", "dl2k" },
-	{ "Digi Intl. RightSwitch SE-X EISA and PCI", "dgrs" },
-	{ "Digital 21x4x Tulip PCI ethernet cards, etc.", "tulip" },
-	{ "Digital DEPCA & EtherWORKS,DEPCA, DE100, etc", "depca" },
-	{ "DM9102 PCI Fast Ethernet Adapter", "dmfe", },
-	{ "Dummy Network Card (testing)", "dummy", },
-	{ "EtherWORKS DE425 TP/COAX EISA, DE434 TP PCI, etc.", "de4x5" },
-	{ "EtherWORKS 3 (DE203, DE204 and DE205)", "ewrk3" },
-	{ "HP PCLAN/plus", "hp-plus" },
-	{ "HP LAN ethernet", "hp" },
-	{ "IBM LANA", "ibmlana" },
-	{ "ICL EtherTeam 16i/32" ,"eth16i" },
-	{ "Intel i82557/i82558 PCI EtherExpressPro", "e100" },
-	{ "Intel EtherExpress Cardbus Ethernet", "eepro100_cb" },
-	{ "Intel i82595 ISA EtherExpressPro10/10+ driver" ,"eepro" },
-	{ "Intel EtherExpress 16 (i82586)", "eexpress" },
-	{ "Intel Panther onboard i82596 driver", "lp486e" },
-	{ "Intel PRO/1000 Gigabit Ethernet", "e1000" },
-	{ "KLSI USB KL5USB101-based", "kaweth" },
-	{ "MiCom-Interlan NI5010 ethercard", "ni5010" },
-	{ "Mylex EISA LNE390A/B", "lne390", },
-	{ "Myson MTD-8xx PCI Ethernet", "fealnx" },
-	{ "National Semiconductor DP8381x" , "natsemi" },
-	{ "National Semiconductor DP83820" , "ns83820" },
-	{ "NE/2 MCA", "ne2" },
-	{ "NE2000 PCI cards, RealTEk RTL-8029, etc", "ne2k-pci" },
-	{ "NE1000 / NE2000 (non-pci)", "ne" },
-	{ "NI50 card (i82586 Ethernet chip)", "ni52" },
-	{ "NI6510, ni6510 EtherBlaster", "ni65" },
-	{ "Novell/Eagle/Microdyne NE3210 EISA", "ne3210" },
-	{ "NVidia Nforce2 Driver", "forcedeth" },
-	{ "Packet Engines Hamachi GNIC-II", "hamachi" },
-	{ "Packet Engines Yellowfin Gigabit-NIC", "yellowfin" },
-	{ "Pegasus/Pegasus-II USB ethernet", "pegasus" },
-	{ "PureData PDUC8028,WD8003 and WD8013 compatibles", "wd" },
-	{ "Racal-Interlan EISA ES3210", "es3210" },
-	{ "RealTek RTL-8139 Fast Ethernet", "8139too" },
-	{ "RealTek RTL-8139C+ series 10/100 PCI Ethernet", "8139cp" },
-	{ "RealTek RTL-8150 USB ethernet", "rtl8150" },
-	{ "RealTek RTL-8169 Gigabit Ethernet", "r8169" },
-	{ "SiS 900 PCI", "sis900" },
-	{ "SKnet MCA", "sk_mca" },
-	{ "SMC 9000 series of ethernet cards", "smc9194" },
-	{ "SMC EtherPower II", "epic100" },
-	{ "SMC Ultra/EtherEZ ISA/PnP Ethernet", "smc-ultra" },
-	{ "SMC Ultra32 EISA Ethernet", "smc-ultra32" },
-	{ "SMC Ultra MCA Ethernet", "smc-mca" },
-	{ "Sundance Alta", "sundance" },
-	{ "SysKonnect SK-98xx", "sk98lin" },
-	{ "Toshiba TC35815 Ethernet", "tc35815" },
-	{ "Tulip chipset Cardbus Ethernet", "tulip_cb" },
-	{ "USB Ethernet", "usbnet" },
-	{ "VIA Rhine PCI Fast Ethernet, etc", "via-rhine" },
-	{ "Winbond W89c840 Ethernet", "winbond-840" },
-	{ "Xircom Cardbus Ethernet", "xircom_cb" },
-	{ "Xircom (tulip-like) Cardbus Ethernet", "xircom_tulip_cb" },
-	{ NULL, NULL }
-};
 
 /* Funky routine for loading all drivers (cept those are already loaded.). */
 int probecards(char *driver, char *driveroptions)
 {
-	int c;
-	char **sections;
-	char drivercount;
-	int rc;
-	int choice;
-	int done = 0;
-	char message[1000];
-	char commandstring[STRING_SIZE];
-	FILE *handle;
-	char line[STRING_SIZE];
+	return 0;
+}
 
-	/* Count all nics. */
-	mysystem("/bin/probenic.sh count");
-	if ((handle = fopen("/drivercount", "r")))
-		fgets(line, STRING_SIZE-1, handle);
-	fclose(handle);
-	//system("rm -f /drivercount");
-	line[strlen(line) - 1] = 0;
-	drivercount = strtok(line, ".");
-	fprintf(flog, "Detected %s NICs in your system.\n", drivercount);
-	if (!drivercount > 0) {
+char *strupper(char *s)
+{
+ int n;
+ for (n=0;s[n];n++) s[n]=toupper(s[n]);
+ return s;
+}
+
+
+int write_configs_netudev(char *description, char *macaddr, char *colour)
+{	
+	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
+	
+	FILE *fp;
+	char commandstring[STRING_SIZE];
+	struct keyvalue *kv = initkeyvalues();
+	char temp1[STRING_SIZE], temp2[STRING_SIZE], temp3[STRING_SIZE];
+	char ucolour[STRING_SIZE];
+	
+	sprintf(ucolour, colour);
+	strupper(ucolour);
+
+	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
+	{
+		freekeyvalues(kv);
+		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		return 0;
+	}
+
+	sprintf(temp1, "%s_DEV", ucolour);
+	sprintf(temp2, "%s_MACADDR", ucolour);
+	sprintf(temp3, "%s0", colour);
+	replacekeyvalue(kv, temp1, temp3);
+	replacekeyvalue(kv, temp2, macaddr);
+
+	writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
+	freekeyvalues(kv);
+	
+	if( (fp = fopen(KNOWN_NICS, "a")) == NULL )
+	{
+		fprintf(stderr,"Couldn't open "KNOWN_NICS);
 		return 1;
 	}
+	fprintf(fp,"%s;%s;\n", description, macaddr);
+	fclose(fp);
 
-	sections = malloc(drivercount * sizeof(char *));
+	// Make sure that there is no conflict
+	snprintf(commandstring, STRING_SIZE, "/usr/bin/touch "UDEV_NET_CONF" >/dev/null 2>&1");
+  system(commandstring);
+  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
+  system(commandstring);
+  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", colour);
+	system(commandstring);
 
-	struct driver drivers[drivercount];
-	strcpy(drivers[0].modulename, "pcnet32");
-
-	fprintf(flog, "TEST0.\n");
-	c = 0;
-	while (drivers[c - 1].modulename)
+	if( (fp = fopen(UDEV_NET_CONF, "a")) == NULL )
 	{
-		sections[c] = drivers[c - 1].description;
-		fprintf(flog, "TEST1.\n");
-		c++;
+		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
+		return 1;
 	}
-	sections[c] = NULL;
-	fprintf(flog, "TEST2.\n");
-	
-	strcpy(driver, "");
-	strcpy(driveroptions, "");
-
-	done = 0; choice = 1;
-	while (!done)
-	{
-		rc = newtWinMenu(ctr[TR_SELECT_NETWORK_DRIVER],
-			ctr[TR_SELECT_NETWORK_DRIVER_LONG], 50, 5, 5, 6,
-			sections, &choice, ctr[TR_OK], ctr[TR_CANCEL], NULL);
-		if (rc == 0 || rc == 1)
-		{
-			if (choice > 0)
-			{
-				/* Find module number, load module. */
-				c = choice - 1;	
-		
-				if (!checkformodule(nics[c].modulename))
-				{
-					sprintf(commandstring, "/sbin/modprobe %s", nics[c].modulename);
-					sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
-					if (runcommandwithstatus(commandstring, message) == 0)
-					{
-						strcpy(driver, nics[c].modulename);
-						strcpy(driveroptions, "");
-						done = 1;
-					}
-					else
-						errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
-				}
-				else
-					errorbox(ctr[TR_THIS_DRIVER_MODULE_IS_ALREADY_LOADED]);
-			}
-			else
-			{
-				manualdriver(driver, driveroptions);
-				if (strlen(driver))
-					done = 1;
-			}
-		}
-		else
-			done = 1;	
-	}
+	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", macaddr, colour, description);
+	fclose(fp);	
 	
 	return 0;
 }
 
-/* A listbox for selected the card... with a * MANUAL * entry at top for
- * manual module names. */
-int choosecards(char *driver, char *driveroptions)
+int nicmenu(char *colour)
 {
-	int c;
-	char **sections;
-	int drivercount;
-	int rc;
-	int choice;
-	char commandstring[STRING_SIZE];
-	char message[STRING_SIZE];
-	int done = 0;
-	
-	/* Count 'em */
-	c = 0; drivercount = 0;
-	while (nics[c].modulename)
-	{
-		drivercount++;
-		c++;
-	}
-	drivercount++;
-	sections = malloc((drivercount + 1) * sizeof(char *));
-	
-	/* Copy 'em. */
-	c = 0;
-	sections[c] = ctr[TR_MANUAL];
-	c++;
-	while (nics[c - 1].modulename)
-	{
-		sections[c] = nics[c - 1].description;
-		c++;
-	}
-	sections[c] = NULL;
-	
-	strcpy(driver, "");
-	strcpy(driveroptions, "");
-	
-	done = 0; choice = 1;
-	while (!done)
-	{
-		rc = newtWinMenu(ctr[TR_SELECT_NETWORK_DRIVER],
-			ctr[TR_SELECT_NETWORK_DRIVER_LONG], 50, 5, 5, 6,
-			sections, &choice, ctr[TR_OK], ctr[TR_CANCEL], NULL);
-		if (rc == 0 || rc == 1)
-		{
-			if (choice > 0)
-			{
-				/* Find module number, load module. */
-				c = choice - 1;	
-		
-				if (!checkformodule(nics[c].modulename))
-				{
-					sprintf(commandstring, "/sbin/modprobe %s", nics[c].modulename);
-					sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
-					if (runcommandwithstatus(commandstring, message) == 0)
-					{
-						strcpy(driver, nics[c].modulename);
-						strcpy(driveroptions, "");
-						done = 1;
-					}
-					else
-						errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
-				}
-				else
-					errorbox(ctr[TR_THIS_DRIVER_MODULE_IS_ALREADY_LOADED]);
-			}
-			else
-			{
-				manualdriver(driver, driveroptions);
-				if (strlen(driver))
-					done = 1;
-			}
-		}
-		else
-			done = 1;	
-	}
+			FILE *fp;
+			char temp_line[STRING_SIZE];
+			struct nic nics[20], *pnics;
+			pnics = nics;
+			struct knic knics[20], *pknics;
+			pknics = knics;
+			int rc, choise, count = 0, kcount = 0, i, found;
+			char macaddr[STRING_SIZE], description[STRING_SIZE];
+			char message[STRING_SIZE];
 
-	return 1;
+			char MenuInhalt[20][80];
+			char *pMenuInhalt[20];
+			
+			mysystem("/bin/probenic.sh");
+			
+			// Read the nics we already use
+			if( (fp = fopen(KNOWN_NICS, "r")) == NULL )
+			{
+				fprintf(flog,"Couldn't open " KNOWN_NICS);
+				return 1;
+			}
+			
+			while (fgets(temp_line, STRING_SIZE, fp) != NULL)
+			{
+				strcpy(knics[kcount].description, strtok(temp_line,";"));
+				strcpy(knics[kcount].macaddr , strtok(NULL,";"));
+				if (strlen(knics[kcount].macaddr) > 5 ) kcount++;
+			}
+			fclose(fp);
+
+			// Read our scanned nics
+			if( (fp = fopen(SCANNED_NICS, "r")) == NULL )
+			{
+				fprintf(stderr,"Couldn't open "SCANNED_NICS);
+				return 1;
+			}
+			while (fgets(temp_line, STRING_SIZE, fp) != NULL)
+			{
+				strcpy(description, strtok(temp_line,";"));
+				strcpy(macaddr,     strtok(NULL,";"));
+				found = 0;
+				if (strlen(macaddr) > 5 ) {
+					for (i=0; i < kcount; i++)
+					{
+						// Check if the nic is already in use
+						if (strcmp(pknics[i].macaddr, macaddr) == NULL )
+						{
+							found = 1;
+						}
+					}
+					if (!found)
+					{
+						strcpy( pnics[count].description , description );
+						strcpy( pnics[count].macaddr , macaddr );
+						count++;
+					}
+				}
+			}
+			fclose(fp);
+			
+			// If new nics are found...
+			if (count > 0) {
+				char cMenuInhalt[STRING_SIZE];
+				for (i=0 ; i < count ; i++)
+				{
+					if ( strlen(nics[i].description) < 52 )
+						strncpy(MenuInhalt[i], nics[i].description + 1, strlen(nics[i].description)- 2);
+					else
+					{
+						strncpy(cMenuInhalt, nics[i].description + 1, 50);
+						strncpy(MenuInhalt[i], cMenuInhalt,(strrchr(cMenuInhalt,' ') - cMenuInhalt));
+						strcat (MenuInhalt[i], "...");
+					}
+					while ( strlen(MenuInhalt[i]) < 50)
+						// Fill with space.
+						strcat( MenuInhalt[i], " ");
+	
+					strcat(MenuInhalt[i], " (");
+					strcat(MenuInhalt[i], nics[i].macaddr);
+					strcat(MenuInhalt[i], ")");
+					pMenuInhalt[i] = MenuInhalt[i];
+				}
+				
+				sprintf(message, "Es wurde(n) %d freie Netzwerkkarte(n) in Ihrem System gefunden.\nBitte waehlen Sie im naechsten Dialog eine davon aus.\n", count);
+				
+				newtWinMessage("NetcardMenu", ctr[TR_OK], message);
+
+				sprintf(message, "Bitte waehlen Sie eine der untenstehenden Netzwerkkarten fuer die Schnittstelle \"%s\" aus.\n", colour);
+		
+				rc = newtWinMenu("NetcardMenu", message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
+				
+				if ( rc == 0 || rc == 1) {
+					write_configs_netudev(pnics[choise].description, pnics[choise].macaddr, colour);
+				} else if (rc == 2) {
+					manualdriver("pcnet32","");
+	      } else {
+	      	errorbox("Sie haben keine Netzwerkkarte ausgewaehlt.\n");
+					return 1;
+				}
+				return 0;
+		} else {
+			// We have to add here that you can manually add a device
+			newtWinMessage("NetcardMenu", ctr[TR_OK], "Es wurden leider keine freien Netzwerkkarten fuer die Schnittstelle \"%s\" in ihrem System gefunden.", colour);
+			return 1;
+		}
 }
 
 /* Manual entry for gurus. */
@@ -623,57 +544,4 @@ int manualdriver(char *driver, char *driveroptions)
 	free(values[0]);
 
 	return 1;
-}
-
-/* Returns the total number of nics current available as ethX devices. */
-int countcards(void)
-{
- 	FILE *file;
-	char buffer[STRING_SIZE];
-	char *start;
-	int niccount = 0;
-	
-	if (!(file = fopen("/proc/net/dev", "r")))
-	{
-		fprintf(flog, "Unable to open /proc/net/dev in countnics()\n");
-		return 0;
-	}
-	
-	while (fgets(buffer, STRING_SIZE, file))
-	{
-		start = buffer;
-		while (*start == ' ') start++;
-		if (strncmp(start, "eth", strlen("eth")) == 0)
-			niccount++;
-		if (strncmp(start, "dummy", strlen("dummy")) == 0)
-			niccount++;
-	}
-	
-	fclose(file);
-	
-	return niccount;
-}
-
-/* Finds the listed module name and copies the card description back. */
-int findnicdescription(char *modulename, char *description)
-{
-	int c = 0;
-	
-	if (strcmp(modulename, "pcmcia") == 0) {
-		strcpy(description, "PCMCIA Ethernet card");
-		return 0;
-	}
-
-	while (nics[c].description)
-	{
-		if (strcmp(nics[c].modulename, modulename) == 0)
-		{
-			strcpy(description, nics[c].description);
-			return 1;
-		}
-		c++;
-	}
-	
-	strcpy(description, "UNKNOWN");
-	return 0;
 }

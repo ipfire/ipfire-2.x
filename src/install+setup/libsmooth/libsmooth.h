@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Contains prototypes for library functions.
  * 
- * $Id: libsmooth.h,v 1.4.2.3 2005/10/30 23:25:35 franck78 Exp $
- * 
  */
 
 #ifndef ___LIBSMOOTH_H
@@ -45,23 +43,24 @@
 #define DHCP 3
 #define NETCHANGE_TOTAL 4
 
+#define KNOWN_NICS   "/var/ipfire/ethernet/known_nics"
+#define SCANNED_NICS "/var/ipfire/ethernet/scanned_nics"
+
 struct keyvalue
 {
  	char key[STRING_SIZE];
  	char value[STRING_SIZE];
  	struct keyvalue *next;  
 };
-
-/* for stuff in net.c */
 struct nic
 {
-	char *description;
-	char *modulename;
+	char description[256];
+	char macaddr[20];
 };
-struct driver
+struct knic
 {
-	char *description;
-	char *modulename;
+	char description[256];
+	char macaddr[20];
 };
 
 /* libsmooth.c */
@@ -85,11 +84,8 @@ int gettype(char *type);
 int setnetaddress(struct keyvalue *kv, char *colour);
 void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
-int probecards(char *driver, char *driveroptions);
-int choosecards(char *driver, char *driveroptions);
+int nicmenu(char *colour);
 int manualdriver(char *driver, char *driveroptions);
-int countcards(void);
-int findnicdescription(char *modulename, char *description);
 	  
 /* data.c */
 struct keyvalue *initkeyvalues(void);

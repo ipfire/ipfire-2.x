@@ -61,5 +61,6 @@ $(TARGET) :
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'"
 
 	cd $(DIR_APP)/setup && install -m 0755 setup /usr/local/sbin
+	install -m 0755 $(DIR_SRC)/src/install+setup/install/probenic.sh /bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

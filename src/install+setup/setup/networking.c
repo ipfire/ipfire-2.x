@@ -104,7 +104,6 @@ int handlenetworking(void)
 				ctr[TR_PUSHING_NETWORK_DOWN]);
 			runcommandwithstatus("/etc/rc.d/init.d/network start",
 				ctr[TR_PULLING_NETWORK_UP]);
-//			mysystem("/etc/rc.d/rc.pcmcia start");
 		}
 	}
 	
@@ -245,11 +244,7 @@ int configtypemenu(void)
 
 	if (rc == 0 || rc == 1)
 	{
-		runcommandwithstatus("/etc/rc.d/init.d/network red down",
-			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
-		runcommandwithstatus("/etc/rc.d/init.d/network blue down",
-			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
-		runcommandwithstatus("/etc/rc.d/init.d/network orange down",
+		runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
 			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 	
 		sprintf(temp, "%d", choice);
@@ -269,12 +264,15 @@ int configtypemenu(void)
 /* Driver menu.  Choose drivers.. */
 int drivermenu(void)
 {
+	FILE *fp;
 	struct keyvalue *kv = initkeyvalues();
-	char message[1000];
+	char message[1000], macaddr[STRING_SIZE];
+	char temp_line[STRING_SIZE];
 	char temp[STRING_SIZE], temp1[STRING_SIZE];
-	char driver[STRING_SIZE], dev[STRING_SIZE];
+	struct knic knics[20], *pknics;
+	pknics = knics;
 	int configtype;
-	int rc;
+	int rc, i = 0, kcount = 0;
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -295,38 +293,60 @@ int drivermenu(void)
 
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 	
-	/* This horrible big formats the heading :( */
-	strcpy(driver, ""); findkey(kv, "GREEN_DISPLAYDRIVER", driver);
-	findnicdescription(driver, temp);
-	strcpy(dev, ctr[TR_UNSET]); findkey(kv, "GREEN_DEV", dev);
-	if (!strlen(dev)) strcpy(dev, ctr[TR_UNSET]);
-	sprintf(temp1, "GREEN: %s (%s)\n", temp, dev);
+	if( (fp = fopen(KNOWN_NICS, "r")) == NULL )
+	{
+		fprintf(flog,"Couldn't open " KNOWN_NICS);
+		return 1;
+	}
+	while (fgets(temp_line, STRING_SIZE, fp) != NULL)
+	{
+		strcpy(knics[kcount].description, strtok(temp_line,";"));
+		strcpy(knics[kcount].macaddr , strtok(NULL,";"));
+		if (strlen(knics[kcount].macaddr) > 5 ) kcount++;
+	}
+	fclose(fp);
+	
+	strcpy(macaddr, ctr[TR_UNSET]);
+	findkey(kv, "GREEN_MACADDR", macaddr);
+	for (i=0; i < kcount; i++)
+	{	// Check if the nic is already in use
+		if (strcmp(pknics[i].macaddr, macaddr) == NULL )
+			break;
+	}
+	sprintf(temp1, "GREEN: %s (%s / green0)\n", pknics[i].description, pknics[i].macaddr);
 	strcat(message, temp1);
-	if (HAS_BLUE)
-	{
-		strcpy(driver, ""); findkey(kv, "BLUE_DISPLAYDRIVER", driver);
-		findnicdescription(driver, temp);
-		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "BLUE_DEV", dev);
-		if (!strlen(dev)) strcpy(dev, ctr[TR_UNSET]);
-		sprintf(temp1, "BLUE: %s (%s)\n", temp, dev);
+	
+	if (HAS_BLUE) {
+		strcpy(macaddr, ctr[TR_UNSET]);
+		findkey(kv, "BLUE_MACADDR", macaddr);
+		for (i=0; i < kcount; i++)
+		{	// Check if the nic is already in use
+			if (strcmp(pknics[i].macaddr, macaddr) == NULL )
+				break;
+		}
+		sprintf(temp1, "BLUE: %s (%s / blue0)\n", pknics[i].description, pknics[i].macaddr);
 		strcat(message, temp1);
 	}
-	if (HAS_ORANGE)
-	{
-		strcpy(driver, ""); findkey(kv, "ORANGE_DISPLAYDRIVER", driver);
-		findnicdescription(driver, temp);
-		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "ORANGE_DEV", dev);
-		if (!strlen(dev)) strcpy(dev, ctr[TR_UNSET]);
-		sprintf(temp1, "ORANGE: %s (%s)\n", temp, dev);
+	if (HAS_ORANGE) {
+		strcpy(macaddr, ctr[TR_UNSET]);
+		findkey(kv, "ORANGE_MACADDR", macaddr);
+		for (i=0; i < kcount; i++)
+		{	// Check if the nic is already in use
+			if (strcmp(pknics[i].macaddr, macaddr) == NULL )
+				break;
+		}
+		sprintf(temp1, "ORANGE: %s (%s / orange0)\n", pknics[i].description, pknics[i].macaddr);
 		strcat(message, temp1);
 	}
-	if (HAS_RED)
-	{
-		strcpy(driver, ""); findkey(kv, "RED_DISPLAYDRIVER", driver);
-		findnicdescription(driver, temp);
-		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "RED_DEV", dev);
-		if (!strlen(dev)) strcpy(dev, ctr[TR_UNSET]);
-		sprintf(temp1, "RED: %s (%s)\n", temp, dev);
+	if (HAS_RED) {
+		strcpy(macaddr, ctr[TR_UNSET]);
+		findkey(kv, "RED_MACADDR", macaddr);
+		for (i=0; i < kcount; i++)
+		{	// Check if the nic is already in use
+			if (strcmp(pknics[i].macaddr, macaddr) == NULL )
+				break;
+		}
+		sprintf(temp1, "RED: %s (%s / red0)\n", pknics[i].description, pknics[i].macaddr);
 		strcat(message, temp1);
 	}
 	strcat(message, ctr[TR_DO_YOU_WISH_TO_CHANGE_THESE_SETTINGS]);
@@ -343,26 +363,22 @@ int drivermenu(void)
 	return 1;
 }
 
+int cardassigned(char *colour)
+{
+	char command[STRING_SIZE];
+	sprintf(command, "grep -q %s < /etc/udev/rules.d/30-persistent-network.rules 2>/dev/null", colour);
+	if (system(command))
+		return 0;
+	else
+		return 1;
+}
+
 int changedrivers(void)
 {
 	struct keyvalue *kv = initkeyvalues();
-	char message[1000];
 	char temp[STRING_SIZE];
-	char driver[STRING_SIZE];
 	int configtype;
-	int rc;
-	int c;
-	int needcards, sofarallocated, countofcards, toallocate;
-	char *orange = "ORANGE";
-	char *blue = "BLUE";
-	char *red = "RED";
-	char *sections[4];
-	int choice;
-	char nexteth[STRING_SIZE];
-	int abort;
-	char currentdriver[STRING_SIZE], currentdriveroptions[STRING_SIZE];
-	char displaydriver[STRING_SIZE];
-	struct stat st;
+	int green = 0, red = 0, blue = 0, orange = 0;
 	
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -370,186 +386,46 @@ int changedrivers(void)
 		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
 		return 0;
 	}
-
+	
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
-
-	runcommandwithstatus("/etc/rc.d/init.d/network red down",
-		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
-	runcommandwithstatus("/etc/rc.d/init.d/network blue down",
-		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
-	runcommandwithstatus("/etc/rc.d/init.d/network orange down",
-		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 	
-	/* Remove all modules not needed for green networking. */
-	c = 0;
-	strcpy(driver, ""); findkey(kv, "GREEN_DRIVER", driver);
-	if (strcmp(driver, "pcmcia") != 0) {
-		stat("/proc/bus/pccard", &st);
-		mysystem("/etc/rc.d/rc.pcmcia stop");
-		if (S_ISDIR(st.st_mode)) {
-			mysystem("/sbin/modprobe pcmcia_core");
-			mysystem("/sbin/modprobe pcmcia-controller");
-			mysystem("/sbin/modprobe ds");
-		}
-	}
-	while (nics[c].modulename)
-	{
-		if (strcmp(nics[c].modulename, driver) != 0)
-		{
-			if (checkformodule(nics[c].modulename))
-			{
-				sprintf(temp, "/sbin/rmmod %s", nics[c].modulename);
-				mysystem(temp);
-			}
-		}
-		c++;
-	}
-	
-	/* Blank them so the rc.netaddress.up does not get confused. */
-	replacekeyvalue(kv, "ORANGE_DEV", "");
-	replacekeyvalue(kv, "BLUE_DEV", "");
-	replacekeyvalue(kv, "RED_DEV", "");
-	
+	runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
+		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+		
 	if (configtype == 0)
-		needcards = 1;
-	else if (configtype == 1 || configtype == 2 || configtype == 4)
-		needcards = 2;
+		{ green = 1; }
+	else if (configtype == 1)
+		{ green = 1; orange = 1; }
+	else if (configtype == 2)
+		{ green = 1; red = 1; }
+	else if (configtype == 3)
+		{ green = 1; red = 1; orange = 1; }
+	else if (configtype == 4)
+		{ green = 1; blue = 1; }
+	else if (configtype == 5)
+		{ green = 1; blue = 1; orange = 1; }
+	else if (configtype == 6)
+		{ green = 1; red = 1; blue = 1; }
 	else if (configtype == 7)
-		needcards = 4;
-	else
-		needcards = 3;
-
-	/* This is the green card. */		
-	sofarallocated = 1;
-
-	findkey(kv, "GREEN_DRIVER", currentdriver);
-	findkey(kv, "GREEN_DRIVER_OPTIONS", currentdriveroptions);
-	strcpy(displaydriver, currentdriver);
+		{ green = 1; red = 1; blue = 1; orange = 1;}
 	
-	if (countcards() > 1)
-		strcpy(currentdriver, "");
-		
-	abort = 0;
-	/* Keep going till all cards are got, or they give up. */
-	while (sofarallocated < needcards && !abort)
-	{
-		countofcards = countcards();
-
-		/* This is how many cards were added by the last module. */
-		toallocate = countofcards - sofarallocated;
-		while (toallocate > 0 && sofarallocated < needcards)
-		{
-			findnicdescription(displaydriver, temp);
-			sprintf(message, ctr[TR_UNCLAIMED_DRIVER], temp);
-			c = 0; choice = 0;
-			strcpy(temp, ""); findkey(kv, "BLUE_DEV", temp);
-			if (HAS_BLUE && !strlen(temp))
-			{
-				sections[c] = blue;
-				c++;
-			}
-			strcpy(temp, ""); findkey(kv, "ORANGE_DEV", temp);
-			if (HAS_ORANGE && !strlen(temp))
-			{
-				sections[c] = orange;
-				c++;
-			}
-			strcpy(temp, ""); findkey(kv, "RED_DEV", temp);			
-			if (HAS_RED && !strlen(temp))
-			{
-				sections[c] = red;
-				c++;
-			}
-			sections[c] = NULL;
-			rc = newtWinMenu(ctr[TR_CARD_ASSIGNMENT],
-				message, 50, 5,	5, 6, sections, &choice, ctr[TR_OK],
-				ctr[TR_CANCEL], NULL);	
-			if (rc == 0 || rc == 1)
-			{
-				/* Now we see which iface needs its settings changed. */
-				sprintf(nexteth, "eth%d", sofarallocated);
-				if (strcmp(sections[choice], blue) == 0)
-				{
-					replacekeyvalue(kv, "BLUE_DEV", nexteth);
-					replacekeyvalue(kv, "BLUE_DRIVER", currentdriver);
-					replacekeyvalue(kv, "BLUE_DRIVER_OPTIONS", currentdriveroptions);
-					replacekeyvalue(kv, "BLUE_DISPLAYDRIVER", displaydriver);
-					sofarallocated++;
-					toallocate--;
-					strcpy(currentdriver, "");
-					strcpy(currentdriveroptions, "");
-				}
-				if (strcmp(sections[choice], orange) == 0)
-				{
-					replacekeyvalue(kv, "ORANGE_DEV", nexteth);
-					replacekeyvalue(kv, "ORANGE_DRIVER", currentdriver);
-					replacekeyvalue(kv, "ORANGE_DRIVER_OPTIONS", currentdriveroptions);
-					replacekeyvalue(kv, "ORANGE_DISPLAYDRIVER", displaydriver);
-					sofarallocated++;
-					toallocate--;
-					strcpy(currentdriver, "");
-					strcpy(currentdriveroptions, "");
-				}
-				if (strcmp(sections[choice], red) == 0)
-				{
-					replacekeyvalue(kv, "RED_DEV", nexteth);
-					replacekeyvalue(kv, "RED_DRIVER", currentdriver);
-					replacekeyvalue(kv, "RED_DRIVER_OPTIONS", currentdriveroptions);
-					replacekeyvalue(kv, "RED_DISPLAYDRIVER", displaydriver);
-					sofarallocated++;
-					toallocate--;
-					strcpy(currentdriver, "");
-					strcpy(currentdriveroptions, "");
-				}
-			}
-			else
-			{
-				break;
-			}
-		}
-		
-		/* Need another module!  The nitty gritty code is in libsmooth. */
-		if (sofarallocated < needcards)
-		{
-			rc = newtWinTernary(ctr[TR_CARD_ASSIGNMENT], ctr[TR_PROBE], 
-				ctr[TR_SELECT], ctr[TR_CANCEL], ctr[TR_NO_UNALLOCATED_CARDS]);
-				
-			if (rc == 0 || rc == 1)
-			{
-				probecards(currentdriver, currentdriveroptions);
-				if (!strlen(currentdriver))
-					errorbox(ctr[TR_PROBE_FAILED]);
-			}				
-			else if (rc == 2)
-				choosecards(currentdriver, currentdriveroptions);
-			else
-				abort = 1;
-				
-			strcpy(displaydriver, currentdriver);
-		}
-	}
+	if (green && !cardassigned("green"))
+		nicmenu("green");
+	if (red && !cardassigned("red"))
+		nicmenu("red");
+	if (blue && !cardassigned("blue"))
+		nicmenu("blue");
+	if (orange && !cardassigned("orange"))
+		nicmenu("orange");
 	
-	countofcards = countcards();
-
-	if (countofcards >= needcards)
-	{
-		newtWinMessage(ctr[TR_CARD_ASSIGNMENT], ctr[TR_OK],
-			ctr[TR_ALL_CARDS_SUCCESSFULLY_ALLOCATED]);
-	}
-	else
-		errorbox(ctr[TR_NOT_ENOUGH_CARDS_WERE_ALLOCATED]);
-		
-	writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
+	// writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 
 	freekeyvalues(kv);
-
-	netaddresschange = 1;
-	
 	return 1;
 }
 
-/* Let user change GREEN address. */
+// Let user change GREEN address.
 int greenaddressmenu(void)
 {
 	struct keyvalue *kv = initkeyvalues();
@@ -581,7 +457,7 @@ int greenaddressmenu(void)
 	return 0;
 }
 
-/* They can change BLUE, ORANGE and GREEN too :) */
+// They can change BLUE, ORANGE and GREEN too :)
 int addressesmenu(void)
 {
 	struct keyvalue *kv = initkeyvalues();
