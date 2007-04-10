@@ -52,7 +52,7 @@ $(TARGET) :
 
 	# Create directories
 	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt}
-	-mkdir -pv /{media/{floppy,cdrom},sbin,srv,var}
+	-mkdir -pv /{media/{floppy,cdrom,usbkey},sbin,srv,var}
 	-install -dv -m 0750 /root
 	-install -dv -m 1777 /tmp /var/tmp
 	-mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src}

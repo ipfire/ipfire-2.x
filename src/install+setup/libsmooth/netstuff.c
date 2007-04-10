@@ -409,12 +409,11 @@ int nicmenu(char *colour)
 			mysystem("/bin/probenic.sh");
 			
 			// Read the nics we already use
-			if( (fp = fopen(KNOWN_NICS, "r")) == NULL )
+			if((fp = fopen(KNOWN_NICS, "r")) == NULL)
 			{
 				fprintf(flog,"Couldn't open " KNOWN_NICS);
 				return 1;
 			}
-			
 			while (fgets(temp_line, STRING_SIZE, fp) != NULL)
 			{
 				strcpy(knics[kcount].description, strtok(temp_line,";"));
@@ -495,7 +494,7 @@ int nicmenu(char *colour)
 				return 0;
 		} else {
 			// We have to add here that you can manually add a device
-			newtWinMessage("NetcardMenu", ctr[TR_OK], "Es wurden leider keine freien Netzwerkkarten fuer die Schnittstelle \"%s\" in ihrem System gefunden.", colour);
+			errorbox("Es wurden leider keine freien Netzwerkkarten fuer die Schnittstelle in ihrem System gefunden.");
 			return 1;
 		}
 }

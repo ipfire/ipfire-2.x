@@ -64,7 +64,7 @@ $(TARGET) :
 	# Touch empty files
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
-	    dhcp/fixleases dhcp/advoptions dmzholes/config ethernet/aliases ethernet/settings \
+	    dhcp/fixleases dhcp/advoptions dmzholes/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings fwlogs/ipsettings fwlogs/portsettings\
 	    isdn/settings main/hosts main/settings optionsfw/settings outgoing/settings outgoing/rules pakfire/settings \
 	    portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \

@@ -379,7 +379,7 @@ int changedrivers(void)
 	char temp[STRING_SIZE];
 	int configtype;
 	int green = 0, red = 0, blue = 0, orange = 0;
-	
+
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(kv);
@@ -387,12 +387,9 @@ int changedrivers(void)
 		return 0;
 	}
 	
-	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
-	configtype = atol(temp);
-	
 	runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
 		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
-		
+
 	if (configtype == 0)
 		{ green = 1; }
 	else if (configtype == 1)
@@ -408,7 +405,7 @@ int changedrivers(void)
 	else if (configtype == 6)
 		{ green = 1; red = 1; blue = 1; }
 	else if (configtype == 7)
-		{ green = 1; red = 1; blue = 1; orange = 1;}
+		{ green = 1; red = 1; blue = 1; orange = 1; }
 	
 	if (green && !cardassigned("green"))
 		nicmenu("green");

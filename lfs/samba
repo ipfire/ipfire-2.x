@@ -100,7 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
 	cp -f $(DIR_CONF)/xinetd/swat /var/ipfire/xinetd/xinetd.d/
 	-mkdir -p /var/ipfire/samba	
-	cp -vf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
+	cp -vrf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
 	chown nobody:nobody -R /var/ipfire/samba/
 	cp -vfp /var/ipfire/samba/default.global /var/ipfire/samba/global
 	cp -vfp /var/ipfire/samba/default.pdc /var/ipfire/samba/pdc
@@ -108,8 +108,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -vfp /var/ipfire/samba/default.shares /var/ipfire/samba/shares
 	cp -vfp /var/ipfire/samba/default.printer /var/ipfire/samba/printer
 	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
-	useradd -c 'Samba User' -s /bin/false
-	groupadd sambauser
-	groupadd sambawks
+	#useradd -c 'Samba User' -s /bin/false
+	#groupadd sambauser
+	#groupadd sambawks
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

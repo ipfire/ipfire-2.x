@@ -111,6 +111,7 @@ else
 					extras/firmware extras/floppy extras/path_id \
 					extras/scsi_id extras/usb_id extras/volume_id" install
 	cd $(DIR_APP) && cp -v udev-config-6.2/[0-9]* /etc/udev/rules.d/
+	touch /etc/udev/rules.d/30-persistent-network.rules
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

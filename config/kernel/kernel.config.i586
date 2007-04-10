@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.42-ipfire
-# Sun Mar 25 17:52:03 2007
+# Sat Apr  7 18:35:00 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -1789,7 +1789,7 @@ CONFIG_UDF_NLS=y
 CONFIG_FAT_FS=m
 # CONFIG_MSDOS_FS is not set
 CONFIG_VFAT_FS=m
-CONFIG_FAT_DEFAULT_CODEPAGE=437
+CONFIG_FAT_DEFAULT_CODEPAGE=850
 CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
 # CONFIG_NTFS_FS is not set
 
@@ -1977,7 +1977,8 @@ CONFIG_CRYPTO_DEFLATE=y
 #
 # Hardware crypto devices
 #
-# CONFIG_CRYPTO_DEV_PADLOCK is not set
+CONFIG_CRYPTO_DEV_PADLOCK=m
+CONFIG_CRYPTO_DEV_PADLOCK_AES=y
 
 #
 # Library routines
