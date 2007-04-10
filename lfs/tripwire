@@ -91,4 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 											cp -vf $(DIR_APP)/bin/$$i /usr/sbin; \
 										done 
 	@rm -rf $(DIR_APP)
+	cp -vrf $(DIR_SRC)/config/tripwire/* /var/ipfire/tripwire/
+	cp -vfp /var/ipfire/tripwire/twcfg.txt /var/ipfire/tripwire/twcfg.default
+	cp -vfp /var/ipfire/tripwire/twpol.txt /var/ipfire/tripwire/twpol.default
 	@$(POSTBUILD)

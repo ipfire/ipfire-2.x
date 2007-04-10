@@ -107,7 +107,7 @@ print "</table></div>\n";
 &Header::closebox();
 
 &Header::openbox('100%', 'center', $Lang::tr{'memory'});
-print "<table><tr><td><table>";
+print "<table width='95%' cellspacing='5'>";
 my $ram=0;
 my $size=0;
 my $used=0;
@@ -123,7 +123,7 @@ while(<FREE>)
         {
     print <<END
 <tr>
-<td>&nbsp;</td>
+<td align='center'>&nbsp;</td>
 <td align='center' class='boldbase'><b>$Lang::tr{'size'}</b></td>
 <td align='center' class='boldbase'><b>$Lang::tr{'used'}</b></td>
 <td align='center' class='boldbase'><b>$Lang::tr{'free'}</b></td>
@@ -177,19 +177,17 @@ END
 }
 close FREE;
 print <<END
-</table></td><td>
-<table>
+<tr><td class='boldbase' colspan='2'><br /></td></tr>
 <tr><td class='boldbase'><b>$Lang::tr{'shared'}</b></td><td align='right'>$shared</td></tr>
 <tr><td class='boldbase'><b>$Lang::tr{'buffers'}</b></td><td align='right'>$buffers</td></tr>
 <tr><td class='boldbase'><b>$Lang::tr{'cached'}</b></td><td align='right'>$cached</td></tr>
 </table>
-</td></tr></table>
 END
 ;
 &Header::closebox();
 
 &Header::openbox('100%', 'center', $Lang::tr{'disk usage'});
-print "<table width=66%>\n";
+print "<table width='95%' cellspacing='5'>\n";
 open(DF,'/bin/df -B M -x rootfs|');
 while(<DF>)
 {
@@ -230,7 +228,7 @@ END
         }
 }
 close DF;
-print "<tr><td colspan='6'>&nbsp;\n<tr><td colspan='6'><h2>Inodes</h2>\n";
+print "<tr><td colspan='6'>&nbsp;\n<tr><td colspan='6'><h3>Inodes</h3>\n";
 
 open(DF,'/bin/df -i -x rootfs|');
 while(<DF>)

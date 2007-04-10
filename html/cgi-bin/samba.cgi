@@ -24,7 +24,7 @@ my $message = "";
 my $errormessage = "";
 my @Logs = qx(ls /var/log/samba/);
 my $Log =$Lang::tr{'no log selected'};
-my $defaultoption= "[Share]\npath = /var/samba/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\nguest ok = yes\npublic = yes\nforce user = samba";
+my $defaultoption= "[Share]\npath = /var/ipfire/samba/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\npublic = yes\nforce user = samba";
 my $userentry = "";
 my @user = ();
 my @userline = ();
@@ -174,14 +174,14 @@ system('/usr/local/bin/sambactrl smbsharesreset');
 if ($sambasettings{'ACTION'} eq 'globalreset')
 	{
 	print <<END
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td colspan='2'><br /></td></tr>
-	<tr><td bgcolor='${Header::table1colour}' colspan='3' align='center'><b>Globals zurück setzen?</b>
+	<tr><td bgcolor='${Header::table1colour}' colspan='3' align='center'><b>$Lang::tr{'resetglobals'}</b>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 Yes <input type='image' alt='Yes' src='/images/edit-redo.png' />
+					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='globalresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='No' src='/images/dialog-error.png' /> No 
+					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -192,14 +192,14 @@ END
 if ($sambasettings{'ACTION'} eq 'sharesreset')
 	{
 	print <<END
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td colspan='2'><br /></td></tr>
-	<tr><td bgcolor='${Header::table1colour}' colspan='3' align='center'><b>Shares zurück setzen?</b>
+	<tr><td bgcolor='${Header::table1colour}' colspan='3' align='center'><b>$Lang::tr{'resetshares'}</b>
 	<tr><td align='right'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 Yes <input type='image' alt='Yes' src='/images/edit-redo.png' />
+					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='sharesresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='No' src='/images/dialog-error.png' /> No 
+					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -510,6 +510,7 @@ $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 &Header::openbox('100%', 'center', $Lang::tr{'samba'});
 print <<END
         <hr />
+        <br />
         <table width='95%' cellspacing='0'>
 END
 ;
@@ -519,7 +520,6 @@ if ( $message ne "" )
 	}
 
 print <<END
-<tr><td colspan='3'><br /></td></tr>
 <tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td></tr>
 </table><table width='95%' cellspacing='0'>
 END
@@ -536,17 +536,16 @@ foreach $key (sort keys %servicenames)
 
 print <<END
 </table>
+<br />
 <table width='95%' cellspacing='0'>
-<tr><td colspan='4'><br /></td></tr>
 <tr><td align='left' width='40%' />
 <td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstart' /><input type='image' alt='$Lang::tr{'smbstart'}' src='/images/go-up.png' /></form></td>
 <td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstop' /><input type='image' alt='$Lang::tr{'smbstop'}' src='/images/go-down.png' /></form></td>
 <td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbrestart' /><input type='image' alt='$Lang::tr{'smbrestart'}' src='/images/view-refresh.png' /></form></td></tr>
 </table>
-
+<br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td colspan='2'><br /></td></tr>
 <tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'netbios name'}</td><td align='left'><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30" /></td></tr>
@@ -638,8 +637,8 @@ END
 
 print <<END
 </table>
+<br />
 <table width='10%' cellspacing='0'>
-<tr><td colspan='3'><br /></td></tr>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
 												<input type='image' alt='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
@@ -656,8 +655,8 @@ END
 if ($sambasettings{'ACTION'} eq 'globalcaption')
 	{
 	print <<END
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td colspan='2'><br /></td></tr>
 	<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
 	<tr><td align='right' width='33%'><img src='/images/media-floppy.png' /></td><td align='left'>$Lang::tr{'save settings'}</td></tr>
 	<tr><td align='right' width='33%'><img src='/images/reload.gif' /></td><td align='left'>$Lang::tr{'restore settings'}</td></tr>
@@ -683,8 +682,8 @@ if ($sambasettings{'SECURITY'} eq 'user')
 		}
 	print <<END
 	<hr />
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td colspan='6'><br /></td></tr>
 	<tr><td colspan='6' align='left'></td></tr>
 	<tr><td bgcolor='${Header::table1colour}' colspan='7' align='left'><b>$Lang::tr{'accounting'}</b></td></tr>
 	<tr><td align='left'><u>$Lang::tr{'username'}</u></td><td align='left'><u>$Lang::tr{'password'}</u></td>
@@ -697,10 +696,10 @@ END
 		}
 	else
 		{
-		print "<td align='left'><u>Typ</u></td>";
+		print "<td align='left'><u>$Lang::tr{'type'}</u></td>";
 		}
 
-	print "<td align='left'><u>$Lang::tr{'interfaces'}</u></td><td colspan='3' width='5%' align='center'><u>$Lang::tr{'options'}</u></td></tr>";
+	print "<td align='left'><u>$Lang::tr{'status'}</u></td><td colspan='3' width='5%' align='center'><u>$Lang::tr{'options'}</u></td></tr>";
 	system('/usr/local/bin/sambactrl readsmbpasswd');
 	open(FILE, "</var/ipfire/samba/private/smbpasswd") or die "Can't read user file: $!";
 	@user = <FILE>;
@@ -738,7 +737,7 @@ END
 		if ($userline[4] =~ /D/)
 			{
 			print <<END
-			inaktiv</td>
+			$Lang::tr{'inactive'}</td>
 			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='smbuserenable' />
@@ -750,7 +749,7 @@ END
 		else
 			{
 			print <<END
-			aktiv</td>
+			$Lang::tr{'active'}</td>
 			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='smbuserdisable' />
@@ -801,8 +800,8 @@ END
 		}
 	print <<END
 	</table>
+	<br />
 	<table width='10%' cellspacing='0'>
-	<tr><td colspan='3'><br /></td></tr>
 	<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 													<input type='hidden' name='ACTION' value='useradd' />
 													<input type='image' alt='$Lang::tr{'add user'}' src='/images/user-option-add.png' /></form></td>
@@ -830,8 +829,8 @@ END
 	if ($sambasettings{'ACTION'} eq 'usercaption')
 		{
 		print <<END
+		<br />
 		<table width='95%' cellspacing='0'>
-		<tr><td align='center' colspan='2'><br /></td></tr>
 		<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
 		<tr><td align='right' width='33%'><img src='/images/user-option-add.png' /></td><td align='left'>$Lang::tr{'add user'}</td></tr>
 		<tr><td align='right' width='33%'><img src='/images/network.png' /></td><td align='left'>$Lang::tr{'add pc'}</td></tr>
@@ -852,9 +851,9 @@ END
 		my $password = 'samba';
 		print <<END
 		<hr />
+		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='95%' cellspacing='0'>
-		<tr><td colspan='2'><br /></td></tr>
 		<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
@@ -876,9 +875,9 @@ END
 		$password=~s/\s//g;
 		print <<END
 		<hr />
+		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='95%' cellspacing='0'>
-		<tr><td colspan='2'><br /></td></tr>
 		<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add user'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
@@ -899,9 +898,9 @@ END
 		$pcname=~s/\s//g;
 		print <<END
 		<hr />
+		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='95%' cellspacing='0'>
-		<tr><td colspan='2'><br /></td></tr>
 		<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'pc add'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'client'}</td><td><input type='text' name='PCNAME' value='$pcname' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambawks' size='30' /></td></tr>
@@ -924,8 +923,8 @@ END
 
 print <<END
 <hr />
+<br />
 <table width='95%' cellspacing='0'>
-<tr><td colspan='3'><br /></td></tr>
 <tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b>
 <tr><td align='left'><u>$Lang::tr{'sharename'}</u></td><td colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></td></tr>
 END
@@ -951,8 +950,8 @@ END
 
 print <<END
 </table>
+<br />
 <table width='10%' cellspacing='0'>
-<tr><td colspan='3'><br /></td></tr>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='shareadd' />
 												<input type='image' alt='$Lang::tr{'add share'}' src='/images/list-add.png' />
@@ -972,9 +971,9 @@ END
 if ($sambasettings{'ACTION'} eq 'sharecaption')
 	{
 	print <<END
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td align='center' colspan='2'><br /></td></tr>
-	<tr><td align='center' colspan='2'><b>Legende:</b></td></tr>
+	<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
 	<tr><td align='right' width='33%'><img src='/images/list-add.png' /></td><td align='left'>$Lang::tr{'add share'}</td></tr>
 	<tr><td align='right' width='33%'><img src='/images/edit.gif' /></td><td align='left'>$Lang::tr{'edit share'}</td></tr>
 	<tr><td align='right' width='33%'><img src='/images/media-floppy.png' /></td><td align='left'>$Lang::tr{'save config'}</td></tr>
@@ -989,8 +988,8 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 	{
 	print <<END
 	<hr />
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td colspan='2'><br /></td></tr>
 	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -999,8 +998,8 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 																																			</form></td></tr>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
 	</table>
+	<br />
 	<table width='10%' cellspacing='0'>
-	<tr><td><br /></td></tr>
 	<tr><td align='center'><input type='hidden' name='ACTION' value='smbshareadd' />
 													<input type='image' alt='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr></form>
 	</table>
@@ -1030,8 +1029,8 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 		}
 	print <<END
 	<hr />
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td colspan='2'><br /></td></tr>
 	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'edit share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1039,8 +1038,8 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 																																			<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
 	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
 	</table>
+	<br />
 	<table width='10%' cellspacing='0'>
-	<tr><td><br /></td></tr>
 	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}' />
 													<input type='image' alt='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
 													<input type='hidden' name='ACTION' value='smbsharechange' /></form></td></tr>
@@ -1052,8 +1051,8 @@ END
 if ($sambasettings{'ACTION'} eq 'optioncaption' || $sambasettings{'ACTION'} eq 'optioncaption2')
 	{
 	print <<END
+	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td><br /></td></tr>
 	<tr><td><b>$Lang::tr{'caption'}</b></td></tr>
 	<tr><td><u>$Lang::tr{'options'}</u></td><td><u>$Lang::tr{'meaning'}</u> / <u>$Lang::tr{'exampel'}</u></td></tr>
 	<tr><td>comment</td><td>$Lang::tr{'comment'}</td></tr>
@@ -1117,8 +1116,8 @@ END
 
 print <<END
 <hr />
+<br />
 <table width='95%' cellspacing='0'>
-<tr><td colspan='4'  align='left'><br /></td></tr>
 <tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'samba status'}</b></td></tr>
 <tr><td  align='left'>$Status</td></tr>
 </table>
@@ -1140,9 +1139,9 @@ $Log=~s/\n/<br \/>/g;
 
 print <<END
 <hr />
+<br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td colspan='3'  align='left'><br /></td></tr>
 <tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
 <tr><td colspan='3'  align='left'><br /></td></tr>
 <tr><td  align='left'><select name='LOG' style="width: 200px">

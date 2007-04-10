@@ -9,7 +9,7 @@ guest ok = yes
 force user = samba
 
 [P2P]
-path = /var/samba/p2p
+path = /var/ipfire/samba/p2p
 comment = P2P
 browseable = yes
 writeable = yes

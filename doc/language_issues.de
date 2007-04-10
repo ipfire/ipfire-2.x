@@ -79,6 +79,7 @@ WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
 WARNING: translation string unused: dat without key
+WARNING: translation string unused: dbfile
 WARNING: translation string unused: ddns help dnsmadeeasy
 WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
@@ -95,6 +96,7 @@ WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: download
 WARNING: translation string unused: dynamic dns client
+WARNING: translation string unused: editor
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enabled on
 WARNING: translation string unused: enabledtitle
@@ -155,11 +157,14 @@ WARNING: translation string unused: javascript menu error1
 WARNING: translation string unused: javascript menu error2
 WARNING: translation string unused: kernel version
 WARNING: translation string unused: key stuff
+WARNING: translation string unused: lateprompting
 WARNING: translation string unused: line
 WARNING: translation string unused: linkq
 WARNING: translation string unused: local hard disk
+WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: log enabled
 WARNING: translation string unused: log viewer
+WARNING: translation string unused: loosedirectorychecking
 WARNING: translation string unused: ls_dhcpd
 WARNING: translation string unused: ls_disk space
 WARNING: translation string unused: ls_free/swan
@@ -215,6 +220,7 @@ WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: pc
+WARNING: translation string unused: polfile
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
 WARNING: translation string unused: proxy no proxy extend
@@ -225,8 +231,10 @@ WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: refresh update list
 WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
+WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
 WARNING: translation string unused: restore hardware settings
+WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: safe removal of umounted device
@@ -235,6 +243,7 @@ WARNING: translation string unused: sectors read from disk per second
 WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: select media
 WARNING: translation string unused: shared memory
+WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
@@ -295,7 +304,6 @@ WARNING: translation string unused: week
 WARNING: translation string unused: written sectors
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year
-WARNING: translation string unused: yes
 WARNING: untranslated string: IPFires hostname
 WARNING: untranslated string: Number of IPs for the pie chart
 WARNING: untranslated string: Number of Ports for the pie chart
