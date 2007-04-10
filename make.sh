@@ -535,6 +535,8 @@ buildipfire() {
   ipfiremake iptraf
   ipfiremake bwm-ng
   ipfiremake nagios
+  ipfiremake tripwire
+  ipfiremake sysstat
 }
 
 buildinstaller() {
@@ -945,6 +947,7 @@ svn)
 		evaluate 1
 	  ;;
 	  diff|di)
+	  update_langs
 		echo -ne "Make a local diff to last svn revision"
 		svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
 		evaluate 1

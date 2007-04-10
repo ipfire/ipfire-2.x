@@ -26,17 +26,15 @@
 
 include Config
 
-VER        = 1.2.64
+VER        = 2.4.0.1
 
-THISAPP    = kudzu-$(VER)
-DL_FILE    = kudzu-$(VER).tar.gz
+THISAPP    = tripwire-$(VER)
+DL_FILE    = $(THISAPP)-src.tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = tripwire
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -46,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3eb6fae5e8f62409fd5149f2079f6060
+$(DL_FILE)_MD5 = b371f79ac23cacc9ad40b1da76b4a0c4
 
 install : $(TARGET)
 
@@ -55,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -75,19 +76,19 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && patch -N < $(DIR_SRC)/src/patches/kudzu-link-lintl.diff
-	cd $(DIR_APP) && make RPM_OPT_FLAGS="-O2 -I/opt/$(MACHINE)-uClibc/include" \
-		ARCH=$(MACHINE)
-	cd $(DIR_APP) && install -m 0755 kudzu /install/initrd/bin/kudzu
-	cd $(DIR_APP) && install -m 0644 libkudzu.a /install/initrd/lib
-	cd $(DIR_APP) && install -m 0644 libkudzu_loader.a /install/initrd/lib
-else
-	rm -rf /usr/sbin/kudzu
-	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make
-	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make install
-	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make install-program
-endif
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ln -s contrib install
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/tripwire-2.4.0.1-gcc4_build_fixes-1.patch
+	cd $(DIR_APP) && sed -i -e 's@TWDB="$${prefix}@TWDB="/var@' \
+													-e 's@^CLOBBER="false"@CLOBBER="true"@' install/install.cfg
+	cd $(DIR_APP) && sed -i -e 's@^PROMPT="true"@PROMPT="false"@' \
+													-e 's@^TW_SITE_PASS=""@TW_SITE_PASS="ipfire"@' \
+													-e 's@^TW_LOCAL_PASS=""@TW_LOCAL_PASS="ipfire"@' \
+													install/install.sh
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/tripwire
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && for i in siggen tripwire twadmin twprint; do \
+											cp -vf $(DIR_APP)/bin/$$i /usr/sbin; \
+										done 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

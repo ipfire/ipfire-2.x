@@ -236,6 +236,7 @@
 * sysfsutils-1.3.0
 * sysklogd-1.4.1
 * syslinux-3.11
+* sysstat-6.0.2
 * sysvinit-2.86
 * tar-1.15.1
 * tcp_wrappers_7.6
@@ -244,6 +245,7 @@
 * tftp-hpa-0.42
 * tiff-3.8.2
 * traceroute-1.4a12
+* tripwire-2.4.0.1
 * uClibc-0.9.28-pass1
 * uClibc-0.9.28-pass2
 * uClibc-0.9.28-pass3

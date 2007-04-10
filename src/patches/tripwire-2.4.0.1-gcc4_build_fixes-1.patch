@@ -1,0 +1,41 @@
+Submitted By: Bruce Dubbs <bdubbs@linuxfromscratch.org>
+Date: 2006-04-12
+Initial Package Version: 2.4.0.1
+Origin: Mandrake CVS
+Description: This patch contains gcc-4 fixes developed by me.
+
+
+diff -Naur tripwire-2.4.0.1/src/fco/fconame.h tw-new/src/fco/fconame.h
+--- tripwire-2.4.0.1/src/fco/fconame.h	2005-09-15 22:12:38.000000000 -0500
++++ tw-new/src/fco/fconame.h	2006-04-11 21:52:53.000000000 -0500
+@@ -49,6 +49,7 @@
+ ///////////////////////////////////////////////////////////////////////////////
+ class cFCONameTblNode;
+ class cFCONameIter;
++class cFCOName_i;
+ 
+ class cFCOName : public iTypedSerializable
+ {
+diff -Naur tripwire-2.4.0.1/src/fco/fcosetimpl.h tw-new/src/fco/fcosetimpl.h
+--- tripwire-2.4.0.1/src/fco/fcosetimpl.h	2005-09-15 22:12:38.000000000 -0500
++++ tw-new/src/fco/fcosetimpl.h	2006-04-11 22:02:16.000000000 -0500
+@@ -46,6 +46,8 @@
+ #include "fconame.h"
+ #endif
+ 
++class cFCOIterImpl;
++
+ class cFCOSetImpl : public iFCOSet
+ {
+ 	friend class cFCOIterImpl;
+diff -Naur tripwire-2.4.0.1/src/tw/fcoreport.h tw-new/src/tw/fcoreport.h
+--- tripwire-2.4.0.1/src/tw/fcoreport.h	2005-09-15 22:12:37.000000000 -0500
++++ tw-new/src/tw/fcoreport.h	2006-04-11 22:05:24.000000000 -0500
+@@ -85,6 +85,7 @@
+ class cFileHeaderID;
+ class cErrorQueue;
+ class cFCOReportGenreHeader;
++class cFCOReportSpecIter;
+ 
+ class cFCOReport : public iTypedSerializable
+ {

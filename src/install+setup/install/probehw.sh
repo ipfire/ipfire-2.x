@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Detecting Hardware"
-for MODULE in $(hwinfo --all | grep modprobe | awk '{ print $5 }' | tr -d \" | sort | uniq); do
+for MODULE in $(kudzu -qps  -t 30 | grep driver | cut -d ' ' -f 2 | sort | uniq); do
     if [ "${MODULE}" = "unknown" ] || \
         [ "${MODULE}" = "ignore" ]; then
         continue

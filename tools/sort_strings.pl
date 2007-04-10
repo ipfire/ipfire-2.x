@@ -42,6 +42,13 @@ EOF
 
 for my $key ( sort (keys %tr) ) {
 	my $value = $tr{$key};
+	$value =~ s/ä/Ã¤/g;
+	$value =~ s/ö/Ã¶/g;
+	$value =~ s/ü/Ã¼/g;
+	$value =~ s/Ä/Ã„/g;
+	$value =~ s/Ö/Ã–/g;
+	$value =~ s/Ü/Ãœ/g;
+	$value =~ s/ß/ÃŸ/g;
 	$value =~ s/\'/\\\'/g;
 	print FILE "\'$key\' => \'$value\',\n";
 }
