@@ -55,7 +55,7 @@ $(TARGET) :
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dmzholes \
 	    ethernet extrahd/bin fwlogs isdn key langs logging main mbmon menu.d modem net-traffic \
 			nfs optionsfw outgoing/bin patches pakfire portfw \
-	    ppp private proxy/advanced qos/bin red remote snort time \
+	    ppp private proxy/advanced qos/bin red remote snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
 	    wakeonlan wireless xtaccess ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
@@ -69,7 +69,7 @@ $(TARGET) :
 	    isdn/settings main/hosts main/settings optionsfw/settings outgoing/settings outgoing/rules pakfire/settings \
 	    portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
-	    qos/tosconfig snort/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
+	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
 	        touch $(CONFIG_ROOT)/$$i; \
 	done
