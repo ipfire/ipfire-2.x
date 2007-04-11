@@ -53,3 +53,6 @@ HOME=/
 %nightly * 3-5   /var/ipfire/updatexlrator/autocheck/cron.daily
 %weekly  * 3-5   /var/ipfire/updatexlrator/autocheck/cron.weekly
 %monthly * 3-5 * /var/ipfire/updatexlrator/autocheck/cron.monthly
+
+# Reset Dialup Statistics
+0 0 1 * *	/usr/local/bin/dialctrl.pl reset

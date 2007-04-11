@@ -62,6 +62,7 @@ then
 		fi
 		
 		### Cleanup the system when red goes down ###
+		/usr/local/bin/dialctrl.pl down
 		rm -f /var/ipfire/red/iface
 		
 	fi
