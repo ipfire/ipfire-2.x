@@ -17,6 +17,7 @@ utmp:x:22:
 squid:x:23:
 ntp:x:38:
 dip:x:40:
+mysql:x:41:
 rsyncd:x:48:
 stunnel:x:51:
 lock:x:54:
@@ -35,4 +36,4 @@ postdrop:x:108:
 clamav:x:109:
 amavis:x:110:
 mldonkey:x:111:
-mysql:x:41:
+samba:x:1000:

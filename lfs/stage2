@@ -98,7 +98,7 @@ $(TARGET) :
 	# Create /var dirs and files
 	-mkdir -v /var/{lock,log,mail,run,spool,empty}
 	-mkdir -pv /var/{opt,cache,lib/{misc,locate},local}
-	touch /var/run/utmp /var/log/{btmp,lastlog,wtmp}
+	touch /var/run/utmp /var/log/{btmp,lastlog,wtmp,counter}
 	chgrp -v utmp /var/run/utmp /var/log/lastlog
 	chmod -v 664 /var/run/utmp /var/log/lastlog
 

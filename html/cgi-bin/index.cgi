@@ -104,6 +104,9 @@ print <<END;
   <tr>	<td bgcolor='$Header::colourred' width='25%'><a href="/cgi-bin/pppsetup.cgi"><font size='2' color='white'><b>$Lang::tr{'internet'}:</b></font></a><br>
 	<td width='30%'>$ipaddr 
 	<td width='45%'>$connstate
+END
+print `/usr/local/bin/dialctrl.pl show`;
+print <<END;
 	<tr><td colspan='2'>
 		<form method='post' action='/cgi-bin/dial.cgi'>$Lang::tr{'profile'}:
 			<select name='PROFILE'>
@@ -282,7 +285,9 @@ if ($warnmessage) {
 }
 print <<END;
 </table>
+
 END
+
 &Header::closebox();
 
 &Header::closebigbox();
