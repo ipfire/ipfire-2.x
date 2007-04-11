@@ -1,8 +1,0 @@
---- patch-o-matic-ng-20040621/pptp-conntrack-nat/linux/net/ipv4/netfilter/Config.in.ladd_2.origin	Fri Mar  5 10:30:28 2004
-+++ patch-o-matic-ng-20040621/pptp-conntrack-nat/linux/net/ipv4/netfilter/Config.in.ladd_2	Thu Jan 27 00:42:50 2005
-@@ -1,4 +1,4 @@
--      bool '    NAT of local connections (READ HELP)' CONFIG_IP_NF_NAT_LOCAL
-+    dep_tristate '  Full NAT' CONFIG_IP_NF_NAT $CONFIG_IP_NF_IPTABLES $CONFIG_IP_NF_CONNTRACK
-       if [ "$CONFIG_IP_NF_PPTP" = "m" ]; then
-         define_tristate CONFIG_IP_NF_NAT_PPTP m
-       else
