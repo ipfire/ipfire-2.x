@@ -10,7 +10,7 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	restartapplejuice setdate rebuildhosts \
 	restartsyslogd logwatch openvpnctrl timecheckctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
-	redctrl extrahdctrl sambactrl upnpctrl
+	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -53,6 +53,9 @@ upnpctrl: upnpctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 sambactrl: sambactrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ sambactrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+tripwirectrl: tripwirectrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ tripwirectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@

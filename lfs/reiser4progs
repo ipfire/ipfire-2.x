@@ -80,10 +80,10 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && ./configure --prefix=/opt/$(MACHINE)-uClibc \
 			--with-libaal=/opt/$(MACHINE)-uClibc \
 			--without-readline --disable-shared \
-			--sbindir=/install/initrd/sbin \
-			--libdir=/install/initrd/lib
+			--sbindir=/install/initrd/sbin
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	-rm -f /install/initrd/{debugfs.,measurefs.,make_}reiser4
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin --enable-static
 	cd $(DIR_APP) && make $(MAKETUNING)

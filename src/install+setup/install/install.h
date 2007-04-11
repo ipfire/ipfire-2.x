@@ -18,8 +18,10 @@
 /* CDROMS and harddisks. */
 struct devparams
 {
-	char devnode[STRING_SIZE];
-	int module;
+	char devnode_disk[30];		// when single partition is addressed
+	char devnode_part[30];		// when the RAID partition is addressed
+	char devnode_disk_run[30];	// the same dev but after installation 
+	char devnode_part_run[30];
 	char modulename[STRING_SIZE];
 	char options[STRING_SIZE];
 };
@@ -45,6 +47,7 @@ int write_ethernet_configs(struct keyvalue *ethernetkv);
 /* usb.c */
 int initialize_usb();
 int write_usb_modules_conf();
+int checkusb (char *partition);
 
 /* scsi.c */
 int try_scsi(char *dev);

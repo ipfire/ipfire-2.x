@@ -95,3 +95,25 @@ int write_usb_modules_conf() {
     
     return 0;
 }
+
+/* Scans the named partitions and returns true if USB-removable. */
+int checkusb(char *device)
+{
+	FILE *f = NULL;
+	char filename[STRING_SIZE];
+	char command[STRING_SIZE];
+	char buffer[STRING_SIZE];
+	int found = 0;
+	
+	sprintf(command, "udevinfo -a -p /sys/block/%s | grep BUS | sort| uniq >/tmp/usbscan 2>/dev/null", device);
+	system(command);
+	
+	f = fopen("/tmp/usbscan", "r");
+	while (fgets(buffer, STRING_SIZE, f)) {
+		if (strstr(buffer,"usb")) found=1;
+	}
+	fclose(f);
+	
+	if (found) return 0;
+		else return 1;
+}

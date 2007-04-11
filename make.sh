@@ -605,9 +605,9 @@ buildpackages() {
   beautify message DONE
 
   # Create images for install
-  #if [ ! -f $BASEDIR/ipfire-$VERSION.i586-devel.iso ]; then
-	#	ipfiremake cdrom ED=devel
-	#fi
+  if [ "$DEVEL" == "1" ]; then
+		ipfiremake cdrom ED=devel
+	fi
 	ipfiremake cdrom ED=full
 	
   # Check if there is a loop device for building in virtual environments

@@ -82,7 +82,7 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev install
 	rm -f /install/initrd/sbin/udev* /install/initrd/usr/sbin/udev* /install/initrd/usr/bin/udev*
-	cd $(DIR_APP) && install udevstart /install/initrd/sbin
+	cd $(DIR_APP) && install udevstart udevinfo /install/initrd/sbin
 	cd /install/initrd/usr/share && rm -rf man
 	cd /install/initrd/dev && rm -f console
 	cd /install/initrd/dev && mknod -m 0600 console c 5 1

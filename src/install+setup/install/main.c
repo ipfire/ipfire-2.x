@@ -201,9 +201,8 @@ int main(int argc, char *argv[])
 		fprintf(flog, "Source drive: %s\n", sourcedrive);
 		fclose(handle);
 
-		snprintf(cdromparams.devnode, STRING_SIZE, "/dev/%s", sourcedrive);
-		cdromparams.module = 0;
-		fprintf(flog, "Source device: %s\n", cdromparams.devnode);
+		//snprintf(cdromparams.devnode_disk, STRING_SIZE, "/dev/%s", sourcedrive);
+		fprintf(flog, "Source device: %s\n", sourcedrive);
 	}
 
  	/* Configure the network now! */
@@ -221,71 +220,86 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Get device for the HD.  This has to succeed. */
-	if (!(hdletter = findidetype(IDE_HD)))
-	{
-		/* Need to clean this up at some point */
-		if (!try_scsi("sda") || strstr(sourcedrive, "sda") != NULL) {
-			if (!try_scsi("ida/c0d0")) {
-				if (!try_scsi("cciss/c0d0")) {
-					if (!try_scsi("rd/c0d0")) {
-						if (!try_scsi("ataraid/d0")) {
-							errorbox(ctr[TR_NO_HARDDISK]);
-							goto EXIT;
-						} else {
-							raid_disk = 1;
-							sprintf(harddrive, "ataraid/d0");
-						}
-					} else {
-						raid_disk = 1;
-						sprintf(harddrive, "rd/c0d0");
-					}
-				} else {
-					raid_disk = 1;
-					sprintf(harddrive, "cciss/c0d0");
-				}
-			} else {
-				raid_disk = 1;
-				sprintf(harddrive, "ida/c0d0");
-			}
-		} else {
-		    if (strstr(sourcedrive, "sda") != NULL) {
-			// probably installing from usb stick, try sdb
-			if (try_scsi("sdb")) {
-			    sprintf(harddrive, "sdb");
-			}
-			else {
-			    errorbox(ctr[TR_NO_HARDDISK]);
-			    goto EXIT;
-			}
-		    }
-		    else {
-			sprintf(harddrive, "sda");
-		    }
-		}
-		scsi_disk = 1;
-	} else
+	// Now try to find destination device...
+	if ((hdletter = findidetype(IDE_HD))) {
 		sprintf(harddrive, "hd%c", hdletter);
+		goto FOUND_DESTINATION;
+	}
+	
+	/* Need to clean this up at some point
+	   scsi disk is sdb/sdc when sda/sdb is used for usb-key
+	   if scsi-disk is sdd or more, it is not discovered
+	   Support only 2 usb keys, none could be unplugged */
+	if (checkusb("sdb") && try_scsi("sdc")) {
+		scsi_disk = 1;
+		sprintf(harddrive, "sdc");
+		goto FOUND_DESTINATION;
+	}
+	if (checkusb("sda") && try_scsi("sdb")) {
+		scsi_disk = 1;
+		sprintf(harddrive, "sdb");
+		goto FOUND_DESTINATION;
+	}
+	if (try_scsi("sda")) {
+		scsi_disk = 1;
+		sprintf(harddrive, "sda");
+		goto FOUND_DESTINATION;
+	}
+	if (try_scsi("ida/c0d0")) {
+		raid_disk = 1;
+		sprintf(harddrive, "ida/c0d0");
+		goto FOUND_DESTINATION;
+	}
+	if (try_scsi("cciss/c0d0")) {
+		raid_disk = 1;
+		sprintf(harddrive, "cciss/c0d0");
+		goto FOUND_DESTINATION;
+	}
+	if (try_scsi("rd/c0d0")) {
+		raid_disk = 1;
+		sprintf(harddrive, "rd/c0d0");
+		goto FOUND_DESTINATION;
+	}
+	if (try_scsi("ataraid/d0")) {
+		raid_disk = 1;
+		sprintf(harddrive, "ataraid/d0");
+		goto FOUND_DESTINATION;
+	}
+	/* nothing worked, give up */
+	errorbox(ctr[TR_NO_HARDDISK]);
+	goto EXIT;
 
-	fprintf(flog, "Destination drive: %s\n", harddrive);
-
+	FOUND_DESTINATION:
 	/* load unattended configuration */
 	if (unattended) {
 	    fprintf(flog, "unattended: Reading unattended.conf\n");
 
 	    (void) readkeyvalues(unattendedkv, UNATTENDED_CONF);
 	}
-
-	/* Make the hdparms struct and print the contents. */
-	snprintf(hdparams.devnode, STRING_SIZE, "/dev/%s", harddrive);
-	hdparams.module = 0;
-
-	sprintf(message, ctr[TR_PREPARE_HARDDISK], hdparams.devnode);
 	
+	/* Make the hdparms struct and print the contents.
+	   With USB-KEY install and SCSI disk, while installing, the disk
+	   is named 'sdb,sdc,...' (following keys)
+	   On reboot, it will become 'sda'
+	   To avoid many test, all names are built in the struct.
+	*/
+	sprintf(hdparams.devnode_disk, "/dev/%s", harddrive);
+	/* Address the partition or raid partition (eg dev/sda or /dev/sdap1 */
+	sprintf(hdparams.devnode_part, "/dev/%s%s", harddrive,raid_disk ? "p" : "");
+	/* Now the names after the machine is booted. Only scsi is affected
+	   and we only install on the first scsi disk. */
+	{	char tmp[30];
+		strcpy(tmp, scsi_disk ? "sda" : harddrive);
+		sprintf(hdparams.devnode_disk_run, "/dev/%s", tmp);
+		sprintf(hdparams.devnode_part_run, "/dev/%s%s", tmp, raid_disk ? "p" : "");
+	}
+
+	fprintf(flog, "Destination drive: %s\n", hdparams.devnode_disk);
+	
+	sprintf(message, ctr[TR_PREPARE_HARDDISK], hdparams.devnode_disk);
 	if (unattended) {
 	    hardyn = 1;
 	}
-	
 	while (! hardyn) {
 		rc = newtWinMenu(title, message,
 				 50, 5, 5, 6, yesnoharddisk,
@@ -294,7 +308,6 @@ int main(int argc, char *argv[])
 		if (rc == 2)
 			goto EXIT;
 	}
-
 	if (rc == 2)
 		goto EXIT;
 
@@ -383,7 +396,7 @@ int main(int argc, char *argv[])
 
 	fclose(handle);
 
-	snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
@@ -392,10 +405,7 @@ int main(int argc, char *argv[])
 
 	mysystem("/sbin/udevstart");
 
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %sp1", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %s1", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %s1", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
@@ -403,10 +413,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (swap_file) {
-		if (raid_disk)
-			snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %sp2", hdparams.devnode);	
-		else
-			snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %s2", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %s2", hdparams.devnode_part);
 		if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
 		{
 			errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
@@ -414,22 +421,14 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %sp3", hdparams.devnode);	
-	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %s3", hdparams.devnode);	
-
+	snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %s3", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
 		goto EXIT;
 	}
 
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %sp4", hdparams.devnode);	
-	else
-		snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %s4", hdparams.devnode);	
-
+	snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %s4", hdparams.devnode_part);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
@@ -437,10 +436,8 @@ int main(int argc, char *argv[])
 	}
 
 	/* Mount harddisk. */
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mount %sp3 /harddisk", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mount %s3 /harddisk", hdparams.devnode);
+
+	snprintf(commandstring, STRING_SIZE, "/bin/mount %s3 /harddisk", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_ROOT_FILESYSTEM]);
@@ -451,31 +448,21 @@ int main(int argc, char *argv[])
 	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);
 	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
 	
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mount %sp1 /harddisk/boot", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mount %s1 /harddisk/boot", hdparams.devnode);
-
+	snprintf(commandstring, STRING_SIZE, "/bin/mount %s1 /harddisk/boot", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_BOOT_FILESYSTEM]);
 		goto EXIT;
 	}
 	if (swap_file) {
-		if (raid_disk)
-			snprintf(commandstring, STRING_SIZE, "/sbin/swapon %sp2", hdparams.devnode);
-		else
-			snprintf(commandstring, STRING_SIZE, "/sbin/swapon %s2", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/sbin/swapon %s2", hdparams.devnode_part);
 		if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_SWAP_PARTITION]))
 		{
 			errorbox(ctr[TR_UNABLE_TO_MOUNT_SWAP_PARTITION]);
 			goto EXIT;
 		}
 	}
-	if (raid_disk)
-		snprintf(commandstring, STRING_SIZE, "/bin/mount %sp4 /harddisk/var", hdparams.devnode);
-	else
-		snprintf(commandstring, STRING_SIZE, "/bin/mount %s4 /harddisk/var", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mount %s4 /harddisk/var", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
@@ -487,7 +474,7 @@ int main(int argc, char *argv[])
 			"/bin/wget -q -O - %s/" SNAME "-" VERSION ".tbz2 | /bin/tar -C /harddisk -xvjf -", url);
 	}
 
-	if (installtype == CDROM_INSTALL) {	
+	if (installtype == CDROM_INSTALL) {
 		snprintf(commandstring, STRING_SIZE,
 			"/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
 	}
@@ -532,7 +519,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Update /etc/fstab */
-	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode);
+	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode_part_run);
 
 	/* if we detected SCSI/USB then fixup */
 /*	mysystem("/bin/probecntrl.sh");
@@ -554,12 +541,9 @@ int main(int argc, char *argv[])
 		}
 	} */
 
-	if (raid_disk)
-		sprintf(string, "root=%sp3", hdparams.devnode);
-	else
-		sprintf(string, "root=%s3", hdparams.devnode);
+	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
-	replace( "/harddisk/boot/grub/grubbatch", "DEVICE", hdparams.devnode);
+	replace( "/harddisk/boot/grub/grubbatch", "DEVICE", hdparams.devnode_disk);
 
 	/* restore permissions */
 	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
@@ -633,10 +617,7 @@ EXIT:
 	fcloseall();
 
 	if (swap_file) {
-		if (raid_disk)
-			snprintf(commandstring, STRING_SIZE, "/bin/swapoff %sp2", hdparams.devnode);
-		else
-			snprintf(commandstring, STRING_SIZE, "/bin/swapoff %s2", hdparams.devnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/swapoff %s2", hdparams.devnode_part);
 	}
 
 	newtFinished();
