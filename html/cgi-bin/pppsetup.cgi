@@ -752,6 +752,16 @@ print <<END
 	<td colspan='2' width='50%'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='25%'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
 </tr>
+<tr>
+	<td width='25%'>MRU</td>
+	<td colspan='2' width='50%'></td>
+	<td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
+</tr>
+<tr>
+	<td width='25%'>MTU</td>
+	<td colspan='2' width='50%'></td>
+	<td width='25%'><input type='text' name='MTU' value='$pppsettings{'MTU'}' /></td>
+</tr>
 END
 ;
 }
@@ -940,6 +950,8 @@ sub initprofile
 	$pppsettings{'PHONEBOOK'} = 'RELAY_PPP1';
 	$pppsettings{'PROTOCOL'} = 'RFC2364';
 	$pppsettings{'METHOD'} = 'PPPOE_PLUGIN';
+	$pppsettings{'MTU'} = '1492';
+	$pppsettings{'MRU'} = '1492';
 	$pppsettings{'DIALMODE'} = 'T';
 	$pppsettings{'MAXRETRIES'} = 5;
 	$pppsettings{'HOLDOFF'} = 30;

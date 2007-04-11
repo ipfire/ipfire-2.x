@@ -53,8 +53,8 @@ case "${2}" in
 				DEMAND+=" active-filter outbound and not icmp[0] == 3 and not tcp[13] & 4 != 0"
 			fi
 			
-			ARGS+=" noipdefault default-asyncmap defaultroute hide-password local mtu 1492"
-			ARGS+=" mru 1492 noaccomp noccp nobsdcomp nodeflate nopcomp novj novjccomp"
+			ARGS+=" noipdefault default-asyncmap defaultroute hide-password local mtu ${MTU}"
+			ARGS+=" mru ${MRU} noaccomp noccp nobsdcomp nodeflate nopcomp novj novjccomp"
 			ARGS+=" user ${USERNAME} lcp-echo-interval 20 lcp-echo-failure 3 lcp-max-configure 50"
 			ARGS+=" maxfail ${MAXRETRIES}"
 			
