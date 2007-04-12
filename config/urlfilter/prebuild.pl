@@ -4,8 +4,6 @@
 #
 # (c) written from scratch
 #
-# $Id: prebuild.pl,v 0.3 2005/04/16 00:00:00 marco Exp $
-#
 
 $dbdir="/var/ipfire/urlfilter/blacklists";
 
@@ -18,15 +16,27 @@ if (-e "$dbdir/custom/blocked/urls.db")    { unlink("$dbdir/custom/blocked/urls.
 
 system("chown -R nobody.nobody $dbdir");
 
-foreach $category (<$dbdir/*>)
+&setpermissions ($dbdir);
+
+# -------------------------------------------------------------------
+
+sub setpermissions
 {
-         if (-d $category){
-		system("chmod 755 $category &> /dev/null");
-		foreach $blacklist (<$category/*>)
-		{
-         		if (-f $blacklist){ system("chmod 644 $blacklist &> /dev/null"); }
-         		if (-d $blacklist){ system("chmod 755 $blacklist &> /dev/null"); }
+	my $bldir = $_[0];
+
+	foreach $category (<$bldir/*>)
+	{
+        	 if (-d $category){
+			system("chmod 755 $category &> /dev/null");
+			foreach $blacklist (<$category/*>)
+			{
+         			if (-f $blacklist) { system("chmod 644 $blacklist &> /dev/null"); }
+         			if (-d $blacklist) { system("chmod 755 $blacklist &> /dev/null"); }
+			}
+        	 	system("chmod 666 $category/*.db &> /dev/null");
+			&setpermissions ($category);
 		}
-         	system("chmod 666 $category/*.db &> /dev/null");
 	 }
 }
+
+# -------------------------------------------------------------------

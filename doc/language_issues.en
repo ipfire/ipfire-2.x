@@ -290,11 +290,9 @@ WARNING: translation string unused: upstream password
 WARNING: translation string unused: upstream proxy host:port
 WARNING: translation string unused: upstream username
 WARNING: translation string unused: uptime and users
-WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
-WARNING: translation string unused: urlfilter upload background
 WARNING: translation string unused: use
 WARNING: translation string unused: used memory
 WARNING: translation string unused: used swap
@@ -324,6 +322,7 @@ WARNING: untranslated string: remove x509
 WARNING: untranslated string: settingsc
 WARNING: untranslated string: smbrestart
 WARNING: untranslated string: up
+WARNING: untranslated string: urlfilter background image
 WARNING: untranslated string: urlfilter log
 WARNING: untranslated string: user log
 WARNING: untranslated string: user proxy logs

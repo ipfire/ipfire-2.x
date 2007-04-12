@@ -1,19 +1,17 @@
 #!/usr/bin/perl
 #
-# SmoothWall CGIs
-#
 # This code is distributed under the terms of the GPL
 #
-# (c) written from scratch
+# (c) 2004-2007 marco.s - http://www.urlfilter.net
 #
-# $Id: urlfilter.cgi,v 1.7 2006/05/08 00:00:00 marco Exp $
+# $Id: urlfilter.cgi,v 1.9.1 2007/03/22 00:00:00 marco.s Exp $
 #
 
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 use File::Copy;
 use IO::Socket;
@@ -22,6 +20,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my $http_port='81';
 my %netsettings=();
 my %mainsettings=();
 my %proxysettings=();
@@ -74,6 +73,7 @@ my @filtergroups=();
 my @tclist=();
 my @uqlist=();
 my @source_urllist=();
+my @clients=();
 my @temp=();
 
 my $lastslashpos=0;
@@ -147,10 +147,30 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter save and restart'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload file'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter remove file'}) ||
+    ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload background'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload blacklist'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter backup'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter restore'}))
-{ 
+{
+
+	@clients = split(/\n/,$filtersettings{'UNFILTERED_CLIENTS'});
+	foreach (@clients)
+	{
+		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
+		if (/.*-.*-.*/) { $errormessage = $Lang::tr{'urlfilter invalid ip or mask error'}; }
+		@temp = split(/-/);
+		foreach (@temp) { unless ((&General::validipormask($_)) || (&General::validipandmask($_))) { $errormessage = $Lang::tr{'urlfilter invalid ip or mask error'}; } }
+	}
+	@clients = split(/\n/,$filtersettings{'BANNED_CLIENTS'});
+	foreach (@clients)
+	{
+		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
+		if (/.*-.*-.*/) { $errormessage = $Lang::tr{'urlfilter invalid ip or mask error'}; }
+		@temp = split(/-/);
+		foreach (@temp) { unless ((&General::validipormask($_)) || (&General::validipandmask($_))) { $errormessage = $Lang::tr{'urlfilter invalid ip or mask error'}; } }
+	}
+	if ($errormessage) { goto ERROR; }
+
 	if (!($filtersettings{'CHILDREN'} =~ /^\d+$/) || ($filtersettings{'CHILDREN'} < 1))
 	{
 		$errormessage = $Lang::tr{'urlfilter invalid num of children'};
@@ -186,6 +206,17 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 
 	}
 	
+	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload background'})
+	{
+		&Header::getcgihash(\%filtersettings, {'wantfile' => 1, 'filevar' => 'BACKGROUND'});
+
+		if (copy($filtersettings{'BACKGROUND'}, "/home/httpd/html/images/urlfilter/background.jpg") != 1)
+		{
+			$errormessage = $!;
+			goto ERROR;
+		}
+	}
+	
 	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload blacklist'})
 	{
 		&Header::getcgihash(\%filtersettings, {'wantfile' => 1, 'filevar' => 'UPDATEFILE'});
@@ -210,6 +241,11 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 		{
 			$errormessage = $Lang::tr{'urlfilter tar error'};
 		} else {
+
+			if (-d "${General::swroot}/urlfilter/update/BL")
+			{
+				system("mv ${General::swroot}/urlfilter/update/BL ${General::swroot}/urlfilter/update/blacklists");
+			}
 
 			if (-d "${General::swroot}/urlfilter/update/category")
 			{
@@ -310,7 +346,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 
 	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter save and restart'})
 	{
-		if (!(-e "${General::swroot}/proxy/enable"))
+		if ((!(-e "${General::swroot}/proxy/enable")) && (!(-e "${General::swroot}/proxy/enable_blue")))
 		{
 			$errormessage = $Lang::tr{'urlfilter web proxy service required'};
 			goto ERROR;
@@ -331,29 +367,10 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 		if (-e "$dbdir/custom/blocked/domains.db") { unlink("$dbdir/custom/blocked/domains.db"); }
 		if (-e "$dbdir/custom/blocked/urls.db")    { unlink("$dbdir/custom/blocked/urls.db"); }
 
-		foreach (<$dbdir/*>)
-		{
-			if (-d $_){ system("chmod 644 $_/*"); }
-			if (-d $_){ system("chmod 666 $_/*.db"); }
-		}
-		if (-d "$dbdir/custom/allowed")
-		{
-			system("chmod 755 $dbdir/custom/allowed");
-			system("chmod 644 $dbdir/custom/allowed/*");
-		}
-		if (-d "$dbdir/custom/blocked")
-		{
-			system("chmod 755 $dbdir/custom/blocked");
-			system("chmod 644 $dbdir/custom/blocked/*");
-		}
+		&setpermissions ($dbdir);
 
 		system('/usr/local/bin/restartsquid');
 	}
-
-ERROR:
-
-	if ($errormessage) { $filtersettings{'VALID'} = 'no'; }
-
 }
 
 if ($tcsettings{'ACTION'} eq $Lang::tr{'urlfilter set time constraints'}) { $tcsettings{'TCMODE'} = 'on'}
@@ -384,6 +401,16 @@ if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang
 
 	if (!$errormessage)
 	{
+		# transform to pre1.8 client definitions
+		@clients = split(/\n/,$tcsettings{'SRC'});
+		undef $tcsettings{'SRC'};
+		foreach(@clients)
+		{
+			s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
+			$tcsettings{'SRC'} .= "$_ ";
+		}
+		$tcsettings{'SRC'} =~ s/\s+$//;
+
 		if ($tcsettings{'DST'} =~ /^any/) { $tcsettings{'DST'} = 'any'; }
 		if ($tcsettings{'ENABLERULE'} eq 'on') { $tcsettings{'ACTIVE'} = $tcsettings{'ENABLERULE'}; } else { $tcsettings{'ACTIVE'} = 'off'}
 
@@ -418,6 +445,38 @@ if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang
 	}
 }
 
+if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang::tr{'urlfilter copy rule'}) && (!$errormessage))
+{
+	$id = 0;
+	foreach $line (@tclist)
+	{
+		$id++;
+		if ($tcsettings{'ID'} eq $id)
+		{
+			chomp($line);
+			@temp = split(/\,/,$line);
+			$tcsettings{'DEFINITION'} = $temp[0];
+			$tcsettings{'MON'} = $temp[1];
+			$tcsettings{'TUE'} = $temp[2];
+			$tcsettings{'WED'} = $temp[3];
+			$tcsettings{'THU'} = $temp[4];
+			$tcsettings{'FRI'} = $temp[5];
+			$tcsettings{'SAT'} = $temp[6];
+			$tcsettings{'SUN'} = $temp[7];
+			$tcsettings{'FROM_HOUR'} = $temp[8];
+			$tcsettings{'FROM_MINUTE'} = $temp[9];
+			$tcsettings{'TO_HOUR'} = $temp[10];
+			$tcsettings{'TO_MINUTE'} = $temp[11];
+			$tcsettings{'SRC'} = $temp[12];
+			$tcsettings{'DST'} = $temp[13];
+			$tcsettings{'ACCESS'} = $temp[14];
+			$tcsettings{'ENABLERULE'} = $temp[15];
+			$tcsettings{'COMMENT'} = $temp[16];
+		}
+	}
+	$tcsettings{'TCMODE'}='on';
+}
+
 if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang::tr{'remove'}))
 {
 	$id = 0;
@@ -439,7 +498,7 @@ if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang
 	{
 		$errormessage = $Lang::tr{'urlfilter not enabled'};
 	}
-	if (!(-e "${General::swroot}/proxy/enable"))
+	if ((!(-e "${General::swroot}/proxy/enable")) && (!(-e "${General::swroot}/proxy/enable_blue")))
 	{
 		$errormessage = $Lang::tr{'urlfilter web proxy service required'};
 	}
@@ -468,11 +527,6 @@ if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang
 	close(FILE);
 	$tcsettings{'CHANGED'}='yes';
 	$tcsettings{'TCMODE'}='on';
-}
-
-if (!$errormessage) {
-	$tcsettings{'ENABLERULE'}='on';
-	$tcsettings{'TO_HOUR'}='24';
 }
 
 if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang::tr{'edit'}) && (!$errormessage))
@@ -505,6 +559,11 @@ if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang
 		}
 	}
 	$tcsettings{'TCMODE'}='on';
+}
+
+if ((!$errormessage) && (!($tcsettings{'ACTION'} eq $Lang::tr{'urlfilter copy rule'})) && (!($tcsettings{'ACTION'} eq $Lang::tr{'edit'}))) {
+	$tcsettings{'ENABLERULE'}='on';
+	$tcsettings{'TO_HOUR'}='24';
 }
 
 if ($uqsettings{'ACTION'} eq $Lang::tr{'urlfilter set user quota'}) { $uqsettings{'UQMODE'} = 'on'}
@@ -642,7 +701,7 @@ if (($uqsettings{'MODE'} eq 'USERQUOTA') && ($uqsettings{'ACTION'} eq $Lang::tr{
 	{
 		$errormessage = $Lang::tr{'urlfilter not enabled'};
 	}
-	if (!(-e "${General::swroot}/proxy/enable"))
+	if ((!(-e "${General::swroot}/proxy/enable")) && (!(-e "${General::swroot}/proxy/enable_blue")))
 	{
 		$errormessage = $Lang::tr{'urlfilter web proxy service required'};
 	}
@@ -968,6 +1027,10 @@ if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter update now'})
 if (-e "${General::swroot}/urlfilter/settings") { &General::readhash("${General::swroot}/urlfilter/settings", \%filtersettings); }
 
 &readcustomlists;
+
+ERROR:
+
+if ($errormessage) { $filtersettings{'VALID'} = 'no'; }
 
 $checked{'ENABLE_CUSTOM_BLACKLIST'}{'off'} = '';
 $checked{'ENABLE_CUSTOM_BLACKLIST'}{'on'} = '';
@@ -1313,10 +1376,46 @@ print <<END
         <td>&nbsp;</td>
 </tr>
 <tr>
-        <td class='base'>$Lang::tr{'urlfilter unfiltered clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-        <td><input type='text' name='UNFILTERED_CLIENTS' value='$filtersettings{'UNFILTERED_CLIENTS'}' size='30' /></td>
-        <td class='base'>$Lang::tr{'urlfilter banned clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-        <td><input type='text' name='BANNED_CLIENTS' value='$filtersettings{'BANNED_CLIENTS'}' size='30' /></td>
+	<td colspan='2'>$Lang::tr{'urlfilter unfiltered clients'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2'>$Lang::tr{'urlfilter banned clients'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+</tr>
+<tr>
+	<td colspan='2' width='50%'><textarea name='UNFILTERED_CLIENTS' cols='32' rows='6' wrap='off'>
+END
+;
+
+# transform from pre1.8 client definitions
+$filtersettings{'UNFILTERED_CLIENTS'} =~ s/^\s+//g;
+$filtersettings{'UNFILTERED_CLIENTS'} =~ s/\s+$//g;
+$filtersettings{'UNFILTERED_CLIENTS'} =~ s/\s+-\s+/-/g;
+$filtersettings{'UNFILTERED_CLIENTS'} =~ s/\s+/ /g;
+
+@clients = split(/ /,$filtersettings{'UNFILTERED_CLIENTS'});
+undef $filtersettings{'UNFILTERED_CLIENTS'};
+foreach (@clients) { $filtersettings{'UNFILTERED_CLIENTS'} .= "$_\n"; }
+
+print $filtersettings{'UNFILTERED_CLIENTS'};
+
+print <<END
+</textarea></td>
+	<td colspan='2' width='50%'><textarea name='BANNED_CLIENTS' cols='32' rows='6' wrap='off'>
+END
+;
+
+# transform from pre1.8 client definitions
+$filtersettings{'BANNED_CLIENTS'} =~ s/^\s+//g;
+$filtersettings{'BANNED_CLIENTS'} =~ s/\s+$//g;
+$filtersettings{'BANNED_CLIENTS'} =~ s/\s+-\s+/-/g;
+$filtersettings{'BANNED_CLIENTS'} =~ s/\s+/ /g;
+
+@clients = split(/ /,$filtersettings{'BANNED_CLIENTS'});
+undef $filtersettings{'BANNED_CLIENTS'};
+foreach (@clients) { $filtersettings{'BANNED_CLIENTS'} .= "$_\n"; }
+
+print $filtersettings{'BANNED_CLIENTS'};
+
+print <<END
+</textarea></td>
 </tr>
 </table>
 <hr size='1'>
@@ -1367,6 +1466,17 @@ print <<END
 	<td>&nbsp;</td>
 </tr>
 </table>
+<table width='100%'>
+<tr>
+	<td class='base'><b>$Lang::tr{'urlfilter background image'}</b></td>
+</tr>
+<tr>
+	<td><br>$Lang::tr{'urlfilter background text'}:</td>
+</tr>
+<tr>
+	<td><input type='file' name='BACKGROUND' size='40' /> &nbsp; <input type='submit' name='ACTION' value='$Lang::tr{'urlfilter upload background'}' /></td>
+</tr>
+</table>
 <hr size='1'>
 <table width='100%'>
 <tr>
@@ -1411,7 +1521,7 @@ print <<END
 	<font class='base'>$Lang::tr{'this field may be blank'}</font>
 	</td>
 	<td align='right'>&nbsp;
-</td>
+	</td>
 </tr>
 </table>
 <table width='100%'>
@@ -1795,10 +1905,28 @@ print <<END
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
-		<td valign='top'><input type='text' name='SRC' value='$tcsettings{'SRC'}' size='32' /></td>
+        <td rowspan='2'><textarea name='SRC' cols='28' rows='5' wrap='off'>
+END
+;
+
+# transform from pre1.8 client definitions
+$tcsettings{'SRC'} =~ s/^\s+//g;
+$tcsettings{'SRC'} =~ s/\s+$//g;
+$tcsettings{'SRC'} =~ s/\s+-\s+/-/g;
+$tcsettings{'SRC'} =~ s/\s+/ /g;
+
+@clients = split(/ /,$tcsettings{'SRC'});
+undef $tcsettings{'SRC'};
+foreach (@clients) { $tcsettings{'SRC'} .= "$_\n"; }
+
+print $tcsettings{'SRC'};
+
+print <<END
+</textarea></td>
+
 		<td>&nbsp;</td>
-		<td class='base' rowspan='3' valign='top'>
-		<select name='DST' size='4' multiple>
+		<td class='base' rowspan='2' valign='top'>
+		<select name='DST' size='6' multiple>
 		<option value='any' $selected{'DST'}{'any'} = "selected='selected'">$Lang::tr{'urlfilter category all'}</option>
 		<option value='in-addr' $selected{'DST'}{'in-addr'} = "selected='selected'">in-addr</option>
 END
@@ -1826,7 +1954,14 @@ print <<END
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
 		<td>$Lang::tr{'remark'}&nbsp;<img src='/blob.gif' alt='*'></td>
+		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
@@ -1834,6 +1969,7 @@ print <<END
 	</tr>
 	<tr>
 		<td><input type='text' name='COMMENT' value='$tcsettings{'COMMENT'}' size='32' /></td>
+		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
@@ -1890,7 +2026,7 @@ print <<END
 		<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'urlfilter time space'}</b></td>
 		<td width='15%' class='boldbase' align='center'><b>$Lang::tr{'urlfilter src'}</b></td>
 		<td width='5%' class='boldbase' align='center'><b>$Lang::tr{'urlfilter dst'}</b></td>
-		<td width='10%' class='boldbase' colspan='4' align='center'>&nbsp;</td>
+		<td width='10%' class='boldbase' colspan='5' align='center'>&nbsp;</td>
 	</tr>
 END
 ;
@@ -1959,6 +2095,15 @@ print <<END
 
 		<td align='center'>
 		<form method='post' name='frmc$id' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='image' name='$Lang::tr{'urlfilter copy rule'}' src='/images/urlfilter/copy.gif' title='$Lang::tr{'urlfilter copy rule'}' alt='$Lang::tr{'urlfilter copy rule'}' />
+		<input type='hidden' name='MODE' value='TIMECONSTRAINT' />
+		<input type='hidden' name='ID' value='$id' />
+		<input type='hidden' name='ACTION' value='$Lang::tr{'urlfilter copy rule'}' />
+		</form>
+		</td>
+
+		<td align='center'>
+		<form method='post' name='frmd$id' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' title='$Lang::tr{'remove'}' alt='$Lang::tr{'remove'}' />
 		<input type='hidden' name='MODE' value='TIMECONSTRAINT' />
 		<input type='hidden' name='ID' value='$id' />
@@ -1978,7 +2123,7 @@ END
 print <<END
 		<td align='center' colspan='4'>$temp[16]
 		</td>
-		<td align='center' colspan='4'>
+		<td align='center' colspan='5'>
 		</td>
 	</tr>
 END
@@ -2004,6 +2149,8 @@ print <<END
 		<td class='base'>$Lang::tr{'click to enable'}</td>
 		<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
 		<td class='base'>$Lang::tr{'edit'}</td>
+		<td>&nbsp; &nbsp; <img src='/images/urlfilter/copy.gif' alt='$Lang::tr{'urlfilter copy rule'}' /></td>
+		<td class='base'>$Lang::tr{'urlfilter copy rule'}</td>
 		<td>&nbsp; &nbsp; <img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
 		<td class='base'>$Lang::tr{'remove'}</td>
 	</tr>
@@ -2385,6 +2532,26 @@ print "</form>\n";
 
 sub savesettings
 {
+	# transform to pre1.8 client definitions
+	@clients = split(/\n/,$filtersettings{'UNFILTERED_CLIENTS'});
+	undef $filtersettings{'UNFILTERED_CLIENTS'};
+	foreach(@clients)
+	{
+		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
+		$filtersettings{'UNFILTERED_CLIENTS'} .= "$_ ";
+	}
+	$filtersettings{'UNFILTERED_CLIENTS'} =~ s/\s+$//;
+
+	# transform to pre1.8 client definitions
+	@clients = split(/\n/,$filtersettings{'BANNED_CLIENTS'});
+	undef $filtersettings{'BANNED_CLIENTS'};
+	foreach(@clients)
+	{
+		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
+		$filtersettings{'BANNED_CLIENTS'} .= "$_ ";
+	}
+	$filtersettings{'BANNED_CLIENTS'} =~ s/\s+$//;
+
 	&writeconfigfile;
 
 	delete $filtersettings{'CUSTOM_BLACK_DOMAINS'};
@@ -2403,22 +2570,34 @@ sub savesettings
 sub readblockcategories
 {
 	undef(@categories);
-	foreach $blacklist (<$dbdir/*>) {
-	  if (-d $blacklist) {
-	    $lastslashpos = rindex($blacklist,"/");
-	    if ($lastslashpos > -1) {
-	      $section = substr($blacklist,$lastslashpos+1);
-	    } else {
-	      $section = $blacklist;
-	    }
-	    if (!($section eq 'custom')) { push(@categories,$section) };
-	  }
-	}
+
+	&getblockcategory ($dbdir);
+
+	foreach (@categories) { $_ = substr($_,length($dbdir)+1); }
 
 	@filtergroups = @categories;
+
 	foreach (@filtergroups) {
+		s/\//_SLASH_/g;
         	tr/a-z/A-Z/;
 	        $_ = "FILTER_".$_;
+	}
+}
+
+# -------------------------------------------------------------------
+
+sub getblockcategory
+{
+	foreach $category (<$_[0]/*>)
+	{
+		if (-d $category)
+		{
+			if ((-e "$category/domains") || (-e "$category/urls"))
+			{
+				unless ($category =~ /\bcustom\b/) { push(@categories,$category); }
+			}
+			&getblockcategory ($category);
+		}
 	}
 }
 
@@ -2488,7 +2667,7 @@ sub aggregatedconstraints
 			foreach (@new)
 			{
 				@tmp2 = split(/\,/);
-				if ($tmp2[15] eq 'on')
+				if (($tmp1[15] eq 'on') && ($tmp2[15] eq 'on'))
 				{
 					if (($tmp1[0] eq $tmp2[0]) && ($tmp1[12] eq $tmp2[12]) && ($tmp1[13] eq $tmp2[13]) && ($tmp1[14] eq $tmp2[14]))
 					{
@@ -2530,10 +2709,31 @@ sub aggregatedconstraints
 
 # -------------------------------------------------------------------
 
+sub setpermissions
+{
+	my $bldir = $_[0];
+
+	foreach $category (<$bldir/*>)
+	{
+        	 if (-d $category){
+			system("chmod 755 $category &> /dev/null");
+			foreach $blacklist (<$category/*>)
+			{
+         			if (-f $blacklist) { system("chmod 644 $blacklist &> /dev/null"); }
+         			if (-d $blacklist) { system("chmod 755 $blacklist &> /dev/null"); }
+			}
+        	 	system("chmod 666 $category/*.db &> /dev/null");
+			&setpermissions ($category);
+		}
+	 }
+}
+
+# -------------------------------------------------------------------
+
 sub writeconfigfile
 {
 	my $executables = "\\.\(ade|adp|asx|bas|bat|chm|com|cmd|cpl|crt|dll|eml|exe|hiv|hlp|hta|inc|inf|ins|isp|jse|jtd|lnk|msc|msh|msi|msp|mst|nws|ocx|oft|ops|pcd|pif|plx|reg|scr|sct|sha|shb|shm|shs|sys|tlb|tsp|url|vbe|vbs|vxd|wsc|wsf|wsh\)\$";
-	my $audiovideo = "\\.\(aiff|asf|avi|dif|divx|mov|movie|mp3|mpe?g?|mpv2|ogg|ra?m|snd|qt|wav|wmf|wmv\)\$";
+	my $audiovideo = "\\.\(aiff|asf|avi|dif|divx|mov|movie|mp3|mpe?g?|mpv2|ogg|ra?m|snd|qt|wav|wma|wmf|wmv\)\$";
 	my $archives = "\\.\(bin|bz2|cab|cdr|dmg|gz|hqx|rar|smi|sit|sea|tar|tgz|zip\)\$";
 
 	my $ident = " anonymous";
@@ -2583,9 +2783,9 @@ sub writeconfigfile
 			if ($filtersettings{'SHOW_URL'} eq 'on') { $redirect .= "&url=%u"; }
 			if ($filtersettings{'SHOW_IP'} eq 'on') { $redirect .= "&ip=%a"; }
 			$redirect  =~ s/^&/?/;
-			$redirect = "http:\/\/$netsettings{'GREEN_ADDRESS'}:81\/redirect.cgi".$redirect; 
+			$redirect = "http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi".$redirect; 
 		} else {
-			$redirect="http:\/\/$netsettings{'GREEN_ADDRESS'}:81\/redirect.cgi";
+			$redirect="http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi";
 		}
 	} else { $redirect=$filtersettings{'REDIRECT_PAGE'}; }
 
@@ -2630,6 +2830,8 @@ sub writeconfigfile
 		$defaultrule .= "any";
 	}
 
+	$defaultrule =~ s/\//_/g;
+
 	open(FILE, ">${General::swroot}/urlfilter/squidGuard.conf") or die "Unable to write squidGuard.conf file";
 	flock(FILE, 2);
 
@@ -2648,14 +2850,14 @@ sub writeconfigfile
 
 	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) || ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
 	{
-		print FILE "rewrite rew-rule-0 {\n";
+		print FILE "rewrite rew-rule-1 {\n";
 
 		if (($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles))
 		{
 			print FILE "    # rewrite localfiles\n";
 			foreach (@repositoryfiles)
 			{
-				print FILE "    s@.*/$_\$\@http://$netsettings{'GREEN_ADDRESS'}:81/repository/$_\@i\n";
+				print FILE "    s@.*/$_\$\@http://$netsettings{'GREEN_ADDRESS'}:$http_port/repository/$_\@i\n";
 			}
 		}
 
@@ -2672,19 +2874,39 @@ sub writeconfigfile
 		print FILE "}\n\n";
 
 		if ((!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) && ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')) {
-			print FILE "rewrite rew-rule-1 {\n";
+			print FILE "rewrite rew-rule-2 {\n";
 			if (($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles))
 			{
 				print FILE "    # rewrite localfiles\n";
 				foreach (@repositoryfiles)
 				{
-					print FILE "    s@.*/$_\$\@http://$netsettings{'GREEN_ADDRESS'}:81/repository/$_\@i\n";
+					print FILE "    s@.*/$_\$\@http://$netsettings{'GREEN_ADDRESS'}:$http_port/repository/$_\@i\n";
 				}
 			} else {
 				print FILE "    # rewrite nothing\n";
 			}
 			print FILE "}\n\n";
 		}
+	}
+
+	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) {
+		print FILE "src unfiltered {\n";
+		print FILE "    ip $filtersettings{'UNFILTERED_CLIENTS'}\n";
+		print FILE "}\n\n";
+	}
+	if (!($filtersettings{'BANNED_CLIENTS'} eq '')) {
+		print FILE "src banned {\n";
+		print FILE "    ip $filtersettings{'BANNED_CLIENTS'}\n";
+		if ($filtersettings{'ENABLE_LOG'} eq 'on')
+		{
+			if ($filtersettings{'ENABLE_CATEGORY_LOG'} eq 'on')
+			{
+				print FILE "    logfile       ".$ident." banned.log\n";
+			} else {
+				print FILE "    logfile       ".$ident." urlfilter.log\n";
+			}
+		}
+		print FILE "}\n\n";
 	}
 
 	if (-e $uqfile)
@@ -2733,7 +2955,30 @@ sub writeconfigfile
 			{
 				$idx++;
 				print FILE "src network-$idx {\n";
-				print FILE "    ip $tc[12]\n";
+				@clients = split(/ /,$tc[12]);
+				@temp = split(/-/,$clients[0]);
+				if ( (&General::validipormask($temp[0])) || (&General::validipandmask($temp[0])))
+				{
+					print FILE "    ip $tc[12]\n";
+				} else {
+					print FILE "    user";
+					@clients = split(/ /,$tc[12]);
+					foreach $line (@clients)
+					{
+						$line =~ s/(^\w+)\\(\w+$)/$1%5c$2/;
+						print FILE " $line";
+					}
+					print FILE "\n";
+				}
+				if (($filtersettings{'ENABLE_LOG'} eq 'on') && ($tc[14] eq 'block') && ($tc[13] eq 'any'))
+				{
+					if ($filtersettings{'ENABLE_CATEGORY_LOG'} eq 'on')
+					{
+						print FILE "    logfile       ".$ident." timeconst.log\n";
+					} else {
+						print FILE "    logfile       ".$ident." urlfilter.log\n";
+					}
+				}
 				print FILE "}\n\n";
 			}
 		}
@@ -2753,31 +2998,22 @@ sub writeconfigfile
 		}
 	}
 
-	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) {
-		print FILE "src unfiltered {\n";
-		print FILE "    ip $filtersettings{'UNFILTERED_CLIENTS'}\n";
-		print FILE "}\n\n";
-	}
-	if (!($filtersettings{'BANNED_CLIENTS'} eq '')) {
-		print FILE "src banned {\n";
-		print FILE "    ip $filtersettings{'BANNED_CLIENTS'}\n";
-		print FILE "}\n\n";
-	}
-
 	foreach $category (@categories) {
+		$blacklist = $category;
+		$category =~ s/\//_/g;
 		print FILE "dest $category {\n";
-		if (-e "$dbdir/$category/domains") {
-			print FILE "    domainlist     $category\/domains\n";
+		if (-e "$dbdir/$blacklist/domains") {
+			print FILE "    domainlist     $blacklist\/domains\n";
 		}
-		if (-e "$dbdir/$category/urls") {
-			print FILE "    urllist        $category\/urls\n";
+		if (-e "$dbdir/$blacklist/urls") {
+			print FILE "    urllist        $blacklist\/urls\n";
 		}
-		if ((-e "$dbdir/$category/expressions") && ($filtersettings{'ENABLE_EXPR_LISTS'} eq 'on')) {
-			print FILE "    expressionlist $category\/expressions\n";
+		if ((-e "$dbdir/$blacklist/expressions") && ($filtersettings{'ENABLE_EXPR_LISTS'} eq 'on')) {
+			print FILE "    expressionlist $blacklist\/expressions\n";
 		}
-		if (($category eq 'ads') && ($filtersettings{'ENABLE_EMPTY_ADS'} eq 'on'))
+		if ((($category eq 'ads') || ($category eq 'adv')) && ($filtersettings{'ENABLE_EMPTY_ADS'} eq 'on'))
 		{
-			print FILE "    redirect       http:\/\/$netsettings{'GREEN_ADDRESS'}:81\/images/urlfilter/1x1.gif\n";
+			print FILE "    redirect       http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/images/urlfilter/1x1.gif\n";
 		}
 		if ($filtersettings{'ENABLE_LOG'} eq 'on')
 		{
@@ -2789,6 +3025,7 @@ sub writeconfigfile
 			}
 		}
 		print FILE "}\n\n";
+		$category = $blacklist;
 	}
 	
 	print FILE "dest files {\n";
@@ -2842,7 +3079,7 @@ sub writeconfigfile
 		print FILE "        pass all\n";
 		if ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')
 		{
-			print FILE "        rewrite rew-rule-1\n";
+			print FILE "        rewrite rew-rule-2\n";
 		}
 		print FILE "    }\n\n";
 	}
@@ -2894,6 +3131,7 @@ sub writeconfigfile
 			chomp;
 			@tc = split(/\,/);
 			@ec = split(/\|/,$tc[13]);
+			foreach (@ec) { s/\//_/g; }
 			if ($tc[15] eq 'on')
 			{
 				$idx++;
@@ -2939,12 +3177,17 @@ sub writeconfigfile
 						print FILE $tcrule unless ((@ec == 1) && ($ec[0] eq 'any'));
 					} else {
 						$tcrule = $defaultrule;
-						foreach (@ec)
+						if ((@ec == 1) && ($ec[0] eq 'any'))
 						{
-							$tcrule =~ s/!$_ //;
-							print FILE "$_ " if ($_ eq 'any');
+							print FILE "any";
+						} else {
+							foreach (@ec)
+							{
+								$tcrule = "$_ ".$tcrule unless (index($defaultrule,"!".$_." ") ge 0);
+								$tcrule =~ s/!$_ //;
+							}
+							print FILE $tcrule;
 						}
-						print FILE $tcrule unless ((@ec == 1) && ($ec[0] eq 'any'));
 					}
 				}
 
@@ -2968,7 +3211,7 @@ sub writeconfigfile
 	}
 	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) || ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
 	{
-		print FILE "        rewrite rew-rule-0\n";
+		print FILE "        rewrite rew-rule-1\n";
 	}
 	print FILE "        redirect $redirect\n";
 	print FILE "    }\n";

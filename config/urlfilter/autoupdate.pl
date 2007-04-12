@@ -1,7 +1,10 @@
 #!/usr/bin/perl
-
 #
-# $Id: autoupdate.pl,v 1.0 2005/06/15 00:00:00 marco Exp $
+# This code is distributed under the terms of the GPL
+#
+# (c) 2004-2007 marco.s - http://www.urlfilter.net
+#
+# $Id: autoupdate.pl,v 1.1 2007/03/14 00:00:00 marco.s Exp $
 #
 use strict;
 
@@ -9,6 +12,7 @@ my $make_clean = 1;
 
 my $swroot = "/var/ipfire";
 my $target = "$swroot/urlfilter/download";
+my $tempdb = "$target/blacklists";
 my $dbdir  = "$swroot/urlfilter/blacklists";
 
 my $sourceurlfile = "$swroot/urlfilter/autoupdate/autoupdate.urls";
@@ -23,6 +27,7 @@ my $source_url;
 my $source_name;
 my @source_urllist;
 
+my @categories;
 my $blacklist;
 my $category;
 
@@ -72,24 +77,32 @@ unless ($blacklist_url eq '')
 	if (-e $blacklist)
 	{
 		system("/bin/tar --no-same-owner -xzf $blacklist -C $target");
-		if (-d "$target/blacklists")
+		if (-d "$target/BL") { system ("mv $target/BL $target/blacklists"); }
+		if (-d "$tempdb")
 		{
+			undef(@categories);
+			&getblockcategory ($tempdb);
+			foreach (@categories) { $_ = substr($_,length($tempdb)+1); }
+
 			open(FILE, ">$target/update.conf");
 			flock FILE, 2;
 			print FILE "logdir $target\n";
-			print FILE "dbhome $target/blacklists\n\n";
+			print FILE "dbhome $tempdb\n\n";
 
-			foreach (<$target/blacklists/*>)
-			{
-        			if ((-d $_) && ((-s "$_/domains") || (-s "$_/urls")))
-				{
-					$category=substr($_,rindex($_,"/")+1);
-					print FILE "dest $category {\n";
-					if (-s "$_/domains") { print FILE "    domainlist  $category/domains\n"; }
-					if (-s "$_/urls")    { print FILE "    urllist     $category/urls\n"; }
-					print FILE "}\n\n";
+			foreach $category (@categories) {
+				$blacklist = $category;
+				$category =~ s/\//_/g;
+				print FILE "dest $category {\n";
+				if (-s "$tempdb/$blacklist/domains") {
+					print FILE "    domainlist     $blacklist\/domains\n";
 				}
+				if (-s "$tempdb/$blacklist/urls") {
+					print FILE "    urllist        $blacklist\/urls\n";
+				}
+				print FILE "}\n\n";
+				$category = $blacklist;
 			}
+
 			print FILE "acl {\n";
 			print FILE "    default {\n";
 			print FILE "        pass none\n";
@@ -103,19 +116,7 @@ unless ($blacklist_url eq '')
 
 			system("chown -R nobody.nobody $dbdir");
 
-			foreach $category (<$dbdir/*>)
-			{
-        			if (-d $category)
-				{
-		                	system("chmod 755 $category &> /dev/null");
-	        		        foreach $blacklist (<$category/*>)
-		        	        {
-                			        if (-f $blacklist){ system("chmod 644 $blacklist &> /dev/null"); }
-                        			if (-d $blacklist){ system("chmod 755 $blacklist &> /dev/null"); }
-			                }
-        			        system("chmod 666 $category/*.db &> /dev/null");
-				}
-			}
+			&setpermissions ($dbdir);
 
 			system("touch $updflagfile");
 			system("chown nobody.nobody $updflagfile");
@@ -169,6 +170,44 @@ sub readhash
 		}
 		close FILE;
 	}
+}
+
+# -------------------------------------------------------------------
+
+sub getblockcategory
+{
+	foreach $category (<$_[0]/*>)
+	{
+		if (-d $category)
+		{
+			if ((-s "$category/domains") || (-s "$category/urls"))
+			{
+				unless ($category =~ /\bcustom\b/) { push(@categories,$category); }
+			}
+			&getblockcategory ($category);
+		}
+	}
+}
+
+# -------------------------------------------------------------------
+
+sub setpermissions
+{
+	my $bldir = $_[0];
+
+	foreach $category (<$bldir/*>)
+	{
+        	 if (-d $category){
+			system("chmod 755 $category &> /dev/null");
+			foreach $blacklist (<$category/*>)
+			{
+         			if (-f $blacklist) { system("chmod 644 $blacklist &> /dev/null"); }
+         			if (-d $blacklist) { system("chmod 755 $blacklist &> /dev/null"); }
+			}
+        	 	system("chmod 666 $category/*.db &> /dev/null");
+			&setpermissions ($category);
+		}
+	 }
 }
 
 # -------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 case "$1" in
 	ide)
-		/sbin/kudzu -qps -c HD | egrep "desc|device" | awk -F': ' '{print $2}' | sed -e '/"$/a\\' -e "s/$/\;/g" | tr "\n" "XX" | sed -e "s/XX/\n/g" -e "s/\;X/\;/g" > /var/ipfire/extrahd/scan
+		/sbin/kudzu -qps -c HD | egrep "desc|device:" | awk -F': ' '{print $2}' | sed -e '/"$/a\\' -e "s/$/\;/g" | tr "\n" "XX" | sed -e "s/XX/\n/g" -e "s/\;X/\;/g" > /var/ipfire/extrahd/scan
 		;;
 	partitions)
 		cat /proc/partitions | awk '{print $4 ";"  $3 ";"}' | grep -v name | grep -v "^;;$" > /var/ipfire/extrahd/partitions
