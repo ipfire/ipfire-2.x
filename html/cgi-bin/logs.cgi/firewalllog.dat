@@ -305,16 +305,14 @@ if ($lines != 0) { &oldernewer(); }
 print <<END
 <table width='100%'>
 <tr>
-	<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
-	<td width='13%' align='center' class='boldbase'><b>$Lang::tr{'chain'}</b></td>
-	<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></td>
-	<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></td>
-	<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'source'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'chain'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'source'}<br/>$Lang::tr{'destination'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'src port'}<br />$Lang::tr{'dst port'}</b></td>
 	<td align='center' class='boldbase'><b>Flag</b></td>
-	<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'src port'}</b></td>
-	<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'mac address'}</b></td>
-	<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'destination'}</b></td>
-	<td width='20%' align='center' class='boldbase'><b>$Lang::tr{'dst port'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'mac address'}</b></td>
 </tr>
 END
 ;
@@ -360,16 +358,10 @@ foreach $_ (@log)
 	<td align='center'>$comment</td>
 	<td align='center'>$iface</td>
 	<td align='center'>$proto</td>
-	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
+	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a><br /><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
+	<td align='center'>$srcport<br/>$dstport</td>
 	<td align='center'><a href='../country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>
-	<td align='center'>$srcport</td>
 	<td align='center'>$macaddr</td>
-	<td align='center'>
-	<table width='100%' cellpadding='0' cellspacing='0'><tr>
-	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
-	</tr></table>
-	</td>
-	<td align='center'>$dstport</td>
 </tr>
 END
 	;

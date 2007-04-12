@@ -1,17 +1,17 @@
 #!/usr/bin/perl
 #
-# IPCop  CGIs
+# (c) 2004-2007 marco.s - http://www.advproxy.net
 #
 # This code is distributed under the terms of the GPL
 #
-# $Id: advproxy.cgi,v 2.0.0 [beta] 2006/09/03 00:00:00 marco.s Exp $
+# $Id: advproxy.cgi,v 2.1.0 2007/03/06 00:00:00 marco.s Exp $
 #
 
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -24,11 +24,9 @@ my $https_port='444';
 my %proxysettings=();
 my %netsettings=();
 my %filtersettings=();
-my %updaccelsettings=();
+my %xlratorsettings=();
 my %stdproxysettings=();
 my %mainsettings=();
-my $urlfilter_addon=0;
-my $updaccel_addon=0;
 
 my %checked=();
 my %selected=();
@@ -146,25 +144,14 @@ close(FILE);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
-if (-e "${General::swroot}/urlfilter/version") { $urlfilter_addon = 1; }
-if (-e "${General::swroot}/updatexlrator/version") { $updaccel_addon = 1; }
-
-if ($urlfilter_addon) {
-	$filtersettings{'CHILDREN'} = '5';
-	if (-e "${General::swroot}/urlfilter/settings") {
-		&General::readhash("${General::swroot}/urlfilter/settings", \%filtersettings);
-	}
-	$urlfilterversion = `cat ${General::swroot}/urlfilter/version`;
-	$urlfilterversion =~ s/([^\s]+).*/$1/;
+$filtersettings{'CHILDREN'} = '5';
+if (-e "${General::swroot}/urlfilter/settings") {
+	&General::readhash("${General::swroot}/urlfilter/settings", \%filtersettings);
 }
 
-if ($updaccel_addon) {
-	$updaccelsettings{'CHILDREN'} = '10';
-	if (-e "${General::swroot}/updatexlrator/settings") {
-		&General::readhash("${General::swroot}/updatexlrator/settings", \%updaccelsettings);
-	}
-	$updaccelversion = `cat ${General::swroot}/updatexlrator/version`;
-	$updaccelversion =~ s/([^\s]+).*/$1/;
+$xlratorsettings{'CHILDREN'} = '5';
+if (-e "${General::swroot}/updatexlrator/settings") {
+	&General::readhash("${General::swroot}/updatexlrator/settings", \%xlratorsettings);
 }
 
 &Header::showhttpheaders();
@@ -202,6 +189,8 @@ $proxysettings{'L1_DIRS'} = '16';
 $proxysettings{'OFFLINE_MODE'} = 'off';
 $proxysettings{'CLASSROOM_EXT'} = 'off';
 $proxysettings{'SUPERVISOR_PASSWORD'} = '';
+$proxysettings{'NO_PROXY_LOCAL'} = 'off';
+$proxysettings{'NO_PROXY_LOCAL_BLUE'} = 'off';
 $proxysettings{'TIME_ACCESS_MODE'} = 'allow';
 $proxysettings{'TIME_FROM_HOUR'} = '00';
 $proxysettings{'TIME_FROM_MINUTE'} = '00';
@@ -254,14 +243,8 @@ $proxysettings{'IDENT_REQUIRED'} = 'off';
 $proxysettings{'IDENT_TIMEOUT'} = '10';
 $proxysettings{'IDENT_ENABLE_ACL'} = 'off';
 $proxysettings{'IDENT_USER_ACL'} = 'positive';
-
-if ($urlfilter_addon) {
-	$proxysettings{'ENABLE_FILTER'} = 'off';
-}
-
-if ($updaccel_addon) {
-	$proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
-}
+$proxysettings{'ENABLE_FILTER'} = 'off';
+$proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 
 $ncsa_buttontext = $Lang::tr{'advproxy NCSA create user'};
 
@@ -304,6 +287,10 @@ if ($proxysettings{'ACTION'} eq $Lang::tr{'remove'})
 	$proxysettings{'NCSA_EDIT_MODE'} = 'yes';
 	&deluser($proxysettings{'ID'});
 }
+
+$checked{'ENABLE_UPDXLRATOR'}{'off'} = '';
+$checked{'ENABLE_UPDXLRATOR'}{'on'} = '';
+$checked{'ENABLE_UPDXLRATOR'}{$proxysettings{'ENABLE_UPDXLRATOR'}} = "checked='checked'";
 
 if ($proxysettings{'ACTION'} eq $Lang::tr{'edit'})
 {
@@ -587,8 +574,8 @@ ERROR:
 
 		if (-e "${General::swroot}/proxy/settings") { &General::readhash("${General::swroot}/proxy/settings", \%stdproxysettings); }
 		$stdproxysettings{'PROXY_PORT'} = $proxysettings{'PROXY_PORT'};
-		if ($urlfilter_addon) { $stdproxysettings{'ENABLE_FILTER'} = $proxysettings{'ENABLE_FILTER'}; }
-		if ($updaccel_addon) { $stdproxysettings{'ENABLE_UPDXLRATOR'} = $proxysettings{'ENABLE_UPDXLRATOR'}; }
+		$stdproxysettings{'ENABLE_FILTER'} = $proxysettings{'ENABLE_FILTER'};
+		$stdproxysettings{'ENABLE_UPDXLRATOR'} = $proxysettings{'ENABLE_UPDXLRATOR'};
 		&General::writehash("${General::swroot}/proxy/settings", \%stdproxysettings);
 
 		&writeconfig;
@@ -679,6 +666,13 @@ $checked{'LOGUSERAGENT'}{$proxysettings{'LOGUSERAGENT'}} = "checked='checked'";
 
 $selected{'ERR_LANGUAGE'}{$proxysettings{'ERR_LANGUAGE'}} = "selected='selected'";
 $selected{'ERR_DESIGN'}{$proxysettings{'ERR_DESIGN'}} = "selected='selected'";
+
+$checked{'NO_PROXY_LOCAL'}{'off'} = '';
+$checked{'NO_PROXY_LOCAL'}{'on'} = '';
+$checked{'NO_PROXY_LOCAL'}{$proxysettings{'NO_PROXY_LOCAL'}} = "checked='checked'";
+$checked{'NO_PROXY_LOCAL_BLUE'}{'off'} = '';
+$checked{'NO_PROXY_LOCAL_BLUE'}{'on'} = '';
+$checked{'NO_PROXY_LOCAL_BLUE'}{$proxysettings{'NO_PROXY_LOCAL_BLUE'}} = "checked='checked'";
 
 $checked{'CLASSROOM_EXT'}{'off'} = '';
 $checked{'CLASSROOM_EXT'}{'on'} = '';
@@ -806,17 +800,13 @@ $checked{'IDENT_USER_ACL'}{'positive'} = '';
 $checked{'IDENT_USER_ACL'}{'negative'} = '';
 $checked{'IDENT_USER_ACL'}{$proxysettings{'IDENT_USER_ACL'}} = "checked='checked'";
 
-if ($urlfilter_addon) {
-	$checked{'ENABLE_FILTER'}{'off'} = '';
-	$checked{'ENABLE_FILTER'}{'on'} = '';
-	$checked{'ENABLE_FILTER'}{$proxysettings{'ENABLE_FILTER'}} = "checked='checked'";
-}
+$checked{'ENABLE_FILTER'}{'off'} = '';
+$checked{'ENABLE_FILTER'}{'on'} = '';
+$checked{'ENABLE_FILTER'}{$proxysettings{'ENABLE_FILTER'}} = "checked='checked'";
 
-if ($updaccel_addon) {
-	$checked{'ENABLE_UPDXLRATOR'}{'off'} = '';
-	$checked{'ENABLE_UPDXLRATOR'}{'on'} = '';
-	$checked{'ENABLE_UPDXLRATOR'}{$proxysettings{'ENABLE_UPDXLRATOR'}} = "checked='checked'";
-}
+$checked{'ENABLE_UPDXLRATOR'}{'off'} = '';
+$checked{'ENABLE_UPDXLRATOR'}{'on'} = '';
+$checked{'ENABLE_UPDXLRATOR'}{$proxysettings{'ENABLE_UPDXLRATOR'}} = "checked='checked'";
 
 &Header::openpage($Lang::tr{'advproxy advanced web proxy configuration'}, 1, '');
 
@@ -1086,11 +1076,10 @@ print <<END
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy allowed subnets'}:</td>
-	<td colspan='2'>&nbsp;</td>
+	<td colspan='4' class='base'>$Lang::tr{'advproxy allowed subnets'}:</td>
 </tr>
 <tr>
-	<td colspan='2'><textarea name='SRC_SUBNETS' cols='32' rows='6' wrap='off'>
+	<td colspan='2' rowspan='4'><textarea name='SRC_SUBNETS' cols='32' rows='6' wrap='off'>
 END
 ;
 
@@ -1105,6 +1094,33 @@ if (!$proxysettings{'SRC_SUBNETS'})
 
 print <<END
 </textarea></td>
+END
+;
+
+$line = $Lang::tr{'advproxy no internal proxy on green'};
+$line =~ s/Green/<font color="$Header::colourgreen">Green<\/font>/i;
+print "<td class='base'>$line:</td>\n";
+print <<END
+	<td><input type='checkbox' name='NO_PROXY_LOCAL' $checked{'NO_PROXY_LOCAL'}{'on'} /></td>
+</tr>
+END
+;
+if ($netsettings{'BLUE_DEV'}) {
+	$line = $Lang::tr{'advproxy no internal proxy on blue'};
+	$line =~ s/Blue/<font color="$Header::colourblue">Blue<\/font>/i;
+	print "<tr>\n";
+	print "<td class='base'>$line:</td>\n";
+	print <<END
+	<td><input type='checkbox' name='NO_PROXY_LOCAL_BLUE' $checked{'NO_PROXY_LOCAL_BLUE'}{'on'} /></td>
+</tr>
+END
+;
+}
+print <<END
+<tr>
+	<td colspan='2'>&nbsp;</td>
+</tr>
+<tr>
 	<td colspan='2'>&nbsp;</td>
 </tr>
 </table>
@@ -1502,11 +1518,10 @@ print <<END
 END
 ;
 
-if ($urlfilter_addon) {
-	print <<END
+print <<END
 <table width='100%'>
 <tr>
-	<td class='base' colspan='4'><b>$Lang::tr{'advproxy url filter'}</b>&nbsp; [<font color='$Header::colourred'> $urlfilterversion </font>]</td>
+	<td class='base' colspan='4'><b>$Lang::tr{'advproxy url filter'}</b></td>
 </tr>
 <tr>
 	<td class='base' width='25%'>$Lang::tr{'advproxy enabled'}:</td>
@@ -1516,14 +1531,10 @@ if ($urlfilter_addon) {
 </tr>
 </table>
 <hr size='1'>
-END
-; }
 
-if ($updaccel_addon) {
-	print <<END
 <table width='100%'>
 <tr>
-	<td class='base' colspan='4'><b>$Lang::tr{'advproxy update accelerator'}</b>&nbsp; [<font color='$Header::colourred'> $updaccelversion </font>]</td>
+	<td class='base' colspan='4'><b>$Lang::tr{'advproxy update accelerator'}</b></td>
 </tr>
 <tr>
 	<td class='base' width='25%'>$Lang::tr{'advproxy enabled'}:</td>
@@ -1533,10 +1544,7 @@ if ($updaccel_addon) {
 </tr>
 </table>
 <hr size='1'>
-END
-; }
 
-print <<END
 <table width='100%'>
 <tr>
 	<td colspan='5'><b>$Lang::tr{'advproxy AUTH method'}</b></td>
@@ -2213,7 +2221,7 @@ END
 print <<END
 </table>
 <br>
-<table width='100%'>
+<table>
 <tr>
 	<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
 	<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
@@ -3114,10 +3122,13 @@ acl IPCop_http  port $http_port
 acl IPCop_https port $https_port
 acl IPCop_ips              dst $netsettings{'GREEN_ADDRESS'}
 acl IPCop_networks         src "$acl_src_subnets"
+acl IPCop_servers          dst "$acl_src_subnets"
 acl IPCop_green_network    src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
+acl IPCop_green_servers    dst $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
 END
 	;
 	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPCop_blue_network     src $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
+	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPCop_blue_servers     dst $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
 	if (!-z $acl_src_banned_ip) { print FILE "acl IPCop_banned_ips       src \"$acl_src_banned_ip\"\n"; }
 	if (!-z $acl_src_banned_mac) { print FILE "acl IPCop_banned_mac       arp \"$acl_src_banned_mac\"\n"; }
 	if (!-z $acl_src_unrestricted_ip) { print FILE "acl IPCop_unrestricted_ips src \"$acl_src_unrestricted_ip\"\n"; }
@@ -3301,9 +3312,23 @@ if ($delaypools) {
 		print FILE "delay_access 2 deny  all\n";
 	}
 
-	print FILE "delay_initial_bucket_level 100%\n"; 
+	print FILE "delay_initial_bucket_level 100\n"; 
 	print FILE "\n";
 }
+
+if ($proxysettings{'NO_PROXY_LOCAL'} eq 'on')
+{
+	print FILE "#Prevent internal proxy access to Green\n";
+	print FILE "http_access deny IPCop_green_servers !IPCop_green_network\n\n";
+}
+
+if ($proxysettings{'NO_PROXY_LOCAL_BLUE'} eq 'on')
+{
+	print FILE "#Prevent internal proxy access from Blue\n";
+	print FILE "http_access allow IPCop_blue_network IPCop_blue_servers\n";
+	print FILE "http_access deny  IPCop_blue_network IPCop_servers\n\n";
+}
+
 	print FILE <<END
 #Set custom configured ACLs
 END
@@ -3628,38 +3653,35 @@ END
 
 		print FILE "\nnever_direct allow all\n\n";
 	}
-	if (($urlfilter_addon) && ($updaccel_addon) && ($proxysettings{'ENABLE_FILTER'} eq 'on') && ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on'))
+	if (($proxysettings{'ENABLE_FILTER'} eq 'on') && ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on'))
 	{
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
-		if ($filtersettings{'CHILDREN'} > $updaccelsettings{'CHILDREN'})
+		if ($filtersettings{'CHILDREN'} > $xlratorsettings{'CHILDREN'})
 		{
 			print FILE "url_rewrite_children $filtersettings{'CHILDREN'}\n\n";
 		} else {
-			print FILE "url_rewrite_children $updaccelsettings{'CHILDREN'}\n\n";
+			print FILE "url_rewrite_children $xlratorsettings{'CHILDREN'}\n\n";
 		}
 	} else
 	{
-		if ($urlfilter_addon) {
-			if ($proxysettings{'ENABLE_FILTER'} eq 'on')
-			{
-				print FILE <<END
+
+		if ($proxysettings{'ENABLE_FILTER'} eq 'on')
+		{
+			print FILE <<END
 url_rewrite_program /usr/bin/squidGuard
 url_rewrite_children $filtersettings{'CHILDREN'}
 
 END
-				;
-			}
+			;
 		}
-		if ($updaccel_addon) {
-			if ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on')
-			{
-				print FILE <<END
+		if ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on')
+		{
+			print FILE <<END
 url_rewrite_program /usr/sbin/updxlrator
-url_rewrite_children $updaccelsettings{'CHILDREN'}
+url_rewrite_children $xlratorsettings{'CHILDREN'}
 
 END
-				;
-			}
+			;
 		}
 	}
 	close FILE;

@@ -8,41 +8,46 @@
 			        'title' => "Webproxy",
 			        'enabled' => 1,
 			        };
-    $subnetwork->{'30.urlfilter'} = {'caption' => 'URL-Filter',
+    $subnetwork->{'21.urlfilter'} = {'caption' => $Lang::tr{'url filter'},
 			        'uri' => '/cgi-bin/urlfilter.cgi',
-			        'title' => "URL-Filter",
+			        'title' => $Lang::tr{'url filter'},
 			        'enabled' => 1,
 			        };
-    $subnetwork->{'40.dhcp'} = {'caption' => $Lang::tr{'dhcp server'},
+		$subnetwork->{'22.updxlrator'} = {'caption' => $Lang::tr{'update accelerator'},
+			        'uri' => '/cgi-bin/updatexlrator.cgi',
+			        'title' => $Lang::tr{'update accelerator'},
+			        'enabled' => 1,
+			        };
+    $subnetwork->{'30.dhcp'} = {'caption' => $Lang::tr{'dhcp server'},
 				 'uri' => '/cgi-bin/dhcp.cgi',
 				 'title' => "$Lang::tr{'dhcp server'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'50.scheduler'} = {
+    $subnetwork->{'40.scheduler'} = {
 				 'caption' => $Lang::tr{'connscheduler'},
 				 'uri' => '/cgi-bin/connscheduler.cgi',
 				 'title' => "$Lang::tr{'connscheduler'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'60.hosts'} = {
+    $subnetwork->{'50.hosts'} = {
 				 'caption' => $Lang::tr{'edit hosts'},
 				 'uri' => '/cgi-bin/hosts.cgi',
 				 'title' => "$Lang::tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'70.upload'} = {
+    $subnetwork->{'60.upload'} = {
 				  'caption' => $Lang::tr{'upload'},
 				  'uri' => '/cgi-bin/upload.cgi',
 				  'title' => "$Lang::tr{'upload'}",
 				  'enabled' => 0,
 				  };
-    $subnetwork->{'80.aliases'} = {
+    $subnetwork->{'70.aliases'} = {
 				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$Lang::tr{'aliases'}",
 				  'enabled' => 0,
 				  };
-    $subnetwork->{'90.wakeonlan'} = {
+    $subnetwork->{'80.wakeonlan'} = {
 				  'caption' => $Lang::tr{'WakeOnLan'},
 				  'uri' => '/cgi-bin/wakeonlan.cgi',
 				  'title' => "$Lang::tr{'WakeOnLan'}",

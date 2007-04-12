@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         if (strcmp(argv[1], "generatepolicy")==0)
         {
             printf("\nGenerating Policy File");
-            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/twadmin --generate-polfile --site-keyfile /var/ipfire/tripwire/site.key --site-passphrase %s --polfile /var/ipfire/tripwire/tw.pol --cfgfile /var/ipfire/tripwire/tw.cfg /var/ipfire/tripwire/twpol.txt", argv[2]);
+            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/twadmin --create-polfile --site-keyfile /var/ipfire/tripwire/site.key --site-passphrase %s --polfile /var/ipfire/tripwire/tw.pol --cfgfile /var/ipfire/tripwire/tw.cfg /var/ipfire/tripwire/twpol.txt", argv[2]);
             safe_system(command);
             printf("\nInitialising - This may take a while depending on your Policy");
             snprintf(command, BUFFER_SIZE-1, "/usr/sbin/tripwire --init -c /var/ipfire/tripwire/tw.cfg -p /var/ipfire/tripwire/tw.cfg --local-passphrase %s", argv[3]);
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
         if (strcmp(argv[1], "resetpolicy")==0)
         {
             printf("\nGenerating Policy File");
-            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/twadmin --generate-polfile --site-keyfile /var/ipfire/tripwire/site.key --site-passphrase %s --polfile /var/ipfire/tripwire/tw.pol --cfgfile /var/ipfire/tripwire/tw.cfg /var/ipfire/tripwire/twpol.default", argv[2]);
+            snprintf(command, BUFFER_SIZE-1, "/usr/sbin/twadmin --create-polfile --site-keyfile /var/ipfire/tripwire/site.key --site-passphrase %s --polfile /var/ipfire/tripwire/tw.pol --cfgfile /var/ipfire/tripwire/tw.cfg /var/ipfire/tripwire/twpol.default", argv[2]);
             safe_system(command);
             printf("\nInitialising - This may take a while depending on your Policy");
             snprintf(command, BUFFER_SIZE-1, "/usr/sbin/tripwire --init -c /var/ipfire/tripwire/tw.cfg -p /var/ipfire/tripwire/tw.cfg --local-passphrase %s", argv[3]);

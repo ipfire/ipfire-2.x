@@ -12,17 +12,14 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 use IO::Socket;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-
-my $updxlratorversion = `cat ${General::swroot}/updatexlrator/version`;
-my $sysupdflagfile = "${General::swroot}/updatexlrator/.up2date";
 
 my %checked=();
 my %selected=();
@@ -59,8 +56,6 @@ my @metadata=();
 my $chk_cron_dly = "${General::swroot}/updatexlrator/autocheck/cron.daily";
 my $chk_cron_wly = "${General::swroot}/updatexlrator/autocheck/cron.weekly";
 my $chk_cron_mly = "${General::swroot}/updatexlrator/autocheck/cron.monthly";
-
-my $latest=substr(&check4updates,0,length($updxlratorversion));
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -236,18 +231,6 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-if (($updxlratorversion lt $latest) && (-e $sysupdflagfile)) { unlink($sysupdflagfile); }
-
-if (!-e $sysupdflagfile) {
-	&Header::openbox('100%', 'left', $Lang::tr{'updxlrtr update notification'});
-	print "<table width='100%' cellpadding='5'>\n";
-	print "<tr>\n";
-	print "<td bgcolor='$hintcolour' class='base'>$Lang::tr{'updxlrtr update information'}</td>";
-	print "</tr>\n";
-	print "</table>\n";
-	&Header::closebox();
-}
-
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>\n";
 
 &Header::openbox('100%', 'left', "$Lang::tr{'updxlrtr update accelerator'}");
@@ -340,7 +323,7 @@ print <<END
 <table width='100%'>
 <tr>
 	<td align='right'>
-	<sup><small><a href='http://www.advproxy.net/update-accelerator/' target='_blank'>Update Accelerator $updxlratorversion</a></small></sup>
+	&nbsp;
 	</td>
 </tr>
 </table>
@@ -618,35 +601,6 @@ print "</table>\n";
 &Header::closebigbox();
 
 &Header::closepage();
-
-# -------------------------------------------------------------------
-
-sub check4updates
-{
-	if ((-e "${General::swroot}/red/active") && (-e $sysupdflagfile) && (int(-M $sysupdflagfile) > 7))
-	{
-		my @response=();;
-
-		my $remote = IO::Socket::INET->new(
-			PeerHost => 'www.advproxy.net',
-			PeerPort => 'http(80)',
-			Timeout  => 1
-		);
-
-		if ($remote)
-		{
-			print $remote "GET http://www.advproxy.net/update-accelerator/version/ipcop/latest HTTP/1.0\n";
-			print $remote "User-Agent: Mozilla/4.0 (compatible; IPCop $General::version; $Lang::language; updatexlrator)\n\n";
-			while (<$remote>) { push(@response,$_); }
-			close $remote;
-			if ($response[0] =~ /^HTTP\/\d+\.\d+\s200\sOK\s*$/)
-			{
-				system("touch $sysupdflagfile");
-				return "$response[$#response]";
-			}
-		}
-	}
-}
 
 # -------------------------------------------------------------------
 

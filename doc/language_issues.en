@@ -309,8 +309,6 @@ WARNING: translation string unused: written sectors
 WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: IPFires hostname
-WARNING: untranslated string: Number of IPs for the pie chart
-WARNING: untranslated string: Number of Ports for the pie chart
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: down
 WARNING: untranslated string: firewall logs ip

@@ -453,7 +453,7 @@ for($s=0;$s<$lines;$s++)
 {
   $show++;
   $percent = $value[$s] * 100 / $linesjc;
-  $percent = sprintf("%.3f", $percent);
+  $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
   if ( ($colour % 10) == 1 ){print "<TR BGCOLOR='$colour1'>\n";}
   if ( ($colour % 10) == 2 ){print "<TR BGCOLOR='$colour2'>\n";}
@@ -490,7 +490,7 @@ if ( ($colour % 10) == 0 ){print "<TR BGCOLOR='$colour10'>\n";}
 my $dif;
 $dif = $linesjc - $total;
 $percent = $dif * 100 / $linesjc;
-$percent = sprintf("%.3f", $percent);
+$percent = sprintf("%.f", $percent);
 print <<END
 <TD ALIGN='CENTER'></TD>
 <TD ALIGN='CENTER'>$Lang::tr{'otherport'}</TD>
