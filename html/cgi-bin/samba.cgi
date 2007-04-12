@@ -726,7 +726,7 @@ END
 			{
 			if ($userline[0] =~ /\$/)
 				{
-				print "$Lang::tr{'interfaces'}</td><td align='left'>";
+				print "$Lang::tr{'pc'}</td><td align='left'>";
 				}
 			else
 				{
@@ -960,10 +960,8 @@ print <<END
 												<input type='hidden' name='ACTION' value='sharesreset' />
 												<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' />
 												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value='sharecaption' />
-												<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' />
-												</form></td></tr>
+		<td align='center'><a target="popup" onClick="window.open ('', 'popup', 'width=580,height=360,scrollbars=no, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"href="sambahlp.cgi"><form method='post' action='$ENV{'SCRIPT_NAME'}'><img border="0" src="/images/help-browser.png"></a>
+</td></tr>
 </table>
 END
 ;
@@ -1048,64 +1046,7 @@ END
 ;
 	}
 
-if ($sambasettings{'ACTION'} eq 'optioncaption' || $sambasettings{'ACTION'} eq 'optioncaption2')
-	{
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr><td><b>$Lang::tr{'caption'}</b></td></tr>
-	<tr><td><u>$Lang::tr{'options'}</u></td><td><u>$Lang::tr{'meaning'}</u> / <u>$Lang::tr{'exampel'}</u></td></tr>
-	<tr><td>comment</td><td>$Lang::tr{'comment'}</td></tr>
-	<tr><td></td><td>comment = $Lang::tr{'my new share'}</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>path</td><td>$Lang::tr{'path to directory'}</td></tr>
-	<tr><td></td><td>path = /tmp</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>writeable</td><td>$Lang::tr{'directory writeable'}</td></tr>
-	<tr><td></td><td>writeable = yes</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>browseable</td><td>sichtbar in Verzeichnisliste</td></tr>
-	<tr><td></td><td>browsable = yes</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>user</td><td>Besitzer der Freigabe</td></tr>
-	<tr><td></td><td>user = samba</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>valid users</td><td>Liste der Zugriffsberechtigten</td></tr>
-	<tr><td></td><td>valid users = samba, user1</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>write list</td><td>$Lang::tr{'visible in browselist'}</td></tr>
-	<tr><td></td><td>write list = samba</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>hosts allow</td><td>$Lang::tr{'host allow'}</td></tr>
-	<tr><td></td><td>hosts allow = localhost 192.168.1.1 192.168.2.0/24</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>hosts deny</td><td>$Lang::tr{'host deny'}</td></tr>
-	<tr><td></td><td>hosts deny = 192.168.1.2 192.168.3.0/24</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>read list</td><td>$Lang::tr{'read list'}</td></tr>
-	<tr><td></td><td>read list = user1</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>admin users</td><td>$Lang::tr{'admin users'}</td></tr>
-	<tr><td></td><td>admin users = user1</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>invalid users</td><td>$Lang::tr{'invalid users'}</td></tr>
-	<tr><td></td><td>invalid users = user2</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>force user</td><td>$Lang::tr{'force user'}</td></tr>
-	<tr><td></td><td>force user = samba</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>directory mask</td><td>$Lang::tr{'directory mask'}</td></tr>
-	<tr><td></td><td>directory mask = 0777</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>create mask</td><td>U$Lang::tr{'create mask'}</td></tr>
-	<tr><td></td><td>create mask = 0777</td></tr>
-	<tr><td><br /></td><td></td></tr>
-	<tr><td>guest ok</td><td>$Lang::tr{'guest ok'}</td></tr>
-	<tr><td></td><td>guest ok = yes</td></tr>
-	</table>
-END
-;
-}
+
 
 &Header::closebox();
 

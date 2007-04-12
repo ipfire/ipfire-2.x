@@ -1,9 +1,9 @@
 ROOT                   =/usr/sbin
 POLFILE                =/var/ipfire/tripwire/tw.pol
 DBFILE                 =/var/ipfire/tripwire/$(HOSTNAME).twd
-REPORTFILE             =/var/ipfire/tripwire/report/$(HOSTNAME)-$(DATE).twr
+REPORTFILE             =/var/ipfire/tripwire/report/$(DATE).twr
 SITEKEYFILE            =/var/ipfire/tripwire/site.key
-LOCALKEYFILE           =/var/ipfire/tripwire/$(HOSTNAME)-local.key
+LOCALKEYFILE           =/var/ipfire/tripwire/local.key
 EDITOR                 =/usr/bin/vi
 LATEPROMPTING          =false
 LOOSEDIRECTORYCHECKING =false

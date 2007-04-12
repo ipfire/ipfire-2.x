@@ -52,9 +52,21 @@ int main(int argc, char *argv[])
             return 0;
         }
 
+        if (strcmp(argv[1], "smbsafeconfcups")==0)
+        {
+            safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf");
+            return 0;
+        }
+
         if (strcmp(argv[1], "smbsafeconfpdc")==0)
         {
             safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
+            return 0;
+        }
+
+        if (strcmp(argv[1], "smbsafeconfpdccups")==0)
+        {
+            safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf");
             return 0;
         }
 
@@ -74,31 +86,34 @@ int main(int argc, char *argv[])
             return 0;
         }
 
+        if (strcmp(argv[1], "smbprinterreset")==0)
+        {
+            safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/default.printer > /var/ipfire/samba/smb.conf");
+            safe_system("/bin/cat /var/ipfire/samba/default.printer > /var/ipfire/samba/printer");
+            return 0;
+        }
+
         if (strcmp(argv[1], "smbstop")==0)
         {
             safe_system("/etc/rc.d/init.d/samba stop");
-            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbstart")==0)
         {
             safe_system("/etc/rc.d/init.d/samba start");
-            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbrestart")==0)
         {
             safe_system("/etc/rc.d/init.d/samba restart");
-            printf(command);
             return 0;
         }
 
         if (strcmp(argv[1], "smbreload")==0)
         {
             safe_system("/etc/rc.d/init.d/samba reload");
-            printf(command);
             return 0;
         }
 
@@ -155,12 +170,5 @@ int main(int argc, char *argv[])
             safe_system("/bin/chmod 600 /var/ipfire/samba/private");
             return 0;
         }
-
-        if (strcmp(argv[1], "smbechotest")==0)
-        {
-            sprintf(command, BUFFER_SIZE-1, "/usr/bin/printf %s %s", argv[2], argv[3]);
-            printf(command);
-            safe_system(command);
-            return 0;
-        }
+return 0;
 }

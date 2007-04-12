@@ -108,6 +108,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -vfp /var/ipfire/samba/default.shares /var/ipfire/samba/shares
 	cp -vfp /var/ipfire/samba/default.printer /var/ipfire/samba/printer
 	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
+	-mkdir -p /var/log/samba
 	#useradd -c 'Samba User' -s /bin/false
 	#groupadd sambauser
 	#groupadd sambawks

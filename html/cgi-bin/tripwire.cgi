@@ -20,7 +20,8 @@ my %checked = ();
 my %netsettings = ();
 my $message = "";
 my $errormessage = "";
-my @Logs = qx(ls /var/ipfire/tripwire/report/);
+my @Logs = qx(ls -r /var/ipfire/tripwire/report/);
+my $file = `ls -tr /var/ipfire/tripwire/report/ | tail -1`;
 my $Log =$Lang::tr{'no log selected'};
 
 ############################################################################################################################
@@ -29,9 +30,9 @@ my $Log =$Lang::tr{'no log selected'};
 $tripwiresettings{'ROOT'} = '/usr/sbin';
 $tripwiresettings{'POLFILE'} = '/var/ipfire/tripwire/tw.pol';
 $tripwiresettings{'DBFILE'} = '/var/ipfire/tripwire/$(HOSTNAME).twd';
-$tripwiresettings{'REPORTFILE'} = '/var/ipfire/tripwire/report/$(HOSTNAME)-$(DATE).twr';
+$tripwiresettings{'REPORTFILE'} = '/var/ipfire/tripwire/report/$(DATE).twr';
 $tripwiresettings{'SITEKEYFILE'} = '/var/ipfire/tripwire/site.key';
-$tripwiresettings{'LOCALKEYFILE'} = '/var/ipfire/tripwire/$(HOSTNAME)-local.key';
+$tripwiresettings{'LOCALKEYFILE'} = '/var/ipfire/tripwire/local.key';
 $tripwiresettings{'EDITOR'} = '/usr/bin/vi';
 $tripwiresettings{'LATEPROMPTING'} = 'false';
 $tripwiresettings{'LOOSEDIRECTORYCHECKING'} = 'false';
@@ -43,9 +44,11 @@ $tripwiresettings{'SMTPHOST'} = 'ipfire.myipfire.de';
 $tripwiresettings{'SMTPPORT'} = '25';
 $tripwiresettings{'SYSLOGREPORTING'} = 'false';
 $tripwiresettings{'MAILPROGRAM'} = '/usr/sbin/sendmail -oi -t';
-$tripwiresettings{'SITEKEY'} = 'IPFire';
-$tripwiresettings{'LOCALKEY'} = 'IPFire';
+$tripwiresettings{'SITEKEY'} = 'ipfire';
+$tripwiresettings{'LOCALKEY'} = 'ipfire';
 $tripwiresettings{'ACTION'} = '';
+
+&General::readhash("${General::swroot}/tripwire/settings", \%tripwiresettings);
 
 ############################################################################################################################
 ######################################################### Tripwire HTML Part ###############################################
@@ -61,7 +64,7 @@ $tripwiresettings{'ACTION'} = '';
 if ($tripwiresettings{'ACTION'} eq $Lang::tr{'save'})
 {
 system("/usr/local/bin/tripwirectrl readconfig");
-open (FILE, ">${General::swroot}/tripwire/tw.cfg") or die "Can't save tripwire config: $!";
+open (FILE, ">${General::swroot}/tripwire/twcfg.txt") or die "Can't save tripwire config: $!";
 flock (FILE, 2);
 
 print FILE <<END
@@ -122,9 +125,10 @@ if ($tripwiresettings{'ACTION'} eq 'generatepolicypw')
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'generatepolicy'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningpolicy'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
+	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /></td></tr>
 	<tr><td align='right' width='50%'>
 					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
-					<input type='hidden' name='ACTION' value='generatepolicy' /></form></td>
+					<input type='hidden' name='ACTION' value='generatepolicyyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
@@ -142,6 +146,7 @@ if ($tripwiresettings{'ACTION'} eq 'policyresetpw')
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'resetpolicy'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningpolicy'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
+	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /></td></tr>
 	<tr><td align='right' width='50%'>
 					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='resetpolicyyes' /></form></td>
@@ -214,12 +219,63 @@ END
 ############################################################################################################################
 ######################################################## Tripwire Funktionen ###############################################
 
-if ($tripwiresettings{'ACTION'} eq 'globalresetyes'){system("/usr/local/bin/tripwirectrl globalreset");}
-if ($tripwiresettings{'ACTION'} eq 'generatekeysyes'){system("/usr/local/bin/tripwirectrl keys $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'SITEKEY'} = 'IPFire';$tripwiresettings{'LOCALKEY'} = 'IPFire';}
-if ($tripwiresettings{'ACTION'} eq 'keyresetyes'){system("/usr/local/bin/tripwirectrl keys IPFire IPFire");$tripwiresettings{'SITEKEY'} = 'IPFire';$tripwiresettings{'LOCALKEY'} = 'IPFire';}
-if ($tripwiresettings{'ACTION'} eq 'resetpolicyyes'){system("/usr/local/bin/tripwirectrl resetpolicy tripwiresettings{'SITEKEY'}");$tripwiresettings{'SITEKEY'} = 'IPFire';}
-if ($tripwiresettings{'ACTION'} eq 'generatepolicyyes'){system("/usr/local/bin/tripwirectrl generatepolicy $tripwiresettings{'SITEKEY'}");$tripwiresettings{'SITEKEY'} = 'IPFire';}
-if ($tripwiresettings{'ACTION'} eq 'updatedatabaseyes'){system("/usr/local/bin/tripwirectrl updatedatabase $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'LOCALKEY'} = 'IPFire';}
+if ($tripwiresettings{'ACTION'} eq 'globalresetyes')
+{
+$tripwiresettings{'ROOT'} = '/usr/sbin';
+$tripwiresettings{'POLFILE'} = '/var/ipfire/tripwire/tw.pol';
+$tripwiresettings{'DBFILE'} = '/var/ipfire/tripwire/$(HOSTNAME).twd';
+$tripwiresettings{'REPORTFILE'} = '/var/ipfire/tripwire/report/$(DATE).twr';
+$tripwiresettings{'SITEKEYFILE'} = '/var/ipfire/tripwire/site.key';
+$tripwiresettings{'LOCALKEYFILE'} = '/var/ipfire/tripwire/local.key';
+$tripwiresettings{'EDITOR'} = '/usr/bin/vi';
+$tripwiresettings{'LATEPROMPTING'} = 'false';
+$tripwiresettings{'LOOSEDIRECTORYCHECKING'} = 'false';
+$tripwiresettings{'MAILNOVIOLATIONS'} = 'false';
+$tripwiresettings{'EMAILREPORTLEVEL'} = '3';
+$tripwiresettings{'REPORTLEVEL'} = '3';
+$tripwiresettings{'MAILMETHOD'} = 'SENDMAIL';
+$tripwiresettings{'SMTPHOST'} = 'ipfire.myipfire.de';
+$tripwiresettings{'SMTPPORT'} = '25';
+$tripwiresettings{'SYSLOGREPORTING'} = 'false';
+$tripwiresettings{'MAILPROGRAM'} = '/usr/sbin/sendmail -oi -t';
+$tripwiresettings{'SITEKEY'} = 'ipfire';
+$tripwiresettings{'LOCALKEY'} = 'ipfire';
+$tripwiresettings{'ACTION'} = '';
+system("/usr/local/bin/tripwirectrl readconfig");
+open (FILE, ">${General::swroot}/tripwire/twcfg.txt") or die "Can't save tripwire config: $!";
+flock (FILE, 2);
+print FILE <<END
+
+ROOT                   =$tripwiresettings{'ROOT'}
+POLFILE                =$tripwiresettings{'POLFILE'}
+DBFILE                 =$tripwiresettings{'DBFILE'}
+REPORTFILE             =$tripwiresettings{'REPORTFILE'}
+SITEKEYFILE            =$tripwiresettings{'SITEKEYFILE'}
+LOCALKEYFILE           =$tripwiresettings{'LOCALKEYFILE'}
+EDITOR                 =$tripwiresettings{'EDITOR'}
+LATEPROMPTING          =$tripwiresettings{'LATEPROMPTING'}
+LOOSEDIRECTORYCHECKING =$tripwiresettings{'LOOSEDIRECTORYCHECKING'}
+MAILNOVIOLATIONS       =$tripwiresettings{'MAILNOVIOLATIONS'}
+EMAILREPORTLEVEL       =$tripwiresettings{'EMAILREPORTLEVEL'}
+REPORTLEVEL            =$tripwiresettings{'REPORTLEVEL'}
+MAILMETHOD             =$tripwiresettings{'MAILMETHOD'}
+SMTPHOST               =$tripwiresettings{'SMTPHOST'}
+SMTPPORT               =$tripwiresettings{'SMTPPORT'}
+SYSLOGREPORTING        =$tripwiresettings{'SYSLOGREPORTING'}
+MAILPROGRAM            =$tripwiresettings{'MAILPROGRAM'}
+
+END
+;
+close FILE;
+&General::writehash("${General::swroot}/tripwire/settings", \%tripwiresettings);
+system("/usr/local/bin/tripwirectrl lockconfig");
+system("/usr/local/bin/tripwirectrl keys ipfire ipfire");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';
+}
+if ($tripwiresettings{'ACTION'} eq 'generatekeysyes'){system("/usr/local/bin/tripwirectrl keys $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'keyresetyes'){system("/usr/local/bin/tripwirectrl keys ipfire ipfire");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'resetpolicyyes'){system("/usr/local/bin/tripwirectrl resetpolicy tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'generatepolicyyes'){system("/usr/local/bin/tripwirectrl generatepolicy $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'updatedatabaseyes'){system("/usr/local/bin/tripwirectrl updatedatabase $tripwiresettings{'LOCALKEY'} /var/ipfire/tripwire/report/$file");$tripwiresettings{'LOCALKEY'} = 'ipfire';}
 if ($tripwiresettings{'ACTION'} eq 'generatereport'){system("/usr/local/bin/tripwirectrl generatereport");}
 
 ############################################################################################################################
@@ -360,7 +416,7 @@ END
 &Header::closebox();
 
 ############################################################################################################################
-####################################################### Tripwire Init Policy ###############################################
+####################################################### Tripwire Log View ##################################################
 
 &Header::openbox('100%', 'center', $Lang::tr{'tripwire reports'});
 print <<END
@@ -384,12 +440,11 @@ END
 if ($tripwiresettings{'ACTION'} eq 'showlog')
 {
 $Log = qx(/usr/local/bin/tripwirectrl tripwirelog $tripwiresettings{'LOG'});
-#$Log=~s/\n/<br \/>/g;
-#$Log=~s/\t/....             /g;
+$Log=~s/--cfgfile \/var\/ipfire\/tripwire\/tw.cfg --polfile \/var\/ipfire\/tripwire\/tw.pol//g;
 print <<END
 <table width='95%' cellspacing='0'>
 <tr><td><br /></td></tr>
-<tr><td><pre>LOG - $Log </pre></td></tr>
+<tr><td><pre>$Log</pre></td></tr>
 <tr><td><br /></td></tr>
 <tr><td align=center>$tripwiresettings{'LOG'}</td></tr>
 </table>

@@ -23,7 +23,7 @@ case "${2}" in
 		
 		if [ "${METHOD}" != "PPPOE_PLUGIN" ]; then
 			PPPCOMMAND="/usr/sbin/pppd pty"
-			PPPOECOMMAND="/usr/sbin/pppoe -p /var/run/pppoe.pid -I ${1} -T 80 -U -m 1412"
+			PPPOECOMMAND="/usr/sbin/pppoe -p /var/run/pppoe.pid -I ${1} -T 80 -U -m ${${MTU}-80}"
 			if [ -n ${SERVICENAME} ]; then
 				PPPOECOMMAND+=" -S ${SERVICENAME}"
 			fi
