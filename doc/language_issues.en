@@ -123,6 +123,7 @@ WARNING: translation string unused: err rs 7 untartst
 WARNING: translation string unused: err rs 8 untar
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
+WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
@@ -190,6 +191,7 @@ WARNING: translation string unused: ls_sshd
 WARNING: translation string unused: ls_syslogd
 WARNING: translation string unused: manage ovpn
 WARNING: translation string unused: manual control and status
+WARNING: translation string unused: marked
 WARNING: translation string unused: max incoming size
 WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
@@ -222,6 +224,7 @@ WARNING: translation string unused: openvpn server
 WARNING: translation string unused: optional data
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
+WARNING: translation string unused: original
 WARNING: translation string unused: other countries
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing traffic in bytes per second
