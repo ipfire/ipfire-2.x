@@ -464,6 +464,7 @@ buildipfire() {
   ipfiremake squid
   ipfiremake squid-graph
   ipfiremake squidguard
+  ipfiremake calamaris
   ipfiremake tcpdump
   ipfiremake traceroute
   ipfiremake vlan

@@ -118,6 +118,7 @@ var/empty
 var/lock
 #var/log
 var/log/btmp
+var/log/calamaris
 var/log/counter
 var/log/lastlog
 var/log/wtmp

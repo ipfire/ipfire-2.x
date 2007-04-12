@@ -1285,6 +1285,7 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
 srv/web/ipfire/cgi-bin/logs.cgi
+#srv/web/ipfire/cgi-bin/logs.cgi/calamaris.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/config.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/firewalllogip.dat

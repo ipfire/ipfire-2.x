@@ -1,0 +1,122 @@
+#!/usr/bin/perl
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) 2005,2006 marco.s
+#
+# $Id: mkreport.pl,v 2.0 2006/03/12 00:00:00 marco.s Exp $
+#
+
+use strict;
+
+use Time::Local;
+
+my $swroot = "/var/ipfire";
+my $apdir  = "$swroot/proxy/calamaris";
+my $squidlogdir = "/var/log/squid";
+my $calamlogdir = "/var/log/calamaris";
+my $reportdir   = "$apdir/reports";
+
+unless (-e $reportdir) { mkdir($reportdir) }
+
+my $unique=time;
+
+my $commandline='';
+my $skip_gzlogs=0;
+
+my @now = localtime(time);
+my $year = $now[5]+1900;
+
+if (@ARGV[0] eq 'nogz')
+{
+	$skip_gzlogs=1;
+	shift(@ARGV);
+}
+
+if (@ARGV < 6) { die "ERROR: Too few arguments\n\n"; }
+
+my $day_begin=@ARGV[0];
+my $month_begin=@ARGV[1];
+my $year_begin=@ARGV[2];
+my $day_end=@ARGV[3];
+my $month_end=@ARGV[4];
+my $year_end=@ARGV[5];
+
+my $i=6;
+
+while ($i < @ARGV) { $commandline.=" @ARGV[$i++]"; } 
+
+$commandline.=" $calamlogdir/squid-$unique.log >> $reportdir/calamaris-$unique.log";
+
+if (&processlogfiles($day_begin,$month_begin,$year_begin,$day_end,$month_end,$year_end) > 0)
+{
+	system("$apdir/bin/calamaris $commandline");
+	system("chown nobody.nobody $reportdir/calamaris-$unique.log");
+}
+
+if (-e "$calamlogdir/squid-$unique.log") { unlink("$calamlogdir/squid-$unique.log"); }
+
+# -------------------------------------------------------------------
+
+sub processlogfiles
+{
+	my $filestr='';
+
+	my $day_from  = $_[0];
+	my $mon_from  = $_[1];
+	my $year_from = $_[2];
+	my $day_to    = $_[3];
+	my $mon_to    = $_[4];
+	my $year_to   = $_[5];
+
+	if (($mon_from =~ /(3|5|8|10)/) && ($day_from > 30)) { $day_from=30 }
+	if (($mon_to   =~ /(3|5|8|10)/) && ($day_to   > 30)) { $day_to=30 }
+	if (($mon_from == 1) && ($day_from > 28)) { if ($year_from%4==0) { $day_from=29 } else { $day_from=28 } }
+	if (($mon_to   == 1) && ($day_to   > 28)) { if ($year_to%4==0)   { $day_to=29 }   else { $day_to=28 } }
+
+	my $date_now  = timelocal(0,0,0,$now[3],$now[4],$year);
+	my $date_from = timelocal(0,0,0,$day_from,$mon_from,$year_from);
+	my $date_to   = timelocal(0,0,0,$day_to,$mon_to,$year_to);
+
+	# if (($date_from > $date_now) || ($date_from > $date_to)) { $year_from-- }
+
+	$day_from  = $_[0];
+	if (($mon_from =~ /(3|5|8|10)/) && ($day_from > 30)) { $day_from=30 }
+	if (($mon_from == 1) && ($day_from > 28)) { if ($year_from%4==0) { $day_from=29 } else { $day_from=28 } }
+
+	my $date_from = timelocal(0,0,0,$day_from,$mon_from,$year_from);
+	my $date_to   = timelocal(59,59,23,$day_to,$mon_to,$year_to);
+
+	open (TMPLOG,">>$calamlogdir/squid-$unique.log") or die "ERROR: Cannot write to $calamlogdir/squid-$unique.log\n";
+
+	unless ($skip_gzlogs) {
+		foreach $filestr (<$squidlogdir/*.gz>)
+		{
+			if ($filestr =~ /access\.log/) {
+				open (LOG,"gzip -dc $filestr |");
+				foreach (<LOG>) {
+					if (substr($_,0,10) >= $date_from) { if (substr($_,0,10) <= $date_to) { print TMPLOG "$_"; } }
+				}
+				close(LOG);
+			}
+		}
+	}
+
+	foreach $filestr (<$squidlogdir/*.log>)
+	{
+		if ($filestr =~ /access\.log/) {
+			open (LOG,$filestr);
+			foreach (<LOG>) {
+				if (substr($_,0,10) >= $date_from) { if (substr($_,0,10) <= $date_to) { print TMPLOG "$_"; } }
+			}
+			close(LOG);
+		}
+	}
+
+	close (TMPLOG);
+
+	return (-s "$calamlogdir/squid-$unique.log");
+
+}
+
+# -------------------------------------------------------------------

@@ -48,6 +48,7 @@
 * busybox-1.2.2
 * bwm-ng-0.6
 * bzip2-1.0.3
+* calamaris-2.59
 * capi4k-utils-2005-07-18
 * ccache-2.4
 * cdrtools-2.01

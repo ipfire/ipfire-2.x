@@ -26,85 +26,54 @@
 
 include Config
 
-VER        = ipfire
+VER        = 2.59
 
-THISAPP    = stage2
+THISAPP    = calamaris-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 63c233b3407f9aec34b03647ed7fc852
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
-$(TARGET) :
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-
-	# Create directories
-	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt}
-	-mkdir -pv /{media/{floppy,cdrom,usbkey},sbin,srv,var}
-	-install -dv -m 0750 /root
-	-install -dv -m 1777 /tmp /var/tmp
-	-mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src}
-	-mkdir -pv /usr/{,local/}share/{doc,info,locale,man}
-	-mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
-	-mkdir -pv /usr/{,local/}share/man/man{1..8}
-	#-for dir in /usr /usr/local; do \
-	#  ln -sv share/{man,doc,info} $$dir; \
-	#done
-	
-	# Symlinks
-	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
-	-ln -sv /tools/bin/{bash,cat,grep,pwd,stty} /bin
-	-ln -sv /tools/bin/perl /usr/bin
-	-ln -sv /tools/lib/libgcc_s.so{,.1} /usr/lib
-	-ln -sv bash /bin/sh
-
-	# Config files
-	for i in $(DIR_SRC)/config/etc/*; do \
-	    [ -f $$i ] && cp $$i /etc; \
-	done
-	touch /etc/mtab
-	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
-	echo "===============================" >> /etc/issue
-	echo "\n running on \s \r \m"          >> /etc/issue
-
-	# Bash startup files
-	install --directory --mode=0755 --owner=root --group=root /etc/profile.d
-	for i in $(DIR_SRC)/config/profile.d/*; do \
-	    [ -f $$i ] && cp $$i /etc/profile.d; \
-	done
-
-	# Scripts
-	for i in `find $(DIR_SRC)/src/scripts -maxdepth 1 -type f`; do \
-	    sed "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i > /usr/local/bin/`basename $$i`; \
-	    chmod 755 /usr/local/bin/`basename $$i`; \
-	done
-
-	# Nobody user
-	-mkdir -p /home/nobody
-	chown -R nobody:nobody /home/nobody
-
-	# Create /var dirs and files
-	-mkdir -v /var/{lock,log,mail,run,spool,empty}
-	-mkdir -pv /var/{opt,cache,lib/{misc,locate},local}
-	-mkdir -pv /var/log/{counter,calamaris}
-	chown nobody.nobody /var/log/calamaris
-	touch /var/run/utmp /var/log/{btmp,lastlog,wtmp}
-	chgrp -v utmp /var/run/utmp /var/log/lastlog
-	chmod -v 664 /var/run/utmp /var/log/lastlog
-
-	# Permissions
-	chmod 0711 /var/empty
-
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && cp -f calamaris $(DIR_SRC)/config/calamaris/mkreport \
+			/var/ipfire/proxy/calamaris/bin/
+	chmod 755 /var/ipfire/proxy/calamaris/bin/{calamaris,mkreport}
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

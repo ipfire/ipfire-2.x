@@ -13,6 +13,11 @@
 				 'title' => "$Lang::tr{'proxy logs'}",
 				 'enabled' => 1
 				 };
+    $sublogs->{'31.calamaris'} = {'caption' => $Lang::tr{'calamaris proxy reports'},
+				 'uri' => '/cgi-bin/logs.cgi/calamaris.dat',
+				 'title' => "$Lang::tr{'calamaris proxy reports'}",
+				 'enabled' => 1
+				 };
     $sublogs->{'40.firewall'} = {'caption' => $Lang::tr{'firewall logs'},
 				 'uri' => '/cgi-bin/logs.cgi/firewalllog.dat',
 				 'title' => "$Lang::tr{'firewall logs'}",

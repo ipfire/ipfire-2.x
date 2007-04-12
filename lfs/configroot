@@ -55,7 +55,7 @@ $(TARGET) :
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dmzholes \
 	    ethernet extrahd/bin fwlogs isdn key langs logging main mbmon menu.d modem net-traffic \
 			nfs optionsfw outgoing/bin patches pakfire portfw \
-	    ppp private proxy/advanced qos/bin red remote snort time tripwire/report \
+	    ppp private proxy/advanced proxy/calamaris/bin qos/bin red remote snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
 	    wakeonlan wireless xtaccess ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
