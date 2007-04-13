@@ -22,6 +22,7 @@ my $message = "";
 my $errormessage = "";
 my @Logs = qx(ls -r /var/ipfire/tripwire/report/);
 my $file = `ls -tr /var/ipfire/tripwire/report/ | tail -1`;
+my @cronjobs = `ls /etc/fcron.daily/tripwire*`;
 my $Log =$Lang::tr{'no log selected'};
 
 ############################################################################################################################
@@ -54,8 +55,9 @@ $tripwiresettings{'ACTION'} = '';
 ######################################################### Tripwire HTML Part ###############################################
 
 &Header::showhttpheaders();
+
 &Header::getcgihash(\%tripwiresettings);
-&Header::openpage('Tripwire', 1, '');
+&Header::openpage('Tripwire', 1,);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
@@ -63,7 +65,7 @@ $tripwiresettings{'ACTION'} = '';
 
 if ($tripwiresettings{'ACTION'} eq $Lang::tr{'save'})
 {
-system("/usr/local/bin/tripwirectrl readconfig");
+system("/usr/local/bin/tripwirectrl readconfig  >& /dev/null");
 open (FILE, ">${General::swroot}/tripwire/twcfg.txt") or die "Can't save tripwire config: $!";
 flock (FILE, 2);
 
@@ -92,11 +94,31 @@ END
 close FILE;
 
 &General::writehash("${General::swroot}/tripwire/settings", \%tripwiresettings);
-system("/usr/local/bin/tripwirectrl lockconfig");
+system("/usr/local/bin/tripwirectrl lockconfig  >& /dev/null");
 }
 
 ############################################################################################################################
 ################################################## Sicherheitsabfrage für CGI ##############################################
+
+if ($tripwiresettings{'ACTION'} eq 'addcron')
+	{
+	print <<END
+	<br />
+	<table width='95%' cellspacing='0'>
+	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'add cron'}</b>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<tr><td align='center' colspan='2'>HH<input type='text' size='2' name='HOUR' value='08'/>MM<input type='text' size='2' name='MINUTE' value='00'/><br /><br /></td></tr>
+	<tr><td align='right' width='50%'>
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					<input type='hidden' name='ACTION' value='addcronyes' /></form></td>
+			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='hidden' name='ACTION' value='cancel' /></form></td>
+	</tr>
+	</table>
+END
+;
+}
 
 if ($tripwiresettings{'ACTION'} eq 'globalreset')
 	{
@@ -106,10 +128,10 @@ if ($tripwiresettings{'ACTION'} eq 'globalreset')
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'resetglobals'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'defaultwarning'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='globalresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -125,12 +147,12 @@ if ($tripwiresettings{'ACTION'} eq 'generatepolicypw')
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'generatepolicy'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningpolicy'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
-	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /></td></tr>
+	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='generatepolicyyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -146,12 +168,12 @@ if ($tripwiresettings{'ACTION'} eq 'policyresetpw')
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'resetpolicy'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningpolicy'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
-	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /></td></tr>
+	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='resetpolicyyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -166,12 +188,12 @@ if ($tripwiresettings{'ACTION'} eq 'updatedatabasepw')
 	<table width='95%' cellspacing='0'>
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'updatedatabase'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningdatabase'}<br /><br /></font></td></tr>
-	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /></td></tr>
+	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='updatedatabaseyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -186,10 +208,10 @@ if ($tripwiresettings{'ACTION'} eq 'keyreset')
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'keyreset'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningkeys'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='keyresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -205,10 +227,10 @@ if ($tripwiresettings{'ACTION'} eq 'generatekeys')
 	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'generatekeys'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningkeys'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='generatekeysyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -221,6 +243,7 @@ END
 
 if ($tripwiresettings{'ACTION'} eq 'globalresetyes')
 {
+&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";
 $tripwiresettings{'ROOT'} = '/usr/sbin';
 $tripwiresettings{'POLFILE'} = '/var/ipfire/tripwire/tw.pol';
 $tripwiresettings{'DBFILE'} = '/var/ipfire/tripwire/$(HOSTNAME).twd';
@@ -241,7 +264,7 @@ $tripwiresettings{'MAILPROGRAM'} = '/usr/sbin/sendmail -oi -t';
 $tripwiresettings{'SITEKEY'} = 'ipfire';
 $tripwiresettings{'LOCALKEY'} = 'ipfire';
 $tripwiresettings{'ACTION'} = '';
-system("/usr/local/bin/tripwirectrl readconfig");
+system("/usr/local/bin/tripwirectrl readconfig  >& /dev/null");
 open (FILE, ">${General::swroot}/tripwire/twcfg.txt") or die "Can't save tripwire config: $!";
 flock (FILE, 2);
 print FILE <<END
@@ -268,15 +291,16 @@ END
 ;
 close FILE;
 &General::writehash("${General::swroot}/tripwire/settings", \%tripwiresettings);
-system("/usr/local/bin/tripwirectrl lockconfig");
-system("/usr/local/bin/tripwirectrl keys ipfire ipfire");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';
+system("/usr/local/bin/tripwirectrl lockconfig  >& /dev/null");
+system("/usr/local/bin/tripwirectrl keys ipfire ipfire  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';
 }
-if ($tripwiresettings{'ACTION'} eq 'generatekeysyes'){system("/usr/local/bin/tripwirectrl keys $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'keyresetyes'){system("/usr/local/bin/tripwirectrl keys ipfire ipfire");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'resetpolicyyes'){system("/usr/local/bin/tripwirectrl resetpolicy tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'generatepolicyyes'){system("/usr/local/bin/tripwirectrl generatepolicy $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'updatedatabaseyes'){system("/usr/local/bin/tripwirectrl updatedatabase $tripwiresettings{'LOCALKEY'} /var/ipfire/tripwire/report/$file");$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'generatereport'){system("/usr/local/bin/tripwirectrl generatereport");}
+if ($tripwiresettings{'ACTION'} eq 'generatekeysyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl keys $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'keyresetyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl keys ipfire ipfire  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'resetpolicyyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl resetpolicy tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'generatepolicyyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl generatepolicy $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'updatedatabaseyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl updatedatabase $tripwiresettings{'LOCALKEY'} /var/ipfire/tripwire/report/$file  >& /dev/null");$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'generatereport'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl generatereport  >& /dev/null");}
+if ($tripwiresettings{'ACTION'} eq 'addcronyes'){system("/usr/local/bin/tripwirectrl addcron $tripwiresettings{'HOUR'} $tripwiresettings{'MINUTE'} >& /dev/null");}
 
 ############################################################################################################################
 ##################################################### Tripwire globale Optionen ############################################
@@ -369,6 +393,7 @@ END
 ;
 
 }
+
 &Header::closebox();
 
 ############################################################################################################################
@@ -451,6 +476,47 @@ print <<END
 END
 ;
 
+}
+
+&Header::closebox();
+
+############################################################################################################################
+####################################################### Tripwire Cronjob ##################################################
+
+&Header::openbox('100%', 'center', $Lang::tr{'tripwire cronjobs'});
+print <<END
+<hr />
+<br />
+<table width='95%' cellspacing='0'>
+<tr><td colspan='3'  align='left'><br /></td></tr>
+END
+;
+foreach my $cronjob (@cronjobs) {chomp $cronjob;my $time=$cronjob; $time=~s/\/etc\/fcron.daily\/tripwire//g;print"<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td  align='left' colspan='2'>$cronjob at $time daily</td><td><input type='hidden' name='ACTION' value='deletecron' /><input type='hidden' name='CRON' value='$cronjob' /><input type='image' alt='delete cronjob' src='/images/user-trash.png' /></td></tr></form>";}
+print <<END
+</table>
+<br />
+<table width='10%' cellspacing='0'>
+<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+												<input type='hidden' name='ACTION' value='addcron'/>
+												<input type='image' alt='$Lang::tr{'add cronjob'}' src='/images/appointment-new.png' /></form></td>
+<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+										<input type='hidden' name='ACTION' value='croncaption' />
+										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+</table>
+END
+;
+
+if ($tripwiresettings{'ACTION'} eq 'croncaption')
+{
+print <<END
+<br />
+<table width='95%' cellspacing='0'>
+<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
+<tr><td align='right' width='33%'><img src='/images/appointment-new.png' /></td><td align='left'>$Lang::tr{'add cron'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/user-trash.png' /></td><td align='left'>$Lang::tr{'delete cron'}</td></tr>
+</table>
+END
+;
 }
 
 &Header::closebox();

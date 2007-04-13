@@ -279,6 +279,7 @@ WARNING: translation string unused: to install an update
 WARNING: translation string unused: traffic on
 WARNING: translation string unused: transfer limits
 WARNING: translation string unused: transparent on
+WARNING: translation string unused: tripwire cronjob
 WARNING: translation string unused: unencrypted
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updates
@@ -308,6 +309,7 @@ WARNING: translation string unused: written sectors
 WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: IPFires hostname
+WARNING: untranslated string: add cronjob
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: down
 WARNING: untranslated string: firewall logs ip
@@ -322,6 +324,7 @@ WARNING: untranslated string: red
 WARNING: untranslated string: remove x509
 WARNING: untranslated string: settingsc
 WARNING: untranslated string: smbrestart
+WARNING: untranslated string: tripwire cronjobs
 WARNING: untranslated string: up
 WARNING: untranslated string: urlfilter background image
 WARNING: untranslated string: urlfilter log

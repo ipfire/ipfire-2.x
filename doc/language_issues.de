@@ -273,6 +273,7 @@ WARNING: translation string unused: too long 80 char max
 WARNING: translation string unused: traffic on
 WARNING: translation string unused: transfer limits
 WARNING: translation string unused: transparent on
+WARNING: translation string unused: tripwire cronjob
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
@@ -304,6 +305,7 @@ WARNING: translation string unused: written sectors
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year
 WARNING: untranslated string: IPFires hostname
+WARNING: untranslated string: add cronjob
 WARNING: untranslated string: allmsg
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: dial profile
@@ -334,6 +336,7 @@ WARNING: untranslated string: trafficred
 WARNING: untranslated string: traffics
 WARNING: untranslated string: trafficsum
 WARNING: untranslated string: trafficto
+WARNING: untranslated string: tripwire cronjobs
 WARNING: untranslated string: up
 WARNING: untranslated string: urlfilter background image
 WARNING: untranslated string: urlfilter log

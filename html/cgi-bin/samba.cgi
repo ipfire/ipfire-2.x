@@ -85,6 +85,7 @@ $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Never';
 $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
+$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
 my $LOGLINES = '50';
@@ -143,6 +144,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'LOCALMASTER'} = 'off';
 	$sambasettings{'DOMAINMASTER'} = 'off';
 	$sambasettings{'PREFERREDMASTER'} = 'off';
+	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
 	$PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 	system("/usr/local/bin/sambactrl smbreload");
 	}
@@ -423,7 +425,7 @@ null passwords = yes
 
 bind interfaces only = true
 interfaces = $sambasettings{'INTERFACES'}
-socket options = TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE
+socket options = $sambasettings{'SOCKETOPTIONS'}
 remote announce = $sambasettings{'REMOTEANNOUNCE'}
 
 username level = 1
@@ -601,6 +603,7 @@ print <<END
 <tr><td align='left'><br /></td><td /></tr>
 <tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'os level'}</td><td align='left'><input type='text' name='OSLEVEL' value='$sambasettings{'OSLEVEL'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'socket options'}</td><td align='left'><input type='text' name='SOCKETOPTIONS' value='$sambasettings{'SOCKETOPTIONS'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
 END
 ;
@@ -960,8 +963,11 @@ print <<END
 												<input type='hidden' name='ACTION' value='sharesreset' />
 												<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' />
 												</form></td>
-		<td align='center'><a target="popup" onClick="window.open ('', 'popup', 'width=580,height=360,scrollbars=no, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"href="sambahlp.cgi"><form method='post' action='$ENV{'SCRIPT_NAME'}'><img border="0" src="/images/help-browser.png"></a>
-</td></tr>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+												<input type='hidden' name='ACTION' value='sharecaption' />
+												<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' />
+												</form></td>
+</tr>
 </table>
 END
 ;
@@ -990,10 +996,9 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 	<table width='95%' cellspacing='0'>
 	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-																																			<input type='hidden' name='ACTION' value='optioncaption' />
-																																			<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' />
-																																			</form></td></tr>
+	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
+ <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=360,scrollbars=no, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a>
+	</td></tr>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
 	</table>
 	<br />
@@ -1045,8 +1050,6 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 END
 ;
 	}
-
-
 
 &Header::closebox();
 
