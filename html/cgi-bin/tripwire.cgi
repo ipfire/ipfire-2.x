@@ -301,6 +301,7 @@ if ($tripwiresettings{'ACTION'} eq 'generatepolicyyes'){&Header::openbox( 'Waiti
 if ($tripwiresettings{'ACTION'} eq 'updatedatabaseyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl updatedatabase $tripwiresettings{'LOCALKEY'} /var/ipfire/tripwire/report/$file  >& /dev/null");$tripwiresettings{'LOCALKEY'} = 'ipfire';}
 if ($tripwiresettings{'ACTION'} eq 'generatereport'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl generatereport  >& /dev/null");}
 if ($tripwiresettings{'ACTION'} eq 'addcronyes'){system("/usr/local/bin/tripwirectrl addcron $tripwiresettings{'HOUR'} $tripwiresettings{'MINUTE'} >& /dev/null");}
+if ($tripwiresettings{'ACTION'} eq 'deletecron'){system("/usr/local/bin/tripwirectrl disablecron $tripwiresettings{'CRON'} >& /dev/null");@cronjobs = `ls /etc/fcron.daily/tripwire*`;}
 
 ############################################################################################################################
 ##################################################### Tripwire globale Optionen ############################################
@@ -491,14 +492,14 @@ print <<END
 <tr><td colspan='3'  align='left'><br /></td></tr>
 END
 ;
-foreach my $cronjob (@cronjobs) {chomp $cronjob;my $time=$cronjob; $time=~s/\/etc\/fcron.daily\/tripwire//g;print"<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td  align='left' colspan='2'>$cronjob at $time daily</td><td><input type='hidden' name='ACTION' value='deletecron' /><input type='hidden' name='CRON' value='$cronjob' /><input type='image' alt='delete cronjob' src='/images/user-trash.png' /></td></tr></form>";}
+foreach my $cronjob (@cronjobs) {chomp $cronjob;my $time=$cronjob; $time=~s/\/etc\/fcron.daily\/tripwire//g;print"<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td  align='left' colspan='2'>$cronjob at $time daily</td><td><input type='hidden' name='ACTION' value='deletecron' /><input type='hidden' name='CRON' value='$time' /><input type='image' alt='delete cron' src='/images/user-trash.png' /></td></tr></form>";}
 print <<END
 </table>
 <br />
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='addcron'/>
-												<input type='image' alt='$Lang::tr{'add cronjob'}' src='/images/appointment-new.png' /></form></td>
+												<input type='image' alt='$Lang::tr{'add cron'}' src='/images/appointment-new.png' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='croncaption' />
 										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>

@@ -8,7 +8,7 @@
 
 #define BUFFER_SIZE 1024
 
-char command[BUFFER_SIZE]; 
+char command[BUFFER_SIZE];
 
 int main(int argc, char *argv[])
 {
@@ -124,7 +124,7 @@ return 0;
 
 if (strcmp(argv[1], "addcron")==0)
 {
-snprintf(command, BUFFER_SIZE-1, "cat /usr/sbin/tripwire --check --cfgfile /var/ipfire/tripwire/tw.cfg --polfile /var/ipfire/tripwire/tw.pol > /etc/fcron.daily/tripwire%s%s", argv[2], argv[3]);
+snprintf(command, BUFFER_SIZE-1, "echo \"/usr/sbin/tripwire --check --cfgfile /var/ipfire/tripwire/tw.cfg --polfile /var/ipfire/tripwire/tw.pol\" > /etc/fcron.daily/tripwire%s%s", argv[2], argv[3]);
 safe_system(command);
 snprintf(command, BUFFER_SIZE-1, "chmod 755 /etc/fcron.daily/tripwire%s%s", argv[2], argv[3]);
 safe_system(command);

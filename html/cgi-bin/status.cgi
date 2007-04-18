@@ -228,7 +228,7 @@ END
         }
 }
 close DF;
-print "<tr><td colspan='6'>&nbsp;\n<tr><td colspan='6'><h3>Inodes</h3>\n";
+print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>Inodes</h3>\n";
 
 open(DF,'/bin/df -i -x rootfs|');
 while(<DF>)
@@ -270,6 +270,9 @@ END
    }
 }
 close DF;
+my $iostat = qx(/usr/bin/iostat -dm -p | grep -v "Linux");
+print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>transfers</h3></td></tr>\n<tr><td align='center' colspan='7'><pre>$iostat</pre></td></tr>";
+
 print "</table>\n";
 &Header::closebox();
 
