@@ -473,12 +473,12 @@ batch_script() {
 	fi
 
 	echo "### RUNNING BUILD"
-	$0 build
+	$0 build --devel
 	evaluate 1 mail_me ERROR
 
-#	echo "### UPLOADING ISO"
-#	$0 upload iso
-#	evaluate 1 mail_me ISO
+	echo "### UPLOADING ISO"
+	$0 upload iso
+	evaluate 1 mail_me ISO
 	
 #	echo -ne "### UPLOADING PAKS"
 #	$0 upload paks

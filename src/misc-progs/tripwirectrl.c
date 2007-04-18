@@ -67,7 +67,7 @@ return 0;
 
 if (strcmp(argv[1], "generatepolicy")==0)
 {
-snprintf(command, BUFFER_SIZE-1, "/usr/sbin/twadmin --create-polfile --site-keyfile /var/ipfire/tripwire/site.key --site-passphrase %s --polfile /var/ipfire/tripwire/tw.pol --cfgfile /var/ipfire/tripwire/tw.cfg /var/ipfire/tripwire/twpol.txt, argv[2]);
+snprintf(command, BUFFER_SIZE-1, "/usr/sbin/twadmin --create-polfile --site-keyfile /var/ipfire/tripwire/site.key --site-passphrase %s --polfile /var/ipfire/tripwire/tw.pol --cfgfile /var/ipfire/tripwire/tw.cfg /var/ipfire/tripwire/twpol.txt", argv[2]);
 safe_system(command);
 snprintf(command, BUFFER_SIZE-1, "/usr/sbin/tripwire --init --cfgfile /var/ipfire/tripwire/tw.cfg --polfile /var/ipfire/tripwire/tw.pol --local-passphrase %s", argv[3]);
 safe_system(command);
