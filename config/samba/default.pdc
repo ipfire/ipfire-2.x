@@ -17,4 +17,3 @@ browseable = no
 writeable = yes
 comment = Benutzerprofile
 valid users = %S
-

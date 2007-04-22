@@ -30,7 +30,8 @@ wins support = true
 log file       = /var/log/samba/samba-log.%m
 lock directory = /var/lock/samba
 pid directory = /var/run/
-	
+log level = 3 passdb:5 auth:5 winbind:2
+
 preferred master = false
 domain master = false
 local master = false

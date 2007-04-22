@@ -85,7 +85,6 @@ WARNING: translation string unused: ddns help dnsmadeeasy
 WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
 WARNING: translation string unused: debugme
-WARNING: translation string unused: description
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -305,7 +304,6 @@ WARNING: translation string unused: written sectors
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year
 WARNING: untranslated string: IPFires hostname
-WARNING: untranslated string: add cronjob
 WARNING: untranslated string: allmsg
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: dial profile

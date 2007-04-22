@@ -30,6 +30,7 @@ my @p2pline = ();
 
 my $configfile = "/var/ipfire/outgoing/rules";
 my $p2pfile = "/var/ipfire/outgoing/p2protocols";
+my $servicefile = "/var/ipfire/outgoing/defaultservices"
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
@@ -201,7 +202,7 @@ if ($outfwsettings{'POLICY'} ne 'MODE0'){
 	&Header::openbox('100%', 'center', 'Rules');
 		print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<input type='submit' name='ACTION' value='Add rule'>
+		<input type='submit' name='ACTION' value='Add rule' />
 	</form>
 END
 ;
@@ -210,7 +211,7 @@ END
 	close FILE;
 	if (@configs) {
 		print <<END
-		<hr>
+		<hr />
 		<table border='0' width='100%' cellspacing='0'>
 		<tr bgcolor='white'>
 		    <td width='14%'><b>Protokoll</b>
@@ -365,16 +366,16 @@ print <<END
 	<table width='100%'>
 		<tr><td width='10%' align='right'><b>Modus 0:</b><td width='90%' align='left' colspan='2'>In diesem Modus ist es allen Rechnern im Netzwerk uneingeschraenkt moeglich Verbindungen ins Internet aufzubauen.
 		<tr><td width='10%' align='right'><b>Modus 1:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden nur Verbindungen nach den oben definierten Regeln zugelassen.
-		<tr><td width='10%' align='right'><b>Modus 2:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden saemtliche Verbindungen erlaubt, bis auf die oben definierten Block-Regeln.<br>Hier ist eine Besonderheit der P2P-Filter.
-		<tr><td colspan='3'><hr>
+		<tr><td width='10%' align='right'><b>Modus 2:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden saemtliche Verbindungen erlaubt, bis auf die oben definierten Block-Regeln.<br />Hier ist eine Besonderheit der P2P-Filter.
+		<tr><td colspan='3'><hr />
 		<tr><td width='10%' align='right'>	<select name='POLICY'><option value='MODE0' $selected{'POLICY'}{'MODE0'}>Modus 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>Modus 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>Modus 2</option></select>
-		    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'}>
+		    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
 		    <td width='45%' align='right'>
 END
 ;
 	if ($outfwsettings{'POLICY'} ne 'MODE0') {
 		print <<END
-		    Alle Regeln loeschen: <input type='submit' name='ACTION' value=$Lang::tr{'reset'}>
+		    Alle Regeln loeschen: <input type='submit' name='ACTION' value=$Lang::tr{'reset'} />
 END
 ;
 	}
@@ -418,14 +419,14 @@ END
 		    <td width='30%' align='left'><select name='SNET'>
 			<option value='all' $selected{'SNET'}{'ALL'}>alle</option>
 			<option value='ip' $selected{'SNET'}{'ip'}>Quell-IP/MAC benutzen</option>
-			<option value='green' $selected{'SNET'}{'green'}>Gruen</option>
+			<option value='green' $selected{'SNET'}{'green'}>$Lang::tr{'green'}</option>
 END
 ;
 	if (&Header::blue_used()){
-		print "\t\t\t<option value='blue' $selected{'SNET'}{'blue'}>Blau</option>\n";
+		print "\t\t\t<option value='blue' $selected{'SNET'}{'blue'}>$Lang::tr{'wireless'}</option>\n";
 	}
 	if (&Header::orange_used()){
-		print "\t\t\t<option value='orange' $selected{'SNET'}{'orange'}>Orange</option>\n";
+		print "\t\t\t<option value='orange' $selected{'SNET'}{'orange'}>$Lang::tr{'dmz'}</option>\n";
 	}
 	print <<END
 			</select>
@@ -445,5 +446,48 @@ END
 END
 ;
 	&Header::closebox();
+
+if ($outfwsettings{'POLICY'} eq 'MODE1')
+{
+&Header::openbox('100%', 'center', 'Quick Add');
+
+	open( FILE, "< /var/ipfire/outgoing/defaultservices" ) or die "Unable to read default services";
+	my @defservices = <FILE>;
+	close FILE;
+
+print "<table width='100%'><tr bgcolor='#F0F0F0'><td><b>$Lang::tr{'service'}</b></td><td><b>$Lang::tr{'description'}</b></td><td><b>$Lang::tr{'port'}</b></td><td><b>$Lang::tr{'protocol'}</b></td><td><b>$Lang::tr{'source net'}</b></td><td></td></tr>";
+foreach my $serviceline(@defservices)
+	{
+	my @service = split(/,/,$serviceline);
+	print <<END
+	<tr><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+												<td>$service[0]<input type='hidden' name='NAME' value='@service[0]' /></td>
+												<td>$service[3]</td>
+												<td><a href='http://isc.sans.org/port_details.php?port=$service[1]' target='top'>$service[1]</a><input type='hidden' name='DPORT' value='@service[1]' /></td>
+												<td>$service[2]<input type='hidden' name='PROT' value='@service[2]' /></td>
+												<td><select name='SNET'><option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option><option value='green' $selected{'SNET'}{'green'}>$Lang::tr{'green'}</option>
+END
+;
+	if (&Header::blue_used()){
+		print "<option value='blue' $selected{'SNET'}{'blue'}>$Lang::tr{'wireless'}</option>";
+	}
+	if (&Header::orange_used()){
+		print "<option value='orange' $selected{'SNET'}{'orange'}>$Lang::tr{'dmz'}</option>";
+	}
+	print <<END
+					</select></td><td>
+					<input type='hidden' name='ACTION' value=$Lang::tr{'add'} />
+					<input type='image' alt='$Lang::tr{'add'}' src='/images/add.gif' />
+					<input type='hidden' name='ENABLED' value='on' />
+					<input type='hidden' name='STATE' value='ALLOW' />
+					</form></td></tr>
+END
+;
+	}
+print "</table>";
+
+	&Header::closebox();
+}
+
 }
 

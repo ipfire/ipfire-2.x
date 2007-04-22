@@ -22,47 +22,34 @@ my %netsettings = ();
 my %ovpnsettings = ();
 my $message = "";
 my $errormessage = "";
+
 my @Logs = qx(ls /var/log/samba/);
 my $Log =$Lang::tr{'no log selected'};
-my $defaultoption= "[Share]\npath = /var/ipfire/samba/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\npublic = yes\nforce user = samba";
+
+my $Status = qx(/usr/local/bin/sambactrl smbstatus);
+$Status=~s/\n/<br \/>/g;
+
 my $userentry = "";
 my @user = ();
 my @userline = ();
-my @proto = ();
+my $userfile = "${General::swroot}/samba/private/smbpasswd";
 my %selected= () ;
-my $userfile = "/var/ipfire/samba/private/smbpasswd";
+
+my $defaultoption= "[Share]\npath = /var/ipfire/samba/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\npublic = yes\nforce user = samba";
+my $defaultprinter= "[Printer]\ncomment = Printer public\npath = /var/spool/cups\nprinting = sysvn\nprintcap = lpstat\npublic = yes\nwritable = no\nprintable = yes";
+my %printer = ();
+my %shares = ();
+
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
 
 ############################################################################################################################
 ############################################# Samba Dienste fr Statusberprfung ##########################################
 
-my %servicenames = ('SMB Daemon' => 'smbd','NetBIOS Nameserver' => 'nmbd','Winbind Daemon' => 'winbindd');
+my %servicenames = ('SMB Daemon' => 'smbd','NetBIOS Nameserver' => 'nmbd');
+#my %servicenames = ('SMB Daemon' => 'smbd','NetBIOS Nameserver' => 'nmbd','Winbind Daemon' => 'winbindd');
 
 &Header::showhttpheaders();
-
-############################################################################################################################
-#################################### Initialisierung von Samba Sharess fr die Verarbeitung ################################
-
-my @Zeilen= ();
-my @Shares= ();
-my $shareentry = "";
-my $shareconfigentry = "";
-my @shareconfigline = ();
-my $shareoption = '';
-my @shares = ();
-my @shareline = ();
-my $sharefile = "/var/ipfire/samba/shares";
-my $EOF = qx(cat $sharefile | wc -l);
-my $Status = qx(/usr/local/bin/sambactrl smbstatus);
-$Status=~s/\n/<br \/>/g;
-
-@shares = `grep -n '^\\[' $sharefile`;
-foreach $shareentry (@shares)
- {
- @shareline = split( /\:/, $shareentry );
- push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
- }
 
 ############################################################################################################################
 #################################### Initialisierung von Samba Variablen fr global Settings ###############################
@@ -72,7 +59,7 @@ $sambasettings{'NETBIOSNAME'} = 'IPFire';
 $sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.0';
 $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'share';
-$sambasettings{'OSLEVEL'} = '65';
+$sambasettings{'OSLEVEL'} = '33';
 $sambasettings{'GREEN'} = 'on';
 $sambasettings{'BLUE'} = 'off';
 $sambasettings{'ORANGE'} = 'off';
@@ -88,6 +75,10 @@ $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
 $sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
+### Samba CUPS Variablen
+$sambasettings{'LOADPRINTERS'} = 'Yes';
+$sambasettings{'PRINTING'} = 'cups';
+$sambasettings{'PRINTCAPNAME'} = 'cups';
 my $LOGLINES = '50';
 
 ################################################## Samba PDC Variablen #####################################################
@@ -139,6 +130,11 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
 	$sambasettings{'MAPTOGUEST'} = 'Never';
 	$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
+### Samba CUPS Variablen
+	$sambasettings{'LOADPRINTERS'} = 'Yes';
+	$sambasettings{'PRINTING'} = 'cups';
+	$sambasettings{'PRINTCAPNAME'} = 'cups';
+	$sambasettings{'PRINTERNAME'} = 'Printer';
 ### Values that have to be initialized
 	$sambasettings{'ACTION'} = '';
 	$sambasettings{'LOCALMASTER'} = 'off';
@@ -148,27 +144,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 	system("/usr/local/bin/sambactrl smbreload");
 	}
-
-# smbsafeconf is directly called by the if clause
-
-if ($sambasettings{'ACTION'} eq 'sharesresetyes')
-{
-system('/usr/local/bin/sambactrl smbsharesreset');
- @Zeilen = ();
- @Shares = ();
- $shareentry = "";
- @shares = ();
- @shareline = ();
- $EOF = qx(cat $sharefile | wc -l);
- 
- @shares = `grep -n '^\\[' $sharefile`;
- foreach $shareentry (@shares)
- {
- @shareline = split( /\:/, $shareentry );
- push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
- }
- system("/usr/local/bin/sambactrl smbreload");
-}
 
 ############################################################################################################################
 ################################################ Sicherheitsabfrage für den Reset ##########################################
@@ -215,163 +190,6 @@ END
 if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl smbuserdelete $sambasettings{'NAME'}");}
 
 ############################################################################################################################
-############################################## Samba Share neu anlegen #####################################################
-
-if ($sambasettings{'ACTION'} eq 'smbshareadd')
-{
-  my $emptyline= ""; 
-	open (FILE, ">>${General::swroot}/samba/shares") or die "Can't save the shares settings: $!";
-	flock (FILE, 2);
-	
-print FILE <<END
-$sambasettings{'SHAREOPTION'}
-$emptyline
-END
-;
-close FILE;
-system("/usr/local/bin/sambactrl smbsafeconf");
-
- @Zeilen = ();
- @Shares = ();
- $shareentry = "";
- @shares = ();
- @shareline = ();
- $EOF = qx(cat $sharefile | wc -l);
- 
- @shares = `grep -n '^\\[' $sharefile`;
- foreach $shareentry (@shares)
- {
- @shareline = split( /\:/, $shareentry );
- push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
- }
-system("/usr/local/bin/sambactrl smbreload");
-}
-
-############################################################################################################################
-################################################## Samba Share l�chen #####################################################
-
-if ($sambasettings{'ACTION'} eq 'smbsharedel')
-{
-my $sharebody = '';
-my $sharehead = '';
-my $sharetext = '';
-my $sharename = "$sambasettings{'NAME'}";
-chomp $sharename;
-$sharename=~s/\s//g;
-
-for(my $i = 0; $i <= $#Shares; $i++)
- {
- chomp $Shares[$i];
- $Shares[$i]=~s/\s//g;
- if ( "$Shares[$i]" eq "$sharename" )
-  {
-  my $Zeilenbegin = $Zeilen[$i]-2;
-  my $Zeilenende =  $EOF-$Zeilen[$i+1]+1;
-  my $Zeilenende2 =  $Zeilenende-1;
-
-  if ( $Zeilen[$i] eq $Zeilen[$#Shares] )
-   {
-   $sharehead = qx(head -$Zeilenbegin $sharefile);
-   $sharetext = $sharehead;
-   }
-  elsif ($Zeilen[$i] eq 1 )
-   {
-   $sharehead = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
-   $sharetext = $sharehead;
-   }
-  else
-   {
-   $sharehead = qx(head -$Zeilenbegin $sharefile);$sharebody = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
-   $sharetext = "$sharehead\n$sharebody";
-   }
-  }
- }
- 
-open (FILE, ">${General::swroot}/samba/shares") or die "Can't delete the share settings: $!";
-flock (FILE, 2);
-print FILE <<END
-$sharetext
-END
-;
-close FILE;
-system("/usr/local/bin/sambactrl smbsafeconf");
-
- @Zeilen = ();
- @Shares = ();
- $shareentry = "";
- @shares = ();
- @shareline = ();
- $EOF = qx(cat $sharefile | wc -l);
- 
- @shares = `grep -n '^\\[' $sharefile`;
- foreach $shareentry (@shares)
- {
- @shareline = split( /\:/, $shareentry );
- push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
- }
-system("/usr/local/bin/sambactrl smbreload");
-}
-############################################################################################################################
-################################################## Sambashare �dern #######################################################
-
-if ($sambasettings{'ACTION'} eq 'smbsharechange')
-{
-my $sharebody = '';
-my $sharehead = '';
-my $sharename = "$sambasettings{'NAME'}";
-my $sharetext = '';
-$sharename=~s/\s//g;
-
-for(my $i = 0; $i <= $#Shares; $i++)
- {
- chomp $Shares[$i];
- $Shares[$i]=~s/\s//g;
- if ( "$Shares[$i]" eq "$sharename" )
-  {
-  my $Zeilenbegin = $Zeilen[$i]-2;
-  my $Zeilenende =  $EOF-$Zeilen[$i+1]+1;
-  my $Zeilenende2 =  $Zeilenende-1;
-
-  if ( $Zeilen[$i] eq $Zeilen[$#Shares] )
-   {
-   $sharehead = qx(head -$Zeilenbegin $sharefile);
-   $sharetext = $sharehead;
-   }
-  elsif ($Zeilen[$i] eq 1 )
-   {
-   $sharehead = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
-   $sharetext = $sharehead;
-   }
-  else
-   {
-   $sharehead = qx(head -$Zeilenbegin $sharefile);$sharebody = qx(tail -$Zeilenende $sharefile | head -$Zeilenende2);
-   $sharetext = "$sharehead\n$sharebody";
-   }
-  }
- }
- 
-open (FILE, ">${General::swroot}/samba/shares") or die "Can't delete the share settings: $!";
-flock (FILE, 2);
-print FILE <<END
-$sharetext
-$sambasettings{'SHAREOPTION'}
-END
-;
-close FILE;
-system("/usr/local/bin/sambactrl smbsafeconf");
-
- @Zeilen = ();
- @Shares = ();
- @shares = `grep -n '^\\[' $sharefile`;
- foreach $shareentry (@shares)
- {
- @shareline = split( /\:/, $shareentry );
- push(@Zeilen,$shareline[0]);push(@Shares,$shareline[1]);
- }
-system("/usr/local/bin/sambactrl smbreload");
-}
-
-############################################################################################################################
 ##################################### Umsetzen der Werte von Checkboxen und Dropdowns ######################################
 
 if ($sambasettings{'ACTION'} eq $Lang::tr{'save'})
@@ -386,8 +204,8 @@ if ($sambasettings{'OTHERINTERFACES'} ne ''){ $sambasettings{'INTERFACES'} .= " 
 ############################################################################################################################
 ##################################### Schreiben settings und bersetzen fr smb.conf #######################################
 
-  &General::writehash("${General::swroot}/samba/settings", \%sambasettings);
-  
+&General::writehash("${General::swroot}/samba/settings", \%sambasettings);
+
 if ($sambasettings{'PASSWORDSYNC'} eq 'on'){ $sambasettings{'PASSWORDSYNC'} = "true";} else { $sambasettings{'PASSWORDSYNC'} = "false";}
 if ($sambasettings{'WINSSUPPORT'} eq 'on'){ $sambasettings{'WINSSUPPORT'} = "true";$sambasettings{'WINSSRV'} = "";} else { $sambasettings{'WINSSUPPORT'} = "false";}
 if ($sambasettings{'LOCALMASTER'} eq 'on'){ $sambasettings{'LOCALMASTER'} = "true";} else { $sambasettings{'LOCALMASTER'} = "false";}
@@ -445,32 +263,59 @@ END
 ;
 close FILE;
 
- if ($sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' )
- {	
- open (FILE, ">${General::swroot}/samba/pdc") or die "Can't save the pdc settings: $!";
- flock (FILE, 2);
- print FILE <<END
+	if (-e "${General::swroot}/cups/enable"){
+	open (FILE, ">>${General::swroot}/samba/global") or die "Can't save the global cups settings: $!";
+	flock (FILE, 2);
+	print FILE <<END
+load printers = $sambasettings{'LOADPRINTERS'}
+printing = $sambasettings{'PRINTING'}
+printcap name = $sambasettings{'PRINTCAPNAME'}
+
+END
+;
+close FILE;
+	}
+
+	if ($sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' )
+	{
+	open (FILE, ">${General::swroot}/samba/pdc") or die "Can't save the pdc settings: $!";
+	flock (FILE, 2);
+	chomp $sambasettings{'PDCOPTIONS'};
+	$sambasettings{'PDCOPTIONS'} =~ s/\r\n/\n/gi;
+	$sambasettings{'PDCOPTIONS'} =~ s/^\n//gi;
+	$sambasettings{'PDCOPTIONS'} =~ s/^\r//gi;
+	$sambasettings{'PDCOPTIONS'} =~ s/^.\n//gi;
+	$sambasettings{'PDCOPTIONS'} =~ s/^.\r//gi;
+	print FILE <<END
 $sambasettings{'PDCOPTIONS'}
 END
 ;
- close FILE;
- system('/usr/local/bin/sambactrl smbsafeconfpdc');
- }
- else
- {
- system('/usr/local/bin/sambactrl smbsafeconf');
- }
+	close FILE;
+	}
+
+if ( -e "/var/ipfire/cups/enable")
+	{
+	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");}
+	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
+	}
+else
+	{
+	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
+	else{system("/usr/local/bin/sambactrl smbsafeconf");}
+	}
+
 system("/usr/local/bin/sambactrl smbreload");
 }
   &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
   
 
-if ($errormessage) {
-        &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-        print "<class name='base'>$errormessage\n";
-        print "&nbsp;</class>\n";
-        &Header::closebox();
-                  }
+if ($errormessage)
+	{
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	print "<class name='base'>$errormessage\n";
+	print "&nbsp;</class>\n";
+	&Header::closebox();
+	}
 
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
@@ -511,9 +356,9 @@ $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 
 &Header::openbox('100%', 'center', $Lang::tr{'samba'});
 print <<END
-        <hr />
-        <br />
-        <table width='95%' cellspacing='0'>
+<hr />
+<br />
+<table width='95%' cellspacing='0'>
 END
 ;
 if ( $message ne "" )
@@ -637,6 +482,18 @@ if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'o
 END
 ;
 	}
+	
+	if ( -e "/var/ipfire/cups/enable")
+	{
+	print <<END
+	<tr><td align='left'><br /></td><td></td></tr>
+	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'printing options'}</b></td></tr>
+	<tr><td align='left' width='40%'>$Lang::tr{'load printer'}</td><td align='left'><input type='text' name='LOADPRINTERS' value='$sambasettings{'LOADPRINTERS'}' size="30" /></td></tr>
+	<tr><td align='left' width='40%'>$Lang::tr{'printing'}</td><td align='left'><input type='text' name='PRINTING' value='$sambasettings{'PRINTING'}' size="30" /></td></tr>
+	<tr><td align='left' width='40%'>$Lang::tr{'printcap name'}</td><td align='left'><input type='text' name='PRINTCAPNAME' value='$sambasettings{'PRINTCAPNAME'}' size="30" /></td></tr>
+END
+;
+	}
 
 print <<END
 </table>
@@ -704,7 +561,7 @@ END
 
 	print "<td align='left'><u>$Lang::tr{'status'}</u></td><td colspan='3' width='5%' align='center'><u>$Lang::tr{'options'}</u></td></tr>";
 	system('/usr/local/bin/sambactrl readsmbpasswd');
-	open(FILE, "</var/ipfire/samba/private/smbpasswd") or die "Can't read user file: $!";
+	open(FILE, "<${General::swroot}/samba/private/smbpasswd") or die "Can't read user file: $!";
 	@user = <FILE>;
 	close(FILE);
 	system('/usr/local/bin/sambactrl locksmbpasswd');
@@ -924,6 +781,9 @@ END
 
 &Header::openbox('100%', 'center', $Lang::tr{'shares'});
 
+my %shares =  config("${General::swroot}/samba/shares");
+
+
 print <<END
 <hr />
 <br />
@@ -933,8 +793,11 @@ print <<END
 END
 ;
 
-foreach $shareentry (sort @Shares)
+my @Shares = keys(%shares);
+
+foreach my $shareentry (sort @Shares)
 	{
+	chomp $shareentry;
 	print <<END
 	<tr><td align='left'>$shareentry</td>
 	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -997,8 +860,7 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
- <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=360,scrollbars=no, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a>
-	</td></tr>
+ <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
 	</table>
 	<br />
@@ -1012,33 +874,14 @@ END
 
 if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'optioncaption2' )
 	{
-	my $sharename = "$sambasettings{'NAME'}";
-	chomp $sharename;
-	$sharename=~s/\s//g;
-	
-	for(my $i = 0; $i <= $#Shares; $i++)
-		{
-		chomp $Shares[$i];
-		$Shares[$i]=~s/\s//g;
-		if ( "$Shares[$i]" eq "$sharename" )
-			{
-			my $Zeilenbegin = $Zeilen[$i+1]-2;
-			my $Zeilenende =  $Zeilen[$i+1]-$Zeilen[$i];
-			if ( $Zeilen[$i] eq $Zeilen[$#Shares] )
-				{$Zeilenende =  $EOF-$Zeilen[$#Shares]+1;$Zeilenbegin = $EOF-$Zeilen[$#Shares]; $shareoption = qx(tail -$Zeilenende $sharefile | head -$Zeilenbegin);}
-			else
-				{$shareoption = qx(head -$Zeilenbegin $sharefile | tail -$Zeilenende);}
-			}
-		}
+	my $shareoption = $shares{$sambasettings{'NAME'}};
 	print <<END
 	<hr />
 	<br />
 	<table width='95%' cellspacing='0'>
 	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'edit share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-																																			<input type='hidden' name='ACTION' value='optioncaption2' />
-																																			<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
 	</table>
 	<br />
@@ -1051,7 +894,157 @@ END
 ;
 	}
 
+if ($sambasettings{'ACTION'} eq 'sharesresetyes')
+	{
+	system('/usr/local/bin/sambactrl smbsharesreset');
+	my $shares = config("${General::swroot}/samba/shares");
+	system("/usr/local/bin/sambactrl smbreload");
+	}
+if ($sambasettings{'ACTION'} eq 'smbshareadd')
+	{
+	$shares{'xvx'}= "$sambasettings{'SHAREOPTION'}";
+	save("shares");
+	my $shares = config("${General::swroot}/samba/shares");
+	}
+if ($sambasettings{'ACTION'} eq 'smbsharedel')
+	{
+	delete $shares{$sambasettings{'NAME'}};
+	save("shares");
+	my %shares = config("${General::swroot}/samba/shares");
+	}
+if ($sambasettings{'ACTION'} eq 'smbsharechange')
+	{
+	$shares{$sambasettings{'NAME'}} = $sambasettings{'SHAREOPTION'};
+	save("shares");
+	my %shares = config("${General::swroot}/samba/shares");
+	}
+
 &Header::closebox();
+
+############################################################################################################################
+################################################ Verwalten von Druckern ####################################################
+
+my %printer =  config("${General::swroot}/samba/printer");
+
+if ( -e "/var/ipfire/cups/enable")
+{
+&Header::openbox('100%', 'center', $Lang::tr{'printer'});
+
+my @Printers = keys(%printer);
+print <<END
+<hr />
+<br />
+<table width='95%' cellspacing='0'>
+<tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'manage printers'}</b>
+<tr><td align='left'><u>$Lang::tr{'printername'}</u></td><td colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></td></tr>
+END
+;
+foreach my $printerentry (sort @Printers)
+	{
+	chomp $printerentry;
+	print <<END
+	<tr><td align='left'>$printerentry</td>
+	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='NAME' value='$printerentry' />
+			<input type='hidden' name='ACTION' value='printerchange' />
+			<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
+	</form></td>
+	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='NAME' value='$printerentry' />
+			<input type='hidden' name='ACTION' value='smbprinterdel' />
+			<input type='image' alt='$Lang::tr{'delete'}' src='/images/user-trash.png' />
+	</form></td></tr>
+END
+;
+	}
+print <<END
+</table>
+<br />
+<table width='10%' cellspacing='0'>
+<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+												<input type='hidden' name='ACTION' value='printeradd' />
+												<input type='image' alt='$Lang::tr{'add printer'}' src='/images/list-add.png' />
+												</form></td>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+												<input type='hidden' name='ACTION' value='printereset' />
+												<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' />
+												</form></td>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+												<input type='hidden' name='ACTION' value='printercaption' />
+												<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' />
+												</form></td>
+</tr>
+</table>
+END
+;
+
+if ($sambasettings{'ACTION'} eq 'printeradd' || $sambasettings{'ACTION'} eq 'printercaption' )
+	{
+	print <<END
+	<hr />
+	<br />
+	<table width='95%' cellspacing='0'>
+	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add printer'}</b></td></tr>
+	<tr><td colspan='2' align='center'></td></tr>
+	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
+ <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td colspan='2' align='center'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$defaultprinter</textarea></td></tr>
+	</table>
+	<br />
+	<table width='10%' cellspacing='0'>
+	<tr><td align='center'><input type='hidden' name='ACTION' value='smbprinteradd' />
+													<input type='image' alt='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr>
+	</table>
+	</form>
+END
+;
+	}
+	
+if ($sambasettings{'ACTION'} eq 'printerchange' || $sambasettings{'ACTION'} eq 'printercaption2' )
+	{
+	my $printeroption = $printer{$sambasettings{'NAME'}};
+	print <<END
+	<hr />
+	<br />
+	<table width='95%' cellspacing='0'>
+	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'edit printer'}</b></td></tr>
+	<tr><td colspan='2' align='center'></td></tr>
+	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
+	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$printeroption</textarea></td></tr>
+	</table>
+	<br />
+	<table width='10%' cellspacing='0'>
+	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}' />
+													<input type='image' alt='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
+													<input type='hidden' name='ACTION' value='smbprinterchange' /></form></td></tr>
+	</table>
+END
+;
+	}
+
+if ($sambasettings{'ACTION'} eq 'smbprinteradd')
+	{
+	$printer{'xvx'}= "$sambasettings{'PRINTEROPTION'}";
+	save("printer");
+	my %printer = config("${General::swroot}/samba/printer");
+	}
+
+if ($sambasettings{'ACTION'} eq 'smbprinterdel')
+	{
+	delete $printer{$sambasettings{'NAME'}};
+	save("printer");
+	my %printer = config("${General::swroot}/samba/printer");
+	}
+
+if ($sambasettings{'ACTION'} eq 'smbprinterchange')
+	{
+	$printer{$sambasettings{'NAME'}} = $sambasettings{'PRINTEROPTION'};
+	save("printer");
+	my %printer = config("${General::swroot}/samba/printer");
+	}
+
+&Header::closebox();
+}
 
 ############################################################################################################################
 ############################################### Anzeige des Sambastatus ####################################################
@@ -1070,12 +1063,12 @@ END
 &Header::closebox();
 
 ############################################################################################################################
-############################################### Anzeige des Sambastatus ####################################################
+############################################### Anzeige der Sambalogs ######################################################
 
 
 if ($sambasettings{'ACTION'} eq 'showlog')
 {
-$Log = qx(tail -n $LOGLINES /var/log/samba/$sambasettings{'LOG'});
+$Log = qx(tail -n $sambasettings{'LOGLINES'} /var/log/samba/$sambasettings{'LOG'});
 $Log=~s/\n/<br \/>/g;
 }
 
@@ -1104,13 +1097,75 @@ print <<END
 </form>
 END
 ;
-
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
 
 ############################################################################################################################
 ############################################ Subfunktion fr Sambadienste ###################################################
+
+sub config
+{
+my $file = shift;
+my @allarray = `grep -n '^\\[' $file`;
+my @linesarray = ();
+my @namearray = ();
+my %hash = ();
+my $options = ();
+my $EOF = qx(cat $file | wc -l);
+foreach my $allarrayentry (@allarray)
+ {
+ my @allarrayline = split( /\:/, $allarrayentry );
+ push(@linesarray,$allarrayline[0]);$allarrayline[1]=~s/\[//g;$allarrayline[1]=~s/\]//g;push(@namearray,$allarrayline[1]);
+ }
+	for(my $i = 0; $i <= $#namearray; $i++)
+		{
+		chomp $namearray[$i];
+		$namearray[$i]=~s/\[//g;$namearray[$i]=~s/\]//g;
+		if ( $i eq $#namearray )
+			{
+			my $lineend = $EOF-$linesarray[$i]+1;
+			$options=qx(tail -$lineend $file);
+			}
+		else
+			{
+			my $linestart = $EOF-$linesarray[$i]+1;
+			my $lineend =  $linesarray[$i+1]-$linesarray[$i];
+			$options=qx(tail -$linestart $file | head -$lineend);
+			}
+		$hash{$namearray[$i]} = "$options";
+#		print"<pre>$namearray[$i]\n$options\n</pre>"; # enable only for debuging
+		}
+return(%hash);
+}
+
+sub save
+{
+my $smb = shift;
+open (FILE, ">${General::swroot}/samba/$smb") or die "Can't $smb settings $!";
+flock (FILE, 2);
+
+if ( $smb eq 'printer')
+	{while (my ($name, $option) = each %printer){chomp $option;$option =~ s/\r\n/\n/gi;$option =~ s/^\n//gi;$option =~ s/^\r//gi;$option =~ s/^.\n//gi;$option =~ s/^.\r//gi;print FILE "$option\n";}}
+
+if ( $smb eq 'shares')
+	{while (my ($name, $option) = each %shares){chomp $option;$option =~ s/\r\n/\n/gi;$option =~ s/^\n//gi;$option =~ s/^\r//gi;$option =~ s/^.\n//gi;$option =~ s/^.\r//gi;print FILE "$option\n";}	}
+
+close FILE;
+
+if ( -e "/var/ipfire/cups/enable")
+	{
+	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");}
+	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
+	}
+else
+	{
+	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
+	else{system("/usr/local/bin/sambactrl smbsafeconf");}
+	}
+
+system("/usr/local/bin/sambactrl smbreload");
+}
 
 sub isrunning
 	{

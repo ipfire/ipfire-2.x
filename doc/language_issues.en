@@ -99,7 +99,6 @@ WARNING: translation string unused: daily firewallhits
 WARNING: translation string unused: dat without key
 WARNING: translation string unused: dbfile
 WARNING: translation string unused: debugme
-WARNING: translation string unused: description
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
 WARNING: translation string unused: dialup settings
@@ -309,7 +308,6 @@ WARNING: translation string unused: written sectors
 WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: IPFires hostname
-WARNING: untranslated string: add cronjob
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: down
 WARNING: untranslated string: firewall logs ip
