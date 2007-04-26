@@ -195,6 +195,7 @@ WARNING: translation string unused: modulation
 WARNING: translation string unused: mount
 WARNING: translation string unused: nat-traversal
 WARNING: translation string unused: network configuration
+WARNING: translation string unused: network status information
 WARNING: translation string unused: new optionsfw later
 WARNING: translation string unused: new optionsfw must boot
 WARNING: translation string unused: no cfg upload
@@ -252,6 +253,7 @@ WARNING: translation string unused: squid fix cache
 WARNING: translation string unused: ssh access tip
 WARNING: translation string unused: ssnetwork status
 WARNING: translation string unused: sssystem status
+WARNING: translation string unused: sstraffic graphs
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: swap usage per
 WARNING: translation string unused: system cpu

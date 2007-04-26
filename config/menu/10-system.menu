@@ -10,25 +10,19 @@
 				'title' => "$Lang::tr{'alt dialup'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'30.passwords'} = {
-				'caption' => $Lang::tr{'sspasswords'},
-				'uri' => '/cgi-bin/changepw.cgi',
-				'title' => "$Lang::tr{'sspasswords'}",
-				'enabled' => 1,
-				};
-    $subsystem->{'40.ssh'} = {
+    $subsystem->{'30.ssh'} = {
 				'caption' => $Lang::tr{'ssh access'},
 				'uri' => '/cgi-bin/remote.cgi',
 				'title' => "$Lang::tr{'ssh access'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'50.gui'} = {
+    $subsystem->{'40.gui'} = {
 				'caption' => $Lang::tr{'gui settings'},
 				'uri' => '/cgi-bin/gui.cgi',
 				'title' => "$Lang::tr{'gui settings'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'60.shutdown'} = {
+    $subsystem->{'50.shutdown'} = {
 				'caption' => $Lang::tr{'shutdown'},
 				'uri' => '/cgi-bin/shutdown.cgi',
 				'title' => "$Lang::tr{'shutdown'} / $Lang::tr{'reboot'}",
