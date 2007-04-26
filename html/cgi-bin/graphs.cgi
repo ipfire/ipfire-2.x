@@ -6,7 +6,6 @@
 #
 # (c) The SmoothWall Team
 #
-# $Id: graphs.cgi,v 1.9.2.6 2005/02/22 22:21:55 gespinasse Exp $
 #
 
 use strict;
@@ -41,24 +40,6 @@ if ($cgigraphs[1] =~ /(network|GREEN|BLUE|ORANGE|RED|lq)/) {
 	&Header::openpage($Lang::tr{'system graphs'}, 1, '');
 }
 
-sub diskbox {
- my $disk = $_[0];
-    if (-e "$graphdir/disk-$disk-day.png") {
-  
- 	  &Header::openbox('100%', 'center', "Disk /dev/$disk $Lang::tr{'graph'}");
-	  my $ftime = localtime((stat("$graphdir/disk-$disk-day.png"))[9]);
-	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-	  print "<a href='/cgi-bin/graphs.cgi?graph=disk-$disk'>";
-	  print "<img alt='' src='/graphs/disk-$disk-day.png' border='0' />";
-	  print "</a>";
-	  print "<br />\n";
-	  if (-e "/usr/local/bin/hddshutdown-state") {
-	    system("/usr/local/bin/hddshutdown-state $disk");
-	  }	
-        &Header::closebox();
-  }
-}
-
 &Header::openbigbox('100%', 'left');
 
 if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
@@ -78,14 +59,6 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		print $Lang::tr{'no information available'};
 	}
 	&Header::closebox();
-	print "<div align='center'><table width='80%'><tr><td align='center'>";
-	if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq)/) {
-		print "<a href='/cgi-bin/graphs.cgi?graph=network'>";
-	} else {
-		print "<a href='/cgi-bin/graphs.cgi'>";
-	}
-	print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
-	;
 } elsif ($cgigraphs[1] =~ /network/) {
 	push (@graphs, ('GREEN'));
 	if ($netsettings{'BLUE_DEV'}) {
@@ -110,80 +83,6 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		print "<br />\n";
 		&Header::closebox();
 	}
-} else {
-	&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
-	if (-e "$graphdir/cpu-day.png") {
-		my $ftime = localtime((stat("$graphdir/cpu-day.png"))[9]);
-		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-		print "<a href='/cgi-bin/graphs.cgi?graph=cpu'>";
-		print "<img alt='' src='/graphs/cpu-day.png' border='0' />";
-		print "</a>";
-	} else {
-		print $Lang::tr{'no information available'};
-	}
-	print "<br />\n";
-	&Header::closebox();
-
-	&Header::openbox('100%', 'center', "Load $Lang::tr{'graph'}");
-	if (-e "$graphdir/load-day.png") {
-		my $ftime = localtime((stat("$graphdir/load-day.png"))[9]);
-		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-		print "<a href='/cgi-bin/graphs.cgi?graph=load'>";
-		print "<img alt='' src='/graphs/load-day.png' border='0' />";
-		print "</a>";
-	} else {
-		print $Lang::tr{'no information available'};
-	}
-	print "<br />\n";
-	&Header::closebox();
-
-	&Header::openbox('100%', 'center', "Memory $Lang::tr{'graph'}");
-	if (-e "$graphdir/memory-day.png") {
-		my $ftime = localtime((stat("$graphdir/memory-day.png"))[9]);
-		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-		print "<a href='/cgi-bin/graphs.cgi?graph=memory'>";
-		print "<img alt='' src='/graphs/memory-day.png' border='0' />";
-		print "</a>";
-	} else {
-		print $Lang::tr{'no information available'};
-	}
-	print "<br />\n";
-	&Header::closebox();
-
-	&Header::openbox('100%', 'center', "Swap $Lang::tr{'graph'}");
-	if (-e "$graphdir/swap-day.png") {
-		my $ftime = localtime((stat("$graphdir/swap-day.png"))[9]);
-		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-		print "<a href='/cgi-bin/graphs.cgi?graph=swap'>";
-		print "<img alt='' src='/graphs/swap-day.png' border='0' />";
-		print "</a>";
-	} else {
-		print $Lang::tr{'no information available'};
-	}
-	print "<br />\n";
-	&Header::closebox();
-
-	&Header::openbox('100%', 'center', "Disk $Lang::tr{'graph'}");
-	if (-e "$graphdir/disk-day.png") {
-		my $ftime = localtime((stat("$graphdir/disk-day.png"))[9]);
-		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-		print "<a href='/cgi-bin/graphs.cgi?graph=disk'>";
-		print "<img alt='' src='/graphs/disk-day.png' border='0' />";
-		print "</a>";
-	} else {
-		print $Lang::tr{'no information available'};
-	}
-	print "<br />\n";
-	&Header::closebox();
-
-    diskbox("hda");
-    diskbox("hdb");
-    diskbox("hdc");
-    diskbox("hdd");
-    diskbox("hde");
-    diskbox("hdf");
-    diskbox("hdg");
-    diskbox("hdh");
 }
 
 &Header::closebigbox();

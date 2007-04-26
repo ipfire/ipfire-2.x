@@ -1,33 +1,39 @@
     $substatus->{'10.systemstatus'} = {
-				 'caption' => $Lang::tr{'status'},
-				 'uri' => '/cgi-bin/status.cgi',
-				 'title' => "$Lang::tr{'status'}",
+				 'caption' => $Lang::tr{'system'},
+				 'uri' => '/cgi-bin/system.cgi',
+				 'title' => "$Lang::tr{'system'}",
 				 'enabled' => 1,
 				 };
-    $substatus->{'20.systemgraphs'} = {
-				'caption' => $Lang::tr{'system graphs'},
-				'uri' => '/cgi-bin/graphs.cgi',
-				'novars' => 1,
-				'title' => "$Lang::tr{'system graphs'}",
+    $substatus->{'20.memory'} = {
+				'caption' => $Lang::tr{'memory'},
+				'uri' => '/cgi-bin/memory.cgi',
+				'title' => "$Lang::tr{'memory'}",
 				'enabled' => 1,
 				};
-    $substatus->{'30.trafficgraphs'} = {
-				'caption' => $Lang::tr{'sstraffic graphs'},
-				'uri' => '/cgi-bin/graphs.cgi',
-				'vars' => 'graph=network',
-				'title' => "$Lang::tr{'sstraffic graphs'}",
+    $substatus->{'30.media'} = {
+				'caption' => $Lang::tr{'media'},
+				'uri' => '/cgi-bin/media.cgi',
+				'title' => "$Lang::tr{'media'}",
 				'enabled' => 1,
 				};
-    $substatus->{'40.proxygraphs'} = {
+    $substatus->{'40.networkred'} = {
+				'caption' => "$Lang::tr{'network red'}",
+				'uri' => '/cgi-bin/network.cgi',
+				'vars' => 'network=red',
+				'title' => "$Lang::tr{'network red'}",
+				'enabled' => 1,
+			  };
+    $substatus->{'41.networkother'} = {
+				'caption' => "$Lang::tr{'network other'}",
+				'uri' => '/cgi-bin/network.cgi',
+				'vars' => 'network=other',
+				'title' => "$Lang::tr{'network other'}",
+				'enabled' => 1,
+			  };
+		$substatus->{'50.proxygraphs'} = {
 				'caption' => $Lang::tr{'ssproxy graphs'},
 				'uri' => '/cgi-bin/proxygraphs.cgi',
 				'title' => "$Lang::tr{'ssproxy graphs'}",
-				'enabled' => 1,
-				};
-    $substatus->{'50.fwhits'} = {
-				'caption' => 'Firewall-Diagramme',
-				'uri' => '/cgi-bin/fwhits.cgi',
-				'title' => "Firewall-Diagramme",
 				'enabled' => 1,
 				};
     $substatus->{'60.hardwaregraphs'} = {
@@ -36,19 +42,25 @@
 				'title' => "$Lang::tr{'hardware graphs'}",
 				'enabled' => 1,
 			  };
-    $substatus->{'70.connections'} = {
+		$substatus->{'70.fwhits'} = {
+				'caption' => "$Lang::tr{'firewall graphs'}",
+				'uri' => '/cgi-bin/fwhits.cgi',
+				'title' => "$Lang::tr{'firewall graphs'}",
+				'enabled' => 1,
+				};
+    $substatus->{'71.connections'} = {
 				'caption' => $Lang::tr{'connections'},
 				'uri' => '/cgi-bin/connections.cgi',
 				'title' => "$Lang::tr{'connections'}",
 				'enabled' => 1,
 				};
-    $substatus->{'80.nettraf'} = {
+    $substatus->{'72.nettraf'} = {
 				'caption' => $Lang::tr{'sstraffic'},
 				'uri' => '/cgi-bin/traffic.cgi',
 				'title' => "$Lang::tr{'sstraffic'}",
 				'enabled' => 1,
 			  };
-    $substatus->{'90.iptable'} = {
+    $substatus->{'73.iptables'} = {
 				'caption' => $Lang::tr{'iptable rules'},
 				'uri' => '/cgi-bin/iptables.cgi',
 				'title' => "$Lang::tr{'iptable rules'}",

@@ -1297,9 +1297,11 @@ srv/web/ipfire/cgi-bin/logs.cgi
 #srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromport.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/summary.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
+srv/web/ipfire/cgi-bin/media.cgi
+srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
 srv/web/ipfire/cgi-bin/netconfig.cgi
-srv/web/ipfire/cgi-bin/netstatus.cgi
+srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/networks.cgi
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
@@ -1316,7 +1318,7 @@ srv/web/ipfire/cgi-bin/samba.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/shaping.cgi
 srv/web/ipfire/cgi-bin/shutdown.cgi
-srv/web/ipfire/cgi-bin/status.cgi
+srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/time.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/traffics.cgi
