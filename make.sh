@@ -33,7 +33,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
-IPFVER="full"				# Which versions should be compiled? (full|light|voice|devel)
+IPFVER="full"				# Which versions should be compiled? (full|light|devel)
 
 # Set an information about the build number
 if [ -e ./.svn ]; then
@@ -531,7 +531,6 @@ buildipfire() {
   ipfiremake ethereal
   ipfiremake tftp-hpa
   ipfiremake bwm-ng
-  ipfiremake nagios
   ipfiremake tripwire
   ipfiremake sysstat
 }

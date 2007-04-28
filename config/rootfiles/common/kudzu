@@ -22,8 +22,8 @@ sbin/kudzu
 #usr/include/kudzu/scsi.h
 #usr/include/kudzu/serial.h
 #usr/include/kudzu/usb.h
-usr/lib/libkudzu.a
-usr/lib/libkudzu_loader.a
+#usr/lib/libkudzu.a
+#usr/lib/libkudzu_loader.a
 #usr/lib/python2.4/site-packages/_kudzumodule.so
 #usr/lib/python2.4/site-packages/drv_libxml2.pyc
 #usr/lib/python2.4/site-packages/kudzu.py

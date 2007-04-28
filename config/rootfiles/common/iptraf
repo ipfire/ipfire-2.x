@@ -1,6 +1,0 @@
-usr/bin/iptraf
-#usr/bin/rvnamed
-#var/local/iptraf
-#var/local/iptraf/version
-var/log/iptraf
-var/run/iptraf
