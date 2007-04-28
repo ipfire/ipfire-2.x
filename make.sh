@@ -170,7 +170,7 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    MAKETUNING="-j6"
+    MAKETUNING="-j4"
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
@@ -446,9 +446,6 @@ buildipfire() {
   ipfiremake Locale-Country
   ipfiremake XML-Parser
   ipfiremake glib
-  ipfiremake dbus
-  ipfiremake hal
-  ipfiremake hwinfo
   ipfiremake GeoIP
   ipfiremake fwhits
   ipfiremake noip_updater
@@ -533,7 +530,6 @@ buildipfire() {
   ipfiremake etherwake
   ipfiremake ethereal
   ipfiremake tftp-hpa
-  ipfiremake iptraf
   ipfiremake bwm-ng
   ipfiremake nagios
   ipfiremake tripwire
@@ -573,11 +569,7 @@ buildinstaller() {
   installmake pciutils
   installmake zlib
   installmake wget
-  installmake libxml2
-  installmake dbus
-  installmake hal
   installmake hwdata
-  installmake hwinfo
   installmake kudzu
   installmake installer
   installmake initrd

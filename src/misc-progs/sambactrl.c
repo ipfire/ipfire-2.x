@@ -174,8 +174,6 @@ if (strcmp(argv[1], "enable")==0)
 {
 safe_system("touch /var/ipfire/samba/enable");
 safe_system("/etc/rc.d/init.d/samba start ");
-safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc2.d/S50samba");
-safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc2.d/K50samba");
 safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc3.d/S50samba");
 safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc3.d/K50samba");
 return 0;
@@ -183,12 +181,8 @@ return 0;
 
 if (strcmp(argv[1], "disable")==0)
 {
-safe_system("unlink /var/ipfire/samba/enable");
 safe_system("/etc/rc.d/init.d/samba stop");
-safe_system("unlink /etc/rc.d/rc2.d/S50samba");
-safe_system("unlink /etc/rc.d/rc2.d/K50samba");
-safe_system("unlink /etc/rc.d/rc3.d/S50samba");
-safe_system("unlink /etc/rc.d/rc3.d/K50samba");
+safe_system("rm -f /etc/rc.d/rc3.d/*samba /var/ipfire/samba/enable 2>/dev/null");
 return 0;
 }
 return 0;

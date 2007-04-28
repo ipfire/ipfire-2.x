@@ -8,6 +8,8 @@ WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: add new ovpn
+WARNING: translation string unused: admin user password has been changed
+WARNING: translation string unused: administrator user password
 WARNING: translation string unused: advproxy LDAP auth
 WARNING: translation string unused: advproxy NTLM auth
 WARNING: translation string unused: advproxy advanced proxy
@@ -101,6 +103,8 @@ WARNING: translation string unused: dbfile
 WARNING: translation string unused: debugme
 WARNING: translation string unused: dhcp server disabled on blue interface
 WARNING: translation string unused: dhcp server enabled on blue interface
+WARNING: translation string unused: dial user password
+WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
 WARNING: translation string unused: disconnect
 WARNING: translation string unused: disk access per
@@ -235,6 +239,8 @@ WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
+WARNING: translation string unused: password contains illegal characters
+WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: polfile
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
@@ -259,6 +265,7 @@ WARNING: translation string unused: smbreload
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: ssnetwork status
+WARNING: translation string unused: sspasswords
 WARNING: translation string unused: sssystem status
 WARNING: translation string unused: sstraffic graphs
 WARNING: translation string unused: successfully refreshed updates list

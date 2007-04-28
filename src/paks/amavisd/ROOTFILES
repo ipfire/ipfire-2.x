@@ -1,4 +1,0 @@
-etc/amavisd.conf
-usr/local/bin/amavisd
-var/amavis
-var/virusmails
