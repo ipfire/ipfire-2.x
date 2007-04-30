@@ -13,6 +13,10 @@
 #include <fcntl.h>
 #include "setuid.h"
 
+#define BUFFER_SIZE 1024
+
+char command[BUFFER_SIZE]; 
+
 int main(int argc, char *argv[]) {
 
 	if (!(initsetuid()))
@@ -22,7 +26,8 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "\nNo argument given.\n\nsmartctrl <device>\n\n");
 		exit(1);
 	}
-	safe_system("smartctl -iHA /dev/%s", argv[1]);
+	sprintf(command, "smartctl -iHA /dev/%s", argv[1]);
+	safe_system(command);
 
 	return 0;
 }

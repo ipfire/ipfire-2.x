@@ -79,12 +79,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && ./configure --prefix=""
 	cd $(DIR_APP)/src && patch < $(DIR_SRC)/src/patches/slang-$(VER)-uclibc.patch
-	cd $(DIR_APP)/src && make $(MAKETUNING)
+	cd $(DIR_APP)/src && make
 	cd $(DIR_APP)/src && make install DESTDIR="/opt/$(MACHINE)-uClibc"
 else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make elf $(MAKETUNING)
+	cd $(DIR_APP) && make elf
 	cd $(DIR_APP) && make install-elf
 	cd $(DIR_APP) && chmod -v 755 /usr/lib/libslang.so.2.0.6
 endif
