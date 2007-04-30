@@ -13,7 +13,6 @@ usr/local/bin/restartapplejuice
 usr/local/bin/restartdhcp
 usr/local/bin/restartntpd
 usr/local/bin/restartsnort
-usr/local/bin/restartsquid
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd
 usr/local/bin/restartwireless
@@ -24,5 +23,6 @@ usr/local/bin/setfilters
 usr/local/bin/setportfw
 usr/local/bin/setxtaccess
 usr/local/bin/smartctrl
+usr/local/bin/squidctrl
 usr/local/bin/timecheckctrl
 usr/local/bin/upnpctrl

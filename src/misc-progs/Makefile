@@ -5,7 +5,7 @@ COMPILE=$(CC) $(CFLAGS)
 
 PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
-	restartsquid restartssh ipfirereboot setaliases \
+	squidctrl restartssh ipfirereboot setaliases \
 	ipsecctrl restartntpd restartdhcp restartsnort \
 	restartapplejuice rebuildhosts \
 	restartsyslogd logwatch openvpnctrl timecheckctrl \
@@ -88,8 +88,8 @@ restartdhcp: restartdhcp.c setuid.o ../install+setup/libsmooth/varval.o
 restartssh: restartssh.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ restartssh.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-restartsquid: restartsquid.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ restartsquid.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+squidctrl: squidctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ squidctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 restartsnort: restartsnort.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ restartsnort.c setuid.o ../install+setup/libsmooth/varval.o -o $@

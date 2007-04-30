@@ -1,0 +1,98 @@
+#!/bin/sh
+# Begin $rc_base/init.d/squid
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+transparent() {
+		DEVICE=$1
+		
+		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+		eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
+		
+		# If the proxy port is not set we set the default to 800.
+		if [ -z $PROXY_PORT ]; then
+			PROXY_PORT=800
+		fi
+
+		LOCALIP=`cat /var/ipfire/red/local-ipaddress | tr -d \n`
+		if [ -z $LOCALIP ]; then
+			boot_mesg "Couldn't read local-ipaddress" ${FAILURE}
+			exit 1
+		fi
+
+		COUNT=1
+		FILE=/var/ipfire/vpn/config
+
+		while read LINE; do
+			let COUNT=$COUNT+1
+			CONN_TYPE=`echo "$LINE" | awk -F, '{ print $5 }'`
+			if [ "$CONN_TYPE" != "net" ]; then
+				continue
+			fi  
+  		iptables -t nat -A SQUID -i $1 -p tcp -d `echo "$LINE" | awk -F, '{ print $13 }'` --dport 80 -j RETURN
+		done < $FILE
+		
+		if [ "$RED_TYPE" == "STATIC" ]; then
+			iptables -t nat -A SQUID -i $1 -p tcp -d $RED_NETADDRESS/$RED_NETMASK --dport 80 -j RETURN
+		fi
+		
+		iptables -t nat -A SQUID -i $1 -p tcp -d $LOCALIP --dport 80 -j RETURN
+		
+		iptables -t nat -A SQUID -i $1 -p tcp --dport 80 -j REDIRECT --to-port $PROXY_PORT
+}
+
+case "$1" in
+	start)
+		boot_mesg "Starting Squid Proxy Server..."
+		
+		if [ -e /var/ipfire/proxy/enable -o -e /var/ipfire/proxy/enable_blue ]; then
+			loadproc /usr/sbin/squid -D -z >/dev/null 2>&1
+			loadproc /usr/sbin/squid -D
+		fi
+
+		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+		if [ -e /var/ipfire/proxy/transparent ]; then
+			transparent $GREEN_DEV
+		fi
+		if [ -e /var/ipfire/proxy/transparent_blue ]; then
+			transparent $BLUE_DEV
+		fi
+		;;
+
+	stop)
+		boot_mesg "Stopping Squid Proxy Server..."
+		iptables -t nat -F SQUID
+		squid -k shutdown >/dev/null 2>&1
+		evaluate_retval
+		killproc /usr/sbin/squid >/dev/null
+		killproc /usr/bin/squidGuard >/dev/null
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/sbin/squid
+		statusproc /usr/lib/squid/unlinkd
+		;;
+		
+	flush)
+		$0 stop
+		echo > /var/log/cache/swap.state
+		chown squid.squid /var/log/cache/swap.state
+		sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status|flush}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/squid

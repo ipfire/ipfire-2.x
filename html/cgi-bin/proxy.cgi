@@ -581,27 +581,30 @@ ERROR:
 		&writeconfig;
 		&writepacfile;
 
+		system ('/usr/local/bin/squidctrl', 'disable');
 		unlink "${General::swroot}/proxy/enable";
 		unlink "${General::swroot}/proxy/transparent";
 		unlink "${General::swroot}/proxy/enable_blue";
 		unlink "${General::swroot}/proxy/transparent_blue";
 
 		if ($proxysettings{'ENABLE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/enable"); }
+			system ('/usr/bin/touch', "${General::swroot}/proxy/enable");
+			system ('/usr/local/bin/squidctrl', 'enable'); }
 		if ($proxysettings{'TRANSPARENT'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent"); }
 		if ($proxysettings{'ENABLE_BLUE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/enable_blue"); }
+			system ('/usr/bin/touch', "${General::swroot}/proxy/enable_blue");
+			system ('/usr/local/bin/squidctrl', 'enable'); }
 		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
 
-		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/restartsquid'); }
+		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
 	}
 }
 
 if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy clear cache'})
 {
-	system('/usr/local/bin/restartsquid','-f');
+	system('/usr/local/bin/squidctrl flush >/dev/null 2>&1');
 }
 
 if (!$errormessage)
