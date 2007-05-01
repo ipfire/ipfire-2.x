@@ -195,7 +195,7 @@ sub diskbox {
 		  if (-e "/usr/local/bin/hddshutdown-state") {
 		    system("/usr/local/bin/hddshutdown-state $disk");
 		  }
-		  my $smart = `smartctrl $disk`;
+		  my $smart = `/usr/local/bin/smartctrl $disk`;
 			$smart = &Header::cleanhtml($smart);
 			print <<END
 				<br /><input type="button" onClick="swapVisibility('smart_$disk')" value="$Lang::tr{'smart information'}" />
