@@ -19,6 +19,7 @@ $|=1; # line buffering
 
 $Header::revision = 'final';
 $Header::swroot = '/var/ipfire';
+$Header::graphdir='/srv/web/ipfire/html/graphs';
 $Header::pagecolour = '#ffffff';
 #$Header::tablecolour = '#a0a0a0';
 $Header::tablecolour = '#FFFFFF';

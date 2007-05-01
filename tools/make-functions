@@ -395,25 +395,31 @@ ipfiremake() {
 }
 
 ipfiredist() {
-	if [ -f $BASEDIR/build/usr/src/lfs/$1 ]; then
-		echo "`date -u '+%b %e %T'`: Packaging $1" | tee -a $LOGFILE
-		chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-						VERSION=$VERSION \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
-						KVER=$KVER IPFVER="$IPFVER" \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-		    /bin/bash -x -c "cd /usr/src/lfs && \
-		    make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
-		if [ $? -ne 0 ]; then
-			exiterror "Packaging $1"
-		fi
+	lfsmakecommoncheck $*
+	[ $? == 1 ] && return 0
+	
+	local PKG_TIME_START=`date +%s`
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
+					TERM=$TERM PS1='\u:\w\$ ' \
+					PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+					VERSION=$VERSION \
+					CONFIG_ROOT=$CONFIG_ROOT \
+					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
+					CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
+					CCACHE_DIR=/usr/src/ccache CCACHE_HASHDIR=1 \
+					KVER=$KVER IPFVER="$IPFVER" \
+					BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+					/bin/bash -x -c "cd /usr/src/lfs && \
+					make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
+
+	local COMPILE_SUCCESS=$?
+	local PKG_TIME_END=`date +%s`
+
+	if [ $COMPILE_SUCCESS -ne 0 ]; then
+		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
+		exiterror "Packaging $*";
 	else
-		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/$1"
+		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
 	fi
 	return 0
 }
@@ -480,9 +486,9 @@ batch_script() {
 	$0 upload iso
 	evaluate 1 mail_me ISO
 	
-#	echo -ne "### UPLOADING PAKS"
-#	$0 upload paks
-#	evaluate 1 mail_me PAKS
+	echo -ne "### UPLOADING PAKS"
+	$0 upload paks
+	evaluate 1 mail_me PAKS
 
 	echo -ne "${BOLD}***SUCCESS!${NORMAL}"
 	mail_me success
@@ -702,4 +708,26 @@ update_langs() {
 		$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
 		$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 		beautify message DONE
+}
+
+sign_packages() {
+	if gpg --list-key 64D96617 ; then
+		if [ -d "$BASEDIR/packages" ]; then
+			cd $BASEDIR/packages
+	  	for i in `ls $BASEDIR/packages`; do
+	  		echo -n "Signing $i"
+				echo $GPG_PASSPHRASE | gpg --sign --armor -u 64D96617 --passphrase-fd 0 $i
+				if [ "$?" -eq "0" ]; then
+					beautify message DONE
+					mv -f $i.asc $i
+				else
+					beautify message FAIL
+				fi
+	  	done
+	  	cd -
+  	fi
+	else
+		echo -n "You don't have the secret key to sign ipfire's packages!"
+		beautify message FAIL
+	fi
 }

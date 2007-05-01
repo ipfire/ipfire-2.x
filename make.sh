@@ -609,14 +609,14 @@ buildpackages() {
   ipfiremake pxe
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz} $BASEDIR >> $LOGFILE 2>&1
 
-#  ipfirepackages
+  ipfirepackages
 
   # Cleanup
   stdumount
   rm -rf $BASEDIR/build/tmp/*
 
   # Generating total list of files
-  echo "Generating files list from logs" | tee -a $LOGFILE
+  echo -n "Generating files list from logs" | tee -a $LOGFILE
   rm -f $BASEDIR/log/FILES
   for i in `ls -1tr $BASEDIR/log/[^_]*`; do
 	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
@@ -626,51 +626,29 @@ buildpackages() {
 		cat $i | sed "s%^\./%#%" | sort >> $BASEDIR/log/FILES
 	fi
   done
-  cd $BASEDIR/packages; ls -w1 *.ipfire | awk -F ".ipfire" '{ print $1 }' > $BASEDIR/packages/packages_list.txt
-  echo -n "###EOF###" >> $BASEDIR/packages/packages_list.txt
+  beautify message DONE
 
   cd $PWD
 }
 
 ipfirepackages() {
-  if [ -d "$BASEDIR/packages" ]; then
-	  for i in `ls $BASEDIR/packages`; do
-		touch $BASEDIR/build/install/packages/$i.empty
-	  done
-  fi
 #  ipfiredist amavisd
-  ipfiredist applejuice
-  ipfiredist asterisk
+#  ipfiredist applejuice
+#  ipfiredist asterisk
   ipfiredist clamav
-  ipfiredist cups
-  ipfiredist cyrusimap
-  ipfiredist fetchmail
-  ipfiredist ffmpeg
-  ipfiredist gnump3d
-  ipfiredist iptraf
-  ipfiredist java
-  ipfiredist lame
-  ipfiredist libmad
-  ipfiredist libogg
-  ipfiredist libvorbis
-  ipfiredist mailx
-  ipfiredist mldonkey
-  ipfiredist mpeg2dec
-  ipfiredist nagios
-  ipfiredist nfs
-  ipfiredist nmap
-  ipfiredist ntop
-  ipfiredist portmap
-  ipfiredist postfix
-  ipfiredist procmail
-  ipfiredist samba
-  ipfiredist sox
-  ipfiredist spamassassin
-  ipfiredist subversion
-  ipfiredist videolan
-  ipfiredist webcyradm
-  ipfiredist xvid
-  ipfiredist yasuc
+#  ipfiredist cups
+#  ipfiredist cyrusimap
+#  ipfiredist fetchmail
+#  ipfiredist gnump3d
+#  ipfiredist java
+#  ipfiredist mailx
+#  ipfiredist mldonkey
+#  ipfiredist nfs
+#  ipfiredist postfix
+#  ipfiredist samba
+#  ipfiredist sox
+#  ipfiredist spamassassin
+#  ipfiredist webcyradm
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/*.{ipfire,md5} $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
@@ -1061,6 +1039,13 @@ pxe)
 	;;
 lang)
 	update_langs
+	;;
+packages)
+	case "$2" in
+		sign)
+			sign_packages
+			;;
+	esac
 	;;
 "")
 	clear
