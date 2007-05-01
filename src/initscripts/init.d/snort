@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# setting and configure Parameter
+
+cd /etc/snort
+snort=/usr/sbin/snort
+vars=/etc/snort/vars
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+HOME_NET=`echo $GREEN_NETADDRESS`
+EXTERMAL_NET="EXTERNAL_NET=ANY"
+
+# setting the snort sensore to the interface  !!
+DEVICE=`echo $GREEN_DEV`
+PIDFILE=/var/run/snort_$DEVICE.pid
+startparameter=" -c snort.conf -i $DEVICE -D -l /var/log/snort --pid-path $PIDFILE"
+
+
+#create the  DYNAMIC vars Variable of Snort 
+ echo "var HOME_NET $HOME_NET" > $vars
+ echo "var EXTERNAL_NET ANY" >> $vars
+
+
+# Begin $rc_base/init.d/snort
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting snort..."
+		loadproc $snort $startparameter
+		;;
+
+	stop)
+		boot_mesg "Stopping snort..."
+		killproc -p $PIDFILE /var/run
+		;;
+
+	status)
+		statusproc /usr/sbin/snort
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/snort

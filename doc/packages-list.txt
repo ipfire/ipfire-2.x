@@ -60,6 +60,7 @@
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
 * db-4.4.20
+* dbus-0.62
 * dhcp-3.0.4
 * dhcpcd-2.0.8
 * diffutils-2.8.1
@@ -104,11 +105,13 @@
 * groff-1.18.1.1
 * grub-0.97
 * gzip-1.3.5
+* hal-0.5.7.1
 * hddtemp-0.3-beta14
 * hdparm-6.6
 * htop-0.6.2
 * httpd-2.2.2
 * hwdata-0.191
+* hwinfo-ipfire
 * iana-etc-2.10
 * ibod
 * iftop-0.17
@@ -119,6 +122,7 @@
 * ipp2p-0.8.2-iptables
 * iproute2-2.6.16-060323
 * iptables-1.3.5
+* iptraf-3.0.0
 * iptstate-2.1
 * iputils-ss020927
 * isapnptools-1.26
@@ -171,6 +175,7 @@
 * mpg123-0.59r
 * mtools-3.9.10
 * mysql-5.0.24a
+* nagios-2.5
 * nano-1.2.5
 * nash
 * nasm-0.98.39
@@ -186,6 +191,7 @@
 * ntp-4.2.2
 * ocaml-3.09.2
 * oinkmaster-1.2
+* oinkmaster-2.0
 * openldap-2.3.20
 * openssh-4.3p2
 * openssl-0.9.8d
@@ -221,6 +227,7 @@
 * slang-2.0.6
 * smartmontools-5.36
 * snort-2.3.3
+* snort-2.6.1.4
 * sox-12.18.1
 * spandsp-0.0.3pre24
 * squashfs3.2-r2
