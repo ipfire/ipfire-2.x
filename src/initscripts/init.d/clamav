@@ -1,0 +1,41 @@
+#!/bin/sh
+# Begin $rc_base/init.d/clamav
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting Clamav Definition Updater..."
+		loadproc /usr/bin/freshclam -d -c 10
+		
+		boot_mesg "Starting Clamav Daemon..."
+		loadproc /usr/sbin/clamd
+		;;
+
+	stop)
+		boot_mesg "Stopping Clamav Definition Updater..."
+		killproc /usr/bin/freshclam
+		
+		boot_mesg "Stopping Clamav Daemon..."
+		killproc /usr/sbin/clamd
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/sbin/clamd
+		statusproc /usr/bin/freshclam
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/clamav

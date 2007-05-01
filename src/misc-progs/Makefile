@@ -11,7 +11,7 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	restartsyslogd logwatch openvpnctrl timecheckctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
 	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
-	smartctrl
+	smartctrl clamavctrl
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -60,6 +60,9 @@ tripwirectrl: tripwirectrl.c setuid.o ../install+setup/libsmooth/varval.o
 	
 smartctrl: smartctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ smartctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+clamavctrl: clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@
