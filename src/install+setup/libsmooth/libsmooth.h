@@ -46,6 +46,11 @@
 #define KNOWN_NICS   "/var/ipfire/ethernet/known_nics"
 #define SCANNED_NICS "/var/ipfire/ethernet/scanned_nics"
 
+#define _GREEN_CARD_ 0
+#define _RED_CARD_ 1
+#define _ORANGE_CARD_ 2
+#define _BLUE_CARD_ 3
+
 struct keyvalue
 {
  	char key[STRING_SIZE];
@@ -57,11 +62,14 @@ struct nic
 	char description[256];
 	char macaddr[20];
 };
+
 struct knic
 {
 	char description[256];
 	char macaddr[20];
+	char colour[20];
 };
+
 
 /* libsmooth.c */
 void reboot(void);
@@ -84,7 +92,9 @@ int gettype(char *type);
 int setnetaddress(struct keyvalue *kv, char *colour);
 void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
+int scan_network_cards(void);
 int nicmenu(char *colour);
+int remove_nic_entry(char *colour);
 int manualdriver(char *driver, char *driveroptions);
 	  
 /* data.c */

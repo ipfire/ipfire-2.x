@@ -16,6 +16,11 @@ extern char *mylog;
 
 extern char **ctr;
 
+extern struct nic nics[];
+extern struct knic knics[];
+
+int scanned_nics_read_done = 0;
+
 newtComponent networkform;
 newtComponent addressentry;
 newtComponent netmaskentry;
@@ -327,26 +332,58 @@ int probecards(char *driver, char *driveroptions)
 	return 0;
 }
 
+/* ### alter strupper ###
 char *strupper(char *s)
 {
  int n;
  for (n=0;s[n];n++) s[n]=toupper(s[n]);
  return s;
 }
+*/
 
+/* neuer StringUpper, wird zur Zeit nicht benutzt da UTF-8 nicht geht.
+void strupper(unsigned char *string)
+{
+	unsigned char *str;
+	for (str = string; *str != '\0'; str++)
+		if (!(*str & 0x80) && islower(*str)) 
+			*str = toupper(*str);
+}
+*/
 
 int write_configs_netudev(char *description, char *macaddr, char *colour)
 {	
 	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
-	
 	FILE *fp;
 	char commandstring[STRING_SIZE];
 	struct keyvalue *kv = initkeyvalues();
 	char temp1[STRING_SIZE], temp2[STRING_SIZE], temp3[STRING_SIZE];
 	char ucolour[STRING_SIZE];
-	
-	sprintf(ucolour, colour);
-	strupper(ucolour);
+
+//	sprintf(ucolour, colour);	
+//	strupper(ucolour);
+
+	switch (*colour)
+	{
+		case 'g':	sprintf(ucolour, "GREEN");
+				strcpy(knics[_GREEN_CARD_].description, description);
+				strcpy(knics[_GREEN_CARD_].macaddr, macaddr);
+				break;
+		case 'r':	sprintf(ucolour, "RED");
+				strcpy(knics[_RED_CARD_].description, description);
+				strcpy(knics[_RED_CARD_].macaddr, macaddr);
+				break;
+		case 'o':	sprintf(ucolour, "ORANGE");
+				strcpy(knics[_ORANGE_CARD_].description, description);
+				strcpy(knics[_ORANGE_CARD_].macaddr, macaddr);
+				break;
+		case 'b':	sprintf(ucolour, "BLUE");
+				strcpy(knics[_BLUE_CARD_].description, description);
+				strcpy(knics[_BLUE_CARD_].macaddr, macaddr);
+				break;
+		default:	sprintf(ucolour, "DUMMY");
+				break;
+	}
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -360,24 +397,20 @@ int write_configs_netudev(char *description, char *macaddr, char *colour)
 	sprintf(temp3, "%s0", colour);
 	replacekeyvalue(kv, temp1, temp3);
 	replacekeyvalue(kv, temp2, macaddr);
+	sprintf(temp1, "%s_DESCRIPTION", ucolour);
+	replacekeyvalue(kv, temp1, description);
 
 	writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 	freekeyvalues(kv);
 	
-	if( (fp = fopen(KNOWN_NICS, "a")) == NULL )
-	{
-		fprintf(stderr,"Couldn't open "KNOWN_NICS);
-		return 1;
-	}
-	fprintf(fp,"%s;%s;\n", description, macaddr);
-	fclose(fp);
-
 	// Make sure that there is no conflict
 	snprintf(commandstring, STRING_SIZE, "/usr/bin/touch "UDEV_NET_CONF" >/dev/null 2>&1");
-  system(commandstring);
-  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
-  system(commandstring);
-  snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", colour);
+	system(commandstring);
+	
+	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
+	system(commandstring);
+
+	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", colour);
 	system(commandstring);
 
 	if( (fp = fopen(UDEV_NET_CONF, "a")) == NULL )
@@ -391,112 +424,173 @@ int write_configs_netudev(char *description, char *macaddr, char *colour)
 	return 0;
 }
 
-int nicmenu(char *colour)
+int scan_network_cards(void)
 {
-			FILE *fp;
-			char temp_line[STRING_SIZE];
-			struct nic nics[20], *pnics;
-			pnics = nics;
-			struct knic knics[20], *pknics;
-			pknics = knics;
-			int rc, choise, count = 0, kcount = 0, i, found;
-			char macaddr[STRING_SIZE], description[STRING_SIZE];
-			char message[STRING_SIZE];
-
-			char MenuInhalt[20][80];
-			char *pMenuInhalt[20];
-			
-			mysystem("/bin/probenic.sh");
-			
-			// Read the nics we already use
-			if((fp = fopen(KNOWN_NICS, "r")) == NULL)
-			{
-				fprintf(flog,"Couldn't open " KNOWN_NICS);
-				return 1;
-			}
-			while (fgets(temp_line, STRING_SIZE, fp) != NULL)
-			{
-				strcpy(knics[kcount].description, strtok(temp_line,";"));
-				strcpy(knics[kcount].macaddr , strtok(NULL,";"));
-				if (strlen(knics[kcount].macaddr) > 5 ) kcount++;
-			}
-			fclose(fp);
-
-			// Read our scanned nics
-			if( (fp = fopen(SCANNED_NICS, "r")) == NULL )
-			{
-				fprintf(stderr,"Couldn't open "SCANNED_NICS);
-				return 1;
-			}
-			while (fgets(temp_line, STRING_SIZE, fp) != NULL)
-			{
-				strcpy(description, strtok(temp_line,";"));
-				strcpy(macaddr,     strtok(NULL,";"));
-				found = 0;
-				if (strlen(macaddr) > 5 ) {
-					for (i=0; i < kcount; i++)
-					{
-						// Check if the nic is already in use
-						if (strcmp(pknics[i].macaddr, macaddr) == NULL )
-						{
-							found = 1;
-						}
-					}
-					if (!found)
-					{
-						strcpy( pnics[count].description , description );
-						strcpy( pnics[count].macaddr , macaddr );
-						count++;
-					}
-				}
-			}
-			fclose(fp);
-			
-			// If new nics are found...
-			if (count > 0) {
-				char cMenuInhalt[STRING_SIZE];
-				for (i=0 ; i < count ; i++)
-				{
-					if ( strlen(nics[i].description) < 52 )
-						strncpy(MenuInhalt[i], nics[i].description + 1, strlen(nics[i].description)- 2);
-					else
-					{
-						strncpy(cMenuInhalt, nics[i].description + 1, 50);
-						strncpy(MenuInhalt[i], cMenuInhalt,(strrchr(cMenuInhalt,' ') - cMenuInhalt));
-						strcat (MenuInhalt[i], "...");
-					}
-					while ( strlen(MenuInhalt[i]) < 50)
-						// Fill with space.
-						strcat( MenuInhalt[i], " ");
+	FILE *fp;
+	char description[STRING_SIZE], macaddr[STRING_SIZE], temp_line[STRING_SIZE];
+	int count = 0;
 	
-					strcat(MenuInhalt[i], " (");
-					strcat(MenuInhalt[i], nics[i].macaddr);
-					strcat(MenuInhalt[i], ")");
-					pMenuInhalt[i] = MenuInhalt[i];
-				}
-				
-				sprintf(message, "Es wurde(n) %d freie Netzwerkkarte(n) in Ihrem System gefunden.\nBitte waehlen Sie im naechsten Dialog eine davon aus.\n", count);
-				
-				newtWinMessage("NetcardMenu", ctr[TR_OK], message);
-
-				sprintf(message, "Bitte waehlen Sie eine der untenstehenden Netzwerkkarten fuer die Schnittstelle \"%s\" aus.\n", colour);
-		
-				rc = newtWinMenu("NetcardMenu", message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
-				
-				if ( rc == 0 || rc == 1) {
-					write_configs_netudev(pnics[choise].description, pnics[choise].macaddr, colour);
-				} else if (rc == 2) {
-					manualdriver("pcnet32","");
-	      } else {
-	      	errorbox("Sie haben keine Netzwerkkarte ausgewaehlt.\n");
-					return 1;
-				}
-				return 0;
-		} else {
-			// We have to add here that you can manually add a device
-			errorbox("Es wurden leider keine freien Netzwerkkarten fuer die Schnittstelle in ihrem System gefunden.");
+	if (!(scanned_nics_read_done))
+	{
+		fprintf(flog,"Enter scan_network_cards\n"); // #### Debug ####
+		mysystem("/bin/probenic.sh");
+		// Read our scanned nics
+		if( (fp = fopen(SCANNED_NICS, "r")) == NULL )
+		{
+			fprintf(stderr,"Couldn't open "SCANNED_NICS);
 			return 1;
 		}
+		while (fgets(temp_line, STRING_SIZE, fp) != NULL)
+		{
+			strcpy(description, strtok(temp_line,";"));
+			strcpy(macaddr,     strtok(NULL,";"));
+			if ( strlen(macaddr) ) {
+				strcpy(nics[count].description , description );
+				strcpy(nics[count].macaddr , macaddr );
+				count++;
+			}
+		}
+		fclose(fp);
+	}
+	scanned_nics_read_done = 1;
+	return count;
+}
+
+
+
+int nicmenu(char *colour)
+{
+	int rc, choise = 0, count = 0, kcount = 0, mcount = 0, i, j, nic_in_use;
+	int found_NIC_as_Card[4];
+	char message[STRING_SIZE];
+
+	char cMenuInhalt[STRING_SIZE];
+	char MenuInhalt[20][180];
+	char *pMenuInhalt[20];
+	
+//	strcpy( message , pnics[count].macaddr);
+//	while (strcmp(message, "")) {
+//		count++;
+//		strcpy( message , pnics[count].macaddr);
+//	}
+
+	while (strcmp(nics[count].macaddr, "")) count++;			// 2 find how many nics in system
+	for ( i=0 ; i<4;i++) if (strcmp(knics[i].macaddr, "")) kcount++;	// loop to find all knowing nics
+	fprintf(flog, "Enter NicMenu\n");					// #### Debug ####
+	fprintf(flog, "count nics %i\ncount knics %i\n", count, kcount);	// #### Debug ####
+
+	// If new nics are found...
+	if (count > kcount) {
+		for (i=0 ; i < count ; i++)
+		{
+			nic_in_use = 0;
+			for (j=0 ; j <= kcount ; j++) {
+				if (strcmp(nics[ i ].macaddr, knics[ j ].macaddr) == 0 ) {
+					nic_in_use = 1;
+					fprintf(flog,"NIC \"%s\" is in use.\n", nics[ i ].macaddr); // #### Debug ####
+					break;
+				}
+			}
+			if (!(nic_in_use)) {
+				fprintf(flog,"NIC \"%s\" is free.\n", nics[ i ].macaddr); // #### Debug ####
+				if ( strlen(nics[i].description) < 55 ) 
+					sprintf(MenuInhalt[mcount], "%.*s",  strlen(nics[i].description)-2, nics[i].description+1);
+				else {
+					sprintf(cMenuInhalt, "%.50s", nics[i].description + 1);
+					strncpy(MenuInhalt[mcount], cMenuInhalt,(strrchr(cMenuInhalt,' ') - cMenuInhalt));
+					strcat (MenuInhalt[mcount], "...");
+				}
+
+				while ( strlen(MenuInhalt[mcount]) < 50) strcat(MenuInhalt[mcount], " "); // Fill with space.
+
+				strcat(MenuInhalt[mcount], " (");
+				strcat(MenuInhalt[mcount], nics[i].macaddr);
+				strcat(MenuInhalt[mcount], ")");
+				pMenuInhalt[mcount] = MenuInhalt[mcount];
+				found_NIC_as_Card[mcount]=i;
+				mcount++;
+			}
+		}
+
+		pMenuInhalt[mcount] = NULL;
+
+//		sprintf(message, "Es wurde(n) %d freie Netzwerkkarte(n) in Ihrem System gefunden.\nBitte waehlen Sie im naechsten Dialog eine davon aus.\n", count);
+//		newtWinMessage("NetcardMenu", ctr[TR_OK], message);
+
+		sprintf(message, "(TR) Bitte waehlen Sie eine der untenstehenden Netzwerkkarten fuer die Schnittstelle \"%s\" aus.\n", colour);
+		rc = newtWinMenu("(TR) NetcardMenu2", message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
+				
+		if ( rc == 0 || rc == 1) {
+			write_configs_netudev(nics[choise].description, nics[found_NIC_as_Card[choise]].macaddr, colour);
+		} else if (rc == 2) {
+//			manualdriver("pcnet32","");
+	      	}
+		return 0;
+	} else {
+		// We have to add here that you can manually add a device
+		errorbox("(TR) Es wurden leider keine freien Netzwerkkarten fuer die Schnittstelle in ihrem System gefunden.");
+		return 1;
+	}
+}
+
+int remove_nic_entry(char *colour)
+{
+	struct keyvalue *kv = initkeyvalues();
+	char message[STRING_SIZE];
+	char temp1[STRING_SIZE], temp2[STRING_SIZE];
+	char ucolour[STRING_SIZE];
+	int rc;
+
+	
+	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
+	{
+		freekeyvalues(kv);
+		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		return 0;
+	}
+
+	switch (*colour)
+	{
+		case 'g':	sprintf(ucolour, "GREEN");
+				strcpy(knics[_GREEN_CARD_].description, ctr[TR_UNSET]);
+				strcpy(knics[_GREEN_CARD_].macaddr, "");
+				strcpy(knics[_GREEN_CARD_].colour, "");
+				break;
+		case 'r':	sprintf(ucolour, "RED");
+				strcpy(knics[_RED_CARD_].description, ctr[TR_UNSET]);
+				strcpy(knics[_RED_CARD_].macaddr, "");
+				strcpy(knics[_RED_CARD_].colour, "");
+				break;
+		case 'o':	sprintf(ucolour, "ORANGE");
+				strcpy(knics[_ORANGE_CARD_].description, ctr[TR_UNSET]);
+				strcpy(knics[_ORANGE_CARD_].macaddr, "");
+				strcpy(knics[_ORANGE_CARD_].colour, "");
+				break;
+		case 'b':	sprintf(ucolour, "BLUE");
+				strcpy(knics[_BLUE_CARD_].description, ctr[TR_UNSET]);
+				strcpy(knics[_BLUE_CARD_].macaddr, "");
+				strcpy(knics[_BLUE_CARD_].colour, "");
+				break;
+		default:	sprintf(ucolour, "DUMMY");
+				break;
+	}
+
+	sprintf(message, "(TR) Soll die Netzwerkkarte \"%s\" entfernt werden ?\n", colour);
+	rc = newtWinChoice(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_CANCEL], message);				
+
+	if ( rc = 0 || rc == 1) {
+		sprintf(temp1, "%s_DEV", ucolour);
+		sprintf(temp2, "%s_MACADDR", ucolour);
+		replacekeyvalue(kv, temp1, "");
+		replacekeyvalue(kv, temp2, "");
+		sprintf(temp1, "%s_DESCRIPTION", ucolour);
+		replacekeyvalue(kv, temp1, "");
+
+		writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
+	} else return 1;
+
+	freekeyvalues(kv);
+	return 0;
 }
 
 /* Manual entry for gurus. */

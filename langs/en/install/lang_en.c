@@ -509,5 +509,11 @@ char *en_tr[] = {
 "Welcome to the %s installation program. Selecting Cancel on any of the following screens will reboot the computer.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */
 "Your configuration is set for a single GREEN interface, which already has a driver assigned.",
+/* TR_YES */
+"Yes",
+/* TR_NO */
+"No",
+/* TR_AS */
+"as",
 }; 
   

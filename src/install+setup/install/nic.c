@@ -20,7 +20,8 @@ extern char *mylog;
 
 extern char **ctr;
 
-extern struct nic nics[];
+//extern struct nic nics[];
+//extern struct knic knics[];
 
 int networkmenu(struct keyvalue *ethernetkv)
 {

@@ -513,5 +513,11 @@ char *de_tr[] = {
 "Willkommen zum %s Installationsprogramm. Wenn Sie auf irgendeiner der folgenden Seiten 'Abbrechen' auswählen, wird der Computer neu gestartet.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */
 "Ihre Konfiguration ist für eine einzelne GRÜNE Schnittstelle eingestellt, der bereits ein Treiber zugewiesen ist.",
+/* TR_YES */
+"Ja",
+/* TR_NO */
+"Nein",
+/* TR_AS */
+"als",
 }; 
   

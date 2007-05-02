@@ -25,6 +25,9 @@ char **ctr;
 
 extern char url[STRING_SIZE];
 
+struct  nic  nics[20] = { { "" , "" } }; // only defined for compile
+struct knic knics[20] = { { "" , "" , "" } }; // only defined for compile
+
 extern char *en_tr[];
 extern char *de_tr[];
 
@@ -83,7 +86,8 @@ int main(int argc, char *argv[])
 	long memory = 0;
 	long system_partition, boot_partition, root_partition, swap_file;
 	int scsi_disk = 0;
-	char *yesnoharddisk[] = { "NO", "YES", NULL };
+	char *yesnoharddisk[3];	//	char *yesnoharddisk = { "NO", "YES", NULL };
+		
 	int unattended = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
 	int hardyn = 0;
@@ -300,6 +304,11 @@ int main(int argc, char *argv[])
 	if (unattended) {
 	    hardyn = 1;
 	}
+
+	yesnoharddisk[0] = ctr[TR_NO];
+	yesnoharddisk[1] = ctr[TR_YES];
+	yesnoharddisk[2] = NULL;
+
 	while (! hardyn) {
 		rc = newtWinMenu(title, message,
 				 50, 5, 5, 6, yesnoharddisk,
@@ -559,8 +568,8 @@ int main(int argc, char *argv[])
 	mysystem("/bin/installbootsplash.sh");
 
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
-	mysystem("umount /harddisk/proc");
-	mysystem("umount /harddisk/dev");
+//	mysystem("umount /harddisk/proc");
+//	mysystem("umount /harddisk/dev");
 
 	if (!unattended) {
 		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
@@ -573,6 +582,8 @@ int main(int argc, char *argv[])
 EXIT:
 	fprintf(flog, "Install program ended.\n");	
 
+
+
 	if (!(allok))
 		newtWinMessage(title, ctr[TR_OK], ctr[TR_PRESS_OK_TO_REBOOT]);	
 	
@@ -582,10 +593,10 @@ EXIT:
 	{
 		/* /proc is needed by the module checker.  We have to mount it
 		 * so it can be seen by setup, which is run chrooted. */
-		if (system("/bin/mount proc -t proc /harddisk/proc"))
-			printf("Unable to mount proc in /harddisk.");
-		else
-		{
+//		if (system("/bin/mount proc -t proc /harddisk/proc"))
+//			printf("Unable to mount proc in /harddisk.");
+//		else
+//		{
 			if (unattended) {
 			    fprintf(flog, "Entering unattended setup\n");
 			    if (unattended_setup(unattendedkv)) {
@@ -597,9 +608,9 @@ EXIT:
 			    }
 			}
 
-			newtFinished();
 			fflush(flog);
 			fclose(flog);
+			newtFinished();
 
 			if (!unattended) {
 					// Copy our scanned nics to the disk and lock because scan doesn't work in chroot
@@ -612,8 +623,13 @@ EXIT:
 
 			if (system("/bin/umount /harddisk/proc"))
 				printf("Unable to umount /harddisk/proc.\n"); 
-		}
+//		}
+	} else {
+		fflush(flog);
+		fclose(flog);
+		newtFinished();
 	}
+
 	fcloseall();
 
 	if (swap_file) {
@@ -621,6 +637,9 @@ EXIT:
 	}
 
 	newtFinished();
+
+	system("/bin/umount /harddisk/proc");
+	system("/bin/umount /harddisk/dev");
 
 	system("/bin/umount /harddisk/var");
 	system("/bin/umount /harddisk/boot");

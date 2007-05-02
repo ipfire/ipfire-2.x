@@ -24,12 +24,14 @@ extern char **ctr;
 
 extern int automode;
 
+#define HAS_GREEN 1
 #define HAS_ORANGE (configtype == 1 || configtype == 3 || configtype == 5 || configtype == 7)
 #define HAS_RED (configtype == 2 || configtype == 3 || configtype == 6 || configtype == 7)
 #define HAS_BLUE (configtype == 4 || configtype == 5 || configtype == 6 || configtype == 7)
 #define RED_IS_NOT_ETH (configtype == 0 || configtype == 1 || configtype == 4 || configtype == 5)
 
 extern struct nic nics[];
+extern struct knic knics[];
 
 char *configtypenames[] = { 
 	"GREEN (RED is modem/ISDN)", 
@@ -264,15 +266,18 @@ int configtypemenu(void)
 /* Driver menu.  Choose drivers.. */
 int drivermenu(void)
 {
-	FILE *fp;
 	struct keyvalue *kv = initkeyvalues();
-	char message[1000], macaddr[STRING_SIZE];
-	char temp_line[STRING_SIZE];
-	char temp[STRING_SIZE], temp1[STRING_SIZE];
-	struct knic knics[20], *pknics;
-	pknics = knics;
+	char message[STRING_SIZE];
+	char temp[STRING_SIZE];
+//	char description[STRING_SIZE], macaddr[STRING_SIZE];
+//	struct nic *pnics = nics;
+//	pnics = nics;
+//	struct knic *pknics = knics;
+//	pknics = knics;
 	int configtype;
-	int rc, i = 0, kcount = 0;
+	int rc, kcount = 0, found, neednics; //i = 0, count = 0,
+	
+	fprintf(flog,"enter drivermenu\n"); // #### Debug ####
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -284,80 +289,113 @@ int drivermenu(void)
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
 	
-	if (configtype == 0)
-	{
-		freekeyvalues(kv);
-		errorbox(ctr[TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER]);
-		return 0;
-	}
+//	if (configtype == 0)
+//	{
+//		freekeyvalues(kv);
+//		errorbox(ctr[TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER]);
+//		return 0;
+//	}
 
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
-	
-	if( (fp = fopen(KNOWN_NICS, "r")) == NULL )
-	{
-		fprintf(flog,"Couldn't open " KNOWN_NICS);
-		return 1;
-	}
-	while (fgets(temp_line, STRING_SIZE, fp) != NULL)
-	{
-		strcpy(knics[kcount].description, strtok(temp_line,";"));
-		strcpy(knics[kcount].macaddr , strtok(NULL,";"));
-		if (strlen(knics[kcount].macaddr) > 5 ) kcount++;
-	}
-	fclose(fp);
-	
-	strcpy(macaddr, ctr[TR_UNSET]);
-	findkey(kv, "GREEN_MACADDR", macaddr);
-	for (i=0; i < kcount; i++)
-	{	// Check if the nic is already in use
-		if (strcmp(pknics[i].macaddr, macaddr) == NULL )
-			break;
-	}
-	sprintf(temp1, "GREEN: %s (%s / green0)\n", pknics[i].description, pknics[i].macaddr);
-	strcat(message, temp1);
-	
-	if (HAS_BLUE) {
-		strcpy(macaddr, ctr[TR_UNSET]);
-		findkey(kv, "BLUE_MACADDR", macaddr);
-		for (i=0; i < kcount; i++)
-		{	// Check if the nic is already in use
-			if (strcmp(pknics[i].macaddr, macaddr) == NULL )
-				break;
+
+	found = scan_network_cards();
+	fprintf(flog,"found %d Card\'s\n", found ); // #### Debug ####
+	kcount = 0;	// counter to find knowing nics.
+	neednics = 0;	// counter to use needing nics.
+	if (HAS_GREEN) {
+		strcpy(temp, ""); findkey(kv, "GREEN_MACADDR", temp);
+		if (strlen(temp)) {
+			strcpy(knics[_GREEN_CARD_].macaddr, temp);
+			strcpy(knics[_GREEN_CARD_].colour, "GREEN");
+			findkey(kv, "GREEN_DESCRIPTION", temp);
+			strcpy(knics[_GREEN_CARD_].description, temp);
+			kcount++;
+		} else {
+			strcpy(knics[_GREEN_CARD_].description, ctr[TR_UNSET]);
 		}
-		sprintf(temp1, "BLUE: %s (%s / blue0)\n", pknics[i].description, pknics[i].macaddr);
-		strcat(message, temp1);
-	}
-	if (HAS_ORANGE) {
-		strcpy(macaddr, ctr[TR_UNSET]);
-		findkey(kv, "ORANGE_MACADDR", macaddr);
-		for (i=0; i < kcount; i++)
-		{	// Check if the nic is already in use
-			if (strcmp(pknics[i].macaddr, macaddr) == NULL )
-				break;
+		sprintf(temp, "GREEN:  %s\n", knics[_GREEN_CARD_].description);
+		strcat(message, temp);
+		if (strlen(knics[_GREEN_CARD_].macaddr) ) {
+			sprintf(temp, "GREEN:  (%s) %s green0\n", knics[_GREEN_CARD_].macaddr, ctr[TR_AS]);
+			strcat(message, temp);
 		}
-		sprintf(temp1, "ORANGE: %s (%s / orange0)\n", pknics[i].description, pknics[i].macaddr);
-		strcat(message, temp1);
+		neednics++;
 	}
 	if (HAS_RED) {
-		strcpy(macaddr, ctr[TR_UNSET]);
-		findkey(kv, "RED_MACADDR", macaddr);
-		for (i=0; i < kcount; i++)
-		{	// Check if the nic is already in use
-			if (strcmp(pknics[i].macaddr, macaddr) == NULL )
-				break;
+		strcpy(temp, ""); findkey(kv, "RED_MACADDR", temp);
+		if (strlen(temp)) {
+			strcpy(knics[_RED_CARD_].macaddr, temp);
+			strcpy(knics[_RED_CARD_].colour, "RED");
+			findkey(kv, "RED_DESCRIPTION", temp);
+			strcpy(knics[_RED_CARD_].description, temp);
+			kcount++;
+		} else {
+			strcpy(knics[_RED_CARD_].description, ctr[TR_UNSET]);
 		}
-		sprintf(temp1, "RED: %s (%s / red0)\n", pknics[i].description, pknics[i].macaddr);
-		strcat(message, temp1);
+		sprintf(temp, "RED:    %s\n", knics[_RED_CARD_].description);
+		strcat(message, temp);
+		if (strlen(knics[_RED_CARD_].macaddr) ) {
+			sprintf(temp, "RED:    (%s) %s red0\n", knics[_RED_CARD_].macaddr, ctr[TR_AS]);
+			strcat(message, temp);
+		}
+		neednics++;
 	}
-	strcat(message, ctr[TR_DO_YOU_WISH_TO_CHANGE_THESE_SETTINGS]);
-	rc = newtWinChoice(ctr[TR_DRIVERS_AND_CARD_ASSIGNMENTS], ctr[TR_OK],
+	if (HAS_ORANGE) {
+		strcpy(temp, ""); findkey(kv, "ORANGE_MACADDR", temp);
+		if (strlen(temp)) {
+			strcpy(knics[_ORANGE_CARD_].macaddr, temp);
+			strcpy(knics[_ORANGE_CARD_].colour, "ORANGE");
+			findkey(kv, "ORANGE_DESCRIPTION", temp );
+			strcpy(knics[_ORANGE_CARD_].description, temp );
+			kcount++;
+		} else {
+			strcpy(knics[_ORANGE_CARD_].description, ctr[TR_UNSET]);
+		}
+		sprintf(temp, "ORANGE: %s\n", knics[_ORANGE_CARD_].description);
+		strcat(message, temp);
+		if ( strlen(knics[_ORANGE_CARD_].macaddr) ) {
+			sprintf(temp, "ORANGE: (%s) %s orange0\n", knics[_ORANGE_CARD_].macaddr, ctr[TR_AS]);
+			strcat(message, temp);
+		}
+		neednics++;
+	}
+	if (HAS_BLUE) {
+		strcpy(temp, ""); findkey(kv, "BLUE_MACADDR", temp);
+		if (strlen(temp)) {
+			strcpy(knics[_BLUE_CARD_].macaddr, temp);
+			strcpy(knics[_BLUE_CARD_].colour, "BLUE");
+			findkey(kv, "BLUE_DESCRIPTION", temp );
+			strcpy(knics[_BLUE_CARD_].description, temp);
+			kcount++;
+		} else {
+			strcpy(knics[_BLUE_CARD_].description, ctr[TR_UNSET]);
+		}
+		sprintf(temp, "BLUE:   %s\n", knics[_BLUE_CARD_].description);
+		strcat(message, temp);
+		if (strlen(knics[_BLUE_CARD_].macaddr)) {
+			sprintf(temp, "BLUE:   (%s) %s blue0\n", knics[_BLUE_CARD_].macaddr, ctr[TR_AS]);
+			strcat(message, temp);
+		}
+		neednics++;
+	}
+
+	fprintf(flog,"found %d knowing Card\'s\n", kcount); // #### DEBUG ####
+
+	if (neednics = kcount) {
+		strcat(message, ctr[TR_DO_YOU_WISH_TO_CHANGE_THESE_SETTINGS]);
+		rc = newtWinChoice(ctr[TR_DRIVERS_AND_CARD_ASSIGNMENTS], ctr[TR_OK],
 		ctr[TR_CANCEL], message);
-	if (rc == 0 || rc == 1)
-	{
+		if (rc == 0 || rc == 1)
+		{
+			/* Shit, got to do something.. */
+			changedrivers();
+		}
+	} else {
+		strcat(message, "\nEs wurden noch nicht alle Netzwerkkarten konfiguriert.\n");
+		newtWinMessage(ctr[TR_DRIVERS_AND_CARD_ASSIGNMENTS], ctr[TR_OK], message);
 		/* Shit, got to do something.. */
 		changedrivers();
 	}
-	
 	freekeyvalues(kv);
 
 	return 1;
@@ -366,6 +404,7 @@ int drivermenu(void)
 int cardassigned(char *colour)
 {
 	char command[STRING_SIZE];
+	fprintf(flog,"cardassigned - %s\n", colour);
 	sprintf(command, "grep -q %s < /etc/udev/rules.d/30-persistent-network.rules 2>/dev/null", colour);
 	if (system(command))
 		return 0;
@@ -376,9 +415,13 @@ int cardassigned(char *colour)
 int changedrivers(void)
 {
 	struct keyvalue *kv = initkeyvalues();
-	char temp[STRING_SIZE];
+	char temp[STRING_SIZE], message[STRING_SIZE];
 	int configtype;
 	int green = 0, red = 0, blue = 0, orange = 0;
+	char MenuInhalt[10][180];
+	char *pMenuInhalt[10];
+	int count = 0, choise = 0, rc;
+	int NicEntry[10];
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -386,10 +429,11 @@ int changedrivers(void)
 		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
 		return 0;
 	}
-	
+	fprintf(flog,"stop network on red, blue and orange\n");	// #### Debug ####
 	runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
 		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 
+	findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
 	if (configtype == 0)
 		{ green = 1; }
 	else if (configtype == 1)
@@ -406,15 +450,92 @@ int changedrivers(void)
 		{ green = 1; red = 1; blue = 1; }
 	else if (configtype == 7)
 		{ green = 1; red = 1; blue = 1; orange = 1; }
-	
-	if (green && !cardassigned("green"))
-		nicmenu("green");
-	if (red && !cardassigned("red"))
-		nicmenu("red");
-	if (blue && !cardassigned("blue"))
-		nicmenu("blue");
-	if (orange && !cardassigned("orange"))
-		nicmenu("orange");
+
+	fprintf(flog,"found: g=%d r=%d o=%d b=%d\n",green, red, orange, blue); // #### Debug ####
+
+	do
+	{
+		count = 0;
+		strcpy(message, "(TR) Bitte wählen Sie das Interface aus das geaendert werden soll.\n\n");
+
+		if (green) {
+			strcpy(MenuInhalt[count], "GREEN");
+			pMenuInhalt[count] = MenuInhalt[count];
+			NicEntry[_GREEN_CARD_] = count;
+//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
+			sprintf(temp, "GREEN:  %s\n", knics[_GREEN_CARD_].description);
+			strcat(message, temp);
+			if ( strlen(knics[_GREEN_CARD_].macaddr) ) {
+				sprintf(temp, "GREEN:  (%s) %s green0\n", knics[_GREEN_CARD_].macaddr, ctr[TR_AS]);
+				strcat(message, temp);
+			}
+			count++;
+		}
+
+		if (red) {
+			strcpy(MenuInhalt[count], "RED");
+			pMenuInhalt[count] = MenuInhalt[count];
+			NicEntry[_RED_CARD_] = count;
+//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
+			sprintf(temp, "RED:    %s\n", knics[_RED_CARD_].description);
+			strcat(message, temp);
+			if ( strlen(knics[_RED_CARD_].macaddr) ) {
+				sprintf(temp, "RED:    (%s) %s red0\n", knics[_RED_CARD_].macaddr, ctr[TR_AS]);
+				strcat(message, temp);
+			}
+			count++;
+		}
+
+		if (orange) {
+			strcpy(MenuInhalt[count], "ORANGE");
+			pMenuInhalt[count] = MenuInhalt[count];
+			NicEntry[_ORANGE_CARD_] = count;
+//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
+			sprintf(temp, "ORANGE: %s\n", knics[_ORANGE_CARD_].description);
+			strcat(message, temp);
+			if ( strlen(knics[_ORANGE_CARD_].macaddr) ) {
+				sprintf(temp, "ORANGE: (%s) %s orange0\n", knics[_ORANGE_CARD_].macaddr, ctr[TR_AS]);
+				strcat(message, temp);
+			}
+			count++;
+		}
+
+		if (blue) {
+			strcpy(MenuInhalt[count], "BLUE");
+			pMenuInhalt[count] = MenuInhalt[count];
+			NicEntry[_BLUE_CARD_] = count;
+//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
+			sprintf(temp, "BLUE:   %s\n", knics[_BLUE_CARD_].description);
+			strcat(message, temp);
+			if ( strlen(knics[_BLUE_CARD_].macaddr) ) {
+				sprintf(temp, "BLUE:   (%s) %s blue0\n", knics[_BLUE_CARD_].macaddr, ctr[TR_AS]);
+				strcat(message, temp);
+			}
+			count++;
+		}
+		pMenuInhalt[count] = NULL;
+
+		rc = newtWinMenu("(TR) Netcard Farbe", message, 70, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_SELECT], "(TR) Entfernen" , ctr[TR_DONE], NULL);
+			
+		if ( rc == 0 || rc == 1) {
+//			write_configs_netudev(pnics[choise].description, pnics[choise].macaddr, colour);
+			// insert nic to colourcard
+			if ((green) && ( choise == NicEntry[0])) nicmenu("green");
+			if ((red) && ( choise == NicEntry[1])) nicmenu("red");
+			if ((orange) && ( choise == NicEntry[2])) nicmenu("orange");
+			if ((blue) && ( choise == NicEntry[3])) nicmenu("blue");
+		} else if (rc == 2) {
+			if ((green) && ( choise == NicEntry[0])) remove_nic_entry("green");
+			if ((red) && ( choise == NicEntry[1])) remove_nic_entry("red");
+			if ((orange) && ( choise == NicEntry[2])) remove_nic_entry("orange");
+			if ((blue) && ( choise == NicEntry[3])) remove_nic_entry("blue");
+		} 
+//		else {
+//			errorbox("Sie haben keine Netzwerkkarte ausgewaehlt.\n");
+//			return 1;
+//		}
+	}
+	while ( rc <= 2);
 	
 	// writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 
