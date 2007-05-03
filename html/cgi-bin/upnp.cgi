@@ -30,12 +30,12 @@ my %servicenames =('UPnP Daemon' => 'upnpd',);
 
 $upnpsettings{'DEBUGMODE'} = '3';
 $upnpsettings{'FORWARDRULES'} = 'yes';
-$upnpsettings{'DOWNSTREAM'} = '900000';
-$upnpsettings{'UPSTREAM'} = '16000000';
+$upnpsettings{'DOWNSTREAM'} = '1048576';
+$upnpsettings{'UPSTREAM'} = '131072';
 $upnpsettings{'DESCRIPTION'} = 'gatedesc.xml';
 $upnpsettings{'XML'} = '/etc/linuxigd';
 $upnpsettings{'ENABLED'} = 'off';
-$upnpsettings{'friendlyName'} = 'IpFire Upnp Device';
+$upnpsettings{'friendlyName'} = 'IPFire Gateway';
 ### Values that have to be initialized
 $upnpsettings{'ACTION'} = '';
 
@@ -51,8 +51,8 @@ $upnpsettings{'ACTION'} = '';
 
 if ($upnpsettings{'ACTION'} eq $Lang::tr{'save'})
 	{
-	$upnpsettings{'DOWNSTREAM'} = $upnpsettings{'DOWNSTREAM'} * 8;
-	$upnpsettings{'UPSTREAM'} = $upnpsettings{'UPSTREAM'} * 8;
+	$upnpsettings{'DOWNSTREAM'} = $upnpsettings{'DOWNSTREAM'} * 1024;
+	$upnpsettings{'UPSTREAM'} = $upnpsettings{'UPSTREAM'} * 1024;
 	&General::writehash("${General::swroot}/upnp/settings", \%upnpsettings);
 
 	open (FILE, ">${General::swroot}/upnp/upnpd.conf") or die "Can't save the upnp config: $!";
@@ -96,8 +96,8 @@ elsif ($upnpsettings{'ACTION'} eq $Lang::tr{'restart'})
 	}
 
 &General::readhash("${General::swroot}/upnp/settings", \%upnpsettings);
-$upnpsettings{'DOWNSTREAM'} = $upnpsettings{'DOWNSTREAM'} / 8;
-$upnpsettings{'UPSTREAM'} = $upnpsettings{'UPSTREAM'} / 8;
+$upnpsettings{'DOWNSTREAM'} = $upnpsettings{'DOWNSTREAM'} / 1024;
+$upnpsettings{'UPSTREAM'} = $upnpsettings{'UPSTREAM'} / 1024;
 
 if ($errormessage)
 	{
@@ -145,24 +145,39 @@ print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
 <tr><td colspan='2' align='left' bgcolor='${Header::table1colour}'><b>$Lang::tr{'options'}</b></td></tr>
-<tr><td colspan='2' align='left'><br></br></td></tr>
-<tr><td align='left'>Debug Mode:</td><td><input type='text' name='DEBUGMODE' value='$upnpsettings{'DEBUGMODE'}' size="30" /></td></tr>
-<tr><td align='left'>Forward Rules:</td><td><input type='text' name='FORWARDRULES' value='$upnpsettings{'FORWARDRULES'}' size="30" /></td></tr>
 <tr><td align='left' colspan='2'><br /></td></tr>
-<tr><td align='left'>Down Stream in KB:</td><td><input type='text' name='DOWNSTREAM' value='$upnpsettings{'DOWNSTREAM'}' size="30" /></td></tr>
-<tr><td align='left'>Up Strean in KB:</td><td><input type='text' name='UPSTREAM' value='$upnpsettings{'UPSTREAM'}' size="30" /></td></tr>
+<tr><td align='left'>UPnP Device Name:</td><td><input type='text' name='friendlyName' value='$upnpsettings{'friendlyName'}' size="30" /></td></tr>
 <tr><td align='left' colspan='2'><br /></td></tr>
-<tr><td align='left'>XML Document:</td><td><input type='text' name='XML' value='$upnpsettings{'XML'}' size="30" /></td></tr>
-<tr><td align='left'>Description Document:</td><td><input type='text' name='DESCRIPTION' value='$upnpsettings{'DESCRIPTION'}' size="30" /></td></tr>
-<tr><td align='left'>Upnp Device Name:</td><td><input type='text' name='friendlyName' value='$upnpsettings{'friendlyName'}' size="30" /></td></tr>
-<tr><td colspan='2' align='left'><br></br></td></tr>
-<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
+<tr><td align='left'>Downstream in KB:</td><td><input type='text' name='DOWNSTREAM' value='$upnpsettings{'DOWNSTREAM'}' size="30" /></td></tr>
+<tr><td align='left'>Upstream in KB:</td><td><input type='text' name='UPSTREAM' value='$upnpsettings{'UPSTREAM'}' size="30" /></td></tr>
+<tr><td align='left' colspan='2'><br /></td></tr>
+<tr><td colspan='2' align='center'>	<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
 																		<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></td></tr>
 </table></form>
-<br />
-<hr />
 END
 ;
+&Header::closebox();
+
+&Header::openbox('100%', 'center', 'Aktuell geoeffnete Ports');
+my @output = qx(iptables -t nat -n -L PORTFW);
+my ($outputline, $extip, $extport, $int);
+my @output2;
+print "<table>";
+foreach $outputline (@output) {
+	if ( $outputline =~ /^DNAT/ ) {	
+		@output2 = split(/ /, $outputline);
+		$extip = $output2[23];
+		$extport = $output2[29];
+		$extport =~ s/dpt://;
+		$int = "$output2[31]";
+		$int =~ s/to://;
+		print "<tr><td>$extip:$extport<td align='center'><img src='/images/forward.gif' alt='=&gt;' /><td>$int";
+
+	}
+}
+
+print "</table>";
+
 &Header::closebox();
 
 &Header::closebigbox();

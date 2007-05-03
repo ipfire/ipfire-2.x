@@ -38,11 +38,17 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	Community-Rules-20070503.tar.gz \
+	bleeding.rules-20070503.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+Community-Rules-20070503.tar.gz = $(DL_FROM)/Community-Rules-20070503.tar.gz
+bleeding.rules-20070503.tar.gz = $(DL_FROM)/bleeding.rules-20070503.tar.gz
 
 $(DL_FILE)_MD5 = 70e7f297c9fcf1f46d6fa3e1bb4aae49
+Community-Rules-20070503.tar.gz_MD5 = f236b8a4ac12e99d3e7bd81bf3b5a482
+bleeding.rules-20070503.tar.gz_MD5 = f18f0a08c139b8205270b41a534f15d7
 
 install : $(TARGET)
 
@@ -78,11 +84,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	mv /usr/bin/snort /usr/sbin/
-	-mkdir /etc/snort
+	-mkdir -p /etc/snort/rules
 
-	# Snort 2.6.X dount use the Directory rules 
-	# cd $(DIR_APP) && install -m 0644 rules/*.rules \
-	#    etc/unicode.map etc/reference.config etc/classification.config /etc/snort
+	tar xvfz $(DIR_DL)/Community-Rules-20070503.tar.gz -C /etc/snort/
+	tar xvfz $(DIR_DL)/bleeding.rules-20070503.tar.gz -C /etc/snort/
+	cd $(DIR_APP) && install -m 0644 etc/unicode.map \
+		etc/reference.config etc/classification.config /etc/snort
 	install -m 0644 $(DIR_SRC)/config/snort/snort.conf /etc/snort
 	chown -R nobody:nobody /etc/snort
 	-mkdir -p /var/log/snort

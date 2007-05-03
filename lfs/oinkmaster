@@ -71,8 +71,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf  $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && chown -R nobody:nobody oinkmaster.pl
-	cd $(DIR_APP) && cp -R $(DIR_SRC)/$(THISAPP) /etc/snort
-	cp $(DIR_SRC)/$(THISAPP)/oinkmaster.pl /usr/local/bin/
+	cd $(DIR_APP) && chown nobody:nobody oinkmaster.pl
+	cd $(DIR_APP) && cp -f oinkmaster.conf /var/ipfire/snort/
+	cd $(DIR_APP) && install -m 0755 oinkmaster.pl /usr/local/bin/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -318,6 +318,8 @@ WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: IPFires hostname
 WARNING: untranslated string: alt proxy
+WARNING: untranslated string: bleeding rules
+WARNING: untranslated string: community rules
 WARNING: untranslated string: down
 WARNING: untranslated string: firewall logs ip
 WARNING: untranslated string: firewall logs port

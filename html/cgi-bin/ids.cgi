@@ -6,8 +6,6 @@
 #
 # (c) The SmoothWall Team
 #
-# $Id: ids.cgi,v 1.8.2.18 2005/07/27 21:35:22 franck78 Exp $
-#
 
 use LWP::UserAgent;
 use File::Copy;
@@ -24,6 +22,7 @@ require "${General::swroot}/header.pl";
 
 my %snortsettings=();
 my %checked=();
+my %selected=();
 my %netsettings=();
 our $errormessage = '';
 our $md5 = '0';# not '' to avoid displaying the wrong message when INSTALLMD5 not set
@@ -40,17 +39,21 @@ $snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
 $snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
 $snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
 $snortsettings{'ACTION'} = '';
-$snortsettings{'RULESTYPE'} = '';
+$snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
 $snortsettings{'INSTALLDATE'} = '';
 $snortsettings{'INSTALLMD5'} = '';
 
 &Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
 
-if ($snortsettings{'RULESTYPE'} eq 'subscripted') {
-	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.3_s.tar.gz";
+if ($snortsettings{'RULES'} eq 'subscripted') {
+	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-CURRENT_s.tar.gz";
+} elsif ($snortsettings{'RULES'} eq 'registered') {
+	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-CURRENT.tar.gz";
+} elsif ($snortsettings{'RULES'} eq 'bleeding') {
+	$url="http://www.bleedingsnort.com/bleeding.rules.tar.gz";
 } else {
-	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.3.tar.gz";
+	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";
 }
 
 if ($snortsettings{'ACTION'} eq $Lang::tr{'save'})
@@ -105,7 +108,7 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 				$errormessage = "$Lang::tr{'invalid md5sum'}";
 			} else {
 				$results = "<b>$Lang::tr{'installed updates'}</b>\n<pre>";
-				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort 2>&1`;
+				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules/ 2>&1`;
 				$results .= "</pre>";
 			}
 			unlink ($filename);
@@ -125,10 +128,12 @@ $checked{'ENABLE_SNORT_BLUE'}{$snortsettings{'ENABLE_SNORT_BLUE'}} = "checked='c
 $checked{'ENABLE_SNORT_ORANGE'}{'off'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{'on'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{$snortsettings{'ENABLE_SNORT_ORANGE'}} = "checked='checked'";
-$checked{'RULESTYPE'}{'nothing'} = '';
-$checked{'RULESTYPE'}{'registered'} = '';
-$checked{'RULESTYPE'}{'subscripted'} = '';
-$checked{'RULESTYPE'}{$snortsettings{'RULESTYPE'}} = "checked='checked'";
+$selected{'RULES'}{'nothing'} = '';
+$selected{'RULES'}{'bleeding'} = '';
+$selected{'RULES'}{'community'} = '';
+$selected{'RULES'}{'registered'} = '';
+$selected{'RULES'}{'subscripted'} = '';
+$selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
@@ -180,16 +185,14 @@ print <<END
 	<td><b>$Lang::tr{'ids rules update'}</b></td>
 </tr>
 <tr>
-	<td><input type='radio' name='RULESTYPE' value='nothing' $checked{'RULESTYPE'}{'nothing'} />
-		$Lang::tr{'no'}</td>
-</tr>
-<tr>
-	<td><input type='radio' name='RULESTYPE' value='registered' $checked{'RULESTYPE'}{'registered'} />
-		$Lang::tr{'registered user rules'}</td>
-</tr>
-<tr>
-	<td><input type='radio' name='RULESTYPE' value='subscripted' $checked{'RULESTYPE'}{'subscripted'} />
-		$Lang::tr{'subscripted user rules'}</td>
+	<td><select name='RULES'>
+				<option value='nothing' $selected{'RULES'}{'nothing'} >$Lang::tr{'no'}</option>
+				<option value='bleeding' $selected{'RULES'}{'bleeding'} >$Lang::tr{'bleeding rules'}</option>
+				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
+				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
+				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>
+			</select>
+	</td>
 </tr>
 <tr>
 	<td><br />
@@ -199,7 +202,7 @@ print <<END
 	</td>
 </tr>
 <tr>
-	<td nowrap='nowrap'>Oink Code:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}' /></td>
+	<td nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}' /></td>
 </tr>
 <tr>
 	<td width='30%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'download new ruleset'}' />
