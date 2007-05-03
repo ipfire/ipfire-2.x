@@ -1651,6 +1651,7 @@ srv/web/ipfire/html
 #srv/web/ipfire/html/include/content.css
 #srv/web/ipfire/html/include/menu.css
 #srv/web/ipfire/html/include/selectbox.js
+#srv/web/ipfire/html/include/snortupdateutility.js
 #srv/web/ipfire/html/include/style.css
 #srv/web/ipfire/html/index.cgi
 #srv/web/ipfire/html/ipfire_big.gif

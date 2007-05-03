@@ -13,8 +13,8 @@ use File::Temp qw/ tempfile tempdir /;
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -45,6 +45,184 @@ $snortsettings{'INSTALLDATE'} = '';
 $snortsettings{'INSTALLMD5'} = '';
 
 &Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
+
+####################### Added for snort rules control #################################
+my $snortrulepath;
+my @snortconfig;
+my $restartsnortrequired = 0;
+my %snortrules;
+my $rule = '';
+my $table1colour = '';
+my $table2colour = '';
+my $var = '';
+my $value = '';
+my $tmp = '';
+my $linkedrulefile = '';
+my $border = '';
+my $checkboxname = '';
+
+if (-e "/etc/snort/snort.conf") {
+	# Open snort.conf file, read it in, close it, and re-open for writing
+	open(FILE, "/etc/snort/snort.conf") or die 'Unable to read snort config file.';
+	@snortconfig = <FILE>;
+	close(FILE);
+	open(FILE, ">/etc/snort/snort.conf") or die 'Unable to write snort config file.';
+
+	# Loop over each line
+	foreach my $line (@snortconfig) {
+		# Trim the line
+		chomp $line;
+
+		# Check for a line with .rules
+		if ($line =~ /\.rules$/) {
+			# Parse out rule file name
+			$rule = $line;
+			$rule =~ s/\$RULE_PATH\///i;
+			$rule =~ s/ ?include ?//i;
+			$rule =~ s/\#//i;
+			my $snortrulepathrule = "$snortrulepath/$rule";
+
+			# Open rule file and read in contents
+			open(RULEFILE, "$snortrulepath/$rule") or die "Unable to read snort rule file for reading => $snortrulepath/$rule.";
+			my @snortrulefile = <RULEFILE>;
+			close(RULEFILE);
+			open(RULEFILE, ">$snortrulepath/$rule") or die "Unable to write snort rule file for writing $snortrulepath/$rule";
+
+			# Local vars
+			my $dashlinecnt = 0;
+			my $desclook = 1;
+			my $snortruledesc = '';
+			my %snortruledef = ();
+			my $rulecnt = 1;
+
+			# Loop over rule file contents
+			foreach my $ruleline (@snortrulefile) {
+				chomp $ruleline;
+
+				# If still looking for a description
+				if ($desclook) {
+					# If line does not start with a # anymore, then done looking for a description
+					if ($ruleline !~ /^\#/) {
+						$desclook = 0;
+					}
+
+					# If see more than one dashed line, (start to) create rule file description
+					if ($dashlinecnt > 1) {
+						# Check for a line starting with a #
+						if ($ruleline =~ /^\#/) {
+							# Create tempruleline
+							my $tempruleline = $ruleline;
+
+							# Strip off # and clean up line
+							$tempruleline =~ s/\# ?//i;
+
+							# Check for part of a description
+							if ($snortruledesc eq '') {
+								$snortruledesc = $tempruleline;
+							} else {
+								$snortruledesc .= " $tempruleline";
+							}
+						} else {
+							# Must be done
+							$desclook = 0;
+						}
+					}
+
+					# If have a dashed line, increment count
+					if ($ruleline =~ /\# ?\-+/) {
+						$dashlinecnt++;
+					}
+				} else {
+					# Parse out rule file rule's message for display
+					if ($ruleline =~ /(msg\:\"[^\"]+\";)/) {
+						my $msg = '';
+						$msg = $1;
+						$msg =~ s/msg\:\"//i;
+						$msg =~ s/\";//i;
+						$snortruledef{$rulecnt}{'Description'} = $msg;
+
+						# Check for 'Save' and rule file displayed in query string
+						if (($snortsettings{'ACTION'} eq $Lang::tr{'update'}) && ($ENV{'QUERY_STRING'} =~ /$rule/i)) {
+							# Check for a disable rule which is now enabled, or an enabled rule which is now disabled
+							if ((($ruleline =~ /^\#/) && (exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"})) || (($ruleline !~ /^\#/) && (!exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"}))) {
+								$restartsnortrequired = 1;
+							}
+
+							# Strip out leading # from rule line
+							$ruleline =~ s/\# ?//i;
+
+							# Check if it does not exists (which means it is disabled), append a #
+							if (!exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"}) {
+								$ruleline = "#"." $ruleline";
+							}
+						}
+
+						# Check if ruleline does not begin with a #, so it is enabled
+						if ($ruleline !~ /^\#/) {
+							$snortruledef{$rulecnt++}{'State'} = 'Enabled';
+						} else {
+							# Otherwise it is disabled
+							$snortruledef{$rulecnt++}{'State'} = 'Disabled';
+						}
+					}
+				}
+
+				# Print ruleline to RULEFILE
+				print RULEFILE "$ruleline\n";
+			}
+
+			# Close RULEFILE
+			close(RULEFILE);
+
+			# Check for 'Save'
+			if ($snortsettings{'ACTION'} eq $Lang::tr{'update'}) {
+				# Check for a disable rule which is now enabled, or an enabled rule which is now disabled
+				if ((($line =~ /^\#/) && (exists $snortsettings{"SNORT_RULE_$rule"})) || (($line !~ /^\#/) && (!exists $snortsettings{"SNORT_RULE_$rule"}))) {
+					$restartsnortrequired = 1;
+				}
+
+				# Strip out leading # from rule line
+				$line =~ s/\# ?//i;
+
+				# Check if it does not exists (which means it is disabled), append a #
+				if (!exists $snortsettings{"SNORT_RULE_$rule"}) {
+					$line = "# $line";
+				}
+			}
+
+			# Check for rule state
+			if ($line =~ /^\#/) {
+				$snortrules{$rule}{"State"} = "Disabled";
+			} else {
+				$snortrules{$rule}{"State"} = "Enabled";
+			}
+
+			# Set rule description
+			$snortrules{$rule}{"Description"} = $snortruledesc;
+
+			# Loop over sorted rules
+			foreach my $ruledef (sort {$a <=> $b} keys(%snortruledef)) {
+				$snortrules{$rule}{"Definition"}{$ruledef}{'Description'} = $snortruledef{$ruledef}{'Description'};
+				$snortrules{$rule}{"Definition"}{$ruledef}{'State'} = $snortruledef{$ruledef}{'State'};
+			}
+
+			$snortruledesc = '';
+			print FILE "$line\n";
+		} elsif ($line =~ /var RULE_PATH/) {
+			($tmp, $tmp, $snortrulepath) = split(' ', $line);
+			print FILE "$line\n";
+		} else {
+			print FILE "$line\n";
+		}
+	}
+	close(FILE);
+
+	if ($restartsnortrequired) {
+		system('/usr/local/bin/restartsnort','red','orange','blue','green');
+	}
+}
+
+#######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
 	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-CURRENT_s.tar.gz";
@@ -89,6 +267,7 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'})
 	}
 
 	system('/usr/local/bin/restartsnort','red','orange','blue','green');
+
 } else {
 	 # INSTALLMD5 is not in the form, so not retrieved by getcgihash
 	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
@@ -108,7 +287,7 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 				$errormessage = "$Lang::tr{'invalid md5sum'}";
 			} else {
 				$results = "<b>$Lang::tr{'installed updates'}</b>\n<pre>";
-				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules/ 2>&1`;
+				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1`;
 				$results .= "</pre>";
 			}
 			unlink ($filename);
@@ -136,6 +315,32 @@ $selected{'RULES'}{'subscripted'} = '';
 $selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
+
+####################### Added for snort rules control #################################
+print "<SCRIPT LANGUAGE='JavaScript' SRC='/include/snortupdateutility.js'></SCRIPT>";
+print <<END
+<STYLE TYPE="text/css">   
+<!--
+.section {
+	border: groove;
+}
+.row1color {
+	border: ridge;
+	background-color: $table1colour;
+}
+.row2color {
+	border: ridge;
+	background-color: $table2colour;
+}
+.rowselected {
+	border: double #FF0000;
+	background-color: #DCDCDC;
+}
+-->
+</STYLE>
+END
+;
+#######################  End added for snort rules control  #################################
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -241,6 +446,157 @@ if ($results ne '') {
 }
 
 &Header::closebox();
+####################### Added for snort rules control #################################
+if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable_green" || -e "${General::swroot}/snort/enable_blue" || -e "${General::swroot}/snort/enable_orange" ) {
+	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
+		# Output display table for rule files
+		print "<TABLE BORDER='$border'><TR><TD VALIGN='TOP'><TABLE BORDER='$border'>";
+		
+		print "<form method='post'>";
+
+		# Local vars
+		my $ruledisplaycnt = 1;
+		my $rulecnt = keys %snortrules;
+		$rulecnt++;
+		$rulecnt = $rulecnt / 2;
+
+		# Loop over each rule file
+		foreach my $rulefile (sort keys(%snortrules)) {
+			my $rulechecked = '';
+
+			# Check if reached half-way through rule file rules to start new column
+			if ($ruledisplaycnt > $rulecnt) {
+				print "</TABLE></TD><TD VALIGN='TOP'><TABLE BORDER='$border'>";
+				$ruledisplaycnt = 0;
+			}
+
+			# Check if rule file is enabled
+			if ($snortrules{$rulefile}{"State"} eq 'Enabled') {
+				$rulechecked = 'CHECKED';
+			}
+
+			# Create rule file link, vars array, and display flag
+			my $rulefilelink = "?RULEFILE=$rulefile";
+			my $rulefiletoclose = '';
+			my @queryvars = ();
+			my $displayrulefilerules = 0;
+
+			# Check for passed in query string
+			if ($ENV{'QUERY_STRING'}) {
+				# Split out vars
+				@queryvars = split(/\&/, $ENV{'QUERY_STRING'});
+
+				# Loop over values
+				foreach $value (@queryvars) {
+					# Split out var pairs
+					($var, $linkedrulefile) = split(/=/, $value);
+
+					# Check if var is 'RULEFILE'
+					if ($var eq 'RULEFILE') {
+						# Check if rulefile equals linkedrulefile
+						if ($rulefile eq $linkedrulefile) {
+							# Set display flag
+							$displayrulefilerules = 1;
+
+							# Strip out rulefile from rulefilelink
+							$rulefilelink =~ s/RULEFILE=$linkedrulefile//g;
+						} else {
+							# Add linked rule file to rulefilelink
+							$rulefilelink .= "&RULEFILE=$linkedrulefile";
+						}
+					}
+				}
+			}
+
+			# Strip out extra & & ? from rulefilelink
+			$rulefilelink =~ s/^\?\&/\?/i;
+
+			# Check for a single '?' and replace with page for proper link display
+			if ($rulefilelink eq '?') {
+				$rulefilelink = "ids.cgi";
+			}
+
+			# Output rule file name and checkbox
+			print "<TR><TD CLASS='base' VALIGN='TOP'><INPUT TYPE='checkbox' NAME='SNORT_RULE_$rulefile' $rulechecked> <A HREF='$rulefilelink'>$rulefile</A></TD></TR>";
+			print "<TR><TD CLASS='base' VALIGN='TOP'>";
+
+			# Check for empty 'Description'
+			if ($snortrules{$rulefile}{'Description'} eq '') {
+				print "<TABLE BORDER='$border' CLASS='section' WIDTH='100%'><TR><TD CLASS='base'>No description available</TD></TR>";
+			} else {
+				# Output rule file 'Description'
+				print "<TABLE BORDER='$border' CLASS='section' WIDTH='100%'><TR><TD CLASS='base'>$snortrules{$rulefile}{'Description'}</TD></TR>";
+			}
+
+			# Check for display flag
+			if ($displayrulefilerules) {
+				# Rule file definition rule display
+				print "<TR><TD CLASS='base' VALIGN='TOP'><TABLE BORDER='$border'><TR>";
+
+				# Local vars
+			 	my $ruledefdisplaycnt = 0;
+				my $ruledefcnt = keys %{$snortrules{$rulefile}{"Definition"}};
+				$ruledefcnt++;
+				$ruledefcnt = $ruledefcnt / 2;
+
+				# Loop over rule file rules
+				foreach my $ruledef (sort {$a <=> $b} keys(%{$snortrules{$rulefile}{"Definition"}})) {
+					# Local vars
+					my $ruledefchecked = '';
+
+					# If have display 2 rules, start new row
+					if (($ruledefdisplaycnt % 2) == 0) {
+						print "</TR><TR>";
+						$ruledefdisplaycnt = 0;
+					}
+
+					# Check for rules state
+					if ($snortrules{$rulefile}{'Definition'}{$ruledef}{'State'} eq 'Enabled') {
+						$ruledefchecked = 'CHECKED';
+					}
+
+					# Create rule file rule's checkbox
+					$checkboxname = "SNORT_RULE_$rulefile";
+					$checkboxname .= "_$ruledef";
+					print "<TD CLASS='base'><INPUT TYPE='checkbox' NAME='$checkboxname' $ruledefchecked> $snortrules{$rulefile}{'Definition'}{$ruledef}{'Description'}</TD>";
+
+					# Increment count
+					$ruledefdisplaycnt++;
+				}
+	
+				# If do not have second rule for row, create empty cell
+				if (($ruledefdisplaycnt % 2) != 0) {
+					print "<TD CLASS='base'></TD>";
+				}
+
+				# Close display table
+				print "</TR></TABLE></TD></TR>";
+			}
+
+			# Close display table
+			print "</TABLE>";
+
+			# Increment ruledisplaycnt
+			$ruledisplaycnt++;
+		}
+
+	print "</TD></TR></TABLE></TD></TR></TABLE>";
+	print <<END
+<table width='100%'>
+<tr>
+	<td width='33%'>&nbsp;</td>
+	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+	<td width='33%'>
+		&nbsp; <!-- space for future online help link -->
+	</td>
+</tr>
+</table>
+</form>
+END
+;
+	&Header::closebox();
+}
+#######################  End added for snort rules control  #################################
 &Header::closebigbox();
 &Header::closepage();
 
