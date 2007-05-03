@@ -458,6 +458,7 @@ buildipfire() {
   ipfiremake setserial
   ipfiremake setup
   ipfiremake snort
+  ipfiremake snortsnarf
   ipfiremake squid
   ipfiremake squid-graph
   ipfiremake squidguard
