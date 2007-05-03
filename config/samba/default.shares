@@ -7,7 +7,6 @@ create mask = 0777
 directory mask = 0777
 guest ok = yes
 force user = samba
-
 [P2P]
 path = /var/ipfire/samba/p2p
 comment = P2P

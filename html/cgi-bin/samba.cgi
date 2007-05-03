@@ -94,21 +94,23 @@ my $PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
 &Header::getcgihash(\%sambasettings);
 
+sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );}
+
 &Header::openpage('Samba', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
 ############################################# Samba Rootskript aufrufe fr SU-Actions #######################################
 
-if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");}
-if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");}
-if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");}
-if ($sambasettings{'ACTION'} eq 'smbpcadd'){system("/usr/local/bin/sambactrl smbpcadd $sambasettings{'PCNAME'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");}
-if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
-if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");}
-if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");}
-if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");}
-if ($sambasettings{'ACTION'} eq 'smbreload'){system("/usr/local/bin/sambactrl smbreload");}
+if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbpcadd'){system("/usr/local/bin/sambactrl smbpcadd $sambasettings{'PCNAME'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbreload'){system("/usr/local/bin/sambactrl smbreload");refreshpage();}
 if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	{
 	system("/usr/local/bin/sambactrl smbglobalreset");
@@ -143,6 +145,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
 	$PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 	system("/usr/local/bin/sambactrl smbreload");
+	refreshpage();
 	}
 
 ############################################################################################################################
@@ -187,7 +190,7 @@ END
 ############################################################################################################################
 ########################################### Samba Benutzer oder PC l�chen #################################################
 
-if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl smbuserdelete $sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl smbuserdelete $sambasettings{'NAME'}");refreshpage();}
 
 ############################################################################################################################
 ##################################### Umsetzen der Werte von Checkboxen und Dropdowns ######################################
@@ -204,6 +207,7 @@ if ($sambasettings{'OTHERINTERFACES'} ne ''){ $sambasettings{'INTERFACES'} .= " 
 ############################################################################################################################
 ##################################### Schreiben settings und bersetzen fr smb.conf #######################################
 
+delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasettings{'y'};
 &General::writehash("${General::swroot}/samba/settings", \%sambasettings);
 
 if ($sambasettings{'PASSWORDSYNC'} eq 'on'){ $sambasettings{'PASSWORDSYNC'} = "true";} else { $sambasettings{'PASSWORDSYNC'} = "false";}
@@ -295,16 +299,16 @@ END
 
 if ( -e "/var/ipfire/cups/enable")
 	{
-	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");}
-	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
+	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");refreshpage();}
+	else {system("/usr/local/bin/sambactrl smbsafeconfcups");refreshpage();}
 	}
 else
 	{
-	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
-	else{system("/usr/local/bin/sambactrl smbsafeconf");}
+	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");refreshpage();}
+	else{system("/usr/local/bin/sambactrl smbsafeconf");refreshpage();}
 	}
 
-system("/usr/local/bin/sambactrl smbreload");
+system("/usr/local/bin/sambactrl smbreload");refreshpage();
 }
   &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
   
@@ -1165,6 +1169,7 @@ else
 	}
 
 system("/usr/local/bin/sambactrl smbreload");
+refreshpage();
 }
 
 sub isrunning

@@ -48,48 +48,48 @@ return 0;
 
 if (strcmp(argv[1], "smbsafeconf")==0)
 {
-safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf >/dev/null");
+safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
 return 0;
 }
 
 if (strcmp(argv[1], "smbsafeconfcups")==0)
 {
-safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf >/dev/null");
+safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf");
 return 0;
 }
 
 if (strcmp(argv[1], "smbsafeconfpdc")==0)
 {
-safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf >/dev/null");
+safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
 return 0;
 }
 
 if (strcmp(argv[1], "smbsafeconfpdccups")==0)
 {
-safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf >/dev/null");
+safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf");
 return 0;
 }
 
 if (strcmp(argv[1], "smbglobalreset")==0)
 {
-safe_system("/bin/cat /var/ipfire/samba/default.global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf >/dev/null");
-safe_system("/bin/cat /var/ipfire/samba/default.settings > /var/ipfire/samba/settings >/dev/null");
-safe_system("/bin/cat /var/ipfire/samba/default.global > /var/ipfire/samba/global >/dev/null");
-safe_system("/bin/cat /var/ipfire/samba/default.pdc > /var/ipfire/samba/pdc >/dev/null");
+safe_system("/bin/cat /var/ipfire/samba/default.global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
+safe_system("/bin/cat /var/ipfire/samba/default.settings > /var/ipfire/samba/settings");
+safe_system("/bin/cat /var/ipfire/samba/default.global > /var/ipfire/samba/global");
+safe_system("/bin/cat /var/ipfire/samba/default.pdc > /var/ipfire/samba/pdc");
 return 0;
 }
 
 if (strcmp(argv[1], "smbsharesreset")==0)
 {
-safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/default.shares > /var/ipfire/samba/smb.conf >/dev/null");
-safe_system("/bin/cat /var/ipfire/samba/default.shares > /var/ipfire/samba/shares >/dev/null");
+safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/default.shares > /var/ipfire/samba/smb.conf");
+safe_system("/bin/cat /var/ipfire/samba/default.shares > /var/ipfire/samba/shares");
 return 0;
 }
 
 if (strcmp(argv[1], "smbprinterreset")==0)
 {
-safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/default.printer > /var/ipfire/samba/smb.conf >/dev/null");
-safe_system("/bin/cat /var/ipfire/samba/default.printer > /var/ipfire/samba/printer >/dev/null");
+safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/default.printer > /var/ipfire/samba/smb.conf");
+safe_system("/bin/cat /var/ipfire/samba/default.printer > /var/ipfire/samba/printer");
 return 0;
 }
 
@@ -128,7 +128,9 @@ if (strcmp(argv[1], "smbuseradd")==0)
 {
 snprintf(command, BUFFER_SIZE-1, "/usr/sbin/groupadd sambauser >/dev/null");
 safe_system(command);
-snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -m -g %s -p %s -s %s %s >/dev/null", argv[4], argv[3], argv[5], argv[2]);
+snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -m -g %s -s %s %s >/dev/null", argv[4], argv[5], argv[2]);
+safe_system(command);
+snprintf(command, BUFFER_SIZE-1, "echo %s:%s | chpasswd", argv[2], argv[3]);
 safe_system(command);
 snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s >/dev/null", argv[3], argv[3], argv[2]);
 safe_system(command);
@@ -148,6 +150,8 @@ return 0;
 
 if (strcmp(argv[1], "smbchangepw")==0)
 {
+snprintf(command, BUFFER_SIZE-1, "echo %s:%s | chpasswd", argv[2], argv[3]);
+safe_system(command);
 snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s >/dev/null", argv[3], argv[3], argv[2]);
 safe_system(command);
 return 0;
@@ -174,6 +178,8 @@ if (strcmp(argv[1], "enable")==0)
 {
 safe_system("touch /var/ipfire/samba/enable");
 safe_system("/etc/rc.d/init.d/samba start ");
+safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc2.d/S50samba");
+safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc2.d/K50samba");
 safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc3.d/S50samba");
 safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc3.d/K50samba");
 return 0;
@@ -181,8 +187,12 @@ return 0;
 
 if (strcmp(argv[1], "disable")==0)
 {
+safe_system("unlink /var/ipfire/samba/enable");
 safe_system("/etc/rc.d/init.d/samba stop");
-safe_system("rm -f /etc/rc.d/rc3.d/*samba /var/ipfire/samba/enable 2>/dev/null");
+safe_system("unlink /etc/rc.d/rc2.d/S50samba");
+safe_system("unlink /etc/rc.d/rc2.d/K50samba");
+safe_system("unlink /etc/rc.d/rc3.d/S50samba");
+safe_system("unlink /etc/rc.d/rc3.d/K50samba");
 return 0;
 }
 return 0;
