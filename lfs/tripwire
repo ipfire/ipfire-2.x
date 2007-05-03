@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 2.4.0.1
+VER        = 2.4.1.2
 
 THISAPP    = tripwire-$(VER)
 DL_FILE    = $(THISAPP)-src.tar.bz2
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b371f79ac23cacc9ad40b1da76b4a0c4
+$(DL_FILE)_MD5 = 8a1147c278b528ed593023912c4b649a
 
 install : $(TARGET)
 
@@ -76,22 +76,21 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ln -s contrib install
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/tripwire-2.4.0.1-gcc4_build_fixes-1.patch
-	cd $(DIR_APP) && sed -i -e 's@TWDB="$${prefix}@TWDB="/var@' \
+	@rm -rf $(DIR_APP)* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP)-src && ln -fs contrib install
+	cd $(DIR_APP)-src && sed -i -e 's@TWDB="$${prefix}@TWDB="/var@' \
 													-e 's@^CLOBBER="false"@CLOBBER="true"@' install/install.cfg
-	cd $(DIR_APP) && sed -i -e 's@^PROMPT="true"@PROMPT="false"@' \
+	cd $(DIR_APP)-src && sed -i -e 's@^PROMPT="true"@PROMPT="false"@' \
 													-e 's@^TW_SITE_PASS=""@TW_SITE_PASS="ipfire"@' \
 													-e 's@^TW_LOCAL_PASS=""@TW_LOCAL_PASS="ipfire"@' \
 													install/install.sh
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/tripwire
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && for i in siggen tripwire twadmin twprint; do \
-											cp -vf $(DIR_APP)/bin/$$i /usr/sbin; \
-										done
+	cd $(DIR_APP)-src && ./configure --prefix=/usr --sysconfdir=/var/ipfire/tripwire
+	cd $(DIR_APP)-src && make $(MAKETUNING)
+	cd $(DIR_APP)-src && for i in siggen tripwire twadmin twprint; do \
+													cp -vf $(DIR_APP)-src/bin/$$i /usr/sbin; \
+											 done
 	cp -vrf $(DIR_SRC)/config/tripwire/* /var/ipfire/tripwire/
 	cp -vfp /var/ipfire/tripwire/twcfg.txt /var/ipfire/tripwire/twcfg.default
 	cp -vfp /var/ipfire/tripwire/twpol.txt /var/ipfire/tripwire/twpol.default
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP)*
 	@$(POSTBUILD)

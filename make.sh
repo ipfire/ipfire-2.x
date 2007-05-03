@@ -650,7 +650,7 @@ ipfirepackages() {
 #  ipfiredist spamassassin
 #  ipfiredist webcyradm
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  mv -f $LFS/install/packages/*.{ipfire,md5} $BASEDIR/packages >> $LOGFILE 2>&1
+  mv -f $LFS/install/packages/*.ipfire $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
 }
 
@@ -983,15 +983,15 @@ EOF
 		;;
 	  paks)
 		cat <<EOF > .ftp-commands
-mkdir $IPFIRE_FTP_PATH_PAK
+mkdir -p $FTP_ISO_PATH/$SVN_REVISION/paks
 ls -lah
 quit
 EOF
-		ncftp -u $IPFIRE_FTP_USER_PAK -p $IPFIRE_FTP_PASS_PAK $IPFIRE_FTP_URL_PAK < .ftp-commands
+		ncftp -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL < .ftp-commands
 		rm -f .ftp-commands
-		ncftpput -z -u $IPFIRE_FTP_USER_PAK -p $IPFIRE_FTP_PASS_PAK $IPFIRE_FTP_URL_PAK $IPFIRE_FTP_PATH_PAK/ packages/*
+		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/paks packages/*
 		if [ "$?" -eq "0" ]; then
-			echo -e "The packages were successfully uploaded to $IPFIRE_FTP_URL_PAK$IPFIRE_FTP_PATH_PAK/."
+			echo -e "The packages were successfully uploaded to $FTP_ISO_URL$FTP_ISO_PATH$SVN_REVISION/."
 		else
 			echo -e "There was an error while uploading the packages to the ftp server."
 			exit 1

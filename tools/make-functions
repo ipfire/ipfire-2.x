@@ -487,6 +487,7 @@ batch_script() {
 	evaluate 1 mail_me ISO
 	
 	echo -ne "### UPLOADING PAKS"
+	$0 packages sign
 	$0 upload paks
 	evaluate 1 mail_me PAKS
 
