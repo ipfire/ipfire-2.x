@@ -2988,8 +2988,7 @@ print <<END
 <tr><td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td>
 <td nowrap='nowrap'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' />
 <td nowrap='nowrap'><input type='file' name='FH' size='30' /></td>
-<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /></td>
-<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>    
+<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /><br /><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>    
 </tr></table></form>
 END
     ;
@@ -3026,8 +3025,8 @@ if (&Ovpnfunc::haveOrangeNet()) {
 print <<END    	
 <tr><td class='base' nowrap='nowrap'>$Lang::tr{'local vpn hostname/ip'}:</td>
     <td><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
-	<td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
-	<td><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
+	<td class='boldbase' nowrap='nowrap'></td><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}
+	<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
 <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn device'}</td>
     <td><select name='DDEVICE' ><option value='tun' $selected{'DDEVICE'}{'tun'}>TUN</option>
                                 <option value='tap' $selected{'DDEVICE'}{'tap'}>TAP</option></select></td>				    

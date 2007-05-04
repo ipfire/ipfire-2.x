@@ -364,13 +364,13 @@ END
 print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
-		<tr><td width='10%' align='right'><b>Modus 0:</b><td width='90%' align='left' colspan='2'>In diesem Modus ist es allen Rechnern im Netzwerk uneingeschraenkt moeglich Verbindungen ins Internet aufzubauen.
-		<tr><td width='10%' align='right'><b>Modus 1:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden nur Verbindungen nach den oben definierten Regeln zugelassen.
-		<tr><td width='10%' align='right'><b>Modus 2:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden saemtliche Verbindungen erlaubt, bis auf die oben definierten Block-Regeln.<br />Hier ist eine Besonderheit der P2P-Filter.
+		<tr><td width='10%' align='left'><b>Modus 0:</b><td width='90%' align='left' colspan='2'>In diesem Modus ist es allen Rechnern im Netzwerk uneingeschraenkt moeglich Verbindungen ins Internet aufzubauen.
+		<tr><td width='10%' align='left'><b>Modus 1:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden nur Verbindungen nach den oben definierten Regeln zugelassen.
+		<tr><td width='10%' align='left'><b>Modus 2:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden saemtliche Verbindungen erlaubt, bis auf die oben definierten Block-Regeln.<br />Hier ist eine Besonderheit der P2P-Filter.
 		<tr><td colspan='3'><hr />
-		<tr><td width='10%' align='right'>	<select name='POLICY'><option value='MODE0' $selected{'POLICY'}{'MODE0'}>Modus 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>Modus 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>Modus 2</option></select>
+		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px"><option value='MODE0' $selected{'POLICY'}{'MODE0'}>Modus 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>Modus 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>Modus 2</option></select>
 		    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
-		    <td width='45%' align='right'>
+		    <td width='45%' align='left'>
 END
 ;
 	if ($outfwsettings{'POLICY'} ne 'MODE0') {

@@ -274,8 +274,6 @@ END
   &Header::closebox();
 }
 
-&Header::closebox();
-
 &Header::closebigbox();
 &Header::closepage();
 

@@ -677,7 +677,7 @@ END
 		print <<END
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='pcadd' />
-												<input type='image' alt='$Lang::tr{'add pc'}' src='/images/network.png' /></form>
+												<input type='image' alt='$Lang::tr{'pc add'}' src='/images/network.png' /></form>
 END
 ;
 		}
@@ -697,7 +697,7 @@ END
 		<table width='95%' cellspacing='0'>
 		<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
 		<tr><td align='right' width='33%'><img src='/images/user-option-add.png' /></td><td align='left'>$Lang::tr{'add user'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/network.png' /></td><td align='left'>$Lang::tr{'add pc'}</td></tr>
+		<tr><td align='right' width='33%'><img src='/images/network.png' /></td><td align='left'>$Lang::tr{'pc add'}</td></tr>
 		<tr><td align='right' width='33%'><img src='/images/user-option-remove.png' /></td><td align='left'>$Lang::tr{'delete user'}</td></tr>
 		<tr><td align='right' width='33%'><img src='/images/network-error.png' /></td><td align='left'>$Lang::tr{'delete pc'}</td></tr>
 		<tr><td align='right' width='33%'><img src='/images/on.gif' /></td><td align='left'>$Lang::tr{'activate user'}</td></tr>

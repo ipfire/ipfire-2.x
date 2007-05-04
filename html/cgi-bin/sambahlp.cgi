@@ -16,7 +16,7 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 &Header::showhttpheaders();
-&Header::openpage('Samba', 1, '');
+&Header::openpagewithoutmenu('Samba', 1, '');
 &Header::openbigbox('100%', 'left', '', 'BigBox');
 &Header::openbox('100%', 'left', '', 'Sambahelp');
 
