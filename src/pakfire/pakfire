@@ -1,67 +1,82 @@
-#!/bin/bash
-############################################################################################
-# Version 0.1a, Copyright (C) 2006  by IPFire.org						  #
-# IPFire ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen.      #
-############################################################################################
+#!/usr/bin/perl -w
 
-. /etc/pakfire.conf
+	require "/opt/pakfire/lib/functions.pl";
+	
+	my $interactive = 1;
+	
+	&Pakfire::message("### Welcome to IPFire Pakfire $Conf::version!");
 
-case "$1" in
-	update)
-			. $PAKHOME/lib/get_mirror.sh
-			. $PAKHOME/lib/get_list.sh
-			. $PAKHOME/lib/check_pak.sh
-			get_mirror
-			get_list
-			check_pak
-	;;
+	### Check if we are running as root
+	#
+	my $user = qx(whoami);
+	chomp($user);
+	unless ( "$user" eq "root" ) {
+	  &Pakfire::message("You must run pakfire as user root!");
+	  exit 1;
+	}
+	
+	unless (@ARGV) {
+	  &Pakfire::message("Usage: pakfire <install|remove> <pak(s)>");
+	  &Pakfire::message("               <update>");
+	  &Pakfire::message("               <upgrade>");
+	  exit 1;
+	}
 
-	upgrade)
-			. $PAKHOME/lib/get_upgrade.sh
-			. $PAKHOME/lib/get_base.sh
-			get_upgrade
-			get_base
-	;;
+	if ("$ARGV[0]" eq "install") {
+		shift;
+		my @deps = ();
+		my @paks = @ARGV;
+		foreach (@ARGV) {
+			@deps = &Pakfire::resolvedeps("$_");
+		}
+		
+		my @all = ();
+		foreach (@paks) {
+		  push(@all,$_);
+		}
+		foreach (@deps) {
+		  push(@all,$_);
+		}
 
-	install)
-		. $PAKHOME/lib/get_pak.sh
-		. $PAKHOME/lib/install_pak.sh
-		case "$2" in
-			"")
-				pakfire_logger "No package name given. Exiting..."
-			;;
-			BASE-*)
-				echo $2
-			;;
-			*)
-				if [ -e $DB_DIR/$2 ]; then
-					if [ -e $IP_DIR/$2 ]; then
-						pakfire_logger "$2 is already installed on this system."
-					else
-						get_pak $2
-						install_pak $2
-						rm -rf $TMP_DIR/*
-					fi
-				else
-					pakfire_logger "There is no paket with this name: $2"
-				fi
-			;;
-		esac
-	;;
+		&Pakfire::message("\n\n### Packages to install:");
+		foreach (@paks) {
+		  my $size = &Pakfire::getsize("$_");
+			$size = &Pakfire::beautifysize($size);
+		  &Pakfire::message("# $_  \t\t - $size");
+		}
+		
+		&Pakfire::message("\n### Packages to install for dependencies:");
+		foreach (@deps) {
+		  my $size = &Pakfire::getsize("$_");
+			$size = &Pakfire::beautifysize($size);
+		  &Pakfire::message("# $_  \t\t - $size");
+		}
 
-	clean)
-		rm -rf $CACHE_DIR/* $TMP_DIR/* $DB_DIR/*
-	;;
-	*)
-		echo -e "IPFire - Pakfire $PAKVER:"
-		echo -e "===\t===\t===\t===\t===\t===\t===\t==="
-		echo -e "pakfire install [packet]\t- Installs a new packet."
-		echo -e "pakfire remove [paket]\t\t- Uninstalls a paket."
-		echo -e "pakfire update\t\t\t- Reloads the package list."
-		echo -e "pakfire upgrade\t\t\t- Searches for new updates."
-		echo -e "===\t===\t===\t===\t===\t===\t===\t==="
-	;;
+		my $totalsize = &Pakfire::addsizes(@all);
+		$totalsize = &Pakfire::beautifysize($totalsize);
+		&Pakfire::message("\n### Download size: \t ~ $totalsize");
+		
+		if ($interactive) {
+		  &Pakfire::message("Is this okay? [y/N]");
+			my $ret = <STDIN>;
+			chomp($ret);
+			&Pakfire::logger("Answer: $ret");
+			if ( $ret ne "y" ) {
+			  &Pakfire::message("Installation aborted.");
+			  exit 1;
+			}
+		}
+		
+		&Pakfire::message("### Installing all packages:");
 
-esac
+		foreach (@all) {
+			&Pakfire::setuppak("$_");
+		}
 
-################################### EOF ####################################################
+		
+	} elsif ("$ARGV[0]" eq "remove") {
+	
+	
+	} elsif ("$ARGV[0]" eq "update") {
+	
+	}
