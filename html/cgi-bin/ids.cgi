@@ -450,7 +450,7 @@ if ($results ne '') {
 if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable_green" || -e "${General::swroot}/snort/enable_blue" || -e "${General::swroot}/snort/enable_orange" ) {
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
 		# Output display table for rule files
-		print "<TABLE BORDER='$border'><TR><TD VALIGN='TOP'><TABLE BORDER='$border'>";
+		print "<TABLE width='100%'><TR><TD VALIGN='TOP'><TABLE>";
 		
 		print "<form method='post'>";
 
@@ -466,7 +466,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 
 			# Check if reached half-way through rule file rules to start new column
 			if ($ruledisplaycnt > $rulecnt) {
-				print "</TABLE></TD><TD VALIGN='TOP'><TABLE BORDER='$border'>";
+				print "</TABLE></TD><TD VALIGN='TOP'><TABLE>";
 				$ruledisplaycnt = 0;
 			}
 
@@ -522,16 +522,16 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 
 			# Check for empty 'Description'
 			if ($snortrules{$rulefile}{'Description'} eq '') {
-				print "<TABLE BORDER='$border' CLASS='section' WIDTH='100%'><TR><TD CLASS='base'>No description available</TD></TR>";
+				print "<TABLE WIDTH='100%'><TR><TD CLASS='base'>No description available</TD></TR>";
 			} else {
 				# Output rule file 'Description'
-				print "<TABLE BORDER='$border' CLASS='section' WIDTH='100%'><TR><TD CLASS='base'>$snortrules{$rulefile}{'Description'}</TD></TR>";
+				print "<TABLE WIDTH='100%'><TR><TD CLASS='base'>$snortrules{$rulefile}{'Description'}</TD></TR>";
 			}
 
 			# Check for display flag
 			if ($displayrulefilerules) {
 				# Rule file definition rule display
-				print "<TR><TD CLASS='base' VALIGN='TOP'><TABLE BORDER='$border'><TR>";
+				print "<TR><TD CLASS='base' VALIGN='TOP'><TABLE border=1><TR>";
 
 				# Local vars
 			 	my $ruledefdisplaycnt = 0;

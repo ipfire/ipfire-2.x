@@ -88,8 +88,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	tar xvfz $(DIR_DL)/Community-Rules-20070503.tar.gz -C /etc/snort/
 	tar xvfz $(DIR_DL)/bleeding.rules-20070503.tar.gz -C /etc/snort/
-	cd $(DIR_APP) && install -m 0644 etc/unicode.map \
-		etc/reference.config etc/classification.config /etc/snort
+	cd $(DIR_APP) && install -m 0644  \
+		etc/reference.config etc/classification.config /etc/snort/rules
+	cd $(DIR_APP) && install -m 0644 etc/unicode.map /etc/snort
 	install -m 0644 $(DIR_SRC)/config/snort/snort.conf /etc/snort
 	chown -R nobody:nobody /etc/snort
 	-mkdir -p /var/log/snort

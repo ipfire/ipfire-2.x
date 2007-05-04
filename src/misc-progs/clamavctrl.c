@@ -30,9 +30,9 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "restart") == 0) {
 		safe_system("/etc/rc.d/init.d/clamav restart");
 	} else if (strcmp(argv[1], "enable") == 0) {
-		safe_system("ln -fs ../init.d/clamav /etc/rc.d/rc3.d/S20clamav >/dev/null 2>&1");
-		safe_system("ln -fs ../init.d/clamav /etc/rc.d/rc0.d/K80clamav >/dev/null 2>&1");
-		safe_system("ln -fs ../init.d/clamav /etc/rc.d/rc6.d/K80clamav >/dev/null 2>&1");
+		safe_system("ln -fs ../init.d/clamav /etc/rc.d/rc3.d/S33clamav >/dev/null 2>&1");
+		safe_system("ln -fs ../init.d/clamav /etc/rc.d/rc0.d/K67clamav >/dev/null 2>&1");
+		safe_system("ln -fs ../init.d/clamav /etc/rc.d/rc6.d/K67clamav >/dev/null 2>&1");
 	} else if (strcmp(argv[1], "disable") == 0) {
 		safe_system("rm -f /etc/rc.d/rc*.d/*clamav >/dev/null 2>&1");
 	} else {
