@@ -281,7 +281,6 @@ WARNING: translation string unused: too long 80 char max
 WARNING: translation string unused: traffic on
 WARNING: translation string unused: transfer limits
 WARNING: translation string unused: transparent on
-WARNING: translation string unused: tripwire cronjob
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
@@ -313,6 +312,7 @@ WARNING: translation string unused: written sectors
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year
 WARNING: untranslated string: IPFires hostname
+WARNING: untranslated string: add pc
 WARNING: untranslated string: allmsg
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: bleeding rules
@@ -328,13 +328,11 @@ WARNING: untranslated string: openvpn log
 WARNING: untranslated string: otherip
 WARNING: untranslated string: otherport
 WARNING: untranslated string: pakfire configuration
-WARNING: untranslated string: pc add
 WARNING: untranslated string: red
 WARNING: untranslated string: selecttraffic
 WARNING: untranslated string: settingsc
 WARNING: untranslated string: show areas
 WARNING: untranslated string: show lines
-WARNING: untranslated string: smbrestart
 WARNING: untranslated string: sstraffic
 WARNING: untranslated string: trafficblue
 WARNING: untranslated string: trafficdate
