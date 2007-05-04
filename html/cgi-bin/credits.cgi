@@ -36,6 +36,8 @@ Projektleiter - Michael Tremer
 (<a href='mailto:m.s.tremer\@gmail.com'>mitch\@ipfire.org</a>)<br />
 Projektmitglied &amp; Sponsor - Detlef Lampart
 (<a href='mailto:info\@delaco.de'>delaco\@ipfire.org</a>)<br />
+Development & Security Manager - Rene Zingel
+(<a href='mailto:ipfire@firewall-service.com'>info\@firewall-service.com</a>)<br />
 Projektmitglied &amp; Developer - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.eu'>cm\@ipfire.org</a>)<br />
 Projektmitglied &amp; Developer - Christian Schmidt

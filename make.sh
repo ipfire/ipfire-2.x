@@ -450,7 +450,6 @@ buildipfire() {
   ipfiremake fwhits
   ipfiremake noip_updater
   ipfiremake ntp
-  ipfiremake oinkmaster
   ipfiremake openssh
   ipfiremake openswan
   ipfiremake pptpclient
@@ -459,6 +458,7 @@ buildipfire() {
   ipfiremake setup
   ipfiremake snort
   ipfiremake snortsnarf
+  ipfiremake oinkmaster
   ipfiremake squid
   ipfiremake squid-graph
   ipfiremake squidguard
