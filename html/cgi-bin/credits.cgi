@@ -32,23 +32,24 @@ print <<END
 <br /><center><b>We want to say thank you to all of the developers who ever contributed anything to IPFire.</b></center>
 <p>
 <p><b>Development:</b><br />
+
 Projektleiter - Michael Tremer
-(<a href='mailto:m.s.tremer\@gmail.com'>mitch\@ipfire.org</a>)<br />
+(<a href='mailto:mitch\@ipfire.org'>mitch\@ipfire.org</a>)<br />
 Projektmitglied &amp; Sponsor - Detlef Lampart
-(<a href='mailto:info\@delaco.de'>delaco\@ipfire.org</a>)<br />
-Development & Security Manager - Rene Zingel
-(<a href='mailto:ipfire@firewall-service.com'>info\@firewall-service.com</a>)<br />
+(<a href='mailto:delaco\@ipfire.org'>delaco\@ipfire.org</a>)<br />
+Development &amp; Security Manager - Rene Zingel
+(<a href='mailto:linuxadmin\@ipfire.org'>linuxadmin\@ipfire.org</a>)<br />
 Projektmitglied &amp; Developer - Heiner Schmeling
-(<a href='mailto:cm\@ipfire.eu'>cm\@ipfire.org</a>)<br />
+(<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
 Projektmitglied &amp; Developer - Christian Schmidt
 (<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
 Projektmitglied &amp; Supporter - Silvio Rechenbach
-(<a href='mailto:sr\@tne.de'>sr\@tne.de</a>)<br />
+(<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
 Creative Mind - Benedikt Correll<br />
 Sponsor - Karsten Rechenbach
-(<a href='mailto:space\@devilboard.net'>space\@devilboard.net</a>)<br />
+(<a href='mailto:space\@ipfire.org'>space\@ipfire.org</a>)<br />
 Betatester - Sebastian Winter
-(<a href='mailto:sebastian.winter\@gmail.com'>sebastian.winter\@gmail.com</a>)<br />
+(<a href='mailto:meisterwinter\@ipfire.org'>meinsterwinter\@ipfire.org</a>)<br />
 </p>
 END
 ;
