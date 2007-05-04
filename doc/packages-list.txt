@@ -191,6 +191,7 @@
 * openssh-4.3p2
 * openssl-0.9.8d
 * openswan-2.4.8rc1
+* openswan-2.4.8rc1
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4

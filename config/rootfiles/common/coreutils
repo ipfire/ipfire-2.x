@@ -38,7 +38,7 @@ usr/bin/env
 usr/bin/expr
 #usr/bin/factor
 #usr/bin/fmt
-#usr/bin/fold
+usr/bin/fold
 usr/bin/groups
 usr/bin/hostid
 usr/bin/id
