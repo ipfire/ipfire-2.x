@@ -1261,7 +1261,6 @@ srv/web/ipfire/cgi-bin/aliases.cgi
 #srv/web/ipfire/cgi-bin/asterisk.cgi/calls
 #srv/web/ipfire/cgi-bin/asterisk.cgi/conf
 #srv/web/ipfire/cgi-bin/asterisk.cgi/status
-#srv/web/ipfire/cgi-bin/changepw.cgi
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/connscheduler.cgi
@@ -1314,10 +1313,10 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/proxygraphs.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
-srv/web/ipfire/cgi-bin/samba.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/shaping.cgi
 srv/web/ipfire/cgi-bin/shutdown.cgi
+srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/time.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi

@@ -52,9 +52,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP)
 	-mkdir -p /opt/pakfire/{cache,db/{meta,lists,rootfiles},etc,lib,logs,tmp}
-	cd $(DIR_SRC) && cp -fRv src/pakfire $(DIR_APP)
-	cd $(DIR_APP) && mv -vf pakfire.conf /opt/pakfire/etc
-	cd $(DIR_APP) && chown root.root $(DIR_APP) -R
+	cp -fRv $(DIR_SRC)/src/pakfire/* $(DIR_APP)
+	cp -vf $(DIR_SRC)/src/pakfire/pakfire.conf $(DIR_APP)/etc/
+	chown root.root $(DIR_APP) -R
 	-cd $(DIR_APP) && find $(DIR_APP) -name .svn -exec rm -rf {} \;
 	@$(POSTBUILD)
-
