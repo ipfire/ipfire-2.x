@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.42-ipfire
-# Sat Apr  7 18:35:28 2007
+# Linux kernel version: 2.6.16.50-ipfire
+# Sat May  5 09:54:33 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -1456,6 +1456,7 @@ CONFIG_HWMON=y
 # CONFIG_HWMON_VID is not set
 CONFIG_SENSORS_K8TEMP=y
 # CONFIG_SENSORS_F71805F is not set
+# CONFIG_SENSORS_PC87427 is not set
 # CONFIG_SENSORS_HDAPS is not set
 # CONFIG_HWMON_DEBUG_CHIP is not set
 

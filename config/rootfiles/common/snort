@@ -1,6 +1,7 @@
 #etc/snort
 etc/snort/rules
 etc/snort/snort.conf
+etc/snort/unicode.map
 #usr/man/man8/snort.8
 usr/sbin/snort
 var/log/snort
