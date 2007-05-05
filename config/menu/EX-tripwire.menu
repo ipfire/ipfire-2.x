@@ -1,0 +1,5 @@
+    $subipfire->{'40.tripwire'} = {'caption' => $Lang::tr{'tripwire'},
+				  'uri' => '/cgi-bin/tripwire.cgi',
+				  'title' => $Lang::tr{'tripwire'},
+				  'enabled' => 1,
+				  };

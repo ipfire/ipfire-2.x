@@ -646,12 +646,13 @@ ipfirepackages() {
 #  ipfiredist mldonkey
 #  ipfiredist nfs
 #  ipfiredist postfix
-#  ipfiredist samba
+  ipfiredist samba
 #  ipfiredist sox
 #  ipfiredist spamassassin
+  ipfiredist tripwire
 #  ipfiredist webcyradm
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
-  mv -f $LFS/install/packages/*.ipfire $BASEDIR/packages >> $LOGFILE 2>&1
+  mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
 }
 

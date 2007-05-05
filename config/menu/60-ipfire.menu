@@ -3,21 +3,6 @@
 				  'title' => "Pakfire",
 				  'enabled' => 1,
 				  };
-    $subipfire->{'20.asterisk'} = {'caption' => 'Asterisk',
-				  'uri' => '/cgi-bin/asterisk.cgi',
-				  'title' => "Asterisk",
-				  'enabled' => 1,
-				  };
-    $subipfire->{'30.samba'} = {'caption' => 'Samba',
-				  'uri' => '/cgi-bin/samba.cgi',
-				  'title' => "Samba",
-				  'enabled' => 1,
-				  };
-    $subipfire->{'40.tripwire'} = {'caption' => 'Tripwire',
-				  'uri' => '/cgi-bin/tripwire.cgi',
-				  'title' => "Tripwire",
-				  'enabled' => 1,
-				  };
     $subipfire->{'99.help'} = {'caption' => $Lang::tr{'help'},
 				  'uri' => '/cgi-bin/help.cgi',
 				  'title' => "$Lang::tr{'help'}",

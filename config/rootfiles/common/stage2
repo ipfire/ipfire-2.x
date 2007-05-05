@@ -58,7 +58,6 @@ usr/local/bin/hddshutdown-state
 usr/local/bin/httpscert
 usr/local/bin/langcache
 usr/local/bin/makegraphs
-#usr/local/bin/packager
 usr/local/bin/qosd
 usr/local/bin/readhash
 usr/local/bin/resetusb

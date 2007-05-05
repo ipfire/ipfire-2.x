@@ -10,9 +10,9 @@ HOME=/
 */1 * * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.minutely
 */5 * * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.cyclic
 01 * * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.hourly
-25 1 * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.daily
-47 2 * * 0	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.weekly
-52 3 1 * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.monthly
+&nice(10),bootrun 25 1 * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.daily
+&nice(10),bootrun 47 2 * * 0	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.weekly
+&nice(10),bootrun 52 3 1 * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.monthly
 
 # Log rotation
 01 * * * *	/usr/sbin/logrotate /etc/logrotate.conf
@@ -55,4 +55,4 @@ HOME=/
 %monthly * 3-5 * /var/ipfire/updatexlrator/autocheck/cron.monthly
 
 # Reset Dialup Statistics
-0 0 1 * *	/usr/local/bin/dialctrl.pl reset
+bootrun 0 0 1 * *	/usr/local/bin/dialctrl.pl reset
