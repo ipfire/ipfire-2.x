@@ -57,8 +57,8 @@ then
 		elif [ "${RED_TYPE}" == "STATIC" ]; then
 			NAME=${name} ADDRESS=${RED_ADDRESS} NETMASK=${RED_NETMASK}\
 			NETADDRESS=${RED_NETADDRESS} BROADCAST=${RED_BROADCAST} \
-			DNS1=${DNS1} DNS2=${DNS2} GATEWAY=${DEFAULT_GATEWAY}
-			/etc/rc.d/init.d/net/red/ipv4-static ${RED_DEV} down
+			DNS1=${DNS1} DNS2=${DNS2} GATEWAY=${DEFAULT_GATEWAY} \
+			/etc/rc.d/init.d/net/common/ipv4-static ${RED_DEV} down
 		fi
 		
 		### Cleanup the system when red goes down ###

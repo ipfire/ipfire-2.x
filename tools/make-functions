@@ -715,7 +715,7 @@ sign_packages() {
 	if gpg --list-key 64D96617 ; then
 		if [ -d "$BASEDIR/packages" ]; then
 			cd $BASEDIR/packages
-	  	for i in `ls $BASEDIR/packages`; do
+	  	for i in `ls $BASEDIR/packages/*.ipfire`; do
 	  		echo -n "Signing $i"
 				echo $GPG_PASSPHRASE | gpg --sign --armor -u 64D96617 --passphrase-fd 0 $i
 				if [ "$?" -eq "0" ]; then
