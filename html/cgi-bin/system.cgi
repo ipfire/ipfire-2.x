@@ -121,43 +121,7 @@ foreach $key (sort keys %servicenames)
 print "</table></div>\n";
 
 &Header::closebox();
-
-&Header::openbox('100%', 'left', $Lang::tr{'loaded modules'});
-my $module = qx(/bin/lsmod | awk -F" " '{print \$1}');
-my $size = qx(/bin/lsmod | awk -F" " '{print \$2}');
-my $used = qx(/bin/lsmod | awk -F" " '{print \$3}');
-my @usedby = qx(/bin/lsmod | awk -F" " '{print \$4}');
-my @usedbyf;
-my $usedbyline;
-
-foreach $usedbyline(@usedby)
-{
-my $laenge = length($usedbyline);
-
-if ( $laenge > 30)
- {
- my $usedbylinef=substr($usedbyline,0,30);
- $usedbyline="$usedbylinef ...\n";
- push(@usedbyf,$usedbyline);
- }
-else
- {push(@usedbyf,$usedbyline);}
-}
-print <<END
-<table cellspacing=25><tr>
-<td><pre>$module</pre></td>
-<td><pre>$size</pre></td>
-<td><pre>$used</pre></td>
-<td><pre>@usedbyf</pre></td>
-</tr></table>
-END
-;
-
-print "";
-&Header::closebox();
-
 &Header::closebigbox();
-
 &Header::closepage();
 
 sub isrunning
