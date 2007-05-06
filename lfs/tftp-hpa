@@ -81,6 +81,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	-mkdir /var/log/tftpboot
-	cp -f $(DIR_CONF)/xinetd/tftpd-hpa /var/ipfire/xinetd/xinetd.d/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
