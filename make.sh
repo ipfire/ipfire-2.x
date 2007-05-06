@@ -476,28 +476,23 @@ buildipfire() {
   ipfiremake lzo
   ipfiremake openvpn
   ipfiremake pammysql
-  ipfiremake xinetd
   ipfiremake ghostscript
   ipfiremake cups
   ipfiremake samba
   ipfiremake sudo
   ipfiremake mc
   ipfiremake wget
-  ipfiremake wput
   ipfiremake bridge-utils
   ipfiremake screen
   ipfiremake hddtemp
   ipfiremake smartmontools
   ipfiremake htop
-  ipfiremake lynx
   ipfiremake postfix
-  ipfiremake procmail
   ipfiremake fetchmail
   ipfiremake cyrusimap
   ipfiremake webcyradm
   ipfiremake mailx
   ipfiremake clamav
-  ipfiremake razor
   ipfiremake spamassassin
   ipfiremake amavisd
   ipfiremake stund
@@ -509,16 +504,11 @@ buildipfire() {
   ipfiremake libogg
   ipfiremake libvorbis
   ipfiremake lame
-  ipfiremake xvid
-  ipfiremake mpeg2dec
-  ipfiremake ffmpeg
   ipfiremake sox
   ipfiremake gnump3d
-  ipfiremake videolan
   ipfiremake applejuice
   ipfiremake ocaml
   ipfiremake mldonkey
-  ipfiremake ntop
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake portmap
