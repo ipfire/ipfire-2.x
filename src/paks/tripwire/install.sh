@@ -1,1 +1,1 @@
-tar xvfj files.tbz -C /
+tar xvfj files.tbz2 -C /

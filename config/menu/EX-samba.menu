@@ -1,4 +1,4 @@
-    $subipfire->{'30.samba'} = {'caption' => '$Lang::tr{'samba'}',
+    $subipfire->{'30.samba'} = {'caption' => $Lang::tr{'samba'},
 				  'uri' => '/cgi-bin/samba.cgi',
 				  'title' => $Lang::tr{'samba'},
 				  'enabled' => 1,

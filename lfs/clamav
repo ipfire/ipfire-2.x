@@ -55,7 +55,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	$(PAK)
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -80,6 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/clamav
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	chown nobody.nobody /usr/share/clamav -R
+	chown clamav.clamav /usr/share/clamav -R
+	cp -rf $(DIR_SRC)/config/clamav/* /var/ipfire/clamav/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

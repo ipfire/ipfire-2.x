@@ -1,7 +1,7 @@
 #root/.gnupg
 root/.gnupg/gpg.conf
 root/.gnupg/pubring.gpg
-#root/.gnupg/pubring.gpg~
+root/.gnupg/pubring.gpg~
 root/.gnupg/secring.gpg
 root/.gnupg/trustdb.gpg
 usr/bin/gpg

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.50-ipfire
-# Sat May  5 09:53:31 2007
+# Sun May  6 14:35:41 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -664,7 +664,7 @@ CONFIG_PNP=y
 #
 # Protocols
 #
-CONFIG_ISAPNP=y
+# CONFIG_ISAPNP is not set
 CONFIG_PNPBIOS=y
 CONFIG_PNPBIOS_PROC_FS=y
 CONFIG_PNPACPI=y
