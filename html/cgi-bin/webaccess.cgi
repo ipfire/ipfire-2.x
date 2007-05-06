@@ -69,7 +69,7 @@ if (($cgiparams{'ACTION'} eq 'submit') && ($is_supervisor))
 		((defined($proxysettings{'SUPERVISOR_PASSWORD'})) && ($proxysettings{'SUPERVISOR_PASSWORD'} eq '')))
 	{
 		&write_acl;
-		system("/usr/local/bin/restartsquid");
+		system("/usr/local/bin/squidctrl restart >/dev/null 2>&1");
 	}
 }
 

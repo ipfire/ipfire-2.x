@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 	require "/opt/pakfire/lib/functions.pl";
 	
@@ -78,5 +78,6 @@
 	
 	
 	} elsif ("$ARGV[0]" eq "update") {
-	
+		&Pakfire::getmirrors();
+		&Pakfire::dbgetlist();
 	}

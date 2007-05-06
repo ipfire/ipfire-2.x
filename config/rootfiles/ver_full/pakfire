@@ -11,5 +11,4 @@ opt/pakfire/lib/functions.pl
 opt/pakfire/logs
 #opt/pakfire/meta
 opt/pakfire/pakfire
-opt/pakfire/pakfire.conf
 opt/pakfire/tmp
