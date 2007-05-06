@@ -102,7 +102,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/source && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
 #	cd $(DIR_APP)/source && install -v -m755 nsswitch/pam_winbind.so /lib/security
 	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
-	cp -f $(DIR_CONF)/xinetd/swat /var/ipfire/xinetd/xinetd.d/
 	-mkdir -p /var/ipfire/samba	
 	cp -vrf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
 	chown nobody:nobody -R /var/ipfire/samba/

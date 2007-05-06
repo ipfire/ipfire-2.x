@@ -2,6 +2,7 @@
 etc/squidGuard/squidGuard.conf
 srv/web/ipfire/html/repository
 usr/bin/squidGuard
+usr/sbin/redirect_wrapper
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
 var/ipfire/urlfilter/autoupdate/cron.daily
 var/ipfire/urlfilter/autoupdate/cron.monthly

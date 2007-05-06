@@ -94,6 +94,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f  $(DIR_CONF)/urlfilter/autoupdate.pl /var/ipfire/urlfilter/bin/autoupdate.pl
 	chmod 755 /var/ipfire/urlfilter/bin/autoupdate.pl
 	echo "1.7.1" > /var/ipfire/urlfilter/version
+	
+	# Wrapper
+	cp -f  $(DIR_CONF)/urlfilter/redirect_wrapper /usr/sbin
+	chmod 755 /usr/sbin/redirect_wrapper
 
 	/bin/tar --no-same-owner -xzf $(DIR_CONF)/urlfilter/blacklists.tar.gz -C /var/ipfire/urlfilter
 	/usr/bin/perl $(DIR_CONF)/urlfilter/makeconf.pl
