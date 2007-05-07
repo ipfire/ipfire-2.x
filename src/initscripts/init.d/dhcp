@@ -1,0 +1,57 @@
+#!/bin/sh
+# Begin $rc_base/init.d/dhcp
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+# Modified for IPFire by Michael Tremer - mitch@ipfire.org
+
+. /etc/sysconfig/rc
+. $rc_functions
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+case "$1" in
+	start)
+		iptables -F DHCPBLUEINPUT
+		if [ -e /var/ipfire/dhcp/enable_green ]; then
+			devices="${GREEN_DEV}"
+		fi
+		if [ -e /var/ipfire/dhcp/enable_blue ]; then
+			devices=+" ${BLUE_DEV}"
+			
+			iptables -A DHCPBLUEINPUT -p tcp --source-port 68 --destination-port 67 -i ${BLUE_DEV} -j ACCEPT > /dev/null 2>&1
+			iptables -A DHCPBLUEINPUT -p udp --source-port 68 --destination-port 67 -i ${BLUE_DEV} -j ACCEPT > /dev/null 2>&1
+		fi		
+		
+		boot_mesg "Starting DHCP Server..."
+		loadproc /usr/sbin/dhcpd -q ${devices}
+		
+		chmod 644 /var/run/dhcpd.pid # Fix because silly dhcpd creates its pid with mode 640
+		;;
+
+	stop)
+		boot_mesg "Stopping DHCP Server..."
+		killproc /usr/sbin/dhcpd
+		;;
+
+	reload)
+		boot_mesg "Reloading DHCP Server..."
+		reloadproc /usr/sbin/dhcpd
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/sbin/dhcpd
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/dhcp

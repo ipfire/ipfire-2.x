@@ -1,3 +1,4 @@
+usr/local/bin/dhcpctrl
 usr/local/bin/extrahdctrl
 usr/local/bin/getipstat
 #usr/local/bin/iowrap
@@ -10,7 +11,6 @@ usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
 usr/local/bin/restartapplejuice
-usr/local/bin/restartdhcp
 usr/local/bin/restartntpd
 usr/local/bin/restartsnort
 usr/local/bin/restartssh

@@ -1224,7 +1224,7 @@ sub buildconf {
 	}
     }
     close FILE;
-    system '/usr/local/bin/restartdhcp';
+    system '/usr/local/bin/dhcpctrl restart >/dev/null 2>&1';
 }
 
 #

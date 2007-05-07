@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 0.90
+VER        = 0.90.2
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f04372e49c3c5ff3bd94bbe1fef2eaca
+$(DL_FILE)_MD5 = 39d1f07a399b551b55096b6ec7325c33
 
 install : $(TARGET)
 
@@ -80,7 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/clamav
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	chown clamav.clamav /usr/share/clamav -R
+	chown clamav.clamav -R /usr/share/clamav/
 	cp -rf $(DIR_SRC)/config/clamav/* /var/ipfire/clamav/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
