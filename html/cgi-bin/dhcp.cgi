@@ -1199,9 +1199,11 @@ sub buildconf {
 	    print FILE "} #$itf\n";
 
 	    system ('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
+	    system ('/usr/local/bin/dhcpctrl enable');
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server enabled'})
 	} else {
 	    unlink "${General::swroot}/dhcp/enable_${lc_itf}";
+	    system ('/usr/local/bin/dhcpctrl disable');
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server disabled'})
 	}
     }
