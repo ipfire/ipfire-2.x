@@ -54,7 +54,7 @@
 * ccache-2.4
 * cdrtools-2.01
 * cftp-0.12
-* clamav-0.90
+* clamav-0.90.2
 * coreutils-5.96
 * cpio-2.6
 * cups-1.2.2
@@ -175,7 +175,7 @@
 * ncftp-3.1.9-src
 * ncurses-5.5
 * net-tools-1.60
-* newt-utf8_0.50.17
+* newt-0.51.6
 * nfs-utils-1.0.8
 * nmap-4.03
 * noip_updater_v1.6
@@ -213,7 +213,7 @@
 * sed-4.1.5
 * setserial-2.17
 * shadow-4.0.15
-* slang-2.0.6
+* slang-1.4.9
 * smartmontools-5.36
 * snort-2.6.1.4
 * sox-12.18.1

@@ -26,12 +26,12 @@
 
 include Config
 
-VER        = 0.50.17
+VER        = 0.51.6
 
-THISAPP    = newt-utf8_$(VER)
-DL_FILE    = $(THISAPP).orig.tar.gz
+THISAPP    = newt-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/newt-0.50.17
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
 else
@@ -42,13 +42,11 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(THISAPP)-9.6.diff.gz
+objects = $(DL_FILE)
 
 $(DL_FILE)                 = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-9.6.diff.gz     = $(DL_FROM)/$(THISAPP)-9.6.diff.gz
 
-$(DL_FILE)_MD5             = 4079546c307475ef2508dd2e98ed505e
-$(THISAPP)-9.6.diff.gz_MD5 = 5f1522189bdb16622677ad8e52f93119
+$(DL_FILE)_MD5             = 98567d5a18535e3a926dca5b4527b4a9
 
 install : $(TARGET)
 
@@ -78,9 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && zcat $(DIR_DL)/$(THISAPP)-9.6.diff.gz | patch -Np1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/newt-0.50.17-colors.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/newt-0.50.17-vaend.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/newt-0.51.6-if1close.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && ./configure --without-gpm-support --host $(MACHINE)-uclibc
 	cd $(DIR_APP) && sed -i 's%^CFLAGS.*$$%CFLAGS = -Os -fomit-frame-pointer -Wall -D_GNU_SOURCE -DUTF8 -I/opt/i586-uClibc/include%' Makefile
@@ -89,17 +85,12 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && install -m 0644 libnewt.a /opt/$(MACHINE)-uClibc/lib/libnewt.a
 	cd $(DIR_APP) && install -m 0644 newt.h /opt/$(MACHINE)-uClibc/include/newt.h
 else
-	cd $(DIR_APP) && RPM_OPT_FLAGS="$(CFLAGS) -DUTF8" ./configure --without-gpm-support
-	cd $(DIR_APP) && sed -i \
-	    -e 's/^PYVER.*$$/PYVER = 2.4/' \
-	    -e 's/^all:.*$$/all: _snackmodule.so/' Makefile
-	cd $(DIR_APP) && echo 'install-snack: _snackmodule.so'							>> Makefile
-	cd $(DIR_APP) && echo '	install -s -m 644 _snackmodule.so $$(instroot)/$$(pythonbindir)'	>> Makefile
-	cd $(DIR_APP) && echo '	install -m 644 snack.py $$(instroot)/$$(pythonbindir)'			>> Makefile
-	cd $(DIR_APP) && RPM_OPT_FLAGS="$(CFLAGS)" make install-snack
-	cd $(DIR_APP) && RPM_OPT_FLAGS="$(CFLAGS)" make install-utf8sh
+	cd $(DIR_APP) && ./configure --without-gpm-support
+	cd $(DIR_APP) && sed -i 's%^CFLAGS.*$$%CFLAGS = $(CFLAGS) -Wall -D_GNU_SOURCE%' Makefile
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -m 0644 newt.h /usr/include
-	ln -sf libnewt.so.0.50 /usr/lib/libnewt.so
+	ln -sf libnewt.so.0.51 /usr/lib/libnewt.so
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -1,5 +1,5 @@
 #usr/bin/clamav-config
-usr/bin/clamconf
+#usr/bin/clamconf
 usr/bin/clamdscan
 usr/bin/clamscan
 usr/bin/freshclam
@@ -8,8 +8,8 @@ usr/bin/sigtool
 #usr/lib/libclamav.a
 #usr/lib/libclamav.la
 usr/lib/libclamav.so
-usr/lib/libclamav.so.1
-usr/lib/libclamav.so.1.0.40
+usr/lib/libclamav.so.2
+usr/lib/libclamav.so.2.0.2
 #usr/lib/pkgconfig/libclamav.pc
 usr/sbin/clamd
 #usr/share/clamav

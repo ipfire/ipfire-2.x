@@ -1,0 +1,917 @@
+--- slang-1.4.4.orig/src/slinclud.h
++++ slang-1.4.4/src/slinclud.h
+@@ -23,4 +23,12 @@
+ # include <memory.h>
+ #endif
+
++#define UTF8 1
++
++#ifdef UTF8
++#include <wchar.h>
++#include <limits.h>
++#endif /* UTF8 */
++
++
+ #endif				       /* _SLANG_INCLUDE_H_ */
+--- slang-1.4.4.orig/src/slang.h
++++ slang-1.4.4/src/slang.h
+@@ -1239,10 +1239,20 @@
+ extern int SLtt_Msdos_Cheap_Video;
+ #endif
+
++#define UTF8 1
++
++#ifdef UTF8
++typedef int SLsmg_Char_Type;
++#define SLSMG_EXTRACT_CHAR(x) ((x) & 0xFFFFFF)
++#define SLSMG_EXTRACT_COLOR(x) (((x)>>24)&0xFF)
++#define SLSMG_BUILD_CHAR(ch,color) (((SLsmg_Char_Type)(wchar_t)(ch))|((color)<<24))
++#define SLSMG_NOCHAR 1
++#else
+ typedef unsigned short SLsmg_Char_Type;
+ #define SLSMG_EXTRACT_CHAR(x) ((x) & 0xFF)
+ #define SLSMG_EXTRACT_COLOR(x) (((x)>>8)&0xFF)
+ #define SLSMG_BUILD_CHAR(ch,color) (((SLsmg_Char_Type)(unsigned char)(ch))|((color)<<8))
++#endif /* UTF8 */
+ 
+ extern int SLtt_flush_output (void);
+ extern void SLtt_set_scroll_region(int, int);
+@@ -1334,7 +1342,11 @@
+ 
+ /*{{{ SLsmg Screen Management Functions */
+ 
++#ifdef UTF8
++extern void SLsmg_fill_region (int, int, unsigned int, unsigned int, wchar_t);
++#else
+ extern void SLsmg_fill_region (int, int, unsigned int, unsigned int, unsigned char);
++#endif /* UTF8 */
+ extern void SLsmg_set_char_set (int);
+ #ifndef IBMPC_SYSTEM
+ extern int SLsmg_Scroll_Hash_Border;
+@@ -1351,7 +1363,12 @@
+ extern void SLsmg_vprintf (char *, va_list);
+ extern void SLsmg_write_string (char *);
+ extern void SLsmg_write_nstring (char *, unsigned int);
++#ifdef UTF8
++extern void SLsmg_write_char (wchar_t);
++extern void SLsmg_write_nwchars (wchar_t *, unsigned int);
++#else
+ extern void SLsmg_write_char (char);
++#endif /* UTF8 */
+ extern void SLsmg_write_nchars (char *, unsigned int);
+ extern void SLsmg_write_wrapped_string (char *, int, int, unsigned int, unsigned int, int);
+ extern void SLsmg_cls (void);
+--- slang-1.4.4.orig/src/slcurses.c
++++ slang-1.4.4/src/slcurses.c
+@@ -440,20 +440,130 @@
+ 
+ static int do_newline (SLcurses_Window_Type *w)
+ {
+-   w->_curx = 0;
++   /* w->_curx = 0; */
+    w->_cury += 1;
+    if (w->_cury >= w->scroll_max)
+      {
+ 	w->_cury = w->scroll_max - 1;
+-	if (w->scroll_ok)
++	if (w->scroll_ok) {
++	  w->_curx = 0;
+ 	  SLcurses_wscrl (w, 1);
++	}
+      }
++   else
++     w->_curx = 0;
++   
++   return 0;
++}
++
++#ifdef UTF8
++static int SLcurses_waddch1 (SLcurses_Window_Type *win,
++			     wchar_t ch, int color)
++{
++   SLsmg_Char_Type *b, *bmin, *bmax, *c;
++   int k;
++
++   if (win == NULL) return -1;
++
++   if (win->_cury >= win->nrows)
++     {
++	/* Curses seems to move current postion to top of window. */
++	win->_cury = win->_curx = 0;
++	return -1;
++     }
++
++   win->modified = 1;
++
++   if (ch < ' ')
++     {
++	if (ch == '\n')
++	  {
++	     SLcurses_wclrtoeol (win);
++	     return do_newline (win);
++	  }
++
++	if (ch == '\r')
++	  {
++	     win->_curx = 0;
++	     return 0;
++	  }
++
++	if (ch == '\b')
++	  {
++	     if (win->_curx > 0)
++	       win->_curx--;
++
++	     return 0;
++	  }
++
++	/* HACK HACK!!!! */
++	if (ch == '\t') ch = ' ';
++     }
++
++   k = wcwidth(ch);
++
++   if (!k)
++     return 0; /* ignore combining characters for now */
++
++   if (k > win->ncols)
++     return 0; /* character wider than window */
++
++   if (win->_curx + k > win->ncols) {
++     if (win->_curx < win->ncols)
++       SLcurses_wclrtoeol(win);
++     do_newline (win);
++   }
++
++   bmin = win->lines[win->_cury];
++   b = bmin + win->_curx;
++   bmax = bmin + win->ncols;
++
++   /* Remove overwritten chars to left */
++   if (*b == SLSMG_NOCHAR) {
++     for (c = b - 1; c >= bmin && *c == SLSMG_NOCHAR; c--)
++       *c = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*c));
++     if (c >= bmin)
++       *c = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*c));
++   }
++
++   *b = SLSMG_BUILD_CHAR(ch,color);
++   win->_curx += k;
++   while (--k > 0)
++     *++b = SLSMG_NOCHAR;
++
++   /* Remove overwritten chars to right */
++   for (c = b + 1; c < bmax && *c == SLSMG_NOCHAR; c++)
++     *c = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*c));
+ 
+    return 0;
+ }
+ 
+ int SLcurses_waddch (SLcurses_Window_Type *win, SLtt_Char_Type attr)
+ {
++   SLsmg_Char_Type ch, color;
++
++   if (win == NULL) return -1;
++
++   ch = SLSMG_EXTRACT_CHAR(attr);
++
++   if (attr == ch)
++     color = win->color;
++   else
++     {
++	/* hack to pick up the default color for graphics chars */
++	if (((attr & A_COLOR) == 0) && ((attr & A_ALTCHARSET) != 0))
++	  {
++	     /* FIXME: priority=medium: Use SLSMG_?? instead of << */
++	     attr |= win->color << 8;
++	  }
++	color = map_attr_to_object (attr);
++     }
++
++   return SLcurses_waddch1 (win, ch, color);
++}
++#else
++int SLcurses_waddch (SLcurses_Window_Type *win, SLtt_Char_Type attr)
++{
+    SLsmg_Char_Type *b, ch;
+    SLsmg_Char_Type color;
+ 
+@@ -518,6 +628,7 @@
+ 
+    return 0;
+ }
++#endif /* UTF8 */
+ 
+ int SLcurses_wnoutrefresh (SLcurses_Window_Type *w)
+ {
+@@ -577,7 +688,11 @@
+ 
+ int SLcurses_wclrtoeol (SLcurses_Window_Type *w)
+ {
++#ifdef UTF8
++   SLsmg_Char_Type *b, *bmin, *bmax, *c;
++#else
+    SLsmg_Char_Type *b, *bmax;
++#endif /* UTF8 */
+    SLsmg_Char_Type blank;
+ 
+    if (w == NULL) return -1;
+@@ -588,9 +703,23 @@
+ 
+    blank = SLSMG_BUILD_CHAR(' ',w->color);
+ 
++#ifdef UTF8
++   bmin = w->lines[w->_cury];
++   b = bmin + w->_curx;
++   bmax = bmin + w->ncols;
++
++   /* Remove overwritten chars to left */
++   if (b < bmax && *b == SLSMG_NOCHAR) {
++     for (c = b - 1; c >= bmin && *c == SLSMG_NOCHAR; c--)
++       *c = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*c));
++     if (c >= bmin) 
++       *c = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*c));
++   }
++#else
+    b = w->lines[w->_cury];
+    bmax = b + w->ncols;
+    b += w->_curx;
++#endif /* UTF8 */
+ 
+    while (b < bmax) *b++ = blank;
+    return 0;
+@@ -677,6 +806,34 @@
+    return 0;
+ }
+ 
++#ifdef UTF8
++/* Note: if len is < 0, entire string will be used.
++ */
++int SLcurses_waddnstr (SLcurses_Window_Type *w, char *str, int len)
++{
++   size_t k;
++   wchar_t wc;
++   mbstate_t mbstate;
++
++   if ((w == NULL)
++       || (str == NULL))
++     return -1;
++
++   if (len < 0)
++     len = (char *)(-1) - str;
++
++   memset (&mbstate, 0, sizeof (mbstate));
++   while ((k = mbrtowc (&wc, str, len, &mbstate)) &&
++	  k != (size_t)(-1) &&
++	  k != (size_t)(-2))
++     {
++	SLcurses_waddch1 (w, wc, w->color);
++	str += k;
++	len -= k;
++     }
++   return k;
++}
++#else
+ /* Note: if len is < 0, entire string will be used.
+  */
+ int SLcurses_waddnstr (SLcurses_Window_Type *w, char *str, int len)
+@@ -758,6 +915,7 @@
+ 
+    return 0;
+ }
++#endif /* UTF8 */
+ 
+ /* This routine IS NOT CORRECT.  It needs to compute the proper overlap
+  * and copy accordingly.  Here, I just assume windows are same size.
+@@ -852,12 +1010,36 @@
+ 
+ int SLcurses_wdelch (SLcurses_Window_Type *w)
+ {
++#ifdef UTF8
++   SLsmg_Char_Type *p, *p1, *pmin, *pmax, *q;
++#else
+    SLsmg_Char_Type *p, *p1, *pmax;
++#endif /* UTF8 */
+ 
++#ifdef UTF8
++   pmin = w->lines[w->_cury];
++   p = pmin + w->_curx;
++   pmax = pmin + w->ncols;
++
++   /* Remove overwritten chars to left */
++   if (p < pmax && *p == SLSMG_NOCHAR) {
++     for (q = p - 1; q >= pmin && *q == SLSMG_NOCHAR; q--)
++       *q = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*q));
++     if (q >= pmin)
++       *q = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*q));
++   }
++
++   /* Remove overwritten chars to right */
++   for (q = p + 1; q < pmax && *q == SLSMG_NOCHAR; q++)
++     *q = SLSMG_BUILD_CHAR(' ',SLSMG_EXTRACT_COLOR(*q));
++ 
++   p1 = p + 1;
++#else
+    p = w->lines[w->_cury];
+    pmax = p + w->ncols;
+    p += w->_curx;
+    p1 = p + 1;
++#endif /* UTF8 */
+ 
+    while (p1 < pmax)
+      {
+@@ -884,12 +1066,12 @@
+ 
+    while (pmax > p)
+      {
+-	*pmax = *p1;
++	*pmax = *p1; /* Doesn't this assign beyond the end of the line? */
+ 	pmax = p1;
+ 	p1--;
+      }
+ 
+-   if (p < pmax)
++   if (p < pmax) /* How could it be? */
+      *p = SLSMG_BUILD_CHAR(ch, w->color);
+ 
+    w->modified = 1;
+--- slang-1.4.4.orig/src/slsmg.c
++++ slang-1.4.4/src/slsmg.c
+@@ -225,6 +225,38 @@
+    SLsmg_write_nchars (str, strlen (str));
+ }
+ 
++#ifdef UTF8
++void SLsmg_write_nstring (char *str, unsigned int n)
++{
++   char blank = ' ';
++   mbstate_t mbstate;
++
++   /* Avoid a problem if a user accidently passes a negative value */
++   if ((int) n < 0)
++     return;
++
++   if (str != NULL)
++     {
++	wchar_t wc;
++	size_t k;
++	int w;
++
++	memset (&mbstate, 0, sizeof (mbstate));
++        while ((k = mbrtowc (&wc, str, MB_LEN_MAX, &mbstate)) &&
++	       k != (size_t)(-1) &&
++	       k != (size_t)(-2))
++	  {
++	     w = wcwidth(wc);
++	     if (w < 0 || w > n)
++	       break;
++	     SLsmg_write_nwchars (&wc, 1);
++	     str += k;
++	     n -= w;
++	  }
++     }
++   while (n-- > 0) SLsmg_write_nchars (&blank, 1);
++}
++#else
+ void SLsmg_write_nstring (char *str, unsigned int n)
+ {
+    unsigned int width;
+@@ -243,7 +275,11 @@
+      }
+    while (width++ < n) SLsmg_write_nchars (&blank, 1);
+ }
++#endif /* UTF8 */
+ 
++#ifdef UTF8
++/* FIXME: This function not UTF8'd yet - Edmund */
++#endif /* UTF8 */
+ void SLsmg_write_wrapped_string (char *s, int r, int c,
+ 				 unsigned int dr, unsigned int dc,
+ 				 int fill)
+@@ -302,6 +338,123 @@
+ int SLsmg_Display_Eight_Bit = 128;
+ #endif
+ 
++#ifdef UTF8
++void SLsmg_write_nwchars (wchar_t *str, unsigned int n)
++{
++  SLsmg_Char_Type *p, *prev, *q;
++  int len, max_len, w, i;
++  wchar_t ch;
++
++#ifndef IBMPC_SYSTEM
++   int alt_char_set_flag;
++
++   alt_char_set_flag = ((This_Color & ALT_CHAR_FLAG)
++			&& ((tt_Use_Blink_For_ACS == NULL)
++			    || (*tt_Use_Blink_For_ACS == 0)));
++#endif
++
++  if (Smg_Inited == 0)
++    return;
++  if (This_Row < Start_Row || This_Row >= Start_Row + Screen_Rows)
++    return;
++
++  max_len = Start_Col + Screen_Cols;
++  len = This_Col;
++  p = SL_Screen[This_Row - Start_Row].neew + len - Start_Col;
++  prev = 0;
++
++  for (i = 0; i < n; i++, str) {
++    ch = *str++;
++#ifndef IBMPC_SYSTEM
++    if (alt_char_set_flag)
++      ch = Alt_Char_Set[ch & 0x7F];
++#endif
++    w = wcwidth(ch);
++
++    if (w > 0) {
++      if (len + w <= max_len) {
++	if (!prev) {
++	  for (q = p; *q == SLSMG_NOCHAR; q--)
++	    *q = SLSMG_BUILD_CHAR(' ', SLSMG_EXTRACT_COLOR(*q));
++	  *q = SLSMG_BUILD_CHAR(' ', SLSMG_EXTRACT_COLOR(*q));
++	}
++	prev = p;
++	*p++ = SLSMG_BUILD_CHAR(ch, This_Color), ++len;
++	for (; --w; len++, p++)
++	  *p = SLSMG_NOCHAR;
++      }
++      else if (len < max_len) {
++	for (; len < max_len; len++, p++)
++	  *p = SLSMG_BUILD_CHAR(' ', SLSMG_EXTRACT_COLOR(*p));
++	prev = 0;
++      }
++    }
++    else if (ch == '\n' &&
++	     SLsmg_Newline_Behavior != SLSMG_NEWLINE_PRINTABLE) {
++      SL_Screen[This_Row - Start_Row].flags |= TOUCHED;
++      for (; len < max_len && *p == SLSMG_NOCHAR; len++, p++)
++	*p = SLSMG_BUILD_CHAR(' ', SLSMG_EXTRACT_COLOR(*p));
++      if (!SLsmg_Newline_Behavior)
++	break;
++      ++This_Row;
++      len = 0;
++      if (This_Row == Start_Row + Screen_Rows) {
++	if (SLsmg_Newline_Behavior == SLSMG_NEWLINE_SCROLLS)
++	  scroll_up();
++	else
++	  break;
++      }
++      p = SL_Screen[This_Row - Start_Row].neew;
++      prev = 0;
++    }
++    else if (ch == '\t' && (SLsmg_Tab_Width > 0)) {
++      while (len < max_len) {
++	*p = SLSMG_BUILD_CHAR(' ', SLSMG_EXTRACT_COLOR(*p));
++	++p, ++len;
++	if (len % SLsmg_Tab_Width == 0)
++	  break;
++      }
++    }
++    else if ((ch == 0x8) && SLsmg_Backspace_Moves) {
++      /* not implemented */
++    }
++    else if (!w && ch) {
++      /* we could handle combining characters here, using prev */
++    }
++    else {
++      /* we should convert control characters to printable form here */
++    }
++  }
++  This_Col = len;
++  if (i == n) {
++    SL_Screen[This_Row - Start_Row].flags |= TOUCHED;
++    for (; len < max_len && *p == SLSMG_NOCHAR; len++, p++)
++      *p = SLSMG_BUILD_CHAR(' ', SLSMG_EXTRACT_COLOR(*p));
++  }
++}
++
++void SLsmg_write_char (wchar_t wc)
++{
++   SLsmg_write_nwchars (&wc, 1);
++}
++
++void SLsmg_write_nchars (char *str, unsigned int n)
++{
++   wchar_t wc;
++   size_t k;
++   mbstate_t mbstate;
++
++   memset (&mbstate, 0, sizeof (mbstate));
++   while ((k = mbrtowc (&wc, str, n, &mbstate)) &&
++	  k != (size_t)(-1) &&
++	  k != (size_t)(-2))
++     {
++        SLsmg_write_nwchars (&wc, 1);
++	str += k;
++	n -= k;
++     }
++}
++#else
+ void SLsmg_write_nchars (char *str, unsigned int n)
+ {
+    register SLsmg_Char_Type *p, old, neew, color;
+@@ -475,6 +628,7 @@
+ {
+    SLsmg_write_nchars (&ch, 1);
+ }
++#endif /* UTF8 */
+ 
+ static int Cls_Flag;
+ 
+@@ -891,6 +1045,10 @@
+ 	     This_Color = color;
+ 	  }
+ 
++#ifdef UTF8
++	/* FIXME: We should convert broken wide characters to spaces
++	   before calling smart_puts */
++#endif /* UTF8 */
+ 	SL_Screen[i].old[Screen_Cols] = 0;
+ 	SL_Screen[i].neew[Screen_Cols] = 0;
+ 
+@@ -1334,9 +1492,16 @@
+    This_Row = r; This_Col = c;
+ }
+ 
++#ifdef UTF8
++void SLsmg_fill_region (int r, int c, unsigned int dr, unsigned int dc, wchar_t ch)
++{
++   static wchar_t hbuf[16];
++   int i;
++#else
+ void SLsmg_fill_region (int r, int c, unsigned int dr, unsigned int dc, unsigned char ch)
+ {
+    static unsigned char hbuf[16];
++#endif /* UTF8 */
+    int count;
+    int dcmax, rmax;
+ 
+@@ -1357,16 +1522,30 @@
+ #if 0
+    ch = Alt_Char_Set[ch];
+ #endif
++#ifdef UTF8
++   if (ch != hbuf[0])
++     for (i = 0; i < 16; i++)
++       hbuf[i] = ch;
++#else
+    if (ch != hbuf[0]) SLMEMSET ((char *) hbuf, (char) ch, 16);
++#endif /* UTF8 */
+ 
+    for (This_Row = r; This_Row < rmax; This_Row++)
+      {
+ 	This_Col = c;
+ 	count = dc / 16;
++#ifdef UTF8
++	SLsmg_write_nwchars (hbuf, dc % 16);
++#else
+ 	SLsmg_write_nchars ((char *) hbuf, dc % 16);
++#endif /* UTF8 */
+ 	while (count-- > 0)
+ 	  {
++#ifdef UTF8
++	     SLsmg_write_nwchars (hbuf, 16);
++#else
+ 	     SLsmg_write_nchars ((char *) hbuf, 16);
++#endif /* UTF8 */
+ 	  }
+      }
+ 
+@@ -1381,14 +1560,22 @@
+ void SLsmg_write_color_chars (SLsmg_Char_Type *s, unsigned int len)
+ {
+    SLsmg_Char_Type *smax, sh;
++#ifdef UTF8
++   wchar_t buf[32], *b, *bmax;
++#else
+    char buf[32], *b, *bmax;
++#endif /* UTF8 */
+    int color, save_color;
+ 
+    if (Smg_Inited == 0) return;
+ 
+    smax = s + len;
+    b = buf;
++#ifdef UTF8
++   bmax = b + sizeof (buf) / sizeof (SLsmg_Char_Type);
++#else
+    bmax = b + sizeof (buf);
++#endif /* UTF8 */
+ 
+    save_color = This_Color;
+ 
+@@ -1412,16 +1599,28 @@
+ 	  {
+ 	     if (b != buf)
+ 	       {
++#ifdef UTF8
++		  SLsmg_write_nwchars (buf, (int) (b - buf));
++#else
+ 		  SLsmg_write_nchars (buf, (int) (b - buf));
++#endif /* UTF8 */
+ 		  b = buf;
+ 	       }
+ 	     This_Color = color;
+ 	  }
++#ifdef UTF8
++	*b++ = SLSMG_EXTRACT_CHAR(sh);
++#else
+ 	*b++ = (char) SLSMG_EXTRACT_CHAR(sh);
++#endif /* UTF8 */
+      }
+ 
+    if (b != buf)
++#ifdef UTF8
++     SLsmg_write_nwchars (buf, (unsigned int) (b - buf));
++#else
+      SLsmg_write_nchars (buf, (unsigned int) (b - buf));
++#endif /* UTF8 */
+ 
+    This_Color = save_color;
+ }
+@@ -1473,7 +1672,11 @@
+ SLsmg_set_color_in_region (int color, int r, int c, unsigned int dr, unsigned int dc)
+ {
+    int cmax, rmax;
++#ifdef UTF8
++   int color_mask;
++#else
+    SLsmg_Char_Type char_mask;
++#endif /* UTF8 */
+ 
+    if (Smg_Inited == 0) return;
+ 
+@@ -1498,14 +1701,22 @@
+ 	  color = ((color & 0x7F) + Bce_Color_Offset) & 0x7F;
+      }
+ #endif
++#ifdef UTF8
++   color_mask = 0;
++#else
+    color = color << 8;
+ 
+    char_mask = 0xFF;
++#endif /* UTF8 */
+ 
+ #ifndef IBMPC_SYSTEM
+    if ((tt_Use_Blink_For_ACS == NULL)
+        || (0 == *tt_Use_Blink_For_ACS))
++#ifdef UTF8
++     color_mask = 0x80;
++#else
+      char_mask = 0x80FF;
++#endif /* UTF8 */
+ #endif
+ 
+    while (r < rmax)
+@@ -1519,7 +1730,13 @@
+ 
+ 	while (s < smax)
+ 	  {
++#ifdef UTF8
++	     *s = SLSMG_BUILD_CHAR(SLSMG_EXTRACT_CHAR(*s),
++				   (SLSMG_EXTRACT_COLOR(*s) & color_mask)
++				   | color);
++#else
+ 	     *s = (*s & char_mask) | color;
++#endif /* UTF8 */
+ 	     s++;
+ 	  }
+ 	r++;
+--- slang-1.4.5/src/Makefile.in.foo	2002-06-12 19:30:09.000000000 -0400
++++ slang-1.4.5/src/Makefile.in	2002-06-12 19:31:13.000000000 -0400
+@@ -67,7 +67,7 @@
+ #---------------------------------------------------------------------------
+ # There should be no need to change anything below here.
+ #---------------------------------------------------------------------------
+-THIS_LIB		= slang#
++THIS_LIB		= slang-utf8#
+ OTHERSTUFF 		= 
+ THIS_LIB_DEFINES	= -DSLANG
+ ELF_MAJOR_VERSION	= @slang_major_version@#
+--- slang-1.4.9/src/sldisply.c.orig	2003-10-27 17:24:15.000000000 -0500
++++ slang-1.4.9/src/sldisply.c	2003-10-27 17:56:25.000000000 -0500
+@@ -9,6 +9,7 @@
+ 
+ #include <time.h>
+ #include <ctype.h>
++#include <limits.h>
+ 
+ #if !defined(VMS) || (__VMS_VER >= 70000000)
+ # include <sys/time.h>
+@@ -1426,14 +1427,25 @@
+ 
+ /* Highest bit represents the character set. */
+ #define COLOR_MASK 0x7F00
++#ifdef UTF8
++# define COLOR_OF(x) (SLSMG_EXTRACT_COLOR(x) & 0x7F)
++#else
+ #define COLOR_OF(x) (((x)&COLOR_MASK)>>8)
++#endif
+ #define CHAR_OF(x) ((x)&0x80FF)
+ 
+ #if SLTT_HAS_NON_BCE_SUPPORT
++#ifdef UTF8
++static int bce_color_eqs (SLsmg_Char_Type a, SLsmg_Char_Type b)
++{
++   a = SLSMG_EXTRACT_COLOR(a) & 0x7F;
++   b = SLSMG_EXTRACT_COLOR(b) & 0x7F;
++#else
+ static int bce_color_eqs (unsigned int a, unsigned int b)
+ {
+    a = COLOR_OF(a);
+    b = COLOR_OF(b);
++#endif
+    
+    if (a == b)
+      return 1;
+@@ -1459,8 +1471,14 @@
+     :  (Ansi_Color_Map[COLOR_OF(a)].mono == Ansi_Color_Map[COLOR_OF(b)].mono))
+ #endif
+ 
++#ifdef UTF8
++#define CHAR_EQS(a, b) ((a) == (b)\
++			|| (SLSMG_EXTRACT_CHAR(a) == SLSMG_EXTRACT_CHAR(b)\
++			    && COLOR_EQS((a), (b))))
++#else
+ #define CHAR_EQS(a, b) (((a) == (b))\
+ 			|| ((CHAR_OF(a)==CHAR_OF(b)) && COLOR_EQS(a,b)))
++#endif
+ 
+ /* The whole point of this routine is to prevent writing to the last column
+  * and last row on terminals with automatic margins.
+@@ -1488,9 +1506,58 @@
+    tt_write (str, len);
+ }
+ 
++#ifdef UTF8
++/* FIXME: This duplicates the function above
++ */
++static void write_wstring_with_care (SLsmg_Char_Type *str, unsigned int len)
++{
++   mbstate_t mbstate;
++
++   if (str == NULL) return;
++
++   if (Automatic_Margins && (Cursor_r + 1 == SLtt_Screen_Rows))
++     {
++	if (len + (unsigned int) Cursor_c >= (unsigned int) SLtt_Screen_Cols)
++	  {
++	     /* For now, just do not write there.  Later, something more
++	      * sophisticated will be implemented.
++	      */
++	     if (SLtt_Screen_Cols > Cursor_c)
++	       {
++		  len = SLtt_Screen_Cols - Cursor_c - 1;
++		  while (len > 0 && str[len] == SLSMG_NOCHAR)
++		    --len;
++	       }
++	     else len = 0;
++	  }
++     }
++
++   memset (&mbstate, 0, sizeof (mbstate));
++   while (len--)
++     {
++        SLsmg_Char_Type c = *str++;
++	char buf[MB_LEN_MAX];
++	size_t n;
++
++	if (c == SLSMG_NOCHAR)
++	  continue;
++
++	n = wcrtomb (buf, c, &mbstate);
++	if (n == (size_t)(-1))
++	  break;
++
++	tt_write(buf, n);
++     }
++}
++#endif /* UTF8 */
++
+ static void send_attr_str (SLsmg_Char_Type *s)
+ {
++#ifdef UTF8
++   SLsmg_Char_Type out[SLTT_MAX_SCREEN_COLS], ch, *p;
++#else
+    unsigned char out[SLTT_MAX_SCREEN_COLS], ch, *p;
++#endif /* UTF8 */
+    register SLtt_Char_Type attr;
+    register SLsmg_Char_Type sh;
+    int color, last_color = -1;
+@@ -1498,8 +1565,13 @@
+    p = out;
+    while (0 != (sh = *s++))
+      {
++#ifdef UTF8
++	ch = SLSMG_EXTRACT_CHAR(sh);
++	color = SLSMG_EXTRACT_COLOR(sh);
++#else
+ 	ch = sh & 0xFF;
+ 	color = ((int) sh & 0xFF00) >> 8;
++#endif
+ 
+ #if SLTT_HAS_NON_BCE_SUPPORT
+ 	if (Bce_Color_Offset
+@@ -1511,8 +1583,12 @@
+ 	  {
+ 	     if (SLtt_Use_Ansi_Colors) attr = Ansi_Color_Map[color & 0x7F].fgbg;
+ 	     else attr = Ansi_Color_Map[color & 0x7F].mono;
+-
++ 
++#ifdef UTF8
++	     if (SLSMG_EXTRACT_COLOR(sh) & 0x80) /* alternate char set */
++#else
+ 	     if (sh & 0x8000) /* alternate char set */
++#endif
+ 	       {
+ 		  if (SLtt_Use_Blink_For_ACS)
+ 		    {
+@@ -1534,8 +1610,12 @@
+ 		    {
+ 		       if (p != out)
+ 			 {
++#ifdef UTF8
++			    write_wstring_with_care (out, p-out);
++#else
+ 			    *p = 0;
+ 			    write_string_with_care ((char *) out);
++#endif
+ 			    Cursor_c += (int) (p - out);
+ 			    p = out;
+ 			 }
+@@ -1558,8 +1638,12 @@
+ 	  }
+ 	*p++ = ch;
+      }
++#ifdef UTF8
++   if (p != out) write_wstring_with_care (out, p-out);
++#else
+    *p = 0;
+    if (p != out) write_string_with_care ((char *) out);
++#endif
+    Cursor_c += (int) (p - out);
+ }
+ 
+@@ -1686,7 +1770,11 @@
+ 
+ 	while (qq < qmax)
+ 	  {
++#ifdef UTF8
++	     if (SLSMG_EXTRACT_COLOR(*qq))
++#else
+ 	     if (*qq & 0xFF00)
++#endif
+ 	       {
+ 		  SLtt_normal_video ();
+ 		  SLtt_del_eol ();
+@@ -1701,7 +1789,11 @@
+    /* Find where the last non-blank character on old/new screen is */
+ 
+    space_char = ' ';
++#ifdef UTF8
++   if (SLSMG_EXTRACT_CHAR(*(pmax-1)) == ' ')
++#else
+    if (CHAR_EQS(*(pmax-1), ' '))
++#endif
+      {
+ 	/* If we get here, then we can erase to the end of the line to create
+ 	 * the final space.  However, this will only work _if_ erasing will 
+@@ -1752,7 +1844,11 @@
+      {
+ #endif
+ 	/* Try use use erase to bol if possible */
++#ifdef UTF8
++	if ((Del_Bol_Str != NULL) && (SLSMG_EXTRACT_CHAR(*neww) == ' '))
++#else
+ 	if ((Del_Bol_Str != NULL) && (CHAR_OF(*neww) == ' '))
++#endif
+ 	  {
+ 	     SLsmg_Char_Type *p1;
+ 	     SLsmg_Char_Type blank;
+@@ -1781,7 +1877,11 @@
+ 		  q = oldd + ofs;
+ 		  p = p1;
+ 		  SLtt_goto_rc (row, ofs - 1);
++#ifdef UTF8
++		  SLtt_reverse_video (SLSMG_EXTRACT_COLOR (blank));
++#else
+ 		  SLtt_reverse_video (COLOR_OF(blank));
++#endif
+ 		  tt_write_string (Del_Bol_Str);
+ 		  tt_write (" ", 1);
+ 		  Cursor_c += 1;
+@@ -1978,7 +2078,11 @@
+ 
+    if (q < qmax) 
+      {
++#ifdef UTF8
++	SLtt_reverse_video (SLSMG_EXTRACT_COLOR (space_char));
++#else
+ 	SLtt_reverse_video (COLOR_OF(space_char));
++#endif
+ 	del_eol ();
+      }
+    

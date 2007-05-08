@@ -166,13 +166,13 @@ define PAK
 	cd / && tar --create --directory=/ --files-from=/install/packages/package/ROOTFILES \
 	        --file=/packagetmp.tar --exclude='#*'
 	cd / && tar -x -C /tmp -f /packagetmp.tar
-	@rm -f /packagetmp.tar
+	rm -f /packagetmp.tar
 	-cd /tmp && tar cjvf /install/packages/package/files.tbz2 *
-	@cd / && rm -rf /tmp/*
-	@cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES
+	cd / && rm -rf /tmp/*
+	cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES
 	cd /install/packages/package && tar cfj ../$(PROG)-$(VER)-$(PAK_VER).ipfire \
 			files.tbz2 install.sh uninstall.sh update.sh ROOTFILES
-	@rm -rf /install/packages/package
+	rm -rf /install/packages/package
 	sed -e s/NAME/$(PROG)/g \
 			-e s/VER/$(VER)/g \
 			-e s/RELEASE/$(PAK_VER)/g \
