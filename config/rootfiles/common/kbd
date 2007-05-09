@@ -29,7 +29,7 @@ bin/setfont
 #lib/kbd/consolefonts/LatArCyrHeb-08.psfu.gz
 #lib/kbd/consolefonts/LatArCyrHeb-14.psfu.gz
 #lib/kbd/consolefonts/LatArCyrHeb-16#.psfu.gz
-#lib/kbd/consolefonts/LatArCyrHeb-16.psfu.gz
+lib/kbd/consolefonts/LatArCyrHeb-16.psfu.gz
 #lib/kbd/consolefonts/LatArCyrHeb-19.psfu.gz
 #lib/kbd/consolefonts/Mik_8x16.gz
 #lib/kbd/consolefonts/README.12x22
@@ -239,7 +239,7 @@ lib/kbd/consolefonts/viscii10-8x16.psfu.gz
 #lib/kbd/consoletrans/8859-10_to_uni.trans
 #lib/kbd/consoletrans/8859-13_to_uni.trans
 #lib/kbd/consoletrans/8859-14_to_uni.trans
-#lib/kbd/consoletrans/8859-15_to_uni.trans
+lib/kbd/consoletrans/8859-15_to_uni.trans
 #lib/kbd/consoletrans/8859-1_to_uni.trans
 #lib/kbd/consoletrans/8859-2_to_uni.trans
 #lib/kbd/consoletrans/8859-3_to_uni.trans
@@ -312,7 +312,7 @@ lib/kbd/keymaps/i386
 #lib/kbd/keymaps/i386/fgGIod
 #lib/kbd/keymaps/i386/fgGIod/tr_f-latin5.map.gz
 #lib/kbd/keymaps/i386/fgGIod/trf.map.gz
-#lib/kbd/keymaps/i386/include
+lib/kbd/keymaps/i386/include
 #lib/kbd/keymaps/i386/include/applkey.map.gz
 #lib/kbd/keymaps/i386/include/azerty-layout.inc
 #lib/kbd/keymaps/i386/include/backspace.map.gz
