@@ -2,6 +2,7 @@
 #usr/include/newt.h
 #usr/lib/libnewt.a
 usr/lib/libnewt.so
+usr/lib/libnewt.so.0.51
 usr/lib/libnewt.so.0.51.6
 #usr/lib/python2.4/site-packages/_snackmodule.so
 #usr/lib/python2.4/site-packages/snack.py

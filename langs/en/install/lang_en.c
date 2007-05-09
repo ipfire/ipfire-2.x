@@ -62,7 +62,7 @@ char *en_tr[] = {
 /* TR_CONGRATULATIONS */
 "Congratulations!",
 /* TR_CONGRATULATIONS_LONG */
-"%s was successfully installed. Please remove any floppy disks or CDROMs in the computer. If your system fails to boot properly, please try booting from a DOS diskette and running 'FDISK /MBR' to re-create the Master Boot Record. Setup will now run where you may configure ISDN, network cards, and the system passwords. After Setup has been completed, you should point your web browser at http://%s:81 or https://%s:444 (or whatever you name your %s), and configure dialup networking (if required) and remote access. Remember to set a password for the %s 'dial' user, if you wish non %s 'admin' users to be able to control the link.",
+"%s was successfully installed. Please remove any CDROMs in the computer. Setup will now run where you may configure ISDN, network cards, and the system passwords. After Setup has been completed, you should point your web browser at https://%s:444 (or whatever you name your %s), and configure dialup networking (if required) and remote access.",
 /* TR_CONTINUE_NO_SWAP */
 "Your harddisk is very small, but you can continue without any swap. (Use with caution).",
 /* TR_CURRENT_CONFIG */

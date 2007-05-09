@@ -571,7 +571,7 @@ int main(int argc, char *argv[])
 
 	if (!unattended) {
 		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
-				NAME, SNAME, SNAME, NAME, NAME, NAME);
+				NAME, SNAME, NAME);
 		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
 	}
 	         
