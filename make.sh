@@ -298,6 +298,7 @@ buildbase() {
     lfsmake2 man
     lfsmake2 mktemp
     lfsmake2 modutils
+    lfsmake2 mtd
     lfsmake2 net-tools
     lfsmake2 patch
     lfsmake2 psmisc
@@ -558,6 +559,7 @@ buildinstaller() {
   installmake util-linux
   installmake pciutils
   installmake zlib
+  installmake mtd
   installmake wget
   installmake hwdata
   installmake kudzu

@@ -55,6 +55,7 @@
 * cdrtools-2.01
 * cftp-0.12
 * clamav-0.90.2
+* clamav-0.90.2
 * coreutils-5.96
 * cpio-2.6
 * cups-1.2.2
@@ -82,6 +83,7 @@
 * fcpci-suse93-3.11-07
 * fcron-3.0.1
 * fetchmail-6.3.4
+* ffmpeg-20051126
 * file-4.17
 * findutils-4.2.27
 * flex-2.5.33
@@ -153,6 +155,7 @@
 * linuxigd-0.95
 * logrotate-3.7.1
 * logwatch_7.3.1
+* lynx2.8.5
 * lzo-2.02
 * m4-1.4.4
 * mailx-12.0
@@ -166,7 +169,9 @@
 * mktemp-1.5
 * mldonkey-2.7.7
 * module-init-tools-3.2.2
+* mpeg2dec-20050802
 * mpg123-0.59r
+* mtd-CVS-20070507
 * mtools-3.9.10
 * mysql-5.0.24a
 * nano-1.2.5
@@ -180,6 +185,7 @@
 * nmap-4.03
 * noip_updater_v1.6
 * ntfs-3g-1.0
+* ntop-3.2
 * ntp-4.2.2
 * ocaml-3.09.2
 * oinkmaster-2.0
@@ -200,8 +206,10 @@
 * postfix-2.2.11
 * ppp-2.4.4
 * pptp-1.7.1
+* procmail-3.22
 * procps-3.2.6
 * psmisc-22.2
+* razor-agents-2.81
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
@@ -245,10 +253,14 @@
 * util-linux-2.12r
 * vim-7.0
 * vlan.1.9
+* vlc-0.8.5
 * web-cyradm-0.5.5-CVS-for-ipfire
 * wget-1.10.2
 * whatmask-1.2
 * wireless_tools.28
+* wput-0.6
+* xinetd-2.3.14
 * xmbmon205
+* xvidcore-1.1.0
 * zaptel-1.4.0
 * zlib-1.2.3

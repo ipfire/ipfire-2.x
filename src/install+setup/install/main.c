@@ -155,8 +155,6 @@ int main(int argc, char *argv[])
 	strcpy(shortlangname, shortlangnames[choice]);
 	fprintf(flog, "Selected language: %s\n", shortlangname);
 
-	mysystem("/bin/setfont lat0-16");
-
 	newtDrawRootText(14, 0, NAME " " VERSION " - " SLOGAN );
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
