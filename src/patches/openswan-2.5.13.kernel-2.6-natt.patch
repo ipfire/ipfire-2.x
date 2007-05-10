@@ -68,7 +68,7 @@ packaging/utils/nattpatch 2.6
 +  xfrm4_rcv_encap_func = NULL;
 +  return 0;
 +}
-+#endif /* CONFIG_XFRM || defined(CONFIG_IPSEC_NAT_TRAVERSAL)*/
++#endif /* CONFIG_XFRM_MODULE || CONFIG_IPSEC_NAT_TRAVERSAL */
 +
 +
  /* return:

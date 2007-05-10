@@ -143,7 +143,7 @@ var/ipfire/vpn
 #var/ipfire/vpn/settings
 var/ipfire/wakeonlan
 #var/ipfire/wakeonlan/clients.conf
-#var/ipfire/wireless
+var/ipfire/wireless
 #var/ipfire/wireless/config
 #var/ipfire/wireless/settings
 var/ipfire/xtaccess

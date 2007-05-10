@@ -385,7 +385,6 @@ buildipfire() {
   ipfiremake capi4k-utils
   ipfiremake cdrtools
   ipfiremake dnsmasq
-  ipfiremake libaal
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake squashfstools
