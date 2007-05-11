@@ -15,8 +15,8 @@ use Geo::IP::PurePerl;
 use Getopt::Std;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -374,7 +374,11 @@ else{
 
 my @data = (\@ips,\@numb);
 use GD::Graph::colour qw( :files );
-GD::Graph::colour::read_rgb( "/srv/web/ipfire/html/themes/ipfire/include/colours.txt" );
+
+my %colours = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colours.txt", \%colours);
 
 if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
         my $mygraph = GD::Graph::pie->new(500, 350);
@@ -385,7 +389,7 @@ if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
              ) or warn $mygraph->error;
 
         $mygraph->set_value_font(GD::gdMediumBoldFont);
-        $mygraph->set( dclrs => [ "colour1" , "colour2" , "colour3" , "colour4" , "colour5" , "colour6" , "colour7" , "colour8" , "colour9" , "colour10" ] );
+        $mygraph->set( dclrs => [ "$colours{'colour1'}" , "$colours{'colour2'}" , "$colours{'colour3'}" , "$colours{'colour4'}" , "$colours{'colour5'}" , "$colours{'colour6'}" , "$colours{'colour7'}" , "$colours{'colour8'}" , "$colours{'colour9'}" , "$colours{'colour10'}" ] );
         my $myimage = $mygraph->plot(\@data) or die $mygraph->error;
 
         my @filenames = glob("/srv/web/ipfire/html/graphs/fwlog-ip*.png");
@@ -415,38 +419,6 @@ END
 
 my $total=0;
 my $show=0;
-my @colour;
-my $colour1;
-my $colour2;
-my $colour3;
-my $colour4;
-my $colour5;
-my $colour6;
-my $colour7;
-my $colour8;
-my $colour9;
-my $colour10;
-
-@colour = GD::Graph::colour::_rgb("colour1");
-$colour1 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour2");
-$colour2 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour3");
-$colour3 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour4");
-$colour4 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour5");
-$colour5 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour6");
-$colour6 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour7");
-$colour7 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour8");
-$colour8 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour9");
-$colour9 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
-@colour = GD::Graph::colour::_rgb("colour10");
-$colour10 = GD::Graph::colour::rgb2hex($colour[0], $colour[1], $colour[2]);
 
 my $s;
 my $percent;
@@ -456,16 +428,16 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  if ( ($colour % 10) == 1 ){print "<TR BGCOLOR='$colour1'>\n";}
-  if ( ($colour % 10) == 2 ){print "<TR BGCOLOR='$colour2'>\n";}
-  if ( ($colour % 10) == 3 ){print "<TR BGCOLOR='$colour3'>\n";}
-  if ( ($colour % 10) == 4 ){print "<TR BGCOLOR='$colour4'>\n";}
-  if ( ($colour % 10) == 5 ){print "<TR BGCOLOR='$colour5'>\n";}
-  if ( ($colour % 10) == 6 ){print "<TR BGCOLOR='$colour6'>\n";}
-  if ( ($colour % 10) == 7 ){print "<TR BGCOLOR='$colour7'>\n";}
-  if ( ($colour % 10) == 8 ){print "<TR BGCOLOR='$colour8'>\n";}
-  if ( ($colour % 10) == 9 ){print "<TR BGCOLOR='$colour9'>\n";}
-  if ( ($colour % 10) == 0 ){print "<TR BGCOLOR='$colour10'>\n";}
+  if ( ($colour % 10) == 1 ){print "<TR BGCOLOR='$colours{'colour1'}'>\n";}
+  if ( ($colour % 10) == 2 ){print "<TR BGCOLOR='$colours{'colour2'}'>\n";}
+  if ( ($colour % 10) == 3 ){print "<TR BGCOLOR='$colours{'colour3'}'>\n";}
+  if ( ($colour % 10) == 4 ){print "<TR BGCOLOR='$colours{'colour4'}'>\n";}
+  if ( ($colour % 10) == 5 ){print "<TR BGCOLOR='$colours{'colour5'}'>\n";}
+  if ( ($colour % 10) == 6 ){print "<TR BGCOLOR='$colours{'colour6'}'>\n";}
+  if ( ($colour % 10) == 7 ){print "<TR BGCOLOR='$colours{'colour7'}'>\n";}
+  if ( ($colour % 10) == 8 ){print "<TR BGCOLOR='$colours{'colour8'}'>\n";}
+  if ( ($colour % 10) == 9 ){print "<TR BGCOLOR='$colours{'colour9'}'>\n";}
+  if ( ($colour % 10) == 0 ){print "<TR BGCOLOR='$colours{'colour10'}'>\n";}
   
   my $gi = Geo::IP::PurePerl->new();
   my $ccode = $gi->country_code_by_name($key[$s]);
@@ -482,16 +454,16 @@ for($s=0;$s<$lines;$s++)
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-if ( ($colour % 10) == 1 ){print "<TR BGCOLOR='$colour1'>\n";}
-if ( ($colour % 10) == 2 ){print "<TR BGCOLOR='$colour2'>\n";}
-if ( ($colour % 10) == 3 ){print "<TR BGCOLOR='$colour3'>\n";}
-if ( ($colour % 10) == 4 ){print "<TR BGCOLOR='$colour4'>\n";}
-if ( ($colour % 10) == 5 ){print "<TR BGCOLOR='$colour5'>\n";}
-if ( ($colour % 10) == 6 ){print "<TR BGCOLOR='$colour6'>\n";}
-if ( ($colour % 10) == 7 ){print "<TR BGCOLOR='$colour7'>\n";}
-if ( ($colour % 10) == 8 ){print "<TR BGCOLOR='$colour8'>\n";}
-if ( ($colour % 10) == 9 ){print "<TR BGCOLOR='$colour9'>\n";}
-if ( ($colour % 10) == 0 ){print "<TR BGCOLOR='$colour10'>\n";}
+if ( ($colour % 10) == 1 ){print "<TR BGCOLOR='$colours{'colour1'}'>\n";}
+if ( ($colour % 10) == 2 ){print "<TR BGCOLOR='$colours{'colour2'}'>\n";}
+if ( ($colour % 10) == 3 ){print "<TR BGCOLOR='$colours{'colour3'}'>\n";}
+if ( ($colour % 10) == 4 ){print "<TR BGCOLOR='$colours{'colour4'}'>\n";}
+if ( ($colour % 10) == 5 ){print "<TR BGCOLOR='$colours{'colour5'}'>\n";}
+if ( ($colour % 10) == 6 ){print "<TR BGCOLOR='$colours{'colour6'}'>\n";}
+if ( ($colour % 10) == 7 ){print "<TR BGCOLOR='$colours{'colour7'}'>\n";}
+if ( ($colour % 10) == 8 ){print "<TR BGCOLOR='$colours{'colour8'}'>\n";}
+if ( ($colour % 10) == 9 ){print "<TR BGCOLOR='$colours{'colour9'}'>\n";}
+if ( ($colour % 10) == 0 ){print "<TR BGCOLOR='$colours{'colour10'}'>\n";}
 
 my $dif;
 $dif = $linesjc - $total;
@@ -513,9 +485,7 @@ END
 ;
 
 &Header::closebox();
-
 &Header::closebigbox();
-
 &Header::closepage();
 
 sub findkey {

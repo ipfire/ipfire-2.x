@@ -1,11 +1,10 @@
-!"R" "G" "B"		"Colour Name"
- 205  91 69		colour1
- 238 106 80		colour2
- 255 114 86		colour3
- 238 149 114		colour4
- 255 160 122		colour5
- 255 160 122		colour6
- 205 175 149		colour7
- 238 203 173		colour8
- 255 218 185		colour9
- 255 228 196		colour10
+colour1=#CD5B45
+colour2=#EE6A50
+colour3=#FF7256
+colour4=#EE9572
+colour5=#FFA07A
+colour6=#CDAF95
+colour7=#EECBAD
+colour8=#FFDAB9
+colour9=#FFE4C4
+colour10=#FFCCCC
