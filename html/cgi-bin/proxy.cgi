@@ -882,7 +882,6 @@ if ($netsettings{'BLUE_DEV'}) {
 print <<END
 	<td class='base'>$Lang::tr{'advproxy error language'}:</td>
 	<td class='base'>
-	$errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}
 	<select name='ERR_LANGUAGE'>
 END
 ;
