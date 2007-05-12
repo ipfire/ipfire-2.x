@@ -62,6 +62,9 @@ int main(int argc, char *argv[])
 
 	fprintf(flog, "Setup program started.\n");
 
+	if (!setlocale(LC_CTYPE,""))
+		fprintf(flog, "Locale not spezified. Check LANG, LC_CTYPE, RC_ALL.");
+
 	kv = initkeyvalues();
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
@@ -178,8 +181,8 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		if (!(handledomainname()))
 			goto EXIT;
-		if (!(handleisdn()))
-			goto EXIT;
+//		if (!(handleisdn()))
+//			goto EXIT;
 		if (!(handlenetworking()))
 			goto EXIT;
 		if (!(handledhcp()))

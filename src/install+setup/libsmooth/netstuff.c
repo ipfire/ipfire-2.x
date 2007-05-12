@@ -19,6 +19,9 @@ extern char **ctr;
 extern struct nic nics[];
 extern struct knic knics[];
 
+char *ucolourcard[] = { "GREEN", "RED", "ORANGE", "BLUE", NULL };
+char *lcolourcard[] = { "green", "red", "orange", "blue", NULL };
+
 int scanned_nics_read_done = 0;
 
 newtComponent networkform;
@@ -351,7 +354,7 @@ void strupper(unsigned char *string)
 }
 */
 
-int write_configs_netudev(char *description, char *macaddr, char *colour)
+int write_configs_netudev(char *description, char *macaddr, int colour)
 {	
 	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
 	FILE *fp;
@@ -363,28 +366,10 @@ int write_configs_netudev(char *description, char *macaddr, char *colour)
 //	sprintf(ucolour, colour);	
 //	strupper(ucolour);
 
-	switch (*colour)
-	{
-		case 'g':	sprintf(ucolour, "GREEN");
-				strcpy(knics[_GREEN_CARD_].description, description);
-				strcpy(knics[_GREEN_CARD_].macaddr, macaddr);
-				break;
-		case 'r':	sprintf(ucolour, "RED");
-				strcpy(knics[_RED_CARD_].description, description);
-				strcpy(knics[_RED_CARD_].macaddr, macaddr);
-				break;
-		case 'o':	sprintf(ucolour, "ORANGE");
-				strcpy(knics[_ORANGE_CARD_].description, description);
-				strcpy(knics[_ORANGE_CARD_].macaddr, macaddr);
-				break;
-		case 'b':	sprintf(ucolour, "BLUE");
-				strcpy(knics[_BLUE_CARD_].description, description);
-				strcpy(knics[_BLUE_CARD_].macaddr, macaddr);
-				break;
-		default:	sprintf(ucolour, "DUMMY");
-				break;
-	}
-
+	sprintf(ucolour, ucolourcard[colour]);
+	strcpy(knics[colour].description, description);
+	strcpy(knics[colour].macaddr, macaddr);
+	
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(kv);
@@ -394,7 +379,7 @@ int write_configs_netudev(char *description, char *macaddr, char *colour)
 
 	sprintf(temp1, "%s_DEV", ucolour);
 	sprintf(temp2, "%s_MACADDR", ucolour);
-	sprintf(temp3, "%s0", colour);
+	sprintf(temp3, "%s0", lcolourcard[colour]);
 	replacekeyvalue(kv, temp1, temp3);
 	replacekeyvalue(kv, temp2, macaddr);
 	sprintf(temp1, "%s_DESCRIPTION", ucolour);
@@ -407,10 +392,10 @@ int write_configs_netudev(char *description, char *macaddr, char *colour)
 	snprintf(commandstring, STRING_SIZE, "/usr/bin/touch "UDEV_NET_CONF" >/dev/null 2>&1");
 	system(commandstring);
 	
-	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
-	system(commandstring);
+//	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
+//	system(commandstring);
 
-	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", colour);
+	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s0\" > "UDEV_NET_CONF" 2>/dev/null", lcolourcard[colour]);
 	system(commandstring);
 
 	if( (fp = fopen(UDEV_NET_CONF, "a")) == NULL )
@@ -418,7 +403,7 @@ int write_configs_netudev(char *description, char *macaddr, char *colour)
 		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
 		return 1;
 	}
-	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", macaddr, colour, description);
+	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", macaddr, lcolourcard[colour], description);
 	fclose(fp);	
 	
 	return 0;
@@ -451,14 +436,14 @@ int scan_network_cards(void)
 			}
 		}
 		fclose(fp);
-	}
-	scanned_nics_read_done = 1;
-	return count;
+		scanned_nics_read_done = count;
+	} else fprintf(flog,"Scan Networkcards does read.\n");
+	return scanned_nics_read_done;
 }
 
 
 
-int nicmenu(char *colour)
+int nicmenu(int colour)
 {
 	int rc, choise = 0, count = 0, kcount = 0, mcount = 0, i, j, nic_in_use;
 	int found_NIC_as_Card[4];
@@ -517,7 +502,7 @@ int nicmenu(char *colour)
 //		sprintf(message, "Es wurde(n) %d freie Netzwerkkarte(n) in Ihrem System gefunden.\nBitte waehlen Sie im naechsten Dialog eine davon aus.\n", count);
 //		newtWinMessage("NetcardMenu", ctr[TR_OK], message);
 
-		sprintf(message, "(TR) Bitte waehlen Sie eine der untenstehenden Netzwerkkarten fuer die Schnittstelle \"%s\" aus.\n", colour);
+		sprintf(message, "(TR) Bitte wählen Sie eine der untenstehenden Netzwerkkarten fuer die Schnittstelle \"%s\" aus.\n", ucolourcard[colour]);
 		rc = newtWinMenu("(TR) NetcardMenu2", message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
 				
 		if ( rc == 0 || rc == 1) {
@@ -533,15 +518,11 @@ int nicmenu(char *colour)
 	}
 }
 
-int remove_nic_entry(char *colour)
+int clear_card_entry(int card)
 {
 	struct keyvalue *kv = initkeyvalues();
-	char message[STRING_SIZE];
-	char temp1[STRING_SIZE], temp2[STRING_SIZE];
-	char ucolour[STRING_SIZE];
-	int rc;
+	char temp[STRING_SIZE];
 
-	
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(kv);
@@ -549,47 +530,43 @@ int remove_nic_entry(char *colour)
 		return 0;
 	}
 
-	switch (*colour)
-	{
-		case 'g':	sprintf(ucolour, "GREEN");
-				strcpy(knics[_GREEN_CARD_].description, ctr[TR_UNSET]);
-				strcpy(knics[_GREEN_CARD_].macaddr, "");
-				strcpy(knics[_GREEN_CARD_].colour, "");
-				break;
-		case 'r':	sprintf(ucolour, "RED");
-				strcpy(knics[_RED_CARD_].description, ctr[TR_UNSET]);
-				strcpy(knics[_RED_CARD_].macaddr, "");
-				strcpy(knics[_RED_CARD_].colour, "");
-				break;
-		case 'o':	sprintf(ucolour, "ORANGE");
-				strcpy(knics[_ORANGE_CARD_].description, ctr[TR_UNSET]);
-				strcpy(knics[_ORANGE_CARD_].macaddr, "");
-				strcpy(knics[_ORANGE_CARD_].colour, "");
-				break;
-		case 'b':	sprintf(ucolour, "BLUE");
-				strcpy(knics[_BLUE_CARD_].description, ctr[TR_UNSET]);
-				strcpy(knics[_BLUE_CARD_].macaddr, "");
-				strcpy(knics[_BLUE_CARD_].colour, "");
-				break;
-		default:	sprintf(ucolour, "DUMMY");
-				break;
-	}
+	strcpy(knics[card].description, ctr[TR_UNSET]);
+	strcpy(knics[card].macaddr, "");
+	strcpy(knics[card].colour, "");
+	sprintf(temp, "%s_DEV", ucolourcard[card]);
+	replacekeyvalue(kv, temp, "");
+	sprintf(temp, "%s_MACADDR", ucolourcard[card]);
+	replacekeyvalue(kv, temp, "");
+	sprintf(temp, "%s_DESCRIPTION", ucolourcard[card]);
+	replacekeyvalue(kv, temp, "");
 
-	sprintf(message, "(TR) Soll die Netzwerkkarte \"%s\" entfernt werden ?\n", colour);
+	writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
+	freekeyvalues(kv);
+
+	fprintf(flog,"Card \"%s\" cleared\n",ucolourcard[card]); // #### Debug ####
+	return 0;
+}
+
+int ask_clear_card_entry(int card)
+{
+	char message[STRING_SIZE];
+	int rc;
+
+	sprintf(message, "(TR) Soll die Zuordnung der Netzwerkkarte \"%s\" entfernt werden ?\n", ucolourcard[card]);
 	rc = newtWinChoice(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_CANCEL], message);				
 
 	if ( rc = 0 || rc == 1) {
-		sprintf(temp1, "%s_DEV", ucolour);
-		sprintf(temp2, "%s_MACADDR", ucolour);
-		replacekeyvalue(kv, temp1, "");
-		replacekeyvalue(kv, temp2, "");
-		sprintf(temp1, "%s_DESCRIPTION", ucolour);
-		replacekeyvalue(kv, temp1, "");
+		clear_card_entry(card);
+//		sprintf(temp1, "%s_DEV", ucolour);
+//		sprintf(temp2, "%s_MACADDR", ucolour);
+//		replacekeyvalue(kv, temp1, "");
+//		replacekeyvalue(kv, temp2, "");
+//		sprintf(temp1, "%s_DESCRIPTION", ucolour);
+//		replacekeyvalue(kv, temp1, "");
 
-		writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
+//		writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 	} else return 1;
 
-	freekeyvalues(kv);
 	return 0;
 }
 

@@ -25,15 +25,20 @@ extern char **ctr;
 extern int automode;
 
 #define HAS_GREEN 1
-#define HAS_ORANGE (configtype == 1 || configtype == 3 || configtype == 5 || configtype == 7)
-#define HAS_RED (configtype == 2 || configtype == 3 || configtype == 6 || configtype == 7)
-#define HAS_BLUE (configtype == 4 || configtype == 5 || configtype == 6 || configtype == 7)
-#define RED_IS_NOT_ETH (configtype == 0 || configtype == 1 || configtype == 4 || configtype == 5)
+#define HAS_RED (configtype == 1 || configtype == 2 || configtype == 3 || configtype == 4)
+#define HAS_ORANGE (configtype == 2 || configtype == 4)
+#define HAS_BLUE (configtype == 3 || configtype == 4)
+#define RED_IS_NOT_ETH (configtype == 0)
+
+//#define HAS_ORANGE (configtype == 1 || configtype == 3 || configtype == 5 || configtype == 7)
+//#define HAS_RED (configtype == 2 || configtype == 3 || configtype == 6 || configtype == 7)
+//#define HAS_BLUE (configtype == 4 || configtype == 5 || configtype == 6 || configtype == 7)
+//#define RED_IS_NOT_ETH (configtype == 0 || configtype == 1 || configtype == 4 || configtype == 5)
 
 extern struct nic nics[];
 extern struct knic knics[];
 
-char *configtypenames[] = { 
+/* char *configtypenames[] = { 
 	"GREEN (RED is modem/ISDN)", 
 	"GREEN + ORANGE (RED is modem/ISDN)", 
 	"GREEN + RED",
@@ -43,6 +48,23 @@ char *configtypenames[] = {
 	"GREEN + BLUE + RED",
 	"GREEN + ORANGE + BLUE + RED",
 	NULL };
+*/
+char *configtypenames[] = { 
+	"GREEN",
+	"GREEN + RED",
+	"GREEN + RED + ORANGE",
+	"GREEN + RED + BLUE",
+	"GREEN + RED + ORANGE + BLUE",
+	NULL };
+int configtypecards[] = {
+	1,	// "GREEN",
+	2,	// "GREEN + RED",
+	3,	// "GREEN + RED + ORANGE",
+	3, 	// "GREEN + RED + BLUE",
+	4	// "GREEN + RED + ORANGE + BLUE",
+};
+
+
 int netaddresschange;
 
 int oktoleave(char *errormessage);
@@ -58,9 +80,15 @@ int handlenetworking(void)
 {
 	int done;
 	int choice;
+	int found;
 	char errormessage[STRING_SIZE];
 	
 	netaddresschange = 0;
+
+	fprintf(flog,"Enter HandleNetworking\n"); // #### Debug ####
+
+	found =	scan_network_cards();
+	fprintf(flog,"found %d cards\n",found); // #### Debug ####
 
 	done = 0;
 	while (!done)
@@ -229,8 +257,10 @@ int configtypemenu(void)
 	struct keyvalue *kv = initkeyvalues();
 	char temp[STRING_SIZE] = "0";
 	char message[1000];
-	int choice;
+	int choise, found;
 	int rc;
+
+	fprintf(flog,"Enter ConfigMenu\n");
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -238,26 +268,37 @@ int configtypemenu(void)
 		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
 		return 0;
 	}
+
+	found = scan_network_cards();
+	fprintf(flog,"found %d Card\'s\n", found ); // #### Debug ####
 	
-	findkey(kv, "CONFIG_TYPE", temp); choice = atol(temp);
-	sprintf(message, ctr[TR_NETWORK_CONFIGURATION_TYPE_LONG], NAME);
-	rc = newtWinMenu(ctr[TR_NETWORK_CONFIGURATION_TYPE], message, 50, 5, 5,
-		6, configtypenames, &choice, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+	findkey(kv, "CONFIG_TYPE", temp); choise = atol(temp);
+
+	do
+	{
+		sprintf(message, ctr[TR_NETWORK_CONFIGURATION_TYPE_LONG], NAME);
+		rc = newtWinMenu(ctr[TR_NETWORK_CONFIGURATION_TYPE], message, 50, 5, 5,
+			6, configtypenames, &choise, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+		if ( configtypecards[choise] > found ) {
+			sprintf(message, "(TR) Nicht genuegend Netzwerkkarten fuer diese Auswahl gefunden.\n\nBenoetigt: %d\nGefunden: %d\n", configtypecards[choise], found);
+			errorbox(message);
+		}
+	}
+	while ( configtypecards[choise] > found);
 
 	if (rc == 0 || rc == 1)
 	{
-		runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
-			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
-	
-		sprintf(temp, "%d", choice);
+//	if (automode != 0) runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange", ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+
+		sprintf(temp, "%d", choise);
 		replacekeyvalue(kv, "CONFIG_TYPE", temp);
-		replacekeyvalue(kv, "ORANGE_DEV", "");
-		replacekeyvalue(kv, "BLUE_DEV", "");
-		replacekeyvalue(kv, "RED_DEV", "");
+		clear_card_entry(_RED_CARD_);
+		clear_card_entry(_ORANGE_CARD_);
+		clear_card_entry(_BLUE_CARD_);
+
 		writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 		netaddresschange = 1;
 	}
-	
 	freekeyvalues(kv);
 	
 	return 0;
@@ -275,9 +316,9 @@ int drivermenu(void)
 //	struct knic *pknics = knics;
 //	pknics = knics;
 	int configtype;
-	int rc, kcount = 0, found, neednics; //i = 0, count = 0,
+	int rc, kcount = 0, neednics; //i = 0, count = 0,
 	
-	fprintf(flog,"enter drivermenu\n"); // #### Debug ####
+	fprintf(flog,"Enter driverenu\n"); // #### Debug ####
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -298,8 +339,6 @@ int drivermenu(void)
 
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 
-	found = scan_network_cards();
-	fprintf(flog,"found %d Card\'s\n", found ); // #### Debug ####
 	kcount = 0;	// counter to find knowing nics.
 	neednics = 0;	// counter to use needing nics.
 	if (HAS_GREEN) {
@@ -412,6 +451,11 @@ int cardassigned(char *colour)
 		return 1;
 }
 
+int set_menu_entry_for(int *nr, int *card)
+{
+
+}
+
 int changedrivers(void)
 {
 	struct keyvalue *kv = initkeyvalues();
@@ -437,19 +481,19 @@ int changedrivers(void)
 	if (configtype == 0)
 		{ green = 1; }
 	else if (configtype == 1)
-		{ green = 1; orange = 1; }
-	else if (configtype == 2)
 		{ green = 1; red = 1; }
-	else if (configtype == 3)
+	else if (configtype == 2)
 		{ green = 1; red = 1; orange = 1; }
-	else if (configtype == 4)
-		{ green = 1; blue = 1; }
-	else if (configtype == 5)
-		{ green = 1; blue = 1; orange = 1; }
-	else if (configtype == 6)
+	else if (configtype == 3)
 		{ green = 1; red = 1; blue = 1; }
-	else if (configtype == 7)
-		{ green = 1; red = 1; blue = 1; orange = 1; }
+	else if (configtype == 4)
+		{ green = 1; red=1; orange=1; blue = 1; }
+//	else if (configtype == 5)
+//		{ green = 1; blue = 1; orange = 1; }
+//	else if (configtype == 6)
+//		{ green = 1; red = 1; blue = 1; }
+//	else if (configtype == 7)
+//		{ green = 1; red = 1; blue = 1; orange = 1; }
 
 	fprintf(flog,"found: g=%d r=%d o=%d b=%d\n",green, red, orange, blue); // #### Debug ####
 
@@ -462,7 +506,6 @@ int changedrivers(void)
 			strcpy(MenuInhalt[count], "GREEN");
 			pMenuInhalt[count] = MenuInhalt[count];
 			NicEntry[_GREEN_CARD_] = count;
-//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
 			sprintf(temp, "GREEN:  %s\n", knics[_GREEN_CARD_].description);
 			strcat(message, temp);
 			if ( strlen(knics[_GREEN_CARD_].macaddr) ) {
@@ -520,15 +563,15 @@ int changedrivers(void)
 		if ( rc == 0 || rc == 1) {
 //			write_configs_netudev(pnics[choise].description, pnics[choise].macaddr, colour);
 			// insert nic to colourcard
-			if ((green) && ( choise == NicEntry[0])) nicmenu("green");
-			if ((red) && ( choise == NicEntry[1])) nicmenu("red");
-			if ((orange) && ( choise == NicEntry[2])) nicmenu("orange");
-			if ((blue) && ( choise == NicEntry[3])) nicmenu("blue");
+			if ((green) && ( choise == NicEntry[0])) nicmenu(_GREEN_CARD_);
+			if ((red) && ( choise == NicEntry[1])) nicmenu(_RED_CARD_);
+			if ((orange) && ( choise == NicEntry[2])) nicmenu(_ORANGE_CARD_);
+			if ((blue) && ( choise == NicEntry[3])) nicmenu(_BLUE_CARD_);
 		} else if (rc == 2) {
-			if ((green) && ( choise == NicEntry[0])) remove_nic_entry("green");
-			if ((red) && ( choise == NicEntry[1])) remove_nic_entry("red");
-			if ((orange) && ( choise == NicEntry[2])) remove_nic_entry("orange");
-			if ((blue) && ( choise == NicEntry[3])) remove_nic_entry("blue");
+			if ((green) && ( choise == NicEntry[0])) ask_clear_card_entry(_GREEN_CARD_);
+			if ((red) && ( choise == NicEntry[1])) ask_clear_card_entry(_RED_CARD_);
+			if ((orange) && ( choise == NicEntry[2])) ask_clear_card_entry(_ORANGE_CARD_);
+			if ((blue) && ( choise == NicEntry[3])) ask_clear_card_entry(_BLUE_CARD_);
 		} 
 //		else {
 //			errorbox("Sie haben keine Netzwerkkarte ausgewaehlt.\n");

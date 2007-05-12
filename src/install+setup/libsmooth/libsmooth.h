@@ -93,8 +93,9 @@ int setnetaddress(struct keyvalue *kv, char *colour);
 void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
 int scan_network_cards(void);
-int nicmenu(char *colour);
-int remove_nic_entry(char *colour);
+int nicmenu(int colour);
+int clear_card_entry(int cards);
+int ask_clear_card_entry(int cards);
 int manualdriver(char *driver, char *driveroptions);
 	  
 /* data.c */
