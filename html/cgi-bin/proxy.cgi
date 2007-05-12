@@ -166,8 +166,8 @@ $proxysettings{'TRANSPARENT_BLUE'} = 'off';
 $proxysettings{'PROXY_PORT'} = '800';
 $proxysettings{'VISIBLE_HOSTNAME'} = '';
 $proxysettings{'ADMIN_MAIL_ADDRESS'} = '';
-$proxysettings{'ERR_LANGUAGE'} = 'English';
-$proxysettings{'ERR_DESIGN'} = 'IPCop';
+$proxysettings{'ERR_LANGUAGE'} = 'German';
+$proxysettings{'ERR_DESIGN'} = 'ipfire';
 $proxysettings{'SUPPRESS_VERSION'} = 'off';
 $proxysettings{'FORWARD_VIA'} = 'off';
 $proxysettings{'FORWARD_IPADDRESS'} = 'off';
@@ -882,6 +882,7 @@ if ($netsettings{'BLUE_DEV'}) {
 print <<END
 	<td class='base'>$Lang::tr{'advproxy error language'}:</td>
 	<td class='base'>
+	$errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}
 	<select name='ERR_LANGUAGE'>
 END
 ;
@@ -900,7 +901,7 @@ print <<END
 	<td><input type='checkbox' name='SUPPRESS_VERSION' $checked{'SUPPRESS_VERSION'}{'on'} /></td>
 	<td class='base'>$Lang::tr{'advproxy error design'}:</td>
 	<td class='base'><select name='ERR_DESIGN'>
-		<option value='ipcop' $selected{'ERR_DESIGN'}{'ipcop'}>IPCop</option>
+		<option value='ipfire' $selected{'ERR_DESIGN'}{'ipfire'}>IPFire</option>
 		<option value='squid' $selected{'ERR_DESIGN'}{'squid'}>$Lang::tr{'advproxy standard'}</option>
 	</select></td>
 </tr>
@@ -2863,9 +2864,9 @@ cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DI
 END
 	;
 
-	if (($proxysettings{'ERR_DESIGN'} eq 'ipcop') && ($proxysettings{'VISIBLE_HOSTNAME'} eq ''))
+	if (($proxysettings{'ERR_DESIGN'} eq 'ipfire' ))
 	{
-		print FILE "error_directory $errordir.ipcop/$proxysettings{'ERR_LANGUAGE'}\n\n";
+		print FILE "error_directory $errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}\n\n";
 	} else {
 		print FILE "error_directory $errordir/$proxysettings{'ERR_LANGUAGE'}\n\n";
 	}
@@ -3150,7 +3151,7 @@ acl IPCop_no_access_mac arp "$acl_src_noaccess_mac"
 END
 		;
 		print FILE "deny_info ";
-		if ((($proxysettings{'ERR_DESIGN'} eq 'ipcop') && (-e "$errordir.ipcop/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")) ||
+		if ((($proxysettings{'ERR_DESIGN'} eq 'ipfire') && (-e "$errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")) ||
 		    (($proxysettings{'ERR_DESIGN'} eq 'squid') && (-e "$errordir/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")))
 		{
 			print FILE "ERR_ACCESS_DISABLED";
@@ -3159,7 +3160,7 @@ END
 		}
 		print FILE " IPCop_no_access_ips\n";
 		print FILE "deny_info ";
-		if ((($proxysettings{'ERR_DESIGN'} eq 'ipcop') && (-e "$errordir.ipcop/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")) ||
+		if ((($proxysettings{'ERR_DESIGN'} eq 'ipfire') && (-e "$errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")) ||
 		    (($proxysettings{'ERR_DESIGN'} eq 'squid') && (-e "$errordir/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")))
 		{
 			print FILE "ERR_ACCESS_DISABLED";

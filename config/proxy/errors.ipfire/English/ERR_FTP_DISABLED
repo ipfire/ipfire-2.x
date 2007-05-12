@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML><HEAD><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>ERROR: The requested URL could not be retrieved</TITLE>
+<STYLE type="text/css"><!--BODY{background-color:white;margin-left:0px;margin-right:0px;margin-top:0px;margin-bottom:0px;margin-width:0px;marhin-height:0px;font-family:verdana,sans-serif}PRE{font-family:sans-serif}--></STYLE>
+</HEAD><BODY>
+<HR noshade size="1px">
+<H2>Sorry ... The requested URL could not be retrieved</H2>
+<HR noshade size="1px">
+<TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0"><TR BGCOLOR="#cc0033">
+<TD><IMG SRC="http://%h:81/images/IPFire.png" ALIGN="left" ALT="IPFire"></TD>
+<TD>
+<!-- Disable footer: %s -->
+<BLOCKQUOTE>
+<P>
+<BR/>
+While trying to retrieve the URL:
+<A HREF="%U">%U</A>
+<P>
+The following error was encountered:
+<UL>
+<LI>
+<STRONG>
+FTP is Disabled
+</STRONG>
+</UL>
+
+<P>
+This cache does not support FTP.
+<P>Your cache administrator is <A HREF="mailto:%w">%w</A>. 
+<BR clear="all">
+<P></P>
+</BLOCKQUOTE>
+</TD></TR></TABLE>
+<HR noshade size="1px">
+<ADDRESS>
+Generated %T by %h (%s)
+</ADDRESS>
+<HR noshade size="1px">
+</BODY></HTML>
