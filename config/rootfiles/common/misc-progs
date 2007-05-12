@@ -10,8 +10,7 @@ usr/local/bin/openvpnctrl
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
-usr/local/bin/restartapplejuice
-usr/local/bin/restartntpd
+#usr/local/bin/restartapplejuice
 usr/local/bin/restartsnort
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd
@@ -24,5 +23,5 @@ usr/local/bin/setportfw
 usr/local/bin/setxtaccess
 usr/local/bin/smartctrl
 usr/local/bin/squidctrl
-usr/local/bin/timecheckctrl
+usr/local/bin/timectrl
 usr/local/bin/upnpctrl

@@ -6,9 +6,9 @@ COMPILE=$(CC) $(CFLAGS)
 PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	squidctrl restartssh ipfirereboot setaliases \
-	ipsecctrl restartntpd dhcpctrl restartsnort \
+	ipsecctrl timectrl dhcpctrl restartsnort \
 	restartapplejuice rebuildhosts \
-	restartsyslogd logwatch openvpnctrl timecheckctrl \
+	restartsyslogd logwatch openvpnctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
 	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl
@@ -63,6 +63,9 @@ smartctrl: smartctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 clamavctrl: clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+	
+timectrl: timectrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ timectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@
@@ -105,9 +108,6 @@ restartwireless: restartwireless.c setuid.o ../install+setup/libsmooth/varval.o
 
 ipsecctrl: ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-timecheckctrl: timecheckctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ timecheckctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 getipstat: getipstat.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ getipstat.c setuid.o ../install+setup/libsmooth/varval.o -o $@

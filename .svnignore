@@ -1,0 +1,12 @@
+## svn propset svn:ignore -F .svnignore .
+*.iso
+*.md5
+*.tgz
+.config
+.svnignore
+build
+cache
+ccache
+packages
+svn_status
+log
