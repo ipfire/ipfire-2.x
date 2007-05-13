@@ -312,7 +312,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR;
 	} 
-	if (!(&General::validport($proxysettings{'PROXY_PORT'})))
+	if (!(&General::validproxyport($proxysettings{'PROXY_PORT'})))
 	{
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
 		goto ERROR;

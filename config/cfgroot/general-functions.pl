@@ -203,6 +203,21 @@ sub validport
 	return 0;
 }
 
+sub validproxyport
+{
+	$_ = $_[0];
+
+	if (!/^\d+$/) {
+		return 0; }
+	if (/^0./) {
+		return 0; }
+	if ($_ == 53 || $_ == 222 || $_ == 444 || $_ == 81 ) {
+		return 0; }
+	elsif ($_ >= 1 && $_ <= 65535) {
+		return 1; }
+	return 0;
+}
+
 sub validmac
 {
 	my $checkmac = $_[0];
