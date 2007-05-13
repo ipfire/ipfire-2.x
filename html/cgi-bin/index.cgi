@@ -225,7 +225,7 @@ END
 			} else {
 			    foreach my $line (@status) {
 				if ($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) {
-				    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+				    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsinactive'}</font></b></td></tr></table>";
 				}
 			   }
 			}

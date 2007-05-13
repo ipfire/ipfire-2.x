@@ -2529,7 +2529,7 @@ END
 	}
 	# move to blueif really down
 	if ($confighash{$key}[0] eq 'off' && $active =~ /${Header::colourred}/ ) {
-	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsinactive'}</font></b></td></tr></table>";
 	}
 	print <<END
 	<td align='center'>$active</td>
