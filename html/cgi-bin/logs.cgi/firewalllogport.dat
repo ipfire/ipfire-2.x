@@ -324,7 +324,7 @@ else
         @tabjc2 = sort { $a <=> $b } keys (%tabjc);
 }
 
-my $colour=1;
+my $color=10;
 
 
 
@@ -374,13 +374,11 @@ else{
 
 my @data = (\@ports,\@numb);
 use GD::Graph::colour qw( :files );
-my %colours = ();
+
+my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-my %colours = ();
-my %mainsettings = ();
-&General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colours.txt", \%colours);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
         my $mygraph = GD::Graph::pie->new(500, 350);
@@ -391,7 +389,7 @@ if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
              ) or warn $mygraph->error;
 
         $mygraph->set_value_font(GD::gdMediumBoldFont);
-        $mygraph->set( dclrs => [ "$colours{'colour1'}" , "$colours{'colour2'}" , "$colours{'colour3'}" , "$colours{'colour4'}" , "$colours{'colour5'}" , "$colours{'colour6'}" , "$colours{'colour7'}" , "$colours{'colour8'}" , "$colours{'colour9'}" , "$colours{'colour10'}" ] );
+        $mygraph->set( dclrs => [ "$color{'color1'}" , "$color{'color2'}" , "$color{'color3'}" , "$color{'color4'}" , "$color{'color5'}" , "$color{'color6'}" , "$color{'color7'}" , "$color{'color8'}" , "$color{'color9'}" , "$color{'color10'}" ] );
         my $myimage = $mygraph->plot(\@data) or die $mygraph->error;
 
         my @filenames = glob("/srv/web/ipfire/html/graphs/fwlog-port*.png");
@@ -429,18 +427,18 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  if ( ($colour % 10) == 1 ){print "<TR BGCOLOR='$colours{'colour1'}'>\n";}
-  if ( ($colour % 10) == 2 ){print "<TR BGCOLOR='$colours{'colour2'}'>\n";}
-  if ( ($colour % 10) == 3 ){print "<TR BGCOLOR='$colours{'colour3'}'>\n";}
-  if ( ($colour % 10) == 4 ){print "<TR BGCOLOR='$colours{'colour4'}'>\n";}
-  if ( ($colour % 10) == 5 ){print "<TR BGCOLOR='$colours{'colour5'}'>\n";}
-  if ( ($colour % 10) == 6 ){print "<TR BGCOLOR='$colours{'colour6'}'>\n";}
-  if ( ($colour % 10) == 7 ){print "<TR BGCOLOR='$colours{'colour7'}'>\n";}
-  if ( ($colour % 10) == 8 ){print "<TR BGCOLOR='$colours{'colour8'}'>\n";}
-  if ( ($colour % 10) == 9 ){print "<TR BGCOLOR='$colours{'colour9'}'>\n";}
-  if ( ($colour % 10) == 0 ){print "<TR BGCOLOR='$colours{'colour10'}'>\n";}
+  if ( ($color % 10) == 1 ){print "<TR BGCOLOR='$color{'color1'}'>\n";}
+  if ( ($color % 10) == 2 ){print "<TR BGCOLOR='$color{'color2'}'>\n";}
+  if ( ($color % 10) == 3 ){print "<TR BGCOLOR='$color{'color3'}'>\n";}
+  if ( ($color % 10) == 4 ){print "<TR BGCOLOR='$color{'color4'}'>\n";}
+  if ( ($color % 10) == 5 ){print "<TR BGCOLOR='$color{'color5'}'>\n";}
+  if ( ($color % 10) == 6 ){print "<TR BGCOLOR='$color{'color6'}'>\n";}
+  if ( ($color % 10) == 7 ){print "<TR BGCOLOR='$color{'color7'}'>\n";}
+  if ( ($color % 10) == 8 ){print "<TR BGCOLOR='$color{'color8'}'>\n";}
+  if ( ($color % 10) == 9 ){print "<TR BGCOLOR='$color{'color9'}'>\n";}
+  if ( ($color % 10) == 0 ){print "<TR BGCOLOR='$color{'color10'}'>\n";}
 
-  $colour++;
+  $color++;
   print "<TD ALIGN='CENTER'><form method='post' action='showrequestfromport.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='port' value='$key[$s]'> <input type='submit' value='details'></form></TD>";
   print "<TD ALIGN='CENTER'>$key[$s]</TD>";
   print "<TD ALIGN='CENTER'>$value[$s]</TD>";
@@ -450,16 +448,16 @@ for($s=0;$s<$lines;$s++)
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-if ( ($colour % 10) == 1 ){print "<TR BGCOLOR='$colours{'colour1'}'>\n";}
-if ( ($colour % 10) == 2 ){print "<TR BGCOLOR='$colours{'colour2'}'>\n";}
-if ( ($colour % 10) == 3 ){print "<TR BGCOLOR='$colours{'colour3'}'>\n";}
-if ( ($colour % 10) == 4 ){print "<TR BGCOLOR='$colours{'colour4'}'>\n";}
-if ( ($colour % 10) == 5 ){print "<TR BGCOLOR='$colours{'colour5'}'>\n";}
-if ( ($colour % 10) == 6 ){print "<TR BGCOLOR='$colours{'colour6'}'>\n";}
-if ( ($colour % 10) == 7 ){print "<TR BGCOLOR='$colours{'colour7'}'>\n";}
-if ( ($colour % 10) == 8 ){print "<TR BGCOLOR='$colours{'colour8'}'>\n";}
-if ( ($colour % 10) == 9 ){print "<TR BGCOLOR='$colours{'colour9'}'>\n";}
-if ( ($colour % 10) == 0 ){print "<TR BGCOLOR='$colours{'colour10'}'>\n";}
+if ( ($color % 10) == 1 ){print "<TR BGCOLOR='$color{'color1'}'>\n";}
+if ( ($color % 10) == 2 ){print "<TR BGCOLOR='$color{'color2'}'>\n";}
+if ( ($color % 10) == 3 ){print "<TR BGCOLOR='$color{'color3'}'>\n";}
+if ( ($color % 10) == 4 ){print "<TR BGCOLOR='$color{'color4'}'>\n";}
+if ( ($color % 10) == 5 ){print "<TR BGCOLOR='$color{'color5'}'>\n";}
+if ( ($color % 10) == 6 ){print "<TR BGCOLOR='$color{'color6'}'>\n";}
+if ( ($color % 10) == 7 ){print "<TR BGCOLOR='$color{'color7'}'>\n";}
+if ( ($color % 10) == 8 ){print "<TR BGCOLOR='$color{'color8'}'>\n";}
+if ( ($color % 10) == 9 ){print "<TR BGCOLOR='$color{'color9'}'>\n";}
+if ( ($color % 10) == 0 ){print "<TR BGCOLOR='$color{'color10'}'>\n";}
 
 my $dif;
 $dif = $linesjc - $total;
