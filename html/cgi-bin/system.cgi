@@ -25,6 +25,11 @@ undef (@dummy);
 my %netsettings=();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %cgiparams=();
 # Maps a nice printable name to the changing part of the pid file, which
 # is also the name of the program
@@ -101,20 +106,14 @@ print <<END
 END
 ;
 
-my $lines = 0;
 my $key = '';
 foreach $key (sort keys %servicenames)
 {
-        if ($lines % 2) {
-                print "<tr bgcolor='${Header::table1colour}'>\n"; }
-        else {
-                print "<tr bgcolor='${Header::table2colour}'>\n"; }
-        print "<td align='left'>$key</td>\n";
+        print "<tr>\n<td align='left'>$key</td>\n";
         my $shortname = $servicenames{$key};
         my $status = &isrunning($shortname);
         print "$status\n";
         print "</tr>\n";
-        $lines++;
 }
 
 

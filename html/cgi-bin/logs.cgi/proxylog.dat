@@ -32,6 +32,11 @@ my %checked=();
 my @log=();
 my $errormessage = '';
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
 	'Sep', 'Oct', 'Nov', 'Dec' );
 my @longmonths = ( $Lang::tr{'january'}, $Lang::tr{'february'}, $Lang::tr{'march'},
@@ -444,9 +449,9 @@ my $ll = 0;
 foreach $_ (@log)
 {
 	if ($ll % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>\n"; }
+		print "<tr bgcolor='$color{'color20'}'>\n"; }
 	else {
-		print "<tr bgcolor='${Header::table2colour}'>\n"; }
+		print "<tr bgcolor='$color{'color20'}'>\n"; }
 	my ($datetime,$ip,$so,$url) = split;
         my ($SECdt, $MINdt, $HOURdt, $DAYdt, $MONTHdt, $YEARdt) = localtime($datetime);
 	$SECdt = sprintf ("%.02d",$SECdt);

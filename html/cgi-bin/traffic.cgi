@@ -18,6 +18,11 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require '/var/ipfire/net-traffic/net-traffic-lib.pl';
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %cgiparams; 
 my %pppsettings;
 my %netsettings;
@@ -225,9 +230,9 @@ foreach (@allDays) {
 	$total_red_out += $allDaysBytes{$_}{${Traffic::red_out}};
 				
 	if ($lines % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>"; }
+		print "<tr bgcolor='$color{'color20'}'>"; }
 	else {
-		print "<tr bgcolor='${Header::table2colour}'>"; }
+		print "<tr bgcolor='$color{'color22'}'>"; }
 				
 	printf "<td align='center' nowrap='nowrap'>%s</td>\n", $allDaysBytes{$_}{'Day'};
 	printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::green_in}}/1048576);
@@ -259,8 +264,8 @@ $total_orange_out=sprintf("%.2f", ($total_orange_out/1048576));
 $total_red_in=sprintf("%.2f", ($total_red_in/1048576));
 $total_red_out=sprintf("%.2f", ($total_red_out/1048576));
 	
-if ($lines % 2) {print "<tr bgcolor='${Header::table1colour}'>"; }
-else {print "<tr bgcolor='${Header::table2colour}'>"; }
+if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>"; }
+else {print "<tr bgcolor='$color{'color22'}'>"; }
   
 print <<END;
 	<td align='center' class='boldbase' height='20' nowrap='nowrap'><b>$Lang::tr{'trafficsum'}</b></td>

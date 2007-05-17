@@ -30,7 +30,12 @@ my @p2pline = ();
 
 my $configfile = "/var/ipfire/outgoing/rules";
 my $p2pfile = "/var/ipfire/outgoing/p2protocols";
-my $servicefile = "/var/ipfire/outgoing/defaultservices"
+my $servicefile = "/var/ipfire/outgoing/defaultservices";
+
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
@@ -213,13 +218,13 @@ END
 		print <<END
 		<hr />
 		<table border='0' width='100%' cellspacing='0'>
-		<tr bgcolor='white'>
-		    <td width='14%'><b>Protokoll</b>
-		    <td width='14%'><b>Netzwerk</b>
-		    <td width='14%'><b>Ziel</b>
-		    <td width='14%'><b>Anmerkung</b>
-		    <td width='14%'><b>Politik</b>
-		    <td width='30%'><b>Aktionen</b>
+		<tr bgcolor='$color{'color22'}'>
+		    <td width='14%' align='center'><b>Protokoll</b>
+		    <td width='14%' align='center'><b>Netzwerk</b>
+		    <td width='14%' align='center'><b>Ziel</b>
+		    <td width='14%' align='center'><b>Anmerkung</b>
+		    <td width='14%' align='center'><b>Politik</b>
+		    <td width='30%' align='center'><b>Aktionen</b>
 END
 ;
 		foreach $configentry (sort @configs)
@@ -240,7 +245,7 @@ END
 				if ($outfwsettings{'STATE'} eq 'ALLOW'){ $outfwsettings{'DISPLAY_STATE'} = "<img src='/images/stock_ok.png' alt='ALLOW'>"; }
 				if ((($outfwsettings{'POLICY'} eq 'MODE1') && ($outfwsettings{'STATE'} eq 'ALLOW')) || (($outfwsettings{'POLICY'} eq 'MODE2') && ($outfwsettings{'STATE'} eq 'DENY'))){
 			  		print <<END
-					<tr bgcolor='#F0F0F0'>
+					<tr bgcolor='$color{'color20'}'>
 					    <td align='center'>$outfwsettings{'PROT'}
 					    <td align='center'>$outfwsettings{'SNET'}
 					    <td align='center'>$outfwsettings{'DISPLAY_DIP'}:$outfwsettings{'DISPLAY_DPORT'}
@@ -310,7 +315,7 @@ if ($outfwsettings{'POLICY'} eq 'MODE2'){
 	&Header::openbox('100%', 'center', 'P2P-Block');
 	print <<END
 	<table width='40%'>
-		<tr bgcolor='#FFFFFF'><td width='66%'><b>Protokoll</b>
+		<tr bgcolor='$color{'color20'}'><td width='66%'><b>Protokoll</b>
 		    <td width='33%'><b>Status</b>
 END
 ;
@@ -322,14 +327,8 @@ END
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 END
 ;
-		if ($id % 2) {
-			print "\t\t\t<tr bgcolor='#F0F0F0'>\n"; 
-		}
-		else {
-			print "\t\t\t<tr bgcolor='#FAFAFA'>\n";
-		}
-		$id++;
-		print <<END
+			print "\t\t\t<tr bgcolor='$color{'color22'}'>\n"; 
+  		print <<END
 			<td width='66%' align='center'>$p2pline[0]:	
 			<td width='33%' align='center'><input type='hidden' name='P2PROT' value=$p2pline[1]>
 END
@@ -455,7 +454,7 @@ if ($outfwsettings{'POLICY'} eq 'MODE1')
 	my @defservices = <FILE>;
 	close FILE;
 
-print "<table width='100%'><tr bgcolor='#F0F0F0'><td><b>$Lang::tr{'service'}</b></td><td><b>$Lang::tr{'description'}</b></td><td><b>$Lang::tr{'port'}</b></td><td><b>$Lang::tr{'protocol'}</b></td><td><b>$Lang::tr{'source net'}</b></td><td></td></tr>";
+print "<table width='100%'><tr bgcolor='$color{'color20'}'><td><b>$Lang::tr{'service'}</b></td><td><b>$Lang::tr{'description'}</b></td><td><b>$Lang::tr{'port'}</b></td><td><b>$Lang::tr{'protocol'}</b></td><td><b>$Lang::tr{'source net'}</b></td><td></td></tr>";
 foreach my $serviceline(@defservices)
 	{
 	my @service = split(/,/,$serviceline);

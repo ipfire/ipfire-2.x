@@ -21,6 +21,11 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my $dbdir = "${General::swroot}/urlfilter/blacklists";
 my $logdir = "/var/log/squidGuard";
 
@@ -331,7 +336,7 @@ if ($lines)
 			if (@loginfo[2] =~ /emergency/) { $attr1 .= "<b><font color='$Header::colourerr'>"; $attr2 .= "</font></b>"; }
 			print "<tr>\n";
 		} else {
-			if ($lines % 2) { print "<tr bgcolor='$Header::table1colour'>\n"; } else { print "<tr bgcolor='$Header::table2colour'>\n"; } 
+			if ($lines % 2) { print "<tr bgcolor='$color{'color20'}'>\n"; } else { print "<tr bgcolor='$color{'color22'}'>\n"; } 
 		}
 		if ($cgiparams{'LOGTYPE'} eq 'squidGuard') {
 			print "<td nowrap>$time &nbsp; $pid &nbsp; $attr1@loginfo$attr2</td>\n";

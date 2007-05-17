@@ -37,6 +37,11 @@ my @wol_devices = ();
 our $datafile = "/var/ipfire/wakeonlan/clients.conf";
 &ReadConfig;
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %netsettings = ();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 my %cgiparams = ();
@@ -298,11 +303,11 @@ for $i ( 0 .. $#wol_devices )
   }
   elsif ( $i % 2) 
   {
-    print "<tr bgcolor='$Header::table2colour'>";
+    print "<tr bgcolor='$color{'color22'}'>";
   }
   else 
   {
-    print "<tr bgcolor='$Header::table1colour'>";
+    print "<tr bgcolor='$color{'color20'}'>";
   }
 
   print <<END

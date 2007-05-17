@@ -29,6 +29,11 @@ my $errormessage = '';
 my $maxprofiles = 5;
 my $kernel=`/bin/uname -r | /usr/bin/tr -d '\012'`;
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 &Header::showhttpheaders();
 
 $pppsettings{'ACTION'} = '';
@@ -647,7 +652,7 @@ print <<END
  <tr>
   <td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'reconnection'}:</b></td>
+	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'reconnection'}:</b></td>
 </tr>
 <tr>
 	<td colspan='4' width='100%'><input type='radio' name='RECONNECTION' value='manual' $checked{'RECONNECTION'}{'manual'}>$Lang::tr{'manual'}</td>
@@ -696,7 +701,7 @@ if ($pppsettings{'TYPE'} eq 'isdn') {
 	print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'isdn settings'}</b></td>
+	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'isdn settings'}</b></td>
 </tr>
 <tr>
 	<td colspan='3' width='75%'>$Lang::tr{'use ibod'}</td>
@@ -715,7 +720,7 @@ if ($pppsettings{'TYPE'} eq 'pptp')
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'pptp settings'}</b></td>
+	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'pptp settings'}</b></td>
 </tr>
 <tr>
 	<td width='25%'>$Lang::tr{'phonebook entry'}</td>
@@ -740,7 +745,7 @@ if ($pppsettings{'TYPE'} eq 'pppoe')
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'pppoe settings'}</b></td>
+	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'pppoe settings'}</b></td>
 </tr>
 <tr>
 	<td width='25%'><input type='radio' name='METHOD' value='PPPOE_PLUGIN' $checked{'METHOD'}{'PPPOE_PLUGIN'} />PPPoE plugin</td>
@@ -771,7 +776,7 @@ if ($pppsettings{'TYPE'} eq 'fritzdsl')
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td colspan='4' width='100%' bgcolor='${Header::table1colour}'><b>$Lang::tr{'adsl settings'}:</b></td>
+	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'adsl settings'}:</b></td>
 </tr>
 <tr>
 	<td colspan='2' width='50%'>$Lang::tr{'vpi number'}</td>
@@ -820,7 +825,7 @@ END
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td bgcolor='${Header::table1colour}' colspan='4' width='100%'><b>$Lang::tr{'authentication'}</b></td>
+	<td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>$Lang::tr{'authentication'}</b></td>
 </tr>
 <tr>
 	<td width='25%'>$Lang::tr{'username'}</td>
@@ -851,7 +856,7 @@ print <<END
 </tr>
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
-	<td bgcolor='${Header::table1colour}' colspan='4' width='100%'><b>DNS:</b></td>
+	<td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>DNS:</b></td>
 </tr>
 <tr>
 	<td colspan='4' width='100%'><input type='radio' name='DNS' value='Automatic' $checked{'DNS'}{'Automatic'} />$Lang::tr{'automatic'}</td>

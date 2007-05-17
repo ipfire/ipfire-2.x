@@ -37,6 +37,11 @@ $pppsettings{'PROFILENAME'} = 'None';
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/ddns/settings", \%ddnssettings);
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my $connstate = &Header::connectionstatus();
 if ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
 	$refresh = "<meta http-equiv='refresh' content='30;'>";
@@ -98,9 +103,9 @@ print <<END;
 
 <!-- Table of networks -->
 <table border='0' width=80%>
-  <tr>	<th bgcolor='lightgrey'>$Lang::tr{'network'}
-	<th bgcolor='lightgrey'>IP
-	<th bgcolor='lightgrey'>$Lang::tr{'status'}
+  <tr>	<th bgcolor='$color{'color20'}'>$Lang::tr{'network'}
+	<th bgcolor='$color{'color20'}'>IP
+	<th bgcolor='$color{'color20'}'>$Lang::tr{'status'}
   <tr>	<td bgcolor='$Header::colourred' width='25%'><a href="/cgi-bin/pppsetup.cgi"><font size='2' color='white'><b>$Lang::tr{'internet'}:</b></font></a><br>
 	<td width='30%'>$ipaddr 
 	<td width='45%'>$connstate
@@ -225,7 +230,7 @@ END
 			} else {
 			    foreach my $line (@status) {
 				if ($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) {
-				    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsinactive'}</font></b></td></tr></table>";
+				    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
 				}
 			   }
 			}

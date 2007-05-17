@@ -20,6 +20,11 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %snortsettings=();
 my %checked=();
 my %selected=();
@@ -326,11 +331,11 @@ print <<END
 }
 .row1color {
 	border: ridge;
-	background-color: $table1colour;
+	background-color: $color{'color22'};
 }
 .row2color {
 	border: ridge;
-	background-color: $table2colour;
+	background-color: $color{'color20'};
 }
 .rowselected {
 	border: double #FF0000;

@@ -102,6 +102,11 @@ $qossettings{'TOS'} = '';
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 &Header::getcgihash(\%qossettings);
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 &Header::openpage('QoS', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -1097,24 +1102,24 @@ sub showclasses {
 				&Header::openbox('100%', 'center', "Klasse: $classline[1]");
 	  			print <<END
 				<table border='0' width='100%' cellspacing='0'>
-				<tr><td bgcolor='lightgrey' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
-				    <td bgcolor='lightgrey' width='10%' align='center'><b>Klasse</b>
-				    <td bgcolor='lightgrey' width='10%' align='center'>Prioritaet
-				    <td bgcolor='lightgrey' width='10%' align='center'>Garantierte Bandbreite
-				    <td bgcolor='lightgrey' width='10%' align='center'>Maximale Bandbreite
-				    <td bgcolor='lightgrey' width='10%' align='center'>Burst
-				    <td bgcolor='lightgrey' width='10%' align='center'>Ceil Burst
-				    <td bgcolor='lightgrey' width='10%' align='center'>TOS
-				    <td bgcolor='lightgrey' width='20%' align='center'>Aktionen
-				<tr><td align='center' bgcolor='#EAEAEA'>$classline[0]</td>
-				    <td align='center' bgcolor='#EAEAEA'>$classline[1]</td>
-				    <td align='center' bgcolor='#EAEAEA'>$classline[2]</td>
-				    <td align='center' bgcolor='#EAEAEA'>$classline[3]</td>
-				    <td align='center' bgcolor='#EAEAEA'>$classline[4]</td>
-				    <td align='center' bgcolor='#EAEAEA'>$classline[5]</td>
-				    <td align='center' bgcolor='#EAEAEA'>$classline[6]</td>
-				    <td align='center' bgcolor='#EAEAEA'>$classline[7]</td>
-				    <td align='right'  bgcolor='#EAEAEA'>
+				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'><b>Klasse</b>
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Prioritaet
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Garantierte Bandbreite
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Maximale Bandbreite
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Burst
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Ceil Burst
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>TOS
+				    <td bgcolor='$color{'color20'}' width='20%' align='center'>Aktionen
+				<tr><td align='center' bgcolor='$color{'color22'}'>$classline[0]</td>
+				    <td align='center' bgcolor='$color{'color22'}'>$classline[1]</td>
+				    <td align='center' bgcolor='$color{'color22'}'>$classline[2]</td>
+				    <td align='center' bgcolor='$color{'color22'}'>$classline[3]</td>
+				    <td align='center' bgcolor='$color{'color22'}'>$classline[4]</td>
+				    <td align='center' bgcolor='$color{'color22'}'>$classline[5]</td>
+				    <td align='center' bgcolor='$color{'color22'}'>$classline[6]</td>
+				    <td align='center' bgcolor='$color{'color22'}'>$classline[7]</td>
+				    <td align='right'  bgcolor='$color{'color22'}'>
 					<table border='0'><tr>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]'>

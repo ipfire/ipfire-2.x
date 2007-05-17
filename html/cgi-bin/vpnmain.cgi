@@ -33,6 +33,11 @@ my %selected=();
 my $warnmessage = '';
 my $errormessage = '';
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'EDIT_ADVANCED'} = 'off';
@@ -2506,9 +2511,9 @@ END
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 	if ($id % 2) {
-	    print "<tr bgcolor='${Header::table1colour}'>\n";
+	    print "<tr bgcolor='$color{'color20'}'>\n";
 	} else {
-	    print "<tr bgcolor='${Header::table2colour}'>\n";
+	    print "<tr bgcolor='$color{'color22'}'>\n";
 	}
 	print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
 	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
@@ -2529,7 +2534,7 @@ END
 	}
 	# move to blueif really down
 	if ($confighash{$key}[0] eq 'off' && $active =~ /${Header::colourred}/ ) {
-	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsinactive'}</font></b></td></tr></table>";
+	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
 	}
 	print <<END
 	<td align='center'>$active</td>
@@ -2663,7 +2668,7 @@ EOF
 	my $casubject = &Header::cleanhtml(getsubjectfromcert ("${General::swroot}/ca/cacert.pem"));
 
 	print <<END
-	<tr bgcolor='${Header::table2colour}'>
+	<tr bgcolor='$color{'color22'}'>
 	<td class='base'>$Lang::tr{'root certificate'}</td>
 	<td class='base'>$casubject</td>
 	<td width='3%' align='center'>
@@ -2684,7 +2689,7 @@ END
     } else {
 	# display rootcert generation buttons
 	print <<END
-	<tr bgcolor='${Header::table2colour}'>
+	<tr bgcolor='$color{'color22'}'>
 	<td class='base'>$Lang::tr{'root certificate'}:</td>
 	<td class='base'>$Lang::tr{'not present'}</td>
 	<td colspan='3'>&nbsp;</td></tr>
@@ -2696,7 +2701,7 @@ END
 	my $hostsubject = &Header::cleanhtml(getsubjectfromcert ("${General::swroot}/certs/hostcert.pem"));
 
 	print <<END
-	<tr bgcolor='${Header::table1colour}'>
+	<tr bgcolor='$color{'color20'}'>
 	<td class='base'>$Lang::tr{'host certificate'}</td>
 	<td class='base'>$hostsubject</td>
 	<td width='3%' align='center'>
@@ -2717,7 +2722,7 @@ END
     } else {
 	# Nothing
 	print <<END
-	<tr bgcolor='${Header::table1colour}'>
+	<tr bgcolor='$color{'color20'}'>
 	<td width='25%' class='base'>$Lang::tr{'host certificate'}:</td>
 	<td class='base'>$Lang::tr{'not present'}</td>
 	<td colspan='3'>&nbsp;</td></tr>
@@ -2729,9 +2734,9 @@ END
     if (keys %cahash > 0) {
    foreach my $key (keys %cahash) {
        if ($rowcolor++ % 2) {
-      print "<tr bgcolor='${Header::table1colour}'>\n";
+      print "<tr bgcolor='$color{'color20'}'>\n";
        } else {
-      print "<tr bgcolor='${Header::table2colour}'>\n";
+      print "<tr bgcolor='$color{'color22'}'>\n";
        }
 	    print "<td class='base'>$cahash{$key}[0]</td>\n";
 	    print "<td class='base'>$cahash{$key}[1]</td>\n";

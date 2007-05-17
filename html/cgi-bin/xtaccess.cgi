@@ -32,6 +32,11 @@ my $filename = "${General::swroot}/xtaccess/config";
 my $aliasfile = "${General::swroot}/ethernet/aliases";
 my $changed = 'no';
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 &Header::showhttpheaders();
 
 $cgiparams{'ENABLED'} = 'off';
@@ -289,9 +294,9 @@ foreach my $line (@current)
 	if($cgiparams{'ACTION'} eq $Lang::tr{'edit'} && $cgiparams{'ID'} eq $id) {
 		print "<tr bgcolor='${Header::colouryellow}'>\n"; }
 	elsif ($id % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>\n"; }
+		print "<tr bgcolor='$color{'color22'}'>\n"; }
 	else {
-		print "<tr bgcolor='${Header::table2colour}'>\n"; }
+		print "<tr bgcolor='$color{'color20'}'>\n"; }
 	if ($temp[3] eq 'on') { $gif='on.gif'; $toggle='off'; $gdesc=$Lang::tr{'click to disable'};}
 	else { $gif='off.gif'; $toggle='on'; $gdesc=$Lang::tr{'click to enable'}; }
 	if ($temp[1] eq '0.0.0.0/0') {

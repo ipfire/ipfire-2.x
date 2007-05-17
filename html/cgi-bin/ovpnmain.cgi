@@ -30,7 +30,10 @@ require "${General::swroot}/countries.pl";
 my @dummy = ( ${Header::colourgreen} );
 undef (@dummy);
 
-
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 ###
 ### Initialize variables
@@ -1460,9 +1463,9 @@ END
 	if ($user2 >= 1){
     	    for (my $idx = 1; $idx <= $user2; $idx++){
 						if ($idx % 2) {
-		    			print "<tr bgcolor='${Header::table1colour}'>\n";
+		    			print "<tr bgcolor='$color{'color20'}'>\n";
 	    			} else {
-		    			print "<tr bgcolor='${Header::table2colour}'>\n";
+		    			print "<tr bgcolor='$color{'color22'}'>\n";
 						}
 						print "<td align='left'>$users[$idx-1]{'CommonName'}</td>";
 						print "<td align='left'>$users[$idx-1]{'RealAddress'}</td>";
@@ -2875,7 +2878,7 @@ if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 	$casubject    =~ s+/Email+, E+;
 	$casubject    =~ s/ ST=/ S=/;
 	print <<END
-	<tr bgcolor='${Header::table2colour}'>
+	<tr bgcolor='$color{'color22'}'>
 	    <td class='base'>$Lang::tr{'root certificate'}</td>
 		<td class='base'>$casubject</td>
 		<form method='post' name='frmrootcrta'><td width='3%' align='center'>
@@ -2892,7 +2895,7 @@ END
 } else {
 	# display rootcert generation buttons
 	print <<END
-	<tr bgcolor='${Header::table2colour}'>
+	<tr bgcolor='$color{'color22'}'>
 	<td class='base'>$Lang::tr{'root certificate'}:</td>
 	<td class='base'>$Lang::tr{'not present'}</td>
 	<td colspan='3'>&nbsp;</td></tr>
@@ -2907,7 +2910,7 @@ if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
 	$hostsubject    =~ s+/Email+, E+;
 	$hostsubject    =~ s/ ST=/ S=/;
 	print <<END
-	<tr bgcolor='${Header::table1colour}'>
+	<tr bgcolor='$color{'color20'}'>
 	<td class='base'>$Lang::tr{'host certificate'}</td>
 	<td class='base'>$hostsubject</td>
 	<form method='post' name='frmhostcrta'><td width='3%' align='center'>
@@ -2924,7 +2927,7 @@ END
 } else {
 	# Nothing
 	print <<END
-	<tr bgcolor='${Header::table1colour}'>
+	<tr bgcolor='$color{'color20'}'>
 	<td width='25%' class='base'>$Lang::tr{'host certificate'}:</td>
 	<td class='base'>$Lang::tr{'not present'}</td>
 	</td><td colspan='3'>&nbsp;</td></tr>
@@ -2941,9 +2944,9 @@ if (! -f "${General::swroot}/ovpn/ca/cacert.pem") {
 if (keys %cahash > 0) {
 	foreach my $key (keys %cahash) {
 		if (($key + 1) % 2) {
-			print "<tr bgcolor='${Header::table1colour}'>\n";
+			print "<tr bgcolor='$color{'color20'}'>\n";
 		} else {
-			print "<tr bgcolor='${Header::table2colour}'>\n";
+			print "<tr bgcolor='$color{'color22'}'>\n";
 		}
 		print "<td class='base'>$cahash{$key}[0]</td>\n";
 		print "<td class='base'>$cahash{$key}[1]</td>\n";

@@ -24,6 +24,11 @@ my %selected= () ;
 
 my %servicenames =('UPnP Daemon' => 'upnpd',);
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 &Header::showhttpheaders();
 ############################################################################################################################
 ############################################### Setzen von Standartwerten ##################################################
@@ -122,12 +127,7 @@ my $lines = 0;
 my $key = '';
 foreach $key (sort keys %servicenames)
 {
-	if ($lines % 2)
-		{print "<tr bgcolor='${Header::table1colour}'>\n";}
-	else
-		{print "<tr bgcolor='${Header::table2colour}'>\n"; }
-
-	print "<td align='left'>$key\n";
+  print "<tr><td align='left'>$key\n";
 	my $shortname = $servicenames{$key};
 	my $status = &isrunning($shortname);
 	print "$status\n";
@@ -144,7 +144,7 @@ print <<END
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td colspan='2' align='left' bgcolor='${Header::table1colour}'><b>$Lang::tr{'options'}</b></td></tr>
+<tr><td colspan='2' align='left' bgcolor='$color{'color20'}'><b>$Lang::tr{'options'}</b></td></tr>
 <tr><td align='left' colspan='2'><br /></td></tr>
 <tr><td align='left'>UPnP Device Name:</td><td><input type='text' name='friendlyName' value='$upnpsettings{'friendlyName'}' size="30" /></td></tr>
 <tr><td align='left' colspan='2'><br /></td></tr>

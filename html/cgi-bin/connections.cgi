@@ -329,7 +329,7 @@ foreach my $line (@active) {
         </a>
       </td>
       <td align='center'>$proto</td>
-      <td align='center' bgcolor="${Header::table1colour}">$state</td>
+      <td align='center'>$state</td>
       <td align='center'>$ttl</td>
     </tr>
 END

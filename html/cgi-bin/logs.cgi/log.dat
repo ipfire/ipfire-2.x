@@ -19,6 +19,11 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 use POSIX();
 
 #workaround to suppress a warning when a variable is used only once
@@ -379,9 +384,9 @@ foreach $_ (@log)
 
 
 	if ($lines % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>"; }
+		print "<tr bgcolor='$color{'color20'}'>"; }
 	else {
-		print "<tr bgcolor='${Header::table2colour}'>"; }
+		print "<tr bgcolor='$color{'color22'}'>"; }
 	print "<td>$time<td>$sec<td>" .&Header::cleanhtml ("$d", 'y') . "</td></tr>\n";
 	$lines++;
 }

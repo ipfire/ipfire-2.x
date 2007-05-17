@@ -193,16 +193,16 @@ END
 				$size = int($partitionline[1] / 1024);
 				print <<END
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<tr><td align="center" bgcolor='#EAEAEA'>/dev/$partitionline[0]
-				<td align="center" bgcolor='#EAEAEA'>$Lang::tr{'size'} $size MB
-				<td align='center' bgcolor='#EAEAEA'><select name="FS">
+				<tr><td align="center">/dev/$partitionline[0]
+				<td align="center">$Lang::tr{'size'} $size MB
+				<td align='center'><select name="FS">
 										<option value="auto">auto</option>
 										<option value="ext3">ext3</option>
 										<option value="reiserfs">reiserfs</option>
 										<option value="vfat">fat</option>
 										<option value="ntfs-3g">ntfs (experimental)</option>
 									   </select>
-				<td align="center" bgcolor='#EAEAEA'><input type='text' name='PATH' value=/mnt/harddisk />
+				<td align="center"><input type='text' name='PATH' value=/mnt/harddisk />
 				<td align="center">
 					<input type='hidden' name='DEVICE' value='$partitionline[0]' />
 					<input type='hidden' name='ACTION' value=$Lang::tr{'add'} />

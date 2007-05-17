@@ -26,6 +26,11 @@ undef (@dummy);
 my $ddnsprefix = $Lang::tr{'ddns noip prefix'};
 $ddnsprefix =~ s/%/$General::noipprefix/;
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 # Files used
 my $setting = "${General::swroot}/ddns/settings";
 our $datafile = "${General::swroot}/ddns/config";
@@ -432,9 +437,9 @@ foreach my $line (@current) {
     if ($settings{'KEY1'} eq $key) {
 	print "<tr bgcolor='${Header::colouryellow}'>";
     } elsif ($key % 2) {
-	print "<tr bgcolor='${Header::table2colour}'>";
+	print "<tr bgcolor='$color{'color22'}'>";
     } else {
-	print "<tr bgcolor='${Header::table1colour}'>"; 
+	print "<tr bgcolor='$color{'color20'}'>"; 
     }
     
     #if a field is empty, replace it with a '---' to see colorized info!

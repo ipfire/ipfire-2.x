@@ -20,6 +20,8 @@ my %cgisettings = ();
 my %checked = ();
 my %netsettings = ();
 my %ovpnsettings = ();
+my %color = ();
+my %mainsettings = ();
 my $message = "";
 my $errormessage = "";
 
@@ -42,6 +44,8 @@ my %shares = ();
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 ############################################################################################################################
 ############################################# Samba Dienste fr Statusberprfung ##########################################
@@ -156,7 +160,7 @@ if ($sambasettings{'ACTION'} eq 'globalreset')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='3' align='center'><b>$Lang::tr{'resetglobals'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='3' align='center'><b>$Lang::tr{'resetglobals'}</b>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='globalresetyes' /></form></td>
@@ -174,7 +178,7 @@ if ($sambasettings{'ACTION'} eq 'sharesreset')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='3' align='center'><b>$Lang::tr{'resetshares'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='3' align='center'><b>$Lang::tr{'resetshares'}</b>
 	<tr><td align='right'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='sharesresetyes' /></form></td>
@@ -360,7 +364,6 @@ $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 
 &Header::openbox('100%', 'center', $Lang::tr{'samba'});
 print <<END
-<hr />
 <br />
 <table width='95%' cellspacing='0'>
 END
@@ -371,7 +374,7 @@ if ( $message ne "" )
 	}
 
 print <<END
-<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td></tr>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td></tr>
 </table><table width='95%' cellspacing='0'>
 END
 ;
@@ -397,7 +400,7 @@ print <<END
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'netbios name'}</td><td align='left'><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'server string'}</td><td align='left'><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30" /></td></tr>
@@ -434,7 +437,7 @@ END
 print <<END
 <tr><td align='center' width='40%'>$Lang::tr{'more'}</td><td align='left'><input type='text' name='OTHERINTERFACES' value='$sambasettings{'OTHERINTERFACES'}' size="30" /></td></tr>
 <tr><td align='left'><br /></td><td></td></tr>
-<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td></tr>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'security'}</td><td align='left'><select name='SECURITY' style="width: 165px">
 																				<option value='share' $selected{'SECURITY'}{'share'}>Share</option>
 																				<option value='user' $selected{'SECURITY'}{'user'}>User</option>
@@ -450,7 +453,7 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'unix password sync'}</td><td align='left'>on <input type='radio' name='PASSWORDSYNC' value='on' $checked{'PASSWORDSYNC'}{'on'} />/
 																										<input type='radio' name='PASSWORDSYNC' value='off' $checked{'PASSWORDSYNC'}{'off'} /> off</td></tr>
 <tr><td align='left'><br /></td><td /></tr>
-<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'os level'}</td><td align='left'><input type='text' name='OSLEVEL' value='$sambasettings{'OSLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'socket options'}</td><td align='left'><input type='text' name='SOCKETOPTIONS' value='$sambasettings{'SOCKETOPTIONS'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
@@ -480,7 +483,7 @@ if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'o
 	{
 	print <<END
 	<tr><td align='left'><br /></td><td></td></tr>
-	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'pdc options'}</b></td></tr>
+	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'pdc options'}</b></td></tr>
 	<tr><td align='left'><br /></td><td></td></tr>
 	<tr><td colspan='2' align='center'><textarea name="PDCOPTIONS" cols="50" rows="15" Wrap="off">$PDCOPTIONS</textarea></td></tr>
 END
@@ -491,7 +494,7 @@ END
 	{
 	print <<END
 	<tr><td align='left'><br /></td><td></td></tr>
-	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'printing options'}</b></td></tr>
+	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'printing options'}</b></td></tr>
 	<tr><td align='left' width='40%'>$Lang::tr{'load printer'}</td><td align='left'><input type='text' name='LOADPRINTERS' value='$sambasettings{'LOADPRINTERS'}' size="30" /></td></tr>
 	<tr><td align='left' width='40%'>$Lang::tr{'printing'}</td><td align='left'><input type='text' name='PRINTING' value='$sambasettings{'PRINTING'}' size="30" /></td></tr>
 	<tr><td align='left' width='40%'>$Lang::tr{'printcap name'}</td><td align='left'><input type='text' name='PRINTCAPNAME' value='$sambasettings{'PRINTCAPNAME'}' size="30" /></td></tr>
@@ -545,11 +548,10 @@ if ($sambasettings{'SECURITY'} eq 'user')
 		&Header::openbox('100%', 'center', $Lang::tr{'accounting user pdc'});
 		}
 	print <<END
-	<hr />
 	<br />
 	<table width='95%' cellspacing='0'>
 	<tr><td colspan='6' align='left'></td></tr>
-	<tr><td bgcolor='${Header::table1colour}' colspan='7' align='left'><b>$Lang::tr{'accounting'}</b></td></tr>
+	<tr><td bgcolor='$color{'color20'}' colspan='7' align='left'><b>$Lang::tr{'accounting'}</b></td></tr>
 	<tr><td align='left'><u>$Lang::tr{'username'}</u></td><td align='left'><u>$Lang::tr{'password'}</u></td>
 END
 ;
@@ -714,11 +716,10 @@ END
 		my $username = "$sambasettings{'NAME'}";
 		my $password = 'samba';
 		print <<END
-		<hr />
 		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='95%' cellspacing='0'>
-		<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td></tr>
+		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' readonly /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbchangepw' />
@@ -738,11 +739,10 @@ END
 		chomp $password;
 		$password=~s/\s//g;
 		print <<END
-		<hr />
 		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='95%' cellspacing='0'>
-		<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add user'}</b></td></tr>
+		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add user'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambauser' size='30' /></td></tr>
@@ -761,11 +761,10 @@ END
 		chomp $pcname;
 		$pcname=~s/\s//g;
 		print <<END
-		<hr />
 		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='95%' cellspacing='0'>
-		<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'pc add'}</b></td></tr>
+		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'pc add'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'client'}</td><td><input type='text' name='PCNAME' value='$pcname' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambawks' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix shell'}</td><td><input type='text' name='SHELL' value='/bin/false' size='30' /></td></tr>
@@ -789,10 +788,9 @@ my %shares =  config("${General::swroot}/samba/shares");
 
 
 print <<END
-<hr />
 <br />
 <table width='95%' cellspacing='0'>
-<tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b>
+<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b>
 <tr><td align='left'><u>$Lang::tr{'sharename'}</u></td><td colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></td></tr>
 END
 ;
@@ -858,10 +856,9 @@ END
 if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optioncaption' )
 	{
 	print <<END
-	<hr />
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add share'}</b></td></tr>
+	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
  <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
@@ -880,10 +877,9 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 	{
 	my $shareoption = $shares{$sambasettings{'NAME'}};
 	print <<END
-	<hr />
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'edit share'}</b></td></tr>
+	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
@@ -936,10 +932,9 @@ if ( -e "/var/ipfire/cups/enable")
 
 my @Printers = keys(%printer);
 print <<END
-<hr />
 <br />
 <table width='95%' cellspacing='0'>
-<tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'manage printers'}</b>
+<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage printers'}</b>
 <tr><td align='left'><u>$Lang::tr{'printername'}</u></td><td colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></td></tr>
 END
 ;
@@ -985,10 +980,9 @@ END
 if ($sambasettings{'ACTION'} eq 'printeradd' || $sambasettings{'ACTION'} eq 'printercaption' )
 	{
 	print <<END
-	<hr />
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'add printer'}</b></td></tr>
+	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add printer'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
  <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
@@ -1008,10 +1002,9 @@ if ($sambasettings{'ACTION'} eq 'printerchange' || $sambasettings{'ACTION'} eq '
 	{
 	my $printeroption = $printer{$sambasettings{'NAME'}};
 	print <<END
-	<hr />
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'edit printer'}</b></td></tr>
+	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit printer'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$printeroption</textarea></td></tr>
@@ -1056,10 +1049,9 @@ if ($sambasettings{'ACTION'} eq 'smbprinterchange')
 &Header::openbox('100%', 'center', 'Status');
 
 print <<END
-<hr />
 <br />
 <table width='95%' cellspacing='0'>
-<tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'samba status'}</b></td></tr>
+<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'samba status'}</b></td></tr>
 <tr><td  align='left'>$Status</td></tr>
 </table>
 END
@@ -1079,11 +1071,10 @@ $Log=~s/\n/<br \/>/g;
 &Header::openbox('100%', 'center', $Lang::tr{'log'});
 
 print <<END
-<hr />
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
+<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
 <tr><td colspan='3'  align='left'><br /></td></tr>
 <tr><td  align='left'><select name='LOG' style="width: 200px">
 END

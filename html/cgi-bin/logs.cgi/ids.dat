@@ -22,6 +22,11 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 use POSIX();
 
 #workaround to suppress a warning when a variable is used only once
@@ -276,9 +281,9 @@ END
 foreach $_ (@slice)
 {
 	if ($lines % 2) {
-		print "<tr bgcolor='${Header::table1colour}'><td>\n"; }
+		print "<tr bgcolor='$color{'color20'}'><td>\n"; }
 	else {
-		print "<tr bgcolor='${Header::table2colour}'><td>\n"; }
+		print "<tr bgcolor='$color{'color22'}'><td>\n"; }
 	my ($datetime,$title,$priority,$classification,$srcip,$srcport,$destip,$destport,$sid,$refs) = split(/\|/);
 	print <<END
 <table width='100%'>

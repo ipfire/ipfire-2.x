@@ -25,6 +25,11 @@ my $file = `ls -tr /var/ipfire/tripwire/report/ | tail -1`;
 my @cronjobs = `ls /etc/fcron.daily/tripwire*`;
 my $Log =$Lang::tr{'no log selected'};
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 ############################################################################################################################
 ################################################# Tripwire Default Variablen ################################################
 
@@ -105,7 +110,7 @@ if ($tripwiresettings{'ACTION'} eq 'addcron')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'add cron'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'add cron'}</b>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<tr><td align='center' colspan='2'>HH<input type='text' size='2' name='HOUR' value='08'/>MM<input type='text' size='2' name='MINUTE' value='00'/><br /><br /></td></tr>
 	<tr><td align='right' width='50%'>
@@ -125,7 +130,7 @@ if ($tripwiresettings{'ACTION'} eq 'globalreset')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'resetglobals'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'resetglobals'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'defaultwarning'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
@@ -144,7 +149,7 @@ if ($tripwiresettings{'ACTION'} eq 'generatepolicypw')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'generatepolicy'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'generatepolicy'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningpolicy'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
@@ -165,7 +170,7 @@ if ($tripwiresettings{'ACTION'} eq 'policyresetpw')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'resetpolicy'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'resetpolicy'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningpolicy'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
@@ -186,7 +191,7 @@ if ($tripwiresettings{'ACTION'} eq 'updatedatabasepw')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'updatedatabase'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'updatedatabase'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningdatabase'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -205,7 +210,7 @@ if ($tripwiresettings{'ACTION'} eq 'keyreset')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'keyreset'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'keyreset'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningkeys'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
@@ -224,7 +229,7 @@ if ($tripwiresettings{'ACTION'} eq 'generatekeys')
 	print <<END
 	<br />
 	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='${Header::table1colour}' colspan='2' align='center'><b>$Lang::tr{'generatekeys'}</b>
+	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'generatekeys'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningkeys'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
@@ -308,12 +313,11 @@ if ($tripwiresettings{'ACTION'} eq 'deletecron'){system("/usr/local/bin/tripwire
 
 &Header::openbox('100%', 'center', 'Tripwire');
 print <<END
-<hr />
 <br />
 
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'emailreportlevel'}</td><td align='left'><input type='text' name='EMAILREPORTLEVEL' value='$tripwiresettings{'EMAILREPORTLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'reportlevel'}</td><td align='left'><input type='text' name='REPORTLEVEL' value='$tripwiresettings{'REPORTLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'mailmethod'}</td><td align='left'><input type='text' name='MAILMETHOD' value='$tripwiresettings{'MAILMETHOD'}' size="30" /></td></tr>
@@ -357,12 +361,11 @@ END
 
 &Header::openbox('100%', 'center', $Lang::tr{'generate tripwire keys and init'});
 print <<END
-<hr />
 <br />
 
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr bgcolor='${Header::table1colour}'><td colspan='2' align='left'><b>$Lang::tr{'keys'}</b></td></tr>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'keys'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /></td></tr>
 </table>
@@ -402,7 +405,6 @@ END
 
 &Header::openbox('100%', 'center', $Lang::tr{'tripwire functions'});
 print <<END
-<hr />
 <br />
 
 <table width='95%' cellspacing='0'>
@@ -446,11 +448,10 @@ END
 
 &Header::openbox('100%', 'center', $Lang::tr{'tripwire reports'});
 print <<END
-<hr />
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td bgcolor='${Header::table1colour}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
+<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
 <tr><td colspan='3'  align='left'><br /></td></tr>
 <tr><td  align='left'><select name='LOG' style="width: 500px">
 END
@@ -483,42 +484,41 @@ END
 
 ############################################################################################################################
 ####################################################### Tripwire Cronjob ##################################################
+#
+#&Header::openbox('100%', 'center', $Lang::tr{'tripwire cronjob'});
+#print <<END
+#<br />
+#<table width='95%' cellspacing='0'>
+#<tr><td colspan='3'  align='left'><br /></td></tr>
+#END
+#;
+#foreach my $cronjob (@cronjobs) {chomp $cronjob;my $time=$cronjob; $time=~s/\/etc\/fcron.daily\/tripwire//g;print"<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td  align='left' colspan='2'>$cronjob at $time daily</td><td><input type='hidden' name='ACTION' value='deletecron' /><input type='hidden' name='CRON' value='$time' /><input type='image' alt='delete cron' src='/images/user-trash.png' /></td></tr></form>";}
+#print <<END
+#</table>
+#<br />
+#<table width='10%' cellspacing='0'>
+#<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+#												<input type='hidden' name='ACTION' value='addcron'/>
+#												<input type='image' alt='$Lang::tr{'add cron'}' src='/images/appointment-new.png' /></form></td>
+#<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+#										<input type='hidden' name='ACTION' value='croncaption' />
+#										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+#</table>
+#END
+#;
 
-&Header::openbox('100%', 'center', $Lang::tr{'tripwire cronjob'});
-print <<END
-<hr />
-<br />
-<table width='95%' cellspacing='0'>
-<tr><td colspan='3'  align='left'><br /></td></tr>
-END
-;
-foreach my $cronjob (@cronjobs) {chomp $cronjob;my $time=$cronjob; $time=~s/\/etc\/fcron.daily\/tripwire//g;print"<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td  align='left' colspan='2'>$cronjob at $time daily</td><td><input type='hidden' name='ACTION' value='deletecron' /><input type='hidden' name='CRON' value='$time' /><input type='image' alt='delete cron' src='/images/user-trash.png' /></td></tr></form>";}
-print <<END
-</table>
-<br />
-<table width='10%' cellspacing='0'>
-<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value='addcron'/>
-												<input type='image' alt='$Lang::tr{'add cron'}' src='/images/appointment-new.png' /></form></td>
-<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-										<input type='hidden' name='ACTION' value='croncaption' />
-										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
-</table>
-END
-;
-
-if ($tripwiresettings{'ACTION'} eq 'croncaption')
-{
-print <<END
-<br />
-<table width='95%' cellspacing='0'>
-<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
-<tr><td align='right' width='33%'><img src='/images/appointment-new.png' /></td><td align='left'>$Lang::tr{'add cron'}</td></tr>
-<tr><td align='right' width='33%'><img src='/images/user-trash.png' /></td><td align='left'>$Lang::tr{'delete cron'}</td></tr>
-</table>
-END
-;
-}
+#if ($tripwiresettings{'ACTION'} eq 'croncaption')
+#{
+#print <<END
+#<br />
+#<table width='95%' cellspacing='0'>
+#<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
+#<tr><td align='right' width='33%'><img src='/images/appointment-new.png' /></td><td align='left'>$Lang::tr{'add cron'}</td></tr>
+#<tr><td align='right' width='33%'><img src='/images/user-trash.png' /></td><td align='left'>$Lang::tr{'delete cron'}</td></tr>
+#</table>
+#END
+#;
+#}
 
 &Header::closebox();
 

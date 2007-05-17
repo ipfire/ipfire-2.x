@@ -25,6 +25,11 @@ require "${General::swroot}/header.pl";
 
 require '/var/ipfire/connscheduler/lib.pl';
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my $buttontext = $Lang::tr{'add'};
 my $hiddenvalue = 'add';
 my $day;
@@ -408,11 +413,11 @@ for my $id ( 0 .. $#CONNSCHED::config )
   }
   elsif ( $id % 2 )
   {
-    $trcolor = "<tr bgcolor='$Header::table2colour'>";
+    $trcolor = "<tr bgcolor='$color{'color20'}'>";
   }
   else 
   {
-    $trcolor = "<tr bgcolor='$Header::table1colour'>";
+    $trcolor = "<tr bgcolor='$color{'color22'}'>";
   }
 
 print <<END

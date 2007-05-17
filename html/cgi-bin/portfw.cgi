@@ -38,6 +38,11 @@ require "${General::swroot}/header.pl";
 my @dummy = ( ${Header::colouryellow} );
 undef (@dummy);
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %cgiparams=();
 my %selected=();
 my %checked=();
@@ -764,10 +769,10 @@ while (<RULES>)
 		print "<tr bgcolor='${Header::colouryellow}'>\n";
 	} else {
 		if ($id % 2) {
-			print "<tr bgcolor='${Header::table1colour}'>\n"; 
+			print "<tr bgcolor='$color{'color22'}'>\n"; 
 		}
 		else {
-			print "<tr bgcolor='${Header::table2colour}'>\n";
+			print "<tr bgcolor='$color{'color20'}'>\n";
 		}
 	}
 	

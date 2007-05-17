@@ -29,6 +29,11 @@ undef (@dummy);
 my $setting = "${General::swroot}/main/settings";
 our $datafile = "${General::swroot}/main/hosts";		#(our: used in subroutine)
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 our %settings = ();
 #Settings1
 # removed
@@ -305,9 +310,9 @@ foreach my $line (@current) {
     if ($settings{'KEY1'} eq $key) {
 	print "<tr bgcolor='${Header::colouryellow}'>";
     } elsif ($key % 2) {
-	print "<tr bgcolor='${Header::table2colour}'>";
+	print "<tr bgcolor='$color{'color22'}'>";
     } else {
-	print "<tr bgcolor='${Header::table1colour}'>"; 
+	print "<tr bgcolor='$color{'color20'}'>"; 
     }
     print <<END
 <td align='center'>$temp[1]</td>
