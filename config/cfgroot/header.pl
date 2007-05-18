@@ -53,8 +53,8 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 }
 
 ### Initialize environment
-&readhash("${swroot}/main/settings", \%settings);
-&readhash("${swroot}/ethernet/settings", \%ethsettings);
+&General::readhash("${swroot}/main/settings", \%settings);
+&General::readhash("${swroot}/ethernet/settings", \%ethsettings);
 $language = $settings{'LANGUAGE'};
 $hostname = $settings{'HOSTNAME'};
 $hostnameintitle = 0;
@@ -101,21 +101,21 @@ require "${swroot}/langs/${language}.pl";
 eval `/bin/cat /srv/web/ipfire/html/themes/$settings{'THEME'}/include/functions.pl`;
 
 sub orange_used () {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[1357]$/) {
+    if ($ethsettings{'CONFIG_TYPE'} =~ /^[24]$/) {
 	return 1;
     }
     return 0;
 }
 
 sub blue_used () {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[4567]$/) {
+    if ($ethsettings{'CONFIG_TYPE'} =~ /^[34]$/) {
 	return 1;
     }
     return 0;
 }
 
 sub is_modem {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[0145]$/) {
+    if ($ethsettings{'CONFIG_TYPE'} =~ /^[0]$/) {
 	return 1;
     }
     return 0;
@@ -154,7 +154,7 @@ sub genmenu {
     if (! blue_used()) {
 	$menu->{'05.firewall'}{'subMenu'}->{'30.wireless'}{'enabled'} = 0;
     }
-    if ( $ethsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
+    if ( $ethsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;
     }
 }
@@ -253,56 +253,6 @@ sub gettitle($) {
     return '';
 }
 
-sub writehash
-{
-	my $filename = $_[0];
-	my $hash = $_[1];
-	
-	# write cgi vars to the file.
-	open(FILE, ">${filename}") or die "Unable to write file $filename";
-	flock FILE, 2;
-	foreach $var (keys %$hash) 
-	{
-		$val = $hash->{$var};
-		# Darren Critchley Jan 17, 2003 added the following because when submitting with a graphic, the x and y
-		# location of the mouse are submitted as well, this was being written to the settings file causing
-		# some serious grief! This skips the variable.x and variable.y
-		if (!($var =~ /(.x|.y)$/)) {
-			if ($val =~ / /) {
-				$val = "\'$val\'"; }
-			if (!($var =~ /^ACTION/)) {
-				print FILE "${var}=${val}\n"; }
-		}
-	}
-	close FILE;
-}
-
-sub readhash
-{
-	my $filename = $_[0];
-	my $hash = $_[1];
-	my ($var, $val);
-
-	open(FILE, $filename) or die "Unable to read file $filename";
-	
-	while (<FILE>)
-	{
-		chop;
-		($var, $val) = split /=/, $_, 2;
-		if ($var)
-		{
-			$val =~ s/^\'//g;
-			$val =~ s/\'$//g;
-
-			# Untaint variables read from hash
-			$var =~ /([A-Za-z0-9_-]*)/;        $var = $1;
-			$val =~ /([\w\W]*)/; $val = $1;
-			$hash->{$var} = $val;
-		}
-	}
-	close FILE;
-}
-
 sub getcgihash {
 	my ($hash, $params) = @_;
 	my $cgi = CGI->new ();
@@ -336,235 +286,6 @@ sub getcgihash {
 	return;
 }
 
-sub log
-{
-	my $logmessage = $_[0];
-	$logmessage =~ /([\w\W]*)/;
-	$logmessage = $1;
-	system('/usr/bin/logger', '-t', 'ipfire', $logmessage);
-}
-
-sub age
-{
-	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
-	        $atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
-	my $now = time;
-
-	my $totalsecs = $now - $mtime;
-	my $days = int($totalsecs / 86400);
-	my $totalhours = int($totalsecs / 3600);
-	my $hours = $totalhours % 24;
-	my $totalmins = int($totalsecs / 60);
-	my $mins = $totalmins % 60;
-	my $secs = $totalsecs % 60;
-
- 	return "${days}d ${hours}h ${mins}m ${secs}s";
-}
-
-sub validip
-{
-	my $ip = $_[0];
-
-	if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
-		return 0; }
-	else 
-	{
-		@octets = ($1, $2, $3, $4);
-		foreach $_ (@octets)
-		{
-			if (/^0./) {
-				return 0; }
-			if ($_ < 0 || $_ > 255) {
-				return 0; }
-		}
-		return 1;
-	}
-}
-
-sub validmask
-{
-	my $mask = $_[0];
-
-	# secord part an ip?
-	if (&validip($mask)) {
-		return 1; }
-	# second part a number?
-	if (/^0/) {
-		return 0; }
-	if (!($mask =~ /^\d+$/)) {
-		return 0; }
-	if ($mask >= 0 && $mask <= 32) {
-		return 1; }
-	return 0;
-}
-
-sub validipormask
-{
-	my $ipormask = $_[0];
-
-	# see if it is a IP only.
-	if (&validip($ipormask)) {
-		return 1; }
-	# split it into number and mask.
-	if (!($ipormask =~ /^(.*?)\/(.*?)$/)) {
-		return 0; }
-	$ip = $1;
-	$mask = $2;
-	# first part not a ip?
-	if (!(&validip($ip))) {
-		return 0; }
-	return &validmask($mask);
-}
-
-sub validipandmask
-{
-	my $ipandmask = $_[0];
-
-	# split it into number and mask.
-	if (!($ipandmask =~ /^(.*?)\/(.*?)$/)) {
-		return 0; }
-	$ip = $1;
-	$mask = $2;
-	# first part not a ip?
-	if (!(&validip($ip))) {
-		return 0; }
-	return &validmask($mask);
-}
-
-sub validport
-{
-	$_ = $_[0];
-
-	if (!/^\d+$/) {
-		return 0; }
-	if (/^0./) {
-		return 0; }
-	if ($_ >= 1 && $_ <= 65535) {
-		return 1; }
-	return 0;
-}
-
-sub validmac
-{
-	my $checkmac = $_[0];
-	my $ot = '[0-9a-f]{2}'; # 2 Hex digits (one octet)
-	if ($checkmac !~ /^$ot:$ot:$ot:$ot:$ot:$ot$/i)
-	{
-		return 0;
-	}
-	return 1;
-}
-
-sub validhostname
-{
-	# Checks a hostname against RFC1035
-        my $hostname = $_[0];
-
-	# Each part should be at least two characters in length
-	# but no more than 63 characters
-	if (length ($hostname) < 2 || length ($hostname) > 63) {
-		return 0;}
-	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($hostname !~ /^[a-zA-Z0-9-]*$/) {
-		return 0;}
-	# First character can only be a letter or a digit
-	if (substr ($hostname, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
-		return 0;}
-	# Last character can only be a letter or a digit
-	if (substr ($hostname, -1, 1) !~ /^[a-zA-Z0-9]*$/) {
-		return 0;}
-	return 1;
-}
-
-sub validdomainname
-{
-	# Checks a domain name against RFC1035
-        my $domainname = $_[0];
-	my @parts = split (/\./, $domainname);	# Split hostname at the '.'
-
-	foreach $part (@parts) {
-		# Each part should be at least two characters in length
-		# but no more than 63 characters
-		if (length ($part) < 2 || length ($part) > 63) {
-			return 0;}
-		# Only valid characters are a-z, A-Z, 0-9 and -
-		if ($part !~ /^[a-zA-Z0-9-]*$/) {
-			return 0;}
-		# First character can only be a letter or a digit
-		if (substr ($part, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
-			return 0;}
-		# Last character can only be a letter or a digit
-		if (substr ($part, -1, 1) !~ /^[a-zA-Z0-9]*$/) {
-			return 0;}
-	}
-	return 1;
-}
-
-sub validfqdn
-{
-	# Checks a fully qualified domain name against RFC1035
-        my $fqdn = $_[0];
-	my @parts = split (/\./, $fqdn);	# Split hostname at the '.'
-	if (scalar(@parts) < 2) {		# At least two parts should
-		return 0;}			# exist in a FQDN
-						# (i.e. hostname.domain)
-	foreach $part (@parts) {
-		# Each part should be at least two characters in length
-		# but no more than 63 characters
-		if (length ($part) < 2 || length ($part) > 63) {
-			return 0;}
-		# Only valid characters are a-z, A-Z, 0-9 and -
-		if ($part !~ /^[a-zA-Z0-9-]*$/) {
-			return 0;}
-		# First character can only be a letter or a digit
-		if (substr ($part, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
-			return 0;}
-		# Last character can only be a letter or a digit
-		if (substr ($part, -1, 1) !~ /^[a-zA-Z0-9]*$/) {
-			return 0;}
-	}
-	return 1;
-}
-
-sub validportrange # used to check a port range 
-{
-	my $port = $_[0]; # port values
-	$port =~ tr/-/:/; # replace all - with colons just in case someone used -
-	my $srcdst = $_[1]; # is it a source or destination port
-
-	if (!($port =~ /^(\d+)\:(\d+)$/)) {
-	
-		if (!(&validport($port))) {	 
-			if ($srcdst eq 'src'){
-				return $tr{'source port numbers'};
-			} else 	{
-				return $tr{'destination port numbers'};
-			} 
-		}
-	}
-	else 
-	{
-		@ports = ($1, $2);
-		if ($1 >= $2){
-			if ($srcdst eq 'src'){
-				return $tr{'bad source range'};
-			} else 	{
-				return $tr{'bad destination range'};
-			} 
-		}
-		foreach $_ (@ports)
-		{
-			if (!(&validport($_))) {
-				if ($srcdst eq 'src'){
-					return $tr{'source port numbers'}; 
-				} else 	{
-					return $tr{'destination port numbers'};
-				} 
-			}
-		}
-		return;
-	}
-}
 
 # Test if IP is within a subnet
 # Call: IpInSubnet (Addr, Subnet, Subnet Mask)
@@ -579,63 +300,6 @@ sub IpInSubnet
     $start &= $mask;  # base of subnet...
     $end   = $start + ~$mask;
     return (($ip >= $start) && ($ip <= $end));
-}
-
-sub validemail {
-    my $mail = shift;
-    return 0 if ( $mail !~ /^[0-9a-zA-Z\.\-\_]+\@[0-9a-zA-Z\.\-]+$/ );
-    return 0 if ( $mail =~ /^[^0-9a-zA-Z]|[^0-9a-zA-Z]$/);
-    return 0 if ( $mail !~ /([0-9a-zA-Z]{1})\@./ );
-    return 0 if ( $mail !~ /.\@([0-9a-zA-Z]{1})/ );
-    return 0 if ( $mail =~ /.\.\-.|.\-\..|.\.\..|.\-\-./g );
-    return 0 if ( $mail =~ /.\.\_.|.\-\_.|.\_\..|.\_\-.|.\_\_./g );
-    return 0 if ( $mail !~ /\.([a-zA-Z]{2,3})$/ );
-    return 1;
-}
-
-sub readhasharray {
-    my ($filename, $hash) = @_;
-
-    open(FILE, $filename) or die "Unable to read file $filename";
-
-    while (<FILE>) {
-	my ($key, $rest, @temp);
-	chomp;
-	($key, $rest) = split (/,/, $_, 2);
-	if ($key =~ /^[0-9]+$/ && $rest) {
-	    @temp = split (/,/, $rest);
-	    $hash->{$key} = \@temp;
-        }
-    }
-    close FILE;
-    return;
-}
-
-sub writehasharray {
-    my ($filename, $hash) = @_;
-    my ($key, @temp);
-
-    open(FILE, ">$filename") or die "Unable to write to file $filename";
-
-    foreach $key (keys %$hash) {
-	if ( $hash->{$key} ) {
-	    print FILE "$key";
-	    foreach $i (0 .. $#{$hash->{$key}}) {
-		print FILE ",$hash->{$key}[$i]";
-	    }
-	}
-	print FILE "\n";
-    }
-    close FILE;
-    return;
-}
-
-sub findhasharraykey {
-    foreach my $i (1 .. 1000000) {
-	if ( ! exists $_[0]{$i}) {
-	     return $i;
-	}
-    }
 }
 
 sub cleanhtml
@@ -661,7 +325,7 @@ sub connectionstatus
     &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
     my $profileused='';
-    if ( ! ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
+    if ( ! ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
     	$profileused="- $pppsettings{'PROFILENAME'}";
     }
 
@@ -676,7 +340,7 @@ sub connectionstatus
     }
 
     my ($timestr, $connstate);
-    if ($netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/ &&  $pppsettings{'TYPE'} =~ /^isdn/) {
+    if ($netsettings{'CONFIG_TYPE'} =~ /^(0|1|2|3|4)$/ &&  $pppsettings{'TYPE'} =~ /^isdn/) {
 	# Count ISDN channels
 	my ($idmap, $chmap, $drmap, $usage, $flags, $phone);
 	my @phonenumbers;
@@ -771,104 +435,10 @@ sub connectionstatus
     return $connstate;
 }
 
-sub srtarray 
-# Darren Critchley - darrenc@telus.net - (c) 2003
-# &srtarray(SortOrder, AlphaNumeric, SortDirection, ArrayToBeSorted)
-# This subroutine will take the following parameters:
-#   ColumnNumber = the column which you want to sort on, starts at 1
-#   AlphaNumberic = a or n (lowercase) defines whether the sort should be alpha or numberic
-#   SortDirection = asc or dsc (lowercase) Ascending or Descending sort
-#   ArrayToBeSorted = the array that wants sorting
-#
-#   Returns an array that is sorted to your specs
-#
-#   If SortOrder is greater than the elements in array, then it defaults to the first element
-# 
-{
-	my ($colno, $alpnum, $srtdir, @tobesorted) = @_;
-	my @tmparray;
-	my @srtedarray;
-	my $line;
-	my $newline;
-	my $ttlitems = scalar @tobesorted; # want to know the number of rows in the passed array
-	if ($ttlitems < 1){ # if no items, don't waste our time lets leave
-		return (@tobesorted);
-	}
-	my @tmp = split(/\,/,$tobesorted[0]);
-	$ttlitems = scalar @tmp; # this should be the number of elements in each row of the passed in array
-
-	# Darren Critchley - validate parameters
-	if ($colno > $ttlitems){$colno = '1';}
-	$colno--; # remove one from colno to deal with arrays starting at 0
-	if($colno < 0){$colno = '0';}
-	if ($alpnum ne '') { $alpnum = lc($alpnum); } else { $alpnum = 'a'; }
-	if ($srtdir ne '') { $srtdir = lc($srtdir); } else { $srtdir = 'src'; }
-
-	foreach $line (@tobesorted)
-	{
-		chomp($line);
-		if ($line ne '') {
-			my @temp = split(/\,/,$line);
-			# Darren Critchley - juggle the fields so that the one we want to sort on is first
-			my $tmpholder = $temp[0];
-			$temp[0] = $temp[$colno];
-			$temp[$colno] = $tmpholder;
-			$newline = "";
-			for ($ctr=0; $ctr < $ttlitems ; $ctr++) {
-				$newline=$newline . $temp[$ctr] . ",";
-			}
-			chop($newline);
-			push(@tmparray,$newline);
-		}
-	}
-	if ($alpnum eq 'n') {
-		@tmparray = sort {$a <=> $b} @tmparray;
-	} else {
-		@tmparray = (sort @tmparray);
-	}
-	foreach $line (@tmparray)
-	{
-		chomp($line);
-		if ($line ne '') {
-			my @temp = split(/\,/,$line);
-			my $tmpholder = $temp[0];
-			$temp[0] = $temp[$colno];
-			$temp[$colno] = $tmpholder;
-			$newline = "";
-			for ($ctr=0; $ctr < $ttlitems ; $ctr++){
-				$newline=$newline . $temp[$ctr] . ",";
-			}
-			chop($newline);
-			push(@srtedarray,$newline);
-		}
-	}
-
-	if ($srtdir eq 'dsc') {
-		@tmparray = reverse(@srtedarray);
-		return (@tmparray);
-	} else {
-		return (@srtedarray);
-	}
-}
-
-sub speedtouchversion
-{
-	if (-f "/proc/bus/usb/devices")
-	{
-		$speedtouch=`/bin/cat /proc/bus/usb/devices | /bin/grep 'Vendor=06b9 ProdID=4061' | /usr/bin/cut -d ' ' -f6`;
-		if ($speedtouch eq '') {
-			$speedtouch= $tr{'connect the modem'};
-		}
-	} else {
-		$speedtouch='USB '.$tr{'not running'};
-	}
-	return $speedtouch
-}
-
 sub CheckSortOrder {
 #Sorting of allocated leases
     if ($ENV{'QUERY_STRING'} =~ /^IPADDR|^ETHER|^HOSTNAME|^ENDTIME/ ) {
-	my $newsort=$ENV{'QUERY_STRING'};
+        my $newsort=$ENV{'QUERY_STRING'};
         &readhash("${swroot}/dhcp/settings", \%dhcpsettings);
         $act=$dhcpsettings{'SORT_LEASELIST'};
         #Reverse actual ?
@@ -878,7 +448,7 @@ sub CheckSortOrder {
         };
 
         $dhcpsettings{'SORT_LEASELIST'}=$newsort;
-	&writehash("${swroot}/dhcp/settings", \%dhcpsettings);
+        &writehash("${swroot}/dhcp/settings", \%dhcpsettings);
         $dhcpsettings{'ACTION'} = 'SORT';  # avoid the next test "First lauch"
     }
 
@@ -1009,72 +579,4 @@ sub leasesort {
     	    $entries{$a}->{$qs} cmp $entries{$b}->{$qs};
 	}
     }
-}
-
-sub get_uplinks() {
-    my @uplinks = ();
-    opendir(DIR, "${swroot}/uplinks/") || return \@uplinks;
-    foreach my $dir (readdir(DIR)) {
-	next if ($dir =~ /^\./);
-	next if (-f "${swroot}/uplinks/$dir");
-	push(@uplinks, $dir);
-    }
-    closedir(DIR);
-    return \@uplinks;
-}
-
-sub get_iface($) {
-    my $filename = shift;
-    chomp($filename);
-    open (F, $filename) || return "";
-    my $iface = <F>;
-    close(F);
-    chomp($iface);
-    return $iface;
-}
-
-sub get_red_ifaces_by_type($) {
-    my $type=shift;
-    my @gottypeiface = ();
-    my @gottypeuplink = ();
-    my @gottype = ();
-
-    my $ref=get_uplinks();
-    my @uplinks=@$ref;
-    my %set = ();
-    foreach my $link (@uplinks) {
-	eval {
-	    &readhash("${swroot}/uplinks/$link/settings", \%set);
-	};
-	push(@gottype, $link);
-
-	my $iface = $set{'RED_DEV'};
-	if (!$iface) {
-	    $iface = get_iface("${swroot}/uplinks/$link/interface");
-	}
-	next if (!$iface);
-
-	if ($set{'RED_TYPE'} eq $type) {
-	    push(@gottypeiface, $iface);
-	    push(@gottypeuplink, $link);
-	}
-    }
-    return (\@gottypeiface, \@gottypeuplink, \@gottype);
-}
-
-sub get_red_ifaces() {
-    return `cat ${swroot}/uplinks/*/interface 2>/dev/null`;
-}
-
-sub get_zone_devices($) {
-    my $bridge = shift;
-    my @ifaces = ();
-    open (FILE, "${swroot}/ethernet/$bridge") || return "";
-    foreach my $line (<FILE>) {
-	chomp($line);
-	next if (!$line);
-	push(@ifaces, $line);
-    }
-    close(FILE);
-    return \@ifaces;
 }

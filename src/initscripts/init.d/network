@@ -73,7 +73,7 @@ case "${DO}" in
 			boot_mesg "Setting IPFire DMZ pinholes"
 			/usr/local/bin/setdmzholes; evaluate_retval
 	
-			if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+			if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 				boot_mesg "Setting up wireless firewall rules"
 				/usr/local/bin/restartwireless; evaluate_retval
 			fi
@@ -96,21 +96,21 @@ case "${DO}" in
 		
 		# BLUE
 		if [ "$blue" == "1" ]; then
-			if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+			if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 				name=blue /etc/rc.d/init.d/net/ifup
 			fi
 		fi
 		
 		# ORANGE
 		if [ "$orange" == "1" ]; then
-			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
+			if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "4" ]; then
 				name=orange /etc/rc.d/init.d/net/ifup
 			fi
 		fi
 		
 		# RED
 		if [ "$red" == "1" ]; then
-			if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 				# Remove possible leftover files
 				rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 				if [ "$AUTOCONNECT" == "off" ]; then
@@ -131,21 +131,21 @@ case "${DO}" in
 		
 		# BLUE
 		if [ "$blue" == "1" ]; then
-			if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+			if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 				name=blue /etc/rc.d/init.d/net/ifdown
 			fi
 		fi
 		
 		# ORANGE
 		if [ "$orange" == "1" ]; then
-			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
+			if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "4" ]; then
 				name=orange /etc/rc.d/init.d/net/ifdown
 			fi
 		fi
 		
 		# RED
 		if [ "$red" == "1" ]; then
-			if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 				name=red /etc/rc.d/init.d/net/ifdown
 			fi
 		fi

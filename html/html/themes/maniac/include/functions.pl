@@ -113,7 +113,7 @@ sub openpage {
     my $extrahead = shift;
 
     @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-    &readhash("${swroot}/main/settings", \%settings);
+    &General::readhash("${swroot}/main/settings", \%settings);
     &genmenu();
 
     my $h2 = gettitle($menu);
@@ -199,7 +199,7 @@ sub openpagewithoutmenu {
     my $extrahead = shift;
 
     @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-    &readhash("${swroot}/main/settings", \%settings);
+    &General::readhash("${swroot}/main/settings", \%settings);
     &genmenu();
 
     my $h2 = gettitle($menu);
