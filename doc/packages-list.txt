@@ -108,7 +108,7 @@
 * hdparm-6.6
 * htop-0.6.2
 * httpd-2.2.2
-* hwdata-0.191
+* hwdata
 * iana-etc-2.10
 * ibod
 * iftop-0.17
@@ -125,6 +125,7 @@
 * java-1.5.0_06-for-ipfire
 * jpegsrc.v6b
 * kbd-1.12
+* klibc-1.5
 * kudzu-1.2.64
 * l7-protocols-2006-09-10
 * lame-3.96.1
@@ -163,6 +164,7 @@
 * mc-4.6.1
 * memtest86+-1.65
 * misc-progs
+* mkinitcpio-0.5.9
 * mktemp-1.5
 * mldonkey-2.7.7
 * module-init-tools-3.2.2
@@ -242,6 +244,7 @@
 * uClibc-0.9.28-pass2
 * uClibc-0.9.28-pass3
 * udev-096
+* udev-096-klibc
 * unzip552
 * util-linux-2.12r
 * vim-7.0

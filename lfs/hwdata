@@ -26,50 +26,28 @@
 
 include Config
 
-VER        = 0.191
+VER        = ipfire
 
-THISAPP    = hwdata-$(VER)
-DL_FILE    = hwdata-$(VER).tar.gz
-DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+THISAPP    = hwdata
 ifeq "$(LFS_PASS)" "install"
   TARGET     = $(DIR_INFO)/$(THISAPP)-install
 else
   TARGET     = $(DIR_INFO)/$(THISAPP)
 endif
 
-FILES = MonitorsDB pci.ids upgradelist usb.ids videodrivers
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
-
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-
-$(DL_FILE)_MD5 = 7a261b9eb813406f73b5eca2570f949a
+objects =
 
 install : $(TARGET)
 
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+check :
 
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
+download :
 
-md5 : $(subst %,%_MD5,$(objects))
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+md5 :
 
 ###############################################################################
 # Installation Details
@@ -77,13 +55,11 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(LFS_PASS)" "install"
 	-mkdir -p -m 755 /install/initrd/usr/share/hwdata
-	cd $(DIR_APP) && for foo in $(FILES) ; do install -m 644 $$foo /install/initrd/usr/share/hwdata ; done
+	install -m 644 $(DIR_SRC)/src/hwdata/*.ids /install/initrd/usr/share/hwdata
 else
 	-mkdir -p -m 755 /usr/share/hwdata
-	cd $(DIR_APP) && for foo in $(FILES) ; do install -m 644 $$foo /usr/share/hwdata ; done
+	install -m 644 $(DIR_SRC)/src/hwdata/*.ids /usr/share/hwdata
 endif
-	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -73,6 +73,9 @@ int main(int argc, char *argv[])
 	char *installtypes[] = { "CDROM/USB", "HTTP/FTP", NULL };
 	int installtype = CDROM_INSTALL;
 	int choice;
+	int i;
+	int found = 0;
+	int firstrun = 0;
 	char shortlangname[10];
 	char message[1000];
 	char title[STRING_SIZE];
@@ -120,6 +123,12 @@ int main(int argc, char *argv[])
 		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
 	} else {
 		fgets(line, STRING_SIZE, cmdfile);
+		if (strstr (line, "noide") == NULL) {
+			fprintf(flog, "Initializing IDE controllers.\n");
+			initialize_ide();
+		} else {
+			fprintf(flog, "Skipping IDE detection.\n");
+		}
 		if (strstr (line, "nousb") == NULL) {
 			fprintf(flog, "Initializing USB controllers.\n");
 			initialize_usb();
@@ -127,9 +136,11 @@ int main(int argc, char *argv[])
 			fprintf(flog, "Skipping USB detection.\n");
 		}
 		// check if we have to make an unattended install
-		if (strstr (line, "unattended") != NULL) {		
+		if (strstr (line, "unattended") != NULL) {
 		    unattended = 1;
 		}
+		// Loading the cdrom-filesystem
+		mysystem("/sbin/modprobe iso9660");
 	}
 
 	if (unattended) {
@@ -202,9 +213,6 @@ int main(int argc, char *argv[])
 		fgets(sourcedrive, 5, handle);
 		fprintf(flog, "Source drive: %s\n", sourcedrive);
 		fclose(handle);
-
-		//snprintf(cdromparams.devnode_disk, STRING_SIZE, "/dev/%s", sourcedrive);
-		fprintf(flog, "Source device: %s\n", sourcedrive);
 	}
 
  	/* Configure the network now! */
@@ -221,17 +229,56 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		}
 	}
-
-	// Now try to find destination device...
-	if ((hdletter = findidetype(IDE_HD))) {
-		sprintf(harddrive, "hd%c", hdletter);
-		goto FOUND_DESTINATION;
-	}
 	
-	/* Need to clean this up at some point
-	   scsi disk is sdb/sdc when sda/sdb is used for usb-key
-	   if scsi-disk is sdd or more, it is not discovered
-	   Support only 2 usb keys, none could be unplugged */
+	i = 0;
+	while (found == 0) {
+		i++;
+		fprintf(flog, "Harddisk scan pass %i\n", i);
+
+		rc = mysystem("/bin/mountdest.sh");
+		fprintf(flog, "RC %d\n", rc);
+		
+		if (rc == 0) { // Found IDE disk
+			scsi_disk = 0;
+			found = 1;
+		} else if (rc == 1) { // Found SCSI/USB/SATA disk
+			scsi_disk = 1;
+			found = 1;
+		} else { // No harddisk found
+			if (firstrun == 1) {
+				errorbox(ctr[TR_NO_HARDDISK]);
+				goto EXIT;
+			}
+			// Do this if the kudzu-scan fails...
+			runcommandwithstatus("/bin/probehw.sh deep-scan", ctr[TR_PROBING_HARDWARE]);
+			firstrun = 1;
+		}
+
+/*		switch (mysystem("/bin/mountdest.sh")) {
+			case 0: // Found IDE disk
+				scsi_disk = 0;
+				found = 1;
+				break;
+			case 1: // Found SCSI disk
+				scsi_disk = 1;
+				found = 1;
+				break;
+			case 10: // No harddisk found
+				if (firstrun == 1) {
+					errorbox(ctr[TR_NO_HARDDISK]);
+					goto EXIT;
+				}
+				// Do this if the kudzu-scan fails...
+				runcommandwithstatus("/bin/probehw.sh deep-scan", ctr[TR_PROBING_HARDWARE]);
+				firstrun = 1;
+		} */
+	}
+
+	/*
+	// Need to clean this up at some point
+	// scsi disk is sdb/sdc when sda/sdb is used for usb-key
+	// if scsi-disk is sdd or more, it is not discovered
+	// Support only 2 usb keys, none could be unplugged
 	if (checkusb("sdb") && try_scsi("sdc")) {
 		scsi_disk = 1;
 		sprintf(harddrive, "sdc");
@@ -266,12 +313,16 @@ int main(int argc, char *argv[])
 		raid_disk = 1;
 		sprintf(harddrive, "ataraid/d0");
 		goto FOUND_DESTINATION;
-	}
-	/* nothing worked, give up */
-	errorbox(ctr[TR_NO_HARDDISK]);
-	goto EXIT;
+	} */
 
 	FOUND_DESTINATION:
+	if ((handle = fopen("/tmp/dest_device", "r")) == NULL) {
+		errorbox(ctr[TR_NO_HARDDISK]);
+		goto EXIT;
+	}
+	fgets(harddrive, 5, handle);
+	fclose(handle);
+			
 	/* load unattended configuration */
 	if (unattended) {
 	    fprintf(flog, "unattended: Reading unattended.conf\n");
@@ -443,6 +494,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Mount harddisk. */
+	mysystem("/sbin/modprobe reiserfs"); // to be banished...
 
 	snprintf(commandstring, STRING_SIZE, "/bin/mount %s3 /harddisk", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
@@ -514,8 +566,9 @@ int main(int argc, char *argv[])
 
 	/* mount proc filesystem */
 	mysystem("mkdir /harddisk/proc");
-	mysystem("/bin/mount -t proc none /harddisk/proc");
-	mysystem("/bin/mount --bind /dev /harddisk/dev");
+	mysystem("/bin/mount --bind /proc /harddisk/proc");
+	mysystem("/bin/mount --bind /dev  /harddisk/dev");
+	mysystem("/bin/mount --bind /sys  /harddisk/sys");
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
@@ -528,25 +581,11 @@ int main(int argc, char *argv[])
 	/* Update /etc/fstab */
 	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode_part_run);
 
-	/* if we detected SCSI/USB then fixup */
-/*	mysystem("/bin/probecntrl.sh");
-	if ((handle = fopen("/tmp/cntrldriver", "r")))
-	{
-		char *driver;
-		fgets(line, STRING_SIZE-1, handle);
-		fclose(handle);
-		line[strlen(line) - 1] = 0;
-		driver = strtok(line, ".");
-		if (strlen(driver) > 1) {
-			fprintf(flog, "Fixing up ipfirerd.img\n");
-			mkdir("/harddisk/initrd", S_IRWXU|S_IRWXG|S_IRWXO);
-			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd.img %s-ipfire", driver, KERNEL_VERSION);
-			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitrd --with=scsi_mod %s --with=sd_mod --with=sr_mod /boot/ipfirerd-smp.img %s-ipfire-smp", driver, KERNEL_VERSION);
-			runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-			mysystem("/sbin/chroot /harddisk /bin/mv /boot/grub/scsigrub.conf /boot/grub/grub.conf");
-		}
-	} */
+	/* Going to make our initrd... */
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd.img -k %s-ipfire", KERNEL_VERSION);
+	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd-smp.img -k %s-smp-ipfire", KERNEL_VERSION);
+	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
@@ -563,11 +602,9 @@ int main(int argc, char *argv[])
 	}
 
 	/* Install bootsplash */
-	mysystem("/bin/installbootsplash.sh");
+	// mysystem("/bin/installbootsplash.sh"); We cannot use this at the moment, it conflicts with our initrds...
 
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
-//	mysystem("umount /harddisk/proc");
-//	mysystem("umount /harddisk/dev");
 
 	if (!unattended) {
 		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
@@ -580,8 +617,6 @@ int main(int argc, char *argv[])
 EXIT:
 	fprintf(flog, "Install program ended.\n");	
 
-
-
 	if (!(allok))
 		newtWinMessage(title, ctr[TR_OK], ctr[TR_PRESS_OK_TO_REBOOT]);	
 	
@@ -589,39 +624,32 @@ EXIT:
 
 	if (allok && !allok_fastexit)
 	{
-		/* /proc is needed by the module checker.  We have to mount it
-		 * so it can be seen by setup, which is run chrooted. */
-//		if (system("/bin/mount proc -t proc /harddisk/proc"))
-//			printf("Unable to mount proc in /harddisk.");
-//		else
-//		{
-			if (unattended) {
-			    fprintf(flog, "Entering unattended setup\n");
-			    if (unattended_setup(unattendedkv)) {
+		if (unattended) {
+			fprintf(flog, "Entering unattended setup\n");
+			if (unattended_setup(unattendedkv)) {
 				snprintf(commandstring, STRING_SIZE, "/bin/sleep 10");
 				runcommandwithstatus(commandstring, "Unattended installation finished, system will reboot");
-			    } else {
+			} else {
 				errorbox("Unattended setup failed.");
 				goto EXIT;
-			    }
 			}
+		}
 
-			fflush(flog);
-			fclose(flog);
-			newtFinished();
+		fflush(flog);
+		fclose(flog);
+		newtFinished();
 
-			if (!unattended) {
-					// Copy our scanned nics to the disk and lock because scan doesn't work in chroot
-					system("touch /harddisk/var/ipfire/ethernet/scan_lock");
-					system("cp -f /tmp/scanned_nics /harddisk/var/ipfire/ethernet/scanned_nics");
-			    if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
-				    printf("Unable to run setup.\n");
-				  system("rm -f /harddisk/var/ipfire/ethernet/scan_lock");
-			}
+		if (!unattended) {
+			// Copy our scanned nics to the disk and lock because scan doesn't work in chroot
+			system("touch /harddisk/var/ipfire/ethernet/scan_lock");
+			system("cp -f /tmp/scanned_nics /harddisk/var/ipfire/ethernet/scanned_nics");
+			if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
+				printf("Unable to run setup.\n");
+			system("rm -f /harddisk/var/ipfire/ethernet/scan_lock");
+		}
 
-			if (system("/bin/umount /harddisk/proc"))
-				printf("Unable to umount /harddisk/proc.\n"); 
-//		}
+		if (system("/bin/umount /harddisk/proc"))
+			printf("Unable to umount /harddisk/proc.\n"); 
 	} else {
 		fflush(flog);
 		fclose(flog);
@@ -638,6 +666,7 @@ EXIT:
 
 	system("/bin/umount /harddisk/proc");
 	system("/bin/umount /harddisk/dev");
+	system("/bin/umount /harddisk/sys");
 
 	system("/bin/umount /harddisk/var");
 	system("/bin/umount /harddisk/boot");

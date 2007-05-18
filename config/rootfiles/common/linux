@@ -1301,3 +1301,4 @@ lib/modules/KVER-ipfire-smp
 #lib/modules/KVER-ipfire-smp/source
 #lib/modules/KVER-ipfire-smp/kernel/drivers/net/imq.ko
 #lib/modules/KVER-ipfire-smp/kernel/net/ipv4/netfilter/ipt_IMQ.ko
+sbin/gen_init_cpio

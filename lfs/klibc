@@ -26,9 +26,9 @@
 
 include Config
 
-VER        = 2.6.1.4
+VER        = 1.5
 
-THISAPP    = snort-$(VER)
+THISAPP    = klibc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -39,16 +39,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 
 objects = $(DL_FILE) \
-	Community-Rules-20070503.tar.gz \
-	bleeding.rules-20070503.tar.gz
+		klibc-extras-2.2.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-Community-Rules-20070503.tar.gz = $(DL_FROM)/Community-Rules-20070503.tar.gz
-bleeding.rules-20070503.tar.gz = $(DL_FROM)/bleeding.rules-20070503.tar.gz
+klibc-extras-2.2.tar.gz = $(DL_FROM)/klibc-extras-2.2.tar.gz
 
-$(DL_FILE)_MD5 = 70e7f297c9fcf1f46d6fa3e1bb4aae49
-Community-Rules-20070503.tar.gz_MD5 = f236b8a4ac12e99d3e7bd81bf3b5a482
-bleeding.rules-20070503.tar.gz_MD5 = f18f0a08c139b8205270b41a534f15d7
+$(DL_FILE)_MD5 = d55ce89c0656a7d6896ec0b2af07b5dc
+klibc-extras-2.2.tar.gz_MD5 = 7e5042978531048c369f59ca1a13055b
 
 install : $(TARGET)
 
@@ -77,23 +74,16 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/snort* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-	    --sysconfdir=/etc/snort \
-	    --enable-linux-smp-stats --enable-smb-alerts
+	@rm -rf $(DIR_APP) $(DIR_SRC)/klibc* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) && \
+		tar zxf $(DIR_DL)/klibc-extras-2.2.tar.gz
+	cd $(DIR_APP) && ln -fs ../linux linux
+	cd $(DIR_SRC)/klibc-extras && sed -i "s|^INSTALL = .*|INSTALL = /usr/bin/install -c -m 755|g" Makefile
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	mv /usr/bin/snort /usr/sbin/
-	-mkdir -p /etc/snort/rules
-
-	tar xvfz $(DIR_DL)/Community-Rules-20070503.tar.gz -C /etc/snort/
-	tar xvfz $(DIR_DL)/bleeding.rules-20070503.tar.gz -C /etc/snort/
-	cd $(DIR_APP) && install -m 0644  \
-		etc/reference.config etc/classification.config /etc/snort/rules
-	cd $(DIR_APP) && install -m 0644 etc/unicode.map /etc/snort
-	install -m 0644 $(DIR_SRC)/config/snort/snort.conf /etc/snort
-	chown -R nobody:nobody /etc/snort
-	-mkdir -p /var/log/snort
-	chown -R snort:snort /var/log/snort
-	@rm -rf $(DIR_APP) $(DIR_SRC)/snort*
+	cd $(DIR_SRC)/klibc-extras && make
+	cd $(DIR_SRC)/klibc-extras && make install
+	ln -sf sh.shared /usr/lib/klibc/bin/sh
+	mv /lib/klibc-*.so /lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
+	mv /usr/lib/klibc/lib/klibc-*.so /usr/lib/klibc/lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
+	@rm -rf $(DIR_APP) $(DIR_SRC)/klibc*
 	@$(POSTBUILD)

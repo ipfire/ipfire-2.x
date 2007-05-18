@@ -204,5 +204,10 @@ endif
 	# remove symlinked pcmcia directory
 	-rm -rf /lib/modules/$(VER)-ipfire{,-smp}/pcmcia
 
+ifeq "$(SMP)" ""
+	# Only do this once on the non-SMP pass	
+	$(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
+endif 
+
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

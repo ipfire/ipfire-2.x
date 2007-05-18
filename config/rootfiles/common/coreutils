@@ -42,7 +42,7 @@ usr/bin/fold
 usr/bin/groups
 usr/bin/hostid
 usr/bin/id
-#usr/bin/install
+usr/bin/install
 usr/bin/join
 #usr/bin/link
 #usr/bin/logname
@@ -58,7 +58,7 @@ usr/bin/paste
 #usr/bin/printenv
 usr/bin/printf
 #usr/bin/ptx
-#usr/bin/readlink
+usr/bin/readlink
 usr/bin/seq
 #usr/bin/sha1sum
 usr/bin/shred
@@ -76,7 +76,7 @@ usr/bin/tr
 #usr/bin/tty
 usr/bin/unexpand
 usr/bin/uniq
-#usr/bin/unlink
+usr/bin/unlink
 #usr/bin/users
 #usr/bin/vdir
 usr/bin/wc

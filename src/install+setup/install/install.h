@@ -27,6 +27,7 @@ struct devparams
 };
 
 /* ide.c */
+int initialize_ide();
 int checkide(char letter);
 char findidetype(int type);
 

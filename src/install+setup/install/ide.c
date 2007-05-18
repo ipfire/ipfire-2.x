@@ -11,6 +11,15 @@
 
 #include "install.h"
 
+int initialize_ide() {
+    mysystem("/sbin/modprobe ide-generic");
+    mysystem("/sbin/modprobe generic");
+    mysystem("/sbin/modprobe ide-cd");
+    mysystem("/sbin/modprobe ide-disk");
+
+    return 0;
+}
+
 /* checkide().  Scans the named drive letter and returns the IDE_??? type. */
 int checkide(char letter)
 {

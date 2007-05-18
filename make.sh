@@ -350,6 +350,9 @@ buildipfire() {
   ipfiremake fuse
   ipfiremake pkg-config
   ipfiremake cpio
+  ipfiremake klibc
+  ipfiremake mkinitcpio
+  ipfiremake udev				KLIBC=1
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp

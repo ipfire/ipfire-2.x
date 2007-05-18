@@ -81,8 +81,8 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make RPM_OPT_FLAGS="-O2 -I/opt/$(MACHINE)-uClibc/include" \
 		ARCH=$(MACHINE)
 	cd $(DIR_APP) && install -m 0755 kudzu /install/initrd/bin/kudzu
-	cd $(DIR_APP) && install -m 0644 libkudzu.a /install/initrd/lib
-	cd $(DIR_APP) && install -m 0644 libkudzu_loader.a /install/initrd/lib
+	#cd $(DIR_APP) && install -m 0644 libkudzu.a /install/initrd/lib
+	#cd $(DIR_APP) && install -m 0644 libkudzu_loader.a /install/initrd/lib
 else
 	rm -rf /usr/sbin/kudzu
 	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make
