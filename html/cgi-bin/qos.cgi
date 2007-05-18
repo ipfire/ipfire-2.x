@@ -468,7 +468,7 @@ END
   		@classline = split( /\;/, $classentry );
 		$qossettings{'CLASS'}=$classline[1];
 		print <<END
-		<input type="button" onClick="swapVisibility('$qossettings{'CLASS'}')" value='$qossettings{'CLASS'}'>
+		<input type="button" onClick="swapVisibility('$qossettings{'CLASS'}')" value='$qossettings{'CLASS'}' />
 END
 ;
 	}
@@ -487,9 +487,9 @@ END
 		&Header::openbox('100%', 'center', "$qossettings{'CLASS'} ($qossettings{'DEV'})");
 		print <<END
 		<table>
-		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png'>
-		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png'>
-		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png'>
+		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png' />
+		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png' />
+		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png' />
 END
 ;
 	  	foreach $subclassentry (sort @subclasses)
@@ -500,9 +500,9 @@ END
 				$qossettings{'SCLASS'}=$subclassline[2];
 				&gengraph($qossettings{'DEV'},$qossettings{'SCLASS'});
 				print <<END
-				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-packets.png'>
-				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-borrowed.png'>
-				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-bytes.png'>
+				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-packets.png' />
+				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-borrowed.png' />
+				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-bytes.png' />
 END
 ;
 			}
@@ -515,7 +515,6 @@ print <<END
 	</table>
 END
 ;
-	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
@@ -621,7 +620,8 @@ if ($errormessage) {
 &Header::openbox('100%', 'center', 'Quality of Service');
 
 print <<END
-	<table width='33%'>
+  <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='66%'>
 END
 ;
 	if ( $message ne "" ) {
@@ -633,38 +633,45 @@ END
 		<tr><td width='100%' align='center' colspan='2'>
 		<input type='submit' name='ACTION' value="Start" /> 
 		<input type='submit' name='ACTION' value="Stop" /> 
-		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" />
+		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" /></table></form>
 END
 ;
 	if (($qossettings{'OUT_SPD'} ne '') && ($qossettings{'INC_SPD'} ne '')) {
 		print <<END
+    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	  <table width='66%'>
 		<tr><td colspan='3'>&nbsp;
 		<tr><td width='40%' align='right'>Downloadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'INC_SPD'} kbps
 		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='Andern' />
 		<tr><td width='40%' align='right'>Uploadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'OUT_SPD'} kbps
+		</table></form>
 END
 ;
 	}
 	if (($qossettings{'DEFCLASS_OUT'} ne '') && ($qossettings{'DEFCLASS_INC'} ne '')&& ($qossettings{'ACK'} ne '')) {
 		print <<END
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='66%'>
 		<tr><td colspan='3'><hr />
 		<tr><td width='40%' align='right'>Downloadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_INC'}	
-		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern'>
+		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern' />
 		<tr><td width='40%' align='right'>Uploadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr />
 		<tr><td colspan='3' width='100%' align='center'>
-		<table boder='0' cellpadding='0' cellspacing='0'>
-			<tr><td><input type='submit' name='ACTION' value='Parentklasse hinzufuegen'>
-			    <td><input type='submit' name='ACTION' value='Erweiterte Einstellungen'>
-			<tr><td><input type='submit' name='ACTION' value='Statusinformationen'>
-			    <td><input type='submit' name='ACTION' value='Grafische Auswertung'>
+		</table>
+		</form>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table border='0' cellpadding='0' cellspacing='0'>
+			<tr><td><input type='submit' name='ACTION' value='Parentklasse hinzufuegen' />
+			    <td><input type='submit' name='ACTION' value='Erweiterte Einstellungen' />
+			<tr><td><input type='submit' name='ACTION' value='Statusinformationen' />
+			    <td><input type='submit' name='ACTION' value='Grafische Auswertung' />
 		</table>
 	</form>
 END
 ;
 	}
-print "</table>";
 &Header::closebox();
 
 if ( ($qossettings{'OUT_SPD'} eq '') || ($qossettings{'INC_SPD'} eq '') ) {
@@ -686,14 +693,14 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 &overviewgraph($qossettings{'IMQ_DEV'});
 print <<END
 	<table>
-		<tr><td colspan='9' align='right' valign='middle'><img src='/images/addblue.gif'>&nbsp;Unterklasse hinzufuegen | <img src='/images/addgreen.gif'>&nbsp;Regel hinzufuegen | <img src='/images/edit.gif'>&nbsp;Bearbeiten | <img src='/images/delete.gif'>&nbsp;Loeschen &nbsp;
+		<tr><td colspan='9' align='center' valign='middle'><img alt="" src='/images/addblue.gif' />&nbsp;Unterklasse hinzufuegen | <img alt="" src='/images/addgreen.gif' />&nbsp;Regel hinzufuegen | <img alt="" src='/images/edit.gif' />&nbsp;Bearbeiten | <img alt="" src='/images/delete.gif' />&nbsp;Loeschen &nbsp;
 		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
 END
 ;
 if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}.png") && ( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png")) {
 	print <<END
-		<tr><td colspan='9' align='center'><img src="/graphs/qos-graph-$qossettings{'RED_DEV'}.png">
-		<tr><td colspan='9' align='center'><img src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png">
+		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'RED_DEV'}.png" />
+		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png" />
 END
 ;}
 print "\t</table>";
@@ -795,8 +802,8 @@ END
 		print "<tr><td colspan='3' align='center'>$message";
 	}
 	if ( $qossettings{'EDIT'} eq 'yes' ) { 
-		print "<input type='hidden' name='CLASS' value=$qossettings{'CLASS'}>";
-		print "<input type='hidden' name='DEVICE' value=$qossettings{'DEVICE'}>";
+		print "<input type='hidden' name='CLASS' value=$qossettings{'CLASS'} />";
+		print "<input type='hidden' name='DEVICE' value=$qossettings{'DEVICE'} />";
 	}
 	print <<END
 		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
@@ -875,7 +882,7 @@ END
 				<option value='1'>Minimale Kosten (1)</option></select>
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'remark'}:
-		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" /> <img alt='blob' src='/blob.gif' />
+		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" /> <img alt="" alt='blob' src='/blob.gif' />
 		<tr><td width='33%' align='right'>&nbsp;
 		    <td width='33%' align='left'>&nbsp;
 		    <td width='33%' align='center'><input type='submit' name='DOCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
@@ -994,11 +1001,11 @@ END
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Quell-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value=$qossettings{'QIP'}>
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value=$qossettings{'QIP'} />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'}>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DOLEVEL7' value=$Lang::tr{'save'} />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'} />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'} /><input type='submit' name='DOLEVEL7' value=$Lang::tr{'save'} />
 		</table></form>
 END
 ;
@@ -1031,17 +1038,17 @@ END
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Quell-Port:
-		    <td width='33%' align='left'><input type='text' name='QPORT' maxlength='5' value=$qossettings{'QPORT'}>
+		    <td width='33%' align='left'><input type='text' name='QPORT' maxlength='5' value=$qossettings{'QPORT'} />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-Port:
-		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='5' value=$qossettings{'DPORT'}>
+		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='5' value=$qossettings{'DPORT'} />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Quell-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value=$qossettings{'QIP'}>
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value=$qossettings{'QIP'} />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'}>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}'><input type='submit' name='DOPORT' value=$Lang::tr{'save'} />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'} />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOPORT' value=$Lang::tr{'save'} />
 		</table></form>
 END
 ;
@@ -1064,11 +1071,11 @@ END
 	print <<END
 		<tr><td colspan='2' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
 		<tr><td width='100%' colspan='2'>Aktivieren oder deaktivieren sie die TOS-Bits <br /> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='50%' align='left'>Minimale Verzoegerung (8)		<td width='50%'><input type="radio" name="TOS" value="8" $checked[8]>
-		<tr><td width='50%' align='left'>Maximaler Durchsatz (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4]>
-		<tr><td width='50%' align='left'>Maximale Zuverlaessigkeit (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2]>
-		<tr><td width='50%' align='left'>Minimale Kosten (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1]>
-		<tr><td width='100%' align='right' colspan='2'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'}><input type='submit' name='DOTOS' value=$Lang::tr{'save'} />
+		<tr><td width='50%' align='left'>Minimale Verzoegerung (8)		<td width='50%'><input type="radio" name="TOS" value="8" $checked[8] />
+		<tr><td width='50%' align='left'>Maximaler Durchsatz (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4] />
+		<tr><td width='50%' align='left'>Maximale Zuverlaessigkeit (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2] />
+		<tr><td width='50%' align='left'>Minimale Kosten (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1] />
+		<tr><td width='100%' align='right' colspan='2'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'} /><input type='submit' name='DOTOS' value=$Lang::tr{'save'} />
 		</table></form>
 END
 ;
@@ -1122,24 +1129,24 @@ sub showclasses {
 				    <td align='right'  bgcolor='$color{'color22'}'>
 					<table border='0'><tr>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen'>
-						<input type='image' alt='Unterklasse hinzufuegen' src='/images/addblue.gif'>
+						<input type='hidden' name='CLASS' value='$classline[1]' />
+						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen' />
+						<input type='image' alt='Unterklasse hinzufuegen' src='/images/addblue.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
-						<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
+						<input type='hidden' name='CLASS' value='$classline[1]' />
+						<input type='hidden' name='ACTION' value='Regel hinzufuegen' />
+						<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='DOCLASS' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+						<input type='hidden' name='CLASS' value='$classline[1]' />
+						<input type='hidden' name='DOCLASS' value='Bearbeiten' />
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]'>
-						<input type='hidden' name='DOCLASS' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+						<input type='hidden' name='CLASS' value='$classline[1]' />
+						<input type='hidden' name='DOCLASS' value='Loeschen' />
+						<input type='image' alt='Loeschen' src='/images/delete.gif' />
 					</form>
 					</table>
 				    </td>
@@ -1222,24 +1229,24 @@ END
 				    <td align='right'>
 				    <table border='0'><tr>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$portruleline[0]'>
-						<input type='hidden' name='PPROT' value='$portruleline[2]'>
-						<input type='hidden' name='QIP' value='$portruleline[3]'>
-						<input type='hidden' name='QPORT' value='$portruleline[4]'>
-						<input type='hidden' name='DIP' value='$portruleline[5]'>
-						<input type='hidden' name='DPORT' value='$portruleline[6]'>
-						<input type='hidden' name='DOPORT' value='Bearbeiten'>
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]' />
+						<input type='hidden' name='PPROT' value='$portruleline[2]' />
+						<input type='hidden' name='QIP' value='$portruleline[3]' />
+						<input type='hidden' name='QPORT' value='$portruleline[4]' />
+						<input type='hidden' name='DIP' value='$portruleline[5]' />
+						<input type='hidden' name='DPORT' value='$portruleline[6]' />
+						<input type='hidden' name='DOPORT' value='Bearbeiten' />
+						<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$portruleline[0]'>
-						<input type='hidden' name='PPROT' value='$portruleline[2]'>
-						<input type='hidden' name='QIP' value='$portruleline[3]'>
-						<input type='hidden' name='QPORT' value='$portruleline[4]'>
-						<input type='hidden' name='DIP' value='$portruleline[5]'>
-						<input type='hidden' name='DPORT' value='$portruleline[6]'>
-						<input type='hidden' name='DOPORT' value='Loeschen'>
-						<input type='image' alt='Loeschen' src='/images/delete.gif'>
+						<input type='hidden' name='CLASS' value='$portruleline[0]' />
+						<input type='hidden' name='PPROT' value='$portruleline[2]' />
+						<input type='hidden' name='QIP' value='$portruleline[3]' />
+						<input type='hidden' name='QPORT' value='$portruleline[4]' />
+						<input type='hidden' name='DIP' value='$portruleline[5]' />
+						<input type='hidden' name='DPORT' value='$portruleline[6]' />
+						<input type='hidden' name='DOPORT' value='Loeschen' />
+						<input type='image' alt='Loeschen' src='/images/delete.gif' />
 					</form>
 				    </table>
 END
@@ -1283,18 +1290,18 @@ END
 					    <td align='right'>
 				  		  <table border='0'><tr>
 							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-								<input type='hidden' name='CLASS' value='$tosruleline[0]'>
-								<input type='hidden' name='DEV' value='$tosruleline[1]'>
-								<input type='hidden' name='TOS' value='$tosruleline[2]'>
-								<input type='hidden' name='DOTOS' value='Bearbeiten'>
-								<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+								<input type='hidden' name='CLASS' value='$tosruleline[0]' />
+								<input type='hidden' name='DEV' value='$tosruleline[1]' />
+								<input type='hidden' name='TOS' value='$tosruleline[2]' />
+								<input type='hidden' name='DOTOS' value='Bearbeiten' />
+								<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
 							</form>
 							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-								<input type='hidden' name='CLASS' value='$tosruleline[0]'>
-								<input type='hidden' name='DEV' value='$tosruleline[1]'>
-								<input type='hidden' name='TOS' value='$tosruleline[2]'>
-								<input type='hidden' name='DOTOS' value='Loeschen'>
-								<input type='image' alt='Loeschen' src='/images/delete.gif'>
+								<input type='hidden' name='CLASS' value='$tosruleline[0]' />
+								<input type='hidden' name='DEV' value='$tosruleline[1]' />
+								<input type='hidden' name='TOS' value='$tosruleline[2]' />
+								<input type='hidden' name='DOTOS' value='Loeschen' />
+								<input type='image' alt='Loeschen' src='/images/delete.gif' />
 							</form>
 				    		</table>
 END
@@ -1305,7 +1312,7 @@ END
 
 				if ( -e "/srv/web/ipfire/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png") {
 					print <<END
-					<tr><td colspan='9' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png'>
+					<tr><td colspan='9' align='center'><img alt="" src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png' />
 END
 ;
 				}
@@ -1327,19 +1334,19 @@ END
 							    <td align='right'  bgcolor='#FAFAFA'>
 						<table border='0'><tr>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]'>
-							<input type='hidden' name='ACTION' value='Regel hinzufuegen'>
-							<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]' />
+							<input type='hidden' name='ACTION' value='Regel hinzufuegen' />
+							<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif' />
 						</form>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]'>
-							<input type='hidden' name='DOSCLASS' value='Bearbeiten'>
-							<input type='image' alt='Bearbeiten' src='/images/edit.gif'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]' />
+							<input type='hidden' name='DOSCLASS' value='Bearbeiten' />
+							<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
 						</form>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]'>
-							<input type='hidden' name='DOSCLASS' value='Loeschen'>
-							<input type='image' alt='Loeschen' src='/images/delete.gif'>
+							<input type='hidden' name='CLASS' value='$subclassline[2]' />
+							<input type='hidden' name='DOSCLASS' value='Loeschen' />
+							<input type='image' alt='Loeschen' src='/images/delete.gif' />
 						</form>
 						</table>
 END
@@ -1363,13 +1370,13 @@ sub expert
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
-			<input type='text' name='MTU' maxlength='8' required='4' value=$qossettings{'MTU'}>
+			<input type='text' name='MTU' maxlength='8' required='4' value=$qossettings{'MTU'} />
 		    <td width='33%' align='center'>Diese Einstellung aendert die MTU nicht global sondern nur fuer das QoS.
 		<tr><td width='33%' align='right'>Queue Laenge:<td width='33%' align='left'>
-			<input type='text' name='QLENGTH' maxlength='8' required='2' value=$qossettings{'QLENGTH'}>
+			<input type='text' name='QLENGTH' maxlength='8' required='2' value=$qossettings{'QLENGTH'} />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>SFQ Perturb:<td width='33%' align='left'>
-			<input type='text' name='SFQ_PERTUB' maxlength='8' required='1' value=$qossettings{'SFQ_PERTUB'}>
+			<input type='text' name='SFQ_PERTUB' maxlength='8' required='1' value=$qossettings{'SFQ_PERTUB'} />
 		    <td width='33%' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
 		</table>
 		</form>
