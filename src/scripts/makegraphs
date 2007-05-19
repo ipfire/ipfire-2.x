@@ -119,7 +119,7 @@ sub updatecpugraph {
 		"--start", "-1$period", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t $tr{'cpu usage per'} $tr{$period}",
 		"DEF:user=$rrdlog/cpu.rrd:user:AVERAGE",
@@ -129,18 +129,22 @@ sub updatecpugraph {
 		"CDEF:userpct=100,user,total,/,*",
 		"CDEF:systempct=100,system,total,/,*",
 		"CDEF:idlepct=100,idle,total,/,*",
-		"AREA:userpct".$color{"color11"}.":$tr{'user cpu usage'}\\j",
-		"STACK:systempct".$color{"color13"}.":$tr{'system cpu usage'}\\j",
+		"AREA:userpct".$color{"color11"}.":$tr{'user cpu usage'}",
+		"STACK:systempct".$color{"color13"}.":$tr{'system cpu usage'}",
 		"STACK:idlepct".$color{"color12"}.":$tr{'idle cpu usage'}\\j",
-		"GPRINT:userpct:MAX:$tr{'maximal'} $tr{'user cpu'}\\:%3.2lf%%",
-		"GPRINT:userpct:AVERAGE:$tr{'average'} $tr{'user cpu'}\\:%3.2lf%%",
-		"GPRINT:userpct:LAST:$tr{'current'} $tr{'user cpu'}\\:%3.2lf%%\\j",
-		"GPRINT:systempct:MAX:$tr{'maximal'} $tr{'system cpu'}\\:%3.2lf%%",
-		"GPRINT:systempct:AVERAGE:$tr{'average'} $tr{'system cpu'}\\:%3.2lf%%",
-		"GPRINT:systempct:LAST:$tr{'current'} $tr{'system cpu'}\\:%3.2lf%%\\j",
-		"GPRINT:idlepct:MAX:$tr{'maximal'} $tr{'idle cpu'}\\:%3.2lf%%",
-		"GPRINT:idlepct:AVERAGE:$tr{'average'} $tr{'idle cpu'}\\:%3.2lf%%",
-		"GPRINT:idlepct:LAST:$tr{'current'} $tr{'idle cpu'}\\:%3.2lf%%\\j");
+    "COMMENT: \\j",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'current'}\\j",
+		"GPRINT:userpct:MAX:$tr{'user cpu'}\\:%3.2lf%%",
+		"GPRINT:userpct:AVERAGE:$tr{'user cpu'}\\:%3.2lf%%",
+		"GPRINT:userpct:LAST:$tr{'user cpu'}\\:%3.2lf%%\\j",
+		"GPRINT:systempct:MAX:$tr{'system cpu'}\\:%3.2lf%%",
+		"GPRINT:systempct:AVERAGE:$tr{'system cpu'}\\:%3.2lf%%",
+		"GPRINT:systempct:LAST:$tr{'system cpu'}\\:%3.2lf%%\\j",
+		"GPRINT:idlepct:MAX:$tr{'idle cpu'}\\:%3.2lf%%",
+		"GPRINT:idlepct:AVERAGE:$tr{'idle cpu'}\\:%3.2lf%%",
+		"GPRINT:idlepct:LAST:$tr{'idle cpu'}\\:%3.2lf%%\\j");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
 }
@@ -187,16 +191,16 @@ sub updateloadgraph {
 		"-w 600", "-h 100", "-i", "-z", "-l 0", "-r", "--alt-y-grid",
 		"-t Load Average",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"DEF:load1=$rrdlog/load.rrd:load1:AVERAGE",
 		"DEF:load5=$rrdlog/load.rrd:load5:AVERAGE",
 		"DEF:load15=$rrdlog/load.rrd:load15:AVERAGE",
-		"AREA:load1".$color{"color13"}.":1 Minute, letzter\\:",
-		"GPRINT:load1:LAST:%5.2lf\\j",
-		"AREA:load5".$color{"color18"}.":5 Minuten, letzter\\:",
-		"GPRINT:load5:LAST:%5.2lf\\j",
-		"AREA:load15".$color{"color14"}.":15 Minuten, letzter\\:",
+		"AREA:load1".$color{"color13"}.":1 Minute, letzter:",
+		"GPRINT:load1:LAST:%5.2lf",
+		"AREA:load5".$color{"color18"}.":5 Minuten, letzter:",
+		"GPRINT:load5:LAST:%5.2lf",
+		"AREA:load15".$color{"color14"}.":15 Minuten, letzter:",
 		"GPRINT:load15:LAST:%5.2lf\\j",
 		"LINE1:load5".$color{"color13"},
 		"LINE1:load1".$color{"color18"});
@@ -227,7 +231,7 @@ sub updatememgraph {
 		"--start", "-1$period", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t $tr{'memory usage per'} $tr{$period}",
 		"DEF:used=$rrdlog/mem.rrd:memused:AVERAGE",
@@ -242,26 +246,30 @@ sub updatememgraph {
 		"CDEF:bufferpct=100,buffer,total,/,*",
 		"CDEF:cachepct=100,cache,total,/,*",
 		"CDEF:freepct=100,free,total,/,*",
-		"AREA:usedpct".$color{"color11"}.":$tr{'used memory'}\\j",
-		"STACK:sharedpct".$color{"color13"}.":$tr{'shared memory'}\\j",
-		"STACK:bufferpct".$color{"color23"}.":$tr{'buffered memory'}\\j",
-		"STACK:cachepct".$color{"color14"}.":$tr{'cached memory'}\\j",
+		"AREA:usedpct".$color{"color11"}.":$tr{'used memory'}",
+		"STACK:sharedpct".$color{"color13"}.":$tr{'shared memory'}",
+		"STACK:bufferpct".$color{"color23"}.":$tr{'buffered memory'}",
+		"STACK:cachepct".$color{"color14"}.":$tr{'cached memory'}",
 		"STACK:freepct".$color{"color12"}.":$tr{'free memory'}\\j",
-		"GPRINT:usedpct:MAX:$tr{'maximal'} $tr{'used memory'}\\:%3.2lf%%",
-		"GPRINT:usedpct:AVERAGE:$tr{'average'} $tr{'used memory'}\\:%3.2lf%%",
-		"GPRINT:usedpct:LAST:$tr{'current'} $tr{'used memory'}\\:%3.2lf%%\\j",
-		"GPRINT:sharedpct:MAX:$tr{'maximal'} $tr{'shared memory'}\\:%3.2lf%%",
-		"GPRINT:sharedpct:AVERAGE:$tr{'average'} $tr{'shared memory'}\\:%3.2lf%%",
-		"GPRINT:sharedpct:LAST:$tr{'current'} $tr{'shared memory'}\\:%3.2lf%%\\j",
-		"GPRINT:bufferpct:MAX:$tr{'maximal'} $tr{'buffered memory'}\\:%3.2lf%%",
-		"GPRINT:bufferpct:AVERAGE:$tr{'average'} $tr{'buffered memory'}\\:%3.2lf%%",
-		"GPRINT:bufferpct:LAST:$tr{'current'} $tr{'buffered memory'}\\:%3.2lf%%\\j",
-		"GPRINT:cachepct:MAX:$tr{'maximal'} $tr{'cached memory'}\\:%3.2lf%%",
-		"GPRINT:cachepct:AVERAGE:$tr{'average'} $tr{'cached memory'}\\:%3.2lf%%",
-		"GPRINT:cachepct:LAST:$tr{'current'} $tr{'cached memory'}\\:%3.2lf%%\\j",
-		"GPRINT:freepct:MAX:$tr{'maximal'} $tr{'free memory'}\\:%3.2lf%%",
-		"GPRINT:freepct:AVERAGE:$tr{'average'} $tr{'free memory'}\\:%3.2lf%%",
-		"GPRINT:freepct:LAST:$tr{'current'} $tr{'free memory'}\\:%3.2lf%%\\j");
+		"COMMENT: \\j",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'current'}\\j",
+		"GPRINT:usedpct:MAX:$tr{'used memory'}\\:%3.2lf%%",
+		"GPRINT:usedpct:AVERAGE:$tr{'used memory'}\\:%3.2lf%%",
+		"GPRINT:usedpct:LAST:$tr{'used memory'}\\:%3.2lf%%\\j",
+		"GPRINT:sharedpct:MAX:$tr{'shared memory'}\\:%3.2lf%%",
+		"GPRINT:sharedpct:AVERAGE:$tr{'shared memory'}\\:%3.2lf%%",
+		"GPRINT:sharedpct:LAST:$tr{'shared memory'}\\:%3.2lf%%\\j",
+		"GPRINT:bufferpct:MAX:$tr{'buffered memory'}\\:%3.2lf%%",
+		"GPRINT:bufferpct:AVERAGE:$tr{'buffered memory'}\\:%3.2lf%%",
+		"GPRINT:bufferpct:LAST:$tr{'buffered memory'}\\:%3.2lf%%\\j",
+		"GPRINT:cachepct:MAX:$tr{'cached memory'}\\:%3.2lf%%",
+		"GPRINT:cachepct:AVERAGE:$tr{'cached memory'}\\:%3.2lf%%",
+		"GPRINT:cachepct:LAST:$tr{'cached memory'}\\:%3.2lf%%\\j",
+		"GPRINT:freepct:MAX:$tr{'free memory'}\\:%3.2lf%%",
+		"GPRINT:freepct:AVERAGE:$tr{'free memory'}\\:%3.2lf%%",
+		"GPRINT:freepct:LAST:$tr{'free memory'}\\:%3.2lf%%\\j");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for mem: $ERROR\n" if $ERROR;
 
@@ -269,7 +277,7 @@ sub updatememgraph {
 		"--start", "-1$period", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t $tr{'swap usage per'} $tr{$period}",
 		"DEF:used=$rrdlog/mem.rrd:swapused:AVERAGE",
@@ -277,14 +285,18 @@ sub updatememgraph {
 		"CDEF:total=used,free,+",
 		"CDEF:usedpct=100,used,total,/,*",
 		"CDEF:freepct=100,free,total,/,*",
-		"AREA:usedpct".$color{"color11"}.":$tr{'used swap'}\\j",
+		"AREA:usedpct".$color{"color11"}.":$tr{'used swap'}",
 		"STACK:freepct".$color{"color12"}.":$tr{'free swap'}\\j",
-		"GPRINT:usedpct:MAX:$tr{'maximal'} $tr{'used swap'}\\:%3.2lf%%",
-		"GPRINT:usedpct:AVERAGE:$tr{'average'} $tr{'used swap'}\\:%3.2lf%%",
-		"GPRINT:usedpct:LAST:$tr{'current'} $tr{'used swap'}\\:%3.2lf%%\\j",
-		"GPRINT:freepct:MAX:$tr{'maximal'} $tr{'free swap'}\\:%3.2lf%%",
-		"GPRINT:freepct:AVERAGE:$tr{'average'} $tr{'free swap'}\\:%3.2lf%%",
-		"GPRINT:freepct:LAST:$tr{'current'} $tr{'free swap'}\\:%3.2lf%%\\j");
+		"COMMENT: \\j",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'current'}\\j",
+		"GPRINT:usedpct:MAX:$tr{'used swap'}\\:%3.2lf%%",
+		"GPRINT:usedpct:AVERAGE:$tr{'used swap'}\\:%3.2lf%%",
+		"GPRINT:usedpct:LAST:$tr{'used swap'}\\:%3.2lf%%\\j",
+		"GPRINT:freepct:MAX:$tr{'free swap'}\\:%3.2lf%%",
+		"GPRINT:freepct:AVERAGE:$tr{'free swap'}\\:%3.2lf%%",
+		"GPRINT:freepct:LAST:$tr{'free swap'}\\:%3.2lf%%\\j");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for swap: $ERROR\n" if $ERROR;
 }
@@ -360,19 +372,23 @@ sub updatediskgraph {
 		"--start", "-1$period", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t $tr{'disk access per'} $tr{$period}",
 		"DEF:read=$rrdlog/disk.rrd:readsect:AVERAGE",
 		"DEF:write=$rrdlog/disk.rrd:writesect:AVERAGE",
-		"AREA:read".$color{"color11"}.":$tr{'sectors read from disk per second'}\\j",
+		"AREA:read".$color{"color11"}.":$tr{'sectors read from disk per second'}",
 		"STACK:write".$color{"color12"}.":$tr{'sectors written to disk per second'}\\j",
-		"GPRINT:read:MAX:$tr{'maximal'} $tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:AVERAGE:$tr{'average'} $tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:LAST:$tr{'current'} $tr{'read sectors'}\\:%8.0lf\\j",
-		"GPRINT:write:MAX:$tr{'maximal'} $tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:AVERAGE:$tr{'average'} $tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:LAST:$tr{'current'} $tr{'written sectors'}\\:%8.0lf\\j");
+		"COMMENT: \\j",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'current'}\\j",
+		"GPRINT:read:MAX:$tr{'read sectors'}\\:%8.0lf",
+		"GPRINT:read:AVERAGE:$tr{'read sectors'}\\:%8.0lf",
+		"GPRINT:read:LAST:$tr{'read sectors'}\\:%8.0lf\\j",
+		"GPRINT:write:MAX:$tr{'written sectors'}\\:%8.0lf",
+		"GPRINT:write:AVERAGE:$tr{'written sectors'}\\:%8.0lf",
+		"GPRINT:write:LAST:$tr{'written sectors'}\\:%8.0lf\\j");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for disk: $ERROR\n" if $ERROR;
 }
@@ -441,7 +457,7 @@ sub updatediskgraphnew {
 		"--start", "-1$period", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t $tr{'disk access per'} $tr{$period}",
 		"DEF:read=$rrdlog/disk-$disk.rrd:readsect:AVERAGE",
@@ -450,15 +466,18 @@ sub updatediskgraphnew {
 		"CDEF:sl_state=sleep,INF,*",
 
                 "AREA:sl_state#a0a0a0:disk standby\\j",
-		"AREA:read".$color{"color11"}.":$tr{'sectors read from disk per second'}\\j",
+		"AREA:read".$color{"color11"}.":$tr{'sectors read from disk per second'}",
 		"STACK:write".$color{"color12"}.":$tr{'sectors written to disk per second'}\\j",
-	
-		"GPRINT:read:MAX:$tr{'maximal'} $tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:AVERAGE:$tr{'average'} $tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:LAST:$tr{'current'} $tr{'read sectors'}\\:%8.0lf\\j",
-		"GPRINT:write:MAX:$tr{'maximal'} $tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:AVERAGE:$tr{'average'} $tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:LAST:$tr{'current'} $tr{'written sectors'}\\:%8.0lf\\j");
+		"COMMENT: \\j",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'current'}\\j",
+		"GPRINT:read:MAX:$tr{'read sectors'}\\:%8.0lf",
+		"GPRINT:read:AVERAGE:$tr{'read sectors'}\\:%8.0lf",
+		"GPRINT:read:LAST:$tr{'read sectors'}\\:%8.0lf\\j",
+		"GPRINT:write:MAX:$tr{'written sectors'}\\:%8.0lf",
+		"GPRINT:write:AVERAGE:$tr{'written sectors'}\\:%8.0lf",
+		"GPRINT:write:LAST:$tr{'written sectors'}\\:%8.0lf\\j");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for disk-$disk: $ERROR\n" if $ERROR;
 }
@@ -544,20 +563,24 @@ sub updateifgraph {
 		"--start", "-1$period", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 100",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t $tr{'traffic on'} $interface ($tr{'graph per'} $tr{$period})",
 		"-v$tr{'bytes per second'}",
 		"DEF:incoming=$rrdlog/$interface.rrd:incoming:AVERAGE",
 		"DEF:outgoing=$rrdlog/$interface.rrd:outgoing:AVERAGE",
-		"AREA:incoming".$color{"color11"}.":$tr{'incoming traffic in bytes per second'}\\j",
+		"AREA:incoming".$color{"color11"}.":$tr{'incoming traffic in bytes per second'}",
 		"LINE1:outgoing".$color{"color12"}.":$tr{'outgoing traffic in bytes per second'}\\j",
-		"GPRINT:incoming:MAX:$tr{'maximal'} $tr{'in'}\\:%8.3lf %sBps",
-		"GPRINT:incoming:AVERAGE:$tr{'average'} $tr{'in'}\\:%8.3lf %sBps",
-		"GPRINT:incoming:LAST:$tr{'current'} $tr{'in'}\\:%8.3lf %sBps\\j",
-		"GPRINT:outgoing:MAX:$tr{'maximal'} $tr{'out'}\\:%8.3lf %sBps",
-		"GPRINT:outgoing:AVERAGE:$tr{'average'} $tr{'out'}\\:%8.3lf %sBps",
-		"GPRINT:outgoing:LAST:$tr{'current'} $tr{'out'}\\:%8.3lf %sBps\\j");
+		"COMMENT: \\j",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'current'}\\j",
+		"GPRINT:incoming:MAX:$tr{'in'}\\:%8.3lf %sBps",
+		"GPRINT:incoming:AVERAGE:$tr{'in'}\\:%8.3lf %sBps",
+		"GPRINT:incoming:LAST:$tr{'in'}\\:%8.3lf %sBps\\j",
+		"GPRINT:outgoing:MAX:$tr{'out'}\\:%8.3lf %sBps",
+		"GPRINT:outgoing:AVERAGE:$tr{'out'}\\:%8.3lf %sBps",
+		"GPRINT:outgoing:LAST:$tr{'out'}\\:%8.3lf %sBps\\j");
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for $interface: $ERROR\n" if $ERROR;
 }
@@ -592,7 +615,7 @@ sub updatefwhitsgraph {
 		"--start", "-1$interval", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 200",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t firewall hits over the last $interval",
 		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
@@ -612,7 +635,7 @@ sub updatefwhitsgraph {
 		"--start", "-1$interval", "-aPNG", "-i", "-z",
 		"--alt-y-grid", "-w 600", "-h 200",
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-t firewall hits over the last $interval",
 		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
@@ -739,7 +762,7 @@ sub updatelqgraph {
 		"-t $tr{'linkq'} ($tr{'graph per'} $tr{$period})",
 		"--lazy", 
 		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color20"},
+		"--color", "SHADEB".$color{"color19"},
 		"--color", "BACK".$color{"color21"},
 		"-v ms / pkts (% x10)",
 		"DEF:roundtrip=$rrdlog/lq.rrd:roundtrip:AVERAGE",
@@ -851,7 +874,7 @@ sub updatehddgraph {
     "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100",
     "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color20"},
+    "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
     "-t $tr{'harddisk temperature'} ($tr{'graph per'} $tr{$period})",
     "DEF:temperature=$rrdlog/hddtemp-$disk.rrd:temperature:AVERAGE",
@@ -918,7 +941,7 @@ sub updatetempgraph
   @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color20"},
+    "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
@@ -958,7 +981,7 @@ sub updatefangraph
   @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color20"},
+    "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
@@ -998,7 +1021,7 @@ sub updatevoltgraph
   @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color20"},
+    "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
@@ -1352,10 +1375,10 @@ if ( $mbmon_settings{'GRAPH_VOLT'} == 1 )
 if (@ipacsum) {
 	updateifdata  ("GREEN");
 	updateifdata  ("RED");
-	if ($settings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/ ) {
+	if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ ) {
 		updateifdata  ("ORANGE");
 	}
-	if ($settings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/ ) {
+	if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ ) {
 		updateifdata  ("BLUE");
 	}
 }
@@ -1373,14 +1396,14 @@ if ( -e "$rrdlog/RED.rrd") {
 	updateifgraph ("RED", "year");
 }
 
-if ($settings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/ && -e "$rrdlog/ORANGE.rrd") {
+if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ && -e "$rrdlog/ORANGE.rrd") {
 	updateifgraph ("ORANGE", "day");
 	updateifgraph ("ORANGE", "week");
 	updateifgraph ("ORANGE", "month");
 	updateifgraph ("ORANGE", "year");
 }
 
-if ($settings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/ && -e "$rrdlog/BLUE.rrd") {
+if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ && -e "$rrdlog/BLUE.rrd") {
 	updateifgraph ("BLUE", "day");
 	updateifgraph ("BLUE", "week");
 	updateifgraph ("BLUE", "month");
