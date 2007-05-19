@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/klibc-extras && make
 	cd $(DIR_SRC)/klibc-extras && make install
 	ln -sf sh.shared /usr/lib/klibc/bin/sh
-	mv /lib/klibc-*.so /lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
-	mv /usr/lib/klibc/lib/klibc-*.so /usr/lib/klibc/lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
+	#mv /lib/klibc-*.so /lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
+	#mv /usr/lib/klibc/lib/klibc-*.so /usr/lib/klibc/lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
 	@rm -rf $(DIR_APP) $(DIR_SRC)/klibc*
 	@$(POSTBUILD)
