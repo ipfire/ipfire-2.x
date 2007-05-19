@@ -235,26 +235,7 @@ int main(int argc, char *argv[])
 		i++;
 		fprintf(flog, "Harddisk scan pass %i\n", i);
 
-		rc = mysystem("/bin/mountdest.sh");
-		fprintf(flog, "RC %d\n", rc);
-		
-		if (rc == 0) { // Found IDE disk
-			scsi_disk = 0;
-			found = 1;
-		} else if (rc == 1) { // Found SCSI/USB/SATA disk
-			scsi_disk = 1;
-			found = 1;
-		} else { // No harddisk found
-			if (firstrun == 1) {
-				errorbox(ctr[TR_NO_HARDDISK]);
-				goto EXIT;
-			}
-			// Do this if the kudzu-scan fails...
-			runcommandwithstatus("/bin/probehw.sh deep-scan", ctr[TR_PROBING_HARDWARE]);
-			firstrun = 1;
-		}
-
-/*		switch (mysystem("/bin/mountdest.sh")) {
+		switch (mysystem("/bin/mountdest.sh") % 255) {
 			case 0: // Found IDE disk
 				scsi_disk = 0;
 				found = 1;
@@ -271,7 +252,7 @@ int main(int argc, char *argv[])
 				// Do this if the kudzu-scan fails...
 				runcommandwithstatus("/bin/probehw.sh deep-scan", ctr[TR_PROBING_HARDWARE]);
 				firstrun = 1;
-		} */
+		}
 	}
 
 	/*
@@ -584,7 +565,7 @@ int main(int argc, char *argv[])
 	/* Going to make our initrd... */
 	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd.img -k %s-ipfire", KERNEL_VERSION);
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd-smp.img -k %s-smp-ipfire", KERNEL_VERSION);
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd-smp.img -k %s-ipfire-smp", KERNEL_VERSION);
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);

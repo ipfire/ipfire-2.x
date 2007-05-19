@@ -167,9 +167,9 @@ define PAK
 	        --file=/packagetmp.tar --exclude='#*'
 	cd / && tar -x -C /tmp -f /packagetmp.tar
 	rm -f /packagetmp.tar
-	-cd /tmp && tar cjvf /install/packages/package/files.tbz2 *
+	cd /tmp && tar cjvf /install/packages/package/files.tbz2 *
 	cd / && rm -rf /tmp/*
-	cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES
+	-cd /install/packages/package && cat ROOTFILES | grep -v "#" > ROOTFILES
 	cd /install/packages/package && tar cfj ../$(PROG)-$(VER)-$(PAK_VER).ipfire \
 			files.tbz2 install.sh uninstall.sh update.sh ROOTFILES
 	rm -rf /install/packages/package
