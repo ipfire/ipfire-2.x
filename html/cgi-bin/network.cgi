@@ -54,7 +54,7 @@ if ($cgiparams[1] =~ /red/) {
 
 foreach my $graphname (@graphs) {
 
-  if ($graphname == "lq" )
+  if ($graphname eq "lq" )
   {
   &Graphs::updatelqgraph("day");
   &Graphs::updatelqgraph("week");
@@ -63,10 +63,10 @@ foreach my $graphname (@graphs) {
   }
   else
   {
-  &Graphs::updateifgraph ($graphname, "day");
-  &Graphs::updateifgraph ($graphname, "week");
-  &Graphs::updateifgraph ($graphname, "month");
-  &Graphs::updateifgraph ($graphname, "year");
+  &Graphs::updateifgraph($graphname, "day");
+  &Graphs::updateifgraph($graphname, "week");
+  &Graphs::updateifgraph($graphname, "month");
+  &Graphs::updateifgraph($graphname, "year");
   }
   
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
