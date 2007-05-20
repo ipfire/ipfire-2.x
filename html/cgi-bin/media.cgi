@@ -17,6 +17,7 @@ use CGI::Carp 'fatalsToBrowser';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourred} );
@@ -32,24 +33,14 @@ my %cgiparams=();
 
 &Header::openbigbox('100%', 'left');
 
-&Header::openbox('100%', 'center', "Disk $Lang::tr{'graph'}");
-if (-e "$Header::graphdir/disk-day.png") {
-	my $ftime = localtime((stat("$Header::graphdir/disk-day.png"))[9]);
-	print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-	print "<a href='/cgi-bin/graphs.cgi?graph=disk'>";
-	print "<img alt='' src='/graphs/disk-day.png' border='0' />";
-	print "</a>";
-} else {
-	print $Lang::tr{'no information available'};
-}
-print "<br />\n";
-&Header::closebox();
-
 my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 
 foreach (@devices) {
 	my $device = $_;
 	chomp($device);
+	&Graphs::updatediskgraph ("day",$device);
+	&Graphs::updatediskgraph ("week",$device);
+	&Graphs::updatediskgraph ("month",$device);
 	diskbox("$device");
 }
 
@@ -206,6 +197,4 @@ END
 ;
       &Header::closebox();
 		}
-
-  
 }

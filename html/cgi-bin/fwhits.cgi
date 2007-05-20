@@ -12,10 +12,16 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 my %cgiparams=();
 my @cgigraphs=();
 my @graphs=();
+
+&Graphs::updatefwhitsgraph ("day");
+&Graphs::updatefwhitsgraph ("week");
+&Graphs::updatefwhitsgraph ("month");
+&Graphs::updatefwhitsgraph ("year");
 
 $ENV{'QUERY_STRING'} =~ s/&//g;
 @cgigraphs = split(/graph=/,$ENV{'QUERY_STRING'});
@@ -24,7 +30,6 @@ $cgigraphs[1] = '' unless defined $cgigraphs[1];
 &Header::showhttpheaders();
 
 my $graphdir = "/home/httpd/html/graphs";
-
 my @LOCALCHECK=();
 my $errormessage="";
 

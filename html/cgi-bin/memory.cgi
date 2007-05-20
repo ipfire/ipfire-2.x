@@ -17,15 +17,18 @@ use CGI::Carp 'fatalsToBrowser';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 my %cgiparams=();
 
+&Graphs::updatememgraph ("day");
+&Graphs::updatememgraph ("week");
+&Graphs::updatememgraph ("month");
+&Graphs::updatememgraph ("year");
+
 &Header::showhttpheaders();
-
 &Header::getcgihash(\%cgiparams);
-
 &Header::openpage($Lang::tr{'memory information'}, 1, '');
-
 &Header::openbigbox('100%', 'left');
 
 &Header::openbox('100%', 'center', "Memory $Lang::tr{'graph'}");

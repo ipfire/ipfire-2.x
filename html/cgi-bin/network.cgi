@@ -17,6 +17,7 @@ use CGI::Carp 'fatalsToBrowser';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 my %cgiparams=();
 my %pppsettings=();
@@ -53,6 +54,21 @@ if ($cgiparams[1] =~ /red/) {
 
 foreach my $graphname (@graphs) {
 
+  if ($graphname == "lq" )
+  {
+  &Graphs::updatelqgraph("day");
+  &Graphs::updatelqgraph("week");
+  &Graphs::updatelqgraph("month");
+  &Graphs::updatelqgraph("year");
+  }
+  else
+  {
+  &Graphs::updateifgraph ($graphname, "day");
+  &Graphs::updateifgraph ($graphname, "week");
+  &Graphs::updateifgraph ($graphname, "month");
+  &Graphs::updateifgraph ($graphname, "year");
+  }
+  
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
 	if (-e "$Header::graphdir/${graphname}-day.png") {
 		my $ftime = localtime((stat("$Header::graphdir/${graphname}-day.png"))[9]);

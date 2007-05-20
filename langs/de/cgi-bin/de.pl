@@ -839,6 +839,7 @@
 'invalid vpi vpci' => 'Ungültige VPI/VPCI-Einstellungen',
 'invalid wins address' => 'Ungültige WINS Server Addresse.',
 'invert' => 'Invertieren',
+'iowait' => 'CPU wartet auf IO',
 'ip address' => 'IP-Adresse',
 'ip address in use' => 'IP-Adresse bereits vergeben',
 'ip address outside subnets' => 'IP-Adresse ausserhalb der(s) lokalen Subnetze(s)',

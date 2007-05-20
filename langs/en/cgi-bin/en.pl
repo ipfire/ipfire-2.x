@@ -854,6 +854,7 @@
 'invalid vpi vpci' => 'Invalid VPI/VPCI settings',
 'invalid wins address' => 'Invalid WINS Server address.',
 'invert' => 'Invert',
+'iowait' => 'CPU waiting for IO',
 'ip address' => 'IP Address',
 'ip address in use' => 'IP address already in use',
 'ip address outside subnets' => 'IP Address outside subnets',

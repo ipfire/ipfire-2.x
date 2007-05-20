@@ -17,6 +17,7 @@ use CGI::Carp 'fatalsToBrowser';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourred} );
@@ -64,12 +65,19 @@ if ($netsettings{'BLUE_DEV'} ne '') {
         $servicenames{"$Lang::tr{'intrusion detection system'} (BLUE)"} = "snort_$netsettings{'BLUE_DEV'}";
 }
 
+# Generate Graphs from rrd Data
+&Graphs::updatecpugraph ("day");
+&Graphs::updatecpugraph ("week");
+&Graphs::updatecpugraph ("month");
+&Graphs::updatecpugraph ("year");
+&Graphs::updateloadgraph ("day");
+&Graphs::updateloadgraph ("week");
+&Graphs::updateloadgraph ("month");
+&Graphs::updateloadgraph ("year");
+
 &Header::showhttpheaders();
-
 &Header::getcgihash(\%cgiparams);
-
 &Header::openpage($Lang::tr{'status information'}, 1, '');
-
 &Header::openbigbox('100%', 'left');
 
 &Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");

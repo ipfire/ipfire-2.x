@@ -48,9 +48,9 @@ if ((${Lang::language} eq 'el') ||
     (${Lang::language} eq 'vi') ||
     (${Lang::language} eq 'zh') ||
     (${Lang::language} eq 'zt')) {
-	eval `/bin/cat "${General::swroot}/langs/en.pl"`;
+        eval `/bin/cat "${General::swroot}/langs/en.pl"`;
 } else {
-	%tr=%Lang::tr;		# use translated version for other languages
+        %tr=%Lang::tr;          # use translated version for other languages
 }
 
 # Settings
@@ -90,706 +90,292 @@ close(FD);
 close(MBMON_OUT);
 
 sub gettraffic {
-	my $interface = $_[0];
+        my $interface = $_[0];
 
-	my $bytesin=0;
-	my $bytesout=0;
+        my $bytesin=0;
+        my $bytesout=0;
 
-	foreach (@ipacsum)
-	{
-		# Incoming...
-		$bytesin += $1 if (/^[\* ]\s+incoming\s+${interface}.+\:\s+(\d+)/);
+        foreach (@ipacsum)
+        {
+                # Incoming...
+                $bytesin += $1 if (/^[\* ]\s+incoming\s+${interface}.+\:\s+(\d+)/);
 
-		# Forwarded Incoming...
-		$bytesin += $1 if (/^[\* ]\s+forwarded\s+incoming\s+${interface}.+\:\s+(\d+)/);
+                # Forwarded Incoming...
+                $bytesin += $1 if (/^[\* ]\s+forwarded\s+incoming\s+${interface}.+\:\s+(\d+)/);
 
-		# Outgoing...
-		$bytesout += $1 if (/^[* ]\s+outgoing\s+${interface}.+\:\s+(\d+)/);
+                # Outgoing...
+                $bytesout += $1 if (/^[* ]\s+outgoing\s+${interface}.+\:\s+(\d+)/);
 
-		# Forwarded Outgoing...
-		$bytesout += $1 if (/^[* ]\s+forwarded\s+outgoing\s+${interface}.+\:\s+(\d+)/);
-	}
-	return "$bytesin:$bytesout";
-}
-
-sub updatecpugraph {
-	my $period    = $_[0];
-
-	RRDs::graph ("$graphs/cpu-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $tr{'cpu usage per'} $tr{$period}",
-		"DEF:user=$rrdlog/cpu.rrd:user:AVERAGE",
-		"DEF:system=$rrdlog/cpu.rrd:system:AVERAGE",
-		"DEF:idle=$rrdlog/cpu.rrd:idle:AVERAGE",
-		"CDEF:total=user,system,idle,+,+",
-		"CDEF:userpct=100,user,total,/,*",
-		"CDEF:systempct=100,system,total,/,*",
-		"CDEF:idlepct=100,idle,total,/,*",
-		"AREA:userpct".$color{"color11"}.":$tr{'user cpu usage'}",
-		"STACK:systempct".$color{"color13"}.":$tr{'system cpu usage'}",
-		"STACK:idlepct".$color{"color12"}.":$tr{'idle cpu usage'}\\j",
-    "COMMENT: \\j",
-    "COMMENT:$tr{'maximal'}",
-    "COMMENT:$tr{'average'}",
-    "COMMENT:$tr{'current'}\\j",
-		"GPRINT:userpct:MAX:$tr{'user cpu'}\\:%3.2lf%%",
-		"GPRINT:userpct:AVERAGE:$tr{'user cpu'}\\:%3.2lf%%",
-		"GPRINT:userpct:LAST:$tr{'user cpu'}\\:%3.2lf%%\\j",
-		"GPRINT:systempct:MAX:$tr{'system cpu'}\\:%3.2lf%%",
-		"GPRINT:systempct:AVERAGE:$tr{'system cpu'}\\:%3.2lf%%",
-		"GPRINT:systempct:LAST:$tr{'system cpu'}\\:%3.2lf%%\\j",
-		"GPRINT:idlepct:MAX:$tr{'idle cpu'}\\:%3.2lf%%",
-		"GPRINT:idlepct:AVERAGE:$tr{'idle cpu'}\\:%3.2lf%%",
-		"GPRINT:idlepct:LAST:$tr{'idle cpu'}\\:%3.2lf%%\\j");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
+                # Forwarded Outgoing...
+                $bytesout += $1 if (/^[* ]\s+forwarded\s+outgoing\s+${interface}.+\:\s+(\d+)/);
+        }
+        return "$bytesin:$bytesout";
 }
 
 sub updatecpudata {
-	if ( ! -e "$rrdlog/cpu.rrd") {
-		RRDs::create ("$rrdlog/cpu.rrd", "--step=300",
-			"DS:user:COUNTER:600:0:500000000",
-			"DS:system:COUNTER:600:0:500000000",
-			"DS:idle:COUNTER:600:0:500000000",
-			"RRA:AVERAGE:0.5:1:576",
-			"RRA:AVERAGE:0.5:6:672",
-			"RRA:AVERAGE:0.5:24:732",
-			"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
-	}
+        if ( ! -e "$rrdlog/cpu.rrd") {
+                RRDs::create ("$rrdlog/cpu.rrd", "--step=300",
+                        "DS:user:GAUGE:600:0:100",
+                        "DS:system:GAUGE:600:0:100",
+                        "DS:idle:GAUGE:600:0:100",
+                        "DS:iowait:GAUGE:600:0:100",
+                        "RRA:AVERAGE:0.5:1:576",
+                        "RRA:AVERAGE:0.5:6:672",
+                        "RRA:AVERAGE:0.5:24:732",
+                        "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+        }
 
-	my ($cpu, $user, $nice, $system, $idle);
+        my ($cpu, $user, $nice, $system, $idle, $trash, $iowait);
 
-	open STAT, "/proc/stat";
-	while(<STAT>) {
-		chomp;
-		/^cpu\s/ or next;
-		($cpu, $user, $nice, $system, $idle) = split /\s+/;
-		last;
-	}
-	close STAT;
-	$user += $nice;
+        my $Zeilen = `/usr/bin/iostat -c | tail -2 | head -1`;
+        ($trash, $user, $nice, $system, $iowait, $trash, $idle) = split(/\s+/,$Zeilen);
+        $user += $nice;
 
-	RRDs::update ("$rrdlog/cpu.rrd",
-		"-t", "user:system:idle", 
-		"N:$user:$system:$idle");
-	$ERROR = RRDs::error;
-	print "Error in RRD::update for cpu: $ERROR\n" if $ERROR;
+        RRDs::update ("$rrdlog/cpu.rrd",
+                "-t", "user:system:idle:iowait", 
+                "N:$user:$system:$idle:$iowait");
+        $ERROR = RRDs::error;
+        print "Error in RRD::update for cpu: $ERROR\n" if $ERROR;
 
-}
-
-sub updateloadgraph {
-	my $period    = $_[0];
-
-	RRDs::graph ("$graphs/load-$period.png",
-		"--start", "-1$period", "-aPNG",
-		"-w 600", "-h 100", "-i", "-z", "-l 0", "-r", "--alt-y-grid",
-		"-t Load Average",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"DEF:load1=$rrdlog/load.rrd:load1:AVERAGE",
-		"DEF:load5=$rrdlog/load.rrd:load5:AVERAGE",
-		"DEF:load15=$rrdlog/load.rrd:load15:AVERAGE",
-		"AREA:load1".$color{"color13"}.":1 Minute, letzter:",
-		"GPRINT:load1:LAST:%5.2lf",
-		"AREA:load5".$color{"color18"}.":5 Minuten, letzter:",
-		"GPRINT:load5:LAST:%5.2lf",
-		"AREA:load15".$color{"color14"}.":15 Minuten, letzter:",
-		"GPRINT:load15:LAST:%5.2lf\\j",
-		"LINE1:load5".$color{"color13"},
-		"LINE1:load1".$color{"color18"});
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for load: $ERROR\n" if $ERROR;
 }
 
 sub updateloaddata {
-	if ( ! -e "$rrdlog/load.rrd") {
-		RRDs::create ("$rrdlog/load.rrd", "--step=60",
-			"DS:load1:GAUGE:120:0:U",
-			"DS:load5:GAUGE:120:0:U",
-			"DS:load15:GAUGE:120:0:U",
-			"RRA:AVERAGE:0.5:1:2160",
-			"RRA:AVERAGE:0.5:5:2016",
-			"RRA:AVERAGE:0.5:15:2880",
-			"RRA:AVERAGE:0.5:60:8760");
+        if ( ! -e "$rrdlog/load.rrd") {
+                RRDs::create ("$rrdlog/load.rrd", "--step=60",
+                        "DS:load1:GAUGE:120:0:U",
+                        "DS:load5:GAUGE:120:0:U",
+                        "DS:load15:GAUGE:120:0:U",
+                        "RRA:AVERAGE:0.5:1:2160",
+                        "RRA:AVERAGE:0.5:5:2016",
+                        "RRA:AVERAGE:0.5:15:2880",
+                        "RRA:AVERAGE:0.5:60:8760");
 
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
-	}
-}
-
-sub updatememgraph {
-	my $period    = $_[0];
-
-	RRDs::graph ("$graphs/memory-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $tr{'memory usage per'} $tr{$period}",
-		"DEF:used=$rrdlog/mem.rrd:memused:AVERAGE",
-		"DEF:free=$rrdlog/mem.rrd:memfree:AVERAGE",
-		"DEF:shared=$rrdlog/mem.rrd:memshared:AVERAGE",
-		"DEF:buffer=$rrdlog/mem.rrd:membuffers:AVERAGE",
-		"DEF:cache=$rrdlog/mem.rrd:memcache:AVERAGE",
-		"CDEF:total=used,free,+",
-		"CDEF:used2=used,buffer,cache,shared,+,+,-",
-		"CDEF:usedpct=100,used2,total,/,*",
-		"CDEF:sharedpct=100,shared,total,/,*",
-		"CDEF:bufferpct=100,buffer,total,/,*",
-		"CDEF:cachepct=100,cache,total,/,*",
-		"CDEF:freepct=100,free,total,/,*",
-		"AREA:usedpct".$color{"color11"}.":$tr{'used memory'}",
-		"STACK:sharedpct".$color{"color13"}.":$tr{'shared memory'}",
-		"STACK:bufferpct".$color{"color23"}.":$tr{'buffered memory'}",
-		"STACK:cachepct".$color{"color14"}.":$tr{'cached memory'}",
-		"STACK:freepct".$color{"color12"}.":$tr{'free memory'}\\j",
-		"COMMENT: \\j",
-    "COMMENT:$tr{'maximal'}",
-    "COMMENT:$tr{'average'}",
-    "COMMENT:$tr{'current'}\\j",
-		"GPRINT:usedpct:MAX:$tr{'used memory'}\\:%3.2lf%%",
-		"GPRINT:usedpct:AVERAGE:$tr{'used memory'}\\:%3.2lf%%",
-		"GPRINT:usedpct:LAST:$tr{'used memory'}\\:%3.2lf%%\\j",
-		"GPRINT:sharedpct:MAX:$tr{'shared memory'}\\:%3.2lf%%",
-		"GPRINT:sharedpct:AVERAGE:$tr{'shared memory'}\\:%3.2lf%%",
-		"GPRINT:sharedpct:LAST:$tr{'shared memory'}\\:%3.2lf%%\\j",
-		"GPRINT:bufferpct:MAX:$tr{'buffered memory'}\\:%3.2lf%%",
-		"GPRINT:bufferpct:AVERAGE:$tr{'buffered memory'}\\:%3.2lf%%",
-		"GPRINT:bufferpct:LAST:$tr{'buffered memory'}\\:%3.2lf%%\\j",
-		"GPRINT:cachepct:MAX:$tr{'cached memory'}\\:%3.2lf%%",
-		"GPRINT:cachepct:AVERAGE:$tr{'cached memory'}\\:%3.2lf%%",
-		"GPRINT:cachepct:LAST:$tr{'cached memory'}\\:%3.2lf%%\\j",
-		"GPRINT:freepct:MAX:$tr{'free memory'}\\:%3.2lf%%",
-		"GPRINT:freepct:AVERAGE:$tr{'free memory'}\\:%3.2lf%%",
-		"GPRINT:freepct:LAST:$tr{'free memory'}\\:%3.2lf%%\\j");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for mem: $ERROR\n" if $ERROR;
-
-	RRDs::graph ("$graphs/swap-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $tr{'swap usage per'} $tr{$period}",
-		"DEF:used=$rrdlog/mem.rrd:swapused:AVERAGE",
-		"DEF:free=$rrdlog/mem.rrd:swapfree:AVERAGE",
-		"CDEF:total=used,free,+",
-		"CDEF:usedpct=100,used,total,/,*",
-		"CDEF:freepct=100,free,total,/,*",
-		"AREA:usedpct".$color{"color11"}.":$tr{'used swap'}",
-		"STACK:freepct".$color{"color12"}.":$tr{'free swap'}\\j",
-		"COMMENT: \\j",
-    "COMMENT:$tr{'maximal'}",
-    "COMMENT:$tr{'average'}",
-    "COMMENT:$tr{'current'}\\j",
-		"GPRINT:usedpct:MAX:$tr{'used swap'}\\:%3.2lf%%",
-		"GPRINT:usedpct:AVERAGE:$tr{'used swap'}\\:%3.2lf%%",
-		"GPRINT:usedpct:LAST:$tr{'used swap'}\\:%3.2lf%%\\j",
-		"GPRINT:freepct:MAX:$tr{'free swap'}\\:%3.2lf%%",
-		"GPRINT:freepct:AVERAGE:$tr{'free swap'}\\:%3.2lf%%",
-		"GPRINT:freepct:LAST:$tr{'free swap'}\\:%3.2lf%%\\j");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for swap: $ERROR\n" if $ERROR;
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+        }
 }
 
 sub updatememdata {
-	my ($memused, $memfree, $memshared, $membuffers, $memcache, $swapused, $swapfree, $swaptotal);
-	if ( ! -e "$rrdlog/mem.rrd") {
-		RRDs::create ("$rrdlog/mem.rrd", "--step=300",
-			"DS:memused:ABSOLUTE:600:0:5000000000",
-			"DS:memfree:ABSOLUTE:600:0:5000000000",
-			"DS:memshared:ABSOLUTE:600:0:5000000000",
-			"DS:membuffers:ABSOLUTE:600:0:5000000000",
-			"DS:memcache:ABSOLUTE:600:0:5000000000",
-			"DS:swapused:ABSOLUTE:600:0:5000000000",
-			"DS:swapfree:ABSOLUTE:600:0:5000000000",
-			"RRA:AVERAGE:0.5:1:576",
-			"RRA:AVERAGE:0.5:6:672",
-			"RRA:AVERAGE:0.5:24:732",
-			"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for mem: $ERROR\n" if $ERROR;
-	}
+        my ($memused, $memfree, $memshared, $membuffers, $memcache, $swapused, $swapfree, $swaptotal);
+        if ( ! -e "$rrdlog/mem.rrd") {
+                RRDs::create ("$rrdlog/mem.rrd", "--step=300",
+                        "DS:memused:ABSOLUTE:600:0:5000000000",
+                        "DS:memfree:ABSOLUTE:600:0:5000000000",
+                        "DS:memshared:ABSOLUTE:600:0:5000000000",
+                        "DS:membuffers:ABSOLUTE:600:0:5000000000",
+                        "DS:memcache:ABSOLUTE:600:0:5000000000",
+                        "DS:swapused:ABSOLUTE:600:0:5000000000",
+                        "DS:swapfree:ABSOLUTE:600:0:5000000000",
+                        "RRA:AVERAGE:0.5:1:576",
+                        "RRA:AVERAGE:0.5:6:672",
+                        "RRA:AVERAGE:0.5:24:732",
+                        "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for mem: $ERROR\n" if $ERROR;
+        }
 
-	open MEM, "/proc/meminfo";
-	while(<MEM>) {
-		chomp;
-		if ($_ =~ /^MemTotal:/) {
-			my @temp = split (/\s+/, $_);
-			$memused    = $temp[1];
-		} elsif ($_ =~ /^MemFree:/) {
-			my @temp = split (/\s+/, $_);
-			$memfree    = $temp[1];
-		} elsif ($_ =~ /^Cached:/) {
-			my @temp = split (/\s+/, $_);
-			$memcache   = $temp[1];
-		} elsif ($_ =~ /^Buffers:/) {
-			my @temp = split (/\s+/, $_);
-			$membuffers = $temp[1];
-		} elsif ($_ =~ /^SwapTotal:/) {
-			my @temp = split (/\s+/, $_);
-			$swaptotal   = $temp[1];
-		} elsif ($_ =~ /^SwapFree:/) {
-			my @temp = split (/\s+/, $_);
-			$swapfree   = $temp[1];
-		}
-	}
-	close MEM;
+        open MEM, "/proc/meminfo";
+        while(<MEM>) {
+                chomp;
+                if ($_ =~ /^MemTotal:/) {
+                        my @temp = split (/\s+/, $_);
+                        $memused    = $temp[1];
+                } elsif ($_ =~ /^MemFree:/) {
+                        my @temp = split (/\s+/, $_);
+                        $memfree    = $temp[1];
+                } elsif ($_ =~ /^Cached:/) {
+                        my @temp = split (/\s+/, $_);
+                        $memcache   = $temp[1];
+                } elsif ($_ =~ /^Buffers:/) {
+                        my @temp = split (/\s+/, $_);
+                        $membuffers = $temp[1];
+                } elsif ($_ =~ /^SwapTotal:/) {
+                        my @temp = split (/\s+/, $_);
+                        $swaptotal   = $temp[1];
+                } elsif ($_ =~ /^SwapFree:/) {
+                        my @temp = split (/\s+/, $_);
+                        $swapfree   = $temp[1];
+                }
+        }
+        close MEM;
 
-	system("/bin/df > /tmp/diskfree");
-	open DF, "/tmp/diskfree";
-	while(<DF>) {
-		chomp;
-		if ($_ =~ /^shm/) {
-			my @temp = split (/\s+/, $_);
-			$memshared  = $temp[2];
-		}
-	}
-	close DF;
-	system("/bin/rm -f /tmp/diskfree");
-	
-	$swapused = $swaptotal-$swapfree;
-	RRDs::update ("$rrdlog/mem.rrd",
-		"-t", "memused:memfree:memshared:membuffers:memcache:swapused:swapfree",
-		"N:$memused:$memfree:$memshared:$membuffers:$memcache:$swapused:$swapfree");
-	$ERROR = RRDs::error;
-	print "Error in RRD::update for mem: $ERROR\n" if $ERROR;
-}
-
-sub updatediskgraph {
-	my $period    = $_[0];
-
-	RRDs::graph ("$graphs/disk-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $tr{'disk access per'} $tr{$period}",
-		"DEF:read=$rrdlog/disk.rrd:readsect:AVERAGE",
-		"DEF:write=$rrdlog/disk.rrd:writesect:AVERAGE",
-		"AREA:read".$color{"color11"}.":$tr{'sectors read from disk per second'}",
-		"STACK:write".$color{"color12"}.":$tr{'sectors written to disk per second'}\\j",
-		"COMMENT: \\j",
-    "COMMENT:$tr{'maximal'}",
-    "COMMENT:$tr{'average'}",
-    "COMMENT:$tr{'current'}\\j",
-		"GPRINT:read:MAX:$tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:AVERAGE:$tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:LAST:$tr{'read sectors'}\\:%8.0lf\\j",
-		"GPRINT:write:MAX:$tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:AVERAGE:$tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:LAST:$tr{'written sectors'}\\:%8.0lf\\j");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for disk: $ERROR\n" if $ERROR;
+        system("/bin/df > /tmp/diskfree");
+        open DF, "/tmp/diskfree";
+        while(<DF>) {
+                chomp;
+                if ($_ =~ /^shm/) {
+                        my @temp = split (/\s+/, $_);
+                        $memshared  = $temp[2];
+                }
+        }
+        close DF;
+        system("/bin/rm -f /tmp/diskfree");
+        
+        $swapused = $swaptotal-$swapfree;
+        RRDs::update ("$rrdlog/mem.rrd",
+                "-t", "memused:memfree:memshared:membuffers:memcache:swapused:swapfree",
+                "N:$memused:$memfree:$memshared:$membuffers:$memcache:$swapused:$swapfree");
+        $ERROR = RRDs::error;
+        print "Error in RRD::update for mem: $ERROR\n" if $ERROR;
 }
 
 sub updatediskdata {
-	my ($readwritereq, $readreq, $readsect, $writereq, $writesect);
-	if ( ! -e "$rrdlog/disk.rrd") {
-		RRDs::create ("$rrdlog/disk.rrd", "--step=300",
-			"DS:readsect:COUNTER:600:0:5000000000",
-			"DS:writesect:COUNTER:600:0:5000000000",
-			"RRA:AVERAGE:0.5:1:576",
-			"RRA:AVERAGE:0.5:6:672",
-			"RRA:AVERAGE:0.5:24:732",
-			"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for disk: $ERROR\n" if $ERROR;
-	}
+        my $disk = $_[0];
+        my ($readsect, $writesect, $trash);
+        if ( ! -e "$rrdlog/disk-$disk.rrd") {
+                RRDs::create ("$rrdlog/disk-$disk.rrd", "--step=300",
+                        "DS:readsect:COUNTER:600:0:5000000000",
+                        "DS:writesect:COUNTER:600:0:5000000000",
+                        "RRA:AVERAGE:0.5:1:576",
+                        "RRA:AVERAGE:0.5:6:672",
+                        "RRA:AVERAGE:0.5:24:732",
+                        "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for disk $disk: $ERROR\n" if $ERROR;
+        }        
+        
+        my $Zeilen = `/usr/bin/iostat $disk | tail -2 | head -1`;
+        ($trash, $trash, $trash, $trash, $readsect, $writesect) = split(/\s+/,$Zeilen);
+        
+        print "\nread:".$readsect."write:".$writesect."\n";
 
-	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
-		$atime, $mtime, $ctime, $blksize, $blocks) = stat("/dev/harddisk");
-
-	my $major = $rdev >> 8;
-	my $minor = $rdev & 0xFF;
-
-	open STAT, "/proc/stat";
-	my @diskstat = <STAT>;
-	close (STAT);
-	foreach my $line (@diskstat)
-	{
-		chomp ($line);
-		my @temp = split(/\:\ /,$line);
-		if ($temp[1]) {
-			my @devicestat = split(/\ /,$temp[1]);
-			foreach my $stats (@devicestat)
-			{
-				chomp ($stats);
-				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
-				if ($major eq $fields[1] and $minor eq $fields[2])
-				{
-					$readwritereq = $fields[3];
-					$readreq      = $fields[4];
-					$readsect     = $fields[5];
-					$writereq     = $fields[6];
-					$writesect    = $fields[7];
-				}
-			}
-		}
-	}
-
-	if ($readsect && $writesect) {
-		RRDs::update ("$rrdlog/disk.rrd",
-			"-t", "readsect:writesect",
-			"N:$readsect:$writesect");
-		$ERROR = RRDs::error;
-		print "Error in RRD::update for disk: $ERROR\n" if $ERROR;
-	} else {
-		print "Error in RRD::update for disk: no data available\n";
-	}
-}
-
-sub updatediskgraphnew {
-	my $disk      = $_[0];
-	my $period    = $_[1];
-
-	RRDs::graph ("$graphs/disk-$disk-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $tr{'disk access per'} $tr{$period}",
-		"DEF:read=$rrdlog/disk-$disk.rrd:readsect:AVERAGE",
-		"DEF:write=$rrdlog/disk-$disk.rrd:writesect:AVERAGE",
-		"DEF:sleep=$rrdlog/disk-$disk.rrd:sleeping:AVERAGE",
-		"CDEF:sl_state=sleep,INF,*",
-
-                "AREA:sl_state#a0a0a0:disk standby\\j",
-		"AREA:read".$color{"color11"}.":$tr{'sectors read from disk per second'}",
-		"STACK:write".$color{"color12"}.":$tr{'sectors written to disk per second'}\\j",
-		"COMMENT: \\j",
-    "COMMENT:$tr{'maximal'}",
-    "COMMENT:$tr{'average'}",
-    "COMMENT:$tr{'current'}\\j",
-		"GPRINT:read:MAX:$tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:AVERAGE:$tr{'read sectors'}\\:%8.0lf",
-		"GPRINT:read:LAST:$tr{'read sectors'}\\:%8.0lf\\j",
-		"GPRINT:write:MAX:$tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:AVERAGE:$tr{'written sectors'}\\:%8.0lf",
-		"GPRINT:write:LAST:$tr{'written sectors'}\\:%8.0lf\\j");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for disk-$disk: $ERROR\n" if $ERROR;
-}
-
-sub updatediskdatanew {
-	my $disk = $_[0];
-
-	my ($readwritereq, $readreq, $readsect, $writereq, $writesect);
-	if ( ! -e "$rrdlog/disk-$disk.rrd") {
-		RRDs::create ("$rrdlog/disk-$disk.rrd", "--step=300",
-			"DS:readsect:COUNTER:600:0:5000000000",
-			"DS:writesect:COUNTER:600:0:5000000000",
-			"DS:sleeping:GAUGE:600:0:1",
-			"RRA:AVERAGE:0.5:1:576",
-			"RRA:AVERAGE:0.5:6:672",
-			"RRA:AVERAGE:0.5:24:732",
-			"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for disk-$disk: $ERROR\n" if $ERROR;
-	}
-
-	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
-		$atime, $mtime, $ctime, $blksize, $blocks) = stat("/dev/$disk");
-
-	print "\n\n$dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks\n\n";
-
-	my $major = $rdev >> 8;
-	my $minor = ($rdev & 0xFF) >>6;
-
-	open STAT, "/proc/stat";
-	my @diskstat = <STAT>;
-	close (STAT);
-	foreach my $line (@diskstat)
-	{
-		chomp ($line);
-		my @temp = split(/\:\ /,$line);
-		if ($temp[1]) {
-			my @devicestat = split(/\ /,$temp[1]);
-			foreach my $stats (@devicestat)
-			{
-				chomp ($stats);
-				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
-				if ($major eq $fields[1] and $minor eq $fields[2])
-				{
-					$readwritereq = $fields[3];
-					$readreq      = $fields[4];
-					$readsect     = $fields[5];
-					$writereq     = $fields[6];
-					$writesect    = $fields[7];
-				}
-			}
-		}
-	}
-
-	my $sleeping=0;
-	my $lastsleepstate=0;
-
-	if ( -e "/tmp/hddshutdown-$disk" ) {
-		open STAT,"/tmp/hddshutdown-$disk";
-		$lastsleepstate = <STAT>;
-		close (STAT);
-		if ($lastsleepstate==$readwritereq) {
-			$sleeping=1;
-		}
-	}
-
-	if ($readsect && $writesect) {
-		RRDs::update ("$rrdlog/disk-$disk.rrd",
-			"-t", "readsect:writesect:sleeping",
-			"N:$readsect:$writesect:$sleeping");
-		$ERROR = RRDs::error;
-		print "Error in RRD::update for disk-$disk: $ERROR\n" if $ERROR;
-	} else {
-		print "Error in RRD::update for disk-$disk: no data available\n";
-	}
-}
-
-sub updateifgraph {
-	my $interface = $_[0];
-	my $period    = $_[1];
-
-	RRDs::graph ("$graphs/$interface-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 100",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $tr{'traffic on'} $interface ($tr{'graph per'} $tr{$period})",
-		"-v$tr{'bytes per second'}",
-		"DEF:incoming=$rrdlog/$interface.rrd:incoming:AVERAGE",
-		"DEF:outgoing=$rrdlog/$interface.rrd:outgoing:AVERAGE",
-		"AREA:incoming".$color{"color11"}.":$tr{'incoming traffic in bytes per second'}",
-		"LINE1:outgoing".$color{"color12"}.":$tr{'outgoing traffic in bytes per second'}\\j",
-		"COMMENT: \\j",
-    "COMMENT:$tr{'maximal'}",
-    "COMMENT:$tr{'average'}",
-    "COMMENT:$tr{'current'}\\j",
-		"GPRINT:incoming:MAX:$tr{'in'}\\:%8.3lf %sBps",
-		"GPRINT:incoming:AVERAGE:$tr{'in'}\\:%8.3lf %sBps",
-		"GPRINT:incoming:LAST:$tr{'in'}\\:%8.3lf %sBps\\j",
-		"GPRINT:outgoing:MAX:$tr{'out'}\\:%8.3lf %sBps",
-		"GPRINT:outgoing:AVERAGE:$tr{'out'}\\:%8.3lf %sBps",
-		"GPRINT:outgoing:LAST:$tr{'out'}\\:%8.3lf %sBps\\j");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for $interface: $ERROR\n" if $ERROR;
+        if ($readsect && $writesect) {
+                RRDs::update ("$rrdlog/disk-$disk.rrd",
+                        "-t", "readsect:writesect",
+                        "N:$readsect:$writesect");
+                $ERROR = RRDs::error;
+                print "Error in RRD::update for disk $disk: $ERROR\n" if $ERROR;
+        } else {
+                print "Error in RRD::update for disk: $disk no data available\n";
+        }
 }
 
 sub updateifdata {
-	my $interface = $_[0];
+        my $interface = $_[0];
 
-	if ( ! -e "$rrdlog/$interface.rrd") {
-		RRDs::create ("$rrdlog/$interface.rrd", "--step=300",
-			"DS:incoming:ABSOLUTE:600:0:12500000",
-			"DS:outgoing:ABSOLUTE:600:0:12500000",
-			"RRA:AVERAGE:0.5:1:576",
-			"RRA:AVERAGE:0.5:6:672",
-			"RRA:AVERAGE:0.5:24:732",
-			"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for $interface: $ERROR\n" if $ERROR;
-	}
+        if ( ! -e "$rrdlog/$interface.rrd") {
+                RRDs::create ("$rrdlog/$interface.rrd", "--step=300",
+                        "DS:incoming:ABSOLUTE:600:0:12500000",
+                        "DS:outgoing:ABSOLUTE:600:0:12500000",
+                        "RRA:AVERAGE:0.5:1:576",
+                        "RRA:AVERAGE:0.5:6:672",
+                        "RRA:AVERAGE:0.5:24:732",
+                        "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for $interface: $ERROR\n" if $ERROR;
+        }
 
-	my $traffic = gettraffic ($interface);
-	RRDs::update ("$rrdlog/$interface.rrd",
-		"-t", "incoming:outgoing", 
-		"N:$traffic");
-	$ERROR = RRDs::error;
-	print "Error in RRD::update for $interface: $ERROR\n" if $ERROR;
-}
-
-sub updatefwhitsgraph {
-	my $interval = $_[0];
-
-	RRDs::graph ("$graphs/firewallhits-$interval-area.png",
-		"--start", "-1$interval", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 200",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t firewall hits over the last $interval",
-		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
-		"AREA:amount".$color{"color24"}.":firewallhits",
-		"GPRINT:amount:MAX:   $tr{'maximal'}\\: %2.2lf %S",
-		"GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-		"GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min\\n",
-		"DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
-		"AREA:portamount".$color{"color25"}.":portscans",
-		"GPRINT:portamount:MAX:      $tr{'maximal'}\\: %2.2lf %S",
-		"GPRINT:portamount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-		"GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
-
-	RRDs::graph ("$graphs/firewallhits-$interval-line.png",
-		"--start", "-1$interval", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 200",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t firewall hits over the last $interval",
-		"DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
-		"LINE2:amount".$color{"color24"}.":firewallhits",
-		"GPRINT:amount:MAX:   $tr{'maximal'}\\: %2.2lf %S",
-		"GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-		"GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min\\n",
-		"DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
-		"LINE2:portamount".$color{"color25"}.":portscans",
-		"GPRINT:portamount:MAX:      $tr{'maximal'}\\: %2.2lf %S",
-		"GPRINT:portamount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-		"GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min");
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
+        my $traffic = gettraffic ($interface);
+        RRDs::update ("$rrdlog/$interface.rrd",
+                "-t", "incoming:outgoing", 
+                "N:$traffic");
+        $ERROR = RRDs::error;
+        print "Error in RRD::update for $interface: $ERROR\n" if $ERROR;
 }
 
 sub updatefwhitsdata {
-	my $portamount=0;
-	my $alertaktuell=0;
-	my $aktuell=0;
-	my $portaktuell=0;
-	my $skip=0;
+        my $portamount=0;
+        my $alertaktuell=0;
+        my $aktuell=0;
+        my $portaktuell=0;
+        my $skip=0;
 
-	if (! -e "$rrdlog/firewallhits.rrd")
-	{
-		RRDs::create ("$rrdlog/firewallhits.rrd", "--step=300",
-			"DS:amount:GAUGE:600:0:U",
-			"DS:portamount:GAUGE:600:0:U",
-			"RRA:AVERAGE:0.5:1:576",
-			"RRA:AVERAGE:0.5:6:672",
-			"RRA:AVERAGE:0.5:24:732",
-			"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
-	}
+        if (! -e "$rrdlog/firewallhits.rrd")
+        {
+                RRDs::create ("$rrdlog/firewallhits.rrd", "--step=300",
+                        "DS:amount:GAUGE:600:0:U",
+                        "DS:portamount:GAUGE:600:0:U",
+                        "RRA:AVERAGE:0.5:1:576",
+                        "RRA:AVERAGE:0.5:6:672",
+                        "RRA:AVERAGE:0.5:24:732",
+                        "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+        }
 
-	system("logtailfwhits /var/log/messages /var/log/fwhits.messages.offset >/tmp/messages.fwhits");
-	if (!(open (FILE,'/tmp/messages.fwhits'))) {
+        system("logtailfwhits /var/log/messages /var/log/fwhits.messages.offset >/tmp/messages.fwhits");
+        if (!(open (FILE,'/tmp/messages.fwhits'))) {
            $skip=1;
-	}
-	$aktuell = 0;
-	if (!$skip) {
-		while (<FILE>) {
-	 		if (/kernel:.*(IN=.*)$/) {
-				$aktuell++;
-			}
-		}
-		close (FILE);
-	}
+        }
+        $aktuell = 0;
+        if (!$skip) {
+                while (<FILE>) {
+                        if (/kernel:.*(IN=.*)$/) {
+                                $aktuell++;
+                        }
+                }
+                close (FILE);
+        }
 
-	system("logtailfwhits /var/log/snort/alert /var/log/snort/fwhits.alert.offset >/tmp/snort.fwhits");
-	if (!(open (FILE,'/tmp/snort.fwhits'))) {
+        system("logtailfwhits /var/log/snort/alert /var/log/snort/fwhits.alert.offset >/tmp/snort.fwhits");
+        if (!(open (FILE,'/tmp/snort.fwhits'))) {
            $skip=1;
-	}
-	$alertaktuell = 0;
-	if (!$skip) {
-		while (<FILE>) {
-	 		if (/scan.*$/) {
-				$alertaktuell++;
-			}
-		}
-		close (FILE);
-	}
+        }
+        $alertaktuell = 0;
+        if (!$skip) {
+                while (<FILE>) {
+                        if (/scan.*$/) {
+                                $alertaktuell++;
+                        }
+                }
+                close (FILE);
+        }
 
-	if (!(open (FILE,'/tmp/messages.fwhits'))) {
+        if (!(open (FILE,'/tmp/messages.fwhits'))) {
            $skip=1;
-	}
-	$portaktuell = 0;
-	if (!$skip) {
-		while (<FILE>) {
-	 		if (/kernel:.*(Scan.*)$/) {
-				$portaktuell++;
-			}
-		}
-		close (FILE);
-	}
+        }
+        $portaktuell = 0;
+        if (!$skip) {
+                while (<FILE>) {
+                        if (/kernel:.*(Scan.*)$/) {
+                                $portaktuell++;
+                        }
+                }
+                close (FILE);
+        }
 
-	system("rm /tmp/messages.fwhits");
-	system("rm /tmp/snort.fwhits");
+        system("rm /tmp/messages.fwhits");
+        system("rm /tmp/snort.fwhits");
 
-	$portamount = $portaktuell + $alertaktuell;
-	chomp($portamount);
-	RRDs::update ("$rrdlog/firewallhits.rrd",
-		"N:$aktuell:$portamount");
-	$ERROR = RRDs::error;
-	print "Error in RRD::update for Firewallhits: $ERROR\n" if $ERROR;
+        $portamount = $portaktuell + $alertaktuell;
+        chomp($portamount);
+        RRDs::update ("$rrdlog/firewallhits.rrd",
+                "N:$aktuell:$portamount");
+        $ERROR = RRDs::error;
+        print "Error in RRD::update for Firewallhits: $ERROR\n" if $ERROR;
 }
 
 # Creates and updates a link quality database
 # -------------------------------------------
 sub updatelq {
-	if ( ! -e "$rrdlog/lq.rrd") {
-		RRDs::create ("$rrdlog/lq.rrd", "--step=300",
-			"DS:loss:GAUGE:600:0:100",
-			"DS:roundtrip:GAUGE:600:0:10000",
-			"RRA:AVERAGE:0.5:1:576",
-			"RRA:AVERAGE:0.5:6:672",
-			"RRA:AVERAGE:0.5:24:732",
-			"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for link: $ERROR\n" if $ERROR;
-	}
-	my $packetloss=0;
-	my $roundtrip=0;
-	my $test=0;
-#	LQ_GATEWAY is the ip of your isp's public ip facing you
-	my $LQ_GATEWAY=`netstat -rn | grep ^0.0.0.0 | awk '{print \$2}'`;
-	my $NUMPINGS=10;
-	my $pingoutput = `ping -c $NUMPINGS -q $LQ_GATEWAY`;
-	chomp;
-	my @temp = split (/\/|\%|\s/, $pingoutput);
-	$packetloss   = $temp[17];
-	$roundtrip    = $temp[28];
-	RRDs::update ("$rrdlog/lq.rrd", "N:$packetloss:$roundtrip");
-	$ERROR = RRDs::error;
-	print "Error in RRD::update for line quality: $ERROR\n" if $ERROR;
+        if ( ! -e "$rrdlog/lq.rrd") {
+                RRDs::create ("$rrdlog/lq.rrd", "--step=300",
+                        "DS:loss:GAUGE:600:0:100",
+                        "DS:roundtrip:GAUGE:600:0:10000",
+                        "RRA:AVERAGE:0.5:1:576",
+                        "RRA:AVERAGE:0.5:6:672",
+                        "RRA:AVERAGE:0.5:24:732",
+                        "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for link: $ERROR\n" if $ERROR;
+        }
+        my $packetloss=0;
+        my $roundtrip=0;
+        my $test=0;
+#       LQ_GATEWAY is the ip of your isp's public ip facing you
+        my $LQ_GATEWAY=`netstat -rn | grep ^0.0.0.0 | awk '{print \$2}'`;
+        my $NUMPINGS=10;
+        my $pingoutput = `ping -c $NUMPINGS -q $LQ_GATEWAY`;
+        chomp;
+        my @temp = split (/\/|\%|\s/, $pingoutput);
+        $packetloss   = $temp[17];
+        $roundtrip    = $temp[28];
+        RRDs::update ("$rrdlog/lq.rrd", "N:$packetloss:$roundtrip");
+        $ERROR = RRDs::error;
+        print "Error in RRD::update for line quality: $ERROR\n" if $ERROR;
 } 
-
-sub updatelqgraph {
-	my $period    = $_[0];
-	RRDs::graph ("$graphs/lq-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
-		"-t $tr{'linkq'} ($tr{'graph per'} $tr{$period})",
-		"--lazy", 
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-v ms / pkts (% x10)",
-		"DEF:roundtrip=$rrdlog/lq.rrd:roundtrip:AVERAGE",
-		"DEF:loss=$rrdlog/lq.rrd:loss:AVERAGE",
-		"CDEF:roundavg=roundtrip,PREV(roundtrip),+,2,/",
-		"CDEF:loss10=loss,10,*",
-		"CDEF:r0=roundtrip,30,MIN",
-		"CDEF:r1=roundtrip,70,MIN",
-		"CDEF:r2=roundtrip,150,MIN",
-		"CDEF:r3=roundtrip,300,MIN",
-		"AREA:roundtrip".$color{"color25"}.":>300 ms",
-		"AREA:r3".$color{"color18"}.":150-300 ms",
-		"AREA:r2".$color{"color14"}.":70-150 ms",
-		"AREA:r1".$color{"color17"}.":30-70 ms",
-		"AREA:r0".$color{"color12"}.":<30 ms",
-		"AREA:loss10".$color{"color13"}.":Packet loss (x10)",
-		"LINE1:roundtrip#707070:",
-		"GPRINT:roundtrip:MAX:$tr{'maximal'}\\:%3.2lf ms",
-		"GPRINT:roundtrip:AVERAGE:$tr{'average'}\\:%3.2lf ms",
-		"GPRINT:roundtrip:LAST:$tr{'current'}\\:%3.2lf ms\\j",
-		"GPRINT:loss:MAX:$tr{'maximal'} Loss\\:%3.2lf%%",
-		"GPRINT:loss:AVERAGE:$tr{'average'} Loss\\:%3.2lf%%",
-		"GPRINT:loss:LAST:$tr{'current'} Loss\\:%3.2lf%%\\j"
-		);
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for Link Quality: $ERROR\n" if $ERROR;
-}
 
 sub updatehdddata 
 {
@@ -824,7 +410,7 @@ sub updatehdddata
     #
     # /dev/harddisk: harddisk type: S.M.A.R.T. not available
     # /dev/harddisk: harddisk type: no sensor
-    # /dev/harddisk: harddisk type: 37°C or °F
+    # /dev/harddisk: harddisk type: 37?C or ?F
     # 37
 
     if ( index($hdd_output, "S.M.A.R.T.") != -1 )
@@ -864,27 +450,6 @@ sub updatehdddata
 
   $ERROR = RRDs::error;
   print "Error in RRD::update for hdd-$disk: $ERROR\n" if $ERROR;
-}
-
-sub updatehddgraph {
-  my $disk = $_[0];
-  my $period = $_[1];
-
-  RRDs::graph ("$graphs/hddtemp-$disk-$period.png",
-    "--start", "-1$period", "-aPNG", "-i", "-z",
-    "--alt-y-grid", "-w 600", "-h 100",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
-    "-t $tr{'harddisk temperature'} ($tr{'graph per'} $tr{$period})",
-    "DEF:temperature=$rrdlog/hddtemp-$disk.rrd:temperature:AVERAGE",
-    "LINE2:temperature".$color{"color11"}.":$tr{'hdd temperature in'} °C",
-    "GPRINT:temperature:MAX:$tr{'maximal'}\\:%3.0lf °C",
-    "GPRINT:temperature:AVERAGE:$tr{'average'}\\:%3.0lf °C",
-    "GPRINT:temperature:LAST:$tr{'current'}\\:%3.0lf °C",
-  );
-  $ERROR = RRDs::error;
-  print "Error in RRD::graph for hdd-$disk: $ERROR\n" if $ERROR;
 }
 
 sub updatembmondata 
@@ -933,127 +498,6 @@ sub updatembmondata
   print("Error in RRD::update for mbmon: $ERROR\n") if $ERROR;
 }
 
-sub updatetempgraph
-{
-  my $type   = "temp";
-  my $period = $_[0];
-
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
-    "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
-    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
-
-  $count = 10;
-  foreach $key ( sort(keys %mbmon_values) ) 
-  {
-    if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
-    {
-      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
-      {
-        $mbmon_settings{'LABEL-'.$key} = $key;
-      }
-
-      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:$key$color{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} °C");
-      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.1lf °C");
-      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.1lf °C");
-      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.1lf °C\\j");
-
-      $count++;
-    }
-  }
-
-  if ( $count > 1 )
-  {
-    RRDs::graph ( @args );
-    $ERROR = RRDs::error;
-    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-  }
-}
-
-sub updatefangraph
-{
-  my $type   = "fan";
-  my $period = $_[0];
-
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
-    "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
-    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
-
-  $count = 10;
-  foreach $key ( sort(keys %mbmon_values) ) 
-  {
-    if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
-    {
-      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
-      {
-        $mbmon_settings{'LABEL-'.$key} = $key;
-      }
-
-      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:$key$color{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
-      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.0lf rpm");
-      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.0lf rpm");
-      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.0lf rpm\\j");
-
-      $count++;
-    }
-  }
-
-  if ( $count > 1 )
-  {
-    RRDs::graph ( @args );
-    $ERROR = RRDs::error;
-    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-  }
-}
-
-sub updatevoltgraph
-{
-  my $type   = "volt";
-  my $period = $_[0];
-
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
-    "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
-    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
-
-  $count = 10;
-  foreach $key ( sort(keys %mbmon_values) ) 
-  {
-    my $v = substr($key,0,1);
-    if ( ($v eq 'v') && ($mbmon_settings{'LINE-'.$key} eq 'on') )
-    {
-      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
-      {
-        $mbmon_settings{'LABEL-'.$key} = $key;
-      }
-
-      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:$key$color{$count}:$mbmon_settings{'LABEL-'.$key} V");
-      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.2lf V");
-      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.2lf V");
-      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.2lf V\\j");
-
-      $count++;
-    }
-  }
-
-  if ( $count > 1 )
-  {
-    RRDs::graph ( @args );
-    $ERROR = RRDs::error;
-    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-  }
-}
-
 ## Update ipac logs
 system ('/usr/sbin/fetchipac');
 sleep 8;
@@ -1062,7 +506,7 @@ sleep 8;
 ### Squid Graphs
 ###
 if ( -e "/var/log/squid/access.log") {
-	system ("/usr/bin/squid-graph -o=/srv/web/ipfire/html/sgraph --tcp-only < /var/log/squid/access.log >/dev/null 2>&1");
+        system ("/usr/bin/squid-graph -o=/srv/web/ipfire/html/sgraph --tcp-only < /var/log/squid/access.log >/dev/null 2>&1");
 }
 
 ###
@@ -1072,300 +516,57 @@ if ((${Lang::language} eq 'cs') ||
     (${Lang::language} eq 'hu') || 
     (${Lang::language} eq 'pl') || 
     (${Lang::language} eq 'sk')) {
-	# Czech, Hungarian, Polish and Slovak character set
-	foreach my $key(keys %Lang::tr) {
-		from_to($tr{$key}, "utf-8", "iso-8859-2");
-	}
+        # Czech, Hungarian, Polish and Slovak character set
+        foreach my $key(keys %Lang::tr) {
+                from_to($tr{$key}, "utf-8", "iso-8859-2");
+        }
 } elsif (${Lang::language} eq 'tr') {
-	# Turkish
-	foreach my $key(keys %Lang::tr) {
-		from_to($tr{$key}, "utf-8", "iso-8859-9");
-	}
+        # Turkish
+        foreach my $key(keys %Lang::tr) {
+                from_to($tr{$key}, "utf-8", "iso-8859-9");
+        }
 } else {
-	foreach my $key(keys %Lang::tr) {
-		from_to($tr{$key}, "utf-8", "iso-8859-1"); 
-	}
+        foreach my $key(keys %Lang::tr) {
+                from_to($tr{$key}, "utf-8", "iso-8859-1"); 
+        }
 }
 
 ###
 ### System graphs
 ###
 updatecpudata();
-updatecpugraph ("day");
-updatecpugraph ("week");
-updatecpugraph ("month");
-updatecpugraph ("year");
-
 updateloaddata();
-updateloadgraph ("day");
-updateloadgraph ("week");
-updateloadgraph ("month");
-updateloadgraph ("year");
-
 updatememdata();
-updatememgraph ("day");
-updatememgraph ("week");
-updatememgraph ("month");
-updatememgraph ("year");
 
-updatediskdata();
-updatediskgraph ("day");
-updatediskgraph ("week");
-updatediskgraph ("month");
-updatediskgraph ("year");
-
-if (open STAT,"/dev/hda") {
-  close STAT; 
-  updatediskdatanew ("hda");
-  updatediskgraphnew ("hda","day");
-  updatediskgraphnew ("hda","week");
-  updatediskgraphnew ("hda","month");
-  updatediskgraphnew ("hda","year");
-} else {
-  if (-e "$graphs/disk-hda-day.png") {
-     system("rm $graphs/disk-hda-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdb") {
-  close STAT; 
-  updatediskdatanew ("hdb");
-  updatediskgraphnew ("hdb","day");
-  updatediskgraphnew ("hdb","week");
-  updatediskgraphnew ("hdb","month");
-  updatediskgraphnew ("hdb","year");
-} else {
-  if (-e "$graphs/disk-hdb-day.png") {
-     system("rm $graphs/disk-hdb-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdc") {
-  close STAT; 
-  updatediskdatanew ("hdc");
-  updatediskgraphnew ("hdc","day");
-  updatediskgraphnew ("hdc","week");
-  updatediskgraphnew ("hdc","month");
-  updatediskgraphnew ("hdc","year");
-} else {
-  if (-e "$graphs/disk-hdc-day.png") {
-     system("rm $graphs/disk-hdc-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdd") {
-  close STAT; 
-  updatediskdatanew ("hdd");
-  updatediskgraphnew ("hdd","day");
-  updatediskgraphnew ("hdd","week");
-  updatediskgraphnew ("hdd","month");
-  updatediskgraphnew ("hdd","year");
-} else {
-  if (-e "$graphs/disk-hdd-day.png") {
-     system("rm $graphs/disk-hdd-day.png");
-  }
-}
-
-if (open STAT,"/dev/hde") {
-  close STAT; 
-  updatediskdatanew ("hde");
-  updatediskgraphnew ("hde","day");
-  updatediskgraphnew ("hde","week");
-  updatediskgraphnew ("hde","month");
-  updatediskgraphnew ("hde","year");
-} else {
-  if (-e "$graphs/disk-hde-day.png") {
-     system("rm $graphs/disk-hde-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdf") {
-  close STAT; 
-  updatediskdatanew ("hdf");
-  updatediskgraphnew ("hdf","day");
-  updatediskgraphnew ("hdf","week");
-  updatediskgraphnew ("hdf","month");
-  updatediskgraphnew ("hdf","year");
-} else {
-  if (-e "$graphs/disk-hdf-day.png") {
-     system("rm $graphs/disk-hdf-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdg") {
-  close STAT; 
-  updatediskdatanew ("hdg");
-  updatediskgraphnew ("hdg","day");
-  updatediskgraphnew ("hdg","week");
-  updatediskgraphnew ("hdg","month");
-  updatediskgraphnew ("hdg","year");
-} else {
-  if (-e "$graphs/disk-hdg-day.png") {
-     system("rm $graphs/disk-hdg-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdh") {
-  close STAT; 
-  updatediskdatanew ("hdh");
-  updatediskgraphnew ("hdh","day");
-  updatediskgraphnew ("hdh","week");
-  updatediskgraphnew ("hdh","month");
-  updatediskgraphnew ("hdh","year");
-} else {
-  if (-e "$graphs/disk-hdh-day.png") {
-     system("rm $graphs/disk-hdh-day.png");
-  }
+my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+print "\nFound following amount of disks:".@disks."\n";
+foreach (@disks){
+my $disk = $_;
+chomp $disk;
+print "Working on disk ".$disk.".\n";
+updatediskdata($disk);
 }
 
 ###
 ### Firewallhits
 ###
 updatefwhitsdata();
-updatefwhitsgraph ("day");
-updatefwhitsgraph ("week");
-updatefwhitsgraph ("month");
-updatefwhitsgraph ("year");
 
 ###
 ### Link Quality
 ###
 updatelq();
-sleep 2;
-updatelqgraph("day");
-updatelqgraph("week");
-updatelqgraph("month");
-updatelqgraph("year");
 
 ###
 ### HDDTEMP-Graphs for /dev/harddisk
 ###
-if (open STAT,"/dev/hda") {
-  close STAT; 
-  updatehdddata ("hda");
-  updatehddgraph ("hda","day");
-  updatehddgraph ("hda","week");
-  updatehddgraph ("hda","month");
-  updatehddgraph ("hda","year");
-} else {
-  if (-e "$graphs/hddtemp-hda-day.png") {
-     system("rm $graphs/hddtemp-hda-day.png");
-  }
-}
 
-if (open STAT,"/dev/hdb") {
-  close STAT; 
-  updatehdddata ("hdb");
-  updatehddgraph ("hdb","day");
-  updatehddgraph ("hdb","week");
-  updatehddgraph ("hdb","month");
-  updatehddgraph ("hdb","year");
-} else {
-  if (-e "$graphs/hddtemp-hdb-day.png") {
-     system("rm $graphs/hddtemp-hdb-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdc") {
-  close STAT; 
-  updatehdddata ("hdc");
-  updatehddgraph ("hdc","day");
-  updatehddgraph ("hdc","week");
-  updatehddgraph ("hdc","month");
-  updatehddgraph ("hdc","year");
-} else {
-  if (-e "$graphs/hddtemp-hdc-day.png") {
-     system("rm $graphs/hddtemp-hdc-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdd") {
-  close STAT; 
-  updatehdddata ("hdd");
-  updatehddgraph ("hdd","day");
-  updatehddgraph ("hdd","week");
-  updatehddgraph ("hdd","month");
-  updatehddgraph ("hdd","year");
-} else {
-  if (-e "$graphs/hddtemp-hdd-day.png") {
-     system("rm $graphs/hddtemp-hdd-day.png");
-  }
-}
-
-if (open STAT,"/dev/hde") {
-  close STAT; 
-  updatehdddata ("hde");
-  updatehddgraph ("hde","day");
-  updatehddgraph ("hde","week");
-  updatehddgraph ("hde","month");
-  updatehddgraph ("hde","year");
-} else {
-  if (-e "$graphs/hddtemp-hde-day.png") {
-     system("rm $graphs/hddtemp-hde-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdf") {
-  close STAT; 
-  updatehdddata ("hdf");
-  updatehddgraph ("hdf","day");
-  updatehddgraph ("hdf","week");
-  updatehddgraph ("hdf","month");
-  updatehddgraph ("hdf","year");
-} else {
-  if (-e "$graphs/hddtemp-hdf-day.png") {
-     system("rm $graphs/hddtemp-hdf-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdg") {
-  close STAT; 
-  updatehdddata ("hdg");
-  updatehddgraph ("hdg","day");
-  updatehddgraph ("hdg","week");
-  updatehddgraph ("hdg","month");
-  updatehddgraph ("hdg","year");
-} else {
-  if (-e "$graphs/hddtemp-hdg-day.png") {
-     system("rm $graphs/hddtemp-hdg-day.png");
-  }
-}
-
-if (open STAT,"/dev/hdh") {
-  close STAT; 
-  updatehdddata ("hdh");
-  updatehddgraph ("hdh","day");
-  updatehddgraph ("hdh","week");
-  updatehddgraph ("hdh","month");
-  updatehddgraph ("hdh","year");
-} else {
-  if (-e "$graphs/hddtemp-hdh-day.png") {
-     system("rm $graphs/hddtemp-hdh-day.png");
-  }
-}
-
-updatembmondata();
-
-if ( $mbmon_settings{'GRAPH_TEMP'} == 1 )
-{
-  updatetempgraph ("day");
-  updatetempgraph ("week");
-  updatetempgraph ("month");
-  updatetempgraph ("year");
-}
-if ( $mbmon_settings{'GRAPH_TEMP'} == 1 )
-{
-  updatefangraph ("day");
-  updatefangraph ("week");
-  updatefangraph ("month");
-  updatefangraph ("year");
-}
-if ( $mbmon_settings{'GRAPH_VOLT'} == 1 )
-{
-  updatevoltgraph ("day");
-  updatevoltgraph ("week");
-  updatevoltgraph ("month");
-  updatevoltgraph ("year");
+my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+print "\nFound following amount of disks for hddtemp:".@disks."\n";
+foreach (@disks){
+my $disk = $_;
+chomp $disk;
+updatehdddata ($disk);
 }
 
 ###
@@ -1373,43 +574,12 @@ if ( $mbmon_settings{'GRAPH_VOLT'} == 1 )
 ###
 @ipacsum = `/usr/sbin/ipacsum --exact -s 5m 2>/dev/null`;
 if (@ipacsum) {
-	updateifdata  ("GREEN");
-	updateifdata  ("RED");
-	if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ ) {
-		updateifdata  ("ORANGE");
-	}
-	if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ ) {
-		updateifdata  ("BLUE");
-	}
+        updateifdata  ("GREEN");
+        updateifdata  ("RED");
+        if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ ) {
+                updateifdata  ("ORANGE");
+        }
+        if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ ) {
+                updateifdata  ("BLUE");
+        }
 }
-if ( -e "$rrdlog/GREEN.rrd") {
-	updateifgraph ("GREEN", "day");
-	updateifgraph ("GREEN", "week");
-	updateifgraph ("GREEN", "month");
-	updateifgraph ("GREEN", "year");
-}
-
-if ( -e "$rrdlog/RED.rrd") {
-	updateifgraph ("RED", "day");
-	updateifgraph ("RED", "week");
-	updateifgraph ("RED", "month");
-	updateifgraph ("RED", "year");
-}
-
-if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ && -e "$rrdlog/ORANGE.rrd") {
-	updateifgraph ("ORANGE", "day");
-	updateifgraph ("ORANGE", "week");
-	updateifgraph ("ORANGE", "month");
-	updateifgraph ("ORANGE", "year");
-}
-
-if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ && -e "$rrdlog/BLUE.rrd") {
-	updateifgraph ("BLUE", "day");
-	updateifgraph ("BLUE", "week");
-	updateifgraph ("BLUE", "month");
-	updateifgraph ("BLUE", "year");
-}
-
-system("chmod -R 0777 /srv/web/ipfire/html/graphs");
-system("chmod -R 0777 /srv/web/ipfire/html/sgraph");
-

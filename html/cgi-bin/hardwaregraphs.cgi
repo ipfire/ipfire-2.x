@@ -16,14 +16,39 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 my %cgiparams=();
 my @cgigraphs=();
-my @graphs=();
 
 &Header::showhttpheaders();
 
 my $graphdir = "/srv/web/ipfire/html/graphs";
+
+my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+foreach (@disks){
+  my $disk = $_;
+  chomp $disk;
+  &Graphs::updatehddgraph ($disk,"day");
+  &Graphs::updatehddgraph ($disk,"week");
+  &Graphs::updatehddgraph ($disk,"month");
+  &Graphs::updatehddgraph ($disk,"year");
+}
+
+  &Graphs::updatetempgraph ("day");
+  &Graphs::updatetempgraph ("week");
+  &Graphs::updatetempgraph ("month");
+  &Graphs::updatetempgraph ("year");
+  &Graphs::updatefangraph ("day");
+  &Graphs::updatefangraph ("week");
+  &Graphs::updatefangraph ("month");
+  &Graphs::updatefangraph ("year");
+  &Graphs::updatevoltgraph ("day");
+  &Graphs::updatevoltgraph ("week");
+  &Graphs::updatevoltgraph ("month");
+  &Graphs::updatevoltgraph ("year");
+
+my @graphs=();
 
 &Header::getcgihash(\%cgiparams);
 
