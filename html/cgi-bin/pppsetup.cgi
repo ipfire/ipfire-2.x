@@ -60,7 +60,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 {
-	if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|usb\/ttyACM0|usb\/ttyACM1|usb\/ttyACM2|usb\/ttyACM3|isdn1|isdn2)$/) {
+	if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|ttyACM0|ttyACM1|ttyACM2|ttyACM3|isdn1|isdn2)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
 	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400|460800)$/) {
@@ -366,10 +366,10 @@ $selected{'COMPORT'}{'ttyS1'} = '';
 $selected{'COMPORT'}{'ttyS2'} = '';
 $selected{'COMPORT'}{'ttyS3'} = '';
 $selected{'COMPORT'}{'ttyS4'} = '';
-$selected{'COMPORT'}{'usb/ttyACM0'} = '';
-$selected{'COMPORT'}{'usb/ttyACM1'} = '';
-$selected{'COMPORT'}{'usb/ttyACM2'} = '';
-$selected{'COMPORT'}{'usb/ttyACM3'} = '';
+$selected{'COMPORT'}{'ttyACM0'} = '';
+$selected{'COMPORT'}{'ttyACM1'} = '';
+$selected{'COMPORT'}{'ttyACM2'} = '';
+$selected{'COMPORT'}{'ttyACM3'} = '';
 $selected{'COMPORT'}{'isdn1'} = '';
 $selected{'COMPORT'}{'isdn2'} = '';
 $selected{'COMPORT'}{$pppsettings{'COMPORT'}} = "selected='selected'";

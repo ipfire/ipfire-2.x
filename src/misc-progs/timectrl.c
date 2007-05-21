@@ -24,19 +24,19 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (strcmp(argv[1], "start") == 0) {
-		safe_system("/etc/rc.d/init.d/ntpd start");
+		safe_system("/etc/rc.d/init.d/ntp start");
 	} else if (strcmp(argv[1], "stop") == 0) {
-		safe_system("/etc/rc.d/init.d/ntpd stop");
+		safe_system("/etc/rc.d/init.d/ntp stop");
 	} else if (strcmp(argv[1], "restart") == 0) {
-		safe_system("/etc/rc.d/init.d/ntpd restart");
+		safe_system("/etc/rc.d/init.d/ntp restart");
 	} else if (strcmp(argv[1], "enable") == 0) {
-		safe_system("ln -fs ../init.d/ntpd /etc/rc.d/rc3.d/S26ntpd >/dev/null 2>&1");
-		safe_system("ln -fs ../init.d/ntpd /etc/rc.d/rc0.d/K46ntpd >/dev/null 2>&1");
-		safe_system("ln -fs ../init.d/ntpd /etc/rc.d/rc6.d/K46ntpd >/dev/null 2>&1");
-		safe_system("/etc/rc.d/init.d/ntpd start");
+		safe_system("ln -fs ../init.d/ntp /etc/rc.d/rc3.d/S26ntpd >/dev/null 2>&1");
+		safe_system("ln -fs ../init.d/ntp /etc/rc.d/rc0.d/K46ntpd >/dev/null 2>&1");
+		safe_system("ln -fs ../init.d/ntp /etc/rc.d/rc6.d/K46ntpd >/dev/null 2>&1");
+		safe_system("/etc/rc.d/init.d/ntp start");
 	} else if (strcmp(argv[1], "disable") == 0) {
 		safe_system("/etc/rc.d/init.d/ntpd stop");
-		safe_system("rm -f /etc/rc.d/rc*.d/*ntpd >/dev/null 2>&1");
+		safe_system("rm -f /etc/rc.d/rc*.d/*ntp >/dev/null 2>&1");
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\ntimectrl (start|stop|restart)\n\n");
 		exit(1);

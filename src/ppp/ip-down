@@ -17,7 +17,7 @@ require 'CONFIG_ROOT/general-functions.pl';
 umask 022;
 
 unlink "${General::swroot}/red/active";
-system "/etc/rc.d/init.d/network red update";
+system "/etc/rc.d/init.d/net/red/update";
 
 # Beep when ppp goes up or down. Silence if 'nobeeps' file exists.
 if ( ! -e "${General::swroot}/ppp/nobeeps") {

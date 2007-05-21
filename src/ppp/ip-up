@@ -50,7 +50,7 @@ if (open(FILE, ">${General::swroot}/red/local-ipaddress"))  { print FILE $ARGV[3
 if (open(FILE, ">${General::swroot}/red/remote-ipaddress")) { print FILE $ARGV[4]; close (FILE); }
 
 system('/usr/bin/touch', "${General::swroot}/red/active");
-system('/etc/rc.d/init.d/network red update');
+system('/etc/rc.d/init.d/net/red/update');
 
 # Beep when ppp goes up or down. Silence if 'nobeeps' file exists.
 if ( ! -e "${General::swroot}/ppp/nobeeps") {

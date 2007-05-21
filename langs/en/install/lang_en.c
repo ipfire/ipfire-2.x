@@ -370,7 +370,7 @@ char *en_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Select installation media",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"%s can be installed from multiple sources.  The simplest is to use the machines CDROM drive. If the computer lacks a drive, you may install via another machine on the LAN which has the installation files available via HTTP. In this case the network driver diskette will be required.",
+"%s can be installed from multiple sources.  The simplest is to use the machines CDROM drive. If the computer lacks a drive, you may install via another machine on the LAN which has the installation files available via HTTP or FTP.",
 /* TR_SELECT_NETWORK_DRIVER */
 "Select network driver",
 /* TR_SELECT_NETWORK_DRIVER_LONG */

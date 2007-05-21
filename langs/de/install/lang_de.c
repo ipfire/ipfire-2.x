@@ -374,7 +374,7 @@ char *de_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Wählen Sie das Installationsmedium",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"%s kann von verschiedenen Programmquellen installiert werden.  Am einfachsten ist, Sie benutzen das eingebaute CD-ROM-Laufwerk. Falls der Computer kein CD-ROM-Laufwerk besitzt, können Sie von einem anderen Rechner im LAN installieren, der die Installationsdateien per HTTP oder FTP zur Verfügung stellt. In diesem Fall benötigen Sie zusätzlich die Treiberdiskette.",
+"%s kann von verschiedenen Programmquellen installiert werden.  Am einfachsten ist, Sie benutzen das eingebaute CD-ROM-Laufwerk. Falls der Computer kein CD-ROM-Laufwerk besitzt, können Sie von einem anderen Rechner im LAN installieren, der die Installationsdateien per HTTP oder FTP zur Verfügung stellt.",
 /* TR_SELECT_NETWORK_DRIVER */
 "Wählen Sie den Netzwerktreiber aus",
 /* TR_SELECT_NETWORK_DRIVER_LONG */
