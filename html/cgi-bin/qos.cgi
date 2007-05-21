@@ -260,24 +260,44 @@ END
 	} else {
 		$qossettings{'ACTION'} = 'Level7-Regel hinzufuegen';
 	}
-} 
-elsif ($qossettings{'DOLEVEL7'} eq 'Loeschen')
+} elsif ($qossettings{'DOLEVEL7'} eq 'Loeschen')
 {
 	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 	@l7rules = <FILE>;
 	close FILE;
-	open( FILE, "> $level7file" ) or die "Unable to read $level7file";
+  system("rm $level7file");
   	foreach $l7ruleentry (sort @l7rules)
   	{
   		@l7ruleline = split( /\;/, $l7ruleentry );
-  		if ( ($l7ruleline[0] ne $qossettings{'CLASS'}) && ($l7ruleline[2] ne $qossettings{'L7PROT'}))
-  		{
-			print FILE $l7ruleentry;
-		}
-	}
+  		if ( ($l7ruleline[0] eq $qossettings{'CLASS'}) && ($l7ruleline[2] eq $qossettings{'L7PROT'}))
+            {$message = "Level7-Regel ($qossettings{'CLASS'} - $qossettings{'L7PROT'}) wurde geloescht.";}
+      else
+        { open( FILE, ">> $level7file" ) or die "Unable to read $level7file";
+          print FILE $l7ruleentry;
+	        close FILE;
+        }
+	  }
+	open( FILE, "< $level7file" ) or system("touch $level7file");close FILE;
+	} elsif ($qossettings{'DOLEVEL7'} eq 'Bearbeiten')
+{
+	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
+	@l7rules = <FILE>;
 	close FILE;
-	$message = "Level7-Regel ($qossettings{'CLASS'} - $qossettings{'L7PROT'}) wurde geloescht.";
-}
+	system("rm $level7file");
+  	foreach $l7ruleentry (sort @l7rules)
+  	{
+  		@l7ruleline = split( /\;/, $l7ruleentry );
+  		if ( ($l7ruleline[0] eq $qossettings{'CLASS'}) && ($l7ruleline[2] eq $qossettings{'L7PROT'}))
+  		        {$qossettings{'QIP'} = $l7ruleline[3];$qossettings{'DIP'} = $l7ruleline[4];}
+  	  else {
+		        open( FILE, ">> $level7file" ) or die "Unable to write $level7file";
+		        print FILE $l7ruleentry;
+		        close FILE;
+      }
+    }
+  &level7rule;
+  open( FILE, "< $level7file" ) or system("touch $level7file");close FILE;
+ }
 
 ############################################################################################################################
 ############################################################################################################################
@@ -331,7 +351,26 @@ END
 	}
 	close FILE;
 	$message = "Port-Regel ($qossettings{'CLASS'} - $qossettings{'PPROT'}) wurde geloescht.";
-}
+}  elsif ($qossettings{'DOPORT'} eq 'Bearbeiten')
+{
+	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
+	@portrules = <FILE>;
+	close FILE;
+	system("rm $portfile");
+  	foreach $portruleentry (sort @portrules)
+  	{
+  		@portruleline = split( /\;/, $portruleentry );
+  		if ( ($portruleline[0] eq $qossettings{'CLASS'}) && ($portruleline[2] eq $qossettings{'PPROT'}) && ($portruleline[3] eq $qossettings{'QIP'}) && ($portruleline[4] eq $qossettings{'QPORT'}) && ($portruleline[5] eq $qossettings{'DIP'}) && ($portruleline[6] eq $qossettings{'DPORT'}))
+  		        {$qossettings{'CLASS'}=$portruleline[0];$qossettings{'PPROT'}=$portruleline[2];$qossettings{'QIP'}=$portruleline[3];$qossettings{'QPORT'}=$portruleline[4];$qossettings{'DIP'}=$portruleline[5];$qossettings{'DPORT'}=$portruleline[6];}
+  	  else {
+		        open( FILE, ">> $portfile" ) or die "Unable to write $portfile";
+		        print FILE $portruleentry;
+		        close FILE;
+      }
+    }
+   &portrule;
+  open( FILE, "< $portfile" ) or system("touch $portfile");close FILE;
+ }
 
 ############################################################################################################################
 ############################################################################################################################
