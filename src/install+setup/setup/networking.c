@@ -764,7 +764,7 @@ int dnsgatewaymenu(void)
 		return 0;
 	}
 
-	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
+/*	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
 	
 	if (RED_IS_NOT_ETH)
@@ -773,7 +773,7 @@ int dnsgatewaymenu(void)
 		errorbox(ctr[TR_DNS_GATEWAY_WITH_GREEN]);
 		return 0;
 	}
-
+*/
 	entries[DNS1].text = ctr[TR_PRIMARY_DNS];
 	strcpy(temp, ""); findkey(kv, "DNS1", temp);
 	values[DNS1] = strdup(temp);
