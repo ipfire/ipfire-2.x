@@ -79,7 +79,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/general-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/countries.pl			$(CONFIG_ROOT)/
-  cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/advoptions-list		$(CONFIG_ROOT)/dhcp/advoptions-list
 	cp $(DIR_SRC)/config/cfgroot/backup-exclude  		$(CONFIG_ROOT)/backup/exclude.system
 	cp $(DIR_SRC)/config/cfgroot/backup-include		$(CONFIG_ROOT)/backup/include.system

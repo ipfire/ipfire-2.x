@@ -292,7 +292,7 @@ int main(int argc, char *argv[]) {
 			int fd;
    			/* Get pluto pid */
    			if ((fd = open("/var/run/pluto.pid", O_RDONLY)) != -1) {
-				safe_system("/etc/rc.d/ipsec stop 2> /dev/null >/dev/null");
+				safe_system("/etc/rc.d/init.d/ipsec stop 2> /dev/null >/dev/null");
 				close(fd);
 			}
 			exit(0);
@@ -441,7 +441,7 @@ int main(int argc, char *argv[]) {
 	if ((argc == 2) && strcmp(argv[1], "S") == 0) {
 		load_modules();
 		safe_system("/usr/sbin/ipsec tncfg --clear >/dev/null");
-		safe_system("/etc/rc.d/ipsec restart >/dev/null");
+		safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
 		add_alias_interfaces(configtype, redtype, if_red, (enable_red+enable_green+enable_orange+enable_blue) >>1 );
 		safe_system("/usr/local/bin/vpn-watch --start");
 		exit(0);

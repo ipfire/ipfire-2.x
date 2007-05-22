@@ -183,9 +183,6 @@ ifeq "$(SMP)" "1"
 	ln -sf vmlinuz-$(VER)-ipfire-smp /boot/vmlinuz-ipfire-smp
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
-	mkdir -p /usr/src/openswan-2.5.13/modobj26/null
-	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
-	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
 else
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire/' Makefile
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
@@ -196,9 +193,6 @@ else
 	ln -sf System.map-$(VER)-ipfire /boot/System.map-ipfire
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
-	mkdir -p /usr/src/openswan-2.5.13/modobj26/null
-	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) module
-	cd $(DIR_SRC)/openswan-* && make KERNELSRC=/usr/src/$(THISAPP) CC=$(CC) minstall
 endif
 
 	# remove symlinked pcmcia directory

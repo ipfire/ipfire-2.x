@@ -289,7 +289,7 @@ sub writeipsecfiles {
 		$localside = $lvpnsettings{'VPN_IP'};
 	}
 
-	print CONF "conn $lconfighash{$key}[1] #$lconfighash{$key}[26]\n";
+	print CONF "conn $lconfighash{$key}[1]\n";
 	print CONF "\tleft=$localside\n";
 	print CONF "\tleftnexthop=%defaultroute\n" if ($lconfighash{$key}[26] eq 'RED' && $lvpnsettings{'VPN_IP'} ne '%defaultroute');
 	print CONF "\tleftsubnet=$lconfighash{$key}[8]\n";

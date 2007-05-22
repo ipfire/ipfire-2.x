@@ -49,6 +49,7 @@ var/ipfire/fwlogs
 #var/ipfire/fwlogs/ipsettings
 #var/ipfire/fwlogs/portsettings
 var/ipfire/general-functions.pl
+var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/isdn
 #var/ipfire/isdn/settings
