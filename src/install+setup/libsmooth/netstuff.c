@@ -330,7 +330,7 @@ int interfacecheck(struct keyvalue *kv, char *colour)
 }
 
 /* Funky routine for loading all drivers (cept those are already loaded.). */
-int probecards(char *driver, char *driveroptions)
+int probecards(char *driver, char *driveroptions )
 {
 	return 0;
 }
@@ -354,7 +354,7 @@ void strupper(unsigned char *string)
 }
 */
 
-int write_configs_netudev(char *description, char *macaddr, int colour)
+int write_configs_netudev(int card , int colour)
 {	
 	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
 	FILE *fp;
@@ -367,8 +367,9 @@ int write_configs_netudev(char *description, char *macaddr, int colour)
 //	strupper(ucolour);
 
 	sprintf(ucolour, ucolourcard[colour]);
-	strcpy(knics[colour].description, description);
-	strcpy(knics[colour].macaddr, macaddr);
+	strcpy(knics[colour].driver, nics[card].driver);
+	strcpy(knics[colour].description, nics[card].description);
+	strcpy(knics[colour].macaddr, nics[card].macaddr);
 	
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -381,9 +382,11 @@ int write_configs_netudev(char *description, char *macaddr, int colour)
 	sprintf(temp2, "%s_MACADDR", ucolour);
 	sprintf(temp3, "%s0", lcolourcard[colour]);
 	replacekeyvalue(kv, temp1, temp3);
-	replacekeyvalue(kv, temp2, macaddr);
+	replacekeyvalue(kv, temp2, nics[card].macaddr);
 	sprintf(temp1, "%s_DESCRIPTION", ucolour);
-	replacekeyvalue(kv, temp1, description);
+	replacekeyvalue(kv, temp1, nics[card].description);
+	sprintf(temp1, "%s_DRIVER", ucolour);
+	replacekeyvalue(kv, temp1, nics[card].driver);
 
 	writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 	freekeyvalues(kv);
@@ -403,7 +406,7 @@ int write_configs_netudev(char *description, char *macaddr, int colour)
 		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
 		return 1;
 	}
-	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", macaddr, lcolourcard[colour], description);
+	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", nics[card].macaddr, lcolourcard[colour], nics[card].description);
 	fclose(fp);	
 	
 	return 0;
@@ -412,7 +415,7 @@ int write_configs_netudev(char *description, char *macaddr, int colour)
 int scan_network_cards(void)
 {
 	FILE *fp;
-	char description[STRING_SIZE], macaddr[STRING_SIZE], temp_line[STRING_SIZE];
+	char driver[STRING_SIZE], description[STRING_SIZE], macaddr[STRING_SIZE], temp_line[STRING_SIZE];
 	int count = 0;
 	
 	if (!(scanned_nics_read_done))
@@ -427,11 +430,13 @@ int scan_network_cards(void)
 		}
 		while (fgets(temp_line, STRING_SIZE, fp) != NULL)
 		{
-			strcpy(description, strtok(temp_line,";"));
+			strcpy(driver,      strtok(temp_line,";"));
+			strcpy(description, strtok(NULL,";"));
 			strcpy(macaddr,     strtok(NULL,";"));
 			if ( strlen(macaddr) ) {
+				strcpy(nics[count].driver      , driver );
 				strcpy(nics[count].description , description );
-				strcpy(nics[count].macaddr , macaddr );
+				strcpy(nics[count].macaddr     , macaddr );
 				count++;
 			}
 		}
@@ -506,7 +511,7 @@ int nicmenu(int colour)
 		rc = newtWinMenu("(TR) NetcardMenu2", message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
 				
 		if ( rc == 0 || rc == 1) {
-			write_configs_netudev(nics[choise].description, nics[found_NIC_as_Card[choise]].macaddr, colour);
+			write_configs_netudev(found_NIC_as_Card[choise], colour);
 		} else if (rc == 2) {
 //			manualdriver("pcnet32","");
 	      	}
@@ -530,9 +535,12 @@ int clear_card_entry(int card)
 		return 0;
 	}
 
+	strcpy(knics[card].driver, "");
 	strcpy(knics[card].description, ctr[TR_UNSET]);
 	strcpy(knics[card].macaddr, "");
 	strcpy(knics[card].colour, "");
+	sprintf(temp, "%s_DRIVER", ucolourcard[card]);
+	replacekeyvalue(kv, temp, "");
 	sprintf(temp, "%s_DEV", ucolourcard[card]);
 	replacekeyvalue(kv, temp, "");
 	sprintf(temp, "%s_MACADDR", ucolourcard[card]);

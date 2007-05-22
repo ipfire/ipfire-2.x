@@ -59,12 +59,14 @@ struct keyvalue
 };
 struct nic
 {
+	char driver[80];
 	char description[256];
 	char macaddr[20];
 };
 
 struct knic
 {
+	char driver[80];
 	char description[256];
 	char macaddr[20];
 	char colour[20];

@@ -348,6 +348,8 @@ int drivermenu(void)
 			strcpy(knics[_GREEN_CARD_].colour, "GREEN");
 			findkey(kv, "GREEN_DESCRIPTION", temp);
 			strcpy(knics[_GREEN_CARD_].description, temp);
+			findkey(kv, "GREEN_DRIVER", temp);
+			strcpy(knics[_GREEN_CARD_].driver, temp);
 			kcount++;
 		} else {
 			strcpy(knics[_GREEN_CARD_].description, ctr[TR_UNSET]);
@@ -367,6 +369,8 @@ int drivermenu(void)
 			strcpy(knics[_RED_CARD_].colour, "RED");
 			findkey(kv, "RED_DESCRIPTION", temp);
 			strcpy(knics[_RED_CARD_].description, temp);
+			findkey(kv, "RED_DRIVER", temp);
+			strcpy(knics[_RED_CARD_].driver, temp);
 			kcount++;
 		} else {
 			strcpy(knics[_RED_CARD_].description, ctr[TR_UNSET]);
@@ -386,6 +390,8 @@ int drivermenu(void)
 			strcpy(knics[_ORANGE_CARD_].colour, "ORANGE");
 			findkey(kv, "ORANGE_DESCRIPTION", temp );
 			strcpy(knics[_ORANGE_CARD_].description, temp );
+			findkey(kv, "ORANGE_DRIVER", temp);
+			strcpy(knics[_ORANGE_CARD_].driver, temp);
 			kcount++;
 		} else {
 			strcpy(knics[_ORANGE_CARD_].description, ctr[TR_UNSET]);
@@ -405,6 +411,8 @@ int drivermenu(void)
 			strcpy(knics[_BLUE_CARD_].colour, "BLUE");
 			findkey(kv, "BLUE_DESCRIPTION", temp );
 			strcpy(knics[_BLUE_CARD_].description, temp);
+			findkey(kv, "BLUE_DRIVER", temp);
+			strcpy(knics[_BLUE_CARD_].driver, temp);
 			kcount++;
 		} else {
 			strcpy(knics[_BLUE_CARD_].description, ctr[TR_UNSET]);

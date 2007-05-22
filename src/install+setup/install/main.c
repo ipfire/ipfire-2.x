@@ -4,7 +4,7 @@
  * Licence.  See the file COPYING for details.
  *
  * (c) Lawrence Manning, 2001
- * Contains main entry point, and misc functions.
+ * Contains main entry point, and misc functions.6
  * 
  */
 
@@ -25,8 +25,8 @@ char **ctr;
 
 extern char url[STRING_SIZE];
 
-struct  nic  nics[20] = { { "" , "" } }; // only defined for compile
-struct knic knics[20] = { { "" , "" , "" } }; // only defined for compile
+struct  nic  nics[20] = { { "" , "" , "" } }; // only defined for compile
+struct knic knics[20] = { { "" , "" , "" , "" } }; // only defined for compile
 
 extern char *en_tr[];
 extern char *de_tr[];
