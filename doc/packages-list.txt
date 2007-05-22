@@ -212,6 +212,7 @@
 * rrdtool-1.2.15
 * rsync-2.6.8
 * samba-3.0.24
+* samba-3.0.25
 * screen-4.0.2
 * sed-4.1.5
 * setserial-2.17
@@ -223,6 +224,7 @@
 * spandsp-0.0.3pre24
 * squashfs3.2-r2
 * squid-2.6.STABLE12
+* squid-2.6.STABLE13
 * squid-graph-3.2
 * squidGuard-1.2.0
 * stund_0.96_Aug13

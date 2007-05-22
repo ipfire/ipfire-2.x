@@ -38,11 +38,6 @@ $timesettings{'UPDATE_METHOD'} = 'manually';
 $timesettings{'UPDATE_VALUE'} = '0';
 $timesettings{'UPDATE_PERIOD'} = '';
 $timesettings{'ENABLECLNTP'} = 'off';
-$timesettings{'SETHOUR'} = '';
-$timesettings{'SETMINUTES'} = '';
-$timesettings{'SETDAY'} = '';
-$timesettings{'SETMONTH'} = '';
-$timesettings{'SETYEAR'} = '';
 
 &Header::getcgihash(\%timesettings);
 
@@ -162,7 +157,6 @@ $timesettings{'ACTION'} = &Header::cleanhtml ($timesettings{'ACTION'});
 if ($timesettings{'ACTION'} eq $Lang::tr{'set time now'} && $timesettings{'ENABLENTP'} eq 'on')
 {
 	system ('/usr/bin/touch', "${General::swroot}/time/settimenow");
-	system ('/usr/local/bin/timecheck >& /dev/null');
 }
 
 &General::readhash("${General::swroot}/time/settings", \%timesettings);

@@ -414,7 +414,6 @@ buildipfire() {
   ipfiremake iptstate
   ipfiremake iputils
   ipfiremake l7-protocols
-  ipfiremake isapnptools
 #  ipfiremake isdn4k-utils # What about mISDN???
   ipfiremake hwdata
   ipfiremake kudzu

@@ -1,6 +1,6 @@
 #etc/screenrc
 usr/bin/screen
-#usr/bin/screen-4.0.2
+usr/bin/screen-4.0.2
 #usr/info/screen.info
 #usr/info/screen.info-1
 #usr/info/screen.info-2
