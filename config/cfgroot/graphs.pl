@@ -269,26 +269,6 @@ sub updatefwhitsgraph {
   "GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min");
   $ERROR = RRDs::error;
   print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
-
-  RRDs::graph ("$graphs/firewallhits-$interval-line.png",
-  "--start", "-1$interval", "-aPNG", "-i", "-z",
-  "--alt-y-grid", "-w 600", "-h 200",
-  "--color", "SHADEA".$color{"color19"},
-  "--color", "SHADEB".$color{"color19"},
-  "--color", "BACK".$color{"color21"},
-  "-t firewall hits over the last $interval",
-  "DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
-  "LINE2:amount".$color{"color24"}.":firewallhits",
-  "GPRINT:amount:MAX:   $tr{'maximal'}\\: %2.2lf %S",
-  "GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-  "GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min\\n",
-  "DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
-  "LINE2:portamount".$color{"color25"}.":portscans",
-  "GPRINT:portamount:MAX:      $tr{'maximal'}\\: %2.2lf %S",
-  "GPRINT:portamount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-  "GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min");
-  $ERROR = RRDs::error;
-  print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
 }
 
 sub updatelqgraph {

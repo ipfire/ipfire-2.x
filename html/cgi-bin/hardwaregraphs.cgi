@@ -10,8 +10,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-# use warnings;
-# use CGI::Carp 'fatalsToBrowser';
+ use warnings;
+ use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -156,9 +156,9 @@ if ($cgigraphs[1] =~ /hddtemp/){
           foreach (@devices) {
 	         my $device = $_;
 	         chomp($device);
-            &Graphs::updatehddgraph ($disk,"week");
-            &Graphs::updatehddgraph ($disk,"month");
-            &Graphs::updatehddgraph ($disk,"year");}}
+            &Graphs::updatehddgraph ($device,"week");
+            &Graphs::updatehddgraph ($device,"month");
+            &Graphs::updatehddgraph ($device,"year");}}
 
   my $graph = $cgigraphs[1];
   my $graphname = $Lang::tr{"mbmon $cgigraphs[1]"};
