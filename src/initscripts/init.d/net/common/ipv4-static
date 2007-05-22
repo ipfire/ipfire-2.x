@@ -45,9 +45,15 @@ case "${2}" in
 				echo_warning
 			else
 				boot_mesg "Setting up default gateway..."
+				echo $DEFAULT_GATEWAY > /var/ipfire/red/remote-ipaddress
 				ip route add default via ${GATEWAY} dev ${1}
 				evaluate_retval
-			 fi
+				boot_mesg "Registering DNS server..."
+				echo $DNS1 > /var/ipfire/red/dns1
+				echo $DNS2 > /var/ipfire/red/dns2
+				echo $ADDRESS > /var/ipfire/red/local-ipaddress
+				evaluate_retval
+			fi
 		fi
 	;;
 

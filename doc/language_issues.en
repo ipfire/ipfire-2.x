@@ -266,6 +266,8 @@ WARNING: translation string unused: sectors read from disk per second
 WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shared memory
+WARNING: translation string unused: show areas
+WARNING: translation string unused: show lines
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
 WARNING: translation string unused: squid extension methods

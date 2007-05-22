@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.50-ipfire
-# Tue May 22 15:37:18 2007
+# Tue May 22 16:36:21 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -1513,7 +1513,14 @@ CONFIG_HPET_MMAP=y
 #
 # Dallas's 1-wire bus
 #
-# CONFIG_W1 is not set
+CONFIG_W1=m
+CONFIG_W1_MATROX=m
+CONFIG_W1_DS9490=m
+CONFIG_W1_DS9490_BRIDGE=m
+CONFIG_W1_THERM=m
+CONFIG_W1_SMEM=m
+CONFIG_W1_DS2433=m
+CONFIG_W1_DS2433_CRC=y
 
 #
 # Hardware Monitoring support
@@ -1917,6 +1924,17 @@ CONFIG_USB_XUSBATM=m
 # USB Gadget Support
 #
 # CONFIG_USB_GADGET is not set
+# CONFIG_USB_GADGET_NET2280 is not set
+# CONFIG_USB_GADGET_PXA2XX is not set
+# CONFIG_USB_GADGET_GOKU is not set
+# CONFIG_USB_GADGET_LH7A40X is not set
+# CONFIG_USB_GADGET_OMAP is not set
+# CONFIG_USB_GADGET_DUMMY_HCD is not set
+# CONFIG_USB_ZERO is not set
+# CONFIG_USB_ETH is not set
+# CONFIG_USB_GADGETFS is not set
+# CONFIG_USB_FILE_STORAGE is not set
+# CONFIG_USB_G_SERIAL is not set
 
 #
 # MMC/SD Card support

@@ -37,9 +37,7 @@ case "$1" in
 		RCREDSTART=`/bin/ps ax | /bin/grep 'red start'`
 		if [ "$TIMETOSTART" -eq 1 ]; then
 			msg "fail before pppd start : no sync, trying again"
-			/etc/rc.d/init.d/red stop
-			/etc/rc.d/init.d/red clear
-			/etc/rc.d/init.d/red start
+			/etc/rc.d/init.d/network restart red
 			exit
 		fi
 		# give 5 s more at pppd to be visible  with ps ax after 'red start' end
@@ -84,7 +82,7 @@ case "$1" in
 
 	#Don't erase keepconnected because it is used to watch user actions
 	/usr/bin/touch /var/ipfire/red/redial
-	/etc/rc.d/init.d/red stop
+	/etc/rc.d/init.d/network stop red
 	while ( /bin/ps ax | /bin/grep -q [p]ppd ); do
 		msg "waiting pppd exit"
 		/bin/sleep 2
@@ -99,7 +97,7 @@ case "$1" in
 	if [ "$ATTEMPTS" -ge "$MAXRETRIES" ]; then
 		echo "0" > /var/ipfire/red/keepconnected
 		msg "Clearing RED interface"
-		/etc/rc.d/init.d/red clear
+		/etc/rc.d/init.d/network stop red
 		if [ "$BACKUPPROFILE" != '' ]; then
 			/bin/rm -f /var/ipfire/ppp/settings
 			/bin/cp "/var/ipfire/ppp/settings-$BACKUPPROFILE" /var/ipfire/ppp/settings
@@ -107,14 +105,14 @@ case "$1" in
 	else
 		echo $ATTEMPTS > /var/ipfire/red/keepconnected
 	fi
-	/etc/rc.d/init.d/red start
+	/etc/rc.d/init.d/network start red
 	;;
   reconnect)
 	while ( /bin/ps ax | /bin/grep -q [p]ppd ); do
 		/bin/sleep 2
 	done
 	msg "will connect again"
-	/etc/rc.d/init.d/red start
+	/etc/rc.d/init.d/network start red
 	;;
   *)
 	/bin/echo "Usage: $0 {start|reconnect}"
