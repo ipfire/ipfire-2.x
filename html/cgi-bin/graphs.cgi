@@ -11,12 +11,13 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 my %cgiparams=();
 my %pppsettings=();
@@ -33,6 +34,24 @@ my $graphdir = "/srv/web/ipfire/html/graphs";
 $ENV{'QUERY_STRING'} =~ s/&//g;
 @cgigraphs = split(/graph=/,$ENV{'QUERY_STRING'});
 $cgigraphs[1] = '' unless defined $cgigraphs[1];
+
+if ($cgigraphs[1] =~ /(load)/) {&Graphs::updateloadgraph ("week");&Graphs::updateloadgraph ("month");&Graphs::updateloadgraph ("year");}
+if ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("week");&Graphs::updatecpugraph ("month");&Graphs::updatecpugraph ("year");}
+if ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
+if ($cgigraphs[1] =~ /disk/){
+          my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+
+          foreach (@devices) {
+	         my $device = $_;
+	         chomp($device);
+	          &Graphs::updatediskgraph ("week",$device);
+	          &Graphs::updatediskgraph ("month",$device);
+	          &Graphs::updatediskgraph ("year",$device);}}
+if ($cgigraphs[1] =~ /lq/) {&Graphs::updatelqgraph("week");&Graphs::updatelqgraph("month");&Graphs::updatelqgraph("year");}
+if ($cgigraphs[1] =~ /RED/) {&Graphs::updateifgraph("RED", "week");&Graphs::updateifgraph("RED", "month");&Graphs::updateifgraph("RED", "year");}
+if ($cgigraphs[1] =~ /GREEN/) {&Graphs::updateifgraph("GREEN", "week");&Graphs::updateifgraph("GREEN", "month");&Graphs::updateifgraph("GREEN", "year");}
+if ($cgigraphs[1] =~ /BLUE/) {&Graphs::updateifgraph("BLUE", "week");&Graphs::updateifgraph("BLUE", "month");&Graphs::updateifgraph("BLUE", "year");}
+if ($cgigraphs[1] =~ /ORANGE/) {&Graphs::updateifgraph("ORANGE", "week");&Graphs::updateifgraph("ORANGE", "month");&Graphs::updateifgraph("ORANGE", "year");}
 
 if ($cgigraphs[1] =~ /(network|GREEN|BLUE|ORANGE|RED|lq)/) {
 	&Header::openpage($Lang::tr{'network traffic graphs'}, 1, '');

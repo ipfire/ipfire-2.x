@@ -39,8 +39,6 @@ foreach (@devices) {
 	my $device = $_;
 	chomp($device);
 	&Graphs::updatediskgraph ("day",$device);
-	&Graphs::updatediskgraph ("week",$device);
-	&Graphs::updatediskgraph ("month",$device);
 	diskbox("$device");
 }
 

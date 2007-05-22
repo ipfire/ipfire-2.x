@@ -22,9 +22,6 @@ require "${General::swroot}/graphs.pl";
 my %cgiparams=();
 
 &Graphs::updatememgraph ("day");
-&Graphs::updatememgraph ("week");
-&Graphs::updatememgraph ("month");
-&Graphs::updatememgraph ("year");
 
 &Header::showhttpheaders();
 &Header::getcgihash(\%cgiparams);

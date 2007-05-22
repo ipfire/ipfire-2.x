@@ -67,13 +67,7 @@ if ($netsettings{'BLUE_DEV'} ne '') {
 
 # Generate Graphs from rrd Data
 &Graphs::updatecpugraph ("day");
-&Graphs::updatecpugraph ("week");
-&Graphs::updatecpugraph ("month");
-&Graphs::updatecpugraph ("year");
 &Graphs::updateloadgraph ("day");
-&Graphs::updateloadgraph ("week");
-&Graphs::updateloadgraph ("month");
-&Graphs::updateloadgraph ("year");
 
 &Header::showhttpheaders();
 &Header::getcgihash(\%cgiparams);
