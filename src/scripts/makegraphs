@@ -115,10 +115,11 @@ sub gettraffic {
 sub updatecpudata {
         if ( ! -e "$rrdlog/cpu.rrd") {
                 RRDs::create ("$rrdlog/cpu.rrd", "--step=300",
-                        "DS:user:GAUGE:600:0:100",
-                        "DS:system:GAUGE:600:0:100",
-                        "DS:idle:GAUGE:600:0:100",
-                        "DS:iowait:GAUGE:600:0:100",
+                        "DS:user:COUNTER:600:0:500000000",
+                        "DS:system:COUNTER:600:0:500000000",
+                        "DS:idle:COUNTER:600:0:500000000",
+                        "DS:iowait:COUNTER:600:0:500000000",
+                        "DS:irq:COUNTER:600:0:500000000",
                         "RRA:AVERAGE:0.5:1:576",
                         "RRA:AVERAGE:0.5:6:672",
                         "RRA:AVERAGE:0.5:24:732",
@@ -127,15 +128,23 @@ sub updatecpudata {
                 print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
         }
 
-        my ($cpu, $user, $nice, $system, $idle, $trash, $iowait);
+        my ($cpu, $user, $nice, $system, $idle, $iowait, $irq, $softirq);
 
-        my $Zeilen = `/usr/bin/iostat -c | tail -2 | head -1`;
-        ($trash, $user, $nice, $system, $iowait, $trash, $idle) = split(/\s+/,$Zeilen);
+        open STAT, "/proc/stat";
+        while(<STAT>) {
+                chomp;
+                /^cpu\s/ or next;
+                ($cpu, $user, $nice, $system, $idle, $iowait, $irq, $softirq) = split /\s+/;
+                last;
+        }
+        close STAT;
         $user += $nice;
+        $irq += $softirq;
+        
 
         RRDs::update ("$rrdlog/cpu.rrd",
-                "-t", "user:system:idle:iowait", 
-                "N:$user:$system:$idle:$iowait");
+                "-t", "user:system:idle:iowait:irq", 
+                "N:$user:$system:$idle:$iowait:$irq");
         $ERROR = RRDs::error;
         print "Error in RRD::update for cpu: $ERROR\n" if $ERROR;
 
