@@ -7,6 +7,7 @@
 # Authors     : Nathan Coulson - nathan@linuxfromscratch.org
 #               Kevin P. Fleming - kpfleming@linuxfromscratch.org
 #               Michael Tremer - mitch@ipfire.org
+#               Maniacikarus - Maniacikarus@ipfire.org
 #
 # Version     : 01.00
 #
@@ -51,9 +52,16 @@ boot_mesg_flush
 
 	# Passing the variables to the script
 	if [ "$name" == "green" ]; then
-		NAME=${name} ADDRESS=${GREEN_ADDRESS} NETMASK=${GREEN_NETMASK} \
+	 if [ "${CONFIG_TYPE}" == "0" ] || [ "${CONFIG_TYPE}" == "" ]; then
+	  NAME=${name} ADDRESS=${GREEN_ADDRESS} NETMASK=${GREEN_NETMASK} \
+		NETADDRESS=${GREEN_NETADDRESS} BROADCAST=${GREEN_BROADCAST} \
+		DNS1=${DNS1} DNS2=${DNS2} GATEWAY=${DEFAULT_GATEWAY} \
+		/etc/rc.d/init.d/net/common/ipv4-static ${GREEN_DEV} up
+	 else
+  	NAME=${name} ADDRESS=${GREEN_ADDRESS} NETMASK=${GREEN_NETMASK} \
 		NETADDRESS=${GREEN_NETADDRESS} BROADCAST=${GREEN_BROADCAST} \
 		/etc/rc.d/init.d/net/common/ipv4-static ${GREEN_DEV} up
+	 fi
 		
 	elif [ "$name" == "blue" ]; then
 		NAME=${name} ADDRESS=${BLUE_ADDRESS} NETMASK=${BLUE_NETMASK} \
