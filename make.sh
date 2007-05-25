@@ -330,13 +330,14 @@ buildipfire() {
   ipfiremake ipp2p			SMP=1
   ipfiremake fcdsl			SMP=1
   ipfiremake fcdsl2			SMP=1
-  ipfiremake fcdslsl			SMP=1
+  ipfiremake fcdslsl		SMP=1
   ipfiremake fcdslusb		SMP=1
-  ipfiremake fcdslslusb		SMP=1
+  ipfiremake fcdslslusb	SMP=1
   ipfiremake fcpci			SMP=1
 #  ipfiremake promise-sata-300-tx	SMP=1
   ipfiremake zaptel			SMP=1
-  ipfiremake fuse			SMP=1
+  ipfiremake fuse				SMP=1
+  ipfiremake linux			XEN=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake fcdsl

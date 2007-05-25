@@ -41,8 +41,13 @@ CXXFLAGS   =
 ifeq "$(SMP)" "1"
 	TARGET = $(DIR_INFO)/linux-$(VER)-smp
 else
+ifeq "$(XEN)" "1"
+	TARGET = $(DIR_INFO)/linux-$(VER)-xen
+else
 	TARGET = $(DIR_INFO)/linux-$(VER)
 endif
+endif
+
 
 ###############################################################################
 # Top-level Rules
@@ -56,23 +61,24 @@ objects =$(DL_FILE) \
 	patch-2.6.16-nath323-1.3.bz2 \
 	openswan-2.5.13.tar.gz
 
-$(DL_FILE)					= $(DL_FROM)/$(DL_FILE)
-patch-o-matic-ng-20061210.tar.bz2    	= $(URL_IPFIRE)/patch-o-matic-ng-20061210.tar.bz2
-iptables-1.3.5.tar.bz2			= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
-netfilter-layer7-v2.9.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.9.tar.gz
-patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
-squashfs3.2-r2.tar.gz			= $(URL_IPFIRE)/squashfs3.2-r2.tar.gz
-mISDN-CVS-2007-01-26.tar.bz2		= $(URL_IPFIRE)/mISDN-CVS-2007-01-26.tar.bz2
-openswan-2.5.13.tar.gz					= $(URL_IPFIRE)/openswan-2.5.13.tar.gz
+$(DL_FILE)												= $(URL_IPFIRE)/$(DL_FILE)
+patch-o-matic-ng-20061210.tar.bz2	= $(URL_IPFIRE)/patch-o-matic-ng-20061210.tar.bz2
+iptables-1.3.5.tar.bz2						= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
+netfilter-layer7-v2.9.tar.gz			= $(URL_IPFIRE)/netfilter-layer7-v2.9.tar.gz
+patch-2.6.16-nath323-1.3.bz2			= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
+squashfs3.2-r2.tar.gz							= $(URL_IPFIRE)/squashfs3.2-r2.tar.gz
+mISDN-CVS-2007-01-26.tar.bz2			= $(URL_IPFIRE)/mISDN-CVS-2007-01-26.tar.bz2
+openswan-2.5.13.tar.gz						= $(URL_IPFIRE)/openswan-2.5.13.tar.gz
 
-$(DL_FILE)_MD5				= cc2106c6188675187d636aa518b04958
+$(DL_FILE)_MD5										= cc2106c6188675187d636aa518b04958
+linux-2.6.16.33.tar.bz2_MD5				= 22f56e3a5e7524b2bbde2696152b5ad7
 patch-o-matic-ng-20061210.tar.bz2_MD5	= 76edac76301b45f89e467b41c8cf4393
-iptables-1.3.5.tar.bz2_MD5			= 00fb916fa8040ca992a5ace56d905ea5
-netfilter-layer7-v2.9.tar.gz_MD5		= ebf9043a5352ebe6dbd721989ef83dee
-patch-2.6.16-nath323-1.3.bz2_MD5		= f926409ff703a307baf54b57ab75d138
-squashfs3.2-r2.tar.gz_MD5			= bf360b92eba9e6d5610196ce2e02fcd1
-mISDN-CVS-2007-01-26.tar.bz2_MD5		= 844c70dc851faffcae7549fd738c7b49
-openswan-2.5.13.tar.gz_MD5 = b83a42ea00ee24ed34413bc122cada51
+iptables-1.3.5.tar.bz2_MD5				= 00fb916fa8040ca992a5ace56d905ea5
+netfilter-layer7-v2.9.tar.gz_MD5	= ebf9043a5352ebe6dbd721989ef83dee
+patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
+squashfs3.2-r2.tar.gz_MD5					= bf360b92eba9e6d5610196ce2e02fcd1
+mISDN-CVS-2007-01-26.tar.bz2_MD5	= 844c70dc851faffcae7549fd738c7b49
+openswan-2.5.13.tar.gz_MD5				= b83a42ea00ee24ed34413bc122cada51
 
 install : $(TARGET)
 
@@ -101,8 +107,14 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	ln -s linux-$(VER) /usr/src/linux
+	
+	# XEN
+ifeq "$(XEN)" "1"
+	-cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xen-3.0.4-2.6.16.x.patch
+	cd $(DIR_APP)/net/ipv4/netfilter && patch -Np0 < $(DIR_SRC)/src/patches/xen-3.0.4-netfilter-fix.patch
+endif
 
 	# An UTF8 patch from LFS
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16.27-utf8_input-1.patch
@@ -141,12 +153,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.9
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.9.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.9/for_older_kernels/kernel-2.6.13-2.6.16-layer7-2.2.patch
+ifeq "$(XEN)" "1"
+	cd $(DIR_APP)/net/ipv4/netfilter && patch -Np0 < $(DIR_SRC)/src/patches/xen-3.0.4-layer7-fix.patch
+endif
 
 	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16-imq2.diff
-
-	# ip_conntrack permissions from 440 to 444
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
+	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16-imq2.diff
 
 	# mISDN
 	cd $(DIR_SRC) && rm -rf mISDN-*
@@ -158,17 +170,17 @@ ifeq "$(SMP)" ""
 	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.5
 endif
 
-	# Bootsplash
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bootsplash-3.1.6-2.6.15.diff
-
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
 
-ifeq "$(SMP)" ""
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
-endif
 ifeq "$(SMP)" "1"
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).smp $(DIR_APP)/.config
+else
+ifeq "$(XEN)" "1"
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE).xen $(DIR_APP)/.config
+else
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
+endif
 endif
 
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
@@ -176,23 +188,32 @@ endif
 
 ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire-smp/' Makefile
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
-	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-ipfire-smp
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
+	cd $(DIR_APP) && cp -v vmlinuz /boot/vmlinuz-$(VER)-ipfire-smp
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire-smp
-	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
 	ln -sf vmlinuz-$(VER)-ipfire-smp /boot/vmlinuz-ipfire-smp
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 else
+ifeq "$(XEN)" "1"
+	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire-xen/' Makefile
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
+	cd $(DIR_APP) && cp -v vmlinuz /boot/vmlinuz-$(VER)-ipfire-xen
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire-xen
+	ln -sf vmlinuz-$(VER)-ipfire-smp /boot/vmlinuz-ipfire-xen
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
+else
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire/' Makefile
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
-	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-ipfire
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
+	cd $(DIR_APP) && cp -v vmlinuz /boot/vmlinuz-$(VER)-ipfire
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
 	ln -sf vmlinuz-$(VER)-ipfire /boot/vmlinuz-ipfire
 	ln -sf System.map-$(VER)-ipfire /boot/System.map-ipfire
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
+endif
 endif
 
 	# remove symlinked pcmcia directory
