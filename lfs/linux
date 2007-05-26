@@ -188,8 +188,8 @@ endif
 
 ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire-smp/' Makefile
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
-	cd $(DIR_APP) && cp -v vmlinuz /boot/vmlinuz-$(VER)-ipfire-smp
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinux
+	cd $(DIR_APP) && cp -v vmlinux /boot/vmlinuz-$(VER)-ipfire-smp
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire-smp
 	ln -sf vmlinuz-$(VER)-ipfire-smp /boot/vmlinuz-ipfire-smp
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
@@ -205,8 +205,8 @@ ifeq "$(XEN)" "1"
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 else
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire/' Makefile
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
-	cd $(DIR_APP) && cp -v vmlinuz /boot/vmlinuz-$(VER)-ipfire
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinux
+	cd $(DIR_APP) && cp -v vmlinux /boot/vmlinuz-$(VER)-ipfire
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
 	ln -sf vmlinuz-$(VER)-ipfire /boot/vmlinuz-ipfire
