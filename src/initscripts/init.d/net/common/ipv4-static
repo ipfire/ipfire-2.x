@@ -63,6 +63,7 @@ case "${2}" in
 				boot_mesg "Registering DNS server..."
 				echo $DNS1 > /var/ipfire/red/dns1
 				echo $DNS2 > /var/ipfire/red/dns2
+				echo "nameserver 127.0.0.1" > /etc/resolv.conf
 				echo $ADDRESS > /var/ipfire/red/local-ipaddress
 				evaluate_retval
 			fi
