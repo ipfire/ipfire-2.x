@@ -364,9 +364,6 @@ buildipfire() {
   ipfiremake libjpeg
   ipfiremake libpng
   ipfiremake libtiff
-  ipfiremake lcms
-  ipfiremake libmng
-  ipfiremake freetype
   ipfiremake libart
   ipfiremake gd
   ipfiremake popt
@@ -474,7 +471,6 @@ buildipfire() {
   ipfiremake 3c5x9setup
   ipfiremake pakfire
   ipfiremake java
-  ipfiremake bootsplash
   ipfiremake spandsp
   ipfiremake lzo
   ipfiremake openvpn
@@ -527,6 +523,7 @@ buildipfire() {
   ipfiremake bwm-ng
   ipfiremake tripwire
   ipfiremake sysstat
+  ipfiremake vsftpd
 }
 
 buildinstaller() {
@@ -631,19 +628,22 @@ ipfirepackages() {
 #  ipfiredist applejuice
 #  ipfiredist asterisk
   ipfiredist clamav
-#  ipfiredist cups
-#  ipfiredist cyrusimap
+  ipfiredist cups
+  ipfiredist cyrus-sasl
 #  ipfiredist fetchmail
 #  ipfiredist gnump3d
 #  ipfiredist java
 #  ipfiredist mailx
 #  ipfiredist mldonkey
+  ipfiredist mpg123
 #  ipfiredist nfs
+  ipfiredist openldap
 #  ipfiredist postfix
   ipfiredist samba
 #  ipfiredist sox
 #  ipfiredist spamassassin
   ipfiredist tripwire
+  ipfiredist vsftpd
 #  ipfiredist webcyradm
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1

@@ -42,7 +42,7 @@ case "$1" in
 			exit 1
 		fi
 
-		if /bin/test -p /var/run/$(basename $0); then
+		if /usr/bin/test -p /var/run/$(basename $0); then
 			if ps --no-heading axw | grep -v 'grep' | grep -q "$(basename $0) conn: "; then
 				echo "Error: use '$(basename $0) stop' please; exit." >&2
 				exit 1

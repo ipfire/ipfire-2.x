@@ -21,6 +21,11 @@ fi
 
 alias ls='ls --color=auto'
 
+# Midnight Commander isn't compatible to UTF8.
+# So we use it in ACSII-Mode.
+
+alias mc='mc -a'
+
 # Provides prompt for non-login shells, specifically shells started
 # in the X environment. [Review the LFS archive thread titled
 # PS1 Environment Variable for a great case study behind this script

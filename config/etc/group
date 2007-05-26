@@ -18,6 +18,8 @@ squid:x:23:
 ntp:x:38:
 dip:x:40:
 mysql:x:41:
+ftp:x:45:
+vsftpd:x:47:
 rsyncd:x:48:
 stunnel:x:51:
 lock:x:54:

@@ -92,9 +92,6 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP)/fdisk && make sfdisk
 	cd $(DIR_APP)/fdisk && install -m 0755 cfdisk /install/initrd/bin
 	cd $(DIR_APP)/fdisk && install -m 0755 sfdisk /install/initrd/bin
-	cd $(DIR_APP)/disk-utils && make LDFLAGS=-static mkfs.minix fsck.minix
-	cd $(DIR_APP)/disk-utils && install -m 0755 mkfs.minix /sbin/mkfs.minix.static
-	cd $(DIR_APP)/disk-utils && install -m 0755 fsck.minix /sbin/fsck.minix.static
 else
 	cd $(DIR_APP) && sed -i 's@etc/adjtime@var/lib/hwclock/adjtime@g' \
 				hwclock/hwclock.c

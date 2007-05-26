@@ -24,13 +24,18 @@
 
 	if ("$ARGV[0]" eq "install") {
 		shift;
-		my @deps = ();
-		my @paks = @ARGV;
+		my @deps;
+		my @paks;
+		my @temp;
 		foreach (@ARGV) {
-			@deps = &Pakfire::resolvedeps("$_");
+			push(@paks,$_);
+		}
+		foreach (@paks) {
+			@temp = &Pakfire::resolvedeps("$_");
+			foreach (@temp) { push(@deps,$_) if $_; }
 		}
 		
-		my @all = ();
+		my @all;
 		foreach (@paks) {
 		  push(@all,$_);
 		}
@@ -39,20 +44,20 @@
 		}
 
 		&Pakfire::message("\n\n### Packages to install:");
-		foreach (@paks) {
+		foreach (sort @paks) {
 		  my $size = &Pakfire::getsize("$_");
 			$size = &Pakfire::beautifysize($size);
 		  &Pakfire::message("# $_  \t\t - $size");
 		}
 		
 		&Pakfire::message("\n### Packages to install for dependencies:");
-		foreach (@deps) {
+		foreach (sort @deps) {
 		  my $size = &Pakfire::getsize("$_");
 			$size = &Pakfire::beautifysize($size);
 		  &Pakfire::message("# $_  \t\t - $size");
 		}
 
-		my $totalsize = &Pakfire::addsizes(@all);
+		my $totalsize = &Pakfire::addsizes("@all");
 		$totalsize = &Pakfire::beautifysize($totalsize);
 		&Pakfire::message("\n### Download size: \t ~ $totalsize");
 		
@@ -68,8 +73,16 @@
 		}
 		
 		&Pakfire::message("### Installing all packages:");
+		foreach (sort @all) { &Pakfire::message("# --> $_"); }
+		&Pakfire::message("");
 
-		foreach (@all) {
+		### Download first
+		foreach (sort @all) {
+			&Pakfire::message("# --> Downloading: $_");
+			&Pakfire::getpak("$_", "");
+		}
+
+		foreach (sort @all) {
 			&Pakfire::setuppak("$_");
 		}
 

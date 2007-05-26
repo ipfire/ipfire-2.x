@@ -212,6 +212,7 @@
 * rrdtool-1.2.15
 * rsync-2.6.8
 * samba-3.0.25
+* samba-3.0.25a
 * screen-4.0.2
 * sed-4.1.5
 * setserial-2.17
@@ -249,6 +250,7 @@
 * util-linux-2.12r
 * vim-7.0
 * vlan.1.9
+* vsftpd-2.0.5
 * web-cyradm-0.5.5-CVS-for-ipfire
 * wget-1.10.2
 * whatmask-1.2

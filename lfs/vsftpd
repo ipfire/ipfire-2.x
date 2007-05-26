@@ -26,13 +26,15 @@
 
 include Config
 
-VER        = Mimas_patch2
+VER        = 2.0.5
 
-THISAPP    = openh323-$(VER)
-DL_FILE    = $(THISAPP)-src-tar.gz
+THISAPP    = vsftpd-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/openh323
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = vsftpd
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2cf48eb8b8bb3d54843cbf0951f31cbf
+$(DL_FILE)_MD5 = 146062e8b2f93af43ff6c2c770feea94
 
 install : $(TARGET)
 
@@ -51,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -72,7 +77,14 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	mv -f $(DIR_SRC)/openh323* $(DIR_SRC)/openh323
-	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make opt PWLIBDIR=/usr/src/pwlib && make install PWLIBDIR=/usr/src/pwlib
+	cd $(DIR_APP) && echo "#define VSF_BUILD_SSL" >>builddefs.h
+	cd $(DIR_APP) && install -v -d -m 0755 /var/ftp/empty
+	cd $(DIR_APP) && install -v -d -m 0755 /home/ftp
+	chown vsftpd.vsftpd /home/ftp
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && install -v -m 755 vsftpd /usr/sbin/vsftpd
+	cd $(DIR_APP) && install -v -m 644 vsftpd.8 /usr/share/man/man8
+	cd $(DIR_APP) && install -v -m 644 vsftpd.conf.5 /usr/share/man/man5
+	cd $(DIR_APP) && install -v -m 644 $(DIR_SRC)/config/vsftpd/vsftpd.conf /etc
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

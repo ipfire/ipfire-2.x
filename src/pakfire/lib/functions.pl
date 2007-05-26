@@ -53,7 +53,7 @@ sub fetchfile {
 	$bfile = basename("$file");
 	
 	my $ua = LWP::UserAgent->new;
-	$ua->agent('Pakfire/2.1');
+	$ua->agent('Pakfire/$Conf::version');
 	#$ua->timeout(5);
 	#$ua->env_proxy;
  
@@ -143,7 +143,7 @@ sub selectmirror {
 				$proto = $templine[0];
 				$host = $templine[1];
 				$path = $templine[2];
-				if ((pinghost("$host")) && testhost("$host") ) {
+				if (pinghost("$host")) {
 					$found = 1;
 					return ($proto, $host, $path);
 				}
@@ -312,18 +312,14 @@ sub getsize {
 	}
 }
 
-sub addsizes {
+sub addsizes { ## Still not working
 	my @paks = shift;
 	
-	my @sizes;
-	foreach (@paks) {
-		my $paksize = getsize("$_");
-		push(@sizes, $paksize);
-	}
-	
+	my $paksize;
 	my $totalsize = 0;
-	foreach (@sizes) {
-		$totalsize += $_;
+	foreach (@paks) {
+		$paksize = getsize("$_");
+		$totalsize = ($totalsize + $paksize) ;
 	}
 	return $totalsize;
 }
@@ -367,11 +363,10 @@ sub getpak {
 		exit 1;
 	}
 	
-	message("\n## Downloading $file...");
+	#message("\n## Downloading $file...");
 	
 	unless ( "$force" eq "force" ) {
 		if ( -e "$Conf::cachedir/$file" ) {
-			message("$file is already there. Skipping download.");
 			return $file;
 		}
 	}
@@ -397,7 +392,7 @@ sub setuppak {
 		exit $return;
 	}
 	
-	exit $return;
+	return $return;
 }
 
 sub updatepak {
@@ -451,13 +446,18 @@ sub removepak {
 
 sub beautifysize {
 	my $size = shift;
+	$size = $size / 1024;
+	my $unit;
 	
 	if ($size > 1023) {
-	  my $newsize = $size / 1024;
-	  return "$newsize MB";
+	  $size = ($size / 1024);
+	  $unit = "MB";
 	} else {
-	  return "$size KB";
+	  $unit = "KB";
 	}
+	$size = sprintf("%.2f" , $size);
+	my $string = "$size $unit";
+	return $string;
 }
 
 
