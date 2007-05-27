@@ -127,13 +127,11 @@
 * kudzu-1.2.64
 * l7-protocols-2006-09-10
 * lame-3.96.1
-* lcms-1.15
 * less-394
 * libaal-1.0.5
 * libart_lgpl-2.3.17
 * libcap-1.10
 * libmad-0.15.1b
-* libmng-1.0.9
 * libnet-1.1.2.1
 * libogg-1.1.3
 * libpcap-0.8.3
@@ -210,7 +208,6 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rsync-2.6.8
-* samba-3.0.25
 * samba-3.0.25a
 * screen-4.0.2
 * sed-4.1.5

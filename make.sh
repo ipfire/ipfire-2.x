@@ -365,6 +365,7 @@ buildipfire() {
   ipfiremake libpng
   ipfiremake libtiff
   ipfiremake libart
+  ipfiremake freetype
   ipfiremake gd
   ipfiremake popt
   ipfiremake pcre
