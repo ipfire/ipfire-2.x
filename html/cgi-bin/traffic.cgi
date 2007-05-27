@@ -30,8 +30,6 @@ my %netsettings;
 &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-my @wday = ($Lang::tr{'wday1'}, $Lang::tr{'wday2'}, $Lang::tr{'wday3'}, $Lang::tr{'wday4'}, $Lang::tr{'wday5'}, $Lang::tr{'wday6'}, $Lang::tr{'wday7'});
-
 my ($s, $min, $h, $d, $m,$y) = localtime(time);
 $y+=1900;
 $m+=1;

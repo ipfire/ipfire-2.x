@@ -430,18 +430,14 @@ sub WriteConfig
 #
 sub haveOrangeNet
 {
-  if ($netsettings{'CONFIG_TYPE'} == 1) {return 1;}
-  if ($netsettings{'CONFIG_TYPE'} == 3) {return 1;}
-  if ($netsettings{'CONFIG_TYPE'} == 5) {return 1;}
-  if ($netsettings{'CONFIG_TYPE'} == 7) {return 1;}
+  if ($netsettings{'CONFIG_TYPE'} == 2) {return 1;}
+  if ($netsettings{'CONFIG_TYPE'} == 4) {return 1;}
   return 0;
 }
 
 sub haveBlueNet
 {
+  if ($netsettings{'CONFIG_TYPE'} == 3) {return 1;}
   if ($netsettings{'CONFIG_TYPE'} == 4) {return 1;}
-  if ($netsettings{'CONFIG_TYPE'} == 5) {return 1;}
-  if ($netsettings{'CONFIG_TYPE'} == 6) {return 1;}
-  if ($netsettings{'CONFIG_TYPE'} == 7) {return 1;}
   return 0;
 }

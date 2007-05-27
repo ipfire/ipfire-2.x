@@ -1,5 +1,6 @@
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
+WARNING: translation string unused: Firewall Graphs
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Local VPN IP
 WARNING: translation string unused: Ping
@@ -82,6 +83,7 @@ WARNING: translation string unused: current dynamic leases
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
+WARNING: translation string unused: daily firwallhits
 WARNING: translation string unused: dat without key
 WARNING: translation string unused: dbfile
 WARNING: translation string unused: ddns help dnsmadeeasy
@@ -123,6 +125,7 @@ WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall log viewer
+WARNING: translation string unused: firewallhits
 WARNING: translation string unused: firmware
 WARNING: translation string unused: force update
 WARNING: translation string unused: free memory
@@ -199,6 +202,7 @@ WARNING: translation string unused: minutes
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modulation
+WARNING: translation string unused: monthly firewallhits
 WARNING: translation string unused: mount
 WARNING: translation string unused: nat-traversal
 WARNING: translation string unused: net address
@@ -235,6 +239,7 @@ WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: polfile
+WARNING: translation string unused: portscancs
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
 WARNING: translation string unused: proxy no proxy extend
@@ -314,11 +319,12 @@ WARNING: translation string unused: vpn on green
 WARNING: translation string unused: vpn on orange
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week
+WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: written sectors
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year
+WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: IPFires hostname
-WARNING: untranslated string: allmsg
 WARNING: untranslated string: alt proxy
 WARNING: untranslated string: bleeding rules
 WARNING: untranslated string: community rules
@@ -334,20 +340,8 @@ WARNING: untranslated string: otherip
 WARNING: untranslated string: otherport
 WARNING: untranslated string: pakfire configuration
 WARNING: untranslated string: red
-WARNING: untranslated string: selecttraffic
 WARNING: untranslated string: settingsc
 WARNING: untranslated string: sstraffic
-WARNING: untranslated string: trafficblue
-WARNING: untranslated string: trafficdate
-WARNING: untranslated string: trafficfrom
-WARNING: untranslated string: trafficgreen
-WARNING: untranslated string: trafficin
-WARNING: untranslated string: trafficorange
-WARNING: untranslated string: trafficout
-WARNING: untranslated string: trafficred
-WARNING: untranslated string: traffics
-WARNING: untranslated string: trafficsum
-WARNING: untranslated string: trafficto
 WARNING: untranslated string: tripwire
 WARNING: untranslated string: up
 WARNING: untranslated string: urlfilter background image

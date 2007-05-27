@@ -1,5 +1,6 @@
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
+WARNING: translation string unused: Firewall Graphs
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Local VPN IP
 WARNING: translation string unused: Ping
@@ -99,6 +100,7 @@ WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
 WARNING: translation string unused: daily firewallhits
+WARNING: translation string unused: daily firwallhits
 WARNING: translation string unused: dat without key
 WARNING: translation string unused: dbfile
 WARNING: translation string unused: debugme
@@ -133,6 +135,7 @@ WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall log viewer
+WARNING: translation string unused: firewallhits
 WARNING: translation string unused: firmware
 WARNING: translation string unused: force update
 WARNING: translation string unused: free memory
@@ -248,6 +251,7 @@ WARNING: translation string unused: package failed to install
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: polfile
+WARNING: translation string unused: portscancs
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
 WARNING: translation string unused: psk
