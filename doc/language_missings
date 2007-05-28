@@ -19,14 +19,11 @@
 < dns server
 < download
 < err bk 10 password
-< firewall logs ip
-< firewall logs port
 < or
 < password crypting key
 < proxy no proxy extend
 < proxy no proxy local
 < removable device advice
-< remove x509
 < root path
 < safe removal of umounted device
 < select media
@@ -35,19 +32,4 @@
 < too long 80 char max
 < umount
 < umount removable media before to unplug
-< vpn aggrmode
-< vpn altname syntax
-< vpn auth-dn
-< vpn incompatible use of defaultroute
-< vpn local id
-< vpn missing remote id
-< vpn no full pki
-< vpn on green
-< vpn on orange
-< vpn payload compression
-< vpn red name
-< vpn remote id
-< vpn subjectaltname
-< vpn vhost
-< vpn watch
 < xtaccess bad transfert

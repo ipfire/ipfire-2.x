@@ -1,6 +1,5 @@
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
-WARNING: translation string unused: Firewall Graphs
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Local VPN IP
 WARNING: translation string unused: Ping
@@ -226,6 +225,8 @@ WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
 WARNING: translation string unused: other countries
+WARNING: translation string unused: other ip
+WARNING: translation string unused: other port
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing traffic in bytes per second
 WARNING: translation string unused: ovpn
@@ -313,6 +314,7 @@ WARNING: translation string unused: used memory
 WARNING: translation string unused: used swap
 WARNING: translation string unused: user cpu
 WARNING: translation string unused: user cpu usage
+WARNING: translation string unused: user proxy log
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
@@ -325,28 +327,11 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: IPFires hostname
-WARNING: untranslated string: alt proxy
-WARNING: untranslated string: bleeding rules
-WARNING: untranslated string: community rules
-WARNING: untranslated string: dial profile
 WARNING: untranslated string: down
-WARNING: untranslated string: firewall graphs
-WARNING: untranslated string: help
-WARNING: untranslated string: install
-WARNING: untranslated string: intrusion detection system rules
-WARNING: untranslated string: invalid input for keepalive 1:2
-WARNING: untranslated string: openvpn log
 WARNING: untranslated string: otherip
 WARNING: untranslated string: otherport
-WARNING: untranslated string: pakfire configuration
-WARNING: untranslated string: red
 WARNING: untranslated string: settingsc
-WARNING: untranslated string: sstraffic
-WARNING: untranslated string: tripwire
 WARNING: untranslated string: up
-WARNING: untranslated string: urlfilter background image
-WARNING: untranslated string: urlfilter log
-WARNING: untranslated string: user log
 WARNING: untranslated string: user proxy logs
 WARNING: untranslated string: wday1
 WARNING: untranslated string: wday2

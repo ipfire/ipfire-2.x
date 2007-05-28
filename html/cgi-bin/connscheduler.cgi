@@ -449,14 +449,14 @@ $trcolor
 <td align='center'>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='up' />
-  <input type='image' name='$Lang::tr{'up'}' src='/images/up.gif' alt='$Lang::tr{'ConnSched up'}' title='$Lang::tr{'ConnSched up'}' />
+  <input type='image' name='$Lang::tr{'ConnSched up'}' src='/images/up.gif' alt='$Lang::tr{'ConnSched up'}' title='$Lang::tr{'ConnSched up'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>
 <td align='center'>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='down' />
-  <input type='image' name='$Lang::tr{'down'}' src='/images/down.gif' alt='$Lang::tr{'ConnSched down'}' title='$Lang::tr{'ConnSched down'}' />
+  <input type='image' name='$Lang::tr{'ConnSched down'}' src='/images/down.gif' alt='$Lang::tr{'ConnSched down'}' title='$Lang::tr{'ConnSched down'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>

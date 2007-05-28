@@ -74,7 +74,7 @@ $selected{'MONTH'}{$cgiparams{'MONTH'}} = 'selected=\'selected\'';
 
 &Header::openbigbox('100%', 'left');
 
-&Header::openbox('100%', 'left', $Lang::tr{'settingsc'});
+&Header::openbox('100%', 'left', $Lang::tr{'settings'});
 
 print <<END;
 	<table width='80%' align='center'>

@@ -33,8 +33,6 @@ my @longmonths = ( $Lang::tr{'january'}, $Lang::tr{'february'}, $Lang::tr{'march
 my @months = ( 0,1,2,3,4,5,6,7,8,9,10,11 );
 my @days = ( 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 );
 
-my @wday = ($Lang::tr{'wday1'}, $Lang::tr{'wday2'}, $Lang::tr{'wday3'}, $Lang::tr{'wday4'}, $Lang::tr{'wday5'}, $Lang::tr{'wday6'}, $Lang::tr{'wday7'});
-
 my @now = localtime(time);	
 
 $now[5] = $now[5]+1900;
@@ -72,7 +70,7 @@ else {
 
 &Header::openbigbox('100%', 'left');
 
-&Header::openbox('100%', 'left', $Lang::tr{'settingsc'});
+&Header::openbox('100%', 'left', $Lang::tr{'settings'});
 
 print <<END;
 <table width='100%' align='center'>

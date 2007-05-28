@@ -1031,7 +1031,7 @@ END
     <table width='100%' border='0' cellspacing='1' cellpadding='0'>
     <tr><td width='40%' class='base'>$Lang::tr{'organization name'}:</td>
         <td width='60%' class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_ORGANIZATION' value='$cgiparams{'ROOTCERT_ORGANIZATION'}' size='32' /></td></tr>
-    <tr><td class='base'>$Lang::tr{'IPFires hostname'}:</td>
+    <tr><td class='base'>$Lang::tr{'ipfires hostname'}:</td>
         <td class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_HOSTNAME' value='$cgiparams{'ROOTCERT_HOSTNAME'}' size='32' /></td></tr>
     <tr><td class='base'>$Lang::tr{'your e-mail'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_EMAIL' value='$cgiparams{'ROOTCERT_EMAIL'}' size='32' /></td></tr>
