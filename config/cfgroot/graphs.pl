@@ -259,25 +259,25 @@ sub updateifgraph {
 }
 
 sub updatefwhitsgraph {
-  my $interval = $_[0];
+  my $period = $_[0];
 
-  RRDs::graph ("$graphs/firewallhits-$interval-area.png",
-  "--start", "-1$interval", "-aPNG", "-i", "-z",
-  "--alt-y-grid", "-w 600", "-h 200",
+  RRDs::graph ("$graphs/firewallhits-$period-area.png",
+  "--start", "-1$period", "-aPNG", "-i", "-z",
+  "--alt-y-grid", "-w 600", "-h 100",
   "--color", "SHADEA".$color{"color19"},
   "--color", "SHADEB".$color{"color19"},
   "--color", "BACK".$color{"color21"},
-  "-t firewall hits over the last $interval",
+  "-t $tr{'firewall hits per'} $tr{$period}",
   "DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
-  "AREA:amount".$color{"color24"}.":$tr{'firewallhits'}",
-  "GPRINT:amount:MAX:   $tr{'maximal'}\\: %2.2lf %S",
-  "GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-  "GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min\\n",
   "DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
-  "AREA:portamount".$color{"color25"}.":$tr{'portscans'}",
-  "GPRINT:portamount:MAX:      $tr{'maximal'}\\: %2.2lf %S",
+  "AREA:amount".$color{"color24"}.":$tr{'firewallhits'}/5 min",
+  "GPRINT:amount:MAX: $tr{'maximal'}\\: %2.2lf %S",
+  "GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
+  "GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %S\\j",
+  "AREA:portamount".$color{"color25"}.":$tr{'portscans'}/5 min",
+  "GPRINT:portamount:MAX: $tr{'maximal'}\\: %2.2lf %S",
   "GPRINT:portamount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-  "GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %Shits/5 min");
+  "GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %S\\j");
   $ERROR = RRDs::error;
   print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
 }

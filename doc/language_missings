@@ -9,6 +9,7 @@
 < blue access use hint
 < could not connect to www ipcop org
 < create new backup
+< daily firwallhits
 < ddns help dnsmadeeasy
 < ddns help freedns
 < ddns help plus
@@ -21,6 +22,7 @@
 < err bk 10 password
 < or
 < password crypting key
+< portscancs
 < proxy no proxy extend
 < proxy no proxy local
 < removable device advice

@@ -37,31 +37,51 @@ my $errormessage="";
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 	        &Header::openbox('100%', 'center', $Lang::tr{"daily firewallhits"});
-		my $ftime = localtime((stat("$graphdir/firewallhits-day-area.png"))[9]);
+if (-e "$Header::graphdir/firewallhits-day-area.png") {
+		my $ftime = localtime((stat("$Header::graphdir/firewallhits-day-area.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<img alt='' src='/graphs/firewallhits-day-area.png' border='0' />";
 		print "<br />\n";
+} else {
+	print $Lang::tr{'no information available'};
+}
+print "<br />\n";
 	        &Header::closebox();
-
+	        
 	        &Header::openbox('100%', 'center', $Lang::tr{"weekly firewallhits"});
-		my $ftime = localtime((stat("$graphdir/firewallhits-week-area.png"))[9]);
+if (-e "$Header::graphdir/firewallhits-week-area.png") {
+		my $ftime = localtime((stat("$Header::graphdir/firewallhits-week-area.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<img alt='' src='/graphs/firewallhits-week-area.png' border='0' />";
 		print "<br />\n";
+} else {
+	print $Lang::tr{'no information available'};
+}
+print "<br />\n";
 	        &Header::closebox();
 
 	        &Header::openbox('100%', 'center', $Lang::tr{"monthly firewallhits"});
-		my $ftime = localtime((stat("$graphdir/firewallhits-month-area.png"))[9]);
+if (-e "$Header::graphdir/firewallhits-month-area.png") {
+		my $ftime = localtime((stat("$Header::graphdir/firewallhits-month-area.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<img alt='' src='/graphs/firewallhits-month-area.png' border='0' />";
 		print "<br />\n";
+} else {
+	print $Lang::tr{'no information available'};
+}
+print "<br />\n";
 	        &Header::closebox();
 
 	        &Header::openbox('100%', 'center', $Lang::tr{"yearly firewallhits"});
-		my $ftime = localtime((stat("$graphdir/firewallhits-year-area.png"))[9]);
+if (-e "$Header::graphdir/firewallhits-year-area.png") {
+		my $ftime = localtime((stat("$Header::graphdir/firewallhits-year-area.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<img alt='' src='/graphs/firewallhits-year-area.png' border='0' />";
 		print "<br />\n";
+} else {
+	print $Lang::tr{'no information available'};
+}
+print "<br />\n";
 	        &Header::closebox();
 
 &Header::closebigbox();

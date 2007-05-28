@@ -99,7 +99,6 @@ WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
 WARNING: translation string unused: daily firewallhits
-WARNING: translation string unused: daily firwallhits
 WARNING: translation string unused: dat without key
 WARNING: translation string unused: dbfile
 WARNING: translation string unused: debugme
@@ -133,6 +132,7 @@ WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
+WARNING: translation string unused: firewall hits per
 WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firewallhits
 WARNING: translation string unused: firmware
@@ -238,8 +238,6 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: original
 WARNING: translation string unused: other countries
-WARNING: translation string unused: other ip
-WARNING: translation string unused: other port
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing traffic in bytes per second
 WARNING: translation string unused: ovpn
@@ -252,7 +250,7 @@ WARNING: translation string unused: package failed to install
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: polfile
-WARNING: translation string unused: portscancs
+WARNING: translation string unused: portscans
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
 WARNING: translation string unused: psk
@@ -320,7 +318,6 @@ WARNING: translation string unused: used memory
 WARNING: translation string unused: used swap
 WARNING: translation string unused: user cpu
 WARNING: translation string unused: user cpu usage
-WARNING: translation string unused: user proxy log
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
@@ -331,17 +328,3 @@ WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: written sectors
 WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: IPFires hostname
-WARNING: untranslated string: down
-WARNING: untranslated string: otherip
-WARNING: untranslated string: otherport
-WARNING: untranslated string: settingsc
-WARNING: untranslated string: up
-WARNING: untranslated string: user proxy logs
-WARNING: untranslated string: wday1
-WARNING: untranslated string: wday2
-WARNING: untranslated string: wday3
-WARNING: untranslated string: wday4
-WARNING: untranslated string: wday5
-WARNING: untranslated string: wday6
-WARNING: untranslated string: wday7
