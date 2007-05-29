@@ -406,7 +406,7 @@ int main(int argc, char *argv[])
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition - swap_file;
 
-	root_partition = 2048 ;
+	root_partition = 1024 ;
 	if (current_free < 512) {
 		errorbox(ctr[TR_DISK_TOO_SMALL]);
 		goto EXIT;

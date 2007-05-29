@@ -133,7 +133,6 @@ $(TARGET) :
 	# Configroot permissions
 	chown -R nobody:nobody $(CONFIG_ROOT)
 	chown      root:root   $(CONFIG_ROOT)
-	chmod 777 /srv/web/ipfire/html/graphs
 	for i in backup/ header.pl general-functions.pl lang.pl addon-lang/ langs/ red/ ; do \
             chown -R root:root $(CONFIG_ROOT)/$$i; \
 	done

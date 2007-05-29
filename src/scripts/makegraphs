@@ -38,6 +38,8 @@ my %mbmon_settings = ();
 use Encode 'from_to';
 my %tr=();
 
+system("chmod 777 /srv/web/ipfire/html/graphs");
+
 # Force language back to English (ugly hack!)
 # Modified to only force if we are unable to convert charset 
 # from utf-8

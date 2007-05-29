@@ -154,7 +154,7 @@ int oktoleave(char *errormessage)
 	}	
 
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
-	if (configtype < 0 || configtype > 7) configtype = 0;
+	if (configtype < 1 || configtype > 4) configtype = 0;
 
 	if (HAS_BLUE)
 	{
@@ -236,7 +236,7 @@ int firstmenu(void)
 		strcpy(networkrestart, ctr[TR_RESTART_REQUIRED]);
 
 	strcpy(temp, ""); findkey(kv, "CONFIG_TYPE", temp); x = atol(temp);
-	if (x < 0 || x > 7) x = 0;
+	if (x < 1 || x > 4) x = 0;
 	/* Format heading bit. */
 	snprintf(message, 1000, ctr[TR_CURRENT_CONFIG], configtypenames[x],
 		networkrestart);
