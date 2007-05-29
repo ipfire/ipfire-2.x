@@ -162,10 +162,10 @@ if ($sambasettings{'ACTION'} eq 'globalreset')
 	<table width='95%' cellspacing='0'>
 	<tr><td bgcolor='$color{'color20'}' colspan='3' align='center'><b>$Lang::tr{'resetglobals'}</b>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' title='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='globalresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'no'}' title='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -180,10 +180,10 @@ if ($sambasettings{'ACTION'} eq 'sharesreset')
 	<table width='95%' cellspacing='0'>
 	<tr><td bgcolor='$color{'color20'}' colspan='3' align='center'><b>$Lang::tr{'resetshares'}</b>
 	<tr><td align='right'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' title='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='sharesresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
+					<input type='image' alt='$Lang::tr{'no'}' title='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -393,9 +393,9 @@ print <<END
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td align='left' width='40%' />
-<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstart' /><input type='image' alt='$Lang::tr{'smbstart'}' src='/images/go-up.png' /></form></td>
-<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstop' /><input type='image' alt='$Lang::tr{'smbstop'}' src='/images/go-down.png' /></form></td>
-<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbrestart' /><input type='image' alt='$Lang::tr{'smbrestart'}' src='/images/view-refresh.png' /></form></td></tr>
+<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstart' /><input type='image' alt='$Lang::tr{'smbstart'}' title='$Lang::tr{'smbstart'}' src='/images/go-up.png' /></form></td>
+<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstop' /><input type='image' alt='$Lang::tr{'smbstop'}' title='$Lang::tr{'smbstop'}' src='/images/go-down.png' /></form></td>
+<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbrestart' /><input type='image' alt='$Lang::tr{'smbrestart'}' title='$Lang::tr{'smbrestart'}' src='/images/view-refresh.png' /></form></td></tr>
 </table>
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -508,13 +508,13 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-												<input type='image' alt='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
+												<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='globalreset' />
-										<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' /></form></td>
+										<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='globalcaption' />
-										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+										<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
 </table>
 END
 ;
@@ -607,7 +607,7 @@ END
 			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='smbuserenable' />
-					<input type='image' alt='$Lang::tr{'activate'}' src='/images/on.gif' />
+					<input type='image' alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/on.gif' />
 			</form></td>
 END
 ;
@@ -619,7 +619,7 @@ END
 			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='smbuserdisable' />
-					<input type='image' alt='$Lang::tr{'deactivate'}' src='/images/off.gif' />
+					<input type='image' alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/off.gif' />
 			</form></td>
 END
 ;
@@ -635,7 +635,7 @@ END
 			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='userchangepw' />
-					<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
+					<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
 			</form></td>
 END
 ;
@@ -647,7 +647,7 @@ END
 				<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='NAME' value='$userline[0]' />
 						<input type='hidden' name='ACTION' value='userdelete' />
-						<input type='image' alt='$Lang::tr{'delete'}' src='/images/network-error.png' />
+						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/network-error.png' />
 						</form></td></tr>
 END
 ;
@@ -658,7 +658,7 @@ END
 				<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='NAME' value='$userline[0]' />
 						<input type='hidden' name='ACTION' value='userdelete' />
-						<input type='image' alt='$Lang::tr{'delete'}' src='/images/user-option-remove.png' />
+						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-option-remove.png' />
 				</form></td></tr>
 END
 ;
@@ -670,7 +670,7 @@ END
 	<table width='10%' cellspacing='0'>
 	<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 													<input type='hidden' name='ACTION' value='useradd' />
-													<input type='image' alt='$Lang::tr{'add user'}' src='/images/user-option-add.png' /></form></td>
+													<input type='image' alt='$Lang::tr{'add user'}' title='$Lang::tr{'add user'}' src='/images/user-option-add.png' /></form></td>
 END
 ;
 
@@ -679,14 +679,14 @@ END
 		print <<END
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='pcadd' />
-												<input type='image' alt='$Lang::tr{'pc add'}' src='/images/network.png' /></form>
+												<input type='image' alt='$Lang::tr{'pc add'}' title='$Lang::tr{'pc add'}' src='/images/network.png' /></form>
 END
 ;
 		}
 	print <<END
 	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 											<input type='hidden' name='ACTION' value='usercaption' />
-											<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form>
+											<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form>
 	</td></tr>
 	</table>
 END
@@ -723,7 +723,7 @@ END
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' readonly /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbchangepw' />
-																				<input type='image' alt=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
+																				<input type='image' alt=$Lang::tr{'save'} title=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
 		</table>
 		</form>
 END
@@ -748,7 +748,7 @@ END
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambauser' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix shell'}</td><td><input type='text' name='SHELL' value='/bin/false' size='30' /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbuseradd' />
-																				<input type='image' alt=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
+																				<input type='image' alt=$Lang::tr{'save'} title=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
 		</table>
 		</form>
 END
@@ -769,7 +769,7 @@ END
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambawks' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix shell'}</td><td><input type='text' name='SHELL' value='/bin/false' size='30' /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbpcadd' />
-																				<input type='image' alt=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
+																				<input type='image' title=$Lang::tr{'save'} alt=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
 		</table>
 		</form>
 END
@@ -805,12 +805,12 @@ foreach my $shareentry (sort @Shares)
 	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='sharechange' />
-			<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
+			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
 	</form></td>
 	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='smbsharedel' />
-			<input type='image' alt='$Lang::tr{'delete'}' src='/images/user-trash.png' />
+			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
 	</form></td></tr>
 END
 ;
@@ -822,15 +822,15 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='shareadd' />
-												<input type='image' alt='$Lang::tr{'add share'}' src='/images/list-add.png' />
+												<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/list-add.png' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='sharesreset' />
-												<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' />
+												<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='sharecaption' />
-												<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' />
+												<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
 												</form></td>
 </tr>
 </table>
@@ -867,7 +867,7 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 	<br />
 	<table width='10%' cellspacing='0'>
 	<tr><td align='center'><input type='hidden' name='ACTION' value='smbshareadd' />
-													<input type='image' alt='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr></form>
+													<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr></form>
 	</table>
 END
 ;
@@ -887,7 +887,7 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 	<br />
 	<table width='10%' cellspacing='0'>
 	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}' />
-													<input type='image' alt='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
+													<input type='image' alt='$Lang::tr{'change share'}' title='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
 													<input type='hidden' name='ACTION' value='smbsharechange' /></form></td></tr>
 	</table>
 END
@@ -946,12 +946,12 @@ foreach my $printerentry (sort @Printers)
 	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='NAME' value='$printerentry' />
 			<input type='hidden' name='ACTION' value='printerchange' />
-			<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
+			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
 	</form></td>
 	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='NAME' value='$printerentry' />
 			<input type='hidden' name='ACTION' value='smbprinterdel' />
-			<input type='image' alt='$Lang::tr{'delete'}' src='/images/user-trash.png' />
+			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
 	</form></td></tr>
 END
 ;
@@ -962,15 +962,15 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='printeradd' />
-												<input type='image' alt='$Lang::tr{'add printer'}' src='/images/list-add.png' />
+												<input type='image' alt='$Lang::tr{'add printer'}' title='$Lang::tr{'add printer'}' src='/images/list-add.png' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='printereset' />
-												<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' />
+												<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='printercaption' />
-												<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' />
+												<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
 												</form></td>
 </tr>
 </table>
@@ -991,7 +991,7 @@ if ($sambasettings{'ACTION'} eq 'printeradd' || $sambasettings{'ACTION'} eq 'pri
 	<br />
 	<table width='10%' cellspacing='0'>
 	<tr><td align='center'><input type='hidden' name='ACTION' value='smbprinteradd' />
-													<input type='image' alt='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr>
+													<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr>
 	</table>
 	</form>
 END
@@ -1012,7 +1012,7 @@ if ($sambasettings{'ACTION'} eq 'printerchange' || $sambasettings{'ACTION'} eq '
 	<br />
 	<table width='10%' cellspacing='0'>
 	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}' />
-													<input type='image' alt='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
+													<input type='image' alt='$Lang::tr{'change share'}' title='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
 													<input type='hidden' name='ACTION' value='smbprinterchange' /></form></td></tr>
 	</table>
 END
@@ -1083,7 +1083,7 @@ foreach my $log (@Logs) {chomp $log;print"<option value='$log'>$log</option>";}
 print <<END
 
 </select></td><td  align='left'>$Lang::tr{'show last x lines'}<input type='text' name='LOGLINES' value='$LOGLINES' size="3" /></td>
-			<td  align='left'><input type='hidden' name='ACTION' value='showlog' /><input type='image' alt='view Log' src='/images/format-justify-fill.png' /></td></tr>
+			<td  align='left'><input type='hidden' name='ACTION' value='showlog' /><input type='image' alt='view Log' title='view Log' src='/images/format-justify-fill.png' /></td></tr>
 <tr><td colspan='3'  align='left'><br /></td></tr>
 <tr><td colspan='3'  align='left'><font size=2>$Log</font></td></tr>
 <tr><td colspan='3'  align='left'><br /></td></tr>

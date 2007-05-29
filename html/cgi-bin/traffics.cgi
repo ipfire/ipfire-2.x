@@ -18,6 +18,11 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require '/var/ipfire/net-traffic/net-traffic-lib.pl';
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %cgiparams; 
 my %netsettings;
 
@@ -177,13 +182,13 @@ my $netWidth = '34%';
 my $inOutWidth = '17%';
 
 # 4 networks
-if ($netsettings{'CONFIG_TYPE'} =~ /^(5|7)$/) {
+if ($netsettings{'CONFIG_TYPE'} =~ /^(4)$/) {
 	$dateWidth = '12%';
 	$netWidth = '22%';
 	$inOutWidth = '11%';
 }
 # 3 networks
-if ($netsettings{'CONFIG_TYPE'} =~ /^(1|3|4|6)$/) {
+if ($netsettings{'CONFIG_TYPE'} =~ /^(2|3)$/) {
 	$dateWidth = '16%';
 	$netWidth = '28%';
 	$inOutWidth = '14%';
@@ -196,13 +201,17 @@ print <<END;
 		<td width='$netWidth' align='center' class='boldbase' ><b>$Lang::tr{'trafficgreen'}</b></td>
 END
 
-if ($netsettings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/) {
+if ($netsettings{'CONFIG_TYPE'} =~ /^(3|4)$/) {
 	print "<td width='$netWidth' align='center' class='boldbase' ><b>$Lang::tr{'trafficblue'}</b></td>";
 }
 
-if ($netsettings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/) {
+if ($netsettings{'CONFIG_TYPE'} =~ /^(2|4)$/) {
 	print "<td width='$netWidth' align='center' class='boldbase' ><b>$Lang::tr{'trafficorange'}</b></td>";
 }
+
+if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/) {
+	print "<td width='$netWidth' align='center' class='boldbase'><b>$Lang::tr{'trafficred'}</b></td>";
+	}
 
 print <<END;
 		<td width='$netWidth' align='center' class='boldbase'><b>$Lang::tr{'trafficred'}</b></td>
@@ -215,22 +224,23 @@ print <<END;
 		<td width='$inOutWidth' align='center' class='boldbase'><font color='#16A61D'><b>$Lang::tr{'trafficout'}</b></font></td>
 END
 
-if ($netsettings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/)
+if ($netsettings{'CONFIG_TYPE'} =~ /^(3|4)$/)
 {  
 	print "<td width='$inOutWidth' align='center' class='boldbase'><font color='${Header::colourblue}'><b>$Lang::tr{'trafficin'}</b></font></td>";
 	print "<td width='$inOutWidth' align='center' class='boldbase'><font color='${Header::colourblue}'><b>$Lang::tr{'trafficout'}</b></font></td>";
 } 
 
-if ($netsettings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/)
+if ($netsettings{'CONFIG_TYPE'} =~ /^(2|4)$/)
 {  
 	print "<td width='$inOutWidth' align='center' class='boldbase'><font color='#FF9933'><b>$Lang::tr{'trafficin'}</b></font></td>";
 	print "<td width='$inOutWidth' align='center' class='boldbase'><font color='#FF9933'><b>$Lang::tr{'trafficout'}</b></font></td>";
 } 
-print <<END;
-		<td width='$inOutWidth' align='center' class='boldbase'><font color='#CE1B31'><b>$Lang::tr{'trafficin'}</b></font></td>
-		<td width='$inOutWidth' align='center' class='boldbase'><font color='#CE1B31'><b>$Lang::tr{'trafficout'}</b></font></td>
-	</tr>
-END
+if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/)
+{	
+	print "<td width='$inOutWidth' align='center' class='boldbase'><font color='#CE1B31'><b>$Lang::tr{'trafficin'}</b></font></td>";
+	print "<td width='$inOutWidth' align='center' class='boldbase'><font color='#CE1B31'><b>$Lang::tr{'trafficout'}</b></font></td>";
+}
+	print"</tr>";
 
 my $total_blue_in=0;
 my $total_blue_out=0;
@@ -270,44 +280,48 @@ foreach (@allDays) {
 	$total_green_in += $allDaysBytes{$_}{${Traffic::green_in}};
 	$total_green_out += $allDaysBytes{$_}{${Traffic::green_out}};
 		
-	if ($netsettings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/)
+	if ($netsettings{'CONFIG_TYPE'} =~ /^(3|4)$/)
 	{
 		$total_blue_in += $allDaysBytes{$_}{${Traffic::blue_in}};
 		$total_blue_out += $allDaysBytes{$_}{${Traffic::blue_out}};
 	}
 		
-	if ($netsettings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/)
+	if ($netsettings{'CONFIG_TYPE'} =~ /^(2|4)$/)
 	{
 		$total_orange_in += $allDaysBytes{$_}{${Traffic::orange_in}};
 		$total_orange_out += $allDaysBytes{$_}{${Traffic::orange_out}};
 	}
-		
+
+  if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/)
+  {
 	$total_red_in += $allDaysBytes{$_}{${Traffic::red_in}};
 	$total_red_out += $allDaysBytes{$_}{${Traffic::red_out}};
+	}
 				
 	if ($lines % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>"; }
+		print "<tr bgcolor='$color{'color20'}'>"; }
 	else {
-		print "<tr bgcolor='${Header::table2colour}'>"; }
+		print "<tr bgcolor='$color{'color22'}'>"; }
 				
 	printf "<td align='center' nowrap='nowrap'>%s</td>\n", $allDaysBytes{$_}{'Day'};
 	printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::green_in}}/1048576);
 	printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::green_out}}/1048576);
 		
-	if ($netsettings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/)
-	{   
+	if ($netsettings{'CONFIG_TYPE'} =~ /^(3|4)$/)
+	{  
 		printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::blue_in}}/1048576);
 		printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::blue_out}}/1048576);
 	} 
-	if ($netsettings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/)
+	if ($netsettings{'CONFIG_TYPE'} =~ /^(2|4)$/)
 	{   
 		printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::orange_in}}/1048576);
 		printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::orange_out}}/1048576);
 	} 
-		
+	if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/)
+  {
 	printf "<td align='center' nowrap='nowrap'>%.3f</td>\n", ($allDaysBytes{$_}{${Traffic::red_in}}/1048576);
 	printf "<td align='center' nowrap='nowrap'>%.3f</td></tr>\n", ($allDaysBytes{$_}{${Traffic::red_out}}/1048576);
-    	        
+  }  	        
 	$lines++;
 }
 
@@ -320,8 +334,8 @@ $total_orange_out=sprintf("%.2f", ($total_orange_out/1048576));
 $total_red_in=sprintf("%.2f", ($total_red_in/1048576));
 $total_red_out=sprintf("%.2f", ($total_red_out/1048576));
 	
-if ($lines % 2) {print "<tr bgcolor='${Header::table1colour}'>"; }
-else {print "<tr bgcolor='${Header::table2colour}'>"; }
+if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>"; }
+else {print "<tr bgcolor='$color{'color22'}'>"; }
   
 print <<END;
 	<td align='center' class='boldbase' height='20' nowrap='nowrap'><b>$Lang::tr{'trafficsum'}</b></td>
@@ -329,21 +343,23 @@ print <<END;
 	<td align='center' class='boldbase' nowrap='nowrap'><b>$total_green_out MB</b></td>
 END
   
-if ($netsettings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/)
+if ($netsettings{'CONFIG_TYPE'} =~ /^(3|4)$/)
 {    
 	print "<td align='center' class='boldbase' nowrap='nowrap'><b>$total_blue_in MB</b></td>";
 	print "<td align='center' class='boldbase' nowrap='nowrap'><b>$total_blue_out MB</b></td>";
 }
 
-if ($netsettings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/)
+if ($netsettings{'CONFIG_TYPE'} =~ /^(2|4)$/)
 {    
 	print "<td align='center' class='boldbase' nowrap='nowrap'><b>$total_orange_in MB</b></td>";
 	print "<td align='center' class='boldbase' nowrap='nowrap'><b>$total_orange_out MB</b></td>";
 }
-     
+if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/)
+{
+	print "<td align='center' class='boldbase' nowrap='nowrap'><b>$total_red_in MB</b></td>";
+	print "<td align='center' class='boldbase' nowrap='nowrap'><b>$total_red_out MB</b></td>";   
+}  
 print <<END;
-		<td align='center' class='boldbase' nowrap='nowrap'><b>$total_red_in MB</b></td>
-		<td align='center' class='boldbase' nowrap='nowrap'><b>$total_red_out MB</b></td>
 	</tr>
 	</table>
 END
