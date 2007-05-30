@@ -56,3 +56,6 @@ HOME=/
 
 # Reset Dialup Statistics
 bootrun 0 0 1 * *	/usr/local/bin/dialctrl.pl reset
+
+# run traffic monitoring every 5 minutes
+*/5 * * * *	/usr/local/bin/monitorTraff > /dev/null

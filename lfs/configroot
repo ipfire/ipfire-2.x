@@ -54,7 +54,7 @@ $(TARGET) :
 	# Create all directories
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dmzholes \
 	    ethernet extrahd/bin fwlogs isdn key langs logging main mbmon menu.d modem net-traffic \
-			nfs optionsfw outgoing/bin patches pakfire portfw \
+			net-traffic\templates nfs optionsfw outgoing/bin patches pakfire portfw \
 	    ppp private proxy/advanced/cre proxy/calamaris/bin qos/bin red remote snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
 	    wakeonlan wireless xtaccess ; do \
@@ -66,7 +66,7 @@ $(TARGET) :
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dmzholes/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings fwlogs/ipsettings fwlogs/portsettings\
-	    isdn/settings main/hosts main/settings optionsfw/settings outgoing/settings outgoing/rules pakfire/settings \
+	    isdn/settings main/hosts main/settings net-traffic\settings optionsfw/settings outgoing/settings outgoing/rules pakfire/settings \
 	    portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
@@ -92,6 +92,8 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/modem-defaults		$(CONFIG_ROOT)/modem/defaults
 	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-lib.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-lib.pl
+	cp $(DIR_SRC)/config/cfgroot/net-traffic-admin.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-admin.pl
+	cp $(DIR_SRC)/config/cfgroot/monitorTraffic.pl		/usr/local/bin/monitorTraffic.pl
 	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
 	cp $(DIR_SRC)/config/cfgroot/p2protocols			$(CONFIG_ROOT)/outgoing/p2protocols
 	cp $(DIR_SRC)/config/outgoingfw/outgoingfw.pl		$(CONFIG_ROOT)/outgoing/bin/
@@ -129,6 +131,10 @@ $(TARGET) :
 	# Language files
 	cp $(DIR_SRC)/langs/de/cgi-bin/de.pl $(CONFIG_ROOT)/langs/
 	cp $(DIR_SRC)/langs/en/cgi-bin/en.pl $(CONFIG_ROOT)/langs/
+	
+	# Copy Net-Traffic Templates
+	cp $(DIR_SRC)/config/nettraffic/templates/* $(CONFIG_ROOT)/net-traffic/templates/
+	touch /var/log/net-traffic.log
 
 	# Configroot permissions
 	chown -R nobody:nobody $(CONFIG_ROOT)

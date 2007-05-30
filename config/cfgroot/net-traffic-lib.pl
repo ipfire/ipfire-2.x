@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Id: net-traffic-lib.pl,v 1.4 2005/03/17 11:43:55 dotzball Exp $
+# $Id: net-traffic-lib.pl,v 1.10 2007/01/09 19:00:35 dotzball Exp $
 #
 # Summarize all IP accounting files from start to end time
 #
@@ -40,29 +40,39 @@ use POSIX qw(strftime);
 use Time::Local;
 use Socket;
 use IO::Handle;
+#use warnings;
+#use strict;
 
 $|=1; # line buffering
 
-@moff = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 );
+my @moff = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 );
 
 # =()<$datdelim="@<DATDELIM>@";>()=
-$datdelim="#-#-#-#-#";
+my $datdelim="#-#-#-#-#";
 # =()<$prefix="@<prefix>@";>()=
-$prefix="/usr";
+my $prefix="/usr";
 # =()<$exec_prefix="@<exec_prefix>@";>()=
-$exec_prefix="${prefix}";
+my $exec_prefix="${prefix}";
 # =()<$INSTALLPATH="@<INSTALLPATH>@";>()=
-$INSTALLPATH="${exec_prefix}/sbin";
-$datdir="/var/log/ip-acct";
+my $INSTALLPATH="${exec_prefix}/sbin";
+my $datdir="/var/log/ip-acct";
 
-$me=$0;
+my $me=$0;
 $me =~ s|^.*/([^/]+)$|$1|;
-$now = time;
-$fetchipac="$INSTALLPATH/fetchipac";
-$rule_regex = ".*";				# match rules with this regex only
+my $now = time;
+my $fetchipac="$INSTALLPATH/fetchipac";
+my $rule_regex = ".*";				# match rules with this regex only
+my $machine_name;
+my $fetchipac_options;
+my ($newest_timestamp_before_starttime, $oldest_timestamp_after_endtime);
+my (%rule_firstfile, %rule_lastfile);
+my $count;
+my @timestamps;
+my $rulenumber;
+my ($starttime, $endtime);
 
 ## Net-Traffic variables ##
-my %allDays = ();
+my %allDays;
 my $allDaysBytes;
 my $tzoffset = 0;
 my $displayMode = "daily";
@@ -82,7 +92,9 @@ sub calcTraffic{
 	$starttime = shift;
 	$endtime = shift;
 	$displayMode = shift;
-
+	
+	# init
+	%allDays = ();
 	$starttime =~ /^(\d\d\d\d)(\d\d)/;
 	$curYear = $1;
 	$curMonth = $2;
@@ -92,8 +104,13 @@ sub calcTraffic{
 	$tzoffset = time-timegm(localtime());
 	$machine_name = undef;
 
-	$starttime = makeunixtime($starttime);
-	$endtime = makeunixtime($endtime);
+	if($displayMode ne "exactTimeframe")
+	{
+		$starttime = makeunixtime($starttime);
+		if($displayMode ne 'exactEnd') {
+			$endtime = makeunixtime($endtime);
+		}
+	}
 	$endtime -= 1;
 
 	# options that we need to pass to fetchipac if we call it.
@@ -101,9 +118,11 @@ sub calcTraffic{
 
 	$endtime = $now if ($endtime > $now);
 	$starttime = 0 if ($starttime < 0);
-	$mystarttime = &makemydailytime($starttime);
-	$myendtime = &makemydailytime($endtime);
-	%rule_firstfile =  %rule_lastfile = ( );
+#~	$mystarttime = &makemydailytime($starttime);
+#~	$myendtime = &makemydailytime($endtime);
+	%rule_firstfile = ( );
+	%rule_lastfile = ( );
+	@timestamps = ();
 
 	# find out which timestamps we need to read.
 	# remember newest timestamp before starttime so we know when data for
@@ -141,9 +160,9 @@ sub calcTraffic{
 	}
 	close DATA;
 
-	push(@timestamps, $oldest_timestamp_after_endtime) 
+	push(@timestamps, $oldest_timestamp_after_endtime)
 		if ($oldest_timestamp_after_endtime);
-	unshift(@timestamps, $newest_timestamp_before_starttime) 
+	unshift(@timestamps, $newest_timestamp_before_starttime)
 		if ($newest_timestamp_before_starttime);
 
 	$rulenumber = 0;
@@ -151,7 +170,7 @@ sub calcTraffic{
 	# read all data we need and put the data into memory.
 	&read_data;
 
-	@days_sorted = sort keys %allDays;
+	my @days_sorted = sort keys %allDays;
 	return @days_sorted;
 }
 ##########################
@@ -233,7 +252,7 @@ sub read_data {
 					$curMonth = 1;
 					$curYear++;
 				}
-				my $newMonth = $curYear;				
+				my $newMonth = $curYear;
 				$newMonth .= $curMonth < 10 ? "0".$curMonth."01" : $curMonth."01";
 				$newMonth .= "01";
 				$curDay = &makeunixtime($newMonth);
@@ -242,7 +261,7 @@ sub read_data {
 
 		if ($timestamp < $starttime) {
 			# this record is too old, we dont need the data.
-			# However, the timestamp gives us a clue on the 
+			# However, the timestamp gives us a clue on the
 			# time period the next item covers.
 			$do_collect = 0;
 		}
@@ -256,7 +275,7 @@ sub read_data {
 			# first one, split the data (if we know for how
 			# long this data is valid, and if $laststamp is not
 			# equal to $starttime in which case the split is
-			# redundant). If we don't have a clue about the 
+			# redundant). If we don't have a clue about the
 			# last file time before our first file was created,
 			# we do not know how much of the file data is in our
 			# time frame. we assume everything belongs to us.
@@ -265,7 +284,7 @@ sub read_data {
 			if ($laststamp && $laststamp != $newest_timestamp_before_starttime) {
 				my $newdata = &split_data($data,
 					$laststamp, $timestamp, $starttime);
-				$glb_data_before = $data;
+#~				$glb_data_before = $data;
 				$data = $newdata;
 				$laststamp = $starttime;
 			}
@@ -279,8 +298,9 @@ sub read_data {
 			if ($after_time == 0) {
 				$after_time = 1;
 				if ($laststamp) {
-					$glb_data_after =
-						&split_data($data,$laststamp,$timestamp,$endtime);
+#~					$glb_data_after =
+#~						&split_data($data,$laststamp,$timestamp,$endtime);
+					&split_data($data,$laststamp,$timestamp,$endtime);
 				} else {
 					$do_collect = 0;
 				}
@@ -334,8 +354,8 @@ sub split_data {
 	# $fac1 now says us how much weight the first result has.
 	# initialize the set we will return.
 	my @ret = ( );
-	
-	foreach $set (@$data) {
+
+	foreach my $set (@$data) {
 		my ($rule, $bytes, $pkts) = @$set;
 		$$set[1] = int($bytes * $fac1 + 0.5);
 		$$set[2] = int($pkts * $fac1 + 0.5);
@@ -347,7 +367,7 @@ sub split_data {
 # put data from one file into global data structures
 # must be called in correct sorted file name order to set rules_lastfile
 # and rules_firstfile (which are currently useless)
-# arguments: 
+# arguments:
 # $1=index number of file; $2 = reference to array with data from file
 sub collect_data {
 	my($filedata, $ifile, $i, $day);
@@ -368,7 +388,7 @@ sub collect_data {
 		my $rule = $$set[0];
 		my $bytes = $$set[1];
 		my $pkts = $$set[2];
-		
+
 		$_ = $rule;
 		/^(.*) \(.*$/;
 		$_ = $1;
@@ -387,8 +407,8 @@ sub init_filter_id {
 			my $newDay = &makemydailytime($s);
 			$newDay =~ /^\d\d\d\d-(\d\d)-\d\d$/;
 
-			return 1 if ($1 > $curMonth && $displayMode ne "daily_multi");	
-			
+			return 1 if ($1 > $curMonth && $displayMode ne "daily_multi");
+
 			$allDaysBytes->{$s}{'Day'} = $newDay;
 		}
 		else {
@@ -408,7 +428,7 @@ sub init_filter_id {
 
 # read data record from filehandle $1
 # number of records is $2
-# Return value: reference to array a of length n; 
+# Return value: reference to array a of length n;
 # 	n is the number of rules
 # 	each field in a is an array aa with 3 fields
 #	the fields in arrays aa are: [0]=name of rule; [1]=byte count;
@@ -452,7 +472,7 @@ sub read_data_record {
 # use time zone offset $tzoffset (input=wall clock time, output=UTC)
 sub makeunixtime {
 	my($y, $m, $d, $h, $i, $e);
-	$s = shift;
+	my $s = shift;
 
 	$h=0; $i=0; $e=0;
 	if ($s =~ /^(\d\d\d\d)(\d\d)(\d\d)/) {

@@ -61,6 +61,7 @@ WARNING: translation string unused: cached memory
 WARNING: translation string unused: calamaris report interval (in minutes)
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: cfg restart
+WARNING: translation string unused: check for net traffic update
 WARNING: translation string unused: choose config
 WARNING: translation string unused: clear cache
 WARNING: translation string unused: compression

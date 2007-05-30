@@ -293,6 +293,60 @@ print <<END;
 
 END
 
+require "${General::swroot}/net-traffic/net-traffic-admin.pl";
+
+if($NETTRAFF::settings{'SHOW_AT_HOME'} eq 'on')
+{
+	my %calc = ();
+	$calc{'CALC_VOLUME_TOTAL'} = 0;
+	$calc{'CALC_VOLUME_IN'} = 0;
+	$calc{'CALC_VOLUME_OUT'} = 0;
+	$calc{'CALC_WEEK_TOTAL'} = 0;
+	$calc{'CALC_WEEK_IN'} = 0;
+	$calc{'CALC_WEEK_OUT'} = 0;
+	$calc{'CALC_LAST_RUN'} = 0;
+	$calc{'CALC_PERCENT'} = 0;
+
+	&General::readhash($NETTRAFF::logfile, \%calc);
+
+	my $calctime = &NETTRAFF::getFormatedDate($calc{'CALC_LAST_RUN'});
+
+	print <<END;
+		<hr /><br />
+
+				<table width='80%'>
+				<tr>
+				<td colspan='4' align='center' nowrap='nowrap' >$Lang::tr{'traffic monitor'} ($Lang::tr{'traffic calc time'} $calctime)</td>
+				</tr>
+				<tr>
+					<td align='center' nowrap='nowrap' > </td>
+					<td align='center' nowrap='nowrap' class='boldbase'><font color='$Header::colourred'><b>$Lang::tr{'trafficin'}</b></font></td>
+					<td align='center' nowrap='nowrap' class='boldbase'><font color='$Header::colourred'><b>$Lang::tr{'trafficout'}</b></font></td>
+					<td align='center' nowrap='nowrap' class='boldbase'><font color='$Header::colourred'><b>$Lang::tr{'trafficsum'}</b></font></td>
+				</tr>
+				<tr>
+					<td align='center' nowrap='nowrap' >$Lang::tr{'this weeks volume'} (MB):</td>
+					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_WEEK_IN'}</td>
+					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_WEEK_OUT'}</td>
+					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_WEEK_TOTAL'}</td>
+				</tr>
+				<tr>
+					<td align='center' nowrap='nowrap' >$Lang::tr{'this months volume'} (MB):</td>
+					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_VOLUME_IN'}</td>
+					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_VOLUME_OUT'}</td>
+					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_VOLUME_TOTAL'}</td>
+				</tr>
+END
+
+	if($NETTRAFF::settings{'MONTHLY_VOLUME_ON'} eq 'on')
+	{
+print "<tr><td align='center'>max. $NETTRAFF::settings{'MONTHLY_VOLUME'} MB</td><td align='left' colspan='3' nowrap='nowrap'>";
+&NETTRAFF::traffPercentbar("$calc{'CALC_PERCENT'}%"); 
+print "</td><td align='left' nowrap='nowrap'>&nbsp; $calc{'CALC_PERCENT'}%</td></tr>";
+	}
+	print "</table>";
+}
+
 &Header::closebox();
 
 &Header::closebigbox();

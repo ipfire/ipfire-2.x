@@ -1,0 +1,10 @@
+Dies ist eine Testemail von Net-Traffic auf Ihrem IPCop __HOSTNAME__.
+
+Verbrauchtes Monatsvolumen:               __CALC_VOLUME_TOTAL__ MB (__CALC_PERCENT__ %)
+Maximales Volumen pro Abrechnungsperiode: __MONTHLY_VOLUME__ MB
+
+Erste Tag der Abrechnungsperiode ist:     __STARTDAY__
+
+Aktuelles Datum:                          __CURRENT_DATE__
+Letzte Traffic Berechnung:                __LAST_RUN__
+

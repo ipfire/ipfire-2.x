@@ -7,7 +7,7 @@ PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	squidctrl restartssh ipfirereboot setaliases \
 	ipsecctrl timectrl dhcpctrl restartsnort \
-	restartapplejuice rebuildhosts \
+	monitorTraff restartapplejuice rebuildhosts \
 	restartsyslogd logwatch openvpnctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
 	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
@@ -60,6 +60,9 @@ tripwirectrl: tripwirectrl.c setuid.o ../install+setup/libsmooth/varval.o
 	
 smartctrl: smartctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ smartctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+monitorTraff: monitorTraff.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ monitorTraff.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 clamavctrl: clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@

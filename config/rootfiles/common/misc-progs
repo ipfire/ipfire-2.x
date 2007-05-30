@@ -10,6 +10,7 @@ usr/local/bin/openvpnctrl
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
+usr/local/bin/monitorTraff
 #usr/local/bin/restartapplejuice
 usr/local/bin/restartsnort
 usr/local/bin/restartssh

@@ -1,0 +1,10 @@
+This is a testemail from Net-Traffic on your IPCop __HOSTNAME__.
+
+This months volume:        __CALC_VOLUME_TOTAL__ MB (__CALC_PERCENT__ %)
+Maximum volume per period: __MONTHLY_VOLUME__ MB
+
+Startday of periode is:    __STARTDAY__
+
+Current date is:           __CURRENT_DATE__
+Last traffic calculation:  __LAST_RUN__
+
