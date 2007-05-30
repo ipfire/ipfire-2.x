@@ -952,7 +952,7 @@ upload)
 	  iso)
 		echo -e "Uploading the iso to $FTP_ISO_PATH/$SVN_REVISION."
 		cat <<EOF > .ftp-commands
-mkdir -p $FTP_ISO_PATH/$SVN_REVISION
+mkdir -p $FTP_ISO_PATH$SVN_REVISION
 ls -lah
 quit
 EOF
@@ -980,7 +980,7 @@ EOF
 		;;
 	  paks)
 		cat <<EOF > .ftp-commands
-mkdir -p $FTP_ISO_PATH/$SVN_REVISION/paks
+mkdir -p $FTP_ISO_PATH$SVN_REVISION/paks
 ls -lah
 quit
 EOF
