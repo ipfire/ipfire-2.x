@@ -14,8 +14,12 @@
 #define CDROM_INSTALL 0
 #define URL_INSTALL 1
 #define DISK_INSTALL 2
-#define INST_FILECOUNT 7000
+#define INST_FILECOUNT 6000
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
+
+#define REISER4 0
+#define REISERFS 1
+#define EXT3 2
 
 int raid_disk = 0;
 FILE *flog = NULL;
@@ -72,6 +76,9 @@ int main(int argc, char *argv[])
 	char commandstring[STRING_SIZE];
 	char *installtypes[] = { "CDROM/USB", "HTTP/FTP", NULL };
 	int installtype = CDROM_INSTALL;
+	char mkfscommand[STRING_SIZE];
+	char *fstypes[] = { "Reiser4", "ReiserFS", "ext3", NULL };
+	int fstype = REISER4;
 	int choice;
 	int i;
 	int found = 0;
@@ -194,14 +201,14 @@ int main(int argc, char *argv[])
 	if (installtype == CDROM_INSTALL) {
 		switch (mysystem("/bin/mountsource.sh")) {
 		    case 0:
-			installtype = CDROM_INSTALL;
-			cdmounted = 1;
+					installtype = CDROM_INSTALL;
+					cdmounted = 1;
 			break;
 		    case 1:
-			installtype = DISK_INSTALL;
+					installtype = DISK_INSTALL;
 			break;
 		    case 10:
-	        	errorbox(ctr[TR_NO_CDROM]);
+	      	errorbox(ctr[TR_NO_CDROM]);
 			goto EXIT;
 		}
 
@@ -350,6 +357,18 @@ int main(int argc, char *argv[])
 	if (rc == 2)
 		goto EXIT;
 
+	if (!unattended) {		
+		sprintf(message, "(TR) Bitte waehlen Sie ihr Dateisystem aus:");
+		rc = newtWinMenu("(TR) Dateisystemauswahl", message,
+			50, 5, 5, 6, fstypes, &fstype, ctr[TR_OK],
+			ctr[TR_CANCEL], NULL);
+	} else {
+	    rc = 1;
+	    fstype = REISER4; // Reiser4 is our standard filesystem. Love it or shut up!
+	}
+	if (rc == 2)
+		goto EXIT;
+
 	/* Calculate amount of memory in machine */
         if ((handle = fopen("/proc/meminfo", "r")))
         {
@@ -441,8 +460,17 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
 		goto EXIT;
 	}
-
-	mysystem("/sbin/udevstart");
+	
+	if (fstype == REISER4) {
+		mysystem("/sbin/modprobe reiser4");
+		sprintf(mkfscommand, "/sbin/mkfs.reiser4 -y");
+	} else if (fstype == REISERFS) {
+		mysystem("/sbin/modprobe reiserfs");
+		sprintf(mkfscommand, "/sbin/mkreiserfs -f");
+	} else if (fstype == EXT3) {
+		mysystem("/sbin/modprobe ext3");
+		sprintf(mkfscommand, "/bin/mke2fs -T ext2 -c");
+	}
 
 	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %s1", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
@@ -460,22 +488,19 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %s3", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "%s %s3", mkfscommand, hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
 		goto EXIT;
 	}
 
-	snprintf(commandstring, STRING_SIZE, "/sbin/mkreiserfs -f %s4", hdparams.devnode_part);	
+	snprintf(commandstring, STRING_SIZE, "%s %s4", mkfscommand, hdparams.devnode_part);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
+		errorbox(ctr[TR_UNABLE_TO_MAKE_LOG_FILESYSTEM]);
 		goto EXIT;
 	}
-
-	/* Mount harddisk. */
-	mysystem("/sbin/modprobe reiserfs"); // to be banished...
 
 	snprintf(commandstring, STRING_SIZE, "/bin/mount %s3 /harddisk", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
@@ -561,6 +586,15 @@ int main(int argc, char *argv[])
 
 	/* Update /etc/fstab */
 	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode_part_run);
+	
+	if (fstype == REISER4) {
+		replace("/harddisk/etc/fstab", "FSTYPE", "reiser4");
+		replace("/harddisk/etc/mkinitcpio.conf", "MODULES=\"", "MODULES=\"reiser4 ");
+	} else if (fstype == REISERFS) {
+		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
+	} else if (fstype == EXT3) {
+		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
+	}
 
 	/* Going to make our initrd... */
 	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd.img -k %s-ipfire", KERNEL_VERSION);
@@ -582,9 +616,6 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-	/* Install bootsplash */
-	// mysystem("/bin/installbootsplash.sh"); We cannot use this at the moment, it conflicts with our initrds...
-
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
 
 	if (!unattended) {
@@ -592,7 +623,7 @@ int main(int argc, char *argv[])
 				NAME, SNAME, NAME);
 		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
 	}
-	         
+
 	allok = 1;
 
 EXIT:

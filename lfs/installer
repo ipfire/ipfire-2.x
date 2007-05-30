@@ -62,6 +62,6 @@ $(TARGET) :
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
 	cd $(DIR_APP)/install && install -v -m 0755 install probenic.sh \
-		probehw.sh installbootsplash.sh mountsource.sh mountdest.sh /install/initrd/bin
+		probehw.sh mountsource.sh mountdest.sh /install/initrd/bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

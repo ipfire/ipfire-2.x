@@ -110,8 +110,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	ln -s linux-$(VER) /usr/src/linux
 	
-	# XEN
 ifeq "$(XEN)" "1"
+	# XEN
 	-cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xen-3.0.4-2.6.16.x.patch
 	cd $(DIR_APP)/net/ipv4/netfilter && patch -Np0 < $(DIR_SRC)/src/patches/xen-3.0.4-netfilter-fix.patch
 endif
@@ -200,7 +200,7 @@ ifeq "$(XEN)" "1"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
 	cd $(DIR_APP) && cp -v vmlinuz /boot/vmlinuz-$(VER)-ipfire-xen
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire-xen
-	ln -sf vmlinuz-$(VER)-ipfire-smp /boot/vmlinuz-ipfire-xen
+	ln -sf vmlinuz-$(VER)-ipfire-xen /boot/vmlinuz-ipfire-xen
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 else
@@ -220,8 +220,10 @@ endif
 	-rm -rf /lib/modules/$(VER)-ipfire{,-smp}/pcmcia
 
 ifeq "$(SMP)" ""
+ifeq "$(XEN)" ""
 	# Only do this once on the non-SMP pass	
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
+endif
 endif 
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
