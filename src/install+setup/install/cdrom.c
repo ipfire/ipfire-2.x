@@ -18,17 +18,10 @@ extern char **ctr;
 /* Ejects the CDROM.  returns 0 for failure, 1 for success. */
 int ejectcdrom(char *dev)
 {
-	int fd;
-
-	if ((fd = open(dev, O_RDONLY|O_NONBLOCK)) == -1)
+	char command;
+	sprintf(command, "eject -r %s", dev);
+	if (mysystem(command))
 		return 0;
-	
-	if (ioctl(fd, 0x5309) == -1)
-	{
-		close(fd);
-		return 0;
-	}
-	close(fd);
-	
-	return 1;
+	else
+		return 1;
 }
