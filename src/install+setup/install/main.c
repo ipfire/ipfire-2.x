@@ -63,6 +63,19 @@ long calc_swapsize(long memory, long disk) {
 	return memory*2;
 }
 
+long calc_rootsize(long free, long max) {
+	long root;
+	
+	root = max / 2;
+	if (root < 512) {
+		return 0;
+	}
+	if (root > 2048) {
+		root = 2048;
+	}
+	return root;
+}
+
 int main(int argc, char *argv[])
 {
 	char *langnames[] = { "Deutsch", "English", NULL };
@@ -390,22 +403,20 @@ int main(int argc, char *argv[])
 	system(commandstring);
 
 	/* Calculate amount of disk space */
-        if ((handle = fopen("/tmp/disksize", "r")))
-        {
-           	fgets(line, STRING_SIZE-1, handle);
-            	if (sscanf (line, "%s", string)) {
+	if ((handle = fopen("/tmp/disksize", "r"))) {
+		fgets(line, STRING_SIZE-1, handle);
+		if (sscanf (line, "%s", string)) {
 			maximum_free = atoi(string) / 1024;
-            	}
-            	fclose(handle);
-        }
+		}
+		fclose(handle);
+	}
 	
-	fprintf(flog, "maximum_free = %ld, memory = %ld", 
-		maximum_free, memory);
+	fprintf(flog, "maximum_free = %ld, memory = %ld", maximum_free, memory);
 	
 	swap_file = calc_swapsize(memory, maximum_free);
 
-	if (maximum_free < 512 + swap_file ) {
-		if (maximum_free < 512) {
+	if (maximum_free < 768 + swap_file ) {
+		if (maximum_free < 768) {
 			errorbox(ctr[TR_DISK_TOO_SMALL]);
 			goto EXIT;
 		}
@@ -425,15 +436,23 @@ int main(int argc, char *argv[])
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition - swap_file;
 
-	root_partition = 1024 ;
-	if (current_free < 512) {
+	if (current_free < 768) {
 		errorbox(ctr[TR_DISK_TOO_SMALL]);
 		goto EXIT;
 	}
-
-	current_free = current_free - root_partition;
-	if (!swap_file) {
-		root_partition = root_partition + swap_file;
+	
+	root_partition = calc_rootsize(current_free, maximum_free);
+	
+	if (root_partition == 0) {
+		errorbox(ctr[TR_DISK_TOO_SMALL]);
+		goto EXIT;	
+	} else {
+		current_free = current_free - root_partition;
+	}
+	
+	if (current_free < 256) {
+		errorbox(ctr[TR_DISK_TOO_SMALL]);
+		goto EXIT;
 	}
 
 	system_partition = current_free;
@@ -469,7 +488,7 @@ int main(int argc, char *argv[])
 		sprintf(mkfscommand, "/sbin/mkreiserfs -f");
 	} else if (fstype == EXT3) {
 		mysystem("/sbin/modprobe ext3");
-		sprintf(mkfscommand, "/bin/mke2fs -T ext2 -c");
+		sprintf(mkfscommand, "/bin/mke2fs -T ext3 -c");
 	}
 
 	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %s1", hdparams.devnode_part);
@@ -590,10 +609,13 @@ int main(int argc, char *argv[])
 	if (fstype == REISER4) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiser4");
 		replace("/harddisk/etc/mkinitcpio.conf", "MODULES=\"", "MODULES=\"reiser4 ");
+		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "rw");
 	} else if (fstype == REISERFS) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
+		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == EXT3) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
+		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	}
 
 	/* Going to make our initrd... */
