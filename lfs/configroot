@@ -93,7 +93,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-lib.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-lib.pl
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-admin.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-admin.pl
-	cp $(DIR_SRC)/config/cfgroot/monitorTraffic.pl		/usr/local/bin/monitorTraffic.pl
 	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
 	cp $(DIR_SRC)/config/cfgroot/p2protocols			$(CONFIG_ROOT)/outgoing/p2protocols
 	cp $(DIR_SRC)/config/outgoingfw/outgoingfw.pl		$(CONFIG_ROOT)/outgoing/bin/
@@ -132,10 +131,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/langs/de/cgi-bin/de.pl $(CONFIG_ROOT)/langs/
 	cp $(DIR_SRC)/langs/en/cgi-bin/en.pl $(CONFIG_ROOT)/langs/
 	
-	# Copy Net-Traffic Templates
-	cp $(DIR_SRC)/config/nettraffic/templates/* $(CONFIG_ROOT)/net-traffic/templates/
-	touch /var/log/net-traffic.log
-
 	# Configroot permissions
 	chown -R nobody:nobody $(CONFIG_ROOT)
 	chown      root:root   $(CONFIG_ROOT)

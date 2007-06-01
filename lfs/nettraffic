@@ -1,0 +1,58 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER = ipfire
+
+THISAPP    = nettraffic
+DIR_APP    = $(DIR_SRC)/config/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+cp $(DIR_APP)/templates/* /var/ipfire/net-traffic/templates/
+touch /var/log/net-traffic.log
+cp $(DIR_SRC)/config/cfgroot/monitorTraffic.pl /usr/local/bin/monitorTraffic.pl
+cp $(DIR_SRC)/config/cfgroot/sendEmail_nettraffic	/usr/local/bin/sendEmail_nettraffic
+chown root.root /usr/local/bin/monitorTraffic.pl
+chown root.root /usr/local/bin/sendEmail_nettraffic
+chmod 0754 /usr/local/bin/monitorTraffic.pl
+chmod 0754 /usr/local/bin/sendEmail_nettraffic

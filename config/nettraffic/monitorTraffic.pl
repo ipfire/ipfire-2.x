@@ -13,7 +13,7 @@ use strict;
 # enable only the following on debugging purpose
 use warnings;
 
-require '/var/ipfire/general-functions.pl';
+require '/var/ipcop/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/net-traffic/net-traffic-lib.pl";
 require "${General::swroot}/net-traffic/net-traffic-admin.pl";
@@ -296,9 +296,9 @@ sub sendEmail
 	
 	my $template = "";
 
-	my %ipfireSettings = ();
-	&General::readhash("${General::swroot}/main/settings", \%ipfireSettings);	
-	my $host = "$ipfireSettings{'HOSTNAME'}.$ipfireSettings{'DOMAINNAME'}";
+	my %ipcopSettings = ();
+	&General::readhash("${General::swroot}/main/settings", \%ipcopSettings);	
+	my $host = "$ipcopSettings{'HOSTNAME'}.$ipcopSettings{'DOMAINNAME'}";
 	
 	my $subject = "[Net-Traffic] $host: ";
 
