@@ -24,6 +24,8 @@ require "/opt/pakfire/lib/functions.pl";
 
 my %pakfiresettings=();
 my $errormessage = '';
+my @instlist = `ls /opt/pakfire/cache`;
+my $uninstall = 'yes';
 
 &Header::showhttpheaders();
 
@@ -39,32 +41,25 @@ $pakfiresettings{'AUTOUPDATE'} = '';
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if ($pakfiresettings{'ACTION'} eq 'install')
-{
-	my @inspaks = split(/\|/, "$pakfiresettings{'INSPAKS'}");
-	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
-	my @deps = "";
-	foreach (@inspaks) {
-		push(@deps, $_);
-		my @add = split(/ /, `/usr/local/bin/pakfire resolvedeps $_`);
-		foreach (@add) { push(@deps, $_); }
-	}
-	&Header::openbox("100%", "center", "Pakfire");
-	print "Wenn sie die Pakete @inspaks installieren wollen müssen sie auch folgende Pakete installieren: @deps";
-	&Header::closebox();
-	exit 0;
+if ($pakfiresettings{'ACTION'} eq 'install'){
+print "Going to install $pakfiresettings{'INSPAKS'}";
+system("/opt/pakfire/pakfire installi $pakfiresettings{'INSPAKS'}")
+}elsif ($pakfiresettings{'ACTION'} eq 'remove'){
+foreach (@instlist){
+my @pakname = split(/-/,$_);
+my $dependency = `grep "Dependencies.*$pakfiresettings{'DELPAKS'}" /opt/pakfire/db/meta/*$pakname[0]`;
+if ($dependency){$errormessage = "We have depending Paket $pakname[0] nothing will be done.<br />";$uninstall='no';last;}else{$uninstall='yes';}
 }
-elsif ($pakfiresettings{'ACTION'} eq 'remove')
-{
-	$errormessage = "$pakfiresettings{'DELPAKS'}";
-	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
+if ($uninstall eq 'yes'){
+print "Going to uninstall $pakfiresettings{'DELPAKS'}";
+system("/opt/pakfire/pakfire uninstalli $pakfiresettings{'DELPAKS'}")
+}
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}")
 {
 	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 }
 
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
-
 
 my %selected=();
 my %checked=();
@@ -108,7 +103,12 @@ print <<END;
 		</td>
 		<td width='40%' align="center">Installierte Addons:<br />
 			<select name="DELPAKS" size="10" multiple>
-			<option value="postfix">Postfix v2.4.0-1</option>
+END
+foreach (@instlist){
+my @pakname = split(/-/,$_);
+print "<option value='$pakname[0]'>$pakname[0]</option>";
+}
+print <<END;		
 		</select>
 	</table></form>
 		<br /><hr /><br />
@@ -124,8 +124,5 @@ print <<END;
 END
 
 &Header::closebox();
-
 &Header::closebigbox();
-
 &Header::closepage();
-

@@ -49,6 +49,48 @@ if ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refr
 	$refresh = "<meta http-equiv='refresh' content='5;'>";
 }
 
+if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
+{
+	my $profile = $cgiparams{'PROFILE'};
+	my %tempcgiparams = ();
+	$tempcgiparams{'PROFILE'} = '';
+	&General::readhash("${General::swroot}/ppp/settings-$cgiparams{'PROFILE'}",
+		\%tempcgiparams);
+
+	# make a link from the selected profile to the "default" one.
+	unlink("${General::swroot}/ppp/settings");
+	link("${General::swroot}/ppp/settings-$cgiparams{'PROFILE'}",
+		"${General::swroot}/ppp/settings");
+	system ("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
+
+	# read in the new params "early" so we can write secrets.
+	%cgiparams = ();
+	&General::readhash("${General::swroot}/ppp/settings", \%cgiparams);
+	$cgiparams{'PROFILE'} = $profile;
+	$cgiparams{'BACKUPPROFILE'} = $profile;
+	&General::writehash("${General::swroot}/ppp/settings-$cgiparams{'PROFILE'}",
+		\%cgiparams);
+
+	# write secrets file.
+	open(FILE, ">/${General::swroot}/ppp/secrets") or die "Unable to write secrets file.";
+	flock(FILE, 2);
+	my $username = $cgiparams{'USERNAME'};
+	my $password = $cgiparams{'PASSWORD'};
+	print FILE "'$username' * '$password'\n";
+	chmod 0600, "${General::swroot}/ppp/secrets";
+	close FILE;
+
+	&General::log("$Lang::tr{'profile made current'} $tempcgiparams{'PROFILENAME'}"); 
+	$cgiparams{'ACTION'} = "$Lang::tr{'dial'}";
+}
+
+if ($cgiparams{'ACTION'} eq $Lang::tr{'dial'}) {
+	system('/usr/local/bin/redctrl','start') == 0
+	or &General::log("Dial failed: $?"); sleep 1;}
+elsif ($cgiparams{'ACTION'} eq $Lang::tr{'hangup'}) {
+	system('/usr/local/bin/redctrl','stop') == 0
+	or &General::log("Hangup failed: $?"); sleep 1;}
+
 my $c;
 my $maxprofiles = 5;
 my @profilenames = ();
@@ -113,7 +155,7 @@ END
 print `/usr/local/bin/dialctrl.pl show`;
 print <<END;
 	<tr><td colspan='2'>
-		<form method='post' action='/cgi-bin/dial.cgi'>$Lang::tr{'profile'}:
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'profile'}:
 			<select name='PROFILE'>
 END
 	for ($c = 1; $c <= $maxprofiles; $c++)
@@ -132,10 +174,10 @@ END
 			<td align='center'>
 				<table width='100%' border='0'>
 					<tr>
-					<td width='50%' align='right'>	<form method='post' action='/cgi-bin/dial.cgi'>
+					<td width='50%' align='right'>	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 											<input type='submit' name='ACTION' value='$Lang::tr{'dial'}'>
 										</form>
-					<td width='50%' align='left'>	<form method='post' action='/cgi-bin/dial.cgi'>
+					<td width='50%' align='left'>	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 											<input type='submit' name='ACTION' value='$Lang::tr{'hangup'}'>
 										</form>
 				</table>

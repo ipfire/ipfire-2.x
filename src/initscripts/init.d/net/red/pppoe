@@ -42,7 +42,7 @@ case "${2}" in
 			fi
 			
 			if [ "${RECONNECTION}" != "persistent" ]; then
-				if [ "${TIMEOUT}" != "0" ]; then
+				if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
 					SECONDS=$[${TIMEOUT} * 60]
 					ARGS+=" idle ${SECONDS}"
 				fi
