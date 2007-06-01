@@ -1,47 +1,86 @@
 #!/bin/sh
-#
-# setting and configure Parameter
-
-cd /etc/snort
-snort=/usr/sbin/snort
-vars=/etc/snort/vars
-eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-HOME_NET=`echo $GREEN_NETADDRESS`
-EXTERMAL_NET="EXTERNAL_NET=ANY"
-
-# setting the snort sensore to the interface  !!
-DEVICE=`echo $GREEN_DEV`
-PIDFILE=/var/run/snort_$DEVICE.pid
-startparameter=" -c snort.conf -i $DEVICE -D -l /var/log/snort --pid-path $PIDFILE"
-
-
-#create the  DYNAMIC vars Variable of Snort 
- echo "var HOME_NET $HOME_NET" > $vars
- echo "var EXTERNAL_NET ANY" >> $vars
-
-
+########################################################################
 # Begin $rc_base/init.d/snort
+#
+# Description : Snort Initscript
+#
+# Authors     : Michael Tremer for ipfire.org - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
 
 . /etc/sysconfig/rc
-. $rc_functions
+. ${rc_functions}
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/snort/settings)
+
+if [ "$ENABLE_SNORT_ORANGE" == "on" ]; then
+	HOME_NET+="$ORANGE_ADDRESS,"
+	DEVICES+="$ORANGE_DEV "
+fi
+
+if [ "$ENABLE_SNORT_GREEN" == "on" ]; then
+	HOME_NET+="$GREEN_ADDRESS,"
+	DEVICES+="$GREEN_DEV "
+fi
+
+if [ "$ENABLE_SNORT_BLUE" == "on" ]; then
+	HOME_NET+="$BLUE_ADDRESS,"
+	DEVICES+="$BLUE_DEV "
+fi
+
+if [ "$ENABLE_SNORT" == "on" ]; then
+	LOCAL_IP=`cat /var/ipfire/red/local-ipaddress`
+	if [ "$LOCAL_IP" ]; then
+		HOME_NET+="$LOCAL_IP,"
+	else
+		exit 1 ## Add error handling here
+	fi
+	DEVICES+="`cat /var/ipfire/red/iface` "
+fi
+
+COUNT=`echo $HOME_NET | wc -m`
+HOME_NET=`echo $HOME_NET | cut -c $[$COUNT - 2]`
+ 
+echo "var HOME_NET [$HOME_NET]" >	/etc/snort/vars
+echo "var EXTERNAL_NET ANY" >> 		/etc/snort/vars
+
+DNS1=`cat /var/ipfire/red/dns1`
+DNS2=`cat /var/ipfire/red/dns2`
+
+if [ "$DNS2" ]; then
+	echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
+else
+	echo "car DNS_SERVERS $DNS1" >> /etc/snort/vars
+fi 
 
 case "$1" in
 	start)
-		boot_mesg "Starting snort..."
-		loadproc $snort $startparameter
+		for DEVICE in $DEVICES; do
+			boot_mesg "Starting Intrusion Detection System on $DEVICE..."
+			loadproc /usr/sbin/snort -c snort.conf -i $DEVICE -D -l /var/log/snort --pid-path /var/run/snort_$DEVICE.pid
+		done
 		;;
-
 	stop)
-		boot_mesg "Stopping snort..."
-		killproc -p $PIDFILE /var/run
+		for DEVICE in $DEVICES; do
+			boot_mesg "Stopping Intrusion Detection System on $DEVICE..."
+			killproc -p /var/run/snort_$DEVICE.pid /var/run
+		done
 		;;
-
 	status)
 		statusproc /usr/sbin/snort
 		;;
-
+	restart)
+		$0 stop
+		$0 start
+		;;
+		
 	*)
-		echo "Usage: $0 {start|stop|status}"
+		echo "Usage: $0 {start|stop|restart|status|update}"
 		exit 1
 		;;
 esac
