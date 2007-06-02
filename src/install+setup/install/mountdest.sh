@@ -36,4 +36,21 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 
 		fi
 done
 
+# scan RAID devices
+echo "--> RAID"
+for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+    echo -n "---> $DEVICE"
+			mount /dev/${DEVICE}p1 /harddisk 2> /dev/null
+    if [ -e /harddisk/ipfire-*.tbz2 ]; then
+			umount /harddisk 2> /dev/null
+			echo " is source drive"
+			continue
+    else
+			umount /harddisk 2> /dev/null
+			echo -n "$DEVICE" > /tmp/dest_device
+			echo " - yes, it is our destination"
+			exit 2
+		fi
+done
+
 exit 10 # Nothing found

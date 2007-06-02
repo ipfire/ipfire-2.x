@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	char *shortlangnames[] = { "de", "en", NULL };
 	char **langtrs[] = { de_tr, en_tr, NULL };
 	char hdletter;
-	char harddrive[5], sourcedrive[5];	/* Device holder. */
+	char harddrive[11], sourcedrive[5];	/* Device holder. */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
 	int cdmounted = 0; /* Loop flag for inserting a cd. */
 	int rc = 0;
@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
 	char title[STRING_SIZE];
 	int allok = 0;
 	int allok_fastexit=0;
+	int raid_disk = 0;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle, *cmdfile;
 	char line[STRING_SIZE];
@@ -258,10 +259,17 @@ int main(int argc, char *argv[])
 		switch (mysystem("/bin/mountdest.sh") % 255) {
 			case 0: // Found IDE disk
 				scsi_disk = 0;
+				raid_disk = 0;
 				found = 1;
 				break;
 			case 1: // Found SCSI disk
 				scsi_disk = 1;
+				raid_disk = 0;
+				found = 1;
+				break;
+			case 2: // Found RAID disk
+				scsi_disk = 0;
+				raid_disk= 1;
 				found = 1;
 				break;
 			case 10: // No harddisk found
@@ -321,7 +329,7 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_NO_HARDDISK]);
 		goto EXIT;
 	}
-	fgets(harddrive, 5, handle);
+	fgets(harddrive, 11, handle);
 	fclose(handle);
 			
 	/* load unattended configuration */
