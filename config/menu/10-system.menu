@@ -22,12 +22,6 @@
 				'title' => "$Lang::tr{'gui settings'}",
 				'enabled' => 1,
 				};
-    $subsystem->{'50.shutdown'} = {
-				'caption' => $Lang::tr{'shutdown'},
-				'uri' => '/cgi-bin/shutdown.cgi',
-				'title' => "$Lang::tr{'shutdown'} / $Lang::tr{'reboot'}",
-				'enabled' => 1,
-				};
     $subsystem->{'99.credits'} = {
 				'caption' => $Lang::tr{'credits'},
 				'uri' => '/cgi-bin/credits.cgi',

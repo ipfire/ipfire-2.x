@@ -85,10 +85,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial'}) {
-	system('/usr/local/bin/redctrl','start') == 0
+	system('/usr/local/bin/redctrl start > /dev/null') == 0
 	or &General::log("Dial failed: $?"); sleep 1;}
 elsif ($cgiparams{'ACTION'} eq $Lang::tr{'hangup'}) {
-	system('/usr/local/bin/redctrl','stop') == 0
+	system('/usr/local/bin/redctrl stop > /dev/null') == 0
 	or &General::log("Hangup failed: $?"); sleep 1;}
 
 my $c;
@@ -135,13 +135,61 @@ if ( $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) {
 	$ipaddr = $netsettings{'RED_ADDRESS'};
 }
 
-print <<END;
-<table border='0'>
+my $death = 0;
+my $rebirth = 0;
+
+if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'}) {
+	$death = 1;
+	&General::log($Lang::tr{'shutting down ipfire'});
+	system '/usr/local/bin/ipfirereboot down';
+} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
+	$rebirth = 1;
+	&General::log($Lang::tr{'rebooting ipfire'});
+	system '/usr/local/bin/ipfirereboot boot';
+}
+
+if ($death == 0 && $rebirth == 0) {
+
+print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<table width='100%'>
 <tr>
-	<td align='center'><form method='post' action="$ENV{'SCRIPT_NAME'}">
-		<input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' />
-	</form></td>
-</tr></table>
+	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot'}' /></td>
+	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
+	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' /></td>
+</tr>
+</table>
+END
+;
+} else {
+	my $message='';
+	my $title='';
+	my $refresh = "<meta http-equiv='refresh' content='5; URL=/cgi-bin/index.cgi' />";
+	if ($death) {
+		$title = $Lang::tr{'shutting down'};
+		$message = $Lang::tr{'ipfire has now shutdown'};
+	} else {
+		$title = $Lang::tr{'rebooting'};
+		$message = $Lang::tr{'ipfire has now rebooted'};
+	}
+	&Header::openpage($title, 0, $refresh);
+
+	&Header::openbigbox('100%', 'center');
+	print <<END
+<div align='center'>
+<table width='100%' bgcolor='#ffffff'>
+<tr><td align='center'>
+<br /><br /><img src='/ipfire_big.gif' /><br /><br /><br />
+</td></tr>
+</table>
+<br />
+<font size='6'>$message</font>
+</div>
+END
+;
+}
+
+print <<END;
 
 <!-- Table of networks -->
 <table border='0' width=80%>
@@ -335,62 +383,6 @@ print <<END;
 
 END
 
-require "${General::swroot}/net-traffic/net-traffic-admin.pl";
-
-if($NETTRAFF::settings{'SHOW_AT_HOME'} eq 'on')
-{
-	my %calc = ();
-	$calc{'CALC_VOLUME_TOTAL'} = 0;
-	$calc{'CALC_VOLUME_IN'} = 0;
-	$calc{'CALC_VOLUME_OUT'} = 0;
-	$calc{'CALC_WEEK_TOTAL'} = 0;
-	$calc{'CALC_WEEK_IN'} = 0;
-	$calc{'CALC_WEEK_OUT'} = 0;
-	$calc{'CALC_LAST_RUN'} = 0;
-	$calc{'CALC_PERCENT'} = 0;
-
-	&General::readhash($NETTRAFF::logfile, \%calc);
-
-	my $calctime = &NETTRAFF::getFormatedDate($calc{'CALC_LAST_RUN'});
-
-	print <<END;
-		<hr /><br />
-
-				<table width='80%'>
-				<tr>
-				<td colspan='4' align='center' nowrap='nowrap' >$Lang::tr{'traffic monitor'} ($Lang::tr{'traffic calc time'} $calctime)</td>
-				</tr>
-				<tr>
-					<td align='center' nowrap='nowrap' > </td>
-					<td align='center' nowrap='nowrap' class='boldbase'><font color='$Header::colourred'><b>$Lang::tr{'trafficin'}</b></font></td>
-					<td align='center' nowrap='nowrap' class='boldbase'><font color='$Header::colourred'><b>$Lang::tr{'trafficout'}</b></font></td>
-					<td align='center' nowrap='nowrap' class='boldbase'><font color='$Header::colourred'><b>$Lang::tr{'trafficsum'}</b></font></td>
-				</tr>
-				<tr>
-					<td align='center' nowrap='nowrap' >$Lang::tr{'this weeks volume'} (MB):</td>
-					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_WEEK_IN'}</td>
-					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_WEEK_OUT'}</td>
-					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_WEEK_TOTAL'}</td>
-				</tr>
-				<tr>
-					<td align='center' nowrap='nowrap' >$Lang::tr{'this months volume'} (MB):</td>
-					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_VOLUME_IN'}</td>
-					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_VOLUME_OUT'}</td>
-					<td align='center' nowrap='nowrap' class='boldbase'>$calc{'CALC_VOLUME_TOTAL'}</td>
-				</tr>
-END
-
-	if($NETTRAFF::settings{'MONTHLY_VOLUME_ON'} eq 'on')
-	{
-print "<tr><td align='center'>max. $NETTRAFF::settings{'MONTHLY_VOLUME'} MB</td><td align='left' colspan='3' nowrap='nowrap'>";
-&NETTRAFF::traffPercentbar("$calc{'CALC_PERCENT'}%"); 
-print "</td><td align='left' nowrap='nowrap'>&nbsp; $calc{'CALC_PERCENT'}%</td></tr>";
-	}
-	print "</table>";
-}
-
 &Header::closebox();
-
 &Header::closebigbox();
-
 &Header::closepage();

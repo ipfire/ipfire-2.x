@@ -63,7 +63,6 @@ case "${2}" in
 				boot_mesg "Registering DNS server..."
 				echo $DNS1 > /var/ipfire/red/dns1
 				echo $DNS2 > /var/ipfire/red/dns2
-				echo "nameserver 127.0.0.1" > /etc/resolv.conf
 				echo $ADDRESS > /var/ipfire/red/local-ipaddress
 				evaluate_retval
 			fi
@@ -76,7 +75,12 @@ case "${2}" in
 			ip route del default
 			evaluate_retval
 		fi
-	
+		
+		if [ "${CONFIG_TYPE}" == "0" ] || [ "${CONFIG_TYPE}" == "" ]; then
+		boot_mesg "Restoring default DNS Proxy Adress in resolv.conf..."
+		echo "nameserver 127.0.0.1" > /etc/resolv.conf
+    fi
+    	
 		boot_mesg "Removing IPv4 address ${ADDRESS} from the ${1} interface..."
 		ip addr del ${args} dev ${1}
 		evaluate_retval

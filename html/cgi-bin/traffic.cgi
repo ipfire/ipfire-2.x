@@ -131,10 +131,6 @@ print <<END;
 				<input type='submit' name='ACTION' value='$Lang::tr{'update'}' />
 			</form>
 		</td>
-		<td width='5%' align='center'>
-			<form method='post' action='/cgi-bin/trafficadm.cgi'>
-			<input type='submit' name='ACTION' value='$Lang::tr{'net-traffic configuration'}' />
-			</form>
 		</td>
 		<td width='5%' align='center'>
 			<form method='post' action='/cgi-bin/traffics.cgi'>
