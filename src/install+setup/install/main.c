@@ -21,7 +21,6 @@
 #define REISERFS 1
 #define EXT3 2
 
-int raid_disk = 0;
 FILE *flog = NULL;
 char *mylog;
 
@@ -283,48 +282,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/*
-	// Need to clean this up at some point
-	// scsi disk is sdb/sdc when sda/sdb is used for usb-key
-	// if scsi-disk is sdd or more, it is not discovered
-	// Support only 2 usb keys, none could be unplugged
-	if (checkusb("sdb") && try_scsi("sdc")) {
-		scsi_disk = 1;
-		sprintf(harddrive, "sdc");
-		goto FOUND_DESTINATION;
-	}
-	if (checkusb("sda") && try_scsi("sdb")) {
-		scsi_disk = 1;
-		sprintf(harddrive, "sdb");
-		goto FOUND_DESTINATION;
-	}
-	if (try_scsi("sda")) {
-		scsi_disk = 1;
-		sprintf(harddrive, "sda");
-		goto FOUND_DESTINATION;
-	}
-	if (try_scsi("ida/c0d0")) {
-		raid_disk = 1;
-		sprintf(harddrive, "ida/c0d0");
-		goto FOUND_DESTINATION;
-	}
-	if (try_scsi("cciss/c0d0")) {
-		raid_disk = 1;
-		sprintf(harddrive, "cciss/c0d0");
-		goto FOUND_DESTINATION;
-	}
-	if (try_scsi("rd/c0d0")) {
-		raid_disk = 1;
-		sprintf(harddrive, "rd/c0d0");
-		goto FOUND_DESTINATION;
-	}
-	if (try_scsi("ataraid/d0")) {
-		raid_disk = 1;
-		sprintf(harddrive, "ataraid/d0");
-		goto FOUND_DESTINATION;
-	} */
-
-	FOUND_DESTINATION:
 	if ((handle = fopen("/tmp/dest_device", "r")) == NULL) {
 		errorbox(ctr[TR_NO_HARDDISK]);
 		goto EXIT;
@@ -647,6 +604,9 @@ int main(int argc, char *argv[])
 	}
 
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
+	
+	mysystem("umount /cdrom");
+	ejectcdrom(sourcedrive);
 
 	if (!unattended) {
 		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],

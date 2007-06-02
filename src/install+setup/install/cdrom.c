@@ -19,7 +19,7 @@ extern char **ctr;
 int ejectcdrom(char *dev)
 {
 	char command;
-	sprintf(command, "eject -r %s", dev);
+	sprintf(command, "eject -r /dev/%s", dev);
 	if (mysystem(command))
 		return 0;
 	else
