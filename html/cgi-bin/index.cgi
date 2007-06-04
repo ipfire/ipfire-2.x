@@ -23,7 +23,7 @@ my %modemsettings=();
 my %netsettings=();
 my %ddnssettings=();
 my $warnmessage = '';
-my $refresh = "";
+my $refresh = "<meta http-equiv='refresh' content='180;'>";
 my $ipaddr='';
 
 &Header::showhttpheaders();

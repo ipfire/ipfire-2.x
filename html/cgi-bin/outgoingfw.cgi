@@ -446,7 +446,7 @@ END
 ;
 	&Header::closebox();
 
-if ($outfwsettings{'POLICY'} eq 'MODE1')
+if ($outfwsettings{'POLICY'} eq 'MODE1' || $outfwsettings{'POLICY'} eq 'MODE2')
 {
 &Header::openbox('100%', 'center', 'Quick Add');
 

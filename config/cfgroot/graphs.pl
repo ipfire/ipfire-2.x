@@ -243,7 +243,7 @@ sub updateifgraph {
   "DEF:incoming=$rrdlog/$interface.rrd:incoming:AVERAGE",
   "DEF:outgoing=$rrdlog/$interface.rrd:outgoing:AVERAGE",
   "AREA:incoming".$color{"color11"}.":$tr{'incoming traffic in bytes per second'}",
-  "LINE1:outgoing".$color{"color12"}.":$tr{'outgoing traffic in bytes per second'}\\j",
+  "AREA:outgoing".$color{"color12"}.":$tr{'outgoing traffic in bytes per second'}\\j",
   "COMMENT: \\j",
   "COMMENT:$tr{'maximal'}",
   "COMMENT:$tr{'average'}",

@@ -113,7 +113,7 @@ case "${2}" in
 		boot_mesg "Bringing down the PPPoE interface on ${1}..."
 		
 		modprobe -r pppoe >/dev/null 2>&1
-		kill $(cat /var/run/pppd-ipfire.pid)
+		kill $(head -1 /var/run/ppp-ipfire.pid)
 		sleep 2
 		ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${1}
 		

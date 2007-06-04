@@ -131,6 +131,10 @@ print <<END;
 				<input type='submit' name='ACTION' value='$Lang::tr{'update'}' />
 			</form>
 		</td>
+		<td width='5%' align='center'>
+			<form method='post' action='/cgi-bin/trafficadm.cgi'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'net-traffic configuration'}' />
+			</form>
 		</td>
 		<td width='5%' align='center'>
 			<form method='post' action='/cgi-bin/traffics.cgi'>
@@ -177,7 +181,7 @@ if ($netsettings{'CONFIG_TYPE'} =~ /^(2|4)$/) {
 	print "<td width='$netWidth' align='center' class='boldbase' ><b>$Lang::tr{'trafficorange'}</b></td>";
 }
 
-if ($netsettings{'CONFIG_TYPE'} =~ /^(2|4)$/) {
+if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/) {
   print "<td width='$netWidth' align='center' class='boldbase'><b>$Lang::tr{'trafficred'}</b></td>";
 }
 print <<END;
