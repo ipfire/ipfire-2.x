@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "disable") == 0) {
 		safe_system("rm -f /etc/rc.d/rc*.d/*squid >/dev/null 2>&1");
 	} else {
-		fprintf(stderr, "\nBad argument given.\n\nredctrl (start|stop|restart|flush)\n\n");
+		fprintf(stderr, "\nBad argument given.\n\nsquidctrl (start|stop|restart|flush)\n\n");
 		exit(1);
 	}
 

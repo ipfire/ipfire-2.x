@@ -55,32 +55,36 @@ DNS2=`cat /var/ipfire/red/dns2`
 if [ "$DNS2" ]; then
 	echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
 else
-	echo "car DNS_SERVERS $DNS1" >> /etc/snort/vars
+	echo "var DNS_SERVERS $DNS1" >> /etc/snort/vars
 fi 
 
 case "$1" in
 	start)
 		for DEVICE in $DEVICES; do
 			boot_mesg "Starting Intrusion Detection System on $DEVICE..."
-			loadproc /usr/sbin/snort -c snort.conf -i $DEVICE -D -l /var/log/snort --pid-path /var/run/snort_$DEVICE.pid
+			/usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --pid-path /var/run/snort_$DEVICE.pid
+			evaluate_retval
 		done
 		;;
+		
 	stop)
 		for DEVICE in $DEVICES; do
 			boot_mesg "Stopping Intrusion Detection System on $DEVICE..."
 			killproc -p /var/run/snort_$DEVICE.pid /var/run
 		done
 		;;
+		
 	status)
 		statusproc /usr/sbin/snort
 		;;
+		
 	restart)
 		$0 stop
 		$0 start
 		;;
 		
 	*)
-		echo "Usage: $0 {start|stop|restart|status|update}"
+		echo "Usage: $0 {start|stop|restart|status}"
 		exit 1
 		;;
 esac

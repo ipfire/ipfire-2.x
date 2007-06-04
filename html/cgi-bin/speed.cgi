@@ -52,10 +52,10 @@ if(( $rxb_diff == $rxb_now ) && ( $txb_diff == $txb_now ))
 else
 {
 	$rx_kbs = $rxb_diff / 1024;
-	$rx_kbs = $rx_kbs / 2.2;
+	$rx_kbs = $rx_kbs / 3.2;
 	$rx_kbs = int($rx_kbs);
 	$tx_kbs = $txb_diff / 1024;
-	$tx_kbs = $tx_kbs / 2.2;
+	$tx_kbs = $tx_kbs / 3.2;
 	$tx_kbs = int($tx_kbs);
 }
 

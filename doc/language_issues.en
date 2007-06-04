@@ -273,6 +273,7 @@ WARNING: translation string unused: psk
 WARNING: translation string unused: quick control
 WARNING: translation string unused: read sectors
 WARNING: translation string unused: reboot schedule
+WARNING: translation string unused: rebooting
 WARNING: translation string unused: refresh update list
 WARNING: translation string unused: released
 WARNING: translation string unused: reportfile
@@ -292,6 +293,7 @@ WARNING: translation string unused: show areas
 WARNING: translation string unused: show lines
 WARNING: translation string unused: shutdown control
 WARNING: translation string unused: shutdown2
+WARNING: translation string unused: shutting down
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
 WARNING: translation string unused: squid extension methods

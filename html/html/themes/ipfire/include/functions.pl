@@ -202,7 +202,7 @@ END
 		             document.forms['speed'].rxkb.value  = root2_node.firstChild.data;
 		
 					// document.getElementsByTagName("input")[0].style.color = "#00FF00";
-		             		url    = "/cgi/bin/speed.cgi?rxb_last=" + root3_node.firstChild.data + "&txb_last=" + root4_node.firstChild.data;
+		             		url    = "/cgi-bin/speed.cgi?rxb_last=" + root3_node.firstChild.data + "&txb_last=" + root4_node.firstChild.data;
 		
 			      window.setTimeout("LoadInetInfo(url)", 3000);
 		        }

@@ -77,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# This fails, but doesn't matter
 	-cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-disk_geometry-1.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.97/grub-gfxmenu-v8.diff
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-gfxmenu-v8.diff
 
 	cd $(DIR_APP) && perl -pi -e 's,/usr/lib/grub/i386-pc,/usr/share/grub/i386-pc,' docs/grub.texi
 	cd $(DIR_APP) && sed -i 's/AM_INIT_AUTOMAKE/&\nAM_PROG_AS/' configure.ac

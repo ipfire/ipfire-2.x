@@ -606,7 +606,8 @@ int main(int argc, char *argv[])
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
 	
 	mysystem("umount /cdrom");
-	ejectcdrom(sourcedrive);
+	snprintf(commandstring, STRING_SIZE, "eject /dev/%s", sourcedrive);
+	mysystem(commandstring);
 
 	if (!unattended) {
 		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
