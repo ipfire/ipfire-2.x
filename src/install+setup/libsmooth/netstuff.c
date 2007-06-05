@@ -354,6 +354,17 @@ void strupper(unsigned char *string)
 }
 */
 
+int ismacaddr(unsigned int *ismac)
+{
+	unsigned int *a;
+	
+	for (a = ismac; *a; a++)
+		if (*a != ':' && !isxdigit(*a)) return 0;	// is int != ':' or not hexdigit then exit
+
+	return 1;
+}
+
+
 int write_configs_netudev(int card , int colour)
 {	
 	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
@@ -433,7 +444,9 @@ int scan_network_cards(void)
 			strcpy(driver,      strtok(temp_line,";"));
 			strcpy(description, strtok(NULL,";"));
 			strcpy(macaddr,     strtok(NULL,";"));
+			fprintf(flog,"Check 4 MacAddr.\n");	// #### Debug ####
 			if ( strlen(macaddr) ) {
+//			if ( ismacaddr(&macaddr) ) {
 				strcpy(nics[count].driver      , driver );
 				strcpy(nics[count].description , description );
 				strcpy(nics[count].macaddr     , macaddr );
@@ -486,8 +499,10 @@ int nicmenu(int colour)
 				if ( strlen(nics[i].description) < 55 ) 
 					sprintf(MenuInhalt[mcount], "%.*s",  strlen(nics[i].description)-2, nics[i].description+1);
 				else {
+					fprintf(flog,"Modify string 4 display.\n");	// #### Debug ####
 					sprintf(cMenuInhalt, "%.50s", nics[i].description + 1);
-					strncpy(MenuInhalt[mcount], cMenuInhalt,(strrchr(cMenuInhalt,' ') - cMenuInhalt));
+//					strncpy(MenuInhalt[mcount], cMenuInhalt,(strrchr(cMenuInhalt,' ') - cMenuInhalt));
+					sprintf(MenuInhalt[mcount], "%.*s", strlen(strrchr(cMenuInhalt,' ')), cMenuInhalt);
 					strcat (MenuInhalt[mcount], "...");
 				}
 

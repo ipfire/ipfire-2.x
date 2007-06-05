@@ -100,7 +100,7 @@ int clear_card_entry(int cards);
 int ask_clear_card_entry(int cards);
 int manualdriver(char *driver, char *driveroptions);
 	  
-/* data.c */
+/* varval.c */
 struct keyvalue *initkeyvalues(void);
 void freekeyvalues(struct keyvalue *head);
 int readkeyvalues(struct keyvalue *head, char *filename);
