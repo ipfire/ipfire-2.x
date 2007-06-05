@@ -53,7 +53,7 @@ sub fetchfile {
 	$bfile = basename("$file");
 	
 	my $ua = LWP::UserAgent->new;
-	$ua->agent('Pakfire/$Conf::version');
+	$ua->agent("Pakfire/$Conf::version");
 	#$ua->timeout(5);
 	#$ua->env_proxy;
  
@@ -391,7 +391,6 @@ sub setuppak {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
 	}
-	
 	return $return;
 }
 
@@ -411,8 +410,7 @@ sub updatepak {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
 	}
-
-	exit $return;
+	return $return;
 }
 
 sub removepak {
@@ -440,8 +438,7 @@ sub removepak {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
 	}
-
-	exit $return;
+	return $return;
 }
 
 sub beautifysize {
@@ -460,5 +457,28 @@ sub beautifysize {
 	return $string;
 }
 
+sub makeuuid {
+	unless ( -e "$Conf::dbdir/uuid" ) {
+		message("Creating a random key...");
+		open(FILE, "</proc/sys/kernel/random/uuid");
+		my @line = <FILE>;
+		close(FILE);
+		
+		open(FILE, ">$Conf::dbdir/uuid");
+		foreach (@line) {
+			print FILE $_;
+		}
+		close(FILE);
+	}
+}
+
+sub senduuid {
+	unless("$Conf::uuid") {
+		$Conf::uuid = `cat $Conf::dbdir/uuid`;
+	}
+	logger("Sending my uuid: $Conf::uuid");
+	fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
+	system("rm -f $Conf::cachedir/counter.cgi* 2>/dev/null");
+}
 
 1;
