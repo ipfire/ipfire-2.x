@@ -9,7 +9,7 @@ usr/bin/sigtool
 #usr/lib/libclamav.la
 usr/lib/libclamav.so
 usr/lib/libclamav.so.2
-usr/lib/libclamav.so.2.0.2
+usr/lib/libclamav.so.2.0.3
 #usr/lib/pkgconfig/libclamav.pc
 usr/sbin/clamd
 #usr/share/clamav

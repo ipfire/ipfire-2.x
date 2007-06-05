@@ -53,7 +53,6 @@
 * ccache-2.4
 * cdrtools-2.01
 * cftp-0.12
-* clamav-0.90.2
 * clamav-0.90.3
 * coreutils-5.96
 * cpio-2.6
@@ -172,7 +171,6 @@
 * mtools-3.9.10
 * mysql-5.0.24a
 * nano-1.2.5
-* nash
 * nasm-0.98.39
 * ncftp-3.1.9-src
 * ncurses-5.5
