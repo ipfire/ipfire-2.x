@@ -414,6 +414,7 @@ buildipfire() {
   ipfiremake iputils
   ipfiremake l7-protocols
 #  ipfiremake isdn4k-utils # What about mISDN???
+  ipfiremake mISDN
   ipfiremake hwdata
   ipfiremake kudzu
   ipfiremake logrotate
@@ -421,7 +422,6 @@ buildipfire() {
   ipfiremake misc-progs
   ipfiremake mtools
   ipfiremake nano
-  ipfiremake nash
   ipfiremake nasm
   ipfiremake URI
   ipfiremake HTML-Tagset

@@ -26,9 +26,11 @@
 
 include Config
 
-VER = ipfire
+VER        = 1_1_3
 
-THISAPP    = nash
+THISAPP    = mISDNuser-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -36,22 +38,41 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 546c42271307b0ffe1dd55fd899adda8
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
-$(TARGET) :
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/nash/* $(DIR_APP)
-	cd $(DIR_APP) && make 
-	cd $(DIR_APP) && install -m 0755 nash mkinitrd /sbin
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && make MISDNDIR=/usr/src/linux
+	cd $(DIR_APP) && make install MISDNDIR=/usr/src/linux
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

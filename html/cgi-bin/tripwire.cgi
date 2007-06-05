@@ -114,10 +114,10 @@ if ($tripwiresettings{'ACTION'} eq 'addcron')
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<tr><td align='center' colspan='2'>HH<input type='text' size='2' name='HOUR' value='08'/>MM<input type='text' size='2' name='MINUTE' value='00'/><br /><br /></td></tr>
 	<tr><td align='right' width='50%'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' title='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='addcronyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -133,10 +133,10 @@ if ($tripwiresettings{'ACTION'} eq 'globalreset')
 	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'resetglobals'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'defaultwarning'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' title='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='globalresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -154,10 +154,10 @@ if ($tripwiresettings{'ACTION'} eq 'generatepolicypw')
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' tilte='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='generatepolicyyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -175,10 +175,10 @@ if ($tripwiresettings{'ACTION'} eq 'policyresetpw')
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' title='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='resetpolicyyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -195,10 +195,10 @@ if ($tripwiresettings{'ACTION'} eq 'updatedatabasepw')
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningdatabase'}<br /><br /></font></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' title='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='updatedatabaseyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -213,10 +213,10 @@ if ($tripwiresettings{'ACTION'} eq 'keyreset')
 	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'keyreset'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningkeys'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' title='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='keyresetyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -232,10 +232,10 @@ if ($tripwiresettings{'ACTION'} eq 'generatekeys')
 	<tr><td bgcolor='$color{'color20'}' colspan='2' align='center'><b>$Lang::tr{'generatekeys'}</b>
 	<tr><td colspan='2' align='center'><font color=red>$Lang::tr{'tripwirewarningkeys'}<br /><br /></font></td></tr>
 	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' title='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='generatekeysyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
+					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
 					<input type='hidden' name='ACTION' value='cancel' /></form></td>
 	</tr>
 	</table>
@@ -329,13 +329,13 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-												<input type='image' alt='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
+												<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='globalreset' />
-										<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' /></form></td>
+										<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='globalcaption' />
-										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+										<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
 </table>
 </from>
 END
@@ -346,8 +346,8 @@ print <<END
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
-<tr><td align='right' width='33%'><img src='/images/media-floppy.png' /></td><td align='left'>$Lang::tr{'save settings'}</td></tr>
-<tr><td align='right' width='33%'><img src='/images/reload.gif' /></td><td align='left'>$Lang::tr{'restore settings'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/media-floppy.png' alt='$Lang::tr{'save settings'}' /></td><td align='left'>$Lang::tr{'save settings'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/reload.gif' alt='$Lang::tr{'restore settings'}' /></td><td align='left'>$Lang::tr{'restore settings'}</td></tr>
 </table>
 END
 ;
@@ -373,13 +373,13 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='generatekeys'/>
-												<input type='image' alt='$Lang::tr{'generatekeys'}' src='/images/system-lock-screen.png' /></form></td>
+												<input type='image' alt='$Lang::tr{'generatekeys'}' title='$Lang::tr{'generatekeys'}' src='/images/system-lock-screen.png' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='keyreset' />
-										<input type='image' alt='$Lang::tr{'reset'}' src='/images/reload.gif' /></form></td>
+										<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='keycaption' />
-										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+										<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
 </table>
 </from>
 END
@@ -390,8 +390,8 @@ print <<END
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
-<tr><td align='right' width='33%'><img src='/images/system-lock-screen.png' /></td><td align='left'>$Lang::tr{'generatekeys'}</td></tr>
-<tr><td align='right' width='33%'><img src='/images/reload.gif' /></td><td align='left'>$Lang::tr{'keyreset'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/system-lock-screen.png' alt='$Lang::tr{'generatekeys'}' /></td><td align='left'>$Lang::tr{'generatekeys'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/reload.gif' alt='$Lang::tr{'keyreset'}' /></td><td align='left'>$Lang::tr{'keyreset'}</td></tr>
 </table>
 END
 ;
@@ -410,19 +410,19 @@ print <<END
 <table width='95%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value='generatepolicypw'/>
-												<input type='image' alt='$Lang::tr{'generatepolicy'}' src='/images/document-new.png' /></form></td>
+												<input type='image' alt='$Lang::tr{'generatepolicy'}' title='$Lang::tr{'generatepolicy'}' src='/images/document-new.png' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='policyresetpw' />
-										<input type='image' alt='$Lang::tr{'resetpolicy'}' src='/images/reload.gif' /></form></td>
+										<input type='image' alt='$Lang::tr{'resetpolicy'}' title='$Lang::tr{'resetpolicy'}' src='/images/reload.gif' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='generatereport' />
-										<input type='image' alt='$Lang::tr{'generatereport'}' src='/images/document-properties.png' /></form></td>
+										<input type='image' alt='$Lang::tr{'generatereport'}' title='$Lang::tr{'generatereport'}' src='/images/document-properties.png' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='updatedatabasepw' />
-										<input type='image' alt='$Lang::tr{'updatedatabase'}' src='/images/network-server.png' /></form></td>
+										<input type='image' alt='$Lang::tr{'updatedatabase'}' title='$Lang::tr{'updatedatabase'}' src='/images/network-server.png' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='policycaption' />
-										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+										<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
 </table>
 END
 ;
@@ -432,10 +432,10 @@ print <<END
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
-<tr><td align='right' width='33%'><img src='/images/document-new.png' /></td><td align='left'>$Lang::tr{'generatepolicy'}</td></tr>
-<tr><td align='right' width='33%'><img src='/images/reload.gif' /></td><td align='left'>$Lang::tr{'resetpolicy'}</td></tr>
-<tr><td align='right' width='33%'><img src='/images/document-properties.png' /></td><td align='left'>$Lang::tr{'generatereport'}</td></tr>
-<tr><td align='right' width='33%'><img src='/images/network-server.png' /></td><td align='left'>$Lang::tr{'updatedatabase'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/document-new.png' alt='$Lang::tr{'generatepolicy'}' /></td><td align='left'>$Lang::tr{'generatepolicy'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/reload.gif' alt='$Lang::tr{'resetpolicy'}' /></td><td align='left'>$Lang::tr{'resetpolicy'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/document-properties.png' alt='$Lang::tr{'generatereport'}' /></td><td align='left'>$Lang::tr{'generatereport'}</td></tr>
+<tr><td align='right' width='33%'><img src='/images/network-server.png' alt='$Lang::tr{'updatedatabase'}' /></td><td align='left'>$Lang::tr{'updatedatabase'}</td></tr>
 </table>
 END
 ;
@@ -459,7 +459,7 @@ END
 foreach my $log (@Logs) {chomp $log;print"<option value='$log'>$log</option>";}
 print <<END
 
-</select></td><td  align='left'><input type='hidden' name='ACTION' value='showlog' /><input type='image' alt='view Log' src='/images/format-justify-fill.png' /></td></tr>
+</select></td><td  align='left'><input type='hidden' name='ACTION' value='showlog' /><input type='image' alt='view Log' title='view log' src='/images/format-justify-fill.png' /></td></tr>
 </table>
 </form>
 END

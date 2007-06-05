@@ -154,6 +154,7 @@
 * logwatch_7.3.1
 * lzo-2.02
 * m4-1.4.4
+* mISDNuser-1_1_3
 * mailx-12.0
 * make-3.80
 * man-db-2.4.3
