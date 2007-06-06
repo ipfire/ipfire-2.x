@@ -2166,7 +2166,7 @@ if (-e $disgrp)
 
 # If the password file contains entries, print entries and action icons
 
-if (! -z "$userdb") {
+if ( $userdb ne "" ) {
 	print <<END
 	<tr>
 		<td width='30%' class='boldbase' align='center'><b><i>$Lang::tr{'advproxy NCSA username'}</i></b></td>
@@ -2733,7 +2733,7 @@ sub write_acls
 
 sub writepacfile
 {
-	open(FILE, ">/home/httpd/html/proxy.pac");
+	open(FILE, ">/srv/web/ipfire/html/proxy.pac");
 	flock(FILE, 2);
 	print FILE "function FindProxyForURL(url, host)\n";
 	print FILE "{\n";

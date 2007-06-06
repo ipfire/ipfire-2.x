@@ -125,8 +125,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 755 /var/log/updatexlrator
 	
   chwon squid:squid /var/log/squid
-  mkdir /var/ipfire/proxy/advanced/auth
-	cp -f $(DIR_SRC)/config/proxy/auth /var/ipfire/proxy/advanced/auth
+  mkdir /usr/lib/squid/auth
+	cp -f $(DIR_SRC)/config/proxy/auth /usr/lib/squid/auth
 	cp -f $(DIR_SRC)/config/proxy/proxy.pac /srv/web/ipfire/html/proxy.pac
 	chown nobody.nobody /srv/web/ipfire/html/proxy.pac
 	ln -f /srv/web/ipfire/html/proxy.pac /srv/web/ipfire/html//wpad.dat

@@ -186,6 +186,7 @@ WARNING: translation string unused: iowait
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
 WARNING: translation string unused: ipfire side is invalid
+WARNING: translation string unused: iptable rules
 WARNING: translation string unused: javascript menu error1
 WARNING: translation string unused: javascript menu error2
 WARNING: translation string unused: kernel version
@@ -235,6 +236,7 @@ WARNING: translation string unused: nat-traversal
 WARNING: translation string unused: net address
 WARNING: translation string unused: net config type
 WARNING: translation string unused: net config type help
+WARNING: translation string unused: net-traffic configuration
 WARNING: translation string unused: network configuration
 WARNING: translation string unused: network status information
 WARNING: translation string unused: new optionsfw later
@@ -366,4 +368,3 @@ WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: written sectors
 WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: qos graphs

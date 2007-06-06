@@ -1207,6 +1207,7 @@
 'psk' => 'PSK',
 'pulse' => 'Pulse',
 'pulse dial' => 'Pulse dial:',
+'qos graphs' => 'Qos Graphs',
 'quick control' => 'Quick Control',
 'ram' => 'RAM',
 'read list' => 'list with readonly hosts',

@@ -1199,6 +1199,7 @@
 'psk' => 'PSK',
 'pulse' => 'Puls',
 'pulse dial' => 'Pulswahl:',
+'qos graphs' => 'Qos Diagramme',
 'ram' => 'RAM-Speicher',
 'read list' => 'Liste der Leseberechtigten',
 'read sectors' => 'Sektoren lesen',
