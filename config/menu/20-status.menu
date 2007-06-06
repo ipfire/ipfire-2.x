@@ -60,9 +60,9 @@
 				'title' => "$Lang::tr{'sstraffic'}",
 				'enabled' => 1,
 			  };
-    $substatus->{'73.iptables'} = {
-				'caption' => $Lang::tr{'iptable rules'},
-				'uri' => '/cgi-bin/iptables.cgi',
-				'title' => "$Lang::tr{'iptable rules'}",
+    $substatus->{'73.qos'} = {
+				'caption' => $Lang::tr{'qos graphs'},
+				'uri' => '/cgi-bin/qosgraphs.cgi',
+				'title' => "$Lang::tr{'qos graphs'}",
 				'enabled' => 1,
 				};

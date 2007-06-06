@@ -2756,9 +2756,34 @@ END
 ;
 		if ($proxysettings{'ENABLE'} eq 'on')
 		{
+			print FILE "if (\n";
+			print FILE "     (isInNet(myIpAddress(), \"$netsettings{'GREEN_NETADDRESS'}\", \"$netsettings{'GREEN_NETMASK'}\"))";
+
+			undef @templist;
+			if (-e "$acl_src_subnets") {
+				open(SUBNETS,"$acl_src_subnets");
+				@templist = <SUBNETS>;
+				close(SUBNETS);
+			}
+
+			foreach (@templist)
+			{
+				@temp = split(/\//);
+				if (
+					($temp[0] ne $netsettings{'GREEN_NETADDRESS'}) && ($temp[1] ne $netsettings{'GREEN_NETMASK'}) && 
+					($temp[0] ne $netsettings{'BLUE_NETADDRESS'}) && ($temp[1] ne $netsettings{'BLUE_NETMASK'})
+					)
+				{
+					chomp $temp[1];
+					print FILE " ||\n     (isInNet(myIpAddress(), \"$temp[0]\", \"$temp[1]\"))";
+				}
+			}
+
+			print FILE "\n";
+
 			print FILE <<END
-if (
-     (isInNet(myIpAddress(), "$netsettings{'GREEN_NETADDRESS'}", "$netsettings{'GREEN_NETMASK'}"))
+
+
    )
      return "PROXY $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
 END

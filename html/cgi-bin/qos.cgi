@@ -488,76 +488,6 @@ elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq 'Grafische Auswertung')
-{
-	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
-	@classes = <FILE>;
-	close FILE;
-	open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
-	@subclasses = <FILE>;
-	close FILE;
-	&Header::openbox('100%', 'left', 'QoS Graphen');
-	print <<END
-	<table width='100%'>	<tr><td align='center'><font color='red'>Diese Seite braucht je nach Geschwindigkeit des Computers laenger zum Laden.</font>
-				<tr><td align='center'><b>Klasse:</b> 
-END
-;
-  	foreach $classentry (sort @classes)
-  	{
-  		@classline = split( /\;/, $classentry );
-		$qossettings{'CLASS'}=$classline[1];
-		print <<END
-		<input type="button" onClick="swapVisibility('$qossettings{'CLASS'}')" value='$qossettings{'CLASS'}' />
-END
-;
-	}
-	print <<END
-	</table>
-END
-;
-	&Header::closebox();
-  	foreach $classentry (sort @classes)
-  	{
-  		@classline = split( /\;/, $classentry );
-		$qossettings{'DEV'}=$classline[0];
-		$qossettings{'CLASS'}=$classline[1];
-		&gengraph($qossettings{'DEV'},$qossettings{'CLASS'});
-		print "<div id='$qossettings{'CLASS'}' style='display: none'>";
-		&Header::openbox('100%', 'center', "$qossettings{'CLASS'} ($qossettings{'DEV'})");
-		print <<END
-		<table>
-		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png' />
-		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-borrowed.png' />
-		<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-bytes.png' />
-END
-;
-	  	foreach $subclassentry (sort @subclasses)
-  		{
-	  		@subclassline = split( /\;/, $subclassentry );
-			if ($subclassline[1] eq $classline[1]) {
-				$qossettings{'DEV'}=$subclassline[0];
-				$qossettings{'SCLASS'}=$subclassline[2];
-				&gengraph($qossettings{'DEV'},$qossettings{'SCLASS'});
-				print <<END
-				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-packets.png' />
-				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-borrowed.png' />
-				<tr><td colspan='2' align='center'><img src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'SCLASS'}_$qossettings{'DEV'}-bytes.png' />
-END
-;
-			}
-		}
-		print "\t\t</table>";
-		&Header::closebox();	
-		print "</div>\n";
-	}
-print <<END
-	</table>
-END
-;
-	&Header::closebigbox();
-	&Header::closepage();
-	exit
-}
 elsif ($qossettings{'ACTION'} eq 'Parentklasse hinzufuegen')
 {
 	&parentclass();
@@ -704,9 +634,8 @@ END
 		<table border='0' cellpadding='0' cellspacing='0'>
 			<tr><td><input type='submit' name='ACTION' value='Parentklasse hinzufuegen' />
 			    <td><input type='submit' name='ACTION' value='Erweiterte Einstellungen' />
-			<tr><td><input type='submit' name='ACTION' value='Statusinformationen' />
-			    <td><input type='submit' name='ACTION' value='Grafische Auswertung' />
-		</table>
+			    <td><input type='submit' name='ACTION' value='Statusinformationen' />
+			</tr></table>
 	</form>
 END
 ;
@@ -728,20 +657,12 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 }
 
 &Header::openbox('100%', 'center', $Lang::tr{'info'});
-&overviewgraph($qossettings{'RED_DEV'});
-&overviewgraph($qossettings{'IMQ_DEV'});
 print <<END
 	<table>
 		<tr><td colspan='9' align='center' valign='middle'><img alt="" src='/images/addblue.gif' />&nbsp;Unterklasse hinzufuegen | <img alt="" src='/images/addgreen.gif' />&nbsp;Regel hinzufuegen | <img alt="" src='/images/edit.gif' />&nbsp;Bearbeiten | <img alt="" src='/images/delete.gif' />&nbsp;Loeschen &nbsp;
 		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
 END
 ;
-if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}.png") && ( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png")) {
-	print <<END
-		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'RED_DEV'}.png" />
-		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png" />
-END
-;}
 print "\t</table>";
 
 &Header::closebox();
@@ -1144,7 +1065,6 @@ sub showclasses {
 	  		@classline = split( /\;/, $classentry );
 	  		if ( $classline[0] eq $qossettings{'DEV'} )
 	  		{
-				gengraph($qossettings{'DEV'},$classline[1]);
 				&Header::openbox('100%', 'center', "Klasse: $classline[1]");
 	  			print <<END
 				<table border='0' width='100%' cellspacing='0'>
@@ -1348,10 +1268,6 @@ END
 	  					}
 	  				}
 				}
-
-				if ( -e "/srv/web/ipfire/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png") {
-					print <<END
-					<tr><td colspan='9' align='center'><img alt="" src='/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png' />
 END
 ;
 				}
@@ -1400,7 +1316,6 @@ END
 	  		}
 	  	}
 	}
-}
 
 sub expert
 {
@@ -1499,87 +1414,4 @@ sub validsubclass {
 			}
 		}
 	}
-}
-
-sub gengraph {
-	$qossettings{'DEV'} = shift;
-	$qossettings{'CLASS'} = shift;
-	my $ERROR="";
-	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
-		$qossettings{'CLASSPRFX'} = '1';
-	} else { 
-		$qossettings{'CLASSPRFX'} = '2';
-	}
-	my $color=random_hex_color(6);
-
-	RRDs::graph ("/srv/web/ipfire/html/graphs/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}-packets.png",
-		"--start", "-3240", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 150", "-r",
-		"--color", "SHADEA#EAE9EE",
-		"--color", "SHADEB#EAE9EE",
-		"--color", "BACK#FFFFFF",
-		"-t $qossettings{'CLASS'} ($qossettings{'DEV'})",
-		"DEF:pkts=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:pkts:AVERAGE",
-		"DEF:dropped=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:dropped:AVERAGE",
-		"DEF:overlimits=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$qossettings{'CLASS'}_$qossettings{'DEV'}.rrd:overlimits:AVERAGE",
-		"AREA:pkts$color:packets",
-		"GPRINT:pkts:LAST:total packets\\:%8.3lf %s packets\\j",
-		"LINE3:dropped#FF0000:dropped",
-		"GPRINT:dropped:LAST:dropped packets\\:%8.3lf %s packets\\j",
-		"LINE3:overlimits#0000FF:overlimits",
-		"GPRINT:overlimits:LAST:overlimits\\:%8.3lf %s packets\\j",
-	);
-	$ERROR = RRDs::error;
-	#print "$ERROR";
-}
-
-sub overviewgraph {
-	$qossettings{'DEV'} = shift;
-	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
-		$qossettings{'CLASSPRFX'} = '1';
-	} else { 
-		$qossettings{'CLASSPRFX'} = '2';
-	}
-	my $ERROR="";
-	my $count="1";
-	my $color="#000000";
-	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}.png",
-		"--start", "-3240", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 150", "-r",
-		"--color", "SHADEA#EAE9EE",
-		"--color", "SHADEB#EAE9EE",
-		"--color", "BACK#FFFFFF",
-		"-t Auslastung auf ($qossettings{'DEV'})"
-	);
-	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
-	@classes = <FILE>;
-	close FILE;
-  	foreach $classentry (sort @classes)
-  	{
-  		@classline = split( /\;/, $classentry );
-  		if ( $classline[0] eq $qossettings{'DEV'} )
-  		{
-			$color=random_hex_color(6);
-			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bits:AVERAGE");
-
-			if ($count eq "1") {
-				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
-			} else {
-				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
-			}
-			$count++;
-		}
-	}
-	RRDs::graph (@command);
-	$ERROR = RRDs::error;
-	#print "$ERROR";
-}
-
-sub random_hex_color {
-    my $size = shift;
-    $size = 6 if $size !~ /^3|6$/;
-    my @hex = ( 0 .. 9, 'a' .. 'f' );
-    my @color;
-    push @color, @hex[rand(@hex)] for 1 .. $size;
-    return join('', '#', @color);
 }
