@@ -354,16 +354,17 @@ void strupper(unsigned char *string)
 }
 */
 
-int ismacaddr(unsigned int *ismac)
+/* int ismacaddr(char *ismac)
 {
-	unsigned int *a;
-	
-	for (a = ismac; *a; a++)
+	char *a;
+	fprintf(flog,"Check is MAC true\n"); // #### Debug ####
+	for (a = ismac; *a; a++) {
+		sprintf(flog,"%c\n", *a);	// #### Debug ####
 		if (*a != ':' && !isxdigit(*a)) return 0;	// is int != ':' or not hexdigit then exit
-
+	}
 	return 1;
 }
-
+*/
 
 int write_configs_netudev(int card , int colour)
 {	
@@ -428,6 +429,9 @@ int scan_network_cards(void)
 	FILE *fp;
 	char driver[STRING_SIZE], description[STRING_SIZE], macaddr[STRING_SIZE], temp_line[STRING_SIZE];
 	int count = 0;
+	const char _driver[]="driver: ";
+	const char _desc[]="desc: ";
+	const char _network_hwaddr[]="network.hwaddr: ";
 	
 	if (!(scanned_nics_read_done))
 	{
@@ -441,17 +445,11 @@ int scan_network_cards(void)
 		}
 		while (fgets(temp_line, STRING_SIZE, fp) != NULL)
 		{
-			strcpy(driver,      strtok(temp_line,";"));
-			strcpy(description, strtok(NULL,";"));
-			strcpy(macaddr,     strtok(NULL,";"));
-			fprintf(flog,"Check 4 MacAddr.\n");	// #### Debug ####
-			if ( strlen(macaddr) ) {
-//			if ( ismacaddr(&macaddr) ) {
-				strcpy(nics[count].driver      , driver );
-				strcpy(nics[count].description , description );
-				strcpy(nics[count].macaddr     , macaddr );
-				count++;
-			}
+			temp_line[strlen(temp_line) -1] = 0;
+			if ( strncmp(temp_line, _driver,         strlen(_driver))         ==  0 ) sprintf(nics[count].driver,      "%s", temp_line+strlen(_driver));
+			if ( strncmp(temp_line, _desc,           strlen(_desc))           ==  0 ) sprintf(nics[count].description, "%s", temp_line+strlen(_desc));
+			if ( strncmp(temp_line, _network_hwaddr, strlen(_network_hwaddr)) ==  0 ) sprintf(nics[count].macaddr,     "%s", temp_line+strlen(_network_hwaddr));
+			if (strlen(nics[count].macaddr) > 15 ) count++;
 		}
 		fclose(fp);
 		scanned_nics_read_done = count;
@@ -501,12 +499,15 @@ int nicmenu(int colour)
 				else {
 					fprintf(flog,"Modify string 4 display.\n");	// #### Debug ####
 					sprintf(cMenuInhalt, "%.50s", nics[i].description + 1);
+					fprintf(flog,"1: %s\n");	// #### Debug ####
 //					strncpy(MenuInhalt[mcount], cMenuInhalt,(strrchr(cMenuInhalt,' ') - cMenuInhalt));
-					sprintf(MenuInhalt[mcount], "%.*s", strlen(strrchr(cMenuInhalt,' ')), cMenuInhalt);
+//					sprintf(MenuInhalt[mcount], "%.*s", strlen(strrchr(cMenuInhalt,' ')), cMenuInhalt);
+					strrchr(cMenuInhalt,' ');
+					sprintf(MenuInhalt[mcount], cMenuInhalt);
 					strcat (MenuInhalt[mcount], "...");
 				}
 
-				while ( strlen(MenuInhalt[mcount]) < 50) strcat(MenuInhalt[mcount], " "); // Fill with space.
+				while ( strlen(MenuInhalt[mcount]) < 53) strcat(MenuInhalt[mcount], " "); // Fill with space.
 
 				strcat(MenuInhalt[mcount], " (");
 				strcat(MenuInhalt[mcount], nics[i].macaddr);
