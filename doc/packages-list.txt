@@ -186,7 +186,7 @@
 * openldap-2.3.20
 * openssh-4.3p2
 * openssl-0.9.8d
-* openswan-2.5.13
+* openswan-2.4.8
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4

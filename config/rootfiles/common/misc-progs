@@ -7,11 +7,11 @@ usr/local/bin/ipsecctrl
 usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
 usr/local/bin/openvpnctrl
+usr/local/bin/outgoingfwctrl
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
 usr/local/bin/monitorTraff
-#usr/local/bin/restartapplejuice
 usr/local/bin/snortctrl
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd

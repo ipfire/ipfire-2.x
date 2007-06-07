@@ -6,6 +6,9 @@
 #
 # (c) The IPFire Team
 #
+# Michael Tremer - mitch@ipfire.org
+# Christian Schmidt - maniacikarus@ipfire.org
+#
 
 use strict;
 # enable only the following on debugging purpose
@@ -24,8 +27,10 @@ my @configline = ();
 my $p2pentry = "";
 my @p2ps = ();
 my @p2pline = ();
-my @protos = ();
+my @proto = ();
 my $CMD = "";
+my $P2PSTRING = "";
+
 my $DEBUG = 0;
 
 my $configfile = "/var/ipfire/outgoing/rules";
@@ -68,21 +73,10 @@ open( FILE, "< $configfile" ) or die "Unable to read $configfile";
 @configs = <FILE>;
 close FILE;
 
-# Say hello!
-print "Outgoing firewall for IPFire - $outfwsettings{'POLICY'}\n";
-if ($DEBUG) { print "Debugging mode!\n"; }
-print "\n";
-
-
-if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
-	system("/sbin/iptables --flush OUTGOINGFW >/dev/null 2>&1");
-	system("/sbin/iptables --delete-chain OUTGOINGFW >/dev/null 2>&1");
-
-	exit 0
-} elsif ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
+if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 	$outfwsettings{'STATE'} = "ALLOW";
 	$POLICY = "DROP";
-	$DO = "ACCEPT";
+	$DO = "RETURN";
 } elsif ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
 	$outfwsettings{'STATE'} = "DENY";
 	$POLICY = "ACCEPT";
@@ -93,6 +87,17 @@ if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
 system("/sbin/iptables --flush OUTGOINGFW >/dev/null 2>&1");
 system("/sbin/iptables --delete-chain OUTGOINGFW >/dev/null 2>&1");
 system("/sbin/iptables -N OUTGOINGFW >/dev/null 2>&1");
+
+if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
+	exit 0
+}
+
+if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
+	$CMD = "/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j RETURN";
+	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
+		$CMD = "/sbin/iptables -A OUTGOINGFW -p icmp -j RETURN";
+	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
+}
 
 foreach $configentry (sort @configs)
 {
@@ -122,33 +127,85 @@ foreach $configentry (sort @configs)
 		}
 
 		if ($configline[7]) { $DESTINATION = "$configline[7]"; } else { $DESTINATION = "0/0"; }
-
-		$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION";
-
-		if ($configline[3] ne 'tcp&udp') {
-			$PROTO = "$configline[3]";
-			$CMD = "$CMD -p $PROTO";
+		
+		if ($configline[3] eq 'tcp') {
+			@proto = ("tcp");
+		} elsif ($configline[3] eq 'udp') {
+			@proto = ("udp");
+		} else {
+			@proto = ("tcp", "udp");
+		}
+		
+		foreach $PROTO (@proto) {
+			$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION -p $PROTO";
+	
 			if ($configline[8]) {
 				$DPORT = "$configline[8]";
 				$CMD = "$CMD --dport $DPORT";
 			}
+			
+			if ($DEV) {
+				$CMD = "$CMD -i $DEV";
+			}
+	
+			if ($configline[6]) {
+				$MAC = "$configline[6]";
+			 	$CMD = "$CMD -m mac --mac-source $MAC";
+			}
+	
+			$CMD = "$CMD -o $netsettings{'RED_DEV'}";
+			if ($DEBUG) {
+				print "$CMD -j $DO\n";
+			} else {
+				system("$CMD -j $DO");
+			}
+			
+			if ($configline[9] eq "log") {
+				if ($DEBUG) {
+					print "$CMD -m state --state NEW -j LOG --log-prefix 'OUTGOINGFW '\n";
+				} else {
+					system("$CMD -m state --state NEW -j LOG --log-prefix 'OUTGOINGFW '");
+				}
+			}
+    }
+	}
+}
+
+### Do the P2P-Stuff here
+open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
+@p2ps = <FILE>;
+close FILE;
+
+$CMD = "/sbin/iptables -A OUTGOINGFW -m ipp2p";
+
+foreach $p2pentry (sort @p2ps)
+{
+	@p2pline = split( /\;/, $p2pentry );
+	if ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
+		$DO = "DROP";
+		if ("$p2pline[2]" eq "off") {
+			$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 		}
-
-		if ($DEV) {
-			$CMD = "$CMD -i $DEV";
+	} else {
+		$DO = "RETURN";
+		if ("$p2pline[2]" eq "on") {
+			$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 		}
+	}
+}
+if ($P2PSTRING) {
+	if ($DEBUG) {
+		print "$CMD $P2PSTRING -j $DO\n";
+	} else {
+		system("$CMD $P2PSTRING -j $DO");
+	}
+}
 
-		if ($configline[6]) {
-			$MAC = "$configline[6]";
-		 	$CMD = "$CMD -m mac --mac-source $MAC";
-		}
-
-		$CMD = "$CMD -o $netsettings{'RED_DEV'}";
-		if ($DEBUG) { print "$CMD -j $DO\n"; } else { system("$CMD -j $DO"); }
-
-		if ($configline[9] eq "log") {
-			if ($DEBUG) { print "$CMD -m state --state NEW -j LOG --log-prefix 'OUTGOINGFW '\n"; } else { system("$CMD -m state --state NEW -j LOG --log-prefix 'OUTGOINGFW '"); }
-		}
-
+if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
+	$CMD = "/sbin/iptables -A OUTGOINGFW -j DROP";
+	if ($DEBUG) {
+		print "$CMD\n";
+	} else {
+		system("$CMD");
 	}
 }

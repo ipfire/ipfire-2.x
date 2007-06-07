@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.50-ipfire
-# Fri Jun  1 22:33:07 2007
+# Wed Jun  6 00:04:48 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -620,6 +620,7 @@ CONFIG_KLIPS_ENC_CRYPTOAPI=y
 CONFIG_KLIPS_ENC_1DES=y
 CONFIG_KLIPS_ENC_3DES=y
 CONFIG_KLIPS_ENC_AES=y
+# CONFIG_KLIPS_ENC_NULL is not set
 CONFIG_KLIPS_IPCOMP=y
 CONFIG_KLIPS_DEBUG=y
 
