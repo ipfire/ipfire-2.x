@@ -76,7 +76,7 @@ close FILE;
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 	$outfwsettings{'STATE'} = "ALLOW";
 	$POLICY = "DROP";
-	$DO = "RETURN";
+	$DO = "ACCEPT";
 } elsif ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
 	$outfwsettings{'STATE'} = "DENY";
 	$POLICY = "ACCEPT";
@@ -93,9 +93,9 @@ if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
 }
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
-	$CMD = "/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j RETURN";
+	$CMD = "/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j ACCEPT";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
-		$CMD = "/sbin/iptables -A OUTGOINGFW -p icmp -j RETURN";
+		$CMD = "/sbin/iptables -A OUTGOINGFW -p icmp -j ACCEPT";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
 }
 
@@ -152,20 +152,21 @@ foreach $configentry (sort @configs)
 				$MAC = "$configline[6]";
 			 	$CMD = "$CMD -m mac --mac-source $MAC";
 			}
-	
+			
 			$CMD = "$CMD -o $netsettings{'RED_DEV'}";
+
+			if ($configline[9] eq "aktiv") {
+				if ($DEBUG) {
+					print "$CMD -m state --state NEW -m limit --limit 10/minute -j LOG --log-prefix 'OUTGOINGFW '\n";
+				} else {
+					system("$CMD -m state --state NEW -m limit --limit 10/minute -j LOG --log-prefix 'OUTGOINGFW '");
+				}
+			}
+			
 			if ($DEBUG) {
 				print "$CMD -j $DO\n";
 			} else {
 				system("$CMD -j $DO");
-			}
-			
-			if ($configline[9] eq "log") {
-				if ($DEBUG) {
-					print "$CMD -m state --state NEW -j LOG --log-prefix 'OUTGOINGFW '\n";
-				} else {
-					system("$CMD -m state --state NEW -j LOG --log-prefix 'OUTGOINGFW '");
-				}
 			}
     }
 	}
@@ -187,7 +188,7 @@ foreach $p2pentry (sort @p2ps)
 			$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 		}
 	} else {
-		$DO = "RETURN";
+		$DO = "ACCEPT";
 		if ("$p2pline[2]" eq "on") {
 			$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 		}
@@ -202,7 +203,7 @@ if ($P2PSTRING) {
 }
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
-	$CMD = "/sbin/iptables -A OUTGOINGFW -j DROP";
+	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -j DROP";
 	if ($DEBUG) {
 		print "$CMD\n";
 	} else {

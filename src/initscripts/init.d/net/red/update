@@ -103,6 +103,7 @@ if [ -e "/var/ipfire/red/active" ]; then
 	[ "$IFACE" != "" ] && ifconfig $IFACE -multicast
 	/etc/rc.d/init.d/firewall reload
 	/usr/local/bin/setfilters
+	/usr/local/bin/outgoingfwctrl
 	/usr/local/bin/restartsnort red
 	/usr/local/bin/qosctrl start
 	/usr/local/bin/setportfw

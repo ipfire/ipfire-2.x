@@ -478,7 +478,7 @@ sub senduuid {
 	}
 	logger("Sending my uuid: $Conf::uuid");
 	fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
-	system("rm -f $Conf::cachedir/counter.cgi* 2>/dev/null");
+	system("rm -f $Conf::cachedir/counter* 2>/dev/null");
 }
 
 1;
