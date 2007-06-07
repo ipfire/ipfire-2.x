@@ -926,6 +926,7 @@
 'log viewing options' => 'Log Ansichts-Optionen',
 'log-options' => 'Logfile options',
 'loged in at' => 'Angemeldet seit',
+'logging' => 'Logging',
 'logging server' => 'Protokollierungs-Server',
 'loginlogout' => 'Login/Logout',
 'lookup failed' => 'Reverse Lookup gescheitert',

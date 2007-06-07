@@ -937,6 +937,7 @@
 'log viewing options' => 'Log viewing options',
 'log-options' => 'Logfile options',
 'loged in at' => 'Logged In At',
+'logging' => 'Logging',
 'logging server' => 'Logging server',
 'loginlogout' => 'Login/Logout',
 'lookup failed' => 'Reverse lookup failed',

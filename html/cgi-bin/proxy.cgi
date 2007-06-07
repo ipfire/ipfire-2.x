@@ -914,31 +914,29 @@ print <<END
 <hr size='1'>
 <table width='100%'>
 <tr>
+	<td class='base' width='50%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
+	<td class='base' width='50%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td>
+</tr>
+</table>
+<hr size='1'>
+<table width='100%'>
+<tr>
 	<td colspan='4' class='base'><b>$Lang::tr{'advproxy upstream proxy'}</b></td>
 </tr>
 <tr>
-	<td width='25%' class='base'>$Lang::tr{'advproxy via forwarding'}:</td>
-	<td width='20%'><input type='checkbox' name='FORWARD_VIA' $checked{'FORWARD_VIA'}{'on'} /></td>
-	<td width='25%' class='base'>$Lang::tr{'advproxy upstream proxy host:port'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td width='30%'><input type='text' name='UPSTREAM_PROXY' value='$proxysettings{'UPSTREAM_PROXY'}' /></td>
+	<td class='base'>$Lang::tr{'advproxy via forwarding'}:</td><td><input type='checkbox' name='FORWARD_VIA' $checked{'FORWARD_VIA'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy upstream proxy host:port'}<img src='/blob.gif' alt='*' /></td><td><input type='text' name='UPSTREAM_PROXY' value='$proxysettings{'UPSTREAM_PROXY'}' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy client IP forwarding'}:</td>
-	<td><input type='checkbox' name='FORWARD_IPADDRESS' $checked{'FORWARD_IPADDRESS'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy upstream username'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' name='UPSTREAM_USER' value='$proxysettings{'UPSTREAM_USER'}' /></td>
+	<td class='base'>$Lang::tr{'advproxy client IP forwarding'}:</td><td><input type='checkbox' name='FORWARD_IPADDRESS' $checked{'FORWARD_IPADDRESS'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy upstream username'}<img src='/blob.gif' alt='*' /></td><td><input type='text' name='UPSTREAM_USER' value='$proxysettings{'UPSTREAM_USER'}' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy username forwarding'}:</td>
-	<td><input type='checkbox' name='FORWARD_USERNAME' $checked{'FORWARD_USERNAME'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy upstream password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='password' name='UPSTREAM_PASSWORD' value='$proxysettings{'UPSTREAM_PASSWORD'}' /></td>
+	<td class='base'>$Lang::tr{'advproxy username forwarding'}:</td><td><input type='checkbox' name='FORWARD_USERNAME' $checked{'FORWARD_USERNAME'}{'on'} />
+  <td class='base'>$Lang::tr{'advproxy upstream password'}:<img src='/blob.gif' alt='*' /></td><td><input type='password' name='UPSTREAM_PASSWORD' value='$proxysettings{'UPSTREAM_PASSWORD'}' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy no connection auth'}:</td>
-	<td><input type='checkbox' name='NO_CONNECTION_AUTH' $checked{'NO_CONNECTION_AUTH'}{'on'} /></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td class='base' colspan='4'>$Lang::tr{'advproxy no connection auth'}:<input type='checkbox' name='NO_CONNECTION_AUTH' $checked{'NO_CONNECTION_AUTH'}{'on'} /></td>
 </tr>
 </table>
 <hr size='1'>
@@ -947,16 +945,9 @@ print <<END
 	<td colspan='4' class='base'><b>$Lang::tr{'advproxy log settings'}</b></td>
 </tr>
 <tr>
-	<td width='25%' class='base'>$Lang::tr{'advproxy log enabled'}:</td>
-	<td width='20%'><input type='checkbox' name='LOGGING' $checked{'LOGGING'}{'on'} /></td>
-	<td width='25%'class='base'>$Lang::tr{'advproxy log query'}:</td>
-	<td width='30%'><input type='checkbox' name='LOGQUERY' $checked{'LOGQUERY'}{'on'} /></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td class='base'>$Lang::tr{'advproxy log useragent'}:</td>
-	<td><input type='checkbox' name='LOGUSERAGENT' $checked{'LOGUSERAGENT'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy log enabled'}:<input type='checkbox' name='LOGGING' $checked{'LOGGING'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy log query'}:<input type='checkbox' name='LOGQUERY' $checked{'LOGQUERY'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy log useragent'}:<input type='checkbox' name='LOGUSERAGENT' $checked{'LOGUSERAGENT'}{'on'} /></td>
 </tr>
 </table>
 <hr size='1'>
@@ -965,7 +956,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy cache management'}</b></td>
 </tr>
 <tr>
-	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
+	<td width='35%'></td><td width='15%'></td><td width='35%'></td><td width='15%'></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'advproxy ram cache size'}:</td>
@@ -1003,7 +994,7 @@ print <<END
 				<!-- intentionally left empty -->
 			</tr>
 			<tr>
-			<td><textarea name='DST_NOCACHE' cols='32' rows='6' wrap='off'>
+			<td align=center><textarea name='DST_NOCACHE' cols='32' rows='6' wrap='off'>
 END
 ;
 
@@ -1047,7 +1038,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy destination ports'}</b></td>
 </tr>
 <tr>
-	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
+	<td width='25%' align=center></td> <td width='20%' align=center></td><td width='25%' align=center></td><td width='30%' align=center></td>
 </tr>
 <tr>
 	<td colspan='2' class='base'>$Lang::tr{'advproxy standard ports'}:</td>
@@ -1082,7 +1073,7 @@ print <<END
 	<td colspan='4' class='base'>$Lang::tr{'advproxy allowed subnets'}:</td>
 </tr>
 <tr>
-	<td colspan='2' rowspan='4'><textarea name='SRC_SUBNETS' cols='32' rows='6' wrap='off'>
+	<td colspan='2' rowspan='4'><textarea name='SRC_SUBNETS' cols='32' rows='3' wrap='off'>
 END
 ;
 
@@ -1136,7 +1127,7 @@ print <<END
 	<td colspan='2' class='base'>$Lang::tr{'advproxy unrestricted mac clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
-	<td colspan='2'><textarea name='SRC_UNRESTRICTED_IP' cols='32' rows='6' wrap='off'>
+	<td colspan='2'><textarea name='SRC_UNRESTRICTED_IP' cols='32' rows='3' wrap='off'>
 END
 ;
 
@@ -1144,7 +1135,7 @@ END
 
 print <<END
 </textarea></td>
-	<td colspan='2'><textarea name='SRC_UNRESTRICTED_MAC' cols='32' rows='6' wrap='off'>
+	<td colspan='2'><textarea name='SRC_UNRESTRICTED_MAC' cols='32' rows='3' wrap='off'>
 END
 ;
 
@@ -1163,7 +1154,7 @@ print <<END
 	<td colspan='2' class='base'>$Lang::tr{'advproxy banned mac clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
-	<td colspan='2'><textarea name='SRC_BANNED_IP' cols='32' rows='6' wrap='off'>
+	<td colspan='2'><textarea name='SRC_BANNED_IP' cols='32' rows='3' wrap='off'>
 END
 ;
 
@@ -1171,7 +1162,7 @@ END
 
 print <<END
 </textarea></td>
-	<td colspan='2'><textarea name='SRC_BANNED_MAC' cols='32' rows='6' wrap='off'>
+	<td colspan='2'><textarea name='SRC_BANNED_MAC' cols='32' rows='3' wrap='off'>
 END
 ;
 
@@ -1194,21 +1185,29 @@ if (-e $cre_enabled) { print <<END
 <table width='100%'>
 
 <tr>
-	<td colspan='4'><b>$Lang::tr{'advproxy classroom extensions'}</b></td>
+	<td colspan='4'><b>$Lang::tr{'advproxy classroom extensions'}</b> $Lang::tr{'advproxy enabled'}:<input type='checkbox' name='CLASSROOM_EXT' $checked{'CLASSROOM_EXT'}{'on'} /></td>
 </tr>
 <tr>
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy enabled'}:</td>
-	<td><input type='checkbox' name='CLASSROOM_EXT' $checked{'CLASSROOM_EXT'}{'on'} /></td>
+
+END
+;
+if ($proxysettings{'CLASSROOM_EXT'} eq 'on'){
+print <<END
 	<td class='base'>$Lang::tr{'advproxy supervisor password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='password' name='SUPERVISOR_PASSWORD' value='$proxysettings{'SUPERVISOR_PASSWORD'}' size='12' /></td>
 </tr>
 <tr>
 	<td colspan='2' class='base'>$Lang::tr{'advproxy cre group definitions'}:</td>
 	<td colspan='2' class='base'>$Lang::tr{'advproxy cre supervisors'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-</tr>
+END
+;
+}
+print "</tr>";
+if ($proxysettings{'CLASSROOM_EXT'} eq 'on'){
+print <<END
 <tr>
 	<td colspan='2'><textarea name='CRE_GROUPS' cols='32' rows='6' wrap='off'>
 END
@@ -1226,12 +1225,11 @@ END
 print <<END
 </textarea></td>
 </tr>
-
-</table>
-
-<hr size='1'>
 END
 ;
+}
+print "</table><hr size='1'>";
+
 } else {
 	print <<END
 	<input type='hidden' name='SUPERVISOR_PASSWORD' value='$proxysettings{'SUPERVISOR_PASSWORD'}' />
@@ -1437,12 +1435,12 @@ print <<END
 <hr size='1'>
 <table width='100%'>
 <tr>
-	<td colspan='4'><b>$Lang::tr{'advproxy MIME filter'}</b></td>
+	<td colspan='4'><b>$Lang::tr{'advproxy MIME filter'}</b> $Lang::tr{'advproxy enabled'}:<input type='checkbox' name='ENABLE_MIME_FILTER' $checked{'ENABLE_MIME_FILTER'}{'on'} /></td>
 </tr>
-<tr>
-	<td width='25%' class='base'>$Lang::tr{'advproxy enabled'}:</td>
-	<td width='20%'><input type='checkbox' name='ENABLE_MIME_FILTER' $checked{'ENABLE_MIME_FILTER'}{'on'} /></td>
-</tr>
+END
+;
+if ( $proxysettings{'ENABLE_MIME_FILTER'} eq 'on' ){
+print <<END
 <tr>
 	<td  colspan='2' class='base'>$Lang::tr{'advproxy MIME block types'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td>&nbsp;</td>
@@ -1460,18 +1458,21 @@ print <<END
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
+END
+;
+}
+print <<END
 </table>
+
 <hr size='1'>
 <table width='100%'>
 <tr>
-	<td colspan='4'><b>$Lang::tr{'advproxy web browser'}</b></td>
+	<td colspan='4'><b>$Lang::tr{'advproxy web browser'}</b> $Lang::tr{'advproxy UA enable filter'}:<input type='checkbox' name='ENABLE_BROWSER_CHECK' $checked{'ENABLE_BROWSER_CHECK'}{'on'} /></td>
 </tr>
-<tr>
-	<td width='25%' class='base'>$Lang::tr{'advproxy UA enable filter'}:</td>
-	<td width='20%'><input type='checkbox' name='ENABLE_BROWSER_CHECK' $checked{'ENABLE_BROWSER_CHECK'}{'on'} /></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-</tr>
+END
+;
+if ( $proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on' ){
+print <<END
 <tr>
 	<td colspan='4'><i>
 END
@@ -1496,7 +1497,7 @@ for ($n=0; $n<=@useragentlist; $n = $n + $i) {
 		if ($i eq 3) { print "<\/tr>\n"; }
 	}
 }
-
+}
 print <<END
 </table>
 <hr size='1'>
@@ -1506,14 +1507,10 @@ print <<END
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'advproxy fake useragent'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-</tr>
-<tr>
-	<td><input type='text' name='FAKE_USERAGENT' value='$proxysettings{'FAKE_USERAGENT'}' size='56' /></td>
-</tr>
-<tr>
 	<td class='base'>$Lang::tr{'advproxy fake referer'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
+	<td><input type='text' name='FAKE_USERAGENT' value='$proxysettings{'FAKE_USERAGENT'}' size='56' /></td>
 	<td><input type='text' name='FAKE_REFERER' value='$proxysettings{'FAKE_REFERER'}' size='56' /></td>
 </tr>
 </table>
@@ -1522,32 +1519,6 @@ END
 ;
 
 print <<END
-<table width='100%'>
-<tr>
-	<td class='base' colspan='4'><b>$Lang::tr{'advproxy url filter'}</b></td>
-</tr>
-<tr>
-	<td class='base' width='25%'>$Lang::tr{'advproxy enabled'}:</td>
-	<td class='base' width='20%'><input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-</tr>
-</table>
-<hr size='1'>
-
-<table width='100%'>
-<tr>
-	<td class='base' colspan='4'><b>$Lang::tr{'advproxy update accelerator'}</b></td>
-</tr>
-<tr>
-	<td class='base' width='25%'>$Lang::tr{'advproxy enabled'}:</td>
-	<td class='base' width='20%'><input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-</tr>
-</table>
-<hr size='1'>
-
 <table width='100%'>
 <tr>
 	<td colspan='5'><b>$Lang::tr{'advproxy AUTH method'}</b></td>
