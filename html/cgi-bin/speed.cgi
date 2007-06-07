@@ -46,8 +46,8 @@ my $txb_diff	= $txb_now - $txb_last;
 
 if(( $rxb_diff == $rxb_now ) && ( $txb_diff == $txb_now ))
 {
-	$rx_kbs	= "0.00";
-	$tx_kbs	= "0.00";
+	$rx_kbs	= "0";
+	$tx_kbs	= "0";
 }
 else
 {

@@ -148,17 +148,69 @@ END
       
         function swapVisibility(id) {
             el = document.getElementById(id);
-  	    if(el.style.display != 'block') {
-  	        el.style.display = 'block'
-  	    }
-  	    else {
-  	        el.style.display = 'none'
-  	    }
+            if(el.style.display != 'block') {
+                el.style.display = 'block'
+            }
+            else {
+                el.style.display = 'none'
+            }
         }
     </script>
-
+                <script type="text/javascript" language="javascript">
+                 
+                    var http_request = false;
+                 
+                    function LoadInetInfo(url) {
+                 
+                        http_request = false;
+                 
+                        if (window.XMLHttpRequest) { // Mozilla, Safari,...
+                            http_request = new XMLHttpRequest();
+                            if (http_request.overrideMimeType) {
+                                http_request.overrideMimeType('text/xml');
+                                // zu dieser Zeile siehe weiter unten
+                            }
+                        } else if (window.ActiveXObject) { // IE
+                            try {
+                                http_request = new ActiveXObject("Msxml2.XMLHTTP");
+                            } catch (e) {
+                                try {
+                                    http_request = new ActiveXObject("Microsoft.XMLHTTP");
+                                } catch (e) {}
+                            }
+                        }
+                 
+                        if (!http_request) {
+                            alert('Ende :( Kann keine XMLHTTP-Instanz erzeugen');
+                            return false;
+                        }
+                        http_request.onreadystatechange = DisplayInetInfo;
+                        http_request.open('GET', url, true);
+                        http_request.send(null);
+                 
+                    }
+                 
+                    function DisplayInetInfo() {
+                        if (http_request.readyState == 4) {
+                             var xmldoc = http_request.responseXML;
+                             var root1_node = xmldoc.getElementsByTagName('rx_kbs').item(0);
+                             var root2_node = xmldoc.getElementsByTagName('tx_kbs').item(0);
+                             var root3_node = xmldoc.getElementsByTagName('rxb').item(0);
+                             var root4_node = xmldoc.getElementsByTagName('txb').item(0);
+                
+                             document.forms['speed'].txkb.value  = root1_node.firstChild.data;
+                             document.forms['speed'].rxkb.value  = root2_node.firstChild.data;
+                
+                                        // document.getElementsByTagName("input")[0].style.color = "#00FF00";
+                                        url    = "/cgi-bin/speed.cgi?rxb_last=" + root3_node.firstChild.data + "&txb_last=" + root4_node.firstChild.data;
+                
+                              window.setTimeout("LoadInetInfo(url)", 3000);
+                        }
+                 
+                    }
+                </script>
   </head>
-  <body>
+  <body onLoad="LoadInetInfo('/cgi-bin/speed.cgi')">
 <!-- IPFIRE HEADER -->
 
 <div id="header">
@@ -289,6 +341,11 @@ END
 		<br class="clear" />	
 		<div id="footer" class="fixed">
 			<b>Status:</b> $status <b>Uptime:</b>$uptime <b>Version:</b> $FIREBUILD
+        <br />
+        <form name='speed'>
+        <b>$Lang::tr{'bandwidth usage'}:</b> $Lang::tr{'incoming'}:<input type="text" name="rxkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:green; border: 1px solid black; padding: 0; background-color:black; vertical-align: middle" />
+        $Lang::tr{'outgoing'}: <input type="text" name="txkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:red; border: 1px solid black; padding: 0; background-color:black; vertical-align: middle"  />
+        </form>
 		</div>
 	</div>
 </div>
