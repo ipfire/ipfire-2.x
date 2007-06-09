@@ -140,6 +140,10 @@ endif
 
 	# ip_conntrack permissions from 440 to 444
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
+	
+	# Some VIA patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/padlock-prereq-2.6.16.diff
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/epia_dma.patch
 
 	# Patch-o-matic
 	cd $(DIR_SRC) && rm -rf iptables-* patch-o-matic*
@@ -161,7 +165,9 @@ ifeq "$(XEN)" "1"
 endif
 
 	# Linux Intermediate Queueing Device
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16-imq2.diff
+ifeq "$(XEN)" ""
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16-imq2.diff
+endif
 
 	# mISDN
 	cd $(DIR_SRC) && rm -rf mISDN-*

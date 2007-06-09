@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
 	if (!(initsetuid()))
 		exit(1);
 
+	safe_system("chmod 755 /var/ipfire/outgoing/bin/outgoingfw.pl");
 	safe_system("/var/ipfire/outgoing/bin/outgoingfw.pl");
 	return 0;
 }

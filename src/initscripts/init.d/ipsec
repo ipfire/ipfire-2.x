@@ -139,6 +139,7 @@ case "$1" in
 		cat ${outtmp} | logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
 		rm -f ${outtmp}
 	fi
+	sleep 20 && chown root:nobody  /var/run/pluto -R && chmod 770 /var/run/pluto -R && ln -sf /var/run/pluto/pluto.pid /var/run/pluto.pid 2>&1 &
 	exit $st
 	;;
 
