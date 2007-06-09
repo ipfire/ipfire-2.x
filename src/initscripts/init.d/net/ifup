@@ -24,6 +24,7 @@ boot_mesg_flush
 
 (
 	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 	if [ "$name" == "green" ]; then
 		DEVICE="${GREEN_DEV}"
@@ -62,16 +63,31 @@ boot_mesg_flush
 		NETADDRESS=${GREEN_NETADDRESS} BROADCAST=${GREEN_BROADCAST} \
 		/etc/rc.d/init.d/net/common/ipv4-static ${GREEN_DEV} up
 	 fi
+	 
+	 if [ "${ENABLE_GREEN}" == "on" ]; then
+		boot_mesg "Bringing up dhcpd on device ${DEVICE}."
+		/etc/rc.d/init.d/net/common/dhcpd ${GREEN_DEV} up		
+   fi 
 		
 	elif [ "$name" == "blue" ]; then
 		NAME=${name} ADDRESS=${BLUE_ADDRESS} NETMASK=${BLUE_NETMASK} \
 		NETADDRESS=${BLUE_NETADDRESS} BROADCAST=${BLUE_BROADCAST} \
 		/etc/rc.d/init.d/net/common/ipv4-static ${BLUE_DEV} up
 		
+	 if [ "${ENABLE_BLUE}" == "on" ]; then
+		boot_mesg "Bringing up dhcpd on device ${DEVICE}."
+		/etc/rc.d/init.d/net/common/dhcpd ${BLUE_DEV} up		
+   fi 
+		
 	elif [ "$name" == "orange" ]; then
 		NAME=${name} ADDRESS=${ORANGE_ADDRESS} NETMASK=${ORANGE_NETMASK} \
 		NETADDRESS=${ORANGE_NETADDRESS} BROADCAST=${ORANGE_BROADCAST} \
 		/etc/rc.d/init.d/net/common/ipv4-static ${ORANGE_DEV} up
+		
+	 if [ "${ENABLE_ORANGE}" == "on" ]; then
+		boot_mesg "Bringing up dhcpd on device ${DEVICE}."
+		/etc/rc.d/init.d/net/common/dhcpd ${ORANGE_DEV} up		
+   fi 
 		
 	elif [ "$name" == "red" ]; then
 		if [ "${RED_TYPE}" == "PPPOE" ]; then
