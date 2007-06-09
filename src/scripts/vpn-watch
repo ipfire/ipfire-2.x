@@ -1,239 +1,181 @@
-#!/bin/sh 
-################################################## 
-#####     VPN-Watch.sh     Version 1.6.3     ##### 
-################################################## 
-
-# This program is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2, or (at your option) 
-# any later version. 
+#!/bin/sh
+# IPsec startup and shutdown script
+# Copyright (C) 1998, 1999, 2001  Henry Spencer.
+# Copyright (C) 2002              Michael Richardson <mcr@freeswan.org>
 # 
-# This program is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-# GNU General Public License for more details. 
-
-# Written by: Daniel Berlin <daniel.berlin@itechnology.de>. 
-# Download: http://www.itechnology.de/front_content.php?idcat=87 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.  See <http://www.fsf.org/copyleft/gpl.txt>.
 # 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+#
+# RCSID $Id: setup.in,v 1.122.6.3 2006/10/26 23:54:32 paul Exp $
+#
+# ipsec         init.d script for starting and stopping
+#               the IPsec security subsystem (KLIPS and Pluto).
+#
+# This script becomes /etc/rc.d/init.d/ipsec (or possibly /etc/init.d/ipsec)
+# and is also accessible as "ipsec setup" (the preferred route for human
+# invocation).
+#
+# The startup and shutdown times are a difficult compromise (in particular,
+# it is almost impossible to reconcile them with the insanely early/late
+# times of NFS filesystem startup/shutdown).  Startup is after startup of
+# syslog and pcmcia support; shutdown is just before shutdown of syslog.
+#
+# chkconfig: 2345 47 76
+# description: IPsec provides encrypted and authenticated communications; \
+# KLIPS is the kernel half of it, Pluto is the user-level management daemon.
 
-# changed by: Rüdiger Sobeck 
-# last changed: 31-01-2006 
+me='ipsec setup'		# for messages
 
-# Configuration 
-# 
-CHECK_INTERVAL='120'            # Check this often (in seconds) 
-DNS_RESOLVE_TRIES='3'            # Try to resolve IPs this often (each try takes max. 2 seconds) 
-NICENESS='+5'               # Adjust niceness of child processes: '-20' ... '+19'; '0' is default 
-ipfire_VPN_CONFIG='/var/ipfire/vpn/config'   # Location of ipfire's vpn configuration file 
-ipfire_VPN_SETTINGS='/var/ipfire/vpn/settings'    # Location of ipfire's vpn settings file 
-VERSION='1.6.3' 
+# where the private directory and the config files are
+IPSEC_EXECDIR="${IPSEC_EXECDIR-/usr/libexec/ipsec}"
+IPSEC_LIBDIR="${IPSEC_LIBDIR-/usr/lib/ipsec}"
+IPSEC_SBINDIR="${IPSEC_SBINDIR-/usr/sbin}"
+IPSEC_CONFS="${IPSEC_CONFS-/etc}"
 
-# Workaround for nonexistent "nl" command on ipfire 1.4.x 
-nl --help >/dev/null 2>&1 
-if test $? -ne 0; then 
-    alias nl='cat' 
-fi 
+if test " $IPSEC_DIR" = " "	# if we were not called by the ipsec command
+then
+    # we must establish a suitable PATH ourselves
+    PATH="${IPSEC_SBINDIR}":/sbin:/usr/sbin:/usr/local/bin:/bin:/usr/bin
+    export PATH
 
-MyHost=`grep VPN_IP /var/ipfire/vpn/settings |  cut --delimiter='=' --output-delimiter=' ' -f2` 
-MyIP=`cat /var/ipfire/red/local-ipaddress` 
-MyDynDnsIP=`ping -c 1 "$1" 2>/dev/null | head -n1 | awk '{print $3}' | tr -d '()' | tr -d ':'` 
+    IPSEC_DIR="$IPSEC_LIBDIR"
+    export IPSEC_DIR IPSEC_CONFS IPSEC_LIBDIR IPSEC_EXECDIR
+fi
 
-case "$1" in 
-   'start' | '--start') 
-      if test ! -r "$ipfire_VPN_CONFIG"; then 
-         echo 'Error: cannot read ipfire VPN configuration file; exit.' >&2 
-         exit 1 
-      fi 
+# Check that the ipsec command is available.
+found=
+for dir in `echo $PATH | tr ':' ' '`
+do
+	if test -f $dir/ipsec -a -x $dir/ipsec
+	then
+		found=yes
+		break			# NOTE BREAK OUT
+	fi
+done
+if ! test "$found"
+then
+	echo "cannot find ipsec command -- \`$1' aborted" |
+		logger -s -p daemon.error -t ipsec_setup
+	exit 1
+fi
 
-      mknod -m 0660 "/var/run/$(basename $0)" p >/dev/null 2>&1   # Create pipe for status-information 
+# accept a few flags
 
-      # Read VPN configuration and fork a child process for each VPN connection 
-      # 
-      while read line; do 
-         VPN=($(echo $line | cut --delimiter=',' --output-delimiter=' ' -f1,2,3,5,6,12))   # 
-                        CONNR=${VPN[0]}                             # connection number 
-                        CONACTIVE=${VPN[1]}                        # active (on|off) 
-                        CONNAME=${VPN[2]}                        # connection name 
-                        CONTYPE=${VPN[3]}                        # connection type (host|net) 
-                        CONCERTPSK=${VPN[4]}                        # key type (cert|psk) 
-                        CONDNSNAME=${VPN[5]}                        # FQDN name of other side 
-                        
-         echo -n "${CONACTIVE}" | grep -qi '^off$' && continue            # Ignore: deactivated connections 
-         echo -n "${CONTYPE}" | grep -qi '^host$' && continue            # Ignore: Roadwarriors (->DPD) 
-#         echo -n "${VPN[1]}${MyHost}" | grep -q '^[[:digit:]\.]\+$' && continue      # Ignore: "left" and "right" side set to an IP 
+export IPSEC_setupflags
+IPSEC_setupflags=""
 
-         $0 'conn:' "${CONNAME}" "${MyHost}" "${CONDNSNAME}" "${CONNR}" >/dev/null 2>&1 &      # Fork child process (parameters: "conn: NAME LEFT RIGHT NUMBER") 
-         echo -n 'S' 
-      done < "$ipfire_VPN_CONFIG" 
-      echo Â"ÂStarte VPN-Watch" 
-      exit 0                                          # Parent dies here... RIP 
-      ;; 
-   'stop' | '--stop') 
-      # Terminate processes 
-      for proc in $(pidof -x -o %PPID $(basename $0)); do 
-         kill -15 $proc 
-         echo -n 'T' 
-      done 
-      sleep 1 
-      # Kill remaining processes 
-      for proc in $(pidof -x -o %PPID $(basename $0)); do 
-         kill -9 $proc
-         echo -n 'K' 
-      done 
-      rm -f "/var/run/$(basename $0)"                        # Remove pipe 
-      echo "Stoppe VPN-Watch"
-      exit 0 
-      ;; 
-   'restart' | '--restart') 
-      $0 stop 
-      $0 start 
-      exit 0 
-      ;; 
-   'status' | '--status') 
-      echo "VPN-Watch ${VERSION}  (mail: daniel@itechnology.de, web: www.itechnology.de/vpn-watch)" 
-      if ps --no-heading axw | grep -v 'grep' | grep -q "$(basename $0) conn: "; then 
-         trap '' USR1 
-         killall -q -g -s USR1 -- $(basename $0) 
-         sleep 1 
-         cat "/var/run/$(basename $0)" | sort | nl            # Read children's info from pipe 
-      else 
-         echo '     no instances running.' 
-      fi 
-      exit 0 
-      ;; 
-   'conn:') 
-      # Children proceed here... 
-      renice ${NICENESS:-0} -p $$ >/dev/null 2>&1               # Adjust niceness 
-      shift                              # Remove the first positional parameter ("conn:"), as we don't need it anymore 
-      ;; 
-   *) 
-      echo "Usage: $0 { start | stop | restart | status }" >&2 
-      exit 1 
-      ;; 
-esac 
+config=""
 
-# Logging, signal handlers 
-# 
-alias log="logger -t '$(basename $0 | cut -d '.' -f 1) ${VERSION}' \(${1}\)" 
-trap 'log "terminated after ${RESTART_COUNT} restarts."' EXIT 
-trap 'echo "connection \"${1}\" restarted ${RESTART_COUNT} times" >>/var/run/$(basename $0)' USR1 
+for dummy
+do
+	case "$1" in
+	--showonly|--show)  IPSEC_setupflags="$1" ;;
+	--config)  config="--config $2" ; shift	;;
+	*) break ;;
+	esac
+	shift
+done
 
-log "started" 
 
-# Get IP of a FQDN... using 'arp', 'traceroute' or 'ping', 
-#  because ipfire has no 'nslookup', 'host' or 'dig' command. 
-# 
-function get_ip () { 
-   local RESULT='' 
-   for ((i=1; ${i} <= ${DNS_RESOLVE_TRIES}; i++)); do 
-      if which arp >/dev/null 2>&1; then 
-         RESULT=$(arp "$1" 2>/dev/null | awk '{ print $2 }' | tr -d '()') 
-      elif which traceroute >/dev/null 2>&1; then 
-         RESULT=$(traceroute -m1 -q1 "$1" 2>/dev/null | head -n1 | awk '{ print $4 }' | tr -d '(),') 
-      else 
-         RESULT=$(ping -c 1 "$1" 2>/dev/null | head -n1 | awk '{print $3}' | tr -d '()' | tr -d ':') 
-      fi 
-      test -n "$RESULT" && break 
-   done 
-   test -z "$RESULT" && log "Warning: could not resolve ${1} after ${DNS_RESOLVE_TRIES} tries..." 
-   echo -n "$RESULT" 
-} 
+# Pick up IPsec configuration (until we have done this, successfully, we
+# do not know where errors should go, hence the explicit "daemon.error"s.)
+# Note the "--export", which exports the variables created.
+eval `ipsec _confread $config --optional --varprefix IPSEC --export --type config setup`
 
-function get_tunnelip () { 
-   file=/var/tmp/$1.remoteip 
-   local TRESULT='' 
-   TVPN=`grep "$1" /var/ipfire/vpn/config| awk 'BEGIN{FS=","}{print $2}'` 
-   DYNHOST=`grep "$1" /var/ipfire/vpn/config| awk 'BEGIN{FS=","}{print $12}'` 
-   CONNR=`grep "$1" /var/ipfire/vpn/config| awk 'BEGIN{FS=","}{print $1}'` 
-   REMOTEIP=`/usr/bin/ping -c 1 "$DYNHOST" 2>/dev/null | head -n1 | awk '{print $3}' | tr -d '()' | tr -d ':'` 
-   if ! test -f $file; then 
-      cat $REMOTEIP > $file 
-   fi 
-   OLDIP=`cat $file` 
-   TUNIP=`ipsec whack --status | grep "$1"` 
-   if [ "$TUNIP" != "" ]; then 
-      TUNIP=`ipsec whack --status | grep "$1" | awk 'BEGIN{FS="["}{print $2}' | awk 'BEGIN{FS="---"}{print $3}'` 
-      log "currently used tunnel IP = $TUNIP, current remote IP = $REMOTEIP" 
-      echo $REMOTEIP > $file 
-      TRESULT=${TUNIP} 
-   fi 
+if test " $IPSEC_confreadstatus" != " "
+then
+    case $1 in 
+    stop|--stop|_autostop) 
+	echo "$IPSEC_confreadstatus -- \`$1' may not work" |
+		logger -s -p daemon.error -t ipsec_setup;;
+		
+    *) echo "$IPSEC_confreadstatus -- \`$1' aborted" |
+	    logger -s -p daemon.error -t ipsec_setup;
+	exit 1;;
+    esac
+fi
 
-   test -n "$TRESULT" && break 
-   test -z "$TRESULT" && log "Warning: could not retrieve last used VPN tunnel IP..." 
-   echo -n "$TRESULT" 
-} 
+IPSEC_confreadsection=${IPSEC_confreadsection:-setup}
+export IPSEC_confreadsection
 
-# Restarts a VPN connection 
-# 
-function restart_vpn () { 
-   if test -x /usr/local/bin/ipsecctrl; then 
-      /usr/local/bin/ipsecctrl D "$1"         # This works for ipfire 1.4.x 
-      /usr/local/bin/ipsecctrl R         # re-read secrets 
-      /usr/local/bin/ipsecctrl S "$1"         # start tunnel 
-   else 
-      ipsec auto --down      "$1"         # This works for ipfire 1.3.x 
-      ipsec auto --unroute   "$1" 
-      ipsec auto --delete      "$1" 
-      ipsec auto --rereadall 
-      ipsec auto --add      "$1" 
-      ipsec auto --route      "$1" 
-      ipsec auto --up         "$1" 
-   fi 
-} 
+IPSECsyslog=${IPSECsyslog-daemon.error}
+export IPSECsyslog
 
-# Get left and right IP 
-# 
-LEFT_IP_OLD=$MyIP 
-RIGHT_IP_OLD=$(get_ip $3) 
+# misc setup
+umask 022
 
-# Infinite loop; checks, whether the IP of a left or right FQDN has changed. 
-#  If so, the affected connection gets restarted; this is logged to syslog. 
-# 
-RESTART_COUNT=0 
-while :; do 
-   sleep $CHECK_INTERVAL 
+mkdir -p /var/run/pluto
 
-   # Skip check until IPSec is running 
-   ipsec auto --status >/dev/null 2>&1 || continue 
 
-   # get own IP (may have changed) 
-   ThisHostIP=`cat /var/ipfire/red/local-ipaddress` 
-    
-   # this our own IP as reported in /var/ipfire/ppp/local-ipadress 
-   LEFT_IP_NEW=$ThisHostIP 
-   # check our own DYNDNS IP 
-   LEFT_IP_DYN=$(get_ip $MyHost) 
-   # this is DYNDNS IP of other side 
-   RIGHT_IP_NEW=$(get_ip $3) 
-   # this the last used (right) IP for VPN-Tunnel 
-   RIGHT_TUN_IP_OLD=$(get_tunnelip $1) 
+# do it
+case "$1" in
+  start|--start|stop|--stop|_autostop|_autostart)
+  wanttodo=$1
+	if test " `id -u`" != " 0"
+	then
+		echo "permission denied (must be superuser)" |
+			logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
+		exit 1
+	fi
+	tmp=/var/run/pluto/ipsec_setup.st
+	outtmp=/var/run/pluto/ipsec_setup.out
+	(
+		ipsec _realsetup $1
+		echo "$?" >$tmp
+	) > ${outtmp} 2>&1
+	st=$?
+	if test -f $tmp
+	then
+		st=`cat $tmp`
+		rm -f $tmp
+	fi
+	if [ -f ${outtmp} ]; then
+		cat ${outtmp} | logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
+		rm -f ${outtmp}
+	fi
+	if [ "$wanttodo" = "start" -o "$wanttodo" = "--start" -o "$wanttodo" = "_autostart" ]; then
+		sleep 20 && chown root:nobody  /var/run/pluto -R && chmod 770 /var/run/pluto -R && ln -f /var/run/pluto/pluto.pid /var/run/pluto.pid 2>&1 &
+	fi
+	exit $st
+	;;
 
-#   for whatever reason, ipsec did not notice our own IP has changed for this connection 
-   if [ "${LEFT_IP_NEW}" != "${LEFT_IP_DYN}" ]; then 
-      restart_vpn "$4" 
-      let RESTART_COUNT++ 
-      log "Red IP = $LEFT_IP_NEW, IP by DynDNS = $LEFT_IP_DYN" 
-      log 'incorrect dynamic IP in tunnel used: restarting connection...' 
-   fi 
-    
-#   left or right IP has changed...    
-   if test "${LEFT_IP_OLD} ${RIGHT_IP_OLD}" != "${LEFT_IP_NEW} ${RIGHT_IP_NEW}"; then 
-      restart_vpn "$4" 
-      let RESTART_COUNT++ 
-      log 'left or right IP has changed: restarting connection...' 
-   fi 
+  restart|--restart|force-reload)
+	$0 $IPSEC_setupflags stop
+	$0 $IPSEC_setupflags start
+	;;
 
-#   right IP / IP of tunnel endpoint has changed... 
-   if [ "$RIGHT_TUN_IP_OLD" != "" ]; then 
-      if test "${RIGHT_TUN_IP_OLD}" != "${RIGHT_IP_NEW}"; then 
-         restart_vpn "$4" 
-         let RESTART_COUNT++ 
-         log 'VPN tunnel IP has changed: restarting connection...' 
-      fi 
-   fi 
+  _autorestart)			# for internal use only
+	$0 $IPSEC_setupflags _autostop
+	$0 $IPSEC_setupflags _autostart
+	;;
 
-   LEFT_IP_OLD=$LEFT_IP_NEW 
-   RIGHT_IP_OLD=$RIGHT_IP_NEW 
-done 
+  status|--status)
+	ipsec _realsetup $1
+	exit
+	;;
 
+  --version)
+	echo "$me $IPSEC_VERSION"
+	exit 0
+	;;
+
+  --help)
+	echo "Usage: $me [ --showonly ] {--start|--stop|--restart}"
+	echo "       $me --status"
+	exit 0
+	;;
+
+  *)
+	echo "Usage: $me [ --showonly ] {--start|--stop|--restart}"
+	echo "       $me --status"
+	exit 2
+esac
+
+exit 0
