@@ -1,3 +1,4 @@
+WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
@@ -8,6 +9,7 @@ WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: add new ovpn
+WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
 WARNING: translation string unused: advproxy LDAP auth
@@ -149,6 +151,7 @@ WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: hdd temperature in
 WARNING: translation string unused: hint
+WARNING: translation string unused: host
 WARNING: translation string unused: host configuration
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hours2
@@ -249,6 +252,20 @@ WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn_fastio
+WARNING: translation string unused: ovpn_fragment
+WARNING: translation string unused: ovpn_mssfix
+WARNING: translation string unused: ovpn_mtudisc
+WARNING: translation string unused: ovpn_processprio
+WARNING: translation string unused: ovpn_processprioD
+WARNING: translation string unused: ovpn_processprioED
+WARNING: translation string unused: ovpn_processprioEH
+WARNING: translation string unused: ovpn_processprioEN
+WARNING: translation string unused: ovpn_processprioH
+WARNING: translation string unused: ovpn_processprioLN
+WARNING: translation string unused: ovpn_processprioN
+WARNING: translation string unused: ovpn_processprioVD
+WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
@@ -261,6 +278,7 @@ WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
 WARNING: translation string unused: proxy no proxy extend
 WARNING: translation string unused: proxy no proxy local
+WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
 WARNING: translation string unused: read sectors
 WARNING: translation string unused: reboot schedule
@@ -274,6 +292,7 @@ WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
+WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
 WARNING: translation string unused: sectors read from disk per second
@@ -281,6 +300,7 @@ WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: select media
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
+WARNING: translation string unused: server reserved
 WARNING: translation string unused: shaping list options
 WARNING: translation string unused: shared memory
 WARNING: translation string unused: shutdown control
@@ -296,6 +316,7 @@ WARNING: translation string unused: ssnetwork status
 WARNING: translation string unused: sspasswords
 WARNING: translation string unused: sssystem status
 WARNING: translation string unused: sstraffic graphs
+WARNING: translation string unused: subnet
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: swap usage per
 WARNING: translation string unused: system cpu
