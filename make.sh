@@ -374,6 +374,7 @@ buildipfire() {
   ipfiremake libcap
   ipfiremake pciutils
   ipfiremake libxml2
+  ipfiremake libxslt
   ipfiremake BerkeleyDB
   ipfiremake mysql
   ipfiremake cyrus-sasl
@@ -413,7 +414,7 @@ buildipfire() {
   ipfiremake iptstate
   ipfiremake iputils
   ipfiremake l7-protocols
-#  ipfiremake isdn4k-utils # What about mISDN???
+  ipfiremake isdn4k-utils
   ipfiremake mISDN
   ipfiremake hwdata
   ipfiremake kudzu

@@ -3,12 +3,11 @@ usr/sbin/openvpn
 var/ipfire/ovpn
 var/ipfire/ovpn/ca
 var/ipfire/ovpn/caconfig
-var/ipfire/ovpn/certs
+#var/ipfire/ovpn/certs
 var/ipfire/ovpn/certs/index.txt
 var/ipfire/ovpn/certs/serial
 var/ipfire/ovpn/crls
-var/ipfire/ovpn/n2nconf
-var/ipfire/ovpn/openssl
+#var/ipfire/ovpn/openssl
 var/ipfire/ovpn/openssl/ovpn.cnf
 var/ipfire/ovpn/ovpnconfig
 var/ipfire/ovpn/settings

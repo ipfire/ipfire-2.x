@@ -76,12 +76,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-e 's%^INC_USRLOCAL.*$$%INC_USRLOCAL=/usr%' \
 		-e 's%^USERCOMPILE.*$$%USERCOMPILE=$(CFLAGS)%' \
 		-e 's%^KLIPSCOMPILE.*$$%KLIPSCOMPILE=$(CFLAGS)%' Makefile.inc
-	cd $(DIR_APP) && sed -i -e 's/CWARNINGS = -Werror/CWARNINGS =/' \
-											lib/liblwres/Makefile
 	cd $(DIR_APP) && make programs
 	cd $(DIR_APP) && make install
-	#mv -f /etc/rc.d/init.d/ipsec /etc/rc.d/
+	
 	-rm -rfv /etc/rc*.d/*ipsec
+	cd $(DIR_SRC) && cp src/initscripts/init.d/ipsec /etc/rc.d/init.d/ipsec
 	rm -f /etc/ipsec.conf /etc/ipsec.secrets
 	ln -sf $(CONFIG_ROOT)/vpn/ipsec.conf /etc/ipsec.conf
 	ln -sf $(CONFIG_ROOT)/vpn/ipsec.secrets /etc/ipsec.secrets

@@ -5,12 +5,8 @@ if [ $1 -eq 0 ]; then
     name4=${name3##*CN=}
     clientdisabled=`/bin/grep -iwc off,.*,$name4 /var/ipfire/ovpn/ovpnconfig`
     if [ "$clientdisabled" = "1" ]; then
-    exit 1
+    	exit 1
     fi
     exit 0
 fi
-
 exit 0
-
-
-

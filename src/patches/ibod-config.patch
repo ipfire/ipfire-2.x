@@ -1,0 +1,11 @@
+--- isdn4k-utils-07022001/ibod.h.orig	Wed Nov  1 21:06:07 2000
++++ isdn4k-utils-07022001/ibod.h	Wed Nov  1 21:06:29 2000
+@@ -10,7 +10,7 @@
+ #define STAYUP			0
+ #define STAYUP_TIME		30
+ 
+-#define IBOD_DEFAULT_DIR	"/etc/ppp"
++#define IBOD_DEFAULT_DIR	"/etc/isdn"
+ #define MAX_STR_LEN		512
+ #define ISDN_INFO_DEV		"/dev/isdninfo"
+ #define ISDN_CTLR_DEV		"/dev/isdnctrl"

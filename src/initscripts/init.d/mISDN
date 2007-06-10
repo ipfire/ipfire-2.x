@@ -1,0 +1,475 @@
+#!/bin/bash
+
+#----------------------------------------------
+#
+# CONFIGURATION:
+#
+MISDN_CONF="/etc/mISDN.conf"
+MISDN_CONF_XSL="/usr/lib/mISDN/mISDN.conf.xsl"
+#
+#----------------------------------------------
+
+SELF="${0}"
+USAGE="Usage: ${SELF} start|stop|restart|config|scan|help"
+
+function die {
+	echo "[!!] ${1}"
+	exit 1
+}
+
+function check_cmd
+{
+	if ! type -p "${1}" > /dev/null; then
+		if [ "${2}" = "opt" ]; then
+			return
+		fi
+		if [ "$(id -u)" != "0" ]; then
+			die "$1 not in path, please install and/or be root."
+		else
+			die "$1 not in path, please install."
+		fi
+		exit 1
+	else
+		local var=$(echo ${1} | tr a-z A-Z)
+		eval "$var=`type -p ${1}`"
+	fi
+}
+
+function check_misdn_conf
+{
+	if [ ! -f ${MISDN_CONF} ]; then
+		die "${MISDN_CONF} not found. Please run: ${SELF} config"
+	fi
+}
+
+check_cmd sed
+check_cmd cut
+check_cmd cp
+check_cmd wc
+check_cmd grep
+check_cmd xsltproc
+check_cmd modprobe
+check_cmd sleep
+check_cmd lspci
+check_cmd lsusb opt
+check_cmd mknod
+check_cmd chown
+check_cmd chmod
+
+declare -a START_COMMANDS
+declare -a STOP_COMMANDS
+
+declare -a HFCMULTI_card
+declare -a HFCMULTI_type
+declare -a HFCMULTI_protocol
+declare -a HFCMULTI_layermask
+HFCMULTI_options=''
+MISDNDSP_options=''
+L1OIP_options=''
+
+AVMFRITZ_protocol=''
+AVMFRITZ_layermask=''
+
+HFCPCI_protocol=''
+HFCPCI_layermask=''
+
+L1OIP_type=''
+L1OIP_protocol=''
+L1OIP_layermask=''
+L1OIP_codec=''
+L1OIP_ip=''
+L1OIP_port=''
+L1OIP_localport=''
+L1OIP_ondemand=''
+L1OIP_id=''
+
+DEVNODE_user='root'
+DEVNODE_group='root'
+DEVNODE_mode='0644'
+
+declare -a SCAN_card
+declare -a SCAN_opts
+declare -a SCAN_num_ports
+declare -a SCAN_port_opts
+
+function parse_config
+{
+	local CONFIG=$(${XSLTPROC} ${MISDN_CONF_XSL} ${MISDN_CONF})
+	local t p l line i tmpcmd curr tmpstr val
+	local IFS=$'\n'
+	
+	START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install capi"
+	START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install mISDN_core debug=0"
+	START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install mISDN_l1 debug=0"
+	START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install mISDN_l2 debug=0"
+	START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install l3udss1 debug=0"
+	START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install mISDN_capi"
+	
+	for line in ${CONFIG}; do
+		case "${line}" in
+			DEVNODE:mISDN*)
+				tmpstr=$(echo ${line} | ${SED} -n 's/.*user:\([^ ]*\).*/\1/p')
+				if [ ! -z "${tmpstr}" ]; then
+					DEVNODE_user="${tmpstr}"
+				fi
+				tmpstr=$(echo ${line} | ${SED} -n 's/.*group:\([^ ]*\).*/\1/p')
+				if [ ! -z "${tmpstr}" ]; then
+					DEVNODE_group="${tmpstr}"
+				fi
+				tmpstr=$(echo ${line} | ${SED} -n 's/.*mode:\([^ ]*\).*/\1/p')
+				if [ ! -z "${tmpstr}" ]; then
+					DEVNODE_mode="${tmpstr}"
+				fi
+				;;
+			MODULE:hfcmulti*)
+				HFCMULTI_options=${line:16}
+				;;
+			MODULE:mISDN_dsp*)
+				MISDNDSP_options=${line:17}
+				;;
+			MODULE:l1oip*)
+				L1OIP_options=${line:13}
+				;;
+			CARD:BN*)
+				curr='hfcmulti'
+				i=${#HFCMULTI_type[@]}
+				let "t = $(echo ${line} | ${SED} -n 's/.*type:\([^,]*\).*/\1/p')"
+				HFCMULTI_type[${i}]=$(printf "0x%x" ${t})
+
+# this is for the BN2E1 card that needs two type numbers
+				t=$(echo ${line} | ${SED} -n 's/.*type:[^,]*,\([^ ]*\).*/\1/p')
+				if [ ! -z "${t}" ]; then
+					let "t = ${t}"
+					HFCMULTI_type[${i}]="${HFCMULTI_type[${i}]},$(printf "0x%x" ${t})"
+				fi
+
+				HFCMULTI_card[${i}]=$(echo ${line:5} | ${CUT} -d" " -f1)
+				;;
+			CARD:hfcpci*)
+				curr='hfcpci'
+				;;
+			CARD:avmfritz*)
+				curr='avmfritz'
+				;;
+			CARD:l1oip*)
+				curr='l1oip'
+				;;
+			PORT*)
+				case "${curr}" in
+					hfcmulti)
+						let "p = $(echo ${line} | ${SED} -n 's/.*protocol:\([^ ]*\).*/\1/p')"
+						HFCMULTI_protocol[${i}]="${HFCMULTI_protocol[${i}]:+"${HFCMULTI_protocol[${i}]},"}$(printf "0x%x" ${p})"
+						let "l = $(echo ${line} | ${SED} -n 's/.*layermask:\([^ ]*\).*/\1/p')"
+						HFCMULTI_layermask[${i}]="${HFCMULTI_layermask[${i}]:+"${HFCMULTI_layermask[${i}]},"}$(printf "0x%x" ${l})"
+						;;
+					hfcpci)
+						let "p = $(echo ${line} | ${SED} -n 's/.*protocol:\([^ ]*\).*/\1/p')"
+						HFCPCI_protocol="${HFCPCI_protocol:+"${HFCPCI_protocol},"}$(printf "0x%x" ${p})"
+						let "l = $(echo ${line} | ${SED} -n 's/.*layermask:\([^ ]*\).*/\1/p')"
+						HFCPCI_layermask="${HFCPCI_layermask:+"${HFCPCI_layermask},"}$(printf "0x%x" ${l})"
+						;;
+					avmfritz)
+						let "p = $(echo ${line} | ${SED} -n 's/.*protocol:\([^ ]*\).*/\1/p')"
+						AVMFRITZ_protocol="${AVMFRITZ_protocol:+"${AVMFRITZ_protocol},"}$(printf "0x%x" ${p})"
+						let "l = $(echo ${line} | ${SED} -n 's/.*layermask:\([^ ]*\).*/\1/p')"
+						AVMFRITZ_layermask="${AVMFRITZ_layermask:+"${AVMFRITZ_layermask},"}$(printf "0x%x" ${l})"
+						;;
+					l1oip)
+						let "val = $(echo ${line} | ${SED} -n 's/.*type:\([^ ]*\).*/\1/p')"
+						L1OIP_type="${L1OIP_type:+"${L1OIP_type},"}$(printf "0x%x" ${val})"
+						let "val = $(echo ${line} | ${SED} -n 's/.*protocol:\([^ ]*\).*/\1/p')"
+						L1OIP_protocol="${L1OIP_protocol:+"${L1OIP_protocol},"}$(printf "0x%x" ${val})"
+						let "val = $(echo ${line} | ${SED} -n 's/.*layermask:\([^ ]*\).*/\1/p')"
+						L1OIP_layermask="${L1OIP_layermask:+"${L1OIP_layermask},"}$(printf "0x%x" ${val})"
+						val="$(echo ${line} | ${SED} -n 's/.*codec:\([^ ]*\).*/\1/p')"
+						L1OIP_codec="${L1OIP_codec:+"${L1OIP_codec},"}${val}"
+						val="$(echo ${line} | ${SED} -n 's/.*ip:\([^ ]*\).*/\1/p')"
+						L1OIP_ip="${L1OIP_ip:+"${L1OIP_ip},"}${val}"
+						val="$(echo ${line} | ${SED} -n 's/.*port:\([^ ]*\).*/\1/p')"
+						L1OIP_port="${L1OIP_port:+"${L1OIP_port},"}${val}"
+						val="$(echo ${line} | ${SED} -n 's/.*localport:\([^ ]*\).*/\1/p')"
+						L1OIP_localport="${L1OIP_localport:+"${L1OIP_localport},"}${val}"
+						val="$(echo ${line} | ${SED} -n 's/.*ondemand:\([^ ]*\).*/\1/p')"
+						L1OIP_ondemand="${L1OIP_ondemand:+"${L1OIP_ondemand},"}${val}"
+						val="$(echo ${line} | ${SED} -n 's/.*id:\([^ ]*\).*/\1/p')"
+						L1OIP_id="${L1OIP_id:+"${L1OIP_id},"}${val}"
+						;;
+				esac
+				;;
+		esac
+	done
+
+	if [ ! -z "${HFCMULTI_protocol[0]}" ]; then
+		tmpcmd="${MODPROBE} --ignore-install hfcmulti type=${HFCMULTI_type[0]}"
+		i=1
+		while [ ! -z "${HFCMULTI_type[${i}]}" ]; do
+			tmpcmd="${tmpcmd},${HFCMULTI_type[${i}]}"
+			let "i = ${i} + 1"
+		done
+		tmpcmd="${tmpcmd} protocol=${HFCMULTI_protocol[0]}"
+		i=1
+		while [ ! -z "${HFCMULTI_protocol[${i}]}" ]; do
+			tmpcmd="${tmpcmd},${HFCMULTI_protocol[${i}]}"
+			let "i = ${i} + 1"
+		done
+		tmpcmd="${tmpcmd} layermask=${HFCMULTI_layermask[0]}"
+		i=1
+		while [ ! -z "${HFCMULTI_layermask[${i}]}" ]; do
+			tmpcmd="${tmpcmd},${HFCMULTI_layermask[${i}]}"
+			let "i = ${i} + 1"
+		done
+		START_COMMANDS[${#START_COMMANDS[@]}]="${tmpcmd} ${HFCMULTI_options}"
+	fi
+
+	if [ ! -z "${HFCPCI_protocol}" ]; then
+		START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install hfcpci protocol=${HFCPCI_protocol} layermask=${HFCPCI_layermask}"
+	fi
+
+	if [ ! -z "${AVMFRITZ_protocol}" ]; then
+		START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install avmfritz protocol=${AVMFRITZ_protocol} layermask=${AVMFRITZ_layermask}"
+	fi
+
+	if [ ! -z "${L1OIP_type}" ]; then
+		START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install l1oip type=${L1OIP_type} protocol=${L1OIP_protocol} layermask=${L1OIP_layermask} codec=${L1OIP_codec} ip=${L1OIP_ip} port=${L1OIP_port} localport=${L1OIP_localport} ondemand=${L1OIP_ondemand} id=${L1OIP_id} ${L1OIP_options}"
+	fi
+
+	START_COMMANDS[${#START_COMMANDS[@]}]="${MODPROBE} --ignore-install mISDN_dsp ${MISDNDSP_options}"
+}
+
+function run_start_commands
+{
+	local i=0
+
+	echo "-- Loading mISDN modules --"
+	while [ ! -z "${START_COMMANDS[${i}]}" ]; do
+		echo ">> ${START_COMMANDS[${i}]}"
+		eval "${START_COMMANDS[${i}]}"
+		let "i = ${i} + 1"
+	done
+}
+
+function run_stop_commands
+{
+	local mod i=0
+
+	for mod in $(lsmod | ${SED} -ne '/Module/!{s/\([^ ]*\).*/\1/;p}');	do
+		case "${mod}" in
+			mISDN_capi | mISDN_dsp | l3udss1 | mISDN_l2 | mISDN_l1 | mISDN_isac | hfcmulti | avmfritz | l1oip)
+				STOP_COMMANDS[0]="${STOP_COMMANDS[0]:-"${MODPROBE} -r --ignore-remove"} ${mod}"
+				;;
+			mISDN_core)
+				STOP_COMMANDS[1]="${MODPROBE} -r --ignore-remove mISDN_core"
+				;;
+		esac
+	done
+
+	echo "-- Unloading mISDN modules --"
+	while [ ! -z "${STOP_COMMANDS[${i}]}" ]; do
+		echo ">> ${STOP_COMMANDS[${i}]}"
+		eval "${STOP_COMMANDS[${i}]}"
+		let "i = ${i} + 1"
+	done
+}
+
+function scan_devices
+{
+	local skipnext=0 IFS=$'\n'
+	local NL="
+"
+	
+	function addcard {
+		SCAN_card[${#SCAN_card[@]}]="${1}"
+		SCAN_opts[${#SCAN_opts[@]}]="${2}"
+		SCAN_num_ports[${#SCAN_num_ports[@]}]="${3}"
+		SCAN_port_opts[${#SCAN_port_opts[@]}]="${4}"
+	}
+
+	for line in $(${LSPCI} -n -d 0xd161:b410); do
+		addcard "BN4S0" "" 4 'mode="te" link="ptmp"'
+	done
+
+	for line in $(${LSPCI} -n | ${SED} -n 's/^\(0000:\|\)\([0-9a-f]\{2\}:[0-9a-f]\{2\}.[0-9a-f]\{1\}\)\( Class \| \)[0-9a-f]\{4\}: 1397:\([0-9a-f]\{4\}\).*$/\4 \2/p'); do
+		if [ ${skipnext} -eq 1 ]; then
+			skipnext=0
+			continue
+		fi
+		case "${line}" in
+			30b1*)
+				case "${line:5}" in
+					00*)
+						addcard "BN1E1" "" 1 'mode="nt" link="ptp"'
+						;;
+					*)
+						if [ $(${LSPCI} -n -s "${line:5:3}" | ${WC} -l) -eq 2 ]; then
+							addcard "BN2E1" "" 2 'mode="nt" link="ptp"'
+							skipnext=1
+						else
+							addcard "BN1E1" "" 1 'mode="nt" link="ptp"'
+						fi
+						;;
+				esac
+				;;
+			16b8*)
+				addcard "BN8S0" "" 8 'mode="te" link="ptmp"'
+				;;
+			08b4*)
+				if ${LSPCI} -n -v -s "${line:5}" | ${GREP} "Subsystem" | ${GREP} "1397:b567" > /dev/null ; then
+					addcard "BN1S0" "" 1 'mode="te" link="ptmp"'
+				elif ${LSPCI} -n -v -s "${line:5}" | ${GREP} "Subsystem" | ${GREP} "1397:b566\|1397:b569" > /dev/null ; then
+					addcard "BN2S0" "" 2 'mode="te" link="ptmp"'
+				else
+					addcard "BN4S0" "" 4 'mode="te" link="ptmp"'
+				fi
+				;;
+		esac
+	done
+	for line in $(${LSPCI} -n | ${GREP} "1397:\(2bd\(0\|6\|7\|8\|9\|a\|b\|c\)\|b100\)\|1043:0675\|0871:ffa\(1\|2\)\|1051:0100\|15b0:2bd0\|114f:007\(0\|1\|2\|3\)\|13d1:2bd1\|182d:3069"); do
+		addcard "hfcpci" "" 1 'mode="te" link="ptmp"'
+	done
+	for line in $(${LSPCI} -n | ${GREP} "1244:\(0a00\|0e00\)"); do
+		addcard "avmfritz" "" 1 'mode="te" link="ptmp"'
+	done
+	for line in $(${LSPCI} -n -d 1050:6692); do
+		addcard "w6692pci" "" 1 'mode="te" link="ptmp"'
+	done
+	if [ -e ${LSUSB} ]; then 
+		for line in $(${LSUSB} | ${GREP} "0959:2bd0\|0675:1688\|07b0:0007\|0742:200\(7\|8\|9\|A\)\|08e3:0301\|07fa:084\(7\|8\)\|07ba:0006"); do
+			addcard "hfcsusb" "" 1 'mode="te" link="ptmp"'
+		done
+	fi
+}
+
+function write_mISDN_conf
+{
+	local NL="
+"
+	local TAB="	"
+	local HEADER="<?xml version=\"1.0\"?>
+<!--
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Card Type: BN2S0, BN4S0, BN8S0
+Card Attributes: ulaw=(yes|no), dtmf=(yes|no), pcm_slave=(yes|no),
+                 ignore_pcm_frameclock=(yes|no), rxclock=(yes|no),
+                 crystalclock=(yes|no), watchdog=(yes|no)
+Port Attributes: mode=(te|nt), link=(ptp|ptmp), master-clock=(yes|no),
+                 capi=(yes|no)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Card Type: BN2E1
+Card Attributes: ulaw=(yes|no), dtmf=(yes|no), pcm_slave=(yes|no),
+                 ignore_pcm_frameclock=(yes|no), rxclock=(yes|no),
+                 crystalclock=(yes|no), watchdog=(yes|no)
+Port Attributes: mode=(te|nt), link=(ptp|ptmp), optical=(yes|no), los=(yes|no),
+                 ais=(yes|no), slip=(yes|no), nocrc4=(yes|no), capi=(yes|no)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Card Type: hfcmulti, avmfritz, w6692pci
+Port Attributes: mode=(te|nt), link=(ptp|ptmp), capi=(yes|no)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Module: hfcmulti
+Options: poll=<number>, pcm=<number>, debug=<number>, timer=(yes|no)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Module: mISDN_dsp
+Options: debug=<number>, options=<number>, poll=<number>,
+         dtmfthreshold=<number>
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-->
+<mISDNconf>
+${TAB}<module poll=\"128\" debug=\"0\" timer=\"no\">hfcmulti</module>
+${TAB}<module debug=\"0\" options=\"0\">mISDN_dsp</module>
+${TAB}<devnode user=\"root\" group=\"root\" mode=\"644\">mISDN</devnode>"
+	local FOOTER="</mISDNconf>"
+	local i=0 j=0 MAIN=""
+
+	echo "Writing ${MISDN_CONF} for ${#SCAN_card[@]} mISDN compatible device(s):"
+	while [ ! -z "${SCAN_card[${i}]}" ]; do
+		echo ">> ${SCAN_card[${i}]}"
+		MAIN="${MAIN}${NL}${TAB}<card type=\"${SCAN_card[${i}]}\"${SCAN_opts[${i}]:+" ${SCAN_opts[${i}]}"}>"
+		j=1
+		while [ ${j} -le ${SCAN_num_ports[${i}]} ]; do
+			MAIN="${MAIN}${NL}${TAB}${TAB}<port${SCAN_port_opts[${i}]:+" ${SCAN_port_opts[${i}]}"}>${j}</port>"
+			let "j = ${j} + 1"
+		done
+		MAIN="${MAIN}${NL}${TAB}</card>"
+		let "i = ${i} + 1"
+	done
+
+	if [ -f ${MISDN_CONF} ]; then
+		echo "${MISDN_CONF} already present, saving a backup: ${MISDN_CONF}.bak"
+		${CP} "${MISDN_CONF}" "${MISDN_CONF}.bak" || die "Could not backup your existing ${MISDN_CONF}!"
+	fi
+	echo "${HEADER}${MAIN}${NL}${FOOTER}" > ${MISDN_CONF}
+}
+
+function print_scan_results
+{
+	local i=0
+	
+	echo "${#SCAN_card[@]} mISDN compatible device(s) found:"
+	while [ ! -z "${SCAN_card[${i}]}" ]; do
+		echo ">> ${SCAN_card[${i}]}"
+		let "i = ${i} + 1"
+	done
+}
+
+function mk_misdn_dev
+{
+	if [ ! -e /dev/mISDN ]; then
+		echo "creating device node: /dev/mISDN"
+		${MKNOD} /dev/mISDN c 46 0
+	fi
+	${CHOWN} ${DEVNODE_user}:${DEVNODE_group} /dev/mISDN
+	${CHMOD} ${DEVNODE_mode} /dev/mISDN
+}
+
+#
+# MAIN
+#
+
+case "${1}" in
+
+	start|--start)
+
+		check_misdn_conf
+		parse_config
+		run_start_commands
+		mk_misdn_dev
+		;;
+
+	stop|--stop)
+
+		run_stop_commands
+		;;
+
+	restart|--restart)
+
+		check_misdn_conf
+		parse_config
+		run_stop_commands
+		${SLEEP} 2
+		run_start_commands
+		mk_misdn_dev
+		;;
+
+	config|--config)
+		
+		scan_devices
+		write_mISDN_conf
+		;;
+
+	scan|--scan)
+
+		scan_devices
+		print_scan_results
+		;;
+
+	help|--help)
+		echo "${USAGE}"
+		exit 0
+		;;
+
+	*)
+		echo "${USAGE}"
+		exit 2
+		;;
+
+esac
+

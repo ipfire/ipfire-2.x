@@ -1,2 +1,2 @@
-etc/ppp/ibod.cf
+etc/isdn/ibod.cf
 usr/sbin/ibod

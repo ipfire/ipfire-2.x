@@ -1,0 +1,84 @@
+--- isdn4k-utils-CVS-2005-03-09/vbox/src/vboxgetty.c.old	2000-11-30 16:35:20.000000000 +0100
++++ isdn4k-utils-CVS-2005-03-09/vbox/src/vboxgetty.c	2005-04-20 16:30:31.000000000 +0200
+@@ -434,7 +434,7 @@
+ static int check_spool_space(unsigned long need)
+ {
+ 	struct statfs stat;
+-	unsigned long have;
++	unsigned long long have;
+ 
+ 	log(L_DEBUG, "Checking free space on \"%s\"...\n", setup.spool);
+ 
+@@ -449,7 +449,7 @@
+ 	{
+ 		have = (stat.f_bfree * stat.f_bsize);
+ 
+-		log_line(L_JUNK, "%ld bytes available; %ld bytes needed... ", have, need);
++		log_line(L_JUNK, "%lld bytes available; %ld bytes needed... ", have, need);
+ 
+ 		if (have >= need)
+ 		{
+--- isdn4k-utils-CVS-2005-03-09/eurofile/src/wuauth/extensions.h.old	2005-04-20 16:35:37.000000000 +0200
++++ isdn4k-utils-CVS-2005-03-09/eurofile/src/wuauth/extensions.h	2005-04-20 16:37:02.000000000 +0200
+@@ -42,3 +42,8 @@
+ #define ARG8    entry->arg[8]
+ #define ARG9    entry->arg[9]
+ #define ARG     entry->arg
++
++#if defined(HAVE_STATVFS) || defined(HAVE_SYS_VFS) || defined (HAVE_SYS_MOUNT)
++unsigned long long getSize(s);
++#endif
++
+--- isdn4k-utils-CVS-2005-03-09/eurofile/src/wuauth/extensions.c.old	2005-04-20 16:20:17.000000000 +0200
++++ isdn4k-utils-CVS-2005-03-09/eurofile/src/wuauth/extensions.c	2005-04-20 16:24:56.000000000 +0200
+@@ -154,7 +154,7 @@
+ }
+ 
+ #if defined(HAVE_STATVFS)
+-int getSize(s)
++unsigned long long getSize(s)
+ char *s;
+ {
+     int c;
+@@ -163,10 +163,10 @@
+     if (( c = statvfs(s, &buf)) != 0)
+         return(0);
+ 
+-    return(buf.f_bavail * buf.f_frsize / 1024);
++    return((unsigned long long)(buf.f_bavail * buf.f_frsize / 1024));
+ }
+ #elif defined(HAVE_SYS_VFS) || defined (HAVE_SYS_MOUNT)
+-int getSize(s)
++unsigned long long getSize(s)
+ char *s;
+ {
+     int c;
+@@ -175,7 +175,7 @@
+     if (( c = statfs(s, &buf)) != 0)
+         return(0);
+ 
+-    return(buf.f_bavail * buf.f_bsize / 1024);
++    return((unsigned long long)(buf.f_bavail * buf.f_bsize / 1024));
+ }
+ #endif
+ 
+@@ -236,7 +236,7 @@
+ 
+             case 'F':
+ #if defined(HAVE_STATVFS) || defined(HAVE_SYS_VFS) || defined(HAVE_SYS_MOUNT)
+-                sprintf(outptr, "%lu", getSize("."));
++                sprintf(outptr, "%llu",(unsigned long long)getSize("."));
+ #endif
+                 break;
+ 
+--- isdn4k-utils-CVS-2005-03-09/eurofile/src/wuauth/divfunc.c.old	2001-03-01 15:59:14.000000000 +0100
++++ isdn4k-utils-CVS-2005-03-09/eurofile/src/wuauth/divfunc.c	2005-04-20 16:34:26.000000000 +0200
+@@ -121,7 +121,7 @@
+ 
+             case 'F':
+ #if defined(HAVE_STATVFS) || defined(HAVE_SYS_VFS) || defined(HAVE_SYS_MOUNT)
+-                sprintf(outptr, "%lu", getSize("."));
++                sprintf(outptr, "%llu",(unsigned long long)getSize("."));
+ #endif
+                 break;
+ 

@@ -1,0 +1,967 @@
+--- isdn4k-utils-CVS-2003-09-23/act2000/Makefile.in.redhat	2002-07-19 21:03:49.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/act2000/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,8 +5,8 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2
+-INCLUDES		= -I.
++CFLAGS			= $(RPM_OPT_FLAGS)
++INCLUDES		= -I.
+ DEFS			=
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAM			= actctrl
+@@ -18,9 +18,9 @@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_DATA	= $(INSTALL) -o 0 -g 0 -m 0644
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_DATA	= $(INSTALL) -m 0644
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ CC				= @CC@
+--- isdn4k-utils-CVS-2003-09-23/areacode/Makefile.in.redhat	1999-06-19 11:39:59.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/areacode/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -12,7 +12,7 @@
+ 	# only ones that _really_ exist on _every_ system.
+ 	#
+ 	BUILDOPTS   := $(DATAOPTS)
+-	INSTALLOPTS := $(DATAOPTS) INSTALL="install -o 0 -g 0 -m 644"
++	INSTALLOPTS := $(DATAOPTS) INSTALL="install -m 644"
+ endif
+ 
+ all: .depend
+--- isdn4k-utils-CVS-2003-09-23/avmb1/Makefile.in.redhat	2002-07-19 21:03:50.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/avmb1/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,7 +5,7 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2
++CFLAGS			= $(RPM_OPT_FLAGS)
+ LDFLAGS			= -L../lib @LIBS@
+ INCLUDES		= -I.
+ PROGRAMS		= avmcapictrl
+@@ -15,8 +15,8 @@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ CC				= @CC@
+--- isdn4k-utils-CVS-2003-09-23/capifax/Makefile.am.redhat	2000-03-03 16:54:12.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/capifax/Makefile.am	2003-09-30 17:44:24.000000000 +0200
+@@ -8,7 +8,7 @@
+ 			  stamp-h.in
+ 
+ INCLUDES = -I../capi20 $(all_includes)
+-CFLAGS = -Wall -O2
++CFLAGS = -Wall $(RPM_OPT_FLAGS)
+ LDFLAGS = -L../capi20/.libs -L../capi20 $(all_libraries)
+ LDADD = -lcapi20
+ 
+--- isdn4k-utils-CVS-2003-09-23/capiinfo/Makefile.am.redhat	2000-10-20 19:14:20.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/capiinfo/Makefile.am	2003-09-30 17:44:24.000000000 +0200
+@@ -8,7 +8,7 @@
+ 			  stamp-h.in comperr
+ 
+ INCLUDES = -I../capi20 $(all_includes)
+-CFLAGS = -Wall -O2
++CFLAGS = -Wall $(RPM_OPT_FLAGS)
+ LDFLAGS = -L../capi20/.libs -L../capi20 $(all_libraries)
+ LDADD = -lcapi20
+ 
+--- isdn4k-utils-CVS-2003-09-23/capiinit/Makefile.am.redhat	2000-03-17 17:19:43.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/capiinit/Makefile.am	2003-09-30 17:44:24.000000000 +0200
+@@ -8,7 +8,7 @@
+ 			  stamp-h.in comperr core
+ 
+ INCLUDES = $(all_includes)
+-CFLAGS = -Wall -O2 -D_GNU_SOURCE # -g
++CFLAGS = -Wall -D_GNU_SOURCE $(RPM_OPT_FLAGS)
+ LDFLAGS = $(all_libraries)
+ LDADD = 
+ 
+--- isdn4k-utils-CVS-2003-09-23/divertctrl/Makefile.in.redhat	2002-07-19 21:03:51.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/divertctrl/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,16 +5,16 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2
+-INCLUDES		= -I.
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
++INCLUDES		= -I.
+ DEFS			=
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAM			= divertctrl
+ MODULES			= divertctrl.o
+ MANPAGE			= divertctrl.8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ ifeq (../.config,$(wildcard ../.config))
+--- isdn4k-utils-CVS-2003-09-23/doc/Makefile.in.redhat	1999-12-24 15:14:50.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/doc/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -9,7 +9,7 @@
+ SED				= @SED@
+ MANDIR			= @CONFIG_MANDIR@
+ MANPAGES		= ttyI.4 isdninfo.4 isdn_audio.4 isdnctrl.4 isdn_cause.7
+-INSTALL_MAN		= @INSTALL@ -o 0 -g 0 -m 0644
++INSTALL_MAN		= @INSTALL@ -m 0644
+ prefix			= @prefix@
+ 
+ %.1: %.man
+--- isdn4k-utils-CVS-2003-09-23/eicon/Makefile.in.redhat	2002-07-19 20:42:01.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/eicon/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -7,8 +7,8 @@
+ #
+ 
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2 -DUNIX -DLINUX
+-INCLUDES		= -I. -Iinclude
++CFLAGS			= -Wall -DUNIX -DLINUX $(RPM_OPT_FLAGS)
++INCLUDES		= -I. -Iinclude
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAMS		= 
+ PROGRAM			= eiconctrl
+@@ -22,9 +22,9 @@
+ DATA_DIR		= @CONFIG_DATADIR@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_DATA	= $(INSTALL) -o 0 -g 0 -m 0644
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_DATA	= $(INSTALL) -m 0644
++INSTALL_MAN		= $(INSTALL) -m 0644
+ CC				= @CC@
+ COPTS			= -DDATADIR=\"$(shell echo $(DESTDIR)$(DATA_DIR))\"
+ 
+--- isdn4k-utils-CVS-2003-09-23/hisax/Makefile.in.redhat	2002-07-19 21:03:51.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/hisax/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -6,7 +6,7 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2 -I.
++CFLAGS			= -Wall $(RPM_OPT_FLAGS) -I.
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAMS		=
+ MODULES			= hisaxctrl.o
+@@ -16,9 +16,9 @@
+ DATADIR			= @CONFIG_DATADIR@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_DATA	= $(INSTALL) -o 0 -g 0 -m 0644
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_DATA	= $(INSTALL) -m 0644
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ ifeq ("@CONFIG_HISAXCTRL@","y")
+--- isdn4k-utils-CVS-2003-09-23/icn/Makefile.in.redhat	2002-07-19 21:03:52.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/icn/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,8 +5,8 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2
+-INCLUDES		= -I.
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
++INCLUDES		= -I.
+ DEFS			=
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAM			= icnctrl
+@@ -17,9 +17,9 @@
+ DATADIR			= @CONFIG_DATADIR@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_DATA	= $(INSTALL) -o 0 -g 0 -m 0644
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_DATA	= $(INSTALL) -m 0644
++INSTALL_MAN		= $(INSTALL) -m 0644
+ CC				= @CC@
+ COPTS			=
+ 
+--- isdn4k-utils-CVS-2003-09-23/imon/Makefile.in.redhat	2002-07-19 21:03:53.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/imon/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -7,8 +7,8 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2
+-INCLUDES		= -I.
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
++INCLUDES		= -I.
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAM			= imon
+ MODULES			= imon.o
+@@ -18,8 +18,8 @@
+ SBINDIR			= @CONFIG_SBINDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ CC				= @CC@
+--- isdn4k-utils-CVS-2003-09-23/imontty/Makefile.redhat	2002-07-19 23:23:53.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/imontty/Makefile	2003-09-30 17:44:24.000000000 +0200
+@@ -15,14 +15,14 @@
+ 	# Manual config standalone
+ 	#
+ 	CONFIG_SBINDRIR := /sbin
+-	MAN8DIR         := /usr/man/man8
++	MAN8DIR         := /usr/share/man/man8
+ endif
+ 
+ INSTALL=install
+-INSTALL_MAN=$(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_MAN=$(INSTALL) -m 0644
+ MANPAGE=imontty.8
+ 
+-CCFLAGS=-O2
++CCFLAGS=$(RPM_OPT_FLAGS)
+ #CCFLAGS=-I$(ISDN_INCLUDE) -g
+ 
+ # nothing to change behind this line
+@@ -34,13 +34,6 @@
+ imontty: imontty.c imontty.h
+ 	cc $(CCFLAGS) -o imontty imontty.c
+ 
+-rootperm:
+-	@echo 'main(int argc,char**argv){unlink(argv[0]);return(getuid()==0);}'>g
+-	@if gcc -x c -o G g && rm -f g && ./G ; then \
+-		echo -e "\n\n      Need root permission for (de)installation!\n\n"; \
+-		exit 1; \
+-	fi
+-
+ imontty.8: imontty.8.in
+ 	MANDATE=`grep CHECKIN $< | awk '{print $$4}'`; \
+ 	sed \
+@@ -52,10 +45,10 @@
+ 	mkdir -p $(DESTDIR)$(MAN8DIR)
+ 	$(INSTALL_MAN) $< $(DESTDIR)$(MAN8DIR)/$(MANPAGE)
+ 
+-install: $(PROGS) rootperm install-man
+-	install -s -o 0 -g 0 -m 0755 $(PROGS) $(DESTDIR)$(CONFIG_SBINDIR)
++install: $(PROGS) install-man
++	install -m 0755 $(PROGS) $(DESTDIR)$(CONFIG_SBINDIR)
+ 
+-uninstall: rootperm
++uninstall:
+ 	for i in $(PROGS) ; do rm -f $(DESTDIR)$(CONFIG_SBINDIR)/$$i; done
+ 
+ clean:
+--- isdn4k-utils-CVS-2003-09-23/ipppstats/Makefile.in.redhat	2002-07-19 21:03:54.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/ipppstats/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -6,14 +6,14 @@
+ MANDIR       = @CONFIG_MANDIR@
+ CC           = @CC@
+ INSTALL      = @INSTALL@
+-INSTALL_SBIN = $(INSTALL) -m 755 -o 0 -g 0
+-INSTALL_DATA = $(INSTALL) -m 644 -o 0 -g 0
+-INSTALL_DIR  = $(INSTALL) -m 755 -o 0 -g 0 -d
++INSTALL_SBIN = $(INSTALL) -m 755
++INSTALL_DATA = $(INSTALL) -m 644
++INSTALL_DIR  = $(INSTALL) -m 755 -d
+ 
+ PPPSTATSRCS  = ipppstats.c
+ PPPSTATOBJS  = ipppstats.o
+ 
+-CFLAGS       = -fomit-frame-pointer -O2
++CFLAGS       = $(RPM_OPT_FLAGS)
+ 
+ all: ipppstats
+ 
+--- isdn4k-utils-CVS-2003-09-23/iprofd/Makefile.in.redhat	2002-07-19 23:23:53.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/iprofd/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,8 +5,8 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2
+-INCLUDES		= -I.
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
++INCLUDES		= -I.
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAM			= iprofd
+ MODULES			= iprofd.o
+@@ -15,8 +15,8 @@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ CC				= @CC@
+--- isdn4k-utils-CVS-2003-09-23/isdnctrl/Makefile.in.redhat	2002-07-19 23:23:54.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/isdnctrl/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,8 +5,8 @@
+ #
+ #
+ SHELL			  = /bin/sh
+-CFLAGS			= -Wall -O2
+-INCLUDES		= -I.
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
++INCLUDES		= -I.
+ LDFLAGS			= @LIBS@ 
+ PROGRAM			= isdnctrl
+ MODULES			= isdnctrl.o
+@@ -15,8 +15,8 @@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ CC				= @CC@ -DVERSION=\"@I4LVERSION@\"
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+--- isdn4k-utils-CVS-2003-09-23/isdnlog/samples/callerid.conf.redhat	2000-09-08 10:55:51.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/isdnlog/samples/callerid.conf	2003-09-30 17:44:24.000000000 +0200
+@@ -2,38 +2,31 @@
+ # 
+ # More information: See the isdnlog documentation
+ 
++#INTERFACE = ippp0      # Isdn network interface. This information  is  required
++                        # with the "-hx" / hangup="value" option.
++
++
+ [MSN]
+ NUMBER = 4711
+ ALIAS  = Phone
+ SI     = 1
+ ZONE   = 1
+-START = {
+-  [FLAG]
+-  FLAGS = I|O|R|C|B|A|E|H
+-  PROGRAM = /bin/myprog \$1 \$2 \$3 Phone
+-}
++#START = {
++#  [FLAG]
++#  FLAGS = I|O|R|C|B|A|E|H
++#  PROGRAM = /bin/myprog \$1 \$2 \$3 Phone
++#}
+ 
+ [MSN]
+ NUMBER = 4711
+ ALIAS  = HDLC
+ SI     = 7
+ ZONE   = 1
+-START = {
+-  [FLAG]
+-  FLAGS = I|O|R|C|B|A|E|
+-  PROGRAM = /bin/myprog \$1 \$2 \$3 HDLC @/home/user1/parameter
+-}
+-
+-[MSN]
+-NUMBER = 4712
+-ALIAS  = Modem
+-SI     = 1
+-ZONE   = 1
+-START = {
+-  [FLAG]
+-  FLAGS = I|O|R|C|B|A|E|H
+-  PROGRAM = /bin/myprog \$1 \$2 \$3 Modem
+-}
++#START = {
++#  [FLAG]
++#  FLAGS = I|O|R|C|B|A|E|
++#  PROGRAM = /bin/myprog \$1 \$2 \$3 HDLC @/home/user1/parameter
++#}
+ 
+ [NUMBER]
+ NUMBER = 01910
+--- isdn4k-utils-CVS-2003-09-23/isdnlog/tools/cdb/Makefile.in.redhat	2000-08-15 17:16:23.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/isdnlog/tools/cdb/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -20,7 +20,7 @@
+ BINDIR:=$(DESTDIR)@prefix@/bin
+ INCDIR:=$(DESTDIR)@prefix@/include
+ 
+-CFLAGS:=-Wall -O2
++CFLAGS:=-Wall $(RPM_OPT_FLAGS)
+ 
+ all: depend $(FILES)
+ 
+@@ -46,7 +46,7 @@
+ 	install -d -m0755 $(MAN1DIR) $(MAN3DIR) $(LIBDIR) $(BINDIR) \
+ 		$(INCDIR)
+ 
+-install:
++install: install-dirs
+ 	install -m0755 $(BINS) $(BINDIR)
+ 	install -m0644 $(MAN1) $(MAN1DIR)
+ 	install -m0644 $(MAN3) $(MAN3DIR)
+--- isdn4k-utils-CVS-2003-09-23/isdnlog/tools/dest/Makefile.in.redhat	2003-07-25 23:23:15.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/isdnlog/tools/dest/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -6,7 +6,7 @@
+ -include ../../../.config
+ BZIP2			= @BZIP2@
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -g
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
+ INCLUDES		=
+ LDFLAGS			= @DBMLIB@
+ export DBEXT		= @DBEXT@
+@@ -20,9 +20,9 @@
+ SBINDIR			= @CONFIG_SBINDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM		= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
+-INSTALL_DATA		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM		= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
++INSTALL_DATA		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ DATADIR			= @datadir@
+--- isdn4k-utils-CVS-2003-09-23/isdnlog/tools/telrate/Makefile.in.redhat	1999-12-24 15:17:08.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/isdnlog/tools/telrate/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -8,8 +8,8 @@
+ CGIDIR		= @CGIDIR@
+ TELDIR		= @TELDIR@
+ INSTALL		= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0755
+-INSTALL_FILE	= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0755
++INSTALL_FILE	= $(INSTALL) -m 0644
+ 
+ FILES = index.html info.html *.jpg *.gif tt.js
+ 
+--- isdn4k-utils-CVS-2003-09-23/isdnlog/tools/zone/Makefile.in.redhat	2003-03-11 14:08:00.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/isdnlog/tools/zone/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,7 +5,7 @@
+ #
+ BZIP2			= @BZIP2@
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -g
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
+ INCLUDES		=
+ LDFLAGS			= @DBMLIB@
+ CDBEXTRALIBS		= @CDBEXTRALIBS@
+@@ -20,8 +20,8 @@
+ SBINDIR			= @CONFIG_SBINDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM		= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM		= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ #CC			= @CC@ -V2.7.2.3
+--- isdn4k-utils-CVS-2003-09-23/isdnlog/Makefile.in.redhat	2003-08-26 21:46:11.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/isdnlog/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -1542,10 +1542,10 @@
+ # autoconf isdnlog specific stuff
+ #
+ INSTALL			:= @INSTALL@
+-INSTALL_DIR		:= $(INSTALL) -m 0755 -o 0 -g 0 -d
+-INSTALL_SBIN		:= $(INSTALL) -m 0700 -o 0 -g 0
+-INSTALL_BIN		:= $(INSTALL) -m 0755 -o 0 -g 0
+-INSTALL_DATA		:= $(INSTALL) -m 0644 -o 0 -g 0
++INSTALL_DIR		:= $(INSTALL) -m 0755 -d
++INSTALL_SBIN		:= $(INSTALL) -m 0700
++INSTALL_BIN		:= $(INSTALL) -m 0755
++INSTALL_DATA		:= $(INSTALL) -m 0644
+ 
+ BZIP2                   := @BZIP2@
+ BUNZIP2                 := $(BZIP2) -f -d
+@@ -1600,9 +1600,9 @@
+ SUBDIRS     += $(LIBISDNDIR)
+ endif
+ 
+-# export CFLAGS  = -Wall -pipe -O6 -fomit-frame-pointer -fforce-mem -fforce-addr -funroll-loops -fstrength-reduce
++# export CFLAGS  = -Wall -pipe -frame-pointer -fforce-mem -fforce-addr -funroll-loops -fstrength-reduce
+ 
+-export CFLAGS  = -Wall -pipe
++export CFLAGS  = -Wall $(RPM_OPT_FLAGS)
+ ifndef _CC
+ export _CC  = gcc
+ endif
+@@ -1837,8 +1837,7 @@
+ 		echo ""; echo 'Do "make (un)install" as root!' ;echo ""; false; \
+ 	fi
+ 
+-uninstall: rootperm
+-		if ps x | fgrep $(ISDNLOG) >/dev/null; then kill `cat $(RUNDIR)/isdnlog.isdnctrl0.pid` 2>/dev/null; fi
++uninstall:
+ 		rm -f	$(DESTDIR)$(SBINDIR)/$(ISDNLOG) \
+ 			$(DESTDIR)$(BINDIR)/$(ISDNREP)	\
+ 			$(DESTDIR)$(BINDIR)/$(ISDNCONF)
+@@ -1859,7 +1858,7 @@
+ 			$(DESTDIR)$(DATADIR)/dest.cdb
+ 
+ 
+-installdirs: rootperm
++installdirs:
+ 		$(INSTALL_DIR) $(DESTDIR)$(I4LCONFDIR)
+ 		$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
+ 		$(INSTALL_DIR) $(DESTDIR)$(SBINDIR)
+@@ -1868,7 +1867,7 @@
+ 		$(INSTALL_DIR) $(DESTDIR)$(MAN8DIR)
+ 		$(INSTALL_DIR) $(DESTDIR)$(DATADIR)
+ 
+-install: all rootperm installdirs install-conf install-data install-progs
++install: all installdirs install-conf install-data install-progs
+ 
+ install-old-conf:
+ 		@if [ -n "$(DESTDIR)$(OLDCONFDIR)" -a "$(DESTDIR)$(OLDCONFDIR)" != '/' ] ; then \
+--- isdn4k-utils-CVS-2003-09-23/lib/Makefile.in.redhat	1999-12-12 18:22:36.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/lib/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -11,7 +11,7 @@
+ 	# Install as root with numeric Id's, since these are the
+ 	# only ones that _really_ exist on _every_ system.
+ 	#
+-	INSTALLOPTS += INSTALL= install -o 0 -g 0 -m 644
++	INSTALLOPTS += INSTALL= install -m 644
+ endif
+ 
+ all: .depend
+--- isdn4k-utils-CVS-2003-09-23/loop/Makefile.in.redhat	2002-07-19 21:03:56.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/loop/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,16 +5,16 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -O2
+-INCLUDES		= -I.
++CFLAGS			= -Wall $(RPM_OPT_FLAGS)
++INCLUDES		= -I.
+ DEFS			=
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAM			= loopctrl
+ MODULES			= loopctrl.o
+ MANPAGE			= loopctrl.8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM	= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM	= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ ifeq (../.config,$(wildcard ../.config))
+--- isdn4k-utils-CVS-2003-09-23/pcbit/Makefile.in.redhat	2002-07-19 21:03:57.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/pcbit/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -5,8 +5,8 @@
+ #
+ #
+ SHELL			= /bin/sh
+-CFLAGS			= -Wall -Wstrict-prototypes -O2 -g
+-INCLUDES		= -I. -DDEBUG 
++CFLAGS			= -Wall -Wstrict-prototypes $(RPM_OPT_FLAGS)
++INCLUDES		= -I. -DDEBUG
+ LDFLAGS			= -L../lib @LIBS@
+ PROGRAM			= pcbitctl
+ MODULES			= pcbitctl.o convhexbin.o
+@@ -15,8 +15,8 @@
+ MANDIR			= @CONFIG_MANDIR@
+ MAN8DIR			= $(MANDIR)/man8
+ INSTALL			= @INSTALL@
+-INSTALL_PROGRAM		= $(INSTALL) -o 0 -g 0 -m 0750
+-INSTALL_MAN		= $(INSTALL) -o 0 -g 0 -m 0644
++INSTALL_PROGRAM		= $(INSTALL) -m 0750
++INSTALL_MAN		= $(INSTALL) -m 0644
+ prefix			= @prefix@
+ exec_prefix		= @exec_prefix@
+ CC				= @CC@
+--- isdn4k-utils-CVS-2003-09-23/pppdcapiplugin/ppp-2.4.1/Makefile.redhat	2001-05-01 14:43:50.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/pppdcapiplugin/ppp-2.4.1/Makefile	2003-09-30 17:44:24.000000000 +0200
+@@ -8,7 +8,7 @@
+ #  as published by the Free Software Foundation; either version
+ #  2 of the License, or (at your option) any later version.
+ 
+-PLUGINDIR=${DESTDIR}/usr/lib/pppd/$(PPPVERSION)
++PLUGINDIR=${DESTDIR}/$(LIBDIR)/pppd/$(PPPVERSION)
+ 
+ include $(TOPDIR)/Rules.make
+ 
+--- isdn4k-utils-CVS-2003-09-23/rcapid/Makefile.am.redhat	2002-07-19 23:23:54.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/rcapid/Makefile.am	2003-09-30 17:44:24.000000000 +0200
+@@ -8,7 +8,7 @@
+ 			  stamp-h.in comperr
+ 
+ INCLUDES = -I../capi20 $(all_includes)
+-CFLAGS = -Wall -O2
++CFLAGS = -Wall $(RPM_OPT_FLAGS)
+ LDFLAGS = -L../capi20/.libs -L../capi20 $(all_libraries)
+ LDADD = -lcapi20
+ 
+--- isdn4k-utils-CVS-2003-09-23/vbox/examples/vboxd.conf.example.redhat	1997-04-28 18:51:29.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/vbox/examples/vboxd.conf.example	2003-09-30 17:44:24.000000000 +0200
+@@ -5,7 +5,7 @@
+ # login (server startup) time. If access is 'yes' the host can login
+ # and count messages without special access.
+ 
+-L:localhost:Y
++#L:localhost:Y
+ L:*:N
+ 
+ # Full access list
+@@ -13,7 +13,7 @@
+ # All hosts in the full access list (begins with 'A') are checked if the
+ # server gets the 'login' command.
+ 
+-A:localhost:RW:michael:xxx:/var/spool/vbox/michael:incoming
+-A:localhost:RW:nicole:xxx:/var/spool/vbox/nicole:incoming
++#A:localhost:RW:michael:xxx:/var/spool/vbox/michael:incoming
++#A:localhost:RW:nicole:xxx:/var/spool/vbox/nicole:incoming
+ 
+ A:*:!:!:!:!:!
+--- isdn4k-utils-CVS-2003-09-23/vbox/examples/vboxgetty.conf.example.redhat	1997-10-22 22:46:58.000000000 +0200
++++ isdn4k-utils-CVS-2003-09-23/vbox/examples/vboxgetty.conf.example	2003-09-30 17:44:24.000000000 +0200
+@@ -20,18 +20,18 @@
+ 
+ # Settings for port ttyI6
+ 
+-port /dev/ttyI6
+-  modeminit		ATZ&B512&E7830022
+-  user			nicole
+-  group			users
+-  spooldir		/var/spool/vbox/nicole
++#port /dev/ttyI6
++#  modeminit		ATZ&B512&E7830022
++#  user			nicole
++#  group			users
++#  spooldir		/var/spool/vbox/nicole
+ 
+ 
+ # Settings for port ttyI7
+ 
+-port /dev/ttyI7
+-  modeminit		ATZ&B512&E7850413
+-  user			michael
+-  group			users
+-  spooldir		/var/spool/vbox/michael
++#port /dev/ttyI7
++#  modeminit		ATZ&B512&E7850413
++#  user			michael
++#  group			users
++#  spooldir		/var/spool/vbox/michael
+ 
+--- isdn4k-utils-CVS-2003-09-23/vbox/Makefile.in.redhat	2002-01-31 21:05:40.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/vbox/Makefile.in	2003-09-30 17:44:24.000000000 +0200
+@@ -14,33 +14,33 @@
+ # [*] Program to install binaries to the sbin directory (eg vboxgetty):      #
+ #----------------------------------------------------------------------------#
+ 
+-INSTALL_SBIN	= @INSTALL@ -m 750 -o root -g root -s
++INSTALL_SBIN	= @INSTALL@ -m 750
+ 
+ #----------------------------------------------------------------------------#
+ # [*] Program to install binaries to the bin directory (eg vboxconvert):     #
+ #----------------------------------------------------------------------------#
+ 
+-INSTALL_BIN	= @INSTALL@ -m 755 -o root -g root -s
++INSTALL_BIN	= @INSTALL@ -m 755
+ 
+ #----------------------------------------------------------------------------#
+ # [*] Program to install bash scripts to the bin directory (eg vboxplay):    #
+ #----------------------------------------------------------------------------#
+ 
+-INSTALL_SHBIN	= @INSTALL@ -m 755 -o root -g root
++INSTALL_SHBIN	= @INSTALL@ -m 755
+ 
+ #----------------------------------------------------------------------------#
+ # [*] Program to install binaries to the bin directory and set the suid bit  #
+ #     (eg vboxbeep):                                                         #
+ #----------------------------------------------------------------------------#
+ 
+-INSTALL_UBIN	= @INSTALL@ -m 4755 -o root -g root -s
++INSTALL_UBIN	= @INSTALL@ -m 4755
+ 
+ #----------------------------------------------------------------------------#
+ # [*] Program to install configurations to sysconf directory                 #
+ #     (eg vboxgetty.conf):                                                   #
+ #----------------------------------------------------------------------------#
+ 
+-INSTALL_SYSCONF	= @INSTALL@ -m 640 -o root -g root
++INSTALL_SYSCONF	= @INSTALL@ -m 640
+ 
+ #----------------------------------------------------------------------------#
+ # [*] Program to create missing directories:                                 #
+--- isdn4k-utils-CVS-2003-09-23/xisdnload/Imakefile.redhat	1998-03-08 19:54:01.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/xisdnload/Imakefile	2003-09-30 17:44:24.000000000 +0200
+@@ -21,7 +21,7 @@
+            OBJS = xisdnload.o
+  OSMAJORVERSION = OSMajorVersion
+  OSMINORVERSION = OSMinorVersion
+-      DEFINES = -DOSMAJORVERSION=$(OSMAJORVERSION) -DOSMINORVERSION=$(OSMINORVERSION) -DREGEX_NUMBER
++      DEFINES = -D_GNU_SOURCE -DOSMAJORVERSION=$(OSMAJORVERSION) -DOSMINORVERSION=$(OSMINORVERSION) -DREGEX_NUMBER
+ 
+ AllTarget(xisdnload)
+ NormalProgramTarget(xisdnload,$(OBJS),$(DEPLIBS),$(LOCAL_LIBRARIES),NullParameter)
+--- isdn4k-utils-CVS-2003-09-23/.config.rpm.redhat	1998-11-23 13:12:04.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/.config.rpm	2003-09-30 17:59:55.000000000 +0200
+@@ -5,16 +5,16 @@
+ #
+ # Code maturity level options
+ #
+-CONFIG_EXPERIMENTAL=y
++# CONFIG_EXPERIMENTAL is not set
+ 
+ #
+ # General configuration
+ #
+ CONFIG_BUILDX11=y
+-CONFIG_KERNELDIR='/usr/src/linux'
++CONFIG_KERNELDIR='/usr/src/linux'
+ CONFIG_BINDIR='/usr/bin'
+-CONFIG_SBINDIR='/sbin'
+-CONFIG_MANDIR='/usr/man'
++CONFIG_SBINDIR='/usr/sbin'
++CONFIG_MANDIR='/usr/share/man'
+ CONFIG_RUNDIR='/var/run'
+ CONFIG_LOCKDIR='/var/lock'
+ CONFIG_LOCKFILE='LCK..'
+@@ -23,11 +23,9 @@
+ CONFIG_CALLERIDFILE='callerid.conf'
+ CONFIG_USERCONFFILE='~/.isdn'
+ CONFIG_COUNTRYCODE='49'
+-CONFIG_AREACODE=''
++CONFIG_AREACODE='9999'
+ CONFIG_COUNTRY_PREFIX='+'
+ CONFIG_AREA_PREFIX='0'
+-CONFIG_DATADIR='/usr/lib/isdn'
+-CONFIG_LIB_AREACODE=y
+ 
+ #
+ # Runtime configuration tools
+@@ -36,18 +34,20 @@
+ CONFIG_ISDNCTRL_CONF=y
+ CONFIG_ISDNCTRL_TIMRU=y
+ CONFIG_IPROFD=y
++CONFIG_DIVERTCTRL=y
+ 
+ #
+ # Card configuration tools
+ #
+-# CONFIG_TELESCTRL is not set
++CONFIG_TELESCTRL=y
+ CONFIG_HISAXCTRL=y
+ CONFIG_ICNCTRL=y
+ # CONFIG_ICNCTRL_DEBUG is not set
+ CONFIG_PCBITCTL=y
+ CONFIG_AVMCAPICTRL=y
++CONFIG_EICONCTRL=y
+ CONFIG_LOOPCTRL=y
+-CONFIG_LOOPCTRL_LOOPDIR='/usr/src/linux/drivers/isdn/isdnloop'
++CONFIG_LOOPCTRL_LOOPDIR='/usr/src/linux-2.4/drivers/isdn/isdnloop'
+ # CONFIG_LOOPCTRL_DEBUG is not set
+ 
+ #
+@@ -64,14 +64,20 @@
+ CONFIG_ISDNLOG_USERFILE='isdnlog.users'
+ CONFIG_ISDNLOG_CHARGEFILE='charge.dat'
+ CONFIG_ISDNLOG_LOGFILE='/var/log/isdn.log'
+-CONFIG_ISDNLOG_RELOADCMD='reload'
+-CONFIG_ISDNLOG_STOPCMD='stop'
++CONFIG_ISDNLOG_RELOADCMD='/etc/rc.d/init.d/isdn restart'
++CONFIG_ISDNLOG_STOPCMD='/etc/rc.d/init.d/isdn stop'
+ CONFIG_ISDNLOG_REBOOTCMD='/sbin/reboot'
+ CONFIG_ISDNLOG_OLDI4LCONFDIR='/etc/isdnlog'
+ CONFIG_ISDNLOG_OLDI4LCONFFILE='isdnlog.conf'
+ # CONFIG_ISDNLOG_POSTGRES is not set
+ # CONFIG_ISDNLOG_MYSQLDB is not set
++# CONFIG_ISDNLOG_ORACLE is not set
+ CONFIG_ISDN_LOG_DE=y
++CONFIG_ISDN_LOG_CC_DE=y
++CONFIG_ISDN_LOG_DEST_DE=y
++# CONFIG_ISDN_LOG_DEST_AT is not set
++# CONFIG_ISDN_LOG_DEST_NL is not set
++# CONFIG_ISDN_LOG_DEST_CH is not set
+ CONFIG_IPPPSTATS=y
+ CONFIG_XISDNLOAD=y
+ CONFIG_XMONISDN=y
+@@ -79,8 +85,8 @@
+ #
+ # Options for xmonisdn
+ #
+-CONFIG_XMONISDN_UPCMD='/sbin/netup'
+-CONFIG_XMONISDN_DOWNCMD='/sbin/netdown'
++CONFIG_XMONISDN_UPCMD='/sbin/ifup'
++CONFIG_XMONISDN_DOWNCMD='/sbin/ifdown'
+ 
+ #
+ # Applications
+@@ -94,23 +100,22 @@
+ VBOX_LOGDIR='/var/log/vbox'
+ VBOX_PIDDIR='/var/run'
+ VBOX_LOCKDIR='/var/lock'
+-VBOX_DOCDIR='/usr/doc/vbox'
+-VBOX_TCL='tcl8.0'
++VBOX_DOCDIR='/usr/share/doc/vbox'
++VBOX_TCL='tcl8.3'
++# VBOX_SUSPEND_ID is not set
+ CONFIG_IPPPD=y
+ 
+ #
+ # Options for ipppd
+ #
+-CONFIG_IPPPD_MSCHAP=y
++# CONFIG_IPPPD_MSCHAP is not set
++CONFIG_IPPP_FILTER=y
+ # CONFIG_IPPPD_RADIUS is not set
+ # CONFIG_RADIUS_WTMP_LOGGING is not set
+ RADIUS_CLIENT_CONFIG_FILE=''
+ CONFIG_CAPIFAX=y
+ CONFIG_RCAPID=y
+ 
+-#
+-# Documentation
+-#
+-CONFIG_GENMAN=y
+-CONFIG_FAQ=y
+-CONFIG_FAQDIR='/usr/doc/faq/isdn4linux'
++# CAPI plugins
++CONFIG_PPPDCAPIPLUGIN=y
++
+--- isdn4k-utils-CVS-2003-09-23/ipppd/ccp.c.redhat	2000-11-12 17:06:42.000000000 +0100
++++ isdn4k-utils-CVS-2003-09-23/ipppd/ccp.c	2004-01-20 19:14:07.000000000 +0100
+@@ -41,7 +41,7 @@
+ 
+ #include "compressions.h"
+ 
+-#if 0
++#if HAVE_LZSCOMP_H
+ #include <linux/isdn_lzscomp.h>
+ #else
+ #include "../ipppcomp/isdn_lzscomp.h"
+--- isdn4k-utils-CVS-2004-11-18/pppdcapiplugin/Makefile.redhat	2004-02-14 16:02:46.000000000 +0100
++++ isdn4k-utils-CVS-2004-11-18/pppdcapiplugin/Makefile	2004-11-18 16:48:54.848276370 +0100
+@@ -12,13 +12,13 @@
+ export CAPIINC=$(TOPDIR)/../capi20
+ export CAPILIB=$(TOPDIR)/../capi20
+ export INSTALL=$(TOPDIR)/install-sh -c
+-export INSTALLDATA=$(TOPDIR)/install-sh -c -o root -m 600
++export INSTALLDATA=$(TOPDIR)/install-sh -c -m 600
+ export MKDIR=$(TOPDIR)/mkinstalldirs
+ 
+ PPPSRCDIRS=/src/isdn/pppd
+ 
+ ifeq ($(PPPVERSIONS),)
+-PPPVERSIONS = 2.3.11 2.4.0 2.4.1 2.4.1b1 2.4.1b2 2.4.2b3 2.4.2 2.4.3
++PPPVERSIONS = 2.4.3
+ endif
+ 
+ PEERDIR=${DESTDIR}/etc/ppp/peers/isdn
+@@ -62,7 +62,7 @@
+ 	done
+ 
+ install-man:
+-	for i in ${DESTDIR}/usr/share/man ${DESTDIR}/usr/man; do \
++	for i in ${DESTDIR}/usr/share/man ; do \
+ 		if [ -d $$i/man8 ] ; then \
+ 			echo $(INSTALLDATA) capiplugin.8 $$i/man8; \
+ 			$(INSTALLDATA) capiplugin.8 $$i/man8; \
+--- isdn4k-utils-CVS-2004-11-18/Makefile.redhat	2004-08-30 16:06:42.000000000 +0200
++++ isdn4k-utils-CVS-2004-11-18/Makefile	2004-12-01 22:19:13.193347501 +0100
+@@ -16,8 +16,8 @@
+ # Following line is important for lib and isdnlog (sl).
+ export ROOTDIR=$(shell pwd)
+ 
+-ifeq (.config,$(wildcard .config))
+-include .config
++ifeq (.config.h,$(wildcard .config.h))
++include .config.h
+ do-it-all:      subtargets
+ else
+ CONFIGURATION = config
+@@ -130,16 +130,10 @@
+ 		exit 1; \
+ 	fi
+ 
+-install: rootperm
++install:
+ 	set -e; for i in `echo $(SUBDIRS)`; do $(MAKE) -C $$i install; done
+-	@if [ -c $(DESTDIR)/dev/isdnctrl0 ] && ls -l $(DESTDIR)/dev/isdnctrl0 | egrep "[[:space:]]45,[[:space:]]+64[[:space:]]" > /dev/null; \
+-	then \
+-		/bin/echo -e '(some) ISDN devices already exist, not creating them.\nUse scripts/makedev.sh manually if necessary.'; \
+-	else \
+-		sh scripts/makedev.sh $(DESTDIR) ; \
+-	fi
+ 
+-uninstall: rootperm
++uninstall:
+ 	set -e; for i in `echo $(SUBDIRS)`; do $(MAKE) -C $$i uninstall; done
+ 
+ #
+@@ -202,7 +196,7 @@
+ 	@set -e; for i in `echo $(BUILD_ONLY) $(SUBDIRS)`; do \
+ 		if [ -x $$i/configure ] ; then \
+ 			/bin/echo -e "\nRunning configure in $$i ...\n"; sleep 1; \
+-			(cd $$i; ./configure --sbindir=$(CONFIG_SBINDIR) --bindir=$(CONFIG_BINDIR) --mandir=$(CONFIG_MANDIR) --datadir=$(CONFIG_DATADIR) || $(MAKE) -C ../ ERRDIR=$$i cfgerror); \
++			(cd $$i; ./configure --sbindir=$(CONFIG_SBINDIR) --bindir=$(CONFIG_BINDIR) --mandir=$(CONFIG_MANDIR) --libdir=$(LIBDIR) --datadir=$(CONFIG_DATADIR) --enable-ippp-filter || $(MAKE) -C ../ ERRDIR=$$i cfgerror); \
+ 		elif [ -f $$i/Makefile.in ] ; then \
+ 			/bin/echo -e "\nRunning make -f Makefile.in config in $$i ...\n"; sleep 1; \
+ 			$(MAKE) -C $$i -f Makefile.in config; \
+--- isdn4k-utils-CVS-2005-02-16/ipppd/Makefile.in.redhat	2004-08-30 16:56:36.000000000 +0200
++++ isdn4k-utils-CVS-2005-02-16/ipppd/Makefile.in	2005-02-16 18:42:54.119955183 +0100
+@@ -15,10 +15,10 @@
+ MANDIR        := @CONFIG_MANDIR@
+ CC            := @CC@
+ INSTALL       := @INSTALL@
+-INSTALL_DIR   := $(INSTALL) -m 0755 -o 0 -g 0 -d
+-INSTALL_SBIN  := $(INSTALL) -m 0700 -o 0 -g 0
+-INSTALL_BIN   := $(INSTALL) -m 0755 -o 0 -g 0
+-INSTALL_DATA  := $(INSTALL) -m 0644 -o 0 -g 0
++INSTALL_DIR   := $(INSTALL) -m 0755 -d
++INSTALL_SBIN  := $(INSTALL) -m 0700 
++INSTALL_BIN   := $(INSTALL) -m 0755
++INSTALL_DATA  := $(INSTALL) -m 0644
+ RADIUS_CLIENT_CONFIG_FILE := @RADIUS_CLIENT_CONFIG_FILE@
+ 
+ ifeq (@CONFIG_IPPPD_MSCHAP@,y)
+@@ -73,7 +73,7 @@
+ 
+ DEBUG_FLAGS   = @CONFIG_IPPPD_DEBUGFLAGS@
+ COMPILE_FLAGS = 
+-CFLAGS        = -O2 -fomit-frame-pointer -Wall
++CFLAGS        = $(RPM_OPT_FLAGS)
+ VER           = 2.2.0
+ 
+ # it's a hack
+--- isdn4k-utils-CVS-2005-02-16/isdnlog/tools/Makefile.cflags	2005-02-16 18:53:15.393382578 +0100
++++ isdn4k-utils-CVS-2005-02-16/isdnlog/tools/Makefile	2005-02-16 18:53:51.914999474 +0100
+@@ -1,4 +1,4 @@
+-CC=gcc -m486 -O2 -Wall -DSTANDALONE -I. -I.. -I../isdnlog -I../connect -I../../lib
++CC=gcc $(RPM_OPT_FLAGS) -DSTANDALONE -I. -I.. -I../isdnlog -I../connect -I../../lib
+ #CC=gcc -m486 -O2 -g -pg -Wall -DSTANDALONE -I. -I.. -I../isdnlog
+ 
+ all: rate-at
+--- isdn4k-utils-CVS-2005-02-16/lib/Makefile.cflags	2005-02-16 19:04:04.338731270 +0100
++++ isdn4k-utils-CVS-2005-02-16/lib/Makefile	2005-02-16 19:04:24.150811068 +0100
+@@ -28,7 +28,7 @@
+ # USER CONFIGURATION AREA
+ ######################################################################
+ 
+-CFLAGS      = -g -Wall -pipe #-O6
++CFLAGS      = $(RPM_OPT_FLAGS)
+ DEFS        =
+ ifndef _CC
+ export _CC  = gcc

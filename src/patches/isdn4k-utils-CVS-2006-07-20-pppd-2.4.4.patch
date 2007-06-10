@@ -1,0 +1,11 @@
+--- isdn4k-utils-CVS-2006-07-20/pppdcapiplugin/Makefile.me	2006-07-19 16:43:45.000000000 +0200
++++ isdn4k-utils-CVS-2006-07-20/pppdcapiplugin/Makefile	2006-07-19 16:43:59.000000000 +0200
+@@ -18,7 +18,7 @@
+ PPPSRCDIRS=/src/isdn/pppd
+ 
+ ifeq ($(PPPVERSIONS),)
+-PPPVERSIONS = 2.4.3
++PPPVERSIONS = 2.4.3 2.4.4
+ endif
+ 
+ PEERDIR=${DESTDIR}/etc/ppp/peers/isdn
