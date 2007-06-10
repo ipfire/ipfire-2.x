@@ -49,7 +49,8 @@ my @nosaved=();
 our $OptionTypes = 'boolean|((un)?signed )?integer (8|16|32)|ip-address|text|string|encapsulate \w+|array of ip-address';
 
 &Header::showhttpheaders();
-our @ITFs=('GREEN','BLUE');
+our @ITFs=('GREEN');
+if (&Header::blue_used()){push(@ITFs,'BLUE');}
 
 #Settings1 for the first screen box
 foreach my $itf (@ITFs) {
