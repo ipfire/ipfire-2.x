@@ -78,7 +78,6 @@
 * fcdslsl-suse93-3.11-07
 * fcdslslusb-suse93-3.11-05
 * fcdslusb-suse93-3.11-07
-* fcpci-suse93-3.11-07
 * fcron-3.0.1
 * fetchmail-6.3.4
 * file-4.17
@@ -109,7 +108,7 @@
 * httpd-2.2.2
 * hwdata
 * iana-etc-2.10
-* ibod
+* ibod-1.4
 * iftop-0.17
 * inetutils-1.4.2
 * ipac-ng-1.31

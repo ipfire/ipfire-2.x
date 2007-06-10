@@ -75,6 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make MISDNDIR=/usr/src/linux
 	cd $(DIR_APP) && make install MISDNDIR=/usr/src/linux
 	-mkdir -p /usr/lib/mISDN
-	cd $(DIR_APP) && cp config/*.xsl /usr/lib/mISDN
-	@rm -rf $(DIR_APP)
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/mISDN-$(VER).tar.gz
+	cd $(DIR_SRC)/mISDN-$(VER) && cp -v config/*.xsl /usr/lib/mISDN
+	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)

@@ -70,11 +70,11 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@-mkdir -p $(DIR_APP)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C $(DIR_APP)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && mkdir -p $(DIR_APP) && tar zxf $(DIR_DL)/$(DL_FILE) -C $(DIR_APP)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ibod-config.patch
 	cd $(DIR_APP) && gcc $(CFLAGS) ibod.c -o ibod
-	cd $(DIR_APP) && install -m 0644 ibod.cf /etc/isdn
+	-mkdir /etc/isdn
+	cd $(DIR_APP) && install -m 0644 ibod.cf /etc/isdn/
 	cd $(DIR_APP) && install -m 0755 ibod /usr/sbin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -11,7 +11,7 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	restartsyslogd logwatch openvpnctrl outgoingfwctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
 	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
-	smartctrl clamavctrl
+	smartctrl clamavctrl pakfire
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -117,3 +117,6 @@ ipsecctrl: ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 getipstat: getipstat.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ getipstat.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+pakfire: pakfire.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ pakfire.c setuid.o ../install+setup/libsmooth/varval.o -o $@

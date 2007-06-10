@@ -12,7 +12,7 @@ usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
 usr/local/bin/monitorTraff
-usr/local/bin/snortctrl
+usr/local/bin/pakfire
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd
 usr/local/bin/restartwireless
@@ -23,6 +23,7 @@ usr/local/bin/setfilters
 usr/local/bin/setportfw
 usr/local/bin/setxtaccess
 usr/local/bin/smartctrl
+usr/local/bin/snortctrl
 usr/local/bin/squidctrl
 usr/local/bin/timectrl
 usr/local/bin/upnpctrl
