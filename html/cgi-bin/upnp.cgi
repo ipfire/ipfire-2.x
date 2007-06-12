@@ -79,7 +79,7 @@ xml_document_path = $upnpsettings{'XML'}
 END
 ;
 	close FILE;
-	system("/usr/local/bin/upnpctrl upnpxml $upnpsettings{'XML'} $upnpsettings{'DESCRIPTION'} $upnpsettings{'manufacturer'}");
+	system("/usr/local/bin/upnpctrl","upnpxml","$upnpsettings{'friendlyName'}","$upnpsettings{'XML'}","$upnpsettings{'DESCRIPTION'}");
 	}
 elsif ($upnpsettings{'ACTION'} eq 'Start')
 	{

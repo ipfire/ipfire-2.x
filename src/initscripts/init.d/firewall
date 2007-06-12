@@ -248,9 +248,6 @@ case "$1" in
 		/sbin/iptables -t nat -A POSTROUTING -m mark --mark 3 -j SNAT --to-source $ORANGE_ADDRESS
 	fi
 
-	# run openvpn
-	/usr/local/bin/openvpnctrl --create-chains-and-rules
-
 	# run local firewall configuration, if present
  	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local start
@@ -259,6 +256,10 @@ case "$1" in
 	# last rule in input and forward chain is for logging.
 	/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "INPUT "
 	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "OUTPUT "
+        ;;
+  startovpn)  
+	# run openvpn
+	/usr/local/bin/openvpnctrl --create-chains-and-rules
         ;;
   stop)
 	iptables_init
@@ -278,9 +279,6 @@ case "$1" in
 		/sbin/iptables -A INPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 	fi
 
-	# stop openvpn
-	/usr/local/bin/openvpnctrl --delete-chains-and-rules
-
 	# run local firewall configuration, if present
  	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local stop
@@ -288,6 +286,10 @@ case "$1" in
 
 	/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "INPUT "
 	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "OUTPUT "
+        ;;
+  stopovpn)
+	# stop openvpn
+	/usr/local/bin/openvpnctrl --delete-chains-and-rules
         ;;
   reload)
 	iptables_red

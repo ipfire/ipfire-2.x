@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[1], "upnpxml")==0)
         {
-            snprintf(command, BUFFER_SIZE-1, "sed 's/<friendlyName>.*<\/friendlyName>/<friendlyName>%s<\/friendlyName>/gi' %s/%s > tmp && mv tmp %s/%s", argv[2], argv[3], argv[4], argv[3], argv[4]);
+            snprintf(command, BUFFER_SIZE-1, "sed 's/\<friendlyName\>.*\<\/friendlyName\>/\<friendlyName\>%s\<\/friendlyName\>/gi' %s/%s > tmp && mv tmp %s/%s", argv[2], argv[3], argv[4], argv[3], argv[4]);
             safe_system(command);
             printf(command);
             return 0;
