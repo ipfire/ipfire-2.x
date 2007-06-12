@@ -136,7 +136,7 @@ int handlenetworking(void)
 				ctr[TR_PULLING_NETWORK_UP]);
 		}
 	}
-	
+	create_udev();
 	return 1;
 }
 

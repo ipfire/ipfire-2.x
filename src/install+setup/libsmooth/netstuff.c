@@ -366,17 +366,36 @@ void strupper(unsigned char *string)
 }
 */
 
-int write_configs_netudev(int card , int colour)
-{	
+
+int create_udev(void)
+{
 	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
 	FILE *fp;
+	int i;
+
+	fprintf(flog,"Enter create_udev: "UDEV_NET_CONF"\n"); // #### Debug ####
+	if ( (fp = fopen(UDEV_NET_CONF, "w")) == NULL ) {
+		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
+		return 1;
+	}
+
+	for (i = 0 ; i < 4 ; i++)
+	{
+		if (strcmp(knics[i].macaddr, "")) {
+			fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", knics[i].macaddr, lcolourcard[i], knics[i].description);
+			fprintf(flog,"Write %s\n",lcolourcard[i]); // #### Debug ####
+		}
+	}
+	fclose(fp);
+	return 0;
+}
+
+int write_configs_netudev(int card , int colour)
+{	
 	char commandstring[STRING_SIZE];
 	struct keyvalue *kv = initkeyvalues();
 	char temp1[STRING_SIZE], temp2[STRING_SIZE], temp3[STRING_SIZE];
 	char ucolour[STRING_SIZE];
-
-//	sprintf(ucolour, colour);	
-//	strupper(ucolour);
 
 	sprintf(ucolour, ucolourcard[colour]);
 	strcpy(knics[colour].driver, nics[card].driver);
@@ -402,24 +421,6 @@ int write_configs_netudev(int card , int colour)
 
 	writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 	freekeyvalues(kv);
-	
-	// Make sure that there is no conflict
-	snprintf(commandstring, STRING_SIZE, "/usr/bin/touch "UDEV_NET_CONF" >/dev/null 2>&1");
-	system(commandstring);
-	
-//	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s\" > "UDEV_NET_CONF" 2>/dev/null", macaddr);
-//	system(commandstring);
-
-	snprintf(commandstring, STRING_SIZE, "/bin/cat "UDEV_NET_CONF" | /bin/grep -v \"%s0\" > "UDEV_NET_CONF" 2>/dev/null", lcolourcard[colour]);
-	system(commandstring);
-
-	if( (fp = fopen(UDEV_NET_CONF, "a")) == NULL )
-	{
-		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
-		return 1;
-	}
-	fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", nics[card].macaddr, lcolourcard[colour], nics[card].description);
-	fclose(fp);	
 	
 	return 0;
 }
@@ -497,12 +498,7 @@ int nicmenu(int colour)
 				if ( strlen(nics[i].description) < 55 ) 
 					sprintf(MenuInhalt[mcount], "%.*s",  strlen(nics[i].description)-2, nics[i].description+1);
 				else {
-					fprintf(flog,"Modify string 4 display.\n");	// #### Debug ####
 					sprintf(cMenuInhalt, "%.50s", nics[i].description + 1);
-					fprintf(flog,"1: %s\n");	// #### Debug ####
-//					strncpy(MenuInhalt[mcount], cMenuInhalt,(strrchr(cMenuInhalt,' ') - cMenuInhalt));
-//					sprintf(MenuInhalt[mcount], "%.*s", strlen(strrchr(cMenuInhalt,' ')), cMenuInhalt);
-					strrchr(cMenuInhalt,' ');
 					sprintf(MenuInhalt[mcount], cMenuInhalt);
 					strcat (MenuInhalt[mcount], "...");
 				}
