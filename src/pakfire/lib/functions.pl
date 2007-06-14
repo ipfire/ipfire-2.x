@@ -5,6 +5,7 @@ require "/opt/pakfire/etc/pakfire.conf";
 use File::Basename;
 use File::Copy;
 use LWP::UserAgent;
+use HTTP::Response;
 use Net::Ping;
 
 package Pakfire;
@@ -35,64 +36,54 @@ sub pinghost {
 }
 
 sub fetchfile {
-	my $file = shift;
-	my $host = shift;
-	my (@server, $proto);
+	my $getfile = shift;
+	my $gethost = shift;
+	my (@server, $host, $proto, $file, $allok, $i);
 	
 	use File::Basename;
-	
-	if ("$host" eq "") {
-		@server = selectmirror();
-		$proto = $server[0];
-		$host = $server[1];
-		$file = "$server[2]/$file";
-	}
-	
-	logger("Trying to get $file from $host ($proto).");
+	$bfile = basename("$getfile");
 
-	$bfile = basename("$file");
-	
-	my $ua = LWP::UserAgent->new;
-	$ua->agent("Pakfire/$Conf::version");
-	#$ua->timeout(5);
-	#$ua->env_proxy;
- 
-	my $response = $ua->get("http://$host/$file");
-	if ($response->is_success) {
-		if (open(FILE, ">$Conf::cachedir/$bfile")) {
-			print FILE $response->content;
-			close(FILE);
+	$i = 0;	
+	while (($allok == 0) && $i < 5) {
+		$i++;
+		
+		if ("$gethost" eq "") {
+			@server = selectmirror();
+			$proto = $server[0];
+			$host = $server[1];
+			$file = "$server[2]/$getfile";
 		} else {
-			message("Could not open $Conf::cachedir/$bfile for writing.");
+			$host = $gethost;
 		}
-		logger("$host sends file: $file.");
-		return 1;
-	}
-	else {
-		my $log = $response->status_line;
-		logger("$log");
-		return 0;
-	}
-}
+		
+		$proto = "HTTP" unless $proto;
+		
+		logger("Trying to get $file from $host ($proto).");
 
-sub testhost {
-	my $host = shift;
- 
-	my $ua = LWP::UserAgent->new;
-	$ua->agent('Pakfire/2.1');
-	$ua->timeout(5);
-	# $ua->env_proxy;
- 
-	my $response = $ua->get("http://$host/dummy");
-	if ($response->is_success) {
-		logger("$host answers my request.");
-		return 1;
+		my $ua = LWP::UserAgent->new;
+		$ua->agent("Pakfire/$Conf::version");
+		#$ua->timeout(5);
+		#$ua->env_proxy;
+	 
+		my $response = $ua->get("http://$host/$file");
+		
+		if ($response->is_success) {
+			logger("$host sends file: $file.");
+			if (open(FILE, ">$Conf::cachedir/$bfile")) {
+				print FILE $response->content;
+				close(FILE);
+				$allok = 1;
+				return 0;
+			} else {
+				logger("Could not open $Conf::cachedir/$bfile for writing.");
+			}
+		}	else {
+			my $log = $response->status_line;
+			logger("Download $file failed from $host ($proto): $log");
+		}
 	}
-	else {
-		my $log = $response->status_line;
-		logger("Server does not work properly: $log");
-		return 0;
-	}
+	message("Giving up: There was no chance to get the file \"$getfile\" from any available server.\nMay be you should run \"pakfire update\" to get some new servers.");
+	return 1;
 }
 
 sub getmirrors {
@@ -149,7 +140,7 @@ sub selectmirror {
 				}
 			}
 		}
-	}	
+	}
 }
 
 sub dbgetlist {
@@ -386,6 +377,7 @@ sub setuppak {
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
+	  copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
 		message("Setup completed. Congratulations!");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");

@@ -9,6 +9,7 @@ usr/bin/testlayer3
 usr/bin/testlib
 usr/bin/tstlib
 usr/bin/voipisdn
+#usr/include/mISDNuser
 #usr/include/mISDNuser/asn1.h
 #usr/include/mISDNuser/asn1_diversion.h
 #usr/include/mISDNuser/bchannel.h
@@ -35,3 +36,11 @@ usr/lib/libmISDN.so
 #usr/lib/libsuppserv.a
 usr/lib/libsuppserv.so
 #usr/lib/libsuppserv_pic.a
+#usr/lib/mISDN
+usr/lib/mISDN/mISDN.conf.bnx.xsl
+usr/lib/mISDN/mISDN.conf.hfcmulti.xsl
+usr/lib/mISDN/mISDN.conf.inc.xsl
+usr/lib/mISDN/mISDN.conf.l1oip.xsl
+usr/lib/mISDN/mISDN.conf.mISDN_dsp.xsl
+usr/lib/mISDN/mISDN.conf.singlepci.xsl
+usr/lib/mISDN/mISDN.conf.xsl

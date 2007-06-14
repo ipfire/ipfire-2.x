@@ -73,11 +73,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	rm -rf /home/nobody/.gnupg /root/.gnupg
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-minimal --disable-nls \
-		--disable-dns-srv --disable-dns-pka --disable-dns-cert
+	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/lib --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	gpg --import $(DIR_SRC)/config/cfgroot/ipfire.gpg
-	gpg --import $(DIR_SRC)/config/cfgroot/cacert.asc
+	chmod -v 4755 /usr/bin/gpg
+	#gpg --import $(DIR_SRC)/config/cfgroot/ipfire.gpg
+	#gpg --import $(DIR_SRC)/config/cfgroot/cacert.asc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
