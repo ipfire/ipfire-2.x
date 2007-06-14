@@ -334,7 +334,7 @@ $total_orange_out=sprintf("%.2f", ($total_orange_out/1048576));
 $total_red_in=sprintf("%.2f", ($total_red_in/1048576));
 $total_red_out=sprintf("%.2f", ($total_red_out/1048576));
 
-if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>"; }
+if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>"; }
 else {print "<tr bgcolor='$color{'color22'}'>"; }
 
 print <<END;

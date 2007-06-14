@@ -118,13 +118,12 @@ case "${DO}" in
 				else
 					name=red /etc/rc.d/init.d/net/ifup
 				fi
+			boot_mesg "Setting OpenVPN Rules if enabled"
+			/etc/rc.d/init.d/firewall startovpn; evaluate_retval
 			fi
 		fi
 		
-			boot_mesg "Setting OpenVPN Rules if enabled"
-			/etc/rc.d/init.d/firewall startovpn; evaluate_retval
-      
-			boot_mesg "Starting SNORT if enabled"
+			boot_mesg "Starting Snort if enabled"
 			/etc/rc.d/init.d/snort start; evaluate_retval						
 		;;
 
@@ -153,13 +152,12 @@ case "${DO}" in
 		if [ "$red" == "1" ]; then
 			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 				name=red /etc/rc.d/init.d/net/ifdown
+			  boot_mesg "Deleting OpenVPN Rules if enabled"
+			  /etc/rc.d/init.d/firewall stopovpn; evaluate_retval	
 			fi
 		fi
 		
-			boot_mesg "Deleting OpenVPN Rules if enabled"
-			/etc/rc.d/init.d/firewall stopovpn; evaluate_retval	
-			
-			boot_mesg "Starting SNORT if enabled"
+			boot_mesg "Stopping Snort if enabled"
 			/etc/rc.d/init.d/snort stop; evaluate_retval		
 		;;
 

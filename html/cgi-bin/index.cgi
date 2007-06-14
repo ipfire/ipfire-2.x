@@ -23,7 +23,7 @@ my %modemsettings=();
 my %netsettings=();
 my %ddnssettings=();
 my $warnmessage = '';
-my $refresh = "<meta http-equiv='refresh' content='180;'>";
+my $refresh = "";
 my $ipaddr='';
 
 &Header::showhttpheaders();
@@ -169,9 +169,10 @@ print <<END;
 	<th bgcolor='$color{'color20'}'>IP
 	<th bgcolor='$color{'color20'}'>$Lang::tr{'status'}
   <tr>	<td bgcolor='$Header::colourred' width='25%'><a href="/cgi-bin/pppsetup.cgi"><font size='2' color='white'><b>$Lang::tr{'internet'}:</b></font></a><br>
-	<td width='30%'>$ipaddr 
-	<td width='45%'>$connstate
+	<td width='30%' align='center'>$ipaddr 
+	<td width='45%' align='center'>$connstate
 END
+if ( $netsettings{'RED_TYPE'} ne "STATIC" && $netsettings{'RED_TYPE'} ne "DHCP" ){
 print `/usr/local/bin/dialctrl.pl show`;
 print <<END;
 	<tr><td colspan='2'>
@@ -205,11 +206,11 @@ END
 	} else {
 	print "$Lang::tr{'profile has errors'}\n </b></font>\n";
 	}
-
+}
 	my $HOSTNAME = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
 	if ( "$HOSTNAME" ne "" ) {
 		print <<END;
-	<tr><td><b>Hostname:</b><td>$HOSTNAME<td>&nbsp;
+	<tr><td><b>Hostname:</b><td align='center'>$HOSTNAME<td>&nbsp;
 END
 	}
 
@@ -217,7 +218,7 @@ END
 		my $GATEWAY = `cat /var/ipfire/red/remote-ipaddress`;
 		chomp($GATEWAY);
 		print <<END;
-	<tr><td><b>Gateway:</b><td>$GATEWAY<td>&nbsp;
+	<tr><td><b>Gateway:</b><td align='center'>$GATEWAY<td>&nbsp;
 END
 	}
 
@@ -227,11 +228,11 @@ END
 	chomp($DNS1);
 
 	if ( $DNS1 ) { print <<END;
-	<tr><td><b>DNS-Server:</b><td>$DNS1
+	<tr><td><b>DNS-Server:</b><td align='center'>$DNS1
 END
 	}
 	if ( $DNS2 ) { print <<END;
-	<td>$DNS2
+	<td align='center'>$DNS2
 END
 	} else { print <<END;
 	<td>&nbsp;
@@ -240,8 +241,8 @@ END
 
 	if ( $netsettings{'GREEN_DEV'} ) { print <<END;
 		<tr><td bgcolor='$Header::colourgreen' width='25%'><a href="/cgi-bin/dhcp.cgi"><font size='2' color='white'><b>$Lang::tr{'lan'}:</b></font></a>
-	  	<td width='30%'>$netsettings{'GREEN_ADDRESS'}
-  		<td width='45%'>
+	  	<td width='30%' align='center'>$netsettings{'GREEN_ADDRESS'}
+  		<td width='45%' align='center'>
 END
 		if ( `cat /var/ipfire/proxy/advanced/settings | grep ^ENABLE=on` ) { 
 			print "Proxy an"; 
@@ -250,8 +251,8 @@ END
 	}
 	if ( $netsettings{'BLUE_DEV'} ) { print <<END;
 		<tr><td bgcolor='$Header::colourblue' width='25%'><a href="/cgi-bin/wireless.cgi"><font size='2' color='white'><b>$Lang::tr{'wireless'}:</b></font></a><br>
-	  	<td width='30%'>$netsettings{'BLUE_ADDRESS'}
-  		<td width='45%'>
+	  	<td width='30%' align='center'>$netsettings{'BLUE_ADDRESS'}
+  		<td width='45%' align='center'>
 END
 		if ( `cat /var/ipfire/proxy/advanced/settings | grep ^ENABLE_BLUE=on` ) { 
 			print "Proxy an"; 
@@ -260,8 +261,8 @@ END
 	}
 	if ( $netsettings{'ORANGE_DEV'} ) { print <<END;
 		<tr><td bgcolor='$Header::colourorange' width='25%'><a href="/cgi-bin/dmzholes.cgi"><font size='2' color='white'><b>$Lang::tr{'dmz'}:</b></font></a><br>
-	  	<td width='30%'>$netsettings{'ORANGE_ADDRESS'}
-  		<td width='45%'><font color=$Header::colourgreen>Online</font>
+	  	<td width='30%' align='center'>$netsettings{'ORANGE_ADDRESS'}
+  		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
 END
 	}
 	if ( `cat /var/ipfire/vpn/settings | grep ^ENABLED=on` ||
@@ -272,8 +273,8 @@ END
 		&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 		print <<END;
 		<tr><td bgcolor='$Header::colourvpn' width='25%'><a href="/cgi-bin/vpnmain.cgi"><font size='2' color='white'><b>$Lang::tr{'vpn'}:</b></font></a><br>
-	  	<td width='30%'>$ipsecip
-  		<td width='45%'><font color=$Header::colourgreen>Online</font>
+	  	<td width='30%' align='center'>$ipsecip
+  		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
 END
 		my $id = 0;
 		my $gif;
@@ -281,11 +282,11 @@ END
 			if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 			if ($id % 2) {
-			    print "<tr bgcolor='${Header::table1colour}'>\n";
+			    print "<tr bgcolor='$color{'color20'}'>\n";
 			} else {
-			    print "<tr bgcolor='${Header::table2colour}'>\n";
+			    print "<tr bgcolor='$color{'color22'}'>\n";
 			}
-			print "<td bgcolor='#ffffff'>&nbsp;</td><td align='center' nowrap='nowrap'>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
+			print "<td bgcolor='#ffffff' align='center'>&nbsp;</td><td align='center' nowrap='nowrap'>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
 			my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
 			if ($confighash{$key}[0] eq 'off') {
 			    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
@@ -305,8 +306,8 @@ END
 		my $ovpnip = `cat /var/ipfire/ovpn/settings | grep ^DOVPN_SUBNET= | cut -c 14- | sed -e 's\/\\/255.255.255.0\/\/'`;
 		print <<END;
 		<tr><td bgcolor='$Header::colourovpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN:</b></font></a><br>
-	  	<td width='30%'>$ovpnip
-  		<td width='45%'><font color=$Header::colourgreen>Online</font>
+	  	<td width='30%' align='center'>$ovpnip
+  		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
 END
 	}
 
