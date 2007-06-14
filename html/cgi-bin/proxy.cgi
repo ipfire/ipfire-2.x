@@ -367,7 +367,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		{
 			chomp;
 			@useragent = split(/,/);
-			if ($proxysettings{'UA_'.@useragent[0]} eq 'on') { $browser_regexp .= "@useragent[2]|"; }
+			if ($proxysettings{'UA_'.$useragent[0]} eq 'on') { $browser_regexp .= "$useragent[2]|"; }
 		}
 		chop($browser_regexp);
 		if (!$browser_regexp)
@@ -742,9 +742,9 @@ $checked{'ENABLE_BROWSER_CHECK'}{$proxysettings{'ENABLE_BROWSER_CHECK'}} = "chec
 
 foreach (@useragentlist) {
 	@useragent = split(/,/);
-	$checked{'UA_'.@useragent[0]}{'off'} = '';
-	$checked{'UA_'.@useragent[0]}{'on'} = '';
-	$checked{'UA_'.@useragent[0]}{$proxysettings{'UA_'.@useragent[0]}} = "checked='checked'";
+	$checked{'UA_'.$useragent[0]}{'off'} = '';
+	$checked{'UA_'.$useragent[0]}{'on'} = '';
+	$checked{'UA_'.$useragent[0]}{$proxysettings{'UA_'.$useragent[0]}} = "checked='checked'";
 }
 
 $checked{'AUTH_METHOD'}{'none'} = '';
@@ -1491,8 +1491,8 @@ for ($n=0; $n<=@useragentlist; $n = $n + $i) {
 		if ($i eq 0) { print "<tr>\n"; }
 		if (($n+$i) < @useragentlist) {
 			@useragent = split(/,/,@useragentlist[$n+$i]);
-			print "<td width='15%'>@useragent[1]:<\/td>\n";
-			print "<td width='10%'><input type='checkbox' name='UA_@useragent[0]' $checked{'UA_'.@useragent[0]}{'on'} /></td>\n";
+			print "<td width='15%'>$useragent[1]:<\/td>\n";
+			print "<td width='10%'><input type='checkbox' name='UA_$useragent[0]' $checked{'UA_'.$useragent[0]}{'on'} /></td>\n";
 		}
 		if ($i eq 3) { print "<\/tr>\n"; }
 	}
@@ -2155,9 +2155,9 @@ END
 		if($proxysettings{'ACTION'} eq $Lang::tr{'edit'} && $proxysettings{'ID'} eq $line) {
 			print "<tr bgcolor='$Header::colouryellow'>\n"; }
 		elsif ($id % 2) {
-			print "<tr bgcolor='$Header::table1colour'>\n"; }
+			print "<tr bgcolor='$color{'color20'}'>\n"; }
 		else {
-			print "<tr bgcolor='$Header::table2colour'>\n"; }
+			print "<tr bgcolor='$color{'color22'}'>\n"; }
 
 		print <<END
 		<td align='center'>$temp[0]</td>

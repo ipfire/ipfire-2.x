@@ -324,7 +324,7 @@ sub writeserverconf {
 	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
     }	
     print CONF "status-version 1\n";
-    print CONF "status /var/ipfire/ovpn/server.log 30\n";
+    print CONF "status /var/log/ovpnserver.log 30\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
     if ($sovpnsettings{DCOMPLZO} eq 'on') {
         print CONF "comp-lzo\n";
@@ -368,7 +368,7 @@ sub writeserverconf {
 }    
 #
 sub emptyserverlog{
-    if (open(FILE, ">${General::swroot}/ovpn/server.log")) {
+    if (open(FILE, ">/var/log/ovpnserver.log")) {
 	flock FILE, 2;
 	print FILE "";
 	close FILE;
@@ -1620,7 +1620,7 @@ END
     </tr>
 END
 ;
-	my $filename = "${General::swroot}/ovpn/server.log";
+	my $filename = "/var/log/ovpnserver.log";
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -1669,9 +1669,9 @@ END
 	if ($user2 >= 1){
     	    for (my $idx = 1; $idx <= $user2; $idx++){
 						if ($idx % 2) {
-		    			print "<tr bgcolor='${Header::table1colour}'>\n";
+		    			print "<tr bgcolor='$color{'color20'}'>\n";
 	    			} else {
-		    			print "<tr bgcolor='${Header::table2colour}'>\n";
+		    			print "<tr bgcolor='$color{'color22'}'>\n";
 						}
 						print "<td align='left'>$users[$idx-1]{'CommonName'}</td>";
 						print "<td align='left'>$users[$idx-1]{'RealAddress'}</td>";
@@ -2470,7 +2470,7 @@ END
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    my @status = `/bin/cat /var/ipfire/ovpn/server.log`;
+    my @status = `/bin/cat /var/log/ovpnserver.log`;
 
     if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
 	if (open(IPADDR, "${General::swroot}/red/local-ipaddress")) {
@@ -2583,10 +2583,8 @@ END
 	print "<td><input type='checkbox' name='ENABLED_ORANGE' $checked{'ENABLED_ORANGE'}{'on'} /></td>";
     }	
     print <<END    	
-    <tr><td class='base' nowrap='nowrap'>$Lang::tr{'local vpn hostname/ip'}:</td>
-        <td><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
-	<td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
-	<td><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
+    <tr><td class='base' nowrap='nowrap' colspan='2'>$Lang::tr{'local vpn hostname/ip'}:<br /><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
+	<td class='boldbase' nowrap='nowrap' colspan='2'>$Lang::tr{'ovpn subnet'}<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn device'}</td>
         <td><select name='DDEVICE' ><option value='tun' $selected{'DDEVICE'}{'tun'}>TUN</option>
                			    <option value='tap' $selected{'DDEVICE'}{'tap'}>TAP</option></select></td>				    
@@ -2657,7 +2655,7 @@ EOF
 	$casubject    =~ s/ ST=/ S=/;
 
 	print <<END
-	<tr bgcolor='${Header::table2colour}'>
+	<tr bgcolor='$color{'color22'}'>
 	<td class='base'>$Lang::tr{'root certificate'}</td>
 	<td class='base'>$casubject</td>
 	<form method='post' name='frmrootcrta'><td width='3%' align='center'>
@@ -2674,7 +2672,7 @@ END
     } else {
 	# display rootcert generation buttons
 	print <<END
-	<tr bgcolor='${Header::table2colour}'>
+	<tr bgcolor='$color{'color22'}'>
 	<td class='base'>$Lang::tr{'root certificate'}:</td>
 	<td class='base'>$Lang::tr{'not present'}</td>
 	<td colspan='3'>&nbsp;</td></tr>
@@ -2690,7 +2688,7 @@ END
 	$hostsubject    =~ s/ ST=/ S=/;
 
 	print <<END
-	<tr bgcolor='${Header::table1colour}'>
+	<tr bgcolor='$color{'color20'}'>
 	<td class='base'>$Lang::tr{'host certificate'}</td>
 	<td class='base'>$hostsubject</td>
 	<form method='post' name='frmhostcrta'><td width='3%' align='center'>
@@ -2707,7 +2705,7 @@ END
     } else {
 	# Nothing
 	print <<END
-	<tr bgcolor='${Header::table1colour}'>
+	<tr bgcolor='$color{'color20'}'>
 	<td width='25%' class='base'>$Lang::tr{'host certificate'}:</td>
 	<td class='base'>$Lang::tr{'not present'}</td>
 	</td><td colspan='3'>&nbsp;</td></tr>
@@ -2724,9 +2722,9 @@ END
     if (keys %cahash > 0) {
 	foreach my $key (keys %cahash) {
 	    if (($key + 1) % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>\n";
+		print "<tr bgcolor='$color{'color20'}'>\n";
 	    } else {
-		print "<tr bgcolor='${Header::table2colour}'>\n";
+		print "<tr bgcolor='$color{'color22'}'>\n";
 	    }
 	    print "<td class='base'>$cahash{$key}[0]</td>\n";
 	    print "<td class='base'>$cahash{$key}[1]</td>\n";
@@ -2774,8 +2772,7 @@ END
     <tr><td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td>
     <td nowrap='nowrap'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' />
     <td nowrap='nowrap'><input type='file' name='FH' size='30' /></td>
-    <td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /></td>
-    <td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>    
+    <td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /><br /><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>    
     </tr></table></form>
 END
     ;
@@ -2807,9 +2804,9 @@ END
     	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 	if ($id % 2) {
-	    print "<tr bgcolor='${Header::table1colour}'>\n";
+	    print "<tr bgcolor='$color{'color20'}'>\n";
 	} else {
-	    print "<tr bgcolor='${Header::table2colour}'>\n";
+	    print "<tr bgcolor='$color{'color22'}'>\n";
 	}
 	print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
 	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
@@ -2953,9 +2950,4 @@ END
     ;    
     &Header::closebox();
 }
-    print "$Lang::tr{'this feature has been sponsored by'} : ";
-    print "<a href='http://www.stareventsgroup.com/' target='_blank'>Star Events Group Ltd</a>.\n";
-    print "<a href='http://www.ibdozing.com/' target='_blank'>IBDOZING</a>.\n";
-    print "<a href='http://www.xencon.net/' target='_blank'>Xen by x|encon</a>.\n";
-	print "<a href='http://www.savatec.de/' target='_blank'>SAVATEC e.K.</a>.\n";    
 &Header::closepage();

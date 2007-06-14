@@ -135,7 +135,7 @@ my $i=0;
 for(my $i = 1; $i <= $#iostat1; $i++)
 {
 if ( $i eq '1' ){print "<tr><td align='center' class='boldbase'><b>Device</b></td><td align='center' class='boldbase'><b>MB read</b></td><td align='center' class='boldbase'><b>MB writen</b></td></tr>";}
-else {print "<tr><td align='center'>@iostat1[$i]</td><td align='center'>@iostat2[$i]</td><td align='center'>@iostat3[$i]</td></tr>";}
+else {print "<tr><td align='center'>$iostat1[$i]</td><td align='center'>$iostat2[$i]</td><td align='center'>$iostat3[$i]</td></tr>";}
 }
 print "</table>\n";
 &Header::closebox();

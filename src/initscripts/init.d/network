@@ -121,8 +121,11 @@ case "${DO}" in
 			fi
 		fi
 		
-			boot_mesg "Setting OVPN Rules if enabled"
-			/etc/rc.d/init.d/firewall startovpn; evaluate_retval			
+			boot_mesg "Setting OpenVPN Rules if enabled"
+			/etc/rc.d/init.d/firewall startovpn; evaluate_retval
+      
+			boot_mesg "Starting SNORT if enabled"
+			/etc/rc.d/init.d/snort start; evaluate_retval						
 		;;
 
 	stop)
@@ -153,8 +156,11 @@ case "${DO}" in
 			fi
 		fi
 		
-			boot_mesg "Deleting OVPN Rules if enabled"
+			boot_mesg "Deleting OpenVPN Rules if enabled"
 			/etc/rc.d/init.d/firewall stopovpn; evaluate_retval	
+			
+			boot_mesg "Starting SNORT if enabled"
+			/etc/rc.d/init.d/snort stop; evaluate_retval		
 		;;
 
 	restart)
