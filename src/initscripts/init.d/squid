@@ -4,6 +4,9 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+chown -R squid:squid /var/log/squid
+chown -R squid:squid /var/log/squidGuard
+
 transparent() {
 		DEVICE=$1
 		

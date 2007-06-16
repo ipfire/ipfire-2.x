@@ -223,7 +223,7 @@ if (-e "/etc/snort/snort.conf") {
 	close(FILE);
 
 	if ($restartsnortrequired) {
-		system('/usr/local/bin/snortctrl','restart');
+		system('/usr/local/bin/snortctrl restart >/dev/null');
 	}
 }
 
@@ -271,7 +271,7 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'})
 		unlink "${General::swroot}/snort/enable_orange";
 	}
 
-		system('/usr/local/bin/snortctrl','restart');
+		system('/usr/local/bin/snortctrl restart >/dev/null');
 
 } else {
 	 # INSTALLMD5 is not in the form, so not retrieved by getcgihash

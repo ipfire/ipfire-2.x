@@ -26,6 +26,7 @@ my $errormessage='';
 
 
 $cgiparams{'FX'} = 'off';
+$cgiparams{'SPEED'} = 'off';
 $cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
 $cgiparams{'REFRESHINDEX'} = 'off';
 $cgiparams{'ACTION'} = '';
@@ -77,6 +78,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	$mainsettings{'WINDOWWITHHOSTNAME'} = $cgiparams{'WINDOWWITHHOSTNAME'};
 	$mainsettings{'PPPUPDOWNBEEP'} = $cgiparams{'PPPUPDOWNBEEP'};
 	$mainsettings{'FX'} = $cgiparams{'FX'};
+	$mainsettings{'SPEED'} = $cgiparams{'SPEED'};
 	$mainsettings{'THEME'} = $cgiparams{'theme'};
 	$mainsettings{'REFRESHINDEX'} = $cgiparams{'REFRESHINDEX'};
 	&General::writehash("${General::swroot}/main/settings", \%mainsettings);
@@ -112,6 +114,11 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	} else {
 		$cgiparams{'REFRESHINDEX'} = 'off';
 	}
+	if($mainsettings{'SPEED'}) {
+		$cgiparams{'SPEED'} = $mainsettings{'SPEED'};
+	} else {
+		$cgiparams{'SPEED'} = 'off';
+	}
 }
 
 # Default settings
@@ -121,6 +128,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 	$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	$cgiparams{'REFRESHINDEX'} = 'off';
 	$cgiparams{'FX'} = 'on';
+	$cgiparams{'SPEED'} = 'on';
 	$cgiparams{'THEME'} = 'ipfire';
 }
 
@@ -139,6 +147,10 @@ $checked{'REFRESHINDEX'}{$cgiparams{'REFRESHINDEX'}} = "checked='checked'";
 $checked{'FX'}{'off'} = '';
 $checked{'FX'}{'on'} = '';
 $checked{'FX'}{$cgiparams{'FX'}} = "checked='checked'";
+
+$checked{'SPEED'}{'off'} = '';
+$checked{'SPEED'}{'on'} = '';
+$checked{'SPEED'}{$cgiparams{'SPEED'}} = "checked='checked'";
 
 &Header::openpage($Lang::tr{'gui settings'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -168,6 +180,10 @@ print <<END
 <tr>
     <td><input type='checkbox' name='REFRESHINDEX' $checked{'REFRESHINDEX'}{'on'} /></td>
     <td>$Lang::tr{'refresh index page while connected'}</td>
+</tr>
+<tr>
+    <td><input type='checkbox' name='SPEED' $checked{'SPEED'}{'on'} /></td>
+    <td>$Lang::tr{'show ajax speedmeter in footer'}</td>
 </tr>
 <tr>
     <td>&nbsp;</td>

@@ -1307,6 +1307,7 @@
 'shared memory' => 'Gemeins. Speicher',
 'sharename' => 'Freigabename',
 'shares' => 'Freigaben',
+'show ajax speedmeter in footer' => 'Ajax Speed Anzeige',
 'show ca certificate' => 'CA Zertifikat anzeigen',
 'show certificate' => 'Zertifikat anzeigen',
 'show crl' => 'Certificate Revocation List anzeigen',

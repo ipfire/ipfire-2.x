@@ -156,6 +156,10 @@ END
             }
         }
     </script>
+END
+;
+if ($settings{'SPEED'} ne 'off') {
+print <<END
                 <script type="text/javascript" language="javascript">
                  
                     var http_request = false;
@@ -211,6 +215,12 @@ END
                 </script>
   </head>
   <body onLoad="LoadInetInfo('/cgi-bin/speed.cgi')">
+END
+;
+}
+else {
+print "</head><body>";}
+print <<END
 <!-- IPFIRE HEADER -->
 
 <div id="header">
@@ -341,11 +351,19 @@ END
                 <br class="clear" />    
                 <div id="footer" class="fixed">
                         <b>Status:</b> $status <b>Uptime:</b>$uptime <b>Version:</b> $FIREBUILD
+END
+;
+if ($settings{'SPEED'} ne 'off') {
+print <<END                        
                         <br />
                         <form name='speed'>
                                 <b>$Lang::tr{'bandwidth usage'}:</b> $Lang::tr{'incoming'}:<input type="text" name="rxkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:green; border: 1px solid #FFFFFF; padding: 0; background-color: #FFFFFF; vertical-align: middle" />
                                 $Lang::tr{'outgoing'}: <input type="text" name="txkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:red; border: 1px solid #FFFFFF; padding: 0; background-color: #FFFFFF; vertical-align: middle"/>
                         </form>
+END
+;
+}
+print <<END
                 </div>
         </div>
 </div>

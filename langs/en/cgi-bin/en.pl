@@ -1313,6 +1313,7 @@
 'shared memory' => 'Shared Memory',
 'sharename' => 'Sharename',
 'shares' => 'Shares',
+'show ajax speedmeter in footer' => 'Show Ajax Speedmeter',
 'show areas' => 'show areas',
 'show ca certificate' => 'Show CA Certificate',
 'show certificate' => 'Show Certificate',

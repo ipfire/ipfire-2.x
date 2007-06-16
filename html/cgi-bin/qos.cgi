@@ -762,8 +762,8 @@ END
 		print "<tr><td colspan='3' align='center'>$message";
 	}
 	if ( $qossettings{'EDIT'} eq 'yes' ) { 
-		print "<input type='hidden' name='CLASS' value=$qossettings{'CLASS'} />";
-		print "<input type='hidden' name='DEVICE' value=$qossettings{'DEVICE'} />";
+		print "<input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' />";
+		print "<input type='hidden' name='DEVICE' value='$qossettings{'DEVICE'}' />";
 	}
 	print <<END
 		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
@@ -782,8 +782,8 @@ END
 			$qossettings{'IMQ_DEV_SEL'} = 'selected';
 		}
 		print <<END
-			<option value=$qossettings{'RED_DEV'} $qossettings{'RED_DEV_SEL'}>$qossettings{'RED_DEV'}</option>
-			<option value=$qossettings{'IMQ_DEV'} $qossettings{'IMQ_DEV_SEL'}>$qossettings{'IMQ_DEV'}</option></select>
+			<option value='$qossettings{'RED_DEV'}' $qossettings{'RED_DEV_SEL'}>$qossettings{'RED_DEV'}</option>
+			<option value='$qossettings{'IMQ_DEV'}' $qossettings{'IMQ_DEV_SEL'}>$qossettings{'IMQ_DEV'}</option></select>
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Klasse:<td width='33%' align='left'>
 END
@@ -845,7 +845,7 @@ END
 		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" /> <img alt="" alt='blob' src='/blob.gif' />
 		<tr><td width='33%' align='right'>&nbsp;
 		    <td width='33%' align='left'>&nbsp;
-		    <td width='33%' align='center'><input type='submit' name='DOCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
+		    <td width='33%' align='center'><input type='submit' name='DOCLASS' value='$Lang::tr{'save'}' />&nbsp;<input type='reset' value='$Lang::tr{'reset'}' />
 		</table></form>
 END
 ;
@@ -920,7 +920,7 @@ END
 				<option value='1'>Minimale Kosten (1)</option></select>
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value="$qossettings{'CLASS'}" />
 							<input type='hidden' name='DEVICE' value="$qossettings{'DEVICE'}" />
-							<input type='submit' name='DOSCLASS' value=$Lang::tr{'save'} />&nbsp;<input type='reset' value=$Lang::tr{'reset'} />
+							<input type='submit' name='DOSCLASS' value='$Lang::tr{'save'}' />&nbsp;<input type='reset' value='$Lang::tr{'reset'}' />
 		</table></form>
 END
 ;
@@ -961,11 +961,11 @@ END
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Quell-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value=$qossettings{'QIP'} />
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'} />
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'} /><input type='submit' name='DOLEVEL7' value=$Lang::tr{'save'} />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOLEVEL7' value='$Lang::tr{'save'}' />
 		</table></form>
 END
 ;
@@ -998,17 +998,17 @@ END
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Quell-Port:
-		    <td width='33%' align='left'><input type='text' name='QPORT' maxlength='5' value=$qossettings{'QPORT'} />
+		    <td width='33%' align='left'><input type='text' name='QPORT' maxlength='5' value='$qossettings{'QPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-Port:
-		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='5' value=$qossettings{'DPORT'} />
+		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='5' value='$qossettings{'DPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Quell-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value=$qossettings{'QIP'} />
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value=$qossettings{'DIP'} />
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOPORT' value=$Lang::tr{'save'} />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
+		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOPORT' value='$Lang::tr{'save'}' />
 		</table></form>
 END
 ;
@@ -1035,7 +1035,7 @@ END
 		<tr><td width='50%' align='left'>Maximaler Durchsatz (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4] />
 		<tr><td width='50%' align='left'>Maximale Zuverlaessigkeit (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2] />
 		<tr><td width='50%' align='left'>Minimale Kosten (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1] />
-		<tr><td width='100%' align='right' colspan='2'><input type='hidden' name='CLASS' value=$qossettings{'CLASS'} /><input type='submit' name='DOTOS' value=$Lang::tr{'save'} />
+		<tr><td width='100%' align='right' colspan='2'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOTOS' value='$Lang::tr{'save'}' />
 		</table></form>
 END
 ;
@@ -1065,7 +1065,7 @@ sub showclasses {
 	  		@classline = split( /\;/, $classentry );
 	  		if ( $classline[0] eq $qossettings{'DEV'} )
 	  		{
-				&Header::openbox('100%', 'center', "Klasse: $classline[1]");
+	  		  &Header::openbox('100%', 'center', "Klasse: $classline[1]");
 	  			print <<END
 				<table border='0' width='100%' cellspacing='0'>
 				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
@@ -1270,9 +1270,6 @@ END
 				}
 END
 ;
-				}
-
-
 			  	foreach $subclassentry (sort @subclasses)
 	  			{
 	  				@subclassline = split( /\;/, $subclassentry );
@@ -1312,9 +1309,10 @@ END
 			</table>
 END
 ;
-			&Header::closebox();
+	          &Header::closebox();
 	  		}
-	  	}
+			}
+  	}
 	}
 
 sub expert
@@ -1324,14 +1322,14 @@ sub expert
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
-			<input type='text' name='MTU' maxlength='8' required='4' value=$qossettings{'MTU'} />
+			<input type='text' name='MTU' maxlength='8' required='4' value='$qossettings{'MTU'}' />
 		    <td width='33%' align='center'>Diese Einstellung aendert die MTU nicht global sondern nur fuer das QoS.
 		<tr><td width='33%' align='right'>Queue Laenge:<td width='33%' align='left'>
-			<input type='text' name='QLENGTH' maxlength='8' required='2' value=$qossettings{'QLENGTH'} />
+			<input type='text' name='QLENGTH' maxlength='8' required='2' value='$qossettings{'QLENGTH'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>SFQ Perturb:<td width='33%' align='left'>
-			<input type='text' name='SFQ_PERTUB' maxlength='8' required='1' value=$qossettings{'SFQ_PERTUB'} />
-		    <td width='33%' align='center'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+			<input type='text' name='SFQ_PERTUB' maxlength='8' required='1' value='$qossettings{'SFQ_PERTUB'}' />
+		    <td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 		</table>
 		</form>
 END

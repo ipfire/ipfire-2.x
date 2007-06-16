@@ -40,9 +40,14 @@ open (ACTIVE, 'iptstate -1rbt |') or die 'Unable to open ip_conntrack';
 my @active = <ACTIVE>;
 close (ACTIVE);
 
-my @vpn = ('none');
-#open (ACTIVE, "/proc/net/ipsec_eroute") and @vpn = <ACTIVE>;
-#close (ACTIVE);
+my @vpn = ` route -n | grep ipsec | awk '{ print \$1" "\$3}'`;
+  foreach my $route (@vpn) {
+                chomp($route);
+                my @temp = split(/[\t ]+/, $route);
+                push(@network, $temp[0]);
+                push(@masklen, $temp[1]);
+                push(@colour, ${Header::colourvpn} );
+        }
 
 my $aliasfile = "${General::swroot}/ethernet/aliases";
 open(ALIASES, $aliasfile) or die 'Unable to open aliases file.';

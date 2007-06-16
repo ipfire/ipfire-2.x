@@ -21,6 +21,11 @@ my @squidversion = `/usr/sbin/squid -v`;
 my $http_port='81';
 my $https_port='444';
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %proxysettings=();
 my %netsettings=();
 my %filtersettings=();

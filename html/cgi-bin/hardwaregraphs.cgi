@@ -180,7 +180,7 @@ if ($cgigraphs[1] =~ /hddtemp/){
   }
   &Header::closebox();
   print "<div align='center'><table width='80%'><tr><td align='center'>";
-  print "<a href='/cgi-bin/mbmongraph.cgi'>";
+  print "<a href='/cgi-bin/hardwaregraphs.cgi=${graph}'>";
   print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
 }
 else 
@@ -192,7 +192,7 @@ else
     {
       my $ftime = localtime((stat("$graphdir/mbmon-temp-day.png"))[9]);
       print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-      print "<a href='/cgi-bin/mbmongraph.cgi?graph=temp'>";
+      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=temp'>";
       print "<img src='/graphs/mbmon-temp-day.png' border='0' />";
       print "</a>";
     }
@@ -211,7 +211,7 @@ else
     {
       my $ftime = localtime((stat("$graphdir/mbmon-fan-day.png"))[9]);
       print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-      print "<a href='/cgi-bin/mbmongraph.cgi?graph=fan'>";
+      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=fan'>";
       print "<img src='/graphs/mbmon-fan-day.png' border='0' />";
       print "</a>";
     }
@@ -230,7 +230,7 @@ else
     {
       my $ftime = localtime((stat("$graphdir/mbmon-volt-day.png"))[9]);
       print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-      print "<a href='/cgi-bin/mbmongraph.cgi?graph=volt'>";
+      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=volt'>";
       print "<img src='/graphs/mbmon-volt-day.png' border='0' />";
       print "</a>";
     } 
