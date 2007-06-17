@@ -27,6 +27,8 @@ my %mbmon_settings = ();
 &General::readhash("${General::swroot}/mbmon/settings", \%mbmon_settings);
 
 my %mbmon_values = ();
+&General::readhash("/var/log/mbmon-values", \%mbmon_values);
+
 my $key;
 my $value;
 my @args = ();
@@ -324,6 +326,7 @@ sub updatelqgraph {
 }
 
 sub updatehddgraph {
+
   my $disk = $_[0];
   my $period = $_[1];
 
@@ -348,15 +351,15 @@ sub updatetempgraph
 {
   my $type   = "temp";
   my $period = $_[0];
-
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+  
+  @args = ("$graphs/mbmon-$type-$period.png",
+    "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
-    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
-
-  $count = 10;
+    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})",);
+    
   foreach $key ( sort(keys %mbmon_values) ) 
   {
     if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
@@ -365,23 +368,17 @@ sub updatetempgraph
       {
         $mbmon_settings{'LABEL-'.$key} = $key;
       }
-
-      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:$key$color{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} ?C");
-      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.1lf ?C");
-      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.1lf ?C");
-      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.1lf ?C\\j");
-
-      $count++;
-    }
+    push (@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
+    push (@args, "LINE2:".$key.$color{'color11'}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} C");
+    push (@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.1lf C");
+    push (@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.1lf C");
+    push (@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.1lf C\\j");
+   }
   }
-
-  if ( $count > 1 )
-  {
-    RRDs::graph ( @args );
+    
+  RRDs::graph ( @args );    
     $ERROR = RRDs::error;
     print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-  }
 }
 
 sub updatefangraph
@@ -396,7 +393,6 @@ sub updatefangraph
     "--color", "BACK".$color{"color21"},
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
-  $count = 10;
   foreach $key ( sort(keys %mbmon_values) ) 
   {
     if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
@@ -407,21 +403,15 @@ sub updatefangraph
       }
 
       push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:$key$color{$count}:$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
+      push(@args, "LINE2:".$key.$color{'color11'}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
       push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.0lf rpm");
       push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.0lf rpm");
       push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.0lf rpm\\j");
-
-      $count++;
     }
   }
-
-  if ( $count > 1 )
-  {
     RRDs::graph ( @args );
     $ERROR = RRDs::error;
     print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-  }
 }
 
 sub updatevoltgraph
@@ -436,7 +426,6 @@ sub updatevoltgraph
     "--color", "BACK".$color{"color21"},
     "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
 
-  $count = 10;
   foreach $key ( sort(keys %mbmon_values) ) 
   {
     my $v = substr($key,0,1);
@@ -448,19 +437,14 @@ sub updatevoltgraph
       }
 
       push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:$key$color{$count}:$mbmon_settings{'LABEL-'.$key} V");
+      push(@args, "LINE2:".$key.$color{'color11'}.":$mbmon_settings{'LABEL-'.$key} V");
       push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.2lf V");
       push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.2lf V");
       push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.2lf V\\j");
-
-      $count++;
     }
   }
 
-  if ( $count > 1 )
-  {
     RRDs::graph ( @args );
     $ERROR = RRDs::error;
     print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-  }
 }

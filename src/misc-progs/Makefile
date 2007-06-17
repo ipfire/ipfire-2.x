@@ -7,7 +7,7 @@ PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	squidctrl restartssh ipfirereboot setaliases \
 	ipsecctrl timectrl dhcpctrl snortctrl \
-	monitorTraff restartapplejuice rebuildhosts \
+	restartapplejuice rebuildhosts \
 	restartsyslogd logwatch openvpnctrl outgoingfwctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
 	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \

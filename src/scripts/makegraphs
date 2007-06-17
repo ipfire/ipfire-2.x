@@ -376,8 +376,9 @@ sub updatelq {
         my $roundtrip=0;
         my $test=0;
 #       LQ_GATEWAY is the ip of your isp's public ip facing you
-        my $LQ_GATEWAY=`netstat -rn | grep ^0.0.0.0 | awk '{print \$2}'`;
-        my $NUMPINGS=10;
+        my $LQ_GATEWAY=`cat /var/ipfire/red/remote-ipaddress`;
+        chomp($LQ_GATEWAY);
+        my $NUMPINGS=5;
         my $pingoutput = `ping -c $NUMPINGS -q $LQ_GATEWAY`;
         chomp;
         my @temp = split (/\/|\%|\s/, $pingoutput);

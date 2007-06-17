@@ -79,7 +79,7 @@ if ( echo $0 | /bin/grep -q 'dhcpcd.exe' ); then
 			/usr/local/bin/setportfw
 			/usr/local/bin/setxtaccess
 			/usr/local/bin/setddns.pl -f
-			/usr/local/bin/restartsnort red
+	    /usr/local/bin/snortctrl restart
 			sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
 			/bin/rm -f /var/lock/red.lock
 			logger -p local0.info -t red[$$] "unlocking from $$"
@@ -100,7 +100,7 @@ if [ -e "/var/ipfire/red/active" ]; then
 	/etc/rc.d/init.d/firewall reload
 	/usr/local/bin/setfilters
 	/usr/local/bin/outgoingfwctrl
-	/usr/local/bin/restartsnort red
+	/usr/local/bin/snortctrl restart
 	/usr/local/bin/qosctrl start
 	/usr/local/bin/setportfw
 	/usr/local/bin/setxtaccess
