@@ -524,6 +524,8 @@ buildipfire() {
   ipfiremake tripwire
   ipfiremake sysstat
   ipfiremake vsftpd
+  ipfiremake alsa
+  ipfiremake mp3blaster
 }
 
 buildinstaller() {
@@ -624,6 +626,7 @@ buildpackages() {
 }
 
 ipfirepackages() {
+  ipfiredist alsa
 #  ipfiredist amavisd
 #  ipfiredist applejuice
 #  ipfiredist asterisk
@@ -633,8 +636,11 @@ ipfirepackages() {
 #  ipfiredist fetchmail
 #  ipfiredist gnump3d
 #  ipfiredist java
+  ipfiredist libogg
+  ipfiredist libvorbis
 #  ipfiredist mailx
 #  ipfiredist mldonkey
+  ipfiredist mp3blaster
   ipfiredist mpg123
 #  ipfiredist nfs
   ipfiredist openldap

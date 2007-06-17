@@ -26,26 +26,29 @@
 
 include Config
 
-VER        = 2.6.1.4
+VER        = 3.2.3
 
-THISAPP    = snort-$(VER)
+THISAPP    = mp3blaster-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = mp3blaster
+PAK_VER    = 1
+
+DESCDE     = "MP3Blaster ist kleine Software um Musik abzuspielen."
+DESCEN     = "MP3Blaster is piece of software that plays your music on the box."
+DEPS       = "libvorbis"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	Community-Rules-20070503.tar.gz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-Community-Rules-20070503.tar.gz = $(DL_FROM)/Community-Rules-20070503.tar.gz
 
-$(DL_FILE)_MD5 = 70e7f297c9fcf1f46d6fa3e1bb4aae49
-Community-Rules-20070503.tar.gz_MD5 = f236b8a4ac12e99d3e7bd81bf3b5a482
+$(DL_FILE)_MD5 = 0d892d7c99df175eb0efb2bc31086285
 
 install : $(TARGET)
 
@@ -54,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -74,22 +80,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/snort* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-	    --sysconfdir=/etc/snort \
-	    --enable-linux-smp-stats --enable-smb-alerts
-	cd $(DIR_APP) && make
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	mv /usr/bin/snort /usr/sbin/
-	-mkdir -p /etc/snort/rules
-
-	tar xvfz $(DIR_DL)/Community-Rules-20070503.tar.gz -C /etc/snort/
-	cd $(DIR_APP) && install -m 0644  \
-		etc/reference.config etc/classification.config /etc/snort/rules
-	cd $(DIR_APP) && install -m 0644 etc/unicode.map /etc/snort
-	install -m 0644 $(DIR_SRC)/config/snort/snort.conf /etc/snort
-	chown -R nobody:nobody /etc/snort
-	-mkdir -p /var/log/snort
-	chown -R snort:snort /var/log/snort
-	@rm -rf $(DIR_APP) $(DIR_SRC)/snort*
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

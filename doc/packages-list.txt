@@ -32,6 +32,7 @@
 * URI-1.35
 * Unix-Syslog-0.100
 * XML-Parser-2.34
+* alsa-lib-1.0.13
 * amavisd-new-2.4.1
 * applejuice-0.30
 * arping-2.05
@@ -166,6 +167,7 @@
 * mktemp-1.5
 * mldonkey-2.7.7
 * module-init-tools-3.2.2
+* mp3blaster-3.2.3
 * mpg123-0.59r
 * mtd-CVS-20070507
 * mtools-3.9.10

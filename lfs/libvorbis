@@ -36,6 +36,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libvorbis
 PAK_VER    = 1
 
+DESCDE     = "Eine Libary zum Abspielen von vorbis-Dateien."
+DESCEN     = "A library for playing vorbis-files."
+DEPS       = "libogg"
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

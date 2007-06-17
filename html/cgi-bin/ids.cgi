@@ -233,8 +233,6 @@ if ($snortsettings{'RULES'} eq 'subscripted') {
 	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-CURRENT_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
 	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-CURRENT.tar.gz";
-} elsif ($snortsettings{'RULES'} eq 'bleeding') {
-	$url="http://www.bleedingsnort.com/bleeding.rules.tar.gz";
 } else {
 	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";
 }
@@ -313,7 +311,6 @@ $checked{'ENABLE_SNORT_ORANGE'}{'off'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{'on'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{$snortsettings{'ENABLE_SNORT_ORANGE'}} = "checked='checked'";
 $selected{'RULES'}{'nothing'} = '';
-$selected{'RULES'}{'bleeding'} = '';
 $selected{'RULES'}{'community'} = '';
 $selected{'RULES'}{'registered'} = '';
 $selected{'RULES'}{'subscripted'} = '';
@@ -397,7 +394,6 @@ print <<END
 <tr>
 	<td><select name='RULES'>
 				<option value='nothing' $selected{'RULES'}{'nothing'} >$Lang::tr{'no'}</option>
-				<option value='bleeding' $selected{'RULES'}{'bleeding'} >$Lang::tr{'bleeding rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
 				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>
