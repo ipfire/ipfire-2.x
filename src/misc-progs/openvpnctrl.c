@@ -7,73 +7,6 @@
 #include "setuid.h"
 #include "libsmooth.h"
 
-/*
-		Version History
-		
-		1.0.0.0		many things happend before ...
-
-		2.0.0.1		2005/06/09	tarralan
-					add. Version History
-					add. deleteChainReference(char*)
-					add. createChainReference(char*)
-					mod. deleteChain(char*)
-					mod. flushChain(char*)
-					add. flushAllChains()
-					del. deletechains()
-					add. consts for chain names
-					del. createchains()
-					add. createAllChains()
-					add. ovpnInit()
-					add. global vars for chain and interface status
-					add. usage of consts for chain names
-					mod. reworked createAllChains()
-
-		2.0.0.2		2005/06/09	horizont
-					change the input + forward chain position index based on active interfaces
-
-		2.0.0.3		2005/06/09	tarralan
-					mod. removed const attribute
-
-		2.0.0.4		2005/06/12	tarralan
-					add. debug condition für output
-					mod. changed definition auf consts
-
-		2.0.0.5-7	2005/06/12	tarralan
-					debugging
-
-		2.0.0.8		2005/06/12	tarralan
-					add. executeCommand()
-
-		2.0.0.9-16	2005/06/12	tarralan
-					debugging
-
-		2.0.0.17	2005/06/12	tarralan
-					mod. createAllChains
-
-		2.0.1.1		2005/06/12	tarralan
-					non-debug build
-
-		2.0.1.2		2005/06/13	tarralan
-					mod. some options renamed
-
-		2.0.1.3		2005/06/13	tarralan
-					mod. startDaemon() to verify if OpenVPN is enabled
-					mod. createAllChains() to verify if OpenVPN is enabled
-					mod. command help
-
-		2.0.1.4		2005/06/13	tarralan
-					mod. bug fixed with the -sdo option
-		2.0.1.5		2005/11/06	Ufuk Altinkaynak
-					mod. bug fixed no need to read blue and orange dev, when they are not enabled
-		2.0.1.6		2005/01/03	Ufuk Altinkaynak
-					mod. bug fixed reported by weizen_42 see http://www.vpnforum.de/viewtopic.php?p=7113#7113					
-					
-# ZERNINA-VERSION:0.9.0b
-# (c) 2005 tarralan + Ufuk Altinkaynak
-#
-# Ipcop and OpenVPN eas as one two three..
-#					
-*/
 #define noovpndebug
 
 // global vars
@@ -121,7 +54,7 @@ void usage(void)
 	printf(" -fwr --firewall-rules\n");
 	printf("      removes current OpenVPN chains and rules and resets them according to the config\n");
 	printf(" -sdo --start-daemon-only\n");
-	printf("      starts OpenVPN daemon only (useful for rc.local)\n");
+	printf("      starts OpenVPN daemon only\n");
 	printf(" -ccr --create-chains-and-rules\n");
 	printf("      creates chains and rules for OpenVPN\n");
 	printf(" -dcr --delete-chains-and-rules\n");
@@ -363,6 +296,7 @@ void stopDaemon(void) {
 	executeCommand(command);
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
 	executeCommand(command);
+	executeCommand("modprobe -r tun");
 }
 
 void startDaemon(void) {
@@ -372,6 +306,7 @@ void startDaemon(void) {
 		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
 		exit(1);
 	} else {
+		executeCommand("modprobe tun");
 		snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config /var/ipfire/ovpn/server.conf");
 		executeCommand(command);
 	}

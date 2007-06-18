@@ -1,9 +1,6 @@
 #!/usr/bin/perl
-# based on SmoothWall and IPCop CGIs
 # 
 # This code is distributed under the terms of the GPL
-# Main idea from zeroconcept
-# ZERNINA-VERSION:0.9.4i
 # (c) 2007 Ufuk Altinkaynak
 #
 
@@ -301,7 +298,7 @@ sub writeserverconf {
     print CONF "\n";
     print CONF "daemon openvpnserver\n";
     print CONF "writepid /var/run/openvpn.pid\n";
-    print CONF "#DAN prepare ZERINA for listening on blue and orange\n";
+    print CONF "#DAN prepare OpenVPN for listening on blue and orange\n";
     print CONF ";local $sovpnsettings{'VPN_IP'}\n";
     print CONF "dev $sovpnsettings{'DDEVICE'}\n";
     print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n";
@@ -2558,8 +2555,7 @@ END
     } else {
 	$activeonrun = "disabled='disabled'";
     }	
-    &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});
-	print "<div align='center'><strong>ZERINA-0.9.4i</strong></div>";	
+    &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});	
     print <<END	
     <table width='100%'>
     <form method='post'>

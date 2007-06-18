@@ -1,3 +1,4 @@
+etc/rc.d/init.d/alsa
 usr/bin/aconnect
 usr/bin/alsamixer
 usr/bin/amidi

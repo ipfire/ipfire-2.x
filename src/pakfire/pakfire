@@ -4,7 +4,7 @@
 	
 	my $interactive = 1;
 	
-	&Pakfire::message("### Welcome to IPFire Pakfire $Conf::version!");
+	&Pakfire::logger("### IPFire Pakfire $Conf::version started!");
 
 	### Check if we are running as root
 	#
@@ -94,5 +94,7 @@
 		&Pakfire::makeuuid();
 		&Pakfire::senduuid();
 		&Pakfire::getmirrors();
-		&Pakfire::dbgetlist();
+		
+	} elsif ("$ARGV[0]" eq "list") {
+		&Pakfire::dblist("noweb");
 	}

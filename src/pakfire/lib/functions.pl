@@ -54,6 +54,7 @@ sub fetchfile {
 			$file = "$server[2]/$getfile";
 		} else {
 			$host = $gethost;
+			$file = $getfile;
 		}
 		
 		$proto = "HTTP" unless $proto;
@@ -62,7 +63,7 @@ sub fetchfile {
 
 		my $ua = LWP::UserAgent->new;
 		$ua->agent("Pakfire/$Conf::version");
-		#$ua->timeout(5);
+		$ua->timeout(5);
 		#$ua->env_proxy;
 	 
 		my $response = $ua->get("http://$host/$file");
@@ -189,9 +190,9 @@ sub dblist {
 		@templine = split(/\;/,$line);
 		### filter here...
 		if ("$forweb" eq "forweb") {
-			print "<option value=\"$templine[0]\">$templine[1]</option>\n";
+			print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
 		} else {
-			print "$templine[0] $templine[1]\n";
+			print "Name: $templine[0]\nVersion: $templine[1]\nRelease: $templine[2]\n\n";
 		}
 	}
 }
@@ -325,7 +326,7 @@ sub decryptpak {
 	my $return = system("gpg -d < $Conf::cachedir/$file | tar xj -C $Conf::tmpdir/");
 	
 	logger("Decryption process returned the following: $return");
-	if ($return == 1) { exit 1; }
+	if ($return != 1) { exit 1; }
 }
 
 sub getpak {
@@ -353,8 +354,6 @@ sub getpak {
 		message("No filename given in meta-file. Please phone the developers.");
 		exit 1;
 	}
-	
-	#message("\n## Downloading $file...");
 	
 	unless ( "$force" eq "force" ) {
 		if ( -e "$Conf::cachedir/$file" ) {
@@ -451,7 +450,6 @@ sub beautifysize {
 
 sub makeuuid {
 	unless ( -e "$Conf::dbdir/uuid" ) {
-		message("Creating a random key...");
 		open(FILE, "</proc/sys/kernel/random/uuid");
 		my @line = <FILE>;
 		close(FILE);
