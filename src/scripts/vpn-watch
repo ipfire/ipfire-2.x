@@ -1,239 +1,52 @@
-#!/bin/sh 
+#!/usr/bin/perl 
 ################################################## 
-#####     VPN-Watch.sh     Version 1.6.3     ##### 
+#####     VPN-Watch.pl     Version 0.1       ##### 
 ################################################## 
 
-# This program is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2, or (at your option) 
-# any later version. 
-# 
-# This program is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-# GNU General Public License for more details. 
+use strict;
 
-# Written by: Daniel Berlin <daniel.berlin@itechnology.de>. 
-# Download: http://www.itechnology.de/front_content.php?idcat=87 
-# 
+require '/var/ipfire/general-functions.pl';
+my @vpnsettings;
+my $i = 0;
+my $file = "/var/run/vpn-watch.pid";
 
-# changed by: Rüdiger Sobeck 
-# last changed: 31-01-2006 
-
-# Configuration 
-# 
-CHECK_INTERVAL='120'            # Check this often (in seconds) 
-DNS_RESOLVE_TRIES='3'            # Try to resolve IPs this often (each try takes max. 2 seconds) 
-NICENESS='+5'               # Adjust niceness of child processes: '-20' ... '+19'; '0' is default 
-ipfire_VPN_CONFIG='/var/ipfire/vpn/config'   # Location of ipfire's vpn configuration file 
-ipfire_VPN_SETTINGS='/var/ipfire/vpn/settings'    # Location of ipfire's vpn settings file 
-VERSION='1.6.3' 
-
-# Workaround for nonexistent "nl" command on ipfire 1.4.x 
-nl --help >/dev/null 2>&1 
-if test $? -ne 0; then 
-    alias nl='cat' 
-fi 
-
-MyHost=`grep VPN_IP /var/ipfire/vpn/settings |  cut --delimiter='=' --output-delimiter=' ' -f2` 
-MyIP=`cat /var/ipfire/red/local-ipaddress` 
-MyDynDnsIP=`ping -c 1 "$1" 2>/dev/null | head -n1 | awk '{print $3}' | tr -d '()' | tr -d ':'` 
-
-case "$1" in 
-   'start' | '--start') 
-      if test ! -r "$ipfire_VPN_CONFIG"; then 
-         echo 'Error: cannot read ipfire VPN configuration file; exit.' >&2 
-         exit 1 
-      fi 
-
-      mknod -m 0660 "/var/run/$(basename $0)" p >/dev/null 2>&1   # Create pipe for status-information 
-
-      # Read VPN configuration and fork a child process for each VPN connection 
-      # 
-      while read line; do 
-         VPN=($(echo $line | cut --delimiter=',' --output-delimiter=' ' -f1,2,3,5,6,12))   # 
-                        CONNR=${VPN[0]}                             # connection number 
-                        CONACTIVE=${VPN[1]}                        # active (on|off) 
-                        CONNAME=${VPN[2]}                        # connection name 
-                        CONTYPE=${VPN[3]}                        # connection type (host|net) 
-                        CONCERTPSK=${VPN[4]}                        # key type (cert|psk) 
-                        CONDNSNAME=${VPN[5]}                        # FQDN name of other side 
-                        
-         echo -n "${CONACTIVE}" | grep -qi '^off$' && continue            # Ignore: deactivated connections 
-         echo -n "${CONTYPE}" | grep -qi '^host$' && continue            # Ignore: Roadwarriors (->DPD) 
-#         echo -n "${VPN[1]}${MyHost}" | grep -q '^[[:digit:]\.]\+$' && continue      # Ignore: "left" and "right" side set to an IP 
-
-         $0 'conn:' "${CONNAME}" "${MyHost}" "${CONDNSNAME}" "${CONNR}" >/dev/null 2>&1 &      # Fork child process (parameters: "conn: NAME LEFT RIGHT NUMBER") 
-         echo -n 'S' 
-      done < "$ipfire_VPN_CONFIG" 
-      echo Â"ÂStarte VPN-Watch" 
-      exit 0                                          # Parent dies here... RIP 
-      ;; 
-   'stop' | '--stop') 
-      # Terminate processes 
-      for proc in $(pidof -x -o %PPID $(basename $0)); do 
-         kill -15 $proc 
-         echo -n 'T' 
-      done 
-      sleep 1 
-      # Kill remaining processes 
-      for proc in $(pidof -x -o %PPID $(basename $0)); do 
-         kill -9 $proc
-         echo -n 'K' 
-      done 
-      rm -f "/var/run/$(basename $0)"                        # Remove pipe 
-      echo "Stoppe VPN-Watch"
-      exit 0 
-      ;; 
-   'restart' | '--restart') 
-      $0 stop 
-      $0 start 
-      exit 0 
-      ;; 
-   'status' | '--status') 
-      echo "VPN-Watch ${VERSION}  (mail: daniel@itechnology.de, web: www.itechnology.de/vpn-watch)" 
-      if ps --no-heading axw | grep -v 'grep' | grep -q "$(basename $0) conn: "; then 
-         trap '' USR1 
-         killall -q -g -s USR1 -- $(basename $0) 
-         sleep 1 
-         cat "/var/run/$(basename $0)" | sort | nl            # Read children's info from pipe 
-      else 
-         echo '     no instances running.' 
-      fi 
-      exit 0 
-      ;; 
-   'conn:') 
-      # Children proceed here... 
-      renice ${NICENESS:-0} -p $$ >/dev/null 2>&1               # Adjust niceness 
-      shift                              # Remove the first positional parameter ("conn:"), as we don't need it anymore 
-      ;; 
-   *) 
-      echo "Usage: $0 { start | stop | restart | status }" >&2 
-      exit 1 
-      ;; 
-esac 
-
-# Logging, signal handlers 
-# 
-alias log="logger -t '$(basename $0 | cut -d '.' -f 1) ${VERSION}' \(${1}\)" 
-trap 'log "terminated after ${RESTART_COUNT} restarts."' EXIT 
-trap 'echo "connection \"${1}\" restarted ${RESTART_COUNT} times" >>/var/run/$(basename $0)' USR1 
-
-log "started" 
-
-# Get IP of a FQDN... using 'arp', 'traceroute' or 'ping', 
-#  because ipfire has no 'nslookup', 'host' or 'dig' command. 
-# 
-function get_ip () { 
-   local RESULT='' 
-   for ((i=1; ${i} <= ${DNS_RESOLVE_TRIES}; i++)); do 
-      if which arp >/dev/null 2>&1; then 
-         RESULT=$(arp "$1" 2>/dev/null | awk '{ print $2 }' | tr -d '()') 
-      elif which traceroute >/dev/null 2>&1; then 
-         RESULT=$(traceroute -m1 -q1 "$1" 2>/dev/null | head -n1 | awk '{ print $4 }' | tr -d '(),') 
-      else 
-         RESULT=$(ping -c 1 "$1" 2>/dev/null | head -n1 | awk '{print $3}' | tr -d '()' | tr -d ':') 
-      fi 
-      test -n "$RESULT" && break 
-   done 
-   test -z "$RESULT" && log "Warning: could not resolve ${1} after ${DNS_RESOLVE_TRIES} tries..." 
-   echo -n "$RESULT" 
-} 
-
-function get_tunnelip () { 
-   file=/var/tmp/$1.remoteip 
-   local TRESULT='' 
-   TVPN=`grep "$1" /var/ipfire/vpn/config| awk 'BEGIN{FS=","}{print $2}'` 
-   DYNHOST=`grep "$1" /var/ipfire/vpn/config| awk 'BEGIN{FS=","}{print $12}'` 
-   CONNR=`grep "$1" /var/ipfire/vpn/config| awk 'BEGIN{FS=","}{print $1}'` 
-   REMOTEIP=`/usr/bin/ping -c 1 "$DYNHOST" 2>/dev/null | head -n1 | awk '{print $3}' | tr -d '()' | tr -d ':'` 
-   if ! test -f $file; then 
-      cat $REMOTEIP > $file 
-   fi 
-   OLDIP=`cat $file` 
-   TUNIP=`ipsec whack --status | grep "$1"` 
-   if [ "$TUNIP" != "" ]; then 
-      TUNIP=`ipsec whack --status | grep "$1" | awk 'BEGIN{FS="["}{print $2}' | awk 'BEGIN{FS="---"}{print $3}'` 
-      log "currently used tunnel IP = $TUNIP, current remote IP = $REMOTEIP" 
-      echo $REMOTEIP > $file 
-      TRESULT=${TUNIP} 
-   fi 
-
-   test -n "$TRESULT" && break 
-   test -z "$TRESULT" && log "Warning: could not retrieve last used VPN tunnel IP..." 
-   echo -n "$TRESULT" 
-} 
-
-# Restarts a VPN connection 
-# 
-function restart_vpn () { 
-   if test -x /usr/local/bin/ipsecctrl; then 
-      /usr/local/bin/ipsecctrl D "$1"         # This works for ipfire 1.4.x 
-      /usr/local/bin/ipsecctrl R         # re-read secrets 
-      /usr/local/bin/ipsecctrl S "$1"         # start tunnel 
-   else 
-      ipsec auto --down      "$1"         # This works for ipfire 1.3.x 
-      ipsec auto --unroute   "$1" 
-      ipsec auto --delete      "$1" 
-      ipsec auto --rereadall 
-      ipsec auto --add      "$1" 
-      ipsec auto --route      "$1" 
-      ipsec auto --up         "$1" 
-   fi 
-} 
-
-# Get left and right IP 
-# 
-LEFT_IP_OLD=$MyIP 
-RIGHT_IP_OLD=$(get_ip $3) 
-
-# Infinite loop; checks, whether the IP of a left or right FQDN has changed. 
-#  If so, the affected connection gets restarted; this is logged to syslog. 
-# 
-RESTART_COUNT=0 
-while :; do 
-   sleep $CHECK_INTERVAL 
-
-   # Skip check until IPSec is running 
-   ipsec auto --status >/dev/null 2>&1 || continue 
-
-   # get own IP (may have changed) 
-   ThisHostIP=`cat /var/ipfire/red/local-ipaddress` 
+system("echo $$ > $file");
     
-   # this our own IP as reported in /var/ipfire/ppp/local-ipadress 
-   LEFT_IP_NEW=$ThisHostIP 
-   # check our own DYNDNS IP 
-   LEFT_IP_DYN=$(get_ip $MyHost) 
-   # this is DYNDNS IP of other side 
-   RIGHT_IP_NEW=$(get_ip $3) 
-   # this the last used (right) IP for VPN-Tunnel 
-   RIGHT_TUN_IP_OLD=$(get_tunnelip $1) 
+while ( $i == 0){
+  if (open(FILE, "${General::swroot}/vpn/config")) {
+    @vpnsettings = <FILE>;
+    close(FILE);
+    unless(@vpnsettings) {exit 1;}
+  }
 
-#   for whatever reason, ipsec did not notice our own IP has changed for this connection 
-   if [ "${LEFT_IP_NEW}" != "${LEFT_IP_DYN}" ]; then 
-      restart_vpn "$4" 
-      let RESTART_COUNT++ 
-      log "Red IP = $LEFT_IP_NEW, IP by DynDNS = $LEFT_IP_DYN" 
-      log 'incorrect dynamic IP in tunnel used: restarting connection...' 
-   fi 
-    
-#   left or right IP has changed...    
-   if test "${LEFT_IP_OLD} ${RIGHT_IP_OLD}" != "${LEFT_IP_NEW} ${RIGHT_IP_NEW}"; then 
-      restart_vpn "$4" 
-      let RESTART_COUNT++ 
-      log 'left or right IP has changed: restarting connection...' 
-   fi 
+foreach (@vpnsettings){
+ my @settings = split(/,/,$_);
 
-#   right IP / IP of tunnel endpoint has changed... 
-   if [ "$RIGHT_TUN_IP_OLD" != "" ]; then 
-      if test "${RIGHT_TUN_IP_OLD}" != "${RIGHT_IP_NEW}"; then 
-         restart_vpn "$4" 
-         let RESTART_COUNT++ 
-         log 'VPN tunnel IP has changed: restarting connection...' 
-      fi 
-   fi 
+  if ($settings[27] ne 'RED'){next;}
+  if ($settings[4] ne 'net'){next;}  
+  if ($settings[1] ne 'on'){next;}chomp($settings[29]);
+  if ($settings[29] ne 'on'){next;}
+ 
+  my $remotehostname = $settings[11];
+  my $remoteip = `/usr/bin/ping -c 1 $remotehostname 2>/dev/null | head -n1 | awk '{print \$3}' | tr -d '()' | tr -d ':'`;chomp($remoteip);
+  if ($remoteip eq ""){next;}
+  if (system("ipsec whack --status | grep $remoteip >/dev/null")){
+    logger("Remote IP for host $remotehostname has changed or is not connected, restarting connection to $remoteip.");
+    system("/usr/local/bin/ipsecctrl S $settings[0]");
+    next;
+  }
+  my $hostip = `cat /var/ipfire/red/local-ipaddress 2>/dev/null`;
+  chomp($hostip);
+  if (system("ipsec whack --status | grep $hostip >/dev/null")){
+    logger("Our own IP has changed to $hostip restarting connection.");
+    system("/usr/local/bin/ipsecctrl S $settings[1]");
+    next;}  
+  }
+  logger("Nothing was done.");
+  sleep(300);
+}
 
-   LEFT_IP_OLD=$LEFT_IP_NEW 
-   RIGHT_IP_OLD=$RIGHT_IP_NEW 
-done 
-
+sub logger {
+        my $log = shift;
+        system("logger -t vpnwatch \"$log\"");
+}

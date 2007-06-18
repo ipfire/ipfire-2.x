@@ -278,6 +278,14 @@ int main(int argc, char *argv[]) {
 	}
 	if (!(initsetuid()))
 		exit(1);
+		
+ /* Get vpnwatch pid */
+ int fd;
+ if ((fd = open("/var/run/vpn-watch.pid", O_RDONLY)) != -1) {
+ close(fd);
+ safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
+ safe_system("unlink /var/run/vpn-watch.pid)");
+ }
 
 	/* FIXME: workaround for pclose() issue - still no real idea why
 	 * this is happening */
@@ -286,7 +294,6 @@ int main(int argc, char *argv[]) {
 	/* handle operations that doesn't need start the ipsec system */
 	if (argc == 2) {
 		if (strcmp(argv[1], "D") == 0) {
-			safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
 			ipsec_norules();
 			/* Only shutdown pluto if it really is running */
 			int fd;
@@ -303,9 +310,6 @@ int main(int argc, char *argv[]) {
 			exit(0);
 		}
 	}
-
-	/* stop the watch script as soon as possible */
-	safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
 
 	/* clear iptables vpn rules */
 	ipsec_norules();
@@ -443,7 +447,6 @@ int main(int argc, char *argv[]) {
 		safe_system("/usr/sbin/ipsec tncfg --clear >/dev/null");
 		safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
 		add_alias_interfaces(configtype, redtype, if_red, (enable_red+enable_green+enable_orange+enable_blue) >>1 );
-		safe_system("/usr/local/bin/vpn-watch &");
 		exit(0);
 	}
 

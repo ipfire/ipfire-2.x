@@ -351,6 +351,7 @@ sub updatetempgraph
 {
   my $type   = "temp";
   my $period = $_[0];
+  my $count = "11";
   
   @args = ("$graphs/mbmon-$type-$period.png",
     "--start", "-1$period", "-aPNG", "-i", "-z",
@@ -369,10 +370,11 @@ sub updatetempgraph
         $mbmon_settings{'LABEL-'.$key} = $key;
       }
     push (@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-    push (@args, "LINE2:".$key.$color{'color11'}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} C");
+    push (@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} C");
     push (@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.1lf C");
     push (@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.1lf C");
     push (@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.1lf C\\j");
+    $count++;
    }
   }
     
@@ -385,6 +387,7 @@ sub updatefangraph
 {
   my $type   = "fan";
   my $period = $_[0];
+  my $count = "11";
 
   @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
@@ -403,10 +406,11 @@ sub updatefangraph
       }
 
       push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:".$key.$color{'color11'}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
+      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
       push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.0lf rpm");
       push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.0lf rpm");
       push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.0lf rpm\\j");
+      $count++;
     }
   }
     RRDs::graph ( @args );
@@ -418,6 +422,7 @@ sub updatevoltgraph
 {
   my $type   = "volt";
   my $period = $_[0];
+  my $count = "11";
 
   @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
@@ -437,10 +442,11 @@ sub updatevoltgraph
       }
 
       push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:".$key.$color{'color11'}.":$mbmon_settings{'LABEL-'.$key} V");
+      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} V");
       push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.2lf V");
       push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.2lf V");
       push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.2lf V\\j");
+      $count++;
     }
   }
 
