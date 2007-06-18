@@ -106,5 +106,8 @@ $(TARGET) :
 
 	# Permissions
 	chmod 0711 /var/empty
+	
+	# A small hack to include /root to the iso but not all of it's files.
+	touch /root/ipfire
 
 	@$(POSTBUILD)

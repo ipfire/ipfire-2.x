@@ -11,7 +11,6 @@ usr/local/bin/outgoingfwctrl
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
-usr/local/bin/monitorTraff
 usr/local/bin/pakfire
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd

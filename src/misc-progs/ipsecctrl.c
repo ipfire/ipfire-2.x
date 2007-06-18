@@ -121,7 +121,7 @@ void add_alias_interfaces(char *configtype,
 
 	/* Check for CONFIG_TYPE=2 or 3 i.e. RED ethernet present. If not,
 	* exit gracefully.  This is not an error... */
-	if (!((strcmp(configtype, "2")==0) || (strcmp(configtype, "3")==0) || (strcmp(configtype, "6")==0) || (strcmp(configtype, "7")==0)))
+	if (!((strcmp(configtype, "1")==0) || (strcmp(configtype, "2")==0) || (strcmp(configtype, "3")==0) || (strcmp(configtype, "4")==0)))
 		return;
 
         /* Now check the RED_TYPE - aliases only work with STATIC. */
@@ -286,7 +286,7 @@ int main(int argc, char *argv[]) {
 	/* handle operations that doesn't need start the ipsec system */
 	if (argc == 2) {
 		if (strcmp(argv[1], "D") == 0) {
-			safe_system("/usr/local/bin/vpn-watch --stop");
+			safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
 			ipsec_norules();
 			/* Only shutdown pluto if it really is running */
 			int fd;
@@ -305,7 +305,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* stop the watch script as soon as possible */
-	safe_system("/usr/local/bin/vpn-watch --stop");
+	safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
 
 	/* clear iptables vpn rules */
 	ipsec_norules();
@@ -443,7 +443,7 @@ int main(int argc, char *argv[]) {
 		safe_system("/usr/sbin/ipsec tncfg --clear >/dev/null");
 		safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
 		add_alias_interfaces(configtype, redtype, if_red, (enable_red+enable_green+enable_orange+enable_blue) >>1 );
-		safe_system("/usr/local/bin/vpn-watch --start");
+		safe_system("/usr/local/bin/vpn-watch &");
 		exit(0);
 	}
 
@@ -494,6 +494,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	fclose(file);
-	safe_system("/usr/local/bin/vpn-watch --start");
+	safe_system("/usr/local/bin/vpn-watch &");
 	return 0;
 }

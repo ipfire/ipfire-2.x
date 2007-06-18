@@ -1,0 +1,24 @@
+#!/bin/sh
+# Begin $rc_base/init.d/alsa
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+# ALSA specific parts by Mark Hymers - markh@linuxfromscratch.org
+# Stores mixer settings in the default location: /etc/asound.state
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	stop)
+		boot_mesg "Stopping ALSA...    Saving volumes..."
+		loadproc /usr/sbin/alsactl store
+		;;
+
+	*)
+		echo "Usage: $0 stop"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/alsa

@@ -43,6 +43,7 @@ media/floppy
 mnt
 #opt
 #root
+root/ipfire
 #sbin
 #srv
 #sys
