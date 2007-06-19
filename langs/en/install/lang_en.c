@@ -36,7 +36,7 @@ char *en_tr[] = {
 /* TR_AUTODETECT */
 "* AUTODETECT *",
 /* TR_BUILDING_INITRD */
-"Building INITRD...",
+"Building ramdisk...",
 /* TR_CANCEL */
 "Cancel",
 /* TR_CARD_ASSIGNMENT */

@@ -9,9 +9,8 @@
 
 use strict;
 
-my $apphome="/var/ipfire/updatexlrator";
 my $logfile="/var/log/updatexlrator/download.log";
-my $debug=(-e "$apphome/debug");
+my $debug = 0;
 my $updcachedir="/srv/web/ipfire/html/updatecache";
 my $updfile='';
 my @metadata=();
@@ -30,10 +29,10 @@ $updfile = substr($dsturl,rindex($dsturl,"/")+1);
 if ($debug)
 {
 	&writelog("Retrieving file for local cache: $updfile");
-	`$apphome/bin/wget -nc -nd -nv -P $updcachedir/download $dsturl >>$logfile 2>&1`;
+	`/usr/bin/wget -nc -nd -nv -P $updcachedir/download $dsturl >>$logfile 2>&1`;
 } else
 {
-	`$apphome/bin/wget -nc -nd -nv -P $updcachedir/download $dsturl 2>&1`;
+	`/usr/bin/wget -nc -nd -nv -P $updcachedir/download $dsturl 2>&1`;
 }
 
 if ($debug) { &writelog("Moving file into the cache directory -> \"$updcachedir/$updfile\""); }

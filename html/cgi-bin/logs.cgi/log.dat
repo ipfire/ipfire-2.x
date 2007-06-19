@@ -62,7 +62,7 @@ my %sections = (
         'ssh' => '(sshd(?:\(.*\))?\[.*\])',
         'auth' => '(\w+\(pam_unix\)\[.*\])',
         'kernel' => '(kernel)',
-        'ipsec' => '(ipsec_[\w_]+|pluto\[.*\])',
+        'ipsec' => '(ipsec_[\w_]+|pluto\[.*\]|vpnwatch)',
         'snort' => '(snort)',
         'openvpn' => '(openvpnserver)\[.*\]'
 	 );

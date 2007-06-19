@@ -40,7 +40,7 @@ char *de_tr[] = {
 /* TR_AUTODETECT */
 "* AUTOMATISCHE ERKENNUNG *",
 /* TR_BUILDING_INITRD */
-"Erzeuge INITRD...",
+"Erzeuge Ramdisk...",
 /* TR_CANCEL */
 "Abbrechen",
 /* TR_CARD_ASSIGNMENT */

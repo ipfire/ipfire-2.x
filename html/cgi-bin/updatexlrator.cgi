@@ -175,7 +175,7 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr save and restart'})
 
 	&savesettings;
 
-	system('/usr/local/bin/restartsquid');
+	system('/usr/local/bin/squidctrl restart');
 }
 
 if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr remove file'})
@@ -456,6 +456,12 @@ END
 		} elsif ($metadata[1] eq 'Symantec')
 		{
 			print "<img src='/images/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'Avira')
+		{
+			print "<img src='/images/updxl-src-avira.gif' alt='Avira'}' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'Avast')
+		{
+			print "<img src='/images/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
 		} else
 		{
 			print "<img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' />&nbsp;</td>\n";
@@ -537,6 +543,16 @@ print <<END
 		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr unknown'}</td>
+	</tr>
+	<tr>
+		<td class='base' colspan='2'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-avast.gif' alt='Avast' /></td>
+		<td class='base'>Avast</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-avira.gif' alt='Avira' /></td>
+		<td class='base'>Avira</td>
+		<td class='base'>&nbsp;</td>
+		<td class='base' colspan='5'>&nbsp;</td>
 	</tr>
 </table>
 END

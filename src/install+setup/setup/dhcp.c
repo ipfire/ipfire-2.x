@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Stuff for setting up the DHCP server from the setup prog.
  * 
- * $Id: dhcp.c,v 1.9.2.3 2004/12/03 06:46:50 eoberlander Exp $
- * 
  */
  
 #include "setup.h"
@@ -193,11 +191,13 @@ int handledhcp(void)
 					replacekeyvalue(dhcpkv, "ENABLE_GREEN", "on");
 					fclose(fopen(CONFIG_ROOT "/dhcp/enable_green", "w"));
 					chown(CONFIG_ROOT "/dhcp/enable_green", 99, 99);
+					mysystem("/usr/local/bin/dhcpctrl enable");
 				}
 				else
 				{
 					replacekeyvalue(dhcpkv, "ENABLE_GREEN", "off");
 					unlink(CONFIG_ROOT "/dhcp/enable_green");
+					mysystem("/usr/local/bin/dhcpctrl disable");
 				}
 				replacekeyvalue(dhcpkv, "VALID", "yes");
 				writekeyvalues(dhcpkv, CONFIG_ROOT "/dhcp/settings");
@@ -229,7 +229,7 @@ int handledhcp(void)
 				fclose(file);
 				chown(CONFIG_ROOT "/dhcp/dhcpd.conf", 99, 99);
 				if (automode == 0)
-					mysystem("/usr/local/bin/restartdhcp");
+					mysystem("/usr/local/bin/dhcpctrl enable");
 			}
 			result = 1;
 		}

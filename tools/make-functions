@@ -717,7 +717,17 @@ sign_packages() {
 			cd $BASEDIR/packages
 	  	for i in `ls $BASEDIR/packages/*.ipfire`; do
 	  		echo -n "Signing $i"
-				echo $GPG_PASSPHRASE | gpg --sign --armor -u 64D96617 --passphrase-fd 0 $i
+				echo $GPG_PASSPHRASE | gpg --compress-algo 3 --sign --armor -u 64D96617 --passphrase-fd 0 $i
+				if [ "$?" -eq "0" ]; then
+					beautify message DONE
+					mv -f $i.asc $i
+				else
+					beautify message FAIL
+				fi
+	  	done
+	  	for i in `ls $BASEDIR/packages/meta-*`; do
+	  		echo -n "Signing $i"
+				echo $GPG_PASSPHRASE | gpg --clearsign --armor -u 64D96617 --passphrase-fd 0 $i
 				if [ "$?" -eq "0" ]; then
 					beautify message DONE
 					mv -f $i.asc $i

@@ -15,19 +15,18 @@
 
 int main(int argc, char *argv[]) {
 	int i;
-	char command; // Add size here
-	char add; // Add size here
+	char command[1024];
+	char add[STRING_SIZE];
 	
 	if (!(initsetuid()))
 		exit(1);
 
-	sprintf(command, "/opt/pakfire/pakfire");
+	snprintf(command, STRING_SIZE, "/opt/pakfire/pakfire");
 
-	for (i = 0; i < argc - 1; i++) {
+	for (i = 1; i < argc; i++) {
 		sprintf(add, " %s", argv[i]);
 		strcat(command, add);
 	}
 	
 	return safe_system(command);
-	
 }

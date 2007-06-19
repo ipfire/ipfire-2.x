@@ -38,7 +38,7 @@ PAK_VER    = 1
 
 DESCDE     = "MP3Blaster ist kleine Software um Musik abzuspielen."
 DESCEN     = "MP3Blaster is piece of software that plays your music on the box."
-DEPS       = "libvorbis"
+DEPS       = "alsa libvorbis"
 
 ###############################################################################
 # Top-level Rules

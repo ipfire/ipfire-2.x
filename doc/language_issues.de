@@ -389,3 +389,6 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: OVPN
+WARNING: untranslated string: abort
+WARNING: untranslated string: aktiv
+WARNING: untranslated string: reload

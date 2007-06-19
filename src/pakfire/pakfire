@@ -16,19 +16,21 @@
 	}
 	
 	unless (@ARGV) {
-	  &Pakfire::message("Usage: pakfire <install|remove> <pak(s)>");
-	  &Pakfire::message("               <update>");
-	  &Pakfire::message("               <upgrade>");
-	  exit 1;
+		&Pakfire::usage;
 	}
 
 	if ("$ARGV[0]" eq "install") {
+		&Pakfire::lock("on");
 		shift;
 		my @deps;
 		my @paks;
 		my @temp;
 		foreach (@ARGV) {
-			push(@paks,$_);
+			if ("$_" =~ "^--") {
+				$interactive = 0 if ("$_" eq "--non-interactive");
+			} else {
+				push(@paks,$_);
+			}
 		}
 		foreach (@paks) {
 			@temp = &Pakfire::resolvedeps("$_");
@@ -71,10 +73,6 @@
 			  exit 1;
 			}
 		}
-		
-		&Pakfire::message("### Installing all packages:");
-		foreach (sort @all) { &Pakfire::message("# --> $_"); }
-		&Pakfire::message("");
 
 		### Download first
 		foreach (sort @all) {
@@ -85,16 +83,28 @@
 		foreach (sort @all) {
 			&Pakfire::setuppak("$_");
 		}
-
+		&Pakfire::lock("off");
 		
 	} elsif ("$ARGV[0]" eq "remove") {
 	
 	
 	} elsif ("$ARGV[0]" eq "update") {
+		my $force = "noforce";
 		&Pakfire::makeuuid();
 		&Pakfire::senduuid();
 		&Pakfire::getmirrors();
+		$force = "force" if ("$ARGV[1]" eq "--force");
+		&Pakfire::dbgetlist("$force");
 		
 	} elsif ("$ARGV[0]" eq "list") {
-		&Pakfire::dblist("noweb");
+		&Pakfire::dblist("all", "noweb");
+		
+	} elsif ("$ARGV[0]" eq "resolvedeps") {
+		foreach (@ARGV) {
+			next if ("$_" eq "resolvedeps");
+			&Pakfire::resolvedeps("$_");
+		}
+		
+	} else {
+		&Pakfire::usage;
 	}

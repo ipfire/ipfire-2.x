@@ -21,6 +21,14 @@ sub logger {
 	system("logger -t pakfire \"$log\"");
 }
 
+sub usage {
+  &Pakfire::message("Usage: pakfire <install|remove> <pak(s)>");
+  &Pakfire::message("               <update> - Contacts the servers for new lists of paks.");
+  &Pakfire::message("               <upgrade> - Installs the latest version of a pak.");
+  &Pakfire::message("               <list> - Outputs a short list with all available paks.");
+  exit 1;
+}
+
 sub pinghost {
 	my $host = shift;
 	
@@ -163,7 +171,7 @@ sub dbgetlist {
 	}
 	
 	if (("$age" gt 86400) || ("$force" eq "force")) {
-		cleanup();
+		#cleanup();
 		fetchfile("lists/packages_list.db", "");
 		move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
 	}
@@ -188,7 +196,11 @@ sub dblist {
 	my @templine;
 	foreach $line (sort @db) {
 		@templine = split(/\;/,$line);
-		### filter here...
+		if ("$filter" eq "notinstalled") {
+			next if ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
+		} elsif ("$filter" eq "installed") {
+			next unless ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
+		}
 		if ("$forweb" eq "forweb") {
 			print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
 		} else {
@@ -469,6 +481,22 @@ sub senduuid {
 	logger("Sending my uuid: $Conf::uuid");
 	fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
 	system("rm -f $Conf::cachedir/counter* 2>/dev/null");
+}
+
+sub lock {
+	my $status = shift;
+	if ("$status" eq "on") {
+		system("touch /opt/pakfire/pakfire.lock");
+		system("chmod 777 /opt/pakfire/pakfire.lock");
+		logger("Created lock");
+	} else {
+		if (system("rm -f /opt/pakfire/pakfire.lock >/dev/null 2>&1")) {
+			logger("Successfully removed lock.");
+		} else {
+			logger("Couldn't remove lock.");
+		}
+	}
+	return 0;
 }
 
 1;

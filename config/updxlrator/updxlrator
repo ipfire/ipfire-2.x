@@ -107,8 +107,26 @@ while (<>) {
 	{
 		$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Symantec");
 	}
-
+	
 	# -----------------------------------------------------------
+	# Section: Avira Downloads
+	# -----------------------------------------------------------
+	
+	if ($dsturl =~ m@^http://dl[0-9]\.avgate\.net/.*\.(htm|html|gz)$@i)
+	{
+	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Avira");
+	}
+	
+	# ----------------------------------------------------------- 
+	# Section: Avast Downloads 
+	# -----------------------------------------------------------  
+	
+	if ($dsturl =~ m@^http://download[0-99]\.avast\.com/.*\.(exe|zip|vps|stamp|vpu)$@i) 
+	{ 
+	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Avast"); 
+	} 
+	
+	# ----------------------------------------------------------- 
 
 	}
 

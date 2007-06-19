@@ -6,9 +6,6 @@
 # 
 # This code is distributed under the terms of the GPL
 #
-# (c) Eric Oberlander June 2002
-#
-# (c) Darren Critchley June 2003 - added real time clock setting, etc
 #
 
 use strict;
@@ -24,8 +21,6 @@ require "/opt/pakfire/lib/functions.pl";
 
 my %pakfiresettings=();
 my $errormessage = '';
-my @instlist = `ls /opt/pakfire/cache`;
-my $uninstall = 'yes';
 
 &Header::showhttpheaders();
 
@@ -42,20 +37,53 @@ $pakfiresettings{'AUTOUPDATE'} = '';
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ($pakfiresettings{'ACTION'} eq 'install'){
-print "Going to install $pakfiresettings{'INSPAKS'}";
-system("/opt/pakfire/pakfire installi $pakfiresettings{'INSPAKS'}")
-}elsif ($pakfiresettings{'ACTION'} eq 'remove'){
-foreach (@instlist){
-my @pakname = split(/-/,$_);
-my $dependency = `grep "Dependencies.*$pakfiresettings{'DELPAKS'}" /opt/pakfire/db/meta/*$pakname[0]`;
-if ($dependency){$errormessage = "We have depending Paket $pakname[0] nothing will be done.<br />";$uninstall='no';last;}else{$uninstall='yes';}
-}
-if ($uninstall eq 'yes'){
-print "Going to uninstall $pakfiresettings{'DELPAKS'}";
-system("/opt/pakfire/pakfire uninstalli $pakfiresettings{'DELPAKS'}")
-}
-} elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}")
-{
+	if ("$pakfiresettings{'FORCE'}" eq "on") {
+		system("/usr/local/bin/pakfire", "install", "--non-interactive", "$pakfiresettings{'INSPAKS'}", "&");
+		sleep(1);
+	} else {
+		&Header::openbox("100%", "center", "Abfrage");
+		my @output = `/usr/local/bin/pakfire resolvedeps $pakfiresettings{'INSPAKS'}`;
+		print <<END;
+		<table><tr><td colspan='2'>Sie maechten folgende Pakete installieren: $pakfiresettings{'INSPAKS'}. Moeglicherweise haben diese Pakete Abhaengigkeiten, d.h. andere Pakete muessen zusaetzlich installiert werden. Dazu sehen sie unten eine Liste.
+		<pre>		
+END
+		foreach (@output) {
+			print "$_\n";
+		}
+		print <<END;
+		</pre>
+		<tr><td colspan='2'>Moechten Sie der Installation aller Pakete zustimmen?
+		<tr><td colspan='2'>&nbsp;
+		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='INSPAKS' value='$pakfiresettings{'INSPAKS'}' />
+							<input type='hidden' name='FORCE' value='on' />
+							<input type='hidden' name='ACTION' value='install' />
+							<input type='image' alt='$Lang::tr{'install'}' src='/images/go-next.png' />
+						</form>
+				<td align='left'>
+						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='ACTION' value='' />
+							<input type='image' alt='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
+						</form>
+		</table>
+END
+		&Header::closebox();
+		&Header::closebigbox();
+		&Header::closepage();
+		exit;
+	}
+} elsif ($pakfiresettings{'ACTION'} eq 'remove') {
+
+} elsif ($pakfiresettings{'ACTION'} eq 'update') {
+	
+	system("/usr/local/bin/pakfire update --force");
+
+} elsif ($pakfiresettings{'ACTION'} eq 'unlock') {
+	
+	&Pakfire::lock("off");
+	
+} elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
+
 	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 }
 
@@ -73,7 +101,30 @@ if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
 	print "<font class='base'>$errormessage&nbsp;</font>\n";
 	&Header::closebox();
-	}
+}
+
+if ( -e "/opt/pakfire/pakfire.lock" ) {
+	&Header::openbox("100%", "center", "Aktiv");
+	print <<END;
+	<table>
+		<tr><td>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='hidden' name='ACTION' value='unlock' />
+				<input type='image' src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
+			</form>
+			<td>
+				Pakfire fuehrt gerade eine Aufgabe aus... Bitte warten sie, bis diese erfolgreich beendet wurde.
+		<tr><td colspan='2' align='center'>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='image' alt='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
+			</form>
+	</table>
+END
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit;
+}
 
 &Header::openbox("100%", "center", "Pakfire");
 
@@ -94,6 +145,7 @@ print <<END;
 			</form><br />
 			
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='hidden' name='ACTION' value='update' />
 				<input type='submit' value='Liste aktualisieren' /><br />
 			</form>
 			
@@ -104,11 +156,10 @@ print <<END;
 		<td width='40%' align="center">Installierte Addons:<br />
 			<select name="DELPAKS" size="10" multiple>
 END
-foreach (@instlist){
-my @pakname = split(/-/,$_);
-print "<option value='$pakname[0]'>$pakname[0]</option>";
-}
-print <<END;		
+
+			&Pakfire::dblist("installed", "forweb");
+
+print <<END;
 		</select>
 	</table></form>
 		<br /><hr /><br />
