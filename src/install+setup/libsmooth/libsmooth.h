@@ -43,7 +43,6 @@
 #define DHCP 3
 #define NETCHANGE_TOTAL 4
 
-#define KNOWN_NICS   "/var/ipfire/ethernet/known_nics"
 #define SCANNED_NICS "/var/ipfire/ethernet/scanned_nics"
 
 #define _GREEN_CARD_ 0
@@ -94,6 +93,7 @@ int gettype(char *type);
 int setnetaddress(struct keyvalue *kv, char *colour);
 void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
+int init_knics(void);
 int create_udev(void);
 int scan_network_cards(void);
 int nicmenu(int colour);

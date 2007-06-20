@@ -89,6 +89,8 @@ int handlenetworking(void)
 
 	found =	scan_network_cards();
 	fprintf(flog,"found %d cards\n",found); // #### Debug ####
+	found = init_knics();
+	fprintf(flog,"found %d kcards\n",found); // #### Debug ####
 
 	done = 0;
 	while (!done)
@@ -304,21 +306,19 @@ int configtypemenu(void)
 	return 0;
 }
 
+
+
 /* Driver menu.  Choose drivers.. */
 int drivermenu(void)
 {
 	struct keyvalue *kv = initkeyvalues();
 	char message[STRING_SIZE];
 	char temp[STRING_SIZE];
-//	char description[STRING_SIZE], macaddr[STRING_SIZE];
-//	struct nic *pnics = nics;
-//	pnics = nics;
-//	struct knic *pknics = knics;
-//	pknics = knics;
+
 	int configtype;
-	int rc, kcount = 0, neednics; //i = 0, count = 0,
+	int i, rc, kcount = 0, neednics; //i = 0, count = 0,
 	
-	fprintf(flog,"Enter driverenu\n"); // #### Debug ####
+	fprintf(flog,"Enter drivermenu\n"); // #### Debug ####
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -330,19 +330,12 @@ int drivermenu(void)
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
 	
-//	if (configtype == 0)
-//	{
-//		freekeyvalues(kv);
-//		errorbox(ctr[TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER]);
-//		return 0;
-//	}
-
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 
 	kcount = 0;	// counter to find knowing nics.
 	neednics = 0;	// counter to use needing nics.
 	if (HAS_GREEN) {
-		strcpy(temp, ""); findkey(kv, "GREEN_MACADDR", temp);
+/*		strcpy(temp, ""); findkey(kv, "GREEN_MACADDR", temp);
 		if (strlen(temp)) {
 			strcpy(knics[_GREEN_CARD_].macaddr, temp);
 			strcpy(knics[_GREEN_CARD_].colour, "GREEN");
@@ -354,6 +347,7 @@ int drivermenu(void)
 		} else {
 			strcpy(knics[_GREEN_CARD_].description, ctr[TR_UNSET]);
 		}
+*/
 		sprintf(temp, "GREEN:  %s\n", knics[_GREEN_CARD_].description);
 		strcat(message, temp);
 		if (strlen(knics[_GREEN_CARD_].macaddr) ) {
@@ -363,7 +357,7 @@ int drivermenu(void)
 		neednics++;
 	}
 	if (HAS_RED) {
-		strcpy(temp, ""); findkey(kv, "RED_MACADDR", temp);
+/*		strcpy(temp, ""); findkey(kv, "RED_MACADDR", temp);
 		if (strlen(temp)) {
 			strcpy(knics[_RED_CARD_].macaddr, temp);
 			strcpy(knics[_RED_CARD_].colour, "RED");
@@ -375,6 +369,7 @@ int drivermenu(void)
 		} else {
 			strcpy(knics[_RED_CARD_].description, ctr[TR_UNSET]);
 		}
+*/
 		sprintf(temp, "RED:    %s\n", knics[_RED_CARD_].description);
 		strcat(message, temp);
 		if (strlen(knics[_RED_CARD_].macaddr) ) {
@@ -384,7 +379,7 @@ int drivermenu(void)
 		neednics++;
 	}
 	if (HAS_ORANGE) {
-		strcpy(temp, ""); findkey(kv, "ORANGE_MACADDR", temp);
+/*		strcpy(temp, ""); findkey(kv, "ORANGE_MACADDR", temp);
 		if (strlen(temp)) {
 			strcpy(knics[_ORANGE_CARD_].macaddr, temp);
 			strcpy(knics[_ORANGE_CARD_].colour, "ORANGE");
@@ -396,6 +391,7 @@ int drivermenu(void)
 		} else {
 			strcpy(knics[_ORANGE_CARD_].description, ctr[TR_UNSET]);
 		}
+*/
 		sprintf(temp, "ORANGE: %s\n", knics[_ORANGE_CARD_].description);
 		strcat(message, temp);
 		if ( strlen(knics[_ORANGE_CARD_].macaddr) ) {
@@ -405,7 +401,7 @@ int drivermenu(void)
 		neednics++;
 	}
 	if (HAS_BLUE) {
-		strcpy(temp, ""); findkey(kv, "BLUE_MACADDR", temp);
+/*		strcpy(temp, ""); findkey(kv, "BLUE_MACADDR", temp);
 		if (strlen(temp)) {
 			strcpy(knics[_BLUE_CARD_].macaddr, temp);
 			strcpy(knics[_BLUE_CARD_].colour, "BLUE");
@@ -417,6 +413,7 @@ int drivermenu(void)
 		} else {
 			strcpy(knics[_BLUE_CARD_].description, ctr[TR_UNSET]);
 		}
+*/
 		sprintf(temp, "BLUE:   %s\n", knics[_BLUE_CARD_].description);
 		strcat(message, temp);
 		if (strlen(knics[_BLUE_CARD_].macaddr)) {
@@ -426,6 +423,7 @@ int drivermenu(void)
 		neednics++;
 	}
 
+	for ( i=0 ; i<4;i++) if (strcmp(knics[i].macaddr, "")) kcount++;
 	fprintf(flog,"found %d knowing Card\'s\n", kcount); // #### DEBUG ####
 
 	if (neednics = kcount) {
@@ -446,17 +444,6 @@ int drivermenu(void)
 	freekeyvalues(kv);
 
 	return 1;
-}
-
-int cardassigned(char *colour)
-{
-	char command[STRING_SIZE];
-	fprintf(flog,"cardassigned - %s\n", colour);
-	sprintf(command, "grep -q %s < /etc/udev/rules.d/30-persistent-network.rules 2>/dev/null", colour);
-	if (system(command))
-		return 0;
-	else
-		return 1;
 }
 
 int set_menu_entry_for(int *nr, int *card)

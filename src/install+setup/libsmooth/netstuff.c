@@ -366,6 +366,51 @@ void strupper(unsigned char *string)
 }
 */
 
+int get_knic(int card)		//returns "0" for zero cards or error and "1" card is found.
+{
+	struct keyvalue *kv = initkeyvalues();
+	char temp[STRING_SIZE], searchstr[STRING_SIZE];
+	int ret_value;
+
+	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
+	{
+		freekeyvalues(kv);
+		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		return 0;
+	}
+
+	sprintf(searchstr, "%s_MACADDR", ucolourcard[card]);
+	strcpy(temp, ""); findkey(kv, searchstr, temp);
+	if (strlen(temp)) {
+		strcpy(knics[ card ].macaddr, temp);
+		strcpy(knics[ card ].colour, "GREEN");
+
+		sprintf(searchstr, "%s_DESCRIPTION", ucolourcard[card]);
+		findkey(kv, searchstr, temp);
+		strcpy(knics[ card ].description, temp);
+
+		sprintf(searchstr, "%s_DRIVER", ucolourcard[card]);
+		findkey(kv, searchstr, temp);
+		strcpy(knics[ card ].driver, temp);
+		ret_value = 1;
+	} else {
+		strcpy(knics[ card ].description, ctr[TR_UNSET]);
+		ret_value = 0;
+	}
+
+	return ret_value;
+}
+
+int init_knics(void)
+{
+	int found = 0;
+	found += get_knic(_GREEN_CARD_);
+	found += get_knic(_RED_CARD_);
+	found += get_knic(_ORANGE_CARD_);
+	found += get_knic(_BLUE_CARD_);
+
+	return found;
+}
 
 int create_udev(void)
 {
