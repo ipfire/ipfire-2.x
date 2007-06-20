@@ -35,15 +35,13 @@ for i in os.listdir(dir):
 		i = i.rstrip("\n")
 		if i.startswith("Name:"):
 			trash,name = i.split(": ")
-		elif i.startswith("Version:"):
+		elif i.startswith("ProgVersion:"):
 			trash,ver = i.split(": ")
 		elif i.startswith("Release:"):
 			trash,rel = i.split(": ")
-		elif i.startswith("Size:"):
-			trash,size = i.split(": ")
 		
 	src.close()
 	
-	dst.write(name+";"+ ver +";"+ rel +";"+ size +";\n")
+	dst.write(name+";"+ ver +";"+ rel +";\n")
 
 dst.close()

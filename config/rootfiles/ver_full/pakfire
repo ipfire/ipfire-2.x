@@ -1,6 +1,7 @@
 #opt/pakfire
 opt/pakfire/cache
 #opt/pakfire/db
+opt/pakfire/db/installed
 opt/pakfire/db/lists
 opt/pakfire/db/meta
 opt/pakfire/db/rootfiles
@@ -8,6 +9,7 @@ opt/pakfire/db/rootfiles
 opt/pakfire/etc/pakfire.conf
 #opt/pakfire/lib
 opt/pakfire/lib/functions.pl
+opt/pakfire/lib/functions.sh
 opt/pakfire/logs
 #opt/pakfire/meta
 opt/pakfire/pakfire

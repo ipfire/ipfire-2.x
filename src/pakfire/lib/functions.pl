@@ -204,7 +204,7 @@ sub dblist {
 		if ("$forweb" eq "forweb") {
 			print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
 		} else {
-			print "Name: $templine[0]\nVersion: $templine[1]\nRelease: $templine[2]\n\n";
+			print "Name: $templine[0]\nProgVersion: $templine[1]\nRelease: $templine[2]\n\n";
 		}
 	}
 }
@@ -335,10 +335,10 @@ sub decryptpak {
 	
 	my $file = getpak("$pak", "noforce");
 	
-	my $return = system("gpg -d < $Conf::cachedir/$file | tar xj -C $Conf::tmpdir/");
+	my $return = system("cd $Conf::tmpdir/ && gpg -d < $Conf::cachedir/$file | cpio -i >/dev/null 2>&1");
 	
 	logger("Decryption process returned the following: $return");
-	if ($return != 1) { exit 1; }
+	if ($return != 0) { exit 1; }
 }
 
 sub getpak {
@@ -385,6 +385,7 @@ sub setuppak {
 	decryptpak("$pak");
 	
 	my $return = system("cd $Conf::tmpdir && ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
+	$return %= 255;
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
@@ -497,6 +498,17 @@ sub lock {
 		}
 	}
 	return 0;
+}
+
+sub checkcryptodb {
+	my $myid = "64D96617"; # Our own gpg-key
+	my $trustid = "65D0FD58"; # Id of CaCert
+	my $ret = system("gpg --list-keys | grep -q $myid");
+	unless ( "$ret" eq "0" ) {
+		message("The GnuPG isn't configured corectly. Trying now to fix this.");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $myid");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $trustid");
+	}
 }
 
 1;

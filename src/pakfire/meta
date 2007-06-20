@@ -1,6 +1,5 @@
 Name: NAME
-FullName: NAME
-Version: VER
+ProgVersion: VER
 Release: RELEASE
 Size: SIZE
 Dependencies: DEPS

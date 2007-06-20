@@ -5,6 +5,7 @@
 	my $interactive = 1;
 	
 	&Pakfire::logger("### IPFire Pakfire $Conf::version started!");
+	&Pakfire::checkcryptodb;
 
 	### Check if we are running as root
 	#
