@@ -281,7 +281,7 @@ int main(int argc, char *argv[]) {
 		
  /* Get vpnwatch pid */
  int fd;
- if ((fd = open("/var/run/vpn-watch.pid", O_RDONLY)) != -1) {
+ if (( fd = open("/var/run/vpn-watch.pid", O_RDONLY)) != "" ) {
  close(fd);
  safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
  safe_system("unlink /var/run/vpn-watch.pid)");

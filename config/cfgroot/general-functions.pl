@@ -88,6 +88,7 @@ sub writehash
 	flock FILE, 2;
 	foreach $var (keys %$hash) 
 	{
+		if ( $var eq "__CGI__"){next;}
 		$val = $hash->{$var};
 		# Darren Critchley Jan 17, 2003 added the following because when submitting with a graphic, the x and y
 		# location of the mouse are submitted as well, this was being written to the settings file causing

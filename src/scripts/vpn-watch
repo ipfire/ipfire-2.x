@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 ################################################## 
-#####     VPN-Watch.pl     Version 0.1       ##### 
+#####     VPN-Watch.pl     Version 0.3       ##### 
 ################################################## 
 
 use strict;
@@ -9,10 +9,17 @@ require '/var/ipfire/general-functions.pl';
 my @vpnsettings;
 my $i = 0;
 my $file = "/var/run/vpn-watch.pid";
+my $debug = 0;
+
+if ( -e $file ){logger("There my be another vpn-watch runnning $file exists, vpn-watch will not start.");exit 1;}
+if ($debug){logger("Call of vpn-watch pid not is not existing.");}
 
 system("echo $$ > $file");
     
 while ( $i == 0){
+ sleep(300);
+  if ($debug){logger("We will wait 300 seconds before next action.");}
+  
   if (open(FILE, "${General::swroot}/vpn/config")) {
     @vpnsettings = <FILE>;
     close(FILE);
@@ -28,6 +35,9 @@ foreach (@vpnsettings){
   if ($settings[29] ne 'on'){next;}
  
   my $remotehostname = $settings[11];
+  
+  if ($debug){logger("Checking connection to $remotehostname.");}
+  
   my $remoteip = `/usr/bin/ping -c 1 $remotehostname 2>/dev/null | head -n1 | awk '{print \$3}' | tr -d '()' | tr -d ':'`;chomp($remoteip);
   if ($remoteip eq ""){next;}
   if (system("ipsec whack --status | grep $remoteip >/dev/null")){
@@ -35,15 +45,8 @@ foreach (@vpnsettings){
     system("/usr/local/bin/ipsecctrl S $settings[0]");
     next;
   }
-  my $hostip = `cat /var/ipfire/red/local-ipaddress 2>/dev/null`;
-  chomp($hostip);
-  if (system("ipsec whack --status | grep $hostip >/dev/null")){
-    logger("Our own IP has changed to $hostip restarting connection.");
-    system("/usr/local/bin/ipsecctrl S $settings[1]");
-    next;}  
-  }
-  logger("Nothing was done.");
-  sleep(300);
+ if ($debug){logger("All connections may be fine nothing was done.");}
+ }
 }
 
 sub logger {
