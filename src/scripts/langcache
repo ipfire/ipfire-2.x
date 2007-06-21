@@ -1,9 +1,0 @@
-#!/bin/bash 
-# 
-# IPFire SCRIPTs 
-# 
-# This code is distributed under the terms of the GPL 
-# 
-# (C) Benedikt Correll for IPFire 
- 
-perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"

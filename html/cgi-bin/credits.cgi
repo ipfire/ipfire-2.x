@@ -45,7 +45,6 @@ Projektmitglied &amp; Developer - Christian Schmidt
 (<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
 Projektmitglied &amp; Supporter - Silvio Rechenbach
 (<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
-Creative Mind - Benedikt Correll<br />
 Sponsor - Karsten Rechenbach
 (<a href='mailto:space\@ipfire.org'>space\@ipfire.org</a>)<br />
 Betatester - Sebastian Winter
