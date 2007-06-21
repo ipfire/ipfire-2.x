@@ -44,6 +44,7 @@ our $filename3 = "${General::swroot}/dhcp/advoptions-list";	# Describe the allow
 my $errormessage = '';
 my $warnNTPmessage = '';
 my @nosaved=();
+my %color = ();
 
 #Basic syntax allowed for new Option definition. Not implemented: RECORDS & array of RECORDS 
 our $OptionTypes = 'boolean|((un)?signed )?integer (8|16|32)|ip-address|text|string|encapsulate \w+|array of ip-address';
@@ -102,6 +103,7 @@ foreach my $itf (@ITFs) {
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("${General::swroot}/time/settings", \%timesettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 #Get GUI values
 &Header::getcgihash(\%dhcpsettings);
@@ -721,9 +723,9 @@ foreach my $line (@current1) {
     if ($dhcpsettings{'KEY1'} eq $key) {
 	print "<tr bgcolor='${Header::colouryellow}'>";
     } elsif ($key % 2) {
-	print "<tr bgcolor='${Header::table2colour}'>";
+	print "<tr bgcolor='$color{'color22'}'>";
     } else {
-	print "<tr bgcolor='${Header::table1colour}'>"; 
+	print "<tr bgcolor='$color{'color20'}'>"; 
     }
 
     print <<END
@@ -919,9 +921,9 @@ foreach my $line (@current2) {
     if ($dhcpsettings{'KEY2'} eq $key) {
 	print "<tr bgcolor='${Header::colouryellow}'>";
     } elsif ($key % 2) {
-	print "<tr bgcolor='${Header::table2colour}'>";
+	print "<tr bgcolor='$color{'color22'}'>";
     } else {
-	print "<tr bgcolor='${Header::table1colour}'>"; 
+	print "<tr bgcolor='$color{'color20'}'>"; 
     }
     my $TAG0 = '';
     my $TAG1 = '';

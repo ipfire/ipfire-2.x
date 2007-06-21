@@ -21,6 +21,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %color = ();
 my %checked=();
 my %selected=();
 my %netsettings=();
@@ -60,6 +61,7 @@ my $chk_cron_mly = "${General::swroot}/updatexlrator/autocheck/cron.monthly";
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 $xlratorsettings{'ACTION'} = '';
 $xlratorsettings{'ENABLE_LOG'} = 'off';
@@ -385,9 +387,9 @@ END
 	{
 		$id++;
 		if ($id % 2) {
-			print "<tr bgcolor='$Header::table1colour'>\n"; }
+			print "<tr bgcolor='$color{'color20'}'>\n"; }
 		else {
-			print "<tr bgcolor='$Header::table2colour'>\n"; }
+			print "<tr bgcolor='$color{'color22'}'>\n"; }
 		$filesize = (-s "$repository/$updatefile");
 		1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
 

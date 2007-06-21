@@ -279,14 +279,16 @@ int main(int argc, char *argv[]) {
 	if (!(initsetuid()))
 		exit(1);
 		
+ FILE *file = NULL;
+		
  /* Get vpnwatch pid */
- int fd;
- if (( fd = open("/var/run/vpn-watch.pid", O_RDONLY)) != "" ) {
- close(fd);
- safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
+
+ if (file = fopen("/var/run/vpn-watch.pid", "r")) {
+ safe_system("kill -9 fd");
  safe_system("unlink /var/run/vpn-watch.pid)");
  }
-
+ close(fd);
+ 
 	/* FIXME: workaround for pclose() issue - still no real idea why
 	 * this is happening */
 	signal(SIGCHLD, SIG_DFL);
@@ -356,7 +358,6 @@ int main(int argc, char *argv[]) {
 	char if_orange[STRING_SIZE] = "";
 	char if_blue[STRING_SIZE] = "";
 	char s[STRING_SIZE];
-	FILE *file = NULL;
 
 	if (!(file = fopen(CONFIG_ROOT "/vpn/config", "r"))) {
 		fprintf(stderr, "Couldn't open vpn settings file");

@@ -18,6 +18,11 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/graphs.pl";
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 my %cgiparams=();
 my @cgigraphs=();
 
@@ -180,7 +185,7 @@ if ($cgigraphs[1] =~ /hddtemp/){
   }
   &Header::closebox();
   print "<div align='center'><table width='80%'><tr><td align='center'>";
-  print "<a href='/cgi-bin/hardwaregraphs.cgi=${graph}'>";
+  print "<a href='/cgi-bin/hardwaregraphs.cgi'>";
   print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
 }
 else 
@@ -274,11 +279,11 @@ foreach $key ( sort(keys %mbmon_values) )
 {
   if ( $i % 2 )
   {
-    print("<tr bgcolor='$Header::table2colour'>");
+    print("<tr bgcolor='$color{'color22'}'>");
   }
   else 
   {
-    print("<tr bgcolor='$Header::table1colour'>");
+    print("<tr bgcolor='$color{'color20'}'>");
   }
   $mbmon_settings{'LABEL-'.$key} = &Header::cleanhtml($mbmon_settings{'LABEL-'.$key});
   print("<td align='center'><input type='checkbox' name='LINE-$key' $mbmon_graphs{$key}/></td>");
