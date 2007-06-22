@@ -127,15 +127,7 @@ if (-e "${General::swroot}/ovpn/settings") {
                 push(@masklen, $tempovpnsubnet[1]);
                 push(@colour, ${Header::colourovpn} );
 
-    if ( ($ovpnsettings{'ENABLED'} eq 'on') && open(IP, "${General::swroot}/red/local-ipaddress") ) {
-      # add RED:port / proto
-                  my $redip = <IP>;
-                  close(IP);
-                  chomp $redip;
-                  push(@network, $redip );
-                  push(@masklen, '255.255.255.255' );
-                  push(@colour, ${Header::colourovpn} );
-    }
+
     if ( ($ovpnsettings{'ENABLED_BLUE'} eq 'on') && $netsettings{'BLUE_DEV'} ) {
       # add BLUE:port / proto
             push(@network, $netsettings{'BLUE_ADDRESS'} );
@@ -277,8 +269,10 @@ foreach my $line (@active) {
     my ($sip, $sport) = split(':', $temp[0]);
     my ($dip, $dport) = split(':', $temp[1]);
     my $proto = $temp[2];
-    my $state = $temp[3];
-    my $ttl = $temp[4];
+    my $state; my $ttl;
+    if ( $proto eq "esp" ){$state = "";$ttl = $temp[3];}
+    elsif ( $proto eq "icmp" ){$state = "";$ttl = $temp[4];}
+    else{$state = $temp[3];$ttl = $temp[4];}
     
     next if( !(
               		(($cgiparams{'SEE_PROTO'}  eq $Lang::tr{'all'}) || ($proto  eq $cgiparams{'SEE_PROTO'} ))

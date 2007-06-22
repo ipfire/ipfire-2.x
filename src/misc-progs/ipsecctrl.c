@@ -284,10 +284,10 @@ int main(int argc, char *argv[]) {
  /* Get vpnwatch pid */
 
  if (file = fopen("/var/run/vpn-watch.pid", "r")) {
- safe_system("kill -9 fd");
+ safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
  safe_system("unlink /var/run/vpn-watch.pid)");
  }
- close(fd);
+ close(file);
  
 	/* FIXME: workaround for pclose() issue - still no real idea why
 	 * this is happening */
