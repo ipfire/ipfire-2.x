@@ -79,6 +79,7 @@ WARNING: translation string unused: could not download the available updates lis
 WARNING: translation string unused: could not open available updates file
 WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
+WARNING: translation string unused: cpu irq usage
 WARNING: translation string unused: cpu usage per
 WARNING: translation string unused: create
 WARNING: translation string unused: create new backup
@@ -88,7 +89,6 @@ WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
 WARNING: translation string unused: daily firewallhits
-WARNING: translation string unused: daily firwallhits
 WARNING: translation string unused: dat without key
 WARNING: translation string unused: dbfile
 WARNING: translation string unused: ddns help dnsmadeeasy
@@ -215,6 +215,7 @@ WARNING: translation string unused: mbmon settings
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: min size
+WARNING: translation string unused: minimal
 WARNING: translation string unused: minutes
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
@@ -274,7 +275,7 @@ WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: polfile
-WARNING: translation string unused: portscancs
+WARNING: translation string unused: portscans
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
 WARNING: translation string unused: proxy no proxy extend

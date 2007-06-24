@@ -71,30 +71,36 @@ sub updatecpugraph {
         "CDEF:idlepct=100,idle,total,/,*",
         "CDEF:iowaitpct=100,iowait,total,/,*",
         "CDEF:irqpct=100,irq,total,/,*",
-        "AREA:iowaitpct".$color{"color14"}.":$tr{'iowait'}",
-        "STACK:userpct".$color{"color11"}.":$tr{'user cpu usage'}",
-        "STACK:irqpct".$color{"color23"}.":IRQ CPU",
-        "STACK:systempct".$color{"color13"}.":$tr{'system cpu usage'}",
-        "STACK:idlepct".$color{"color12"}.":$tr{'idle cpu usage'}\\j",
-        "COMMENT: \\j",
+        "COMMENT:$tr{'caption'}\\t\\t\\t   ",
         "COMMENT:$tr{'maximal'}",
         "COMMENT:$tr{'average'}",
+        "COMMENT:$tr{'minimal'}",
         "COMMENT:$tr{'current'}\\j",
-        "GPRINT:userpct:MAX:$tr{'user cpu'}\\:%3.2lf%%",
-        "GPRINT:userpct:AVERAGE:$tr{'user cpu'}\\:%3.2lf%%",
-        "GPRINT:userpct:LAST:$tr{'user cpu'}\\:%3.2lf%%\\j",
-        "GPRINT:irqpct:MAX:IRQ CPU\\:%3.2lf%%",
-        "GPRINT:irqpct:AVERAGE:IRQ CPU\\:%3.2lf%%",
-        "GPRINT:irqpct:LAST:IRQ CPU\\:%3.2lf%%\\j",
-        "GPRINT:systempct:MAX:$tr{'system cpu'}\\:%3.2lf%%",
-        "GPRINT:systempct:AVERAGE:$tr{'system cpu'}\\:%3.2lf%%",
-        "GPRINT:systempct:LAST:$tr{'system cpu'}\\:%3.2lf%%\\j",
-        "GPRINT:idlepct:MAX:$tr{'idle cpu'}\\:%3.2lf%%",
-        "GPRINT:idlepct:AVERAGE:$tr{'idle cpu'}\\:%3.2lf%%",
-        "GPRINT:idlepct:LAST:$tr{'idle cpu'}\\:%3.2lf%%\\j",
-        "GPRINT:iowaitpct:MAX:$tr{'iowait'}\\:%3.2lf%%",
-        "GPRINT:iowaitpct:AVERAGE:$tr{'iowait'}\\:%3.2lf%%",
-        "GPRINT:iowaitpct:LAST:$tr{'iowait'}\\:%3.2lf%%\\j");
+        "AREA:iowaitpct".$color{"color14"}.":$tr{'iowait'}",
+        "GPRINT:iowaitpct:MAX:%3.2lf%%",
+        "GPRINT:iowaitpct:AVERAGE:%3.2lf%%",
+        "GPRINT:iowaitpct:MIN:%3.2lf%%",
+        "GPRINT:iowaitpct:LAST:%3.2lf%%\\j",
+        "STACK:irqpct".$color{"color23"}.":$tr{'irq cpu usage'}",
+        "GPRINT:irqpct:MAX:%3.2lf%%",
+        "GPRINT:irqpct:AVERAGE:%3.2lf%%",
+        "GPRINT:irqpct:MIN:%3.2lf%%",
+        "GPRINT:irqpct:LAST:%3.2lf%%\\j",
+        "STACK:userpct".$color{"color11"}.":$tr{'user cpu usage'}",
+        "GPRINT:userpct:MAX:%3.2lf%%",
+        "GPRINT:userpct:AVERAGE:%3.2lf%%",
+        "GPRINT:userpct:MIN:%3.2lf%%",
+        "GPRINT:userpct:LAST:%3.2lf%%\\j",
+        "STACK:systempct".$color{"color13"}.":$tr{'system cpu usage'}",
+        "GPRINT:systempct:MAX:%3.2lf%%",
+        "GPRINT:systempct:AVERAGE:%3.2lf%%",
+        "GPRINT:systempct:MIN:%3.2lf%%",
+        "GPRINT:systempct:LAST:%3.2lf%%\\j",
+        "STACK:idlepct".$color{"color12"}.":$tr{'idle cpu usage'}",
+        "GPRINT:idlepct:MAX:%3.2lf%%",
+        "GPRINT:idlepct:AVERAGE:%3.2lf%%",
+        "GPRINT:idlepct:MIN:%3.2lf%%",
+        "GPRINT:idlepct:LAST:%3.2lf%%\\j");
         $ERROR = RRDs::error;
         print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
 }
@@ -146,30 +152,36 @@ sub updatememgraph {
         "CDEF:bufferpct=100,buffer,total,/,*",
         "CDEF:cachepct=100,cache,total,/,*",
         "CDEF:freepct=100,free,total,/,*",
-        "AREA:usedpct".$color{"color11"}.":$tr{'used memory'}",
-        "STACK:sharedpct".$color{"color13"}.":$tr{'shared memory'}",
-        "STACK:bufferpct".$color{"color23"}.":$tr{'buffered memory'}",
-        "STACK:cachepct".$color{"color14"}.":$tr{'cached memory'}",
-        "STACK:freepct".$color{"color12"}.":$tr{'free memory'}\\j",
-        "COMMENT: \\j",
+        "COMMENT:$tr{'caption'}\\t\\t\\t",
         "COMMENT:$tr{'maximal'}",
         "COMMENT:$tr{'average'}",
+        "COMMENT:$tr{'minimal'}",
         "COMMENT:$tr{'current'}\\j",
-        "GPRINT:usedpct:MAX:$tr{'used memory'}\\:%3.2lf%%",
-        "GPRINT:usedpct:AVERAGE:$tr{'used memory'}\\:%3.2lf%%",
-        "GPRINT:usedpct:LAST:$tr{'used memory'}\\:%3.2lf%%\\j",
-        "GPRINT:sharedpct:MAX:$tr{'shared memory'}\\:%3.2lf%%",
-        "GPRINT:sharedpct:AVERAGE:$tr{'shared memory'}\\:%3.2lf%%",
-        "GPRINT:sharedpct:LAST:$tr{'shared memory'}\\:%3.2lf%%\\j",
-        "GPRINT:bufferpct:MAX:$tr{'buffered memory'}\\:%3.2lf%%",
-        "GPRINT:bufferpct:AVERAGE:$tr{'buffered memory'}\\:%3.2lf%%",
-        "GPRINT:bufferpct:LAST:$tr{'buffered memory'}\\:%3.2lf%%\\j",
-        "GPRINT:cachepct:MAX:$tr{'cached memory'}\\:%3.2lf%%",
-        "GPRINT:cachepct:AVERAGE:$tr{'cached memory'}\\:%3.2lf%%",
-        "GPRINT:cachepct:LAST:$tr{'cached memory'}\\:%3.2lf%%\\j",
-        "GPRINT:freepct:MAX:$tr{'free memory'}\\:%3.2lf%%",
-        "GPRINT:freepct:AVERAGE:$tr{'free memory'}\\:%3.2lf%%",
-        "GPRINT:freepct:LAST:$tr{'free memory'}\\:%3.2lf%%\\j");
+        "AREA:usedpct".$color{"color11"}.":$tr{'used memory'}",
+        "GPRINT:usedpct:MAX:%3.2lf%%",
+        "GPRINT:usedpct:AVERAGE:%3.2lf%%",
+        "GPRINT:usedpct:MIN:%3.2lf%%",
+        "GPRINT:usedpct:LAST:%3.2lf%%\\j",
+        "STACK:sharedpct".$color{"color13"}.":$tr{'shared memory'}",
+        "GPRINT:sharedpct:MAX:%3.2lf%%",
+        "GPRINT:sharedpct:AVERAGE:%3.2lf%%",
+        "GPRINT:sharedpct:MIN:%3.2lf%%",
+        "GPRINT:sharedpct:LAST:%3.2lf%%\\j",
+        "STACK:bufferpct".$color{"color23"}.":$tr{'buffered memory'}",
+        "GPRINT:bufferpct:MAX:%3.2lf%%",
+        "GPRINT:bufferpct:AVERAGE:%3.2lf%%",
+        "GPRINT:bufferpct:MIN:%3.2lf%%",
+        "GPRINT:bufferpct:LAST:%3.2lf%%\\j",
+        "STACK:cachepct".$color{"color14"}.":$tr{'cached memory'}",
+        "GPRINT:cachepct:MAX:%3.2lf%%",
+        "GPRINT:cachepct:AVERAGE:%3.2lf%%",
+        "GPRINT:cachepct:MIN:%3.2lf%%",
+        "GPRINT:cachepct:LAST:%3.2lf%%\\j",
+        "STACK:freepct".$color{"color12"}.":$tr{'free memory'}",
+        "GPRINT:freepct:MAX:%3.2lf%%",
+        "GPRINT:freepct:AVERAGE:%3.2lf%%",
+        "GPRINT:freepct:MIN:%3.2lf%%",
+        "GPRINT:freepct:LAST:%3.2lf%%\\j");
         $ERROR = RRDs::error;
         print "Error in RRD::graph for mem: $ERROR\n" if $ERROR;
 
@@ -185,18 +197,21 @@ sub updatememgraph {
         "CDEF:total=used,free,+",
         "CDEF:usedpct=100,used,total,/,*",
         "CDEF:freepct=100,free,total,/,*",
-        "AREA:usedpct".$color{"color11"}.":$tr{'used swap'}",
-        "STACK:freepct".$color{"color12"}.":$tr{'free swap'}\\j",
-        "COMMENT: \\j",
+        "COMMENT:$tr{'caption'}\\t\\t",
         "COMMENT:$tr{'maximal'}",
         "COMMENT:$tr{'average'}",
+        "COMMENT:$tr{'minimal'}",
         "COMMENT:$tr{'current'}\\j",
-        "GPRINT:usedpct:MAX:$tr{'used swap'}\\:%3.2lf%%",
-        "GPRINT:usedpct:AVERAGE:$tr{'used swap'}\\:%3.2lf%%",
-        "GPRINT:usedpct:LAST:$tr{'used swap'}\\:%3.2lf%%\\j",
-        "GPRINT:freepct:MAX:$tr{'free swap'}\\:%3.2lf%%",
-        "GPRINT:freepct:AVERAGE:$tr{'free swap'}\\:%3.2lf%%",
-        "GPRINT:freepct:LAST:$tr{'free swap'}\\:%3.2lf%%\\j");
+        "AREA:usedpct".$color{"color11"}.":$tr{'used swap'}",
+        "GPRINT:usedpct:MAX:%3.2lf%%",
+        "GPRINT:usedpct:AVERAGE:%3.2lf%%",
+        "GPRINT:usedpct:MIN:%3.2lf%%",
+        "GPRINT:usedpct:LAST:%3.2lf%%\\j",
+        "STACK:freepct".$color{"color12"}.":$tr{'free swap'}",
+        "GPRINT:freepct:MAX:%3.2lf%%",
+        "GPRINT:freepct:AVERAGE:%3.2lf%%",
+        "GPRINT:freepct:MIN:%3.2lf%%",
+        "GPRINT:freepct:LAST:%3.2lf%%\\j");
         $ERROR = RRDs::error;
         print "Error in RRD::graph for swap: $ERROR\n" if $ERROR;
 }
@@ -249,12 +264,15 @@ sub updateifgraph {
   "COMMENT: \\j",
   "COMMENT:$tr{'maximal'}",
   "COMMENT:$tr{'average'}",
+  "COMMENT:$tr{'minimal'}",
   "COMMENT:$tr{'current'}\\j",
   "GPRINT:incoming:MAX:$tr{'in'}\\:%8.3lf %sBps",
   "GPRINT:incoming:AVERAGE:$tr{'in'}\\:%8.3lf %sBps",
+  "GPRINT:incoming:MIN:$tr{'in'}\\:%8.3lf %sBps",
   "GPRINT:incoming:LAST:$tr{'in'}\\:%8.3lf %sBps\\j",
   "GPRINT:outgoing:MAX:$tr{'out'}\\:%8.3lf %sBps",
   "GPRINT:outgoing:AVERAGE:$tr{'out'}\\:%8.3lf %sBps",
+  "GPRINT:outgoing:MIN:$tr{'out'}\\:%8.3lf %sBps",
   "GPRINT:outgoing:LAST:$tr{'out'}\\:%8.3lf %sBps\\j");
   $ERROR = RRDs::error;
   print "Error in RRD::graph for $interface: $ERROR\n" if $ERROR;
@@ -272,14 +290,21 @@ sub updatefwhitsgraph {
   "-t $tr{'firewall hits per'} $tr{$period}",
   "DEF:amount=$rrdlog/firewallhits.rrd:amount:AVERAGE",
   "DEF:portamount=$rrdlog/firewallhits.rrd:portamount:AVERAGE",
+  "COMMENT:$tr{'caption'}\\t\\t\\t",
+  "COMMENT:$tr{'maximal'}",
+  "COMMENT:$tr{'average'}",
+  "COMMENT:$tr{'minimal'}",
+  "COMMENT:$tr{'current'}\\j",
   "AREA:amount".$color{"color24"}.":$tr{'firewallhits'}/5 min",
-  "GPRINT:amount:MAX: $tr{'maximal'}\\: %2.2lf %S",
-  "GPRINT:amount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-  "GPRINT:amount:LAST: $tr{'current'}\\: %2.2lf %S\\j",
-  "AREA:portamount".$color{"color25"}.":$tr{'portscans'}/5 min",
-  "GPRINT:portamount:MAX: $tr{'maximal'}\\: %2.2lf %S",
-  "GPRINT:portamount:AVERAGE: $tr{'average'}\\: %2.2lf %S",
-  "GPRINT:portamount:LAST: $tr{'current'}\\: %2.2lf %S\\j");
+  "GPRINT:amount:MAX:%2.2lf %S",
+  "GPRINT:amount:AVERAGE:%2.2lf %S",
+  "GPRINT:amount:MIN:%2.2lf %S",
+  "GPRINT:amount:LAST:%2.2lf %S\\j",
+  "STACK:portamount".$color{"color25"}.":$tr{'portscans'}/5 min",
+  "GPRINT:portamount:MAX:%2.2lf %S",
+  "GPRINT:portamount:MIN:%2.2lf %S",
+  "GPRINT:portamount:AVERAGE:%2.2lf %S",
+  "GPRINT:portamount:LAST:%2.2lf %S\\j");
   $ERROR = RRDs::error;
   print "Error in RRD::graph for Firewallhits: $ERROR\n" if $ERROR;
 }
@@ -312,13 +337,16 @@ sub updatelqgraph {
   "COMMENT: \\j",
   "COMMENT:$tr{'maximal'}",
   "COMMENT:$tr{'average'}",
+  "COMMENT:$tr{'minimal'}",
   "COMMENT:$tr{'current'}\\j",
   "LINE1:roundtrip#707070:",
   "GPRINT:roundtrip:MAX:Time\\:%3.2lf ms",
   "GPRINT:roundtrip:AVERAGE:Time\\:%3.2lf ms",
+  "GPRINT:roundtrip:MIN:Time\\:%3.2lf ms",
   "GPRINT:roundtrip:LAST:Time\\:%3.2lf ms\\j",
   "GPRINT:loss:MAX:Loss\\:%3.2lf%%",
   "GPRINT:loss:AVERAGE:Loss\\:%3.2lf%%",
+  "GPRINT:loss:MIN:Loss\\:%3.2lf%%",
   "GPRINT:loss:LAST:Loss\\:%3.2lf%%\\j"
   );
   $ERROR = RRDs::error;
@@ -338,12 +366,17 @@ sub updatehddgraph {
   "--color", "BACK".$color{"color21"},
   "-t $tr{'harddisk temperature'} ($tr{'graph per'} $tr{$period})",
   "DEF:temperature=$rrdlog/hddtemp-$disk.rrd:temperature:AVERAGE",
-  "LINE2:temperature".$color{"color11"}.":$tr{'hdd temperature in'} ?C",
-  "GPRINT:temperature:MAX:$tr{'maximal'}\\:%3.0lf ?C",
-  "GPRINT:temperature:AVERAGE:$tr{'average'}\\:%3.0lf ?C",
-  "GPRINT:temperature:LAST:$tr{'current'}\\:%3.0lf ?C",
+  "AREA:temperature".$color{"color11"}.":$tr{'hdd temperature in'} C\\j",
+  "COMMENT:$tr{'maximal'}",
+  "COMMENT:$tr{'average'}",
+  "COMMENT:$tr{'minimal'}",
+  "COMMENT:$tr{'current'}\\j",
+  "GPRINT:temperature:MAX:%2.0lf Grad C",
+  "GPRINT:temperature:AVERAGE:%2.0lf Grad C",
+  "GPRINT:temperature:MIN:%2.0lf Grad C",
+  "GPRINT:temperature:LAST:%2.0lf Grad C\\j",
   );
-  $ERROR = RRDs::error;
+  $ERROR = RRDs::error; 
   print "Error in RRD::graph for hdd-$disk: $ERROR\n" if $ERROR;
 }
 
@@ -359,7 +392,12 @@ sub updatetempgraph
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
-    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})",);
+    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})",
+    "COMMENT:$tr{'caption'}\\t\\t",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'minimal'}",
+    "COMMENT:$tr{'current'}\\j",);
     
   foreach $key ( sort(keys %mbmon_values) ) 
   {
@@ -370,14 +408,15 @@ sub updatetempgraph
         $mbmon_settings{'LABEL-'.$key} = $key;
       }
     push (@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-    push (@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon temp in'} C");
-    push (@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.1lf C");
-    push (@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.1lf C");
-    push (@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.1lf C\\j");
+    push (@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} Grad C");
+    push (@args, "GPRINT:$key:MAX:%3.1lf");
+    push (@args, "GPRINT:$key:AVERAGE:%3.1lf");
+    push (@args, "GPRINT:$key:MIN:%3.1lf");
+    push (@args, "GPRINT:$key:LAST:%3.1lf\\j");
     $count++;
    }
   }
-    
+   
   RRDs::graph ( @args );    
     $ERROR = RRDs::error;
     print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
@@ -394,7 +433,12 @@ sub updatefangraph
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
-    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
+    "-t $tr{'mbmon fan'} ($tr{'graph per'} $tr{$period})",
+    "COMMENT:$tr{'caption'}\\t\\t",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'minimal'}",
+    "COMMENT:$tr{'current'}\\j",);
 
   foreach $key ( sort(keys %mbmon_values) ) 
   {
@@ -406,10 +450,11 @@ sub updatefangraph
       }
 
       push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} $tr{'mbmon fan in'} rpm");
-      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.0lf rpm");
-      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.0lf rpm");
-      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.0lf rpm\\j");
+      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} rpm");
+      push(@args, "GPRINT:$key:MAX:%5.0lf");
+      push(@args, "GPRINT:$key:AVERAGE:%5.0lf");
+      push(@args, "GPRINT:$key:MIN:%5.0lf");
+      push(@args, "GPRINT:$key:LAST:%5.0lf\\j");
       $count++;
     }
   }
@@ -429,7 +474,12 @@ sub updatevoltgraph
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
-    "-t $tr{'mbmon temp'} ($tr{'graph per'} $tr{$period})" );
+    "-t $tr{'mbmon volt'} ($tr{'graph per'} $tr{$period})",
+    "COMMENT:$tr{'caption'}\\t",
+    "COMMENT:$tr{'maximal'}",
+    "COMMENT:$tr{'average'}",
+    "COMMENT:$tr{'minimal'}",
+    "COMMENT:$tr{'current'}\\j",);
 
   foreach $key ( sort(keys %mbmon_values) ) 
   {
@@ -442,10 +492,11 @@ sub updatevoltgraph
       }
 
       push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} V");
-      push(@args, "GPRINT:$key:MAX:$tr{'maximal'}\\:%5.2lf V");
-      push(@args, "GPRINT:$key:AVERAGE:$tr{'average'}\\:%5.2lf V");
-      push(@args, "GPRINT:$key:LAST:$tr{'current'}\\:%5.2lf V\\j");
+      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} Volt");
+      push(@args, "GPRINT:$key:MAX:%3.2lf");
+      push(@args, "GPRINT:$key:AVERAGE:%3.2lf");
+      push(@args, "GPRINT:$key:MIN:%3.2lf");
+      push(@args, "GPRINT:$key:LAST:%3.2lf\\j");
       $count++;
     }
   }

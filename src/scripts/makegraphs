@@ -408,7 +408,7 @@ sub updatehdddata
   $temp = 0;
   my $hdd_output = '';
   my $smart_output = '';
-
+  
   if ( -e "$path_smartctl" )
   {
     system("$path_smartctl -iHA /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
@@ -417,7 +417,7 @@ sub updatehdddata
   if ( -e "$path_hddtemp" )
   {
     $hdd_output = `$path_hddtemp -qn /dev/$disk`;
-
+    
     # I know 4 response possible responses:
     #
     # /dev/harddisk: harddisk type: S.M.A.R.T. not available
@@ -454,12 +454,11 @@ sub updatehdddata
   {
     $temp = 0;
   }
+  
 
-#  print "hdd  $hdd_output \n";
-#  print "temp $temp \n";
+  print "Temperature for ".$disk."->".$temp."<-\n";
 
   RRDs::update ("$rrdlog/hddtemp-$disk.rrd", "-t", "temperature", "N:$temp");
-
   $ERROR = RRDs::error;
   print "Error in RRD::update for hdd-$disk: $ERROR\n" if $ERROR;
 }
@@ -550,6 +549,10 @@ updatecpudata();
 updateloaddata();
 updatememdata();
 
+###
+### HDD graphs
+###
+
 my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 print "\nFound following amount of disks:".@disks."\n";
 foreach (@disks){
@@ -557,6 +560,7 @@ my $disk = $_;
 chomp $disk;
 print "Working on disk ".$disk.".\n";
 updatediskdata($disk);
+updatehdddata($disk);
 }
 
 ###
@@ -570,16 +574,9 @@ updatefwhitsdata();
 updatelq();
 
 ###
-### HDDTEMP-Graphs for /dev/harddisk
+### Mbmon Data
 ###
-
-my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-print "\nFound following amount of disks for hddtemp:".@disks."\n";
-foreach (@disks){
-my $disk = $_;
-chomp $disk;
-updatehdddata ($disk);
-}
+updatembmondata();
 
 ###
 ### Network Graphs

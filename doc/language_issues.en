@@ -96,6 +96,7 @@ WARNING: translation string unused: could not download the available updates lis
 WARNING: translation string unused: could not open available updates file
 WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
+WARNING: translation string unused: cpu irq usage
 WARNING: translation string unused: cpu usage per
 WARNING: translation string unused: create
 WARNING: translation string unused: current
@@ -226,6 +227,7 @@ WARNING: translation string unused: mbmon settings
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: memory usage per
 WARNING: translation string unused: min size
+WARNING: translation string unused: minimal
 WARNING: translation string unused: minutes
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
