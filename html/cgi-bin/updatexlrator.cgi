@@ -6,8 +6,6 @@
 #
 # (c) 2006 marco.s
 #
-# $Id: updatexlrator.cgi,v 1.0.0 2006/09/12 00:00:00 marco.s Exp $
-#
 
 use strict;
 
@@ -177,7 +175,7 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr save and restart'})
 
 	&savesettings;
 
-	system('/usr/local/bin/squidctrl restart');
+	system('/usr/local/bin/squidctrl restart >/dev/null 2>&1');
 }
 
 if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr remove file'})

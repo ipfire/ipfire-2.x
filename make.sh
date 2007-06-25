@@ -505,6 +505,7 @@ buildipfire() {
   ipfiremake lame
   ipfiremake sox
   ipfiremake gnump3d
+  ipfiremake ctorrent
   ipfiremake applejuice
   ipfiremake ocaml
   ipfiremake mldonkey

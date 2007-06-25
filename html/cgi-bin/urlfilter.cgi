@@ -369,7 +369,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 
 		&setpermissions ($dbdir);
 
-		system('/usr/local/bin/restartsquid');
+		system('/usr/local/bin/squidctrl restart >/dev/null 2>&1');
 	}
 }
 
@@ -503,7 +503,7 @@ if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang
 		$errormessage = $Lang::tr{'urlfilter web proxy service required'};
 	}
 
-	if (!$errormessage) { system('/usr/local/bin/restartsquid'); }
+	if (!$errormessage) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
 	$tcsettings{'TCMODE'}='on';
 }
 
@@ -706,7 +706,7 @@ if (($uqsettings{'MODE'} eq 'USERQUOTA') && ($uqsettings{'ACTION'} eq $Lang::tr{
 		$errormessage = $Lang::tr{'urlfilter web proxy service required'};
 	}
 
-	if (!$errormessage) { system('/usr/local/bin/restartsquid'); }
+	if (!$errormessage) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
 	$uqsettings{'UQMODE'}='on';
 }
 
@@ -960,7 +960,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter install blacklist'}) && ($bes
 
 		&writeconfigfile;
 
-		system('/usr/local/bin/restartsquid') unless ($besettings{'NORESTART'} eq 'on');
+		system('/usr/local/bin/squidctrl restart >/dev/null 2>&1') unless ($besettings{'NORESTART'} eq 'on');
 
 		if (-d $editdir) { system("rm -rf $editdir"); }
 	} else {

@@ -2,6 +2,6 @@
 
 extract_files() {
 	echo "Extracting files..."
-	cd / && cpio -i < /opt/pakfire/tmp/files
-	
+	tar xvf /opt/pakfire/tmp/files -C /
+	echo "...Finished."
 }

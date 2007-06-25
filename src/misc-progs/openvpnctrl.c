@@ -296,7 +296,8 @@ void stopDaemon(void) {
 	executeCommand(command);
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
 	executeCommand(command);
-	executeCommand("modprobe -r tun");
+	snprintf(command, STRING_SIZE-1, "/sbin/modprobe -r tun");
+	executeCommand(command);
 }
 
 void startDaemon(void) {
@@ -306,7 +307,8 @@ void startDaemon(void) {
 		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
 		exit(1);
 	} else {
-		executeCommand("modprobe tun");
+		snprintf(command, STRING_SIZE-1, "/sbin/modprobe tun");
+		executeCommand(command);
 		snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config /var/ipfire/ovpn/server.conf");
 		executeCommand(command);
 	}
