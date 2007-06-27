@@ -892,6 +892,7 @@
 'iptmangles' => 'IPTable Mangles',
 'iptnats' => 'IPTable Network Address Translation',
 'ipts' => 'IPTables',
+'irq cpu usage' => 'IRQ Cpu Usage       ',
 'isdn' => 'ISDN',
 'isdn settings' => 'Additional ISDN settings:',
 'isdn1' => 'Single ISDN',

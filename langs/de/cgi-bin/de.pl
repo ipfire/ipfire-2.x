@@ -880,6 +880,7 @@
 'iptmangles' => 'IPTable Mangles',
 'iptnats' => 'IPTable Network Address Translation',
 'ipts' => 'IPTables',
+'irq cpu usage' => 'IRQ Cpu Nutzung     ',
 'isdn' => 'ISDN',
 'isdn settings' => 'Zusätzliche ISDN-Einstellungen:',
 'isdn1' => 'Einfaches ISDN',
