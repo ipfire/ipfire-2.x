@@ -3,4 +3,6 @@
 
 extract_files
 
-clamavctrl enable
+chown clamav:clamav /usr/share/clamav
+
+/usr/local/bin/clamavctrl enable

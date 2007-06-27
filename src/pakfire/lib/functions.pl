@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 require "/opt/pakfire/etc/pakfire.conf";
+require "/var/ipfire/general-functions.pl";
 
 use File::Basename;
 use File::Copy;
@@ -9,6 +10,9 @@ use HTTP::Response;
 use Net::Ping;
 
 package Pakfire;
+
+my %pakfiresettings = ();
+&General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 
 sub message {
 	my $message = shift;
@@ -72,22 +76,41 @@ sub fetchfile {
 		my $ua = LWP::UserAgent->new;
 		$ua->agent("Pakfire/$Conf::version");
 		$ua->timeout(5);
-		#$ua->env_proxy;
+		
+		my %proxysettings=();
+		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
+
+		if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+			my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+			if ($proxysettings{'UPSTREAM_USER'}) {
+				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$peer:$peerport/");
+			} else {
+				$ua->proxy("http","http://$peer:$peerport/");
+			}
+		}
 	 
 		my $response = $ua->get("http://$host/$file");
 		
+		my $code = $response->code();
+		my $log = $response->status_line;
+		logger("HTTP-Status-Code: $code - $log");
+		
+		if ( $code eq "500" ) {
+			message("Giving up: There was no chance to get teh file \"$getfile\" from any available server.\nThere was an error on the way. Please fix it.");
+			return 1;
+		}
+		
 		if ($response->is_success) {
-			logger("$host sends file: $file.");
 			if (open(FILE, ">$Conf::cachedir/$bfile")) {
 				print FILE $response->content;
 				close(FILE);
+				logger("Download successfully done from $host (file: $file).");
 				$allok = 1;
 				return 0;
 			} else {
 				logger("Could not open $Conf::cachedir/$bfile for writing.");
 			}
 		}	else {
-			my $log = $response->status_line;
 			logger("Download $file failed from $host ($proto): $log");
 		}
 	}
@@ -184,6 +207,12 @@ sub dblist {
 	#   filter may be: all, notinstalled, installed
 	my $filter = shift;
 	my $forweb = shift;
+	my @meta;
+	my $file;
+	my $line;
+	my $prog;
+	my ($name, $version, $release);
+	my @templine;
 	
 	### Make sure that the list is not outdated. 
 	dbgetlist("noforce");
@@ -191,20 +220,56 @@ sub dblist {
 	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
 	my @db = <FILE>;
 	close(FILE);
-	
-	my $line;
-	my @templine;
-	foreach $line (sort @db) {
-		@templine = split(/\;/,$line);
-		if ("$filter" eq "notinstalled") {
-			next if ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
-		} elsif ("$filter" eq "installed") {
-			next unless ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
+
+	if ("$filter" eq "upgrade") {
+		opendir(DIR,"$Conf::dbdir/meta");
+		my @files = readdir(DIR);
+		closedir(DIR);
+		foreach $file (@files) {
+			next if ( $file eq "." );
+			next if ( $file eq ".." );
+			open(FILE, "<$Conf::dbdir/meta/$file");
+			@meta = <FILE>;
+			close(FILE);
+			foreach $line (@meta) {
+				@templine = split(/\: /,$line);
+				if ("$templine[0]" eq "Name") {
+					$name = $templine[1];
+					chomp($name);
+				} elsif ("$templine[0]" eq "ProgVersion") {
+					$version = $templine[1];
+					chomp($version);
+				} elsif ("$templine[0]" eq "Release") {
+					$release = $templine[1];
+					chomp($release);
+				}
+			}
+			foreach $prog (@db) {
+				@templine = split(/\;/,$prog);
+				if (("$name" eq "$templine[0]") && ("$release" < "$templine[2]" )) {
+					if ("$forweb" eq "forweb") {
+						print "<option value=\"$name\">Update: $name -- Version: $version -> $templine[1] -- Release: $release -> $templine[2]</option>\n";
+					} else {
+						print "Update: $name\nVersion: $version -> $templine[1]\nRelease: $release -> $templine[2]\n\n";
+					}
+				}
+			}
 		}
-		if ("$forweb" eq "forweb") {
-			print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
-		} else {
-			print "Name: $templine[0]\nProgVersion: $templine[1]\nRelease: $templine[2]\n\n";
+	} else {
+		my $line;
+		my @templine;
+		foreach $line (sort @db) {
+			@templine = split(/\;/,$line);
+			if ("$filter" eq "notinstalled") {
+				next if ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
+			} elsif ("$filter" eq "installed") {
+				next unless ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
+			}
+			if ("$forweb" eq "forweb") {
+				print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
+			} else {
+				print "Name: $templine[0]\nProgVersion: $templine[1]\nRelease: $templine[2]\n\n";
+			}
 		}
 	}
 }
@@ -314,18 +379,7 @@ sub getsize {
 			return $templine[1];
 		}
 	}
-}
-
-sub addsizes { ## Still not working
-	my @paks = shift;
-	
-	my $paksize;
-	my $totalsize = 0;
-	foreach (@paks) {
-		$paksize = getsize("$_");
-		$totalsize = ($totalsize + $paksize) ;
-	}
-	return $totalsize;
+	return 0;
 }
 
 sub decryptpak {
@@ -476,12 +530,14 @@ sub makeuuid {
 }
 
 sub senduuid {
-	unless("$Conf::uuid") {
-		$Conf::uuid = `cat $Conf::dbdir/uuid`;
+	if ($pakfiresettings{'UUID'} eq "on") {
+		unless("$Conf::uuid") {
+			$Conf::uuid = `cat $Conf::dbdir/uuid`;
+		}
+		logger("Sending my uuid: $Conf::uuid");
+		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
+		system("rm -f $Conf::cachedir/counter* 2>/dev/null");
 	}
-	logger("Sending my uuid: $Conf::uuid");
-	fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
-	system("rm -f $Conf::cachedir/counter* 2>/dev/null");
 }
 
 sub lock {

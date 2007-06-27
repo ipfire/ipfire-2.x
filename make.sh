@@ -445,6 +445,8 @@ buildipfire() {
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
   ipfiremake XML-Parser
+  ipfiremake MP3-Info
+  ipfiremake MP3-Tag
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits

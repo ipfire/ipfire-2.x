@@ -19,6 +19,13 @@
 	unless (@ARGV) {
 		&Pakfire::usage;
 	}
+	
+	foreach (@ARGV) {
+		if ("$_" =~ "^-") {
+			$interactive = 0 if ("$_" eq "--non-interactive");
+			$interactive = 0 if ("$_" eq "-y");
+		}
+	}
 
 	if ("$ARGV[0]" eq "install") {
 		&Pakfire::lock("on");
@@ -26,24 +33,23 @@
 		my @deps;
 		my @paks;
 		my @temp;
+		my @all;
 		foreach (@ARGV) {
-			if ("$_" =~ "^--") {
-				$interactive = 0 if ("$_" eq "--non-interactive");
-			} else {
-				push(@paks,$_);
+			unless ("$_" =~ "^-") {
+				push(@paks,$_) if $_;
 			}
 		}
+		
 		foreach (@paks) {
 			@temp = &Pakfire::resolvedeps("$_");
 			foreach (@temp) { push(@deps,$_) if $_; }
 		}
 		
-		my @all;
 		foreach (@paks) {
-		  push(@all,$_);
+		  push(@all,$_) if $_;
 		}
 		foreach (@deps) {
-		  push(@all,$_);
+		  push(@all,$_) if $_;
 		}
 
 		&Pakfire::message("\n\n### Packages to install:");
@@ -53,16 +59,19 @@
 		  &Pakfire::message("# $_  \t\t - $size");
 		}
 		
-		&Pakfire::message("\n### Packages to install for dependencies:");
+		&Pakfire::message("\n### Packages to install for dependencies:") if @deps;
 		foreach (sort @deps) {
 		  my $size = &Pakfire::getsize("$_");
 			$size = &Pakfire::beautifysize($size);
 		  &Pakfire::message("# $_  \t\t - $size");
 		}
-
-		my $totalsize = &Pakfire::addsizes("@all");
+		
+		my $totalsize;
+		foreach (@all) {
+			$totalsize = ($totalsize + &Pakfire::getsize("$_"));
+		}
 		$totalsize = &Pakfire::beautifysize($totalsize);
-		&Pakfire::message("\n### Download size: \t ~ $totalsize");
+		&Pakfire::message("\n### Total size: \t ~ $totalsize\n");
 		
 		if ($interactive) {
 		  &Pakfire::message("Is this okay? [y/N]");
@@ -96,6 +105,10 @@
 		&Pakfire::getmirrors();
 		$force = "force" if ("$ARGV[1]" eq "--force");
 		&Pakfire::dbgetlist("$force");
+		
+	
+	} elsif ("$ARGV[0]" eq "upgrade") {
+		&Pakfire::dblist("upgrade", "noweb");
 		
 	} elsif ("$ARGV[0]" eq "list") {
 		&Pakfire::dblist("all", "noweb");

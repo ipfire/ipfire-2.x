@@ -30,6 +30,7 @@ $pakfiresettings{'VALID'} = '';
 $pakfiresettings{'INSPAKS'} = '';
 $pakfiresettings{'DELPAKS'} = '';
 $pakfiresettings{'AUTOUPDATE'} = '';
+$pakfiresettings{'UUID'} = '';
 
 &Header::getcgihash(\%pakfiresettings);
 
@@ -85,6 +86,7 @@ END
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
 	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
+
 }
 
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
@@ -95,6 +97,9 @@ my %checked=();
 $checked{'AUTOUPDATE'}{'off'} = '';
 $checked{'AUTOUPDATE'}{'on'} = '';
 $checked{'AUTOUPDATE'}{$pakfiresettings{'AUTOUPDATE'}} = "checked='checked'";
+$checked{'UUID'}{'off'} = '';
+$checked{'UUID'}{'on'} = '';
+$checked{'UUID'}{$pakfiresettings{'UUID'}} = "checked='checked'";
 
 # DPC move error message to top so it is seen!
 if ($errormessage) {
@@ -164,11 +169,26 @@ print <<END;
 	</table></form>
 		<br /><hr /><br />
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%'>
+		<tr><td colspan='2'>Zur Verfuegung stehende Updates:
+		<tr><td width='20%'>&nbsp;<td width='60%' align='center'>
+			<select name="UPDPAKS" size="5" disabled>
+END
+
+			&Pakfire::dblist("upgrade", "forweb");
+
+print <<END;
+			</select>
+		<td width='20%' align='center' valign='middle'><input type='hidden' name='ACTION' value='upgrade' />
+			<input type='image' alt='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
+	</table></form>
+		<br /><hr /><br />
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='100%'>
 			<tr><td width='40%' align="right">Automatische Updates taeglich ausfuehren:
 					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
-					<td width='40%' align="right">Test:
-					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
+					<td width='40%' align="right">Registrierung am Master-Server: 
+					<td width='10%' align="left"><input type="checkbox" name="UUID" $checked{'UUID'}{'on'} />
 			<tr><td width='100%' colspan="4" align="right"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />					
 		</table>
 	</form>
