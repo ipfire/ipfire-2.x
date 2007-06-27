@@ -61,6 +61,7 @@
 * cpio-2.6
 * ctorrent-dnh3.1
 * cups-1.2.2
+* curl-7.15.3
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
 * db-4.4.20
@@ -142,7 +143,9 @@
 * libpng-1.2.12
 * libpri-1.4.0
 * libsafe_2.0-16
+* libsigc++-2.0.17
 * libtool-1.5.22
+* libtorrent-0.11.4
 * libupnp-1.3.1
 * libusb-0.1.12
 * libvorbis-1.1.2
@@ -213,6 +216,7 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rsync-2.6.8
+* rtorrent-0.7.4
 * samba-3.0.25a
 * samba-3.0.25b
 * screen-4.0.2

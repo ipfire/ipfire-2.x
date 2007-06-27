@@ -357,6 +357,7 @@ buildipfire() {
   ipfiremake gmp
   ipfiremake pam
   ipfiremake openssl
+  ipfiremake curl
   ipfiremake python
   ipfiremake libnet
   ipfiremake libjpeg
@@ -507,10 +508,13 @@ buildipfire() {
   ipfiremake lame
   ipfiremake sox
   ipfiremake gnump3d
+  ipfiremake libsigc++
   ipfiremake ctorrent
   ipfiremake applejuice
   ipfiremake ocaml
   ipfiremake mldonkey
+  ipfiremake libtorrent
+  ipfiremake rtorrent
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake portmap
