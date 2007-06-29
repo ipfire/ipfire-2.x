@@ -30,26 +30,41 @@
 	if ("$ARGV[0]" eq "install") {
 		&Pakfire::lock("on");
 		shift;
+		
+		### Make sure that the list is not outdated. 
+		&Pakfire::dbgetlist("noforce");
+
+		open(FILE, "<$Conf::dbdir/lists/packages_list.db");
+		my @db = <FILE>;
+		close(FILE);
+		
+		my $dep;
 		my @deps;
+		my $pak;
 		my @paks;
 		my @temp;
+		my @templine;
+		my $found = 0;
 		my @all;
-		foreach (@ARGV) {
-			unless ("$_" =~ "^-") {
-				push(@paks,$_) if $_;
+		foreach $pak (@ARGV) {
+			unless ("$pak" =~ "^-") {
+				$found = 0;
+				foreach (@db) {
+					@templine = split(/;/,$_);
+					if ("$templine[0]" eq "$pak" ) {
+						push(@paks,$pak);
+						push(@all,$pak);
+						@temp = &Pakfire::resolvedeps("$pak");
+						foreach $dep (@temp) {
+							push(@deps,$dep) if $dep;
+							push(@all,$dep) if $dep;
+						}
+						$found = 1;
+						break;
+					}
+				}
+				&Pakfire::message("\nThe pak \"$pak\" is not known. Please try running \"pakfire update\".") if ($found == 0);
 			}
-		}
-		
-		foreach (@paks) {
-			@temp = &Pakfire::resolvedeps("$_");
-			foreach (@temp) { push(@deps,$_) if $_; }
-		}
-		
-		foreach (@paks) {
-		  push(@all,$_) if $_;
-		}
-		foreach (@deps) {
-		  push(@all,$_) if $_;
 		}
 
 		&Pakfire::message("\n\n### Packages to install:");
@@ -108,7 +123,38 @@
 		
 	
 	} elsif ("$ARGV[0]" eq "upgrade") {
-		&Pakfire::dblist("upgrade", "noweb");
+		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
+		my @temp;
+		
+		foreach (@upgradepaks) {
+			@temp = &Pakfire::resolvedeps("$_");
+			foreach (@temp) { push(@upgradepaks,$_) if $_; }
+		}
+		
+		if (@upgradepaks) {
+			&Pakfire::message("");
+			&Pakfire::message("We are going to install all packages listed above.");
+			if ($interactive) {
+			  &Pakfire::message("Is this okay? [y/N]");
+				my $ret = <STDIN>;
+				chomp($ret);
+				&Pakfire::logger("Answer: $ret");
+				if ( $ret ne "y" ) {
+				  &Pakfire::message("Installation aborted.");
+				  exit 1;
+				}
+			}
+		}
+		
+		### Download first
+		foreach (sort @upgradepaks) {
+			&Pakfire::message("# --> Downloading: $_");
+			&Pakfire::getpak("$_", "");
+		}
+		
+		foreach (sort @upgradepaks) {
+			&Pakfire::upgradepak("$_");
+		}
 		
 	} elsif ("$ARGV[0]" eq "list") {
 		&Pakfire::dblist("all", "noweb");
@@ -122,3 +168,5 @@
 	} else {
 		&Pakfire::usage;
 	}
+	
+exit 0;

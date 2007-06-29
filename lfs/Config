@@ -15,7 +15,6 @@
 #
 URL_IPFIRE  = http://source.ipfire.org/othersrc
 URL_TOOLCHAIN = http://source.ipfire.org/toolchain
-URL_IPCOP   = http://ipcop.ath.cx
 
 # Default compiler optimizations.
 #
@@ -159,10 +158,10 @@ define PAK
 	# Bringing the files to their right place.
 	@rm -rf /install/packages/package
 	@mkdir -p /install/packages/package
-	@cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
+	cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
 		/install/packages/package
 	-grep -v "#" < /usr/src/config/rootfiles/packages/$(PROG) > /install/packages/package/ROOTFILES
-	@chmod 755 /install/packages/package/{,un}install.sh
+	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cvf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*'
 	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
 	rm -rf /install/packages/package

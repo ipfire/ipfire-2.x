@@ -7,7 +7,7 @@ PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	squidctrl restartssh ipfirereboot setaliases \
 	ipsecctrl timectrl dhcpctrl snortctrl \
-	restartapplejuice rebuildhosts \
+	applejuicectrl rebuildhosts \
 	restartsyslogd logwatch openvpnctrl outgoingfwctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
 	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
@@ -91,8 +91,8 @@ setfilters: setfilters.c setuid.o ../install+setup/libsmooth/varval.o
 rebuildhosts: rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-restartapplejuice: restartapplejuice.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ restartapplejuice.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+applejuicectrl: applejuicectrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ applejuicectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 dhcpctrl: dhcpctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ dhcpctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@

@@ -36,6 +36,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = applejuice
 PAK_VER    = 1
 
+DESCDE     = "Applejuice ist ein (deutsches) P2P-Netzwerk."
+DESCEN     = "Applejuice is a german p2p-network."
+DEPS       = "java"
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -79,6 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && mkdir -p /opt/applejuice && mv -fv ajcore.jar /opt/applejuice
 	cd $(DIR_APP) && mv -fv libajnetmask.so /opt/applejuice
+	ln -svf ../../opt/applejuice/libajnetmask.so /usr/lib
 	mkdir -p /srv/web/phpaj
 	cd $(DIR_APP) && cp -rfv phpaj /srv/web/phpaj
 	-mkdir /var/ipfire/applejuice

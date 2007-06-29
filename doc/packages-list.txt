@@ -217,7 +217,6 @@
 * rrdtool-1.2.15
 * rsync-2.6.8
 * rtorrent-0.7.4
-* samba-3.0.25a
 * samba-3.0.25b
 * screen-4.0.2
 * sed-4.1.5

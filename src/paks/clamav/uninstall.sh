@@ -1,3 +1,3 @@
 #!/bin/bash
 
-clamavctrl disable
+/usr/local/bin/clamavctrl disable

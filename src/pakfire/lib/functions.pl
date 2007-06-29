@@ -28,8 +28,9 @@ sub logger {
 sub usage {
   &Pakfire::message("Usage: pakfire <install|remove> <pak(s)>");
   &Pakfire::message("               <update> - Contacts the servers for new lists of paks.");
-  &Pakfire::message("               <upgrade> - Installs the latest version of a pak.");
+  &Pakfire::message("               <upgrade> - Installs the latest version of all paks.");
   &Pakfire::message("               <list> - Outputs a short list with all available paks.");
+  &Pakfire::message("");
   exit 1;
 }
 
@@ -80,12 +81,11 @@ sub fetchfile {
 		my %proxysettings=();
 		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 
-		if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-			my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+		if ($proxysettings{'UPSTREAM_PROXY'}) {
 			if ($proxysettings{'UPSTREAM_USER'}) {
-				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$peer:$peerport/");
+				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
 			} else {
-				$ua->proxy("http","http://$peer:$peerport/");
+				$ua->proxy("http","http://$proxysettings{'UPSTREAM_PROXY'}/");
 			}
 		}
 	 
@@ -208,6 +208,7 @@ sub dblist {
 	my $filter = shift;
 	my $forweb = shift;
 	my @meta;
+	my @updatepaks;
 	my $file;
 	my $line;
 	my $prog;
@@ -247,6 +248,7 @@ sub dblist {
 			foreach $prog (@db) {
 				@templine = split(/\;/,$prog);
 				if (("$name" eq "$templine[0]") && ("$release" < "$templine[2]" )) {
+					push(@updatepaks,$name);
 					if ("$forweb" eq "forweb") {
 						print "<option value=\"$name\">Update: $name -- Version: $version -> $templine[1] -- Release: $release -> $templine[2]</option>\n";
 					} else {
@@ -255,6 +257,7 @@ sub dblist {
 				}
 			}
 		}
+		return @updatepaks;
 	} else {
 		my $line;
 		my @templine;
@@ -389,8 +392,8 @@ sub decryptpak {
 	
 	my $file = getpak("$pak", "noforce");
 	
-	my $return = system("cd $Conf::tmpdir/ && gpg -d < $Conf::cachedir/$file | cpio -i >/dev/null 2>&1");
-	
+	my $return = system("cd $Conf::tmpdir/ && gpg -d < $Conf::cachedir/$file | tar x >/dev/null 2>&1");
+	$return %= 255;
 	logger("Decryption process returned the following: $return");
 	if ($return != 0) { exit 1; }
 }
@@ -438,7 +441,7 @@ sub setuppak {
 	
 	decryptpak("$pak");
 	
-	my $return = system("cd $Conf::tmpdir && ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
+	my $return = system("cd $Conf::tmpdir && NAME=$pak ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
 	$return %= 255;
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
@@ -452,18 +455,20 @@ sub setuppak {
 	return $return;
 }
 
-sub updatepak {
+sub upgradepak {
 	my $pak = shift;
 
-	message("We are going to update: $pak");
+	message("We are going to upgrade: $pak");
 
 	decryptpak("$pak");
 
-	my $return = system("cd $Conf::tmpdir && ./update.sh >> $Conf::logdir/update-$pak.log 2>&1");
+	my $return = system("cd $Conf::tmpdir && NAME=$pak ./update.sh >> $Conf::logdir/update-$pak.log 2>&1");
+	$return %= 255;
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
-		message("Update completed. Congratulations!");
+		copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
+		message("Upgrade completed. Congratulations!");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
@@ -478,7 +483,8 @@ sub removepak {
 
 	decryptpak("$pak");
 
-	my $return = system("cd $Conf::tmpdir && ./uninstall.sh >> $Conf::logdir/uninstall-$pak.log 2>&1");
+	my $return = system("cd $Conf::tmpdir && NAME=$pak ./uninstall.sh >> $Conf::logdir/uninstall-$pak.log 2>&1");
+	$return %= 255;
 	if ($return == 0) {
 	  open(FILE, "<$Conf::dbdir/rootfiles/$pak");
 		my @file = <FILE>;
@@ -530,7 +536,7 @@ sub makeuuid {
 }
 
 sub senduuid {
-	if ($pakfiresettings{'UUID'} eq "on") {
+	if ($pakfiresettings{'UUID'} ne "off") {
 		unless("$Conf::uuid") {
 			$Conf::uuid = `cat $Conf::dbdir/uuid`;
 		}

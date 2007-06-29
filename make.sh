@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2006 IPFire-Team <info@ipfire.eu>.                         #
+# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                         #
 #                                                                          #
 ############################################################################
 #
@@ -635,14 +635,14 @@ buildpackages() {
 ipfirepackages() {
   ipfiredist alsa
 #  ipfiredist amavisd
-#  ipfiredist applejuice
+  ipfiredist applejuice
 #  ipfiredist asterisk
   ipfiredist clamav
   ipfiredist cups
   ipfiredist cyrus-sasl
 #  ipfiredist fetchmail
 #  ipfiredist gnump3d
-#  ipfiredist java
+  ipfiredist java
   ipfiredist libogg
   ipfiredist libvorbis
 #  ipfiredist mailx

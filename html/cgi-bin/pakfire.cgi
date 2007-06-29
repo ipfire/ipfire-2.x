@@ -29,8 +29,8 @@ $pakfiresettings{'VALID'} = '';
 
 $pakfiresettings{'INSPAKS'} = '';
 $pakfiresettings{'DELPAKS'} = '';
-$pakfiresettings{'AUTOUPDATE'} = '';
-$pakfiresettings{'UUID'} = '';
+$pakfiresettings{'AUTOUPDATE'} = 'off';
+$pakfiresettings{'UUID'} = 'on';
 
 &Header::getcgihash(\%pakfiresettings);
 
