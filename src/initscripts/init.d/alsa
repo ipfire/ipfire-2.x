@@ -10,13 +10,20 @@
 . $rc_functions
 
 case "$1" in
+	start)
+		boot_mesg "Starting ALSA..."
+		modprobe snd_pcm_oss >/dev/null 2>&1 || failed=1
+		modprobe snd_mixer_oss >/dev/null 2>&1 || failed=1
+		(exit ${failed})
+		evaluate_retval
+		;;
 	stop)
 		boot_mesg "Stopping ALSA...    Saving volumes..."
 		loadproc /usr/sbin/alsactl store
 		;;
 
 	*)
-		echo "Usage: $0 stop"
+		echo "Usage: $0 (start|stop)"
 		exit 1
 		;;
 esac

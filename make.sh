@@ -372,6 +372,7 @@ buildipfire() {
   ipfiremake newt
   ipfiremake libcap
   ipfiremake pciutils
+  ipfiremake usbutils
   ipfiremake libxml2
   ipfiremake libxslt
   ipfiremake BerkeleyDB
@@ -533,6 +534,7 @@ buildipfire() {
   ipfiremake vsftpd
   ipfiremake alsa
   ipfiremake mp3blaster
+  ipfiremake which
 }
 
 buildinstaller() {

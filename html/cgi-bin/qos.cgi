@@ -657,12 +657,20 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 }
 
 &Header::openbox('100%', 'center', $Lang::tr{'info'});
+&overviewgraph($qossettings{'RED_DEV'});
+&overviewgraph($qossettings{'IMQ_DEV'});
 print <<END
 	<table>
 		<tr><td colspan='9' align='center' valign='middle'><img alt="" src='/images/addblue.gif' />&nbsp;Unterklasse hinzufuegen | <img alt="" src='/images/addgreen.gif' />&nbsp;Regel hinzufuegen | <img alt="" src='/images/edit.gif' />&nbsp;Bearbeiten | <img alt="" src='/images/delete.gif' />&nbsp;Loeschen &nbsp;
 		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
 END
 ;
+if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}.png") && ( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png")) {
+	print <<END
+		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'RED_DEV'}.png" />
+		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png" />
+END
+;}
 print "\t</table>";
 
 &Header::closebox();
@@ -1412,4 +1420,55 @@ sub validsubclass {
 			}
 		}
 	}
+}
+
+sub overviewgraph {
+	$qossettings{'DEV'} = shift;
+	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
+		$qossettings{'CLASSPRFX'} = '1';
+	} else { 
+		$qossettings{'CLASSPRFX'} = '2';
+	}
+	my $ERROR="";
+	my $count="1";
+	my $color="#000000";
+	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}.png",
+		"--start", "-3240", "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 150", "-r",
+		"--color", "SHADEA#EAE9EE",
+		"--color", "SHADEB#EAE9EE",
+		"--color", "BACK#FFFFFF",
+		"-t Auslastung auf ($qossettings{'DEV'})"
+	);
+	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
+	@classes = <FILE>;
+	close FILE;
+  	foreach $classentry (sort @classes)
+  	{
+  		@classline = split( /\;/, $classentry );
+  		if ( $classline[0] eq $qossettings{'DEV'} )
+  		{
+			$color=random_hex_color(6);
+			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bits:AVERAGE");
+
+			if ($count eq "1") {
+				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+			} else {
+				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+			}
+			$count++;
+		}
+	}
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
+}
+
+sub random_hex_color {
+    my $size = shift;
+    $size = 6 if $size !~ /^3|6$/;
+    my @hex = ( 0 .. 9, 'a' .. 'f' );
+    my @color;
+    push @color, @hex[rand(@hex)] for 1 .. $size;
+    return join('', '#', @color);
 }

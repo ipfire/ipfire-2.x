@@ -14,6 +14,8 @@ for MODULE in $(kudzu -qps  -t 30 | grep driver: | cut -d ' ' -f 2 | sort | uniq
 		echo " --> ecode: $?"
 done
 
+sleep 10
+
 if [ $# -eq 0 ]; then
 	exit 0
 fi

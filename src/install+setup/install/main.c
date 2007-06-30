@@ -177,8 +177,7 @@ int main(int argc, char *argv[])
 		goto EXIT;
 
 	if (!unattended) {
-	    rc = newtWinMenu("Language selection",
-		    "Select the language you wish to use for the " NAME ".", 50, 5, 5, 8,
+	    rc = newtWinMenu("Language selection", "Select the language you wish to use for the " NAME ".", 50, 5, 5, 8,
 		    langnames, &choice, "Ok", NULL);
 	}
 
@@ -208,7 +207,6 @@ int main(int argc, char *argv[])
 
 	// Starting hardware detection
 	runcommandwithstatus("/bin/probehw.sh", ctr[TR_PROBING_HARDWARE]);
-	runcommandwithstatus("/bin/probenic.sh install", ctr[TR_PROBING_HARDWARE]);
 
 	/* CDROM INSTALL */
 	if (installtype == CDROM_INSTALL) {
@@ -643,12 +641,8 @@ EXIT:
 		newtFinished();
 
 		if (!unattended) {
-			// Copy our scanned nics to the disk and lock because scan doesn't work in chroot
-			system("touch /harddisk/var/ipfire/ethernet/scan_lock");
-			system("cp -f /tmp/scanned_nics /harddisk/var/ipfire/ethernet/scanned_nics");
 			if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
 				printf("Unable to run setup.\n");
-			system("rm -f /harddisk/var/ipfire/ethernet/scan_lock");
 		}
 
 		if (system("/bin/umount /harddisk/proc"))

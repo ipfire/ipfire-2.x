@@ -175,6 +175,7 @@
 * module-init-tools-3.2.2
 * mp3blaster-3.2.3
 * mpg123-0.59r
+* mpg123-0.60
 * mtd-CVS-20070507
 * mtools-3.9.10
 * mysql-5.0.24a
@@ -252,6 +253,7 @@
 * udev-096
 * udev-096-klibc
 * unzip552
+* usbutils-0.72
 * util-linux-2.12r
 * vim-7.0
 * vlan.1.9
@@ -259,6 +261,7 @@
 * web-cyradm-0.5.5-CVS-for-ipfire
 * wget-1.10.2
 * whatmask-1.2
+* which-2.16
 * wireless_tools.28
 * xmbmon205
 * zaptel-1.4.0

@@ -1247,9 +1247,7 @@ etc/httpd/conf/global.conf
 etc/httpd/conf/hostname.conf
 etc/httpd/conf/listen.conf
 etc/httpd/conf/loadmodule.conf
-etc/httpd/conf/mod_info.conf
 etc/httpd/conf/mod_log_config.conf
-etc/httpd/conf/mod_status.conf
 etc/httpd/conf/server-tuning.conf
 etc/httpd/conf/ssl-global.conf
 etc/httpd/conf/uid.conf
