@@ -1,0 +1,9 @@
+usr/local/bin/mpfirectrl
+srv/web/ipfire/cgi-bin/mpfire.cgi
+var/ipfire/mpfire
+var/ipfire/mpfire/bin
+var/ipfire/mpfire/bin/mpfire.pl
+var/ipfire/mpfire/db
+var/ipfire/mpfire/db/songs.db
+var/ipfire/mpfire/playlist
+var/ipfire/mpfire/settings

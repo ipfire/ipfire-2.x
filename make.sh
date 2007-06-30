@@ -651,6 +651,7 @@ ipfirepackages() {
 #  ipfiredist mailx
 #  ipfiredist mldonkey
   ipfiredist mp3blaster
+  ipfiredist mpfire
   ipfiredist mpg123
 #  ipfiredist nfs
   ipfiredist openldap
