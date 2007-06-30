@@ -99,9 +99,6 @@ ifneq "$(ROOT)" ""
 	-mkdir -p $(ROOT)/usr/bin
 	ln -sf bash /tools/bin/sh
 	-ln -sf /tools/bin/bash $(ROOT)/bin/sh
-	echo "#!/bin/sh"	>  $(ROOT)/usr/bin/which
-	echo "type -p \$$1"	>> $(ROOT)/usr/bin/which
-	chmod 755 $(ROOT)/usr/bin/which
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
