@@ -571,10 +571,14 @@ END
 	@user = <FILE>;
 	close(FILE);
 	system('/usr/local/bin/sambactrl locksmbpasswd');
+	
+	my $lines = 0;
+	
 	foreach $userentry (sort @user)
 		{
 		@userline = split( /\:/, $userentry );
-		print "<tr><td align='left'>$userline[0]</td><td align='left'>";
+    if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
+		print "<td align='left'>$userline[0]</td><td align='left'>";
 		if ($userline[4] =~ /N/)
 			{
 			print "$Lang::tr{'not set'}</td><td align='left'>";
@@ -663,6 +667,7 @@ END
 END
 ;
 				}
+		$lines++;
 		}
 	print <<END
 	</table>
@@ -796,12 +801,14 @@ END
 ;
 
 my @Shares = keys(%shares);
+my $lines = 0;
 
 foreach my $shareentry (sort @Shares)
 	{
 	chomp $shareentry;
+	if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
 	print <<END
-	<tr><td align='left'>$shareentry</td>
+	<td align='left'>$shareentry</td>
 	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='sharechange' />
@@ -814,6 +821,7 @@ foreach my $shareentry (sort @Shares)
 	</form></td></tr>
 END
 ;
+  $lines++;
 	}
 
 print <<END

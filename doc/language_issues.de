@@ -340,7 +340,6 @@ WARNING: translation string unused: this months volume
 WARNING: translation string unused: this update is already installed
 WARNING: translation string unused: this weeks volume
 WARNING: translation string unused: time date manually reset
-WARNING: translation string unused: title
 WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
@@ -388,7 +387,6 @@ WARNING: translation string unused: week
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: written sectors
 WARNING: translation string unused: xtaccess bad transfert
-WARNING: translation string unused: year
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: OVPN
 WARNING: untranslated string: abort

@@ -503,6 +503,7 @@ buildipfire() {
 # ipfiremake bristuff
   ipfiremake asterisk
   ipfiremake mpg123
+  ipfiremake mpfire
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis

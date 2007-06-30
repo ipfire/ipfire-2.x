@@ -34,7 +34,7 @@ my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 foreach (@disks){
   my $disk = $_;
   chomp $disk;
-  &Graphs::updatehddgraph ($disk,"day");
+  &Graphs::updatehddgraph ($disk,"day");&Graphs::updatehddgraph ($disk,"week");&Graphs::updatehddgraph ($disk,"month");&Graphs::updatehddgraph ($disk,"year");
 }
 
   &Graphs::updatetempgraph ("day");
@@ -155,15 +155,6 @@ elsif ($cgigraphs[1] =~ /(temp|fan|volt)/)
 if ($cgigraphs[1] =~ /temp/) {&Graphs::updatetempgraph ("week");&Graphs::updatetempgraph ("month");&Graphs::updatetempgraph ("year");}
 if ($cgigraphs[1] =~ /fan/) {&Graphs::updatefangraph ("week");&Graphs::updatefangraph ("month");&Graphs::updatefangraph ("year");}
 if ($cgigraphs[1] =~ /volt/) {&Graphs::updatevoltgraph ("week");&Graphs::updatevoltgraph ("month");&Graphs::updatevoltgraph ("year");}
-if ($cgigraphs[1] =~ /hddtemp/){
-          my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-
-          foreach (@devices) {
-	         my $device = $_;
-	         chomp($device);
-            &Graphs::updatehddgraph ($device,"week");
-            &Graphs::updatehddgraph ($device,"month");
-            &Graphs::updatehddgraph ($device,"year");}}
 
   my $graph = $cgigraphs[1];
   my $graphname = $Lang::tr{"mbmon $cgigraphs[1]"};
@@ -249,14 +240,11 @@ else
 
   if ( $mbmon_settings{'GRAPH_HDD'} == 1 )
   {
-	hddtempbox("hda");
-	hddtempbox("hdb");
-	hddtempbox("hdc");
-	hddtempbox("hdd");
-	hddtempbox("hde");
-	hddtempbox("hdf");
-	hddtempbox("hdg");
-	hddtempbox("hdh");
+   my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+    foreach (@devices) {
+	   my $device = $_;
+	   chomp($device);
+    hddtempbox($device);}
   }
 
   &Header::openbox('100%', 'center', $Lang::tr{'settings'});

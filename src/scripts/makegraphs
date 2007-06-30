@@ -379,11 +379,22 @@ sub updatelq {
         my $LQ_GATEWAY=`cat /var/ipfire/red/remote-ipaddress`;
         chomp($LQ_GATEWAY);
         my $NUMPINGS=5;
-        my $pingoutput = `ping -c $NUMPINGS -q $LQ_GATEWAY`;
-        chomp;
+        my $pingoutput = `/usr/bin/ping -w 10 -c $NUMPINGS -q $LQ_GATEWAY | tail -2`;
         my @temp = split (/\/|\%|\s/, $pingoutput);
-        $packetloss   = $temp[17];
-        $roundtrip    = $temp[28];
+        $packetloss = $temp[5];
+        $roundtrip = $temp[17];
+        
+        print "Paketlos->".$packetloss."<-Roundtrip->".$roundtrip."<-\n";
+       
+        if ( $packetloss eq "100" ){
+        my $pingoutput = `/usr/bin/ping -w 10 -c $NUMPINGS -q ping.ipfire.org  | tail -2`;
+        my @temp = split (/\/|\%|\s/, $pingoutput);
+        $packetloss = $temp[5];
+        $roundtrip = $temp[17];
+        
+        print "Paketlos->".$packetloss."<-Roundtrip->".$roundtrip."<-\n";
+        }
+        
         RRDs::update ("$rrdlog/lq.rrd", "N:$packetloss:$roundtrip");
         $ERROR = RRDs::error;
         print "Error in RRD::update for line quality: $ERROR\n" if $ERROR;
