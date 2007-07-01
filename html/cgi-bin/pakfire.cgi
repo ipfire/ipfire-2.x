@@ -79,9 +79,9 @@ END
 	
 	system("/usr/local/bin/pakfire update --force");
 
-} elsif ($pakfiresettings{'ACTION'} eq 'unlock') {
+} elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
 	
-	&Pakfire::lock("off");
+	system("/usr/local/bin/pakfire upgrade -y");
 	
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
@@ -108,23 +108,32 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-if ( -e "/opt/pakfire/pakfire.lock" ) {
+my $return = `pidof pakfire`;
+chomp($return);
+if ($return) {
 	&Header::openbox("100%", "center", "Aktiv");
 	print <<END;
 	<table>
 		<tr><td>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='hidden' name='ACTION' value='unlock' />
-				<input type='image' src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
-			</form>
+				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
 			<td>
 				Pakfire fuehrt gerade eine Aufgabe aus... Bitte warten sie, bis diese erfolgreich beendet wurde.
 		<tr><td colspan='2' align='center'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<input type='image' alt='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
 			</form>
+		### TO BE CONTINUED.... WE HAVE TO BEAUTIFY THIS A LITTLE BIT :D
+		<tr><td colspan='2' align='left'><pre>
+END
+my @output = `tail /var/log/messages | grep pakfire`;
+foreach (@output) {
+	print "$_";
+}
+print <<END;
+		</pre>
 	</table>
 END
+  	### TO BE CONTINUED.... WE HAVE TO BEAUTIFY THIS A LITTLE BIT :D
 	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
@@ -132,6 +141,8 @@ END
 }
 
 &Header::openbox("100%", "center", "Pakfire");
+
+system("pakfire update &>dev/null");
 
 print <<END;
 	<table width='100%'>

@@ -462,6 +462,12 @@ END
 		} elsif ($metadata[1] eq 'Avast')
 		{
 			print "<img src='/images/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'IPFire')
+		{
+			print "<img src='/images/updxl-src-ipfire.gif' alt='IPFire'}' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'Linux')
+		{
+			print "<img src='/images/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</td>\n";
 		} else
 		{
 			print "<img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' />&nbsp;</td>\n";
@@ -541,18 +547,22 @@ print <<END
 		<td align='center'><img src='/images/updxl-src-symantec.gif' alt='Symantec' /></td>
 		<td class='base'>Symantec</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' /></td>
-		<td class='base'>$Lang::tr{'updxlrtr unknown'}</td>
+		<td align='center'><img src='/images/updxl-src-avira.gif' alt='Avira' /></td>
+		<td class='base'>Avira</td>
 	</tr>
 	<tr>
 		<td class='base' colspan='2'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-ipfire.gif' alt='IPFire' /></td>
+		<td class='base'>IPFire</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-linux.gif' alt='Linux' /></td>
+		<td class='base'>Linux</td>
+		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-avast.gif' alt='Avast' /></td>
 		<td class='base'>Avast</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-avira.gif' alt='Avira' /></td>
-		<td class='base'>Avira</td>
-		<td class='base'>&nbsp;</td>
-		<td class='base' colspan='5'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr unknown'}</td>
 	</tr>
 </table>
 END

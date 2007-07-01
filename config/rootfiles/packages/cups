@@ -1,4 +1,5 @@
 etc/pam.d/cups
+etc/rc.d/init.d/cups
 #etc/rc0.d
 #etc/rc0.d/K00cups
 #etc/rc2.d
@@ -563,9 +564,9 @@ usr/share/cups/templates/test-page.tmpl
 usr/share/cups/templates/trailer.tmpl
 usr/share/cups/templates/users.tmpl
 #usr/share/doc/cups
-#usr/share/doc/cups/cups-printable.css
-#usr/share/doc/cups/cups.css
-#usr/share/doc/cups/de
+usr/share/doc/cups/cups-printable.css
+usr/share/doc/cups/cups.css
+usr/share/doc/cups/de
 #usr/share/doc/cups/de/images
 #usr/share/doc/cups/de/images/button-accept-jobs.gif
 #usr/share/doc/cups/de/images/button-add-class.gif
@@ -675,7 +676,7 @@ usr/share/cups/templates/users.tmpl
 #usr/share/doc/cups/es/images/button-view-printable-version.gif
 #usr/share/doc/cups/es/index.html
 #usr/share/doc/cups/favicon.ico
-#usr/share/doc/cups/help
+usr/share/doc/cups/help
 #usr/share/doc/cups/help/api-array.html
 #usr/share/doc/cups/help/api-cups.html
 #usr/share/doc/cups/help/api-filedir.html
@@ -740,7 +741,7 @@ usr/share/cups/templates/users.tmpl
 #usr/share/doc/cups/help/standard.html
 #usr/share/doc/cups/help/translation.html
 #usr/share/doc/cups/help/whatsnew.html
-#usr/share/doc/cups/images
+usr/share/doc/cups/images
 #usr/share/doc/cups/images/bottom-left.gif
 #usr/share/doc/cups/images/bottom-right.gif
 #usr/share/doc/cups/images/button-accept-jobs.gif
@@ -815,7 +816,7 @@ usr/share/cups/templates/users.tmpl
 #usr/share/doc/cups/images/web-printer-status.gif
 #usr/share/doc/cups/images/web-set-printer-options.gif
 #usr/share/doc/cups/images/web-test-page.gif
-#usr/share/doc/cups/index.html
+usr/share/doc/cups/index.html
 #usr/share/doc/cups/ja
 #usr/share/doc/cups/ja/images
 #usr/share/doc/cups/ja/images/button-accept-jobs.gif
@@ -922,7 +923,7 @@ usr/share/cups/templates/users.tmpl
 #usr/share/doc/cups/pl/images/button-view-page-log.gif
 #usr/share/doc/cups/pl/images/button-view-printable-version.gif
 #usr/share/doc/cups/pl/index.html
-#usr/share/doc/cups/robots.txt
+usr/share/doc/cups/robots.txt
 #usr/share/doc/cups/sv
 #usr/share/doc/cups/sv/images
 #usr/share/doc/cups/sv/images/button-accept-jobs.gif

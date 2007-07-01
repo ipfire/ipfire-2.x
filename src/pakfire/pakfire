@@ -28,7 +28,6 @@
 	}
 
 	if ("$ARGV[0]" eq "install") {
-		&Pakfire::lock("on");
 		shift;
 		
 		### Make sure that the list is not outdated. 
@@ -45,9 +44,15 @@
 		my @temp;
 		my @templine;
 		my $found = 0;
+		my $return;
 		my @all;
 		foreach $pak (@ARGV) {
 			unless ("$pak" =~ "^-") {
+				$return = &Pakfire::isinstalled($pak);
+				if ($return eq 0) {
+					&Pakfire::message("Package $pak is already installed.");
+					next; 
+				}
 				$found = 0;
 				foreach (@db) {
 					@templine = split(/;/,$_);
@@ -63,30 +68,45 @@
 						break;
 					}
 				}
-				&Pakfire::message("\nThe pak \"$pak\" is not known. Please try running \"pakfire update\".") if ($found == 0);
+				&Pakfire::message("");
+				&Pakfire::message("The pak \"$pak\" is not known. Please try running \"pakfire update\".") if ($found == 0);
 			}
 		}
+		
+		unless (@paks) {
+			&Pakfire::message("No packages to install. Exiting...");
+			exit 1;
+		}
 
-		&Pakfire::message("\n\n### Packages to install:");
-		foreach (sort @paks) {
-		  my $size = &Pakfire::getsize("$_");
+		&Pakfire::message("");
+		&Pakfire::message("");
+		&Pakfire::message("### Packages to install:");
+		foreach $pak (sort @paks) {
+		  my $size = &Pakfire::getsize("$pak");
 			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("# $_  \t\t - $size");
+		  &Pakfire::message("# $pak  \t\t - $size");
 		}
 		
-		&Pakfire::message("\n### Packages to install for dependencies:") if @deps;
-		foreach (sort @deps) {
-		  my $size = &Pakfire::getsize("$_");
+		if (@deps) {
+			my %sort = map{ $_, 1 } @deps;
+			@deps = sort keys %sort;
+			&Pakfire::message("");
+			&Pakfire::message("### Packages to install for dependencies:");
+		}
+		foreach $dep (sort @deps) {
+		  my $size = &Pakfire::getsize("$dep");
 			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("# $_  \t\t - $size");
+		  &Pakfire::message("# $dep  \t\t - $size");
 		}
 		
 		my $totalsize;
-		foreach (@all) {
-			$totalsize = ($totalsize + &Pakfire::getsize("$_"));
+		foreach $pak (@all) {
+			$totalsize = ($totalsize + &Pakfire::getsize("$pak"));
 		}
 		$totalsize = &Pakfire::beautifysize($totalsize);
-		&Pakfire::message("\n### Total size: \t ~ $totalsize\n");
+		&Pakfire::message("");
+		&Pakfire::message("### Total size: \t ~ $totalsize");
+		&Pakfire::message("");
 		
 		if ($interactive) {
 		  &Pakfire::message("Is this okay? [y/N]");
@@ -98,17 +118,19 @@
 			  exit 1;
 			}
 		}
+		
+		my %sort = map{ $_, 1 } @all;
+		@all = sort keys %sort;
 
 		### Download first
-		foreach (sort @all) {
-			&Pakfire::message("# --> Downloading: $_");
-			&Pakfire::getpak("$_", "");
+		foreach $pak (sort @all) {
+			&Pakfire::message("# --> Downloading: $pak");
+			&Pakfire::getpak("$pak", "");
 		}
 
-		foreach (sort @all) {
-			&Pakfire::setuppak("$_");
+		foreach $pak (sort @all) {
+			&Pakfire::setuppak("$pak") if ($pak ne "");
 		}
-		&Pakfire::lock("off");
 		
 	} elsif ("$ARGV[0]" eq "remove") {
 	

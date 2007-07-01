@@ -536,6 +536,7 @@ buildipfire() {
   ipfiremake alsa
   ipfiremake mp3blaster
   ipfiremake which
+  ipfiremake lsof
 }
 
 buildinstaller() {

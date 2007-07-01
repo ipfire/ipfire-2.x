@@ -32,7 +32,7 @@
 				'caption' => 'UPnP',
 				'uri' => '/cgi-bin/upnp.cgi',
 				'title' => "Universal Plug and Play",
-				'enabled' => 1,
+				'enabled' => 0,
 				};
     $subfirewall->{'70.fwopts'} = {
 				'caption' => $Lang::tr{'options fw'},

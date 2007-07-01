@@ -176,7 +176,6 @@
 * mp3blaster-3.2.3
 * mpfire-ipfire
 * mpg123-0.59r
-* mpg123-0.60
 * mtd-CVS-20070507
 * mtools-3.9.10
 * mysql-5.0.24a

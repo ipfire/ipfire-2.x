@@ -124,9 +124,28 @@ while (<>) {
 	if ($dsturl =~ m@^http://download[0-99]\.avast\.com/.*\.(exe|zip|vps|stamp|vpu)$@i) 
 	{ 
 	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Avast"); 
+	}  
+	
+	# ----------------------------------------------------------- 
+	# Section: IPFire Downloads 
+	# -----------------------------------------------------------  
+	
+	if ($dsturl =~ m@^[f|h]t?tp://.*\.(ipfire)$@i) 
+	{ 
+	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"IPFire"); 
 	} 
 	
 	# ----------------------------------------------------------- 
+	# Section: Linux Downloads 
+	# -----------------------------------------------------------  
+	
+	if ($dsturl =~ m@^[f|h]t?tp://.*\.(deb|rpm)$@i) 
+	{ 
+	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Linux"); 
+	}
+	
+	# ----------------------------------------------------------- 
+
 
 	}
 

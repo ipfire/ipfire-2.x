@@ -69,13 +69,14 @@ case "$1" in
 		iptables -t nat -F SQUID
 		squid -k shutdown >/dev/null 2>&1
 		evaluate_retval
-		killproc /usr/sbin/squid >/dev/null
 		killproc /usr/bin/squidGuard >/dev/null
+		killproc /usr/sbin/updxlrator >/dev/null
+		killproc /usr/sbin/squid >/dev/null
 		;;
 
 	restart)
 		$0 stop
-		sleep 1
+		sleep 5
 		$0 start
 		;;
 

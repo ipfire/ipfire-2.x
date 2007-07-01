@@ -82,8 +82,10 @@ sub fetchfile {
 		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 
 		if ($proxysettings{'UPSTREAM_PROXY'}) {
+			logger("Using upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\""); 
 			if ($proxysettings{'UPSTREAM_USER'}) {
 				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
+				logger("  Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"");
 			} else {
 				$ua->proxy("http","http://$proxysettings{'UPSTREAM_PROXY'}/");
 			}
@@ -101,9 +103,17 @@ sub fetchfile {
 		}
 		
 		if ($response->is_success) {
-			if (open(FILE, ">$Conf::cachedir/$bfile")) {
+			if (open(FILE, ">$Conf::tmpdir/$bfile")) {
 				print FILE $response->content;
 				close(FILE);
+				logger("File received. Start checking signature...");
+				if (system("gpg --verify \"$Conf::tmpdir/$bfile\" &>/dev/null") eq 0) {
+					logger("Signature of $bfile is fine.");
+					move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
+				} else {
+					message("The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
+					exit 1;
+				}
 				logger("Download successfully done from $host (file: $file).");
 				$allok = 1;
 				return 0;
@@ -282,14 +292,19 @@ sub resolvedeps {
 	
 	getmetafile("$pak");
 	
-	message("\n## Resolving dependencies for $pak...");
+	message("");
+	message("## Resolving dependencies for $pak...");
+	#if (&isinstalled($pak) eq 0) {
+	#	my @empty;
+	#	return @empty;
+	#}
 	
 	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
 	my @file = <FILE>;
 	close(FILE);
 	
 	my $line;
-	my (@templine, @deps, @tempdeps);
+	my (@templine, @deps, @tempdeps, @all);
 	foreach $line (@file) {
 		@templine = split(/\: /,$line);
 		if ("$templine[0]" eq "Dependencies") {
@@ -299,8 +314,14 @@ sub resolvedeps {
 	chomp (@deps);
 	foreach (@deps) {
 		if ($_) {
-		  message("### Found dependency: $_");
-		  push(@tempdeps,$_);
+		  my $return = &isinstalled($_);
+		  if ($return eq 0) {
+		  	message("### Dependency is already installed: $_");
+		  } else {
+		  	message("### Need to install dependency: $_");
+				push(@tempdeps,$_);
+				push(@all,$_);
+			} 
 		}
 	}
 	
@@ -310,14 +331,19 @@ sub resolvedeps {
 			my @newdeps = resolvedeps("$_");
 			foreach(@newdeps) {
 				unless (($_ eq " ") || ($_ eq "")) {
-				  message("### Found dependency: $_");
-					push(@deps,$_);
+					my $return = &isinstalled($_);
+					if ($return eq 0) {
+						message("### Dependency is already installed: $_");
+					} else {
+						message("### Need to install dependency: $_");
+						push(@all,$_);
+					}
 				}
 			}
 		}
 	}
-	chomp (@deps);
-	return @deps;
+	chomp (@all);
+	return @all;
 }
 
 sub cleanup {
@@ -437,7 +463,9 @@ sub getpak {
 sub setuppak {
 	my $pak = shift;
 	
-	message("We are going to install: $pak");
+	message("################################################################################");
+	message("# --> Installing: $pak");
+	message("################################################################################");
 	
 	decryptpak("$pak");
 	
@@ -448,11 +476,22 @@ sub setuppak {
 	  cleanup("tmp");
 	  copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
 		message("Setup completed. Congratulations!");
+		message("################################################################################");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
 	}
 	return $return;
+}
+
+sub isinstalled {
+	my $pak = shift;
+	if ( open(FILE,"<$Conf::dbdir/installed/meta-$pak") ) {
+		close(FILE);
+		return 0;
+	} else {
+		return 1;
+	}
 }
 
 sub upgradepak {
@@ -544,22 +583,6 @@ sub senduuid {
 		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
 		system("rm -f $Conf::cachedir/counter* 2>/dev/null");
 	}
-}
-
-sub lock {
-	my $status = shift;
-	if ("$status" eq "on") {
-		system("touch /opt/pakfire/pakfire.lock");
-		system("chmod 777 /opt/pakfire/pakfire.lock");
-		logger("Created lock");
-	} else {
-		if (system("rm -f /opt/pakfire/pakfire.lock >/dev/null 2>&1")) {
-			logger("Successfully removed lock.");
-		} else {
-			logger("Couldn't remove lock.");
-		}
-	}
-	return 0;
 }
 
 sub checkcryptodb {
