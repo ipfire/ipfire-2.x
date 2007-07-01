@@ -1202,11 +1202,9 @@ sub buildconf {
 	    print FILE "} #$itf\n";
 
 	    system ('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
-	    system ('/usr/local/bin/dhcpctrl enable');
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server enabled'})
 	} else {
 	    unlink "${General::swroot}/dhcp/enable_${lc_itf}";
-	    system ('/usr/local/bin/dhcpctrl disable');
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server disabled'})
 	}
     }
@@ -1229,6 +1227,8 @@ sub buildconf {
 	}
     }
     close FILE;
+    if ( $dhcpsettings{"ENABLE_GREEN"} eq 'on' || $dhcpsettings{"ENABLE_BLUE"} eq 'on' ) {system '/usr/local/bin/dhcpctrl enable >/dev/null 2>&1';}
+    else {system '/usr/local/bin/dhcpctrl disable >/dev/null 2>&1';}
     system '/usr/local/bin/dhcpctrl restart >/dev/null 2>&1';
 }
 

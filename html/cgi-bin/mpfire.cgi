@@ -48,7 +48,7 @@ delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresett
 system("/usr/local/bin/mpfirectrl scan $mpfiresettings{'SCANDIR'} $mpfiresettings{'SCANDIRDEPS'}");
 }
 
-if ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl play $mpfiresettings{'FILE'}");}
+if ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\""); print $mpfiresettings{'FILE'};}
 if ( $mpfiresettings{'ACTION'} eq "x" ){system("/usr/local/bin/mpfirectrl stop");}
 if ( $mpfiresettings{'ACTION'} eq "||" ){system("/usr/local/bin/mpfirectrl pause");}
 if ( $mpfiresettings{'ACTION'} eq "|>" ){system("/usr/local/bin/mpfirectrl resume");}
@@ -57,6 +57,39 @@ if ( $mpfiresettings{'ACTION'} eq "+" ){system("/usr/local/bin/mpfirectrl volup 
 if ( $mpfiresettings{'ACTION'} eq "-" ){system("/usr/local/bin/mpfirectrl voldown 5");}
 if ( $mpfiresettings{'ACTION'} eq "++" ){system("/usr/local/bin/mpfirectrl volup 10");}
 if ( $mpfiresettings{'ACTION'} eq "--" ){system("/usr/local/bin/mpfirectrl voldown 10");}
+if ( $mpfiresettings{'ACTION'} eq "playlist" ){system("/usr/local/bin/mpfirectrl playall");}
+if ( $mpfiresettings{'ACTION'} eq "playalbum" )
+{
+my @temp = "";
+my @album = split(/\|/,$mpfiresettings{'album'});
+my %hash = map{ $_, 1 }@album;
+
+foreach (@songdb){
+  my @song = split(/\|/,$_);
+  chomp($song[0]);
+  push(@temp,$song[0]."\n") if exists $hash{$song[4]};
+  }
+open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+print DATEI @temp;
+close(DATEI);
+system("/usr/local/bin/mpfirectrl playall");
+}
+if ( $mpfiresettings{'ACTION'} eq "playartist" )
+{
+my @temp = "";
+my @artist = split(/\|/,$mpfiresettings{'artist'});
+my %hash = map{ $_, 1 }@artist;
+
+foreach (@songdb){
+  my @song = split(/\|/,$_);
+  chomp($song[0]);
+    push(@temp,$song[0]."\n") if exists $hash{$song[1]};
+  }
+open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+print DATEI @temp;
+close(DATEI);
+system("/usr/local/bin/mpfirectrl playall");
+}
 if ( $mpfiresettings{'ACTION'} eq "playall" )
 {
 my @temp = "";
@@ -103,7 +136,7 @@ END
 &Header::closebox();
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
-print "<form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='95%' cellspacing='0'><tr>";
+print "<table width='95%' cellspacing='0'><tr>";
 print <<END
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='||' /><input type='image' alt='$Lang::tr{'pause'}' title='$Lang::tr{'pause'}' src='/images/media-playback-pause.png' /></form></td>
@@ -126,12 +159,52 @@ END
 ;
 &Header::closebox();
 
+&Header::openbox('100%', 'center', $Lang::tr{'quick playlist'});
+
+my @artist;
+my @album;
+foreach (@songdb){
+  my @song = split(/\|/,$_);
+  push(@artist,$song[1]);push(@album,$song[4]);}
+  my %hash = map{ $_, 1 }@artist;
+  @artist = sort keys %hash;
+  my %hash = map{ $_, 1 }@album;
+  @album = sort keys %hash;
+print <<END
+  <table width='95%' cellspacing='0'>
+  <tr><td align='center'>
+      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+      <select name='artist' size='8' multiple='multiple'>
+END
+;
+  foreach (@artist){print "<option>$_</option>";}
+print <<END
+      </select><br/>
+      <input type='hidden' name='ACTION' value='playartist' />
+      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+      </form></td>
+      <td align='center'>
+      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+      <select name='album' size='8' multiple='multiple'>
+END
+;
+  foreach (@album){print "<option>$_</option>";}
+print <<END
+      </select><br/>
+      <input type='hidden' name='ACTION' value='playalbum' />
+      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+      </form></td>
+      </tr></table>
+END
+;
+&Header::closebox();
+
 if ( $mpfiresettings{'SHOWLIST'} eq "on" ){
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire songs'});
 print <<END
 
-<table width='95%' cellspacing=5'>
+<table width='95%' cellspacing='5'>
 <tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'Existing Files'}</b></td></tr>
 <tr><td align='center'></td>
     <td align='center'><b>$Lang::tr{'artist'}<br/>$Lang::tr{'title'}</b></td>
@@ -150,7 +223,7 @@ foreach (@songdb){
   if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
   $song[0]=~s/\/\//\//g;   
   print <<END
-  <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value='$song[0]' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+  <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
   <td align='center'>$song[1]<br/>$song[2]</td>
   <td align='center'>$song[3]</td>
   <td align='center'>$song[4]</td>
@@ -169,6 +242,27 @@ END
 print "</table></form>";
 &Header::closebox();
 }
+
+&Header::openbox('100%', 'center', $Lang::tr{'mpfire playlist'});
+
+;
+
+open(DATEI, "<${General::swroot}/mpfire/playlist") || die "Could not open playlist";
+my @playlist = <DATEI>;
+close(DATEI);
+
+print <<END
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'current playlist'}</b></td></tr>
+<tr><td align='center'><textarea cols='120' rows='10' name='playlist' style='font-size:10px' readonly='readonly' >@playlist</textarea><br/>
+                       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+                       <input type='hidden' name='ACTION' value='playlist' />
+                       <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+      </form></td></tr>
+</table>
+END
+;
+&Header::closebox();
 
 &Header::closebigbox();
 &Header::closepage();
