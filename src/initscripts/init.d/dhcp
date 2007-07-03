@@ -25,7 +25,7 @@ case "$1" in
 		boot_mesg "Starting DHCP Server..."
 		loadproc /usr/sbin/dhcpd -q ${devices}
 		
-		(sleep 20 && chmod 644 /var/run/dhcpd.pid) & # Fix because silly dhcpd creates its pid with mode 640
+		(sleep 5 && chmod 644 /var/run/dhcpd.pid) & # Fix because silly dhcpd creates its pid with mode 640
 		;;
 
 	stop)

@@ -464,10 +464,10 @@ END
 			print "<img src='/images/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'IPFire')
 		{
-			print "<img src='/images/updxl-src-ipfire.gif' alt='IPFire'}' />&nbsp;</td>\n";
+			print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire'}' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Linux')
 		{
-			print "<img src='/images/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</td>\n";
+			print "<img src='/images/tux.png' alt='Linux'}' />&nbsp;</td>\n";
 		} else
 		{
 			print "<img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' />&nbsp;</td>\n";
@@ -552,10 +552,10 @@ print <<END
 	</tr>
 	<tr>
 		<td class='base' colspan='2'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-ipfire.gif' alt='IPFire' /></td>
+		<td align='center'><img src='/images/IPFire.png' width='18' height='18' alt='IPFire' /></td>
 		<td class='base'>IPFire</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-linux.gif' alt='Linux' /></td>
+		<td align='center'><img src='/images/tux.png' alt='Linux' /></td>
 		<td class='base'>Linux</td>
 		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-avast.gif' alt='Avast' /></td>

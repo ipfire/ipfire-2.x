@@ -33,10 +33,8 @@ close(DATEI);
 &Header::showhttpheaders();
 &Header::getcgihash(\%mpfiresettings);
 
-&Header::openpage($Lang::tr{'mpfire'}, 1, '');
+&Header::openpage($Lang::tr{'mpfire'}, 1, "<meta http-equiv='refresh' content='120'>");
 &Header::openbigbox('100%', 'left', '', $errormessage);
-
-sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );}
 
 ############################################################################################################################
 ######################################## Scanne Verzeichnisse nach Mp3 Dateien #############################################
@@ -48,11 +46,13 @@ delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresett
 system("/usr/local/bin/mpfirectrl scan $mpfiresettings{'SCANDIR'} $mpfiresettings{'SCANDIRDEPS'}");
 }
 
-if ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\""); print $mpfiresettings{'FILE'};}
+if ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
 if ( $mpfiresettings{'ACTION'} eq "x" ){system("/usr/local/bin/mpfirectrl stop");}
 if ( $mpfiresettings{'ACTION'} eq "||" ){system("/usr/local/bin/mpfirectrl pause");}
 if ( $mpfiresettings{'ACTION'} eq "|>" ){system("/usr/local/bin/mpfirectrl resume");}
 if ( $mpfiresettings{'ACTION'} eq ">>" ){system("/usr/local/bin/mpfirectrl next");}
+if ( $mpfiresettings{'ACTION'} eq "stopweb" ){system("/usr/local/bin/mpfirectrl stopweb");}
+if ( $mpfiresettings{'ACTION'} eq "playweb" ){system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
 if ( $mpfiresettings{'ACTION'} eq "+" ){system("/usr/local/bin/mpfirectrl volup 5");}
 if ( $mpfiresettings{'ACTION'} eq "-" ){system("/usr/local/bin/mpfirectrl voldown 5");}
 if ( $mpfiresettings{'ACTION'} eq "++" ){system("/usr/local/bin/mpfirectrl volup 10");}
@@ -119,7 +119,7 @@ $mpfiresettings{'SHOWLIST'} = "off";
 if ( $message ne "" )	{	print "<font color='red'>$message</font>"; }
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire scanning'});
-	
+
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
@@ -135,8 +135,11 @@ END
 ;
 &Header::closebox();
 
+my $song = qx(/usr/local/bin/mpfirectrl song);
+if ( $song eq "" ){$song = "None";}
+
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
-print "<table width='95%' cellspacing='0'><tr>";
+print "<table width='95%' cellspacing='0'><tr bgcolor='$color{'color20'}'><td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr><tr><td colspan='5'><br/></td></tr><tr>";
 print <<END
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='||' /><input type='image' alt='$Lang::tr{'pause'}' title='$Lang::tr{'pause'}' src='/images/media-playback-pause.png' /></form></td>
@@ -245,8 +248,6 @@ print "</table></form>";
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire playlist'});
 
-;
-
 open(DATEI, "<${General::swroot}/mpfire/playlist") || die "Could not open playlist";
 my @playlist = <DATEI>;
 close(DATEI);
@@ -262,6 +263,31 @@ print <<END
 </table>
 END
 ;
+&Header::closebox();
+
+&Header::openbox('100%', 'center', $Lang::tr{'mpfire webradio'});
+
+open(DATEI, "<${General::swroot}/mpfire/webradio") || die "Could not open playlist";
+my @webradio = <DATEI>;
+close(DATEI);
+
+print <<END
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'webradio playlist'}</b></td></tr>
+<tr><td>Stream</td><td colspan='2'></td></tr>
+END
+;
+foreach (@webradio){
+ my @stream = split(/\|/,$_);
+ print <<END
+ <tr><td>$stream[1]</td>
+     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='stopweb' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
+     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+</tr>
+END
+;
+ }
+print "</table>";
 &Header::closebox();
 
 &Header::closebigbox();

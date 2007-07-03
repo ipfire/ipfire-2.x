@@ -66,4 +66,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	touch /var/ipfire/mpfire/db/songs.db
 	chown nobody.nobody /var/ipfire/mpfire/{settings,playlist}	
 	install -v -m 755 $(DIR_SRC)/config/mpfire/mpfire.pl /var/ipfire/mpfire/bin
+	install -v -m 644 $(DIR_SRC)/config/mpfire/webradio /var/ipfire/mpfire/
 	@$(POSTBUILD)

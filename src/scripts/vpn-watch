@@ -11,7 +11,13 @@ my $i = 0;
 my $file = "/var/run/vpn-watch.pid";
 my $debug = 0;
 
-if ( -e $file ){logger("There my be another vpn-watch runnning $file exists, vpn-watch will not start.");exit 1;}
+if ( -e $file ){
+  logger("There my be another vpn-watch runnning because $file exists, vpn-watch will try kill the process.");
+  open(FILE, "<$file");
+    my $PID = <FILE>;
+    close(FILE);
+    system("kill -9 $PID");
+  }
 if ($debug){logger("Call of vpn-watch pid not is not existing.");}
 
 system("echo $$ > $file");
@@ -20,7 +26,7 @@ while ( $i == 0){
  sleep(300);
   if ($debug){logger("We will wait 300 seconds before next action.");}
   
-  if (open(FILE, "${General::swroot}/vpn/config")) {
+  if (open(FILE, "<${General::swroot}/vpn/config")) {
     @vpnsettings = <FILE>;
     close(FILE);
     unless(@vpnsettings) {exit 1;}
