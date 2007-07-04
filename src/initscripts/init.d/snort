@@ -69,6 +69,16 @@ case "$1" in
 		;;
 		
 	stop)
+	     DEVICES=""
+	     if [ -r /var/run/snort_$BLUE_DEV.pid ]; then
+	         DEVICES+="$BLUE_DEV "
+       fi
+	     if [ -r /var/run/snort_$GREEN_DEV.pid ]; then
+	         DEVICES+="$GREEN_DEV "
+       fi
+	     if [ -r /var/run/snort_$ORANGE_DEV.pid ]; then
+	         DEVICES+="$ORANGE_DEV "
+       fi
 		for DEVICE in $DEVICES; do
 			boot_mesg "Stopping Intrusion Detection System on $DEVICE..."
 			killproc -p /var/run/snort_$DEVICE.pid /var/run
