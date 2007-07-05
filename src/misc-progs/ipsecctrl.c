@@ -267,11 +267,11 @@ int main(int argc, char *argv[]) {
                 
  /* Get vpnwatch pid */
 
- if (file = fopen("/var/run/vpn-watch.pid", "r")) {
+ if ( (argc == 2) && (file = fopen("/var/run/vpn-watch.pid", "r"))) {
  safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
  safe_system("unlink /var/run/vpn-watch.pid)");
- }
  close(file);
+ }
  
         /* FIXME: workaround for pclose() issue - still no real idea why
          * this is happening */
@@ -431,6 +431,7 @@ int main(int argc, char *argv[]) {
                 safe_system("/usr/sbin/ipsec tncfg --clear >/dev/null");
                 safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
                 add_alias_interfaces(configtype, redtype, if_red, (enable_red+enable_green+enable_orange+enable_blue) >>1 );
+                safe_system("/usr/local/bin/vpn-watch &");
                 exit(0);
         }
 
@@ -481,6 +482,5 @@ int main(int argc, char *argv[]) {
                 }
         }
         fclose(file);
-        safe_system("/usr/local/bin/vpn-watch &");
         return 0;
 }
