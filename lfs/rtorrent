@@ -38,7 +38,7 @@ PAK_VER    = 1
 
 DESCDE     = ""
 DESCEN     = ""
-DEPS       = "libtorrent"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules

@@ -1,0 +1,3 @@
+etc/rc.d/init.d/ipfireseeder
+var/ipfire/seeder
+var/log/seeder

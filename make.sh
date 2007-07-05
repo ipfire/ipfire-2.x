@@ -17,18 +17,18 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                         #
+# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 
-NAME="IPFire"				# Software name
-SNAME="ipfire"			# Short name
-VERSION="2.0t4"			# Version number
-SLOGAN="www.ipfire.org"		# Software slogan
-CONFIG_ROOT=/var/ipfire		# Configuration rootdir
-NICE=10				# Nice level
-MAX_RETRIES=1				# prefetch/check loop
+NAME="IPFire"										# Software name
+SNAME="ipfire"									# Short name
+VERSION="2.0t4"									# Version number
+SLOGAN="www.ipfire.org"					# Software slogan
+CONFIG_ROOT=/var/ipfire					# Configuration rootdir
+NICE=10													# Nice level
+MAX_RETRIES=1										# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 SVN_REVISION=`svn info | grep Revision | cut -c 11-`
@@ -511,12 +511,12 @@ buildipfire() {
   ipfiremake sox
   ipfiremake gnump3d
   ipfiremake libsigc++
-  ipfiremake ctorrent
   ipfiremake applejuice
   ipfiremake ocaml
   ipfiremake mldonkey
   ipfiremake libtorrent
   ipfiremake rtorrent
+  ipfiremake ipfireseeder
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake portmap
@@ -646,6 +646,7 @@ ipfirepackages() {
   ipfiredist cyrus-sasl
 #  ipfiredist fetchmail
 #  ipfiredist gnump3d
+  ipfiredist ipfireseeder
   ipfiredist java
   ipfiredist libogg
   ipfiredist libvorbis
@@ -657,6 +658,7 @@ ipfirepackages() {
 #  ipfiredist nfs
   ipfiredist openldap
 #  ipfiredist postfix
+  ipfiredist rtorrent
   ipfiredist samba
 #  ipfiredist sox
 #  ipfiredist spamassassin

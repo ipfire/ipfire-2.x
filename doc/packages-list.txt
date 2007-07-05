@@ -118,6 +118,7 @@
 * inetutils-1.4.2
 * ipac-ng-1.31
 * ipaddr-1.2
+* ipfireseeder-1.00
 * ipp2p-0.8.2
 * ipp2p-0.8.2-iptables
 * iproute2-2.6.16-060323
@@ -158,6 +159,7 @@
 * linuxigd-0.95
 * logrotate-3.7.1
 * logwatch_7.3.1
+* lsof-4.78
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_3

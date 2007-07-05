@@ -16,6 +16,27 @@
 	  exit 1;
 	}
 	
+	### Check if there are running some other pakfire processes
+	#
+	#my $return = `pidof pakfire`;
+	#chomp($return);
+	#if ($return) {
+	#	&Pakfire::message("There are running some other pakfire processes...");
+	#	exit 1;
+	#}
+	
+	### Check if we are started by another name
+	#
+	if ( $0 =~ /pakfire-update$/ ) {
+		&Pakfire::message("Running an update started by fcron.");
+		$ARGV[0] = "update";
+		$interactive = 0;
+	} elsif ( $0 =~ /pakfire-upgrade$/ ) {
+		&Pakfire::message("Running an upgrade started by fcron.");
+		$ARGV[0] = "upgrade";
+		$interactive = 0;
+	}
+	
 	unless (@ARGV) {
 		&Pakfire::usage;
 	}

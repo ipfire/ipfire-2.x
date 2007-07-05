@@ -106,13 +106,15 @@ sub fetchfile {
 			if (open(FILE, ">$Conf::tmpdir/$bfile")) {
 				print FILE $response->content;
 				close(FILE);
-				logger("File received. Start checking signature...");
-				if (system("gpg --verify \"$Conf::tmpdir/$bfile\" &>/dev/null") eq 0) {
-					logger("Signature of $bfile is fine.");
-					move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
-				} else {
-					message("The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
-					exit 1;
+				unless ($bfile =~ /^counter\?.*/) { # Don't check out counterfile cause it's empty
+					logger("File received. Start checking signature...");
+					if (system("gpg --verify \"$Conf::tmpdir/$bfile\" &>/dev/null") eq 0) {
+						logger("Signature of $bfile is fine.");
+						move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
+					} else {
+						message("The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
+						exit 1;
+					}
 				}
 				logger("Download successfully done from $host (file: $file).");
 				$allok = 1;
@@ -133,15 +135,15 @@ sub getmirrors {
 
 	logger("Try to get a mirror list.");
 	
-	fetchfile("lists/$Conf::version-server-list", "$Conf::mainserver");
-	move("$Conf::cachedir/$Conf::version-server-list", "$Conf::dbdir/lists/$Conf::version-server-list");
+	fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver");
+	move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
 }
 
 sub selectmirror {
 	### Check if there is a current server list and read it.
 	#   If there is no list try to get one.
 	my $count = 0;
-	while (!(open(FILE, "<$Conf::dbdir/lists/$Conf::version-server-list")) && ($count lt 5)) {
+	while (!(open(FILE, "<$Conf::dbdir/lists/server-list.db")) && ($count lt 5)) {
 		$count++;
 		getmirrors();
 	}
@@ -272,6 +274,7 @@ sub dblist {
 		my $line;
 		my @templine;
 		foreach $line (sort @db) {
+			next unless ($line =~ /.*;.*;.*;/ );
 			@templine = split(/\;/,$line);
 			if ("$filter" eq "notinstalled") {
 				next if ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
@@ -477,6 +480,7 @@ sub setuppak {
 	  copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
 		message("Setup completed. Congratulations!");
 		message("################################################################################");
+		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&ipak=$pak&return=$return", "$Conf::mainserver");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
@@ -507,6 +511,7 @@ sub upgradepak {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
 		copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
+		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&upak=$pak&return=$return", "$Conf::mainserver");
 		message("Upgrade completed. Congratulations!");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
@@ -536,6 +541,7 @@ sub removepak {
 		}
 	  unlink("$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
+	  fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&dpak=$pak&return=$return", "$Conf::mainserver");
 		message("Uninstall completed. Congratulations!");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
@@ -581,7 +587,7 @@ sub senduuid {
 		}
 		logger("Sending my uuid: $Conf::uuid");
 		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
-		system("rm -f $Conf::cachedir/counter* 2>/dev/null");
+		system("rm -f $Conf::tmpdir/counter* 2>/dev/null");
 	}
 }
 
