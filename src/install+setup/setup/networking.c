@@ -158,17 +158,31 @@ int oktoleave(char *errormessage)
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
 	if (configtype < 1 || configtype > 4) configtype = 0;
 
-	if (HAS_BLUE)
+	if (HAS_GREEN)
 	{
-		strcpy(temp, ""); findkey(kv, "BLUE_DEV", temp);
+		strcpy(temp, ""); findkey(kv, "GREEN_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_NO_BLUE_INTERFACE]);
+			strcpy(errormessage, ctr[TR_NO_GREEN_INTERFACE]);
 			goto EXIT;
 		}
-		if (!(interfacecheck(kv, "BLUE")))
+		if (!(interfacecheck(kv, "GREEN")))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_BLUE_IP]);
+			strcpy(errormessage, "(TR) GRÜNE IP nicht konfiguriert.\n"); //ctr[TR_MISSING_GREEN_IP]);
+			goto EXIT;
+		}
+	}
+	if (HAS_RED)
+	{
+		strcpy(temp, ""); findkey(kv, "RED_DEV", temp);
+		if (!(strlen(temp)))
+		{
+			strcpy(errormessage, ctr[TR_NO_RED_INTERFACE]);
+			goto EXIT;
+		}
+		if (!(interfacecheck(kv, "RED")))
+		{
+			strcpy(errormessage, ctr[TR_MISSING_RED_IP]);
 			goto EXIT;
 		}
 	}
@@ -186,17 +200,32 @@ int oktoleave(char *errormessage)
 			goto EXIT;
 		}
 	}
-	if (HAS_RED)
+	if (HAS_BLUE)
 	{
-		strcpy(temp, ""); findkey(kv, "RED_DEV", temp);
+		strcpy(temp, ""); findkey(kv, "BLUE_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_NO_RED_INTERFACE]);
+			strcpy(errormessage, ctr[TR_NO_BLUE_INTERFACE]);
 			goto EXIT;
 		}
-		if (!(interfacecheck(kv, "RED")))
+		if (!(interfacecheck(kv, "BLUE")))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_RED_IP]);
+			strcpy(errormessage, ctr[TR_MISSING_BLUE_IP]);
+			goto EXIT;
+		}
+	}
+	if (configtype == 0)
+	{
+		strcpy(temp, ""); findkey(kv, "DNS1", temp);
+		if (!(strlen(temp)))
+		{
+			strcpy(errormessage, "(TR) Kein DNS eingetragen\n");
+			goto EXIT;
+		}
+		strcpy(temp, ""); findkey(kv, "DEFAULT_GATEWAY", temp);
+		if (!(strlen(temp)))
+		{
+			strcpy(errormessage, "(TR) Kein default Gateway eingetragen.\n");
 			goto EXIT;
 		}
 	}
@@ -335,19 +364,6 @@ int drivermenu(void)
 	kcount = 0;	// counter to find knowing nics.
 	neednics = 0;	// counter to use needing nics.
 	if (HAS_GREEN) {
-/*		strcpy(temp, ""); findkey(kv, "GREEN_MACADDR", temp);
-		if (strlen(temp)) {
-			strcpy(knics[_GREEN_CARD_].macaddr, temp);
-			strcpy(knics[_GREEN_CARD_].colour, "GREEN");
-			findkey(kv, "GREEN_DESCRIPTION", temp);
-			strcpy(knics[_GREEN_CARD_].description, temp);
-			findkey(kv, "GREEN_DRIVER", temp);
-			strcpy(knics[_GREEN_CARD_].driver, temp);
-			kcount++;
-		} else {
-			strcpy(knics[_GREEN_CARD_].description, ctr[TR_UNSET]);
-		}
-*/
 		sprintf(temp, "GREEN:  %s\n", knics[_GREEN_CARD_].description);
 		strcat(message, temp);
 		if (strlen(knics[_GREEN_CARD_].macaddr) ) {
@@ -357,19 +373,6 @@ int drivermenu(void)
 		neednics++;
 	}
 	if (HAS_RED) {
-/*		strcpy(temp, ""); findkey(kv, "RED_MACADDR", temp);
-		if (strlen(temp)) {
-			strcpy(knics[_RED_CARD_].macaddr, temp);
-			strcpy(knics[_RED_CARD_].colour, "RED");
-			findkey(kv, "RED_DESCRIPTION", temp);
-			strcpy(knics[_RED_CARD_].description, temp);
-			findkey(kv, "RED_DRIVER", temp);
-			strcpy(knics[_RED_CARD_].driver, temp);
-			kcount++;
-		} else {
-			strcpy(knics[_RED_CARD_].description, ctr[TR_UNSET]);
-		}
-*/
 		sprintf(temp, "RED:    %s\n", knics[_RED_CARD_].description);
 		strcat(message, temp);
 		if (strlen(knics[_RED_CARD_].macaddr) ) {
@@ -379,19 +382,6 @@ int drivermenu(void)
 		neednics++;
 	}
 	if (HAS_ORANGE) {
-/*		strcpy(temp, ""); findkey(kv, "ORANGE_MACADDR", temp);
-		if (strlen(temp)) {
-			strcpy(knics[_ORANGE_CARD_].macaddr, temp);
-			strcpy(knics[_ORANGE_CARD_].colour, "ORANGE");
-			findkey(kv, "ORANGE_DESCRIPTION", temp );
-			strcpy(knics[_ORANGE_CARD_].description, temp );
-			findkey(kv, "ORANGE_DRIVER", temp);
-			strcpy(knics[_ORANGE_CARD_].driver, temp);
-			kcount++;
-		} else {
-			strcpy(knics[_ORANGE_CARD_].description, ctr[TR_UNSET]);
-		}
-*/
 		sprintf(temp, "ORANGE: %s\n", knics[_ORANGE_CARD_].description);
 		strcat(message, temp);
 		if ( strlen(knics[_ORANGE_CARD_].macaddr) ) {
@@ -401,19 +391,6 @@ int drivermenu(void)
 		neednics++;
 	}
 	if (HAS_BLUE) {
-/*		strcpy(temp, ""); findkey(kv, "BLUE_MACADDR", temp);
-		if (strlen(temp)) {
-			strcpy(knics[_BLUE_CARD_].macaddr, temp);
-			strcpy(knics[_BLUE_CARD_].colour, "BLUE");
-			findkey(kv, "BLUE_DESCRIPTION", temp );
-			strcpy(knics[_BLUE_CARD_].description, temp);
-			findkey(kv, "BLUE_DRIVER", temp);
-			strcpy(knics[_BLUE_CARD_].driver, temp);
-			kcount++;
-		} else {
-			strcpy(knics[_BLUE_CARD_].description, ctr[TR_UNSET]);
-		}
-*/
 		sprintf(temp, "BLUE:   %s\n", knics[_BLUE_CARD_].description);
 		strcat(message, temp);
 		if (strlen(knics[_BLUE_CARD_].macaddr)) {
@@ -426,7 +403,8 @@ int drivermenu(void)
 	for ( i=0 ; i<4;i++) if (strcmp(knics[i].macaddr, "")) kcount++;
 	fprintf(flog,"found %d knowing Card\'s\n", kcount); // #### DEBUG ####
 
-	if (neednics = kcount) {
+	if (neednics = kcount)
+	{
 		strcat(message, ctr[TR_DO_YOU_WISH_TO_CHANGE_THESE_SETTINGS]);
 		rc = newtWinChoice(ctr[TR_DRIVERS_AND_CARD_ASSIGNMENTS], ctr[TR_OK],
 		ctr[TR_CANCEL], message);
@@ -436,8 +414,8 @@ int drivermenu(void)
 			changedrivers();
 		}
 	} else {
-		strcat(message, "\nEs wurden noch nicht alle Netzwerkkarten konfiguriert.\n");
-		newtWinMessage(ctr[TR_DRIVERS_AND_CARD_ASSIGNMENTS], ctr[TR_OK], message);
+//		strcat(message, "\nEs wurden noch nicht alle Netzwerkkarten konfiguriert.\n");
+//		newtWinMessage(ctr[TR_DRIVERS_AND_CARD_ASSIGNMENTS], ctr[TR_OK], message);
 		/* Shit, got to do something.. */
 		changedrivers();
 	}

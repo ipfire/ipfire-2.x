@@ -285,6 +285,8 @@ char *en_tr[] = {
 "No BLUE interface assigned.",
 /* TR_NO_CDROM */
 "No CD-ROM found.",
+/* TR_NO_GREEN_INTERFACE */
+"No GREEN interface assigned.",
 /* TR_NO_HARDDISK */
 "No hard disk found.",
 /* TR_NO_IPCOP_TARBALL_FOUND */

@@ -289,6 +289,8 @@ char *de_tr[] = {
 "Kein BLAUES Interface zugeordnet.",
 /* TR_NO_CDROM */
 "Kein CD-ROM gefunden.",
+/* TR_NO_GREEN_INTERFACE */
+"Keine GRÜNE Schnittstelle zugewiesen.",
 /* TR_NO_HARDDISK */
 "Keine Festplatte gefunden.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
