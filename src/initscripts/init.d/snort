@@ -79,6 +79,10 @@ case "$1" in
 	     if [ -r /var/run/snort_$ORANGE_DEV.pid ]; then
 	         DEVICES+="$ORANGE_DEV "
        fi
+       if [ "$ENABLE_SNORT" == "on" ]; then
+	         DEVICES+="`cat /var/ipfire/red/iface` "
+       fi
+       
 		for DEVICE in $DEVICES; do
 			boot_mesg "Stopping Intrusion Detection System on $DEVICE..."
 			killproc -p /var/run/snort_$DEVICE.pid /var/run
