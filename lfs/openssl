@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 0.9.8d
+VER        = 0.9.8e
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8ed1853538e1d05a1f5ada61ebf8bffa
+$(DL_FILE)_MD5 = 3a7ff24f6ea5cd711984722ad654b927
 
 install : $(TARGET)
 
@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf /etc/ssl
 	cd $(DIR_APP) && sed -i -e 's/mcpu/march/' config
 	cd $(DIR_APP) && sed -i -e 's/-O3/-O2/' -e 's/-march=i486/-march=i586/' Configure
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fix_manpages-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8d-fix_manpages-1.patch
 	cd $(DIR_APP) && ./config --openssldir=/etc/ssl --prefix=/usr shared
 	cd $(DIR_APP) && make MANDIR=/usr/share/man
 	cd $(DIR_APP) && make MANDIR=/usr/share/man install
