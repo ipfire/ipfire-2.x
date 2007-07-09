@@ -38,14 +38,16 @@ $pakfiresettings{'UUID'} = 'on';
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ($pakfiresettings{'ACTION'} eq 'install'){
+	$pakfiresettings{'INSPAKS'} =~ s/\|/\ /g;
 	if ("$pakfiresettings{'FORCE'}" eq "on") {
-		system("/usr/local/bin/pakfire", "install", "--non-interactive", "$pakfiresettings{'INSPAKS'}", "&");
-		sleep(1);
+		my $command = "/usr/local/bin/pakfire install --non-interactive $pakfiresettings{'INSPAKS'} &>/dev/null &";
+		system("$command");
+		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", "Abfrage");
 		my @output = `/usr/local/bin/pakfire resolvedeps $pakfiresettings{'INSPAKS'}`;
 		print <<END;
-		<table><tr><td colspan='2'>Sie maechten folgende Pakete installieren: $pakfiresettings{'INSPAKS'}. Moeglicherweise haben diese Pakete Abhaengigkeiten, d.h. andere Pakete muessen zusaetzlich installiert werden. Dazu sehen sie unten eine Liste.
+		<table><tr><td colspan='2'>Sie maechten folgende Pakete installieren: "$pakfiresettings{'INSPAKS'}". Moeglicherweise haben diese Pakete Abhaengigkeiten, d.h. andere Pakete muessen zusaetzlich installiert werden. Dazu sehen sie unten eine Liste.
 		<pre>		
 END
 		foreach (@output) {
@@ -200,7 +202,7 @@ print <<END;
 					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
 					<td width='40%' align="right">Registrierung am Master-Server: 
 					<td width='10%' align="left"><input type="checkbox" name="UUID" $checked{'UUID'}{'on'} />
-			<tr><td width='100%' colspan="4" align="right"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />					
+			<tr><td width='100%' colspan="4" align="right"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
 		</table>
 	</form>
 END

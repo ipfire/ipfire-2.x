@@ -34,15 +34,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = backup
 PAK_VER    = 1
 
-DESCDE     = "In Backup sind alle notwendigen Dateien für das Backup des IPFire enthalten"
-DESCEN     = "Backup contains all Files necessary for backup the IPFire"
-DEPS       = "backup"
+DESCDE     = "Im Paket Backup sind alle notwendigen Dateien für das Backup des IPFire enthalten."
+DESCEN     = "Backup contains all the files that are necessary for backing up the IPFire."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-
-objects =
 
 install : $(TARGET)
 
