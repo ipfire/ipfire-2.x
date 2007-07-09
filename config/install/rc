@@ -37,4 +37,10 @@ echo "Starting udev daemon"
 /sbin/udevtrigger
 /sbin/udevsettle
 
+sleep 3
+for file in /dev/.udev/failed/*/uevent ; do
+	echo "add" >"${file}"
+done 2>/dev/null
+/sbin/udevsettle
+
 echo "Loading Installer..."
