@@ -459,6 +459,8 @@ if ( ($color % 10) == 8 ){print "<TR BGCOLOR='$color{'color8'}'>\n";}
 if ( ($color % 10) == 9 ){print "<TR BGCOLOR='$color{'color9'}'>\n";}
 if ( ($color % 10) == 0 ){print "<TR BGCOLOR='$color{'color10'}'>\n";}
 
+if ( $linesjc ne "0")
+{
 my $dif;
 $dif = $linesjc - $total;
 $percent = $dif * 100 / $linesjc;
@@ -471,6 +473,7 @@ print <<END
 </TR>
 END
 ;
+}
 }
 print <<END
 </TABLE>

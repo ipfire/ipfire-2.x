@@ -30,7 +30,7 @@ print FILE "outgoing GREEN ($settings{'GREEN_DEV'})|ipac~i|$settings{'GREEN_DEV'
 print FILE "forwarded incoming GREEN ($settings{'GREEN_DEV'})|ipac~fi|$settings{'GREEN_DEV'}|all|||\n";
 print FILE "forwarded outgoing GREEN ($settings{'GREEN_DEV'})|ipac~fo|$settings{'GREEN_DEV'}|all|||\n";
 
-if ($settings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/ )
+if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ )
 {
         print FILE "incoming ORANGE ($settings{'ORANGE_DEV'})|ipac~o|$settings{'ORANGE_DEV'}|all|||\n";
         print FILE "outgoing ORANGE ($settings{'ORANGE_DEV'})|ipac~i|$settings{'ORANGE_DEV'}|all|||\n";
@@ -38,7 +38,7 @@ if ($settings{'CONFIG_TYPE'} =~ /^(1|3|5|7)$/ )
         print FILE "forwarded outgoing ORANGE ($settings{'ORANGE_DEV'})|ipac~fo|$settings{'ORANGE_DEV'}|all|||\n";
 }
 
-if ($settings{'CONFIG_TYPE'} =~ /^(4|5|6|7)$/ )
+if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ )
 {
         print FILE "incoming BLUE ($settings{'BLUE_DEV'})|ipac~o|$settings{'BLUE_DEV'}|all|||\n";
         print FILE "outgoing BLUE ($settings{'BLUE_DEV'})|ipac~i|$settings{'BLUE_DEV'}|all|||\n";

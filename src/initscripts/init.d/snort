@@ -40,7 +40,7 @@ if [ "$ENABLE_SNORT" == "on" ]; then
 	else
 		exit 1 ## Add error handling here
 	fi
-	DEVICES+="`cat /var/ipfire/red/iface` "
+	DEVICES+=`cat /var/ipfire/red/iface`
 fi
 
 COUNT=`echo $HOME_NET | wc -m`
@@ -62,7 +62,7 @@ case "$1" in
 	start)
 		for DEVICE in $DEVICES; do
 			boot_mesg "Starting Intrusion Detection System on $DEVICE..."
-			/usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --pid-path /var/run/snort_$DEVICE.pid
+			/usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --pid-path /var/run/
 			evaluate_retval
 			chmod 644 /var/run/snort_$DEVICE.pid
 		done
@@ -79,14 +79,18 @@ case "$1" in
 	     if [ -r /var/run/snort_$ORANGE_DEV.pid ]; then
 	         DEVICES+="$ORANGE_DEV "
        fi
-       if [ "$ENABLE_SNORT" == "on" ]; then
-	         DEVICES+="`cat /var/ipfire/red/iface` "
+      
+       RED=`cat /var/ipfire/red/iface`
+       if [ -r /var/run/snort_$RED.pid ]; then
+	         DEVICES+=`cat /var/ipfire/red/iface`
        fi
        
-		for DEVICE in $DEVICES; do
+    for DEVICE in $DEVICES; do
 			boot_mesg "Stopping Intrusion Detection System on $DEVICE..."
 			killproc -p /var/run/snort_$DEVICE.pid /var/run
 		done
+		
+		rm /var/run/snort_*
 		;;
 		
 	status)

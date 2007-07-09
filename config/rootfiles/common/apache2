@@ -1259,6 +1259,7 @@ srv/web/ipfire/cgi-bin/aliases.cgi
 #srv/web/ipfire/cgi-bin/asterisk.cgi/calls
 #srv/web/ipfire/cgi-bin/asterisk.cgi/conf
 #srv/web/ipfire/cgi-bin/asterisk.cgi/status
+srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/connscheduler.cgi

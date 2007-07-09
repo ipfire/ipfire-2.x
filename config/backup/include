@@ -1,0 +1,3 @@
+/var/ipfire/*/settings
+/var/ipfire/*/*.conf
+/var/ipfire/*/*.pem

@@ -504,6 +504,7 @@ buildipfire() {
   ipfiremake asterisk
   ipfiremake mpg123
   ipfiremake mpfire
+  ipfiremake backup
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis
