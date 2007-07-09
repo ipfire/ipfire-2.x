@@ -336,7 +336,6 @@ buildipfire() {
 #  ipfiremake promise-sata-300-tx	SMP=1
   ipfiremake zaptel			SMP=1
   ipfiremake fuse				SMP=1
-  #ipfiremake linux			XEN=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake fcdsl
