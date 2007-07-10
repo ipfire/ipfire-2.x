@@ -14,7 +14,7 @@
 #define CDROM_INSTALL 0
 #define URL_INSTALL 1
 #define DISK_INSTALL 2
-#define INST_FILECOUNT 6000
+#define INST_FILECOUNT 6200
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
 #define REISER4 0
@@ -578,6 +578,7 @@ int main(int argc, char *argv[])
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == EXT3) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
+		replace("/harddisk/etc/mkinitcpio.conf", "MODULES=\"", "MODULES=\"ext3 ");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	}
 

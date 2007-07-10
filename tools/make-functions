@@ -479,7 +479,7 @@ batch_script() {
 	fi
 
 	echo "### RUNNING BUILD"
-	$0 build --devel
+	$0 build #--devel
 	evaluate 1 mail_me ERROR
 
 	echo "### UPLOADING ISO"

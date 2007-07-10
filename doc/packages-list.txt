@@ -29,7 +29,6 @@
 * Net-Server-0.93
 * Net_SSLeay.pm-1.25
 * Python-2.4.3
-* SnortSnarf-050314.1
 * Text-Tabs+Wrap-2005.0824
 * URI-1.35
 * Unix-Syslog-0.100
@@ -196,7 +195,6 @@
 * oinkmaster-2.0
 * openldap-2.3.20
 * openssh-4.3p2
-* openssl-0.9.8d
 * openssl-0.9.8e
 * openswan-2.4.8
 * openvpn-2.0.9
