@@ -86,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.9.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.9/iptables-layer7-2.9.patch
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.3.6-imq.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.3.0-imq1.diff
 	chmod +x $(DIR_APP)/extensions/.IMQ-test*  $(DIR_APP)/extensions/.layer7-test*
 
 	# hack to disable IPv6 compilation as the configuration variable does not work when ip6.h is present
