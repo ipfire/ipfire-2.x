@@ -563,7 +563,6 @@ buildinstaller() {
   installmake popt
   installmake sysvinit
   installmake misc-progs
-  installmake e2fsprogs
   installmake libaal
   installmake reiser4progs
   installmake reiserfsprogs
