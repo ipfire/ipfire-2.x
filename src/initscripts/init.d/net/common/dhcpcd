@@ -35,7 +35,7 @@ case "$2" in
 			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${1} -j ACCEPT
 		fi
 		
-		DHCP_START="-N -R -L /var/ipfire/dhcpc "
+		DHCP_START="-N -R -L /var/ipfire/dhcpc -c /var/ipfire/dhcpc/dhcpcd.exe "
 		
 		if [ -n "${DHCP_HOSTNAME}" ]; then
 			DHCP_START+="-h ${DHCP_HOSTNAME} "
@@ -91,7 +91,7 @@ case "$2" in
 		# Do nothing with the client daemon if we have an infinate 
 		# lease time as the client exits when started in this case,
 		# just echo OK.
-		DHCP_STOP="-k"
+		DHCP_STOP="-k -c /var/ipfire/dhcpc/dhcpcd.exe "
 		if [ -e $LEASEINFO ]
 		then
 			. $LEASEINFO

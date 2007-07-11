@@ -16,7 +16,7 @@ VARNAME='[A-Za-z_][A-zA-z0-9_]*'
 VARCHARS='A-Za-z0-9=/,._@#+-'
 VARVAL="[${VARCHARS}]*"
 
-sed -ne "s/^\(${VARNAME}\)=\(${VARVAL}\)$/\1=\2/p" $1
+sed -ne "s/\(${VARNAME}\)=\(${VARVAL}\)$/\1=\2/p" $1
 
 # Accept space only if it's quoted
-sed -ne "s/^\(${VARNAME}\)=\('[ ${VARCHARS}]*'\)$/\1=\2/p" $1
+sed -ne "s/\(${VARNAME}\)=\('[ ${VARCHARS}]*'\)$/\1=\2/p" $1

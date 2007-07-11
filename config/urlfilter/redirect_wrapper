@@ -1,2 +1,67 @@
-#!/bin/sh
-/usr/bin/squidGuard | /usr/sbin/updxlrator
+#!/usr/bin/perl
+
+###############
+#
+#     This is free software; you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation; either version 2 of the License, or
+#     (at your option) any later version.
+#
+#     It is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with SquiVi2; if not, write to the Free Software
+#     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#     Copyright 2004 Steffen Schoch (sschoch@users.sourceforge.net)
+#     Modified by Michael Tremer for www.ipfire.org (mitch@ipfire.org, 2007)
+#
+###############
+
+# Version
+my $VERSION = '1.0';
+
+use strict;
+use IPC::Open2;
+use IO::Handle;
+
+# define here your redirectors (use a comma sperated list)
+my $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator', ];
+
+# Attention: keep in mind that the order of your redirectors is important.
+# It doesn't make sense to scan for viruses on pages you restrict access to...
+# So place first your tools which restrict access, then the tools which do the
+# content filtering!
+
+
+##### no need to change anything below this line #####
+
+# init
+$| = 1;
+STDOUT->autoflush(1);
+my $line;
+my $return;
+my $i;
+
+# open progamms
+my $pidlist = [];
+my $rlist = [];
+my $wlist = [];
+for($i = 0; $i < @$redirectors; $i++) {
+        $pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
+}
+
+# wait for data...
+while($line = <>) {
+        for($i = 0; $i < @$redirectors; $i++) {
+                $wlist->[$i]->print($line);
+                $return = $rlist->[$i]->getline;
+                last if($return ne "\n" and $return ne $line);
+								# break if redirector changes data
+        }
+        print $return;
+}
+exit 0;

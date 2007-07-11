@@ -223,8 +223,8 @@ usr/lib/perl5/5.8.8/I18N/LangTags/List.pm
 usr/lib/perl5/5.8.8/IO/Socket/INET.pm
 usr/lib/perl5/5.8.8/IO/Socket/UNIX.pm
 #usr/lib/perl5/5.8.8/IPC
-#usr/lib/perl5/5.8.8/IPC/Open2.pm
-#usr/lib/perl5/5.8.8/IPC/Open3.pm
+usr/lib/perl5/5.8.8/IPC/Open2.pm
+usr/lib/perl5/5.8.8/IPC/Open3.pm
 #usr/lib/perl5/5.8.8/List
 usr/lib/perl5/5.8.8/List/Util.pm
 #usr/lib/perl5/5.8.8/Locale
