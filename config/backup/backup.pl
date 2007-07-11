@@ -15,10 +15,14 @@ $Minuten = sprintf("%02d", $Minuten);
 
 if ($ARGV[0] eq 'include') {
   &createinclude;
+    my @files = `find / -name *.log`;
+    foreach (@files){
+      push(@include,$_);
+     }
   open(DATEI, ">/tmp/include") || die "Could not save temp include file";
   print DATEI @include;
   close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf  --files-from=/tmp/include --exclude-from=/var/ipfire/backup/exclude");
+  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf  --files-from=/tmp/include --exclude-from=/var/ipfire/backup/exclude");
   system("rm /tmp/include");
 }
 
@@ -27,8 +31,29 @@ if ($ARGV[0] eq 'exclude') {
   open(DATEI, ">/tmp/include") || die "Could not save temp include file";
   print DATEI @include;
   close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
+  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
   system("rm /tmp/include");
+}
+
+if ($ARGV[0] eq 'restore') {
+  system("tar -xvz --preserve -f /tmp/restore.ipf");
+}
+
+if ($ARGV[0] eq 'exclude') {
+  &createinclude;
+  open(DATEI, ">/tmp/include") || die "Could not save temp include file";
+  print DATEI @include;
+  close(DATEI);
+  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
+  system("rm /tmp/include");
+}
+
+if ($ARGV[0] eq 'cli') {
+  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
+}
+
+if ($ARGV[0] eq '') {
+ printf "No argument given, please use <include><exclude>\n"
 }
 
 sub createinclude(){
@@ -42,8 +67,8 @@ sub createinclude(){
     my @files = `ls $_`;
     foreach (@files){
       push(@include,$_);
-      }
-    }
+     }
+   }
   else {push(@include,$_);}
   }
 }

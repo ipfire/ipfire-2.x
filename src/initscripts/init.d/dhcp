@@ -16,7 +16,7 @@ case "$1" in
 			devices="${GREEN_DEV}"
 		fi
 		if [ -e /var/ipfire/dhcp/enable_blue ]; then
-			devices=+" ${BLUE_DEV}"
+			devices+=" ${BLUE_DEV}"
 			
 			iptables -A DHCPBLUEINPUT -p tcp --source-port 68 --destination-port 67 -i ${BLUE_DEV} -j ACCEPT > /dev/null 2>&1
 			iptables -A DHCPBLUEINPUT -p udp --source-port 68 --destination-port 67 -i ${BLUE_DEV} -j ACCEPT > /dev/null 2>&1

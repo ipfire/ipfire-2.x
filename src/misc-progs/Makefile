@@ -7,7 +7,7 @@ PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	squidctrl restartssh ipfirereboot setaliases \
 	ipsecctrl timectrl dhcpctrl snortctrl \
-	applejuicectrl rebuildhosts \
+	applejuicectrl rebuildhosts backupctrl\
 	restartsyslogd logwatch openvpnctrl outgoingfwctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
 	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
@@ -123,3 +123,6 @@ pakfire: pakfire.c setuid.o ../install+setup/libsmooth/varval.o
 
 mpfirectrl: mpfirectrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ mpfirectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+backupctrl: backupctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ backupctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
