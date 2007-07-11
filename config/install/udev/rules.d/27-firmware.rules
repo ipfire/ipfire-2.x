@@ -1,0 +1,3 @@
+# /etc/udev/rules.d/27-firmware.rules: Load firmware for devices that need it
+
+ACTION=="add", SUBSYSTEM=="firmware", RUN+="firmware.sh"
