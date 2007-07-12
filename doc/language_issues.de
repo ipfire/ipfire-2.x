@@ -32,6 +32,8 @@ WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy no cre groups
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update notification
+WARNING: translation string unused: alcatelusb help
+WARNING: translation string unused: alcatelusb upload
 WARNING: translation string unused: all updates installed
 WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
@@ -109,6 +111,8 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: downlink speed
 WARNING: translation string unused: download
 WARNING: translation string unused: dynamic dns client
+WARNING: translation string unused: eciadsl help
+WARNING: translation string unused: eciadsl upload
 WARNING: translation string unused: editor
 WARNING: translation string unused: email server can not be empty
 WARNING: translation string unused: enable javascript
@@ -135,9 +139,12 @@ WARNING: translation string unused: firewall hits per
 WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firewallhits
 WARNING: translation string unused: firmware
+WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
 WARNING: translation string unused: free memory
 WARNING: translation string unused: free swap
+WARNING: translation string unused: fritzdsl help
+WARNING: translation string unused: fritzdsl upload
 WARNING: translation string unused: from email adr
 WARNING: translation string unused: from email pw
 WARNING: translation string unused: from email server
@@ -362,7 +369,10 @@ WARNING: translation string unused: updates
 WARNING: translation string unused: updates is old1
 WARNING: translation string unused: updates is old2
 WARNING: translation string unused: uplink speed
+WARNING: translation string unused: upload file
 WARNING: translation string unused: upload static key
+WARNING: translation string unused: upload successful
+WARNING: translation string unused: upload synch.bin
 WARNING: translation string unused: upload update file
 WARNING: translation string unused: upstream password
 WARNING: translation string unused: upstream proxy host:port

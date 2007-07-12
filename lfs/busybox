@@ -74,6 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	-mkdir -p /install/initrd/{,s}bin
 	cd $(DIR_APP) && cp -f $(DIR_SRC)/config/uClibc/busybox.config .config
+	cd $(DIR_APP) && make oldconfig
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	mkdir -p /install/initrd/usr/share/udhcpc
