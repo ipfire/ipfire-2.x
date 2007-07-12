@@ -21,7 +21,7 @@ char **ctr = NULL;
 
 int automode = 0;
 
-struct  nic  nics[20] = { { "" , "" , "" } };
+struct  nic  nics[20] = { { "" , "" , "" , "" } };
 struct knic knics[20] = { { "" , "" , "" , "" } };
 
 extern char *en_tr[];

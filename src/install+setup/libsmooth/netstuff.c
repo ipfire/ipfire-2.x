@@ -470,6 +470,54 @@ int write_configs_netudev(int card , int colour)
 	return 0;
 }
 
+char g_temp[STRING_SIZE]="";
+char* readmac(char *card) {
+	fprintf(flog,"Enter readmac... NIC: %s\n", card);	// #### Debug ####
+	FILE *fp;
+	char temp[STRING_SIZE], mac[20];
+
+	sprintf(temp,"/sys/class/net/%s/address",card);
+	if( (fp = fopen(temp, "r")) == NULL ) {
+		fprintf(flog,"Couldn't open: %s\n",temp);
+		return NULL;
+	}
+	fgets(mac, 18, fp);
+	strtok(mac,"\n");
+	fclose(fp);
+	strcpy(g_temp, mac);
+	return g_temp;
+}
+
+char* find_nic4mac(char *findmac) {
+	fprintf(flog,"Enter find_name4nic... Search for %s\n", findmac);	// #### Debug ####
+	#define SYSDIR "/sys/class/net"
+
+	DIR *dir;
+	struct dirent *dirzeiger;
+	char temp[STRING_SIZE], temp2[STRING_SIZE];
+        
+	if((dir=opendir(SYSDIR)) == NULL) {
+		fprintf(flog,"Fehler bei opendir (find_name4nic) ...\n");
+		return NULL;
+	}
+
+	sprintf(temp, "");
+	while((dirzeiger=readdir(dir)) != NULL) {
+		if(*((*dirzeiger).d_name) != '.' & strcmp(((*dirzeiger).d_name), "lo") != 0) {
+			sprintf(temp2, "%s", readmac((*dirzeiger).d_name) );
+			if (strcmp(findmac, temp2) == 0) {
+				sprintf(temp,"%s", (*dirzeiger).d_name);
+				fprintf(flog,"MAC: %s is NIC: %s\n", findmac, temp);	// #### Debug ####
+				break;
+			}
+		}
+	}
+
+	if(closedir(dir) == -1) fprintf(flog,"Fehler beim schliessen von %s\n", SYSDIR);
+	strcpy(g_temp, temp);
+	return g_temp;
+}
+
 int scan_network_cards(void)
 {
 	FILE *fp;
@@ -495,7 +543,10 @@ int scan_network_cards(void)
 			if ( strncmp(temp_line, _driver,         strlen(_driver))         ==  0 ) sprintf(nics[count].driver,      "%s", temp_line+strlen(_driver));
 			if ( strncmp(temp_line, _desc,           strlen(_desc))           ==  0 ) sprintf(nics[count].description, "%s", temp_line+strlen(_desc));
 			if ( strncmp(temp_line, _network_hwaddr, strlen(_network_hwaddr)) ==  0 ) sprintf(nics[count].macaddr,     "%s", temp_line+strlen(_network_hwaddr));
-			if (strlen(nics[count].macaddr) > 15 ) count++;
+			if (strlen(nics[count].macaddr) > 15 ) {
+				sprintf(nics[count].nic, "%s", find_nic4mac(nics[count].macaddr));
+				count++;
+			}
 		}
 		fclose(fp);
 		scanned_nics_read_done = count;
