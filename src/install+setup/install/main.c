@@ -451,10 +451,10 @@ int main(int argc, char *argv[])
 		sprintf(mkfscommand, "/sbin/mkreiserfs -f");
 	} else if (fstype == EXT3) {
 		mysystem("/sbin/modprobe ext3");
-		sprintf(mkfscommand, "/bin/mke2fs -T ext3 -c");
+		sprintf(mkfscommand, "/sbin/mke2fs -T ext3 -c");
 	}
 
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -T ext2 -c %s1", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/sbin/mke2fs -T ext2 -c %s1", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
