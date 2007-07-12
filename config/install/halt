@@ -1,6 +1,5 @@
 #!/bin/sh
 # Clear screen
-sleep 60
 /bin/clear
 
 echo "Shutting down..."
