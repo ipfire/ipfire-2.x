@@ -15,45 +15,35 @@ $Minuten = sprintf("%02d", $Minuten);
 
 if ($ARGV[0] eq 'include') {
   &createinclude;
-    my @files = `find / -name *.log`;
+    my @files = `find / -name *.log 2>/dev/null`;
     foreach (@files){
       push(@include,$_);
      }
   open(DATEI, ">/tmp/include") || die "Could not save temp include file";
   print DATEI @include;
   close(DATEI);
-  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf  --files-from=/tmp/include --exclude-from=/var/ipfire/backup/exclude");
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
   system("rm /tmp/include");
 }
-
-if ($ARGV[0] eq 'exclude') {
+elsif ($ARGV[0] eq 'exclude') {
   &createinclude;
   open(DATEI, ">/tmp/include") || die "Could not save temp include file";
   print DATEI @include;
   close(DATEI);
-  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
   system("rm /tmp/include");
 }
-
-if ($ARGV[0] eq 'restore') {
+elsif ($ARGV[0] eq 'restore') {
   system("tar -xvz --preserve -f /tmp/restore.ipf");
 }
-
-if ($ARGV[0] eq 'exclude') {
-  &createinclude;
-  open(DATEI, ">/tmp/include") || die "Could not save temp include file";
-  print DATEI @include;
-  close(DATEI);
-  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
-  system("rm /tmp/include");
+elsif ($ARGV[0] eq 'cli') {
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
 }
-
-if ($ARGV[0] eq 'cli') {
-  system("tar -cvzf /srv/web/ipfire/html/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
+elsif ($ARGV[0] =~ /ipf$/ ) {
+  system("rm /var/ipfire/backup/$ARGV[0]");
 }
-
-if ($ARGV[0] eq '') {
- printf "No argument given, please use <include><exclude>\n"
+elsif ($ARGV[0] eq '') {
+ printf "No argument given, please use <include><exclude><cli>\n"
 }
 
 sub createinclude(){

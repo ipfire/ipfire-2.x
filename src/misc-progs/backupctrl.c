@@ -43,7 +43,5 @@ int main(int argc, char *argv[]) {
 		sprintf(add, " %s", argv[i]);
 		strcat(command, add);
 	}
-	
-  snprintf(command, STRING_SIZE, " >/dev/null 2>/dev/null");
 	return safe_system(command);
 }

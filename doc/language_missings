@@ -17,7 +17,6 @@
 < dhcp fixed lease err1
 < dhcp fixed lease help1
 < dns server
-< download
 < err bk 10 password
 < or
 < password crypting key

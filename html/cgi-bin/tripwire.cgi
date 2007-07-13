@@ -248,7 +248,7 @@ END
 
 if ($tripwiresettings{'ACTION'} eq 'globalresetyes')
 {
-&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";
+&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";&Header::closebox();
 $tripwiresettings{'ROOT'} = '/usr/sbin';
 $tripwiresettings{'POLFILE'} = '/var/ipfire/tripwire/tw.pol';
 $tripwiresettings{'DBFILE'} = '/var/ipfire/tripwire/$(HOSTNAME).twd';

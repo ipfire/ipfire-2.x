@@ -2302,8 +2302,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike integrity'}</td><td class='boldbase' valign='top'>
 		<select name='IKE_INTEGRITY' multiple='multiple' size='4'>
-		<option value='sha2_512' $checked{'IKE_INTEGRITY'}{'sha2_512'}>SHA2 (512)</option>
-		<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 (256)</option>
 		<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA</option>
 		<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
 		</select></td>
@@ -2340,8 +2338,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp integrity'}</td><td class='boldbase' valign='top'>
 		<select name='ESP_INTEGRITY' multiple='multiple' size='4'>
-		<option value='sha2_512' $checked{'ESP_INTEGRITY'}{'sha2_512'}>SHA2 (512)</option>
-		<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 (256)</option>
 		<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
 		<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option></select></td>
 

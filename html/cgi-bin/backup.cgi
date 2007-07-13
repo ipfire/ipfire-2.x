@@ -22,7 +22,7 @@ my %cgiparams=();
 my %checked = ();
 my $message = "";
 my $errormessage = "";
-my @backups = `cd /srv/web/ipfire/html/backup && ls *.ipf`;
+my @backups = `cd /var/ipfire/backup/ && ls *.ipf`;
 
 $a = new CGI;
 
@@ -33,19 +33,16 @@ $cgiparams{'ACTION'} = '';
 $cgiparams{'FILE'} = '';
 $cgiparams{'UPLOAD'} = '';
 $cgiparams{'BACKUPLOGS'} = '';
+
 &Header::getcgihash(\%cgiparams);
 
 ############################################################################################################################
-######################################## Scanne Verzeichnisse nach Mp3 Dateien #############################################
+############################################## System calls ohne Http Header ###############################################
 
-if ( $cgiparams{'ACTION'} eq "backup" )
+
+if ( $cgiparams{'ACTION'} eq "download" )
 {
- if ( $cgiparams{'BACKUPLOGS'} eq "include" ){system("/usr/local/bin/backupctrl include");}
- else {system("/usr/local/bin/backupctrl exclude");}
-}
-elsif ( $cgiparams{'ACTION'} eq "download" )
-{
-    open(DLFILE, "</srv/web/ipfire/html/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
+    open(DLFILE, "</var/ipfire/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
     my @fileholder = <DLFILE>;
     print "Content-Type:application/x-download\n";
     print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
@@ -64,12 +61,30 @@ elsif ( $cgiparams{'ACTION'} eq "restore" )
   system("/usr/local/bin/backupctrl restore");
 }
 
-############################################################################################################################
-########################################### rekursiv nach neuen Mp3s Scannen ##############################################ä
-
 &Header::showhttpheaders();
+
+sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
+
 &Header::openpage($Lang::tr{'backup'}, 1, "");
 &Header::openbigbox('100%', 'left', '', $errormessage);
+
+############################################################################################################################
+################################################### Default System calls ###################################################
+
+if ( $cgiparams{'ACTION'} eq "backup" )
+{
+ if ( $cgiparams{'BACKUPLOGS'} eq "include" ){system("/usr/local/bin/backupctrl include >/dev/null");}
+ else {system("/usr/local/bin/backupctrl exclude >/dev/null");}
+ refreshpage();
+}
+elsif ( $cgiparams{'ACTION'} eq "delete" )
+{
+  system("/usr/local/bin/backupctrl $cgiparams{'FILE'} >/dev/null");
+  refreshpage();
+}
+
+############################################################################################################################
+########################################### rekursiv nach neuen Mp3s Scannen ##############################################ä
 
 if ( $message ne "" ){
 	&Header::openbox('100%','left',$Lang::tr{'error messages'});
@@ -100,11 +115,12 @@ END
 ;
 foreach (@backups){
 chomp($_);
-my $Datei = "/srv/web/ipfire/html/backup/".$_;
+my $Datei = "/var/ipfire/backup/".$_;
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024;
 $Size = sprintf("%02d", $Size);
-print "<tr><td align='left'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB <input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' src='/images/package-x-generic.png' /></form></td></tr>";
+print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
+print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 print <<END													
 </table>
@@ -116,7 +132,7 @@ END
 
 print <<END
 <table width='95%' cellspacing='0'>
-<tr><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'backup'}</td><td align='left'><input type="file" size='50' name="UPLOAD" /><input type='submit' name='ACTION' value='restore' /></form></td></tr>
+<tr><td align='left'>$Lang::tr{'backup'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restore' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
 </table>
 END
 ;

@@ -31,8 +31,10 @@ close(DATEI);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 &Header::showhttpheaders();
-&Header::getcgihash(\%mpfiresettings);
 
+sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
+
+&Header::getcgihash(\%mpfiresettings);
 &Header::openpage($Lang::tr{'mpfire'}, 1, "<meta http-equiv='refresh' content='120'>");
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -44,6 +46,7 @@ if ( $mpfiresettings{'ACTION'} eq "scan" )
 delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};
 &General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 system("/usr/local/bin/mpfirectrl scan $mpfiresettings{'SCANDIR'} $mpfiresettings{'SCANDIRDEPS'}");
+refreshpage();
 }
 
 if ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
@@ -139,8 +142,12 @@ my $song = qx(/usr/local/bin/mpfirectrl song);
 if ( $song eq "" ){$song = "None";}
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
-print "<table width='95%' cellspacing='0'><tr bgcolor='$color{'color20'}'><td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr><tr><td colspan='5'><br/></td></tr><tr>";
 print <<END
+
+    <table width='95%' cellspacing='0'>
+    <tr bgcolor='$color{'color20'}'>    <td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr>
+    <tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>
+    <tr>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='||' /><input type='image' alt='$Lang::tr{'pause'}' title='$Lang::tr{'pause'}' src='/images/media-playback-pause.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='|>' /><input type='image' alt='$Lang::tr{'resume'}' title='$Lang::tr{'resume'}' src='/images/media-resume.png' /></form></td>
@@ -175,9 +182,10 @@ foreach (@songdb){
   @album = sort keys %hash;
 print <<END
   <table width='95%' cellspacing='0'>
+  <tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - $#artist</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - $#album</b></td></tr>
   <tr><td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-      <select name='artist' size='8' multiple='multiple'>
+      <select name='artist' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
   foreach (@artist){print "<option>$_</option>";}
@@ -188,7 +196,7 @@ print <<END
       </form></td>
       <td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-      <select name='album' size='8' multiple='multiple'>
+      <select name='album' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
   foreach (@album){print "<option>$_</option>";}

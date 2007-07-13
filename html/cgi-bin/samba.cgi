@@ -98,7 +98,7 @@ my $PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
 &Header::getcgihash(\%sambasettings);
 
-sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );}
+sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
 &Header::openpage('Samba', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);

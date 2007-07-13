@@ -1,6 +1,7 @@
 /var/ipfire/*/settings
 /var/ipfire/*/*.conf
 /var/ipfire/*/*.pem
+/var/ipfire/*/config
 /etc/passwd
 /etc/shadow
 /etc/group
