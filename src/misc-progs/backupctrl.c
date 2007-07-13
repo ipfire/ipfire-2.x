@@ -28,17 +28,22 @@ int main(int argc, char *argv[]) {
 	      fprintf (stderr, "Bad Argument!\n");
         exit (1);
     }
-		if (strstr(argv[i], "|")){
+		elsif (strstr(argv[i], "|")){
 		    fprintf (stderr, "Bad Argument!\n");
 		    exit (1);
 		}
-		if (argc > 2){
+		elsif (argc > 2){
 		    fprintf (stderr, "Too Many Arguments!\n");
 		    exit (1);
 		}
+		else{
+		    fprintf (stderr, "Wrong or no Argument!\n");
+		    exit (1);
+    }
 		sprintf(add, " %s", argv[i]);
 		strcat(command, add);
 	}
 	
+  snprintf(command, STRING_SIZE, " >/dev/null 2>/dev/null");
 	return safe_system(command);
 }

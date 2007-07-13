@@ -96,12 +96,16 @@ return 0;
 if (strcmp(argv[1], "smbstop")==0)
 {
 safe_system("/etc/rc.d/init.d/samba stop >/dev/null");
+safe_system("rm -rf /etc/rc.d/rc*.d/*samba");
 return 0;
 }
 
 if (strcmp(argv[1], "smbstart")==0)
 {
 safe_system("/etc/rc.d/init.d/samba start >/dev/null");
+safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc3.d/S45samba");
+safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc0.d/K48samba");
+safe_system("ln -snf /etc/rc.d/init.d/samba /etc/rc.d/rc6.d/K48samba");
 return 0;
 }
 
