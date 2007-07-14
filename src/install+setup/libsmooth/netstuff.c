@@ -412,6 +412,142 @@ int init_knics(void)
 	return found;
 }
 
+int fmt_exists(const char *fname) {	/* Check it's any File or Directory */
+	struct stat st;
+	if (stat(fname, &st) == -1) return 0;
+	else return 1;
+}
+
+int is_interface_up(char *card) {	/* Check is interface UP */
+	char temp[STRING_SIZE];
+
+	sprintf(temp,"ip link show dev %s | grep -q UP", card);
+	if (mysystem(temp)) return 0; else return 1;
+}
+
+int rename_device(char *old_name, char *new_name) {
+	char temp[STRING_SIZE];
+
+	sprintf(temp,SYSDIR "/%s", old_name);
+	if (!(fmt_exists(temp))) {
+		fprintf(flog,"Device not found: %s\n",old_name);
+		return 0;
+	}
+//	fprintf(flog,"NIC: %s wurde in %s umbenannt.\n", old_name, new_name);	// #### Debug ####
+	sprintf(temp,"/sbin/ip link set dev %s name %s",old_name ,new_name );
+	mysystem(temp);
+
+	return 1;
+}
+
+char g_temp[STRING_SIZE]="";
+char* readmac(char *card) {
+//	fprintf(flog,"Enter readmac... NIC: %s\n", card);	// #### Debug ####
+	FILE *fp;
+	char temp[STRING_SIZE], mac[20];
+
+	sprintf(temp,"/sys/class/net/%s/address",card);
+	if( (fp = fopen(temp, "r")) == NULL ) {
+		fprintf(flog,"Couldn't open: %s\n",temp);
+		return NULL;
+	}
+	fgets(mac, 18, fp);
+	strtok(mac,"\n");
+	fclose(fp);
+	strcpy(g_temp, mac);
+	return g_temp;
+}
+
+char* find_nic4mac(char *findmac) {
+	fprintf(flog,"Enter find_name4nic... Search for %s\n", findmac);	// #### Debug ####
+
+	DIR *dir;
+	struct dirent *dirzeiger;
+	char temp[STRING_SIZE], temp2[STRING_SIZE];
+        
+	if((dir=opendir(SYSDIR)) == NULL) {
+		fprintf(flog,"Fehler bei opendir (find_name4nic) ...\n");
+		return NULL;
+	}
+
+	sprintf(temp, "");
+	while((dirzeiger=readdir(dir)) != NULL) {
+		if(*((*dirzeiger).d_name) != '.' & strcmp(((*dirzeiger).d_name), "lo") != 0) {
+			sprintf(temp2, "%s", readmac((*dirzeiger).d_name) );
+			if (strcmp(findmac, temp2) == 0) {
+				sprintf(temp,"%s", (*dirzeiger).d_name);
+//				fprintf(flog,"MAC: %s is NIC: %s\n", findmac, temp);	// #### Debug ####
+				break;
+			}
+		}
+	}
+
+	if(closedir(dir) == -1) fprintf(flog,"Fehler beim schliessen von %s\n", SYSDIR);
+	strcpy(g_temp, temp);
+	return g_temp;
+}
+
+int nic_shutdown(char *nic) {
+	char temp[STRING_SIZE];
+	
+	sprintf(temp,"ip link set %s down", nic);
+	mysystem(temp);
+}
+
+int nic_startup(char *nic) {
+	char temp[STRING_SIZE];
+	
+	sprintf(temp,"ip link set %s up", nic);
+	mysystem(temp);
+
+}
+
+int rename_nics(void) {
+	int i, j, k;
+	int fnics = scan_network_cards();
+	char nic2find[STRING_SIZE], temp[STRING_SIZE];
+
+	fprintf(flog,"Renaming Nics\n");	// #### Debug ####
+
+	for(i=0; i<4; i++)
+		if (strcmp(knics[i].macaddr, ""))									// Wird das Interface benutzt ?
+			for(j=0; j<fnics; j++)
+				if(strcmp(knics[i].macaddr, nics[j].macaddr) == 0) {					// suche den aktuellen Namen
+					sprintf(nic2find,"%s0",lcolourcard[i]);
+//					fprintf(flog,"search4: %s\n", nic2find);	// #### Debug ####
+					if(strcmp(nic2find, nics[j].nic)) {						// hat das Interface nicht den Namen ?
+//						fprintf(flog,"cmp nic2find false\n");	// #### Debug ####
+//						fprintf(flog,"is nic( %s ) up ?\n",nics[j].nic);	// #### Debug ####
+
+						if(is_interface_up(nics[j].nic)) {					// wurde das Interface gestartet ?
+//							fprintf(flog,"%s is UP, shutting down...\n",nics[j].nic);	// #### Debug ####
+							nic_shutdown(nics[j].nic);
+						}
+						sprintf(temp,SYSDIR "/%s", nic2find);
+//						fprintf(flog,"exists ?--> %s\n", temp);	// #### Debug ####
+						if(fmt_exists(temp)) {							// Ist der Name schon in Benutzung ?
+//							fprintf(flog,"is exists %s\n", nic2find);	// #### Debug ####
+							for(k=0; k<fnics; k++) 				// Suche das Interface
+								if (strcmp(nics[k].nic, nic2find) == 0 ) {
+									if(is_interface_up(nics[k].nic)) {		// wurde das Interface gestartet ?
+//										fprintf(flog,"%s is UP, shutting down...\n",nics[k].nic);	// #### Debug ####
+										nic_shutdown(nics[k].nic);
+									}
+									sprintf(temp,"dummy%i",k);			// Benenne NIC nach "dummy[k]" um.
+//									fprintf(flog,"set dummy%i\n", k);	// #### Debug ####
+									if (rename_device(nics[k].nic, temp)) strcpy(nics[k].nic, temp);
+								}
+						}
+						if (rename_device(nics[j].nic, nic2find)) strcpy(nics[j].nic, nic2find);	// Benenne NIC um.
+
+//						if(strncmp(nics[j].nic,"dummy",5)) {
+//							fprintf(flog,"%s is down, start up...\n",nics[j].nic);	// #### Debug ####
+//							nic_startup(nics[j].nic);
+//						}
+					}
+				}
+}
+
 int create_udev(void)
 {
 	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
@@ -468,54 +604,6 @@ int write_configs_netudev(int card , int colour)
 	freekeyvalues(kv);
 	
 	return 0;
-}
-
-char g_temp[STRING_SIZE]="";
-char* readmac(char *card) {
-	fprintf(flog,"Enter readmac... NIC: %s\n", card);	// #### Debug ####
-	FILE *fp;
-	char temp[STRING_SIZE], mac[20];
-
-	sprintf(temp,"/sys/class/net/%s/address",card);
-	if( (fp = fopen(temp, "r")) == NULL ) {
-		fprintf(flog,"Couldn't open: %s\n",temp);
-		return NULL;
-	}
-	fgets(mac, 18, fp);
-	strtok(mac,"\n");
-	fclose(fp);
-	strcpy(g_temp, mac);
-	return g_temp;
-}
-
-char* find_nic4mac(char *findmac) {
-	fprintf(flog,"Enter find_name4nic... Search for %s\n", findmac);	// #### Debug ####
-	#define SYSDIR "/sys/class/net"
-
-	DIR *dir;
-	struct dirent *dirzeiger;
-	char temp[STRING_SIZE], temp2[STRING_SIZE];
-        
-	if((dir=opendir(SYSDIR)) == NULL) {
-		fprintf(flog,"Fehler bei opendir (find_name4nic) ...\n");
-		return NULL;
-	}
-
-	sprintf(temp, "");
-	while((dirzeiger=readdir(dir)) != NULL) {
-		if(*((*dirzeiger).d_name) != '.' & strcmp(((*dirzeiger).d_name), "lo") != 0) {
-			sprintf(temp2, "%s", readmac((*dirzeiger).d_name) );
-			if (strcmp(findmac, temp2) == 0) {
-				sprintf(temp,"%s", (*dirzeiger).d_name);
-				fprintf(flog,"MAC: %s is NIC: %s\n", findmac, temp);	// #### Debug ####
-				break;
-			}
-		}
-	}
-
-	if(closedir(dir) == -1) fprintf(flog,"Fehler beim schliessen von %s\n", SYSDIR);
-	strcpy(g_temp, temp);
-	return g_temp;
 }
 
 int scan_network_cards(void)

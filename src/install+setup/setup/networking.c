@@ -134,6 +134,9 @@ int handlenetworking(void)
 		{
 			runcommandwithstatus("/etc/rc.d/init.d/network stop",
 				ctr[TR_PUSHING_NETWORK_DOWN]);
+
+			rename_nics();
+
 			runcommandwithstatus("/etc/rc.d/init.d/network start",
 				ctr[TR_PULLING_NETWORK_UP]);
 		}
@@ -540,11 +543,13 @@ int changedrivers(void)
 			if ((red) && ( choise == NicEntry[1])) nicmenu(_RED_CARD_);
 			if ((orange) && ( choise == NicEntry[2])) nicmenu(_ORANGE_CARD_);
 			if ((blue) && ( choise == NicEntry[3])) nicmenu(_BLUE_CARD_);
+			netaddresschange = 1;
 		} else if (rc == 2) {
 			if ((green) && ( choise == NicEntry[0])) ask_clear_card_entry(_GREEN_CARD_);
 			if ((red) && ( choise == NicEntry[1])) ask_clear_card_entry(_RED_CARD_);
 			if ((orange) && ( choise == NicEntry[2])) ask_clear_card_entry(_ORANGE_CARD_);
 			if ((blue) && ( choise == NicEntry[3])) ask_clear_card_entry(_BLUE_CARD_);
+			netaddresschange = 1;
 		} 
 //		else {
 //			errorbox("Sie haben keine Netzwerkkarte ausgewaehlt.\n");

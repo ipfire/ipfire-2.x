@@ -44,6 +44,7 @@
 #define NETCHANGE_TOTAL 4
 
 #define SCANNED_NICS "/var/ipfire/ethernet/scanned_nics"
+#define SYSDIR "/sys/class/net"
 
 #define _GREEN_CARD_ 0
 #define _RED_CARD_ 1
@@ -94,6 +95,7 @@ int gettype(char *type);
 int setnetaddress(struct keyvalue *kv, char *colour);
 void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
+int rename_nics(void);
 int init_knics(void);
 int create_udev(void);
 int scan_network_cards(void);
