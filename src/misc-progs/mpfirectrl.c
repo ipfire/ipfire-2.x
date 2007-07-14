@@ -35,6 +35,5 @@ int main(int argc, char *argv[]) {
 		sprintf(add, " %s", argv[i]);
 		strcat(command, add);
 	}
-	
 	return safe_system(command);
 }
