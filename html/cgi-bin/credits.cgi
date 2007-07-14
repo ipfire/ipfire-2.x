@@ -27,29 +27,34 @@ require "${General::swroot}/header.pl";
 
 print <<END
 <br /><center><b><a href='http://www.ipfire.org/'>http://www.ipfire.org/</a></b></center>
+<br />
 <p>
-<br /><center><b>IPFire is based on IPCop and Smoothwall. Many thanks to its developers.</b></center>
-<br /><center><b>We want to say thank you to all of the developers who ever contributed anything to IPFire.</b></center>
-<p>
+	<b>IPFire is based on IPCop and Smoothwall. Many thanks to its developers.</b><br />
+	<b>We want to say thank you to all of the developers who ever contributed anything to IPFire.</b>
+</p>
+
 <p><b>Development:</b><br />
 
-Projektleiter - Michael Tremer
+Project Leader - Michael Tremer
 (<a href='mailto:mitch\@ipfire.org'>mitch\@ipfire.org</a>)<br />
-Projektmitglied &amp; Sponsor - Detlef Lampart
-(<a href='mailto:delaco\@ipfire.org'>delaco\@ipfire.org</a>)<br />
-Development &amp; Security Manager - Rene Zingel
-(<a href='mailto:linuxadmin\@ipfire.org'>linuxadmin\@ipfire.org</a>)<br />
-Projektmitglied &amp; Developer - Heiner Schmeling
-(<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
-Projektmitglied &amp; Developer - Christian Schmidt
+Vice Project Leader - Christian Schmidt
 (<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
-Projektmitglied &amp; Supporter - Silvio Rechenbach
+Developer - Heiner Schmeling
+(<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
+Sponsor - Detlef Lampart
+(<a href='mailto:delaco\@ipfire.org'>delaco\@ipfire.org</a>)<br />
+Developer &amp; Security Manager - Rene Zingel
+(<a href='mailto:linuxadmin\@ipfire.org'>linuxadmin\@ipfire.org</a>)<br />
+Supporter - Silvio Rechenbach
 (<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
 Sponsor - Karsten Rechenbach
 (<a href='mailto:space\@ipfire.org'>space\@ipfire.org</a>)<br />
-Betatester - Sebastian Winter
-(<a href='mailto:meisterwinter\@ipfire.org'>meinsterwinter\@ipfire.org</a>)<br />
+Tester - Ronald Wiesinger
+(<a href='mailto:rowie\@ipfire.org'>rowie\@ipfire.org</a>)<br />
 </p>
+<p>Some parts of the distribution are left ajar on third-party software, that is licensed under the GPL, too.<br />
+There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connection Scheduler, mbmon-Graphs, Hddtemp and Wake-on-LAN.<br />
+Distributed by Marco Sondermann, Ufuk Altinkaynak, Thomas Eichstaedt and Olaf Westrik.</p>
 END
 ;
 &Header::closebox();
