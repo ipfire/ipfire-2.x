@@ -21,15 +21,12 @@
 #
 ###############
 
-# Version
-my $VERSION = '1.0';
-
 use strict;
 use IPC::Open2;
 use IO::Handle;
 
 # define here your redirectors (use a comma sperated list)
-my $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator', ];
+my $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];
 
 # Attention: keep in mind that the order of your redirectors is important.
 # It doesn't make sense to scan for viruses on pages you restrict access to...
