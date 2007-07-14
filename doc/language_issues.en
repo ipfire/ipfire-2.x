@@ -44,7 +44,6 @@ WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: available updates
-WARNING: translation string unused: average
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
 WARNING: translation string unused: backup config floppy
@@ -73,11 +72,8 @@ WARNING: translation string unused: bewan adsl pci st
 WARNING: translation string unused: bewan adsl usb
 WARNING: translation string unused: bleeding rules
 WARNING: translation string unused: blue interface
-WARNING: translation string unused: buffered memory
-WARNING: translation string unused: bytes per second
 WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
-WARNING: translation string unused: cached memory
 WARNING: translation string unused: calamaris report interval (in minutes)
 WARNING: translation string unused: calc traffic all x minutes
 WARNING: translation string unused: capsinactive
@@ -97,10 +93,7 @@ WARNING: translation string unused: could not download the available updates lis
 WARNING: translation string unused: could not open available updates file
 WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
-WARNING: translation string unused: cpu irq usage
-WARNING: translation string unused: cpu usage per
 WARNING: translation string unused: create
-WARNING: translation string unused: current
 WARNING: translation string unused: current dynamic leases
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
@@ -115,7 +108,6 @@ WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
 WARNING: translation string unused: disconnect
-WARNING: translation string unused: disk access per
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: done
@@ -144,14 +136,10 @@ WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
-WARNING: translation string unused: firewall hits per
 WARNING: translation string unused: firewall log viewer
-WARNING: translation string unused: firewallhits
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
-WARNING: translation string unused: free memory
-WARNING: translation string unused: free swap
 WARNING: translation string unused: fritzdsl help
 WARNING: translation string unused: fritzdsl upload
 WARNING: translation string unused: from email adr
@@ -164,10 +152,8 @@ WARNING: translation string unused: g.lite
 WARNING: translation string unused: gen static key
 WARNING: translation string unused: generate
 WARNING: translation string unused: genkey
-WARNING: translation string unused: graph per
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
-WARNING: translation string unused: hdd temperature in
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host configuration
@@ -175,11 +161,8 @@ WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hours2
 WARNING: translation string unused: id
 WARNING: translation string unused: idle cpu
-WARNING: translation string unused: idle cpu usage
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
-WARNING: translation string unused: in
-WARNING: translation string unused: incoming traffic in bytes per second
 WARNING: translation string unused: incorrect password
 WARNING: translation string unused: insert floppy
 WARNING: translation string unused: insert removable device
@@ -193,7 +176,6 @@ WARNING: translation string unused: invalid port list
 WARNING: translation string unused: invalid time entered
 WARNING: translation string unused: invalid uplink speed
 WARNING: translation string unused: invalid upstream proxy username or password setting
-WARNING: translation string unused: iowait
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
 WARNING: translation string unused: iptable rules
@@ -204,7 +186,6 @@ WARNING: translation string unused: kernel version
 WARNING: translation string unused: key stuff
 WARNING: translation string unused: lateprompting
 WARNING: translation string unused: line
-WARNING: translation string unused: linkq
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
 WARNING: translation string unused: localkeyfile
@@ -227,14 +208,11 @@ WARNING: translation string unused: marked
 WARNING: translation string unused: max incoming size
 WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
-WARNING: translation string unused: maximal
 WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
 WARNING: translation string unused: mbmon settings
 WARNING: translation string unused: mbmon temp in
-WARNING: translation string unused: memory usage per
 WARNING: translation string unused: min size
-WARNING: translation string unused: minimal
 WARNING: translation string unused: minutes
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
@@ -267,8 +245,6 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: original
 WARNING: translation string unused: other countries
-WARNING: translation string unused: out
-WARNING: translation string unused: outgoing traffic in bytes per second
 WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
@@ -293,13 +269,11 @@ WARNING: translation string unused: package failed to install
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: polfile
-WARNING: translation string unused: portscans
 WARNING: translation string unused: pots
 WARNING: translation string unused: profiles
 WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
 WARNING: translation string unused: quick control
-WARNING: translation string unused: read sectors
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: rebooting
 WARNING: translation string unused: refresh update list
@@ -311,14 +285,11 @@ WARNING: translation string unused: root
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: save error
-WARNING: translation string unused: sectors read from disk per second
-WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
 WARNING: translation string unused: server reserved
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shaping list options
-WARNING: translation string unused: shared memory
 WARNING: translation string unused: show areas
 WARNING: translation string unused: show lines
 WARNING: translation string unused: shutdown control
@@ -336,9 +307,7 @@ WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
 WARNING: translation string unused: successfully refreshed updates list
-WARNING: translation string unused: swap usage per
 WARNING: translation string unused: system cpu
-WARNING: translation string unused: system cpu usage
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
 WARNING: translation string unused: test
@@ -361,7 +330,6 @@ WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
 WARNING: translation string unused: traffic info messages
 WARNING: translation string unused: traffic monitor
-WARNING: translation string unused: traffic on
 WARNING: translation string unused: traffic shaping
 WARNING: translation string unused: traffic shaping settings
 WARNING: translation string unused: traffic warn level bad
@@ -387,10 +355,7 @@ WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
 WARNING: translation string unused: use
-WARNING: translation string unused: used memory
-WARNING: translation string unused: used swap
 WARNING: translation string unused: user cpu
-WARNING: translation string unused: user cpu usage
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
@@ -399,5 +364,4 @@ WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week
 WARNING: translation string unused: weekly firewallhits
-WARNING: translation string unused: written sectors
 WARNING: translation string unused: yearly firewallhits

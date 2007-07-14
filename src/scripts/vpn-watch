@@ -1,7 +1,11 @@
 #!/usr/bin/perl 
-################################################## 
-#####     VPN-Watch.pl     Version 0.3       ##### 
-################################################## 
+##################################################
+#####     VPN-Watch.pl     Version 0.4       #####
+##################################################
+#                                                #
+#   VPN-Watch is part of the IPFire Firewall     #
+#                                                #
+##################################################
 
 use strict;
 
@@ -45,9 +49,12 @@ foreach (@vpnsettings){
   if ($debug){logger("Checking connection to $remotehostname.");}
   
   my $remoteip = `/usr/bin/ping -c 1 $remotehostname 2>/dev/null | head -n1 | awk '{print \$3}' | tr -d '()' | tr -d ':'`;chomp($remoteip);
-  if ($remoteip eq ""){next;}
-  if (system("ipsec whack --status | grep $remoteip >/dev/null")){
-    logger("Remote IP for host $remotehostname has changed or is not connected, restarting connection to $remoteip.");
+  if ($remoteip eq ""){next;if ($debug){logger("Unable to resolve $remotehostname.");}}
+  my $connected=system("ipsec whack --status | grep $remoteip >/dev/null");
+  my $established=system("ipsec whack --status | grep '$settings[1]' | grep 'ISAKMP SA established' >/dev/null"); 
+  
+  if ( $established  eq "" || $connected eq "" ){
+    logger("Remote IP for host $remotehostname has changed or no connection is established, restarting connection to $remoteip.");
     system("/usr/local/bin/ipsecctrl S $settings[0]");
     next;
   }
@@ -59,3 +66,4 @@ sub logger {
         my $log = shift;
         system("logger -t vpnwatch \"$log\"");
 }
+
