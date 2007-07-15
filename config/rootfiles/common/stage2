@@ -69,7 +69,6 @@ usr/local/bin/setreservedports
 usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/tunerrd.pl
-usr/local/bin/vpn-restart
 usr/local/bin/vpn-watch
 #usr/local/include
 #usr/local/lib
