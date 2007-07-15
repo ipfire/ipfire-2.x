@@ -577,15 +577,30 @@ int main(int argc, char *argv[])
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == EXT3) {
+		snprintf(commandstring, STRING_SIZE, "tune2fs -j %s3", hdparams.devnode_part);
+		if (runcommandwithstatus(commandstring, "(TR) Creating journal for ext3..."))
+		{
+			errorbox("(TR) Unable to create journal. Going back to ext2.");
+			replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
+			goto NOJOURNAL;
+		}
+		snprintf(commandstring, STRING_SIZE, "tune2fs -j %s4", hdparams.devnode_part);
+		if (runcommandwithstatus(commandstring, "(TR) Creating journal for ext3..."))
+		{
+			errorbox("(TR) Unable to create journal. Going back to ext2.");
+			replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
+			goto NOJOURNAL;
+		}
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
+		NOJOURNAL:
 		replace("/harddisk/etc/mkinitcpio.conf", "MODULES=\"", "MODULES=\"ext3 ");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	}
 
 	/* Going to make our initrd... */
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd.img -k %s-ipfire", KERNEL_VERSION);
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd.img -k %s-ipfire", KERNEL_VERSION);
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -v -g /boot/ipfirerd-smp.img -k %s-ipfire-smp", KERNEL_VERSION);
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-smp.img -k %s-ipfire-smp", KERNEL_VERSION);
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
