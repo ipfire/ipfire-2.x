@@ -24,11 +24,11 @@ int main(int argc, char *argv[]) {
 	snprintf(command, STRING_SIZE, "/var/ipfire/mpfire/bin/mpfire.pl");
 
 	for (i = 1; i < argc; i++) {
-                if (strstr(argv[i], "&&")){
-	    	    fprintf (stderr, "Bad Argument!\n");
-            	    exit (1);
-            	}
-		if (strstr(argv[i], "|")){
+    if (strstr(argv[i], "&&")){
+	    	fprintf (stderr, "Bad Argument!\n");
+        exit (1);
+    }
+		else if (strstr(argv[i], "|")){
 		    fprintf (stderr, "Bad Argument!\n");
 		    exit (1);
 		}

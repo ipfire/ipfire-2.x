@@ -32,10 +32,10 @@ close(DATEI);
 
 &Header::showhttpheaders();
 
-sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
+sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;' />" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
 &Header::getcgihash(\%mpfiresettings);
-&Header::openpage($Lang::tr{'mpfire'}, 1, "<meta http-equiv='refresh' content='120'>");
+&Header::openpage($Lang::tr{'mpfire'}, 1, "<meta http-equiv='refresh' content='120' />");
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
@@ -48,20 +48,19 @@ delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresett
 system("/usr/local/bin/mpfirectrl scan $mpfiresettings{'SCANDIR'} $mpfiresettings{'SCANDIRDEPS'}");
 refreshpage();
 }
-
-if ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
-if ( $mpfiresettings{'ACTION'} eq "x" ){system("/usr/local/bin/mpfirectrl stop");}
-if ( $mpfiresettings{'ACTION'} eq "||" ){system("/usr/local/bin/mpfirectrl pause");}
-if ( $mpfiresettings{'ACTION'} eq "|>" ){system("/usr/local/bin/mpfirectrl resume");}
-if ( $mpfiresettings{'ACTION'} eq ">>" ){system("/usr/local/bin/mpfirectrl next");}
-if ( $mpfiresettings{'ACTION'} eq "stopweb" ){system("/usr/local/bin/mpfirectrl stopweb");}
-if ( $mpfiresettings{'ACTION'} eq "playweb" ){system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
-if ( $mpfiresettings{'ACTION'} eq "+" ){system("/usr/local/bin/mpfirectrl volup 5");}
-if ( $mpfiresettings{'ACTION'} eq "-" ){system("/usr/local/bin/mpfirectrl voldown 5");}
-if ( $mpfiresettings{'ACTION'} eq "++" ){system("/usr/local/bin/mpfirectrl volup 10");}
-if ( $mpfiresettings{'ACTION'} eq "--" ){system("/usr/local/bin/mpfirectrl voldown 10");}
-if ( $mpfiresettings{'ACTION'} eq "playlist" ){system("/usr/local/bin/mpfirectrl playall");}
-if ( $mpfiresettings{'ACTION'} eq "playalbum" )
+elsif ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
+elsif ( $mpfiresettings{'ACTION'} eq "x" ){system("/usr/local/bin/mpfirectrl stop");}
+elsif ( $mpfiresettings{'ACTION'} eq "||" ){system("/usr/local/bin/mpfirectrl pause");}
+elsif ( $mpfiresettings{'ACTION'} eq "|>" ){system("/usr/local/bin/mpfirectrl resume");}
+elsif ( $mpfiresettings{'ACTION'} eq ">>" ){system("/usr/local/bin/mpfirectrl next");}
+elsif ( $mpfiresettings{'ACTION'} eq "stopweb" ){system("/usr/local/bin/mpfirectrl stopweb");}
+elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
+elsif ( $mpfiresettings{'ACTION'} eq "+" ){system("/usr/local/bin/mpfirectrl volup 5");}
+elsif ( $mpfiresettings{'ACTION'} eq "-" ){system("/usr/local/bin/mpfirectrl voldown 5");}
+elsif ( $mpfiresettings{'ACTION'} eq "++" ){system("/usr/local/bin/mpfirectrl volup 10");}
+elsif ( $mpfiresettings{'ACTION'} eq "--" ){system("/usr/local/bin/mpfirectrl voldown 10");}
+elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){system("/usr/local/bin/mpfirectrl playall");}
+elsif ( $mpfiresettings{'ACTION'} eq "playalbum" )
 {
 my @temp = "";
 my @album = split(/\|/,$mpfiresettings{'album'});
@@ -77,7 +76,7 @@ print DATEI @temp;
 close(DATEI);
 system("/usr/local/bin/mpfirectrl playall");
 }
-if ( $mpfiresettings{'ACTION'} eq "playartist" )
+elsif ( $mpfiresettings{'ACTION'} eq "playartist" )
 {
 my @temp = "";
 my @artist = split(/\|/,$mpfiresettings{'artist'});
@@ -93,7 +92,7 @@ print DATEI @temp;
 close(DATEI);
 system("/usr/local/bin/mpfirectrl playall");
 }
-if ( $mpfiresettings{'ACTION'} eq "playall" )
+elsif ( $mpfiresettings{'ACTION'} eq "playall" )
 {
 my @temp = "";
 foreach (@songdb){
@@ -106,7 +105,7 @@ print DATEI @temp;
 close(DATEI);
 system("/usr/local/bin/mpfirectrl playall");
 }
-if ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);}
+elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);}
 
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ####################################
@@ -260,10 +259,22 @@ open(DATEI, "<${General::swroot}/mpfire/playlist") || die "Could not open playli
 my @playlist = <DATEI>;
 close(DATEI);
 
+my %hash;
+foreach (@songdb){
+  my @song = split(/\|/,$_);
+  chomp($song[0]);
+  $hash{$song[0]}=$song[1]." - ".$song[2]." - ".$song[7].":".$song[8];
+}
+
 print <<END
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'current playlist'}</b></td></tr>
-<tr><td align='center'><textarea cols='120' rows='10' name='playlist' style='font-size:10px' readonly='readonly' >@playlist</textarea><br/>
+<tr><td align='center'><textarea cols='120' rows='10' name='playlist' style='font-size:11px' readonly='readonly' >
+END
+;
+foreach (@playlist){chomp($_);print $hash{$_}."\n";}
+print <<END
+</textarea><br/>
                        <form method='post' action='$ENV{'SCRIPT_NAME'}'>
                        <input type='hidden' name='ACTION' value='playlist' />
                        <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />

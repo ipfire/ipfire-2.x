@@ -28,11 +28,11 @@ int main(int argc, char *argv[]) {
 	      fprintf (stderr, "Bad Argument!\n");
         exit (1);
     }
-		elsif (strstr(argv[i], "|")){
+		else if (strstr(argv[i], "|")){
 		    fprintf (stderr, "Bad Argument!\n");
 		    exit (1);
 		}
-		elsif (argc > 2){
+		else if (argc > 2){
 		    fprintf (stderr, "Too Many Arguments!\n");
 		    exit (1);
 		}

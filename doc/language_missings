@@ -4,31 +4,3 @@
 ############################################################################
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
-< backup password
-< bad characters in
-< blue access use hint
-< could not connect to www ipcop org
-< create new backup
-< ddns help dnsmadeeasy
-< ddns help freedns
-< ddns help plus
-< dhcp base ip fixed lease
-< dhcp create fixed leases
-< dhcp fixed lease err1
-< dhcp fixed lease help1
-< dns server
-< err bk 10 password
-< or
-< password crypting key
-< proxy no proxy extend
-< proxy no proxy local
-< removable device advice
-< root path
-< safe removal of umounted device
-< select media
-< squid fix cache
-< ssh access tip
-< too long 80 char max
-< umount
-< umount removable media before to unplug
-< xtaccess bad transfert

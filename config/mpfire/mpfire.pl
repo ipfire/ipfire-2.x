@@ -35,13 +35,11 @@ if ($ARGV[0] eq 'getdb') {
   &getExistingSongs();
   print %songs;
   }
-
-if ($ARGV[0] eq 'play') {
+elsif ($ARGV[0] eq 'play') {
   if ($debug){print "Yes we are called and we will play $ARGV[1]\n";}
   system("/usr/bin/mpg123 -b 1024 --aggressive -q \"$ARGV[1]\" 2>/dev/null >/dev/null &");
   }
-  
-if ($ARGV[0] eq 'stop') {
+elsif ($ARGV[0] eq 'stop') {
   my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
   if ( $PID ne "" ){
     if ($debug){print "Stopping $PID\n";}
@@ -49,48 +47,45 @@ if ($ARGV[0] eq 'stop') {
     }
   else {&stopweb();}
   }
-
-if ($ARGV[0] eq 'volup') {
+elsif ($ARGV[0] eq 'volup') {
   if ($debug){print "Increasing Volume\n";}
   system("/usr/bin/amixer set Master $ARGV[1]%+ 2>/dev/null >/dev/null");
   }
-
-if ($ARGV[0] eq 'voldown') {
+elsif ($ARGV[0] eq 'voldown') {
   if ($debug){print "Decreasing Volume\n";}
   system("/usr/bin/amixer set Master $ARGV[1]%- 2>/dev/null >/dev/null");
   }
-
-if ($ARGV[0] eq 'playall') {
+elsif ($ARGV[0] eq 'playall') {
   if ($debug){print "Playing everything\n";}
   system("/usr/bin/mpg123 -b 1024 --aggressive -Zq@ /var/ipfire/mpfire/playlist 2>/dev/null >/dev/null &"); 
   }
-  
-if ($ARGV[0] eq 'pause') {
+elsif ($ARGV[0] eq 'pause') {
   my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
   if ($debug){print "Pausing Process $PID\n";}
   system("kill -STOP $PID");
   }
-
-if ($ARGV[0] eq 'resume') {
+elsif ($ARGV[0] eq 'resume') {
   my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
   if ($debug){print "Resuming Process $PID\n";}
   system("kill -CONT $PID");
   }
-  
-if ($ARGV[0] eq 'next') {
+elsif ($ARGV[0] eq 'next') {
   if ($debug){print "Next Song\n";}
   my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
   system("kill -SIGINT $PID");
   }
-
-if ($ARGV[0] eq 'song') {
-  my $song = `lsof -nX \| grep mpg123 \| grep REG \| grep mem | grep mp3`;
+elsif ($ARGV[0] eq 'song') {
+  my $song = `lsof -nX \| grep mpg123 \| grep REG \| grep mem | grep mp3 \| grep -v "sh -c"`;
   my @song = split(/\//,$song);
   my $i = @song;
-  print $song[$i-1];
+  if ( $i == 0 ){
+  my $song = `ps -ef \| grep wget \| grep EXTM3U \| grep -v "sh -c"`;
+  my @song = split(/\//,$song);
+  print $song[2];
   }
-
-if ($ARGV[0] eq 'playweb') {
+  else { print $song[$i-1];}
+  }
+elsif ($ARGV[0] eq 'playweb') {
   &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
   if ($debug){print "Playing webstream\n";}
 			if ($proxysettings{'UPSTREAM_PROXY'}) {
@@ -102,8 +97,7 @@ if ($ARGV[0] eq 'playweb') {
         system("wget -qO - `wget -qO -  $ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &"); 
 			}
   }
-
-if ($ARGV[0] eq 'stopweb') {
+elsif ($ARGV[0] eq 'stopweb') {
   &stopweb();
   }
 

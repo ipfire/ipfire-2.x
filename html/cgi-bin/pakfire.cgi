@@ -47,7 +47,7 @@ if ($pakfiresettings{'ACTION'} eq 'install'){
 		&Header::openbox("100%", "center", "Abfrage");
 		my @output = `/usr/local/bin/pakfire resolvedeps $pakfiresettings{'INSPAKS'}`;
 		print <<END;
-		<table><tr><td colspan='2'>Sie maechten folgende Pakete installieren: "$pakfiresettings{'INSPAKS'}". Moeglicherweise haben diese Pakete Abhaengigkeiten, d.h. andere Pakete muessen zusaetzlich installiert werden. Dazu sehen sie unten eine Liste.
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$pakfiresettings{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
 		<pre>		
 END
 		foreach (@output) {
@@ -55,7 +55,7 @@ END
 		}
 		print <<END;
 		</pre>
-		<tr><td colspan='2'>Moechten Sie der Installation aller Pakete zustimmen?
+		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}
 		<tr><td colspan='2'>&nbsp;
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='INSPAKS' value='$pakfiresettings{'INSPAKS'}' />
@@ -119,7 +119,7 @@ if ($return) {
 		<tr><td>
 				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
 			<td>
-				Pakfire fuehrt gerade eine Aufgabe aus... Bitte warten sie, bis diese erfolgreich beendet wurde.
+				$Lang::tr{'pakfire working'}
 		<tr><td colspan='2' align='center'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<input type='image' alt='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
@@ -171,7 +171,7 @@ print <<END;
 				<input type='hidden' name='ACTION' value='remove' />
 				<input type='image' alt='$Lang::tr{'remove'}' src='/images/list-remove.png' />
 		</td>
-		<td width='40%' align="center">Installierte Addons:<br />
+		<td width='40%' align="center">$Lang::tr{'pakfire installed addons'}<br />
 			<select name="DELPAKS" size="10" multiple>
 END
 
@@ -183,7 +183,7 @@ print <<END;
 		<br /><hr /><br />
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
-		<tr><td colspan='2'>Zur Verfuegung stehende Updates:
+		<tr><td colspan='2'>$Lang::tr{'pakfire updates'}
 		<tr><td width='20%'>&nbsp;<td width='60%' align='center'>
 			<select name="UPDPAKS" size="5" disabled>
 END
@@ -198,9 +198,9 @@ print <<END;
 		<br /><hr /><br />
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='100%'>
-			<tr><td width='40%' align="right">Automatische Updates taeglich ausfuehren:
+			<tr><td width='40%' align="right">$Lang::tr{'pakfire update daily'}
 					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
-					<td width='40%' align="right">Registrierung am Master-Server: 
+					<td width='40%' align="right">$Lang::tr{'pakfire register'} 
 					<td width='10%' align="left"><input type="checkbox" name="UUID" $checked{'UUID'}{'on'} />
 			<tr><td width='100%' colspan="4" align="right"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
 		</table>
