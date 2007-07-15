@@ -62,7 +62,6 @@ usr/local/bin/httpscert
 usr/local/bin/makegraphs
 usr/local/bin/qosd
 usr/local/bin/readhash
-usr/local/bin/resetusb
 usr/local/bin/run-parts
 usr/local/bin/scanhd
 usr/local/bin/setddns.pl
