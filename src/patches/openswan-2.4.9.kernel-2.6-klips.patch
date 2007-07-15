@@ -41977,7 +41977,7 @@ packaging/utils/kernelpatch 2.6
 + */
 --- /dev/null   Tue Mar 11 13:02:56 2003
 +++ linux/net/ipsec/ipsec_xmit.c     Mon Feb  9 13:51:03 2004
-@@ -0,0 +1,1850 @@
+@@ -0,0 +1,1855 @@
 +/*
 + * IPSEC Transmit code.
 + * Copyright (C) 1996, 1997  John Ioannidis.
@@ -41995,7 +41995,7 @@ packaging/utils/kernelpatch 2.6
 + * for more details.
 + */
 +
-+char ipsec_xmit_c_version[] = "RCSID $Id: ipsec_xmit.c,v 1.20.2.8 2006/10/06 21:39:26 paul Exp $";
++char ipsec_xmit_c_version[] = "RCSID $Id: ipsec_xmit.c,v 1.20.2.9 2007/07/06 17:18:43 paul Exp $";
 +
 +#define __NO_VERSION__
 +#include <linux/module.h>
@@ -42519,6 +42519,7 @@ packaging/utils/kernelpatch 2.6
 +		ixt_a=ixs->ipsp->ips_alg_auth;
 +		if (ixt_a) {
 +			tailroom += AHHMAC_HASHLEN;
++			authlen = AHHMAC_HASHLEN;
 +		} else 
 +		switch(ixs->ipsp->ips_authalg) {
 +#ifdef CONFIG_KLIPS_AUTH_HMAC_MD5
@@ -43717,6 +43718,10 @@ packaging/utils/kernelpatch 2.6
 +
 +/*
 + * $Log: ipsec_xmit.c,v $
++ * Revision 1.20.2.9  2007/07/06 17:18:43  paul
++ * Fix for authentication field on sent packets has size equals to zero when
++ * using custom auth algorithms. This is bug #811. Patch by "iamscared".
++ *
 + * Revision 1.20.2.8  2006/10/06 21:39:26  paul
 + * Fix for 2.6.18+ only include linux/config.h if AUTOCONF_INCLUDED is not
 + * set. This is defined through autoconf.h which is included through the
@@ -59104,7 +59109,7 @@ packaging/utils/kernelpatch 2.6
 +
 +#include "openswan.h"
 +
-+#define	V	"2.4.8"		/* substituted in by Makefile */
++#define	V	"2.4.9"		/* substituted in by Makefile */
 +static const char openswan_number[] = V;
 +static const char openswan_string[] = "Openswan " V;
 +
@@ -59379,4 +59384,4 @@ packaging/utils/kernelpatch 2.6
 --- /dev/null   Fri May 10 13:59:54 2002
 +++ linux/net/ipsec/Makefile.ver  Sun Jul 28 22:10:40 2002
 @@ -0,0 +1 @@
-+IPSECVERSION=2.4.8
++IPSECVERSION=2.4.9
