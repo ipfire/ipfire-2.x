@@ -26,7 +26,7 @@
 
 include Config
 
-VER        = 0.90.3
+VER        = 0.91
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d42ccf7a32daeb7c7cc3c8c23a7793ea
+$(DL_FILE)_MD5 = 35192423e44642c86ea69dc93f59cfb1
 
 install : $(TARGET)
 
