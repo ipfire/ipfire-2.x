@@ -22,6 +22,12 @@
 				'title' => "$Lang::tr{'gui settings'}",
 				'enabled' => 1,
 				};
+    $subsystem->{'40.backup'} = {
+				'caption' => $Lang::tr{'backup'},
+				'uri' => '/cgi-bin/backup.cgi',
+				'title' => "$Lang::tr{'backup'}",
+				'enabled' => 1,
+				};
     $subsystem->{'99.credits'} = {
 				'caption' => $Lang::tr{'credits'},
 				'uri' => '/cgi-bin/credits.cgi',

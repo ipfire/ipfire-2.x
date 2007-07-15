@@ -1,5 +1,6 @@
 usr/local/bin/mpfirectrl
 srv/web/ipfire/cgi-bin/mpfire.cgi
+var/ipfire/menu.d/EX-mpfire.menu
 var/ipfire/mpfire
 var/ipfire/mpfire/bin
 var/ipfire/mpfire/bin/mpfire.pl
