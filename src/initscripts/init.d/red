@@ -97,16 +97,16 @@ if ($ARGV[0] eq 'start') {
 		exit 1;
 	}
 
-	if ( ( ( ($netsettings{'RED_TYPE'} =~ /^(PPPOE|PPTP)$/) && ($netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/) ) ||
+	if ( ( ( ($netsettings{'RED_TYPE'} =~ /^(PPPOE|PPTP)$/) && ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/) ) ||
 		  ( ( ($pppsettings{'METHOD'} =~ /^(PPPOE|PPPOE_PLUGIN)$/) || ($pppsettings{'PROTOCOL'} eq 'RFC2364') ) &&
-		  ($netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/) ) ) && ($pppsettings{'RECONNECTION'} ne 'manual') ) {
+		  ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/) ) ) && ($pppsettings{'RECONNECTION'} ne 'manual') ) {
 		system ('/etc/rc.d/init.d/connectioncheck start &');
 	}
 
 	###
 	### Red device is ethernet
 	###
-	if ($netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/)
+	if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/)
 	{
 		if ($netsettings{'RED_DEV'} ne '')
 		{
@@ -255,7 +255,7 @@ elsif ($ARGV[0] eq 'stop')
 	}
 
 	# Bring down Ethernet interfaces & Kill DHCPC daemons
-	if (($netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/) && ( $netsettings{'RED_TYPE'} eq 'PPPOE') && $iface ) {
+	if (($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/) && ( $netsettings{'RED_TYPE'} eq 'PPPOE') && $iface ) {
 		system ("/sbin/ifconfig", $iface, "down");
 	}
 	if ($device) {
@@ -283,8 +283,8 @@ elsif ($ARGV[0] eq 'stop')
 	if ($pppsettings{'TYPE'} eq 'isdn')		{ system('/etc/rc.d/rc.isdn','stop'); }
 	if ($pppsettings{'TYPE'} eq 'fritzdsl')		{ system ('/etc/rc.d/rc.fritzdsl','stop'); }
 
-	if ( 	( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && $netsettings{'RED_TYPE'} eq 'STATIC') ||
-		( $netsettings{'CONFIG_TYPE'} =~ /^(0|1|4|5)$/ && $pppsettings{'PROTOCOL'} eq 'RFC1483' &&
+	if ( 	( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} eq 'STATIC') ||
+		( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $pppsettings{'PROTOCOL'} eq 'RFC1483' &&
 		  $pppsettings{'METHOD'} eq 'STATIC' ) ) {
 	    system ("/etc/rc.d/init.d/network red update");
 	}
