@@ -955,8 +955,14 @@ sub initprofile
 	$pppsettings{'PHONEBOOK'} = 'RELAY_PPP1';
 	$pppsettings{'PROTOCOL'} = 'RFC2364';
 	$pppsettings{'METHOD'} = 'PPPOE_PLUGIN';
+	if ( $pppsettings{'METHOD'} eq 'PPPOE_PLUGIN' ){
 	$pppsettings{'MTU'} = '1492';
 	$pppsettings{'MRU'} = '1492';
+  }
+  else{
+  $pppsettings{'MTU'} = '1452';
+	$pppsettings{'MRU'} = '1452';
+  }
 	$pppsettings{'DIALMODE'} = 'T';
 	$pppsettings{'MAXRETRIES'} = 5;
 	$pppsettings{'HOLDOFF'} = 30;

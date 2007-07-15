@@ -22,13 +22,12 @@ if ( -e $file ){
     close(FILE);
     system("kill -9 $PID");
   }
-if ($debug){logger("Call of vpn-watch pid not is not existing.");}
 
 system("echo $$ > $file");
     
 while ( $i == 0){
- sleep(300);
   if ($debug){logger("We will wait 300 seconds before next action.");}
+    sleep(300);
   
   if (open(FILE, "<${General::swroot}/vpn/config")) {
     @vpnsettings = <FILE>;
@@ -50,10 +49,10 @@ foreach (@vpnsettings){
   
   my $remoteip = `/usr/bin/ping -c 1 $remotehostname 2>/dev/null | head -n1 | awk '{print \$3}' | tr -d '()' | tr -d ':'`;chomp($remoteip);
   if ($remoteip eq ""){next;if ($debug){logger("Unable to resolve $remotehostname.");}}
-  my $connected=system("ipsec whack --status | grep $remoteip >/dev/null");
-  my $established=system("ipsec whack --status | grep '$settings[1]' | grep 'ISAKMP SA established' >/dev/null"); 
+  my $connected= `ipsec whack --status | grep $remoteip`;
+  my $established= `ipsec whack --status | grep '$settings[2]' | grep 'ISAKMP SA established'`; 
   
-  if ( $established  eq "" || $connected eq "" ){
+  if ( $established  eq '' || $connected eq '' ){
     logger("Remote IP for host $remotehostname has changed or no connection is established, restarting connection to $remoteip.");
     system("/usr/local/bin/ipsecctrl S $settings[0]");
     next;
