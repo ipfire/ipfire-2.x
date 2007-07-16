@@ -471,7 +471,6 @@ buildipfire() {
   ipfiremake vlan
   ipfiremake wireless
   ipfiremake libsafe
-  ipfiremake 3c5x9setup
   ipfiremake pakfire
   ipfiremake java
   ipfiremake spandsp
