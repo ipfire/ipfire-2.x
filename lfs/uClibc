@@ -48,14 +48,12 @@ STAGING_DIR=/opt/$(MACHINE)-uClibc
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) buildroot-snapshot-20061026.tar.bz2 uClibc-locale-030818.tgz
+objects = $(DL_FILE) uClibc-locale-030818.tgz
 
 $(DL_FILE)					= $(DL_FROM)/$(DL_FILE)
-buildroot-snapshot-20061026.tar.bz2	= $(DL_FROM)/buildroot-snapshot-20061026.tar.bz2
 uClibc-locale-030818.tgz			= $(DL_FROM)/uClibc-locale-030818.tgz
 
 $(DL_FILE)_MD5				= 1ada58d919a82561061e4741fb6abd29
-buildroot-snapshot-20061026.tar.bz2_MD5	= ecc5d48a780e46a56d1d39207d5868bd
 uClibc-locale-030818.tgz_MD5		= d75b2239b4e27c3c9cbed1c8f6eabba6
 
 install : $(TARGET)

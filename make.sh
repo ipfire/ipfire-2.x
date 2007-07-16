@@ -966,45 +966,41 @@ uploadsrc)
 	exit 0
 	;;
 upload)
+	FTP_ISO_PORT=`echo "$FTP_ISO_URL" | awk -F: '{ print $2 }'`
+	FTP_ISO_URL=`echo "$FTP_ISO_URL" | awk -F: '{ print $1 }'`
+	if [ -z $FTP_ISO_PORT ]; then
+	    FTP_ISO_PORT=21
+	fi
+	cat <<EOF > .ftp-commands
+mkdir -p $FTP_ISO_PATH$SVN_REVISION
+mkdir -p $FTP_ISO_PATH$SVN_REVISION/paks
+quit
+EOF
+	ncftp -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL < .ftp-commands
+	rm -f .ftp-commands
+		
 	case "$2" in
 	  iso)
 		echo -e "Uploading the iso to $FTP_ISO_PATH/$SVN_REVISION."
-		cat <<EOF > .ftp-commands
-mkdir -p $FTP_ISO_PATH$SVN_REVISION
-ls -lah
-quit
-EOF
-		ncftp -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL < .ftp-commands
-		rm -f .ftp-commands
+
 		md5sum ipfire-$VERSION.$MACHINE-full.iso > ipfire-$VERSION.$MACHINE-full.iso.md5
-		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ ipfire-$VERSION.$MACHINE-full.iso
-		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ ipfire-$VERSION.$MACHINE-full.iso.md5
-		if [ -e ipfire-$VERSION.$MACHINE-devel.iso ]; then
-			md5sum ipfire-$VERSION.$MACHINE-devel.iso > ipfire-$VERSION.$MACHINE-devel.iso.md5
-			ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ ipfire-$VERSION.$MACHINE-devel.iso
-			ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ ipfire-$VERSION.$MACHINE-devel.iso.md5
-		fi
-		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ ipfire-source-r$SVN_REVISION.tar.gz
-		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ svn_status
-		if [ "$?" -eq "0" ]; then
-			echo -e "The iso of Revision $SVN_REVISION was successfully uploaded to $FTP_ISO_URL$FTP_ISO_PATH$SVN_REVISION/."
-		else
-			echo -e "There was an error while uploading the iso to the ftp server."
-			exit 1
-		fi
+		for i in "svn_status ipfire-source-r$SVN_REVISION.tar.gz ipfire-$VERSION.$MACHINE-full.iso ipfire-$VERSION.$MACHINE-full.iso.md5 ipfire-$VERSION.$MACHINE-devel.iso ipfire-$VERSION.$MACHINE-devel.iso.md5"; do
+				#if [ -e "$i" ]; then
+			    ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ $i
+					if [ "$?" -eq "0" ]; then
+						echo "The file with name $i was successfully uploaded to $FTP_ISO_URL$FTP_ISO_PATH$SVN_REVISION/."
+					else
+						echo "There was an error while uploading the file $i to the ftp server."
+						exit 1
+					fi
+				#fi
+		done
 		if [ "$3" = "--with-sources-cd" ]; then
-			ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH/$SVN_REVISION/ ipfire-sources-cd-$VERSION.$MACHINE.iso
+			ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL $FTP_ISO_PATH/$SVN_REVISION/ ipfire-sources-cd-$VERSION.$MACHINE.iso
 		fi
 		;;
 	  paks)
-		cat <<EOF > .ftp-commands
-mkdir -p $FTP_ISO_PATH$SVN_REVISION/paks
-ls -lah
-quit
-EOF
-		ncftp -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL < .ftp-commands
-		rm -f .ftp-commands
-		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/paks packages/*
+		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/paks packages/*
 		if [ "$?" -eq "0" ]; then
 			echo -e "The packages were successfully uploaded to $FTP_ISO_URL$FTP_ISO_PATH$SVN_REVISION/."
 		else

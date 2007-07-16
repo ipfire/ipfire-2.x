@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.50-ipfire
-# Sun Jun 17 18:22:24 2007
+# Sun Jul 15 23:14:46 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -646,14 +646,16 @@ CONFIG_CONNECTOR=m
 #
 CONFIG_MTD=m
 # CONFIG_MTD_DEBUG is not set
-# CONFIG_MTD_CONCAT is not set
-# CONFIG_MTD_PARTITIONS is not set
+CONFIG_MTD_CONCAT=m
+CONFIG_MTD_PARTITIONS=y
+# CONFIG_MTD_REDBOOT_PARTS is not set
+CONFIG_MTD_CMDLINE_PARTS=y
 
 #
 # User Modules And Translation Layers
 #
-# CONFIG_MTD_CHAR is not set
-# CONFIG_MTD_BLOCK is not set
+CONFIG_MTD_CHAR=m
+CONFIG_MTD_BLOCK=m
 # CONFIG_MTD_BLOCK_RO is not set
 # CONFIG_FTL is not set
 # CONFIG_NFTL is not set
