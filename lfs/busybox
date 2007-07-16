@@ -80,5 +80,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /install/initrd/usr/share/udhcpc
 	cd $(DIR_APP) && install -m 0755 examples/udhcp/simple.script \
 		/install/initrd/usr/share/udhcpc/default.script
+	ln -svf /tmp/resolv.conf /install/initrd/etc/resolv.conf
 	@rm -rf $(DIR_APP) /install/initrd/linuxrc
 	@$(POSTBUILD)
