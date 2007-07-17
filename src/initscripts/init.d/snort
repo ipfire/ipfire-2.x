@@ -49,8 +49,8 @@ HOME_NET=`echo $HOME_NET | cut -c $[$COUNT - 2]`
 echo "var HOME_NET [$HOME_NET]" >	/etc/snort/vars
 echo "var EXTERNAL_NET ANY" >> 		/etc/snort/vars
 
-DNS1=`cat /var/ipfire/red/dns1`
-DNS2=`cat /var/ipfire/red/dns2`
+DNS1=`cat /var/ipfire/red/dns1 2>/dev/null`
+DNS2=`cat /var/ipfire/red/dns2 2>/dev/null`
 
 if [ "$DNS2" ]; then
 	echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
@@ -82,7 +82,7 @@ case "$1" in
       
        RED=`cat /var/ipfire/red/iface`
        if [ -r /var/run/snort_$RED.pid ]; then
-	         DEVICES+=`cat /var/ipfire/red/iface`
+	         DEVICES+=`cat /var/ipfire/red/iface 2>/dev/null`
        fi
        
     for DEVICE in $DEVICES; do
@@ -90,7 +90,7 @@ case "$1" in
 			killproc -p /var/run/snort_$DEVICE.pid /var/run
 		done
 		
-		rm /var/run/snort_*
+		rm /var/run/snort_* >/dev/null 2>/dev/null
 		;;
 		
 	status)

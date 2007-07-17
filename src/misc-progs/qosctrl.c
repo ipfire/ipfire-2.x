@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	safe_system("chmod 755 /var/ipfire/qos/bin/qos.sh 2>&1 >/dev/null");
 	if (strcmp(argv[1], "start") == 0) {
       		 if ((fd = open("/var/ipfire/qos/bin/qos.sh", O_RDONLY)) != -1)
 		{
