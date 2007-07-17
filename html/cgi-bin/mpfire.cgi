@@ -19,7 +19,7 @@ my %color = ();
 my %mainsettings = ();
 my %mpfiresettings = ();
 my %checked = ();
-my $message = "";
+my $message = '0';
 my $errormessage = "";
 
 open(DATEI, "<${General::swroot}/mpfire/db/songs.db") || die "No Database found";
@@ -34,6 +34,8 @@ close(DATEI);
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;' />" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
+$mpfiresettings{'PAGE'} = "1";
+
 &Header::getcgihash(\%mpfiresettings);
 &Header::openpage($Lang::tr{'mpfire'}, 1, "<meta http-equiv='refresh' content='120' />");
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -43,23 +45,28 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 
 if ( $mpfiresettings{'ACTION'} eq "scan" )
 {
-delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};
+delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};
 &General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);
-system("/usr/local/bin/mpfirectrl scan $mpfiresettings{'SCANDIR'} $mpfiresettings{'SCANDIRDEPS'}");
+$message=system("/usr/local/bin/mpfirectrl scan $mpfiresettings{'SCANDIR'} $mpfiresettings{'SCANDIRDEPS'}");
 refreshpage();
 }
-elsif ( $mpfiresettings{'ACTION'} eq ">" ){system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
-elsif ( $mpfiresettings{'ACTION'} eq "x" ){system("/usr/local/bin/mpfirectrl stop");}
-elsif ( $mpfiresettings{'ACTION'} eq "||" ){system("/usr/local/bin/mpfirectrl pause");}
-elsif ( $mpfiresettings{'ACTION'} eq "|>" ){system("/usr/local/bin/mpfirectrl resume");}
-elsif ( $mpfiresettings{'ACTION'} eq ">>" ){system("/usr/local/bin/mpfirectrl next");}
-elsif ( $mpfiresettings{'ACTION'} eq "stopweb" ){system("/usr/local/bin/mpfirectrl stopweb");}
-elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
-elsif ( $mpfiresettings{'ACTION'} eq "+" ){system("/usr/local/bin/mpfirectrl volup 5");}
-elsif ( $mpfiresettings{'ACTION'} eq "-" ){system("/usr/local/bin/mpfirectrl voldown 5");}
-elsif ( $mpfiresettings{'ACTION'} eq "++" ){system("/usr/local/bin/mpfirectrl volup 10");}
-elsif ( $mpfiresettings{'ACTION'} eq "--" ){system("/usr/local/bin/mpfirectrl voldown 10");}
-elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){system("/usr/local/bin/mpfirectrl playall");}
+elsif ( $mpfiresettings{'ACTION'} eq ">" ){$message=system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
+elsif ( $mpfiresettings{'ACTION'} eq "x" ){$message=system("/usr/local/bin/mpfirectrl stop");}
+elsif ( $mpfiresettings{'ACTION'} eq "||" ){$message=system("/usr/local/bin/mpfirectrl pause");}
+elsif ( $mpfiresettings{'ACTION'} eq "|>" ){$message=system("/usr/local/bin/mpfirectrl resume");}
+elsif ( $mpfiresettings{'ACTION'} eq ">>" ){$message=system("/usr/local/bin/mpfirectrl next");}
+elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){$message=system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
+elsif ( $mpfiresettings{'ACTION'} eq "+" ){$message=system("/usr/local/bin/mpfirectrl volup 5");}
+elsif ( $mpfiresettings{'ACTION'} eq "-" ){$message=system("/usr/local/bin/mpfirectrl voldown 5");}
+elsif ( $mpfiresettings{'ACTION'} eq "++" ){$message=system("/usr/local/bin/mpfirectrl volup 10");}
+elsif ( $mpfiresettings{'ACTION'} eq "--" ){$message=system("/usr/local/bin/mpfirectrl voldown 10");}
+elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){$message=system("/usr/local/bin/mpfirectrl playall");}
+elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){$message=system("unlink ${General::swroot}/mpfire/playlist && touch ${General::swroot}/mpfire/playlist");}
+elsif ( $mpfiresettings{'ACTION'} eq "addtoplaylist" ){
+open(DATEI, ">>${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+print DATEI $mpfiresettings{'FILE'}."\n";
+close(DATEI);
+}
 elsif ( $mpfiresettings{'ACTION'} eq "playalbum" )
 {
 my @temp = "";
@@ -74,7 +81,7 @@ foreach (@songdb){
 open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-system("/usr/local/bin/mpfirectrl playall");
+$message=system("/usr/local/bin/mpfirectrl playall");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playartist" )
 {
@@ -90,7 +97,7 @@ foreach (@songdb){
 open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-system("/usr/local/bin/mpfirectrl playall");
+$message=system("/usr/local/bin/mpfirectrl playall");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playall" )
 {
@@ -103,7 +110,7 @@ foreach (@songdb){
 open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-system("/usr/local/bin/mpfirectrl playall");
+$message=system("/usr/local/bin/mpfirectrl playall");
 }
 elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);}
 
@@ -118,7 +125,8 @@ $mpfiresettings{'SHOWLIST'} = "off";
 ############################################################################################################################
 ########################################### rekursiv nach neuen Mp3s Scannen ##############################################ä
 
-if ( $message ne "" )	{	print "<font color='red'>$message</font>"; }
+if ( $message ne '0' )	{	print "<font color='red'>An Error occured while launching the command</font>"; }
+elsif ( $message ne "" && $message ne '0' )	{	print "<font color='red'>$message</font>"; }
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire scanning'});
 
@@ -168,6 +176,7 @@ END
 ;
 &Header::closebox();
 
+if ( $#songdb ne '0' ){
 &Header::openbox('100%', 'center', $Lang::tr{'quick playlist'});
 
 my @artist;
@@ -208,6 +217,8 @@ print <<END
 END
 ;
 &Header::closebox();
+}
+
 
 if ( $mpfiresettings{'SHOWLIST'} eq "on" ){
 
@@ -216,6 +227,16 @@ print <<END
 
 <table width='95%' cellspacing='5'>
 <tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'Existing Files'}</b></td></tr>
+<tr><td align='center' colspan='9'><br/>$Lang::tr{'Pages'}<br/><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='submit' name='PAGE' value='all' /><br/>
+END
+;
+my $pages =(int($#songdb/100)+1);
+for(my $i = 1; $i <= $pages; $i++) {
+print "<input type='submit' name='PAGE' value='$i' />";
+if (!($i % 205)){print"<br/>";}
+}
+print <<END
+</form></td></tr>
 <tr><td align='center'></td>
     <td align='center'><b>$Lang::tr{'artist'}<br/>$Lang::tr{'title'}</b></td>
     <td align='center'><b>$Lang::tr{'number'}</b></td>
@@ -226,14 +247,25 @@ print <<END
     <td align='center'><b>$Lang::tr{'mode'}</b></td></tr>
 END
 ;
-my $lines = 0;
+my $lines=0;my $i=0;my $begin;my $end;
+if ( $mpfiresettings{'PAGE'} eq 'all' ){
+  $begin=0;
+  $end=$#songdb;
+}
+else{
+  $begin=(($mpfiresettings{'PAGE'}-1) * 100);
+  $end=(($mpfiresettings{'PAGE'} * 100)-1);
+}
 foreach (@songdb){
+  if (!($i >= $begin && $i <= $end)){
+  #print $begin."->".$i."<-".$end."\n";
+  $i++;next;}
   my @song = split(/\|/,$_);
   
   if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
   $song[0]=~s/\/\//\//g;   
   print <<END
-  <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+  <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='addtoplaylist' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/list-add.png' /></form><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
   <td align='center'>$song[1]<br/>$song[2]</td>
   <td align='center'>$song[3]</td>
   <td align='center'>$song[4]</td>
@@ -247,9 +279,10 @@ END
     elsif ( $song[11] eq "2\n" ) {print "<td align='center'>Dual<br/>Channel</td></tr>"; }
     elsif ( $song[11] eq "3\n" ) {print "<td align='center'>Single<br/>Channel</td></tr>"; }
     else {print "<td align='center'></td></tr>"; }
-  $lines++
+  $lines++;
+  $i++;
   }
-print "</table></form>";
+print "</table>";
 &Header::closebox();
 }
 
@@ -268,17 +301,25 @@ foreach (@songdb){
 
 print <<END
 <table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'current playlist'}</b></td></tr>
-<tr><td align='center'><textarea cols='120' rows='10' name='playlist' style='font-size:11px' readonly='readonly' >
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'current playlist'}</b></td></tr>
+<tr><td align='center' colspan='2' ><textarea cols='100' rows='10' name='playlist' style='font-size:11px;width:650px;' readonly='readonly'>
 END
 ;
 foreach (@playlist){chomp($_);print $hash{$_}."\n";}
 print <<END
-</textarea><br/>
-                       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-                       <input type='hidden' name='ACTION' value='playlist' />
-                       <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
-      </form></td></tr>
+</textarea></td></tr><tr>
+<td align='right'>
+      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+      <input type='hidden' name='ACTION' value='emptyplaylist' />
+      <input type='image' alt='$Lang::tr{'clear playlist'}' title='$Lang::tr{'clear playlist'}' src='/images/user-trash.png' />
+      </form>
+</td>
+<td align='left'>
+      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+      <input type='hidden' name='ACTION' value='playlist' />
+      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+      </form>
+      </td></tr>
 </table>
 END
 ;
@@ -300,7 +341,6 @@ foreach (@webradio){
  my @stream = split(/\|/,$_);
  print <<END
  <tr><td>$stream[1]</td>
-     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='stopweb' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
      <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
 </tr>
 END

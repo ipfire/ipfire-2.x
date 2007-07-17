@@ -9,7 +9,7 @@ require "${General::swroot}/header.pl";
 
 my $filename = "";
 my %songs = "";
-my $debug = 1;
+my $debug = 0;
 
 if ($ARGV[0] eq 'scan') {
 my $command = "find ";
@@ -36,16 +36,24 @@ if ($ARGV[0] eq 'getdb') {
   print %songs;
   }
 elsif ($ARGV[0] eq 'play') {
+  &checkplaylist();
   if ($debug){print "Yes we are called and we will play $ARGV[1]\n";}
   system("/usr/bin/mpg123 -b 1024 --aggressive -q \"$ARGV[1]\" 2>/dev/null >/dev/null &");
   }
 elsif ($ARGV[0] eq 'stop') {
-  my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
-  if ( $PID ne "" ){
-    if ($debug){print "Stopping $PID\n";}
-    system("kill -KILL $PID");
-    }
-  else {&stopweb();}
+  my $PID = `ps -ef \| grep wget \| grep EXTM3U \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
+  if ( $PID ne '' ){
+   if ($debug){print "Stopping $PID\n";}
+   system("kill -KILL $PID");
+   my $PID =  `ps -ef \| grep "mpg123 -b 1024 --aggressive -Zq -" \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
+   if ($debug){print "Killing Process $PID\n";}
+   system("kill -KILL $PID");
+  }
+  else{
+   my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
+   if ($debug){print "Stopping $PID\n";}
+   system("kill -KILL $PID");
+  }
   }
 elsif ($ARGV[0] eq 'volup') {
   if ($debug){print "Increasing Volume\n";}
@@ -56,16 +64,17 @@ elsif ($ARGV[0] eq 'voldown') {
   system("/usr/bin/amixer set Master $ARGV[1]%- 2>/dev/null >/dev/null");
   }
 elsif ($ARGV[0] eq 'playall') {
+  &checkplaylist();
   if ($debug){print "Playing everything\n";}
   system("/usr/bin/mpg123 -b 1024 --aggressive -Zq@ /var/ipfire/mpfire/playlist 2>/dev/null >/dev/null &"); 
   }
 elsif ($ARGV[0] eq 'pause') {
-  my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
+  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
   if ($debug){print "Pausing Process $PID\n";}
   system("kill -STOP $PID");
   }
 elsif ($ARGV[0] eq 'resume') {
-  my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
+  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
   if ($debug){print "Resuming Process $PID\n";}
   system("kill -CONT $PID");
   }
@@ -80,34 +89,29 @@ elsif ($ARGV[0] eq 'song') {
   my $i = @song;
   if ( $i == 0 ){
   my $song = `ps -ef \| grep wget \| grep EXTM3U \| grep -v "sh -c"`;
-  my @song = split(/\//,$song);
-  print $song[2];
+  my @song = split(/,/,$song);
+  print $song[1];
   }
   else { print $song[$i-1];}
   }
 elsif ($ARGV[0] eq 'playweb') {
   &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
-  if ($debug){print "Playing webstream\n";}
+
 			if ($proxysettings{'UPSTREAM_PROXY'}) {
 			  if ($proxysettings{'UPSTREAM_USER'}) {
-          system("wget -qO - `wget -qO -  $ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - -p $proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@$proxysettings{'UPSTREAM_PROXY'} 2>/dev/null >/dev/null &");
+			    &checkm3uproxy();
+			    if ($debug){print "Playing webstream\n";}
+          system("wget -qO - `wget -qO - http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@$proxysettings{'UPSTREAM_PROXY'}$ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &");
           }
-          else {          system("wget -qO - `wget -qO -  $ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - -p $proxysettings{'UPSTREAM_PROXY'} 2>/dev/null >/dev/null &");} 
+          else {
+          &checkm3uproxyuser();
+          if ($debug){print "Playing webstream\n";}
+          system("wget -qO - `wget -qO - http://$proxysettings{'UPSTREAM_PROXY'}$ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &");} 
 			} else {
-        system("wget -qO - `wget -qO -  $ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &"); 
+        &checkm3u();
+        if ($debug){print "Playing webstream\n";}
+        system("wget -qO - `wget -qO - http://$ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &");
 			}
-  }
-elsif ($ARGV[0] eq 'stopweb') {
-  &stopweb();
-  }
-
-sub stopweb(){
-  my $PID =  `ps -ef | grep wget | grep EXTM3U | head -1 | awk '{  print \$2 }'`;
-  if ($debug){print "Stopping $PID\n";}
-  system("kill -KILL $PID");
-  my $PID =  `ps -ef | grep "mpg123 -b 1024 --aggressive -Zq -" | head -1 | awk '{  print \$2 }'`;
-  if ($debug){print "Killing Process $PID\n";}
-  system("kill -KILL $PID");
   }
 
 sub getSongInfo(){
@@ -127,3 +131,24 @@ sub getExistingSongs(){
     $songs{$Zeile[0]} = "|".$Zeile[1]."|".$Zeile[2]."|".$Zeile[3]."|".$Zeile[4]."|".$Zeile[5]."|".$Zeile[6]."|".$Zeile[7]."|".$Zeile[8]."|".$Zeile[9]."|".$Zeile[10]."|".$Zeile[11]."\n";
     }
  }
+ 
+sub checkplaylist(){
+ my $Datei = "/var/ipfire/mpfire/playlist";
+ my @Info = stat($Datei);
+ if ( $Info[7] eq '' ){print "There is no playlist";exit(1);}
+}
+
+sub checkm3u(){
+ my $Datei = system("wget -q --spider http://$ARGV[1]");
+ if ( $Datei ne '0' ){print "We are unable to get the stream";exit(1);}
+}
+
+sub checkm3uproxy(){
+ my $Datei = system("wget -q --spider http://$ARGV[1]");
+ if ( $Datei ne '0' ){print "We are unable to get the stream";exit(1);}
+}
+
+sub checkm3uproxyuser(){
+ my $Datei = system("wget -q --spider http://$ARGV[1]");
+ if ( $Datei ne '0' ){print "We are unable to get the stream";exit(1);}
+}

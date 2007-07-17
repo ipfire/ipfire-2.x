@@ -304,12 +304,12 @@ END
 if ( -e "/var/ipfire/cups/enable")
 	{
 	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");refreshpage();}
-	else {system("/usr/local/bin/sambactrl smbsafeconfcups");refreshpage();}
+	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
 	}
 else
 	{
 	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");refreshpage();}
-	else{system("/usr/local/bin/sambactrl smbsafeconf");refreshpage();}
+	else{system("/usr/local/bin/sambactrl smbsafeconf");}
 	}
 
 system("/usr/local/bin/sambactrl smbreload");refreshpage();

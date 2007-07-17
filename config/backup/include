@@ -5,4 +5,16 @@
 /etc/passwd
 /etc/shadow
 /etc/group
-
+/etc/hosts
+/etc/localtime
+/etc/httpd/server.crt
+/etc/httpd/server.csr
+/etc/httpd/server.key
+/etc/rc.d/rc.local
+/etc/rc.d/rc.firewall.local
+/etc/ssh/ssh_host_dsa_key
+/etc/ssh/ssh_host_dsa_key.pub
+/etc/ssh/ssh_host_key
+/etc/ssh/ssh_host_key.pub
+/etc/ssh/ssh_host_rsa_key
+/etc/ssh/ssh_host_rsa_key.pub

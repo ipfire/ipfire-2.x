@@ -124,7 +124,6 @@ if ($return) {
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<input type='image' alt='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
 			</form>
-		### TO BE CONTINUED.... WE HAVE TO BEAUTIFY THIS A LITTLE BIT :D
 		<tr><td colspan='2' align='left'><pre>
 END
 my @output = `tail /var/log/messages | grep pakfire`;
@@ -135,7 +134,6 @@ print <<END;
 		</pre>
 	</table>
 END
-  	### TO BE CONTINUED.... WE HAVE TO BEAUTIFY THIS A LITTLE BIT :D
 	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();

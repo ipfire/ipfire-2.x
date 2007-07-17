@@ -27,10 +27,10 @@ SIG_HI        = 100 ;                # Critical files that are significant point
   $(TWDB)                          -> $(SEC_CRIT) ;
   $(TWPOL)/tw.pol                  -> $(SEC_CRIT) -i ;
   $(TWPOL)/tw.cfg                  -> $(SEC_CRIT) -i ;
-  $(TWLKEY)/local.key  -> $(SEC_CRIT) ;
+  $(TWLKEY)/local.key              -> $(SEC_CRIT) ;
   $(TWSKEY)/site.key               -> $(SEC_CRIT) ;
 
-  /bin		                   -> $(SEC_CRIT) ;
+  /bin		                         -> $(SEC_CRIT) ;
   /boot                            -> $(SEC_CRIT) ;
   /etc                             -> $(SEC_CRIT) ;
   /lib                             -> $(SEC_CRIT) ;
@@ -39,6 +39,7 @@ SIG_HI        = 100 ;                # Critical files that are significant point
   /sbin                            -> $(SEC_CRIT) ;
   /usr                             -> $(SEC_CRIT) ;
   !/usr/src                                       ;
+  !usr/share/clamav                               ;
   /etc/mtab                        -> $(SEC_CONFIG) -i ; # Inode number changes on any mount/unmount
 
   #don't scan the individual reports
@@ -70,5 +71,5 @@ SIG_HI        = 100 ;                # Critical files that are significant point
      /proc/mounts                 -> $(Device) ;
      /proc/filesystems            -> $(Device) ;
      /proc/misc                   -> $(Device) ;
-     /var/log                     -> $(SEC_CONFIG) ;
+     /var/log                     -> $(SEC_LOG) ;
 }
