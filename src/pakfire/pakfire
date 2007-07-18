@@ -154,6 +154,52 @@
 		}
 		
 	} elsif ("$ARGV[0]" eq "remove") {
+		shift;
+		
+		my @paks;
+		my $pak;
+		
+		foreach $pak (@ARGV) {
+			unless ("$pak" =~ "^-") {
+				$return = &Pakfire::isinstalled($pak);
+				if ($return ne 0) {
+					&Pakfire::message("Package $pak is not installed.");
+					next;
+				}
+			
+				push(@paks, $pak);
+			
+			}
+		}
+		
+		unless (@paks) {
+			&Pakfire::message("No packages to remove. Exiting...");
+			exit 1;
+		}
+		
+		&Pakfire::message("");
+		&Pakfire::message("");
+		&Pakfire::message("### Packages to remove:");
+		foreach $pak (sort @paks) {
+		  my $size = &Pakfire::getsize("$pak");
+			$size = &Pakfire::beautifysize($size);
+		  &Pakfire::message("# $pak  \t\t - $size");
+		}
+		
+		if ($interactive) {
+		  &Pakfire::message("Is this okay? [y/N]");
+			my $ret = <STDIN>;
+			chomp($ret);
+			&Pakfire::logger("Answer: $ret");
+			if ( $ret ne "y" ) {
+			  &Pakfire::message("Installation aborted.");
+			  exit 1;
+			}
+		}
+		
+		foreach $pak (@paks) {
+			&Pakfire::removepak("$pak");
+		}
 	
 	
 	} elsif ("$ARGV[0]" eq "update") {

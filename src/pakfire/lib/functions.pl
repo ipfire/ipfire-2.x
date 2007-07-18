@@ -98,7 +98,7 @@ sub fetchfile {
 		logger("HTTP-Status-Code: $code - $log");
 		
 		if ( $code eq "500" ) {
-			message("Giving up: There was no chance to get teh file \"$getfile\" from any available server.\nThere was an error on the way. Please fix it.");
+			message("Giving up: There was no chance to get the file \"$getfile\" from any available server.\nThere was an error on the way. Please fix it.");
 			return 1;
 		}
 		
@@ -156,8 +156,12 @@ sub selectmirror {
 
 	### Count the number of the servers in the list
 	my $scount = 0;
+	my @newlines;
 	foreach (@lines) {
-		$scount++;
+		if ("$_" =~ /.*;.*;.*;/ ) {
+			push(@newlines,$_);
+			$scount++;
+		}
 	}
 	logger("$scount servers found in list.");
 	
@@ -171,7 +175,7 @@ sub selectmirror {
 		$servers = 0;
 		my ($line, $proto, $path, $host);
 		my @templine;
-		foreach $line (@lines) {
+		foreach $line (@newlines) {
 			$servers++;
 			if ($servers eq $server) {
 				@templine = split(/\;/, $line);
@@ -297,10 +301,6 @@ sub resolvedeps {
 	
 	message("");
 	message("## Resolving dependencies for $pak...");
-	#if (&isinstalled($pak) eq 0) {
-	#	my @empty;
-	#	return @empty;
-	#}
 	
 	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
 	my @file = <FILE>;
@@ -327,8 +327,7 @@ sub resolvedeps {
 			} 
 		}
 	}
-	
-	#my @tempdeps = @deps;
+
 	foreach (@tempdeps) {
 		if ($_) {
 			my @newdeps = resolvedeps("$_");
@@ -474,13 +473,15 @@ sub setuppak {
 	
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
 	$return %= 255;
+	if ($pakfiresettings{'UUID'} ne "off") {
+		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&ipak=$pak&return=$return", "$Conf::mainserver");
+	}
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
 	  copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
 		message("Setup completed. Congratulations!");
 		message("################################################################################");
-		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&ipak=$pak&return=$return", "$Conf::mainserver");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
@@ -507,11 +508,13 @@ sub upgradepak {
 
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./update.sh >> $Conf::logdir/update-$pak.log 2>&1");
 	$return %= 255;
+	if ($pakfiresettings{'UUID'} ne "off") {
+		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&upak=$pak&return=$return", "$Conf::mainserver");
+	}
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
 		copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
-		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&upak=$pak&return=$return", "$Conf::mainserver");
 		message("Upgrade completed. Congratulations!");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
@@ -529,6 +532,9 @@ sub removepak {
 
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./uninstall.sh >> $Conf::logdir/uninstall-$pak.log 2>&1");
 	$return %= 255;
+	if ($pakfiresettings{'UUID'} ne "off") {
+		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&dpak=$pak&return=$return", "$Conf::mainserver");
+	}
 	if ($return == 0) {
 	  open(FILE, "<$Conf::dbdir/rootfiles/$pak");
 		my @file = <FILE>;
@@ -541,7 +547,6 @@ sub removepak {
 		}
 	  unlink("$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
-	  fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&dpak=$pak&return=$return", "$Conf::mainserver");
 		message("Uninstall completed. Congratulations!");
 	} else {
 		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");

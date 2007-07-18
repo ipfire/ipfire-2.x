@@ -81,9 +81,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/countries.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/advoptions-list		$(CONFIG_ROOT)/dhcp/advoptions-list
-	cp $(DIR_SRC)/config/cfgroot/backup-exclude  		$(CONFIG_ROOT)/backup/exclude.system
-	cp $(DIR_SRC)/config/cfgroot/backup-include		$(CONFIG_ROOT)/backup/include.system
-	cp $(DIR_SRC)/config/cfgroot/backup-exclude.hardware	$(CONFIG_ROOT)/backup/exclude.hardware
 	cp $(DIR_SRC)/config/cfgroot/connscheduler-lib.pl	$(CONFIG_ROOT)/connscheduler/lib.pl
 	cp $(DIR_SRC)/config/cfgroot/connscheduler.conf		$(CONFIG_ROOT)/connscheduler
 	cp $(DIR_SRC)/config/extrahd/*				$(CONFIG_ROOT)/extrahd/bin/

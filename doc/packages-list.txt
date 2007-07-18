@@ -1,5 +1,4 @@
 == List of softwares used to build IPFire Version: 2.0t4 ==
-* 3c5x9setup-1.00
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -57,6 +56,7 @@
 * cdrtools-2.01
 * cftp-0.12
 * clamav-0.91
+* clamav-0.91.1
 * coreutils-5.96
 * cpio-2.6
 * cups-1.2.2
