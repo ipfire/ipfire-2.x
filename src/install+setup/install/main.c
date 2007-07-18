@@ -66,7 +66,7 @@ long calc_rootsize(long free, long max) {
 	long root;
 	
 	root = max / 2;
-	if (root < 512) {
+	if (root < 256) {
 		return 0;
 	}
 	if (root > 2048) {
@@ -378,16 +378,15 @@ int main(int argc, char *argv[])
 	
 	swap_file = calc_swapsize(memory, maximum_free);
 
-	if (maximum_free < 768 + swap_file ) {
-		if (maximum_free < 768) {
+	if (maximum_free < 512 + swap_file ) {
+		if (maximum_free < 700) {
 			errorbox(ctr[TR_DISK_TOO_SMALL]);
 			goto EXIT;
 		}
 
 		if (!unattended) {
 		    rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
-		}
-		else {
+		} else {
 		    rc = 1;
 		}
 		
@@ -399,7 +398,7 @@ int main(int argc, char *argv[])
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition - swap_file;
 
-	if (current_free < 768) {
+	if (current_free < 700) {
 		errorbox(ctr[TR_DISK_TOO_SMALL]);
 		goto EXIT;
 	}
