@@ -1,0 +1,4 @@
+MENUSELECT_MODULES=
+MENUSELECT_UTILS=sethdlc-new 
+MENUSELECT_FIRMWARE=
+MENUSELECT_BUILD_DEPS=zttranscode ztdynamic wct4xxp wctc4xxp 
