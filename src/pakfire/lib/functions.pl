@@ -7,9 +7,16 @@ use File::Basename;
 use File::Copy;
 use LWP::UserAgent;
 use HTTP::Response;
+use HTTP::Headers;
+use HTTP::Message;
+use HTTP::Request;
 use Net::Ping;
 
 package Pakfire;
+
+my $final_data;
+my $total_size;
+my $bfile;
 
 my %pakfiresettings = ();
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
@@ -22,7 +29,7 @@ sub message {
 
 sub logger {
 	my $log = shift;
-	system("logger -t pakfire \"$log\"");
+	system("logger -t pakfire \"$log\"") if "$log";
 }
 
 sub usage {
@@ -39,10 +46,10 @@ sub pinghost {
 	
 	$p = Net::Ping->new();
   if ($p->ping($host)) {
-  	logger("$host is alive.");
+  	logger("PING INFO: $host is alive");
   	return 1;
   } else {
-		logger("$host is dead.");
+		logger("PING INFO: $host is unreachable");
 		return 0;
 	}
   $p->close();
@@ -53,6 +60,7 @@ sub fetchfile {
 	my $gethost = shift;
 	my (@server, $host, $proto, $file, $allok, $i);
 	
+	logger("DOWNLOAD STARTED: $getfile") unless ($bfile =~ /^counter\?.*/);
 	use File::Basename;
 	$bfile = basename("$getfile");
 
@@ -72,7 +80,10 @@ sub fetchfile {
 		
 		$proto = "HTTP" unless $proto;
 		
-		logger("Trying to get $file from $host ($proto).");
+		unless ($bfile =~ /^counter\?.*/) {
+			logger("DOWNLOAD INFO: Host: $host ($proto) - File: $file");
+			#message("DOWNLOAD INFO: Loading $bfile from ($proto) $host...");
+		}
 
 		my $ua = LWP::UserAgent->new;
 		$ua->agent("Pakfire/$Conf::version");
@@ -82,20 +93,34 @@ sub fetchfile {
 		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 
 		if ($proxysettings{'UPSTREAM_PROXY'}) {
-			logger("Using upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\""); 
+			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"") unless ($bfile =~ /^counter\?.*/); 
 			if ($proxysettings{'UPSTREAM_USER'}) {
 				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
-				logger("  Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"");
+				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"") unless ($bfile =~ /^counter\?.*/);
 			} else {
 				$ua->proxy("http","http://$proxysettings{'UPSTREAM_PROXY'}/");
 			}
 		}
-	 
-		my $response = $ua->get("http://$host/$file");
+
+		$final_data = undef;
+	 	my $url = "http://$host/$file";
+		my $response;
+		
+		unless ($bfile =~ /^counter\?.*/) {
+			my $result = $ua->head($url);
+			my $remote_headers = $result->headers;
+			$total_size = $remote_headers->content_length;
+			logger("DOWNLOAD INFO: $file has size of $total_size bytes");
+			
+			$response = $ua->get($url, ':content_cb' => \&callback );
+			message("");
+		} else {
+			$response = $ua->get($url);
+		}
 		
 		my $code = $response->code();
 		my $log = $response->status_line;
-		logger("HTTP-Status-Code: $code - $log");
+		logger("DOWNLOAD INFO: HTTP-Status-Code: $code - $log");
 		
 		if ( $code eq "500" ) {
 			message("Giving up: There was no chance to get the file \"$getfile\" from any available server.\nThere was an error on the way. Please fix it.");
@@ -104,36 +129,36 @@ sub fetchfile {
 		
 		if ($response->is_success) {
 			if (open(FILE, ">$Conf::tmpdir/$bfile")) {
-				print FILE $response->content;
+				print FILE $final_data;
 				close(FILE);
 				unless ($bfile =~ /^counter\?.*/) { # Don't check out counterfile cause it's empty
-					logger("File received. Start checking signature...");
+					logger("DOWNLOAD INFO: File received. Start checking signature...");
 					if (system("gpg --verify \"$Conf::tmpdir/$bfile\" &>/dev/null") eq 0) {
-						logger("Signature of $bfile is fine.");
+						logger("DOWNLOAD INFO: Signature of $bfile is fine.");
 						move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
 					} else {
-						message("The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
+						message("DOWNLOAD ERROR: The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
 						exit 1;
 					}
 				}
-				logger("Download successfully done from $host (file: $file).");
+				logger("DOWNLOAD FINISHED: $file") unless ($bfile =~ /^counter\?.*/);
 				$allok = 1;
 				return 0;
 			} else {
-				logger("Could not open $Conf::cachedir/$bfile for writing.");
+				logger("DOWNLOAD ERROR: Could not open $Conf::cachedir/$bfile for writing.");
 			}
 		}	else {
-			logger("Download $file failed from $host ($proto): $log");
+			logger("DOWNLOAD ERROR: $log");
 		}
 	}
-	message("Giving up: There was no chance to get the file \"$getfile\" from any available server.\nMay be you should run \"pakfire update\" to get some new servers.");
+	message("DOWNLOAD ERROR: There was no chance to get the file \"$getfile\" from any available server.\nMay be you should run \"pakfire update\" to get some new servers.");
 	return 1;
 }
 
 sub getmirrors {
 	use File::Copy;
 
-	logger("Try to get a mirror list.");
+	logger("MIRROR: Trying to get a mirror list.");
 	
 	fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver");
 	move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
@@ -148,7 +173,7 @@ sub selectmirror {
 		getmirrors();
 	}
 	if ($count == 5) {
-		message("Could not find or download a server list.");
+		message("MIRROR ERROR: Could not find or download a server list");
 		exit 1;
 	}
 	my @lines = <FILE>;
@@ -163,7 +188,7 @@ sub selectmirror {
 			$scount++;
 		}
 	}
-	logger("$scount servers found in list.");
+	logger("MIRROR INFO: $scount servers found in list");
 	
 	### Choose a random server and test if it is online
 	#   If the check fails try a new server.
@@ -371,8 +396,6 @@ sub cleanup {
 sub getmetafile {
 	my $pak = shift;
 	
-	logger("Going to download meta-$pak.");
-	
 	unless ( -e "$Conf::dbdir/meta/meta-$pak") {
 		fetchfile("meta/meta-$pak", "");
 		move("$Conf::cachedir/meta-$pak", "$Conf::dbdir/meta/meta-$pak");
@@ -420,9 +443,10 @@ sub decryptpak {
 	
 	my $file = getpak("$pak", "noforce");
 	
-	my $return = system("cd $Conf::tmpdir/ && gpg -d < $Conf::cachedir/$file | tar x >/dev/null 2>&1");
+	logger("DECRYPT STARTED: $pak");
+	my $return = system("cd $Conf::tmpdir/ && gpg -d < $Conf::cachedir/$file | tar x &>/dev/null");
 	$return %= 255;
-	logger("Decryption process returned the following: $return");
+	logger("DECRYPT FINISHED: $pak - Status: $return");
 	if ($return != 0) { exit 1; }
 }
 
@@ -539,6 +563,7 @@ sub removepak {
 	  open(FILE, "<$Conf::dbdir/rootfiles/$pak");
 		my @file = <FILE>;
 		close(FILE);
+		message("Removing files...");
 		foreach (@file) {
 		  my $line = $_;
 		  chomp($line);
@@ -546,6 +571,8 @@ sub removepak {
 			system("cd / && rm -rf $line >> $Conf::logdir/uninstall-$pak.log 2>&1");
 		}
 	  unlink("$Conf::dbdir/rootfiles/$pak");
+	  unlink("$Conf::dbdir/installed/meta-$pak");
+	  message("Finished removing files!");
 	  cleanup("tmp");
 		message("Uninstall completed. Congratulations!");
 	} else {
@@ -597,14 +624,38 @@ sub senduuid {
 }
 
 sub checkcryptodb {
+	logger("CRYPTO INFO: Checking GnuPG Database");
 	my $myid = "64D96617"; # Our own gpg-key
 	my $trustid = "65D0FD58"; # Id of CaCert
 	my $ret = system("gpg --list-keys | grep -q $myid");
 	unless ( "$ret" eq "0" ) {
-		message("The GnuPG isn't configured corectly. Trying now to fix this.");
-		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $myid");
-		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $trustid");
+		message("CRYPTO WARN: The GnuPG isn't configured corectly. Trying now to fix this.");
+		message("CRYPTO WARN: It's normal to see this on first execution.");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $myid &>>$Conf::logdir/gnupg-database.log");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $trustid &>>$Conf::logdir/gnupg-database.log");
+	} else {
+		logger("CRYPTO INFO: Database is okay");
 	}
+}
+
+sub callback {
+   my ($data, $response, $protocol) = @_;
+   $final_data .= $data;
+   print progress_bar( length($final_data), $total_size, 25, '=' );
+}
+
+sub progress_bar {
+    my ( $got, $total, $width, $char ) = @_;
+    my $show_bfile;
+    $width ||= 25; $char ||= '=';
+    my $num_width = length $total;
+    my $len_bfile = length $bfile;
+    if ("$len_bfile" >= "12") {
+			$show_bfile = substr($bfile,0,12)."...";
+		} else {
+			$show_bfile = $bfile;
+		} 
+    sprintf "$show_bfile [%-${width}s] Got %${num_width}s bytes of %s (%.2f%%)\r", $char x (($width-1)*$got/$total). '>', $got, $total, 100*$got/+$total;
 }
 
 1;

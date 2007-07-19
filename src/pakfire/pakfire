@@ -4,7 +4,7 @@
 	
 	my $interactive = 1;
 	
-	&Pakfire::logger("### IPFire Pakfire $Conf::version started!");
+	&Pakfire::logger("PAKFIRE INFO: IPFire Pakfire $Conf::version started!");
 	&Pakfire::checkcryptodb;
 
 	### Check if we are running as root
@@ -12,27 +12,18 @@
 	my $user = qx(whoami);
 	chomp($user);
 	unless ( "$user" eq "root" ) {
-	  &Pakfire::message("You must run pakfire as user root!");
+	  &Pakfire::message("PAKFIRE ERROR: You must run pakfire as user root!");
 	  exit 1;
 	}
-	
-	### Check if there are running some other pakfire processes
-	#
-	#my $return = `pidof pakfire`;
-	#chomp($return);
-	#if ($return) {
-	#	&Pakfire::message("There are running some other pakfire processes...");
-	#	exit 1;
-	#}
 	
 	### Check if we are started by another name
 	#
 	if ( $0 =~ /pakfire-update$/ ) {
-		&Pakfire::message("Running an update started by fcron.");
+		&Pakfire::message("CRON INFO: Running an update");
 		$ARGV[0] = "update";
 		$interactive = 0;
 	} elsif ( $0 =~ /pakfire-upgrade$/ ) {
-		&Pakfire::message("Running an upgrade started by fcron.");
+		&Pakfire::message("CRON INFO: Running an upgrade");
 		$ARGV[0] = "upgrade";
 		$interactive = 0;
 	}
@@ -71,7 +62,7 @@
 			unless ("$pak" =~ "^-") {
 				$return = &Pakfire::isinstalled($pak);
 				if ($return eq 0) {
-					&Pakfire::message("Package $pak is already installed.");
+					&Pakfire::message("PAKFIRE INFO: $pak is already installed");
 					next; 
 				}
 				$found = 0;
@@ -89,35 +80,37 @@
 						break;
 					}
 				}
-				&Pakfire::message("");
-				&Pakfire::message("The pak \"$pak\" is not known. Please try running \"pakfire update\".") if ($found == 0);
+				if ($found == 0) {
+					&Pakfire::message("");
+					&Pakfire::message("PAKFIRE WARN: The pak \"$pak\" is not known. Please try running \"pakfire update\".");
+				}
 			}
 		}
 		
 		unless (@paks) {
-			&Pakfire::message("No packages to install. Exiting...");
+			&Pakfire::message("PAKFIRE ERROR: No packages to install. Exiting...");
 			exit 1;
 		}
 
 		&Pakfire::message("");
 		&Pakfire::message("");
-		&Pakfire::message("### Packages to install:");
+		&Pakfire::message("PAKFIRE INFO: Packages to install:");
 		foreach $pak (sort @paks) {
 		  my $size = &Pakfire::getsize("$pak");
 			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("# $pak  \t\t - $size");
+		  &Pakfire::message("PAKFIRE INFO: $pak  \t\t - $size");
 		}
 		
 		if (@deps) {
 			my %sort = map{ $_, 1 } @deps;
 			@deps = sort keys %sort;
 			&Pakfire::message("");
-			&Pakfire::message("### Packages to install for dependencies:");
+			&Pakfire::message("PAKFIRE INFO: Packages to install for dependencies:");
 		}
 		foreach $dep (sort @deps) {
 		  my $size = &Pakfire::getsize("$dep");
 			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("# $dep  \t\t - $size");
+		  &Pakfire::message("PAKFIRE INFO: $dep  \t\t - $size");
 		}
 		
 		my $totalsize;
@@ -126,18 +119,20 @@
 		}
 		$totalsize = &Pakfire::beautifysize($totalsize);
 		&Pakfire::message("");
-		&Pakfire::message("### Total size: \t ~ $totalsize");
+		&Pakfire::message("PAKFIRE INFO: Total size: \t ~ $totalsize");
 		&Pakfire::message("");
 		
 		if ($interactive) {
-		  &Pakfire::message("Is this okay? [y/N]");
+		  &Pakfire::message("PAKFIRE INFO: Is this okay? [y/N]");
 			my $ret = <STDIN>;
 			chomp($ret);
-			&Pakfire::logger("Answer: $ret");
+			&Pakfire::logger("PAKFIRE INFO: Answer: $ret");
 			if ( $ret ne "y" ) {
-			  &Pakfire::message("Installation aborted.");
+			  &Pakfire::message("PAKFIRE ERROR: Installation aborted.");
 			  exit 1;
 			}
+		} else {
+			&Pakfire::logger("PAKFIRE INFO: Interaction skipped.");
 		}
 		
 		my %sort = map{ $_, 1 } @all;
@@ -145,7 +140,6 @@
 
 		### Download first
 		foreach $pak (sort @all) {
-			&Pakfire::message("# --> Downloading: $pak");
 			&Pakfire::getpak("$pak", "");
 		}
 
@@ -163,7 +157,7 @@
 			unless ("$pak" =~ "^-") {
 				$return = &Pakfire::isinstalled($pak);
 				if ($return ne 0) {
-					&Pakfire::message("Package $pak is not installed.");
+					&Pakfire::message("PAKFIRE WARN: $pak is not installed");
 					next;
 				}
 			
@@ -173,7 +167,7 @@
 		}
 		
 		unless (@paks) {
-			&Pakfire::message("No packages to remove. Exiting...");
+			&Pakfire::message("PAKFIRE ERROR: No packages to remove. Exiting...");
 			exit 1;
 		}
 		
@@ -237,7 +231,6 @@
 		
 		### Download first
 		foreach (sort @upgradepaks) {
-			&Pakfire::message("# --> Downloading: $_");
 			&Pakfire::getpak("$_", "");
 		}
 		
@@ -253,9 +246,9 @@
 			next if ("$_" eq "resolvedeps");
 			&Pakfire::resolvedeps("$_");
 		}
-		
 	} else {
 		&Pakfire::usage;
 	}
-	
+
+&Pakfire::message("");
 exit 0;
