@@ -636,7 +636,8 @@ print <<END
   ;;
   clear|stop)
 	### RESET EVERYTHING TO A KNOWN STATE
-	killall -9 qosd
+	killall qosd
+	(sleep 3 && killall -9 qosd &>/dev/null) &
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root
