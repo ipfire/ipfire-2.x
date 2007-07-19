@@ -15,12 +15,17 @@ $Minuten = sprintf("%02d", $Minuten);
 
 if ($ARGV[0] eq 'include') {
   &createinclude;
-    my @files = `find / -name *.log 2>/dev/null`;
+    my @files = `find / -name *.log* 2>/dev/null`;
+    foreach (@files){
+      push(@include,$_);
+     }
+    my @files = `find /var/log/ -name *messages* 2>/dev/null`;
     foreach (@files){
       push(@include,$_);
      }
   open(DATEI, ">/tmp/include") || die "Could not save temp include file";
   print DATEI @include;
+  print "/var/log/messages";
   close(DATEI);
   system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
   system("rm /tmp/include");

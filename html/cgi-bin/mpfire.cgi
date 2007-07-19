@@ -112,7 +112,7 @@ print DATEI @temp;
 close(DATEI);
 $message=system("/usr/local/bin/mpfirectrl playall");
 }
-elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);}
+elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);}
 
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ####################################

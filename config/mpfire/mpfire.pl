@@ -9,7 +9,7 @@ require "${General::swroot}/header.pl";
 
 my $filename = "";
 my %songs = "";
-my $debug = 0;
+my $debug = 1;
 
 if ($ARGV[0] eq 'scan') {
 my $command = "find ";
@@ -135,7 +135,7 @@ sub getExistingSongs(){
 sub checkplaylist(){
  my $Datei = "/var/ipfire/mpfire/playlist";
  my @Info = stat($Datei);
- if ( $Info[7] eq '' ){print "There is no playlist";exit(1);}
+ if ( $Info[7] eq '' || $Info[7] eq '0' ){print "There is no playlist";exit(1);}
 }
 
 sub checkm3u(){

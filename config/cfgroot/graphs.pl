@@ -233,7 +233,7 @@ sub updatediskgraph {
         "COMMENT:$Lang::tr{'average'}",
         "COMMENT:$Lang::tr{'current'}\\j",
         "GPRINT:read:MAX:$Lang::tr{'read sectors'}\\:%8.0lf",
-        "GPRINT:read:AVERAGE:$$Lang::tr{'read sectors'}\\:%8.0lf",
+        "GPRINT:read:AVERAGE:$Lang::tr{'read sectors'}\\:%8.0lf",
         "GPRINT:read:LAST:$Lang::tr{'read sectors'}\\:%8.0lf\\j",
         "GPRINT:write:MAX:$Lang::tr{'written sectors'}\\:%8.0lf",
         "GPRINT:write:AVERAGE:$Lang::tr{'written sectors'}\\:%8.0lf",

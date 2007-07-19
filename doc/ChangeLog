@@ -1,4 +1,194 @@
 ------------------------------------------------------------------------
+r711 | ms | 2007-07-19 21:04:04 +0400 (Thu, 19 Jul 2007) | 6 lines
+
+Asynchrones Syslogging aktiviert (Performancegruende)
+Cron.log deaktiviert.
+Pakfire hat eine eigene Logdatei bekommen.
+Grosse Dateien und Logs des Pakfire werden ausgelagert auf /var.
+qosd sollte nun besser gekillt werden. Hartnaeckiger Bursche.
+
+------------------------------------------------------------------------
+r710 | ms | 2007-07-19 20:18:32 +0400 (Thu, 19 Jul 2007) | 3 lines
+
+Pakfire ist jetzt bunt und schoen zu bedienen.
+Es fehlt noch die Abhaengigkeitsaufloesung bei der Uninstallation.
+
+------------------------------------------------------------------------
+r709 | ms | 2007-07-19 17:43:48 +0400 (Thu, 19 Jul 2007) | 2 lines
+
+Buildreihenfolge geaendert, damit asterisk den chan_alsa baut.
+
+------------------------------------------------------------------------
+r708 | ms | 2007-07-19 15:02:54 +0400 (Thu, 19 Jul 2007) | 3 lines
+
+Das zttool benoetigt libnewt, welche aber noch nicht zur Verfuegung steht.
+Vielleicht kommen wir ja ohne das Tool aus.
+
+------------------------------------------------------------------------
+r707 | ms | 2007-07-19 04:48:03 +0400 (Thu, 19 Jul 2007) | 4 lines
+
+Und wieder den Packfire erweitert. Diesesmal:
+* Fortschrittsbalken beim Download
+* Einheitliche und strukturierte Fehler- und Logging-Meldungen
+
+------------------------------------------------------------------------
+r706 | ms | 2007-07-19 02:03:07 +0400 (Thu, 19 Jul 2007) | 6 lines
+
+Die Mindestgröße des Dateisystems nochmal reduziert für die Installation 
+auf einer 1GB CompactFlash-IDE-Karte.
+Das hier erfordert nochmal eine genauere Untersuchung und die Umsetzung 
+einer besseren Berechnung der Mindestgrößen der Partitionen sowie einige 
+erweiterte Einstellungen zur swap-Partition.
+
+------------------------------------------------------------------------
+r705 | ms | 2007-07-18 19:55:47 +0400 (Wed, 18 Jul 2007) | 2 lines
+
+n gaaaanz frischer Asterisk und n gut aufgemotzter Kernel
+
+------------------------------------------------------------------------
+r704 | ms | 2007-07-18 14:04:26 +0400 (Wed, 18 Jul 2007) | 4 lines
+
+Clamav-Update
+Einige Aenderungen rueckgaengig gemacht...
+Bisschen Pakfire gemacht...
+
+------------------------------------------------------------------------
+r703 | maniacikarus | 2007-07-18 00:42:52 +0400 (Wed, 18 Jul 2007) | 2 lines
+
+Kleine Commits um ein paar Fehlermeldungen zu unterdruecken
+
+------------------------------------------------------------------------
+r702 | maniacikarus | 2007-07-17 23:39:18 +0400 (Tue, 17 Jul 2007) | 5 lines
+
+MPFire erweitert
+Samba etwas angepasst
+Pakfire ueberfluessigen Text entfernt
+Tripwire Policy angepasst
+
+------------------------------------------------------------------------
+r701 | ms | 2007-07-16 22:00:55 +0400 (Mon, 16 Jul 2007) | 2 lines
+
+Ein Commit damit der Heiner weiterbauen kann...
+
+------------------------------------------------------------------------
+r700 | ms | 2007-07-16 04:39:38 +0400 (Mon, 16 Jul 2007) | 2 lines
+
+Ein ueberfluessiges Paket entfernt.
+
+------------------------------------------------------------------------
+r699 | ms | 2007-07-16 04:32:00 +0400 (Mon, 16 Jul 2007) | 2 lines
+
+Ein Syntax-Fix zum FTP-Upload.
+
+------------------------------------------------------------------------
+r698 | ms | 2007-07-16 04:20:58 +0400 (Mon, 16 Jul 2007) | 2 lines
+
+Fake-resolv.conf eingefuegt.
+
+------------------------------------------------------------------------
+r697 | ms | 2007-07-16 04:12:10 +0400 (Mon, 16 Jul 2007) | 6 lines
+
+Alte Buildroot-Dateien entfernt.
+Kernelconfig erweitert für Flash-Devices.
+losetup ins Installationssystem kompiliert.
+Das Buildscript kann nun selbstständig auch auf andere Ports als 21 
+hochladen...
+
+------------------------------------------------------------------------
+r696 | maniacikarus | 2007-07-15 18:44:24 +0400 (Sun, 15 Jul 2007) | 3 lines
+
+Makefile angepasst fuer backupctrl
+Menueeintraege fuer mpfire und backup
+
+------------------------------------------------------------------------
+r695 | ms | 2007-07-15 18:16:07 +0400 (Sun, 15 Jul 2007) | 2 lines
+
+Ich wuerde mal sagen, dass das ext3-Dateisystem nun geht. :D
+
+------------------------------------------------------------------------
+r694 | ms | 2007-07-15 16:51:24 +0400 (Sun, 15 Jul 2007) | 2 lines
+
+Clamav-Update und 2 Fixes.
+
+------------------------------------------------------------------------
+r693 | ms | 2007-07-15 15:30:12 +0400 (Sun, 15 Jul 2007) | 2 lines
+
+OpenSwan aktualisiert, da in der alten Version ein Fehler mit dem PPPoE vorlag.
+
+------------------------------------------------------------------------
+r692 | ms | 2007-07-15 13:40:12 +0400 (Sun, 15 Jul 2007) | 3 lines
+
+VPN-Watch ueberprueft nun ob der Tunnel da ist und nicht der ISAKMP.
+VPN-Restart gekillt.
+
+------------------------------------------------------------------------
+r691 | ms | 2007-07-15 13:36:06 +0400 (Sun, 15 Jul 2007) | 2 lines
+
+Nochma n Fix...
+
+------------------------------------------------------------------------
+r690 | maniacikarus | 2007-07-15 12:37:20 +0400 (Sun, 15 Jul 2007) | 2 lines
+
+Und wieder ein commit da ich heute so fleissig bin :D
+
+------------------------------------------------------------------------
+r689 | maniacikarus | 2007-07-15 11:58:51 +0400 (Sun, 15 Jul 2007) | 2 lines
+
+Doch noch ein paar alte Config Types gefunden
+
+------------------------------------------------------------------------
+r688 | maniacikarus | 2007-07-15 11:33:07 +0400 (Sun, 15 Jul 2007) | 5 lines
+
+Control Skripe korrigiert
+Pakfire 2sprachig gemacht
+MPFire Gui erweitert
+Language Missings bereinigt
+
+------------------------------------------------------------------------
+r687 | ms | 2007-07-15 01:45:00 +0400 (Sun, 15 Jul 2007) | 3 lines
+
+Fuer unsere speziellen IPCop-Freunde...
+Liebe Gruesse.
+
+------------------------------------------------------------------------
+r686 | ms | 2007-07-15 00:45:36 +0400 (Sun, 15 Jul 2007) | 3 lines
+
+Rollback des SSL, weils nen netten Fehler mit dem SSH gibt.
+Und noch das komische resetusb geloescht, was keine Funktion mehr besitzt.
+
+------------------------------------------------------------------------
+r685 | casemaster | 2007-07-14 21:22:40 +0400 (Sat, 14 Jul 2007) | 2 lines
+
+Namen der Netzwerkkarten können jetzt geändert werden.
+
+------------------------------------------------------------------------
+r684 | maniacikarus | 2007-07-14 16:25:46 +0400 (Sat, 14 Jul 2007) | 2 lines
+
+Die beiden CTRL Dateien nochmal angepasst
+
+------------------------------------------------------------------------
+r683 | maniacikarus | 2007-07-14 13:52:29 +0400 (Sat, 14 Jul 2007) | 3 lines
+
+Aenderungen am VPN Watch
+Language Einstellungen in der Graph.pl
+
+------------------------------------------------------------------------
+r682 | maniacikarus | 2007-07-13 22:49:27 +0400 (Fri, 13 Jul 2007) | 8 lines
+
+Fuer den Urlfilter ein Background Image gemacht
+MPFire erweitert
+Samba Pagerefresh korrigiert
+Tripwire Pagerefreh korrigiert
+Backup CGI sollte jetzt fertig sein zum Testen
+vpnmain die beiden SHA2 Crypts entfernt
+Snort init nochmal angepasst damit die PID alleine angelegt wird
+
+------------------------------------------------------------------------
+r681 | maniacikarus | 2007-07-13 21:51:42 +0400 (Fri, 13 Jul 2007) | 2 lines
+
+Die beiden Control Dateien angepasst
+
+------------------------------------------------------------------------
 r680 | casemaster | 2007-07-13 02:57:26 +0400 (Fri, 13 Jul 2007) | 2 lines
 
 Warteschleife entfernt.
