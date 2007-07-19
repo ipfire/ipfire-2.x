@@ -98,7 +98,7 @@
 		foreach $pak (sort @paks) {
 		  my $size = &Pakfire::getsize("$pak");
 			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("PAKFIRE INFO: $pak  \t\t - $size");
+		  &Pakfire::message("PAKFIRE INFO: $pak \t - $size");
 		}
 		
 		if (@deps) {
@@ -110,7 +110,7 @@
 		foreach $dep (sort @deps) {
 		  my $size = &Pakfire::getsize("$dep");
 			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("PAKFIRE INFO: $dep  \t\t - $size");
+		  &Pakfire::message("PAKFIRE INFO: $dep \t - $size");
 		}
 		
 		my $totalsize;
@@ -143,6 +143,8 @@
 			&Pakfire::getpak("$pak", "");
 		}
 
+		&Pakfire::message("");
+
 		foreach $pak (sort @all) {
 			&Pakfire::setuppak("$pak") if ($pak ne "");
 		}
@@ -173,20 +175,20 @@
 		
 		&Pakfire::message("");
 		&Pakfire::message("");
-		&Pakfire::message("### Packages to remove:");
+		&Pakfire::message("PAKFIRE INFO: Packages to remove:");
 		foreach $pak (sort @paks) {
 		  my $size = &Pakfire::getsize("$pak");
 			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("# $pak  \t\t - $size");
+		  &Pakfire::message("PAKFIRE INFO: $pak \t - $size");
 		}
 		
 		if ($interactive) {
-		  &Pakfire::message("Is this okay? [y/N]");
+		  &Pakfire::message("PAKFIRE INFO: Is this okay? [y/N]");
 			my $ret = <STDIN>;
 			chomp($ret);
-			&Pakfire::logger("Answer: $ret");
+			&Pakfire::logger("PAKFIRE INFO: Answer: $ret");
 			if ( $ret ne "y" ) {
-			  &Pakfire::message("Installation aborted.");
+			  &Pakfire::message("PAKFIRE ERROR: Installation aborted.");
 			  exit 1;
 			}
 		}
@@ -216,14 +218,14 @@
 		
 		if (@upgradepaks) {
 			&Pakfire::message("");
-			&Pakfire::message("We are going to install all packages listed above.");
+			&Pakfire::message("PAKFIRE UPGR: We are going to install all packages listed above.");
 			if ($interactive) {
-			  &Pakfire::message("Is this okay? [y/N]");
+			  &Pakfire::message("PAKFIRE INFO: Is this okay? [y/N]");
 				my $ret = <STDIN>;
 				chomp($ret);
-				&Pakfire::logger("Answer: $ret");
+				&Pakfire::logger("PAKFIRE INFO: Answer: $ret");
 				if ( $ret ne "y" ) {
-				  &Pakfire::message("Installation aborted.");
+				  &Pakfire::message("PAKFIRE ERROR: Installation aborted.");
 				  exit 1;
 				}
 			}
@@ -250,5 +252,6 @@
 		&Pakfire::usage;
 	}
 
-&Pakfire::message("");
+&Pakfire::logger("PAKFIRE INFO: Pakfire has finished. Closing.");
+
 exit 0;

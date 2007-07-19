@@ -14,6 +14,26 @@ use Net::Ping;
 
 package Pakfire;
 
+# A small color-hash :D
+my %color;
+	$color{'normal'}      = "\033[0m"; 
+	$color{'black'}       = "\033[0;30m";
+	$color{'darkgrey'}    = "\033[1;30m";
+	$color{'blue'}        = "\033[0;34m";
+	$color{'lightblue'}   = "\033[1;34m";
+	$color{'green'}       = "\033[0;32m";
+	$color{'lightgreen'}  = "\033[1;32m";
+	$color{'cyan'}        = "\033[0;36m";
+	$color{'lightcyan'}   = "\033[1;36m";
+	$color{'red'}         = "\033[0;31m";
+	$color{'lightred'}    = "\033[1;31m";
+	$color{'purple'}      = "\033[0;35m";
+	$color{'lightpurple'} = "\033[1;35m";
+	$color{'brown'}       = "\033[0;33m";
+	$color{'lightgrey'}   = "\033[0;37m";
+	$color{'yellow'}      = "\033[1;33m";
+	$color{'white'}       = "\033[1;37m";
+
 my $final_data;
 my $total_size;
 my $bfile;
@@ -23,8 +43,25 @@ my %pakfiresettings = ();
 
 sub message {
 	my $message = shift;
-	print "$message\n";
+		
 	logger("$message");
+	if ("$message" =~ /ERROR/) {
+		$message = "$color{'red'}$message$color{'normal'}";
+	} elsif ("$message" =~ /INFO/) {
+		$message = "$color{'cyan'}$message$color{'normal'}";
+	} elsif ("$message" =~ /WARN/) {
+		$message = "$color{'yellow'}$message$color{'normal'}";
+	} elsif ("$message" =~ /RESV/) {
+		$message = "$color{'purple'}$message$color{'normal'}";
+	} elsif ("$message" =~ /INST/) {
+		$message = "$color{'green'}$message$color{'normal'}";
+	} elsif ("$message" =~ /REMV/) {
+		$message = "$color{'lightred'}$message$color{'normal'}";
+	} elsif ("$message" =~ /UPGR/) {
+		$message = "$color{'lightblue'}$message$color{'normal'}";
+	}
+	print "$message\n";
+	
 }
 
 sub logger {
@@ -128,10 +165,10 @@ sub fetchfile {
 		}
 		
 		if ($response->is_success) {
-			if (open(FILE, ">$Conf::tmpdir/$bfile")) {
-				print FILE $final_data;
-				close(FILE);
-				unless ($bfile =~ /^counter\?.*/) { # Don't check out counterfile cause it's empty
+			unless ($bfile =~ /^counter\?.*/) {
+				if (open(FILE, ">$Conf::tmpdir/$bfile")) {
+					print FILE $final_data;
+					close(FILE);
 					logger("DOWNLOAD INFO: File received. Start checking signature...");
 					if (system("gpg --verify \"$Conf::tmpdir/$bfile\" &>/dev/null") eq 0) {
 						logger("DOWNLOAD INFO: Signature of $bfile is fine.");
@@ -140,12 +177,14 @@ sub fetchfile {
 						message("DOWNLOAD ERROR: The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
 						exit 1;
 					}
+					logger("DOWNLOAD FINISHED: $file");
+					$allok = 1;
+					return 0;
+				} else {
+					logger("DOWNLOAD ERROR: Could not open $Conf::cachedir/$bfile for writing.");
 				}
-				logger("DOWNLOAD FINISHED: $file") unless ($bfile =~ /^counter\?.*/);
-				$allok = 1;
-				return 0;
 			} else {
-				logger("DOWNLOAD ERROR: Could not open $Conf::cachedir/$bfile for writing.");
+				return 0;
 			}
 		}	else {
 			logger("DOWNLOAD ERROR: $log");
@@ -234,8 +273,7 @@ sub dbgetlist {
 		$age = "86401";
 	}
 	
-	if (("$age" gt 86400) || ("$force" eq "force")) {
-		#cleanup();
+	if (("$age" gt "86400") || ("$force" eq "force")) {
 		fetchfile("lists/packages_list.db", "");
 		move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
 	}
@@ -324,8 +362,7 @@ sub resolvedeps {
 	
 	getmetafile("$pak");
 	
-	message("");
-	message("## Resolving dependencies for $pak...");
+	message("PAKFIRE RESV: $pak: Resolving dependencies...");
 	
 	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
 	my @file = <FILE>;
@@ -344,9 +381,9 @@ sub resolvedeps {
 		if ($_) {
 		  my $return = &isinstalled($_);
 		  if ($return eq 0) {
-		  	message("### Dependency is already installed: $_");
+		  	message("PAKFIRE RESV: $pak: Dependency is already installed: $_");
 		  } else {
-		  	message("### Need to install dependency: $_");
+		  	message("PAKFIRE RESV: $pak: Need to install dependency: $_");
 				push(@tempdeps,$_);
 				push(@all,$_);
 			} 
@@ -360,15 +397,16 @@ sub resolvedeps {
 				unless (($_ eq " ") || ($_ eq "")) {
 					my $return = &isinstalled($_);
 					if ($return eq 0) {
-						message("### Dependency is already installed: $_");
+						message("PAKFIRE RESV: $pak: Dependency is already installed: $_");
 					} else {
-						message("### Need to install dependency: $_");
+						message("PAKFIRE RESV: $pak: Need to install dependency: $_");
 						push(@all,$_);
 					}
 				}
 			}
 		}
 	}
+	message("");
 	chomp (@all);
 	return @all;
 }
@@ -376,6 +414,8 @@ sub resolvedeps {
 sub cleanup {
 	my $dir = shift;
 	my $path;
+	
+	logger("CLEANUP: $dir");
 	
 	if ( "$dir" eq "meta" ) {
 		$path = "$Conf::dbdir/meta";
@@ -444,7 +484,7 @@ sub decryptpak {
 	my $file = getpak("$pak", "noforce");
 	
 	logger("DECRYPT STARTED: $pak");
-	my $return = system("cd $Conf::tmpdir/ && gpg -d < $Conf::cachedir/$file | tar x &>/dev/null");
+	my $return = system("cd $Conf::tmpdir/ && gpg -d --batch --quiet --no-verbose --status-fd 2 --output - < $Conf::cachedir/$file 2>/dev/null | tar x");
 	$return %= 255;
 	logger("DECRYPT FINISHED: $pak - Status: $return");
 	if ($return != 0) { exit 1; }
@@ -489,12 +529,10 @@ sub getpak {
 sub setuppak {
 	my $pak = shift;
 	
-	message("################################################################################");
-	message("# --> Installing: $pak");
-	message("################################################################################");
-	
+	message("PAKFIRE INST: $pak: Decrypting...");
 	decryptpak("$pak");
 	
+	message("PAKFIRE INST: $pak: Copying files and running post-installation scripts...");
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
 	$return %= 255;
 	if ($pakfiresettings{'UUID'} ne "off") {
@@ -504,10 +542,10 @@ sub setuppak {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
 	  copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
-		message("Setup completed. Congratulations!");
-		message("################################################################################");
+		message("PAKFIRE INST: $pak: Finished.");
+		message("");
 	} else {
-		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
+		message("PAKFIRE ERROR: Returncode: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
 	}
 	return $return;
@@ -526,10 +564,10 @@ sub isinstalled {
 sub upgradepak {
 	my $pak = shift;
 
-	message("We are going to upgrade: $pak");
-
+	message("PAKFIRE UPGR: $pak: Decrypting...");
 	decryptpak("$pak");
 
+	message("PAKFIRE UPGR: $pak: Upgrading files and running post-upgrading scripts...");
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./update.sh >> $Conf::logdir/update-$pak.log 2>&1");
 	$return %= 255;
 	if ($pakfiresettings{'UUID'} ne "off") {
@@ -539,9 +577,10 @@ sub upgradepak {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
 		copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
-		message("Upgrade completed. Congratulations!");
+		message("PAKFIRE UPGR: $pak: Finished.");
+		message("");
 	} else {
-		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
+		message("PAKFIRE ERROR: Returncode: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
 	}
 	return $return;
@@ -550,10 +589,10 @@ sub upgradepak {
 sub removepak {
 	my $pak = shift;
 
-	message("We are going to uninstall: $pak");
-
+	message("PAKFIRE REMV: $pak: Decrypting...");
 	decryptpak("$pak");
 
+	message("PAKFIRE REMV: $pak: Removing files and running post-removing scripts...");
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./uninstall.sh >> $Conf::logdir/uninstall-$pak.log 2>&1");
 	$return %= 255;
 	if ($pakfiresettings{'UUID'} ne "off") {
@@ -563,7 +602,6 @@ sub removepak {
 	  open(FILE, "<$Conf::dbdir/rootfiles/$pak");
 		my @file = <FILE>;
 		close(FILE);
-		message("Removing files...");
 		foreach (@file) {
 		  my $line = $_;
 		  chomp($line);
@@ -572,11 +610,11 @@ sub removepak {
 		}
 	  unlink("$Conf::dbdir/rootfiles/$pak");
 	  unlink("$Conf::dbdir/installed/meta-$pak");
-	  message("Finished removing files!");
 	  cleanup("tmp");
-		message("Uninstall completed. Congratulations!");
+		message("PAKFIRE REMV: $pak: Finished.");
+		message("");
 	} else {
-		message("Setup returned: $return. Sorry. Please search our forum to find a solution for this problem.");
+		message("PAKFIRE ERROR: Returncode: $return. Sorry. Please search our forum to find a solution for this problem.");
 		exit $return;
 	}
 	return $return;
@@ -584,14 +622,17 @@ sub removepak {
 
 sub beautifysize {
 	my $size = shift;
-	$size = $size / 1024;
+	#$size = $size / 1024;
 	my $unit;
 	
-	if ($size > 1023) {
-	  $size = ($size / 1024);
+	if ($size > 1023*1024) {
+	  $size = ($size / (1024*1024));
 	  $unit = "MB";
-	} else {
+	} elsif ($size > 1023) {
+	  $size = ($size / 1024);
 	  $unit = "KB";
+	} else {
+	  $unit = "B";
 	}
 	$size = sprintf("%.2f" , $size);
 	my $string = "$size $unit";
@@ -641,21 +682,21 @@ sub checkcryptodb {
 sub callback {
    my ($data, $response, $protocol) = @_;
    $final_data .= $data;
-   print progress_bar( length($final_data), $total_size, 25, '=' );
+   print progress_bar( length($final_data), $total_size, 30, '=' );
 }
 
 sub progress_bar {
     my ( $got, $total, $width, $char ) = @_;
     my $show_bfile;
-    $width ||= 25; $char ||= '=';
-    my $num_width = length $total;
+    $width ||= 30; $char ||= '=';
     my $len_bfile = length $bfile;
-    if ("$len_bfile" >= "12") {
-			$show_bfile = substr($bfile,0,12)."...";
+    if ("$len_bfile" >= "17") {
+			$show_bfile = substr($bfile,0,17)."...";
 		} else {
 			$show_bfile = $bfile;
-		} 
-    sprintf "$show_bfile [%-${width}s] Got %${num_width}s bytes of %s (%.2f%%)\r", $char x (($width-1)*$got/$total). '>', $got, $total, 100*$got/+$total;
+		}	
+		$progress = sprintf("%.2f%%", 100*$got/+$total);
+    sprintf "$color{'lightgreen'}%-20s %7s |%-${width}s| %10s$color{'normal'}\r",$show_bfile, $progress, $char x (($width-1)*$got/$total). '>', beautifysize($got);
 }
 
 1;
