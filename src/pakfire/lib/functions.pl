@@ -66,7 +66,10 @@ sub message {
 
 sub logger {
 	my $log = shift;
-	system("logger -f /var/log/pakfire.log -t pakfire \"$log\"") if "$log";
+	if ($log) {
+		system("echo \"`date`: $log\" >> /var/log/pakfire.log");
+		#system("logger -t pakfire \"$log\"");
+	}
 }
 
 sub usage {

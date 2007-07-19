@@ -39,7 +39,7 @@ SIG_HI        = 100 ;                # Critical files that are significant point
   /sbin                            -> $(SEC_CRIT) ;
   /usr                             -> $(SEC_CRIT) ;
   !/usr/src                                       ;
-  !usr/share/clamav                               ;
+  !/usr/share/clamav                               ;
   /etc/mtab                        -> $(SEC_CONFIG) -i ; # Inode number changes on any mount/unmount
 
   #don't scan the individual reports

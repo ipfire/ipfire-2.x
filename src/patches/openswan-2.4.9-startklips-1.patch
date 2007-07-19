@@ -1,0 +1,52 @@
+--- /usr/lib/ipsec/_startklips_old	2007-07-16 04:14:15.000000000 +0000
++++ /usr/lib/ipsec/_startklips	2007-07-19 22:12:37.000000000 +0000
+@@ -104,23 +104,23 @@
+ 
+ 	# figure out ifconfig for interface
+ 	addr=
+-	eval `ifconfig $phys |
+-		awk '$1 == "inet" && $2 ~ /^addr:/ && $NF ~ /^Mask:/ {
+-			gsub(/:/, " ", $0)
+-			print "addr=" $3
+-			other = $5
+-			if ($4 == "Bcast")
+-				print "type=broadcast"
+-			else if ($4 == "P-t-P")
+-				print "type=pointopoint"
+-			else if (NF == 5) {
+-				print "type="
+-				other = ""
+-			} else
+-				print "type=unknown"
+-			print "otheraddr=" other
+-			print "mask=" $NF
+-		}'`
++	eval `ip addr show red0 | awk '$1 == "inet"  { gsub(/\//, " "); 
++				print "addr=" $2;
++				print "mask=" $3;
++				print "otheraddr=" $5;
++			}'`
++	eval `ip addr show red0 | awk '$3 ~ /BROADCAST|POINTTOPOINT/ { 
++				if ($3 ~ /BROADCAST/) 
++					print "type=broadcast"; 
++				else if ($3 ~ /POINTTOPOINT/) 
++					print "type=pointtopoint";
++				else {
++					print "type=";
++					print "otheraddr=";
++				}
++			}'`
++	eval `whatmask /$mask | awk -F': ' '$1 ~ /^Netmask =/ { print "mask=" $2 }'`
++	
+ 	if test " $addr" = " "
+ 	then
+ 		echo "unable to determine address of \`$phys'"
+@@ -129,7 +129,7 @@
+ 	if test " $type" = " unknown"
+ 	then
+ 		echo "\`$phys' is of an unknown type"
+-		exit 1
++		exit 1 
+ 	fi
+ 	if test " $omtu" != " "
+ 	then

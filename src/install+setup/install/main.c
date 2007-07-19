@@ -159,8 +159,12 @@ int main(int argc, char *argv[])
 		if (strstr (line, "unattended") != NULL) {
 		    unattended = 1;
 		}
-		// Loading the cdrom-filesystem
+		// Loading the cdrom-filesystem and ext2
 		mysystem("/sbin/modprobe iso9660");
+		mysystem("/sbin/modprobe ext2");
+		
+		// Loading the via_rhine driver because it isn't detected correctly
+		mysystem("/sbin/modprobe via_rhine");
 	}
 
 	if (unattended) {

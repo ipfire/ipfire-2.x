@@ -1,3 +1,6 @@
+#usr/local/bin/applejuicectrl
+usr/local/bin/backupctrl
+#usr/local/bin/clamavctrl
 usr/local/bin/dhcpctrl
 usr/local/bin/extrahdctrl
 usr/local/bin/getipstat
@@ -6,12 +9,13 @@ usr/local/bin/ipfirereboot
 usr/local/bin/ipsecctrl
 usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
+#usr/local/bin/mpfirectrl
 usr/local/bin/openvpnctrl
 usr/local/bin/outgoingfwctrl
+usr/local/bin/pakfire
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
-usr/local/bin/pakfire
 usr/local/bin/restartssh
 usr/local/bin/restartsyslogd
 usr/local/bin/restartwireless
@@ -25,4 +29,5 @@ usr/local/bin/smartctrl
 usr/local/bin/snortctrl
 usr/local/bin/squidctrl
 usr/local/bin/timectrl
+#usr/local/bin/tripwirectrl
 usr/local/bin/upnpctrl
