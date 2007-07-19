@@ -496,18 +496,20 @@ buildipfire() {
   ipfiremake clamav
   ipfiremake spamassassin
   ipfiremake amavisd
-  ipfiremake stund
-  ipfiremake libpri
-# ipfiremake bristuff
-  ipfiremake asterisk
+  ipfiremake alsa
   ipfiremake mpg123
   ipfiremake mpfire
-  ipfiremake backup
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis
   ipfiremake lame
   ipfiremake sox
+  ipfiremake mp3blaster
+  ipfiremake libpri
+  ipfiremake stund
+# ipfiremake bristuff
+  ipfiremake asterisk
+  ipfiremake backup
   ipfiremake gnump3d
   ipfiremake libsigc++
   ipfiremake applejuice
@@ -532,8 +534,6 @@ buildipfire() {
   ipfiremake tripwire
   ipfiremake sysstat
   ipfiremake vsftpd
-  ipfiremake alsa
-  ipfiremake mp3blaster
   ipfiremake which
   ipfiremake lsof
 }
