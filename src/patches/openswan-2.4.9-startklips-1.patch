@@ -21,12 +21,12 @@
 -			print "otheraddr=" other
 -			print "mask=" $NF
 -		}'`
-+	eval `ip addr show red0 | awk '$1 == "inet"  { gsub(/\//, " "); 
++	eval `ip addr show $phys | awk '$1 == "inet"  { gsub(/\//, " "); 
 +				print "addr=" $2;
 +				print "mask=" $3;
 +				print "otheraddr=" $5;
 +			}'`
-+	eval `ip addr show red0 | awk '$3 ~ /BROADCAST|POINTTOPOINT/ { 
++	eval `ip addr show $phys | awk '$3 ~ /BROADCAST|POINTTOPOINT/ { 
 +				if ($3 ~ /BROADCAST/) 
 +					print "type=broadcast"; 
 +				else if ($3 ~ /POINTTOPOINT/) 

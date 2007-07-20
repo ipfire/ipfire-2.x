@@ -675,8 +675,8 @@ sub checkcryptodb {
 	unless ( "$ret" eq "0" ) {
 		message("CRYPTO WARN: The GnuPG isn't configured corectly. Trying now to fix this.");
 		message("CRYPTO WARN: It's normal to see this on first execution.");
-		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $myid &>>$Conf::logdir/gnupg-database.log");
-		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $trustid &>>$Conf::logdir/gnupg-database.log");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $myid --status-fd 2 >> $Conf::logdir/gnupg-database.log 2>&1");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $trustid --status-fd 2 >> $Conf::logdir/gnupg-database.log 2>&1");
 	} else {
 		logger("CRYPTO INFO: Database is okay");
 	}
