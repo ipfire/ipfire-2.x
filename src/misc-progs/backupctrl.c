@@ -37,11 +37,9 @@ int main(int argc, char *argv[]) {
 		    exit (1);
 		}
 		else{
-		    fprintf (stderr, "Wrong or no Argument!\n");
-		    exit (1);
+    		sprintf(add, " %s", argv[i]);
+		    strcat(command, add);
     }
-		sprintf(add, " %s", argv[i]);
-		strcat(command, add);
 	}
 	return safe_system(command);
 }

@@ -41,7 +41,7 @@ elsif ($ARGV[0] eq 'play') {
   system("/usr/bin/mpg123 -b 1024 --aggressive -q \"$ARGV[1]\" 2>/dev/null >/dev/null &");
   }
 elsif ($ARGV[0] eq 'stop') {
-  my $PID = `ps -ef \| grep wget \| grep EXTM3U \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
+  my $PID = `ps -ef \| grep "wget -qO" \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
   if ( $PID ne '' ){
    if ($debug){print "Stopping $PID\n";}
    system("kill -KILL $PID");
@@ -69,12 +69,12 @@ elsif ($ARGV[0] eq 'playall') {
   system("/usr/bin/mpg123 -b 1024 --aggressive -Zq@ /var/ipfire/mpfire/playlist 2>/dev/null >/dev/null &"); 
   }
 elsif ($ARGV[0] eq 'pause') {
-  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
+  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| grep -v "grep" \| awk '{  print \$2 }'`;
   if ($debug){print "Pausing Process $PID\n";}
   system("kill -STOP $PID");
   }
 elsif ($ARGV[0] eq 'resume') {
-  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
+  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| grep -v "grep" \| awk '{  print \$2 }'`;
   if ($debug){print "Resuming Process $PID\n";}
   system("kill -CONT $PID");
   }
@@ -84,13 +84,15 @@ elsif ($ARGV[0] eq 'next') {
   system("kill -SIGINT $PID");
   }
 elsif ($ARGV[0] eq 'song') {
-  my $song = `lsof -nX \| grep mpg123 \| grep REG \| grep mem | grep mp3 \| grep -v "sh -c"`;
+  my $song = `lsof -nX \| grep mpg123 \| grep REG \| grep mem | grep mp3 \| grep -v "sh -c" \| grep -v "grep"`;
   my @song = split(/\//,$song);
   my $i = @song;
   if ( $i == 0 ){
-  my $song = `ps -ef \| grep wget \| grep EXTM3U \| grep -v "sh -c"`;
-  my @song = split(/,/,$song);
-  print $song[1];
+  my $song = `ps -ef \| grep "wget -qO" \| grep -v "sh -c" \| grep -v "grep"`;
+  my @song = split(/http\:\/\//,$song);
+  my $temp = $song[1];
+  my @song = split(/ /,$temp);
+  print $song[0];
   }
   else { print $song[$i-1];}
   }

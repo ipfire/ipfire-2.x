@@ -153,7 +153,12 @@ print <<END
 
     <table width='95%' cellspacing='0'>
     <tr bgcolor='$color{'color20'}'>    <td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr>
-    <tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>
+END
+;
+if ( $#songdb > -1 ){
+print"<tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>";
+}
+print <<END
     <tr>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='||' /><input type='image' alt='$Lang::tr{'pause'}' title='$Lang::tr{'pause'}' src='/images/media-playback-pause.png' /></form></td>
@@ -176,7 +181,7 @@ END
 ;
 &Header::closebox();
 
-if ( $#songdb ne '0' ){
+if ( $#songdb > -1 ){
 &Header::openbox('100%', 'center', $Lang::tr{'quick playlist'});
 
 my @artist;
