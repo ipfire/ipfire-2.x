@@ -99,6 +99,38 @@ print DATEI @temp;
 close(DATEI);
 $message=system("/usr/local/bin/mpfirectrl playall");
 }
+elsif ( $mpfiresettings{'ACTION'} eq "playyear" )
+{
+my @temp = "";
+my @year = split(/\|/,$mpfiresettings{'year'});
+my %hash = map{ $_, 1 }@year;
+
+foreach (@songdb){
+  my @song = split(/\|/,$_);
+  chomp($song[0]);
+    push(@temp,$song[0]."\n") if exists $hash{$song[5]};
+  }
+open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+print DATEI @temp;
+close(DATEI);
+$message=system("/usr/local/bin/mpfirectrl playall");
+}
+elsif ( $mpfiresettings{'ACTION'} eq "playgenre" )
+{
+my @temp = "";
+my @genre = split(/\|/,$mpfiresettings{'genre'});
+my %hash = map{ $_, 1 }@genre;
+
+foreach (@songdb){
+  my @song = split(/\|/,$_);
+  chomp($song[0]);
+    push(@temp,$song[0]."\n") if exists $hash{$song[6]};
+  }
+open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+print DATEI @temp;
+close(DATEI);
+$message=system("/usr/local/bin/mpfirectrl playall");
+}
 elsif ( $mpfiresettings{'ACTION'} eq "playall" )
 {
 my @temp = "";
@@ -112,7 +144,7 @@ print DATEI @temp;
 close(DATEI);
 $message=system("/usr/local/bin/mpfirectrl playall");
 }
-elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);}
+elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);refreshpage();}
 
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ####################################
@@ -148,17 +180,15 @@ END
 my $song = qx(/usr/local/bin/mpfirectrl song);
 if ( $song eq "" ){$song = "None";}
 
+my $Volume = `/usr/local/bin/mpfirectrl volume`;
+$Volume=~s/<break>/<br \/>/g;
+
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
 print <<END
 
     <table width='95%' cellspacing='0'>
     <tr bgcolor='$color{'color20'}'>    <td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr>
-END
-;
-if ( $#songdb > -1 ){
-print"<tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>";
-}
-print <<END
+    <tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>
     <tr>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='||' /><input type='image' alt='$Lang::tr{'pause'}' title='$Lang::tr{'pause'}' src='/images/media-playback-pause.png' /></form></td>
@@ -176,23 +206,27 @@ print <<END
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='+' /><input type='image' alt='$Lang::tr{'volup5'}' title='$Lang::tr{'volup5'}' src='/images/audio-volume-high.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='++' /><input type='image' alt='$Lang::tr{'volup10'}' title='$Lang::tr{'volup10'}' src='/images/audio-volume-high-red.png' /></form></td>
     </tr>
+<tr><td colspan='5' align='center'>$Volume</td></tr>
 </table>
 END
 ;
 &Header::closebox();
 
-if ( $#songdb > -1 ){
+if ( $#songdb ne '0' ){
 &Header::openbox('100%', 'center', $Lang::tr{'quick playlist'});
 
-my @artist;
-my @album;
+my @artist; my @album;  my @genre;  my @year;
 foreach (@songdb){
   my @song = split(/\|/,$_);
-  push(@artist,$song[1]);push(@album,$song[4]);}
+  push(@artist,$song[1]);   push(@album,$song[4]);  push(@year,$song[5]);   push(@genre,$song[6]);}
   my %hash = map{ $_, 1 }@artist;
   @artist = sort keys %hash;
   my %hash = map{ $_, 1 }@album;
   @album = sort keys %hash;
+  my %hash = map{ $_, 1 }@year;
+  @year = sort keys %hash;
+  my %hash = map{ $_, 1 }@genre;
+  @genre = sort keys %hash;
 print <<END
   <table width='95%' cellspacing='0'>
   <tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - $#artist</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - $#album</b></td></tr>
@@ -201,7 +235,7 @@ print <<END
       <select name='artist' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
-  foreach (@artist){print "<option>$_</option>";}
+  foreach (@artist){if ( $_ ne '' ){print "<option>$_</option>";}}
 print <<END
       </select><br/>
       <input type='hidden' name='ACTION' value='playartist' />
@@ -212,10 +246,34 @@ print <<END
       <select name='album' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
-  foreach (@album){print "<option>$_</option>";}
+  foreach (@album){if ( $_ ne '' ){print "<option>$_</option>";}}
 print <<END
       </select><br/>
       <input type='hidden' name='ACTION' value='playalbum' />
+      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+      </form></td>
+      </tr>
+  <tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'} - $#year</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'} - $#genre</b></td></tr>
+  <tr><td align='center'>
+      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+      <select name='year' size='8' multiple='multiple' style='width:300px;'>
+END
+;
+  foreach (@year){if ( $_ ne '' ){print "<option>$_</option>";}}
+print <<END
+      </select><br/>
+      <input type='hidden' name='ACTION' value='playyear' />
+      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+      </form></td>
+      <td align='center'>
+      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+      <select name='genre' size='8' multiple='multiple' style='width:300px;'>
+END
+;
+  foreach (@genre){if ( $_ ne '' ){print "<option>$_</option>";}}
+print <<END
+      </select><br/>
+      <input type='hidden' name='ACTION' value='playgenre' />
       <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
       </form></td>
       </tr></table>

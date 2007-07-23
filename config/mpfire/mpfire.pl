@@ -10,6 +10,7 @@ require "${General::swroot}/header.pl";
 my $filename = "";
 my %songs = "";
 my $debug = 1;
+my $temp;
 
 if ($ARGV[0] eq 'scan') {
 my $command = "find ";
@@ -37,6 +38,7 @@ if ($ARGV[0] eq 'getdb') {
   }
 elsif ($ARGV[0] eq 'play') {
   &checkplaylist();
+  &checkmute();
   if ($debug){print "Yes we are called and we will play $ARGV[1]\n";}
   system("/usr/bin/mpg123 -b 1024 --aggressive -q \"$ARGV[1]\" 2>/dev/null >/dev/null &");
   }
@@ -65,6 +67,7 @@ elsif ($ARGV[0] eq 'voldown') {
   }
 elsif ($ARGV[0] eq 'playall') {
   &checkplaylist();
+  &checkmute();
   if ($debug){print "Playing everything\n";}
   system("/usr/bin/mpg123 -b 1024 --aggressive -Zq@ /var/ipfire/mpfire/playlist 2>/dev/null >/dev/null &"); 
   }
@@ -84,6 +87,7 @@ elsif ($ARGV[0] eq 'next') {
   system("kill -SIGINT $PID");
   }
 elsif ($ARGV[0] eq 'song') {
+  &checkmute();
   my $song = `lsof -nX \| grep mpg123 \| grep REG \| grep mem | grep mp3 \| grep -v "sh -c" \| grep -v "grep"`;
   my @song = split(/\//,$song);
   my $i = @song;
@@ -98,6 +102,7 @@ elsif ($ARGV[0] eq 'song') {
   }
 elsif ($ARGV[0] eq 'playweb') {
   &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+  &checkmute();
 
 			if ($proxysettings{'UPSTREAM_PROXY'}) {
 			  if ($proxysettings{'UPSTREAM_USER'}) {
@@ -115,6 +120,13 @@ elsif ($ARGV[0] eq 'playweb') {
         system("wget -qO - `wget -qO - http://$ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &");
 			}
   }
+elsif ($ARGV[0] eq 'volume') {
+ $temp = "Master - ";
+ $temp .= `amixer get Master \| tail -2 \| awk '{ print \$2" "\$5 }'`;
+ $temp .= "<break>PCM -";
+ $temp .= `amixer get PCM \| tail -2 \| awk '{ print \$2" "\$5 }'`;
+ print $temp;
+}
 
 sub getSongInfo(){
   my $mp3 = MP3::Tag->new($filename);
@@ -138,6 +150,21 @@ sub checkplaylist(){
  my $Datei = "/var/ipfire/mpfire/playlist";
  my @Info = stat($Datei);
  if ( $Info[7] eq '' || $Info[7] eq '0' ){print "There is no playlist";exit(1);}
+}
+
+sub checkmute(){
+ $temp = `amixer get Master \| tail -2`;
+  my @Master = split(/ /,$temp);
+ $temp = `amixer get PCM \| tail -2`;
+  my @PCM = split(/ /,$temp);
+ if ( $PCM[7] =~  /off/ ){
+  if ($debug){print "PCM was muted - umuting.\n";}
+  system("amixer set PCM toggle");
+  }
+ if ( $Master[7] =~ /off/ ){
+  if ($debug){print "Master was muted - umuting.\n";}
+  system("amixer set Master toggle");
+  } 
 }
 
 sub checkm3u(){

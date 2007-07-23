@@ -13,3 +13,7 @@ usr/lib/perl5/site_perl/5.8.8/MP3/Tag.pm
 usr/lib/perl5/site_perl/5.8.8/MP3/Tag/File.pm
 usr/lib/perl5/site_perl/5.8.8/MP3/Tag/ID3v1.pm
 usr/lib/perl5/site_perl/5.8.8/MP3/Tag/ID3v2.pm
+usr/lib/perl5/site_perl/5.8.8/MP3/Tag/ParseData.pm
+usr/lib/perl5/site_perl/5.8.8/MP3/Tag/LastResort.pm
+usr/lib/perl5/site_perl/5.8.8/MP3/Tag/Inf.pm
+usr/lib/perl5/site_perl/5.8.8/MP3/Tag/CDDB_File.pm

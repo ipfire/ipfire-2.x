@@ -63,4 +63,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 755 $(DIR_SRC)/config/backup/backup.pl /var/ipfire/backup/bin
 	install -v -m 644 $(DIR_SRC)/config/backup/include /var/ipfire/backup/
 	install -v -m 644 $(DIR_SRC)/config/backup/exclude /var/ipfire/backup/
+	chown nobody:nobody -R /var/ipfire/backup/
 	@$(POSTBUILD)
