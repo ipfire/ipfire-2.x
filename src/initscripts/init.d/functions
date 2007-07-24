@@ -152,12 +152,15 @@ print_error_msg()
 	boot_mesg_flush
 	boot_mesg -n "If you're able to track this"
 	boot_mesg -n " error down to a bug in one of the files provided by"
-	boot_mesg -n " the LFS book, please be so kind to inform us at"
-	boot_mesg " lfs-dev@linuxfromscratch.org.\n"
+	boot_mesg -n " ipfire, please be so kind to inform us at"
+	boot_mesg " info@ipfire.org.\n"
 	boot_mesg_flush
-	boot_mesg -n "Press Enter to continue..." ${INFO}
+	boot_mesg -n "Press Enter to continue or wait 3 minutes..." ${INFO}
 	boot_mesg "" ${NORMAL}
-	read ENTER
+	while sleep 180; do
+		read ENTER
+		break
+	done
 }
 
 check_script_status()
