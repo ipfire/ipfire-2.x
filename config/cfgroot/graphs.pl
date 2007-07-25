@@ -268,7 +268,7 @@ sub updateifgraph {
   "GPRINT:incoming:MIN:$Lang::tr{'in'}\\:%8.3lf %sBps",
   "GPRINT:incoming:LAST:$Lang::tr{'in'}\\:%8.3lf %sBps\\j",
   "GPRINT:outgoing:MAX:$Lang::tr{'out'}\\:%8.3lf %sBps",
-  "GPRINT:outgoing:AVERAGE:$$Lang::tr{'out'}\\:%8.3lf %sBps",
+  "GPRINT:outgoing:AVERAGE:$Lang::tr{'out'}\\:%8.3lf %sBps",
   "GPRINT:outgoing:MIN:$Lang::tr{'out'}\\:%8.3lf %sBps",
   "GPRINT:outgoing:LAST:$Lang::tr{'out'}\\:%8.3lf %sBps\\j");
   $ERROR = RRDs::error;

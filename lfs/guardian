@@ -1,0 +1,70 @@
+###############################################################################
+# This file is part of the IPCop Firewall.                                    #
+#                                                                             #
+# IPCop is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# IPCop is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with IPCop; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA    #
+#                                                                             #
+# Makefiles are based on LFSMake, which is                                    #
+# Copyright (C) 2002 Rod Roard <rod@sunsetsystems.com>                        #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = ipfire
+
+THISAPP    = guardian-$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = guardian
+PAK_VER    = 1.7
+
+DESCDE     = "Guardian ist Sicherheitstool, welches das Snort IDS Log auswertet und IP´s mit Hilfe von iptables block."
+DESCEN     = "Guardian is a security tool which will issue commands to the OS to block ip addresses which attacks may be coming from. Guardian requires an IDS (Intrusion detection system), and currently only works with snort."
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects =
+
+install : $(TARGET)
+
+check : 
+
+download :
+
+md5 : 
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	-mkdir -p /var/ipfire/guardian/
+	-mkdir -p /var/log/guardian/
+	touch /var/log/guardian/guardian.log
+	install -v -m 755 $(DIR_SRC)/config/guardian/guardian.conf /var/ipfire/guardian/
+	install -v -m 755 $(DIR_SRC)/config/guardian/guardian.pl /usr/local/bin/
+	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_block.sh /usr/local/bin/
+	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_unblock.sh /usr/local/bin/
+	@$(POSTBUILD)
