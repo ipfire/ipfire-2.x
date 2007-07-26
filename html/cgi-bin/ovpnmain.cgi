@@ -573,6 +573,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
     $vpnsettings{'DCOMPLZO'} = $cgiparams{'DCOMPLZO'};
     $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
+#wrtie enable
+
+  if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable_blue 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable_blue 2>/dev/null");}
+  if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable_orange 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable_orange 2>/dev/null");}
+  if ( $vpnsettings{'ENABLED'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable 2>/dev/null");}
 #new settings for daemon    
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &writeserverconf();#hier ok

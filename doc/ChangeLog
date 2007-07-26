@@ -1,4 +1,59 @@
 ------------------------------------------------------------------------
+r720 | maniacikarus | 2007-07-25 22:02:01 +0400 (Wed, 25 Jul 2007) | 2 lines
+
+Guardian Paket angefangen, zum Testen muss Snort funktionieren ...
+
+------------------------------------------------------------------------
+r719 | ms | 2007-07-25 01:02:07 +0400 (Wed, 25 Jul 2007) | 3 lines
+
+Sorry, aber so ist es deutlich schoener...
+Und es ist ja schon spaet :D
+
+------------------------------------------------------------------------
+r718 | ms | 2007-07-25 00:57:19 +0400 (Wed, 25 Jul 2007) | 3 lines
+
+Habe mal die Meldung geaendert, dass niemand die LFS-Leute informiert wenn er nen Fehler hat.
+Bei Errors wartet das System jetzt 3 Minuten und geht dann automatisch weiter, falls man per Remote neu startet...
+
+------------------------------------------------------------------------
+r717 | ms | 2007-07-24 20:33:31 +0400 (Tue, 24 Jul 2007) | 2 lines
+
+LFS-Scripts, die unbenutzt waren entfernt.
+
+------------------------------------------------------------------------
+r716 | maniacikarus | 2007-07-23 22:13:41 +0400 (Mon, 23 Jul 2007) | 3 lines
+
+Probleme mit dem Perl Modulen hoffentlich bereinigt
+MPFire liest jetzt auch Genre und Jahr aus
+
+------------------------------------------------------------------------
+r715 | maniacikarus | 2007-07-21 21:23:57 +0400 (Sat, 21 Jul 2007) | 2 lines
+
+Fixes am MPFire und an der backupctrl
+
+------------------------------------------------------------------------
+r714 | ms | 2007-07-20 19:10:19 +0400 (Fri, 20 Jul 2007) | 2 lines
+
+Pakfire und startklips Fixes.
+
+------------------------------------------------------------------------
+r713 | ms | 2007-07-20 03:20:04 +0400 (Fri, 20 Jul 2007) | 7 lines
+
+Tripwire-Policy gefixt.
+Backupctrl zur ISO gefuegt.
+Das logger-Tool loggt nicht korrekt in eine Datei.
+Unser IPSec-restart-Problem mit einem kleinem Patch behoben.
+  Das das ifconfig Fehler liefert nehmen wir IP.
+  Bitte testet dies noch einmal langfristig!!!
+
+------------------------------------------------------------------------
+r712 | maniacikarus | 2007-07-19 21:08:25 +0400 (Thu, 19 Jul 2007) | 4 lines
+
+Backupklamotte erweitert
+Fehler im Disk Graphen gefixt
+Kleine Anpassung am MPFire
+
+------------------------------------------------------------------------
 r711 | ms | 2007-07-19 21:04:04 +0400 (Thu, 19 Jul 2007) | 6 lines
 
 Asynchrones Syslogging aktiviert (Performancegruende)

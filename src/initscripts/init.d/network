@@ -123,6 +123,9 @@ case "${DO}" in
 			fi
 		fi
 		
+			boot_mesg "Setting OpenVPN if enabled"
+			/usr/local/bin/openvpnctrl -s; evaluate_retval
+			
 			boot_mesg "Starting Snort if enabled"
 			/etc/rc.d/init.d/snort start; evaluate_retval						
 		;;
@@ -157,6 +160,9 @@ case "${DO}" in
 			fi
 		fi
 		
+			boot_mesg "Stopping OpenVPN if enabled"
+			/usr/local/bin/openvpnctrl -k; evaluate_retval
+			
 			boot_mesg "Stopping Snort if enabled"
 			/etc/rc.d/init.d/snort stop; evaluate_retval		
 		;;
