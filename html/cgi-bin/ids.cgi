@@ -67,21 +67,26 @@ my $border = '';
 my $checkboxname = '';
 
 if (-e "/etc/snort/snort.conf") {
+
+
 	# Open snort.conf file, read it in, close it, and re-open for writing
 	open(FILE, "/etc/snort/snort.conf") or die 'Unable to read snort config file.';
 	@snortconfig = <FILE>;
 	close(FILE);
 	open(FILE, ">/etc/snort/snort.conf") or die 'Unable to write snort config file.';
 
+    my @rules = `cd /etc/snort/rules/ && ls *.rules`;    # With this loop the rule might be display with correct rulepath set
+  	foreach (@rules) {
+  	chomp $_;
+  	my $temp = join(";",@snortconfig);
+    if ( $temp =~ /$_/ ){next;}
+    else { push(@snortconfig,"#include \$RULE_PATH/".$_);}
+  	}
+  	
 	# Loop over each line
 	foreach my $line (@snortconfig) {
 	# Trim the line
 		chomp $line;
-
- #   my @rules = `ls $snortrulepath`;     With this loop the rule might be display with correct rulepath set
- # 	foreach my $line (@rules) {
- # 	# Trim the line
- #		chomp $line;
 
 		# Check for a line with .rules
 		if ($line =~ /\.rules$/) {
@@ -474,7 +479,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
  		if ($ruledisplaycnt > $rulecnt) {
 				print "</TABLE></TD><TD VALIGN='TOP'><TABLE>";
 				$ruledisplaycnt = 0;
-		}
+			}
 
 			# Check if rule file is enabled
 			if ($snortrules{$rulefile}{"State"} eq 'Enabled') {
@@ -482,7 +487,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 			}
 
 			# Create rule file link, vars array, and display flag
-		my $rulefilelink = "?RULEFILE=$rulefile";
+			my $rulefilelink = "?RULEFILE=$rulefile";
 			my $rulefiletoclose = '';
 			my @queryvars = ();
 			my $displayrulefilerules = 0;
@@ -490,12 +495,12 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 			# Check for passed in query string
 			if ($ENV{'QUERY_STRING'}) {
 				# Split out vars
-			@queryvars = split(/\&/, $ENV{'QUERY_STRING'});
+				@queryvars = split(/\&/, $ENV{'QUERY_STRING'});
 
 				# Loop over values
 				foreach $value (@queryvars) {
 					# Split out var pairs
-				($var, $linkedrulefile) = split(/=/, $value);
+					($var, $linkedrulefile) = split(/=/, $value);
 
 					# Check if var is 'RULEFILE'
 					if ($var eq 'RULEFILE') {
@@ -513,6 +518,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 					}
 				}
 			}
+
 			# Strip out extra & & ? from rulefilelink
 			$rulefilelink =~ s/^\?\&/\?/i;
 
@@ -576,27 +582,26 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 
 				# Close display table
 				print "</TR></TABLE></TD></TR>";
-			}
+		}
 
 			# Close display table
 			print "</TABLE>";
 
 			# Increment ruledisplaycnt
-			$ruledisplaycnt++;
+		$ruledisplaycnt++;
 		}
-
 	print "</TD></TR></TABLE></TD></TR></TABLE>";
 	print <<END
-  <table width='100%'>
-  <tr>
+<table width='100%'>
+<tr>
 	<td width='33%'>&nbsp;</td>
 	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
 	<td width='33%'>
 		&nbsp; <!-- space for future online help link -->
 	</td>
-  </tr>
-  </table>
-  </form>
+</tr>
+</table>
+</form>
 END
 ;
 	&Header::closebox();

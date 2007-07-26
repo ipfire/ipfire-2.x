@@ -644,6 +644,7 @@ ipfirepackages() {
   ipfiredist cyrus-sasl
 #  ipfiredist fetchmail
 #  ipfiredist gnump3d
+  ipfiredist guardian
   ipfiredist ipfireseeder
   ipfiredist java
   ipfiredist libogg
