@@ -499,6 +499,7 @@ buildipfire() {
   ipfiremake alsa
   ipfiremake mpg123
   ipfiremake mpfire
+  ipfiremake guardian
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis
