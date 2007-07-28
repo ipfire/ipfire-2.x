@@ -357,8 +357,8 @@ if ($settings{'SPEED'} ne 'off') {
 print <<END                        
                         <br />
                         <form name='speed'>
-                                <b>$Lang::tr{'bandwidth usage'}:</b> $Lang::tr{'incoming'}:<input type="text" name="rxkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:green; border: 1px solid #FFFFFF; padding: 0; background-color: #FFFFFF; vertical-align: middle" />
-                                $Lang::tr{'outgoing'}: <input type="text" name="txkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:red; border: 1px solid #FFFFFF; padding: 0; background-color: #FFFFFF; vertical-align: middle"/>
+                                <b>$Lang::tr{'bandwidth usage'}:</b> $Lang::tr{'incoming'}:<input type="text" name="rxkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:green; border: none; padding: 0; background-color: #000000; vertical-align: middle" />
+                                $Lang::tr{'outgoing'}: <input type="text" name="txkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:red; border: none; padding: 0; background-color: #000000; vertical-align: middle"/>
                         </form>
 END
 ;
