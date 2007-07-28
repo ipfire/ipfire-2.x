@@ -1,5 +1,7 @@
+#!/usr/bin/perl
 # Generate Graphs exported from Makegraphs to minimize system load an only generate the Graphs when displayed
 # This is part of the IPFire Firewall
+
 
 package Graphs;
 
@@ -501,4 +503,70 @@ sub updatevoltgraph
     RRDs::graph ( @args );
     $ERROR = RRDs::error;
     print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
+}
+
+sub overviewgraph {
+
+  my $period = $_[0];
+  my $periodstring;
+  my $description;
+  my %qossettings = ();
+  &General::readhash("${General::swroot}/qos/settings", \%qossettings);
+  my $classentry = "";
+  my @classes = ();
+  my @classline = ();
+  my $classfile = "/var/ipfire/qos/classes";
+  
+	$qossettings{'DEV'} = $_[1];
+	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
+		$qossettings{'CLASSPRFX'} = '1';
+	} else { 
+		$qossettings{'CLASSPRFX'} = '2';
+	}
+	
+  if ( $period ne '3240' ){ $periodstring = "-1$period";}else{ $periodstring = "-".$period;}
+  if ( $period ne '3240' ){ $description = "-t $Lang::tr{'Utilization on'} ($qossettings{'DEV'}) ($Lang::tr{'graph per'} $Lang::tr{$period})";}else{ $description = "-t $Lang::tr{'Utilization on'} ($qossettings{'DEV'})";}
+	
+	my $ERROR="";
+	my $count="1";
+	my $color="#000000";
+	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}-$period.png",
+		"--start", $periodstring, "-aPNG", "-i", "-z",
+		"--alt-y-grid", "-w 600", "-h 150", "-r",
+    "--color", "SHADEA".$color{"color19"},
+    "--color", "SHADEB".$color{"color19"},
+    "--color", "BACK".$color{"color21"},
+		$description
+	);
+	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
+	@classes = <FILE>;
+	close FILE;
+  	foreach $classentry (sort @classes)
+  	{
+  		@classline = split( /\;/, $classentry );
+  		if ( $classline[0] eq $qossettings{'DEV'} )
+  		{
+			$color=random_hex_color(6);
+			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bits:AVERAGE");
+
+			if ($count eq "1") {
+				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+			} else {
+				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+			}
+			$count++;
+		}
+	}
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
+}
+
+sub random_hex_color {
+    my $size = shift;
+    $size = 6 if $size !~ /^3|6$/;
+    my @hex = ( 0 .. 9, 'a' .. 'f' );
+    my @color;
+    push @color, @hex[rand(@hex)] for 1 .. $size;
+    return join('', '#', @color);
 }

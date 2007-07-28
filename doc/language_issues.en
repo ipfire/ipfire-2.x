@@ -124,7 +124,6 @@ WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: done
-WARNING: translation string unused: downlink speed
 WARNING: translation string unused: dynamic dns client
 WARNING: translation string unused: eciadsl help
 WARNING: translation string unused: eciadsl upload
@@ -367,7 +366,6 @@ WARNING: translation string unused: update transcript
 WARNING: translation string unused: updates
 WARNING: translation string unused: updates is old1
 WARNING: translation string unused: updates is old2
-WARNING: translation string unused: uplink speed
 WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
 WARNING: translation string unused: upload static key

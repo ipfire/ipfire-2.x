@@ -16,6 +16,7 @@ use CGI::Carp 'fatalsToBrowser';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 my %qossettings = ();
 my %checked = ();
@@ -186,7 +187,7 @@ elsif ($qossettings{'DOCLASS'} eq 'Loeschen')
 		}
 	}
 	close FILE;
-	$message = "Klasse $qossettings{'CLASS'} wurde mit eventuell vorhandenen Unterklassen geloescht.";
+	$message = "$Lang::tr{'Class'} $qossettings{'CLASS'} $Lang::tr{'Class was deleted'}";
 }
 
 ############################################################################################################################
@@ -221,7 +222,7 @@ END
 		}
 	}
 	close FILE;
-	$message = "Unterklasse $qossettings{'CLASS'} wurde geloescht.";
+	$message = "$Lang::tr{'Subclass'} $qossettings{'CLASS'} $Lang::tr{'was deleted'}.";
 }
 
 ############################################################################################################################
@@ -350,7 +351,7 @@ END
 		}
 	}
 	close FILE;
-	$message = "Port-Regel ($qossettings{'CLASS'} - $qossettings{'PPROT'}) wurde geloescht.";
+	$message = "$Lang::tr{'Port Rule'} ($qossettings{'CLASS'} - $qossettings{'PPROT'}) $Lang::tr{'was deleted'}.";
 }  elsif ($qossettings{'DOPORT'} eq 'Bearbeiten')
 {
 	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
@@ -408,7 +409,7 @@ elsif ($qossettings{'DOTOS'} eq 'Loeschen')
 		}
 	}
 	close FILE;
-	$message = "TOS-Regel ($qossettings{'CLASS'} - $qossettings{'TOS'}) wurde geloescht.";
+	$message = "$Lang::tr{'TOS Rule'} ($qossettings{'CLASS'} - $qossettings{'TOS'}) $Lang::tr{'was deleted'}.";
 } elsif ($qossettings{'DOTOS'} eq 'Bearbeiten')
 {
 	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
@@ -482,7 +483,7 @@ elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
 		$output = `/usr/local/bin/qosctrl status`;
 		$output = &Header::cleanhtml($output,"y");
 		print "<pre>$output</pre>\n";
-	} else { print "QoS ist nicht aktiviert!"; }
+	} else { print "$Lang::tr{'QoS not enabled'}"; }
 	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
@@ -504,10 +505,10 @@ elsif ($qossettings{'ACTION'} eq 'Unterklasse hinzufuegen')
 }
 elsif ($qossettings{'ACTION'} eq 'Regel hinzufuegen')
 {
-	&Header::openbox('100%', 'center', 'Regel hinzufuegen');
+	&Header::openbox('100%', 'center', $Lang::tr{'Add Rule'});
 	print <<END
 		<table>
-		<tr><td align='center'>Waehlen sie <u>eine</u> der untenstehenden Regeln aus.
+		<tr><td align='center'>$Lang::tr{'Choose Rule'}
 		<tr><td align='center'>
 			<input type="button" onClick="swapVisibility('l7rule')" value='Level7-Regel' />
 			<input type="button" onClick="swapVisibility('portrule')" value='Port-Regel' />
@@ -610,9 +611,9 @@ END
     <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	  <table width='66%'>
 		<tr><td colspan='3'>&nbsp;
-		<tr><td width='40%' align='right'>Downloadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'INC_SPD'} kbps
+		<tr><td width='40%' align='right'>$Lang::tr{'downlink speed'}: 	<td width='40%' align='left'>$qossettings{'INC_SPD'} kbps
 		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='Andern' />
-		<tr><td width='40%' align='right'>Uploadgeschwindigkeit: 	<td width='40%' align='left'>$qossettings{'OUT_SPD'} kbps
+		<tr><td width='40%' align='right'>$Lang::tr{'uplink speed'}: 	<td width='40%' align='left'>$qossettings{'OUT_SPD'} kbps
 		</table></form>
 END
 ;
@@ -622,9 +623,9 @@ END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td colspan='3'><hr />
-		<tr><td width='40%' align='right'>Downloadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_INC'}	
+		<tr><td width='40%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_INC'}	
 		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern' />
-		<tr><td width='40%' align='right'>Uploadstandardklasse: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
+		<tr><td width='40%' align='right'>$Lang::tr{'uplink std class'}: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr />
 		<tr><td colspan='3' width='100%' align='center'>
@@ -657,20 +658,24 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 }
 
 &Header::openbox('100%', 'center', $Lang::tr{'info'});
-&overviewgraph($qossettings{'RED_DEV'});
-&overviewgraph($qossettings{'IMQ_DEV'});
+&Graphs::overviewgraph("3240",$qossettings{'RED_DEV'});
+&Graphs::overviewgraph("3240",$qossettings{'IMQ_DEV'});
 print <<END
 	<table>
-		<tr><td colspan='9' align='center' valign='middle'><img alt="" src='/images/addblue.gif' />&nbsp;Unterklasse hinzufuegen | <img alt="" src='/images/addgreen.gif' />&nbsp;Regel hinzufuegen | <img alt="" src='/images/edit.gif' />&nbsp;Bearbeiten | <img alt="" src='/images/delete.gif' />&nbsp;Loeschen &nbsp;
-		<tr><td colspan='9' align='right' valign='middle'><b>TOS-Bits:</b>&nbsp;&nbsp;<b>0</b> - Deaktiviert | <b>8</b> - Minimale Verzoegerung | <b>4</b> - Maximaler Durchsatz | <b>2</b> - Maximale Zuverlaessigkeit | <b>1</b> - Minimale Kosten &nbsp;
+		<tr><td colspan='9' align='center' valign='middle'><img alt="" src='/images/addblue.gif' />&nbsp;$Lang::tr{'add subclass'} | <img alt="" src='/images/addgreen.gif' />&nbsp;$Lang::tr{'Add Rule'} | <img alt="" src='/images/edit.gif' />&nbsp;$Lang::tr{'edit'} | <img alt="" src='/images/delete.gif' />&nbsp;$Lang::tr{'delete'} &nbsp;
+		<tr><td colspan='9' align='right' valign='middle'><b>$Lang::tr{'TOS Bits'}:</b>&nbsp;&nbsp;<b>0</b> - $Lang::tr{'disabled'} | <b>8</b> - $Lang::tr{'min delay'} | <b>4</b> - $Lang::tr{'max throughput'} | <b>2</b> - $Lang::tr{'max reliability'} | <b>1</b> - $Lang::tr{'min costs'} &nbsp;
 END
 ;
-if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}.png") && ( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png")) {
+if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}-3240.png") && ( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}-3240.png")) {
 	print <<END
-		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'RED_DEV'}.png" />
-		<tr><td colspan='9' align='center'><img alt="" src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}.png" />
+		<tr><td colspan='9' align='center'><a href='/cgi-bin/qosgraph.cgi?graph=$qossettings{'RED_DEV'}'><img alt="" src="/graphs/qos-graph-$qossettings{'RED_DEV'}-3240.png" border='0' /></a></td></tr>
+		<tr><td colspan='9' align='center'><a href='/cgi-bin/qosgraph.cgi?graph=$qossettings{'IMQ_DEV'}'><img alt="" src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}-3240.png" border='0' /></a></td></tr>
 END
 ;}
+else 
+{
+print $Lang::tr{'no information available'};
+}
 print "\t</table>";
 
 &Header::closebox();
@@ -685,11 +690,11 @@ print "\t</table>";
 ############################################################################################################################
 
 sub changedefclasses {
-	&Header::openbox('100%', 'center', 'Standardklassen:');
+	&Header::openbox('100%', 'center', $Lang::tr{'std classes'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Legen sie hier die Standardklassen fest durch die nicht-gefilterte Pakete gehen.
+		<tr><td width='100%' colspan='3'>$Lang::tr{'no filter pass'}
 		<tr><td width='33%' align='right'>Download:<td width='33%' align='left'><select name='DEFCLASS_INC'>
 END
 ;
@@ -715,7 +720,7 @@ END
 		</table>
 		<hr />
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Legen sie hier die ACK-Klasse fest <br /> und klicken Sie danach auf <i>Speichern</i>.
+		<tr><td width='100%' colspan='3'>$Lang::tr{'enter ack class'}
 		<tr><td width='33%' align='right'>ACKs:<td width='33%' align='left'><select name='ACK'>
 END
 ;
@@ -735,20 +740,20 @@ END
 }
 
 sub changebandwidth {
-	&Header::openbox('100%', 'center', 'Bandbreiteneinstellungen');
+	&Header::openbox('100%', 'center', $Lang::tr{'bandwithsettings'});
 	if ($qossettings{'ENABLED'} eq 'on') {
-		print "Sie koennen die Bandbreiteneinstellungen nicht bearbeiten, wenn QoS eingeschaltet ist. Schalten sie es zuerst dazu aus.<p>";
-		print "<a href='/cgi-bin/qos.cgi'>Zurueck</a>";
+		print "$Lang::tr{'bandwitherror'}";
+		print "<a href='/cgi-bin/qos.cgi'>$Lang::tr{'back'}</a>";
 	} else {
 		print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Geben Sie bitte hier ihre Download- bzw. Upload-Geschwindigkeit ein <br /> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='33%' align='right'>Download-Geschwindigkeit:
+		<tr><td width='100%' colspan='3'>$Lang::tr{'down and up speed'}
+		<tr><td width='33%' align='right'>$Lang::tr{'downlink speed'}:
 		    <td width='33%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" /> &nbsp; kbps
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Upload-Geschwindigkeit:
+		<tr><td width='33%' align='right'>$Lang::tr{'uplink speed'}:
 		    <td width='33%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" /> &nbsp; kbps
 		    <td width='33%' align='center'><input type='submit' name='ACTION' value="$Lang::tr{'save'}" />&nbsp;<input type='reset' name='ACTION' value="$Lang::tr{'reset'}" />
 		</table>
@@ -760,7 +765,7 @@ END
 }
 
 sub parentclass {
-	&Header::openbox('100%', 'center', 'Parentklasse');
+	&Header::openbox('100%', 'center', $Lang::tr{'parentclass'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
@@ -774,8 +779,8 @@ END
 		print "<input type='hidden' name='DEVICE' value='$qossettings{'DEVICE'}' />";
 	}
 	print <<END
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='33%' align='right'>Interface:
+		<tr><td width='100%' colspan='3'>$Lang::tr{'enter data'}
+		<tr><td width='33%' align='right'>$Lang::tr{'interface'}:
 		    <td width='33%' align='left'>
 END
 ;
@@ -793,7 +798,7 @@ END
 			<option value='$qossettings{'RED_DEV'}' $qossettings{'RED_DEV_SEL'}>$qossettings{'RED_DEV'}</option>
 			<option value='$qossettings{'IMQ_DEV'}' $qossettings{'IMQ_DEV_SEL'}>$qossettings{'IMQ_DEV'}</option></select>
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Klasse:<td width='33%' align='left'>
+		<tr><td width='33%' align='right'>$Lang::tr{'Class'}:<td width='33%' align='left'>
 END
 ;
 		if ( $qossettings{'EDIT'} eq 'yes' ) { 
@@ -816,7 +821,7 @@ END
 		print <<END
 		</select>
 		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Prioritaet:<td width='33%' align='left'><select name='PRIO'>
+		<tr><td width='33%' align='right'>$Lang::tr{'priority'}:<td width='33%' align='left'><select name='PRIO'>
 END
 ;
 		for ( $c = 1 ; $c <= 7 ; $c++ )
@@ -829,10 +834,10 @@ END
 		print <<END
 		</select>
 		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Garantierte Bandbreite:
+		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwith'}:
 		    <td width='33%' align='left'><input type='text' size='20' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Maximale Bandbreite:
+		<tr><td width='33%' align='right'>$Lang::tr{'max bandwith'}:
 		    <td width='33%' align='left'><input type='text' size='20' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Burst:
@@ -843,11 +848,11 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>TOS-Bit:
 		    <td width='33%' align='left'><select name='TOS'>
-				<option value='0'>Ausgeschaltet (0)</option>
-				<option value='8'>Minimale Verzoegerung (8)</option>
-				<option value='4'>Maximaler Durchsatz (4)</option>
-				<option value='2'>Maximale Zuverlaessigkeit (2)</option>
-				<option value='1'>Minimale Kosten (1)</option></select>
+				<option value='0'>$Lang::tr{'disabled'} (0)</option>
+				<option value='8'>$Lang::tr{'min delay'} (8)</option>
+				<option value='4'>$Lang::tr{'max throughput'} (4)</option>
+				<option value='2'>$Lang::tr{'max reliability'} (2)</option>
+				<option value='1'>$Lang::tr{'min costs'} (1)</option></select>
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'remark'}:
 		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" /> <img alt="" alt='blob' src='/blob.gif' />
@@ -861,7 +866,7 @@ END
 }
 
 sub subclass {
-	&Header::openbox('100%', 'center', 'Unterklasse');
+	&Header::openbox('100%', 'center', $Lang::tr{'Subclass'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
@@ -871,9 +876,9 @@ END
 		print "<tr><td colspan='3' align='center'>$message";
 	}
 	print <<END
-		<tr><td colspan='3' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='33%' align='right'>Unterklasse:<td width='33%' align='left'><select name='SCLASS'>
+		<tr><td colspan='3' width='100%'>$Lang::tr{'current class'}: $qossettings{'CLASS'}
+		<tr><td width='100%' colspan='3'>$Lang::tr{'enter data'}
+		<tr><td width='33%' align='right'>$Lang::tr{'Subclass'}:<td width='33%' align='left'><select name='SCLASS'>
 END
 ;
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -896,7 +901,7 @@ END
 	print <<END
 		</select>
 		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Prioritaet:<td width='33%' align='left'><select name='PRIO'>
+		<tr><td width='33%' align='right'>$Lang::tr{'priority'}:<td width='33%' align='left'><select name='PRIO'>
 END
 ;
 		for ( $c = 1 ; $c <= 7 ; $c++ )
@@ -907,10 +912,10 @@ END
 		}
 		print <<END
 		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Garantierte Bandbreite:
+		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwith'}:
 		    <td width='33%' align='left'><input type='text' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Maximale Bandbreite:
+		<tr><td width='33%' align='right'>$Lang::tr{'max bandwith'}:
 		    <td width='33%' align='left'><input type='text' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Burst:
@@ -921,11 +926,11 @@ END
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>TOS-Bit:
 		    <td width='33%' align='left'><select name='TOS'>
-				<option value='0'>Ausgeschaltet (0)</option>
-				<option value='8'>Minimale Verzoegerung (8)</option>
-				<option value='4'>Maximaler Durchsatz (4)</option>
-				<option value='2'>Maximale Zuverlaessigkeit (2)</option>
-				<option value='1'>Minimale Kosten (1)</option></select>
+				<option value='0'>$Lang::tr{'disabled'} (0)</option>
+				<option value='8'>$Lang::tr{'min delay'} (8)</option>
+				<option value='4'>$Lang::tr{'max throughput'} (4)</option>
+				<option value='2'>$Lang::tr{'max reliability'} (2)</option>
+				<option value='1'>$Lang::tr{'min costs'} (1)</option></select>
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value="$qossettings{'CLASS'}" />
 							<input type='hidden' name='DEVICE' value="$qossettings{'DEVICE'}" />
 							<input type='submit' name='DOSCLASS' value='$Lang::tr{'save'}' />&nbsp;<input type='reset' value='$Lang::tr{'reset'}' />
@@ -936,7 +941,7 @@ END
 }
 
 sub level7rule {
-	&Header::openbox('100%', 'center', 'Level7-Regel');
+	&Header::openbox('100%', 'center', $Lang::tr{'Level7 Rule'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
@@ -946,9 +951,9 @@ END
 		print "<tr><td colspan='3' align='center'><font color='red'>$message</font>";
 	}
 	print <<END
-		<tr><td colspan='3' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='33%' align='right'>Protokoll:
+		<tr><td colspan='3' width='100%'>$Lang::tr{'current class'}: $qossettings{'CLASS'}
+		<tr><td width='100%' colspan='3'>$Lang::tr{'enter data'}
+		<tr><td width='33%' align='right'>$Lang::tr{'protocol'}:
 		    <td width='33%' align='left'><select name='L7PROT'>
 END
 ;
@@ -968,10 +973,10 @@ END
 		closedir DIR;
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Quell-IP-Adresse:
+		<tr><td width='33%' align='right'>$Lang::tr{'source ip'}:
 		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
+		<tr><td width='33%' align='right'>$Lang::tr{'destination ip'}:
 		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOLEVEL7' value='$Lang::tr{'save'}' />
 		</table></form>
@@ -981,12 +986,12 @@ END
 }
 
 sub portrule {
-	&Header::openbox('100%', 'center', 'Port-Regel hinzufuegen');
+	&Header::openbox('100%', 'center', $Lang::tr{'Add Port Rule'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>Geben sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='33%' align='right'>Protokoll:
+		<tr><td width='100%' colspan='3'>$Lang::tr{'enter data'}
+		<tr><td width='33%' align='right'>$Lang::tr{'protocol'}:
 		    <td width='33%' align='left'><select name='PPROT'>
 END
 ;
@@ -1005,16 +1010,16 @@ END
 			}
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Quell-Port:
+		<tr><td width='33%' align='right'>$Lang::tr{'source port'}:
 		    <td width='33%' align='left'><input type='text' name='QPORT' maxlength='5' value='$qossettings{'QPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Ziel-Port:
+		<tr><td width='33%' align='right'>$Lang::tr{'destination port'}:
 		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='5' value='$qossettings{'DPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Quell-IP-Adresse:
+		<tr><td width='33%' align='right'>$Lang::tr{'source ip'}:
 		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Ziel-IP-Adresse:
+		<tr><td width='33%' align='right'>$Lang::tr{'destination ip'}:
 		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOPORT' value='$Lang::tr{'save'}' />
 		</table></form>
@@ -1024,9 +1029,9 @@ END
 }
 
 sub tosrule {
-	&Header::openbox('100%', 'center', 'TOS-Regel');
+	&Header::openbox('100%', 'center', $Lang::tr{'TOS Rule'});
 	if ($qossettings{'TOS'}) {
-		$checked[$qossettings{'TOS'}] = "checked";
+		$checked{$qossettings{'TOS'}} = "checked";
 	}
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1037,12 +1042,12 @@ END
 		print "<tr><td colspan='3' align='center'><font color='red'>$message</font>";
 	}
 	print <<END
-		<tr><td colspan='2' width='100%'>Aktuelle Klasse: $qossettings{'CLASS'}
-		<tr><td width='100%' colspan='2'>Aktivieren oder deaktivieren sie die TOS-Bits <br /> und klicken Sie danach auf <i>Speichern</i>.
-		<tr><td width='50%' align='left'>Minimale Verzoegerung (8)		<td width='50%'><input type="radio" name="TOS" value="8" $checked[8] />
-		<tr><td width='50%' align='left'>Maximaler Durchsatz (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4] />
-		<tr><td width='50%' align='left'>Maximale Zuverlaessigkeit (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2] />
-		<tr><td width='50%' align='left'>Minimale Kosten (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1] />
+		<tr><td colspan='2' width='100%'>$Lang::tr{'current class'}: $qossettings{'CLASS'}
+		<tr><td width='100%' colspan='2'>$Lang::tr{'Enter TOS'}
+		<tr><td width='50%' align='left'>$Lang::tr{'min delay'} (8)		<td width='50%'><input type="radio" name="TOS" value="8" $checked[8] />
+		<tr><td width='50%' align='left'>$Lang::tr{'max throughput'} (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4] />
+		<tr><td width='50%' align='left'>$Lang::tr{'max reliability'} (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2] />
+		<tr><td width='50%' align='left'$Lang::tr{'min costs'} (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1] />
 		<tr><td width='100%' align='right' colspan='2'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOTOS' value='$Lang::tr{'save'}' />
 		</table></form>
 END
@@ -1077,14 +1082,14 @@ sub showclasses {
 	  			print <<END
 				<table border='0' width='100%' cellspacing='0'>
 				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'><b>Klasse</b>
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Prioritaet
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Garantierte Bandbreite
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Maximale Bandbreite
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'Class'}</b>
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'priority'}
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'guaranteed bandwith'}
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'max bandwith'}
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Burst
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Ceil Burst
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>TOS
-				    <td bgcolor='$color{'color20'}' width='20%' align='center'>Aktionen
+				    <td bgcolor='$color{'color20'}' width='20%' align='center'>$Lang::tr{'action'}
 				<tr><td align='center' bgcolor='$color{'color22'}'>$classline[0]</td>
 				    <td align='center' bgcolor='$color{'color22'}'>$classline[1]</td>
 				    <td align='center' bgcolor='$color{'color22'}'>$classline[2]</td>
@@ -1098,22 +1103,22 @@ sub showclasses {
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
 						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen' />
-						<input type='image' alt='Unterklasse hinzufuegen' src='/images/addblue.gif' />
+						<input type='image' alt='$Lang::tr{'add subclass'}' src='/images/addblue.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
 						<input type='hidden' name='ACTION' value='Regel hinzufuegen' />
-						<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif' />
+						<input type='image' alt='$Lang::tr{'Add Rule'}' src='/images/addgreen.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
 						<input type='hidden' name='DOCLASS' value='Bearbeiten' />
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
+						<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
 						<input type='hidden' name='DOCLASS' value='Loeschen' />
-						<input type='image' alt='Loeschen' src='/images/delete.gif' />
+						<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 					</form>
 					</table>
 				    </td>
@@ -1130,7 +1135,7 @@ END
 	  					if ( $l7ruleline[0] eq $classline[1] )
 	  					{
 	  						print <<END
-				<tr><td align='right' colspan='2'><b>Level7-Protokoll:</b>
+				<tr><td align='right' colspan='2'><b>$Lang::tr{'Level7 Protocol'}:</b>
 				    <td align='center' colspan='6'>$l7ruleline[2]
 				    <td align='right' >
 					<table border='0'><tr>
@@ -1152,8 +1157,8 @@ END
 							if (($l7ruleline[3] ne "") || ($l7ruleline[4] ne "")){
 								print <<END
 				<tr><td align='center'>&nbsp;
-				    <td align='right' colspan='3'><b>Quell-IP:</b> $l7ruleline[3]
-				    <td align='right' colspan='3'><b>Ziel-IP:</b> $l7ruleline[4]
+				    <td align='right' colspan='3'><b>$Lang::tr{'source ip'}:</b> $l7ruleline[3]
+				    <td align='right' colspan='3'><b>$Lang::tr{'destination ip'}:</b> $l7ruleline[4]
 END
 ;
 							}
@@ -1173,7 +1178,7 @@ END
 				  		if ( $portruleline[0] eq $classline[1] )
 				  		{
 				  			print <<END
-				<tr><td align='right' colspan='2'><b>Port-Regel:</b>
+				<tr><td align='right' colspan='2'><b>$Lang::tr{'Port Rule'}:</b>
 				    <td align='center'>($portruleline[2])
 				    <td align='center' colspan='2'>
 END
@@ -1203,7 +1208,7 @@ END
 						<input type='hidden' name='DIP' value='$portruleline[5]' />
 						<input type='hidden' name='DPORT' value='$portruleline[6]' />
 						<input type='hidden' name='DOPORT' value='Bearbeiten' />
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
+						<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$portruleline[0]' />
@@ -1213,7 +1218,7 @@ END
 						<input type='hidden' name='DIP' value='$portruleline[5]' />
 						<input type='hidden' name='DPORT' value='$portruleline[6]' />
 						<input type='hidden' name='DOPORT' value='Loeschen' />
-						<input type='image' alt='Loeschen' src='/images/delete.gif' />
+						<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 					</form>
 				    </table>
 END
@@ -1221,8 +1226,8 @@ END
 							if (($portruleline[3] ne "") || ($portruleline[5] ne "")){
 								print <<END
 				<tr><td align='center'>&nbsp;
-				    <td align='right' colspan='3'><b>Quell-IP:</b> $portruleline[3]
-				    <td align='right' colspan='3'><b>Ziel-IP:</b> $portruleline[5]
+				    <td align='right' colspan='3'><b>$Lang::tr{'source ip'}:</b> $portruleline[3]
+				    <td align='right' colspan='3'><b>$Lang::tr{'destination ip'}:</b> $portruleline[5]
 END
 ;
 							}
@@ -1243,13 +1248,13 @@ END
 END
 ;
 							if ( $tosruleline[2] eq "8") {
-								print "Minimale Verzoegerung\n";
+								print "$Lang::tr{'min delay'}\n";
 							} elsif ( $tosruleline[2] eq "4") {
-								print "Maximaler Durchsatz\n";
+								print "$Lang::tr{'max throughput'}\n";
 							} elsif ( $tosruleline[2] eq "2") {
-								print "Maximaler Durchsatz\n";
+								print "$Lang::tr{'max reliability'}\n";
 							} elsif ( $tosruleline[2] eq "1") {
-								print "Minimale Kosten\n";
+								print "$Lang::tr{'min costs'}\n";
 							} else { print "&nbsp;\n"; }
 
 							print <<END
@@ -1261,14 +1266,14 @@ END
 								<input type='hidden' name='DEV' value='$tosruleline[1]' />
 								<input type='hidden' name='TOS' value='$tosruleline[2]' />
 								<input type='hidden' name='DOTOS' value='Bearbeiten' />
-								<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
+								<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 							</form>
 							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 								<input type='hidden' name='CLASS' value='$tosruleline[0]' />
 								<input type='hidden' name='DEV' value='$tosruleline[1]' />
 								<input type='hidden' name='TOS' value='$tosruleline[2]' />
 								<input type='hidden' name='DOTOS' value='Loeschen' />
-								<input type='image' alt='Loeschen' src='/images/delete.gif' />
+								<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 							</form>
 				    		</table>
 END
@@ -1283,7 +1288,7 @@ END
 	  				@subclassline = split( /\;/, $subclassentry );
 		  			if ( $subclassline[1] eq $classline[1] ) {
 						print <<END
-							<tr><td align='center' bgcolor='#FAFAFA'>Subklasse:
+							<tr><td align='center' bgcolor='#FAFAFA'>$Lang::tr{'Subclass'}:
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[2]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[3]
 							    <td align='center' bgcolor='#FAFAFA'>$subclassline[4]
@@ -1296,17 +1301,17 @@ END
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]' />
 							<input type='hidden' name='ACTION' value='Regel hinzufuegen' />
-							<input type='image' alt='Regel hinzufuegen' src='/images/addgreen.gif' />
+							<input type='image' alt='$Lang::tr{'Add Rule'}' src='/images/addgreen.gif' />
 						</form>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]' />
 							<input type='hidden' name='DOSCLASS' value='Bearbeiten' />
-							<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
+							<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 						</form>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]' />
 							<input type='hidden' name='DOSCLASS' value='Loeschen' />
-							<input type='image' alt='Loeschen' src='/images/delete.gif' />
+							<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 						</form>
 						</table>
 END
@@ -1325,14 +1330,14 @@ END
 
 sub expert
 {
-	&Header::openbox('100%', 'center', 'Expertenoptionen:');
+	&Header::openbox('100%', 'center', $Lang::tr{'expertoptions'});
 	print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
 			<input type='text' name='MTU' maxlength='8' required='4' value='$qossettings{'MTU'}' />
-		    <td width='33%' align='center'>Diese Einstellung aendert die MTU nicht global sondern nur fuer das QoS.
-		<tr><td width='33%' align='right'>Queue Laenge:<td width='33%' align='left'>
+		    <td width='33%' align='center'>$Lang::tr{'mtu QoS'}
+		<tr><td width='33%' align='right'>$Lang::tr{'Queuelenght'}:<td width='33%' align='left'>
 			<input type='text' name='QLENGTH' maxlength='8' required='2' value='$qossettings{'QLENGTH'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>SFQ Perturb:<td width='33%' align='left'>
@@ -1354,7 +1359,7 @@ sub validminbwdth {
 		}
 		unless ( ( $qossettings{'MINBWDTH'} >= 1 ) && ( $qossettings{'MINBWDTH'} <= $qossettings{'SPD'} ) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Mindestbandbreite ist ungueltig.";
+			$message = "$Lang::tr{'false min bandwith'}";
 		}
 		$qossettings{'SPD'} = '';
 	}
@@ -1369,7 +1374,7 @@ sub validmaxbwdth {
 		}
 		unless ( ( $qossettings{'MAXBDWTH'} >= 0 ) && ($qossettings{'MAXBDWTH'} >= $qossettings{'MINBDWTH'}) &&( $qossettings{'MAXBDWTH'} <= $qossettings{'SPD'} ) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Mamimalbandbreite ist ungueltig.";
+			$message = "$Lang::tr{'false max bandwith'}";
 		}
 		$qossettings{'SPD'} = '';
 	}
@@ -1380,7 +1385,7 @@ sub validclass {
 		if ( $qossettings{'DEVICE'} eq $qossettings{'RED_DEV'} ) {
 			if ($qossettings{'CLASS'} lt 100 || $qossettings{'CLASS'} ge 121) {
 				$qossettings{'VALID'} = 'no';
-				$message = "Die Klassennummer passt nicht zum angegebenen Interface.";
+				$message = "$Lang::tr{'false classnumber'}";
 			}
 		} elsif ( $qossettings{'DEVICE'} eq $qossettings{'IMQ_DEV'} ) {
 			if ($qossettings{'CLASS'} lt 200 || $qossettings{'CLASS'} ge 221) {
@@ -1397,7 +1402,7 @@ sub validclass {
 	  		if ( $tmpline[1] eq $qossettings{'CLASS'} )
   			{
 				$qossettings{'VALID'} = 'no';
-				$message = "Die aktuelle Klasse wird bereits verwendet.";
+				$message = "$Lang::tr{'false classnumber'}";
 				last
 			}
 		}
@@ -1415,60 +1420,9 @@ sub validsubclass {
 	  		if ( $tmpline[2] eq $qossettings{'SCLASS'} )
   			{
 				$qossettings{'VALID'} = 'no';
-				$message = "Die aktuelle Klasse wird bereits verwendet.";
+				$message = "$Lang::tr{'class in use'}";
 				last
 			}
 		}
 	}
-}
-
-sub overviewgraph {
-	$qossettings{'DEV'} = shift;
-	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
-		$qossettings{'CLASSPRFX'} = '1';
-	} else { 
-		$qossettings{'CLASSPRFX'} = '2';
-	}
-	my $ERROR="";
-	my $count="1";
-	my $color="#000000";
-	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}.png",
-		"--start", "-3240", "-aPNG", "-i", "-z",
-		"--alt-y-grid", "-w 600", "-h 150", "-r",
-		"--color", "SHADEA#EAE9EE",
-		"--color", "SHADEB#EAE9EE",
-		"--color", "BACK#FFFFFF",
-		"-t Auslastung auf ($qossettings{'DEV'})"
-	);
-	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
-	@classes = <FILE>;
-	close FILE;
-  	foreach $classentry (sort @classes)
-  	{
-  		@classline = split( /\;/, $classentry );
-  		if ( $classline[0] eq $qossettings{'DEV'} )
-  		{
-			$color=random_hex_color(6);
-			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bits:AVERAGE");
-
-			if ($count eq "1") {
-				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
-			} else {
-				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
-			}
-			$count++;
-		}
-	}
-	RRDs::graph (@command);
-	$ERROR = RRDs::error;
-	print "$ERROR";
-}
-
-sub random_hex_color {
-    my $size = shift;
-    $size = 6 if $size !~ /^3|6$/;
-    my @hex = ( 0 .. 9, 'a' .. 'f' );
-    my @color;
-    push @color, @hex[rand(@hex)] for 1 .. $size;
-    return join('', '#', @color);
 }
