@@ -43,6 +43,7 @@ $snortsettings{'ENABLE_SNORT'} = 'off';
 $snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
 $snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
 $snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
+$snortsettings{'ENABLE_GUARDIAN'} = 'off';
 $snortsettings{'ACTION'} = '';
 $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
@@ -278,6 +279,12 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'})
 	} else {
 		unlink "${General::swroot}/snort/enable_orange";
 	}
+	if ($snortsettings{'ENABLE_GUARDIAN'} eq 'on')
+	{
+		system ('/usr/bin/touch', "${General::swroot}/guardian/enable");
+	} else {
+		unlink "${General::swroot}/guardian/enable";
+	}
 
 		system('/usr/local/bin/snortctrl restart >/dev/null');
 
@@ -320,6 +327,9 @@ $checked{'ENABLE_SNORT_BLUE'}{$snortsettings{'ENABLE_SNORT_BLUE'}} = "checked='c
 $checked{'ENABLE_SNORT_ORANGE'}{'off'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{'on'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{$snortsettings{'ENABLE_SNORT_ORANGE'}} = "checked='checked'";
+$checked{'ENABLE_GUARDIAN'}{'off'} = '';
+$checked{'ENABLE_GUARDIAN'}{'on'} = '';
+$checked{'ENABLE_GUARDIAN'}{$snortsettings{'ENABLE_GUARDIAN'}} = "checked='checked'";
 $selected{'RULES'}{'nothing'} = '';
 $selected{'RULES'}{'community'} = '';
 $selected{'RULES'}{'registered'} = '';
@@ -366,35 +376,22 @@ if ($errormessage) {
 &Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system2'});
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='100%'>
-<tr>
-	<td class='base'><input type='checkbox' name='ENABLE_SNORT_GREEN' $checked{'ENABLE_SNORT_GREEN'}{'on'} />
-		GREEN Snort</td>
-</tr>
+<tr><td class='base'><input type='checkbox' name='ENABLE_SNORT_GREEN' $checked{'ENABLE_SNORT_GREEN'}{'on'} />GREEN Snort
 END
 ;
 if ($netsettings{'BLUE_DEV'} ne '') {
-print <<END
-<tr>
-	<td class='base'><input type='checkbox' name='ENABLE_SNORT_BLUE' $checked{'ENABLE_SNORT_BLUE'}{'on'} />
-		BLUE Snort</td>
-</tr>
-END
-;
+  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT_BLUE' $checked{'ENABLE_SNORT_BLUE'}{'on'} />   BLUE Snort";
 }
 if ($netsettings{'ORANGE_DEV'} ne '') {
-print <<END
-<tr>
-	<td class='base'><input type='checkbox' name='ENABLE_SNORT_ORANGE' $checked{'ENABLE_SNORT_ORANGE'}{'on'} />
-		ORANGE Snort</td>
-</tr>
-END
-;
+  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT_ORANGE' $checked{'ENABLE_SNORT_ORANGE'}{'on'} />   ORANGE Snort";
 }
+  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT' $checked{'ENABLE_SNORT'}{'on'} />   RED Snort";
+if ( -e "/var/ipfire/guardian/guardian.conf" ) {
+  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_GUARDIAN' $checked{'ENABLE_GUARDIAN'}{'on'} />  Guardian";
+}
+
 print <<END
-<tr>
-	<td class='base'><input type='checkbox' name='ENABLE_SNORT' $checked{'ENABLE_SNORT'}{'on'} />
-		RED Snort</td>
-</tr>
+</td></tr>
 <tr>
 	<td><hr /></td>
 </tr>

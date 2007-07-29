@@ -611,9 +611,9 @@ END
     <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	  <table width='66%'>
 		<tr><td colspan='3'>&nbsp;
-		<tr><td width='40%' align='right'>$Lang::tr{'downlink speed'}: 	<td width='40%' align='left'>$qossettings{'INC_SPD'} kbps
+		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}: 	<td width='30%' align='left'>$qossettings{'INC_SPD'}
 		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='Andern' />
-		<tr><td width='40%' align='right'>$Lang::tr{'uplink speed'}: 	<td width='40%' align='left'>$qossettings{'OUT_SPD'} kbps
+		<tr><td width='50%' align='right'>$Lang::tr{'uplink speed'}: 	<td width='30%' align='left'>$qossettings{'OUT_SPD'}
 		</table></form>
 END
 ;
@@ -623,10 +623,10 @@ END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td colspan='3'><hr />
-		<tr><td width='40%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_INC'}	
+		<tr><td width='50%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_INC'}	
 		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern' />
-		<tr><td width='40%' align='right'>$Lang::tr{'uplink std class'}: 	<td width='40%' align='left'>$qossettings{'DEFCLASS_OUT'}
-		<tr><td width='40%' align='right'>ACKs:				<td width='40%' align='left'>$qossettings{'ACK'}
+		<tr><td width='50%' align='right'>$Lang::tr{'uplink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_OUT'}
+		<tr><td width='50%' align='right'>ACKs:				<td width='30%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr />
 		<tr><td colspan='3' width='100%' align='center'>
 		</table>
@@ -750,12 +750,12 @@ sub changebandwidth {
 		<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
 		<table width='66%'>
 		<tr><td width='100%' colspan='3'>$Lang::tr{'down and up speed'}
-		<tr><td width='33%' align='right'>$Lang::tr{'downlink speed'}:
-		    <td width='33%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" /> &nbsp; kbps
-		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'uplink speed'}:
-		    <td width='33%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" /> &nbsp; kbps
-		    <td width='33%' align='center'><input type='submit' name='ACTION' value="$Lang::tr{'save'}" />&nbsp;<input type='reset' name='ACTION' value="$Lang::tr{'reset'}" />
+		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}:
+		    <td width='30%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" />
+		    <td width='20%' align='center'>&nbsp;
+		<tr><td width='50%' align='right'>$Lang::tr{'uplink speed'}:
+		    <td width='30%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" />
+		    <td width='20%' align='center'><input type='submit' name='ACTION' value="$Lang::tr{'save'}" />&nbsp;<input type='reset' name='ACTION' value="$Lang::tr{'reset'}" />
 		</table>
 		</form>
 END

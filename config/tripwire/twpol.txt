@@ -33,13 +33,13 @@ SIG_HI        = 100 ;                # Critical files that are significant point
   /bin		                         -> $(SEC_CRIT) ;
   /boot                            -> $(SEC_CRIT) ;
   /etc                             -> $(SEC_CRIT) ;
+  /etc/snort/rules/                -> $(Dynamic)  ;
   /lib                             -> $(SEC_CRIT) ;
   /root                            -> $(SEC_CRIT) ;
   /root/.bash_history              -> $(Dynamic)  ;
   /sbin                            -> $(SEC_CRIT) ;
   /usr                             -> $(SEC_CRIT) ;
-  !/usr/src                                       ;
-  !/usr/share/clamav                               ;
+  /usr/share/clamav                -> $(Dynamic)  ;
   /etc/mtab                        -> $(SEC_CONFIG) -i ; # Inode number changes on any mount/unmount
 
   #don't scan the individual reports

@@ -15,97 +15,116 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
+
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/snort/settings)
 
 if [ "$ENABLE_SNORT_ORANGE" == "on" ]; then
-	HOME_NET+="$ORANGE_ADDRESS,"
-	DEVICES+="$ORANGE_DEV "
+        HOME_NET+="$ORANGE_ADDRESS,"
+        DEVICES+="$ORANGE_DEV "
 fi
 
 if [ "$ENABLE_SNORT_GREEN" == "on" ]; then
-	HOME_NET+="$GREEN_ADDRESS,"
-	DEVICES+="$GREEN_DEV "
+        HOME_NET+="$GREEN_ADDRESS,"
+        DEVICES+="$GREEN_DEV "
 fi
 
 if [ "$ENABLE_SNORT_BLUE" == "on" ]; then
-	HOME_NET+="$BLUE_ADDRESS,"
-	DEVICES+="$BLUE_DEV "
+        HOME_NET+="$BLUE_ADDRESS,"
+        DEVICES+="$BLUE_DEV "
 fi
 
 if [ "$ENABLE_SNORT" == "on" ]; then
-	LOCAL_IP=`cat /var/ipfire/red/local-ipaddress`
-	if [ "$LOCAL_IP" ]; then
-		HOME_NET+="$LOCAL_IP,"
-	else
-		exit 1 ## Add error handling here
-	fi
-	DEVICES+=`cat /var/ipfire/red/iface`
+        LOCAL_IP=`cat /var/ipfire/red/local-ipaddress`
+        if [ "$LOCAL_IP" ]; then
+                HOME_NET+="$LOCAL_IP,"
+        else
+                exit 1 ## Add error handling here
+        fi
+        DEVICES+=`cat /var/ipfire/red/iface 2>/dev/null`
 fi
 
 COUNT=`echo $HOME_NET | wc -m`
 HOME_NET=`echo $HOME_NET | cut -c $[$COUNT - 2]`
  
-echo "var HOME_NET [$HOME_NET]" >	/etc/snort/vars
-echo "var EXTERNAL_NET ANY" >> 		/etc/snort/vars
+echo "var HOME_NET [$HOME_NET]" >       /etc/snort/vars
+echo "var EXTERNAL_NET ANY" >>          /etc/snort/vars
 
 DNS1=`cat /var/ipfire/red/dns1 2>/dev/null`
 DNS2=`cat /var/ipfire/red/dns2 2>/dev/null`
 
 if [ "$DNS2" ]; then
-	echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
+        echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
 else
-	echo "var DNS_SERVERS $DNS1" >> /etc/snort/vars
+        echo "var DNS_SERVERS $DNS1" >> /etc/snort/vars
 fi 
 
 case "$1" in
-	start)
-		for DEVICE in $DEVICES; do
-			boot_mesg "Starting Intrusion Detection System on $DEVICE..."
-			/usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --create-pidfile --nolock-pidfile --pid-path /var/run/
-			evaluate_retval
-			chmod 644 /var/run/snort_$DEVICE.pid
-		done
-		;;
-		
-	stop)
-	     DEVICES=""
-	     if [ -r /var/run/snort_$BLUE_DEV.pid ]; then
-	         DEVICES+="$BLUE_DEV "
-       fi
-	     if [ -r /var/run/snort_$GREEN_DEV.pid ]; then
-	         DEVICES+="$GREEN_DEV "
-       fi
-	     if [ -r /var/run/snort_$ORANGE_DEV.pid ]; then
-	         DEVICES+="$ORANGE_DEV "
-       fi
+        start)
+                for DEVICE in $DEVICES; do
+                        boot_mesg "Starting Intrusion Detection System on $DEVICE..."
+                        /usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --create-pidfile --nolock-pidfile --pid-path /var/run/
+                        evaluate_retval
+                        chmod 644 /var/run/snort_$DEVICE.pid
+                done
+                
+	  
+                if [ -r /var/ipfire/guardian/enable ]; then
+		              IFACE=`/bin/cat /var/ipfire/red/iface 2>/dev/null | /usr/bin/tr -d '\012'`
+	                sed -e "s/^Interface.*/Interface       ${IFACE}/" /var/ipfire/guardian/guardian.conf > temp
+	                mv temp /var/ipfire/guardian/guardian.conf
+	              
+                  boot_mesg "Starting Guardian..."
+		              loadproc /usr/local/bin/guardian.pl -c /var/ipfire/guardian/guardian.conf
+		            fi
+		    ;;
+                
+        stop)
+               DEVICES=""
+               if [ -r /var/run/snort_$BLUE_DEV.pid ]; then
+                 DEVICES+="$BLUE_DEV "
+               fi
+               
+               if [ -r /var/run/snort_$GREEN_DEV.pid ]; then
+                 DEVICES+="$GREEN_DEV "
+              fi
+             
+              if [ -r /var/run/snort_$ORANGE_DEV.pid ]; then
+                 DEVICES+="$ORANGE_DEV "
+              fi
       
-       RED=`cat /var/ipfire/red/iface`
-       if [ -r /var/run/snort_$RED.pid ]; then
-	         DEVICES+=`cat /var/ipfire/red/iface 2>/dev/null`
-       fi
+              RED=`cat /var/ipfire/red/iface 2>/dev/null`
+              if [ -r /var/run/snort_$RED.pid ]; then
+                 DEVICES+=`cat /var/ipfire/red/iface 2>/dev/null`
+              fi
        
-    for DEVICE in $DEVICES; do
-			boot_mesg "Stopping Intrusion Detection System on $DEVICE..."
-			killproc -p /var/run/snort_$DEVICE.pid /var/run
-		done
-		
-		rm /var/run/snort_* >/dev/null 2>/dev/null
-		;;
-		
-	status)
-		statusproc /usr/sbin/snort
-		;;
-		
-	restart)
-		$0 stop
-		$0 start
-		;;
-		
-	*)
-		echo "Usage: $0 {start|stop|restart|status}"
-		exit 1
-		;;
+              for DEVICE in $DEVICES; do
+                 boot_mesg "Stopping Intrusion Detection System on $DEVICE..."
+                 killproc -p /var/run/snort_$DEVICE.pid /var/run
+              done
+              
+              rm /var/run/snort_* >/dev/null 2>/dev/null
+                
+              if [ -r /var/ipfire/guardian/enable ]; then
+		          boot_mesg "Stopping Guardian..."
+		          killproc /usr/local/bin/guardian.pl
+		          fi
+        ;;
+                
+        status)
+                statusproc /usr/sbin/snort
+                ;;
+                
+        restart)
+                $0 stop
+                $0 start
+                ;;
+                
+        *)
+                echo "Usage: $0 {start|stop|restart|status}"
+                exit 1
+                ;;
 esac
 
 # End $rc_base/init.d/snort
