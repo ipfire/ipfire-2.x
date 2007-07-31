@@ -2,6 +2,10 @@
 # V 1.7
 # Read the readme file for changes
 #
+# Enhanced for IPFire by IPFire Team
+# Added Portscan detection for non syslog system
+# Added SSH-Watch for SSH-Bruteforce Attacks
+# An suppected IP will be blocked on all interfaces
 
 $OS=`uname`;
 chomp $OS;
@@ -45,6 +49,8 @@ $broadcastaddr =~ s/\d+$/255/;
                           # destination was found.
               "$hostipaddr" => 1);
 
+%sshhash = ();
+
 if ( -e $targetfile ) {
   &load_targetfile;
 }
@@ -58,28 +64,16 @@ open (ALERT, $alert_file) or die "can't open alert file: $alert_file: $!\n";
 seek (ALERT, 0, 2); # set the position to EOF. 
 # this is the same as a tail -f :)
 $counter=0;
+open (ALERT2, "/var/log/messages" ) or die "can't open /var/log/messages: $!\n";
+seek (ALERT2, 0, 2); # set the position to EOF. 
+# this is the same as a tail -f :)
+$counter2=0;
+
 for (;;) { 
   sleep 1; 
   if (seek(ALERT,0,1)){ 
     while (<ALERT>) { 
       chop;
-      if (/snort/) { #syslog file
-        if (defined($opt_d)) {print "$_\n";}
-        # This is *much* cleaner, and should work on all systems
-		@foo=split(/\s+/,$_);
-		($junk,$reason) = split (/\]:/,$_,2);
-		@array=();
-		foreach $str (@foo) {
-		  if ($str=~/(\d+\.\d+\.\d+\.\d+)/) {
-			$array[$#array+1]=$1;
-			# write_log ("Found $array[$#array]\n");
-		  }
-		}
-        if ($array[1] eq "") { $array[1]=0; }
-        # this should work if snort didn't report the target address. 
-        # $array[1] should be the target address (portscans don't show this)
-        &checkem ($array[0], $array[1], $reason);
-      } else { # snort.alert type file for backwards compat
 			  if (defined($opt_d)) {print "$_\n";}
         if (/\[\*\*\]\s+(.*)\s+\[\*\*\]/){ 
           $type=$1;
@@ -87,7 +81,8 @@ for (;;) {
         if (/(\d+\.\d+\.\d+\.\d+):\d+ -\> (\d+\.\d+\.\d+\.\d+):\d+/) {
           &checkem ($1, $2, $type);
         }
-      }
+        if ($_=~/Portscan/) {
+          my @array=split(/ /,$_);&checkem ($array[5], $hostipaddr, "Portscan was detected.");} 
     } 
   } 
   # Run this stuff every 30 seconds.. 
@@ -97,6 +92,22 @@ for (;;) {
     &check_log_name;
     $counter=0;
   } else { $counter=$counter+1; }
+  
+  sleep 1; 
+  if (seek(ALERT2,0,1)){ 
+    while (<ALERT2>) { 
+      chop;
+        if ($_=~/.*sshd.*Failed password for root from.*/) {
+          my @array=split(/ /,$_);&checkssh ($array[10], "possible SSH-Bruteforce Attack");} 
+    } 
+  } 
+  # Run this stuff every 30 seconds.. 
+  if ($counter2 == 30) {
+    &remove_blocks; # This might get moved elsewhere, depending on how much load
+		    # it puts on the system..
+    &check_log_name;
+    $counter2=0;
+  } else { $counter2=$counter2+1; }
 }
 
 sub check_log_name {
@@ -116,19 +127,16 @@ sub check_log_name {
 sub checkem {
   my ($source, $dest,$type) = @_;
   my $flag=0;
-  my $date = localtime();
   return 1 if ($source eq $hostipaddr); # this should prevent is from nuking
                                        # ourselves 
   return 1 if ($source eq $gatewayaddr); # or our gateway 
   if ($ignore{$source} == 1) { # check our ignore list..
-     &write_log("$date: ");
      &write_log("$source\t$type\n");
      &write_log("Ignoring attack because $source is in my ignore list\n");
      return 1;
   }
   # if the offending packet was sent to us, the network, or the broadcast, then
   if ($targethash{$dest} == 1) {   
-    &write_log("$date: ");
     &ipchain ($source, $dest, $type);
   }
   # you will see this if the destination was not in the $targethash, and the
@@ -143,12 +151,36 @@ sub checkem {
   }
 }
 
+sub checkssh {
+  my ($source,$type) = @_;
+  my $flag=0;
+  return 1 if ($source eq $hostipaddr); # this should prevent is from nuking
+                                       # ourselves 
+  return 1 if ($source eq $gatewayaddr); # or our gateway 
+  if ($sshhash{$dest} eq "" ){ $sshhash{$dest} = 1; } 
+  if ($sshhash{$dest} >= 3 ) {
+    &write_log ("source = $source, count $sshhash{$dest} - blocking for ssh attack.\n");   
+    &ipchain ($source, "", $type);
+  }
+  # you will see this if the destination was not in the $sshhash, and the
+  # packet was not ignored before the target check.. 
+  else { 
+    &write_log ("Odd.. source = $source, ssh count only $sshhash{$dest} - No action done.\n"); 
+    if (defined ($opt_d)) {
+      foreach $key (keys %sshhash) {
+        &write_log ("sshhash{$key} = %sshhash{$key}\n");
+      }
+    }
+        $sshhash{$key} = $sshhash{$key}+1;
+  }
+}
+
 sub ipchain { 
   my ($source, $dest, $type) = @_;
   &write_log ("$source\t$type\n");
   if ($hash{$source} eq "") {
-    &write_log ("Running '$blockpath $source $interface'\n");
-    system ("$blockpath $source $interface");
+    &write_log ("Running '$blockpath $source'\n");
+    system ("$blockpath $source");
     $hash{$source} = time() + $TimeLimit;
   } else {
     # We have already blocked this one, but snort detected another attack. So
@@ -274,19 +306,17 @@ configuration file\n";
   }
 }
 
-
 sub write_log {
   my $message = $_[0];
+  my $date = localtime();
   if (defined($opt_d)) {  # we are in debug mode, and not daemonized
     print STDOUT $message;
   } else {
     open (LOG, ">>$logfile");
-    print LOG $message;
+    print LOG $date.": ".$message;
     close (LOG);
   }
 }
-
-
 
 sub daemonize {
   my ($home);
@@ -347,7 +377,7 @@ sub remove_blocks {
 sub call_unblock {
   my ($source, $message) = @_;
   &write_log ("$message");
-  system ("$unblockpath $source $interface");
+  system ("$unblockpath $source");
 }
 
 sub clean_up_and_exit {
