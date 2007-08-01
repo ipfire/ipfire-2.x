@@ -40,12 +40,12 @@ $pakfiresettings{'UUID'} = 'on';
 if ($pakfiresettings{'ACTION'} eq 'install'){
 	$pakfiresettings{'INSPAKS'} =~ s/\|/\ /g;
 	if ("$pakfiresettings{'FORCE'}" eq "on") {
-		my $command = "/usr/local/bin/pakfire install --non-interactive $pakfiresettings{'INSPAKS'} &>/dev/null &";
+		my $command = "/usr/local/bin/pakfire install --non-interactive --no-colors $pakfiresettings{'INSPAKS'} &>/dev/null &";
 		system("$command");
 		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", "Abfrage");
-		my @output = `/usr/local/bin/pakfire resolvedeps $pakfiresettings{'INSPAKS'}`;
+		my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'INSPAKS'}`;
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$pakfiresettings{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
 		<pre>		
@@ -79,11 +79,11 @@ END
 
 } elsif ($pakfiresettings{'ACTION'} eq 'update') {
 	
-	system("/usr/local/bin/pakfire update --force");
+	system("/usr/local/bin/pakfire update --force --no-colors");
 
 } elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
 	
-	system("/usr/local/bin/pakfire upgrade -y");
+	system("/usr/local/bin/pakfire upgrade -y --no-colors");
 	
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
@@ -126,13 +126,13 @@ if ($return) {
 			</form>
 		<tr><td colspan='2' align='left'><pre>
 END
-my @output = `tail /var/log/messages | grep pakfire`;
-foreach (@output) {
-	print "$_";
-}
-print <<END;
-		</pre>
-	</table>
+	my @output = `tail -20 /var/log/pakfire.log`;
+	foreach (@output) {
+		print "$_";
+	}
+	print <<END;
+			</pre>
+		</table>
 END
 	&Header::closebox();
 	&Header::closebigbox();

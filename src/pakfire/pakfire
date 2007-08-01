@@ -39,8 +39,12 @@
 	
 	foreach (@ARGV) {
 		if ("$_" =~ "^-") {
+			# Turn off interactive mode
 			$interactive = 0 if ("$_" eq "--non-interactive");
 			$interactive = 0 if ("$_" eq "-y");
+			
+			# Turn off shell colors - Bad for displaying in webinterface
+			$Pakfire::enable_colors = 0 if ("$_" eq "--no-colors");
 		}
 	}
 
@@ -251,6 +255,7 @@
 	} elsif ("$ARGV[0]" eq "resolvedeps") {
 		foreach (@ARGV) {
 			next if ("$_" eq "resolvedeps");
+			next if ("$_" =~ "^-");
 			&Pakfire::resolvedeps("$_");
 		}
 	} else {

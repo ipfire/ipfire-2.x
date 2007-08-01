@@ -14,6 +14,10 @@ use Net::Ping;
 
 package Pakfire;
 
+# GPG Keys
+my $myid = "64D96617";			# Our own gpg-key paks@ipfire.org
+my $trustid = "65D0FD58";		# gpg-key of CaCert
+
 # A small color-hash :D
 my %color;
 	$color{'normal'}      = "\033[0m"; 
@@ -33,6 +37,7 @@ my %color;
 	$color{'lightgrey'}   = "\033[0;37m";
 	$color{'yellow'}      = "\033[1;33m";
 	$color{'white'}       = "\033[1;37m";
+our $enable_colors = 1;
 
 my $final_data;
 my $total_size;
@@ -45,20 +50,22 @@ sub message {
 	my $message = shift;
 		
 	logger("$message");
-	if ("$message" =~ /ERROR/) {
-		$message = "$color{'red'}$message$color{'normal'}";
-	} elsif ("$message" =~ /INFO/) {
-		$message = "$color{'cyan'}$message$color{'normal'}";
-	} elsif ("$message" =~ /WARN/) {
-		$message = "$color{'yellow'}$message$color{'normal'}";
-	} elsif ("$message" =~ /RESV/) {
-		$message = "$color{'purple'}$message$color{'normal'}";
-	} elsif ("$message" =~ /INST/) {
-		$message = "$color{'green'}$message$color{'normal'}";
-	} elsif ("$message" =~ /REMV/) {
-		$message = "$color{'lightred'}$message$color{'normal'}";
-	} elsif ("$message" =~ /UPGR/) {
-		$message = "$color{'lightblue'}$message$color{'normal'}";
+	if ( $enable_colors == 1 ) {
+		if ("$message" =~ /ERROR/) {
+			$message = "$color{'red'}$message$color{'normal'}";
+		} elsif ("$message" =~ /INFO/) {
+			$message = "$color{'cyan'}$message$color{'normal'}";
+		} elsif ("$message" =~ /WARN/) {
+			$message = "$color{'yellow'}$message$color{'normal'}";
+		} elsif ("$message" =~ /RESV/) {
+			$message = "$color{'purple'}$message$color{'normal'}";
+		} elsif ("$message" =~ /INST/) {
+			$message = "$color{'green'}$message$color{'normal'}";
+		} elsif ("$message" =~ /REMV/) {
+			$message = "$color{'lightred'}$message$color{'normal'}";
+		} elsif ("$message" =~ /UPGR/) {
+			$message = "$color{'lightblue'}$message$color{'normal'}";
+		}
 	}
 	print "$message\n";
 	
@@ -73,10 +80,16 @@ sub logger {
 }
 
 sub usage {
-  &Pakfire::message("Usage: pakfire <install|remove> <pak(s)>");
+  &Pakfire::message("Usage: pakfire <install|remove> [options] <pak(s)>");
   &Pakfire::message("               <update> - Contacts the servers for new lists of paks.");
   &Pakfire::message("               <upgrade> - Installs the latest version of all paks.");
   &Pakfire::message("               <list> - Outputs a short list with all available paks.");
+  &Pakfire::message("");
+  &Pakfire::message("       Global options:");
+  &Pakfire::message("               --non-interactive --> Enables the non-interactive mode.");
+  &Pakfire::message("                                     You won't see any question here.");
+  &Pakfire::message("                              -y --> Short for --non-interactive.");
+  &Pakfire::message("                     --no-colors --> Turns off the wonderful colors.");
   &Pakfire::message("");
   exit 1;
 }
@@ -122,7 +135,6 @@ sub fetchfile {
 		
 		unless ($bfile =~ /^counter\?.*/) {
 			logger("DOWNLOAD INFO: Host: $host ($proto) - File: $file");
-			#message("DOWNLOAD INFO: Loading $bfile from ($proto) $host...");
 		}
 
 		my $ua = LWP::UserAgent->new;
@@ -669,14 +681,12 @@ sub senduuid {
 
 sub checkcryptodb {
 	logger("CRYPTO INFO: Checking GnuPG Database");
-	my $myid = "64D96617"; # Our own gpg-key
-	my $trustid = "65D0FD58"; # Id of CaCert
 	my $ret = system("gpg --list-keys | grep -q $myid");
 	unless ( "$ret" eq "0" ) {
 		message("CRYPTO WARN: The GnuPG isn't configured corectly. Trying now to fix this.");
 		message("CRYPTO WARN: It's normal to see this on first execution.");
-		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $myid --status-fd 2 >> $Conf::logdir/gnupg-database.log 2>&1");
-		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --recv-key $trustid --status-fd 2 >> $Conf::logdir/gnupg-database.log 2>&1");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --status-fd 2 --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
+		system("gpg --keyserver wwwkeys.de.pgp.net --always-trust --status-fd 2 --recv-key $trustid >> $Conf::logdir/gnupg-database.log 2>&1");
 	} else {
 		logger("CRYPTO INFO: Database is okay");
 	}
