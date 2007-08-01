@@ -87,6 +87,12 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev install
 	rm -f /install/initrd/sbin/udev* /install/initrd/usr/sbin/udev* /install/initrd/usr/bin/udev*
 	cd $(DIR_APP) && install udevstart udevinfo udevd udevsettle udevtrigger /install/initrd/sbin
+	cd $(DIR_APP) && make $(MAKETUNING) EXTRAS="extras/ata_id extras/cdrom_id extras/edd_id \
+					extras/firmware extras/floppy extras/path_id \
+					extras/scsi_id extras/usb_id extras/volume_id"
+	cd $(DIR_APP) && make DESTDIR=/install/initrd EXTRAS="extras/ata_id extras/cdrom_id extras/edd_id \
+					extras/firmware extras/floppy extras/path_id \
+					extras/scsi_id extras/usb_id extras/volume_id" install
 	cd /install/initrd/usr/share && rm -rf man
 	cd /install/initrd/dev && rm -f console
 	cd /install/initrd/dev && mknod -m 0600 console c 5 1

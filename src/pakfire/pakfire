@@ -16,6 +16,11 @@
 	  exit 1;
 	}
 	
+	unless ( -e "/var/ipfire/red/active" ) {
+		&Pakfire::message("PAKFIRE ERROR: You need to be online to run pakfire!");
+		exit 2;
+	}
+	
 	### Check if we are started by another name
 	#
 	if ( $0 =~ /pakfire-update$/ ) {

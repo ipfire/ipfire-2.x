@@ -2,4 +2,4 @@
 . /opt/pakfire/lib/functions.sh
 
 extract_files
-/etc/init.d/ipfireseeder start
+(sleep 600 & /etc/init.d/ipfireseeder start) &
