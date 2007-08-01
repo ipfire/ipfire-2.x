@@ -2,4 +2,5 @@
 . /opt/pakfire/lib/functions.sh
 
 extract_files
-chmod nobody.nobody /var/ipfire/mpfire
+
+chown nobody.nobody -Rv /var/ipfire/mpfire
