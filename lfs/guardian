@@ -32,10 +32,10 @@ THISAPP    = guardian-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = guardian
-PAK_VER    = 1.7
+PAK_VER    = 1
 
-DESCDE     = "Guardian ist Sicherheitstool, welches das Snort IDS Log auswertet und IP´s mit Hilfe von iptables block."
-DESCEN     = "Guardian is a security tool which will issue commands to the OS to block ip addresses which attacks may be coming from. Guardian requires an IDS (Intrusion detection system), and currently only works with snort."
+DESCDE     = "Guardian ist ein Sicherheitstool, welches das Snort IDS Log auswertet und IPs mit Hilfe von iptables blockt."
+DESCEN     = "Guardian is a security tool which will issue commands to the OS to block ip addresses which attacks may be coming from."
 
 ###############################################################################
 # Top-level Rules
@@ -60,10 +60,9 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	-mkdir -p /var/ipfire/guardian/
-	-mkdir -p /var/log/guardian/
+	-mkdir -p /var/ipfire/guardian /var/log/guardian
 	touch /var/log/guardian/guardian.log
-	install -v -m 755 $(DIR_SRC)/config/guardian/guardian.conf /var/ipfire/guardian/
+	install -v -m 644 $(DIR_SRC)/config/guardian/guardian.conf /var/ipfire/guardian/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian.pl /usr/local/bin/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_block.sh /usr/local/bin/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_unblock.sh /usr/local/bin/

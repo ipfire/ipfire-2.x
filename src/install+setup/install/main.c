@@ -163,8 +163,8 @@ int main(int argc, char *argv[])
 		mysystem("/sbin/modprobe iso9660");
 		mysystem("/sbin/modprobe ext2");
 		
-		// Loading the via_rhine driver because it isn't detected correctly
-		mysystem("/sbin/modprobe via_rhine");
+		// Loading the via_rhine driver because it isn't detected correctly (sometimes)
+		mysystem("/sbin/modprobe via-rhine");
 	}
 
 	if (unattended) {
