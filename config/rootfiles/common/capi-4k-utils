@@ -20,9 +20,9 @@ usr/lib/libcapi20.so
 usr/lib/libcapi20.so.3
 usr/lib/libcapi20.so.3.0.4
 #usr/lib/libcapi20dyn.a
-#usr/lib/pppd/2.4.3
-usr/lib/pppd/2.4.3/capiplugin.so
-usr/lib/pppd/2.4.3/userpass.so
+#usr/lib/pppd/2.4.4
+usr/lib/pppd/2.4.4/capiplugin.so
+usr/lib/pppd/2.4.4/userpass.so
 #usr/man/man8/avmcapictrl.8
 #usr/man/man8/capiinfo.8
 #usr/man/man8/capiplugin.8

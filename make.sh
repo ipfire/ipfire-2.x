@@ -389,7 +389,6 @@ buildipfire() {
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
-  ipfiremake squashfstools
   ipfiremake sysfsutils
   ipfiremake ntfs-3g
   ipfiremake ethtool
@@ -460,7 +459,7 @@ buildipfire() {
   ipfiremake setserial
   ipfiremake setup
   ipfiremake snort
-  #ipfiremake snortsnarf
+  ipfiremake snortsnarf
   ipfiremake oinkmaster
   ipfiremake squid
   ipfiremake squid-graph
@@ -508,7 +507,6 @@ buildipfire() {
   ipfiremake mp3blaster
   ipfiremake libpri
   ipfiremake stund
-# ipfiremake bristuff
   ipfiremake asterisk
   ipfiremake backup
   ipfiremake gnump3d

@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/capi20 && SED=sed ./configure
 	cd $(DIR_APP)/capi20 && SED=sed make $(MAKETUNING)
 	cd $(DIR_APP)/capi20 && make install
-	PPPVER=2.4.3 && \
+	PPPVER=2.4.4 && \
 		 cd $(DIR_APP)/pppdcapiplugin && PPPVERSIONS="$$PPPVER" make && PPPVERSIONS="$$PPPVER" make install
 	cd $(DIR_APP)/capiinfo && ./configure
 	cd $(DIR_APP)/capiinfo && make $(MAKETUNING)
