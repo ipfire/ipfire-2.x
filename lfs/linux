@@ -26,8 +26,8 @@
 
 include Config
 
-PATCHLEVEL = .1
-VER        = 2.6.22.1
+PATCHLEVEL = .50
+VER        = 2.6.16.50
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -35,10 +35,6 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
-
-OPENSWAN = openswan-2.4.9
-MISDN = mISDN-1_1_5
-LAYER7 = netfilter-layer7-v2.13
 
 # Normal build or SMP build.
 #
@@ -53,19 +49,32 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-		$(OPENSWAN).tar.gz \
-		$(MISDN).tar.gz \
-		$(LAYER7).tar.gz
+	mISDN-1_1_3.tar.gz \
+	squashfs3.2-r2.tar.gz \
+	iptables-1.3.5.tar.bz2 \
+	patch-o-matic-ng-20061210.tar.bz2 \
+	netfilter-layer7-v2.9.tar.gz \
+	patch-2.6.16-nath323-1.3.bz2 \
+	openswan-2.4.9.tar.gz
 
 $(DL_FILE)												= $(URL_IPFIRE)/$(DL_FILE)
-$(LAYER7).tar.gz                  = $(URL_IPFIRE)/$(LAYER7).tar.gz
-$(MISDN).tar.gz                   = $(URL_IPFIRE)/$(MISDN).tar.gz
-$(OPENSWAN).tar.gz                = $(URL_IPFIRE)/$(OPENSWAN).tar.gz
+patch-o-matic-ng-20061210.tar.bz2	= $(URL_IPFIRE)/patch-o-matic-ng-20061210.tar.bz2
+iptables-1.3.5.tar.bz2						= $(URL_IPFIRE)/iptables-1.3.5.tar.bz2
+netfilter-layer7-v2.9.tar.gz			= $(URL_IPFIRE)/netfilter-layer7-v2.9.tar.gz
+patch-2.6.16-nath323-1.3.bz2			= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
+squashfs3.2-r2.tar.gz							= $(URL_IPFIRE)/squashfs3.2-r2.tar.gz
+mISDN-1_1_3.tar.gz                = $(URL_IPFIRE)/mISDN-1_1_3.tar.gz
+openswan-2.4.9.tar.gz							= $(URL_IPFIRE)/openswan-2.4.9.tar.gz
 
-$(DL_FILE)_MD5										= 50249e822a2a112d9221129a4a3af374
-$(LAYER7).tar.gz_MD5              = c8097875074405be31e4372682b68d7a
-$(MISDN).tar.gz_MD5               = 93b1cff7817b82638a0475c2b7b7f1b6
-$(OPENSWAN).tar.gz_MD5            = 845f12d80d443cfa1a52f2b53b987bee
+$(DL_FILE)_MD5										= cc2106c6188675187d636aa518b04958
+linux-2.6.16.33.tar.bz2_MD5				= 22f56e3a5e7524b2bbde2696152b5ad7
+patch-o-matic-ng-20061210.tar.bz2_MD5	= 76edac76301b45f89e467b41c8cf4393
+iptables-1.3.5.tar.bz2_MD5				= 00fb916fa8040ca992a5ace56d905ea5
+netfilter-layer7-v2.9.tar.gz_MD5	= ebf9043a5352ebe6dbd721989ef83dee
+patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
+squashfs3.2-r2.tar.gz_MD5					= bf360b92eba9e6d5610196ce2e02fcd1
+mISDN-1_1_3.tar.gz_MD5	          = d29bcf48f16fc8a9b9f3552d111b308d
+openswan-2.4.9.tar.gz_MD5					= 845f12d80d443cfa1a52f2b53b987bee
 
 install : $(TARGET)
 
@@ -94,35 +103,68 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	ln -s linux-$(VER) /usr/src/linux
+
+	# An UTF8 patch from LFS
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16.27-utf8_input-1.patch
 
 	# Openswan 2
 	cd $(DIR_SRC) && rm -rf openswan-*
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/$(OPENSWAN).tar.gz
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(OPENSWAN).kernel-2.6-natt.patch
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(OPENSWAN).kernel-2.6-klips.patch
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-2.4.9.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.9.kernel-2.6-klips.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.9.kernel-2.6-natt.patch
 
 	cd $(DIR_SRC)/openswan-* && sed -i -e 's/INC_USRLOCAL=\/usr\/local/INC_USRLOCAL=\/usr/' Makefile.inc
 
+	# H323 conntrack
+	cd $(DIR_APP) && bunzip2 -cd $(DIR_DL)/patch-2.6.16-nath323-1.3.bz2 | patch -Np1
+
 	# Reiser4
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/reiser4-for-2.6.22-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/reiser4-for-2.6.16-5.patch
+
+	# SquashFS
+	cd $(DIR_SRC) && rm -rf squashfs*
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/squashfs3.2-r2.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.2-r2/kernel-patches/linux-2.6.16/squashfs3.2-patch
 
 	# ip_conntrack permissions from 440 to 444
-	#cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
+	
+	# Some VIA patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/padlock-prereq-2.6.16.diff
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/epia_dma.patch
+
+	# Patch-o-matic
+	cd $(DIR_SRC) && rm -rf iptables-* patch-o-matic*
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.5.tar.bz2
+	cd $(DIR_SRC) && ln -sf iptables-1.3.5 iptables
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20061210.tar.bz2
+	cd $(DIR_SRC)/patch-o-matic-ng* && \
+		./runme --batch --kernel-path=$(ROOT)/usr/src/$(THISAPP)/ \
+			--iptables-path=$(ROOT)/usr/src/iptables/ \
+			sip-conntrack-nat rtsp-conntrack-nat \
+			mms-conntrack-nat
 
 	# Layer7-patch
-	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/$(LAYER7)
-	cd $(DIR_SRC) && tar xzf $(DIR_DL)/$(LAYER7).tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/$(LAYER7)/kernel-2.6.22-layer7-2.13.patch
+	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.9
+	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.9.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.9/for_older_kernels/kernel-2.6.13-2.6.16-layer7-2.2.patch
 
 	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.21-img2.diff
+ifeq "$(XEN)" ""
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.16-imq2.diff
+endif
 
 	# mISDN
 	cd $(DIR_SRC) && rm -rf mISDN-*
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/$(MISDN).tar.gz
-	cd $(DIR_SRC)/$(MISDN) && yes 'yes' | ./std2kern -k /usr/src/linux
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/mISDN-1_1_3.tar.gz
+	cd $(DIR_SRC)/mISDN-1_1_3 && yes 'yes' | ./std2kern -k /usr/src/linux
+
+ifeq "$(SMP)" ""
+	# Only do this once on the non-SMP pass
+	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.5
+endif
 
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
@@ -156,10 +198,13 @@ else
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 endif
 
+	# remove symlinked pcmcia directory
+	-rm -rf /lib/modules/$(VER)-ipfire{,-smp}/pcmcia
+
 ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass	
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 endif 
 
-	@rm -rf $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
+	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

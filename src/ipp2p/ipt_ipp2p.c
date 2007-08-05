@@ -831,9 +831,7 @@ checkentry(const char *tablename,
            const struct ipt_ip *ip,
 #endif
 	   void *matchinfo,
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,21)
 	   unsigned int matchsize,
-#endif
 	   unsigned int hook_mask)
 {
         /* Must specify -p tcp */
@@ -882,20 +880,12 @@ static struct ipt_match ipp2p_match = {
 static int __init init(void)
 {
     printk(KERN_INFO "IPP2P v%s loading\n", IPP2P_VERSION);
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,21)
-    return xt_register_match(&ipp2p_match);
-#else
     return ipt_register_match(&ipp2p_match);
-#endif
 }
 	
 static void __exit fini(void)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,21)
-    xt_unregister_match(&ipp2p_match);
-#else
     ipt_unregister_match(&ipp2p_match);
-#endif
     printk(KERN_INFO "IPP2P v%s unloaded\n", IPP2P_VERSION);    
 }
 	
