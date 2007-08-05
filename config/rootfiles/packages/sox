@@ -1,0 +1,5 @@
+usr/bin/sox
+usr/bin/soxmix
+#usr/man/man1/sox.1
+#usr/man/man1/soxexam.1
+#usr/man/man1/soxmix.1

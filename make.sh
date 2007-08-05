@@ -641,6 +641,7 @@ ipfirepackages() {
   ipfiredist clamav
   ipfiredist cups
   ipfiredist cyrus-sasl
+  ipfiredist ethereal
 #  ipfiredist fetchmail
 #  ipfiredist gnump3d
   ipfiredist guardian
@@ -648,17 +649,19 @@ ipfirepackages() {
   ipfiredist java
   ipfiredist libogg
   ipfiredist libvorbis
-#  ipfiredist mailx
+  ipfiredist mailx
 #  ipfiredist mldonkey
   ipfiredist mp3blaster
   ipfiredist mpfire
   ipfiredist mpg123
 #  ipfiredist nfs
+  ipfiredist nmap
   ipfiredist openldap
 #  ipfiredist postfix
+  ipfiredist rsync
   ipfiredist rtorrent
   ipfiredist samba
-#  ipfiredist sox
+  ipfiredist sox
 #  ipfiredist spamassassin
   ipfiredist tripwire
   ipfiredist vsftpd

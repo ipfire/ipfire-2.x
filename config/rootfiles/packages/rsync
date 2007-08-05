@@ -1,0 +1,3 @@
+usr/bin/rsync
+#usr/man/man1/rsync.1
+#usr/man/man5/rsyncd.conf.5

@@ -105,7 +105,7 @@ define POSTBUILD
 		else LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
 		fi; \
 		echo $(LFS_SCRIPT); \
-		ROOTFILE=`find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f -name $$LFS_SCRIPT`; \
+		ROOTFILE=`find $(DIR_SRC)/config/rootfiles/common $(DIR_SRC)/config/rootfiles/packages -maxdepth 1 -type f -name $$LFS_SCRIPT`; \
 		if [ "$$ROOTFILE" = "" ]; then \
 			ROOTFILE=`find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -type f -name $$LFS_SCRIPT`; \
 		fi; \
