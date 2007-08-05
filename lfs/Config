@@ -69,10 +69,10 @@ define PREBUILD
 	if [ -f $(DIR_SRC)/linux-$(KVER) ]; then \
 		if [ "$(SMP)" = "" ]; then \
 			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))+' Makefile; \
+				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire+' Makefile; \
 		else \
 			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-smp+' Makefile; \
+				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire-smp+' Makefile; \
 		fi; \
 	fi
 endef

@@ -82,11 +82,11 @@ prepareenv() {
     #                                                                          #
     ############################################################################
     if [ ! "$BASH" ]; then
-	exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
+			exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
     fi
 
     if [ -z "${BASH_VERSION}" ]; then
-	exiterror "Not running BASH shell."
+			exiterror "Not running BASH shell."
     fi
 
 
@@ -106,10 +106,10 @@ prepareenv() {
     echo -ne "Resetting our nice level to $NICE" | tee -a $LOGFILE
     renice $NICE $$ > /dev/null
     if [ `nice` != "$NICE" ]; then
-	beautify message FAIL
-	exiterror "Failed to set correct nice level"
+			beautify message FAIL
+			exiterror "Failed to set correct nice level"
     else
-	beautify message DONE
+			beautify message DONE
     fi
 
 
@@ -120,10 +120,10 @@ prepareenv() {
     ############################################################################
     echo -ne "Checking if we're running as root user" | tee -a $LOGFILE
     if [ `id -u` != 0 ]; then
-	beautify message FAIL
-	exiterror "Not building as root"
+			beautify message FAIL
+			exiterror "Not building as root"
     else
-	beautify message DONE
+			beautify message DONE
     fi
 
 
@@ -136,13 +136,13 @@ prepareenv() {
     BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
     BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
     if (( 2048000 > $BASE_ASPACE )); then
-	BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
-	if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
-		beautify message FAIL
-		exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
-	fi
+			BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
+			if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
+				beautify message FAIL
+				exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
+			fi
     else
-	beautify message DONE
+			beautify message DONE
     fi
 
     ############################################################################
@@ -161,10 +161,10 @@ prepareenv() {
         rm -f /tools
     fi
     if [ ! -a /tools ]; then
-	ln -s $BASEDIR/build/tools /
+			ln -s $BASEDIR/build/tools /
     fi
     if [ ! -h /tools ]; then
-	exiterror "Could not create /tools symbolic link."
+			exiterror "Could not create /tools symbolic link."
     fi
 
     # Setup environment
