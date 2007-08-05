@@ -394,7 +394,7 @@ buildipfire() {
   ipfiremake ethtool
   ipfiremake ez-ipupdate
   ipfiremake fcron
-  ipfiremake GD
+  ipfiremake perl-GD
   ipfiremake GD-Graph
   ipfiremake GD-TextUtil
   ipfiremake gnupg

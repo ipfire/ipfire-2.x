@@ -1,0 +1,46 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/beep
+#
+# Description : Plays a short melody when system goes up or down
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+LENGTH=80
+
+play () {
+
+	beep -l $LENGTH -f $1
+
+}
+
+case "${1}" in
+	start)
+		for i in 440 466 494 523 554 587 622 659 698 740 764 831 880; do
+			play $i
+		done
+		
+		;;
+
+	stop)
+		for i in 880 831 764 740 698 659 622 587 554 532 494 466 440; do
+			play $i
+		done
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/beep

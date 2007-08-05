@@ -28,6 +28,8 @@ include Config
 
 VER        = 2005-07-18
 
+PPPVER = 2.4.4
+
 THISAPP    = capi4k-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
@@ -81,8 +83,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/capi20 && SED=sed ./configure
 	cd $(DIR_APP)/capi20 && SED=sed make $(MAKETUNING)
 	cd $(DIR_APP)/capi20 && make install
-	PPPVER=2.4.4 && \
-		 cd $(DIR_APP)/pppdcapiplugin && PPPVERSIONS="$$PPPVER" make && PPPVERSIONS="$$PPPVER" make install
+	cd $(DIR_APP)/pppdcapiplugin && ln -sf ppp-2.4.3 ppp-$(PPPVER)
+	cd $(DIR_APP)/pppdcapiplugin && PPPVERSIONS="$(PPPVER)" make && PPPVERSIONS="$(PPPVER)" make install
 	cd $(DIR_APP)/capiinfo && ./configure
 	cd $(DIR_APP)/capiinfo && make $(MAKETUNING)
 	cd $(DIR_APP)/capiinfo && make install

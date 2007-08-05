@@ -214,8 +214,19 @@ sub getmirrors {
 
 	logger("MIRROR: Trying to get a mirror list.");
 	
-	fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver");
-	move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
+	if ( -e "$Conf::dbdir/lists/server_list.db" ) {
+		my @stat = stat("$Conf::dbdir/lists/server_list.db");
+		my $time = time();
+		$age = $time - $stat[9];
+	} else {
+		# Force an update.
+		$age = "86401";
+	}
+	
+	if ("$age" gt "86400") {
+		fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver");
+		move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
+	}
 }
 
 sub selectmirror {
@@ -346,7 +357,12 @@ sub dblist {
 					if ("$forweb" eq "forweb") {
 						print "<option value=\"$name\">Update: $name -- Version: $version -> $templine[1] -- Release: $release -> $templine[2]</option>\n";
 					} else {
-						print "Update: $name\nVersion: $version -> $templine[1]\nRelease: $release -> $templine[2]\n\n";
+						my $command = "Update: $name\nVersion: $version -> $templine[1]\nRelease: $release -> $templine[2]\n";
+						if ("$Pakfire::enable_colors" eq "1") {
+							print "$color{'lila'}$command$color{'normal'}\n";
+						} else {
+							print "$command\n";
+						}
 					}
 				}
 			}
@@ -354,9 +370,13 @@ sub dblist {
 		return @updatepaks;
 	} else {
 		my $line;
+		my $use_color;
 		my @templine;
+		my $count;
 		foreach $line (sort @db) {
 			next unless ($line =~ /.*;.*;.*;/ );
+			$use_color = "";
+			$count++;
 			@templine = split(/\;/,$line);
 			if ("$filter" eq "notinstalled") {
 				next if ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
@@ -366,9 +386,17 @@ sub dblist {
 			if ("$forweb" eq "forweb") {
 				print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
 			} else {
-				print "Name: $templine[0]\nProgVersion: $templine[1]\nRelease: $templine[2]\n\n";
+				if ("$Pakfire::enable_colors" eq "1") {
+					if (&isinstalled("$templine[0]")) {
+						$use_color = "$color{'red'}" 
+					} else {
+						$use_color = "$color{'green'}"
+					}
+				}
+				print "${use_color}Name: $templine[0]\nProgVersion: $templine[1]\nRelease: $templine[2]$color{'normal'}\n\n";
 			}
 		}
+		print "$count packages total.\n" unless ("$forweb" eq "forweb");
 	}
 }
 

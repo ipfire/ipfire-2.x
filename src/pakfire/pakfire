@@ -163,7 +163,6 @@
 		
 		my @paks;
 		my $pak;
-		
 		foreach $pak (@ARGV) {
 			unless ("$pak" =~ "^-") {
 				$return = &Pakfire::isinstalled($pak);
@@ -171,9 +170,7 @@
 					&Pakfire::message("PAKFIRE WARN: $pak is not installed");
 					next;
 				}
-			
 				push(@paks, $pak);
-			
 			}
 		}
 		
@@ -208,14 +205,11 @@
 	
 	
 	} elsif ("$ARGV[0]" eq "update") {
-		my $force = "noforce";
 		&Pakfire::makeuuid();
 		&Pakfire::senduuid();
 		&Pakfire::getmirrors();
-		$force = "force" if ("$ARGV[1]" eq "--force");
-		&Pakfire::dbgetlist("$force");
-		
-	
+		&Pakfire::dbgetlist("force");
+
 	} elsif ("$ARGV[0]" eq "upgrade") {
 		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
 		my @temp;
@@ -250,7 +244,12 @@
 		}
 		
 	} elsif ("$ARGV[0]" eq "list") {
-		&Pakfire::dblist("all", "noweb");
+		if ("$ARGV[1]" =~ /installed|notinstalled/) {
+			&Pakfire::dblist("$ARGV[1]", "noweb");
+		} else {
+			&Pakfire::message("PAKFIRE WARN: Not a known option $ARGV[1]") if ($ARGV[1]); 
+			&Pakfire::dblist("all", "noweb");
+		}
 		
 	} elsif ("$ARGV[0]" eq "resolvedeps") {
 		foreach (@ARGV) {
