@@ -1,5 +1,5 @@
-usr/bin/isdnbridge
 usr/bin/loadfirm
+usr/bin/mISDNdebugtool
 usr/bin/misdnportinfo
 usr/bin/sendhwctrl
 usr/bin/testcon
@@ -41,6 +41,7 @@ usr/lib/mISDN/mISDN.conf.bnx.xsl
 usr/lib/mISDN/mISDN.conf.hfcmulti.xsl
 usr/lib/mISDN/mISDN.conf.inc.xsl
 usr/lib/mISDN/mISDN.conf.l1oip.xsl
+usr/lib/mISDN/mISDN.conf.mISDN_debugtool.xsl
 usr/lib/mISDN/mISDN.conf.mISDN_dsp.xsl
 usr/lib/mISDN/mISDN.conf.singlepci.xsl
 usr/lib/mISDN/mISDN.conf.xsl

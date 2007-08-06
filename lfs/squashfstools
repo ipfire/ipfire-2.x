@@ -26,19 +26,13 @@
 
 include Config
 
-VER        = 12.18.1
+VER        = 3.2-r2
 
-THISAPP    = sox-$(VER)
+THISAPP    = squashfs$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = sox
-PAK_VER    = 1
-
-DESCDE     = "Sox spielt gsm-Dateien ab."
-DESCEN     = "Sox is a player for gsm-files."
-DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b12507493d3c8571fa8b6e70a01d5438
+$(DL_FILE)_MD5 = bf360b92eba9e6d5610196ce2e02fcd1
 
 install : $(TARGET)
 
@@ -57,9 +51,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -81,9 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-alsa-dsp --disable-oss-dsp \
-				--disable-sun-audio --disable-mad
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP)/squashfs-tools && make mksquashfs
+	cd $(DIR_APP)/squashfs-tools && cp -f mksquashfs /bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

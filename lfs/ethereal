@@ -33,6 +33,12 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = ethereal
+PAK_VER    = 1
+
+DESCDE     = "Ethereal ist ein Netzwerksniffer."
+DESCEN     = "Ethereal is a network sniffer."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh ethereal $(THISAPP)-ipfire-beta-1
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

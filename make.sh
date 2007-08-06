@@ -388,6 +388,7 @@ buildipfire() {
   ipfiremake cdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
+  ipfiremake squashfstools
   ipfiremake reiserfsprogs
   ipfiremake sysfsutils
   ipfiremake ntfs-3g
@@ -412,8 +413,8 @@ buildipfire() {
   ipfiremake iptstate
   ipfiremake iputils
   ipfiremake l7-protocols
-  ipfiremake isdn4k-utils
   ipfiremake mISDN
+  ipfiremake isdn4k-utils
   ipfiremake hwdata
   ipfiremake kudzu
   ipfiremake logrotate
