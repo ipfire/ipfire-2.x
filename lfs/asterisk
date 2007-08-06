@@ -36,6 +36,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
 PAK_VER    = 1
 
+DESCDE = "Asterisk ist eine Telefonsoftware für Linux."
+DESCEN = "Asterisk is a Private Branch Exchange."
+DEPS = "sox zaptel libpri"
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

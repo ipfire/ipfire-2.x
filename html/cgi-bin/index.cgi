@@ -114,6 +114,8 @@ my $dialButtonDisabled = "disabled='disabled'";
 &Header::openbigbox('', 'center');
 &Header::openbox('100%', 'center', &Header::cleanhtml(`/bin/uname -n`,"y"));
 
+
+
 if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
 	if (open(IPADDR,"${General::swroot}/ddns/ipcache")) {
    	    $ipaddr = <IPADDR>;
@@ -131,9 +133,9 @@ if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || (
 	print "$Lang::tr{'profile has errors'}\n </b></font>\n";
 }
 
-if ( $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) {
-	$ipaddr = $netsettings{'RED_ADDRESS'};
-}
+#if ( $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) {
+#	$ipaddr = $netsettings{'RED_ADDRESS'};
+#}
 
 my $death = 0;
 my $rebirth = 0;

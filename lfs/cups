@@ -36,6 +36,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
 PAK_VER    = 1
 
+DESCDE     = "CUPS ist ein Linux-Druck-System."
+DESCEN     = "The Common Unix Printing System."
+DEPS       = "ghostscript"
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

@@ -638,17 +638,19 @@ ipfirepackages() {
   ipfiredist alsa
 #  ipfiredist amavisd
   ipfiredist applejuice
-#  ipfiredist asterisk
+  ipfiredist asterisk
   ipfiredist clamav
   ipfiredist cups
   ipfiredist cyrus-sasl
   ipfiredist ethereal
 #  ipfiredist fetchmail
+  ipfiredist ghostscript
 #  ipfiredist gnump3d
   ipfiredist guardian
   ipfiredist ipfireseeder
   ipfiredist java
   ipfiredist libogg
+  ipfiredist libpri
   ipfiredist libvorbis
   ipfiredist mailx
 #  ipfiredist mldonkey
@@ -667,6 +669,7 @@ ipfirepackages() {
   ipfiredist tripwire
   ipfiredist vsftpd
 #  ipfiredist webcyradm
+  ipfiredist zaptel
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*

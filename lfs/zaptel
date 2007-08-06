@@ -40,6 +40,10 @@ endif
 PROG       = zaptel
 PAK_VER    = 1
 
+DESCDE = "Zaptel ist eine Treibersammlung für diverse ISDN-Karten."
+DESCEN = "Zaptel is a collection of modules for isdn hardware."
+DEPS = ""
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

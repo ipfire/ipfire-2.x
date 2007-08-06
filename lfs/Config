@@ -158,11 +158,17 @@ define PAK
 	# Bringing the files to their right place.
 	@rm -rf /install/packages/package
 	@mkdir -p /install/packages/package
-	cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
-		/install/packages/package
-	-grep -v "#" < /usr/src/config/rootfiles/packages/$(PROG) > /install/packages/package/ROOTFILES
+	if [ -e "/usr/src/src/paks $(PROG)" ]; then \
+		cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
+		/install/packages/package; \
+	else \
+		cp -f /usr/src/src/paks/default/{,un}install.sh /usr/src/src/paks/default/update.sh \
+		/install/packages/package; \
+	fi
+	sed -e "s/KVER/$(KVER)/g" < /usr/src/config/rootfiles/packages/$(PROG) > /install/packages/package/ROOTFILES 
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cvf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*'
+	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES 
 	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
 	rm -rf /install/packages/package
 	sed -e s/NAME/$(PROG)/g \

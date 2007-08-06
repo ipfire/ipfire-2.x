@@ -33,6 +33,12 @@ DL_FILE    = $(THISAPP)-source.tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/espgs-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = ghostscript
+PAK_VER    = 1
+
+DESCDE     = "Eine Adobe-Postscript-Alternative."
+DESCEN     = "An alternative to Adobe-Postscript."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -59,7 +65,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh ghostscript $(THISAPP)-ipfire-beta-1
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
