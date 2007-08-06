@@ -160,6 +160,8 @@ endif
 	cd $(DIR_SRC) && rm -rf mISDN-*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/mISDN-1_1_5.tar.gz
 	cd $(DIR_SRC)/mISDN-1_1_5 && yes 'yes' | ./std2kern -k /usr/src/linux
+	
+	cd $(DIR_APP)/drivers/isdn/hardware/mISDN && patch -Np0 < $(DIR_SRC)/src/patches/mISDN-avmfritz.patch
 
 ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass
