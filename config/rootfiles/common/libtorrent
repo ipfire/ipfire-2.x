@@ -39,7 +39,7 @@
 #usr/include/torrent/tracker.h
 #usr/include/torrent/tracker_list.h
 #usr/lib/libtorrent.la
-usr/lib/libtorrent.so
-usr/lib/libtorrent.so.10
-usr/lib/libtorrent.so.10.0.4
+#usr/lib/libtorrent.so
+#usr/lib/libtorrent.so.10
+#usr/lib/libtorrent.so.10.0.4
 #usr/lib/pkgconfig/libtorrent.pc

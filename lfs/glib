@@ -33,6 +33,12 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = glib
+PAK_VER    = 1
+
+DESCDE     = "Glib ist eine grafische Bibliothek."
+DESCEN     = "Glib is a lib for graphic functions."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -51,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

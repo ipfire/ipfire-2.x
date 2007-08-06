@@ -1,3 +1,4 @@
+# THIS INCLUDES ligsigc++ and libtorrent
 usr/bin/rtorrent
 #usr/man/man1/rtorrent.1
 #usr/include/torrent

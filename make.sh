@@ -635,41 +635,9 @@ buildpackages() {
 }
 
 ipfirepackages() {
-  ipfiredist alsa
-#  ipfiredist amavisd
-  ipfiredist applejuice
-  ipfiredist asterisk
-  ipfiredist clamav
-  ipfiredist cups
-  ipfiredist cyrus-sasl
-  ipfiredist ethereal
-#  ipfiredist fetchmail
-  ipfiredist ghostscript
-#  ipfiredist gnump3d
-  ipfiredist guardian
-  ipfiredist ipfireseeder
-  ipfiredist java
-  ipfiredist libogg
-  ipfiredist libpri
-  ipfiredist libvorbis
-  ipfiredist mailx
-#  ipfiredist mldonkey
-  ipfiredist mp3blaster
-  ipfiredist mpfire
-  ipfiredist mpg123
-#  ipfiredist nfs
-  ipfiredist nmap
-  ipfiredist openldap
-#  ipfiredist postfix
-  ipfiredist rsync
-  ipfiredist rtorrent
-  ipfiredist samba
-  ipfiredist sox
-#  ipfiredist spamassassin
-  ipfiredist tripwire
-  ipfiredist vsftpd
-#  ipfiredist webcyradm
-  ipfiredist zaptel
+	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
+		[ -e $BASEDIR/lfs/$i ] && ipfiredist $i
+	done
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
