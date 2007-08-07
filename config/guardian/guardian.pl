@@ -67,7 +67,6 @@ $counter=0;
 open (ALERT2, "/var/log/messages" ) or die "can't open /var/log/messages: $!\n";
 seek (ALERT2, 0, 2); # set the position to EOF. 
 # this is the same as a tail -f :)
-$counter2=0;
 
 for (;;) { 
   sleep 1; 
@@ -85,14 +84,7 @@ for (;;) {
           my @array=split(/ /,$_);&checkem ($array[5], $hostipaddr, "Portscan was detected.");} 
     } 
   } 
-  # Run this stuff every 30 seconds.. 
-  if ($counter == 30) {
-    &remove_blocks; # This might get moved elsewhere, depending on how much load
-		    # it puts on the system..
-    &check_log_name;
-    $counter=0;
-  } else { $counter=$counter+1; }
-  
+
   sleep 1; 
   if (seek(ALERT2,0,1)){ 
     while (<ALERT2>) { 
@@ -102,12 +94,12 @@ for (;;) {
     } 
   } 
   # Run this stuff every 30 seconds.. 
-  if ($counter2 == 30) {
+  if ($counter == 30) {
     &remove_blocks; # This might get moved elsewhere, depending on how much load
 		    # it puts on the system..
     &check_log_name;
-    $counter2=0;
-  } else { $counter2=$counter2+1; }
+    $counter=0;
+  } else { $counter=$counter+1; }
 }
 
 sub check_log_name {
