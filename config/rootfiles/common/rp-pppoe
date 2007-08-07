@@ -1,8 +1,8 @@
-etc/ppp/firewall-masq
-etc/ppp/firewall-standalone
+#etc/ppp/firewall-masq
+#etc/ppp/firewall-standalone
 #etc/ppp/plugins
 #etc/ppp/plugins/README
-etc/ppp/pppoe-server-options
+#etc/ppp/pppoe-server-options
 etc/ppp/pppoe.conf
 #usr/man/man5/pppoe.conf.5
 #usr/man/man8/pppoe-connect.8
@@ -16,8 +16,8 @@ etc/ppp/pppoe.conf
 #usr/man/man8/pppoe.8
 usr/sbin/pppoe
 usr/sbin/pppoe-connect
-usr/sbin/pppoe-relay
-usr/sbin/pppoe-server
+#usr/sbin/pppoe-relay
+#usr/sbin/pppoe-server
 usr/sbin/pppoe-setup
 usr/sbin/pppoe-sniff
 usr/sbin/pppoe-start
