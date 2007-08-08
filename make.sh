@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.0a4"									# Version number
+VERSION="2.0t5"									# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
 NICE=10													# Nice level
@@ -333,7 +333,6 @@ buildipfire() {
   ipfiremake fcdslsl		SMP=1
   ipfiremake fcdslusb		SMP=1
   ipfiremake fcdslslusb	SMP=1
-#  ipfiremake promise-sata-300-tx	SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake zaptel			SMP=1
   ipfiremake fuse				SMP=1
@@ -344,7 +343,6 @@ buildipfire() {
   ipfiremake fcdslsl
   ipfiremake fcdslusb
   ipfiremake fcdslslusb
-#  ipfiremake promise-sata-300-tx
   ipfiremake r8169
   ipfiremake zaptel
   ipfiremake fuse

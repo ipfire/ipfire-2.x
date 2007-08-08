@@ -320,11 +320,11 @@ int main(int argc, char *argv[])
 	sprintf(message, ctr[TR_PREPARE_HARDDISK], hdparams.devnode_disk);
 	if (unattended) {
 	    hardyn = 1;
+	} else {
+		yesnoharddisk[0] = ctr[TR_NO];
+		yesnoharddisk[1] = ctr[TR_YES];
+		yesnoharddisk[2] = NULL;
 	}
-
-	yesnoharddisk[0] = ctr[TR_NO];
-	yesnoharddisk[1] = ctr[TR_YES];
-	yesnoharddisk[2] = NULL;
 
 	while (! hardyn) {
 		rc = newtWinMenu(title, message,
