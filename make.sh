@@ -334,6 +334,7 @@ buildipfire() {
   ipfiremake fcdslusb		SMP=1
   ipfiremake fcdslslusb	SMP=1
 #  ipfiremake promise-sata-300-tx	SMP=1
+  ipfiremake r8169			SMP=1
   ipfiremake zaptel			SMP=1
   ipfiremake fuse				SMP=1
   ipfiremake linux
@@ -344,6 +345,7 @@ buildipfire() {
   ipfiremake fcdslusb
   ipfiremake fcdslslusb
 #  ipfiremake promise-sata-300-tx
+  ipfiremake r8169
   ipfiremake zaptel
   ipfiremake fuse
   ipfiremake pkg-config
