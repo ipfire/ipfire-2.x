@@ -214,8 +214,8 @@ sub getmirrors {
 
 	logger("MIRROR: Trying to get a mirror list.");
 	
-	if ( -e "$Conf::dbdir/lists/server_list.db" ) {
-		my @stat = stat("$Conf::dbdir/lists/server_list.db");
+	if ( -e "$Conf::dbdir/lists/server-list.db" ) {
+		my @stat = stat("$Conf::dbdir/lists/server-list.db");
 		my $time = time();
 		$age = $time - $stat[9];
 	} else {
@@ -228,6 +228,27 @@ sub getmirrors {
 		move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
 	}
 }
+
+sub getcoredb {
+	use File::Copy;
+
+	logger("CORE: Trying to get a core list.");
+	
+	if ( -e "$Conf::dbdir/lists/core-list.db" ) {
+		my @stat = stat("$Conf::dbdir/lists/core-list.db");
+		my $time = time();
+		$age = $time - $stat[9];
+	} else {
+		# Force an update.
+		$age = "3601";
+	}
+	
+	if ("$age" gt "3600") {
+		fetchfile("lists/core-list.db", "");
+		move("$Conf::cachedir/core-list.db", "$Conf::dbdir/lists/core-list.db");
+	}
+}
+
 
 sub selectmirror {
 	### Check if there is a current server list and read it.
@@ -296,10 +317,10 @@ sub dbgetlist {
 		$age = $time - $stat[9];
 	} else {
 		# Force an update.
-		$age = "86401";
+		$age = "3601";
 	}
 	
-	if (("$age" gt "86400") || ("$force" eq "force")) {
+	if (("$age" gt "3600") || ("$force" eq "force")) {
 		fetchfile("lists/packages_list.db", "");
 		move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
 	}
@@ -592,6 +613,32 @@ sub setuppak {
 		exit $return;
 	}
 	return $return;
+}
+
+sub upgradecore {
+	getcoredb();
+	eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
+	if ("$core_release" gt "$Conf::core_mine") {
+		message("CORE UPGR: Upgrading from release $Conf::core_mine to $core_release");
+		
+		my @seq = `seq $Conf::core_mine $core_release`;
+		shift @seq;
+		my $release;
+		foreach $release (@seq) {
+			chomp($release);
+			getpak("core-upgrade-$release");
+		}
+		
+		foreach $release (@seq) {
+			chomp($release);
+			upgradepak("core-upgrade-$release");
+		}
+		
+		system("echo $core_release > $Conf::coredir/mine");
+		
+	} else {
+		message("CORE ERROR: No new upgrades available. You are on release $Conf::core_mine.");
+	}
 }
 
 sub isinstalled {

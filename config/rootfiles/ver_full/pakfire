@@ -2,6 +2,7 @@ etc/fcron.daily/pakfire-update
 #opt/pakfire
 opt/pakfire/cache
 #opt/pakfire/db
+opt/pakfire/db/core
 opt/pakfire/db/installed
 opt/pakfire/db/lists
 opt/pakfire/db/meta

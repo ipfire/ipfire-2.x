@@ -208,9 +208,11 @@
 		&Pakfire::makeuuid();
 		&Pakfire::senduuid();
 		&Pakfire::getmirrors();
-		&Pakfire::dbgetlist("force");
+		&Pakfire::dbgetlist("noforce");
+		&Pakfire::getcoredb();
 
 	} elsif ("$ARGV[0]" eq "upgrade") {
+		&Pakfire::upgradecore();
 		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
 		my @temp;
 		
