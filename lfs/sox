@@ -38,7 +38,7 @@ PAK_VER    = 1
 
 DESCDE     = "Sox spielt gsm-Dateien ab."
 DESCEN     = "Sox is a player for gsm-files."
-DEPS       = ""
+DEPS       = "libvorbis"
 
 ###############################################################################
 # Top-level Rules

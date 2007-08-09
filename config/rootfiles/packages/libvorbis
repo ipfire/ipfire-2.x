@@ -9,9 +9,9 @@ usr/lib/libvorbis.so.0
 usr/lib/libvorbis.so.0.3.1
 #usr/lib/libvorbisenc.a
 #usr/lib/libvorbisenc.la
-#usr/lib/libvorbisenc.so
-#usr/lib/libvorbisenc.so.2
-#usr/lib/libvorbisenc.so.2.0.2
+usr/lib/libvorbisenc.so
+usr/lib/libvorbisenc.so.2
+usr/lib/libvorbisenc.so.2.0.2
 #usr/lib/libvorbisfile.a
 #usr/lib/libvorbisfile.la
 usr/lib/libvorbisfile.so

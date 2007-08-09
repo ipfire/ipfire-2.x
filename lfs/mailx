@@ -36,6 +36,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mailx
 PAK_VER    = 1
 
+DESCDE     = "Tools zum Versenden von Mails."
+DESCEN     = "Tools for sending mails from console."
+DEPS       = ""
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	@$(PAKS)
+	$(PAKS)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -81,7 +85,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make PREFIX=/usr UCBINSTALL=/usr/bin/install install
 	cd $(DIR_APP) && ln -v -sf mailx /usr/bin/mail
 	cd $(DIR_APP) && ln -v -sf mailx /usr/bin/nail
-	# cd $(DIR_APP) && install -v -m755 -d /usr/share/doc/mailx-12.0
-	# cd $(DIR_APP) && install -v -m644 README mailx.1.html /usr/share/doc/mailx-12.0
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
