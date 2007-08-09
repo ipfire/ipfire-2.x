@@ -120,3 +120,7 @@ var/log/mldonkey/incoming
 var/log/mldonkey/incoming/directories
 var/log/mldonkey/incoming/files
 var/log/mldonkey/temp
+#opt/mldonkey/ed2k_mozilla/mldonkey_protocol_handler-2.1.xpi
+opt/mldonkey/i18n/mlnet_strings.de_DE.utf8
+opt/mldonkey/i18n/mlnet_strings.it_IT.UTF-8
+#opt/mldonkey/multiuser.txt
