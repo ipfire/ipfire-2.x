@@ -88,6 +88,7 @@ boot_mesg_flush
 			NETADDRESS=${RED_NETADDRESS} BROADCAST=${RED_BROADCAST} \
 			DNS1=${DNS1} DNS2=${DNS2} GATEWAY=${DEFAULT_GATEWAY} \
 			/etc/rc.d/init.d/net/common/ipv4-static ${RED_DEV} up
+			touch /var/ipfire/red/active
 		fi
 		
 		/usr/local/bin/dialctrl.pl up

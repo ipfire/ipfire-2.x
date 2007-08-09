@@ -49,8 +49,8 @@ case "${2}" in
 				ip route add default via ${GATEWAY} dev ${1}
 				evaluate_retval
 				 if [ "${DNS1}" != "" ];then
-				boot_mesg "Registering DNS Server for green only..."
-				echo "nameserver $DNS1" > /etc/resolv.conf
+					boot_mesg "Registering DNS Server for green only..."
+					echo "nameserver $DNS1" > /etc/resolv.conf
 				 fi
 				 if [ "${DNS2}" != "" ];then
 				  echo "nameserver $DNS2" >> /etc/resolv.conf
@@ -77,8 +77,8 @@ case "${2}" in
 		fi
 		
 		if [ "${CONFIG_TYPE}" == "0" ] || [ "${CONFIG_TYPE}" == "" ]; then
-		boot_mesg "Restoring default DNS Proxy Adress in resolv.conf..."
-		echo "nameserver 127.0.0.1" > /etc/resolv.conf
+			boot_mesg "Restoring default DNS Proxy Adress in resolv.conf..."
+			echo "nameserver 127.0.0.1" > /etc/resolv.conf
     fi
     	
 		boot_mesg "Removing IPv4 address ${ADDRESS} from the ${1} interface..."
