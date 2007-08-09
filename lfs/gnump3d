@@ -38,7 +38,7 @@ PAK_VER    = 1
 
 DESCDE     = "Ein GNU mp3 server."
 DESCEN     = "A GNU mp3 server."
-DEPS       = ""
+DEPS       = "lame sox"
 
 ###############################################################################
 # Top-level Rules

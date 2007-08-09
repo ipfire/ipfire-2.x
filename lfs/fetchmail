@@ -36,6 +36,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fetchmail
 PAK_VER    = 1
 
+DESCDE     = "fetchmail kann Emails von entfernten Mailservern abholen."
+DESCEN     = "fetchmail fetches emails from remote servers."
+DEPS       = ""
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	@$(PAK)
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

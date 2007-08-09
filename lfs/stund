@@ -33,6 +33,12 @@ DL_FILE    = $(THISAPP).tgz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/stund
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = stund
+PAK_VER    = 1
+
+DESCDE     = "Ein stun-Server."
+DESCEN     = "A stun server."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -51,6 +57,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

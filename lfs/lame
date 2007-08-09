@@ -34,7 +34,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = lame
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
+
+DESCDE     = "Ein Konsolen-MP3-Codec."
+DESCEN     = "A mp3 codec for console."
+DEPS       = "libmad"
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	@$(PAK)
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

@@ -34,7 +34,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tftp-hpa
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
+
+DESCDE     = "Ein tftp-Server."
+DESCEN     = "A tftp server."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules

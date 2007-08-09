@@ -33,6 +33,12 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/ncftp-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = ncftp
+PAK_VER    = 1
+
+DESCDE     = "Ein Konsolen-FTP-Client."
+DESCEN     = "A ftp client for console."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	make-packages.sh ncftp $(THISAPP)-ipfire-beta-1
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

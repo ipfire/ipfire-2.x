@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.0a4 ==
+== List of softwares used to build IPFire Version: 2.0t5 ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -213,6 +213,7 @@
 * pptp-1.7.1
 * procps-3.2.6
 * psmisc-22.2
+* r8169-6.002.00
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19

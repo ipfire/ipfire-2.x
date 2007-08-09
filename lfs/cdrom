@@ -59,8 +59,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
-		--exclude='proc/*' --exclude='usr/src/ccache/*' --exclude='usr/src/cache/*' \
-		--exclude='tmp/ROOTFILES'
+		--exclude='proc/*' --exclude='tmp/ROOTFILES'
 	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar

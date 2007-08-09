@@ -1,4 +1,4 @@
-sbin/debugfs.reiser4
+#sbin/debugfs.reiser4
 sbin/fsck.reiser4
 #sbin/make_reiser4
 sbin/measurefs.reiser4
