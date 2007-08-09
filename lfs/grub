@@ -29,7 +29,7 @@ include Config
 VER        = 0.97
 
 THISAPP    = grub-$(VER)
-DL_FILE    = $(THISAPP)-reiser4-20050808.tar.gz
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c5a860a4cd81cffc95a3b9ca5624aa7b
+$(DL_FILE)_MD5 = cd3f3eb54446be6003156158d51f4884
 
 install : $(TARGET)
 
