@@ -1,0 +1,12 @@
+usr/bin/ices
+#usr/share/ices
+usr/share/ices/basic.html
+usr/share/ices/config.html
+usr/share/ices/faq.html
+usr/share/ices/ices-alsa.xml
+usr/share/ices/ices-oss.xml
+usr/share/ices/ices-playlist.xml
+usr/share/ices/index.html
+usr/share/ices/inputs.html
+usr/share/ices/intro.html
+usr/share/ices/style.css

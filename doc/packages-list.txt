@@ -114,6 +114,8 @@
 * hwdata
 * iana-etc-2.10
 * ibod-1.4
+* icecast-2.3.1
+* ices-2.0.1
 * iftop-0.17
 * inetutils-1.4.2
 * ipac-ng-1.31
@@ -144,6 +146,7 @@
 * libpng-1.2.12
 * libpri-1.4.1
 * libsafe_2.0-16
+* libshout-2.2.2
 * libsigc++-2.0.17
 * libtool-1.5.22
 * libtorrent-0.11.4

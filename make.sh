@@ -505,6 +505,9 @@ buildipfire() {
   ipfiremake libvorbis
   ipfiremake lame
   ipfiremake sox
+  ipfiremake libshout
+  ipfiremake icecast
+  ipfiremake ices
   ipfiremake mp3blaster
   ipfiremake libpri
   ipfiremake stund
