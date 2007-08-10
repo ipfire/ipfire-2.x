@@ -710,7 +710,7 @@ sbin/ldconfig
 #usr/lib/libutil.a
 #usr/lib/libutil.so
 #usr/lib/locale
-#usr/lib/locale/locale-archive
+usr/lib/locale/locale-archive
 #usr/sbin/iconvconfig
 #usr/sbin/nscd
 #usr/sbin/nscd_nischeck
