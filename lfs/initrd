@@ -61,30 +61,13 @@ $(TARGET) :
 	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
 	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l
 
-	# Install SCSI Drivers
-	cp -rf /lib/modules/$(KVER)-ipfire/kernel/drivers/scsi \
-		/lib/modules/$(KVER)-ipfire/kernel/drivers/block \
-		/lib/modules/$(KVER)-ipfire/kernel/drivers/ide \
-		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
-	rm -f	/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan*
-
 	# make new dependencies 
 	depmod -a -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
 	depmod -a -F /boot/System.map-$(KVER)-ipfire-smp $(KVER)-ipfire-smp
-
-	cd / && tar -cf /tmp/drivers.tar \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/{arch,crypto} \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{acpi,atm,bluetooth,block,char,connector,cpufreq,crypto,hwmon} \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/{ieee1394,mmc,md,parport,video} \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/net/{wan,ppp*,slip*,slhc*,tun*,wireless} \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/fs/{jfs,nfs*,xfs,udf,fuse} \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/drivers/usb/atm \
-		--exclude=lib/modules/$(KVER)-ipfire/kernel/net \
-		--exclude=lib/modules/$(KVER)-ipfire/{build,extra,misc,modules.*,source} \
-		lib/modules/$(KVER)-ipfire
-	cd /install/initrd/ && tar -xvf /tmp/drivers.tar && rm -f /tmp/drivers.tar
-
-	cp -f /lib/modules/$(KVER)-ipfire/modules.* /install/initrd/lib/modules/$(KVER)-ipfire
+	
+	cp -a /lib/modules/$(KVER)-ipfire/ /install/initrd/lib/modules/
+	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,source} \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan*
 
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
 
