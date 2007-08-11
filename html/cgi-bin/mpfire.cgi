@@ -188,7 +188,11 @@ print <<END
 
     <table width='95%' cellspacing='0'>
     <tr bgcolor='$color{'color20'}'>    <td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr>
-    <tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>
+END
+;
+if ( $#songdb eq '-1' ) {print "<tr><td colspan='5' align='center'><br/><b>total 0 songs</b><br/><br/></td></tr>";}
+else {print "<tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>";}
+print <<END
     <tr>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='||' /><input type='image' alt='$Lang::tr{'pause'}' title='$Lang::tr{'pause'}' src='/images/media-playback-pause.png' /></form></td>
@@ -229,7 +233,11 @@ foreach (@songdb){
   @genre = sort keys %hash;
 print <<END
   <table width='95%' cellspacing='0'>
-  <tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - $#artist</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - $#album</b></td></tr>
+END
+;
+if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'}</b></td></tr>";}
+else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'} - $#year</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'} - $#genre</b></td></tr>>";}
+print <<END
   <tr><td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
       <select name='artist' size='8' multiple='multiple' style='width:300px;'>
@@ -253,7 +261,11 @@ print <<END
       <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
       </form></td>
       </tr>
-  <tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'} - $#year</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'} - $#genre</b></td></tr>
+END
+;
+if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'}</b></td></tr>";}
+else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - $#artist</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - $#album</b></td></tr>";}
+print <<END
   <tr><td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
       <select name='year' size='8' multiple='multiple' style='width:300px;'>

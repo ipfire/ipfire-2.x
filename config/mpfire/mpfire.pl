@@ -60,10 +60,12 @@ elsif ($ARGV[0] eq 'stop') {
 elsif ($ARGV[0] eq 'volup') {
   if ($debug){print "Increasing Volume\n";}
   system("/usr/bin/amixer set Master $ARGV[1]%+ 2>/dev/null >/dev/null");
+  system("/usr/bin/amixer set PCM $ARGV[1]%+ 2>/dev/null >/dev/null");
   }
 elsif ($ARGV[0] eq 'voldown') {
   if ($debug){print "Decreasing Volume\n";}
   system("/usr/bin/amixer set Master $ARGV[1]%- 2>/dev/null >/dev/null");
+  system("/usr/bin/amixer set PCM $ARGV[1]%- 2>/dev/null >/dev/null");
   }
 elsif ($ARGV[0] eq 'playall') {
   &checkplaylist();

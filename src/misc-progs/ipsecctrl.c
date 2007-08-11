@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
 
  if ( (argc == 2) && (file = fopen("/var/run/vpn-watch.pid", "r"))) {
  safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
- safe_system("unlink /var/run/vpn-watch.pid)");
+ safe_system("unlink /var/run/vpn-watch.pid");
  close(file);
  }
  
