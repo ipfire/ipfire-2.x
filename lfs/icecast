@@ -38,7 +38,7 @@ PAK_VER    = 1
 
 DESCDE     = "Ein Musik-Streamer."
 DESCEN     = "A music streamer."
-DEPS       = "libshout"
+DEPS       = "libshout lame sox libvorbis libogg"
 
 ###############################################################################
 # Top-level Rules

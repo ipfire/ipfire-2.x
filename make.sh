@@ -420,7 +420,6 @@ buildipfire() {
   ipfiremake logrotate
   ipfiremake logwatch
   ipfiremake misc-progs
-  ipfiremake mtools
   ipfiremake nano
   ipfiremake nasm
   ipfiremake URI

@@ -5,10 +5,6 @@
  *
  * (c) Lawrence Manning, 2001
  * Contains main entry point, and misc functions.
- * 
- * modified 16/11/2002 eoberlander - French language added
- *
- * $Id: main.c,v 1.4.2.7 2005/12/01 20:13:08 eoberlander Exp $
  *
  */
 
@@ -84,7 +80,6 @@ int main(int argc, char *argv[])
 
 	if (!ctr)
 	{
-		/* zh,lt,ro,ru,th languages not available in setup, so use English */
 		for (choice = 0; shortlangnames[choice]; choice++)
 		{
 			if (strcmp(shortlangnames[choice], "en") == 0)
@@ -99,11 +94,10 @@ int main(int argc, char *argv[])
 	sections[1] = ctr[TR_TIMEZONE];
 	sections[2] = ctr[TR_HOSTNAME];
 	sections[3] = ctr[TR_DOMAINNAME];
-	sections[4] = ctr[TR_ISDN_CONFIGURATION];
-	sections[5] = ctr[TR_NETWORKING];
-	sections[6] = ctr[TR_ROOT_PASSWORD];
-	sections[7] = ctr[TR_ADMIN_PASSWORD];
-	sections[8] = NULL;
+	sections[4] = ctr[TR_NETWORKING];
+	sections[5] = ctr[TR_ROOT_PASSWORD];
+	sections[6] = ctr[TR_ADMIN_PASSWORD];
+	sections[7] = NULL;
 
 	newtInit();
 	newtCls();
@@ -151,18 +145,14 @@ int main(int argc, char *argv[])
 					break;
 
 				case 4:
-					handleisdn();
-					break;
-
-				case 5:
 					handlenetworking();
 					break;
 
-				case 6:
+				case 5:
 					handlerootpassword();
 					break;
 					
-				case 7:
+				case 6:
 					handleadminpassword();
 					break;
 		
@@ -181,8 +171,6 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		if (!(handledomainname()))
 			goto EXIT;
-//		if (!(handleisdn()))
-//			goto EXIT;
 		if (!(handlenetworking()))
 			goto EXIT;
 		if (!(handledhcp()))
@@ -213,4 +201,3 @@ EXIT:
 
 	return 0;
 }
-
