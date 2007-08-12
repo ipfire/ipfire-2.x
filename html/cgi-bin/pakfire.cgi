@@ -45,7 +45,7 @@ if ($pakfiresettings{'ACTION'} eq 'install'){
 		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", "Abfrage");
-		my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'INSPAKS'}`;
+  	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'INSPAKS'}`;
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$pakfiresettings{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
 		<pre>		
@@ -76,6 +76,44 @@ END
 		exit;
 	}
 } elsif ($pakfiresettings{'ACTION'} eq 'remove') {
+
+	$pakfiresettings{'DELPAKS'} =~ s/\|/\ /g;
+	if ("$pakfiresettings{'FORCE'}" eq "on") {
+		my $command = "/usr/local/bin/pakfire remove --non-interactive --no-colors $pakfiresettings{'DELPAKS'} &>/dev/null &";
+		system("$command");
+		sleep(2);
+	} else {
+		&Header::openbox("100%", "center", "Abfrage");
+  	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'DELPAKS'}`;
+		print <<END;
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.$pakfiresettings{'DELPAKS'}.$Lang::tr{'pakfire possible dependency'}
+		<pre>		
+END
+		foreach (@output) {
+			print "$_\n";
+		}
+		print <<END;
+		</pre>
+		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}
+		<tr><td colspan='2'>&nbsp;
+		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='DELPAKS' value='$pakfiresettings{'DELPAKS'}' />
+							<input type='hidden' name='FORCE' value='on' />
+							<input type='hidden' name='ACTION' value='remove' />
+							<input type='image' alt='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
+						</form>
+				<td align='left'>
+						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='ACTION' value='' />
+							<input type='image' alt='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
+						</form>
+		</table>
+END
+		&Header::closebox();
+		&Header::closebigbox();
+		&Header::closepage();
+		exit;
+	}
 
 } elsif ($pakfiresettings{'ACTION'} eq 'update') {
 	
@@ -113,7 +151,7 @@ if ($errormessage) {
 my $return = `pidof pakfire`;
 chomp($return);
 if ($return) {
-	&Header::openbox("100%", "center", "Aktiv");
+	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='5;'>" );
 	print <<END;
 	<table>
 		<tr><td>
