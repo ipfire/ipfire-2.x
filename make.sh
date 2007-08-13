@@ -971,6 +971,7 @@ EOF
 					fi
 				fi
 		done
+		rm -f ipfire-$VERSION.$MACHINE-full.iso.md5
 		if [ "$3" = "--with-sources-cd" ]; then
 			ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL $FTP_ISO_PATH/$SVN_REVISION/ ipfire-sources-cd-$VERSION.$MACHINE.iso
 		fi

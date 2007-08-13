@@ -760,7 +760,7 @@ sub checkcryptodb {
 	unless ( "$ret" eq "0" ) {
 		message("CRYPTO WARN: The GnuPG isn't configured corectly. Trying now to fix this.");
 		message("CRYPTO WARN: It's normal to see this on first execution.");
-		my $command = "gpg --keyserver pgp.mit.edu --always-trust --status-fs 2";
+		my $command = "gpg --keyserver pgp.mit.edu --always-trust --status-fd 2";
 		system("$command --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
 		system("$command --recv-key $trustid >> $Conf::logdir/gnupg-database.log 2>&1");
 	} else {
