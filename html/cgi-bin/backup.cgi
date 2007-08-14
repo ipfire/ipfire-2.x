@@ -58,7 +58,7 @@ elsif ( $cgiparams{'ACTION'} eq "restore" )
   print UPLOADFILE;
   }
   close UPLOADFILE;
-  system("/usr/local/bin/backupctrl restore");
+  system("/usr/local/bin/backupctrl restore >/dev/null");
 }
 
 &Header::showhttpheaders();
