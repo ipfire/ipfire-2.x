@@ -85,6 +85,7 @@ $(TARGET) :
 	for i in $(DIR_SRC)/src/initscripts/sysconfig/*; do \
 		install -v -m 644 $$i /etc/sysconfig/; \
 	done
+	chmod -v 755 /etc/sysconfig/firewall.local
 
 	for i in $(DIR_SRC)/src/initscripts/helper/*; do \
 		install -v -m 755 $$i /etc/rc.d/helper/; \

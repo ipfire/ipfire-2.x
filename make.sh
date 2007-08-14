@@ -415,7 +415,6 @@ buildipfire() {
   ipfiremake iputils
   ipfiremake l7-protocols
   ipfiremake mISDN
-  ipfiremake isdn4k-utils
   ipfiremake hwdata
   ipfiremake kudzu
   ipfiremake logrotate
