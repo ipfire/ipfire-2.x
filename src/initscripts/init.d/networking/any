@@ -19,21 +19,21 @@
 . ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-if [ "$0" == "green" ]; then
+if [ "$(basename $0)" == "green" ]; then
 	DEVICE="${GREEN_DEV}"
 	ADDRESS="${GREEN_ADDRESS}"
 	BROADCAST="${GREEN_BROADCAST}"
 	NETADDRESS="${GREEN_NETADDRESS}"
 	NETMASK="${GREEN_NETMASK}"
 	DEVICE="${GREEN_DEV}"
-elif [ "$0" == "blue" ]; then
+elif [ "$(basename $0)" == "blue" ]; then
 	DEVICE="${BLUE_DEV}"
 	ADDRESS="${BLUE_ADDRESS}"
 	BROADCAST="${BLUE_BROADCAST}"
 	NETADDRESS="${BLUE_NETADDRESS}"
 	NETMASK="${BLUE_NETMASK}"
 	DEVICE="${BLUE_DEV}"
-elif [ "$0" == "orange" ]; then
+elif [ "$(basename $0)" == "orange" ]; then
 	DEVICE="${ORANGE_DEV}"
 	ADDRESS="${ORANGE_ADDRESS}"
 	BROADCAST="${ORANGE_BROADCAST}"
@@ -57,7 +57,7 @@ else
 	exit 1
 fi
 
-case "${1}" do
+case "${1}" in
 
 	start)
 		boot_mesg "Bringing up the ${DEVICE} interface..."
