@@ -55,9 +55,9 @@ $(TARGET) :
 	install -d -m 755 /etc/rc.d/rc6.d
 	install -d -m 755 /etc/rc.d/rcsysinit.d
 	install -d -m 755 /etc/rc.d/init.d
-	install -d -m 755 /etc/rc.d/init.d/net
-	install -d -m 755 /etc/rc.d/init.d/net/common
-	install -d -m 755 /etc/rc.d/init.d/net/red
+	install -d -m 755 /etc/rc.d/init.d/networking
+	install -d -m 755 /etc/rc.d/init.d/networking/red.up
+	install -d -m 755 /etc/rc.d/init.d/networking/red.down
 	install -d -m 755 /etc/rc.d/helper
 	install -d -m 755 /etc/sysconfig
 	-rm -rf /etc/init.d
@@ -68,18 +68,18 @@ $(TARGET) :
 	done
 	chmod 644 /etc/rc.d/init.d/functions
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/net/*; do \
+	for i in $(DIR_SRC)/src/initscripts/init.d/networking/*; do \
 		if [ -f $$i ]; then \
-			install -v -m 754 $$i /etc/rc.d/init.d/net/; \
+			install -v -m 754 $$i /etc/rc.d/init.d/networking/; \
 		fi; \
 	done
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/net/common/*; do \
-		install -v -m 754 $$i /etc/rc.d/init.d/net/common/; \
+	for i in $(DIR_SRC)/src/initscripts/init.d/networking/red.up/*; do \
+		install -v -m 754 $$i /etc/rc.d/init.d/networking/red.up/; \
 	done
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/net/red/*; do \
-		install -v -m 754 $$i /etc/rc.d/init.d/net/red/; \
+	for i in $(DIR_SRC)/src/initscripts/init.d/networking/red.down/*; do \
+		install -v -m 754 $$i /etc/rc.d/init.d/networking/red.down/; \
 	done
 
 	for i in $(DIR_SRC)/src/initscripts/sysconfig/*; do \
@@ -131,7 +131,27 @@ $(TARGET) :
 	ln -sf ../init.d/console     /etc/rc.d/rcsysinit.d/S70console
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
 	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S90sysctl
+	
+	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
+	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.up/20-RL-firewall
+	ln -sf ../../../../../usr/local/bin/setfilters \
+		/etc/rc.d/init.d/networking/red.up/21-setfilters
+	ln -sf ../../../../../usr/local/bin/outgoingfwctrl \
+		/etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
+	ln -sf ../../../../../usr/local/bin/snortctrl \
+		/etc/rc.d/init.d/networking/red.up/23-RS-snort
+	ln -sf ../../../../../usr/local/bin/qosctrl \
+		/etc/rc.d/init.d/networking/red.up/24-RS-qos
+	ln -sf ../../../../../usr/local/bin/setportfw \
+		/etc/rc.d/init.d/networking/red.up/25-portfw
+	ln -sf ../../../../../usr/local/bin/setxtaccess \
+		/etc/rc.d/init.d/networking/red.up/26-xtaccess
+	
+	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
+	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.down/20-RL-firewall
 
-	chgrp nobody /etc/rc.d/init.d/red
-	chmod 4750 /etc/rc.d/init.d/red
+	for i in green blue orange; do \
+		ln -sf any /etc/rc.d/init.d/networking/$$i; \
+	done
+	
 	@$(POSTBUILD)

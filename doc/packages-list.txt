@@ -157,6 +157,7 @@
 * libxml2-2.6.26
 * libxslt-1.1.17
 * linux-2.6.16.50
+* linux-2.6.16.53
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95

@@ -73,7 +73,7 @@ usr/bin/test
 usr/bin/touch
 usr/bin/tr
 #usr/bin/tsort
-#usr/bin/tty
+usr/bin/tty
 usr/bin/unexpand
 usr/bin/uniq
 usr/bin/unlink

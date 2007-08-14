@@ -1,0 +1,93 @@
+#!/bin/sh
+########################################################################
+# Begin
+#
+# Description : ANY Device Script
+#
+# Authors     : Nathan Coulson - nathan@linuxfromscratch.org
+#               Kevin P. Fleming - kpfleming@linuxfromscratch.org
+#               Michael Tremer - mitch@ipfire.org
+#               Maniacikarus - maniacikarus@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       : 
+#
+########################################################################
+
+. /etc/sysconfig/rc 
+. ${rc_functions}
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+if [ "$0" == "green" ]; then
+	DEVICE="${GREEN_DEV}"
+	ADDRESS="${GREEN_ADDRESS}"
+	BROADCAST="${GREEN_BROADCAST}"
+	NETADDRESS="${GREEN_NETADDRESS}"
+	NETMASK="${GREEN_NETMASK}"
+	DEVICE="${GREEN_DEV}"
+elif [ "$0" == "blue" ]; then
+	DEVICE="${BLUE_DEV}"
+	ADDRESS="${BLUE_ADDRESS}"
+	BROADCAST="${BLUE_BROADCAST}"
+	NETADDRESS="${BLUE_NETADDRESS}"
+	NETMASK="${BLUE_NETMASK}"
+	DEVICE="${BLUE_DEV}"
+elif [ "$0" == "orange" ]; then
+	DEVICE="${ORANGE_DEV}"
+	ADDRESS="${ORANGE_ADDRESS}"
+	BROADCAST="${ORANGE_BROADCAST}"
+	NETADDRESS="${ORANGE_NETADDRESS}"
+	NETMASK="${ORANGE_NETMASK}"
+	DEVICE="${ORANGE_DEV}"
+fi
+
+if [ -z "${BROADCAST}" ]; then
+	boot_mesg "BROADCAST variable missing from input, cannot continue." ${FAILURE}
+	echo_failure
+	exit 1
+fi
+		
+if [ -n "${ADDRESS}" -a -n "${NETMASK}" ]; then
+	PREFIX=`whatmask ${NETMASK} | grep -e ^CIDR | awk -F': ' '{ print $2 }' | cut -c 2-`
+	args="${args} ${ADDRESS}/${PREFIX} broadcast ${BROADCAST}"
+else
+	boot_mesg "ADDRESS and/or NETMASK variable missing from input, cannot continue." ${FAILURE}
+	echo_failure
+	exit 1
+fi
+
+case "${1}" do
+
+	start)
+		boot_mesg "Bringing up the ${DEVICE} interface..."
+		boot_mesg_flush
+		
+		# Check if an interface is there...
+		if ip link show ${DEVICE} > /dev/null 2>&1; then
+			link_status=`ip link show ${DEVICE} 2> /dev/null`
+			if [ -n "${link_status}" ]; then
+				if ! echo "${link_status}" | grep -q UP; then
+					ip link set ${DEVICE} up
+				fi
+			fi
+		else
+			boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
+			echo_failure
+			exit 1
+		fi
+		
+		boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
+		ip addr add ${args} dev ${DEVICE}
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Removing IPv4 address ${ADDRESS} from the ${1} interface..."
+		ip addr del ${args} dev ${DEVICE}
+		evaluate_retval
+		;;
+		
+esac
+
+# End

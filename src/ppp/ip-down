@@ -1,33 +1,10 @@
-#!/usr/bin/perl
-#
-# SmoothWall CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# (c) The SmoothWall Team
-#
-# $Id: ip-down,v 1.3.2.9 2005/01/26 12:23:26 riddles Exp $
+#!/bin/sh
 #
 
-use strict;
-require 'CONFIG_ROOT/general-functions.pl';
+rm -f /var/ipfire/red/active
 
-&General::log("PPP has gone down on $ARGV[0]");
+[ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep down
 
-umask 022;
-
-unlink "${General::swroot}/red/active";
-system "/etc/rc.d/init.d/net/red/update";
-
-# Beep when ppp goes up or down. Silence if 'nobeeps' file exists.
-if ( ! -e "${General::swroot}/ppp/nobeeps") {
-	system('/usr/bin/beep','-l 75', '-f 880', '-n', '-l 75', '-f 440');
-}
-
-if ( -e "${General::swroot}/red/keepconnected") {
-	if ( system ('/bin/ps ax | /bin/grep -q "[r]c.connectioncheck reconnect"') ) {
-		system ('/etc/rc.d/init.d/connectioncheck reconnect &');
-	} else {
-		&General::log ('connectioncheck reconnect already running');
-	}
-}
+[ -e "/var/ipfire/red/keepconnected" ] && \
+	(ps ax | grep -q "connectioncheck reconnect") && \
+	/etc/rc.d/init.d/connectioncheck reconnect &

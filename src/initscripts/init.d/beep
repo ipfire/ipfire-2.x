@@ -36,9 +36,21 @@ case "${1}" in
 			play $i
 		done
 		;;
+	
+	up)
+		for i in 440 622 880; do
+			play $i
+		done
+		;;
+	
+	down)
+		for i in 880 622 440; do
+			play $i
+		done
+		;;
 
 	*)
-		echo "Usage: ${0} {start|stop}"
+		echo "Usage: ${0} {start|stop|up|down}"
 		exit 1
 		;;
 esac

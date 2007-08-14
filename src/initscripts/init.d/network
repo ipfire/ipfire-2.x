@@ -4,7 +4,7 @@
 #
 # Description : Network Control Script
 #
-# Authors     : Michael Tremer - m.s.tremer@googlemail.com
+# Authors     : Michael Tremer - mitch@ipfire.org
 #
 # Version     : 01.00
 #
@@ -20,178 +20,121 @@ DO="${1}"
 shift
 
 if [ -n "${1}" ]; then
-        ALL=0
-        for i in green red blue orange; do      
-                eval "${i}=0"
-        done
+	ALL=0
+	for i in green red blue orange; do      
+		eval "${i}=0"
+	done
 else
-        ALL=1
-        for i in green red blue orange; do
-                eval "${i}=1"
-        done
+	ALL=1
+	for i in green red blue orange; do
+		eval "${i}=1"
+	done
 fi
 
 while [ ! $# = 0 ]; do
-        for i in green red blue orange; do
-                if [ "${i}" == "${1}" ]; then
-                        eval "${i}=1"
-                        shift
-                fi
-        done
+	for i in green red blue orange; do
+		if [ "${i}" == "${1}" ]; then
+			eval "${i}=1"
+			shift
+		fi
+	done
 done
 
 case "${DO}" in
-        start)
-                if [ "${ALL}" == "1" ]; then
-                        boot_mesg "Loading iptables helper modules"
-                        modprobe iptable_nat || failed=1
-                        modprobe ip_conntrack || failed=1
-                        modprobe ip_conntrack_ftp || failed=1
-                        modprobe ip_nat_ftp || failed=1
-                        modprobe ip_conntrack_h323 || failed=1
-                        modprobe ip_nat_h323 || failed=1
-                        modprobe ip_conntrack_irc || failed=1
-                        modprobe ip_nat_irc || failed=1
-                        modprobe ip_conntrack_mms || failed=1
-                        modprobe ip_nat_mms || failed=1
-                        modprobe ip_conntrack_pptp || failed=1
-                        modprobe ip_nat_pptp || failed=1
-                        modprobe ip_conntrack_sip || failed=1
-                        modprobe ip_nat_sip || failed=1
-                        (exit ${failed})
-                        evaluate_retval
-                        
-                        boot_mesg "Setting up IPFire firewall rules"
-                        /etc/rc.d/init.d/firewall start; evaluate_retval
-        
-                        boot_mesg "Setting up IP Accounting"
-                        /etc/rc.d/helper/writeipac.pl || failed=1
-                        /usr/sbin/fetchipac -S || failed=1 
-                        (exit ${failed})
-                        evaluate_retval
-        
-                        boot_mesg "Setting IPFire DMZ pinholes"
-                        /usr/local/bin/setdmzholes; evaluate_retval
-        
-                        if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
-                                boot_mesg "Setting up wireless firewall rules"
-                                /usr/local/bin/restartwireless; evaluate_retval
-                        fi
-                        
-                        # Start DNSMASQ with defaults
-                        killall -KILL dnsmasq 2> /dev/null
-                        sleep 1
-                        if [ "$DOMAIN_NAME_GREEN" == "" ]; then
-                                /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases
-                        else 
-                                /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases -s "$DOMAIN_NAME_GREEN"
-                        fi
-                fi
-                
-                # Starting interfaces...
-                # GREEN
-                if [ "$green" == "1" ]; then
-                        name=green /etc/rc.d/init.d/net/ifup
-                fi
-                
-                # BLUE
-                if [ "$blue" == "1" ]; then
-                        if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
-                                name=blue /etc/rc.d/init.d/net/ifup
-                        fi
-                fi
-                
-                # ORANGE
-                if [ "$orange" == "1" ]; then
-                        if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "4" ]; then
-                                name=orange /etc/rc.d/init.d/net/ifup
-                        fi
-                fi
-                
-                # RED
-                if [ "$red" == "1" ]; then
-                        if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
-                                # Remove possible leftover files
-                                rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
-                                if [ "$AUTOCONNECT" == "off" ]; then
-                                        echo -n         # Do anything
-                                else
-                                        name=red /etc/rc.d/init.d/net/ifup
-                                fi
-                        fi
-                fi
-                
-            	 if [ -f "/var/ipfire/ovpn/enable" -o -f "/var/ipfire/ovpn/enable_blue" -o -f "/var/ipfire/ovpn/enable_orange" ];then
-          			boot_mesg "Setting OpenVPN Rules if enabled"
-          			/etc/rc.d/init.d/firewall startovpn; evaluate_retval		
-      		
-                boot_mesg "Setting OpenVPN if enabled"
-          			/usr/local/bin/openvpnctrl -s; evaluate_retval		
-               fi
-		
-		            if [ -f "/var/ipfire/snort/enable" -o -f "/var/ipfire/snort/enable_blue" -o -f "/var/ipfire/snort/enable_orange" ];then
-			           boot_mesg "Starting Snort if enabled"
-			           /etc/rc.d/init.d/snort start; evaluate_retval		
-                fi                                        
-                ;;
+	start)
+		[ "${ALL}" == "1" ] && init_networking
 
-        stop)
-                # Stopping interfaces...
-                # GREEN
-                if [ "$green" == "1" ]; then
-                        name=green /etc/rc.d/init.d/net/ifdown
-                fi
-                
-                # BLUE
-                if [ "$blue" == "1" ]; then
-                        if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
-                                name=blue /etc/rc.d/init.d/net/ifdown
-                        fi
-                fi
-                
-                # ORANGE
-                if [ "$orange" == "1" ]; then
-                        if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "4" ]; then
-                                name=orange /etc/rc.d/init.d/net/ifdown
-                        fi
-                fi
-                
-                # RED
-                if [ "$red" == "1" ]; then
-                        if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
-                                name=red /etc/rc.d/init.d/net/ifdown
-                        fi
-                fi
-                        
-               	 if [ -f "/var/ipfire/ovpn/enable" -o -f "/var/ipfire/ovpn/enable_blue" -o -f "/var/ipfire/ovpn/enable_orange" ];then
-	              	boot_mesg "Deleting OpenVPN Rules if enabled"
-		              /etc/rc.d/init.d/firewall stopovpn; evaluate_retval		
-		
-		              boot_mesg "Stopping OpenVPN if enabled"
-		              /usr/local/bin/openvpnctrl -k; evaluate_retval		
-	              fi
-	
-	              if [ -f "/var/ipfire/snort/enable" -o -f "/var/ipfire/snort/enable_blue" -o -f "/var/ipfire/snort/enable_orange" ];then		
-		             boot_mesg "Stopping Snort if enabled"
-		             /etc/rc.d/init.d/snort stop; evaluate_retval		
-	              fi
-                ;;
+		# Starting interfaces...
+		# GREEN
+		[ "$green" == "1" ] && /etc/rc.d/init.d/networking/green start
 
-        restart)
-                for i in green red blue orange; do
-                        if [ "${!i}" == "1" ]; then
-                                ARGS+=" ${i}"
-                        fi
-                done
-                ${0} stop ${ARGS}
-                sleep 1
-                ${0} start ${ARGS}
-                ;;
+		# BLUE
+		[ "$blue" == "1" ] && [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ] && \
+			/etc/rc.d/init.d/networking/blue start
 
-        *)
-                echo "Usage: ${0} {start|stop|restart}"
-                exit 1
-                ;;
+		# ORANGE
+		[ "$orange" == "1" ] && [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "4" ] && \
+			/etc/rc.d/init.d/networking/orange start
+
+		# RED
+		if [ "$red" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
+				# Remove possible leftover files
+				rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
+				[ "$AUTOCONNECT" == "off" ] || /etc/rc.d/init.d/networking/red start
+			fi
+		fi                           
+		;;
+
+	stop)
+		# Stopping interfaces...
+		# GREEN
+		[ "$green" == "1" ] && /etc/rc.d/init.d/networking/green stop
+
+		# BLUE
+		[ "$blue" == "1" ] && [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ] && \
+			/etc/rc.d/init.d/networking/blue stop
+
+		# ORANGE
+		[ "$orange" == "1" ] && [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "4" ] && \
+			/etc/rc.d/init.d/networking/orange stop
+
+		# RED
+		if [ "$red" == "1" ]; then
+			if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
+				/etc/rc.d/init.d/networking/red stop
+			fi
+		fi
+		;;
+
+	restart)
+		for i in green red blue orange; do
+			if [ "${!i}" == "1" ]; then
+				ARGS+=" ${i}"
+			fi
+		done
+		${0} stop ${ARGS}
+		sleep 1
+		${0} start ${ARGS}
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart} [device(s)]"
+		exit 1
+		;;
 esac
+
+init_networking() {
+
+	boot_mesg "Loading firewall modules into the kernel"
+	modprobe iptable_nat || failed=1
+	for i in $(find /lib/modules/$(uname -r) -name ip_conntrack*); do
+		modprobe $i || failed=1
+	done
+	for i in $(find /lib/modules/$(uname -r) -name ip_nat*); do
+		modprobe $i || failed=1
+	done
+	(exit ${failed})
+	evaluate_retval
+                        
+	boot_mesg "Setting up firewall"
+	/etc/rc.d/init.d/firewall start; evaluate_retval
+
+	boot_mesg "Setting up traffic accounting"
+	/etc/rc.d/helper/writeipac.pl || failed=1
+	/usr/sbin/fetchipac -S || failed=1
+	(exit ${failed})
+	evaluate_retval
+
+	boot_mesg "Setting up DMZ pinholes"
+	/usr/local/bin/setdmzholes; evaluate_retval
+
+	if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
+		boot_mesg "Setting up wireless firewall rules"
+		/usr/local/bin/restartwireless; evaluate_retval
+	fi
+
+	/etc/rc.d/init.d/dnsmasq start
+}
 
 # End /etc/rc.d/init.d/network

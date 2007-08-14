@@ -1,0 +1,51 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/dnsmasq
+#
+# Description : dnsmasq init script
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting Domain Name Service Proxy..."
+		
+		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+		ARGS=
+		[ "$DOMAIN_NAME_GREEN" == "" ] && ARGS="-s $DOMAIN_NAME_GREEN "
+		[ -e "/var/ipfire/red/active" ] && ARGS+="-r /var/ipfire/red/resolv.conf"
+		
+		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS
+		;;
+
+	stop)
+		boot_mesg "Stopping Domain Name Service Proxy..."
+		killproc /usr/sbin/dnsmasq
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/dnsmasq
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/dnsmasq

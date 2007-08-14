@@ -1,58 +1,28 @@
-#!/usr/bin/perl
-#
-# SmoothWall CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# (c) The SmoothWall Team
-#
-# $Id: ip-up,v 1.3.2.3 2005/01/26 12:23:26 riddles Exp $
+#!/bin/sh
 #
 
-use strict;
-require '/var/ipfire/general-functions.pl';
+PRIMARY_DNS=$DNS1
+SECONDARY_DNS=$DNS2
 
-&General::log("PPP has gone up on $ARGV[0]");
-umask 022;
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 
-my %pppsettings;
-
-# read vars back from file.
-&General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
-
-if ( ( $pppsettings{'TYPE'} eq 'isdn') &&
-		( $pppsettings{'COMPORT'} eq 'isdn2')  && 
-		( $pppsettings{'USEIBOD'} eq 'off') ) {
-	system('/usr/sbin/isdnctrl', 'dial', 'ippp1');
-}
-
-my $dns = $pppsettings{'DNS'};
-my $primarydns = $pppsettings{'DNS1'};
-my $secondarydns = $pppsettings{'DNS2'};
-if ($dns eq 'Automatic') {
-	if (!($pppsettings{'TYPE'} =~ /^isdn/))
-	{
-		if (open(FILE, ">${General::swroot}/red/dns1")) { print FILE $ENV{'DNS1'}; close FILE; }
-		if (open(FILE, ">${General::swroot}/red/dns2")) { print FILE $ENV{'DNS2'}; close FILE; }
-	}
+if [ "$DNS" == "Automatic" ]; then
+	if [ "$TYPE" == "isdn" ]; then
+		echo -n "$MS_DNS1" > /var/ipfire/red/dns1
+		echo -n "$MS_DNS2" > /var/ipfire/red/dns2
 	else
-	{
-		if (open(FILE, ">${General::swroot}/red/dns1")) { print FILE $ENV{'MS_DNS1'}; close FILE; }
-		if (open(FILE, ">${General::swroot}/red/dns2")) { print FILE $ENV{'MS_DNS2'}; close FILE; }
-	}
-} else {
-	if (open(FILE, ">${General::swroot}/red/dns1")) { print FILE $pppsettings{'DNS1'}; close FILE; }
-	if (open(FILE, ">${General::swroot}/red/dns2")) { print FILE $pppsettings{'DNS2'}; close FILE; }
-}
+		echo -n "$PRIMARY_DNS" > /var/ipfire/red/dns1
+		echo -n "$SECONDARY_DNS" > /var/ipfire/red/dns2
+	fi
+else
+	echo -n "$DNS1" > /var/ipfire/red/dns1
+	echo -n "$DNS2" > /var/ipfire/red/dns2
+fi
 
-if (open(FILE, ">${General::swroot}/red/iface")) { print FILE $ARGV[0]; close (FILE); }
-if (open(FILE, ">${General::swroot}/red/local-ipaddress"))  { print FILE $ARGV[3]; close (FILE); }
-if (open(FILE, ">${General::swroot}/red/remote-ipaddress")) { print FILE $ARGV[4]; close (FILE); }
+echo -n "$1" > /var/ipfire/red/iface
+echo -n "$4" > /var/ipfire/red/local-ipaddress
+echo -n "$5" > /var/ipfire/red/remote-ipaddress
 
-system('/usr/bin/touch', "${General::swroot}/red/active");
-system('/etc/rc.d/init.d/net/red/update');
+touch /var/ipfire/red/active
 
-# Beep when ppp goes up or down. Silence if 'nobeeps' file exists.
-if ( ! -e "${General::swroot}/ppp/nobeeps") {
-	system "/bin/echo -en '\a' >/dev/console";
-}
+[ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep up

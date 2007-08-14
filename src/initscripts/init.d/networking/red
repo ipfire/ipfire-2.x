@@ -1,0 +1,291 @@
+#!/bin/sh
+########################################################################
+# Begin
+#
+# Description : RED Device Script
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#               Maniacikarus - maniacikarus@ipfire.org
+# Inspired by : Nathan Coulson - nathan@linuxfromscratch.org
+#               Kevin P. Fleming - kpfleming@linuxfromscratch.org
+#
+# Version     : 01.00
+#
+# Notes       : 
+#
+########################################################################
+
+. /etc/sysconfig/rc 
+. ${rc_functions}
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+TYPE="${RED_TYPE}"
+DEVICE="${RED_DEV}"
+
+if [ "$TYPE" == "STATIC" ]; then
+	ADDRESS="${RED_ADDRESS}"
+	BROADCAST="${RED_BROADCAST}"
+	NETADDRESS="${RED_NETADDRESS}"
+	NETMASK="${RED_NETMASK}"
+	GATEWAY="${DEFAULT_GATEWAY}"
+	DNS1="${DNS1}"
+	DNS2="${DNS2}"
+
+	if [ -z "${BROADCAST}" ]; then
+		boot_mesg "BROADCAST variable missing from input, cannot continue." ${FAILURE}
+		echo_failure
+		exit 1
+	fi
+	if [ -n "${ADDRESS}" -a -n "${NETMASK}" ]; then
+		PREFIX=`whatmask ${NETMASK} | grep -e ^CIDR | awk -F': ' '{ print $2 }' | cut -c 2-`
+		args="${args} ${ADDRESS}/${PREFIX} broadcast ${BROADCAST}"
+	else
+		boot_mesg "ADDRESS and/or NETMASK variable missing from input, cannot continue." ${FAILURE}
+		echo_failure
+		exit 1
+	fi
+	
+elif [ "${TYPE}" == "DHCP" ]; then
+
+	PIDFILE="/var/run/dhcpcd-${DEVICE}.pid"
+	LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.info"
+	DHCP_START="-N -R -L /var/ipfire/dhcpc -c /var/ipfire/dhcpc/dhcpcd.exe "
+	DHCP_STOP="-k -c /var/ipfire/dhcpc/dhcpcd.exe "
+
+fi
+
+case "${1}" in
+	start)
+		boot_mesg "Bringing up the ${DEVICE} interface..."
+		boot_mesg_flush
+		
+		# Check if an interface is there...
+		if ip link show ${DEVICE} > /dev/null 2>&1; then
+			link_status=`ip link show ${DEVICE} 2> /dev/null`
+			if [ -n "${link_status}" ]; then
+				if ! echo "${link_status}" | grep -q UP; then
+					ip link set ${DEVICE} up
+				fi
+			fi
+		else
+			boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
+			echo_failure
+			exit 1
+		fi
+		
+		if [ "${TYPE}" == "STATIC" ]; then
+			boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
+			ip addr add ${args} dev ${DEVICE}
+			evaluate_retval
+			
+		elif [ "${TYPE}" == "DHCP" ]; then
+			boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."		
+			echo -n "${DEVICE}" > /var/ipfire/red/iface
+
+			# Test to see if there is a stale pid file
+			if [ -f "$PIDFILE" ]; then
+				ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
+				if [ $? != 0 ]; then
+					rm -f /var/run/dhcpcd-${DEVICE}.pid > /dev/null
+				else
+					boot_mesg "dhcpcd already running!" ${WARNING}
+					echo_warning
+					exit 2
+				fi
+			fi
+			
+			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
+			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
+			
+			if [ -n "${DHCP_HOSTNAME}" ]; then
+				DHCP_START+="-h ${DHCP_HOSTNAME} "
+	  	fi
+	  	
+	  	/sbin/dhcpcd ${DEVICE} ${DHCP_START} >/dev/null 2>&1
+	  	RET="$?"
+	  	
+	  	if [ "$RET" = "0" ]; then
+				. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.info
+				echo ""
+				echo_ok
+				boot_mesg "           DHCP Assigned Settings for ${DEVICE}:"
+				boot_mesg_flush
+				boot_mesg "           IP Address:      $IPADDR"
+				boot_mesg_flush
+				if [ -n "${DHCP_HOSTNAME}" ]; then
+					boot_mesg "           Hostname:        $DHCP_HOSTNAME"
+					boot_mesg_flush
+				fi
+				boot_mesg "           Subnet Mask:     $NETMASK"
+				boot_mesg_flush
+				boot_mesg "           Default Gateway: $GATEWAY"
+				boot_mesg_flush
+				boot_mesg "           DNS Server:      $DNS"
+				boot_mesg_flush
+				
+				echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
+				echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
+
+				. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.info
+				echo "$IPADDR"  > /var/ipfire/red/local-ipaddress
+				echo "$GATEWAY" > /var/ipfire/red/remote-ipaddress
+			else
+				echo ""
+				$(exit "$RET")
+				evaluate_retval
+			fi
+		
+		elif [ "$TYPE" == "PPPOE" ]; then
+			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+			
+			boot_mesg "Bringing up the PPPoE interface on ${DEVICE}..."
+			ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
+			
+			PPPOECONF=/etc/ppp/pppoe.conf
+			echo > $PPPOECONF #clear
+			
+			if [ "${METHOD}" != "PPPOE_PLUGIN" ]; then
+				echo "LINUX_PLUGIN=" >> $PPPOECONF
+			else
+				echo "LINUX_PLUGIN=/usr/lib/pppd/2.4.4/rp-pppoe.so" >> $PPPOECONF
+			fi
+				
+			echo "ETH=${DEVICE}" >> $PPPOECONF
+			echo "USER=${USERNAME}" >> $PPPOECONF
+				
+			echo "PPPOE_TIMEOUT=80" >> $PPPOECONF
+				
+			#echo "PPPD_EXTRA=\"-U\"" >> $PPPOECONF
+			#echo "PPPOE_EXTRA=\"-m ${MTU}\"" >> $PPPOECONF
+
+			if [ -n ${SERVICENAME} ]; then
+				echo "SERVICENAME=${SERVICENAME}" >> $PPPOECONF
+			fi
+			if [ -n ${CONCENTRATORNAME} ]; then
+				echo "ACNAME=${CONCENTRATORNAME}" >> $PPPOECONF
+			fi
+				
+			if [ "${DNS}" == "Automatic" ]; then
+				echo "PEERDNS=yes" >> $PPPOECONF
+				echo "DNSTYPE=NOCHANGE" >> $PPPOECONF
+			fi
+		
+			if [ "${AUTH}" == "pap" ]; then
+				PPPD_EXTRA+="-chap "
+			elif [ "${AUTH}" == "chap" ]; then
+				PPPD_EXTRA+="-pap "
+			fi
+				
+			echo "FIREWALL=NONE" >> $PPPOECONF
+
+			if [ "${RECONNECTION}" != "persistent" ]; then
+				if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
+					SECONDS=$[${TIMEOUT} * 60]
+				fi
+				if [ "${RECONNECTION}" == "dialondemand" ]; then
+					touch /var/ipfire/red/dial-on-demand
+					echo "DEMAND=${SECONDS}" >> $PPPOECONF
+				fi
+			else
+				echo "DEMAND=no" >> $PPPOECONF
+			fi
+			
+			echo "LCP_INTERVAL=20" >> $PPPOECONF
+			echo "LCP_FAILURE=3" >> $PPPOECONF
+				
+			echo "PIDFILE=/var/run/ppp-ipfire.pid" >> $PPPOECONF
+				
+			#ARGS+=" maxfail ${MAXRETRIES}"
+			
+			[ "${METHOD}" != "PPPOE_PLUGIN" ] && [ "${DEBUG}" == "on" ] && export DEBUG=1
+			/usr/sbin/pppoe-start
+			evaluate_retval
+		fi
+		
+		for i in $( ls -v ${rc_base}/init.d/networking/red.up/* 2> /dev/null); do
+			check_script_status
+			OUT=$(echo $(basename ${i}) | awk -F- '{ print $2 }')
+			case "$OUT" in
+				S) ${i} start	;;
+				K) ${i} stop ;;
+				RS) ${i} restart ;;
+				RL) ${i} reload	;;
+				*) ${i} ;;
+			esac
+		done
+		;;
+
+	stop)
+		if [ "$TYPE" == "STATIC" ]; then
+			boot_mesg "Removing IPv4 address ${ADDRESS} from the ${DEVICE} interface..."
+			ip addr del ${args} dev ${DEVICE}
+			evaluate_retval
+			
+		elif [ "$TYPE" == "DHCP" ]; then
+			boot_mesg -n "Stopping dhcpcd on the ${DEVICE} interface..."
+			if [ -e $LEASEINFO ]; then
+				. $LEASEINFO
+				if [ "$LEASETIME" = "4294967295" ]; then
+					# do nothing, just echo ok
+					echo ""
+					echo_ok
+				else
+					if [ -n "$DHCP_STOP" ]; then
+						/sbin/dhcpcd ${DEVICE} $DHCP_STOP &> /dev/null
+						RET="$?"
+						if [ "$RET" -eq 0 ]; then
+							echo ""
+							echo_ok
+						elif [ "$RET" -eq 1 ]; then
+							boot_mesg "dhcpcd not running!" ${WARNING}
+							echo_warning
+						else
+							echo ""
+							echo_failure
+						fi
+					else
+						echo ""
+						killproc dhcpcd
+					fi
+		    fi
+			else
+				boot_mesg -n "LEASEINFO Test failed! - " ${WARNING}
+				boot_mesg "dhcpcd is not running!" ${WARNING}
+				echo_warning
+				exit 1
+			fi
+		
+		elif [ "$TYPE" == "PPPOE" ]; then
+			boot_mesg "Bringing down the PPPoE interface on ${DEVICE}..."
+		
+			/usr/sbin/pppoe-stop
+			evaluate_retval
+			ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
+			
+		fi
+		
+		link_status=`ip link show $DEVICE 2> /dev/null`
+		if [ -n "${link_status}" ]; then
+			if echo "${link_status}" | grep -q UP; then
+				boot_mesg "Bringing down the ${DEVICE} interface..."
+				ip link set ${DEVICE} down
+				evaluate_retval
+			fi
+		fi
+		
+		for i in $( ls -v ${rc_base}/init.d/networking/red.down/* 2> /dev/null); do
+			check_script_status
+			OUT=$(echo $(basename ${i}) | awk -F- '{ print $2 }')
+			case "$OUT" in
+				S) ${i} start	;;
+				K) ${i} stop ;;
+				RS) ${i} restart ;;
+				RL) ${i} reload	;;
+				*) ${i} ;;
+			esac
+		done
+		;;
+		
+esac
+
+# End
