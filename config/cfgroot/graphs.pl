@@ -53,7 +53,7 @@ sub updatecpugraph {
         my $period    = $_[0];
 
         RRDs::graph ("$graphs/cpu-$period.png",
-        "--start", "-1$period", "-aPNG", "-i", "-z",
+        "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
         "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
@@ -109,7 +109,7 @@ sub updateloadgraph {
 
         RRDs::graph ("$graphs/load-$period.png",
         "--start", "-1$period", "-aPNG",
-        "-w 600", "-h 100", "-i", "-z", "-l 0", "-r", "--alt-y-grid",
+        "-w 600", "-h 100", "-i", "-z", "-W www.ipfire.org", "-l 0", "-r", "--alt-y-grid",
         "-t Load Average",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
@@ -133,7 +133,7 @@ sub updatememgraph {
         my $period    = $_[0];
 
         RRDs::graph ("$graphs/memory-$period.png",
-        "--start", "-1$period", "-aPNG", "-i", "-z",
+        "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
         "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
@@ -185,7 +185,7 @@ sub updatememgraph {
         print "Error in RRD::graph for mem: $ERROR\n" if $ERROR;
 
         RRDs::graph ("$graphs/swap-$period.png",
-        "--start", "-1$period", "-aPNG", "-i", "-z",
+        "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
         "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
@@ -220,7 +220,7 @@ sub updatediskgraph {
         my $disk    = $_[1];
 
         RRDs::graph ("$graphs/disk-$disk-$period.png",
-        "--start", "-1$period", "-aPNG", "-i", "-z",
+        "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
         "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
@@ -249,7 +249,7 @@ sub updateifgraph {
   my $period    = $_[1];
 
   RRDs::graph ("$graphs/$interface-$period.png",
-  "--start", "-1$period", "-aPNG", "-i", "-z",
+  "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
   "--alt-y-grid", "-w 600", "-h 100",
   "--color", "SHADEA".$color{"color19"},
   "--color", "SHADEB".$color{"color19"},
@@ -281,7 +281,7 @@ sub updatefwhitsgraph {
   my $period = $_[0];
 
   RRDs::graph ("$graphs/firewallhits-$period-area.png",
-  "--start", "-1$period", "-aPNG", "-i", "-z",
+  "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
   "--alt-y-grid", "-w 600", "-h 100",
   "--color", "SHADEA".$color{"color19"},
   "--color", "SHADEB".$color{"color19"},
@@ -311,7 +311,7 @@ sub updatefwhitsgraph {
 sub updatelqgraph {
   my $period    = $_[0];
   RRDs::graph ("$graphs/lq-$period.png",
-  "--start", "-1$period", "-aPNG", "-i", "-z",
+  "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
   "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
   "-t $Lang::tr{'linkq'} ($Lang::tr{'graph per'} $Lang::tr{$period})",
   "--lazy", 
@@ -358,7 +358,7 @@ sub updatehddgraph {
   my $period = $_[1];
 
   RRDs::graph ("$graphs/hddtemp-$disk-$period.png",
-  "--start", "-1$period", "-aPNG", "-i", "-z",
+  "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
   "--alt-y-grid", "-w 600", "-h 100",
   "--color", "SHADEA".$color{"color19"},
   "--color", "SHADEB".$color{"color19"},
@@ -386,7 +386,7 @@ sub updatetempgraph
   my $count = "11";
   
   @args = ("$graphs/mbmon-$type-$period.png",
-    "--start", "-1$period", "-aPNG", "-i", "-z",
+    "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
@@ -427,7 +427,7 @@ sub updatefangraph
   my $period = $_[0];
   my $count = "11";
 
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
@@ -468,7 +468,7 @@ sub updatevoltgraph
   my $period = $_[0];
   my $count = "11";
 
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z",
+  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
@@ -531,7 +531,7 @@ sub overviewgraph {
 	my $count="1";
 	my $color="#000000";
 	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}-$period.png",
-		"--start", $periodstring, "-aPNG", "-i", "-z",
+		"--start", $periodstring, "-aPNG", "-i", "-z", "-W www.ipfire.org",
 		"--alt-y-grid", "-w 600", "-h 150", "-r",
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
@@ -547,7 +547,7 @@ sub overviewgraph {
   		if ( $classline[0] eq $qossettings{'DEV'} )
   		{
 			$color=random_hex_color(6);
-			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bits:AVERAGE");
+			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
 			if ($count eq "1") {
 				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");

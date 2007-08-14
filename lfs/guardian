@@ -62,8 +62,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	-mkdir -p /var/ipfire/guardian /var/log/guardian
 	touch /var/log/guardian/guardian.log
+	touch /var/ipfire/guardian/guardian.ignore
 	install -v -m 644 $(DIR_SRC)/config/guardian/guardian.conf /var/ipfire/guardian/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian.pl /usr/local/bin/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_block.sh /usr/local/bin/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_unblock.sh /usr/local/bin/
+	chown nobody.nobody /var/ipfire/guardian/{guardian.conf,guardian.ignore}
 	@$(POSTBUILD)

@@ -44,7 +44,16 @@ $snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
 $snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
 $snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
 $snortsettings{'ENABLE_GUARDIAN'} = 'off';
+$snortsettings{'GUARDIAN_INTERFACE'} = `cat /var/ipfire/red/iface`;
+$snortsettings{'GUARDIAN_HOSTGATEWAYBYTE'} = '1';
+$snortsettings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
+$snortsettings{'GUARDIAN_ALERTFILE'} = '/var/log/snort/alert';
+$snortsettings{'GUARDIAN_IGNOREFILE'} = '/var/ipfire/guardian/guardian.ignore';
+$snortsettings{'GUARDIAN_TARGETFILE'} = '/var/ipfire/guardian/guardian.target';
+$snortsettings{'GUARDIAN_TIMELIMIT'} = '86400';
+$snortsettings{'GUARDIAN_IGNOREFILE_CONTENT'} = `cat $snortsettings{'GUARDIAN_IGNOREFILE'}`;
 $snortsettings{'ACTION'} = '';
+$snortsettings{'ACTION2'} = '';
 $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
 $snortsettings{'INSTALLDATE'} = '';
@@ -248,7 +257,7 @@ if ($snortsettings{'RULES'} eq 'subscripted') {
 	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";
 }
 
-if ($snortsettings{'ACTION'} eq $Lang::tr{'save'})
+if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "snort" )
 {
 	$errormessage = $Lang::tr{'invalid input for oink code'} unless (
 	    ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/)  ||
@@ -288,6 +297,23 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'})
 
 		system('/usr/local/bin/snortctrl restart >/dev/null');
 
+} elsif ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "guardian" ){
+			open(IGNOREFILE, ">$snortsettings{'GUARDIAN_IGNOREFILE'}") or die "Unable to write guardian ignore file $snortsettings{'GUARDIAN_IGNOREFILE'}";
+				print IGNOREFILE $snortsettings{'GUARDIAN_IGNOREFILE_CONTENT'};
+			close(IGNOREFILE);
+			open(GUARDIAN, ">/var/ipfire/guardian/guardian.conf") or die "Unable to write guardian conf /var/ipfire/guardian/guardian.conf";
+				print GUARDIAN <<END
+Interface   $snortsettings{'GUARDIAN_INTERFACE'}
+HostGatewayByte   $snortsettings{'GUARDIAN_HOSTGATEWAYBYTE'}
+LogFile   $snortsettings{'GUARDIAN_LOGFILE'}
+AlertFile   $snortsettings{'GUARDIAN_ALERTFILE'}
+IgnoreFile   $snortsettings{'GUARDIAN_IGNOREFILE'}
+TargetFile   $snortsettings{'GUARDIAN_TARGETFILE'}
+TimeLimit   $snortsettings{'GUARDIAN_TIMELIMIT'}
+END
+;
+			close(GUARDIAN);
+	  	system('/usr/local/bin/snortctrl restart >/dev/null');
 } else {
 	 # INSTALLMD5 is not in the form, so not retrieved by getcgihash
 	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
@@ -438,11 +464,7 @@ print <<END
 <hr />
 <table width='100%'>
 <tr>
-	<td width='55%'>&nbsp;</td>
-	<td width='40%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-	<td width='5%'>
-		&nbsp; <!-- space for future online help link -->
-	</td>
+	<td align='center'><input type='hidden' name='ACTION2' value='snort' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>
@@ -454,6 +476,28 @@ if ($results ne '') {
 }
 
 &Header::closebox();
+
+####################### Added for guardian control ####################################
+if ( -e "/var/ipfire/guardian/guardian.conf" ) {
+	&Header::openbox('100%', 'LEFT', $Lang::tr{'guardian configuration'});
+print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='100%'>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian interface'}</td><td align='left'><input type='text' name='INTERFACE' value='$snortsettings{'GUARDIAN_INTERFACE'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian timelimit'}</td><td align='left'><input type='text' name='TIMELIMIT' value='$snortsettings{'GUARDIAN_TIMELIMIT'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian logfile'}</td><td align='left'><input type='text' name='LOGFILE' value='$snortsettings{'GUARDIAN_LOGFILE'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian alertfile'}</td><td align='left'><input type='text' name='ALERTFILE' value='$snortsettings{'GUARDIAN_ALERTFILE'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian ignorefile'}</td><td align='left'><textarea name='IGNOREFILE_CONTENT' cols='32' rows='6' wrap='off'></textarea></td></tr>
+<tr><td align='center' colspan='2'><input type='hidden' name='ACTION2' value='guardian' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td></tr>
+</table>
+</form>
+END
+;
+	&Header::closebox();
+}
+
+
+
+
 ####################### Added for snort rules control #################################
 if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable_green" || -e "${General::swroot}/snort/enable_blue" || -e "${General::swroot}/snort/enable_orange" ) {
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
