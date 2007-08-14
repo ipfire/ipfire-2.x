@@ -182,7 +182,6 @@
 * mpfire-ipfire
 * mpg123-0.59r
 * mtd-CVS-20070507
-* mtools-3.9.10
 * mysql-5.0.24a
 * nano-1.2.5
 * nasm-0.98.39
