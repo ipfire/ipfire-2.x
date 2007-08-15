@@ -26,29 +26,39 @@
 
 include Config
 
-VER        = 1.2.12
+DATE       = 20070813
+VER        = 3.0-$(DATE)
 
-THISAPP    = cups-$(VER)
-DL_FILE    = $(THISAPP)-source.tar.bz2
+THISAPP    = foomatic-$(VER)
+DL_FILE    = foomatic-filters-$(VER).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/cups-$(VER)
+DIR_APP    = $(DIR_SRC)/foomatic-filters-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = cups
-PAK_VER    = 2
+PROG       = foomatic
+PAK_VER    = 1
 
-DESCDE     = "CUPS ist ein Linux-Druck-System."
-DESCEN     = "The Common Unix Printing System."
-DEPS       = "ghostscript"
+DESCDE     = "Foomatic beinhaltet Filter und Treiber für CUPS."
+DESCEN     = "Foomatic is a collection of filters and ppds for cups."
+DEPS       = "cups ghostscript"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	foomatic-db-$(DATE).tar.gz \
+	foomatic-db-engine-$(VER).tar.gz \
+	foomatic-db-hpijs-$(DATE).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+foomatic-db-$(DATE).tar.gz = $(DL_FROM)/foomatic-db-$(DATE).tar.gz
+foomatic-db-engine-$(VER).tar.gz = $(DL_FROM)/foomatic-db-engine-$(VER).tar.gz
+foomatic-db-hpijs-$(DATE).tar.gz = $(DL_FROM)/foomatic-db-hpijs-$(DATE).tar.gz
 
-$(DL_FILE)_MD5 = d410658468384b5ba5d04a808f6157fe
+$(DL_FILE)_MD5 = 41de0f45866ab4c19c1d5e3e2cdab42f
+foomatic-db-$(DATE).tar.gz_MD5 = a3ab04b7cc5d870b040ffce19e664698
+foomatic-db-engine-$(VER).tar.gz_MD5 = ec9639719a9c1d4095248e534c3f2d0d
+foomatic-db-hpijs-$(DATE).tar.gz_MD5 = e59fa189336e96a9d43cfcfb6222a9c2
 
 install : $(TARGET)
 
@@ -80,11 +90,22 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-#	cd $(DIR_APP) && sed -i -e "s@pam/pam@security/pam@g" {config-scripts/cups-pam.m4,scheduler/auth.c,configure}
-	cd $(DIR_APP) && ./configure --disable-nls --sysconfdir=/var/ipfire
-	cd $(DIR_APP) && make
+	@rm -rf $(DIR_SRC)/foomatic-* && cd $(DIR_SRC) && \
+		tar zxf $(DIR_DL)/$(DL_FILE) && \
+		tar zxf $(DIR_DL)/foomatic-db-$(DATE).tar.gz && \
+		tar zxf $(DIR_DL)/foomatic-db-engine-$(VER).tar.gz && \
+		tar zxf $(DIR_DL)/foomatic-db-hpijs-$(DATE).tar.gz
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
-	@rm -rf $(DIR_APP)
+	cd $(DIR_SRC)/foomatic-db-$(DATE) && ./configure --prefix=/usr --sysconfdir=/etc
+	cd $(DIR_SRC)/foomatic-db-$(DATE) && make $(MAKETUNING)
+	cd $(DIR_SRC)/foomatic-db-$(DATE) && make install
+	cd $(DIR_SRC)/foomatic-db-engine-$(VER) && ./configure --prefix=/usr --sysconfdir=/etc
+	cd $(DIR_SRC)/foomatic-db-engine-$(VER) && make $(MAKETUNING)
+	cd $(DIR_SRC)/foomatic-db-engine-$(VER) && make install
+	cd $(DIR_SRC)/foomatic-db-hpijs-$(DATE) && ./configure --prefix=/usr --sysconfdir=/etc
+	cd $(DIR_SRC)/foomatic-db-hpijs-$(DATE) && make $(MAKETUNING)
+	cd $(DIR_SRC)/foomatic-db-hpijs-$(DATE) && make install
+	@rm -rf $(DIR_SRC)/foomatic-*
 	@$(POSTBUILD)

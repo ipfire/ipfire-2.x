@@ -476,8 +476,9 @@ buildipfire() {
   ipfiremake lzo
   ipfiremake openvpn
   ipfiremake pammysql
-  ipfiremake ghostscript
   ipfiremake cups
+  ipfiremake ghostscript
+  ipfiremake foomatic
   ipfiremake samba
   ipfiremake sudo
   ipfiremake mc
