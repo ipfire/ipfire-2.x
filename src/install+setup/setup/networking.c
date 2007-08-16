@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * The big one: networking. 
  * 
- * $Id: networking.c,v 1.5.2.6 2006/02/06 22:00:13 gespinasse Exp $
- * 
  */
  
 #include "setup.h"
@@ -30,34 +28,16 @@ extern int automode;
 #define HAS_BLUE (configtype == 3 || configtype == 4)
 #define RED_IS_NOT_ETH (configtype == 0)
 
-//#define HAS_ORANGE (configtype == 1 || configtype == 3 || configtype == 5 || configtype == 7)
-//#define HAS_RED (configtype == 2 || configtype == 3 || configtype == 6 || configtype == 7)
-//#define HAS_BLUE (configtype == 4 || configtype == 5 || configtype == 6 || configtype == 7)
-//#define RED_IS_NOT_ETH (configtype == 0 || configtype == 1 || configtype == 4 || configtype == 5)
-
 extern struct nic nics[];
 extern struct knic knics[];
 
-/* char *configtypenames[] = { 
-	"GREEN (RED is modem/ISDN)", 
-	"GREEN + ORANGE (RED is modem/ISDN)", 
-	"GREEN + RED",
-	"GREEN + ORANGE + RED", 
-	"GREEN + BLUE (RED is modem/ISDN) ",
-	"GREEN + ORANGE + BLUE (RED is modem/ISDN)",
-	"GREEN + BLUE + RED",
-	"GREEN + ORANGE + BLUE + RED",
-	NULL };
-*/
-char *configtypenames[] = { 
-	"GREEN",
+char *configtypenames[] = {
 	"GREEN + RED",
 	"GREEN + RED + ORANGE",
 	"GREEN + RED + BLUE",
 	"GREEN + RED + ORANGE + BLUE",
 	NULL };
 int configtypecards[] = {
-	1,	// "GREEN",
 	2,	// "GREEN + RED",
 	3,	// "GREEN + RED + ORANGE",
 	3, 	// "GREEN + RED + BLUE",
@@ -85,12 +65,8 @@ int handlenetworking(void)
 	
 	netaddresschange = 0;
 
-	fprintf(flog,"Enter HandleNetworking\n"); // #### Debug ####
-
 	found =	scan_network_cards();
-	fprintf(flog,"found %d cards\n",found); // #### Debug ####
 	found = init_knics();
-	fprintf(flog,"found %d kcards\n",found); // #### Debug ####
 
 	done = 0;
 	while (!done)
@@ -304,7 +280,6 @@ int configtypemenu(void)
 	}
 
 	found = scan_network_cards();
-	fprintf(flog,"found %d Card\'s\n", found ); // #### Debug ####
 	
 	findkey(kv, "CONFIG_TYPE", temp); choise = atol(temp);
 
@@ -322,8 +297,7 @@ int configtypemenu(void)
 
 	if (rc == 0 || rc == 1)
 	{
-//	if (automode != 0) runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange", ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
-
+		choise++;
 		sprintf(temp, "%d", choise);
 		replacekeyvalue(kv, "CONFIG_TYPE", temp);
 		clear_card_entry(_RED_CARD_);
@@ -349,8 +323,6 @@ int drivermenu(void)
 
 	int configtype;
 	int i, rc, kcount = 0, neednics; //i = 0, count = 0,
-	
-	fprintf(flog,"Enter drivermenu\n"); // #### Debug ####
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -404,7 +376,6 @@ int drivermenu(void)
 	}
 
 	for ( i=0 ; i<4;i++) if (strcmp(knics[i].macaddr, "")) kcount++;
-	fprintf(flog,"found %d knowing Card\'s\n", kcount); // #### DEBUG ####
 
 	if (neednics = kcount)
 	{
@@ -417,8 +388,6 @@ int drivermenu(void)
 			changedrivers();
 		}
 	} else {
-//		strcat(message, "\nEs wurden noch nicht alle Netzwerkkarten konfiguriert.\n");
-//		newtWinMessage(ctr[TR_DRIVERS_AND_CARD_ASSIGNMENTS], ctr[TR_OK], message);
 		/* Shit, got to do something.. */
 		changedrivers();
 	}
@@ -449,14 +418,11 @@ int changedrivers(void)
 		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
 		return 0;
 	}
-	fprintf(flog,"stop network on red, blue and orange\n");	// #### Debug ####
 	runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
 		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 
 	findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
-	if (configtype == 0)
-		{ green = 1; }
-	else if (configtype == 1)
+	if (configtype == 1)
 		{ green = 1; red = 1; }
 	else if (configtype == 2)
 		{ green = 1; red = 1; orange = 1; }
@@ -464,14 +430,6 @@ int changedrivers(void)
 		{ green = 1; red = 1; blue = 1; }
 	else if (configtype == 4)
 		{ green = 1; red=1; orange=1; blue = 1; }
-//	else if (configtype == 5)
-//		{ green = 1; blue = 1; orange = 1; }
-//	else if (configtype == 6)
-//		{ green = 1; red = 1; blue = 1; }
-//	else if (configtype == 7)
-//		{ green = 1; red = 1; blue = 1; orange = 1; }
-
-	fprintf(flog,"found: g=%d r=%d o=%d b=%d\n",green, red, orange, blue); // #### Debug ####
 
 	do
 	{
@@ -495,7 +453,6 @@ int changedrivers(void)
 			strcpy(MenuInhalt[count], "RED");
 			pMenuInhalt[count] = MenuInhalt[count];
 			NicEntry[_RED_CARD_] = count;
-//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
 			sprintf(temp, "RED:    %s\n", knics[_RED_CARD_].description);
 			strcat(message, temp);
 			if ( strlen(knics[_RED_CARD_].macaddr) ) {
@@ -509,7 +466,6 @@ int changedrivers(void)
 			strcpy(MenuInhalt[count], "ORANGE");
 			pMenuInhalt[count] = MenuInhalt[count];
 			NicEntry[_ORANGE_CARD_] = count;
-//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
 			sprintf(temp, "ORANGE: %s\n", knics[_ORANGE_CARD_].description);
 			strcat(message, temp);
 			if ( strlen(knics[_ORANGE_CARD_].macaddr) ) {
@@ -523,7 +479,6 @@ int changedrivers(void)
 			strcpy(MenuInhalt[count], "BLUE");
 			pMenuInhalt[count] = MenuInhalt[count];
 			NicEntry[_BLUE_CARD_] = count;
-//			fprintf(flog,"found: %s as entry %d\n", MenuInhalt[count], NicEntry[count]); // #### Debug ####
 			sprintf(temp, "BLUE:   %s\n", knics[_BLUE_CARD_].description);
 			strcat(message, temp);
 			if ( strlen(knics[_BLUE_CARD_].macaddr) ) {
@@ -537,8 +492,6 @@ int changedrivers(void)
 		rc = newtWinMenu("(TR) Netcard Farbe", message, 70, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_SELECT], "(TR) Entfernen" , ctr[TR_DONE], NULL);
 			
 		if ( rc == 0 || rc == 1) {
-//			write_configs_netudev(pnics[choise].description, pnics[choise].macaddr, colour);
-			// insert nic to colourcard
 			if ((green) && ( choise == NicEntry[0])) nicmenu(_GREEN_CARD_);
 			if ((red) && ( choise == NicEntry[1])) nicmenu(_RED_CARD_);
 			if ((orange) && ( choise == NicEntry[2])) nicmenu(_ORANGE_CARD_);
@@ -550,15 +503,9 @@ int changedrivers(void)
 			if ((orange) && ( choise == NicEntry[2])) ask_clear_card_entry(_ORANGE_CARD_);
 			if ((blue) && ( choise == NicEntry[3])) ask_clear_card_entry(_BLUE_CARD_);
 			netaddresschange = 1;
-		} 
-//		else {
-//			errorbox("Sie haben keine Netzwerkkarte ausgewaehlt.\n");
-//			return 1;
-//		}
+		}
 	}
 	while ( rc <= 2);
-	
-	// writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 
 	freekeyvalues(kv);
 	return 1;
@@ -734,16 +681,6 @@ int dnsgatewaymenu(void)
 		return 0;
 	}
 
-/*	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
-	configtype = atol(temp);
-	
-	if (RED_IS_NOT_ETH)
-	{
-		freekeyvalues(kv);
-		errorbox(ctr[TR_DNS_GATEWAY_WITH_GREEN]);
-		return 0;
-	}
-*/
 	entries[DNS1].text = ctr[TR_PRIMARY_DNS];
 	strcpy(temp, ""); findkey(kv, "DNS1", temp);
 	values[DNS1] = strdup(temp);

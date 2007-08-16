@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.50-ipfire
-# Wed Aug  1 13:18:55 2007
+# Linux kernel version: 2.6.16.53-ipfire
+# Thu Aug 16 21:08:22 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -1371,14 +1371,7 @@ CONFIG_ISDN_CAPI_CAPIFS=m
 #
 # Active AVM cards
 #
-CONFIG_CAPI_AVM=y
-CONFIG_ISDN_DRV_AVMB1_B1ISA=m
-CONFIG_ISDN_DRV_AVMB1_B1PCI=m
-CONFIG_ISDN_DRV_AVMB1_B1PCIV4=y
-CONFIG_ISDN_DRV_AVMB1_T1ISA=m
-CONFIG_ISDN_DRV_AVMB1_B1PCMCIA=m
-CONFIG_ISDN_DRV_AVMB1_T1PCI=m
-CONFIG_ISDN_DRV_AVMB1_C4=m
+# CONFIG_CAPI_AVM is not set
 
 #
 # Active Eicon DIVA Server cards

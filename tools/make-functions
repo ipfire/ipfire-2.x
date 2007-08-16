@@ -543,7 +543,7 @@ END
 	esac
 	tar cfz $ATTACHMENT log/_build*
 	cat /tmp/ipfire_mail_body | tools/sendEmail -q \
-		-f $MAIL_USER \
+		-f $MAIL_FROM \
 		-t $MAIL_TO \
 		-u $SUBJECT \
 		-s $MAIL_SERVER:25 \
@@ -627,6 +627,8 @@ make_config() {
 		echo -ne "You should enter a mail server to login...\n"
 		echo -ne "Please type the url: "
 		read MAIL_SERVER
+		echo -ne "Please type where the email is from: "
+		read MAIL_FROM
 		echo -ne "Please type the username: "
 		read MAIL_USER
 		echo -ne "Please type the password (hidden): "
@@ -647,6 +649,7 @@ FTP_CACHE_USER=$FTP_CACHE_USER
 FTP_CACHE_PASS=$FTP_CACHE_PASS
 ### mail reports
 MAIL_TO="$MAIL_TO"
+MAIL_FROM=$MAIL_FROM
 MAIL_SERVER=$MAIL_SERVER
 MAIL_USER=$MAIL_USER
 MAIL_PASS=$MAIL_PASS

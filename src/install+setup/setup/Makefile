@@ -1,7 +1,3 @@
-#
-# $Id: Makefile,v 1.3 2003/12/11 11:25:54 riddles Exp $
-#
-
 CC      = gcc
 CFLAGS  = -O2 -Wall
 INCLUDE = 
@@ -23,7 +19,7 @@ clean :
 
 ######
 
-OBJS=main.o hostname.o domainname.o passwords.o isdn.o networking.o misc.o \
+OBJS=main.o hostname.o domainname.o passwords.o networking.o misc.o \
 	dhcp.o keymap.o timezone.o ../libsmooth/libsmooth.o
 
 setup: $(OBJS)

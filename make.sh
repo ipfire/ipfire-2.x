@@ -328,21 +328,11 @@ buildipfire() {
   ipfiremake unzip
   ipfiremake linux			SMP=1
   ipfiremake ipp2p			SMP=1
-  ipfiremake fcdsl			SMP=1
-  ipfiremake fcdsl2			SMP=1
-  ipfiremake fcdslsl		SMP=1
-  ipfiremake fcdslusb		SMP=1
-  ipfiremake fcdslslusb	SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake zaptel			SMP=1
   ipfiremake fuse				SMP=1
   ipfiremake linux
   ipfiremake ipp2p
-  ipfiremake fcdsl
-  ipfiremake fcdsl2
-  ipfiremake fcdslsl
-  ipfiremake fcdslusb
-  ipfiremake fcdslslusb
   ipfiremake r8169
   ipfiremake zaptel
   ipfiremake fuse
@@ -384,7 +374,6 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake bind
-  ipfiremake capi4k-utils
   ipfiremake cdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
@@ -459,7 +448,6 @@ buildipfire() {
   ipfiremake setserial
   ipfiremake setup
   ipfiremake snort
-  ipfiremake snortsnarf
   ipfiremake oinkmaster
   ipfiremake squid
   ipfiremake squid-graph
