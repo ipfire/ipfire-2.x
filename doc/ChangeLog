@@ -1,4 +1,286 @@
 ------------------------------------------------------------------------
+r770 | ms | 2007-08-15 23:23:14 +0400 (Wed, 15 Aug 2007) | 2 lines
+
+Testversion foomatic...
+
+------------------------------------------------------------------------
+r769 | ms | 2007-08-15 00:04:10 +0400 (Wed, 15 Aug 2007) | 2 lines
+
+Einie Syntaxfehler bereinigt.
+
+------------------------------------------------------------------------
+r768 | maniacikarus | 2007-08-14 22:55:35 +0400 (Tue, 14 Aug 2007) | 2 lines
+
+Backup funktioniert jetzt auch via Webinterface
+
+------------------------------------------------------------------------
+r767 | ms | 2007-08-14 22:31:45 +0400 (Tue, 14 Aug 2007) | 4 lines
+
+isdn4k-Utils entfernt.
+Alte Scripts entfernt.
+firewall.local bekommt die richtigen Rechte
+
+------------------------------------------------------------------------
+r766 | maniacikarus | 2007-08-14 22:10:09 +0400 (Tue, 14 Aug 2007) | 3 lines
+
+QoS Graphen angepasst damit Bytes angezeigt werden
+Guardian Konfiguration in die IDS CGI eingebaut
+
+------------------------------------------------------------------------
+r765 | ms | 2007-08-14 21:58:31 +0400 (Tue, 14 Aug 2007) | 2 lines
+
+Neue und hoffentlich bessere Scripte fuer die Verwaltung der vielen Netzwerkschnittstellen...
+
+------------------------------------------------------------------------
+r764 | ms | 2007-08-14 20:27:04 +0400 (Tue, 14 Aug 2007) | 2 lines
+
+OpenSwan-Build-Fix.
+
+------------------------------------------------------------------------
+r763 | ms | 2007-08-14 14:17:00 +0400 (Tue, 14 Aug 2007) | 2 lines
+
+Minor-Kernel-Update auf 2.6.16.53.
+
+------------------------------------------------------------------------
+r762 | ms | 2007-08-14 12:43:05 +0400 (Tue, 14 Aug 2007) | 3 lines
+
+mtools reintegriert.
+Brauchen wir zum bauen der USB-Images.
+
+------------------------------------------------------------------------
+r761 | ms | 2007-08-14 00:58:51 +0400 (Tue, 14 Aug 2007) | 3 lines
+
+OpenSwan gefixt.
+Tippfehler im Pakfire-lib.
+
+------------------------------------------------------------------------
+r760 | maniacikarus | 2007-08-12 12:32:30 +0400 (Sun, 12 Aug 2007) | 3 lines
+
+Pakfire Remove Funktion in der CGI aktiviert
+Pakfire autorefresh bei install/uninstall eingebaut
+
+------------------------------------------------------------------------
+r759 | ms | 2007-08-11 20:29:22 +0400 (Sat, 11 Aug 2007) | 3 lines
+
+Zum Test alle Kernelmodule in das Installationssystem getan.
+PCI- und USB-IDs aktualisiert.
+
+------------------------------------------------------------------------
+r758 | ms | 2007-08-11 17:15:05 +0400 (Sat, 11 Aug 2007) | 4 lines
+
+mtools enfernt.
+Keyserver des Pakfire geaendert.
+ISDN aus dem Setup-Menue ausgebaut.
+
+------------------------------------------------------------------------
+r757 | maniacikarus | 2007-08-11 16:40:01 +0400 (Sat, 11 Aug 2007) | 3 lines
+
+Fixes an MPFire
+Syntaxfix am ipsec
+
+------------------------------------------------------------------------
+r756 | ms | 2007-08-10 17:57:23 +0400 (Fri, 10 Aug 2007) | 2 lines
+
+Kleiner Glibc-Fehler vom Detlef entdeckt.
+
+------------------------------------------------------------------------
+r755 | ms | 2007-08-10 16:47:52 +0400 (Fri, 10 Aug 2007) | 2 lines
+
+Homepage in die Versionskontrolle gebracht.
+
+------------------------------------------------------------------------
+r754 | ms | 2007-08-09 23:34:46 +0400 (Thu, 09 Aug 2007) | 2 lines
+
+Icecast...
+
+------------------------------------------------------------------------
+r753 | ms | 2007-08-09 22:01:48 +0400 (Thu, 09 Aug 2007) | 2 lines
+
+Grub ohne reiser4-Support, da der Probleme macht.
+
+------------------------------------------------------------------------
+r752 | ms | 2007-08-09 21:12:34 +0400 (Thu, 09 Aug 2007) | 2 lines
+
+Fix fuer Red-Static.
+
+------------------------------------------------------------------------
+r751 | ms | 2007-08-09 20:04:04 +0400 (Thu, 09 Aug 2007) | 2 lines
+
+Pakfire holt nun Systemupdates.
+
+------------------------------------------------------------------------
+r750 | ms | 2007-08-09 17:14:55 +0400 (Thu, 09 Aug 2007) | 3 lines
+
+Einige Root-Files noch erweitert/gekuerzt.
+Abhaengigkeiten hinzugefuegt.
+
+------------------------------------------------------------------------
+r749 | ms | 2007-08-09 16:43:41 +0400 (Thu, 09 Aug 2007) | 2 lines
+
+Mldonkey-Update.
+
+------------------------------------------------------------------------
+r748 | ms | 2007-08-09 16:34:47 +0400 (Thu, 09 Aug 2007) | 2 lines
+
+Wieder einige Pakete zur ISO/Pakfire hinzugefuegt.
+
+------------------------------------------------------------------------
+r747 | ms | 2007-08-08 23:12:48 +0400 (Wed, 08 Aug 2007) | 3 lines
+
+Einen im Kernel enthaltenen Treiber entfernt.
+Vorgerueckt auf Testing 5.
+
+------------------------------------------------------------------------
+r746 | casemaster | 2007-08-08 22:49:25 +0400 (Wed, 08 Aug 2007) | 2 lines
+
+Eine Realtak-Version des Gigabit-Treibers eingebaut
+
+------------------------------------------------------------------------
+r745 | ms | 2007-08-08 00:42:12 +0400 (Wed, 08 Aug 2007) | 3 lines
+
+Noch die PPP-Peers hinzugefuegt.
+Alpha 4!
+
+------------------------------------------------------------------------
+r744 | maniacikarus | 2007-08-07 22:06:17 +0400 (Tue, 07 Aug 2007) | 4 lines
+
+DMZ Pinholes korrigiert
+Kleine Anpassung am Guardian Skript
+Samba init beim restart das sleep verlängert
+
+------------------------------------------------------------------------
+r743 | ms | 2007-08-06 23:45:54 +0400 (Mon, 06 Aug 2007) | 2 lines
+
+Ein kleiner Patch am Fritz-Treiber.
+
+------------------------------------------------------------------------
+r742 | ms | 2007-08-06 20:24:39 +0400 (Mon, 06 Aug 2007) | 2 lines
+
+Viele Pakete gemacht und ISO verkleinert.
+
+------------------------------------------------------------------------
+r741 | ms | 2007-08-06 18:05:05 +0400 (Mon, 06 Aug 2007) | 5 lines
+
+Rote IP wird auf der Hauptseite bei DHCP angezeigt.
+Neue Pakete gemacht.
+Ein Default-install.sh/uninstall.sh/upgrade.sh-Set erstellt damit da nicht so viele gleiche (leere) Dateien 
+rumliegen.
+
+------------------------------------------------------------------------
+r740 | ms | 2007-08-06 13:32:46 +0400 (Mon, 06 Aug 2007) | 3 lines
+
+Wieder einige Fixes.
+Das System ist nun wieder auf dem letzten Stand vor unserem Unfall mit dem Kernel.
+
+------------------------------------------------------------------------
+r739 | ms | 2007-08-06 01:17:31 +0400 (Mon, 06 Aug 2007) | 2 lines
+
+Fix.
+
+------------------------------------------------------------------------
+r738 | ms | 2007-08-06 00:27:46 +0400 (Mon, 06 Aug 2007) | 2 lines
+
+mISDN auch im Kernel auf Version 1.1.5 gebracht.
+
+------------------------------------------------------------------------
+r737 | ms | 2007-08-05 22:11:26 +0400 (Sun, 05 Aug 2007) | 2 lines
+
+Eine Reihe an Paketen gemacht: ethereal, nmap, rsync, sox, mailx
+
+------------------------------------------------------------------------
+r736 | ms | 2007-08-05 21:44:01 +0400 (Sun, 05 Aug 2007) | 2 lines
+
+...
+
+------------------------------------------------------------------------
+r735 | ms | 2007-08-05 21:39:37 +0400 (Sun, 05 Aug 2007) | 2 lines
+
+Den "neuen" Kernel entfernt.
+
+------------------------------------------------------------------------
+r734 | ms | 2007-08-05 21:17:10 +0400 (Sun, 05 Aug 2007) | 2 lines
+
+...
+
+------------------------------------------------------------------------
+r733 | ms | 2007-08-05 21:15:33 +0400 (Sun, 05 Aug 2007) | 2 lines
+
+Pakfire Update.
+
+------------------------------------------------------------------------
+r732 | ms | 2007-08-05 00:41:48 +0400 (Sun, 05 Aug 2007) | 3 lines
+
+Kernel 2.6.22.1 - leider ohne OpenSwan.
+Sprung auf GPLv3.
+
+------------------------------------------------------------------------
+r731 | ms | 2007-08-02 02:02:51 +0400 (Thu, 02 Aug 2007) | 3 lines
+
+Die Farben im Pakfire sind nun abschaltbar.
+Hilfe erweitert.
+
+------------------------------------------------------------------------
+r730 | ms | 2007-08-01 19:04:47 +0400 (Wed, 01 Aug 2007) | 4 lines
+
+Udev-Tools letztendlich auch im Installationssystem bauen lassen.
+IPFireSeeder-Post-Install-Fix.
+Pakfire laesst sich nur aufrufen, wenn man auch "online" ist.
+
+------------------------------------------------------------------------
+r729 | ms | 2007-08-01 18:32:50 +0400 (Wed, 01 Aug 2007) | 2 lines
+
+Installationsfix fuer MPFire.
+
+------------------------------------------------------------------------
+r728 | ms | 2007-08-01 18:24:47 +0400 (Wed, 01 Aug 2007) | 3 lines
+
+Den Guardian mal korrigiert, einen Tippfehler korrigiert und versucht 
+die Jetway GigaNics ans laufen zu bekommen mittels der neuen NAPI.
+
+------------------------------------------------------------------------
+r727 | maniacikarus | 2007-07-31 21:19:06 +0400 (Tue, 31 Jul 2007) | 3 lines
+
+Guardian spielt jetzt auch SSH-Watch 3mal falsches PW und dann gibts ein block
+Guardian blockt jetzt auf allen interfaces die IP
+
+------------------------------------------------------------------------
+r726 | maniacikarus | 2007-07-29 21:55:20 +0400 (Sun, 29 Jul 2007) | 5 lines
+
+Guardian in Snort eingebaut
+QoS CGI wegen den Language Anpassungen korrigiert
+Tripwire Policy soll Snortregeln ignorieren
+Network Skript angepasst
+
+------------------------------------------------------------------------
+r725 | maniacikarus | 2007-07-29 00:22:43 +0400 (Sun, 29 Jul 2007) | 2 lines
+
+Ajax Speed Anzeige ncohmal veraendert
+
+------------------------------------------------------------------------
+r724 | maniacikarus | 2007-07-28 21:03:50 +0400 (Sat, 28 Jul 2007) | 5 lines
+
+Qosgraphen in das Standardschema gepackt
+Qosgraph CGI komplett neu
+Qos CGI multilingual
+(ich hoffe das geht ueberhaupt noch was :D )
+
+------------------------------------------------------------------------
+r723 | maniacikarus | 2007-07-27 09:24:44 +0400 (Fri, 27 Jul 2007) | 2 lines
+
+buildfix
+
+------------------------------------------------------------------------
+r722 | maniacikarus | 2007-07-27 00:23:40 +0400 (Fri, 27 Jul 2007) | 2 lines
+
+IDS nochmal angepasst
+
+------------------------------------------------------------------------
+r721 | maniacikarus | 2007-07-26 21:17:06 +0400 (Thu, 26 Jul 2007) | 3 lines
+
+IDS Rules wieder aktiviert
+OpenVPN Start/Stop on boot/shutdown
+
+------------------------------------------------------------------------
 r720 | maniacikarus | 2007-07-25 22:02:01 +0400 (Wed, 25 Jul 2007) | 2 lines
 
 Guardian Paket angefangen, zum Testen muss Snort funktionieren ...

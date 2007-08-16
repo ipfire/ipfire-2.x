@@ -514,9 +514,9 @@ print <<END
 	<option value='serial' $selected{'TYPE'}{'serial'}>$Lang::tr{'serial'}</option>
 END
 ;
-if ($isdnsettings{'ENABLED'} eq 'on') {
-	print "\t<option value='isdn' $selected{'TYPE'}{'isdn'}>$Lang::tr{'isdn'}</option>\n";
-}
+#if ($isdnsettings{'ENABLED'} eq 'on') {
+#	print "\t<option value='isdn' $selected{'TYPE'}{'isdn'}>$Lang::tr{'isdn'}</option>\n";
+#}
 if ($netsettings{'RED_TYPE'} eq 'PPPOE') {
 	print "\t<option value='pppoe' $selected{'TYPE'}{'pppoe'}>PPPoE</option>\n";
 }
@@ -535,9 +535,10 @@ if (-f "/proc/bus/usb/devices") {
 END
 ;
 }
+
+#	print "<option value='fritzdsl' $selected{'TYPE'}{'fritzdsl'}>Fritz!DSL</option>";
 	print <<END
-	<option value='fritzdsl' $selected{'TYPE'}{'fritzdsl'}>Fritz!DSL</option>
-	</select></td>
+  </select></td>
 	<td colspan='2' width='50%'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}'></td>
 	</tr>
 	<tr>
@@ -757,11 +758,14 @@ print <<END
 	<td colspan='2' width='50%'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='25%'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
 </tr>
-<tr>
-	<td width='25%'>MRU</td>
-	<td colspan='2' width='50%'></td>
-	<td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
-</tr>
+END
+;
+#<tr>
+#	<td width='25%'>MRU</td>
+#	<td colspan='2' width='50%'></td>
+#	<td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
+#</tr>
+print <<END
 <tr>
 	<td width='25%'>MTU</td>
 	<td colspan='2' width='50%'></td>
