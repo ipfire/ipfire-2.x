@@ -51,7 +51,7 @@ if ($pppsettings{'ACTION'} ne '' &&
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 {
-	unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp|alcatelusb|alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|fritzdsl|bewanadsl|eagleusbadsl)$/) {
+	unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
 	my $type = $pppsettings{'TYPE'};
@@ -130,39 +130,6 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 		$errormessage = $Lang::tr{'only digits allowed in holdoff field'};
 		goto ERROR; }
 
-	my $drivererror = 0;
-	if ($pppsettings{'TYPE'} =~ /^(alcatelusb|alcatelusbk)$/) {
-		my $modem = '';
-		my $speedtouch = &Header::speedtouchversion;
-		if ($speedtouch >=0 && $speedtouch <=4) {
-			if ($speedtouch ==4) { $modem='v4_b'; } else { $modem='v0123'; }
-			$pppsettings{'MODEM'} = $modem;
-		} else {
-			$modem='v0123';
-			$errormessage ="$Lang::tr{'unknown'} Rev $speedtouch";
-			goto ERROR;
-		}
-		if (! -e "${General::swroot}/alcatelusb/firmware.$modem.bin") {
-			$errormessage = $Lang::tr{'no alcatelusb firmware'};
-			$drivererror = 1;
-			goto ERROR;
-		}
-	}
-
-	if($pppsettings{'TYPE'} eq 'eciadsl' && (!(-e "${General::swroot}/eciadsl/synch.bin"))) {
-		$errormessage = $Lang::tr{'no eciadsl synch.bin file'};
-		$drivererror = 1;
-		goto ERROR; }
-
-	if($pppsettings{'TYPE'} eq 'fritzdsl' && (!(-e "/lib/modules/$kernel/misc/fcdslusb.o.gz"))) {
-		$errormessage = $Lang::tr{'no fritzdsl driver'};
-		$drivererror = 1;
-		goto ERROR; }
-
-	if( $pppsettings{'USEIBOD'} eq 'on' && $pppsettings{'COMPORT'} eq 'isdn1') {
-		$errormessage = $Lang::tr{'ibod for dual isdn only'};
-		goto ERROR; }
-
 	if ($pppsettings{'TYPE'} eq 'pptp') {
 		$errormessage = '';
 		if ($pppsettings{'METHOD'} eq 'STATIC') {
@@ -175,21 +142,6 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 			}
 		}
 		if ($errormessage ne '') {goto ERROR; }
-	}
-
-	if ($pppsettings{'TYPE'} =~ /^(alcatelusb|alcatelusbk|amedynusbadsl|conexantusbadsl|conexantpciadsl|3cp4218usbadsl|pulsardsl|eciadsl|fritzdsl|bewanadsl|eagleusbadsl)$/) {
-		if ( ($pppsettings{'VPI'} eq '') || ($pppsettings{'VCI'} eq '') ) {
-			$errormessage = $Lang::tr{'invalid vpi vpci'};
-			goto ERROR; }
-		if ( (!($pppsettings{'VPI'} =~ /^\d+$/)) || (!($pppsettings{'VCI'} =~ /^\d+$/)) ) {
-			$errormessage = $Lang::tr{'invalid vpi vpci'};
-			goto ERROR; }
-		if (($pppsettings{'VPI'} eq '0') && ($pppsettings{'VCI'} eq '0')) {
-			$errormessage = $Lang::tr{'invalid vpi vpci'};
-			goto ERROR; }
-		if ( $pppsettings{'PROTOCOL'} eq '' ) {
-			$errormessage = $Lang::tr{'invalid input'};
-			goto ERROR; }
 	}
 
 	if ( ($pppsettings{'PROTOCOL'} eq 'RFC1483') && ($pppsettings{'METHOD'} eq '') && \
@@ -228,10 +180,6 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 
 	if( $pppsettings{'RECONNECTION'} eq 'dialondemand' && `/bin/cat ${General::swroot}/ddns/config` =~ /,on$/m ) {
 		$errormessage = $Lang::tr{'dod not compatible with ddns'};
-		goto ERROR; }
-
-	if ( ($pppsettings{'TYPE'} =~ /^(bewanadsl)$/) && $pppsettings{'MODEM'} eq '') {
-		$errormessage = $Lang::tr{'no modem selected'};
 		goto ERROR; }
 
 	if( $pppsettings{'PROTOCOL'} eq 'RFC1483') {
@@ -341,20 +289,8 @@ $selected{'BACKUPPROFILE'}{$pppsettings{'BACKUPPROFILE'}} = "selected='selected'
 
 $selected{'TYPE'}{'modem'} = '';
 $selected{'TYPE'}{'serial'} = '';
-$selected{'TYPE'}{'isdn'} = '';
 $selected{'TYPE'}{'pppoe'} = '';
 $selected{'TYPE'}{'pptp'} = '';
-$selected{'TYPE'}{'alcatelusb'} = '';
-$selected{'TYPE'}{'alcatelusbk'} = '';
-$selected{'TYPE'}{'pulsardsl'} = '';
-$selected{'TYPE'}{'eciadsl'} = '';
-$selected{'TYPE'}{'fritzdsl'} = '';
-$selected{'TYPE'}{'bewanadsl'} = '';
-$selected{'TYPE'}{'eagleusbadsl'} = '';
-$selected{'TYPE'}{'conexantusbadsl'} = '';
-$selected{'TYPE'}{'conexantpciadsl'} = '';
-$selected{'TYPE'}{'amedynusbadsl'} = '';
-$selected{'TYPE'}{'3cp4218usbadsl'} = '';
 $selected{'TYPE'}{$pppsettings{'TYPE'}} = "selected='selected'";
 
 $checked{'DEBUG'}{'off'} = '';
@@ -514,9 +450,6 @@ print <<END
 	<option value='serial' $selected{'TYPE'}{'serial'}>$Lang::tr{'serial'}</option>
 END
 ;
-#if ($isdnsettings{'ENABLED'} eq 'on') {
-#	print "\t<option value='isdn' $selected{'TYPE'}{'isdn'}>$Lang::tr{'isdn'}</option>\n";
-#}
 if ($netsettings{'RED_TYPE'} eq 'PPPOE') {
 	print "\t<option value='pppoe' $selected{'TYPE'}{'pppoe'}>PPPoE</option>\n";
 }
@@ -556,7 +489,7 @@ if (-f "/proc/bus/usb/devices") {
 
 if ($pppsettings{'TYPE'}) {
 	print "<tr><td colspan='4' width='100%'><br></br></td></tr>";
-	if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/) {
+	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/) {
 		print <<END
 <tr>
 	<td colspan='3' width='75%'>$Lang::tr{'interface'}:</td>
@@ -577,14 +510,6 @@ END
 	</select></td>
 END
 ;
-		} elsif ($pppsettings{'TYPE'} eq 'isdn') {
-			print <<END
-		<option value='isdn1' $selected{'COMPORT'}{'isdn1'}>$Lang::tr{'isdn1'}</option>
-		<option value='isdn2' $selected{'COMPORT'}{'isdn2'}>$Lang::tr{'isdn2'}</option>
-	</select></td>
- </tr>
-END
-;
 		}
 		if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ ) {
 			print <<END
@@ -603,7 +528,7 @@ END
 END
 ;
 		} 
-		if ($pppsettings{'TYPE'} =~ /^(modem|isdn)$/ ) {
+		if ($pppsettings{'TYPE'} =~ /^(modem)$/ ) {
 			print "<tr><td colspan='3' width='75%'>$Lang::tr{'number'}</td>\n";
 			print "<td width='25%'><input type='text' name='TELEPHONE' value='$pppsettings{'TELEPHONE'}'></td><tr>\n";
 			if ($pppsettings{'TYPE'} eq 'modem' ) {
@@ -698,24 +623,6 @@ print <<END
 END
 ;
 
-if ($pppsettings{'TYPE'} eq 'isdn') {
-	print <<END
-<tr><td colspan='4' width='100%'><br></br></td></tr>
-<tr>
-	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'isdn settings'}</b></td>
-</tr>
-<tr>
-	<td colspan='3' width='75%'>$Lang::tr{'use ibod'}</td>
-	<td width='25%'><input type='checkbox' name='USEIBOD' $checked{'USEIBOD'}{'on'} /></td>
-</tr>
-<tr>
-	<td colspan='3' width='75%'>$Lang::tr{'use dov'}</td>
-	<td width='25%'><input type='checkbox' name='USEDOV' $checked{'USEDOV'}{'on'} /></td>
-</tr>
-END
-;
-}
-
 if ($pppsettings{'TYPE'} eq 'pptp')
 {
 print <<END
@@ -758,14 +665,6 @@ print <<END
 	<td colspan='2' width='50%'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='25%'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
 </tr>
-END
-;
-#<tr>
-#	<td width='25%'>MRU</td>
-#	<td colspan='2' width='50%'></td>
-#	<td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
-#</tr>
-print <<END
 <tr>
 	<td width='25%'>MTU</td>
 	<td colspan='2' width='50%'></td>
@@ -773,57 +672,6 @@ print <<END
 </tr>
 END
 ;
-}
-
-if ($pppsettings{'TYPE'} eq 'fritzdsl')
-{
-print <<END
-<tr><td colspan='4' width='100%'><br></br></td></tr>
-<tr>
-	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'adsl settings'}:</b></td>
-</tr>
-<tr>
-	<td colspan='2' width='50%'>$Lang::tr{'vpi number'}</td>
-	<td colspan='2' width='50%'><input type='text' name='VPI' value='$pppsettings{'VPI'}' /></td>
-</tr>
-<tr>
-	<td colspan='2' width='50%'>$Lang::tr{'vci number'}</td>
-	<td colspan='2' width='50%'><input type='text' name='VCI' value='$pppsettings{'VCI'}' /></td>
-</tr>
-<tr>
-	<td colspan='2' width='50%'>$Lang::tr{'protocol'}:</td>
-	<td colspan='2' width='50%'><input type='radio' name='PROTOCOL' value='RFC2364' $checked{'PROTOCOL'}{'RFC2364'} />RFC2364 PPPoA</td>
- </tr>
- 	<td colspan='2' width='50%'></td>
-	<td colspan='2' width='50%'><input type='radio' name='PROTOCOL' value='RFC1483' $checked{'PROTOCOL'}{'RFC1483'} />RFC 1483 / 2684</td>
- </tr>
- <tr>		
-	<td colspan='2' width='50%'>$Lang::tr{'encapsulation'}:</td>
-	<td colspan='2' width='50%'>
-		<select name='ENCAP_RFC2364' style="width: 165px">
-		<option value='0' $selected{'ENCAP'}{'0'}>VCmux</option>
-		<option value='1' $selected{'ENCAP'}{'1'}>LLC</option>
-		</select>
-	</td>
-</tr>
-<tr>
-	<td colspan='2' width='50%'>$Lang::tr{'encapsulation'}:</td>
-	<td colspan='2' width='50%'>
-		<select name='ENCAP_RFC1483' style="width: 165px">
-		<option value='0' $selected{'ENCAP'}{'0'}>BRIDGED_ETH_LLC</option>
-		<option value='1' $selected{'ENCAP'}{'1'}>BRIDGED_ETH_VC</option>
-		<option value='2' $selected{'ENCAP'}{'2'}>ROUTED_IP_LLC</option>
-		<option value='3' $selected{'ENCAP'}{'3'}>ROUTED_IP_VC</option>
-		</select>
-	</td>
-</tr>
-END
-;
-	print "<tr><td colspan='2' width='50%'>$Lang::tr{'driver'}:</td>";
-	if (-e "/lib/modules/$kernel/misc/fcdslusb.o.gz") {
-		print "<td colspan='2' width='50%'>$Lang::tr{'present'}</td></tr>";
-	} else {
-		print "<td colspan='2' width='50%'>$Lang::tr{'not present'}</td></tr>"; }
 }
 
 print <<END
@@ -906,27 +754,6 @@ sub updatesettings
 	link("${General::swroot}/ppp/settings-$pppsettings{'PROFILE'}",
 		"${General::swroot}/ppp/settings");
 	system ("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
-	if ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
-		# eagle-usb.conf is in backup but link DSPcode.bin can't, so the link is created in rc.eagleusbadsl
-		open(FILE, ">/${General::swroot}/eagle-usb/eagle-usb.conf") or die "Unable to write eagle-usb.conf file";
-		flock(FILE, 2);
-		# decimal to hexa
-		$modemsettings{'VPI'} = uc(sprintf('%X', $pppsettings{'VPI'}));
-		$modemsettings{'VCI'} = uc(sprintf('%X', $pppsettings{'VCI'}));
-		if( $pppsettings{'PROTOCOL'} eq 'RFC1483') {
-			$modemsettings{'Encapsulation'} =1+$pppsettings{'ENCAP'}
-		} elsif ( $pppsettings{'PROTOCOL'} eq 'RFC2364') {
-			$modemsettings{'Encapsulation'} =6-$pppsettings{'ENCAP'}
-		}
-		print FILE "<eaglectrl>\n";
-		print FILE "VPI=$modemsettings{'VPI'}\n";
-		print FILE "VCI=$modemsettings{'VCI'}\n";
-		print FILE "Encapsulation=$modemsettings{'Encapsulation'}\n";
-		print FILE "Linetype=0A\n";
-		print FILE "RatePollFreq=00000009\n";
-		print FILE "</eaglectrl>\n";
-		close FILE;
-	}
 }
 
 sub writesecrets
@@ -959,13 +786,12 @@ sub initprofile
 	$pppsettings{'PHONEBOOK'} = 'RELAY_PPP1';
 	$pppsettings{'PROTOCOL'} = 'RFC2364';
 	$pppsettings{'METHOD'} = 'PPPOE_PLUGIN';
-	if ( $pppsettings{'METHOD'} eq 'PPPOE_PLUGIN' ){
-	$pppsettings{'MTU'} = '1492';
-	$pppsettings{'MRU'} = '1492';
-  }
-  else{
-  $pppsettings{'MTU'} = '1452';
-	$pppsettings{'MRU'} = '1452';
+	if ( $pppsettings{'METHOD'} eq 'PPPOE_PLUGIN' ) {
+		$pppsettings{'MTU'} = '1492';
+		$pppsettings{'MRU'} = '1492';
+  } else {
+  	$pppsettings{'MTU'} = '1452';
+		$pppsettings{'MRU'} = '1452';
   }
 	$pppsettings{'DIALMODE'} = 'T';
 	$pppsettings{'MAXRETRIES'} = 5;
@@ -976,10 +802,6 @@ sub initprofile
 	$pppsettings{'DNS'} = 'Automatic';
 	$pppsettings{'DEBUG'} = 'off';
 	$pppsettings{'BACKUPPROFILE'} = $pppsettings{'PROFILE'};
-
-	# Get ISDN settings so we can see if ISDN is enabled or not.
-	$isdnsettings{'ENABLED'} = 'off';
-	&General::readhash("${General::swroot}/isdn/settings", \%isdnsettings);
 	
 	# Get PPPoE settings so we can see if PPPoE is enabled or not.
 	&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
@@ -987,8 +809,6 @@ sub initprofile
 	# empty profile partial pre-initialization
 	if ($netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/) {
 		$pppsettings{'TYPE'}=lc($netsettings{'RED_TYPE'});
-	} elsif ($isdnsettings{'ENABLED'} eq 'on') {
-		$pppsettings{'TYPE'}='isdn';
 	} else {
 		$pppsettings{'TYPE'}='modem';
 	}
