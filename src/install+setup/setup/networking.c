@@ -41,7 +41,7 @@ int configtypecards[] = {
 	2,	// "GREEN + RED",
 	3,	// "GREEN + RED + ORANGE",
 	3, 	// "GREEN + RED + BLUE",
-	4	// "GREEN + RED + ORANGE + BLUE",
+	4	  // "GREEN + RED + ORANGE + BLUE",
 };
 
 
@@ -282,6 +282,7 @@ int configtypemenu(void)
 	found = scan_network_cards();
 	
 	findkey(kv, "CONFIG_TYPE", temp); choise = atol(temp);
+	choise--;
 
 	do
 	{

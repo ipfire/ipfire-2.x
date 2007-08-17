@@ -2,7 +2,7 @@
 #etc/rc.d/helper
 etc/rc.d/helper/getdnsfromdhcpc.pl
 etc/rc.d/helper/writeipac.pl
-#etc/rc.d/init.d
+etc/rc.d/init.d
 #etc/rc.d/init.d/alsa
 etc/rc.d/init.d/apache
 #etc/rc.d/init.d/applejuice
@@ -34,7 +34,7 @@ etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/blue
 etc/rc.d/init.d/networking/green
 etc/rc.d/init.d/networking/orange
-#etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/networking/red
 #etc/rc.d/init.d/networking/red.down
 etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
 etc/rc.d/init.d/networking/red.down/10-ipsec
