@@ -8,8 +8,8 @@
 
 use strict;
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
@@ -58,7 +58,7 @@ elsif ( $cgiparams{'ACTION'} eq "restore" )
   print UPLOADFILE;
   }
   close UPLOADFILE;
-  system("/usr/local/bin/backupctrl restore >/dev/null");
+  system("/usr/local/bin/backupctrl restore");
 }
 
 &Header::showhttpheaders();

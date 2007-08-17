@@ -1242,6 +1242,7 @@
 'package failed to install' => 'Package failed to install.',
 'pagerefresh' => 'Page is beeing refreshed, please wait.',
 'pakfire accept all' => 'Do you want to install all packages?',
+'pakfire available addons' => 'Available Addons:',
 'pakfire configuration' => 'Pakfire Configuration',
 'pakfire install package' => 'You want to install the following packages: ',
 'pakfire installed addons' => 'Installed Addons:',

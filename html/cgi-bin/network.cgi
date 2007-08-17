@@ -11,8 +11,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -75,7 +75,7 @@ foreach my $graphname (@graphs) {
 
 if ($cgiparams[1] =~ /red/) {
 	
-	if ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/  && $netsettings{'RED_TYPE'} eq "DHCP") {
+	if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/  && $netsettings{'RED_TYPE'} eq "DHCP") {
 
 		&Header::openbox('100%', 'left', "RED $Lang::tr{'dhcp configuration'}");
 		if (-s "${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info") {

@@ -204,13 +204,8 @@ ERROR:
 	&writesecrets();
 
 	&General::log("$Lang::tr{'profile saved'} $pppsettings{'PROFILENAME'}");
-	if ($drivererror) {
-	my $refresh = "<META HTTP-EQUIV='refresh' CONTENT='1; URL=/cgi-bin/upload.cgi'>";
-		my $title = $Lang::tr{'upload'};
-		&Header::openpage($title, 0, $refresh);
-	}
 }
-elsif ($pppsettings{'ACTION'} eq $Lang::tr{'select'})
+if ($pppsettings{'ACTION'} eq $Lang::tr{'select'})
 {
 	my $profile = $pppsettings{'PROFILE'};
 	%temppppsettings = ();
@@ -306,8 +301,6 @@ $selected{'COMPORT'}{'ttyACM0'} = '';
 $selected{'COMPORT'}{'ttyACM1'} = '';
 $selected{'COMPORT'}{'ttyACM2'} = '';
 $selected{'COMPORT'}{'ttyACM3'} = '';
-$selected{'COMPORT'}{'isdn1'} = '';
-$selected{'COMPORT'}{'isdn2'} = '';
 $selected{'COMPORT'}{$pppsettings{'COMPORT'}} = "selected='selected'";
 
 $selected{'DTERATE'}{'9600'} = '';
@@ -346,9 +339,6 @@ $checked{'SENDCR'}{$pppsettings{'SENDCR'}} = "checked='checked'";
 $checked{'USEDOV'}{'off'} = '';
 $checked{'USEDOV'}{'on'} = '';
 $checked{'USEDOV'}{$pppsettings{'USEDOV'}} = "checked='checked'";
-$checked{'USEIBOD'}{'off'} = '';
-$checked{'USEIBOD'}{'on'} = '';
-$checked{'USEIBOD'}{$pppsettings{'USEIBOD'}} = "checked='checked'";
 
 $checked{'MODEM'}{'PCIST'} = '';
 $checked{'MODEM'}{'USB'} = '';
@@ -561,7 +551,7 @@ print <<END
 </tr>
 END
 ;
-	if ( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ && ( $netsettings{'RED_TYPE'} eq "DHCP" || $netsettings{'RED_TYPE'} eq "STATIC") ) {
+	if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && ( $netsettings{'RED_TYPE'} eq "DHCP" || $netsettings{'RED_TYPE'} eq "STATIC") ) {
 		$pppsettings{'AUTOCONNECT'} = 'on';
 		print "<tr><td colspan='3' width='75%'>$Lang::tr{'connect on ipfire restart'}</td>\n";
 		print "<td width='25%'><input type='checkbox' disabled='disabled' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'}></td>\n";
@@ -807,7 +797,7 @@ sub initprofile
 	&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 	# empty profile partial pre-initialization
-	if ($netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/) {
+	if ($netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/) {
 		$pppsettings{'TYPE'}=lc($netsettings{'RED_TYPE'});
 	} else {
 		$pppsettings{'TYPE'}='modem';

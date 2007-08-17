@@ -12,7 +12,7 @@
 # to fully troubleshot your code, uncomment diagnostics, Carp and cluck lines
 #use diagnostics; # need to add the file /usr/lib/perl5/5.8.x/pods/perldiag.pod before to work
 # next look at /var/log/httpd/error_log , http://www.perl.com/pub/a/2002/05/07/mod_perl.html may help
-use warnings;
+#use warnings;
 use strict;
 #use Carp ();
 #local $SIG{__WARN__} = \&Carp::cluck;
@@ -230,7 +230,7 @@ if ($errormessage) {
     print "<font class='base'>$errormessage&nbsp;</font>";
     &Header::closebox();
 }
-unless (( $netsettings{'CONFIG_TYPE'} =~ /^(2|3|6|7)$/ ) && ($netsettings{'RED_TYPE'} eq 'STATIC'))
+unless (( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ ) && ($netsettings{'RED_TYPE'} eq 'STATIC'))
 {
     &Header::openbox('100%', 'left', $Lang::tr{'capswarning'});
     print <<END

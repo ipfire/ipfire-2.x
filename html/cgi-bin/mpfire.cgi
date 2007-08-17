@@ -8,8 +8,8 @@
 
 use strict;
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -231,19 +231,16 @@ foreach (@songdb){
   @year = sort keys %hash;
   my %hash = map{ $_, 1 }@genre;
   @genre = sort keys %hash;
-print <<END
-  <table width='95%' cellspacing='0'>
-END
-;
-if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'}</b></td></tr>";}
-else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'} - $#year</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'} - $#genre</b></td></tr>>";}
+print "<table width='95%' cellspacing='0'>";
+if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'}</b></td></tr>";}
+else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - $#artist</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - $#album</b></td></tr>";}
 print <<END
   <tr><td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
       <select name='artist' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
-  foreach (@artist){if ( $_ ne '' ){print "<option>$_</option>";}}
+foreach (@artist){if ( $_ ne '' ){print "<option>$_</option>";}}
 print <<END
       </select><br/>
       <input type='hidden' name='ACTION' value='playartist' />
@@ -263,8 +260,8 @@ print <<END
       </tr>
 END
 ;
-if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'}</b></td></tr>";}
-else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - $#artist</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - $#album</b></td></tr>";}
+if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'}</b></td></tr>";}
+else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'} - $#year</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'} - $#genre</b></td></tr>";}
 print <<END
   <tr><td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>

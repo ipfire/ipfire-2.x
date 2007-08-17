@@ -10,8 +10,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 use File::Copy;
 use IO::Socket;

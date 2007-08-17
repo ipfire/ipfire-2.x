@@ -11,8 +11,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -21,6 +21,8 @@ require "/opt/pakfire/lib/functions.pl";
 
 my %pakfiresettings=();
 my $errormessage = '';
+my %color = ();
+my %mainsettings = ();
 
 &Header::showhttpheaders();
 
@@ -33,6 +35,8 @@ $pakfiresettings{'AUTOUPDATE'} = 'off';
 $pakfiresettings{'UUID'} = 'on';
 
 &Header::getcgihash(\%pakfiresettings);
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -184,7 +188,8 @@ system("pakfire update &>dev/null");
 
 print <<END;
 	<table width='100%'>
-		<tr><td width='40%' align="center">Verfuegbare Addons:<br />
+		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b></td><td bgcolor='$color{'color20'}'></td><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
+		<tr><td width='40%' align="center">
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<select name="INSPAKS" size="10" multiple>
 END
@@ -207,7 +212,7 @@ print <<END;
 				<input type='hidden' name='ACTION' value='remove' />
 				<input type='image' alt='$Lang::tr{'remove'}' src='/images/list-remove.png' />
 		</td>
-		<td width='40%' align="center">$Lang::tr{'pakfire installed addons'}<br />
+		<td width='40%' align="center">
 			<select name="DELPAKS" size="10" multiple>
 END
 
@@ -216,10 +221,10 @@ END
 print <<END;
 		</select>
 	</table></form>
-		<br /><hr /><br />
+	<br />
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
-		<tr><td colspan='2'>$Lang::tr{'pakfire updates'}
+		<tr><td colspan='3' bgcolor='$color{'color20'}'><b>$Lang::tr{'pakfire updates'}</b></br>
 		<tr><td width='20%'>&nbsp;<td width='60%' align='center'>
 			<select name="UPDPAKS" size="5" disabled>
 END
@@ -231,14 +236,15 @@ print <<END;
 		<td width='20%' align='center' valign='middle'><input type='hidden' name='ACTION' value='upgrade' />
 			<input type='image' alt='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
 	</table></form>
-		<br /><hr /><br />
+	<br />
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='100%'>
+			<tr><td colspan='4' bgcolor='$color{'color20'}'><b>$Lang::tr{'basic options'}</b></br>
 			<tr><td width='40%' align="right">$Lang::tr{'pakfire update daily'}
 					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
 					<td width='40%' align="right">$Lang::tr{'pakfire register'} 
 					<td width='10%' align="left"><input type="checkbox" name="UUID" $checked{'UUID'}{'on'} />
-			<tr><td width='100%' colspan="4" align="right"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
+			<tr><td width='100%' colspan="4" align="center"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
 		</table>
 	</form>
 END

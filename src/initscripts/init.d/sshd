@@ -15,7 +15,7 @@ case "$1" in
         boot_mesg "Starting SSH Server..."
         # Also prevent ssh from being killed by out of memory conditions
         loadproc /usr/sbin/sshd 
-        sleep 1
+        sleep 3
         echo "-16" >/proc/`cat /var/run/sshd.pid`/oom_adj
         ;;
 
