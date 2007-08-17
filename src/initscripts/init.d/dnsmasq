@@ -21,7 +21,7 @@ case "${1}" in
 		
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 		ARGS=
-		[ "$DOMAIN_NAME_GREEN" == "" ] && ARGS="-s $DOMAIN_NAME_GREEN "
+		[ "$DOMAIN_NAME_GREEN" != "" ] && ARGS="-s $DOMAIN_NAME_GREEN "
 		[ -e "/var/ipfire/red/active" ] && ARGS+="-r /var/ipfire/red/resolv.conf"
 		
 		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS
