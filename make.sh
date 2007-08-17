@@ -390,7 +390,6 @@ buildipfire() {
   ipfiremake gnupg
   ipfiremake hdparm
   ipfiremake mtools
-  ipfiremake ibod
   ipfiremake initscripts
   ipfiremake whatmask
   ipfiremake iptables
