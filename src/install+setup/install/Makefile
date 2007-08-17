@@ -23,7 +23,7 @@ clean :
 
 ######
 
-OBJS=main.o ide.o nic.o net.o config.o ../libsmooth/libsmooth.o usb.o scsi.o unattended.o
+OBJS=main.o nic.o net.o config.o ../libsmooth/libsmooth.o unattended.o
 
 install: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)

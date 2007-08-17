@@ -28,7 +28,6 @@
 * Net-Server-0.93
 * Net_SSLeay.pm-1.25
 * Python-2.4.3
-* SnortSnarf-050314.1
 * Text-Tabs+Wrap-2005.0824
 * URI-1.35
 * Unix-Syslog-0.100
@@ -52,7 +51,6 @@
 * bwm-ng-0.6
 * bzip2-1.0.3
 * calamaris-2.59
-* capi4k-utils-2005-07-18
 * ccache-2.4
 * cdrtools-2.01
 * cftp-0.12
@@ -77,11 +75,6 @@
 * ethtool-3
 * expat-2.0.0
 * ez-ipupdate-3.0.11b8
-* fcdsl-suse93-3.11-07
-* fcdsl2-suse93-3.11-07
-* fcdslsl-suse93-3.11-07
-* fcdslslusb-suse93-3.11-05
-* fcdslusb-suse93-3.11-07
 * fcron-3.0.1
 * fetchmail-6.3.4
 * file-4.17

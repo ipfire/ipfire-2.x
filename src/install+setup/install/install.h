@@ -26,14 +26,6 @@ struct devparams
 	char options[STRING_SIZE];
 };
 
-/* ide.c */
-int initialize_ide();
-int checkide(char letter);
-char findidetype(int type);
-
-/* cdrom.c */
-int ejectcdrom(char *dev);
-
 /* nic.c */
 int networkmenu(struct keyvalue *ethernetkv);
 
@@ -44,15 +36,6 @@ int checktarball(char *, char *message);
 int write_disk_configs(struct devparams *dp);
 int write_lang_configs( char *lang);
 int write_ethernet_configs(struct keyvalue *ethernetkv);
-
-/* usb.c */
-int initialize_usb();
-int write_usb_modules_conf();
-int checkusb (char *partition);
-
-/* scsi.c */
-int try_scsi(char *dev);
-int get_boot(char *dev);
 
 /* unattended.c */
 int unattended_setup(struct keyvalue *unattendedkv);

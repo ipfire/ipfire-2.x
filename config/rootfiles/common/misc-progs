@@ -17,7 +17,6 @@ usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
 usr/local/bin/restartssh
-usr/local/bin/restartsyslogd
 usr/local/bin/restartwireless
 #usr/local/bin/sambactrl
 usr/local/bin/setaliases

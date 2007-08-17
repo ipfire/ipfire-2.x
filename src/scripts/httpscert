@@ -1,6 +1,5 @@
 #!/bin/sh
 #
-# $Id: httpscert,v 1.1.2.2 2005/12/15 21:59:57 eoberlander Exp $
 # new : generate new certificate
 # read: read issuer in certificate and verify if it is the same as hostname
 

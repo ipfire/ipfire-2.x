@@ -18,9 +18,6 @@ int handlehostname(void);
 /* domainname.c */
 int handledomainname(void);
 
-/* isdn.c */
-int handleisdn(void);
-
 /* networking.c */
 int handlenetworking(void);
 

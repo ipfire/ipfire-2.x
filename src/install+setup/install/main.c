@@ -142,29 +142,23 @@ int main(int argc, char *argv[])
 	{
 		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
 	} else {
+		mysystem("/sbin/modprobe ide-generic");
+		mysystem("/sbin/modprobe generic");
+		mysystem("/sbin/modprobe ide-cd");
+		mysystem("/sbin/modprobe ide-disk");
+		mysystem("/sbin/modprobe sd_mod");
+		mysystem("/sbin/modprobe sr_mod");
+		mysystem("/sbin/modprobe usb-storage");
+		
 		fgets(line, STRING_SIZE, cmdfile);
-		if (strstr (line, "noide") == NULL) {
-			fprintf(flog, "Initializing IDE controllers.\n");
-			initialize_ide();
-		} else {
-			fprintf(flog, "Skipping IDE detection.\n");
-		}
-		if (strstr (line, "nousb") == NULL) {
-			fprintf(flog, "Initializing USB controllers.\n");
-			initialize_usb();
-		} else {
-			fprintf(flog, "Skipping USB detection.\n");
-		}
+		
 		// check if we have to make an unattended install
 		if (strstr (line, "unattended") != NULL) {
 		    unattended = 1;
 		}
-		// Loading the cdrom-filesystem and ext2
-		mysystem("/sbin/modprobe iso9660");
-		mysystem("/sbin/modprobe ext2");
-		
-		// Loading the via_rhine driver because it isn't detected correctly (sometimes)
-		mysystem("/sbin/modprobe via-rhine");
+		mysystem("/sbin/modprobe iso9660"); // CDROM
+		mysystem("/sbin/modprobe ext2"); // Boot patition
+		mysystem("/sbin/modprobe vfat"); // USB key
 	}
 
 	if (unattended) {
@@ -535,9 +529,6 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
 		goto EXIT;
 	}
-		
-	/* Save USB controller type to modules.conf */
-	write_usb_modules_conf();
 	
 	/* Save language und local settings */
 	write_lang_configs(shortlangname);
