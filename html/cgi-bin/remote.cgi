@@ -31,7 +31,7 @@ $remotesettings{'ENABLE_SSH_PORTFW'} = 'off';
 $remotesettings{'ACTION'} = '';
 &Header::getcgihash(\%remotesettings);
 
-if ($remotesettings{'ACTION'} eq $Lang::tr{'save'})
+if ( ($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} )
 {
 	# not existing here indicates the box is unticked
 	$remotesettings{'ENABLE_SSH_PASSWORDS'} = 'off' unless exists $remotesettings{'ENABLE_SSH_PASSWORDS'};
@@ -63,9 +63,18 @@ if ($remotesettings{'ACTION'} eq $Lang::tr{'save'})
 	{
 		&General::log($Lang::tr{'ssh1 disabled'});
 	}
-
+if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ){
+	system('/usr/local/bin/restartssh','tempstart15') == 0
+		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
+ }
+elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
+	system('/usr/local/bin/restartssh','tempstart30') == 0
+		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
+ }
+else {
 	system('/usr/local/bin/restartssh') == 0
 		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
+ }
 }
 
 &General::readhash("${General::swroot}/remote/settings", \%remotesettings);
@@ -132,7 +141,9 @@ print <<END
 	<td width='100%' class='base'>$Lang::tr{'ssh keys'}</td>
 </tr>
 <tr>
-	<td colspan='3' align='center'><hr /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	<td align='center'><hr /><input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart15'}' /></td>
+  <td align='center'><hr /><input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart30'}' /></td>
+  <td align='center'><hr /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 END

@@ -9,7 +9,7 @@ require "${General::swroot}/header.pl";
 
 my $filename = "";
 my %songs = "";
-my $debug = 1;
+my $debug = 0;
 my $temp;
 
 if ($ARGV[0] eq 'scan') {

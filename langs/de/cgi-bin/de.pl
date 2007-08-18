@@ -1460,6 +1460,8 @@
 'ssh no auth' => 'Sie haben keinerlei Authentifizierungverfahren zugelassen; dies wird Ihre Anmeldung verhindern',
 'ssh passwords' => 'Passwortbasierte Authentifizierung zulassen',
 'ssh portfw' => 'TCP-Weiterleitung zulassen',
+'ssh tempstart15' => 'SSH-Zugriff für 15 Minuten',
+'ssh tempstart30' => 'SSH-Zugriff für 30 Minuten',
 'ssh1 disabled' => 'SSHv1 ist deaktiviert, ein Client der Version 2 wird benötigt.',
 'ssh1 enabled' => 'SSHv1 ist aktiviert, Clients mit alten Versionen werden unterstützt.',
 'ssh1 support' => 'Unterstützung für Version 1 des SSH-Protokolls (wird nur für alte Clients benötigt)',

@@ -188,7 +188,7 @@ system("pakfire update &>dev/null");
 
 print <<END;
 	<table width='100%'>
-		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b></td><td bgcolor='$color{'color20'}'></td><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
+		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b></td><td bgcolor='$color{'color20'}'></td><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
 		<tr><td width='40%' align="center">
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<select name="INSPAKS" size="10" multiple>
