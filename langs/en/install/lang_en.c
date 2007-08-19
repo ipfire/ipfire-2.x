@@ -25,6 +25,8 @@
 
 char *en_tr[] = {
 
+/* TR_CHOOSE_FILESYSTEM */
+"Please choose your filesystem:",
 /* TR_NOT_ENOUGH_INTERFACES */
 "Not enough netcards for your choice.\n\nNeeded: %d - Available: %d\n",
 /* TR_INTERFACE_CHANGE */
@@ -33,8 +35,6 @@ char *en_tr[] = {
 "Assigned Cards",
 /* TR_REMOVE */
 "Remove",
-/* TR_CHOOSE_FILESYSTEM */
-"Please choose your filesystem:",
 /* TR_MISSING_DNS */
 "Misssing DNS.\n",
 /* TR_MISSING_DEFAULT */

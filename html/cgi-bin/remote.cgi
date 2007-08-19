@@ -31,7 +31,7 @@ $remotesettings{'ENABLE_SSH_PORTFW'} = 'off';
 $remotesettings{'ACTION'} = '';
 &Header::getcgihash(\%remotesettings);
 
-if ( ($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} )
+if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'}) || ($remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'})) && $remotesettings{'ACTION'} ne "" )
 {
 	# not existing here indicates the box is unticked
 	$remotesettings{'ENABLE_SSH_PASSWORDS'} = 'off' unless exists $remotesettings{'ENABLE_SSH_PASSWORDS'};

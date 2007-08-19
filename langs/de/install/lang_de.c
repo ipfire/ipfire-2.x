@@ -30,11 +30,11 @@
 char *de_tr[] = {
 
 /* TR_CHOOSE_FILESYSTEM */
-"Bitte waehlen Sie ihr Dateisystem aus:",
+"Bitte wählen Sie ihr Dateisystem aus:",
 /* TR_NOT_ENOUGH_INTERFACES */
 "Nicht genügend Netzwerkkarten für diese Auswahl gefunden.\n\nBenötigt: %d - Gefunden: %d\n",
 /* TR_INTERFACE_CHANGE */
-"Bitte wählen Sie das Interface aus das geaendert werden soll.\n\n",
+"Bitte wählen Sie das Interface aus das geändert werden soll.\n\n",
 /* TR_METCARD_COLOR */
 "Zugewiesene Karten",
 /* TR_REMOVE */
@@ -46,11 +46,11 @@ char *de_tr[] = {
 /* TR_JOURNAL_EXT3 */
 "Erstelle Journal für Ext3...",
 /* TR_CHOOSE_NETCARD */
-"Bitte wählen Sie eine der untenstehenden Netzwerkkarten fuer die folgene Schnittstelle aus - %s.",
+"Bitte wählen Sie eine der untenstehenden Netzwerkkarten für die folgene Schnittstelle aus - %s.",
 /* TR_NETCARDMENU2 */
 "Erweitertes Netzwerkmenu",
 /* TR_ERROR_INTERFACES */
-"Es wurden leider keine freien Netzwerkkarten fuer die Schnittstelle in ihrem System gefunden.",
+"Es wurden leider keine freien Netzwerkkarten für die Schnittstelle in ihrem System gefunden.",
 /* TR_REMOVE_CARD */
 "Soll die Zuordnung der folgende Netzwerkkarte entfernt werden?",
 /* TR_JOURNAL_ERROR */
