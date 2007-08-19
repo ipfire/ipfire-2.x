@@ -142,28 +142,27 @@ int main(int argc, char *argv[])
 	{
 		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
 	} else {
-		mysystem("/sbin/modprobe ide-generic");
-		mysystem("/sbin/modprobe generic");
-		mysystem("/sbin/modprobe ide-cd");
-		mysystem("/sbin/modprobe ide-disk");
-		mysystem("/sbin/modprobe sd_mod");
-		mysystem("/sbin/modprobe sr_mod");
-		mysystem("/sbin/modprobe usb-storage");
-		
 		fgets(line, STRING_SIZE, cmdfile);
 		
 		// check if we have to make an unattended install
 		if (strstr (line, "unattended") != NULL) {
 		    unattended = 1;
-		}
-		mysystem("/sbin/modprobe iso9660"); // CDROM
-		mysystem("/sbin/modprobe ext2"); // Boot patition
-		mysystem("/sbin/modprobe vfat"); // USB key
+		    runcommandwithstatus("/bin/sleep 10", "WARNING: Unattended installation will start in 10 seconds...");
+		}		
 	}
+	
+	mysystem("/sbin/modprobe ide-generic");
+	mysystem("/sbin/modprobe generic");
+	mysystem("/sbin/modprobe ide-cd");
+	mysystem("/sbin/modprobe ide-disk");
+	mysystem("/sbin/modprobe sd_mod");
+	mysystem("/sbin/modprobe sr_mod");
+	mysystem("/sbin/modprobe usb-storage");
+	mysystem("/sbin/modprobe usbhid");
 
-	if (unattended) {
-	    runcommandwithstatus("/bin/sleep 10", "WARNING: Unattended installation will start in 10 seconds...");
- 	}
+	mysystem("/sbin/modprobe iso9660"); // CDROM
+	mysystem("/sbin/modprobe ext2"); // Boot patition
+	mysystem("/sbin/modprobe vfat"); // USB key
 	
 	/* German is the default */
 	for (choice = 0; langnames[choice]; choice++)
@@ -181,7 +180,6 @@ int main(int argc, char *argv[])
 
 	ctr = langtrs[choice];
 	strcpy(shortlangname, shortlangnames[choice]);
-	fprintf(flog, "Selected language: %s\n", shortlangname);
 
 	newtDrawRootText(14, 0, NAME " " VERSION " - " SLOGAN );
 	newtPushHelpLine(ctr[TR_HELPLINE]);

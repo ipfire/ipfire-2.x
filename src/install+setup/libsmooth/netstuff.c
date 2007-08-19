@@ -335,37 +335,6 @@ int probecards(char *driver, char *driveroptions )
 	return 0;
 }
 
-/* ### alter strupper ###
-char *strupper(char *s)
-{
- int n;
- for (n=0;s[n];n++) s[n]=toupper(s[n]);
- return s;
-}
-*/
-
-/* neuer StringUpper, wird zur Zeit nicht benutzt da UTF-8 nicht geht.
-void strupper(unsigned char *string)
-{
-	unsigned char *str;
-	for (str = string; *str != '\0'; str++)
-		if (!(*str & 0x80) && islower(*str)) 
-			*str = toupper(*str);
-}
-*/
-
-/* int ismacaddr(char *ismac)
-{
-	char *a;
-	fprintf(flog,"Check is MAC true\n"); // #### Debug ####
-	for (a = ismac; *a; a++) {
-		sprintf(flog,"%c\n", *a);	// #### Debug ####
-		if (*a != ':' && !isxdigit(*a)) return 0;	// is int != ':' or not hexdigit then exit
-	}
-	return 1;
-}
-*/
-
 int get_knic(int card)		//returns "0" for zero cards or error and "1" card is found.
 {
 	struct keyvalue *kv = initkeyvalues();
@@ -412,13 +381,13 @@ int init_knics(void)
 	return found;
 }
 
-int fmt_exists(const char *fname) {	/* Check it's any File or Directory */
+int fmt_exists(const char *fname) {	/* Check if it is any file or directory */
 	struct stat st;
 	if (stat(fname, &st) == -1) return 0;
 	else return 1;
 }
 
-int is_interface_up(char *card) {	/* Check is interface UP */
+int is_interface_up(char *card) {	/* Check if the interface is UP */
 	char temp[STRING_SIZE];
 
 	sprintf(temp,"ip link show dev %s | grep -q UP", card);
@@ -433,7 +402,6 @@ int rename_device(char *old_name, char *new_name) {
 		fprintf(flog,"Device not found: %s\n",old_name);
 		return 0;
 	}
-//	fprintf(flog,"NIC: %s wurde in %s umbenannt.\n", old_name, new_name);	// #### Debug ####
 	sprintf(temp,"/sbin/ip link set dev %s name %s",old_name ,new_name );
 	mysystem(temp);
 
@@ -442,7 +410,6 @@ int rename_device(char *old_name, char *new_name) {
 
 char g_temp[STRING_SIZE]="";
 char* readmac(char *card) {
-//	fprintf(flog,"Enter readmac... NIC: %s\n", card);	// #### Debug ####
 	FILE *fp;
 	char temp[STRING_SIZE], mac[20];
 
@@ -459,8 +426,6 @@ char* readmac(char *card) {
 }
 
 char* find_nic4mac(char *findmac) {
-	fprintf(flog,"Enter find_name4nic... Search for %s\n", findmac);	// #### Debug ####
-
 	DIR *dir;
 	struct dirent *dirzeiger;
 	char temp[STRING_SIZE], temp2[STRING_SIZE];
@@ -476,7 +441,6 @@ char* find_nic4mac(char *findmac) {
 			sprintf(temp2, "%s", readmac((*dirzeiger).d_name) );
 			if (strcmp(findmac, temp2) == 0) {
 				sprintf(temp,"%s", (*dirzeiger).d_name);
-//				fprintf(flog,"MAC: %s is NIC: %s\n", findmac, temp);	// #### Debug ####
 				break;
 			}
 		}
@@ -507,43 +471,27 @@ int rename_nics(void) {
 	int fnics = scan_network_cards();
 	char nic2find[STRING_SIZE], temp[STRING_SIZE];
 
-	fprintf(flog,"Renaming Nics\n");	// #### Debug ####
-
 	for(i=0; i<4; i++)
-		if (strcmp(knics[i].macaddr, ""))									// Wird das Interface benutzt ?
+		if (strcmp(knics[i].macaddr, ""))
 			for(j=0; j<fnics; j++)
-				if(strcmp(knics[i].macaddr, nics[j].macaddr) == 0) {					// suche den aktuellen Namen
+				if(strcmp(knics[i].macaddr, nics[j].macaddr) == 0) {
 					sprintf(nic2find,"%s0",lcolourcard[i]);
-//					fprintf(flog,"search4: %s\n", nic2find);	// #### Debug ####
-					if(strcmp(nic2find, nics[j].nic)) {						// hat das Interface nicht den Namen ?
-//						fprintf(flog,"cmp nic2find false\n");	// #### Debug ####
-//						fprintf(flog,"is nic( %s ) up ?\n",nics[j].nic);	// #### Debug ####
-
-						if(is_interface_up(nics[j].nic)) {					// wurde das Interface gestartet ?
-//							fprintf(flog,"%s is UP, shutting down...\n",nics[j].nic);	// #### Debug ####
+					if(strcmp(nic2find, nics[j].nic)) {
+						if(is_interface_up(nics[j].nic)) {
 							nic_shutdown(nics[j].nic);
 						}
 						sprintf(temp,SYSDIR "/%s", nic2find);
-//						fprintf(flog,"exists ?--> %s\n", temp);	// #### Debug ####
-						if(fmt_exists(temp)) {							// Ist der Name schon in Benutzung ?
-//							fprintf(flog,"is exists %s\n", nic2find);	// #### Debug ####
-							for(k=0; k<fnics; k++) 				// Suche das Interface
+						if(fmt_exists(temp)) {
+							for(k=0; k<fnics; k++)
 								if (strcmp(nics[k].nic, nic2find) == 0 ) {
-									if(is_interface_up(nics[k].nic)) {		// wurde das Interface gestartet ?
-//										fprintf(flog,"%s is UP, shutting down...\n",nics[k].nic);	// #### Debug ####
+									if(is_interface_up(nics[k].nic)) {
 										nic_shutdown(nics[k].nic);
 									}
-									sprintf(temp,"dummy%i",k);			// Benenne NIC nach "dummy[k]" um.
-//									fprintf(flog,"set dummy%i\n", k);	// #### Debug ####
+									sprintf(temp,"dummy%i",k);
 									if (rename_device(nics[k].nic, temp)) strcpy(nics[k].nic, temp);
 								}
 						}
-						if (rename_device(nics[j].nic, nic2find)) strcpy(nics[j].nic, nic2find);	// Benenne NIC um.
-
-//						if(strncmp(nics[j].nic,"dummy",5)) {
-//							fprintf(flog,"%s is down, start up...\n",nics[j].nic);	// #### Debug ####
-//							nic_startup(nics[j].nic);
-//						}
+						if (rename_device(nics[j].nic, nic2find)) strcpy(nics[j].nic, nic2find);
 					}
 				}
 }
@@ -554,7 +502,6 @@ int create_udev(void)
 	FILE *fp;
 	int i;
 
-	fprintf(flog,"Enter create_udev: "UDEV_NET_CONF"\n"); // #### Debug ####
 	if ( (fp = fopen(UDEV_NET_CONF, "w")) == NULL ) {
 		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
 		return 1;
@@ -564,7 +511,6 @@ int create_udev(void)
 	{
 		if (strcmp(knics[i].macaddr, "")) {
 			fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", knics[i].macaddr, lcolourcard[i], knics[i].description);
-			fprintf(flog,"Write %s\n",lcolourcard[i]); // #### Debug ####
 		}
 	}
 	fclose(fp);
@@ -617,9 +563,7 @@ int scan_network_cards(void)
 	
 	if (!(scanned_nics_read_done))
 	{
-		fprintf(flog,"Enter scan_network_cards\n"); // #### Debug ####
 		mysystem("/bin/probenic.sh");
-		// Read our scanned nics
 		if( (fp = fopen(SCANNED_NICS, "r")) == NULL )
 		{
 			fprintf(stderr,"Couldn't open "SCANNED_NICS);
@@ -654,16 +598,8 @@ int nicmenu(int colour)
 	char MenuInhalt[20][180];
 	char *pMenuInhalt[20];
 	
-//	strcpy( message , pnics[count].macaddr);
-//	while (strcmp(message, "")) {
-//		count++;
-//		strcpy( message , pnics[count].macaddr);
-//	}
-
 	while (strcmp(nics[count].macaddr, "")) count++;			// 2 find how many nics in system
 	for ( i=0 ; i<4;i++) if (strcmp(knics[i].macaddr, "")) kcount++;	// loop to find all knowing nics
-	fprintf(flog, "Enter NicMenu\n");					// #### Debug ####
-	fprintf(flog, "count nics %i\ncount knics %i\n", count, kcount);	// #### Debug ####
 
 	// If new nics are found...
 	if (count > kcount) {
@@ -673,12 +609,10 @@ int nicmenu(int colour)
 			for (j=0 ; j <= kcount ; j++) {
 				if (strcmp(nics[ i ].macaddr, knics[ j ].macaddr) == 0 ) {
 					nic_in_use = 1;
-					fprintf(flog,"NIC \"%s\" is in use.\n", nics[ i ].macaddr); // #### Debug ####
 					break;
 				}
 			}
 			if (!(nic_in_use)) {
-				fprintf(flog,"NIC \"%s\" is free.\n", nics[ i ].macaddr); // #### Debug ####
 				if ( strlen(nics[i].description) < 55 ) 
 					sprintf(MenuInhalt[mcount], "%.*s",  strlen(nics[i].description)-2, nics[i].description+1);
 				else {
@@ -700,17 +634,12 @@ int nicmenu(int colour)
 
 		pMenuInhalt[mcount] = NULL;
 
-//		sprintf(message, "Es wurde(n) %d freie Netzwerkkarte(n) in Ihrem System gefunden.\nBitte waehlen Sie im naechsten Dialog eine davon aus.\n", count);
-//		newtWinMessage("NetcardMenu", ctr[TR_OK], message);
-
 		sprintf(message, ctr[TR_CHOOSE_NETCARD], ucolourcard[colour]);
 		rc = newtWinMenu( ctr[TR_NETCARDMENU2], message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
 				
 		if ( rc == 0 || rc == 1) {
 			write_configs_netudev(found_NIC_as_Card[choise], colour);
-		} else if (rc == 2) {
-//			manualdriver("pcnet32","");
-	      	}
+		}
 		return 0;
 	} else {
 		// We have to add here that you can manually add a device
@@ -747,7 +676,6 @@ int clear_card_entry(int card)
 	writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 	freekeyvalues(kv);
 
-	fprintf(flog,"Card \"%s\" cleared\n",ucolourcard[card]); // #### Debug ####
 	return 0;
 }
 
@@ -756,19 +684,11 @@ int ask_clear_card_entry(int card)
 	char message[STRING_SIZE];
 	int rc;
 
-	sprintf(message, ctr[TR_REMOVE_CARD] "%s \n", ucolourcard[card]);
+	sprintf(message, ctr[TR_REMOVE_CARD], ucolourcard[card]);
 	rc = newtWinChoice(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_CANCEL], message);				
 
 	if ( rc = 0 || rc == 1) {
 		clear_card_entry(card);
-//		sprintf(temp1, "%s_DEV", ucolour);
-//		sprintf(temp2, "%s_MACADDR", ucolour);
-//		replacekeyvalue(kv, temp1, "");
-//		replacekeyvalue(kv, temp2, "");
-//		sprintf(temp1, "%s_DESCRIPTION", ucolour);
-//		replacekeyvalue(kv, temp1, "");
-
-//		writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 	} else return 1;
 
 	return 0;

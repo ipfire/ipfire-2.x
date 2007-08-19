@@ -95,9 +95,10 @@ int main(int argc, char *argv[])
 	sections[2] = ctr[TR_HOSTNAME];
 	sections[3] = ctr[TR_DOMAINNAME];
 	sections[4] = ctr[TR_NETWORKING];
-	sections[5] = ctr[TR_ROOT_PASSWORD];
-	sections[6] = ctr[TR_ADMIN_PASSWORD];
-	sections[7] = NULL;
+	sections[5] = ctr[TR_ISDN];
+	sections[6] = ctr[TR_ROOT_PASSWORD];
+	sections[7] = ctr[TR_ADMIN_PASSWORD];
+	sections[8] = NULL;
 
 	newtInit();
 	newtCls();
@@ -147,12 +148,16 @@ int main(int argc, char *argv[])
 				case 4:
 					handlenetworking();
 					break;
-
+				
 				case 5:
+					handleisdn();
+					break;
+
+				case 6:
 					handlerootpassword();
 					break;
 					
-				case 6:
+				case 7:
 					handleadminpassword();
 					break;
 		
@@ -172,6 +177,8 @@ int main(int argc, char *argv[])
 		if (!(handledomainname()))
 			goto EXIT;
 		if (!(handlenetworking()))
+			goto EXIT;
+		if (!(handleisdn()))
 			goto EXIT;
 		if (!(handledhcp()))
 			goto EXIT;

@@ -29,13 +29,21 @@
 
 char *de_tr[] = {
 
+/* TR_ISDN */
+"ISDN",
+/* TR_ERROR_PROBING_ISDN */
+"Konnte ISDN Scan nicht durchf�hren.",
+/* TR_PROBING_ISDN */
+"Suche und konfiguriere ISDN Ger�te.",
+/* TR_MISSING_GREEN_IP */
+"Fehlende IP auf der gr�nen Schnittstelle!",
 /* TR_CHOOSE_FILESYSTEM */
 "Bitte wählen Sie ihr Dateisystem aus:",
 /* TR_NOT_ENOUGH_INTERFACES */
 "Nicht genügend Netzwerkkarten für diese Auswahl gefunden.\n\nBenötigt: %d - Gefunden: %d\n",
 /* TR_INTERFACE_CHANGE */
 "Bitte wählen Sie das Interface aus das geändert werden soll.\n\n",
-/* TR_METCARD_COLOR */
+/* TR_NETCARD_COLOR */
 "Zugewiesene Karten",
 /* TR_REMOVE */
 "Entfernen",
@@ -52,7 +60,7 @@ char *de_tr[] = {
 /* TR_ERROR_INTERFACES */
 "Es wurden leider keine freien Netzwerkkarten für die Schnittstelle in ihrem System gefunden.",
 /* TR_REMOVE_CARD */
-"Soll die Zuordnung der folgende Netzwerkkarte entfernt werden?",
+"Soll die Zuordnung der folgende Netzwerkkarte entfernt werden? - %s",
 /* TR_JOURNAL_ERROR */
 "Konnte das Journal nicht erstelle, verwende ext2 Fallback.",
 /* TR_FILESYSTEM */

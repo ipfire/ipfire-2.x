@@ -25,13 +25,21 @@
 
 char *en_tr[] = {
 
+/* TR_ISDN */
+"ISDN",
+/* TR_ERROR_PROBING_ISDN */
+"Unable to scan for ISDN devices.",
+/* TR_PROBING_ISDN */
+"Scanning and configuring ISDN devices.",
+/* TR_MISSING_GREEN_IP */
+"Missing Green IP!",
 /* TR_CHOOSE_FILESYSTEM */
 "Please choose your filesystem:",
 /* TR_NOT_ENOUGH_INTERFACES */
 "Not enough netcards for your choice.\n\nNeeded: %d - Available: %d\n",
 /* TR_INTERFACE_CHANGE */
 "Please choose the interface you wish to change.\n\n",
-/* TR_METCARD_COLOR */
+/* TR_NETCARD_COLOR */
 "Assigned Cards",
 /* TR_REMOVE */
 "Remove",
@@ -48,7 +56,7 @@ char *en_tr[] = {
 /* TR_ERROR_INTERFACES */
 "There are no free interfaces on your system.",
 /* TR_REMOVE_CARD */
-"Should the allocation for the networkcard be deleted?",
+"Should the allocation for the networkcard be deleted? - %s",
 /* TR_JOURNAL_ERROR */
 "Could not create the journal, using fallback to ext2.",
 /* TR_FILESYSTEM */

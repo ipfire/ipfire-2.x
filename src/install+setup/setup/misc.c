@@ -6,8 +6,6 @@
  * (c) Lawrence Manning, 2001
  * Misc. stuff for the lib.
  * 
- * $Id: misc.c,v 1.5.2.3 2005/08/25 17:51:42 gespinasse Exp $
- * 
  */
  
 #include "setup.h"
@@ -139,3 +137,13 @@ int writehostsfiles(void)
 	
 	return 1;
 }	
+
+int handleisdn(void)
+{
+	char command[STRING_SIZE];
+	sprintf(command, "/etc/rc.d/init.d/mISDN config");
+	if (!runcommandwithstatus(command, ctr[TR_PROBING_ISDN]))
+		errorbox(ctr[TR_ERROR_PROBING_ISDN]);
+	// Need to write some lines that count the cards and say the names...
+	return 0;
+}

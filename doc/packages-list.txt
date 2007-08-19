@@ -107,7 +107,6 @@
 * httpd-2.2.2
 * hwdata
 * iana-etc-2.10
-* ibod-1.4
 * icecast-2.3.1
 * ices-2.0.1
 * iftop-0.17

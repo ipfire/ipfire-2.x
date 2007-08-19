@@ -141,9 +141,10 @@ print <<END
 	<td width='100%' class='base'>$Lang::tr{'ssh keys'}</td>
 </tr>
 <tr>
-	<td align='center'><hr /><input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart15'}' /></td>
-  <td align='center'><hr /><input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart30'}' /></td>
-  <td align='center'><hr /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	<td align='center' colspan='3'><hr />
+	<input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart15'}' />
+	<input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart30'}' />
+	<input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 END

@@ -31,6 +31,7 @@ int handleadminpassword(void);
 
 /* misc.c */
 int writehostsfiles(void);
+int handleisdn(void);
 
 /* keymap.c */
 int handlekeymap(void);
