@@ -32,6 +32,7 @@ etc/rc.d/init.d/network
 #etc/rc.d/init.d/networking
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/blue
+etc/rc.d/init.d/networking/dhcpcd.exe
 etc/rc.d/init.d/networking/green
 etc/rc.d/init.d/networking/orange
 etc/rc.d/init.d/networking/red

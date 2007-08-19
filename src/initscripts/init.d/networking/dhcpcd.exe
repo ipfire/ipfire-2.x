@@ -1,0 +1,32 @@
+#!/bin/sh
+########################################################################
+# Begin
+#
+# Description : DHCP Client Script
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       : 
+#
+########################################################################
+
+eval $(/usr/local/bin/readhash "$1")
+case "$2" in
+	up)
+		logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been configured with old IP=${IPADDR}"
+		touch /var/ipfire/red/active
+		;;
+	new)	
+		logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been configured with new IP=${IPADDR}"
+		[ -e "/var/ipfire/red/active" ] || touch /var/ipfire/red/active
+		fi
+		;;
+	down)
+		logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been brought down"
+		rm -f /var/ipfire/red/active
+		;;
+esac
+
+# End
