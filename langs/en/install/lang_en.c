@@ -25,6 +25,34 @@
 
 char *en_tr[] = {
 
+/* TR_NOT_ENOUGH_INTERFACES */
+"Not enough netcards for your choice.\n\nNeeded: %d - Available: %d\n",
+/* TR_INTERFACE_CHANGE */
+"Please choose the interface you wish to change.\n\n",
+/* TR_METCARD_COLOR */
+"Assigned Cards",
+/* TR_REMOVE */
+"Remove",
+/* TR_CHOOSE_FILESYSTEM */
+"Please choose your filesystem:",
+/* TR_MISSING_DNS */
+"Misssing DNS.\n",
+/* TR_MISSING_DEFAULT */
+"Missing Default Gateway.\n",
+/* TR_JOURNAL_EXT3 */
+"Creating journal for Ext3...",
+/* TR_CHOOSE_NETCARD */
+"Please choose a networkcard for the following interface - %s.",
+/* TR_NETCARDMENU2 */
+"Extended Networkmenu",
+/* TR_ERROR_INTERFACES */
+"There are no free interfaces on your system.",
+/* TR_REMOVE_CARD */
+"Should the allocation for the networkcard be deleted?",
+/* TR_JOURNAL_ERROR */
+"Could not create the journal, using fallback to ext2.",
+/* TR_FILESYSTEM */
+"Choose Filesystem",
 /* TR_ADDRESS_SETTINGS */
 "Address settings",
 /* TR_ADMIN_PASSWORD */

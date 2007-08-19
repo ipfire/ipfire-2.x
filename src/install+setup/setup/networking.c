@@ -147,7 +147,7 @@ int oktoleave(char *errormessage)
 		}
 		if (!(interfacecheck(kv, "GREEN")))
 		{
-			strcpy(errormessage, "(TR) GRÜNE IP nicht konfiguriert.\n"); //ctr[TR_MISSING_GREEN_IP]);
+			strcpy(errormessage, ctr[TR_MISSING_GREEN_IP]);
 			goto EXIT;
 		}
 	}
@@ -198,13 +198,13 @@ int oktoleave(char *errormessage)
 		strcpy(temp, ""); findkey(kv, "DNS1", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, "(TR) Kein DNS eingetragen\n");
+			strcpy(errormessage, ctr[TR_MISSING_DNS]);
 			goto EXIT;
 		}
 		strcpy(temp, ""); findkey(kv, "DEFAULT_GATEWAY", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, "(TR) Kein default Gateway eingetragen.\n");
+			strcpy(errormessage, ctr[TR_MISSING_DEFAULT]);
 			goto EXIT;
 		}
 	}
@@ -290,7 +290,7 @@ int configtypemenu(void)
 		rc = newtWinMenu(ctr[TR_NETWORK_CONFIGURATION_TYPE], message, 50, 5, 5,
 			6, configtypenames, &choise, ctr[TR_OK], ctr[TR_CANCEL], NULL);
 		if ( configtypecards[choise] > found ) {
-			sprintf(message, "(TR) Nicht genuegend Netzwerkkarten fuer diese Auswahl gefunden.\n\nBenoetigt: %d\nGefunden: %d\n", configtypecards[choise], found);
+			sprintf(message, ctr[TR_NOT_ENOUGH_INTERFACES] , configtypecards[choise], found);
 			errorbox(message);
 		}
 	}
@@ -435,7 +435,7 @@ int changedrivers(void)
 	do
 	{
 		count = 0;
-		strcpy(message, "(TR) Bitte wählen Sie das Interface aus das geaendert werden soll.\n\n");
+		strcpy(message, ctr[TR_INTERFACE_CHANGE]);
 
 		if (green) {
 			strcpy(MenuInhalt[count], "GREEN");
@@ -490,7 +490,7 @@ int changedrivers(void)
 		}
 		pMenuInhalt[count] = NULL;
 
-		rc = newtWinMenu("(TR) Netcard Farbe", message, 70, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_SELECT], "(TR) Entfernen" , ctr[TR_DONE], NULL);
+		rc = newtWinMenu( ctr[TR_NETCARD_COLOR], message, 70, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_SELECT], ctr[TR_REMOVE], ctr[TR_DONE], NULL);
 			
 		if ( rc == 0 || rc == 1) {
 			if ((green) && ( choise == NicEntry[0])) nicmenu(_GREEN_CARD_);

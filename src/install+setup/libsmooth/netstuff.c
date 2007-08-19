@@ -703,8 +703,8 @@ int nicmenu(int colour)
 //		sprintf(message, "Es wurde(n) %d freie Netzwerkkarte(n) in Ihrem System gefunden.\nBitte waehlen Sie im naechsten Dialog eine davon aus.\n", count);
 //		newtWinMessage("NetcardMenu", ctr[TR_OK], message);
 
-		sprintf(message, "(TR) Bitte wählen Sie eine der untenstehenden Netzwerkkarten fuer die Schnittstelle \"%s\" aus.\n", ucolourcard[colour]);
-		rc = newtWinMenu("(TR) NetcardMenu2", message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
+		sprintf(message, ctr[TR_CHOOSE_NETCARD], ucolourcard[colour]);
+		rc = newtWinMenu( ctr[TR_NETCARDMENU2], message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
 				
 		if ( rc == 0 || rc == 1) {
 			write_configs_netudev(found_NIC_as_Card[choise], colour);
@@ -714,7 +714,7 @@ int nicmenu(int colour)
 		return 0;
 	} else {
 		// We have to add here that you can manually add a device
-		errorbox("(TR) Es wurden leider keine freien Netzwerkkarten fuer die Schnittstelle in ihrem System gefunden.");
+		errorbox( ctr[TR_ERROR_INTERFACES]);
 		return 1;
 	}
 }
@@ -756,7 +756,7 @@ int ask_clear_card_entry(int card)
 	char message[STRING_SIZE];
 	int rc;
 
-	sprintf(message, "(TR) Soll die Zuordnung der Netzwerkkarte \"%s\" entfernt werden ?\n", ucolourcard[card]);
+	sprintf(message, ctr[TR_REMOVE_CARD] "%s \n", ucolourcard[card]);
 	rc = newtWinChoice(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_CANCEL], message);				
 
 	if ( rc = 0 || rc == 1) {

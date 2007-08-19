@@ -332,8 +332,8 @@ int main(int argc, char *argv[])
 		goto EXIT;
 
 	if (!unattended) {		
-		sprintf(message, "(TR) Bitte waehlen Sie ihr Dateisystem aus:");
-		rc = newtWinMenu("(TR) Dateisystemauswahl", message,
+		sprintf(message, ctr[TR_CHOOSE_FILESYSTEM]);
+		rc = newtWinMenu( ctr[TR_CHOOSE_FILESYSTEM], message,
 			50, 5, 5, 6, fstypes, &fstype, ctr[TR_OK],
 			ctr[TR_CANCEL], NULL);
 	} else {
@@ -572,16 +572,16 @@ int main(int argc, char *argv[])
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == EXT3) {
 		snprintf(commandstring, STRING_SIZE, "tune2fs -j %s3", hdparams.devnode_part);
-		if (runcommandwithstatus(commandstring, "(TR) Creating journal for ext3..."))
+		if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
 		{
-			errorbox("(TR) Unable to create journal. Going back to ext2.");
+			errorbox(ctr[TR_JOURNAL_ERROR]);
 			replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
 			goto NOJOURNAL;
 		}
 		snprintf(commandstring, STRING_SIZE, "tune2fs -j %s4", hdparams.devnode_part);
-		if (runcommandwithstatus(commandstring, "(TR) Creating journal for ext3..."))
+		if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
 		{
-			errorbox("(TR) Unable to create journal. Going back to ext2.");
+			errorbox(ctr[TR_JOURNAL_ERROR]);
 			replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
 			goto NOJOURNAL;
 		}
