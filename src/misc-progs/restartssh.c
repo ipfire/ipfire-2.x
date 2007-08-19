@@ -26,14 +26,14 @@ int main(int argc, char *argv[])
 {
 	if (strcmp(argv[1], "tempstart15") == 0) {
 		      safe_system("/usr/local/bin/restartssh");
-          sleep 5;
+          sleep(5);
 					unlink("/var/ipfire/remote/enablessh");
 					safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
 		      safe_system("sleep 900 && /usr/local/bin/restartssh &");
 	}
   else if (strcmp(argv[1], "tempstart30") == 0) {
 		      safe_system("/usr/local/bin/restartssh");
-          sleep 5;
+          sleep(5);
 					unlink("/var/ipfire/remote/enablessh");
 					safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
 		      safe_system("sleep 1800 && /usr/local/bin/restartssh &");

@@ -1,4 +1,64 @@
 ------------------------------------------------------------------------
+r780 | maniacikarus | 2007-08-18 23:10:10 +0400 (Sat, 18 Aug 2007) | 4 lines
+
+ARP Tabelle aus der DHCP CGI entfernt
+Pakfire CGI nochmal korrigiert
+SSH Zugriff mit Timer gebaut
+
+------------------------------------------------------------------------
+r779 | maniacikarus | 2007-08-17 20:00:01 +0400 (Fri, 17 Aug 2007) | 5 lines
+
+Debuginformationen aus den CGIs entfernt
+Hoffentlich die letzten Config Types bereinigt
+Samba und SSHd init Skripte angepasst
+Pakfire CGI optisch angepasst
+
+------------------------------------------------------------------------
+r778 | ms | 2007-08-17 16:42:50 +0400 (Fri, 17 Aug 2007) | 2 lines
+
+Noch zwei Netzwerkfixes...
+
+------------------------------------------------------------------------
+r777 | ms | 2007-08-17 15:25:26 +0400 (Fri, 17 Aug 2007) | 2 lines
+
+Code bereinigt...
+
+------------------------------------------------------------------------
+r776 | ms | 2007-08-17 15:16:06 +0400 (Fri, 17 Aug 2007) | 2 lines
+
+ISDN-Config geloescht.
+
+------------------------------------------------------------------------
+r775 | ms | 2007-08-17 15:14:27 +0400 (Fri, 17 Aug 2007) | 3 lines
+
+Fixes an den Netzwerkscripts und der Netzwerkroutine im Setup.
+Viele alte Patches entfernt.
+
+------------------------------------------------------------------------
+r774 | ms | 2007-08-17 13:03:18 +0400 (Fri, 17 Aug 2007) | 2 lines
+
+Ibod entfernt.
+
+------------------------------------------------------------------------
+r773 | ms | 2007-08-17 13:01:02 +0400 (Fri, 17 Aug 2007) | 3 lines
+
+Den Installer ordentlich abgespeckt.
+restartsyslogd entfernt.
+
+------------------------------------------------------------------------
+r772 | ms | 2007-08-17 01:21:24 +0400 (Fri, 17 Aug 2007) | 5 lines
+
+Capi-Utils entfernt.
+Green-only entfernt.
+Snortsnarf entfernt.
+Fritz-Card entfernt.
+
+------------------------------------------------------------------------
+r771 | maniacikarus | 2007-08-17 01:07:38 +0400 (Fri, 17 Aug 2007) | 2 lines
+
+PPP Menue angepasst
+
+------------------------------------------------------------------------
 r770 | ms | 2007-08-15 23:23:14 +0400 (Wed, 15 Aug 2007) | 2 lines
 
 Testversion foomatic...
