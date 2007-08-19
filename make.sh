@@ -330,12 +330,10 @@ buildipfire() {
   ipfiremake ipp2p			SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake zaptel			SMP=1
-  ipfiremake fuse				SMP=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake r8169
   ipfiremake zaptel
-  ipfiremake fuse
   ipfiremake pkg-config
   ipfiremake cpio
   ipfiremake klibc
@@ -380,6 +378,7 @@ buildipfire() {
   ipfiremake squashfstools
   ipfiremake reiserfsprogs
   ipfiremake sysfsutils
+  ipfiremake fuse
   ipfiremake ntfs-3g
   ipfiremake ethtool
   ipfiremake ez-ipupdate
