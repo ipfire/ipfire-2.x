@@ -1,4 +1,58 @@
 ------------------------------------------------------------------------
+r790 | ms | 2007-08-20 18:25:59 +0400 (Mon, 20 Aug 2007) | 2 lines
+
+Netzwerkscripts: DHCP vollstaendig getestet und gefixt.
+
+------------------------------------------------------------------------
+r789 | ms | 2007-08-20 17:21:16 +0400 (Mon, 20 Aug 2007) | 3 lines
+
+Setup weiter ausgebaut.
+Initrd des Installationssystems verkleinert.
+
+------------------------------------------------------------------------
+r788 | ms | 2007-08-20 13:01:12 +0400 (Mon, 20 Aug 2007) | 2 lines
+
+Setup SegFault-Fix.
+
+------------------------------------------------------------------------
+r787 | ms | 2007-08-20 01:55:19 +0400 (Mon, 20 Aug 2007) | 3 lines
+
+dhcpcd.exe geschrieben.
+asterisk.cgis geloescht.
+
+------------------------------------------------------------------------
+r786 | ms | 2007-08-20 01:39:43 +0400 (Mon, 20 Aug 2007) | 2 lines
+
+Fuse bereinigt.
+
+------------------------------------------------------------------------
+r785 | ms | 2007-08-20 01:21:25 +0400 (Mon, 20 Aug 2007) | 4 lines
+
+Rudimentaere ISDN-Erkennung erstellt.
+ProbeHW optimiert weges des via-rhine-Problem.
+Grubs gfx-Menue entfernt wegen der Kompatibilitaet.
+
+------------------------------------------------------------------------
+r784 | maniacikarus | 2007-08-20 00:18:59 +0400 (Mon, 20 Aug 2007) | 2 lines
+
+Fix am Installer
+
+------------------------------------------------------------------------
+r783 | maniacikarus | 2007-08-19 23:59:53 +0400 (Sun, 19 Aug 2007) | 2 lines
+
+Nochmal kleine Korrekturen an den Sprachdateien und der Remote CGI
+
+------------------------------------------------------------------------
+r782 | maniacikarus | 2007-08-19 23:35:46 +0400 (Sun, 19 Aug 2007) | 2 lines
+
+Translations fuer den Installer gemacht
+
+------------------------------------------------------------------------
+r781 | maniacikarus | 2007-08-19 11:21:46 +0400 (Sun, 19 Aug 2007) | 2 lines
+
+Buildfix
+
+------------------------------------------------------------------------
 r780 | maniacikarus | 2007-08-18 23:10:10 +0400 (Sat, 18 Aug 2007) | 4 lines
 
 ARP Tabelle aus der DHCP CGI entfernt

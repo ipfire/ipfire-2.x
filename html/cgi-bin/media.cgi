@@ -181,8 +181,8 @@ sub diskbox {
 		  print "<img alt='' src='/graphs/disk-$disk-day.png' border='0' />";
 		  print "</a>";
 		  print "<br />\n";
-		  if (-e "/usr/local/bin/hddshutdown-state") {
-		    system("/usr/local/bin/hddshutdown-state $disk");
+		  if (-e "/usr/local/bin/hddshutdown") {
+		    system("/usr/local/bin/hddshutdown state $disk");
 		  }
 		  my $smart = `/usr/local/bin/smartctrl $disk`;
 			$smart = &Header::cleanhtml($smart);

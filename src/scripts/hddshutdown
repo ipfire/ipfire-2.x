@@ -1,117 +1,57 @@
 #!/usr/bin/perl
 #
-# IPFire HDD Shutdown
+# IPFire HDD Shutdown state reader
 #
 # This code is distributed under the terms of the GPL
 #
-# 13.05.2006 Arne Fitzenreiter
+# 20.08.2007 Maniacikarus - IPFire.org - maniacikarus@ipfire.org
 #
 
 # begin
 
-sub shutdown_hdd {
+my @proc = `cat /proc/diskstats`;
+my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+my %diskstatus = "";
+my $debug = 1;
+my $status = "unknown";
 
-	my $hdd = $_[0];
-	my $hdddev = "/dev/$_[0]";
+if ( @ARGV[0] eq "state" ){
+my $hdd = @ARGV[1];
+$status = `hdparm -C /dev/$hdd | tail -1 | cut -d: -f2`;
 
-	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
-		$atime, $mtime, $ctime, $blksize, $blocks) = stat($hdddev);
-
-	my $major = $rdev >> 8;
-	my $minor = ($rdev & 0xFF) >> 6;
-
-       open STAT, "/tmp/hddshutdown-stat";
-	my @diskstat = <STAT>;
-	close (STAT);
-	foreach my $line (@diskstat)
-	{
-		chomp ($line);
-		my @temp = split(/\:\ /,$line);
-		if ($temp[1]) {
-			my @devicestat = split(/\ /,$temp[1]);
-			foreach my $stats (@devicestat)
-			{
-				chomp ($stats);
-				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
-				if ($major eq $fields[1] and $minor eq $fields[2])
-				{
-					$lastreadwritereq = $fields[3];
-				}
-			}
-		}
-	}
-
-	open STAT, "/proc/stat";
-	my @diskstat = <STAT>;
-	close (STAT);
-	foreach my $line (@diskstat)
-	{
-		chomp ($line);
-		my @temp = split(/\:\ /,$line);
-		if ($temp[1]) {
-			my @devicestat = split(/\ /,$temp[1]);
-			foreach my $stats (@devicestat)
-			{
-				chomp ($stats);
-				my @fields = split(/\((\d+),(\d+)\):\((\d+),(\d+),(\d+),(\d+),(\d+)/,$stats);
-				if ($major eq $fields[1] and $minor eq $fields[2])
-				{
-					$readwritereq = $fields[3];
-				}
-			}
-		}
-	}
-
-	if (! -e "/tmp/hddshutdown-$hdd" ) { system("echo 0 > /tmp/hddshutdown-$hdd"); }
-
-	if ($readwritereq==$lastreadwritereq) {
-		open STAT,"/tmp/hddshutdown-$hdd";
-		my $lastsleepstate = <STAT>;
-		close (STAT);
-		if (! ($lastsleepstate==$readwritereq)) { 
-			system("hdparm -y $hdddev");
-			system("logger -t ipfire Shuting down $hdddev !");
-			system("echo $readwritereq > /tmp/hddshutdown-$hdd");
-		}       
-	}		
-	
+if ( $status=~/standby/){
+  my $ftime = localtime((stat("/tmp/hddshutdown-$hdd"))[9]);
+  print"<B>Disk $hdddev status: <font color=#00FF00>standby</font></B> (since $ftime)";
+  }
+else{
+  print"<B>Disk $hdddev status: <font color=#FF0000>active</font></B>";
+  }
+exit;
 }
 
-if ( -e "/tmp/hddshutdown-stat" ) {
-  if (open STAT,"/dev/hda") {
-     close STAT; 
-  shutdown_hdd("hda");
-  }
-  if (open STAT,"/dev/hdb") {
-     close STAT; 
-  shutdown_hdd("hdb");
-  }
-  if (open STAT,"/dev/hdc") {
-     close STAT; 
-  shutdown_hdd("hdc");
-  }
-  if (open STAT,"/dev/hdd") {
-     close STAT; 
-  shutdown_hdd("hdd");
-  }
-  if (open STAT,"/dev/hde") {
-     close STAT; 
-  shutdown_hdd("hde");
-  }
-  if (open STAT,"/dev/hdf") {
-     close STAT; 
-  shutdown_hdd("hdf");
-  }
-  if (open STAT,"/dev/hdg") {
-     close STAT; 
-  shutdown_hdd("hdg");
-  }
-  if (open STAT,"/dev/hdh") {
-     close STAT; 
-  shutdown_hdd("hdh");
-  }
+if ($debug){print "### Reading Diskstats ###\n";}
 
+foreach (@proc){
+my @line = split(/ +/,$_);
+$diskstatus{$line[3]} =$line[12];
+if ($debug){print "Getting device ".$line[3]." with the following value ".$line[12]."\n";}
 }
 
-system("cp /proc/stat /tmp/hddshutdown-stat");
+if ($debug){print "### Searching for available Disks ###\n";}
+
+foreach (@devices){
+chomp $_;
+if ($debug){print "Device ".$_." has ".$diskstatus{$_}." IO Requests.\n";}
+$status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;
+
+  if ($diskstatus{$_} eq "0" && $status !=~/standby/){
+    if ($debug){print "Device ".$_." is set to standy.\n";}
+    system("/sbin/hdparm -y /dev/$_");
+    system("touch /tmp/hddshutdown-$_");
+  }
+  elsif ($diskstatus{$_} ne "0" || $status !=~/standby/){
+    if ($debug){print "Device ".$_." is active.\n";}
+    if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); }
+  }
+}
 # end
