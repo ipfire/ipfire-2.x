@@ -245,10 +245,12 @@ int firstmenu(void)
 	if (netaddresschange) 
 		strcpy(networkrestart, ctr[TR_RESTART_REQUIRED]);
 
-	strcpy(temp, ""); findkey(kv, "CONFIG_TYPE", temp); x = atol(temp);
-	if (x < 1 || x > 4) x = 0;
+	strcpy(temp, ""); findkey(kv, "CONFIG_TYPE", temp); 
+	x = atol(temp);
+	x--;
+	if (x < 1 || x > 4) x = 1;
 	/* Format heading bit. */
-	snprintf(message, 1000, ctr[TR_CURRENT_CONFIG], configtypenames[x-1],
+	snprintf(message, 1000, ctr[TR_CURRENT_CONFIG], configtypenames[x],
 		networkrestart);
 	rc = newtWinMenu(ctr[TR_NETWORK_CONFIGURATION_MENU], message, 50, 5, 5, 6,
 			sections, &choice, ctr[TR_OK], ctr[TR_DONE], NULL);

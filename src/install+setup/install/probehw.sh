@@ -2,17 +2,20 @@
 
 echo "Detecting Hardware..."
 for MODULE in $(kudzu -qps  -t 30 | grep driver: | cut -d ' ' -f 2 | sort | uniq); do
-    if [ "${MODULE}" = "unknown" ] || \
-        [ "${MODULE}" = "ignore" ]; then
+		if [ "${MODULE}" = "unknown" ] || \
+				[ "${MODULE}" = "ignore" ] || \
+				[ "${MODULE}" = "" ]; then
         continue
-    fi
-    MODULE=$(basename $(find /lib/modules -name $(echo $MODULE | sed -e 's/[_-]/*/g')* ) | cut -d. -f1 | head -1)
+		fi
+		echo -n "Module: $MODULE --> "
+		MODULE=$(basename $(find /lib/modules -name $(echo $MODULE | sed -e 's/[_-]/*/g')* ) | cut -d. -f1 | head -1)
+		echo "$MODULE"
     
-    if grep -Eqe "^${MODULE} " /proc/modules; then
-        continue
-    fi
-    echo -n "Loading ${MODULE}"
-    modprobe ${MODULE} >/dev/null 2>&1
+		if grep -Eqe "^${MODULE} " /proc/modules; then
+			continue
+		fi
+		echo -n "Loading ${MODULE}"
+		modprobe ${MODULE} >/dev/null 2>&1
 		echo " --> ecode: $?"
 done
 
