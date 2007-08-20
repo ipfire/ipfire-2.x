@@ -142,8 +142,8 @@ int handleisdn(void)
 {
 	char command[STRING_SIZE];
 	sprintf(command, "/etc/rc.d/init.d/mISDN config");
-	if (!runcommandwithstatus(command, ctr[TR_PROBING_ISDN]))
+	if (runcommandwithstatus(command, ctr[TR_PROBING_ISDN]))
 		errorbox(ctr[TR_ERROR_PROBING_ISDN]);
 	// Need to write some lines that count the cards and say the names...
-	return 0;
+	return 1;
 }

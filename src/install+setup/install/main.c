@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
 		    runcommandwithstatus("/bin/sleep 10", "WARNING: Unattended installation will start in 10 seconds...");
 		}		
 	}
-	
+
 	mysystem("/sbin/modprobe ide-generic");
 	mysystem("/sbin/modprobe generic");
 	mysystem("/sbin/modprobe ide-cd");
@@ -185,6 +185,9 @@ int main(int argc, char *argv[])
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 
+	// Starting hardware detection
+	runcommandwithstatus("/bin/probehw.sh", ctr[TR_PROBING_HARDWARE]);
+
 	if (!unattended) {
 		sprintf(message, ctr[TR_WELCOME], NAME);
 		newtWinMessage(title, ctr[TR_OK], message);
@@ -200,9 +203,6 @@ int main(int argc, char *argv[])
 
 	if (rc == 2)
 		goto EXIT;
-
-	// Starting hardware detection
-	runcommandwithstatus("/bin/probehw.sh", ctr[TR_PROBING_HARDWARE]);
 
 	/* CDROM INSTALL */
 	if (installtype == CDROM_INSTALL) {

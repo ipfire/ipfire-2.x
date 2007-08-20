@@ -32,11 +32,11 @@ char *de_tr[] = {
 /* TR_ISDN */
 "ISDN",
 /* TR_ERROR_PROBING_ISDN */
-"Konnte ISDN Scan nicht durchf�hren.",
+"Konnte ISDN Scan nicht durchführen.",
 /* TR_PROBING_ISDN */
-"Suche und konfiguriere ISDN Ger�te.",
+"Suche und konfiguriere ISDN Geräte.",
 /* TR_MISSING_GREEN_IP */
-"Fehlende IP auf der gr�nen Schnittstelle!",
+"Fehlende IP auf der grünen Schnittstelle!",
 /* TR_CHOOSE_FILESYSTEM */
 "Bitte wählen Sie ihr Dateisystem aus:",
 /* TR_NOT_ENOUGH_INTERFACES */
@@ -178,7 +178,7 @@ char *de_tr[] = {
 /* TR_ENTER_SETUP_PASSWORD */
 "Geben Sie das Passwort für den Benutzer 'setup' ein. Melden Sie sich als dieser Benutzer an, um das Setup-Programm zu starten.",
 /* TR_ENTER_THE_IP_ADDRESS_INFORMATION */
-"Geben Sie die IP-Adressinformationen für die %s Schnittstelle ein.",
+"Geben Sie die IP-Adressinformationen für die folgende Schnittstelle ein - %s.",
 /* TR_ENTER_THE_LOCAL_MSN */
 "Geben Sie Ihre lokale Telefonnummer ein (MSN/EAZ):",
 /* TR_ENTER_URL */
@@ -224,7 +224,7 @@ char *de_tr[] = {
 /* TR_INSTALLING_LANG_CACHE */
 "Installiere Sprachunterstützung...",
 /* TR_INTERFACE */
-"%s Schnittstelle",
+"Schnittstelle - %s",
 /* TR_INTERFACE_FAILED_TO_COME_UP */
 "Schnittstelle konnte nicht aktiviert werden.",
 /* TR_INVALID_FIELDS */

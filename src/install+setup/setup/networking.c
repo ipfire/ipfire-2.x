@@ -134,8 +134,8 @@ int oktoleave(char *errormessage)
 		return 0;
 	}	
 
-	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
-	if (configtype < 1 || configtype > 4) configtype = 0;
+	strcpy(temp, "1"); findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
+	if (configtype < 1 || configtype > 4) configtype = 1;
 
 	if (HAS_GREEN)
 	{
@@ -230,7 +230,7 @@ int firstmenu(void)
 	static int choice = 0;
 	struct keyvalue *kv = initkeyvalues();
 	char message[1000];
-	char temp[STRING_SIZE];
+	char temp[STRING_SIZE] = "1";
 	int x;
 	int result;
 	char networkrestart[STRING_SIZE] = "";
@@ -248,7 +248,7 @@ int firstmenu(void)
 	strcpy(temp, ""); findkey(kv, "CONFIG_TYPE", temp); 
 	x = atol(temp);
 	x--;
-	if (x < 1 || x > 4) x = 1;
+	if (x < 0 || x > 4) x = 0;
 	/* Format heading bit. */
 	snprintf(message, 1000, ctr[TR_CURRENT_CONFIG], configtypenames[x],
 		networkrestart);
@@ -267,12 +267,10 @@ int firstmenu(void)
 int configtypemenu(void)
 {
 	struct keyvalue *kv = initkeyvalues();
-	char temp[STRING_SIZE] = "0";
+	char temp[STRING_SIZE] = "1";
 	char message[1000];
 	int choise, found;
-	int rc;
-
-	fprintf(flog,"Enter ConfigMenu\n");
+	int rc, configtype;
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -303,9 +301,13 @@ int configtypemenu(void)
 		choise++;
 		sprintf(temp, "%d", choise);
 		replacekeyvalue(kv, "CONFIG_TYPE", temp);
-		clear_card_entry(_RED_CARD_);
-		clear_card_entry(_ORANGE_CARD_);
-		clear_card_entry(_BLUE_CARD_);
+		configtype = atol(temp);
+		if (!HAS_RED)
+			clear_card_entry(_RED_CARD_);
+		if (!HAS_ORANGE)
+			clear_card_entry(_ORANGE_CARD_);
+		if (!HAS_BLUE)
+			clear_card_entry(_BLUE_CARD_);
 
 		writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
 		netaddresschange = 1;
@@ -315,17 +317,15 @@ int configtypemenu(void)
 	return 0;
 }
 
-
-
 /* Driver menu.  Choose drivers.. */
 int drivermenu(void)
 {
 	struct keyvalue *kv = initkeyvalues();
 	char message[STRING_SIZE];
-	char temp[STRING_SIZE];
+	char temp[STRING_SIZE] = "1";
 
 	int configtype;
-	int i, rc, kcount = 0, neednics; //i = 0, count = 0,
+	int i, rc, kcount = 0, neednics;
 
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -334,13 +334,13 @@ int drivermenu(void)
 		return 0;
 	}
 
-	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
+	findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
 	
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 
-	kcount = 0;	// counter to find knowing nics.
-	neednics = 0;	// counter to use needing nics.
+	kcount = 0;
+	neednics = 0;
 	if (HAS_GREEN) {
 		sprintf(temp, "GREEN:  %s\n", knics[_GREEN_CARD_].description);
 		strcat(message, temp);
@@ -378,7 +378,9 @@ int drivermenu(void)
 		neednics++;
 	}
 
-	for ( i=0 ; i<4;i++) if (strcmp(knics[i].macaddr, "")) kcount++;
+	for ( i=0 ; i<4; i++)
+		if (strcmp(knics[i].macaddr, ""))
+			kcount++;
 
 	if (neednics = kcount)
 	{
@@ -387,11 +389,9 @@ int drivermenu(void)
 		ctr[TR_CANCEL], message);
 		if (rc == 0 || rc == 1)
 		{
-			/* Shit, got to do something.. */
 			changedrivers();
 		}
 	} else {
-		/* Shit, got to do something.. */
 		changedrivers();
 	}
 	freekeyvalues(kv);
@@ -421,8 +421,9 @@ int changedrivers(void)
 		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
 		return 0;
 	}
-	runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
-		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+	if (automode == 0)
+		runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
+			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 
 	findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
 	if (configtype == 1)

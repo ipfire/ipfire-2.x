@@ -66,7 +66,7 @@ $(TARGET) :
 	depmod -a -F /boot/System.map-$(KVER)-ipfire-smp $(KVER)-ipfire-smp
 	
 	cp -a /lib/modules/$(KVER)-ipfire/ /install/initrd/lib/modules/
-	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,source} \
+	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,source,misc/*,kernel/{crypro,sound,net}} \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan*
 
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/

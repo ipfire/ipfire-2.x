@@ -28,8 +28,8 @@ if [ "$TYPE" == "STATIC" ]; then
 	NETADDRESS="${RED_NETADDRESS}"
 	NETMASK="${RED_NETMASK}"
 	GATEWAY="${DEFAULT_GATEWAY}"
-	DNS1="${DNS1}"
-	DNS2="${DNS2}"
+	# DNS1
+	# DNS2
 
 	if [ -z "${BROADCAST}" ]; then
 		boot_mesg "BROADCAST variable missing from input, cannot continue." ${FAILURE}
@@ -77,6 +77,11 @@ case "${1}" in
 			boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
 			ip addr add ${args} dev ${DEVICE}
 			evaluate_retval
+			echo -n "${DEVICE}" > /var/ipfire/red/iface
+			echo -n "${ADDRESS}"  > /var/ipfire/red/local-ipaddress
+			echo -n "${GATEWAY}" > /var/ipfire/red/remote-ipaddress
+			echo -n "${DNS1}" > /var/ipfire/red/dns1
+			echo -n "${DNS2}" > /var/ipfire/red/dns2
 			
 		elif [ "${TYPE}" == "DHCP" ]; then
 			boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."		

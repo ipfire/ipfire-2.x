@@ -220,7 +220,7 @@ char *en_tr[] = {
 /* TR_INSTALLING_LANG_CACHE */
 "Installing language files...",
 /* TR_INTERFACE */
-"%s interface",
+"Interface - %s",
 /* TR_INTERFACE_FAILED_TO_COME_UP */
 "Interface failed to come up.",
 /* TR_INVALID_FIELDS */

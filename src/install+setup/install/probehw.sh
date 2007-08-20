@@ -7,9 +7,8 @@ for MODULE in $(kudzu -qps  -t 30 | grep driver: | cut -d ' ' -f 2 | sort | uniq
 				[ "${MODULE}" = "" ]; then
         continue
 		fi
-		echo -n "Module: $MODULE --> "
-		MODULE=$(basename $(find /lib/modules -name $(echo $MODULE | sed -e 's/[_-]/*/g')* ) | cut -d. -f1 | head -1)
-		echo "$MODULE"
+		MODULE=$(basename $(find /lib/modules -name $(echo $MODULE | sed -e 's/[_-]/*/g')* ) | cut -d. -f1 | head -1 2>/dev/null)
+    [ "${MODULE}" == "" ] && continue
     
 		if grep -Eqe "^${MODULE} " /proc/modules; then
 			continue
