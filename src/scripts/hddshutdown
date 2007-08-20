@@ -21,10 +21,10 @@ $status = `hdparm -C /dev/$hdd | tail -1 | cut -d: -f2`;
 
 if ( $status=~/standby/){
   my $ftime = localtime((stat("/tmp/hddshutdown-$hdd"))[9]);
-  print"<B>Disk $hdddev status: <font color=#00FF00>standby</font></B> (since $ftime)";
+  print"<B>Disk $hdd status: <font color=#00FF00>standby</font></B> (since $ftime)";
   }
 else{
-  print"<B>Disk $hdddev status: <font color=#FF0000>active</font></B>";
+  print"<B>Disk $hdd status: <font color=#FF0000>active</font></B>";
   }
 exit;
 }

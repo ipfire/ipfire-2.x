@@ -57,7 +57,6 @@ usr/lib/libgcc_s.so.1
 usr/local/bin/connscheduler
 usr/local/bin/dialctrl.pl
 usr/local/bin/hddshutdown
-usr/local/bin/hddshutdown-state
 usr/local/bin/httpscert
 usr/local/bin/makegraphs
 usr/local/bin/qosd
