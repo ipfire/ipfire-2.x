@@ -278,6 +278,7 @@ case "${1}" in
 			fi
 		fi
 		
+		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 		for i in $( ls -v ${rc_base}/init.d/networking/red.down/* 2> /dev/null); do
 			check_script_status
 			OUT=$(echo $(basename ${i}) | awk -F- '{ print $2 }')
