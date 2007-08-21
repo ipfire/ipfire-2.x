@@ -7,9 +7,9 @@ echo "--> IDE"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		echo -n "---> $DEVICE"
     mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-    if [ -e /harddisk/ipfire-*.tbz2 ]; then
+    if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
-			echo " is source drive"
+			echo "${DEVICE} is source drive - skipping"
 			continue
     else
     	umount /harddisk 2> /dev/null
@@ -19,14 +19,26 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 |
 		fi
 done
 
+    mount /dev/${DEVICE}1 /cdrom 2> /dev/null
+    if [  ]; then
+	     echo -n ${DEVICE} > /tmp/source_device
+	     echo "Found Sources in ${DEVICE}"
+    else
+       umount /cdrom 2> /dev/null
+	     echo "Found no Sources in ${DEVICE} skipping"
+    fi
+    umount /cdrom 2> /dev/null
+
+
+
 # scan USB/SCSI devices
 echo "--> USB/SCSI"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 | sort | uniq); do
     echo -n "---> $DEVICE"
 		mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-    if [ -e /harddisk/ipfire-*.tbz2 ]; then
+    if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
-			echo " is source drive"
+			echo "${DEVICE} is source drive - skipping"
 			continue
     else
     	umount /harddisk 2> /dev/null
@@ -41,8 +53,9 @@ echo "--> RAID"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 | sort | uniq); do
     echo -n "---> $DEVICE"
 			mount /dev/${DEVICE}p1 /harddisk 2> /dev/null
-    if [ -e /harddisk/ipfire-*.tbz2 ]; then
+    if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
+			echo "${DEVICE} is source drive - skipping"
 			echo " is source drive"
 			continue
     else
