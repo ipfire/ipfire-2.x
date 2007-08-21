@@ -415,7 +415,6 @@ sub updatehdddata
     $ERROR = RRDs::error;
     print "Error in RRD::create for hdd-$disk: $ERROR\n" if $ERROR;
   }
-
   $temp = 0;
   my $hdd_output = '';
   my $smart_output = '';
@@ -564,14 +563,22 @@ updatememdata();
 ### HDD graphs
 ###
 
+
 my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+system("unlink /tmp/hddstatus && touch /tmp/hddstatus");
 print "\nFound following amount of disks:".@disks."\n";
 foreach (@disks){
 my $disk = $_;
 chomp $disk;
 print "Working on disk ".$disk.".\n";
+
 updatediskdata($disk);
 updatehdddata($disk);
+
+my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
+open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
+print DATEI $disk."-".$status;
+close(DATEI);
 }
 
 ###

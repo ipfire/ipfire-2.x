@@ -173,6 +173,8 @@ END
 
 sub diskbox {
  my $disk = $_[0];
+ chomp $disk;
+ my @status;
     if (-e "$Header::graphdir/disk-$disk-day.png") {
 	 	  &Header::openbox('100%', 'center', "Disk /dev/$disk $Lang::tr{'graph'}");
 		  my $ftime = localtime((stat("$Header::graphdir/disk-$disk-day.png"))[9]);
@@ -181,9 +183,24 @@ sub diskbox {
 		  print "<img alt='' src='/graphs/disk-$disk-day.png' border='0' />";
 		  print "</a>";
 		  print "<br />\n";
-		  if (-e "/usr/local/bin/hddshutdown") {
-		    system("/usr/local/bin/hddshutdown state $disk");
-		  }
+
+      if (-e "/tmp/hddstatus") {
+        open(DATEI, "</tmp/hddstatus") || die "Datei nicht gefunden";
+        my  @diskstate = <DATEI>;
+        close(DATEI);
+
+        foreach (@diskstate){
+          if ( $_ =~/$disk/ ){@status = split(/-/,$_);}
+        }
+
+        if ( $status[1]=~/standby/){
+          my $ftime = localtime((stat("/tmp/hddshutdown-$disk"))[9]);
+          print"<B>Disk /dev/$disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
+        }
+        else{
+          print"<B>Disk /dev/$disk status:<font color=#00FF00>".$status[1]."</font></B>";
+        }
+      }
 		  my $smart = `/usr/local/bin/smartctrl $disk`;
 			$smart = &Header::cleanhtml($smart);
 			print <<END

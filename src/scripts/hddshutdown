@@ -12,22 +12,9 @@
 my @proc = `cat /proc/diskstats`;
 my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 my %diskstatus = "";
+my %diskstate = "";
 my $debug = 1;
 my $status = "unknown";
-
-if ( @ARGV[0] eq "state" ){
-my $hdd = @ARGV[1];
-$status = `hdparm -C /dev/$hdd | tail -1 | cut -d: -f2`;
-
-if ( $status=~/standby/){
-  my $ftime = localtime((stat("/tmp/hddshutdown-$hdd"))[9]);
-  print"<B>Disk $hdd status: <font color=#00FF00>standby</font></B> (since $ftime)";
-  }
-else{
-  print"<B>Disk $hdd status: <font color=#FF0000>active</font></B>";
-  }
-exit;
-}
 
 if ($debug){print "### Reading Diskstats ###\n";}
 
@@ -54,4 +41,5 @@ $status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;
     if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); }
   }
 }
+
 # end
