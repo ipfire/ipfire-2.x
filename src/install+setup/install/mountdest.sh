@@ -14,22 +14,10 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 |
     else
     	umount /harddisk 2> /dev/null
     	echo -n "$DEVICE" > /tmp/dest_device
-    	echo " - yes, it is our destination"
+    	echo "${DEVICE} - yes, it is our destination"
     	exit 0
 		fi
 done
-
-    mount /dev/${DEVICE}1 /cdrom 2> /dev/null
-    if [  ]; then
-	     echo -n ${DEVICE} > /tmp/source_device
-	     echo "Found Sources in ${DEVICE}"
-    else
-       umount /cdrom 2> /dev/null
-	     echo "Found no Sources in ${DEVICE} skipping"
-    fi
-    umount /cdrom 2> /dev/null
-
-
 
 # scan USB/SCSI devices
 echo "--> USB/SCSI"
@@ -43,7 +31,7 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 
     else
     	umount /harddisk 2> /dev/null
     	echo -n "$DEVICE" > /tmp/dest_device
-    	echo " - yes, it is our destination"
+    	echo "${DEVICE} - yes, it is our destination"
     	exit 1
 		fi
 done
@@ -61,7 +49,7 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 
     else
 			umount /harddisk 2> /dev/null
 			echo -n "$DEVICE" > /tmp/dest_device
-			echo " - yes, it is our destination"
+    	echo "${DEVICE} - yes, it is our destination"
 			exit 2
 		fi
 done
