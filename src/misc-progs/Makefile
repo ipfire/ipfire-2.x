@@ -10,7 +10,7 @@ SUID_PROGS = setdmzholes setportfw setfilters setxtaccess \
 	applejuicectrl rebuildhosts backupctrl \
 	logwatch openvpnctrl outgoingfwctrl \
 	restartwireless getipstat qosctrl launch-ether-wake \
-	redctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
+	redctrl restartsyslogd extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl pakfire mpfirectrl
 
 install : all
@@ -123,3 +123,6 @@ mpfirectrl: mpfirectrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 backupctrl: backupctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ backupctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+restartsyslogd: restartsyslogd.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ restartsyslogd.c setuid.o ../install+setup/libsmooth/varval.o -o $@

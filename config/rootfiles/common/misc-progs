@@ -30,3 +30,4 @@ usr/local/bin/squidctrl
 usr/local/bin/timectrl
 #usr/local/bin/tripwirectrl
 usr/local/bin/upnpctrl
+usr/local/bin/restartsyslogd

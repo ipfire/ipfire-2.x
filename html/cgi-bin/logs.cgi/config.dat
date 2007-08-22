@@ -33,6 +33,7 @@ $logsettings{'LOGWATCH_KEEP'} = '56';
 my @VS = ('15','50','100','150','250','500');
 $logsettings{'ENABLE_REMOTELOG'} = 'off';
 $logsettings{'REMOTELOG_ADDR'} = '';
+$logsettings{'VARMESSAGES'} = 'daemon.*;local0.*;local2.*;*.info;mail.none;authpriv.*';
 $logsettings{'ACTION'} = '';
 &Header::getcgihash(\%logsettings);
 
@@ -145,7 +146,16 @@ END
 ;
 &Header::closebox();
 
-
+&Header::openbox('100%', 'left', $Lang::tr{'messages logging'});
+print <<END
+<table width='100%'>
+<tr>
+  <td>$Lang::tr{'log var messages'}</td><td><input type='text' name='VARMESSAGES' size='50' value='$logsettings{'VARMESSAGES'}' /></td>
+</tr>
+</table>
+END
+;
+&Header::closebox();
 
 print <<END
 <div align='center'>
