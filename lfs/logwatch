@@ -92,18 +92,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#  for i in $$UNNEEDED ; do \
 	#    rm -f /etc/log.d/{conf,scripts}/services/$$i{,.conf} /etc/log.d/conf/logfiles/$$i.conf; \
 	#  done
-	#rm -rf /etc/log.d/scripts/logfiles
-	cp -f $(DIR_SRC)/config/logwatch/dialup /etc/log.d/scripts/services/dialup
-	cp -f $(DIR_SRC)/config/logwatch/dialup.conf /etc/log.d/conf/services/dialup.conf
+	cp -f $(DIR_SRC)/config/logwatch/dialup /usr/share/logwatch/scripts/services/dialup
+	cp -f $(DIR_SRC)/config/logwatch/dialup.conf /usr/share/logwatch/dist.conf/services/dialup.conf
 
-	#sed -i 's/df -h/df -h -x rootfs/' /etc/log.d/scripts/services/zz-disk_space
-	#for i in `find /etc/log.d -type f`; do \
-	#    sed -i 's/perl -w/perl/' $$i; \
-	#done
-	# The httpd log checker script considers any request containing the word
-	# null to be an exploit attempt, reverse this behaviour as we have a
-	# null.gif
-	#sed -i -e "/ 'null',/d" /etc/log.d/scripts/services/http
-	#chmod -R 755 /etc/log.d
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
