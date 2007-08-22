@@ -308,7 +308,7 @@ sub cleanhtml
 	$outstring =~ tr/,/ / if not defined $_[1] or $_[1] ne 'y';
 	$outstring =~ s/&/&amp;/g;
 	$outstring =~ s/\'/&#039;/g;
-	$outstring =~ s/\"/&quot;/g;
+	$outstring =~ s/\"/&quot;/g; #" This is just a workaround for the syntax highlighter
 	$outstring =~ s/</&lt;/g;
 	$outstring =~ s/>/&gt;/g;
 	return $outstring;
@@ -325,113 +325,25 @@ sub connectionstatus
     &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
     my $profileused='';
-    if ( ! ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
+    unless ( $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) {
     	$profileused="- $pppsettings{'PROFILENAME'}";
     }
 
-    if ( ( $pppsettings{'METHOD'} eq 'DHCP' && $netsettings{'RED_TYPE'} ne 'PPTP') 
-						|| $netsettings{'RED_TYPE'} eq 'DHCP' ) {
-		if (open(IFACE, "${General::swroot}/red/iface")) {
-			$iface = <IFACE>;
-			close IFACE;
-			chomp ($iface);
-			$iface =~ /([a-zA-Z0-9]*)/; $iface = $1;
-		}
-    }
-
     my ($timestr, $connstate);
-    if ($netsettings{'CONFIG_TYPE'} =~ /^(0|1|2|3|4)$/ &&  $pppsettings{'TYPE'} =~ /^isdn/) {
-	# Count ISDN channels
-	my ($idmap, $chmap, $drmap, $usage, $flags, $phone);
-	my @phonenumbers;
-	my $count=0;
 
-	open (FILE, "/dev/isdninfo");
+		my $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
 
-	$idmap = <FILE>; chop $idmap;
-	$chmap = <FILE>; chop $chmap;
-	$drmap = <FILE>; chop $drmap;
-	$usage = <FILE>; chop $usage;
-	$flags = <FILE>; chop $flags;
-	$phone = <FILE>; chop $phone;
-
-	$phone =~ s/^phone(\s*):(\s*)//;
-
-	@phonenumbers = split / /, $phone;
-
-	foreach (@phonenumbers) {
-		if ($_ ne '???') {
-			$count++;
-		}
-	}
-	close (FILE);
-
-	## Connection status
-	my $number;
-	if ($count == 0) {
-		$number = 'none!';
-	} elsif ($count == 1) {
-		$number = 'single';
-	} else {
-		$number = 'dual';
-	}
-
-	if (-e "${General::swroot}/red/active") {
-		$timestr = &General::age("${General::swroot}/red/active");
-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} - $number channel (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
-	} else {
-		if ($count == 0) {
-			if (-e "${General::swroot}/red/dial-on-demand") {
+		if (-e "${General::swroot}/red/active") {
+			$timestr = &General::age("${General::swroot}/red/active");
+			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} - (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+		} else {
+			if (($pppsettings{'RECONNECTION'} eq "dialondemand") && ( -e "${General::swroot}/red/dial-on-demand")) {
 				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
 			} else {
-				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>" if (system("ps -ef | grep -q '[p]ppd'"));
 			}
-		} else {
-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>";
 		}
-	}
-    } elsif ($netsettings{'RED_TYPE'} eq "STATIC" || $pppsettings {'METHOD'} eq 'STATIC') {
-	if (-e "${General::swroot}/red/active") {
-		$timestr = &General::age("${General::swroot}/red/active");
-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
-	} else {
-		$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
-	}
-    } elsif ( ( (-e "${General::swroot}/dhcpc/dhcpcd-$iface.pid") && $netsettings{'RED_TYPE'} ne 'PPTP' ) || 
-	!system("/bin/ps -ef | /bin/grep -q '[p]ppd'") || !system("/bin/ps -ef | /bin/grep -q '[c]onnectioncheck'")) {
-	if (-e "${General::swroot}/red/active") {
-		$timestr = &General::age("${General::swroot}/red/active");
-		if ($pppsettings{'TYPE'} =~ /^(modem|bewanadsl|conexantpciadsl|eagleusbadsl)$/) {
-			my $speed;
-			if ($pppsettings{'TYPE'} eq 'modem') {
-				open(CONNECTLOG, "/var/log/connect.log");
-				while (<CONNECTLOG>) {
-					if (/CONNECT/) {
-						$speed = (split / /)[6];
-					}
-				}
-				close (CONNECTLOG);
-			} elsif ($pppsettings{'TYPE'} eq 'bewanadsl') {
-				$speed = `/usr/bin/unicorn_status | /bin/grep Rate | /usr/bin/cut -f2 -d ':'`;
-			} elsif ($pppsettings{'TYPE'} eq 'conexantpciadsl') {
-				$speed = `/bin/cat /proc/net/atm/CnxAdsl:* | /bin/grep 'Line Rates' | /bin/sed -e 's+Line Rates:   Receive+Rx+' -e 's+Transmit+Tx+'`;
-			} elsif ($pppsettings{'TYPE'} eq 'eagleusbadsl') {
-				$speed = `/usr/sbin/eaglestat | /bin/grep Rate`;
-			}
-			$connstate = "$Lang::tr{'connected'} ($timestr) $profileused (\@$speed)";
-		} else {
-			$connstate = "$Lang::tr{'connected'} ($timestr) $profileused";
-		}
-	} else {
-		if (-e "${General::swroot}/red/dial-on-demand") {
-		    $connstate = "$Lang::tr{'dod waiting'} $profileused";
-		} else {
-		    $connstate = "$Lang::tr{'connecting'} $profileused";
-		}
-	}
-    } else {
-	$connstate = "$Lang::tr{'idle'} $profileused";
-    }
+		
     return $connstate;
 }
 
