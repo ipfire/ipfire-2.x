@@ -689,6 +689,8 @@ run_subdir() {
 			K) ${i} stop ;;
 			RS) ${i} restart ;;
 			RL) ${i} reload	;;
+			U) ${i} up ;;
+			D) ${i] down ;;
 			*) ${i} ;;
 		esac
 	done

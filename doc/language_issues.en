@@ -8,6 +8,7 @@ WARNING: translation string unused: Remote IP
 WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
 WARNING: translation string unused: Verbose
+WARNING: translation string unused: add new alias
 WARNING: translation string unused: add new ovpn
 WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
@@ -36,6 +37,7 @@ WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
+WARNING: translation string unused: aliases not active
 WARNING: translation string unused: all interfaces
 WARNING: translation string unused: all updates installed
 WARNING: translation string unused: alt information
@@ -101,6 +103,7 @@ WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: create
 WARNING: translation string unused: create new backup
+WARNING: translation string unused: current aliases
 WARNING: translation string unused: current dynamic leases
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
@@ -130,6 +133,7 @@ WARNING: translation string unused: driver
 WARNING: translation string unused: dynamic dns client
 WARNING: translation string unused: eciadsl help
 WARNING: translation string unused: eciadsl upload
+WARNING: translation string unused: edit an existing alias
 WARNING: translation string unused: editor
 WARNING: translation string unused: email server can not be empty
 WARNING: translation string unused: enable javascript
@@ -152,6 +156,7 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
+WARNING: translation string unused: external aliases configuration
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
@@ -196,6 +201,9 @@ WARNING: translation string unused: invalid uplink speed
 WARNING: translation string unused: invalid upstream proxy username or password setting
 WARNING: translation string unused: invalid vpi vpci
 WARNING: translation string unused: ip address in use
+WARNING: translation string unused: ip alias added
+WARNING: translation string unused: ip alias changed
+WARNING: translation string unused: ip alias removed
 WARNING: translation string unused: ipfire side
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: irq cpu usage
