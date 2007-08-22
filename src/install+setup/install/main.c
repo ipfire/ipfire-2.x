@@ -58,8 +58,7 @@ long calc_swapsize(long memory, long disk) {
 	if (memory > 1024) {
 		return 512;
 	}
-
-	return memory*2;
+	return memory;
 }
 
 long calc_rootsize(long free, long max) {
@@ -155,9 +154,9 @@ int main(int argc, char *argv[])
 	mysystem("/sbin/modprobe generic");
 	mysystem("/sbin/modprobe ide-cd");
 	mysystem("/sbin/modprobe ide-disk");
-	mysystem("/sbin/modprobe uhci_hcd");
-	mysystem("/sbin/modprobe ohci_hcd");
-	mysystem("/sbin/modprobe ehci_hcd");
+	mysystem("/sbin/modprobe uhci-hcd");
+	mysystem("/sbin/modprobe ohci-hcd");
+	mysystem("/sbin/modprobe ehci-hcd");
 	mysystem("/sbin/modprobe ohci1394");
 	mysystem("/sbin/modprobe sd_mod");
 	mysystem("/sbin/modprobe sr_mod");

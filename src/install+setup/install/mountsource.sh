@@ -27,7 +27,7 @@ for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort |
 		umount /cdrom 2> /dev/null
 done
 
-if [ -e /tmp/source_device ]; then
+if [ -e "/tmp/source_device" ]; then
 	mount /dev/$(cat /tmp/source_device) /cdrom 2> /dev/null
 	exit 0
 else
