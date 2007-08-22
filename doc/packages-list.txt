@@ -186,6 +186,7 @@
 * nmap-4.03
 * noip_updater_v1.6
 * ntfs-3g-1.0
+* ntfs-3g-1.810
 * ntp-4.2.2
 * ocaml-3.09.2
 * oinkmaster-2.0
@@ -217,6 +218,7 @@
 * rsync-2.6.8
 * rtorrent-0.7.4
 * samba-3.0.25b
+* samba-3.0.25c
 * screen-4.0.2
 * sed-4.1.5
 * setserial-2.17
@@ -228,6 +230,7 @@
 * spandsp-0.0.3pre24
 * squashfs3.2-r2
 * squid-2.6.STABLE13
+* squid-2.6.STABLE14
 * squid-graph-3.2
 * squidGuard-1.2.0
 * stund_0.96_Aug13

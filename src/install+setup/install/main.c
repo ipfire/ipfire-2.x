@@ -55,10 +55,12 @@ long calc_swapsize(long memory, long disk) {
 	if (memory < 128) {
 		return 256;
 	}
-	if (memory > 1024) {
+	else if (memory > 1024) {
 		return 512;
 	}
-	return memory;
+	else {
+	  return memory;
+	}
 }
 
 long calc_rootsize(long free, long max) {
@@ -68,10 +70,12 @@ long calc_rootsize(long free, long max) {
 	if (root < 256) {
 		return 0;
 	}
-	if (root > 2048) {
-		root = 2048;
+	else if (root > 2048) {
+		return 2048;
 	}
-	return root;
+	else {
+	  return 400;
+	}
 }
 
 int main(int argc, char *argv[])
@@ -397,11 +401,6 @@ int main(int argc, char *argv[])
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition - swap_file;
 
-	if (current_free < 700) {
-		errorbox(ctr[TR_DISK_TOO_SMALL]);
-		goto EXIT;
-	}
-	
 	root_partition = calc_rootsize(current_free, maximum_free);
 	
 	if (root_partition == 0) {
