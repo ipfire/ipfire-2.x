@@ -35,6 +35,7 @@ WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
+WARNING: translation string unused: all interfaces
 WARNING: translation string unused: all updates installed
 WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
@@ -236,9 +237,11 @@ WARNING: translation string unused: not enough disk space
 WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
 WARNING: translation string unused: online help en
+WARNING: translation string unused: only red
 WARNING: translation string unused: openvpn client
 WARNING: translation string unused: openvpn server
 WARNING: translation string unused: optional data
+WARNING: translation string unused: options fw
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
@@ -268,6 +271,7 @@ WARNING: translation string unused: package failed to install
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
+WARNING: translation string unused: ping disabled
 WARNING: translation string unused: polfile
 WARNING: translation string unused: pots
 WARNING: translation string unused: present

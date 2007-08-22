@@ -4,8 +4,6 @@
  * Licence.  See the file COPYING for details.
  * Simple header file for all setuid progs.
  * 
- * $Id: setuid.h,v 1.4.2.4 2005/11/20 23:20:13 franck78 Exp $
- * 
  */
 
 #ifndef SETUID_H
@@ -71,21 +69,6 @@ int initsetuid(void);
 
 /* check whether a file exists */
 int file_exists(const char *fname);	    
-int file_exists_w(const char *fname); //wildcard filename test	    
-
-// Backup restore
-#define MOUNTPOINT "/home/httpd/html/backup"
-#define BACKUP_KEY CONFIG_ROOT"/backup/backup.key"
-
-/* defines for config create/restore return status*/
-#define ERR_ANY      1   // unspecified error
-#define ERR_KEY      2   // error creating key file
-#define ERR_TAR      3   // error creating .tar
-#define ERR_GZ       4   // error creating .tar.gz
-#define ERR_ENCRYPT  5   // error creating .dat
-#define ERR_DECRYPT  6   // error decrypting .dat file
-#define ERR_UNTARTST 7   // error (test) untarring .tar.gz
-#define ERR_UNTAR    8   // error (real) untarring .tar.gz
-#define ERR_DAT      9   // missing .dat file
+int file_exists_w(const char *fname); //wildcard filename test
 
 #endif

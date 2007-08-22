@@ -16,7 +16,6 @@
 int main(int argc, char *argv[]) {
 
 	int fd = -1;
-	int enable = 0;
 
 	if (!(initsetuid()))
 		exit(1);
@@ -25,18 +24,17 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "\nNo argument given.\n\nqosctrl (start|stop|restart|status|generate)\n\n");
 		exit(1);
 	}
-
+	
+	if ((fd = open("/var/ipfire/qos/bin/qos.sh", O_RDONLY)) != -1) {
+		close(fd);
+	} else {
+		// If there is no qos.sh do nothing.
+		exit(0);
+	}
+	
 	safe_system("chmod 755 /var/ipfire/qos/bin/qos.sh &>/dev/null");
 	if (strcmp(argv[1], "start") == 0) {
-      		 if ((fd = open("/var/ipfire/qos/bin/qos.sh", O_RDONLY)) != -1)
-		{
-			close(fd);
-			enable = 1;
-		}
-			if (enable)
-		{
-			safe_system("/var/ipfire/qos/bin/qos.sh start");
-		}	
+		safe_system("/var/ipfire/qos/bin/qos.sh start");	
 	} else if (strcmp(argv[1], "stop") == 0) {
 		safe_system("/var/ipfire/qos/bin/qos.sh clear");
 	} else if (strcmp(argv[1], "status") == 0) {

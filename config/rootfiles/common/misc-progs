@@ -19,9 +19,7 @@ usr/local/bin/redctrl
 usr/local/bin/restartssh
 usr/local/bin/restartwireless
 #usr/local/bin/sambactrl
-usr/local/bin/setaliases
 usr/local/bin/setdmzholes
-usr/local/bin/setfilters
 usr/local/bin/setportfw
 usr/local/bin/setxtaccess
 usr/local/bin/smartctrl
