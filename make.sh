@@ -441,7 +441,6 @@ buildipfire() {
   ipfiremake ntp
   ipfiremake openssh
   ipfiremake openswan
-  ipfiremake pptpclient
   ipfiremake rrdtool
   ipfiremake setserial
   ipfiremake setup
