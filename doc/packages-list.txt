@@ -153,6 +153,7 @@
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
 * logrotate-3.7.1
+* logwatch-7.3.6
 * logwatch_7.3.1
 * lsof-4.78
 * lzo-2.02
