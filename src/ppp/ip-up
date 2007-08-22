@@ -25,4 +25,6 @@ echo -n "$5" > /var/ipfire/red/remote-ipaddress
 
 touch /var/ipfire/red/active
 
+run_subdir ${rc_base}/init.d/networking/red.up/
+
 [ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep up

@@ -83,6 +83,8 @@ case "${1}" in
 			echo -n "${DNS1}" > /var/ipfire/red/dns1
 			echo -n "${DNS2}" > /var/ipfire/red/dns2
 			
+			run_subdir ${rc_base}/init.d/networking/red.up/
+			
 		elif [ "${TYPE}" == "DHCP" ]; then
 			boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."		
 			echo -n "${DEVICE}" > /var/ipfire/red/iface
@@ -206,18 +208,6 @@ case "${1}" in
 			/usr/sbin/pppoe-start
 			evaluate_retval
 		fi
-		
-		for i in $( ls -v ${rc_base}/init.d/networking/red.up/* 2> /dev/null); do
-			check_script_status
-			OUT=$(echo $(basename ${i}) | awk -F- '{ print $2 }')
-			case "$OUT" in
-				S) ${i} start	;;
-				K) ${i} stop ;;
-				RS) ${i} restart ;;
-				RL) ${i} reload	;;
-				*) ${i} ;;
-			esac
-		done
 		;;
 
 	stop)
@@ -225,6 +215,8 @@ case "${1}" in
 			boot_mesg "Removing IPv4 address ${ADDRESS} from the ${DEVICE} interface..."
 			ip addr del ${args} dev ${DEVICE}
 			evaluate_retval
+			
+			run_subdir ${rc_base}/init.d/networking/red.down/
 			
 		elif [ "$TYPE" == "DHCP" ]; then
 			boot_mesg -n "Stopping dhcpcd on the ${DEVICE} interface..."
@@ -279,17 +271,6 @@ case "${1}" in
 		fi
 		
 		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
-		for i in $( ls -v ${rc_base}/init.d/networking/red.down/* 2> /dev/null); do
-			check_script_status
-			OUT=$(echo $(basename ${i}) | awk -F- '{ print $2 }')
-			case "$OUT" in
-				S) ${i} start	;;
-				K) ${i} stop ;;
-				RS) ${i} restart ;;
-				RL) ${i} reload	;;
-				*) ${i} ;;
-			esac
-		done
 		;;
 		
 esac

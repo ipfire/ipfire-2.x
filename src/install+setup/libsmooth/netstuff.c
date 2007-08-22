@@ -30,7 +30,6 @@ newtComponent netmaskentry;
 newtComponent statictyperadio;
 newtComponent dhcptyperadio;
 newtComponent pppoetyperadio;
-newtComponent pptptyperadio;
 newtComponent dhcphostnameentry;
 
 /* acceptable character filter for IP and netmaks entry boxes */
@@ -68,7 +67,6 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	int startstatictype = 0;
 	int startdhcptype = 0;
 	int startpppoetype = 0;
-	int startpptptype = 0;
 		
 	/* Build some key strings. */
 	sprintf(addressfield, "%s_ADDRESS", colour);
@@ -93,17 +91,14 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 		if (strcmp(temp, "STATIC") == 0) startstatictype = 1;
 		if (strcmp(temp, "DHCP") == 0) startdhcptype = 1;
 		if (strcmp(temp, "PPPOE") == 0) startpppoetype = 1;
-		if (strcmp(temp, "PPTP") == 0) startpptptype = 1;
 		statictyperadio = newtRadiobutton(2, 4, ctr[TR_STATIC], startstatictype, NULL);
 		dhcptyperadio = newtRadiobutton(2, 5, "DHCP", startdhcptype, statictyperadio);
 		pppoetyperadio = newtRadiobutton(2, 6, "PPPOE", startpppoetype, dhcptyperadio);
-		pptptyperadio = newtRadiobutton(2, 7, "PPTP", startpptptype, pppoetyperadio);
 		newtFormAddComponents(networkform, statictyperadio, dhcptyperadio, 
-			pppoetyperadio, pptptyperadio, NULL);
+			pppoetyperadio, NULL);
 		newtComponentAddCallback(statictyperadio, networkdialogcallbacktype, NULL);
 		newtComponentAddCallback(dhcptyperadio, networkdialogcallbacktype, NULL);
 		newtComponentAddCallback(pppoetyperadio, networkdialogcallbacktype, NULL);
-		newtComponentAddCallback(pptptyperadio, networkdialogcallbacktype, NULL);
 		dhcphostnamelabel = newtTextbox(2, 9, 18, 1, 0);
 		newtTextboxSetText(dhcphostnamelabel, ctr[TR_DHCP_HOSTNAME]);
 		strcpy(temp, defaultdhcphostname);
@@ -121,7 +116,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	findkey(kv, addressfield, temp);
 	addressentry = newtEntry(20, (typeflag ? 11 : 4) + 0, temp, 20, &addressresult, 0);
 	newtEntrySetFilter(addressentry, ip_input_filter, NULL);
-	if (typeflag == 1 && startstatictype == 0 && startpptptype == 0 )
+	if (typeflag == 1 && startstatictype == 0)
 		newtEntrySetFlags(addressentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 	newtFormAddComponent(networkform, addresslabel);
 	newtFormAddComponent(networkform, addressentry);
@@ -132,7 +127,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	strcpy(temp, "255.255.255.0"); findkey(kv, netmaskfield, temp);
 	netmaskentry = newtEntry(20, (typeflag ? 11 : 4) + 1, temp, 20, &netmaskresult, 0);
 	newtEntrySetFilter(netmaskentry, ip_input_filter, NULL);
-	if (typeflag == 1 && startstatictype == 0 && startpptptype == 0 ) 
+	if (typeflag == 1 && startstatictype == 0) 
 		newtEntrySetFlags(netmaskentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 
 	newtFormAddComponent(networkform, netmasklabel);
@@ -160,7 +155,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 			strcpy(type, "STATIC");
 			if (typeflag)
 				gettype(type);
-			if (strcmp(type, "STATIC") == 0 || strcmp(type, "PPTP") == 0 )
+			if (strcmp(type, "STATIC") == 0)
 			{		
 				if (inet_addr(addressresult) == INADDR_NONE)
 				{
@@ -189,7 +184,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 				if (typeflag)
 				{
 					replacekeyvalue(kv, dhcphostnamefield, dhcphostnameresult);
-					if (strcmp(type, "STATIC") != 0 && strcmp(type, "PPTP") != 0)
+					if (strcmp(type, "STATIC") != 0)
 					{
 						replacekeyvalue(kv, addressfield, "0.0.0.0");
 						replacekeyvalue(kv, netmaskfield, "0.0.0.0");
@@ -231,8 +226,6 @@ int gettype(char *type)
 		strcpy(type, "DHCP");
 	else if (selected == pppoetyperadio)
 		strcpy(type, "PPPOE");
-	else if (selected == pptptyperadio)
-		strcpy(type, "PPTP");
 	else
 		strcpy(type, "ERROR");
 	
@@ -292,7 +285,7 @@ void networkdialogcallbacktype(newtComponent cm, void *data)
 	
 	gettype(type);
 
-	if (strcmp(type, "STATIC") != 0  && strcmp(type, "PPTP") != 0 )
+	if (strcmp(type, "STATIC") != 0)
 	{
 		newtEntrySetFlags(addressentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 		newtEntrySetFlags(netmaskentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);

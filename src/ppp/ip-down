@@ -3,8 +3,11 @@
 
 rm -f /var/ipfire/red/active
 
+run_subdir ${rc_base}/init.d/networking/red.down/
+
 [ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep down
 
-[ -e "/var/ipfire/red/keepconnected" ] && \
-	(ps ax | grep -q "connectioncheck reconnect") && \
-	/etc/rc.d/init.d/connectioncheck reconnect &
+
+#[ -e "/var/ipfire/red/keepconnected" ] && \
+#	(ps ax | grep -q "connectioncheck reconnect") && \
+#	/etc/rc.d/init.d/connectioncheck reconnect &

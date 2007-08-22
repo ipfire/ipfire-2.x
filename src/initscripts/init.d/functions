@@ -679,15 +679,19 @@ log_warning_msg() {
 	return 0
 }
 
-animate()
-{
-	if [ $# = 0 ]
-		then
-		echo "Usage: animate {hook}"
-		exit 1
-	fi
-
-	splash "$*"
+run_subdir() {
+	$DIR=$1
+	for i in $( ls -v ${DIR}* 2> /dev/null); do
+		check_script_status
+		OUT=$(echo $(basename ${i}) | awk -F- '{ print $2 }')
+		case "$OUT" in
+			S) ${i} start	;;
+			K) ${i} stop ;;
+			RS) ${i} restart ;;
+			RL) ${i} reload	;;
+			*) ${i} ;;
+		esac
+	done
 }
 
 # End $rc_base/init.d/functions
