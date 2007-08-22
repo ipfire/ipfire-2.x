@@ -2,6 +2,8 @@
 /var/ipfire/*/*.conf
 /var/ipfire/*/*.pem
 /var/ipfire/*/config
+/var/ipfire/*/enable
+/var/ipifre/*/*enable*
 /etc/passwd
 /etc/shadow
 /etc/group
@@ -10,11 +12,11 @@
 /etc/httpd/*
 /etc/ssh/ssh_host*
 /var/ipfire/auth/users
-/var/ipifre/*/*enable*
 /var/ipfire/dhcp/*
 /var/ipfire/main/*
 /var/ipfire/outgoing/rules
 /var/ipfire/ovpn
+/var/ipfire/ppp
 /var/ipfire/proxy
 /var/ipfire/qos/*
 /var/ipfire/urlfilter

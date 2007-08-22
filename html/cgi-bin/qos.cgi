@@ -846,13 +846,17 @@ END
 		<tr><td width='33%' align='right'>Ceilburst:
 		    <td width='33%' align='left'><input type='text' size='20' name='CBURST' maxlength='8' value="$qossettings{'CBURST'}" />
 		    <td width='33%' align='center'>&nbsp;
+END
+;
+			$selected{'TOS'}{$qossettings{'TOS'}} = "selected='selected'";
+print <<END
 		<tr><td width='33%' align='right'>TOS-Bit:
 		    <td width='33%' align='left'><select name='TOS'>
-				<option value='0'>$Lang::tr{'disabled'} (0)</option>
-				<option value='8'>$Lang::tr{'min delay'} (8)</option>
-				<option value='4'>$Lang::tr{'max throughput'} (4)</option>
-				<option value='2'>$Lang::tr{'max reliability'} (2)</option>
-				<option value='1'>$Lang::tr{'min costs'} (1)</option></select>
+				<option value='0' $selected{'TOS'}{'0'}>$Lang::tr{'disabled'} (0)</option>
+				<option value='8' $selected{'TOS'}{'8'}>$Lang::tr{'min delay'} (8)</option>
+				<option value='4' $selected{'TOS'}{'4'}>$Lang::tr{'max throughput'} (4)</option>
+				<option value='2' $selected{'TOS'}{'2'}>$Lang::tr{'max reliability'} (2)</option>
+				<option value='1' $selected{'TOS'}{'1'}>$Lang::tr{'min costs'} (1)</option></select>
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'remark'}:
 		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" /> <img alt="" alt='blob' src='/blob.gif' />
