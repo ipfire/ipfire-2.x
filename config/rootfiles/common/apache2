@@ -1296,7 +1296,6 @@ srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
 srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/networks.cgi
-srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
