@@ -998,6 +998,7 @@
 'proxy access graphs' => 'Diagramme zur Proxyauslastung',
 'proxy log viewer' => 'Ansicht Proxy-Log',
 'proxy logs' => 'Proxy-Logdateien',
+'psk' => 'PSK',
 'pulse' => 'Puls',
 'pulse dial' => 'Pulswahl:',
 'qos graphs' => 'Qos Diagramme',

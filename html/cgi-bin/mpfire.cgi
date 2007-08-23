@@ -231,9 +231,13 @@ foreach (@songdb){
   @year = sort keys %hash;
   my %hash = map{ $_, 1 }@genre;
   @genre = sort keys %hash;
+  my $artistcount = $#artist+1;
+  my $albumcount = $#album+1;
+  my $yearcount = $#year+1;
+  my $genrecount = $#genre+1;
 print "<table width='95%' cellspacing='0'>";
 if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'}</b></td></tr>";}
-else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - $#artist</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - $#album</b></td></tr>";}
+else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - ".$artistcount."</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - ".$albumcount."</b></td></tr>";}
 print <<END
   <tr><td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -261,7 +265,7 @@ print <<END
 END
 ;
 if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'}</b></td></tr>";}
-else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'} - $#year</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'} - $#genre</b></td></tr>";}
+else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'} - ".$yearcount."</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'} - ".$genrecount."</b></td></tr>";}
 print <<END
   <tr><td align='center'>
       <form method='post' action='$ENV{'SCRIPT_NAME'}'>

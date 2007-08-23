@@ -998,6 +998,7 @@
 'proxy access graphs' => 'Proxy access graphs',
 'proxy log viewer' => 'Proxy log viewer',
 'proxy logs' => 'Proxy Logs',
+'psk' => 'PSK',
 'pulse' => 'Pulse',
 'pulse dial' => 'Pulse dial:',
 'qos graphs' => 'Qos Graphs',

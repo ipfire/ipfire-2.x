@@ -24,7 +24,7 @@
 
 #define ERR_ANY 1
 #define ERR_SETTINGS 2    /* error in settings file */
-#define ERR_ETC 3         /* error with CONFIG_ROOT/etc permissions */
+#define ERR_ETC 3         /* error with /etc permissions */
 #define ERR_CONFIG 4      /* error updated sshd_config */
 #define ERR_SYSLOG 5      /* error restarting syslogd */
 
@@ -45,7 +45,7 @@ int main(void)
    /* Read in and verify config */
    kv=initkeyvalues();
 
-   if (!readkeyvalues(kv, CONFIG_ROOT "/logging/settings"))
+   if (!readkeyvalues(kv, "/logging/settings"))
    {
       fprintf(stderr, "Cannot read syslog settings\n");
       exit(ERR_SETTINGS);
@@ -78,55 +78,55 @@ int main(void)
    freekeyvalues(kv);
 
 
-   /* If anyone other than root can write to CONFIG_ROOT/etc this would be totally
-    * insecure - same if anyone other than root owns CONFIG_ROOT/etc, as they could
+   /* If anyone other than root can write to /etc this would be totally
+    * insecure - same if anyone other than root owns /etc, as they could
     * change the file mode to give themselves or anyone else write access. */
 
-   if(lstat(CONFIG_ROOT "/etc",&st))
+   if(lstat("/etc",&st))
    {
-      perror("Unable to stat" CONFIG_ROOT "/etc");
+      perror("Unable to stat /etc");
       exit(ERR_ETC);
    }
    if(!S_ISDIR(st.st_mode))
    {
-      fprintf(stderr,CONFIG_ROOT "/etc is not a directory?!\n");
+      fprintf(stderr, "/etc is not a directory?!\n");
       exit(ERR_ETC);
    }
    if ( st.st_uid != 0  ||  st.st_mode & S_IWOTH ||
       ((st.st_gid != 0) && (st.st_mode & S_IWGRP)) )
    {
-      fprintf(stderr,CONFIG_ROOT "/etc is owned/writable by non-root users\n");
+      fprintf(stderr, "/etc is owned/writable by non-root users\n");
       exit(ERR_ETC);
    }
 
    /* O_CREAT with O_EXCL will make open() fail if the file already exists -
     * mostly to prevent 2 copies running at once */
-   if ((config_fd = open( CONFIG_ROOT "/etc/syslog.conf.new", O_WRONLY|O_CREAT|O_EXCL, 0644 )) == -1 )
+   if ((config_fd = open( "/etc/syslog.conf.new", O_WRONLY|O_CREAT|O_EXCL, 0644 )) == -1 )
    {
       perror("Unable to open new config file");
       exit(ERR_CONFIG);
    }
 
    if (!strcmp(buffer,"on"))
-      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@\\).\\+$/\\1%s/' " CONFIG_ROOT "/etc/syslog.conf >&%d", hostname, config_fd );
+      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@\\).\\+$/\\1%s/' /etc/syslog.conf >&%d", hostname, config_fd );
    else
-      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@.\\+\\)$/#\\1/' " CONFIG_ROOT "/etc/syslog.conf >&%d", config_fd );
+      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@.\\+\\)$/#\\1/' /etc/syslog.conf >&%d", config_fd );
       
-      snprintf(buffer, STRING_SIZE - 1, "&& /bin/sed -e 's/*.\/var\/log\/messages/%s \/var\/log\/messages/' " CONFIG_ROOT "/etc/syslog.conf >&%d", varmessages, config_fd );
+      snprintf(buffer, STRING_SIZE - 1, "&& /bin/sed -e 's/*.\/var\/log\/messages/%s \/var\/log\/messages/' /etc/syslog.conf >&%d", varmessages, config_fd );
 
    /* if the return code isn't 0 failsafe */
    if ((rc = unpriv_system(buffer,99,99)) != 0)
    {
       fprintf(stderr, "sed returned bad exit code: %d\n", rc);
       close(config_fd);
-      unlink(CONFIG_ROOT "/etc/syslog.conf.new");
+      unlink("/etc/syslog.conf.new");
       exit(ERR_CONFIG);
    }
    close(config_fd);
-   if (rename(CONFIG_ROOT "/etc/syslog.conf.new", CONFIG_ROOT "/etc/syslog.conf") == -1)
+   if (rename("/etc/syslog.conf.new /etc/syslog.conf") == -1)
    {
       perror("Unable to replace old config file");
-      unlink(CONFIG_ROOT "/etc/syslog.conf.new");
+      unlink("/etc/syslog.conf.new");
       exit(ERR_CONFIG);
    }
 
