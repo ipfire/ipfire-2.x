@@ -1,5 +1,10 @@
+bin/ntfs-3g
+#lib/libntfs-3g.a
+#lib/libntfs-3g.la
+lib/libntfs-3g.so
+lib/libntfs-3g.so.9
+lib/libntfs-3g.so.9.0.0
 sbin/mount.ntfs-3g
-usr/bin/ntfs-3g
 #usr/include/ntfs-3g
 #usr/include/ntfs-3g/attrib.h
 #usr/include/ntfs-3g/attrlist.h
@@ -30,10 +35,5 @@ usr/bin/ntfs-3g
 #usr/include/ntfs-3g/unistr.h
 #usr/include/ntfs-3g/version.h
 #usr/include/ntfs-3g/volume.h
-#usr/lib/libntfs-3g.a
-#usr/lib/libntfs-3g.la
-usr/lib/libntfs-3g.so
-usr/lib/libntfs-3g.so.0
-usr/lib/libntfs-3g.so.0.0.0
-#usr/man/man8/mount.ntfs-3g.8
-#usr/man/man8/ntfs-3g.8
+#usr/share/man/man8/mount.ntfs-3g.8
+#usr/share/man/man8/ntfs-3g.8
