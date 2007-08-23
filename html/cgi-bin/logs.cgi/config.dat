@@ -58,7 +58,7 @@ if ($logsettings{'ACTION'} eq $Lang::tr{'save'})
   unless ($errormessage)
   {
     &General::writehash("${General::swroot}/logging/settings", \%logsettings);
-    system('/usr/local/bin/restartsyslogd') == 0
+    system('/usr/local/bin/syslogdctrl') == 0
       or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
   }
 

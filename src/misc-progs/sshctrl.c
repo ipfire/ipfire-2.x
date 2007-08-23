@@ -1,4 +1,4 @@
-/* SmoothWall helper program - restartssh
+/* SmoothWall helper program - sshctrl
  *
  * This program is distributed under the terms of the GNU General Public
  * Licence.  See the file COPYING for details.
@@ -7,7 +7,7 @@
  * Simple program intended to be installed setuid(0) that can be used for
  * restarting SSHd. 
  * 
- * $Id: restartssh.c,v 1.3 2003/12/11 10:57:34 riddles Exp $
+ * $Id: sshctrl.c,v 1.3 2003/12/11 10:57:34 riddles Exp $
  * 
  */
 
@@ -25,18 +25,18 @@
 int main(int argc, char *argv[])
 {
 	if (strcmp(argv[1], "tempstart15") == 0) {
-		      safe_system("/usr/local/bin/restartssh");
+		      safe_system("/usr/local/bin/sshctrl");
           sleep(5);
 					unlink("/var/ipfire/remote/enablessh");
 					safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
-		      safe_system("sleep 900 && /usr/local/bin/restartssh &");
+		      safe_system("sleep 900 && /usr/local/bin/sshctrl &");
 	}
   else if (strcmp(argv[1], "tempstart30") == 0) {
-		      safe_system("/usr/local/bin/restartssh");
+		      safe_system("/usr/local/bin/sshctrl");
           sleep(5);
 					unlink("/var/ipfire/remote/enablessh");
 					safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
-		      safe_system("sleep 1800 && /usr/local/bin/restartssh &");
+		      safe_system("sleep 1800 && /usr/local/bin/sshctrl &");
 	} else {
 	int fd, config_fd, rc, pid;
 	char buffer[STRING_SIZE], command[STRING_SIZE] = "/bin/sed -e '";
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* By using O_CREAT with O_EXCL open() will fail if the file already exists,
-	 * this prevents 2 copies of restartssh both trying to edit the config file
+	 * this prevents 2 copies of sshctrl both trying to edit the config file
 	 * at once. It also prevents race conditions, but these shouldn't be
 	 * possible as /etc/ssh/ should only be writable by root anyhow
 	 */

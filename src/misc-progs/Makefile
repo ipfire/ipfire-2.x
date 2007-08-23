@@ -5,12 +5,12 @@ COMPILE=$(CC) $(CFLAGS)
 
 PROGS = iowrap
 SUID_PROGS = setdmzholes setportfw setxtaccess \
-	squidctrl restartssh ipfirereboot \
+	squidctrl sshctrl ipfirereboot \
 	ipsecctrl timectrl dhcpctrl snortctrl \
 	applejuicectrl rebuildhosts backupctrl \
 	logwatch openvpnctrl outgoingfwctrl \
-	restartwireless getipstat qosctrl launch-ether-wake \
-	redctrl restartsyslogd extrahdctrl sambactrl upnpctrl tripwirectrl \
+	wirelessctrl getipstat qosctrl launch-ether-wake \
+	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl pakfire mpfirectrl
 
 install : all
@@ -88,8 +88,8 @@ applejuicectrl: applejuicectrl.c setuid.o ../install+setup/libsmooth/varval.o
 dhcpctrl: dhcpctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ dhcpctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-restartssh: restartssh.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ restartssh.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+sshctrl: sshctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ sshctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 squidctrl: squidctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ squidctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
@@ -97,8 +97,8 @@ squidctrl: squidctrl.c setuid.o ../install+setup/libsmooth/varval.o
 snortctrl: snortctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ snortctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-restartwireless: restartwireless.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ restartwireless.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+wirelessctrl: wirelessctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ wirelessctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 ipsecctrl: ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
@@ -115,5 +115,5 @@ mpfirectrl: mpfirectrl.c setuid.o ../install+setup/libsmooth/varval.o
 backupctrl: backupctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ backupctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-restartsyslogd: restartsyslogd.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ restartsyslogd.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+syslogdctrl: syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
