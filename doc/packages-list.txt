@@ -154,7 +154,6 @@
 * linuxigd-0.95
 * logrotate-3.7.1
 * logwatch-7.3.6
-* logwatch_7.3.1
 * lsof-4.78
 * lzo-2.02
 * m4-1.4.4
@@ -186,7 +185,6 @@
 * nfs-utils-1.0.8
 * nmap-4.03
 * noip_updater_v1.6
-* ntfs-3g-1.0
 * ntfs-3g-1.810
 * ntp-4.2.2
 * ocaml-3.09.2
@@ -207,7 +205,6 @@
 * portmap_5beta
 * postfix-2.2.11
 * ppp-2.4.4
-* pptp-1.7.1
 * procps-3.2.6
 * psmisc-22.2
 * r8169-6.002.00
@@ -218,7 +215,6 @@
 * rrdtool-1.2.15
 * rsync-2.6.8
 * rtorrent-0.7.4
-* samba-3.0.25b
 * samba-3.0.25c
 * screen-4.0.2
 * sed-4.1.5
@@ -230,7 +226,6 @@
 * sox-12.18.1
 * spandsp-0.0.3pre24
 * squashfs3.2-r2
-* squid-2.6.STABLE13
 * squid-2.6.STABLE14
 * squid-graph-3.2
 * squidGuard-1.2.0

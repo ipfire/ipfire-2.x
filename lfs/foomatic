@@ -27,7 +27,7 @@
 include Config
 
 DATE       = 20070813
-VER        = 3.0-$(DATE)
+VER        = 3.0-20070813
 
 THISAPP    = foomatic-$(VER)
 DL_FILE    = foomatic-filters-$(VER).tar.gz
@@ -95,7 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		tar zxf $(DIR_DL)/foomatic-db-$(DATE).tar.gz && \
 		tar zxf $(DIR_DL)/foomatic-db-engine-$(VER).tar.gz && \
 		tar zxf $(DIR_DL)/foomatic-db-hpijs-$(DATE).tar.gz
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_SRC)/foomatic-db-$(DATE) && ./configure --prefix=/usr --sysconfdir=/etc
