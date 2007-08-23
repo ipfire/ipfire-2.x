@@ -680,8 +680,8 @@ log_warning_msg() {
 }
 
 run_subdir() {
-	$DIR=$1
-	for i in $( ls -v ${DIR}* 2> /dev/null); do
+	DIR=$1
+	for i in $(ls -v ${DIR}* 2> /dev/null); do
 		check_script_status
 		OUT=$(echo $(basename ${i}) | awk -F- '{ print $2 }')
 		case "$OUT" in
@@ -690,7 +690,7 @@ run_subdir() {
 			RS) ${i} restart ;;
 			RL) ${i} reload	;;
 			U) ${i} up ;;
-			D) ${i] down ;;
+			D) ${i} down ;;
 			*) ${i} ;;
 		esac
 	done

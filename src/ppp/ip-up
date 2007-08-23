@@ -1,6 +1,9 @@
 #!/bin/sh
 #
 
+. /etc/sysconfig/rc
+. $rc_functions
+
 PRIMARY_DNS=$DNS1
 SECONDARY_DNS=$DNS2
 

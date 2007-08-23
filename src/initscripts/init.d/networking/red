@@ -143,70 +143,104 @@ case "${1}" in
 			fi
 		
 		elif [ "$TYPE" == "PPPOE" ]; then
+		
 			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 			
 			boot_mesg "Bringing up the PPPoE interface on ${DEVICE}..."
 			ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
 			
-			PPPOECONF=/etc/ppp/pppoe.conf
-			echo > $PPPOECONF #clear
+			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
 			
-			if [ "${METHOD}" != "PPPOE_PLUGIN" ]; then
-				echo "LINUX_PLUGIN=" >> $PPPOECONF
-			else
-				echo "LINUX_PLUGIN=/usr/lib/pppd/2.4.4/rp-pppoe.so" >> $PPPOECONF
-			fi
-				
-			echo "ETH=${DEVICE}" >> $PPPOECONF
-			echo "USER=${USERNAME}" >> $PPPOECONF
-				
-			echo "PPPOE_TIMEOUT=80" >> $PPPOECONF
-				
-			#echo "PPPD_EXTRA=\"-U\"" >> $PPPOECONF
-			#echo "PPPOE_EXTRA=\"-m ${MTU}\"" >> $PPPOECONF
+			###                      ###
+			### Configuring the pppd ###
+			###                      ###
+			
+			### Plugin Options
+			#			
+			[ "${METHOD}" == "PPPOE_PLUGIN" ] && \
+				PLUGOPTS="plugin /usr/lib/pppd/2.4.4/rp-pppoe.so nic-${DEVICE}"
 
-			if [ -n ${SERVICENAME} ]; then
-				echo "SERVICENAME=${SERVICENAME}" >> $PPPOECONF
+			### Synchronous Mode
+			#
+			#PPPOE_SYNC=-s
+    	#PPPD_SYNC=sync
+    	
+    	### Access Concentrator Name
+    	#
+			if [ -n "${CONCENTRATORNAME}" ]; then
+				ACNAME="-C ${CONCENTRATORNAME}"
 			fi
-			if [ -n ${CONCENTRATORNAME} ]; then
-				echo "ACNAME=${CONCENTRATORNAME}" >> $PPPOECONF
+
+			### Service Name
+			#
+			if [ -n "${SERVICENAME}" ]; then
+				if [ "${METHOD}" == "PPPOE_PLUGIN" ]; then
+					PLUGOPTS+=" rp_pppoe_service ${SERVICENAME}"
+				else
+					SERVICENAME="-S ${SERVICENAME}"
+				fi
 			fi
-				
-			if [ "${DNS}" == "Automatic" ]; then
-				echo "PEERDNS=yes" >> $PPPOECONF
-				echo "DNSTYPE=NOCHANGE" >> $PPPOECONF
-			fi
-		
+			
+			### Authentication Types
+			#
 			if [ "${AUTH}" == "pap" ]; then
-				PPPD_EXTRA+="-chap "
+				AUTH="-chap"
 			elif [ "${AUTH}" == "chap" ]; then
-				PPPD_EXTRA+="-pap "
+				AUTH="-pap"
 			fi
-				
-			echo "FIREWALL=NONE" >> $PPPOECONF
-
+	
+			### Dial On Demand		
+			#
 			if [ "${RECONNECTION}" != "persistent" ]; then
 				if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
 					SECONDS=$[${TIMEOUT} * 60]
+				else
+					SECONDS=300
 				fi
 				if [ "${RECONNECTION}" == "dialondemand" ]; then
 					touch /var/ipfire/red/dial-on-demand
-					echo "DEMAND=${SECONDS}" >> $PPPOECONF
+					DEMAND="demand persist idle ${SECONDS} 10.112.112.112:10.112.112.113"
+					DEMAND+=" ipcp-accept-remote ipcp-accept-local connect true noipdefault ktune"		
 				fi
-			else
-				echo "DEMAND=no" >> $PPPOECONF
 			fi
 			
-			echo "LCP_INTERVAL=20" >> $PPPOECONF
-			echo "LCP_FAILURE=3" >> $PPPOECONF
-				
-			echo "PIDFILE=/var/run/ppp-ipfire.pid" >> $PPPOECONF
-				
-			#ARGS+=" maxfail ${MAXRETRIES}"
+			### When using plugin the device has to be the last option
+			#
+			[ "${METHOD}" == "PPPOE_PLUGIN" ] && PLUGOPTS+=" ${DEVICE}"
+		
+			### Standard PPP options we always use
+			#
+			PPP_STD_OPTIONS="$PLUGOPTS usepeerdns defaultroute noipdefault noauth"
+			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach mtu ${MTU}"
+			PPP_STD_OPTIONS+=" mru ${MTU} noaccomp nodeflate nopcomp novj novjccomp"
+			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
+			PPP_STD_OPTIONS+=" lcp-echo-failure 3 ${AUTH}"
 			
-			[ "${METHOD}" != "PPPOE_PLUGIN" ] && [ "${DEBUG}" == "on" ] && export DEBUG=1
-			/usr/sbin/pppoe-start
-			evaluate_retval
+			### Debugging
+			#
+			if [ "${DEBUG}" == "on" ]; then
+				DEBUG="debug"
+			else
+				DEBUG=""
+			fi
+			
+			### PPPoE invocation
+			#
+			PPPOE_CMD="/usr/sbin/pppoe -p /var/run/ppp-ipfire.pid.pppoe -I ${DEVICE}"
+			PPPOE_CMD+=" -T 80 -U $PPPOE_SYNC $ACNAME $SERVICENAMEOPT"
+			
+			### Run everything
+			#
+			if [ "${METHOD}" == "PPPOE_PLUGIN" ]; then
+				/usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND >/dev/null 2>&1 &
+				evaluate_retval
+			else
+				/usr/sbin/pppd pty "$PPPOE_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC >/dev/null 2>&1 &
+				evaluate_retval
+			fi
+			
+			/etc/rc.d/init.d/connectd start
+
 		fi
 		;;
 
@@ -254,9 +288,8 @@ case "${1}" in
 		
 		elif [ "$TYPE" == "PPPOE" ]; then
 			boot_mesg "Bringing down the PPPoE interface on ${DEVICE}..."
-		
-			/usr/sbin/pppoe-stop
-			evaluate_retval
+			killproc /usr/sbin/pppd
+			
 			ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
 			
 		fi

@@ -167,7 +167,7 @@ define PAK
 	fi
 	sed -e "s/KVER/$(KVER)/g" < /usr/src/config/rootfiles/packages/$(PROG) > /install/packages/package/ROOTFILES 
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
-	cd / && tar cvf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*'
+	cd / && tar cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*'
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES 
 	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
 	rm -rf /install/packages/package

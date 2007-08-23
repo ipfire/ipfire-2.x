@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+
+. /etc/sysconfig/rc 
+. ${rc_functions}
+
+eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+MAX=160
+ATTEMPTS=0
+COUNT=0
+if [ ! $HOLDOFF ]; then
+	HOLDOFF=30
+fi
+
+msg_log () {
+	logger -t $(basename $0)[$$] $*
+}
+
+msg_log "Connectd ($1) started with PID $$"
+
+
+if [ -s "/var/ipfire/red/keepconnected" ]; then
+	ATTEMPTS=$(cat /var/ipfire/red/keepconnected)
+else
+	echo "0" > /var/ipfire/red/keepconnected
+fi
+
+case "$1" in
+  start)
+  	boot_mesg "Starting connection daemon..."
+  	echo_ok
+  	  	
+  	while [ "$COUNT" -lt "$MAX" ]; do
+		if [ ! -e "/var/ipfire/red/keepconnected" ]; then
+			# User pressed disconnect in gui
+			msg_log "Stopping by user request. Exiting."
+			/etc/rc.d/init.d/network stop red
+			exit 0
+		fi
+		if [ -e "/var/ipfire/red/active" ]; then
+			# Successfully connected in time
+			echo "0" > /var/ipfire/red/keepconnected
+			msg_log "System is online. Exiting."; exit 0
+		fi
+		if ( ! ps ax | grep -q [p]ppd ); then
+			msg_log "No pppd is running. Trying reconnect."
+			break # because pppd died
+		fi
+		sleep 5
+		(( COUNT+=1 ))
+	done
+		
+		/etc/rc.d/init.d/network stop red
+		
+		(( ATTEMPTS+=1 ))
+		msg_log "Reconnecting: Attempt ${ATTEMPTS} of ${MAXRETRIES}"
+		if [ "${ATTEMPTS}" -ge "${MAXRETRIES}" ]; then
+			echo "0" > /var/ipfire/red/keepconnected
+			if [ "$BACKUPPROFILE" != '' ]; then
+				rm -f /var/ipfire/ppp/settings
+				cp "/var/ipfire/ppp/settings-${BACKUPPROFILE}" /var/ipfire/ppp/settings
+				msg_log "Switched to backup profile ${BACKUPPROFILE}"
+			else
+				msg_log "No backup profile given. Exiting."
+				exit 0
+			fi
+		else
+			echo $ATTEMPTS > /var/ipfire/red/keepconnected
+			sleep ${HOLDOFF}
+		fi
+		
+		/etc/rc.d/init.d/network start red &
+		;;
+		
+  reconnect)
+		while ( ps ax | grep -q [p]ppd ); do
+			sleep 2
+		done
+		
+		/etc/rc.d/init.d/network restart red &
+		;;
+		
+  *)
+		echo "Usage: $0 {start|reconnect}"
+		exit 1
+	;;
+esac
+
+msg_log "Exiting gracefully connectd with PID $$."

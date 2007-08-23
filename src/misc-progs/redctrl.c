@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
 	if (strcmp(argv[1], "start") == 0) {
 		safe_system("/etc/rc.d/init.d/network start red");
 	} else if (strcmp(argv[1], "stop") == 0) {
+		safe_system("rm -f /var/ipfire/red/keepconnected");
 		safe_system("/etc/rc.d/init.d/network stop red");
 	} else if (strcmp(argv[1], "restart") == 0) {
 		safe_system("/etc/rc.d/init.d/network restart red");

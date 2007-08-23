@@ -149,6 +149,7 @@ case "$1" in
 	# filtering from GUI
 	/sbin/iptables -N GUIINPUT
 	/sbin/iptables -A INPUT -j GUIINPUT
+	/sbin/iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
 
 	# Accept everything connected
 	/sbin/iptables -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
