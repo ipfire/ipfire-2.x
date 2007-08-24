@@ -23,10 +23,9 @@ usr/local/bin/setxtaccess
 usr/local/bin/smartctrl
 usr/local/bin/snortctrl
 usr/local/bin/squidctrl
-usr/local/bin/sshctrls
+usr/local/bin/sshctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/timectrl
 #usr/local/bin/tripwirectrl
 usr/local/bin/upnpctrl
 usr/local/bin/wirelessctrl
-

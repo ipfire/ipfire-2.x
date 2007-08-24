@@ -18,7 +18,7 @@ done
 for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		mount /dev/${DEVICE}1 /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/ipfire-*.tbz2 2>/dev/null)" ]; then
-			echo -n ${DEVICE} > /tmp/source_device
+			echo -n ${DEVICE}1 > /tmp/source_device
 			echo "Found tarball on ${DEVICE}"
 		else
 			umount /cdrom 2> /dev/null
