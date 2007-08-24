@@ -59,7 +59,7 @@ END
 ;
 &Header::closebox();
 
-&Header::openbox('100%', 'left', 'General Public License v2');
+&Header::openbox('100%', 'left', 'General Public License v3');
 print <<END;
 <pre>
                     GNU GENERAL PUBLIC LICENSE
