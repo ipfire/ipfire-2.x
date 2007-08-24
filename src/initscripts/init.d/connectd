@@ -4,6 +4,11 @@
 . /etc/sysconfig/rc 
 . ${rc_functions}
 
+# Stop if nothing is configured
+if [ ! -s "/var/ipfire/ppp/settings" ];then
+ exit 0
+fi
+
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 
 MAX=160
@@ -31,25 +36,25 @@ case "$1" in
   	boot_mesg "Starting connection daemon..."
   	echo_ok
   	  	
-  	while [ "$COUNT" -lt "$MAX" ]; do
-		if [ ! -e "/var/ipfire/red/keepconnected" ]; then
-			# User pressed disconnect in gui
-			msg_log "Stopping by user request. Exiting."
-			/etc/rc.d/init.d/network stop red
-			exit 0
-		fi
-		if [ -e "/var/ipfire/red/active" ]; then
-			# Successfully connected in time
-			echo "0" > /var/ipfire/red/keepconnected
-			msg_log "System is online. Exiting."; exit 0
-		fi
-		if ( ! ps ax | grep -q [p]ppd ); then
-			msg_log "No pppd is running. Trying reconnect."
-			break # because pppd died
-		fi
-		sleep 5
-		(( COUNT+=1 ))
-	done
+		while [ "$COUNT" -lt "$MAX" ]; do
+			if [ ! -e "/var/ipfire/red/keepconnected" ]; then
+				# User pressed disconnect in gui
+				msg_log "Stopping by user request. Exiting."
+				/etc/rc.d/init.d/network stop red
+				exit 0
+			fi
+			if [ -e "/var/ipfire/red/active" ]; then
+				# Successfully connected in time
+				echo "0" > /var/ipfire/red/keepconnected
+				msg_log "System is online. Exiting."; exit 0
+			fi
+			if ( ! ps ax | grep -q [p]ppd ); then
+				msg_log "No pppd is running. Trying reconnect."
+				break # because pppd died
+			fi
+			sleep 5
+			(( COUNT+=1 ))
+		done
 		
 		/etc/rc.d/init.d/network stop red
 		

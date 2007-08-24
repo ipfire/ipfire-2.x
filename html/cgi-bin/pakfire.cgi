@@ -34,6 +34,8 @@ $pakfiresettings{'DELPAKS'} = '';
 $pakfiresettings{'AUTOUPDATE'} = 'off';
 $pakfiresettings{'UUID'} = 'on';
 
+system("/usr/local/bin/pakfire update >/dev/null") if not -e "/opt/pakfire/db/lists/packages_list.db";
+
 &Header::getcgihash(\%pakfiresettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
