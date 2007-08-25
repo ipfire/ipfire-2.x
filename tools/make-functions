@@ -543,12 +543,12 @@ END
 	esac
 	tar cfz $ATTACHMENT log/_build*
 	cat /tmp/ipfire_mail_body | tools/sendEmail -q \
-		-f $MAIL_FROM \
-		-t $MAIL_TO \
-		-u $SUBJECT \
+		-f "$MAIL_FROM" \
+		-t "$MAIL_TO" \
+		-u "$SUBJECT" \
 		-s $MAIL_SERVER:25 \
-		-xu $MAIL_USER \
-		-xp $MAIL_PASS \
+		-xu "$MAIL_USER" \
+		-xp "$MAIL_PASS" \
 		-l log/_build.mail.log \
 		-a $ATTACHMENT # -v
 	if [ "$?" -eq "0" ]; then
