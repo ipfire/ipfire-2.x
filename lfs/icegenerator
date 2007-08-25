@@ -26,9 +26,9 @@
 
 include Config
 
-VER        = 0.4
+VER        = 0.5.5-pre2
 
-THISAPP    = ices-$(VER)
+THISAPP    = icegenerator-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d31450c4011561dae0229f071cb41cb6
+$(DL_FILE)_MD5 = 71515d79bc43ca53baffc96c4ada946a
 
 install : $(TARGET)
 
@@ -81,8 +81,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && ./configure --prefix=/usr --with-id3
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
