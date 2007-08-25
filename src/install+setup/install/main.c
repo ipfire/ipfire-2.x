@@ -51,33 +51,6 @@ int detect_smp() {
 	return (cpu_count > 1);
 }
 
-long calc_swapsize(long memory, long disk) {
-	if (memory < 128) {
-		return 256;
-	}
-	else if (memory > 1024) {
-		return 512;
-	}
-	else {
-	  return memory;
-	}
-}
-
-long calc_rootsize(long free, long max) {
-	long root;
-	
-	root = max / 2;
-	if (root < 256) {
-		return 0;
-	}
-	else if (root > 2048) {
-		return 2048;
-	}
-	else {
-	  return 400;
-	}
-}
-
 int main(int argc, char *argv[])
 {
 	char *langnames[] = { "Deutsch", "English", NULL };
@@ -108,8 +81,7 @@ int main(int argc, char *argv[])
 	FILE *handle, *cmdfile;
 	char line[STRING_SIZE];
 	char string[STRING_SIZE];
-	long maximum_free = 0, current_free;
-	long memory = 0;
+	long memory = 0; disk = 0, free;
 	long system_partition, boot_partition, root_partition, swap_file;
 	int scsi_disk = 0;
 	char *yesnoharddisk[3];	//	char *yesnoharddisk = { "NO", "YES", NULL };
@@ -372,21 +344,28 @@ int main(int argc, char *argv[])
 	if ((handle = fopen("/tmp/disksize", "r"))) {
 		fgets(line, STRING_SIZE-1, handle);
 		if (sscanf (line, "%s", string)) {
-			maximum_free = atoi(string) / 1024;
+			disk = atoi(string) / 1024;
 		}
 		fclose(handle);
 	}
 	
-	fprintf(flog, "maximum_free = %ld, memory = %ld", maximum_free, memory);
+	fprintf(flog, "Disksize = %ld, memory = %ld", disk, memory);
 	
-	swap_file = calc_swapsize(memory, maximum_free);
-
-	if (maximum_free < 400 + swap_file ) {
-		if (maximum_free < 700) {
-			errorbox(ctr[TR_DISK_TOO_SMALL]);
-			goto EXIT;
-		}
-
+	 /* Calculating Swap-Size dependend of Ram Size */
+	if (memory < 128) {	      swap_file = 256;	}
+	else if (memory > 1024) {	swap_file = 512;	}
+	else {                    swap_file = memory;}
+	
+  /* Calculating Root-Size dependend of Max Disk Space */
+  if ( disk < 512 ) { errorbox(ctr[TR_DISK_TOO_SMALL]);goto EXIT; }
+	else if ( disk < 1024 && disk > 512 ) {  root_partition = 256;	}
+	else if ( disk > 1024 && disk < 2048 ) { root_partition = 512;	}
+	else {                                   root_partition = 2048; }
+	
+  /* Calculating the amount of free space */
+	boot_partition = 20; /* in MB */
+	system_partition = disk - ( root_partition + swap_file + boot_partition );
+	 
 		if (!unattended) {
 		    rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
 		} else {
@@ -397,26 +376,7 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		swap_file = 0;
 	}
-
-	boot_partition = 20; /* in MB */
-	current_free = maximum_free - boot_partition - swap_file;
-
-	root_partition = calc_rootsize(current_free, maximum_free);
 	
-	if (root_partition == 0) {
-		errorbox(ctr[TR_DISK_TOO_SMALL]);
-		goto EXIT;	
-	} else {
-		current_free = current_free - root_partition;
-	}
-	
-	if (current_free < 256) {
-		errorbox(ctr[TR_DISK_TOO_SMALL]);
-		goto EXIT;
-	}
-
-	system_partition = current_free;
-
 	fprintf(flog, "boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",
 		boot_partition, swap_file, system_partition, root_partition);
 
