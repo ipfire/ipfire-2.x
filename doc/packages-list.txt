@@ -141,7 +141,7 @@
 * libshout-2.2.2
 * libsigc++-2.0.17
 * libtool-1.5.22
-* libtorrent-0.11.4
+* libtorrent-0.11.6
 * libupnp-1.3.1
 * libusb-0.1.12
 * libvorbis-1.1.2
@@ -214,7 +214,7 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rsync-2.6.8
-* rtorrent-0.7.4
+* rtorrent-0.7.6
 * samba-3.0.25c
 * screen-4.0.2
 * sed-4.1.5
