@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
 	 /* Calculating Swap-Size dependend of Ram Size */
 	if (memory < 128)
 		swap_file = 32;
-	else if (memory > 1024)
+	else if (memory >= 1024)
 		swap_file = 512;
 	else 
 		swap_file = memory;
@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
   /* Calculating Root-Size dependend of Max Disk Space */
   if ( disk < 1024 )
 		root_partition = 256;
-	else if ( disk > 1024 && disk < 3072 )
+	else if ( disk >= 1024 && disk <= 3072 )
 		root_partition = 512;
 	else 
 		root_partition = 2048;
@@ -378,7 +378,7 @@ int main(int argc, char *argv[])
 	if ( (!unattended) && (((disk - (root_partition + swap_file + boot_partition)) < 256 ) && ((disk - (root_partition + boot_partition)) > 256)) ) {
    rc = newtWinChoice(title, ctr[TR_CONTINUE_NO_SWAP], ctr[TR_OK], ctr[TR_CANCEL]);
   } 
-  else if (disk - (root_partition + swap_file + boot_partition) > 256) {
+  else if (disk - (root_partition + swap_file + boot_partition) >= 256) {
   
   }
   else {
