@@ -157,7 +157,7 @@ if ($errormessage) {
 my $return = `pidof pakfire`;
 chomp($return);
 if ($return) {
-	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='5;'>" );
+	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
 	print <<END;
 	<table>
 		<tr><td>

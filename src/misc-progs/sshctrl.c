@@ -22,129 +22,116 @@
 #include "libsmooth.h"
 #include "setuid.h"
 
+#define BUFFER_SIZE 1024
+
+char command[BUFFER_SIZE]; 
+
 int main(int argc, char *argv[])
 {
-	if (strcmp(argv[1], "tempstart15") == 0) {
-		      safe_system("/usr/local/bin/sshctrl");
-          sleep(5);
-					unlink("/var/ipfire/remote/enablessh");
-					safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
-		      safe_system("sleep 900 && /usr/local/bin/sshctrl &");
-	}
-  else if (strcmp(argv[1], "tempstart30") == 0) {
-		      safe_system("/usr/local/bin/sshctrl");
-          sleep(5);
-					unlink("/var/ipfire/remote/enablessh");
-					safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
-		      safe_system("sleep 1800 && /usr/local/bin/sshctrl &");
-	} else {
-	int fd, config_fd, rc, pid;
-	char buffer[STRING_SIZE], command[STRING_SIZE] = "/bin/sed -e '";
-	struct keyvalue *kv = NULL;
+	if (argc < 2) {
+				int fd, config_fd, rc, pid;
+				char buffer[STRING_SIZE], command[STRING_SIZE] = "/bin/sed -e '";
+				struct keyvalue *kv = NULL;
 
-	if (!(initsetuid()))
-		exit(1);
+				if (!(initsetuid()))
+						exit(1);
 
-	kv = initkeyvalues();
-	if (!readkeyvalues(kv, CONFIG_ROOT "/remote/settings"))
-	{
-		fprintf(stderr, "Cannot read remote access settings\n");
-		exit(1);
-	}
+				kv = initkeyvalues();
+				if (!readkeyvalues(kv, CONFIG_ROOT "/remote/settings")){
+						fprintf(stderr, "Cannot read remote access settings\n");
+						exit(1);
+				}
 
-	/* By using O_CREAT with O_EXCL open() will fail if the file already exists,
-	 * this prevents 2 copies of sshctrl both trying to edit the config file
-	 * at once. It also prevents race conditions, but these shouldn't be
-	 * possible as /etc/ssh/ should only be writable by root anyhow
-	 */
+				/* By using O_CREAT with O_EXCL open() will fail if the file already exists,
+				* this prevents 2 copies of sshctrl both trying to edit the config file
+				* at once. It also prevents race conditions, but these shouldn't be
+				* possible as /etc/ssh/ should only be writable by root anyhow
+				*/
 
-	if ((config_fd = open( "/etc/ssh/sshd_config.new", O_WRONLY|O_CREAT|O_EXCL, 0644 )) == -1 )
-	{
-		perror("Unable to open new config file");
-		freekeyvalues(kv);
-		exit(1);
-	}
+				if ((config_fd = open( "/etc/ssh/sshd_config.new", O_WRONLY|O_CREAT|O_EXCL, 0644 )) == -1 ){
+						perror("Unable to open new config file");
+						freekeyvalues(kv);
+						exit(1);
+				}
 
-	if(findkey(kv, "ENABLE_SSH_PROTOCOL1", buffer) && !strcmp(buffer,"on"))
-		strlcat(command, "s/^Protocol .*$/Protocol 2,1/;", STRING_SIZE - 1 );
-	else
-		strlcat(command, "s/^Protocol .*$/Protocol 2/;", STRING_SIZE - 1 );
-
-	if(findkey(kv, "ENABLE_SSH_KEYS", buffer) && !strcmp(buffer,"off"))
-		strlcat(command, "s/^RSAAuthentication .*$/RSAAuthentication no/;"
-		                 "s/^PubkeyAuthentication .*$/PubkeyAuthentication no/;",
-		                  STRING_SIZE - 1 );
-	else
-		strlcat(command, "s/^RSAAuthentication .*$/RSAAuthentication yes/;"
-		                 "s/^PubkeyAuthentication .*$/PubkeyAuthentication yes/;",
-		                  STRING_SIZE - 1 );
-
-	if(findkey(kv, "ENABLE_SSH_PASSWORDS", buffer) && !strcmp(buffer,"off"))
-		strlcat(command, "s/^PasswordAuthentication .*$/PasswordAuthentication no/;", STRING_SIZE - 1 );
-	else
-		strlcat(command, "s/^PasswordAuthentication .*$/PasswordAuthentication yes/;", STRING_SIZE - 1 );
-
-	if(findkey(kv, "ENABLE_SSH_PORTFW", buffer) && !strcmp(buffer,"on"))
-		strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding yes/", STRING_SIZE - 1 );
-	else
-		strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding no/", STRING_SIZE - 1 );
-
-	freekeyvalues(kv);
-
-	snprintf(buffer, STRING_SIZE - 1, "' /etc/ssh/sshd_config >&%d", config_fd );
-	strlcat(command, buffer, STRING_SIZE - 1);
-
-	if((rc = unpriv_system(command,99,99)) != 0)
-	{
-		fprintf(stderr, "sed returned bad exit code: %d\n", rc);
-		close(config_fd);
-		unlink("/etc/ssh/sshd_config.new");
-		exit(1);
-	}
-	close(config_fd);
-	if (rename("/etc/ssh/sshd_config.new","/etc/ssh/sshd_config") != 0)
-	{
-		perror("Unable to replace old config file");
-		unlink("/etc/ssh/sshd_config.new");
-		exit(1);
-	}
-
-	memset(buffer, 0, STRING_SIZE);
-
-	if ((fd = open("/var/run/sshd.pid", O_RDONLY)) != -1)
-	{
-		if (read(fd, buffer, STRING_SIZE - 1) == -1)
-			fprintf(stderr, "Couldn't read from pid file\n");
-		else
-		{
-			pid = atoi(buffer);
-			if (pid <= 1)
-				fprintf(stderr, "Bad pid value\n");
-			else
-			{
-				if (kill(pid, SIGTERM) == -1)
-					fprintf(stderr, "Unable to send SIGTERM\n");
+				if(findkey(kv, "ENABLE_SSH_PROTOCOL1", buffer) && !strcmp(buffer,"on"))
+						strlcat(command, "s/^Protocol .*$/Protocol 2,1/;", STRING_SIZE - 1 );
 				else
-					unlink("/var/run/sshd.pid");
-			}
-		}
-		close(fd);
-	}
-	else
-	{
-		if (errno != ENOENT)
-		{
-			perror("Unable to open pid file");
-			exit(1);
-		}
-	}
+						strlcat(command, "s/^Protocol .*$/Protocol 2/;", STRING_SIZE - 1 );
 
-	if ((fd = open(CONFIG_ROOT "/remote/enablessh", O_RDONLY)) != -1)
-	{
-		close(fd);
-		safe_system("/usr/sbin/sshd");
-	}
+				if(findkey(kv, "ENABLE_SSH_KEYS", buffer) && !strcmp(buffer,"off"))
+						strlcat(command, "s/^RSAAuthentication .*$/RSAAuthentication no/;"		"s/^PubkeyAuthentication .*$/PubkeyAuthentication no/;", STRING_SIZE - 1 );
+				else
+						strlcat(command, "s/^RSAAuthentication .*$/RSAAuthentication yes/;"		"s/^PubkeyAuthentication .*$/PubkeyAuthentication yes/;", STRING_SIZE - 1 );
 
-	return 0;
- }
+				if(findkey(kv, "ENABLE_SSH_PASSWORDS", buffer) && !strcmp(buffer,"off"))
+						strlcat(command, "s/^PasswordAuthentication .*$/PasswordAuthentication no/;", STRING_SIZE - 1 );
+				else
+						strlcat(command, "s/^PasswordAuthentication .*$/PasswordAuthentication yes/;", STRING_SIZE - 1 );
+
+				if(findkey(kv, "ENABLE_SSH_PORTFW", buffer) && !strcmp(buffer,"on"))
+						strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding yes/", STRING_SIZE - 1 );
+				else
+						strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding no/", STRING_SIZE - 1 );
+
+				freekeyvalues(kv);
+
+				snprintf(buffer, STRING_SIZE - 1, "' /etc/ssh/sshd_config >&%d", config_fd );
+				strlcat(command, buffer, STRING_SIZE - 1);
+
+				if((rc = unpriv_system(command,99,99)) != 0){
+						fprintf(stderr, "sed returned bad exit code: %d\n", rc);
+						close(config_fd);
+						unlink("/etc/ssh/sshd_config.new");
+						exit(1);
+				}
+
+				close(config_fd);
+				if (rename("/etc/ssh/sshd_config.new","/etc/ssh/sshd_config") != 0){
+						perror("Unable to replace old config file");
+						unlink("/etc/ssh/sshd_config.new");
+						exit(1);
+				}
+
+				memset(buffer, 0, STRING_SIZE);
+
+				if ((fd = open("/var/run/sshd.pid", O_RDONLY)) != -1){
+						if (read(fd, buffer, STRING_SIZE - 1) == -1)
+								fprintf(stderr, "Couldn't read from pid file\n");
+						else{
+								pid = atoi(buffer);
+								if (pid <= 1)
+										fprintf(stderr, "Bad pid value\n");
+								else{
+										if (kill(pid, SIGTERM) == -1)
+												fprintf(stderr, "Unable to send SIGTERM\n");
+										else
+												unlink("/var/run/sshd.pid");
+										}
+								}
+						close(fd);
+				}
+				else{
+						if (errno != ENOENT){
+								perror("Unable to open pid file");
+								exit(1);
+						}
+				}
+
+				if ((fd = open(CONFIG_ROOT "/remote/enablessh", O_RDONLY)) != -1){
+						close(fd);
+						safe_system("/usr/sbin/sshd");
+				}
+
+				return 0;
+	}
+	else if (strcmp(argv[1], "tempstart") == 0) {
+				safe_system("/usr/local/bin/sshctrl");
+				sleep(5);
+				unlink("/var/ipfire/remote/enablessh");
+				safe_system("cat /var/ipfire/remote/settings | sed 's/ENABLE_SSH=on/ENABLE_SSH=off/' > /var/ipfire/remote/settings2 && mv /var/ipfire/remote/settings2 /var/ipfire/remote/settings");
+				argv[1]
+				snprintf(command, BUFFER_SIZE-1, "sleep %s && /usr/local/bin/sshctrl &", argv[2]);
+				safe_system(command);
+	}
 }

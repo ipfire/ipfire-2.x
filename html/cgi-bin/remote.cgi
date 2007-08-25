@@ -64,11 +64,11 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 		&General::log($Lang::tr{'ssh1 disabled'});
 	}
 if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ){
-	system('/usr/local/bin/sshctrl','tempstart15') == 0
+	system('/usr/local/bin/sshctrl','tempstart','900') == 0
 		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
  }
 elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
-	system('/usr/local/bin/sshctrl','tempstart30') == 0
+	system('/usr/local/bin/sshctrl','tempstart','1800') == 0
 		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
  }
 else {
