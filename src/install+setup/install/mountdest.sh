@@ -5,7 +5,6 @@ echo "Scanning for possible destination drives"
 # scan IDE devices
 echo "--> IDE"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-		echo -n "---> $DEVICE"
 		mount /dev/${DEVICE}1 /harddisk 2> /dev/null
 		if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
@@ -22,7 +21,6 @@ done
 # scan USB/SCSI devices
 echo "--> USB/SCSI"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-		echo -n "---> $DEVICE"
 		mount /dev/${DEVICE}1 /harddisk 2> /dev/null
 		if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
@@ -39,7 +37,6 @@ done
 # scan RAID devices
 echo "--> RAID"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-		echo -n "---> $DEVICE"
 		mount /dev/${DEVICE}p1 /harddisk 2> /dev/null
 		if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null

@@ -1014,13 +1014,6 @@ pxe)
 lang)
 	update_langs
 	;;
-packages)
-	case "$2" in
-		sign)
-			sign_packages
-			;;
-	esac
-	;;
 "")
 	clear
 	svn info

@@ -487,7 +487,6 @@ batch_script() {
 	evaluate 1 mail_me ISO
 	
 	echo -ne "### UPLOADING PAKS"
-	$0 packages sign
 	$0 upload paks
 	evaluate 1 mail_me PAKS
 
@@ -712,36 +711,4 @@ update_langs() {
 		$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
 		$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 		beautify message DONE
-}
-
-sign_packages() {
-	if gpg --list-key 64D96617 ; then
-		if [ -d "$BASEDIR/packages" ]; then
-			cd $BASEDIR/packages
-	  	for i in `ls $BASEDIR/packages/*.ipfire`; do
-	  		echo -n "Signing $i"
-				echo $GPG_PASSPHRASE | gpg --compress-algo 3 --sign --armor -u 64D96617 --passphrase-fd 0 $i
-				if [ "$?" -eq "0" ]; then
-					beautify message DONE
-					mv -f $i.asc $i
-				else
-					beautify message FAIL
-				fi
-	  	done
-	  	for i in `ls $BASEDIR/packages/meta-*`; do
-	  		echo -n "Signing $i"
-				echo $GPG_PASSPHRASE | gpg --clearsign --armor -u 64D96617 --passphrase-fd 0 $i
-				if [ "$?" -eq "0" ]; then
-					beautify message DONE
-					mv -f $i.asc $i
-				else
-					beautify message FAIL
-				fi
-	  	done
-	  	cd -
-  	fi
-	else
-		echo -n "You don't have the secret key to sign ipfire's packages!"
-		beautify message FAIL
-	fi
 }

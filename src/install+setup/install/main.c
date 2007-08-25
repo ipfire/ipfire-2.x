@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 	FILE *handle, *cmdfile;
 	char line[STRING_SIZE];
 	char string[STRING_SIZE];
-	long memory = 0; disk = 0, free;
+	long memory = 0, disk = 0, free;
 	long system_partition, boot_partition, root_partition, swap_file;
 	int scsi_disk = 0;
 	char *yesnoharddisk[3];	//	char *yesnoharddisk = { "NO", "YES", NULL };
@@ -352,34 +352,44 @@ int main(int argc, char *argv[])
 	fprintf(flog, "Disksize = %ld, memory = %ld", disk, memory);
 	
 	 /* Calculating Swap-Size dependend of Ram Size */
-	if (memory < 128) {	      swap_file = 256;	}
-	else if (memory > 1024) {	swap_file = 512;	}
-	else {                    swap_file = memory;}
+	if (memory < 128)
+		swap_file = 32;
+	else if (memory > 1024)
+		swap_file = 512;
+	else 
+		swap_file = memory;
 	
   /* Calculating Root-Size dependend of Max Disk Space */
-  if ( disk < 512 ) { errorbox(ctr[TR_DISK_TOO_SMALL]);goto EXIT; }
-	else if ( disk < 1024 && disk > 512 ) {  root_partition = 256;	}
-	else if ( disk > 1024 && disk < 2048 ) { root_partition = 512;	}
-	else {                                   root_partition = 2048; }
+  if ( disk < 1024 )
+		root_partition = 256;
+	else if ( disk > 1024 && disk < 3072 )
+		root_partition = 512;
+	else 
+		root_partition = 2048;
+		
 	
   /* Calculating the amount of free space */
 	boot_partition = 20; /* in MB */
 	system_partition = disk - ( root_partition + swap_file + boot_partition );
-	 
-		if (!unattended) {
-		    rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
-		} else {
-		    rc = 1;
-		}
-		
-		if (rc != 1)
-			goto EXIT;
-		swap_file = 0;
-	}
 	
-	fprintf(flog, "boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",
-		boot_partition, swap_file, system_partition, root_partition);
+	fprintf(flog, ", boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",
+	boot_partition, swap_file, system_partition, root_partition);
 
+	if ( (!unattended) && (((disk - (root_partition + swap_file + boot_partition)) < 256 ) && ((disk - (root_partition + boot_partition)) > 256)) ) {
+   rc = newtWinChoice(title, ctr[TR_CONTINUE_NO_SWAP], ctr[TR_OK], ctr[TR_CANCEL]);
+  } 
+  else if (disk - (root_partition + swap_file + boot_partition) > 256) {
+  
+  }
+  else {
+   fprintf(flog, "Disk is too small.\n");
+   errorbox(ctr[TR_DISK_TOO_SMALL]);goto EXIT;
+  }
+  if (rc != 1){
+   swap_file = 0;
+   fprintf(flog, "Changing Swap Size to 0.\n");
+  }
+	 
 	handle = fopen("/tmp/partitiontable", "w");
 
 	/* Make swapfile */

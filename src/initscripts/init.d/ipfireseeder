@@ -24,7 +24,6 @@ case "${1}" in
 			/var/ipfire/seeder/*.torrent
 		if ! grep -q "35700:35705" /var/ipfire/xtaccess/config ; then
 			echo "tcp,0.0.0.0/0,35700:35705,on,0.0.0.0,IPFireSeeder" >> /var/ipfire/xtaccess/config
-			echo "udp,0.0.0.0/0,35700:35705,on,0.0.0.0,IPFireSeeder" >> /var/ipfire/xtaccess/config
 			/usr/local/bin/setxtaccess
 		fi
 		;;
