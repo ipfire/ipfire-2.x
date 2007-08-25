@@ -381,7 +381,7 @@ int main(int argc, char *argv[])
 	
 	swap_file = calc_swapsize(memory, maximum_free);
 
-	if (maximum_free < 512 + swap_file ) {
+	if (maximum_free < 400 + swap_file ) {
 		if (maximum_free < 700) {
 			errorbox(ctr[TR_DISK_TOO_SMALL]);
 			goto EXIT;

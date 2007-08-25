@@ -434,6 +434,8 @@ int changedrivers(void)
 		{ green = 1; red = 1; blue = 1; }
 	else if (configtype == 4)
 		{ green = 1; red=1; orange=1; blue = 1; }
+	else if (configtype == "")
+	  { green = 1; red = 1; }
 
 	do
 	{
