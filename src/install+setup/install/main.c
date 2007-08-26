@@ -374,15 +374,16 @@ int main(int argc, char *argv[])
 	
 	fprintf(flog, ", boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",
 	boot_partition, swap_file, system_partition, root_partition);
+	rc = 0;
 
-	if ( (!unattended) && (((disk - (root_partition + swap_file + boot_partition)) < 256 ) && ((disk - (root_partition + boot_partition + 32 )) > 256)) ) {
+	if ( (!unattended) && (((disk - (root_partition + swap_file + boot_partition)) < 256 ) && ((disk - (root_partition + boot_partition )) > 256)) ) {
    rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
-    if (rc != 0){
-      swap_file = 32;
+    if (rc == 1){
+      swap_file = 0;
       system_partition = disk - ( root_partition + swap_file + boot_partition );
-      fprintf(flog, "Changing Swap Size to 32 MB.\n");
+      fprintf(flog, "Changing Swap Size to 0 MB.\n");
     }
-    else {
+    else if (rc == 2){
     fprintf(flog, "Disk is too small.\n");
     errorbox(ctr[TR_DISK_TOO_SMALL]);goto EXIT;
     }
@@ -398,13 +399,13 @@ int main(int argc, char *argv[])
 	handle = fopen("/tmp/partitiontable", "w");
 
 	/* Make swapfile */
-	if (swap_file) {
-		fprintf(handle, ",%ld,L,*\n,%ld,S,\n,%ld,L,\n,,L,\n",
-			boot_partition, swap_file, root_partition);
-	} else {
-		fprintf(handle, ",%ld,L,*\n,0,0,\n,%ld,L,\n,,L,\n",
-			boot_partition, root_partition);
-	}
+  if (swap_file) {
+     fprintf(handle, ",%ld,L,*\n,%ld,S,\n,%ld,L,\n,,L,\n",
+     boot_partition, swap_file, root_partition);
+  } else {
+     fprintf(handle, ",%ld,L,*\n,0,0,\n,%ld,L,\n,,L,\n",
+     boot_partition, root_partition);
+  }
 
 	fclose(handle);
 

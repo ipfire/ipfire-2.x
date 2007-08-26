@@ -47,27 +47,27 @@ md5 :
 # Installation Details
 ###############################################################################
 
-$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	for i in $$(ls -1 $(DIR_SRC)/config/rootfiles/core) ; do \
-		if [ "$$i" == "files" ]; then continue; fi; \
-		rm -rf /install/packages/package; \
-		mkdir -p /install/packages/package && \
-		eval $$(cat /usr/src/config/rootfiles/core/$$i/meta) \
-		&& cp -f /usr/src/config/rootfiles/core/$$i/update.sh /install/packages/package \
-		&& cp -f /usr/src/config/rootfiles/core/$$i/files /install/packages/package/ROOTFILES \
-		&& chmod 755 /install/packages/package/update.sh \
-		&&  cd / \
-		&& tar -cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
-		&& cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES; \
-		cd /install/packages/package && tar cf ../core-update-$(VERSION)-$$i.ipfire \
-			--files-from=/usr/src/config/rootfiles/core/files && \
-		rm -rf /install/packages/package; \
-		sed -e "s/NAME/core-update/g" \
+CORE = $(patsubst $(DIR_SRC)/config/rootfiles/%,%,$(wildcard $(DIR_SRC)/config/rootfiles/core/*))
+
+$(TARGET) : $(CORE)
+
+core/%:
+	rm -rf /install/packages/package
+	mkdir -p /install/packages/package
+	eval $$(cat /usr/src/config/rootfiles/$@/meta)
+	cp -f /usr/src/config/rootfiles/$@/update.sh /install/packages/package
+	cp -f /usr/src/config/rootfiles/$@/files /install/packages/package/ROOTFILES
+	chmod 755 /install/packages/package/update.sh
+	cd / && tar cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*'
+	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES
+	cd /install/packages/package && tar cf ../core-upgrade-$(VERSION)-$$(basename $@).ipfire \
+		update.sh files ROOTFILES
+	rm -rf /install/packages/package
+	sed -e "s/NAME/core-upgrade/g" \
 		-e "s/VER/$(VERSION)/g" \
-		-e "s/RELEASE/$$i/g" \
+		-e "s/RELEASE/$$(basename $@)/g" \
 		-e "s/DEPS/$(DEPS)/g" \
 		-e "s/DESCDE/$(DESCDE)/g" \
 		-e "s/DESCEN/$(DESCEN)/g" \
-		-e "s/SIZE/`ls -l \/install\/packages\/core-update-$(VERSION)-$$i.ipfire | awk '{ print \$5 }'`/g" \
-		< /usr/src/src/pakfire/meta > /install/packages/meta-core-update-$$i; \
-	done
+		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-$(VERSION)-$$(basename $@).ipfire | awk '{ print $$5 }'`/g" \
+		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-$$(basename $@)
