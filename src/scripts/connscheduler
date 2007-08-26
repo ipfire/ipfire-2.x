@@ -70,7 +70,7 @@ sub hangup
   }
 
   &General::log("ConnSched disconnect");
-  unless ( system('/etc/rc.d/init.d/red', 'stop') == 0 )
+  unless ( system('/etc/rc.d/init.d/network', 'stop', 'red') == 0 )
   {
     &General::log("ConnSched disconnect failed: $?");
     return;
@@ -94,7 +94,7 @@ sub dial
   }
 
   &General::log("ConnSched connect");
-  unless ( system('/etc/rc.d/init.d/red', 'start') == 0 )
+  unless ( system('/etc/rc.d/init.d/network', 'start', 'red') == 0 )
   {
     &General::log("ConnSched connect failed: $?");
     return;
