@@ -588,9 +588,6 @@ buildpackages() {
   beautify message DONE
 
   # Create images for install
-  if [ "$DEVEL" == "1" ]; then
-		ipfiremake cdrom ED=devel
-	fi
 	ipfiremake cdrom ED=full
 	
   # Check if there is a loop device for building in virtual environments
@@ -623,6 +620,7 @@ buildpackages() {
 }
 
 ipfirepackages() {
+	ipfiremake core-updates
 	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
 		[ -e $BASEDIR/lfs/$i ] && ipfiredist $i
 	done
@@ -636,10 +634,6 @@ case "$1" in
 build)
 	clear
 	BUILDMACHINE=`uname -m`
-	DEVEL=0
-	if [ "$2" == "--devel" ]; then
-	  DEVEL=1
-	fi
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/cleanup-toolchain-2-tools ]; then

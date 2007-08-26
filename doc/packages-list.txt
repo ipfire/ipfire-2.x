@@ -109,8 +109,6 @@
 * iana-etc-2.10
 * icecast-2.3.1
 * icegenerator-0.5.5-pre2
-* ices-0.4
-* ices-2.0.1
 * iftop-0.17
 * inetutils-1.4.2
 * ipac-ng-1.31

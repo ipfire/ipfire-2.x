@@ -104,7 +104,7 @@ char *de_tr[] = {
 /* TR_CONGRATULATIONS_LONG */
 "%s wurde erfolgreich installiert. Entfernen Sie bitte alle eventuellen CDs aus dem Computer. Nun wird das Setup-Programm gestartet, in dem Sie ISDN, Netzwerkkarten und die Systempasswörter konfigurieren können. Wenn dies fertiggestellt ist, rufen Sie in Ihrem Webbrowser die Box mit https://%s:444 (oder welchen Namen Sie Ihrem %s auch immer gegeben haben) auf und konfigurieren die Wählverbindung und (falls nötig) die Fernwartung.",
 /* TR_CONTINUE_NO_SWAP */
-"Ihre Festplatte ist sehr klein, aber sie können ohne Auslagerungsdatei weitermachen. (Mit Vorsicht benutzen).",
+"Ihre Festplatte ist sehr klein, aber sie können mit einer minimalen Auslagerungspartition weitermachen. (Mit Vorsicht benutzen).",
 /* TR_CURRENT_CONFIG */
 "Aktuelle Einstellung: %s%s",
 /* TR_DEFAULT_GATEWAY */

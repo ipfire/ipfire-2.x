@@ -100,7 +100,7 @@ char *en_tr[] = {
 /* TR_CONGRATULATIONS_LONG */
 "%s was successfully installed. Please remove any CDROMs in the computer. Setup will now run where you may configure ISDN, network cards, and the system passwords. After Setup has been completed, you should point your web browser at https://%s:444 (or whatever you name your %s), and configure dialup networking (if required) and remote access.",
 /* TR_CONTINUE_NO_SWAP */
-"Your harddisk is very small, but you can continue without any swap. (Use with caution).",
+"Your harddisk is very small, but you can continue with an very small swap. (Use with caution).",
 /* TR_CURRENT_CONFIG */
 "Current config: %s%s",
 /* TR_DEFAULT_GATEWAY */
