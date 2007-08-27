@@ -187,6 +187,8 @@ case "${1}" in
 				AUTH="-chap"
 			elif [ "${AUTH}" == "chap" ]; then
 				AUTH="-pap"
+			else
+				AUTH=""
 			fi
 	
 			### Dial On Demand		
