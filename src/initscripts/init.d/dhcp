@@ -30,7 +30,7 @@ case "$1" in
 
 	stop)
 		boot_mesg "Stopping DHCP Server..."
-		killproc /usr/sbin/dhcpd
+		killproc -p /var/run/dhcpd.pid /usr/sbin/dhcpd
 		;;
 
 	reload)
