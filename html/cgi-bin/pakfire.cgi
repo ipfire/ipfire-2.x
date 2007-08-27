@@ -186,8 +186,6 @@ END
 
 &Header::openbox("100%", "center", "Pakfire");
 
-system("pakfire update &>dev/null");
-
 print <<END;
 	<table width='100%'>
 		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b></td><td bgcolor='$color{'color20'}'></td><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>

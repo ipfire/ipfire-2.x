@@ -1099,7 +1099,7 @@ usr/lib/perl5/5.8.8/syslog.pl
 usr/lib/perl5/5.8.8/tainted.pl
 usr/lib/perl5/5.8.8/termcap.pl
 usr/lib/perl5/5.8.8/timelocal.pl
-usr/lib/perl5/5.8.8/unicore
+#usr/lib/perl5/5.8.8/unicore
 #usr/lib/perl5/5.8.8/unicore/ArabicShaping.txt
 #usr/lib/perl5/5.8.8/unicore/BidiMirroring.txt
 #usr/lib/perl5/5.8.8/unicore/Blocks.txt

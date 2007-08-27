@@ -349,6 +349,21 @@ sub dblist {
 	close(FILE);
 
 	if ("$filter" eq "upgrade") {
+		getcoredb();
+		eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
+		if ("$core_release" gt "$Conf::core_mine") {
+			if ("$forweb" eq "forweb") {
+				print "<option value=\"core\">Core-Update -- $Conf::version -- Release: $Conf::core_mine -> $core_release</option>\n";
+			} else {
+				my $command = "Core-Update $Conf::version\nRelease: $Conf::core_mine -> $core_release\n";
+				if ("$Pakfire::enable_colors" eq "1") {
+					print "$color{'lila'}$command$color{'normal'}\n";
+				} else {
+					print "$command\n";
+				}
+			}
+		}
+	
 		opendir(DIR,"$Conf::dbdir/meta");
 		my @files = readdir(DIR);
 		closedir(DIR);
