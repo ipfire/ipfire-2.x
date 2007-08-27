@@ -536,6 +536,11 @@ sub overviewgraph {
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
+    "COMMENT:$Lang::tr{'caption'}\\t\\t\\t\\t   ",
+    "COMMENT:$Lang::tr{'maximal'}",
+    "COMMENT:$Lang::tr{'average'}",
+    "COMMENT:$Lang::tr{'minimal'}",
+    "COMMENT:$Lang::tr{'current'}\\j",
 		$description
 	);
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
@@ -550,10 +555,15 @@ sub overviewgraph {
 			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
 			if ($count eq "1") {
-				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
 			} else {
-				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] - $classline[8]\\j");
+				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
+
 			}
+			push(@command, "GPRINT:$classline[1]:MAX:%5.2lf");
+			push(@command, "GPRINT:$classline[1]:AVERAGE:%5.2lf");
+			push(@command, "GPRINT:$classline[1]:MIN:%5.2lf");
+			push(@command, "GPRINT:$classline[1]:LAST:%5.2lf\\j");
 			$count++;
 		}
 	}
