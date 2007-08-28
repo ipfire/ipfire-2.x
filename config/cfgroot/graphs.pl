@@ -26,7 +26,9 @@ my %mbmon_settings = ();
 &General::readhash("${General::swroot}/mbmon/settings", \%mbmon_settings);
 
 my %mbmon_values = ();
+if ( -e "/var/log/mbmon-values" ){
 &General::readhash("/var/log/mbmon-values", \%mbmon_values);
+}
 
 my $key;
 my $value;

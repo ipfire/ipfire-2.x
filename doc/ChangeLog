@@ -1,4 +1,326 @@
 ------------------------------------------------------------------------
+r850 | maniacikarus | 2007-08-28 15:03:30 +0400 (Tue, 28 Aug 2007) | 2 lines
+
+Erster Versuch fuer Update Booster und Apple
+
+------------------------------------------------------------------------
+r849 | maniacikarus | 2007-08-28 14:47:06 +0400 (Tue, 28 Aug 2007) | 4 lines
+
+Openswan patch fuer Fehler im Realsetup
+Remote CGI fuer ssh tempstart fertig
+kleine Korrektur der sshctrl und syslogdctrl
+
+------------------------------------------------------------------------
+r848 | ms | 2007-08-28 12:59:34 +0400 (Tue, 28 Aug 2007) | 2 lines
+
+IRC-Verweis auf der Hauptseite erstellt.
+
+------------------------------------------------------------------------
+r847 | ms | 2007-08-27 23:32:30 +0400 (Mon, 27 Aug 2007) | 2 lines
+
+Kleinen Fehler bereinigt.
+
+------------------------------------------------------------------------
+r846 | ms | 2007-08-27 23:31:19 +0400 (Mon, 27 Aug 2007) | 2 lines
+
+Update Nummer 2
+
+------------------------------------------------------------------------
+r845 | ms | 2007-08-27 20:43:30 +0400 (Mon, 27 Aug 2007) | 2 lines
+
+Homepage aktualisiert.
+
+------------------------------------------------------------------------
+r844 | maniacikarus | 2007-08-27 19:41:44 +0400 (Mon, 27 Aug 2007) | 2 lines
+
+Qos Service Graphen zeigen jetzt auch Werte
+
+------------------------------------------------------------------------
+r843 | maniacikarus | 2007-08-27 17:23:29 +0400 (Mon, 27 Aug 2007) | 2 lines
+
+Red Fix fuer PPP mit der Option PAP or CHAP
+
+------------------------------------------------------------------------
+r842 | maniacikarus | 2007-08-27 14:54:17 +0400 (Mon, 27 Aug 2007) | 2 lines
+
+3 Perlbase Module aktiviert und DHCP Init gefixt
+
+------------------------------------------------------------------------
+r841 | ms | 2007-08-27 02:17:50 +0400 (Mon, 27 Aug 2007) | 3 lines
+
+Die Updates fein gemacht...
+Min. Swapsize := 0.
+
+------------------------------------------------------------------------
+r840 | ms | 2007-08-27 02:03:48 +0400 (Mon, 27 Aug 2007) | 3 lines
+
+Clearsign fuer Metafiles,
+Armorsign fuer Packages.
+
+------------------------------------------------------------------------
+r839 | ms | 2007-08-26 18:34:06 +0400 (Sun, 26 Aug 2007) | 4 lines
+
+Swap-Abfrage gefixt.
+Prototyp der Core-Scripte.
+sshctrl gefixt.
+
+------------------------------------------------------------------------
+r838 | ms | 2007-08-26 18:03:22 +0400 (Sun, 26 Aug 2007) | 4 lines
+
+Serverliste musste signiert werden.
+Der Caller ueberprueft nun ob schon ein Prozess laeuft.
+ssh-keyput geadded.
+
+------------------------------------------------------------------------
+r837 | ms | 2007-08-26 16:33:12 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Einen kleinen Wrapper gebaut.
+
+------------------------------------------------------------------------
+r836 | maniacikarus | 2007-08-26 13:17:39 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Connection Scheduler korrigiert
+
+------------------------------------------------------------------------
+r835 | ms | 2007-08-26 03:00:44 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Die Listen wurden nicht signiert...
+
+------------------------------------------------------------------------
+r834 | ms | 2007-08-26 02:03:50 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Buildfix.
+
+------------------------------------------------------------------------
+r833 | ms | 2007-08-26 01:56:48 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Ices durch Icegenerator ersetzt.
+
+------------------------------------------------------------------------
+r832 | ms | 2007-08-26 01:44:14 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Diskgroessen angepasst.
+
+------------------------------------------------------------------------
+r831 | ms | 2007-08-26 01:40:23 +0400 (Sun, 26 Aug 2007) | 6 lines
+
+Dem Installer ne bessere Rechnung fuer die Diskgroessen bekommen.
+Ices-0 eingebaut.
+PCI- und USB-IDs aktualisiert.
+libmagic eingebaut fuer den mldonkey.
+Torrent braucht keine UDP-Ports.
+
+------------------------------------------------------------------------
+r830 | ms | 2007-08-26 00:38:37 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Hatte zum Testen eine Zeile auskommentiert, damit es schneller geht...
+
+------------------------------------------------------------------------
+r829 | ms | 2007-08-26 00:26:52 +0400 (Sun, 26 Aug 2007) | 2 lines
+
+Pakfire-Master-Branch eroeffnet.
+
+------------------------------------------------------------------------
+r828 | ms | 2007-08-25 21:06:33 +0400 (Sat, 25 Aug 2007) | 2 lines
+
+IPFireSeeder oeffnet automatisch Ports.
+
+------------------------------------------------------------------------
+r827 | maniacikarus | 2007-08-25 20:49:41 +0400 (Sat, 25 Aug 2007) | 2 lines
+
+Disk Berechnung im Installer umgestellt
+
+------------------------------------------------------------------------
+r826 | ms | 2007-08-25 20:37:26 +0400 (Sat, 25 Aug 2007) | 2 lines
+
+rtorrent hatte Probleme auf den VIA C3 Prozessoren.
+
+------------------------------------------------------------------------
+r825 | maniacikarus | 2007-08-25 20:07:48 +0400 (Sat, 25 Aug 2007) | 2 lines
+
+kleine Anpassungen am Installer
+
+------------------------------------------------------------------------
+r824 | ms | 2007-08-25 17:06:25 +0400 (Sat, 25 Aug 2007) | 2 lines
+
+Das ein wenige instabile Sender der Emails gefixt.
+
+------------------------------------------------------------------------
+r823 | ms | 2007-08-25 16:38:30 +0400 (Sat, 25 Aug 2007) | 2 lines
+
+Keepconnected muss geloescht werden.
+
+------------------------------------------------------------------------
+r822 | maniacikarus | 2007-08-25 13:06:41 +0400 (Sat, 25 Aug 2007) | 4 lines
+
+Languages Revert
+Pakfire und Remote CGI etwas angepasst
+Syslogctrl und SSHctrl korrigiert
+
+------------------------------------------------------------------------
+r821 | ms | 2007-08-24 18:27:42 +0400 (Fri, 24 Aug 2007) | 2 lines
+
+Die Beta1 getagt.
+
+------------------------------------------------------------------------
+r820 | ms | 2007-08-24 17:27:18 +0400 (Fri, 24 Aug 2007) | 2 lines
+
+Eine Beta-1 Einfuehrung gemacht.
+
+------------------------------------------------------------------------
+r819 | ms | 2007-08-24 14:27:14 +0400 (Fri, 24 Aug 2007) | 2 lines
+
+Beta-Announcement auf der Webseite erstellt.
+
+------------------------------------------------------------------------
+r818 | ms | 2007-08-24 13:00:25 +0400 (Fri, 24 Aug 2007) | 2 lines
+
+Typo in der credits.cgi.
+
+------------------------------------------------------------------------
+r817 | ms | 2007-08-24 12:58:14 +0400 (Fri, 24 Aug 2007) | 2 lines
+
+Nochmal 2 Fixes.
+
+------------------------------------------------------------------------
+r816 | ms | 2007-08-24 11:45:35 +0400 (Fri, 24 Aug 2007) | 2 lines
+
+Sytaxfehler un den ueblichen Sch***
+
+------------------------------------------------------------------------
+r815 | ms | 2007-08-23 23:52:52 +0400 (Thu, 23 Aug 2007) | 4 lines
+
+BETA 1!
+Foomatic-Paket.
+Nochmal das DSL Script ueberarbeitet und nen kleinen Daemon geschrieben.
+
+------------------------------------------------------------------------
+r814 | maniacikarus | 2007-08-23 23:09:31 +0400 (Thu, 23 Aug 2007) | 5 lines
+
+Korrektur MPFire CGI
+Language nachgetragen
+Syslogctrl angepasst
+Tunerrd geloescht
+
+------------------------------------------------------------------------
+r813 | ms | 2007-08-23 15:18:50 +0400 (Thu, 23 Aug 2007) | 2 lines
+
+Ein paar Rootfiles bearbeitet.
+
+------------------------------------------------------------------------
+r812 | maniacikarus | 2007-08-23 14:58:00 +0400 (Thu, 23 Aug 2007) | 2 lines
+
+Alle Restartskripte umbenannt in CTRL Skripte
+
+------------------------------------------------------------------------
+r811 | ms | 2007-08-23 11:04:09 +0400 (Thu, 23 Aug 2007) | 2 lines
+
+Buildfix
+
+------------------------------------------------------------------------
+r810 | maniacikarus | 2007-08-23 02:25:36 +0400 (Thu, 23 Aug 2007) | 2 lines
+
+Languages bereinigt
+
+------------------------------------------------------------------------
+r809 | ms | 2007-08-23 01:33:52 +0400 (Thu, 23 Aug 2007) | 2 lines
+
+PPTP-Client entfernt.
+
+------------------------------------------------------------------------
+r808 | ms | 2007-08-23 01:24:17 +0400 (Thu, 23 Aug 2007) | 2 lines
+
+Logwatch Buildfix.
+
+------------------------------------------------------------------------
+r807 | ms | 2007-08-23 00:46:18 +0400 (Thu, 23 Aug 2007) | 2 lines
+
+Dialctrl.pl integriert.
+
+------------------------------------------------------------------------
+r806 | ms | 2007-08-22 23:58:53 +0400 (Wed, 22 Aug 2007) | 3 lines
+
+setfilters und setaliases entfernt.
+qosctrl Fix.
+
+------------------------------------------------------------------------
+r805 | ms | 2007-08-22 23:00:23 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Firewalloptions entfernt :D
+
+------------------------------------------------------------------------
+r804 | ms | 2007-08-22 22:35:37 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Connectionstatus-Funktion ueberarbeitet.
+
+------------------------------------------------------------------------
+r803 | ms | 2007-08-22 22:07:20 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+QoS.cgi speichert jetzt die TOS-Bits nach dem editieren wieder richtig.
+
+------------------------------------------------------------------------
+r802 | ms | 2007-08-22 21:24:39 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Logwatch - Experimental.
+
+------------------------------------------------------------------------
+r801 | ms | 2007-08-22 20:23:15 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Grub hat wieder ein huebsches Splashimage.
+
+------------------------------------------------------------------------
+r800 | ms | 2007-08-22 14:38:25 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Squid, Samba und NTFS Update.
+
+------------------------------------------------------------------------
+r799 | ms | 2007-08-22 14:26:55 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Wieder einmal die Netzwerkscripts.
+
+------------------------------------------------------------------------
+r798 | maniacikarus | 2007-08-22 12:06:33 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Syslogeinstellungen fuer var log messages per GUI Einstellbar
+
+------------------------------------------------------------------------
+r797 | maniacikarus | 2007-08-22 11:24:06 +0400 (Wed, 22 Aug 2007) | 2 lines
+
+Swap Size verringert und kleine Aenderung im Mountsource
+
+------------------------------------------------------------------------
+r796 | maniacikarus | 2007-08-21 21:11:33 +0400 (Tue, 21 Aug 2007) | 2 lines
+
+Hddstatus auf der Media CGI nochmal ueberarbeitet
+
+------------------------------------------------------------------------
+r795 | ms | 2007-08-21 15:42:44 +0400 (Tue, 21 Aug 2007) | 4 lines
+
+Laedt die USB-Controller von allein...
+Das soll die Probleme mit den USB-Tastaturen beheben.
+Die mount*.sh-Scripts ordentlich formatiert.
+
+------------------------------------------------------------------------
+r794 | maniacikarus | 2007-08-21 12:40:46 +0400 (Tue, 21 Aug 2007) | 2 lines
+
+gleich die Korrektur hinterher
+
+------------------------------------------------------------------------
+r793 | maniacikarus | 2007-08-21 12:36:40 +0400 (Tue, 21 Aug 2007) | 2 lines
+
+Neue Mount Skripte fuer den Installer - Status untested
+
+------------------------------------------------------------------------
+r792 | ms | 2007-08-21 01:05:15 +0400 (Tue, 21 Aug 2007) | 2 lines
+
+Hddshutdown-Fixes.
+
+------------------------------------------------------------------------
+r791 | maniacikarus | 2007-08-20 19:17:03 +0400 (Mon, 20 Aug 2007) | 2 lines
+
+Neue Version von hddshutdown
+
+------------------------------------------------------------------------
 r790 | ms | 2007-08-20 18:25:59 +0400 (Mon, 20 Aug 2007) | 2 lines
 
 Netzwerkscripts: DHCP vollstaendig getestet und gefixt.
