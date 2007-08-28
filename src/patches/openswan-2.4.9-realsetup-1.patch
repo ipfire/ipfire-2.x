@@ -1,0 +1,10 @@
+--- programs/_realsetup/_realsetup.in
++++ programs/_realsetup/_realsetup.in
+@@ -193,8 +193,8 @@
+ 
+ 	# preliminaries
+ 	perform rm -f $lock
+-	mkdir -p rundir > /dev/null 2>/dev/null
+-	mkdir -p subsysdir > /dev/null 2>/dev/null
++	mkdir -p $rundir > /dev/null 2>/dev/null
++	mkdir -p $subsysdir > /dev/null 2>/dev/null

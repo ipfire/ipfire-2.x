@@ -22,6 +22,7 @@ require "${General::swroot}/header.pl";
 my %remotesettings=();
 my %checked=();
 my $errormessage='';
+my $counter = 0;
 
 &Header::showhttpheaders();
 
@@ -63,13 +64,16 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 	{
 		&General::log($Lang::tr{'ssh1 disabled'});
 	}
-if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ){
-	system('/usr/local/bin/sshctrl','tempstart','900') == 0
-		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
- }
-elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
-	system('/usr/local/bin/sshctrl','tempstart','1800') == 0
-		or $errormessage = "$Lang::tr{'bad return code'} " . $?/256;
+if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
+	if ($remotesettings{'ENABLE_SSH'} eq 'off')
+	{
+			system ('/usr/bin/touch', "${General::swroot}/remote/enablessh");
+			system('/usr/local/bin/sshctrl');
+	}
+  if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ) { $counter = 900;}
+  elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ) { $counter = 1800;}
+ 
+  system("/usr/local/bin/sshctrl tempstart $counter >/dev/null");
  }
 else {
 	system('/usr/local/bin/sshctrl') == 0
