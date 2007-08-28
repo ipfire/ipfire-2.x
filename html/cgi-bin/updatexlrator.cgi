@@ -465,6 +465,9 @@ END
 		} elsif ($metadata[1] eq 'IPFire')
 		{
 			print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire'}' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'Appel')
+		{
+			print "<img src='/images/Apple.png' width='18' height='18' alt='Apple'}' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Linux')
 		{
 			print "<img src='/images/tux.png' alt='Linux'}' />&nbsp;</td>\n";
@@ -549,6 +552,10 @@ print <<END
 		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-avira.gif' alt='Avira' /></td>
 		<td class='base'>Avira</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-apple.gif' alt='Apple' /></td>
+		<td class='base'>Apple</td>
+		<td class='base'>&nbsp;</td>
 	</tr>
 	<tr>
 		<td class='base' colspan='2'>&nbsp;</td>
@@ -563,6 +570,10 @@ print <<END
 		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr unknown'}</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'></td>
+		<td class='base'></td>
+		<td class='base'>&nbsp;</td>
 	</tr>
 </table>
 END
