@@ -83,6 +83,10 @@ case "${1}" in
 			echo -n "${DNS1}" > /var/ipfire/red/dns1
 			echo -n "${DNS2}" > /var/ipfire/red/dns2
 			
+			boot_mesg "Setting up default gateway ${GATEWAY}..."
+			ip route add default via ${GATEWAY} dev ${DEVICE}
+			evaluate_retval
+			
 			run_subdir ${rc_base}/init.d/networking/red.up/
 			
 		elif [ "${TYPE}" == "DHCP" ]; then
