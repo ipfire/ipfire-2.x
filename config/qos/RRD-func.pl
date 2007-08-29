@@ -15,7 +15,6 @@
 ## CHANGELOG
 ##   2004-04-15:  Initial version.
 ##
-## $Id: RRD-func.pl,v 1.10 2004/05/27 17:02:12 hawk Exp $
 ##########################################
 
 use RRDs;

@@ -24,7 +24,6 @@
 ##   2004-04-15:  Initial version.
 ##   2005-04-18:  Remove some warnings.
 ##
-## $Id: parse-func.pl,v 1.15 2005/04/18 12:37:17 hawk Exp $
 ##########################################
 
 #use Data::Dumper;

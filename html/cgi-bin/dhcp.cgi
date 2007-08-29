@@ -1,24 +1,24 @@
 #!/usr/bin/perl
-#
-# SmoothWall CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# (c) The SmoothWall Team
-#
-# Copyright (C) 01-02-2002 Graham Smith <grhm@grhm.co.uk>
-#              - Fixed DHCP Leases added
-#
-# $Id: dhcp.cgi,v 1.14.2.81 2006/01/20 12:05:29 franck78 Exp $
-#
-#  Franck	-rewrite for two or more interface
-#  nov/2004	-check range is in correct subnet
-#		-add NTP option
-#		-add display sorting of actives leases
-#  dec/2004	-add comment field to fixed leases
-# 
-# to do : choose a correct format for displaying dates
-#
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
 use strict;
 
 # enable only the following on debugging purpose

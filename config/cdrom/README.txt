@@ -12,7 +12,7 @@ necessary decisions during the installation process.
 License
 -------
 
-IPFire is licensed under the terms of the GPL (Version 2).
+IPFire is licensed under the terms of the GPL (Version 3).
 Please read the file COPYING for more information on the license.
 
 

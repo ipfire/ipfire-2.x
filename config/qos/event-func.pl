@@ -23,7 +23,6 @@
 ## CHANGELOG
 ##   2004-04-21:  Initial version.
 ##
-## $Id: event-func.pl,v 1.10 2004/08/10 16:05:46 hawk Exp $
 ##########################################
 
 our $event_file_all = "${event_datadir}changes.evt";

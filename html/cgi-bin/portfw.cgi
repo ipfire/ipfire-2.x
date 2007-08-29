@@ -1,28 +1,23 @@
 #!/usr/bin/perl
-#
-# SmoothWall CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# (c) The SmoothWall Team
-# Copyright (c) 2002/04/13 Steve Bootes - Add source IP support
-#
-# $Id: portfw.cgi,v 1.5.2.18 2005/05/02 16:19:49 eoberlander Exp $
-#
-#
-# Darren Critchley February 2003 - I added the multiple external access rules for each port forward
-# A couple of things to remember when reading the code
-#	There are two kinds of records in the config file, those with a number in the first field, and then 0,
-#		these are port forward rules, these records will have a 0 or 0.0.0.0 in position 9 (ORIG_IP)
-#		If there is a 0, it means that there are external access rules, otherwise the port is open to ALL.
-#	The second type of record is a number followed by a number which indicates that it is an external access
-#	rule. The first number indicates which Portfw rule it belongs to, and the second is just a unique key.
-#
-# Darren Critchley - March 5, 2003 - if you come along after me and work on this page, please comment your
-#		work. Put your name, and date and then your comment - it helps the person that comes along after you
-#		to figure out why and how things have changed, and it is considered good coding practice
-# Thanks . . . 
-#
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 use strict;
 
