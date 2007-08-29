@@ -32,9 +32,8 @@ $pakfiresettings{'VALID'} = '';
 $pakfiresettings{'INSPAKS'} = '';
 $pakfiresettings{'DELPAKS'} = '';
 $pakfiresettings{'AUTOUPDATE'} = 'off';
+$pakfiresettings{'AUTOUPGRADE'} = 'off';
 $pakfiresettings{'UUID'} = 'on';
-
-system("/usr/local/bin/pakfire update >/dev/null") if not -e "/opt/pakfire/db/lists/packages_list.db";
 
 &Header::getcgihash(\%pakfiresettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -123,16 +122,27 @@ END
 
 } elsif ($pakfiresettings{'ACTION'} eq 'update') {
 	
-	system("/usr/local/bin/pakfire update --force --no-colors");
+	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null");
 
 } elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
 	
-	system("/usr/local/bin/pakfire upgrade -y --no-colors");
+	system("/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null");
 	
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
-	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
+	if ($pakfiresettings{'AUTOUPDATE'} == "on") {
+		system("/usr/local/bin/pakfire enable updates");
+	} else {
+		system("/usr/local/bin/pakfire disable updates");
+	}
+	
+	if ($pakfiresettings{'AUTOUPGRADE'} == "on") {
+		system("/usr/local/bin/pakfire enable upgrades");
+	} else {
+		system("/usr/local/bin/pakfire disable upgrades");
+	}
 
+	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 }
 
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
@@ -143,6 +153,9 @@ my %checked=();
 $checked{'AUTOUPDATE'}{'off'} = '';
 $checked{'AUTOUPDATE'}{'on'} = '';
 $checked{'AUTOUPDATE'}{$pakfiresettings{'AUTOUPDATE'}} = "checked='checked'";
+$checked{'AUTOUPGRADE'}{'off'} = '';
+$checked{'AUTOUPGRADE'}{'on'} = '';
+$checked{'AUTOUPGRADE'}{$pakfiresettings{'AUTOUPGRADE'}} = "checked='checked'";
 $checked{'UUID'}{'off'} = '';
 $checked{'UUID'}{'on'} = '';
 $checked{'UUID'}{$pakfiresettings{'UUID'}} = "checked='checked'";
@@ -184,66 +197,88 @@ END
 	exit;
 }
 
+my $core_release = `cat /opt/pakfire/db/core/mine`;
+chomp($core_release);
+my $core_update_age = &General::age("/opt/pakfire/db/core/mine");
+my $corelist_update_age = &General::age("/opt/pakfire/db/lists/core-list.db");
+my $server_update_age = &General::age("/opt/pakfire/db/lists/server-list.db");
+my $packages_update_age = &General::age("/opt/pakfire/db/lists/packages_list.db");
+
 &Header::openbox("100%", "center", "Pakfire");
 
 print <<END;
-	<table width='100%'>
-		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b></td><td bgcolor='$color{'color20'}'></td><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
-		<tr><td width='40%' align="center">
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%' cellpadding='5' >
+		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>(TR) Your system's state:</b>
+				<td width="50%">
+		<tr><td align="center">(TR) Core-Update-Level: $core_release<hr />
+					(TR) Last Update made $core_update_age ago<br />
+					(TR) Last server list update made $server_update_age ago<br />
+					(TR) Last core list update made $corelist_update_age ago<br />
+					(TR) Last packages list update made $packages_update_age ago
+					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='ACTION' value='update' />
+						<input type='submit' value='Liste aktualisieren' /><br />
+					</form>
+				<td align="center">
+				 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<select name="UPDPAKS" size="5" disabled>
+END
+						&Pakfire::dblist("upgrade", "forweb");
+	print <<END;
+					</select>
+					<br />
+					<input type='hidden' name='ACTION' value='upgrade' />
+					<input type='image' alt='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
+				 </form>
+		
+		<tr><td colspan="2"><!-- Just an empty line -->&nbsp;
+		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b>
+				<td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
+		<tr><td align="center">
+			<p>(TR) Please choose one or more items from the list below and click the 'plus' to install.</p>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>	
 				<select name="INSPAKS" size="10" multiple>
 END
 			&Pakfire::dblist("notinstalled", "forweb");
 		
 print <<END;
 				</select>
-		</td>
-		<td width='20%' align="center">
+				<br />
 				<input type='hidden' name='ACTION' value='install' />
 				<input type='image' alt='$Lang::tr{'install'}' src='/images/list-add.png' />
-			</form><br />
-			
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='hidden' name='ACTION' value='update' />
-				<input type='submit' value='Liste aktualisieren' /><br />
 			</form>
-			
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='hidden' name='ACTION' value='remove' />
-				<input type='image' alt='$Lang::tr{'remove'}' src='/images/list-remove.png' />
-		</td>
-		<td width='40%' align="center">
+
+		<td align="center">
+			<p>(TR) Please choose one or more items from the list below and click the 'minus' to uninstall.</p>
+		 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<select name="DELPAKS" size="10" multiple>
 END
 
 			&Pakfire::dblist("installed", "forweb");
 
 print <<END;
-		</select>
-	</table></form>
-	<br />
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table width='100%'>
-		<tr><td colspan='3' bgcolor='$color{'color20'}'><b>$Lang::tr{'pakfire updates'}</b></br>
-		<tr><td width='20%'>&nbsp;<td width='60%' align='center'>
-			<select name="UPDPAKS" size="5" disabled>
+			</select>
+			<br />
+			<input type='hidden' name='ACTION' value='remove' />
+			<input type='image' alt='$Lang::tr{'remove'}' src='/images/list-remove.png' />
+		</form>
+	</table>
 END
 
-			&Pakfire::dblist("upgrade", "forweb");
+&Header::closebox();
+&Header::openbox("100%", "center", "$Lang::tr{'settings'}");
 
 print <<END;
-			</select>
-		<td width='20%' align='center' valign='middle'><input type='hidden' name='ACTION' value='upgrade' />
-			<input type='image' alt='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
-	</table></form>
-	<br />
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='100%'>
-			<tr><td colspan='4' bgcolor='$color{'color20'}'><b>$Lang::tr{'basic options'}</b></br>
+			<tr><td colspan='4' bgcolor='$color{'color20'}'><b>$Lang::tr{'basic options'}</b>
 			<tr><td width='40%' align="right">$Lang::tr{'pakfire update daily'}
 					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
 					<td width='40%' align="right">$Lang::tr{'pakfire register'} 
 					<td width='10%' align="left"><input type="checkbox" name="UUID" $checked{'UUID'}{'on'} />
+			<tr><td width='40%' align="right">(TR) Apply core updates automatically?
+					<td width='10%' align="left"><input type="checkbox" name="AUTOUPGRADE" $checked{'AUTOUPGRADE'}{'on'} />
+					<td width='50%' colspan="2">&nbsp;
 			<tr><td width='100%' colspan="4" align="center"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
 		</table>
 	</form>

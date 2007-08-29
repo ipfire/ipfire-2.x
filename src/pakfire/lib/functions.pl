@@ -111,11 +111,13 @@ sub pinghost {
 sub fetchfile {
 	my $getfile = shift;
 	my $gethost = shift;
-	my (@server, $host, $proto, $file, $allok, $i);
+	my (@server, $host, $proto, $file, $i);
+	my $allok = 0;
 	
-	logger("DOWNLOAD STARTED: $getfile") unless ($bfile =~ /^counter\?.*/);
 	use File::Basename;
 	$bfile = basename("$getfile");
+	
+	logger("DOWNLOAD STARTED: $getfile") unless ($bfile =~ /^counter\?.*/);
 
 	$i = 0;	
 	while (($allok == 0) && $i < 5) {
@@ -210,40 +212,46 @@ sub fetchfile {
 }
 
 sub getmirrors {
+	my $force = shift;
+	my $age;
+	
 	use File::Copy;
-
-	logger("MIRROR: Trying to get a mirror list.");
 	
 	if ( -e "$Conf::dbdir/lists/server-list.db" ) {
 		my @stat = stat("$Conf::dbdir/lists/server-list.db");
 		my $time = time();
 		$age = $time - $stat[9];
+		$force = "force" if ("$age" >= "3600");
+		logger("MIRROR INFO: server-list.db is $age seconds old. - DEBUG: $force");
 	} else {
 		# Force an update.
-		$age = "86401";
+		$force = "force";
 	}
 	
-	if ("$age" gt "86400") {
+	if ("$force" eq "force") {
 		fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver");
 		move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
 	}
 }
 
 sub getcoredb {
+	my $force = shift;
+	my $age;
+	
 	use File::Copy;
-
-	logger("CORE: Trying to get a core list.");
 	
 	if ( -e "$Conf::dbdir/lists/core-list.db" ) {
 		my @stat = stat("$Conf::dbdir/lists/core-list.db");
 		my $time = time();
 		$age = $time - $stat[9];
+		$force = "force" if ("$age" >= "3600");
+		logger("CORE INFO: core-list.db is $age seconds old. - DEBUG: $force");
 	} else {
 		# Force an update.
-		$age = "3601";
+		$force = "force";
 	}
 	
-	if ("$age" gt "3600") {
+	if ("$force" eq "force") {
 		fetchfile("lists/core-list.db", "");
 		move("$Conf::cachedir/core-list.db", "$Conf::dbdir/lists/core-list.db");
 	}
@@ -256,7 +264,7 @@ sub selectmirror {
 	my $count = 0;
 	while (!(open(FILE, "<$Conf::dbdir/lists/server-list.db")) && ($count lt 5)) {
 		$count++;
-		getmirrors();
+		getmirrors("noforce");
 	}
 	if ($count == 5) {
 		message("MIRROR ERROR: Could not find or download a server list");
@@ -315,12 +323,14 @@ sub dbgetlist {
 		my @stat = stat("$Conf::dbdir/lists/packages_list.db");
 		my $time = time();
 		$age = $time - $stat[9];
+		$force = "force" if ("$age" >= "3600");
+		logger("DB INFO: packages_list.db is $age seconds old. - DEBUG: $force");
 	} else {
 		# Force an update.
-		$age = "3601";
+		$force = "force";
 	}
 	
-	if (("$age" gt "3600") || ("$force" eq "force")) {
+	if ("$force" eq "force") {
 		fetchfile("lists/packages_list.db", "");
 		move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
 	}
@@ -342,14 +352,14 @@ sub dblist {
 	my @templine;
 	
 	### Make sure that the list is not outdated. 
-	dbgetlist("noforce");
+	#dbgetlist("noforce");
 
 	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
 	my @db = <FILE>;
 	close(FILE);
 
 	if ("$filter" eq "upgrade") {
-		getcoredb();
+		getcoredb("noforce");
 		eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
 		if ("$core_release" gt "$Conf::core_mine") {
 			if ("$forweb" eq "forweb") {
@@ -631,7 +641,7 @@ sub setuppak {
 }
 
 sub upgradecore {
-	getcoredb();
+	getcoredb("noforce");
 	eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
 	if ("$core_release" gt "$Conf::core_mine") {
 		message("CORE UPGR: Upgrading from release $Conf::core_mine to $core_release");

@@ -3,6 +3,7 @@
 	require "/opt/pakfire/lib/functions.pl";
 	
 	my $interactive = 1;
+	my $force = "noforce";
 	
 	&Pakfire::logger("PAKFIRE INFO: IPFire Pakfire $Conf::version started!");
 	&Pakfire::checkcryptodb;
@@ -45,6 +46,10 @@
 			
 			# Turn off shell colors - Bad for displaying in webinterface
 			$Pakfire::enable_colors = 0 if ("$_" eq "--no-colors");
+			
+			# Turn on force mode
+			$force = "force" if ("$_" eq "-f" );
+			$force = "force" if ("$_" eq "--force" );
 		}
 	}
 
@@ -207,9 +212,9 @@
 	} elsif ("$ARGV[0]" eq "update") {
 		&Pakfire::makeuuid();
 		&Pakfire::senduuid();
-		&Pakfire::getmirrors();
-		&Pakfire::dbgetlist("noforce");
-		&Pakfire::getcoredb();
+		&Pakfire::getmirrors("$force");
+		&Pakfire::dbgetlist("$force");
+		&Pakfire::getcoredb("$force");
 
 	} elsif ("$ARGV[0]" eq "upgrade") {
 		&Pakfire::upgradecore();
@@ -258,6 +263,18 @@
 			next if ("$_" eq "resolvedeps");
 			next if ("$_" =~ "^-");
 			&Pakfire::resolvedeps("$_");
+		}
+	} elsif ("$ARGV[0]" eq "enable") {
+		if ("$ARGV[1]" eq "updates") {
+			system("ln -s ../../opt/pakfire/pakfire /etc/fcron.daily/pakfire-update");
+		elsif ("$ARGV[1]" eq "upgrades") {
+			system("ln -s ../../opt/pakfire/pakfire /etc/fcron.daily/pakfire-upgrade");
+		}
+	} elsif ("$ARGV[0]" eq "disable") {
+		if ("$ARGV[1]" eq "updates") {
+			system("rm -f /etc/fcron.daily/pakfire-update");
+		elsif ("$ARGV[1]" eq "upgrades") {
+			system("rm -f /etc/fcron.daily/pakfire-upgrade");
 		}
 	} else {
 		&Pakfire::usage;

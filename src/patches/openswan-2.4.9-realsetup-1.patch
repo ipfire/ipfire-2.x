@@ -1,5 +1,5 @@
---- programs/_realsetup/_realsetup.in
-+++ programs/_realsetup/_realsetup.in
+--- _realsetup
++++ _realsetup
 @@ -193,8 +193,8 @@
  
  	# preliminaries
