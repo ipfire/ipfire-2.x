@@ -521,12 +521,12 @@ watch_screen() {
 }
 
 mail_me() {
-	chmod 755 tools/sendEmail
-	ATTACHMENT=/tmp/ipfire-build-logs-R$SVN_REVISION.tar.gz
+	echo "From: $MAIL_FROM" > /tmp/ipfire_mail_body.$$
+	echo "To: $MAIL_TO" >> /tmp/ipfire_mail_body.$$
 	case "$1" in
 		success)
-			SUBJECT="SUCCESS: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-			cat <<END > /tmp/ipfire_mail_body
+			cat <<END >> /tmp/ipfire_mail_body.$$
+Subject: SUCCESS: IPFIRE-BUILD R$SVN_REVISION on `hostname`
 Building IPFire on `hostname` in Revision $SVN_REVISION was successfull!
 You can find the ISO on your ftp server if you told the script where it is.
 
@@ -542,8 +542,8 @@ END
 		echo -ne "${BOLD}***Sending success message${NORMAL}"
 		;;
 		*)
-			SUBJECT="ERROR $1: IPFIRE-BUILD R$SVN_REVISION on `hostname`"
-			cat <<END > /tmp/ipfire_mail_body
+			cat <<END >> /tmp/ipfire_mail_body.$$
+Subject: ERROR $1: IPFIRE-BUILD R$SVN_REVISION on `hostname`
 When I was building IPFire on `hostname`, I have found an ERROR with name $1!
 Here you can see the logs and detect the reason for this error.
 
@@ -559,22 +559,14 @@ END
 		echo -ne "${BOLD}***Sending error message${NORMAL}"
 		;;
 	esac
-	tar cfz $ATTACHMENT log/_build*
-	cat /tmp/ipfire_mail_body | tools/sendEmail -q \
-		-f "$MAIL_FROM" \
-		-t "$MAIL_TO" \
-		-u "$SUBJECT" \
-		-s $MAIL_SERVER:25 \
-		-xu "$MAIL_USER" \
-		-xp "$MAIL_PASS" \
-		-l log/_build.mail.log \
-		-a $ATTACHMENT # -v
+
+	python tools/sendEmail < /tmp/ipfire_mail_body.$$
 	if [ "$?" -eq "0" ]; then
 		beautify message DONE
 	else
 		beautify message FAIL
 	fi
-	rm -f /tmp/ipfire_mail_body $ATTACHMENT
+	rm -f /tmp/ipfire_mail_body.$$
 }
 
 make_config() {
