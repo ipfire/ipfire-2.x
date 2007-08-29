@@ -286,13 +286,13 @@
 	} elsif ("$ARGV[0]" eq "enable") {
 		if ("$ARGV[1]" eq "updates") {
 			system("ln -s ../../opt/pakfire/pakfire /etc/fcron.daily/pakfire-update");
-		elsif ("$ARGV[1]" eq "upgrades") {
+		} elsif ("$ARGV[1]" eq "upgrades") {
 			system("ln -s ../../opt/pakfire/pakfire /etc/fcron.daily/pakfire-upgrade");
 		}
 	} elsif ("$ARGV[0]" eq "disable") {
 		if ("$ARGV[1]" eq "updates") {
 			system("rm -f /etc/fcron.daily/pakfire-update");
-		elsif ("$ARGV[1]" eq "upgrades") {
+		} elsif ("$ARGV[1]" eq "upgrades") {
 			system("rm -f /etc/fcron.daily/pakfire-upgrade");
 		}
 	} else {
