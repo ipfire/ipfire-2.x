@@ -3013,6 +3013,7 @@ sub writeconfigfile
 	foreach $category (@categories) {
 		$blacklist = $category;
 		$category =~ s/\//_/g;
+		if ( $filtersettings{"FILTER_".uc($category)} ne "on" ){next;}
 		print FILE "dest $category {\n";
 		if (-e "$dbdir/$blacklist/domains") {
 			print FILE "    domainlist     $blacklist\/domains\n";
