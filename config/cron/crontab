@@ -55,4 +55,4 @@ HOME=/
 %monthly * 3-5 * /var/ipfire/updatexlrator/autocheck/cron.monthly
 
 # Reset Dialup Statistics
-bootrun 0 0 1 * *	/usr/local/bin/dialctrl.pl reset
+&bootrun 0 0 1 * *	/usr/local/bin/dialctrl.pl reset

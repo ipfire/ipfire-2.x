@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.2.11
+VER        = 2.4.5
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 03f416410110bf46352004dcae67a5fe
+$(DL_FILE)_MD5 = ceba0cde05d12baa0ba2ed69fbb96b42
 
 install : $(TARGET)
 

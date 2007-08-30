@@ -34,6 +34,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cyrusimap
 PAK_VER    = 1
 
+DEPS = "cyrus-sasl"
+DESCDE = "Cyrus IMAPd ist ein MDA"
+DESCEN = "Cyrus IMAPd is an MDA"
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -106,7 +110,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	-mkdir /var/imap
 	chown cyrus:mail /var/imap
-	chmod 750 /var/imap
+	chmod 755 /var/imap
 	-mkdir /var/log/imap
 	chown cyrus:mail /var/log/imap
 	chmod 750 /var/log/imap

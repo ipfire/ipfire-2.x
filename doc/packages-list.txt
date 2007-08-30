@@ -66,6 +66,7 @@
 * dhcpcd-2.0.8
 * diffutils-2.8.1
 * dnsmasq-2.33
+* dnsmasq-2.40
 * dosfstools-2.11
 * e2fsprogs-1.39
 * ed-0.2
@@ -204,6 +205,7 @@
 * popt-1.10.4
 * portmap_5beta
 * postfix-2.2.11
+* postfix-2.4.5
 * ppp-2.4.4
 * procps-3.2.6
 * psmisc-22.2
