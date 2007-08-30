@@ -361,8 +361,8 @@ int main(int argc, char *argv[])
 	
   /* Calculating Root-Size dependend of Max Disk Space */
   if ( disk < 756 )
-		root_partition = 256;
-	else if ( disk >= 1024 && disk <= 3072 )
+		root_partition = 200;
+	else if ( disk >= 756 && disk <= 3072 )
 		root_partition = 512;
 	else 
 		root_partition = 2048;
