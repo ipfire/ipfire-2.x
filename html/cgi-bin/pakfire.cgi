@@ -219,13 +219,13 @@ my $packages_update_age = &General::age("/opt/pakfire/db/lists/packages_list.db"
 
 print <<END;
 	<table width='100%' cellpadding='5' >
-		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>(TR) Your system's state:</b>
+		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire system state'}:</b>
 				<td width="50%">
-		<tr><td align="center">(TR) Core-Update-Level: $core_release<hr />
-					(TR) Last Update made $core_update_age ago<br />
-					(TR) Last server list update made $server_update_age ago<br />
-					(TR) Last core list update made $corelist_update_age ago<br />
-					(TR) Last packages list update made $packages_update_age ago
+		<tr><td align="center">$Lang::tr{'pakfire core update level'}: $core_release<hr />
+					$Lang::tr{'pakfire last update'} $core_update_age ago<br />
+					$Lang::tr{'pakfire last serverlist update'} $server_update_age ago<br />
+					$Lang::tr{'pakfire last core list update'} $corelist_update_age ago<br />
+					$Lang::tr{'pakfire last package update'} $packages_update_age ago
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='ACTION' value='update' />
 						<input type='submit' value='Liste aktualisieren' /><br />
@@ -246,7 +246,7 @@ END
 		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b>
 				<td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
 		<tr><td align="center">
-			<p>(TR) Please choose one or more items from the list below and click the 'plus' to install.</p>
+			<p>($Lang::tr{'pakfire install description'}</p>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>	
 				<select name="INSPAKS" size="10" multiple>
 END
@@ -260,7 +260,7 @@ print <<END;
 			</form>
 
 		<td align="center">
-			<p>(TR) Please choose one or more items from the list below and click the 'minus' to uninstall.</p>
+			<p>($Lang::tr{'pakfire uninstall description'}</p>
 		 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<select name="DELPAKS" size="10" multiple>
 END
@@ -287,7 +287,7 @@ print <<END;
 					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
 					<td width='40%' align="right">$Lang::tr{'pakfire register'} 
 					<td width='10%' align="left"><input type="checkbox" name="UUID" $checked{'UUID'}{'on'} />
-			<tr><td width='40%' align="right">(TR) Apply core updates automatically?
+			<tr><td width='40%' align="right">$Lang::tr{'pakfire core update auto'}
 					<td width='10%' align="left"><input type="checkbox" name="AUTOUPGRADE" $checked{'AUTOUPGRADE'}{'on'} />
 					<td width='50%' colspan="2">&nbsp;
 			<tr><td width='100%' colspan="4" align="center"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
