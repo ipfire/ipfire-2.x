@@ -591,7 +591,7 @@ buildpackages() {
 	ipfiremake cdrom ED=full
 	
   # Check if there is a loop device for building in virtual environments
-  if [ -e /dev/loop0 ]; then
+  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
   	ipfiremake usb-stick
   fi
   ipfiremake pxe

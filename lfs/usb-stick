@@ -50,7 +50,7 @@ IMGfs  := /install/images/fs
 
 define COPY_TO_IMG
 	mkdosfs -n IPFIRE -F 16 -I $$IMAGE && \
-	for i in `seq 0 7`; do \
+	for i in /0 `seq 0 7`; do \
 		if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
 			LOOPDEV="/dev/loop$${i}"; \
 			break; \
