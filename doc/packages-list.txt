@@ -172,6 +172,7 @@
 * mldonkey-2.9.0
 * module-init-tools-3.2.2
 * mp3blaster-3.2.3
+* mpd-0.13.0
 * mpfire-ipfire
 * mpg123-0.59r
 * mtd-CVS-20070507

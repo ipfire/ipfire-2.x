@@ -493,6 +493,7 @@ buildipfire() {
   ipfiremake libshout
   ipfiremake icecast
   ipfiremake icegenerator
+  ipfiremake mpd
   ipfiremake mp3blaster
   ipfiremake libpri
   ipfiremake stund
