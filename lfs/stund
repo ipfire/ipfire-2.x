@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = stund
 PAK_VER    = 1
 
-DESCDE     = "Ein stun-Server."
-DESCEN     = "A stun server."
 DEPS       = ""
 
 ###############################################################################

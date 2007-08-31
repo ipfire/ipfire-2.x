@@ -35,8 +35,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = applejuice
 PAK_VER    = 1
 
-DESCDE     = "Applejuice ist ein (deutsches) P2P-Netzwerk."
-DESCEN     = "Applejuice is a german p2p-network."
 DEPS       = "java"
 
 ###############################################################################

@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = htop
 PAK_VER    = 1
 
-DESCDE     = "Eine Alternative zu top."
-DESCEN     = "An alternative to top."
 DEPS       = ""
 
 ###############################################################################

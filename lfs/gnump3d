@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = gnump3d
 PAK_VER    = 1
 
-DESCDE     = "Ein GNU mp3 server."
-DESCEN     = "A GNU mp3 server."
 DEPS       = "lame sox"
 
 ###############################################################################

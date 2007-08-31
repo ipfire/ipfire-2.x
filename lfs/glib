@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = glib
 PAK_VER    = 1
 
-DESCDE     = "Glib ist eine grafische Bibliothek."
-DESCEN     = "Glib is a lib for graphic functions."
 DEPS       = ""
 
 ###############################################################################

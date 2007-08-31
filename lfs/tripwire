@@ -31,10 +31,12 @@ DL_FILE    = $(THISAPP)-src.tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-CFLAGS     =
-CXXFLAGS   = 
 PROG       = tripwire
 PAK_VER    = 1
+CFLAGS     =
+CXXFLAGS   = 
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules

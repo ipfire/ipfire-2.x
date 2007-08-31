@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rsync
 PAK_VER    = 1
 
-DESCDE     = "rsync ist ein Mirroring-Tool."
-DESCEN     = "rsync is a tool for mirroring."
 DEPS       = ""
 
 ###############################################################################

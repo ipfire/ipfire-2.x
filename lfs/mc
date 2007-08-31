@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
 PAK_VER    = 1
 
-DESCDE     = "Der vielbekannte Midnight Commander."
-DESCEN     = "The well-known Midnight Commander."
 DEPS       = "glib"
 
 ###############################################################################

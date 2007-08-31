@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ncftp
 PAK_VER    = 1
 
-DESCDE     = "Ein Konsolen-FTP-Client."
-DESCEN     = "A ftp client for console."
 DEPS       = ""
 
 ###############################################################################

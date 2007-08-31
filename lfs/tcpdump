@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tcpdump
 PAK_VER    = 1
 
-DESCDE     = "tcpdump kann Netzverkehr mitschneiden."
-DESCEN     = "tcpdump dumps networking traffic."
 DEPS       = ""
 
 ###############################################################################

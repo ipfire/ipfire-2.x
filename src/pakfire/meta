@@ -3,6 +3,4 @@ ProgVersion: VER
 Release: RELEASE
 Size: SIZE
 Dependencies: DEPS
-Description-de: DESCDE
-Description-en: DESCEN
 File: NAME-VER-RELEASE.ipfire

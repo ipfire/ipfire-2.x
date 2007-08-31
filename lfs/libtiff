@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libtiff
 PAK_VER    = 1
 
-DESCDE     = "libtiff ist eine Bibliothek für tiff-Bilder."
-DESCEN     = "libtiff is a library for tiff-images."
 DEPS       = ""
 
 ###############################################################################

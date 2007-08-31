@@ -494,7 +494,7 @@ buildipfire() {
   ipfiremake icecast
   ipfiremake icegenerator
   ipfiremake mpd
-  ipfiremake mp3blaster
+  ipfiremake mpc
   ipfiremake libpri
   ipfiremake stund
   ipfiremake asterisk

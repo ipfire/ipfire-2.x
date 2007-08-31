@@ -32,9 +32,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
 PAK_VER    = 1
 
-DESCDE     = "MPFire ist ein CGI Multimediaplayer auf Basis von mpg123."
-DESCEN     = "MPFire is a mpg123 based CGI Multimedia-Player."
-DEPS       = "mpg123"
+DEPS       = "mpg123 alsa"
 
 ###############################################################################
 # Top-level Rules

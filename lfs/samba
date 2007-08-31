@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
 PAK_VER    = 1
 
-DESCDE     = "Samba ist ein Windows-File- und Printserver."
-DESCEN     = "Samba is a file- and printserver for Windows."
 DEPS       = "cups openldap cyrus-sasl"
 
 ###############################################################################

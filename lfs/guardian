@@ -32,8 +32,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = guardian
 PAK_VER    = 1
 
-DESCDE     = "Guardian ist ein Sicherheitstool, welches das Snort IDS Log auswertet und IPs mit Hilfe von iptables blockt."
-DESCEN     = "Guardian is a security tool which will issue commands to the OS to block ip addresses which attacks may be coming from."
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules

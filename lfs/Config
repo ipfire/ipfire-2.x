@@ -195,8 +195,6 @@ define PAK
 			-e s/VER/$(VER)/g \
 			-e s/RELEASE/$(PAK_VER)/g \
 			-e s/DEPS/$(DEPS)/g \
-			-e s/DESCDE/$(DESCDE)/g \
-			-e s/DESCEN/$(DESCEN)/g \
 			-e s/SIZE/`ls -l \/install\/packages\/$(PROG)-$(VER)-$(PAK_VER).ipfire | awk '{ print $$5 }'`/g \
 	  < /usr/src/src/pakfire/meta > /install/packages/meta-$(PROG)
 endef

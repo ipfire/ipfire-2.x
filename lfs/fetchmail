@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fetchmail
 PAK_VER    = 1
 
-DESCDE     = "fetchmail kann Emails von entfernten Mailservern abholen."
-DESCEN     = "fetchmail fetches emails from remote servers."
 DEPS       = ""
 
 ###############################################################################

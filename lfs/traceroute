@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = traceroute
 PAK_VER    = 1
 
-DESCDE     = "traceroute kann Routen durch das Internet verfolgen und anzeigen."
-DESCEN     = "traceroute traces routes on the internet and displays them."
 DEPS       = ""
 
 ###############################################################################

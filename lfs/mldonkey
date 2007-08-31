@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mldonkey
 PAK_VER    = 1
 
-DESCDE     = "Ein P2P-Client für viele Netze."
-DESCEN     = "A p2p client for multiple networks."
 DEPS       = ""
 
 ###############################################################################

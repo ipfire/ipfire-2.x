@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = moblock
 PAK_VER    = 1
 
-DESCDE     = "Moblock blockt dynamisch Angriffe."
-DESCEN     = "Moblock blocks with iptables."
 DEPS       = ""
 
 ###############################################################################

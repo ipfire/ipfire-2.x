@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = webcyradm
 PAK_VER    = 1
 
-DESCDE     = "Ein in PHP geschriebenes Frontend für das Verwalten von Emailaccounts."
-DESCEN     = "A frontend for managing email accounts written in PHP."
 DEPS       = "cyrusimap postfix"
 
 ###############################################################################

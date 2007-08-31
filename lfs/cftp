@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cftp
 PAK_VER    = 1
 
-DESCDE     = "Eine grafischer FTP-Client."
-DESCEN     = "A graphical ftp client."
 DEPS       = ""
 
 ###############################################################################

@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = spandsp
 PAK_VER    = 1
 
-DESCDE     = "Ein Plugin zum Faxen mit Asterisk."
-DESCEN     = "A plugin for faxing with asterisk."
 DEPS       = "libtiff"
 
 ###############################################################################

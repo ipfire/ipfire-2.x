@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libogg
 PAK_VER    = 1
 
-DESCDE     = "Eine Libary zum Abspielen von ogg-Dateien."
-DESCEN     = "A library for playing ogg-files."
 DEPS       = ""
 
 ###############################################################################

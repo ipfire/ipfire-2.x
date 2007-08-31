@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = icecast
 PAK_VER    = 1
 
-DESCDE     = "Ein Musik-Streamer."
-DESCEN     = "A music streamer."
 DEPS       = "libshout lame sox libvorbis libogg"
 
 ###############################################################################

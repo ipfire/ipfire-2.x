@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sox
 PAK_VER    = 1
 
-DESCDE     = "Sox spielt gsm-Dateien ab."
-DESCEN     = "Sox is a player for gsm-files."
 DEPS       = "libvorbis"
 
 ###############################################################################

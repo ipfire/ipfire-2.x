@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libshout
 PAK_VER    = 1
 
-DESCDE     = "Eine Musik-Bibliothek."
-DESCEN     = "A music library."
 DEPS       = ""
 
 ###############################################################################

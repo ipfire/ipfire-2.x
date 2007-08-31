@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = lame
 PAK_VER    = 1
 
-DESCDE     = "Ein Konsolen-MP3-Codec."
-DESCEN     = "A mp3 codec for console."
 DEPS       = "libmad"
 
 ###############################################################################

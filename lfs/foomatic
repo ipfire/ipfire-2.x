@@ -35,8 +35,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = foomatic
 PAK_VER    = 1
 
-DESCDE     = "Foomatic beinhaltet Filter und Treiber für CUPS."
-DESCEN     = "Foomatic is a collection of filters and ppds for cups."
 DEPS       = "cups ghostscript"
 
 ###############################################################################

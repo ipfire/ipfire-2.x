@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nano
 PAK_VER    = 1
 
-DESCDE     = "nano ist ein bequemer Texteditor für die Konsole."
-DESCEN     = "nano is a text editor for console."
 DEPS       = ""
 
 ###############################################################################

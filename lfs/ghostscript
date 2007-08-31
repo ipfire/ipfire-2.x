@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
 PAK_VER    = 1
 
-DESCDE     = "Eine Adobe-Postscript-Alternative."
-DESCEN     = "An alternative to Adobe-Postscript."
 DEPS       = ""
 
 ###############################################################################

@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ipfireseeder
 PAK_VER    = 2
 
-DESCDE     = ""
-DESCEN     = ""
 DEPS       = "rtorrent"
 
 ###############################################################################

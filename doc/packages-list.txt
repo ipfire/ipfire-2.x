@@ -65,7 +65,6 @@
 * dhcp-3.0.4
 * dhcpcd-2.0.8
 * diffutils-2.8.1
-* dnsmasq-2.33
 * dnsmasq-2.40
 * dosfstools-2.11
 * e2fsprogs-1.39
@@ -172,6 +171,7 @@
 * mldonkey-2.9.0
 * module-init-tools-3.2.2
 * mp3blaster-3.2.3
+* mpc-0.12.1
 * mpd-0.13.0
 * mpfire-ipfire
 * mpg123-0.59r
@@ -205,7 +205,6 @@
 * pkg-config-0.20
 * popt-1.10.4
 * portmap_5beta
-* postfix-2.2.11
 * postfix-2.4.5
 * ppp-2.4.4
 * procps-3.2.6

@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = alsa
 PAK_VER    = 1
 
-DESCDE     = "Alsa ist ein Linux-Sound-Server."
-DESCEN     = "Alsa is a linux sound server."
 DEPS       = ""
 
 ###############################################################################

@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = amavisd
 PAK_VER    = 1
 
-DESCDE     = "Ein Daemon zum scannen von Emails."
-DESCEN     = "A daemon for scanning emails."
 DEPS       = "clamav spamassassin"
 
 ###############################################################################

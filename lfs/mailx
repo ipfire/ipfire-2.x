@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mailx
 PAK_VER    = 1
 
-DESCDE     = "Tools zum Versenden von Mails."
-DESCEN     = "Tools for sending mails from console."
 DEPS       = ""
 
 ###############################################################################

@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = iftop
 PAK_VER    = 1
 
-DESCDE     = "iftop stellt Interfacestatistiken dar."
-DESCEN     = "iftop shows what's going on with your network interfaces."
 DEPS       = ""
 
 ###############################################################################

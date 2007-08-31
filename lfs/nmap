@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nmap
 PAK_VER    = 1
 
-DESCDE     = "nmap ist ein vielseitiger Portscanner."
-DESCEN     = "nmap is a versatile portscanner."
 DEPS       = ""
 
 ###############################################################################

@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libpri
 PAK_VER    = 1
 
-DESCDE     = "Libpri ist eine Hilfsbibliothek für Asterisk."
-DESCEN     = "Libpri is a library used by asterisk PBX."
 DEPS       = ""
 
 ###############################################################################

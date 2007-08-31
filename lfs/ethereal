@@ -34,8 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ethereal
 PAK_VER    = 1
 
-DESCDE     = "Ethereal ist ein Netzwerksniffer."
-DESCEN     = "Ethereal is a network sniffer."
 DEPS       = ""
 
 ###############################################################################
