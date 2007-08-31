@@ -203,6 +203,7 @@
 * pcre-6.7
 * perl-5.8.8
 * php-4.4.4
+* php-5.2.4
 * pkg-config-0.20
 * popt-1.10.4
 * portmap_5beta
