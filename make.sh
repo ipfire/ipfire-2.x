@@ -485,6 +485,7 @@ buildipfire() {
   ipfiremake mpg123
   ipfiremake mpfire
   ipfiremake guardian
+  ipfiremake libid3tag
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis
