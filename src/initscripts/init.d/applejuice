@@ -1,32 +1,53 @@
-#!/bin/bash
-HOME=/opt/applejuice
-JAVA=/usr/bin/java
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/applejuice
+#
+# Description : Applejuice Init script
+#
+# Authors     : Michael Tremer - www.ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/applejuice/settings)
 
 
-case "$1" in
-  start)
-	cd $HOME
-	screen -dmS ajcore $JAVA -Xmx${RAMSIZE}m -Djava.library.path=. -jar ajcore.jar
-	echo -e "Applejuice is running!"; logger -t ipfire "Applejuice started!"
-	;;
-  stop)
-	killall -9 java
-	echo -e "Applejuice is stopped!"; logger -t ipfire "Applejuice stopped!"
-	;;
-  status)
-	if pidof java > /dev/null ; then
-		echo -e "Applejuice is running!"
-		exit 0
-	else
-		echo -e "Applejuice is not running!"
+case "${1}" in
+	start)
+		boot_mesg "Starting Applejuice Core..."
+		cd /opt/applejuice
+		screen -dmS ajcore /usr/bin/java -Xmx${RAMSIZE} -Djava.library.path=. -jar ajcore.jar
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping Applejuice Core..."
+		killproc /usr/bin/java
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/java
+		;;
+		
+	core)
+		screen -x ajcore
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status|core}"
 		exit 1
-	fi
-	;;
-  restart)
-	$0 stop
-	$0 start
-	;;
-  *)
-	echo -e "Usage: $0 (start|stop|restart|status)"
+		;;
 esac
+
+# End $rc_base/init.d/applejuice
