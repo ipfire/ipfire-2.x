@@ -1,0 +1,38 @@
+#!/bin/sh
+# Begin $rc_base/init.d/cyrus-imapd
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting the Cyrus IMAP Server..."
+		/usr/lib/cyrus/master &
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping the Cyrus IMAP Server..."
+		killproc /usr/lib/cyrus/master
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/lib/cyrus/master
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/cyrus-imapd

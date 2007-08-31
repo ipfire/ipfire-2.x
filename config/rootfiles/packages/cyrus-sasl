@@ -1,3 +1,4 @@
+etc/rc.d/init.d/cyrus-sasl
 #usr/include/sasl
 #usr/include/sasl/hmac-md5.h
 #usr/include/sasl/md5.h

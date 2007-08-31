@@ -1,3 +1,4 @@
+etc/rc.d/init.d/cyrus-imapd
 usr/bin/cyradm
 usr/bin/imtest
 usr/bin/installsieve
