@@ -86,8 +86,6 @@
 * fwhits
 * gawk-3.1.5
 * gcc-4.0.3
-* gcc-4.0.3-install1
-* gcc-4.0.3-install2
 * gd-2.0.33
 * gdbm-1.8.3
 * gettext-0.14.5
@@ -246,9 +244,6 @@
 * tiff-3.8.2
 * traceroute-1.4a12
 * tripwire-2.4.1.2
-* uClibc-0.9.28-pass1
-* uClibc-0.9.28-pass2
-* uClibc-0.9.28-pass3
 * udev-096
 * udev-096-klibc
 * unzip552
