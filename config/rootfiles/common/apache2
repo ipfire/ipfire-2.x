@@ -1241,7 +1241,7 @@ usr/sbin/httpd
 #usr/share/man/man8/suexec.8
 var/log/httpd
 etc/httpd/conf/conf.d
-#etc/httpd/conf/conf.d/php4.conf
+#etc/httpd/conf/conf.d/php5.conf
 etc/httpd/conf/default-server.conf
 etc/httpd/conf/global.conf
 etc/httpd/conf/hostname.conf
