@@ -246,7 +246,7 @@ END
 		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b>
 				<td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
 		<tr><td align="center">
-			<p>($Lang::tr{'pakfire install description'}</p>
+			<p>$Lang::tr{'pakfire install description'}</p>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>	
 				<select name="INSPAKS" size="10" multiple>
 END
@@ -260,7 +260,7 @@ print <<END;
 			</form>
 
 		<td align="center">
-			<p>($Lang::tr{'pakfire uninstall description'}</p>
+			<p>$Lang::tr{'pakfire uninstall description'}</p>
 		 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<select name="DELPAKS" size="10" multiple>
 END

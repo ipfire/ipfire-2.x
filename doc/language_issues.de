@@ -57,6 +57,7 @@ WARNING: translation string unused: backup password
 WARNING: translation string unused: backup sets
 WARNING: translation string unused: backup to floppy
 WARNING: translation string unused: bad characters in
+WARNING: translation string unused: bitrate
 WARNING: translation string unused: bleeding rules
 WARNING: translation string unused: blue access use hint
 WARNING: translation string unused: blue interface
@@ -94,6 +95,7 @@ WARNING: translation string unused: ddns help dnsmadeeasy
 WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
 WARNING: translation string unused: debugme
+WARNING: translation string unused: deep scan directories
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -138,6 +140,7 @@ WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
+WARNING: translation string unused: frequency
 WARNING: translation string unused: fritzdsl help
 WARNING: translation string unused: fritzdsl upload
 WARNING: translation string unused: from email adr
@@ -220,6 +223,7 @@ WARNING: translation string unused: min size
 WARNING: translation string unused: minutes
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
+WARNING: translation string unused: mode
 WARNING: translation string unused: modulation
 WARNING: translation string unused: monthly firewallhits
 WARNING: translation string unused: monthly start day bad
@@ -389,5 +393,3 @@ WARNING: translation string unused: week
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: pause
-WARNING: untranslated string: resume

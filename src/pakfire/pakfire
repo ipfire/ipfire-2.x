@@ -45,10 +45,16 @@
 	#
 	if ( $0 =~ /pakfire-update$/ ) {
 		&Pakfire::message("CRON INFO: Running an update");
+		my $random = int(rand(3600));
+		&Pakfire::logger("CRON INFO: Waiting for $random seconds.");
+		sleep($random);
 		$ARGV[0] = "update";
 		$interactive = 0;
 	} elsif ( $0 =~ /pakfire-upgrade$/ ) {
 		&Pakfire::message("CRON INFO: Running an upgrade");
+		my $random = int(rand(3600));
+		&Pakfire::logger("CRON INFO: Waiting for $random seconds.");
+		sleep($random);
 		$ARGV[0] = "upgrade";
 		$interactive = 0;
 	}
