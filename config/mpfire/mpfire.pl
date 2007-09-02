@@ -1,80 +1,44 @@
 #!/usr/bin/perl
-###############################################################################
-#                                                                             #
-# IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
-#                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
-# it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
-#                                                                             #
-# This program is distributed in the hope that it will be useful,             #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
-# GNU General Public License for more details.                                #
-#                                                                             #
-# You should have received a copy of the GNU General Public License           #
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
-#                                                                             #
-###############################################################################
-
-use MP3::Tag;
-use MP3::Info;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my $filename = "";
-my %songs = "";
-my $debug = 0;
-my $temp;
+my $debug = 0; 
 
-if ($ARGV[0] eq 'scan') {
-my $command = "find ";
-chomp $ARGV[1];
-$command .= "\"$ARGV[1]\"";
-if ($ARGV[2] eq 'off'){$command .= " -maxdepth 1";}
-$command .= " -name *.mp3";
-my @files = `$command`;
-
-&getExistingSongs();
-
-foreach (@files){
- $filename = $_;
- chomp($filename)
-  &getSongInfo();
-  }
-open(DATEI, ">${General::swroot}/mpfire/db/songs.db") || die "Kann Datenbank nicht speichern";
-print DATEI %songs;
-close(DATEI);
+if ( ! -e /var/run/mpd.pid){
+  system("mpd >/dev/null");
 }
 
-if ($ARGV[0] eq 'getdb') {
-  &getExistingSongs();
-  print %songs;
-  }
+if ($ARGV[0] eq 'scan') {
+  if ($debug){print "Creating Database\n";}
+  system("mpd --create-db >/dev/null");
+}
 elsif ($ARGV[0] eq 'play') {
-  &checkplaylist();
   &checkmute();
+  &clearplaylist();
   if ($debug){print "Yes we are called and we will play $ARGV[1]\n";}
-  system("/usr/bin/mpg123 -b 1024 --aggressive -q \"$ARGV[1]\" 2>/dev/null >/dev/null &");
+  system("mpc add \"$ARGV[1]\" >/dev/null && mpc play >/dev/null");
+  }
+elsif ($ARGV[0] eq 'playadd') {
+  if ($debug){print "Yes we are called and we will add $ARGV[1]\n";}
+  system("mpc add \"$ARGV[1]\" >/dev/null && mpc play >/dev/null");
+  }
+elsif ($ARGV[0] eq 'playlist') {
+  &checkmute();
+  &clearplaylist();
+  if ($debug){print "Yes we are called and we will play your Playlist\n";}
+  system("mpc load playlist >/dev/null && mpc play >/dev/null");
+  }
+elsif ($ARGV[0] eq 'clearplaylist') {
+  if ($debug){print "Deleting playlist\n";}
+  &clearplaylist();
   }
 elsif ($ARGV[0] eq 'stop') {
-  my $PID = `ps -ef \| grep "wget -qO" \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
-  if ( $PID ne '' ){
-   if ($debug){print "Stopping $PID\n";}
-   system("kill -KILL $PID");
-   my $PID =  `ps -ef \| grep "mpg123 -b 1024 --aggressive -Zq -" \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
-   if ($debug){print "Killing Process $PID\n";}
-   system("kill -KILL $PID");
-  }
-  else{
-   my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| awk '{  print \$2 }'`;
-   if ($debug){print "Stopping $PID\n";}
-   system("kill -KILL $PID");
-  }
+    my $PID = 'cat /var/run/mpd.pid';
+    if ($debug){print "Killing Process $PID\n";}
+    system("mpc stop >/dev/null");
   }
 elsif ($ARGV[0] eq 'volup') {
   if ($debug){print "Increasing Volume\n";}
@@ -87,59 +51,33 @@ elsif ($ARGV[0] eq 'voldown') {
   system("/usr/bin/amixer set PCM $ARGV[1]%- 2>/dev/null >/dev/null");
   }
 elsif ($ARGV[0] eq 'playall') {
-  &checkplaylist();
-  &checkmute();
   if ($debug){print "Playing everything\n";}
-  system("/usr/bin/mpg123 -b 1024 --aggressive -Zq@ /var/ipfire/mpfire/playlist 2>/dev/null >/dev/null &"); 
+  system("mpc play >/dev/null"); 
   }
-elsif ($ARGV[0] eq 'pause') {
-  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| grep -v "grep" \| awk '{  print \$2 }'`;
-  if ($debug){print "Pausing Process $PID\n";}
-  system("kill -STOP $PID");
-  }
-elsif ($ARGV[0] eq 'resume') {
-  my $PID =  `ps -ef \| grep mpg123 \| grep playlist \| head -1 \| grep -v "sh -c" \| grep -v "grep" \| awk '{  print \$2 }'`;
-  if ($debug){print "Resuming Process $PID\n";}
-  system("kill -CONT $PID");
+elsif ($ARGV[0] eq 'toggle') {
+  system("mpc toggle >/dev/null");
   }
 elsif ($ARGV[0] eq 'next') {
   if ($debug){print "Next Song\n";}
-  my $PID =  `ps -ef | grep mpg123 | grep playlist | head -1 | awk '{  print \$2 }'`;
-  system("kill -SIGINT $PID");
+  system("mpc next >/dev/null[");
+  }
+elsif ( $ARGV[0] eq 'prev' ) {
+  if ($debug){print "Previous Song\n";}
+  system("mpc prev >/dev/null");  
   }
 elsif ($ARGV[0] eq 'song') {
-  &checkmute();
-  my $song = `lsof -nX \| grep mpg123 \| grep REG \| grep mem | grep mp3 \| grep -v "sh -c" \| grep -v "grep"`;
-  my @song = split(/\//,$song);
-  my $i = @song;
-  if ( $i == 0 ){
-  my $song = `ps -ef \| grep "wget -qO" \| grep -v "sh -c" \| grep -v "grep"`;
-  my @song = split(/http\:\/\//,$song);
-  my $temp = $song[1];
-  my @song = split(/ /,$temp);
-  print $song[0];
+  my $song = `mpc \| head -2 | grep -v volume`;
+  print $song;
   }
-  else { print $song[$i-1];}
+elsif ($ARGV[0] eq 'stats') {
+  my $song = `mpc stats | grep Songs`;
+  print $song;
   }
 elsif ($ARGV[0] eq 'playweb') {
-  &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
   &checkmute();
-
-			if ($proxysettings{'UPSTREAM_PROXY'}) {
-			  if ($proxysettings{'UPSTREAM_USER'}) {
-			    &checkm3uproxy();
-			    if ($debug){print "Playing webstream\n";}
-          system("wget -qO - `wget -qO - http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@$proxysettings{'UPSTREAM_PROXY'}$ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &");
-          }
-          else {
-          &checkm3uproxyuser();
-          if ($debug){print "Playing webstream\n";}
-          system("wget -qO - `wget -qO - http://$proxysettings{'UPSTREAM_PROXY'}$ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &");} 
-			} else {
-        &checkm3u();
-        if ($debug){print "Playing webstream\n";}
-        system("wget -qO - `wget -qO - http://$ARGV[1]` | mpg123 -b 1024 --aggressive -Zq - 2>/dev/null >/dev/null &");
-			}
+  &clearplaylist();
+  if ($debug){print "Playing webstream $ARGV[1] \n";}
+     system("mpc add http://$ARGV[1] >/dev/null && mpc play >/dev/null && sleep 1");
   }
 elsif ($ARGV[0] eq 'volume') {
  $temp = "Master - ";
@@ -149,26 +87,12 @@ elsif ($ARGV[0] eq 'volume') {
  print $temp;
 }
 
-sub getSongInfo(){
-  my $mp3 = MP3::Tag->new($filename);
-  my ($title, $track, $artist, $album, $comment, $year, $genre) = $mp3->autoinfo();
-  my $info = get_mp3info($filename);
-  $mp3->close();
-  $songs{$filename} = "|".$artist."|".$title."|".$track."|".$album."|".$year."|".$genre."|".$info->{MM}."|".$info->{SS}."|".$info->{BITRATE}."|".$info->{FREQUENCY}."|".$info->{MODE}."\n";
+sub clearplaylist(){
+  system("mpc clear >/dev/null");  
   }
 
-sub getExistingSongs(){
-  open(DATEI, "<${General::swroot}/mpfire/db/songs.db") || die "Keine Datenbank vorhanden";
-  my @Zeilen = <DATEI>;
-  close(DATEI);
-  foreach (@Zeilen){
-    my @Zeile = split(/\|/,$_);
-    $songs{$Zeile[0]} = "|".$Zeile[1]."|".$Zeile[2]."|".$Zeile[3]."|".$Zeile[4]."|".$Zeile[5]."|".$Zeile[6]."|".$Zeile[7]."|".$Zeile[8]."|".$Zeile[9]."|".$Zeile[10]."|".$Zeile[11]."\n";
-    }
- }
- 
 sub checkplaylist(){
- my $Datei = "/var/ipfire/mpfire/playlist";
+ my $Datei = "/var/ipfire/mpfire/playlist.m3u";
  my @Info = stat($Datei);
  if ( $Info[7] eq '' || $Info[7] eq '0' ){print "There is no playlist";exit(1);}
 }
@@ -186,19 +110,4 @@ sub checkmute(){
   if ($debug){print "Master was muted - umuting.\n";}
   system("amixer set Master toggle");
   } 
-}
-
-sub checkm3u(){
- my $Datei = system("wget -q --spider http://$ARGV[1]");
- if ( $Datei ne '0' ){print "We are unable to get the stream";exit(1);}
-}
-
-sub checkm3uproxy(){
- my $Datei = system("wget -q --spider http://$ARGV[1]");
- if ( $Datei ne '0' ){print "We are unable to get the stream";exit(1);}
-}
-
-sub checkm3uproxyuser(){
- my $Datei = system("wget -q --spider http://$ARGV[1]");
- if ( $Datei ne '0' ){print "We are unable to get the stream";exit(1);}
 }

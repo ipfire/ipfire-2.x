@@ -1,28 +1,15 @@
 #!/usr/bin/perl
-###############################################################################
-#                                                                             #
-# IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
-#                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
-# it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
-#                                                                             #
-# This program is distributed in the hope that it will be useful,             #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
-# GNU General Public License for more details.                                #
-#                                                                             #
-# You should have received a copy of the GNU General Public License           #
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
-#                                                                             #
-###############################################################################
+#
+# IPFire CGIs
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) The IPFire Team
 
 use strict;
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -35,11 +22,6 @@ my %checked = ();
 my $message = '0';
 my $errormessage = "";
 
-open(DATEI, "<${General::swroot}/mpfire/db/songs.db") || die "No Database found";
-my @songdb = <DATEI>;
-close(DATEI);
-@songdb = sort(@songdb);
-
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
@@ -48,6 +30,44 @@ close(DATEI);
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;' />" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
 $mpfiresettings{'PAGE'} = "1";
+
+open(DATEI, "<${General::swroot}/mpfire/db/mpd.db") || die "No Database found";
+my @songdb = <DATEI>;
+close(DATEI);
+
+my @artist; my @album;  my @genre;  my @year; my $linecount = 0; my @currentsong = ""; my %songs;
+foreach (@songdb){
+  
+  if ( $_ =~ /mtime: / ){
+   $songs{$currentsong[1]}="$currentsong[2]|$currentsong[3]|$currentsong[4]|$currentsong[5]|$currentsong[6]|$currentsong[7]|$currentsong[8]|$currentsong[9]";
+   push(@artist,$currentsong[4]);
+   push(@album,$currentsong[6]);
+   push(@year,$currentsong[8]);
+   push(@genre,$currentsong[9]);
+   @currentsong = "";
+   }
+  elsif ( $_ =~ /key: / || $_ =~ /file: / || $_ =~ /Time: / || $_ =~ /Artist: / || $_ =~ /Title: / || $_ =~ /Album: / || $_ =~ /Track: / || $_ =~ /Date: / || $_ =~ /Genre: / ){
+   my @temp = split(/: /,$_);
+   push(@currentsong,$temp[1]);
+   }
+  else {
+   next;
+   }
+ }
+  
+  my %hash = map{ $_, 1 }@artist;
+  @artist = sort keys %hash;
+  my %hash = map{ $_, 1 }@album;
+  @album = sort keys %hash;
+   my %hash = map{ $_, 1 }@year;
+  @year = sort keys %hash;
+  my %hash = map{ $_, 1 }@genre;
+  @genre = sort keys %hash;
+  
+  my $artistcount = $#artist+1;
+  my $albumcount = $#album+1;
+  my $yearcount = $#year+1;
+  my $genrecount = $#genre+1;
 
 &Header::getcgihash(\%mpfiresettings);
 &Header::openpage($Lang::tr{'mpfire'}, 1, "<meta http-equiv='refresh' content='120' />");
@@ -60,110 +80,111 @@ if ( $mpfiresettings{'ACTION'} eq "scan" )
 {
 delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};
 &General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);
-$message=system("/usr/local/bin/mpfirectrl scan $mpfiresettings{'SCANDIR'} $mpfiresettings{'SCANDIRDEPS'}");
+open(DATEI, "<${General::swroot}/mpfire/mpd.conf") || die "Datei nicht gefunden";
+my @Zeilen = <DATEI>;
+close(DATEI);
+open(DATEI, ">${General::swroot}/mpfire/mpd.conf") || die "Datei nicht gefunden";
+foreach (@Zeilen){
+if ( $_ =~ /music_directory/){print DATEI "music_directory \"".$mpfiresettings{'MUSICDIR'}."\"\n";}
+else {print DATEI $_;}
+}
+close(DATEI);
+
+$message=system("/usr/local/bin/mpfirectrl scan");
 refreshpage();
 }
 elsif ( $mpfiresettings{'ACTION'} eq ">" ){$message=system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
 elsif ( $mpfiresettings{'ACTION'} eq "x" ){$message=system("/usr/local/bin/mpfirectrl stop");}
-elsif ( $mpfiresettings{'ACTION'} eq "||" ){$message=system("/usr/local/bin/mpfirectrl pause");}
-elsif ( $mpfiresettings{'ACTION'} eq "|>" ){$message=system("/usr/local/bin/mpfirectrl resume");}
+elsif ( $mpfiresettings{'ACTION'} eq "|>" ){$message=system("/usr/local/bin/mpfirectrl toggle");}
+elsif ( $mpfiresettings{'ACTION'} eq "<<" ){$message=system("/usr/local/bin/mpfirectrl prev");}
 elsif ( $mpfiresettings{'ACTION'} eq ">>" ){$message=system("/usr/local/bin/mpfirectrl next");}
-elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){$message=system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
 elsif ( $mpfiresettings{'ACTION'} eq "+" ){$message=system("/usr/local/bin/mpfirectrl volup 5");}
 elsif ( $mpfiresettings{'ACTION'} eq "-" ){$message=system("/usr/local/bin/mpfirectrl voldown 5");}
 elsif ( $mpfiresettings{'ACTION'} eq "++" ){$message=system("/usr/local/bin/mpfirectrl volup 10");}
 elsif ( $mpfiresettings{'ACTION'} eq "--" ){$message=system("/usr/local/bin/mpfirectrl voldown 10");}
-elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){$message=system("/usr/local/bin/mpfirectrl playall");}
-elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){$message=system("unlink ${General::swroot}/mpfire/playlist && touch ${General::swroot}/mpfire/playlist");}
-elsif ( $mpfiresettings{'ACTION'} eq "addtoplaylist" ){
-open(DATEI, ">>${General::swroot}/mpfire/playlist") || die "Could not add playlist";
-print DATEI $mpfiresettings{'FILE'}."\n";
-close(DATEI);
-}
+elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){$message=system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
+elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){$message=system("/usr/local/bin/mpfirectrl playlist");}
+elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){$message=system("/usr/local/bin/mpfirectrl clearplaylist");}
+elsif ( $mpfiresettings{'ACTION'} eq "addtoplaylist" ){$message=system("/usr/local/bin/mpfirectrl","playadd","\"$mpfiresettings{'FILE'}\"");}
+elsif ( $mpfiresettings{'ACTION'} eq "playall" ){$message=system("/usr/local/bin/mpfirectrl playall");}
 elsif ( $mpfiresettings{'ACTION'} eq "playalbum" )
 {
-my @temp = "";
-my @album = split(/\|/,$mpfiresettings{'album'});
-my %hash = map{ $_, 1 }@album;
+my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'album'});
 
-foreach (@songdb){
-  my @song = split(/\|/,$_);
-  chomp($song[0]);
-  push(@temp,$song[0]."\n") if exists $hash{$song[4]};
+foreach (keys(%songs)){
+  @song = split(/\|/,$songs{$_});$song[4] =~ s/\W/ /g;
+    
+  foreach (@select){
+    $_ =~ s/\W/ /g;
+    if ( $song[4] =~ /$_/ ){push(@temp,$song[0]);}
   }
-open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+}
+ 
+open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playall");
+$message=system("/usr/local/bin/mpfirectrl playlist");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playartist" )
 {
-my @temp = "";
-my @artist = split(/\|/,$mpfiresettings{'artist'});
-my %hash = map{ $_, 1 }@artist;
+my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'artist'});
 
-foreach (@songdb){
-  my @song = split(/\|/,$_);
-  chomp($song[0]);
-    push(@temp,$song[0]."\n") if exists $hash{$song[1]};
+foreach (keys(%songs)){
+  @song = split(/\|/,$songs{$_});$song[2] =~ s/\W/ /g;
+    
+  foreach (@select){
+    $_ =~ s/\W/ /g;
+    if ( $song[2] =~ /$_/ ){push(@temp,$song[0]);}
   }
-open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+}
+
+open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playall");
+$message=system("/usr/local/bin/mpfirectrl playlist");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playyear" )
 {
-my @temp = "";
-my @year = split(/\|/,$mpfiresettings{'year'});
-my %hash = map{ $_, 1 }@year;
+my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'year'});
 
-foreach (@songdb){
-  my @song = split(/\|/,$_);
-  chomp($song[0]);
-    push(@temp,$song[0]."\n") if exists $hash{$song[5]};
+foreach (keys(%songs)){
+  @song = split(/\|/,$songs{$_});$song[6] =~ s/\W/ /g;
+    
+  foreach (@select){
+    $_ =~ s/\W/ /g;
+    if ( $song[6] =~ /$_/ ){push(@temp,$song[0]);}
   }
-open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+}
+
+open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playall");
+$message=system("/usr/local/bin/mpfirectrl playlist");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playgenre" )
 {
-my @temp = "";
-my @genre = split(/\|/,$mpfiresettings{'genre'});
-my %hash = map{ $_, 1 }@genre;
+my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'genre'});
 
-foreach (@songdb){
-  my @song = split(/\|/,$_);
-  chomp($song[0]);
-    push(@temp,$song[0]."\n") if exists $hash{$song[6]};
+foreach (keys(%songs)){
+  @song = split(/\|/,$songs{$_});$song[7] =~ s/\W/ /g;
+    
+  foreach (@select){
+    $_ =~ s/\W/ /g;
+    if ( $song[7] =~ /$_/ ){push(@temp,$song[0]);}
   }
-open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
-print DATEI @temp;
-close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playall");
 }
-elsif ( $mpfiresettings{'ACTION'} eq "playall" )
-{
-my @temp = "";
-foreach (@songdb){
-  my @song = split(/\|/,$_);
-  chomp($song[0]);
-  push(@temp,$song[0]."\n");
-  }
-open(DATEI, ">${General::swroot}/mpfire/playlist") || die "Could not add playlist";
+
+open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playall");
+$message=system("/usr/local/bin/mpfirectrl playlist");
 }
 elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);refreshpage();}
 
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ####################################
 
-$mpfiresettings{'SCANDIR'} = "/";
-$mpfiresettings{'SHOWLIST'} = "off";
+$mpfiresettings{'MUSICDIR'} = "/";
 
 &General::readhash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 
@@ -179,9 +200,7 @@ print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'Scan for Files'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'Scan from Directory'}</td><td align='left'><input type='text' name='SCANDIR' value='$mpfiresettings{'SCANDIR'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'deep scan directories'}</td><td align='left'>on <input type='radio' name='SCANDIRDEPS' value='on' checked='checked'/>/
-																									                                          <input type='radio' name='SCANDIRDEPS' value='off'/> off</td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'Scan from Directory'}</td><td align='left'><input type='text' name='MUSICDIR' value='$mpfiresettings{'MUSICDIR'}' size="30" /></td></tr>
 <tr><td align='center' colspan='2'><input type='hidden' name='ACTION' value='scan' />
                               <input type='image' alt='$Lang::tr{'Scan for Files'}' title='$Lang::tr{'Scan for Files'}' src='/images/edit-find.png' /></td></tr>																				
 </table>
@@ -195,6 +214,8 @@ if ( $song eq "" ){$song = "None";}
 
 my $Volume = `/usr/local/bin/mpfirectrl volume`;
 $Volume=~s/<break>/<br \/>/g;
+my $stats = `mpc stats | tail -4`;
+$stats=~s/\\/<br \/>/g
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
 print <<END
@@ -203,13 +224,13 @@ print <<END
     <tr bgcolor='$color{'color20'}'>    <td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr>
 END
 ;
-if ( $#songdb eq '-1' ) {print "<tr><td colspan='5' align='center'><br/><b>total 0 songs</b><br/><br/></td></tr>";}
-else {print "<tr><td colspan='5' align='center'><br/><b>total $#songdb songs</b><br/><br/></td></tr>";}
+my $countsongs=`/usr/local/bin/mpfirectrl stats`;
+print "<tr><td colspan='5' align='center'><br/><b>".$countsongs."</b><br/><br/></td></tr>";
 print <<END
     <tr>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='||' /><input type='image' alt='$Lang::tr{'pause'}' title='$Lang::tr{'pause'}' src='/images/media-playback-pause.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='|>' /><input type='image' alt='$Lang::tr{'resume'}' title='$Lang::tr{'resume'}' src='/images/media-resume.png' /></form></td>
+    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='<<' /><input type='image' alt='$Lang::tr{'prev'}' title='$Lang::tr{'prev'}' src='/images/media-skip-backward.png' /></form></td>
+    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='|>' /><input type='image' alt='$Lang::tr{'toggle'}' title='$Lang::tr{'toggle'}' src='/images/media-resume.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='playall' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>>' /><input type='image' alt='$Lang::tr{'next'}' title='$Lang::tr{'next'}' src='/images/media-skip-forward.png' /></form></td>
     </tr>
@@ -224,30 +245,14 @@ print <<END
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='++' /><input type='image' alt='$Lang::tr{'volup10'}' title='$Lang::tr{'volup10'}' src='/images/audio-volume-high-red.png' /></form></td>
     </tr>
 <tr><td colspan='5' align='center'>$Volume</td></tr>
+<tr><td colspan='5' align='center'><br />$stats</td></tr>
 </table>
 END
 ;
 &Header::closebox();
 
-if ( $#songdb ne '0' ){
 &Header::openbox('100%', 'center', $Lang::tr{'quick playlist'});
 
-my @artist; my @album;  my @genre;  my @year;
-foreach (@songdb){
-  my @song = split(/\|/,$_);
-  push(@artist,$song[1]);   push(@album,$song[4]);  push(@year,$song[5]);   push(@genre,$song[6]);}
-  my %hash = map{ $_, 1 }@artist;
-  @artist = sort keys %hash;
-  my %hash = map{ $_, 1 }@album;
-  @album = sort keys %hash;
-  my %hash = map{ $_, 1 }@year;
-  @year = sort keys %hash;
-  my %hash = map{ $_, 1 }@genre;
-  @genre = sort keys %hash;
-  my $artistcount = $#artist+1;
-  my $albumcount = $#album+1;
-  my $yearcount = $#year+1;
-  my $genrecount = $#genre+1;
 print "<table width='95%' cellspacing='0'>";
 if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'}</b></td></tr>";}
 else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - ".$artistcount."</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - ".$albumcount."</b></td></tr>";}
@@ -306,8 +311,6 @@ print <<END
 END
 ;
 &Header::closebox();
-}
-
 
 if ( $mpfiresettings{'SHOWLIST'} eq "on" ){
 
@@ -319,7 +322,7 @@ print <<END
 <tr><td align='center' colspan='9'><br/>$Lang::tr{'Pages'}<br/><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='submit' name='PAGE' value='all' /><br/>
 END
 ;
-my $pages =(int($#songdb/100)+1);
+my $pages =(int(keys(%songs)/100)+1);
 for(my $i = 1; $i <= $pages; $i++) {
 print "<input type='submit' name='PAGE' value='$i' />";
 if (!($i % 205)){print"<br/>";}
@@ -332,42 +335,37 @@ print <<END
     <td align='center'><b>$Lang::tr{'album'}</b></td>
     <td align='center'><b>$Lang::tr{'year'}</b></td>
     <td align='center'><b>$Lang::tr{'genre'}</b></td>
-    <td align='center'><b>$Lang::tr{'length'}<br/>$Lang::tr{'bitrate'} - $Lang::tr{'frequency'}</b></td>
-    <td align='center'><b>$Lang::tr{'mode'}</b></td></tr>
+    <td align='center'><b>$Lang::tr{'length'}</b></td></tr>
 END
 ;
 my $lines=0;my $i=0;my $begin;my $end;
 if ( $mpfiresettings{'PAGE'} eq 'all' ){
   $begin=0;
-  $end=$#songdb;
+  $end=keys(%songs);
 }
 else{
   $begin=(($mpfiresettings{'PAGE'}-1) * 100);
   $end=(($mpfiresettings{'PAGE'} * 100)-1);
 }
-foreach (@songdb){
+foreach (keys(%songs)){
   if (!($i >= $begin && $i <= $end)){
-  #print $begin."->".$i."<-".$end."\n";
+# print $begin."->".$i."<-".$end."\n";
   $i++;next;}
-  my @song = split(/\|/,$_);
+  my @song = split(/\|/,$songs{$_});
+  my $minutes = sprintf ("%.0f", $song[1] / 60 );
+  my $seconds = $song[1] % 60;
   
   if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
-  $song[0]=~s/\/\//\//g;   
   print <<END
   <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='addtoplaylist' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/list-add.png' /></form><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
-  <td align='center'>$song[1]<br/>$song[2]</td>
-  <td align='center'>$song[3]</td>
-  <td align='center'>$song[4]</td>
+  <td align='center'>$song[2]<br/>$song[3]</td>
   <td align='center'>$song[5]</td>
+  <td align='center'>$song[4]</td>
   <td align='center'>$song[6]</td>
-  <td align='center'>$song[7]:$song[8]<br/>$song[9] - $song[10]</td>
+  <td align='center'>$song[7]</td>
+  <td align='center'>$minutes:$seconds</td></tr>
 END
 ;
-    if ( $song[11] eq "0\n" ) {print "<td align='center'>Stereo</td></tr>"; }
-    elsif ( $song[11] eq "1\n" ) {print "<td align='center'>Joint<br/>Stereo</td></tr>"; }
-    elsif ( $song[11] eq "2\n" ) {print "<td align='center'>Dual<br/>Channel</td></tr>"; }
-    elsif ( $song[11] eq "3\n" ) {print "<td align='center'>Single<br/>Channel</td></tr>"; }
-    else {print "<td align='center'></td></tr>"; }
   $lines++;
   $i++;
   }
@@ -377,16 +375,7 @@ print "</table>";
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire playlist'});
 
-open(DATEI, "<${General::swroot}/mpfire/playlist") || die "Could not open playlist";
-my @playlist = <DATEI>;
-close(DATEI);
-
-my %hash;
-foreach (@songdb){
-  my @song = split(/\|/,$_);
-  chomp($song[0]);
-  $hash{$song[0]}=$song[1]." - ".$song[2]." - ".$song[7].":".$song[8];
-}
+my @playlist = `mpc playlist`;
 
 print <<END
 <table width='95%' cellspacing='0'>
@@ -394,7 +383,7 @@ print <<END
 <tr><td align='center' colspan='2' ><textarea cols='100' rows='10' name='playlist' style='font-size:11px;width:650px;' readonly='readonly'>
 END
 ;
-foreach (@playlist){chomp($_);print $hash{$_}."\n";}
+foreach (@playlist){print $_;}
 print <<END
 </textarea></td></tr><tr>
 <td align='right'>
@@ -429,7 +418,7 @@ END
 foreach (@webradio){
  my @stream = split(/\|/,$_);
  print <<END
- <tr><td>$stream[1]</td>
+ <tr><td><a href="$stream[2]">$stream[1]</a></td>
      <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
 </tr>
 END

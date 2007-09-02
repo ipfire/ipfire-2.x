@@ -30,9 +30,9 @@ THISAPP    = mpfire-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
-PAK_VER    = 1
+PAK_VER    = 2
 
-DEPS       = "mpg123 alsa"
+DEPS       = "mpd mpc alsa libshout libogg libmad libid3tag"
 
 ###############################################################################
 # Top-level Rules
@@ -58,9 +58,12 @@ dist:
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	-mkdir -p /var/ipfire/mpfire/{bin,db}
-	touch /var/ipfire/mpfire/{settings,playlist}
-	touch /var/ipfire/mpfire/db/songs.db
-	chown nobody.nobody /var/ipfire/mpfire/{settings,playlist}	
+	touch /var/ipfire/mpfire/{settings,playlist.m3u}
+	touch /var/ipfire/mpfire/db/mpd.db
+	touch /var/log/mpd_error.log
+	touch /var/log/mpd.log
 	install -v -m 755 $(DIR_SRC)/config/mpfire/mpfire.pl /var/ipfire/mpfire/bin
+	install -v -m 644 $(DIR_SRC)/config/mpfire/mpd.conf /var/ipfire/mpfire/
 	install -v -m 644 $(DIR_SRC)/config/mpfire/webradio /var/ipfire/mpfire/
+	chown nobody.nobody /var/ipfire/mpfire/{settings,playlist.m3u,webradio,mpd.conf}
 	@$(POSTBUILD)
