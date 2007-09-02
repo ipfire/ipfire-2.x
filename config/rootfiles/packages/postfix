@@ -13,8 +13,8 @@ etc/postfix/master.cf
 etc/postfix/mysql-canonical.cf
 etc/postfix/mysql-mydestination.cf
 etc/postfix/mysql-virtual.cf
-#etc/postfix/post-install
-#etc/postfix/postfix-files
+etc/postfix/post-install
+etc/postfix/postfix-files
 etc/postfix/postfix-script
 etc/postfix/relocated
 etc/postfix/transport
