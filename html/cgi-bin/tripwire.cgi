@@ -461,8 +461,9 @@ END
 
 &Header::openbox('100%', 'center', $Lang::tr{'tripwire reports'});
 print <<END
+<a name="$Lang::tr{'log view'}"</a>
 <br />
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'log view'}'>
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
 <tr><td colspan='3'  align='left'><br /></td></tr>

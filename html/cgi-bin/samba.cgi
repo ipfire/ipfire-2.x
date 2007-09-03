@@ -561,6 +561,7 @@ if ($sambasettings{'SECURITY'} eq 'user')
 		&Header::openbox('100%', 'center', $Lang::tr{'accounting user pdc'});
 		}
 	print <<END
+	<a name="$Lang::tr{'accounting'}"</a>
 	<br />
 	<table width='95%' cellspacing='0'>
 	<tr><td colspan='6' align='left'></td></tr>
@@ -621,7 +622,7 @@ END
 			{
 			print <<END
 			$Lang::tr{'inactive'}</td>
-			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='smbuserenable' />
 					<input type='image' alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' />
@@ -633,7 +634,7 @@ END
 			{
 			print <<END
 			$Lang::tr{'active'}</td>
-			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='smbuserdisable' />
 					<input type='image' alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' />
@@ -649,7 +650,7 @@ END
 		else
 			{
 			print <<END
-			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='userchangepw' />
 					<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
@@ -661,7 +662,7 @@ END
 			if ($sambasettings{'DOMAINMASTER'} eq 'on' && $userline[0] =~ /\$/)
 				{
 				print <<END
-				<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 						<input type='hidden' name='NAME' value='$userline[0]' />
 						<input type='hidden' name='ACTION' value='userdelete' />
 						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/network-error.png' />
@@ -672,7 +673,7 @@ END
 			else
 				{
 				print <<END
-				<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 						<input type='hidden' name='NAME' value='$userline[0]' />
 						<input type='hidden' name='ACTION' value='userdelete' />
 						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-option-remove.png' />
@@ -686,7 +687,7 @@ END
 	</table>
 	<br />
 	<table width='10%' cellspacing='0'>
-	<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 													<input type='hidden' name='ACTION' value='useradd' />
 													<input type='image' alt='$Lang::tr{'add user'}' title='$Lang::tr{'add user'}' src='/images/user-option-add.png' /></form></td>
 END
@@ -695,14 +696,14 @@ END
 	if ($sambasettings{'DOMAINMASTER'} eq 'on')
 		{
 		print <<END
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 												<input type='hidden' name='ACTION' value='pcadd' />
 												<input type='image' alt='$Lang::tr{'pc add'}' title='$Lang::tr{'pc add'}' src='/images/network.png' /></form>
 END
 ;
 		}
 	print <<END
-	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 											<input type='hidden' name='ACTION' value='usercaption' />
 											<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form>
 	</td></tr>
@@ -735,7 +736,7 @@ END
 		my $password = 'samba';
 		print <<END
 		<br />
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 		<table width='95%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' readonly /></td></tr>
@@ -758,7 +759,7 @@ END
 		$password=~s/\s//g;
 		print <<END
 		<br />
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 		<table width='95%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add user'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' /></td></tr>
@@ -780,7 +781,7 @@ END
 		$pcname=~s/\s//g;
 		print <<END
 		<br />
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 		<table width='95%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'pc add'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'client'}</td><td><input type='text' name='PCNAME' value='$pcname' size='30' /></td></tr>
@@ -806,6 +807,7 @@ my %shares =  config("${General::swroot}/samba/shares");
 
 
 print <<END
+<a name="$Lang::tr{'manage shares'}"</a>
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b>
@@ -822,12 +824,12 @@ foreach my $shareentry (sort @Shares)
 	if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
 	print <<END
 	<td align='left'>$shareentry</td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='sharechange' />
 			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
 	</form></td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='smbsharedel' />
 			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
@@ -841,15 +843,15 @@ print <<END
 </table>
 <br />
 <table width='10%' cellspacing='0'>
-<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 												<input type='hidden' name='ACTION' value='shareadd' />
 												<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/list-add.png' />
 												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 												<input type='hidden' name='ACTION' value='sharesreset' />
 												<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' />
 												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 												<input type='hidden' name='ACTION' value='sharecaption' />
 												<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
 												</form></td>
@@ -883,7 +885,7 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
  <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
 	</table>
 	<br />
 	<table width='10%' cellspacing='0'>
@@ -903,7 +905,7 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
-	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
+	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
 	</table>
 	<br />
 	<table width='10%' cellspacing='0'>
@@ -953,6 +955,7 @@ if ( -e "/var/ipfire/cups/enable")
 
 my @Printers = keys(%printer);
 print <<END
+<a name="$Lang::tr{'manage printers'}"</a>
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage printers'}</b>
@@ -964,12 +967,12 @@ foreach my $printerentry (sort @Printers)
 	chomp $printerentry;
 	print <<END
 	<tr><td align='left'>$printerentry</td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
 			<input type='hidden' name='NAME' value='$printerentry' />
 			<input type='hidden' name='ACTION' value='printerchange' />
 			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
 	</form></td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
 			<input type='hidden' name='NAME' value='$printerentry' />
 			<input type='hidden' name='ACTION' value='smbprinterdel' />
 			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
@@ -981,15 +984,15 @@ print <<END
 </table>
 <br />
 <table width='10%' cellspacing='0'>
-<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
 												<input type='hidden' name='ACTION' value='printeradd' />
 												<input type='image' alt='$Lang::tr{'add printer'}' title='$Lang::tr{'add printer'}' src='/images/list-add.png' />
 												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
 												<input type='hidden' name='ACTION' value='printereset' />
 												<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' />
 												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
 												<input type='hidden' name='ACTION' value='printercaption' />
 												<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
 												</form></td>
@@ -1007,7 +1010,7 @@ if ($sambasettings{'ACTION'} eq 'printeradd' || $sambasettings{'ACTION'} eq 'pri
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
  <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td colspan='2' align='center'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$defaultprinter</textarea></td></tr>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'><tr><td colspan='2' align='center'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$defaultprinter</textarea></td></tr>
 	</table>
 	<br />
 	<table width='10%' cellspacing='0'>
@@ -1028,7 +1031,7 @@ if ($sambasettings{'ACTION'} eq 'printerchange' || $sambasettings{'ACTION'} eq '
 	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit printer'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
-	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$printeroption</textarea></td></tr>
+	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$printeroption</textarea></td></tr>
 	</table>
 	<br />
 	<table width='10%' cellspacing='0'>
@@ -1092,8 +1095,9 @@ $Log=~s/\n/<br \/>/g;
 &Header::openbox('100%', 'center', $Lang::tr{'log'});
 
 print <<END
+<a name="$Lang::tr{'log view'}"</a>
 <br />
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'log view'}'>
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
 <tr><td colspan='3'  align='left'><br /></td></tr>

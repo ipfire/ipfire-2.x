@@ -115,5 +115,14 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 	}
 }
 
+print "<div align='center'><table width='80%'><tr><td align='center'>";
+if ( $cgigraphs[1] eq "cpu" || $cgigraphs[1] eq "load" ) { print "<a href='/cgi-bin/system.cgi'>"; }
+elsif ( $cgigraphs[1] eq "memory" || $cgigraphs[1] eq "swap" ) { print "<a href='/cgi-bin/memory.cgi'>"; }
+elsif ( $cgigraphs[1] eq "memory" || $cgigraphs[1] eq "swap" ) { print "<a href='/cgi-bin/memory.cgi'>"; }
+elsif ( $cgigraphs[1] =~ /disk/ ) { print "<a href='/cgi-bin/media.cgi'>"; }
+elsif ( $cgigraphs[1] eq "RED" || $cgigraphs[1] eq "lq" ) { print "<a href='/cgi-bin/network.cgi?network=red'>"; }
+elsif ( $cgigraphs[1] eq "GREEN" || $cgigraphs[1] eq "BLUE" || $cgigraphs[1] eq "ORANGE" ) { print "<a href='/cgi-bin/network.cgi?network=other'>"; }
+print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
+
 &Header::closebigbox();
 &Header::closepage();

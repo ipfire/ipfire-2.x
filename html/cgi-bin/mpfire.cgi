@@ -1,15 +1,28 @@
 #!/usr/bin/perl
-#
-# IPFire CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# (c) The IPFire Team
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 use strict;
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -200,7 +213,7 @@ print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'Scan for Files'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'Scan from Directory'}</td><td align='left'><input type='text' name='MUSICDIR' value='$mpfiresettings{'MUSICDIR'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'Scan from Directory'}</td><td align='left'><input type='text' name='MUSICDIR' value='$mpfiresettings{'MUSICDIR'}' size="50" /></td></tr>
 <tr><td align='center' colspan='2'><input type='hidden' name='ACTION' value='scan' />
                               <input type='image' alt='$Lang::tr{'Scan for Files'}' title='$Lang::tr{'Scan for Files'}' src='/images/edit-find.png' /></td></tr>																				
 </table>
@@ -316,7 +329,7 @@ if ( $mpfiresettings{'SHOWLIST'} eq "on" ){
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire songs'});
 print <<END
-
+<a name="$Lang::tr{'mpfire songs'}"</a>
 <table width='95%' cellspacing='5'>
 <tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'Existing Files'}</b></td></tr>
 <tr><td align='center' colspan='9'><br/>$Lang::tr{'Pages'}<br/><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='submit' name='PAGE' value='all' /><br/>
@@ -357,7 +370,7 @@ foreach (keys(%songs)){
   
   if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
   print <<END
-  <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='addtoplaylist' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/list-add.png' /></form><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+  <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'mpfire songs'}'><input type='hidden' name='ACTION' value='addtoplaylist' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/list-add.png' /></form><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
   <td align='center'>$song[2]<br/>$song[3]</td>
   <td align='center'>$song[5]</td>
   <td align='center'>$song[4]</td>
@@ -418,7 +431,7 @@ END
 foreach (@webradio){
  my @stream = split(/\|/,$_);
  print <<END
- <tr><td><a href="$stream[2]">$stream[1]</a></td>
+ <tr><td><a href="$stream[2]" target="_blank">$stream[1]</a></td>
      <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
 </tr>
 END
