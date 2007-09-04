@@ -7,10 +7,6 @@ require "${General::swroot}/header.pl";
 my $filename = "";
 my $debug = 0; 
 
-if ( ! -e /var/run/mpd.pid){
-  system("mpd >/dev/null");
-}
-
 if ($ARGV[0] eq 'scan') {
   if ($debug){print "Creating Database\n";}
   system("mpd --create-db >/dev/null");
@@ -75,9 +71,10 @@ elsif ($ARGV[0] eq 'stats') {
   }
 elsif ($ARGV[0] eq 'playweb') {
   &checkmute();
+  &stop(); 
   &clearplaylist();
   if ($debug){print "Playing webstream $ARGV[1] \n";}
-     system("mpc add http://$ARGV[1] >/dev/null && mpc play >/dev/null && sleep 1");
+     system("mpc add \"http://$ARGV[1]\" >/dev/null && mpc play >/dev/null && sleep 1");
   }
 elsif ($ARGV[0] eq 'volume') {
  $temp = "Master - ";
@@ -89,6 +86,10 @@ elsif ($ARGV[0] eq 'volume') {
 
 sub clearplaylist(){
   system("mpc clear >/dev/null");  
+  }
+
+sub stop(){
+  system("mpc stop >/dev/null");  
   }
 
 sub checkplaylist(){

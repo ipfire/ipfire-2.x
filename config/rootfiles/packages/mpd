@@ -1,4 +1,7 @@
+etc/rc.d/init.d/mpd
 usr/bin/mpd
+var/log/mpd.error.log
+var/log/mpd.log
 #usr/share/doc/mpd
 #usr/share/doc/mpd/COMMANDS
 #usr/share/doc/mpd/README

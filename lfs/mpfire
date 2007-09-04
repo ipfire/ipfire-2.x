@@ -32,7 +32,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
 PAK_VER    = 2
 
-DEPS       = "mpd mpc alsa libshout libogg libmad libid3tag"
+DEPS       = "mpd mpc alsa libshout libogg libmad libid3tag libvorbis"
 
 ###############################################################################
 # Top-level Rules
@@ -65,5 +65,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 755 $(DIR_SRC)/config/mpfire/mpfire.pl /var/ipfire/mpfire/bin
 	install -v -m 644 $(DIR_SRC)/config/mpfire/mpd.conf /var/ipfire/mpfire/
 	install -v -m 644 $(DIR_SRC)/config/mpfire/webradio /var/ipfire/mpfire/
-	chown nobody.nobody /var/ipfire/mpfire/{settings,playlist.m3u,webradio,mpd.conf}
+	chown root.nobody /var/ipfire/mpfire/{settings,playlist.m3u,webradio,mpd.conf}
+	chown root.nobody /var/ipfire/mpfire/db/mpd.db
 	@$(POSTBUILD)

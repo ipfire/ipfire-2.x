@@ -1,0 +1,33 @@
+#!/bin/sh
+# Begin $rc_base/init.d/mpd
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+# ALSA specific parts by Mark Hymers - markh@linuxfromscratch.org
+# Stores mixer settings in the default location: /etc/asound.state
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting MPD..."
+		/bin/nice --20 /usr/bin/mpd
+    evaluate_retval
+		;;
+	stop)
+		boot_mesg "Stopping MPD..."
+		/usr/bin/mpd --kill
+    evaluate_retval
+		;;
+	status)
+		statusproc /usr/bin/mpd
+		;;
+
+	*)
+		echo "Usage: $0 (start|stop|status)"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/alsa

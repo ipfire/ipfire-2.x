@@ -48,26 +48,27 @@ open(DATEI, "<${General::swroot}/mpfire/db/mpd.db") || die "No Database found";
 my @songdb = <DATEI>;
 close(DATEI);
 
-my @artist; my @album;  my @genre;  my @year; my $linecount = 0; my @currentsong = ""; my %songs;
+my @artist; my @album;  my @genre;  my @year; my $linecount = 0; my %songs;
+my $key;my $file;my $Time;my $Artist;my $Title;my $Album;my $Track;my $Date;my $Genre;
 foreach (@songdb){
   
   if ( $_ =~ /mtime: / ){
-   $songs{$currentsong[1]}="$currentsong[2]|$currentsong[3]|$currentsong[4]|$currentsong[5]|$currentsong[6]|$currentsong[7]|$currentsong[8]|$currentsong[9]";
-   push(@artist,$currentsong[4]);
-   push(@album,$currentsong[6]);
-   push(@year,$currentsong[8]);
-   push(@genre,$currentsong[9]);
-   @currentsong = "";
+   $songs{$key}="$file|$Time|$Artist|$Title|$Album|$Track|$Date|$Genre";
+   push(@artist,$Artist);push(@album,$Album);push(@year,$Date);push(@genre,$Genre);
+   $key="";$file="";$Time="";$Artist="";$Title="";$Album="";$Track="";$Date="";$Genre="";
    }
-  elsif ( $_ =~ /key: / || $_ =~ /file: / || $_ =~ /Time: / || $_ =~ /Artist: / || $_ =~ /Title: / || $_ =~ /Album: / || $_ =~ /Track: / || $_ =~ /Date: / || $_ =~ /Genre: / ){
-   my @temp = split(/: /,$_);
-   push(@currentsong,$temp[1]);
-   }
-  else {
-   next;
-   }
+  elsif ( $_ =~ /key: / ){my @temp = split(/: /,$_);$key=$temp[1];}
+  elsif ( $_ =~ /file: / ){my @temp = split(/: /,$_);$file=$temp[1];}
+  elsif ( $_ =~ /Time: / ){my @temp = split(/: /,$_);$Time=$temp[1];}
+  elsif ( $_ =~ /Artist: / ){my @temp = split(/: /,$_);$Artist=$temp[1];}
+  elsif ( $_ =~ /Title: / ){my @temp = split(/: /,$_);$Title=$temp[1];}
+  elsif ( $_ =~ /Album: / ){my @temp = split(/: /,$_);$Album=$temp[1];}
+  elsif ( $_ =~ /Track: / ){my @temp = split(/: /,$_);$Track=$temp[1];}
+  elsif ( $_ =~ /Date: / ){my @temp = split(/: /,$_);$Date=$temp[1];}
+  elsif ( $_ =~ /Genre: / ){my @temp = split(/: /,$_);$Genre=$temp[1];}
+  else {next;}
  }
-  
+ 
   my %hash = map{ $_, 1 }@artist;
   @artist = sort keys %hash;
   my %hash = map{ $_, 1 }@album;
