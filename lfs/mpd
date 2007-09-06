@@ -81,4 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
+	touch /var/log/mpd.error.log
+	touch /var/log/mpd.log
 	@$(POSTBUILD)

@@ -18,8 +18,6 @@
 * Linux-PAM-0.99.4.0
 * Locale-Codes-2.07
 * MIME-tools-5.420
-* MP3-Info-1.22
-* MP3-Tag-0.9709
 * Mail-SpamAssassin-3.1.3
 * MailTools-1.74
 * MoBlock-0.8
