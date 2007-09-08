@@ -1,4 +1,169 @@
 ------------------------------------------------------------------------
+r880 | maniacikarus | 2007-09-08 16:30:48 +0400 (Sat, 08 Sep 2007) | 2 lines
+
+Ohne Webinterface is doof
+
+------------------------------------------------------------------------
+r879 | maniacikarus | 2007-09-08 15:56:37 +0400 (Sat, 08 Sep 2007) | 2 lines
+
+Gnump Perl Module gefixt
+
+------------------------------------------------------------------------
+r878 | maniacikarus | 2007-09-08 12:29:01 +0400 (Sat, 08 Sep 2007) | 2 lines
+
+Kleine Pfadanpassung fuer logwatch
+
+------------------------------------------------------------------------
+r877 | ms | 2007-09-06 22:55:37 +0400 (Thu, 06 Sep 2007) | 2 lines
+
+Weitere Improvements am MPFire.
+
+------------------------------------------------------------------------
+r876 | maniacikarus | 2007-09-04 13:03:55 +0400 (Tue, 04 Sep 2007) | 2 lines
+
+MPFire nochmal konrrigiert
+
+------------------------------------------------------------------------
+r875 | maniacikarus | 2007-09-03 13:18:10 +0400 (Mon, 03 Sep 2007) | 4 lines
+
+MPFire Copyright korrigiert
+Tripwire Samba und MPFire mit Ankern versehen
+Graph Cgi mit Back Button
+
+------------------------------------------------------------------------
+r874 | ms | 2007-09-02 23:53:09 +0400 (Sun, 02 Sep 2007) | 3 lines
+
+Einige Dateien zur ISO hinzugefuegt.
+Dem Postfix fehlte auch eine.
+
+------------------------------------------------------------------------
+r873 | ms | 2007-09-02 23:03:33 +0400 (Sun, 02 Sep 2007) | 4 lines
+
+MP3-Tag und MP3-Info entfernt, da der MPFire sie nichtmehr benoetigt.
+Benutzerrechte der Dateien vom mldonkey stimmen nicht.
+Pakfire wartet jetzt bei Cronjobs eine zufaellige Anzahl an Sekunden. (Bei Upgrades max. 1h, bei Updates max. 1 Minute.)
+
+------------------------------------------------------------------------
+r872 | maniacikarus | 2007-09-02 17:16:38 +0400 (Sun, 02 Sep 2007) | 2 lines
+
+MPFire Version 2 begonnen
+
+------------------------------------------------------------------------
+r871 | ms | 2007-09-01 15:10:47 +0400 (Sat, 01 Sep 2007) | 2 lines
+
+Falscher Name...
+
+------------------------------------------------------------------------
+r870 | ms | 2007-09-01 14:48:01 +0400 (Sat, 01 Sep 2007) | 3 lines
+
+Die letzten "missing_rootfile"s berichtigt und angelegt.
+NFS-Paket geschnuert.
+
+------------------------------------------------------------------------
+r869 | ms | 2007-09-01 14:03:25 +0400 (Sat, 01 Sep 2007) | 2 lines
+
+Php5-Konfuguration im Apache angepasst.
+
+------------------------------------------------------------------------
+r868 | ms | 2007-09-01 13:38:05 +0400 (Sat, 01 Sep 2007) | 2 lines
+
+Fehler im WebCyradm-Paket.
+
+------------------------------------------------------------------------
+r867 | ms | 2007-09-01 02:40:26 +0400 (Sat, 01 Sep 2007) | 2 lines
+
+Libid3tag... und PHP-Rootfile.
+
+------------------------------------------------------------------------
+r866 | ms | 2007-08-31 17:50:23 +0400 (Fri, 31 Aug 2007) | 2 lines
+
+CoreUpdate 3!
+
+------------------------------------------------------------------------
+r865 | ms | 2007-08-31 16:09:23 +0400 (Fri, 31 Aug 2007) | 3 lines
+
+Amavisd-new und PHP aktualisiert.
+Neues Startscript fuer den Applejuice.
+
+------------------------------------------------------------------------
+r864 | ms | 2007-08-31 14:25:13 +0400 (Fri, 31 Aug 2007) | 3 lines
+
+Postfix- und WebCyradm-Paket geschnuert.
+Einige Initscripts hinzugefuegt.
+
+------------------------------------------------------------------------
+r863 | ms | 2007-08-31 13:20:15 +0400 (Fri, 31 Aug 2007) | 4 lines
+
+MP3Blaster ist geflogen.
+MPC dazugekommen.
+Die Beschreibung aller Pakete entfernt.
+
+------------------------------------------------------------------------
+r862 | ms | 2007-08-31 01:37:54 +0400 (Fri, 31 Aug 2007) | 2 lines
+
+MPD.
+
+------------------------------------------------------------------------
+r861 | ms | 2007-08-31 01:22:19 +0400 (Fri, 31 Aug 2007) | 5 lines
+
+Postfix-Update
+dnsmasq-Update
+Syntaxfehler in der crontab
+cyrusimap-Paket
+
+------------------------------------------------------------------------
+r860 | maniacikarus | 2007-08-31 01:19:25 +0400 (Fri, 31 Aug 2007) | 3 lines
+
+Displayfix in der Samba CGI
+Disksize Rechnung im Installer angepasst
+
+------------------------------------------------------------------------
+r859 | casemaster | 2007-08-30 17:19:02 +0400 (Thu, 30 Aug 2007) | 2 lines
+
+Damit die USB-Images auch auf Ubuntu-Maschinen gebuat werden koennen.
+
+------------------------------------------------------------------------
+r858 | maniacikarus | 2007-08-30 11:39:37 +0400 (Thu, 30 Aug 2007) | 2 lines
+
+Pakfire Gui Update und Language fixes
+
+------------------------------------------------------------------------
+r857 | ms | 2007-08-29 22:52:21 +0400 (Wed, 29 Aug 2007) | 2 lines
+
+Den Mailer ausgetauscht, da der Perl-Mailer sich immer weggehangen hat.
+
+------------------------------------------------------------------------
+r856 | maniacikarus | 2007-08-29 22:51:14 +0400 (Wed, 29 Aug 2007) | 2 lines
+
+Fix am Urlfilter damit nur die gewuenschten Sperrkategorie gesperrt wird
+
+------------------------------------------------------------------------
+r855 | ms | 2007-08-29 20:40:20 +0400 (Wed, 29 Aug 2007) | 2 lines
+
+Syntaxfehler.
+
+------------------------------------------------------------------------
+r854 | ms | 2007-08-29 20:24:16 +0400 (Wed, 29 Aug 2007) | 3 lines
+
+Gateway wurde bei fester IP-Vergabe nicht gesetzt.
+Danke an "walter" fuer das Finden des Bugs.
+
+------------------------------------------------------------------------
+r853 | ms | 2007-08-29 17:25:32 +0400 (Wed, 29 Aug 2007) | 2 lines
+
+Ein Paar Dateien fuer die GPLv3 angepasst.
+
+------------------------------------------------------------------------
+r852 | ms | 2007-08-29 14:14:06 +0400 (Wed, 29 Aug 2007) | 2 lines
+
+Pakfire laedt die Listen jetzt besser und hat eine veraenderte Oberflaeche bekommen.
+
+------------------------------------------------------------------------
+r851 | maniacikarus | 2007-08-28 15:27:08 +0400 (Tue, 28 Aug 2007) | 2 lines
+
+Graph.pl gefixt, damit die CGIs sich trotz fehlender Mbmon Daten aufbauen
+
+------------------------------------------------------------------------
 r850 | maniacikarus | 2007-08-28 15:03:30 +0400 (Tue, 28 Aug 2007) | 2 lines
 
 Erster Versuch fuer Update Booster und Apple
