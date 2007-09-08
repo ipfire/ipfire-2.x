@@ -104,7 +104,7 @@ int main(void)
    argv[1] = "--detail";
    argv[2] = buffer;
    argv[3] = NULL;
-   execve("/etc/log.d/scripts/logwatch.pl", argv, trusted_env);
+   execve("/usr/share/logwatch/scripts/logwatch.pl", argv, trusted_env);
 
    /* shouldn't get here - execve replaces current running process */
    perror("logwatch: execve failed");
