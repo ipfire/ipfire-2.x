@@ -42,6 +42,7 @@ usr/lib/perl5/5.8.8/gnump3d/readtags.pm
 usr/lib/perl5/5.8.8/gnump3d/sorting.pm
 usr/lib/perl5/5.8.8/gnump3d/tagcache.pm
 usr/lib/perl5/5.8.8/gnump3d/url.pm
+usr/lib/perl5/5.8.8/Pod
 #usr/local/man/man1/gnump3d-index.1
 #usr/local/man/man1/gnump3d-top.1
 #usr/local/man/man1/gnump3d.1
