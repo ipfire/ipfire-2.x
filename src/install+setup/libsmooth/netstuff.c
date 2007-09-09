@@ -345,7 +345,7 @@ int get_knic(int card)		//returns "0" for zero cards or error and "1" card is fo
 	strcpy(temp, ""); findkey(kv, searchstr, temp);
 	if (strlen(temp)) {
 		strcpy(knics[ card ].macaddr, temp);
-		strcpy(knics[ card ].colour, "GREEN");
+		strcpy(knics[ card ].colour, ucolourcard[card]);
 
 		sprintf(searchstr, "%s_DESCRIPTION", ucolourcard[card]);
 		findkey(kv, searchstr, temp);
@@ -359,6 +359,7 @@ int get_knic(int card)		//returns "0" for zero cards or error and "1" card is fo
 		strcpy(knics[ card ].description, ctr[TR_UNSET]);
 		ret_value = 0;
 	}
+	freekeyvalues(kv);
 
 	return ret_value;
 }

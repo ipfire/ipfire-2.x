@@ -334,9 +334,15 @@ int drivermenu(void)
 		return 0;
 	}
 
-	findkey(kv, "CONFIG_TYPE", temp);
-	configtype = atol(temp);
-	
+	if (findkey(kv, "CONFIG_TYPE", temp))
+		configtype = atol(temp);
+	else {
+		fprintf(flog,"setting CONFIG_TYPE = %s\n",temp);
+		configtype = atol(temp);
+		replacekeyvalue(kv, "CONFIG_TYPE", temp);
+		writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
+	}
+
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 
 	kcount = 0;
