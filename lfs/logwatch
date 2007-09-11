@@ -95,7 +95,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	
 	-mkdir -p /var/cache/logwatch
 	-mkdir -p /var/log/logwatch
-	chmod 755 /var/cache/logwatch
+	chmod -v 755 /var/cache/logwatch
+	-rm -rf /etc/logwatch/conf
+	ln -vsf /usr/share/logwatch/default.config /etc/logwatch/config
 	
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

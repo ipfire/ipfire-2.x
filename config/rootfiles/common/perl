@@ -294,7 +294,7 @@ usr/lib/perl5/5.8.8/Net/servent.pm
 usr/lib/perl5/5.8.8/PerlIO.pm
 #usr/lib/perl5/5.8.8/PerlIO/via
 usr/lib/perl5/5.8.8/PerlIO/via/QuotedPrint.pm
-#usr/lib/perl5/5.8.8/Pod
+usr/lib/perl5/5.8.8/Pod
 #usr/lib/perl5/5.8.8/Pod/Checker.pm
 #usr/lib/perl5/5.8.8/Pod/Find.pm
 #usr/lib/perl5/5.8.8/Pod/Functions.pm

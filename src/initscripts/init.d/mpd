@@ -23,9 +23,13 @@ case "$1" in
 	status)
 		statusproc /usr/bin/mpd
 		;;
-
+	restart)
+		$0 stop
+		sleep 3
+		$0 start
+		;;
 	*)
-		echo "Usage: $0 (start|stop|status)"
+		echo "Usage: $0 (start|stop|restart|status)"
 		exit 1
 		;;
 esac
