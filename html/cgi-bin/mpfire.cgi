@@ -120,7 +120,18 @@ elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){$message=system("/usr/local/bin
 elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){$message=system("/usr/local/bin/mpfirectrl playlist");}
 elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){$message=system("/usr/local/bin/mpfirectrl clearplaylist");}
 elsif ( $mpfiresettings{'ACTION'} eq "addtoplaylist" ){$message=system("/usr/local/bin/mpfirectrl","playadd","\"$mpfiresettings{'FILE'}\"");}
-elsif ( $mpfiresettings{'ACTION'} eq "playall" ){$message=system("/usr/local/bin/mpfirectrl playall");}
+elsif ( $mpfiresettings{'ACTION'} eq "playall" ){
+my @temp = ""; my @song = "";
+
+foreach (keys(%songs)){
+  @song = split(/\|/,$songs{$_});push(@temp,$song[0])
+  }
+open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
+print DATEI @temp;
+close(DATEI);  
+
+$message=system("/usr/local/bin/mpfirectrl playlist");
+}
 elsif ( $mpfiresettings{'ACTION'} eq "playalbum" )
 {
 my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'album'});

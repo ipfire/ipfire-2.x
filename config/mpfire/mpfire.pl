@@ -10,6 +10,7 @@ my $debug = 0;
 if ($ARGV[0] eq 'scan') {
   if ($debug){print "Creating Database\n";}
   system("mpd --create-db >/dev/null");
+  system("/etc/init.d/mpd restart");
 }
 elsif ($ARGV[0] eq 'play') {
   &checkmute();
@@ -23,6 +24,7 @@ elsif ($ARGV[0] eq 'playadd') {
   }
 elsif ($ARGV[0] eq 'playlist') {
   &checkmute();
+  &shuffle();
   &clearplaylist();
   if ($debug){print "Yes we are called and we will play your Playlist\n";}
   system("mpc load playlist >/dev/null && mpc play >/dev/null");
@@ -46,10 +48,6 @@ elsif ($ARGV[0] eq 'voldown') {
   system("/usr/bin/amixer set Master $ARGV[1]%- 2>/dev/null >/dev/null");
   system("/usr/bin/amixer set PCM $ARGV[1]%- 2>/dev/null >/dev/null");
   }
-elsif ($ARGV[0] eq 'playall') {
-  if ($debug){print "Playing everything\n";}
-  system("mpc play >/dev/null"); 
-  }
 elsif ($ARGV[0] eq 'toggle') {
   system("mpc toggle >/dev/null");
   }
@@ -71,10 +69,9 @@ elsif ($ARGV[0] eq 'stats') {
   }
 elsif ($ARGV[0] eq 'playweb') {
   &checkmute();
-  &stop(); 
   &clearplaylist();
   if ($debug){print "Playing webstream $ARGV[1] \n";}
-     system("mpc add \"http://$ARGV[1]\" >/dev/null && mpc play >/dev/null && sleep 1");
+     system("mpc add http://$ARGV[1] >/dev/null && mpc play >/dev/null && sleep 1");
   }
 elsif ($ARGV[0] eq 'volume') {
  $temp = "Master - ";
@@ -88,8 +85,8 @@ sub clearplaylist(){
   system("mpc clear >/dev/null");  
   }
 
-sub stop(){
-  system("mpc stop >/dev/null");  
+sub shuffle(){
+  system("mpc shuffle >/dev/null");  
   }
 
 sub checkplaylist(){
