@@ -1,11 +1,11 @@
 #etc/logwatch
-#etc/logwatch/conf
+etc/logwatch/conf
 #etc/logwatch/conf/html
-etc/logwatch/conf/ignore.conf
-etc/logwatch/conf/logfiles
-etc/logwatch/conf/logwatch.conf
-etc/logwatch/conf/override.conf
-etc/logwatch/conf/services
+#etc/logwatch/conf/ignore.conf
+#etc/logwatch/conf/logfiles
+#etc/logwatch/conf/logwatch.conf
+#etc/logwatch/conf/override.conf
+#etc/logwatch/conf/services
 etc/logwatch/scripts
 etc/logwatch/scripts/services
 usr/sbin/logwatch
@@ -290,3 +290,5 @@ usr/share/logwatch/scripts/shared/remove
 usr/share/logwatch/scripts/shared/removeheaders
 usr/share/logwatch/scripts/shared/removeservice
 #usr/share/man/man8/logwatch.8
+var/cache/logwatch
+var/log/logwatch
