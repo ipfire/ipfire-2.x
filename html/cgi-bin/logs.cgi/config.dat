@@ -33,7 +33,7 @@ $logsettings{'LOGWATCH_KEEP'} = '56';
 my @VS = ('15','50','100','150','250','500');
 $logsettings{'ENABLE_REMOTELOG'} = 'off';
 $logsettings{'REMOTELOG_ADDR'} = '';
-$logsettings{'VARMESSAGES'} = 'daemon.*;local0.*;local2.*;*.info;mail.none;authpriv.*';
+$logsettings{'VARMESSAGES'} = 'cron.none;daemon.*;local0.*;local2.*;*.info;mail.none;authpriv.*';
 $logsettings{'ACTION'} = '';
 &Header::getcgihash(\%logsettings);
 

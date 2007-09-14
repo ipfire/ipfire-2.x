@@ -74,8 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-8bit-1.patch
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	touch /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
-	chmod 664 /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
-	chown 0:105 /var/log/{boot.log,dhcpcd.log,messages,ovpnserver.log}
+	touch /var/log/{dhcpcd.log,messages,ovpnserver.log}
+	chmod 664 /var/log/{dhcpcd.log,messages,ovpnserver.log}
+	chown 0:105 /var/log/{dhcpcd.log,messages,ovpnserver.log}
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

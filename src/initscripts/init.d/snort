@@ -127,6 +127,6 @@ case "$1" in
                 ;;
 esac
 
-chmod 644 /var/log/snort/*
+chmod 644 /var/log/snort/* 2>/dev/null
 
 # End $rc_base/init.d/snort
