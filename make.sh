@@ -909,13 +909,13 @@ uploadsrc)
 	PWD=`pwd`
 	cd $BASEDIR/cache/
 	echo -e "Uploading cache to ftp server:"
-	ncftpls -u $FTP_CACHE_USER -p $FTP_CACHE_PASS ftp://$FTP_CACHE_URL$FTP_CACHE_PATH/ > /tmp/ftplist
+	ncftpls -u $FTP_CACHE_USER -p $FTP_CACHE_PASS ftp://$FTP_CACHE_URL/$FTP_CACHE_PATH/ > /tmp/ftplist
 	for i in *; do
-		if [ "$i" == "toolchains" ]; then continue; fi
-		grep -q $i /tmp/ftplist
+		if [ "$(basename $i)" == "toolchains" ]; then continue; fi
+		grep -q $(basename $i) /tmp/ftplist
 		if [ "$?" -ne "0" ]; then
-			echo -ne "$i"
-			ncftpput -u $FTP_CACHE_USER -p $FTP_CACHE_PASS $FTP_CACHE_URL $FTP_CACHE_PATH/ $i
+			echo -ne "$(basename $i)"
+			ncftpput -u $FTP_CACHE_USER -p $FTP_CACHE_PASS $FTP_CACHE_URL $FTP_CACHE_PATH/ $(basename $i)
 			if [ "$?" -ne "0" ]; then
 				beautify message FAIL
 			fi
