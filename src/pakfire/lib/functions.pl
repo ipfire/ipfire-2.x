@@ -710,7 +710,7 @@ sub upgradepak {
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
-		copy("$Conf::dbdir/meta/meta-$pak","$Conf::dbdir/installed/");
+		copy("$Conf::dbdir/meta/meta-$pak", "$Conf::dbdir/installed/");
 		message("PAKFIRE UPGR: $pak: Finished.");
 		message("");
 	} else {

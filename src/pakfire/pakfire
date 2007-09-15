@@ -244,7 +244,7 @@
 	} elsif ("$ARGV[0]" eq "upgrade") {
 		&Pakfire::upgradecore();
 		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
-		my @temp;
+		my @temp, $pak;
 		
 		foreach (@upgradepaks) {
 			@temp = &Pakfire::resolvedeps("$_");
@@ -267,12 +267,15 @@
 		}
 		
 		### Download first
-		foreach (sort @upgradepaks) {
-			&Pakfire::getpak("$_", "");
+		foreach $pak (sort @upgradepaks) {
+			system("mv $Conf::dbdir/meta/meta-$pak $Conf::dbdir/meta/old-meta-$pak");
+			&Pakfire::getpak("$pak", "");
 		}
 		
-		foreach (sort @upgradepaks) {
-			&Pakfire::upgradepak("$_");
+		foreach $pak (sort @upgradepaks) {
+			if (&Pakfire::upgradepak("$pak")) {
+				system("mv $Conf::dbdir/meta/old-meta-$pak $Conf::dbdir/meta/meta-$pak");
+			}
 		}
 		
 	} elsif ("$ARGV[0]" eq "list") {
