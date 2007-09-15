@@ -75,7 +75,6 @@
 * ez-ipupdate-3.0.11b8
 * fcron-3.0.1
 * fetchmail-6.3.4
-* ffmpeg-0.4.9-pre1
 * file-4.17
 * findutils-4.2.27
 * flex-2.5.33
@@ -254,7 +253,6 @@
 * vlan.1.9
 * vlc-0.8.6c
 * vsftpd-2.0.5
-* web-cyradm-0.5.5-CVS-for-ipfire
 * wget-1.10.2
 * whatmask-1.2
 * which-2.16

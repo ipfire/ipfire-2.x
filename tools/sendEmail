@@ -32,7 +32,7 @@ for i in fromaddr, toaddrs, subject:
 	
 msg = header + "\r\n" + body # An empty line to finish the header + add the body
 
-server = smtplib.SMTP('mail01.ipfire.org')
+server = smtplib.SMTP('mail01.tremer.info')
 #server.set_debuglevel(1)
 #server.login(fromaddr, password)
 server.sendmail(fromaddr, toaddrs, msg)
