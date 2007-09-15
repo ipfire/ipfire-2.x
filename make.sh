@@ -494,6 +494,10 @@ buildipfire() {
   ipfiremake icegenerator
   ipfiremake mpd
   ipfiremake mpc
+  ipfiremake xvid
+  ipfiremake libmpeg2
+  #ipfiremake ffmpeg
+  ipfiremake videolan
   ipfiremake libpri
   ipfiremake stund
   ipfiremake asterisk

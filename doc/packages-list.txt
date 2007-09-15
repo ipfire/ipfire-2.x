@@ -75,6 +75,7 @@
 * ez-ipupdate-3.0.11b8
 * fcron-3.0.1
 * fetchmail-6.3.4
+* ffmpeg-0.4.9-pre1
 * file-4.17
 * findutils-4.2.27
 * flex-2.5.33
@@ -169,6 +170,7 @@
 * module-init-tools-3.2.2
 * mpc-0.12.1
 * mpd-0.13.0
+* mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mpg123-0.59r
 * mtd-CVS-20070507
@@ -249,6 +251,7 @@
 * util-linux-2.12r
 * vim-7.0
 * vlan.1.9
+* vlc-0.8.6c
 * vsftpd-2.0.5
 * web-cyradm-0.5.5-CVS-for-ipfire
 * wget-1.10.2
@@ -256,5 +259,6 @@
 * which-2.16
 * wireless_tools.28
 * xmbmon205
+* xvidcore-1.1.0
 * zaptel-1.4.4
 * zlib-1.2.3

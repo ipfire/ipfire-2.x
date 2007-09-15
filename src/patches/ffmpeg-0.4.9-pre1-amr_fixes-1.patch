@@ -1,0 +1,190 @@
+Submitted By:            Randy McMurchy <randy_at_linuxfromscratch_dot_org>
+Date:                    2006-01-12
+Initial Package Version: 0.4.9-pre1
+Upstream Status:         Applied in upstream CVS
+Origin:                  MPlayer-1.0pre7try2 version of FFmpeg (upstream CVS)
+Description:             Fixes building with AMR code
+
+
+diff -Naur ffmpeg-0.4.9-pre1-orig/libavcodec/Makefile ffmpeg-0.4.9-pre1/libavcodec/Makefile
+--- ffmpeg-0.4.9-pre1-orig/libavcodec/Makefile	2004-06-18 13:11:15.000000000 +0000
++++ ffmpeg-0.4.9-pre1/libavcodec/Makefile	2006-01-12 18:27:33.000000000 +0000
+@@ -7,7 +7,7 @@
+ VPATH=$(SRC_PATH)/libavcodec
+ 
+ # NOTE: -I.. is needed to include config.h
+-CFLAGS=$(OPTFLAGS) -DHAVE_AV_CONFIG_H -I.. -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE
++CFLAGS=$(OPTFLAGS) -DHAVE_AV_CONFIG_H -I.. -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE $(AMR_CFLAGS)
+ 
+ OBJS= common.o utils.o mem.o allcodecs.o \
+       mpegvideo.o jrevdct.o jfdctfst.o jfdctint.o\
+@@ -22,14 +22,16 @@
+       smc.o parser.o flicvideo.o truemotion1.o vmdav.o lcl.o qtrle.o g726.o \
+       flac.o vp3dsp.o integer.o
+ 
++AMROBJS=
+ ifeq ($(AMR_NB),yes)
+ ifeq ($(AMR_NB_FIXED),yes)
+-OBJS+= amr.o
++AMROBJS= amr.o
+ AMREXTRALIBS+= amr/*.o
+ AMRLIBS=amrlibs
+ CLEANAMR=cleanamr
+ else
+-OBJS+= amr.o amr_float/sp_dec.o amr_float/sp_enc.o amr_float/interf_dec.o amr_float/interf_enc.o
++AMROBJS= amr.o
++OBJS+= amr_float/sp_dec.o amr_float/sp_enc.o amr_float/interf_dec.o amr_float/interf_enc.o
+ CLEANAMR=cleanamrfloat
+ endif
+ endif
+@@ -43,13 +45,15 @@
+ endif
+ 
+ ifeq ($(AMR_WB),yes)
+-OBJS+= amr.o amrwb_float/dec_acelp.o amrwb_float/dec_dtx.o amrwb_float/dec_gain.o \
++AMROBJS= amr.o
++OBJS+= amrwb_float/dec_acelp.o amrwb_float/dec_dtx.o amrwb_float/dec_gain.o \
+ 		amrwb_float/dec_if.o amrwb_float/dec_lpc.o amrwb_float/dec_main.o \
+ 		amrwb_float/dec_rom.o amrwb_float/dec_util.o amrwb_float/enc_acelp.o \
+ 		amrwb_float/enc_dtx.o amrwb_float/enc_gain.o amrwb_float/enc_if.o \
+ 		amrwb_float/enc_lpc.o amrwb_float/enc_main.o amrwb_float/enc_rom.o \
+ 		amrwb_float/enc_util.o amrwb_float/if_rom.o
+ endif
++OBJS+= $(AMROBJS)
+ CLEANAMRWB=cleanamrwbfloat
+ ASM_OBJS=
+ 
+diff -Naur ffmpeg-0.4.9-pre1-orig/libavcodec/amr.c ffmpeg-0.4.9-pre1/libavcodec/amr.c
+--- ffmpeg-0.4.9-pre1-orig/libavcodec/amr.c	2004-05-21 14:37:16.000000000 +0000
++++ ffmpeg-0.4.9-pre1/libavcodec/amr.c	2006-01-12 18:27:33.000000000 +0000
+@@ -411,27 +411,32 @@
+     AMRContext *s = (AMRContext*)avctx->priv_data;
+ 
+     uint8_t*amrData=buf;
+-    int offset=0;
+     static short block_size[16]={ 12, 13, 15, 17, 19, 20, 26, 31, 5, 0, 0, 0, 0, 0, 0, 0 };
+     enum Mode dec_mode;
+     int packet_size;
+ 
+-    //printf("amr_decode_frame data_size=%i buf=0x%X buf_size=%d frameCount=%d!!\n",*data_size,buf,buf_size,s->frameCount);
++    /* av_log(NULL,AV_LOG_DEBUG,"amr_decode_frame buf=%p buf_size=%d frameCount=%d!!\n",buf,buf_size,s->frameCount); */
++    
++    if(buf_size==0) {
++        /* nothing to do */
++        return 0;
++    }
+ 
+-    while(offset<buf_size)
+-    {
+-    	dec_mode = (amrData[offset] >> 3) & 0x000F;
+-    	packet_size = block_size[dec_mode];
++    dec_mode = (buf[0] >> 3) & 0x000F;
++    packet_size = block_size[dec_mode]+1;
++
++    if(packet_size > buf_size) {
++        av_log(avctx, AV_LOG_ERROR, "amr frame too short (%u, should be %u)\n", buf_size, packet_size);
++        return -1;
++    }
+     
+-        s->frameCount++;
+-        //printf("offset=%d, packet_size=%d amrData= 0x%X %X %X %X\n",offset,packet_size,amrData[offset],amrData[offset+1],amrData[offset+2],amrData[offset+3]);
+-    	/* call decoder */
+-    	Decoder_Interface_Decode(s->decState, &amrData[offset], data+*data_size, 0);
+-    	*data_size+=160*2;
++    s->frameCount++;
++    /* av_log(NULL,AV_LOG_DEBUG,"packet_size=%d amrData= 0x%X %X %X %X\n",packet_size,amrData[0],amrData[1],amrData[2],amrData[3]); */
++    /* call decoder */
++    Decoder_Interface_Decode(s->decState, amrData, data, 0);
++    *data_size=160*2;
+    
+-        offset+=packet_size+1; 
+-    }
+-    return buf_size;
++    return packet_size;
+ }
+ 
+ static int amr_nb_encode_frame(AVCodecContext *avctx,
+@@ -445,6 +450,7 @@
+         data, 
+         frame, 
+         0);
++    /* av_log(NULL,AV_LOG_DEBUG,"amr_nb_encode_frame encoded %u bytes, bitrate %u, first byte was %#02x\n",written, s->enc_bitrate, frame[0] ); */
+ 
+     return written;
+ }
+@@ -598,20 +604,26 @@
+     AMRWBContext *s = (AMRWBContext*)avctx->priv_data;
+ 
+     uint8_t*amrData=buf;
+-    int offset=0;
+     int mode;
+     int packet_size;
+ 
+-    while(offset<buf_size)
+-    {
+-        s->frameCount++;
+-        mode = (Word16)((amrData[offset] >> 3) & 0x0F);
+-        packet_size = block_size[mode];
+-        D_IF_decode( s->state, &amrData[offset], data+*data_size, _good_frame);
+-    	*data_size+=320*2;
+-        offset+=packet_size; 
++    if(buf_size==0) {
++        /* nothing to do */
++        return 0;
+     }
+-    return buf_size;
++
++    mode = (amrData[0] >> 3) & 0x000F;
++    packet_size = block_size[mode];
++
++    if(packet_size > buf_size) {
++        av_log(avctx, AV_LOG_ERROR, "amr frame too short (%u, should be %u)\n", buf_size, packet_size+1);
++        return -1;
++    }
++    
++    s->frameCount++;
++    D_IF_decode( s->state, amrData, data, _good_frame);
++    *data_size=320*2;
++    return packet_size;
+ }
+ 
+ static int amr_wb_decode_close(AVCodecContext * avctx)
+
+diff -Naur ffmpeg-0.4.9-pre1-orig/libavcodec/avcodec.h ffmpeg-0.4.9-pre1/libavcodec/avcodec.h
+--- ffmpeg-0.4.9-pre1-orig/libavcodec/avcodec.h	2004-07-09 12:49:55.000000000 +0000
++++ ffmpeg-0.4.9-pre1/libavcodec/avcodec.h	2006-01-12 18:27:33.000000000 +0000
+@@ -124,7 +124,7 @@
+     CODEC_ID_ADPCM_G726,
+ 
+ 	/* AMR */
+-    CODEC_ID_AMR_NB,
++    CODEC_ID_AMR_NB= 0x12000,
+     CODEC_ID_AMR_WB,
+ 
+     /* RealAudio codecs*/
+
+diff -Naur ffmpeg-0.4.9-pre1-orig/libavformat/Makefile ffmpeg-0.4.9-pre1/libavformat/Makefile
+--- ffmpeg-0.4.9-pre1-orig/libavformat/Makefile	2004-04-24 15:16:23.000000000 +0000
++++ ffmpeg-0.4.9-pre1/libavformat/Makefile	2006-01-12 18:27:33.000000000 +0000
+@@ -23,15 +23,17 @@
+ OBJS+= asf-enc.o
+ endif
+ 
++AMROBJS=
+ ifeq ($(AMR_NB),yes)
+-OBJS+= amr.o
++AMROBJS= amr.o
+ endif
+ ifeq ($(AMR_NB_FIXED),yes)
+-OBJS+= amr.o
++AMROBJS= amr.o
+ endif
+ ifeq ($(AMR_WB),yes)
+-OBJS+= amr.o
++AMROBJS= amr.o
+ endif
++OBJS+= $(AMROBJS)
+ 
+ # image formats
+ OBJS+= pnm.o yuv.o png.o jpeg.o gifdec.o sgi.o
+
