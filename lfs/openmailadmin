@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 0.5.5-CVS-for-ipfire
+VER        = 1.0.0
 
-THISAPP    = web-cyradm-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = openmailadmin-$(VER)
+DL_FILE    = $(THISAPP).tbz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = webcyradm
+PROG       = openmailadmin
 PAK_VER    = 1
 
 DEPS       = "cyrusimap postfix"
@@ -40,13 +40,11 @@ DEPS       = "cyrusimap postfix"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) mail-db-mysql.tar.gz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-mail-db-mysql.tar.gz = $(DL_FROM)/mail-db-mysql.tar.gz
 
-$(DL_FILE)_MD5 = 4764e91fd422edc9bbe9d63ed9f07d01
-mail-db-mysql.tar.gz_MD5 = 789ebf5ab48a430c77ca7c1a47a04281
+$(DL_FILE)_MD5 = c56bc9c41f9dd25da9dbf1b63a470333
 
 install : $(TARGET)
 
@@ -78,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	cd $(DIR_SRC) && mkdir -p /srv/web/webcyradm
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) -C /srv/web/webcyradm
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/mail-db-mysql.tar.gz -C /srv/mysql
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE) -C /srv/web
+	mv -v /srv/web/openmailadmin-* /srv/web/openmailadmin
+	chown nobody.nobody /srv/web/openmailadmin/ -Rv
 	@$(POSTBUILD)

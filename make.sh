@@ -474,7 +474,7 @@ buildipfire() {
   ipfiremake postfix
   ipfiremake fetchmail
   ipfiremake cyrusimap
-  ipfiremake webcyradm
+  ipfiremake openmailadmin
   ipfiremake mailx
   ipfiremake clamav
   ipfiremake spamassassin

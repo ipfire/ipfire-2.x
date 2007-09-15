@@ -190,6 +190,7 @@
 * ocaml-3.09.2
 * oinkmaster-2.0
 * openldap-2.3.20
+* openmailadmin-1.0.0
 * openssh-4.3p2
 * openssl-0.9.8d
 * openswan-2.4.9
