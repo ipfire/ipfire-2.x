@@ -40,7 +40,7 @@ clean :
 
 ######
 
-OBJS=main.o nic.o net.o config.o ../libsmooth/libsmooth.o unattended.o
+OBJS=main.o config.o ../libsmooth/libsmooth.o unattended.o
 
 install: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)

@@ -11,9 +11,6 @@
 #include "install.h"
 #define _GNU_SOURCE
  
-#define CDROM_INSTALL 0
-#define URL_INSTALL 1
-#define DISK_INSTALL 2
 #define INST_FILECOUNT 6200
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
@@ -34,23 +31,6 @@ struct knic knics[20] = { { "" , "" , "" , "" } }; // only defined for compile
 extern char *en_tr[];
 extern char *de_tr[];
 
-int detect_smp() {
-	FILE *fd = NULL;
-	char line[STRING_SIZE];
-	int cpu_count = 0;
-
-	if ((fd = fopen("/proc/cpuinfo", "r")) == NULL) {
-		return 0;
-	}
-	while (fgets(line, STRING_SIZE, fd) != NULL) {
-		if (strstr(line, "processor") == line) {
-			cpu_count++;
-		}
-	}
-	(void)fclose(fd);
-	return (cpu_count > 1);
-}
-
 int main(int argc, char *argv[])
 {
 	char *langnames[] = { "Deutsch", "English", NULL };
@@ -59,11 +39,8 @@ int main(int argc, char *argv[])
 	char hdletter;
 	char harddrive[11], sourcedrive[5];	/* Device holder. */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
-	int cdmounted = 0; /* Loop flag for inserting a cd. */
 	int rc = 0;
 	char commandstring[STRING_SIZE];
-	char *installtypes[] = { "CDROM/USB", "HTTP/FTP", NULL };
-	int installtype = CDROM_INSTALL;
 	char mkfscommand[STRING_SIZE];
 	char *fstypes[] = { "Reiser4", "ReiserFS", "ext3", NULL };
 	int fstype = REISER4;
@@ -167,61 +144,25 @@ int main(int argc, char *argv[])
 	// Starting hardware detection
 	runcommandwithstatus("/bin/probehw.sh", ctr[TR_PROBING_HARDWARE]);
 
-	if (!unattended) {
-		sprintf(message, ctr[TR_WELCOME], NAME);
-		newtWinMessage(title, ctr[TR_OK], message);
+	sprintf(message, ctr[TR_WELCOME], NAME);
+	newtWinMessage(title, ctr[TR_OK], message);
 
-		sprintf(message, ctr[TR_SELECT_INSTALLATION_MEDIA_LONG], NAME);
-		rc = newtWinMenu(ctr[TR_SELECT_INSTALLATION_MEDIA], message,
-			50, 5, 5, 6, installtypes, &installtype, ctr[TR_OK],
-			ctr[TR_CANCEL], NULL);
-	} else {
-	    rc = 1;
-	    installtype = CDROM_INSTALL;
-	}
-
-	if (rc == 2)
+	switch (mysystem("/bin/mountsource.sh")) {
+	    case 0:
+				break;
+	    case 10:
+      	errorbox(ctr[TR_NO_CDROM]);
 		goto EXIT;
-
-	/* CDROM INSTALL */
-	if (installtype == CDROM_INSTALL) {
-		switch (mysystem("/bin/mountsource.sh")) {
-		    case 0:
-					installtype = CDROM_INSTALL;
-					cdmounted = 1;
-			break;
-		    case 1:
-					installtype = DISK_INSTALL;
-			break;
-		    case 10:
-	      	errorbox(ctr[TR_NO_CDROM]);
-			goto EXIT;
-		}
-
-		/* read source drive letter */
-		if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
-			errorbox(ctr[TR_ERROR_PROBING_CDROM]);
-			goto EXIT;
-		}
-		fgets(sourcedrive, 5, handle);
-		fprintf(flog, "Source drive: %s\n", sourcedrive);
-		fclose(handle);
 	}
 
- 	/* Configure the network now! */
-	if (installtype == URL_INSTALL) {
-		/* Network driver and params. */
-		if (!(networkmenu(ethernetkv))) {
-			errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
-			goto EXIT;
-		}
-
-		/* Check for ipfire-<VERSION>.tbz2 */
-		if (checktarball(SNAME "-" VERSION ".tbz2", ctr[TR_ENTER_URL])) {
-			errorbox(ctr[TR_NO_IPCOP_TARBALL_FOUND]);
-			goto EXIT;
-		}
+	/* read source drive letter */
+	if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
+		errorbox(ctr[TR_ERROR_PROBING_CDROM]);
+		goto EXIT;
 	}
+	fgets(sourcedrive, 5, handle);
+	fprintf(flog, "Source drive: %s\n", sourcedrive);
+	fclose(handle);
 	
 	i = 0;
 	while (found == 0) {
@@ -489,15 +430,8 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-	if (installtype == URL_INSTALL) {
-		snprintf(commandstring, STRING_SIZE,
-			"/bin/wget -q -O - %s/" SNAME "-" VERSION ".tbz2 | /bin/tar -C /harddisk -xvjf -", url);
-	}
-
-	if (installtype == CDROM_INSTALL) {
-		snprintf(commandstring, STRING_SIZE,
-			"/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
-	}
+	snprintf(commandstring, STRING_SIZE,
+		"/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
 	
 	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
 		ctr[TR_INSTALLING_FILES]))
@@ -581,7 +515,7 @@ int main(int argc, char *argv[])
 	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
 
 	snprintf(commandstring, STRING_SIZE, 
-		 "/sbin/chroot /harddisk /boot/grub/grubbatch");
+		 "/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;

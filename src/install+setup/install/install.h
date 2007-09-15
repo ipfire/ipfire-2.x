@@ -26,12 +26,6 @@ struct devparams
 	char options[STRING_SIZE];
 };
 
-/* nic.c */
-int networkmenu(struct keyvalue *ethernetkv);
-
-/* net.c */
-int checktarball(char *, char *message);
-
 /* config.c */
 int write_disk_configs(struct devparams *dp);
 int write_lang_configs( char *lang);
