@@ -1,6 +1,0 @@
-etc/init.d/networking/red
-etc/init.d/dhcp
-srv/web/ipfire/cgi-bin/pakfire.cgi
-opt/pakfire/lib/functions.pl
-usr/local/bin/syslogdctrl
-var/ipfire/graphs.pl
