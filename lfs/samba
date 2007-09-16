@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
 PAK_VER    = 1
 
-DEPS       = "cups openldap cyrus-sasl"
+DEPS       = "cups cyrus-sasl"
 
 ###############################################################################
 # Top-level Rules

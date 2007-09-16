@@ -509,10 +509,9 @@ int main(int argc, char *argv[])
 
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
-	replace( "/harddisk/boot/grub/grubbatch", "DEVICE", hdparams.devnode_disk);
+	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
 
-	/* restore permissions */
-	chmod("/harddisk/boot/grub/grubbatch", S_IXUSR | S_IRUSR | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
+	system("sed -e 's#harddisk\\/##g' < /proc/mounts > /harddisk/etc/mtab");
 
 	snprintf(commandstring, STRING_SIZE, 
 		 "/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
@@ -520,8 +519,6 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
 	}
-
-	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
 	
 	mysystem("umount /cdrom");
 	snprintf(commandstring, STRING_SIZE, "eject /dev/%s", sourcedrive);

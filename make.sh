@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.0beta1"							# Version number
+VERSION="2.0beta2"							# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
 NICE=10													# Nice level
@@ -322,7 +322,6 @@ buildipfire() {
   ipfiremake dhcpcd
   ipfiremake libusb
   ipfiremake libpcap
-  ipfiremake linux-atm
   ipfiremake ppp
   ipfiremake rp-pppoe
   ipfiremake unzip

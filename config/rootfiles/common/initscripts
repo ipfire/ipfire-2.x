@@ -29,7 +29,7 @@ etc/rc.d/init.d/mISDN
 etc/rc.d/init.d/modules
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/mountkernfs
-etc/rc.d/init.d/mysql
+#etc/rc.d/init.d/mysql
 etc/rc.d/init.d/network
 #etc/rc.d/init.d/networking
 etc/rc.d/init.d/networking/any
