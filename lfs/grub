@@ -94,8 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	for i in $(DIR_SRC)/config/grub/*; do \
 	    [ -f $$i ] && cp -f $$i /boot/grub; \
 	done
-
-	install -m 0755 $(DIR_SRC)/src/install+setup/install/grubbatch /boot/grub
+	
 	/usr/sbin/grub-set-default 1
 
 	@rm -rf $(DIR_APP)

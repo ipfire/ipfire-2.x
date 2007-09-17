@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.0beta1 ==
+== List of softwares used to build IPFire Version: 2.0beta2 ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -146,7 +146,6 @@
 * libxml2-2.6.26
 * libxslt-1.1.17
 * linux-2.6.16.53
-* linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
 * logrotate-3.7.1
