@@ -4,37 +4,34 @@
 #
 # This code is distributed under the terms of the GPL
 #
-# 20.08.2007 Maniacikarus - IPFire.org - maniacikarus@ipfire.org
+# 18.09.2007 Maniacikarus - IPFire.org - maniacikarus@ipfire.org
 #
 
 # begin
 
-my @proc = `cat /proc/diskstats`;
 my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-my %diskstatus = "";
-my %diskstate = "";
+my $diskstats = "";
+my $newdiskstats = "";
 my $debug = 1;
 my $status = "unknown";
-
-if ($debug){print "### Reading Diskstats ###\n";}
-
-foreach (@proc){
-my @line = split(/ +/,$_);
-$diskstatus{$line[3]} =$line[12];
-if ($debug){print "Getting device ".$line[3]." with the following value ".$line[12]."\n";}
-}
 
 if ($debug){print "### Searching for available Disks ###\n";}
 
 foreach (@devices){
 chomp $_;
-if ($debug){print "Device ".$_." has ".$diskstatus{$_}." IO Requests.\n";}
+$diskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
 $status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;
+chomp $status;
+chomp $diskstats;
+if ($debug){print "Device ".$_." is in status".$status." and has ".$diskstats." write and read Requests.\n";}
+sleep 30;
+$newdiskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+chomp $newdiskstats;
 
-  if ($diskstatus{$_} eq "0" && $status !=~/standby/){
-    if ($debug){print "Device ".$_." is set to standy.\n";}
-    system("/sbin/hdparm -y /dev/$_");
-    system("touch /tmp/hddshutdown-$_");
+  if ($diskstats eq $newdiskstats && $status !=~/standby/){
+      if ($debug){print "Device ".$_." is set to standy.\n";}
+      system("/sbin/hdparm -y /dev/$_");
+      system("touch /tmp/hddshutdown-$_");
   }
   elsif ($diskstatus{$_} ne "0" || $status !=~/standby/){
     if ($debug){print "Device ".$_." is active.\n";}

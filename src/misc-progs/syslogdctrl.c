@@ -112,7 +112,7 @@ int main(void)
    else
       snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@.\\+\\)$/#\\1/' /etc/syslog.conf >&%d", config_fd );
       
-      snprintf(buffer, STRING_SIZE - 1, "/bin/sed 's/.*\\/var\\/log\\/messages.*/%s     \\/var\\/log\\/messages/' /etc/syslog.conf >&%d", varmessages, config_fd );
+      snprintf(buffer, STRING_SIZE - 1, "/bin/sed 's#.*/var/log/messages.*#%s     /var/log/messages#' /etc/syslog.conf >&%d", varmessages, config_fd );
 
    /* if the return code isn't 0 failsafe */
    if ((rc = unpriv_system(buffer,99,99)) != 0)

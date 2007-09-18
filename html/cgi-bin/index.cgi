@@ -55,10 +55,13 @@ my %mainsettings = ();
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 my $connstate = &Header::connectionstatus();
-if ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
-	$refresh = "<meta http-equiv='refresh' content='30;'>";
+
+if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'} || $cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
+	$refresh = "<meta http-equiv='refresh' content='300;'>";
 } elsif ($connstate =~ /$Lang::tr{'connecting'}/) {
 	$refresh = "<meta http-equiv='refresh' content='5;'>";
+} elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
+	$refresh = "<meta http-equiv='refresh' content='30;'>";
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
