@@ -387,6 +387,7 @@ buildipfire() {
   ipfiremake GD-TextUtil
   ipfiremake gnupg
   ipfiremake hdparm
+  ipfiremake sdparm
   ipfiremake mtools
   ipfiremake initscripts
   ipfiremake whatmask

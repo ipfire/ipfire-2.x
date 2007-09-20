@@ -33,7 +33,7 @@ chomp $newdiskstats;
       system("/sbin/hdparm -y /dev/$_");
       system("touch /tmp/hddshutdown-$_");
   }
-  elsif ($diskstatus{$_} ne "0" || $status !=~/standby/){
+  else{
     if ($debug){print "Device ".$_." is active.\n";}
     if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); }
   }
