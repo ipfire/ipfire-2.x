@@ -148,6 +148,7 @@ $(TARGET) :
 		/etc/rc.d/init.d/networking/red.up/26-xtaccess
 	ln -sf ../../../../../usr/local/bin/dialctrl.pl \
 		/etc/rc.d/init.d/networking/red.up/99-U-dialctrl.pl
+	ln -sf ../../squid /etc/rc.d/init.d/networking/red.up/27-RS-squid
 	
 	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
 	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.down/20-RL-firewall
