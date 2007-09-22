@@ -7,6 +7,10 @@ require "${General::swroot}/header.pl";
 my $filename = "";
 my $debug = 0; 
 
+if (  `/etc/init.d/mpd status` =~/not running/ ){
+system("/etc/init.d/mpd start >/dev/null");
+}
+
 if ($ARGV[0] eq 'scan') {
   if ($debug){print "Creating Database\n";}
   system("mpd --create-db >/dev/null");
