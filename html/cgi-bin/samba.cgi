@@ -829,7 +829,7 @@ foreach my $shareentry (sort @Shares)
 			<input type='hidden' name='ACTION' value='sharechange' />
 			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
 	</form></td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}>
+	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='smbsharedel' />
 			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />

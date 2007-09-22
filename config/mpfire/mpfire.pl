@@ -14,7 +14,7 @@ system("/etc/init.d/mpd start >/dev/null");
 if ($ARGV[0] eq 'scan') {
   if ($debug){print "Creating Database\n";}
   system("mpd --create-db >/dev/null");
-  system("/etc/init.d/mpd restart");
+  system("/etc/init.d/mpd restart >/dev/null");
 }
 elsif ($ARGV[0] eq 'play') {
   &checkmute();
@@ -106,10 +106,10 @@ sub checkmute(){
   my @PCM = split(/ /,$temp);
  if ( $PCM[7] =~  /off/ ){
   if ($debug){print "PCM was muted - umuting.\n";}
-  system("amixer set PCM toggle");
+  system("amixer set PCM toggle >/dev/null");
   }
  if ( $Master[7] =~ /off/ ){
   if ($debug){print "Master was muted - umuting.\n";}
-  system("amixer set Master toggle");
+  system("amixer set Master toggle >/dev/null");
   } 
 }
