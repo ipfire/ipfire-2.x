@@ -30,7 +30,7 @@
 
 int main(void)
 {
-   char buffer[STRING_SIZE], hostname[STRING_SIZE], varmessages[STRING_SIZE];
+   char buffer[STRING_SIZE], command[STRING_SIZE], hostname[STRING_SIZE], varmessages[STRING_SIZE];
    int config_fd,rc,fd,pid;
    struct stat st;
    struct keyvalue *kv = NULL;
@@ -111,10 +111,8 @@ int main(void)
       snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@\\).\\+$/\\1%s/' /etc/syslog.conf >&%d", hostname, config_fd );
    else
       snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@.\\+\\)$/#\\1/' /etc/syslog.conf >&%d", config_fd );
-      
-      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's#\\.\\*/var/log/messages\\.\\*#%s     /var/log/messages#' /etc/syslog.conf >&%d", varmessages, config_fd );
 
-   /* if the return code isn't 0 failsafe */
+     /* if the return code isn't 0 failsafe */
    if ((rc = unpriv_system(buffer,99,99)) != 0)
    {
       fprintf(stderr, "sed returned bad exit code: %d\n", rc);
@@ -123,6 +121,13 @@ int main(void)
       exit(ERR_CONFIG);
    }
    close(config_fd);
+   
+   /* Replace the logging option*/
+
+     safe_system("grep -v '/var/log/messages' < /etc/syslog.conf.new > /etc/syslog.conf.tmp && mv /etc/syslog.conf.tmp /etc/syslog.conf.new");
+     snprintf(command, STRING_SIZE-1, "printf '%s     /var/log/messages' >> /etc/syslog.conf.new", varmessages );
+     safe_system(command);
+
    if (rename("/etc/syslog.conf.new", "/etc/syslog.conf") == -1)
    {
       perror("Unable to replace old config file");

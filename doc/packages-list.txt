@@ -216,9 +216,7 @@
 * rtorrent-0.7.6
 * samba-3.0.25c
 * screen-4.0.2
-* sdparm-0.90
 * sdparm-1.01
-* sdparm-1.02
 * sed-4.1.5
 * setserial-2.17
 * shadow-4.0.15

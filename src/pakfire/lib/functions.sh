@@ -25,20 +25,15 @@ extract_files() {
 	echo "...Finished."
 }
 
-reload_all() {
-	reload_modules
-	reload_libs
-}
-
 reload_libs() {
 	echo "(Re-)Initializing the lib-cache..."	
-	ldconfig
+	ldconfig -vv
 	echo "...Finished."
 }
 
 reload_modules() {
 	echo "(Re-)Initializing the module-dependencies..."	
-	depmod -a
+	depmod -va
 	echo "...Finished."
 }
 

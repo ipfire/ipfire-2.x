@@ -166,10 +166,10 @@ sub fetchfile {
 		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 
 		if ($proxysettings{'UPSTREAM_PROXY'}) {
-			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"") unless ($bfile =~ /^counter\?.*/); 
+			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"") unless ($bfile =~ /^counter.py\?.*/); 
 			if ($proxysettings{'UPSTREAM_USER'}) {
 				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
-				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"") unless ($bfile =~ /^counter\?.*/);
+				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"") unless ($bfile =~ /^counter.py\?.*/);
 			} else {
 				$ua->proxy("http","http://$proxysettings{'UPSTREAM_PROXY'}/");
 			}
@@ -179,7 +179,7 @@ sub fetchfile {
 	 	my $url = "http://$host/$file";
 		my $response;
 		
-		unless ($bfile =~ /^counter\?.*/) {
+		unless ($bfile =~ /^counter.py\?.*/) {
 			my $result = $ua->head($url);
 			my $remote_headers = $result->headers;
 			$total_size = $remote_headers->content_length;
@@ -201,7 +201,7 @@ sub fetchfile {
 		}
 		
 		if ($response->is_success) {
-			unless ($bfile =~ /^counter\?.*/) {
+			unless ($bfile =~ /^counter.py\?.*/) {
 				if (open(FILE, ">$Conf::tmpdir/$bfile")) {
 					print FILE $final_data;
 					close(FILE);
@@ -644,7 +644,7 @@ sub setuppak {
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
 	$return %= 255;
 	if ($pakfiresettings{'UUID'} ne "off") {
-		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&ipak=$pak&return=$return", "$Conf::mainserver");
+		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid&ipak=$pak&return=$return", "$Conf::mainserver");
 	}
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
@@ -705,7 +705,7 @@ sub upgradepak {
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./update.sh >> $Conf::logdir/update-$pak.log 2>&1");
 	$return %= 255;
 	if ($pakfiresettings{'UUID'} ne "off") {
-		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&upak=$pak&return=$return", "$Conf::mainserver");
+		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid&upak=$pak&return=$return", "$Conf::mainserver");
 	}
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
@@ -730,7 +730,7 @@ sub removepak {
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./uninstall.sh >> $Conf::logdir/uninstall-$pak.log 2>&1");
 	$return %= 255;
 	if ($pakfiresettings{'UUID'} ne "off") {
-		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid&dpak=$pak&return=$return", "$Conf::mainserver");
+		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid&dpak=$pak&return=$return", "$Conf::mainserver");
 	}
 	if ($return == 0) {
 	  open(FILE, "<$Conf::dbdir/rootfiles/$pak");
@@ -793,7 +793,7 @@ sub senduuid {
 			$Conf::uuid = `cat $Conf::dbdir/uuid`;
 		}
 		logger("Sending my uuid: $Conf::uuid");
-		fetchfile("cgi-bin/counter?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
+		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
 		system("rm -f $Conf::tmpdir/counter* 2>/dev/null");
 	}
 }

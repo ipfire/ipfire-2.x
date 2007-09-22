@@ -178,7 +178,7 @@ define PAK
 	# Bringing the files to their right place.
 	@rm -rf /install/packages/package
 	@mkdir -p /install/packages/package
-	if [ -e "/usr/src/src/paks $(PROG)" ]; then \
+	if [ -e "/usr/src/src/paks/$(PROG)" ]; then \
 		cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
 		/install/packages/package; \
 	else \
