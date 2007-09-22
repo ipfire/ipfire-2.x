@@ -421,7 +421,7 @@ sub updatehdddata
   
   if ( -e "$path_smartctl" )
   {
-    system("$path_smartctl -iHA /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
+    system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
   }
 
   if ( -e "$path_hddtemp" )

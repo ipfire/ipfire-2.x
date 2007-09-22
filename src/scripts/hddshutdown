@@ -20,22 +20,30 @@ if ($debug){print "### Searching for available Disks ###\n";}
 foreach (@devices){
 chomp $_;
 $diskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
-$status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;
+
+if ( $_ =~ /^s/ ){$status = `sdparm --command=ready /dev/$_ | tail -1`;}
+else {$status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;}
+
 chomp $status;
 chomp $diskstats;
-if ($debug){print "Device ".$_." is in status".$status." and has ".$diskstats." write and read Requests.\n";}
+if ($debug){print "Device ".$_." is in status ".$status." and has ".$diskstats." write and read Requests.\n";}
 sleep 30;
+
 $newdiskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
 chomp $newdiskstats;
 
-  if ($diskstats eq $newdiskstats && $status !=~/standby/){
+  if ($diskstats eq $newdiskstats && $status !~/standby/){
       if ($debug){print "Device ".$_." is set to standy.\n";}
-      system("/sbin/hdparm -y /dev/$_");
+      if ( $_ =~ /^s/ ){system("sdparm --command=stop /dev/$_");}
+      else {system("/sbin/hdparm -y /dev/$_");}
       system("touch /tmp/hddshutdown-$_");
   }
-  else{
+  elsif ($diskstatus{$_} ne "0" ){
     if ($debug){print "Device ".$_." is active.\n";}
     if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); }
+  }
+  elsif ( $status =~/standby/ ){
+    if ($debug){print "Device ".$_." is in standby mode.\n";}
   }
 }
 
