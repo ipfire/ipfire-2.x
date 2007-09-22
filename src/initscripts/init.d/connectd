@@ -80,10 +80,11 @@ case "$1" in
 		
   reconnect)
 		while ( ps ax | grep -q [p]ppd ); do
+			msg_log "There is a pppd still running. Waiting 2 seconds for exit."
 			sleep 2
 		done
 		
-		/etc/rc.d/init.d/network restart red &
+		/etc/rc.d/init.d/network restart red
 		;;
 		
   *)

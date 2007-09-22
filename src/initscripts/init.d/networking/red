@@ -295,7 +295,9 @@ case "${1}" in
 		elif [ "$TYPE" == "PPPOE" ]; then
 			boot_mesg "Bringing down the PPPoE interface on ${DEVICE}..."
 			rm -f /var/ipfire/red/keepconnected
-			killproc /usr/sbin/pppd
+			kill -TERM /usr/sbin/pppd 2>/dev/null
+			evaluate_retval
+			sleep 5
 			
 			ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
 			
