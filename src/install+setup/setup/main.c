@@ -176,15 +176,15 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		if (!(handledomainname()))
 			goto EXIT;
-		if (!(handlenetworking()))
-			goto EXIT;
-		if (!(handleisdn()))
-			goto EXIT;
-		if (!(handledhcp()))
-			goto EXIT;
 		if (!(handlerootpassword()))
 			goto EXIT;
 		if (!(handleadminpassword()))
+			goto EXIT;
+		if (!(handleisdn()))
+			goto EXIT;
+		if (!(handlenetworking()))
+			goto EXIT;
+		if (!(handledhcp()))
 			goto EXIT;
 
 		autook = 1;
