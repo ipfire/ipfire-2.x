@@ -35,7 +35,7 @@ srv/web/openmailadmin/images/sh_ru.gif
 srv/web/openmailadmin/images/sh_ver.gif
 srv/web/openmailadmin/images/spacer.gif
 #srv/web/openmailadmin/images/treeview
-srv/web/openmailadmin/images/treeview/#.png
+srv/web/openmailadmin/images/treeview/+.png
 srv/web/openmailadmin/images/treeview/-.png
 srv/web/openmailadmin/images/treeview/act_mbox.png
 srv/web/openmailadmin/images/treeview/ina_mbox.png
@@ -47,6 +47,7 @@ srv/web/openmailadmin/inc/.htaccess
 srv/web/openmailadmin/inc/_append.php
 srv/web/openmailadmin/inc/_prepend.php
 srv/web/openmailadmin/inc/config.inc.php
+srv/web/openmailadmin/inc/config.local.inc.php
 #srv/web/openmailadmin/inc/database
 srv/web/openmailadmin/inc/database/domains.adodb.txt
 srv/web/openmailadmin/inc/database/imap_demo.adodb.txt
@@ -84,6 +85,7 @@ srv/web/openmailadmin/inc/miniauth.inc.php
 srv/web/openmailadmin/inc/panel_filter.php
 srv/web/openmailadmin/inc/translation.inc.php
 srv/web/openmailadmin/index.php
+srv/web/openmailadmin/mail.dump
 srv/web/openmailadmin/mailboxes.php
 srv/web/openmailadmin/regexp.php
 #srv/web/openmailadmin/samples

@@ -4,4 +4,4 @@
 extract_files
 
 # Set postfix's hostname
-postconf -e "hostname=$(hostname -f)"
+postconf -e "myhostname=$(hostname -f)"
