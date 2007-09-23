@@ -272,6 +272,9 @@
 #"SAMSUNG SV1204H"					194  C	"Samsung 120G"
 "SAMSUNG SV(0401|0802|1203|1604)N"			194  C	"Samsung SpinPoint V80 serie"
 "SAMSUNG SV4012H"					194  C	"Samsung 40GB, 5400RPM, 2MB cache"
+"SAMSUNG HM100JC"         194  C  "Samsung 100GB,5400RPM, 8MB cache"
+
+
 
 ########################################
 ############# Seagate drives

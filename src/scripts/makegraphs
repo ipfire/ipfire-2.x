@@ -403,6 +403,28 @@ sub updatelq {
 sub updatehdddata 
 {
   my $disk = $_[0];
+  my $standby;
+  
+  if ( ! -e "$rrdlog/hddshutdown-$disk.rrd") 
+  {
+    # database did not exist -> create
+    RRDs::create ("$rrdlog/hddshutdown-$disk.rrd", "--step=300",
+      "DS:standby:GAUGE:600:0:1",
+      "RRA:AVERAGE:0.5:1:576",
+      "RRA:AVERAGE:0.5:6:672",
+      "RRA:AVERAGE:0.5:24:732",
+      "RRA:AVERAGE:0.5:144:1460");
+    $ERROR = RRDs::error;
+    print "Error in RRD::create for hddshutdown-$disk: $ERROR\n" if $ERROR;
+  }
+
+  if (-e "/tmp/hddshutdown-$disk") {$standby = 1;}
+    else {$standby = 0;}
+
+  RRDs::update ("$rrdlog/hddshutdown-$disk.rrd", "-t", "standby", "N:$standby");
+  $ERROR = RRDs::error;
+  print "Error in RRD::update for hddshutdown-$disk: $ERROR\n" if $ERROR;
+
   if ( ! -e "$rrdlog/hddtemp-$disk.rrd") 
   {
     # database did not exist -> create
@@ -415,62 +437,70 @@ sub updatehdddata
     $ERROR = RRDs::error;
     print "Error in RRD::create for hdd-$disk: $ERROR\n" if $ERROR;
   }
-  $temp = 0;
-  my $hdd_output = '';
-  my $smart_output = '';
+
+  # Temperaturlesen wÃrde die Platte aufwecken!!!
+  if (!$standby) 
+  {
+    $temp = 0;
+    my $hdd_output = '';
+    my $smart_output = '';
   
-  if ( -e "$path_smartctl" )
-  {
-    system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
-  }
+    if ( -e "$path_smartctl" )
+    {
+	system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
+    }
 
-  if ( -e "$path_hddtemp" )
-  {
-    $hdd_output = `$path_hddtemp -qn /dev/$disk`;
+    if ( -e "$path_hddtemp" )
+    {
+	$hdd_output = `$path_hddtemp -qn /dev/$disk`;
     
-    # I know 4 response possible responses:
-    #
-    # /dev/harddisk: harddisk type: S.M.A.R.T. not available
-    # /dev/harddisk: harddisk type: no sensor
-    # /dev/harddisk: harddisk type: 37?C or ?F
-    # 37
+	# I know 4 response possible responses:
+	#
+	# /dev/harddisk: harddisk type: S.M.A.R.T. not available
+	# /dev/harddisk: harddisk type: no sensor
+	# /dev/harddisk: harddisk type: 37?C or ?F
+	# 37
 
-    if ( index($hdd_output, "S.M.A.R.T.") != -1 )
-    {
-      $temp = 0;
+	if ( index($hdd_output, "S.M.A.R.T.") != -1 )
+	{
+    	    $temp = 0;
+	}
+	elsif ( index($hdd_output, "no sensor") != -1 )
+	{
+    	    $temp = 1;
+	}
+	elsif ( index($hdd_output, "$disk") != -1 )
+	{
+    	    $hdd_output =~ /.*:.*:\s*(\d+).*\s/;
+    	    $temp = $1;
+	}
+	else
+	{
+    	    $hdd_output =~ /(\d+)\s/;
+    	    $temp = $1;
+	}
     }
-    elsif ( index($hdd_output, "no sensor") != -1 )
+    elsif ( -e "/var/log/smartctl_out_hddtemp-$disk" )
     {
-      $temp = 1;
-    }
-    elsif ( index($hdd_output, "$disk") != -1 )
-    {
-      $hdd_output =~ /.*:.*:\s*(\d+).*\s/;
-      $temp = $1;
+	$hdd_output = `cat /var/log/smartctl_out_hddtemp-$disk | grep Temperature_`;
+	my @t = split(/\s+/,$hdd_output);
+	$temp = $t[9];
     }
     else
     {
-      $hdd_output =~ /(\d+)\s/;
-      $temp = $1;
+	$temp = 0;
     }
-  }
-  elsif ( -e "/var/log/smartctl_out_hddtemp-$disk" )
-  {
-    $hdd_output = `cat /var/log/smartctl_out_hddtemp-$disk | grep Temperature_`;
-    my @t = split(/\s+/,$hdd_output);
-    $temp = $t[9];
-  }
-  else
-  {
-    $temp = 0;
-  }
   
 
-  print "Temperature for ".$disk."->".$temp."<-\n";
-
-  RRDs::update ("$rrdlog/hddtemp-$disk.rrd", "-t", "temperature", "N:$temp");
-  $ERROR = RRDs::error;
-  print "Error in RRD::update for hdd-$disk: $ERROR\n" if $ERROR;
+    print "Temperature for ".$disk."->".$temp."<-\n";
+    # Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
+    if ($temp)
+    {
+	RRDs::update ("$rrdlog/hddtemp-$disk.rrd", "-t", "temperature", "N:$temp");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for hdd-$disk: $ERROR\n" if $ERROR;
+    }
+  }
 }
 
 sub updatembmondata 
@@ -572,13 +602,42 @@ my $disk = $_;
 chomp $disk;
 print "Working on disk ".$disk.".\n";
 
-updatediskdata($disk);
-updatehdddata($disk);
+my $status = "";
+my $diskstats = "";
+my $newdiskstats = "";
 
+$diskstats = `cat /tmp/hddstats-$disk`;
+chomp $diskstats;
+my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+chomp $newdiskstats;
 my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
+chomp $status;
+
+if ($status !~/standby/ || $diskstats ne $newdiskstats)
+{
+    if (-e "/tmp/hddshutdown-$disk") 
+    {
+      system("unlink /tmp/hddshutdown-$disk");
+    }
+}
+
+if (-e "/tmp/hddshutdown-$disk")  
+{
+    $status = " standby\n";
+}
+else
+{
+    $status = " active\n";
+}
+
+
 open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
 print DATEI $disk."-".$status;
 close(DATEI);
+
+updatediskdata($disk);
+updatehdddata($disk);
+
 }
 
 ###

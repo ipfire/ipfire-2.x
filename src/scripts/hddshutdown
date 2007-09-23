@@ -5,7 +5,7 @@
 # This code is distributed under the terms of the GPL
 #
 # 18.09.2007 Maniacikarus - IPFire.org - maniacikarus@ipfire.org
-#
+# 22.09.2007 Arne_F -  fitzenreiter.de - arne@fitzenreiter.de
 
 # begin
 
@@ -13,38 +13,48 @@ my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 my $diskstats = "";
 my $newdiskstats = "";
 my $debug = 1;
-my $status = "unknown";
+my $status = "";
 
 if ($debug){print "### Searching for available Disks ###\n";}
 
 foreach (@devices){
-chomp $_;
-$diskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+    chomp $_;
+    $diskstats = `cat /tmp/hddstats-$_`;
+    chomp $diskstats;
+    $newdiskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+    chomp $newdiskstats;
+    $status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;
+    chomp $status;
 
-if ( $_ =~ /^s/ ){$status = `sdparm --command=ready /dev/$_ | tail -1`;}
-else {$status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;}
+    if ($debug){print "Device ".$_." IDE Power status:".$status."\n";}
+    if (-e "/tmp/hddshutdown-$_" && $status !~/standby/)
+    {
+	if ($debug){print "Remove wrong standby marking\n";}
+	if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); } 
+    }
 
-chomp $status;
-chomp $diskstats;
-if ($debug){print "Device ".$_." is in status ".$status." and has ".$diskstats." write and read Requests.\n";}
-sleep 30;
-
-$newdiskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
-chomp $newdiskstats;
-
-  if ($diskstats eq $newdiskstats && $status !~/standby/){
-      if ($debug){print "Device ".$_." is set to standy.\n";}
-      if ( $_ =~ /^s/ ){system("sdparm --command=stop /dev/$_");}
-      else {system("/sbin/hdparm -y /dev/$_");}
-      system("touch /tmp/hddshutdown-$_");
-  }
-  elsif ($diskstatus{$_} ne "0" ){
-    if ($debug){print "Device ".$_." is active.\n";}
-    if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); }
-  }
-  elsif ( $status =~/standby/ ){
-    if ($debug){print "Device ".$_." is in standby mode.\n";}
-  }
+    if ($debug){print "Device ".$_." has ".$newdiskstats." write and read Requests, was ".$diskstats." at last run.\n";}
+    if ($diskstats eq $newdiskstats && (! -e "/tmp/hddshutdown-$_") )
+    {
+	if ($debug){print "Setting Device ".$_." to standby ... ";}
+	$status = `hdparm -y /dev/$_ 2>&1`;
+	chomp $status;
+	if ($status !~/failed/) 
+	{  
+    	    if ($debug){print "OK\n";}
+    	    system("touch /tmp/hddshutdown-$_");
+	}
+	else
+	{
+	    if ($debug){print "FAIL\n";}         
+	}
+    }
+    if ($diskstats ne $newdiskstats)
+    {
+	if ($debug){print "Device ".$_." is active.\n";}
+	if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); }
+    }
+    system("echo $newdiskstats > /tmp/hddstats-$_");
 }
 
 # end
