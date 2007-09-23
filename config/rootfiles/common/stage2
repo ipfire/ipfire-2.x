@@ -10,6 +10,7 @@ etc/bashrc
 etc/certparams
 etc/fstab
 etc/group
+etc/hddtemp.db
 etc/host.conf
 etc/inittab
 etc/inputrc

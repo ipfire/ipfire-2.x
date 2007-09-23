@@ -36,14 +36,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-		hddtemp.db
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-hddtemp.db = $(DL_FROM)/hddtemp.db
 
 $(DL_FILE)_MD5 = bbf8be4539495e18bec54af77511a680
-hddtemp.db_MD5 = 5321858f8c028d4b1a91a8a5f951f2f8
 
 install : $(TARGET)
 
@@ -73,7 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp -fv $(DIR_DL)/hddtemp.db /etc/hddtemp.db
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-db-path=/etc/hddtemp.db
 	cd $(DIR_APP) && make $(MAKETUNING) && make install
 	@rm -rf $(DIR_APP)
