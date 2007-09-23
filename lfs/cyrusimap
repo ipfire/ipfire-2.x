@@ -77,27 +77,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-no_transfig.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-autocreate-0.9.4.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-autosievefolder-0.6.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-rmquota+deletemailbox-0.2-1.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.1.3-flock.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-munge8bit.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.1.16-getrlimit.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.10-groupcache.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-seenstate.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-acceptinvalidfrom.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.3.3-deleteacl_invalid_identifier_fix.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-notify_sms.patch
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-gcc4.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/timsieved_reset_sasl_conn.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/allow_auth_plain_proxying.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/authid_normalize.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-64bit_quota-p1.patch
-	# cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-64bit_quota-p2.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-singleinstancestore.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-spool.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-mupdate-thread-safe.patch
 	cp -f /usr/include/et/com_err.h /usr/include/com_err.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-service-path=/usr/lib/cyrus \
 				--with-cyrus-prefix=/usr/lib/cyrus --sysconfdir=/var/ipfire/cyrusimap \
@@ -120,9 +101,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_APP)/tools/mkimap /usr/bin
 	sudo -u cyrus /usr/bin/mkimap /var/ipfire/cyrusimap/imapd.conf
 	chown cyrus.mail /var/imap/socket
-	# Wenn das Dateisystem ext2 waere...
-	# cd /var/imap && chattr +S user quota user/* quota/* && chattr +S /var/spool/imap /var/spool/imap/*
-	# Give user cyrus a password
-	echo cyrus:ipfire | /usr/sbin/chpasswd
 	@rm -rf $(DIR_APP) /usr/include/com_err.h
 	@$(POSTBUILD)

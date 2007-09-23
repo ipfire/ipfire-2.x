@@ -1,15 +1,7 @@
-# Host der Datenbank
-hosts = localhost 
-
-# Benutzername und Passwort der Datenbank
-user = mail
-password = ipfire
-
-# Der Datenbankname
+hosts = localhost
+user = root
+password = mysqlfire
 dbname = mail
-
-# Der Tabellenname
-table = domain
-
-select_field = domain_name
-where_field = domain_name
+table = domains
+select_field = domain
+where_field = domain

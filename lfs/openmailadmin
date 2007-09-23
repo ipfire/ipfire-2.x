@@ -78,5 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE) -C /srv/web
 	mv -v /srv/web/openmailadmin-* /srv/web/openmailadmin
+	cp -fv $(DIR_SRC)/config/openmailadmin/config.local.inc.php \
+		/srv/web/openmailadmin/inc
+	cp -fv $(DIR_SRC)/config/openmailadmin/mail.dump \
+		/srv/web/openmailadmin/
 	chown nobody.nobody /srv/web/openmailadmin/ -Rv
 	@$(POSTBUILD)

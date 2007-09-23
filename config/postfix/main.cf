@@ -4,24 +4,29 @@
 queue_directory = /var/spool/postfix
 command_directory = /usr/sbin
 daemon_directory = /usr/lib/postfix
+manpage_directory = /usr/share/man
+sample_directory = /etc/postfix
+html_directory = no
+readme_directory = no
+
+sendmail_path = /usr/sbin/sendmail
+newaliases_path = /usr/bin/newaliases
+mailq_path = /usr/bin/mailq
+
 mail_owner = postfix
+setgid_group = postdrop
+
 #myhostname = host.domain.tld
-#mydomain = domain.tld
-#myorigin = $myhostname
-#myorigin = $mydomain
+myorigin = $myhostname
+
 inet_interfaces = all
 #proxy_interfaces =
-mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain, mysql:/etc/postfix/mysql-mydestination.cf
-#local_recipient_maps = unix:passwd.byname $alias_maps
-#local_recipient_maps = proxy:unix:passwd.byname $alias_maps
-#local_recipient_maps =
+mydestination = $myhostname, localhost.$mydomain, localhost, mysql:/etc/postfix/mysql-mydestination.cf
 unknown_local_recipient_reject_code = 550
-#ynetworks_style = class
-#mynetworks_style = subnet
-#mynetworks_style = host
-#mynetworks = 168.100.189.0/28, 127.0.0.0/8
-#mynetworks = $config_directory/mynetworks
-#mynetworks = hash:/etc/postfix/network_table
+
+mynetworks_style = host
+mynetworks = 127.0.0.0/8
+
 #relay_domains = $mydestination
 #relayhost = $mydomain
 #relayhost = [gateway.my.domain]
@@ -33,31 +38,15 @@ unknown_local_recipient_reject_code = 550
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 #recipient_delimiter = +
-#home_mailbox = Mailbox
-#home_mailbox = Maildir/
-#mail_spool_directory = /var/mail
-#mail_spool_directory = /var/spool/mail
-#mailbox_command = /some/where/procmail
-#mailbox_command = /some/where/procmail -a "$EXTENSION"
-mailbox_transport = procmail
-#fallback_transport = lmtp:unix:/file/name
-#fallback_transport = cyrus
-#fallback_transport =
-#luser_relay = $user@other.host
-#luser_relay = $local@other.host
-#luser_relay = admin+$local
-#header_checks = regexp:/etc/postfix/header_checks
+
+mailbox_transport = cyrus
+
+header_checks = regexp:/etc/postfix/header_checks
 #fast_flush_domains = $relay_domains
+
 smtpd_banner = $myhostname ESMTP $mail_name ($mail_version)
 #local_destination_concurrency_limit = 2
 #default_destination_concurrency_limit = 20
-sendmail_path = /usr/sbin/sendmail
-newaliases_path = /usr/bin/newaliases
-mailq_path = /usr/bin/mailq
-setgid_group = postdrop
-html_directory = no
-manpage_directory = /usr/share/man
-sample_directory = /etc/postfix
-readme_directory = no
+
 virtual_alias_maps = hash:/etc/postfix/virtual, mysql:/etc/postfix/mysql-virtual.cf
 sender_canonical_maps = hash:/etc/postfix/canonical, mysql:/etc/postfix/mysql-canonical.cf

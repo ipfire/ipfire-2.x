@@ -1,15 +1,8 @@
-# Host der Datenbank
-hosts = localhost 
-# Benutzername und Passwort der Datenbank
-user = mail
-password = ipfire
-
-# Der Datenbankname
-table = virtual
+hosts = localhost
+user = root
+password = mysqlfire
+table = user
 dbname = mail
-
-select_field = alias
-where_field = username
-
-# Das erste Ergebniss zurückliefern
-additional_conditions = and status = '1' limit 1
+select_field = canonical
+where_field = mbox
+additional_conditions = and active = '1' limit 1

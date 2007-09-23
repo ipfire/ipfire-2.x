@@ -1,4 +1,2 @@
-auth sufficient pam_mysql.so user=mail passwd=ipfire host=localhost db=mail table=accountuser usercolumn=username passwdcolumn=password crypt=1 logtable=log logmsgcolumn=msg logusercolumn=user loghostcolumn=host logpidcolumn=pid logtimecolumn=time 
-auth sufficient pam_unix_auth.so
-account required pam_mysql.so user=mail passwd=ipfire host=localhost db=mail table=accountuser usercolumn=username passwdcolumn=password crypt=1 logtable=log logmsgcolumn=msg logusercolumn=user loghostcolumn=host logpidcolumn=pid logtimecolumn=time
-account sufficient pam_unix_acct.so
+auth    sufficient pam_mysql.so user=root passwd=mysqlfire host=localhost db=mail table=user usercolumn=mbox passwdcolumn=password crypt=0 sqlLog=0
+account required   pam_mysql.so user=root passwd=mysqlfire host=localhost db=mail table=user usercolumn=mbox passwdcolumn=password crypt=0 sqlLog=0
