@@ -89,6 +89,7 @@ etc/rc.d/rc0.d/K30sshd
 etc/rc.d/rc0.d/K45random
 etc/rc.d/rc0.d/K80network
 etc/rc.d/rc0.d/K90sysklogd
+etc/rc.d/rc0.d/K99beep
 etc/rc.d/rc0.d/S60sendsignals
 etc/rc.d/rc0.d/S70localnet
 etc/rc.d/rc0.d/S80mountfs
@@ -101,6 +102,8 @@ etc/rc.d/rc3.d/S25random
 etc/rc.d/rc3.d/S30sshd
 etc/rc.d/rc3.d/S32apache
 etc/rc.d/rc3.d/S40fcron
+etc/rc.d/rc3.d/S98rc.local
+etc/rc.d/rc3.d/S99beep
 #etc/rc.d/rc6.d
 etc/rc.d/rc6.d/K08fcron
 etc/rc.d/rc6.d/K28apache
@@ -108,6 +111,7 @@ etc/rc.d/rc6.d/K30sshd
 etc/rc.d/rc6.d/K45random
 etc/rc.d/rc6.d/K80network
 etc/rc.d/rc6.d/K90sysklogd
+etc/rc.d/rc6.d/K99beep
 etc/rc.d/rc6.d/S60sendsignals
 etc/rc.d/rc6.d/S70mountfs
 etc/rc.d/rc6.d/S80swap
@@ -131,3 +135,4 @@ etc/sysconfig/createfiles
 etc/sysconfig/firewall.local
 etc/sysconfig/modules
 etc/sysconfig/rc
+etc/sysconfig/rc.local

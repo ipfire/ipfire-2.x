@@ -83,7 +83,7 @@ $(TARGET) :
 	for i in $(DIR_SRC)/src/initscripts/sysconfig/*; do \
 		install -v -m 644 $$i /etc/sysconfig/; \
 	done
-	chmod -v 755 /etc/sysconfig/firewall.local
+	chmod -v 755 /etc/sysconfig/{firewall,rc}.local
 
 	for i in $(DIR_SRC)/src/initscripts/helper/*; do \
 		install -v -m 755 $$i /etc/rc.d/helper/; \
@@ -117,6 +117,7 @@ $(TARGET) :
 	ln -sf ../init.d/random      /etc/rc.d/rc0.d/K45random
 	ln -sf ../init.d/random      /etc/rc.d/rc3.d/S25random
 	ln -sf ../init.d/random      /etc/rc.d/rc6.d/K45random
+	ln -sf ../../sysconfig/rc.local /etc/rc.d/rc3.d/S98rc.local
 	ln -sf ../init.d/beep        /etc/rc.d/rc0.d/K99beep
 	ln -sf ../init.d/beep        /etc/rc.d/rc3.d/S99beep
 	ln -sf ../init.d/beep        /etc/rc.d/rc6.d/K99beep
