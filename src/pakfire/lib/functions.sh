@@ -21,7 +21,7 @@
 
 extract_files() {
 	echo "Extracting files..."
-	tar xvf --preserve --numeric-owner /opt/pakfire/tmp/files -C /
+	tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C /
 	echo "...Finished."
 }
 
