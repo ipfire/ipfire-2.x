@@ -19,15 +19,25 @@ char command[BUFFER_SIZE];
 
 int main(int argc, char *argv[]) {
 
-	if (!(initsetuid()))
-		exit(1);
+        if (!(initsetuid()))
+                exit(1);
 
-	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\nsmartctrl <device>\n\n");
-		exit(1);
+        if (argc < 2) {
+                fprintf(stderr, "\nNo argument given.\n\nsmartctrl <device>\n\n");
+                exit(1);
+        }
+
+
+        sprintf(command, "/tmp/hddshutdown-%s", argv[1]);
+        FILE *fp = fopen(command,"r");
+	if( fp ) {
+		fclose(fp);
+		printf("\nDisk %s is in Standby. Do nothing because we won't wakeup\n",argv[1]);
+                exit(1);
 	}
-	sprintf(command, "smartctl -iHA /dev/%s", argv[1]);
-	safe_system(command);
 
-	return 0;
+        sprintf(command, "smartctl -iHA -d ata /dev/%s", argv[1]);
+        safe_system(command);
+
+        return 0;
 }
