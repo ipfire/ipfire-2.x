@@ -47,6 +47,7 @@ $pakfiresettings{'AUTOUPGRADE'} = 'off';
 $pakfiresettings{'UUID'} = 'on';
 
 &Header::getcgihash(\%pakfiresettings);
+
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
@@ -218,7 +219,7 @@ my $packages_update_age = &General::age("/opt/pakfire/db/lists/packages_list.db"
 &Header::openbox("100%", "center", "Pakfire");
 
 print <<END;
-	<table width='100%' cellpadding='5' >
+	<table width='95%' cellpadding='5' >
 		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire system state'}:</b>
 				<td width="50%">
 		<tr><td align="center">$Lang::tr{'pakfire core update level'}: $core_release<hr />
@@ -281,16 +282,18 @@ END
 
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='100%'>
-			<tr><td colspan='4' bgcolor='$color{'color20'}'><b>$Lang::tr{'basic options'}</b>
-			<tr><td width='40%' align="right">$Lang::tr{'pakfire update daily'}
-					<td width='10%' align="left"><input type="checkbox" name="AUTOUPDATE" $checked{'AUTOUPDATE'}{'on'} />
-					<td width='40%' align="right">$Lang::tr{'pakfire register'} 
-					<td width='10%' align="left"><input type="checkbox" name="UUID" $checked{'UUID'}{'on'} />
-			<tr><td width='40%' align="right">$Lang::tr{'pakfire core update auto'}
-					<td width='10%' align="left"><input type="checkbox" name="AUTOUPGRADE" $checked{'AUTOUPGRADE'}{'on'} />
-					<td width='50%' colspan="2">&nbsp;
-			<tr><td width='100%' colspan="4" align="center"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
+		<table width='95%'>
+			<tr><td colspan='2' bgcolor='$color{'color20'}'><b>$Lang::tr{'basic options'}</b></td></tr>
+			<tr><td align='left' width='40%'>$Lang::tr{'pakfire update daily'}</td><td align="left">
+          on <input type='radio' name='AUTOUPDATE' value='on' $checked{'AUTOUPDATE'}{'on'} />/
+          <input type='radio' name='AUTOUPDATE' value='off' $checked{'AUTOUPDATE'}{'off'} /> off </td></tr>
+			<tr><td align='left' width='40%'>$Lang::tr{'pakfire core update auto'}</td><td align="left">
+          on <input type='radio' name='AUTOUPGRADE' value='on' $checked{'AUTOUPGRADE'}{'on'} />/
+          <input type='radio' name='AUTOUPGRADE' value='off' $checked{'AUTOUPGRADE'}{'off'} /> off </td></tr>
+			<tr><td align='left' width='40%'>$Lang::tr{'pakfire register'}</td><td align="left">
+          on <input type='radio' name='UUID' value='on' $checked{'UUID'}{'on'} />/
+          <input type='radio' name='UUID' value='off' $checked{'UUID'}{'off'} /> off </td></tr>
+			<tr><td width='100%' colspan="2" align="center"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" /></td></tr>
 		</table>
 	</form>
 END
