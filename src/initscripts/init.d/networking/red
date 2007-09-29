@@ -82,6 +82,7 @@ case "${1}" in
 			echo -n "${GATEWAY}" > /var/ipfire/red/remote-ipaddress
 			echo -n "${DNS1}" > /var/ipfire/red/dns1
 			echo -n "${DNS2}" > /var/ipfire/red/dns2
+			touch /var/ipfire/red/active
 			
 			boot_mesg "Setting up default gateway ${GATEWAY}..."
 			ip route add default via ${GATEWAY} dev ${DEVICE}
