@@ -82,5 +82,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
+	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/cups /etc/rc.d/init.d
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

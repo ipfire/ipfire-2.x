@@ -150,10 +150,14 @@ case "${1}" in
 		
 			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 			
-			boot_mesg "Bringing up the PPPoE interface on ${DEVICE}..."
-			ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
-			
 			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
+			
+			if [ "$TYPE" == "pppoe" ]; then			
+				boot_mesg "Bringing up the PPPoE interface on ${DEVICE}..."
+				ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
+			else
+				boot_mesg "Bringing up the PPP via ${TYPE} on ${COMPORT}..."
+			fi
 			
 			###                      ###
 			### Configuring the pppd ###
@@ -210,9 +214,15 @@ case "${1}" in
 				fi
 			fi
 			
-			### When using plugin the device has to be the last option
+			### When using pppoe-plugin the device has to be the last option
 			#
 			[ "${METHOD}" == "PPPOE_PLUGIN" ] && PLUGOPTS+=" ${DEVICE}"
+			
+			if [ "$TYPE" == "modem" ]; then
+				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /etc/ppp/dialer"
+			elif [ "$TYPE" == "serial" ]; then
+				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /bin/true"
+			fi
 		
 			### Standard PPP options we always use
 			#
@@ -221,6 +231,7 @@ case "${1}" in
 			PPP_STD_OPTIONS+=" mru ${MTU} noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
 			PPP_STD_OPTIONS+=" lcp-echo-failure 3 ${AUTH}"
+			[ "${TYPE}" eq "pppoe" ] || PPP_STD_OPTIONS+=" lock modem crtscts user ${USERNAME}"
 			
 			### Debugging
 			#
@@ -232,8 +243,10 @@ case "${1}" in
 			
 			### PPPoE invocation
 			#
-			PPPOE_CMD="/usr/sbin/pppoe -p /var/run/ppp-ipfire.pid.pppoe -I ${DEVICE}"
-			PPPOE_CMD+=" -T 80 -U $PPPOE_SYNC $ACNAME $SERVICENAMEOPT"
+			if [ "${TYPE}" == "pppoe" ]; then
+				PPPOE_CMD="/usr/sbin/pppoe -p /var/run/ppp-ipfire.pid.pppoe -I ${DEVICE}"
+				PPPOE_CMD+=" -T 80 -U $PPPOE_SYNC $ACNAME $SERVICENAMEOPT"
+			fi
 			
 			### Run everything
 			#

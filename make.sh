@@ -346,6 +346,7 @@ buildipfire() {
   ipfiremake curl
   ipfiremake python
   ipfiremake libnet
+  ipfiremake libidn
   ipfiremake libjpeg
   ipfiremake libpng
   ipfiremake libtiff

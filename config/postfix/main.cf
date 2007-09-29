@@ -16,12 +16,12 @@ mailq_path = /usr/bin/mailq
 mail_owner = postfix
 setgid_group = postdrop
 
-#myhostname = host.domain.tld
+myhostname = ipfire.localdomain
 myorigin = $myhostname
 
 inet_interfaces = all
 #proxy_interfaces =
-mydestination = $myhostname, localhost.$mydomain, localhost, mysql:/etc/postfix/mysql-mydestination.cf
+mydestination = $myhostname, localhost, mysql:/etc/postfix/mysql-mydestination.cf
 unknown_local_recipient_reject_code = 550
 
 mynetworks_style = host
@@ -48,5 +48,5 @@ smtpd_banner = $myhostname ESMTP $mail_name ($mail_version)
 #local_destination_concurrency_limit = 2
 #default_destination_concurrency_limit = 20
 
-virtual_alias_maps = hash:/etc/postfix/virtual, mysql:/etc/postfix/mysql-virtual.cf
-sender_canonical_maps = hash:/etc/postfix/canonical, mysql:/etc/postfix/mysql-canonical.cf
+virtual_alias_maps = mysql:/etc/postfix/mysql-virtual.cf
+sender_canonical_maps = mysql:/etc/postfix/mysql-canonical.cf

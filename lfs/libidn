@@ -24,30 +24,23 @@
 
 include Config
 
-VER        = 1.0.0
+VER        = 0.6.14
 
-THISAPP    = openmailadmin-$(VER)
-DL_FILE    = $(THISAPP).tbz2
+THISAPP    = libidn-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = openmailadmin
-PAK_VER    = 1
-
-DEPS       = "cyrusimap postfix"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-					adodb502.tgz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-adodb502.tgz = $(DL_FROM)/adodb502.tgz
 
-$(DL_FILE)_MD5 = c56bc9c41f9dd25da9dbf1b63a470333
-adodb502.tgz_MD5 = 850fe353400df5af006985a88620936d
+$(DL_FILE)_MD5 = 040f012a45feb56168853998bb87ad4d
 
 install : $(TARGET)
 
@@ -56,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -79,13 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE) -C /srv/web
-	mv -v /srv/web/openmailadmin-* /srv/web/openmailadmin
-	cp -fv $(DIR_SRC)/config/openmailadmin/config.local.inc.php \
-		/srv/web/openmailadmin/inc
-	cp -fv $(DIR_SRC)/config/openmailadmin/mail.dump \
-		/srv/web/openmailadmin/
-	tar xfz $(DIR_DL)/adodb502.tgz -C /srv/web/openmailadmin
-	ln -svf adodb5 /srv/web/openmailadmin/adodb
-	chown nobody.nobody /srv/web/openmailadmin/ -Rv
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

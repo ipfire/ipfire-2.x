@@ -36,11 +36,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) idn-0.1.tgz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+idn-0.1.tgz = $(DL_FROM)/idn-0.1.tgz
 
 $(DL_FILE)_MD5 = 55c97a671fdabf462cc7a82971a656d2
+idn-0.1.tgz_MD5 = ef8635ec22348325a76abd2abddca4a1
 
 install : $(TARGET)
 
@@ -72,7 +74,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/package.xml && \
+		cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i 's/const char \*errpfx,/const DB_ENV *dbenv, & const/' ext/dba/dba_db4.c
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 										            --sysconfdir=/etc \
@@ -118,7 +121,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -v -m644 php.ini-recommended /etc/php.ini
-	grep -v libphp5.so < /etc/httpd/conf/httpd.conf > /etc/httpd/conf/httpd.conf.bak
+	-grep -v libphp5.so < /etc/httpd/conf/httpd.conf > /etc/httpd/conf/httpd.conf.bak
 	mv -f /etc/httpd/conf/httpd.conf.bak /etc/httpd/conf/httpd.conf
-	@rm -rf $(DIR_APP)
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/idn-0.1.tgz
+	-rm -f $(DIR_SRC)/package.xml
+	cd $(DIR_SRC)/idn-* && phpize
+	cd $(DIR_SRC)/idn-* && ./configure --prefix=/usr --with-idn
+	cd $(DIR_SRC)/idn-* && make
+	cd $(DIR_SRC)/idn-* && make install
+	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/package.xml
 	@$(POSTBUILD)

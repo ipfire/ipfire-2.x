@@ -93,7 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make testdir=/tmp/mysql install
 	rm -rf /tmp/mysql
 	cd /usr/lib && ln -v -sf mysql/libmysqlclient{,_r}.so* .
-	install -v -m644 /usr/share/mysql/my-medium.cnf /etc/my.cnf
+	install -v -m644 $(DIR_SRC)/config/mysql/my.cnf /etc/my.cnf
 	mkdir -p /srv/mysql
 	mysql_install_db --user=mysql --force
 	chgrp -v mysql /srv/mysql{,/test,/mysql}

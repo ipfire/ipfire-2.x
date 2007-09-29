@@ -3,5 +3,7 @@
 
 extract_files
 
+postalias /etc/aliases
+
 # Set postfix's hostname
 postconf -e "myhostname=$(hostname -f)"
