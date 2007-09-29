@@ -1,6 +1,6 @@
 etc/pear.conf
 etc/php.ini
-usr/bin/pear
+#usr/bin/pear
 #usr/bin/peardev
 #usr/bin/pecl
 usr/bin/php

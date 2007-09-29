@@ -73,5 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	sed -e 's/include_next/include/g' -i /usr/include/idn-int.h
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
