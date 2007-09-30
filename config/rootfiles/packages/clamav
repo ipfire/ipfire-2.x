@@ -12,7 +12,7 @@ usr/lib/libclamav.so.2
 usr/lib/libclamav.so.2.0.7
 #usr/lib/pkgconfig/libclamav.pc
 usr/sbin/clamd
-#usr/share/clamav
+usr/share/clamav
 usr/share/clamav/daily.cvd
 usr/share/clamav/main.cvd
 #usr/share/man/man1/clamconf.1

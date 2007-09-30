@@ -626,7 +626,12 @@ buildpackages() {
 ipfirepackages() {
 	ipfiremake core-updates
 	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
-		[ -e $BASEDIR/lfs/$i ] && ipfiredist $i
+		if [ -e $BASEDIR/lfs/$i ]; then
+			ipfiredist $i
+		else
+			echo -n $i
+			beautify message SKIP
+		fi
 	done
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
   mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1

@@ -1,10 +1,7 @@
 etc/my.cnf
 etc/rc.d/init.d/mysql
-#srv/mysql
-srv/mysql/mysql
-#srv/mysql/mysql-bin.000001
-#srv/mysql/mysql-bin.000002
-#srv/mysql/mysql-bin.index
+srv/mysql
+#srv/mysql/mysql
 #srv/mysql/mysql/columns_priv.MYD
 #srv/mysql/mysql/columns_priv.MYI
 #srv/mysql/mysql/columns_priv.frm
