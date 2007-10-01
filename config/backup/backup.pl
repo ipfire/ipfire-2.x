@@ -46,7 +46,7 @@ if ($ARGV[0] eq 'include') {
   print DATEI @include;
   print "/var/log/messages";
   close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
   system("rm /tmp/include");
 }
 elsif ($ARGV[0] eq 'exclude') {
@@ -54,14 +54,14 @@ elsif ($ARGV[0] eq 'exclude') {
   open(DATEI, ">/tmp/include") || die "Could not save temp include file";
   print DATEI @include;
   close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
   system("rm /tmp/include");
 }
 elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz --preserve -f /tmp/restore.ipf");
 }
 elsif ($ARGV[0] eq 'cli') {
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden:$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
 }
 elsif ($ARGV[0] =~ /ipf$/ ) {
   system("rm /var/ipfire/backup/$ARGV[0]");
