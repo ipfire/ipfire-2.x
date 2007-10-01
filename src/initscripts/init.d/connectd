@@ -66,6 +66,9 @@ case "$1" in
 				rm -f /var/ipfire/ppp/settings
 				cp "/var/ipfire/ppp/settings-${BACKUPPROFILE}" /var/ipfire/ppp/settings
 				msg_log "Switched to backup profile ${BACKUPPROFILE}"
+				# to be shure the right secrets are used
+        eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings-${BACKUPPROFILE})
+        echo "'$USERNAME' * '$PASSWORD'" > /var/ipfire/ppp/secrets
 			else
 				msg_log "No backup profile given. Exiting."
 				exit 0

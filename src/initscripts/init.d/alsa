@@ -11,11 +11,12 @@
 
 case "$1" in
 	start)
-		boot_mesg "Starting ALSA..."
+		boot_mesg "Starting ALSA...   Restoring volumes..."
 		modprobe snd_pcm_oss >/dev/null 2>&1 || failed=1
 		modprobe snd_mixer_oss >/dev/null 2>&1 || failed=1
 		(exit ${failed})
 		evaluate_retval
+		loadproc /usr/sbin/alsactl restore
 		;;
 	stop)
 		boot_mesg "Stopping ALSA...    Saving volumes..."
