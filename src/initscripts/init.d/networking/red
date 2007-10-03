@@ -153,7 +153,7 @@ case "${1}" in
 			
 			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
 			
-			if [ "$TYPE" == "pppoe" ]; then			
+			if [ "$TYPE" == "PPPOE" ]; then			
 				boot_mesg "Bringing up the PPPoE interface on ${DEVICE}..."
 				ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
 			else
@@ -232,7 +232,7 @@ case "${1}" in
 			PPP_STD_OPTIONS+=" mru ${MTU} noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
 			PPP_STD_OPTIONS+=" lcp-echo-failure 3 ${AUTH}"
-			[ "${TYPE}" eq "pppoe" ] || PPP_STD_OPTIONS+=" lock modem crtscts user ${USERNAME}"
+			[ "${TYPE}" eq "PPPOE" ] || PPP_STD_OPTIONS+=" lock modem crtscts user ${USERNAME}"
 			
 			### Debugging
 			#
@@ -244,7 +244,7 @@ case "${1}" in
 			
 			### PPPoE invocation
 			#
-			if [ "${TYPE}" == "pppoe" ]; then
+			if [ "${TYPE}" == "PPPOE" ]; then
 				PPPOE_CMD="/usr/sbin/pppoe -p /var/run/ppp-ipfire.pid.pppoe -I ${DEVICE}"
 				PPPOE_CMD+=" -T 80 -U $PPPOE_SYNC $ACNAME $SERVICENAMEOPT"
 			fi
