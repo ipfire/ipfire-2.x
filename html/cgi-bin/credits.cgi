@@ -35,6 +35,10 @@ require "${General::swroot}/header.pl";
 
 &Header::openbigbox('100%', 'center');
 
+&Header::openbox('100%', 'left', 'Version');
+print "This is IPFire Build Version ".`cat /var/ipfire/firebuild`." and tagged as ".`cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
+&Header::closebox();
+
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
 
 print <<END
@@ -53,6 +57,10 @@ Vice Project Leader - Christian Schmidt
 (<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
 Developer - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
+Developer - Sven Nierlein
+(<a href='mailto:cm\@ipfire.org'>affect\@versatel.de</a>)<br />
+Developer - Arne Fitzenreiter
+(<a href='mailto:arne\@ipfire.org'>arne\@ipfire.org</a>)<br />
 Sponsor - Detlef Lampart
 (<a href='mailto:delaco\@ipfire.org'>delaco\@ipfire.org</a>)<br />
 Developer &amp; Security Manager - Rene Zingel
