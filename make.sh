@@ -334,6 +334,7 @@ buildipfire() {
   ipfiremake r8169
   ipfiremake zaptel
   ipfiremake pkg-config
+  ipfiremake linux-atm
   ipfiremake cpio
   ipfiremake klibc
   ipfiremake mkinitcpio

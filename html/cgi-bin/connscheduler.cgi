@@ -479,14 +479,6 @@ print <<END
 </table>
 <br />
 <hr />
-<table width='100%'>
-<tr>
-	<td>&nbsp;</td>
-	<td align='right'>
-	<b><small><a href="http://www.ban-solms.de/t/IPCop.html" target="_blank">Connection Scheduler $CONNSCHED::version</a></small></b>
-	</td>
-</tr>
-</table>
 END
 ;
 

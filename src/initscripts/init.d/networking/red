@@ -148,18 +148,32 @@ case "${1}" in
 			fi
 		
 		elif [ "$TYPE" == "PPPOE" ]; then
-		
+			
+			if ( ps ax | grep -q [p]ppd ); then 
+			    echo Error! A pppd is still running. Stop it first.
+			    echo
+			    exit 1;
+			fi
 			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 			
 			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
 			
-			if [ "$TYPE" == "PPPOE" ]; then			
-				boot_mesg "Bringing up the PPPoE interface on ${DEVICE}..."
-				ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
+			PPP_NIC=${DEVICE}
+			
+			if [ "$TYPE" == "pppoeatm" ]; then
+				PPP_NIC=nas0		
+				boot_mesg "Create ATM-Bridge as $PPP_NIC ..."
+				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
+				sleep 1
+				ifconfig $PPP_NIC up
+				TYPE="pppoe"
+			fi
+			if [ "$TYPE" == "pppoe" ]; then			
+				boot_mesg "Bringing up the PPPoE interface on $PPP_NIC ..."
+				ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev $PPP_NIC
 			else
 				boot_mesg "Bringing up the PPP via ${TYPE} on ${COMPORT}..."
 			fi
-			
 			###                      ###
 			### Configuring the pppd ###
 			###                      ###
@@ -167,15 +181,17 @@ case "${1}" in
 			### Plugin Options
 			#			
 			[ "${METHOD}" == "PPPOE_PLUGIN" ] && \
-				PLUGOPTS="plugin /usr/lib/pppd/2.4.4/rp-pppoe.so nic-${DEVICE}"
+				PLUGOPTS="plugin /usr/lib/pppd/2.4.4/rp-pppoe.so"
+
+				# PLUGOPTS="plugin /usr/lib/pppd/2.4.4/rp-pppoe.so nic-$PPP_NIC"
 
 			### Synchronous Mode
 			#
 			#PPPOE_SYNC=-s
-    	#PPPD_SYNC=sync
-    	
-    	### Access Concentrator Name
-    	#
+			#PPPD_SYNC=sync
+	
+			### Access Concentrator Name
+			#
 			if [ -n "${CONCENTRATORNAME}" ]; then
 				ACNAME="-C ${CONCENTRATORNAME}"
 			fi
@@ -189,7 +205,7 @@ case "${1}" in
 					SERVICENAME="-S ${SERVICENAME}"
 				fi
 			fi
-			
+
 			### Authentication Types
 			#
 			if [ "${AUTH}" == "pap" ]; then
@@ -199,7 +215,18 @@ case "${1}" in
 			else
 				AUTH=""
 			fi
-	
+
+			### DNS Config
+			#
+			if [ "${DNS}" == "Automatic" ]; then
+				DNS="usepeerdns"
+			else
+				DNS=""
+				echo nameserver=$DNS1 > /etc/ppp/resolv.conf
+				echo nameserver=$DNS2 >> /etc/ppp/resolv.conf
+				
+			fi
+
 			### Dial On Demand		
 			#
 			if [ "${RECONNECTION}" != "persistent" ]; then
@@ -211,29 +238,28 @@ case "${1}" in
 				if [ "${RECONNECTION}" == "dialondemand" ]; then
 					touch /var/ipfire/red/dial-on-demand
 					DEMAND="demand persist idle ${SECONDS} 10.112.112.112:10.112.112.113"
-					DEMAND+=" ipcp-accept-remote ipcp-accept-local connect true noipdefault ktune"		
+					DEMAND+=" ipcp-accept-remote ipcp-accept-local noipdefault ktune"
 				fi
 			fi
 			
 			### When using pppoe-plugin the device has to be the last option
 			#
-			[ "${METHOD}" == "PPPOE_PLUGIN" ] && PLUGOPTS+=" ${DEVICE}"
+			[ "${METHOD}" == "PPPOE_PLUGIN" ] && PLUGOPTS+=" $PPP_NIC"
 			
 			if [ "$TYPE" == "modem" ]; then
-				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /etc/ppp/dialer"
+				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /etc/ppp/dialer lock modem crtscts"
 			elif [ "$TYPE" == "serial" ]; then
-				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /bin/true"
+				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /bin/true lock modem crtscts"
 			fi
 		
 			### Standard PPP options we always use
 			#
-			PPP_STD_OPTIONS="$PLUGOPTS usepeerdns defaultroute noipdefault noauth"
+			PPP_STD_OPTIONS="$PLUGOPTS $DNS defaultroute noipdefault noauth"
 			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach mtu ${MTU}"
 			PPP_STD_OPTIONS+=" mru ${MTU} noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
 			PPP_STD_OPTIONS+=" lcp-echo-failure 3 ${AUTH}"
-			[ "${TYPE}" eq "PPPOE" ] || PPP_STD_OPTIONS+=" lock modem crtscts user ${USERNAME}"
-			
+				
 			### Debugging
 			#
 			if [ "${DEBUG}" == "on" ]; then
@@ -244,8 +270,8 @@ case "${1}" in
 			
 			### PPPoE invocation
 			#
-			if [ "${TYPE}" == "PPPOE" ]; then
-				PPPOE_CMD="/usr/sbin/pppoe -p /var/run/ppp-ipfire.pid.pppoe -I ${DEVICE}"
+			if [ "$TYPE" == "pppoe" ]; then
+				PPPOE_CMD="/usr/sbin/pppoe -p /var/run/ppp-ipfire.pid.pppoe -I $PPP_NIC"
 				PPPOE_CMD+=" -T 80 -U $PPPOE_SYNC $ACNAME $SERVICENAMEOPT"
 			fi
 			
@@ -254,9 +280,11 @@ case "${1}" in
 			if [ "${METHOD}" == "PPPOE_PLUGIN" ]; then
 				/usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND >/dev/null 2>&1 &
 				evaluate_retval
+				# echo PLUGIN: /usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND
 			else
 				/usr/sbin/pppd pty "$PPPOE_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC >/dev/null 2>&1 &
 				evaluate_retval
+				# echo PPP: /usr/sbin/pppd pty "$PPPOE_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC
 			fi
 			
 			/etc/rc.d/init.d/connectd start
@@ -307,12 +335,11 @@ case "${1}" in
 			fi
 		
 		elif [ "$TYPE" == "PPPOE" ]; then
-			boot_mesg "Bringing down the PPPoE interface on ${DEVICE}..."
+			boot_mesg "Bringing down the PPP interface ..."
 			rm -f /var/ipfire/red/keepconnected
-			kill -TERM /usr/sbin/pppd 2>/dev/null
+			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
 			evaluate_retval
-			sleep 5
-			
+			killall -w -s TERM br2684ctl >/dev/null 2>&1
 			ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
 			
 		fi

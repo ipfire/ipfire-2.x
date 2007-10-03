@@ -13,7 +13,6 @@ WARNING: translation string unused: add new ovpn
 WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
-WARNING: translation string unused: adsl settings
 WARNING: translation string unused: advproxy LDAP auth
 WARNING: translation string unused: advproxy NTLM auth
 WARNING: translation string unused: advproxy advanced proxy
@@ -117,7 +116,6 @@ WARNING: translation string unused: email server can not be empty
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enabled on
 WARNING: translation string unused: enabledtitle
-WARNING: translation string unused: encapsulation
 WARNING: translation string unused: encrypted
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
@@ -175,7 +173,6 @@ WARNING: translation string unused: invalid port list
 WARNING: translation string unused: invalid time entered
 WARNING: translation string unused: invalid uplink speed
 WARNING: translation string unused: invalid upstream proxy username or password setting
-WARNING: translation string unused: invalid vpi vpci
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ip alias added
 WARNING: translation string unused: ip alias changed
@@ -381,9 +378,7 @@ WARNING: translation string unused: urlfilter update results
 WARNING: translation string unused: use
 WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
-WARNING: translation string unused: vci number
 WARNING: translation string unused: view log
-WARNING: translation string unused: vpi number
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
 WARNING: translation string unused: vpn on orange

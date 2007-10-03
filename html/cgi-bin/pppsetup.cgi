@@ -63,7 +63,7 @@ if ($pppsettings{'ACTION'} ne '' &&
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 {
-	unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp)$/) {
+	unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp|pppoeatm)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
 	my $type = $pppsettings{'TYPE'};
@@ -75,7 +75,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 	if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|ttyACM0|ttyACM1|ttyACM2|ttyACM3|isdn1|isdn2)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
-	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400|460800)$/) {
+	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400|460800|921600)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR; }
 	if ($pppsettings{'TYPE'} eq 'modem' && $pppsettings{'DIALMODE'} !~ /^(T|P)$/) {
@@ -155,7 +155,21 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 		}
 		if ($errormessage ne '') {goto ERROR; }
 	}
-
+	if ($pppsettings{'TYPE'} =~ /^(pppoeatm)$/) {
+		if ( ($pppsettings{'VPI'} eq '') || ($pppsettings{'VCI'} eq '') ) {
+			$errormessage = $Lang::tr{'invalid vpi vpci'};
+			goto ERROR; }
+		if ( (!($pppsettings{'VPI'} =~ /^\d+$/)) || (!($pppsettings{'VCI'} =~ /^\d+$/)) ) {
+			$errormessage = $Lang::tr{'invalid vpi vpci'};
+			goto ERROR; }
+		if (($pppsettings{'VPI'} eq '0') && ($pppsettings{'VCI'} eq '0')) {
+			$errormessage = $Lang::tr{'invalid vpi vpci'};
+			goto ERROR; }
+		if ( $pppsettings{'PROTOCOL'} eq '' ) {
+			$errormessage = $Lang::tr{'invalid input'};
+			goto ERROR; }
+	} 
+	
 	if ( ($pppsettings{'PROTOCOL'} eq 'RFC1483') && ($pppsettings{'METHOD'} eq '') && \
 		($pppsettings{'TYPE'} !~ /^(alcatelusb|fritzdsl)$/)) {
 			$errormessage = $Lang::tr{'invalid input'};
@@ -194,10 +208,10 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 		$errormessage = $Lang::tr{'dod not compatible with ddns'};
 		goto ERROR; }
 
-	if( $pppsettings{'PROTOCOL'} eq 'RFC1483') {
-		$pppsettings{'ENCAP'} = $pppsettings{'ENCAP_RFC1483'}; }
-	if( $pppsettings{'PROTOCOL'} eq 'RFC2364') {
-		$pppsettings{'ENCAP'} = $pppsettings{'ENCAP_RFC2364'}; }
+#	if( $pppsettings{'PROTOCOL'} eq 'RFC1483') {
+#		$pppsettings{'ENCAP'} = $pppsettings{'ENCAP_RFC1483'}; }
+#	if( $pppsettings{'PROTOCOL'} eq 'RFC2364') {
+#		$pppsettings{'ENCAP'} = $pppsettings{'ENCAP_RFC2364'}; }
 	delete $pppsettings{'ENCAP_RFC1483'};
 	delete $pppsettings{'ENCAP_RFC2364'};
 
@@ -322,6 +336,7 @@ $selected{'DTERATE'}{'57600'} = '';
 $selected{'DTERATE'}{'115200'} = '';
 $selected{'DTERATE'}{'230400'} = '';
 $selected{'DTERATE'}{'460800'} = '';
+$selected{'DTERATE'}{'921600'} = '';
 $selected{'DTERATE'}{$pppsettings{'DTERATE'}} = "selected='selected'";
 
 $checked{'SPEAKER'}{'off'} = '';
@@ -377,10 +392,11 @@ $checked{'PROTOCOL'}{$pppsettings{'PROTOCOL'}} = "checked='checked'";
 
 $selected{'ENCAP'}{'0'} = '';
 $selected{'ENCAP'}{'1'} = '';
-$selected{'ENCAP'}{'2'} = '';
-$selected{'ENCAP'}{'3'} = '';
-$selected{'ENCAP'}{'4'} = '';
+#$selected{'ENCAP'}{'2'} = '';
+#$selected{'ENCAP'}{'3'} = '';
+#$selected{'ENCAP'}{'4'} = '';
 $selected{'ENCAP'}{$pppsettings{'ENCAP'}} = "selected='selected'";
+
 $checked{'METHOD'}{'STATIC'} = '';
 $checked{'METHOD'}{'PPPOE'} = '';
 $checked{'METHOD'}{'PPPOE_PLUGIN'} = '';
@@ -418,7 +434,7 @@ print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 print <<END
 <table width='95%' cellspacing='0'>
 <tr>
-	<td align='left'>$Lang::tr{'profile'}</td>
+        	<td align='left'>$Lang::tr{'profile'}</td>
 	<td align='left'>
 	<select name='PROFILE' style="width: 165px">
 END
@@ -458,41 +474,59 @@ if ($netsettings{'RED_TYPE'} eq 'PPPOE') {
 if ($netsettings{'RED_TYPE'} eq 'PPTP') {
 	print "\t<option value='pptp' $selected{'TYPE'}{'pptp'}>PPTP</option>\n";
 }
-if (-f "/proc/bus/usb/devices") {
+my $atmdev=`cat /proc/net/atm/devices | grep 0`;
+chomp ($atmdev);
+if ($atmdev ne '') {
 	print <<END
-	<option value='eciadsl' $selected{'TYPE'}{'eciadsl'}>ECI USB ADSL</option>
-	<option value='eagleusbadsl' $selected{'TYPE'}{'eagleusbadsl'}>Eagle USB ADSL (Acer Allied-Telesyn Comtrend D-Link Sagem USR)</option>
-	<option value='conexantusbadsl' $selected{'TYPE'}{'conexantusbadsl'}>Conexant USB(Aetra Amigo Draytek Etec Mac Olitec Vitelcom Zoom)</option>
-	<option value='amedynusbadsl' $selected{'TYPE'}{'amedynusbadsl'}>Zyxel 630-11 / Asus AAM6000UG USB ADSL</option>
-	<option value='3cp4218usbadsl' $selected{'TYPE'}{'3cp4218usbadsl'}>3Com USB AccessRunner</option>
-	<option value='alcatelusb' $selected{'TYPE'}{'alcatelusb'}>Speedtouch USB ADSL user mode driver</option>
-	<option value='alcatelusbk' $selected{'TYPE'}{'alcatelusbk'}>Speedtouch USB ADSL kernel mode driver</option>
+	<option value='pppoeatm' $selected{'TYPE'}{'pppoeatm'}>PPPoE over ATM-BRIDGE</option>
 END
 ;
 }
 
+#if (0) {
+#	print <<END
+#	<option value='eciadsl' $selected{'TYPE'}{'eciadsl'}>ECI USB ADSL</option>
+#	<option value='eagleusbadsl' $selected{'TYPE'}{'eagleusbadsl'}>Eagle USB ADSL (Acer Allied-Telesyn Comtrend D-Link Sagem USR)</option>
+#	<option value='conexantusbadsl' $selected{'TYPE'}{'conexantusbadsl'}>Conexant USB(Aetra Amigo Draytek Etec Mac Olitec Vitelcom Zoom)</option>
+#	<option value='amedynusbadsl' $selected{'TYPE'}{'amedynusbadsl'}>Zyxel 630-11 / Asus AAM6000UG USB ADSL</option>
+#	<option value='3cp4218usbadsl' $selected{'TYPE'}{'3cp4218usbadsl'}>3Com USB AccessRunner</option>
+#	<option value='alcatelusb' $selected{'TYPE'}{'alcatelusb'}>Speedtouch USB ADSL user mode driver</option>
+#	<option value='alcatelusbk' $selected{'TYPE'}{'alcatelusbk'}>Speedtouch USB ADSL kernel mode driver</option>
+#END
+#;
+#}
 #	print "<option value='fritzdsl' $selected{'TYPE'}{'fritzdsl'}>Fritz!DSL</option>";
+
 	print <<END
-  </select></td>
-	<td colspan='2' width='50%'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}'></td>
-	</tr>
-	<tr>
-	<td colspan='2' width='50%'>USB:</td>
+        </select></td>
+	<td colspan='1' width='25%'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}'></td>
 END
 ;
-if (-f "/proc/bus/usb/devices") {
-	my $usb=`lsmod | cut -d ' ' -f1 | grep -E "hci"`;
-	if ($usb eq '') {
-		print "\t<td colspan='2' width='50%'>$Lang::tr{'not running'}</td></tr>\n";
-	} else {
-		print "\t<td colspan='2' width='50%'>$usb</td></tr>\n";
-	}
+	if ($pppsettings{'TYPE'} =~ /^(modem)$/) {
+	print <<END
+	    <td colspan='1' width='25%'><A HREF=modem.cgi>$Lang::tr{'modem configuration'}</A></td>
+END
+;
 }
+
+	print "</tr>";
+
+#if (-f "/proc/bus/usb/devices") {
+#	<td colspan='2' width='50%'>USB:</td>
+#	my $usb=`lsmod | cut -d ' ' -f1 | grep -E "hci"`;
+#	if ($usb eq '') {
+#		print "\t<td colspan='2' width='50%'>$Lang::tr{'not running'}</td></tr>\n";
+#	} else {
+#		print "\t<td colspan='2' width='50%'>$usb</td></tr>\n";
+#	}
+#}
 
 if ($pppsettings{'TYPE'}) {
 	print "<tr><td colspan='4' width='100%'><br></br></td></tr>";
+
 	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/) {
 		print <<END
+
 <tr>
 	<td colspan='3' width='75%'>$Lang::tr{'interface'}:</td>
 	<td width='25%'><select name='COMPORT' style="width: 165px">
@@ -509,7 +543,7 @@ END
 		<option value='ttyACM1' $selected{'COMPORT'}{'ttyACM1'}>$Lang::tr{'usb modem on acm1'}</option>
 		<option value='ttyACM2' $selected{'COMPORT'}{'ttyACM2'}>$Lang::tr{'usb modem on acm2'}</option>
 		<option value='ttyACM3' $selected{'COMPORT'}{'ttyACM3'}>$Lang::tr{'usb modem on acm3'}</option>
-	</select></td>
+	</select></td>	
 END
 ;
 		}
@@ -525,6 +559,7 @@ END
 		<option value='115200' $selected{'DTERATE'}{'115200'}>115200</option>
 		<option value='230400' $selected{'DTERATE'}{'230400'}>230400</option>
 		<option value='460800' $selected{'DTERATE'}{'460800'}>460800</option>
+		<option value='921600' $selected{'DTERATE'}{'921600'}>921600</option>
 	</select></td>
 </tr>
 END
@@ -650,7 +685,38 @@ print <<END
 END
 ;
 }
-if ($pppsettings{'TYPE'} eq 'pppoe')
+if ($pppsettings{'TYPE'} =~ /^(pppoeatm)$/)
+{
+
+print <<END
+</table>
+<table width='100%'>
+<tr>
+	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'adsl settings'}:</b></td>
+</tr>
+<tr>
+
+	<td> $Lang::tr{'encapsulation'}:</td>
+	<td colspan='2' width='30%'>
+		<select name='ENCAP'>
+		   <option value='0' $selected{'ENCAP'}{'0'}>LLC</option>
+		   <option value='1' $selected{'ENCAP'}{'1'}>VCmux</option>
+		</select>
+	</td>
+</tr>
+<tr>
+
+	<td nowrap='nowrap'>$Lang::tr{'vpi number'}</td>
+	<td><input type='text' size='5' name='VPI' value='$pppsettings{'VPI'}' /></td>
+	<td align='right'>$Lang::tr{'vci number'}</td>
+	<td colspan='2'><input type='text' size='5' name='VCI' value='$pppsettings{'VCI'}' /></td>
+</tr>
+END
+;
+} 
+
+
+if ($pppsettings{'TYPE'} eq 'pppoe' || $pppsettings{'TYPE'} eq 'pppoeatm')
 {
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
@@ -785,6 +851,8 @@ sub initprofile
 	$pppsettings{'MODEM'} = 'PCIST';
 	$pppsettings{'LINE'} = 'WO';
 	$pppsettings{'ENCAP'} = '0';
+	$pppsettings{'VPI'} = '1';
+	$pppsettings{'VCI'} = '32';
 	$pppsettings{'PHONEBOOK'} = 'RELAY_PPP1';
 	$pppsettings{'PROTOCOL'} = 'RFC2364';
 	$pppsettings{'METHOD'} = 'PPPOE_PLUGIN';
