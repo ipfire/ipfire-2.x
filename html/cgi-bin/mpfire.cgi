@@ -104,22 +104,22 @@ else {print DATEI $_;}
 }
 close(DATEI);
 
-$message=system("/usr/local/bin/mpfirectrl scan");
+$message=system("/usr/local/bin/mpfirectrl scan 2>/dev/null");
 refreshpage();
 }
-elsif ( $mpfiresettings{'ACTION'} eq ">" ){$message=system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"");}
-elsif ( $mpfiresettings{'ACTION'} eq "x" ){$message=system("/usr/local/bin/mpfirectrl stop");}
-elsif ( $mpfiresettings{'ACTION'} eq "|>" ){$message=system("/usr/local/bin/mpfirectrl toggle");}
-elsif ( $mpfiresettings{'ACTION'} eq "<<" ){$message=system("/usr/local/bin/mpfirectrl prev");}
-elsif ( $mpfiresettings{'ACTION'} eq ">>" ){$message=system("/usr/local/bin/mpfirectrl next");}
-elsif ( $mpfiresettings{'ACTION'} eq "+" ){$message=system("/usr/local/bin/mpfirectrl volup 5");}
-elsif ( $mpfiresettings{'ACTION'} eq "-" ){$message=system("/usr/local/bin/mpfirectrl voldown 5");}
-elsif ( $mpfiresettings{'ACTION'} eq "++" ){$message=system("/usr/local/bin/mpfirectrl volup 10");}
-elsif ( $mpfiresettings{'ACTION'} eq "--" ){$message=system("/usr/local/bin/mpfirectrl voldown 10");}
-elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){$message=system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");}
-elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){$message=system("/usr/local/bin/mpfirectrl playlist");}
-elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){$message=system("/usr/local/bin/mpfirectrl clearplaylist");}
-elsif ( $mpfiresettings{'ACTION'} eq "addtoplaylist" ){$message=system("/usr/local/bin/mpfirectrl","playadd","\"$mpfiresettings{'FILE'}\"");}
+elsif ( $mpfiresettings{'ACTION'} eq ">" ){$message=system("/usr/local/bin/mpfirectrl","play","\"$mpfiresettings{'FILE'}\"","2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "x" ){$message=system("/usr/local/bin/mpfirectrl stop 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "|>" ){$message=system("/usr/local/bin/mpfirectrl toggle 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "<<" ){$message=system("/usr/local/bin/mpfirectrl prev 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq ">>" ){$message=system("/usr/local/bin/mpfirectrl next 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "+" ){$message=system("/usr/local/bin/mpfirectrl volup 5 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "-" ){$message=system("/usr/local/bin/mpfirectrl voldown 5 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "++" ){$message=system("/usr/local/bin/mpfirectrl volup 10 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "--" ){$message=system("/usr/local/bin/mpfirectrl voldown 10 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){$message=system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"","2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){$message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){$message=system("/usr/local/bin/mpfirectrl clearplaylist 2>/dev/null");}
+elsif ( $mpfiresettings{'ACTION'} eq "addtoplaylist" ){$message=system("/usr/local/bin/mpfirectrl","playadd","\"$mpfiresettings{'FILE'}\"","2>/dev/null");}
 elsif ( $mpfiresettings{'ACTION'} eq "playall" ){
 my @temp = ""; my @song = "";
 
@@ -130,7 +130,7 @@ open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add pla
 print DATEI @temp;
 close(DATEI);  
 
-$message=system("/usr/local/bin/mpfirectrl playlist");
+$message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playalbum" )
 {
@@ -148,7 +148,7 @@ foreach (keys(%songs)){
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playlist");
+$message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playartist" )
 {
@@ -166,7 +166,7 @@ foreach (keys(%songs)){
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playlist");
+$message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playyear" )
 {
@@ -184,7 +184,7 @@ foreach (keys(%songs)){
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playlist");
+$message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
 }
 elsif ( $mpfiresettings{'ACTION'} eq "playgenre" )
 {
@@ -202,7 +202,7 @@ foreach (keys(%songs)){
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
-$message=system("/usr/local/bin/mpfirectrl playlist");
+$message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
 }
 elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);refreshpage();}
 
@@ -234,13 +234,13 @@ END
 ;
 &Header::closebox();
 
-my $song = qx(/usr/local/bin/mpfirectrl song);
+my $song = `/usr/local/bin/mpfirectrl song 2>/dev/null`;
 if ( $song eq "" ){$song = "None";}
 if ( length($song) > 125 ) {$song = substr($song,0,125)."...";}
 
-my $Volume = `/usr/local/bin/mpfirectrl volume`;
+my $Volume = `/usr/local/bin/mpfirectrl volume 2>/dev/null`;
 $Volume=~s/<break>/<br \/>/g;
-my $stats = `mpc stats | tail -4`;
+my $stats = `mpc stats | tail -4 2>/dev/null`;
 $stats=~s/\\/<br \/>/g
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
@@ -250,7 +250,7 @@ print <<END
     <tr bgcolor='$color{'color20'}'>    <td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr>
 END
 ;
-my $countsongs=`/usr/local/bin/mpfirectrl stats`;
+my $countsongs=`/usr/local/bin/mpfirectrl stats 2>/dev/null`;
 print "<tr><td colspan='5' align='center'><br/><b>".$countsongs."</b><br/><br/></td></tr>";
 print <<END
     <tr>
@@ -401,7 +401,7 @@ print "</table>";
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire playlist'});
 
-my @playlist = `mpc playlist`;
+my @playlist = `mpc playlist 2>/dev/null`;
 
 print <<END
 <table width='95%' cellspacing='0'>

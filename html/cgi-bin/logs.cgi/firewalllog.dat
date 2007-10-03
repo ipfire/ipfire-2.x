@@ -365,7 +365,13 @@ foreach $_ (@log)
         <td align='center'>$proto</td>
         <td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a><br /><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
         <td align='center'>$srcport<br/>$dstport</td>
-        <td align='center'><a href='../country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>
+END
+;
+        if ( $fcode ne "" ){
+        print "<td align='center'><a href='../country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>";} 
+        else {
+        print "<td align='center'></td>";}
+        print <<END
         <td align='center'>$macaddr</td>
 </tr>
 END

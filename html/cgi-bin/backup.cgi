@@ -35,7 +35,7 @@ my %cgiparams=();
 my %checked = ();
 my $message = "";
 my $errormessage = "";
-my @backups = `cd /var/ipfire/backup/ && ls *.ipf`;
+my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
 
 $a = new CGI;
 
@@ -71,7 +71,7 @@ elsif ( $cgiparams{'ACTION'} eq "restore" )
   print UPLOADFILE;
   }
   close UPLOADFILE;
-  system("/usr/local/bin/backupctrl restore >/dev/null");
+  system("/usr/local/bin/backupctrl restore >/dev/null 2>&1");
 }
 
 &Header::showhttpheaders();
@@ -86,13 +86,13 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 
 if ( $cgiparams{'ACTION'} eq "backup" )
 {
- if ( $cgiparams{'BACKUPLOGS'} eq "include" ){system("/usr/local/bin/backupctrl include >/dev/null");}
- else {system("/usr/local/bin/backupctrl exclude >/dev/null");}
+ if ( $cgiparams{'BACKUPLOGS'} eq "include" ){system("/usr/local/bin/backupctrl include >/dev/null 2>&1");}
+ else {system("/usr/local/bin/backupctrl exclude >/dev/null 2>&1");}
  refreshpage();
 }
 elsif ( $cgiparams{'ACTION'} eq "delete" )
 {
-  system("/usr/local/bin/backupctrl $cgiparams{'FILE'} >/dev/null");
+  system("/usr/local/bin/backupctrl $cgiparams{'FILE'} >/dev/null 2>&1");
   refreshpage();
 }
 
