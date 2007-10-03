@@ -236,6 +236,7 @@ END
 
 my $song = qx(/usr/local/bin/mpfirectrl song);
 if ( $song eq "" ){$song = "None";}
+if ( length($song) > 125 ) {$song = substr($song,0,125)."...";}
 
 my $Volume = `/usr/local/bin/mpfirectrl volume`;
 $Volume=~s/<break>/<br \/>/g;
