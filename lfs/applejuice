@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -afv phpaj /srv/web
 	chown nobody.nobody /srv/web/phpaj -Rv
 	-mkdir /var/ipfire/applejuice
-	echo "RAMSIZE=64" > /var/ipfire/applejuice/settings
+	echo "RAMSIZE=64M" > /var/ipfire/applejuice/settings
 	chown nobody.nobody /var/ipfire/applejuice -Rv
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
