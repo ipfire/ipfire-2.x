@@ -327,11 +327,9 @@ buildipfire() {
   ipfiremake unzip
   ipfiremake linux			SMP=1
   ipfiremake ipp2p			SMP=1
-  ipfiremake r8169			SMP=1
   ipfiremake zaptel			SMP=1
   ipfiremake linux
   ipfiremake ipp2p
-  ipfiremake r8169
   ipfiremake zaptel
   ipfiremake pkg-config
   ipfiremake linux-atm
