@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.25c
+VER        = 3.0.26a
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 87950694270b86cbc1b2074cb53dd1aa
+$(DL_FILE)_MD5 = 16b47e6add332e5ac4523fc88c381d06
 
 install : $(TARGET)
 
