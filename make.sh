@@ -528,6 +528,7 @@ buildipfire() {
   ipfiremake vsftpd
   ipfiremake which
   ipfiremake lsof
+  ipfiremake centerim
 }
 
 buildinstaller() {
