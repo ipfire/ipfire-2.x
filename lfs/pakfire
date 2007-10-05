@@ -60,6 +60,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf ../../opt/pakfire/pakfire /etc/fcron.daily/pakfire-update
 	
 	touch /var/log/pakfire.log
+	chown root.nobody /var/log/pakfire.log
+	chmod 664 /var/log/pakfire.log
 	ln -sf ../../var/log/pakfire /opt/pakfire/logs
 	ln -sf ../../var/cache/pakfire /opt/pakfire/cache
 	@$(POSTBUILD)

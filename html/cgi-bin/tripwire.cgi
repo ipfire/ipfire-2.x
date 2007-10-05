@@ -33,9 +33,9 @@ my %checked = ();
 my %netsettings = ();
 my $message = "";
 my $errormessage = "";
-my @Logs = qx(ls -r /var/ipfire/tripwire/report/);
-my $file = `ls -tr /var/ipfire/tripwire/report/ | tail -1`;
-my @cronjobs = `ls /etc/fcron.daily/tripwire*`;
+my @Logs = `ls -r /var/ipfire/tripwire/report/ 2>/dev/null`;
+my $file = `ls -tr /var/ipfire/tripwire/report/ | tail -1 2>/dev/null`;
+my @cronjobs = `ls /etc/fcron.daily/tripwire* 2>/dev/null`;
 my $Log =$Lang::tr{'no log selected'};
 
 my %color = ();
@@ -83,7 +83,7 @@ $tripwiresettings{'ACTION'} = '';
 
 if ($tripwiresettings{'ACTION'} eq $Lang::tr{'save'})
 {
-system("/usr/local/bin/tripwirectrl readconfig  >& /dev/null");
+system("/usr/local/bin/tripwirectrl readconfig  >/dev/null 2>&1");
 open (FILE, ">${General::swroot}/tripwire/twcfg.txt") or die "Can't save tripwire config: $!";
 flock (FILE, 2);
 
@@ -112,7 +112,7 @@ END
 close FILE;
 
 &General::writehash("${General::swroot}/tripwire/settings", \%tripwiresettings);
-system("/usr/local/bin/tripwirectrl lockconfig  >& /dev/null");
+system("/usr/local/bin/tripwirectrl lockconfig  >/dev/null 2>&1");
 }
 
 ############################################################################################################################
@@ -282,7 +282,7 @@ $tripwiresettings{'MAILPROGRAM'} = '/usr/sbin/sendmail -oi -t';
 $tripwiresettings{'SITEKEY'} = 'ipfire';
 $tripwiresettings{'LOCALKEY'} = 'ipfire';
 $tripwiresettings{'ACTION'} = '';
-system("/usr/local/bin/tripwirectrl readconfig  >& /dev/null");
+system("/usr/local/bin/tripwirectrl readconfig  >/dev/null 2>&1");
 open (FILE, ">${General::swroot}/tripwire/twcfg.txt") or die "Can't save tripwire config: $!";
 flock (FILE, 2);
 print FILE <<END
@@ -309,17 +309,17 @@ END
 ;
 close FILE;
 &General::writehash("${General::swroot}/tripwire/settings", \%tripwiresettings);
-system("/usr/local/bin/tripwirectrl lockconfig  >& /dev/null");
-system("/usr/local/bin/tripwirectrl keys ipfire ipfire  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';
+system("/usr/local/bin/tripwirectrl lockconfig  >/dev/null 2>&1l");
+system("/usr/local/bin/tripwirectrl keys ipfire ipfire  >/dev/null 2>&1");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';
 }
-if ($tripwiresettings{'ACTION'} eq 'generatekeysyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl keys $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'keyresetyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl keys ipfire ipfire  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'resetpolicyyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl resetpolicy tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'generatepolicyyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl generatepolicy $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >& /dev/null");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'updatedatabaseyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl updatedatabase $tripwiresettings{'LOCALKEY'} /var/ipfire/tripwire/report/$file  >& /dev/null");$tripwiresettings{'LOCALKEY'} = 'ipfire';}
-if ($tripwiresettings{'ACTION'} eq 'generatereport'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl generatereport  >& /dev/null");}
-if ($tripwiresettings{'ACTION'} eq 'addcronyes'){system("/usr/local/bin/tripwirectrl addcron $tripwiresettings{'HOUR'} $tripwiresettings{'MINUTE'} >& /dev/null");}
-if ($tripwiresettings{'ACTION'} eq 'deletecron'){system("/usr/local/bin/tripwirectrl disablecron $tripwiresettings{'CRON'} >& /dev/null");@cronjobs = `ls /etc/fcron.daily/tripwire*`;}
+if ($tripwiresettings{'ACTION'} eq 'generatekeysyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl keys $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >/dev/null 2>&1");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'keyresetyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl keys ipfire ipfire  >/dev/null 2>&1");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'resetpolicyyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl resetpolicy tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >/dev/null 2>&1");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'generatepolicyyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl generatepolicy $tripwiresettings{'SITEKEY'} $tripwiresettings{'LOCALKEY'}  >/dev/null 2>&1");$tripwiresettings{'SITEKEY'} = 'ipfire';$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'updatedatabaseyes'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl updatedatabase $tripwiresettings{'LOCALKEY'} /var/ipfire/tripwire/report/$file  >/dev/null 2>&1");$tripwiresettings{'LOCALKEY'} = 'ipfire';}
+if ($tripwiresettings{'ACTION'} eq 'generatereport'){&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'tripwireoperating'}</font></center>";system("/usr/local/bin/tripwirectrl generatereport  >/dev/null 2>&1");}
+if ($tripwiresettings{'ACTION'} eq 'addcronyes'){system("/usr/local/bin/tripwirectrl addcron $tripwiresettings{'HOUR'} $tripwiresettings{'MINUTE'}  >/dev/null 2>&1");}
+if ($tripwiresettings{'ACTION'} eq 'deletecron'){system("/usr/local/bin/tripwirectrl disablecron $tripwiresettings{'CRON'} >/dev/null 2>&1");@cronjobs = `ls /etc/fcron.daily/tripwire* 2>/dev/null`;}
 
 ############################################################################################################################
 ##################################################### Tripwire globale Optionen ############################################

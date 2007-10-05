@@ -143,15 +143,15 @@ END
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
 	if ($pakfiresettings{'AUTOUPDATE'} == "on") {
-		system("/usr/local/bin/pakfire enable updates");
+		system("/usr/local/bin/pakfire enable updates >/dev/null 2>&1");
 	} else {
-		system("/usr/local/bin/pakfire disable updates");
+		system("/usr/local/bin/pakfire disable updates  >/dev/null 2>&1");
 	}
 	
 	if ($pakfiresettings{'AUTOUPGRADE'} == "on") {
-		system("/usr/local/bin/pakfire enable upgrades");
+		system("/usr/local/bin/pakfire enable upgrades >/dev/null 2>&1");
 	} else {
-		system("/usr/local/bin/pakfire disable upgrades");
+		system("/usr/local/bin/pakfire disable upgrades >/dev/null 2>&1");
 	}
 
 	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
@@ -209,7 +209,7 @@ END
 	exit;
 }
 
-my $core_release = `cat /opt/pakfire/db/core/mine`;
+my $core_release = `cat /opt/pakfire/db/core/mine 2>/dev/null`;
 chomp($core_release);
 my $core_update_age = &General::age("/opt/pakfire/db/core/mine");
 my $corelist_update_age = &General::age("/opt/pakfire/db/lists/core-list.db");
