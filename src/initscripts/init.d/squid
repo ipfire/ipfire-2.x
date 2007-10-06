@@ -65,13 +65,16 @@ case "$1" in
 		;;
 
 	stop)
-		boot_mesg "Stopping Squid Proxy Server..."
-		iptables -t nat -F SQUID
-		squid -k shutdown >/dev/null 2>&1
-		evaluate_retval
-		killproc /usr/bin/squidGuard >/dev/null
-		killproc /usr/sbin/updxlrator >/dev/null
-		killproc /usr/sbin/squid >/dev/null
+	
+		if [ -e /var/ipfire/proxy/enable -o -e /var/ipfire/proxy/enable_blue ]; then
+			boot_mesg "Stopping Squid Proxy Server..."
+			iptables -t nat -F SQUID
+			squid -k shutdown >/dev/null 2>&1
+			evaluate_retval
+			killproc /usr/bin/squidGuard >/dev/null
+			killproc /usr/sbin/updxlrator >/dev/null
+			killproc /usr/sbin/squid >/dev/null
+		fi
 		;;
 
 	restart)
