@@ -83,7 +83,7 @@ case "${1}" in
 		;;
 
 	stop)
-		boot_mesg "Removing IPv4 address ${ADDRESS} from the ${1} interface..."
+		boot_mesg "Removing IPv4 address ${ADDRESS} from the ${2} interface..."
 		ip addr del ${args} dev ${DEVICE}
 		evaluate_retval
 		;;

@@ -23,4 +23,6 @@
 /var/ipfire/vpn
 /var/log/ip-acct/*
 /var/log/rrd/*
+/etc/sysconfig/firewall.local
+/etc/sysconfig/rc.local
 

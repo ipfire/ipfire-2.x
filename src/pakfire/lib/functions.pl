@@ -281,11 +281,11 @@ sub selectmirror {
 	### Check if there is a current server list and read it.
 	#   If there is no list try to get one.
 	my $count = 0;
-	while (!(open(FILE, "<$Conf::dbdir/lists/server-list.db")) && ($count lt 5)) {
+	while (!(open(FILE, "<$Conf::dbdir/lists/server-list.db")) && ($count lt 20)) {
 		$count++;
 		getmirrors("noforce");
 	}
-	if ($count == 5) {
+	if ($count == 20) {
 		message("MIRROR ERROR: Could not find or download a server list");
 		exit 1;
 	}
