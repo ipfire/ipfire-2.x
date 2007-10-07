@@ -51,6 +51,7 @@
 * calamaris-2.59
 * ccache-2.4
 * cdrtools-2.01
+* centerim-4.22.1
 * cftp-0.12
 * clamav-0.91.1
 * coreutils-5.96
@@ -166,7 +167,6 @@
 * misc-progs
 * mkinitcpio-0.5.9
 * mktemp-1.5
-* mldonkey-2.9.0
 * mldonkey-2.9.1
 * module-init-tools-3.2.2
 * mpc-0.12.1
@@ -209,7 +209,6 @@
 * ppp-2.4.4
 * procps-3.2.6
 * psmisc-22.2
-* r8169-6.002.00
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19

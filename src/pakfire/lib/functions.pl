@@ -160,7 +160,7 @@ sub fetchfile {
 
 		my $ua = LWP::UserAgent->new;
 		$ua->agent("Pakfire/$Conf::version");
-		$ua->timeout(5);
+		$ua->timeout(20);
 		
 		my %proxysettings=();
 		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
@@ -281,11 +281,11 @@ sub selectmirror {
 	### Check if there is a current server list and read it.
 	#   If there is no list try to get one.
 	my $count = 0;
-	while (!(open(FILE, "<$Conf::dbdir/lists/server-list.db")) && ($count lt 20)) {
+	while (!(open(FILE, "<$Conf::dbdir/lists/server-list.db")) && ($count lt 5)) {
 		$count++;
 		getmirrors("noforce");
 	}
-	if ($count == 20) {
+	if ($count == 5) {
 		message("MIRROR ERROR: Could not find or download a server list");
 		exit 1;
 	}
