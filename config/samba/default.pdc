@@ -1,9 +1,9 @@
 [homes]
-path = /home/%u
+path = /home/%U
 comment = Benutzer-Verzeichnisse
 browseable = yes
 writeable = yes
-valid users = %S
+valid users = %U
 
 [netlogon]
 path = /var/ipfire/samba/netlogon
@@ -16,4 +16,4 @@ path = /var/ipfire/samba/profiles
 browseable = no
 writeable = yes
 comment = Benutzerprofile
-valid users = %S
+valid users = %U

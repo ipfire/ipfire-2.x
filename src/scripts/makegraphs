@@ -235,8 +235,9 @@ sub updatememdata {
 sub updatediskdata {
         my $disk = $_[0];
         my ($readsect, $writesect, $trash);
-        if ( ! -e "$rrdlog/disk-$disk.rrd") {
-                RRDs::create ("$rrdlog/disk-$disk.rrd", "--step=300",
+				my @array = split(/\//,$disk);
+        if ( ! -e "$rrdlog/disk-".$array[$#array].".rrd") {
+                RRDs::create ("$rrdlog/disk-".$array[$#array].".rrd", "--step=300",
                         "DS:readsect:COUNTER:600:0:5000000000",
                         "DS:writesect:COUNTER:600:0:5000000000",
                         "RRA:AVERAGE:0.5:1:576",
@@ -253,7 +254,7 @@ sub updatediskdata {
         print "\nread:".$readsect."write:".$writesect."\n";
 
         if ($readsect && $writesect) {
-                RRDs::update ("$rrdlog/disk-$disk.rrd",
+                RRDs::update ("$rrdlog/disk-".$array[$#array].".rrd",
                         "-t", "readsect:writesect",
                         "N:$readsect:$writesect");
                 $ERROR = RRDs::error;
@@ -404,38 +405,39 @@ sub updatehdddata
 {
   my $disk = $_[0];
   my $standby;
+  my @array = split(/\//,$disk);
   
-  if ( ! -e "$rrdlog/hddshutdown-$disk.rrd") 
+  if ( ! -e "$rrdlog/hddshutdown-".$array[$#array].".rrd") 
   {
     # database did not exist -> create
-    RRDs::create ("$rrdlog/hddshutdown-$disk.rrd", "--step=300",
+    RRDs::create ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "--step=300",
       "DS:standby:GAUGE:600:0:1",
       "RRA:AVERAGE:0.5:1:576",
       "RRA:AVERAGE:0.5:6:672",
       "RRA:AVERAGE:0.5:24:732",
       "RRA:AVERAGE:0.5:144:1460");
     $ERROR = RRDs::error;
-    print "Error in RRD::create for hddshutdown-$disk: $ERROR\n" if $ERROR;
+    print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
   }
 
-  if (-e "/tmp/hddshutdown-$disk") {$standby = 1;}
+  if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
     else {$standby = 0;}
 
-  RRDs::update ("$rrdlog/hddshutdown-$disk.rrd", "-t", "standby", "N:$standby");
+  RRDs::update ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
   $ERROR = RRDs::error;
-  print "Error in RRD::update for hddshutdown-$disk: $ERROR\n" if $ERROR;
+  print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
 
-  if ( ! -e "$rrdlog/hddtemp-$disk.rrd") 
+  if ( ! -e "$rrdlog/hddtemp-".$array[$#array].".rrd") 
   {
     # database did not exist -> create
-    RRDs::create ("$rrdlog/hddtemp-$disk.rrd", "--step=300",
+    RRDs::create ("$rrdlog/hddtemp-".$array[$#array].".rrd", "--step=300",
       "DS:temperature:GAUGE:600:0:100",
       "RRA:AVERAGE:0.5:1:576",
       "RRA:AVERAGE:0.5:6:672",
       "RRA:AVERAGE:0.5:24:732",
       "RRA:AVERAGE:0.5:144:1460");
     $ERROR = RRDs::error;
-    print "Error in RRD::create for hdd-$disk: $ERROR\n" if $ERROR;
+    print "Error in RRD::create for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
   }
 
   # Temperaturlesen wÃrde die Platte aufwecken!!!
@@ -480,9 +482,9 @@ sub updatehdddata
     	    $temp = $1;
 	}
     }
-    elsif ( -e "/var/log/smartctl_out_hddtemp-$disk" )
+    elsif ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] )
     {
-	$hdd_output = `cat /var/log/smartctl_out_hddtemp-$disk | grep Temperature_`;
+	$hdd_output = `cat /var/log/smartctl_out_hddtemp-".$array[$#array]." | grep Temperature_`;
 	my @t = split(/\s+/,$hdd_output);
 	$temp = $t[9];
     }
@@ -492,13 +494,13 @@ sub updatehdddata
     }
   
 
-    print "Temperature for ".$disk."->".$temp."<-\n";
+    print "Temperature for ".$array[$#array]."->".$temp."<-\n";
     # Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
     if ($temp)
     {
-	RRDs::update ("$rrdlog/hddtemp-$disk.rrd", "-t", "temperature", "N:$temp");
+	RRDs::update ("$rrdlog/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
 	$ERROR = RRDs::error;
-	print "Error in RRD::update for hdd-$disk: $ERROR\n" if $ERROR;
+	print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
     }
   }
 }
@@ -605,8 +607,9 @@ print "Working on disk ".$disk.".\n";
 my $status = "";
 my $diskstats = "";
 my $newdiskstats = "";
+my @array = split(/\//,$disk);
 
-$diskstats = `cat /tmp/hddstats-$disk`;
+$diskstats = `cat /tmp/hddstats-$array[$#array]`;
 chomp $diskstats;
 my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
 chomp $newdiskstats;
@@ -615,13 +618,13 @@ chomp $status;
 
 if ($status !~/standby/ || $diskstats ne $newdiskstats)
 {
-    if (-e "/tmp/hddshutdown-$disk") 
+    if (-e "/tmp/hddshutdown-".$array[$#array]) 
     {
-      system("unlink /tmp/hddshutdown-$disk");
+      system("unlink /tmp/hddshutdown-".$array[$#array]);
     }
 }
 
-if (-e "/tmp/hddshutdown-$disk")  
+if (-e "/tmp/hddshutdown-".$array[$#array])  
 {
     $status = " standby\n";
 }
