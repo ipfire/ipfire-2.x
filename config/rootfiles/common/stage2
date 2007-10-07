@@ -65,7 +65,6 @@ usr/local/bin/readhash
 usr/local/bin/run-parts
 usr/local/bin/scanhd
 usr/local/bin/setddns.pl
-usr/local/bin/setreservedports
 usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/vpn-watch
