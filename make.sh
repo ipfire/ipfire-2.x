@@ -529,6 +529,7 @@ buildipfire() {
   ipfiremake which
   ipfiremake lsof
   ipfiremake centerim
+  ipfiremake br2684ctl
 }
 
 buildinstaller() {

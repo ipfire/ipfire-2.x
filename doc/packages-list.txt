@@ -44,6 +44,7 @@
 * bind-9.3.2
 * binutils-2.16.1
 * bison-2.2
+* br2684ctl
 * bridge-utils-1.1
 * busybox-1.2.2
 * bwm-ng-0.6

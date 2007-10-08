@@ -58,7 +58,7 @@ Vice Project Leader - Christian Schmidt
 Developer - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
 Developer - Sven Nierlein
-(<a href='mailto:cm\@ipfire.org'>affect\@versatel.de</a>)<br />
+(<a href='mailto:affect\@ipfire.org'>affect\@versatel.de</a>)<br />
 Developer - Arne Fitzenreiter
 (<a href='mailto:arne\@ipfire.org'>arne\@ipfire.org</a>)<br />
 Sponsor - Detlef Lampart
