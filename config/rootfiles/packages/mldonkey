@@ -1,3 +1,4 @@
+etc/init.d/mldonkey
 #opt/mldonkey
 opt/mldonkey/.mldonkey
 #opt/mldonkey/Authors.txt
