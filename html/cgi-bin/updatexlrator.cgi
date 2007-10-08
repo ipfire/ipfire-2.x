@@ -461,28 +461,31 @@ END
 		print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
 		if ($metadata[1] eq 'Adobe')
 		{
-			print "<img src='/images/updxl-src-adobe.gif' alt='Adobe'}' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-adobe.gif' alt='Adobe' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Microsoft')
 		{
-			print "<img src='/images/updxl-src-windows.gif' alt='Microsoft'}' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-windows.gif' alt='Microsoft' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Symantec')
 		{
-			print "<img src='/images/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-symantec.gif' alt='Symantec' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Avira')
 		{
-			print "<img src='/images/updxl-src-avira.gif' alt='Avira'}' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-avira.gif' alt='Avira' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Avast')
 		{
-			print "<img src='/images/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-avast.gif' alt='Avast' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'IPFire')
 		{
-			print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire'}' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Appel')
+			print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'Apple')
 		{
-			print "<img src='/images/Apple.png' width='18' height='18' alt='Apple'}' />&nbsp;</td>\n";
+			print "<img src='/images/images/updxl-src-apple.gif' alt='Apple' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'Kaspersky')
+		{
+			print "<img src='/images/Kaspersky.png' alt='Kaspersky' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Linux')
 		{
-			print "<img src='/images/tux.png' alt='Linux'}' />&nbsp;</td>\n";
+			print "<img src='/images/tux.png' alt='Linux' />&nbsp;</td>\n";
 		} else
 		{
 			print "<img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' />&nbsp;</td>\n";
@@ -580,11 +583,11 @@ print <<END
 		<td align='center'><img src='/images/updxl-src-avast.gif' alt='Avast' /></td>
 		<td class='base'>Avast</td>
 		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-kaspersky.gif' alt='Kaspersky' /></td>
+		<td class='base'>Kaspersky</td>
+		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr unknown'}</td>
-		<td class='base'>&nbsp;</td>
-		<td align='center'></td>
-		<td class='base'></td>
 		<td class='base'>&nbsp;</td>
 	</tr>
 </table>
