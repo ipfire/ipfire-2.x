@@ -46,7 +46,8 @@ my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 foreach (@disks){
   my $disk = $_;
   chomp $disk;
-  &Graphs::updatehddgraph ($disk,"day");&Graphs::updatehddgraph ($disk,"week");&Graphs::updatehddgraph ($disk,"month");&Graphs::updatehddgraph ($disk,"year");
+  my @array = split(/\//,$disk);
+  &Graphs::updatehddgraph ($array[$#array],"day");&Graphs::updatehddgraph ($array[$#array],"week");&Graphs::updatehddgraph ($array[$#array],"month");&Graphs::updatehddgraph ($array[$#array],"year");
 }
 
   &Graphs::updatetempgraph ("day");
@@ -256,7 +257,8 @@ else
     foreach (@devices) {
 	   my $device = $_;
 	   chomp($device);
-    hddtempbox($device);}
+	   my @array = split(/\//,$device);
+    hddtempbox($array[$#array]);}
   }
 
   &Header::openbox('100%', 'center', $Lang::tr{'settings'});
@@ -312,7 +314,7 @@ sub hddtempbox {
  my $disk = $_[0];
     if (-e "$graphdir/hddtemp-$disk-day.png") {
   
- 	  &Header::openbox('100%', 'center', "Disk /dev/$disk $Lang::tr{'graph'}");
+ 	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
 	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-day.png"))[9]);
 	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 	  print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=hddtemp-$disk'>";

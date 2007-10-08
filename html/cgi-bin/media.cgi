@@ -49,8 +49,9 @@ my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 foreach (@devices) {
 	my $device = $_;
 	chomp($device);
-	&Graphs::updatediskgraph ("day",$device);
-	diskbox("$device");
+	my @array = split(/\//,$device);
+	&Graphs::updatediskgraph ("day",$array[$#array]);
+	diskbox($array[$#array]);
 }
 
 &Header::openbox('100%', 'center', $Lang::tr{'disk usage'});
@@ -187,7 +188,7 @@ sub diskbox {
  chomp $disk;
  my @status;
     if (-e "$Header::graphdir/disk-$disk-day.png") {
-	 	  &Header::openbox('100%', 'center', "Disk /dev/$disk $Lang::tr{'graph'}");
+	 	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
 		  my $ftime = localtime((stat("$Header::graphdir/disk-$disk-day.png"))[9]);
 		  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		  print "<a href='/cgi-bin/graphs.cgi?graph=disk-$disk'>";
@@ -206,10 +207,10 @@ sub diskbox {
 
         if ( $status[1]=~/standby/){
           my $ftime = localtime((stat("/tmp/hddshutdown-$disk"))[9]);
-          print"<B>Disk /dev/$disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
+          print"<B>Disk $disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
         }
         else{
-          print"<B>Disk /dev/$disk status:<font color=#00FF00>".$status[1]."</font></B>";
+          print"<B>Disk $disk status:<font color=#00FF00>".$status[1]."</font></B>";
         }
       }
 		  my $smart = `/usr/local/bin/smartctrl $disk`;

@@ -19,7 +19,8 @@ if ($debug){print "### Searching for available Disks ###\n";}
 
 foreach (@devices){
     chomp $_;
-    $diskstats = `cat /tmp/hddstats-$_`;
+    my @array = split(/\//,$_);
+    $diskstats = `cat /tmp/hddstats-$array[$#array]`;
     chomp $diskstats;
     $newdiskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
     chomp $newdiskstats;
@@ -27,34 +28,34 @@ foreach (@devices){
     chomp $status;
 
     if ($debug){print "Device ".$_." IDE Power status:".$status."\n";}
-    if (-e "/tmp/hddshutdown-$_" && $status !~/standby/)
+    if (-e "/tmp/hddshutdown-$array[$#array]" && $status !~/standby/)
     {
 	if ($debug){print "Remove wrong standby marking\n";}
-	if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); } 
+	if ( -e "/tmp/hddshutdown-$array[$#array]" ) { system("unlink /tmp/hddshutdown-$array[$#array]"); } 
     }
 
     if ($debug){print "Device ".$_." has ".$newdiskstats." write and read Requests, was ".$diskstats." at last run.\n";}
-    if ($diskstats eq $newdiskstats && (! -e "/tmp/hddshutdown-$_") )
+    if ($diskstats eq $newdiskstats && (! -e "/tmp/hddshutdown-$array[$#array]") )
     {
 	if ($debug){print "Setting Device ".$_." to standby ... ";}
 	$status = `hdparm -y /dev/$_ 2>&1`;
 	chomp $status;
-	if ($status !~/failed/) 
+	if ($status !~/Invalid/) 
 	{  
     	    if ($debug){print "OK\n";}
-    	    system("touch /tmp/hddshutdown-$_");
+    	    system("touch /tmp/hddshutdown-$array[$#array]");
 	}
 	else
 	{
-	    if ($debug){print "FAIL\n";}         
+	    if ($debug){print "FAIL\n";}
 	}
     }
     if ($diskstats ne $newdiskstats)
     {
 	if ($debug){print "Device ".$_." is active.\n";}
-	if ( -e "/tmp/hddshutdown-$_" ) { system("unlink /tmp/hddshutdown-$_"); }
+	if ( -e "/tmp/hddshutdown-$array[$#array]" ) { system("unlink /tmp/hddshutdown-$array[$#array]"); }
     }
-    system("echo $newdiskstats > /tmp/hddstats-$_");
+    system("echo $newdiskstats > /tmp/hddstats-$array[$#array]");
 }
 
 # end
