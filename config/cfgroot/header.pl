@@ -331,16 +331,18 @@ sub connectionstatus
 
     my ($timestr, $connstate);
 
-		my $connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'idle'} $profileused</span>";
+		my $connstate = "<span>$Lang::tr{'idle'} $profileused</span>";
 
 		if (-e "${General::swroot}/red/active") {
 			$timestr = &General::age("${General::swroot}/red/active");
-			$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connected'} - (<span class='ipcop_StatusBigRed'>$timestr</span>) $profileused</span>";
+			$connstate = "<span>$Lang::tr{'connected'} - (<span>$timestr</span>) $profileused</span>";
 		} else {
-			if (($pppsettings{'RECONNECTION'} eq "dialondemand") && ( -e "${General::swroot}/red/dial-on-demand")) {
-				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'dod waiting'} $profileused</span>";
+		  if ((open(KEEPCONNECTED, "</var/ipfire/red/keepconnected") == false) && ($pppsettings{'RECONNECTION'} eq "persistent")) {
+				$connstate = "<span>$Lang::tr{'connection closed'} $profileused</span>";
+      } elsif (($pppsettings{'RECONNECTION'} eq "dialondemand") && ( -e "${General::swroot}/red/dial-on-demand")) {
+				$connstate = "<span>$Lang::tr{'dod waiting'} $profileused</span>";
 			} else {
-				$connstate = "<span class='ipcop_StatusBig'>$Lang::tr{'connecting'} $profileused</span>" if (system("ps -ef | grep -q '[p]ppd'"));
+				$connstate = "<span>$Lang::tr{'connecting'} $profileused</span>" if (system("ps -ef | grep -q '[p]ppd'"));
 			}
 		}
 		

@@ -493,6 +493,7 @@
 'connected' => 'Connected',
 'connecting' => 'Connecting...',
 'connection' => 'Connection',
+'connection closed' => 'Not connected...',
 'connection debugging' => 'Connection debugging',
 'connection status and controlc' => 'Connection status and control:',
 'connection tracking' => 'IPTables Connection Tracking',

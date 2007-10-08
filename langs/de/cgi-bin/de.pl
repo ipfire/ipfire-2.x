@@ -473,6 +473,7 @@
 'connected' => 'Verbunden',
 'connecting' => 'Baue Verbindung auf...',
 'connection' => 'Verbindung',
+'connection closed' => 'Nicht Verbunden...',
 'connection debugging' => 'Verbindungs-Debugging',
 'connection status and controlc' => 'Verbindungsstatus und -kontrolle:',
 'connection tracking' => 'IPTables-Verbindungsverfolgung',
