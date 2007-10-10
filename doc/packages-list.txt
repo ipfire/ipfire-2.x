@@ -218,7 +218,6 @@
 * rsync-2.6.8
 * rtorrent-0.7.6
 * samba-3.0.26a
-* screen-4.0.2
 * screen-4.0.3
 * sdparm-1.01
 * sed-4.1.5

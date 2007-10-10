@@ -3,4 +3,4 @@
 
 extract_files
 
-mysql -u root < /srv/web/openmailadmin/mail.dump
+mysql -u root mail < /srv/web/openmailadmin/mail.dump
