@@ -276,6 +276,9 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'delete'})
 	&General::writehash("${General::swroot}/ppp/settings-$pppsettings{'PROFILE'}",
 		\%pppsettings);
 }
+elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
+{
+}
 else
 {
 	# read in the current vars
@@ -313,7 +316,6 @@ $selected{'TYPE'}{'serial'} = '';
 $selected{'TYPE'}{'pppoe'} = '';
 $selected{'TYPE'}{'pptp'} = '';
 $selected{'TYPE'}{$pppsettings{'TYPE'}} = "selected='selected'";
-
 $checked{'DEBUG'}{'off'} = '';
 $checked{'DEBUG'}{'on'} = '';
 $checked{'DEBUG'}{$pppsettings{'DEBUG'}} = "checked='checked'";
@@ -323,10 +325,11 @@ $selected{'COMPORT'}{'ttyS1'} = '';
 $selected{'COMPORT'}{'ttyS2'} = '';
 $selected{'COMPORT'}{'ttyS3'} = '';
 $selected{'COMPORT'}{'ttyS4'} = '';
+if ( $pppsettings{'TYPE'} ne '' ){
 $selected{'COMPORT'}{'ttyACM0'} = '';
 $selected{'COMPORT'}{'ttyACM1'} = '';
 $selected{'COMPORT'}{'ttyACM2'} = '';
-$selected{'COMPORT'}{'ttyACM3'} = '';
+$selected{'COMPORT'}{'ttyACM3'} = '';}
 $selected{'COMPORT'}{$pppsettings{'COMPORT'}} = "selected='selected'";
 
 $selected{'DTERATE'}{'9600'} = '';
@@ -347,7 +350,6 @@ $selected{'DIALMODE'}{'T'} = '';
 $selected{'DIALMODE'}{'P'} = '';
 $selected{'DIALMODE'}{$pppsettings{'DIALMODE'}} = "selected='selected'";
 
-$checked{'RECONNECTION'}{'manual'} = '';
 $checked{'RECONNECTION'}{'persistent'} = '';
 $checked{'RECONNECTION'}{'dialondemand'} = '';
 $checked{'RECONNECTION'}{$pppsettings{'RECONNECTION'}} = "checked='checked'";
@@ -539,14 +541,18 @@ END
 		<option value='ttyS2' $selected{'COMPORT'}{'ttyS2'}>$Lang::tr{'modem on com3'}</option>
 		<option value='ttyS3' $selected{'COMPORT'}{'ttyS3'}>$Lang::tr{'modem on com4'}</option>
 		<option value='ttyS4' $selected{'COMPORT'}{'ttyS4'}>$Lang::tr{'modem on com5'}</option>
+END
+;
+		if ($pppsettings{'TYPE'} ne 'serial' ) {
+			print <<END
 		<option value='ttyACM0' $selected{'COMPORT'}{'ttyACM0'}>$Lang::tr{'usb modem on acm0'}</option>
 		<option value='ttyACM1' $selected{'COMPORT'}{'ttyACM1'}>$Lang::tr{'usb modem on acm1'}</option>
 		<option value='ttyACM2' $selected{'COMPORT'}{'ttyACM2'}>$Lang::tr{'usb modem on acm2'}</option>
 		<option value='ttyACM3' $selected{'COMPORT'}{'ttyACM3'}>$Lang::tr{'usb modem on acm3'}</option>
-	</select></td>	
 END
 ;
 		}
+    print "</select></td>	"}
 		if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ ) {
 			print <<END
   <tr>
@@ -596,18 +602,6 @@ print <<END
 	<td colspan='3' width='75%'>$Lang::tr{'idle timeout'}</td>
 	<td width='25%'><input type='text' name='TIMEOUT' value='$pppsettings{'TIMEOUT'}' /></td>
 </tr>
-END
-;
-	if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && ( $netsettings{'RED_TYPE'} eq "DHCP" || $netsettings{'RED_TYPE'} eq "STATIC") ) {
-		$pppsettings{'AUTOCONNECT'} = 'on';
-		print "<tr><td colspan='3' width='75%'>$Lang::tr{'connect on ipfire restart'}</td>\n";
-		print "<td width='25%'><input type='checkbox' disabled='disabled' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'}></td>\n";
-	} else {
-		print "<tr><td colspan='3' width='75%'>$Lang::tr{'connect on ipfire restart'}</td>\n";
-		print "<td width='25%'><input type='checkbox' name='AUTOCONNECT' value='on' $checked{'AUTOCONNECT'}{'on'}></td>\n";
-	}
-print <<END
- </tr>
  <tr>
   <td colspan='3' width='75%'>$Lang::tr{'connection debugging'}:</td>
 	<td width='25%'><input type='checkbox' name='DEBUG' $checked{'DEBUG'}{'on'} /></td>
@@ -616,9 +610,6 @@ print <<END
   <td colspan='4' width='100%'><br></br></td></tr>
 <tr>
 	<td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'reconnection'}:</b></td>
-</tr>
-<tr>
-	<td colspan='4' width='100%'><input type='radio' name='RECONNECTION' value='manual' $checked{'RECONNECTION'}{'manual'}>$Lang::tr{'manual'}</td>
 </tr>
 <tr>
 	<td colspan='4' width='100%'><input type='radio' name='RECONNECTION' value='dialondemand' $checked{'RECONNECTION'}{'dialondemand'}>$Lang::tr{'dod'}</td>
@@ -842,9 +833,9 @@ sub initprofile
 	$pppsettings{'COMPORT'} = 'ttyS0';
 	$pppsettings{'DTERATE'} = 115200;
 	$pppsettings{'SPEAKER'} = 'off';
-	$pppsettings{'RECONNECTION'} = 'manual';
+	$pppsettings{'RECONNECTION'} = 'persistent';
 	$pppsettings{'DIALONDEMANDDNS'} = 'off';
-	$pppsettings{'AUTOCONNECT'} = 'off';
+	$pppsettings{'AUTOCONNECT'} = 'on';
 	$pppsettings{'SENDCR'} = 'off';
 	$pppsettings{'USEIBOD'} = 'off';
 	$pppsettings{'USEDOV'} = 'off';

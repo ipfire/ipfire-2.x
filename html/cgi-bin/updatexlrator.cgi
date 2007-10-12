@@ -479,10 +479,10 @@ END
 			print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Apple')
 		{
-			print "<img src='/images/images/updxl-src-apple.gif' alt='Apple' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-apple.gif' alt='Apple' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Kaspersky')
 		{
-			print "<img src='/images/Kaspersky.png' alt='Kaspersky' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-kaspersky.gif' alt='Kaspersky' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Linux')
 		{
 			print "<img src='/images/tux.png' alt='Linux' />&nbsp;</td>\n";
