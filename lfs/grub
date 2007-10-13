@@ -78,6 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-xpmjunk.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-splash-error-term.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-moreraid.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-i2o.patch
 
 	cd $(DIR_APP) && perl -pi -e 's,/usr/lib/grub/i386-pc,/usr/share/grub/i386-pc,' docs/grub.texi
 	cd $(DIR_APP) && sed -i 's/AM_INIT_AUTOMAKE/&\nAM_PROG_AS/' configure.ac

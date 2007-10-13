@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	char *shortlangnames[] = { "de", "en", NULL };
 	char **langtrs[] = { de_tr, en_tr, NULL };
 	char hdletter;
-	char harddrive[11], sourcedrive[5];	/* Device holder. */
+	char harddrive[30], sourcedrive[5];	/* Device holder. */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
 	int rc = 0;
 	char commandstring[STRING_SIZE];
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_NO_HARDDISK]);
 		goto EXIT;
 	}
-	fgets(harddrive, 11, handle);
+	fgets(harddrive, 30, handle);
 	fclose(handle);
 			
 	/* load unattended configuration */
