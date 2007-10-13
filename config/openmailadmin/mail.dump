@@ -16,6 +16,15 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Database: `mail`
+--
+
+CREATE DATABASE `mail`;
+USE `mail`;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `domains`
 --
 

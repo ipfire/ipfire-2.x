@@ -9,4 +9,6 @@ ln -svf  ../init.d/mysql /etc/rc.d/rc6.d/K26mysql
 
 /etc/init.d/mysql start
 
+sleep 10
+
 mysqladmin -u root --password='' password 'mysqlfire'

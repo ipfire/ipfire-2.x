@@ -15,4 +15,7 @@
 # a space or a tab.
 ########################################################################
 
+parport_pc
+lp
+
 # End /etc/sysconfig/modules

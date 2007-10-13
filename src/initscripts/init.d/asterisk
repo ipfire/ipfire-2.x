@@ -1,0 +1,52 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/asterisk
+#
+# Description : Asterisk Script
+#
+# Authors     : Michael Tremer (mitch@ipfire.org)
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting Asterisk PBX..."
+		loadproc /usr/sbin/asterisk
+		;;
+
+	stop)
+		boot_mesg "Stopping Asterisk PBX..."
+		asterisk -rx "stop gracefully" >/dev/null 2>&1
+		evaluate_retval
+		;;
+
+	reload)
+		boot_mesg "Reloading Asterisk PBX..."
+		asterisk -rx "reload" >/dev/null 2>&1
+		evaluate_retval
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/asterisk
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/asterisk

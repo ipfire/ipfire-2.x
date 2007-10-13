@@ -15,7 +15,7 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-LENGTH=80
+LENGTH=40
 
 play () {
 

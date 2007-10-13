@@ -7,3 +7,5 @@ postalias /etc/aliases
 
 # Set postfix's hostname
 postconf -e "myhostname=$(hostname -f)"
+
+/etc/init.d/postfix start

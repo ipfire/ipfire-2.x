@@ -1,3 +1,4 @@
+etc/init.d/asterisk
 #usr/include/asterisk
 #usr/include/asterisk.h
 #usr/include/asterisk/abstract_jb.h

@@ -3,4 +3,6 @@
 
 extract_files
 
-mysql -u root mail < /srv/web/openmailadmin/mail.dump
+mysql < /srv/web/openmailadmin/mail.dump
+
+/etc/init.d/apache restart
