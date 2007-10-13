@@ -58,7 +58,7 @@ my $connstate = &Header::connectionstatus();
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'} || $cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$refresh = "<meta http-equiv='refresh' content='300;'>";
-} elsif ($connstate =~ /$Lang::tr{'connecting'}/) {
+} elsif ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
 	$refresh = "<meta http-equiv='refresh' content='5;'>";
 } elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
 	$refresh = "<meta http-equiv='refresh' content='30;'>";

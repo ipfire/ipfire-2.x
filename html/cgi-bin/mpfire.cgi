@@ -38,6 +38,21 @@ my $errormessage = "";
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
+if ( $ENV{'QUERY_STRING'} =~ /title/){
+my $song = `/usr/local/bin/mpfirectrl song 2>/dev/null`;
+if ( $song eq "" ){$song = "None";}
+if ( length($song) > 125 ) {$song = substr($song,0,125)."...";}
+&Header::showhttpheaders();
+print"<meta http-equiv='refresh' content='30'>";
+print <<END
+<div class="body"><table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td align='center'><font color=red><marquee behavior='alternate' scrollamount='1' scrolldelay='5'>-= $song =-</marquee></font></td></tr>
+</table>
+END
+;
+} 
+else{
+
 &Header::showhttpheaders();
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;' />" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
@@ -84,7 +99,7 @@ foreach (@songdb){
   my $genrecount = $#genre+1;
 
 &Header::getcgihash(\%mpfiresettings);
-&Header::openpage($Lang::tr{'mpfire'}, 1, "<meta http-equiv='refresh' content='120' />");
+&Header::openpage($Lang::tr{'mpfire'}, 1,);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
@@ -234,10 +249,6 @@ END
 ;
 &Header::closebox();
 
-my $song = `/usr/local/bin/mpfirectrl song 2>/dev/null`;
-if ( $song eq "" ){$song = "None";}
-if ( length($song) > 125 ) {$song = substr($song,0,125)."...";}
-
 my $Volume = `/usr/local/bin/mpfirectrl volume 2>/dev/null`;
 $Volume=~s/<break>/<br \/>/g;
 my $stats = `mpc stats | tail -4 2>/dev/null`;
@@ -247,7 +258,7 @@ $stats=~s/\\/<br \/>/g
 print <<END
 
     <table width='95%' cellspacing='0'>
-    <tr bgcolor='$color{'color20'}'>    <td colspan='5' align='center'><marquee behavior='alternate' scrollamount='1' scrolldelay='5'><font color=red>-= $song =-</font></marquee></td></tr>
+    <iframe height='30' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' ></iframe> 
 END
 ;
 my $countsongs=`/usr/local/bin/mpfirectrl stats 2>/dev/null`;
@@ -455,3 +466,4 @@ print "</table>";
 
 &Header::closebigbox();
 &Header::closepage();
+}

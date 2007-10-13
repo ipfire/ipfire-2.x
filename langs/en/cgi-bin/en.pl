@@ -487,7 +487,6 @@
 'concentrator name' => 'Concentrator name:',
 'confirmation' => 'confirmation',
 'connect' => 'OVPN Start / Connect',
-'connect on ipfire restart' => 'Connect on IPFire restart:',
 'connect the modem' => 'Connect the modem',
 'connect timeout' => 'Connect timeout:',
 'connected' => 'Connected',
