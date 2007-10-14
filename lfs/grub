@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-xpmjunk.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-splash-error-term.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-special-device-names.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-moreraid.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-i2o.patch
 
@@ -96,8 +97,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	for i in $(DIR_SRC)/config/grub/*; do \
 	    [ -f $$i ] && cp -f $$i /boot/grub; \
 	done
-	
-	/usr/sbin/grub-set-default 1
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
