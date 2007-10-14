@@ -15,6 +15,7 @@
 /var/ipfire/dhcp/*
 /var/ipfire/main/*
 /var/ipfire/outgoing/rules
+/var/ipfire/outgoing/p2protocols
 /var/ipfire/ovpn
 /var/ipfire/ppp
 /var/ipfire/proxy

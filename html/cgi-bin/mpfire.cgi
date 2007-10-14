@@ -41,13 +41,12 @@ my $errormessage = "";
 if ( $ENV{'QUERY_STRING'} =~ /title/){
 my $song = `/usr/local/bin/mpfirectrl song 2>/dev/null`;
 if ( $song eq "" ){$song = "None";}
-if ( length($song) > 100 ) {$song = substr($song,0,100)."...";}
 &Header::showhttpheaders();
-print"<meta http-equiv='refresh' content='30'>";
+print"<meta http-equiv='refresh' content='5'>";
 print <<END
-<div class="body"><table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td align='center'><font color=red><marquee behavior='alternate' scrollamount='1' scrolldelay='5'>-= $song =-</marquee></font></td></tr>
-</table>
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td align='center' valign='center'><font color='red' face='Verdana' size='2'>-= $song =-</font></td></tr>
+</table></div>
 END
 ;
 } 
@@ -257,7 +256,7 @@ $stats=~s/\\/<br \/>/g
 print <<END
 
     <table width='95%' cellspacing='0'>
-    <iframe height='40' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' ></iframe> 
+    <iframe height='35' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' align='top' marginheight='0'></iframe> 
 END
 ;
 my $countsongs=`/usr/local/bin/mpfirectrl stats 2>/dev/null`;
@@ -451,15 +450,27 @@ print <<END
 <tr><td align='left'>Stream</td><td colspan='2'></td></tr>
 END
 ;
+my $lines=0;
 foreach (@webradio){
  my @stream = split(/\|/,$_);
- print <<END
- <tr><td align='left'><a href="$stream[2]" target="_blank">$stream[1]</a></td>
+ $lines++;
+ if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
+print <<END
+ <td align='left'><a href="$stream[2]" target="_blank">$stream[1]</a></td>
      <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
 </tr>
 END
 ;
  }
+ $lines++;
+ if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
+print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+ <td align='left'>http://<input type=text name='FILE' value='www.meineradiourl:1234' size='75' /></td>
+     <td align='center'><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+</tr>
+END
+;
 print "</table>";
 &Header::closebox();
 
