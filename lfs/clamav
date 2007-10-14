@@ -82,5 +82,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	chown clamav.clamav -R /usr/share/clamav/
 	cp -rf $(DIR_SRC)/config/clamav/* /var/ipfire/clamav/
+	rm -rfv /usr/share/clamav/*.cvd
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
