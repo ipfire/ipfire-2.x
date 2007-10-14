@@ -54,7 +54,7 @@
 * cdrtools-2.01
 * centerim-4.22.1
 * cftp-0.12
-* clamav-0.91.1
+* clamav-0.91.2
 * coreutils-5.96
 * cpio-2.6
 * cups-1.2.12

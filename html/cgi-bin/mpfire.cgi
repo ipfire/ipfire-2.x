@@ -41,7 +41,7 @@ my $errormessage = "";
 if ( $ENV{'QUERY_STRING'} =~ /title/){
 my $song = `/usr/local/bin/mpfirectrl song 2>/dev/null`;
 if ( $song eq "" ){$song = "None";}
-if ( length($song) > 125 ) {$song = substr($song,0,125)."...";}
+if ( length($song) > 100 ) {$song = substr($song,0,100)."...";}
 &Header::showhttpheaders();
 print"<meta http-equiv='refresh' content='30'>";
 print <<END
@@ -52,7 +52,6 @@ END
 ;
 } 
 else{
-
 &Header::showhttpheaders();
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;' />" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
@@ -258,7 +257,7 @@ $stats=~s/\\/<br \/>/g
 print <<END
 
     <table width='95%' cellspacing='0'>
-    <iframe height='30' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' ></iframe> 
+    <iframe height='40' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' ></iframe> 
 END
 ;
 my $countsongs=`/usr/local/bin/mpfirectrl stats 2>/dev/null`;
@@ -449,13 +448,13 @@ close(DATEI);
 print <<END
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='9' align='left'><b>$Lang::tr{'webradio playlist'}</b></td></tr>
-<tr><td>Stream</td><td colspan='2'></td></tr>
+<tr><td align='left'>Stream</td><td colspan='2'></td></tr>
 END
 ;
 foreach (@webradio){
  my @stream = split(/\|/,$_);
  print <<END
- <tr><td><a href="$stream[2]" target="_blank">$stream[1]</a></td>
+ <tr><td align='left'><a href="$stream[2]" target="_blank">$stream[1]</a></td>
      <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
 </tr>
 END
