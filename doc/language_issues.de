@@ -221,6 +221,11 @@ WARNING: translation string unused: minutes
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: mode
+WARNING: translation string unused: modem on com1
+WARNING: translation string unused: modem on com2
+WARNING: translation string unused: modem on com3
+WARNING: translation string unused: modem on com4
+WARNING: translation string unused: modem on com5
 WARNING: translation string unused: modulation
 WARNING: translation string unused: monthly firewallhits
 WARNING: translation string unused: monthly start day bad

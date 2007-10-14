@@ -156,16 +156,14 @@ while (<>) {
 	}
 	
 	# ----------------------------------------------------------- 
-	
-	# ----------------------------------------------------------- 
 	# Section: Kaspersky Downloads 
 	# -----------------------------------------------------------  
 	
-	if ($dsturl =~ m@^ht?tp://dnl*kapsersky*\.(xml\.dif|avc*|tzv)$@i) 
+	if ($dsturl =~ m@^http://dnl-.*\.kaspersky-labs\.com\/(diffs|bases|AutoPatches).*$@i) 
 	{ 
 	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Kaspersky"); 
 	}
-	
+
 	# ----------------------------------------------------------- 
 
 	}
