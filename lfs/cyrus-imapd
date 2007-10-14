@@ -31,10 +31,10 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = cyrusimap
+PROG       = cyrus-imapd
 PAK_VER    = 1
 
-DEPS       = "cyrus-sasl mysql"
+DEPS       = "cyrus-sasl"
 
 ###############################################################################
 # Top-level Rules

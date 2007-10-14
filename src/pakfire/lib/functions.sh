@@ -19,26 +19,56 @@
 #                                                                             #
 ###############################################################################
 
+. /etc/sysconfig/rc
+. $rc_functions
+
 extract_files() {
 	echo "Extracting files..."
 	tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C /
 	echo "...Finished."
 }
 
-reload_libs() {
-	echo "(Re-)Initializing the lib-cache..."	
-	ldconfig -vv
-	echo "...Finished."
-}
-
-reload_modules() {
-	echo "(Re-)Initializing the module-dependencies..."	
-	depmod -va
+remove_files() {
+	echo "Removing files..."
+	for i in $(cat /opt/pakfire/tmp/ROOTFILES); do
+		rm -rfv ${i}
+	done
 	echo "...Finished."
 }
 
 restart_service() {
 	
 	/etc/init.d/$1 restart
+
+}
+
+start_service() {
+	DELAY=0
+	while true
+		case "${1}" in
+			--delay|-d)
+				DELAY=${2}
+				shift 2
+				;;
+			--background|-b)
+				BACKGROUND="&"
+				shift
+				;;
+			-*)
+				log_failure_msg "Unknown Option: ${1}"
+				return 2 #invalid or excess argument(s)
+				;;
+			*)
+				break
+				;;			
+		esac
+		
+		[ -e "/etc/init.d/${1}" ] && \
+		 (sleep ${DELAY} && /etc/init.d/${1} start ${BACKGROUND})
+}
+
+stop_service() {
+	
+	[ -e "/etc/init.d/${1}" ] && /etc/init.d/${1} stop
 
 }
