@@ -42,11 +42,16 @@ if ( $ENV{'QUERY_STRING'} =~ /title/){
 my $song = `/usr/local/bin/mpfirectrl song 2>/dev/null`;
 if ( $song eq "" ){$song = "None";}
 &Header::showhttpheaders();
-print"<meta http-equiv='refresh' content='5'>";
 print <<END
-<table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td align='center' valign='center'><font color='red' face='Verdana' size='2'>-= $song =-</font></td></tr>
-</table></div>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+  "http://www.w3.org/TR/html4/loose.dtd">
+<meta http-equiv='refresh' content='5'>
+<head><title>Song</title></head>
+<body>
+<table width='95%' cellspacing='0' align='center'>
+<tr bgcolor='$color{'color20'}'><td align='center'><font color='red' face='Verdana' size='2'>-= $song =-</font></td></tr>
+</table>
+</body>
 END
 ;
 } 
@@ -254,13 +259,12 @@ $stats=~s/\\/<br \/>/g
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
 print <<END
-
+    <iframe height='35' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' marginheight='0'></iframe>
     <table width='95%' cellspacing='0'>
-    <iframe height='35' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' align='top' marginheight='0'></iframe> 
 END
 ;
 my $countsongs=`/usr/local/bin/mpfirectrl stats 2>/dev/null`;
-print "<tr><td colspan='5' align='center'><br/><b>".$countsongs."</b><br/><br/></td></tr>";
+print "<tr><td colspan='5' align='center'><b>".$countsongs."</b></td></tr>";
 print <<END
     <tr>
     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
@@ -418,7 +422,7 @@ print <<END
 <tr><td align='center' colspan='2' ><textarea cols='100' rows='10' name='playlist' style='font-size:11px;width:650px;' readonly='readonly'>
 END
 ;
-foreach (@playlist){print $_;}
+foreach (@playlist){$_=~s/&/&amp\;/g;;print $_;}
 print <<END
 </textarea></td></tr><tr>
 <td align='right'>
@@ -454,6 +458,7 @@ my $lines=0;
 foreach (@webradio){
  my @stream = split(/\|/,$_);
  $lines++;
+ chomp($stream[2]);
  if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
 print <<END
  <td align='left'><a href="$stream[2]" target="_blank">$stream[1]</a></td>
@@ -465,9 +470,8 @@ END
  $lines++;
  if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
 print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
- <td align='left'>http://<input type=text name='FILE' value='www.meineradiourl:1234' size='75' /></td>
-     <td align='center'><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+ <td align='left'><form method='post' action='$ENV{'SCRIPT_NAME'}'>http://<input type=text name='FILE' value='www.meineradiourl:1234' size='75' /></form></td>
+     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
 </tr>
 END
 ;

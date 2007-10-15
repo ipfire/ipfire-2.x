@@ -21,8 +21,8 @@
 
 use strict;
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
@@ -35,7 +35,6 @@ my %cgiparams=();
 my %checked = ();
 my $message = "";
 my $errormessage = "";
-my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
 
 $a = new CGI;
 
@@ -55,23 +54,23 @@ $cgiparams{'BACKUPLOGS'} = '';
 
 if ( $cgiparams{'ACTION'} eq "download" )
 {
-    open(DLFILE, "</var/ipfire/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
-    my @fileholder = <DLFILE>;
-    print "Content-Type:application/x-download\n";
-    print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
-    print @fileholder;
-    exit (0);
+		open(DLFILE, "</var/ipfire/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
+		my @fileholder = <DLFILE>;
+		print "Content-Type:application/x-download\n";
+		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
+		print @fileholder;
+		exit (0);
 }
 elsif ( $cgiparams{'ACTION'} eq "restore" )
 {
-  my $upload = $a->param("UPLOAD");
-  open UPLOADFILE, ">/tmp/restore.ipf";
-  binmode $upload;
-  while ( <$upload> ) {
-  print UPLOADFILE;
-  }
-  close UPLOADFILE;
-  system("/usr/local/bin/backupctrl restore >/dev/null 2>&1");
+		my $upload = $a->param("UPLOAD");
+		open UPLOADFILE, ">/tmp/restore.ipf";
+		binmode $upload;
+		while ( <$upload> ) {
+		print UPLOADFILE;
+		}
+		close UPLOADFILE;
+		system("/usr/local/bin/backupctrl restore >/dev/null 2>&1");
 }
 
 &Header::showhttpheaders();
@@ -86,18 +85,20 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 
 if ( $cgiparams{'ACTION'} eq "backup" )
 {
- if ( $cgiparams{'BACKUPLOGS'} eq "include" ){system("/usr/local/bin/backupctrl include >/dev/null 2>&1");}
- else {system("/usr/local/bin/backupctrl exclude >/dev/null 2>&1");}
- refreshpage();
+	if ( $cgiparams{'BACKUPLOGS'} eq "include" ){system("/usr/local/bin/backupctrl include >/dev/null 2>&1");}
+	else {system("/usr/local/bin/backupctrl exclude >/dev/null 2>&1");}
+}
+if ( $cgiparams{'ACTION'} eq "addonbackup" )
+{
+	system("/usr/local/bin/backupctrl addonbackup $cgiparams{'ADDON'}");
 }
 elsif ( $cgiparams{'ACTION'} eq "delete" )
 {
-  system("/usr/local/bin/backupctrl $cgiparams{'FILE'} >/dev/null 2>&1");
-  refreshpage();
+	system("/usr/local/bin/backupctrl $cgiparams{'FILE'} >/dev/null 2>&1");
 }
 
 ############################################################################################################################
-########################################### rekursiv nach neuen Mp3s Scannen ##############################################ä
+############################################ Backups des Systems erstellen #################################################
 
 if ( $message ne "" ){
 	&Header::openbox('100%','left',$Lang::tr{'error messages'});
@@ -105,20 +106,29 @@ if ( $message ne "" ){
 	&Header::closebox();
 }
 
+my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
+
 &Header::openbox('100%', 'center', $Lang::tr{'backup'});
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td align='left' width='40%'>$Lang::tr{'logs'}</td><td align='left'>include Logfiles <input type='radio' name='BACKUPLOGS' value='include'/>/
-																									                                       <input type='radio' name='BACKUPLOGS' value='exclude' checked='checked'/> exclude Logfiles</td></tr>
-<tr><td align='center' colspan='2'><input type='hidden' name='ACTION' value='backup' />
-                              <input type='image' alt='$Lang::tr{'Scan for Files'}' title='$Lang::tr{'Scan for Files'}' src='/images/document-save.png' /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'logs'}</td><td align='left'>include Logfiles
+	<input type='radio' name='BACKUPLOGS' value='include'/>/
+	<input type='radio' name='BACKUPLOGS' value='exclude' checked='checked'/> exclude Logfiles
+</td></tr>
+<tr><td align='center' colspan='2'>
+	<input type='hidden' name='ACTION' value='backup' />
+	<input type='image' alt='$Lang::tr{'backup'}' title='$Lang::tr{'backup'}' src='/images/document-save.png' />
+</td></tr>
 </table>
 </form>
 END
 ;
 &Header::closebox();
+
+############################################################################################################################
+############################################ Backups des Systems downloaden ################################################
 
 &Header::openbox('100%', 'center', $Lang::tr{'backups'});
 
@@ -135,11 +145,14 @@ $Size = sprintf("%02d", $Size);
 print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
-print <<END													
+print <<END
 </table>
 END
 ;
 &Header::closebox();
+
+############################################################################################################################
+####################################### Backups des Systems wiederherstellen ###############################################
 
 &Header::openbox('100%', 'center', $Lang::tr{'restore'});
 
@@ -149,6 +162,57 @@ print <<END
 </table>
 END
 ;
+&Header::closebox();
+
+############################################################################################################################
+############################################# Backups von Addons erstellen #################################################
+
+&Header::openbox('100%', 'center', 'addons');
+
+my @addonincluds = `ls /var/ipfire/backup/addons/includes/ 2>/dev/null`;
+
+print "<table width='95%' cellspacing='0'>";
+foreach (@addonincluds){
+chomp($_);
+my $Datei = "/var/ipfire/backup/addons/backup/".$_.".ipf";
+my @Info = stat($Datei);
+my $Size = $Info[7] / 1024;
+$Size = sprintf("%2d", $Size);
+if ( -e $Datei ){
+print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+print <<END
+	<td align='right' width='5'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='hidden' name='ACTION' value='download' />
+		<input type='hidden' name='FILE' value='addons/backup/$_.ipf' />
+		<input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' />
+		</form>
+	</td>
+	<td align='right' width='5'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='hidden' name='ACTION' value='delete' />
+		<input type='hidden' name='FILE' value='addons/backup/$_.ipf' />
+		<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
+		</form>
+	</td>
+END
+;
+}
+else{
+  print "<tr><td align='center'>$Lang::tr{'backup from'} $_ </td><td colspan='2' width='10'></td>";
+}
+print <<END
+	<td align='right' width='5'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='hidden' name='ACTION' value='addonbackup' />
+		<input type='hidden' name='ADDON' value='$_' />
+		<input type='image' alt='$Lang::tr{'backup'}' title='$Lang::tr{'backup'}' src='/images/document-save.png' />
+		</form>
+	</td></tr>
+END
+;
+}
+print "</table>";
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
