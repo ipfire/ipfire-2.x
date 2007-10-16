@@ -21,8 +21,8 @@
 
 use strict;
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
@@ -61,6 +61,15 @@ if ( $cgiparams{'ACTION'} eq "download" )
 		print @fileholder;
 		exit (0);
 }
+if ( $cgiparams{'ACTION'} eq "downloadaddon" )
+{
+		open(DLFILE, "</var/ipfire/backup/addons/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
+		my @fileholder = <DLFILE>;
+		print "Content-Type:application/x-download\n";
+		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
+		print @fileholder;
+		exit (0);
+}
 elsif ( $cgiparams{'ACTION'} eq "restore" )
 {
 		my $upload = $a->param("UPLOAD");
@@ -70,6 +79,18 @@ elsif ( $cgiparams{'ACTION'} eq "restore" )
 		print UPLOADFILE;
 		}
 		close UPLOADFILE;
+		system("/usr/local/bin/backupctrl restore >/dev/null 2>&1");
+}
+elsif ( $cgiparams{'ACTION'} eq "restoreaddon" )
+{
+		my $upload = $a->param("UPLOAD");
+		open UPLOADFILE, ">/var/$cgiparams{'UPLOAD'}";
+		binmode $upload;
+		while ( <$upload> ) {
+		print UPLOADFILE;
+		}
+		close UPLOADFILE;
+		system("cp /var/ipfire/backup/addons/backup/$cgiparams{'UPLOAD'} /tmp/restore.ipf >/dev/null 2>&1");
 		system("/usr/local/bin/backupctrl restore >/dev/null 2>&1");
 }
 
@@ -90,7 +111,7 @@ if ( $cgiparams{'ACTION'} eq "backup" )
 }
 if ( $cgiparams{'ACTION'} eq "addonbackup" )
 {
-	system("/usr/local/bin/backupctrl addonbackup $cgiparams{'ADDON'}");
+	system("/usr/local/bin/backupctrl addonbackup $cgiparams{'ADDON'} >/dev/null 2>&1");
 }
 elsif ( $cgiparams{'ACTION'} eq "delete" )
 {
@@ -152,19 +173,6 @@ END
 &Header::closebox();
 
 ############################################################################################################################
-####################################### Backups des Systems wiederherstellen ###############################################
-
-&Header::openbox('100%', 'center', $Lang::tr{'restore'});
-
-print <<END
-<table width='95%' cellspacing='0'>
-<tr><td align='left'>$Lang::tr{'backup'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restore' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
-</table>
-END
-;
-&Header::closebox();
-
-############################################################################################################################
 ############################################# Backups von Addons erstellen #################################################
 
 &Header::openbox('100%', 'center', 'addons');
@@ -183,8 +191,8 @@ print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Siz
 print <<END
 	<td align='right' width='5'>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<input type='hidden' name='ACTION' value='download' />
-		<input type='hidden' name='FILE' value='addons/backup/$_.ipf' />
+		<input type='hidden' name='ACTION' value='downloadaddon' />
+		<input type='hidden' name='FILE' value='$_.ipf' />
 		<input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' />
 		</form>
 	</td>
@@ -213,6 +221,21 @@ END
 ;
 }
 print "</table>";
+&Header::closebox();
+
+############################################################################################################################
+####################################### Backups des Systems wiederherstellen ###############################################
+
+&Header::openbox('100%', 'center', $Lang::tr{'restore'});
+
+print <<END
+<table width='95%' cellspacing='0'>
+<tr><td align='center' colspan='2'><font color='red'><br />$Lang::tr{'backupwarning'}</font><br /><br /></td></tr>
+<tr><td align='left'>$Lang::tr{'backup'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restore' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
+<tr><td align='left'>$Lang::tr{'backupaddon'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restoreaddon' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
+</table>
+END
+;
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();

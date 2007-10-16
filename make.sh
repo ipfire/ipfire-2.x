@@ -394,7 +394,6 @@ buildipfire() {
   ipfiremake iptables
   ipfiremake libupnp
   ipfiremake ipp2p			IPT=1
-  ipfiremake moblock
   ipfiremake linux-igd
   ipfiremake ipac-ng
   ipfiremake ipaddr
@@ -473,7 +472,7 @@ buildipfire() {
   ipfiremake htop
   ipfiremake postfix
   ipfiremake fetchmail
-  ipfiremake cyrusimap
+  ipfiremake cyrus-imapd
   ipfiremake openmailadmin
   ipfiremake mailx
   ipfiremake clamav

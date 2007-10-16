@@ -36,6 +36,20 @@ remove_files() {
 	echo "...Finished."
 }
 
+make_backup(){
+		[ -e "/var/ipfire/backup/addons/include/${1}" ] && \
+		( echo "Creating Backup..."
+			/usr/local/bin/backupctrl addonbackup ${1}
+			echo "...Finished." )
+}
+
+restore_backup(){
+		[ -e "/var/ipfire/backup/addons/backup/${1}" ] && \
+		( echo "Restoring Backup..." && \
+			/usr/local/bin/backupctrl restoreaddon ${1} && \
+			echo "...Finished." )
+}
+
 restart_service() {
 	
 	/etc/init.d/$1 restart

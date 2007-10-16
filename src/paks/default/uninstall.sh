@@ -2,3 +2,4 @@
 . /opt/pakfire/lib/functions.sh
 
 stop_service ${NAME}
+make_backup ${NAME}

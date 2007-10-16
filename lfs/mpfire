@@ -67,4 +67,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown nobody.nobody /var/ipfire/mpfire/{settings,webradio}
 	chown root.nobody /var/ipfire/mpfire/db/mpd.db
 	chmod 664 /var/ipfire/mpfire/playlist.m3u
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/mpfire /var/ipfire/backup/addons/includes/mpfire
 	@$(POSTBUILD)

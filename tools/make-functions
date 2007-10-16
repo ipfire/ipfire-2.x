@@ -560,6 +560,7 @@ END
 		;;
 	esac
 
+sleep 15
 	python tools/sendEmail < /tmp/ipfire_mail_body.$$
 	if [ "$?" -eq "0" ]; then
 		beautify message DONE

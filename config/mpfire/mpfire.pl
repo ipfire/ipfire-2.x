@@ -90,7 +90,7 @@ sub clearplaylist(){
   }
 
 sub shuffle(){
-  system("mpc shuffle >/dev/null");  
+  system("mpc random >/dev/null");  
   }
 
 sub checkplaylist(){

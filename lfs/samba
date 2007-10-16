@@ -107,5 +107,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -vfp /var/ipfire/samba/default.printer /var/ipfire/samba/printer
 	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
 	-mkdir -p /var/log/samba
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/samba /var/ipfire/backup/addons/includes/samba
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

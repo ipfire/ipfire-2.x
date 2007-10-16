@@ -60,6 +60,9 @@ elsif ($ARGV[0] eq 'exclude') {
 elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz --preserve -f /tmp/restore.ipf");
 }
+elsif ($ARGV[0] eq 'restoreaddon') {
+  system("cd / && tar -xvz --preserve -f /var/ipfire/backup/addons/backup/$ARGV[1].ipf");
+}
 elsif ($ARGV[0] eq 'cli') {
   system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
 }
