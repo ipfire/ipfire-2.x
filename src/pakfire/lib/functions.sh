@@ -37,28 +37,29 @@ remove_files() {
 }
 
 make_backup(){
-		[ -e "/var/ipfire/backup/addons/include/${1}" ] && \
-		( echo "Creating Backup..."
-			/usr/local/bin/backupctrl addonbackup ${1}
-			echo "...Finished." )
+	if [ -e "/var/ipfire/backup/addons/include/${1}" ];then
+	echo "Creating Backup..."
+	/usr/local/bin/backupctrl addonbackup ${1}
+	echo "...Finished."
+	fi
 }
 
 restore_backup(){
-		[ -e "/var/ipfire/backup/addons/backup/${1}" ] && \
-		( echo "Restoring Backup..." && \
-			/usr/local/bin/backupctrl restoreaddon ${1} && \
-			echo "...Finished." )
+	if [ -e "/var/ipfire/backup/addons/backup/${1}" ];then
+	echo "Restoring Backup..."
+	/usr/local/bin/backupctrl restoreaddon ${1}.ipf
+	echo "...Finished."
+	fi
 }
 
 restart_service() {
-	
-	/etc/init.d/$1 restart
-
+	/etc/init.d/${1} restart
 }
 
 start_service() {
 	DELAY=0
 	while true
+	 do
 		case "${1}" in
 			--delay|-d)
 				DELAY=${2}
@@ -76,13 +77,16 @@ start_service() {
 				break
 				;;			
 		esac
+	done
 		
-		[ -e "/etc/init.d/${1}" ] && \
-		 (sleep ${DELAY} && /etc/init.d/${1} start ${BACKGROUND})
+		if [ -e "/etc/init.d/${1}" ];then
+		 sleep ${DELAY}
+     /etc/init.d/${1} start ${BACKGROUND}
+		fi
 }
 
 stop_service() {
-	
-	[ -e "/etc/init.d/${1}" ] && /etc/init.d/${1} stop
-
+	if [ -e "/etc/init.d/${1}" ];then
+	/etc/init.d/${1} stop
+	fi
 }

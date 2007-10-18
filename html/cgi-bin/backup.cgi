@@ -84,14 +84,13 @@ elsif ( $cgiparams{'ACTION'} eq "restore" )
 elsif ( $cgiparams{'ACTION'} eq "restoreaddon" )
 {
 		my $upload = $a->param("UPLOAD");
-		open UPLOADFILE, ">/var/$cgiparams{'UPLOAD'}";
+		open UPLOADFILE, ">/tmp/$cgiparams{'UPLOAD'}";
 		binmode $upload;
 		while ( <$upload> ) {
 		print UPLOADFILE;
 		}
 		close UPLOADFILE;
-		system("cp /var/ipfire/backup/addons/backup/$cgiparams{'UPLOAD'} /tmp/restore.ipf >/dev/null 2>&1");
-		system("/usr/local/bin/backupctrl restore >/dev/null 2>&1");
+		system("/usr/local/bin/backupctrl restoreaddon $cgiparams{'UPLOAD'} >/dev/null 2>&1");
 }
 
 &Header::showhttpheaders();
