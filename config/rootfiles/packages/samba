@@ -574,7 +574,7 @@ usr/sbin/winbindd
 #usr/share/samba/swat/using_samba/samba2_s.gif
 #usr/share/samba/swat/using_samba/samba2_xs.gif
 #usr/share/samba/swat/using_samba/toc.html
-var/ipfire/backup/addons/include/samba
+var/ipfire/backup/addons/includes/samba
 #var/ipfire/samba
 var/ipfire/samba/default.global
 var/ipfire/samba/default.pdc

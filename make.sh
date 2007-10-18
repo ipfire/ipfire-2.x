@@ -318,6 +318,7 @@ buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
   ipfiremake configroot
+  ipfiremake backup
   ipfiremake dhcp
   ipfiremake dhcpcd
   ipfiremake libusb
@@ -500,7 +501,6 @@ buildipfire() {
   ipfiremake libpri
   ipfiremake stund
   ipfiremake asterisk
-  ipfiremake backup
   ipfiremake gnump3d
   ipfiremake libsigc++
   ipfiremake applejuice

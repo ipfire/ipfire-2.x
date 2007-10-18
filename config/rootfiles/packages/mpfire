@@ -1,6 +1,6 @@
 usr/local/bin/mpfirectrl
 srv/web/ipfire/cgi-bin/mpfire.cgi
-var/ipfire/backup/addons/include/mpfire
+var/ipfire/backup/addons/includes/mpfire
 var/ipfire/menu.d/EX-mpfire.menu
 var/ipfire/mpfire
 var/ipfire/mpfire/bin
