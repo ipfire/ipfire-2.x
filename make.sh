@@ -475,7 +475,6 @@ buildipfire() {
   ipfiremake fetchmail
   ipfiremake cyrus-imapd
   ipfiremake openmailadmin
-  ipfiremake mailx
   ipfiremake clamav
   ipfiremake spamassassin
   ipfiremake amavisd
@@ -496,10 +495,8 @@ buildipfire() {
   ipfiremake mpc
   ipfiremake xvid
   ipfiremake libmpeg2
-  #ipfiremake ffmpeg
   ipfiremake videolan
   ipfiremake libpri
-  ipfiremake stund
   ipfiremake asterisk
   ipfiremake gnump3d
   ipfiremake libsigc++
@@ -515,12 +512,8 @@ buildipfire() {
   ipfiremake nfs
   ipfiremake nmap
   ipfiremake mbmon
-  ipfiremake iftop
   ipfiremake ncftp
-  ipfiremake cftp
   ipfiremake etherwake
-  ipfiremake ethereal
-  ipfiremake tftp-hpa
   ipfiremake bwm-ng
   ipfiremake tripwire
   ipfiremake sysstat

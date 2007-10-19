@@ -16,8 +16,6 @@ while 1:
 		line = raw_input()
 	except EOFError:
 		break
-	#if not line:
-	#	break
 	if line.startswith("From: "):
 		fromaddr = line
 	elif line.startswith("To: "):

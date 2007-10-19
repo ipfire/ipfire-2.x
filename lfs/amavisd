@@ -77,17 +77,14 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp -f amavisd /usr/local/bin
-	cd $(DIR_APP) && chown root.root /usr/local/bin/amavisd
-	cd $(DIR_APP) && chmod 755 /usr/local/bin/amavisd
+	cd $(DIR_APP) && cp -f amavisd /usr/bin
+	chown root.root /usr/bin/amavisd
+	chmod 755 /usr/bin/amavisd
 	cd $(DIR_APP) && cp amavisd.conf /etc
-	cd $(DIR_APP) && chown root.root /etc/amavisd.conf
-	cd $(DIR_APP) && chmod 644 /etc/amavisd.conf
-	cd $(DIR_APP) && test -d /var/virusmails || mkdir /var/virusmails
-	cd $(DIR_APP) && chown amavis.amavis /var/virusmails
-	cd $(DIR_APP) && chmod 750 /var/virusmails
-	cd $(DIR_APP) && test -d /var/amavis || mkdir /var/amavis
-	cd $(DIR_APP) && chown amavis.amavis /var/amavis
-	cd $(DIR_APP) && chmod 750 /var/amavis
+	chown root.root /etc/amavisd.conf
+	chmod 644 /etc/amavisd.conf
+	-mkdir -p /var/amavis/{db,tmp} /var/virusmails
+	chown amavis.amavis -Rv /var/{amavis,virusmails}
+	chmod 750 -Rv /var/{amavis,virusmails}
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

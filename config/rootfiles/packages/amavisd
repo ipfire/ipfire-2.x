@@ -1,4 +1,5 @@
 etc/amavisd.conf
-usr/local/bin/amavisd
+etc/init.d/amavisd
+usr/bin/amavisd
 var/amavis
 var/virusmails
