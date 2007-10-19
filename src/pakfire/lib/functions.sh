@@ -36,16 +36,16 @@ remove_files() {
 	echo "...Finished."
 }
 
-make_backup(){
-	if [ -e "/var/ipfire/backup/addons/include/${1}" ];then
+make_backup() {
+	if [ -e "/var/ipfire/backup/addons/includes/${1}" ];then
 	echo "Creating Backup..."
 	/usr/local/bin/backupctrl addonbackup ${1}
 	echo "...Finished."
 	fi
 }
 
-restore_backup(){
-	if [ -e "/var/ipfire/backup/addons/backup/${1}" ];then
+restore_backup() {
+	if [ -e "/var/ipfire/backup/addons/backup/${1}.ipf" ];then
 	echo "Restoring Backup..."
 	/usr/local/bin/backupctrl restoreaddon ${1}.ipf
 	echo "...Finished."

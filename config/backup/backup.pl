@@ -61,7 +61,7 @@ elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz --preserve -f /tmp/restore.ipf");
 }
 elsif ($ARGV[0] eq 'restoreaddon') {
-  system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");
+  if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}
   system("cd / && tar -xvz --preserve -f /var/ipfire/backup/addons/backup/$ARGV[1]");
 }
 elsif ($ARGV[0] eq 'cli') {
