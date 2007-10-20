@@ -36,13 +36,15 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) idn-0.1.tgz
+objects = $(DL_FILE) idn-0.1.tgz Log-1.9.11.tgz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 idn-0.1.tgz = $(DL_FROM)/idn-0.1.tgz
+Log-1.9.11.tgz = $(DL_FROM)/Log-1.9.11.tgz
 
 $(DL_FILE)_MD5 = 55c97a671fdabf462cc7a82971a656d2
 idn-0.1.tgz_MD5 = ef8635ec22348325a76abd2abddca4a1
+Log-1.9.11.tgz_MD5 = fb7c648b212f12fdb5ce1ab687793513
 
 install : $(TARGET)
 
@@ -74,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/package.xml && \
+	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/Log-* $(DIR_SRC)/package.xml && \
 		cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i 's/const char \*errpfx,/const DB_ENV *dbenv, & const/' ext/dba/dba_db4.c
 	cd $(DIR_APP) && ./configure --prefix=/usr \
@@ -129,5 +131,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/idn-* && ./configure --prefix=/usr --with-idn
 	cd $(DIR_SRC)/idn-* && make
 	cd $(DIR_SRC)/idn-* && make install
-	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/package.xml
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/Log-1.9.11.tgz
+	-rm -f $(DIR_SRC)/package.xml
+	cd $(DIR_SRC)/Log-* && cp -av Log Log.php /usr/lib/php 
+	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/Log-* $(DIR_SRC)/package.xml
 	@$(POSTBUILD)
