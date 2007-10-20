@@ -1,3 +1,4 @@
+etc/httpd/conf/vhosts.d/openmailadmin.conf
 #srv/web/openmailadmin
 srv/web/openmailadmin/.htaccess
 #srv/web/openmailadmin/INSTALL

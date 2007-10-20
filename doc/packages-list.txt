@@ -52,7 +52,6 @@
 * ccache-2.4
 * cdrtools-2.01
 * centerim-4.22.1
-* cftp-0.12
 * clamav-0.91.2
 * coreutils-5.96
 * cpio-2.6
@@ -69,7 +68,6 @@
 * e2fsprogs-1.39
 * ed-0.2
 * espgs-8.15.1
-* ethereal-0.99.0
 * etherwake-1.09
 * ethtool-3
 * expat-2.0.0
@@ -106,7 +104,6 @@
 * iana-etc-2.10
 * icecast-2.3.1
 * icegenerator-0.5.5-pre2
-* iftop-0.17
 * inetutils-1.4.2
 * ipac-ng-1.31
 * ipaddr-1.2
@@ -157,7 +154,6 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_5
-* mailx-12.0
 * make-3.80
 * man-db-2.4.3
 * man-pages-2.34
@@ -231,7 +227,6 @@
 * squid-2.6.STABLE16
 * squid-graph-3.2
 * squidGuard-1.2.0
-* stund_0.96_Aug13
 * sudo-1.6.8p12
 * sysfsutils-1.3.0
 * sysklogd-1.4.1
@@ -242,7 +237,6 @@
 * tcp_wrappers_7.6
 * tcpdump-3.8.3
 * texinfo-4.8
-* tftp-hpa-0.42
 * tiff-3.8.2
 * traceroute-1.4a12
 * tripwire-2.4.1.2
