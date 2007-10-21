@@ -5,4 +5,4 @@ extract_files
 
 mysql < /srv/web/openmailadmin/mail.dump
 
-/etc/init.d/apache restart
+/etc/init.d/apache reload

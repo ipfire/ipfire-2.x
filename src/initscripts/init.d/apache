@@ -30,6 +30,12 @@ case "$1" in
 		/usr/sbin/apachectl -k restart
 		evaluate_retval
 		;;
+		
+	reload)
+		boot_mesg "Reloading Apache daemon..."
+		/usr/sbin/apachectl -k graceful
+		evaluate_retval
+		;;
 
 	status)
 		statusproc /usr/sbin/httpd
