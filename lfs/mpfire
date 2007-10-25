@@ -59,10 +59,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	-mkdir -p /var/ipfire/mpfire/{bin,db}
 	touch /var/ipfire/mpfire/{settings,playlist.m3u}
-	touch /var/ipfire/mpfire/db/mpd.db
 	install -v -m 755 $(DIR_SRC)/config/mpfire/mpfire.pl /var/ipfire/mpfire/bin
 	install -v -m 664 $(DIR_SRC)/config/mpfire/mpd.conf /var/ipfire/mpfire/
 	install -v -m 644 $(DIR_SRC)/config/mpfire/webradio /var/ipfire/mpfire/
+	install -v -m 644 $(DIR_SRC)/config/mpfire/mpd.db /var/ipfire/mpfire/db/mpd.db
 	chown root.nobody /var/ipfire/mpfire/{mpd.conf,playlist.m3u}
 	chown nobody.nobody /var/ipfire/mpfire/{settings,webradio}
 	chown root.nobody /var/ipfire/mpfire/db/mpd.db

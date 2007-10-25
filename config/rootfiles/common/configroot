@@ -3,7 +3,7 @@ var/ipfire/addon-lang
 #var/ipfire/alcatelusb
 var/ipfire/auth
 #var/ipfire/auth/users
-var/ipfire/backup
+#var/ipfire/backup
 var/ipfire/ca
 var/ipfire/certs
 #var/ipfire/certs/index.txt

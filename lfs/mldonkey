@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.1
+VER        = 2.9.2
 
 THISAPP    = mldonkey-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0f8882bd0bf343b0565e21e59b252b16
+$(DL_FILE)_MD5 = d7b92ae3e8782a3c4adeb0e7870c07dc
 
 install : $(TARGET)
 
