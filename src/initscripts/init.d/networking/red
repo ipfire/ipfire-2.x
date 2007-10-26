@@ -109,8 +109,8 @@ case "${1}" in
 			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
 			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
 			
-			if [ -n "${DHCP_HOSTNAME}" ]; then
-				DHCP_START+="-h ${DHCP_HOSTNAME} "
+			if [ -n "${RED_DHCP_HOSTNAME}" ]; then
+				DHCP_START+="-h ${RED_DHCP_HOSTNAME} "
 	  	fi
 	  	
 	  	/sbin/dhcpcd ${DEVICE} ${DHCP_START} >/dev/null 2>&1
@@ -124,8 +124,8 @@ case "${1}" in
 				boot_mesg_flush
 				boot_mesg "           IP Address:      $IPADDR"
 				boot_mesg_flush
-				if [ -n "${DHCP_HOSTNAME}" ]; then
-					boot_mesg "           Hostname:        $DHCP_HOSTNAME"
+				if [ -n "${RED_DHCP_HOSTNAME}" ]; then
+					boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
 					boot_mesg_flush
 				fi
 				boot_mesg "           Subnet Mask:     $NETMASK"

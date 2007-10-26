@@ -79,12 +79,9 @@ case "${1}" in
 			-delete || failed=1
 
 		boot_mesg -n " /var/ipfire/dhcp" ${NORMAL}
-		cd /var/ipfire/dhcpc/ && 
-		find . -name *.pid -exec rm -f {} \; || failed=1
-		cd /var/ipfire/dhcpc/ && 
-		find . -name *.cache -exec rm -f {} \; || failed=1
-		cd /var/ipfire/dhcpc/ && 
-		find . -name *.info -exec rm -f {} \; || failed=1
+		cd /var/ipfire/dhcpc/ && find . -name "*.pid" -exec rm -f {} \; || failed=1
+		cd /var/ipfire/dhcpc/ && find . -name "*.cache" -exec rm -f {} \; || failed=1
+		cd /var/ipfire/dhcpc/ && find . -name "*.info" -exec rm -f {} \; || failed=1
 
 		boot_mesg -n " /var/ipfire/red" ${NORMAL}
 		cd /var/ipfire/red/ && find . -name active -exec rm -f {} \; || failed=1

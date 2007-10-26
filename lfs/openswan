@@ -90,6 +90,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-startklips-1.patch
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-realsetup-1.patch
+	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown-1.patch
+	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown_x509-1.patch
+	cd /etc/ipsec.d/policies && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-clear-1.patch
 	
 	#@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
