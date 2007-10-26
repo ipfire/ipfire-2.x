@@ -19,14 +19,8 @@
 #usr/man/man8/statd.8
 usr/sbin/exportfs
 usr/sbin/nfsstat
-usr/sbin/nhfsgraph
-usr/sbin/nhfsnums
-usr/sbin/nhfsrun
-usr/sbin/nhfsstone
-usr/sbin/rpc.lockd
 usr/sbin/rpc.mountd
 usr/sbin/rpc.nfsd
-usr/sbin/rpc.rquotad
 usr/sbin/rpc.statd
 usr/sbin/showmount
 #var/lib/nfs

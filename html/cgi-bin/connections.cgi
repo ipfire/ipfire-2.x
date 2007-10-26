@@ -48,10 +48,20 @@ open (ACTIVE, 'iptstate -1rbt |') or die 'Unable to open ip_conntrack';
 my @active = <ACTIVE>;
 close (ACTIVE);
 
+if (open(IP, "${General::swroot}/red/local-ipaddress")) {
+        my $redip = <IP>;
+        close(IP);
+        chomp $redip;
+        push(@network, $redip);
+        push(@masklen, '255.255.255.255' );
+        push(@colour, ${Header::colourfw} );
+}
+
 my @vpn = ` route -n | grep ipsec | awk '{ print \$1" "\$3}'`;
   foreach my $route (@vpn) {
                 chomp($route);
                 my @temp = split(/[\t ]+/, $route);
+                if ( $temp[0] eq '$redip' ){next;}
                 push(@network, $temp[0]);
                 push(@masklen, $temp[1]);
                 push(@colour, ${Header::colourvpn} );
@@ -178,15 +188,6 @@ if ( $vpn[0] ne 'none' ) {
                 push(@colour, ${Header::colourvpn} );
         }
 }
-if (open(IP, "${General::swroot}/red/local-ipaddress")) {
-        my $redip = <IP>;
-        close(IP);
-        chomp $redip;
-        push(@network, $redip);
-        push(@masklen, '255.255.255.255' );
-        push(@colour, ${Header::colourfw} );
-}
-
 
 #Establish simple filtering&sorting boxes on top of table
 
