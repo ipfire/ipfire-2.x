@@ -1,4 +1,226 @@
 ------------------------------------------------------------------------
+r1000 | ms | 2007-10-26 19:14:59 +0400 (Fri, 26 Oct 2007) | 2 lines
+
+Dropped wireless drivers from kernel.
+
+------------------------------------------------------------------------
+r999 | ms | 2007-10-26 18:02:15 +0400 (Fri, 26 Oct 2007) | 2 lines
+
+A small number of buildfixes by Maniac.
+
+------------------------------------------------------------------------
+r998 | maniacikarus | 2007-10-25 12:51:31 +0400 (Thu, 25 Oct 2007) | 4 lines
+
+Update mldonkey openssh openssl ntfs-3g nfs and hdparm
+Change samba default config
+Some fixes for mpfire
+
+------------------------------------------------------------------------
+r997 | maniacikarus | 2007-10-21 14:06:04 +0400 (Sun, 21 Oct 2007) | 4 lines
+
+Added some Radio Streams for MPFire
+Added Reload function to apache init script
+Changed the packages to use reload instead of restart
+
+------------------------------------------------------------------------
+r996 | ms | 2007-10-21 02:00:55 +0400 (Sun, 21 Oct 2007) | 2 lines
+
+Hab das Pear auch mal in die ISO gebaut...
+
+------------------------------------------------------------------------
+r995 | skav3n | 2007-10-20 21:35:15 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Added some usage instructions and license info
+------------------------------------------------------------------------
+r994 | ms | 2007-10-20 20:01:14 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Einmal wieder auf den richtigen Stand gebracht...
+------------------------------------------------------------------------
+r993 | ms | 2007-10-20 19:59:58 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Bitte nicht so viele einzelne Commits...
+------------------------------------------------------------------------
+r992 | skav3n | 2007-10-20 17:51:16 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Added a file remotely
+------------------------------------------------------------------------
+r991 | skav3n | 2007-10-20 17:51:02 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Removed file/folder
+------------------------------------------------------------------------
+r990 | skav3n | 2007-10-20 16:08:01 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Added a file remotely
+------------------------------------------------------------------------
+r989 | skav3n | 2007-10-20 16:07:47 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Removed file/folder
+------------------------------------------------------------------------
+r988 | skav3n | 2007-10-20 15:49:31 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Added a file remotely
+------------------------------------------------------------------------
+r987 | skav3n | 2007-10-20 15:49:14 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Removed file/folder
+------------------------------------------------------------------------
+r986 | skav3n | 2007-10-20 15:39:18 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Added a file remotely
+------------------------------------------------------------------------
+r985 | skav3n | 2007-10-20 15:39:08 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Removed file/folder
+------------------------------------------------------------------------
+r984 | ms | 2007-10-20 15:35:27 +0400 (Sat, 20 Oct 2007) | 3 lines
+
+Fehlende Rechter der IMAP-Ordner.
+Pear::Log fuer das openmailadmin implementiert.
+
+------------------------------------------------------------------------
+r983 | ms | 2007-10-20 15:28:34 +0400 (Sat, 20 Oct 2007) | 3 lines
+
+Openmailadmin fehlt die Apache-Config...
+Tippfehler im Names des Spamassassin-Scripts.
+
+------------------------------------------------------------------------
+r982 | skav3n | 2007-10-20 14:17:59 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Added a file remotely
+------------------------------------------------------------------------
+r981 | skav3n | 2007-10-20 14:17:26 +0400 (Sat, 20 Oct 2007) | 1 line
+
+Removed file/folder
+------------------------------------------------------------------------
+r980 | ms | 2007-10-20 13:53:00 +0400 (Sat, 20 Oct 2007) | 3 lines
+
+Import eines Scripts fuer die Anzeige des aktuellen Titels in XChat.
+Vielen Dank an Skaven.
+
+------------------------------------------------------------------------
+r979 | maniacikarus | 2007-10-19 20:21:32 +0400 (Fri, 19 Oct 2007) | 2 lines
+
+Weiter am Backup gebastelt
+
+------------------------------------------------------------------------
+r978 | ms | 2007-10-19 19:21:00 +0400 (Fri, 19 Oct 2007) | 5 lines
+
+Alte Stylesheets entfernt. Wir haben ja Themes.
+Ne Menge Pakete geloescht, da wir nicht den Eindruck hatten, dass diese 
+benutzt werden.
+Initscripts fuer Amavisd-new und Spamassassin gebaut.
+
+------------------------------------------------------------------------
+r977 | ms | 2007-10-18 23:51:15 +0400 (Thu, 18 Oct 2007) | 2 lines
+
+Kleinere fixes an der Backup Routine
+
+------------------------------------------------------------------------
+r976 | ms | 2007-10-18 09:55:08 +0400 (Thu, 18 Oct 2007) | 2 lines
+
+Buildfixes
+
+------------------------------------------------------------------------
+r975 | ms | 2007-10-16 22:35:15 +0400 (Tue, 16 Oct 2007) | 4 lines
+
+Korrekturen damit der Build wieder laeuft
+MPFire fix damit der shuffle funktioniert
+Backup der Addons weiter gebaut
+
+------------------------------------------------------------------------
+r974 | maniacikarus | 2007-10-15 23:36:15 +0400 (Mon, 15 Oct 2007) | 3 lines
+
+MPFire CGI korrigiert
+Backupfunktionen fuer Addons begonnen
+
+------------------------------------------------------------------------
+r973 | ms | 2007-10-15 00:49:19 +0400 (Mon, 15 Oct 2007) | 6 lines
+
+Den cyrus-imapd umbenannt.
+Die Abhaengigkeiten von openmailadmin angepasst.
+Moblock erstmal raus bis wir damit beginnen.
+Begonnen die Pakfire-functions.sh zu erweitern.
+Cups soll automatisch starten.
+
+------------------------------------------------------------------------
+r972 | maniacikarus | 2007-10-14 19:17:50 +0400 (Sun, 14 Oct 2007) | 3 lines
+
+MPFire CGI Update
+Fehlende Datei in die Backup Include eingefuegt
+
+------------------------------------------------------------------------
+r971 | ms | 2007-10-14 18:04:38 +0400 (Sun, 14 Oct 2007) | 10 lines
+
+Clamav kommt erstma ohne Virendefinitionen daher.
+Die laedt der sich dann alleine.
+rsync-Update.
+Das Pakfire-Update kann beim Verbinden auch im Hintergrund ablaufen.
+Einige Shell-Kommandos interaktiv gemacht.
+AdoDB ins Paket von Openmailadmin hinzugefuegt.
+Prompt ist wieder farbig.
+Das MySQL-Setup ist noch nicht so besonders fit.
+Der Server braucht zu lange zum starten - somit kann noch kein Passwort gesetzt werden.
+
+------------------------------------------------------------------------
+r970 | maniacikarus | 2007-10-14 17:28:58 +0400 (Sun, 14 Oct 2007) | 3 lines
+
+Clamav Update
+Fix in der MPFire CGI
+
+------------------------------------------------------------------------
+r969 | ms | 2007-10-14 14:59:34 +0400 (Sun, 14 Oct 2007) | 2 lines
+
+Der Grub findet leider ohne diesen Patch nicht die richtige Partition.
+
+------------------------------------------------------------------------
+r968 | ms | 2007-10-14 13:58:02 +0400 (Sun, 14 Oct 2007) | 2 lines
+
+Ein Fix fuer die Verwendung von Loop-Devices.
+
+------------------------------------------------------------------------
+r967 | ms | 2007-10-14 13:57:11 +0400 (Sun, 14 Oct 2007) | 3 lines
+
+Kernel Update auf 2.6.16.55.
+Den Kaspersky n bisschen gefixxt.
+
+------------------------------------------------------------------------
+r966 | ms | 2007-10-14 13:48:23 +0400 (Sun, 14 Oct 2007) | 2 lines
+
+Den RC1 getaggt.
+
+------------------------------------------------------------------------
+r965 | ms | 2007-10-14 13:38:06 +0400 (Sun, 14 Oct 2007) | 2 lines
+
+Die RC1 zum Downloadbereich und auf der Hauptseite hinzugefuegt.
+
+------------------------------------------------------------------------
+r964 | ms | 2007-10-14 00:25:24 +0400 (Sun, 14 Oct 2007) | 2 lines
+
+Eine kleine Aenderung in der pppsetup.cgi von Arne.
+
+------------------------------------------------------------------------
+r963 | ms | 2007-10-13 23:29:30 +0400 (Sat, 13 Oct 2007) | 2 lines
+
+Der Grub lies sich auf einigen RAID-Controllern nicht installieren...
+
+------------------------------------------------------------------------
+r962 | ms | 2007-10-13 21:10:12 +0400 (Sat, 13 Oct 2007) | 9 lines
+
+Foomatic ist gegen die libtiff gelinkt.
+Der Dump der Maildatenbank muss die Datenbank noch anlegen.
+Die Adresse der server.met soll nicht funktionieren. Ausgetauscht.
+Initscript fuer Asterisk geschrieben.
+Der Pakfire macht ein Update, wenn sich die Maschine einwaehlt (Ohne --force).
+Die Beep-Melodie ein bisschen schneller gemacht, weil der rowie die nicht mag. ;)
+Das applejuice-Paket startet nun den Client von allein.
+...und somit wird es dann bald Zeit fuer einen Release Candidate...
+
+------------------------------------------------------------------------
+r961 | maniacikarus | 2007-10-13 13:59:54 +0400 (Sat, 13 Oct 2007) | 2 lines
+
+CGIs angepasst
+
+------------------------------------------------------------------------
 r960 | maniacikarus | 2007-10-12 21:18:57 +0400 (Fri, 12 Oct 2007) | 3 lines
 
 Fixes im Update Booster

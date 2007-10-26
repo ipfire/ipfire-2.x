@@ -21,8 +21,8 @@
 
 use strict;
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
@@ -47,6 +47,11 @@ $cgiparams{'UPLOAD'} = '';
 $cgiparams{'BACKUPLOGS'} = '';
 
 &Header::getcgihash(\%cgiparams);
+
+############################################################################################################################
+################################################ Workaround for Directories ################################################
+
+system("/usr/local/bin/backupctrl makedirs >/dev/null 2>&1 ") unless ( -e '/var/ipfire/backup/addons');
 
 ############################################################################################################################
 ############################################## System calls ohne Http Header ###############################################

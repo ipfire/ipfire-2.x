@@ -43,8 +43,7 @@ my $song = `/usr/local/bin/mpfirectrl song 2>/dev/null`;
 if ( $song eq "" ){$song = "None";}
 &Header::showhttpheaders();
 print <<END
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <meta http-equiv='refresh' content='5'>
 <head><title>Song</title></head>
 <body>
@@ -69,37 +68,36 @@ close(DATEI);
 my @artist; my @album;  my @genre;  my @year; my $linecount = 0; my %songs;
 my $key;my $file;my $Time;my $Artist;my $Title;my $Album;my $Track;my $Date;my $Genre;
 foreach (@songdb){
-  
-  if ( $_ =~ /mtime: / ){
-   $songs{$key}="$file|$Time|$Artist|$Title|$Album|$Track|$Date|$Genre";
-   push(@artist,$Artist);push(@album,$Album);push(@year,$Date);push(@genre,$Genre);
-   $key="";$file="";$Time="";$Artist="";$Title="";$Album="";$Track="";$Date="";$Genre="";
-   }
-  elsif ( $_ =~ /key: / ){my @temp = split(/: /,$_);$key=$temp[1];}
-  elsif ( $_ =~ /file: / ){my @temp = split(/: /,$_);$file=$temp[1];}
-  elsif ( $_ =~ /Time: / ){my @temp = split(/: /,$_);$Time=$temp[1];}
-  elsif ( $_ =~ /Artist: / ){my @temp = split(/: /,$_);$Artist=$temp[1];}
-  elsif ( $_ =~ /Title: / ){my @temp = split(/: /,$_);$Title=$temp[1];}
-  elsif ( $_ =~ /Album: / ){my @temp = split(/: /,$_);$Album=$temp[1];}
-  elsif ( $_ =~ /Track: / ){my @temp = split(/: /,$_);$Track=$temp[1];}
-  elsif ( $_ =~ /Date: / ){my @temp = split(/: /,$_);$Date=$temp[1];}
-  elsif ( $_ =~ /Genre: / ){my @temp = split(/: /,$_);$Genre=$temp[1];}
-  else {next;}
- }
- 
-  my %hash = map{ $_, 1 }@artist;
-  @artist = sort keys %hash;
-  my %hash = map{ $_, 1 }@album;
-  @album = sort keys %hash;
-   my %hash = map{ $_, 1 }@year;
-  @year = sort keys %hash;
-  my %hash = map{ $_, 1 }@genre;
-  @genre = sort keys %hash;
-  
-  my $artistcount = $#artist+1;
-  my $albumcount = $#album+1;
-  my $yearcount = $#year+1;
-  my $genrecount = $#genre+1;
+	if ( $_ =~ /mtime: / ){
+		$songs{$key}="$file|$Time|$Artist|$Title|$Album|$Track|$Date|$Genre";
+		push(@artist,$Artist);push(@album,$Album);push(@year,$Date);push(@genre,$Genre);
+		$key="";$file="";$Time="";$Artist="";$Title="";$Album="";$Track="";$Date="";$Genre="";
+		}
+	elsif ( $_ =~ /key: / ){my @temp = split(/: /,$_);$key=$temp[1];}
+	elsif ( $_ =~ /file: / ){my @temp = split(/: /,$_);$file=$temp[1];}
+	elsif ( $_ =~ /Time: / ){my @temp = split(/: /,$_);$Time=$temp[1];}
+	elsif ( $_ =~ /Artist: / ){my @temp = split(/: /,$_);$Artist=$temp[1];}
+	elsif ( $_ =~ /Title: / ){my @temp = split(/: /,$_);$Title=$temp[1];}
+	elsif ( $_ =~ /Album: / ){my @temp = split(/: /,$_);$Album=$temp[1];}
+	elsif ( $_ =~ /Track: / ){my @temp = split(/: /,$_);$Track=$temp[1];}
+	elsif ( $_ =~ /Date: / ){my @temp = split(/: /,$_);$Date=$temp[1];}
+	elsif ( $_ =~ /Genre: / ){my @temp = split(/: /,$_);$Genre=$temp[1];}
+	else {next;}
+	}
+
+	my %hash = map{ $_, 1 }@artist;
+	@artist = sort keys %hash;
+	my %hash = map{ $_, 1 }@album;
+	@album = sort keys %hash;
+	my %hash = map{ $_, 1 }@year;
+	@year = sort keys %hash;
+	my %hash = map{ $_, 1 }@genre;
+	@genre = sort keys %hash;
+
+	my $artistcount = $#artist+1;
+	my $albumcount = $#album+1;
+	my $yearcount = $#year+1;
+	my $genrecount = $#genre+1;
 
 &Header::getcgihash(\%mpfiresettings);
 &Header::openpage($Lang::tr{'mpfire'}, 1,);
@@ -142,8 +140,8 @@ elsif ( $mpfiresettings{'ACTION'} eq "playall" ){
 my @temp = ""; my @song = "";
 
 foreach (keys(%songs)){
-  @song = split(/\|/,$songs{$_});push(@temp,$song[0])
-  }
+	@song = split(/\|/,$songs{$_});push(@temp,$song[0])
+	}
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);  
@@ -155,14 +153,14 @@ elsif ( $mpfiresettings{'ACTION'} eq "playalbum" )
 my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'album'});
 
 foreach (keys(%songs)){
-  @song = split(/\|/,$songs{$_});$song[4] =~ s/\W/ /g;
-    
-  foreach (@select){
-    $_ =~ s/\W/ /g;
-    if ( $song[4] =~ /$_/ ){push(@temp,$song[0]);}
-  }
+	@song = split(/\|/,$songs{$_});$song[4] =~ s/\W/ /g;
+
+	foreach (@select){
+		$_ =~ s/\W/ /g;
+		if ( $song[4] =~ /$_/ ){push(@temp,$song[0]);}
+	}
 }
- 
+
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
 close(DATEI);
@@ -173,12 +171,12 @@ elsif ( $mpfiresettings{'ACTION'} eq "playartist" )
 my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'artist'});
 
 foreach (keys(%songs)){
-  @song = split(/\|/,$songs{$_});$song[2] =~ s/\W/ /g;
-    
-  foreach (@select){
-    $_ =~ s/\W/ /g;
-    if ( $song[2] =~ /$_/ ){push(@temp,$song[0]);}
-  }
+	@song = split(/\|/,$songs{$_});$song[2] =~ s/\W/ /g;
+
+	foreach (@select){
+		$_ =~ s/\W/ /g;
+		if ( $song[2] =~ /$_/ ){push(@temp,$song[0]);}
+	}
 }
 
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
@@ -191,12 +189,12 @@ elsif ( $mpfiresettings{'ACTION'} eq "playyear" )
 my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'year'});
 
 foreach (keys(%songs)){
-  @song = split(/\|/,$songs{$_});$song[6] =~ s/\W/ /g;
-    
-  foreach (@select){
-    $_ =~ s/\W/ /g;
-    if ( $song[6] =~ /$_/ ){push(@temp,$song[0]);}
-  }
+	@song = split(/\|/,$songs{$_});$song[6] =~ s/\W/ /g;
+
+	foreach (@select){
+		$_ =~ s/\W/ /g;
+		if ( $song[6] =~ /$_/ ){push(@temp,$song[0]);}
+	}
 }
 
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
@@ -245,7 +243,7 @@ print <<END
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'Scan for Files'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'Scan from Directory'}</td><td align='left'><input type='text' name='MUSICDIR' value='$mpfiresettings{'MUSICDIR'}' size="50" /></td></tr>
 <tr><td align='center' colspan='2'><input type='hidden' name='ACTION' value='scan' />
-                              <input type='image' alt='$Lang::tr{'Scan for Files'}' title='$Lang::tr{'Scan for Files'}' src='/images/edit-find.png' /></td></tr>																				
+																		<input type='image' alt='$Lang::tr{'Scan for Files'}' title='$Lang::tr{'Scan for Files'}' src='/images/edit-find.png' /></td></tr>																				
 </table>
 </form>
 END
@@ -259,30 +257,30 @@ $stats=~s/\\/<br \/>/g
 
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire controls'});
 print <<END
-    <iframe height='35' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' marginheight='0'></iframe>
-    <table width='95%' cellspacing='0'>
+	<iframe height='35' width='100%' src='/cgi-bin/mpfire.cgi?title' scrolling='no' frameborder='no' marginheight='0'></iframe>
+	<table width='95%' cellspacing='0'>
 END
 ;
 my $countsongs=`/usr/local/bin/mpfirectrl stats 2>/dev/null`;
 print "<tr><td colspan='5' align='center'><b>".$countsongs."</b></td></tr>";
 print <<END
-    <tr>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='<<' /><input type='image' alt='$Lang::tr{'prev'}' title='$Lang::tr{'prev'}' src='/images/media-skip-backward.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='|>' /><input type='image' alt='$Lang::tr{'toggle'}' title='$Lang::tr{'toggle'}' src='/images/media-resume.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='playall' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>>' /><input type='image' alt='$Lang::tr{'next'}' title='$Lang::tr{'next'}' src='/images/media-skip-forward.png' /></form></td>
-    </tr>
+	<tr>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='x' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/media-playback-stop.png' /></form></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='<<' /><input type='image' alt='$Lang::tr{'prev'}' title='$Lang::tr{'prev'}' src='/images/media-skip-backward.png' /></form></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='|>' /><input type='image' alt='$Lang::tr{'toggle'}' title='$Lang::tr{'toggle'}' src='/images/media-resume.png' /></form></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='playall' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>>' /><input type='image' alt='$Lang::tr{'next'}' title='$Lang::tr{'next'}' src='/images/media-skip-forward.png' /></form></td>
+	</tr>
 END
 ;
 if ( $mpfiresettings{'SHOWLIST'} eq "on" ){print"<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='SHOWLIST' value='off' /><input type='image' alt='$Lang::tr{'off'}' title='$Lang::tr{'off'}' src='/images/audio-x-generic.png' /></form></td>";}
 else { print"<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='SHOWLIST' value='on' /><input type='image' alt='$Lang::tr{'on'}' title='$Lang::tr{'on'}' src='/images/audio-x-generic-red.png' /></form></td>";}    
 print <<END  
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='--' /><input type='image' alt='$Lang::tr{'voldown10'}' title='$Lang::tr{'voldown10'}' src='/images/audio-volume-low-red.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='-' /><input type='image' alt='$Lang::tr{'voldown5'}' title='$Lang::tr{'voldown5'}' src='/images/audio-volume-low.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='+' /><input type='image' alt='$Lang::tr{'volup5'}' title='$Lang::tr{'volup5'}' src='/images/audio-volume-high.png' /></form></td>
-    <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='++' /><input type='image' alt='$Lang::tr{'volup10'}' title='$Lang::tr{'volup10'}' src='/images/audio-volume-high-red.png' /></form></td>
-    </tr>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='--' /><input type='image' alt='$Lang::tr{'voldown10'}' title='$Lang::tr{'voldown10'}' src='/images/audio-volume-low-red.png' /></form></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='-' /><input type='image' alt='$Lang::tr{'voldown5'}' title='$Lang::tr{'voldown5'}' src='/images/audio-volume-low.png' /></form></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='+' /><input type='image' alt='$Lang::tr{'volup5'}' title='$Lang::tr{'volup5'}' src='/images/audio-volume-high.png' /></form></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='++' /><input type='image' alt='$Lang::tr{'volup10'}' title='$Lang::tr{'volup10'}' src='/images/audio-volume-high-red.png' /></form></td>
+	</tr>
 <tr><td colspan='5' align='center'>$Volume</td></tr>
 <tr><td colspan='5' align='center'><br />$stats</td></tr>
 </table>
@@ -296,29 +294,29 @@ print "<table width='95%' cellspacing='0'>";
 if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'}</b></td></tr>";}
 else {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'artist'} - ".$artistcount."</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'album'} - ".$albumcount."</b></td></tr>";}
 print <<END
-  <tr><td align='center'>
-      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-      <select name='artist' size='8' multiple='multiple' style='width:300px;'>
+	<tr><td align='center'>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<select name='artist' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
 foreach (@artist){if ( $_ ne '' ){print "<option>$_</option>";}}
 print <<END
-      </select><br/>
-      <input type='hidden' name='ACTION' value='playartist' />
-      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
-      </form></td>
-      <td align='center'>
-      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-      <select name='album' size='8' multiple='multiple' style='width:300px;'>
+	</select><br/>
+	<input type='hidden' name='ACTION' value='playartist' />
+	<input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+	</form></td>
+	<td align='center'>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<select name='album' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
   foreach (@album){if ( $_ ne '' ){print "<option>$_</option>";}}
 print <<END
-      </select><br/>
-      <input type='hidden' name='ACTION' value='playalbum' />
-      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
-      </form></td>
-      </tr>
+	</select><br/>
+	<input type='hidden' name='ACTION' value='playalbum' />
+	<input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+	</form></td>
+	</tr>
 END
 ;
 if ( $#songdb eq '-1' ) {print "<tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'}</b></td></tr>";}
@@ -331,22 +329,22 @@ END
 ;
   foreach (@year){if ( $_ ne '' ){print "<option>$_</option>";}}
 print <<END
-      </select><br/>
-      <input type='hidden' name='ACTION' value='playyear' />
-      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
-      </form></td>
-      <td align='center'>
-      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-      <select name='genre' size='8' multiple='multiple' style='width:300px;'>
+	</select><br/>
+	<input type='hidden' name='ACTION' value='playyear' />
+	<input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+	</form></td>
+	<td align='center'>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<select name='genre' size='8' multiple='multiple' style='width:300px;'>
 END
 ;
   foreach (@genre){if ( $_ ne '' ){print "<option>$_</option>";}}
 print <<END
-      </select><br/>
-      <input type='hidden' name='ACTION' value='playgenre' />
-      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
-      </form></td>
-      </tr></table>
+	</select><br/>
+	<input type='hidden' name='ACTION' value='playgenre' />
+	<input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+	</form></td>
+	</tr></table>
 END
 ;
 &Header::closebox();
@@ -369,45 +367,45 @@ if (!($i % 205)){print"<br/>";}
 print <<END
 </form></td></tr>
 <tr><td align='center'></td>
-    <td align='center'><b>$Lang::tr{'artist'}<br/>$Lang::tr{'title'}</b></td>
-    <td align='center'><b>$Lang::tr{'number'}</b></td>
-    <td align='center'><b>$Lang::tr{'album'}</b></td>
-    <td align='center'><b>$Lang::tr{'year'}</b></td>
-    <td align='center'><b>$Lang::tr{'genre'}</b></td>
-    <td align='center'><b>$Lang::tr{'length'}</b></td></tr>
+	<td align='center'><b>$Lang::tr{'artist'}<br/>$Lang::tr{'title'}</b></td>
+	<td align='center'><b>$Lang::tr{'number'}</b></td>
+	<td align='center'><b>$Lang::tr{'album'}</b></td>
+	<td align='center'><b>$Lang::tr{'year'}</b></td>
+	<td align='center'><b>$Lang::tr{'genre'}</b></td>
+	<td align='center'><b>$Lang::tr{'length'}</b></td></tr>
 END
 ;
 my $lines=0;my $i=0;my $begin;my $end;
 if ( $mpfiresettings{'PAGE'} eq 'all' ){
-  $begin=0;
-  $end=keys(%songs);
+	$begin=0;
+	$end=keys(%songs);
 }
 else{
-  $begin=(($mpfiresettings{'PAGE'}-1) * 100);
-  $end=(($mpfiresettings{'PAGE'} * 100)-1);
+	$begin=(($mpfiresettings{'PAGE'}-1) * 100);
+	$end=(($mpfiresettings{'PAGE'} * 100)-1);
 }
 foreach (keys(%songs)){
-  if (!($i >= $begin && $i <= $end)){
+	if (!($i >= $begin && $i <= $end)){
 # print $begin."->".$i."<-".$end."\n";
-  $i++;next;}
-  my @song = split(/\|/,$songs{$_});
-  my $minutes = sprintf ("%.0f", $song[1] / 60 );
-  my $seconds = $song[1] % 60;
-  
-  if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
-  print <<END
-  <td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'mpfire songs'}'><input type='hidden' name='ACTION' value='addtoplaylist' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/list-add.png' /></form><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
-  <td align='center'>$song[2]<br/>$song[3]</td>
-  <td align='center'>$song[5]</td>
-  <td align='center'>$song[4]</td>
-  <td align='center'>$song[6]</td>
-  <td align='center'>$song[7]</td>
-  <td align='center'>$minutes:$seconds</td></tr>
+	$i++;next;}
+	my @song = split(/\|/,$songs{$_});
+	my $minutes = sprintf ("%.0f", $song[1] / 60 );
+	my $seconds = $song[1] % 60;
+
+	if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
+	print <<END
+	<td align='center' style="white-space:nowrap;"><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'mpfire songs'}'><input type='hidden' name='ACTION' value='addtoplaylist' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/list-add.png' /></form><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='>' /><input type='hidden' name='FILE' value="$song[0]" /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+	<td align='center'>$song[2]<br/>$song[3]</td>
+	<td align='center'>$song[5]</td>
+	<td align='center'>$song[4]</td>
+	<td align='center'>$song[6]</td>
+	<td align='center'>$song[7]</td>
+	<td align='center'>$minutes:$seconds</td></tr>
 END
 ;
-  $lines++;
-  $i++;
-  }
+	$lines++;
+	$i++;
+	}
 print "</table>";
 &Header::closebox();
 }
@@ -426,17 +424,17 @@ foreach (@playlist){$_=~s/&/&amp\;/g;;print $_;}
 print <<END
 </textarea></td></tr><tr>
 <td align='right'>
-      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-      <input type='hidden' name='ACTION' value='emptyplaylist' />
-      <input type='image' alt='$Lang::tr{'clear playlist'}' title='$Lang::tr{'clear playlist'}' src='/images/user-trash.png' />
-      </form>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<input type='hidden' name='ACTION' value='emptyplaylist' />
+	<input type='image' alt='$Lang::tr{'clear playlist'}' title='$Lang::tr{'clear playlist'}' src='/images/user-trash.png' />
+	</form>
 </td>
 <td align='left'>
-      <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-      <input type='hidden' name='ACTION' value='playlist' />
-      <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
-      </form>
-      </td></tr>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<input type='hidden' name='ACTION' value='playlist' />
+	<input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+	</form>
+</td></tr>
 </table>
 END
 ;
@@ -456,22 +454,22 @@ END
 ;
 my $lines=0;
 foreach (@webradio){
- my @stream = split(/\|/,$_);
- $lines++;
- chomp($stream[2]);
- if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
+	my @stream = split(/\|/,$_);
+	$lines++;
+	chomp($stream[2]);
+	if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
 print <<END
- <td align='left'><a href="$stream[2]" target="_blank">$stream[1]</a></td>
-     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+	<td align='left'><a href="$stream[2]" target="_blank">$stream[1]</a></td>
+	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='middle' /></form></td>
 </tr>
 END
 ;
- }
- $lines++;
- if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
+	}
+	$lines++;
+	if ($lines % 2) {print "<tr bgcolor='$color{'color22'}'>";} else {print "<tr>";}
 print <<END
- <td align='left'><form method='post' action='$ENV{'SCRIPT_NAME'}'>http://<input type=text name='FILE' value='www.meineradiourl:1234' size='75' /></form></td>
-     <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' /></form></td>
+	<td align='center' colspan='2'><form method='post' action='$ENV{'SCRIPT_NAME'}'><br />http://<input type=text name='FILE' value='www.meineradiourl:1234' size='75' />
+	<input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='top' /></form></td>
 </tr>
 END
 ;

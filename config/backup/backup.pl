@@ -76,6 +76,9 @@ elsif ($ARGV[0] =~ /ipf$/ ) {
 elsif ($ARGV[0] eq '') {
  printf "No argument given, please use <include><exclude><cli>\n"
 }
+elsif ($ARGV[0] eq 'makedirs') {
+ system("mkdir /var/ipfire/backup/addons && mkdir /var/ipfire/backup/addons/backup && mkdir /var/ipfire/backup/addons/includes");
+}
 
 sub createinclude(){
 
