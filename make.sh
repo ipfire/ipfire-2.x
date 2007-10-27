@@ -462,6 +462,7 @@ buildipfire() {
   ipfiremake cups
   ipfiremake ghostscript
   ipfiremake foomatic
+  ipfiremake hplip
   ipfiremake samba
   ipfiremake sudo
   ipfiremake mc
