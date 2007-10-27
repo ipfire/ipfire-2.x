@@ -182,12 +182,18 @@ END
 &Header::openbox('100%', 'center', 'addons');
 
 my @addonincluds = `ls /var/ipfire/backup/addons/includes/ 2>/dev/null`;
-my %addons = `ls /var/ipfire/backup/addons/backup/ 2>/dev/null`;
+my @addons = `ls /var/ipfire/backup/addons/backup/ 2>/dev/null`;
+my %addons;
+
+foreach (@addons){
+	my $addon=substr($_,0,length($_)-5);
+	$addons{$addon}='';
+}
 
 print "<table width='95%' cellspacing='0'>";
 foreach (@addonincluds){
 chomp($_);
-delete($addons{$_."\.ipf\n"});
+delete $addons{$_};
 my $Datei = "/var/ipfire/backup/addons/backup/".$_.".ipf";
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024;
@@ -228,24 +234,23 @@ END
 }
 foreach (keys(%addons)){
 chomp($_);
-my $Datei = "/var/ipfire/backup/addons/backup/".$_;
+my $Datei = "/var/ipfire/backup/addons/backup/".$_.".ipf";
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024;
 $Size = sprintf("%2d", $Size);
-my $addon=substr($_,0,length($_)-4);
-print "<tr><td align='center'>$Lang::tr{'backup from'} $addon $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
 print <<END
 	<td align='right' width='5'>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ACTION' value='downloadaddon' />
-		<input type='hidden' name='FILE' value='$_' />
+		<input type='hidden' name='FILE' value='$_.ipf' />
 		<input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' />
 		</form>
 	</td>
 	<td align='right' width='5'>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ACTION' value='delete' />
-		<input type='hidden' name='FILE' value='addons/backup/$_' />
+		<input type='hidden' name='FILE' value='addons/backup/$_.ipf' />
 		<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
 		</form>
 	</td>

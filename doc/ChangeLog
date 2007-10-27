@@ -1,4 +1,32 @@
 ------------------------------------------------------------------------
+r1005 | ms | 2007-10-27 13:02:37 +0400 (Sat, 27 Oct 2007) | 2 lines
+
+Made the website compatible to XHTML.
+
+------------------------------------------------------------------------
+r1004 | ms | 2007-10-27 11:48:17 +0400 (Sat, 27 Oct 2007) | 2 lines
+
+The hplip tool was added for printing with HP.
+
+------------------------------------------------------------------------
+r1003 | ms | 2007-10-27 02:28:09 +0400 (Sat, 27 Oct 2007) | 2 lines
+
+You need to change the version in the pakfire.conf, too.
+
+------------------------------------------------------------------------
+r1002 | ms | 2007-10-27 02:26:23 +0400 (Sat, 27 Oct 2007) | 4 lines
+
+Added some custom patches for openswan
+tagged rc2
+fixed red and cleanfs by arne
+
+------------------------------------------------------------------------
+r1001 | maniacikarus | 2007-10-26 22:09:41 +0400 (Fri, 26 Oct 2007) | 3 lines
+
+corrected mpfire stream url
+changed some directories for backup
+
+------------------------------------------------------------------------
 r1000 | ms | 2007-10-26 19:14:59 +0400 (Fri, 26 Oct 2007) | 2 lines
 
 Dropped wireless drivers from kernel.

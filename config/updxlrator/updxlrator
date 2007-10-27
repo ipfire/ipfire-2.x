@@ -156,13 +156,14 @@ while (<>) {
 	}
 	
 	# ----------------------------------------------------------- 
-	# Section: Kaspersky Downloads 
+	# Section: Kaspersky Downloads
+  # not working properly 
 	# -----------------------------------------------------------  
 	
-	if ($dsturl =~ m@^http://dnl-.*\.kaspersky-labs\.com\/(diffs|bases|AutoPatches).*$@i) 
-	{ 
-	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Kaspersky"); 
-	}
+	#if ($dsturl =~ m@^http://dnl-.*\.kaspersky-labs\.com\/(diffs|bases|AutoPatches).*$@i) 
+	#{ 
+	#$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Kaspersky"); 
+	#}
 
 	# ----------------------------------------------------------- 
 
