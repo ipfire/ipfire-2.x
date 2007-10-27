@@ -1,3 +1,4 @@
+etc/httpd/conf/conf.d/php5.conf
 etc/pear.conf
 etc/php.ini
 #usr/bin/pear

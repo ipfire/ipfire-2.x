@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = openmailadmin
 PAK_VER    = 1
 
-DEPS       = "cyrus-imapd postfix mysql"
+DEPS       = "cyrus-imapd postfix mysql php"
 
 ###############################################################################
 # Top-level Rules
