@@ -490,13 +490,13 @@ buildipfire() {
   ipfiremake lame
   ipfiremake sox
   ipfiremake libshout
-  ipfiremake icecast
-  ipfiremake icegenerator
+  #ipfiremake icecast
+  #ipfiremake icegenerator
   ipfiremake mpd
   ipfiremake mpc
-  ipfiremake xvid
-  ipfiremake libmpeg2
-  ipfiremake videolan
+  #ipfiremake xvid
+  #ipfiremake libmpeg2
+  #ipfiremake videolan
   ipfiremake libpri
   ipfiremake asterisk
   ipfiremake gnump3d

@@ -483,7 +483,7 @@ usr/lib/php/System.php
 #usr/lib/php/extensions
 #usr/lib/php/extensions/no-debug-non-zts-20060613
 #usr/lib/php/extensions/no-debug-non-zts-20060613/dba.so
-#usr/lib/php/extensions/no-debug-non-zts-20060613/idn.so
+usr/lib/php/extensions/no-debug-non-zts-20060613/idn.so
 #usr/lib/php/pearcmd.php
 #usr/lib/php/peclcmd.php
 #usr/lib/php/test

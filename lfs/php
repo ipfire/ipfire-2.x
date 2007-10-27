@@ -122,7 +122,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 										            --with-iconv
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && install -v -m644 php.ini-recommended /etc/php.ini
+	cd $(DIR_APP) && install -v -m644 $(DIR_SRC)/config/php/php.ini /etc/php.ini
 	-grep -v libphp5.so < /etc/httpd/conf/httpd.conf > /etc/httpd/conf/httpd.conf.bak
 	mv -f /etc/httpd/conf/httpd.conf.bak /etc/httpd/conf/httpd.conf
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/idn-0.1.tgz

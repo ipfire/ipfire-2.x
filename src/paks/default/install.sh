@@ -4,4 +4,4 @@
 extract_files
 restore_backup ${NAME}
 
-start_service --delay 60 --background ${NAME}
+start_service --background ${NAME}
