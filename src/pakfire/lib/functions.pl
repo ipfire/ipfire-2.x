@@ -733,15 +733,6 @@ sub removepak {
 		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid&dpak=$pak&return=$return", "$Conf::mainserver");
 	}
 	if ($return == 0) {
-	  open(FILE, "<$Conf::dbdir/rootfiles/$pak");
-		my @file = <FILE>;
-		close(FILE);
-		foreach (@file) {
-		  my $line = $_;
-		  chomp($line);
-			system("echo \"Removing: $line\" >> $Conf::logdir/uninstall-$pak.log 2>&1");
-			system("cd / && rm -rf $line >> $Conf::logdir/uninstall-$pak.log 2>&1");
-		}
 	  unlink("$Conf::dbdir/rootfiles/$pak");
 	  unlink("$Conf::dbdir/installed/meta-$pak");
 	  cleanup("tmp");
