@@ -88,14 +88,17 @@ elsif ( $cgiparams{'ACTION'} eq "restore" )
 }
 elsif ( $cgiparams{'ACTION'} eq "restoreaddon" )
 {
+    chomp($cgiparams{'UPLOAD'});
+    # we need to fix cause IE7 gives the full path and FF only the filename
+    my @temp = split(/\\/,$cgiparams{'UPLOAD'});
 		my $upload = $a->param("UPLOAD");
-		open UPLOADFILE, ">/tmp/$cgiparams{'UPLOAD'}";
+		open UPLOADFILE, ">/tmp/".$temp[$#temp];
 		binmode $upload;
 		while ( <$upload> ) {
 		print UPLOADFILE;
 		}
 		close UPLOADFILE;
-		system("/usr/local/bin/backupctrl restoreaddon $cgiparams{'UPLOAD'} >/dev/null 2>&1");
+		system("/usr/local/bin/backupctrl restoreaddon ".$temp[$#temp]." >/dev/null 2>&1");
 }
 
 &Header::showhttpheaders();
@@ -270,8 +273,8 @@ print "</table>";
 print <<END
 <table width='95%' cellspacing='0'>
 <tr><td align='center' colspan='2'><font color='red'><br />$Lang::tr{'backupwarning'}</font><br /><br /></td></tr>
-<tr><td align='left'>$Lang::tr{'backup'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restore' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
-<tr><td align='left'>$Lang::tr{'backupaddon'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restoreaddon' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
+<tr><td align='left'>$Lang::tr{'backup'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restore' /><input type='hidden' name='FILE' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
+<tr><td align='left'>$Lang::tr{'backupaddon'}</td><td align='left'><form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'><input type="file" size='50' name="UPLOAD" /><input type='hidden' name='ACTION' value='restoreaddon' /><input type='hidden' name='FILE' /><input type='image' alt='$Lang::tr{'restore'}' title='$Lang::tr{'restore'}' src='/images/media-floppy.png' /></form></td></tr>
 </table>
 END
 ;
