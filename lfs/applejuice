@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = applejuice
 PAK_VER    = 1
 
-DEPS       = "java php"
+DEPS       = "java"
 
 ###############################################################################
 # Top-level Rules
