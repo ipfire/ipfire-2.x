@@ -88,7 +88,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(PASS)" ""
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 		            --with-dbpath=/var/lib/sasl/sasldb2 \
-		            --with-saslauthd=/var/run
+		            --with-saslauthd=/var/run/saslauthd
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	install -v -m700 -d /var/lib/sasl
