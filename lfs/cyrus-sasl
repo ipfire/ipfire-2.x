@@ -92,6 +92,7 @@ ifeq "$(PASS)" ""
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	install -v -m700 -d /var/lib/sasl
+	-mkdir /var/run/saslauthd
 else
 	# WITH LDAP SUPPORT AT THIS TIME
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \

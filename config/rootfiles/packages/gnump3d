@@ -27,7 +27,6 @@ usr/lib/perl5/5.8.8/gnump3d/mp3info.pm
 usr/lib/perl5/5.8.8/gnump3d/mp4info.pm
 usr/lib/perl5/5.8.8/gnump3d/ogginfo.pm
 #usr/lib/perl5/5.8.8/gnump3d/plugins
-usr/lib/perl5/5.8.8/gnump3d/plugins/bug.pm
 usr/lib/perl5/5.8.8/gnump3d/plugins/copying.pm
 usr/lib/perl5/5.8.8/gnump3d/plugins/info.pm
 usr/lib/perl5/5.8.8/gnump3d/plugins/now.pm
@@ -396,6 +395,7 @@ usr/share/gnump3d
 #usr/share/gnump3d/redgrey/search.html
 #usr/share/gnump3d/redgrey/stats.html
 #usr/share/gnump3d/redgrey/tagbrowse.html
+#usr/share/gnump3d/simple
 var/cache/gnump3d
 var/cache/gnump3d/serving
 var/mp3
