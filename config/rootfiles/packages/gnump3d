@@ -2,6 +2,7 @@
 etc/gnump3d/file.types
 etc/gnump3d/gnump3d.conf
 etc/gnump3d/mime.types
+etc/init.d/gnump3d
 usr/bin/gnump3d
 usr/bin/gnump3d-index
 usr/bin/gnump3d-top
@@ -397,4 +398,5 @@ usr/share/gnump3d
 #usr/share/gnump3d/redgrey/tagbrowse.html
 var/cache/gnump3d
 var/cache/gnump3d/serving
+var/mp3
 var/log/gnump3d

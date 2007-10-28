@@ -1,0 +1,46 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/gnump3d
+#
+# Description : GNUMP3d Init Script
+#
+# Authors     : Michael Tremer (ms@ipfire.org)
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting GNUMP3d Server..."
+		/usr/bin/gnump3d --background --fast >/dev/null 2>&1
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping GNUMP3d Server..."
+		killproc /usr/bin/gnump3d
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/gnump3d
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/gnump3d

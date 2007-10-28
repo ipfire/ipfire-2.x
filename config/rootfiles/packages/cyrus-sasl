@@ -85,3 +85,4 @@ usr/sbin/saslauthd
 usr/sbin/sasldblistusers2
 usr/sbin/saslpasswd2
 var/lib/sasl
+var/run/saslauthd
