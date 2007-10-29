@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1004
+VER        = 1.1030
 
 THISAPP    = ntfs-3g-$(VER)
 DL_FILE    = $(THISAPP).tgz
