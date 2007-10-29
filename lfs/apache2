@@ -47,7 +47,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 httpd-2.2.2-config-1.patch = $(DL_FROM)/httpd-2.2.2-config-1.patch
 
-$(DL_FILE)_MD5 = d050a49bd7532ec21c6bb593b3473a5d
+$(DL_FILE)_MD5 = 203bea91715064f0c787f6499d33a377
 httpd-2.2.2-config-1.patch_MD5 = e02a3ec5925eb9e111400b9aa229f822
 
 install : $(TARGET)
