@@ -189,7 +189,7 @@ case "${1}" in
 				TYPE="pppoe"
 			fi
 			if [ "$TYPE" == "pppoe" ]; then			
-				if [ $PPP_NIC == "" ]; then
+				if [ "$PPP_NIC" == "" ]; then
 					boot_mesg "No device for red interface given. Check netsetup or dialprofile!" ${FAILURE}
 					echo_failure
 				fi
