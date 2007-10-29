@@ -10,6 +10,14 @@ case "$1" in
 		loadproc /usr/bin/freshclam -d -c 10
 		
 		boot_mesg "Starting Clamav Daemon..."
+		COUNTER=0
+		while [ "$COUNTER" -lt "10" ]; do
+			[ -e "/usr/share/clamav/main.cvd" ] && \
+				[ -e "/usr/share/clamav/daily.cvd" ] && \
+					break
+			sleep 5
+			(( $COUNTER += 1 ))
+		done
 		loadproc /usr/sbin/clamd
 		;;
 

@@ -22,17 +22,32 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 TYPE="${RED_TYPE}"
 DEVICE="${RED_DEV}"
 
-if [ "$TYPE" == "STATIC" ]; then
-	ADDRESS="${RED_ADDRESS}"
-	BROADCAST="${RED_BROADCAST}"
-	NETADDRESS="${RED_NETADDRESS}"
-	NETMASK="${RED_NETMASK}"
+if [ "$TYPE" == "STATIC" ] || [ "$TYPE" == "DHCP" ]; then
+	if [ "$DEVICE" == "" ]; then
+		boot_mesg "No device for red network. Please run setup." ${FAILURE}
+		echo_failure
+		[ "${1}" == "start" ] && exit 0
+	fi
+fi
+	
+if [ "${TYPE}" == "STATIC" ]; then
+	if [ "${DEVICE}" != "${GREEN_DEV}" ]; then
+		ADDRESS="${RED_ADDRESS}"
+		BROADCAST="${RED_BROADCAST}"
+		NETADDRESS="${RED_NETADDRESS}"
+		NETMASK="${RED_NETMASK}"
+	else
+		ADDRESS="${GREEN_ADDRESS}"
+		BROADCAST="${GREEN_BROADCAST}"
+		NETADDRESS="${GREEN_NETADDRESS}"
+		NETMASK="${GREEN_NETMASK}"
+	fi
 	GATEWAY="${DEFAULT_GATEWAY}"
 	# DNS1
 	# DNS2
 
 	if [ -z "${BROADCAST}" ]; then
-		boot_mesg "BROADCAST variable missing from input, cannot continue." ${FAILURE}
+		boot_mesg "BROADCAST variable missing, cannot continue." ${FAILURE}
 		echo_failure
 		exit 1
 	fi
@@ -56,27 +71,31 @@ fi
 
 case "${1}" in
 	start)
-		boot_mesg "Bringing up the ${DEVICE} interface..."
-		boot_mesg_flush
-		
-		# Check if an interface is there...
-		if ip link show ${DEVICE} > /dev/null 2>&1; then
-			link_status=`ip link show ${DEVICE} 2> /dev/null`
-			if [ -n "${link_status}" ]; then
-				if ! echo "${link_status}" | grep -q UP; then
-					ip link set ${DEVICE} up
+		if [ "${DEVICE}" != "${GREEN_DEV}" ] && [ "${DEVICE}" != "" ]; then
+			boot_mesg "Bringing up the ${DEVICE} interface..."
+			boot_mesg_flush
+			# Check if an interface is there...
+			if ip link show ${DEVICE} > /dev/null 2>&1; then
+				link_status=`ip link show ${DEVICE} 2> /dev/null`
+				if [ -n "${link_status}" ]; then
+					if ! echo "${link_status}" | grep -q UP; then
+						ip link set ${DEVICE} up
+					fi
 				fi
+			else
+				boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
+				echo_failure
+				exit 1
 			fi
-		else
-			boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
-			echo_failure
-			exit 1
 		fi
 		
 		if [ "${TYPE}" == "STATIC" ]; then
-			boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
-			ip addr add ${args} dev ${DEVICE}
-			evaluate_retval
+		
+			if [ "$DEVICE" != "${GREEN_DEV}" ]; then
+				boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
+				ip addr add ${args} dev ${DEVICE}
+				evaluate_retval
+			fi
 			echo -n "${DEVICE}" > /var/ipfire/red/iface
 			echo -n "${ADDRESS}"  > /var/ipfire/red/local-ipaddress
 			echo -n "${GATEWAY}" > /var/ipfire/red/remote-ipaddress
@@ -150,10 +169,11 @@ case "${1}" in
 		elif [ "$TYPE" == "PPPOE" ]; then
 			
 			if ( ps ax | grep -q [p]ppd ); then 
-			    echo Error! A pppd is still running. Stop it first.
-			    echo
-			    exit 1;
+			    boot_mesg "pppd is still running." ${FAILURE}
+			    echo_failure
+			    exit 1
 			fi
+			
 			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 			
 			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
@@ -162,18 +182,23 @@ case "${1}" in
 			
 			if [ "$TYPE" == "pppoeatm" ]; then
 				PPP_NIC=nas0		
-				boot_mesg "Create ATM-Bridge as $PPP_NIC ..."
+				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
 				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
 				sleep 1
 				ifconfig $PPP_NIC up
 				TYPE="pppoe"
 			fi
 			if [ "$TYPE" == "pppoe" ]; then			
+				if [ $PPP_NIC == "" ]; then
+					boot_mesg "No device for red interface given. Check netsetup or dialprofile!" ${FAILURE}
+					echo_failure
+				fi
 				boot_mesg "Bringing up the PPPoE interface on $PPP_NIC ..."
 				ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev $PPP_NIC
 			else
 				boot_mesg "Bringing up the PPP via ${TYPE} on ${COMPORT}..."
 			fi
+			
 			###                      ###
 			### Configuring the pppd ###
 			###                      ###
@@ -294,10 +319,14 @@ case "${1}" in
 
 	stop)
 		if [ "$TYPE" == "STATIC" ]; then
-			boot_mesg "Removing IPv4 address ${ADDRESS} from the ${DEVICE} interface..."
-			ip addr del ${args} dev ${DEVICE}
-			evaluate_retval
-			
+			boot_mesg "Stopping default gateway ${GATEWAY}..."
+			ip route del default via ${GATEWAY} >/dev/null 2>&1
+			echo_ok
+			if [ "$DEVICE" != "${GREEN_DEV}" ]; then
+				boot_mesg "Removing IPv4 address ${ADDRESS} from the ${DEVICE} interface..."
+				ip addr del ${args} dev ${DEVICE}
+				evaluate_retval
+			fi
 			run_subdir ${rc_base}/init.d/networking/red.down/
 			
 		elif [ "$TYPE" == "DHCP" ]; then
@@ -339,20 +368,21 @@ case "${1}" in
 			rm -f /var/ipfire/red/keepconnected
 			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
 			evaluate_retval
-			killall -w -s TERM br2684ctl >/dev/null 2>&1
-			ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE}
-			
+			ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE} >/dev/null 2>&1
 		fi
-		
-		link_status=`ip link show $DEVICE 2> /dev/null`
-		if [ -n "${link_status}" ]; then
-			if echo "${link_status}" | grep -q UP; then
-				boot_mesg "Bringing down the ${DEVICE} interface..."
-				ip link set ${DEVICE} down
-				evaluate_retval
+
+		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
+			link_status=`ip link show $DEVICE 2> /dev/null`
+			if [ -n "${link_status}" ]; then
+				if echo "${link_status}" | grep -q UP; then
+					boot_mesg "Bringing down the ${DEVICE} interface..."
+					ip link set ${DEVICE} down
+					evaluate_retval
+				fi
 			fi
 		fi
-		
+		killall -w -s TERM /usr/sbin/pppd >/dev/null 2>&1
+		killall -w -s TERM br2684ctl >/dev/null 2>&1
 		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 		;;
 		
