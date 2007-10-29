@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6
+VER        = 2.9
 
 THISAPP    = cpio-$(VER)
 DL_FILE    = $(THISAPP).tar.gz

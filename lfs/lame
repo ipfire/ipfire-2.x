@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.96.1
+VER        = 3.97
 
 THISAPP    = lame-$(VER)
 DL_FILE    = $(THISAPP).tar.gz

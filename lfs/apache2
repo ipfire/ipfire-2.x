@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 2.2.2
+VER        = 2.2.6
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -101,7 +101,6 @@ ifeq "$(PASS)" "C"
 	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
 else
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
 
 	### Add IPFire's layout, too
 	echo "# IPFire layout" >> $(DIR_APP)/config.layout

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.3.4
+VER        = 6.3.8
 
 THISAPP    = fetchmail-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2

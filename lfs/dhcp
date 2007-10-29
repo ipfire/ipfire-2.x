@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.4
+VER        = 3.1.0
 
 THISAPP    = dhcp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
