@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ec91c33b6d9cb46a42f9564e573fd249
+$(DL_FILE)_MD5 = 6f69c3c9d3b36666078c4aba25e650ab
 
 install : $(TARGET)
 

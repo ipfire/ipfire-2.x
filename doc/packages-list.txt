@@ -118,7 +118,7 @@
 * kbd-1.12
 * klibc-1.5
 * kudzu-1.2.64
-* l7-protocols-2006-09-10
+* l7-protocols-2007-10-10
 * lame-3.97
 * less-394
 * libaal-1.0.5

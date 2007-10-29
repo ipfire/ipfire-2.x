@@ -47,7 +47,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 httpd-2.2.2-config-1.patch = $(DL_FROM)/httpd-2.2.2-config-1.patch
 
-$(DL_FILE)_MD5 = 9c759a9744436de6a6aa2ddbc49d6e81
+$(DL_FILE)_MD5 = d050a49bd7532ec21c6bb593b3473a5d
 httpd-2.2.2-config-1.patch_MD5 = e02a3ec5925eb9e111400b9aa229f822
 
 install : $(TARGET)
@@ -101,6 +101,7 @@ ifeq "$(PASS)" "C"
 	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
 else
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
 
 	### Add IPFire's layout, too
 	echo "# IPFire layout" >> $(DIR_APP)/config.layout
