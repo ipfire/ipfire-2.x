@@ -65,7 +65,7 @@
 * diffutils-2.8.1
 * dnsmasq-2.40
 * dosfstools-2.11
-* e2fsprogs-1.40.2
+* e2fsprogs-1.39
 * ed-0.2
 * espgs-8.15.1
 * etherwake-1.09
