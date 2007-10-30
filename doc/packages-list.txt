@@ -54,14 +54,14 @@
 * centerim-4.22.1
 * clamav-0.91.2
 * coreutils-5.96
-* cpio-2.9
+* cpio-2.6
 * cups-1.2.12
 * curl-7.15.3
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
 * db-4.4.20
 * dhcp-3.1.0
-* dhcpcd-3.1.7
+* dhcpcd-2.0.8
 * diffutils-2.8.1
 * dnsmasq-2.40
 * dosfstools-2.11
