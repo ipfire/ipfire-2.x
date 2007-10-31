@@ -47,7 +47,7 @@ int configtypecards[] = {
 
 int netaddresschange;
 
-int oktoleave(char *errormessage);
+int oktoleave(void);
 int firstmenu(void);
 int configtypemenu(void);
 int drivermenu(void);
@@ -61,7 +61,6 @@ int handlenetworking(void)
 	int done;
 	int choice;
 	int found;
-	char errormessage[STRING_SIZE];
 	
 	netaddresschange = 0;
 
@@ -92,10 +91,7 @@ int handlenetworking(void)
 				break;
 				
 			case 0:
-				if (oktoleave(errormessage))
-					done = 1;
-				else
-					errorbox(errormessage);
+				if (oktoleave()) done = 1;
 				break;
 				
 			default:
@@ -121,11 +117,12 @@ int handlenetworking(void)
 	return 1;
 }
 
-int oktoleave(char *errormessage)
+int oktoleave(void)
 {
 	struct keyvalue *kv = initkeyvalues();
 	char temp[STRING_SIZE];
 	int configtype;
+	int rc;
 	
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
@@ -142,27 +139,35 @@ int oktoleave(char *errormessage)
 		strcpy(temp, ""); findkey(kv, "GREEN_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_NO_GREEN_INTERFACE]);
-			goto EXIT;
+			errorbox(ctr[TR_NO_GREEN_INTERFACE]);
+			freekeyvalues(kv);
+			return 0;
 		}
 		if (!(interfacecheck(kv, "GREEN")))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_GREEN_IP]);
-			goto EXIT;
+			errorbox(ctr[TR_MISSING_GREEN_IP]);
+			freekeyvalues(kv);
+			return 0;
 		}
 	}
 	if (HAS_RED)
 	{
+
 		strcpy(temp, ""); findkey(kv, "RED_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_NO_RED_INTERFACE]);
-			goto EXIT;
+			rc = newtWinChoice(ctr[TR_ERROR], ctr[TR_OK], ctr[TR_IGNORE], ctr[TR_NO_RED_INTERFACE]);
+			if (rc == 0 || rc == 1)
+			{
+				freekeyvalues(kv);
+				return 0;
+			}
 		}
 		if (!(interfacecheck(kv, "RED")))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_RED_IP]);
-			goto EXIT;
+			errorbox(ctr[TR_MISSING_RED_IP]);
+			freekeyvalues(kv);
+			return 0;
 		}
 	}
 	if (HAS_ORANGE)
@@ -170,13 +175,15 @@ int oktoleave(char *errormessage)
 		strcpy(temp, ""); findkey(kv, "ORANGE_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_NO_ORANGE_INTERFACE]);
-			goto EXIT;
+			errorbox(ctr[TR_NO_ORANGE_INTERFACE]);
+			freekeyvalues(kv);
+			return 0;
 		}
 		if (!(interfacecheck(kv, "ORANGE")))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_ORANGE_IP]);
-			goto EXIT;
+			errorbox(ctr[TR_MISSING_ORANGE_IP]);
+			freekeyvalues(kv);
+			return 0;
 		}
 	}
 	if (HAS_BLUE)
@@ -184,13 +191,15 @@ int oktoleave(char *errormessage)
 		strcpy(temp, ""); findkey(kv, "BLUE_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_NO_BLUE_INTERFACE]);
-			goto EXIT;
+			errorbox(ctr[TR_NO_BLUE_INTERFACE]);
+			freekeyvalues(kv);
+			return 0;
 		}
 		if (!(interfacecheck(kv, "BLUE")))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_BLUE_IP]);
-			goto EXIT;
+			errorbox(ctr[TR_MISSING_BLUE_IP]);
+			freekeyvalues(kv);
+			return 0;
 		}
 	}
 	if (configtype == 0)
@@ -198,24 +207,19 @@ int oktoleave(char *errormessage)
 		strcpy(temp, ""); findkey(kv, "DNS1", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_DNS]);
-			goto EXIT;
+			errorbox(ctr[TR_MISSING_DNS]);
+			freekeyvalues(kv);
+			return 0;
 		}
 		strcpy(temp, ""); findkey(kv, "DEFAULT_GATEWAY", temp);
 		if (!(strlen(temp)))
 		{
-			strcpy(errormessage, ctr[TR_MISSING_DEFAULT]);
-			goto EXIT;
+			errorbox(ctr[TR_MISSING_DEFAULT]);
+			freekeyvalues(kv);
+			return 0;
 		}
 	}
-	strcpy(errormessage, "");
-EXIT:
-	freekeyvalues(kv);
-	
-	if (strlen(errormessage))
-		return 0;
-	else
-		return 1;
+	return 1;
 }
 
 	
@@ -284,8 +288,6 @@ int configtypemenu(void)
 	findkey(kv, "CONFIG_TYPE", temp); choise = atol(temp);
 	choise--;
 
-	do
-	{
 		sprintf(message, ctr[TR_NETWORK_CONFIGURATION_TYPE_LONG], NAME);
 		rc = newtWinMenu(ctr[TR_NETWORK_CONFIGURATION_TYPE], message, 50, 5, 5,
 			6, configtypenames, &choise, ctr[TR_OK], ctr[TR_CANCEL], NULL);
@@ -293,8 +295,6 @@ int configtypemenu(void)
 			sprintf(message, ctr[TR_NOT_ENOUGH_INTERFACES] , configtypecards[choise], found);
 			errorbox(message);
 		}
-	}
-	while ( configtypecards[choise] > found);
 
 	if (rc == 0 || rc == 1)
 	{

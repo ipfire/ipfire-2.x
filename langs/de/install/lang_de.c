@@ -557,5 +557,15 @@ char *de_tr[] = {
 "Nein",
 /* TR_AS */
 "als",
+/* TR_IGNORE */
+"Ignorieren",
+/* TR_PPP_DIALUP */
+"PPP Einwahl (PPPoE, Modem, ATM ...)",
+/* TR_DHCP */
+"DHCP",
+/* TR_DHCP_STARTSERVER */
+"Starte den DHCP-Server ...",
+/* TR_DHCP_STOPSERVER */
+"Stoppe den DHCP-Server ...",
 }; 
   

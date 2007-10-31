@@ -553,5 +553,16 @@ char *en_tr[] = {
 "No",
 /* TR_AS */
 "as",
+/* TR_IGNORE */
+"Ignore",
+/* TR_PPP_DIALUP */
+"PPP DIALUP (PPPoE, Modem, ATM ...)",
+/* TR_DHCP */
+"DHCP",
+/* TR_DHCP_STARTSERVER */
+"Starting DHCP-Server ...",
+/* TR_DHCP_STOPSERVER */
+"Stopping DHCP-Server ...",
+
 }; 
   

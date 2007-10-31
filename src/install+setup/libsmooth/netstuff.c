@@ -92,8 +92,8 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 		if (strcmp(temp, "DHCP") == 0) startdhcptype = 1;
 		if (strcmp(temp, "PPPOE") == 0) startpppoetype = 1;
 		statictyperadio = newtRadiobutton(2, 4, ctr[TR_STATIC], startstatictype, NULL);
-		dhcptyperadio = newtRadiobutton(2, 5, "DHCP", startdhcptype, statictyperadio);
-		pppoetyperadio = newtRadiobutton(2, 6, "PPPOE", startpppoetype, dhcptyperadio);
+		dhcptyperadio = newtRadiobutton(2, 5, ctr[TR_DHCP], startdhcptype, statictyperadio);
+		pppoetyperadio = newtRadiobutton(2, 6, ctr[TR_PPP_DIALUP], startpppoetype, dhcptyperadio);
 		newtFormAddComponents(networkform, statictyperadio, dhcptyperadio, 
 			pppoetyperadio, NULL);
 		newtComponentAddCallback(statictyperadio, networkdialogcallbacktype, NULL);
