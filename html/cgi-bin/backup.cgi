@@ -141,9 +141,9 @@ my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td align='left' width='40%'>$Lang::tr{'logs'}</td><td align='left'>include Logfiles
+<tr><td align='left' width='40%'>$Lang::tr{'logs'}</td><td align='left'>$Lang::tr{'include logfiles'}
 	<input type='radio' name='BACKUPLOGS' value='include'/>/
-	<input type='radio' name='BACKUPLOGS' value='exclude' checked='checked'/> exclude Logfiles
+	<input type='radio' name='BACKUPLOGS' value='exclude' checked='checked'/>$Lang::tr{'exclude logfiles'}
 </td></tr>
 <tr><td align='center' colspan='2'>
 	<input type='hidden' name='ACTION' value='backup' />

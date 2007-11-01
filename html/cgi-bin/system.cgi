@@ -47,33 +47,33 @@ my %cgiparams=();
 # is also the name of the program
 my %servicenames =
 (
-        $Lang::tr{'dhcp server'} => 'dhcpd',
-        $Lang::tr{'web server'} => 'httpd',
-        $Lang::tr{'cron server'} => 'fcron',
-        $Lang::tr{'dns proxy server'} => 'dnsmasq',
-        $Lang::tr{'logging server'} => 'syslogd',
-        $Lang::tr{'kernel logging server'} => 'klogd',
-        $Lang::tr{'ntp server'} => 'ntpd',
-        $Lang::tr{'secure shell server'} => 'sshd',
-        $Lang::tr{'vpn'} => 'pluto',
-        $Lang::tr{'web proxy'} => 'squid',
-        'OpenVPN' => 'openvpn'
+	$Lang::tr{'dhcp server'} => 'dhcpd',
+	$Lang::tr{'web server'} => 'httpd',
+	$Lang::tr{'cron server'} => 'fcron',
+	$Lang::tr{'dns proxy server'} => 'dnsmasq',
+	$Lang::tr{'logging server'} => 'syslogd',
+	$Lang::tr{'kernel logging server'} => 'klogd',
+	$Lang::tr{'ntp server'} => 'ntpd',
+	$Lang::tr{'secure shell server'} => 'sshd',
+	$Lang::tr{'vpn'} => 'pluto',
+	$Lang::tr{'web proxy'} => 'squid',
+	'OpenVPN' => 'openvpn'
 );
 
 my $iface = '';
 if (open(FILE, "${General::swroot}/red/iface"))
 {
-        $iface = <FILE>;
-        close FILE;
-        chomp $iface;
+	$iface = <FILE>;
+	close FILE;
+	chomp $iface;
 }
 $servicenames{"$Lang::tr{'intrusion detection system'} (RED)"}   = "snort_${iface}";
 $servicenames{"$Lang::tr{'intrusion detection system'} (GREEN)"} = "snort_$netsettings{'GREEN_DEV'}";
 if ($netsettings{'ORANGE_DEV'} ne '') {
-        $servicenames{"$Lang::tr{'intrusion detection system'} (ORANGE)"} = "snort_$netsettings{'ORANGE_DEV'}";
+	$servicenames{"$Lang::tr{'intrusion detection system'} (ORANGE)"} = "snort_$netsettings{'ORANGE_DEV'}";
 }
 if ($netsettings{'BLUE_DEV'} ne '') {
-        $servicenames{"$Lang::tr{'intrusion detection system'} (BLUE)"} = "snort_$netsettings{'BLUE_DEV'}";
+	$servicenames{"$Lang::tr{'intrusion detection system'} (BLUE)"} = "snort_$netsettings{'BLUE_DEV'}";
 }
 
 # Generate Graphs from rrd Data
@@ -115,18 +115,19 @@ print "<br />\n";
 
 print <<END
 <div align='center'>
-<table width='60%' cellspacing='0' border='0'>
+<table width='60%' cellspacing='1' border='0'>
+<tr><td align='left'><b>$Lang::tr{'services'}</b></td><td align='center'><b>$Lang::tr{'status'}</b></td><td align='center'><b>PID</b></td><td align='center'><b>$Lang::tr{'memory'}</b></td></tr>
 END
 ;
 
 my $key = '';
 foreach $key (sort keys %servicenames)
 {
-        print "<tr>\n<td align='left'>$key</td>\n";
-        my $shortname = $servicenames{$key};
-        my $status = &isrunning($shortname);
-        print "$status\n";
-        print "</tr>\n";
+	print "<tr>\n<td align='left'>$key</td>\n";
+	my $shortname = $servicenames{$key};
+	my $status = &isrunning($shortname);
+	print "$status\n";
+	print "</tr>\n";
 }
 
 
@@ -138,58 +139,55 @@ print "</table></div>\n";
 
 sub isrunning
 {
-        my $cmd = $_[0];
-        my $status = "<td bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
-        my $pid = '';
-        my $testcmd = '';
-        my $exename;
+	my $cmd = $_[0];
+	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+	my $pid = '';
+	my $testcmd = '';
+	my $exename;
+	my @memory;
 
-        $cmd =~ /(^[a-z]+)/;
-        $exename = $1;
+	$cmd =~ /(^[a-z]+)/;
+	$exename = $1;
 
-        if (open(FILE, "/var/run/${cmd}.pid"))
-        {
-                $pid = <FILE>; chomp $pid;
-                close FILE;
-                if (open(FILE, "/proc/${pid}/status"))
-                {
-                        while (<FILE>)
-                        {
-                                if (/^Name:\W+(.*)/) {
-                                        $testcmd = $1; }
-                        }
-                        close FILE;
-                        if ($testcmd =~ /$exename/)
-                        {
-                                $status = "<td bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
-                        }
-                }
-        }
-
-        return $status;
+	if (open(FILE, "/var/run/${cmd}.pid")){
+		$pid = <FILE>; chomp $pid;
+		close FILE;
+		if (open(FILE, "/proc/${pid}/status")){
+			while (<FILE>){
+				if (/^Name:\W+(.*)/) {$testcmd = $1; }
+			}
+			close FILE;
+		}
+		if (open(FILE, "/proc/${pid}/statm")){
+				my $temp = <FILE>;
+				@memory = split(/ /,$temp);
+		}
+		close FILE;
+		if ($testcmd =~ /$exename/){$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td><td align='center'>$pid</td><td align='center'>$memory[0] KB</td>";}
+		}
+return $status;
 }
 
 sub percentbar
 {
-  my $percent = $_[0];
-  my $fg = '#a0a0a0';
-  my $bg = '#e2e2e2';
+	my $percent = $_[0];
+	my $fg = '#a0a0a0';
+	my $bg = '#e2e2e2';
 
-  if ($percent =~ m/^(\d+)%$/ )
-  {
-    print <<END
+	if ($percent =~ m/^(\d+)%$/ ){
+		print <<END
 <table width='100' border='1' cellspacing='0' cellpadding='0' style='border-width:1px;border-style:solid;border-color:$fg;width:100px;height:10px;'>
 <tr>
 END
 ;
-    if ($percent eq "100%") {
-      print "<td width='100%' bgcolor='$fg' style='background-color:$fg;border-style:solid;border-width:1px;border-color:$bg'>"
-    } elsif ($percent eq "0%") {
-      print "<td width='100%' bgcolor='$bg' style='background-color:$bg;border-style:solid;border-width:1px;border-color:$bg'>"
-    } else {
-      print "<td width='$percent' bgcolor='$fg' style='background-color:$fg;border-style:solid;border-width:1px;border-color:$bg'></td><td width='" . (100-$1) . "%' bgcolor='$bg' style='background-color:$bg;border-style:solid;border-width:1px;border-color:$bg'>"
-    }
-    print <<END
+		if ($percent eq "100%") {
+			print "<td width='100%' bgcolor='$fg' style='background-color:$fg;border-style:solid;border-width:1px;border-color:$bg'>"
+		} elsif ($percent eq "0%") {
+			print "<td width='100%' bgcolor='$bg' style='background-color:$bg;border-style:solid;border-width:1px;border-color:$bg'>"
+		} else {
+			print "<td width='$percent' bgcolor='$fg' style='background-color:$fg;border-style:solid;border-width:1px;border-color:$bg'></td><td width='" . (100-$1) . "%' bgcolor='$bg' style='background-color:$bg;border-style:solid;border-width:1px;border-color:$bg'>"
+		}
+		print <<END
 <img src='/images/null.gif' width='1' height='1' alt='' /></td></tr></table>
 END
 ;

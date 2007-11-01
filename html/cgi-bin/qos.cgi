@@ -23,7 +23,7 @@ use RRDs;
 use strict;
 # enable only the following on debugging purpose
 # use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+# use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -487,6 +487,95 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'save'})
 	}
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 }
+elsif ($qossettings{'ACTION'} eq $Lang::tr{'template'} )
+{
+	my @UP;
+	#print "UP<br />";
+	for(my $i = 1; $i <= 10; $i++) {
+	$UP[$i] = int($qossettings{'OUT_SPD'} / $i );
+	#print $i."=".$UP[$i]." ";
+	}
+	my @DOWN;
+	#print "<br /><br />Down<br />";
+	for(my $i = 1; $i <= 20; $i++) {
+	$DOWN[$i] = int($qossettings{'INC_SPD'} / $i);
+	#print $i."=".$DOWN[$i]." ";
+	}
+	open( FILE, "> $classfile" ) or die "Unable to write $classfile";
+	print FILE <<END
+imq0;200;1;$DOWN[10];$DOWN[1];;;8;VoIP;
+imq0;203;4;$DOWN[20];$DOWN[1];;;0;VPN;
+imq0;204;5;$DOWN[20];$DOWN[1];;;8;Webtraffic;
+imq0;210;6;1;$DOWN[1];;;0;Standardklasse;
+imq0;220;7;1;$DOWN[1];;;1;P2P;
+ppp0;101;1;$UP[2];$UP[1];;;8;ACKs oder so;
+ppp0;102;2;$UP[3];$UP[1];;;8;VoIP;
+ppp0;104;5;$UP[10];$UP[1];;;8;Webtraffic;
+ppp0;110;6;1;$UP[1];;;0;Standardklasse;
+ppp0;120;7;1;$UP[1];;;1;P2P;
+ppp0;103;4;$UP[2];$UP[1];;;2;VPN;
+END
+;
+	close FILE;
+	open( FILE, "> $level7file" ) or die "Unable to write $level7file";
+	print FILE <<END
+102;ppp0;dns;;;
+102;ppp0;sip;;;
+102;ppp0;skypetoskype;;;
+103;ppp0;ssh;;;
+103;ppp0;rdp;;;
+104;ppp0;http;;;
+104;ppp0;ssl;;;
+104;ppp0;pop3;;;
+110;ppp0;ftp;;;
+120;ppp0;applejuice;;;
+120;ppp0;bittorrent;;;
+200;imq0;skypetoskype;;;
+203;imq0;ssh;;;
+203;imq0;rdp;;;
+204;imq0;http;;;
+204;imq0;pop3;;;
+204;imq0;ssl;;;
+220;imq0;applejuice;;;
+220;imq0;bittorrent;;;
+210;imq0;ftp;;;
+END
+;
+	close FILE;
+	open( FILE, "> $portfile" ) or die "Unable to write $portfile";
+	print FILE <<END
+101;ppp0;icmp;;;;;
+102;ppp0;tcp;;;;53;
+102;ppp0;udp;;;;53;
+103;ppp0;esp;;;;;
+103;ppp0;tcp;;;;1194;
+103;ppp0;udp;;4500;;4500;
+103;ppp0;udp;;500;;500;
+104;ppp0;tcp;;;;80;
+108;ppp0;esp;;;;;
+108;ppp0;l2tp;;;;;
+109;ppp0;icmp;;;;;
+200;imq0;icmp;;;;;
+203;imq0;esp;;;;;
+203;imq0;tcp;;;;1194;
+203;imq0;udp;;4500;;4500;
+203;imq0;udp;;500;;500;
+204;imq0;tcp;;;;80;
+END
+;
+	close FILE;
+	if ($qossettings{'DEF_INC_SPD'} eq '') {
+		$qossettings{'DEF_INC_SPD'} = int($qossettings{'INC_SPD'} * 0.9);
+	}
+	if ($qossettings{'DEF_OUT_SPD'} eq '') {
+		$qossettings{'DEF_OUT_SPD'} = int($qossettings{'OUT_SPD'} * 0.9);
+	}
+	$qossettings{'DEFCLASS_INC'} = "210";
+	$qossettings{'DEFCLASS_OUT'} = "110";
+	$qossettings{'ACK'} ="101";
+	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
+	
+}
 elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
 {
 	&Header::openbox('100%', 'left', 'QoS Status');
@@ -686,7 +775,7 @@ END
 ;}
 else 
 {
-print $Lang::tr{'no information available'};
+print "\t</table><br />".$Lang::tr{'no information available'};
 }
 print "\t</table>";
 
@@ -761,15 +850,15 @@ sub changebandwidth {
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
 		<table width='66%'>
-		<tr><td width='100%' colspan='3'>$Lang::tr{'down and up speed'}
-		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}:
-		    <td width='30%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" />
-		    <td width='20%' align='center'>&nbsp;
-		<tr><td width='50%' align='right'>$Lang::tr{'uplink speed'}:
-		    <td width='30%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" />
-		    <td width='20%' align='center'><input type='submit' name='ACTION' value="$Lang::tr{'save'}" />&nbsp;<input type='reset' name='ACTION' value="$Lang::tr{'reset'}" />
+		<tr><td width='100%' colspan='3'>$Lang::tr{'down and up speed'}</td></tr>
+		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}:</td>
+				<td width='30%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" /></td>
+				<td width='20%' align='center' rowspan='2'><input type='submit' name='ACTION' value="$Lang::tr{'template'}" /><br /><input type='submit' name='ACTION' value="$Lang::tr{'save'}" /><br /><input type='reset' name='ACTION' value="$Lang::tr{'reset'}" /></td></tr>
+		<tr><td width='50%' align='right'>$Lang::tr{'uplink speed'}:</td>
+				<td width='30%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" /></td></tr>
 		</table>
 		</form>
+		<font color='red'>$Lang::tr{'template warning'}</font>
 END
 ;
 	}

@@ -97,7 +97,7 @@ END
       print <<END
 <tr>
 <td class='boldbase'><b>$Lang::tr{'ram'}</b></td>
-<td align='center'>$size</td>
+<td align='center'>$size  KB</td>
 END
 ;
     } elsif ($_ =~ m/^Swap:\s+(\d+)\s+(\d+)\s+(\d+)$/) {
@@ -111,7 +111,7 @@ END
       print <<END
 <tr>
 <td class='boldbase'><b>$Lang::tr{'swap'}</b></td>
-<td align='center'>$size</td>
+<td align='center'>$size  KB</td>
 END
 ;
     } elsif ($ram and $_ =~ m/^-\/\+ buffers\/cache:\s+(\d+)\s+(\d+)$/ ) {
@@ -120,8 +120,8 @@ END
       print "<tr><td colspan='2' class='boldbase'><b>$Lang::tr{'excluding buffers and cache'}</b></td>"
     }
     print <<END
-<td align='center'>$used</td>
-<td align='center'>$free</td>
+<td align='center'>$used KB</td>
+<td align='center'>$free KB</td>
 <td>
 END
 ;
@@ -137,9 +137,9 @@ END
 close FREE;
 print <<END
 <tr><td class='boldbase' colspan='2'><br /></td></tr>
-<tr><td class='boldbase'><b>$Lang::tr{'shared'}</b></td><td align='center'>$shared</td></tr>
-<tr><td class='boldbase'><b>$Lang::tr{'buffers'}</b></td><td align='center'>$buffers</td></tr>
-<tr><td class='boldbase'><b>$Lang::tr{'cached'}</b></td><td align='center'>$cached</td></tr>
+<tr><td class='boldbase'><b>$Lang::tr{'shared'}</b></td><td align='center'>$shared KB</td></tr>
+<tr><td class='boldbase'><b>$Lang::tr{'buffers'}</b></td><td align='center'>$buffers KB</td></tr>
+<tr><td class='boldbase'><b>$Lang::tr{'cached'}</b></td><td align='center'>$cached KB</td></tr>
 </table>
 END
 ;
