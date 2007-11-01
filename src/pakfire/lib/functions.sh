@@ -81,10 +81,10 @@ start_service() {
 		
 	if [ -e "/etc/init.d/${1}" ]; then
 	    if [ -n "${BACKGROUND}" ]; then
-		(sleep ${DELAY} && /etc/init.d/${1} start) &
-	    else
-		sleep ${DELAY} && /etc/init.d/${1} start
-	    fi
+				(sleep ${DELAY} && /etc/init.d/${1} start) &
+			else
+				sleep ${DELAY} && /etc/init.d/${1} start
+			fi
 	fi
 }
 
