@@ -36,6 +36,7 @@ usr/lib/sasl2/libplain.so.2.0.21
 usr/lib/sasl2/libsasldb.so
 usr/lib/sasl2/libsasldb.so.2
 usr/lib/sasl2/libsasldb.so.2.0.21
+usr/lib/sasl2/smtpd.conf
 #usr/man/man3/sasl.3
 #usr/man/man3/sasl_authorize_t.3
 #usr/man/man3/sasl_auxprop.3
