@@ -7,9 +7,9 @@
 
  -  To enable dma support, type: 04dma <ENTER>07.
 
- -  To run an unattended installation, type 04unattended <ENTER>07.
-
  -  To test the memory in your system type: 04memtest <ENTER>07.
+
+
 
 
 
