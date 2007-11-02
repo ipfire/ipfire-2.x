@@ -17,5 +17,6 @@
 
 parport_pc
 lp
+button
 
 # End /etc/sysconfig/modules

@@ -473,7 +473,9 @@ sub updatehdddata
 	}
 	elsif ( index($hdd_output, "$disk") != -1 )
 	{
-    	    $hdd_output =~ /.*:.*:\s*(\d+).*\s/;
+    	    my @temp = split(/:/,$hdd_output);
+    	    $temp[2] =~ s/\D//gi;
+    	    $temp = $temp[2];
     	    $temp = $1;
 	}
 	else
