@@ -43,16 +43,17 @@ system("chmod 777 /srv/web/ipfire/html/graphs");
 # Force language back to English (ugly hack!)
 # Modified to only force if we are unable to convert charset 
 # from utf-8
-if ((${Lang::language} eq 'el') || 
-    (${Lang::language} eq 'fa') ||
-    (${Lang::language} eq 'ru') ||
-    (${Lang::language} eq 'th') || 
-    (${Lang::language} eq 'vi') ||
-    (${Lang::language} eq 'zh') ||
-    (${Lang::language} eq 'zt')) {
-        eval `/bin/cat "${General::swroot}/langs/en.pl"`;
+if((${Lang::language} eq 'el') ||
+	(${Lang::language} eq 'fa') ||
+	(${Lang::language} eq 'ru') ||
+	(${Lang::language} eq 'th') ||
+	(${Lang::language} eq 'vi') ||
+	(${Lang::language} eq 'zh') ||
+	(${Lang::language} eq 'zt')) {
+	eval `/bin/cat "${General::swroot}/langs/en.pl"`;
 } else {
-        %tr=%Lang::tr;          # use translated version for other languages
+	use translated version for other languages
+	%tr=%Lang::tr;
 }
 
 # Settings
@@ -81,476 +82,380 @@ open(FD, "/usr/bin/mbmon -rc1|" ) || die "ERROR: Cannot run mbmon\n" ;
 
 while( $_ = <FD> ) 
 {
-  next unless( /^([A-Za-z][^:\s]+)\s*:\s*([+\-]{0,1}[\d\.]+)/ ) ;
-  $key = $1 ;
-  $value = $2 ;
-  $key =~ y/A-Z/a-z/ ;
-  $mbmon_values{$key} = $value;
-  print(MBMON_OUT "$key=$value\n");
+	next unless( /^([A-Za-z][^:\s]+)\s*:\s*([+\-]{0,1}[\d\.]+)/ ) ;
+	$key = $1 ;
+	$value = $2 ;
+	$key =~ y/A-Z/a-z/ ;
+	$mbmon_values{$key} = $value;
+	print(MBMON_OUT "$key=$value\n");
 }
 close(FD);
 close(MBMON_OUT);
 
 sub gettraffic {
-        my $interface = $_[0];
+	my $interface = $_[0];
 
-        my $bytesin=0;
-        my $bytesout=0;
+	my $bytesin=0;
+	my $bytesout=0;
 
-        foreach (@ipacsum)
-        {
-                # Incoming...
-                $bytesin += $1 if (/^[\* ]\s+incoming\s+${interface}.+\:\s+(\d+)/);
-
-                # Forwarded Incoming...
-                $bytesin += $1 if (/^[\* ]\s+forwarded\s+incoming\s+${interface}.+\:\s+(\d+)/);
-
-                # Outgoing...
-                $bytesout += $1 if (/^[* ]\s+outgoing\s+${interface}.+\:\s+(\d+)/);
-
-                # Forwarded Outgoing...
-                $bytesout += $1 if (/^[* ]\s+forwarded\s+outgoing\s+${interface}.+\:\s+(\d+)/);
-        }
-        return "$bytesin:$bytesout";
+	foreach (@ipacsum){
+		# Incoming...
+		$bytesin += $1 if (/^[\* ]\s+incoming\s+${interface}.+\:\s+(\d+)/);
+		# Forwarded Incoming...
+		$bytesin += $1 if (/^[\* ]\s+forwarded\s+incoming\s+${interface}.+\:\s+(\d+)/);
+		# Outgoing...
+		$bytesout += $1 if (/^[* ]\s+outgoing\s+${interface}.+\:\s+(\d+)/);
+		# Forwarded Outgoing...
+		$bytesout += $1 if (/^[* ]\s+forwarded\s+outgoing\s+${interface}.+\:\s+(\d+)/);
+	}
+	return "$bytesin:$bytesout";
 }
 
 sub updatecpudata {
-        if ( ! -e "$rrdlog/cpu.rrd") {
-                RRDs::create ("$rrdlog/cpu.rrd", "--step=300",
-                        "DS:user:COUNTER:600:0:500000000",
-                        "DS:system:COUNTER:600:0:500000000",
-                        "DS:idle:COUNTER:600:0:500000000",
-                        "DS:iowait:COUNTER:600:0:500000000",
-                        "DS:irq:COUNTER:600:0:500000000",
-                        "RRA:AVERAGE:0.5:1:576",
-                        "RRA:AVERAGE:0.5:6:672",
-                        "RRA:AVERAGE:0.5:24:732",
-                        "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
-        }
+	if ( ! -e "$rrdlog/cpu.rrd") {
+		RRDs::create ("$rrdlog/cpu.rrd", "--step=300",
+		"DS:user:COUNTER:600:0:500000000",
+		"DS:system:COUNTER:600:0:500000000",
+		"DS:idle:COUNTER:600:0:500000000",
+		"DS:iowait:COUNTER:600:0:500000000",
+		"DS:irq:COUNTER:600:0:500000000",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+	}
 
-        my ($cpu, $user, $nice, $system, $idle, $iowait, $irq, $softirq);
-
-        open STAT, "/proc/stat";
-        while(<STAT>) {
-                chomp;
-                /^cpu\s/ or next;
-                ($cpu, $user, $nice, $system, $idle, $iowait, $irq, $softirq) = split /\s+/;
-                last;
-        }
-        close STAT;
-        $user += $nice;
-        $irq += $softirq;
-        
-
-        RRDs::update ("$rrdlog/cpu.rrd",
-                "-t", "user:system:idle:iowait:irq", 
-                "N:$user:$system:$idle:$iowait:$irq");
-        $ERROR = RRDs::error;
-        print "Error in RRD::update for cpu: $ERROR\n" if $ERROR;
-
+	my ($cpu, $user, $nice, $system, $idle, $iowait, $irq, $softirq);
+	open STAT, "/proc/stat";
+	while(<STAT>) {
+		chomp;
+		/^cpu\s/ or next;
+		($cpu, $user, $nice, $system, $idle, $iowait, $irq, $softirq) = split /\s+/;
+		last;
+	}
+	close STAT;
+	$user += $nice;
+	$irq += $softirq;
+	RRDs::update ("$rrdlog/cpu.rrd",
+	"-t", "user:system:idle:iowait:irq",
+	"N:$user:$system:$idle:$iowait:$irq");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for cpu: $ERROR\n" if $ERROR;
 }
 
 sub updateloaddata {
-        if ( ! -e "$rrdlog/load.rrd") {
-                RRDs::create ("$rrdlog/load.rrd", "--step=60",
-                        "DS:load1:GAUGE:120:0:U",
-                        "DS:load5:GAUGE:120:0:U",
-                        "DS:load15:GAUGE:120:0:U",
-                        "RRA:AVERAGE:0.5:1:2160",
-                        "RRA:AVERAGE:0.5:5:2016",
-                        "RRA:AVERAGE:0.5:15:2880",
-                        "RRA:AVERAGE:0.5:60:8760");
-
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
-        }
+	if ( ! -e "$rrdlog/load.rrd") {
+		RRDs::create ("$rrdlog/load.rrd", "--step=60",
+		"DS:load1:GAUGE:120:0:U",
+		"DS:load5:GAUGE:120:0:U",
+		"DS:load15:GAUGE:120:0:U",
+		"RRA:AVERAGE:0.5:1:2160",
+		"RRA:AVERAGE:0.5:5:2016",
+		"RRA:AVERAGE:0.5:15:2880",
+		"RRA:AVERAGE:0.5:60:8760");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+	}
 }
 
 sub updatememdata {
-        my ($memused, $memfree, $memshared, $membuffers, $memcache, $swapused, $swapfree, $swaptotal);
-        if ( ! -e "$rrdlog/mem.rrd") {
-                RRDs::create ("$rrdlog/mem.rrd", "--step=300",
-                        "DS:memused:ABSOLUTE:600:0:5000000000",
-                        "DS:memfree:ABSOLUTE:600:0:5000000000",
-                        "DS:memshared:ABSOLUTE:600:0:5000000000",
-                        "DS:membuffers:ABSOLUTE:600:0:5000000000",
-                        "DS:memcache:ABSOLUTE:600:0:5000000000",
-                        "DS:swapused:ABSOLUTE:600:0:5000000000",
-                        "DS:swapfree:ABSOLUTE:600:0:5000000000",
-                        "RRA:AVERAGE:0.5:1:576",
-                        "RRA:AVERAGE:0.5:6:672",
-                        "RRA:AVERAGE:0.5:24:732",
-                        "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for mem: $ERROR\n" if $ERROR;
-        }
+	my ($memused, $memfree, $memshared, $membuffers, $memcache, $swapused, $swapfree, $swaptotal);
+	if ( ! -e "$rrdlog/mem.rrd") {
+		RRDs::create ("$rrdlog/mem.rrd", "--step=300",
+		"DS:memused:ABSOLUTE:600:0:5000000000",
+		"DS:memfree:ABSOLUTE:600:0:5000000000",
+		"DS:memshared:ABSOLUTE:600:0:5000000000",
+		"DS:membuffers:ABSOLUTE:600:0:5000000000",
+		"DS:memcache:ABSOLUTE:600:0:5000000000",
+		"DS:swapused:ABSOLUTE:600:0:5000000000",
+		"DS:swapfree:ABSOLUTE:600:0:5000000000",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for mem: $ERROR\n" if $ERROR;
+	}
 
-        open MEM, "/proc/meminfo";
-        while(<MEM>) {
-                chomp;
-                if ($_ =~ /^MemTotal:/) {
-                        my @temp = split (/\s+/, $_);
-                        $memused    = $temp[1];
-                } elsif ($_ =~ /^MemFree:/) {
-                        my @temp = split (/\s+/, $_);
-                        $memfree    = $temp[1];
-                } elsif ($_ =~ /^Cached:/) {
-                        my @temp = split (/\s+/, $_);
-                        $memcache   = $temp[1];
-                } elsif ($_ =~ /^Buffers:/) {
-                        my @temp = split (/\s+/, $_);
-                        $membuffers = $temp[1];
-                } elsif ($_ =~ /^SwapTotal:/) {
-                        my @temp = split (/\s+/, $_);
-                        $swaptotal   = $temp[1];
-                } elsif ($_ =~ /^SwapFree:/) {
-                        my @temp = split (/\s+/, $_);
-                        $swapfree   = $temp[1];
-                }
-        }
-        close MEM;
+	open MEM, "/proc/meminfo";
+	while(<MEM>) {
+		chomp;
+		if ($_ =~ /^MemTotal:/) {my @temp = split (/\s+/, $_);$memused    = $temp[1];
+		} elsif ($_ =~ /^MemFree:/) {my @temp = split (/\s+/, $_);$memfree    = $temp[1];
+		} elsif ($_ =~ /^Cached:/) {my @temp = split (/\s+/, $_);$memcache   = $temp[1];
+		} elsif ($_ =~ /^Buffers:/) {my @temp = split (/\s+/, $_);$membuffers = $temp[1];
+		} elsif ($_ =~ /^SwapTotal:/) {my @temp = split (/\s+/, $_);$swaptotal   = $temp[1];
+		} elsif ($_ =~ /^SwapFree:/) {my @temp = split (/\s+/, $_);$swapfree   = $temp[1];}
+	}
+	close MEM;
 
-        system("/bin/df > /tmp/diskfree");
-        open DF, "/tmp/diskfree";
-        while(<DF>) {
-                chomp;
-                if ($_ =~ /^shm/) {
-                        my @temp = split (/\s+/, $_);
-                        $memshared  = $temp[2];
-                }
-        }
-        close DF;
-        system("/bin/rm -f /tmp/diskfree");
-        
-        $swapused = $swaptotal-$swapfree;
-        RRDs::update ("$rrdlog/mem.rrd",
-                "-t", "memused:memfree:memshared:membuffers:memcache:swapused:swapfree",
-                "N:$memused:$memfree:$memshared:$membuffers:$memcache:$swapused:$swapfree");
-        $ERROR = RRDs::error;
-        print "Error in RRD::update for mem: $ERROR\n" if $ERROR;
+	system("/bin/df > /tmp/diskfree");
+	open DF, "/tmp/diskfree";
+	while(<DF>) {
+		chomp;
+		if ($_ =~ /^shm/) {my @temp = split (/\s+/, $_);$memshared  = $temp[2];}
+	}
+	close DF;
+	system("/bin/rm -f /tmp/diskfree");
+	$swapused = $swaptotal-$swapfree;
+	RRDs::update ("$rrdlog/mem.rrd",
+	"-t", "memused:memfree:memshared:membuffers:memcache:swapused:swapfree",
+	"N:$memused:$memfree:$memshared:$membuffers:$memcache:$swapused:$swapfree");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for mem: $ERROR\n" if $ERROR;
 }
 
 sub updatediskdata {
-        my $disk = $_[0];
-        my ($readsect, $writesect, $trash);
-				my @array = split(/\//,$disk);
-        if ( ! -e "$rrdlog/disk-".$array[$#array].".rrd") {
-                RRDs::create ("$rrdlog/disk-".$array[$#array].".rrd", "--step=300",
-                        "DS:readsect:COUNTER:600:0:5000000000",
-                        "DS:writesect:COUNTER:600:0:5000000000",
-                        "RRA:AVERAGE:0.5:1:576",
-                        "RRA:AVERAGE:0.5:6:672",
-                        "RRA:AVERAGE:0.5:24:732",
-                        "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for disk $disk: $ERROR\n" if $ERROR;
-        }        
-        
-        my $Zeilen = `/usr/bin/iostat $disk | tail -2 | head -1`;
-        ($trash, $trash, $trash, $trash, $readsect, $writesect) = split(/\s+/,$Zeilen);
-        
-        print "\nread:".$readsect."write:".$writesect."\n";
-
-        if ($readsect && $writesect) {
-                RRDs::update ("$rrdlog/disk-".$array[$#array].".rrd",
-                        "-t", "readsect:writesect",
-                        "N:$readsect:$writesect");
-                $ERROR = RRDs::error;
-                print "Error in RRD::update for disk $disk: $ERROR\n" if $ERROR;
-        } else {
-                print "Error in RRD::update for disk: $disk no data available\n";
-        }
+	my $disk = $_[0];
+	my ($readsect, $writesect, $trash);
+	my @array = split(/\//,$disk);
+	if ( ! -e "$rrdlog/disk-".$array[$#array].".rrd") {
+		RRDs::create ("$rrdlog/disk-".$array[$#array].".rrd", "--step=300",
+		"DS:readsect:COUNTER:600:0:5000000000",
+		"DS:writesect:COUNTER:600:0:5000000000",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for disk $disk: $ERROR\n" if $ERROR;
+	}
+	my $Zeilen = `/usr/bin/iostat $disk | tail -2 | head -1`;
+	($trash, $trash, $trash, $trash, $readsect, $writesect) = split(/\s+/,$Zeilen);
+	print "\nread:".$readsect."write:".$writesect."\n";
+	if ($readsect && $writesect) {
+		RRDs::update ("$rrdlog/disk-".$array[$#array].".rrd",
+		"-t", "readsect:writesect",
+		"N:$readsect:$writesect");
+		$ERROR = RRDs::error;
+		print "Error in RRD::update for disk $disk: $ERROR\n" if $ERROR;
+	} else {print "Error in RRD::update for disk: $disk no data available\n";}
 }
 
 sub updateifdata {
-        my $interface = $_[0];
-
-        if ( ! -e "$rrdlog/$interface.rrd") {
-                RRDs::create ("$rrdlog/$interface.rrd", "--step=300",
-                        "DS:incoming:ABSOLUTE:600:0:12500000",
-                        "DS:outgoing:ABSOLUTE:600:0:12500000",
-                        "RRA:AVERAGE:0.5:1:576",
-                        "RRA:AVERAGE:0.5:6:672",
-                        "RRA:AVERAGE:0.5:24:732",
-                        "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for $interface: $ERROR\n" if $ERROR;
-        }
-
-        my $traffic = gettraffic ($interface);
-        RRDs::update ("$rrdlog/$interface.rrd",
-                "-t", "incoming:outgoing", 
-                "N:$traffic");
-        $ERROR = RRDs::error;
-        print "Error in RRD::update for $interface: $ERROR\n" if $ERROR;
+	my $interface = $_[0];
+	if ( ! -e "$rrdlog/$interface.rrd") {
+		RRDs::create ("$rrdlog/$interface.rrd", "--step=300",
+		"DS:incoming:ABSOLUTE:600:0:12500000",
+		"DS:outgoing:ABSOLUTE:600:0:12500000",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for $interface: $ERROR\n" if $ERROR;
+	}
+	my $traffic = gettraffic ($interface);
+	RRDs::update ("$rrdlog/$interface.rrd",
+	"-t", "incoming:outgoing",
+	"N:$traffic");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for $interface: $ERROR\n" if $ERROR;
 }
 
 sub updatefwhitsdata {
-        my $portamount=0;
-        my $alertaktuell=0;
-        my $aktuell=0;
-        my $portaktuell=0;
-        my $skip=0;
-
-        if (! -e "$rrdlog/firewallhits.rrd")
-        {
-                RRDs::create ("$rrdlog/firewallhits.rrd", "--step=300",
-                        "DS:amount:GAUGE:600:0:U",
-                        "DS:portamount:GAUGE:600:0:U",
-                        "RRA:AVERAGE:0.5:1:576",
-                        "RRA:AVERAGE:0.5:6:672",
-                        "RRA:AVERAGE:0.5:24:732",
-                        "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
-        }
-
-        system("logtailfwhits /var/log/messages /var/log/fwhits.messages.offset >/tmp/messages.fwhits");
-        if (!(open (FILE,'/tmp/messages.fwhits'))) {
-           $skip=1;
-        }
-        $aktuell = 0;
-        if (!$skip) {
-                while (<FILE>) {
-                        if (/kernel:.*(IN=.*)$/) {
-                                $aktuell++;
-                        }
-                }
-                close (FILE);
-        }
-
-        system("logtailfwhits /var/log/snort/alert /var/log/snort/fwhits.alert.offset >/tmp/snort.fwhits");
-        if (!(open (FILE,'/tmp/snort.fwhits'))) {
-           $skip=1;
-        }
-        $alertaktuell = 0;
-        if (!$skip) {
-                while (<FILE>) {
-                        if (/scan.*$/) {
-                                $alertaktuell++;
-                        }
-                }
-                close (FILE);
-        }
-
-        if (!(open (FILE,'/tmp/messages.fwhits'))) {
-           $skip=1;
-        }
-        $portaktuell = 0;
-        if (!$skip) {
-                while (<FILE>) {
-                        if (/kernel:.*(Scan.*)$/) {
-                                $portaktuell++;
-                        }
-                }
-                close (FILE);
-        }
-
-        system("rm /tmp/messages.fwhits");
-        system("rm /tmp/snort.fwhits");
-
-        $portamount = $portaktuell + $alertaktuell;
-        chomp($portamount);
-        RRDs::update ("$rrdlog/firewallhits.rrd",
-                "N:$aktuell:$portamount");
-        $ERROR = RRDs::error;
-        print "Error in RRD::update for Firewallhits: $ERROR\n" if $ERROR;
+	my $portamount=0;
+	my $alertaktuell=0;
+	my $aktuell=0;
+	my $portaktuell=0;
+	my $skip=0;
+	if (! -e "$rrdlog/firewallhits.rrd"){
+		RRDs::create ("$rrdlog/firewallhits.rrd", "--step=300",
+		"DS:amount:GAUGE:600:0:U",
+		"DS:portamount:GAUGE:600:0:U",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for cpu: $ERROR\n" if $ERROR;
+	}
+	system("logtailfwhits /var/log/messages /var/log/fwhits.messages.offset >/tmp/messages.fwhits");
+	if (!(open (FILE,'/tmp/messages.fwhits'))) {$skip=1;}
+	$aktuell = 0;
+	if (!$skip) {
+		while (<FILE>) {
+			if (/kernel:.*(IN=.*)$/) {$aktuell++;}
+		}
+		close (FILE);
+	}
+	system("logtailfwhits /var/log/snort/alert /var/log/snort/fwhits.alert.offset >/tmp/snort.fwhits");
+	if (!(open (FILE,'/tmp/snort.fwhits'))) {$skip=1;}
+	$alertaktuell = 0;
+	if (!$skip) {
+		while (<FILE>) {
+			if (/scan.*$/) {$alertaktuell++;}
+		}
+		close (FILE);
+	}
+	if (!(open (FILE,'/tmp/messages.fwhits'))) {$skip=1;}
+	$portaktuell = 0;
+	if (!$skip) {
+		while (<FILE>) {
+			if (/kernel:.*(Scan.*)$/) {$portaktuell++;}
+		}
+		close (FILE);
+	}
+	system("rm /tmp/messages.fwhits");
+	system("rm /tmp/snort.fwhits");
+	$portamount = $portaktuell + $alertaktuell;
+	chomp($portamount);
+	RRDs::update ("$rrdlog/firewallhits.rrd",
+	"N:$aktuell:$portamount");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for Firewallhits: $ERROR\n" if $ERROR;
 }
 
 # Creates and updates a link quality database
 # -------------------------------------------
 sub updatelq {
-        if ( ! -e "$rrdlog/lq.rrd") {
-                RRDs::create ("$rrdlog/lq.rrd", "--step=300",
-                        "DS:loss:GAUGE:600:0:100",
-                        "DS:roundtrip:GAUGE:600:0:10000",
-                        "RRA:AVERAGE:0.5:1:576",
-                        "RRA:AVERAGE:0.5:6:672",
-                        "RRA:AVERAGE:0.5:24:732",
-                        "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for link: $ERROR\n" if $ERROR;
-        }
-        my $packetloss=0;
-        my $roundtrip=0;
-        my $test=0;
-#       LQ_GATEWAY is the ip of your isp's public ip facing you
-        my $LQ_GATEWAY=`cat /var/ipfire/red/remote-ipaddress`;
-        chomp($LQ_GATEWAY);
-        my $NUMPINGS=5;
-        my $pingoutput = `/usr/bin/ping -w 10 -c $NUMPINGS -q $LQ_GATEWAY | tail -2`;
-        my @temp = split (/\/|\%|\s/, $pingoutput);
-        $packetloss = $temp[5];
-        $roundtrip = $temp[17];
-        
-        print "Paketlos->".$packetloss."<-Roundtrip->".$roundtrip."<-\n";
-       
-        if ( $packetloss eq "100" ){
-        my $pingoutput = `/usr/bin/ping -w 10 -c $NUMPINGS -q ping.ipfire.org  | tail -2`;
-        my @temp = split (/\/|\%|\s/, $pingoutput);
-        $packetloss = $temp[5];
-        $roundtrip = $temp[17];
-        
-        print "Paketlos->".$packetloss."<-Roundtrip->".$roundtrip."<-\n";
-        }
-        
-        RRDs::update ("$rrdlog/lq.rrd", "N:$packetloss:$roundtrip");
-        $ERROR = RRDs::error;
-        print "Error in RRD::update for line quality: $ERROR\n" if $ERROR;
+	if ( ! -e "$rrdlog/lq.rrd") {
+		RRDs::create ("$rrdlog/lq.rrd", "--step=300",
+		"DS:loss:GAUGE:600:0:100",
+		"DS:roundtrip:GAUGE:600:0:10000",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for link: $ERROR\n" if $ERROR;
+	}
+	my $packetloss=0;
+	my $roundtrip=0;
+	my $test=0;
+	#LQ_GATEWAY is the ip of your isp's public ip facing you
+	my $LQ_GATEWAY=`cat /var/ipfire/red/remote-ipaddress`;
+	chomp($LQ_GATEWAY);
+	my $NUMPINGS=5;
+	my $pingoutput = `/usr/bin/ping -w 10 -c $NUMPINGS -q $LQ_GATEWAY | tail -2`;
+	my @temp = split (/\/|\%|\s/, $pingoutput);
+	$packetloss = $temp[5];
+	$roundtrip = $temp[17];
+	print "Paketlos->".$packetloss."<-Roundtrip->".$roundtrip."<-\n";
+	if ( $packetloss eq "100" ){
+		my $pingoutput = `/usr/bin/ping -w 10 -c $NUMPINGS -q ping.ipfire.org  | tail -2`;
+		my @temp = split (/\/|\%|\s/, $pingoutput);
+		$packetloss = $temp[5];
+		$roundtrip = $temp[17];
+		print "Paketlos->".$packetloss."<-Roundtrip->".$roundtrip."<-\n";
+	}
+	RRDs::update ("$rrdlog/lq.rrd", "N:$packetloss:$roundtrip");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for line quality: $ERROR\n" if $ERROR;
 } 
 
 sub updatehdddata 
 {
-  my $disk = $_[0];
-  my $standby;
-  my @array = split(/\//,$disk);
-  
-  if ( ! -e "$rrdlog/hddshutdown-".$array[$#array].".rrd") 
-  {
-    # database did not exist -> create
-    RRDs::create ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "--step=300",
-      "DS:standby:GAUGE:600:0:1",
-      "RRA:AVERAGE:0.5:1:576",
-      "RRA:AVERAGE:0.5:6:672",
-      "RRA:AVERAGE:0.5:24:732",
-      "RRA:AVERAGE:0.5:144:1460");
-    $ERROR = RRDs::error;
-    print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
-  }
+	my $disk = $_[0];
+	my $standby;
+	my @array = split(/\//,$disk);
 
-  if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
-    else {$standby = 0;}
-
-  RRDs::update ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
-  $ERROR = RRDs::error;
-  print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
-
-  if ( ! -e "$rrdlog/hddtemp-".$array[$#array].".rrd") 
-  {
-    # database did not exist -> create
-    RRDs::create ("$rrdlog/hddtemp-".$array[$#array].".rrd", "--step=300",
-      "DS:temperature:GAUGE:600:0:100",
-      "RRA:AVERAGE:0.5:1:576",
-      "RRA:AVERAGE:0.5:6:672",
-      "RRA:AVERAGE:0.5:24:732",
-      "RRA:AVERAGE:0.5:144:1460");
-    $ERROR = RRDs::error;
-    print "Error in RRD::create for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
-  }
-
-  # Temperaturlesen wÃrde die Platte aufwecken!!!
-  if (!$standby) 
-  {
-    $temp = 0;
-    my $hdd_output = '';
-    my $smart_output = '';
-  
-    if ( -e "$path_smartctl" )
-    {
-	system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
-    }
-
-    if ( -e "$path_hddtemp" )
-    {
-	$hdd_output = `$path_hddtemp -qn /dev/$disk`;
-    
-	# I know 4 response possible responses:
-	#
-	# /dev/harddisk: harddisk type: S.M.A.R.T. not available
-	# /dev/harddisk: harddisk type: no sensor
-	# /dev/harddisk: harddisk type: 37?C or ?F
-	# 37
-
-	if ( index($hdd_output, "S.M.A.R.T.") != -1 )
-	{
-    	    $temp = 0;
+	if ( ! -e "$rrdlog/hddshutdown-".$array[$#array].".rrd"){
+		# database did not exist -> create
+		RRDs::create ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "--step=300",
+		"DS:standby:GAUGE:600:0:1",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
 	}
-	elsif ( index($hdd_output, "no sensor") != -1 )
-	{
-    	    $temp = 1;
-	}
-	elsif ( index($hdd_output, "$disk") != -1 )
-	{
-    	    my @temp = split(/:/,$hdd_output);
-    	    $temp[2] =~ s/\D//gi;
-    	    $temp = $temp[2];
-    	    $temp = $1;
-	}
-	else
-	{
-    	    $hdd_output =~ /(\d+)\s/;
-    	    $temp = $1;
-	}
-    }
-    elsif ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] )
-    {
-	$hdd_output = `cat /var/log/smartctl_out_hddtemp-".$array[$#array]." | grep Temperature_`;
-	my @t = split(/\s+/,$hdd_output);
-	$temp = $t[9];
-    }
-    else
-    {
-	$temp = 0;
-    }
-  
 
-    print "Temperature for ".$array[$#array]."->".$temp."<-\n";
-    # Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
-    if ($temp)
-    {
-	RRDs::update ("$rrdlog/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
+	if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
+	else {$standby = 0;}
+
+	RRDs::update ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
 	$ERROR = RRDs::error;
-	print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
-    }
-  }
+	print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
+
+	if ( ! -e "$rrdlog/hddtemp-".$array[$#array].".rrd"){
+		# database did not exist -> create
+		RRDs::create ("$rrdlog/hddtemp-".$array[$#array].".rrd", "--step=300",
+		"DS:temperature:GAUGE:600:0:100",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
+	}
+
+	# Temperaturlesen wÃrde die Platte aufwecken!!!
+	if (!$standby){
+		$temp = 0;
+		my $hdd_output = '';
+		my $smart_output = '';
+		if ( -e "$path_smartctl" ){system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");}
+		if ( -e "$path_hddtemp" ){
+			$hdd_output = `$path_hddtemp -qn /dev/$disk`;
+			# I know 4 response possible responses:
+			#
+			# /dev/harddisk: harddisk type: S.M.A.R.T. not available
+			# /dev/harddisk: harddisk type: no sensor
+			# /dev/harddisk: harddisk type: 37?C or ?F
+			# 37
+
+			if ( index($hdd_output, "S.M.A.R.T.") != -1 ){$temp = 0;}
+			elsif ( index($hdd_output, "no sensor") != -1 ){$temp = 1;}
+			elsif ( index($hdd_output, "$disk") != -1 ){my @temp = split(/:/,$hdd_output);$temp[2] =~ s/\D//gi;$temp = $temp[2];}
+			else{$hdd_output =~ /(\d+)\s/;$temp = $1;}
+		}
+    elsif ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] ){
+		$hdd_output = `cat /var/log/smartctl_out_hddtemp-".$array[$#array]." | grep Temperature_`;
+		my @t = split(/\s+/,$hdd_output);
+		$temp = $t[9];
+		}else{$temp = 0;}
+
+		print "Temperature for ".$array[$#array]."->".$temp."<-\n";
+		# Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
+		if ($temp){
+			RRDs::update ("$rrdlog/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
+			$ERROR = RRDs::error;
+			print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
+		}
+	}
 }
 
 sub updatembmondata 
 {
-  if ( ! -e "$rrdlog/mbmon.rrd" )
-  {
-    # database did not exist -> create
+	if ( ! -e "$rrdlog/mbmon.rrd" ){
+		# database did not exist -> create
 
-    @args = ("$rrdlog/mbmon.rrd");
+		@args = ("$rrdlog/mbmon.rrd");
+		push(@args, "--step=300");
+		foreach $key ( sort(keys %mbmon_values) ){push(@args, "DS:$key:GAUGE:600:U:U");}
+		push(@args, "RRA:AVERAGE:0.5:1:576");
+		push(@args, "RRA:AVERAGE:0.5:6:672");
+		push(@args, "RRA:AVERAGE:0.5:24:732");
+		push(@args, "RRA:AVERAGE:0.5:144:1460");
 
-    push(@args, "--step=300");
-    foreach $key ( sort(keys %mbmon_values) ) 
-    {
-      push(@args, "DS:$key:GAUGE:600:U:U");
-    }
-    push(@args, "RRA:AVERAGE:0.5:1:576");
-    push(@args, "RRA:AVERAGE:0.5:6:672");
-    push(@args, "RRA:AVERAGE:0.5:24:732");
-    push(@args, "RRA:AVERAGE:0.5:144:1460");
+		print("create ". join( ", ", @args)) if ( $dbg );
+		RRDs::create (@args);
+		$ERROR = RRDs::error;
+		print("Error in RRD::create for mbmon: $ERROR\n") if $ERROR;
+	}
 
-    print("create ". join( ", ", @args)) if ( $dbg );
-   
-    RRDs::create (@args);
-    $ERROR = RRDs::error;
-    print("Error in RRD::create for mbmon: $ERROR\n") if $ERROR;
-  }
+	my @ds;
+	my @val;
+	my $template;
 
-  my @ds;
-  my @val;
-  my $template;
+	foreach $key ( sort(keys %mbmon_values) ){
+		push(@ds, $key);
+		push(@val, $mbmon_values{$key});
+	}
 
-  foreach $key ( sort(keys %mbmon_values) )
-  {
-    push(@ds, $key);
-    push(@val, $mbmon_values{$key});
-  }
+	$template = join(':', @ds);
+	$value    = "N:".join(':', @val);
 
-  $template = join(':', @ds);
-  $value    = "N:".join(':', @val);
+	print("update template = '$template'\n") if ( $dbg );
+	print("update value    = '$value'\n") if ( $dbg );
 
-  print("update template = '$template'\n") if ( $dbg );
-  print("update value    = '$value'\n") if ( $dbg );
-
-  RRDs::update("$rrdlog/mbmon.rrd", "-t", $template, $value);
-  $ERROR = RRDs::error;
-  print("Error in RRD::update for mbmon: $ERROR\n") if $ERROR;
+	RRDs::update("$rrdlog/mbmon.rrd", "-t", $template, $value);
+	$ERROR = RRDs::error;
+	print("Error in RRD::update for mbmon: $ERROR\n") if $ERROR;
 }
 
 ## Update ipac logs
@@ -560,30 +465,19 @@ sleep 8;
 ###
 ### Squid Graphs
 ###
-if ( -e "/var/log/squid/access.log") {
-        system ("/usr/bin/squid-graph -o=/srv/web/ipfire/html/sgraph --tcp-only < /var/log/squid/access.log >/dev/null 2>&1");
-}
+if ( -e "/var/log/squid/access.log") {system ("/usr/bin/squid-graph -o=/srv/web/ipfire/html/sgraph --tcp-only < /var/log/squid/access.log >/dev/null 2>&1");}
 
 ###
 ### utf8 conversion
 ###
-if ((${Lang::language} eq 'cs') || 
-    (${Lang::language} eq 'hu') || 
-    (${Lang::language} eq 'pl') || 
-    (${Lang::language} eq 'sk')) {
-        # Czech, Hungarian, Polish and Slovak character set
-        foreach my $key(keys %Lang::tr) {
-                from_to($tr{$key}, "utf-8", "iso-8859-2");
-        }
+if ((${Lang::language} eq 'cs') || (${Lang::language} eq 'hu') || (${Lang::language} eq 'pl') || (${Lang::language} eq 'sk')) {
+	# Czech, Hungarian, Polish and Slovak character set
+	foreach my $key(keys %Lang::tr) {from_to($tr{$key}, "utf-8", "iso-8859-2");}
 } elsif (${Lang::language} eq 'tr') {
-        # Turkish
-        foreach my $key(keys %Lang::tr) {
-                from_to($tr{$key}, "utf-8", "iso-8859-9");
-        }
+	# Turkish
+	foreach my $key(keys %Lang::tr) {from_to($tr{$key}, "utf-8", "iso-8859-9");}
 } else {
-        foreach my $key(keys %Lang::tr) {
-                from_to($tr{$key}, "utf-8", "iso-8859-1"); 
-        }
+	foreach my $key(keys %Lang::tr) {from_to($tr{$key}, "utf-8", "iso-8859-1");}
 }
 
 ###
@@ -602,46 +496,35 @@ my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 system("unlink /tmp/hddstatus && touch /tmp/hddstatus");
 print "\nFound following amount of disks:".@disks."\n";
 foreach (@disks){
-my $disk = $_;
-chomp $disk;
-print "Working on disk ".$disk.".\n";
+	my $disk = $_;
+	chomp $disk;
+	print "Working on disk ".$disk.".\n";
 
-my $status = "";
-my $diskstats = "";
-my $newdiskstats = "";
-my @array = split(/\//,$disk);
+	my $status = "";
+	my $diskstats = "";
+	my $newdiskstats = "";
+	my @array = split(/\//,$disk);
 
-$diskstats = `cat /tmp/hddstats-$array[$#array]`;
-chomp $diskstats;
-my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
-chomp $newdiskstats;
-my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
-chomp $status;
+	$diskstats = `cat /tmp/hddstats-$array[$#array]`;
+	chomp $diskstats;
+	my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+	chomp $newdiskstats;
+	my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
+	chomp $status;
 
-if ($status !~/standby/ || $diskstats ne $newdiskstats)
-{
-    if (-e "/tmp/hddshutdown-".$array[$#array]) 
-    {
-      system("unlink /tmp/hddshutdown-".$array[$#array]);
-    }
-}
+	if ($status !~/standby/ || $diskstats ne $newdiskstats){
+		if (-e "/tmp/hddshutdown-".$array[$#array]){system("unlink /tmp/hddshutdown-".$array[$#array]);}
+	}
 
-if (-e "/tmp/hddshutdown-".$array[$#array])  
-{
-    $status = " standby\n";
-}
-else
-{
-    $status = " active\n";
-}
+	if (-e "/tmp/hddshutdown-".$array[$#array]){$status = " standby\n";}
+	else{$status = " active\n";}
 
+	open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
+	print DATEI $disk."-".$status;
+	close(DATEI);
 
-open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
-print DATEI $disk."-".$status;
-close(DATEI);
-
-updatediskdata($disk);
-updatehdddata($disk);
+	updatediskdata($disk);
+	updatehdddata($disk);
 
 }
 
@@ -665,12 +548,8 @@ updatembmondata();
 ###
 @ipacsum = `/usr/sbin/ipacsum --exact -s 5m 2>/dev/null`;
 if (@ipacsum) {
-        updateifdata  ("GREEN");
-        updateifdata  ("RED");
-        if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ ) {
-                updateifdata  ("ORANGE");
-        }
-        if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ ) {
-                updateifdata  ("BLUE");
-        }
+	updateifdata  ("GREEN");
+	updateifdata  ("RED");
+	if ($settings{'CONFIG_TYPE'} =~ /^(2|4)$/ ) {updateifdata  ("ORANGE");}
+	if ($settings{'CONFIG_TYPE'} =~ /^(3|4)$/ ) {updateifdata  ("BLUE");}
 }
