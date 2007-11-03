@@ -19,6 +19,11 @@
 #                                                                             #
 ###############################################################################
 
+	### Clean up our environment
+	#
+	delete @ENV{qw(IFS CDPATH ENV BASH_ENV PATH)};
+	$< = $>;
+
 	require "/opt/pakfire/lib/functions.pl";
 	
 	my $interactive = 1;

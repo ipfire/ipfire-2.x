@@ -15,8 +15,19 @@
 # a space or a tab.
 ########################################################################
 
+### ACPI
+#
+ac
+battery
+button
+fan
+processor
+thermal
+video
+
+### parport
+#
 parport_pc
 lp
-button
 
 # End /etc/sysconfig/modules

@@ -143,7 +143,6 @@
 * libwww-perl-5.803
 * libxml2-2.6.26
 * libxslt-1.1.17
-* linux-2.6.16.55
 * linux-2.6.16.56
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
