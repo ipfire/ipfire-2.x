@@ -2,6 +2,7 @@ etc/aliases
 #etc/postfix
 #etc/postfix/LICENSE
 #etc/postfix/TLS_LICENSE
+etc/postfix/body_checks
 #etc/postfix/bounce.cf.default
 etc/postfix/header_checks
 etc/postfix/main.cf
