@@ -327,10 +327,9 @@ END
 ;
 			close(GUARDIAN);
 	  	system('/usr/local/bin/snortctrl restart >/dev/null');
-} else {
+}
 	 # INSTALLMD5 is not in the form, so not retrieved by getcgihash
 	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
-}
 
 if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 	$md5 = &getmd5;
