@@ -78,7 +78,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && echo "#define VSF_BUILD_SSL" >>builddefs.h
-	cd $(DIR_APP) && echo "#undef VSF_BUILD_PAM" >>builddefs.h
 	cd $(DIR_APP) && install -v -d -m 0755 /var/ftp/empty
 	cd $(DIR_APP) && install -v -d -m 0755 /home/ftp
 	chown vsftpd.vsftpd /home/ftp
@@ -87,5 +86,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -v -m 644 vsftpd.8 /usr/share/man/man8
 	cd $(DIR_APP) && install -v -m 644 vsftpd.conf.5 /usr/share/man/man5
 	cd $(DIR_APP) && install -v -m 644 $(DIR_SRC)/config/vsftpd/vsftpd.conf /etc
+	cd $(DIR_APP) && install -v -m 644 $(DIR_SRC)/config/vsftpd/vsftpd.user_list /etc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -52,7 +52,7 @@ if((${Lang::language} eq 'el') ||
 	(${Lang::language} eq 'zt')) {
 	eval `/bin/cat "${General::swroot}/langs/en.pl"`;
 } else {
-	use translated version for other languages
+	#use translated version for other languages
 	%tr=%Lang::tr;
 }
 

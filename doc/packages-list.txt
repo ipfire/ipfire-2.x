@@ -103,6 +103,8 @@
 * httpd-2.2.6
 * hwdata
 * iana-etc-2.10
+* icecast-2.3.1
+* icegenerator-0.5.5-pre2
 * inetutils-1.4.2
 * ipac-ng-1.31
 * ipaddr-1.2
@@ -166,6 +168,7 @@
 * module-init-tools-3.2.2
 * mpc-0.12.1
 * mpd-0.13.0
+* mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mpg123-0.59r
 * mtd-CVS-20070507
@@ -245,11 +248,13 @@
 * util-linux-2.12r
 * vim-7.0
 * vlan.1.9
+* vlc-0.8.6c
 * vsftpd-2.0.5
 * wget-1.10.2
 * whatmask-1.2
 * which-2.16
 * wireless_tools.28
 * xmbmon205
+* xvidcore-1.1.0
 * zaptel-1.4.4
 * zlib-1.2.3
