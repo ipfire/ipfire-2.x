@@ -192,6 +192,7 @@ case "${1}" in
 				if [ "$PPP_NIC" == "" ]; then
 					boot_mesg "No device for red interface given. Check netsetup or dialprofile!" ${FAILURE}
 					echo_failure
+					exit 0
 				fi
 				boot_mesg "Bringing up the PPPoE interface on $PPP_NIC ..."
 				ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev $PPP_NIC
@@ -381,8 +382,8 @@ case "${1}" in
 				fi
 			fi
 		fi
-		killall -w -s TERM /usr/sbin/pppd >/dev/null 2>&1
-		killall -w -s TERM br2684ctl >/dev/null 2>&1
+		killall -w -s KILL /usr/sbin/pppd >/dev/null 2>&1
+		killall -w -s KILL br2684ctl >/dev/null 2>&1
 		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 		;;
 		

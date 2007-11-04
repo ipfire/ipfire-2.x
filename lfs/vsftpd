@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && echo "#define VSF_BUILD_SSL" >>builddefs.h
+	cd $(DIR_APP) && echo "#undef VSF_BUILD_PAM" >>builddefs.h
 	cd $(DIR_APP) && install -v -d -m 0755 /var/ftp/empty
 	cd $(DIR_APP) && install -v -d -m 0755 /home/ftp
 	chown vsftpd.vsftpd /home/ftp

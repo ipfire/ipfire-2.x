@@ -22,7 +22,7 @@ export PATH="/bin:/usr/bin:/sbin:/usr/sbin"
 RELOADSIG="HUP"
 
 # Number of seconds between STOPSIG and FALLBACK when stopping processes
-KILLDELAY="5"
+KILLDELAY="10"
 
 ## Screen Dimensions
 # Find current screen size

@@ -37,9 +37,10 @@ mynetworks = 127.0.0.0/8
 #in_flow_delay = 1s
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
-#recipient_delimiter = +
+recipient_delimiter = +
 
 mailbox_transport = cyrus
+cyrus_destination_recipient_limit=1
 
 header_checks = regexp:/etc/postfix/header_checks
 #fast_flush_domains = $relay_domains
@@ -58,6 +59,8 @@ smtpd_sasl_local_domain = $myhostname
 broken_sasl_auth_clients = yes
 
 #smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+
+content_filter=amavis:[127.0.0.1]:10024
 
 smtpd_helo_required = yes
 mime_header_checks=pcre:/etc/postfix/body_checks
@@ -78,3 +81,4 @@ smtpd_recipient_restrictions =
             reject_rbl_client list.dsbl.org,
             reject_rbl_client sbl.spamhaus.org,
             permit
+            
