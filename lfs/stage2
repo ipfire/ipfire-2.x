@@ -82,6 +82,8 @@ $(TARGET) :
 	for i in $(DIR_SRC)/config/profile.d/*; do \
 	    [ -f $$i ] && cp $$i /etc/profile.d; \
 	done
+	chmod 755 /etc/bashrc
+	ln -svf ../bashrc /etc/profile.d/bashrc.sh
 
 	# Scripts
 	for i in `find $(DIR_SRC)/src/scripts -maxdepth 1 -type f`; do \
