@@ -34,4 +34,3 @@ usr/lib/openssh/ssh-keysign
 #usr/man/man8/sshd.8
 usr/sbin/sshd
 #usr/share/Ssh.bin
-var/ipfire/remote/enablessh
