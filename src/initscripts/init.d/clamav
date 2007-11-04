@@ -16,7 +16,7 @@ case "$1" in
 				[ -e "/usr/share/clamav/daily.cvd" ] && \
 					break
 			sleep 5
-			(( $COUNTER += 1 ))
+			COUNTER=$(($COUNTER + 1))
 		done
 		loadproc /usr/sbin/clamd
 		;;

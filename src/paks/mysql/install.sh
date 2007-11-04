@@ -37,7 +37,7 @@ while [ "$COUNTER" -lt "10" ]; do
 	[ -e "/var/run/mysql/mysql.sock" ] && break
 	echo "MySQL server is still not running. Waiting 5 seconds."
 	sleep 5
-	(( $COUNTER += 1 ))
+	COUNTER=$(($COUNTER + 1))
 done 
 
 [ -e "/var/run/mysql/mysql.sock" ] || (echo "MySQL still noch running... Exiting."; \
