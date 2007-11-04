@@ -202,7 +202,9 @@ int oktoleave(void)
 			return 0;
 		}
 	}
-	if (configtype == 0)
+	
+	strcpy(temp, ""); findkey(kv, "RED_TYPE", temp);
+	if ((configtype == 0) || (strcmp(temp, "STATIC") == 0))
 	{
 		strcpy(temp, ""); findkey(kv, "DNS1", temp);
 		if (!(strlen(temp)))

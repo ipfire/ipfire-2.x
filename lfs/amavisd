@@ -80,7 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -f amavisd /usr/bin
 	chown root.root /usr/bin/amavisd
 	chmod 755 /usr/bin/amavisd
-	cd $(DIR_APP) && cp amavisd.conf /etc
+	cp -fv $(DIR_SRC)/config/amavisd/amavisd.conf /etc
 	chown root.root /etc/amavisd.conf
 	chmod 644 /etc/amavisd.conf
 	-mkdir -p /var/amavis/{db,tmp} /var/virusmails

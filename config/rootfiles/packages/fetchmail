@@ -1,4 +1,5 @@
-#root/.fetchmailrc
+etc/init.d/fetchmail
+root/.fetchmailrc
 usr/bin/fetchmail
 #usr/bin/fetchmailconf
 #usr/lib/python2.4/site-packages/fetchmailconf.py

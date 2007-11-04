@@ -11,7 +11,7 @@
 #	This file can be distributed under either the GNU General Public License
 #	(version 2 or higher) or the 3-clause BSD License.
 #
-#	Daily snapshot on Sat 2007-09-29 01:05:01
+#	Daily snapshot on Sat 2007-11-03 02:05:01
 #
 
 # Vendors, devices and subsystems. Please keep sorted.
@@ -98,11 +98,11 @@
 	1703  ISDN Adapter (PCI Bus, DV, W)
 	1704  ISDN Adapter (PCI Bus, D, C)
 067b  Prolific Technology, Inc.
-	2303  PL-2303 USB-to-Serial Converter
 	3507  PL-3507 Hi-Speed USB & IEEE 1394 Combo to IDE Bridge Controller
 069d  Hughes Network Systems (HNS)
 0721  Sapphire, Inc.
 07ca  AVerMedia Technologies Inc.
+	a301  AVerTV 301
 	b808  AVerTV DVB-T Volar (USB 2.0)
 07e2  ELMEG Communication Systems GmbH
 0842  NPG, Personal Grand Technology
@@ -10365,9 +10365,13 @@
 15ab  Bluesteel Networks Inc
 15ac  North Atlantic Instruments
 15ad  VMware Inc
-	0405  [VMware SVGA II] PCI Display Adapter
-	0710  Virtual SVGA
-	0720  VMware High-Speed Virtual NIC [vmxnet]
+	0405  Abstract SVGA II Adapter
+	0710  Abstract SVGA Adapter
+	0720  Abstract Ethernet Controller
+	0740  Virtual Machine Communication Interface
+	0770  Abstract USB2 EHCI Controller
+	0801  Virtual Machine Interface
+		15ad 0800  Hypervisor ROM Interface
 15ae  Amersham Pharmacia Biotech
 15b0  Zoltrix International Ltd
 15b1  Source Technology Inc
@@ -11228,6 +11232,9 @@
 	0002  NXB-10GCX4 10 Gigabit Ethernet PCIe Adapter with CX4 copper interface
 	0003  NXB-4GCU Quad Gigabit Ethernet PCIe Adapter with 1000-BASE-T interface
 	0004  BladeCenter-H 10 Gigabit Ethernet High Speed Daughter Card
+	0005  NetXen Dual Port 10GbE Multifunction Adapter for c-Class
+	0024  XG Mgmt
+	0025  XG Mgmt
 4143  Digital Equipment Corp
 4144  Alpha Data
 	0044  ADM-XRCIIPro
@@ -11619,7 +11626,7 @@
 		1014 026a  PRO/1000 MT Network Connection
 		1028 002e  Optiplex GX260
 		1028 0134  PowerEdge 600SC
-		1028 0151  PRO/1000 MT Network Connection
+		1028 0151  Optiplex GX270
 		107b 8920  PRO/1000 MT Desktop Adapter
 		8086 001e  PRO/1000 MT Desktop Adapter
 		8086 002e  PRO/1000 MT Desktop Adapter
@@ -11628,11 +11635,13 @@
 	100f  82545EM Gigabit Ethernet Controller (Copper)
 		1014 0269  iSeries 1000/100/10 Ethernet Adapter
 		1014 028e  PRO/1000 MT Network Connection
+		15ad 0750  Abstract PRO/1000 MT Single Port Adapter
 		8086 1000  PRO/1000 MT Network Connection
 		8086 1001  PRO/1000 MT Server Adapter
 	1010  82546EB Gigabit Ethernet Controller (Copper)
 		0e11 00db  NC7170 Gigabit Server Adapter
 		1014 027c  PRO/1000 MT Dual Port Network Adapter
+		15ad 0760  Abstract PRO/1000 MT Dual Port Adapter
 		18fb 7872  RESlink-X
 		1fc1 0026  Niagara 2260 Bypass Card
 		4c53 1080  CT8 mainboard
@@ -11742,6 +11751,7 @@
 	104c  82562V 10/100 Network Connection
 	104d  82566MC Gigabit Network Connection
 	1050  82562EZ 10/100 Ethernet Controller
+		1028 019d  Dimension 3000
 		1462 728c  865PE Neo2 (MS-6728)
 		1462 758c  MS-6758 (875P Neo)
 		8086 3020  D865PERL mainboard
@@ -11791,7 +11801,9 @@
 		8086 1075  PRO/1000 CT Network Connection
 	1076  82541GI Gigabit Ethernet Controller
 		1028 0165  PowerEdge 750
+		1028 016d  PowerEdge 1850
 		1028 019a  PowerEdge SC1425
+		1028 106d  PowerEdge 1850
 		8086 0076  PRO/1000 MT Network Connection
 		8086 1076  PRO/1000 MT Network Connection
 		8086 1176  PRO/1000 MT Desktop Adapter
@@ -13151,6 +13163,7 @@
 		8086 544e  DeskTop Board D945GTP
 	27c4  82801GBM/GHM (ICH7 Family) SATA IDE Controller
 		1025 006c  9814 WKMI
+		17aa 200e  Thinkpad T60 model 2007
 	27c5  82801GBM/GHM (ICH7 Family) SATA AHCI Controller
 		103c 30a3  Compaq nw8440
 		17aa 200d  Thinkpad R60e model 0657
@@ -13209,6 +13222,7 @@
 		17aa 2010  ThinkPad T60/R60 series
 		17aa 3802  Lenovo 3000 C200 audio [Realtek ALC861VD]
 		8086 1112  DeskTop Board D945GTP
+		8086 27d8  Lenovo 3000 N100 Audio (Intel HDA)
 	27da  82801G (ICH7 Family) SMBus Controller
 		1025 006c  9814 WKMI
 		10f7 8338  Panasonic CF-Y5 laptop
@@ -13273,9 +13287,9 @@
 	2912  82801IH (ICH9DH) LPC Interface Controller
 	2914  82801IO (ICH9DO) LPC Interface Controller
 	2916  82801IR (ICH9R) LPC Interface Controller
-	2917  Mobile LPC Controller
+	2917  Mobile LPC Interface Controller
 	2918  82801IB (ICH9) LPC Interface Controller
-	2919  Mobile LPC Controller
+	2919  Mobile LPC Interface Controller
 	2920  82801IR/IO/IH (ICH9R/DO/DH) 4 port SATA IDE Controller
 	2921  82801IB (ICH9) 2 port SATA IDE Controller
 	2922  82801IR/IO/IH (ICH9R/DO/DH) 6 port SATA AHCI Controller
@@ -13361,13 +13375,13 @@
 	29d5  82Q33 Express MEI Controller
 	29d6  82Q33 Express PT IDER Controller
 	29d7  82Q33 Express Serial KT Controller
-	29e0  DRAM Controller
-	29e1  Host-Primary PCI Express Bridge
-	29e4  MEI Controller
-	29e5  MEI Controller
-	29e6  PT IDER Controller
-	29e7  Serial KT Controller
-	29e9  Host-Secondary PCI Express Bridge
+	29e0  82X38 Express DRAM Controller
+	29e1  82X38 Express Host-Primary PCI Express Bridge
+	29e4  82X38 Express MEI Controller
+	29e5  82X38 Express MEI Controller
+	29e6  82X38 Express PT IDER Controller
+	29e7  82X38 Express Serial KT Controller
+	29e9  82X38 Express Host-Secondary PCI Express Bridge
 	29f0  Server DRAM Controller
 	29f1  Server Host-Primary PCI Express Bridge
 	29f4  Server MEI Controller
@@ -13400,6 +13414,27 @@
 	2a51  Mobile MEI Controller
 	2a52  Mobile PT IDER Controller
 	2a53  Mobile AMT SOL Redirection
+	2c01  QuickPath Architecture System Address Decoder
+	2c10  QuickPath Interconnect Link 0
+	2c11  QuickPath Interconnect Physical 0
+	2c14  QuickPath Interconnect Link 1
+	2c18  QuickPath Memory Controller
+	2c19  QuickPath Memory Controller Target Address Decoder
+	2c1a  QuickPath Memory Controller RAS Registers
+	2c1c  QuickPath Memory Controller Test Registers
+	2c20  QuickPath Memory Controller Channel 0 Control Registers
+	2c21  QuickPath Memory Controller Channel 0 Address Registers
+	2c22  QuickPath Memory Controller Channel 0 Rank Registers
+	2c23  QuickPath Memory Controller Channel 0 Thermal Control Registers
+	2c28  QuickPath Memory Controller Channel 1 Control Registers
+	2c29  QuickPath Memory Controller Channel 1 Address Registers
+	2c2a  QuickPath Memory Controller Channel 1 Rank Registers
+	2c2b  QuickPath Memory Controller Channel 1 Thermal Control Registers
+	2c30  QuickPath Memory Controller Channel 2 Control Registers
+	2c31  QuickPath Memory Controller Channel 2 Address Registers
+	2c32  QuickPath Memory Controller Channel 2 Rank Registers
+	2c33  QuickPath Memory Controller Channel 2 Thermal Control Registers
+	2c40  QuickPath Architecture Generic Non-Core Registers
 	3200  GD31244 PCI-X SATA HBA
 		1775 c200  C2K onboard SATA host bus adapter
 	3313  IOP348 I/O Processor (SL8e) in IOC Mode SAS/SATA
@@ -13418,6 +13453,46 @@
 	3363  IOC340 I/O Controller in IOC Mode SAS/SATA
 	33c3  IOP348 I/O Processor (SL8De) in IOC Mode SAS/SATA
 	33cb  IOP348 I/O Processor (SL8Dx) in IOC Mode SAS/SATA
+	3400  QuickPath Architecture I/O Hub to ESI Port
+	3401  QuickPath Architecture I/O Hub to ESI Port
+	3402  QuickPath Architecture I/O Hub to ESI Port
+	3403  QuickPath Architecture I/O Hub to ESI Port
+	3404  QuickPath Architecture I/O Hub to ESI Port
+	3405  QuickPath Architecture I/O Hub to ESI Port
+	3406  QuickPath Architecture I/O Hub to ESI Port
+	3407  QuickPath Architecture I/O Hub to ESI Port
+	3408  QuickPath Architecture I/O Hub PCI Express Root Port 1
+	3409  QuickPath Architecture I/O Hub PCI Express Root Port 2
+	340a  QuickPath Architecture I/O Hub PCI Express Root Port 3
+	340b  QuickPath Architecture I/O Hub PCI Express Root Port 4
+	340c  QuickPath Architecture I/O Hub PCI Express Root Port 5
+	340d  QuickPath Architecture I/O Hub PCI Express Root Port 6
+	340e  QuickPath Architecture I/O Hub PCI Express Root Port 7
+	340f  QuickPath Architecture I/O Hub PCI Express Root Port 8
+	3410  QuickPath Architecture I/O Hub PCI Express Root Port 9
+	3411  QuickPath Architecture I/O Hub PCI Express Root Port 10
+	3418  Quickpath Interconnect Physical Layer Port 0
+	3419  Quickpath Interconnect Physical Layer Port 1
+	3420  QuickPath Architecture I/O Hub PCI Express Root Port 0
+	3421  QuickPath Architecture I/O Hub PCI Express Root Port 0
+	3422  QuickPath Architecture I/O Hub GPIO and Scratch Pad Registers
+	3423  QuickPath Architecture I/O Hub Control Status and RAS Registers
+	3425  QuickPath Interconnect Physical and Link Layer Registers – Port 0
+	3426  QuickPath Interconnect Routing and Protocol Layer Registers – Port 0
+	3427  QuickPath Interconnect Physical and Link Layer Registers - Port 1
+	3428  QuickPath Interconnect Routing & Protocol Layer Register –  Port 1
+	3429  DMA Engine
+	342a  DMA Engine
+	342b  DMA Engine
+	342c  DMA Engine
+	342d  QuickPath Architecture I/O Hub I/OxAPIC Interrupt Controller
+	342e  QuickPath Architecture I/O Hub System Management Registers
+	342f  Trusted Execution Technology Registers
+	3430  DMA Engine
+	3431  DMA Engine
+	3432  DMA Engine
+	3433  DMA Engine
+	3438  QuickPath Architecture I/O Hub Throttle Registers
 	3500  6311ESB/6321ESB PCI Express Upstream Port
 	3501  6310ESB PCI Express Upstream Port
 	3504  6311ESB/6321ESB I/OxAPIC Interrupt Controller
@@ -13542,8 +13617,6 @@
 	4000  Memory Controller Hub
 	4001  Memory Controller Hub
 	4003  Memory Controller Hub
-	4008  Memory Controller Hub
-	4010  Memory Controller Hub
 	4021  PCI Express Port 1
 	4022  PCI Express Port 2
 	4023  PCI Express Port 3
@@ -13557,6 +13630,7 @@
 	402e  IBIST Registers
 	402f  DMA/DCA Engine
 	4030  FSB Registers
+	4031  CE/SF Registers
 	4032  I/OxAPIC
 	4035  FBD Registers
 	4036  FBD Registers
@@ -13647,13 +13721,13 @@
 	7051  PB 642365-003 (Business Video Conferencing Card)
 	7100  430TX - 82439TX MTXC
 	7110  82371AB/EB/MB PIIX4 ISA
-		15ad 1976  virtualHW v3
+		15ad 1976  Virtual Machine Chipset
 	7111  82371AB/EB/MB PIIX4 IDE
-		15ad 1976  virtualHW v3
+		15ad 1976  Virtual Machine Chipset
 	7112  82371AB/EB/MB PIIX4 USB
-		15ad 1976  virtualHW v3
+		15ad 1976  Virtual Machine Chipset
 	7113  82371AB/EB/MB PIIX4 ACPI
-		15ad 1976  virtualHW v3
+		15ad 1976  Virtual Machine Chipset
 	7120  82810 GMCH (Graphics Memory Controller Hub)
 		4c53 1040  CL7 mainboard
 		4c53 1060  PC7 mainboard
@@ -13676,8 +13750,9 @@
 		0e11 0500  Armada 1750 Laptop System Chipset
 		0e11 b110  Armada M700/E500
 		1028 008e  PowerEdge 1300 mainboard
+		1043 803b  CUBX-L/E Mainboard
 		1179 0001  Toshiba Tecra 8100 Laptop System Chipset
-		15ad 1976  virtualHW v3
+		15ad 1976  Virtual Machine Chipset
 		4c53 1050  CT7 mainboard
 		4c53 1051  CE7 mainboard
 	7191  440BX/ZX/DX - 82443BX/ZX/DX AGP bridge
@@ -14263,7 +14338,7 @@ C 01  Mass storage controller
 	04  RAID bus controller
 	05  ATA controller
 		20  ADMA single stepping
-		40  ADMA continuous operation
+		30  ADMA continuous operation
 	06  SATA controller
 		00  Vendor specific
 		01  AHCI 1.0
@@ -14275,11 +14350,13 @@ C 02  Network controller
 	02  FDDI network controller
 	03  ATM network controller
 	04  ISDN controller
+	05  WorldFip controller
+	06  PICMG controller
 	80  Network controller
 C 03  Display controller
 	00  VGA compatible controller
-		00  VGA
-		01  8514
+		00  VGA controller
+		01  8514 controller
 	01  XGA compatible controller
 	02  3D controller
 	80  Display controller
@@ -14334,6 +14411,8 @@ C 07  Communication controller
 		02  Hayes/16550
 		03  Hayes/16650
 		04  Hayes/16750
+	04  GPIB controller
+	05  Smard Card controller
 	80  Communication controller
 C 08  Generic system peripheral
 	00  PIC
@@ -14354,6 +14433,7 @@ C 08  Generic system peripheral
 		00  Generic
 		01  ISA RTC
 	04  PCI Hot-plug controller
+	05  SD Host controller
 	80  System peripheral
 C 09  Input device controller
 	00  Keyboard controller
@@ -14390,16 +14470,23 @@ C 0c  Serial bus controller
 	04  Fibre Channel
 	05  SMBus
 	06  InfiniBand
+	07  IPMI SMIC interface
+	08  SERCOS interface
+	09  CANBUS
 C 0d  Wireless controller
 	00  IRDA controller
 	01  Consumer IR controller
 	10  RF controller
+	11  Bluetooth
+	12  Broadband
+	20  802.1a controller
+	21  802.1b controller
 	80  Wireless controller
 C 0e  Intelligent controller
 	00  I2O
 C 0f  Satellite communications controller
-	00  Satellite TV controller
-	01  Satellite audio communication controller
+	01  Satellite TV controller
+	02  Satellite audio communication controller
 	03  Satellite voice communication controller
 	04  Satellite data communication controller
 C 10  Encryption controller
@@ -14410,4 +14497,5 @@ C 11  Signal processing controller
 	00  DPIO module
 	01  Performance counters
 	10  Communication synchronizer
+	20  Signal processing management
 	80  Signal processing controller

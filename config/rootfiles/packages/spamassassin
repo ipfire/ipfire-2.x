@@ -11,7 +11,7 @@ usr/bin/spamassassin
 usr/bin/spamc
 usr/bin/spamd
 usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin
-#usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin.pm
+usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin.pm
 #usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin/ArchiveIterator.pm
 #usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin/AutoWhitelist.pm
 #usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin/Bayes
