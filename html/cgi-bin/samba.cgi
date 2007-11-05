@@ -84,6 +84,7 @@ $sambasettings{'VPN'} = 'off';
 $sambasettings{'WINSSRV'} = '';
 $sambasettings{'WINSSUPPORT'} = 'on';
 $sambasettings{'REMOTEANNOUNCE'} = '';
+$sambasettings{'REMOTESYNC'} = '';
 $sambasettings{'PASSWORDSYNC'} = 'off';
 $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
@@ -144,6 +145,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'WINSSRV'} = '';
 	$sambasettings{'WINSSUPPORT'} = 'on';
 	$sambasettings{'REMOTEANNOUNCE'} = '';
+	$sambasettings{'REMOTESYNC'} = '';
 	$sambasettings{'PASSWORDSYNC'} = 'off';
 	$sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
@@ -266,6 +268,7 @@ bind interfaces only = true
 interfaces = $sambasettings{'INTERFACES'}
 socket options = $sambasettings{'SOCKETOPTIONS'}
 remote announce = $sambasettings{'REMOTEANNOUNCE'}
+remote browse sync = $sambasettings{'REMOTESYNC'}
 
 username level = 1
 wins support = $sambasettings{'WINSSUPPORT'}
@@ -463,13 +466,17 @@ print <<END
 																						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>
 																						<option value='Bad Password' $selected{'MAPTOGUEST'}{'Bad Password'}>Bad Password</option>
 																						</select></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'unix password sync'}</td><td align='left'>on <input type='radio' name='PASSWORDSYNC' value='on' $checked{'PASSWORDSYNC'}{'on'} />/
-																										<input type='radio' name='PASSWORDSYNC' value='off' $checked{'PASSWORDSYNC'}{'off'} /> off</td></tr>
+END
+;
+#<tr><td align='left' width='40%'>$Lang::tr{'unix password sync'}</td><td align='left'>on <input type='radio' name='PASSWORDSYNC' value='on' $checked{'PASSWORDSYNC'}{'on'} />/
+#																										<input type='radio' name='PASSWORDSYNC' value='off' $checked{'PASSWORDSYNC'}{'off'} /> off</td></tr>
+print <<END
 <tr><td align='left'><br /></td><td /></tr>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'os level'}</td><td align='left'><input type='text' name='OSLEVEL' value='$sambasettings{'OSLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'socket options'}</td><td align='left'><input type='text' name='SOCKETOPTIONS' value='$sambasettings{'SOCKETOPTIONS'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td><td align='left'><input type='text' name='REMOTESYNC='$sambasettings{'REMOTESYNC'}' size="30" /></td></tr>
 END
 ;
 if ($sambasettings{'WINSSUPPORT'} eq 'off') {print"<tr><td align='left' width='40%'>$Lang::tr{'wins server'}</td><td align='left'><input type='text' name='WINSSRV' value='$sambasettings{'WINSSRV'}' size='30' /></td></tr>";}

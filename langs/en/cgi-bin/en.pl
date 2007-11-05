@@ -1355,6 +1355,7 @@
 'remark title' => 'Remark:',
 'remote access' => 'Remote access',
 'remote announce' => 'Remote Announce',
+'remote browse sync' => 'Remote Browse Sync',
 'remote host/ip' => 'Remote Host/IP',
 'remote logging' => 'Remote logging',
 'remote subnet' => 'Remote subnet:',

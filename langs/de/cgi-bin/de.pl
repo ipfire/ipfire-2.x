@@ -1326,6 +1326,7 @@
 'remark title' => 'Anmerkung:',
 'remote access' => 'Fernwartung',
 'remote announce' => 'Remote Announce',
+'remote browse sync' => 'Remote Browse Sync',
 'remote host/ip' => 'Remote Host/IP',
 'remote logging' => 'Remote logging',
 'remote subnet' => 'Remote Subnetz:',
