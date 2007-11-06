@@ -38,10 +38,10 @@ my $count = 0;
 use Encode 'from_to';
 
 my %tr=();
-if ((${Lang::language} eq 'el') || 
+if ((${Lang::language} eq 'el') ||
     (${Lang::language} eq 'fa') ||
     (${Lang::language} eq 'ru') ||
-    (${Lang::language} eq 'th') || 
+    (${Lang::language} eq 'th') ||
     (${Lang::language} eq 'vi') ||
     (${Lang::language} eq 'zh') ||
     (${Lang::language} eq 'zt')) {
@@ -232,7 +232,7 @@ sub updatediskgraph {
         "DEF:write=$rrdlog/disk-$disk.rrd:writesect:AVERAGE",
         "DEF:standby=$rrdlog/hddshutdown-$disk.rrd:standby:AVERAGE",
         "CDEF:st=standby,INF,*",
-        "AREA:st".$color{"color19"}.":standby\\j",
+        "AREA:st".$color{"color20"}.":standby\\j",
         "AREA:read".$color{"color11"}.":$Lang::tr{'sectors read from disk per second'}",
         "STACK:write".$color{"color12"}.":$Lang::tr{'sectors written to disk per second'}\\j",
         "COMMENT: \\j",
@@ -319,7 +319,7 @@ sub updatelqgraph {
   "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
   "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r",
   "-t $Lang::tr{'linkq'} ($Lang::tr{'graph per'} $Lang::tr{$period})",
-  "--lazy", 
+  "--lazy",
   "--color", "SHADEA".$color{"color19"},
   "--color", "SHADEB".$color{"color19"},
   "--color", "BACK".$color{"color21"},
@@ -372,7 +372,7 @@ sub updatehddgraph {
   "DEF:temperature=$rrdlog/hddtemp-$disk.rrd:temperature:AVERAGE",
   "DEF:standby=$rrdlog/hddshutdown-$disk.rrd:standby:AVERAGE",
   "CDEF:st=standby,INF,*",
-  "AREA:st".$color{"color19"}.":standby\\j",
+  "AREA:st".$color{"color20"}.":standby",
   "LINE2:temperature".$color{"color11"}.":$Lang::tr{'hdd temperature in'} C\\j",
   "COMMENT:$Lang::tr{'maximal'}",
   "COMMENT:$Lang::tr{'average'}",
@@ -383,7 +383,7 @@ sub updatehddgraph {
   "GPRINT:temperature:MIN:%3.0lf Grad C",
   "GPRINT:temperature:LAST:%3.0lf Grad C\\j",
   );
-  $ERROR = RRDs::error; 
+  $ERROR = RRDs::error;
   print "Error in RRD::graph for hdd-$disk: $ERROR\n" if $ERROR;
 }
 
@@ -392,7 +392,7 @@ sub updatetempgraph
   my $type   = "temp";
   my $period = $_[0];
   my $count = "11";
-  
+
   @args = ("$graphs/mbmon-$type-$period.png",
     "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
     "--alt-y-grid", "-w 600", "-h 100", "--alt-autoscale",
@@ -405,8 +405,8 @@ sub updatetempgraph
     "COMMENT:$Lang::tr{'average'}",
     "COMMENT:$Lang::tr{'minimal'}",
     "COMMENT:$Lang::tr{'current'}\\j",);
-    
-  foreach $key ( sort(keys %mbmon_values) ) 
+
+  foreach $key ( sort(keys %mbmon_values) )
   {
     if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
     {
@@ -423,8 +423,8 @@ sub updatetempgraph
     $count++;
    }
   }
-   
-  RRDs::graph ( @args );    
+
+  RRDs::graph ( @args );
     $ERROR = RRDs::error;
     print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
 }
@@ -447,7 +447,7 @@ sub updatefangraph
     "COMMENT:$Lang::tr{'minimal'}",
     "COMMENT:$Lang::tr{'current'}\\j",);
 
-  foreach $key ( sort(keys %mbmon_values) ) 
+  foreach $key ( sort(keys %mbmon_values) )
   {
     if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
     {
@@ -488,7 +488,7 @@ sub updatevoltgraph
     "COMMENT:$Lang::tr{'minimal'}",
     "COMMENT:$Lang::tr{'current'}\\j",);
 
-  foreach $key ( sort(keys %mbmon_values) ) 
+  foreach $key ( sort(keys %mbmon_values) )
   {
     my $v = substr($key,0,1);
     if ( ($v eq 'v') && ($mbmon_settings{'LINE-'.$key} eq 'on') )
@@ -524,17 +524,17 @@ sub overviewgraph {
   my @classes = ();
   my @classline = ();
   my $classfile = "/var/ipfire/qos/classes";
-  
+
 	$qossettings{'DEV'} = $_[1];
-	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) { 
+	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) {
 		$qossettings{'CLASSPRFX'} = '1';
-	} else { 
+	} else {
 		$qossettings{'CLASSPRFX'} = '2';
 	}
-	
+
   if ( $period ne '3240' ){ $periodstring = "-1$period";}else{ $periodstring = "-".$period;}
   if ( $period ne '3240' ){ $description = "-t $Lang::tr{'Utilization on'} ($qossettings{'DEV'}) ($Lang::tr{'graph per'} $Lang::tr{$period})";}else{ $description = "-t $Lang::tr{'Utilization on'} ($qossettings{'DEV'})";}
-	
+
 	my $ERROR="";
 	my $count="1";
 	my $color="#000000";
