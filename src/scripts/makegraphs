@@ -41,7 +41,7 @@ my %tr=();
 system("chmod 777 /srv/web/ipfire/html/graphs");
 
 # Force language back to English (ugly hack!)
-# Modified to only force if we are unable to convert charset 
+# Modified to only force if we are unable to convert charset
 # from utf-8
 if((${Lang::language} eq 'el') ||
 	(${Lang::language} eq 'fa') ||
@@ -80,7 +80,7 @@ my %mainsettings = ();
 open(MBMON_OUT, ">/var/log/mbmon-values");
 open(FD, "/usr/bin/mbmon -rc1|" ) || die "ERROR: Cannot run mbmon\n" ;
 
-while( $_ = <FD> ) 
+while( $_ = <FD> )
 {
 	next unless( /^([A-Za-z][^:\s]+)\s*:\s*([+\-]{0,1}[\d\.]+)/ ) ;
 	$key = $1 ;
@@ -344,9 +344,9 @@ sub updatelq {
 	RRDs::update ("$rrdlog/lq.rrd", "N:$packetloss:$roundtrip");
 	$ERROR = RRDs::error;
 	print "Error in RRD::update for line quality: $ERROR\n" if $ERROR;
-} 
+}
 
-sub updatehdddata 
+sub updatehdddata
 {
 	my $disk = $_[0];
 	my $standby;
@@ -389,27 +389,13 @@ sub updatehdddata
 		my $hdd_output = '';
 		my $smart_output = '';
 		if ( -e "$path_smartctl" ){system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");}
-		if ( -e "$path_hddtemp" ){
-			$hdd_output = `$path_hddtemp -qn /dev/$disk`;
-			# I know 4 response possible responses:
-			#
-			# /dev/harddisk: harddisk type: S.M.A.R.T. not available
-			# /dev/harddisk: harddisk type: no sensor
-			# /dev/harddisk: harddisk type: 37?C or ?F
-			# 37
-
-			if ( index($hdd_output, "S.M.A.R.T.") != -1 ){$temp = 0;}
-			elsif ( index($hdd_output, "no sensor") != -1 ){$temp = 1;}
-			elsif ( index($hdd_output, "$disk") != -1 ){my @temp = split(/:/,$hdd_output);$temp[2] =~ s/\D//gi;$temp = $temp[2];}
-			else{$hdd_output =~ /(\d+)\s/;$temp = $1;}
-		}
-    elsif ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] ){
-		$hdd_output = `cat /var/log/smartctl_out_hddtemp-".$array[$#array]." | grep Temperature_`;
+		if ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] ){
+		$hdd_output = `cat /var/log/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
 		my @t = split(/\s+/,$hdd_output);
 		$temp = $t[9];
 		}else{$temp = 0;}
-
 		print "Temperature for ".$array[$#array]."->".$temp."<-\n";
+		system("echo \"Temperature for $array[$#array] -> $temp <-\n\" >>/tmp/debug");
 		# Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
 		if ($temp){
 			RRDs::update ("$rrdlog/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
@@ -419,7 +405,7 @@ sub updatehdddata
 	}
 }
 
-sub updatembmondata 
+sub updatembmondata
 {
 	if ( ! -e "$rrdlog/mbmon.rrd" ){
 		# database did not exist -> create
