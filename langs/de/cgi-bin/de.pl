@@ -599,6 +599,7 @@
 'dial user password' => 'Passwort für Benutzer &quot;dial&quot;:',
 'dial user password has been changed' => 'Passwort für Benutzer -dial- wurde geändert.',
 'dialing mode' => 'Wählmodus:',
+'dialup red not ppp' => 'Einwahl Profile können nur verwendet werden wenn <b>RED</b> auf <b>PPP Einwahl</b> eingestellt ist. <BR>Bitte die Netzwerkeinstellungen prüfen.',
 'dialup settings' => 'Einwahl-Einstellungen',
 'directory mask' => 'UNIX Verzeichnis Rechte',
 'directory writeable' => 'Verzeichnis schreibbar',

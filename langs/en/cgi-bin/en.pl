@@ -622,6 +622,7 @@
 'dial user password' => 'Dial user password:',
 'dial user password has been changed' => 'Dial user password has been changed.',
 'dialing mode' => 'Dialing mode:',
+'dialup red not ppp' => 'Dialup profiles can only used if <b>RED</b> is set to <b>PPP Dialup</b><BR>Check the networking setup.',
 'dialup settings' => 'Dialup Settings',
 'directory mask' => 'UNIX directory rights',
 'directory writeable' => 'directory writeable',

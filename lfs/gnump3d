@@ -77,9 +77,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-remove_badbannerlink.patch
 	cd $(DIR_APP) && make install
 	-mkdir /var/mp3
 	chown nobody.nobody /var/mp3
 	install -m 644 $(DIR_SRC)/config/gnump3d/gnump3d.conf /etc/gnump3d/
+	-mkdir /var/mp3
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

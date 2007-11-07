@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .56
-VER        = 2.6.16.56
+PATCHLEVEL = .57
+VER        = 2.6.16.57
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -64,7 +64,7 @@ squashfs3.2-r2.tar.gz							= $(URL_IPFIRE)/squashfs3.2-r2.tar.gz
 mISDN-1_1_5.tar.gz                = $(URL_IPFIRE)/mISDN-1_1_5.tar.gz
 openswan-2.4.9.tar.gz							= $(URL_IPFIRE)/openswan-2.4.9.tar.gz
 
-$(DL_FILE)_MD5										= 2733ea1e0f924402da4f6903cc38bae9
+$(DL_FILE)_MD5										= d6f37a2967be44ab2696eef3132d4b0a
 patch-o-matic-ng-20061210.tar.bz2_MD5	= 76edac76301b45f89e467b41c8cf4393
 iptables-1.3.5.tar.bz2_MD5				= 00fb916fa8040ca992a5ace56d905ea5
 netfilter-layer7-v2.9.tar.gz_MD5	= ebf9043a5352ebe6dbd721989ef83dee

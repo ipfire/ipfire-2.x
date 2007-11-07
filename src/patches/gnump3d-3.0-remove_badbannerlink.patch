@@ -1,0 +1,11 @@
+--- gnump3d-3.0/bin/org/gnump3d2	2007-11-05 00:00:34.000000000 +0100
++++ gnump3d-3.0/bin/gnump3d2	2007-11-07 15:23:21.000000000 +0100
+@@ -2805,7 +2805,7 @@
+ 	}
+     }
+ 
+-    if ( $dir ne '/prefs/' ) {
++    if ( ($dir ne '/prefs/')&&($dir ne '/tagbrowse/')&&($dir ne '/playlist/')&&($dir ne '/random/')&&($dir ne '/stats/') ) {
+         #
+         # Interpolate links - chopping out trailing '/' if necessary.
+         #

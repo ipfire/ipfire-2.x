@@ -421,8 +421,9 @@ $checked{'DNS'}{$pppsettings{'DNS'}} = "checked='checked'";
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ($netsettings{'RED_TYPE'} ne 'PPPOE') {
+	$errormessage = $Lang::tr{'dialup red not ppp'};
 	&Header::openbox('100%', 'center', $Lang::tr{'error messages'});
-        print "<CLASS name='base'>Einwahl nur funktioniert nur mit RED=PPPOE im Netzwerksetup";
+        print "<CLASS name='base'>$errormessage\n";
         print "&nbsp;</CLASS>\n";
         &Header::closebox();
 	&Header::closebigbox();
