@@ -53,7 +53,7 @@ print <<END
 </body>
 END
 ;
-} 
+}
 else{
 &Header::showhttpheaders();
 
@@ -108,6 +108,8 @@ foreach (@songdb){
 
 if ( $mpfiresettings{'ACTION'} eq "scan" )
 {
+&General::readhash("${General::swroot}/mpfire/settings", \%mpfiresettings);
+&Header::getcgihash(\%mpfiresettings);
 delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};
 &General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 open(DATEI, "<${General::swroot}/mpfire/mpd.conf") || die "Datei nicht gefunden";
@@ -144,7 +146,7 @@ foreach (keys(%songs)){
 	}
 open(DATEI, ">${General::swroot}/mpfire/playlist.m3u") || die "Could not add playlist";
 print DATEI @temp;
-close(DATEI);  
+close(DATEI);
 
 $message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
 }
@@ -208,7 +210,7 @@ my @temp = ""; my @song = ""; my @select = split(/\|/,$mpfiresettings{'genre'});
 
 foreach (keys(%songs)){
   @song = split(/\|/,$songs{$_});$song[7] =~ s/\W/ /g;
-    
+
   foreach (@select){
     $_ =~ s/\W/ /g;
     if ( $song[7] =~ /$_/ ){push(@temp,$song[0]);}
@@ -220,13 +222,20 @@ print DATEI @temp;
 close(DATEI);
 $message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
 }
-elsif ( $mpfiresettings{'SHOWLIST'} ){delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};delete $mpfiresettings{'PAGE'};&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);refreshpage();}
+elsif ( $mpfiresettings{'SHOWLIST'} ){
+	&General::readhash("${General::swroot}/mpfire/settings", \%mpfiresettings);
+	&Header::getcgihash(\%mpfiresettings);
+	delete $mpfiresettings{'__CGI__'};
+	delete $mpfiresettings{'x'};
+	delete $mpfiresettings{'y'};
+	delete $mpfiresettings{'PAGE'};
+	&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);refreshpage();
+}
 
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ####################################
 
 $mpfiresettings{'MUSICDIR'} = "/";
-
 &General::readhash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 
 ############################################################################################################################
@@ -243,7 +252,7 @@ print <<END
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'Scan for Files'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'Scan from Directory'}</td><td align='left'><input type='text' name='MUSICDIR' value='$mpfiresettings{'MUSICDIR'}' size="50" /></td></tr>
 <tr><td align='center' colspan='2'><input type='hidden' name='ACTION' value='scan' />
-																		<input type='image' alt='$Lang::tr{'Scan for Files'}' title='$Lang::tr{'Scan for Files'}' src='/images/edit-find.png' /></td></tr>																				
+																		<input type='image' alt='$Lang::tr{'Scan for Files'}' title='$Lang::tr{'Scan for Files'}' src='/images/edit-find.png' /></td></tr>
 </table>
 </form>
 END
@@ -274,8 +283,8 @@ print <<END
 END
 ;
 if ( $mpfiresettings{'SHOWLIST'} eq "on" ){print"<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='SHOWLIST' value='off' /><input type='image' alt='$Lang::tr{'off'}' title='$Lang::tr{'off'}' src='/images/audio-x-generic.png' /></form></td>";}
-else { print"<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='SHOWLIST' value='on' /><input type='image' alt='$Lang::tr{'on'}' title='$Lang::tr{'on'}' src='/images/audio-x-generic-red.png' /></form></td>";}    
-print <<END  
+else { print"<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='SHOWLIST' value='on' /><input type='image' alt='$Lang::tr{'on'}' title='$Lang::tr{'on'}' src='/images/audio-x-generic-red.png' /></form></td>";}
+print <<END
 	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='--' /><input type='image' alt='$Lang::tr{'voldown10'}' title='$Lang::tr{'voldown10'}' src='/images/audio-volume-low-red.png' /></form></td>
 	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='-' /><input type='image' alt='$Lang::tr{'voldown5'}' title='$Lang::tr{'voldown5'}' src='/images/audio-volume-low.png' /></form></td>
 	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='+' /><input type='image' alt='$Lang::tr{'volup5'}' title='$Lang::tr{'volup5'}' src='/images/audio-volume-high.png' /></form></td>
@@ -384,13 +393,13 @@ else{
 	$begin=(($mpfiresettings{'PAGE'}-1) * 100);
 	$end=(($mpfiresettings{'PAGE'} * 100)-1);
 }
-foreach (keys(%songs)){
+foreach (sort(keys(%songs))){
 	if (!($i >= $begin && $i <= $end)){
 # print $begin."->".$i."<-".$end."\n";
 	$i++;next;}
 	my @song = split(/\|/,$songs{$_});
 	my $minutes = sprintf ("%.0f", $song[1] / 60 );
-	my $seconds = $song[1] % 60;
+	my $seconds = sprintf("%02d", ($song[1] % 60) );
 
 	if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
 	print <<END

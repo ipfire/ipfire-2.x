@@ -476,7 +476,7 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'os level'}</td><td align='left'><input type='text' name='OSLEVEL' value='$sambasettings{'OSLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'socket options'}</td><td align='left'><input type='text' name='SOCKETOPTIONS' value='$sambasettings{'SOCKETOPTIONS'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td><td align='left'><input type='text' name='REMOTESYNC='$sambasettings{'REMOTESYNC'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td><td align='left'><input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" /></td></tr>
 END
 ;
 if ($sambasettings{'WINSSUPPORT'} eq 'off') {print"<tr><td align='left' width='40%'>$Lang::tr{'wins server'}</td><td align='left'><input type='text' name='WINSSRV' value='$sambasettings{'WINSSRV'}' size='30' /></td></tr>";}

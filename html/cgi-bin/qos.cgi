@@ -243,15 +243,15 @@ END
 if ($qossettings{'DOLEVEL7'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'QIP'}) ) { 
+		unless ( &General::validip($qossettings{'QIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Quell-IP-Adresse ist ungueltig."; 
+			$message = "Die Quell-IP-Adresse ist ungueltig.";
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'DIP'}) ) { 
+		unless ( &General::validip($qossettings{'DIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Ziel-IP-Adresse ist ungueltig."; 
+			$message = "Die Ziel-IP-Adresse ist ungueltig.";
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -318,15 +318,15 @@ END
 if ($qossettings{'DOPORT'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'QIP'}) ) { 
+		unless ( &General::validip($qossettings{'QIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Quell-IP-Adresse ist ungueltig."; 
+			$message = "Die Quell-IP-Adresse ist ungueltig.";
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'DIP'}) ) { 
+		unless ( &General::validip($qossettings{'DIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Ziel-IP-Adresse ist ungueltig."; 
+			$message = "Die Ziel-IP-Adresse ist ungueltig.";
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -405,7 +405,7 @@ $qossettings{'CLASS'};$qossettings{'DEVICE'};$qossettings{'TOS'};
 END
 ;
 	close FILE;
-} 
+}
 elsif ($qossettings{'DOTOS'} eq 'Loeschen')
 {
 	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
@@ -508,28 +508,28 @@ imq0;203;4;$DOWN[20];$DOWN[1];;;0;VPN;
 imq0;204;5;$DOWN[20];$DOWN[1];;;8;Webtraffic;
 imq0;210;6;1;$DOWN[1];;;0;Standardklasse;
 imq0;220;7;1;$DOWN[1];;;1;P2P;
-ppp0;101;1;$UP[2];$UP[1];;;8;ACKs oder so;
-ppp0;102;2;$UP[3];$UP[1];;;8;VoIP;
-ppp0;104;5;$UP[10];$UP[1];;;8;Webtraffic;
-ppp0;110;6;1;$UP[1];;;0;Standardklasse;
-ppp0;120;7;1;$UP[1];;;1;P2P;
-ppp0;103;4;$UP[2];$UP[1];;;2;VPN;
+$qossettings{'RED_DEV'};101;1;$UP[2];$UP[1];;;8;ACKs oder so;
+$qossettings{'RED_DEV'};102;2;$UP[3];$UP[1];;;8;VoIP;
+$qossettings{'RED_DEV'};104;5;$UP[10];$UP[1];;;8;Webtraffic;
+$qossettings{'RED_DEV'};110;6;1;$UP[1];;;0;Standardklasse;
+$qossettings{'RED_DEV'};120;7;1;$UP[1];;;1;P2P;
+$qossettings{'RED_DEV'};103;4;$UP[2];$UP[1];;;2;VPN;
 END
 ;
 	close FILE;
 	open( FILE, "> $level7file" ) or die "Unable to write $level7file";
 	print FILE <<END
-102;ppp0;dns;;;
-102;ppp0;sip;;;
-102;ppp0;skypetoskype;;;
-103;ppp0;ssh;;;
-103;ppp0;rdp;;;
-104;ppp0;http;;;
-104;ppp0;ssl;;;
-104;ppp0;pop3;;;
-110;ppp0;ftp;;;
-120;ppp0;applejuice;;;
-120;ppp0;bittorrent;;;
+102;$qossettings{'RED_DEV'};dns;;;
+102;$qossettings{'RED_DEV'};sip;;;
+102;$qossettings{'RED_DEV'};skypetoskype;;;
+103;$qossettings{'RED_DEV'};ssh;;;
+103;$qossettings{'RED_DEV'};rdp;;;
+104;$qossettings{'RED_DEV'};http;;;
+104;$qossettings{'RED_DEV'};ssl;;;
+104;$qossettings{'RED_DEV'};pop3;;;
+110;$qossettings{'RED_DEV'};ftp;;;
+120;$qossettings{'RED_DEV'};applejuice;;;
+120;$qossettings{'RED_DEV'};bittorrent;;;
 200;imq0;skypetoskype;;;
 203;imq0;ssh;;;
 203;imq0;rdp;;;
@@ -544,14 +544,14 @@ END
 	close FILE;
 	open( FILE, "> $portfile" ) or die "Unable to write $portfile";
 	print FILE <<END
-101;ppp0;icmp;;;;;
-102;ppp0;tcp;;;;53;
-102;ppp0;udp;;;;53;
-103;ppp0;esp;;;;;
-103;ppp0;tcp;;;;1194;
-103;ppp0;udp;;4500;;4500;
-103;ppp0;udp;;500;;500;
-104;ppp0;tcp;;;;80;
+101;$qossettings{'RED_DEV'};icmp;;;;;
+102;$qossettings{'RED_DEV'};tcp;;;;53;
+102;$qossettings{'RED_DEV'};udp;;;;53;
+103;$qossettings{'RED_DEV'};esp;;;;;
+103;$qossettings{'RED_DEV'};tcp;;;;1194;
+103;$qossettings{'RED_DEV'};udp;;4500;;4500;
+103;$qossettings{'RED_DEV'};udp;;500;;500;
+104;$qossettings{'RED_DEV'};tcp;;;;80;
 200;imq0;icmp;;;;;
 203;imq0;esp;;;;;
 203;imq0;tcp;;;;1194;
@@ -571,7 +571,7 @@ END
 	$qossettings{'DEFCLASS_OUT'} = "110";
 	$qossettings{'ACK'} ="101";
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
-	
+
 }
 elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
 {
@@ -699,8 +699,8 @@ END
 		<tr><td width='50%' align='left'><b>Quality of Service:</b>
 		    <td width='50%' align='center' bgcolor='$statuscolor'><font color='white'>$status</font>
 		<tr><td width='100%' align='center' colspan='2'>
-		<input type='submit' name='ACTION' value="Start" /> 
-		<input type='submit' name='ACTION' value="Stop" /> 
+		<input type='submit' name='ACTION' value="Start" />
+		<input type='submit' name='ACTION' value="Stop" />
 		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" /></table></form>
 END
 ;
@@ -721,7 +721,7 @@ END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td colspan='3'><hr />
-		<tr><td width='50%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_INC'}	
+		<tr><td width='50%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_INC'}
 		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern' />
 		<tr><td width='50%' align='right'>$Lang::tr{'uplink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='50%' align='right'>ACKs:				<td width='30%' align='left'>$qossettings{'ACK'}
@@ -770,7 +770,7 @@ if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}-3240.png
 		<tr><td colspan='9' align='center'><a href='/cgi-bin/qosgraph.cgi?graph=$qossettings{'IMQ_DEV'}'><img alt="" src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}-3240.png" border='0' /></a></td></tr>
 END
 ;}
-else 
+else
 {
 print "\t</table><br />".$Lang::tr{'no information available'};
 }
@@ -799,7 +799,7 @@ END
 		for ( $c = 200 ; $c <= 220 ; $c++ )
 		{
 			if ( $qossettings{'DEFCLASS_INC'} ne $c )
-			{ print "<option value='$c'>$c</option>\n"; } 
+			{ print "<option value='$c'>$c</option>\n"; }
 			else	{ print "<option selected value='$c'>$c</option>\n"; }
 		}
 		print <<END
@@ -872,7 +872,7 @@ END
 	if ( $message ne "" ) {
 		print "<tr><td colspan='3' align='center'>$message";
 	}
-	if ( $qossettings{'EDIT'} eq 'yes' ) { 
+	if ( $qossettings{'EDIT'} eq 'yes' ) {
 		print "<input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' />";
 		print "<input type='hidden' name='DEVICE' value='$qossettings{'DEVICE'}' />";
 	}
@@ -882,7 +882,7 @@ END
 		    <td width='33%' align='left'>
 END
 ;
-		if ( $qossettings{'EDIT'} eq 'yes' ) { 
+		if ( $qossettings{'EDIT'} eq 'yes' ) {
 			print "<select name='DEVICE' disabled>";
 		} else {
 			print "<select name='DEVICE'>";
@@ -899,7 +899,7 @@ END
 		<tr><td width='33%' align='right'>$Lang::tr{'Class'}:<td width='33%' align='left'>
 END
 ;
-		if ( $qossettings{'EDIT'} eq 'yes' ) { 
+		if ( $qossettings{'EDIT'} eq 'yes' ) {
 			print "<select name='CLASS' disabled>";
 		} else {
 			print "<select name='CLASS'>";
@@ -1067,7 +1067,7 @@ END
 			next if -d "/etc/l7-protocols/protocols/$direntry";
 			@proto = split( /\./, $direntry );
 			if ( $proto[0] eq $qossettings{'L7PROT'} ) {
-				print "<option value='$proto[0]' selected>$proto[0]</option>\n";			
+				print "<option value='$proto[0]' selected>$proto[0]</option>\n";
 			} else {
 				print "<option value='$proto[0]'>$proto[0]</option>\n";
 			}
@@ -1105,7 +1105,7 @@ END
 				@tmpline = split( /\ /, $direntry );
 				next if $tmpline[0] =~ "#";
 				if ( $tmpline[0] eq $qossettings{'PPROT'} ) {
-					print "<option value='$tmpline[0]' selected>$tmpline[0]</option>\n";			
+					print "<option value='$tmpline[0]' selected>$tmpline[0]</option>\n";
 				} else {
 					print "<option value='$tmpline[0]'>$tmpline[0]</option>\n";
 				}

@@ -1520,7 +1520,7 @@
 'system status information' => 'System-Statusinformationen',
 'telephone not set' => 'Telefonnummer nicht angegeben.',
 'template' => 'Vorlage',
-'template warning' => 'Zur Einrichtugn von QoS stehen Ihnen 2 Möglichkeiten zur Auswahl. Erstens Sie wählen speichern und erstellen Classen und Regeln nach Ihren Wünschen, oder Sie wählen Vorlage, dann werden die Klassen und Regeln durch ein Template generiert.',
+'template warning' => 'Zur Einrichtung von QoS stehen Ihnen 2 Möglichkeiten zur Auswahl. Erstens Sie wählen speichern und erstellen Klassen und Regeln nach Ihren Wünschen, oder Sie wählen Vorlage, dann werden die Klassen und Regeln durch ein Template generiert.',
 'test' => 'test',
 'test email could not be sent' => 'Könnte Testemail nicht senden',
 'test email was sent' => 'Testemail wurde erfolgreich versand',
