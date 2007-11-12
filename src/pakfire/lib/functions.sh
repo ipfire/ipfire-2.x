@@ -31,7 +31,7 @@ extract_files() {
 remove_files() {
 	echo "Removing files..."
 	for i in $(cat /opt/pakfire/tmp/ROOTFILES); do
-		rm -rfv ${i}
+	rm -rfv /${i}
 	done
 	echo "...Finished."
 }
@@ -75,10 +75,10 @@ start_service() {
 				;;
 			*)
 				break
-				;;			
+				;;
 		esac
 	done
-		
+
 	if [ -e "/etc/init.d/${1}" ]; then
 	    if [ -n "${BACKGROUND}" ]; then
 				(sleep ${DELAY} && /etc/init.d/${1} start) &
