@@ -1,3 +1,4 @@
 var/ipfire/langs
 srv/web/ipfire/cgi-bin/qos.cgi
+srv/web/ipfire/cgi-bin/pakfire.cgi
 opt/pakfire/lib/functions.sh

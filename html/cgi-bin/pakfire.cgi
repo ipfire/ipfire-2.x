@@ -65,9 +65,10 @@ if ($pakfiresettings{'ACTION'} eq 'install'){
   	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'INSPAKS'}`;
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$pakfiresettings{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
-		<pre>		
+		<pre>
 END
 		foreach (@output) {
+		  $_ =~ s/\\[[0-1]\;[0-9]+m//g;
 			print "$_\n";
 		}
 		print <<END;
@@ -104,9 +105,10 @@ END
   	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'DELPAKS'}`;
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.$pakfiresettings{'DELPAKS'}.$Lang::tr{'pakfire possible dependency'}
-		<pre>		
+		<pre>
 END
 		foreach (@output) {
+		  $_ =~ s/\\[[0-1]\;[0-9]+m//g;
 			print "$_\n";
 		}
 		print <<END;
@@ -133,13 +135,13 @@ END
 	}
 
 } elsif ($pakfiresettings{'ACTION'} eq 'update') {
-	
+
 	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null");
 
 } elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
-	
+
 	system("/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null");
-	
+
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
 	if ($pakfiresettings{'AUTOUPDATE'} == "on") {
@@ -147,7 +149,7 @@ END
 	} else {
 		system("/usr/local/bin/pakfire disable updates  >/dev/null 2>&1");
 	}
-	
+
 	if ($pakfiresettings{'AUTOUPGRADE'} == "on") {
 		system("/usr/local/bin/pakfire enable upgrades >/dev/null 2>&1");
 	} else {
@@ -242,17 +244,17 @@ END
 					<input type='hidden' name='ACTION' value='upgrade' />
 					<input type='image' alt='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
 				 </form>
-		
+
 		<tr><td colspan="2"><!-- Just an empty line -->&nbsp;
 		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b>
 				<td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
 		<tr><td align="center">
 			<p>$Lang::tr{'pakfire install description'}</p>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>	
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<select name="INSPAKS" size="10" multiple>
 END
 			&Pakfire::dblist("notinstalled", "forweb");
-		
+
 print <<END;
 				</select>
 				<br />

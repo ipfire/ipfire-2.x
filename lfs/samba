@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.26a
+VER        = 3.0.27
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 2
+PAK_VER    = 1
 
 DEPS       = "cups cyrus-sasl"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 16b47e6add332e5ac4523fc88c381d06
+$(DL_FILE)_MD5 = cff7854ea5947882954f30d2657e1a9d
 
 install : $(TARGET)
 
