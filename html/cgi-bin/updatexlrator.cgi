@@ -48,7 +48,7 @@ my $filedate='';
 my $lastaccess='';
 my $lastcheck='';
 
-my $repository = "/srv/web/ipfire/html/updatecache";
+my $repository = "/var/updatecache";
 my $hintcolour = '#FFFFCC';
 
 my $sfNoSource='0';
@@ -77,7 +77,7 @@ $xlratorsettings{'ACTION'} = '';
 $xlratorsettings{'ENABLE_LOG'} = 'off';
 $xlratorsettings{'CHILDREN'} = '5';
 $xlratorsettings{'PASSIVE_MODE'} = 'off';
-$xlratorsettings{'MAX_DISK_USAGE'} = '75';
+$xlratorsettings{'MAX_DISK_USAGE'} = '95';
 $xlratorsettings{'LOW_DOWNLOAD_PRIORITY'} = 'off';
 $xlratorsettings{'ENABLE_AUTOCHECK'} = 'off';
 $xlratorsettings{'FULL_AUTOSYNC'} = 'off';

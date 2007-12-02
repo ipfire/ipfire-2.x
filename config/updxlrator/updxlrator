@@ -14,7 +14,7 @@ use IO::Socket;
 $|=1;
 
 my $swroot="/var/ipfire";
-my $updcachedir="/srv/web/ipfire/html/updatecache";
+my $updcachedir="/var/updatecache";
 my %netsettings=();
 my %xlratorsettings=();
 my $http_port="81";
