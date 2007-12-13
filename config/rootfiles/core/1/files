@@ -5,3 +5,4 @@ opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 usr/sbin/updxlrator
 var/ipfire/updatexlrator/bin/download
+etc/httpd/conf/vhosts.d/ipfire-interface.conf

@@ -156,7 +156,7 @@ case "\$1" in
 
 	### SET QUEUE LENGTH & MTU - has just to be tested!!! IMPORTANT
 	ip link set dev $qossettings{'RED_DEV'} qlen $qossettings{'QLENGTH'}
-	ip link set dev $qossettings{'RED_DEV'} mtu $qossettings{'MTU'}
+	#ip link set dev $qossettings{'RED_DEV'} mtu $qossettings{'MTU'}
 
 	### ADD HTB QDISC FOR $qossettings{'RED_DEV'}
 	tc qdisc add dev $qossettings{'RED_DEV'} root handle 1: htb default $qossettings{'DEFCLASS_OUT'}

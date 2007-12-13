@@ -1,0 +1,2 @@
+srv/web/ipfire/cgi-bin/qos.cgi
+var/ipfire/qos/bin/makeqosscripts.pl

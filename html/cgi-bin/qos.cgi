@@ -570,6 +570,11 @@ END
 	$qossettings{'DEFCLASS_INC'} = "210";
 	$qossettings{'DEFCLASS_OUT'} = "110";
 	$qossettings{'ACK'} ="101";
+	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
+	system("/usr/bin/touch /var/ipfire/qos/enable");
+	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
+	system("logger -t ipfire 'QoS started'");
+	$qossettings{'ENABLED'} = 'on';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 
 }
@@ -1149,7 +1154,7 @@ END
 		<tr><td width='50%' align='left'>$Lang::tr{'min delay'} (8)		<td width='50%'><input type="radio" name="TOS" value="8" $checked[8] />
 		<tr><td width='50%' align='left'>$Lang::tr{'max throughput'} (4)		<td width='50%'><input type="radio" name="TOS" value="4" $checked[4] />
 		<tr><td width='50%' align='left'>$Lang::tr{'max reliability'} (2)	<td width='50%'><input type="radio" name="TOS" value="2" $checked[2] />
-		<tr><td width='50%' align='left'$Lang::tr{'min costs'} (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1] />
+		<tr><td width='50%' align='left'>$Lang::tr{'min costs'} (1)			<td width='50%'><input type="radio" name="TOS" value="1" $checked[1] />
 		<tr><td width='100%' align='right' colspan='2'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOTOS' value='$Lang::tr{'save'}' />
 		</table></form>
 END
