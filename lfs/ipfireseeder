@@ -27,12 +27,12 @@ include Config
 VER        = 1.00
 
 THISAPP    = ipfireseeder-$(VER)
-DL_FILE    = IPFire-1.4.9-FINAL.iso.torrent
+DL_FILE    = ipfire-2.1.i586-full.iso.torrent
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ipfireseeder
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "rtorrent"
 
@@ -40,14 +40,11 @@ DEPS       = "rtorrent"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	ipfire-2.0beta1.i586-full.iso.torrent
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-ipfire-2.0beta1.i586-full.iso.torrent = $(DL_FROM)/ipfire-2.0beta1.i586-full.iso.torrent
 
-$(DL_FILE)_MD5 = 20c0e570329d80c2ae965b8d3b206ba5
-ipfire-2.0beta1.i586-full.iso.torrent_MD5 = 65414ea68e7797a45465021c666fc0ad
+$(DL_FILE)_MD5 = cf4598509a9817dfc493e9143f55d5d7
 
 install : $(TARGET)
 
@@ -80,5 +77,5 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	-mkdir -p /var/log/seeder /var/ipfire/seeder
-	cp -vf $(DIR_DL)/{$(DL_FILE),ipfire-2.0beta1.i586-full.iso.torrent} /var/ipfire/seeder
+	cp -vf $(DIR_DL)/$(DL_FILE) /var/ipfire/seeder
 	@$(POSTBUILD)

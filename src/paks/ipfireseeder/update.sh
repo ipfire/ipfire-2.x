@@ -22,3 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+/etc/init.d/ipfireseeder stop
+
+./install.sh
