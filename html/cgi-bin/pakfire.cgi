@@ -144,13 +144,13 @@ END
 
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
-	if ($pakfiresettings{'AUTOUPDATE'} == "on") {
+	if ($pakfiresettings{'AUTOUPDATE'} eq 'on') {
 		system("/usr/local/bin/pakfire enable updates >/dev/null 2>&1");
 	} else {
 		system("/usr/local/bin/pakfire disable updates  >/dev/null 2>&1");
 	}
 
-	if ($pakfiresettings{'AUTOUPGRADE'} == "on") {
+	if ($pakfiresettings{'AUTOUPGRADE'} eq 'on') {
 		system("/usr/local/bin/pakfire enable upgrades >/dev/null 2>&1");
 	} else {
 		system("/usr/local/bin/pakfire disable upgrades >/dev/null 2>&1");

@@ -176,6 +176,7 @@ print <<END
 	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' /></td>
 </tr>
 </table>
+</form>
 END
 ;
 print <<END;

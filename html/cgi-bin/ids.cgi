@@ -263,9 +263,9 @@ if (-e "/etc/snort/snort.conf") {
 #######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
-	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-CURRENT_s.tar.gz";
+	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.6_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
-	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-CURRENT.tar.gz";
+	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.6.tar.gz";
 } else {
 	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";
 }

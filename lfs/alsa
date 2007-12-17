@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.13
+VER        = 1.0.15
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -45,8 +45,8 @@ objects = $(DL_FILE) alsa-utils-$(VER).tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(VER).tar.bz2 = $(DL_FROM)/alsa-utils-$(VER).tar.bz2
 
-$(DL_FILE)_MD5 = d55a9d7d2a79d738a1b7a511cffda4b6
-alsa-utils-$(VER).tar.bz2_MD5 = dfe4bb5d3217f3ec662b172ce8397cf0
+$(DL_FILE)_MD5 = 94254ea0d2c966a58184b134e9da29ff
+alsa-utils-$(VER).tar.bz2_MD5 = 287f46f891581c15018de4f8c0731575
 
 install : $(TARGET)
 

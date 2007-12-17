@@ -29,7 +29,7 @@
 * URI-1.35
 * Unix-Syslog-0.100
 * XML-Parser-2.34
-* alsa-lib-1.0.13
+* alsa-lib-1.0.15
 * amavisd-new-2.5.2
 * applejuice-0.30
 * arping-2.05
@@ -56,6 +56,7 @@
 * coreutils-5.96
 * cpio-2.6
 * cups-1.2.12
+* cups-1.3.4
 * curl-7.15.3
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
@@ -99,7 +100,7 @@
 * hddtemp-0.3-beta14
 * hdparm-7.7
 * hplip-2.7.10
-* htop-0.6.2
+* htop-0.7
 * httpd-2.2.6
 * hwdata
 * iana-etc-2.10
@@ -139,9 +140,10 @@
 * libsigc++-2.0.17
 * libtool-1.5.22
 * libtorrent-0.11.6
+* libtorrent-0.11.9
 * libupnp-1.3.1
 * libusb-0.1.12
-* libvorbis-1.1.2
+* libvorbis-1.2.0
 * libwww-perl-5.803
 * libxml2-2.6.26
 * libxslt-1.1.17
@@ -212,8 +214,8 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rsync-2.6.9
-* rtorrent-0.7.6
-* samba-3.0.27a
+* rtorrent-0.7.9
+* samba-3.0.28
 * screen-4.0.3
 * sdparm-1.01
 * sed-4.1.5
@@ -222,12 +224,15 @@
 * slang-1.4.9
 * smartmontools-5.36
 * snort-2.6.1.4
+* snort-2.8.0.1
 * sox-12.18.1
 * spandsp-0.0.3pre24
 * squashfs3.2-r2
 * squid-2.6.STABLE16
+* squid-3.0.STABLE1
 * squid-graph-3.2
 * squidGuard-1.2.0
+* squidGuard-1.3
 * sudo-1.6.8p12
 * sysfsutils-1.3.0
 * sysklogd-1.4.1

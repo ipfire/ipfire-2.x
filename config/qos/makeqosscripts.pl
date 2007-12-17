@@ -323,9 +323,9 @@ print "\n\t### SET PORT-RULES\n";
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-p $qossettings{'PPROT'} ";
-			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
-				print "-m multiport ";
-			}
+#			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
+#				print "-m multiport ";
+#			}
 			if ($qossettings{'QPORT'} ne ''){
 				print "--sport $qossettings{'QPORT'} ";
 			}
@@ -341,9 +341,9 @@ print "\n\t### SET PORT-RULES\n";
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-p $qossettings{'PPROT'} ";
-			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
-				print "-m multiport ";
-			}
+#			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
+#				print "-m multiport ";
+#			}
 			if ($qossettings{'QPORT'} ne ''){
 				print "--sport $qossettings{'QPORT'} ";
 			}
@@ -543,9 +543,9 @@ print "\n\t### SET PORT-RULES\n";
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-p $qossettings{'PPROT'} ";
-			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
-				print "-m multiport ";
-			}
+#			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
+#				print "-m multiport ";
+#			}
 			if ($qossettings{'QPORT'} ne ''){
 				print "--sport $qossettings{'QPORT'} ";
 			}
@@ -561,9 +561,9 @@ print "\n\t### SET PORT-RULES\n";
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-p $qossettings{'PPROT'} ";
-			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
-				print "-m multiport ";
-			}
+#			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
+#				print "-m multiport ";
+#			}
 			if ($qossettings{'QPORT'} ne ''){
 				print "--sport $qossettings{'QPORT'} ";
 			}

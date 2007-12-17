@@ -22,3 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+mv /etc/asound.state /tmp
+./uninstall.sh
+./install.sh
+mv /tmp/asound.state /etc

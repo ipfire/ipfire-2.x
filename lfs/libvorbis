@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 1.1.2
+VER        = 1.2.0
 
 THISAPP    = libvorbis-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libvorbis
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "libogg"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 37847626b8e1b53ae79a34714c7b3211
+$(DL_FILE)_MD5 = 7c6e409d7aa1fa8a5481dea571d5bde0
 
 install : $(TARGET)
 
@@ -76,11 +76,11 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make
 	#cd $(DIR_APP) && sed -i.bak -e 's/-mno-ieee-fp//' lib/Makefile
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && install -v -m644 doc/Vorbis* /usr/share/doc/libvorbis-1.1.2
+	cd $(DIR_APP) && install -v -m644 doc/Vorbis* /usr/share/doc/libvorbis-1.2.0
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

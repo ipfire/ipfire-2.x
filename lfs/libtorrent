@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.11.6
+VER        = 0.11.9
 
 THISAPP    = libtorrent-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4e16a93fd398cfef1acf1956fb2164b4
+$(DL_FILE)_MD5 = 8974dc9499b382a09fb952cabcfef9a0
 
 install : $(TARGET)
 
