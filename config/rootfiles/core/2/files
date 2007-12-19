@@ -1,4 +1,5 @@
 srv/web/ipfire/cgi-bin/qos.cgi
+srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 var/ipfire/qos/bin/makeqosscripts.pl
