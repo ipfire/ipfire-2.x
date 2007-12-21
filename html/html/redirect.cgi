@@ -114,7 +114,7 @@ print <<END
 	<td colspan='3' height='60%' valign="bottom" align="right">
 		<font face="verdana,arial,sans serif" color="#656565" size="1">Web Filtering by
 		</font>
-		<a href="http://www.ipfire.eu" target="_blank"><b>
+		<a href="http://www.ipfire.org" target="_blank"><b>
 		<font face="verdana,arial,sans serif" color="#656565" size="1">IPFire</b></a>
 		</font>
 

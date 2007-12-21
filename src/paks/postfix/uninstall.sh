@@ -22,7 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 remove_files
-
 rm -rfv /etc/rc.d/rc*.d/*postfix

@@ -22,11 +22,8 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 extract_files
-
 start_service --delay 300 --background ${NAME}
-
 ln -svf ../init.d/cups /etc/rc.d/rc0.d/K00cups
 ln -svf ../init.d/cups /etc/rc.d/rc3.d/S25cups
 ln -svf ../init.d/cups /etc/rc.d/rc6.d/K00cups

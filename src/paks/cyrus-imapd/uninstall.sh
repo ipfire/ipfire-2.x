@@ -22,11 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 stop_service ${NAME}
-
 make_backup ${NAME}
-
 remove_files
-
 rm -rfv /etc/rc.d/rc*.d/*cyrus-imapd

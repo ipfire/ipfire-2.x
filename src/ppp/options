@@ -1,2 +1,3 @@
 linkname ipfire
 noauth
+child-timeout 0

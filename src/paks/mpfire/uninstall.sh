@@ -22,10 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 stop_service ${NAME}
 make_backup ${NAME}
-
 remove_files
-
 rm -f /etc/rc.d/rc*.d/*mpd /var/log/mpd.error.log /var/log/mpd.log /etc/mpd.conf

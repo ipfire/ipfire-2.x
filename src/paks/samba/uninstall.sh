@@ -22,8 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 /usr/local/bin/sambactrl smbstop
 make_backup ${NAME}
-
 remove_files

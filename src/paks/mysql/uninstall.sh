@@ -22,7 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 remove_files
-
 rm -rvf /etc/rc.d/rc*.d/*mysql

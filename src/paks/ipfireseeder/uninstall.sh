@@ -22,7 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 stop_service ${NAME}
-
 remove_files

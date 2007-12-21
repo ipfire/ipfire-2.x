@@ -22,9 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 /etc/init.d/applejuice stop
-
 remove_files
-
 rm -rf /etc/rc.d/rc*.d/*applejuice

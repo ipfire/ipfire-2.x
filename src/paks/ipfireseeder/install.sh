@@ -22,7 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 extract_files
-
 start_service --delay 90 --background ${NAME}

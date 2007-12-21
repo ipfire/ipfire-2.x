@@ -22,7 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 remove_files
-
 rm -rf /etc/rc.d/rc*.d/*alsa

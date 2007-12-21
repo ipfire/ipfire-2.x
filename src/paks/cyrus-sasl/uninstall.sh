@@ -22,9 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 stop_service ${NAME}
-
 remove_files
-
 rm -rvf /etc/rc.d/rc*.d/*cyrus-sasl

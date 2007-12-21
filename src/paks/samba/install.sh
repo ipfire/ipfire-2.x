@@ -22,8 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-
 extract_files
 restore_backup ${NAME}
-
 /usr/local/bin/sambactrl smbstart

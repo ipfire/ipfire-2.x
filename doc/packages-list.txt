@@ -57,6 +57,7 @@
 * cpio-2.6
 * cups-1.2.12
 * cups-1.3.4
+* cups-1.3.5
 * curl-7.15.3
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21

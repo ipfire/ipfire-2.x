@@ -46,8 +46,6 @@ my $DEBUG = 0;
 my $configfile = "/var/ipfire/outgoing/rules";
 my $p2pfile = "/var/ipfire/outgoing/p2protocols";
 
-&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
-
 ### Values that have to be initialized
 $outfwsettings{'ACTION'} = '';
 $outfwsettings{'VALID'} = 'yes';
@@ -78,6 +76,8 @@ my $DO = "";
 # read files
 &General::readhash("${General::swroot}/outgoing/settings", \%outfwsettings);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+$netsettings{'RED_DEV'}=`cat /var/ipfire/red/iface`;
 
 open( FILE, "< $configfile" ) or die "Unable to read $configfile";
 @configs = <FILE>;
