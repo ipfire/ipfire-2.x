@@ -2,3 +2,4 @@
 
 /usr/local/bin/openvpnctrl -s
 
+exit 0

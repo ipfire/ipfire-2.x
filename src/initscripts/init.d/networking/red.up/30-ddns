@@ -1,3 +1,5 @@
 #!/bin/bash
 
 /usr/local/bin/setddns.pl -f
+
+exit 0

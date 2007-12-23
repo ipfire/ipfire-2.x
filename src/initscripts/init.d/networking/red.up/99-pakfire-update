@@ -1,3 +1,5 @@
 #!/bin/sh
 
 nice -n 10 /opt/pakfire/pakfire update >/dev/null 2>&1 &
+
+exit 0

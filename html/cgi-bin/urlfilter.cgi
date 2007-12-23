@@ -159,7 +159,6 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter save and restart'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload file'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter remove file'}) ||
-    ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload background'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload blacklist'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter backup'}) ||
     ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter restore'}))
@@ -217,18 +216,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 		}
 
 	}
-	
-	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload background'})
-	{
-		&Header::getcgihash(\%filtersettings, {'wantfile' => 1, 'filevar' => 'BACKGROUND'});
 
-		if (copy($filtersettings{'BACKGROUND'}, "/home/httpd/html/images/urlfilter/background.jpg") != 1)
-		{
-			$errormessage = $!;
-			goto ERROR;
-		}
-	}
-	
 	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter upload blacklist'})
 	{
 		&Header::getcgihash(\%filtersettings, {'wantfile' => 1, 'filevar' => 'UPDATEFILE'});
@@ -244,11 +232,11 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 			$errormessage = $!;
 			goto ERROR;
 		}
-		
+
 		if (!(-d "${General::swroot}/urlfilter/update")) { mkdir("${General::swroot}/urlfilter/update"); }
 
 		my $exitcode = system("/bin/tar --no-same-owner -xzf ${General::swroot}/urlfilter/blacklists.tar.gz -C ${General::swroot}/urlfilter/update");
-		
+
 		if ($exitcode > 0)
 		{
 			$errormessage = $Lang::tr{'urlfilter tar error'};
@@ -326,7 +314,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 		{
 			$errormessage = $!;
 		}
-		
+
 		my $exitcode = system("/bin/tar --no-same-owner --preserve-permissions -xzf ${General::swroot}/urlfilter/backup.tar.gz -C ${General::swroot}/urlfilter/restore");
 		if ($exitcode > 0)
 		{
@@ -801,7 +789,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter import blacklist'}) && ($bese
 		{
 			$errormessage = $!;
 		} else {
-		
+
 			my $exitcode = system("/bin/tar --no-same-owner --preserve-permissions -xzf $editdir/blacklist.tar.gz -C $editdir");
 			if ($exitcode > 0)
 			{
@@ -1476,17 +1464,6 @@ print <<END
 	<td><input type='checkbox' name='ENABLE_JPEG' $checked{'ENABLE_JPEG'}{'on'} /></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-</tr>
-</table>
-<table width='100%'>
-<tr>
-	<td class='base'><b>$Lang::tr{'urlfilter background image'}</b></td>
-</tr>
-<tr>
-	<td><br>$Lang::tr{'urlfilter background text'}:</td>
-</tr>
-<tr>
-	<td><input type='file' name='BACKGROUND' size='40' /> &nbsp; <input type='submit' name='ACTION' value='$Lang::tr{'urlfilter upload background'}' /></td>
 </tr>
 </table>
 <hr size='1'>
@@ -2795,7 +2772,7 @@ sub writeconfigfile
 			if ($filtersettings{'SHOW_URL'} eq 'on') { $redirect .= "&url=%u"; }
 			if ($filtersettings{'SHOW_IP'} eq 'on') { $redirect .= "&ip=%a"; }
 			$redirect  =~ s/^&/?/;
-			$redirect = "http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi".$redirect; 
+			$redirect = "http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi".$redirect;
 		} else {
 			$redirect="http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi";
 		}
@@ -3040,7 +3017,7 @@ sub writeconfigfile
 		print FILE "}\n\n";
 		$category = $blacklist;
 	}
-	
+
 	print FILE "dest files {\n";
 	print FILE "    expressionlist custom\/blocked\/files\n";
 	if ($filtersettings{'ENABLE_LOG'} eq 'on')

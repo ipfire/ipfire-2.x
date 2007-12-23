@@ -5,3 +5,5 @@
 IFACE=`cat /var/ipfire/red/iface 2>/dev/null | tr -d '\012'`
 
 [ "$IFACE" != "" ] && ifconfig $IFACE -multicast
+
+exit 0

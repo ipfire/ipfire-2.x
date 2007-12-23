@@ -7,4 +7,4 @@ if [ -e "/var/ipfire/qos/enable" ]; then
  /usr/local/bin/qosctrl generate
  /usr/local/bin/qosctrl start
 fi
-/usr/local/bin/outgoingfwctrl
+/usr/local/bin/outgoingfwctrl restart
