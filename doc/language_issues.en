@@ -410,9 +410,12 @@ WARNING: translation string unused: upstream password
 WARNING: translation string unused: upstream proxy host:port
 WARNING: translation string unused: upstream username
 WARNING: translation string unused: uptime and users
+WARNING: translation string unused: urlfilter background image
+WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
+WARNING: translation string unused: urlfilter upload background
 WARNING: translation string unused: use
 WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod

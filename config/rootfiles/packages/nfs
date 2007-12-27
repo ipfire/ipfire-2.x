@@ -1,3 +1,4 @@
+etc/init.d/nfs-server
 #usr/man/man5/exports.5
 #usr/man/man7/nfsd.7
 #usr/man/man8/exportfs.8
@@ -23,6 +24,7 @@ usr/sbin/rpc.mountd
 usr/sbin/rpc.nfsd
 usr/sbin/rpc.statd
 usr/sbin/showmount
+var/ipfire/nfs/nfs-server
 #var/lib/nfs
 var/lib/nfs/etab
 var/lib/nfs/rmtab

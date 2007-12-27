@@ -1,8 +1,8 @@
 #usr/include/tcpd.h
 #usr/lib/libwrap.a
-#usr/lib/libwrap.so
-#usr/lib/libwrap.so.0
-#usr/lib/libwrap.so.0.7.6
+usr/lib/libwrap.so
+usr/lib/libwrap.so.0
+usr/lib/libwrap.so.0.7.6
 #usr/sbin/safe_finger
 #usr/sbin/tcpd
 #usr/sbin/tcpdchk

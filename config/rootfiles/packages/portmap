@@ -1,4 +1,5 @@
-#sbin/portmap
+etc/init.d/portmap
+sbin/portmap
 #usr/sbin/pmap_dump
 #usr/sbin/pmap_set
 #usr/share/man/man8/pmap_dump.8

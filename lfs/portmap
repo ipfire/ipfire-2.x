@@ -32,7 +32,9 @@ DL_FROM    = ftp://ftp.porcupine.org/pub/security
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = portmap
-PAK_VER    = ipfire-beta1
+PAK_VER    = 1
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules

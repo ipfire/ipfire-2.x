@@ -9,7 +9,7 @@
 
 . /etc/sysconfig/rc
 . $rc_functions
-. /etc/sysconfig/nfs-server
+. /var/ipfire/nfs/nfs-server
 
 case "$1" in
 	start)
