@@ -310,7 +310,7 @@ foreach $_ (@slice)
 	$_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
 	my $timestamp = $1; my $chain = $2; my $packet = $3;
 	$timestamp =~ /(...) (..) (..:..:..)/;
-	my $month = $1; my $day = $2; my $time = $3;
+	my $month = $1; my $day = $2; my $time = $3; my $iface;
 
 	if ($a =~ /IN\=(\w+)/) { $iface = $1; }
 	if ($a =~ /OUT\=(\w+)/) { $out = $1; }
