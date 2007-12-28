@@ -90,6 +90,9 @@ $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Never';
 $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
+$sambasettings{'DOSCHARSET'} = 'CP850';
+$sambasettings{'UNIXCHARSET'} = 'UTF8';
+$sambasettings{'DISPLAYCHARSET'} = 'CP850';
 $sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
@@ -151,6 +154,9 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
 	$sambasettings{'MAPTOGUEST'} = 'Never';
 	$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
+	$sambasettings{'DOSCHARSET'} = 'CP850';
+	$sambasettings{'UNIXCHARSET'} = 'UTF8';
+	$sambasettings{'DISPLAYCHARSET'} = 'CP850';
 ### Samba CUPS Variablen
 	$sambasettings{'LOADPRINTERS'} = 'Yes';
 	$sambasettings{'PRINTING'} = 'cups';
@@ -256,7 +262,9 @@ fstype = NTFS
 kernel oplocks = false
 map to guest = $sambasettings{'MAPTOGUEST'}
 smb ports = 445 139
-unix charset = CP850
+dos charset = $sambasettings{'DOSCHARSET'}
+unix charset = $sambasettings{'UNIXCHARSET'}
+display charset = $sambasettings{'DISPLAYCHARSET'}
 
 security = $sambasettings{'SECURITY'}
 encrypt passwords = yes
@@ -276,7 +284,7 @@ wins server = $sambasettings{'WINSSRV'}
 
 log file       = /var/log/samba/samba-log.%m
 lock directory = /var/lock/samba
-pid directory = /var/run/
+pid directory  = /var/run/
 log level = $sambasettings{'LOGLEVEL'}
 	
 preferred master = $sambasettings{'PREFERREDMASTER'}
@@ -419,6 +427,9 @@ print <<END
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'netbios name'}</td><td align='left'><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'dos charset'}</td><td align='left'><input type='text' name='DOSCHARSET' value='$sambasettings{'DOSCHARSET'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'unix charset'}</td><td align='left'><input type='text' name='UNIXCHARSET' value='$sambasettings{'UNIXCHARSET'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'display charset'}</td><td align='left'><input type='text' name='DISPLAYCHARSET' value='$sambasettings{'DISPLAYCHARSET'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'server string'}</td><td align='left'><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/

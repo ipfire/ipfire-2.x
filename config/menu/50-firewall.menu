@@ -34,3 +34,9 @@
 				'title' => "Universal Plug and Play",
 				'enabled' => 0,
 				};
+    $subfirewall->{'60.optingsfw'} = {
+				'caption' => $Lang::tr{'options fw'},
+				'uri' => '/cgi-bin/optionsfw.cgi',
+				'title' => "$Lang::tr{'options fw'}",
+				'enabled' => 1,
+				};

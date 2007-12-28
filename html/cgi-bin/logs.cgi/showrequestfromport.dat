@@ -312,7 +312,7 @@ foreach $_ (@slice)
 	$timestamp =~ /(...) (..) (..:..:..)/;
 	my $month = $1; my $day = $2; my $time = $3;
 
-	if ($a =~ /IN\=(\w+)/) { $in = $1; }
+	if ($a =~ /IN\=(\w+)/) { $iface = $1; }
 	if ($a =~ /OUT\=(\w+)/) { $out = $1; }
 	if ($a =~ /SRC\=([\d\.]+)/) { $srcaddr = $1; }
 	if ($a =~ /DST\=([\d\.]+)/) { $dstaddr = $1; }
@@ -320,7 +320,6 @@ foreach $_ (@slice)
 	my $protostrlc = lc($protostr);
 	if ($a =~  /SPT\=([\d\.]+)/){ $srcport = $1; }
 	if ($a =~  /DPT\=([\d\.]+)/){ $dstport = $1; }
-	$a =~ /IN=(\w+)/;       my $iface=$1;
 
 	if ($lines % 2) {
 		print "<tr bgcolor='${Header::table1colour}'>\n"; }

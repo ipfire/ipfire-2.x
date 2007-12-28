@@ -71,9 +71,14 @@ $outfwsettings{'DISPLAY_DPORT'} = '';
 $outfwsettings{'DISPLAY_SMAC'} = '';
 $outfwsettings{'DISPLAY_SIP'} = '';
 $outfwsettings{'POLICY'} = 'MODE0';
+$outfwsettings{'MODE1LOG'} = 'off';
 
 &General::readhash("${General::swroot}/outgoing/settings", \%outfwsettings);
 &Header::getcgihash(\%outfwsettings);
+
+$checked{'MODE1LOG'}{'off'} = '';
+$checked{'MODE1LOG'}{'on'} = '';
+$checked{'MODE1LOG'}{$outfwsettings{'MODE1LOG'}} = "checked='checked'";
 
 if ($outfwsettings{'POLICY'} eq 'MODE0'){ $selected{'POLICY'}{'MODE0'} = 'selected'; } else { $selected{'POLICY'}{'MODE0'} = ''; }
 if ($outfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
@@ -98,8 +103,10 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 if ($outfwsettings{'ACTION'} eq $Lang::tr{'save'})
 {
 	my $MODE = $outfwsettings{'POLICY'};
+	my $MODE1LOG = $outfwsettings{'MODE1LOG'};
 	%outfwsettings = ();
 	$outfwsettings{'POLICY'} = "$MODE";
+	$outfwsettings{'MODE1LOG'} = "$MODE1LOG";
 	&General::writehash("${General::swroot}/outgoing/settings", \%outfwsettings);
 	system("/usr/local/bin/outgoingfwctrl");
 }
@@ -331,6 +338,22 @@ END
 ;
 				}
 			}
+if ($outfwsettings{'POLICY'} eq 'MODE1'){
+print <<END
+					<tr bgcolor='$color{'color20'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					    <td align='center'>tcp&udp
+					    <td align='center'>all
+					    <td align='center'>ALL
+					    <td align='center'>drop
+					    <td align='center'><img src='/images/stock_stop.png' alt='DENY' />
+					    <td align='center'>on <input type='radio' name='MODE1LOG' value='on' $checked{'MODE1LOG'}{'on'} /><input type='radio' name='MODE1LOG' value='off' $checked{'MODE1LOG'}{'off'} /> off
+					    <td align='center'><input type='hidden' name='ACTION' value=$Lang::tr{'save'} /><input type='image' src='/images/media-floppy.png' width="18" height="18" alt=$Lang::tr{'save'} /></form></tr>
+					     <table border='0' cellpadding='0' cellspacing='0'><tr>
+						<td>
+						<td></table>
+END
+;
+}
 		print <<END
 		</table>
 END

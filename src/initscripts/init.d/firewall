@@ -2,6 +2,7 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 IFACE=`/bin/cat /var/ipfire/red/iface 2> /dev/null | /usr/bin/tr -d '\012'`
 
 if [ -f /var/ipfire/red/device ]; then
@@ -33,16 +34,20 @@ iptables_init() {
 	# This chain will log, then DROPs packets with certain bad combinations
 	# of flags might indicate a port-scan attempt (xmas, null, etc)
 	/sbin/iptables -N PSCAN
-	/sbin/iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "TCP Scan? "
-	/sbin/iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "UDP Scan? "
-	/sbin/iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "ICMP Scan? "
-	/sbin/iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "FRAG Scan? "
-	/sbin/iptables -A PSCAN -j DROP
+	if [ "$DROPPORTSCAN" == "on" ]; then
+		/sbin/iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "DROP-TCP Scan " -m comment --comment "DROP-TCP PScan"
+		/sbin/iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP-UDP Scan " -m comment --comment "DROP-UPD PScan"
+		/sbin/iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "DROP-ICMP Scan " -m comment --comment "DROP-ICMP PScan"
+		/sbin/iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "DROP-FRAG Scan " -m comment --comment "DROP-FRAG PScan"
+	fi
+	/sbin/iptables -A PSCAN -j DROP -m comment --comment "DROP PScan"
 
 	# New tcp packets without SYN set - could well be an obscure type of port scan
 	# that's not covered above, may just be a broken windows machine
 	/sbin/iptables -N NEWNOTSYN
-	/sbin/iptables -A NEWNOTSYN  -m limit --limit 10/minute -j LOG  --log-prefix "NEW not SYN? "
+	if [ "$DROPNEWNOTSYN" == "on" ]; then
+		/sbin/iptables -A NEWNOTSYN  -m limit --limit 10/minute -j LOG  --log-prefix "DROP-NEW not SYN " -m comment --comment "DROP-NEW not SYN"
+	fi
 	/sbin/iptables -A NEWNOTSYN  -j DROP
 
 	# Chain to contain all the rules relating to bad TCP flags
@@ -158,10 +163,10 @@ case "$1" in
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
 	/sbin/iptables -N IPSECVIRTUAL
 	/sbin/iptables -N OPENSSLVIRTUAL
-	/sbin/iptables -A INPUT -j IPSECVIRTUAL
-	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL
-	/sbin/iptables -A FORWARD -j IPSECVIRTUAL
-	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL
+	/sbin/iptables -A INPUT -j IPSECVIRTUAL -m comment --comment "IPSECVIRTUAL INPUT"
+	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL INPUT"
+	/sbin/iptables -A FORWARD -j IPSECVIRTUAL -m comment --comment "IPSECVIRTUAL FORWARD"
+	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
 	
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFW
@@ -255,8 +260,13 @@ case "$1" in
 	fi
 	
 	# last rule in input and forward chain is for logging.
-	/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "INPUT "
-	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "OUTPUT "
+
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP-INPUT "  -m comment --comment "DROP-INPUT"
+	fi
+	if [ "$DROPOUTPUT" == "on" ]; then
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP-OUTPUT "  -m comment --comment "DROP-OUTPUT"
+	fi
         ;;
   startovpn)  
 	# run openvpn
@@ -285,8 +295,12 @@ case "$1" in
 		/etc/sysconfig/firewall.local stop
 	fi
 
-	/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "INPUT "
-	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "OUTPUT "
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP-INPUT "  -m comment --comment "DROP-INPUT"
+	fi
+	if [ "$DROPOUTPUT" == "on" ]; then
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP-OUTPUT "  -m comment --comment "DROP-OUTPUT"
+	fi
         ;;
   stopovpn)
 	# stop openvpn

@@ -12,8 +12,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -50,21 +50,20 @@ my $year = $now[5]+1900;
 $cgiparams{'DAY'} = $now[3];
 $cgiparams{'MONTH'} = $now[4];
 $cgiparams{'ACTION'} = '';
-$cgiparams{'SECTION'} = 'ipfire';
+$cgiparams{'SECTION'} = 'kernel';
 
 my %sections = (
-        'ipfire' => '(ipfire)',
-        'red' => '(red.*|kernel: usb.*|pppd\[.*\]|chat\[.*\]|pppoe\[.*\]|pptp\[.*\]|pppoa\[.*\]|pppoa3\[.*\]|pppoeci\[.*\]|ipppd|ipppd\[.*\]|kernel: ippp\d|kernel: isdn.*|ibod\[.*\]|kernel: eth.*|dhcpcd\[.*\]|modem_run\[.*\])',
-        'dns' => '(dnsmasq\[.*\])',
-        'dhcp' => '(dhcpd)',
-        'cron' => '(fcron\[.*\])',
-        'ntp' => '(ntpd(?:ate)?\[.*\])',
-        'ssh' => '(sshd(?:\(.*\))?\[.*\])',
-        'auth' => '(\w+\(pam_unix\)\[.*\])',
-        'kernel' => '(kernel)',
-        'ipsec' => '(ipsec_[\w_]+|pluto\[.*\]|vpnwatch)',
-        'snort' => '(snort)',
-        'openvpn' => '(openvpnserver)\[.*\]'
+        'ipfire' => '(ipfire: )',
+        'red' => '(red:|pppd\[.*\]: |chat\[.*\]|pppoe\[.*\]|pptp\[.*\]|pppoa\[.*\]|pppoa3\[.*\]|pppoeci\[.*\]|ipppd|ipppd\[.*\]|kernel: ippp\d|kernel: isdn.*|ibod\[.*\]|dhcpcd\[.*\]|modem_run\[.*\])',
+        'dns' => '(dnsmasq\[.*\]: )',
+        'dhcp' => '(dhcpd: )',
+        'cron' => '(fcron\[.*\]: )',
+        'ntp' => '(ntpd(?:ate)?\[.*\]: )',
+        'ssh' => '(sshd(?:\(.*\))?\[.*\]: )',
+        'auth' => '(\w+\(pam_unix\)\[.*\]: )',
+        'kernel' => '(kernel: (?!DROP-))',
+        'ipsec' => '(ipsec_[\w_]+: |pluto\[.*\]: |vpnwatch: )',
+        'openvpn' => '(openvpnserver)\[.*\]: '
 	 );
 
 # Translations for the %sections array.
@@ -80,7 +79,6 @@ my %trsections = (
         'kernel' => "$Lang::tr{'kernel'}",
         'ipsec' => 'IPSec',
         'openvpn' => 'OpenVPN',
-        'snort' => 'Snort'
 	);
 
 
@@ -197,7 +195,7 @@ while ($gzindex >=0 && $loop) {
 	    #&General::log("reading $filestr");
 	    READ:while (<FILE>) {
 		my $line = $_;
-	 	if ($line =~ /^${monthstr} ${daystr} ..:..:.. [\w\-]+ ${section}: (.*)/) {
+	 	if ($line =~ /^${monthstr} ${daystr} ..:..:.. [\w\-]+ ${section}(.*)/) {
 		    # when standart viewing, just keep in memory the correct slice
 		    # it starts a '$start' and size is $viewport
 		    # If export, then keep all lines...
@@ -242,11 +240,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 
 	foreach $_ (@log)
 	{
-		/^... (..) (..:..:..) [\w\-]+ ${section}: (.*)$/;
+		/^... (..) (..:..:..) [\w\-]+ ${section}(.*)$/;
 		my $day =  $1;
 		$day =~ tr / /0/;
 		my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
-		print "$time $3 $4\r\n";
+  print "$time $3 $4\r\n";
 	}
 	exit 0;
 }
@@ -365,7 +363,7 @@ $lines = 0;
 #print '<tt>';
 foreach $_ (@log)
 {
-	/^... (..) (..:..:..) [\w\-]+ ${section}: (.*)$/;
+	/^... (..) (..:..:..) [\w\-]+ ${section}(.*)$/;
 	my $day =  $1;
 	$day =~ tr / /0/;
 	my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;

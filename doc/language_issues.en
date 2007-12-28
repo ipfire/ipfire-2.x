@@ -266,7 +266,6 @@ WARNING: translation string unused: net config type help
 WARNING: translation string unused: net-traffic configuration
 WARNING: translation string unused: network configuration
 WARNING: translation string unused: network status information
-WARNING: translation string unused: new optionsfw later
 WARNING: translation string unused: new optionsfw must boot
 WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
@@ -283,7 +282,6 @@ WARNING: translation string unused: only red
 WARNING: translation string unused: openvpn client
 WARNING: translation string unused: openvpn server
 WARNING: translation string unused: optional data
-WARNING: translation string unused: options fw
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or

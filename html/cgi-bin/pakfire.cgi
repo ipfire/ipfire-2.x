@@ -46,6 +46,8 @@ $pakfiresettings{'AUTOUPDATE'} = 'off';
 $pakfiresettings{'AUTOUPGRADE'} = 'off';
 $pakfiresettings{'UUID'} = 'on';
 
+sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
+
 &Header::getcgihash(\%pakfiresettings);
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -141,6 +143,7 @@ END
 } elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
 
 	system("/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null");
+	refreshpage();
 
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
