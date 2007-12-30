@@ -277,7 +277,7 @@ sub updatefwhitsdata {
 	$aktuell = 0;
 	if (!$skip) {
 		while (<FILE>) {
-			if (/kernel:.*(IN=.*)$/) {$aktuell++;}
+			if (/kernel: DROP_INPUT.*$/) {$aktuell++;}
 		}
 		close (FILE);
 	}

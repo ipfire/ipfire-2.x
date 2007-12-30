@@ -1,4 +1,5 @@
 etc/inid.d/firewall
+usr/local/bin/makegraphs
 var/ipfire/langs
 var/ipfire/optionsfw/settings
 var/ipfire/menu.d/50-firewall.menu

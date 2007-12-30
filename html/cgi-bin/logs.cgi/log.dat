@@ -50,7 +50,7 @@ my $year = $now[5]+1900;
 $cgiparams{'DAY'} = $now[3];
 $cgiparams{'MONTH'} = $now[4];
 $cgiparams{'ACTION'} = '';
-$cgiparams{'SECTION'} = 'kernel';
+$cgiparams{'SECTION'} = 'ipfire';
 
 my %sections = (
         'ipfire' => '(ipfire: )',
@@ -61,7 +61,7 @@ my %sections = (
         'ntp' => '(ntpd(?:ate)?\[.*\]: )',
         'ssh' => '(sshd(?:\(.*\))?\[.*\]: )',
         'auth' => '(\w+\(pam_unix\)\[.*\]: )',
-        'kernel' => '(kernel: (?!DROP-))',
+        'kernel' => '(kernel: (?!DROP_))',
         'ipsec' => '(ipsec_[\w_]+: |pluto\[.*\]: |vpnwatch: )',
         'openvpn' => '(openvpnserver)\[.*\]: '
 	 );

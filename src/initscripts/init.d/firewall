@@ -2,7 +2,6 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 IFACE=`/bin/cat /var/ipfire/red/iface 2> /dev/null | /usr/bin/tr -d '\012'`
 
 if [ -f /var/ipfire/red/device ]; then
@@ -35,20 +34,20 @@ iptables_init() {
 	# of flags might indicate a port-scan attempt (xmas, null, etc)
 	/sbin/iptables -N PSCAN
 	if [ "$DROPPORTSCAN" == "on" ]; then
-		/sbin/iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "DROP-TCP Scan " -m comment --comment "DROP-TCP PScan"
-		/sbin/iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP-UDP Scan " -m comment --comment "DROP-UPD PScan"
-		/sbin/iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "DROP-ICMP Scan " -m comment --comment "DROP-ICMP PScan"
-		/sbin/iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "DROP-FRAG Scan " -m comment --comment "DROP-FRAG PScan"
+		/sbin/iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_TCP Scan " -m comment --comment "DROP_TCP PScan"
+		/sbin/iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UPD PScan"
+		/sbin/iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "DROP_ICMP Scan " -m comment --comment "DROP_ICMP PScan"
+		/sbin/iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "DROP_FRAG Scan " -m comment --comment "DROP_FRAG PScan"
 	fi
-	/sbin/iptables -A PSCAN -j DROP -m comment --comment "DROP PScan"
+	/sbin/iptables -A PSCAN -j DROP -m comment --comment "DROP_PScan"
 
 	# New tcp packets without SYN set - could well be an obscure type of port scan
 	# that's not covered above, may just be a broken windows machine
 	/sbin/iptables -N NEWNOTSYN
 	if [ "$DROPNEWNOTSYN" == "on" ]; then
-		/sbin/iptables -A NEWNOTSYN  -m limit --limit 10/minute -j LOG  --log-prefix "DROP-NEW not SYN " -m comment --comment "DROP-NEW not SYN"
+		/sbin/iptables -A NEWNOTSYN  -m limit --limit 10/minute -j LOG  --log-prefix "DROP_NEWNOTSYN "
 	fi
-	/sbin/iptables -A NEWNOTSYN  -j DROP
+	/sbin/iptables -A NEWNOTSYN  -j DROP -m comment --comment "DROP_NEWNOTSYN"
 
 	# Chain to contain all the rules relating to bad TCP flags
 	/sbin/iptables -N BADTCP
@@ -262,11 +261,13 @@ case "$1" in
 	# last rule in input and forward chain is for logging.
 
 	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP-INPUT "  -m comment --comment "DROP-INPUT"
+		/sbin/iptables -A INPUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 	fi
+	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
 	if [ "$DROPOUTPUT" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP-OUTPUT "  -m comment --comment "DROP-OUTPUT"
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
 	fi
+	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
         ;;
   startovpn)  
 	# run openvpn
@@ -296,11 +297,13 @@ case "$1" in
 	fi
 
 	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP-INPUT "  -m comment --comment "DROP-INPUT"
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 	fi
+	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
 	if [ "$DROPOUTPUT" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP-OUTPUT "  -m comment --comment "DROP-OUTPUT"
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
 	fi
+	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
         ;;
   stopovpn)
 	# stop openvpn
