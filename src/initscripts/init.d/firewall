@@ -2,6 +2,7 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 IFACE=`/bin/cat /var/ipfire/red/iface 2> /dev/null | /usr/bin/tr -d '\012'`
 
 if [ -f /var/ipfire/red/device ]; then
@@ -35,7 +36,7 @@ iptables_init() {
 	/sbin/iptables -N PSCAN
 	if [ "$DROPPORTSCAN" == "on" ]; then
 		/sbin/iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_TCP Scan " -m comment --comment "DROP_TCP PScan"
-		/sbin/iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UPD PScan"
+		/sbin/iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UDP PScan"
 		/sbin/iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "DROP_ICMP Scan " -m comment --comment "DROP_ICMP PScan"
 		/sbin/iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "DROP_FRAG Scan " -m comment --comment "DROP_FRAG PScan"
 	fi
