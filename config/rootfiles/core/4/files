@@ -1,4 +1,4 @@
-etc/inid.d/firewall
+etc/init.d/firewall
 usr/local/bin/makegraphs
 var/ipfire/langs
 var/ipfire/optionsfw/settings
@@ -10,3 +10,5 @@ srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromip.dat
 srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromport.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
+usr/local/bin/qosctrl
+opt/pakfire/lib/functions.sh

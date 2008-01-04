@@ -93,3 +93,10 @@ stop_service() {
 		/etc/init.d/${1} stop
 	fi
 }
+
+rebuild_langcache() {
+	echo "Rebuilding language cache..."
+	perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+	echo "...Finished."
+}
+

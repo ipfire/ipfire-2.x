@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.54-ipfire
-# Thu Oct 25 20:03:33 2007
+# Linux kernel version: 2.6.16.57-ipfire-smp
+# Sun Dec 30 22:30:36 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -2100,7 +2100,9 @@ CONFIG_NFS_V3=y
 CONFIG_NFS_V4=y
 # CONFIG_NFS_DIRECTIO is not set
 CONFIG_NFSD=m
-# CONFIG_NFSD_V3 is not set
+CONFIG_NFSD_V3=y
+# CONFIG_NFSD_V3_ACL is not set
+# CONFIG_NFSD_V4 is not set
 CONFIG_NFSD_TCP=y
 CONFIG_LOCKD=m
 CONFIG_LOCKD_V4=y
