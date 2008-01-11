@@ -65,7 +65,7 @@ case "$1" in
 
 	stop)
 	
-		if [ -e /var/ipfire/proxy/enable -o -e /var/ipfire/proxy/enable_blue ]; then
+		if [ -e /var/run/squid.pid ]; then
 			boot_mesg "Stopping Squid Proxy Server..."
 			iptables -t nat -F SQUID
 			squid -k shutdown >/dev/null 2>&1

@@ -780,7 +780,7 @@
 'genre' => 'Genre',
 'global settings' => 'Globale Einstellungen',
 'graph' => 'Diagramm',
-'graph per' => 'Diagramm pro',
+'graph per' => 'pro',
 'green' => 'GRÜN',
 'green interface' => 'Grünes Interface',
 'guaranteed bandwith' => 'Garantierte Bandbreite',

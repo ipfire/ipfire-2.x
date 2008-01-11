@@ -2,4 +2,3 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 rebuild_langcache
-depmod -a

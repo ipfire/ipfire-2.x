@@ -806,7 +806,7 @@
 'genre' => 'Genre',
 'global settings' => 'Global settings',
 'graph' => 'Graph',
-'graph per' => 'Graph per',
+'graph per' => 'per',
 'green' => 'GREEN',
 'green interface' => 'Green Interface',
 'guaranteed bandwith' => 'Guaranteed bandwith',

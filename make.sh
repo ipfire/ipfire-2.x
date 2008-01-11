@@ -523,7 +523,6 @@ buildipfire() {
   ipfiremake lsof
   ipfiremake centerim
   ipfiremake br2684ctl
-  ipfiremake squidclam
 }
 
 buildinstaller() {
