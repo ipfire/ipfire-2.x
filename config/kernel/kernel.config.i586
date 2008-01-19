@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.54-ipfire
-# Thu Oct 25 20:02:53 2007
+# Linux kernel version: 2.6.16.57-ipfire
+# Mon Jan 14 21:16:26 2008
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -309,7 +309,22 @@ CONFIG_MCA_LEGACY=y
 #
 # PCCARD (PCMCIA/CardBus) support
 #
-# CONFIG_PCCARD is not set
+CONFIG_PCCARD=m
+# CONFIG_PCMCIA_DEBUG is not set
+CONFIG_PCMCIA=m
+CONFIG_PCMCIA_LOAD_CIS=y
+CONFIG_PCMCIA_IOCTL=y
+CONFIG_CARDBUS=y
+
+#
+# PC-card bridges
+#
+# CONFIG_YENTA is not set
+# CONFIG_PD6729 is not set
+# CONFIG_I82092 is not set
+# CONFIG_I82365 is not set
+# CONFIG_TCIC is not set
+CONFIG_PCMCIA_PROBE=y
 
 #
 # PCI Hotplug Support
@@ -723,6 +738,7 @@ CONFIG_PARPORT_PC=m
 # CONFIG_PARPORT_SERIAL is not set
 # CONFIG_PARPORT_PC_FIFO is not set
 # CONFIG_PARPORT_PC_SUPERIO is not set
+# CONFIG_PARPORT_PC_PCMCIA is not set
 # CONFIG_PARPORT_GSC is not set
 # CONFIG_PARPORT_1284 is not set
 
@@ -777,6 +793,7 @@ CONFIG_BLK_DEV_IDE=m
 # CONFIG_BLK_DEV_HD_IDE is not set
 CONFIG_BLK_DEV_IDEDISK=m
 # CONFIG_IDEDISK_MULTI_MODE is not set
+# CONFIG_BLK_DEV_IDECS is not set
 CONFIG_BLK_DEV_IDECD=m
 # CONFIG_BLK_DEV_IDETAPE is not set
 CONFIG_BLK_DEV_IDEFLOPPY=m
@@ -991,6 +1008,15 @@ CONFIG_SCSI_NSP32=m
 # CONFIG_SCSI_DEBUG is not set
 
 #
+# PCMCIA SCSI adapter support
+#
+# CONFIG_PCMCIA_AHA152X is not set
+# CONFIG_PCMCIA_FDOMAIN is not set
+# CONFIG_PCMCIA_NINJA_SCSI is not set
+# CONFIG_PCMCIA_QLOGIC is not set
+# CONFIG_PCMCIA_SYM53C500 is not set
+
+#
 # Old CD-ROM drivers (not SCSI, not IDE)
 #
 # CONFIG_CD_NO_IDESCSI is not set
@@ -1137,6 +1163,8 @@ CONFIG_DE4X5=m
 CONFIG_WINBOND_840=m
 CONFIG_DM9102=m
 CONFIG_ULI526X=m
+# CONFIG_PCMCIA_XIRCOM is not set
+# CONFIG_PCMCIA_XIRTULIP is not set
 CONFIG_AT1700=m
 CONFIG_DEPCA=m
 CONFIG_HP100=m
@@ -1233,6 +1261,11 @@ CONFIG_S2IO=m
 # Wireless LAN (non-hamradio)
 #
 # CONFIG_NET_RADIO is not set
+
+#
+# PCMCIA network device support
+#
+# CONFIG_NET_PCMCIA is not set
 
 #
 # Wan interfaces
@@ -1420,6 +1453,7 @@ CONFIG_HW_CONSOLE=y
 # Serial drivers
 #
 CONFIG_SERIAL_8250=m
+# CONFIG_SERIAL_8250_CS is not set
 # CONFIG_SERIAL_8250_ACPI is not set
 CONFIG_SERIAL_8250_NR_UARTS=4
 CONFIG_SERIAL_8250_RUNTIME_UARTS=4
@@ -1520,6 +1554,13 @@ CONFIG_RTC=y
 # CONFIG_FTAPE is not set
 # CONFIG_AGP is not set
 # CONFIG_DRM is not set
+
+#
+# PCMCIA character devices
+#
+# CONFIG_SYNCLINK_CS is not set
+# CONFIG_CARDMAN_4000 is not set
+# CONFIG_CARDMAN_4040 is not set
 CONFIG_MWAVE=m
 CONFIG_CS5535_GPIO=m
 # CONFIG_RAW_DRIVER is not set
@@ -1789,6 +1830,12 @@ CONFIG_SND_USB_AUDIO=m
 CONFIG_SND_USB_USX2Y=m
 
 #
+# PCMCIA devices
+#
+# CONFIG_SND_VXPOCKET is not set
+# CONFIG_SND_PDAUDIOCF is not set
+
+#
 # Open Sound System
 #
 # CONFIG_SOUND_PRIME is not set
@@ -1822,6 +1869,7 @@ CONFIG_USB_OHCI_HCD=m
 CONFIG_USB_OHCI_LITTLE_ENDIAN=y
 CONFIG_USB_UHCI_HCD=m
 CONFIG_USB_SL811_HCD=m
+# CONFIG_USB_SL811_CS is not set
 
 #
 # USB Device Class drivers
@@ -2021,7 +2069,7 @@ CONFIG_QUOTACTL=y
 CONFIG_DNOTIFY=y
 # CONFIG_AUTOFS_FS is not set
 # CONFIG_AUTOFS4_FS is not set
-# CONFIG_FUSE_FS is not set
+CONFIG_FUSE_FS=m
 
 #
 # CD-ROM/DVD Filesystems

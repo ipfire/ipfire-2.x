@@ -377,6 +377,7 @@ buildipfire() {
   ipfiremake dosfstools
   ipfiremake squashfstools
   ipfiremake reiserfsprogs
+  ipfiremake xfsprogs
   ipfiremake sysfsutils
   ipfiremake fuse
   ipfiremake ntfs-3g
@@ -523,6 +524,8 @@ buildipfire() {
   ipfiremake lsof
   ipfiremake centerim
   ipfiremake br2684ctl
+  ipfiremake neon
+  ipfiremake subversion
 }
 
 buildinstaller() {
