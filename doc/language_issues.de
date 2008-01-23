@@ -159,8 +159,10 @@ WARNING: translation string unused: hours2
 WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: id
 WARNING: translation string unused: idle cpu
+WARNING: translation string unused: idle cpu usage
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
+WARNING: translation string unused: in
 WARNING: translation string unused: incorrect password
 WARNING: translation string unused: insert floppy
 WARNING: translation string unused: install new update
@@ -173,6 +175,7 @@ WARNING: translation string unused: invalid port list
 WARNING: translation string unused: invalid time entered
 WARNING: translation string unused: invalid uplink speed
 WARNING: translation string unused: invalid upstream proxy username or password setting
+WARNING: translation string unused: iowait
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ip alias added
 WARNING: translation string unused: ip alias changed
@@ -259,6 +262,7 @@ WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
 WARNING: translation string unused: other countries
+WARNING: translation string unused: out
 WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
@@ -293,6 +297,7 @@ WARNING: translation string unused: proxy no proxy extend
 WARNING: translation string unused: proxy no proxy local
 WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
+WARNING: translation string unused: read sectors
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: rebooting
 WARNING: translation string unused: refresh update list
@@ -307,11 +312,14 @@ WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
+WARNING: translation string unused: sectors read from disk per second
+WARNING: translation string unused: sectors written to disk per second
 WARNING: translation string unused: select media
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
 WARNING: translation string unused: server reserved
 WARNING: translation string unused: shaping list options
+WARNING: translation string unused: shared memory
 WARNING: translation string unused: shutdown control
 WARNING: translation string unused: shutdown2
 WARNING: translation string unused: shutting down
@@ -330,6 +338,7 @@ WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system cpu
+WARNING: translation string unused: system cpu usage
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
 WARNING: translation string unused: test
@@ -384,6 +393,7 @@ WARNING: translation string unused: urlfilter upload background
 WARNING: translation string unused: use
 WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
+WARNING: translation string unused: user cpu usage
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
@@ -392,6 +402,7 @@ WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week
 WARNING: translation string unused: weekly firewallhits
+WARNING: translation string unused: written sectors
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: cached swap

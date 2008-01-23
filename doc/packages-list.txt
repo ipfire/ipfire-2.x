@@ -162,6 +162,7 @@
 * man-pages-2.34
 * mbr-1.1.8
 * mc-4.6.1
+* mcs7830-060926
 * memtest86+-1.65
 * misc-progs
 * mkinitcpio-0.5.9
@@ -200,6 +201,7 @@
 * pam_mysql-0.7RC1
 * patch-2.5.4
 * pciutils-2.2.3
+* pcmciautils-014
 * pcre-6.7
 * perl-5.8.8
 * php-5.2.4
@@ -210,6 +212,8 @@
 * ppp-2.4.4
 * procps-3.2.6
 * psmisc-22.2
+* r8168-8.004.00
+* r8169-6.004.00
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19

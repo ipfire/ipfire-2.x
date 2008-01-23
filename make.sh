@@ -329,9 +329,15 @@ buildipfire() {
   ipfiremake linux			SMP=1
   ipfiremake ipp2p			SMP=1
   ipfiremake zaptel			SMP=1
+  ipfiremake r8169			SMP=1
+  ipfiremake r8168			SMP=1
+  ipfiremake mcs7830			SMP=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake zaptel
+  ipfiremake r8169
+  ipfiremake r8168
+  ipfiremake mcs7830
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -524,6 +530,7 @@ buildipfire() {
   ipfiremake lsof
   ipfiremake centerim
   ipfiremake br2684ctl
+  ipfiremake pcmciautils
   ipfiremake collectd
   ipfiremake lcd4linux
   ipfiremake neon
