@@ -23,7 +23,14 @@
 				'title' => "$Lang::tr{'network red'}",
 				'enabled' => 1,
 			  };
-    $substatus->{'41.networkother'} = {
+    $substatus->{'41.networkinternal'} = {
+				'caption' => "$Lang::tr{'network internal'}",
+				'uri' => '/cgi-bin/network.cgi',
+				'vars' => 'network=internal',
+				'title' => "$Lang::tr{'network internal'}",
+				'enabled' => 1,
+			  };
+    $substatus->{'42.networkother'} = {
 				'caption' => "$Lang::tr{'network other'}",
 				'uri' => '/cgi-bin/network.cgi',
 				'vars' => 'network=other',
@@ -42,12 +49,6 @@
 				'title' => "$Lang::tr{'hardware graphs'}",
 				'enabled' => 1,
 			  };
-		$substatus->{'70.fwhits'} = {
-				'caption' => "$Lang::tr{'firewall graphs'}",
-				'uri' => '/cgi-bin/fwhits.cgi',
-				'title' => "$Lang::tr{'firewall graphs'}",
-				'enabled' => 1,
-				};
     $substatus->{'71.connections'} = {
 				'caption' => $Lang::tr{'connections'},
 				'uri' => '/cgi-bin/connections.cgi',

@@ -524,6 +524,8 @@ buildipfire() {
   ipfiremake lsof
   ipfiremake centerim
   ipfiremake br2684ctl
+  ipfiremake collectd
+  ipfiremake lcd4linux
   ipfiremake neon
   ipfiremake subversion
 }

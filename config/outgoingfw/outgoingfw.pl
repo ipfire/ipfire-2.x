@@ -90,7 +90,7 @@ if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 } elsif ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
 	$outfwsettings{'STATE'} = "DENY";
 	$POLICY = "ACCEPT";
-	$DO = "DROP";
+	$DO = "DROP -m comment --comment 'DROP_OUTGOINGFW'";
 }
 
 ### Initialize IPTables
@@ -167,9 +167,9 @@ foreach $configentry (sort @configs)
 
 			if ($configline[9] eq "aktiv") {
 				if ($DEBUG) {
-					print "$CMD -m state --state NEW -m limit --limit 10/minute -j LOG --log-prefix 'OUTGOINGFW '\n";
+					print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'OUTGOINGFW '\n";
 				} else {
-					system("$CMD -m state --state NEW -m limit --limit 10/minute -j LOG --log-prefix 'OUTGOINGFW '");
+					system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'OUTGOINGFW '");
 				}
 			}
 			
@@ -213,7 +213,7 @@ if ($P2PSTRING) {
 }
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
-	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -j DROP";
+	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -j DROP -m comment --comment 'DROP_OUTGOINGFW'";
 	if ($DEBUG) {
 		print "$CMD\n";
 	} else {

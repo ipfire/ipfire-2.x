@@ -64,15 +64,15 @@ case "$1" in
 		;;
 
 	stop)
-	
+			iptables -t nat -F SQUID
 		if [ -e /var/run/squid.pid ]; then
 			boot_mesg "Stopping Squid Proxy Server..."
-			iptables -t nat -F SQUID
 			squid -k shutdown >/dev/null 2>&1
 			evaluate_retval
 			killproc /usr/bin/squidGuard >/dev/null
 			killproc /usr/sbin/updxlrator >/dev/null
 			killproc /usr/sbin/squid >/dev/null
+			rm -rf /var/run/squid.pid	
 		fi
 		;;
 

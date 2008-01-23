@@ -428,3 +428,15 @@ WARNING: translation string unused: week
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: cached swap
+WARNING: untranslated string: cpu idle usage
+WARNING: untranslated string: cpu interrupt usage
+WARNING: untranslated string: cpu iowait usage
+WARNING: untranslated string: cpu nice usage
+WARNING: untranslated string: cpu steal usage
+WARNING: untranslated string: cpu system usage
+WARNING: untranslated string: cpu user usage
+WARNING: untranslated string: network internal
+WARNING: untranslated string: network traffic graphs others
+WARNING: untranslated string: read bytes
+WARNING: untranslated string: written bytes

@@ -46,25 +46,24 @@ $ENV{'QUERY_STRING'} =~ s/&//g;
 @cgigraphs = split(/graph=/,$ENV{'QUERY_STRING'});
 $cgigraphs[1] = '' unless defined $cgigraphs[1];
 
-if ($cgigraphs[1] =~ /(load)/) {&Graphs::updateloadgraph ("week");&Graphs::updateloadgraph ("month");&Graphs::updateloadgraph ("year");}
-if ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("week");&Graphs::updatecpugraph ("month");&Graphs::updatecpugraph ("year");}
-if ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
+if ($cgigraphs[1] =~ /(load)/) {&Graphs::updateloadgraph ("hour");&Graphs::updateloadgraph ("week");&Graphs::updateloadgraph ("month");&Graphs::updateloadgraph ("year");}
+if ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("hour");&Graphs::updatecpugraph ("week");&Graphs::updatecpugraph ("month");&Graphs::updatecpugraph ("year");}
+if ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("hour");&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
 if ($cgigraphs[1] =~ /disk/){
           my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-
+					push(@devices,"uba");
           foreach (@devices) {
 	         my $device = $_;
 	         chomp($device);
+					  &Graphs::updatediskgraph ("hour",$device);
 	          &Graphs::updatediskgraph ("week",$device);
 	          &Graphs::updatediskgraph ("month",$device);
 	          &Graphs::updatediskgraph ("year",$device);}}
-if ($cgigraphs[1] =~ /lq/) {&Graphs::updatelqgraph("week");&Graphs::updatelqgraph("month");&Graphs::updatelqgraph("year");}
-if ($cgigraphs[1] =~ /RED/) {&Graphs::updateifgraph("RED", "week");&Graphs::updateifgraph("RED", "month");&Graphs::updateifgraph("RED", "year");}
-if ($cgigraphs[1] =~ /GREEN/) {&Graphs::updateifgraph("GREEN", "week");&Graphs::updateifgraph("GREEN", "month");&Graphs::updateifgraph("GREEN", "year");}
-if ($cgigraphs[1] =~ /BLUE/) {&Graphs::updateifgraph("BLUE", "week");&Graphs::updateifgraph("BLUE", "month");&Graphs::updateifgraph("BLUE", "year");}
-if ($cgigraphs[1] =~ /ORANGE/) {&Graphs::updateifgraph("ORANGE", "week");&Graphs::updateifgraph("ORANGE", "month");&Graphs::updateifgraph("ORANGE", "year");}
+if ($cgigraphs[1] =~ /lq/) {&Graphs::updatelqgraph("hour");&Graphs::updatelqgraph("week");&Graphs::updatelqgraph("month");&Graphs::updatelqgraph("year");}
+if ($cgigraphs[1] =~ /fwhits/) {&Graphs::updatefwhitsgraph("hour");&Graphs::updatefwhitsgraph("week");&Graphs::updatefwhitsgraph("month");&Graphs::updatefwhitsgraph("year");}
+if ($cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /ipsec/ || $cgigraphs[1] =~ /orange/ || $cgigraphs[1] =~ /red/ ) {&Graphs::updateifgraph($cgigraphs[1], "hour");&Graphs::updateifgraph($cgigraphs[1], "week");&Graphs::updateifgraph($cgigraphs[1], "month");&Graphs::updateifgraph($cgigraphs[1], "year");}
 
-if ($cgigraphs[1] =~ /(network|GREEN|BLUE|ORANGE|RED|lq)/) {
+if ($cgigraphs[1] =~ /(network|green|blue|orange|red|ipsec|lq)/) {
 	&Header::openpage($Lang::tr{'network traffic graphs'}, 1, '');
 } else {
 	&Header::openpage($Lang::tr{'system graphs'}, 1, '');
@@ -72,7 +71,7 @@ if ($cgigraphs[1] =~ /(network|GREEN|BLUE|ORANGE|RED|lq)/) {
 
 &Header::openbigbox('100%', 'left');
 
-if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
+if ($cgigraphs[1] =~ /(green|blue|orange|red|ipsec|lq|cpu|memory|swap|disk|load|fwhits)/) {
 	my $graph = $cgigraphs[1];
 	my $graphname = ucfirst(lc($cgigraphs[1]));
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
@@ -81,6 +80,7 @@ if ($cgigraphs[1] =~ /(GREEN|BLUE|ORANGE|RED|lq|cpu|memory|swap|disk|load)/) {
 		my $ftime = localtime((stat("$graphdir/${graph}-day.png"))[9]);
 		print "<center>";
 		print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
+		print "<img alt='' src='/graphs/${graph}-hour.png' border='0' /><hr />";
 		print "<img alt='' src='/graphs/${graph}-day.png' border='0' /><hr />";
 		print "<img alt='' src='/graphs/${graph}-week.png' border='0' /><hr />";
 		print "<img alt='' src='/graphs/${graph}-month.png' border='0' /><hr />";

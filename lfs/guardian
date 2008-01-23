@@ -30,7 +30,7 @@ THISAPP    = guardian-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = guardian
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -64,5 +64,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian.pl /usr/local/bin/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_block.sh /usr/local/bin/
 	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_unblock.sh /usr/local/bin/
+	chown nobody.nobody /var/ipfire/guardian
 	chown nobody.nobody /var/ipfire/guardian/{guardian.conf,guardian.ignore}
 	@$(POSTBUILD)

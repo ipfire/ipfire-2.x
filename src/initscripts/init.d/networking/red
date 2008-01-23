@@ -159,6 +159,9 @@ case "${1}" in
 
 				. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.info
 				echo "$IPADDR"  > /var/ipfire/red/local-ipaddress
+				grep -v "gateway" /etc/hosts > /tmp/hosts
+				echo "$GATEWAY gateway"  >> /tmp/hosts
+				mv /tmp/hosts /etc/hosts
 				echo "$GATEWAY" > /var/ipfire/red/remote-ipaddress
 			else
 				echo ""

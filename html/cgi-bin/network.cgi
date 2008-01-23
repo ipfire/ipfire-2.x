@@ -50,15 +50,19 @@ $cgiparams[1] = '' unless defined $cgiparams[1];
 
 if ($cgiparams[1] =~ /red/) {
 	&Header::openpage($Lang::tr{'network traffic graphs external'}, 1, '');
-	push (@graphs, ("RED"));
-	push (@graphs, ('lq'));
-} else {
+	push (@graphs, ($netsettings{'RED_DEV'}));
+	push (@graphs, ("ipsec0"));
+}elsif ($cgiparams[1] =~ /other/) {
+	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
+	push (@graphs, ("lq"));
+	push (@graphs, ("fwhits"));
+}else {
 	&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
-	push (@graphs, ('GREEN'));
+	push (@graphs, ($netsettings{'GREEN_DEV'}));
 	if ($netsettings{'BLUE_DEV'}) {
-		push (@graphs, ('BLUE')); }
+		push (@graphs, ($netsettings{'BLUE_DEV'})); }
 	if ($netsettings{'ORANGE_DEV'}) {
-		push (@graphs, ('ORANGE')); }
+		push (@graphs, ($netsettings{'ORANGE_DEV'})); }
 }
 
 &Header::openbigbox('100%', 'left');
@@ -67,6 +71,8 @@ foreach my $graphname (@graphs) {
 
   if ($graphname eq "lq" )
   {  &Graphs::updatelqgraph("day");  }
+  elsif ($graphname eq "fwhits" )
+  {  &Graphs::updatefwhitsgraph("day");  }
   else
   {  &Graphs::updateifgraph($graphname, "day");  }
   

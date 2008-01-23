@@ -1,0 +1,48 @@
+#!/bin/sh
+# Begin $rc_base/init.d/collecd
+
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting Collection daemon..."
+		/usr/sbin/collectd -C /etc/collectd.conf
+		evaluate_retval
+#		for disk in `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`; do boot_mesg "Bringing up hddtemp daemon for $disk ..."; /usr/sbin/hddtemp $disk -d -l localhost; evaluate_retval; done
+#		boot_mesg "Bringing up mbmon daemon..."
+#		/usr/bin/mbmon -P 411 -r
+#		evaluate_retval
+		;;
+
+	stop)
+#		boot_mesg "Stopping mbmon daemon..."
+#		killproc /usr/bin/mbmon
+#		evaluate_retval
+#		boot_mesg "Stopping hddtemp daemon..."
+#		killproc /usr/sbin/hddtemp
+#		evaluate_retval
+		boot_mesg "Stopping Collection daemon..."
+		killproc /usr/sbin/collectd
+		evaluate_retval
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		evaluate_retval
+				;;
+
+	status)
+		statusproc /usr/sbin/collectd
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/collectd
