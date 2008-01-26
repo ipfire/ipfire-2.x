@@ -74,7 +74,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kudzu-mcs7830.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kudzu-usbnet.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && patch -N < $(DIR_SRC)/src/patches/kudzu-link-lintl.diff
 	cd $(DIR_APP) && make RPM_OPT_FLAGS="-O2 -I/opt/$(MACHINE)-uClibc/include" \

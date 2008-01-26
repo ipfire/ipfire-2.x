@@ -5,7 +5,7 @@ diff -Naur kudzu.org/usb.c kudzu-1.2.64/usb.c
  			    !strcmp(t->driver, "ax8817x") ||
  			    !strcmp(t->driver, "zd1201") ||
  			    !strcmp(t->driver, "asix") ||
-+			    !strcmp(t->driver, "mcs7830") ||
++			    !strcmp(t->driver, "mcs7830") || !strcmp(t->driver, "dm9601") ||
  			    !strcmp(t->driver, "usbnet"))) {
  				if (t->type == CLASS_OTHER)
  					t->type = CLASS_NETWORK;

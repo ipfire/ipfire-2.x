@@ -64,6 +64,7 @@
 * dhcp-3.1.0
 * dhcpcd-2.0.8
 * diffutils-2.8.1
+* dm9601-1.01
 * dnsmasq-2.40
 * dosfstools-2.11
 * e2fsprogs-1.39
