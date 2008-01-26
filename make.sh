@@ -572,6 +572,7 @@ buildinstaller() {
   installmake wget
   installmake hwdata
   installmake kudzu
+  installmake pcmciautils
   installmake installer
   installmake initrd
 }
