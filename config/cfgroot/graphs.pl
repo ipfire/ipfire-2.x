@@ -19,22 +19,27 @@ $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 
 my %color = ();
 my %mainsettings = ();
+my %mbmonsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
+
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
-
-my %mbmon_settings = ();
-&General::readhash("${General::swroot}/mbmon/settings", \%mbmon_settings);
-
-my %mbmon_values = ();
-if ( -e "/var/log/mbmon-values" ){
-&General::readhash("/var/log/mbmon-values", \%mbmon_values);
-}
 
 my $key;
 my $value;
 my @args = ();
 my $count = 0;
-
+my @mbmongraphs = ();
+if ( -e "/var/log/rrd/collectd/localhost/mbmon" ){
+	 @mbmongraphs = `ls /var/log/rrd/collectd/localhost/mbmon/`;
+	 foreach (@mbmongraphs){
+	         chomp($_);
+	 				 my @name=split(/\./,$_);my $label = $name[0]; $label=~ s/-//;
+		 			 $mbmonsettings{'LABEL-'.$name[0]}="$label";
+			 		 $mbmonsettings{'LINE-'.$name[0]}="checked";
+   				 }
+	 }
+	 
+&General::readhash("${General::swroot}/mbmon/settings", \%mbmonsettings);
 use Encode 'from_to';
 
 my %tr=();
@@ -56,7 +61,7 @@ sub updatecpugraph {
 
         RRDs::graph ("$graphs/cpu-$period.png",
         "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",, "-v $Lang::tr{'percentage'}",
-        "--alt-y-grid", "-w 600", "-h 150", "-l 0", "-u 100", "-r",
+        "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
         "--color", "BACK".$color{"color21"},
@@ -132,7 +137,7 @@ sub updateloadgraph {
 
         RRDs::graph ("$graphs/load-$period.png",
         "--start", "-1$period", "-aPNG",
-        "-w 600", "-h 150", "-i", "-z", "-W www.ipfire.org", "-l 0", "-r", "--alt-y-grid",
+        "-w 600", "-h 100", "-i", "-z", "-W www.ipfire.org", "-l 0", "-r", "--alt-y-grid",
         "-t Load Average $Lang::tr{'graph per'} $Lang::tr{$period}",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
@@ -157,7 +162,7 @@ sub updatememgraph {
 
         RRDs::graph ("$graphs/memory-$period.png",
         "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org", "-v $Lang::tr{'percentage'}",
-        "--alt-y-grid", "-w 600", "-h 150", "-l 0", "-u 100", "-r",
+        "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
         "--color", "BACK".$color{"color21"},
@@ -171,7 +176,7 @@ sub updatememgraph {
         "CDEF:bufferpct=buffer,total,/,100,*",
         "CDEF:cachepct=cache,total,/,100,*",
         "CDEF:freepct=free,total,/,100,*",
-        "COMMENT:$Lang::".sprintf("%-29s",$Lang::tr{'caption'}),
+        "COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
         "COMMENT:$Lang::tr{'maximal'}",
         "COMMENT:$Lang::tr{'average'}",
         "COMMENT:$Lang::tr{'minimal'}",
@@ -201,7 +206,7 @@ sub updatememgraph {
 
         RRDs::graph ("$graphs/swap-$period.png",
         "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org", "-v $Lang::tr{'percentage'}",
-        "--alt-y-grid", "-w 600", "-h 150", "-l 0", "-u 100", "-r",
+        "--alt-y-grid", "-w 600", "-h 100", "-l 0", "-u 100", "-r",
         "--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
         "--color", "BACK".$color{"color21"},
@@ -213,7 +218,7 @@ sub updatememgraph {
         "CDEF:usedpct=100,used,total,/,*",
         "CDEF:freepct=100,free,total,/,*",
         "CDEF:cachedpct=100,cached,total,/,*",
-        "COMMENT:$Lang::".sprintf("%-29s",$Lang::tr{'caption'}),
+        "COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
         "COMMENT:$Lang::tr{'maximal'}",
         "COMMENT:$Lang::tr{'average'}",
         "COMMENT:$Lang::tr{'minimal'}",
@@ -243,7 +248,7 @@ sub updatediskgraph {
 
         RRDs::graph ("$graphs/disk-$disk-$period.png",
         "--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org", "-v $Lang::tr{'bytes per second'}",
-        "--alt-y-grid", "-w 600", "-h 150", "-r", "-z",
+        "--alt-y-grid", "-w 600", "-h 100", "-r", "-z",
 				"--color", "SHADEA".$color{"color19"},
         "--color", "SHADEB".$color{"color19"},
         "--color", "BACK".$color{"color21"},
@@ -258,7 +263,7 @@ sub updatediskgraph {
         "COMMENT:$Lang::tr{'average'}",
         "COMMENT:$Lang::tr{'minimal'}",
         "COMMENT:$Lang::tr{'current'}\\j",
-        "AREA:st".$color{"color20"}.":standby\\j",
+        "AREA:st".$color{"color20"}."A0:standby\\j",
         "AREA:read".$color{"color14"}."A0:".sprintf("%-25s",$Lang::tr{'read bytes'}),
         "GPRINT:read:MAX:%8.1lf %sBps",
         "GPRINT:read:AVERAGE:%8.1lf %sBps",
@@ -279,7 +284,7 @@ sub updateifgraph {
 
 				RRDs::graph ("$graphs/$interface-$period.png",
 				"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org", "-v $Lang::tr{'bytes per second'}",
-				"--alt-y-grid", "-w 600", "-h 150", "-z", "-r",
+				"--alt-y-grid", "-w 600", "-h 100", "-z", "-r",
 				"--color", "SHADEA".$color{"color19"},
 				"--color", "SHADEB".$color{"color19"},
 				"--color", "BACK".$color{"color21"},
@@ -311,7 +316,7 @@ sub updatefwhitsgraph {
 				my $period = $_[0];
 				RRDs::graph ("$graphs/fwhits-$period.png",
 				"--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
-				"--alt-y-grid", "-w 600", "-h 150", "-r", "-v $Lang::tr{'bytes per second'}",
+				"--alt-y-grid", "-w 600", "-h 100", "-r", "-v $Lang::tr{'bytes per second'}",
 				"--color", "SHADEA".$color{"color19"},
 				"--color", "SHADEB".$color{"color19"},
 				"--color", "BACK".$color{"color21"},
@@ -344,22 +349,23 @@ sub updatelqgraph {
 				my $period    = $_[0];
 				RRDs::graph ("$graphs/lq-$period.png",
 				"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
-				"--alt-y-grid", "-w 600", "-h 150", "-l 0", "-r", "-v ms",
+				"--alt-y-grid", "-w 600", "-h 100", "-l 0", "-r", "-v ms",
 				"-t $Lang::tr{'linkq'} $Lang::tr{'graph per'} $Lang::tr{$period}",
 				"--color", "SHADEA".$color{"color19"},
 				"--color", "SHADEB".$color{"color19"},
 				"--color", "BACK".$color{"color21"},
 				"DEF:roundtrip=$rrdlog/collectd/localhost/ping/ping-gateway.rrd:ping:AVERAGE",
 				"COMMENT:$Lang::".sprintf("%-20s",$Lang::tr{'caption'})."\\j",
-				"CDEF:r0=roundtrip,30,-",
-				"CDEF:r1=r0,70,-",
-				"CDEF:r2=r1,150,-",
-				"CDEF:r3=r2,300,-",
-				"AREA:r0".$color{"color12"}."A0:<30 ms",
-				"STACK:r1".$color{"color17"}."A0:30-70 ms",
-				"STACK:r2".$color{"color14"}."A0:70-150 ms",
-				"STACK:r3".$color{"color18"}."A0:150-300 ms",
-				"STACK:roundtrip".$color{"color25"}.":>300 ms\\j",
+				"CDEF:roundavg=roundtrip,PREV(roundtrip),+,2,/",
+				"CDEF:r0=roundtrip,30,MIN",
+				"CDEF:r1=roundtrip,70,MIN",
+				"CDEF:r2=roundtrip,150,MIN",
+				"CDEF:r3=roundtrip,300,MIN",
+				"AREA:roundtrip".$color{"color25"}."A0:>300 ms",
+				"AREA:r3".$color{"color18"}."A0:150-300 ms",
+				"AREA:r2".$color{"color14"}."A0:70-150 ms",
+				"AREA:r1".$color{"color17"}."A0:30-70 ms",
+				"AREA:r0".$color{"color12"}."A0:<30 ms\\j",
 				"COMMENT:$Lang::tr{'maximal'}",
 				"COMMENT:$Lang::tr{'average'}",
 				"COMMENT:$Lang::tr{'minimal'}",
@@ -380,7 +386,7 @@ sub updatehddgraph {
 
   RRDs::graph ("$graphs/hddtemp-$disk-$period.png",
   "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
-  "--alt-y-grid", "-w 600", "-h 150",
+  "--alt-y-grid", "-w 600", "-h 100",
   "--color", "SHADEA".$color{"color19"},
   "--color", "SHADEB".$color{"color19"},
   "--color", "BACK".$color{"color21"},
@@ -388,8 +394,8 @@ sub updatehddgraph {
   "DEF:temperature=$rrdlog/hddtemp-$disk.rrd:temperature:AVERAGE",
   "DEF:standby=$rrdlog/hddshutdown-$disk.rrd:standby:AVERAGE",
   "CDEF:st=standby,INF,*",
-  "AREA:st".$color{"color20"}.":standby",
-  "LINE2:temperature".$color{"color11"}.":$Lang::tr{'hdd temperature in'} C\\j",
+  "AREA:st".$color{"color20"}."A0:standby",
+  "LINE3:temperature".$color{"color11"}."A0:$Lang::tr{'hdd temperature in'} C\\j",
   "COMMENT:$Lang::tr{'maximal'}",
   "COMMENT:$Lang::tr{'average'}",
   "COMMENT:$Lang::tr{'minimal'}",
@@ -401,132 +407,6 @@ sub updatehddgraph {
   );
   $ERROR = RRDs::error;
   print "Error in RRD::graph for hdd-$disk: $ERROR\n" if $ERROR;
-}
-
-sub updatetempgraph
-{
-  my $type   = "temp";
-  my $period = $_[0];
-  my $count = "11";
-
-  @args = ("$graphs/mbmon-$type-$period.png",
-    "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
-    "--alt-y-grid", "-w 600", "-h 150", "--alt-autoscale",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
-    "-t $Lang::tr{'mbmon temp'} ($Lang::tr{'graph per'} $Lang::tr{$period})",
-    "COMMENT:$Lang::tr{'caption'}\\t\\t",
-    "COMMENT:$Lang::tr{'maximal'}",
-    "COMMENT:$Lang::tr{'average'}",
-    "COMMENT:$Lang::tr{'minimal'}",
-    "COMMENT:$Lang::tr{'current'}\\j",);
-
-  foreach $key ( sort(keys %mbmon_values) )
-  {
-    if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
-    {
-      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
-      {
-        $mbmon_settings{'LABEL-'.$key} = $key;
-      }
-    push (@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-    push (@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} Grad C");
-    push (@args, "GPRINT:$key:MAX:%3.1lf");
-    push (@args, "GPRINT:$key:AVERAGE:%3.1lf");
-    push (@args, "GPRINT:$key:MIN:%3.1lf");
-    push (@args, "GPRINT:$key:LAST:%3.1lf\\j");
-    $count++;
-   }
-  }
-
-  RRDs::graph ( @args );
-    $ERROR = RRDs::error;
-    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-}
-
-sub updatefangraph
-{
-  my $type   = "fan";
-  my $period = $_[0];
-  my $count = "11";
-
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
-    "--alt-y-grid", "-w 600", "-h 150", "--alt-autoscale",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
-    "-t $Lang::tr{'mbmon fan'} ($Lang::tr{'graph per'} $Lang::tr{$period})",
-    "COMMENT:$Lang::tr{'caption'}\\t\\t",
-    "COMMENT:$Lang::tr{'maximal'}",
-    "COMMENT:$Lang::tr{'average'}",
-    "COMMENT:$Lang::tr{'minimal'}",
-    "COMMENT:$Lang::tr{'current'}\\j",);
-
-  foreach $key ( sort(keys %mbmon_values) )
-  {
-    if ( (index($key, $type) != -1) && ($mbmon_settings{'LINE-'.$key} eq 'on') )
-    {
-      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
-      {
-        $mbmon_settings{'LABEL-'.$key} = $key;
-      }
-
-      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} rpm");
-      push(@args, "GPRINT:$key:MAX:%5.0lf");
-      push(@args, "GPRINT:$key:AVERAGE:%5.0lf");
-      push(@args, "GPRINT:$key:MIN:%5.0lf");
-      push(@args, "GPRINT:$key:LAST:%5.0lf\\j");
-      $count++;
-    }
-  }
-    RRDs::graph ( @args );
-    $ERROR = RRDs::error;
-    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
-}
-
-sub updatevoltgraph
-{
-  my $type   = "volt";
-  my $period = $_[0];
-  my $count = "11";
-
-  @args = ("$graphs/mbmon-$type-$period.png", "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
-    "--alt-y-grid", "-w 600", "-h 150", "--alt-autoscale",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
-    "-t $Lang::tr{'mbmon volt'} ($Lang::tr{'graph per'} $Lang::tr{$period})",
-    "COMMENT:$Lang::tr{'caption'}\\t",
-    "COMMENT:$Lang::tr{'maximal'}",
-    "COMMENT:$Lang::tr{'average'}",
-    "COMMENT:$Lang::tr{'minimal'}",
-    "COMMENT:$Lang::tr{'current'}\\j",);
-
-  foreach $key ( sort(keys %mbmon_values) )
-  {
-    my $v = substr($key,0,1);
-    if ( ($v eq 'v') && ($mbmon_settings{'LINE-'.$key} eq 'on') )
-    {
-      if ( !defined($mbmon_settings{'LABEL-'.$key}) || ($mbmon_settings{'LABEL-'.$key} eq '') )
-      {
-        $mbmon_settings{'LABEL-'.$key} = $key;
-      }
-
-      push(@args, "DEF:$key=$rrdlog/mbmon.rrd:$key:AVERAGE");
-      push(@args, "LINE2:".$key.$color{"color$count"}.":$mbmon_settings{'LABEL-'.$key} Volt");
-      push(@args, "GPRINT:$key:MAX:%3.2lf");
-      push(@args, "GPRINT:$key:AVERAGE:%3.2lf");
-      push(@args, "GPRINT:$key:MIN:%3.2lf");
-      push(@args, "GPRINT:$key:LAST:%3.2lf\\j");
-      $count++;
-    }
-  }
-
-    RRDs::graph ( @args );
-    $ERROR = RRDs::error;
-    print("Error in RRD::graph for temp: $ERROR\n")if $ERROR;
 }
 
 sub overviewgraph {
@@ -556,7 +436,7 @@ sub overviewgraph {
 	my $color="#000000";
 	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}-$period.png",
 		"--start", $periodstring, "-aPNG", "-i", "-z", "-W www.ipfire.org",
-		"--alt-y-grid", "-w 600", "-h 150", "-r",
+		"--alt-y-grid", "-w 600", "-h 100", "-r",
     "--color", "SHADEA".$color{"color19"},
     "--color", "SHADEB".$color{"color19"},
     "--color", "BACK".$color{"color21"},
@@ -603,4 +483,86 @@ sub random_hex_color {
     my @color;
     push @color, @hex[rand(@hex)] for 1 .. $size;
     return join('', '#', @color);
+}
+
+sub updatehwtempgraph {
+
+  my $period = $_[0];
+
+  my @command = ("$graphs/mbmon-hwtemp-$period.png",
+	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
+	"--alt-y-grid", "-w 600", "-h 100",
+	"--color", "SHADEA".$color{"color19"},"--color",
+	"SHADEB".$color{"color19"},"--color",
+	"BACK".$color{"color21"},
+	"-t $Lang::tr{'mbmon temp'} $Lang::tr{'graph per'} $Lang::tr{$period}");
+
+	foreach(@mbmongraphs){
+	chomp($_);
+	if ( $_ =~ /temperature/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");
+		 }
+	}
+	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:$Lang::tr{'maximal'}","COMMENT:$Lang::tr{'average'}","COMMENT:$Lang::tr{'minimal'}","COMMENT:$Lang::tr{'current'}\\j");
+	foreach(@mbmongraphs){
+	chomp($_);
+	if ( $_ =~ /temperature/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
+ 		 	 			 							 	 		 																		"GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MAX:%3.2lf C","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":AVERAGE:%3.2lf C","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MIN:%3.2lf C","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":LAST:%3.2lf C\\j",);}
+	}
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
+}
+
+sub updatehwvoltgraph {
+
+  my $period = $_[0];
+
+  my @command = ("$graphs/mbmon-hwvolt-$period.png",
+	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
+	"--alt-y-grid", "-w 600", "-h 100",
+	"--color", "SHADEA".$color{"color19"},"--color",
+	"SHADEB".$color{"color19"},"--color",
+	"BACK".$color{"color21"},
+	"-t $Lang::tr{'mbmon volt'} $Lang::tr{'graph per'} $Lang::tr{$period}");
+
+	foreach(@mbmongraphs){
+	chomp($_);
+	if ( $_ =~ /voltage/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");}
+	}
+	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:$Lang::tr{'maximal'}","COMMENT:$Lang::tr{'average'}","COMMENT:$Lang::tr{'minimal'}","COMMENT:$Lang::tr{'current'}\\j");
+	foreach(@mbmongraphs){
+	chomp($_);
+	if ( $_ =~ /voltage/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
+ 		 	 			 							 	 		 																		"GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MAX:%3.2lf V","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":AVERAGE:%3.2lf V","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MIN:%3.2lf V","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":LAST:%3.2lf V\\j",);}
+	}
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
+}
+
+sub updatehwfangraph {
+
+  my $period = $_[0];
+
+  my @command = ("$graphs/mbmon-hwfan-$period.png",
+	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
+	"--alt-y-grid", "-w 600", "-h 100",
+	"--color", "SHADEA".$color{"color19"},"--color",
+	"SHADEB".$color{"color19"},"--color",
+	"BACK".$color{"color21"},
+	"-t $Lang::tr{'mbmon fan'} $Lang::tr{'graph per'} $Lang::tr{$period}");
+
+	foreach(@mbmongraphs){
+	chomp($_);
+	if ( $_ =~ /fanspeed/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");}
+	}
+	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:$Lang::tr{'maximal'}","COMMENT:$Lang::tr{'average'}","COMMENT:$Lang::tr{'minimal'}","COMMENT:$Lang::tr{'current'}\\j");
+	foreach(@mbmongraphs){
+	chomp($_);
+	if ( $_ =~ /fanspeed/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
+ 		 	 			 							 	 		 																		"GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MAX:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":AVERAGE:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MIN:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":LAST:%5.0lf RPM\\j",);}
+	}
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
 }

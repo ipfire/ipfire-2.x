@@ -22,19 +22,15 @@
 use strict;
 
 # enable only the following on debugging purpose
-# use warnings;
-# use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/graphs.pl";
 
-my %color = ();
-my %mainsettings = ();
-&General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
-
+my %mbmonsettings = ();
 my %cgiparams=();
 my @cgigraphs=();
 
@@ -42,269 +38,78 @@ my @cgigraphs=();
 
 my $graphdir = "/srv/web/ipfire/html/graphs";
 
-my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-foreach (@disks){
-  my $disk = $_;
-  chomp $disk;
-  my @array = split(/\//,$disk);
-  &Graphs::updatehddgraph ($array[$#array],"day");&Graphs::updatehddgraph ($array[$#array],"week");&Graphs::updatehddgraph ($array[$#array],"month");&Graphs::updatehddgraph ($array[$#array],"year");
-}
-
-  &Graphs::updatetempgraph ("day");
-  &Graphs::updatefangraph ("day");
-  &Graphs::updatevoltgraph ("day");
-
-my @graphs=();
-
-&Header::getcgihash(\%cgiparams);
-
 $ENV{'QUERY_STRING'} =~ s/&//g;
 @cgigraphs = split(/graph=/,$ENV{'QUERY_STRING'});
 $cgigraphs[1] = '' unless defined $cgigraphs[1];
 
-my %mbmon_settings = ();
-my %mbmon_values = ();
-&General::readhash("/var/log/mbmon-values", \%mbmon_values);
-my $key;
+my @mbmongraphs = ();
+if ( -e "/var/log/rrd/collectd/localhost/mbmon" ){@mbmongraphs = `ls /var/log/rrd/collectd/localhost/mbmon/`;}
 
-if ( $cgiparams{'ACTION'} eq $Lang::tr{'save'} )
-{
-  $mbmon_settings{'GRAPH_TEMP'} = ($cgiparams{'TEMP'} eq 'on');
-  $mbmon_settings{'GRAPH_FAN'} = ($cgiparams{'FAN'} eq 'on');
-  $mbmon_settings{'GRAPH_VOLT'} = ($cgiparams{'VOLT'} eq 'on');
-  $mbmon_settings{'GRAPH_HDD'} = ($cgiparams{'HDD'} eq 'on');
+&Header::getcgihash(\%mbmonsettings);
 
-  foreach my $line (sort keys %cgiparams) 
-  {
-    if ( index($line, "LINE-") != -1 )
-    {
-      $mbmon_settings{$line} = 'on';
-    }
+if ( $mbmonsettings{'ACTION'} eq $Lang::tr{'save'} ) {
+	 foreach (@mbmongraphs){
+	 				 chomp($_);
+ 					 my @name=split(/\./,$_);
+					 if ( $mbmonsettings{'LINE-'.$name[0]} ne "on" ){$mbmonsettings{'LINE-'.$name[0]} = 'off';}
+					 elsif ( $mbmonsettings{'LINE-'.$name[0]} eq "on" ){$mbmonsettings{'LINE-'.$name[0]} = 'checked';}
+	 }
+	 &General::writehash("${General::swroot}/mbmon/settings", \%mbmonsettings);
+}
 
-    if ( index($line, "LABEL-") != -1 )
-    {
-      $mbmon_settings{$line} = $cgiparams{$line};
-    }
-  }
+my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 
-  &General::writehash("${General::swroot}/mbmon/settings", \%mbmon_settings);
+&Header::openpage($Lang::tr{'harddisk temperature graphs'}, 1, '');
+&Header::openbigbox('100%', 'left');
+
+if ($cgigraphs[1] =~ /hwtemp/) {&Graphs::updatehwtempgraph ("hour");&Graphs::updatehwtempgraph ("week");&Graphs::updatehwtempgraph ("month");&Graphs::updatehwtempgraph ("year");graphbox("hwtemp");}
+elsif ($cgigraphs[1] =~ /hwfan/) {&Graphs::updatehwfangraph ("hour");&Graphs::updatehwfangraph ("week");&Graphs::updatehwfangraph ("month");&Graphs::updatehwfangraph ("year");graphbox("hwfan");}
+elsif ($cgigraphs[1] =~ /hwvolt/) {&Graphs::updatehwvoltgraph ("hour");&Graphs::updatehwvoltgraph ("week");&Graphs::updatehwvoltgraph ("month");&Graphs::updatehwvoltgraph ("year");graphbox("hwvolt");}
+elsif ($cgigraphs[1] =~ /hddtemp/) {
+ foreach (@disks){
+  my $disk = $_;
+  chomp $disk;
+  my @array = split(/\//,$disk);
+  &Graphs::updatehddgraph ($array[$#array],"week");&Graphs::updatehddgraph ($array[$#array],"month");&Graphs::updatehddgraph ($array[$#array],"year");
+  hddtempbox($array[$#array]);
+	}
 }
 else
 {
-  &General::readhash("${General::swroot}/mbmon/settings", \%mbmon_settings);
-}
+ &Graphs::updatehwtempgraph ("day");&Graphs::updatehwfangraph ("day");&Graphs::updatehwvoltgraph ("day");
+ foreach (@disks){
+  my $disk = $_;
+  chomp $disk;
+  my @array = split(/\//,$disk);
+  &Graphs::updatehddgraph ($array[$#array],"day");
+   	if (-e "$graphdir/hddtemp-$disk-day.png") {
 
-my $selected_temp = '';
-my $selected_fan = '';
-my $selected_volt = '';
-my $selected_hdd = '';
-
-$selected_temp = "checked='checked'" if ( $mbmon_settings{'GRAPH_TEMP'} == 1 );
-$selected_fan  = "checked='checked'" if ( $mbmon_settings{'GRAPH_FAN'} == 1 );
-$selected_volt = "checked='checked'" if ( $mbmon_settings{'GRAPH_VOLT'} == 1 );
-$selected_hdd = "checked='checked'" if ( $mbmon_settings{'GRAPH_HDD'} == 1 );
-
-my %mbmon_graphs = ();
-foreach $key ( sort(keys %mbmon_values) ) 
-{
-  $mbmon_graphs{$key} = "checked='checked'" if ( $mbmon_settings{'LINE-'.$key} eq 'on' );
-  if ( !defined($mbmon_settings{'LABEL-'.$key}) )
-  {
-    $mbmon_settings{'LABEL-'.$key} = $key;
-  }
-}
-
-&Header::openpage($Lang::tr{'harddisk temperature graphs'}, 1, '');
-
-&Header::openbigbox('100%', 'left');
-
-###############
-# DEBUG DEBUG
-#&Header::openbox('100%', 'left', 'DEBUG');
-#my $debugCount = 0;
-#foreach my $line (sort keys %cgiparams) {
-#  print "$line = $cgiparams{$line}<br />\n";
-#  $debugCount++;
-#}
-#print "&nbsp;Count: $debugCount<br />\n";
-#print "&nbsp;CGIParams: $cgigraphs[1]\n"; 
-#&Header::closebox();
-# DEBUG DEBUG
-###############
-
-if ($cgigraphs[1] =~ /hddtemp/) 
-{
-  my $graph = $cgigraphs[1];
-  my $graphname = $Lang::tr{"harddisk temperature"};
-  &Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
-
-    if (-e "$graphdir/${graph}-day.png")
-     {
-      my $ftime = localtime((stat("$graphdir/${graph}-day.png"))[9]);
-      print "<center>";
-      print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
-      print "<img src='/graphs/${graph}-day.png' border='0' /><hr />";
-      print "<img src='/graphs/${graph}-week.png' border='0' /><hr />";
-      print "<img src='/graphs/${graph}-month.png' border='0' /><hr />";
-      print "<img src='/graphs/${graph}-year.png' border='0' />";
-      if ( -e "/var/log/smartctl_out_${graph}" ) 
-      {
-        my $output = `/bin/cat /var/log/smartctl_out_${graph}`;
-        $output = &Header::cleanhtml($output);
-        print "<hr><table border=0><tr><td align=left><pre>$output</pre></table>\n";
-      }
-    }
-    else 
-    {
-      print $Lang::tr{'no information available'};
-    }
-  &Header::closebox();
-  print "<div align='center'><table width='80%'><tr><td align='center'>";
-  print "<a href='/cgi-bin/hardwaregraphs.cgi'>";
-  print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
-}
-elsif ($cgigraphs[1] =~ /(temp|fan|volt)/) 
-{
-if ($cgigraphs[1] =~ /temp/) {&Graphs::updatetempgraph ("week");&Graphs::updatetempgraph ("month");&Graphs::updatetempgraph ("year");}
-if ($cgigraphs[1] =~ /fan/) {&Graphs::updatefangraph ("week");&Graphs::updatefangraph ("month");&Graphs::updatefangraph ("year");}
-if ($cgigraphs[1] =~ /volt/) {&Graphs::updatevoltgraph ("week");&Graphs::updatevoltgraph ("month");&Graphs::updatevoltgraph ("year");}
-
-  my $graph = $cgigraphs[1];
-  my $graphname = $Lang::tr{"mbmon $cgigraphs[1]"};
-  &Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
-
-  if (-e "$graphdir/mbmon-${graph}-day.png") 
-  {
-    my $ftime = localtime((stat("$graphdir/mbmon-${graph}-day.png"))[9]);
-    print "<center>";
-    print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
-    print "<img src='/graphs/mbmon-${graph}-day.png' border='0' /><hr />";
-    print "<img src='/graphs/mbmon-${graph}-week.png' border='0' /><hr />";
-    print "<img src='/graphs/mbmon-${graph}-month.png' border='0' /><hr />";
-    print "<img src='/graphs/mbmon-${graph}-year.png' border='0' />";
-  }
-  else 
-  {
-    print $Lang::tr{'no information available'};
-  }
-  &Header::closebox();
-  print "<div align='center'><table width='80%'><tr><td align='center'>";
-  print "<a href='/cgi-bin/hardwaregraphs.cgi'>";
-  print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
-}
-else 
-{
-  if ( $mbmon_settings{'GRAPH_TEMP'} == 1 )
-  {
-    &Header::openbox('100%', 'center', "$Lang::tr{'mbmon temp'} $Lang::tr{'graph'}");
-    if (-e "$graphdir/mbmon-temp-day.png") 
-    {
-      my $ftime = localtime((stat("$graphdir/mbmon-temp-day.png"))[9]);
-      print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=temp'>";
-      print "<img src='/graphs/mbmon-temp-day.png' border='0' />";
-      print "</a>";
-    }
-    else 
-    {
-      print $Lang::tr{'no information available'};
-    }
-    print "<br />\n";
-    &Header::closebox();
+ 	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
+	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-day.png"))[9]);
+	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	  print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=hddtemp'>";
+	  print "<img src='/graphs/hddtemp-$disk-day.png' border='0' />";
+		print "</a>";
+	  print "<br />\n";
+        &Header::closebox();
+		}
   }
 
-  if ( $mbmon_settings{'GRAPH_FAN'} == 1 )
-  {
-    &Header::openbox('100%', 'center', "$Lang::tr{'mbmon fan'} $Lang::tr{'graph'}");
-    if (-e "$graphdir/mbmon-fan-day.png") 
-    {
-      my $ftime = localtime((stat("$graphdir/mbmon-fan-day.png"))[9]);
-      print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=fan'>";
-      print "<img src='/graphs/mbmon-fan-day.png' border='0' />";
-      print "</a>";
-    }
-    else 
-    {
-      print $Lang::tr{'no information available'};
-    }
-    print "<br />\n";
-    &Header::closebox();
-  }
-
-  if ( $mbmon_settings{'GRAPH_VOLT'} == 1 )
-  {
-    &Header::openbox('100%', 'center', "$Lang::tr{'mbmon volt'} $Lang::tr{'graph'}");
-    if (-e "$graphdir/mbmon-volt-day.png") 
-    {
-      my $ftime = localtime((stat("$graphdir/mbmon-volt-day.png"))[9]);
-      print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-      print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=volt'>";
-      print "<img src='/graphs/mbmon-volt-day.png' border='0' />";
-      print "</a>";
-    } 
-    else 
-    {
-      print $Lang::tr{'no information available'};
-    }
-    print "<br />\n";
-    &Header::closebox();
-  }
-
-  if ( $mbmon_settings{'GRAPH_HDD'} == 1 )
-  {
-   my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-    foreach (@devices) {
-	   my $device = $_;
-	   chomp($device);
-	   my @array = split(/\//,$device);
-    hddtempbox($array[$#array]);}
-  }
-
-  &Header::openbox('100%', 'center', $Lang::tr{'settings'});
-print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='100%'>
-<tr><td colspan='2' align='left'><input type='checkbox' name='TEMP' $selected_temp />&nbsp;$Lang::tr{'mbmon temp'} $Lang::tr{'graph'}</td></tr>
-<tr><td colspan='2' align='left'><input type='checkbox' name='FAN' $selected_fan />&nbsp;$Lang::tr{'mbmon fan'} $Lang::tr{'graph'}</td></tr>
-<tr><td colspan='2' align='left'><input type='checkbox' name='VOLT' $selected_volt />&nbsp;$Lang::tr{'mbmon volt'} $Lang::tr{'graph'}</td></tr>
-<tr><td colspan='2' align='left'><input type='checkbox' name='HDD' $selected_hdd />&nbsp;$Lang::tr{'harddisk temperature'}-$Lang::tr{'graph'}</td></tr>
-</table>
-<hr />
-<table width='100%' border='0' cellspacing='1' cellpadding='0'>
-<tr><td align='center' width='10%'><b>$Lang::tr{'mbmon display'}</b></td><td align='center' width='15%'>&nbsp;</td><td align='center' width='15%'><b>$Lang::tr{'mbmon value'}</b></td><td align='left'><b>$Lang::tr{'mbmon label'}</b></td></tr>
-END
-;
-
-my $i = 0;
-foreach $key ( sort(keys %mbmon_values) ) 
-{
-  if ( $i % 2 )
-  {
-    print("<tr bgcolor='$color{'color22'}'>");
-  }
-  else 
-  {
-    print("<tr bgcolor='$color{'color20'}'>");
-  }
-  $mbmon_settings{'LABEL-'.$key} = &Header::cleanhtml($mbmon_settings{'LABEL-'.$key});
-  print("<td align='center'><input type='checkbox' name='LINE-$key' $mbmon_graphs{$key}/></td>");
-  print("<td>$key</td><td align='center'>$mbmon_values{$key}</td>\n");
-  print("<td>&nbsp;<input type='text' name='LABEL-$key' value='$mbmon_settings{'LABEL-'.$key}' size='25' /></td></tr>\n");
-  $i++;
-}
-
-print <<END
-</table>
-
-<table width='100%'>
-<tr><td class='base' valign='top'>&nbsp;</td><td width='40%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td></tr>
-</table>
-
-</form>
-END
-;
-  &Header::closebox();
+ my @graphs = ("hwtemp","hwfan","hwvolt");
+ foreach (@graphs){
+ 				 					&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+									if (-e "$graphdir/mbmon-$_-day.png"){
+											my $ftime = localtime((stat("$graphdir/mbmon-$_-day.png"))[9]);
+											print "<center>";
+											print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	  									print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=$_'>";
+											print "<img src='/graphs/mbmon-$_-day.png' border='0' />";
+											print "</a><hr />";
+									}
+									else{print $Lang::tr{'no information available'};}
+									&Header::closebox();
+	}
+	if ( -e "/var/log/rrd/collectd/localhost/mbmon" ){mbmonbox();}
 }
 
 &Header::closebigbox();
@@ -312,15 +117,98 @@ END
 
 sub hddtempbox {
  my $disk = $_[0];
-    if (-e "$graphdir/hddtemp-$disk-day.png") {
-  
+    if (-e "$graphdir/hddtemp-$disk-week.png") {
+
  	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
-	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-day.png"))[9]);
+	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-week.png"))[9]);
 	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-	  print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=hddtemp-$disk'>";
 	  print "<img src='/graphs/hddtemp-$disk-day.png' border='0' />";
-	  print "</a>";
 	  print "<br />\n";
         &Header::closebox();
   }
+      if (-e "$graphdir/hddtemp-$disk-month.png") {
+
+ 	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
+	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-month.png"))[9]);
+	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	  print "<img src='/graphs/hddtemp-$disk-day.png' border='0' />";
+	  print "<br />\n";
+        &Header::closebox();
+  }
+      if (-e "$graphdir/hddtemp-$disk-year.png") {
+
+ 	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
+	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-year.png"))[9]);
+	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	  print "<img src='/graphs/hddtemp-$disk-year.png' border='0' />";
+	  print "<br />\n";
+        &Header::closebox();
+  }
+}
+
+sub graphbox {
+ my $graph = $_[0];
+ 
+	&Header::openbox('100%', 'center', "$graph $Lang::tr{'graph'}");
+	if (-e "$graphdir/mbmon-$graph-week.png"){
+			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-day.png"))[9]);
+			 print "<center>";
+			 print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+			 print "<img src='/graphs/mbmon-$graph-day.png' border='0' /><hr />";
+	 }
+	 else{print $Lang::tr{'no information available'};}
+	 &Header::closebox();
+	&Header::openbox('100%', 'center', "$graph $Lang::tr{'graph'}");
+	if (-e "$graphdir/mbmon-$graph-month.png"){
+			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-month.png"))[9]);
+			 print "<center>";
+			 print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+			 print "<img src='/graphs/mbmon-$graph-month.png' border='0' /><hr />";
+	 }
+	 else{print $Lang::tr{'no information available'};}
+	 &Header::closebox();
+	&Header::openbox('100%', 'center', "$graph $Lang::tr{'graph'}");
+	if (-e "$graphdir/mbmon-$graph-year.png"){
+			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-year.png"))[9]);
+			 print "<center>";
+			 print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+			 print "<img src='/graphs/mbmon-$graph-year.png' border='0' /><hr />";
+	 }
+	 else{print $Lang::tr{'no information available'};}
+	 &Header::closebox();
+}
+
+sub mbmonbox{
+
+ foreach (@mbmongraphs){
+ 				 chomp($_);
+				 my @name=split(/\./,$_);my $label = $name[0]; $label=~ s/-//;
+				 $mbmonsettings{'LABEL-'.$name[0]}="$label";
+				 $mbmonsettings{'LINE-'.$name[0]}="checked";
+				 }
+ &General::readhash("${General::swroot}/mbmon/settings", \%mbmonsettings);
+ 
+ &Header::openbox('100%', 'center', "$Lang::tr{'mbmon settings'}");
+ if ( $cgiparams{'ACTION'} eq $Lang::tr{'save'} ){print "Test";}
+ 
+ print <<END
+ <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+ <table width='100%' border='0' cellspacing='5' cellpadding='0' align='center'>
+ <tr><td align='right' width='40%'><b>$Lang::tr{'mbmon display'}</b></td>
+		 <td align='left'><b>$Lang::tr{'mbmon label'}</b></td>
+ </tr>
+END
+;
+ foreach (@mbmongraphs){
+ 				 chomp($_);my @name=split(/\./,$_);
+				 print("<tr><td align='right'><input type='checkbox' name='LINE-$name[0]' $mbmonsettings{'LINE-'.$name[0]} /></td>");
+ 				 print("<td><input type='text' name='LABEL-$name[0]' value='$mbmonsettings{'LABEL-'.$name[0]}' size='25' /></td></tr>\n");
+  }
+ print <<END
+ <tr><td align='center' colspan='2' ><input type='submit' name='ACTION' value=$Lang::tr{'save'} /></td></tr>
+ </table>
+ </form>
+END
+;
+ &Header::closebox();
 }

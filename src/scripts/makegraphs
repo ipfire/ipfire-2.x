@@ -29,230 +29,107 @@ use RRDs;
 require "/var/ipfire/general-functions.pl";
 require "${General::swroot}/lang.pl";
 
-my (%settings, @ipacsum, $iface, $ERROR);
-&General::readhash("${General::swroot}/ethernet/settings", \%settings);
-my %mbmon_settings = ();
-&General::readhash("${General::swroot}/mbmon/settings", \%mbmon_settings);
-
-# Added for conversion of utf-8 characters
-use Encode 'from_to';
-my %tr=();
-
-system("chmod 777 /srv/web/ipfire/html/graphs");
-
-# Force language back to English (ugly hack!)
-# Modified to only force if we are unable to convert charset
-# from utf-8
-if((${Lang::language} eq 'el') ||
-	(${Lang::language} eq 'fa') ||
-	(${Lang::language} eq 'ru') ||
-	(${Lang::language} eq 'th') ||
-	(${Lang::language} eq 'vi') ||
-	(${Lang::language} eq 'zh') ||
-	(${Lang::language} eq 'zt')) {
-	eval `/bin/cat "${General::swroot}/langs/en.pl"`;
-} else {
-	#use translated version for other languages
-	%tr=%Lang::tr;
-}
-
 # Settings
-my $rrdlog = "/var/log/rrd";
-my $graphs = "/srv/web/ipfire/html/graphs";
 $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
-my $hdd_device = "/dev/harddisk";
 my $temp = '';
-my %mbmon_values = ();
-my $key;
-my $value;
-my @args = ();
-my $count = 0;
+my $rrdlog = '/var/log/rrd';
 my $ERROR;
-my $dbg = 0;
 my $path_smartctl = "/usr/sbin/smartctl";
-my $path_hddtemp = "/usr/sbin/hddtemp";
 
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-open(MBMON_OUT, ">/var/log/mbmon-values");
-open(FD, "/usr/bin/mbmon -rc1|" ) || die "ERROR: Cannot run mbmon\n" ;
-
-while( $_ = <FD> )
-{
-	next unless( /^([A-Za-z][^:\s]+)\s*:\s*([+\-]{0,1}[\d\.]+)/ ) ;
-	$key = $1 ;
-	$value = $2 ;
-	$key =~ y/A-Z/a-z/ ;
-	$mbmon_values{$key} = $value;
-	print(MBMON_OUT "$key=$value\n");
-}
-close(FD);
-close(MBMON_OUT);
-
 sub updatehdddata
 {
-	my $disk = $_[0];
-	my $standby;
-	my @array = split(/\//,$disk);
+        my $disk = $_[0];
+        my $standby;
+        my @array = split(/\//,$disk);
 
-	if ( ! -e "$rrdlog/hddshutdown-".$array[$#array].".rrd"){
-		# database did not exist -> create
-		RRDs::create ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "--step=300",
-		"DS:standby:GAUGE:600:0:1",
-		"RRA:AVERAGE:0.5:1:576",
-		"RRA:AVERAGE:0.5:6:672",
-		"RRA:AVERAGE:0.5:24:732",
-		"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
-	}
+        if ( ! -e "$rrdlog/hddshutdown-".$array[$#array].".rrd"){
+                # database did not exist -> create
+                RRDs::create ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "--step=300",
+                "DS:standby:GAUGE:600:0:1",
+                "RRA:AVERAGE:0.5:1:576",
+                "RRA:AVERAGE:0.5:6:672",
+                "RRA:AVERAGE:0.5:24:732",
+                "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
+        }
 
-	if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
-	else {$standby = 0;}
+        if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
+        else {$standby = 0;}
 
-	RRDs::update ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
-	$ERROR = RRDs::error;
-	print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
+        RRDs::update ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
+        $ERROR = RRDs::error;
+        print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
 
-	if ( ! -e "$rrdlog/hddtemp-".$array[$#array].".rrd"){
-		# database did not exist -> create
-		RRDs::create ("$rrdlog/hddtemp-".$array[$#array].".rrd", "--step=300",
-		"DS:temperature:GAUGE:600:0:100",
-		"RRA:AVERAGE:0.5:1:576",
-		"RRA:AVERAGE:0.5:6:672",
-		"RRA:AVERAGE:0.5:24:732",
-		"RRA:AVERAGE:0.5:144:1460");
-		$ERROR = RRDs::error;
-		print "Error in RRD::create for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
-	}
+        if ( ! -e "$rrdlog/hddtemp-".$array[$#array].".rrd"){
+                # database did not exist -> create
+                RRDs::create ("$rrdlog/hddtemp-".$array[$#array].".rrd", "--step=300",
+                "DS:temperature:GAUGE:600:0:100",
+                "RRA:AVERAGE:0.5:1:576",
+                "RRA:AVERAGE:0.5:6:672",
+                "RRA:AVERAGE:0.5:24:732",
+                "RRA:AVERAGE:0.5:144:1460");
+                $ERROR = RRDs::error;
+                print "Error in RRD::create for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
+        }
 
-	# Temperaturlesen wÃrde die Platte aufwecken!!!
-	if (!$standby){
-		$temp = 0;
-		my $hdd_output = '';
-		my $smart_output = '';
-		if ( -e "$path_smartctl" ){system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");}
-		if ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] ){
-		$hdd_output = `cat /var/log/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
-		my @t = split(/\s+/,$hdd_output);
-		$temp = $t[9];
-		}else{$temp = 0;}
-		print "Temperature for ".$array[$#array]."->".$temp."<-\n";
-		system("echo \"Temperature for $array[$#array] -> $temp <-\n\" >>/tmp/debug");
-		# Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
-		if ($temp){
-			RRDs::update ("$rrdlog/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
-			$ERROR = RRDs::error;
-			print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
-		}
-	}
-}
-
-sub updatembmondata
-{
-	if ( ! -e "$rrdlog/mbmon.rrd" ){
-		# database did not exist -> create
-
-		@args = ("$rrdlog/mbmon.rrd");
-		push(@args, "--step=300");
-		foreach $key ( sort(keys %mbmon_values) ){push(@args, "DS:$key:GAUGE:600:U:U");}
-		push(@args, "RRA:AVERAGE:0.5:1:576");
-		push(@args, "RRA:AVERAGE:0.5:6:672");
-		push(@args, "RRA:AVERAGE:0.5:24:732");
-		push(@args, "RRA:AVERAGE:0.5:144:1460");
-
-		print("create ". join( ", ", @args)) if ( $dbg );
-		RRDs::create (@args);
-		$ERROR = RRDs::error;
-		print("Error in RRD::create for mbmon: $ERROR\n") if $ERROR;
-	}
-
-	my @ds;
-	my @val;
-	my $template;
-
-	foreach $key ( sort(keys %mbmon_values) ){
-		push(@ds, $key);
-		push(@val, $mbmon_values{$key});
-	}
-
-	$template = join(':', @ds);
-	$value    = "N:".join(':', @val);
-
-	print("update template = '$template'\n") if ( $dbg );
-	print("update value    = '$value'\n") if ( $dbg );
-
-	RRDs::update("$rrdlog/mbmon.rrd", "-t", $template, $value);
-	$ERROR = RRDs::error;
-	print("Error in RRD::update for mbmon: $ERROR\n") if $ERROR;
+        # Temperaturlesen wï¿½rde die Platte aufwecken!!!
+        if (!$standby){
+                $temp = 0;
+                my $smart_output = '';
+                system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
+                if ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] ){
+                my $hdd_output = `cat /var/log/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
+                my @t = split(/\s+/,$hdd_output);
+                $temp = $t[9];
+                }else{$temp = 0;}
+                print "Temperature for ".$array[$#array]."->".$temp."<-\n";
+                # Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
+                if ($temp){
+                        RRDs::update ("$rrdlog/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
+                        $ERROR = RRDs::error;
+                        print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
+                }
+        }
 }
 
 ## Update ipac logs
 system ('/usr/sbin/fetchipac');
-sleep 8;
-
-###
-### Squid Graphs
-###
-if ( -e "/var/log/squid/access.log") {system ("/usr/bin/squid-graph -o=/srv/web/ipfire/html/sgraph --tcp-only < /var/log/squid/access.log >/dev/null 2>&1");}
-
-###
-### utf8 conversion
-###
-if ((${Lang::language} eq 'cs') || (${Lang::language} eq 'hu') || (${Lang::language} eq 'pl') || (${Lang::language} eq 'sk')) {
-	# Czech, Hungarian, Polish and Slovak character set
-	foreach my $key(keys %Lang::tr) {from_to($tr{$key}, "utf-8", "iso-8859-2");}
-} elsif (${Lang::language} eq 'tr') {
-	# Turkish
-	foreach my $key(keys %Lang::tr) {from_to($tr{$key}, "utf-8", "iso-8859-9");}
-} else {
-	foreach my $key(keys %Lang::tr) {from_to($tr{$key}, "utf-8", "iso-8859-1");}
-}
-
-###
-### HDD graphs
-###
-
 
 my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 system("unlink /tmp/hddstatus && touch /tmp/hddstatus");
-print "\nFound following amount of disks:".@disks."\n";
 foreach (@disks){
-	my $disk = $_;
-	chomp $disk;
-	print "Working on disk ".$disk.".\n";
+        my $disk = $_;
+        chomp $disk;
+        print "Working on disk ".$disk.".\n";
 
-	my $status = "";
-	my $diskstats = "";
-	my $newdiskstats = "";
-	my @array = split(/\//,$disk);
+        my $status = "";
+        my $diskstats = "";
+        my $newdiskstats = "";
+        my @array = split(/\//,$disk);
 
-	$diskstats = `cat /tmp/hddstats-$array[$#array]`;
-	chomp $diskstats;
-	my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
-	chomp $newdiskstats;
-	my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
-	chomp $status;
+        $diskstats = `cat /tmp/hddstats-$array[$#array]`;
+        chomp $diskstats;
+        my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+        chomp $newdiskstats;
+        my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
+        chomp $status;
 
-	if ($status !~/standby/ || $diskstats ne $newdiskstats){
-		if (-e "/tmp/hddshutdown-".$array[$#array]){system("unlink /tmp/hddshutdown-".$array[$#array]);}
-	}
+        if ($status !~/standby/ || $diskstats ne $newdiskstats){
+                if (-e "/tmp/hddshutdown-".$array[$#array]){system("unlink /tmp/hddshutdown-".$array[$#array]);}
+        }
 
-	if (-e "/tmp/hddshutdown-".$array[$#array]){$status = " standby\n";}
-	else{$status = " active\n";}
+        if (-e "/tmp/hddshutdown-".$array[$#array]){$status = " standby\n";}
+        else{$status = " active\n";}
 
-	open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
-	print DATEI $disk."-".$status;
-	close(DATEI);
+        open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
+        print DATEI $disk."-".$status;
+        close(DATEI);
 
-	updatehdddata($disk);
-
+        updatehdddata($disk);
 }
-
-###
-### Mbmon Data
-###
-updatembmondata();

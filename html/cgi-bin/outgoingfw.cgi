@@ -253,13 +253,13 @@ END
 		<hr />
 		<table border='0' width='100%' cellspacing='0'>
 		<tr bgcolor='$color{'color22'}'>
-		    <td width='14%' align='center'><b>Protokoll</b>
-		    <td width='14%' align='center'><b>Netzwerk</b>
-		    <td width='14%' align='center'><b>Ziel</b>
-		    <td width='14%' align='center'><b>Anmerkung</b>
-		    <td width='14%' align='center'><b>Politik</b>
-		    <td width='16%' align='center'><b>Logging</b>
-		    <td width='14%' align='center'><b>Aktionen</b>
+		    <td width='14%' align='center'><b>$Lang::tr{'protocol'}</b></td>
+		    <td width='14%' align='center'><b>$Lang::tr{'network'}</b></td>
+		    <td width='14%' align='center'><b>$Lang::tr{'destination'}</b></td>
+		    <td width='14%' align='center'><b>$Lang::tr{'description'}</b></td>
+		    <td width='14%' align='center'><b>$Lang::tr{'policy'}</b></td>
+		    <td width='16%' align='center'><b>$Lang::tr{'logging'}</b></td>
+		    <td width='14%' align='center'><b>$Lang::tr{'action'}</b></td>
 END
 ;
 		foreach $configentry (sort @configs)
@@ -324,10 +324,8 @@ END
 						unless ($outfwsettings{'SIP'}) { $outfwsettings{'DISPLAY_SIP'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SIP'} = $outfwsettings{'SIP'}; }
 						unless ($outfwsettings{'SMAC'}) { $outfwsettings{'DISPLAY_SMAC'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SMAC'} = $outfwsettings{'SMAC'}; }
 						print <<END
-						<tr><td width='14%' align='right'>Quell-IP-Adresse: 
+						<tr><td width='14%' align='right'>$Lang::tr{'source ip'}:
 						    <td width='14%' align='left'>$outfwsettings{'DISPLAY_SIP'}
-						    <td width='14%' align='right'>Quell-MAC-Adresse:
-						    <td width='14%' align='left'>$outfwsettings{'DISPLAY_SMAC'}
 						    <td width='44%' colspan='2' align='center'>
 END
 ;
@@ -370,8 +368,8 @@ if ($outfwsettings{'POLICY'} ne 'MODE0'){
 	&Header::openbox('100%', 'center', 'P2P-Block');
 	print <<END
 	<table width='40%'>
-		<tr bgcolor='$color{'color22'}'><td width='66%' align=center><b>Protokoll</b>
-		    <td width='33%' align=center><b>Status</b>
+		<tr bgcolor='$color{'color22'}'><td width='66%' align=center><b>$Lang::tr{'protocol'}</b>
+		    <td width='33%' align=center><b>$Lang::tr{'status'}</b>
 END
 ;
 	my $id = 1;
@@ -408,7 +406,7 @@ END
 	}
 	print <<END
 	</table>
-  <br />Klicken Sie auf die Symbole um das entsprechende iptables P2P-Blockmodul zu (de-)aktivieren.
+  <br />$Lang::tr{'outgoingfw p2p description'}
 END
 ;
 	&Header::closebox();
@@ -418,18 +416,18 @@ END
 print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
-		<tr><td width='10%' align='left'><b>Modus 0:</b><td width='90%' align='left' colspan='2'>In diesem Modus ist es allen Rechnern im Netzwerk uneingeschraenkt moeglich Verbindungen ins Internet aufzubauen.</td></tr>
-		<tr><td width='10%' align='left'><b>Modus 1:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden nur Verbindungen nach den oben definierten Regeln zugelassen.</td></tr>
-		<tr><td width='10%' align='left'><b>Modus 2:</b><td width='90%' align='left' colspan='2'>In diesem Modus werden saemtliche Verbindungen erlaubt, bis auf die oben definierten Block-Regeln.</td></tr>
+		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 0:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoingfw mode0'}</td></tr>
+		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 1:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoingfw mode1'}</td></tr>
+		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 2:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoingfw mode2'}</td></tr>
 		<tr><td colspan='3'><hr /></td></tr>
-		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px"><option value='MODE0' $selected{'POLICY'}{'MODE0'}>Modus 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>Modus 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>Modus 2</option></select>
+		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px"><option value='MODE0' $selected{'POLICY'}{'MODE0'}>$Lang::tr{'mode'} 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'mode'} 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'mode'} 2</option></select>
 		    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
 		    <td width='45%' align='left'>
 END
 ;
 	if ($outfwsettings{'POLICY'} ne 'MODE0') {
 		print <<END
-		    Alle Regeln loeschen: <input type='submit' name='ACTION' value=$Lang::tr{'reset'} />
+		    $Lang::tr{'outgoingfw reset'}: <input type='submit' name='ACTION' value=$Lang::tr{'reset'} />
 END
 ;
 	}
@@ -453,13 +451,13 @@ sub addrule
 	print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='80%'>
-		<tr><td width='20%' align='right'>Anmerkung: <img src='/blob.gif' />
+		<tr><td width='20%' align='right'>$Lang::tr{'description'}: <img src='/blob.gif' />
 		    <td width='30%' align='left'><input type='text' name='NAME' maxlength='30' value='$outfwsettings{'NAME'}' />
-		    <td width='20%' align='right'>Aktiviert:
+		    <td width='20%' align='right'>$Lang::tr{'active'}:
 		    <td width='30%' align='left'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} />
-		<tr><td width='20%' align='right'>Protokoll:
+		<tr><td width='20%' align='right'>$Lang::tr{'protocol'}:
 		    <td width='30%' align='left'><select name='PROT'><option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option><option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option><option value='udp' $selected{'PROT'}{'udp'}>UDP</option></select>
-		    <td width='20%' align='right'>Sicherheitspolitik:
+		    <td width='20%' align='right'>$Lang::tr{'policy'}:
 		    <td width='30%' align='left'>
 END
 ;
@@ -469,10 +467,10 @@ END
 		print "\t\t\tDENY<input type='hidden' name='STATE' value='DENY' />\n";
 	}
 	print <<END
-		<tr><td width='20%' align='right'>Quellnetz:
+		<tr><td width='20%' align='right'>$Lang::tr{'source net'}:
 		    <td width='30%' align='left'><select name='SNET'>
-			<option value='all' $selected{'SNET'}{'ALL'}>alle</option>
-			<option value='ip' $selected{'SNET'}{'ip'}>Quell-IP/MAC benutzen</option>
+			<option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option>
+			<option value='ip' $selected{'SNET'}{'ip'}>$Lang::tr{'source ip'}</option>
 			<option value='green' $selected{'SNET'}{'green'}>$Lang::tr{'green'}</option>
 END
 ;
@@ -484,15 +482,15 @@ END
 	}
 	print <<END
 			</select>
-		    <td width='20%' align='right'>Quell-IP-Adresse: <img src='/blob.gif' />
+		    <td width='20%' align='right'>$Lang::tr{'source ip'}: <img src='/blob.gif' />
 		    <td width='30%' align='left'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' />
-		<tr><td width='20%' align='right'>Logging:
+		<tr><td width='20%' align='right'>$Lang::tr{'logging'}:
 		    <td width='30%' align='left'><select name='LOG'><option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option><option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option></select></td>
-		    <td width='20%' align='right'>Quell-MAC-Adresse: <img src='/blob.gif' />
-		    <td width='30%' align='left'><input type='text' name='SMAC' maxlength='23' value='$outfwsettings{'SMAC'}' />
-		<tr><td width='20%' align='right'>Ziel-IP-Adresse: <img src='/blob.gif' />
+		    <td width='20%' align='right' />
+		    <td width='30%' align='left' />
+		<tr><td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' />
 		    <td width='30%' align='left'><input type='text' name='DIP' maxlength='15' value='$outfwsettings{'DIP'}' />
-		    <td width='20%' align='right'>Ziel-Port: <img src='/blob.gif' />
+		    <td width='20%' align='right'>$Lang::tr{'destination port'}: <img src='/blob.gif' />
 		    <td width='30%' align='left'><input type='text' name='DPORT' maxlength='11' value='$outfwsettings{'DPORT'}' />
 		<tr><td colspan='4'>
 		<tr><td width='40%' align='right' colspan='2'><img src='/blob.gif' />$Lang::tr{'this field may be blank'}
@@ -510,7 +508,7 @@ if ($outfwsettings{'POLICY'} eq 'MODE1' || $outfwsettings{'POLICY'} eq 'MODE2')
 	my @defservices = <FILE>;
 	close FILE;
 
-print "<table width='100%'><tr bgcolor='$color{'color20'}'><td><b>$Lang::tr{'service'}</b></td><td><b>$Lang::tr{'description'}</b></td><td><b>$Lang::tr{'port'}</b></td><td><b>$Lang::tr{'protocol'}</b></td><td><b>$Lang::tr{'source net'}</b></td><td><b>$Lang::tr{'logging'}</b></td><td></td></tr>";
+print "<table width='100%'><tr bgcolor='$color{'color20'}'><td><b>$Lang::tr{'service'}</b></td><td><b>$Lang::tr{'description'}</b></td><td><b>$Lang::tr{'port'}</b></td><td><b>$Lang::tr{'protocol'}</b></td><td><b>$Lang::tr{'source net'}</b></td><td><b>$Lang::tr{'logging'}</b></td><td><b>$Lang::tr{'action'}</b></td></tr>";
 foreach my $serviceline(@defservices)
 	{
 	my @service = split(/,/,$serviceline);
