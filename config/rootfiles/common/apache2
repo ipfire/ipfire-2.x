@@ -1658,6 +1658,6 @@ srv/web/ipfire/html
 #srv/web/ipfire/html/themes/ipfire/include/colours.txt
 #srv/web/ipfire/html/themes/ipfire/include/functions.pl
 #srv/web/ipfire/html/themes/ipfire/include/style.css
-#srv/web/ipfire/html/updatecache
+/var/updatecache
 #srv/web/ipfire/html/updatecache/download
 #srv/web/ipfire/html/updatecache/metadata

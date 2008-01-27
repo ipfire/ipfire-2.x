@@ -114,12 +114,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.weekly
 
 	chown -R nobody:nobody /var/ipfire/updatexlrator
-	chown nobody.squid /srv/web/ipfire/html/updatecache
-	chown nobody.squid /srv/web/ipfire/html/updatecache/download
-	chown nobody.squid /srv/web/ipfire/html/updatecache/metadata
-	chmod 775 /srv/web/ipfire/html/updatecache
-	chmod 775 /srv/web/ipfire/html/updatecache/download
-	chmod 775 /srv/web/ipfire/html/updatecache/metadata
+	chown nobody.squid /var/updatecache
+	chown nobody.squid /var/updatecache/download
+	chown nobody.squid /var/updatecache/metadata
+	chmod 775 /var/updatecache
+	chmod 775 /var/updatecache/download
+	chmod 775 /var/updatecache/metadata
 	chmod 755 /var/log/updatexlrator
 	
 	chown squid:squid /var/log/squid

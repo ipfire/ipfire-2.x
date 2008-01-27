@@ -48,11 +48,14 @@ md5 :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf /install/cdrom /tmp/*
 
+	cp -f $(DIR_SRC)/config/rootfiles/cdrom_corever /opt/pakfire/db/core/mine
+
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
 	mkdir -p /install/cdrom/doc
 	find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
 	find $(DIR_SRC)/config/rootfiles/ver_$(ED) -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
+	find $(DIR_SRC)/config/rootfiles/core/*/files -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 
 	tar -c -C / --files-from=/tmp/ROOTFILES \
