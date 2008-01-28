@@ -34,7 +34,7 @@
 # a site you should change its URL to that of a suitable mirror site.
 #
 URL_IPFIRE  = http://source.ipfire.org/othersrc
-URL_TOOLCHAIN = http://source.ipfire.org/toolchain
+URL_TOOLCHAIN = http://source.ipfire.org/toolchains
 
 # Default compiler optimizations.
 #

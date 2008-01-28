@@ -77,7 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --localstatedir=/var \
+	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
 		--disable-{apache,apple_sensors,csv,ipvs,memcached,mysql,netlink,nginx,nut} \
 		--disable-{perl,serial,sensors,snmp,tape,vserver,wireless,xmms} \
 		--enable-{apcups,battery,cpu{,freq},df,disk,dns,email,entropy,exec,hddtemp} \

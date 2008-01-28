@@ -10,6 +10,5 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/usb/net/mcs7830.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/ieee1394/sbp2.ko
 /sbin/kudzu
 var/ipfire/langs
-srv/web/html/
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
 etc/init.d/squid
