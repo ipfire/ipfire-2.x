@@ -8,5 +8,3 @@ usr/local/bin/makegraphs
 usr/sbin/collectd
 var/ipfire/graphs.pl
 var/ipfire/menu.d/20-status.menu
-
-
