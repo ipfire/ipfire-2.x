@@ -151,10 +151,10 @@ sub graphbox {
  
 	&Header::openbox('100%', 'center', "$graph $Lang::tr{'graph'}");
 	if (-e "$graphdir/mbmon-$graph-week.png"){
-			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-day.png"))[9]);
+			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-week.png"))[9]);
 			 print "<center>";
 			 print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-			 print "<img src='/graphs/mbmon-$graph-day.png' border='0' /><hr />";
+			 print "<img src='/graphs/mbmon-$graph-week.png' border='0' /><hr />";
 	 }
 	 else{print $Lang::tr{'no information available'};}
 	 &Header::closebox();

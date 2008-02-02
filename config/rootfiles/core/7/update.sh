@@ -4,3 +4,7 @@ extract_files
 ln -s /etc/rc.d/rc0.d/K50collectd /etc/init.d/collectd
 ln -s /etc/rc.d/rc3.d/S20collectd /etc/init.d/collectd
 ln -s /etc/rc.d/rc6.d/K50collectd /etc/init.d/collectd
+GATEWAY=$(cat /var/ipfire/red/remote-ipaddress)
+echo "$GATEWAY gateway" >> /etc/hosts
+/etc/init.d/collectd start
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"

@@ -51,7 +51,6 @@ if ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("hour");&Graphs::updatec
 if ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("hour");&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
 if ($cgigraphs[1] =~ /disk/){
           my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-					push(@devices,"uba");
           foreach (@devices) {
 	         my $device = $_;
 	         chomp($device);
