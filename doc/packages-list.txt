@@ -171,6 +171,7 @@
 * module-init-tools-3.2.2
 * mpc-0.12.1
 * mpd-0.13.0
+* mpd-0.13.1
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mpg123-0.59r
@@ -187,7 +188,7 @@
 * nfs-utils-1.1.1
 * nmap-4.03
 * noip_updater_v1.6
-* ntfs-3g-1.1104
+* ntfs-3g-1.2129
 * ntp-4.2.2
 * ocaml-3.09.2
 * oinkmaster-2.0
