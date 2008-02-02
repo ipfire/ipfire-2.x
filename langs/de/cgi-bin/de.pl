@@ -825,6 +825,7 @@
 'hostname not set' => 'Hostname nicht eingegeben.',
 'hosts config added' => 'Hosts-Konfiguration hinzugefügt',
 'hosts config changed' => 'Hosts-Konfiguration geändert',
+'hour' => 'Stunde',
 'hours' => 'Stunden',
 'hours2' => 'Stunden',
 'ibod for dual isdn only' => 'iBOD kann nur bei ISDN-Kanalbündelung genutzt werden.',

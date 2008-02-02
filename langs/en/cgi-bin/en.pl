@@ -851,6 +851,7 @@
 'hostname not set' => 'Hostname not set.',
 'hosts config added' => 'hosts config added',
 'hosts config changed' => 'hosts config changed',
+'hour' => 'Hour',
 'hours' => 'hours',
 'hours2' => 'Hours',
 'ibod for dual isdn only' => 'iBOD can only be used with Dual ISDN.',
