@@ -35,11 +35,6 @@ SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
-# Set an information about the build number
-if [ -e ./.svn ]; then
-	FIREBUILD=`cat .svn/entries |sed -n 's/^[ \t]*revision=\"// p' | sed -n 's/\".*$// p'`
-fi
-
 # Debian specific settings
 if [ ! -e /etc/debian_version ]; then
 	FULLPATH=`which $0`
@@ -683,8 +678,8 @@ build)
 	buildipfire
 
 	# Setzen des IPFire Builds
-	if [ "$FIREBUILD" ]; then
-		echo "$FIREBUILD" > $BASEDIR/build/var/ipfire/firebuild
+	if [ "$SVN_REVISION" ]; then
+		echo "$SVN_REVISION" > $BASEDIR/build/var/ipfire/firebuild
 	else
 		echo "_(OvO)_" > $BASEDIR/build/var/ipfire/firebuild
 	fi
