@@ -3,6 +3,7 @@ etc/init.d/collectd
 etc/rc.d/rc0.d/K50collectd
 etc/rc.d/rc3.d/S20collectd
 etc/rc.d/rc6.d/K50collectd
+etc/init.d/networking/red
 srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/network.cgi
