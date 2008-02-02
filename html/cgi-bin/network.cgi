@@ -51,7 +51,7 @@ $cgiparams[1] = '' unless defined $cgiparams[1];
 if ($cgiparams[1] =~ /red/) {
 	&Header::openpage($Lang::tr{'network traffic graphs external'}, 1, '');
 	push (@graphs, ($netsettings{'RED_DEV'}));
-	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd") {push (@graphs, ("ipsec0"));
+	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd") {push (@graphs, ("ipsec0"));}
 }elsif ($cgiparams[1] =~ /other/) {
 	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
 	push (@graphs, ("lq"));

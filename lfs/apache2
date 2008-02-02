@@ -100,6 +100,7 @@ ifeq "$(PASS)" "C"
 	chmod -R 755 /srv/web/ipfire/cgi-bin
 	chmod -R 644 /srv/web/ipfire/html
 	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
+	chown nobody:nobody /srv/web/ipfire/html/graphs
 else
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch

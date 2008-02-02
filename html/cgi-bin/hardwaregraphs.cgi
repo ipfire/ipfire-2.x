@@ -122,7 +122,7 @@ sub hddtempbox {
  	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
 	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-week.png"))[9]);
 	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-	  print "<img src='/graphs/hddtemp-$disk-day.png' border='0' />";
+	  print "<img src='/graphs/hddtemp-$disk-week.png' border='0' />";
 	  print "<br />\n";
         &Header::closebox();
   }
@@ -131,7 +131,7 @@ sub hddtempbox {
  	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
 	  my $ftime = localtime((stat("$graphdir/hddtemp-$disk-month.png"))[9]);
 	  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-	  print "<img src='/graphs/hddtemp-$disk-day.png' border='0' />";
+	  print "<img src='/graphs/hddtemp-$disk-month.png' border='0' />";
 	  print "<br />\n";
         &Header::closebox();
   }
