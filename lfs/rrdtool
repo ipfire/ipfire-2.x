@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make site-perl-install
 	-mkdir -p /srv/web/ipfire/html/graphs/
+	chmod 777 /srv/web/ipfire/html/graphs/
 	-mkdir -p /var/log/rrd/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
