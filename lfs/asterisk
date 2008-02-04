@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "sox zaptel libpri spandsp libmad"
 
@@ -109,4 +109,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar xfz $(DIR_DL)/asterisk-1.4-de-prompts.tar.gz -C /var/lib/asterisk/sounds/
 	-rm -f /var/lib/asterisk/sounds/README.txt
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*
+	-mkdir -p /var/ipfire/asterisk
+	cp -vrf $(DIR_SRC)/config/asterisk/* /var/ipfire/asterisk/
+	chmod o+w /var/ipfire/asterisk
+	ln -f -s /var/ipfire/asterisk/wakeup/wakeup.sh /etc/fcron.minutely/wakeup.sh
 	@$(POSTBUILD)

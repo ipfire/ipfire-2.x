@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include "setuid.h"
+#include <errno.h>
 
 FILE *fd = NULL;
 char blue_dev[STRING_SIZE] = "";
@@ -26,11 +27,21 @@ char command[STRING_SIZE];
 
 void exithandler(void)
 {
+  struct keyvalue *kv = NULL;
+  char buffer[STRING_SIZE];
 	if(strlen(blue_dev))
 	{
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j LOG_DROP", blue_dev);
+	 if(findkey(kv, "DROPWIRELESSINPUT", buffer) && !strcmp(buffer,"on")){
+	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput'", blue_dev);
 		safe_system(command);
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j LOG_DROP", blue_dev);
+		}
+	 if(findkey(kv, "DROPWIRELESSFORWARD", buffer) && !strcmp(buffer,"on")){
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward'", blue_dev);
+		safe_system(command);
+		}
+	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
+		safe_system(command);
+	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
 		safe_system(command);
 	}
 
@@ -61,6 +72,13 @@ int main(void)
 	if (!readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings"))
 	{
 		fprintf(stderr, "Cannot read ethernet settings\n");
+		exit(1);
+	}
+
+	/* Read in the firewall values */
+	if (!readkeyvalues(kv, CONFIG_ROOT "/optionsfw/settings"))
+	{
+		fprintf(stderr, "Cannot read optionsfw settings\n");
 		exit(1);
 	}
 

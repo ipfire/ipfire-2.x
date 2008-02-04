@@ -37,12 +37,6 @@
 				'title' => "$Lang::tr{'network other'}",
 				'enabled' => 1,
 			  };
-		$substatus->{'50.proxygraphs'} = {
-				'caption' => $Lang::tr{'ssproxy graphs'},
-				'uri' => '/cgi-bin/proxygraphs.cgi',
-				'title' => "$Lang::tr{'ssproxy graphs'}",
-				'enabled' => 1,
-				};
     $substatus->{'60.hardwaregraphs'} = {
 				'caption' => "$Lang::tr{'hardware graphs'}",
 				'uri' => '/cgi-bin/hardwaregraphs.cgi',

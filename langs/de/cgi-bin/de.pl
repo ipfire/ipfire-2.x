@@ -657,6 +657,8 @@
 'drop newnotsyn' => 'Verworfene New Not Syn Pakete loggen',
 'drop output' => 'Verworfene Output Pakete loggen',
 'drop portscan' => 'Verworfene Portscan Pakete loggen',
+'drop wirelessforward' => 'Verworfene Wireless Forward Pakete loggen',
+'drop wirelessinput' => 'Verworfene Wireless Input Pakete loggen',
 'dst port' => 'Ziel-Port',
 'dstprt range overlaps' => 'Der Zielportbereich überlappt mit einem bereits definierten Port.',
 'dstprt within existing' => 'Der Zielport liegt innerhalb eines bereits definierten Portbereichs.',

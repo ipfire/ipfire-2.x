@@ -32,6 +32,8 @@ $settings{'DROPNEWNOTSYN'} = 'on';
 $settings{'DROPINPUT'} = 'on';
 $settings{'DROPOUTPUT'} = 'on';
 $settings{'DROPPORTSCAN'} = 'on';
+$settings{'DROPWIRELESSINPUT'} = 'on';
+$settings{'DROPWIRELESSFORWARD'} = 'on';
 
 my $errormessage = '';
 my $warnmessage = '';
@@ -70,6 +72,12 @@ $checked{'DROPOUTPUT'}{$settings{'DROPOUTPUT'}} = "checked='checked'";
 $checked{'DROPPORTSCAN'}{'off'} = '';
 $checked{'DROPPORTSCAN'}{'on'} = '';
 $checked{'DROPPORTSCAN'}{$settings{'DROPPORTSCAN'}} = "checked='checked'";
+$checked{'DROPWIRELESSINPUT'}{'off'} = '';
+$checked{'DROPWIRELESSINPUT'}{'on'} = '';
+$checked{'DROPWIRELESSINPUT'}{$settings{'DROPWIRELESSINPUT'}} = "checked='checked'";
+$checked{'DROPWIRELESSFORWARD'}{'off'} = '';
+$checked{'DROPWIRELESSFORWARD'}{'on'} = '';
+$checked{'DROPWIRELESSFORWARD'}{$settings{'DROPWIRELESSFORWARD'}} = "checked='checked'";
 
 &Header::openbox('100%', 'center', $Lang::tr{'options fw'});
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
@@ -86,6 +94,10 @@ print <<END
 																						<input type='radio' name='DROPOUTPUT' value='off' $checked{'DROPOUTPUT'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'drop portscan'}</td><td align='left'>on <input type='radio' name='DROPPORTSCAN' value='on' $checked{'DROPPORTSCAN'}{'on'} />/
 																						<input type='radio' name='DROPPORTSCAN' value='off' $checked{'DROPPORTSCAN'}{'off'} /> off</td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'drop wirelessinput'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSINPUT' value='on' $checked{'DROPWIRELESSINPUT'}{'on'} />/
+																						<input type='radio' name='DROPWIRELESSINPUT' value='off' $checked{'DROPWIRELESSINPUT'}{'off'} /> off</td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'drop wirelessforward'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSFORWARD' value='on' $checked{'DROPWIRELESSFORWARD'}{'on'} />/
+																						<input type='radio' name='DROPWIRELESSFORWARD' value='off' $checked{'DROPWIRELESSFORWARD'}{'off'} /> off</td></tr>
 </table>
 <br />
 <table width='10%' cellspacing='0'>

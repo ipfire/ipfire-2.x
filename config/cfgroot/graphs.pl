@@ -264,7 +264,7 @@ sub updatediskgraph {
         "COMMENT:$Lang::tr{'minimal'}",
         "COMMENT:$Lang::tr{'current'}\\j",
         "AREA:st".$color{"color20"}."A0:standby\\j",
-        "AREA:read".$color{"color14"}."A0:".sprintf("%-25s",$Lang::tr{'read bytes'}),
+        "AREA:read".$color{"color12"}."A0:".sprintf("%-25s",$Lang::tr{'read bytes'}),
         "GPRINT:read:MAX:%8.1lf %sBps",
         "GPRINT:read:AVERAGE:%8.1lf %sBps",
         "GPRINT:read:MIN:%8.1lf %sBps",

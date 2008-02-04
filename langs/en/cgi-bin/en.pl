@@ -681,6 +681,8 @@
 'drop newnotsyn' => 'Log dropped New Not Syn pakets',
 'drop output' => 'Log dropped Output pakets',
 'drop portscan' => 'Log dropped Portscan pakets',
+'drop wirelessforward' => 'Log dropped wireless Forward pakets',
+'drop wirelessinput' => 'Log dropped wireless Input pakets',
 'dst port' => 'Dst Port',
 'dstprt range overlaps' => 'Destination port range overlaps an already defined port.',
 'dstprt within existing' => 'Destination port is within an already defined port range.',

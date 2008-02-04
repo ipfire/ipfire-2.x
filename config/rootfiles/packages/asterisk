@@ -1,4 +1,8 @@
 etc/init.d/asterisk
+var/ipfire/menu.d/EX-asterisk.menu
+var/ipfire/asterisk
+srv/web/ipfire/cgi-bin/asterisk
+usr/sbin/asterisk
 #usr/include/asterisk
 #usr/include/asterisk.h
 #usr/include/asterisk/abstract_jb.h
