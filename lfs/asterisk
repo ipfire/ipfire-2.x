@@ -112,5 +112,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /var/ipfire/asterisk
 	cp -vrf $(DIR_SRC)/config/asterisk/* /var/ipfire/asterisk/
 	chmod o+w /var/ipfire/asterisk
+	chown nobody:nobody -R /var/ipfire/asterisk
 	ln -f -s /var/ipfire/asterisk/wakeup/wakeup.sh /etc/fcron.minutely/wakeup.sh
 	@$(POSTBUILD)

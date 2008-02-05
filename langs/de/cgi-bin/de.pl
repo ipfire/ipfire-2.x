@@ -1306,6 +1306,7 @@
 'printing' => 'Printing',
 'printing options' => 'Druckeroptionen',
 'priority' => 'Priorität',
+'processes' => 'Prozesse',
 'profile' => 'Profil',
 'profile deleted' => 'Profil gelöscht: ',
 'profile has errors' => 'Profil fehlerhaft',

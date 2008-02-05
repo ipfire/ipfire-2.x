@@ -6,6 +6,9 @@ require "${General::swroot}/header.pl";
 
 &Header::showhttpheaders();
 
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
 my %asterisksettings;
 
 &Header::getcgihash(\%asterisksettings);
@@ -42,8 +45,23 @@ if ($asterisksettings{'ACTION'} eq "$Lang::tr{'reload'} IAX")
         system("/etc/init.d/asterisk remod iax >/dev/null 2>&1");
 }
 
-$checked{'ENABLE_AST'}{'status'} = system("/etc/init.d/asterisk status >/dev/null 2>&1");
-if ($checked{'ENABLE_AST'}{'status'}) {
+	my $pid = '';
+	my $testcmd = '';
+	my $exename;
+	my @memory;
+
+	if (open(FILE, "/var/run/asterisk.pid")){
+		$pid = <FILE>; chomp $pid;
+		close FILE;
+		if (open(FILE, "/proc/${pid}/status")){
+			while (<FILE>){
+				if (/^Name:\W+(.*)/) {$testcmd = $1;}
+			}
+			close FILE;
+		}
+		}
+
+if ($testcmd !~ /asterisk/) {
 	$checked{'ENABLE_AST'}{'status_s'}="<font style=\"color:white;background-color:red;\"> $Lang::tr{'not running'}</font>";
 	$checked{'ENABLE_AST'}{'status_b'}="<INPUT TYPE='submit' NAME='ACTION' VALUE='Start'>";
 } else {
