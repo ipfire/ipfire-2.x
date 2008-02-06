@@ -7,8 +7,11 @@ etc/init.d/networking/red
 srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/network.cgi
+srv/web/ipfire/cgi-bin/optionsfw.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 usr/lib/collectd
 usr/local/bin/makegraphs
+usr/local/bin/wirelessctrl
 usr/sbin/collectd
 var/ipfire/graphs.pl
 var/ipfire/menu.d/20-status.menu

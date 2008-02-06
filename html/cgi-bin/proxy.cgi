@@ -102,7 +102,7 @@ my $cre_svhosts = "${General::swroot}/proxy/advanced/cre/supervisors";
 
 my $identhosts = "$identdir/hosts";
 
-my $authdir  = "/usr/lib/squid/auth";
+my $authdir  = "/usr/lib/squid/";
 my $errordir = "/usr/lib/squid/errors";
 
 my $acl_src_subnets = "$acldir/src_subnets.acl";

@@ -552,7 +552,7 @@ sub updatehwtempgraph {
 	if ( $_ =~ /temperature/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");
 		 }
 	}
-	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
+	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
 	foreach(@mbmongraphs){
 	chomp($_);
 	if ( $_ =~ /temperature/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
@@ -581,7 +581,7 @@ sub updatehwvoltgraph {
 	chomp($_);
 	if ( $_ =~ /voltage/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");}
 	}
-	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
+	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
 	foreach(@mbmongraphs){
 	chomp($_);
 	if ( $_ =~ /voltage/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
@@ -610,7 +610,7 @@ sub updatehwfangraph {
 	chomp($_);
 	if ( $_ =~ /fanspeed/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");}
 	}
-	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
+	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
 	foreach(@mbmongraphs){
 	chomp($_);
 	if ( $_ =~ /fanspeed/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
