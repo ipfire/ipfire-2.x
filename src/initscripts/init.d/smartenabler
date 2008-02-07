@@ -1,0 +1,22 @@
+#!/bin/sh
+# Begin $rc_base/init.d/smartenabler
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		for disk in `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`; do 
+		  boot_mesg "Enabling S.M.A.R.T. for $disk ...";
+		  /usr/sbin/smartctl --smart=on /dev/$disk > /dev/nul;
+		  evaluate_retval;
+		done
+		;;
+
+	*)
+		echo "Usage: $0 {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/smartenabler

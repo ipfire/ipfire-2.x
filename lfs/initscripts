@@ -96,6 +96,7 @@ $(TARGET) :
 	ln -sf ../init.d/swap        /etc/rc.d/rc0.d/S90swap
 	ln -sf ../init.d/halt        /etc/rc.d/rc0.d/S99halt
 	ln -sf ../init.d/sysklogd    /etc/rc.d/rc3.d/S10sysklogd
+	ln -sf ../init.d/smartenabler /etc/rc.d/rc3.d/S19smartenabler
 	ln -sf ../init.d/sysklogd    /etc/rc.d/rc6.d/K90sysklogd
 	ln -sf ../init.d/sendsignals /etc/rc.d/rc6.d/S60sendsignals
 	ln -sf ../init.d/mountfs     /etc/rc.d/rc6.d/S70mountfs
