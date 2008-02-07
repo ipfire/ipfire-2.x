@@ -607,12 +607,12 @@ ERROR:
 		if ($proxysettings{'ENABLE'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/proxy/enable");
 			system ('/usr/local/bin/squidctrl', 'enable'); }
-		if ($proxysettings{'TRANSPARENT'} eq 'on') {
+		if ($proxysettings{'TRANSPARENT'} eq 'on' && $proxysettings{'ENABLE'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent"); }
 		if ($proxysettings{'ENABLE_BLUE'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/proxy/enable_blue");
 			system ('/usr/local/bin/squidctrl', 'enable'); }
-		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on') {
+		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on' && $proxysettings{'ENABLE_BLUE'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
 
 		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
