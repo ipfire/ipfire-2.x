@@ -532,6 +532,7 @@ buildipfire() {
   ipfiremake lcd4linux
   ipfiremake neon
   ipfiremake subversion
+  ipfiremake tcptrack
 }
 
 buildinstaller() {
