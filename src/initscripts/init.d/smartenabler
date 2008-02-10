@@ -6,11 +6,17 @@
 
 case "$1" in
 	start)
+	        boot_mesg -n "Enabling S.M.A.R.T.: ";
 		for disk in `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`; do 
-		  boot_mesg "Enabling S.M.A.R.T. for $disk ...";
-		  /usr/sbin/smartctl -d ata --smart=on /dev/$disk > /dev/nul;
-		  evaluate_retval;
+		    /usr/sbin/smartctl -d ata --smart=on /dev/$disk > /dev/nul;
+		    if [ ${?} = 0 ]; then 
+			boot_mesg -n "$SUCCESS$disk$NORMAL ";
+		    else
+			boot_mesg -n "$WARNING$disk$NORMAL ";
+		    fi
 		done
+		boot_mesg;
+		echo_ok;
 		;;
 
 	*)
