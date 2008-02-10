@@ -57,6 +57,7 @@ my %sections = (
         'red' => '(red:|pppd\[.*\]: |chat\[.*\]|pppoe\[.*\]|pptp\[.*\]|pppoa\[.*\]|pppoa3\[.*\]|pppoeci\[.*\]|ipppd|ipppd\[.*\]|kernel: ippp\d|kernel: isdn.*|ibod\[.*\]|dhcpcd\[.*\]|modem_run\[.*\])',
         'dns' => '(dnsmasq\[.*\]: )',
         'dhcp' => '(dhcpd: )',
+        'collectd' => '(collectd: )',
         'cron' => '(fcron\[.*\]: )',
         'ntp' => '(ntpd(?:ate)?\[.*\]: )',
         'ssh' => '(sshd(?:\(.*\))?\[.*\]: )',
@@ -73,6 +74,7 @@ my %trsections = (
         'dns' => 'DNS',
         'dhcp' => "$Lang::tr{'dhcp server'}",
         'cron' => 'Cron',
+        'collectd' => 'Collectd',
         'ntp' => 'NTP',
         'ssh' => 'SSH',
         'auth' => "$Lang::tr{'loginlogout'}",
@@ -149,7 +151,7 @@ my $date = $cgiparams{'DAY'} == 0 ? '' :  $cgiparams{'DAY'} <= 9 ? "0$cgiparams{
 
 {
     my $xday;
-    
+
     # Calculate time. If future date, calculate for past year !!!
     if (( $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
         ( $cgiparams{'MONTH'}  > $now[4] ) ) {
@@ -169,7 +171,7 @@ my $date = $cgiparams{'DAY'} == 0 ? '' :  $cgiparams{'DAY'} <= 9 ? "0$cgiparams{
     # Convert delta in second to full weeks
 	$gzindex = int (($sunday-$xday)/604800 );
 }
-											   
+
 my $monthstr = $shortmonths[$cgiparams{'MONTH'}];
 my $daystr =  $cgiparams{'DAY'} == 0 ?  '..' : $cgiparams{'DAY'} <= 9 ? " $cgiparams{'DAY'}" : "$cgiparams{'DAY'}";
 my $section = $sections{$cgiparams{'SECTION'}};
@@ -181,7 +183,7 @@ my $loop = 1;
 my $filestr = 0;
 my $lastdatetime;           # for debug
 my $search_for_end = 0;
-	    
+
 while ($gzindex >=0 && $loop) {
         # calculate file name
         if ($gzindex == 0) {
@@ -302,7 +304,7 @@ print <<END
 END
 ;
 print "<option value='0'>$Lang::tr{'all'}</option>\n";
-for (my $day = 1; $day <= 31; $day++) 
+for (my $day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
@@ -337,7 +339,7 @@ my $prev;
 	$prev = $start - ${Header::viewsize};
 	$prev = 0 if ( $prev < 0);
     }
-				    
+
 my $next;
     if ($start == $lines - ${Header::viewsize}) {
         $next = -1;

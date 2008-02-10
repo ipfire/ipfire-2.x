@@ -10,20 +10,27 @@ case "$1" in
 		boot_mesg "Starting Collection daemon..."
 		/usr/sbin/collectd -C /etc/collectd.conf
 		evaluate_retval
+#
+# These lines are for furhter implementation of the collectd, atm the temps are
+# collected by the makegraphs script because of the standby functions
+#
 #		for disk in `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`; do boot_mesg "Bringing up hddtemp daemon for $disk ..."; /usr/sbin/hddtemp $disk -d -l localhost; evaluate_retval; done
+#
+# Starting the mbmon in deamon mode to enable sensors reading for collectd
+# later mbmon will be replaced by lmsensors, if mbmon is not running on your
+# system, we advise to comment out these lines in order to prevent fail
+#
 		boot_mesg "Bringing up mbmon daemon..."
 		/usr/bin/mbmon -P 411 -r
-		if [ ${?} = 0 ]; then
-		    echo_ok;
-		fi
+		evaluate_retval
 		;;
 
 	stop)
-#		boot_mesg "Stopping mbmon daemon..."
-#		killproc /usr/bin/mbmon
-#		if [ ${?} = 0 ]; then
-#		    echo_ok;
-#		fi
+# if mbmon is not running on your system, we advise to comment out these lines
+# in order to prevent fail
+		boot_mesg "Stopping mbmon daemon..."
+		killproc /usr/bin/mbmon
+		evaluate_retval
 #		boot_mesg "Stopping hddtemp daemon..."
 #		killproc /usr/sbin/hddtemp
 #		evaluate_retval
@@ -33,9 +40,17 @@ case "$1" in
 		;;
 
 	restart)
-		$0 stop
+
+#
+# We need to do this that way because mbmon doesn`t clear the port when killed
+# so the next startup it fails with port allready in use -> don´t restart mbmon
+#
+		boot_mesg "Stopping Collection daemon..."
+		killproc /usr/sbin/collectd
+		evaluate_retval
 		sleep 1
-		$0 start
+		boot_mesg "Starting Collection daemon..."
+		/usr/sbin/collectd -C /etc/collectd.conf
 		evaluate_retval
 				;;
 
