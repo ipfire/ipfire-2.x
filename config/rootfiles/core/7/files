@@ -19,4 +19,4 @@ var/ipfire/graphs.pl
 var/ipfire/menu.d/20-status.menu
 var/ipfire/langs
 lib/modules/2.6.16.57-ipfire/kernel/drivers/ieee1394/sbp2.ko
-html/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
