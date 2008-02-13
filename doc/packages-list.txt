@@ -53,6 +53,7 @@
 * cdrtools-2.01
 * centerim-4.22.1
 * clamav-0.92
+* clamav-0.92.1
 * collectd-4.2.3
 * coreutils-5.96
 * cpio-2.6
