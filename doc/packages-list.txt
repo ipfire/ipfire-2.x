@@ -211,8 +211,8 @@
 * ppp-2.4.4
 * procps-3.2.6
 * psmisc-22.2
-* r8168-8.004.00
-* r8169-6.004.00
+* r8168-8.005.00
+* r8169-6.005.00
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
