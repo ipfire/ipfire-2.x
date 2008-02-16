@@ -119,6 +119,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod o+w /var/ipfire/asterisk
 	chown nobody:nobody -R /var/ipfire/asterisk
 	ln -f -s /var/ipfire/asterisk/wakeup/wakeup.sh /etc/fcron.minutely/wakeup.sh
+	-find /var/ipfire/asterisk -name .svn -exec rm -rf {} \;
 	
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(CHAN_CAPI).tar.gz
 	cd $(DIR_SRC)/$(CHAN_CAPI) && make $(MAKETUNING)
