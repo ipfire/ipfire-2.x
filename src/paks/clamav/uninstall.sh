@@ -22,5 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-remove_files
 /usr/local/bin/clamavctrl disable
+remove_files
