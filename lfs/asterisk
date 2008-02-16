@@ -51,7 +51,7 @@ objects = $(DL_FILE) \
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asterisk-core-sounds-en-alaw-1.4.8.tar.gz = $(URL_IPFIRE)/asterisk-core-sounds-en-alaw-1.4.8.tar.gz
-asterisk-extra-sounds-en-alaw-.1.4.7.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-alaw-1.4.7.tar.gz
+asterisk-extra-sounds-en-alaw-1.4.7.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-alaw-1.4.7.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 asterisk-addons-1.4.5.tar.gz = $(URL_IPFIRE)/asterisk-addons-1.4.5.tar.gz
 $(CHAN_CAPI).tar.gz = $(URL_IPFIRE)/$(CHAN_CAPI).tar.gz
