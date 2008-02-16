@@ -34,7 +34,7 @@
 * applejuice-0.30
 * arping-2.05
 * as86-0.16.17
-* asterisk-1.4.8
+* asterisk-1.4.18
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire
@@ -49,10 +49,10 @@
 * bwm-ng-0.6
 * bzip2-1.0.3
 * calamaris-2.59
+* capi4k-utils-2005-07-18
 * ccache-2.4
 * cdrtools-2.01
 * centerim-4.22.1
-* clamav-0.92
 * clamav-0.92.1
 * collectd-4.2.3
 * coreutils-5.96

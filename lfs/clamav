@@ -83,5 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown clamav.clamav -R /usr/share/clamav/
 	cp -rf $(DIR_SRC)/config/clamav/* /var/ipfire/clamav/
 	rm -rfv /usr/share/clamav/*.cvd
+	mkdir -p /var/run/clamav
+	chown clamav:clamav /var/run/clamav
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
