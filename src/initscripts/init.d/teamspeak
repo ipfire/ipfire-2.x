@@ -1,0 +1,17 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/teamspeak
+#
+# Description :	Start/Stops the teamspeak server
+#
+# Authors     : Michael Tremer
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+cd /opt/teamspeak && sudo -u teamspeak ./teamspeak2-server_startscript $*
+
+# End $rc_base/init.d/teamspeak

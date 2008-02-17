@@ -534,6 +534,7 @@ buildipfire() {
   ipfiremake neon
   ipfiremake subversion
   ipfiremake tcptrack
+  ipfiremake teamspeak
 }
 
 buildinstaller() {

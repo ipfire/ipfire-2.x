@@ -247,6 +247,7 @@
 * tcp_wrappers_7.6
 * tcpdump-3.8.3
 * tcptrack-1.3.0
+* teamspeak-2.0.24.1
 * texinfo-4.8
 * tiff-3.8.2
 * traceroute-1.4a12
