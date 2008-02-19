@@ -99,7 +99,7 @@
 * guardian-ipfire
 * gzip-1.3.5
 * hddtemp-0.3-beta14
-* hdparm-7.7
+* hdparm-8.1
 * hplip-2.7.10
 * htop-0.7
 * httpd-2.2.6
@@ -180,7 +180,7 @@
 * mysql-5.0.24a
 * nano-1.2.5
 * nasm-0.98.39
-* ncftp-3.1.9-src
+* ncftp-3.2.1-src
 * ncurses-5.5
 * neon-0.25.5
 * net-tools-1.60
@@ -188,7 +188,7 @@
 * nfs-utils-1.1.1
 * nmap-4.03
 * noip_updater_v1.6
-* ntfs-3g-1.2129
+* ntfs-3g-1.2216
 * ntp-4.2.2
 * ocaml-3.09.2
 * oinkmaster-2.0
