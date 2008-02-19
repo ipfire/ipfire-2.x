@@ -4,3 +4,4 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/net/r8169.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/net/r8168.ko
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 etc/ntp
+usr/local/bin/wirelessctrl

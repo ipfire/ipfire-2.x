@@ -2,8 +2,8 @@ bin/ntfs-3g
 #lib/libntfs-3g.a
 #lib/libntfs-3g.la
 lib/libntfs-3g.so
-lib/libntfs-3g.so.21
-lib/libntfs-3g.so.21.0.0
+lib/libntfs-3g.so.23
+lib/libntfs-3g.so.23.0.0
 sbin/mount.ntfs-3g
 #usr/include/ntfs-3g
 #usr/include/ntfs-3g/attrib.h

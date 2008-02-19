@@ -25,30 +25,6 @@ FILE *fd = NULL;
 char blue_dev[STRING_SIZE] = "";
 char command[STRING_SIZE];
 
-void exithandler(void)
-{
-  struct keyvalue *kv = NULL;
-  char buffer[STRING_SIZE];
-	if(strlen(blue_dev))
-	{
-	 if(findkey(kv, "DROPWIRELESSINPUT", buffer) && !strcmp(buffer,"on")){
-	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput'", blue_dev);
-		safe_system(command);
-		}
-	 if(findkey(kv, "DROPWIRELESSFORWARD", buffer) && !strcmp(buffer,"on")){
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward'", blue_dev);
-		safe_system(command);
-		}
-	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
-		safe_system(command);
-	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
-		safe_system(command);
-	}
-
-	if (fd)
-		fclose(fd);
-}
-
 int main(void)
 {
 	char green_dev[STRING_SIZE] = "";
@@ -110,8 +86,24 @@ int main(void)
 		exit(0);
 	}
 
-	/* register exit handler to ensure the block rule is always present */
-	atexit(exithandler);
+	if(strlen(blue_dev))
+	{
+	 if(findkey(kv, "DROPWIRELESSINPUT", buffer) && !strcmp(buffer,"on")){
+	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput'", blue_dev);
+		safe_system(command);
+		}
+	 if(findkey(kv, "DROPWIRELESSFORWARD", buffer) && !strcmp(buffer,"on")){
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward'", blue_dev);
+		safe_system(command);
+		}
+	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
+		safe_system(command);
+	 	snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
+		safe_system(command);
+	}
+
+	if (fd)
+		fclose(fd);
 
 	if (!(fd = fopen(CONFIG_ROOT "/wireless/config", "r")))
 	{
