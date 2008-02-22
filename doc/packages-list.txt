@@ -54,7 +54,6 @@
 * cdrtools-2.01
 * centerim-4.22.1
 * clamav-0.92.1
-* collectd-4.2.3
 * collectd-4.3.0
 * coreutils-5.96
 * cpio-2.6
@@ -100,7 +99,6 @@
 * guardian-ipfire
 * gzip-1.3.5
 * hddtemp-0.3-beta14
-* hdparm-8.1
 * hdparm-8.4
 * hplip-2.7.10
 * htop-0.7
