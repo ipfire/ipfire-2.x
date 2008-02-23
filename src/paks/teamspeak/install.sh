@@ -44,8 +44,11 @@ useradd -g teamspeak teamspeak
 
 chown teamspeak.teamspeak /opt/teamspeak -Rv
 
+restore_backup ${NAME}
 start_service --background ${NAME}
 
 ln -sf  ../init.d/teamspeak /etc/rc.d/rc0.d/K00teamspeak
 ln -sf  ../init.d/teamspeak /etc/rc.d/rc3.d/S99teamspeak
 ln -sf  ../init.d/teamspeak /etc/rc.d/rc6.d/K00teamspeak
+
+

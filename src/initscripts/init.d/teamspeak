@@ -14,5 +14,5 @@
 
 export LANG=en_US.utf8
 cd /opt/teamspeak && sudo -u teamspeak ./teamspeak2-server_startscript $*
-
+exit 0
 # End $rc_base/init.d/teamspeak

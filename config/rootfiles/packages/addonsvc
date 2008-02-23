@@ -1,0 +1,3 @@
+usr/local/bin/addonctrl
+srv/web/ipfire/cgi-bin/addonsvc.cgi
+var/ipfire/menu.d/EX-addonsvc.menu
