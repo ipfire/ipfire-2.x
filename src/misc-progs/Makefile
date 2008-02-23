@@ -31,7 +31,7 @@ SUID_PROGS = setdmzholes setportfw setxtaccess \
 	logwatch openvpnctrl outgoingfwctrl \
 	wirelessctrl getipstat qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
-	smartctrl clamavctrl pakfire mpfirectrl
+	smartctrl clamavctrl addonctrl pakfire mpfirectrl
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -134,6 +134,9 @@ mpfirectrl: mpfirectrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 backupctrl: backupctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ backupctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+addonctrl: addonctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ addonctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 syslogdctrl: syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@

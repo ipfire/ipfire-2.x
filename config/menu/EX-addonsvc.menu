@@ -1,0 +1,5 @@
+    $subipfire->{'11.addonsvc'} = {'caption' => 'Addon Services',
+				  'uri' => '/cgi-bin/addonsvc.cgi',
+				  'title' => 'Addon Services',
+				  'enabled' => 1,
+				  };
