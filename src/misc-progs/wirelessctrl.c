@@ -102,12 +102,12 @@ int main(void)
         }
 
         /* with this rule you can disable the logging of the dropped wireless input packets*/
-        if(findkey(kv, "DROPWIRELESSINPUT", buffer) && !strcmp(buffer,"on")){
+        if(!findkey(kv, "DROPWIRELESSINPUT", buffer) || strcmp(buffer,"off")){
                 snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput'", blue_dev);
                 safe_system(command);
         }
         /* with this rule you can disable the logging of the dropped wireless forward packets*/
-        if(findkey(kv, "DROPWIRELESSFORWARD", buffer) && !strcmp(buffer,"on")){
+        if(!findkey(kv, "DROPWIRELESSFORWARD", buffer) || strcmp(buffer,"off")){
                 snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward'", blue_dev);
                 safe_system(command);
         }
