@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 stop_service ${NAME}
 
-if [ ! -e "/var/ipfire/backup/addons/includes/teamspeak ]; then
+if [ ! -e "/var/ipfire/backup/addons/includes/teamspeak" ]; then
     echo /opt/teamspeak/bad_names.txt > /var/ipfire/backup/addons/includes/teamspeak
     echo /opt/teamspeak/server.dbs >> /var/ipfire/backup/addons/includes/teamspeak
     echo /opt/teamspeak/server.ini >> /var/ipfire/backup/addons/includes/teamspeak
