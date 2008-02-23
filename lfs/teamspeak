@@ -29,7 +29,7 @@ VER        = 2.0.24.1
 THISAPP    = teamspeak-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = teamspeak
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
