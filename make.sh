@@ -535,6 +535,8 @@ buildipfire() {
   ipfiremake subversion
   ipfiremake tcptrack
   ipfiremake teamspeak
+  ipfiremake elinks
+  
 }
 
 buildinstaller() {

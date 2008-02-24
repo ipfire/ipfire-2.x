@@ -69,6 +69,7 @@
 * dosfstools-2.11
 * e2fsprogs-1.39
 * ed-0.2
+* elinks-0.11.4rc0
 * espgs-8.15.1
 * etherwake-1.09
 * ethtool-3
