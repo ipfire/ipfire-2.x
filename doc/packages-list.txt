@@ -35,6 +35,7 @@
 * arping-2.05
 * as86-0.16.17
 * asterisk-1.4.18
+* atl1-1.2.40.2
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire
@@ -109,6 +110,7 @@
 * icecast-2.3.1
 * icegenerator-0.5.5-pre2
 * inetutils-1.4.2
+* ip1000a-2.10c
 * ipac-ng-1.31
 * ipaddr-1.2
 * ipfireseeder-1.00

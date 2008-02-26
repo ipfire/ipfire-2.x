@@ -327,14 +327,18 @@ buildipfire() {
   ipfiremake r8169			SMP=1
   ipfiremake r8168			SMP=1
   ipfiremake mcs7830			SMP=1
-#  ipfiremake dm9601			SMP=1
+  ipfiremake atl1			SMP=1
+  ipfiremake ip1000a			SMP=1
+  ipfiremake dm9601			SMP=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake zaptel
   ipfiremake r8169
   ipfiremake r8168
   ipfiremake mcs7830
-#  ipfiremake dm9601
+  ipfiremake atl1
+  ipfiremake ip1000a 
+  ipfiremake dm9601
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
