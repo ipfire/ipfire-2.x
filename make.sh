@@ -536,6 +536,7 @@ buildipfire() {
   ipfiremake tcptrack
   ipfiremake teamspeak
   ipfiremake elinks
+  ipfiremake igmpproxy
   
 }
 

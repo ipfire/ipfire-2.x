@@ -419,7 +419,7 @@ sub updatelqgraph {
 				"AREA:r2".$color{"color14"}."A0:70-150 ms",
 				"AREA:r1".$color{"color17"}."A0:30-70 ms",
 				"AREA:r0".$color{"color12"}."A0:<30 ms\\j",
-				"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+				"COMMENT:".sprintf("%-15s",$Lang::tr{'maximal'}),
 				"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
 				"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
 				"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j",

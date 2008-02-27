@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.4
+VER        = 8.6
 
 THISAPP    = hdparm-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f29945ce67796253157dc3a8041131fb
+$(DL_FILE)_MD5 = 237fbceeeba6318b987983fd858994df
 
 install : $(TARGET)
 

@@ -24,13 +24,17 @@
 
 include Config
 
-VER        = 2.6.STABLE18
+VER        = 0.1-beta2
 
-THISAPP    = squid-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = igmpproxy-src-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = igmpproxy
+PAK_VER    = 1
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = eb49bc06ea1a40421b6f1ac9e76d1757
+$(DL_FILE)_MD5 = 2a5a59480f44d4b14077a6b5319e9940
 
 install : $(TARGET)
 
@@ -49,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -69,64 +76,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-	   --datadir=/usr/lib/squid \
-	   --mandir=/usr/share/man --libexecdir=/usr/lib/squid \
-	   --localstatedir=/var --sysconfdir=/etc/squid \
-	   --disable-poll --disable-snmp --disable-icmp --disable-wccp \
-	   --disable-http-violations --disable-ident-lookups \
-	   --enable-storeio="aufs,coss,diskd,ufs" --enable-ssl \
-	   --enable-underscores --enable-ntlm-fail-open --enable-arp-acl \
-	   --enable-http-violations --enable-auth=basic,ntlm \
-	   --enable-removal-policies="heap,lru" \
-	   --enable-delay-pools --enable-linux-netfilter \
-	   --enable-basic-auth-helpers="NCSA,SMB,MSNT,LDAP,multi-domain-NTLM" \
-	   --enable-ntlm-auth-helpers="SMB" \
-	   --enable-useragent-log \
-	   --enable-referer-log \
-	   --with-pthreads --with-dl
-
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
-
-	rm -f /etc/squid/squid.conf
-	ln -sf /var/ipfire/proxy/squid.conf /etc/squid/squid.conf
-	rm -f /etc/squid/errors
-	ln -sf /usr/lib/squid/errors/English /etc/squid/errors
-
-	-mkdir -p /var/log/cache /var/log/squid /var/log/updatexlrator
-	touch /var/log/squid/access.log
-	chown -R squid:squid /var/log/squid /var/log/cache /var/log/updatexlrator
-
-	cp -f $(DIR_SRC)/config/updxlrator/updxlrator /usr/sbin/updxlrator
-	cp -f $(DIR_SRC)/config/updxlrator/checkup /var/ipfire/updatexlrator/bin/checkup
-	cp -f $(DIR_SRC)/config/updxlrator/download /var/ipfire/updatexlrator/bin/download
-	-mkdir -p /usr/lib/squid/errors.ipfire
-	cp -fr $(DIR_SRC)/config/proxy/errors.ipfire/* /usr/lib/squid/errors.ipfire/
-	-find /usr/lib/squid/errors.ipfire/ -name .svn -exec rm -rf {} \;
-	chmod 755 /usr/sbin/updxlrator /var/ipfire/updatexlrator/bin/checkup \
-		/var/ipfire/updatexlrator/bin/download
-
-	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.daily
-	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.monthly
-	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.weekly
-
-	chown -R nobody:nobody /var/ipfire/updatexlrator
-	chown nobody.squid /var/updatecache
-	chown nobody.squid /var/updatecache/download
-	chown nobody.squid /var/updatecache/metadata
-	chmod 775 /var/updatecache
-	chmod 775 /var/updatecache/download
-	chmod 775 /var/updatecache/metadata
-	chmod 755 /var/log/updatexlrator
-	
-	chown squid:squid /var/log/squid
-	ln -sf /usr/lib/squid /usr/lib/squid/auth
-	cp -f $(DIR_SRC)/config/proxy/proxy.pac /srv/web/ipfire/html/proxy.pac
-	chown nobody.nobody /srv/web/ipfire/html/proxy.pac
-	ln -sf /srv/web/ipfire/html/proxy.pac /srv/web/ipfire/html/wpad.dat
-
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC)/$(PROG)/src && make $(MAKETUNING)
+	cd $(DIR_SRC)/$(PROG)/src && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

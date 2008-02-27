@@ -1,0 +1,9 @@
+sbin/hdparm
+usr/lib/collectd
+usr/sbin/collectd
+usr/sbin/collectdmon
+etc/init.d/networking/red
+etc/squid
+usr/lib/squid
+usr/sbin/squid
+var/ipfire/graphs.pl
