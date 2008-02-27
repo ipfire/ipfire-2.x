@@ -537,7 +537,8 @@ buildipfire() {
   ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
-  
+  ipfiremake sdl
+  ipfiremake qemu
 }
 
 buildinstaller() {

@@ -1,0 +1,23 @@
+2008-01-12  Mike kronenberg  <mike.kronenberg@kronenberg.org>
+
+	* Fix for QEMU 0.9.1.
+	
+2007-02-01  Mike kronenberg  <mike.kronenberg@kronenberg.org>
+
+	* Fix for QEMU 0.9.0.
+	
+2006-02-12  Gwenole Beauchesne  <gbeauchesne@mandriva.com>
+
+	* Enforce 16-byte boundaries.
+
+--- qemu-0.8.0/Makefile.target.enforce-16byte-stack-boundary	2006-02-12 17:46:54.000000000 +0100
++++ qemu-0.8.0/Makefile.target	2006-02-12 17:55:24.000000000 +0100
+@@ -67,7 +67,7 @@ endif
+ 
+ ifeq ($(ARCH),i386)
+ HELPER_CFLAGS+=-fomit-frame-pointer
+-OP_CFLAGS+=-mpreferred-stack-boundary=2 -fomit-frame-pointer
++OP_CFLAGS+=-fomit-frame-pointer
+ ifdef TARGET_GPROF
+ USE_I386_LD=y
+ endif
