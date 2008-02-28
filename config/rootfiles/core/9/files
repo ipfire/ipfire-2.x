@@ -4,6 +4,11 @@ usr/sbin/collectd
 usr/sbin/collectdmon
 etc/init.d/networking/red
 etc/squid
+sbin/capiinit
+usr/bin/capiinfo
+usr/lib/libcapi20.so
+usr/lib/libcapi20.so.3
+usr/lib/libcapi20.so.3.0.4
 usr/lib/squid
 usr/sbin/squid
 var/ipfire/graphs.pl
