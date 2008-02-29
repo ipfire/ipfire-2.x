@@ -55,8 +55,8 @@ if ($param[1] ne '') {
 
 print <<END
 <div align='center'>
-<table width='90%' cellspacing='1' border='0'>
-<tr>
+<table width='90%' cellspacing='2' border='0'>
+<tr bgcolor='$color{'color20'}'>
 <td align='left'><b>Addon</b></td>
 <td align='center' colspan=3><b>Bootconfiguration</b></td>
 <td align='center' colspan=2><b>Manual</b></td>
@@ -64,6 +64,8 @@ print <<END
 </tr>
 END
 ;
+
+my $lines=0; # Used to count the outputlines to make different bgcolor
 
 # Generate list of installed addon pak's
 my @pak = `find /opt/pakfire/db/installed/meta-* | cut -d"-" -f2`;
@@ -75,20 +77,35 @@ foreach (@pak)
 	my @svc = `find /etc/init.d/$_ | cut -d"/" -f4`;
 	foreach (@svc)
 	{
+	    # blacklist some packages
+	    #
+	    # alsa has trouble with the volume saving and was not really stopped
+	    #
 	    chomp($_);
-	    print "<tr>";
-	    print "<td align='left'>$_</td> ";
-	    my $status = isautorun($_);
-	    print "$status ";
-	    print "<td align='center'><A HREF=addonsvc.cgi?$_!enable>enable</A></td> ";
-	    print "<td align='center'><A HREF=addonsvc.cgi?$_!disable>disable</A></td> ";
-	    print "<td align='center'><A HREF=addonsvc.cgi?$_!start>start</A></td> ";
-	    print "<td align='center'><A HREF=addonsvc.cgi?$_!stop>stop</A></td> ";
-	    my $status = `/usr/local/bin/addonctrl $_ status`;
- 	    $status =~ s/\\[[0-1]\;[0-9]+m//g;
-	    chomp($status);
-	    print "<td align='left'>$status</td> ";
-	    print "</tr>";
+	    if ($_ ne "alsa")
+	    {
+		$lines++;
+		if ($lines % 2) 
+		{
+		    print "<tr bgcolor='$color{'color22'}'>";
+		}
+		else
+		{
+		    print "<tr bgcolor='$color{'color20'}'>";
+		}
+		print "<td align='left'>$_</td> ";
+		my $status = isautorun($_);
+		print "$status ";
+		print "<td align='center'><A HREF=addonsvc.cgi?$_!enable>enable</A></td> ";
+		print "<td align='center'><A HREF=addonsvc.cgi?$_!disable>disable</A></td> ";
+		print "<td align='center'><A HREF=addonsvc.cgi?$_!start>start</A></td> ";
+		print "<td align='center'><A HREF=addonsvc.cgi?$_!stop>stop</A></td> ";
+		my $status = `/usr/local/bin/addonctrl $_ status`;
+ 		$status =~ s/\\[[0-1]\;[0-9]+m//g;
+		chomp($status);
+		print "<td align='left'>$status</td> ";
+		print "</tr>";
+	    }
 	}
 }
 
@@ -101,12 +118,18 @@ print "</table></div>\n";
 sub isautorun
 {
 	my $cmd = $_[0];
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>Aus</b></font></td>";
+	my $status = "<td align='center' bgcolor='${Header::colourblue}'><font color='white'><b>---</b></font></td>";
 	my $init = `find /etc/rc.d/rc3.d/S??${cmd}`;
 	chomp ($init);
 	if ($init ne '') {
 		$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>Ein</b></font></td>";
 	}
+	$init = `find /etc/rc.d/rc3.d/off/S??${cmd}`;
+	chomp ($init);
+	if ($init ne '') {
+		$status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>Aus</b></font></td>";
+	}
+	
 return $status;
 }
 
