@@ -185,11 +185,14 @@ define PAK
 		cp -f /usr/src/src/paks/default/{,un}install.sh /usr/src/src/paks/default/update.sh \
 		/install/packages/package; \
 	fi
-	sed -e "s/KVER/$(KVER)/g" < /usr/src/config/rootfiles/packages/$(PROG) > /install/packages/package/ROOTFILES 
+	cp -v /usr/src/config/rootfiles/packages/$(PROG) /install/packages/package/ROOTFILES
+	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
 		--preserve --numeric-owner
-	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES 
+	if grep -q '#' < /install/packages/package/ROOTFILES; then \
+		cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES; \
+	fi
 	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
 	rm -rf /install/packages/package
 	sed -e s/NAME/$(PROG)/g \

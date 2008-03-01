@@ -1,3 +1,5 @@
+lib/modules/2.6.16.57-ipfire/misc/kqemu.ko
+lib/modules/2.6.16.57-ipfire-smp/misc/kqemu.ko
 sbin/hdparm
 usr/lib/collectd
 usr/sbin/collectd
