@@ -12,7 +12,17 @@
 #
 ########################################################################
 
-export LANG=en_US.utf8
-cd /opt/teamspeak && sudo -u teamspeak ./teamspeak2-server_startscript $*
-exit 0
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	status)
+	    statusproc /opt/teamspeak/server_linux
+	;;	
+	*)
+	    export LANG=en_US.utf8
+	    cd /opt/teamspeak && sudo -u teamspeak ./teamspeak2-server_startscript $*
+	    exit 0
+	;;
+esac
 # End $rc_base/init.d/teamspeak
