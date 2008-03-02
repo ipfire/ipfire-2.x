@@ -10,27 +10,33 @@
 				'title' => "$Lang::tr{'memory'}",
 				'enabled' => 1,
 				};
-    $substatus->{'30.media'} = {
+    $substatus->{'30.services'} = {
+				'caption' => $Lang::tr{'services'},
+				'uri' => '/cgi-bin/services.cgi',
+				'title' => "$Lang::tr{'services'}",
+				'enabled' => 1,
+				};
+    $substatus->{'40.media'} = {
 				'caption' => $Lang::tr{'media'},
 				'uri' => '/cgi-bin/media.cgi',
 				'title' => "$Lang::tr{'media'}",
 				'enabled' => 1,
 				};
-    $substatus->{'40.networkred'} = {
+    $substatus->{'50.networkred'} = {
 				'caption' => "$Lang::tr{'network red'}",
 				'uri' => '/cgi-bin/network.cgi',
 				'vars' => 'network=red',
 				'title' => "$Lang::tr{'network red'}",
 				'enabled' => 1,
 			  };
-    $substatus->{'41.networkinternal'} = {
+    $substatus->{'51.networkinternal'} = {
 				'caption' => "$Lang::tr{'network internal'}",
 				'uri' => '/cgi-bin/network.cgi',
 				'vars' => 'network=internal',
 				'title' => "$Lang::tr{'network internal'}",
 				'enabled' => 1,
 			  };
-    $substatus->{'42.networkother'} = {
+    $substatus->{'52.networkother'} = {
 				'caption' => "$Lang::tr{'network other'}",
 				'uri' => '/cgi-bin/network.cgi',
 				'vars' => 'network=other',

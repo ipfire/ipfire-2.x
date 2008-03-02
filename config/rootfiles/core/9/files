@@ -14,3 +14,8 @@ usr/lib/libcapi20.so.3.0.4
 usr/lib/squid
 usr/sbin/squid
 var/ipfire/graphs.pl
+usr/local/bin/addonctrl
+srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/system.cgi
+var/ipfire/menu.d/20-status.menu
+var/ipfire/langs

@@ -21,564 +21,247 @@
 
 use strict;
 
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-my @icmptypes = &get_icmptypes();
+#workaround to suppress a warning when a variable is used only once
+my @dummy = ( ${Header::colourred} );
+undef (@dummy);
 
-&Header::showhttpheaders();
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
+my %netsettings=();
+&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 my %cgiparams=();
-my %selected=();
-my %checked=();
-my $filename = "${General::swroot}/firewall/customservices";
-my $key = 0; # used for finding last sequence number used 
+# Maps a nice printable name to the changing part of the pid file, which
+# is also the name of the program
+my %servicenames =
+(
+	$Lang::tr{'dhcp server'} => 'dhcpd',
+	$Lang::tr{'web server'} => 'httpd',
+	$Lang::tr{'cron server'} => 'fcron',
+	$Lang::tr{'dns proxy server'} => 'dnsmasq',
+	$Lang::tr{'logging server'} => 'syslogd',
+	$Lang::tr{'kernel logging server'} => 'klogd',
+	$Lang::tr{'ntp server'} => 'ntpd',
+	$Lang::tr{'secure shell server'} => 'sshd',
+	$Lang::tr{'vpn'} => 'pluto',
+	$Lang::tr{'web proxy'} => 'squid',
+	'OpenVPN' => 'openvpn'
+);
 
-# Darren Critchley - vars for setting up sort order
-my $sort_col = '1';
-my $sort_type = 'a';
-my $sort_dir = 'asc';
+my $lines=0; # Used to count the outputlines to make different bgcolor
 
-if ($ENV{'QUERY_STRING'} ne '') {
-	my ($item1, $item2, $item3) = split(/\&/,$ENV{'QUERY_STRING'});
-	if ($item1 ne '') {
-		($junk, $sort_col) = split(/\=/,$item1)
-	}
-	if ($item2 ne '') {
-		($junk, $sort_type) = split(/\=/,$item2)
-	}
-	if ($item3 ne '') {
-		($junk, $sort_dir) = split(/\=/,$item3)
-	}
+my $iface = '';
+if (open(FILE, "${General::swroot}/red/iface"))
+{
+	$iface = <FILE>;
+	close FILE;
+	chomp $iface;
+}
+$servicenames{"$Lang::tr{'intrusion detection system'} (RED)"}   = "snort_${iface}";
+$servicenames{"$Lang::tr{'intrusion detection system'} (GREEN)"} = "snort_$netsettings{'GREEN_DEV'}";
+if ($netsettings{'ORANGE_DEV'} ne '') {
+	$servicenames{"$Lang::tr{'intrusion detection system'} (ORANGE)"} = "snort_$netsettings{'ORANGE_DEV'}";
+}
+if ($netsettings{'BLUE_DEV'} ne '') {
+	$servicenames{"$Lang::tr{'intrusion detection system'} (BLUE)"} = "snort_$netsettings{'BLUE_DEV'}";
 }
 
-$cgiparams{'KEY'} = '';
-$cgiparams{'PORTS'} = '';
-$cgiparams{'PROTOCOL'} = '6';
-$cgiparams{'NAME'} = '';
-$cgiparams{'PORT_INVERT'} = 'off';
-$cgiparams{'PROTOCOL_INVERT'} = 'off';
-$cgiparams{'ICMP'} = 'BLANK';
-
+&Header::showhttpheaders();
 &Header::getcgihash(\%cgiparams);
+&Header::openpage($Lang::tr{'status information'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-if ($cgiparams{'ACTION'} eq $Lang::tr{'add'}){
+&Header::openbox('100%', 'left', $Lang::tr{'services'});
 
-	&validateparams();
-	unless($errormessage){
-		$key++; # Add one to last sequence number
-		open(FILE,">>$filename") or die 'Unable to open config file.';
-		flock FILE, 2;
-		print FILE "$key,$cgiparams{'NAME'},$cgiparams{'PORTS'},$cgiparams{'PROTOCOL'},$cgiparams{'PORT_INVERT'},$cgiparams{'PROTOCOL_INVERT'},$cgiparams{'ICMP'}\n";
-		close(FILE);
-		&General::log("$Lang::tr{'service added'}: $cgiparams{'NAME'}");
-		undef %cgiparams;
-	}
+print <<END
+<div align='center'>
+<table width='80%' cellspacing='1' border='0'>
+<tr bgcolor='$color{'color20'}'><td align='left'><b>$Lang::tr{'services'}</b></td><td align='center' ><b>$Lang::tr{'status'}</b></td><td align='center'><b>PID</b></td><td align='center'><b>$Lang::tr{'memory'}</b></td></tr>
+END
+;
+
+my $key = '';
+foreach $key (sort keys %servicenames)
+{
+	$lines++;
+	if ($lines % 2)
+	{  print "<tr bgcolor='$color{'color22'}'>\n<td align='left'>$key</td>\n";}
+	else
+	{  print "<tr bgcolor='$color{'color20'}'>\n<td align='left'>$key</td>\n";}
+
+	my $shortname = $servicenames{$key};
+	my $status = &isrunning($shortname);
+
+ 	print "$status\n";
+	print "</tr>\n";
 }
 
-if ($cgiparams{'ACTION'} eq $Lang::tr{'update'})
-{
-	&validateparams();
-	# Darren Critchley - If there is an error don't waste any more processing time
-	if ($errormessage) { $cgiparams{'ACTION'} = $Lang::tr{'edit'}; goto UPD_ERROR; }
 
-	unless($errormessage){
-		open(FILE, $filename) or die 'Unable to open custom services file.';
-		my @current = <FILE>;
-		close(FILE);
-		my $line;
-		open(FILE, ">$filename") or die 'Unable to open config file.';
-		flock FILE, 2;
-		foreach $line (@current) {
-			chomp($line);
-			my @temp = split(/\,/,$line);
-			if ($cgiparams{'KEY'} eq $temp[0]) {
-				print FILE "$cgiparams{'KEY'},$cgiparams{'NAME'},$cgiparams{'PORTS'},$cgiparams{'PROTOCOL'},$cgiparams{'PORT_INVERT'},$cgiparams{'PROTOCOL_INVERT'},$cgiparams{'ICMP'}\n";
-			} else {
-				print FILE "$line\n";
-			}
-		}
-		close(FILE);
-		&General::log("$Lang::tr{'service updated'}: $cgiparams{'NAME'}");
-		undef %cgiparams;
-	}
-UPD_ERROR:
+print "</table></div>\n";
+
+&Header::closebox();
+
+&Header::openbox('100%', 'left', "Addon - $Lang::tr{services}");
+
+my $paramstr=$ENV{QUERY_STRING};
+my @param=split(/!/, $paramstr);
+if ($param[1] ne '') {
+    my $temp = `/usr/local/bin/addonctrl @param[0] @param[1]`;
 }
 
-if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'})
-{
-	open(FILE, "$filename") or die 'Unable to open custom services file.';
-	my @current = <FILE>;
-	close(FILE);
+print <<END
+<div align='center'>
+<table width='80%' cellspacing='1' border='0'>
+<tr bgcolor='$color{'color20'}'>
+<td align='center'><b>Addon</b></td>
+<td align='center'><b>Boot</b></td>
+<td align='center' colspan=2><b>$Lang::tr{'action'}</b></td>
+<td align='center'><b>$Lang::tr{'status'}</b></td>
+<td align='center'><b>PID</b></td>
+<td align='center'><b>$Lang::tr{'memory'}</b></td>
+</tr>
+END
+;
 
-	unless ($errormessage)
+my $lines=0; # Used to count the outputlines to make different bgcolor
+
+# Generate list of installed addon pak's
+my @pak = `find /opt/pakfire/db/installed/meta-* | cut -d"-" -f2`;
+foreach (@pak)
+{
+	chomp($_);
+	
+	# Check which of the paks are services
+	my @svc = `find /etc/init.d/$_ | cut -d"/" -f4`;
+	foreach (@svc)
 	{
-		foreach my $line (@current)
+	    # blacklist some packages
+	    #
+	    # alsa has trouble with the volume saving and was not really stopped
+	    #
+	    chomp($_);
+	    if ($_ ne "alsa")
+	    {
+		$lines++;
+		if ($lines % 2) 
 		{
-			chomp($line);
-			my @temp = split(/\,/,$line);
-			if ($cgiparams{'KEY'} eq $temp[0]) {
-				$cgiparams{'NAME'} = $temp[1];
-				$cgiparams{'PORTS'} = $temp[2];
-				$cgiparams{'PROTOCOL'} = $temp[3];
-				$cgiparams{'PORT_INVERT'} = $temp[4];
-				$cgiparams{'PROTOCOL_INVERT'} = $temp[5];
-				$cgiparams{'ICMP'} = $temp[6];
-			}
-			
+		    print "<tr bgcolor='$color{'color22'}'>";
 		}
-	}
-}
-
-if ($cgiparams{'ACTION'} eq $Lang::tr{'remove'})
-{
-	open(FILE, $filename) or die 'Unable to open custom services file.';
-	my @current = <FILE>;
-	close(FILE);
-
-	open(FILE, ">$filename") or die 'Unable to open custom services file.';
-	flock FILE, 2;
-	foreach my $line (@current)
-	{
-		chomp($line);
-		if ($line ne '') {		
-			my @temp = split(/\,/,$line);
-			if ($cgiparams{'KEY'} eq $temp[0]) {
-				&General::log("$Lang::tr{'service removed'}: $temp[1]");
-			} else {
-       	        		print FILE "$temp[0],$temp[1],$temp[2],$temp[3],$temp[4],$temp[5],$temp[6]\n";
-			}
+		else
+		{
+		    print "<tr bgcolor='$color{'color20'}'>";
 		}
-	}
-	close(FILE);
-	undef %cgiparams;
-}
-
-if ($cgiparams{'ACTION'} eq $Lang::tr{'reset'})
-{
-	undef %cgiparams;
-}
-
-if ($cgiparams{'ACTION'} eq '')
-{
-	$cgiparams{'KEY'} = '';
-	$cgiparams{'PORTS'} = '';
-	$cgiparams{'PROTOCOL'} = '6';
-    $cgiparams{'NAME'} = '';
-	$cgiparams{'PORT_INVERT'} = 'off';
-	$cgiparams{'PROTOCOL_INVERT'} = 'off';
-	$cgiparams{'ICMP'} = 'BLANK';
-}
-
-# Darren Critchley - Bring in the protocols file built from /etc/protocols into hash %protocol
-require "${General::swroot}/firewall/protocols.pl";
-
-# Darren Critchley - figure out which protocol is selected
-$selected{'PROTOCOL'}{'tcpudp'}= '';
-$selected{'PROTOCOL'}{'all'}= '';
-foreach $line (keys %protocols) {
-#	$selected{'PROTOCOL'}{"$protocols{$line}"}= '';
-	$selected{'PROTOCOL'}{$line}= '';
-}
-$selected{'PROTOCOL'}{$cgiparams{'PROTOCOL'}} = 'SELECTED';
-
-# Darren Critchley - figure out which icmptype is selected
-$selected{'ICMP'}{$cgiparams{'ICMP'}} = 'SELECTED';
-
-$checked{'PORT_INVERT'}{'off'} = '';
-$checked{'PORT_INVERT'}{'on'} = '';
-$checked{'PORT_INVERT'}{$cgiparams{'PORT_INVERT'}} = 'CHECKED';
-$checked{'PROTOCOL_INVERT'}{'off'} = '';
-$checked{'PROTOCOL_INVERT'}{'on'} = '';
-$checked{'PROTOCOL_INVERT'}{$cgiparams{'PROTOCOL_INVERT'}} = 'CHECKED';
-
-&Header::openpage($Lang::tr{'services settings'}, 1, '');
-
-&Header::openbigbox('100%', 'LEFT', '', $errormessage);
-
-# DEBUG DEBUG
-#&Header::openbox('100%', 'LEFT', 'DEBUG');
-#foreach $line (keys %cgiparams) {
-#	print "<CLASS NAME='base'>$line = $cgiparams{$line}<BR>";
-#}
-#print "$sort_col\n";
-#print "$ENV{'QUERY_STRING'}\n";
-#print "&nbsp;</CLASS>\n";
-#&Header::closebox();
-
-if ($errormessage) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});
-	print "<CLASS NAME='base'><FONT COLOR='${Header::colourred}'>$errormessage\n</FONT>";
-	print "&nbsp;</CLASS>\n";
-	&Header::closebox();
-}
-
-if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'}){
-	&Header::openbox('100%', 'LEFT', "$Lang::tr{'edit service'}:");
-} else {
-	&Header::openbox('100%', 'LEFT', "$Lang::tr{'add service'}:");
-}
-# Darren Critchley - Show protocols with TCP, UDP, etc at the top of the list.
-print <<END
-<FORM METHOD='POST'>
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='100%' ALIGN='CENTER'>
-<TR align="center">
-	<TD><strong>$Lang::tr{'servicename'}</strong></TD>
-	<TD ALIGN='RIGHT'><strong>$Lang::tr{'invert'}</strong></TD>
-	<TD><strong>$Lang::tr{'ports'}</strong></TD>
-	<TD ALIGN='RIGHT'><strong>$Lang::tr{'invert'}</strong></TD>
-	<TD><strong>$Lang::tr{'protocol'}</strong></TD>
-	<TD>&nbsp;</TD>
-	<TD>&nbsp;</TD>
-</TR>
-<TR align="center">
-	<TD>
-		<INPUT TYPE='TEXT' NAME='NAME' VALUE='$cgiparams{'NAME'}' SIZE='20' MAXLENGTH='20'>
-	</TD>
-	<TD ALIGN='RIGHT'>
-		<INPUT TYPE='CHECKBOX' NAME='PORT_INVERT' $checked{'PORT_INVERT'}{'on'}>
-	</TD>
-	<TD>
-		<INPUT TYPE='TEXT' NAME='PORTS' VALUE='$cgiparams{'PORTS'}' SIZE='15' MAXLENGTH='11'>
-	</TD>
-	<TD ALIGN='RIGHT'>
-		<INPUT TYPE='CHECKBOX' NAME='PROTOCOL_INVERT' $checked{'PROTOCOL_INVERT'}{'on'}>
-	</TD>
-    <TD ALIGN='LEFT'>
-		<SELECT NAME='PROTOCOL'>
-			<OPTION VALUE='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP</OPTION>
-			<OPTION VALUE='udp' $selected{'PROTOCOL'}{'udp'}>UDP</OPTION>
-			<OPTION VALUE='tcpudp' $selected{'PROTOCOL'}{'tcpudp'}>TCP & UDP</OPTION>
-			<OPTION VALUE='all' $selected{'PROTOCOL'}{'all'}>ALL</OPTION>
-			<OPTION VALUE='icmp' $selected{'PROTOCOL'}{'icmp'}>ICMP</OPTION>
-			<OPTION VALUE='gre' $selected{'PROTOCOL'}{'gre'}>GRE</OPTION>
-END
-;
-foreach $line (sort keys %protocols) {
-	# Darren Critchley - do not have duplicates in the list
-	if ($protocols{$line} ne '6' && $protocols{$line} ne '17' && $protocols{$line} ne '1' && $protocols{$line} ne '47'){
-#		print "<OPTION VALUE='$line' $selected{'PROTOCOL'}{$protocols{$line}}>".uc($line)."</OPTION>\n";
-		print "<OPTION VALUE='$line' $selected{'PROTOCOL'}{$line}>".uc($line)."</OPTION>\n";
+		print "<td align='left'>$_</td> ";
+		my $status = isautorun($_);
+		print "$status ";
+		print "<td align='center'><A HREF=services.cgi?$_!start><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></A></td>";
+		print "<td align='center'><A HREF=services.cgi?$_!stop><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></A></td> ";
+		my $status = &isrunningaddon($_);
+ 		$status =~ s/\\[[0-1]\;[0-9]+m//g;
+ 		
+		chomp($status);
+		print "$status";
+		print "</tr>";
+	    }
 	}
 }
-print <<END
-		</SELECT>
-	</TD>
-</TR>
-<TR>
-	<TD>&nbsp;</TD>
-	<TD>&nbsp;</TD>
-	<TD>&nbsp;</TD>
-	<TD><strong>$Lang::tr{'icmp type'}:</strong></TD>
-	<TD ALIGN='LEFT'>
-			<SELECT NAME='ICMP'>
-				<OPTION VALUE='BLANK' $selected{'ICMP'}{'BLANK'}>Valid ICMP Types</OPTION>
-END
-;
-foreach $line (@icmptypes) {
-	if ($cgiparams{'ICMP'} eq $line){
-		print "<OPTION VALUE='$line' SELECTED>$line</OPTION>\n";
-	} else {
-		print "<OPTION VALUE='$line' >$line</OPTION>\n";
-	}
-}
-print <<END
-			</SELECT>
-	</TD>
-</TR>
-<TR>
-END
-;
-if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'}){
-	print "<TD ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$Lang::tr{'update'}'></TD>\n";
-	print "<INPUT TYPE='HIDDEN' NAME='KEY' VALUE='$cgiparams{'KEY'}'>\n";
-	print "<TD ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$Lang::tr{'reset'}'></TD>\n";
-} else {
-	print "<TD ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$Lang::tr{'add'}'></TD>\n";
-	print "<TD ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$Lang::tr{'reset'}'></TD>\n";
-}
-print <<END
-</TR>
-</TABLE>
-</DIV>
-</FORM>
-END
-;
+
+print "</table></div>\n";
 
 &Header::closebox();
-
-&Header::openbox('100%', 'LEFT', "$Lang::tr{'custom services'}:");
-print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='100%' ALIGN='CENTER'>
-<TR align="center">
-END
-;
-
-if ($sort_dir eq 'asc' && $sort_col eq '2') {
-	print "<TD WIDTH='25%'><strong><a href='services.cgi?sortcol=2&srtype=a&srtdir=dsc' title='$Lang::tr{'sort descending'}'>$Lang::tr{'servicename'}</a></strong></TD>\n";
-} else {
-	print "<TD WIDTH='25%'><strong><a href='services.cgi?sortcol=2&srtype=a&srtdir=asc' title='$Lang::tr{'sort ascending'}'>$Lang::tr{'servicename'}</a></strong></TD>\n";
-}
-if ($sort_dir eq 'asc' && $sort_col eq '3') {
-	print "<TD WIDTH='25%'><strong><a href='services.cgi?sortcol=3&srtype=n&srtdir=dsc' title='$Lang::tr{'sort descending'}'>$Lang::tr{'ports'}</a></strong></TD>\n";
-} else {
-	print "<TD WIDTH='25%'><strong><a href='services.cgi?sortcol=3&srtype=n&srtdir=asc' title='$Lang::tr{'sort ascending'}'>$Lang::tr{'ports'}</a></strong></TD>\n";
-}
-if ($sort_dir eq 'asc' && $sort_col eq '4') {
-	print "<TD WIDTH='25%'><strong><a href='services.cgi?sortcol=4&srtype=a&srtdir=dsc' title='$Lang::tr{'sort descending'}'>$Lang::tr{'protocol'}</a></strong></TD>\n";
-} else {
-	print "<TD WIDTH='25%'><strong><a href='services.cgi?sortcol=4&srtype=a&srtdir=asc' title='$Lang::tr{'sort ascending'}'>$Lang::tr{'protocol'}</a></strong></TD>\n";
-}
-
-print <<END
-	<TD WIDTH='25%'><strong>$Lang::tr{'icmp type'}</strong></TD>
-	<TD WIDTH='5%'>&nbsp;</TD>
-	<TD WIDTH='5%'>&nbsp;</TD>
-</TR>
-END
-;
-&display_custom_services();
-print <<END
-</TABLE>
-</DIV>
-END
-;
-&Header::closebox();
-
-&Header::openbox('100%', 'LEFT', "$Lang::tr{'default services'}:");
-print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='100%' ALIGN='CENTER'>
-<TR align="center">
-	<TD><strong>$Lang::tr{'servicename'}</strong></TD>
-	<TD><strong>$Lang::tr{'ports'}</strong></TD>
-	<TD><strong>$Lang::tr{'protocol'}</strong></TD>
-</TR>
-END
-;
-&display_default_services();
-print <<END
-</TABLE>
-</DIV>
-END
-;
-&Header::closebox();
- 
-    print "$Lang::tr{'this feature has been sponsored by'} : ";
-    print "<A HREF='http://www.kdi.ca/' TARGET='_blank'>Kobelt Development Inc.</A>.\n";
-
-
 &Header::closebigbox();
-
 &Header::closepage();
 
-sub display_custom_services
+sub isautorun
 {
+	my $cmd = $_[0];
+	my $status = "<td align='center'></td>";
+	my $init = `find /etc/rc.d/rc3.d/S??${cmd}`;
+	chomp ($init);
+	if ($init ne '') {
+ 	$status = "<td align='center'><A HREF=services.cgi?$_!disable><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></A></td>";
+	}
+	$init = `find /etc/rc.d/rc3.d/off/S??${cmd}`;
+	chomp ($init);
+	if ($init ne '') {
+  $status = "<td align='center'><A HREF=services.cgi?$_!enable><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></A></td>";
+	}
 	
-	open(FILE, "$filename") or die 'Unable to open services file.';
-	my @current = <FILE>;
-	close(FILE);
+return $status;
+}
 
-	my $id = 0;
-	my $port_inv = '';
-	my $prot_inv = '';
-	my $port_inv_tail = '';
-	my $prot_inv_tail = '';
-	my @outarray = &General::srtarray($sort_col,$sort_type,$sort_dir,@current);
-	foreach $line (@outarray)
-	{
-		chomp($line);
-		if ($line ne ''){
-			my @temp = split(/\,/,$line);
-			# Darren Critchley highlight the row we are editing
-			if ( $cgiparams{'ACTION'} eq $Lang::tr{'edit'} && $cgiparams{'KEY'} eq $temp[0] ) { 
-				print "<TR BGCOLOR='${Header::colouryellow}'>\n";
-			} else {
-				if ($id % 2) {
-					print "<TR BGCOLOR='${Header::table1colour}'>\n"; 
-				} else {
-	    	       	print "<TR BGCOLOR='${Header::table2colour}'>\n";
-				}
+sub isrunning
+{
+	my $cmd = $_[0];
+	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+	my $pid = '';
+	my $testcmd = '';
+	my $exename;
+	my @memory;
+
+	$cmd =~ /(^[a-z]+)/;
+	$exename = $1;
+
+	if (open(FILE, "/var/run/${cmd}.pid")){
+		$pid = <FILE>; chomp $pid;
+		close FILE;
+		if (open(FILE, "/proc/${pid}/status")){
+			while (<FILE>){
+				if (/^Name:\W+(.*)/) {$testcmd = $1; }
 			}
-			print "<TD>$temp[1]</TD>\n";
-			if ($temp[4] eq 'on'){$port_inv = " <strong><font color='RED'>! (</font></strong>";$port_inv_tail = "<strong><font color='RED'>)</font></strong>";}else{$port_inv='';$port_inv_tail='';}
-			print "<TD ALIGN='CENTER'>" . $port_inv . &cleanport("$temp[2]") . $port_inv_tail . "</TD>\n";
-			if ($temp[5] eq 'on'){$prot_inv = " <strong><font color='RED'>! (</font></strong>";$prot_inv_tail = "<strong><font color='RED'>)</font></strong>";}else{$prot_inv='';$prot_inv_tail='';}
-			print "<TD ALIGN='CENTER'>" . $prot_inv . &cleanprotocol("$temp[3]") . $prot_inv_tail . "</TD>\n";
-			if ($temp[6] eq 'BLANK') {
-				print "<TD ALIGN='CENTER'>N/A</TD>\n";
-			} else {
-				print "<TD ALIGN='CENTER'>$temp[6]</TD>\n";
-			}
-			print <<END
-<FORM METHOD='POST' NAME='frm$temp[0]'>
-<TD ALIGN='CENTER'>
-	<INPUT TYPE='hidden' NAME='ACTION' VALUE='$Lang::tr{'edit'}'>
-	<INPUT TYPE='image' NAME='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' width='20' height='20' border='0'>
-	<INPUT TYPE='hidden' NAME='KEY' VALUE='$temp[0]'>
-</TD>
-</FORM>
-<FORM METHOD='POST' NAME='frm$temp[0]b'>
-<TD ALIGN='CENTER'>
-	<INPUT TYPE='hidden' NAME='ACTION' VALUE='$Lang::tr{'remove'}'>
-	<INPUT TYPE='image' NAME='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' width='20' height='20' border='0'>
-	<INPUT TYPE='hidden' NAME='KEY' VALUE='$temp[0]'>
-</TD>
-</FORM>
-END
-;
-			print "</TR>\n";
-			$id++;
+			close FILE;
 		}
-	}
+		if (open(FILE, "/proc/${pid}/statm")){
+				my $temp = <FILE>;
+				@memory = split(/ /,$temp);
+		}
+		close FILE;
+		if ($testcmd =~ /$exename/){$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td><td align='center'>$pid</td><td align='center'>$memory[0] KB</td>";}
+		}
+return $status;
 }
 
-sub display_default_services
+sub isrunningaddon
 {
-	my $fname = "${General::swroot}/firewall/defaultservices";
-	my $prev = "";
-	my $newline="";
+	my $cmd = $_[0];
+	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+	my $pid = '';
+	my $testcmd = '';
+	my $exename;
+	my @memory;
 	
-	open(FILE, "$fname") or die 'Unable to open default services file.';
-	my @current = <FILE>;
-	close(FILE);
+	my $testcmd = `/usr/local/bin/addonctrl $_ status`;
+
+	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
+	$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
+	$testcmd =~ s/[a-z_]//gi;	$testcmd =~ s/\[[0-1]\;[0-9]+//gi;	$testcmd =~ s/[\(\)\.]//gi;	$testcmd =~ s/  //gi; $testcmd =~ s///gi;
+
+	my @pid = split(/\s/,$testcmd);
+	$status .="<td align='center'>$pid[0]</td>";
 	
-	my $id = 0;
+	my $memory = 0;
 	
-	foreach my $line (sort @current)
-	{
-		my @temp = split(/\,/,$line);
-		if ($id % 2) {
-			print "<TR BGCOLOR='${Header::table1colour}'>\n"; 
-		} else {
-           	print "<TR BGCOLOR='${Header::table2colour}'>\n";
+	foreach (@pid){
+	chomp($_);
+	if (open(FILE, "/proc/$_/statm")){
+				my $temp = <FILE>;
+			@memory = split(/ /,$temp);
 		}
-		print "<TD>$temp[0]</TD>\n";
-		print "<TD ALIGN='CENTER'>$temp[1]</TD>\n";
-		print "<TD ALIGN='CENTER'>" . &cleanprotocol("$temp[2]") . "</TD>\n";
-		print "</TR>\n";
-		$id++;
+	$memory+=$memory[0];
 	}
+	$status .="<td align='center'>$memory KB</td>";
+	}
+	else {$status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";}
+return $status;
 }
-
-sub cleanprotocol
-{
-	my $prtcl = $_[0];
-	chomp($prtcl);
-	if ($prtcl eq 'tcpudp') {
-		$prtcl = 'TCP & UDP';
-	} else {
-		$prtcl = uc($prtcl);
-	}
-	return $prtcl;
-}
-
-sub cleanport
-{
-	my $prt = $_[0];
-	chomp($prt);
-	# Darren Critchley - Format the ports
-	$prt =~ s/-/ - /;
-	$prt =~ s/:/ - /;
-	return $prt;
-}
-
-# Validate Field Entries
-sub validateparams 
-{
-	$erromessage='';
-	if ($cgiparams{'PROTOCOL'} eq 'tcp' || $cgiparams{'PROTOCOL'} eq 'udp' || $cgiparams{'PROTOCOL'} eq 'tcpudp' || $cgiparams{'PROTOCOL'} eq 'all') {
-		# Darren Critchley - Get rid of dashes in port ranges
-		$cgiparams{'PORTS'}=~ tr/-/:/;
-		# Darren Critchley - code to substitue wildcards
-		if ($cgiparams{'PORTS'} eq "*") {
-			$cgiparams{'PORTS'} = "1:65535";
-		}
-		if ($cgiparams{'PORTS'} =~ /^(\D)\:(\d+)$/) {
-			$cgiparams{'PORTS'} = "1:$2";
-		}
-		if ($cgiparams{'PORTS'} =~ /^(\d+)\:(\D)$/) {
-			$cgiparams{'PORTS'} = "$1:65535";
-		}
-		# Darren Critchley - watch the order here, the validportrange sets errormessage=''
-		$errormessage = &General::validportrange($cgiparams{'PORTS'}, 'src');
-		if ($errormessage) {return;}
-	} else {
-		$cgiparams{'PORTS'} = "";
-	}
-	if ($cgiparams{'PROTOCOL'} eq 'tcp') {
-		$cgiparams{'ICMP'} = "BLANK";
-	}
-	
-	if($cgiparams{'PORTS'} eq '' && $cgiparams{'PORT_INVERT'} ne 'off'){
-		$cgiparams{'PORT_INVERT'} = 'off';
-	}
-	if ($cgiparams{'NAME'} eq '') {
-		$errormessage = $Lang::tr{'noservicename'};
-		return;
-	}
-	if ($cgiparams{'PROTOCOL'} eq 'icmp' && $cgiparams{'ICMP'} eq 'BLANK'){
-		$errormessage = $Lang::tr{'icmp selected but no type'};
-		return;
-	}
-    unless($errormessage){
-		$cgiparams{'NAME'}=&Header::cleanhtml($cgiparams{'NAME'});
-		open(FILE, $filename) or die 'Unable to open custom services file.';
-		my @current = <FILE>;
-		close(FILE);
-		foreach my $line (@current)
-		{
-			chomp($line);
-			if ($line ne '') {
-				my @temp = split(/\,/,$line);
-				if ($cgiparams{'NAME'} eq $temp[1] && $cgiparams{'KEY'} ne $temp[0]) {
-					$errormessage=$Lang::tr{'duplicate name'};
-					return;
-				}
-				$key=$temp[0];
-			}
-		}
-		unless($errormessage){
-			my $fname = "${General::swroot}/firewall/defaultservices";
-			my $prev = "";
-			my $newline="";
-			
-			open(FILE, "$fname") or die 'Unable to open default services file.';
-			my @current = <FILE>;
-			close(FILE);
-			
-			foreach my $line (sort @current)
-			{
-				my @temp = split(/\,/,$line);
-				if ($cgiparams{'NAME'} eq $temp[0]) {
-					$errormessage=$Lang::tr{'duplicate name'};
-					return;
-				}
-			}
-		}
-	}
-}
-
-sub get_icmptypes
-{
-	my $fname = "${General::swroot}/firewall/icmptypes";
-	my $newline="";
-	my @newarray=();
-	
-	open(FILE, "$fname") or die 'Unable to open icmp file.';
-	my @current = <FILE>;
-	close(FILE);
-
-	foreach $newline (sort @current)
-	{
-		chomp ($newline);
-		if (substr($newline, 0, 1) ne "#") {
-			push (@newarray, $newline);
-		}
-	}
-	return (@newarray);
-}
-

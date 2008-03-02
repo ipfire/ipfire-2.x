@@ -1,4 +1,5 @@
 #usr/local/bin/applejuicectrl
+usr/local/bin/addonctrl
 usr/local/bin/backupctrl
 #usr/local/bin/clamavctrl
 usr/local/bin/dhcpctrl

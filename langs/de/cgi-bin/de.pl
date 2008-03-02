@@ -1509,6 +1509,7 @@
 'sstraffic' => 'Net-Traffic',
 'sstraffic graphs' => 'Netzwerk-Diagramme',
 'standard login script' => 'Standard-Anmeldeskript',
+'start' => 'Starten',
 'start address' => 'Anfangsadresse:',
 'start ovpn server' => 'Starte OpenVPN Server',
 'state or province' => 'Bundesstat oder Provinz',

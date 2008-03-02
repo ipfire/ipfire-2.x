@@ -1541,6 +1541,7 @@
 'sstraffic' => 'Net-Traffic',
 'sstraffic graphs' => 'Traffic Graphs',
 'standard login script' => 'Standard login script',
+'start' => 'Start',
 'start address' => 'Start address:',
 'start ovpn server' => 'Start OpenVPN Server',
 'state or province' => 'State or Province',
