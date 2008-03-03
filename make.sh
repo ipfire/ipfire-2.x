@@ -541,6 +541,7 @@ buildipfire() {
   ipfiremake igmpproxy
   ipfiremake sdl
   ipfiremake qemu
+  ipfiremake sane
 }
 
 buildinstaller() {

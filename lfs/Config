@@ -190,9 +190,8 @@ define PAK
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
 		--preserve --numeric-owner
-	if grep -q '#' < /install/packages/package/ROOTFILES; then \
-		cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES; \
-	fi
+	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
+	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
 	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
 	rm -rf /install/packages/package
 	sed -e s/NAME/$(PROG)/g \
