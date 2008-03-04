@@ -77,13 +77,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-ipv6 \
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
+				     --disable-ipv6 \
 				     --enable-parport-directio
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cp -vf $(DIR_SRC)/config/sane/saned.conf /usr/etc/sane.d/
+	chmod 4755 /usr/bin/scanimage
+	cp -vf $(DIR_SRC)/config/sane/saned.conf /etc/sane.d/
 	ln -sf ../init.d/sane /etc/rc.d/rc3.d/S95sane
 	ln -sf ../init.d/sane /etc/rc.d/rc0.d/K10sane
 	ln -sf ../init.d/sane /etc/rc.d/rc6.d/K10sane
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/sane  \
+			/var/ipfire/backup/addons/includes/sane
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+	
