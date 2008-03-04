@@ -542,6 +542,8 @@ buildipfire() {
   ipfiremake sdl
   ipfiremake qemu
   ipfiremake sane
+  ipfiremake netpbm
+  ipfiremake phpSANE
 }
 
 buildinstaller() {

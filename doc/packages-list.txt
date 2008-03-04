@@ -189,6 +189,7 @@
 * ncurses-5.5
 * neon-0.25.5
 * net-tools-1.60
+* netpbm-10.26.46
 * newt-0.51.6
 * nfs-utils-1.1.1
 * nmap-4.03
@@ -210,6 +211,7 @@
 * pcre-6.7
 * perl-5.8.8
 * php-5.2.4
+* phpSANE-0.3.3
 * pkg-config-0.20
 * popt-1.10.4
 * portmap_5beta
