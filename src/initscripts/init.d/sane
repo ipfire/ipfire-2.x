@@ -19,16 +19,16 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting saned - network scanner deamon..."
-		killall -s KILL -w sanedloop > /dev/nul 2>&1
-		killall -s KILL -w saned > /dev/nul 2>&1
+		killall -s KILL -w sanedloop > /dev/null 2>&1
+		killall -s KILL -w saned > /dev/null 2>&1
 		/usr/local/bin/sanedloop &
 		evaluate_retval
 		;;
 
 	stop)
 		boot_mesg "Stopping saned - network scanner deamon..."
-		killall -s KILL -w sanedloop > /dev/nul 2>&1
-		killall -s KILL -w saned > /dev/nul 2>&1
+		killall -s KILL -w sanedloop > /dev/null 2>&1
+		killall -s KILL -w saned > /dev/null 2>&1
 		echo_ok
 		;;
 
