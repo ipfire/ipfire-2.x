@@ -1,0 +1,50 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/sane
+#
+# Description : Sane Network deamon
+#
+# Authors     : Arne Fitzenreiter (arne_f@ipfire.org)
+#
+# Version     : 01.00
+#
+# Notes       : runs sanedloop ibecause saned is intended
+#		for use with (x)inet.d
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting sane - network scanner deamon..."
+		killall sanedloop > /dev/nul 2&>1
+		killall saned > /dev/nul 2&>1
+		/usr/local/bin/sanedloop &
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping sane - network scanner deamon..."
+		killall sanedloop > /dev/nul 2&>1
+		killall saned > /dev/nul 2&>1
+		echo_ok
+		;;
+
+	restart)
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/sanedloop
+		statusproc /usr/sbin/saned
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/sane

@@ -566,3 +566,8 @@ usr/etc/sane.d/mustek_pp.conf
 usr/lib/sane/libsane-mustek_pp.so
 usr/lib/sane/libsane-mustek_pp.so.1
 usr/lib/sane/libsane-mustek_pp.so.1.0.19
+etc/rc.d/init.d/sane
+etc/rc.d/rc3.d/S95sane
+etc/rc.d/rc0.d/K10sane
+etc/rc.d/rc6.d/K10sane
+usr/local/bin/sanedloop

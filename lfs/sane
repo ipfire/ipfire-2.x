@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sane
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       = "libtiff"
 
 ###############################################################################
 # Top-level Rules
@@ -81,5 +81,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				     --enable-parport-directio
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	cp -vf $(DIR_SRC)/config/sane/saned.conf /usr/etc/sane.d/
+	ln -sf ../init.d/sane /etc/rc.d/rc3.d/S95sane
+	ln -sf ../init.d/sane /etc/rc.d/rc0.d/K10sane
+	ln -sf ../init.d/sane /etc/rc.d/rc6.d/K10sane
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
