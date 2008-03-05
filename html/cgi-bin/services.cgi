@@ -117,7 +117,7 @@ print "</table></div>\n";
 my $paramstr=$ENV{QUERY_STRING};
 my @param=split(/!/, $paramstr);
 if ($param[1] ne '') {
-    my $temp = `/usr/local/bin/addonctrl @param[0] @param[1]`;
+    system("/usr/local/bin/addonctrl @param[0] @param[1] > /dev/null 2>&1");
 }
 
 print <<END
