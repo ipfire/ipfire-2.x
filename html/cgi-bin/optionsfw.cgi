@@ -78,6 +78,12 @@ $checked{'DROPWIRELESSINPUT'}{$settings{'DROPWIRELESSINPUT'}} = "checked='checke
 $checked{'DROPWIRELESSFORWARD'}{'off'} = '';
 $checked{'DROPWIRELESSFORWARD'}{'on'} = '';
 $checked{'DROPWIRELESSFORWARD'}{$settings{'DROPWIRELESSFORWARD'}} = "checked='checked'";
+$checked{'DROPPROXY'}{'off'} = '';
+$checked{'DROPPROXY'}{'on'} = '';
+$checked{'DROPPROXY'}{$settings{'DROPPROXY'}} = "checked='checked'";
+$checked{'DROPSAMBA'}{'off'} = '';
+$checked{'DROPSAMBA'}{'on'} = '';
+$checked{'DROPSAMBA'}{$settings{'DROPSAMBA'}} = "checked='checked'";
 
 &Header::openbox('100%', 'center', $Lang::tr{'options fw'});
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
@@ -98,6 +104,14 @@ print <<END
 																						<input type='radio' name='DROPWIRELESSINPUT' value='off' $checked{'DROPWIRELESSINPUT'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'drop wirelessforward'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSFORWARD' value='on' $checked{'DROPWIRELESSFORWARD'}{'on'} />/
 																						<input type='radio' name='DROPWIRELESSFORWARD' value='off' $checked{'DROPWIRELESSFORWARD'}{'off'} /> off</td></tr>
+</table>
+<br />
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw blue'}</b></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'drop proxy'}</td><td align='left'>on <input type='radio' name='DROPPROXY' value='on' $checked{'DROPPROXY'}{'on'} />/
+																						<input type='radio' name='DROPPROXY' value='off' $checked{'DROPPROXY'}{'off'} /> off</td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'drop samba'}</td><td align='left'>on <input type='radio' name='DROPSAMBA' value='on' $checked{'DROPSAMBA'}{'on'} />/
+																						<input type='radio' name='DROPSAMBA' value='off' $checked{'DROPSAMBA'}{'off'} /> off</td></tr>
 </table>
 <br />
 <table width='10%' cellspacing='0'>
