@@ -231,6 +231,7 @@
 * rtorrent-0.7.9
 * samba-3.0.28
 * sane-1.0.19
+* sane-1.0.19-kmod
 * screen-4.0.3
 * sdparm-1.01
 * sed-4.1.5

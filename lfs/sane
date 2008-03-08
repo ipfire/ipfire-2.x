@@ -30,7 +30,15 @@ THISAPP    = sane-$(VER)
 DL_FILE    = sane-backends-$(VER).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/sane-backends-$(VER)
+ifeq "$(KMOD)" "1"
+ifeq "$(SMP)" "1"
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
+else
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod
+endif
+else
 TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 PROG       = sane
 PAK_VER    = 1
 
@@ -77,6 +85,21 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(KMOD)" "1"
+	cd $(DIR_APP)/doc/plustek && cp -vf Makefile.kernel26 \
+				$(DIR_APP)/backend/Makefile
+ifeq "$(SMP)" "1"
+	cd $(DIR_APP)/backend && make -C /lib/modules/$(KVER)-ipfire-smp/build/ \
+				    SUBDIRS=$(DIR_APP)/backend modules
+	cd $(DIR_APP)/backend && install -m 644 pt_drv.ko \
+	    /lib/modules/$(KVER)-ipfire-smp/kernel/drivers/parport/
+else
+	cd $(DIR_APP)/backend && make -C /lib/modules/$(KVER)-ipfire/build/ \
+				    SUBDIRS=$(DIR_APP)/backend modules
+	cd $(DIR_APP)/backend && install -m 644 pt_drv.ko \
+	    /lib/modules/$(KVER)-ipfire/kernel/drivers/parport/
+endif
+else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 				     --disable-ipv6 \
 				     --enable-parport-directio
@@ -89,6 +112,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf ../init.d/sane /etc/rc.d/rc6.d/K10sane
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/sane  \
 			/var/ipfire/backup/addons/includes/sane
+endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 	
