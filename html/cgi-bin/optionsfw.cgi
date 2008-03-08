@@ -92,25 +92,25 @@ print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw logging'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop newnotsyn'}</td><td align='left'>on <input type='radio' name='DROPNEWNOTSYN' value='on' $checked{'DROPNEWNOTSYN'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop newnotsyn'}</td><td align='left'>on <input type='radio' name='DROPNEWNOTSYN' value='on' $checked{'DROPNEWNOTSYN'}{'on'} />/
 																						<input type='radio' name='DROPNEWNOTSYN' value='off' $checked{'DROPNEWNOTSYN'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop input'}</td><td align='left'>on <input type='radio' name='DROPINPUT' value='on' $checked{'DROPINPUT'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop input'}</td><td align='left'>on <input type='radio' name='DROPINPUT' value='on' $checked{'DROPINPUT'}{'on'} />/
 																						<input type='radio' name='DROPINPUT' value='off' $checked{'DROPINPUT'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop output'}</td><td align='left'>on <input type='radio' name='DROPOUTPUT' value='on' $checked{'DROPOUTPUT'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop output'}</td><td align='left'>on <input type='radio' name='DROPOUTPUT' value='on' $checked{'DROPOUTPUT'}{'on'} />/
 																						<input type='radio' name='DROPOUTPUT' value='off' $checked{'DROPOUTPUT'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop portscan'}</td><td align='left'>on <input type='radio' name='DROPPORTSCAN' value='on' $checked{'DROPPORTSCAN'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop portscan'}</td><td align='left'>on <input type='radio' name='DROPPORTSCAN' value='on' $checked{'DROPPORTSCAN'}{'on'} />/
 																						<input type='radio' name='DROPPORTSCAN' value='off' $checked{'DROPPORTSCAN'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop wirelessinput'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSINPUT' value='on' $checked{'DROPWIRELESSINPUT'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop wirelessinput'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSINPUT' value='on' $checked{'DROPWIRELESSINPUT'}{'on'} />/
 																						<input type='radio' name='DROPWIRELESSINPUT' value='off' $checked{'DROPWIRELESSINPUT'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop wirelessforward'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSFORWARD' value='on' $checked{'DROPWIRELESSFORWARD'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop wirelessforward'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSFORWARD' value='on' $checked{'DROPWIRELESSFORWARD'}{'on'} />/
 																						<input type='radio' name='DROPWIRELESSFORWARD' value='off' $checked{'DROPWIRELESSFORWARD'}{'off'} /> off</td></tr>
 </table>
 <br />
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw blue'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop proxy'}</td><td align='left'>on <input type='radio' name='DROPPROXY' value='on' $checked{'DROPPROXY'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop proxy'}</td><td align='left'>on <input type='radio' name='DROPPROXY' value='on' $checked{'DROPPROXY'}{'on'} />/
 																						<input type='radio' name='DROPPROXY' value='off' $checked{'DROPPROXY'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'drop samba'}</td><td align='left'>on <input type='radio' name='DROPSAMBA' value='on' $checked{'DROPSAMBA'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'drop samba'}</td><td align='left'>on <input type='radio' name='DROPSAMBA' value='on' $checked{'DROPSAMBA'}{'on'} />/
 																						<input type='radio' name='DROPSAMBA' value='off' $checked{'DROPSAMBA'}{'off'} /> off</td></tr>
 </table>
 <br />

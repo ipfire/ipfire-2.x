@@ -110,28 +110,28 @@ int main(void)
 				}
 
 				/* restrict blue access tp the proxy port */
-				if(findkey(kv, "DROPPROXY", buffer) && strcmp(buffer,"on")){
+				if(findkey(kv, "DROPPROXY", buffer) && strcmp(buffer,"off")){
 							/* Read the proxy values */
 							if (!readkeyvalues(kv, CONFIG_ROOT "/proxy/settings") || !(findkey(kv, "PROXY_PORT", buffer)))
 							{
 									fprintf(stderr, "Cannot read proxy settings\n");
 									exit(1);
 							}
-							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessforward'", buffer, blue_dev);
+							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev, buffer);
 							safe_system(command);
-							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessinput'", buffer, blue_dev);
+							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev, buffer);
 							safe_system(command);
 				}
 
 				/* not allow blue to acces a samba server running on local fire*/
-				if(findkey(kv, "DROPSAMBA", buffer) && strcmp(buffer,"on")){
-							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p tcp -m multiport --dport 135,137,138,139,445,1025-j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
+				if(findkey(kv, "DROPSAMBA", buffer) && strcmp(buffer,"off")){
+							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p tcp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
 							safe_system(command);
-							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p tcp -m multiport --dport 135,137,,138139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
+							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p tcp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
 							safe_system(command);
-							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p udp -m multiport --dport 135,137,138,139,445,1025-j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
+							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p udp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
 							safe_system(command);
-							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p udp -m multiport --dport 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
+							snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p udp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
 							safe_system(command);
 				}
 
