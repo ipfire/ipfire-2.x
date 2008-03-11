@@ -128,7 +128,10 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	if($mainsettings{'SPEED'}) {
 		$cgiparams{'SPEED'} = $mainsettings{'SPEED'};
 	} else {
-		$cgiparams{'SPEED'} = 'off';
+	# if var is not defined it will be set to on because after installation var
+	# is not set and the speedmeter should be displayed, it can only be deactivated
+	# by manually setting the var to off
+		$cgiparams{'SPEED'} = 'on';
 	}
 }
 
@@ -242,6 +245,8 @@ my $dir = "/srv/web/ipfire/html/themes";
 local *DH;
 my ($item, $file);
 my @files;
+
+# Foreach directory create am theme entry to be selected by user
 
 opendir (DH, $dir);
 while ($file = readdir (DH)) {
