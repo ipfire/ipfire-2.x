@@ -1,6 +1,7 @@
 usr/local/bin/wirelessctrl
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
+srv/web/ipfire/cgi-bin/qos.cgi
 var/ipfire/langs
 lib/modules/2.6.16.57-ipfire/kernel/drivers/parport/pt_drv.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/parport/pt_drv.ko

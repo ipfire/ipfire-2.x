@@ -506,12 +506,12 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'template'} )
 imq0;200;1;$DOWN[10];$DOWN[1];;;8;VoIP;
 imq0;203;4;$DOWN[20];$DOWN[1];;;0;VPN;
 imq0;204;5;$DOWN[20];$DOWN[1];;;8;Webtraffic;
-imq0;210;6;1;$DOWN[1];;;0;Standardklasse;
+imq0;210;6;1;$DOWN[1];;;0;Default;
 imq0;220;7;1;$DOWN[1];;;1;P2P;
-$qossettings{'RED_DEV'};101;1;$UP[2];$UP[1];;;8;ACKs oder so;
+$qossettings{'RED_DEV'};101;1;$UP[2];$UP[1];;;8;ACKs;
 $qossettings{'RED_DEV'};102;2;$UP[3];$UP[1];;;8;VoIP;
 $qossettings{'RED_DEV'};104;5;$UP[10];$UP[1];;;8;Webtraffic;
-$qossettings{'RED_DEV'};110;6;1;$UP[1];;;0;Standardklasse;
+$qossettings{'RED_DEV'};110;6;1;$UP[1];;;0;Default;
 $qossettings{'RED_DEV'};120;7;1;$UP[1];;;1;P2P;
 $qossettings{'RED_DEV'};103;4;$UP[2];$UP[1];;;2;VPN;
 END
@@ -527,7 +527,6 @@ END
 104;$qossettings{'RED_DEV'};http;;;
 104;$qossettings{'RED_DEV'};ssl;;;
 104;$qossettings{'RED_DEV'};pop3;;;
-110;$qossettings{'RED_DEV'};ftp;;;
 120;$qossettings{'RED_DEV'};applejuice;;;
 120;$qossettings{'RED_DEV'};bittorrent;;;
 200;imq0;skypetoskype;;;
@@ -538,7 +537,6 @@ END
 204;imq0;ssl;;;
 220;imq0;applejuice;;;
 220;imq0;bittorrent;;;
-210;imq0;ftp;;;
 END
 ;
 	close FILE;
@@ -549,6 +547,7 @@ END
 102;$qossettings{'RED_DEV'};udp;;;;53;
 103;$qossettings{'RED_DEV'};esp;;;;;
 103;$qossettings{'RED_DEV'};tcp;;;;1194;
+103;$qossettings{'RED_DEV'};udp;;;;1194;
 103;$qossettings{'RED_DEV'};udp;;4500;;4500;
 103;$qossettings{'RED_DEV'};udp;;500;;500;
 104;$qossettings{'RED_DEV'};tcp;;;;80;
@@ -1292,14 +1291,14 @@ END
 ;
 						if ($portruleline[4]) {
 							print <<END
-				    <i>Quell-Port:</i> $portruleline[4]
+				    <i>$Lang::tr{'source port'}:</i> $portruleline[4]
 END
 ;
 						}
 						print "<td align='center' colspan='2'>";
 						if ($portruleline[6]) {
 							print <<END
-				    <i>Ziel-Port:</i> $portruleline[6]
+				    <i>$Lang::tr{'destination port'}:</i> $portruleline[6]
 END
 ;
 						}
