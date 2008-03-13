@@ -38,8 +38,9 @@ my $value;
 my @args = ();
 my $count = 0;
 my @mbmongraphs = ();
-if ( -e "/var/log/rrd/collectd/localhost/mbmon" ){
-	 @mbmongraphs = `ls /var/log/rrd/collectd/localhost/mbmon/`;
+my @processesgraph = `ls -dA $rrdlog/collectd/localhost/processes-*/`;
+if ( -e "$rrdlog/collectd/localhost/mbmon" ){
+	 @mbmongraphs = `ls $rrdlog/collectd/localhost/mbmon/`;
 	 foreach (@mbmongraphs){
 	         chomp($_);
 	 				 my @name=split(/\./,$_);my $label = $name[0]; $label=~ s/-//;
@@ -47,7 +48,7 @@ if ( -e "/var/log/rrd/collectd/localhost/mbmon" ){
 			 		 $mbmonsettings{'LINE-'.$name[0]}="checked";
    				 }
 	 }
-	 
+
 &General::readhash("${General::swroot}/mbmon/settings", \%mbmonsettings);
 use Encode 'from_to';
 
@@ -76,8 +77,8 @@ sub updatecpugraph {
         "--color", "SHADEB".$color{"color19"},
         "--color", "BACK".$color{"color21"},
         "-t $Lang::tr{'cpu usage per'} $Lang::tr{$period}");
-        
-        if ( -e "/var/log/rrd/collectd/localhost/cpu-1/" ){
+
+        if ( -e "$rrdlog/collectd/localhost/cpu-1/" ){
         push(@command,"DEF:iowait0=$rrdlog/collectd/localhost/cpu-0/cpu-wait.rrd:value:AVERAGE",
 				"DEF:nice0=$rrdlog/collectd/localhost/cpu-0/cpu-nice.rrd:value:AVERAGE",
 				"DEF:interrupt0=$rrdlog/collectd/localhost/cpu-0/cpu-interrupt.rrd:value:AVERAGE",
@@ -513,7 +514,7 @@ sub overviewgraph {
   		if ( $classline[0] eq $qossettings{'DEV'} )
   		{
 			$color=random_hex_color(6);
-			push(@command, "DEF:$classline[1]=/var/log/rrd/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
+			push(@command, "DEF:$classline[1]=$rrdlog/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
 			if ($count eq "1") {
 				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
@@ -616,6 +617,63 @@ sub updatehwfangraph {
 	if ( $_ =~ /fanspeed/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
  		 	 			 							 	 		 																		"GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MAX:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":AVERAGE:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MIN:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":LAST:%5.0lf RPM\\j",);}
 	}
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
+}
+
+sub updateprocessesgraph {
+
+  my $period = $_[0];
+  my $count="0";
+
+  my @command = ("$graphs/processes-$period.png",
+	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
+	"--alt-y-grid", "-w 600", "-h 125",
+	"--color", "SHADEA".$color{"color19"},"--color",
+	"SHADEB".$color{"color19"},"--color",
+	"BACK".$color{"color21"},
+	"-t $Lang::tr{'processes'} $Lang::tr{'graph per'} $Lang::tr{$period}");
+
+	foreach(@processesgraph){
+			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
+			push(@command,"DEF:".$name[1]."user=".$_."ps_cputime.rrd:user:AVERAGE");
+			push(@command,"DEF:".$name[1]."system=".$_."ps_cputime.rrd:syst:AVERAGE");
+			push(@command,"CDEF:".$name[1]."=".$name[1]."user,".$name[1]."system,+");}
+
+			push(@command,"COMMENT:".$Lang::tr{'caption'}."\\j");
+
+	foreach(@processesgraph){
+			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
+			if ($count eq "0") {push(@command,"AREA:".$name[1].random_hex_color(6)."A0:".$name[1]);}
+			else {push(@command,"STACK:".$name[1].random_hex_color(6)."A0:".$name[1]);}
+			$count++;}
+
+	RRDs::graph (@command);
+	$ERROR = RRDs::error;
+	print "$ERROR";
+
+  my $count="0";
+
+  my @command = ("$graphs/processesmem-$period.png",
+	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
+	"--alt-y-grid", "-w 600", "-h 125",
+	"--color", "SHADEA".$color{"color19"},"--color",
+	"SHADEB".$color{"color19"},"--color",
+	"BACK".$color{"color21"},
+	"-t $Lang::tr{'processes'} $Lang::tr{'memory'} $Lang::tr{'graph per'} $Lang::tr{$period}");
+
+	foreach(@processesgraph){
+			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
+			push(@command,"DEF:".$name[1]."=".$_."ps_rss.rrd:value:AVERAGE");}
+			push(@command,"COMMENT:".$Lang::tr{'caption'}."\\j");
+
+	foreach(@processesgraph){
+			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
+			if ($count eq "0") {push(@command,"AREA:".$name[1].random_hex_color(6)."A0:".$name[1]);}
+			else {push(@command,"STACK:".$name[1].random_hex_color(6)."A0:".$name[1]);}
+			$count++;}
+
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
 	print "$ERROR";

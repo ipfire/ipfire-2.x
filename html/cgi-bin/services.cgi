@@ -28,6 +28,7 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourred} );
@@ -40,6 +41,8 @@ my %mainsettings = ();
 
 my %netsettings=();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+&Graphs::updateprocessesgraph ("day");
 
 my %cgiparams=();
 # Maps a nice printable name to the changing part of the pid file, which
@@ -141,7 +144,7 @@ my @pak = `find /opt/pakfire/db/installed/meta-* | cut -d"-" -f2`;
 foreach (@pak)
 {
 	chomp($_);
-	
+
 	# Check which of the paks are services
 	my @svc = `find /etc/init.d/$_ | cut -d"/" -f4`;
 	foreach (@svc)
@@ -154,7 +157,7 @@ foreach (@pak)
 	    if ($_ ne "alsa")
 	    {
 		$lines++;
-		if ($lines % 2) 
+		if ($lines % 2)
 		{
 		    print "<tr bgcolor='$color{'color22'}'>";
 		}
@@ -169,7 +172,7 @@ foreach (@pak)
 		print "<td align='center'><A HREF=services.cgi?$_!stop><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></A></td> ";
 		my $status = &isrunningaddon($_);
  		$status =~ s/\\[[0-1]\;[0-9]+m//g;
- 		
+
 		chomp($status);
 		print "$status";
 		print "</tr>";
@@ -179,6 +182,32 @@ foreach (@pak)
 
 print "</table></div>\n";
 
+&Header::closebox();
+
+&Header::openbox('100%', 'center', "$Lang::tr{'processes'} $Lang::tr{'graph'}");
+if (-e "$Header::graphdir/processes-day.png") {
+	my $ftime = localtime((stat("$Header::graphdir/processes-day.png"))[9]);
+	print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	print "<a href='/cgi-bin/graphs.cgi?graph=processes'>";
+	print "<img alt='' src='/graphs/processes-day.png' border='0' />";
+	print "</a>";
+} else {
+	print $Lang::tr{'no information available'};
+}
+print "<br />\n";
+&Header::closebox();
+
+&Header::openbox('100%', 'center', "$Lang::tr{'processes'} $Lang::tr{'memory'} $Lang::tr{'graph'}");
+if (-e "$Header::graphdir/processesmem-day.png") {
+	my $ftime = localtime((stat("$Header::graphdir/processesmem-day.png"))[9]);
+	print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	print "<a href='/cgi-bin/graphs.cgi?graph=processesmem'>";
+	print "<img alt='' src='/graphs/processesmem-day.png' border='0' />";
+	print "</a>";
+} else {
+	print $Lang::tr{'no information available'};
+}
+print "<br />\n";
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
@@ -197,7 +226,7 @@ sub isautorun
 	if ($init ne '') {
   $status = "<td align='center'><A HREF=services.cgi?$_!enable><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></A></td>";
 	}
-	
+
 return $status;
 }
 
@@ -240,7 +269,7 @@ sub isrunningaddon
 	my $testcmd = '';
 	my $exename;
 	my @memory;
-	
+
 	my $testcmd = `/usr/local/bin/addonctrl $_ status`;
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
@@ -249,9 +278,9 @@ sub isrunningaddon
 
 	my @pid = split(/\s/,$testcmd);
 	$status .="<td align='center'>$pid[0]</td>";
-	
+
 	my $memory = 0;
-	
+
 	foreach (@pid){
 	chomp($_);
 	if (open(FILE, "/proc/$_/statm")){

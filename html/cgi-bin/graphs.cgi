@@ -48,6 +48,7 @@ $cgigraphs[1] = '' unless defined $cgigraphs[1];
 
 if ($cgigraphs[1] =~ /(load)/) {&Graphs::updateloadgraph ("hour");&Graphs::updateloadgraph ("week");&Graphs::updateloadgraph ("month");&Graphs::updateloadgraph ("year");}
 if ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("hour");&Graphs::updatecpugraph ("week");&Graphs::updatecpugraph ("month");&Graphs::updatecpugraph ("year");}
+if ($cgigraphs[1] =~ /(processes)/) {&Graphs::updateprocessesgraph ("hour");&Graphs::updateprocessesgraph ("week");&Graphs::updateprocessesgraph ("month");&Graphs::updateprocessesgraph ("year");}
 if ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("hour");&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
 if ($cgigraphs[1] =~ /disk/){
           my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
@@ -70,7 +71,7 @@ if ($cgigraphs[1] =~ /(network|green|blue|orange|red|ipsec|lq)/) {
 
 &Header::openbigbox('100%', 'left');
 
-if ($cgigraphs[1] =~ /(green|blue|orange|red|ipsec|lq|cpu|memory|swap|disk|load|fwhits)/) {
+if ($cgigraphs[1] =~ /(green|blue|orange|red|ipsec|lq|cpu|memory|swap|disk|load|fwhits|processes)/) {
 	my $graph = $cgigraphs[1];
 	my $graphname = ucfirst(lc($cgigraphs[1]));
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");

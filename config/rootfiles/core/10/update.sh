@@ -4,3 +4,4 @@
 extract_files
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 depmod -a
+/etc/init.d/collectd restart
