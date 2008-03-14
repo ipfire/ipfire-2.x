@@ -380,7 +380,7 @@ sub dblist {
 	if ("$filter" eq "upgrade") {
 		getcoredb("noforce");
 		eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
-		if ("$core_release" gt "$Conf::core_mine") {
+		if ("$core_release" > "$Conf::core_mine") {
 			if ("$forweb" eq "forweb") {
 				print "<option value=\"core\">Core-Update -- $Conf::version -- Release: $Conf::core_mine -> $core_release</option>\n";
 			} else {
@@ -662,7 +662,7 @@ sub setuppak {
 sub upgradecore {
 	getcoredb("noforce");
 	eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
-	if ("$core_release" gt "$Conf::core_mine") {
+	if ("$core_release" > "$Conf::core_mine") {
 		message("CORE UPGR: Upgrading from release $Conf::core_mine to $core_release");
 		
 		my @seq = `seq $Conf::core_mine $core_release`;

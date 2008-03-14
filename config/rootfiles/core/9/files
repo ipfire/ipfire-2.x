@@ -19,3 +19,4 @@ srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 var/ipfire/menu.d/20-status.menu
 var/ipfire/langs
+opt/pakfire/lib/functions.pl
