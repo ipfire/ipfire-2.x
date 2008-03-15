@@ -306,7 +306,7 @@ sub updatediskgraph {
         "CDEF:writen=write,-1,*",
         "DEF:standby=$rrdlog/hddshutdown-$disk.rrd:standby:AVERAGE",
         "CDEF:st=standby,INF,*",
-        "CDEF:st=standby,-INF,*",
+        "CDEF:st1=standby,-INF,*",
 				"COMMENT:".sprintf("%-25s",$Lang::tr{'caption'}),
 				"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 				"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
