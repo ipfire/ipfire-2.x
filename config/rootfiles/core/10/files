@@ -1,3 +1,4 @@
+etc/collectd.conf
 etc/init.d/collectd
 usr/local/bin/wirelessctrl
 srv/web/ipfire/cgi-bin/optionsfw.cgi

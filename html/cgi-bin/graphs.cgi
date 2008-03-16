@@ -118,6 +118,7 @@ if ($cgigraphs[1] =~ /(green|blue|orange|red|ipsec|lq|cpu|memory|swap|disk|load|
 print "<div align='center'><table width='80%'><tr><td align='center'>";
 if ( $cgigraphs[1] eq "cpu" || $cgigraphs[1] eq "load" ) { print "<a href='/cgi-bin/system.cgi'>"; }
 elsif ( $cgigraphs[1] eq "memory" || $cgigraphs[1] eq "swap" ) { print "<a href='/cgi-bin/memory.cgi'>"; }
+elsif ( $cgigraphs[1] eq "processes" ) { print "<a href='/cgi-bin/services.cgi'>"; }
 elsif ( $cgigraphs[1] =~ /disk/ ) { print "<a href='/cgi-bin/media.cgi'>"; }
 elsif ( $cgigraphs[1] =~ /red/ || $cgigraphs[1] =~ /ipsec/ ) { print "<a href='/cgi-bin/network.cgi?network=red'>"; }
 elsif ( $cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /orange/ ) { print "<a href='/cgi-bin/network.cgi?network=internal'>"; }
