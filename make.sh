@@ -546,6 +546,7 @@ buildipfire() {
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
+  ipfiremake tunctl
 }
 
 buildinstaller() {
