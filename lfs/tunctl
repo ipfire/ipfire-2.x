@@ -47,7 +47,7 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_SRC)/br2684ctl
+	@rm -rf $(DIR_SRC)/tunctl
 	cd $(DIR_SRC) && gcc $(CFLAGS) -latm $(DIR_SRC)/src/tunctl/tunctl.c -o tunctl
 	cd $(DIR_SRC) && install -v -m 755 tunctl /usr/bin/tunctl
 	@rm -rf $(DIR_SRC)/tunctl
