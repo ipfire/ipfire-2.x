@@ -110,7 +110,7 @@ unless ($blacklist_url eq '')
 			print FILE "}\n";
 			close FILE;
 
-			system("/usr/sbin/squidGuard -d -c $target/update.conf -C all");
+			system("/usr/bin/squidGuard -d -c $target/update.conf -C all");
 
 			system("cp -r $target/blacklists/* $dbdir");
 
@@ -121,7 +121,7 @@ unless ($blacklist_url eq '')
 			system("touch $updflagfile");
 			system("chown nobody.nobody $updflagfile");
 
-			system("/usr/local/bin/restartsquid");
+			system("/etc/init.d/squid restart");
 
 			system("logger -t installpackage[urlfilter] \"URL filter blacklist - Update from $blacklist_src completed\"");
 

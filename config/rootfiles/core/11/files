@@ -1,1 +1,11 @@
 usr/bin/tunctl
+usr/bin/squidGuard
+var/ipfire/urlfilter/bin/autoupdate.pl
+etc/squid
+usr/lib/squid
+usr/sbin/squid
+bin/ntfs-3g
+lib/libntfs-3g.so
+lib/libntfs-3g.so.24
+lib/libntfs-3g.so.24.0.0
+sbin/mount.ntfs-3g

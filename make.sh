@@ -547,6 +547,7 @@ buildipfire() {
   ipfiremake netpbm
   ipfiremake phpSANE
   ipfiremake tunctl
+  ipfiremake nagios
 }
 
 buildinstaller() {
