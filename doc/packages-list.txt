@@ -34,6 +34,7 @@
 * amavisd-new-2.5.2
 * applejuice-0.30
 * arping-2.05
+* arptables-v0.0.3-3
 * as86-0.16.17
 * asterisk-1.4.18
 * atl1-1.2.40.2
@@ -70,6 +71,7 @@
 * dnsmasq-2.40
 * dosfstools-2.11
 * e2fsprogs-1.39
+* ebtables-v2.0.8-2
 * ed-0.2
 * elinks-0.11.4rc0
 * espgs-8.15.1

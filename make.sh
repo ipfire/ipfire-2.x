@@ -548,6 +548,8 @@ buildipfire() {
   ipfiremake phpSANE
   ipfiremake tunctl
   ipfiremake nagios
+  ipfiremake ebtables
+  ipfiremake arptables
 }
 
 buildinstaller() {
