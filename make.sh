@@ -550,6 +550,9 @@ buildipfire() {
   ipfiremake nagios
   ipfiremake ebtables
   ipfiremake arptables
+  ipfiremake fontconfig
+  ipfiremake freefont
+  ipfiremake vdr
 }
 
 buildinstaller() {

@@ -68,3 +68,5 @@ lib/initcpio/udev/udev.rules
 lib/initcpio/udev/udevd
 lib/initcpio/udev/udevsettle
 lib/initcpio/udev/udevtrigger
+etc/udev/dvb.sh
+etc/udev/rules.d/10-dvb.rules

@@ -140,6 +140,10 @@ else
 					extras/firmware extras/floppy extras/path_id \
 					extras/scsi_id extras/usb_id extras/volume_id" install
 	cd $(DIR_APP) && cp -v udev-config-6.2/[0-9]* /etc/udev/rules.d/
+	cp -rf $(DIR_SRC)/config/udev/10-dvb.rules /etc/udev/rules.d/
+	chmod 644 /etc/udev/rules.d/10-dvb.rules
+	cp -rf $(DIR_SRC)/config/udev/dvb.sh /etc/udev/
+	chmod 755 /etc/udev/dvb.sh
 	touch /etc/udev/rules.d/30-persistent-network.rules
 endif
 endif

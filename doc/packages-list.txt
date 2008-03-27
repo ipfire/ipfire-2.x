@@ -84,7 +84,9 @@
 * file-4.17
 * findutils-4.2.27
 * flex-2.5.33
+* fontconfig-2.5.91
 * foomatic-3.0-20070813
+* freefont-20060126
 * freetype-2.1.10
 * fuse-2.6.3
 * fwhits
@@ -271,6 +273,7 @@
 * unzip552
 * usbutils-0.72
 * util-linux-2.12r
+* vdr-1.6.0
 * vim-7.0
 * vlan.1.9
 * vlc-0.8.6c
