@@ -93,7 +93,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 										            --with-config-file-path=/etc \
 										            --with-openssl \
 										            --with-kerberos \
-										            --with-pcre-regex=/usr \
 										            --with-zlib \
 										            --enable-bcmath \
 										            --with-bz2 \
