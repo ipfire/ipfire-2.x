@@ -105,3 +105,4 @@ var/video/plugins/streamdevhosts.conf
 var/video/setup.conf
 var/video/sources.conf
 var/video/svdrphosts.conf
+etc/rc.d/init.d/vdr
