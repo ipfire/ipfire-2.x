@@ -12,6 +12,10 @@ opt/vdr/PLUGINS/lib/libvdr-streamdev-server.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-svccli.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-svcsvr.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-svdrpdemo.so.1.6.0
+#opt/vdr/bin
+opt/vdr/bin/runvdr
+opt/vdr/bin/svdrpsend.pl
+opt/vdr/bin/vdr
 #opt/vdr/locale
 #opt/vdr/locale/ca_ES
 #opt/vdr/locale/ca_ES/LC_MESSAGES
@@ -85,12 +89,6 @@ opt/vdr/locale/de_DE/LC_MESSAGES/vdr-skincurses.mo
 #opt/vdr/locale/tr_TR
 #opt/vdr/locale/tr_TR/LC_MESSAGES
 #opt/vdr/locale/tr_TR/LC_MESSAGES/vdr-hello.mo
-#opt/vdr/usr
-#opt/vdr/usr/local
-#opt/vdr/usr/local/bin
-opt/vdr/bin/runvdr
-opt/vdr/bin/svdrpsend.pl
-opt/vdr/bin/vdr
 #opt/vdr/share
 #opt/vdr/share/man
 #opt/vdr/share/man/man1
@@ -98,4 +96,12 @@ opt/vdr/share/man/man1/vdr.1.gz
 #opt/vdr/share/man/man5
 opt/vdr/share/man/man5/vdr.5.gz
 #opt/vdr/video
-etc/rc.d/init.d/vdr
+#var/video
+var/video/channels.conf
+var/video/diseqc.conf
+var/video/keymacros.conf
+#var/video/plugins
+var/video/plugins/streamdevhosts.conf
+var/video/setup.conf
+var/video/sources.conf
+var/video/svdrphosts.conf
