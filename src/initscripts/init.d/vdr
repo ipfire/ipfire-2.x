@@ -19,11 +19,12 @@ case "${1}" in
 	start)
 		boot_mesg "Starting Video Disk Recorder..."
 		cd /opt/vdr
-		loadproc screen -dmS vdr /opt/vdr/bin/vdr -Pstreamdev-server
+		loadproc screen -dmS vdr /opt/vdr/bin/runvdr
 		;;
 		
 	stop)
 		boot_mesg "Stopping Video Disk Recorder..."
+		killall -s KILL -w runvdr
 		killproc /opt/vdr/bin/vdr
 		;;
 
@@ -34,6 +35,7 @@ case "${1}" in
 		;;
 
 	status)
+		statusproc /opt/vdr/bin/runvdr
 		statusproc /opt/vdr/bin/vdr
 		;;
 

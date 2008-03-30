@@ -86,8 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make VIDEODIR=/var/video vdr $(MAKETUNING)
 	cd $(DIR_APP) && make PREFIX=. DESTDIR=/opt/vdr/ install
 	-mkdir -p /var/video/plugins/ 
-	cd $(DIR_APP) && install *.conf /var/video/
-	cp -f $(DIR_SRC)/config/vdr/*.conf /var/video/
-	cp -f $(DIR_SRC)/config/vdr/plugins/*.conf /var/video/plugins/
+	cd $(DIR_APP) && install *.conf /opt/vdr/etc/
+	cp -f $(DIR_SRC)/config/vdr/* /opt/vdr/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

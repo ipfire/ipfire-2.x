@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# runvdr: Loads the DVB driver and runs VDR
+#
+# If VDR exits abnormally, the driver will be reloaded
+# and VDR restarted.
+#
+# Any command line parameters will be passed on to the
+# actual 'vdr' program.
+#
+
+VDRPRG="./bin/vdr"
+VDRCMD="$VDRPRG -w 60 -c /opt/vdr/etc -Pstreamdev-server $*"
+
+KILL="killall -q -TERM"
+
+mkdir -p /var/video
+cd /opt/vdr
+while (true) do
+#
+# If you have stability Problems at tuning or similar
+# unload and reload the dvb-modules here ...
+# Example is for Hauppauge Nexus 2.0
+#
+#     rmmod dvb_ttpci
+#     rmmod stv0299
+#     rmmod dvb_core
+#     modprobe dvb_ttpci
+#
+      sleep 1
+      eval "$VDRCMD"
+      if test $? -eq 0 -o $? -eq 2; then exit; fi
+      $KILL $VDRPRG
+      sleep 10
+      echo "`date` restarting VDR"
+done
