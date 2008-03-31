@@ -553,6 +553,7 @@ buildipfire() {
   ipfiremake fontconfig
   ipfiremake freefont
   ipfiremake vdr
+  ipfiremake git
 }
 
 buildinstaller() {
