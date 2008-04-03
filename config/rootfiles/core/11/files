@@ -11,3 +11,11 @@ lib/libntfs-3g.so.24.0.0
 sbin/mount.ntfs-3g
 usr/bin/php
 usr/lib/apache/libphp5.so
+usr/bin/pear
+usr/bin/peardev
+usr/lib/php/.channels/.alias/pear.txt
+usr/lib/php/.channels/pear.php.net.reg
+usr/lib/php/.registry/pear.reg
+usr/lib/php/data/PEAR/package.dtd
+usr/lib/php/data/PEAR/template.spec
+usr/lib/php/pearcmd.php
