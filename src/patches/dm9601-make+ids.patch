@@ -1,0 +1,77 @@
+diff -Naur dm9601-2.6.org/dm9601.h dm9601-2.6/dm9601.h
+--- dm9601-2.6.org/dm9601.h	2006-11-24 10:06:02.000000000 +0100
++++ dm9601-2.6/dm9601.h	2008-04-04 09:54:06.000000000 +0200
+@@ -162,6 +162,8 @@
+ 		DEFAULT_GPIO_RESET )
+ DM9601_DEV( "Davicom USB-100", 0x3334, 0x1701,
+ 		DEFAULT_GPIO_RESET )
++DM9601_DEV( "ShanTou ST268 USB", 0x0a46, 0x0268,
++		DEFAULT_GPIO_RESET )
+ DM9601_DEV( "Billionton USB-100", VENDOR_BILLIONTON, 0x0986,
+ 		DEFAULT_GPIO_RESET )
+ DM9601_DEV( "Billionton USBLP-100", VENDOR_BILLIONTON, 0x0987,
+diff -Naur dm9601-2.6.org/Makefile dm9601-2.6/Makefile
+--- dm9601-2.6.org/Makefile	2006-11-24 10:06:04.000000000 +0100
++++ dm9601-2.6/Makefile	2008-04-03 22:34:04.000000000 +0200
+@@ -1,51 +1,17 @@
+-##================================================================
+-##     Davicom Semiconductor Inc.  	For DM9601 V0.00
+-##   --------------------------------------------------------
+-## Description:
+-##              Compile driver dm9601.c to dm9601.o
+-##
+-## Modification List:
+-## 09/05/2000	Fixed SMPFALGS wrong on smp & smp_mod
+-## 08/02/2000	Changed some description string & include file path
+-## 07/25/2000	Append smp_mod and changed some descriptions
+-## 01/25/2000	by Sten Wang
+-##================================================================
+-# Comment/uncomment the following line to disable/enable debugging
+-#DEBUG = y
++obj-m    := dm9601.o
+ 
+-# Add your debugging flag (or not) to CFLAGS
+-ifeq ($(DEBUG),y)
+-  DEBFLAGS = -O -g # "-O" is needed to expand inlines
+-else
+-  DEBFLAGS = -O2
+-endif
+-
+-CFLAGS += $(DEBFLAGS) -I$(LDDINCDIR)
+-
+-ifneq ($(KERNELRELEASE),)
+-# call from kernel build system
+-
+-obj-m	:= dm9601.o
+-
+-else
+-
+-KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+-PWD       := $(shell pwd)
++KDIR    := /lib/modules/$(shell uname -r)/build
++PWD    := $(shell pwd)
+ 
+ default:
+-	$(MAKE) -C $(KERNELDIR) M=$(PWD) LDDINCDIR=$(PWD)/../include modules
+-
+-endif
+-
+-
++	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules;
++install:
++	insmod dm9601.ko
++remove:
++	rmmod dm9601                                                                                                                             
+ 
+ clean:
+-	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions
+-
+-depend .depend dep:
+-	$(CC) $(CFLAGS) -M *.c > .depend
++	rm -rf .tmp_versions Modules.symvers *.mod.c *.o *.ko .*.cmd
+ 
++	
+ 
+-ifeq (.depend,$(wildcard .depend))
+-include .depend
+-endif
