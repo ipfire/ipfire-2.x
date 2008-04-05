@@ -711,13 +711,6 @@ build)
 	beautify build_stage "Building IPFire"
 	buildipfire
 
-	# Setzen des IPFire Builds
-	if [ "$SVN_REVISION" ]; then
-		echo "$SVN_REVISION" > $BASEDIR/build/var/ipfire/firebuild
-	else
-		echo "_(OvO)_" > $BASEDIR/build/var/ipfire/firebuild
-	fi
-
 	beautify build_stage "Building installer"
 	buildinstaller
 
@@ -730,11 +723,6 @@ shell)
 	# may be used to changed kernel settings
 	prepareenv
 	entershell
-	;;
-changelog)
-	echo -n "Loading new Changelog from SVN: "
-	svn log http://svn.ipfire.org/svn/ipfire > doc/ChangeLog
-	beautify message DONE
 	;;
 clean)
 	echo -en "${BOLD}Cleaning build directory...${NORMAL}"
@@ -1014,8 +1002,7 @@ lang)
 	;;
 "")
 	clear
-	svn info
-	select name in "Exit" "IPFIRE: Downloadsrc" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "SVN: Commit" "SVN: Update" "SVN: Status" "SVN: Diff" "LOG: Tail" "Help"
+	select name in "Exit" "IPFIRE: Downloadsrc" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "LOG: Tail" "Help"
 	do
 	case $name in
 	"IPFIRE: Downloadsrc")
@@ -1032,9 +1019,6 @@ lang)
 		;;
 	"IPFIRE: Clean")
 		$0 clean
-		;;
-	"SVN: Update")
-		$0 svn update
 		;;
 	"Help")
 		echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"

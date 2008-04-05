@@ -488,17 +488,16 @@ batch_script() {
 		export IPFIRE_START_TIME=`date`
 		evaluate 1
 
-		echo "### RUNNING SVN-UPDATE"
-		$0 svn update
-		evaluate 1 mail_me SVNUPDATE
+		$0 git update
+		evaluate 1 mail_me UPDATE
 
 		echo "### EXPORT SOURCES"
-		$0 svn dist
-		evaluate 1 mail_me SVNDIST
+		$0 git dist
+		evaluate 1 mail_me DIST
 	fi
 
 	echo "### RUNNING BUILD"
-	$0 build #--devel
+	$0 build
 	evaluate 1 mail_me ERROR
 
 	echo "### UPLOADING ISO"
@@ -526,8 +525,8 @@ mail_me() {
 	case "$1" in
 		success)
 			cat <<END >> /tmp/ipfire_mail_body.$$
-Subject: SUCCESS: IPFIRE-BUILD R$SVN_REVISION on `hostname`
-Building IPFire on `hostname` in Revision $SVN_REVISION was successfull!
+Subject: SUCCESS: IPFIRE-BUILD on `hostname`
+Building IPFire on `hostname` was successfull!
 You can find the ISO on your ftp server if you told the script where it is.
 
 Statistics:
@@ -543,7 +542,7 @@ END
 		;;
 		*)
 			cat <<END >> /tmp/ipfire_mail_body.$$
-Subject: ERROR $1: IPFIRE-BUILD R$SVN_REVISION on `hostname`
+Subject: ERROR $1: IPFIRE-BUILD on `hostname`
 When I was building IPFire on `hostname`, I have found an ERROR with name $1!
 Here you can see the logs and detect the reason for this error.
 
