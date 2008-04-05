@@ -19,3 +19,6 @@ usr/lib/php/.registry/pear.reg
 usr/lib/php/data/PEAR/package.dtd
 usr/lib/php/data/PEAR/template.spec
 usr/lib/php/pearcmd.php
+srv/web/ipfire/cgi-bin/proxy.cgi
+usr/sbin/redirect_wrapper
+var/ipfire/langs

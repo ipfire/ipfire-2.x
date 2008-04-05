@@ -1,0 +1,3 @@
+usr/bin/squidclamav
+etc/squidclamav.conf
+srv/web/ipfire/html/clwarn.cgi

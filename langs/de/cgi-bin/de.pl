@@ -92,6 +92,7 @@
 'advproxy AUTH method' => 'Authentifizierungsmethode',
 'advproxy AUTH method ident' => 'identd',
 'advproxy AUTH method ldap' => 'LDAP',
+'advproxy squidclamav' => 'SquidClamav',
 'advproxy AUTH method ncsa' => 'Lokal',
 'advproxy AUTH method none' => 'Keine',
 'advproxy AUTH method ntlm' => 'Windows',

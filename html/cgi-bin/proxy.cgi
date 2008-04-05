@@ -262,6 +262,7 @@ $proxysettings{'IDENT_ENABLE_ACL'} = 'off';
 $proxysettings{'IDENT_USER_ACL'} = 'positive';
 $proxysettings{'ENABLE_FILTER'} = 'off';
 $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
+$proxysettings{'ENABLE_CLAMAV'} = 'off';
 
 $ncsa_buttontext = $Lang::tr{'advproxy NCSA create user'};
 
@@ -593,6 +594,7 @@ ERROR:
 		$stdproxysettings{'PROXY_PORT'} = $proxysettings{'PROXY_PORT'};
 		$stdproxysettings{'ENABLE_FILTER'} = $proxysettings{'ENABLE_FILTER'};
 		$stdproxysettings{'ENABLE_UPDXLRATOR'} = $proxysettings{'ENABLE_UPDXLRATOR'};
+		$stdproxysettings{'ENABLE_CLAMAV'} = $proxysettings{'ENABLE_CLAMAV'};
 		&General::writehash("${General::swroot}/proxy/settings", \%stdproxysettings);
 
 		&writeconfig;
@@ -828,6 +830,10 @@ $checked{'ENABLE_UPDXLRATOR'}{'off'} = '';
 $checked{'ENABLE_UPDXLRATOR'}{'on'} = '';
 $checked{'ENABLE_UPDXLRATOR'}{$proxysettings{'ENABLE_UPDXLRATOR'}} = "checked='checked'";
 
+$checked{'ENABLE_CLAMAV'}{'off'} = '';
+$checked{'ENABLE_CLAMAV'}{'on'} = '';
+$checked{'ENABLE_CLAMAV'}{$proxysettings{'ENABLE_CLAMAV'}} = "checked='checked'";
+
 &Header::openpage($Lang::tr{'advproxy advanced web proxy configuration'}, 1, '');
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -930,9 +936,19 @@ print <<END
 </table>
 <hr size='1'>
 <table width='100%'>
-<tr>
-	<td class='base' width='50%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
-	<td class='base' width='50%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td>
+END
+;
+if ( -e "/usr/bin/squidclamav" ) {
+	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>";
+	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td>";
+	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy squidclamav'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_CLAMAV' $checked{'ENABLE_CLAMAV'}{'on'} /></td>";
+}
+else
+{
+ print "<td class='base' width='50%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>";
+ print "<td class='base' width='50%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td>";
+}
+print <<END
 </tr>
 </table>
 <hr size='1'>
@@ -2813,7 +2829,7 @@ sub writeconfig
 
 	if ($proxysettings{'AUTH_REALM'} eq '')
 	{
-		$authrealm = "IPCop Advanced Proxy Server";
+		$authrealm = "IPFire Advanced Proxy Server";
 	} else {
 		$authrealm = $proxysettings{'AUTH_REALM'};
 	}
@@ -3684,7 +3700,7 @@ END
 		if ($proxysettings{'ENABLE_FILTER'} eq 'on')
 		{
 			print FILE <<END
-url_rewrite_program /usr/bin/squidGuard
+url_rewrite_program /usr/sbin/redirect_wrapper
 url_rewrite_children $filtersettings{'CHILDREN'}
 
 END
@@ -3693,7 +3709,7 @@ END
 		if ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on')
 		{
 			print FILE <<END
-url_rewrite_program /usr/sbin/updxlrator
+url_rewrite_program /usr/sbin/redirect_wrapper
 url_rewrite_children $xlratorsettings{'CHILDREN'}
 
 END
@@ -3723,7 +3739,7 @@ sub adduser
 		close(FILE);
 	} else {
 		&deluser($str_user);
-		system("/usr/bin/htpasswd -b $userdb $str_user $str_pass");
+		system("/usr/sbin/htpasswd -b $userdb $str_user $str_pass");
 	}
 
 	if ($str_group eq 'standard') { open(FILE, ">>$stdgrp");

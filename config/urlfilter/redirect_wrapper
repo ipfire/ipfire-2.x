@@ -24,15 +24,25 @@
 use strict;
 use IPC::Open2;
 use IO::Handle;
+require '/var/ipfire/general-functions.pl';
+
+my %proxysettings=();
+&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
 # define here your redirectors (use a comma sperated list)
-my $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];
+my @redirectors = "";
+if ( $proxysettings{'ENABLE_FILTER'} eq 'on' && -e '/usr/bin/squidGuard' ){push(@redirectors,"/usr/bin/squidGuard"); }
+if ( $proxysettings{'ENABLE_CLAMAV'} eq 'on' && -e '/usr/bin/squidclamav' ){ push(@redirectors,"/usr/bin/squidclamav"); }
+if ( $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' && -e '/usr/sbin/updxlrator' ) { push(@redirectors,"/usr/sbin/updxlrator"); }
+
+#my $redirectors = [ '/usr/bin/squidclamav', '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];
 
 # Attention: keep in mind that the order of your redirectors is important.
 # It doesn't make sense to scan for viruses on pages you restrict access to...
 # So place first your tools which restrict access, then the tools which do the
 # content filtering!
 
+#print "Anzahl ".$#redirectors."\n";
 
 ##### no need to change anything below this line #####
 
@@ -47,13 +57,14 @@ my $i;
 my $pidlist = [];
 my $rlist = [];
 my $wlist = [];
-for($i = 0; $i < @$redirectors; $i++) {
-        $pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
+for($i = 1; $i <= $#redirectors; $i++) {
+			  #print "i=".$i." redirector ".$redirectors[$i]."\n";
+        $pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors[$i] );
 }
 
 # wait for data...
 while($line = <>) {
-        for($i = 0; $i < @$redirectors; $i++) {
+        for($i = 1; $i <= $#redirectors; $i++) {
                 $wlist->[$i]->print($line);
                 $return = $rlist->[$i]->getline;
                 last if($return ne "\n" and $return ne $line);
