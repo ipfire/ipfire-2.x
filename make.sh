@@ -31,7 +31,6 @@ NICE=10													# Nice level
 MAX_RETRIES=1										# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
-SVN_REVISION=`svn info | grep Revision | cut -c 11-`
 
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
@@ -68,6 +67,17 @@ else
 	if [ "$CREATE_CONFIG" == "y" ]; then
 		make_config
 	fi
+fi
+
+if [ -z $EDITOR ]; then
+	for i in nano emacs vi; do
+		EDITOR=$(which $i 2>/dev/null)
+		if ! [ -z $EDITOR ]; then
+			export EDITOR=$EDITOR
+			break
+		fi
+	done
+	[ -z $EDITOR ] && exiterror "You should have installed an editor."
 fi
 
 prepareenv() {
@@ -855,87 +865,44 @@ othersrc)
 	fi
 	stdumount
 	;;
-svn)
+git)
 	case "$2" in
 	  update|up)
-		# clear
-		echo -ne "Loading the latest source files...\n"
-		if [ $3 ]; then
-			svn update -r $3 | tee -a $PWD/log/_build.svn.update.log
-		else
-			svn update | tee -a $PWD/log/_build.svn.update.log
-		fi
-		if [ $? -eq "0" ]; then
-			beautify message DONE
-		else
-			beautify message FAIL
-			exit 1
-		fi
-		echo -ne "Writing the svn-info to a file"
-		svn info > $PWD/svn_status
-		if [ $? -eq "0" ]; then
-			beautify message DONE
-		else
-			beautify message FAIL
-			exit 1
-		fi
-		chmod 755 $0
-		exit 0
-	  ;;
+			git pull
+	  	;;
 	  commit|ci)
-		clear
-		if [ -f /usr/bin/mcedit ]; then
-			export EDITOR=/usr/bin/mcedit
-		fi
-		if [ -f /usr/bin/nano ]; then
-			export EDITOR=/usr/bin/nano
-		fi
-		echo -ne "Selecting editor $EDITOR..."
-		beautify message DONE
-		if [ -e /sbin/yast ]; then
-			if [ "`echo $SVN_REVISION | cut -c 3`" -eq "0" ]; then
-				$0 changelog
-			fi
-		fi
-		update_langs
-		svn commit
-		$0 svn up
-		if [ -n "$FTP_CACHE_URL" ]; then
-			$0 uploadsrc
-		fi
-	  ;;
+	  	shift 2
+			git commit $*
+			
+			[ "$?" -eq "0" ] || exiterror "git commit $* failed."
+			
+			echo -e "${BOLD}Do you want to push, too? [y/N]${NORMAL}"
+			read
+			[ -z $REPLY ] && exit 0
+			for i in y Y j J; do
+				if [ "$i" == "$REPLY" ]; then
+					$0 git push
+					exit $?
+				fi
+			done
+			exiterror "\"$REPLY\" is not a valid answer."
+	  	;;
 	  dist)
-		if [ $3 ]; then
-			SVN_REVISION=$3
-		fi
-		if [ -f ipfire-source-r$SVN_REVISION.tar.gz ]; then
-			echo -ne "REV $SVN_REVISION: SKIPPED!\n"
-			exit 0
-		fi
-		echo -en "REV $SVN_REVISION: Downloading..."
-		svn export http://svn.ipfire.org/svn/ipfire/trunk ipfire-source/ --force > /dev/null
-		svn log http://svn.ipfire.org/svn/ipfire/trunk -r 1:$SVN_REVISION > ipfire-source/Changelog
-		#svn info http://svn.ipfire.org/svn/ipfire/trunk -r $SVN_REVISION > ipfire-source/svn_status
-		evaluate 1
-
-		echo -en "REV $SVN_REVISION: Compressing files..."
-		if [ -e ipfire-source/trunk/make.sh ]; then
-			chmod 755 ipfire-source/trunk/make.sh
-		fi
-		tar cfz ipfire-source-r$SVN_REVISION.tar.gz ipfire-source
-		evaluate 1
-		echo -en "REV $SVN_REVISION: Cleaning up..."
-		rm ipfire-source/ -r
-		evaluate 1
-	  ;;
+			git archive HEAD | gzip -9 > ${SNAME}-${VERSION}.tar.gz
+		  ;;
 	  diff|di)
-	  update_langs
-		echo -ne "Make a local diff to last svn revision"
-		svn diff > ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff
-		evaluate 1
-		echo "Diff was successfully saved to ipfire-diff-`date +'%Y-%m-%d-%H:%M'`-r`svn info | grep Revision | cut -c 11-`.diff"
-		svn status
-	  ;;
+			echo -ne "Make a local diff to last revision"
+			git diff HEAD > ipfire-diff-$(date +'%Y-%m-%d-%H:%M').diff
+			evaluate 1
+			echo "Diff was successfully saved to ipfire-diff-$(date +'%Y-%m-%d-%H:%M').diff"
+			git diff --stat
+	  	;;
+	  push)
+	  	[ -z $GIT_USER ] && exiterror "You have to setup GIT_USER first."
+			GIT_URL="ssh://${GIT_USER}@git.ipfire.org/pub/git/ipfire-2.x"
+			
+	  	git push ${GIT_URL} master
+	  	;;
 	esac
 	;;
 uploadsrc)
