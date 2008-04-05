@@ -1,0 +1,7 @@
+.config
+build
+cache
+ccache
+log
+*.diff
+*.iso
