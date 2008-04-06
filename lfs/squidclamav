@@ -34,6 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = squidclamav
 PAK_VER    = 1
 
+DEPS       = "clamav"
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -51,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -72,10 +77,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidGuard-$(VER)-20071117.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cp -f  $(DIR_SRC)/squidclamav/squidclamav.conf /etc/squidclamav.conf
+	cp -f  $(DIR_CONF)/squidclamav/squidclamav.conf /etc/squidclamav.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

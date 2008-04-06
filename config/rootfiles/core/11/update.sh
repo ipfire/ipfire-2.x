@@ -5,5 +5,5 @@
 extract_files
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 squidGuard -d -C all
-chmod 666 /var/ipfire/urlfilter/blacklist/*/*.db
+chmod 666 /var/ipfire/urlfilter/blacklists/*/*.db
 /etc/init.d/squid start

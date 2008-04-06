@@ -3685,7 +3685,7 @@ END
 
 		print FILE "\nnever_direct allow all\n\n";
 	}
-	if (($proxysettings{'ENABLE_FILTER'} eq 'on') && ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on'))
+	if (($proxysettings{'ENABLE_FILTER'} eq 'on') || ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') || ($proxysettings{'ENABLE_CLAMAV'} eq 'on'))
 	{
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
 		if ($filtersettings{'CHILDREN'} > $xlratorsettings{'CHILDREN'})
@@ -3693,27 +3693,6 @@ END
 			print FILE "url_rewrite_children $filtersettings{'CHILDREN'}\n\n";
 		} else {
 			print FILE "url_rewrite_children $xlratorsettings{'CHILDREN'}\n\n";
-		}
-	} else
-	{
-
-		if ($proxysettings{'ENABLE_FILTER'} eq 'on')
-		{
-			print FILE <<END
-url_rewrite_program /usr/sbin/redirect_wrapper
-url_rewrite_children $filtersettings{'CHILDREN'}
-
-END
-			;
-		}
-		if ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on')
-		{
-			print FILE <<END
-url_rewrite_program /usr/sbin/redirect_wrapper
-url_rewrite_children $xlratorsettings{'CHILDREN'}
-
-END
-			;
 		}
 	}
 	close FILE;
