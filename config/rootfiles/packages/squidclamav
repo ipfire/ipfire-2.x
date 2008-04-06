@@ -1,3 +1,4 @@
 usr/bin/squidclamav
 etc/squidclamav.conf
 srv/web/ipfire/html/clwarn.cgi
+var/ipfire/backup/addons/includes/squidclamav
