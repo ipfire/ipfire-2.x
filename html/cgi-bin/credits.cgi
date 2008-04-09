@@ -36,7 +36,7 @@ require "${General::swroot}/header.pl";
 &Header::openbigbox('100%', 'center');
 
 &Header::openbox('100%', 'left', 'Version');
-print "This is IPFire Build ".`cat /var/ipfire/firebuild`." and tagged as ".`cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
+print "This is IPFire ".`cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
