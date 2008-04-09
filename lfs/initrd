@@ -54,7 +54,6 @@ $(TARGET) :
 	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)-ipfire/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys} && \
 	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
-	rm -rf /install/initrd/etc{,/udev,/udev/rules.d}/.svn
 	rm -rf /install/initrd/usr/share/man
 	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
 	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l

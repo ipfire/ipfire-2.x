@@ -85,7 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -f mlnet /opt/mldonkey
 	cd $(DIR_APP) && cp -rf distrib/* /opt/mldonkey
 	cp -rf $(DIR_CONF)/mldonkey/* /opt/mldonkey/.mldonkey
-	-find /opt/mldonkey -name .svn -exec rm -rf {} \;
 	chown -Rv mldonkey.mldonkey /opt/mldonkey
 	-mkdir -p /var/log/mldonkey/{incoming,temp}
 	-mkdir -p /var/log/mldonkey/incoming/{directories,files}

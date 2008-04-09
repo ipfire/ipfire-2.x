@@ -82,13 +82,11 @@ ifeq "$(PASS)" "C"
 
 	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
 	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
-	-find /etc/httpd/conf -name .svn -exec rm -rf {} \;
 
 	# Copy all html/cgi-bin files
 	mkdir -p /srv/web/ipfire/{cgi-bin,html}
 	mkdir -p /var/updatecache/{download,metadata}
 	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
-	-find /srv/web/ipfire -name .svn -exec rm -rf {} \;
 
 	# Change CONFIG_ROOT in cgi-scripts
 	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \

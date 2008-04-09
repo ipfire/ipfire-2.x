@@ -105,7 +105,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_SRC)/config/updxlrator/download /var/ipfire/updatexlrator/bin/download
 	-mkdir -p /usr/lib/squid/errors.ipfire
 	cp -fr $(DIR_SRC)/config/proxy/errors.ipfire/* /usr/lib/squid/errors.ipfire/
-	-find /usr/lib/squid/errors.ipfire/ -name .svn -exec rm -rf {} \;
 	chmod 755 /usr/sbin/updxlrator /var/ipfire/updatexlrator/bin/checkup \
 		/var/ipfire/updatexlrator/bin/download
 

@@ -56,7 +56,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown root.root $(DIR_APP) -R
 	chmod 755 $(DIR_APP)/pakfire
 	
-	-cd $(DIR_APP) && find $(DIR_APP) -name .svn -exec rm -rf {} \;
 	ln -sf ../../opt/pakfire/pakfire /etc/fcron.daily/pakfire-update
 	
 	touch /var/log/pakfire.log
