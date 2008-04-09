@@ -145,6 +145,7 @@ else
 	cp -rf $(DIR_SRC)/config/udev/dvb.sh /etc/udev/
 	chmod 755 /etc/udev/dvb.sh
 	touch /etc/udev/rules.d/30-persistent-network.rules
+	cp -vf $(DIR_SRC)/config/udev/backlist /etc/modprobe.d/blacklist
 endif
 endif
 	@rm -rf $(DIR_APP)

@@ -1,4 +1,5 @@
 etc/scsi_id.config
+etc/modprobe.d/blacklist
 etc/udev
 #etc/udev/rules.d
 #etc/udev/rules.d/05-udev-early.rules
