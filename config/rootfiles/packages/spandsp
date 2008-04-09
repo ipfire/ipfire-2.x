@@ -73,3 +73,9 @@ usr/lib/libspandsp.so.0.0.2
 #usr/share/spandsp
 usr/share/spandsp/global-tones.xml
 usr/share/spandsp/tones.dtd
+#usr/include/spandsp/complex_vector_float.h
+#usr/include/spandsp/crc.h
+#usr/include/spandsp/modem_connect_tones.h
+#usr/include/spandsp/vector_float.h
+#usr/include/spandsp/vector_int.h
+#usr/include/spandsp/version.h

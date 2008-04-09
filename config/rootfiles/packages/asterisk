@@ -2479,3 +2479,10 @@ var/spool/asterisk/tmp
 var/spool/asterisk/voicemail/default/1234/INBOX
 var/spool/asterisk/voicemail/default/1234/busy.alaw
 var/spool/asterisk/voicemail/default/1234/unavail.alaw
+usr/lib/asterisk/modules/app_devstate.so
+usr/lib/asterisk/modules/app_nv_backgrounddetect.so
+usr/lib/asterisk/modules/app_nv_faxdetect.so
+usr/lib/asterisk/modules/app_pickup2.so
+usr/lib/asterisk/modules/app_rxfax.so
+usr/lib/asterisk/modules/app_txfax.so
+usr/lib/asterisk/modules/func_devstate.so

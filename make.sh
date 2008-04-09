@@ -518,6 +518,7 @@ buildipfire() {
   ipfiremake xvid
   ipfiremake libmpeg2
   ipfiremake videolan
+  ipfiremake cmake
   ipfiremake libpri
   ipfiremake asterisk
   ipfiremake gnump3d
@@ -567,6 +568,7 @@ buildipfire() {
   ipfiremake vdr
   ipfiremake git
   ipfiremake squidclamav
+  ipfiremake bc
 }
 
 buildinstaller() {

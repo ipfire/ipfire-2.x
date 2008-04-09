@@ -47,6 +47,7 @@ objects = $(DL_FILE) \
 	   asterisk-core-sounds-en-alaw-1.4.8.tar.gz \
 	   asterisk-extra-sounds-en-alaw-1.4.7.tar.gz \
 	   asterisk-addons-1.4.5.tar.gz \
+	   agx-ast-addons-1.4.5.tar.bz2 \
 	   $(CHAN_CAPI).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
@@ -54,6 +55,7 @@ asterisk-core-sounds-en-alaw-1.4.8.tar.gz = $(URL_IPFIRE)/asterisk-core-sounds-e
 asterisk-extra-sounds-en-alaw-1.4.7.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-alaw-1.4.7.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 asterisk-addons-1.4.5.tar.gz = $(URL_IPFIRE)/asterisk-addons-1.4.5.tar.gz
+agx-ast-addons-1.4.5.tar.bz2 = $(URL_IPFIRE)/agx-ast-addons-1.4.5.tar.bz2
 $(CHAN_CAPI).tar.gz = $(URL_IPFIRE)/$(CHAN_CAPI).tar.gz
 
 $(DL_FILE)_MD5 = 3d8b2b2ef4f202901771663b40f19c3d
@@ -61,6 +63,7 @@ asterisk-core-sounds-en-alaw-1.4.8.tar.gz_MD5 = e708a5510a61217725b6ad663287dfa0
 asterisk-extra-sounds-en-alaw-1.4.7.tar.gz_MD5 = ecc50bd2b9b29d8237911272248c5d35
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
 asterisk-addons-1.4.5.tar.gz_MD5 = 8de9922c0a93321941f29a77a2f1bf13
+agx-ast-addons-1.4.5.tar.bz2_MD5 = a28f73d041769ea103e59b7f96c13d5e
 $(CHAN_CAPI).tar.gz_MD5 = d4732ecc008e8ef45c38bd2f4d70ef44
 
 install : $(TARGET)
@@ -93,8 +96,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*  $(DIR_SRC)/$(CHAN_CAPI) && \
-		cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/$(CHAN_CAPI) \
+		$(DIR_SRC)/agx-ast-addons && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire
 	cd $(DIR_APP) && cp -fv $(DIR_SRC)/config/asterisk/asterisk.makeopts \
 		menuselect.makeopts
@@ -119,11 +122,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod o+w /var/ipfire/asterisk
 	chown nobody:nobody -R /var/ipfire/asterisk
 	ln -f -s /var/ipfire/asterisk/wakeup/wakeup.sh /etc/fcron.minutely/wakeup.sh
-	-find /var/ipfire/asterisk -name .svn -exec rm -rf {} \;
 	
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(CHAN_CAPI).tar.gz
 	cd $(DIR_SRC)/$(CHAN_CAPI) && make $(MAKETUNING)
 	cd $(DIR_SRC)/$(CHAN_CAPI) && make install
 	
-	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*  $(DIR_SRC)/$(CHAN_CAPI)
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/agx-ast-addons-1.4.5.tar.bz2
+	cd $(DIR_SRC)/agx-ast-addons && ./build.sh
+	
+	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*  $(DIR_SRC)/$(CHAN_CAPI) \
+		$(DIR_SRC)/agx-ast-addons
 	@$(POSTBUILD)

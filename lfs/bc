@@ -24,17 +24,13 @@
 
 include Config
 
-VER        = 0.0.4pre15
+VER        = 1.06
 
-THISAPP    = spandsp-$(VER)
-DL_FILE    = $(THISAPP).tgz
+THISAPP    = bc-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/spandsp-0.0.4
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = spandsp
-PAK_VER    = 2
-
-DEPS       = "libtiff"
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5c0147612e040fc72b29a5c519bd5154
+$(DL_FILE)_MD5 = d44b5dddebd8a7a7309aea6c36fda117
 
 install : $(TARGET)
 
@@ -53,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -77,7 +70,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && sed -i '/PROTO.*readline/d' bc/scan.l
+	cd $(DIR_APP) && sed -i '/flex -I8/s/8//' configure
+	cd $(DIR_APP) && sed -i '/stdlib/a #include <string.h>' lib/number.c
+	cd $(DIR_APP) && sed -i 's/program.*save/static &/' bc/load.c
+	cd $(DIR_APP) && ./configure --prefix=/usr --with-readline
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
