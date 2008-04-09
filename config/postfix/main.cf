@@ -60,7 +60,7 @@ broken_sasl_auth_clients = yes
 
 #smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 
-content_filter=amavis:[127.0.0.1]:10024
+#content_filter=amavis:[127.0.0.1]:10024
 
 smtpd_helo_required = yes
 mime_header_checks=pcre:/etc/postfix/body_checks
@@ -76,7 +76,6 @@ smtpd_recipient_restrictions =
             permit_sasl_authenticated,
             reject_unauth_destination,
             reject_rbl_client zombie.dnsbl.sorbs.net,
-            reject_rbl_client relays.ordb.org,
             reject_rbl_client opm.blitzed.org,
             reject_rbl_client list.dsbl.org,
             reject_rbl_client sbl.spamhaus.org,
