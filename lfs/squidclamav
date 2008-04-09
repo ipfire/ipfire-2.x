@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make install
-	cp -f  $(DIR_CONF)/squidclamav/squidclamav.conf /etc/squidclamav.conf
+	install -v -m 755  $(DIR_CONF)/squidclamav/squidclamav.conf /etc/squidclamav.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/squidclamav /var/ipfire/backup/addons/includes/squidclamav
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

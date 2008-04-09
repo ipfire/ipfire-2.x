@@ -140,13 +140,13 @@ END
 my $lines=0; # Used to count the outputlines to make different bgcolor
 
 # Generate list of installed addon pak's
-my @pak = `find /opt/pakfire/db/installed/meta-* | cut -d"-" -f2`;
+my @pak = `find /opt/pakfire/db/installed/meta-* 2>/dev/null | cut -d"-" -f2`;
 foreach (@pak)
 {
 	chomp($_);
 
 	# Check which of the paks are services
-	my @svc = `find /etc/init.d/$_ | cut -d"/" -f4`;
+	my @svc = `find /etc/init.d/$_ 2>/dev/null | cut -d"/" -f4`;
 	foreach (@svc)
 	{
 	    # blacklist some packages
@@ -216,12 +216,12 @@ sub isautorun
 {
 	my $cmd = $_[0];
 	my $status = "<td align='center'></td>";
-	my $init = `find /etc/rc.d/rc3.d/S??${cmd}`;
+	my $init = `find /etc/rc.d/rc3.d/S??${cmd} 2>/dev/null`;
 	chomp ($init);
 	if ($init ne '') {
  	$status = "<td align='center'><A HREF=services.cgi?$_!disable><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></A></td>";
 	}
-	$init = `find /etc/rc.d/rc3.d/off/S??${cmd}`;
+	$init = `find /etc/rc.d/rc3.d/off/S??${cmd} 2>/dev/null`;
 	chomp ($init);
 	if ($init ne '') {
   $status = "<td align='center'><A HREF=services.cgi?$_!enable><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></A></td>";

@@ -128,3 +128,4 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/v4l1-compat.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/v4l2-common.ko
 etc/udev/dvb.sh
 etc/udev/rules.d/10-dvb.rules
+srv/web/ipfire/cgi-bin/services.cgi
