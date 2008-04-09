@@ -3,5 +3,8 @@ build
 cache
 ccache
 log
+packages
+tmp
 *.diff
+*.img.gz
 *.iso
