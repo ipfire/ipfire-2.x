@@ -125,8 +125,9 @@ ifeq "$(KLIBC)" "1"
 	install -m644 $(DIR_SRC)/config/mkinitcpio/udev_install /lib/initcpio/install/udev
 	install -m644 $(DIR_SRC)/config/mkinitcpio/udev_hook /lib/initcpio/hooks/udev
 else
+	rm -rf /lib/udev/devices
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/udev-config-6.2.tar.bz2
-	install -dv /lib/{firmware,udev/devices/{pts,shm}}
+	install -dv /lib/{firmware,udev/devices/{pts,shm}} 
 	mknod -m0666 /lib/udev/devices/null c 1 3
 	ln -sv /proc/self/fd /lib/udev/devices/fd
 	ln -sv /proc/self/fd/0 /lib/udev/devices/stdin
@@ -145,7 +146,7 @@ else
 	cp -rf $(DIR_SRC)/config/udev/dvb.sh /etc/udev/
 	chmod 755 /etc/udev/dvb.sh
 	touch /etc/udev/rules.d/30-persistent-network.rules
-	cp -vf $(DIR_SRC)/config/udev/backlist /etc/modprobe.d/blacklist
+	cp -vf $(DIR_SRC)/config/udev/blacklist /etc/modprobe.d/blacklist
 endif
 endif
 	@rm -rf $(DIR_APP)
