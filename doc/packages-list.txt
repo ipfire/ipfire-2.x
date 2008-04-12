@@ -283,6 +283,7 @@
 * vlan.1.9
 * vlc-0.8.6c
 * vsftpd-2.0.5
+* w_scan-20080105
 * wget-1.10.2
 * whatmask-1.2
 * which-2.16

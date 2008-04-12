@@ -566,6 +566,7 @@ buildipfire() {
   ipfiremake fontconfig
   ipfiremake freefont
   ipfiremake vdr
+  ipfiremake w_scan
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake bc
