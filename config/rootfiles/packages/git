@@ -49,7 +49,6 @@ usr/bin/git-get-tar-commit-id
 usr/bin/git-grep
 usr/bin/git-gui
 usr/bin/git-hash-object
-usr/bin/git-help--browse
 usr/bin/git-http-fetch
 usr/bin/git-http-push
 usr/bin/git-imap-send
@@ -135,6 +134,7 @@ usr/bin/git-upload-pack
 usr/bin/git-var
 usr/bin/git-verify-pack
 usr/bin/git-verify-tag
+usr/bin/git-web--browse
 usr/bin/git-whatchanged
 usr/bin/git-write-tree
 #usr/bin/gitk
@@ -155,6 +155,7 @@ usr/share/git-core/templates/hooks/post-update
 usr/share/git-core/templates/hooks/pre-applypatch
 usr/share/git-core/templates/hooks/pre-commit
 usr/share/git-core/templates/hooks/pre-rebase
+usr/share/git-core/templates/hooks/prepare-commit-msg
 usr/share/git-core/templates/hooks/update
 usr/share/git-core/templates/info
 usr/share/git-core/templates/info/exclude
@@ -197,6 +198,7 @@ usr/share/git-core/templates/info/exclude
 #usr/share/git-gui/lib/remote.tcl
 #usr/share/git-gui/lib/remote_branch_delete.tcl
 #usr/share/git-gui/lib/shortcut.tcl
+#usr/share/git-gui/lib/spellcheck.tcl
 #usr/share/git-gui/lib/status_bar.tcl
 #usr/share/git-gui/lib/tclIndex
 #usr/share/git-gui/lib/transport.tcl
@@ -206,5 +208,6 @@ usr/share/git-core/templates/info/exclude
 #usr/share/gitk/lib
 #usr/share/gitk/lib/msgs
 #usr/share/gitk/lib/msgs/de.msg
+#usr/share/gitk/lib/msgs/it.msg
 #usr/share/man/man3/Git.3
 #usr/share/man/man3/private-Error.3

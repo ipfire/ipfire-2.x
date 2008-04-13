@@ -1,0 +1,24 @@
+--- w_scan_start.sh.org	2008-01-05 19:58:44.000000000 +0100
++++ w_scan_start.sh	2008-04-12 18:18:19.000000000 +0200
+@@ -224,7 +224,7 @@
+ 		echo "Checking for ct-vdr style startscript.."
+ 		if [ -e /etc/init.d/vdr ]; then			# c't-vdr
+ 			echo_yes
+-			$(/etc/init.d/vdr stop)
++			/etc/init.d/vdr stop
+ 			stopped=true
+ 		else
+ 			echo_no
+@@ -692,9 +692,9 @@
+ 			echo ""
+ 			echo -e -n $NORMAL
+ 		else
+-			if [ -d /etc/vdr ]; then
+-				mv /etc/vdr/channels.conf /etc/vdr/channels.conf-backup$DATE
+-				cp channels.conf-$DATE /etc/vdr/channels.conf
++			if [ -d /opt/vdr/etc ]; then
++				mv /opt/vdr/etc/channels.conf /opt/vdr/etc/channels.conf-backup$DATE
++				cp channels.conf-$DATE /opt/vdr/etc/channels.conf
+ 			fi
+ 			if [ -d /var/lib/vdr ]; then
+ 				mv /var/lib/vdr/channels.conf /var/lib/vdr/channels.conf-backup$DATE

@@ -84,6 +84,7 @@
 * ez-ipupdate-3.0.11b8
 * fcron-3.0.1
 * fetchmail-6.3.8
+* ffmpeg-export-2008-04-13
 * file-4.17
 * findutils-4.2.27
 * flex-2.5.33
@@ -98,7 +99,7 @@
 * gd-2.0.33
 * gdbm-1.8.3
 * gettext-0.14.5
-* git-1.5.4.5
+* git-1.5.5
 * glib-2.9.6
 * glibc-2.3.6
 * gmp-4.2
@@ -171,7 +172,7 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_5
-* make-3.80
+* make-3.81
 * man-db-2.4.3
 * man-pages-2.34
 * mbr-1.1.8
@@ -283,6 +284,7 @@
 * vlan.1.9
 * vlc-0.8.6c
 * vsftpd-2.0.5
+* w_scan-20080105
 * wget-1.10.2
 * whatmask-1.2
 * which-2.16
