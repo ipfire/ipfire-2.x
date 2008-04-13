@@ -565,6 +565,7 @@ buildipfire() {
   ipfiremake arptables
   ipfiremake fontconfig
   ipfiremake freefont
+  ipfiremake ffmpeg
   ipfiremake vdr
   ipfiremake w_scan
   ipfiremake git

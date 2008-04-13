@@ -24,30 +24,19 @@
 
 include Config
 
-VER        = 3.81
 
-THISAPP    = make-$(VER)
+
+
+VER        = 2008-04-13
+THISAPP    = ffmpeg-export-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PROG       = make
-PAK_VER    = 2
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = ffmpeg
+PAK_VER    = 1
 
 DEPS       = ""
-
-# Normal build or /tools build.
-#
-ifeq "$(ROOT)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --disable-nls
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-endif
 
 ###############################################################################
 # Top-level Rules
@@ -57,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 354853e0b2da90c527e35aabb8d6f1e6
+$(DL_FILE)_MD5 = 017ab929ff92be552debb65c589c2183
 
 install : $(TARGET)
 
@@ -90,8 +79,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && ./configure --prefix=/usr/local \
+                                     --enable-shared \
+				     --enable-postproc \
+				     --enable-gpl
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install-libs
+	ldconfig
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

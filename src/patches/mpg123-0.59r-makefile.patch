@@ -1,0 +1,12 @@
+--- Makefile	1999-06-15 22:39:06.000000000 +0200
++++ Makefile	2008-04-13 15:26:55.000000000 +0200
+@@ -104,8 +104,7 @@
+ 
+ linux:
+ 	$(MAKE) CC=gcc LDFLAGS= \
+-		OBJECTS='decode_i386.o dct64_i386.o decode_i586.o \
+-			audio_oss.o term.o' \
++		OBJECTS='decode_i386.o dct64_i386.o decode_i586.o audio_oss.o term.o' \
+ 		CFLAGS='-DI386_ASSEM -DPENTIUM_OPT -DREAL_IS_FLOAT -DLINUX \
+ 			-DREAD_MMAP -DOSS -DTERM_CONTROL\
+ 			-Wall -O2 -m486 \

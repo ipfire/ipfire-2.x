@@ -84,6 +84,7 @@
 * ez-ipupdate-3.0.11b8
 * fcron-3.0.1
 * fetchmail-6.3.8
+* ffmpeg-export-2008-04-13
 * file-4.17
 * findutils-4.2.27
 * flex-2.5.33
@@ -171,7 +172,7 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_5
-* make-3.80
+* make-3.81
 * man-db-2.4.3
 * man-pages-2.34
 * mbr-1.1.8
