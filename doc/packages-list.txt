@@ -42,6 +42,7 @@
 * automake-1.9.6
 * backup-ipfire
 * bash-3.1
+* bc-1.06
 * beep-1.2.2
 * bind-9.3.2
 * binutils-2.16.1
@@ -57,6 +58,7 @@
 * cdrtools-2.01
 * centerim-4.22.1
 * clamav-0.92.1
+* cmake-2.4.8
 * collectd-4.3.0
 * coreutils-5.96
 * cpio-2.6
@@ -236,7 +238,7 @@
 * rrdtool-1.2.15
 * rsync-2.6.9
 * rtorrent-0.7.9
-* samba-3.0.28
+* samba-3.0.28a
 * sane-1.0.19
 * sane-1.0.19-kmod
 * screen-4.0.3
@@ -248,7 +250,7 @@
 * smartmontools-5.36
 * snort-2.6.1.4
 * sox-12.18.1
-* spandsp-0.0.3pre24
+* spandsp-0.0.4pre15
 * squashfs3.2-r2
 * squid-2.6.STABLE19
 * squid-graph-3.2
