@@ -61,5 +61,4 @@ usr/lib/vhook/watermark.so
 usr/lib/libpostproc.so
 usr/lib/libpostproc.so.51
 usr/lib/libpostproc.so.51.1.0
-usr/
-lib/pkgconfig/libpostproc.pc
+usr/lib/pkgconfig/libpostproc.pc
