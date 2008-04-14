@@ -79,7 +79,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr/local \
+	cd $(DIR_APP) && ./configure --prefix=/usr \
                                      --enable-shared \
 				     --enable-postproc \
 				     --enable-gpl
