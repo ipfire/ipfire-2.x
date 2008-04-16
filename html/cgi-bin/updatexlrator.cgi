@@ -75,7 +75,6 @@ my $chk_cron_mly = "${General::swroot}/updatexlrator/autocheck/cron.monthly";
 
 $xlratorsettings{'ACTION'} = '';
 $xlratorsettings{'ENABLE_LOG'} = 'off';
-$xlratorsettings{'CHILDREN'} = '5';
 $xlratorsettings{'PASSIVE_MODE'} = 'off';
 $xlratorsettings{'MAX_DISK_USAGE'} = '95';
 $xlratorsettings{'LOW_DOWNLOAD_PRIORITY'} = 'off';
@@ -148,11 +147,6 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr purge'})
 
 if ($xlratorsettings{'ACTION'} eq $Lang::tr{'save'})
 {
-	if (!($xlratorsettings{'CHILDREN'} =~ /^\d+$/) || ($xlratorsettings{'CHILDREN'} < 1))
-	{
-		$errormessage = $Lang::tr{'updxlrtr invalid num of children'};
-		goto ERROR;
-	}
 	if (!($xlratorsettings{'MAX_DISK_USAGE'} =~ /^\d+$/) || ($xlratorsettings{'MAX_DISK_USAGE'} < 1) || ($xlratorsettings{'MAX_DISK_USAGE'} > 100))
 	{
 		$errormessage = $Lang::tr{'updxlrtr invalid disk usage'};
@@ -164,11 +158,6 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'save'})
 
 if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr save and restart'})
 {
-	if (!($xlratorsettings{'CHILDREN'} =~ /^\d+$/) || ($xlratorsettings{'CHILDREN'} < 1))
-	{
-		$errormessage = $Lang::tr{'updxlrtr invalid num of children'};
-		goto ERROR;
-	}
 	if (!($xlratorsettings{'MAX_DISK_USAGE'} =~ /^\d+$/) || ($xlratorsettings{'MAX_DISK_USAGE'} < 1) || ($xlratorsettings{'MAX_DISK_USAGE'} > 100))
 	{
 		$errormessage = $Lang::tr{'updxlrtr invalid disk usage'};
@@ -255,8 +244,6 @@ print <<END
 <tr>
 	<td class='base' width='25%'>$Lang::tr{'updxlrtr enable log'}:</td>
 	<td class='base' width='20%'><input type='checkbox' name='ENABLE_LOG' $checked{'ENABLE_LOG'}{'on'} /></td>
-	<td class='base' width='25%'>$Lang::tr{'updxlrtr children'}:</td>
-	<td class='base' width='30%'><input type='text' name='CHILDREN' value='$xlratorsettings{'CHILDREN'}' size='5' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'updxlrtr passive mode'}:</td>

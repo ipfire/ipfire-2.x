@@ -144,7 +144,6 @@ $filtersettings{'ENABLE_SAFESEARCH'} = 'off';
 $filtersettings{'ENABLE_LOG'} = 'off';
 $filtersettings{'ENABLE_USERNAME_LOG'} = 'off';
 $filtersettings{'ENABLE_CATEGORY_LOG'} = 'off';
-$filtersettings{'CHILDREN'} = '5';
 $filtersettings{'ENABLE_AUTOUPDATE'} = 'off';
 
 $filtersettings{'ACTION'} = '';
@@ -181,12 +180,6 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 		foreach (@temp) { unless ((&General::validipormask($_)) || (&General::validipandmask($_))) { $errormessage = $Lang::tr{'urlfilter invalid ip or mask error'}; } }
 	}
 	if ($errormessage) { goto ERROR; }
-
-	if (!($filtersettings{'CHILDREN'} =~ /^\d+$/) || ($filtersettings{'CHILDREN'} < 1))
-	{
-		$errormessage = $Lang::tr{'urlfilter invalid num of children'};
-		goto ERROR;
-	}
 
 	if ((!($filtersettings{'REDIRECT_PAGE'} eq '')) && (!($filtersettings{'REDIRECT_PAGE'} =~ /^https?:\/\//)))
 	{
@@ -1492,8 +1485,6 @@ print <<END
 <tr>
 	<td class='base'>$Lang::tr{'urlfilter block ip'}:</td>
 	<td><input type='checkbox' name='BLOCK_IP_ADDR' $checked{'BLOCK_IP_ADDR'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'urlfilter children'}:</td>
-	<td><input type='text' name='CHILDREN' value='$filtersettings{'CHILDREN'}' size='5' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'urlfilter block all'}:</td>

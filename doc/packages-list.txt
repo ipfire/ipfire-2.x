@@ -57,7 +57,6 @@
 * ccache-2.4
 * cdrtools-2.01
 * centerim-4.22.1
-* clamav-0.92.1
 * clamav-0.93
 * cmake-2.4.8
 * collectd-4.3.0
@@ -100,7 +99,6 @@
 * gd-2.0.33
 * gdbm-1.8.3
 * gettext-0.14.5
-* git-1.5.4.5
 * git-1.5.5
 * glib-2.9.6
 * glibc-2.3.6
@@ -174,7 +172,6 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_5
-* make-3.80
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34

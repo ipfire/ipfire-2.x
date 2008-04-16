@@ -161,16 +161,6 @@ close(FILE);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
-$filtersettings{'CHILDREN'} = '5';
-if (-e "${General::swroot}/urlfilter/settings") {
-	&General::readhash("${General::swroot}/urlfilter/settings", \%filtersettings);
-}
-
-$xlratorsettings{'CHILDREN'} = '5';
-if (-e "${General::swroot}/updatexlrator/settings") {
-	&General::readhash("${General::swroot}/updatexlrator/settings", \%xlratorsettings);
-}
-
 &Header::showhttpheaders();
 
 $proxysettings{'ACTION'} = '';
@@ -263,6 +253,7 @@ $proxysettings{'IDENT_USER_ACL'} = 'positive';
 $proxysettings{'ENABLE_FILTER'} = 'off';
 $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 $proxysettings{'ENABLE_CLAMAV'} = 'off';
+$proxysettings{'CHILDREN'} = '5';
 
 $ncsa_buttontext = $Lang::tr{'advproxy NCSA create user'};
 
@@ -376,6 +367,11 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	if (!($proxysettings{'MAX_INCOMING_SIZE'} =~ /^\d+/))
 	{
 		$errormessage = $Lang::tr{'invalid maximum incoming size'};
+		goto ERROR;
+	}
+		if (!($proxysettings{'CHILDREN'} =~ /^\d+$/) || ($proxysettings{'CHILDREN'} < 1))
+	{
+		$errormessage = $Lang::tr{'advproxy invalid num of children'};
 		goto ERROR;
 	}
 	if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on')
@@ -936,20 +932,20 @@ print <<END
 </table>
 <hr size='1'>
 <table width='100%'>
+<tr><td class='base' width='50%' ><b>$Lang::tr{'advproxy redirector children'}</b><input type='text' name='CHILDREN' value='$proxysettings{'CHILDREN'}' size='5' /></td>
 END
 ;
 if ( -e "/usr/bin/squidclamav" ) {
-	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>";
-	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td>";
-	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy squidclamav'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_CLAMAV' $checked{'ENABLE_CLAMAV'}{'on'} /></td>";
+	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy squidclamav'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_CLAMAV' $checked{'ENABLE_CLAMAV'}{'on'} /></td></tr>";
 }
 else
 {
- print "<td class='base' width='50%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>";
- print "<td class='base' width='50%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td>";
+	 print "<td class='base' width='33%'></td></tr>";
 }
 print <<END
 </tr>
+<tr><td class='base' width='50%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
+<td class='base' width='50%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td></tr>
 </table>
 <hr size='1'>
 <table width='100%'>
@@ -3688,12 +3684,7 @@ END
 	if (($proxysettings{'ENABLE_FILTER'} eq 'on') || ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') || ($proxysettings{'ENABLE_CLAMAV'} eq 'on'))
 	{
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
-		if ($filtersettings{'CHILDREN'} > $xlratorsettings{'CHILDREN'})
-		{
-			print FILE "url_rewrite_children $filtersettings{'CHILDREN'}\n\n";
-		} else {
-			print FILE "url_rewrite_children $xlratorsettings{'CHILDREN'}\n\n";
-		}
+		print FILE "url_rewrite_children $proxysettings{'CHILDREN'}\n\n";
 	}
 	close FILE;
 }
