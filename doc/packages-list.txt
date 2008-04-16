@@ -282,7 +282,7 @@
 * vdr-1.6.0
 * vim-7.0
 * vlan.1.9
-* vlc-0.8.6c
+* vlc-0.8.6f
 * vsftpd-2.0.5
 * w_scan-20080105
 * wget-1.10.2

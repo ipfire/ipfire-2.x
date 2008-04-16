@@ -517,7 +517,6 @@ buildipfire() {
   ipfiremake mpc
   ipfiremake xvid
   ipfiremake libmpeg2
-  ipfiremake videolan
   ipfiremake cmake
   ipfiremake libpri
   ipfiremake asterisk
@@ -566,6 +565,7 @@ buildipfire() {
   ipfiremake fontconfig
   ipfiremake freefont
   ipfiremake ffmpeg
+  ipfiremake videolan
   ipfiremake vdr
   ipfiremake w_scan
   ipfiremake git

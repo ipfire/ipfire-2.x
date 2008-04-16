@@ -24,76 +24,29 @@
 
 include Config
 
-VER        = 1.6.0
-THISAPP    = vdr-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FILE1   = vdr-streamdev-20080325-http-0_4.tgz
-DL_FILE2   = vdr-softdevice-cvs-2008-04-16.tar.bz2
+VER        = plugin
 
-
-DL_FROM    = $(URL_IPFIRE)
+THISAPP    = vdr-softdevice-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = vdr
+PROG       = vdr-softdevice
 PAK_VER    = 1
 
-DEPS       = "freefont fontconfig"
+DEPS       = "ffmpeg alsa"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(DL_FILE1) $(DL_FILE2)
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-$(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
-$(DL_FILE2) = $(DL_FROM)/$(DL_FILE2)
+install : 
 
-$(DL_FILE)_MD5 = 76f4ebe6525a35e33313d27a3f8e80c0
-$(DL_FILE1)_MD5 = 874026c643601692077c42ee7a70b720
-$(DL_FILE2)_MD5 = 2b2eec38a653c205967849efb907b707
+check : 
 
-install : $(TARGET)
+download :
 
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
-
-download : $(patsubst %,$(DIR_DL)/%,$(objects))
-
-md5 : $(subst %,%_MD5,$(objects))
+md5 :
 
 dist: 
-	@$(PAK)
+	$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
-
-###############################################################################
-# Installation Details
-###############################################################################
-
-$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/PLUGINS/src && tar zxf $(DIR_DL)/$(DL_FILE1)
-	cd $(DIR_APP)/PLUGINS/src && ln -s streamdev-0.3.3-20080325-http streamdev
-	cd $(DIR_APP)/PLUGINS/src && tar jxf $(DIR_DL)/$(DL_FILE2)
-	cd $(DIR_APP)/PLUGINS/src && ln -s softdevice-cvs-2008-04-16 softdevice
-	cd $(DIR_APP)/PLUGINS/src/softdevice && ./configure
-	cd $(DIR_APP) && make VIDEODIR=/var/video plugins $(MAKETUNING)
-	cd $(DIR_APP) && make VIDEODIR=/var/video vdr $(MAKETUNING)
-	cd $(DIR_APP) && make PREFIX=. DESTDIR=/opt/vdr/ install
-	-mkdir -p /opt/vdr/etc
-	cd $(DIR_APP) && install *.conf /opt/vdr/etc/
-	cp -Rvf $(DIR_SRC)/config/vdr /opt
-	@rm -rf $(DIR_APP)
-	@$(POSTBUILD)
