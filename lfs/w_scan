@@ -81,6 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch < $(DIR_SRC)/src/patches/w_scan-ipfire.patch 
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && install -m 755 w_scan /opt/vdr/bin/
-	cd $(DIR_APP) && install -m 755 w_scan_start.sh /opt/vdr/bin/
+	cd $(DIR_APP) && install -m 755 w_scan_start.sh /opt/vdr/bin/w_scan_start
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

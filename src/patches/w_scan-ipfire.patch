@@ -1,5 +1,14 @@
---- w_scan_start.sh.org	2008-01-05 19:58:44.000000000 +0100
-+++ w_scan_start.sh	2008-04-12 18:18:19.000000000 +0200
+--- w_scan_start.sh	2008-01-05 19:58:44.000000000 +0100
++++ w_scan_start.sh	2008-04-17 12:38:04.000000000 +0200
+@@ -10,7 +10,7 @@
+ #######################################################
+ 
+ umask 022
+-export PATH="$(pwd):/bin:/usr/bin:/sbin:/usr/sbin"
++export PATH="$(pwd):/bin:/usr/bin:/sbin:/usr/sbin:/opt/vdr/bin"
+ DATE="$(date +%Y)$(date +%m)$(date +%d)" # $DATE == "YYYYMMDD", i.e. 20060710
+ W_SCAN=$(which w_scan 2>/dev/null)
+ UDEVSTART=$(which udevstart)
 @@ -224,7 +224,7 @@
  		echo "Checking for ct-vdr style startscript.."
  		if [ -e /etc/init.d/vdr ]; then			# c't-vdr

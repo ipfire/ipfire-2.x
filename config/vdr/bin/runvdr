@@ -9,10 +9,17 @@
 # actual 'vdr' program.
 #
 
+PLUGOPTS="-Pstreamdev-server"
+
 VDRPRG="./bin/vdr"
-VDRCMD="$VDRPRG -w 60 -c /opt/vdr/etc -Pstreamdev-server $*"
+VDRCMD="$VDRPRG -w 60 -c /opt/vdr/etc $PLUGOPTS $*"
 
 KILL="killall -q -TERM"
+
+if [ "$(ps -A | grep " vdr")" != "" ]; then
+   echo vdr is already running!
+   exit 1
+fi
 
 mkdir -p /var/video
 cd /opt/vdr

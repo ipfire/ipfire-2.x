@@ -18,7 +18,11 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting Video Disk Recorder..."
-		cd /opt/vdr
+		if [ "$(ps -A | grep runvdr)" != "" ]; then
+		   boot_mesg "Error! Alrady run!"
+		   echo_failure
+		   exit 1;
+		fi
 		loadproc screen -dmS vdr /opt/vdr/bin/runvdr
 		;;
 		
