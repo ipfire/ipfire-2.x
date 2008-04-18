@@ -61,7 +61,6 @@ if ($pakfiresettings{'ACTION'} eq 'install'){
 	if ("$pakfiresettings{'FORCE'}" eq "on") {
 		my $command = "/usr/local/bin/pakfire install --non-interactive --no-colors $pakfiresettings{'INSPAKS'} &>/dev/null &";
 		system("$command");
-		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", "Abfrage");
   	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'INSPAKS'}`;
@@ -101,7 +100,6 @@ END
 	if ("$pakfiresettings{'FORCE'}" eq "on") {
 		my $command = "/usr/local/bin/pakfire remove --non-interactive --no-colors $pakfiresettings{'DELPAKS'} &>/dev/null &";
 		system("$command");
-		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", "Abfrage");
   	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'DELPAKS'}`;
@@ -141,8 +139,8 @@ END
 	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null");
 
 } elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
-
-	system("/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null");
+	my $command = "/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null";
+	system("$command");
 	refreshpage();
 
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {

@@ -93,8 +93,8 @@ sub message {
 sub logger {
 	my $log = shift;
 	if ($log) {
-		system("echo \"`date`: $log\" >> /var/log/pakfire.log");
-		#system("logger -t pakfire \"$log\"");
+		#system("echo \"`date`: $log\" >> /var/log/pakfire.log");
+		system("logger -t pakfire \"$log\"");
 	}
 }
 

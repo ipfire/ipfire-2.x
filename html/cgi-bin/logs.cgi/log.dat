@@ -65,7 +65,8 @@ my %sections = (
         'auth' => '(\w+\(pam_unix\)\[.*\]: )',
         'kernel' => '(kernel: (?!DROP_))',
         'ipsec' => '(ipsec_[\w_]+: |pluto\[.*\]: |vpnwatch: )',
-        'openvpn' => '(openvpnserver)\[.*\]: '
+        'openvpn' => '(openvpnserver)\[.*\]: ',
+        'pakfire' => '(pakfire:) '
 	 );
 
 # Translations for the %sections array.
@@ -76,13 +77,14 @@ my %trsections = (
         'dhcp' => "$Lang::tr{'dhcp server'}",
         'cron' => 'Cron',
         'collectd' => 'Collectd',
-	'clamav' => 'ClamAV',
+				'clamav' => 'ClamAV',
         'ntp' => 'NTP',
         'ssh' => 'SSH',
         'auth' => "$Lang::tr{'loginlogout'}",
         'kernel' => "$Lang::tr{'kernel'}",
         'ipsec' => 'IPSec',
         'openvpn' => 'OpenVPN',
+        'pakfire' => 'Pakfire',
 	);
 
 
