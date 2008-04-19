@@ -24,29 +24,67 @@
 
 include Config
 
-VER        = plugin
+VER        = 7.0.1
 
-THISAPP    = vdr-softdevice-$(VER)
+THISAPP    = linux-fusion-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PROG       = vdr-softdevice
-PAK_VER    = 1
-
-DEPS       = "directfb ffmpeg alsa"
+ifeq "$(SMP)" "1"
+	TARGET     = $(DIR_INFO)/$(THISAPP)-smp
+else
+	TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
 
-install : 
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-check : 
+$(DL_FILE)_MD5 = 937028c98dbfd512f0c570c5ffe13769
 
-download :
+install : $(TARGET)
 
-md5 :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
 	$(PAK)
 
 ###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(SMP)" "1"
+	cd $(DIR_APP) && sed -i "s/\x24(shell uname -r)/$(KVER)-ipfire-smp/g" Makefile
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install 
+else
+	cd $(DIR_APP) && sed -i "s/\x24(shell uname -r)/$(KVER)-ipfire/g" Makefile
+	cd $(DIR_APP) && make 
+	cd $(DIR_APP) && make install 
+endif
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

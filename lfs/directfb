@@ -24,29 +24,66 @@
 
 include Config
 
-VER        = plugin
+VER        = 1.1.1
 
-THISAPP    = vdr-softdevice-$(VER)
+THISAPP    = DirectFB-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PROG       = vdr-softdevice
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = DirectFB
 PAK_VER    = 1
 
-DEPS       = "directfb ffmpeg alsa"
+DEPS       = ""
+
+
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
 
-install : 
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-check : 
+$(DL_FILE)_MD5 = c75255049ca8d5c69afe4db58f603028
 
-download :
+install : $(TARGET)
 
-md5 :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	$(PAK)
+	@$(PAK)
 
 ###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && sed -i "s/checkfor_matrox=yes/checkfor_matrox=no/g" configure
+	cd $(DIR_APP) && sed -i "s/checkfor_cle266=no/checkfor_cle266=yes/g" configure
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-x11 \
+				     --enable-video4linux2 --enable-multi 
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
