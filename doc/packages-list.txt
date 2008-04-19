@@ -8,6 +8,7 @@
 * Digest-1.08
 * Digest-HMAC-1.01
 * Digest-SHA1-2.10
+* DirectFB-1.1.1
 * GD-2.35
 * GDGraph-1.4308
 * GDTextUtil-0.86
@@ -164,6 +165,7 @@
 * libxslt-1.1.17
 * linux-2.6.16.57
 * linux-atm-2.4.1
+* linux-fusion-7.0.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
 * logrotate-3.7.1

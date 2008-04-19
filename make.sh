@@ -341,6 +341,7 @@ buildipfire() {
   ipfiremake dm9601			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake sane		KMOD=1	SMP=1
+  ipfiremake linux-fusion		SMP=1
   ipfiremake linux
   ipfiremake ipp2p
   ipfiremake zaptel
@@ -351,6 +352,7 @@ buildipfire() {
   ipfiremake dm9601
   ipfiremake kqemu
   ipfiremake sane		KMOD=1
+  ipfiremake linux-fusion
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -553,6 +555,7 @@ buildipfire() {
   ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
+  ipfiremake directfb
   ipfiremake sdl
   ipfiremake qemu
   ipfiremake sane

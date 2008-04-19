@@ -126,6 +126,8 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/compat_ioctl32.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/videodev.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/v4l1-compat.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/v4l2-common.ko
+lib/modules/2.6.16.57-ipfire/drivers/char/fusion/fusion.ko
+lib/modules/2.6.16.57-ipfire-smp/drivers/char/fusion/fusion.ko
 etc/udev/dvb.sh
 etc/udev/rules.d/10-dvb.rules
 srv/web/ipfire/cgi-bin/services.cgi
@@ -138,3 +140,4 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 opt/pakfire/lib/functions.pl
 var/ipfire/langs
+etc/sysconfig/modules
