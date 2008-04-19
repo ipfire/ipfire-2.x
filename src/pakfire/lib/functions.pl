@@ -118,7 +118,7 @@ sub pinghost {
 	
 	$p = Net::Ping->new();
   if ($p->ping($host)) {
-  	logger("PING INFO: $host is alive");
+ 	 logger("PING INFO: $host is alive");
   	return 1;
   } else {
 		logger("PING INFO: $host is unreachable");
@@ -211,6 +211,9 @@ sub fetchfile {
 						move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
 					} else {
 						message("DOWNLOAD ERROR: The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
+						my $ntp = `ntpdate -q -t 10 pool.ntp.org 2>/dev/null | tail -1`;
+						if ( $ntp !~ /time\ server(.*)offset(.*)/ ){message("TIME ERROR: Unable to get the nettime, this may lead to the verification error.");}
+						else { $ntp =~ /time\ server(.*)offset(.*)/; message("TIME INFO: Time Server$1has$2 offset to localtime.");}
 						exit 1;
 					}
 					logger("DOWNLOAD FINISHED: $file");
@@ -544,7 +547,12 @@ sub cleanup {
 sub getmetafile {
 	my $pak = shift;
 	
-	unless ( -e "$Conf::dbdir/meta/meta-$pak") {
+	unless ( -e "$Conf::dbdir/meta/meta-$pak" ) {
+		fetchfile("meta/meta-$pak", "");
+		move("$Conf::cachedir/meta-$pak", "$Conf::dbdir/meta/meta-$pak");
+	}
+	
+	if ( -z "$Conf::dbdir/meta/meta-$pak" ) {
 		fetchfile("meta/meta-$pak", "");
 		move("$Conf::cachedir/meta-$pak", "$Conf::dbdir/meta/meta-$pak");
 	}

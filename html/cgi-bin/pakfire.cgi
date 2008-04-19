@@ -136,13 +136,11 @@ END
 
 } elsif ($pakfiresettings{'ACTION'} eq 'update') {
 
-	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null");
+	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null &");
 
 } elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
-	my $command = "/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null";
+	my $command = "/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null &";
 	system("$command");
-	refreshpage();
-
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
 
 	if ($pakfiresettings{'AUTOUPDATE'} eq 'on') {
@@ -198,7 +196,7 @@ if ($return) {
 			</form>
 		<tr><td colspan='2' align='left'><pre>
 END
-	my @output = `tail -20 /var/log/pakfire.log`;
+	my @output = `grep pakfire /var/log/messages | tail -20`;
 	foreach (@output) {
 		print "$_";
 	}
@@ -210,6 +208,7 @@ END
 	&Header::closebigbox();
 	&Header::closepage();
 	exit;
+	refreshpage();
 }
 
 my $core_release = `cat /opt/pakfire/db/core/mine 2>/dev/null`;
