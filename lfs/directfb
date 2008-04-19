@@ -85,5 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				     --enable-video4linux2 --enable-multi 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	@rm -rf $(DIR_APP)
+	ln -s $(THISAPP) /usr/src/directfb
+#	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

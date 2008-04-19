@@ -1,4 +1,5 @@
 opt/vdr/bin/runvdr-soft
+opt/vdr/PLUGINS/lib/libsoftdevice-dfb.so.1.6.0
 opt/vdr/PLUGINS/lib/libsoftdevice-fb.so.1.6.0
 opt/vdr/PLUGINS/lib/libsoftdevice-shm.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-softdevice.so.1.6.0

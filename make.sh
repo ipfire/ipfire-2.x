@@ -556,6 +556,7 @@ buildipfire() {
   ipfiremake elinks
   ipfiremake igmpproxy
   ipfiremake directfb
+  ipfiremake dfb++
   ipfiremake sdl
   ipfiremake qemu
   ipfiremake sane

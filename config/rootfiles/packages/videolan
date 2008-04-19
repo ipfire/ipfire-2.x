@@ -220,6 +220,7 @@ usr/lib/vlc/video_filter/libtime_plugin.so
 usr/lib/vlc/video_filter/libtransform_plugin.so
 usr/lib/vlc/video_filter/libwall_plugin.so
 #usr/lib/vlc/video_output
+usr/lib/vlc/video_output/libdirectfb_plugin.so
 usr/lib/vlc/video_output/libfb_plugin.so
 usr/lib/vlc/video_output/libimage_plugin.so
 usr/lib/vlc/video_output/libvout_sdl_plugin.so

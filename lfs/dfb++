@@ -24,17 +24,19 @@
 
 include Config
 
-VER        = 0.8.6f
+VER        = 1.0.0
 
-THISAPP    = vlc-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = DFB++-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = videolan
-PAK_VER    = 2
+PROG       = dfb++
+PAK_VER    = 1
 
-DEPS       = "libshout libmpeg2 libmad directfb ffmpeg"
+DEPS       = "directfb"
+
+
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c3aded2583fcdb9f4c71d3fc3601b73b
+$(DL_FILE)_MD5 = c7d0b98bcc648a25ff11bfc74635f4ca
 
 install : $(TARGET)
 
@@ -76,20 +78,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-shared -with-ffmpeg-tree=/usr/src/ffmpeg \
-								   -with-ffmpeg-config=/usr/src/ffmpeg \
-								--disable-wxwidgets --disable-skins2 \
-								--enable-httpd --enable-pth --enable-shout \
-								--enable-smb --enable-cddax --enable-ncurses \
-								--enable-a52 --enable-dts --enable-alsa \
-								--enable-unicode-utf8 --enable-v4l --enable-vcd \
-								--enable-ogg -enable-vorbis --enable-theora \
-								--enable-mad \
-								--enable-libdvbpsi --enable-faac --enable-mkv  \
-								--enable-x264 --enable-release \
-								--disable-nls \
-								--enable-directfb --with-directfb=/usr/src/directfb
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

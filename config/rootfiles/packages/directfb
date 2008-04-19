@@ -232,10 +232,10 @@ usr/lib/libfusion-1.1.so.0
 usr/lib/libfusion-1.1.so.0.1.0
 #usr/lib/libfusion.la
 usr/lib/libfusion.so
-usr/lib/pkgconfig/direct.pc
-usr/lib/pkgconfig/directfb-internal.pc
-usr/lib/pkgconfig/directfb.pc
-usr/lib/pkgconfig/fusion.pc
+#usr/lib/pkgconfig/direct.pc
+#usr/lib/pkgconfig/directfb-internal.pc
+#usr/lib/pkgconfig/directfb.pc
+#usr/lib/pkgconfig/fusion.pc
 #usr/share/directfb-1.1.1
 usr/share/directfb-1.1.1/cursor.dat
 #usr/share/man/man1/dfbg.1

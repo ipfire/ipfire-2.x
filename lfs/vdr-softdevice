@@ -31,7 +31,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = vdr-softdevice
 PAK_VER    = 1
 
-DEPS       = "directfb ffmpeg alsa"
+DEPS       = "directfb dfb++ ffmpeg alsa"
 
 ###############################################################################
 # Top-level Rules
