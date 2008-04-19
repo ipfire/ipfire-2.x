@@ -1,5 +1,6 @@
 etc/init.d/asterisk
 var/ipfire/menu.d/EX-asterisk.menu
+var/ipfire/backup/addons/includes/asterisk
 srv/web/ipfire/cgi-bin/asterisk
 etc/fcron.minutely/wakeup.sh
 #usr/include/asterisk

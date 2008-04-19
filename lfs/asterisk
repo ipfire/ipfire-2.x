@@ -132,4 +132,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*  $(DIR_SRC)/$(CHAN_CAPI) \
 		$(DIR_SRC)/agx-ast-addons
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/asterisk /var/ipfire/backup/addons/includes/asterisk
 	@$(POSTBUILD)
