@@ -31,6 +31,6 @@ parport_pc
 lp
 
 ### fusion
-fusion
+# fusion
 
 # End /etc/sysconfig/modules
