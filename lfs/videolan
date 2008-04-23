@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = videolan
 PAK_VER    = 2
 
-DEPS       = "libshout libmpeg2 libmad directfb ffmpeg"
+DEPS       = "libshout libmpeg2 libmad ffmpeg"
 
 ###############################################################################
 # Top-level Rules

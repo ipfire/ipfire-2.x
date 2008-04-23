@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sdl
 PAK_VER    = 2
 
-DEPS       = "alsa directfb"
+DEPS       = "alsa"
 
 ###############################################################################
 # Top-level Rules
