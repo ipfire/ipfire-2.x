@@ -22,13 +22,13 @@
 ############################################################################
 #
 
-NAME="IPFire"				# Software name
-SNAME="ipfire"				# Short name
-VERSION="2.1"				# Version number
-SLOGAN="www.ipfire.org"			# Software slogan
-CONFIG_ROOT=/var/ipfire			# Configuration rootdir
-NICE=10					# Nice level
-MAX_RETRIES=1				# prefetch/check loop
+NAME="IPFire"										# Software name
+SNAME="ipfire"									# Short name
+VERSION="2.1"										# Version number
+SLOGAN="www.ipfire.org"					# Software slogan
+CONFIG_ROOT=/var/ipfire					# Configuration rootdir
+NICE=10													# Nice level
+MAX_RETRIES=1										# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 
@@ -351,7 +351,6 @@ buildipfire() {
   ipfiremake dm9601
   ipfiremake kqemu
   ipfiremake sane		KMOD=1
-  ipfiremake madwifi
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -572,8 +571,6 @@ buildipfire() {
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake bc
-  ipfiremake wpa_supplicant
-  ipfiremake hostapd
 }
 
 buildinstaller() {

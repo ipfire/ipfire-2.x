@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.57-ipfire
-# Mon Apr 21 16:25:48 2008
+# Wed Mar 26 10:05:08 2008
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -634,7 +634,6 @@ CONFIG_IEEE80211=m
 # CONFIG_IEEE80211_DEBUG is not set
 CONFIG_IEEE80211_CRYPT_WEP=m
 # CONFIG_IEEE80211_CRYPT_CCMP is not set
-# CONFIG_IEEE80211_CRYPT_TKIP is not set
 CONFIG_KLIPS=m
 
 #
@@ -1268,48 +1267,7 @@ CONFIG_S2IO=m
 #
 # Wireless LAN (non-hamradio)
 #
-CONFIG_NET_RADIO=y
-
-#
-# Obsolete Wireless cards support (pre-802.11)
-#
-# CONFIG_STRIP is not set
-# CONFIG_ARLAN is not set
-# CONFIG_WAVELAN is not set
-# CONFIG_PCMCIA_WAVELAN is not set
-# CONFIG_PCMCIA_NETWAVE is not set
-
-#
-# Wireless 802.11 Frequency Hopping cards support
-#
-# CONFIG_PCMCIA_RAYCS is not set
-
-#
-# Wireless 802.11b ISA/PCI cards support
-#
-# CONFIG_IPW2100 is not set
-# CONFIG_IPW2200 is not set
-# CONFIG_AIRO is not set
-# CONFIG_HERMES is not set
-# CONFIG_ATMEL is not set
-
-#
-# Wireless 802.11b Pcmcia/Cardbus cards support
-#
-# CONFIG_AIRO_CS is not set
-# CONFIG_PCMCIA_WL3501 is not set
-
-#
-# Prism GT/Duette 802.11(a/b/g) PCI/Cardbus support
-#
-CONFIG_PRISM54=m
-CONFIG_HOSTAP=m
-CONFIG_HOSTAP_FIRMWARE=y
-# CONFIG_HOSTAP_FIRMWARE_NVRAM is not set
-CONFIG_HOSTAP_PLX=m
-CONFIG_HOSTAP_PCI=m
-CONFIG_HOSTAP_CS=m
-CONFIG_NET_WIRELESS=y
+# CONFIG_NET_RADIO is not set
 
 #
 # PCMCIA network device support
@@ -2269,7 +2227,6 @@ CONFIG_USB_BELKIN=y
 CONFIG_USB_ARMLINUX=y
 CONFIG_USB_EPSON2888=y
 CONFIG_USB_NET_ZAURUS=m
-# CONFIG_USB_ZD1201 is not set
 # CONFIG_USB_MON is not set
 
 #
