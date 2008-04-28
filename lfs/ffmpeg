@@ -36,7 +36,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       = "sdl"
 
 ###############################################################################
 # Top-level Rules
