@@ -3,3 +3,5 @@ etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc
 opt/pakfire/lib/functions.pl
+var/ipfire/urlfilter/bin/prebuild.pl
+srv/web/ipfire/cgi-bin/urlfilter.cgi
