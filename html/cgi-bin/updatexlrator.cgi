@@ -458,6 +458,9 @@ END
 		} elsif ($metadata[1] eq 'Avira')
 		{
 			print "<img src='/images/updxl-src-avira.gif' alt='Avira' />&nbsp;</td>\n";
+		} elsif ($metadata[1] eq 'AVG')
+		{
+			print "<img src='/images/updxl-src-avg.gif' alt='AVG' />&nbsp;</td>\n";
 		} elsif ($metadata[1] eq 'Avast')
 		{
 			print "<img src='/images/updxl-src-avast.gif' alt='Avast' />&nbsp;</td>\n";
@@ -554,6 +557,9 @@ print <<END
 		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-avira.gif' alt='Avira' /></td>
 		<td class='base'>Avira</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updxl-src-avg.gif' alt='AVG' /></td>
+		<td class='base'>AVG</td>
 		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updxl-src-apple.gif' alt='Apple' /></td>
 		<td class='base'>Apple</td>

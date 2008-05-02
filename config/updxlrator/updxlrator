@@ -154,6 +154,16 @@ while (<>) {
 	{ 
 	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"Apple"); 
 	}
+
+	# -----------------------------------------------------------
+	# Section: AVG Downloads
+	# -----------------------------------------------------------
+
+	if ($dsturl =~ m@^http://[^/]*\.(grisoft|avg)\.com/.*\.(bin)$@i)
+	{
+	$from_local_cache = &cache_access($dsturl,$hostaddr,$username,"AVG");
+	}
+
 	
 	# ----------------------------------------------------------- 
 	# Section: Kaspersky Downloads
