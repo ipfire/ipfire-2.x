@@ -353,15 +353,6 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
               	$filtersettings{'VALID'} = 'yes';
 		&savesettings;
 
-		system("chown -R nobody.nobody $dbdir");
-
-		if (-e "$dbdir/custom/allowed/domains.db") { unlink("$dbdir/custom/allowed/domains.db"); }
-		if (-e "$dbdir/custom/allowed/urls.db")    { unlink("$dbdir/custom/allowed/urls.db"); }
-		if (-e "$dbdir/custom/blocked/domains.db") { unlink("$dbdir/custom/blocked/domains.db"); }
-		if (-e "$dbdir/custom/blocked/urls.db")    { unlink("$dbdir/custom/blocked/urls.db"); }
-
-		&setpermissions ($dbdir);
-
 		system('/usr/local/bin/squidctrl restart >/dev/null 2>&1');
 	}
 }
@@ -2541,6 +2532,13 @@ sub savesettings
 	delete $filtersettings{'CUSTOM_EXPRESSIONS'};
 	delete $filtersettings{'BACKGROUND'};
 	delete $filtersettings{'UPDATEFILE'};
+
+	system("chown -R nobody.nobody $dbdir");
+	system('/usr/bin/squidGuard -C custom/allowed/domains >/dev/null 2>&1');
+	system('/usr/bin/squidGuard -C custom/allowed/urls >/dev/null 2>&1');
+	system('/usr/bin/squidGuard -C custom/blocked/domains >/dev/null 2>&1');
+	system('/usr/bin/squidGuard -C custom/blocked/urls >/dev/null 2>&1 ');
+	&setpermissions ($dbdir);
 
 	&General::writehash("${General::swroot}/urlfilter/settings", \%filtersettings);
 }

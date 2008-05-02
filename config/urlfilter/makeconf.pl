@@ -36,10 +36,6 @@ print FILE "}\n";
 close FILE;
 print "\n";
 
-print "Building blacklist databases ";
-system("$swroot/urlfilter/bin/prebuild.pl");
-print "\n";
-
 print "Creating custom directories ";
 mkdir("$dbdir/custom");
 mkdir("$dbdir/custom/allowed");
@@ -48,6 +44,10 @@ system("touch $dbdir/custom/allowed/domains");
 system("touch $dbdir/custom/allowed/urls");
 system("touch $dbdir/custom/blocked/domains");
 system("touch $dbdir/custom/blocked/urls");
+print "\n";
+
+print "Building blacklist databases ";
+system("$swroot/urlfilter/bin/prebuild.pl");
 print "\n";
 
 exit

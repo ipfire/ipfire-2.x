@@ -9,11 +9,6 @@ $dbdir="/var/ipfire/urlfilter/blacklists";
 
 system("/usr/bin/squidGuard -C all");
 
-if (-e "$dbdir/custom/allowed/domains.db") { unlink("$dbdir/custom/allowed/domains.db"); }
-if (-e "$dbdir/custom/allowed/urls.db")    { unlink("$dbdir/custom/allowed/urls.db"); }
-if (-e "$dbdir/custom/blocked/domains.db") { unlink("$dbdir/custom/blocked/domains.db"); }
-if (-e "$dbdir/custom/blocked/urls.db")    { unlink("$dbdir/custom/blocked/urls.db"); }
-
 system("chown -R nobody.nobody $dbdir");
 
 &setpermissions ($dbdir);
