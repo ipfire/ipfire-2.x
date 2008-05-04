@@ -95,5 +95,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /opt/vdr/etc
 	cd $(DIR_APP) && install *.conf /opt/vdr/etc/
 	cp -Rvf $(DIR_SRC)/config/vdr /opt
+	ln -sf ../init.d/vdr /etc/rc.d/rc3.d/S60vdr
+	ln -sf ../init.d/vdr /etc/rc.d/rc0.d/K40vdr
+	ln -sf ../init.d/vdr /etc/rc.d/rc6.d/K40vdr
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

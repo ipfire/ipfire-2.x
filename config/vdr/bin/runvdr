@@ -12,7 +12,7 @@
 PLUGOPTS="-Pstreamdev-server"
 
 VDRPRG="./bin/vdr"
-VDRCMD="$VDRPRG -w 60 -c /opt/vdr/etc $PLUGOPTS $*"
+VDRCMD="/bin/nice --11 $VDRPRG -w 60 -c /opt/vdr/etc $PLUGOPTS $*"
 
 KILL="killall -q -TERM"
 
