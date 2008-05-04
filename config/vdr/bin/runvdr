@@ -33,8 +33,18 @@ while (true) do
 #     rmmod stv0299
 #     rmmod dvb_core
 #     modprobe dvb_ttpci
+#     sleep 5
 #
-      sleep 1
+# Check if DVB device is present / remove this check if you
+# would use vdr as streaming client only
+#
+      if [ ! -e /dev/dvb/adapter0/frontend0 ]; then
+	  echo No DVB tuner found!
+	  exit 1
+      fi
+#
+#     Run VDR    
+#
       eval "$VDRCMD"
       if test $? -eq 0 -o $? -eq 2; then exit; fi
       $KILL $VDRPRG
