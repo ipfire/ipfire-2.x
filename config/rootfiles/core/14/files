@@ -2,3 +2,9 @@ etc/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc
+etc/squid
+usr/lib/squid
+usr/sbin/squid
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+srv/web/ipfire/html/images/updxl-src-avg.gif
+usr/sbin/updxlrator

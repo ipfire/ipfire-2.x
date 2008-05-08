@@ -2,4 +2,4 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 extract_files
-/etc/init.d/mISDN config
+/var/ipfire/urlfilter/bin/prebuild.pl
