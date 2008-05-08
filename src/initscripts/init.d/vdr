@@ -26,7 +26,7 @@ case "${1}" in
 		if [ ! -e /dev/dvb/adapter0/frontend0 ]; then
 		   boot_mesg "Error! No DVB tuner found."
 		   echo_failure
-		   exit 1;
+		   exit 0;
 		fi	
 		loadproc screen -dmS vdr /opt/vdr/bin/runvdr
 		;;

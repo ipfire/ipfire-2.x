@@ -17,7 +17,7 @@ VDRCMD="/bin/nice --11 $VDRPRG -w 60 -c /opt/vdr/etc $PLUGOPTS $*"
 KILL="killall -q -TERM"
 
 if [ "$(ps -A | grep " vdr")" != "" ]; then
-   echo vdr is already running!
+   echo Error! VDR is already running!
    exit 1
 fi
 

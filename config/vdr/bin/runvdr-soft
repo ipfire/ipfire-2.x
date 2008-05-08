@@ -1,3 +1,5 @@
 #!/bin/sh
 clear
-runvdr -P\'softdevice -vo fb:\' > /dev/null 2>&1
+runvdr -P\'softdevice -vo fb:\' > /tmp/vdrsoft.log 2>&1
+tail /tmp/vdrsoft.log
+rm /tmp/vdrsoft.log

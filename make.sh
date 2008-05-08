@@ -340,6 +340,7 @@ buildipfire() {
   ipfiremake atl1			SMP=1
   ipfiremake dm9601			SMP=1
   ipfiremake kqemu			SMP=1
+  ipfiremake v4l-dvb			SMP=1
   ipfiremake sane		KMOD=1	SMP=1
   ipfiremake linux
   ipfiremake ipp2p
@@ -350,6 +351,7 @@ buildipfire() {
   ipfiremake atl1
   ipfiremake dm9601
   ipfiremake kqemu
+  ipfiremake v4l-dvb
   ipfiremake sane		KMOD=1
   ipfiremake pkg-config
   ipfiremake linux-atm
