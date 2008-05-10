@@ -1,0 +1,62 @@
+diff -Naur v4l-dvb-4c4fd6b8755c.org/linux/drivers/media/video/videodev.c v4l-dvb/linux/drivers/media/video/videodev.c
+--- v4l-dvb-4c4fd6b8755c.org/linux/drivers/media/video/videodev.c	2008-05-02 12:51:27.000000000 +0200
++++ v4l-dvb/linux/drivers/media/video/videodev.c	2008-05-10 14:40:07.000000000 +0200
+@@ -492,7 +492,7 @@
+ 
+ static struct class video_class = {
+ 	.name    = VIDEO_NAME,
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,13)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19)
+ 	.release = video_release,
+ #else
+ 	.dev_attrs = video_device_attrs,
+@@ -2102,28 +2102,28 @@
+ 
+ 	/* sysfs class */
+ 	memset(&vfd->class_dev, 0x00, sizeof(vfd->class_dev));
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,13)
+-	if (vfd->dev)
+-		vfd->class_dev.dev = vfd->dev;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19)
++//	if (vfd->dev)
++//		vfd->class_dev.dev = vfd->dev;
+ #else
+ 	if (vfd->dev)
+ 		vfd->class_dev.parent = vfd->dev;
+ #endif
+-	vfd->class_dev.class       = &video_class;
++//	vfd->class_dev.class       = &video_class;
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,12)
+-	vfd->class_dev.devt        = MKDEV(VIDEO_MAJOR, vfd->minor);
++//	vfd->class_dev.devt        = MKDEV(VIDEO_MAJOR, vfd->minor);
+ #endif
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,13)
+-	sprintf(vfd->class_dev.class_id, "%s%d", name_base, i - base);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19)
++//	sprintf(vfd->class_dev.class_id, "%s%d", name_base, i - base);
+ #else
+ 	sprintf(vfd->class_dev.bus_id, "%s%d", name_base, i - base);
+ #endif
+-	ret = device_register(&vfd->class_dev);
+-	if (ret < 0) {
+-		printk(KERN_ERR "%s: device_register failed\n",
++//	ret = device_register(&vfd->class_dev);
++//	if (ret < 0) {
++		printk(KERN_ERR "%s: device_register disabled\n",
+ 		       __func__);
+-		goto fail_minor;
+-	}
++//		goto fail_minor;
++//	}
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,13)
+ 	ret = class_device_create_file(&vfd->class_dev, &class_device_attr_name);
+ 	if (ret < 0) {
+@@ -2176,7 +2176,7 @@
+ 		panic("videodev: bad unregister");
+ 
+ 	video_device[vfd->minor]=NULL;
+-	device_unregister(&vfd->class_dev);
++//	device_unregister(&vfd->class_dev);
+ 	mutex_unlock(&videodev_lock);
+ }
+ EXPORT_SYMBOL(video_unregister_device);
