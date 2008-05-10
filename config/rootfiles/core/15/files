@@ -124,7 +124,6 @@ lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/pvrusb2/pvrusb2.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/compat_ioctl32.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/tvaudio.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/cx25840/cx25840.ko
-lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/tuner.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/saa7115.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/tda7432.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/bt8xx/bttv.ko
@@ -255,7 +254,6 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/pvrusb2/pvrusb2.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/compat_ioctl32.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tvaudio.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/cx25840/cx25840.ko
-lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tuner.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7115.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tda7432.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/bt8xx/bttv.ko
