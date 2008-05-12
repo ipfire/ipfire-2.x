@@ -258,3 +258,9 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7115.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tda7432.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/bt8xx/bttv.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tveeprom.ko
+etc/squid
+usr/lib/squid
+usr/sbin/squid
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+srv/web/ipfire/html/images/updxl-src-avg.gif
+usr/sbin/updxlrator
