@@ -31,6 +31,9 @@ my $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];
 require '/var/ipfire/general-functions.pl';
 
 my %proxysettings=();
+$proxysettings{'ENABLE_FILTER'} = 'off';
+$proxysettings{'ENABLE_CLAMAV'} = 'off';
+$proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
 # define here your redirectors (use a comma sperated list)

@@ -3,3 +3,4 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 extract_files
 /var/ipfire/urlfilter/bin/prebuild.pl
+/etc/init.d/squid restart

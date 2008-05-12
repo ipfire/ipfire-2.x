@@ -1,5 +1,11 @@
+usr/lib/perl5/site_perl/5.8.8/Audio/MPD
+usr/lib/perl5/site_perl/5.8.8/Audio/MPD.pm
+usr/lib/perl5/5.8.8/Readonly.pm
+usr/lib/perl5/5.8.8/Class/Accessor
+usr/lib/perl5/5.8.8/Class/Accessor.pm
 usr/local/bin/mpfirectrl
 srv/web/ipfire/cgi-bin/mpfire.cgi
+srv/web/ipfire/html/images/mpfire
 var/ipfire/backup/addons/includes/mpfire
 var/ipfire/menu.d/EX-mpfire.menu
 var/ipfire/mpfire
