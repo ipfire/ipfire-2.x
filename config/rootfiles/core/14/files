@@ -282,3 +282,4 @@ srv/web/ipfire/html/images/media-skip-forward.png
 srv/web/ipfire/html/images/media-optical.png
 srv/web/ipfire/html/images/media-playback-stop.png
 srv/web/ipfire/html/images/media-shuffle.png
+usr/share/curl/curl-ca-bundle.crt
