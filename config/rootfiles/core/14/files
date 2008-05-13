@@ -128,6 +128,12 @@ lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/saa7115.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/tda7432.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/bt8xx/bttv.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/tveeprom.ko
+lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/saa7134
+lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/saa7134/saa6752hs.ko
+lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/saa7134/saa7134-dvb.ko
+lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/saa7134/saa7134-empress.ko
+lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/saa7134/saa7134.ko
+lib/modules/2.6.16.57-ipfire/kernel/drivers/media/video/tuner.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/common/ir-common.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/common/saa7146_vv.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/common/tuners/tea5761.ko
@@ -258,6 +264,12 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7115.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tda7432.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/bt8xx/bttv.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tveeprom.ko
+lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7134
+lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7134/saa6752hs.ko
+lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7134/saa7134-dvb.ko
+lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7134/saa7134-empress.ko
+lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/saa7134/saa7134.ko
+lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/video/tuner.ko
 var/ipfire/langs
 etc/squid
 usr/lib/squid
