@@ -573,6 +573,7 @@ buildipfire() {
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake bc
+  ipfiremake esniper
 }
 
 buildinstaller() {
