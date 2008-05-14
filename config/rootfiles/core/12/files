@@ -30,7 +30,6 @@ lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/b2c2/b2c2-flexcop-pci.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/b2c2/b2c2-flexcop.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/b2c2/b2c2-flexcop-usb.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/frontends/s5h1420.ko
-lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/frontends/dib3000-common.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/frontends/dib3000mb.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/frontends/mt352.ko
 lib/modules/2.6.16.57-ipfire/kernel/drivers/media/dvb/frontends/cx22702.ko
@@ -93,7 +92,6 @@ lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/b2c2/b2c2-flexcop-pci.
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/b2c2/b2c2-flexcop.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/b2c2/b2c2-flexcop-usb.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/frontends/s5h1420.ko
-lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/frontends/dib3000-common.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/frontends/dib3000mb.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/frontends/mt352.ko
 lib/modules/2.6.16.57-ipfire-smp/kernel/drivers/media/dvb/frontends/cx22702.ko
