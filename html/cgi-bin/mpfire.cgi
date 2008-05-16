@@ -101,7 +101,7 @@ if ( $ENV{'QUERY_STRING'} =~ /title/){
 <meta http-equiv='refresh' content='5'>
 <title></title>
 <body>
-<table width='100%' cellspacing='0' align='center' style="background-image:url(/images/mpfire/box.png)">
+<table width='100%' cellspacing='0' align='center' style="background-image:url(/images/mpfire/box.png);background-repeat:no-repeat">
 END
 ;
 	print"<tr ><td align='center'><font color='red' face='Verdana' size='2'><br />".encode('utf-8', $song)."<br /><br /></font></td></tr></table></body>";
@@ -440,7 +440,7 @@ END
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire search'});
 # box to quickly search artist, album or title
 print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'mpfire songs'}'>
 <table width='95%' cellspacing='0'>
 <tr>
 <td align='right' width='33%'>$Lang::tr{'artist'}</td>

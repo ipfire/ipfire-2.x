@@ -12,7 +12,7 @@
 case "$1" in
 	start)
 		boot_mesg "Starting MPD..."
-		/bin/nice --20 /usr/bin/mpd
+		/bin/nice --5 /usr/bin/mpd
     evaluate_retval
 		;;
 	stop)
