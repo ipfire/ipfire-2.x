@@ -86,6 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir /srv/web/esniper
 	tar xvfz $(DIR_DL)/es-f_1.0.0.tgz -C /srv/web/esniper
 	chown -Rv nobody.nobody /srv/web/esniper
-
+	chmod -Rv 755 /srv/web/esniper
+	chmod -v 777 /srv/web/esniper
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
