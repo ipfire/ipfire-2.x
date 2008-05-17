@@ -1,4 +1,4 @@
-etc/init.d/firewall
+etc/rc.d/init.d/firewall
 usr/local/bin/makegraphs
 var/ipfire/langs
 var/ipfire/optionsfw/settings

@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.1 ==
+== List of softwares used to build IPFire Version: 2.2-test ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -70,7 +70,6 @@
 * dhcp-3.1.0
 * dhcpcd-2.0.8
 * diffutils-2.8.1
-* dm9601-2.6
 * dnsmasq-2.40
 * dosfstools-2.11
 * e2fsprogs-1.39
@@ -128,7 +127,7 @@
 * ipp2p-0.8.2
 * ipp2p-0.8.2-iptables
 * iproute2-2.6.16-060323
-* iptables-1.3.5
+* iptables-1.3.8
 * iptstate-2.1
 * iputils-ss020927
 * java-1.5.0_06-for-ipfire
@@ -163,7 +162,7 @@
 * libwww-perl-5.803
 * libxml2-2.6.26
 * libxslt-1.1.17
-* linux-2.6.16.57
+* linux-2.6.20.21
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
@@ -178,7 +177,6 @@
 * man-pages-2.34
 * mbr-1.1.8
 * mc-4.6.1
-* mcs7830-060926
 * memtest86+-1.65
 * misc-progs
 * mkinitcpio-0.5.9
@@ -213,7 +211,7 @@
 * openmailadmin-1.0.0
 * openssh-4.7p1
 * openssl-0.9.8g
-* openswan-2.4.9
+* openswan-2.4.12
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4

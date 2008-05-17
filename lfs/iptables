@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.3.5
+VER        = 1.3.8
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -45,7 +45,7 @@ netfilter-layer7-v2.9.tar.gz 	= $(URL_IPFIRE)/netfilter-layer7-v2.9.tar.gz
 libnfnetlink-0.0.25.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-0.0.25.tar.bz2
 libnetfilter_queue-0.0.13.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.13.tar.bz2
 
-$(DL_FILE)_MD5 = 00fb916fa8040ca992a5ace56d905ea5
+$(DL_FILE)_MD5 = 0a9209f928002e5eee9cdff8fef4d4b3
 netfilter-layer7-v2.9.tar.gz_MD5 = ebf9043a5352ebe6dbd721989ef83dee
 libnfnetlink-0.0.25.tar.bz2_MD5 = fc915a2e66d282e524af6ef939042d7d
 libnetfilter_queue-0.0.13.tar.bz2_MD5 = 660cbfd3dc8c10bf9b1803cd2b688256

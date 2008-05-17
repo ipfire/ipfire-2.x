@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.9
+VER        = 2.4.12
 
 THISAPP    = openswan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 845f12d80d443cfa1a52f2b53b987bee
+$(DL_FILE)_MD5 = 0bca0cc205d2d83eff64a7cea825ce7a
 
 install : $(TARGET)
 
@@ -88,8 +88,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf $(CONFIG_ROOT)/certs /etc/ipsec.d/certs
 	ln -sf $(CONFIG_ROOT)/crls  /etc/ipsec.d/crls
 	
-	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-startklips-1.patch
-	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-realsetup-1.patch
+	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.12-startklips-1.patch
+#	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-realsetup-1.patch
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown-1.patch
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown_x509-1.patch
 	cd /etc/ipsec.d/policies && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-clear-1.patch

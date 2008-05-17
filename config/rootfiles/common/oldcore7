@@ -1,11 +1,11 @@
 etc/collectd.conf
-etc/init.d/collectd
+etc/rc.d/init.d/collectd
 etc/rc.d/rc0.d/K50collectd
 etc/rc.d/rc3.d/S20collectd
 etc/rc.d/rc6.d/K50collectd
 etc/rc.d/rc3.d/S19smartenabler
-etc/init.d/smartenabler
-etc/init.d/networking/red
+etc/rc.d/init.d/smartenabler
+etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/network.cgi
@@ -18,5 +18,5 @@ usr/sbin/collectd
 var/ipfire/graphs.pl
 var/ipfire/menu.d/20-status.menu
 var/ipfire/langs
-lib/modules/2.6.16.57-ipfire/kernel/drivers/ieee1394/sbp2.ko
+lib/modules/KVER-ipfire/kernel/drivers/ieee1394/sbp2.ko
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat

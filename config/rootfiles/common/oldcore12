@@ -1,0 +1,11 @@
+etc/udev/dvb.sh
+etc/udev/rules.d/10-dvb.rules
+srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/urlfilter.cgi
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+srv/web/ipfire/cgi-bin/pakfire.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+opt/pakfire/lib/functions.pl
+var/ipfire/langs
+etc/sysconfig/modules

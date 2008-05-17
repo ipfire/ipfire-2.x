@@ -55,6 +55,7 @@ core/%:
 	eval $$(cat /usr/src/config/rootfiles/$@/meta)
 	cp -f /usr/src/config/rootfiles/$@/update.sh /install/packages/package
 	cp -f /usr/src/config/rootfiles/$@/files /install/packages/package/ROOTFILES
+	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
 	chmod 755 /install/packages/package/update.sh
 	cd / && tar cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*'
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES

@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.1"										# Version number
+VERSION="2.2-test"										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
 NICE=10													# Nice level
@@ -336,9 +336,9 @@ buildipfire() {
   ipfiremake zaptel			SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake r8168			SMP=1
-  ipfiremake mcs7830			SMP=1
+  #ipfiremake mcs7830			SMP=1
   ipfiremake atl1			SMP=1
-  ipfiremake dm9601			SMP=1
+  #ipfiremake dm9601			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
   ipfiremake sane		KMOD=1	SMP=1
@@ -347,9 +347,9 @@ buildipfire() {
   ipfiremake zaptel
   ipfiremake r8169
   ipfiremake r8168
-  ipfiremake mcs7830
+  #ipfiremake mcs7830
   ipfiremake atl1
-  ipfiremake dm9601
+  #ipfiremake dm9601
   ipfiremake kqemu
   ipfiremake v4l-dvb
   ipfiremake sane		KMOD=1
@@ -670,7 +670,7 @@ buildpackages() {
 }
 
 ipfirepackages() {
-	ipfiremake core-updates
+	#ipfiremake core-updates
 	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
 		if [ -e $BASEDIR/lfs/$i ]; then
 			ipfiredist $i

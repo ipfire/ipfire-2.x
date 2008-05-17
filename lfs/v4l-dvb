@@ -78,13 +78,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -N -p1 \
-	 < $(DIR_SRC)/src/patches/v4l-dvb-kernel2.6.16-disabledvideodev.patch
 	cp -f $(DIR_SRC)/config/v4l-dvb/config $(DIR_APP)/v4l/.config
 ifeq "$(SMP)" "1"
-	cd $(DIR_APP) && make release VER=2.6.16.57-ipfire-smp
+	cd $(DIR_APP) && make release VER=$(KVER)-ipfire-smp
 else
-	cd $(DIR_APP) && make release VER=2.6.16.57-ipfire
+	cd $(DIR_APP) && make release VER=$(KVER)-ipfire
 endif
 	cd $(DIR_APP) && make $(MAKETUNING) all
 	cd $(DIR_APP) && make install
