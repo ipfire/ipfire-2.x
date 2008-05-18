@@ -1,0 +1,2 @@
+# SCSI devices
+BUS=="scsi", KERNEL=="sr[0-9]*",	NAME="scd%n", SYMLINK+="sr%n"
