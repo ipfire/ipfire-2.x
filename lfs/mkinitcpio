@@ -72,6 +72,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./install.sh ""
 	sed -i 's|^FILELIST=.*|FILELIST="$$(mktemp)"|g' /sbin/mkinitcpio
-	sed -i 's|^HOOKS=.*|HOOKS="base udev autodetect ide usb scsi sata filesystems"|g' /etc/mkinitcpio.conf
+	sed -i 's|^HOOKS=.*|HOOKS="base udev autodetect ide usb scsi pata sata filesystems"|g' /etc/mkinitcpio.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
