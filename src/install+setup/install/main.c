@@ -501,6 +501,10 @@ int main(int argc, char *argv[])
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	}
 
+	/* Remove the ide hook if we install sda */
+	if ( scsi_disk==1 ) {
+	  replace("/harddisk/etc/mkinitcpio.conf", " ide ", " ");
+	}
 	/* Going to make our initrd... */
 	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd.img -k %s-ipfire", KERNEL_VERSION);
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
