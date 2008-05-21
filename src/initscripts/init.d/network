@@ -31,11 +31,11 @@ init_networking() {
 	boot_mesg "Setting up firewall"
 	/etc/rc.d/init.d/firewall start; evaluate_retval
 
-	boot_mesg "Setting up traffic accounting"
-	/etc/rc.d/helper/writeipac.pl || failed=1
-	/usr/sbin/fetchipac -S || failed=1
-	(exit ${failed})
-	evaluate_retval
+#	boot_mesg "Setting up traffic accounting"
+#	/etc/rc.d/helper/writeipac.pl || failed=1
+#	/usr/sbin/fetchipac -S || failed=1
+#	(exit ${failed})
+#	evaluate_retval
 
 	boot_mesg "Setting up DMZ pinholes"
 	/usr/local/bin/setdmzholes; evaluate_retval
