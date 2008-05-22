@@ -62,9 +62,9 @@ if ($cgigraphs[1] =~ /disk/){
 	          &Graphs::updatediskgraph ("year",$device);}}
 if ($cgigraphs[2] ne "" ) {&Graphs::updatepinggraph("hour",$cgigraphs[1]);&Graphs::updatepinggraph("week",$cgigraphs[1]);&Graphs::updatepinggraph("month",$cgigraphs[1]);&Graphs::updatepinggraph("year",$cgigraphs[1]);}
 if ($cgigraphs[1] =~ /fwhits/) {&Graphs::updatefwhitsgraph("hour");&Graphs::updatefwhitsgraph("week");&Graphs::updatefwhitsgraph("month");&Graphs::updatefwhitsgraph("year");}
-if ($cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /ipsec/ || $cgigraphs[1] =~ /orange/ || $cgigraphs[1] =~ /red/ ) {&Graphs::updateifgraph($cgigraphs[1], "hour");&Graphs::updateifgraph($cgigraphs[1], "week");&Graphs::updateifgraph($cgigraphs[1], "month");&Graphs::updateifgraph($cgigraphs[1], "year");}
+if ($cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /ipsec/ || $cgigraphs[1] =~ /orange/ || $cgigraphs[1] =~ /ppp/ || $cgigraphs[1] =~ /red/ ) {&Graphs::updateifgraph($cgigraphs[1], "hour");&Graphs::updateifgraph($cgigraphs[1], "week");&Graphs::updateifgraph($cgigraphs[1], "month");&Graphs::updateifgraph($cgigraphs[1], "year");}
 
-if ($cgigraphs[1] =~ /(network|green|blue|orange|red|ipsec)/ || $cgigraphs[2] ne "") {
+if ($cgigraphs[1] =~ /(network|green|blue|orange|red|ppp|ipsec)/ || $cgigraphs[2] ne "") {
 	&Header::openpage($Lang::tr{'network traffic graphs'}, 1, '');
 } else {
 	&Header::openpage($Lang::tr{'system graphs'}, 1, '');
@@ -72,7 +72,7 @@ if ($cgigraphs[1] =~ /(network|green|blue|orange|red|ipsec)/ || $cgigraphs[2] ne
 
 &Header::openbigbox('100%', 'left');
 
-if ($cgigraphs[1] =~ /(green|blue|orange|red|ipsec|cpu|memory|swap|disk|load|fwhits|processes)/ || $cgigraphs[2] ne "") {
+if ($cgigraphs[1] =~ /(green|blue|orange|red|ppp|ipsec|cpu|memory|swap|disk|load|fwhits|processes)/ || $cgigraphs[2] ne "") {
 	my $graph = $cgigraphs[1];
 	my $graphname = ucfirst(lc($cgigraphs[1]));
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
@@ -121,7 +121,7 @@ if ( $cgigraphs[1] eq "cpu" || $cgigraphs[1] eq "load" ) { print "<a href='/cgi-
 elsif ( $cgigraphs[1] eq "memory" || $cgigraphs[1] eq "swap" ) { print "<a href='/cgi-bin/memory.cgi'>"; }
 elsif ( $cgigraphs[1] eq "processes" ) { print "<a href='/cgi-bin/services.cgi'>"; }
 elsif ( $cgigraphs[1] =~ /disk/ ) { print "<a href='/cgi-bin/media.cgi'>"; }
-elsif ( $cgigraphs[1] =~ /red/ || $cgigraphs[1] =~ /ipsec/ ) { print "<a href='/cgi-bin/network.cgi?network=red'>"; }
+elsif ( $cgigraphs[1] =~ /red/ || $cgigraphs[1] =~ /ppp/ || $cgigraphs[1] =~ /ipsec/ ) { print "<a href='/cgi-bin/network.cgi?network=red'>"; }
 elsif ( $cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /orange/ ) { print "<a href='/cgi-bin/network.cgi?network=internal'>"; }
 elsif ( $cgigraphs[1] eq "fwhits" || $cgigraphs[2] ne "" ) { print "<a href='/cgi-bin/network.cgi?network=other'>"; }
 print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
