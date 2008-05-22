@@ -23,4 +23,6 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+chmod 777 /srv/web/esniper
+chown nobody.nobody /srv/web/esniper
 /etc/init.d/apache reload

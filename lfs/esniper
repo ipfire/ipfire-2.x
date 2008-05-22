@@ -82,11 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	
 	-mkdir /srv/web/esniper
 	tar xvfz $(DIR_DL)/es-f_1.0.0.tgz -C /srv/web/esniper
 	chown -Rv nobody.nobody /srv/web/esniper
-	chmod -Rv 755 /srv/web/esniper
-	chmod -v 777 /srv/web/esniper
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
