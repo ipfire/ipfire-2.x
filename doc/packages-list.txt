@@ -283,6 +283,8 @@
 * vim-7.0
 * vlan.1.9
 * vlc-0.8.6f
+* vnstat-1.6
+* vnstati-beta3
 * vsftpd-2.0.5
 * w_scan-20080105
 * wget-1.10.2

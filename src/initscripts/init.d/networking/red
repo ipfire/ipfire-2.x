@@ -88,6 +88,9 @@ case "${1}" in
 				exit 1
 			fi
 		fi
+
+		## Create/Update vnstat
+		/usr/bin/vnstat -u -i ${DEVICE} --force > /dev/null 2>&1
 		
 		if [ "${TYPE}" == "STATIC" ]; then
 		
@@ -318,7 +321,8 @@ case "${1}" in
 				evaluate_retval
 				# echo PPP: /usr/sbin/pppd pty "$PPPOE_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC
 			fi
-			
+			## Create/Update vnstat
+			/usr/bin/vnstat -u -i ppp0 --force > /dev/null 2>&1
 			/etc/rc.d/init.d/connectd start
 
 		fi
@@ -372,6 +376,8 @@ case "${1}" in
 		
 		elif [ "$TYPE" == "PPPOE" ]; then
 			boot_mesg "Bringing down the PPP interface ..."
+			## Update vnstat
+			/usr/bin/vnstat -u -i ppp0 > /dev/null 2>&1
 			rm -f /var/ipfire/red/keepconnected
 			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
 			evaluate_retval
@@ -391,8 +397,11 @@ case "${1}" in
 		killall -w -s KILL /usr/sbin/pppd >/dev/null 2>&1
 		killall -w -s KILL br2684ctl >/dev/null 2>&1
 		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
+
+		## Update vnstat
+		/usr/bin/vnstat -u -i ${DEVICE} > /dev/null 2>&1
+		exit 0;
 		;;
-		
 esac
 
 # End

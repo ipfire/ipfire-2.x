@@ -100,6 +100,8 @@ sub updatehdddata
 
 ## Update ipac logs
 #system ('/usr/sbin/fetchipac');
+## Update vnstat
+system ('/usr/bin/vnstat -u');
 
 my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 system("unlink /tmp/hddstatus && touch /tmp/hddstatus");

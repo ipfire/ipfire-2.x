@@ -575,6 +575,8 @@ buildipfire() {
   ipfiremake squidclamav
   ipfiremake bc
   ipfiremake esniper
+  ipfiremake vnstat
+  ipfiremake vnstati
 }
 
 buildinstaller() {

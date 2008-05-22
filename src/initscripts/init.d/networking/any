@@ -76,6 +76,9 @@ case "${1}" in
 			echo_failure
 			exit 1
 		fi
+
+		# Create/Update vnstat database
+		/usr/bin/vnstat -u -i ${DEVICE} --force > /dev/null 2>&1
 		
 		boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
 		ip addr add ${args} dev ${DEVICE}
@@ -86,8 +89,10 @@ case "${1}" in
 		boot_mesg "Removing IPv4 address ${ADDRESS} from the ${DEVICE} interface..."
 		ip addr del ${args} dev ${DEVICE}
 		evaluate_retval
-		;;
-		
-esac
 
+		# Update vnstat database
+		/usr/bin/vnstat -u -i ${DEVICE}	> /dev/null 2>&1
+		exit 0;
+		;;
+esac
 # End
