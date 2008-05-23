@@ -77,8 +77,8 @@ case "${1}" in
 			exit 1
 		fi
 
-		# Create/Update vnstat database
-		/usr/bin/vnstat -u -i ${DEVICE} --force > /dev/null 2>&1
+		# Create & Enable vnstat data collection
+		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
 		
 		boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
 		ip addr add ${args} dev ${DEVICE}
@@ -90,8 +90,8 @@ case "${1}" in
 		ip addr del ${args} dev ${DEVICE}
 		evaluate_retval
 
-		# Update vnstat database
-		/usr/bin/vnstat -u -i ${DEVICE}	> /dev/null 2>&1
+		# Disable vnstat collection
+		/usr/bin/vnstat -u -i ${DEVICE}	-r --disable > /dev/null 2>&1
 		exit 0;
 		;;
 esac

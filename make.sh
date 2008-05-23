@@ -333,24 +333,22 @@ buildipfire() {
   ipfiremake rp-pppoe
   ipfiremake unzip
   ipfiremake linux			SMP=1
+  ipfiremake linux-fusion		SMP=1
   ipfiremake ipp2p			SMP=1
   ipfiremake zaptel			SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake r8168			SMP=1
-  #ipfiremake mcs7830			SMP=1
   ipfiremake atl1			SMP=1
-  #ipfiremake dm9601			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
   ipfiremake sane		KMOD=1	SMP=1
   ipfiremake linux
+  ipfiremake linux-fusion
   ipfiremake ipp2p
   ipfiremake zaptel
   ipfiremake r8169
   ipfiremake r8168
-  #ipfiremake mcs7830
   ipfiremake atl1
-  #ipfiremake dm9601
   ipfiremake kqemu
   ipfiremake v4l-dvb
   ipfiremake sane		KMOD=1
@@ -577,6 +575,7 @@ buildipfire() {
   ipfiremake esniper
   ipfiremake vnstat
   ipfiremake vnstati
+  ipfiremake lm_sensors
 }
 
 buildinstaller() {

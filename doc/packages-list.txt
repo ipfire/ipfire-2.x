@@ -164,8 +164,10 @@
 * libxslt-1.1.17
 * linux-2.6.20.21
 * linux-atm-2.4.1
+* linux-fusion-7.0.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
+* lm_sensors-3.0.2
 * logrotate-3.7.1
 * logwatch-7.3.6
 * lsof-4.78
