@@ -25,7 +25,7 @@
 include Config
 
 PKG_NAME   = collectd
-VER        = 4.3.0
+VER        = 4.4.0
 
 THISAPP    = collectd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ace292ba502f09379741e79561cf2c89
+$(DL_FILE)_MD5 = 76ec42bf1976c1d4110443d845decca3
 
 install : $(TARGET)
 
@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
-		--disable-{apache,apple_sensors,csv,ipvs,memcached,mysql,netlink,nginx,nut} \
+		--disable-{apple_sensors,csv,ipvs,memcached,mysql,netlink,nginx,nut} \
 		--disable-{perl,serial,sensors,snmp,tape,vserver,wireless,xmms} \
 		--enable-{apcups,battery,cpu{,freq},df,disk,dns,email,entropy,exec,hddtemp} \
 		--enable-{interface,iptables,irq,load,logfile,mbmon,memory,multimeter} \

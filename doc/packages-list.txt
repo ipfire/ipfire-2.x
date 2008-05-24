@@ -60,6 +60,7 @@
 * clamav-0.93
 * cmake-2.4.8
 * collectd-4.3.0
+* collectd-4.4.0
 * coreutils-5.96
 * cpio-2.6
 * cups-1.3.7
@@ -241,6 +242,7 @@
 * rsync-2.6.9
 * rtorrent-0.7.9
 * samba-3.0.28a
+* samba-3.0.29
 * sane-1.0.19
 * sane-1.0.19-kmod
 * screen-4.0.3
