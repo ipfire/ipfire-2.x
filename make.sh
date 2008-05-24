@@ -574,6 +574,7 @@ buildipfire() {
   ipfiremake squidclamav
   ipfiremake bc
   ipfiremake esniper
+  ipfiremake mod_perl
 }
 
 buildinstaller() {
