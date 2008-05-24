@@ -1,0 +1,620 @@
+diff -urN openssl-0.9.8g.orig/crypto/engine/eng_padlock.c openssl-0.9.8g/crypto/engine/eng_padlock.c
+--- openssl-0.9.8g.orig/crypto/engine/eng_padlock.c	2007-11-13 20:00:28.390611512 +0100
++++ openssl-0.9.8g/crypto/engine/eng_padlock.c	2007-11-13 20:02:52.398818072 +0100
+@@ -74,12 +74,23 @@
+ #ifndef OPENSSL_NO_AES
+ #include <openssl/aes.h>
+ #endif
++#ifndef OPENSSL_NO_SHA
++#include <openssl/sha.h>
++#endif
+ #include <openssl/rand.h>
+ #include <openssl/err.h>
+
+ #ifndef OPENSSL_NO_HW
+ #ifndef OPENSSL_NO_HW_PADLOCK
+
++/* PadLock RNG is disabled by default */
++#define	PADLOCK_NO_RNG	1
++
++/* No ASM routines for SHA in MSC yet */
++#ifdef _MSC_VER
++#define OPENSSL_NO_SHA
++#endif
++
+ /* Attempt to have a single source for both 0.9.7 and 0.9.8 :-) */
+ #if (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+ #  ifndef OPENSSL_NO_DYNAMIC_ENGINE
+@@ -135,52 +146,89 @@
+ static int padlock_init(ENGINE *e);
+
+ /* RNG Stuff */
++#ifndef PADLOCK_NO_RNG
+ static RAND_METHOD padlock_rand;
++#endif
+
+ /* Cipher Stuff */
+ #ifndef OPENSSL_NO_AES
+ static int padlock_ciphers(ENGINE *e, const EVP_CIPHER **cipher, const int **nids, int nid);
+ #endif
+
++/* Digest Stuff */
++#ifndef OPENSSL_NO_SHA
++static int padlock_digests(ENGINE *e, const EVP_MD **digest, const int **nids, int nid);
++#endif
++
+ /* Engine names */
+ static const char *padlock_id = "padlock";
+ static char padlock_name[100];
+
+ /* Available features */
+-static int padlock_use_ace = 0;	/* Advanced Cryptography Engine */
+-static int padlock_use_rng = 0;	/* Random Number Generator */
++enum padlock_flags {
++	PADLOCK_RNG  = 0x01,
++	PADLOCK_ACE  = 0x02,
++	PADLOCK_ACE2 = 0x04,
++	PADLOCK_PHE  = 0x08,
++	PADLOCK_PMM  = 0x10
++};
++enum padlock_flags padlock_flags;
++
++#define PADLOCK_HAVE_RNG  (padlock_flags & PADLOCK_RNG)
++#define PADLOCK_HAVE_ACE  (padlock_flags & (PADLOCK_ACE|PADLOCK_ACE2))
++#define PADLOCK_HAVE_ACE1 (padlock_flags & PADLOCK_ACE)
++#define PADLOCK_HAVE_ACE2 (padlock_flags & PADLOCK_ACE2)
++#define PADLOCK_HAVE_PHE  (padlock_flags & PADLOCK_PHE)
++#define PADLOCK_HAVE_PMM  (padlock_flags & PADLOCK_PMM)
++
+ #ifndef OPENSSL_NO_AES
+ static int padlock_aes_align_required = 1;
+ #endif
+
++/* Init / Max buffer sizes for SHA */
++#define PADLOCK_SHA_INIT_ORD	13	/* = 8192 */
++#define PADLOCK_SHA_MAX_ORD	13	/* = 8192 */
++
+ /* ===== Engine "management" functions ===== */
+
+ /* Prepare the ENGINE structure for registration */
+ static int
+ padlock_bind_helper(ENGINE *e)
+ {
++	char phe_string[20];
++
+ 	/* Check available features */
+ 	padlock_available();
+
+-#if 1	/* disable RNG for now, see commentary in vicinity of RNG code */
+-	padlock_use_rng=0;
+-#endif
++	/* Build PHE info with buffer size argument */
++	if (PADLOCK_HAVE_PHE)
++		BIO_snprintf(phe_string, sizeof(phe_string),
++			     "PHE(%lu) ", 1UL << PADLOCK_SHA_MAX_ORD);
+
+ 	/* Generate a nice engine name with available features */
+ 	BIO_snprintf(padlock_name, sizeof(padlock_name),
+-		"VIA PadLock (%s, %s)",
+-		 padlock_use_rng ? "RNG" : "no-RNG",
+-		 padlock_use_ace ? "ACE" : "no-ACE");
++		"VIA PadLock: %s%s%s%s%s",
++		 padlock_flags ? "" : "not supported",
++		 PADLOCK_HAVE_RNG ? "RNG " : "",
++		 PADLOCK_HAVE_ACE ? (PADLOCK_HAVE_ACE2 ? "ACE2 " : "ACE ") : "",
++		 PADLOCK_HAVE_PHE ? phe_string : "",
++		 PADLOCK_HAVE_PMM ? "PMM " : "");
+
+ 	/* Register everything or return with an error */
+ 	if (!ENGINE_set_id(e, padlock_id) ||
+ 	    !ENGINE_set_name(e, padlock_name) ||
+
+-	    !ENGINE_set_init_function(e, padlock_init) ||
++	    !ENGINE_set_init_function(e, padlock_init)
+ #ifndef OPENSSL_NO_AES
+-	    (padlock_use_ace && !ENGINE_set_ciphers (e, padlock_ciphers)) ||
++	    || (PADLOCK_HAVE_ACE && !ENGINE_set_ciphers (e, padlock_ciphers))
++#endif
++#ifndef OPENSSL_NO_SHA
++	    || (PADLOCK_HAVE_PHE && !ENGINE_set_digests (e, padlock_digests))
++#endif
++#ifndef PADLOCK_NO_RNG
++	    || (PADLOCK_HAVE_RNG && !ENGINE_set_RAND (e, &padlock_rand))
+ #endif
+-	    (padlock_use_rng && !ENGINE_set_RAND (e, &padlock_rand))) {
++	    ) {
+ 		return 0;
+ 	}
+
+@@ -210,7 +258,7 @@
+ static int
+ padlock_init(ENGINE *e)
+ {
+-	return (padlock_use_rng || padlock_use_ace);
++	return (padlock_flags);
+ }
+
+ /* This stuff is needed if this ENGINE is being compiled into a self-contained
+@@ -237,6 +285,17 @@
+
+ /* ===== Here comes the "real" engine ===== */
+
++#ifdef __GNUC__
++#define likely(x)       __builtin_expect(!!(x), 1)
++#define unlikely(x)     __builtin_expect(!!(x), 0)
++#else
++#define likely(x)       (x)
++#define unlikely(x)     (x)
++#endif
++
++/* How to test if we need to typedef uint32_t ??? */
++typedef unsigned long uint32_t;
++
+ #ifndef OPENSSL_NO_AES
+ /* Some AES-related constants */
+ #define AES_BLOCK_SIZE		16
+@@ -362,10 +421,22 @@
+ 		: "+a"(eax), "=d"(edx) : : "ecx");
+
+ 	/* Fill up some flags */
+-	padlock_use_ace = ((edx & (0x3<<6)) == (0x3<<6));
+-	padlock_use_rng = ((edx & (0x3<<2)) == (0x3<<2));
++	padlock_flags |= ((edx & (0x3<<3)) ? PADLOCK_RNG : 0);
++	padlock_flags |= ((edx & (0x3<<7)) ? PADLOCK_ACE : 0);
++	padlock_flags |= ((edx & (0x3<<9)) ? PADLOCK_ACE2 : 0);
++	padlock_flags |= ((edx & (0x3<<11)) ? PADLOCK_PHE : 0);
++	padlock_flags |= ((edx & (0x3<<13)) ? PADLOCK_PMM : 0);
+
+-	return padlock_use_ace + padlock_use_rng;
++	return padlock_flags;
++}
++
++static inline void
++padlock_htonl_block(uint32_t *data, size_t count)
++{
++	while (count--) {
++		asm volatile ("bswapl %0" : "+r"(*data));
++		data++;
++	}
+ }
+
+ #ifndef OPENSSL_NO_AES
+@@ -374,12 +445,9 @@
+ padlock_bswapl(AES_KEY *ks)
+ {
+ 	size_t i = sizeof(ks->rd_key)/sizeof(ks->rd_key[0]);
+-	unsigned int *key = ks->rd_key;
++	uint32_t *key = (uint32_t*) ks->rd_key;
+
+-	while (i--) {
+-		asm volatile ("bswapl %0" : "+r"(*key));
+-		key++;
+-	}
++	padlock_htonl_block(key, i);
+ }
+ #endif
+
+@@ -1154,6 +1222,415 @@
+
+ #endif /* OPENSSL_NO_AES */
+
++#ifndef OPENSSL_NO_SHA
++
++// #define PADLOCK_SHA_STAT 1
++
++union sha_all_ctx {
++	SHA_CTX		sha_ctx;
++	SHA256_CTX	sha256_ctx;	/* shared with SHA224 */
++};
++
++typedef int (*f_sha_init)(void *c);
++typedef int (*f_sha_update)(void *c, const void *_data, size_t len);
++typedef int (*f_sha_final)(unsigned char *md, void *c);
++typedef void (*f_sha_padlock)(char *in, unsigned char *out, int count);
++
++struct sha_digest_functions {
++	f_sha_init	init;
++	f_sha_update	update;
++	f_sha_final	final;
++	f_sha_padlock	padlock;
++};
++
++/* Don't forget to initialize all relevant
++ * fields in padlock_sha_init() or face the
++ * consequences!!!
++ * BTW We don't use bzero() on this structure
++ *     because zeroing fallback_ctx is
++ *     a waste of time. */
++struct padlock_digest_data {
++	void		*buf_start, *buf_alloc;
++	ssize_t		used;
++	unsigned long	order:8, bypass:1;
++	/* Fallback support */
++	struct sha_digest_functions	fallback_fcs;
++	union sha_all_ctx		fallback_ctx;
++#ifdef PADLOCK_SHA_STAT
++	size_t		stat_count, stat_total;
++#endif
++};
++
++#ifdef PADLOCK_SHA_STAT
++size_t all_count, all_total;
++#endif
++
++#define DIGEST_DATA(ctx) ((struct padlock_digest_data *)(ctx->md_data))
++#define DDATA_FREE(ddata) ((size_t)(1L << ddata->order) - ddata->used)
++
++static void
++padlock_sha_bypass(struct padlock_digest_data *ddata)
++{
++	if (ddata->bypass)
++		return;
++
++	ddata->fallback_fcs.init(&ddata->fallback_ctx);
++	if (ddata->buf_start && ddata->used > 0) {
++		ddata->fallback_fcs.update(&ddata->fallback_ctx, ddata->buf_start, ddata->used);
++		if (ddata->buf_alloc) {
++			memset(ddata->buf_start, 0, ddata->used);
++			free(ddata->buf_alloc);
++			ddata->buf_alloc = 0;
++		}
++	}
++	ddata->buf_start = 0;
++	ddata->used = 0;
++	ddata->bypass = 1;
++
++	return;
++}
++
++static void
++padlock_do_sha1(char *in, char *out, int count)
++{
++	/* We can't store directly to *out as it
++	 * doesn't have to be aligned. But who cares,
++	 * it's only a few bytes... */
++	char buf[128+16];
++	unsigned char *output = NEAREST_ALIGNED(buf);
++
++	((uint32_t*)output)[0] = 0x67452301;
++	((uint32_t*)output)[1] = 0xEFCDAB89;
++	((uint32_t*)output)[2] = 0x98BADCFE;
++	((uint32_t*)output)[3] = 0x10325476;
++	((uint32_t*)output)[4] = 0xC3D2E1F0;
++
++	asm volatile (".byte 0xf3,0x0f,0xa6,0xc8"	/* rep xsha1 */
++		      : "+S"(in), "+D"(output)
++		      : "c"(count), "a"(0));
++
++	memcpy(out, output, 5 * sizeof(uint32_t));
++
++	padlock_htonl_block((uint32_t*)out, 5);
++}
++
++static void
++padlock_do_sha224(char *in, char *out, int count)
++{
++	/* We can't store directly to *out as it
++	 * doesn't have to be aligned. But who cares,
++	 * it's only a few bytes... */
++	char buf[128+16];
++	unsigned char *output = NEAREST_ALIGNED(buf);
++
++	((uint32_t*)output)[0] = 0xC1059ED8UL;
++	((uint32_t*)output)[1] = 0x367CD507UL;
++	((uint32_t*)output)[2] = 0x3070DD17UL;
++	((uint32_t*)output)[3] = 0xF70E5939UL;
++	((uint32_t*)output)[4] = 0xFFC00B31UL;
++	((uint32_t*)output)[5] = 0x68581511UL;
++	((uint32_t*)output)[6] = 0x64F98FA7UL;
++	((uint32_t*)output)[7] = 0xBEFA4FA4UL;
++
++	asm volatile (".byte 0xf3,0x0f,0xa6,0xd0"	/* rep xsha256 */
++		      : "+S"(in), "+D"(output)
++		      : "c"(count), "a"(0));
++
++	memcpy(out, output, 7 * sizeof(uint32_t));
++
++	padlock_htonl_block((uint32_t*)out, 7);
++}
++
++static void
++padlock_do_sha256(char *in, char *out, int count)
++{
++	/* We can't store directly to *out as it
++	 * doesn't have to be aligned. But who cares,
++	 * it's only a few bytes... */
++	char buf[128+16];
++	unsigned char *output = NEAREST_ALIGNED(buf);
++
++	((uint32_t*)output)[0] = 0x6A09E667;
++	((uint32_t*)output)[1] = 0xBB67AE85;
++	((uint32_t*)output)[2] = 0x3C6EF372;
++	((uint32_t*)output)[3] = 0xA54FF53A;
++	((uint32_t*)output)[4] = 0x510E527F;
++	((uint32_t*)output)[5] = 0x9B05688C;
++	((uint32_t*)output)[6] = 0x1F83D9AB;
++	((uint32_t*)output)[7] = 0x5BE0CD19;
++
++	asm volatile (".byte 0xf3,0x0f,0xa6,0xd0"	/* rep xsha256 */
++		      : "+S"(in), "+D"(output)
++		      : "c"(count), "a"(0));
++
++	memcpy(out, output, 8 * sizeof(uint32_t));
++
++	padlock_htonl_block((uint32_t*)out, 8);
++}
++
++static int
++padlock_sha_init(EVP_MD_CTX *ctx)
++{
++	struct padlock_digest_data *ddata = DIGEST_DATA(ctx);
++
++	ddata->used = 0;
++	ddata->bypass = 0;
++
++	ddata->order = PADLOCK_SHA_INIT_ORD;
++	ddata->buf_alloc = malloc((1L << ddata->order) + 16);
++	ddata->buf_start = NEAREST_ALIGNED(ddata->buf_alloc);
++
++	return 1;
++}
++
++static int
++padlock_sha1_init(EVP_MD_CTX *ctx)
++{
++	struct padlock_digest_data *ddata = DIGEST_DATA(ctx);
++
++	ddata->fallback_fcs.init = (f_sha_init)SHA1_Init;
++	ddata->fallback_fcs.update = (f_sha_update)SHA1_Update;
++	ddata->fallback_fcs.final = (f_sha_final)SHA1_Final;
++	ddata->fallback_fcs.padlock = (f_sha_padlock)padlock_do_sha1;
++
++	return padlock_sha_init(ctx);
++}
++
++static int
++padlock_sha224_init(EVP_MD_CTX *ctx)
++{
++	struct padlock_digest_data *ddata = DIGEST_DATA(ctx);
++
++	ddata->fallback_fcs.init = (f_sha_init)SHA224_Init;
++	ddata->fallback_fcs.update = (f_sha_update)SHA224_Update;
++	ddata->fallback_fcs.final = (f_sha_final)SHA224_Final;
++	ddata->fallback_fcs.padlock = (f_sha_padlock)padlock_do_sha224;
++
++	return padlock_sha_init(ctx);
++}
++
++static int
++padlock_sha256_init(EVP_MD_CTX *ctx)
++{
++	struct padlock_digest_data *ddata = DIGEST_DATA(ctx);
++
++	ddata->fallback_fcs.init = (f_sha_init)SHA256_Init;
++	ddata->fallback_fcs.update = (f_sha_update)SHA256_Update;
++	ddata->fallback_fcs.final = (f_sha_final)SHA256_Final;
++	ddata->fallback_fcs.padlock = (f_sha_padlock)padlock_do_sha256;
++
++	return padlock_sha_init(ctx);
++}
++
++static int
++padlock_sha_update(EVP_MD_CTX *ctx, const void *data, size_t length)
++{
++	struct padlock_digest_data *ddata = DIGEST_DATA(ctx);
++
++#ifdef PADLOCK_SHA_STAT
++	ddata->stat_count++;
++	ddata->stat_total += length;
++	all_count++;
++	all_total += length;
++#endif
++	if (unlikely(ddata->bypass)) {
++		ddata->fallback_fcs.update(&ddata->fallback_ctx, data, length);
++		return 1;
++	}
++	if (unlikely(DDATA_FREE(ddata) < length)) {
++		if (likely(ddata->used + length > (1 << PADLOCK_SHA_MAX_ORD))) {
++			/* Too much data to be stored -> bypass to SW SHA */
++			padlock_sha_bypass(ddata);
++			ddata->fallback_fcs.update(&ddata->fallback_ctx, data, length);
++			return 1;
++		} else {
++			/* Resize the alocated buffer */
++			char *new_buf;
++			size_t new_size;
++
++			while ((1<<++ddata->order) < (ddata->used + length));
++			new_size = (1<<ddata->order);
++			if(!(new_buf = realloc(ddata->buf_alloc, new_size + 16))) {
++				/* fallback plan again */
++				padlock_sha_bypass(ddata);
++				ddata->fallback_fcs.update(&ddata->fallback_ctx, data, length);
++				return 1;
++			}
++			ddata->buf_alloc = new_buf;
++			ddata->buf_start = NEAREST_ALIGNED(new_buf);
++		}
++	}
++
++	memcpy(ddata->buf_start + ddata->used, data, length);
++	ddata->used += length;
++
++	return 1;
++}
++
++static int
++padlock_sha_final(EVP_MD_CTX *ctx, unsigned char *md)
++{
++	struct padlock_digest_data *ddata = DIGEST_DATA(ctx);
++
++#ifdef PADLOCK_SHA_STAT
++	fprintf(stderr, "PadLock CTX: cnt=%zu, tot=%zu, avg=%zu\n",
++		ddata->stat_count, ddata->stat_total,
++		ddata->stat_count ? (ddata->stat_total/ddata->stat_count) : 0);
++	fprintf(stderr, "PadLock ALL: cnt=%zu, tot=%zu, avg=%zu\n",
++		all_count, all_total, all_count ? (all_total/all_count) : 0);
++#endif
++
++	if (ddata->bypass) {
++		ddata->fallback_fcs.final(md, &ddata->fallback_ctx);
++		return 1;
++	}
++
++	/* Pass the input buffer to PadLock microcode... */
++	ddata->fallback_fcs.padlock(ddata->buf_start, md, ddata->used);
++	memset(ddata->buf_start, 0, ddata->used);
++	free(ddata->buf_alloc);
++	ddata->buf_start = 0;
++	ddata->buf_alloc = 0;
++	ddata->used = 0;
++
++	return 1;
++}
++
++static int
++padlock_sha_copy(EVP_MD_CTX *to,const EVP_MD_CTX *from)
++{
++	struct padlock_digest_data *ddata_from = DIGEST_DATA(from);
++	struct padlock_digest_data *ddata_to = DIGEST_DATA(to);
++
++	memcpy(ddata_to, ddata_from, sizeof(struct padlock_digest_data));
++	if (ddata_from->buf_alloc) {
++		ddata_to->buf_alloc = malloc(1L << ddata_to->order);
++		if (!ddata_to->buf_start) {
++			fprintf(stderr, "%s(): malloc() failed\n", __func__);
++			exit(1);
++		}
++		ddata_to->buf_start = NEAREST_ALIGNED(ddata_to->buf_alloc);
++		memcpy(ddata_to->buf_start, ddata_from->buf_start, ddata_from->used);
++	}
++	return 1;
++}
++
++static int
++padlock_sha_cleanup(EVP_MD_CTX *ctx)
++{
++	struct padlock_digest_data *ddata = DIGEST_DATA(ctx);
++
++	if (ddata->buf_alloc) {
++		memset(ddata->buf_start, 0, ddata->used);
++		free(ddata->buf_alloc);
++	}
++
++	memset(ddata, 0, sizeof(struct padlock_digest_data));
++
++	return 1;
++}
++
++static const EVP_MD padlock_sha1_md = {
++	NID_sha1,
++	NID_sha1WithRSAEncryption,
++	SHA_DIGEST_LENGTH,
++	0,
++	padlock_sha1_init,
++	padlock_sha_update,
++	padlock_sha_final,
++	padlock_sha_copy,
++	padlock_sha_cleanup,
++	EVP_PKEY_RSA_method,
++	SHA_CBLOCK,
++	sizeof(struct padlock_digest_data),
++};
++
++static const EVP_MD padlock_sha224_md = {
++	NID_sha224,
++	NID_sha224WithRSAEncryption,
++	SHA224_DIGEST_LENGTH,
++	0,
++	padlock_sha224_init,
++	padlock_sha_update,
++	padlock_sha_final,
++	padlock_sha_copy,
++	padlock_sha_cleanup,
++	EVP_PKEY_RSA_method,
++	SHA_CBLOCK,
++	sizeof(struct padlock_digest_data),
++};
++
++static const EVP_MD padlock_sha256_md = {
++	NID_sha256,
++	NID_sha256WithRSAEncryption,
++	SHA256_DIGEST_LENGTH,
++	0,
++	padlock_sha256_init,
++	padlock_sha_update,
++	padlock_sha_final,
++	padlock_sha_copy,
++	padlock_sha_cleanup,
++	EVP_PKEY_RSA_method,
++	SHA_CBLOCK,
++	sizeof(struct padlock_digest_data),
++};
++
++static int padlock_digest_nids[] = {
++#if !defined(OPENSSL_NO_SHA)
++	NID_sha1,
++#endif
++#if !defined(OPENSSL_NO_SHA256)
++#if !defined(OPENSSL_NO_SHA224)
++	NID_sha224,
++#endif
++	NID_sha256,
++#endif
++};
++
++static int padlock_digest_nids_num = sizeof(padlock_digest_nids)/sizeof(padlock_digest_nids[0]);
++
++static int
++padlock_digests (ENGINE *e, const EVP_MD **digest, const int **nids, int nid)
++{
++	/* No specific digest => return a list of supported nids ... */
++	if (!digest) {
++		*nids = padlock_digest_nids;
++		return padlock_digest_nids_num;
++	}
++
++	/* ... or the requested "digest" otherwise */
++	switch (nid) {
++#if !defined(OPENSSL_NO_SHA)
++	  case NID_sha1:
++	    *digest = &padlock_sha1_md;
++	    break;
++#endif
++
++
++#if !defined(OPENSSL_NO_SHA256)
++#if !defined(OPENSSL_NO_SHA224)
++	  case NID_sha224:
++	    *digest = &padlock_sha224_md;
++	    break;
++#endif	/* OPENSSL_NO_SHA224 */
++
++	  case NID_sha256:
++	    *digest = &padlock_sha256_md;
++	    break;
++#endif	/* OPENSSL_NO_SHA256 */
++
++	  default:
++	    /* Sorry, we don't support this NID */
++	    *digest = NULL;
++	    return 0;
++	}
++
++	return 1;
++}
++
++#endif /* OPENSSL_NO_SHA */
++
++#ifndef PADLOCK_NO_RNG
+ /* ===== Random Number Generator ===== */
+ /*
+  * This code is not engaged. The reason is that it does not comply
+@@ -1209,6 +1686,7 @@
+ 	padlock_rand_bytes,	/* pseudorand */
+ 	padlock_rand_status,	/* rand status */
+ };
++#endif /* PADLOCK_NO_RNG */
+
+ #endif /* COMPILE_HW_PADLOCK */
+
