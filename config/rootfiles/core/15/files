@@ -2,3 +2,6 @@ etc/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc
+srv/web/ipfire/cgi-bin/pakfire.cgi
+srv/web/ipfire/cgi-bin/qos.cgi
+var/ipfire/langs

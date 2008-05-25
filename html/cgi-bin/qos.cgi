@@ -578,7 +578,7 @@ END
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 
 }
-elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
+elsif ($qossettings{'ACTION'} eq "$Lang::tr{'status'}" )
 {
 	&Header::openbox('100%', 'left', 'QoS Status');
 	if ($qossettings{'ENABLED'} eq 'on'){
@@ -592,7 +592,7 @@ elsif ($qossettings{'ACTION'} eq 'Statusinformationen')
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq 'Parentklasse hinzufuegen')
+elsif ($qossettings{'ACTION'} eq "$Lang::tr{'parentclass add'}" )
 {
 	&parentclass();
 	&Header::closebigbox();
@@ -645,21 +645,21 @@ END
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq 'Erweiterte Einstellungen')
+elsif ($qossettings{'ACTION'} eq "$Lang::tr{'urlfilter advanced settings'}" )
 {
 	&expert();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
 }
-if ($qossettings{'ACTIONBW'} eq 'Andern')
+if ($qossettings{'ACTIONBW'} eq "$Lang::tr{'modify'}" )
 {
 	&changebandwidth();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
 }
-if ($qossettings{'ACTIONDEF'} eq 'Andern')
+if ($qossettings{'ACTIONDEF'} eq "$Lang::tr{'modify'}" )
 {
 	&changedefclasses();
 	&Header::closebigbox();
@@ -715,7 +715,7 @@ END
 	  <table width='66%'>
 		<tr><td colspan='3'>&nbsp;
 		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}: 	<td width='30%' align='left'>$qossettings{'INC_SPD'}
-		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='Andern' />
+		    <td width='20%' rowspan='2' align='center' valign='middle'><input type='submit' name='ACTIONBW' value='$Lang::tr{'modify'}' />
 		<tr><td width='50%' align='right'>$Lang::tr{'uplink speed'}: 	<td width='30%' align='left'>$qossettings{'OUT_SPD'}
 		</table></form>
 END
@@ -727,7 +727,7 @@ END
 		<table width='66%'>
 		<tr><td colspan='3'><hr />
 		<tr><td width='50%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_INC'}
-		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='Andern' />
+		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='$Lang::tr{'modify'}' />
 		<tr><td width='50%' align='right'>$Lang::tr{'uplink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_OUT'}
 		<tr><td width='50%' align='right'>ACKs:				<td width='30%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr />
@@ -736,9 +736,9 @@ END
 		</form>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table border='0' cellpadding='0' cellspacing='0'>
-			<tr><td><input type='submit' name='ACTION' value='Parentklasse hinzufuegen' />
-			    <td><input type='submit' name='ACTION' value='Erweiterte Einstellungen' />
-			    <td><input type='submit' name='ACTION' value='Statusinformationen' />
+			<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'parentclass add'}' />
+			    <td><input type='submit' name='ACTION' value='$Lang::tr{'urlfilter advanced settings'}' />
+			    <td><input type='submit' name='ACTION' value='$Lang::tr{'status'}' />
 			</tr></table>
 	</form>
 END
