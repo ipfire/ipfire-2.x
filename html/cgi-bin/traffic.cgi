@@ -50,7 +50,7 @@ my %netsettings;
 &Header::openpage($Lang::tr{'sstraffic'}, 1, '');
 &Header::openbigbox('100%', 'left');
 
-&Header::openbox('100%', 'left', "$Lang::tr{'traffics'}");
+&Header::openbox('100%', 'center', "$Lang::tr{'traffics'}");
 
 # Display internal network
 display_vnstat($netsettings{'GREEN_DEV'});
@@ -83,23 +83,23 @@ sub display_vnstat
 {
 	my $device = $_[0];
 
-	# Sumary graph sometimes hang so i print the text
-	print "<B><PRE>";
-	system("/usr/bin/vnstat -s -i $device");
-	print "</PRE></B>";
-	# generate Graphs if they are older than 5 min (-c 5)
-	# Hour graph
-	system("/usr/bin/vnstati -c 5 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
-	# Day graph
-	system("/usr/bin/vnstati -c 5 -d -i $device -o /srv/web/ipfire/html/graphs/vnstat-d-$device.png");
-	# Month graph
-	system("/usr/bin/vnstati -c 5 -m -i $device -o /srv/web/ipfire/html/graphs/vnstat-m-$device.png");
-	# Top10 graph
-	system("/usr/bin/vnstati -c 5 -t -i $device -o /srv/web/ipfire/html/graphs/vnstat-t-$device.png");
+	my $testdata = `/usr/bin/vnstat -i $device | grep "enough data"`;
+
+	if (! $testdata) {
+	    system("/usr/bin/vnstati -c 5 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
+	    # Hour graph
+	    system("/usr/bin/vnstati -c 5 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
+	    # Day graph
+	    system("/usr/bin/vnstati -c 5 -d -i $device -o /srv/web/ipfire/html/graphs/vnstat-d-$device.png");
+	    # Month graph
+	    system("/usr/bin/vnstati -c 5 -m -i $device -o /srv/web/ipfire/html/graphs/vnstat-m-$device.png");
+	    # Top10 graph
+	    system("/usr/bin/vnstati -c 5 -t -i $device -o /srv/web/ipfire/html/graphs/vnstat-t-$device.png");
 
 # Generate HTML-Table with the graphs
 print <<END
 <table>
+<tr><td><img src="/graphs/vnstat-s-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-h-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-d-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-m-$device.png"></td></tr>
@@ -107,4 +107,8 @@ print <<END
 </table>
 END
 ;
+	    } else {
+		print"No data for $device !<br>";
+	    }
+	print"<hr>";
 }
