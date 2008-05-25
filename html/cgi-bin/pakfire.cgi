@@ -231,7 +231,7 @@ print <<END;
 					$Lang::tr{'pakfire last package update'} $packages_update_age ago
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='ACTION' value='update' />
-						<input type='submit' value='Liste aktualisieren' /><br />
+						<input type='submit' value='$Lang::tr{'calamaris refresh list'}' /><br />
 					</form>
 				<td align="center">
 				 <form method='post' action='$ENV{'SCRIPT_NAME'}'>

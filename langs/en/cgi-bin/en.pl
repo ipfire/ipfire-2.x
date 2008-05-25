@@ -19,6 +19,8 @@
 'ConnSched scheduled actions' => 'Scheduled actions',
 'ConnSched scheduler' => 'Scheduler',
 'ConnSched select profile' => 'Select profile',
+'modify' => 'Modify',
+'parentclass add' => 'Add parentclass',
 'ConnSched time' => 'Time:',
 'ConnSched up' => 'Up',
 'ConnSched weekdays' => 'Days of the week:',

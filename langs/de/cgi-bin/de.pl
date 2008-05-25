@@ -31,6 +31,8 @@
 'Level7 Rule' => 'Level7-Regel',
 'Local VPN IP' => 'Internes Netzwerk (GREEN)',
 'MTU' => 'MTU Size',
+'modify' => 'Ändern',
+'parentclass add' => 'Parentklasse hinzufügen',
 'Number of IPs for the pie chart' => 'Anzahl der angezeigten IPs im Diagramm',
 'Number of Ports for the pie chart' => 'Anzahl der angezeigten Ports im Diagramm',
 'OVPN' => 'OpenVPN',
