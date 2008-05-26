@@ -184,7 +184,6 @@
 * mkinitcpio-0.5.9
 * mktemp-1.5
 * mldonkey-2.9.2
-* mod_perl-2.0.4
 * module-init-tools-3.2.2
 * mpc-0.12.1
 * mpd-0.13.1

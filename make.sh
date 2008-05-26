@@ -576,7 +576,6 @@ buildipfire() {
   ipfiremake esniper
   ipfiremake vnstat
   ipfiremake vnstati
-  ipfiremake mod_perl
 }
 
 buildinstaller() {
