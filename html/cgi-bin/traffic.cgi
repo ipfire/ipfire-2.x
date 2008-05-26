@@ -83,10 +83,15 @@ sub display_vnstat
 {
 	my $device = $_[0];
 
-	my $testdata = `/usr/bin/vnstat -i $device | grep "enough data"`;
+	my $testdata = `/usr/bin/vnstat -i $device`;
 
-	if (! $testdata) {
-	    system("/usr/bin/vnstati -c 5 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
+	if ( $testdata =~ 'enough') {
+		print"No data for $device !<br>";
+	} else {
+	    # Falls back to textoutput if there was no % value because vnstati hang in this case
+	    if (!($testdata =~ 'nan%')) {
+		    system("/usr/bin/vnstati -c 5 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
+	    }
 	    # Hour graph
 	    system("/usr/bin/vnstati -c 5 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
 	    # Day graph
@@ -97,9 +102,15 @@ sub display_vnstat
 	    system("/usr/bin/vnstati -c 5 -t -i $device -o /srv/web/ipfire/html/graphs/vnstat-t-$device.png");
 
 # Generate HTML-Table with the graphs
+	    print "<table>";
+	    if ($testdata =~ 'nan%') {
+		print "<tr><td><b><pre>";
+		system("/usr/bin/vnstat -i $device");
+		print "</pre></b></td></tr>";
+	    } else {
+		print"<tr><td><img src=\"/graphs/vnstat-s-$device.png\"></td></tr>";
+	    }
 print <<END
-<table>
-<tr><td><img src="/graphs/vnstat-s-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-h-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-d-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-m-$device.png"></td></tr>
@@ -107,8 +118,6 @@ print <<END
 </table>
 END
 ;
-	    } else {
-		print"No data for $device !<br>";
 	    }
 	print"<hr>";
 }
