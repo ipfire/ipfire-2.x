@@ -20,9 +20,10 @@ case "$1" in
 # later mbmon will be replaced by lmsensors, if mbmon is not running on your
 # system, we advise to comment out these lines in order to prevent fail
 #
-		boot_mesg "Bringing up mbmon daemon..."
-		/usr/bin/mbmon -P 411 -r
-		evaluate_retval
+#		boot_mesg "Bringing up mbmon daemon..."
+#		/usr/bin/mbmon -P 411 -r
+#		evaluate_retval
+
 		;;
 
 	stop)
