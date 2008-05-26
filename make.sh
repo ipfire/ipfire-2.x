@@ -546,6 +546,7 @@ buildipfire() {
   ipfiremake centerim
   ipfiremake br2684ctl
   ipfiremake pcmciautils
+  ipfiremake lm_sensors
   ipfiremake collectd
   ipfiremake lcd4linux
   ipfiremake neon
@@ -575,7 +576,6 @@ buildipfire() {
   ipfiremake esniper
   ipfiremake vnstat
   ipfiremake vnstati
-  ipfiremake lm_sensors
   ipfiremake mod_perl
 }
 

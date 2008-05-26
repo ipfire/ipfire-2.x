@@ -80,10 +80,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
 		--disable-{apple_sensors,csv,ipvs,mbmon,memcached,mysql} \
 		--disable-{netlink,nginx,nut,perl,serial,snmp,tape,vserver,wireless,xmms} \
-		--disable-{perl,serial,sensors,snmp,tape,vserver,wireless,xmms} \
+		--disable-{perl,serial,snmp,tape,vserver,wireless,xmms} \
 		--enable-{apcups,battery,cpu{,freq},df,disk,dns,email,entropy,exec,hddtemp} \
 		--enable-{interface,iptables,irq,load,logfile,memory,multimeter} \
-		--enable-{network,nfs,ntpd,ping,processes,rrdtool,swap,sensors,syslog} \
+		--enable-{network,nfs,ntpd,ping,processes,rrdtool,sensors,swap,syslog} \
 		--enable-{tcpconns,unixsock,users} \
 		--with-rrdtool=/usr/share/rrdtool-1.2.15 --enable-debug
 	cd $(DIR_APP) && make install
