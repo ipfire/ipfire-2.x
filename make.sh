@@ -649,6 +649,9 @@ buildpackages() {
   fi
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz} $BASEDIR >> $LOGFILE 2>&1
 
+  # Create updater package
+  ipfiremake updater
+
   ipfirepackages
 
   # Cleanup
