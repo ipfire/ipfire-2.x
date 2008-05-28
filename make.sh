@@ -417,7 +417,6 @@ buildipfire() {
   ipfiremake libupnp
   ipfiremake ipp2p			IPT=1
   ipfiremake linux-igd
-  ipfiremake ipac-ng
   ipfiremake ipaddr
   ipfiremake iptstate
   ipfiremake iputils
@@ -534,7 +533,6 @@ buildipfire() {
   ipfiremake portmap
   ipfiremake nfs
   ipfiremake nmap
-  ipfiremake mbmon
   ipfiremake ncftp
   ipfiremake etherwake
   ipfiremake bwm-ng

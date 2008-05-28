@@ -22,13 +22,13 @@ $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 
 my %color = ();
 my %mainsettings = ();
-my %mbmonsettings = ();
+my %sensorsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 
-# If the collection deamon is working and collecting mbmon data there will be
-# some data source named after a common scheme, with the mbmonsettingsfile
+# If the collection deamon is working and collecting lm_sensors data there will be
+# some data source named after a common scheme, with the sensorssettingsfile
 # the user is able to deactivate some of this parameters, in case not to show
 # false collected value´s may be disable. The user has the ability to enter
 # custom graph names in order to change temp0 to cpu or motherboad
@@ -37,19 +37,23 @@ my $key;
 my $value;
 my @args = ();
 my $count = 0;
-my @mbmongraphs = ();
+my @sensorsgraphs = ();
 my @processesgraph = `ls -dA $rrdlog/collectd/localhost/processes-*/`;
-if ( -e "$rrdlog/collectd/localhost/mbmon" ){
-	 @mbmongraphs = `ls $rrdlog/collectd/localhost/mbmon/`;
-	 foreach (@mbmongraphs){
-	         chomp($_);
-	 				 my @name=split(/\./,$_);my $label = $name[0]; $label=~ s/-//;
-		 			 $mbmonsettings{'LABEL-'.$name[0]}="$label";
-			 		 $mbmonsettings{'LINE-'.$name[0]}="checked";
-   				 }
-	 }
+my @sensorsdir = `ls -dA $rrdlog/collectd/localhost/sensors-*/`;
+foreach (@sensorsdir)
+{
+	chomp($_);chop($_);
+	foreach (`ls $_/*`){
+		chomp($_);
+		push(@sensorsgraphs,$_);
+		$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+		my $label = $2.$3;$label=~ s/-//g;
+		$sensorsettings{'LABEL-'.$label}="$label";
+		$sensorsettings{'LINE-'.$label}="checked";
+	}
+}
 
-&General::readhash("${General::swroot}/mbmon/settings", \%mbmonsettings);
+&General::readhash("${General::swroot}/sensors/settings", \%sensorsettings);
 use Encode 'from_to';
 
 my %tr=();
@@ -536,43 +540,51 @@ sub overviewgraph {
 	print "$ERROR";
 }
 
-# Generate the Temperature Graph for the current period of time for values given by collecd and mbmon
+# Generate the Temperature Graph for the current period of time for values given by collecd and lm_sensors
 
 sub updatehwtempgraph {
 
   my $period = $_[0];
 
-  my @command = ("$graphs/mbmon-hwtemp-$period.png",
+  my @command = ("$graphs/sensors-hwtemp-$period.png",
 	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
 	"--alt-y-grid", "-w 600", "-h 125",
 	"--color", "SHADEA".$color{"color19"},"--color",
 	"SHADEB".$color{"color19"},"--color",
 	"BACK".$color{"color21"},
-	"-t $Lang::tr{'mbmon temp'} $Lang::tr{'graph per'} $Lang::tr{$period}");
+	"-t $Lang::tr{'sensors temp'} $Lang::tr{'graph per'} $Lang::tr{$period}");
 
-	foreach(@mbmongraphs){
-	chomp($_);
-	if ( $_ =~ /temperature/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");
-		 }
+	foreach(@sensorsgraphs){
+		chomp($_);
+		if ( $_ =~ /temperature/ ) {
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+			push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
+		}
 	}
 	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
-	foreach(@mbmongraphs){
-	chomp($_);
-	if ( $_ =~ /temperature/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
- 		 	 			 							 	 		 																		"GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MAX:%3.2lf C","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":AVERAGE:%3.2lf C","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MIN:%3.2lf C","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":LAST:%3.2lf C\\j",);}
+	foreach(@sensorsgraphs){
+		chomp($_);
+		if ( $_ =~ /temperature/ ){
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+			push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf C\\j",);
+		}
 	}
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
 	print "$ERROR";
 }
 
-# Generate the Voltage Graph for the current period of time for values given by collecd and mbmon
+# Generate the Voltage Graph for the current period of time for values given by collecd and lm_sensors
 
 sub updatehwvoltgraph {
 
   my $period = $_[0];
 
-  my @command = ("$graphs/mbmon-hwvolt-$period.png",
+  my @command = ("$graphs/sensors-hwvolt-$period.png",
 	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
 	"--alt-y-grid", "-w 600", "-h 125",
 	"--color", "SHADEA".$color{"color19"},"--color",
@@ -580,28 +592,37 @@ sub updatehwvoltgraph {
 	"BACK".$color{"color21"},
 	"-t $Lang::tr{'mbmon volt'} $Lang::tr{'graph per'} $Lang::tr{$period}");
 
-	foreach(@mbmongraphs){
-	chomp($_);
-	if ( $_ =~ /voltage/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");}
+	foreach(@sensorsgraphs){
+		chomp($_);
+		if ( $_ =~ /voltage/ ) {
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+			push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
+		}
 	}
 	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
-	foreach(@mbmongraphs){
-	chomp($_);
-	if ( $_ =~ /voltage/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
- 		 	 			 							 	 		 																		"GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MAX:%3.2lf V","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":AVERAGE:%3.2lf V","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MIN:%3.2lf V","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":LAST:%3.2lf V\\j",);}
+	foreach(@sensorsgraphs){
+		chomp($_);
+		if ( $_ =~ /voltage/ ){
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+			push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf V\\j",);
+		}
 	}
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
 	print "$ERROR";
 }
 
-# Generate the Load Graph for the current period of time for values given by collecd and mbmon
+# Generate the Load Graph for the current period of time for values given by collecd and lm_sensors
 
 sub updatehwfangraph {
 
   my $period = $_[0];
 
-  my @command = ("$graphs/mbmon-hwfan-$period.png",
+  my @command = ("$graphs/sensors-hwfan-$period.png",
 	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
 	"--alt-y-grid", "-w 600", "-h 125",
 	"--color", "SHADEA".$color{"color19"},"--color",
@@ -609,15 +630,24 @@ sub updatehwfangraph {
 	"BACK".$color{"color21"},
 	"-t $Lang::tr{'mbmon fan'} $Lang::tr{'graph per'} $Lang::tr{$period}");
 
-	foreach(@mbmongraphs){
-	chomp($_);
-	if ( $_ =~ /fanspeed/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"DEF:".$mbmonsettings{'LABEL-'.$name[0]}."=$rrdlog/collectd/localhost/mbmon/".$_.":value:AVERAGE");}
+	foreach(@sensorsgraphs){
+		chomp($_);
+		if ( $_ =~ /fanspeed/ ) {
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+			push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
+		}
 	}
 	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
-	foreach(@mbmongraphs){
-	chomp($_);
-	if ( $_ =~ /fanspeed/ ) {my @name=split(/\./,$_);if ( $mbmonsettings{'LINE-'.$name[0]} eq "off" ){next;}push(@command,"LINE3:".$mbmonsettings{'LABEL-'.$name[0]}.random_hex_color(6)."A0:".sprintf("%-25s",$mbmonsettings{'LABEL-'.$name[0]}),
- 		 	 			 							 	 		 																		"GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MAX:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":AVERAGE:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":MIN:%5.0lf RPM","GPRINT:".$mbmonsettings{'LABEL-'.$name[0]}.":LAST:%5.0lf RPM\\j",);}
+	foreach(@sensorsgraphs){
+		chomp($_);
+		if ( $_ =~ /fanspeed/ ){
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+			push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf RPM\\j",);
+		}
 	}
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
