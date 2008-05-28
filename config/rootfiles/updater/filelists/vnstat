@@ -1,5 +1,5 @@
-/etc/cron.d
-/etc/cron.d/vnstat
+#/etc/cron.d
+#/etc/cron.d/vnstat
 /etc/vnstat.conf
 /usr/bin/vnstat
 #usr/share/man/man1/vnstat.1

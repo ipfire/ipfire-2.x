@@ -1,0 +1,10 @@
+etc/udev/dvb.sh
+etc/udev/rules.d/10-dvb.rules
+etc/udev/rules.d/55-scsi-cdrom.rules
+etc/rc.d/init.d/network
+etc/rc.d/init.d/networking/any
+etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/networking/red.up/40-ipac
+usr/local/bin/getiptstate
+usr/local/bin/makegraphs
+srv/web/ipfire/cgi-bin/traffic.cgi

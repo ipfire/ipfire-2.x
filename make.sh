@@ -647,10 +647,10 @@ buildpackages() {
   if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
   	ipfiremake usb-stick
   fi
-  mv $LFS/install/images/{*.iso,*.tgz,*.img.gz} $BASEDIR >> $LOGFILE 2>&1
 
   # Create updater package
   ipfiremake updater
+  mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
 

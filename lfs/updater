@@ -59,17 +59,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
-	cd /tmp && tar cf /install/updater/files * && rm -rf *
-	tar tf /install/updater/files > /install/updater/ROOTFILES
+	cd /tmp && tar jcf /install/updater/files.ipfire * && rm -rf *
+
 	# Other files
 	cp $(DIR_SRC)/config/rootfiles/updater/update.sh /install/updater/
 	chmod 755 /install/updater/update.sh
-	cd /install/updater && tar cf ../packages/updater-$(SNAME)-$(VERSION).ipfire \
-		update.sh files ROOTFILES
+	cd /install/updater && tar jcf ../images/updater-$(SNAME)-$(VERSION).tar.bz2 \
+		update.sh files.ipfire
 	rm -rf /install/updater
-#	sed -e "s/NAME/updater/g" \
-#		-e "s/VER/$(VERSION)/g" \
-#		-e "s/RELEASE/$$(basename $@)/g" \
-#		-e "s/DEPS/$(DEPS)/g" \
-#		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-$(VERSION)-$$(basename $@).ipfire | awk '{ print $$5 }'`/g" \
-#		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-$$(basename $@)
