@@ -17,7 +17,7 @@ case "$1" in
 		fi
 
 		boot_mesg -n "Loading Sensor Modules..."
-		for modul in `cat /etc/sysconfig/lm_sensors | grep "MODULE_" | cut -d"=" -f2`; do
+		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
 		    modprobe $modul > /dev/null 2>&1;
 		    if [ ${?} = 0 ]; then
 			boot_mesg -n "$SUCCESS$modul$NORMAL ";
