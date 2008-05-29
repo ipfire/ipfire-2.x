@@ -59,8 +59,7 @@ var/ipfire/logging
 var/ipfire/main
 #var/ipfire/main/hosts
 #var/ipfire/main/settings
-var/ipfire/mbmon
-#var/ipfire/mbmon/settings
+var/ipfire/sensors
 var/ipfire/menu.d/00-menu.main
 var/ipfire/menu.d/10-system.menu
 var/ipfire/menu.d/20-status.menu

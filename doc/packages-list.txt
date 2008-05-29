@@ -121,7 +121,6 @@
 * icegenerator-0.5.5-pre2
 * igmpproxy-src-0.1-beta2
 * inetutils-1.4.2
-* ipac-ng-1.31
 * ipaddr-1.2
 * ipfireseeder-1.00
 * ipp2p-0.8.2
@@ -294,7 +293,6 @@
 * which-2.16
 * wireless_tools.28
 * xfsprogs-2.9.4
-* xmbmon205
 * xvidcore-1.1.0
 * zaptel-1.4.4
 * zlib-1.2.3
