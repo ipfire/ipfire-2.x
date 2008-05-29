@@ -107,17 +107,17 @@ else
 
  my @graphs = ("hwtemp","hwfan","hwvolt");
  foreach (@graphs){
- 				 					&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-									if (-e "$graphdir/sensors-$_-day.png"){
-											my $ftime = localtime((stat("$graphdir/sensors-$_-day.png"))[9]);
-											print "<center>";
-											print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-	  									print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=$_'>";
-											print "<img src='/graphs/sensors-$_-day.png' border='0' />";
-											print "</a><hr />";
-									}
-									else{print $Lang::tr{'no information available'};}
-									&Header::closebox();
+ 	&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+	if (-e "$graphdir/sensors-$_-day.png"){
+	    my $ftime = localtime((stat("$graphdir/sensors-$_-day.png"))[9]);
+	    print "<center>";
+	    print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	    print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=$_'>";
+	    print "<img src='/graphs/sensors-$_-day.png' border='0' />";
+	    print "</a><hr />";
+	    }
+	    else{print $Lang::tr{'no information available'};}
+	&Header::closebox();
  }
 	sensorsbox();
 }

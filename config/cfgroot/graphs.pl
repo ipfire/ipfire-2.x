@@ -30,7 +30,7 @@ my %sensorsettings = ();
 # If the collection deamon is working and collecting lm_sensors data there will be
 # some data source named after a common scheme, with the sensorssettingsfile
 # the user is able to deactivate some of this parameters, in case not to show
-# false collected value´s may be disable. The user has the ability to enter
+# false collected value´s may be disable. The user has the ability to ente
 # custom graph names in order to change temp0 to cpu or motherboad
 
 my $key;
@@ -70,7 +70,7 @@ if ((${Lang::language} eq 'el') ||
 }
 
 # Generate the CPU Graph for the current period of time for values given by
-# collectd atm only cpu average is displayed and only 1 or 2 cpu´s is working
+# collectd atm only cpu average is displayed and only 1 or 2 cpus is working
 
 sub updatecpugraph {
         my $period    = $_[0];
