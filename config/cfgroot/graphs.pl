@@ -401,16 +401,17 @@ sub updatefwhitsgraph {
 
 # Generate the Line Quality Graph for the current period of time for values given by collecd
 
-sub updatelqgraph {
+sub updatepinggraph {
 				my $period    = $_[0];
-				RRDs::graph ("$graphs/lq-$period.png",
+				my $host    = $_[1];
+				RRDs::graph ("$graphs/$host-$period.png",
 				"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
 				"--alt-y-grid", "-w 600", "-h 125", "-l 0", "-r", "-v ms",
-				"-t $Lang::tr{'linkq'} $Lang::tr{'graph per'} $Lang::tr{$period}",
+				"-t $Lang::tr{'linkq'} $host $Lang::tr{'graph per'} $Lang::tr{$period}",
 				"--color", "SHADEA".$color{"color19"},
 				"--color", "SHADEB".$color{"color19"},
 				"--color", "BACK".$color{"color21"},
-				"DEF:roundtrip=$rrdlog/collectd/localhost/ping/ping-gateway.rrd:ping:AVERAGE",
+				"DEF:roundtrip=$rrdlog/collectd/localhost/ping/ping-$host.rrd:ping:AVERAGE",
 				"COMMENT:$Lang::".sprintf("%-20s",$Lang::tr{'caption'})."\\j",
 				"CDEF:roundavg=roundtrip,PREV(roundtrip),+,2,/",
 				"CDEF:r0=roundtrip,30,MIN",
@@ -422,10 +423,9 @@ sub updatelqgraph {
 				"AREA:r2".$color{"color14"}."A0:70-150 ms",
 				"AREA:r1".$color{"color17"}."A0:30-70 ms",
 				"AREA:r0".$color{"color12"}."A0:<30 ms\\j",
-				"COMMENT:".sprintf("%-15s",$Lang::tr{'maximal'}),
-				"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
-				"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
-				"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j",
+				"COMMENT:$Lang::tr{'maximal'}",
+				"COMMENT:$Lang::tr{'average'}",
+				"COMMENT:$Lang::tr{'minimal'}","COMMENT:$Lang::tr{'current'}\\j",
 				"LINE1:roundtrip#707070:",
 				"GPRINT:roundtrip:MAX:%3.2lf ms",
 				"GPRINT:roundtrip:AVERAGE:%3.2lf ms",
