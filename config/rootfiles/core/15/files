@@ -4,4 +4,7 @@ usr/bin/bc
 usr/bin/dc
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
+srv/web/ipfire/cgi-bin/network.cgi
+srv/web/ipfire/cgi-bin/graphs.cgi
 var/ipfire/langs
+var/ipfire/graphs.pl

@@ -35,6 +35,7 @@ my %pppsettings=();
 my %netsettings=();
 my @cgiparams=();
 my @graphs=();
+my @pings=();
 my $iface='';
 my %dhcpsettings=();
 my %dhcpinfo=();
@@ -60,7 +61,11 @@ if ($cgiparams[1] =~ /red/) {
 	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd") {push (@graphs, ("ipsec0"));}
 }elsif ($cgiparams[1] =~ /other/) {
 	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
-	push (@graphs, ("lq"));
+	my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/*`;
+	foreach (@pinggraphs){
+	        $_ =~ /(.*)\/ping\/ping-(.*)\.rrd/;
+	        push(@pings,$2);
+	}
 	push (@graphs, ("fwhits"));
 }else {
 	&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
@@ -73,11 +78,30 @@ if ($cgiparams[1] =~ /red/) {
 
 &Header::openbigbox('100%', 'left');
 
+foreach my $graphname (@pings) {
+
+  if ($graphname eq "gateway" )
+  {  &Graphs::updatepinggraph("day","gateway"); }
+  else
+  {  &Graphs::updatepinggraph("day","$graphname"); }
+
+	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
+	if (-e "$Header::graphdir/${graphname}-day.png") {
+		my $ftime = localtime((stat("$Header::graphdir/${graphname}-day.png"))[9]);
+		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+		print "<a href='/cgi-bin/graphs.cgi?graph=$graphname&graph=ping'>";
+		print "<img alt='' src='/graphs/${graphname}-day.png' border='0' />";
+		print "</a>";
+	} else {
+		print $Lang::tr{'no information available'};
+	}
+	print "<br />\n";
+	&Header::closebox();
+}
+
 foreach my $graphname (@graphs) {
 
-  if ($graphname eq "lq" )
-  {  &Graphs::updatelqgraph("day");  }
-  elsif ($graphname eq "fwhits" )
+  if ($graphname eq "fwhits" )
   {  &Graphs::updatefwhitsgraph("day");  }
   else
   {  &Graphs::updateifgraph($graphname, "day");  }
