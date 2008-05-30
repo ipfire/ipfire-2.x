@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = videolan
 PAK_VER    = 2
 
-DEPS       = "libshout libmpeg2 libmad ffmpeg"
+DEPS       = "libshout libmpeg2 libmad directfb ffmpeg"
 
 ###############################################################################
 # Top-level Rules
@@ -88,7 +88,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 								--enable-mad \
 								--enable-libdvbpsi --enable-faac --enable-mkv  \
 								--enable-x264 --enable-release \
-								--disable-nls
+								--disable-nls \
+								--enable-directfb --with-directfb=/usr/src/directfb
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

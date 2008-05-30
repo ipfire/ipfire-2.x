@@ -5,9 +5,11 @@
 * Compress-Zlib-1.35
 * Convert-TNEF-0.17
 * Convert-UUlib-1.06
+* DFB++-1.0.0
 * Digest-1.08
 * Digest-HMAC-1.01
 * Digest-SHA1-2.10
+* DirectFB-1.1.1
 * GD-2.35
 * GDGraph-1.4308
 * GDTextUtil-0.86

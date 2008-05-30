@@ -24,29 +24,63 @@
 
 include Config
 
-VER        = plugin
+VER        = 1.0.0
 
-THISAPP    = vdr-softdevice-$(VER)
+THISAPP    = DFB++-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PROG       = vdr-softdevice
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = dfb++
 PAK_VER    = 1
 
-DEPS       = "vdr ffmpeg sdl alsa dfb++"
+DEPS       = "directfb"
+
+
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
 
-install : 
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-check : 
+$(DL_FILE)_MD5 = c7d0b98bcc648a25ff11bfc74635f4ca
 
-download :
+install : $(TARGET)
 
-md5 :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	$(PAK)
+	@$(PAK)
 
 ###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr 
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
