@@ -241,7 +241,6 @@
 * rrdtool-1.2.15
 * rsync-2.6.9
 * rtorrent-0.7.9
-* samba-3.0.29
 * samba-3.0.30
 * sane-1.0.19
 * sane-1.0.19-kmod

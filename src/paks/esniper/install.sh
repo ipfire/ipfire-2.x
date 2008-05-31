@@ -23,6 +23,11 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+useradd -s /bin/false esniper
+grep -v 'esniper' /etc/sudoers > /tmp/sudoers
+echo # esniper user >> /tmp/sudoers
+echo nobody ALL=(esniper) NOPASSWD: /usr/bin/sudo, /bin/sh, /bin/kill >> /tmp/sudoers
+mv /tmp/sudoers /etc/sudoers
 chmod 777 /srv/web/esniper
 chown nobody.nobody /srv/web/esniper
 /etc/init.d/apache reload
