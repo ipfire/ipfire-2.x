@@ -23,3 +23,5 @@
 #
 . /opt/pakfire/lib/functions.sh
 remove_files
+grep -v "esniper" /etc/sudoers > /tmp/sudoers
+mv /tmp/sudoers /etc/sudoers
