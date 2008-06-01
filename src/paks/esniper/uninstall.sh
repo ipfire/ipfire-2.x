@@ -25,3 +25,4 @@
 remove_files
 grep -v "esniper" /etc/sudoers > /tmp/sudoers
 mv /tmp/sudoers /etc/sudoers
+chmod 0440 /etc/sudoers
