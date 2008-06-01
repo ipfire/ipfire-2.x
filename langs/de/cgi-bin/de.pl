@@ -1702,7 +1702,7 @@
 'urlfilter add new time constraint rule' => 'Neue Zeitbeschränkungsregel hinzufügen',
 'urlfilter add new user quota rule' => 'Neue Zeitkontingentsregel für Benutzer hinzufügen',
 'urlfilter add rule' => 'Hinzufügen',
-'urlfilter advanced settings' => ' Erweiterte Einstellungen',
+'urlfilter advanced settings' => 'Erweiterte Einstellungen',
 'urlfilter allow' => 'Erlauben',
 'urlfilter allow access' => 'Zugriff erlauben',
 'urlfilter allowed domains' => 'Erlaubte Domains (eine pro Zeile)',
