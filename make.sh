@@ -553,6 +553,7 @@ buildipfire() {
   ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
+  ipfiremake fbset
   ipfiremake sdl
   ipfiremake qemu
   ipfiremake sane
