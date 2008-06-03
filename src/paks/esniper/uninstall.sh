@@ -22,6 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+make_backup ${NAME}
 remove_files
 grep -v "esniper" /etc/sudoers > /tmp/sudoers
 mv /tmp/sudoers /etc/sudoers

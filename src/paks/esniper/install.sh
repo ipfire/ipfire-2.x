@@ -23,6 +23,7 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+restore_backup ${NAME}
 useradd -s /bin/false esniper
 grep -v "esniper" /etc/sudoers > /tmp/sudoers
 echo "# esniper user" >> /tmp/sudoers

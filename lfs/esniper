@@ -85,5 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir /srv/web/esniper
 	tar xvfz $(DIR_DL)/es-f_1.0.0.tgz -C /srv/web/esniper
 	chown -Rv nobody.nobody /srv/web/esniper
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/esniper \
+	                 /var/ipfire/backup/addons/includes/esniper
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
