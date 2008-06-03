@@ -26,9 +26,9 @@ include Config
 
 VER        = plugin
 
-THISAPP    = vdr-softdevice-$(VER)
+THISAPP    = vdr_softdevice-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PROG       = vdr-softdevice
+PROG       = vdr_softdevice
 PAK_VER    = 1
 
 DEPS       = "vdr ffmpeg sdl alsa dfb++"

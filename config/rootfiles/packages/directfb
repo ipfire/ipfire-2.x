@@ -161,6 +161,8 @@ usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_nvidia.so
 usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_radeon.so
 #usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_savage.la
 usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_savage.so
+#usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_sdlgraphics.la
+usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_sdlgraphics.so
 #usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_sh7722.la
 usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_sh7722.so
 #usr/lib/directfb-1.1-0/gfxdrivers/libdirectfb_sis315.la
@@ -186,6 +188,8 @@ usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_mutouch.so
 usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_penmount.so
 #usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_ps2mouse.la
 usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_ps2mouse.so
+#usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_sdlinput.la
+usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_sdlinput.so
 #usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_serialmouse.la
 usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_serialmouse.so
 #usr/lib/directfb-1.1-0/inputdrivers/libdirectfb_sonypi.la
@@ -217,6 +221,8 @@ usr/lib/directfb-1.1-0/interfaces/IDirectFBVideoProvider/libidirectfbvideoprovid
 usr/lib/directfb-1.1-0/systems/libdirectfb_devmem.so
 #usr/lib/directfb-1.1-0/systems/libdirectfb_fbdev.la
 usr/lib/directfb-1.1-0/systems/libdirectfb_fbdev.so
+#usr/lib/directfb-1.1-0/systems/libdirectfb_sdl.la
+usr/lib/directfb-1.1-0/systems/libdirectfb_sdl.so
 #usr/lib/directfb-1.1-0/wm
 #usr/lib/directfb-1.1-0/wm/libdirectfbwm_default.la
 usr/lib/directfb-1.1-0/wm/libdirectfbwm_default.so

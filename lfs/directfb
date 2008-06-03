@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i "s/checkfor_matrox=yes/checkfor_matrox=no/g" configure
 	cd $(DIR_APP) && sed -i "s/checkfor_cle266=no/checkfor_cle266=yes/g" configure
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-x11 \
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-x11 --enable-sdl \
 				     --enable-video4linux2 --enable-multi 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
