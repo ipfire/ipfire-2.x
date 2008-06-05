@@ -56,7 +56,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
 		--exclude='proc/*' --exclude='tmp/ROOTFILES'
-	rm -f /tmp/ROOTFILES
+	mv -f /tmp/ROOTFILES /install/updater/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	cd /tmp && tar jcf /install/updater/files.ipfire * && rm -rf *
@@ -65,5 +65,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/config/rootfiles/updater/update.sh /install/updater/
 	chmod 755 /install/updater/update.sh
 	cd /install/updater && tar jcf ../images/updater-$(SNAME)-$(VERSION).tar.bz2 \
-		update.sh files.ipfire
+		update.sh files.ipfire ROOTFILES
 	rm -rf /install/updater
