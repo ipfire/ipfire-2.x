@@ -1,3 +1,4 @@
+var/ipfire/backup/addons/includes/esniper
 etc/httpd/conf/vhosts.d/esniper.conf
 #srv/web/esniper
 #srv/web/esniper/CHANGELOG
