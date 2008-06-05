@@ -84,6 +84,7 @@
 * ethtool-3
 * expat-2.0.0
 * ez-ipupdate-3.0.11b8
+* fbset-2.1
 * fcron-3.0.1
 * fetchmail-6.3.8
 * ffmpeg-export-2008-04-13
@@ -241,7 +242,6 @@
 * rrdtool-1.2.15
 * rsync-2.6.9
 * rtorrent-0.7.9
-* samba-3.0.29
 * samba-3.0.30
 * sane-1.0.19
 * sane-1.0.19-kmod
