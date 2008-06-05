@@ -9,3 +9,4 @@ srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 var/ipfire/langs
 var/ipfire/graphs.pl
+usr/share/terminfo/x/xterm-color
