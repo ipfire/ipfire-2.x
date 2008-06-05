@@ -177,7 +177,7 @@ endef
 define PAK
 	# Bringing the files to their right place.
 	@rm -rf /install/packages/package
-	@mkdir -p /install/packages/package
+	@mkdir -p /install/packages/package/tmp
 	if [ -e "/usr/src/src/paks/$(PROG)" ]; then \
 		cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
 		/install/packages/package; \
@@ -188,8 +188,14 @@ define PAK
 	cp -v /usr/src/config/rootfiles/packages/$(PROG) /install/packages/package/ROOTFILES
 	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
-	cd / && tar cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
+	cd / && tar cf /install/packages/package/files.tmp --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
 		--preserve --numeric-owner
+	# Double tar to remove double files
+	tar xf /install/packages/package/files.tmp -C /install/packages/package/tmp/ \
+		--preserve --numeric-owner
+	rm -f /install/packages/package/files.tmp
+	cd /install/packages/package/tmp/ && tar -c --preserve --numeric-owner -f /install/packages/package/files * 		
+	rm -r /install/packages/package/tmp
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
 	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
