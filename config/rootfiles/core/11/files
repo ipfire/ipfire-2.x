@@ -5,9 +5,9 @@ etc/squid
 usr/lib/squid
 usr/sbin/squid
 bin/ntfs-3g
-lib/libntfs-3g.so
-lib/libntfs-3g.so.24
-lib/libntfs-3g.so.24.0.0
+#lib/libntfs-3g.so
+#lib/libntfs-3g.so.24
+#lib/libntfs-3g.so.24.0.0
 sbin/mount.ntfs-3g
 usr/bin/php
 usr/lib/apache/libphp5.so
