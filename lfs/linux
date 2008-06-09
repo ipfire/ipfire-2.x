@@ -103,6 +103,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	ln -s linux-$(VER) /usr/src/linux
 
+	# Security fix for CIFS & Netfilter SNMP
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
+
 	# Openswan 2
 	cd $(DIR_SRC) && rm -rf openswan-*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-2.4.12.tar.gz
