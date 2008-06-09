@@ -86,5 +86,6 @@ else
 endif
 	cd $(DIR_APP) && make $(MAKETUNING) all
 	cd $(DIR_APP) && make install
-	@rm -rf $(DIR_APP)
+	-ln -s $(DIR_APP)/ /usr/src/v4l-dvb
+#	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

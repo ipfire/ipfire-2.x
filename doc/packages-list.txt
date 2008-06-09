@@ -145,6 +145,7 @@
 * libaal-1.0.5
 * libart_lgpl-2.3.17
 * libcap-1.10
+* libdvbpsi5-0.1.6
 * libid3tag-0.15.1b
 * libidn-0.6.14
 * libmad-0.15.1b
@@ -286,7 +287,7 @@
 * vdr-1.6.0
 * vim-7.0
 * vlan.1.9
-* vlc-0.8.6f
+* vlc-0.8.6h
 * vnstat-1.6
 * vnstati-beta3
 * vsftpd-2.0.5

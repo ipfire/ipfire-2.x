@@ -508,6 +508,7 @@ buildipfire() {
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis
+  ipfiremake libdvbpsi
   ipfiremake lame
   ipfiremake sox
   ipfiremake libshout

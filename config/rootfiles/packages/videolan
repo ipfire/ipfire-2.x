@@ -24,6 +24,7 @@ usr/lib/vlc/access/libaccess_smb_plugin.so
 usr/lib/vlc/access/libaccess_tcp_plugin.so
 usr/lib/vlc/access/libaccess_udp_plugin.so
 usr/lib/vlc/access/libcdda_plugin.so
+usr/lib/vlc/access/libdvb_plugin.so
 usr/lib/vlc/access/libv4l_plugin.so
 usr/lib/vlc/access/libvcd_plugin.so
 #usr/lib/vlc/access_filter
@@ -131,6 +132,7 @@ usr/lib/vlc/demux/librawdv_plugin.so
 usr/lib/vlc/demux/libreal_plugin.so
 usr/lib/vlc/demux/libsgimb_plugin.so
 usr/lib/vlc/demux/libsubtitle_plugin.so
+usr/lib/vlc/demux/libts_plugin.so
 usr/lib/vlc/demux/libtta_plugin.so
 usr/lib/vlc/demux/libty_plugin.so
 usr/lib/vlc/demux/libvobsub_plugin.so
@@ -147,6 +149,7 @@ usr/lib/vlc/gui/libncurses_plugin.so
 #usr/lib/vlc/libmemcpy3dn.a
 #usr/lib/vlc/libmemcpymmx.a
 #usr/lib/vlc/libmemcpymmxext.a
+#usr/lib/vlc/libmux_ts.a
 #usr/lib/vlc/libstream_out_switcher.a
 #usr/lib/vlc/misc
 usr/lib/vlc/misc/libdummy_plugin.so
