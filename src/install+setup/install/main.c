@@ -501,6 +501,8 @@ int main(int argc, char *argv[])
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	}
 
+	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
+
 	/* mkinitcpio has a problem if ide and pata are included */
 	if ( scsi_disk==1 ) {
 	    /* Remove the ide hook if we install sda */
@@ -510,9 +512,9 @@ int main(int argc, char *argv[])
 	    replace("/harddisk/etc/mkinitcpio.conf", " pata ", " ");
 	}
 	/* Going to make our initrd... */
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd.img -k %s-ipfire", KERNEL_VERSION);
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s.img -k %s-ipfire", KERNEL_VERSION, KERNEL_VERSION);
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-smp.img -k %s-ipfire-smp", KERNEL_VERSION);
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-smp.img -k %s-ipfire-smp", KERNEL_VERSION, KERNEL_VERSION );
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
