@@ -80,10 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/ffmpeg && ./configure --prefix=/usr \
                                      --enable-shared \
 				     --enable-postproc \
-				     --enable-gpl \
-				     --enable-libmp3lame \
-				     --enable-libvorbis \
-				     --enable-libxvid
+				     --enable-gpl
 	cd $(DIR_SRC)/ffmpeg && make
 	cd $(DIR_SRC)/ffmpeg && make install
 	cd $(DIR_SRC)/ffmpeg && make install-libs
