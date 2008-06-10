@@ -24,9 +24,6 @@
 
 include Config
 
-
-
-
 VER        = 2008-04-13
 THISAPP    = ffmpeg-export-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,9 +31,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 1
+PAK_VER    = 2
 
-DEPS       = "sdl"
+DEPS       = "sdl lame libvorbis libxvid"
 
 ###############################################################################
 # Top-level Rules
@@ -83,7 +80,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/ffmpeg && ./configure --prefix=/usr \
                                      --enable-shared \
 				     --enable-postproc \
-				     --enable-gpl
+				     --enable-gpl \
+				     --enable-libmp3lame \
+				     --enable-libvorbis \
+				     --enable-libxvid
 	cd $(DIR_SRC)/ffmpeg && make
 	cd $(DIR_SRC)/ffmpeg && make install
 	cd $(DIR_SRC)/ffmpeg && make install-libs
