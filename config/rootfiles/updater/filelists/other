@@ -7,6 +7,7 @@ etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/red.up/40-ipac
 usr/local/bin/getiptstate
 usr/local/bin/makegraphs
+srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 var/ipfire/sensors/
