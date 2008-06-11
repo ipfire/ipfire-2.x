@@ -33,24 +33,25 @@ echo $MOUNT > /dev/null
 MOUNT=$_
 INSTALLEDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
 INSTALLEDCORE=`cat /opt/pakfire/db/core/mine`
+OLDKERNEL=`ls /boot/vmlinuz-*-ipfire | cut -d"-" -f2 | tail -n 1`
 #
 # check version
 #
 if [ ! "$INSTALLEDVERSION" == "$OLDVERSION" ]; then
-    echo Error! This update is only for IPfire $OLDVERSION CORE $CORE
-    echo You have installed IPfire $INSTALLEDVERSION CORE $INSTALLEDCORE
+    echo Error! This update is only for IPFire $OLDVERSION Core $CORE
+    echo You have installed IPFire $INSTALLEDVERSION Core $INSTALLEDCORE
     exit 1
 fi
 # check core
 if [ ! "$INSTALLEDCORE" == "$CORE" ]; then
-    echo Error! This update is only for IPfire $OLDVERSION CORE $CORE
-    echo You have installed IPfire $INSTALLEDVERSION CORE $INSTALLEDCORE
+    echo Error! This update is only for IPFire $OLDVERSION Core $CORE
+    echo You have installed IPFire $INSTALLEDVERSION Core $INSTALLEDCORE
     exit 2
 fi
 #
 #
 echo 
-echo Update IPfire $OLDVERSION to $NEWVERSION
+echo Update IPFire $OLDVERSION to $NEWVERSION
 echo
 echo Press Enter to begin.
 read
@@ -80,16 +81,19 @@ echo Unpack the updated files ...
 tar xjvf files.ipfire -C /
 # 
 # Modify grub.conf
-# 
+#
+echo 
 echo Update grub configuration ...
-sed -i "s|MOUNT|$ROOT|g" /boot/grub/grub.conf
+sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
 sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
 sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
 echo "title Old Kernel" >> /boot/grub/grub.conf
-echo "	configfile /grub/grub-old.conf" >> /boot/grub/grub.conf
+echo "  configfile /grub/grub-old.conf" >> /boot/grub/grub.conf
+sed -i "s|/vmlinuz-ipfire|/vmlinuz-$OLDKERNEL-ipfire|g" /boot/grub/grub-old.conf
 #
 # Made initramdisk
 #
+echo
 echo Create new Initramdisks ...
 if [ "${ROOT:0:7}" == "/dev/sd" ]; then
     # Remove ide hook if root is on sda 
@@ -106,6 +110,17 @@ mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
 # Change version of Pakfire.conf
 #
 sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
+#
+# Create new issue
+#
+echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
+echo =================================== >> /etc/issue
+echo \\n running on \\s \\r \\m >> /etc/issue
+# Core 15 begin
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+/etc/init.d/mISDN config
+# Core 15 end
 echo
-echo Update to IPfire $NEWVERSION finished. Please reboot...
+echo
+echo Update to IPFire $NEWVERSION finished. Please reboot...
 echo
