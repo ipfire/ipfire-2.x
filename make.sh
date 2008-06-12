@@ -341,6 +341,7 @@ buildipfire() {
   ipfiremake atl1			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
+  ipfiremake madwifi                    SMP=1
   ipfiremake sane		KMOD=1	SMP=1
   ipfiremake linux
   ipfiremake linux-fusion
@@ -351,6 +352,7 @@ buildipfire() {
   ipfiremake atl1
   ipfiremake kqemu
   ipfiremake v4l-dvb
+  ipfiremake madwifi
   ipfiremake sane		KMOD=1
   ipfiremake pkg-config
   ipfiremake linux-atm
@@ -578,6 +580,8 @@ buildipfire() {
   ipfiremake esniper
   ipfiremake vnstat
   ipfiremake vnstati
+  ipfiremake wpa_supplicant
+  ipfiremake hostapd
 }
 
 buildinstaller() {
