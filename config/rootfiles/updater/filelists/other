@@ -10,5 +10,6 @@ usr/local/bin/makegraphs
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
+srv/web/ipfire/cgi-bin/connections.cgi
 var/ipfire/sensors/
 var/ipfire/graphs.pl

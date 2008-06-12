@@ -115,6 +115,7 @@
 * gzip-1.3.5
 * hddtemp-0.3-beta14
 * hdparm-8.6
+* hostapd-0.5.10
 * hplip-2.7.10
 * htop-0.7
 * httpd-2.2.6
@@ -177,6 +178,7 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_5
+* madwifi-0.9.4-wlan
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
@@ -296,6 +298,7 @@
 * whatmask-1.2
 * which-2.16
 * wireless_tools.28
+* wpa_supplicant-0.5.10
 * xfsprogs-2.9.4
 * xvidcore-1.1.0
 * zaptel-1.4.4
