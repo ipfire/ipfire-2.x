@@ -30,9 +30,10 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/graphs.pl";
 
-my %mbmonsettings = ();
+my %sensorsettings = ();
 my %cgiparams=();
 my @cgigraphs=();
+my $rrdlog = "/var/log/rrd";
 
 &Header::showhttpheaders();
 
@@ -42,19 +43,28 @@ $ENV{'QUERY_STRING'} =~ s/&//g;
 @cgigraphs = split(/graph=/,$ENV{'QUERY_STRING'});
 $cgigraphs[1] = '' unless defined $cgigraphs[1];
 
-my @mbmongraphs = ();
-if ( -e "/var/log/rrd/collectd/localhost/mbmon" ){@mbmongraphs = `ls /var/log/rrd/collectd/localhost/mbmon/`;}
+my @sensorsgraphs = ();
+my @sensorsdir = `ls -dA $rrdlog/collectd/localhost/sensors-*/`;
+foreach (@sensorsdir)
+{
+	chomp($_);chop($_);
+	foreach (`ls $_/*`){
+		chomp($_);
+		push(@sensorsgraphs,$_);
+	}
+}
 
-&Header::getcgihash(\%mbmonsettings);
+&Header::getcgihash(\%sensorsettings);
 
-if ( $mbmonsettings{'ACTION'} eq $Lang::tr{'save'} ) {
-	 foreach (@mbmongraphs){
-	 				 chomp($_);
- 					 my @name=split(/\./,$_);
-					 if ( $mbmonsettings{'LINE-'.$name[0]} ne "on" ){$mbmonsettings{'LINE-'.$name[0]} = 'off';}
-					 elsif ( $mbmonsettings{'LINE-'.$name[0]} eq "on" ){$mbmonsettings{'LINE-'.$name[0]} = 'checked';}
-	 }
-	 &General::writehash("${General::swroot}/mbmon/settings", \%mbmonsettings);
+if ( $sensorsettings{'ACTION'} eq $Lang::tr{'save'} ) {
+	foreach(@sensorsgraphs){
+		chomp($_);
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} ne "on" ){$sensorsettings{'LINE-'.$label} = 'off';}
+			elsif ( $sensorsettings{'LINE-'.$label} eq "on" ){$sensorsettings{'LINE-'.$label} = 'checked';}
+	}
+	 &General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 }
 
 my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
@@ -97,19 +107,19 @@ else
 
  my @graphs = ("hwtemp","hwfan","hwvolt");
  foreach (@graphs){
- 				 					&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-									if (-e "$graphdir/mbmon-$_-day.png"){
-											my $ftime = localtime((stat("$graphdir/mbmon-$_-day.png"))[9]);
-											print "<center>";
-											print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-	  									print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=$_'>";
-											print "<img src='/graphs/mbmon-$_-day.png' border='0' />";
-											print "</a><hr />";
-									}
-									else{print $Lang::tr{'no information available'};}
-									&Header::closebox();
-	}
-	if ( -e "/var/log/rrd/collectd/localhost/mbmon" ){mbmonbox();}
+ 	&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+	if (-e "$graphdir/sensors-$_-day.png"){
+	    my $ftime = localtime((stat("$graphdir/sensors-$_-day.png"))[9]);
+	    print "<center>";
+	    print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	    print "<a href='/cgi-bin/hardwaregraphs.cgi?graph=$_'>";
+	    print "<img src='/graphs/sensors-$_-day.png' border='0' />";
+	    print "</a><hr />";
+	    }
+	    else{print $Lang::tr{'no information available'};}
+	&Header::closebox();
+ }
+	sensorsbox();
 }
 
 &Header::closebigbox();
@@ -150,47 +160,39 @@ sub graphbox {
  my $graph = $_[0];
  
 	&Header::openbox('100%', 'center', "$graph $Lang::tr{'graph'}");
-	if (-e "$graphdir/mbmon-$graph-week.png"){
-			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-week.png"))[9]);
+	if (-e "$graphdir/sensors-$graph-week.png"){
+			 my $ftime = localtime((stat("$graphdir/sensors-$graph-week.png"))[9]);
 			 print "<center>";
 			 print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-			 print "<img src='/graphs/mbmon-$graph-week.png' border='0' /><hr />";
+			 print "<img src='/graphs/sensors-$graph-week.png' border='0' /><hr />";
 	 }
 	 else{print $Lang::tr{'no information available'};}
 	 &Header::closebox();
 	&Header::openbox('100%', 'center', "$graph $Lang::tr{'graph'}");
-	if (-e "$graphdir/mbmon-$graph-month.png"){
-			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-month.png"))[9]);
+	if (-e "$graphdir/sensors-$graph-month.png"){
+			 my $ftime = localtime((stat("$graphdir/sensors-$graph-month.png"))[9]);
 			 print "<center>";
 			 print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-			 print "<img src='/graphs/mbmon-$graph-month.png' border='0' /><hr />";
+			 print "<img src='/graphs/sensors-$graph-month.png' border='0' /><hr />";
 	 }
 	 else{print $Lang::tr{'no information available'};}
 	 &Header::closebox();
 	&Header::openbox('100%', 'center', "$graph $Lang::tr{'graph'}");
-	if (-e "$graphdir/mbmon-$graph-year.png"){
-			 my $ftime = localtime((stat("$graphdir/mbmon-$graph-year.png"))[9]);
+	if (-e "$graphdir/sensors-$graph-year.png"){
+			 my $ftime = localtime((stat("$graphdir/sensors-$graph-year.png"))[9]);
 			 print "<center>";
 			 print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-			 print "<img src='/graphs/mbmon-$graph-year.png' border='0' /><hr />";
+			 print "<img src='/graphs/sensors-$graph-year.png' border='0' /><hr />";
 	 }
 	 else{print $Lang::tr{'no information available'};}
 	 &Header::closebox();
 }
 
-sub mbmonbox{
+sub sensorsbox{
 
- foreach (@mbmongraphs){
- 				 chomp($_);
-				 my @name=split(/\./,$_);my $label = $name[0]; $label=~ s/-//;
-				 $mbmonsettings{'LABEL-'.$name[0]}="$label";
-				 $mbmonsettings{'LINE-'.$name[0]}="checked";
-				 }
- &General::readhash("${General::swroot}/mbmon/settings", \%mbmonsettings);
- 
  &Header::openbox('100%', 'center', "$Lang::tr{'mbmon settings'}");
  if ( $cgiparams{'ACTION'} eq $Lang::tr{'save'} ){print "Test";}
- 
+
  print <<END
  <form method='post' action='$ENV{'SCRIPT_NAME'}'>
  <table width='100%' border='0' cellspacing='5' cellpadding='0' align='center'>
@@ -199,11 +201,15 @@ sub mbmonbox{
  </tr>
 END
 ;
- foreach (@mbmongraphs){
- 				 chomp($_);my @name=split(/\./,$_);
-				 print("<tr><td align='right'><input type='checkbox' name='LINE-$name[0]' $mbmonsettings{'LINE-'.$name[0]} /></td>");
- 				 print("<td><input type='text' name='LABEL-$name[0]' value='$mbmonsettings{'LABEL-'.$name[0]}' size='25' /></td></tr>\n");
-  }
+foreach (@sensorsgraphs){
+		$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+		my $label = $2.$3;$label=~ s/-//g;
+		$sensorsettings{'LABEL-'.$label}="$label";
+		$sensorsettings{'LINE-'.$label}="checked";
+		&General::readhash("${General::swroot}/sensors/settings", \%sensorsettings);
+		print("<tr><td align='right'><input type='checkbox' name='LINE-$label' $sensorsettings{'LINE-'.$label} /></td>");
+ 		print("<td><input type='text' name='LABEL-$label' value='$sensorsettings{'LABEL-'.$label}' size='25' /></td></tr>\n");
+}
  print <<END
  <tr><td align='center' colspan='2' ><input type='submit' name='ACTION' value=$Lang::tr{'save'} /></td></tr>
  </table>

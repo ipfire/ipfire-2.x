@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.3.5
+VER        = 1.3.8
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -36,17 +36,17 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 objects = 	$(DL_FILE) \
-			netfilter-layer7-v2.9.tar.gz \
+			netfilter-layer7-v2.18.tar.gz \
 			libnfnetlink-0.0.25.tar.bz2 \
 			libnetfilter_queue-0.0.13.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-netfilter-layer7-v2.9.tar.gz 	= $(URL_IPFIRE)/netfilter-layer7-v2.9.tar.gz
+netfilter-layer7-v2.18.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.18.tar.gz
 libnfnetlink-0.0.25.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-0.0.25.tar.bz2
 libnetfilter_queue-0.0.13.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.13.tar.bz2
 
-$(DL_FILE)_MD5 = 00fb916fa8040ca992a5ace56d905ea5
-netfilter-layer7-v2.9.tar.gz_MD5 = ebf9043a5352ebe6dbd721989ef83dee
+$(DL_FILE)_MD5 = 0a9209f928002e5eee9cdff8fef4d4b3
+netfilter-layer7-v2.18.tar.gz_MD5 = 8d2e2c00f5c20e8c0852998035aeffd2
 libnfnetlink-0.0.25.tar.bz2_MD5 = fc915a2e66d282e524af6ef939042d7d
 libnetfilter_queue-0.0.13.tar.bz2_MD5 = 660cbfd3dc8c10bf9b1803cd2b688256
 
@@ -81,16 +81,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.25 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.13
 
 	@cd $(DIR_SRC) && tar zxf $(DIR_DL)/iptables-fixed.tar.gz
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.9.tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.9/iptables-layer7-2.9.patch
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.18.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.18/iptables-1.3-for-kernel-2.6.20forward-layer7-2.18.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.3.0-imq1.diff
 	chmod +x $(DIR_APP)/extensions/.IMQ-test*  $(DIR_APP)/extensions/.layer7-test*
 
 	# hack to disable IPv6 compilation as the configuration variable does not work when ip6.h is present
 	cd $(DIR_APP) && sed -i -e 's/DO_IPV6:=1/DO_IPV6:=0/' Makefile
-	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib $(MAKETUNING)
-	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man LIBDIR=/lib install install-devel
+	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man KERNEL_DIR=/usr/src/linux LIBDIR=/lib $(MAKETUNING)
+	cd $(DIR_APP) && make BINDIR=/sbin MANDIR=/usr/share/man KERNEL_DIR=/usr/src/linux LIBDIR=/lib install install-devel
 	cd $(DIR_APP) && cp -fva include/* /usr/include
 	-mkdir /usr/include/libiptc
 	cd $(DIR_APP) && cp -vf include/libiptc/{libiptc.h,ipt_kernel_headers.h} \
@@ -105,6 +105,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.13 && ./configure --prefix=/usr
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.13 && make
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.13 && make install
-
 	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.25 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.13
 	@$(POSTBUILD)

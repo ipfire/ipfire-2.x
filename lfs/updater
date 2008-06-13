@@ -1,0 +1,69 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER = ipfire
+
+THISAPP    = updater
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	rm -rf /install/updater /tmp/*
+
+	# Compress files of filelists 
+	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
+	mkdir -p /install/updater
+	find $(DIR_SRC)/config/rootfiles/updater/filelists -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
+	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
+	tar -c -C / --files-from=/tmp/ROOTFILES \
+		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
+		--exclude='proc/*' --exclude='tmp/ROOTFILES'
+	mv -f /tmp/ROOTFILES /install/updater/ROOTFILES
+	tar -x -C /tmp -f /$(SNAME).tar
+	rm -f /$(SNAME).tar
+	cd /tmp && tar jcf /install/updater/files.ipfire * && rm -rf *
+
+	# Other files
+	cp $(DIR_SRC)/config/rootfiles/updater/update.sh /install/updater/
+	chmod 755 /install/updater/update.sh
+	cd /install/updater && tar jcf ../images/updater-$(SNAME)-$(VERSION).tar.bz2 \
+		update.sh files.ipfire ROOTFILES
+	rm -rf /install/updater

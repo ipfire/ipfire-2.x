@@ -44,7 +44,7 @@ undef (@dummy);
 my %netsettings=();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-open (ACTIVE, 'iptstate -1rbt |') or die 'Unable to open ip_conntrack';
+open (ACTIVE, '/usr/local/bin/getiptstate |') or die 'Unable to open ip_conntrack';
 my @active = <ACTIVE>;
 close (ACTIVE);
 

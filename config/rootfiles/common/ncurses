@@ -3211,7 +3211,7 @@ usr/share/terminfo/x/xterm-88color
 #usr/share/terminfo/x/xterm-8bit
 #usr/share/terminfo/x/xterm-basic
 #usr/share/terminfo/x/xterm-bold
-#usr/share/terminfo/x/xterm-color
+usr/share/terminfo/x/xterm-color
 #usr/share/terminfo/x/xterm-hp
 #usr/share/terminfo/x/xterm-new
 #usr/share/terminfo/x/xterm-nic

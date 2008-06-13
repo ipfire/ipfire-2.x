@@ -1,0 +1,133 @@
+From: Chris Wright <chrisw@sous-sol.org>
+Date: Wed, 4 Jun 2008 16:16:33 +0000 (-0700)
+Subject: asn1: additional sanity checking during BER decoding (CVE-2008-1673)
+X-Git-Tag: v2.6.25.5~1
+X-Git-Url: http://git.kernel.org/?p=linux%2Fkernel%2Fgit%2Fstable%2Flinux-2.6.25.y.git;a=commitdiff_plain;h=33afb8403f361919aa5c8fe1d0a4f5ddbfbbea3c
+
+asn1: additional sanity checking during BER decoding (CVE-2008-1673)
+
+upstream commit: ddb2c43594f22843e9f3153da151deaba1a834c5
+
+- Don't trust a length which is greater than the working buffer.
+  An invalid length could cause overflow when calculating buffer size
+  for decoding oid.
+
+- An oid length of zero is invalid and allows for an off-by-one error when
+  decoding oid because the first subid actually encodes first 2 subids.
+
+- A primitive encoding may not have an indefinite length.
+
+Thanks to Wei Wang from McAfee for report.
+
+Cc: Steven French <sfrench@us.ibm.com>
+Cc: stable@kernel.org
+Acked-by: Patrick McHardy <kaber@trash.net>
+Signed-off-by: Chris Wright <chrisw@sous-sol.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+rediff for Linux-2.6.20.21 by Arne Fitzenreiter <arne_f@ipfire.org>
+---
+From: Chris Wright <chrisw@sous-sol.org>
+Date: Wed, 4 Jun 2008 16:16:33 +0000 (-0700)
+Subject: asn1: additional sanity checking during BER decoding (CVE-2008-1673)
+X-Git-Tag: v2.6.25.5~1
+X-Git-Url: http://git.kernel.org/?p=linux%2Fkernel%2Fgit%2Fstable%2Flinux-2.6.25.y.git;a=commitdiff_plain;h=33afb8403f361919aa5c8fe1d0a4f5ddbfbbea3c
+
+asn1: additional sanity checking during BER decoding (CVE-2008-1673)
+
+upstream commit: ddb2c43594f22843e9f3153da151deaba1a834c5
+
+- Don't trust a length which is greater than the working buffer.
+  An invalid length could cause overflow when calculating buffer size
+  for decoding oid.
+
+- An oid length of zero is invalid and allows for an off-by-one error when
+  decoding oid because the first subid actually encodes first 2 subids.
+
+- A primitive encoding may not have an indefinite length.
+
+Thanks to Wei Wang from McAfee for report.
+
+Cc: Steven French <sfrench@us.ibm.com>
+Cc: stable@kernel.org
+Acked-by: Patrick McHardy <kaber@trash.net>
+Signed-off-by: Chris Wright <chrisw@sous-sol.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+rediff for Linux-2.6.20.21 by Arne Fitzenreiter <arne_f@ipfire.org>
+---
+diff -Naur linux-2.6.20.21.org/fs/cifs/asn1.c linux-2.6.20.21/fs/cifs/asn1.c
+--- linux-2.6.20.21.org/fs/cifs/asn1.c	2007-10-17 21:31:14.000000000 +0200
++++ linux-2.6.20.21/fs/cifs/asn1.c	2008-06-10 00:09:43.000000000 +0200
+@@ -182,6 +182,11 @@
+ 			}
+ 		}
+ 	}
++
++	/* don't trust len bigger than ctx buffer */
++	if (*len > ctx->end - ctx->pointer)
++		return 0;
++
+ 	return 1;
+ }
+ 
+@@ -199,6 +204,10 @@
+ 	if (!asn1_length_decode(ctx, &def, &len))
+ 		return 0;
+ 
++	/* primitive shall be definite, indefinite shall be constructed */
++	if (*con == ASN1_PRI && !def)
++		return 0;
++
+ 	if (def)
+ 		*eoc = ctx->pointer + len;
+ 	else
+@@ -385,6 +394,10 @@
+ 	unsigned long *optr;
+ 
+ 	size = eoc - ctx->pointer + 1;
++	
++	/* first subid actually encodes first two subids */
++	if (size < 2 || size > ULONG_MAX/sizeof(unsigned long))
++	return 0;
+ 	*oid = kmalloc(size * sizeof (unsigned long), GFP_ATOMIC);
+ 	if (*oid == NULL) {
+ 		return 0;
+diff -Naur linux-2.6.20.21.org/net/ipv4/netfilter/nf_nat_snmp_basic.c linux-2.6.20.21/net/ipv4/netfilter/nf_nat_snmp_basic.c
+--- linux-2.6.20.21.org/net/ipv4/netfilter/nf_nat_snmp_basic.c	2007-10-17 21:31:14.000000000 +0200
++++ linux-2.6.20.21/net/ipv4/netfilter/nf_nat_snmp_basic.c	2008-06-10 00:03:59.000000000 +0200
+@@ -235,6 +235,11 @@
+ 			}
+ 		}
+ 	}
++
++	/* don't trust len bigger than ctx buffer */
++	if (*len > ctx->end - ctx->pointer)
++		return 0;
++
+ 	return 1;
+ }
+ 
+@@ -253,6 +258,10 @@
+ 	if (!asn1_length_decode(ctx, &def, &len))
+ 		return 0;
+ 
++	/* primitive shall be definite, indefinite shall be constructed */
++	if (*con == ASN1_PRI && !def)
++		return 0;
++
+ 	if (def)
+ 		*eoc = ctx->pointer + len;
+ 	else
+@@ -437,6 +446,11 @@
+ 	unsigned long *optr;
+ 
+ 	size = eoc - ctx->pointer + 1;
++
++	/* first subid actually encodes first two subids */
++	if (size < 2 || size > ULONG_MAX/sizeof(unsigned long))
++		return 0;
++
+ 	*oid = kmalloc(size * sizeof(unsigned long), GFP_ATOMIC);
+ 	if (*oid == NULL) {
+ 		if (net_ratelimit())

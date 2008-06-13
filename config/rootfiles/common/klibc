@@ -1,4 +1,4 @@
-lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
+lib/klibc-a0tNUCyBK7E4egoFt3zvXR0uOfI.so
 usr/bin/klcc
 #usr/lib/klibc
 #usr/lib/klibc/bin
@@ -1566,7 +1566,7 @@ usr/lib/klibc/bin/zcat
 #usr/lib/klibc/lib
 #usr/lib/klibc/lib/crt0.o
 #usr/lib/klibc/lib/interp.o
-usr/lib/klibc/lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so
+usr/lib/klibc/lib/klibc-a0tNUCyBK7E4egoFt3zvXR0uOfI.so
 #usr/lib/klibc/lib/libc.a
 usr/lib/klibc/lib/libc.so
 #usr/man/man1/klcc.1

@@ -1,0 +1,85 @@
+#
+#   DirectFB video modes, should be placed into "/etc"
+# 
+
+mode "640x480 75Hz 16bit"
+    # D: 31.50 MHz, H: 37.500 kHz, V: 75.00 Hz
+    geometry 640 480 640 480 16
+    timings 31747 120 16 16 1 64 3
+endmode
+ 
+mode "720x576 50Hz 16bit"
+    geometry 720 576 720 576 16
+    timings 31208 144 40 32 10 128 3
+endmode
+
+mode "768x576 75Hz 16bit"
+    # D: 49.188 MHz, H: 46.580 kHz, V: 75.008 Hz
+    geometry 768 576 768 576 16
+    timings 20330 128 32 32 8 128 5
+endmode
+
+
+mode "800x600 75Hz 16bit"
+    # D: 49.50 MHz, H: 46.875 kHz, V: 75.00 Hz
+    geometry 800 600 800 600 16
+    timings 20203 160 16 21 1 80 3
+    hsync high
+    vsync high
+endmode
+ 
+
+mode "1024x768 72Hz 16bit"
+    # D: 75.00 MHz, H: 58.230 kHz, V: 72.245 Hz
+    geometry 1024 768 1024 768 16
+    timings 13334 104 24 29 3 136 6
+endmode
+ 
+
+mode "1280x1024-75"
+    # D: 134.880 MHz, H: 79.905 kHz, V: 74.958 Hz
+    geometry 1280 1024 1280 3264 16
+    timings 7414 232 64 38 1 112 3
+    hsync high
+    vsync high
+endmode
+
+mode "1280x1024 60Hz 16bit"
+    # D: 108.00 MHz, H: 63.981 kHz, V: 60.02 Hz
+    geometry 1280 1024 1280 1024 16
+    timings 9260 248 48 38 1 112 3
+    hsync high
+    vsync high
+endmode
+ 
+
+mode "1600x1200 60Hz 16bit"
+    # D: 156.00 MHz, H: 76.200 kHz, V: 60.00 Hz
+    geometry 1600 1200 1600 1200 16
+    timings 6411 256 32 52 10 160 8
+endmode
+
+
+mode "640x400 93Hz 16bit"
+    geometry 640 400 640 400 16
+    timings 28272 48 32 17 22 128 12
+endmode
+
+mode "400x300 100Hz 16bit"
+    geometry 400 300 400 300 16
+    timings 31747 40 16 16 1 40 3
+    double true
+endmode
+
+
+mode "320x240 85Hz 16bit"
+    geometry 320 240 320 240 16
+    timings 51383 32 32 20 4 48 1
+    double true
+endmode
+
+mode "320x200 85Hz 16bit"
+    geometry 320 200 320 200 16
+    timings 60440 32 32 20 4 48 1
+    double true
+endmode

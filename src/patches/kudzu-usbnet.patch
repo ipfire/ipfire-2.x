@@ -1,11 +1,24 @@
 diff -Naur kudzu.org/usb.c kudzu-1.2.64/usb.c
---- kudzu-1.2.64/usb.c	2006-11-28 17:58:58.000000000 +0100
-+++ kudzu-1.2.64/usb.c	2007-11-29 09:24:35.000000000 +0100
-@@ -268,6 +268,7 @@
+--- kudzu.org/usb.c	2006-11-28 17:58:58.000000000 +0100
++++ kudzu-1.2.64/usb.c	2008-06-11 19:27:36.000000000 +0200
+@@ -264,10 +264,20 @@
+ 			if (t->driver && (!strcmp(t->driver, "pegasus") ||
+ 			    !strcmp(t->driver, "catc") ||
+ 			    !strcmp(t->driver, "kaweth") ||
++			    !strcmp(t->driver, "cdc_ether") ||
++			    !strcmp(t->driver, "gl620a") ||
++			    !strcmp(t->driver, "net1080") ||
++			    !strcmp(t->driver, "plusb") ||
++			    !strcmp(t->driver, "rndis_host") ||
++			    !strcmp(t->driver, "zaurus") ||
++			    !strcmp(t->driver, "net1080") ||
+ 			    !strcmp(t->driver, "rtl8150") ||
  			    !strcmp(t->driver, "ax8817x") ||
++			    !strcmp(t->driver, "zd1211rw") ||
  			    !strcmp(t->driver, "zd1201") ||
  			    !strcmp(t->driver, "asix") ||
-+			    !strcmp(t->driver, "mcs7830") || !strcmp(t->driver, "dm9601") ||
++			    !strcmp(t->driver, "mcs7830") || 
++			    !strcmp(t->driver, "dm9601") ||
  			    !strcmp(t->driver, "usbnet"))) {
  				if (t->type == CLASS_OTHER)
  					t->type = CLASS_NETWORK;

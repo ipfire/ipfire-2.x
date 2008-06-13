@@ -103,6 +103,8 @@ ifeq "$(LFS_PASS)" "install"
 	cd /install/initrd/dev && mknod -m 0600 tty4 c 4 4
 	cd /install/initrd/dev && mknod -m 0600 tty5 c 4 5
 	cd /install/initrd/dev && mknod -m 0600 tty6 c 4 6
+	cp -f /etc/udev/rules.d/55-scsi-cdrom.rules /install/initrd/etc/udev/rules.d/55-scsi-cdrom.rules
+
 else
 ifeq "$(KLIBC)" "1"
 	cd $(DIR_APP) && sed -i "s|USE_LOG = .*|USE_LOG = false|g" Makefile
@@ -124,6 +126,7 @@ ifeq "$(KLIBC)" "1"
 	install -m755 $(DIR_SRC)/config/mkinitcpio/load-modules.sh /lib/initcpio/udev
 	install -m644 $(DIR_SRC)/config/mkinitcpio/udev_install /lib/initcpio/install/udev
 	install -m644 $(DIR_SRC)/config/mkinitcpio/udev_hook /lib/initcpio/hooks/udev
+
 else
 	rm -rf /lib/udev/devices
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/udev-config-6.2.tar.bz2
@@ -142,7 +145,9 @@ else
 					extras/scsi_id extras/usb_id extras/volume_id" install
 	cd $(DIR_APP) && cp -v udev-config-6.2/[0-9]* /etc/udev/rules.d/
 	cp -rf $(DIR_SRC)/config/udev/10-dvb.rules /etc/udev/rules.d/
+	cp -rf $(DIR_SRC)/config/udev/55-scsi-cdrom.rules /etc/udev/rules.d/
 	chmod 644 /etc/udev/rules.d/10-dvb.rules
+	chmod 644 /etc/udev/rules.d/55-scsi-cdrom.rules
 	cp -rf $(DIR_SRC)/config/udev/dvb.sh /etc/udev/
 	chmod 755 /etc/udev/dvb.sh
 	touch /etc/udev/rules.d/30-persistent-network.rules

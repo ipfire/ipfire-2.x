@@ -7,6 +7,27 @@
 
 case "$1" in
 	start)
+		if [ ! -e /etc/sysconfig/lm_sensors ]; then
+		    boot_mesg "Searching for Sensors..."
+		    "yes" | /usr/sbin/sensors-detect > /dev/null
+		    evaluate_retval
+		    if [ ! -e /etc/sysconfig/lm_sensors ]; then
+			echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
+		    fi
+		fi
+
+		boot_mesg -n "Loading Sensor Modules..."
+		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
+		    modprobe $modul > /dev/null 2>&1;
+		    if [ ${?} = 0 ]; then
+			boot_mesg -n "$SUCCESS$modul$NORMAL ";
+		    else
+			boot_mesg -n "$FAILURE$modul$NORMAL ";
+		    fi
+		done
+		boot_mesg;
+		echo_ok;
+
 		boot_mesg "Starting Collection daemon..."
 		/usr/sbin/collectd -C /etc/collectd.conf
 		evaluate_retval
@@ -20,17 +41,17 @@ case "$1" in
 # later mbmon will be replaced by lmsensors, if mbmon is not running on your
 # system, we advise to comment out these lines in order to prevent fail
 #
-		boot_mesg "Bringing up mbmon daemon..."
-		/usr/bin/mbmon -P 411 -r
-		evaluate_retval
+#		boot_mesg "Bringing up mbmon daemon..."
+#		/usr/bin/mbmon -P 411 -r
+#		evaluate_retval
 		;;
 
 	stop)
 # if mbmon is not running on your system, we advise to comment out these lines
 # in order to prevent fail
-		boot_mesg "Stopping mbmon daemon..."
-		killproc /usr/bin/mbmon
-		evaluate_retval
+#		boot_mesg "Stopping mbmon daemon..."
+#		killproc /usr/bin/mbmon
+#		evaluate_retval
 #		boot_mesg "Stopping hddtemp daemon..."
 #		killproc /usr/sbin/hddtemp
 #		evaluate_retval

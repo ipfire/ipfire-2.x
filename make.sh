@@ -24,7 +24,8 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.1"										# Version number
+VERSION="2.2-test"
+GIT_BRANCH=rspezial:rspezial										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
 NICE=10													# Nice level
@@ -332,26 +333,26 @@ buildipfire() {
   ipfiremake rp-pppoe
   ipfiremake unzip
   ipfiremake linux			SMP=1
+  ipfiremake linux-fusion		SMP=1
   ipfiremake ipp2p			SMP=1
   ipfiremake zaptel			SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake r8168			SMP=1
-  ipfiremake mcs7830			SMP=1
   ipfiremake atl1			SMP=1
-  ipfiremake dm9601			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
+  ipfiremake madwifi                    SMP=1
   ipfiremake sane		KMOD=1	SMP=1
   ipfiremake linux
+  ipfiremake linux-fusion
   ipfiremake ipp2p
   ipfiremake zaptel
   ipfiremake r8169
   ipfiremake r8168
-  ipfiremake mcs7830
   ipfiremake atl1
-  ipfiremake dm9601
   ipfiremake kqemu
   ipfiremake v4l-dvb
+  ipfiremake madwifi
   ipfiremake sane		KMOD=1
   ipfiremake pkg-config
   ipfiremake linux-atm
@@ -418,7 +419,6 @@ buildipfire() {
   ipfiremake libupnp
   ipfiremake ipp2p			IPT=1
   ipfiremake linux-igd
-  ipfiremake ipac-ng
   ipfiremake ipaddr
   ipfiremake iptstate
   ipfiremake iputils
@@ -510,6 +510,7 @@ buildipfire() {
   ipfiremake libmad
   ipfiremake libogg
   ipfiremake libvorbis
+  ipfiremake libdvbpsi
   ipfiremake lame
   ipfiremake sox
   ipfiremake libshout
@@ -535,7 +536,6 @@ buildipfire() {
   ipfiremake portmap
   ipfiremake nfs
   ipfiremake nmap
-  ipfiremake mbmon
   ipfiremake ncftp
   ipfiremake etherwake
   ipfiremake bwm-ng
@@ -547,6 +547,7 @@ buildipfire() {
   ipfiremake centerim
   ipfiremake br2684ctl
   ipfiremake pcmciautils
+  ipfiremake lm_sensors
   ipfiremake collectd
   ipfiremake lcd4linux
   ipfiremake neon
@@ -555,6 +556,7 @@ buildipfire() {
   ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
+  ipfiremake fbset
   ipfiremake sdl
   ipfiremake qemu
   ipfiremake sane
@@ -566,6 +568,8 @@ buildipfire() {
   ipfiremake arptables
   ipfiremake fontconfig
   ipfiremake freefont
+  ipfiremake directfb
+  ipfiremake dfb++
   ipfiremake ffmpeg
   ipfiremake videolan
   ipfiremake vdr
@@ -575,7 +579,10 @@ buildipfire() {
   ipfiremake bc
   ipfiremake esniper
   ipfiremake mod_perl
-}
+  ipfiremake vnstat
+  ipfiremake vnstati
+  ipfiremake wpa_supplicant
+  ipfiremake hostapd}
 
 buildinstaller() {
   # Run installer scripts one by one
@@ -646,7 +653,10 @@ buildpackages() {
   if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
   	ipfiremake usb-stick
   fi
-  mv $LFS/install/images/{*.iso,*.tgz,*.img.gz} $BASEDIR >> $LOGFILE 2>&1
+
+  # Create updater package
+  ipfiremake updater
+  mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
 
@@ -671,7 +681,7 @@ buildpackages() {
 }
 
 ipfirepackages() {
-	ipfiremake core-updates
+	#ipfiremake core-updates
 	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
 		if [ -e $BASEDIR/lfs/$i ]; then
 			ipfiredist $i
@@ -898,7 +908,7 @@ git)
 	  	[ -z $GIT_USER ] && exiterror "You have to setup GIT_USER first."
 			GIT_URL="ssh://${GIT_USER}@git.ipfire.org/pub/git/ipfire-2.x"
 			
-	  	git push ${GIT_URL} master
+	  	git push ${GIT_URL} ${GIT_BRANCH}
 	  	;;
 	esac
 	;;

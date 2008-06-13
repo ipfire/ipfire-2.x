@@ -1,0 +1,6 @@
+lib/modules/KVER-ipfire/kernel/fs/nfsd/nfsd.ko
+lib/modules/KVER-ipfire-smp/kernel/fs/nfsd/nfsd.ko
+usr/local/bin/qosctrl
+etc/rc.d/init.d/squid
+var/ipfire/langs
+var/ipfire/graphs.pl
