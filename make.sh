@@ -582,7 +582,8 @@ buildipfire() {
   ipfiremake vnstat
   ipfiremake vnstati
   ipfiremake wpa_supplicant
-  ipfiremake hostapd}
+  ipfiremake hostapd
+}
 
 buildinstaller() {
   # Run installer scripts one by one
