@@ -5,6 +5,7 @@ etc/rc.d/init.d/network
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/red.up/40-ipac
+etc/linuxigd/gatedesc.xml
 usr/local/bin/getiptstate
 usr/local/bin/makegraphs
 srv/web/ipfire/cgi-bin/speed.cgi

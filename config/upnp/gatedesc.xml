@@ -9,7 +9,7 @@
 		<friendlyName>IPFire UPnP Device</friendlyName>
 		<manufacturer>IPFire Project</manufacturer>
 		<manufacturerURL>http://www.ipfire.org</manufacturerURL>
-		<modelName>IPFire 2.1</modelName>
+		<modelName>IPFire 2.2</modelName>
 		<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce13e</UDN>
 		<iconList>
 			<icon>
@@ -37,9 +37,9 @@
 				<manufacturerURL>http://www.ipfire.org</manufacturerURL>
 				<modelDescription>WAN Device on Linux IGD</modelDescription>
 				<modelName>IPFire</modelName>
-				<modelNumber>2.1</modelNumber>
+				<modelNumber>2.2</modelNumber>
 				<modelURL>http://linux-igd.sourceforge.net</modelURL>
-				<serialNumber>2.1</serialNumber>
+				<serialNumber>2.2</serialNumber>
 				<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce13e</UDN>
 				<UPC>Linux IGD</UPC>
 				<serviceList>
@@ -59,9 +59,9 @@
 						<manufacturerURL>http://www.ipfire.org</manufacturerURL>
 						<modelDescription>Internet connection on Linux IPFire Firewall</modelDescription>
 						<modelName>IPFire</modelName>
-						<modelNumber>2.1</modelNumber>
+						<modelNumber>2.2</modelNumber>
 						<modelURL>http://www.ipfire.org</modelURL>
-						<serialNumber>2.1</serialNumber>
+						<serialNumber>2.2</serialNumber>
 						<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce13e</UDN>
 						<UPC>Linux IGD</UPC>
 						<serviceList>
