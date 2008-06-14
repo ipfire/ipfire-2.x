@@ -5,7 +5,7 @@
 #                                                                          #
 # IPFire is free software; you can redistribute it and/or modify           #
 # it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
+# the Free Software Foundation; either version 3 of the License, or        #
 # (at your option) any later version.                                      #
 #                                                                          #
 # IPFire is distributed in the hope that it will be useful,                #
@@ -21,40 +21,21 @@
 #                                                                          #
 ############################################################################
 #
+. /opt/pakfire/lib/functions.sh
+/usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
-OLDVERSION="2.1.1"
-NEWVERSION="2.2-test"
-CORE="14"
+OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
+NEWVERSION="2.3"
 KVER="2.6.20.21"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
 MOUNT=$_
-INSTALLEDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
-INSTALLEDCORE=`cat /opt/pakfire/db/core/mine`
 OLDKERNEL=`ls /boot/vmlinuz-*-ipfire | cut -d"-" -f2 | tail -n 1`
-#
-# check version
-#
-if [ ! "$INSTALLEDVERSION" == "$OLDVERSION" ]; then
-    echo Error! This update is only for IPFire $OLDVERSION Core $CORE
-    echo You have installed IPFire $INSTALLEDVERSION Core $INSTALLEDCORE
-    exit 1
-fi
-# check core
-if [ ! "$INSTALLEDCORE" == "$CORE" ]; then
-    echo Error! This update is only for IPFire $OLDVERSION Core $CORE
-    echo You have installed IPFire $INSTALLEDVERSION Core $INSTALLEDCORE
-    exit 2
-fi
-#
 #
 echo 
 echo Update IPFire $OLDVERSION to $NEWVERSION
-echo
-echo Press Enter to begin.
-read
 echo
 #
 # check if we the backup file already exist
@@ -78,7 +59,7 @@ mv /boot/grub/grub.conf /boot/grub/grub-old.conf
 #
 echo
 echo Unpack the updated files ...
-tar xjvf files.ipfire -C /
+extract_files
 # 
 # Modify grub.conf
 #

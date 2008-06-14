@@ -682,7 +682,7 @@ buildpackages() {
 }
 
 ipfirepackages() {
-	#ipfiremake core-updates
+	ipfiremake core-updates
 	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
 		if [ -e $BASEDIR/lfs/$i ]; then
 			ipfiredist $i
