@@ -55,22 +55,20 @@ Project Leader - Michael Tremer
 (<a href='mailto:mitch\@ipfire.org'>mitch\@ipfire.org</a>)<br />
 Vice Project Leader - Christian Schmidt
 (<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
+Developer - Arne Fitzenreiter
+(<a href='mailto:arne\@ipfire.org'>arne\@ipfire.org</a>)<br />
 Developer - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
 Developer - Sven Nierlein
 (<a href='mailto:affect\@ipfire.org'>affect\@versatel.de</a>)<br />
-Developer - Arne Fitzenreiter
-(<a href='mailto:arne\@ipfire.org'>arne\@ipfire.org</a>)<br />
-Sponsor - Detlef Lampart
-(<a href='mailto:delaco\@ipfire.org'>delaco\@ipfire.org</a>)<br />
-Developer &amp; Security Manager - Rene Zingel
+Developer  - Rene Zingel
 (<a href='mailto:linuxadmin\@ipfire.org'>linuxadmin\@ipfire.org</a>)<br />
-Supporter - Silvio Rechenbach
-(<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
 Sponsor - Karsten Rechenbach
 (<a href='mailto:space\@ipfire.org'>space\@ipfire.org</a>)<br />
 Tester - Ronald Wiesinger
 (<a href='mailto:rowie\@ipfire.org'>rowie\@ipfire.org</a>)<br />
+Tester - Silvio Rechenbach
+(<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
 </p>
 <p>Some parts of the distribution are left ajar on third-party software, that is licensed under the GPL, too.<br />
 There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connection Scheduler, mbmon-Graphs, Hddtemp and Wake-on-LAN.<br />

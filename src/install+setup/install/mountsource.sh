@@ -34,7 +34,7 @@ for DEVICE in $(kudzu -qps -t 30 -c CDROM | grep device: | cut -d ' ' -f 2 | sor
 done
 
 # scan HD device (usb sticks, etc.)
-for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		mount /dev/${DEVICE}1 /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/ipfire-*.tbz2 2>/dev/null)" ]; then
 			echo -n ${DEVICE}1 > /tmp/source_device

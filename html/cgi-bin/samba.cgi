@@ -73,7 +73,7 @@ my %servicenames = ('SMB Daemon' => 'smbd','NetBIOS Nameserver' => 'nmbd');
 
 $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'NETBIOSNAME'} = 'IPFire';
-$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.2';
+$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.3';
 $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'share';
 $sambasettings{'OSLEVEL'} = '33';
