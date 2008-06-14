@@ -1,4 +1,4 @@
-#!/bin/perl -wT
+#!/usr/bin/perl -wT
 
 use ModPerl::Registry;
 use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
