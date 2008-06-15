@@ -508,8 +508,9 @@ int main(int argc, char *argv[])
 	    /* Remove the ide hook if we install sda */
 	    replace("/harddisk/etc/mkinitcpio.conf", " ide ", " ");
 	} else {
-	    /* Remove the pata hook if we install hda */
+	    /* Remove the pata & sata hook if we install hda */
 	    replace("/harddisk/etc/mkinitcpio.conf", " pata ", " ");
+	    replace("/harddisk/etc/mkinitcpio.conf", " sata ", " ");
 	}
 	/* Going to make our initrd... */
 	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s.img -k %s-ipfire", KERNEL_VERSION, KERNEL_VERSION);

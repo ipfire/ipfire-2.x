@@ -84,8 +84,9 @@ if [ "${ROOT:0:7}" == "/dev/sd" ]; then
     sed -i "s| ide | |g" /etc/mkinitcpio.conf
 else
 if [ "${ROOT:0:7}" == "/dev/hd" ]; then
-    # Remove pata hook if root is on hda 
+    # Remove pata & sata hook if root is on hda 
     sed -i "s| pata | |g" /etc/mkinitcpio.conf
+    sed -i "s| sata | |g" /etc/mkinitcpio.conf
 fi
 fi
 mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
