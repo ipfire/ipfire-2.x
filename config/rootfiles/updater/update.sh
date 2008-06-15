@@ -46,6 +46,9 @@ if [ -e /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 ]; then
 fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
+# Add issue and packfire conf to backup
+echo etc/issue >> ROOTFILES
+echo opt/pakfire/etc/pakfire.conf >> ROOTFILES
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
 echo
@@ -94,7 +97,7 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
 # Create new issue
 #
-echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
+echo IPFire v$NEWVERSION - www.ipfire.org > /
 echo =================================== >> /etc/issue
 echo \\n running on \\s \\r \\m >> /etc/issue
 # Core 15 begin
