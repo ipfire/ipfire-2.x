@@ -36,6 +36,8 @@ case "${1}" in
 		fi
 		[ -e "/var/ipfire/red/active" ] && ARGS="$ARGS -r /var/ipfire/red/resolv.conf"
 		
+		ARGS="$ARGS --domain=`cat /var/ipfire/main/settings |grep DOMAIN |cut -d = -f 2`"
+		
 		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS
 		
 		if [ "${SHOW_SRV}" -eq 1 ] && [ "${DNS1}" != "" -o "${DNS2}" != "" ]; then
