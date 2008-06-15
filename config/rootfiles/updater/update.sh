@@ -97,7 +97,7 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
 # Create new issue
 #
-echo IPFire v$NEWVERSION - www.ipfire.org > /
+echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
 echo =================================== >> /etc/issue
 echo \\n running on \\s \\r \\m >> /etc/issue
 # Core 15 begin
