@@ -106,6 +106,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Security fix for CIFS & Netfilter SNMP
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
 
+	# Temperatursensoren von Intel Core & Core 2 Prozessoren
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20-hwmon-coretemp.patch
+
 	# Openswan 2
 	cd $(DIR_SRC) && rm -rf openswan-*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/openswan-2.4.12.tar.gz
