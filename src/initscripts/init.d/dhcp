@@ -31,6 +31,14 @@ case "$1" in
 	stop)
 		boot_mesg "Stopping DHCP Server..."
 		killproc -p /var/run/dhcpd.pid /usr/sbin/dhcpd
+		if [ "$(ps -A | grep " dhcpd")" != "" ] ; then
+		    # if fail use the hard way ...
+		    boot_mesg "Killing DHCP Server..."
+		    killall -w -s KILL /usr/sbin/dhcpd > /dev/null 2>&1
+		    rm -f /var/run/dhcpd.pid > /dev/null 2>&1
+		    echo_ok;
+		    exit 0
+		fi
 		;;
 
 	reload)
