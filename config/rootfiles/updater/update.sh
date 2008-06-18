@@ -54,6 +54,10 @@ tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
 echo
 echo Update IPfire to $NEWVERSON ...
 #
+# Delete old collectd symlink
+#
+rm -rf /etc/rc.d/rc3.d/S20collectd
+#
 # Backup the old grub config
 #
 mv /boot/grub/grub.conf /boot/grub/grub-old.conf
