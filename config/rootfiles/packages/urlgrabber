@@ -1,6 +1,7 @@
 usr/bin/urlgrabber
 usr/lib/python2.4/httplib.pyc
 usr/lib/python2.4/socket.pyc
+usr/lib/python2.4/encodings/idna.pyc
 #usr/lib/python2.4/site-packages/urlgrabber
 #usr/lib/python2.4/site-packages/urlgrabber/__init__.py
 usr/lib/python2.4/site-packages/urlgrabber/__init__.pyc
