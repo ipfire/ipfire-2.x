@@ -583,6 +583,7 @@ buildipfire() {
   ipfiremake vnstati
   ipfiremake wpa_supplicant
   ipfiremake hostapd
+  ipfiremake urlgrabber
 }
 
 buildinstaller() {
