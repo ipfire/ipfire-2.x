@@ -578,7 +578,6 @@ buildipfire() {
   ipfiremake squidclamav
   ipfiremake bc
   ipfiremake esniper
-  ipfiremake mod_perl
   ipfiremake vnstat
   ipfiremake vnstati
   ipfiremake wpa_supplicant
