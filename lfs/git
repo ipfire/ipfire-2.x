@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.5.5
+VER        = 1.5.6
 
 THISAPP    = git-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = git
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 09f15f0b0e330986d930746abf6962f4
+$(DL_FILE)_MD5 = 76c4efaaa5470a5385e22d99349a97b3
 
 install : $(TARGET)
 
