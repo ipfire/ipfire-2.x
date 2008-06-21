@@ -19,3 +19,4 @@ srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/connections.cgi
 var/ipfire/sensors/
 var/ipfire/graphs.pl
+var/ipfire/firebuild

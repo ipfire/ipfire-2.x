@@ -40,6 +40,7 @@ var/ipfire/extrahd/devices
 var/ipfire/extrahd/partitions
 var/ipfire/extrahd/scan
 var/ipfire/extrahd/settings
+var/ipfire/firebuild
 var/ipfire/fwlogs
 #var/ipfire/fwlogs/ipsettings
 #var/ipfire/fwlogs/portsettings
