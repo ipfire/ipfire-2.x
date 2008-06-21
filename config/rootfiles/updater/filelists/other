@@ -1,7 +1,5 @@
 etc/rc.d/init.d/dhcp
 etc/rc.d/init.d/dnsmasq
-etc/httpd/conf/loadmodule.conf
-etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/udev/dvb.sh
 etc/udev/rules.d/10-dvb.rules
 etc/udev/rules.d/55-scsi-cdrom.rules
