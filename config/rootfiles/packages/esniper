@@ -1,5 +1,6 @@
 var/ipfire/backup/addons/includes/esniper
 etc/httpd/conf/vhosts.d/esniper.conf
+var/ipfire/backup/addons/includes/esniper
 #srv/web/esniper
 #srv/web/esniper/CHANGELOG
 #srv/web/esniper/INSTALL
@@ -48,6 +49,10 @@ srv/web/esniper/config/ebay.php
 #srv/web/esniper/doc/TRANSLATIONS
 srv/web/esniper/include
 srv/web/esniper/include/.htaccess
+srv/web/esniper/include/classes
+srv/web/esniper/include/classes/esf_extension.class.php
+srv/web/esniper/include/classes/esf_module.class.php
+srv/web/esniper/include/classes/esf_plugin.class.php
 srv/web/esniper/include/define.php
 srv/web/esniper/include/dirify.php
 srv/web/esniper/include/err_handler.php
@@ -614,8 +619,6 @@ srv/web/esniper/module/logfiles
 srv/web/esniper/module/logfiles/common.php
 srv/web/esniper/module/logfiles/config.php
 srv/web/esniper/module/logfiles/configuration.php
-srv/web/esniper/module/logfiles/help
-srv/web/esniper/module/logfiles/help/de.htm
 srv/web/esniper/module/logfiles/language
 srv/web/esniper/module/logfiles/language/de.configuration.php
 srv/web/esniper/module/logfiles/language/de.php
@@ -856,8 +859,14 @@ srv/web/esniper/plugin/api/config.php
 srv/web/esniper/plugin/api/install.php
 srv/web/esniper/plugin/api/plugin.php
 srv/web/esniper/plugin/auctionstats
-srv/web/esniper/plugin/auctionstats/auctionstats.php
+srv/web/esniper/plugin/auctionstats/auctionstats.class.php
 srv/web/esniper/plugin/auctionstats/config.php
+srv/web/esniper/plugin/auctionstats/language
+srv/web/esniper/plugin/auctionstats/language/de.php
+srv/web/esniper/plugin/auctionstats/language/en.php
+srv/web/esniper/plugin/auctionstats/layout
+srv/web/esniper/plugin/auctionstats/layout/default
+srv/web/esniper/plugin/auctionstats/layout/default/content.tpl
 srv/web/esniper/plugin/auctionstats/plugin.php
 srv/web/esniper/plugin/autodelete
 srv/web/esniper/plugin/autodelete/config.php

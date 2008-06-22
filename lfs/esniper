@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = esniper
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -40,13 +40,13 @@ DEPS       = ""
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) es-f_1.0.0.tgz
+objects = $(DL_FILE) es-f_1.1.1.tgz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-es-f_1.0.0.tgz = $(DL_FROM)/es-f_1.0.0.tgz
+es-f_1.1.1.tgz = $(DL_FROM)/es-f_1.1.1.tgz
 
 $(DL_FILE)_MD5 = b5dad4270657727951d89f410e63355f
-es-f_1.0.0.tgz_MD5 = 3911ad4ea678e46895ec113a48cc666a
+es-f_1.1.1.tgz_MD5 = 6d322716edfc0d86a0a230e648a6f797
 
 install : $(TARGET)
 
@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	-mkdir /srv/web/esniper
-	tar xvfz $(DIR_DL)/es-f_1.0.0.tgz -C /srv/web/esniper
+	tar xvfz $(DIR_DL)/es-f_1.1.1.tgz -C /srv/web/esniper
 	chown -Rv nobody.nobody /srv/web/esniper
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/esniper \
 	                 /var/ipfire/backup/addons/includes/esniper
