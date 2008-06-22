@@ -30,7 +30,15 @@ THISAPP    = openswan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+ifeq "$(KMOD)" "1"
+ifeq "$(SMP)" "1"
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
+else
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod
+endif
+else
 TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -70,6 +78,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(KMOD)" "1"
+	cd $(DIR_APP) && make KERNELSRC=/usr/src/linux module
+	cd $(DIR_APP) && make minstall
+else
 	cd $(DIR_APP) && sed -i \
 		-e 's%^INC_USRLOCAL.*$$%INC_USRLOCAL=/usr%' \
 		-e 's%^USERCOMPILE.*$$%USERCOMPILE=$(CFLAGS)%' \
@@ -93,6 +105,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown-1.patch
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown_x509-1.patch
 	cd /etc/ipsec.d/policies && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-clear-1.patch
-	
+endif	
 	#@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
