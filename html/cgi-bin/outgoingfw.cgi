@@ -485,7 +485,15 @@ END
 		    <td width='20%' align='right'>$Lang::tr{'source ip'}: <img src='/blob.gif' />
 		    <td width='30%' align='left'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' />
 		<tr><td width='20%' align='right'>$Lang::tr{'logging'}:
-		    <td width='30%' align='left'><select name='LOG'><option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option><option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option></select></td>
+END
+;
+if ($outfwsettings{'POLICY'} eq 'MODE1'){
+	 print "<td width='30%' align='left'><input type='text' name='LOG' maxlength='10' value='$Lang::tr{'inactive'}' readonly='true' /></td>";
+}
+else{
+	 print "<td width='30%' align='left'><select name='LOG'><option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option><option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option></select></td>";
+}
+print <<END
 		    <td width='20%' align='right' />
 		    <td width='30%' align='left' />
 		<tr><td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' />

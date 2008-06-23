@@ -8,6 +8,7 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/graphs.cgi
+srv/web/ipfire/cgi-bin/outgoingfw.cgi
 var/ipfire/langs
 var/ipfire/graphs.pl
 var/ipfire/outgoing/bin/outgoingfw.pl
