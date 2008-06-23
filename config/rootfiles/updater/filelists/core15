@@ -10,6 +10,7 @@ srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/graphs.cgi
 var/ipfire/langs
 var/ipfire/graphs.pl
+var/ipfire/outgoing/bin/outgoingfw.pl
 usr/share/terminfo/x/xterm-color
 bin/ntfs-3g
 lib/libntfs-3g.so
