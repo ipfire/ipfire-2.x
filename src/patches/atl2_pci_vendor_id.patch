@@ -1,0 +1,14 @@
+diff -Naur atl2-2.0.4.org/atl2_main.c atl2-2.0.4/atl2_main.c
+--- atl2-2.0.4.org/atl2_main.c	2008-01-28 23:16:38.000000000 +0100
++++ atl2-2.0.4/atl2_main.c	2008-06-23 20:46:04.000000000 +0200
+@@ -61,6 +61,10 @@
+ MODULE_VERSION(ATL2_DRV_VERSION);
+ 
+ /* FIXME: remove this after merging, goes in pci_ids.h */
++#ifndef PCI_VENDOR_ID_ATTANSIC
++#define PCI_VENDOR_ID_ATTANSIC		0x1969
++#endif
++
+ #ifndef PCI_DEVICE_ID_ATTANSIC_L2
+ #define PCI_DEVICE_ID_ATTANSIC_L2	0x2048
+ #endif
