@@ -300,9 +300,9 @@ END
 			if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 			if ($id % 2) {
-          print "<tr><td align='center'>&nbsp;</td><td align='center' nowrap='nowrap' bgcolor='$color{'color20'}'>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
+          print "<tr><td align='left' nowrap='nowrap' bgcolor='$color{'color20'}'>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td><td align='center'>$confighash{$key}[11]</td>";
 			} else {
-          print "<tr><td align='center'>&nbsp;</td><td align='center' nowrap='nowrap' bgcolor='$color{'color22'}'>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
+          print "<tr></td><td align='left' nowrap='nowrap' bgcolor='$color{'color22'}'>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td><td align='center'>$confighash{$key}[11]</td>";
 			}
 			
 			my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
