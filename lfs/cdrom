@@ -87,6 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/config/syslinux/splash.lss    /install/cdrom/boot/isolinux/splash.lss; \
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest; \
 	cp /usr/lib/syslinux/isolinux.bin           /install/cdrom/boot/isolinux/isolinux.bin; \
+	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
+						xargs md5sum > md5sum.txt; \
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
     	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
     	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(ED).iso
