@@ -63,9 +63,16 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 
 			continue
 		else
 			umount /harddisk 2> /dev/null
-			echo -n "$DEVICE" > /tmp/dest_device
-			echo "${DEVICE} - yes, it is our destination"
-			exit 2
+			mount /dev/${DEVICE}1 /harddisk 2> /dev/null
+			if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+			    umount /harddisk 2> /dev/null
+			    echo "${DEVICE} is source drive - SKIP"
+			    continue
+			else
+			    echo -n "$DEVICE" > /tmp/dest_device
+			    echo "${DEVICE} - yes, it is our destination"
+			    exit 2
+			fi
 		fi
 done
 
