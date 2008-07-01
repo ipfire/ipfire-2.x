@@ -40,6 +40,7 @@
 * as86-0.16.17
 * asterisk-1.4.18
 * atl1-1.2.40.2
+* atl2-2.0.4
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire

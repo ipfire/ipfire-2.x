@@ -76,7 +76,8 @@ $(TARGET) :
 	cp -aR /install/initrd/* /install/mnt
 
 	# make new dependencies
-	depmod -a -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
+	depmod -a -F /boot/System.map-$(KVER)-ipfire \
+	    -b /install/initrd $(KVER)-ipfire
 
 	mksquashfs /install/initrd /install/images/initrd
 	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log
