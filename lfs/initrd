@@ -79,10 +79,10 @@ $(TARGET) :
 	depmod -a -F /boot/System.map-$(KVER)-ipfire \
 	    -b /install/initrd $(KVER)-ipfire
 	    
-	# Change priority of pata and ub module
-	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep "# \|ata\| ub" \
+	# Change priority of pata module
+	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep "# \|ata" \
 	    modules.alias > modules.alias.tmp
-	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep -v "# \|ata\| ub" \
+	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep -v "# \|ata" \
 	    modules.alias >> modules.alias.tmp
 	cd /install/initrd/lib/modules/$(KVER)-ipfire && mv -f \
 	    modules.alias.tmp modules.alias
