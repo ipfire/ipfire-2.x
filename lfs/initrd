@@ -75,9 +75,17 @@ $(TARGET) :
 
 	cp -aR /install/initrd/* /install/mnt
 
-	# make new dependencies
+	# make new dependencies for installer
 	depmod -a -F /boot/System.map-$(KVER)-ipfire \
 	    -b /install/initrd $(KVER)-ipfire
+	    
+	# Change priority of pata and ub module
+	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep "# \|ata\| ub" \
+	    modules.alias > modules.alias.tmp
+	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep -v "# \|ata\| ub" \
+	    modules.alias >> modules.alias.tmp
+	cd /install/initrd/lib/modules/$(KVER)-ipfire && mv -f \
+	    modules.alias.tmp modules.alias
 
 	mksquashfs /install/initrd /install/images/initrd
 	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log
