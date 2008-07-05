@@ -77,10 +77,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	# iptables-fixed.tar.gz is made in the linux kernel build process
 	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.25 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.13
 
-	@cd $(DIR_SRC) && tar zxf $(DIR_DL)/iptables-fixed.tar.gz
+	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.18.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.18/iptables-1.3-for-kernel-2.6.20forward-layer7-2.18.patch
 

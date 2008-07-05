@@ -49,22 +49,16 @@ endif
 objects =$(DL_FILE) \
 	mISDN-1_1_5.tar.gz \
 	squashfs3.3.tgz \
-	iptables-1.3.8.tar.bz2 \
-	patch-o-matic-ng-20061210.tar.bz2 \
 	netfilter-layer7-v2.18.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2
 	
 $(DL_FILE)												= $(URL_IPFIRE)/$(DL_FILE)
-patch-o-matic-ng-20061210.tar.bz2	= $(URL_IPFIRE)/patch-o-matic-ng-20061210.tar.bz2
-iptables-1.3.8.tar.bz2			= $(URL_IPFIRE)/iptables-1.3.8.tar.bz2
 netfilter-layer7-v2.18.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.18.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.3.tgz				= $(URL_IPFIRE)/squashfs3.3.tgz
 mISDN-1_1_5.tar.gz			= $(URL_IPFIRE)/mISDN-1_1_5.tar.gz
 
 $(DL_FILE)_MD5										= fbedc192e654735936cc780da8deeba4
-patch-o-matic-ng-20061210.tar.bz2_MD5	= 76edac76301b45f89e467b41c8cf4393
-iptables-1.3.8.tar.bz2_MD5		= 0a9209f928002e5eee9cdff8fef4d4b3
 netfilter-layer7-v2.18.tar.gz_MD5	= 8d2e2c00f5c20e8c0852998035aeffd2
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.3.tgz_MD5			= 95c40fca0d886893631b5de14a0af25b
@@ -123,21 +117,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# ip_conntrack permissions from 440 to 444
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 	
-	# Some VIA patches
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/padlock-prereq-2.6.16.diff
-	#cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/epia_dma.patch
-
-	# Patch-o-matic
-	cd $(DIR_SRC) && rm -rf iptables-* patch-o-matic*
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/iptables-1.3.8.tar.bz2
-	cd $(DIR_SRC) && ln -sf iptables-1.3.8 iptables
-	#cd $(DIR_SRC) && tar xfj $(DIR_DL)/patch-o-matic-ng-20061210.tar.bz2
-	#cd $(DIR_SRC)/patch-o-matic-ng* && \
-	#	./runme --batch --kernel-path=$(ROOT)/usr/src/$(THISAPP)/ \
-	#		--iptables-path=$(ROOT)/usr/src/iptables/ \
-	#		sip-conntrack-nat rtsp-conntrack-nat \
-	#		mms-conntrack-nat
-
 	# Layer7-patch
 	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.18
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.18.tar.gz
@@ -154,11 +133,6 @@ endif
 	cd $(DIR_SRC)/mISDN-1_1_5 && yes 'yes' | ./std2kern -k /usr/src/linux
 	
 	cd $(DIR_APP)/drivers/isdn/hardware/mISDN && patch -Np0 < $(DIR_SRC)/src/patches/mISDN-avmfritz.patch
-
-ifeq "$(SMP)" ""
-	# Only do this once on the non-SMP pass
-	cd $(DIR_SRC) && tar czf $(DIR_DL)/iptables-fixed.tar.gz iptables-1.3.8
-endif
 
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
