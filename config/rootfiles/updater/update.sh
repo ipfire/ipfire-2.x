@@ -100,6 +100,10 @@ mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
 #
 sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
+# Delete lists of the old version
+#
+rm -f /opt/pakfire/db/lists/*list.db
+#
 # Create new issue
 #
 echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
