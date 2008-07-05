@@ -18,9 +18,7 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting Asterisk PBX..."
-		/sbin/modprobe zaptel
-		/sbin/modprobe ztdummy
-		loadproc /usr/sbin/asterisk
+		loadproc /usr/sbin/asterisk -p
 		;;
 
 	stop)
@@ -44,7 +42,7 @@ case "${1}" in
 	status)
 		statusproc /usr/sbin/asterisk > /tmp/ast 2>&1
 		STAT=$(cat /tmp/ast)
-		/bin/rm -f /tmp/ast
+		rm -f /tmp/ast
 		echo $STAT
 		EX_Z=$(echo $STAT | grep "not" | wc -l)
 		exit $EX_Z
