@@ -71,7 +71,7 @@ Tester - Silvio Rechenbach
 (<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
 </p>
 <p>Some parts of the distribution are left ajar on third-party software, that is licensed under the GPL, too.<br />
-There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connection Scheduler, mbmon-Graphs, Hddtemp and Wake-on-LAN.<br />
+There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connection Scheduler, Hddtemp and Wake-on-LAN.<br />
 Distributed by Marco Sondermann, Ufuk Altinkaynak, Thomas Eichstaedt and Olaf Westrik.</p>
 END
 ;
