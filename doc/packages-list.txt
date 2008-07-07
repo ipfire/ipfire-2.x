@@ -227,6 +227,7 @@
 * pciutils-2.2.3
 * pcmciautils-014
 * pcre-6.7
+* pcre-7.7
 * perl-5.8.8
 * php-5.2.4
 * phpSANE-0.3.3
