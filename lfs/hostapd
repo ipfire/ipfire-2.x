@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
 PAK_VER    = 1
 
-DEPS       = "wpa_supplicant"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
