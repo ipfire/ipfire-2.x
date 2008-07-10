@@ -9,13 +9,13 @@ usr/bin/sigtool
 #usr/lib/libclamav.la
 usr/lib/libclamav.so
 usr/lib/libclamav.so.4
-usr/lib/libclamav.so.4.0.3
+usr/lib/libclamav.so.4.0.4
 usr/lib/libclamunrar.so
 usr/lib/libclamunrar.so.4
-usr/lib/libclamunrar.so.4.0.3
+usr/lib/libclamunrar.so.4.0.4
 usr/lib/libclamunrar_iface.so
 usr/lib/libclamunrar_iface.so.4
-usr/lib/libclamunrar_iface.so.4.0.3
+usr/lib/libclamunrar_iface.so.4.0.4
 #usr/lib/pkgconfig/libclamav.pc
 usr/sbin/clamd
 usr/share/clamav
