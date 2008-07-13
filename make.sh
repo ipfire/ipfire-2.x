@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.3-beta1"
+VERSION="2.3-test"
 GIT_BRANCH=master:master										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
@@ -333,12 +333,12 @@ buildipfire() {
   ipfiremake rp-pppoe
   ipfiremake unzip
   ipfiremake linux			SMP=1
-  ipfiremake linux-fusion		SMP=1
-  ipfiremake ipp2p			SMP=1
-  ipfiremake zaptel			SMP=1
-  ipfiremake r8169			SMP=1
-  ipfiremake r8168			SMP=1
-  ipfiremake atl1			SMP=1
+#  ipfiremake linux-fusion		SMP=1
+#  ipfiremake ipp2p			SMP=1
+#  ipfiremake zaptel			SMP=1
+#  ipfiremake r8169			SMP=1
+#  ipfiremake r8168			SMP=1
+#  ipfiremake atl1			SMP=1
   ipfiremake atl2			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
@@ -346,12 +346,12 @@ buildipfire() {
   ipfiremake sane		KMOD=1	SMP=1
   ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
-  ipfiremake linux-fusion
-  ipfiremake ipp2p
-  ipfiremake zaptel
-  ipfiremake r8169
-  ipfiremake r8168
-  ipfiremake atl1
+#  ipfiremake linux-fusion
+#  ipfiremake ipp2p
+#  ipfiremake zaptel
+#  ipfiremake r8169
+#  ipfiremake r8168
+#  ipfiremake atl1
   ipfiremake atl2
   ipfiremake kqemu
   ipfiremake v4l-dvb
@@ -465,7 +465,6 @@ buildipfire() {
   ipfiremake noip_updater
   ipfiremake ntp
   ipfiremake openssh
-  ipfiremake openswan
   ipfiremake rrdtool
   ipfiremake setserial
   ipfiremake setup
@@ -547,6 +546,7 @@ buildipfire() {
   ipfiremake sysstat
   ipfiremake vsftpd
   ipfiremake which
+  ipfiremake openswan
   ipfiremake lsof
   ipfiremake centerim
   ipfiremake br2684ctl

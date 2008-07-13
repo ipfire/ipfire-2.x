@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .21
-VER        = 2.6.20.21
+PATCHLEVEL = .7
+VER        = 2.6.24.7
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -47,22 +47,22 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	mISDN-1_1_5.tar.gz \
+	mISDN-1_1_8.tar.gz \
 	squashfs3.3.tgz \
 	netfilter-layer7-v2.18.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2
 	
-$(DL_FILE)												= $(URL_IPFIRE)/$(DL_FILE)
+$(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.18.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.18.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.3.tgz				= $(URL_IPFIRE)/squashfs3.3.tgz
-mISDN-1_1_5.tar.gz			= $(URL_IPFIRE)/mISDN-1_1_5.tar.gz
+mISDN-1_1_8.tar.gz			= $(URL_IPFIRE)/mISDN-1_1_8.tar.gz
 
-$(DL_FILE)_MD5										= fbedc192e654735936cc780da8deeba4
+$(DL_FILE)_MD5				= 40a73780d51525d28d36dec852c680c4
 netfilter-layer7-v2.18.tar.gz_MD5	= 8d2e2c00f5c20e8c0852998035aeffd2
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.3.tgz_MD5			= 95c40fca0d886893631b5de14a0af25b
-mISDN-1_1_5.tar.gz_MD5	          	= 93b1cff7817b82638a0475c2b7b7f1b6
+mISDN-1_1_8.tar.gz_MD5	          	= 29c55ffe0b35668a41eaed3b1c3ddfe2
 
 install : $(TARGET)
 
@@ -95,42 +95,42 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -s linux-$(VER) /usr/src/linux
 
 	# Security fix for CIFS & Netfilter SNMP
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
 
 	# Temperatursensoren von Intel Core & Core 2 Prozessoren
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20-hwmon-coretemp.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20-hwmon-coretemp.patch
 
 	# Add USB ID of US-Robotics USR805423 to ZD1211 driver
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-zd1211-usrobotics-usbid.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-zd1211-usrobotics-usbid.patch
 
 	# Openswan nat-t
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.12.kernel-2.6.20.21-natt.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.6.14-kernel-2.6.24.7-natt.patch
 
 	# Reiser4
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/reiser4-for-2.6.20.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/reiser4-for-2.6.24.patch
 
 	# SquashFS
 	cd $(DIR_SRC) && rm -rf squashfs*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/squashfs3.3.tgz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.3/kernel-patches/linux-2.6.20/squashfs3.3-patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.3/kernel-patches/linux-2.6.24/squashfs3.3-patch
 
 	# ip_conntrack permissions from 440 to 444
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
+#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 	
 	# Layer7-patch
 	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.18
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.18.tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.18/for_older_kernels/kernel-2.6.20-2.6.21-layer7-2.16.1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.18/for_older_kernels/kernel-2.6.22-2.6.24-layer7-2.18.patch
 
 	# Linux Intermediate Queueing Device
 ifeq "$(XEN)" ""
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20-imq.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.24-imq.diff
 endif
 
 	# mISDN
 	cd $(DIR_SRC) && rm -rf mISDN-*
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/mISDN-1_1_5.tar.gz
-	cd $(DIR_SRC)/mISDN-1_1_5 && yes 'yes' | ./std2kern -k /usr/src/linux
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/mISDN-1_1_8.tar.gz
+	cd $(DIR_SRC)/mISDN-1_1_8 && yes 'yes' | ./std2kern -k /usr/src/linux
 	
 	cd $(DIR_APP)/drivers/isdn/hardware/mISDN && patch -Np0 < $(DIR_SRC)/src/patches/mISDN-avmfritz.patch
 
@@ -173,3 +173,4 @@ endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)
+

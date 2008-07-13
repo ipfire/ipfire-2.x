@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1_1_5
+VER        = 1_1_8
 
 THISAPP    = mISDNuser-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 45bf90350ac8f8e1845c02e293126d70
+$(DL_FILE)_MD5 = 7cf66625608736eb939cfcb2308f3edf
 
 install : $(TARGET)
 

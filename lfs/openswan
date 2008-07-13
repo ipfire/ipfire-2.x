@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.13
+VER        = 2.6.14
 
 THISAPP    = openswan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -48,7 +48,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0c2505cf2639a7de051e815f41e8e1f4
+#$(DL_FILE)_MD5 = 0c2505cf2639a7de051e815f41e8e1f4
+$(DL_FILE)_MD5 = 44dc3cb98b9cb4e3fa03b82967d08b78
 
 install : $(TARGET)
 
@@ -78,14 +79,17 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(KMOD)" "1"
-	cd $(DIR_APP) && make KERNELSRC=/usr/src/linux module
-	cd $(DIR_APP) && make minstall
-else
 	cd $(DIR_APP) && sed -i \
 		-e 's%^INC_USRLOCAL.*$$%INC_USRLOCAL=/usr%' \
 		-e 's%^USERCOMPILE.*$$%USERCOMPILE=$(CFLAGS)%' \
 		-e 's%^KLIPSCOMPILE.*$$%KLIPSCOMPILE=$(CFLAGS)%' Makefile.inc
+	cd $(DIR_APP) && sed -i \
+		-e 's/-Werror//g' programs/Makefile.program
+
+ifeq "$(KMOD)" "1"
+	cd $(DIR_APP) && make KERNELSRC=/usr/src/linux module
+	cd $(DIR_APP) && make minstall
+else
 	cd $(DIR_APP) && make programs
 	cd $(DIR_APP) && make install
 	
@@ -100,10 +104,10 @@ else
 	ln -sf $(CONFIG_ROOT)/certs /etc/ipsec.d/certs
 	ln -sf $(CONFIG_ROOT)/crls  /etc/ipsec.d/crls
 	
-	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.12-startklips-1.patch
-	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown-1.patch
-	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown_x509-1.patch
-	cd /etc/ipsec.d/policies && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-clear-1.patch
+	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.14-startklips-1.patch
+	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.14-updown-1.patch
+#	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown_x509-1.patch
+#	cd /etc/ipsec.d/policies && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-clear-1.patch
 endif	
 	#@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -80,10 +80,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	
 ifeq "$(SMP)" "1"
+	mkdir -p /lib/modules/$(KVER)-ipfire-smp/misc/
 	cd $(DIR_APP) && ./configure --prefix=/usr --kernel-path=/lib/modules/$(KVER)-ipfire-smp/build/
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && install -m 644 kqemu.ko /lib/modules/$(KVER)-ipfire-smp/misc/
 else
+	mkdir -p /lib/modules/$(KVER)-ipfire/misc/
 	cd $(DIR_APP) && ./configure --prefix=/usr --kernel-path=/lib/modules/$(KVER)-ipfire/build/
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && install -m 644 kqemu.ko /lib/modules/$(KVER)-ipfire/misc/
