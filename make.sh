@@ -421,7 +421,7 @@ buildipfire() {
   ipfiremake whatmask
   ipfiremake iptables
   ipfiremake libupnp
-  ipfiremake ipp2p			IPT=1
+#  ipfiremake ipp2p			IPT=1
   ipfiremake linux-igd
   ipfiremake ipaddr
   ipfiremake iptstate

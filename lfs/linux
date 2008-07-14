@@ -101,7 +101,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-zd1211-usrobotics-usbid.patch
 
 	# Openswan nat-t
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.6.14-kernel-2.6.24.7-natt.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
 
 	# Reiser4
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/reiser4-for-2.6.24.patch
