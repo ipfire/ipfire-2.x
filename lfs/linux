@@ -97,9 +97,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Security fix for CIFS & Netfilter SNMP
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
 
-	# Temperatursensoren von Intel Core & Core 2 Prozessoren
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20-hwmon-coretemp.patch
-
 	# Add USB ID of US-Robotics USR805423 to ZD1211 driver
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-zd1211-usrobotics-usbid.patch
 
