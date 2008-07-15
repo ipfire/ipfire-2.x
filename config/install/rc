@@ -32,6 +32,10 @@ ln -s /proc/kcore /dev/core
 echo "Starting syslogd"
 syslogd -O /dev/tty4
 
+echo "Load scsi_mod & libata"
+modprobe scsi_mod
+modprobe libata
+
 echo "Starting udev daemon"
 /sbin/udevd --daemon
 /sbin/udevtrigger

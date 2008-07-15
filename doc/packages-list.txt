@@ -127,7 +127,6 @@
 * inetutils-1.4.2
 * ipaddr-1.2
 * ipfireseeder-1.00
-* ipp2p-0.8.2-iptables
 * iproute2-2.6.16-060323
 * iptables-1.4.0
 * iptstate-2.1
