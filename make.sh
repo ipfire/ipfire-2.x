@@ -335,7 +335,6 @@ buildipfire() {
   ipfiremake linux			SMP=1
 #  ipfiremake linux-fusion		SMP=1
 #  ipfiremake ipp2p			SMP=1
-#  ipfiremake zaptel			SMP=1
 #  ipfiremake r8169			SMP=1
 #  ipfiremake r8168			SMP=1
 #  ipfiremake atl1			SMP=1
@@ -348,7 +347,6 @@ buildipfire() {
   ipfiremake linux
 #  ipfiremake linux-fusion
 #  ipfiremake ipp2p
-#  ipfiremake zaptel
 #  ipfiremake r8169
 #  ipfiremake r8168
 #  ipfiremake atl1
