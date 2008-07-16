@@ -99,8 +99,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/$(CHAN_CAPI) \
 		$(DIR_SRC)/agx-ast-addons && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire
-#	cd $(DIR_APP) && cp -fv $(DIR_SRC)/config/asterisk/asterisk.makeopts \
-#		menuselect.makeopts
+	cd $(DIR_APP) && cp -fv $(DIR_SRC)/config/asterisk/asterisk.makeopts \
+		menuselect.makeopts
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-core-sounds-en-alaw-1.4.8.tar.gz \
 		$(DIR_APP)/sounds/asterisk-core-sounds-en-alaw-1.4.8.tar.gz
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-alaw-1.4.7.tar.gz \
