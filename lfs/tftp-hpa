@@ -82,6 +82,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	mv -fv /usr/sbin/in.tftpd /usr/sbin/tftpd
 	-mkdir -pv /var/tftpboot/pxelinux.cfg
-	cp -vf usr/lib/syslinux/pxelinux.0 /var/tftpboot
+	cp -vf /usr/lib/syslinux/pxelinux.0 /var/tftpboot
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
