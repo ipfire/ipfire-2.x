@@ -4,3 +4,5 @@ etc/init.d/tftpd
 #usr/man/man8/tftpd.8
 usr/sbin/tftpd
 var/tftpboot
+var/tftpboot/pxelinux.0
+var/tftpboot/pxelinux.cfg
