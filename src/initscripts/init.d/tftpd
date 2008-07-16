@@ -1,0 +1,45 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/tftpd
+#
+# Description : This script controls the tftpd server
+#
+# Authors     : Michael Tremer <ms@ipfire.org>
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting tftpd-hpa Server..."
+		loadproc /usr/sbin/tftpd -l -s /var/tftpboot
+		;;
+
+	stop)
+		boot_mesg "Stopping tftpd-hpa Server..."
+		killproc /usr/sbin/tftpd
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/tftpd
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/tftpd
