@@ -35,7 +35,7 @@ usr/lib/collectd/hddtemp.so
 #usr/lib/collectd/interface.la
 usr/lib/collectd/interface.so
 #usr/lib/collectd/iptables.la
-#usr/lib/collectd/iptables.so #### temporary disabled ####
+usr/lib/collectd/iptables.so
 #usr/lib/collectd/irq.la
 usr/lib/collectd/irq.so
 #usr/lib/collectd/load.la

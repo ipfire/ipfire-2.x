@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.5.10
+VER        = 1.5
 
 THISAPP    = klibc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 klibc-extras-2.2.tar.gz = $(DL_FROM)/klibc-extras-2.2.tar.gz
 
-$(DL_FILE)_MD5 = baf6b522e427aae9c8f511b9c57193bd
+$(DL_FILE)_MD5 = d55ce89c0656a7d6896ec0b2af07b5dc
 klibc-extras-2.2.tar.gz_MD5 = 7e5042978531048c369f59ca1a13055b
 
 install : $(TARGET)

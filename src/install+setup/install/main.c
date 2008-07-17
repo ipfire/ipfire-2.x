@@ -116,6 +116,9 @@ int main(int argc, char *argv[])
 	mysystem("/sbin/modprobe usb-storage");
 	mysystem("/sbin/modprobe usbhid");
 
+	mysystem("/bin/sleep 3"); 
+	mysystem("/sbin/modprobe ahci"); // SATA AHCI Host controller
+
 	mysystem("/sbin/modprobe iso9660"); // CDROM
 	mysystem("/sbin/modprobe ext2"); // Boot patition
 	mysystem("/sbin/modprobe vfat"); // USB key

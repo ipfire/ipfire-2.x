@@ -1,9 +1,0 @@
-lib/modules/KVER-ipfire/kernel/net/ipsec/ipsec.ko
-lib/modules/KVER-ipfire-smp/kernel/net/ipsec/ipsec.ko
-usr/lib/ipsec
-usr/libexec/ipsec
-usr/sbin/ipsec
-var/run/pluto
-lib/libpcre.so.0
-lib/libpcre.so.0.0.1
-usr/lib/libpcre.so
