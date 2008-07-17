@@ -32,6 +32,7 @@ NICE=10													# Nice level
 MAX_RETRIES=1										# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
+GIT_TAG=$(git tag | tail -1)
 
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
@@ -655,6 +656,9 @@ buildpackages() {
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
   beautify message DONE
+  
+  # Update changelog
+  $0 git log
 
   # Create images for install
 	ipfiremake cdrom ED=full
@@ -920,6 +924,12 @@ git)
 			
 	  	git push ${GIT_URL} ${GIT_BRANCH}
 	  	;;
+	  log)
+		[ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
+		[ -z $LAST_TAG ] || EXT="$LAST_TAG..HEAD"
+
+		git log -n 500 --no-merges --pretty=medium --shortstat $EXT > $BASEDIR/doc/ChangeLog
+	;;
 	esac
 	;;
 uploadsrc)

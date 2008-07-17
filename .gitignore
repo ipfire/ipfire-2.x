@@ -2,6 +2,7 @@
 /build
 /cache
 /ccache
+/doc/ChangeLog
 /log
 /packages
 /tmp
