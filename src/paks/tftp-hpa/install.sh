@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
-start_service --background ${NAME}
+start_service --background tftpd
 ln -svf  ../init.d/tftpd /etc/rc.d/rc0.d/K00tftpd
 ln -svf  ../init.d/tftpd /etc/rc.d/rc3.d/S99tftpd
 ln -svf  ../init.d/tftpd /etc/rc.d/rc6.d/K00tftpd
