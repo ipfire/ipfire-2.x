@@ -658,6 +658,7 @@ buildpackages() {
   beautify message DONE
   
   # Update changelog
+  cd $BASEDIR
   $0 git log
 
   # Create images for install
