@@ -583,6 +583,7 @@ buildipfire() {
   ipfiremake wpa_supplicant
   ipfiremake hostapd
   ipfiremake urlgrabber
+  ipfiremake syslinux
   ipfiremake tftp-hpa
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
@@ -598,7 +599,6 @@ buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  ipfiremake syslinux
   ipfiremake as86
   ipfiremake mbr
   ipfiremake memtest
