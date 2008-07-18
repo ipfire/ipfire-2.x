@@ -78,7 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cp -f $(DIR_SRC)/config/v4l-dvb/config $(DIR_APP)/v4l/.config
+#	cp -f $(DIR_SRC)/config/v4l-dvb/config $(DIR_APP)/v4l/.config
 ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && make release VER=$(KVER)-ipfire-smp
 else

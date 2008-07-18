@@ -39,7 +39,6 @@
 * arptables-v0.0.3-3
 * as86-0.16.17
 * asterisk-1.4.18
-* asterisk-1.4.18_old
 * atl2-2.0.4
 * autoconf-2.59
 * automake-1.9.6
@@ -126,7 +125,6 @@
 * icegenerator-0.5.5-pre2
 * igmpproxy-src-0.1-beta2
 * inetutils-1.4.2
-* initscripts_old
 * ipaddr-1.2
 * ipfireseeder-1.00
 * iproute2-2.6.16-060323
@@ -167,8 +165,6 @@
 * libxml2-2.6.26
 * libxslt-1.1.17
 * linux-2.6.24.7
-* linux-2.6.24.7-smp_old
-* linux-2.6.24.7_old
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
@@ -219,8 +215,6 @@
 * openmailadmin-1.0.0
 * openssh-4.7p1
 * openssl-0.9.8g
-* openswan-2.6.14
-* openswan-2.6.14-kmod
 * openswan-2.6.16dr2
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
@@ -277,8 +271,6 @@
 * tcptrack-1.3.0
 * teamspeak-2.0.24.1
 * texinfo-4.8
-* tftp-hpa-0.48
-* tftp-hpa-0.48_old
 * tiff-3.8.2
 * traceroute-1.4a12
 * tripwire-2.4.1.2

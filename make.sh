@@ -338,7 +338,6 @@ buildipfire() {
 #  ipfiremake ipp2p			SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake r8168			SMP=1
-#  ipfiremake atl1			SMP=1
   ipfiremake atl2			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
@@ -349,7 +348,6 @@ buildipfire() {
 #  ipfiremake ipp2p
   ipfiremake r8169
   ipfiremake r8168
-#  ipfiremake atl1
   ipfiremake atl2
 #  ipfiremake kqemu
   ipfiremake v4l-dvb
