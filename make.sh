@@ -343,16 +343,18 @@ buildipfire() {
   ipfiremake v4l-dvb			SMP=1
   ipfiremake madwifi                    SMP=1
   ipfiremake sane		KMOD=1	SMP=1
+  ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
   ipfiremake linux-fusion
 #  ipfiremake ipp2p
   ipfiremake r8169
   ipfiremake r8168
   ipfiremake atl2
-#  ipfiremake kqemu
+  ipfiremake kqemu
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake sane		KMOD=1
+  ipfiremake openswan		KMOD=1
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio

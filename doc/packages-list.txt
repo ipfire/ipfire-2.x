@@ -128,13 +128,13 @@
 * ipaddr-1.2
 * ipfireseeder-1.00
 * iproute2-2.6.16-060323
-* iptables-1.4.0
+* iptables-1.3.8
 * iptstate-2.1
 * iputils-ss020927
 * java-1.5.0_06-for-ipfire
 * jpegsrc.v6b
 * kbd-1.12
-* klibc-1.5.10
+* klibc-1.5
 * kqemu-1.3.0pre11
 * kudzu-1.2.64
 * l7-protocols-2007-10-10
@@ -164,8 +164,9 @@
 * libwww-perl-5.803
 * libxml2-2.6.26
 * libxslt-1.1.17
-* linux-2.6.24.7
+* linux-2.6.23.17
 * linux-atm-2.4.1
+* linux-fusion-7.0.1
 * linux-libc-headers-2.6.12.0
 * linuxigd-0.95
 * lm_sensors-3.0.2
@@ -215,7 +216,7 @@
 * openmailadmin-1.0.0
 * openssh-4.7p1
 * openssl-0.9.8g
-* openswan-2.6.16dr2
+* openswan-2.4.13
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4
@@ -233,6 +234,8 @@
 * procps-3.2.6
 * psmisc-22.2
 * qemu-0.9.1
+* r8168-8.005.00
+* r8169-6.005.00
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
@@ -262,7 +265,7 @@
 * sudo-1.6.8p12
 * sysfsutils-1.3.0
 * sysklogd-1.4.1
-* syslinux-3.11
+* syslinux-3.62
 * sysstat-6.0.2
 * sysvinit-2.86
 * tar-1.15.1
@@ -271,6 +274,7 @@
 * tcptrack-1.3.0
 * teamspeak-2.0.24.1
 * texinfo-4.8
+* tftp-hpa-0.48
 * tiff-3.8.2
 * traceroute-1.4a12
 * tripwire-2.4.1.2
