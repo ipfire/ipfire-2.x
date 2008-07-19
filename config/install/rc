@@ -36,7 +36,6 @@ echo "Loading scsi_mod & libata"
 /sbin/modprobe scsi_mod
 /sbin/modprobe libata
 
-sleep 1
 echo "Starting udev daemon"
 /sbin/udevd --daemon
 /sbin/udevtrigger
@@ -47,6 +46,5 @@ for file in /dev/.udev/failed/*/uevent ; do
 	echo "add" >"${file}"
 done 2>/dev/null
 /sbin/udevsettle
-sleep 2
 
 echo "Loading Installer..."
