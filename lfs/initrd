@@ -82,9 +82,9 @@ $(TARGET) :
 	    -b /install/initrd $(KVER)-ipfire
 	    
 	# Change priority of pata module
-	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep "# \|ata" \
+	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep "# \|ata\|ahci" \
 	    modules.alias > modules.alias.tmp
-	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep -v "# \|ata" \
+	cd /install/initrd/lib/modules/$(KVER)-ipfire && grep -v "# \|ata\|ahci" \
 	    modules.alias >> modules.alias.tmp
 	cd /install/initrd/lib/modules/$(KVER)-ipfire && mv -f \
 	    modules.alias.tmp modules.alias
