@@ -298,7 +298,7 @@
 * wget-1.10.2
 * whatmask-1.2
 * which-2.16
-* wireless_tools.28
+* wireless_tools.30.pre6
 * wpa_supplicant-0.5.10
 * xfsprogs-2.9.4
 * xvidcore-1.1.0

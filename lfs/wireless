@@ -24,12 +24,13 @@
 
 include Config
 
-VER        = 28
+VER        = 30.pre6
 
 THISAPP    = wireless_tools.$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+#DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/wireless_tools.30
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -40,8 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 599c94497f9c9073c7b052d3dcb7cd16
-
+$(DL_FILE)_MD5 = 4f42f95e6ec8890b2cebd27aeddf954f
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
