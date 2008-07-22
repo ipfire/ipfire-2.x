@@ -1,24 +1,30 @@
-diff -Naur kudzu.org/usb.c kudzu-1.2.64/usb.c
---- kudzu.org/usb.c	2006-11-28 17:58:58.000000000 +0100
-+++ kudzu-1.2.64/usb.c	2008-06-11 19:27:36.000000000 +0200
-@@ -264,10 +264,20 @@
- 			if (t->driver && (!strcmp(t->driver, "pegasus") ||
+diff -Naur kudzu-1.2.64.org/usb.c kudzu-1.2.64/usb.c
+--- kudzu-1.2.64.org/usb.c	2006-11-28 17:58:58.000000000 +0100
++++ kudzu-1.2.64/usb.c	2008-07-22 12:13:42.000000000 +0200
+@@ -261,13 +261,22 @@
+ 				t->desc = strdup(t->usbprod);
+ 			else
+ 				asprintf(&t->desc,"Unknown USB device 0x%x:0x%x",t->vendorId,t->deviceId);
+-			if (t->driver && (!strcmp(t->driver, "pegasus") ||
++			if (t->driver && (!strcmp(t->driver, "asix") ||
  			    !strcmp(t->driver, "catc") ||
- 			    !strcmp(t->driver, "kaweth") ||
 +			    !strcmp(t->driver, "cdc_ether") ||
++			    !strcmp(t->driver, "dm9601") ||
 +			    !strcmp(t->driver, "gl620a") ||
+ 			    !strcmp(t->driver, "kaweth") ||
+-			    !strcmp(t->driver, "rtl8150") ||
+-			    !strcmp(t->driver, "ax8817x") ||
++			    !strcmp(t->driver, "mcs7830") || 
 +			    !strcmp(t->driver, "net1080") ||
++			    !strcmp(t->driver, "pegasus") ||	    
 +			    !strcmp(t->driver, "plusb") ||
 +			    !strcmp(t->driver, "rndis_host") ||
 +			    !strcmp(t->driver, "zaurus") ||
-+			    !strcmp(t->driver, "net1080") ||
- 			    !strcmp(t->driver, "rtl8150") ||
- 			    !strcmp(t->driver, "ax8817x") ||
-+			    !strcmp(t->driver, "zd1211rw") ||
++			    !strcmp(t->driver, "rtl8187") ||
++			    !strcmp(t->driver, "usb8xxx") ||
  			    !strcmp(t->driver, "zd1201") ||
- 			    !strcmp(t->driver, "asix") ||
-+			    !strcmp(t->driver, "mcs7830") || 
-+			    !strcmp(t->driver, "dm9601") ||
+-			    !strcmp(t->driver, "asix") ||
++			    !strcmp(t->driver, "zd1211rw") ||
  			    !strcmp(t->driver, "usbnet"))) {
  				if (t->type == CLASS_OTHER)
  					t->type = CLASS_NETWORK;
