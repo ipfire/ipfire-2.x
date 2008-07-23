@@ -113,7 +113,22 @@ echo \\n running on \\s \\r \\m >> /etc/issue
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 /etc/init.d/mISDN config
 # Core 15 end
+#
+# Remove obsolete packages
+#
+echo '#!/bin/sh'                                          >  /tmp/remove_obsolete_paks 
+echo 'while [ "$(ps -A | grep " update.sh")" != "" ]; do' >> /tmp/remove_obsolete_paks
+echo '    sleep 2'                                        >> /tmp/remove_obsolete_paks
+echo 'done'                                               >> /tmp/remove_obsolete_paks
+echo 'while [ "$(ps -A | grep " pakfire")" != "" ]; do'   >> /tmp/remove_obsolete_paks
+echo '    sleep 2'                                        >> /tmp/remove_obsolete_paks
+echo 'done'                                               >> /tmp/remove_obsolete_paks
+echo 'pakfire remove zaptel -y'                           >> /tmp/remove_obsolete_paks
+echo 'echo'                                               >> /tmp/remove_obsolete_paks
+echo 'echo Update to IPFire $NEWVERSION finished. Please reboot... ' >> /tmp/remove_obsolete_paks
+echo 'echo'                                               >> /tmp/remove_obsolete_paks
+chmod +x /tmp/remove_obsolete_paks
+/tmp/remove_obsolete_paks &
 echo
-echo
-echo Update to IPFire $NEWVERSION finished. Please reboot...
+echo Please wait until pakfire has ended...
 echo
