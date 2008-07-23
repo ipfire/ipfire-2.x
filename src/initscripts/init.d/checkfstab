@@ -18,8 +18,9 @@
 case "${1}" in
 	start)
 		boot_mesg "Checking fstab rootdevice entry ..."
-		OLDROOT=`cat /etc/fstab | grep " / " | cut -d" " -f1`;
-		NEWROOT=`df | grep " /$" -m1 | cut -d" " -f1`;
+		ROOTPOS=`expr index "$CMDLINE" root=`
+		NEWROOT=`echo ${CMDLINE:$ROOTPOS} | cut -d"=" -f2 | cut -d" " -f1`;
+		OLDROOT=`cat /etc/fstab | grep -m1 " / " | cut -d" " -f1`;
 		OLDDRV=${OLDROOT::`expr length $OLDROOT`-1}
 		NEWDRV=${NEWROOT::`expr length $NEWROOT`-1}
 		if [ "$OLDROOT" == "$NEWROOT" ]; then
