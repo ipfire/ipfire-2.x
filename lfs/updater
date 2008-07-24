@@ -70,13 +70,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Other files
 	cp $(DIR_SRC)/config/rootfiles/updater/update.sh /install/updater/
 	chmod 755 /install/updater/update.sh
-	cd /install/updater && tar cf /install/packages/core-upgrade-2.1-15.ipfire \
+	cd /install/updater && tar cf /install/packages/core-upgrade-2.1-16.ipfire \
 		update.sh files ROOTFILES
 	rm -rf /install/updater
 
 	sed -e "s/NAME/core-upgrade/g" \
 		-e "s/VER/2.1/g" \
-		-e "s/RELEASE/15/g" \
+		-e "s/RELEASE/16/g" \
 		-e "s/DEPS/$(DEPS)/g" \
-		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-2.1-15.ipfire | awk '{ print $$5 }'`/g" \
+		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-2.1-16.ipfire | awk '{ print $$5 }'`/g" \
 		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-15

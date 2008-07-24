@@ -109,10 +109,10 @@ rm -f /opt/pakfire/db/lists/*list.db
 echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
 echo =================================== >> /etc/issue
 echo \\n running on \\s \\r \\m >> /etc/issue
-# Core 15 begin
+# Core 16 begin
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 /etc/init.d/mISDN config
-# Core 15 end
+# Core 16 end
 #
 # Remove obsolete packages
 #

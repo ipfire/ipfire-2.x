@@ -72,7 +72,7 @@
 * dhcp-3.1.0
 * dhcpcd-2.0.8
 * diffutils-2.8.1
-* dnsmasq-2.40
+* dnsmasq-2.45
 * dosfstools-2.11
 * e2fsprogs-1.39
 * ebtables-v2.0.8-2

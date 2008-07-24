@@ -70,10 +70,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && sed -i -e 's|/usr/local|/usr|g' Makefile
 	cd $(DIR_APP)/src && sed -i \
 		-e 's|^\/\* #define HAVE_ISC_READER .*$$|#define HAVE_ISC_READER\n#define NO_IPV6|' \
 		-e 's/^#define CHUSER .*$$/#define CHUSER "dnsmasq"/' config.h
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && PREFIX=/usr make install
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
