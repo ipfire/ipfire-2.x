@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.40
+VER        = 2.45
 
 THISAPP    = dnsmasq-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 91b6063ae81146b9d70b4381b2f3e44f
+$(DL_FILE)_MD5 = b7956e15c9766e05b3eca3ce88fdb616
 
 install : $(TARGET)
 
