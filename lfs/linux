@@ -97,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Security fix for CIFS & Netfilter SNMP
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
 
-	# Openswan nat-t
+	# Openswan
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
 
 	# Reiser4
