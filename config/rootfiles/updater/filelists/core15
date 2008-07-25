@@ -12,6 +12,7 @@ srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
 var/ipfire/langs
 var/ipfire/graphs.pl
+var/ipfire/header.pl
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
 usr/share/terminfo/x/xterm-color

@@ -353,7 +353,7 @@ sub CheckSortOrder {
 #Sorting of allocated leases
     if ($ENV{'QUERY_STRING'} =~ /^IPADDR|^ETHER|^HOSTNAME|^ENDTIME/ ) {
         my $newsort=$ENV{'QUERY_STRING'};
-        &readhash("${swroot}/dhcp/settings", \%dhcpsettings);
+        &General::readhash("${swroot}/dhcp/settings", \%dhcpsettings);
         $act=$dhcpsettings{'SORT_LEASELIST'};
         #Reverse actual ?
         if ($act =~ $newsort) {
@@ -362,7 +362,7 @@ sub CheckSortOrder {
         };
 
         $dhcpsettings{'SORT_LEASELIST'}=$newsort;
-        &writehash("${swroot}/dhcp/settings", \%dhcpsettings);
+        &General::writehash("${swroot}/dhcp/settings", \%dhcpsettings);
         $dhcpsettings{'ACTION'} = 'SORT';  # avoid the next test "First lauch"
     }
 
