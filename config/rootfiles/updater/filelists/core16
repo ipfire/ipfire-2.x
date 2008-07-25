@@ -20,3 +20,5 @@ bin/ntfs-3g
 lib/libntfs-3g.so
 lib/libntfs-3g.so.31
 lib/libntfs-3g.so.31.0.0
+etc/rc.d/init.d/checkfstab
+etc/rc.d/rcsysinit.d/S19checkfstab

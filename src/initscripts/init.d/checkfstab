@@ -1,0 +1,51 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/checkfstab
+#
+# Description : Check and repair fstab if the drivename has changed
+#
+# Authors     : Arne Fitzenreiter - arne_f@ipfire.org
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Checking fstab rootdevice entry ..."
+		ROOTPOS=`expr index "$CMDLINE" root=`
+		NEWROOT=`echo ${CMDLINE:$ROOTPOS} | cut -d"=" -f2 | cut -d" " -f1`;
+		OLDROOT=`cat /etc/fstab | grep -m1 " / " | cut -d" " -f1`;
+		OLDDRV=${OLDROOT::`expr length $OLDROOT`-1}
+		NEWDRV=${NEWROOT::`expr length $NEWROOT`-1}
+		if [ "$OLDROOT" == "$NEWROOT" ]; then
+		    echo_ok;
+		    exit 0;
+		fi
+		echo_failure;
+		boot_mesg "Warning! Rootdevice not match with fstab entry!"
+		boot_mesg
+		boot_mesg "Rootdevice:  $NEWROOT"
+		boot_mesg "fstab-entry: $OLDROOT"
+		boot_mesg
+		boot_mesg "Attempt to repair it ..."
+		mount -o remount,rw /
+		sed -i -e "s|$OLDDRV|$NEWDRV|g" /etc/fstab
+		mount /boot
+		sed -i -e "s|$OLDDRV|$NEWDRV|g" /boot/grub/grub.conf
+		umount /boot
+		echo_ok;
+		exit 0;
+		;;
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/checkfstab

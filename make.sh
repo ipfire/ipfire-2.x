@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.3-test"
+VERSION="2.3-beta2"
 GIT_BRANCH=master:master										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
@@ -338,23 +338,23 @@ buildipfire() {
 #  ipfiremake ipp2p			SMP=1
   ipfiremake r8169			SMP=1
   ipfiremake r8168			SMP=1
-#  ipfiremake atl1			SMP=1
   ipfiremake atl2			SMP=1
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
   ipfiremake madwifi                    SMP=1
   ipfiremake sane		KMOD=1	SMP=1
+  ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
   ipfiremake linux-fusion
 #  ipfiremake ipp2p
   ipfiremake r8169
   ipfiremake r8168
-#  ipfiremake atl1
   ipfiremake atl2
-#  ipfiremake kqemu
+  ipfiremake kqemu
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake sane		KMOD=1
+  ipfiremake openswan		KMOD=1
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
