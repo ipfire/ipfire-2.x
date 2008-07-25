@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.3-test"
+VERSION="2.3-beta2"
 GIT_BRANCH=master:master										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir

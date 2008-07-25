@@ -79,4 +79,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-e "s/RELEASE/16/g" \
 		-e "s/DEPS/$(DEPS)/g" \
 		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-2.1-16.ipfire | awk '{ print $$5 }'`/g" \
-		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-15
+		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-16
