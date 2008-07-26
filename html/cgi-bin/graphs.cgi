@@ -48,10 +48,11 @@ $cgigraphs[1] = '' unless defined $cgigraphs[1];
 $cgigraphs[2] = '' unless defined $cgigraphs[2];
 
 if ($cgigraphs[1] =~ /(load)/) {&Graphs::updateloadgraph ("hour");&Graphs::updateloadgraph ("week");&Graphs::updateloadgraph ("month");&Graphs::updateloadgraph ("year");}
-if ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("hour");&Graphs::updatecpugraph ("week");&Graphs::updatecpugraph ("month");&Graphs::updatecpugraph ("year");}
-if ($cgigraphs[1] =~ /(processes)/) {&Graphs::updateprocessesgraph ("hour");&Graphs::updateprocessesgraph ("week");&Graphs::updateprocessesgraph ("month");&Graphs::updateprocessesgraph ("year");}
-if ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("hour");&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
-if ($cgigraphs[1] =~ /disk/){
+elsif ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("hour");&Graphs::updatecpugraph ("week");&Graphs::updatecpugraph ("month");&Graphs::updatecpugraph ("year");}
+elsif ($cgigraphs[1] =~ /(processes)/) {&Graphs::updateprocessesgraph ("hour");&Graphs::updateprocessesgraph ("week");&Graphs::updateprocessesgraph ("month");&Graphs::updateprocessesgraph ("year");}
+elsif ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("hour");&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
+elsif ($cgigraphs[1] =~ /wireless/){ &Graphs::wireless("hour",$cgigraphs[2]); &Graphs::wireless("week",$cgigraphs[2]); &Graphs::wireless("month",$cgigraphs[2]); &Graphs::wireless("year",$cgigraphs[2]); }
+elsif ($cgigraphs[1] =~ /disk/){
           my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
           foreach (@devices) {
 	         my $device = $_;
@@ -60,9 +61,9 @@ if ($cgigraphs[1] =~ /disk/){
 	          &Graphs::updatediskgraph ("week",$device);
 	          &Graphs::updatediskgraph ("month",$device);
 	          &Graphs::updatediskgraph ("year",$device);}}
-if ($cgigraphs[2] ne "" ) {&Graphs::updatepinggraph("hour",$cgigraphs[1]);&Graphs::updatepinggraph("week",$cgigraphs[1]);&Graphs::updatepinggraph("month",$cgigraphs[1]);&Graphs::updatepinggraph("year",$cgigraphs[1]);}
-if ($cgigraphs[1] =~ /fwhits/) {&Graphs::updatefwhitsgraph("hour");&Graphs::updatefwhitsgraph("week");&Graphs::updatefwhitsgraph("month");&Graphs::updatefwhitsgraph("year");}
-if ($cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /ipsec/ || $cgigraphs[1] =~ /orange/ || $cgigraphs[1] =~ /ppp/ || $cgigraphs[1] =~ /red/ ) {&Graphs::updateifgraph($cgigraphs[1], "hour");&Graphs::updateifgraph($cgigraphs[1], "week");&Graphs::updateifgraph($cgigraphs[1], "month");&Graphs::updateifgraph($cgigraphs[1], "year");}
+elsif ($cgigraphs[2] ne "" ) {&Graphs::updatepinggraph("hour",$cgigraphs[1]);&Graphs::updatepinggraph("week",$cgigraphs[1]);&Graphs::updatepinggraph("month",$cgigraphs[1]);&Graphs::updatepinggraph("year",$cgigraphs[1]);}
+elsif ($cgigraphs[1] =~ /fwhits/) {&Graphs::updatefwhitsgraph("hour");&Graphs::updatefwhitsgraph("week");&Graphs::updatefwhitsgraph("month");&Graphs::updatefwhitsgraph("year");}
+elsif ($cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /ipsec/ || $cgigraphs[1] =~ /orange/ || $cgigraphs[1] =~ /ppp/ || $cgigraphs[1] =~ /red/ ) {&Graphs::updateifgraph($cgigraphs[1], "hour");&Graphs::updateifgraph($cgigraphs[1], "week");&Graphs::updateifgraph($cgigraphs[1], "month");&Graphs::updateifgraph($cgigraphs[1], "year");}
 
 if ($cgigraphs[1] =~ /(network|green|blue|orange|red|ppp|ipsec)/ || $cgigraphs[2] ne "") {
 	&Header::openpage($Lang::tr{'network traffic graphs'}, 1, '');
@@ -72,7 +73,24 @@ if ($cgigraphs[1] =~ /(network|green|blue|orange|red|ppp|ipsec)/ || $cgigraphs[2
 
 &Header::openbigbox('100%', 'left');
 
-if ($cgigraphs[1] =~ /(green|blue|orange|red|ppp|ipsec|cpu|memory|swap|disk|load|fwhits|processes)/ || $cgigraphs[2] ne "") {
+if ($cgigraphs[1] =~ /wireless/){
+	my $graphname = $cgigraphs[2];
+	&Header::openbox('100%', 'center', "wireless $graphname $Lang::tr{'graph'}");
+	if (-e "$graphdir/wireless-${graphname}-day.png") {
+		my $ftime = localtime((stat("$graphdir/wireless-${graphname}-day.png"))[9]);
+		print "<center>";
+		print "<b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br /><hr />\n";
+		print "<img alt='' src='/graphs/wireless-${graphname}-hour.png' border='0' /><hr />";
+		print "<img alt='' src='/graphs/wireless-${graphname}-day.png' border='0' /><hr />";
+		print "<img alt='' src='/graphs/wireless-${graphname}-week.png' border='0' /><hr />";
+		print "<img alt='' src='/graphs/wireless-${graphname}-month.png' border='0' /><hr />";
+		print "<img alt='' src='/graphs/wireless-${graphname}-year.png' border='0' />";
+	} else {
+		print $Lang::tr{'no information available'};
+	}
+	&Header::closebox();
+}
+elsif ($cgigraphs[1] =~ /(green|blue|orange|red|ppp|ipsec|cpu|memory|swap|disk|load|fwhits|processes)/ || $cgigraphs[2] ne "") {
 	my $graph = $cgigraphs[1];
 	my $graphname = ucfirst(lc($cgigraphs[1]));
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
@@ -122,7 +140,7 @@ elsif ( $cgigraphs[1] eq "memory" || $cgigraphs[1] eq "swap" ) { print "<a href=
 elsif ( $cgigraphs[1] eq "processes" ) { print "<a href='/cgi-bin/services.cgi'>"; }
 elsif ( $cgigraphs[1] =~ /disk/ ) { print "<a href='/cgi-bin/media.cgi'>"; }
 elsif ( $cgigraphs[1] =~ /red/ || $cgigraphs[1] =~ /ppp/ || $cgigraphs[1] =~ /ipsec/ ) { print "<a href='/cgi-bin/network.cgi?network=red'>"; }
-elsif ( $cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /orange/ ) { print "<a href='/cgi-bin/network.cgi?network=internal'>"; }
+elsif ( $cgigraphs[1] =~ /green/ || $cgigraphs[1] =~ /blue/ || $cgigraphs[1] =~ /orange/ || $cgigraphs[1] =~ /wireless/ ) { print "<a href='/cgi-bin/network.cgi?network=internal'>"; }
 elsif ( $cgigraphs[1] eq "fwhits" || $cgigraphs[2] ne "" ) { print "<a href='/cgi-bin/network.cgi?network=other'>"; }
 print "$Lang::tr{'back'}</a></td></tr></table></div>\n";
 

@@ -36,6 +36,7 @@ my %netsettings=();
 my @cgiparams=();
 my @graphs=();
 my @pings=();
+my @wireless=();
 my $iface='';
 my %dhcpsettings=();
 my %dhcpinfo=();
@@ -67,6 +68,7 @@ if ($cgiparams[1] =~ /red/) {
 	        push(@pings,$2);
 	}
 	push (@graphs, ("fwhits"));
+
 }else {
 	&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
 	push (@graphs, ($netsettings{'GREEN_DEV'}));
@@ -74,6 +76,11 @@ if ($cgiparams[1] =~ /red/) {
 		push (@graphs, ($netsettings{'BLUE_DEV'})); }
 	if ($netsettings{'ORANGE_DEV'}) {
 		push (@graphs, ($netsettings{'ORANGE_DEV'})); }
+	my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless*`;
+	foreach (@wirelessgraphs){
+	        $_ =~ /(.*)\/wireless-(.*)/;
+	        push(@wireless,$2);
+	}
 }
 
 &Header::openbigbox('100%', 'left');
@@ -105,13 +112,31 @@ foreach my $graphname (@graphs) {
   {  &Graphs::updatefwhitsgraph("day");  }
   else
   {  &Graphs::updateifgraph($graphname, "day");  }
-  
+
 	&Header::openbox('100%', 'center', "$graphname $Lang::tr{'graph'}");
 	if (-e "$Header::graphdir/${graphname}-day.png") {
 		my $ftime = localtime((stat("$Header::graphdir/${graphname}-day.png"))[9]);
 		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
 		print "<a href='/cgi-bin/graphs.cgi?graph=$graphname'>";
 		print "<img alt='' src='/graphs/${graphname}-day.png' border='0' />";
+		print "</a>";
+	} else {
+		print $Lang::tr{'no information available'};
+	}
+	print "<br />\n";
+	&Header::closebox();
+}
+
+foreach my $graphname (@wireless) {
+
+	&Graphs::wireless("day",$graphname);
+	
+	&Header::openbox('100%', 'center', "wireless $graphname $Lang::tr{'graph'}");
+	if (-e "$Header::graphdir/wireless-${graphname}-day.png") {
+		my $ftime = localtime((stat("$Header::graphdir/wireless-${graphname}-day.png"))[9]);
+		print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+		print "<a href='/cgi-bin/graphs.cgi?graph=wireless&graph=$graphname'>";
+		print "<img alt='' src='/graphs/wireless-${graphname}-day.png' border='0' />";
 		print "</a>";
 	} else {
 		print $Lang::tr{'no information available'};

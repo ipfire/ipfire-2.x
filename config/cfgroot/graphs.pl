@@ -711,6 +711,38 @@ sub updateprocessesgraph {
 	print "$ERROR";
 }
 
+sub wireless {
+				my $period    = $_[0];
+				my $interface    = $_[1];
+				RRDs::graph ("$graphs/wireless-$interface-$period.png",
+				"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
+				"--alt-y-grid", "-w 600", "-h 125", "-r", "-v dBm", "-z",
+				"-t Wireless $interface $Lang::tr{'graph per'} $Lang::tr{$period}",
+				"--color", "SHADEA".$color{"color19"},
+				"--color", "SHADEB".$color{"color19"},
+				"--color", "BACK".$color{"color21"},
+				"DEF:noise=$rrdlog/collectd/localhost/wireless-$interface/signal_noise.rrd:value:AVERAGE",
+				"DEF:power=$rrdlog/collectd/localhost/wireless-$interface/signal_power.rrd:value:AVERAGE",
+				"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),
+				"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+				"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
+				"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+				"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j",
+				"LINE1:noise".$color{"color11"}."A0:".sprintf("%-20s","Signal Noise Ratio"),
+				"GPRINT:noise:MAX:%5.1lf %sdBm",
+				"GPRINT:noise:AVERAGE:%5.1lf %sdBm",
+				"GPRINT:noise:MIN:%5.1lf %sdBm",
+				"GPRINT:noise:LAST:%5.1lf %sdBm\\j",
+				"LINE1:power".$color{"color12"}."A0:".sprintf("%-20s","Signal Power Ratio"),
+				"GPRINT:power:MAX:%5.1lf %sdBm",
+				"GPRINT:power:AVERAGE:%5.1lf %sdBm",
+				"GPRINT:power:MIN:%5.1lf %sdBm",
+				"GPRINT:power:LAST:%5.1lf %sdBm\\j",
+				);
+				$ERROR = RRDs::error;
+				print "Error in RRD::graph for Wireless: $ERROR\n" if $ERROR;
+}
+
 # Generate a random color, used by Qos Graph to be independent from the amount of values
 
 sub random_hex_color {
