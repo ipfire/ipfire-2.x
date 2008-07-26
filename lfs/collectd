@@ -80,11 +80,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
 		--disable-{apple_sensors,csv,ipvs,mbmon,memcached,mysql} \
 		--disable-{netlink,nginx,nut,perl,serial,snmp,tape,vserver,wireless,xmms} \
-		--disable-{perl,serial,snmp,tape,vserver,wireless,xmms} \
+		--disable-{perl,serial,snmp,tape,vserver,xmms} \
 		--enable-{apcups,battery,cpu{,freq},df,disk,dns,email,entropy,exec,hddtemp} \
 		--enable-{interface,iptables,irq,load,logfile,memory,multimeter} \
 		--enable-{network,nfs,ntpd,ping,processes,rrdtool,sensors,swap,syslog} \
-		--enable-{tcpconns,unixsock,users} \
+		--enable-{tcpconns,unixsock,users,wireless} \
 		--with-rrdtool=/usr/share/rrdtool-1.2.15 --enable-debug
 	cd $(DIR_APP) && make install
 	cp -vf $(DIR_SRC)/config/collectd/collectd.conf /etc/
