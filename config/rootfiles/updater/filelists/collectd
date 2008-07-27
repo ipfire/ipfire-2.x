@@ -79,6 +79,8 @@ usr/lib/collectd/unixsock.so
 usr/lib/collectd/users.so
 #usr/lib/collectd/uuid.la
 usr/lib/collectd/uuid.so
+#usr/lib/collectd/wireless.la
+usr/lib/collectd/wireless.so
 #usr/lib/collectd/vmem.la
 usr/lib/collectd/vmem.so
 #usr/lib/perl5/site_perl/5.8.8/Collectd
