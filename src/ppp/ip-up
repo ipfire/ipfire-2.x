@@ -44,35 +44,27 @@ echo -n "$1" > /var/ipfire/red/iface
 echo -n "$4" > /var/ipfire/red/local-ipaddress
 echo -n "$5" > /var/ipfire/red/remote-ipaddress
 
-grep -v "gateway" /etc/hosts > /tmp/hosts
-echo "$5 gateway" >> /tmp/hosts
-touch /var/ipfire/red/active
-mv /tmp/hosts /etc/hosts
-
-#Start pingtest in background and store the pid
-ping -c 2 $5 > /tmp/gatewayping &
-PINGPID=$!
-
 run_subdir ${rc_base}/init.d/networking/red.up/
 
-[ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep up
-
-#Make sure that pingtest has enough time
-sleep 3
-
-#Kill the pingtest
-kill $PINGPID >/dev/null 2>&1
-
 #Check if gateway has answerd to ping, if not replace with ping.ipfire.org
-TEST=`cat /tmp/gatewayping | tail -2 | head -1 | cut -d"," -f2`;
+TEST=`/usr/bin/ping -c 2 $5 2>/dev/null | tail -2 | head -1 | cut -d"," -f2`;
+
+grep -v "gateway" /etc/hosts > /tmp/hosts
 
 if [ "$TEST" == " 2 packets received" ]; then
-	echo Ping gateway
+	#ping the ppp-gateway
+	echo "$5	gateway" >> /tmp/hosts
 else
-	echo Ping ipfire
+	#no answer
 	FIRE=`nslookup ping.ipfire.org | tail -2  | head -1 | cut -d" " -f2`;
-	grep -v "gateway" /etc/hosts > /tmp/hosts
-	echo "$FIRE gateway" >> /tmp/hosts
-	mv /tmp/hosts /etc/hosts
+	if [ "$FIRE" == "server" ]; then
+	    #DNS lookup failed use direct ip
+	    echo "85.88.28.124	gateway" >> /tmp/hosts
+	else
+	    #use ping.ipfire.org
+	    echo "$FIRE	gateway" >> /tmp/hosts
+	fi
 fi
-rm -f /tmp/gatewayping
+mv /tmp/hosts /etc/hosts
+
+[ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep up
