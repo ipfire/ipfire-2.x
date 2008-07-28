@@ -43,6 +43,7 @@ fi
 echo -n "$1" > /var/ipfire/red/iface
 echo -n "$4" > /var/ipfire/red/local-ipaddress
 echo -n "$5" > /var/ipfire/red/remote-ipaddress
+touch /var/ipfire/red/active
 
 run_subdir ${rc_base}/init.d/networking/red.up/
 
