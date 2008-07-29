@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.3-beta2 ==
+== List of softwares used to build IPFire Version: 2.3-test ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -286,7 +286,6 @@
 * urlgrabber-3.1.0
 * usbutils-0.72
 * util-linux-2.12r
-* v4l-dvb-9ff62c80bf4c
 * v4l-dvb-e9a442d3b53a
 * vdr-1.6.0
 * vim-7.0
