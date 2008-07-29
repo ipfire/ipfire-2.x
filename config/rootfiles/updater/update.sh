@@ -100,10 +100,6 @@ mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
 #
 sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
-# Delete lists of the old version
-#
-rm -f /opt/pakfire/db/lists/*list.db
-#
 # Create new issue
 #
 echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
@@ -124,6 +120,7 @@ echo 'while [ "$(ps -A | grep " pakfire")" != "" ]; do'   >> /tmp/remove_obsolet
 echo '    sleep 2'                                        >> /tmp/remove_obsolete_paks
 echo 'done'                                               >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire remove zaptel -y'              >> /tmp/remove_obsolete_paks
+echo '/opt/pakfire/pakfire update --force'                >> /tmp/remove_obsolete_paks
 echo 'echo'                                               >> /tmp/remove_obsolete_paks
 echo 'echo Update to IPFire $NEWVERSION finished. Please reboot... ' >> /tmp/remove_obsolete_paks
 echo 'echo'                                               >> /tmp/remove_obsolete_paks
