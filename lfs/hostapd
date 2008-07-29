@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -81,5 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp $(DIR_SRC)/config/hostapd/config ./.config
 	cd $(DIR_APP) && sed -e "s@/usr/local@/usr@g" -i Makefile
 	cd $(DIR_APP) && make && make install
+	cp -vrf $(DIR_SRC)/config/hostapd/hostapd.conf /etc/hostapd.conf
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

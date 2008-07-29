@@ -859,7 +859,7 @@ gettoolchain)
 		cd $BASEDIR/cache/toolchains
 		wget $URL_TOOLCHAIN/$PACKAGE.tar.gz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
 		if [ $? -ne 0 ]; then
-			echo "`date -u '+%b %e %T'`: error downloading toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
+			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
 		else
 			if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
 				echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE

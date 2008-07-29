@@ -287,6 +287,7 @@
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-9ff62c80bf4c
+* v4l-dvb-e9a442d3b53a
 * vdr-1.6.0
 * vim-7.0
 * vlan.1.9

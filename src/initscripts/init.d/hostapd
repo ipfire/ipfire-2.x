@@ -1,0 +1,36 @@
+#!/bin/sh
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+        start)
+                /usr/local/bin/wlanconfig ath0 destroy
+                /usr/local/bin/wlanconfig blue0 create wlandev wifi0 wlanmode ap
+                /usr/sbin/iwconfig blue0 channel 05
+                /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf &
+                evaluate_retval
+                ;;
+
+        stop)
+                # Just make shure when going down the first time blue0 nw values are ignored
+						 		sed -i -e 's/^ACTION=="add", SUBSYSTEM=="net", SYSFS{address}=="*", NAME="blue0"*/#ACTION=="add", SUBSYSTEM=="net", SYSFS{address}=="*", NAME="blue0"*/' /etc/udev/rules.d/30-persistent-network.rules
+                /usr/local/bin/wlanconfig blue0 destroy
+                killproc /usr/bin/hostapd
+                evaluate_retval
+                ;;
+
+        restart)
+                ${0} stop
+                sleep 1
+                ${0} start
+                ;;
+
+        status)
+                statusproc /usr/bin/hostapd
+                ;;
+
+        *)
+                echo "Usage: ${0} {start|stop|restart|status}"
+                exit 1
+                ;;
+esac

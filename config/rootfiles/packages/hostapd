@@ -1,2 +1,5 @@
+etc/hostapd.conf
+etc/init.d/hostapd
 usr/bin/hostapd
 usr/bin/hostapd_cli
+var/ipfire/backup/addons/includes/hostapd
