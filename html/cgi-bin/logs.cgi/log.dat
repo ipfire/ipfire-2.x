@@ -67,7 +67,7 @@ my %sections = (
         'ipsec' => '(ipsec_[\w_]+: |pluto\[.*\]: |vpnwatch: )',
         'openvpn' => '(openvpnserver)\[.*\]: ',
         'pakfire' => '(pakfire:) ',
-        'wireless' => '(hostapd:) '
+        'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:) '
 	 );
 
 # Translations for the %sections array.
