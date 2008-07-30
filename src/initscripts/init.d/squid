@@ -47,6 +47,14 @@ transparent() {
 
 case "$1" in
 	start)
+		getpids "squid"
+
+		if [ -n "${pidlist}" ]; then
+			echo -e "Squid is already running with Process"\
+				"ID(s) ${pidlist}.${NORMAL}"
+		evaluate_retval
+		exit
+		fi
 		if [ -e /var/ipfire/proxy/enable -o -e /var/ipfire/proxy/enable_blue ]; then
 			boot_mesg "Starting Squid Proxy Server..."
 			loadproc /usr/sbin/squid -D -z >/dev/null 2>&1
