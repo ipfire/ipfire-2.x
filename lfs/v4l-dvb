@@ -28,6 +28,7 @@ VER        = e9a442d3b53a
 
 THISAPP    = v4l-dvb-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE1   = v4l-dvb-af9015-820fe3a25cbc.patch.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PAK_VER    = 2
@@ -42,11 +43,13 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) $(DL_FILE1)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
 
 $(DL_FILE)_MD5 = e4d9fccd3e3c242d1dce59bc5ecd2c51
+$(DL_FILE1)_MD5 = e51ca70bf1dc413a50796504f513fdd9
 
 install : $(TARGET)
 
@@ -79,7 +82,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-#	cp -f $(DIR_SRC)/config/v4l-dvb/config $(DIR_APP)/v4l/.config
+	cd $(DIR_APP) && bzip2 -d -c $(DIR_DL)/$(DL_FILE1) | patch -p1
 ifeq "$(SMP)" "1"
 	cd $(DIR_APP) && make release VER=$(KVER)-ipfire-smp
 else
