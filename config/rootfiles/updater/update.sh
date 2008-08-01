@@ -79,6 +79,13 @@ echo "title Old Kernel" >> /boot/grub/grub.conf
 echo "  configfile /grub/grub-old.conf" >> /boot/grub/grub.conf
 sed -i "s|/vmlinuz-ipfire|/vmlinuz-$OLDKERNEL-ipfire|g" /boot/grub/grub-old.conf
 #
+# Made emergency - initramdisk
+#
+cp -f /etc/mkinitcpio.conf /etc/mkinitcpio.conf.org
+sed -i "s| autodetect | |g" /etc/mkinitcpio.conf
+mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
+cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
+#
 # Made initramdisk
 #
 echo

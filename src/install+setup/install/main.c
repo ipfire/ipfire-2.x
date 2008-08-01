@@ -503,6 +503,15 @@ int main(int argc, char *argv[])
 
 	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
 
+	/* Build the emergency ramdisk with all drivers */
+	mysystem("cp -f /harddisk/etc/mkinitcpio.conf /harddisk/etc/mkinitcpio.conf.org");
+
+	replace("/harddisk/etc/mkinitcpio.conf", " autodetect ", " ");
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-emergency.img -k %s-ipfire", KERNEL_VERSION, KERNEL_VERSION);
+	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+
+	mysystem("cp -f /harddisk/etc/mkinitcpio.conf.org /harddisk/etc/mkinitcpio.conf");
+
 	/* mkinitcpio has a problem if ide and pata are included */
 	if ( scsi_disk==1 ) {
 	    /* Remove the ide hook if we install sda */
