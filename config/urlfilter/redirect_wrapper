@@ -26,7 +26,7 @@ use IPC::Open2;
 use IO::Handle;
 
 # define here your redirectors (use a comma sperated list)
-my $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];
+my $redirectors;
 
 require '/var/ipfire/general-functions.pl';
 
@@ -37,19 +37,19 @@ $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
 # define here your redirectors (use a comma sperated list)
-if ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){my $redirectors = [ '/usr/bin/squidGuard', '/usr/bin/squidclamav', '/usr/sbin/updxlrator' ];}
-if ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){my $redirectors = [ '/usr/bin/squidGuard', '/usr/bin/squidclamav' ];}
-if ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){my $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];}
-if ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){my $redirectors = [ '/usr/bin/squidGuard' ];}
-if ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){my $redirectors = [ '/usr/bin/squidclamav', '/usr/sbin/updxlrator' ];}
-if ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){my $redirectors = [ '/usr/bin/squidclamav' ];}
-if ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){my $redirectors = [ '/usr/sbin/updxlrator' ];}
+if ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/bin/squidGuard', '/usr/bin/squidclamav', '/usr/sbin/updxlrator' ];}
+elsif ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){$redirectors = [ '/usr/bin/squidGuard', '/usr/bin/squidclamav' ];}
+elsif ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];}
+elsif ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){$redirectors = [ '/usr/bin/squidGuard' ];}
+elsif ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/bin/squidclamav', '/usr/sbin/updxlrator' ];}
+elsif ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){$redirectors = [ '/usr/bin/squidclamav' ];}
+elsif ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/sbin/updxlrator' ];}
+else  { $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];}
 
 # Attention: keep in mind that the order of your redirectors is important.
 # It doesn't make sense to scan for viruses on pages you restrict access to...
 # So place first your tools which restrict access, then the tools which do the
 # content filtering!
-
 
 ##### no need to change anything below this line #####
 
@@ -61,12 +61,19 @@ my $return;
 my $i;
 my $debug=0; # enable only for debugging
 
+if ($debug){
+	 print "Urlfilter = ".$proxysettings{'ENABLE_FILTER'}."\n";
+	 print "Clamav = ".$proxysettings{'ENABLE_CLAMAV'}."\n";
+	 print "Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'}."\n";
+	 }
+
 # open progamms
 my $pidlist = [];
 my $rlist = [];
 my $wlist = [];
 for($i = 0; $i < @$redirectors; $i++) {
-        $pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
+			 if ($debug){print "Current redirector is ".$redirectors->[$i]."\n";}
+			 $pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
 }
 
 # wait for data...

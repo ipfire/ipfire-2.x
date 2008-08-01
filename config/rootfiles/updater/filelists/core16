@@ -18,6 +18,7 @@ var/ipfire/header.pl
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
 usr/share/terminfo/x/xterm-color
+usr/sbin/redirect_wrapper
 bin/ntfs-3g
 lib/libntfs-3g.so
 lib/libntfs-3g.so.31
