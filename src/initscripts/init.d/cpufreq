@@ -1,0 +1,59 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/cpufreq
+#
+# Description : Initalisize and startup cpufreq and set a governor
+#
+# Authors     : Arne Fitzenreiter - arne_f@ipfire.org
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting cpufreq ..."
+		# Chose your cpufreq module, acpi-cpufreq should work with
+		# newer hardware
+		modprobe acpi-cpufreq
+		# modprobe cpufreq-nforce2
+		# modprobe e-powersaver
+		# modprobe gx-suspmod
+		# modprobe longhaul
+		# modprobe longrun
+		# modprobe p4-clockmod
+		# modprobe powernow-k6
+		# modprobe powernow-k7
+		# modprobe powernow-k8
+		# modprobe speedstep-centrino
+		# modprobe speedstep-ich
+		# modprobe speedstep-lib
+		# modprobe speedstep-smi
+		
+		# load cqufreq governors
+		modprobe cpufreq_conservative
+		modprobe cpufreq_ondemand
+		modprobe cpufreq_powersave
+		modprobe cpufreq_userspace
+
+		# Set the governor to ondemand 
+		cpufreq-set -g ondemand
+		evaluate_retval;
+		
+		# activate cpufreq collectd module
+		sed -i -e "s|#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
+
+		exit 0;
+		;;
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/cpufreq

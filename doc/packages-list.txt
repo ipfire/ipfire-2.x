@@ -64,6 +64,7 @@
 * collectd-4.4.1
 * coreutils-5.96
 * cpio-2.6
+* cpufrequtils-004
 * cups-1.3.7
 * curl-7.15.3
 * cyrus-imapd-2.2.12
