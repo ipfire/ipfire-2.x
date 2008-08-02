@@ -209,13 +209,13 @@ sub updatecpufreqgraph {
 
 
         if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
-	    push(@command,"LINE1:cpu1".$color{"color11"}."A0:1",
+	    push(@command,"LINE3:cpu1".$color{"color12"}."A0:1",
 			    "GPRINT:cpu1:MAX:%3.0lf Mhz",
 			    "GPRINT:cpu1:AVERAGE:%3.0lf Mhz",
 			    "GPRINT:cpu1:MIN:%3.0lf Mhz",
 			    "GPRINT:cpu1:LAST:%3.0lf Mhz\\j",);
 	}
-	push(@command,"LINE2:cpu0".$color{"color12"}."A1:0",
+	push(@command,"LINE2:cpu0".$color{"color11"}."A1:0",
 			    "GPRINT:cpu0:MAX:%3.0lf Mhz",
 			    "GPRINT:cpu0:AVERAGE:%3.0lf Mhz",
 			    "GPRINT:cpu0:MIN:%3.0lf Mhz",

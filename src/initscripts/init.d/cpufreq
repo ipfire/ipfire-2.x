@@ -17,24 +17,18 @@
 
 case "${1}" in
 	start)
-		boot_mesg "Starting cpufreq ..."
-		# Chose your cpufreq module, acpi-cpufreq should work with
-		# newer hardware
-		modprobe acpi-cpufreq
-		# modprobe cpufreq-nforce2
-		# modprobe e-powersaver
-		# modprobe gx-suspmod
-		# modprobe longhaul
-		# modprobe longrun
-		# modprobe p4-clockmod
-		# modprobe powernow-k6
-		# modprobe powernow-k7
-		# modprobe powernow-k8
-		# modprobe speedstep-centrino
-		# modprobe speedstep-ich
-		# modprobe speedstep-lib
-		# modprobe speedstep-smi
-		
+		boot_mesg -n "Starting cpufreq ... "
+
+		for module in acpi-cpufreq cpufreq-nforce2 e-powersaver \
+		    gx-suspmod longhaul longrun p4-clockmod powernow-k6 \
+		    powernow-k7 powernow-k8 speedstep-centrino speedstep-ich \
+		    speedstep-smi; do
+		    modprobe $module > /dev/null 2>&1;
+		    if [ ${?} = 0 ]; then
+			boot_mesg -n "$SUCCESS$module$NORMAL "
+		    fi
+		done
+		boot_mesg ""
 		# load cqufreq governors
 		modprobe cpufreq_conservative
 		modprobe cpufreq_ondemand
