@@ -72,7 +72,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 {
-        if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|ttyACM0|ttyACM1|ttyACM2|ttyACM3|isdn1|isdn2)$/) {
+        if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|ttyACM0|ttyACM1|ttyACM2|ttyACM3|ttyUSB0|ttyUSB1|ttyUSB2|ttyUSB3|isdn1|isdn2)$/) {
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
         if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400|460800|921600)$/) {
@@ -325,11 +325,14 @@ $selected{'COMPORT'}{'ttyS1'} = '';
 $selected{'COMPORT'}{'ttyS2'} = '';
 $selected{'COMPORT'}{'ttyS3'} = '';
 $selected{'COMPORT'}{'ttyS4'} = '';
-if ( $pppsettings{'TYPE'} ne '' ){
 $selected{'COMPORT'}{'ttyACM0'} = '';
 $selected{'COMPORT'}{'ttyACM1'} = '';
 $selected{'COMPORT'}{'ttyACM2'} = '';
-$selected{'COMPORT'}{'ttyACM3'} = '';}
+$selected{'COMPORT'}{'ttyACM3'} = '';
+$selected{'COMPORT'}{'ttyUSB0'} = '';
+$selected{'COMPORT'}{'ttyUSB1'} = '';
+$selected{'COMPORT'}{'ttyUSB2'} = '';
+$selected{'COMPORT'}{'ttyUSB3'} = '';
 $selected{'COMPORT'}{$pppsettings{'COMPORT'}} = "selected='selected'";
 
 $selected{'DTERATE'}{'9600'} = '';
@@ -557,6 +560,10 @@ END
                 <option value='ttyS2' $selected{'COMPORT'}{'ttyS2'}>COM3</option>
                 <option value='ttyS3' $selected{'COMPORT'}{'ttyS3'}>COM4</option>
                 <option value='ttyS4' $selected{'COMPORT'}{'ttyS4'}>COM5</option>
+                <option value='ttyUSB0' $selected{'COMPORT'}{'ttyUSB0'}>ttyUSB0</option>
+                <option value='ttyUSB1' $selected{'COMPORT'}{'ttyUSB1'}>ttyUSB1</option>
+                <option value='ttyUSB2' $selected{'COMPORT'}{'ttyUSB2'}>ttyUSB2</option>
+                <option value='ttyUSB3' $selected{'COMPORT'}{'ttyUSB3'}>ttyUSB3</option>
 END
 ;
                 if ($pppsettings{'TYPE'} ne 'serial' ) {
