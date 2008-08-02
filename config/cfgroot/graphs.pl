@@ -178,6 +178,58 @@ sub updatecpugraph {
         print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
 }
 
+# Generate the CPU Frequency Graph for the current period of time for values given by
+# only 1 or 2 cpus is working
+sub updatecpufreqgraph {
+        if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-0.rrd" ){
+
+        my $period    = $_[0];
+	my @command = ("$graphs/cpufreq-$period.png",
+        "--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org", "-v Mhz",
+        "-w 600", "-h 125",  "-r",
+        "--color", "SHADEA".$color{"color19"},
+        "--color", "SHADEB".$color{"color19"},
+        "--color", "BACK".$color{"color21"},
+        "-t $Lang::tr{'cpu frequency per'} $Lang::tr{$period}");
+
+        if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
+	    push(@command,"DEF:cpu1_=$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd:value:AVERAGE");
+	}
+	push(@command,"DEF:cpu0_=$rrdlog/collectd/localhost/cpufreq/cpufreq-0.rrd:value:AVERAGE");
+
+        if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
+	    push(@command,"CDEF:cpu1=cpu1_,1000000,/");
+	}
+	push(@command,"CDEF:cpu0=cpu0_,1000000,/");
+
+        if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
+	    push(@command,"LINE1:cpu1".$color{"color11"}."A0:cpu 1\\j",
+			    "COMMENT:$Lang::tr{'maximal'}",
+			    "COMMENT:$Lang::tr{'average'}",
+			    "COMMENT:$Lang::tr{'minimal'}",
+			    "COMMENT:$Lang::tr{'current'}\\j",
+			    "GPRINT:cpu1:MAX:%3.0lf Mhz",
+			    "GPRINT:cpu1:AVERAGE:%3.0lf Mhz",
+			    "GPRINT:cpu1:MIN:%3.0lf Mhz",
+			    "GPRINT:cpu1:LAST:%3.0lf Mhz\\j",);
+	}
+	push(@command,"LINE2:cpu0".$color{"color12"}."A1:cpu 0\\j",
+			    "COMMENT:$Lang::tr{'maximal'}",
+			    "COMMENT:$Lang::tr{'average'}",
+			    "COMMENT:$Lang::tr{'minimal'}",
+			    "COMMENT:$Lang::tr{'current'}\\j",
+			    "GPRINT:cpu0:MAX:%3.0lf Mhz",
+			    "GPRINT:cpu0:AVERAGE:%3.0lf Mhz",
+			    "GPRINT:cpu0:MIN:%3.0lf Mhz",
+			    "GPRINT:cpu0:LAST:%3.0lf Mhz\\j",);
+
+	RRDs::graph (@command);
+        $ERROR = RRDs::error;
+        print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
+    }
+}
+
+
 # Generate the Load Graph for the current period of time for values given by collecd
 
 sub updateloadgraph {
@@ -204,6 +256,7 @@ sub updateloadgraph {
         $ERROR = RRDs::error;
         print "Error in RRD::graph for load: $ERROR\n" if $ERROR;
 }
+
 
 # Generate the Memory and Swap Graph for the current period of time for values given by collecd
 

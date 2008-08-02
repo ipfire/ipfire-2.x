@@ -48,6 +48,7 @@ $cgigraphs[1] = '' unless defined $cgigraphs[1];
 $cgigraphs[2] = '' unless defined $cgigraphs[2];
 
 if ($cgigraphs[1] =~ /(load)/) {&Graphs::updateloadgraph ("hour");&Graphs::updateloadgraph ("week");&Graphs::updateloadgraph ("month");&Graphs::updateloadgraph ("year");}
+elsif ($cgigraphs[1] =~ /(cpufreq)/) {&Graphs::updatecpufreqgraph ("hour");&Graphs::updatecpufreqgraph ("week");&Graphs::updatecpufreqgraph ("month");&Graphs::updatecpufreqgraph ("year");}
 elsif ($cgigraphs[1] =~ /(cpu)/) {&Graphs::updatecpugraph ("hour");&Graphs::updatecpugraph ("week");&Graphs::updatecpugraph ("month");&Graphs::updatecpugraph ("year");}
 elsif ($cgigraphs[1] =~ /(processes)/) {&Graphs::updateprocessesgraph ("hour");&Graphs::updateprocessesgraph ("week");&Graphs::updateprocessesgraph ("month");&Graphs::updateprocessesgraph ("year");}
 elsif ($cgigraphs[1] =~ /(memory|swap)/) {&Graphs::updatememgraph ("hour");&Graphs::updatememgraph ("week");&Graphs::updatememgraph ("month");&Graphs::updatememgraph ("year");}
@@ -135,7 +136,7 @@ elsif ($cgigraphs[1] =~ /(green|blue|orange|red|ppp|ipsec|cpu|memory|swap|disk|l
 }
 
 print "<div align='center'><table width='80%'><tr><td align='center'>";
-if ( $cgigraphs[1] eq "cpu" || $cgigraphs[1] eq "load" ) { print "<a href='/cgi-bin/system.cgi'>"; }
+if ( $cgigraphs[1] eq "cpu" || $cgigraphs[1] eq "cpufreq" || $cgigraphs[1] eq "load" ) { print "<a href='/cgi-bin/system.cgi'>"; }
 elsif ( $cgigraphs[1] eq "memory" || $cgigraphs[1] eq "swap" ) { print "<a href='/cgi-bin/memory.cgi'>"; }
 elsif ( $cgigraphs[1] eq "processes" ) { print "<a href='/cgi-bin/services.cgi'>"; }
 elsif ( $cgigraphs[1] =~ /disk/ ) { print "<a href='/cgi-bin/media.cgi'>"; }

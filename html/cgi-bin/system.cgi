@@ -39,6 +39,7 @@ my %cgiparams=();
 
 # Generate Graphs from rrd Data
 &Graphs::updatecpugraph ("day");
+&Graphs::updatecpufreqgraph ("day");
 &Graphs::updateloadgraph ("day");
 
 &Header::showhttpheaders();
@@ -58,6 +59,17 @@ if (-e "$Header::graphdir/cpu-day.png") {
 }
 print "<br />\n";
 &Header::closebox();
+
+if (-e "$Header::graphdir/cpufreq-day.png") {
+    &Header::openbox('100%', 'center', "CPU Frequency $Lang::tr{'graph'}");
+	my $ftime = localtime((stat("$Header::graphdir/cpufreq-day.png"))[9]);
+	print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
+	print "<a href='/cgi-bin/graphs.cgi?graph=cpufreq'>";
+	print "<img alt='' src='/graphs/cpufreq-day.png' border='0' />";
+	print "</a>";
+	print "<br />\n";
+    &Header::closebox();
+}
 
 &Header::openbox('100%', 'center', "Load $Lang::tr{'graph'}");
 if (-e "$Header::graphdir/load-day.png") {
