@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
 PAK_VER    = 2
 
-DEPS       = "ghostscript"
+DEPS       = "ghostscript cyrus-sasl"
 
 ###############################################################################
 # Top-level Rules
