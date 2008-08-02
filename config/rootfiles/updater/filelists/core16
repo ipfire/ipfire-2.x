@@ -1,4 +1,5 @@
 opt/pakfire/db/core/mine
+etc/mkinitcpio.conf
 etc/init.d/mISDN
 etc/init.d/squid
 etc/ppp/ip-up

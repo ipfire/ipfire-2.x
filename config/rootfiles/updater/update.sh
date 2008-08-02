@@ -47,10 +47,10 @@ fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
 # Add issue and packfire conf to backup
-echo etc/issue >> ROOTFILES
-echo opt/pakfire/etc/pakfire.conf >> ROOTFILES
+echo etc/issue >> /opt/pakfire/tmp/ROOTFILES
+echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
-   -T ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
+   -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
 echo
 echo Update IPfire to $NEWVERSON ...
 #
@@ -81,15 +81,15 @@ sed -i "s|/vmlinuz-ipfire|/vmlinuz-$OLDKERNEL-ipfire|g" /boot/grub/grub-old.conf
 #
 # Made emergency - initramdisk
 #
+echo
+echo Create new Initramdisks ...
 cp -f /etc/mkinitcpio.conf /etc/mkinitcpio.conf.org
 sed -i "s| autodetect | |g" /etc/mkinitcpio.conf
-mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
+mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER-emergency.img
 cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
 #
 # Made initramdisk
 #
-echo
-echo Create new Initramdisks ...
 if [ "${ROOT:0:7}" == "/dev/sd" ]; then
     # Remove ide hook if root is on sda 
     sed -i "s| ide | |g" /etc/mkinitcpio.conf
