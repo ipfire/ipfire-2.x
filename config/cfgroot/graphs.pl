@@ -200,24 +200,22 @@ sub updatecpufreqgraph {
         if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
 	    push(@command,"CDEF:cpu1=cpu1_,1000000,/");
 	}
-	push(@command,"CDEF:cpu0=cpu0_,1000000,/");
-
-        if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
-	    push(@command,"LINE1:cpu1".$color{"color11"}."A0:cpu 1\\j",
+	push(@command,"CDEF:cpu0=cpu0_,1000000,/",
+			    "COMMENT:CPU",
 			    "COMMENT:$Lang::tr{'maximal'}",
 			    "COMMENT:$Lang::tr{'average'}",
 			    "COMMENT:$Lang::tr{'minimal'}",
-			    "COMMENT:$Lang::tr{'current'}\\j",
+			    "COMMENT:$Lang::tr{'current'}\\j",);
+
+
+        if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
+	    push(@command,"LINE1:cpu1".$color{"color11"}."A0:1",
 			    "GPRINT:cpu1:MAX:%3.0lf Mhz",
 			    "GPRINT:cpu1:AVERAGE:%3.0lf Mhz",
 			    "GPRINT:cpu1:MIN:%3.0lf Mhz",
 			    "GPRINT:cpu1:LAST:%3.0lf Mhz\\j",);
 	}
-	push(@command,"LINE2:cpu0".$color{"color12"}."A1:cpu 0\\j",
-			    "COMMENT:$Lang::tr{'maximal'}",
-			    "COMMENT:$Lang::tr{'average'}",
-			    "COMMENT:$Lang::tr{'minimal'}",
-			    "COMMENT:$Lang::tr{'current'}\\j",
+	push(@command,"LINE2:cpu0".$color{"color12"}."A1:0",
 			    "GPRINT:cpu0:MAX:%3.0lf Mhz",
 			    "GPRINT:cpu0:AVERAGE:%3.0lf Mhz",
 			    "GPRINT:cpu0:MIN:%3.0lf Mhz",
