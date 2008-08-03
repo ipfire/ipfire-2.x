@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 0.9.4
+VER        = svn3841
 
 THISAPP    = madwifi-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(SMP)" ""
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 399d20de8d855a59f20058857c2178ad
+$(DL_FILE)_MD5 = 60c8ce7553b55eff618b49aeee3bc3b5
 
 install : $(TARGET)
 
@@ -73,7 +73,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xzf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i -e "s/\/sbin\/depmod -ae//" Makefile
 	cd $(DIR_APP) && sed -i -e "94,96d" Makefile
 	# workaround for build on lfs
