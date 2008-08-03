@@ -19,6 +19,7 @@ case "${1}" in
 	start)
 		boot_mesg -n "Starting cpufreq ... "
 
+		# try cpufreq hardware depend modules
 		for module in acpi-cpufreq cpufreq-nforce2 e-powersaver \
 		    gx-suspmod longhaul longrun p4-clockmod powernow-k6 \
 		    powernow-k7 powernow-k8 speedstep-centrino speedstep-ich \
@@ -29,6 +30,7 @@ case "${1}" in
 		    fi
 		done
 		boot_mesg ""
+
 		# load cqufreq governors
 		modprobe cpufreq_conservative
 		modprobe cpufreq_ondemand
@@ -37,11 +39,13 @@ case "${1}" in
 
 		# Set the governor to ondemand 
 		cpufreq-set -g ondemand
-		evaluate_retval;
-		
-		# activate cpufreq collectd module
-		sed -i -e "s|#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
-
+		if [ ${?} = 0 ]; then
+		    # activate cpufreq collectd module
+		    sed -i -e "s|#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
+		    echo_ok;
+		else
+		    echo_failure;
+		fi
 		exit 0;
 		;;
 	*)
