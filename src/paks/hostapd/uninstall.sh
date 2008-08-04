@@ -24,5 +24,5 @@
 . /opt/pakfire/lib/functions.sh
 stop_service ${NAME}
 make_backup ${NAME}
-rm -rf /etc/rc.d/rc*.d/*hostap
+rm -rf /etc/rc.d/rc*.d/*hostapd
 remove_files
