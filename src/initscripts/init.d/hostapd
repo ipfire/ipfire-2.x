@@ -4,19 +4,22 @@
 
 case "${1}" in
         start)
+		boot_mesg -n "Starting hostapd... "
 		# enable wlan module of collectd
 		sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
                 /usr/bin/wlanconfig ath0 destroy
                 /usr/bin/wlanconfig blue0 create wlandev wifi0 wlanmode ap
                 /usr/sbin/iwconfig blue0 channel 05
-                /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf &
+                /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
                 evaluate_retval
                 ;;
 
         stop)
+		boot_mesg "Stopping hostapd..."
                 # Just make sure when going down the first time blue0 nw values are ignored
-		sed -i -e 's/^ACTION=="add", SUBSYSTEM=="net", SYSFS{address}=="*", NAME="blue0"*/#ACTION=="add", SUBSYSTEM=="net", SYSFS{address}=="*", NAME="blue0"*/' /etc/udev/rules.d/30-persistent-network.rules
-                /usr/bin/wlanconfig blue0 destroy
+		grep -v 'NAME="blue0"' /etc/udev/rules.d/30-persistent-network.rules > /tmp/30-persistent-network.rules
+		mv /tmp/30-persistent-network.rules /etc/udev/rules.d/30-persistent-network.rules
+	        /usr/bin/wlanconfig blue0 destroy
                 killproc /usr/bin/hostapd
                 evaluate_retval
                 ;;

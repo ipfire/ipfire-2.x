@@ -17,7 +17,7 @@
 
 case "${1}" in
 	start)
-		boot_mesg -n "Starting cpufreq ... "
+		boot_mesg -n "Starting cpufreq... "
 
 		# try cpufreq hardware depend modules
 		for module in acpi-cpufreq cpufreq-nforce2 e-powersaver \
