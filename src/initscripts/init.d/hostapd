@@ -6,8 +6,8 @@ case "${1}" in
         start)
 		# enable wlan module of collectd
 		sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
-                /usr/local/bin/wlanconfig ath0 destroy
-                /usr/local/bin/wlanconfig blue0 create wlandev wifi0 wlanmode ap
+                /usr/bin/wlanconfig ath0 destroy
+                /usr/bin/wlanconfig blue0 create wlandev wifi0 wlanmode ap
                 /usr/sbin/iwconfig blue0 channel 05
                 /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf &
                 evaluate_retval
@@ -16,7 +16,7 @@ case "${1}" in
         stop)
                 # Just make sure when going down the first time blue0 nw values are ignored
 		sed -i -e 's/^ACTION=="add", SUBSYSTEM=="net", SYSFS{address}=="*", NAME="blue0"*/#ACTION=="add", SUBSYSTEM=="net", SYSFS{address}=="*", NAME="blue0"*/' /etc/udev/rules.d/30-persistent-network.rules
-                /usr/local/bin/wlanconfig blue0 destroy
+                /usr/bin/wlanconfig blue0 destroy
                 killproc /usr/bin/hostapd
                 evaluate_retval
                 ;;
