@@ -2556,7 +2556,7 @@ sub readblockcategories
 	@filtergroups = @categories;
 
 	foreach (@filtergroups) {
-		s/\//_SLASH_/g;
+		s/\//_/g;
         	tr/a-z/A-Z/;
 	        $_ = "FILTER_".$_;
 	}

@@ -1,11 +1,15 @@
 #opt/vdr
 #opt/vdr/PLUGINS
 #opt/vdr/PLUGINS/lib
+opt/vdr/PLUGINS/lib/libsoftdevice-dfb.so.1.6.0
+opt/vdr/PLUGINS/lib/libsoftdevice-fb.so.1.6.0
+opt/vdr/PLUGINS/lib/libsoftdevice-shm.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-hello.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-osddemo.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-pictures.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-skincurses.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-sky.so.1.6.0
+opt/vdr/PLUGINS/lib/libvdr-softdevice.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-status.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-streamdev-client.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-streamdev-server.so.1.6.0
@@ -14,6 +18,7 @@ opt/vdr/PLUGINS/lib/libvdr-svcsvr.so.1.6.0
 opt/vdr/PLUGINS/lib/libvdr-svdrpdemo.so.1.6.0
 #opt/vdr/bin
 opt/vdr/bin/runvdr
+opt/vdr/bin/runvdr-soft
 opt/vdr/bin/svdrpsend.pl
 opt/vdr/bin/vdr
 #opt/vdr/locale

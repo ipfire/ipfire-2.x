@@ -14,6 +14,7 @@ srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
+srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 var/ipfire/langs
 var/ipfire/graphs.pl
