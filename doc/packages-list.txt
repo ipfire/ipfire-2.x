@@ -32,7 +32,8 @@
 * URI-1.35
 * Unix-Syslog-0.100
 * XML-Parser-2.34
-* alsa-lib-1.0.15
+* alsa-lib-1.0.17
+* alsa-lib-1.0.17-kmod
 * amavisd-new-2.5.2
 * applejuice-0.30
 * arping-2.05

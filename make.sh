@@ -342,6 +342,7 @@ buildipfire() {
   ipfiremake kqemu			SMP=1
   ipfiremake v4l-dvb			SMP=1
   ipfiremake madwifi                    SMP=1
+  ipfiremake alsa		KMOD=1	SMP=1
   ipfiremake sane		KMOD=1	SMP=1
   ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
@@ -353,6 +354,7 @@ buildipfire() {
   ipfiremake kqemu
   ipfiremake v4l-dvb
   ipfiremake madwifi
+  ipfiremake alsa		KMOD=1
   ipfiremake sane		KMOD=1
   ipfiremake openswan		KMOD=1
   ipfiremake pkg-config

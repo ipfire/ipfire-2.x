@@ -24,15 +24,23 @@
 
 include Config
 
-VER        = 1.0.15
+VER        = 1.0.17
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+ifeq "$(KMOD)" "1"
+ifeq "$(SMP)" "1"
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
+else
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod
+endif
+else
 TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 PROG       = alsa
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,9 +52,13 @@ objects = $(DL_FILE) alsa-utils-$(VER).tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(VER).tar.bz2 = $(DL_FROM)/alsa-utils-$(VER).tar.bz2
+alsa-firmware-$(VER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(VER).tar.bz2
+alsa-driver-$(VER).tar.bz2 = $(DL_FROM)/alsa-driver-$(VER).tar.bz2
 
-$(DL_FILE)_MD5 = 94254ea0d2c966a58184b134e9da29ff
-alsa-utils-$(VER).tar.bz2_MD5 = 287f46f891581c15018de4f8c0731575
+$(DL_FILE)_MD5 = 9bbbdc502478cdc75074c9ba42c385b3
+alsa-utils-$(VER).tar.bz2_MD5 = 14ccd0c900bf663afb36eac6f92d41d6
+alsa-firmware-$(VER).tar.bz_MD5 = 2a334a2b736cc6244162d7cc83247075d
+alsa-firmware-$(VER).tar.bz_MD5 = 26044062d13dbfe61c0330fe9915cfdb4
 
 install : $(TARGET)
 
@@ -78,13 +90,27 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_SRC)/alsa* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_SRC)/alsa*
+ifeq "$(KMOD)" "1"
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-driver-$(VER).tar.bz2
+	cd $(DIR_SRC)/alsa-driver-$(VER) && sed -i -e "s| soc/ | |g" Makefile
+	cd $(DIR_SRC)/alsa-driver-$(VER) && sed -i -e "s| soc||g" Makefile
+	cd $(DIR_SRC)/alsa-driver-$(VER) && ./configure
+	cd $(DIR_SRC)/alsa-driver-$(VER) && make
+	cd $(DIR_SRC)/alsa-driver-$(VER) && make install
+else
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --enable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-utils-$(VER).tar.bz2
 	cd $(DIR_SRC)/alsa-utils-$(VER) && ./configure
-	cd $(DIR_SRC)/alsa-utils-$(VER) && make
+	cd $(DIR_SRC)/alsa-utils-$(VER) && make $(MAKETUNING)
 	cd $(DIR_SRC)/alsa-utils-$(VER) && make install
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-firmware-$(VER).tar.bz2
+	cd $(DIR_SRC)/alsa-firmware-$(VER) && ./configure
+	cd $(DIR_SRC)/alsa-firmware-$(VER) && make $(MAKETUNING)
+	cd $(DIR_SRC)/alsa-firmware-$(VER) && make install
+endif
 	@rm -rf $(DIR_SRC)/alsa*
 	@$(POSTBUILD)
