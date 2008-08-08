@@ -1,0 +1,9 @@
+opt/pakfire/db/core/mine
+etc/mkinitcpio.conf
+etc/init.d/mISDN
+etc/modprobe.d/blacklist
+usr/bin/bc
+usr/bin/dc
+srv/web/ipfire/cgi-bin/pppsetup.cgi
+etc/rc.d/init.d/checkfstab
+etc/rc.d/rcsysinit.d/S19checkfstab

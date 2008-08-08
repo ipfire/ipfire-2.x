@@ -112,10 +112,10 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
 echo =================================== >> /etc/issue
 echo \\n running on \\s \\r \\m >> /etc/issue
-# Core 16 begin
+# Core 17 begin
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 /etc/init.d/mISDN config
-# Core 16 end
+# Core 17 end
 #
 # Remove obsolete packages
 #
