@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2-18-1
+VER        = 2-19-0
 
 THISAPP    = esniper-$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = esniper
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE) es-f_1.1.1.tgz
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 es-f_1.1.1.tgz = $(DL_FROM)/es-f_1.1.1.tgz
 
-$(DL_FILE)_MD5 = b5dad4270657727951d89f410e63355f
+$(DL_FILE)_MD5 = 9b2b27a8d01deadf547f59831f2a06fc
 es-f_1.1.1.tgz_MD5 = 6d322716edfc0d86a0a230e648a6f797
 
 install : $(TARGET)
