@@ -80,7 +80,7 @@
 * ebtables-v2.0.8-2
 * ed-0.2
 * elinks-0.11.4rc0
-* esniper-2-18-1
+* esniper-2-19-0
 * espgs-8.15.1
 * etherwake-1.09
 * ethtool-3

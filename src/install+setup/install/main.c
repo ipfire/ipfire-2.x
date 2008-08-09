@@ -475,7 +475,6 @@ int main(int argc, char *argv[])
 	
 	if (fstype == REISER4) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiser4");
-		replace("/harddisk/etc/mkinitcpio.conf", "MODULES=\"", "MODULES=\"reiser4 ");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "rw");
 	} else if (fstype == REISERFS) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
@@ -497,7 +496,6 @@ int main(int argc, char *argv[])
 		}
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
 		NOJOURNAL:
-		replace("/harddisk/etc/mkinitcpio.conf", "MODULES=\"", "MODULES=\"ext3 ");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	}
 
