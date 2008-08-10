@@ -4,6 +4,10 @@ etc/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc
+var/ipfire/graphs.pl
+srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
+srv/web/ipfire/cgi-bin/network.cgi
+srv/web/ipfire/cgi-bin/system.cgi
 etc/rc.d/init.d/checkfstab
 etc/rc.d/rcsysinit.d/S19checkfstab
