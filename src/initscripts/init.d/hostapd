@@ -4,23 +4,39 @@
 
 case "${1}" in
         start)
-		boot_mesg -n "Starting hostapd... "
+		boot_mesg "Starting hostapd... "
 		mkdir -p /var/run/hostapd
 		# enable wlan module of collectd
 		sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
-                /usr/bin/wlanconfig ath0 destroy
-                /usr/bin/wlanconfig blue0 create wlandev wifi0 wlanmode ap
-                /usr/sbin/iwconfig blue0 channel 05
-                /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
-                evaluate_retval
+
+		# Set Atheros Card to master mode
+                /usr/bin/wlanconfig blue0 destroy > /dev/null
+                /usr/bin/wlanconfig blue0 create wlandev wifi0 wlanmode ap > /dev/null
+
+		# Set other cards to master mode
+		#/usr/sbin/iwconfig blue0 mode master
+
+		if [ "$(/usr/sbin/iwconfig blue0 | /bin/grep "Mode:Master")" == "" ]; then
+		    boot_mesg "Error! Can't set wlan master mode"
+		    echo_failure;
+		    exit 1;
+		else
+		    /usr/sbin/iwconfig blue0 channel 05
+		    /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
+		    evaluate_retval
+		fi
                 ;;
 
         stop)
 		boot_mesg "Stopping hostapd..."
-                # Just make sure when going down the first time blue0 nw values are ignored
-		grep -v 'NAME="blue0"' /etc/udev/rules.d/30-persistent-network.rules > /tmp/30-persistent-network.rules
-		mv /tmp/30-persistent-network.rules /etc/udev/rules.d/30-persistent-network.rules
-	        /usr/bin/wlanconfig blue0 destroy
+
+		# Set Atheros Card to Managed mode
+                /usr/bin/wlanconfig blue0 destroy > /dev/null
+                /usr/bin/wlanconfig blue0 create wlandev wifi0 wlanmode sta > /dev/null
+
+		# Set other cards to master mode
+		#/usr/sbin/iwconfig blue0 mode Managed
+
                 killproc /usr/bin/hostapd
                 evaluate_retval
                 ;;

@@ -504,7 +504,7 @@ int create_udev(void)
 	for (i = 0 ; i < 4 ; i++)
 	{
 		if (strcmp(knics[i].macaddr, "")) {
-			fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", knics[i].macaddr, lcolourcard[i], knics[i].description);
+			fprintf(fp,"ACTION==\"add\", SUBSYSTEM==\"net\", SYSFS{type}==\"1\", SYSFS{address}==\"%s\", NAME=\"%s0\" # %s\n", knics[i].macaddr, lcolourcard[i], knics[i].description);
 		}
 	}
 	fclose(fp);
