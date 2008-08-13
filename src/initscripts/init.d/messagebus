@@ -1,0 +1,45 @@
+#!/bin/sh
+# Begin $rc_base/init.d/messagebus
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+
+#$LastChangedBy: dnicholson $
+#$Date: 2007-10-21 11:33:30 -0500 (Sun, 21 Oct 2007) $
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+pidfile=/var/run/dbus/pid
+socket=/var/run/dbus/system_bus_socket
+
+case "$1" in
+        start)
+                boot_mesg "Starting the D-Bus Messagebus Daemon..."
+                /usr/bin/dbus-uuidgen --ensure
+                loadproc -p "$pidfile" /usr/bin/dbus-daemon --system
+                ;;
+
+        stop)
+                boot_mesg "Stopping the D-Bus Messagebus Daemon..."
+                killproc -p "$pidfile" /usr/bin/dbus-daemon
+                [ $? -eq 0 ] && rm -f "$socket"
+                ;;
+
+        restart)
+                $0 stop
+                sleep 1
+                $0 start
+                ;;
+
+        status)
+                statusproc -p $pidfile /usr/bin/dbus-daemon
+                ;;
+
+        *)
+                echo "Usage: $0 {start|stop|restart|status}"
+                exit 1
+                ;;
+esac
+
+# End $rc_base/init.d/messagebus

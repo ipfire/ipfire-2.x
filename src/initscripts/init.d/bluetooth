@@ -1,0 +1,53 @@
+#!/bin/sh
+# Begin $rc_base/init.d/bluetooth
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+        start)
+                boot_mesg "Starting Bluetooth daemon..."
+                loadproc /usr/sbin/hcid
+		sleep 1
+		
+		# The passkey-agent is only needed for pairing
+		#boot_mesg "Starting Bluetooth passkey-agent..."
+                #loadproc /usr/bin/passkey-agent --default 12345 &
+
+		# Bind rfcomm to a blootooth cellphone/modem
+		#boot_mesg "Bind rfcomm0 to cellphone/modem..."
+		#rfcomm bind /dev/rfcomm0 00:11:22:33:44:55 1
+		#evaluate_retval
+                ;;
+
+        stop)
+                #boot_mesg "Realease rfcomm0..."
+		#rfcomm release rfcomm0
+                #boot_mesg "Stopping Bluetooth passkey-agent..."
+		#killproc /usr/bin/passkey-agent
+                boot_mesg "Stopping Bluetooth daemon..."
+		killproc /usr/sbin/hcid
+                ;;
+
+        restart)
+                $0 stop
+                sleep 1
+                $0 start
+                ;;
+
+        status)
+                statusproc /usr/sbin/hcid
+		statusproc /usr/bin/passkey-agent
+		
+                ;;
+
+        *)
+                echo "Usage: $0 {start|stop|restart|status}"
+                exit 1
+                ;;
+esac
+
+# End $rc_base/init.d/bluetooth
