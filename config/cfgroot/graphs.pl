@@ -767,7 +767,7 @@ sub wireless {
 				my $interface    = $_[1];
 				RRDs::graph ("$graphs/wireless-$interface-$period.png",
 				"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
-				"--alt-y-grid", "-w 600", "-h 125", "-r", "-v dBm", "-z",
+				"--alt-y-grid", "-w 600", "-h 125", "-v dBm", "-z",
 				"-t Wireless $interface $Lang::tr{'graph per'} $Lang::tr{$period}",
 				"--color", "SHADEA".$color{"color19"},
 				"--color", "SHADEB".$color{"color19"},
