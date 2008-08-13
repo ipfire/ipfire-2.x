@@ -591,6 +591,7 @@ buildipfire() {
   ipfiremake cpufrequtils
   ipfiremake dbus
   ipfiremake bluez
+  ipfiremake gutenprint
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
