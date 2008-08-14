@@ -24,7 +24,7 @@ case "$1" in
                 ;;
 
         stop)
-                #boot_mesg "Realease rfcomm0..."
+                #boot_mesg "Release rfcomm0..."
 		#rfcomm release rfcomm0
                 #boot_mesg "Stopping Bluetooth passkey-agent..."
 		#killproc /usr/bin/passkey-agent
