@@ -20,11 +20,6 @@ HOME=/
 # Set time
 */5 * * * *	/usr/local/bin/timecheck > /dev/null 2>&1
 
-# Summarize ip accounting info:
-2 1 * * * 	/usr/sbin/ipacsum -r -H `/bin/hostname` -t "the day 2 days ago" >/dev/null
-3 1 * * 0 	/usr/sbin/ipacsum -r -H `/bin/hostname` -t "the week 4 weeks ago" >/dev/null
-4 1 1 2 * 	/usr/sbin/ipacsum -r -H `/bin/hostname` -t "the year 2 years ago" >/dev/null
-
 # Make some nice graphs
 */5 * * * * 	/usr/local/bin/makegraphs >/dev/null
 

@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2008 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -46,9 +46,12 @@ if [ -e /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 ]; then
 fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
-# Add issue and packfire conf to backup
+# Add some files that are not in the package to backup
 echo etc/issue >> /opt/pakfire/tmp/ROOTFILES
 echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
+echo var/spool/cron/root.orig >> /opt/pakfire/tmp/ROOTFILES
+echo etc/udev/rules.d/30-persistant-network.rules >> /opt/pakfire/tmp/ROOTFILES
+#
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
 echo
@@ -61,6 +64,11 @@ rm -rf /etc/rc.d/rc3.d/S20collectd
 # Backup the old grub config
 #
 mv /boot/grub/grub.conf /boot/grub/grub-old.conf
+#
+# Remove the kernel modules of the new kernel (only needed if this update run
+# over an already updated system)
+#
+rm -rf /lib/modules/$KVER-ipfire
 #
 # Unpack the updated files
 #
@@ -112,6 +120,19 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
 echo =================================== >> /etc/issue
 echo \\n running on \\s \\r \\m >> /etc/issue
+#
+# Update crontab
+#
+grep -v "ipacsum" /var/spool/cron/root.orig > /tmp/root.orig.tmp
+mv /tmp/root.orig.tmp /var/spool/cron/root.orig
+chmod 600 /var/spool/cron/root.orig
+chown root:cron /var/spool/cron/root.orig
+#
+# Update network-rules
+#
+sed -i 's|"net", SYSFS{"address"}|"net", SYSFS{"type"}=="1", SYSFS{"address"}|g' \
+          /etc/udev/rules.d/30-persistant-network.rules
+#
 # Core 17 begin
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 /etc/init.d/mISDN config
@@ -128,6 +149,7 @@ echo '    sleep 2'                                        >> /tmp/remove_obsolet
 echo 'done'                                               >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire remove zaptel -y'              >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire update --force'                >> /tmp/remove_obsolete_paks
+echo '/opt/pakfire/pakfire upgrade'                       >> /tmp/remove_obsolete_paks
 echo 'echo'                                               >> /tmp/remove_obsolete_paks
 echo 'echo Update to IPFire $NEWVERSION finished. Please reboot... ' >> /tmp/remove_obsolete_paks
 echo 'echo'                                               >> /tmp/remove_obsolete_paks
