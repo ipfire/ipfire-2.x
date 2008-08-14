@@ -649,12 +649,12 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/source
 #lib/modules/KVER-ipfire/kernel/drivers/net/imq.ko
 #lib/modules/KVER-ipfire/kernel/net/ipv4/netfilter/ipt_IMQ.ko
-boot/System.map-KVER-ipfire-smp
+#boot/System.map-KVER-ipfire-smp
 boot/config-KVER-ipfire
-boot/vmlinuz-KVER-ipfire-smp
-boot/vmlinuz-ipfire-smp
+#boot/vmlinuz-KVER-ipfire-smp
+#boot/vmlinuz-ipfire-smp
 #lib/modules
-lib/modules/KVER-ipfire-smp
+#lib/modules/KVER-ipfire-smp
 #lib/modules/KVER-ipfire-smp/build
 #lib/modules/KVER-ipfire-smp/kernel
 #lib/modules/KVER-ipfire-smp/kernel/arch

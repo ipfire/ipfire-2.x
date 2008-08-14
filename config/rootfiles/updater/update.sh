@@ -101,7 +101,7 @@ if [ "${ROOT:0:7}" == "/dev/hd" ]; then
 fi
 fi
 mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
-mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
+#mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
 #
 # Change version of Pakfire.conf
 #

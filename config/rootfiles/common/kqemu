@@ -1,2 +1,2 @@
-#lib/modules/KVER-ipfire/misc/kqemu.ko	# doesnt work in non-smp mode yet
-lib/modules/KVER-ipfire-smp/misc/kqemu.ko
+lib/modules/KVER-ipfire/misc/kqemu.ko
+#lib/modules/KVER-ipfire-smp/misc/kqemu.ko

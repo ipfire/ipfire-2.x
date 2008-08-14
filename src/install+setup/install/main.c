@@ -448,11 +448,11 @@ int main(int argc, char *argv[])
 		"/bin/touch /harddisk/lib/modules/%s-ipfire/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
-	snprintf(commandstring, STRING_SIZE, 
+/*	snprintf(commandstring, STRING_SIZE, 
 		"/bin/touch /harddisk/lib/modules/%s-ipfire-smp/modules.dep",
 		KERNEL_VERSION);
 	mysystem(commandstring);
-
+*/
 	/* Rename uname */
 	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
 
@@ -522,9 +522,9 @@ int main(int argc, char *argv[])
 	/* Going to make our initrd... */
 	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s.img -k %s-ipfire", KERNEL_VERSION, KERNEL_VERSION);
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-smp.img -k %s-ipfire-smp", KERNEL_VERSION, KERNEL_VERSION );
+/*	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-smp.img -k %s-ipfire-smp", KERNEL_VERSION, KERNEL_VERSION );
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-
+*/
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");

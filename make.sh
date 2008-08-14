@@ -333,18 +333,18 @@ buildipfire() {
   ipfiremake ppp
   ipfiremake rp-pppoe
   ipfiremake unzip
-  ipfiremake linux			SMP=1
-  ipfiremake linux-fusion		SMP=1
+#  ipfiremake linux			SMP=1
+#  ipfiremake linux-fusion		SMP=1
 #  ipfiremake ipp2p			SMP=1
-  ipfiremake r8169			SMP=1
-  ipfiremake r8168			SMP=1
-  ipfiremake atl2			SMP=1
-  ipfiremake kqemu			SMP=1
-  ipfiremake v4l-dvb			SMP=1
-  ipfiremake madwifi                    SMP=1
-  ipfiremake alsa		KMOD=1	SMP=1
-  ipfiremake sane		KMOD=1	SMP=1
-  ipfiremake openswan		KMOD=1	SMP=1
+#  ipfiremake r8169			SMP=1
+#  ipfiremake r8168			SMP=1
+#  ipfiremake atl2			SMP=1
+#  ipfiremake kqemu			SMP=1
+#  ipfiremake v4l-dvb			SMP=1
+#  ipfiremake madwifi                    SMP=1
+#  ipfiremake alsa		KMOD=1	SMP=1
+#  ipfiremake sane		KMOD=1	SMP=1
+#  ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
   ipfiremake linux-fusion
 #  ipfiremake ipp2p
