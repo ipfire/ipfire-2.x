@@ -505,7 +505,7 @@ buildipfire() {
   ipfiremake spamassassin
   ipfiremake amavisd
   ipfiremake alsa
-  ipfiremake mpg123
+#  ipfiremake mpg123
   ipfiremake mpfire
   ipfiremake guardian
   ipfiremake libid3tag
@@ -547,18 +547,18 @@ buildipfire() {
   ipfiremake which
   ipfiremake openswan
   ipfiremake lsof
-  ipfiremake centerim
+ # ipfiremake centerim
   ipfiremake br2684ctl
   ipfiremake pcmciautils
   ipfiremake lm_sensors
   ipfiremake collectd
-  ipfiremake lcd4linux
+ # ipfiremake lcd4linux
   ipfiremake neon
-  ipfiremake subversion
+ # ipfiremake subversion
   ipfiremake tcptrack
   ipfiremake teamspeak
   ipfiremake elinks
-  ipfiremake igmpproxy
+ # ipfiremake igmpproxy
   ipfiremake fbset
   ipfiremake sdl
   ipfiremake qemu
@@ -566,7 +566,7 @@ buildipfire() {
   ipfiremake netpbm
   ipfiremake phpSANE
   ipfiremake tunctl
-  ipfiremake nagios
+ # ipfiremake nagios
   ipfiremake ebtables
   ipfiremake arptables
   ipfiremake fontconfig
