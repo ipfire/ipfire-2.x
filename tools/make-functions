@@ -507,12 +507,12 @@ batch_script() {
 	evaluate 1 mail_me ERROR
 
 	echo "### UPLOADING ISO"
-	$0 upload iso
-	evaluate 1 mail_me ISO
+	#$0 upload iso
+	#evaluate 1 mail_me ISO
 	
 	echo -ne "### UPLOADING PAKS"
-	$0 upload paks
-	evaluate 1 mail_me PAKS
+	#$0 upload paks
+	#evaluate 1 mail_me PAKS
 
 	echo -ne "${BOLD}***SUCCESS!${NORMAL}"
 	mail_me success
