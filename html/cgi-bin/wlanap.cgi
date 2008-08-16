@@ -343,7 +343,6 @@ logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
 logger_stdout=-1
 logger_stdout_level=$wlanapsettings{'DEBUG'}
 dump_file=/tmp/hostapd.dump
-ignore_broadcast_ssid=0
 eapol_key_index_workaround=0
 eap_server=0
 own_ip_addr=127.0.0.1
