@@ -20,6 +20,7 @@
 /var/ipfire/ppp
 /var/ipfire/proxy
 /var/ipfire/qos/*
+/var/ipfire/qos/bin/qos.sh
 /var/ipfire/time/
 /var/ipfire/urlfilter
 /var/ipfire/vpn
@@ -27,4 +28,5 @@
 /var/log/rrd/*
 /etc/sysconfig/firewall.local
 /etc/sysconfig/rc.local
-
+/root/.gitconfig
+/root/.bash_history

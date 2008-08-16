@@ -80,7 +80,7 @@ if ( $ENV{'QUERY_STRING'} =~ /title/){
 	my $song = "";
 	if ( $mpd->current() )
 	{
-		$song = substr("-= ".$mpd->current()->Artist()." | ".$mpd->current()->Title(),0,90)." =-<br /> ";
+		$song = substr("-= ".$mpd->current()->Artist()." | ".$mpd->current()->Title(),0,85)." =-<br /> ";
 		if ( $song eq "-=  |  =-<br /> " ){
 			$song = "None<br />"
 		};
@@ -601,7 +601,7 @@ foreach (@webradio){
 	}else{
 		print "<tr>";
 	}
-	chomp $stream[1];chop $stream[2];
+	chomp $stream[1];chomp $stream[2];
 	print <<END
 <td align='left'><a href='$stream[2]' target='_blank'>$stream[1]</a></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='middle' /></form></td>

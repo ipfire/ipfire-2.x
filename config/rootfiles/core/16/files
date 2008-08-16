@@ -17,3 +17,5 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 var/ipfire/langs
 var/ipfire/header.pl
 usr/share/terminfo/x/xterm-color
+sbin/hdparm
+var/ipfire/backup/include

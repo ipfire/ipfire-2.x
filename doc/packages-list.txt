@@ -119,7 +119,7 @@
 * gutenprint-5.0.2
 * gzip-1.3.5
 * hddtemp-0.3-beta14
-* hdparm-8.6
+* hdparm-8.9
 * hostapd-0.5.10
 * hplip-2.7.10
 * htop-0.7
@@ -197,7 +197,6 @@
 * mpd-0.13.1
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
-* mpg123-0.59r
 * mtd-CVS-20070507
 * mtools-3.9.10
 * mysql-5.0.24a
