@@ -25,15 +25,15 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/lang.pl';
 require '/var/ipfire/header.pl';
 
 my $debug = 0;
-my $i = 0;
+my $status = '';
 my $errormessage = '';
 my $status_started = "<td align='center' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td></tr>";
 my $status_stopped = "<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td></tr>";
@@ -59,35 +59,25 @@ $wlanapsettings{'APMODE'} = 'on';
 $wlanapsettings{'INTERFACE'} = $netsettings{'BLUE_DEV'};
 $wlanapsettings{'SSID'} = 'IPFire';
 $wlanapsettings{'HIDESSID'} = 'off';
-$wlanapsettings{'ENC'} = 'wpa';               # none / wpa
+$wlanapsettings{'ENC'} = 'wpa';               # none / wpa1 /wpa2
 $wlanapsettings{'TXPOWER'} = 'auto';
-# $wlanapsettings{'CC'} = '276';                    # CountryCode, 276 = Germany
 $wlanapsettings{'CHAN'} = '05';
 $wlanapsettings{'PWD'} = 'IPFire-2.x';
-$wlanapsettings{'PSK'} = '69eb868ed7b3cc36d767b729048c9c585234723d1eafbe66e5a16957b7c85e9c';
-$wlanapsettings{'WPA'} = '1';
-
 $wlanapsettings{'SYSLOGLEVEL'} = '0';
 $wlanapsettings{'DEBUG'} = '4';
-$wlanapsettings{'DRIVER'} = 'MADWIFI';            # UNKNOWN / MADWIFI / RT2500 / PRISM54 / ...
+$wlanapsettings{'DRIVER'} = 'MADWIFI';
 
-# WLANMODE= (a/b/g)
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 
 my %cgiparams=();
 $cgiparams{'ACTION'} = '';
-$cgiparams{'RUNNING'} = 'off';
 $cgiparams{'APMODE'} = 'on';
 $cgiparams{'SSID'} = 'IPFire';
 $cgiparams{'HIDESSID'} = 'off';
 $cgiparams{'ENC'} = 'wpa';               # none / wep / wpa / wep+wpa
 $cgiparams{'TXPOWER'} = 'auto';
 $cgiparams{'CHAN'} = '05';
-
 $cgiparams{'PWD'} = 'IPFire-2.x';
-$cgiparams{'PSK'} = '69eb868ed7b3cc36d767b729048c9c585234723d1eafbe66e5a16957b7c85e9c';
-$cgiparams{'WPA'} = '1';
-
 $cgiparams{'SYSLOGLEVEL'} = '0';
 $cgiparams{'DEBUG'} = '4';
 &Header::getcgihash(\%cgiparams);
@@ -96,7 +86,6 @@ $cgiparams{'DEBUG'} = '4';
 &Header::showhttpheaders();
 
 if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
-	$wlanapsettings{'APMODE'}     = $cgiparams{'APMODE'};
 	$wlanapsettings{'SSID'}       = $cgiparams{'SSID'};
 	$wlanapsettings{'HIDESSID'}   = $cgiparams{'HIDESSID'};
 	$wlanapsettings{'ENC'}        = $cgiparams{'ENC'};
@@ -104,8 +93,6 @@ if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 	$wlanapsettings{'TXPOWER'}    = $cgiparams{'TXPOWER'};
 
 	$wlanapsettings{'PWD'}        = $cgiparams{'PWD'};
-	$wlanapsettings{'PSK'}        = $cgiparams{'PSK'};
-	$wlanapsettings{'WPA'}        = $cgiparams{'WPA'};
 	$wlanapsettings{'SYSLOGLEVEL'}= $cgiparams{'SYSLOGLEVEL'};
 	$wlanapsettings{'DEBUG'}      = $cgiparams{'DEBUG'};
 
@@ -118,7 +105,7 @@ if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 		&WriteConfig();
 		&WriteConfig_hostapd();
 
-		system("/usr/local/bin/wlanapctrl start >/dev/null 2>&1") if ( $cgiparams{'RUNNING'} eq 'on' );
+		system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1")
 	}
 }elsif ( $cgiparams{'ACTION'} eq 'Start' ){
 	system("/usr/local/bin/wlanapctrl start >/dev/null 2>&1");
@@ -155,14 +142,11 @@ if ( $debug ){
 # DEBUG DEBUG
 ###############
 
-my $test;
-
 #
 # Driver and status detection
 #
 my $wlan_card_status = 'dummy';
 my $wlan_ap_status = '';
-my $wlan_hostapd_status = '';
 my $blue_message = "";
 
 if ( ($netsettings{'BLUE_DEV'} eq '') || ($netsettings{'BLUE_DRIVER'} eq '') ){
@@ -186,47 +170,38 @@ if ( ($netsettings{'BLUE_DEV'} eq '') || ($netsettings{'BLUE_DRIVER'} eq '') ){
 	}
 }
 
-my $disabled_apmode = "disabled='disabled'";
-$disabled_apmode = '' if ( ($wlanapsettings{'DRIVER'} eq 'MADWIFI') || ($wlanapsettings{'DRIVER'} eq 'HOSTAP') || ($wlanapsettings{'DRIVER'} eq 'ACX100') );
-
-my $checked_apmode = '';
 my $checked_hidessid = '';
-$checked_apmode = "checked='checked'" if ( $wlanapsettings{'APMODE'} eq 'on' );
 $checked_hidessid = "checked='checked'" if ( $wlanapsettings{'HIDESSID'} eq 'on' );
 
 $selected{'ENC'}{'none'} = '';
-$selected{'ENC'}{'wpa'} = '';
+$selected{'ENC'}{'wpa1'} = '';
+$selected{'ENC'}{'wpa2'} = '';
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
-
 $selected{'CHAN'}{$wlanapsettings{'CHAN'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
 
-my @channellist = `iwlist $netsettings{'BLUE_DEV'} channel`;
+my @channellist_cmd = `iwlist $netsettings{'BLUE_DEV'} channel`;
 # get available channels
 
 my @temp;
-foreach (@channellist){
+foreach (@channellist_cmd){
 $_ =~ /(.*)Channel (\d+)(.*):/;
-my $channel = $2;chomp $channel;
+$channel = $2;chomp $channel;
 if ( $channel =~ /\d+/ ){push(@temp,$channel);}
 }
-@channellist = @temp;
+my @channellist = @temp;
 
-my @txpower = `iwlist $netsettings{'BLUE_DEV'} txpower`;
+my @txpower_cmd = `iwlist $netsettings{'BLUE_DEV'} txpower`;
 # get available channels
 
 my @temp;
-foreach (@txpower){
+foreach (@txpower_cmd){
 $_ =~ /(\s)(\d+)(\s)dBm(\s)(.*)(\W)(\d+)(.*)/;
-my $tx = $7;chomp $tx;
-if ( $tx =~ /\d+/ ){push(@temp,$tx."mW");}
+$txpower = $7;chomp $txpower;
+if ( $txpower =~ /\d+/ ){push(@temp,$txpower."mW");}
 }
-@txpower = @temp;
+my @txpower = @temp;
 push(@txpower,"auto");
-
-$selected{'WPA'}{'1'} = '';
-$selected{'WPA'}{'2'} = '';
-$selected{'WPA'}{$wlanapsettings{'WPA'}} = "selected='selected'";
 
 $selected{'SYSLOGLEVEL'}{'0'} = '';
 $selected{'SYSLOGLEVEL'}{'1'} = '';
@@ -276,22 +251,15 @@ print <<END
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='4' align='left'><b>WLAN Settings</b>
-END
-;
-#<tr><td width='25%' class='base'>Access Point:&nbsp;</td><td class='base' colspan='3'><input type='checkbox' name='APMODE' $checked_apmode $disabled_apmode /></td></tr>
-print <<END
 <tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='40' value='$wlanapsettings{'SSID'}' /></td></tr>
-<tr><td width='25%' class='base'>Disable SSID broadcast:&nbsp;</td><td class='base' colspan='3'><input type='checkbox' name='HIDESSID' $checked_hidessid $disabled_apmode /></td></tr>
+<tr><td width='25%' class='base'>Disable SSID broadcast:&nbsp;</td><td class='base' colspan='3'><input type='checkbox' name='HIDESSID' $checked_hidessid /></td></tr>
 <tr><td width='25%' class='base'>Encryption:&nbsp;</td><td class='base' colspan='3'>
 	<select name='ENC'>
 		<option value='none' $selected{'ENC'}{'none'}>none</option>
-		<option value='wpa' $selected{'ENC'}{'wpa'}>wpa</option>
+		<option value='wpa1' $selected{'ENC'}{'wpa1'}>wpa1</option>
+		<option value='wpa2' $selected{'ENC'}{'wpa2'}>wpa2</option>
 	</select>
 </td></tr>
-END
-;
-print <<END
-<!-- <tr><td width='25%' class='base'>Select Country:&nbsp;</td><td class='base' colspan='3'><input type='checkbox' name='CC' $checked_hidessid /></td></tr> -->
 <tr><td width='25%' class='base'>Channel:&nbsp;</td><td class='base' colspan='3'>
 	<select name='CHAN'>
 END
@@ -311,12 +279,6 @@ foreach $txpower (@txpower){
 print <<END
 	</select></td></tr>
 <tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='63' value='$wlanapsettings{'PWD'}' /></td></tr>
-<tr><td width='25%' class='base'>WPA Version:&nbsp;</td><td class='base' colspan='3'>
-	<select name='WPA'>
-		<option value='1' $selected{'WPA'}{'1'}>1</option>
-		<option value='2' $selected{'WPA'}{'2'}>2</option>
-	</select>
-</td></tr>
 <tr><td width='25%' class='base'>Loglevel (hostapd):&nbsp;</td><td class='base' width='25%'>
 	<select name='SYSLOGLEVEL'>
 		<option value='0' $selected{'SYSLOGLEVEL'}{'0'}>0 (verbose)</option>
@@ -346,13 +308,15 @@ print <<END
 END
 ;
 
-
-my $status =  `cat /proc/net/madwifi/$netsettings{'BLUE_DEV'}/associated_sta`;
+if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
+	 $status =  `cat /proc/net/madwifi/$netsettings{'BLUE_DEV'}/associated_sta`;
+}
 print <<END
 <br />
 <table width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' align='left'><b>WLAN Status</b></td></tr>
-<tr><td><pre>$status</pre></td></tr>
+<tr><td bgcolor='$color{'color20'}' colspan='2' align='left'><b>WLAN Status</b></td></tr>
+<tr><td><pre>@channellist_cmd</pre></td><td><pre>@txpower_cmd</pre></td></tr>
+<tr><td colspan='2'><pre>Connected Stations<br />$status</pre></td></tr>
 </table>
 END
 ;
@@ -405,11 +369,21 @@ END
 
  }
  
- if ( $wlanapsettings{'ENC'} eq 'wpa'){
+ if ( $wlanapsettings{'ENC'} eq 'wpa1'){
 	print CONFIGFILE <<END
 ######################### wpa hostapd configuration ############################
 
-wpa=$wlanapsettings{'WPA'}
+wpa=1
+wpa_passphrase=$wlanapsettings{'PWD'}
+wpa_key_mgmt=WPA-PSK WPA-EAP
+wpa_pairwise=CCMP TKIP
+END
+;
+ }elsif ( $wlanapsettings{'ENC'} eq 'wpa2'){
+	print CONFIGFILE <<END
+######################### wpa hostapd configuration ############################
+
+wpa=2
 wpa_passphrase=$wlanapsettings{'PWD'}
 wpa_key_mgmt=WPA-PSK WPA-EAP
 wpa_pairwise=CCMP TKIP
@@ -418,37 +392,3 @@ END
  }
 	close CONFIGFILE;
 }
-
-sub isrunning
-	{
-	my $cmd = $_[0];
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
-	my $pid = '';
-	my $testcmd = '';
-	my $exename;
-
-	$cmd =~ /(^[a-z]+)/;
-	$exename = $1;
-
-	if (open(FILE, "/var/run/${cmd}.pid"))
-		{
-		$pid = <FILE>; chomp $pid;
-		close FILE;
-		if (open(FILE, "/proc/${pid}/status"))
-			{
-			while (<FILE>)
-				{
-				if (/^Name:\W+(.*)/)
-					{
-					$testcmd = $1;
-					}
-				}
-			close FILE;
-			if ($testcmd =~ /$exename/)
-				{
-				$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
-				}
-			}
-		}
-	return $status;
-	}
