@@ -7,29 +7,45 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+eval $(/usr/local/bin/readhash /var/ipfire/bluetooth/settings)
+
 case "$1" in
         start)
                 boot_mesg "Starting Bluetooth daemon..."
                 loadproc /usr/sbin/hcid
 		sleep 1
-		
-		# The passkey-agent is only needed for pairing
-		#boot_mesg "Starting Bluetooth passkey-agent..."
-                #loadproc /usr/bin/passkey-agent --default 12345 &
 
-		# Bind rfcomm to a blootooth cellphone/modem
-		#boot_mesg "Bind rfcomm0 to cellphone/modem..."
-		#rfcomm bind /dev/rfcomm0 00:11:22:33:44:55 1
-		#evaluate_retval
+		if [ "$PASSKEY_AGENT" == "on" ]; then
+		    boot_mesg "Starting Bluetooth passkey-agent..."
+		    loadproc /usr/bin/passkey-agent --default $PWD &
+		fi
+
+		if [ "$RFCOMM0_BIND" == "on" ]; then
+		    boot_mesg "Bind rfcomm0 to cellphone/modem ${RFCOMM0_DEVICE//-/:}/$RFCOMM0_CHANNEL ..."
+		    rfcomm bind /dev/rfcomm0 ${RFCOMM0_DEVICE//-/:} $RFCOMM0_CHANNEL
+		    evaluate_retval
+		fi
+		if [ "$RFCOMM1_BIND" == "on" ]; then
+		    boot_mesg "Bind rfcomm1 to cellphone/modem ${RFCOMM1_DEVICE//-/:}/${RFCOMM1_CHANNEL} ..."
+		    rfcomm bind /dev/rfcomm1 ${RFCOMM1_DEVICE//-/:} $RFCOMM1_CHANNEL
+		    evaluate_retval
+		fi
+		exit 0;
+		
                 ;;
 
         stop)
-                #boot_mesg "Release rfcomm0..."
-		#rfcomm release rfcomm0
-                #boot_mesg "Stopping Bluetooth passkey-agent..."
-		#killproc /usr/bin/passkey-agent
+		if [ -e /dev/rfcomm0 ]; then
+		    boot_mesg "Release rfcomm0..."
+		    rfcomm release rfcomm0
+		fi
+		if [ -e /dev/rfcomm1 ]; then
+		    boot_mesg "Release rfcomm1..."
+		    rfcomm release rfcomm1
+		fi
                 boot_mesg "Stopping Bluetooth daemon..."
 		killproc /usr/sbin/hcid
+		exit 0;
                 ;;
 
         restart)
@@ -41,8 +57,7 @@ case "$1" in
         status)
                 statusproc /usr/sbin/hcid
 		statusproc /usr/bin/passkey-agent
-		
-                ;;
+		;;
 
         *)
                 echo "Usage: $0 {start|stop|restart|status}"
