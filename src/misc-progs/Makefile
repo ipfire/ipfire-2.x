@@ -141,5 +141,5 @@ addonctrl: addonctrl.c setuid.o ../install+setup/libsmooth/varval.o
 syslogdctrl: syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-syslogdctrl: wlanapctrl.c setuid.o ../install+setup/libsmooth/varval.o
+wlanapctrl: wlanapctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ wlanapctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
