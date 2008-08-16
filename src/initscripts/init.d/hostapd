@@ -38,71 +38,7 @@ case "${1}" in
 
 		# Set Atheros Card to Managed mode
                 /usr/bin/wlanconfig $INTERFACE destroy > /dev/null
-                /usr/bin/wlanconfig #!/bin/sh
-. /etc/sysconfig/rc
-. ${rc_functions}
-
-CHANNEL="05"
-TXPOWER="auto"
-INTERFACE="blue0"
-eval $(/usr/local/bin/readhash /var/ipfire/wlanpap/settings)
-
-case "${1}" in
-        start)
-		boot_mesg "Starting hostapd... "
-		mkdir -p /var/run/hostapd
-		# enable wlan module of collectd
-		sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
-
-		# Set Atheros Card to master mode
-                /usr/bin/wlanconfig $INTERFACE destroy > /dev/null
-                /usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode ap > /dev/null
-
-		# Set other cards to master mode
-		#/usr/sbin/iwconfig blue0 mode master
-
-		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
-		    boot_mesg "Error! Can't set wlan master mode"
-		    echo_failure;
-		    exit 1;
-		else
-		    /usr/sbin/iwconfig $INTERFACE channel $CHANNEL
-		    /usr/sbin/iwconfig $INTERFACE channel $TXPOWER
-		    /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
-		    evaluate_retval
-		fi
-                ;;
-
-        stop)
-		boot_mesg "Stopping hostapd..."
-
-		# Set Atheros Card to Managed mode
-                /usr/bin/wlanconfig $INTERFACE destroy > /dev/null
                 /usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode sta > /dev/null
-
-		# Set other cards to master mode
-		#/usr/sbin/iwconfig blue0 mode Managed
-
-                killproc /usr/bin/hostapd
-                evaluate_retval
-                ;;
-
-        restart)
-                ${0} stop
-                sleep 1
-                ${0} start
-                ;;
-
-        status)
-                statusproc /usr/bin/hostapd
-                ;;
-
-        *)
-                echo "Usage: ${0} {start|stop|restart|status}"
-                exit 1
-                ;;
-esac
- create wlandev wifi0 wlanmode sta > /dev/null
 
 		# Set other cards to master mode
 		#/usr/sbin/iwconfig blue0 mode Managed
