@@ -5,7 +5,7 @@
 CHANNEL="05"
 TXPOWER="auto"
 INTERFACE="blue0"
-eval $(/usr/local/bin/readhash /var/ipfire/wlanpap/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
 
 case "${1}" in
         start)
@@ -15,7 +15,7 @@ case "${1}" in
 		sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
 
 		# Set Atheros Card to master mode
-                /usr/bin/wlanconfig $INTERFACE destroy > /dev/null
+                /usr/bin/wlanconfig ath0 destroy > /dev/null
                 /usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode ap > /dev/null
 
 		# Set other cards to master mode
@@ -27,7 +27,7 @@ case "${1}" in
 		    exit 1;
 		else
 		    /usr/sbin/iwconfig $INTERFACE channel $CHANNEL
-		    /usr/sbin/iwconfig $INTERFACE channel $TXPOWER
+		    /usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
 		    /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
 		    evaluate_retval
 		fi
