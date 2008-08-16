@@ -37,8 +37,8 @@ case "${1}" in
 		boot_mesg "Stopping hostapd..."
 
 		# Set Atheros Card to Managed mode
-                /usr/bin/wlanconfig $INTERFACE destroy > /dev/null
-                /usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode sta > /dev/null
+#                /usr/bin/wlanconfig $INTERFACE destroy > /dev/null
+#                /usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode sta > /dev/null
 
 		# Set other cards to master mode
 		#/usr/sbin/iwconfig blue0 mode Managed

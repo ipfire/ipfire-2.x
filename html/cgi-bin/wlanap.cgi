@@ -309,14 +309,14 @@ END
 ;
 
 if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
-	 $status =  `cat /proc/net/madwifi/$netsettings{'BLUE_DEV'}/associated_sta`;
+	 $status =  `wlanconfig $netsettings{'BLUE_DEV'} list`;
 }
 print <<END
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='2' align='left'><b>WLAN Status</b></td></tr>
 <tr><td><pre>@channellist_cmd</pre></td><td><pre>@txpower_cmd</pre></td></tr>
-<tr><td colspan='2'><pre>Connected Stations<br />$status</pre></td></tr>
+<tr><td colspan='2'><pre>$status</pre></td></tr>
 </table>
 END
 ;
@@ -335,7 +335,7 @@ sub WriteConfig_hostapd{
 	open (CONFIGFILE, ">/var/ipfire/wlanap/hostapd.conf");
 	print CONFIGFILE <<END
 ######################### basic hostapd configuration ##########################
-
+#
 interface=$netsettings{'BLUE_DEV'}
 driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 logger_syslog=-1
@@ -343,9 +343,6 @@ logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
 logger_stdout=-1
 logger_stdout_level=$wlanapsettings{'DEBUG'}
 dump_file=/tmp/hostapd.dump
-eapol_key_index_workaround=0
-eap_server=0
-own_ip_addr=127.0.0.1
 auth_algs=3
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
@@ -371,20 +368,20 @@ END
  if ( $wlanapsettings{'ENC'} eq 'wpa1'){
 	print CONFIGFILE <<END
 ######################### wpa hostapd configuration ############################
-
+#
 wpa=1
 wpa_passphrase=$wlanapsettings{'PWD'}
-wpa_key_mgmt=WPA-PSK WPA-EAP
+wpa_key_mgmt=WPA-PSK
 wpa_pairwise=CCMP TKIP
 END
 ;
  }elsif ( $wlanapsettings{'ENC'} eq 'wpa2'){
 	print CONFIGFILE <<END
 ######################### wpa hostapd configuration ############################
-
+#
 wpa=2
 wpa_passphrase=$wlanapsettings{'PWD'}
-wpa_key_mgmt=WPA-PSK WPA-EAP
+wpa_key_mgmt=WPA-PSK
 wpa_pairwise=CCMP TKIP
 END
 ;
