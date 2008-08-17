@@ -82,5 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make && make install
 	cp -vrf $(DIR_SRC)/config/hostapd/hostapd.conf /etc/hostapd.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
+	mkdir -p /var/ipfire/wlanap
+	touch /var/ipfire/wlanap/settings
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

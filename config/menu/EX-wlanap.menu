@@ -1,0 +1,5 @@
+    $subipfire->{'54.wlanap'} = {'caption' => wlanap,
+				  'uri' => '/cgi-bin/wlanap.cgi',
+				  'title' => wlanap,
+				  'enabled' => 1,
+				  };
