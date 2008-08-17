@@ -117,5 +117,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo '# Bluetooth input configuration' > /etc/bluetooth/input.conf
 	echo '# Bluetooth network configuration' > /etc/bluetooth/network.conf
 	echo '# Bluetooth rfcomm configuration' > /etc/bluetooth/rfcomm.conf
+	mkdir -p /var/ipfire/bluetooth
+	touch /var/ipfire/bluetooth/settings
+	chown nobody:nobody /var/ipfire/bluetooth/settings
+	chmod 644 /var/ipfire/bluetooth/settings
 	@rm -rf $(DIR_SRC)/bluez*
 	@$(POSTBUILD)

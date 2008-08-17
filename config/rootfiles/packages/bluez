@@ -1,5 +1,6 @@
 srv/web/ipfire/cgi-bin/bluetooth.cgi
 var/ipfire/menu.d/EX-bluetooth.menu
+var/ipfire/bluetooth/settings
 etc/rc.d/init.d/bluetooth
 etc/rc.d/rc3.d/S16bluetooth
 etc/rc.d/rc0.d/K84bluetooth

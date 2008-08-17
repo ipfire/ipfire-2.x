@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -84,5 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	mkdir -p /var/ipfire/wlanap
 	touch /var/ipfire/wlanap/settings
+	chown nobody:nobody /var/ipfire/wlanap/settings
+	chmod 644 /var/ipfire/wlanap/settings
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

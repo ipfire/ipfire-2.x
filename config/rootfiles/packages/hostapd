@@ -6,3 +6,4 @@ etc/init.d/hostapd
 usr/bin/hostapd
 usr/bin/hostapd_cli
 var/ipfire/backup/addons/includes/hostapd
+usr/local/bin/wlanapctrl
