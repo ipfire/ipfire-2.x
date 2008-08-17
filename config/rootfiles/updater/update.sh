@@ -147,9 +147,9 @@ echo 'done'                                               >> /tmp/remove_obsolet
 echo 'while [ "$(ps -A | grep " pakfire")" != "" ]; do'   >> /tmp/remove_obsolete_paks
 echo '    sleep 2'                                        >> /tmp/remove_obsolete_paks
 echo 'done'                                               >> /tmp/remove_obsolete_paks
-echo '/opt/pakfire/pakfire remove zaptel -y'              >> /tmp/remove_obsolete_paks
-echo '/opt/pakfire/pakfire update --force'                >> /tmp/remove_obsolete_paks
-echo '/opt/pakfire/pakfire upgrade'                       >> /tmp/remove_obsolete_paks
+echo '/opt/pakfire/pakfire remove -y zaptel'              >> /tmp/remove_obsolete_paks
+echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/remove_obsolete_paks
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
 echo 'echo'                                               >> /tmp/remove_obsolete_paks
 echo 'echo Update to IPFire $NEWVERSION finished. Please reboot... ' >> /tmp/remove_obsolete_paks
 echo 'echo'                                               >> /tmp/remove_obsolete_paks
