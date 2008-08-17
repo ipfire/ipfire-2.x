@@ -97,6 +97,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Security fix for CIFS & Netfilter SNMP
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
 
+	# Add devolo MicroLink ADSL Fun USB ID's to ueagle-atm
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.23-ueagle-atm-devolo_usb_id.patch
+
 	# Openswan
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
 
