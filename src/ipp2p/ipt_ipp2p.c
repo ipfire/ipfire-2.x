@@ -2,9 +2,18 @@
 #include <linux/modversions.h>
 #endif
 #include <linux/module.h>
-#include <linux/netfilter_ipv4/ip_tables.h>
 #include <linux/version.h>
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,21)
+#	include <linux/netfilter/x_tables.h>
+#	define ipt_register_match xt_register_match
+#	define ipt_unregister_match xt_unregister_match
+#	define ipt_match xt_match
+#else 
+#	include <linux/netfilter_ipv4/ip_tables.h>
 //#include <linux/netfilter_ipv4/ipt_ipp2p.h>
+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,21) */
+
 #include "ipt_ipp2p.h"
 #include <net/tcp.h>
 #include <net/udp.h>
@@ -725,7 +734,11 @@ static struct {
 };
 
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+static bool
+#else
 static int
+#endif
 match(const struct sk_buff *skb,
       const struct net_device *in,
       const struct net_device *out,
@@ -744,11 +757,19 @@ match(const struct sk_buff *skb,
       u_int16_t datalen,
 #endif
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+      bool *hotdrop)
+#else
       int *hotdrop)
+#endif
 {
     const struct ipt_p2p_info *info = matchinfo;
     unsigned char  *haystack;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+    struct iphdr *ip = ip_hdr(skb);
+#else
     struct iphdr *ip = skb->nh.iph;
+#endif
     int p2p_result = 0, i = 0;
 //    int head_len;
     int hlen = ntohs(ip->tot_len)-(ip->ihl*4);	/*hlen = packet-data length*/
@@ -822,7 +843,11 @@ match(const struct sk_buff *skb,
 
 
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+static bool
+#else
 static int
+#endif
 checkentry(const char *tablename,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,17)
            const void *ip, 
@@ -831,7 +856,9 @@ checkentry(const char *tablename,
            const struct ipt_ip *ip,
 #endif
 	   void *matchinfo,
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,18)
 	   unsigned int matchsize,
+#endif
 	   unsigned int hook_mask)
 {
         /* Must specify -p tcp */
@@ -843,15 +870,6 @@ checkentry(const char *tablename,
 }
 									    
 
-// TODO: find out what this structure is for (scheme taken
-// from kernel sources)
-// content seems to have a length of 8 bytes 
-// (at least on my x86 machine)
-struct ipp2p_match_info {
-	long int dunno_what_this_is_for;
-	long int i_also_dunno_what_this_is_for;
-};
-
 static struct ipt_match ipp2p_match = { 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 	{ NULL, NULL }, 
@@ -860,17 +878,16 @@ static struct ipt_match ipp2p_match = {
 	&checkentry, 
 	NULL, 
 	THIS_MODULE
-#endif
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,17))
+#elif LINUX_VERSION_CODE < KERNEL_VERSION(2,6,17)
 	.name		= "ipp2p",
 	.match		= &match,
 	.checkentry	= &checkentry,
 	.me		= THIS_MODULE,
-#elif LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,17)
+#else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,17) */
 	.name		= "ipp2p",
 	.match		= &match,
 	.family         = AF_INET,
-	.matchsize      = sizeof(struct ipp2p_match_info),
+	.matchsize      = XT_ALIGN(sizeof(struct ipt_p2p_info)),
 	.checkentry	= &checkentry,
 	.me		= THIS_MODULE,
 #endif
