@@ -91,7 +91,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/bluez-utils-$(VER).tar.gz
 	cd $(DIR_SRC)/bluez-utils-$(VER) && ./configure --prefix=/usr \
 	    --sysconfdir=/etc --localstatedir=/var --libexecdir=/lib \
-	    --enable-test
+	    --enable-alsa --enable-usb --enable-netlink --enable-tools \
+	    --enable-bccmd --enable-hid2hci --enable-dfutool --enable-hidd \
+	    --enable-pand --enable-dund --enable-cups --enable-test \
+	    --enable-configfiles --enable-pcmciarules
 	cd $(DIR_SRC)/bluez-utils-$(VER) && make $(MAKETUNING)
 	cd $(DIR_SRC)/bluez-utils-$(VER) && make install
 	cd $(DIR_SRC)/bluez-utils-$(VER) && install -m 755 \
@@ -105,5 +108,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    --sysconfdir=/etc --localstatedir=/var --libexecdir=/lib
 	cd $(DIR_SRC)/bluez-hcidump-1.42 && make $(MAKETUNING)
 	cd $(DIR_SRC)/bluez-hcidump-1.42 && make install
+	mv -f /etc/udev/bluetooth.rules /etc/udev/rules.d/24-bluetooth.rules
+	# Change bluetooth peername to Hostname-devicenumber
+	sed -i -e 's|name "BlueZ (%d)";|name "%h-%d";|g' /etc/bluetooth/hcid.conf
+	# Create empty config files
+	echo '# Bluetooth audio configuration' > /etc/bluetooth/audio.conf
+	echo '# Bluetooth main configuration' > /etc/bluetooth/main.conf
+	echo '# Bluetooth input configuration' > /etc/bluetooth/input.conf
+	echo '# Bluetooth network configuration' > /etc/bluetooth/network.conf
+	echo '# Bluetooth rfcomm configuration' > /etc/bluetooth/rfcomm.conf
 	@rm -rf $(DIR_SRC)/bluez*
 	@$(POSTBUILD)
