@@ -553,7 +553,6 @@ buildipfire() {
   ipfiremake collectd
   ipfiremake lcd4linux
   ipfiremake neon
-  ipfiremake subversion
   ipfiremake tcptrack
   ipfiremake teamspeak
   ipfiremake elinks
