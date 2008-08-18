@@ -35,7 +35,9 @@ case "${1}" in
 		# Bring blue up (but not at boot)
 		if [ "$(basename $0)" == "hostapd" ]; then
 		    /etc/rc.d/init.d/networking/blue start
-		    /etc/rc.d/init.d/dhcp restart
+		    if [ -f /var/ipfire/dhcp/enable_blue ]; then
+			/etc/rc.d/init.d/dhcp restart
+		    fi
 		fi
                 ;;
 
