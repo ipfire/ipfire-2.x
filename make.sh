@@ -552,7 +552,6 @@ buildipfire() {
   ipfiremake lm_sensors
   ipfiremake collectd
   ipfiremake lcd4linux
-  ipfiremake neon
   ipfiremake tcptrack
   ipfiremake teamspeak
   ipfiremake elinks
