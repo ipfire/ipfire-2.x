@@ -121,5 +121,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	touch /var/ipfire/bluetooth/settings
 	chown nobody:nobody /var/ipfire/bluetooth/settings
 	chmod 644 /var/ipfire/bluetooth/settings
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/bluetooth /var/ipfire/backup/addons/includes/bluetooth
 	@rm -rf $(DIR_SRC)/bluez*
 	@$(POSTBUILD)
