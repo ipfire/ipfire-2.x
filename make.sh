@@ -589,7 +589,7 @@ buildipfire() {
   ipfiremake tftp-hpa
   ipfiremake cpufrequtils
   ipfiremake dbus
-  ipfiremake bluez
+  ipfiremake bluetooth
   ipfiremake gutenprint
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
