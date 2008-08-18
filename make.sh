@@ -470,7 +470,6 @@ buildipfire() {
   ipfiremake snort
   ipfiremake oinkmaster
   ipfiremake squid
-  ipfiremake squid-graph
   ipfiremake squidguard
   ipfiremake calamaris
   ipfiremake tcpdump
