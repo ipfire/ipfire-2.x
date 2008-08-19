@@ -10,4 +10,6 @@ srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 etc/rc.d/init.d/checkfstab
+etc/rc.d/init.d/networking/any
+etc/rc.d/init.d/networking/red
 etc/rc.d/rcsysinit.d/S19checkfstab
