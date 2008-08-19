@@ -70,11 +70,23 @@ mv /boot/grub/grub.conf /boot/grub/grub-old.conf
 #
 rm -rf /lib/modules/$KVER-ipfire
 #
+# Stopping Squid
+#
+echo
+echo Stopping Squid ...
+/etc/init.d/squid stop
+#
 # Unpack the updated files
 #
 echo
 echo Unpack the updated files ...
 extract_files
+#
+# Starting Squid
+#
+echo
+echo Starting Squid ...
+/etc/init.d/squid start
 # 
 # Modify grub.conf
 #

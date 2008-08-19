@@ -13,3 +13,6 @@ etc/rc.d/init.d/checkfstab
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
 etc/rc.d/rcsysinit.d/S19checkfstab
+etc/squid
+usr/lib/squid
+usr/sbin/squid
