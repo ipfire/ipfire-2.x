@@ -1,6 +1,7 @@
 srv/web/ipfire/cgi-bin/wlanap.cgi
 var/ipfire/menu.d/EX-wlanap.menu
 var/ipfire/wlanap/settings
+var/ipfire/wlanap/hostapd.conf
 etc/hostapd.conf
 etc/init.d/hostapd
 usr/bin/hostapd

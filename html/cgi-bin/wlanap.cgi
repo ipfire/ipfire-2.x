@@ -59,7 +59,7 @@ $wlanapsettings{'APMODE'} = 'on';
 $wlanapsettings{'INTERFACE'} = $netsettings{'BLUE_DEV'};
 $wlanapsettings{'SSID'} = 'IPFire';
 $wlanapsettings{'HIDESSID'} = 'off';
-$wlanapsettings{'ENC'} = 'wpa';               # none / wpa1 /wpa2
+$wlanapsettings{'ENC'} = 'wpa2';               # none / wpa1 /wpa2
 $wlanapsettings{'TXPOWER'} = 'auto';
 $wlanapsettings{'CHAN'} = '05';
 $wlanapsettings{'PWD'} = 'IPFire-2.x';
@@ -74,7 +74,7 @@ $cgiparams{'ACTION'} = '';
 $cgiparams{'APMODE'} = 'on';
 $cgiparams{'SSID'} = 'IPFire';
 $cgiparams{'HIDESSID'} = 'off';
-$cgiparams{'ENC'} = 'wpa';               # none / wep / wpa / wep+wpa
+$cgiparams{'ENC'} = 'wpa2';               # none / wep / wpa / wep+wpa
 $cgiparams{'TXPOWER'} = 'auto';
 $cgiparams{'CHAN'} = '05';
 $cgiparams{'PWD'} = 'IPFire-2.x';
@@ -105,7 +105,7 @@ if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 		&WriteConfig();
 		&WriteConfig_hostapd();
 
-		system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1")
+		system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1");
 	}
 }elsif ( $cgiparams{'ACTION'} eq 'Start' ){
 	system("/usr/local/bin/wlanapctrl start >/dev/null 2>&1");
