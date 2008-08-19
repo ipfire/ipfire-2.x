@@ -41,7 +41,7 @@ case "${1}" in
 				/etc/rc.d/init.d/networking/green start
 			fi
 			
-			if [ -f /var/ipfire/dhcp/enable_blue || -f -f /var/ipfire/dhcp/enable_green ]; then
+			if [ -f /var/ipfire/dhcp/enable_blue || -f /var/ipfire/dhcp/enable_green ]; then
 				/etc/rc.d/init.d/dhcp restart
 			fi
 		fi
