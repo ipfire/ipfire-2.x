@@ -86,8 +86,8 @@ case "${1}" in
 		;;
 
 	stop)
-		boot_mesg "Removing IPv4 address ${ADDRESS} from the ${DEVICE} interface..."
-		ip addr del ${args} dev ${DEVICE}
+		boot_mesg "Removing IPv4 addresses from the ${DEVICE} interface..."
+		ip addr flush dev ${DEVICE}
 		evaluate_retval
 
 		# Disable vnstat collection

@@ -194,7 +194,7 @@ case "${1}" in
 				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
 				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
 				sleep 1
-				ifconfig $PPP_NIC up
+				ip link set ${PPP_NIC} up
 				TYPE="pppoe"
 			fi
 			if [ "$TYPE" == "pppoe" ]; then			
@@ -334,8 +334,8 @@ case "${1}" in
 			ip route del default via ${GATEWAY} >/dev/null 2>&1
 			echo_ok
 			if [ "$DEVICE" != "${GREEN_DEV}" ]; then
-				boot_mesg "Removing IPv4 address ${ADDRESS} from the ${DEVICE} interface..."
-				ip addr del ${args} dev ${DEVICE}
+				boot_mesg "Removing IPv4 addresses from the ${DEVICE} interface..."
+				ip addr flush dev ${DEVICE}
 				evaluate_retval
 			fi
 			run_subdir ${rc_base}/init.d/networking/red.down/
