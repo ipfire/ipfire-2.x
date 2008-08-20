@@ -70,7 +70,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Other files
 	cp $(DIR_SRC)/config/rootfiles/updater/update.sh /install/updater/
 	chmod 755 /install/updater/update.sh
-	cd /install/updater && tar cf /install/packages/core-upgrade-2.1-17.ipfire \
+	cd /install/updater && tar cf /install/packages/core-upgrade-2.1-18.ipfire \
 		update.sh files ROOTFILES
 	rm -rf /install/updater
 
