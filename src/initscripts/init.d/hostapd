@@ -35,11 +35,7 @@ case "${1}" in
 		# Bring blue up (but not at boot)
 		if [ "$(basename $0)" == "hostapd" ]; then
 			
-			if [ "$(INTERFACE)" == "blue0" ]; then
-				/etc/rc.d/init.d/networking/blue start
-			elif [ "$(INTERFACE)" == "green0" ]; then
-				/etc/rc.d/init.d/networking/green start
-			fi
+			/etc/rc.d/init.d/networking/${INTERFACE//[0-9]/} start
 			
 			if [ -f /var/ipfire/dhcp/enable_blue || -f /var/ipfire/dhcp/enable_green ]; then
 				/etc/rc.d/init.d/dhcp restart

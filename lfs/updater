@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	sed -e "s/NAME/core-upgrade/g" \
 		-e "s/VER/2.1/g" \
-		-e "s/RELEASE/16/g" \
+		-e "s/RELEASE/18/g" \
 		-e "s/DEPS/$(DEPS)/g" \
-		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-2.1-17.ipfire | awk '{ print $$5 }'`/g" \
-		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-17
+		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-2.1-18.ipfire | awk '{ print $$5 }'`/g" \
+		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-18

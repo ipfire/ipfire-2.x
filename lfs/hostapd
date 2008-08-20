@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	mkdir -p /var/ipfire/wlanap
 	touch /var/ipfire/wlanap/settings
-	cp -vrf $(DIR_SRC)/config/hostapd/hostapd.conf /var/ipfire/wlanap/etc/hostapd.conf
+	cp -vrf $(DIR_SRC)/config/hostapd/hostapd.conf /var/ipfire/wlanap/hostapd.conf
 	chown nobody:nobody /var/ipfire/wlanap/*
 	chmod 644 /var/ipfire/wlanap/*
 	@rm -rf $(DIR_APP)
