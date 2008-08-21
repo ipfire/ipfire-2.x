@@ -61,9 +61,24 @@ case "${1}" in
                 ;;
 
         restart)
-                ${0} stop
+		boot_mesg "Stopping hostapd..."
+                killproc /usr/bin/hostapd
+                evaluate_retval
+
                 sleep 1
-                ${0} start
+
+		boot_mesg "Starting hostapd... "
+		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
+		    boot_mesg "Error! Card is not master"
+		    echo_failure;
+		    exit 1;
+		else
+		    /usr/sbin/iwconfig $INTERFACE channel $CHANNEL
+		    /usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
+		    /usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
+		    evaluate_retval
+		fi
+
                 ;;
 
         status)
