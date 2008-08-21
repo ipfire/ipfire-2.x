@@ -15,6 +15,9 @@ case "${1}" in
 		sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
 
 		# Set Atheros Cards to master mode
+		if [ -d /proc/net/madwifi/ath0/ ]; then
+			/usr/bin/wlanconfig ath0 destroy > /dev/null
+		fi
 		/usr/bin/wlanconfig $INTERFACE destroy > /dev/null
                 /usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode ap > /dev/null
 
