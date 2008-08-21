@@ -50,7 +50,7 @@ echo update archive. This may take a while ...
 echo etc/issue >> /opt/pakfire/tmp/ROOTFILES
 echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
 echo var/spool/cron/root.orig >> /opt/pakfire/tmp/ROOTFILES
-echo etc/udev/rules.d/30-persistant-network.rules >> /opt/pakfire/tmp/ROOTFILES
+echo etc/udev/rules.d/30-persistent-network.rules >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
@@ -142,8 +142,8 @@ chown root:cron /var/spool/cron/root.orig
 #
 # Update network-rules
 #
-sed -i 's|"net", SYSFS{"address"}|"net", SYSFS{"type"}=="1", SYSFS{"address"}|g' \
-          /etc/udev/rules.d/30-persistant-network.rules
+sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
+          /etc/udev/rules.d/30-persistent-network.rules
 #
 # Core 17 begin
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
@@ -163,8 +163,8 @@ echo '/opt/pakfire/pakfire remove -y zaptel'              >> /tmp/remove_obsolet
 echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
 echo 'echo'                                               >> /tmp/remove_obsolete_paks
-echo 'echo Update to IPFire $NEWVERSION finished. Please reboot... ' >> /tmp/remove_obsolete_paks
-echo 'echo'                                               >> /tmp/remove_obsolete_paks
+echo 'logger -p syslog.emerg -t Core-Upgrade-18 "Upgrade finished. Please reboot... "' >> /tmp/remove_obsolete_paks
+#
 chmod +x /tmp/remove_obsolete_paks
 /tmp/remove_obsolete_paks &
 echo
