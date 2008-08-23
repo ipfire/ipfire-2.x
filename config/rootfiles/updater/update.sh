@@ -32,7 +32,6 @@ MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
 MOUNT=$_
-OLDKERNEL=`ls /boot/vmlinuz-*-ipfire | cut -d"-" -f2 | tail -n 1`
 #
 echo 
 echo Update IPFire $OLDVERSION to $NEWVERSION
@@ -61,14 +60,13 @@ echo Update IPfire to $NEWVERSON ...
 #
 rm -rf /etc/rc.d/rc3.d/S20collectd
 #
-# Backup the old grub config
+# Remove old kernel, configs, initrd, modules ...
 #
-mv /boot/grub/grub.conf /boot/grub/grub-old.conf
-#
-# Remove the kernel modules of the new kernel (only needed if this update run
-# over an already updated system)
-#
-rm -rf /lib/modules/$KVER-ipfire
+rm -rf /boot/System.map-*
+rm -rf /boot/config-*
+rm -rf /boot/ipfirerd-*
+rm -rf /boot/vmlinuz-*
+rm -rf /lib/modules/
 #
 # Stopping Squid
 #
@@ -95,9 +93,6 @@ echo Update grub configuration ...
 sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
 sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
 sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
-echo "title Old Kernel" >> /boot/grub/grub.conf
-echo "  configfile /grub/grub-old.conf" >> /boot/grub/grub.conf
-sed -i "s|/vmlinuz-ipfire|/vmlinuz-$OLDKERNEL-ipfire|g" /boot/grub/grub-old.conf
 #
 # Made emergency - initramdisk
 #
@@ -162,8 +157,9 @@ echo 'done'                                               >> /tmp/remove_obsolet
 echo '/opt/pakfire/pakfire remove -y mpg123 subversion zaptel' >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
-echo 'echo'                                               >> /tmp/remove_obsolete_paks
-echo 'logger -p syslog.emerg -t Core-Upgrade-18 "Upgrade finished. Please reboot... "' >> /tmp/remove_obsolete_paks
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
+echo 'logger -p syslog.emerg -t core-upgrade-18 "Upgrade finished. Please reboot... "' >> /tmp/remove_obsolete_paks
 #
 chmod +x /tmp/remove_obsolete_paks
 /tmp/remove_obsolete_paks &
