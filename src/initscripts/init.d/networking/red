@@ -194,7 +194,6 @@ case "${1}" in
 				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
 				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
 				sleep 1
-				ip link set ${PPP_NIC} up
 				TYPE="pppoe"
 			fi
 			if [ "$TYPE" == "pppoe" ]; then			
@@ -204,7 +203,8 @@ case "${1}" in
 					exit 0
 				fi
 				boot_mesg "Bringing up the PPPoE interface on $PPP_NIC ..."
-				ip addr add 1.1.1.1/24 broadcast 1.1.1.255 dev $PPP_NIC
+				ip addr flush dev $PPP_NIC >/dev/null 2>&1
+				ip link set ${PPP_NIC} up
 			else
 				boot_mesg "Bringing up the PPP via ${TYPE} on ${COMPORT}..."
 			fi
@@ -381,7 +381,6 @@ case "${1}" in
 			rm -f /var/ipfire/red/keepconnected
 			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
 			evaluate_retval
-			ip addr del 1.1.1.1/24 broadcast 1.1.1.255 dev ${DEVICE} >/dev/null 2>&1
 		fi
 
 		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
