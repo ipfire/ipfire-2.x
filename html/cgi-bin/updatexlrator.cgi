@@ -442,7 +442,7 @@ END
 		}
 		if ($metadata[2] eq '')
 		{
-			print "<img src='/images/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' />&nbsp;</td>\n";
+			print "<img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' />&nbsp;</td>\n";
 		}
 
 		print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
