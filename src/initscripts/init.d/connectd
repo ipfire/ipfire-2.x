@@ -81,8 +81,7 @@ case "$1" in
 			echo $ATTEMPTS > /var/ipfire/red/keepconnected
 			sleep ${HOLDOFF}
 		fi
-		
-		/etc/rc.d/init.d/network start red &
+		/etc/rc.d/init.d/network start red >/dev/tty12 2>&1 </dev/tty12 &
 		;;
 		
   reconnect)
