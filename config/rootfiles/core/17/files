@@ -1,3 +1,4 @@
 etc/squid
+etc/init.d/connectd
 usr/lib/squid
 usr/sbin/squid

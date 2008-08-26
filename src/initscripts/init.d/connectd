@@ -18,6 +18,10 @@ if [ ! $HOLDOFF ]; then
 	HOLDOFF=30
 fi
 
+if [ "$RECONNECTION" = "dialondemand" ]; then
+	exit 0
+fi
+
 msg_log () {
 	logger -t $(basename $0)[$$] $*
 }
@@ -78,7 +82,7 @@ case "$1" in
 			sleep ${HOLDOFF}
 		fi
 		
-		/etc/rc.d/init.d/network start red >/dev/tty12 2>&1 </dev/tty12 &
+		/etc/rc.d/init.d/network start red &
 		;;
 		
   reconnect)
