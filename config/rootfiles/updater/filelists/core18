@@ -11,7 +11,6 @@ srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 etc/rc.d/init.d/checkfstab
-etc/rc.d/init.d/connectd
 etc/rc.d/init.d/network
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red

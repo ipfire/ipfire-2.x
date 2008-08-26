@@ -1,0 +1,2 @@
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+etc/rc.d/init.d/connectd
