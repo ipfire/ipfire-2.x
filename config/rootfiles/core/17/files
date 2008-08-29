@@ -3,3 +3,7 @@ etc/init.d/connectd
 usr/lib/squid
 usr/sbin/squid
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
+bin/ntfs-3g
+lib/libntfs-3g.so
+lib/libntfs-3g.so.36
+lib/libntfs-3g.so.36.0.0

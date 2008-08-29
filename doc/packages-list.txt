@@ -63,7 +63,7 @@
 * centerim-4.22.1
 * clamav-0.93.3
 * cmake-2.4.8
-* collectd-4.4.1
+* collectd-4.4.2
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-004
@@ -196,7 +196,7 @@
 * mldonkey-2.9.2
 * module-init-tools-3.2.2
 * mpc-0.12.1
-* mpd-0.13.1
+* mpd-0.13.2
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mtd-CVS-20070507
@@ -213,7 +213,7 @@
 * nfs-utils-1.1.1
 * nmap-4.03
 * noip_updater_v1.6
-* ntfs-3g-1.2712
+* ntfs-3g-1.2812
 * ntp-4.2.2
 * ocaml-3.09.2
 * oinkmaster-2.0
@@ -249,7 +249,7 @@
 * rrdtool-1.2.15
 * rsync-2.6.9
 * rtorrent-0.7.9
-* samba-3.0.30
+* samba-3.0.32
 * sane-1.0.19
 * sane-1.0.19-kmod
 * screen-4.0.3

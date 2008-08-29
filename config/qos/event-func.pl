@@ -25,19 +25,6 @@
 ##
 ##########################################
 
-our $event_file_all = "${event_datadir}changes.evt";
-sub get_filename_event($) {
-    my $class_device = "$_[0]";
-    my $filename = "${event_datadir}class_${class_device}.evt";
-    return $filename;
-}
-
-sub get_filename_bandwidth_info($) {
-    my $class_device = "$_[0]";
-    my $filename = "${event_datadir}class_${class_device}_bandwidth.evt";
-    return $filename;
-}
-
 sub update_event_file($$$) {
     my $filename    = $_[0];
     my $information = $_[1];

@@ -210,27 +210,6 @@ sub parse_class($) {
 	    $classes_data{$hash}{last_update} = $timestamp;
 	    update_counter( $hash, $timestamp, "bytes"     , $bytes);
 	    #(yes I know its bad/redundant, but it makes in easier elsewhere)
-	    update_counter( $hash, $timestamp, "bits"      , $bytes*8);
-	    update_counter( $hash, $timestamp, "pkts"      , $pkts);
-	    update_counter( $hash, $timestamp, "dropped"   , $dropped);
-	    update_counter( $hash, $timestamp, "overlimits", $overlimits);
-	    update_counter( $hash, $timestamp, "lended"    , $lended);
-	    update_counter( $hash, $timestamp, "borrowed"  , $borrowed);
-	    update_counter( $hash, $timestamp, "giants"    , $giants);
-	    # Not a counter value...
-	    $classes_data{$hash}{backlog}                  = $backlog;
-
-	    # Update the info data
-	    # (remember to update the "type" first)
-	    update_info( $hash, $timestamp, "type"  , $type);
-	    update_info( $hash, $timestamp, "parent", $parent);
-	    update_info( $hash, $timestamp, "leaf"  , $leaf);
-	    update_info( $hash, $timestamp, "prio"  , $prio);
-	    update_info( $hash, $timestamp, "rate"  , $rate);
-	    update_info( $hash, $timestamp, "ceil"  , $ceil);
-	    update_info( $hash, $timestamp, "burst" , $burst);
-	    update_info( $hash, $timestamp, "cburst", $cburst);
-
 	    #print "\n";	  
 	}
 
@@ -259,15 +238,11 @@ sub parse_class($) {
 	    my $upperlimit_m2 = $18;
 
 	    #print "\nType: $type\n";
-	    my ($bytes, $pkts, $dropped, $overlimits);
+	    my $bytes;
 	    if ($tc_output[$i + 1] =~ m/Sent (\d+) bytes (\d+) pkts \(dropped (\d+), overlimits (\d+)\)/ ) {
 		$bytes      = $1;
-		$pkts       = $2;
-		$dropped    = $3;
-		$overlimits = $4;
 		#print "bytes: $bytes\n"."pkts: $pkts\n";
-		#print "dropped: $dropped\n"."overlimits: $overlimits\n";
-	    } else { 
+	    } else {
 		print "$timestamp: ERROR(+1) - Unable to parse (class ${class}_$device): ";
 		print "\"$tc_output[$i + 1]\"\n";
 		$return_val="";
@@ -316,40 +291,6 @@ sub parse_class($) {
 	    # (need a function call for error checking)
 	    $classes_data{$hash}{last_update} = $timestamp;
 	    update_counter( $hash, $timestamp, "bytes"     , $bytes);
-	    #(yes I know its bad/redundant, but it makes in easier elsewhere)
-	    update_counter( $hash, $timestamp, "bits"      , $bytes*8);
-	    update_counter( $hash, $timestamp, "pkts"      , $pkts);
-	    update_counter( $hash, $timestamp, "dropped"   , $dropped);
-	    update_counter( $hash, $timestamp, "overlimits", $overlimits);
-	    # Not a counter value...
-	    $classes_data{$hash}{backlog}                = $backlog;
-	    #
-	    # Extra HFSC counters
-	    $classes_data{$hash}{hfsc_period}                 = $period;
-	    update_counter( $hash, $timestamp, "hfsc_work"    , $work);
-	    update_counter( $hash, $timestamp, "hfsc_rtwork"  , $rtwork);
-
-
-	    # HFSC - Update the info data
-	    # (remember to update the "type" first)
-	    update_info( $hash, $timestamp, "type"  , $type);
-	    update_info( $hash, $timestamp, "parent", $parent);
-	    update_info( $hash, $timestamp, "leaf"  , $leaf);
-	    #
-	    # Extra HFSC information
-	    update_info( $hash, $timestamp, "level" , $level);
-	    update_info( $hash, $timestamp, "realtime_m1", $realtime_m1);
-	    update_info( $hash, $timestamp, "realtime_d" , $realtime_d);
-	    update_info( $hash, $timestamp, "realtime_m2", $realtime_m2);
-
-	    update_info( $hash, $timestamp, "linkshare_m1", $linkshare_m1);
-	    update_info( $hash, $timestamp, "linkshare_d" , $linkshare_d);
-	    update_info( $hash, $timestamp, "linkshare_m2", $linkshare_m2);
-
-	    update_info( $hash, $timestamp, "upperlimit_m1", $upperlimit_m1);
-	    update_info( $hash, $timestamp, "upperlimit_d" , $upperlimit_d);
-	    update_info( $hash, $timestamp, "upperlimit_m2", $upperlimit_m2);
-    
 
 	}
 

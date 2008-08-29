@@ -88,7 +88,6 @@ $SIG{PIPE} = 'IGNORE';
 our %classes_data;
 our %classes_info;
 require "$include_dir/parse-func.pl";
-require "$include_dir/event-func.pl";
 require "$include_dir/RRD-func.pl";
 
 until ($time_to_die) {
@@ -105,8 +104,6 @@ until ($time_to_die) {
     #	print " Error updating RRDs: \"$res\"\n";
     #}
     
-    process_events();
-
 #    my $timestamp = time;
 #    print "$timestamp\n";
    

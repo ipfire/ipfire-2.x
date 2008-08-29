@@ -1,2 +1,6 @@
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 etc/rc.d/init.d/connectd
+bin/ntfs-3g
+lib/libntfs-3g.so
+lib/libntfs-3g.so.36
+lib/libntfs-3g.so.36.0.0
