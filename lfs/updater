@@ -54,7 +54,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /install/updater
 	mkdir -p /install/packages
 
-	find $(DIR_SRC)/config/rootfiles/updater/filelists -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
+	find $(DIR_SRC)/config/rootfiles/updater/filelists/* -maxdepth 1 | xargs cat >> /tmp/ROOTFILES
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
