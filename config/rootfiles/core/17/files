@@ -1,9 +1,12 @@
 etc/squid
 etc/init.d/connectd
-usr/lib/squid
+usr/lib/squid/
 usr/sbin/squid
-srv/web/ipfire/cgi-bin/updatexlrator.cgi
 bin/ntfs-3g
 lib/libntfs-3g.so
 lib/libntfs-3g.so.36
 lib/libntfs-3g.so.36.0.0
+srv/web/ipfire/html/images/updbooster
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+var/ipfire/updatexlrator/bin/
+usr/sbin/updxlrator
