@@ -24,10 +24,11 @@
 
 include Config
 
-VER        = 0.8.6h
-
+VER        = 0.8.6i
 THISAPP    = vlc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE1   = $(THISAPP)-bugfix-080903.patch.bz2
+
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,11 +41,13 @@ DEPS       = "libshout libmpeg2 libmad libdvbpsi directfb ffmpeg"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) $(DL_FILE1)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
 
-$(DL_FILE)_MD5 = 4a6eece2f56d4ad5dfa786e934d2b4a8
+$(DL_FILE)_MD5 = 3c90520c9f22a68d287458d5a8af989e
+$(DL_FILE1)_MD5 = 36ea293b5ebb604778b321b5e3e3cdc4
 
 install : $(TARGET)
 
@@ -77,6 +80,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	#Apply some patched from videolan 8.6-bugfix branch,
+	#ignore the error because one patch is already applied
+	-cd $(DIR_APP) && bzip2 -d -c $(DIR_DL)/$(DL_FILE1) | patch -p1
 	cd $(DIR_APP) && ./configure --prefix=/usr --enable-shared --with-ffmpeg-tree=/usr/src/ffmpeg \
 								   --with-ffmpeg-config=/usr/src/ffmpeg \
 								--disable-wxwidgets --disable-skins2 \

@@ -293,7 +293,7 @@
 * vdr-1.6.0
 * vim-7.0
 * vlan.1.9
-* vlc-0.8.6h
+* vlc-0.8.6i
 * vnstat-1.6
 * vnstati-beta3
 * vsftpd-2.0.5
