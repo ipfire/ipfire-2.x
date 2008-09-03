@@ -145,10 +145,14 @@ chown root:cron /var/spool/cron/root.orig
 sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
           /etc/udev/rules.d/30-persistent-network.rules
 #
-# Core 17 begin
+# Core 17
+#
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "/var/ipfire/qos/bin/migrate.pl"
+#
+# ISDN
+#
 /etc/init.d/mISDN config
-# Core 17 end
 #
 # Remove obsolete packages, update the lists and do upgrade
 #
