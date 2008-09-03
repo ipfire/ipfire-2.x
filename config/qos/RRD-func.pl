@@ -93,12 +93,6 @@ sub update_rrds {
 
     my $res=0;
 
-    my @test = keys %classes_data;
-    if ( $#test <= 0) {
-	print  time, " [update_rrds] WARNING: classes_data empty!\n";
-	return "classes_data empty";
-    }
-
     # Find the class_device (keys) in %classes_data
     for my $class_device ( keys %classes_data ) {
 

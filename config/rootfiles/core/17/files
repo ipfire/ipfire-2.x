@@ -10,3 +10,6 @@ srv/web/ipfire/html/images/updbooster
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 var/ipfire/updatexlrator/bin/
 usr/sbin/updxlrator
+srv/web/ipfire/cgi-bin/qos.cgi
+usr/local/bin/qosd
+var/ipfire/qos/bin

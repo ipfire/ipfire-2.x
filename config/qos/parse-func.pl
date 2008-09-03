@@ -71,42 +71,6 @@ class htb 1:666 parent 1:1 leaf 666: prio 7 rate 4Kbit ceil 40Kbit burst 1604b c
 
 END_OF_HERE_HTB
 
-
-my @input_hfsc = (<<"END_OF_HERE_HFSC" =~ m/^\s*(.+)/gm);
-class hfsc 1: root 
- Sent 0 bytes 0 pkts (dropped 0, overlimits 0) 
- period 0 level 2 
-
-class hfsc 1:1 parent 1: ls m1 0bps d 0us m2 250Kbit ul m1 0bps d 0us m2 250Kbit 
- Sent 0 bytes 0 pkts (dropped 0, overlimits 0) 
- period 6 work 131770097 bytes level 1 
-
-class hfsc 1:10 parent 1:1 rt m1 250Kbit d 30.0ms m2 50Kbit ls m1 250Kbit d 50.0ms m2 50Kbit 
- Sent 1300885 bytes 7052 pkts (dropped 0, overlimits 0) 
- period 6502 work 1300885 bytes rtwork 1245495 bytes level 0 
-
-class hfsc 1:20 parent 1: rt m1 0bps d 64.0ms m2 75Kbit ls m1 0bps d 0us m2 250Kbit 
- Sent 19144279 bytes 325503 pkts (dropped 46, overlimits 0) 
- backlog 3p 
- period 20242 work 19143778 bytes level 0 
-
-class hfsc 1:30 parent 1:1 leaf 4230: ls m1 0bps d 150.0ms m2 50Kbit 
- Sent 45139930 bytes 74200 pkts (dropped 1664, overlimits 0) 
- backlog 24p 
- period 140 work 44885232 bytes level 0 
-
-class hfsc 1:50 parent 1:1 leaf 4250: ls m1 0bps d 235.7ms m2 72Kbit 
- Sent 73910198 bytes 301294 pkts (dropped 104807, overlimits 0) 
- backlog 62p 
- period 115 work 64625490 bytes level 0 
-
-class hfsc 1:666 parent 1:1 leaf 666: ls m1 0bps d 1.0s m2 2Kbit 
- Sent 2217104 bytes 17018 pkts (dropped 74526, overlimits 0) 
- backlog 22p 
- period 1 work 1814712 bytes level 0 
-
-END_OF_HERE_HFSC
-
 sub parse_class($) {
     my $device = "$_[0]";
     my $return_val = 1;
@@ -150,48 +114,13 @@ sub parse_class($) {
 	    my ($bytes, $pkts, $dropped, $overlimits);
 	    if ($tc_output[$i + 1] =~ m/Sent (\d+) bytes (\d+) pkt \(dropped (\d+), overlimits (\d+) requeues (\d+)\)/ ) {
 		$bytes      = $1;
-		$pkts       = $2;
-		$dropped    = $3;
-		$overlimits = $4;
-		$requeues   = $5;
-		#print "bytes: $bytes\n"."pkts: $pkts\n";
-		#print "dropped: $dropped\n"."overlimits: $overlimits\n"."requeues: $requeues\n";
+  	#print "bytes: $bytes\n";
 	    } else { 
 		print "$timestamp: ERROR(+1) - Unable to parse (class ${class}_$device): ";
 		print "\"$tc_output[$i + 1]\"\n";
 		$return_val="";
 		next;
-	    } 
-
-	    # Problem:
-	    #  Sometimes the "rate" line is not shown (when a rate cannot be calculated)
-	    #  And sometimes only "backlog"...
-	    # Use $next_index to specify the next line to parse
-	    #
-	    my $next_index = 3;
-	    my ($backlog);
-	    if ($tc_output[$i + 2] =~ m/((rate (\d+\w+) )|backlog )(\d+)?(pps )?(backlog )?(\d+)?p?/ ) {
-		$backlog = $7;
-		#print "backlog: $backlog\n";
-	    } else { 
-# Too verbose:
-#		print "$timestamp: WARNING \"rate\" line missing";
-#		print " very inactive class ${class}_$device).\n";
-		$next_index = 2;		
-	    } 
-
-	    my ($lended, $borrowed, $giants);
-	    if ($tc_output[$i + $next_index] =~ m/lended: (\d+) borrowed: (\d+) giants: (\d+)/ ) {
-		$lended   = $1;
-		$borrowed = $2;
-		$giants   = $3;
-		#print "lended: $lended\n"."borrowed: $borrowed\n"."giants: $giants\n";
-	    } else { 
-		print "$timestamp: ERROR(+$next_index) - Unable to parse (class ${class}_$device): ";
-		print "\"$tc_output[$i + $next_index]\"\n";
-		$return_val="";
-		next;
-	    } 
+	    }
 
 	    # Update the hash tables	 
 	    my $hash="${class}_$device";
@@ -211,87 +140,6 @@ sub parse_class($) {
 	    update_counter( $hash, $timestamp, "bytes"     , $bytes);
 	    #(yes I know its bad/redundant, but it makes in easier elsewhere)
 	    #print "\n";	  
-	}
-
-	# Parsing HFSC:
-	# -------------
-	if ( $line =~ m/class hfsc (\d+):(\d+)( root| parent )?(\d+:\d?)?( leaf )?(\d+)?:?( rt m1 (\d+\w+?) d (\d+.?\d?\w+) m2 (\d+\w+?))?( ls m1 (\d+\w+?) d (\d+.?\d?\w+) m2 (\d+\w+?))?( ul m1 (\d+\w+?) d (\d+.?\d?\w+) m2 (\d+\w+?))? / ){
-
-	    my $type  = "hfsc";
-	    my $major = $1;
-	    my $minor = $2;
-	    my $class = "${major}-${minor}";
-	    #my $hash  = "${class}_${device}";
-	    my $parent= $4;
-	    my $leaf  = $6;
-
-	    my $realtime_m1; if (defined $8 && $8 ne '0bps') {$realtime_m1 = $8;}
-	    my $realtime_d;  if (defined $9 && $9 ne '0us' ) {$realtime_d  = $9;}
-	    my $realtime_m2 = $10;
-
-	    my $linkshare_m1; if (defined $12 && $12 ne '0bps') { $linkshare_m1 = $12;}
-	    my $linkshare_d ; if (defined $13 && $13 ne '0us' ) { $linkshare_d  = $13;}
-	    my $linkshare_m2 = $14;
-
-	    my $upperlimit_m1; if (defined $16 && $16 ne '0bps') { $upperlimit_m1 = $16;}
-	    my $upperlimit_d ; if (defined $17 && $17 ne '0us' ) { $upperlimit_d  = $17;}
-	    my $upperlimit_m2 = $18;
-
-	    #print "\nType: $type\n";
-	    my $bytes;
-	    if ($tc_output[$i + 1] =~ m/Sent (\d+) bytes (\d+) pkts \(dropped (\d+), overlimits (\d+)\)/ ) {
-		$bytes      = $1;
-		#print "bytes: $bytes\n"."pkts: $pkts\n";
-	    } else {
-		print "$timestamp: ERROR(+1) - Unable to parse (class ${class}_$device): ";
-		print "\"$tc_output[$i + 1]\"\n";
-		$return_val="";
-		next;
-	    } 
-
-	    # Sometimes the "backlog" line is not shown (when there is no backlog...)
-	    # Use $next_index to specify the next line to parse
-	    #
-	    my $next_index = 3;
-	    my ($backlog);
-	    if ($tc_output[$i + 2] =~ m/backlog (\d+)?p?/ ) {
-		$backlog = $1;
-		#print "backlog: $backlog\n";
-	    } else { 
-		$next_index = 2;		
-	    } 
-
-	    my ($period, $work, $rtwork, $level);
-	    if ($tc_output[$i + $next_index] =~ m/period (\d+) (work (\d+) bytes )?(rtwork (\d+) bytes )?level (\d+)/ ) {
-		$period = $1;
-		$work   = $3;
-		$rtwork = $5;
-		$level  = $6
-	    } else { 
-		print "$timestamp: ERROR(+$next_index) - Unable to parse (class ${class}_$device): ";
-		print "\"$tc_output[$i + $next_index]\"\n";
-		$return_val="";
-		next;
-	    } 
-	    
-
-	    # Update the hash tables	 
-	    my $hash="${class}_$device";
-
-	    # Tests if previous data have been updated to file
-	    if ( (exists $classes_data{$hash}{last_update}) &&
-		 (exists $classes_data{$hash}{file_update})) {
-		if ( $classes_data{$hash}{last_update} >
-		     $classes_data{$hash}{file_update}   ){
-		    print "Warning: old data from $hash has not been updated to file!\n";
-		}
-	    }
-
-	    # HFSC - Update the statistics data
-	    # (need a function call for error checking)
-	    $classes_data{$hash}{last_update} = $timestamp;
-	    update_counter( $hash, $timestamp, "bytes"     , $bytes);
-
 	}
 
 	# Parsing XXX:

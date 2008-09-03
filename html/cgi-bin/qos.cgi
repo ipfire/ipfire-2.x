@@ -452,12 +452,12 @@ elsif ($qossettings{'DOTOS'} eq 'Loeschen')
 
 if ($qossettings{'ACTION'} eq 'Start')
 {
+	$qossettings{'ENABLED'} = 'on';
+	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
 	system("/usr/bin/touch /var/ipfire/qos/enable");
 	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
 	system("logger -t ipfire 'QoS started'");
-	$qossettings{'ENABLED'} = 'on';
-	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 }
 elsif ($qossettings{'ACTION'} eq 'Stop')
 {
@@ -570,13 +570,12 @@ END
 	$qossettings{'DEFCLASS_INC'} = "210";
 	$qossettings{'DEFCLASS_OUT'} = "110";
 	$qossettings{'ACK'} ="101";
+	$qossettings{'ENABLED'} = 'on';
+	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
 	system("/usr/bin/touch /var/ipfire/qos/enable");
 	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
 	system("logger -t ipfire 'QoS started'");
-	$qossettings{'ENABLED'} = 'on';
-	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
-
 }
 elsif ($qossettings{'ACTION'} eq "$Lang::tr{'status'}" )
 {
