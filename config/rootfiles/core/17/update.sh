@@ -5,3 +5,4 @@
 extract_files
 /etc/init.d/squid start
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "/var/ipfire/qos/bin/migrate.pl"
