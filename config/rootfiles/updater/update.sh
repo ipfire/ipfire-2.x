@@ -149,6 +149,7 @@ sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
 #
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 perl -e "/var/ipfire/qos/bin/migrate.pl"
+/var/ipfire/updatexlrator/bin/convert
 #
 # ISDN
 #
