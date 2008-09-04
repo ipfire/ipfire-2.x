@@ -3,7 +3,7 @@ etc/squid
 usr/lib/squid
 usr/sbin/squid
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
-srv/web/ipfire/html/images/updxl-src-avg.gif
+#srv/web/ipfire/html/images/updxl-src-avg.gif
 usr/sbin/updxlrator
 srv/web/ipfire/html/images/audio-volume-high.png
 srv/web/ipfire/html/images/audio-volume-low.png

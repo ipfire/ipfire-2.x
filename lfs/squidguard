@@ -99,6 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	/bin/tar --no-same-owner -xzf $(DIR_CONF)/urlfilter/blacklists.tar.gz -C /var/ipfire/urlfilter
 	/usr/bin/perl $(DIR_CONF)/urlfilter/makeconf.pl
+	touch /var/ipfire/urlfilter/settings
 	chown -R nobody:nobody /var/ipfire/urlfilter
 	chmod 755 /srv/web/ipfire/html/images/urlfilter
 	chmod 644 /srv/web/ipfire/html/images/urlfilter/*

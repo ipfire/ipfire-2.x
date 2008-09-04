@@ -183,7 +183,7 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_8
-* madwifi-hal-0.10.5.6-r3835-20080801
+* madwifi-hal-2008-08-15-r3851-20080829
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
