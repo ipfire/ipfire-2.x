@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = hal-2008-08-15-r3851-20080829
+VER        = hal-2008-08-15-r3862-20080903
 
 THISAPP    = madwifi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5e66a7d080636675830a94775d13c760
+$(DL_FILE)_MD5 = 3c9726acd5ffa180fa7b274b625a6082
 
 install : $(TARGET)
 
