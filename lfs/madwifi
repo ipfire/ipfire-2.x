@@ -81,4 +81,7 @@ ifeq "$(SMP)" ""
 	cp $(DIR_SRC)/config/madwifi/madwifi.conf /etc/
 	ln -s $(DIR_APP) $(DIR_SRC)/madwifi 
 endif
+	# Set Countrycode to germany because some cards
+	# are not detected without cc
+	echo options ath_pci countrycode=276 > /etc/modprobe.d/madwifi
 	@$(POSTBUILD)

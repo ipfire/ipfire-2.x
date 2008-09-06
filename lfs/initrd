@@ -70,7 +70,7 @@ $(TARGET) :
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
 
 	cd /install/initrd/lib/ && ln -sf libgcc_s.so.1 libgcc_s.so
-	
+
 	-mkdir -p /install/{images,mnt}
 	rm -rf /install/mnt/*
 
