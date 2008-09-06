@@ -1,5 +1,7 @@
 etc/squid
 etc/init.d/connectd
+opt/pakfire/lib/functions.sh
+opt/pakfire/lib/functions.pl
 usr/lib/squid/
 usr/sbin/squid
 bin/ntfs-3g

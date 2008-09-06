@@ -1,5 +1,4 @@
 opt/pakfire/db/core/mine
-opt/pakfire/lib/functions.pl
 etc/mkinitcpio.conf
 etc/init.d/mISDN
 etc/modprobe.d/blacklist

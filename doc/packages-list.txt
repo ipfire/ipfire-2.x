@@ -241,7 +241,6 @@
 * psmisc-22.2
 * qemu-0.9.1
 * r8168-8.005.00
-* r8169-6.005.00
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
