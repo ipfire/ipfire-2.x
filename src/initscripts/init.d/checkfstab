@@ -17,21 +17,21 @@
 
 case "${1}" in
 	start)
-		boot_mesg "Checking fstab rootdevice entry ..."
+		boot_mesg "Checking fstab bootdevice ..."
 		ROOTPOS=`expr index "$CMDLINE" root=`
 		NEWROOT=`echo ${CMDLINE:$ROOTPOS} | cut -d"=" -f2 | cut -d" " -f1`;
-		OLDROOT=`cat /etc/fstab | grep -m1 " / " | cut -d" " -f1`;
-		OLDDRV=${OLDROOT::`expr length $OLDROOT`-1}
+		OLDBOOT=`cat /etc/fstab | grep -m1 "/boot" | cut -d" " -f1 | cut -f1`;
+		OLDDRV=${OLDBOOT::`expr length $OLDBOOT`-1}
 		NEWDRV=${NEWROOT::`expr length $NEWROOT`-1}
-		if [ "$OLDROOT" == "$NEWROOT" ]; then
+		if [ "$OLDDRV" == "$NEWDRV" ]; then
 		    echo_ok;
 		    exit 0;
 		fi
 		echo_failure;
-		boot_mesg "Warning! Rootdevice not match with fstab entry!"
+		boot_mesg "Warning! Bootdrive not match with fstab!"
 		boot_mesg
-		boot_mesg "Rootdevice:  $NEWROOT"
-		boot_mesg "fstab-entry: $OLDROOT"
+		boot_mesg "Bootdrive:   $NEWDRV"
+		boot_mesg "fstab-entry: $OLDDRV"
 		boot_mesg
 		boot_mesg "Attempt to repair it ..."
 		mount -o remount,rw /
