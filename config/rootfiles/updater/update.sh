@@ -51,6 +51,8 @@ echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
 echo var/spool/cron/root.orig >> /opt/pakfire/tmp/ROOTFILES
 echo etc/udev/rules.d/30-persistent-network.rules >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
+echo var/log/rrd >> /opt/pakfire/tmp/ROOTFILES
+echo var/updatexlerator >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
