@@ -105,12 +105,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_SRC)/config/updxlrator/download /var/ipfire/updatexlrator/bin/download
 	cp -f $(DIR_SRC)/config/updxlrator/convert /var/ipfire/updatexlrator/bin/convert
 	cp -f $(DIR_SRC)/config/updxlrator/lscache /var/ipfire/updatexlrator/bin/lscache
-	cp -f $(DIR_SRC)/config/updxlrator/setperms /var/ipfire/updatexlrator/bin/setperms
+
+#	this binary is incompatible with 
+#	cp -f $(DIR_SRC)/config/updxlrator/setperms /var/ipfire/updatexlrator/bin/setperms
 
 	-mkdir -p /usr/lib/squid/errors.ipfire
 	cp -fr $(DIR_SRC)/config/proxy/errors.ipfire/* /usr/lib/squid/errors.ipfire/
 	chmod 755 /usr/sbin/updxlrator /var/ipfire/updatexlrator/bin/checkup \
-		/var/ipfire/updatexlrator/bin/download
+		/var/ipfire/updatexlrator/bin/download \
+		/var/ipfire/updatexlrator/bin/convert \
+		/var/ipfire/updatexlrator/bin/lscache
 
 	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.daily
 	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.monthly

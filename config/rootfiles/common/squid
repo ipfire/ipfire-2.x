@@ -1185,7 +1185,7 @@ var/ipfire/updatexlrator/bin/checkup
 var/ipfire/updatexlrator/bin/download
 var/ipfire/updatexlrator/bin/convert
 var/ipfire/updatexlrator/bin/lscache
-var/ipfire/updatexlrator/bin/setperms
+#var/ipfire/updatexlrator/bin/setperms
 var/log/cache
 #var/log/squid
 var/log/squid/access.log
