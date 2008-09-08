@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tftp-hpa
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -81,7 +81,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mv -fv /usr/sbin/in.tftpd /usr/sbin/tftpd
-	-mkdir -pv /var/tftpboot/pxelinux.cfg
-	cp -vf /usr/lib/syslinux/{pxelinux.0,vesamenu.c32} /var/tftpboot
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
