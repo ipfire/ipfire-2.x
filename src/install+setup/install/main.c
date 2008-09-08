@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	char commandstring[STRING_SIZE];
 	char mkfscommand[STRING_SIZE];
 	char *fstypes[] = { "Reiser4", "ReiserFS", "ext3", NULL };
-	int fstype = REISER4;
+	int fstype = REISERFS;
 	int choice;
 	int i;
 	int found = 0;
@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
 			ctr[TR_CANCEL], NULL);
 	} else {
 	    rc = 1;
-	    fstype = REISER4; // Reiser4 is our standard filesystem. Love it or shut up!
+	    fstype = REISERFS;
 	}
 	if (rc == 2)
 		goto EXIT;

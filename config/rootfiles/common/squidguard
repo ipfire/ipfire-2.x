@@ -10,6 +10,7 @@ var/ipfire/urlfilter/autoupdate/cron.weekly
 var/ipfire/urlfilter/bin/autoupdate.pl
 var/ipfire/urlfilter/bin/prebuild.pl
 var/ipfire/urlfilter/blacklists
+var/ipfire/urlfilter/settings
 #var/ipfire/urlfilter/blacklists/README
 #var/ipfire/urlfilter/blacklists/ads
 #var/ipfire/urlfilter/blacklists/ads/domains

@@ -1,3 +1,4 @@
+etc/rc.d/init.d/alsa
 lib/firmware/aica_firmware.bin
 #lib/firmware/asihpi
 lib/firmware/asihpi/dsp2400.bin

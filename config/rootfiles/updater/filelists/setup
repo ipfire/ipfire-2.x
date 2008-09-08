@@ -1,2 +1,1 @@
-usr/local/sbin/setup
-bin/probenic.sh
+../../common/setup

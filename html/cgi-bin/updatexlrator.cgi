@@ -39,21 +39,39 @@ my %mainsettings=();
 my %proxysettings=();
 my %xlratorsettings=();
 my $id=0;
+my @dfdata=();
+my $dfstr='';
+my @updatelist=();
+my @sources=();
+my $sourceurl='';
+my $vendorid='';
+my $uuid='';
+my $status=0;
 my $updatefile='';
 my $shortname='';
-my $vendor='';
 my $time='';
 my $filesize=0;
 my $filedate='';
 my $lastaccess='';
 my $lastcheck='';
+my $cachedtraffic=0;
+my @requests=();
+my $data='';
+my $counts=0;
+my $numfiles=0;
+my $cachehits=0;
+my $efficiency='0.0';
+my @vendors=();
+my %vendorstats=();
 
-my $repository = "/var/updatecache";
+my $repository = "/var/updatecache/";
 my $hintcolour = '#FFFFCC';
+my $colourgray = '#808080';
 
-my $sfNoSource='0';
+my $sfUnknown='0';
 my $sfOk='1';
 my $sfOutdated='2';
+my $sfNoSource='3';
 
 my $not_accessed_last='';
 
@@ -76,69 +94,114 @@ my $chk_cron_mly = "${General::swroot}/updatexlrator/autocheck/cron.monthly";
 $xlratorsettings{'ACTION'} = '';
 $xlratorsettings{'ENABLE_LOG'} = 'off';
 $xlratorsettings{'PASSIVE_MODE'} = 'off';
-$xlratorsettings{'MAX_DISK_USAGE'} = '95';
+$xlratorsettings{'MAX_DISK_USAGE'} = '75';
 $xlratorsettings{'LOW_DOWNLOAD_PRIORITY'} = 'off';
+$xlratorsettings{'MAX_DOWNLOAD_RATE'} = '';
 $xlratorsettings{'ENABLE_AUTOCHECK'} = 'off';
 $xlratorsettings{'FULL_AUTOSYNC'} = 'off';
 $xlratorsettings{'NOT_ACCESSED_LAST'} = 'month1';
 
 &Header::getcgihash(\%xlratorsettings);
 
+$xlratorsettings{'EXTENDED_GUI'} = '';
+
+if ($xlratorsettings{'ACTION'} eq "$Lang::tr{'updxlrtr statistics'} >>")
+{
+	$xlratorsettings{'EXTENDED_GUI'} = 'statistics';
+}
+
+if ($xlratorsettings{'ACTION'} eq "$Lang::tr{'updxlrtr maintenance'} >>")
+{
+	$xlratorsettings{'EXTENDED_GUI'} = 'maintenance';
+}
+
 if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr purge'})
 {
+	$xlratorsettings{'EXTENDED_GUI'} = 'maintenance';
+
 	if (($xlratorsettings{'REMOVE_OBSOLETE'} eq 'on') || ($xlratorsettings{'REMOVE_NOSOURCE'} eq 'on') || ($xlratorsettings{'REMOVE_OUTDATED'} eq 'on'))
 	{
-		@repositorylist = <$repository/*>;
-		foreach (@repositorylist)
+		undef (@sources);
+		undef @repositoryfiles;
+		foreach (<$repository/*>)
 		{
-			if (!-d $_)
+			if (-d $_)
 			{
-				$updatefile = substr($_,rindex($_,"/")+1);
-				if (-e "$repository/metadata/$updatefile")
-				{
-					open (FILE,"$repository/metadata/$updatefile");
-					@metadata = <FILE>;
-					close FILE;
-					chomp(@metadata);
+				unless (/^$repository\/download$/) { push(@sources,$_); }
+			}
+		}
 
-					if (($xlratorsettings{'REMOVE_NOSOURCE'} eq 'on') && ($metadata[2] == $sfNoSource))
-					{
-						unlink("$repository/$updatefile");
-						unlink("$repository/metadata/$updatefile");
-					}
-					if (($xlratorsettings{'REMOVE_OUTDATED'} eq 'on') && ($metadata[2] == $sfOutdated))
-					{
-						unlink("$repository/$updatefile");
-						unlink("$repository/metadata/$updatefile");
-					}
-					if ($xlratorsettings{'REMOVE_OBSOLETE'} eq 'on')
-					{
-						if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'week') && ($metadata[-1] < (time - 604800)))
-						{
-							unlink("$repository/$updatefile");
-							unlink("$repository/metadata/$updatefile");
-						}
-						if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month1') && ($metadata[-1] < (time - 2505600)))
-						{
-							unlink("$repository/$updatefile");
-							unlink("$repository/metadata/$updatefile");
-						}
-						if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month3') && ($metadata[-1] < (time - 7516800)))
-						{
-							unlink("$repository/$updatefile");
-							unlink("$repository/metadata/$updatefile");
-						}
-						if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month6') && ($metadata[-1] < (time - 15033600)))
-						{
-							unlink("$repository/$updatefile");
-							unlink("$repository/metadata/$updatefile");
-						}
-						if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'year') && ($metadata[-1] < (time - 31536000)))
-						{
-							unlink("$repository/$updatefile");
-							unlink("$repository/metadata/$updatefile");
-						}
-					}
+		foreach (@sources)
+		{
+			@updatelist=<$_/*>;
+			$vendorid = substr($_,rindex($_,"/")+1);
+			foreach(@updatelist)
+			{
+				$uuid = substr($_,rindex($_,"/")+1);
+				if (-e "$_/source.url")
+				{
+					open (FILE,"$_/source.url");
+					$sourceurl=<FILE>;
+					close FILE;
+					chomp($sourceurl);
+					$updatefile = substr($sourceurl,rindex($sourceurl,'/')+1,length($sourceurl));
+					$updatefile = "$vendorid/$uuid/$updatefile";
+					push(@repositoryfiles,$updatefile);
+				}
+			}
+		}
+
+		foreach (@repositoryfiles)
+		{
+			($vendorid,$uuid,$updatefile) = split('/');
+
+			if (-e "$repository/$vendorid/$uuid/status")
+			{
+				open (FILE,"$repository/$vendorid/$uuid/status");
+				@metadata = <FILE>;
+				close FILE;
+				chomp(@metadata);
+				$status = $metadata[-1];
+			}
+
+			if (-e "$repository/$vendorid/$uuid/access.log")
+			{
+				open (FILE,"$repository/$vendorid/$uuid/access.log");
+				@metadata = <FILE>;
+				close FILE;
+				chomp(@metadata);
+				$lastaccess = $metadata[-1];
+			}
+
+			if (($xlratorsettings{'REMOVE_NOSOURCE'} eq 'on') && ($status == $sfNoSource))
+			{
+				if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+			}
+			if (($xlratorsettings{'REMOVE_OUTDATED'} eq 'on') && ($status == $sfOutdated))
+			{
+				if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+			}
+			if ($xlratorsettings{'REMOVE_OBSOLETE'} eq 'on')
+			{
+				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'week') && ($lastaccess < (time - 604800)))
+				{
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+				}
+				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month1') && ($lastaccess < (time - 2505600)))
+				{
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+				}
+				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month3') && ($lastaccess < (time - 7516800)))
+				{
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+				}
+				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month6') && ($lastaccess < (time - 15033600)))
+				{
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+				}
+				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'year') && ($lastaccess < (time - 31536000)))
+				{
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
 				}
 			}
 		}
@@ -152,6 +215,11 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'save'})
 		$errormessage = $Lang::tr{'updxlrtr invalid disk usage'};
 		goto ERROR;
 	}
+	if (($xlratorsettings{'MAX_DOWNLOAD_RATE'} ne '') && ((!($xlratorsettings{'MAX_DOWNLOAD_RATE'} =~ /^\d+$/)) || ($xlratorsettings{'MAX_DOWNLOAD_RATE'} < 1)))
+	{
+		$errormessage = $Lang::tr{'updxlrtr invalid download rate'};
+		goto ERROR;
+	}
 
 	&savesettings;
 }
@@ -163,7 +231,12 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr save and restart'})
 		$errormessage = $Lang::tr{'updxlrtr invalid disk usage'};
 		goto ERROR;
 	}
-	if (!(-e "${General::swroot}/proxy/enable"))
+	if (($xlratorsettings{'MAX_DOWNLOAD_RATE'} ne '') && ((!($xlratorsettings{'MAX_DOWNLOAD_RATE'} =~ /^\d+$/)) || ($xlratorsettings{'MAX_DOWNLOAD_RATE'} < 1)))
+	{
+		$errormessage = $Lang::tr{'updxlrtr invalid download rate'};
+		goto ERROR;
+	}
+	if ((!(-e "${General::swroot}/proxy/enable")) && (!(-e "${General::swroot}/proxy/enable_blue")))
 	{
 		$errormessage = $Lang::tr{'updxlrtr web proxy service required'};
 		goto ERROR;
@@ -181,13 +254,19 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr save and restart'})
 
 if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr remove file'})
 {
-	$updatefile = $xlratorsettings{'ID'};
-	if (-e "$repository/$updatefile") { unlink("$repository/$updatefile"); }
-	$updatefile =~ s/^download\///i;
-	if (-e "$repository/metadata/$updatefile") { unlink("$repository/metadata/$updatefile"); }
-}
+	$xlratorsettings{'EXTENDED_GUI'} = 'maintenance';
 
-ERROR:
+	$updatefile = $xlratorsettings{'ID'};
+
+	if ($updatefile =~ /^download\//)
+	{
+		($uuid,$vendorid,$updatefile) = split('/',$updatefile);
+		if (-e "$repository/download/$vendorid/$updatefile") { system("rm $repository/download/$vendorid/$updatefile"); }
+	} else {
+		($vendorid,$uuid,$updatefile) = split('/',$updatefile);
+		if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+	}
+}
 
 $not_accessed_last =  $xlratorsettings{'NOT_ACCESSED_LAST'};
 undef($xlratorsettings{'NOT_ACCESSED_LAST'});
@@ -196,6 +275,7 @@ if (-e "${General::swroot}/updatexlrator/settings") { &General::readhash("${Gene
 
 if ($xlratorsettings{'NOT_ACCESSED_LAST'} eq '') { $xlratorsettings{'NOT_ACCESSED_LAST'} = $not_accessed_last; } ;
 
+ERROR:
 
 $checked{'ENABLE_LOG'}{'off'} = '';
 $checked{'ENABLE_LOG'}{'on'} = '';
@@ -244,6 +324,8 @@ print <<END
 <tr>
 	<td class='base' width='25%'>$Lang::tr{'updxlrtr enable log'}:</td>
 	<td class='base' width='20%'><input type='checkbox' name='ENABLE_LOG' $checked{'ENABLE_LOG'}{'on'} /></td>
+	<td class='base' width='25%'></td>
+	<td class='base' width='30%'></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'updxlrtr passive mode'}:</td>
@@ -251,11 +333,17 @@ print <<END
 	<td class='base'>$Lang::tr{'updxlrtr max disk usage'}:</td>
 	<td class='base'><input type='text' name='MAX_DISK_USAGE' value='$xlratorsettings{'MAX_DISK_USAGE'}' size='1' /> %</td>
 </tr>
+</table>
+<hr size='1'>
+<table width='100%'>
 <tr>
-	<td class='base'>$Lang::tr{'updxlrtr low download priority'}:</td>
-	<td class='base'><input type='checkbox' name='LOW_DOWNLOAD_PRIORITY' $checked{'LOW_DOWNLOAD_PRIORITY'}{'on'} /></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+        <td colspan='4'><b>$Lang::tr{'updxlrtr performance options'}</b></td>
+</tr>
+<tr>
+	<td class='base' width='25%'>$Lang::tr{'updxlrtr low download priority'}:</td>
+	<td class='base' width='20%'><input type='checkbox' name='LOW_DOWNLOAD_PRIORITY' $checked{'LOW_DOWNLOAD_PRIORITY'}{'on'} /></td>
+	<td class='base' width='25%'>$Lang::tr{'updxlrtr max download rate'}:&nbsp;<img src='/blob.gif' alt='*' </td>
+	<td class='base' width='30%'><input type='text' name='MAX_DOWNLOAD_RATE' value='$xlratorsettings{'MAX_DOWNLOAD_RATE'}' size='5' /></td>
 </tr>
 </table>
 <hr size='1'>
@@ -285,8 +373,464 @@ print <<END
 <hr size='1'>
 <table width='100%'>
 <tr>
-        <td colspan='6'><b>$Lang::tr{'updxlrtr maintenance'}</b></td>
+	<td align='center' width='20%'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	<td align='center' width='20%'><input type='submit' name='ACTION' value='$Lang::tr{'updxlrtr save and restart'}' /></td>
+	<td>&nbsp;</td>
+END
+;
+
+print"	<td align='center' width='20%'><input type='submit' name='ACTION' value='$Lang::tr{'updxlrtr statistics'}";
+if ($xlratorsettings{'EXTENDED_GUI'} eq 'statistics') { print " <<' "; } else { print " >>' "; }
+print "/></td>\n";
+
+print" 	<td align='center' width='20%'><input type='submit' name='ACTION' value='$Lang::tr{'updxlrtr maintenance'}";
+if ($xlratorsettings{'EXTENDED_GUI'} eq 'maintenance') { print " <<' "; } else { print " >>' "; }
+print "/></td>\n";
+
+print <<END
 </tr>
+</table>
+END
+;
+
+&Header::closebox();
+
+print "</form>\n";
+
+# =====================================================================================
+#  CACHE STATISTICS
+# =====================================================================================
+
+if ($xlratorsettings{'EXTENDED_GUI'} eq 'statistics')
+{
+
+# ----------------------------------------------------
+#    Get statistics
+# ----------------------------------------------------
+
+@sources=();
+foreach (<$repository/*>)
+{
+	if (-d $_)
+	{
+		unless ((/^$repository\/download$/) || (/^$repository\/lost\+found$/)) { push(@sources,$_); }
+	}
+}
+
+@vendors=();
+foreach (@sources)
+{
+	$vendorid=substr($_,rindex($_,'/')+1,length($_));
+	push(@vendors,$vendorid);
+	@updatelist=<$_/*>;
+	foreach $data (@updatelist)
+	{
+		if (-e "$data/source.url")
+		{
+			open (FILE,"$data/source.url");
+			$sourceurl=<FILE>;
+			close FILE;
+			chomp($sourceurl);
+			$updatefile = substr($sourceurl,rindex($sourceurl,'/')+1,length($sourceurl));
+		#
+		# Total file size
+		#
+			$filesize += (-s "$data/$updatefile");
+		#
+		# File size for this source
+		#
+			$vendorstats{$vendorid."_filesize"} += (-s "$data/$updatefile");
+		#
+		# Number of requests from cache for this source
+		#
+			open (FILE,"$data/access.log");
+			@requests=<FILE>;
+			close FILE;
+			chomp(@requests);
+			$counts = @requests;
+			$counts--;
+			$vendorstats{$vendorid."_requests"} += $counts;
+			$cachehits += $counts;
+		#
+		# Total number of files in cache
+		#
+			$numfiles++;
+		#
+		# Number of files for this source
+		#
+			$vendorstats{$vendorid."_files"}++;
+		#
+		# Count cache status occurences
+		#
+			open (FILE,"$data/status");
+			$_=<FILE>;
+			close FILE;
+			chomp;
+			$vendorstats{$vendorid."_".$_}++;
+		#
+		# Calculate cached traffic for this source
+		#
+			$vendorstats{$vendorid."_cachehits"} += $counts * (-s "$data/$updatefile");
+		#
+		# Calculate total cached traffic
+		#
+			$cachedtraffic += $counts * (-s "$data/$updatefile");
+
+		}
+	}
+}
+
+if ($numfiles) { $efficiency = sprintf("%.1f", $cachehits / $numfiles); }
+
+1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
+1 while $cachedtraffic =~ s/^(-?\d+)(\d{3})/$1.$2/;
+
+# ----------------------------------------------------
+#    Show statistics
+# ----------------------------------------------------
+
+&Header::openbox('100%', 'left', "$Lang::tr{'updxlrtr cache statistics'}");
+
+unless ($numfiles) { print "<i>$Lang::tr{'updxlrtr empty repository'}</i>\n<hr size='1'>\n"; }
+
+print <<END
+<table>
+<tr><td class='boldbase'><b>$Lang::tr{'updxlrtr disk usage'}</b></td></tr>
+</table>
+<table cellpadding='3'>
+<tr>
+<td align='left' class='base'><i>$Lang::tr{'updxlrtr cache dir'}</i></td>
+<td align='center' class='base'><i>$Lang::tr{'size'}</i></td>
+<td align='center' class='base'><i>$Lang::tr{'used'}</i></td>
+<td align='center' class='base'><i>$Lang::tr{'free'}</i></td>
+<td align='left' class='base' colspan='2'><i>$Lang::tr{'percentage'}</i></td>
+</tr>
+END
+;
+
+open(DF,"/bin/df -h $repository|");
+@dfdata = <DF>;
+close DF;
+shift(@dfdata);
+chomp(@dfdata);
+$dfstr = join(' ',@dfdata);
+my ($device,$size,$used,$free,$percent,$mount) = split(' ',$dfstr);
+
+print <<END
+<tr>
+<td>[$repository]</td>
+<td align='right'>$size</td>
+<td align='right'>$used</td>
+<td align='right'>$free</td>
+<td>
+END
+;
+&percentbar($percent);
+print <<END
+</td>
+<td align='right'>$percent</td>
+</tr>
+</table>
+END
+;
+
+if ($numfiles)
+{
+	print <<END
+<hr size='1'>
+<table width='100%'>
+<tr>
+        <td colspan='5'><b>$Lang::tr{'updxlrtr summary'}</b></td>
+</tr>
+<tr>
+	<td class='base' width='25%'>$Lang::tr{'updxlrtr total files'}:</td>
+	<td class='base' width='20%'><font color='$colourgray'>$numfiles</font></td>
+	<td class='base' width='25%'>$Lang::tr{'updxlrtr total cache size'}:</td>
+	<td class='base' width='15%' align='right'><font color='$colourgray'>$filesize</font></td>
+	<td class='base'></td>
+</tr>
+<tr>
+	<td class='base'>$Lang::tr{'updxlrtr efficiency index'}:</td>
+	<td class='base'><font color='$colourgray'>$efficiency</font></td>
+	<td class='base'>$Lang::tr{'updxlrtr total data from cache'}:</td>
+	<td class='base' align='right'><font color='$colourgray'>$cachedtraffic</font></td>
+	<td class='base'></td>
+</tr>
+</table>
+<hr size='1'>
+<table>
+<tr>
+        <td colspan='17'><b>$Lang::tr{'updxlrtr statistics by source'}</b></td>
+</tr>
+<tr>
+	<td class='base' colspan='2'><i>$Lang::tr{'updxlrtr source'}</i></td>
+	<td class='base' width='7%'>&nbsp;</td>
+	<td class='base' align='right'><i>$Lang::tr{'updxlrtr files'}</i></td>
+	<td class='base' width='7%'>&nbsp;</td>
+	<td class='base' align='right'><nobr><i>$Lang::tr{'updxlrtr cache size'}</i></nobr></td>
+	<td class='base' width='7%'>&nbsp;</td>
+	<td class='base' align='right'><nobr><i>$Lang::tr{'updxlrtr data from cache'}</i></nobr></td>
+	<td class='base' width='15%'>&nbsp;</td>
+	<td class='base'><img src="/images/updbooster/updxl-led-green.gif" /></td>
+	<td class='base' width='15%'>&nbsp;</td>
+	<td class='base'><img src="/images/updbooster/updxl-led-yellow.gif" /></td>
+	<td class='base' width='15%'>&nbsp;</td>
+	<td class='base'><img src="/images/updbooster/updxl-led-red.gif" /></td>
+	<td class='base' width='15%'>&nbsp;</td>
+	<td class='base'><img src="/images/updbooster/updxl-led-gray.gif" /></td>
+	<td class='base' width='90%'>&nbsp;</td>
+</tr>
+END
+;
+
+$id = 0;
+
+foreach (@vendors)
+{
+	$vendorid = $_;
+
+	unless ($vendorstats{$vendorid . "_files"}) { next; }
+
+	$id++;
+	if ($id % 2) {
+		print "<tr bgcolor=''$color{'color20'}'>\n"; }
+	else {
+		print "<tr bgcolor=''$color{'color22'}'>\n"; }
+
+	print "<td class='base' align='center'><nobr>&nbsp;";
+
+	if ($vendorid =~ /^Adobe$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-adobe.gif' alt='Adobe'}' />&nbsp;</nobr></td>\n";
+		print "<td class='base'>&nbsp;Adobe&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^Microsoft$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-windows.gif' alt='Microsoft'}' />&nbsp;</nobr></td>\n";
+		print "<td class='base'>&nbsp;Microsoft&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^Symantec$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</nobr></td>\n";
+		print "<td class='base'>&nbsp;Symantec&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^Linux$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</nobr></td>\n";
+		print "<td class='base'>&nbsp;Linux&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^TrendMicro$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-trendmicro.gif' alt='Trend Micro'}' />&nbsp;</nobr></td>\n";
+		print "<td class='base'>&nbsp;Trend&nbsp;Micro&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^Apple$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-apple.gif' alt='Apple'}' />&nbsp;</nobr></td>\n";
+		print "<td class='base'>&nbsp;Apple&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^Avast$/i)
+	{
+	 	print "<img src='/images/updbooster/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</nobr></td>\n";
+		print "<td class='base'>&nbsp;Avast&nbsp;</td>\n";
+  } elsif ($vendorid =~ /^Avira$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-avira.gif' alt='Avira' />&nbsp;</td>\n";
+		print "<td class='base'>&nbsp;Avira&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^AVG$/i)
+	{
+		print "<img src='/images/updbooster/updxl-src-avg.gif' alt='AVG' />&nbsp;</td>\n";
+		print "<td class='base'>&nbsp;AVG&nbsp;</td>\n";
+	} elsif ($vendorid =~ /^Ipfire$/i)
+	{
+		print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire' />&nbsp;</td>\n";
+		print "<td class='base'>&nbsp;IPFiew&nbsp;</td>\n";
+	} else
+	{
+		if (-e "/srv/web/ipfire/html/images/updbooster/updxl-src-" . $vendorid . ".gif")
+		{
+			print "<img src='/images/updbooster/updxl-src-" . $vendorid . ".gif' alt='" . ucfirst $vendorid . "' />&nbsp;</nobr></td>\n";
+		} else {
+			print "<img src='/images/updbooster/updxl-src-unknown.gif' alt='" . ucfirst $vendorid . "' />&nbsp;</nobr></td>\n";
+		}
+		print "<td class='base'>&nbsp;" . ucfirst $vendorid . "&nbsp;</td>\n";
+	}
+
+	print "<td class='base' colspan=2 align='right'>";
+	printf "%5d", $vendorstats{$vendorid."_files"};
+	print "&nbsp;</td>\n";
+
+	unless ($vendorstats{$vendorid."_filesize"}) { $vendorstats{$vendorid."_filesize"} = '0'; }
+	1 while $vendorstats{$vendorid."_filesize"} =~ s/^(-?\d+)(\d{3})/$1.$2/;
+	print "<td class='base' colspan=2 align='right'>";
+	printf "%15s", $vendorstats{$vendorid."_filesize"};
+	print "&nbsp;</td>\n";
+
+	unless ($vendorstats{$vendorid."_cachehits"}) { $vendorstats{$vendorid."_cachehits"} = '0'; }
+	1 while $vendorstats{$vendorid."_cachehits"} =~ s/^(-?\d+)(\d{3})/$1.$2/;
+	print "<td class='base' colspan=2 align='right'>";
+	printf "%15s", $vendorstats{$vendorid."_cachehits"};
+	print "&nbsp;</td>\n";
+
+	print "<td class='base' colspan=2 align='right'>";
+	printf "%5d", $vendorstats{$vendorid."_1"};
+	print "&nbsp;&nbsp;</td>\n";
+
+	print "<td class='base' colspan=2 align='right'>";
+	printf "%5d", $vendorstats{$vendorid."_3"};
+	print "&nbsp;&nbsp;</td>\n";
+
+	print "<td class='base' colspan=2 align='right'>";
+	printf "%5d", $vendorstats{$vendorid."_2"};
+	print "&nbsp;&nbsp;</td>\n";
+
+	print "<td class='base' colspan=2 align='right'>";
+	printf "%5d", $vendorstats{$vendorid."_0"};
+	print "&nbsp;&nbsp;</td>\n";
+
+	print "<td class='base'>&nbsp;</td>\n";
+	print "</tr>\n";
+}
+
+print "</table>\n";
+
+print <<END
+<br>
+<table>
+	<tr>
+		<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-led-green.gif' alt='$Lang::tr{'updxlrtr condition ok'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr condition ok'}</td>
+		<td class='base'>&nbsp;&nbsp;&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr condition nosource'}</td>
+		<td class='base'>&nbsp;&nbsp;&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr condition outdated'}</td>
+		<td class='base'>&nbsp;&nbsp;&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition unknown'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr condition unknown'}</td>
+		<td class='base'>&nbsp;&nbsp;&nbsp;</td>
+	</tr>
+</table>
+END
+;
+
+}
+
+&Header::closebox();
+
+}
+
+# =====================================================================================
+#  CACHE MAINTENANCE
+# =====================================================================================
+
+if ($xlratorsettings{'EXTENDED_GUI'} eq 'maintenance')
+{
+
+
+# ----------------------------------------------------
+#    File list dialog
+# ----------------------------------------------------
+
+&Header::openbox('100%', 'left', "$Lang::tr{'updxlrtr cache maintenance'}");
+
+@sources= <$repository/download/*>;
+
+undef @repositoryfiles;
+foreach (@sources)
+{
+	if (-d)
+	{
+		@updatelist = <$_/*>;
+		$vendorid = substr($_,rindex($_,"/")+1);
+		foreach(@updatelist)
+		{
+			$updatefile = substr($_,rindex($_,"/")+1);
+			$updatefile .= ":download/$vendorid/$updatefile";
+			$updatefile = " ".$updatefile;
+			push(@repositoryfiles,$updatefile);
+		}
+	}
+}
+
+undef (@sources);
+foreach (<$repository/*>)
+{
+	if (-d $_)
+{
+		unless (/^$repository\/download$/) { push(@sources,$_); }
+	}
+}
+
+foreach (@sources)
+{
+	@updatelist=<$_/*>;
+	$vendorid = substr($_,rindex($_,"/")+1);
+	foreach(@updatelist)
+	{
+		$uuid = substr($_,rindex($_,"/")+1);
+		if (-e "$_/source.url")
+		{
+			open (FILE,"$_/source.url");
+			$sourceurl=<FILE>;
+			close FILE;
+			chomp($sourceurl);
+			$updatefile = substr($sourceurl,rindex($sourceurl,'/')+1,length($sourceurl));
+			$_ = $updatefile; tr/[A-Z]/[a-z]/;
+			$updatefile = "$_:$vendorid/$uuid/$updatefile";
+			push(@repositoryfiles,$updatefile);
+		}
+	}
+}
+
+@repositoryfiles = sort(@repositoryfiles);
+
+unless (@repositoryfiles) { print "<i>$Lang::tr{'updxlrtr empty repository'}</i>\n<hr size='1'>\n"; }
+
+print <<END
+<table>
+<tr><td class='boldbase'><b>$Lang::tr{'updxlrtr disk usage'}</b></td></tr>
+</table>
+<table cellpadding='3'>
+<tr>
+<td align='left' class='base'><i>$Lang::tr{'updxlrtr cache dir'}</i></td>
+<td align='center' class='base'><i>$Lang::tr{'size'}</i></td>
+<td align='center' class='base'><i>$Lang::tr{'used'}</i></td>
+<td align='center' class='base'><i>$Lang::tr{'free'}</i></td>
+<td align='left' class='base' colspan='2'><i>$Lang::tr{'percentage'}</i></td>
+</tr>
+END
+;
+
+open(DF,"/bin/df -h $repository|");
+@dfdata = <DF>;
+close DF;
+shift(@dfdata);
+chomp(@dfdata);
+$dfstr = join(' ',@dfdata);
+my ($device,$size,$used,$free,$percent,$mount) = split(' ',$dfstr);
+
+print <<END
+<tr>
+<td>[$repository]</td>
+<td align='right'>$size</td>
+<td align='right'>$used</td>
+<td align='right'>$free</td>
+<td>
+END
+;
+&percentbar($percent);
+print <<END
+</td>
+<td align='right'>$percent</td>
+</tr>
+</table>
+END
+;
+
+if (@repositoryfiles)
+{
+	print <<END
+<hr size='1'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>
+<table width='100%'>
 <tr>
 	<td class='base' colspan='3'><input type='submit' name='ACTION' value='$Lang::tr{'updxlrtr purge'}' /> &nbsp;$Lang::tr{'updxlrtr all files'}</td>
 	<td class='base' width='25%'><input type='checkbox' name='REMOVE_OBSOLETE' $checked{'REMOVE_OBSOLETE'}{'on'} />&nbsp;$Lang::tr{'updxlrtr not accessed'}</td>
@@ -303,65 +847,18 @@ print <<END
 </tr>
 <tr>
 	<td class='base' width='25%'><input type='checkbox' name='REMOVE_NOSOURCE' $checked{'REMOVE_NOSOURCE'}{'on'} />&nbsp;$Lang::tr{'updxlrtr marked as'}</td>
-	<td class='base' width='3%'><img src='/images/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' /></td>
+	<td class='base' width='3%'><img src='/images/updbooster/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' /></td>
 	<td class='base' width='17%'>[<i>$Lang::tr{'updxlrtr condition nosource'}</i>]</td>
 	<td class='base' width='25%'><input type='checkbox' name='REMOVE_OUTDATED' $checked{'REMOVE_OUTDATED'}{'on'} />&nbsp;$Lang::tr{'updxlrtr marked as'}</td>
-	<td class='base' width='3%'><img src='/images/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' /></td>
+	<td class='base' width='3%'><img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' /></td>
 	<td class='base' width='27%'>[<i>$Lang::tr{'updxlrtr condition outdated'}</i>]</td>
 </tr>
 </table>
+</form>
 <hr size='1'>
-<table width='100%'>
-<tr>
-	<td>&nbsp;</td>
-	<td align='center' width='45%'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-	<td align='center' width='45%'><input type='submit' name='ACTION' value='$Lang::tr{'updxlrtr save and restart'}' /></td>
-	<td>&nbsp;</td>
-</tr>
+<table>
+<tr><td class='boldbase'><b>$Lang::tr{'updxlrtr current files'}</b></td></tr>
 </table>
-<table width='100%'>
-<tr>
-	<td align='right'>
-	&nbsp;
-	</td>
-</tr>
-</table>
-END
-;
-
-&Header::closebox();
-
-print "</form>\n";
-
-# ----------------------------------------------------
-#    File list dialog
-# ----------------------------------------------------
-
-&Header::openbox('100%', 'left', "$Lang::tr{'updxlrtr current files'}:");
-
-@repositorylist = <$repository/download/*>;
-
-undef @repositoryfiles;
-foreach (@repositorylist)
-{
-	if (!-d)
-	{
-		$updatefile = substr($_,rindex($_,"/")+1);
-		$updatefile = "download/$updatefile";
-		push(@repositoryfiles,$updatefile);
-	}
-}
-
-@repositorylist = <$repository/*>;
-
-foreach (@repositorylist)
-{
-	if (!-d) { push(@repositoryfiles,substr($_,rindex($_,"/")+1)); }
-}
-
-if (@repositoryfiles)
-{
-	print <<END
 <table width='100%'>
 <colgroup span='2' width='2%'></colgroup>
 <colgroup span='1' width='0*'></colgroup>
@@ -374,7 +871,7 @@ if (@repositoryfiles)
 	<td class='base' align='center'><b>$Lang::tr{'updxlrtr filesize'}</b></td>
 	<td class='base' align='center'><b>$Lang::tr{'date'}</b></td>
 	<td class='base' align='center'><img src='/images/reload.gif' alt='$Lang::tr{'updxlrtr last access'}' /></td>
-	<td class='base' align='center'><img src='/images/floppy.gif' alt='$Lang::tr{'updxlrtr last checkup'}' /></td>
+	<td class='base' align='center'><img src='/images/updbooster/updxl-globe.gif' alt='$Lang::tr{'updxlrtr last checkup'}' /></td>
 	<td class='base' align='center'>&nbsp;</td>
 </tr>
 END
@@ -382,11 +879,13 @@ END
 	$id = 0;
 	foreach $updatefile (@repositoryfiles)
 	{
+		$updatefile =~ s/.*://;
+
 		$id++;
 		if ($id % 2) {
-			print "<tr bgcolor='$color{'color20'}'>\n"; }
+			print "<tr bgcolor='$Header::table1colour'>\n"; }
 		else {
-			print "<tr bgcolor='$color{'color22'}'>\n"; }
+			print "<tr bgcolor='$Header::table2colour'>\n"; }
 		$filesize = (-s "$repository/$updatefile");
 		1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
 
@@ -398,95 +897,121 @@ END
 
 		$lastaccess = "n/a";
 		$lastcheck  = "n/a";
-		undef @metadata;
 
-		$shortname = $updatefile;
-		$shortname =~ s/^download\///i;
+		$status = $sfUnknown;
 
-		if (-e "$repository/metadata/$shortname")
+		unless ($updatefile =~ /^download\//)
 		{
-			open (FILE,"$repository/metadata/$shortname");
-			@metadata = <FILE>;
-			close(FILE);
-			chomp @metadata;
+			($vendorid,$uuid,$shortname) = split('/',$updatefile);
 
-			($SECdt,$MINdt,$HOURdt,$DAYdt,$MONTHdt,$YEARdt) = localtime($metadata[-1]);
-			$DAYdt   = sprintf ("%.02d",$DAYdt);
-			$MONTHdt = sprintf ("%.02d",$MONTHdt+1);
-			$YEARdt  = sprintf ("%.04d",$YEARdt+1900);
-			if (($metadata[-1] =~ /^\d+/) && ($metadata[-1] >= 1)) { $lastaccess = $YEARdt."-".$MONTHdt."-".$DAYdt; }
+			if (-e "$repository/$vendorid/$uuid/access.log")
+			{
+				open (FILE,"$repository/$vendorid/$uuid/access.log");
+				@metadata = <FILE>;
+				close(FILE);
+				chomp @metadata;
 
-			($SECdt,$MINdt,$HOURdt,$DAYdt,$MONTHdt,$YEARdt) = localtime($metadata[3]);
-			$DAYdt   = sprintf ("%.02d",$DAYdt);
-			$MONTHdt = sprintf ("%.02d",$MONTHdt+1);
-			$YEARdt  = sprintf ("%.04d",$YEARdt+1900);
-			if (($metadata[3] =~ /^\d+/) && ($metadata[3] >= 1)) { $lastcheck = $YEARdt."-".$MONTHdt."-".$DAYdt; }
+				($SECdt,$MINdt,$HOURdt,$DAYdt,$MONTHdt,$YEARdt) = localtime($metadata[-1]);
+				$DAYdt   = sprintf ("%.02d",$DAYdt);
+				$MONTHdt = sprintf ("%.02d",$MONTHdt+1);
+				$YEARdt  = sprintf ("%.04d",$YEARdt+1900);
+				if (($metadata[-1] =~ /^\d+/) && ($metadata[-1] >= 1)) { $lastaccess = $YEARdt."-".$MONTHdt."-".$DAYdt; }
+			}
+			if (-e "$repository/$vendorid/$uuid/checkup.log")
+			{
+				open (FILE,"$repository/$vendorid/$uuid/checkup.log");
+				@metadata = <FILE>;
+				close(FILE);
+				chomp @metadata;
+
+				($SECdt,$MINdt,$HOURdt,$DAYdt,$MONTHdt,$YEARdt) = localtime($metadata[-1]);
+				$DAYdt   = sprintf ("%.02d",$DAYdt);
+				$MONTHdt = sprintf ("%.02d",$MONTHdt+1);
+				$YEARdt  = sprintf ("%.04d",$YEARdt+1900);
+				if (($metadata[-1] =~ /^\d+/) && ($metadata[-1] >= 1)) { $lastcheck = $YEARdt."-".$MONTHdt."-".$DAYdt; }
+			}
+			if (-e "$repository/$vendorid/$uuid/status")
+			{
+				open (FILE,"$repository/$vendorid/$uuid/status");
+				@metadata = <FILE>;
+				close(FILE);
+				chomp @metadata;
+				$status = $metadata[-1];
+			}
+		} else {
+			($uuid,$vendorid,$shortname) = split('/',$updatefile);
+			$status = $sfOutdated;
 		}
-		
+
 		print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
-		if ($metadata[2] eq $sfNoSource)
+		if ($status == $sfUnknown)
 		{
-			print "<img src='/images/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' />&nbsp;</td>\n";
+			print "<img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition unknown'}' />&nbsp;</td>\n";
 		}
-		if ($metadata[2] eq $sfOk)
+		if ($status == $sfOk)
 		{
-			print "<img src='/images/updxl-led-green.gif' alt='$Lang::tr{'updxlrtr condition ok'}' />&nbsp;</td>\n";
+			print "<img src='/images/updbooster/updxl-led-green.gif' alt='$Lang::tr{'updxlrtr condition ok'}' />&nbsp;</td>\n";
 		}
-		if (($metadata[2] eq $sfOutdated) && (!($updatefile =~ /^download\//i)))
+		if ($status == $sfNoSource)
 		{
-			print "<img src='/images/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' />&nbsp;</td>\n";
+			print "<img src='/images/updbooster/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' />&nbsp;</td>\n";
 		}
-		if (($metadata[2] eq $sfOutdated) && ($updatefile =~ /^download\//i))
+		if (($status == $sfOutdated) && (!($updatefile =~ /^download\//i)))
 		{
-			print "<img src='/images/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' />&nbsp;</td>\n";
+			print "<img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' />&nbsp;</td>\n";
 		}
-		if ($metadata[2] eq '')
+		if (($status == $sfOutdated) && ($updatefile =~ /^download\//i))
 		{
-			print "<img src='/images/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' />&nbsp;</td>\n";
+			print "<img src='/images/updbooster/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' />&nbsp;</td>\n";
 		}
 
 		print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
-		if ($metadata[1] eq 'Adobe')
+		if ($vendorid =~ /^Adobe$/i)
 		{
-			print "<img src='/images/updxl-src-adobe.gif' alt='Adobe' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Microsoft')
+			print "<img src='/images/updbooster/updxl-src-adobe.gif' alt='Adobe'}' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^Microsoft$/i)
 		{
-			print "<img src='/images/updxl-src-windows.gif' alt='Microsoft' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Symantec')
+			print "<img src='/images/updbooster/updxl-src-windows.gif' alt='Microsoft'}' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^Symantec$/i)
 		{
-			print "<img src='/images/updxl-src-symantec.gif' alt='Symantec' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Avira')
+			print "<img src='/images/updbooster/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^Linux$/i)
 		{
-			print "<img src='/images/updxl-src-avira.gif' alt='Avira' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'AVG')
+			print "<img src='/images/updbooster/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^TrendMicro$/i)
 		{
-			print "<img src='/images/updxl-src-avg.gif' alt='AVG' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Avast')
+			print "<img src='/images/updbooster/updxl-src-trendmicro.gif' alt='Trend Micro'}' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^Apple$/i)
 		{
-			print "<img src='/images/updxl-src-avast.gif' alt='Avast' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'IPFire')
+			print "<img src='/images/updbooster/updxl-src-apple.gif' alt='Apple'}' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^Avast$/i)
+		{
+			print "<img src='/images/updbooster/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
+  	} elsif ($vendorid =~ /^Avira$/i)
+		{
+			print "<img src='/images/updbooster/updxl-src-avira.gif' alt='Avira' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^AVG$/i)
+		{
+			print "<img src='/images/updbooster/updxl-src-avg.gif' alt='AVG' />&nbsp;</td>\n";
+		} elsif ($vendorid =~ /^Ipfire$/i)
 		{
 			print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Apple')
+		}
+		else
 		{
-			print "<img src='/images/updxl-src-apple.gif' alt='Apple' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Kaspersky')
-		{
-			print "<img src='/images/updxl-src-kaspersky.gif' alt='Kaspersky' />&nbsp;</td>\n";
-		} elsif ($metadata[1] eq 'Linux')
-		{
-			print "<img src='/images/tux.png' alt='Linux' />&nbsp;</td>\n";
-		} else
-		{
-			print "<img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' />&nbsp;</td>\n";
+			if (-e "/srv/web/ipfire/html/images/updbooster/updxl-src-" . $vendorid . ".gif")
+			{
+				print "<img src='/images/updbooster/updxl-src-" . $vendorid . ".gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+			} else {
+				print "<img src='/images/updbooster/updxl-src-unknown.gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+			}
 		}
 
-		$shortname = $updatefile;
+		$shortname = substr($updatefile,rindex($updatefile,"/")+1);
 		$shortname =~ s/(.*)_[\da-f]*(\.(exe|cab|psf)$)/\1_*\2/i;
-		$shortname =~ s/^download\///i;
 
 print <<END
-		<td class='base' align='left' title='$updatefile'>$shortname</td>
+		<td class='base' align='left' title='cache:/$updatefile'><a href="/updatecache/$updatefile">$shortname</a></td>
 		<td class='base' align='right'  nowrap='nowrap'>&nbsp;$filesize&nbsp;</td>
 		<td class='base' align='center' nowrap='nowrap'>&nbsp;$filedate&nbsp;</td>
 		<td class='base' align='center' nowrap='nowrap'>&nbsp;$lastaccess&nbsp;</td>
@@ -513,7 +1038,7 @@ print <<END
 		<td><img src='/images/reload.gif' alt='$Lang::tr{'updxlrtr last access'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr last access'}</td>
 		<td class='base'>&nbsp;</td>
-		<td><img src='/images/floppy.gif' alt='$Lang::tr{'updxlrtr last checkup'}' /></td>
+		<td><img src='/images/updbooster/updxl-globe.gif' alt='$Lang::tr{'updxlrtr last checkup'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr last checkup'}</td>
 		<td class='base'>&nbsp;</td>
 		<td><img src='/images/delete.gif' alt='$Lang::tr{'updxlrtr remove file'}' /></td>
@@ -523,125 +1048,102 @@ print <<END
 		<td class='base'>&nbsp;</td>
 	</tr>
 	<tr>
-		<td colspan='13'></td>
+		<td colspan='13'><br></td>
 	</tr>
 	<tr>
 		<td class='base'>&nbsp; $Lang::tr{'status'}:</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-led-green.gif' alt='$Lang::tr{'updxlrtr condition ok'}' /></td>
+		<td align='center'><img src='/images/updbooster/updxl-led-green.gif' alt='$Lang::tr{'updxlrtr condition ok'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr condition ok'}</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' /></td>
+		<td align='center'><img src='/images/updbooster/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr condition nosource'}</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' /></td>
+		<td align='center'><img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr condition outdated'}</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' /></td>
+		<td align='center'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+	</tr>
+	<tr>
+		<td class='base'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr condition download'}</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition unknown'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr condition unknown'}</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan='13'>&nbsp;<br></td>
+	</tr>
+	<tr>
+		<td class='base'>&nbsp; $Lang::tr{'updxlrtr source'}:</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-adobe.gif' alt='Adobe' /></td>
+		<td class='base'>Adobe</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-apple.gif' alt='Apple' /></td>
+		<td class='base'>Apple</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-avast.gif' alt='Avast' /></td>
+		<td class='base'>Avast</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-linux.gif' alt='Linux' /></td>
+		<td class='base'>Linux</td>
 	</tr>
 	<tr>
 		<td colspan='13'></td>
 	</tr>
 	<tr>
-		<td class='base'>&nbsp; $Lang::tr{'updxlrtr source'}:</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-adobe.gif' alt='Adobe' /></td>
-		<td class='base'>Adobe</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-windows.gif' alt='Microsoft' /></td>
+		<td align='center'><img src='/images/updbooster/updxl-src-windows.gif' alt='Microsoft' /></td>
 		<td class='base'>Microsoft</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-symantec.gif' alt='Symantec' /></td>
+		<td align='center'><img src='/images/updbooster/updxl-src-symantec.gif' alt='Symantec' /></td>
 		<td class='base'>Symantec</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-avira.gif' alt='Avira' /></td>
-		<td class='base'>Avira</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-trendmicro.gif' alt='Trend Micro' /></td>
+		<td class='base'>Trend Micro</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-avg.gif' alt='AVG' /></td>
-		<td class='base'>AVG</td>
-		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-apple.gif' alt='Apple' /></td>
-		<td class='base'>Apple</td>
-		<td class='base'>&nbsp;</td>
-	</tr>
-	<tr>
-		<td class='base' colspan='2'>&nbsp;</td>
 		<td align='center'><img src='/images/IPFire.png' width='18' height='18' alt='IPFire' /></td>
 		<td class='base'>IPFire</td>
+	</tr>
+	<tr>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/tux.png' alt='Linux' /></td>
-		<td class='base'>Linux</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-avast.gif' alt='Avast' /></td>
-		<td class='base'>Avast</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-avira.gif' alt='Avira' /></td>
+		<td class='base'>Avira</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-kaspersky.gif' alt='Kaspersky' /></td>
-		<td class='base'>Kaspersky</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-avg.gif' alt='AVG' /></td>
+		<td class='base'>AVG</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'><img src='/images/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr unknown'}' /></td>
-		<td class='base'>$Lang::tr{'updxlrtr unknown'}</td>
+		<td align='center'><img src='/images/updbooster/updxl-src-unknown.gif' alt='$Lang::tr{'updxlrtr other'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr other'}</td>
+		<td class='base'>&nbsp;</td>
+		<td align='center'></td>
 		<td class='base'>&nbsp;</td>
 	</tr>
 </table>
 END
 ;
-} else {
 
-	print "<i>$Lang::tr{'updxlrtr empty repository'}</i>\n";
 }
-
-print <<END
-<hr>
-
-<table>
-<tr><td class='boldbase'><b>$Lang::tr{'updxlrtr disk usage'}:</b></td></tr>
-</table>
-
-<table cellpadding='3'>
-END
-;
-open(DF,"/bin/df -h $repository|");
-while(<DF>)
-{
-	if ($_ =~ m/^Filesystem/ )
-	{
-		print <<END
-<tr>
-<td align='left' class='base'><i>$Lang::tr{'updxlrtr cache dir'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'size'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'used'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'free'}</i></td>
-<td align='left' class='base' colspan='2'><i>$Lang::tr{'percentage'}</i></td>
-</tr>
-END
-;
-	}
-	else
-	{
-		my ($device,$size,$used,$free,$percent,$mount) = split;
-		print <<END
-<tr>
-<td>[$repository]</td>
-<td align='right'>$size</td>
-<td align='right'>$used</td>
-<td align='right'>$free</td>
-<td>
-END
-;
-		&percentbar($percent);
-		print <<END
-</td>
-<td align='right'>$percent</td>
-</tr>
-END
-;
-	}
-}
-close DF;
-print "</table>\n";
 
 &Header::closebox();
+
+}
+
+# =====================================================================================
+
+# ----------------------------------------------------
 
 &Header::closebigbox();
 
@@ -677,6 +1179,8 @@ sub savesettings
 	delete($xlratorsettings{'REMOVE_OBSOLETE'});
 	delete($xlratorsettings{'REMOVE_NOSOURCE'});
 	delete($xlratorsettings{'REMOVE_OUTDATED'});
+
+	delete($xlratorsettings{'EXTENDED_GUI'});
 
 	&General::writehash("${General::swroot}/updatexlrator/settings", \%xlratorsettings);
 }

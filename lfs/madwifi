@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = hal-0.10.5.6-r3835-20080801
+VER        = hal-2008-08-15-r3862-20080903
 
 THISAPP    = madwifi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 23018ff3366b427eb9cbe5ac653bc1ab
+$(DL_FILE)_MD5 = 3c9726acd5ffa180fa7b274b625a6082
 
 install : $(TARGET)
 
@@ -81,4 +81,7 @@ ifeq "$(SMP)" ""
 	cp $(DIR_SRC)/config/madwifi/madwifi.conf /etc/
 	ln -s $(DIR_APP) $(DIR_SRC)/madwifi 
 endif
+	# Set Countrycode to germany because some cards
+	# are not detected without cc
+	echo options ath_pci countrycode=276 > /etc/modprobe.d/madwifi
 	@$(POSTBUILD)

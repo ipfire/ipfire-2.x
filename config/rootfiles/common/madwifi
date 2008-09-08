@@ -1,4 +1,5 @@
 etc/madwifi.conf
+etc/modprobe.d/madwifi
 usr/bin/80211debug
 usr/bin/80211stats
 usr/bin/ath_info

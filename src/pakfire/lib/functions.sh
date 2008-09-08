@@ -30,8 +30,8 @@ extract_files() {
 
 remove_files() {
 	echo "Removing files..."
-	for i in $(cat /opt/pakfire/tmp/ROOTFILES); do
-	rm -rfv /${i}
+	for i in $(cat /opt/pakfire/db/rootfiles/${NAME}); do
+	    rm -rfv /${i}
 	done
 	echo "...Finished."
 }

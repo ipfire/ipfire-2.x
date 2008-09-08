@@ -311,6 +311,7 @@ sub selectmirror {
 	#   This will never give up.
 	my $found = 0;
 	my $servers = 0;
+	my $pingdelay = 1;
 	while ($found == 0) {
 		$server = int(rand($scount) + 1);
 		$servers = 0;
@@ -326,6 +327,13 @@ sub selectmirror {
 				if (pinghost("$host")) {
 					$found = 1;
 					return ($proto, $host, $path);
+				}
+				if ($found == 0) {
+					sleep($pingdelay);
+					$pingdelay=$pingdelay*2;
+					if ($pingdelay>1200) {
+						$pingdelay=1200;
+					}
 				}
 			}
 		}

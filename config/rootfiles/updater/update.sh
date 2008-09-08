@@ -50,12 +50,14 @@ echo etc/issue >> /opt/pakfire/tmp/ROOTFILES
 echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
 echo var/spool/cron/root.orig >> /opt/pakfire/tmp/ROOTFILES
 echo etc/udev/rules.d/30-persistent-network.rules >> /opt/pakfire/tmp/ROOTFILES
-echo etc/sysconfig/lm-sensors >> /opt/pakfire/tmp/ROOTFILES
+echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
+echo var/log/rrd >> /opt/pakfire/tmp/ROOTFILES
+echo var/updatexlerator >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
 echo
-echo Update IPfire to $NEWVERSON ...
+echo Update IPfire to $NEWVERSION ...
 #
 # Delete old collectd symlink
 #
@@ -63,7 +65,7 @@ rm -rf /etc/rc.d/rc3.d/S20collectd
 #
 # Delete old lm-sensor modullist...
 #
-rm -rf /etc/sysconfig/lm-sensors
+rm -rf /etc/sysconfig/lm_sensors
 #
 # Remove old kernel, configs, initrd, modules ...
 #
@@ -145,10 +147,15 @@ chown root:cron /var/spool/cron/root.orig
 sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
           /etc/udev/rules.d/30-persistent-network.rules
 #
-# Core 17 begin
+# Core 17
+#
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "/var/ipfire/qos/bin/migrate.pl"
+/var/ipfire/updatexlrator/bin/convert
+#
+# ISDN
+#
 /etc/init.d/mISDN config
-# Core 17 end
 #
 # Remove obsolete packages, update the lists and do upgrade
 #

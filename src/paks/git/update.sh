@@ -22,4 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-rm -rf /usr/bin/git-* || true
+./uninstall.sh
+./install.sh

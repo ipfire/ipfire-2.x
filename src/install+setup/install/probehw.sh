@@ -55,7 +55,7 @@ for i in a b c d e f g; do
 	fi
 done
 
-for MODULE in $(ls /lib/modules/*/kernel/drivers/scsi); do
+for MODULE in $(ls /lib/modules/*/kernel/drivers/ata && ls /lib/modules/*/kernel/drivers/scsi); do
 	MODULE=`basename $MODULE | awk -F. '{ print $1 }'`
 	
 	echo -n "Probing for $MODULE"

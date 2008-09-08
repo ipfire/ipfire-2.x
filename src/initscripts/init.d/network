@@ -117,6 +117,9 @@ case "${DO}" in
 				/etc/rc.d/init.d/networking/red stop
 			fi
 		fi
+
+		# Stopping dnsmasq if network all networks shutdown
+		[ "${ALL}" == "1" ] && /etc/rc.d/init.d/dnsmasq stop
 		;;
 
 	restart)

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -61,7 +61,7 @@ $wlanapsettings{'SSID'} = 'IPFire';
 $wlanapsettings{'HIDESSID'} = 'off';
 $wlanapsettings{'ENC'} = 'wpa2';               # none / wpa1 /wpa2
 $wlanapsettings{'TXPOWER'} = 'auto';
-$wlanapsettings{'CHAN'} = '05';
+$wlanapsettings{'CHANNEL'} = '05';
 $wlanapsettings{'PWD'} = 'IPFire-2.x';
 $wlanapsettings{'SYSLOGLEVEL'} = '0';
 $wlanapsettings{'DEBUG'} = '4';
@@ -76,7 +76,7 @@ $cgiparams{'SSID'} = 'IPFire';
 $cgiparams{'HIDESSID'} = 'off';
 $cgiparams{'ENC'} = 'wpa2';               # none / wep / wpa / wep+wpa
 $cgiparams{'TXPOWER'} = 'auto';
-$cgiparams{'CHAN'} = '05';
+$cgiparams{'CHANNEL'} = '05';
 $cgiparams{'PWD'} = 'IPFire-2.x';
 $cgiparams{'SYSLOGLEVEL'} = '0';
 $cgiparams{'DEBUG'} = '4';
@@ -89,7 +89,7 @@ if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 	$wlanapsettings{'SSID'}       = $cgiparams{'SSID'};
 	$wlanapsettings{'HIDESSID'}   = $cgiparams{'HIDESSID'};
 	$wlanapsettings{'ENC'}        = $cgiparams{'ENC'};
-	$wlanapsettings{'CHAN'}       = $cgiparams{'CHAN'};
+	$wlanapsettings{'CHANNEL'}       = $cgiparams{'CHANNEL'};
 	$wlanapsettings{'TXPOWER'}    = $cgiparams{'TXPOWER'};
 
 	$wlanapsettings{'PWD'}        = $cgiparams{'PWD'};
@@ -177,7 +177,7 @@ $selected{'ENC'}{'none'} = '';
 $selected{'ENC'}{'wpa1'} = '';
 $selected{'ENC'}{'wpa2'} = '';
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
-$selected{'CHAN'}{$wlanapsettings{'CHAN'}} = "selected='selected'";
+$selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
 
 my @channellist_cmd = `iwlist $netsettings{'BLUE_DEV'} channel`;
@@ -261,11 +261,11 @@ print <<END
 	</select>
 </td></tr>
 <tr><td width='25%' class='base'>Channel:&nbsp;</td><td class='base' colspan='3'>
-	<select name='CHAN'>
+	<select name='CHANNEL'>
 END
 ;
 foreach $channel (@channellist){
-	print "<option $selected{'CHAN'}{$channel}>$channel</option>";
+	print "<option $selected{'CHANNEL'}{$channel}>$channel</option>";
 }
 
 print <<END

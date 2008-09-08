@@ -3,10 +3,6 @@ etc/ppp/ip-up
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
 usr/sbin/redirect_wrapper
-bin/ntfs-3g
-lib/libntfs-3g.so
-lib/libntfs-3g.so.34
-lib/libntfs-3g.so.34.0.0
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi

@@ -33,14 +33,6 @@ my $heartbeat=$STEP*2;
 my @rrd_data_sources = 
     ("-s", $STEP,
      "DS:bytes:COUNTER:$heartbeat:0:U",
-     "DS:bits:COUNTER:$heartbeat:0:U",
-     "DS:pkts:COUNTER:$heartbeat:0:U",
-     "DS:dropped:COUNTER:$heartbeat:0:U",
-     "DS:overlimits:COUNTER:$heartbeat:0:U",
-     "DS:lended:COUNTER:$heartbeat:0:U",
-     "DS:borrowed:COUNTER:$heartbeat:0:U",
-     "DS:giants:COUNTER:$heartbeat:0:U",
-     "DS:backlog:GAUGE:$heartbeat:0:U",
      "RRA:AVERAGE:0.5:1:43200",
      "RRA:AVERAGE:0.5:7:8640",
      "RRA:AVERAGE:0.5:31:8640",
@@ -100,12 +92,6 @@ sub format_class_data($) {
 sub update_rrds {
 
     my $res=0;
-
-    my @test = keys %classes_data;
-    if ( $#test <= 0) {
-	print  time, " [update_rrds] WARNING: classes_data empty!\n";
-	return "classes_data empty";
-    }
 
     # Find the class_device (keys) in %classes_data
     for my $class_device ( keys %classes_data ) {
