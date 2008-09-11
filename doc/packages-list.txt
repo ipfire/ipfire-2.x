@@ -35,6 +35,7 @@
 * alsa-lib-1.0.17
 * alsa-lib-1.0.17-kmod
 * amavisd-new-2.5.2
+* apcupsd-3.14.4
 * applejuice-0.30
 * arping-2.05
 * arptables-v0.0.3-3
