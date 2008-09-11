@@ -1,0 +1,53 @@
+--- a/drivers/pci/quirks.c	2008-09-08 20:33:16.000000000 +0200
++++ b/drivers/pci/quirks.c	2008-09-11 08:52:32.000000000 +0200
+@@ -1381,6 +1381,50 @@
+ 			 PCI_DEVICE_ID_TOSHIBA_TC86C001_IDE,
+ 			 quirk_tc86c001_ide);
+ 
++/*
++ * The Twinhad H12Y assign mmio (0xffbfe800-0xffbfecff)
++ * resources that seems to be used by an unknown device.
++ * This quirk reserve more than really used mmio space to
++ * force change the mmio area of the cardreader and the network chip.
++ * See http://bugzilla.kerbel.org/show_bug.cgi?id=10231
++ * and http://bugzilla.kerbel.org/show_bug.cgi?id=9905
++ * for more details
++ */
++static void __init quirk_h12y_1_mmio(struct pci_dev *dev)
++{
++/*
++ * Network Device: Realtek 8139C of Twinhead H12Y
++ * PCI VENDOR: 0x10EC PCI ID:0x8139
++ * SUB VENDOR: 0x14FF SUB ID:0xA003
++ */
++	struct resource *r = &dev->resource[1];
++	if ((dev->subsystem_vendor) == 0x14FF &&
++	    (dev->subsystem_device) == 0xA003) {
++		r->start = 0;
++		r->end = 0x03ff;
++	}	
++}
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_REALTEK,
++			PCI_DEVICE_ID_REALTEK_8139,
++			quirk_h12y_1_mmio);
++
++static void __init quirk_h12y_2_mmio(struct pci_dev *dev)
++{
++/*
++ * SD-Cardreader Device: O2 7120 of Twinhead H12Y
++ * PCI VENDOR: 0x1217 PCI ID:0x7120
++ * SUB VENDOR: 0x14FF SUB ID:0xA003
++ */
++	struct resource *r = &dev->resource[0];
++	if ((dev->subsystem_vendor) == 0x14FF &&
++	    (dev->subsystem_device) == 0xA003) {
++		r->start = 0;
++		r->end = 0x03ff;
++	}	
++}
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_O2,0x7120,quirk_h12y_2_mmio);
++
++
+ static void __devinit quirk_netmos(struct pci_dev *dev)
+ {
+ 	unsigned int num_parallel = (dev->subsystem_device & 0xf0) >> 4;
