@@ -1,4 +1,4 @@
-lib/klibc-OAjdpFbBkEGH4SoDC_yBoygNI8g.so
+lib/klibc-ZO-RpWWd1KanShWf2YpByFrlJSI.so
 usr/bin/klcc
 #usr/lib/klibc
 #usr/lib/klibc/bin
@@ -11,7 +11,7 @@ usr/lib/klibc/bin/fstype
 usr/lib/klibc/bin/gunzip
 usr/lib/klibc/bin/gzip
 usr/lib/klibc/bin/halt
-usr/lib/klibc/bin/insmod
+#usr/lib/klibc/bin/insmod
 usr/lib/klibc/bin/ipconfig
 usr/lib/klibc/bin/kill
 usr/lib/klibc/bin/kinit
@@ -1566,7 +1566,7 @@ usr/lib/klibc/bin/zcat
 #usr/lib/klibc/lib
 #usr/lib/klibc/lib/crt0.o
 #usr/lib/klibc/lib/interp.o
-usr/lib/klibc/lib/klibc-OAjdpFbBkEGH4SoDC_yBoygNI8g.so
+usr/lib/klibc/lib/klibc-ZO-RpWWd1KanShWf2YpByFrlJSI.so
 #usr/lib/klibc/lib/libc.a
 usr/lib/klibc/lib/libc.so
 #usr/man/man1/klcc.1

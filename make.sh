@@ -336,8 +336,6 @@ buildipfire() {
 #  ipfiremake linux			SMP=1
 #  ipfiremake linux-fusion		SMP=1
 #  ipfiremake ipp2p			SMP=1
-#  ipfiremake r8169			SMP=1
-#  ipfiremake r8168			SMP=1
 #  ipfiremake atl2			SMP=1
 #  ipfiremake kqemu			SMP=1
 #  ipfiremake v4l-dvb			SMP=1
@@ -346,10 +344,8 @@ buildipfire() {
 #  ipfiremake sane		KMOD=1	SMP=1
 #  ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
-  ipfiremake linux-fusion
+#  ipfiremake linux-fusion
   ipfiremake ipp2p
-  ipfiremake r8169
-  ipfiremake r8168
   ipfiremake atl2
   ipfiremake kqemu
   ipfiremake v4l-dvb
@@ -420,7 +416,7 @@ buildipfire() {
   ipfiremake whatmask
   ipfiremake iptables
   ipfiremake libupnp
-  ipfiremake ipp2p			IPT=1
+#  ipfiremake ipp2p			IPT=1
   ipfiremake linux-igd
   ipfiremake ipaddr
   ipfiremake iptstate
@@ -564,7 +560,6 @@ buildipfire() {
   ipfiremake tunctl
   ipfiremake nagios
   ipfiremake ebtables
-  ipfiremake arptables
   ipfiremake fontconfig
   ipfiremake freefont
   ipfiremake directfb

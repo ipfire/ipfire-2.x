@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.5
+VER        = 1.5.14
 
 THISAPP    = klibc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -42,7 +42,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 klibc-extras-2.2.tar.gz = $(DL_FROM)/klibc-extras-2.2.tar.gz
 
-$(DL_FILE)_MD5 = d55ce89c0656a7d6896ec0b2af07b5dc
+$(DL_FILE)_MD5 = 030d978a7f16800e8ccae12d6fb5e7ba
 klibc-extras-2.2.tar.gz_MD5 = 7e5042978531048c369f59ca1a13055b
 
 install : $(TARGET)
@@ -72,7 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/klibc* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE) && \
+	@rm -rf $(DIR_APP) $(DIR_SRC)/klibc* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE) && \
 		tar zxf $(DIR_DL)/klibc-extras-2.2.tar.gz
 	cd $(DIR_APP) && ln -fs ../linux linux
 	cd $(DIR_SRC)/klibc-extras && sed -i "s|^INSTALL = .*|INSTALL = /usr/bin/install -c -m 755|g" Makefile

@@ -1,5 +1,0 @@
-#etc/rc.d/init.d/arptables
-#usr/local/man/man8/arptables.8
-usr/local/sbin/arptables
-usr/local/sbin/arptables-restore
-usr/local/sbin/arptables-save
