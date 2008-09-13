@@ -410,6 +410,7 @@ sub dblist {
 		foreach $file (@files) {
 			next if ( $file eq "." );
 			next if ( $file eq ".." );
+			next if ( $file =~ /^old/ );
 			open(FILE, "<$Conf::dbdir/meta/$file");
 			@meta = <FILE>;
 			close(FILE);
