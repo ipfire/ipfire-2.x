@@ -15,3 +15,4 @@ usr/sbin/updxlrator
 srv/web/ipfire/cgi-bin/qos.cgi
 usr/local/bin/qosd
 var/ipfire/qos/bin
+var/ipfire/langs
