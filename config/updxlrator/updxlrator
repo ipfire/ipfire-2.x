@@ -44,7 +44,7 @@ if (-e "$swroot/updatexlrator/settings")
 	if ($xlratorsettings{'ENABLE_LOG'} eq 'on') { $logging=1; };
 	if ($xlratorsettings{'PASSIVE_MODE'} eq 'on') { $passive_mode=1; };
 	$maxusage=$xlratorsettings{'MAX_DISK_USAGE'};
-	if ($xlratorsettings{'LOW_DOWNLOAD_PRIORITY'} eq 'on') { $nice='/usr/bin/nice --adjustment=15 '; };
+	if ($xlratorsettings{'LOW_DOWNLOAD_PRIORITY'} eq 'on') { $nice='/bin/nice --adjustment=15 '; };
 }
 if (!$maxusage) { $maxusage=75; };
 
