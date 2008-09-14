@@ -16,7 +16,6 @@ my $swroot="/var/ipfire";
 my $updcachedir="/var/updatecache";
 my $apphome="/var/ipfire/updatexlrator";
 my $logfile="/var/log/updatexlrator/cache.log";
-my $wget="$apphome/bin/wget";
 my $debug=(-e "$apphome/debug");
 my $http_port='81';
 my %netsettings=();
@@ -342,7 +341,7 @@ sub check_cache
 	if ($proxysettings{'UPSTREAM_PROXY'}) { &debuglog("Using upstream proxy $proxysettings{'UPSTREAM_PROXY'}"); }
 
 	$ENV{'http_proxy'} = $proxysettings{'UPSTREAM_PROXY'};
-	@http_header = `$wget $login --user-agent="$useragent" --spider -S $sourceurl 2>&1`;
+	@http_header = `wget $login --user-agent="$useragent" --spider -S $sourceurl 2>&1`;
 	$ENV{'http_proxy'} = '';
 
 	foreach (@http_header) 
