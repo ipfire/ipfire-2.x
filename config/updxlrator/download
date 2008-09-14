@@ -18,7 +18,6 @@ my $repository='/var/updatecache';
 my $login='';
 my $dlrate='';
 my $uuid='';
-my $wget="$apphome/bin/wget";
 my $useragent="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)";
 my %xlratorsettings=();
 my %proxysettings=();
@@ -44,8 +43,9 @@ $vendorid =~ tr/A-Z/a-z/;
 
 unless (-d "$repository/download/$vendorid")
 {
-	system("mkdir $repository/download/$vendorid");
-	system("$apphome/bin/setperms download/$vendorid");
+	system("mkdir -p $repository/download/$vendorid");
+	system("chown -R nobody.squid $repository/download/$vendorid");
+	system("chmod 775 $repository/download/$vendorid");
 }
 
 exit if (-e "$repository/download/$vendorid/$updatefile");
@@ -94,7 +94,7 @@ if ($xlratorsettings{'MAX_DOWNLOAD_RATE'} eq '')
 }
 
 $ENV{'http_proxy'} = $proxysettings{'UPSTREAM_PROXY'};
-@http_header = `$wget $login --user-agent="$useragent" --spider -S $sourceurl 2>&1`;
+@http_header = `wget $login --user-agent="$useragent" --spider -S $sourceurl 2>&1`;
 $ENV{'http_proxy'} = '';
 
 foreach (@http_header)
@@ -106,7 +106,7 @@ foreach (@http_header)
 
 $ENV{'http_proxy'} = $proxysettings{'UPSTREAM_PROXY'};
 unlink "$repository/download/$vendorid/$updatefile";
-$_ = system("$wget $login $dlrate --user-agent=\"$useragent\" -q -nc -P $repository/download/$vendorid $sourceurl");
+$_ = system("wget $login $dlrate --user-agent=\"$useragent\" -q -nc -P $repository/download/$vendorid $sourceurl");
 $ENV{'http_proxy'} = '';
 
 if ($_ == 0)
@@ -115,14 +115,16 @@ if ($_ == 0)
 
 	unless (-d "$repository/$vendorid")
 	{
-		system("mkdir $repository/$vendorid");
-		system("$apphome/bin/setperms $vendorid");
+		system("mkdir -p $repository/$vendorid");
+		system("chown -R nobody.squid $repository/$vendorid");
+		system("chmod 775 $repository/$vendorid");
 	}
 
 	unless (-d "$repository/$vendorid/$uuid")
 	{
-		system("mkdir $repository/$vendorid/$uuid");
-		system("$apphome/bin/setperms $vendorid/$uuid");
+		system("mkdir -p $repository/$vendorid/$uuid");
+		system("chown -R nobody.squid $repository/$vendorid/$uuid");
+		system("chmod 775 $repository/$vendorid/$uuid");
 	}
 
 	&writelog("Moving file to the cache directory: $vendorid/$uuid");
@@ -137,7 +139,8 @@ if ($_ == 0)
 	&setcachestatus("$repository/$vendorid/$uuid/checkup.log",time);
 	&setcachestatus("$repository/$vendorid/$uuid/access.log",time);
 
-	system("$apphome/bin/setperms $vendorid/$uuid/*");
+	system("chown -R nobody.squid $repository/$vendorid/$uuid/*");
+	system("chmod 775 $repository/$vendorid/$uuid/*");
 
 } else {
 	&writelog("Download finished with result code: ERROR");
@@ -180,7 +183,7 @@ sub readhash
 sub writelog
 {
 	if ($logging)
-	{ 
+	{
         	open (LOGFILE,">>$logfile");
 	        my @now = localtime(time);
         	printf LOGFILE "%04d-%02d-%02d %02d:%02d:%02d [%d] %s\n",$now[5]+1900,$now[4]+1,$now[3],$now[2],$now[1],$now[0],$$,$_[0];

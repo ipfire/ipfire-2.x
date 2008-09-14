@@ -361,7 +361,7 @@ sub check_cache
 		&debuglog("File exists in cache and is up to date");
 		&debuglog("Retrieving file from cache ($updsource)");
 		&setcachestatus("$updcachedir/$vendorid/$uuid/access.log",time);
-		system("$apphome/bin/setperms $vendorid/$uuid/access.log");
+		system("chown nobody.squid $vendorid/$uuid/access.log");
 		$cacheurl="http://$netsettings{'GREEN_ADDRESS'}:$http_port/updatecache/$vendorid/$uuid/$updfile";
 	}
 		else
