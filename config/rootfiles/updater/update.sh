@@ -26,7 +26,7 @@
 #
 OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
 NEWVERSION="2.3"
-KVER="2.6.23.17"
+KVER="2.6.25.17"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
@@ -53,6 +53,7 @@ echo etc/udev/rules.d/30-persistent-network.rules >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
 echo var/log/rrd >> /opt/pakfire/tmp/ROOTFILES
 echo var/updatexlerator >> /opt/pakfire/tmp/ROOTFILES
+echo lib/iptables >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
@@ -66,6 +67,10 @@ rm -rf /etc/rc.d/rc3.d/S20collectd
 # Delete old lm-sensor modullist...
 #
 rm -rf /etc/sysconfig/lm_sensors
+#
+# Delete old iptables libs...
+#
+rm -rf /lib/iptables
 #
 # Remove old kernel, configs, initrd, modules ...
 #

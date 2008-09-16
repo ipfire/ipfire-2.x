@@ -68,7 +68,7 @@ ifeq "$(SMP)" "1"
 else
 ifeq "$(IPT)" "1"
 	cd $(DIR_APP) && make libipt_ipp2p.so
-	cp -f $(DIR_APP)/libipt_ipp2p.so /lib/iptables
+	cp -f $(DIR_APP)/libipt_ipp2p.so /lib/xtables
 else
 	cd $(DIR_APP) && make ipt_ipp2p.ko
 	cp -f $(DIR_APP)/ipt_ipp2p.ko /lib/modules/$(KVER)-ipfire/kernel/net/ipv4/netfilter
