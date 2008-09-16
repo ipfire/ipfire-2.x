@@ -119,6 +119,9 @@ case "${1}" in
 			boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."		
 			echo -n "${DEVICE}" > /var/ipfire/red/iface
 
+			## Create & Enable vnstat
+			/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
+
 			# Test to see if there is a stale pid file
 			if [ -f "$PIDFILE" ]; then
 				ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
@@ -373,7 +376,10 @@ case "${1}" in
 				echo_warning
 				exit 1
 			fi
-		
+			
+			## Disable vnstat collection
+			/usr/bin/vnstat -u -i ${DEVICE} -r --disable > /dev/null 2>&1
+
 		elif [ "$TYPE" == "PPPOE" ]; then
 			boot_mesg "Bringing down the PPP interface ..."
 			## Disable vnstat collection
