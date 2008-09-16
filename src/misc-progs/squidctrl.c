@@ -32,7 +32,6 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "flush") == 0) {
 		safe_system("/etc/rc.d/init.d/squid flush");
 	} else if (strcmp(argv[1], "enable") == 0) {
-		safe_system("ln -fs ../init.d/squid /etc/rc.d/rc3.d/S99squid >/dev/null 2>&1");
 		safe_system("ln -fs ../init.d/squid /etc/rc.d/rc0.d/K00squid >/dev/null 2>&1");
 		safe_system("ln -fs ../init.d/squid /etc/rc.d/rc6.d/K00squid >/dev/null 2>&1");
 	} else if (strcmp(argv[1], "disable") == 0) {

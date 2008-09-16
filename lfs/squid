@@ -106,9 +106,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_SRC)/config/updxlrator/convert /var/ipfire/updatexlrator/bin/convert
 	cp -f $(DIR_SRC)/config/updxlrator/lscache /var/ipfire/updatexlrator/bin/lscache
 
-#	this binary is incompatible with 
-#	cp -f $(DIR_SRC)/config/updxlrator/setperms /var/ipfire/updatexlrator/bin/setperms
-
 	-mkdir -p /usr/lib/squid/errors.ipfire
 	cp -fr $(DIR_SRC)/config/proxy/errors.ipfire/* /usr/lib/squid/errors.ipfire/
 	chmod 755 /usr/sbin/updxlrator /var/ipfire/updatexlrator/bin/checkup \

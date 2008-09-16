@@ -18,6 +18,7 @@ etc/udev/rules.d/55-scsi-cdrom.rules
 etc/linuxigd/gatedesc.xml
 usr/local/bin/getiptstate
 usr/local/bin/makegraphs
+usr/local/bin/squidctrl
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
