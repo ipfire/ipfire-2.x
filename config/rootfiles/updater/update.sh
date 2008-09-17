@@ -64,10 +64,6 @@ echo Update IPfire to $NEWVERSION ...
 #
 rm -rf /etc/rc.d/rc3.d/S20collectd
 #
-# Delete old lm-sensor modullist...
-#
-rm -rf /etc/sysconfig/lm_sensors
-#
 # Delete old iptables libs...
 #
 rm -rf /lib/iptables
@@ -157,6 +153,10 @@ sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 perl /var/ipfire/qos/bin/migrate.pl
 /var/ipfire/updatexlrator/bin/convert
+#
+# Delete old lm-sensor modullist...
+#
+rm -rf /etc/sysconfig/lm_sensors
 #
 # ISDN
 #
