@@ -122,6 +122,6 @@ system("/etc/init.d/collectd start");
 system("/usr/local/bin/qosctrl start");
 
 # Finaly we will delete unneeded evt files and touch the migration file
-system("rf $rrddir/*.evt");
+system("rm -f $rrddir/*.evt");
 system("touch $rrddir/migrated");
 exit 0;
