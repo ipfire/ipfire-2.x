@@ -1,5 +1,4 @@
 opt/pakfire/db/core/mine
-etc/mkinitcpio.conf
 etc/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
