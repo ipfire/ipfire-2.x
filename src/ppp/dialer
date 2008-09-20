@@ -10,7 +10,7 @@
 #
 
 use strict;
-require 'CONFIG_ROOT/general-functions.pl';
+require '/var/ipfire/general-functions.pl';
 
 my %pppsettings;
 my %modemsettings;
@@ -56,6 +56,22 @@ if ($pppsettings{'SENDCR'} eq 'off') {
 else {
 	$btfudge = ''; }
 
+
+my ($add_at1, $add_at2, $add_at3);
+
+if ($pppsettings{'ADD_AT1'} eq '') {
+	$add_at1 = 'AT'; }
+else {
+	$add_at1 = $pppsettings{'ADD_AT1'}; }
+if ($pppsettings{'ADD_AT2'} eq '') {
+	$add_at2 = 'AT'; }
+else {
+	$add_at2 = $pppsettings{'ADD_AT2'}; }
+if ($pppsettings{'ADD_AT3'} eq '') {
+	$add_at3 = 'AT'; }
+else {
+	$add_at3 = $pppsettings{'ADD_AT3'}; }
+
 unlink('/var/log/connect.log');
 
 my $com = "/usr/sbin/chat -v -r /var/log/connect.log			\
@@ -68,6 +84,9 @@ my $com = "/usr/sbin/chat -v -r /var/log/connect.log			\
 	''			'$modemsettings{'INIT'}'		\
 	OK			'$modemsettings{'HANGUP'}'		\
 	OK			'$speaker'				\
+	OK			'$add_at1'				\
+	OK			'$add_at2'				\
+	OK			'$add_at3'				\
 	TIMEOUT			'$modemsettings{'TIMEOUT'}'		\
 	OK			'${dial}${telephone}'			\
 	CONNECT			'${btfudge}'				";

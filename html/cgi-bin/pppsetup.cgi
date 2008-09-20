@@ -617,6 +617,18 @@ END
         </select></td>
 </tr>
 <tr>
+        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;1&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'><input type='text' name='ADD_AT1' value='$pppsettings{'ADD_AT1'}'></td>
+</tr>
+<tr>
+        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;2&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'><input type='text' name='ADD_AT2' value='$pppsettings{'ADD_AT2'}'></td>
+</tr>
+<tr>
+        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;3&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'><input type='text' name='ADD_AT3' value='$pppsettings{'ADD_AT3'}'></td>
+</tr>
+<tr>
   <td colspan='3' width='75%'>$Lang::tr{'send cr'}</td>
         <td width='50%'><input type='checkbox' name='SENDCR' $checked{'SENDCR'}{'on'} /></td>
 </tr>

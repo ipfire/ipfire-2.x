@@ -4,6 +4,7 @@
 'Act as' => 'Act as:',
 'Add Port Rule' => 'Add port rule',
 'Add Rule' => 'Add Rule',
+'optional at cmd' => 'optional AT command',
 'Choose Rule' => 'Choose <u>one</u> of the following rules.',
 'Class' => 'Class',
 'Class was deleted' => 'with potential Subclasses was deleted',

@@ -4,6 +4,7 @@
 'Act as' => 'Konfiguriert als',
 'Add Port Rule' => 'Port Regel hinzufügen',
 'Add Rule' => 'Regel hinzufügen',
+'optional at cmd' => 'zusätzlicher Modembefehl',
 'Choose Rule' => 'Waehlen sie <u>eine</u> der untenstehenden Regeln aus.',
 'Class' => 'Klasse',
 'Class was deleted' => 'wurde mit eventuell vorhandenen Unterklassen geloescht',
