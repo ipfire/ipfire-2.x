@@ -544,9 +544,9 @@ print <<END
     <input type='checkbox' name='ENABLE_${itf}' $checked{'ENABLE'}{'on'} /></td>
     <td width='25%' class='base'>$Lang::tr{'ip address'}<br />$Lang::tr{'netmask'}:</td><td><b>$netsettings{"${itf}_ADDRESS"}<br />$netsettings{"${itf}_NETMASK"}</b></td>
 </tr><tr>
-    <td width='25%' class='base'>$Lang::tr{'start address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td width='25%' class='base'>$Lang::tr{'start address'}</td>
     <td width='25%'><input type='text' name='START_ADDR_${itf}' value='$dhcpsettings{"START_ADDR_${itf}"}' /></td>
-    <td width='25%' class='base'>$Lang::tr{'end address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td width='25%' class='base'>$Lang::tr{'end address'}</td>
     <td width='25%'><input type='text' name='END_ADDR_${itf}' value='$dhcpsettings{"END_ADDR_${itf}"}' /></td>
 </tr><tr>
     <td class='base'>$Lang::tr{'default lease time'}</td>
