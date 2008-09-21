@@ -748,6 +748,10 @@ build)
 
 	beautify build_stage "Building packages"
 	buildpackages
+	
+	beautify build_stage "Checking Logfiles for new Files"
+	tools/checknewlog.pl
+	
 	beautify build_end
 	;;
 shell)

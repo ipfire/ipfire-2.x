@@ -63,7 +63,7 @@
 * centerim-4.22.1
 * clamav-0.94
 * cmake-2.4.8
-* collectd-4.4.2
+* collectd-4.5.0
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-004

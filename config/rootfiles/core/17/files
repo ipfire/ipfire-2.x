@@ -16,3 +16,9 @@ srv/web/ipfire/cgi-bin/qos.cgi
 usr/local/bin/qosd
 var/ipfire/qos/bin
 var/ipfire/langs
+usr/lib/collectd/
+var/lib/collectd/
+usr/sbin/collectd
+usr/sbin/collectdmon
+usr/share/collectd
+usr/share/collectd/postgresql_default.conf

@@ -3,6 +3,7 @@ etc/squidGuard/squidGuard.conf
 srv/web/ipfire/html/repository
 usr/bin/squidGuard
 usr/sbin/redirect_wrapper
+#usr/squidGuard
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
 var/ipfire/urlfilter/autoupdate/cron.daily
 var/ipfire/urlfilter/autoupdate/cron.monthly
@@ -10,7 +11,6 @@ var/ipfire/urlfilter/autoupdate/cron.weekly
 var/ipfire/urlfilter/bin/autoupdate.pl
 var/ipfire/urlfilter/bin/prebuild.pl
 var/ipfire/urlfilter/blacklists
-var/ipfire/urlfilter/settings
 #var/ipfire/urlfilter/blacklists/README
 #var/ipfire/urlfilter/blacklists/ads
 #var/ipfire/urlfilter/blacklists/ads/domains
@@ -74,7 +74,9 @@ var/ipfire/urlfilter/settings
 #var/ipfire/urlfilter/blacklists/warez/domains.db
 #var/ipfire/urlfilter/blacklists/warez/urls
 #var/ipfire/urlfilter/blacklists/warez/urls.db
+var/ipfire/urlfilter/settings
 var/ipfire/urlfilter/squidGuard.conf
 var/ipfire/urlfilter/version
+var/lib/squidguard
 #var/log/squidGuard
 var/log/squidGuard/squidGuard.log
