@@ -344,9 +344,11 @@ buildipfire() {
 #  ipfiremake sane		KMOD=1	SMP=1
 #  ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
-#  ipfiremake linux-fusion
+  ipfiremake linux-fusion
   ipfiremake ipp2p
   ipfiremake atl2
+  ipfiremake r8168
+  ipfiremake r8169
   ipfiremake kqemu
   ipfiremake v4l-dvb
   ipfiremake madwifi
@@ -755,8 +757,9 @@ build)
 	buildpackages
 	
 	beautify build_stage "Checking Logfiles for new Files"
+	cd ..
 	tools/checknewlog.pl
-	
+
 	beautify build_end
 	;;
 shell)
