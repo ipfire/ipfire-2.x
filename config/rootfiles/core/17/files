@@ -6,8 +6,8 @@ usr/lib/squid/
 usr/sbin/squid
 bin/ntfs-3g
 lib/libntfs-3g.so
-lib/libntfs-3g.so.36
-lib/libntfs-3g.so.36.0.0
+lib/libntfs-3g.so.38
+lib/libntfs-3g.so.38.0.0
 srv/web/ipfire/html/images/updbooster/
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 var/ipfire/updatexlrator/bin/
