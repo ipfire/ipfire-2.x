@@ -84,6 +84,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -vf $(DIR_SRC)/netfilter-layer7-v2.20/iptables-1.4.1.1-for-kernel-2.6.20forward/* \
 	                 ./extensions/
 
+	# ipp2p 0.8.2-pomng
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.1.1-ipp2p-0.8.2-pomng.patch
+
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.1-imq.diff
 	chmod +x $(DIR_APP)/extensions/.IMQ-test*
 

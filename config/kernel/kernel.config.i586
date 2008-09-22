@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.23.17-ipfire
-# Mon Sep 22 16:12:54 2008
+# Linux kernel version: 2.6.23.17
+# Mon Sep 22 22:16:13 2008
 #
 CONFIG_X86_32=y
 CONFIG_GENERIC_TIME=y
@@ -563,6 +563,7 @@ CONFIG_IP_NF_RAW=m
 CONFIG_IP_NF_ARPTABLES=m
 CONFIG_IP_NF_ARPFILTER=m
 CONFIG_IP_NF_ARP_MANGLE=m
+CONFIG_IP_NF_MATCH_IPP2P=m
 
 #
 # Bridge: Netfilter Configuration

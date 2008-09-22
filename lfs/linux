@@ -117,6 +117,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# ip_conntrack permissions from 440 to 444
 #	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 	
+	# ipp2p 0.8.2-pomng
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.23.17-ipp2p-0.8.2-pomng.patch
+
 	# Layer7-patch
 	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.20
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.20.tar.gz

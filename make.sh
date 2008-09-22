@@ -345,7 +345,6 @@ buildipfire() {
 #  ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux
   ipfiremake linux-fusion
-  ipfiremake ipp2p
   ipfiremake atl2
   ipfiremake r8168
   ipfiremake r8169
@@ -418,7 +417,6 @@ buildipfire() {
   ipfiremake whatmask
   ipfiremake iptables
   ipfiremake libupnp
-#  ipfiremake ipp2p			IPT=1
   ipfiremake linux-igd
   ipfiremake ipaddr
   ipfiremake iptstate
