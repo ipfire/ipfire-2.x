@@ -24,13 +24,18 @@
 
 include Config
 
-VER        = 3.4
+VER        = 6.005.00
 
-THISAPP    = squashfs$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = r8169-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+ifeq "$(SMP)" "1"
+	TARGET     = $(DIR_INFO)/$(THISAPP)-smp
+else
+	TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
+
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2a4d2995ad5aa6840c95a95ffa6b1da6
+$(DL_FILE)_MD5 = 0004219943751f90ea996843257a00cb
 
 install : $(TARGET)
 
@@ -49,6 +54,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -69,8 +77,17 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/squashfs-tools && make mksquashfs
-	cd $(DIR_APP)/squashfs-tools && cp -f mksquashfs /bin
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -N -p1 < $(DIR_SRC)/src/patches/r8169-dlink_linksys.patch
+	
+ifeq "$(SMP)" "1"
+	cd $(DIR_APP) && make clean
+	cd $(DIR_APP)/src && make -C /lib/modules/$(KVER)-ipfire-smp/build/ SUBDIRS=$(DIR_APP)/src modules
+	cd $(DIR_APP)/src && install -m 644 r8169.ko /lib/modules/$(KVER)-ipfire-smp/kernel/drivers/net 
+else
+	cd $(DIR_APP) && make clean
+	cd $(DIR_APP)/src && make -C /lib/modules/$(KVER)-ipfire/build/ SUBDIRS=$(DIR_APP)/src modules
+	cd $(DIR_APP)/src && install -m 644 r8169.ko /lib/modules/$(KVER)-ipfire/kernel/drivers/net 
+endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
