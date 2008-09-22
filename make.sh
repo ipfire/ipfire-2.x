@@ -454,6 +454,11 @@ buildipfire() {
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
   ipfiremake XML-Parser
+  ipfiremake python-setuptools
+  ipfiremake python-clientform
+  ipfiremake python-mechanize
+  ipfiremake python-feedparser
+  ipfiremake python-rssdler
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits

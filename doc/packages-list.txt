@@ -2,6 +2,7 @@
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
+* ClientForm-0.2.9
 * Compress-Zlib-1.35
 * Convert-TNEF-0.17
 * Convert-UUlib-1.06
@@ -90,6 +91,7 @@
 * ez-ipupdate-3.0.11b8
 * fbset-2.1
 * fcron-3.0.1
+* feedparser-4.1
 * fetchmail-6.3.8
 * ffmpeg-export-2008-04-13
 * file-4.17
@@ -187,6 +189,7 @@
 * man-pages-2.34
 * mbr-1.1.8
 * mc-4.6.1
+* mechanize-0.1.8
 * memtest86+-1.65
 * misc-progs
 * mkinitcpio-0.5.9
@@ -243,6 +246,7 @@
 * reiserfsprogs-3.6.19
 * rp-pppoe-3.8
 * rrdtool-1.2.15
+* rssdler-0.4.0a
 * rsync-2.6.9
 * rtorrent-0.7.9
 * samba-3.0.32
@@ -252,6 +256,7 @@
 * sdparm-1.01
 * sed-4.1.5
 * setserial-2.17
+* setuptools-0.6c8
 * shadow-4.0.15
 * slang-1.4.9
 * smartmontools-5.36
