@@ -82,11 +82,11 @@ my $com = "/usr/sbin/chat -v -r /var/log/connect.log			\
 	ABORT			'\\nRINGING\\r\\n\\r\\nRINGING\\r'	\
 	ABORT			'\\nNO CARRIER\\r'			\
 	''			'$modemsettings{'INIT'}'		\
-	OK			'$modemsettings{'HANGUP'}'		\
-	OK			'$speaker'				\
 	OK			'$add_at1'				\
+	''			'$modemsettings{'HANGUP'}'		\
+	OK			'$speaker'				\
 	OK			'$add_at2'				\
-	OK			'$add_at3'				\
+	''			'$add_at3'				\
 	TIMEOUT			'$modemsettings{'TIMEOUT'}'		\
 	OK			'${dial}${telephone}'			\
 	CONNECT			'${btfudge}'				";
