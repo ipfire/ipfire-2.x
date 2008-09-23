@@ -60,6 +60,7 @@ if ($cgiparams[1] =~ /red/) {
 	    push (@graphs, "ppp0");
 	}
 	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd") {push (@graphs, ("ipsec0"));}
+	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-tun0.rrd") {push (@graphs, ("tun0"));}
 }elsif ($cgiparams[1] =~ /other/) {
 	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
 	my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/*`;
