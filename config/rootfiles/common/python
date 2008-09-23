@@ -1061,7 +1061,7 @@ usr/lib/python2.4/hmac.pyc
 #usr/lib/python2.4/hotshot/stones.pyc
 #usr/lib/python2.4/hotshot/stones.pyo
 #usr/lib/python2.4/htmlentitydefs.py
-#usr/lib/python2.4/htmlentitydefs.pyc
+usr/lib/python2.4/htmlentitydefs.pyc
 #usr/lib/python2.4/htmlentitydefs.pyo
 #usr/lib/python2.4/htmllib.py
 #usr/lib/python2.4/htmllib.pyc
@@ -1475,7 +1475,7 @@ usr/lib/python2.4/logging/handlers.pyc
 #usr/lib/python2.4/mailcap.pyc
 #usr/lib/python2.4/mailcap.pyo
 #usr/lib/python2.4/markupbase.py
-#usr/lib/python2.4/markupbase.pyc
+usr/lib/python2.4/markupbase.pyc
 #usr/lib/python2.4/markupbase.pyo
 #usr/lib/python2.4/mhlib.py
 #usr/lib/python2.4/mhlib.pyc
