@@ -20,5 +20,3 @@ usr/lib/collectd/
 var/lib/collectd/
 usr/sbin/collectd
 usr/sbin/collectdmon
-usr/share/collectd
-usr/share/collectd/postgresql_default.conf

@@ -134,7 +134,6 @@
 * inetutils-1.4.2
 * ipaddr-1.2
 * ipfireseeder-1.00
-* ipp2p-0.8.2
 * iproute2-2.6.16-060323
 * iptables-1.4.1.1
 * iptstate-2.1
@@ -225,7 +224,6 @@
 * openssl-0.9.8g
 * openswan-2.4.12
 * openswan-2.4.12-kmod
-* openswan-2.6.16
 * openvpn-2.0.9
 * pam_mysql-0.7RC1
 * patch-2.5.4
