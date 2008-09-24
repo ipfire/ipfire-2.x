@@ -19,9 +19,9 @@ my %modemsettings;
 &General::readhash("${General::swroot}/modem/settings", \%modemsettings);
 
 if ($modemsettings{'INIT'} eq '') {
-	$modemsettings{'INIT'} = 'AT'; }
+	$modemsettings{'INIT'} = '+++ATZ'; }
 if ($modemsettings{'HANGUP'} eq '') {
-	$modemsettings{'HANGUP'} = 'AT'; }
+	$modemsettings{'HANGUP'} = 'ATH'; }
 if ($modemsettings{'SPEAKER_ON'} eq '') {
 	$modemsettings{'SPEAKER_ON'} = 'AT'; }
 if ($modemsettings{'SPEAKER_OFF'} eq '') {
@@ -82,8 +82,9 @@ my $com = "/usr/sbin/chat -v -r /var/log/connect.log			\
 	ABORT			'\\nRINGING\\r\\n\\r\\nRINGING\\r'	\
 	ABORT			'\\nNO CARRIER\\r'			\
 	''			'$modemsettings{'INIT'}'		\
-	OK			'$add_at1'				\
-	''			'$modemsettings{'HANGUP'}'		\
+	''			'$add_at1'				\
+	''			'$modemsettings{'INIT'}'		\
+	OK			'$modemsettings{'HANGUP'}'		\
 	OK			'$speaker'				\
 	OK			'$add_at2'				\
 	''			'$add_at3'				\

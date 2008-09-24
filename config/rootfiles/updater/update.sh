@@ -54,6 +54,8 @@ echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
 echo var/log/rrd >> /opt/pakfire/tmp/ROOTFILES
 echo var/updatexlerator >> /opt/pakfire/tmp/ROOTFILES
 echo lib/iptables >> /opt/pakfire/tmp/ROOTFILES
+echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
+echo boot >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
@@ -63,6 +65,10 @@ echo Update IPfire to $NEWVERSION ...
 # Delete old collectd symlink
 #
 rm -rf /etc/rc.d/rc3.d/S20collectd
+#
+# Delete squid symlink
+#
+rm -rf /etc/rc.d/rc3.d/S99squid
 #
 # Delete old iptables libs...
 #
@@ -125,6 +131,10 @@ fi
 fi
 mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
 #mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
+#
+# ReInstall grub
+#
+grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
 #
 # Change version of Pakfire.conf
 #

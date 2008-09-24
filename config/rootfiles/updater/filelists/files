@@ -3,6 +3,7 @@ etc/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc
+etc/ppp/dialer
 etc/rc.d/init.d/checkfstab
 etc/rc.d/rcsysinit.d/S19checkfstab
 etc/rc.d/init.d/dhcp
