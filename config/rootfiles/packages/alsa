@@ -190,7 +190,7 @@ usr/local/share/alsa
 #usr/local/share/alsa/firmware/pcxhrloader/pcxhr.conf
 #usr/local/share/alsa/firmware/pcxhrloader/xc_1_882.dat
 #usr/local/share/alsa/firmware/pcxhrloader/xi_1_882.dat
-##usr/local/share/alsa/firmware/usx2yloader
+#usr/local/share/alsa/firmware/usx2yloader
 #usr/local/share/alsa/firmware/usx2yloader/tascam_loader.ihx
 #usr/local/share/alsa/firmware/usx2yloader/us122.conf
 #usr/local/share/alsa/firmware/usx2yloader/us122.prepad

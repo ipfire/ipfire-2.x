@@ -1,3 +1,6 @@
+#usr/share/fonts
+#usr/share/fonts/default
+#usr/share/fonts/default/TrueType
 usr/share/fonts/default/TrueType/FreeMono.ttf
 usr/share/fonts/default/TrueType/FreeMonoBold.ttf
 usr/share/fonts/default/TrueType/FreeMonoBoldOblique.ttf
