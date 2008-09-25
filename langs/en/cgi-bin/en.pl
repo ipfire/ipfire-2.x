@@ -881,6 +881,7 @@
 'ids rules license2' => 'Acknowledge the license, receive your password by email, and connect to the site. Go to',
 'ids rules license3' => 'press the \'Get Code\' button at the bottom and copy the 40 character Oink Code into the field below.',
 'ids rules update' => 'Snort rules update',
+'ids preprocessor' => 'Snort preprocessor',
 'iface' => 'Iface',
 'ignore filter' => 'Ignore filter',
 'ike encryption' => 'IKE Encryption:',
