@@ -1,5 +1,6 @@
 srv/web/ipfire/cgi-bin/bluetooth.cgi
 var/ipfire/menu.d/EX-bluetooth.menu
+#var/ipfire/bluetooth
 var/ipfire/bluetooth/settings
 var/ipfire/backup/addons/includes/bluetooth
 etc/rc.d/init.d/bluetooth

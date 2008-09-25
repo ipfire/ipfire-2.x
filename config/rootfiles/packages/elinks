@@ -1,3 +1,5 @@
+#usr/local/etc
+#usr/local/etc/elinks
 usr/local/etc/elinks/elinks.conf
 usr/local/bin/elinks
 #usr/local/man/man1/elinks.1

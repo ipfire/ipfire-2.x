@@ -4,7 +4,7 @@ etc/rc.d/init.d/applejuice
 opt/applejuice/ajcore.jar
 opt/applejuice/libajnetmask.so
 #srv/web/phpaj
-#srv/web/phpaj/phpaj/export
+#srv/web/phpaj/export
 srv/web/phpaj/export/Default.php
 srv/web/phpaj/export/ajl.php
 srv/web/phpaj/export/bb.php
@@ -138,3 +138,4 @@ srv/web/phpaj/vars.php
 usr/local/bin/applejuicectrl
 #var/ipfire/applejuice
 var/ipfire/applejuice/settings
+#usr/lib/libajnetmask.so

@@ -45,6 +45,7 @@ usr/lib/ipsec
 #usr/lib/ipsec/_startklips
 #usr/lib/ipsec/_updown
 #usr/lib/ipsec/_updown_x509
+#usr/libexec
 usr/libexec/ipsec
 #usr/libexec/ipsec/_pluto_adns
 #usr/libexec/ipsec/auto

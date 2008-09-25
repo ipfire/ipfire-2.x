@@ -572,3 +572,5 @@ etc/rc.d/rc0.d/K10sane
 etc/rc.d/rc6.d/K10sane
 usr/local/bin/sanedloop
 var/ipfire/backup/addons/includes/sane
+#usr/var
+#usr/var/lock
