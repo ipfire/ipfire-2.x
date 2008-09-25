@@ -28,6 +28,7 @@ srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/network.cgi
 srv/web/ipfire/cgi-bin/system.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 var/ipfire/sensors/
 var/ipfire/graphs.pl
 var/ipfire/firebuild

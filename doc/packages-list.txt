@@ -133,6 +133,7 @@
 * igmpproxy-src-0.1-beta2
 * inetutils-1.4.2
 * ipaddr-1.2
+* iperf-2.0.4
 * ipfireseeder-1.00
 * iproute2-2.6.16-060323
 * iptables-1.4.1.1
@@ -209,6 +210,7 @@
 * ncftp-3.2.1-src
 * ncurses-5.5
 * net-tools-1.60
+* netcat-0.7.1
 * netpbm-10.26.46
 * newt-0.51.6
 * nfs-utils-1.1.1
