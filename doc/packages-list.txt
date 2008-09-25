@@ -144,7 +144,7 @@
 * klibc-1.5.14
 * kqemu-1.3.0pre11
 * kudzu-1.2.64
-* l7-protocols-2007-10-10
+* l7-protocols-2008-04-23
 * lame-3.97
 * lcd4linux-0.10.1-RC2
 * less-394
