@@ -154,6 +154,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
 	    if (mysystem(commandstring)) {
 		errorbox("unattended: ERROR setting admin password");
 		return 0;
+	    }
 	}
 
     fprintf(flog, "unattended: Setup ended\n");
