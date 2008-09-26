@@ -24,22 +24,19 @@
 				};
     $substatus->{'50.networkred'} = {
 				'caption' => "$Lang::tr{'network red'}",
-				'uri' => '/cgi-bin/network.cgi',
-				'vars' => 'network=red',
+				'uri' => '/cgi-bin/netexternal.cgi',
 				'title' => "$Lang::tr{'network red'}",
 				'enabled' => 1,
 			  };
     $substatus->{'51.networkinternal'} = {
 				'caption' => "$Lang::tr{'network internal'}",
-				'uri' => '/cgi-bin/network.cgi',
-				'vars' => 'network=internal',
+				'uri' => '/cgi-bin/netinternal.cgi',
 				'title' => "$Lang::tr{'network internal'}",
 				'enabled' => 1,
 			  };
     $substatus->{'52.networkother'} = {
 				'caption' => "$Lang::tr{'network other'}",
-				'uri' => '/cgi-bin/network.cgi',
-				'vars' => 'network=other',
+				'uri' => '/cgi-bin/netother.cgi',
 				'title' => "$Lang::tr{'network other'}",
 				'enabled' => 1,
 			  };

@@ -32,34 +32,56 @@ require "${General::swroot}/graphs.pl";
 
 my %color = ();
 my %mainsettings = ();
+my %netsettings=();
+&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
+my @graphs=();
+my @wireless=();
 
 my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
 $querry[1] = 'hour' unless defined $querry[1];
+$querry[2] = '' unless defined $querry[2];
 
-if ( $querry[0] =~ "cpu"){
+if ( $querry[0] =~ /wireless/ ){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
-	&Graphs::updatecpugraph($querry[1]);
-}elsif ( $querry[0] =~ "load"){
+	$querry[0] =~ s/wireless//g;
+	&Graphs::updatewirelessgraph($querry[0],$querry[1]);
+}elsif ( $querry[0] ne "" ){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
-	&Graphs::updateloadgraph($querry[1]);
+	&Graphs::updateifgraph($querry[0],$querry[1]);
 }else{
+
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'status information'}, 1, '');
+	&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
-	&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("system.cgi","cpu","day","315");
-	&Header::closebox();
+	push (@graphs, ($netsettings{'GREEN_DEV'}));
+	if ($netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
+	if ($netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
 
-	&Header::openbox('100%', 'center', "Load $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("system.cgi","load","day");
-	&Header::closebox();
+	my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless*`;
+	foreach (@wirelessgraphs){
+		$_ =~ /(.*)\/wireless-(.*)/;
+		push(@wireless,$2);
+	}
+
+	foreach (@graphs) {
+		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("netinternal.cgi",$_,"day");
+		&Header::closebox();
+	}
+
+	foreach (@wireless) {
+		&Header::openbox('100%', 'center', "Wireless $_ $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("netinternal.cgi","wireless".$_,"day");
+		&Header::closebox();
+	}
 
 	&Header::closebigbox();
 	&Header::closepage();
-}
+}	

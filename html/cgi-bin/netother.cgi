@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -28,50 +28,49 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
 
-my %cgiparams=();
-my %pppsettings=();
-my %netsettings=();
-my @graphs=();
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-&Header::showhttpheaders();
+my @pings=();
 
-my $dir = "/srv/web/ipfire/html/sgraph";
-$cgiparams{'ACTION'} = '';
-&Header::getcgihash(\%cgiparams);
-my $sgraphdir = "/srv/web/ipfire/html/sgraph";
+my @querry = split(/\?/,$ENV{'QUERY_STRING'});
+$querry[0] = '' unless defined $querry[0];
+$querry[1] = 'hour' unless defined $querry[1];
 
-&Header::openpage($Lang::tr{'proxy access graphs'}, 1, '');
+if ( $querry[0] =~ "fwhits"){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updatefwhitsgraph($querry[0],$querry[1]);
+}elsif ( $querry[0] ne ""){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updatepinggraph($querry[0],$querry[1]);
+}else{
 
-&Header::openbigbox('100%', 'left');
-
-&Header::openbox('100%', 'left', $Lang::tr{'proxy access graphs'} . ":" );
-
-if (open(IPACHTML, "$sgraphdir/index.html"))
-{
-	my $skip = 1;
-	while (<IPACHTML>)
-	{
-		$skip = 1 if /^<HR>$/;
-		if ($skip)
-		{
-			$skip = 0 if /<H1>/;
-			next;
-		}
-		s/<IMG SRC=([^"'>]+)>/<img src='\/sgraph\/$1' alt='Graph' \/>/;
-		s/<HR>/<hr \/>/g;
-		s/<BR>/<br \/>/g;
-		s/<([^>]*)>/\L<$1>\E/g;
-		s/(size|align|border|color)=([^'"> ]+)/$1='$2'/g;
-		print;
+	&Header::showhttpheaders();
+	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
+	&Header::openbigbox('100%', 'left');
+	
+	my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/*`;
+	foreach (@pinggraphs){
+		$_ =~ /(.*)\/ping\/ping-(.*)\.rrd/;
+		push(@pings,$2);
 	}
-	close(IPACHTML);
-}
-else {
-	print $Lang::tr{'no information available'}; }
 
-&Header::closebox();
+	foreach (@pings) {
+		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("netother.cgi",$_,"day");
+		&Header::closebox();
+	}
 
-&Header::closebigbox();
+	&Header::openbox('100%', 'center', "Firewall Hits $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netother.cgi","fwhits","day");
+	&Header::closebox();
 
-&Header::closepage();
+	&Header::closebigbox();
+	&Header::closepage();
+}	

@@ -3,6 +3,7 @@ etc/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc
+etc/fstab
 etc/ppp/dialer
 etc/rc.d/init.d/checkfstab
 etc/rc.d/rcsysinit.d/S19checkfstab
@@ -26,7 +27,10 @@ srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
-srv/web/ipfire/cgi-bin/network.cgi
+srv/web/ipfire/cgi-bin/netexternal.cgi
+srv/web/ipfire/cgi-bin/netinernal.cgi
+srv/web/ipfire/cgi-bin/netother.cgi
+
 srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 var/ipfire/sensors/

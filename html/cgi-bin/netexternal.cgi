@@ -1,0 +1,169 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/header.pl";
+require "${General::swroot}/graphs.pl";
+
+my %color = ();
+my %mainsettings = ();
+my %netsettings=();
+&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
+my @graphs=();
+my %dhcpinfo=();
+
+my @querry = split(/\?/,$ENV{'QUERY_STRING'});
+$querry[0] = '' unless defined $querry[0];
+$querry[1] = 'hour' unless defined $querry[1];
+
+if ( $querry[0] ne~ ""){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updateifgraph($querry[0],$querry[1]);
+}else{
+
+	&Header::showhttpheaders();
+	&Header::openpage($Lang::tr{'network traffic graphs external'}, 1, '');
+	&Header::openbigbox('100%', 'left');
+
+	if ($netsettings{'RED_TYPE'} ne 'PPPOE'){
+		if ($netsettings{'RED_DEV'} ne $netsettings{'GREEN_DEV'}){
+			push (@graphs, ($netsettings{'RED_DEV'}));
+		}
+	}else{
+		push (@graphs, "ppp0");
+	}
+	
+	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd"){
+		push (@graphs, ("ipsec0"));
+	}
+
+	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-tun0.rrd"){
+		push (@graphs, ("tun0"));
+	}
+
+	foreach (@graphs) {
+		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("netexternal.cgi",$_,"day");
+		&Header::closebox();
+	}
+
+	if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/  && $netsettings{'RED_TYPE'} eq "DHCP"){
+
+		&Header::openbox('100%', 'left', "RED $Lang::tr{'dhcp configuration'}");
+		if (-s "${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info") {
+
+			&General::readhash("${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info", \%dhcpinfo);
+
+			my $DNS1=`echo $dhcpinfo{'DNS'} | cut -f 1 -d ,`;
+			my $DNS2=`echo $dhcpinfo{'DNS'} | cut -f 2 -d ,`;
+
+			my $lsetme=0;
+			my $leasetime="";
+			if ($dhcpinfo{'LEASETIME'} ne "") {
+				$lsetme=$dhcpinfo{'LEASETIME'};
+				$lsetme=($lsetme/60);
+				
+				if ($lsetme > 59) {
+					$lsetme=($lsetme/60); $leasetime=$lsetme." Hour";
+				}else{
+					$leasetime=$lsetme." Minute";
+				}
+				
+				if ($lsetme > 1) {
+					$leasetime=$leasetime."s";
+				}
+			}
+
+			my $rentme=0;
+			my $rnwltime="";
+
+			if ($dhcpinfo{'RENEWALTIME'} ne "") {
+				$rentme=$dhcpinfo{'RENEWALTIME'};
+				$rentme=($rentme/60);
+				
+				if ($rentme > 59){
+					$rentme=($rentme/60); $rnwltime=$rentme." Hour";
+				}else{
+					$rnwltime=$rentme." Minute";
+				}
+				
+				if ($rentme > 1){
+					$rnwltime=$rnwltime."s";
+				}
+			}
+
+			my $maxtme=0;
+			my $maxtime="";
+
+			if ($dhcpinfo{'REBINDTIME'} ne "") {
+				$maxtme=$dhcpinfo{'REBINDTIME'};
+				$maxtme=($maxtme/60);
+
+				if ($maxtme > 59){
+					$maxtme=($maxtme/60); $maxtime=$maxtme." Hour";
+				} else {
+					$maxtime=$maxtme." Minute";
+				}
+
+				if ($maxtme > 1) {
+					$maxtime=$maxtime."s";
+				}
+			}
+
+			print "<table width='100%'>";
+
+			if ($dhcpinfo{'HOSTNAME'}) {
+				print "<tr><td width='30%'>$Lang::tr{'hostname'}</td><td>$dhcpinfo{'HOSTNAME'}.$dhcpinfo{'DOMAIN'}</td></tr>\n";
+			} else {
+				print "<tr><td width='30%'>$Lang::tr{'domain'}</td><td>$dhcpinfo{'DOMAIN'}</td></tr>\n";
+			}
+
+			print <<END
+<tr><td>$Lang::tr{'gateway'}</td><td>$dhcpinfo{'GATEWAY'}</td></tr>
+<tr><td>$Lang::tr{'primary dns'}</td><td>$DNS1</td></tr>
+<tr><td>$Lang::tr{'secondary dns'}</td><td>$DNS2</td></tr>
+<tr><td>$Lang::tr{'dhcp server'}</td><td>$dhcpinfo{'DHCPSIADDR'}</td></tr>
+<tr><td>$Lang::tr{'def lease time'}</td><td>$leasetime</td></tr>
+<tr><td>$Lang::tr{'default renewal time'}</td><td>$rnwltime</td></tr>
+<tr><td>$Lang::tr{'max renewal time'}</td><td>$maxtime</td></tr>
+</table>
+END
+;
+		}else{
+			print "$Lang::tr{'no dhcp lease'}";
+		}
+		&Header::closebox();
+	}
+
+	&Header::closebigbox();
+	&Header::closepage();
+}	
