@@ -56,6 +56,9 @@ echo var/updatexlerator >> /opt/pakfire/tmp/ROOTFILES
 echo lib/iptables >> /opt/pakfire/tmp/ROOTFILES
 echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
 echo boot >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/fwhits.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/network.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/traffics.cgi >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
@@ -69,6 +72,12 @@ rm -rf /etc/rc.d/rc3.d/S20collectd
 # Delete squid symlink
 #
 rm -rf /etc/rc.d/rc3.d/S99squid
+#
+# Delete old cgi files ...
+#
+rm -rf /srv/web/ipfire/cgi-bin/fwhits.cgi
+rm -rf /srv/web/ipfire/cgi-bin/network.cgi
+rm -rf /srv/web/ipfire/cgi-bin/traffics.cgi
 #
 # Delete old iptables libs...
 #

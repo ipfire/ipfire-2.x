@@ -28,9 +28,8 @@ srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
-srv/web/ipfire/cgi-bin/netinernal.cgi
+srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
-
 srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 var/ipfire/sensors/
