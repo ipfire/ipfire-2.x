@@ -10,4 +10,4 @@ sysfs	/sys	sysfs	defaults	0	0
 devpts	/dev/pts	devpts   gid=4,mode=620  0     0
 shm	/dev/shm	tmpfs	defaults,size=25%	0	0
 none	/tmp		tmpfs	defaults,size=128M	0	0
-none	/var/log/rrd	tmps	defaults,size=64M	0	0
+none	/var/log/rrd	tmpfs	defaults,size=64M	0	0
