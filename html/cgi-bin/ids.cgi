@@ -114,7 +114,7 @@ if (-e "/etc/snort/snort.conf") {
 
 		if ($snortsettings{'ACTION'} eq $Lang::tr{'save'}) {
 			# Check for preprocessor settings
-			if ($line =~ /preprocessor http_inspect:/) {
+			if ($line =~ /preprocessor http_inspect/) {
 				# Strip out leading # from rule line
 				$line =~ s/\# ?//i;
 				if (($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'off')) {
