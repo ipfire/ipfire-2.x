@@ -53,7 +53,7 @@ if ( $querry[0] =~ "cpu"){
 	&Header::openbigbox('100%', 'left');
 
 	&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("system.cgi","cpu","day","315");
+	&Graphs::makegraphbox("system.cgi","cpu","day","325");
 	&Header::closebox();
 
 	&Header::openbox('100%', 'center', "Load $Lang::tr{'graph'}");

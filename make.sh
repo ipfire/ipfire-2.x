@@ -177,7 +177,7 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    MAKETUNING="-j6"
+    MAKETUNING="-j8"
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 

@@ -30,7 +30,7 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my $ERROR;
-my $rrdlog = "/var/log/rrd/";
+my $rrdlog = "/var/log/rrd";
 my $graphs = "/srv/web/ipfire/html/graphs";
 $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 
@@ -46,8 +46,8 @@ my %sensorsettings = ();
 # If the collection deamon is working and collecting lm_sensors data there will be
 # some data source named after a common scheme, with the sensorssettingsfile
 # the user is able to deactivate some of this parameters, in case not to show
-# false collected value´s may be disable. The user has the ability to ente
-# custom graph names in order to change temp0 to cpu or motherboad
+# false collected values may be disable. The user has the ability to enter
+# custom graph names in order to change temp0 to cpu or motherboard
 
 my $key;
 my $value;
@@ -85,9 +85,9 @@ if ((${Lang::language} eq 'el') ||
 } else {%tr=%Lang::tr;}
 
 # Generate a nice box for selection of time range in graphs
-# this will generate a nice iframe for the cgi requesting every klick for
+# this will generate a nice iframe for the cgi every klick for
 # the graph will be handled inside the iframe
-# 0 is the cgi revering to
+# 0 is the cgi refering to
 # 1 is the graph name
 # 2 is the time range for the graph
 # 3 if given is the height of the iframe default if nothing is given
@@ -135,7 +135,12 @@ sub updatecpugraph {
 		"-v ".$Lang::tr{'percentage'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
-		"--color=BACK".$color{"color21"}
+		"--color=BACK".$color{"color21"},
+		"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
 	);
 	
 	my $nice = "CDEF:nice=";
@@ -692,7 +697,6 @@ sub updatewirelessgraph {
 		"--alt-y-grid",
 		"-w 600",
 		"-h 125",
-		"-r",
 		"-t Wireless ".$interface." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
 		"-v dBm",
 		"--color=SHADEA".$color{"color19"},
@@ -720,14 +724,204 @@ sub updatewirelessgraph {
 		print "Error in RRD::graph for wireless: ".$ERROR."\n" if $ERROR;
 }
 
+# Generate the HDD Temp Graph for the current period of time for values given by collecd and lm_sensors
 
+sub updatehddgraph {
+	my $disk = $_[0];
+	my $period = $_[1];
+	RRDs::graph(
+		"-",
+		"--start",
+		"-1".$period,
+		"-aPNG",
+		"-i",
+		"-z",
+		"-W www.ipfire.org",
+		"--alt-y-grid",
+		"-w 600",
+		"-h 125",
+		"-r",
+		"-t ".$disk." ".$Lang::tr{'harddisk temperature'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
+		"-v Celsius",
+		"--color=SHADEA".$color{"color19"},
+		"--color=SHADEB".$color{"color19"},
+		"--color=BACK".$color{"color21"},
+		"DEF:temperature=".$rrdlog."/hddtemp-$disk.rrd:temperature:AVERAGE",
+		"DEF:standby=".$rrdlog."/hddshutdown-$disk.rrd:standby:AVERAGE",
+		"CDEF:st=standby,INF,*",
+		"AREA:st".$color{"color20"}."A0:standby",
+		"LINE3:temperature".$color{"color11"}."A0:$Lang::tr{'hdd temperature in'} C\\j",
+		"COMMENT:$Lang::tr{'maximal'}",
+		"COMMENT:$Lang::tr{'average'}",
+		"COMMENT:$Lang::tr{'minimal'}",
+		"COMMENT:$Lang::tr{'current'}\\j",
+		"GPRINT:temperature:MAX:%3.0lf Grad C",
+		"GPRINT:temperature:AVERAGE:%3.0lf Grad C",
+		"GPRINT:temperature:MIN:%3.0lf Grad C",
+		"GPRINT:temperature:LAST:%3.0lf Grad C\\j",
+		);
+		$ERROR = RRDs::error;
+		print "Error in RRD::graph for hdd-".$disk.": ".$ERROR."\n" if $ERROR;
+}
 
+# Generate the Temp Graph for the current period of time for values given by collecd and lm_sensors
 
+sub updatehwtempgraph {
+	my $period = $_[0];
 
+	my @command = (
+		"-",
+		"--start",
+		"-1".$period,
+		"-aPNG",
+		"-i",
+		"-z",
+		"-W www.ipfire.org",
+		"--alt-y-grid",
+		"-w 600",
+		"-h 125",
+		"-r",
+		"-t ".$Lang::tr{'sensors temp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
+		"--color=SHADEA".$color{"color19"},
+		"--color=SHADEB".$color{"color19"},
+		"--color=BACK".$color{"color21"},
+		"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
+	);
 
+		foreach(@sensorsgraphs){
+			chomp($_);
+			if ( $_ =~ /temperature/ ) {
+				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+				my $label = $2.$3;$label=~ s/-//g;
+				if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+				push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
+			}
+		}
 
+		foreach(@sensorsgraphs){
+			chomp($_);
+			if ( $_ =~ /temperature/ ){
+				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+				my $label = $2.$3;$label=~ s/-//g;
+				if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+				push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf C\\j",);
+			}
+		}
 
+		RRDs::graph (@command);
+		$ERROR = RRDs::error;
+		print "Error in RRD::graph for HDD Temp: ".$ERROR."\n" if $ERROR;
+}
 
+# Generate the Fan Graph for the current period of time for values given by collecd and lm_sensors
+
+sub updatehwfangraph {
+	my $period = $_[0];
+
+	my @command = (
+		"-",
+		"--start",
+		"-1".$period,
+		"-aPNG",
+		"-i",
+		"-z",
+		"-W www.ipfire.org",
+		"--alt-y-grid",
+		"-w 600",
+		"-h 125",
+		"-r",
+		"-t ".$Lang::tr{'mbmon fan'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
+		"--color=SHADEA".$color{"color19"},
+		"--color=SHADEB".$color{"color19"},
+		"--color=BACK".$color{"color21"},
+		"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
+	);
+
+		foreach(@sensorsgraphs){
+			chomp($_);
+			if ( $_ =~ /fanspeed/ ) {
+				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+				my $label = $2.$3;$label=~ s/-//g;
+				if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+				push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
+			}
+		}
+
+		foreach(@sensorsgraphs){
+			chomp($_);
+			if ( $_ =~ /fanspeed/ ){
+				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+				my $label = $2.$3;$label=~ s/-//g;
+				if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+				push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf RPM\\j",);
+			}
+		}
+
+		RRDs::graph (@command);
+		$ERROR = RRDs::error;
+		print "Error in RRD::graph for Fan Speed: ".$ERROR."\n" if $ERROR;
+}
+
+# Generate the Voltage Graph for the current period of time for values given by collecd and lm_sensors
+
+sub updatehwvoltgraph {
+	my $period = $_[0];
+
+	my @command = (
+		"-",
+		"--start",
+		"-1".$period,
+		"-aPNG",
+		"-i",
+		"-z",
+		"-W www.ipfire.org",
+		"--alt-y-grid",
+		"-w 600",
+		"-h 125",
+		"-r",
+		"-t ".$Lang::tr{'mbmon volt'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
+		"--color=SHADEA".$color{"color19"},
+		"--color=SHADEB".$color{"color19"},
+		"--color=BACK".$color{"color21"},
+		"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
+	);
+
+		foreach(@sensorsgraphs){
+			chomp($_);
+			if ( $_ =~ /voltage/ ) {
+				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+				my $label = $2.$3;$label=~ s/-//g;
+				if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+				push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
+			}
+		}
+
+		foreach(@sensorsgraphs){
+			chomp($_);
+			if ( $_ =~ /voltage/ ){
+				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+				my $label = $2.$3;$label=~ s/-//g;
+				if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
+				push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf V\\j",);
+			}
+		}
+
+		RRDs::graph (@command);
+		$ERROR = RRDs::error;
+		print "Error in RRD::graph for Voltage: ".$ERROR."\n" if $ERROR;
+}
 
 
 
@@ -792,24 +986,6 @@ sub updatecpufreqgraph {
 		print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Generate the QoS Graph for the current period of time
 
@@ -879,154 +1055,6 @@ sub updateqosgraph {
 	$ERROR = RRDs::error;
 	print "$ERROR";
 }
-
-# Generate the HDD Temp Graph for the current period of time for values given by collecd and lm_sensors
-
-sub updatehddgraph {
-
-		my $disk = $_[0];
-		my $period = $_[1];
-
-		RRDs::graph ("$graphs/hddtemp-$disk-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org",
-		"--alt-y-grid", "-w 600", "-h 125",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $disk $Lang::tr{'harddisk temperature'} $Lang::tr{'graph per'} $Lang::tr{$period}",
-		"DEF:temperature=$rrdlog/hddtemp-$disk.rrd:temperature:AVERAGE",
-		"DEF:standby=$rrdlog/hddshutdown-$disk.rrd:standby:AVERAGE",
-		"CDEF:st=standby,INF,*",
-		"AREA:st".$color{"color20"}."A0:standby",
-		"LINE3:temperature".$color{"color11"}."A0:$Lang::tr{'hdd temperature in'} C\\j",
-		"COMMENT:$Lang::tr{'maximal'}",
-		"COMMENT:$Lang::tr{'average'}",
-		"COMMENT:$Lang::tr{'minimal'}",
-		"COMMENT:$Lang::tr{'current'}\\j",
-		"GPRINT:temperature:MAX:%3.0lf Grad C",
-		"GPRINT:temperature:AVERAGE:%3.0lf Grad C",
-		"GPRINT:temperature:MIN:%3.0lf Grad C",
-		"GPRINT:temperature:LAST:%3.0lf Grad C\\j",
-		);
-		$ERROR = RRDs::error;
-		print "Error in RRD::graph for hdd-$disk: $ERROR\n" if $ERROR;
-}
-
-# Generate the Temp Graph for the current period of time for values given by collecd and lm_sensors
-
-sub updatehwtempgraph {
-
-  my $period = $_[0];
-
-  my @command = ("$graphs/sensors-hwtemp-$period.png",
-	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
-	"--alt-y-grid", "-w 600", "-h 125",
-	"--color", "SHADEA".$color{"color19"},"--color",
-	"SHADEB".$color{"color19"},"--color",
-	"BACK".$color{"color21"},
-	"-t $Lang::tr{'sensors temp'} $Lang::tr{'graph per'} $Lang::tr{$period}");
-
-	foreach(@sensorsgraphs){
-		chomp($_);
-		if ( $_ =~ /temperature/ ) {
-			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
-			my $label = $2.$3;$label=~ s/-//g;
-			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
-			push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
-		}
-	}
-	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
-	foreach(@sensorsgraphs){
-		chomp($_);
-		if ( $_ =~ /temperature/ ){
-			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
-			my $label = $2.$3;$label=~ s/-//g;
-			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
-			push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf C\\j",);
-		}
-	}
-	RRDs::graph (@command);
-	$ERROR = RRDs::error;
-	print "$ERROR";
-}
-
-# Generate the Voltage Graph for the current period of time for values given by collecd and lm_sensors
-
-sub updatehwvoltgraph {
-
-  my $period = $_[0];
-
-  my @command = ("$graphs/sensors-hwvolt-$period.png",
-	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
-	"--alt-y-grid", "-w 600", "-h 125",
-	"--color", "SHADEA".$color{"color19"},"--color",
-	"SHADEB".$color{"color19"},"--color",
-	"BACK".$color{"color21"},
-	"-t $Lang::tr{'mbmon volt'} $Lang::tr{'graph per'} $Lang::tr{$period}");
-
-	foreach(@sensorsgraphs){
-		chomp($_);
-		if ( $_ =~ /voltage/ ) {
-			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
-			my $label = $2.$3;$label=~ s/-//g;
-			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
-			push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
-		}
-	}
-	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
-	foreach(@sensorsgraphs){
-		chomp($_);
-		if ( $_ =~ /voltage/ ){
-			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
-			my $label = $2.$3;$label=~ s/-//g;
-			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
-			push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf V","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf V\\j",);
-		}
-	}
-	RRDs::graph (@command);
-	$ERROR = RRDs::error;
-	print "$ERROR";
-}
-
-# Generate the Fan Graph for the current period of time for values given by collecd and lm_sensors
-
-sub updatehwfangraph {
-
-  my $period = $_[0];
-
-  my @command = ("$graphs/sensors-hwfan-$period.png",
-	"--start", "-1$period", "-aPNG", "-i", "-W www.ipfire.org",
-	"--alt-y-grid", "-w 600", "-h 125",
-	"--color", "SHADEA".$color{"color19"},"--color",
-	"SHADEB".$color{"color19"},"--color",
-	"BACK".$color{"color21"},
-	"-t $Lang::tr{'mbmon fan'} $Lang::tr{'graph per'} $Lang::tr{$period}");
-
-	foreach(@sensorsgraphs){
-		chomp($_);
-		if ( $_ =~ /fanspeed/ ) {
-			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
-			my $label = $2.$3;$label=~ s/-//g;
-			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
-			push(@command,"DEF:".$sensorsettings{'LABEL-'.$label}."=".$_.":value:AVERAGE");
-		}
-	}
-	push(@command,"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j");
-	foreach(@sensorsgraphs){
-		chomp($_);
-		if ( $_ =~ /fanspeed/ ){
-			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
-			my $label = $2.$3;$label=~ s/-//g;
-			if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
-			push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf RPM","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf RPM\\j",);
-		}
-	}
-	RRDs::graph (@command);
-	$ERROR = RRDs::error;
-	print "$ERROR";
-}
-
-
 
 # Generate a random color, used by Qos Graph to be independent from the amount of values
 
