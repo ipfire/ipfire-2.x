@@ -1268,7 +1268,7 @@ srv/web/ipfire/cgi-bin/dhcp.cgi
 #srv/web/ipfire/cgi-bin/dial/index.cgi
 srv/web/ipfire/cgi-bin/dmzholes.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
-srv/web/ipfire/cgi-bin/graphs.cgi
+#srv/web/ipfire/cgi-bin/graphs.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/hosts.cgi
@@ -1303,7 +1303,7 @@ srv/web/ipfire/cgi-bin/portfw.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
-srv/web/ipfire/cgi-bin/qosgraph.cgi
+#srv/web/ipfire/cgi-bin/qosgraph.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
