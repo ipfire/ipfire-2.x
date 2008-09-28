@@ -47,3 +47,5 @@ var/ipfire/updatexlrator/bin/
 usr/sbin/updxlrator
 var/ipfire/langs
 usr/local/bin/qosd
+usr/bin/mkisofs
+usr/bin/cdrecord
