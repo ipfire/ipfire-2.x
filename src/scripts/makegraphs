@@ -46,7 +46,7 @@ sub updatehdddata
         my $standby;
         my @array = split(/\//,$disk);
 
-        if ( ! -e "$rrdlog/hddshutdown-".$array[$#array].".rrd"){
+        if ( ! -e "$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd"){
                 # database did not exist -> create
                 RRDs::create ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "--step=300",
                 "DS:standby:GAUGE:600:0:1",
