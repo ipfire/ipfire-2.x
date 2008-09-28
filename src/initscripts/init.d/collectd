@@ -5,25 +5,35 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
+
 case "$1" in
 	start)
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
-		    boot_mesg "Searching for Sensors..."
-		    "yes" | /usr/sbin/sensors-detect > /dev/null
-		    evaluate_retval
-		    if [ ! -e /etc/sysconfig/lm_sensors ]; then
-			echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
-		    fi
+			boot_mesg "Searching for Sensors..."
+			"yes" | /usr/sbin/sensors-detect > /dev/null
+			evaluate_retval
+
+			if [ ! -e /etc/sysconfig/lm_sensors ]; then
+				echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
+				sed -i -e "s|LoadPlugin sensors|#LoadPlugin sensors|g" /etc/collectd.conf
+			fi
 		fi
+
+		if [ ! -e $RRDLOG.bak/ ]; then
+			mkdir $RRDLOG.bak/
+		fi
+
+		/etc/init.d/collectd restore
 
 		boot_mesg -n "Loading Sensor Modules..."
 		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
-		    modprobe $modul > /dev/null 2>&1;
-		    if [ ${?} = 0 ]; then
-			boot_mesg -n "$SUCCESS$modul$NORMAL ";
-		    else
-			boot_mesg -n "$FAILURE$modul$NORMAL ";
-		    fi
+		modprobe $modul > /dev/null 2>&1;
+			if [ ${?} = 0 ]; then
+				boot_mesg -n "$SUCCESS$modul$NORMAL ";
+			else
+				boot_mesg -n "$FAILURE$modul$NORMAL ";
+			fi
 		done
 		boot_mesg;
 		echo_ok;
@@ -31,50 +41,27 @@ case "$1" in
 		boot_mesg "Starting Collection daemon..."
 		/usr/sbin/collectd -C /etc/collectd.conf
 		evaluate_retval
-#
-# These lines are for furhter implementation of the collectd, atm the temps are
-# collected by the makegraphs script because of the standby functions
-#
-#		for disk in `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`; do boot_mesg "Bringing up hddtemp daemon for $disk ..."; /usr/sbin/hddtemp $disk -d -l localhost; evaluate_retval; done
-#
-# Starting the mbmon in deamon mode to enable sensors reading for collectd
-# later mbmon will be replaced by lmsensors, if mbmon is not running on your
-# system, we advise to comment out these lines in order to prevent fail
-#
-#		boot_mesg "Bringing up mbmon daemon..."
-#		/usr/bin/mbmon -P 411 -r
-#		evaluate_retval
 		;;
-
 	stop)
-# if mbmon is not running on your system, we advise to comment out these lines
-# in order to prevent fail
-#		boot_mesg "Stopping mbmon daemon..."
-#		killproc /usr/bin/mbmon
-#		evaluate_retval
-#		boot_mesg "Stopping hddtemp daemon..."
-#		killproc /usr/sbin/hddtemp
-#		evaluate_retval
+		/etc/init.d/collectd backup
 		boot_mesg "Stopping Collection daemon..."
 		killproc /usr/sbin/collectd
 		evaluate_retval
 		;;
-
 	restart)
-
-#
-# We need to do this that way because mbmon doesn`t clear the port when killed
-# so the next startup it fails with port allready in use -> don´t restart mbmon
-#
-		boot_mesg "Stopping Collection daemon..."
-		killproc /usr/sbin/collectd
-		evaluate_retval
+		${0} stop
 		sleep 1
-		boot_mesg "Starting Collection daemon..."
-		/usr/sbin/collectd -C /etc/collectd.conf
+		${0} start
+		;;
+	backup)
+		boot_mesg "Save rrd files from ramd..."
+		cp -pR $RRDLOG/* $RRDLOG.bak/
 		evaluate_retval
-				;;
-
+		;;
+	restore)
+		boot_mesg "Copying rrd files to ramd..."
+		cp -pR $RRDLOG.bak/* $RRDLOG/
+		;;
 	status)
 		statusproc /usr/sbin/collectd
 		;;

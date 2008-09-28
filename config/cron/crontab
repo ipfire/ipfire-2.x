@@ -22,6 +22,7 @@ HOME=/
 
 # Make some nice graphs
 */5 * * * * 	/usr/local/bin/makegraphs >/dev/null
+01 * * * * 	/etc/init.d/collectd backup >/dev/null
 
 # Force update the dynamic dns registration once a week
 # Force update even if IP has not changed once a month if 'minimize update' selected in GUI

@@ -30,7 +30,6 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my $ERROR;
-$ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 
 # Read the global settings files to get the current theme and after this load
 # colors for this theme
@@ -52,16 +51,10 @@ if ( $mainsettings{'RRDLOG'} eq "" ){
 # false collected values may be disable. The user has the ability to enter
 # custom graph names in order to change temp0 to cpu or motherboard
 
-my $key;
-my $value;
-my @args = ();
 my $count = 0;
 my @sensorsgraphs = ();
-my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ | wc -l`;
-my @processesgraph = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/processes-*/`;
 my @sensorsdir = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/`;
-foreach (@sensorsdir)
-{
+foreach (@sensorsdir){
 	chomp($_);chop($_);
 	foreach (`ls $_/*`){
 		chomp($_);
@@ -74,18 +67,6 @@ foreach (@sensorsdir)
 }
 
 &General::readhash("${General::swroot}/sensors/settings", \%sensorsettings);
-use Encode 'from_to';
-
-my %tr=();
-if ((${Lang::language} eq 'el') ||
-	(${Lang::language} eq 'fa') ||
-	(${Lang::language} eq 'ru') ||
-	(${Lang::language} eq 'th') ||
-	(${Lang::language} eq 'vi') ||
-	(${Lang::language} eq 'zh') ||
-	(${Lang::language} eq 'zt')) {
-	eval `/bin/cat "${General::swroot}/langs/en.pl"`;
-} else {%tr=%Lang::tr;}
 
 # Generate a nice box for selection of time range in graphs
 # this will generate a nice iframe for the cgi every klick for
@@ -119,6 +100,7 @@ sub makegraphbox {
 # collectd we are now able to handle any kind of cpucount
 
 sub updatecpugraph {
+	my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ | wc -l`;
 	my $period    = $_[0];
 	my @command = (
 		"-",
@@ -404,6 +386,7 @@ sub updateswapgraph {
 # Generate the Process Cpu Graph for the current period of time for values given by collecd
 
 sub updateprocessescpugraph {
+	my @processesgraph = getprocesses();
 	my $period    = $_[0];
 	my $count="0";
 
@@ -453,6 +436,7 @@ sub updateprocessescpugraph {
 # Generate the Process Memory Graph for the current period of time for values given by collecd
 
 sub updateprocessesmemorygraph {
+	my @processesgraph = getprocesses();
 	my $period    = $_[0];
 	my $count="0";
 
@@ -1008,6 +992,7 @@ sub updateqosgraph {
 # Generate the CPU Frequency Graph for the current period of time for values given by collectd an lm_sensors
 
 sub updatecpufreqgraph {
+	my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ | wc -l`;
 	my $period    = $_[0];
 	my @command = (
 		"-",
@@ -1059,4 +1044,9 @@ sub random_hex_color {
 	my @color;
 	push @color, @hex[rand(@hex)] for 1 .. $size;
 	return join('', '#', @color);
+}
+
+sub getprocesses {
+	my @processesgraph = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/processes-*/`;
+	return @processesgraph;
 }

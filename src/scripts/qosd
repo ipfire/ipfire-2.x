@@ -48,9 +48,11 @@ use strict;
 #
 my  $device        = "$ARGV[0]";
 
-my %mainsettings = ();
+our %mainsettings = ();
+require '/var/ipfire/general-functions.pl';
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
+our $rrd_datadir   = $mainsettings{'RRDLOG'}."/";
 our $event_datadir = $mainsettings{'RRDLOG'};
 our $STEP          = 10;
 our $tc_command    = "/sbin/tc";
@@ -107,8 +109,6 @@ until ($time_to_die) {
     #if ( $res ) {
     #	print " Error updating RRDs: \"$res\"\n";
     #}
-
-    process_events();
 
 #    my $timestamp = time;
 #    print "$timestamp\n";
