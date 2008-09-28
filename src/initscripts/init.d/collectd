@@ -7,6 +7,10 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 
+if [ "$RRDLOG" = '' ]; then
+	RRDLOG=/var/log/rrd
+fi
+
 case "$1" in
 	start)
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
