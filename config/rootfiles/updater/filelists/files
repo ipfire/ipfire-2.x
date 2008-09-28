@@ -41,3 +41,9 @@ var/ipfire/sensors/
 var/ipfire/graphs.pl
 var/ipfire/firebuild
 var/ipfire/proxy/advanced/useragents
+srv/web/ipfire/html/images/updbooster/
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+var/ipfire/updatexlrator/bin/
+usr/sbin/updxlrator
+var/ipfire/langs
+usr/local/bin/qosd

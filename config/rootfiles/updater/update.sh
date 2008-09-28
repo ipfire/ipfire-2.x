@@ -59,6 +59,8 @@ echo boot >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/fwhits.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/network.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/traffics.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/graphs.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/qosgraph.cgi >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
@@ -78,6 +80,8 @@ rm -rf /etc/rc.d/rc3.d/S99squid
 rm -rf /srv/web/ipfire/cgi-bin/fwhits.cgi
 rm -rf /srv/web/ipfire/cgi-bin/network.cgi
 rm -rf /srv/web/ipfire/cgi-bin/traffics.cgi
+rm -rf /srv/web/ipfire/cgi-bin/graphs.cgi
+rm -rf /srv/web/ipfire/cgi-bin/qosgraph.cgi
 #
 # Delete old iptables libs...
 #

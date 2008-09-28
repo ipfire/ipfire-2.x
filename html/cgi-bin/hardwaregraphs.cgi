@@ -22,8 +22,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -36,10 +36,9 @@ my %mainsettings = ();
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 my %sensorsettings = ();
-my $rrdlog = "/var/log/rrd";
 
 my @sensorsgraphs = ();
-my @sensorsdir = `ls -dA $rrdlog/collectd/localhost/sensors-*/`;
+my @sensorsdir = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/`;
 foreach (@sensorsdir){
 	chomp($_);chop($_);
 	foreach (`ls $_/*`){

@@ -64,8 +64,6 @@ my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-&Header::showhttpheaders();
-
 $qossettings{'ENABLED'} = 'off';
 $qossettings{'EDIT'} = 'no';
 $qossettings{'OUT_SPD'} = '';
@@ -120,8 +118,19 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-&Header::openpage('QoS', 1, '');
-&Header::openbigbox('100%', 'left', '', $errormessage);
+my @querry = split(/\?/,$ENV{'QUERY_STRING'});
+$querry[0] = '' unless defined $querry[0];
+$querry[1] = 'hour' unless defined $querry[1];
+
+if ( $querry[0] ne ""){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updateqosgraph($querry[0],$querry[1]);
+}else{
+	&Header::showhttpheaders();
+
+	&Header::openpage('QoS', 1, '');
+	&Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
 ############################################################################################################################
@@ -759,34 +768,20 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 	exit
 }
 
-&Header::openbox('100%', 'center', $Lang::tr{'info'});
-&Graphs::overviewgraph("3240",$qossettings{'RED_DEV'});
-&Graphs::overviewgraph("3240",$qossettings{'IMQ_DEV'});
-print <<END
-	<table>
-		<tr><td colspan='9' align='center' valign='middle'><img alt="" src='/images/addblue.gif' />&nbsp;$Lang::tr{'add subclass'} | <img alt="" src='/images/addgreen.gif' />&nbsp;$Lang::tr{'Add Rule'} | <img alt="" src='/images/edit.gif' />&nbsp;$Lang::tr{'edit'} | <img alt="" src='/images/delete.gif' />&nbsp;$Lang::tr{'delete'} &nbsp;
-		<tr><td colspan='9' align='right' valign='middle'><b>$Lang::tr{'TOS Bits'}:</b>&nbsp;&nbsp;<b>0</b> - $Lang::tr{'disabled'} | <b>8</b> - $Lang::tr{'min delay'} | <b>4</b> - $Lang::tr{'max throughput'} | <b>2</b> - $Lang::tr{'max reliability'} | <b>1</b> - $Lang::tr{'min costs'} &nbsp;
-END
-;
-if (( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'RED_DEV'}-3240.png") && ( -e "/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'IMQ_DEV'}-3240.png")) {
-	print <<END
-		<tr><td colspan='9' align='center'><a href='/cgi-bin/qosgraph.cgi?graph=$qossettings{'RED_DEV'}'><img alt="" src="/graphs/qos-graph-$qossettings{'RED_DEV'}-3240.png" border='0' /></a></td></tr>
-		<tr><td colspan='9' align='center'><a href='/cgi-bin/qosgraph.cgi?graph=$qossettings{'IMQ_DEV'}'><img alt="" src="/graphs/qos-graph-$qossettings{'IMQ_DEV'}-3240.png" border='0' /></a></td></tr>
-END
-;}
-else
-{
-print "\t</table><br />".$Lang::tr{'no information available'};
-}
-print "\t</table>";
-
-&Header::closebox();
+	&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("qos.cgi",$qossettings{'RED_DEV'},"hour","325");
+	&Header::closebox();
+	&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("qos.cgi",$qossettings{'IMQ_DEV'},"hour","325");
+	&Header::closebox();
 
 &showclasses($qossettings{'RED_DEV'});
 &showclasses($qossettings{'IMQ_DEV'});
 
 &Header::closebigbox();
 &Header::closepage();
+
+}
 
 ############################################################################################################################
 ############################################################################################################################

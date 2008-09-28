@@ -30,8 +30,6 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my $ERROR;
-my $rrdlog = "/var/log/rrd";
-my $graphs = "/srv/web/ipfire/html/graphs";
 $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 
 # Read the global settings files to get the current theme and after this load
@@ -42,6 +40,11 @@ my %mainsettings = ();
 my %sensorsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
+if ( $mainsettings{'RRDLOG'} eq "" ){
+	$mainsettings{'RRDLOG'}="/var/log/rrd";
+	&General::writehash("${General::swroot}/main/settings", \%mainsettings);
+}
 
 # If the collection deamon is working and collecting lm_sensors data there will be
 # some data source named after a common scheme, with the sensorssettingsfile
@@ -54,9 +57,9 @@ my $value;
 my @args = ();
 my $count = 0;
 my @sensorsgraphs = ();
-my $cpucount = `ls -dA /media/ramd/rrd/collectd/localhost/cpu-*/ | wc -l`;
-my @processesgraph = `ls -dA $rrdlog/collectd/localhost/processes-*/`;
-my @sensorsdir = `ls -dA $rrdlog/collectd/localhost/sensors-*/`;
+my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ | wc -l`;
+my @processesgraph = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/processes-*/`;
+my @sensorsdir = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/`;
 foreach (@sensorsdir)
 {
 	chomp($_);chop($_);
@@ -154,14 +157,15 @@ sub updatecpugraph {
 	my $addstring = "";
 	
 	for(my $i = 0; $i < $cpucount; $i++) {
-		push(@command,"DEF:iowait".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-wait.rrd:value:AVERAGE");
-		push(@command,"DEF:nice".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-nice.rrd:value:AVERAGE");
-		push(@command,"DEF:interrupt".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-interrupt.rrd:value:AVERAGE");
-		push(@command,"DEF:steal".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-steal.rrd:value:AVERAGE");
-		push(@command,"DEF:user".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-user.rrd:value:AVERAGE");
-		push(@command,"DEF:system".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-system.rrd:value:AVERAGE");
-		push(@command,"DEF:idle".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-idle.rrd:value:AVERAGE");
-		push(@command,"DEF:irq".$i."=".$rrdlog."/collectd/localhost/cpu-".$i."/cpu-softirq.rrd:value:AVERAGE");
+		push(@command,"DEF:iowait".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-wait.rrd:value:AVERAGE"
+				,"DEF:nice".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-nice.rrd:value:AVERAGE"
+				,"DEF:interrupt".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-interrupt.rrd:value:AVERAGE"
+				,"DEF:steal".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-steal.rrd:value:AVERAGE"
+				,"DEF:user".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-user.rrd:value:AVERAGE"
+				,"DEF:system".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-system.rrd:value:AVERAGE"
+				,"DEF:idle".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-idle.rrd:value:AVERAGE"
+				,"DEF:irq".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-softirq.rrd:value:AVERAGE");
+
 		$nice .= "nice".$i.",";
 		$interrupt .= "interrupt".$i.",";
 		$steal .= "steal".$i.",";
@@ -178,64 +182,64 @@ sub updatecpugraph {
 
 	$addstring .= "+";
 
-	push(@command,$nice.$addstring);
-	push(@command,$interrupt.$addstring);
-	push(@command,$steal.$addstring);
-	push(@command,$user.$addstring);
-	push(@command,$system.$addstring);
-	push(@command,$idle.$addstring);
-	push(@command,$iowait.$addstring);
-	push(@command,$irq.$addstring);
+	push(@command,$nice.$addstring
+		,$interrupt.$addstring
+		,$steal.$addstring
+		,$user.$addstring
+		,$system.$addstring
+		,$idle.$addstring
+		,$iowait.$addstring
+		,$irq.$addstring);
 
-	push(@command,"CDEF:total=user,system,idle,iowait,irq,nice,interrupt,steal,+,+,+,+,+,+,+");
-	push(@command,"CDEF:userpct=100,user,total,/,*");
-	push(@command,"CDEF:nicepct=100,nice,total,/,*");
-	push(@command,"CDEF:interruptpct=100,interrupt,total,/,*");
-	push(@command,"CDEF:stealpct=100,steal,total,/,*");
-	push(@command,"CDEF:systempct=100,system,total,/,*");
-	push(@command,"CDEF:idlepct=100,idle,total,/,*");
-	push(@command,"CDEF:iowaitpct=100,iowait,total,/,*");
-	push(@command,"CDEF:irqpct=100,irq,total,/,*");
-	push(@command,"AREA:iowaitpct".$color{"color14"}.":".sprintf("%-25s",$Lang::tr{'cpu iowait usage'}));
-	push(@command,"GPRINT:iowaitpct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:iowaitpct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:iowaitpct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:iowaitpct:LAST:%3.2lf%%\\j");
-	push(@command,"STACK:irqpct".$color{"color23"}."A0:".sprintf("%-25s",$Lang::tr{'cpu irq usage'}));
-	push(@command,"GPRINT:irqpct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:irqpct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:irqpct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:irqpct:LAST:%3.2lf%%\\j");
-	push(@command,"STACK:nicepct".$color{"color16"}."A0:".sprintf("%-25s",$Lang::tr{'cpu nice usage'}));
-	push(@command,"GPRINT:nicepct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:nicepct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:nicepct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:nicepct:LAST:%3.2lf%%\\j");
-	push(@command,"STACK:interruptpct".$color{"color15"}."A0:".sprintf("%-25s",$Lang::tr{'cpu interrupt usage'}));
-	push(@command,"GPRINT:interruptpct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:interruptpct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:interruptpct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:interruptpct:LAST:%3.2lf%%\\j");
-	push(@command,"STACK:stealpct".$color{"color18"}."A0:".sprintf("%-25s",$Lang::tr{'cpu steal usage'}));
-	push(@command,"GPRINT:stealpct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:stealpct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:stealpct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:stealpct:LAST:%3.2lf%%\\j");
-	push(@command,"STACK:userpct".$color{"color11"}."A0:".sprintf("%-25s",$Lang::tr{'cpu user usage'}));
-	push(@command,"GPRINT:userpct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:userpct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:userpct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:userpct:LAST:%3.2lf%%\\j");
-	push(@command,"STACK:systempct".$color{"color13"}."A0:".sprintf("%-25s",$Lang::tr{'cpu system usage'}));
-	push(@command,"GPRINT:systempct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:systempct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:systempct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:systempct:LAST:%3.2lf%%\\j");
-	push(@command,"STACK:idlepct".$color{"color12"}."A0:".sprintf("%-25s",$Lang::tr{'cpu idle usage'}));
-	push(@command,"GPRINT:idlepct:MAX:%3.2lf%%");
-	push(@command,"GPRINT:idlepct:AVERAGE:%3.2lf%%");
-	push(@command,"GPRINT:idlepct:MIN:%3.2lf%%");
-	push(@command,"GPRINT:idlepct:LAST:%3.2lf%%\\j");
+	push(@command,"CDEF:total=user,system,idle,iowait,irq,nice,interrupt,steal,+,+,+,+,+,+,+"
+			,"CDEF:userpct=100,user,total,/,*"
+			,"CDEF:nicepct=100,nice,total,/,*"
+			,"CDEF:interruptpct=100,interrupt,total,/,*"
+			,"CDEF:stealpct=100,steal,total,/,*"
+			,"CDEF:systempct=100,system,total,/,*"
+			,"CDEF:idlepct=100,idle,total,/,*"
+			,"CDEF:iowaitpct=100,iowait,total,/,*"
+			,"CDEF:irqpct=100,irq,total,/,*"
+			,"AREA:iowaitpct".$color{"color14"}.":".sprintf("%-25s",$Lang::tr{'cpu iowait usage'})
+			,"GPRINT:iowaitpct:MAX:%3.2lf%%"
+			,"GPRINT:iowaitpct:AVERAGE:%3.2lf%%"
+			,"GPRINT:iowaitpct:MIN:%3.2lf%%"
+			,"GPRINT:iowaitpct:LAST:%3.2lf%%\\j"
+			,"STACK:irqpct".$color{"color23"}."A0:".sprintf("%-25s",$Lang::tr{'cpu irq usage'})
+			,"GPRINT:irqpct:MAX:%3.2lf%%"
+			,"GPRINT:irqpct:AVERAGE:%3.2lf%%"
+			,"GPRINT:irqpct:MIN:%3.2lf%%"
+			,"GPRINT:irqpct:LAST:%3.2lf%%\\j"
+			,"STACK:nicepct".$color{"color16"}."A0:".sprintf("%-25s",$Lang::tr{'cpu nice usage'})
+			,"GPRINT:nicepct:MAX:%3.2lf%%"
+			,"GPRINT:nicepct:AVERAGE:%3.2lf%%"
+			,"GPRINT:nicepct:MIN:%3.2lf%%"
+			,"GPRINT:nicepct:LAST:%3.2lf%%\\j"
+			,"STACK:interruptpct".$color{"color15"}."A0:".sprintf("%-25s",$Lang::tr{'cpu interrupt usage'})
+			,"GPRINT:interruptpct:MAX:%3.2lf%%"
+			,"GPRINT:interruptpct:AVERAGE:%3.2lf%%"
+			,"GPRINT:interruptpct:MIN:%3.2lf%%"
+			,"GPRINT:interruptpct:LAST:%3.2lf%%\\j"
+			,"STACK:stealpct".$color{"color18"}."A0:".sprintf("%-25s",$Lang::tr{'cpu steal usage'})
+			,"GPRINT:stealpct:MAX:%3.2lf%%"
+			,"GPRINT:stealpct:AVERAGE:%3.2lf%%"
+			,"GPRINT:stealpct:MIN:%3.2lf%%"
+			,"GPRINT:stealpct:LAST:%3.2lf%%\\j"
+			,"STACK:userpct".$color{"color11"}."A0:".sprintf("%-25s",$Lang::tr{'cpu user usage'})
+			,"GPRINT:userpct:MAX:%3.2lf%%"
+			,"GPRINT:userpct:AVERAGE:%3.2lf%%"
+			,"GPRINT:userpct:MIN:%3.2lf%%"
+			,"GPRINT:userpct:LAST:%3.2lf%%\\j"
+			,"STACK:systempct".$color{"color13"}."A0:".sprintf("%-25s",$Lang::tr{'cpu system usage'})
+			,"GPRINT:systempct:MAX:%3.2lf%%"
+			,"GPRINT:systempct:AVERAGE:%3.2lf%%"
+			,"GPRINT:systempct:MIN:%3.2lf%%"
+			,"GPRINT:systempct:LAST:%3.2lf%%\\j"
+			,"STACK:idlepct".$color{"color12"}."A0:".sprintf("%-25s",$Lang::tr{'cpu idle usage'})
+			,"GPRINT:idlepct:MAX:%3.2lf%%"
+			,"GPRINT:idlepct:AVERAGE:%3.2lf%%"
+			,"GPRINT:idlepct:MIN:%3.2lf%%"
+			,"GPRINT:idlepct:LAST:%3.2lf%%\\j");
 
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
@@ -264,9 +268,9 @@ sub updateloadgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:load1=".$rrdlog."/collectd/localhost/load/load.rrd:shortterm:AVERAGE",
-		"DEF:load5=".$rrdlog."/collectd/localhost/load/load.rrd:midterm:AVERAGE",
-		"DEF:load15=".$rrdlog."/collectd/localhost/load/load.rrd:longterm:AVERAGE",
+		"DEF:load1=".$mainsettings{'RRDLOG'}."/collectd/localhost/load/load.rrd:shortterm:AVERAGE",
+		"DEF:load5=".$mainsettings{'RRDLOG'}."/collectd/localhost/load/load.rrd:midterm:AVERAGE",
+		"DEF:load15=".$mainsettings{'RRDLOG'}."/collectd/localhost/load/load.rrd:longterm:AVERAGE",
 		"AREA:load1".$color{"color13"}."A0:1 Minute:",
 		"GPRINT:load1:LAST:%5.2lf",
 		"AREA:load5".$color{"color18"}."A0:5 Minuten:",
@@ -303,10 +307,10 @@ sub updatememorygraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:used=".$rrdlog."/collectd/localhost/memory/memory-used.rrd:value:AVERAGE",
-		"DEF:free=".$rrdlog."/collectd/localhost/memory/memory-free.rrd:value:AVERAGE",
-		"DEF:buffer=".$rrdlog."/collectd/localhost/memory/memory-buffered.rrd:value:AVERAGE",
-		"DEF:cache=".$rrdlog."/collectd/localhost/memory/memory-cached.rrd:value:AVERAGE",
+		"DEF:used=".$mainsettings{'RRDLOG'}."/collectd/localhost/memory/memory-used.rrd:value:AVERAGE",
+		"DEF:free=".$mainsettings{'RRDLOG'}."/collectd/localhost/memory/memory-free.rrd:value:AVERAGE",
+		"DEF:buffer=".$mainsettings{'RRDLOG'}."/collectd/localhost/memory/memory-buffered.rrd:value:AVERAGE",
+		"DEF:cache=".$mainsettings{'RRDLOG'}."/collectd/localhost/memory/memory-cached.rrd:value:AVERAGE",
 		"CDEF:total=used,free,cache,buffer,+,+,+",
 		"CDEF:usedpct=used,total,/,100,*",
 		"CDEF:bufferpct=buffer,total,/,100,*",
@@ -365,9 +369,9 @@ sub updateswapgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:used=".$rrdlog."/collectd/localhost/swap/swap-used.rrd:value:AVERAGE",
-		"DEF:free=".$rrdlog."/collectd/localhost/swap/swap-free.rrd:value:AVERAGE",
-		"DEF:cached=".$rrdlog."/collectd/localhost/swap/swap-cached.rrd:value:AVERAGE",
+		"DEF:used=".$mainsettings{'RRDLOG'}."/collectd/localhost/swap/swap-used.rrd:value:AVERAGE",
+		"DEF:free=".$mainsettings{'RRDLOG'}."/collectd/localhost/swap/swap-free.rrd:value:AVERAGE",
+		"DEF:cached=".$mainsettings{'RRDLOG'}."/collectd/localhost/swap/swap-cached.rrd:value:AVERAGE",
 		"CDEF:total=used,free,cached,+,+",
 		"CDEF:usedpct=100,used,total,/,*",
 		"CDEF:freepct=100,free,total,/,*",
@@ -516,10 +520,10 @@ sub updatediskgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:read=".$rrdlog."/collectd/localhost/disk-$disk/disk_octets.rrd:read:AVERAGE",
-		"DEF:write=".$rrdlog."/collectd/localhost/disk-$disk/disk_octets.rrd:write:AVERAGE",
+		"DEF:read=".$mainsettings{'RRDLOG'}."/collectd/localhost/disk-$disk/disk_octets.rrd:read:AVERAGE",
+		"DEF:write=".$mainsettings{'RRDLOG'}."/collectd/localhost/disk-$disk/disk_octets.rrd:write:AVERAGE",
 		"CDEF:writen=write,-1,*",
-		"DEF:standby=".$rrdlog."/hddshutdown-".$disk.".rrd:standby:AVERAGE",
+		"DEF:standby=".$mainsettings{'RRDLOG'}."/hddshutdown-".$disk.".rrd:standby:AVERAGE",
 		"CDEF:st=standby,INF,*",
 		"CDEF:st1=standby,-INF,*",
 		"COMMENT:".sprintf("%-25s",$Lang::tr{'caption'}),
@@ -566,8 +570,8 @@ sub updateifgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:incoming=".$rrdlog."/collectd/localhost/interface/if_octets-".$interface.".rrd:rx:AVERAGE",
-		"DEF:outgoing=".$rrdlog."/collectd/localhost/interface/if_octets-".$interface.".rrd:tx:AVERAGE",
+		"DEF:incoming=".$mainsettings{'RRDLOG'}."/collectd/localhost/interface/if_octets-".$interface.".rrd:rx:AVERAGE",
+		"DEF:outgoing=".$mainsettings{'RRDLOG'}."/collectd/localhost/interface/if_octets-".$interface.".rrd:tx:AVERAGE",
 		"CDEF:outgoingn=outgoing,-1,*",
 		"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
@@ -610,10 +614,10 @@ sub updatefwhitsgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:output=".$rrdlog."/collectd/localhost/iptables-filter-FORWARD/ipt_bytes-DROP_OUTPUT.rrd:value:AVERAGE",
-		"DEF:input=".$rrdlog."/collectd/localhost/iptables-filter-INPUT/ipt_bytes-DROP_INPUT.rrd:value:AVERAGE",
-		"DEF:newnotsyn=".$rrdlog."/collectd/localhost/iptables-filter-NEWNOTSYN/ipt_bytes-DROP_NEWNOTSYN.rrd:value:AVERAGE",
-		"DEF:portscan=".$rrdlog."/collectd/localhost/iptables-filter-PSCAN/ipt_bytes-DROP_PScan.rrd:value:AVERAGE",
+		"DEF:output=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-FORWARD/ipt_bytes-DROP_OUTPUT.rrd:value:AVERAGE",
+		"DEF:input=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-INPUT/ipt_bytes-DROP_INPUT.rrd:value:AVERAGE",
+		"DEF:newnotsyn=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-NEWNOTSYN/ipt_bytes-DROP_NEWNOTSYN.rrd:value:AVERAGE",
+		"DEF:portscan=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-PSCAN/ipt_bytes-DROP_PScan.rrd:value:AVERAGE",
 		"CDEF:amount=output,input,newnotsyn,+,+",
 		"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
@@ -658,7 +662,7 @@ sub updatepinggraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:roundtrip=".$rrdlog."/collectd/localhost/ping/ping-".$host.".rrd:ping:AVERAGE",
+		"DEF:roundtrip=".$mainsettings{'RRDLOG'}."/collectd/localhost/ping/ping-".$host.".rrd:ping:AVERAGE",
 		"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'})."\\j",
 		"CDEF:roundavg=roundtrip,PREV(roundtrip),+,2,/",
 		"CDEF:r0=roundtrip,30,MIN",
@@ -702,8 +706,8 @@ sub updatewirelessgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:noise=".$rrdlog."/collectd/localhost/wireless-".$interface."/signal_noise.rrd:value:AVERAGE",
-		"DEF:power=".$rrdlog."/collectd/localhost/wireless-".$interface."/signal_power.rrd:value:AVERAGE",
+		"DEF:noise=".$mainsettings{'RRDLOG'}."/collectd/localhost/wireless-".$interface."/signal_noise.rrd:value:AVERAGE",
+		"DEF:power=".$mainsettings{'RRDLOG'}."/collectd/localhost/wireless-".$interface."/signal_power.rrd:value:AVERAGE",
 		"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
@@ -746,8 +750,8 @@ sub updatehddgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:temperature=".$rrdlog."/hddtemp-$disk.rrd:temperature:AVERAGE",
-		"DEF:standby=".$rrdlog."/hddshutdown-$disk.rrd:standby:AVERAGE",
+		"DEF:temperature=".$mainsettings{'RRDLOG'}."/hddtemp-$disk.rrd:temperature:AVERAGE",
+		"DEF:standby=".$mainsettings{'RRDLOG'}."/hddshutdown-$disk.rrd:standby:AVERAGE",
 		"CDEF:st=standby,INF,*",
 		"AREA:st".$color{"color20"}."A0:standby",
 		"LINE3:temperature".$color{"color11"}."A0:$Lang::tr{'hdd temperature in'} C\\j",
@@ -924,136 +928,126 @@ sub updatehwvoltgraph {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Generate the CPU Frequency Graph for the current period of time for values given by
-# only 1 or 2 cpus is working
-sub updatecpufreqgraph {
-		if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-0.rrd" ){
-
-		my $period    = $_[0];
-	my @command = ("$graphs/cpufreq-$period.png",
-		"--start", "-1$period", "-aPNG", "-i", "-z", "-W www.ipfire.org", "-v Mhz",
-		"-w 600", "-h 125",  "-r",
-		"--color", "SHADEA".$color{"color19"},
-		"--color", "SHADEB".$color{"color19"},
-		"--color", "BACK".$color{"color21"},
-		"-t $Lang::tr{'cpu frequency per'} $Lang::tr{$period}");
-
-		if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
-	    push(@command,"DEF:cpu1_=$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd:value:AVERAGE");
-	}
-	push(@command,"DEF:cpu0_=$rrdlog/collectd/localhost/cpufreq/cpufreq-0.rrd:value:AVERAGE");
-
-		if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
-	    push(@command,"CDEF:cpu1=cpu1_,1000000,/");
-	}
-	push(@command,"CDEF:cpu0=cpu0_,1000000,/",
-			"COMMENT:CPU",
-			"COMMENT:$Lang::tr{'maximal'}",
-			"COMMENT:$Lang::tr{'average'}",
-			"COMMENT:$Lang::tr{'minimal'}",
-			"COMMENT:$Lang::tr{'current'}\\j",);
-
-
-		if ( -e "$rrdlog/collectd/localhost/cpufreq/cpufreq-1.rrd" ){
-			push(@command,"LINE3:cpu1".$color{"color12"}."A0:1",
-			"GPRINT:cpu1:MAX:%3.0lf Mhz",
-			"GPRINT:cpu1:AVERAGE:%3.0lf Mhz",
-			"GPRINT:cpu1:MIN:%3.0lf Mhz",
-			"GPRINT:cpu1:LAST:%3.0lf Mhz\\j",);
-	}
-	push(@command,"LINE2:cpu0".$color{"color11"}."A1:0",
-			"GPRINT:cpu0:MAX:%3.0lf Mhz",
-			"GPRINT:cpu0:AVERAGE:%3.0lf Mhz",
-			"GPRINT:cpu0:MIN:%3.0lf Mhz",
-			"GPRINT:cpu0:LAST:%3.0lf Mhz\\j",);
-
-	RRDs::graph (@command);
-		$ERROR = RRDs::error;
-		print "Error in RRD::graph for cpu: $ERROR\n" if $ERROR;
-    }
-}
-
 # Generate the QoS Graph for the current period of time
 
 sub updateqosgraph {
 
-  my $period = $_[0];
-  my $periodstring;
-  my $description;
-  my %qossettings = ();
-  &General::readhash("${General::swroot}/qos/settings", \%qossettings);
-  my $classentry = "";
-  my @classes = ();
-  my @classline = ();
-  my $classfile = "/var/ipfire/qos/classes";
+	my $period = $_[1];
+	my %qossettings = ();
+	&General::readhash("${General::swroot}/qos/settings", \%qossettings);
 
-	$qossettings{'DEV'} = $_[1];
+	my $classentry = "";
+	my @classes = ();
+	my @classline = ();
+	my $classfile = "/var/ipfire/qos/classes";
+
+	$qossettings{'DEV'} = $_[0];
 	if ( $qossettings{'DEV'} eq $qossettings{'RED_DEV'} ) {
 		$qossettings{'CLASSPRFX'} = '1';
 	} else {
 		$qossettings{'CLASSPRFX'} = '2';
 	}
 
-  if ( $period ne '3240' ){ $periodstring = "-1$period";}else{ $periodstring = "-".$period;}
-  if ( $period ne '3240' ){ $description = "-t $Lang::tr{'Utilization on'} ($qossettings{'DEV'}) ($Lang::tr{'graph per'} $Lang::tr{$period})";}else{ $description = "-t $Lang::tr{'Utilization on'} ($qossettings{'DEV'})";}
-
 	my $ERROR="";
 	my $count="1";
 	my $color="#000000";
-	my @command=("/srv/web/ipfire/html/graphs/qos-graph-$qossettings{'DEV'}-$period.png",
-		"--start", $periodstring, "-aPNG", "-i", "-z", "-W www.ipfire.org",
-		"--alt-y-grid", "-w 600", "-h 125", "-r", "-v $Lang::tr{'bytes per second'}",
-    "--color", "SHADEA".$color{"color19"},
-    "--color", "SHADEB".$color{"color19"},
-    "--color", "BACK".$color{"color21"},
+
+	my @command = (
+		"-",
+		"--start",
+		"-1".$period,
+		"-aPNG",
+		"-i",
+		"-z",
+		"-W www.ipfire.org",
+		"--alt-y-grid",
+		"-w 600",
+		"-h 125",
+		"-r",
+		"-t ".$Lang::tr{'Utilization on'}." (".$qossettings{'DEV'}.") ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
+		"-v ".$Lang::tr{'bytes per second'},
+		"--color=SHADEA".$color{"color19"},
+		"--color=SHADEB".$color{"color19"},
+		"--color=BACK".$color{"color21"},
 		"COMMENT:".sprintf("%-28s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
-		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j",
-		$description
+		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
 	);
-	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
-	@classes = <FILE>;
-	close FILE;
-  	foreach $classentry (sort @classes)
-  	{
-  		@classline = split( /\;/, $classentry );
-  		if ( $classline[0] eq $qossettings{'DEV'} )
-  		{
-			$color=random_hex_color(6);
-			push(@command, "DEF:$classline[1]=$rrdlog/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
-			if ($count eq "1") {
-				push(@command, "AREA:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
-			} else {
-				push(@command, "STACK:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
+		open( FILE, "< $classfile" ) or die "Unable to read $classfile";
+		@classes = <FILE>;
+		close FILE;
 
+		foreach $classentry (sort @classes){
+			@classline = split( /\;/, $classentry );
+			if ( $classline[0] eq $qossettings{'DEV'} ){
+				$color=random_hex_color(6);
+				push(@command, "DEF:$classline[1]=$mainsettings{'RRDLOG'}/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
+
+				if ($count eq "1") {
+					push(@command, "AREA:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
+				} else {
+					push(@command, "STACK:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
+
+				}
+
+				push(@command, "GPRINT:$classline[1]:MAX:%8.1lf %sBps"
+						, "GPRINT:$classline[1]:AVERAGE:%8.1lf %sBps"
+						, "GPRINT:$classline[1]:MIN:%8.1lf %sBps"
+						, "GPRINT:$classline[1]:LAST:%8.1lf %sBps\\j");
+				$count++;
 			}
-			push(@command, "GPRINT:$classline[1]:MAX:%8.1lf %sBps");
-			push(@command, "GPRINT:$classline[1]:AVERAGE:%8.1lf %sBps");
-			push(@command, "GPRINT:$classline[1]:MIN:%8.1lf %sBps");
-			push(@command, "GPRINT:$classline[1]:LAST:%8.1lf %sBps\\j");
-			$count++;
 		}
+		RRDs::graph (@command);
+		$ERROR = RRDs::error;
+		print "Error in RRD::graph for qos device ".$qossettings{'DEV'}.": ".$ERROR."\n" if $ERROR;
+}
+
+# Generate the CPU Frequency Graph for the current period of time for values given by collectd an lm_sensors
+
+sub updatecpufreqgraph {
+	my $period    = $_[0];
+	my @command = (
+		"-",
+		"--start",
+		"-1".$period,
+		"-aPNG",
+		"-i",
+		"-z",
+		"-W www.ipfire.org",
+		"--alt-y-grid",
+		"-w 600",
+		"-h 125",
+		"-l 0",
+		"-u 100",
+		"-r",
+		"-t ".$Lang::tr{'cpu frequency per'}." ".$Lang::tr{$period},
+		"-v MHz",
+		"--color=SHADEA".$color{"color19"},
+		"--color=SHADEB".$color{"color19"},
+		"--color=BACK".$color{"color21"},
+		"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
+	);
+
+	for(my $i = 0; $i < $cpucount; $i++) {
+		push(@command,"DEF:cpu".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpufreq/cpufreq-".$i.".rrd:value:AVERAGE"
+				,"CDEF:cpu".$i."=cpu".$i."_,1000000,/"
+				,"LINE3:cpu".$i.$color{"color12"}."A0:1"
+				,"GPRINT:cpu".$i.":MAX:%3.0lf Mhz"
+				,"GPRINT:cpu".$i.":AVERAGE:%3.0lf Mhz"
+				,"GPRINT:cpu".$i.":MIN:%3.0lf Mhz"
+				,"GPRINT:cpu".$i.":LAST:%3.0lf Mhz\\j");
 	}
+
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
-	print "$ERROR";
+	print "Error in RRD::graph for cpu freq: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate a random color, used by Qos Graph to be independent from the amount of values

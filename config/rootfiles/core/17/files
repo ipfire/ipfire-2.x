@@ -8,14 +8,9 @@ bin/ntfs-3g
 lib/libntfs-3g.so
 lib/libntfs-3g.so.38
 lib/libntfs-3g.so.38.0.0
-srv/web/ipfire/html/images/updbooster/
-srv/web/ipfire/cgi-bin/updatexlrator.cgi
-var/ipfire/updatexlrator/bin/
-usr/sbin/updxlrator
 srv/web/ipfire/cgi-bin/qos.cgi
 usr/local/bin/qosd
 var/ipfire/qos/bin
-var/ipfire/langs
 usr/lib/collectd/
 var/lib/collectd/
 usr/sbin/collectd
