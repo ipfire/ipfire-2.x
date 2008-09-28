@@ -162,16 +162,20 @@ sub updatecpugraph {
 		$addstring .= "+,";
 	}
 
-	$addstring .= "+";
-
-	push(@command,$nice.$addstring
-		,$interrupt.$addstring
-		,$steal.$addstring
-		,$user.$addstring
-		,$system.$addstring
-		,$idle.$addstring
-		,$iowait.$addstring
-		,$irq.$addstring);
+	if ( $cpucount > 1){
+		$addstring .= "+";
+		push(@command,$nice.$addstring
+			,$interrupt.$addstring
+			,$steal.$addstring
+			,$user.$addstring
+			,$system.$addstring
+			,$idle.$addstring
+			,$iowait.$addstring
+			,$irq.$addstring);
+	}else{
+		chop($nice),chop($interrupt),chop($steal),chop($user),chop($system),chop($idle),chop($iowait),chop($irq);
+		push(@command,$nice,$interrupt,$steal,$user,$system,$idle,$iowait,$irq);
+	}
 
 	push(@command,"CDEF:total=user,system,idle,iowait,irq,nice,interrupt,steal,+,+,+,+,+,+,+"
 			,"CDEF:userpct=100,user,total,/,*"
