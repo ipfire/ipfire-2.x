@@ -171,7 +171,8 @@ echo \\n running on \\s \\r \\m >> /etc/issue
 # Update crontab
 #
 grep -v "ipacsum" /var/spool/cron/root.orig > /tmp/root.orig.tmp
-echo "Backup collectd files\n01 * * * * 	/etc/init.d/collectd backup >/dev/null" >> /tmp/root.orig.tmp
+echo "# Backup collectd files" >> /tmp/root.orig.tmp
+echo "01 * * * *	/etc/init.d/collectd backup >/dev/null" >> /tmp/root.orig.tmp
 mv /tmp/root.orig.tmp /var/spool/cron/root.orig
 chmod 600 /var/spool/cron/root.orig
 chown root:cron /var/spool/cron/root.orig
