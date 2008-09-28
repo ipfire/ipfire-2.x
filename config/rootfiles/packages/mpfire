@@ -29,3 +29,7 @@ var/ipfire/mpfire/mpd.conf
 var/ipfire/mpfire/playlist.m3u
 var/ipfire/mpfire/settings
 var/ipfire/mpfire/webradio
+usr/local/bin/mpfirectrl
+srv/web/ipfire/cgi-bin/mpfire.cgi
+srv/web/ipfire/html/images/mpfire
+var/ipfire/menu.d/EX-mpfire.menu
