@@ -147,7 +147,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     }
 
 	/* restore backup */
-	if (restore_file != "") {
+	if (!strcmp(restore_file, "")) {
 		fprintf(flog, "unattended: Restoring Backup\n");
 	    snprintf(commandstring, STRING_SIZE,
 		    "cd /harddisk && /bin/tar -xvz --preserve -f /cdrom/%s", restore_file);
