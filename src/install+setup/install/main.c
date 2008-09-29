@@ -455,6 +455,11 @@ int main(int argc, char *argv[])
 		KERNEL_VERSION);
 	mysystem(commandstring);
 */
+	snprintf(commandstring, STRING_SIZE, 
+		"/bin/touch /harddisk/lib/modules/2.6.25.17-ipfire/modules.dep");
+	mysystem(commandstring);
+
+
 	/* Rename uname */
 	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
 
@@ -527,6 +532,11 @@ int main(int argc, char *argv[])
 /*	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-smp.img -k %s-ipfire-smp", KERNEL_VERSION, KERNEL_VERSION );
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 */
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-2.6.25.17.img -k 2.6.25.17-ipfire");
+	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+
+
+
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
