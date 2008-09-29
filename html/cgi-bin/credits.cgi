@@ -37,6 +37,7 @@ require "${General::swroot}/header.pl";
 
 &Header::openbox('100%', 'left', 'Version');
 print "This is IPFire ".`cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
+print "<br>".`uname -a`;
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
@@ -63,6 +64,8 @@ Developer - Sven Nierlein
 (<a href='mailto:affect\@ipfire.org'>affect\@versatel.de</a>)<br />
 Developer  - Rene Zingel
 (<a href='mailto:linuxadmin\@ipfire.org'>linuxadmin\@ipfire.org</a>)<br />
+Developer - Daniel Glanzmann
+(<a href='mailto:dg\@ipfire.org'>dg\@ipfire.org</a>)<br />
 Sponsor - Karsten Rechenbach
 (<a href='mailto:space\@ipfire.org'>space\@ipfire.org</a>)<br />
 Tester - Ronald Wiesinger
