@@ -144,6 +144,7 @@ fi
 fi
 mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
 #mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
+mkinitcpio -k 2.6.25.17-ipfire -g /boot/ipfirerd-2.6.25.17.img
 #
 # ReInstall grub
 #

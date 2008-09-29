@@ -35,7 +35,7 @@ PAK_VER    = 2
 ifeq "$(SMP)" "1"
 	TARGET     = $(DIR_INFO)/$(THISAPP)-smp
 else
-	TARGET     = $(DIR_INFO)/$(THISAPP)
+	TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
 endif
 
 
