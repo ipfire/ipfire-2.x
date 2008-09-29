@@ -1378,6 +1378,7 @@ END
     }
     print CLIENTCONF "verb 3\r\n";
     print CLIENTCONF "ns-cert-type server\r\n";
+    print CLIENTCONF "tls-remote $vpnsettings{ROOTCERT_HOSTNAME}\r\n";
     close(CLIENTCONF);
     $zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
     my $status = $zip->writeToFileNamed($zippathname);
