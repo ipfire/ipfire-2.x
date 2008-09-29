@@ -459,7 +459,7 @@ print <<END
 	<td><b>$Lang::tr{'ids preprocessor'}</b></td>
 </tr>
 <tr>
-  	<td><input type='checkbox' name='ENABLE_PREPROCESSOR_HTTP_INSPECT' $checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{'on'} />  http_inspect
+  	<td><input type='checkbox' name='ENABLE_PREPROCESSOR_HTTP_INSPECT' $checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{'on'} />  http_inspect $Lang::tr{'active'}
 <tr>
 	<td><hr /></td>
 </tr>

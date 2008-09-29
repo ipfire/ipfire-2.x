@@ -113,8 +113,13 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 
 if ( $cgiparams{'ACTION'} eq "backup" )
 {
-	if ( $cgiparams{'BACKUPLOGS'} eq "include" ){system("/usr/local/bin/backupctrl include >/dev/null 2>&1");}
-	else {system("/usr/local/bin/backupctrl exclude >/dev/null 2>&1");}
+	if ( $cgiparams{'BACKUPLOGS'} eq "include" ) {
+		system("/usr/local/bin/backupctrl include >/dev/null 2>&1");
+	} elsif ( $cgiparams{'BACKUPLOGS'} eq "exclude" ) {
+		system("/usr/local/bin/backupctrl exclude >/dev/null 2>&1");
+	} elsif ( $cgiparams{'BACKUPLOGS'} eq "iso" ) {
+		system("/usr/local/bin/backupctrl iso >/dev/null 2>&1");
+	}
 }
 if ( $cgiparams{'ACTION'} eq "addonbackup" )
 {
@@ -141,10 +146,14 @@ my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
-<tr><td align='left' width='40%'>$Lang::tr{'logs'}</td><td align='left'>$Lang::tr{'include logfiles'}
-	<input type='radio' name='BACKUPLOGS' value='include'/>/
-	<input type='radio' name='BACKUPLOGS' value='exclude' checked='checked'/>$Lang::tr{'exclude logfiles'}
-</td></tr>
+<tr>
+	<td align='left' width='40%'>$Lang::tr{'logs'}</td>
+	<td align='left'>
+		<input type='radio' name='BACKUPLOGS' value='include'/> $Lang::tr{'include logfiles'}<br/>
+		<input type='radio' name='BACKUPLOGS' value='exclude' checked='checked'/> $Lang::tr{'exclude logfiles'}<br/>
+		<input type='radio' name='BACKUPLOGS' value='iso' /> $Lang::tr{'generate iso'}
+	</td>
+</tr>
 <tr><td align='center' colspan='2'>
 	<input type='hidden' name='ACTION' value='backup' />
 	<input type='image' alt='$Lang::tr{'backup'}' title='$Lang::tr{'backup'}' src='/images/document-save.png' />
