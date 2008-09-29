@@ -56,6 +56,7 @@ tmp
 #usr/lib
 usr/lib/libgcc_s.so
 usr/lib/libgcc_s.so.1
+usr/local/bin/backupiso
 usr/local/bin/connscheduler
 usr/local/bin/dialctrl.pl
 usr/local/bin/hddshutdown
