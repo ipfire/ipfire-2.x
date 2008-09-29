@@ -150,10 +150,10 @@ int unattended_setup(struct keyvalue *unattendedkv) {
 	if (!strcmp(restore_file, "")) {
 		fprintf(flog, "unattended: Restoring Backup\n");
 	    snprintf(commandstring, STRING_SIZE,
-		    "cd /harddisk && /bin/tar -xvz --preserve -f /cdrom/%s", restore_file);
+		    "cd /harddisk && /bin/tar -xvz --preserve -f /harddisk/var/ipfire/%s", restore_file);
 	    if (mysystem(commandstring)) {
-		errorbox("unattended: ERROR restoring backup");
-		return 0;
+	    	errorbox("unattended: ERROR restoring backup");
+	    	return 0;
 	    }
 	}
 

@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 	int unattended = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
 	int hardyn = 0;
+	char restore_file[STRING_SIZE];
 
 	setlocale (LC_ALL, "");
 	sethostname( SNAME , 10);
@@ -208,6 +209,7 @@ int main(int argc, char *argv[])
 	    fprintf(flog, "unattended: Reading unattended.conf\n");
 
 	    (void) readkeyvalues(unattendedkv, UNATTENDED_CONF);
+	    findkey(unattendedkv, "RESTORE_FILE", restore_file);	    
 	}
 	
 	/* Make the hdparms struct and print the contents.
@@ -536,6 +538,13 @@ int main(int argc, char *argv[])
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
+	}
+	
+	/* Copy restore file from cdrom */
+	if (unattended && !strcmp(restore_file, "")) {
+		fprintf(flog, "unattended: Copy restore file\n");
+	    snprintf(commandstring, STRING_SIZE, 
+			"cp /cdrom/%s /harddisk/var/ipfire/backup", restore_file);
 	}
 	
 	mysystem("umount /cdrom");
