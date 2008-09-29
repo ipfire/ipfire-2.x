@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	int unattended = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
 	int hardyn = 0;
-	char restore_file[STRING_SIZE];
+	char restore_file[STRING_SIZE] = "";
 
 	setlocale (LC_ALL, "");
 	sethostname( SNAME , 10);

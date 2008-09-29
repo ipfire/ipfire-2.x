@@ -41,7 +41,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     char green_broadcast[STRING_SIZE];
     char root_password[STRING_SIZE];
     char admin_password[STRING_SIZE];
-    char restore_file[STRING_SIZE];
+    char restore_file[STRING_SIZE] = "";
 
     findkey(unattendedkv, "DOMAINNAME", domainname);
     findkey(unattendedkv, "HOSTNAME", hostname);
