@@ -24,5 +24,5 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
-echo none	/dev/shm	tmpfs	defaults,size=256M	0	0 >> /etc/fstab
+echo shm	/dev/shm	tmpfs	defaults,size=256M	0	0 >> /etc/fstab
 start_service --background ${NAME}
