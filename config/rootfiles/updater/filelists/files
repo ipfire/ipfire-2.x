@@ -21,6 +21,8 @@ usr/local/bin/getiptstate
 usr/local/bin/makegraphs
 usr/local/bin/squidctrl
 usr/local/bin/setddns.pl
+srv/web/ipfire/cgi-bin/backup.cgi
+srv/web/ipfire/cgi-bin/ovpn.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
@@ -46,5 +48,6 @@ var/ipfire/updatexlrator/bin/
 usr/sbin/updxlrator
 var/ipfire/langs
 usr/local/bin/qosd
+usr/local/bin/backupiso
 usr/bin/mkisofs
 usr/bin/cdrecord
