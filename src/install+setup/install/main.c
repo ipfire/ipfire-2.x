@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 	int unattended = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
 	int hardyn = 0;
+	char restore_file[STRING_SIZE] = "";
 
 	setlocale (LC_ALL, "");
 	sethostname( SNAME , 10);
@@ -208,6 +209,7 @@ int main(int argc, char *argv[])
 	    fprintf(flog, "unattended: Reading unattended.conf\n");
 
 	    (void) readkeyvalues(unattendedkv, UNATTENDED_CONF);
+	    findkey(unattendedkv, "RESTORE_FILE", restore_file);	    
 	}
 	
 	/* Make the hdparms struct and print the contents.
@@ -453,6 +455,11 @@ int main(int argc, char *argv[])
 		KERNEL_VERSION);
 	mysystem(commandstring);
 */
+	snprintf(commandstring, STRING_SIZE, 
+		"/bin/touch /harddisk/lib/modules/2.6.25.17-ipfire/modules.dep");
+	mysystem(commandstring);
+
+
 	/* Rename uname */
 	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
 
@@ -525,6 +532,11 @@ int main(int argc, char *argv[])
 /*	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-smp.img -k %s-ipfire-smp", KERNEL_VERSION, KERNEL_VERSION );
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 */
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-2.6.25.17.img -k 2.6.25.17-ipfire");
+	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
+
+
+
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
@@ -536,6 +548,13 @@ int main(int argc, char *argv[])
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
+	}
+	
+	/* Copy restore file from cdrom */
+	if (unattended && (strlen(restore_file) > 0)) {
+		fprintf(flog, "unattended: Copy restore file\n");
+	    snprintf(commandstring, STRING_SIZE, 
+			"cp /cdrom/%s /harddisk/var/ipfire/backup", restore_file);
 	}
 	
 	mysystem("umount /cdrom");

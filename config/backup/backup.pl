@@ -32,7 +32,7 @@ $Monatstag = sprintf("%02d", $Monatstag);
 $Stunden = sprintf("%02d", $Stunden);
 $Minuten = sprintf("%02d", $Minuten);
 
-if ($ARGV[0] eq 'include') {
+if (($ARGV[0] eq 'include') || ($ARGV[0] eq 'iso')) {
   &createinclude;
     my @files = `find / -name *.log* 2>/dev/null`;
     foreach (@files){
@@ -48,6 +48,9 @@ if ($ARGV[0] eq 'include') {
   close(DATEI);
   system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
   system("rm /tmp/include");
+  if ($ARGV[0] eq 'iso') {
+  	system("/usr/local/bin/backupiso $Jahr$Monat$Monatstag-$Stunden$Minuten &");
+  }
 }
 elsif ($ARGV[0] eq 'exclude') {
   &createinclude;

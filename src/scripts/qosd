@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w 
+#!/usr/bin/perl -w
 use strict;
 
 ##########################################
@@ -47,8 +47,13 @@ use strict;
 # Configuration options:
 #
 my  $device        = "$ARGV[0]";
-our $rrd_datadir   = "/var/log/rrd/";
-our $event_datadir = $rrd_datadir;
+
+our %mainsettings = ();
+require '/var/ipfire/general-functions.pl';
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+
+our $rrd_datadir   = $mainsettings{'RRDLOG'}."/";
+our $event_datadir = $mainsettings{'RRDLOG'};
 our $STEP          = 10;
 our $tc_command    = "/sbin/tc";
 
@@ -58,20 +63,20 @@ our $tc_command    = "/sbin/tc";
 my $include_dir = '/var/ipfire/qos/bin';
 
 
-# Create the $rrd_datadir if it doesn't exists
-if ( ! -d $rrd_datadir ) {
-    print "RRD-datadir not found, creating it: $rrd_datadir \n";
-    my $status = system("mkdir $rrd_datadir");
-    die "\nERROR cannot create \"$rrd_datadir\"\n" unless $status == 0;
+# Create the $mainsettings{'RRDLOG'} if it doesn't exists
+if ( ! -d $mainsettings{'RRDLOG'} ) {
+    print "RRD-datadir not found, creating it: $mainsettings{'RRDLOG'} \n";
+    my $status = system("mkdir $mainsettings{'RRDLOG'}");
+    die "\nERROR cannot create \"$mainsettings{'RRDLOG'}\"\n" unless $status == 0;
 }
 
 # use POSIX;
 #
-#POSIX::setsid() 
+#POSIX::setsid()
 #    or die "Can't become a daemon: $!";
 
 # The init scripts will do the right "daemon" thing...
-# Become a daemon  
+# Become a daemon
 print "Becoming a daemon...\n";
 my $pid = fork;
 exit if $pid;
@@ -88,6 +93,7 @@ $SIG{PIPE} = 'IGNORE';
 our %classes_data;
 our %classes_info;
 require "$include_dir/parse-func.pl";
+require "$include_dir/event-func.pl";
 require "$include_dir/RRD-func.pl";
 
 until ($time_to_die) {
@@ -103,10 +109,10 @@ until ($time_to_die) {
     #if ( $res ) {
     #	print " Error updating RRDs: \"$res\"\n";
     #}
-    
+
 #    my $timestamp = time;
 #    print "$timestamp\n";
-   
+
     sleep($STEP);
 }
 

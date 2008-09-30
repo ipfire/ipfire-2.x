@@ -32,7 +32,6 @@ require "${General::swroot}/lang.pl";
 # Settings
 $ENV{PATH}="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 my $temp = '';
-my $rrdlog = '/var/log/rrd';
 my $ERROR;
 my $path_smartctl = "/usr/sbin/smartctl";
 
@@ -47,9 +46,9 @@ sub updatehdddata
         my $standby;
         my @array = split(/\//,$disk);
 
-        if ( ! -e "$rrdlog/hddshutdown-".$array[$#array].".rrd"){
+        if ( ! -e "$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd"){
                 # database did not exist -> create
-                RRDs::create ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "--step=300",
+                RRDs::create ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "--step=300",
                 "DS:standby:GAUGE:600:0:1",
                 "RRA:AVERAGE:0.5:1:576",
                 "RRA:AVERAGE:0.5:6:672",
@@ -62,13 +61,13 @@ sub updatehdddata
         if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
         else {$standby = 0;}
 
-        RRDs::update ("$rrdlog/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
+        RRDs::update ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
         $ERROR = RRDs::error;
         print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
 
-        if ( ! -e "$rrdlog/hddtemp-".$array[$#array].".rrd"){
+        if ( ! -e "$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd"){
                 # database did not exist -> create
-                RRDs::create ("$rrdlog/hddtemp-".$array[$#array].".rrd", "--step=300",
+                RRDs::create ("$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd", "--step=300",
                 "DS:temperature:GAUGE:600:0:100",
                 "RRA:AVERAGE:0.5:1:576",
                 "RRA:AVERAGE:0.5:6:672",
@@ -91,7 +90,7 @@ sub updatehdddata
                 print "Temperature for ".$array[$#array]."->".$temp."<-\n";
                 # Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
                 if ($temp){
-                        RRDs::update ("$rrdlog/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
+                        RRDs::update ("$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
                         $ERROR = RRDs::error;
                         print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
                 }

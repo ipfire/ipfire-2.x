@@ -56,6 +56,11 @@ echo var/updatexlerator >> /opt/pakfire/tmp/ROOTFILES
 echo lib/iptables >> /opt/pakfire/tmp/ROOTFILES
 echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
 echo boot >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/fwhits.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/network.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/traffics.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/graphs.cgi >> /opt/pakfire/tmp/ROOTFILES
+echo srv/web/ipfire/cgi-bin/qosgraph.cgi >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
@@ -69,6 +74,14 @@ rm -rf /etc/rc.d/rc3.d/S20collectd
 # Delete squid symlink
 #
 rm -rf /etc/rc.d/rc3.d/S99squid
+#
+# Delete old cgi files ...
+#
+rm -rf /srv/web/ipfire/cgi-bin/fwhits.cgi
+rm -rf /srv/web/ipfire/cgi-bin/network.cgi
+rm -rf /srv/web/ipfire/cgi-bin/traffics.cgi
+rm -rf /srv/web/ipfire/cgi-bin/graphs.cgi
+rm -rf /srv/web/ipfire/cgi-bin/qosgraph.cgi
 #
 # Delete old iptables libs...
 #
@@ -131,10 +144,20 @@ fi
 fi
 mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
 #mkinitcpio -k $KVER-ipfire-smp -g /boot/ipfirerd-$KVER-smp.img
+mkinitcpio -k 2.6.25.17-ipfire -g /boot/ipfirerd-2.6.25.17.img
 #
 # ReInstall grub
 #
 grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
+#
+# Update fstab
+#
+grep -v "tmpfs" /etc/fstab > /tmp/fstab.tmp
+echo shm	/dev/shm	tmpfs	defaults,size=25%	0	0 >> /tmp/fstab.tmp
+echo none	/tmp		tmpfs	defaults,size=128M	0	0 >> /tmp/fstab.tmp
+echo none	/var/log/rrd	tmpfs	defaults,size=64M	0	0 >> /tmp/fstab.tmp
+echo none	/var/lock	tmpfs	defaults,size=32M	0	0 >> /tmp/fstab.tmp
+mv /tmp/fstab.tmp /etc/fstab
 #
 # Change version of Pakfire.conf
 #
@@ -149,6 +172,8 @@ echo \\n running on \\s \\r \\m >> /etc/issue
 # Update crontab
 #
 grep -v "ipacsum" /var/spool/cron/root.orig > /tmp/root.orig.tmp
+echo "# Backup collectd files" >> /tmp/root.orig.tmp
+echo "01 * * * *	/etc/init.d/collectd backup >/dev/null" >> /tmp/root.orig.tmp
 mv /tmp/root.orig.tmp /var/spool/cron/root.orig
 chmod 600 /var/spool/cron/root.orig
 chown root:cron /var/spool/cron/root.orig

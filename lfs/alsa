@@ -34,7 +34,7 @@ ifeq "$(KMOD)" "1"
 ifeq "$(SMP)" "1"
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
 else
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
 endif
 else
 TARGET     = $(DIR_INFO)/$(THISAPP)

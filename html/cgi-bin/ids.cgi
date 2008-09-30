@@ -114,7 +114,7 @@ if (-e "/etc/snort/snort.conf") {
 
 		if ($snortsettings{'ACTION'} eq $Lang::tr{'save'}) {
 			# Check for preprocessor settings
-			if ($line =~ /preprocessor http_inspect:/) {
+			if ($line =~ /preprocessor http_inspect/) {
 				# Strip out leading # from rule line
 				$line =~ s/\# ?//i;
 				if (($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'off')) {
@@ -459,7 +459,7 @@ print <<END
 	<td><b>$Lang::tr{'ids preprocessor'}</b></td>
 </tr>
 <tr>
-  	<td><input type='checkbox' name='ENABLE_PREPROCESSOR_HTTP_INSPECT' $checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{'on'} />  http_inspect
+  	<td><input type='checkbox' name='ENABLE_PREPROCESSOR_HTTP_INSPECT' $checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{'on'} />  http_inspect $Lang::tr{'active'}
 <tr>
 	<td><hr /></td>
 </tr>

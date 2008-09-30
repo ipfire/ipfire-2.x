@@ -243,6 +243,7 @@ $checked{'SERVICE'}{'easydns.com'} = '';
 $checked{'SERVICE'}{'enom.com'} = '';
 $checked{'SERVICE'}{'freedns.afraid.org'} = '';
 $checked{'SERVICE'}{'hn.org'} = '';
+$checked{'SERVICE'}{'mydyn.de'} = '';
 $checked{'SERVICE'}{'no-ip.com'} = '';
 $checked{'SERVICE'}{'nsupdate'} = '';
 $checked{'SERVICE'}{'ovh.com'} = '';
@@ -335,6 +336,7 @@ print <<END
     <option $checked{'SERVICE'}{'enom.com'}>enom.com</option>
     <option $checked{'SERVICE'}{'freedns.afraid.org'}>freedns.afraid.org</option>
     <option $checked{'SERVICE'}{'hn.org'}>hn.org</option>
+    <option $checked{'SERVICE'}{'mydyn.de'}>mydyn.de</option>
     <option $checked{'SERVICE'}{'no-ip.com'}>no-ip.com</option>
     <option $checked{'SERVICE'}{'nsupdate'}>nsupdate</option>
     <option $checked{'SERVICE'}{'ovh.com'}>ovh.com</option>

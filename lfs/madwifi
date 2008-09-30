@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(SMP)" ""
-  TARGET     = $(DIR_INFO)/$(THISAPP)
+  TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
 else
   TARGET     = $(DIR_INFO)/$(THISAPP)-smp
 endif

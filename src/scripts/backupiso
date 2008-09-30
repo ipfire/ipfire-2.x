@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# FIXME: edit this lines before release
+#URL=http://download.ipfire.org/iso/
+#ISO=ipfire-2.3-beta4.i586-full.iso
+URL=http://www.rowie.at/ipfire/builds/v2.3test/Beta3/20080929-6uhr/
+ISO=ipfire-2.3-test.i586-full.iso
+
+if [ -z "$1" ]; then 
+	echo usage: $0 backup-file
+	exit
+fi
+
+TS=$1
+
+mkdir -p /var/tmp/backupiso
+cd /var/tmp/backupiso
+
+echo "Fetching ${URL}${ISO}"
+wget --quiet -c ${URL}${ISO}
+echo "Fetching ${URL}md5sums.txt"
+wget --quiet -O md5sums.txt ${URL}md5sums.txt
+
+echo "Checking md5 of ${ISO}"
+cat md5sums.txt | grep iso | tr '\r' '\n' | md5sum --status -c
+RETVAR="$?"
+if [ $RETVAR -eq 0 -o $RETVAR -eq 24 ]
+       then
+                echo "md5 is OK"
+       else
+                echo "md5 mismatch"
+		echo "Fetching again ${URL}${ISO}"
+		wget --quiet -O ${ISO} ${URL}${ISO}
+fi
+
+echo "Remastering iso"
+mkdir -p backupiso.tmp.${TS}
+mount -o loop ${ISO} backupiso.tmp.${TS}
+cp -pr backupiso.tmp.${TS} backupiso.${TS}
+umount backupiso.tmp.${TS}
+rm -r backupiso.tmp.${TS}
+
+echo "RESTORE=${TS}.ipf" >> backupiso.${TS}/boot/unattended.conf
+cp /var/ipfire/backup/${TS}.ipf backupiso.${TS}
+
+echo "Running mkisofs"
+mkisofs -J -r -V "ipfire backup ${TS}" \
+            -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
+            -c boot/isolinux/boot.catalog backupiso.${TS} > `basename ${ISO} .iso`-${TS}.iso
+
+echo "Cleaning up"
+rm -rf backupiso.${TS}

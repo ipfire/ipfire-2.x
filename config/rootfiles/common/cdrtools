@@ -1,12 +1,12 @@
 #usr/bin/cdda2wav
-#usr/bin/cdrecord
+usr/bin/cdrecord
 #usr/bin/devdump
 #usr/bin/isodebug
 #usr/bin/isodump
 #usr/bin/isoinfo
 #usr/bin/isovfy
 #usr/bin/mkhybrid
-#usr/bin/mkisofs
+usr/bin/mkisofs
 #usr/bin/readcd
 #usr/bin/scgcheck
 #usr/bin/skel

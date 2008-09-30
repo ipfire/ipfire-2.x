@@ -41,7 +41,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     char green_broadcast[STRING_SIZE];
     char root_password[STRING_SIZE];
     char admin_password[STRING_SIZE];
-    char restore_file[STRING_SIZE];
+    char restore_file[STRING_SIZE] = "";
 
     findkey(unattendedkv, "DOMAINNAME", domainname);
     findkey(unattendedkv, "HOSTNAME", hostname);
@@ -147,13 +147,13 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     }
 
 	/* restore backup */
-	if (restore_file != "") {
+	if (strlen(restore_file) > 0) {
 		fprintf(flog, "unattended: Restoring Backup\n");
 	    snprintf(commandstring, STRING_SIZE,
-		    "cd /harddisk && /bin/tar -xvz --preserve -f /cdrom/%s", restore_file);
+		    "cd /harddisk && /bin/tar -xvz --preserve -f /harddisk/var/ipfire/%s", restore_file);
 	    if (mysystem(commandstring)) {
-		errorbox("unattended: ERROR setting admin password");
-		return 0;
+	    	errorbox("unattended: ERROR restoring backup");
+	    }
 	}
 
     fprintf(flog, "unattended: Setup ended\n");

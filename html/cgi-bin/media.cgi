@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -30,38 +30,50 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/graphs.pl";
 
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourred} );
 undef (@dummy);
 
 my %cgiparams=();
 
-&Header::showhttpheaders();
-
-&Header::getcgihash(\%cgiparams);
-
-&Header::openpage($Lang::tr{'media information'}, 1, '');
-
-&Header::openbigbox('100%', 'left');
+my @querry = split(/\?/,$ENV{'QUERY_STRING'});
+$querry[0] = '' unless defined $querry[0];
+$querry[1] = 'hour' unless defined $querry[1];
 
 my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 
-foreach (@devices) {
-	my $device = $_;
-	chomp($device);
-	my @array = split(/\//,$device);
-	&Graphs::updatediskgraph ("day",$array[$#array]);
-	diskbox($array[$#array]);
-}
+if ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" ){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	
+	&Graphs::updatediskgraph($querry[0],$querry[1]);
+}else{
+	&Header::showhttpheaders();
+	&Header::openpage($Lang::tr{'media information'}, 1, '');
+	&Header::openbigbox('100%', 'left');
 
-&Header::openbox('100%', 'center', $Lang::tr{'disk usage'});
-print "<table width='95%' cellspacing='5'>\n";
-open(DF,'/bin/df -B M -x rootfs|');
-while(<DF>)
-{
-        if ($_ =~ m/^Filesystem/ )
-        {
-                print <<END
+	foreach (@devices) {
+		my $device = $_;
+		chomp($device);
+		my @array = split(/\//,$device);
+		&Header::openbox('100%', 'center', "$array[$#array] $Lang::tr{'graph'}");
+		diskbox($array[$#array]);
+		&Graphs::makegraphbox("media.cgi",$array[$#array],"day");
+		&Header::closebox();
+	}
+
+	
+	&Header::openbox('100%', 'center', $Lang::tr{'disk usage'});
+	print "<table width='95%' cellspacing='5'>\n";
+	open(DF,'/bin/df -B M -x rootfs|');
+	while(<DF>){
+		if ($_ =~ m/^Filesystem/ ){
+			print <<END
 <tr>
 <td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td>
 <td align='center' class='boldbase'><b>$Lang::tr{'mounted on'}</b></td>
@@ -72,11 +84,9 @@ while(<DF>)
 </tr>
 END
 ;
-        }
-        else
-        {
-                my ($device,$size,$used,$free,$percent,$mount) = split;
-                print <<END
+		}else{
+			my ($device,$size,$used,$free,$percent,$mount) = split;
+			print <<END
 <tr>
 <td align='center'>$device</td>
 <td align='center'>$mount</td>
@@ -86,24 +96,22 @@ END
 <td align='left'>
 END
 ;
-                &percentbar($percent);
-                print <<END
+		 	&percentbar($percent);
+			 print <<END
 </td>
 <td align='left'>$percent</td>
 </tr>
 END
 ;
-        }
-}
-close DF;
-print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>Inodes</h3>\n";
+		}
+	}
+	close DF;
+	print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>Inodes</h3>\n";
 
-open(DF,'/bin/df -i -x rootfs|');
-while(<DF>)
-{
-   if ($_ =~ m/^Filesystem/ )
-   {
-      print <<END
+	open(DF,'/bin/df -i -x rootfs|');
+	while(<DF>){
+		if ($_ =~ m/^Filesystem/ ){
+			print <<END
 <tr>
 <td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td>
 <td align='center' class='boldbase'><b>$Lang::tr{'mounted on'}</b></td>
@@ -114,11 +122,9 @@ while(<DF>)
 </tr>
 END
 ;
-   }
-   else
-   {
-      my ($device,$size,$used,$free,$percent,$mount) = split;
-      print <<END
+		}else{
+			my ($device,$size,$used,$free,$percent,$mount) = split;
+			print <<END
 <tr>
 <td align='center'>$device</td>
 <td align='center'>$mount</td>
@@ -128,33 +134,35 @@ END
 <td>
 END
 ;
-      &percentbar($percent);
-      print <<END
+			&percentbar($percent);
+			print <<END
 </td>
 <td align='left'>$percent</td>
 </tr>
 END
 ;
-   }
+		}
+	}
+	close DF;
+	my @iostat1 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$1}');
+	my @iostat2 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$5}');
+	my @iostat3 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$6}');
+	print "<tr><td colspan='3'>&nbsp;\n<tr><td colspan='3'><h3>transfers</h3></td></tr>";
+	my $i=0;
+
+	for(my $i = 1; $i <= $#iostat1; $i++){
+		if ( $i eq '1' ){
+			print "<tr><td align='center' class='boldbase'><b>Device</b></td><td align='center' class='boldbase'><b>MB read</b></td><td align='center' class='boldbase'><b>MB writen</b></td></tr>";
+		}else{
+			print "<tr><td align='center'>$iostat1[$i]</td><td align='center'>$iostat2[$i]</td><td align='center'>$iostat3[$i]</td></tr>";
+		}
+	}
+	print "</table>\n";
+	&Header::closebox();
+
+	&Header::closebigbox();
+	&Header::closepage();
 }
-close DF;
-my @iostat1 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$1}');
-my @iostat2 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$5}');
-my @iostat3 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$6}');
-print "<tr><td colspan='3'>&nbsp;\n<tr><td colspan='3'><h3>transfers</h3></td></tr>";
-my $i=0;
-
-for(my $i = 1; $i <= $#iostat1; $i++)
-{
-if ( $i eq '1' ){print "<tr><td align='center' class='boldbase'><b>Device</b></td><td align='center' class='boldbase'><b>MB read</b></td><td align='center' class='boldbase'><b>MB writen</b></td></tr>";}
-else {print "<tr><td align='center'>$iostat1[$i]</td><td align='center'>$iostat2[$i]</td><td align='center'>$iostat3[$i]</td></tr>";}
-}
-print "</table>\n";
-&Header::closebox();
-
-&Header::closebigbox();
-
-&Header::closepage();
 
 sub percentbar
 {
@@ -184,44 +192,33 @@ END
 }
 
 sub diskbox {
- my $disk = $_[0];
- chomp $disk;
- my @status;
-    if (-e "$Header::graphdir/disk-$disk-day.png") {
-	 	  &Header::openbox('100%', 'center', "Disk $disk $Lang::tr{'graph'}");
-		  my $ftime = localtime((stat("$Header::graphdir/disk-$disk-day.png"))[9]);
-		  print "<center><b>$Lang::tr{'the statistics were last updated at'}: $ftime</b></center><br />\n";
-		  print "<a href='/cgi-bin/graphs.cgi?graph=disk-$disk'>";
-		  print "<img alt='' src='/graphs/disk-$disk-day.png' border='0' />";
-		  print "</a>";
-		  print "<br />\n";
+	my $disk = $_[0];
+	chomp $disk;
+	my @status;
+	if (-e "/tmp/hddstatus"){
+		open(DATEI, "</tmp/hddstatus") || die "Datei nicht gefunden";
+		my  @diskstate = <DATEI>;
+		close(DATEI);
 
-      if (-e "/tmp/hddstatus") {
-        open(DATEI, "</tmp/hddstatus") || die "Datei nicht gefunden";
-        my  @diskstate = <DATEI>;
-        close(DATEI);
+		foreach (@diskstate){
+			if ( $_ =~/$disk/ ){@status = split(/-/,$_);}
+		}
 
-        foreach (@diskstate){
-          if ( $_ =~/$disk/ ){@status = split(/-/,$_);}
-        }
+		if ( $status[1]=~/standby/){
+			my $ftime = localtime((stat("/tmp/hddshutdown-$disk"))[9]);
+			print"<B>Disk $disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
+		}else{
+			print"<B>Disk $disk status:<font color=#00FF00>".$status[1]."</font></B>";
+		}
+	}
 
-        if ( $status[1]=~/standby/){
-          my $ftime = localtime((stat("/tmp/hddshutdown-$disk"))[9]);
-          print"<B>Disk $disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
-        }
-        else{
-          print"<B>Disk $disk status:<font color=#00FF00>".$status[1]."</font></B>";
-        }
-      }
-		  my $smart = `/usr/local/bin/smartctrl $disk`;
-			$smart = &Header::cleanhtml($smart);
-			print <<END
-				<br /><input type="button" onClick="swapVisibility('smart_$disk')" value="$Lang::tr{'smart information'}" />
-				<div id='smart_$disk' style='display: none'>
-					<hr /><table border=0><tr><td align=left><pre>$smart</pre></table>
-				</div>
+	my $smart = `/usr/local/bin/smartctrl $disk`;
+	$smart = &Header::cleanhtml($smart);
+	print <<END
+<br /><input type="button" onClick="swapVisibility('smart_$disk')" value="$Lang::tr{'smart information'}" />
+<div id='smart_$disk' style='display: none'>
+	<hr /><table border=0><tr><td align=left><pre>$smart</pre></table>
+</div>
 END
 ;
-      &Header::closebox();
-		}
 }

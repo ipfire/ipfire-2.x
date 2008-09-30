@@ -8,4 +8,7 @@ DEVICE4	/var	FSTYPE	defaults	1	1
 proc	/proc	proc	defaults	0	0
 sysfs	/sys	sysfs	defaults	0	0
 devpts	/dev/pts	devpts   gid=4,mode=620  0     0
-shm	/dev/shm	tmpfs	defaults	0	0
+shm	/dev/shm	tmpfs	defaults,size=25%	0	0
+none	/tmp		tmpfs	defaults,size=128M	0	0
+none	/var/log/rrd	tmpfs	defaults,size=64M	0	0
+none	/var/lock	tmpfs	defaults,size=32M	0	0
