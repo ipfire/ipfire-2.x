@@ -553,8 +553,9 @@ int main(int argc, char *argv[])
 	/* Copy restore file from cdrom */
 	if (unattended && (strlen(restore_file) > 0)) {
 		fprintf(flog, "unattended: Copy restore file\n");
-	    snprintf(commandstring, STRING_SIZE, 
+		snprintf(commandstring, STRING_SIZE, 
 			"cp /cdrom/%s /harddisk/var/ipfire/backup", restore_file);
+		mysystem(commandstring);
 	}
 	
 	mysystem("umount /cdrom");
