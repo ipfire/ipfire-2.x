@@ -1,5 +1,5 @@
-    $subipfire->{'54.wlanap'} = {'caption' => wlanap,
+    $subipfire->{'54.wlanap'} = {'caption' => WLanAP,
 				  'uri' => '/cgi-bin/wlanap.cgi',
-				  'title' => wlanap,
+				  'title' => WLanAP,
 				  'enabled' => 1,
 				  };

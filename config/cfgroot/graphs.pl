@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -77,21 +77,21 @@ foreach (@sensorsdir){
 # 3 if given is the height of the iframe default if nothing is given
 
 sub makegraphbox {
-	my $height = 275;
+	my $height = 285;
 	my $width = 700;
 
 	if ( $_[3] ne "" ){ $height = $_[3]; }
 
 	print "<center>";
-	print "<a href='".$_[0]."?".$_[1]."?hour' target='".$_[1]."box'>Hour</a>";
+	print "<a href='".$_[0]."?".$_[1]."?hour' target='".$_[1]."box'><b>".$Lang::tr{'hour'}."</b></a>";
 	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?day' target='".$_[1]."box'>Day</a>";
+	print "<a href='".$_[0]."?".$_[1]."?day' target='".$_[1]."box'><b>".$Lang::tr{'day'}."</b></a>";
 	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?week' target='".$_[1]."box'>Week</a>";
+	print "<a href='".$_[0]."?".$_[1]."?week' target='".$_[1]."box'><b>".$Lang::tr{'week'}."</b></a>";
 	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?month' target='".$_[1]."box'>Month</a>";
+	print "<a href='".$_[0]."?".$_[1]."?month' target='".$_[1]."box'><b>".$Lang::tr{'month'}."</b></a>";
 	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?year' target='".$_[1]."box'>Year</a>";
+	print "<a href='".$_[0]."?".$_[1]."?year' target='".$_[1]."box'><b>".$Lang::tr{'year'}."</b></a>";
 	print "<iframe src='".$_[0]."?".$_[1]."?".$_[2]."' width='".$width."' height='".$height."' scrolling='no' frameborder='no' marginheight='0' name='".$_[1]."box'></iframe>";
 	print "</center>";
 }

@@ -63,8 +63,10 @@ case "$1" in
 		evaluate_retval
 		;;
 	restore)
-		boot_mesg "Copying rrd files to ramd..."
-		cp -pR $RRDLOG.bak/* $RRDLOG/
+		if [ -e $RRDLOG.bak ];then
+			boot_mesg "Copying rrd files to ramd..."
+			cp -pR $RRDLOG.bak/* $RRDLOG/
+		fi
 		;;
 	status)
 		statusproc /usr/sbin/collectd

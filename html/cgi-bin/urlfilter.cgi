@@ -1443,12 +1443,6 @@ print <<END
 	<td class='base'>$Lang::tr{'urlfilter msg text 3'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='MSG_TEXT_3' value='$filtersettings{'MSG_TEXT_3'}' size='40' /></td>
 </tr>
-<tr>
-	<td class='base'>$Lang::tr{'urlfilter enable jpeg'}:</td>
-	<td><input type='checkbox' name='ENABLE_JPEG' $checked{'ENABLE_JPEG'}{'on'} /></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-</tr>
 </table>
 <hr size='1'>
 <table width='100%'>
