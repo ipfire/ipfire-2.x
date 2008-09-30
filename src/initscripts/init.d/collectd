@@ -24,11 +24,11 @@ case "$1" in
 			fi
 		fi
 
+		/etc/init.d/collectd restore
+
 		if [ ! -e $RRDLOG.bak/ ]; then
 			mkdir $RRDLOG.bak/
 		fi
-
-		/etc/init.d/collectd restore
 
 		boot_mesg -n "Loading Sensor Modules..."
 		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
