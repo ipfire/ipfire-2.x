@@ -22,7 +22,7 @@ usr/local/bin/makegraphs
 usr/local/bin/squidctrl
 usr/local/bin/setddns.pl
 srv/web/ipfire/cgi-bin/backup.cgi
-srv/web/ipfire/cgi-bin/ovpn.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
@@ -38,6 +38,7 @@ srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/ddns.cgi
+var/ipfire/backup/bin/backup.pl
 var/ipfire/sensors/
 var/ipfire/graphs.pl
 var/ipfire/firebuild
