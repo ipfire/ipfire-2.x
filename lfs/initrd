@@ -61,7 +61,6 @@ $(TARGET) :
 	# make new dependencies 
 	depmod -a -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
 	#depmod -a -F /boot/System.map-$(KVER)-ipfire-smp $(KVER)-ipfire-smp
-	depmod -a -F /boot/System.map-2.6.25.17-ipfire 2.6.25.17-ipfire
 	
 	cp -a /lib/modules/$(KVER)-ipfire/ /install/initrd/lib/modules/
 	
