@@ -3,7 +3,7 @@
 # FIXME: edit this lines before release
 #URL=http://download.ipfire.org/iso/
 #ISO=ipfire-2.3-beta4.i586-full.iso
-URL=http://www.rowie.at/ipfire/builds/v2.3test/Beta3/20080930-11uhr/
+URL=http://www.rowie.at/ipfire/builds/v2.3test/Beta3/20081001-10uhr/
 ISO=ipfire-2.3-test.i586-full.iso
 
 if [ -z "$1" ]; then 
