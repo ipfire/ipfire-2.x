@@ -1,26 +1,24 @@
 #!/usr/bin/perl
 
-############################################################################
-#                                                                          #
-# This file is part of the IPCop Firewall.                                 #
-#                                                                          #
-# IPCop is free software; you can redistribute it and/or modify            #
-# it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
-# (at your option) any later version.                                      #
-#                                                                          #
-# IPCop is distributed in the hope that it will be useful,                 #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-# GNU General Public License for more details.                             #
-#                                                                          #
-# You should have received a copy of the GNU General Public License        #
-# along with IPCop; if not, write to the Free Software                     #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
-#                                                                          #
-# Copyright (C) 2004-01-19 Mark Wormgoor <mark@wormgoor.com>.              #
-#                                                                          #
-############################################################################
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 use strict;
 #use warnings;
@@ -40,97 +38,94 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-sub updatehdddata
-{
-        my $disk = $_[0];
-        my $standby;
-        my @array = split(/\//,$disk);
+sub updatehdddata{
+	my $disk = $_[0];
+	my $standby;
+	my @array = split(/\//,$disk);
 
-        if ( ! -e "$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd"){
-                # database did not exist -> create
-                RRDs::create ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "--step=300",
-                "DS:standby:GAUGE:600:0:1",
-                "RRA:AVERAGE:0.5:1:576",
-                "RRA:AVERAGE:0.5:6:672",
-                "RRA:AVERAGE:0.5:24:732",
-                "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
-        }
+	if ( ! -e "$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd"){
+		# database did not exist -> create
+		RRDs::create ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "--step=300",
+		"DS:standby:GAUGE:600:0:1",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
+	}
 
-        if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
-        else {$standby = 0;}
+	if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
+	else {$standby = 0;}
 
-        RRDs::update ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
-        $ERROR = RRDs::error;
-        print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
+	RRDs::update ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
+	$ERROR = RRDs::error;
+	print "Error in RRD::update for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
 
-        if ( ! -e "$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd"){
-                # database did not exist -> create
-                RRDs::create ("$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd", "--step=300",
-                "DS:temperature:GAUGE:600:0:100",
-                "RRA:AVERAGE:0.5:1:576",
-                "RRA:AVERAGE:0.5:6:672",
-                "RRA:AVERAGE:0.5:24:732",
-                "RRA:AVERAGE:0.5:144:1460");
-                $ERROR = RRDs::error;
-                print "Error in RRD::create for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
-        }
+	if ( ! -e "$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd"){
+		# database did not exist -> create
+		RRDs::create ("$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd", "--step=300",
+		"DS:temperature:GAUGE:600:0:100",
+		"RRA:AVERAGE:0.5:1:576",
+		"RRA:AVERAGE:0.5:6:672",
+		"RRA:AVERAGE:0.5:24:732",
+		"RRA:AVERAGE:0.5:144:1460");
+		$ERROR = RRDs::error;
+		print "Error in RRD::create for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
+		}
 
-        # Temperaturlesen w�rde die Platte aufwecken!!!
-        if (!$standby){
-                $temp = 0;
-                my $smart_output = '';
-                system("$path_smartctl -iHA -d ata /dev/$disk > /var/log/smartctl_out_hddtemp-$disk");
-                if ( -e "/var/log/smartctl_out_hddtemp-".$array[$#array] ){
-                my $hdd_output = `cat /var/log/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
-                my @t = split(/\s+/,$hdd_output);
-                $temp = $t[9];
-                }else{$temp = 0;}
-                print "Temperature for ".$array[$#array]."->".$temp."<-\n";
-                # Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
-                if ($temp){
-                        RRDs::update ("$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
-                        $ERROR = RRDs::error;
-                        print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
-                }
-        }
+	# Temperaturlesen w�rde die Platte aufwecken!!!
+	if (!$standby){
+		$temp = 0;
+		my $smart_output = '';
+		system("$path_smartctl -iHA -d ata /dev/$disk > /tmp/smartctl_out_hddtemp-$disk");
+		if ( -e "/tmp/smartctl_out_hddtemp-".$array[$#array] ){
+			my $hdd_output = `cat /tmp/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
+			my @t = split(/\s+/,$hdd_output);
+			$temp = $t[9];
+		}else{$temp = 0;}
+		print "Temperature for ".$array[$#array]."->".$temp."<-\n";
+		# Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
+		if ($temp){
+			RRDs::update ("$mainsettings{'RRDLOG'}/hddtemp-".$array[$#array].".rrd", "-t", "temperature", "N:$temp");
+			$ERROR = RRDs::error;
+			print "Error in RRD::update for hdd-".$array[$#array].": $ERROR\n" if $ERROR;
+		}
+	}
 }
 
-## Update ipac logs
-#system ('/usr/sbin/fetchipac');
 ## Update vnstat
 system ('/usr/bin/vnstat -u');
 
 my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 system("unlink /tmp/hddstatus && touch /tmp/hddstatus");
 foreach (@disks){
-        my $disk = $_;
-        chomp $disk;
-        print "Working on disk ".$disk.".\n";
+	my $disk = $_;
+	chomp $disk;
+	print "Working on disk ".$disk.".\n";
 
-        my $status = "";
-        my $diskstats = "";
-        my $newdiskstats = "";
-        my @array = split(/\//,$disk);
+	my $status = "";
+	my $diskstats = "";
+	my $newdiskstats = "";
+	my @array = split(/\//,$disk);
 
-        $diskstats = `cat /tmp/hddstats-$array[$#array]`;
-        chomp $diskstats;
-        my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
-        chomp $newdiskstats;
-        my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
-        chomp $status;
+	$diskstats = `cat /tmp/hddstats-$array[$#array]`;
+	chomp $diskstats;
+	my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+	chomp $newdiskstats;
+	my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
+	chomp $status;
 
-        if ($status !~/standby/ || $diskstats ne $newdiskstats){
-                if (-e "/tmp/hddshutdown-".$array[$#array]){system("unlink /tmp/hddshutdown-".$array[$#array]);}
-        }
+	if ($status !~/standby/ || $diskstats ne $newdiskstats){
+		if (-e "/tmp/hddshutdown-".$array[$#array]){system("unlink /tmp/hddshutdown-".$array[$#array]);}
+	}
 
-        if (-e "/tmp/hddshutdown-".$array[$#array]){$status = " standby\n";}
-        else{$status = " active\n";}
+	if (-e "/tmp/hddshutdown-".$array[$#array]){$status = " standby\n";}
+	else{$status = " active\n";}
 
-        open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
-        print DATEI $disk."-".$status;
-        close(DATEI);
+	open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
+	print DATEI $disk."-".$status;
+	close(DATEI);
 
-        updatehdddata($disk);
+	updatehdddata($disk);
 }
