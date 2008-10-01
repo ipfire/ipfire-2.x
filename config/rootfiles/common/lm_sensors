@@ -16,7 +16,7 @@ usr/lib/libsensors.so.4.0.2
 #usr/man/man8/isadump.8
 #usr/man/man8/isaset.8
 #usr/man/man8/pwmconfig.8
-#usr/local/man/man8/sensors-detect.8
+#usr/man/man8/sensors-detect.8
 usr/sbin/fancontrol
 usr/sbin/isadump
 usr/sbin/isaset
