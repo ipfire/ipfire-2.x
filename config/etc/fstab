@@ -11,4 +11,4 @@ devpts	/dev/pts	devpts   gid=4,mode=620  0     0
 none	/tmp		tmpfs	defaults,size=128M	0	0
 none	/var/log/rrd	tmpfs	defaults,size=64M	0	0
 none	/var/lock	tmpfs	defaults,size=16M	0	0
-none	/var/spool	tmpfs	defaults,size=16M	0	0
+none	/var/run	tmpfs	defaults,size=16M	0	0
