@@ -1,0 +1,31 @@
+#!/bin/sh
+# Begin $rc_base/init.d/tmpfs
+
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
+
+if [ "$RRDLOG" = '' ]; then
+	RRDLOG=/var/log/rrd
+fi
+
+case "$1" in
+	start)
+		/etc/init.d/collectd restore
+		if [ ! -e $RRDLOG.bak/vnstat ]; then
+			mkdir -p $RRDLOG.bak/vnstat
+		fi
+		;;
+	stop)
+		/etc/init.d/collectd backup
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/tmpfs

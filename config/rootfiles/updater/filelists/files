@@ -8,6 +8,10 @@ etc/ppp/dialer
 etc/rc.d/init.d/checkfstab
 etc/rc.d/rcsysinit.d/S19checkfstab
 etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/tmpfs
+etc/rc.d/rc0.d/K85tmpfs
+etc/rc.d/rc3.d/S01tmpfs
+etc/rc.d/rc6.d/K85tmpfs
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/network
 etc/rc.d/init.d/networking/any

@@ -164,3 +164,7 @@ etc/sysconfig/firewall.local
 etc/sysconfig/modules
 etc/sysconfig/rc
 etc/sysconfig/rc.local
+etc/rc.d/init.d/tmpfs
+etc/rc.d/rc0.d/K85tmpfs
+etc/rc.d/rc3.d/S01tmpfs
+etc/rc.d/rc6.d/K85tmpfs
