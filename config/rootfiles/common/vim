@@ -838,7 +838,7 @@ usr/share/vim/vim70/syntax/fstab.vim
 #usr/share/vim/vim70/syntax/ncf.vim
 #usr/share/vim/vim70/syntax/netrc.vim
 #usr/share/vim/vim70/syntax/netrw.vim
-#usr/share/vim/vim70/syntax/nosyntax.vim
+usr/share/vim/vim70/syntax/nosyntax.vim
 #usr/share/vim/vim70/syntax/nqc.vim
 #usr/share/vim/vim70/syntax/nroff.vim
 #usr/share/vim/vim70/syntax/nsis.vim
@@ -977,7 +977,7 @@ usr/share/vim/vim70/syntax/strace.vim
 #usr/share/vim/vim70/syntax/sudoers.vim
 #usr/share/vim/vim70/syntax/svn.vim
 #usr/share/vim/vim70/syntax/syncolor.vim
-#usr/share/vim/vim70/syntax/synload.vim
+usr/share/vim/vim70/syntax/synload.vim
 usr/share/vim/vim70/syntax/syntax.vim
 #usr/share/vim/vim70/syntax/sysctl.vim
 #usr/share/vim/vim70/syntax/tads.vim
