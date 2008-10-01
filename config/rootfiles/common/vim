@@ -617,7 +617,7 @@ usr/bin/vim
 #usr/share/vim/vim70/syntax/blank.vim
 #usr/share/vim/vim70/syntax/bst.vim
 #usr/share/vim/vim70/syntax/btm.vim
-#usr/share/vim/vim70/syntax/c.vim
+usr/share/vim/vim70/syntax/c.vim
 #usr/share/vim/vim70/syntax/calendar.vim
 #usr/share/vim/vim70/syntax/catalog.vim
 #usr/share/vim/vim70/syntax/cdl.vim
@@ -667,7 +667,7 @@ usr/bin/vim
 #usr/share/vim/vim70/syntax/desktop.vim
 #usr/share/vim/vim70/syntax/dictconf.vim
 #usr/share/vim/vim70/syntax/dictdconf.vim
-#usr/share/vim/vim70/syntax/diff.vim
+usr/share/vim/vim70/syntax/diff.vim
 #usr/share/vim/vim70/syntax/dircolors.vim
 #usr/share/vim/vim70/syntax/diva.vim
 #usr/share/vim/vim70/syntax/django.vim
@@ -712,7 +712,7 @@ usr/bin/vim
 #usr/share/vim/vim70/syntax/forth.vim
 #usr/share/vim/vim70/syntax/fortran.vim
 #usr/share/vim/vim70/syntax/foxpro.vim
-#usr/share/vim/vim70/syntax/fstab.vim
+usr/share/vim/vim70/syntax/fstab.vim
 #usr/share/vim/vim70/syntax/fvwm.vim
 #usr/share/vim/vim70/syntax/fvwm2m4.vim
 #usr/share/vim/vim70/syntax/gdb.vim
@@ -856,7 +856,7 @@ usr/bin/vim
 #usr/share/vim/vim70/syntax/passwd.vim
 #usr/share/vim/vim70/syntax/pcap.vim
 #usr/share/vim/vim70/syntax/pccts.vim
-#usr/share/vim/vim70/syntax/perl.vim
+usr/share/vim/vim70/syntax/perl.vim
 #usr/share/vim/vim70/syntax/pf.vim
 #usr/share/vim/vim70/syntax/pfmain.vim
 #usr/share/vim/vim70/syntax/php.vim
@@ -886,7 +886,7 @@ usr/bin/vim
 #usr/share/vim/vim70/syntax/ptcap.vim
 #usr/share/vim/vim70/syntax/purifylog.vim
 #usr/share/vim/vim70/syntax/pyrex.vim
-#usr/share/vim/vim70/syntax/python.vim
+usr/share/vim/vim70/syntax/python.vim
 #usr/share/vim/vim70/syntax/qf.vim
 #usr/share/vim/vim70/syntax/quake.vim
 #usr/share/vim/vim70/syntax/r.vim
@@ -927,7 +927,7 @@ usr/bin/vim
 #usr/share/vim/vim70/syntax/sgml.vim
 #usr/share/vim/vim70/syntax/sgmldecl.vim
 #usr/share/vim/vim70/syntax/sgmllnx.vim
-#usr/share/vim/vim70/syntax/sh.vim
+usr/share/vim/vim70/syntax/sh.vim
 #usr/share/vim/vim70/syntax/sicad.vim
 #usr/share/vim/vim70/syntax/sieve.vim
 #usr/share/vim/vim70/syntax/simula.vim
@@ -973,12 +973,12 @@ usr/bin/vim
 #usr/share/vim/vim70/syntax/st.vim
 #usr/share/vim/vim70/syntax/stata.vim
 #usr/share/vim/vim70/syntax/stp.vim
-#usr/share/vim/vim70/syntax/strace.vim
+usr/share/vim/vim70/syntax/strace.vim
 #usr/share/vim/vim70/syntax/sudoers.vim
 #usr/share/vim/vim70/syntax/svn.vim
 #usr/share/vim/vim70/syntax/syncolor.vim
 #usr/share/vim/vim70/syntax/synload.vim
-#usr/share/vim/vim70/syntax/syntax.vim
+usr/share/vim/vim70/syntax/syntax.vim
 #usr/share/vim/vim70/syntax/sysctl.vim
 #usr/share/vim/vim70/syntax/tads.vim
 #usr/share/vim/vim70/syntax/tags.vim
