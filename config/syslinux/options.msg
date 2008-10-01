@@ -9,7 +9,7 @@
 
  -  To test the memory in your system type: 04memtest <ENTER>07.
 
- -  To install in unattended mode, type: unattended <ENTER>.
+ -  To install in unattended mode, type: 04unattended <ENTER>07.
 
 
 
