@@ -3,12 +3,16 @@ etc/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc
-etc/fstab
 etc/ppp/dialer
 etc/rc.d/init.d/checkfstab
 etc/rc.d/rcsysinit.d/S19checkfstab
 etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/tmpfs
+etc/rc.d/rc0.d/K85tmpfs
+etc/rc.d/rc3.d/S01tmpfs
+etc/rc.d/rc6.d/K85tmpfs
 etc/rc.d/init.d/dnsmasq
+etc/rc.d/init.d/sysklogd
 etc/rc.d/init.d/network
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
@@ -21,6 +25,8 @@ usr/local/bin/getiptstate
 usr/local/bin/makegraphs
 usr/local/bin/squidctrl
 usr/local/bin/setddns.pl
+srv/web/ipfire/cgi-bin/backup.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
@@ -36,6 +42,7 @@ srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/ddns.cgi
+var/ipfire/backup/bin/backup.pl
 var/ipfire/sensors/
 var/ipfire/graphs.pl
 var/ipfire/firebuild
@@ -46,5 +53,6 @@ var/ipfire/updatexlrator/bin/
 usr/sbin/updxlrator
 var/ipfire/langs
 usr/local/bin/qosd
+usr/local/bin/backupiso
 usr/bin/mkisofs
 usr/bin/cdrecord

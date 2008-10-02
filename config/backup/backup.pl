@@ -76,6 +76,9 @@ elsif ($ARGV[0] eq 'addonbackup') {
 elsif ($ARGV[0] =~ /ipf$/ ) {
   system("rm /var/ipfire/backup/$ARGV[0]");
 }
+elsif ($ARGV[0] =~ /iso$/ ) {
+  system("rm /var/tmp/backupiso/$ARGV[0]");
+}
 elsif ($ARGV[0] eq '') {
  printf "No argument given, please use <include><exclude><cli>\n"
 }

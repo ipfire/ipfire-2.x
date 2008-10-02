@@ -24,12 +24,6 @@ case "$1" in
 			fi
 		fi
 
-		if [ ! -e $RRDLOG.bak/ ]; then
-			mkdir $RRDLOG.bak/
-		fi
-
-		/etc/init.d/collectd restore
-
 		boot_mesg -n "Loading Sensor Modules..."
 		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
 		modprobe $modul > /dev/null 2>&1;
@@ -47,7 +41,10 @@ case "$1" in
 		evaluate_retval
 		;;
 	stop)
-		/etc/init.d/collectd backup
+		# Save the ramdisk at manual stop but not at shutdown
+		if [ "$(basename $0)" == "collectd" ]; then
+		    /etc/init.d/tmpfs backup
+		fi
 		boot_mesg "Stopping Collection daemon..."
 		killproc /usr/sbin/collectd
 		evaluate_retval
@@ -56,17 +53,6 @@ case "$1" in
 		${0} stop
 		sleep 1
 		${0} start
-		;;
-	backup)
-		boot_mesg "Save rrd files from ramd..."
-		cp -pR $RRDLOG/* $RRDLOG.bak/
-		evaluate_retval
-		;;
-	restore)
-		if [ -e $RRDLOG.bak ];then
-			boot_mesg "Copying rrd files to ramd..."
-			cp -pR $RRDLOG.bak/* $RRDLOG/
-		fi
 		;;
 	status)
 		statusproc /usr/sbin/collectd

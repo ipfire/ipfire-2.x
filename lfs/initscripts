@@ -129,6 +129,9 @@ $(TARGET) :
 	ln -sf ../init.d/beep        /etc/rc.d/rc0.d/K99beep
 	ln -sf ../init.d/beep        /etc/rc.d/rc3.d/S99beep
 	ln -sf ../init.d/beep        /etc/rc.d/rc6.d/K99beep
+	ln -sf ../init.d/tmpfs       /etc/rc.d/rc0.d/K85tmpfs
+	ln -sf ../init.d/tmpfs       /etc/rc.d/rc3.d/S01tmpfs
+	ln -sf ../init.d/tmpfs       /etc/rc.d/rc6.d/K85tmpfs
 
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules

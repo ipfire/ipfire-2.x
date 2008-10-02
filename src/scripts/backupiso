@@ -3,7 +3,7 @@
 # FIXME: edit this lines before release
 #URL=http://download.ipfire.org/iso/
 #ISO=ipfire-2.3-beta4.i586-full.iso
-URL=http://www.rowie.at/ipfire/builds/v2.3test/Beta3/20080929-6uhr/
+URL=http://www.rowie.at/ipfire/builds/v2.3test/Beta3/20081001-17uhr/
 ISO=ipfire-2.3-test.i586-full.iso
 
 if [ -z "$1" ]; then 
@@ -19,10 +19,10 @@ cd /var/tmp/backupiso
 echo "Fetching ${URL}${ISO}"
 wget --quiet -c ${URL}${ISO}
 echo "Fetching ${URL}md5sums.txt"
-wget --quiet -O md5sums.txt ${URL}md5sums.txt
+wget --quiet -O ${ISO}.md5 ${URL}${ISO}.md5
 
 echo "Checking md5 of ${ISO}"
-cat md5sums.txt | grep iso | tr '\r' '\n' | md5sum --status -c
+md5sum --status -c ${ISO}.md5
 RETVAR="$?"
 if [ $RETVAR -eq 0 -o $RETVAR -eq 24 ]
        then
@@ -40,7 +40,7 @@ cp -pr backupiso.tmp.${TS} backupiso.${TS}
 umount backupiso.tmp.${TS}
 rm -r backupiso.tmp.${TS}
 
-echo "RESTORE=${TS}.ipf" >> backupiso.${TS}/boot/unattended.conf
+echo "RESTORE_FILE=${TS}.ipf" >> backupiso.${TS}/boot/unattended.conf
 cp /var/ipfire/backup/${TS}.ipf backupiso.${TS}
 
 echo "Running mkisofs"

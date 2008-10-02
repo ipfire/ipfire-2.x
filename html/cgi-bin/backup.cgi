@@ -56,10 +56,21 @@ system("/usr/local/bin/backupctrl makedirs >/dev/null 2>&1 ") unless ( -e '/var/
 ############################################################################################################################
 ############################################## System calls ohne Http Header ###############################################
 
+# Replace slashes from filename
+$cgiparams{'FILE'} =~ s/\///;
 
 if ( $cgiparams{'ACTION'} eq "download" )
 {
 		open(DLFILE, "</var/ipfire/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
+		my @fileholder = <DLFILE>;
+		print "Content-Type:application/x-download\n";
+		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
+		print @fileholder;
+		exit (0);
+}
+if ( $cgiparams{'ACTION'} eq "downloadiso" )
+{
+		open(DLFILE, "</var/tmp/backupiso/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
 		my @fileholder = <DLFILE>;
 		print "Content-Type:application/x-download\n";
 		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
@@ -140,6 +151,7 @@ if ( $message ne "" ){
 }
 
 my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
+my @backupisos = `cd /var/tmp/backupiso/ && ls *.iso 2>/dev/null`;
 
 &Header::openbox('100%', 'center', $Lang::tr{'backup'});
 
@@ -180,6 +192,15 @@ my @Info = stat($Datei);
 my $Size = $Info[7] / 1024;
 $Size = sprintf("%02d", $Size);
 print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
+print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
+}
+foreach (@backupisos){
+chomp($_);
+my $Datei = "/var/tmp/backupiso/".$_;
+my @Info = stat($Datei);
+my $Size = $Info[7] / 1024;
+$Size = sprintf("%02d", $Size);
+print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='downloadiso' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 print <<END

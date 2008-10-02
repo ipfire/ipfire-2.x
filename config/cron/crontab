@@ -22,7 +22,7 @@ HOME=/
 
 # Make some nice graphs
 */5 * * * * 	/usr/local/bin/makegraphs >/dev/null
-01 * * * * 	/etc/init.d/collectd backup >/dev/null
+* 05 * * * 	/etc/init.d/tmpfs backup >/dev/null
 
 # Force update the dynamic dns registration once a week
 # Force update even if IP has not changed once a month if 'minimize update' selected in GUI
@@ -37,7 +37,7 @@ HOME=/
 		find /var/log/logwatch/ -ctime +${LOGWATCH_KEEP=56} -exec rm -f '{}' ';'
 
 # hddshutdown
-02 * * * * 	/usr/local/bin/hddshutdown >/dev/null
+*/30 * * * * 	/usr/local/bin/hddshutdown >/dev/null
 
 # connection-scheduler
 */5 * * * *	/usr/local/bin/connscheduler timer > /dev/null
