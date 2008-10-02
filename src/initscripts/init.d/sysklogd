@@ -17,13 +17,19 @@
 
 case "${1}" in
 	start)
+		boot_mesg "Starting kernel log daemon..."
+		loadproc klogd
+
 		boot_mesg "Starting system log daemon..."
 		loadproc syslogd -m 0
 
-		boot_mesg "Starting kernel log daemon..."
-		loadproc klogd
+		boot_mesg "Saving Bootlog..."
+		if [ -e /var/log/bootlog ]; then
+		    mv -f /var/log/bootlog /var/log/bootlog.old
+		fi
+		dmesg -c > /var/log/bootlog
+		evaluate_retval
 		;;
-
 	stop)
 		boot_mesg "Stopping kernel log daemon..."
 		killproc klogd

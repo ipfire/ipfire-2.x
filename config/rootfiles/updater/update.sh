@@ -38,10 +38,10 @@ echo Update IPFire $OLDVERSION to $NEWVERSION
 echo
 #
 # check if we the backup file already exist
-if [ -e /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 ]; then
+if [ -e /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.gz ]; then
     echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
-       /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION-old.tar.bz2
+    mv -f /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.gz \
+       /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION-old.tar.gz
 fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
@@ -52,6 +52,7 @@ echo var/spool/cron/root.orig >> /opt/pakfire/tmp/ROOTFILES
 echo etc/udev/rules.d/30-persistent-network.rules >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
 echo var/log/rrd >> /opt/pakfire/tmp/ROOTFILES
+echo var/log/vnstat >> /opt/pakfire/tmp/ROOTFILES
 echo var/updatexlerator >> /opt/pakfire/tmp/ROOTFILES
 echo lib/iptables >> /opt/pakfire/tmp/ROOTFILES
 echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
@@ -62,7 +63,7 @@ echo srv/web/ipfire/cgi-bin/traffics.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/graphs.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/qosgraph.cgi >> /opt/pakfire/tmp/ROOTFILES
 #
-tar cjvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.bz2 \
+tar czvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.gz \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
 echo
 echo Update IPfire to $NEWVERSION ...
@@ -152,10 +153,10 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
 # Update fstab
 #
 grep -v "tmpfs" /etc/fstab > /tmp/fstab.tmp
-echo none	/tmp		tmpfs	defaults,size=128M	0	0 >> /tmp/fstab.tmp
-echo none	/var/log/rrd	tmpfs	defaults,size=64M	0	0 >> /tmp/fstab.tmp
-echo none	/var/lock	tmpfs	defaults,size=16M	0	0 >> /tmp/fstab.tmp
-echo none	/var/run	tmpfs	defaults,size=16M	0	0 >> /tmp/fstab.tmp
+echo "none	/tmp		tmpfs	defaults,size=128M	0	0" >> /tmp/fstab.tmp
+echo "none	/var/log/rrd	tmpfs	defaults,size=64M	0	0" >> /tmp/fstab.tmp
+echo "none	/var/lock	tmpfs	defaults,size=16M	0	0" >> /tmp/fstab.tmp
+echo "none	/var/run	tmpfs	defaults,size=16M	0	0" >> /tmp/fstab.tmp
 mv /tmp/fstab.tmp /etc/fstab
 #
 # Change version of Pakfire.conf
@@ -174,7 +175,7 @@ grep -v "ipacsum" /var/spool/cron/root.orig | grep -v "hddshutdown" > /tmp/root.
 echo "# Backup collectd files" >> /tmp/root.orig.tmp
 echo "* 05 * * *	/etc/init.d/tmpfs backup >/dev/null" >> /tmp/root.orig.tmp
 echo "# hddshutdown" >> /tmp/root.orig.tmp
-echo "*/30 * * * * 	/usr/local/bin/hddshutdown >/dev/null" >> /tmp/root.orig.tmp
+echo "*/30 * * * *	/usr/local/bin/hddshutdown >/dev/null" >> /tmp/root.orig.tmp
 mv /tmp/root.orig.tmp /var/spool/cron/root.orig
 chmod 600 /var/spool/cron/root.orig
 chown root:cron /var/spool/cron/root.orig
@@ -189,6 +190,12 @@ sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 perl /var/ipfire/qos/bin/migrate.pl
 /var/ipfire/updatexlrator/bin/convert
+#
+# Move vnstat database to /var/log/rrd
+#
+mkdir -p /var/log/rrd.bak/vnstat
+cp /var/log/vnstat /var/log/rrd.bak/vnstat
+mv /var/log/vnstat /var/log/rrd/vnstat
 #
 # Delete old lm-sensor modullist...
 #
