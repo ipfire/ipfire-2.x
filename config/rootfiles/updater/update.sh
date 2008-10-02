@@ -172,7 +172,7 @@ echo \\n running on \\s \\r \\m >> /etc/issue
 #
 grep -v "ipacsum" /var/spool/cron/root.orig | grep -v "hddshutdown" > /tmp/root.orig.tmp
 echo "# Backup collectd files" >> /tmp/root.orig.tmp
-echo "* 05 * * *	/etc/init.d/collectd backup >/dev/null" >> /tmp/root.orig.tmp
+echo "* 05 * * *	/etc/init.d/tmpfs backup >/dev/null" >> /tmp/root.orig.tmp
 echo "# hddshutdown" >> /tmp/root.orig.tmp
 echo "*/30 * * * * 	/usr/local/bin/hddshutdown >/dev/null" >> /tmp/root.orig.tmp
 mv /tmp/root.orig.tmp /var/spool/cron/root.orig
