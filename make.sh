@@ -905,6 +905,8 @@ othersrc)
 git)
 	case "$2" in
 	  update|up)
+	  		## REMOVES ALL UNCOMMITTED CHANGES!
+	  		[ "$3" == "--force" ] && git checkout -f
 			git pull
 	  	;;
 	  commit|ci)

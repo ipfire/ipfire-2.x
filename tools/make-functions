@@ -496,7 +496,7 @@ batch_script() {
 		$0 clean
 		evaluate 1
 
-		$0 git update
+		$0 git update --force
 		evaluate 1 mail_me UPDATE
 
 		echo "### EXPORT SOURCES"
