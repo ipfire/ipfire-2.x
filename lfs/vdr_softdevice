@@ -29,7 +29,7 @@ VER        = plugin
 THISAPP    = vdr_softdevice-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = vdr_softdevice
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = "vdr ffmpeg sdl alsa dfb++"
 
