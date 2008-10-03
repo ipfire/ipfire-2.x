@@ -16,6 +16,42 @@ case "$1" in
 		if [ ! -e $RRDLOG.bak/vnstat ]; then
 			mkdir -p $RRDLOG.bak/vnstat
 		fi
+
+		#
+		# create some folders
+		#
+		if [ ! -e /var/run/clamav ]; then
+			mkdir -p /var/run/clamav
+			chown clamav:clamav /var/run/clamav
+		fi
+		if [ ! -e /var/run/cups ]; then
+			mkdir -p /var/run/cups
+		fi
+		if [ ! -e /var/run/dbus ]; then
+			mkdir -p /var/run/dbus
+		fi
+		if [ ! -e /var/run/mysql ]; then
+			mkdir -p /var/run/mysql
+			chown mysql:mysql /var/run/mysql
+		fi
+		if [ ! -e /var/run/pluto ]; then
+			mkdir -p /var/run/pluto
+			chmod 700 /var/run/pluto
+		fi
+		if [ ! -e /var/run/saslauthd ]; then
+			mkdir -p /var/run/saslauthd
+		fi
+
+		#
+		# Move /var/spool/cron to ramdisk and make a symlink
+		#
+		if [ ! -L /var/spool/cron ]; then
+			cp -pR /var/spool/cron /var/log/rrd.bak/cron
+			mv /var/spool/cron /var/log/rrd/cron
+			ln -s /var/log/rrd/cron /var/spool/cron
+		fi
+
+		echo_ok
 		;;
 	stop)
 		$0 backup

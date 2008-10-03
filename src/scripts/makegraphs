@@ -38,6 +38,11 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
+if ( $mainsettings{'RRDLOG'} eq "" ){
+	$mainsettings{'RRDLOG'}="/var/log/rrd";
+	&General::writehash("${General::swroot}/main/settings", \%mainsettings);
+}
+
 sub updatehdddata{
 	my $disk = $_[0];
 	my $standby;

@@ -68,6 +68,12 @@ tar czvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.gz \
 echo
 echo Update IPfire to $NEWVERSION ...
 #
+# On some systems the folder for addon backups is missing
+#
+if [ ! -e /var/ipfire/backup/addons/backup ]; then
+    mkdir -p /var/ipfire/backup/addons/backup
+fi
+#
 # Delete old collectd symlink
 #
 rm -rf /etc/rc.d/rc3.d/S20collectd
@@ -194,8 +200,10 @@ perl /var/ipfire/qos/bin/migrate.pl
 # Move vnstat database to /var/log/rrd
 #
 mkdir -p /var/log/rrd.bak/vnstat
-cp /var/log/vnstat /var/log/rrd.bak/vnstat
-mv /var/log/vnstat /var/log/rrd/vnstat
+if [ -e /var/log/vnstat ]; then
+    cp /var/log/vnstat /var/log/rrd.bak/vnstat
+    mv /var/log/vnstat /var/log/rrd/vnstat
+fi
 #
 # Delete old lm-sensor modullist...
 #
