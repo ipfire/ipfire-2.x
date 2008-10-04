@@ -191,19 +191,19 @@ chown root:cron /var/spool/cron/root.orig
 sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
           /etc/udev/rules.d/30-persistent-network.rules
 #
+# Move vnstat database to /var/log/rrd
+#
+mkdir -p /var/log/rrd.bak/vnstat
+if [ -e /var/log/vnstat ]; then
+    cp -pR /var/log/vnstat /var/log/rrd.bak/vnstat
+    mv /var/log/vnstat /var/log/rrd/vnstat
+fi
+#
 # Core 17
 #
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 perl /var/ipfire/qos/bin/migrate.pl
 /var/ipfire/updatexlrator/bin/convert
-#
-# Move vnstat database to /var/log/rrd
-#
-mkdir -p /var/log/rrd.bak/vnstat
-if [ -e /var/log/vnstat ]; then
-    cp /var/log/vnstat /var/log/rrd.bak/vnstat
-    mv /var/log/vnstat /var/log/rrd/vnstat
-fi
 #
 # Delete old lm-sensor modullist...
 #
