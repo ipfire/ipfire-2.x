@@ -213,6 +213,14 @@ rm -rf /etc/sysconfig/lm_sensors
 #
 /etc/init.d/mISDN config
 #
+# Update permissions
+#
+chown -r nobody:nobody /var/ipfire/outgoing
+chown -r nobody:nobody /var/ipfire/proxy
+chown -r nobody:nobody /var/ipfire/qos
+chown -r nobody:nobody /var/ipfire/urlfilter
+chown -r nobody:nobody /var/ipfire/updatexlerator
+#
 # Remove obsolete packages, update the lists and do upgrade
 #
 echo '#!/bin/bash'                                        >  /tmp/remove_obsolete_paks 
