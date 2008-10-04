@@ -1010,7 +1010,6 @@ sub updatecpufreqgraph {
 		"-w 600",
 		"-h 125",
 		"-l 0",
-		"-u 100",
 		"-r",
 		"-t ".$Lang::tr{'cpu frequency per'}." ".$Lang::tr{$period},
 		"-v MHz",
@@ -1025,9 +1024,10 @@ sub updatecpufreqgraph {
 	);
 
 	for(my $i = 0; $i < $cpucount; $i++) {
+		my $j=$i+1;
 		push(@command,"DEF:cpu".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpufreq/cpufreq-".$i.".rrd:value:AVERAGE"
 				,"CDEF:cpu".$i."=cpu".$i."_,1000000,/"
-				,"LINE3:cpu".$i.$color{"color12"}."A0:1"
+				,"LINE1:cpu".$i.$color{"color1$j"}."A0:cpu ".$i." "
 				,"GPRINT:cpu".$i.":MAX:%3.0lf Mhz"
 				,"GPRINT:cpu".$i.":AVERAGE:%3.0lf Mhz"
 				,"GPRINT:cpu".$i.":MIN:%3.0lf Mhz"

@@ -39,14 +39,14 @@ my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
 $querry[1] = 'hour' unless defined $querry[1];
 
-if ( $querry[0] =~ "cpu"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatecpugraph($querry[1]);
-}elsif ( $querry[0] =~ "cpufreq"){
+if ( $querry[0] =~ "cpufreq"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	&Graphs::updatecpufreqgraph($querry[1]);
+}elsif ( $querry[0] =~ "cpu"){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updatecpugraph($querry[1]);
 }elsif ( $querry[0] =~ "load"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
@@ -58,7 +58,7 @@ if ( $querry[0] =~ "cpu"){
 
 	if ( -e "$mainsettings{'RRDLOG'}/collectd/localhost/cpufreq/cpufreq-0.rrd"){
 		&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("system.cgi","cpu","day","325");
+		&Graphs::makegraphbox("system.cgi","cpufreq","day","325");
 		&Header::closebox();
 	}
 
