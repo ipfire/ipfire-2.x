@@ -44,7 +44,7 @@ $querry[1] = 'hour' unless defined $querry[1];
 if ( $querry[0] =~ "fwhits"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
-	&Graphs::updatefwhitsgraph($querry[0],$querry[1]);
+	&Graphs::updatefwhitsgraph($querry[1]);
 }elsif ( $querry[0] ne ""){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
