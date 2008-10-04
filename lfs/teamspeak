@@ -57,4 +57,6 @@ dist:
 $(TARGET) :
 	@$(PREBUILD)
 	-mkdir -p /opt/teamspeak
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/teamspeak \
+			/var/ipfire/backup/addons/includes/teamspeak
 	@$(POSTBUILD)

@@ -1,6 +1,6 @@
 #var/ipfire/backup/addons
 var/ipfire/backup/addons/backup
-var/ipfire/backup/addons/includes
+#var/ipfire/backup/addons/includes
 #var/ipfire/backup/bin
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude
