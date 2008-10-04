@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # FIXME: edit this lines before release
-#URL=http://download.ipfire.org/iso/
-#ISO=ipfire-2.3-beta4.i586-full.iso
-URL=http://www.rowie.at/ipfire/builds/v2.3test/Beta3/20081001-17uhr/
-ISO=ipfire-2.3-test.i586-full.iso
+URL=http://download.ipfire.org/iso/
+ISO=ipfire-2.3-beta4.i586-full.iso
+#URL=http://www.rowie.at/ipfire/builds/v2.3test/Beta3/20081001-17uhr/
+#ISO=ipfire-2.3-test.i586-full.iso
 
 if [ -z "$1" ]; then 
 	echo usage: $0 backup-file
