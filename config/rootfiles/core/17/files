@@ -1,5 +1,5 @@
 etc/squid
-etc/init.d/connectd
+etc/rc.d/init.d/connectd
 opt/pakfire/lib/functions.sh
 opt/pakfire/lib/functions.pl
 usr/lib/squid/

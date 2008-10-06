@@ -1,5 +1,5 @@
 opt/pakfire/db/core/mine
-etc/init.d/mISDN
+etc/rc.d/init.d/mISDN
 etc/modprobe.d/blacklist
 usr/bin/bc
 usr/bin/dc

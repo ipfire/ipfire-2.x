@@ -196,6 +196,7 @@ sed -i 's|"net", SYSFS{address}|"net", SYSFS{type}=="1", SYSFS{address}|g' \
 # Move vnstat database to /var/log/rrd
 #
 mkdir -p /var/log/rrd.bak/vnstat
+mkdir -p /var/log/rrd/vnstat
 if [ -e /var/log/vnstat ]; then
     cp -pR /var/log/vnstat /var/log/rrd.bak/vnstat
     mv /var/log/vnstat /var/log/rrd/vnstat

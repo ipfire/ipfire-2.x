@@ -1,4 +1,4 @@
-etc/init.d/squid
+etc/rc.d/init.d/squid
 etc/ppp/ip-up
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/urlfilter/autoupdate/autoupdate.urls

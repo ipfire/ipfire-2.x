@@ -15,8 +15,10 @@ case "$1" in
 		$0 restore
 		if [ ! -e $RRDLOG.bak/vnstat ]; then
 			mkdir -p $RRDLOG.bak/vnstat
-		fi
-
+    		fi
+		if [ ! -e $RRDLOG/vnstat ]; then
+			mkdir -p $RRDLOG/vnstat
+    		fi
 		#
 		# create some folders
 		#
