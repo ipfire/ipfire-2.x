@@ -60,7 +60,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
 		--exclude='proc/*' --exclude='tmp/ROOTFILES'
 	mv -f /tmp/ROOTFILES /install/updater/ROOTFILES
-	tar -x -C /tmp -f /$(SNAME).tar
+	tar --preserve --numeric-owner -x  -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	cd /tmp && tar cf /install/updater/files * && rm -rf *
 	cat /install/updater/ROOTFILES | grep -v "#" > /install/updater/ROOTFILES.tmp
