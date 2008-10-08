@@ -161,7 +161,7 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
 # Update fstab
 #
 grep -v "tmpfs" /etc/fstab > /tmp/fstab.tmp
-echo "none	/tmp		tmpfs	defaults,size=128M	0	0" >> /tmp/fstab.tmp
+echo "none	/tmp		tmpfs	defaults	0	0" >> /tmp/fstab.tmp
 echo "none	/var/log/rrd	tmpfs	defaults,size=64M	0	0" >> /tmp/fstab.tmp
 echo "none	/var/lock	tmpfs	defaults,size=16M	0	0" >> /tmp/fstab.tmp
 echo "none	/var/run	tmpfs	defaults,size=16M	0	0" >> /tmp/fstab.tmp
