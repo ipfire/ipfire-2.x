@@ -23,6 +23,7 @@ etc/udev/rules.d/55-scsi-cdrom.rules
 etc/linuxigd/gatedesc.xml
 usr/local/bin/getiptstate
 usr/local/bin/makegraphs
+usr/local/bin/hddshutdown
 usr/local/bin/squidctrl
 usr/local/bin/setddns.pl
 srv/web/ipfire/cgi-bin/backup.cgi
