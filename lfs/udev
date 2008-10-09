@@ -130,7 +130,8 @@ ifeq "$(KLIBC)" "1"
 else
 	rm -rf /lib/udev/devices
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/udev-config-6.2.tar.bz2
-	install -dv /lib/{firmware,udev/devices/{pts,shm}} 
+	install -dv /lib/{firmware,udev/devices/{pts,shm}}
+	echo "Put device firmwares here ..." > /lib/firmware/dirinfo
 	mknod -m0666 /lib/udev/devices/null c 1 3
 	ln -sv /proc/self/fd /lib/udev/devices/fd
 	ln -sv /proc/self/fd/0 /lib/udev/devices/stdin

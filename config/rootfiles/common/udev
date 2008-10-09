@@ -9,7 +9,8 @@ etc/udev
 #etc/udev/rules.d/60-persistent-storage.rules
 #etc/udev/rules.d/81-cdrom.rules
 #etc/udev/udev.conf
-lib/firmware
+#lib/firmware
+lib/firmware/dirinfo
 lib/libvolume_id.so.0
 lib/libvolume_id.so.0.66.0
 lib/udev
