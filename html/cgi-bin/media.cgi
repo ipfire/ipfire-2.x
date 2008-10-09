@@ -195,8 +195,8 @@ sub diskbox {
 	my $disk = $_[0];
 	chomp $disk;
 	my @status;
-	if (-e "/tmp/hddstatus"){
-		open(DATEI, "</tmp/hddstatus") || die "Datei nicht gefunden";
+	if (-e "/var/run/hddstatus"){
+		open(DATEI, "</var/run/hddstatus") || die "Datei nicht gefunden";
 		my  @diskstate = <DATEI>;
 		close(DATEI);
 
@@ -205,7 +205,7 @@ sub diskbox {
 		}
 
 		if ( $status[1]=~/standby/){
-			my $ftime = localtime((stat("/tmp/hddshutdown-$disk"))[9]);
+			my $ftime = localtime((stat("/var/run/hddshutdown-$disk"))[9]);
 			print"<B>Disk $disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
 		}else{
 			print"<B>Disk $disk status:<font color=#00FF00>".$status[1]."</font></B>";

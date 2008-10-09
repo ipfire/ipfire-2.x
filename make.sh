@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.3-beta4"
+VERSION="2.3-test"
 GIT_BRANCH=master:master										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
@@ -349,6 +349,7 @@ buildipfire() {
   ipfiremake v4l-dvb			KVER=2.6.25.17
   ipfiremake madwifi			KVER=2.6.25.17
   ipfiremake alsa		KMOD=1	KVER=2.6.25.17
+#  ipfiremake openswan		KMOD=1	KVER=2.6.25.17
   ipfiremake linux
   ipfiremake atl2
   ipfiremake r8168
@@ -596,6 +597,7 @@ buildipfire() {
   ipfiremake apcupsd
   ipfiremake iperf
   ipfiremake netcat
+  ipfiremake 7zip
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
