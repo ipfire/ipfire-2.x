@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.3-beta4 ==
+== List of softwares used to build IPFire Version: 2.3-test ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -228,9 +228,10 @@
 * openmailadmin-1.0.0
 * openssh-4.7p1
 * openssl-0.9.8g
-* openswan-2.4.12
-* openswan-2.4.12-kmod
+* openswan-2.6.18
+* openswan-2.6.18-kmod-VER
 * openvpn-2.0.9
+* p7zip_4.58
 * pam_mysql-0.7RC1
 * patch-2.5.4
 * pciutils-2.2.3
