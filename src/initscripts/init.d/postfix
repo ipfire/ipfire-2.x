@@ -46,6 +46,9 @@ case "$1" in
 		sleep 1
 		$0 start
 		;;
+	status)
+		statusproc /usr/lib/postfix/master
+		;;
 
 	*)
 		echo "Usage: $0 {start|stop|reload|abort|flush|check|restart}"
