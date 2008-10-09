@@ -374,11 +374,7 @@ case "${1}" in
 				boot_mesg -n "LEASEINFO Test failed! - " ${WARNING}
 				boot_mesg "dhcpcd is not running!" ${WARNING}
 				echo_warning
-				exit 1
 			fi
-			
-			## Disable vnstat collection
-			/usr/bin/vnstat -u -i ${DEVICE} -r --disable > /dev/null 2>&1
 
 		elif [ "$TYPE" == "PPPOE" ]; then
 			boot_mesg "Bringing down the PPP interface ..."
@@ -401,10 +397,11 @@ case "${1}" in
 		fi
 		killall -w -s KILL /usr/sbin/pppd >/dev/null 2>&1
 		killall -w -s KILL br2684ctl >/dev/null 2>&1
-		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 
 		## Disable vnstat collection
 		/usr/bin/vnstat -u -i ${DEVICE} -r --disable > /dev/null 2>&1
+
+		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 		exit 0;
 		;;
 esac

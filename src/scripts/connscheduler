@@ -77,10 +77,13 @@ sub hangup
   }
 
   # now wait for active triggerfile and ppp daemon to disappear 
+  # wait maximum 60 seconds
+  my $counter = 60;
   sleep 1;
-  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipfire.pid' ) 
+  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipfire.pid' || $counter == 0 ) 
   {
     sleep 1;
+    $counter--;
   }
 }
 
@@ -113,6 +116,15 @@ sub dial
 sub reconnect
 {
   &hangup() if ( -e "${General::swroot}/red/active" );
+  # now wait for active triggerfile and ppp daemon to disappear
+  # wait maximum 60 seconds
+  my $counter = 60;
+  sleep 1;
+  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipfire.pid' || $counter == 0 ) 
+  {
+    sleep 1;
+    $counter--;
+  }
   &dial();
 }
 
