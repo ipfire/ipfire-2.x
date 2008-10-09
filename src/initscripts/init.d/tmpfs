@@ -22,6 +22,9 @@ case "$1" in
 		#
 		# create some folders
 		#
+		if [ ! -e /var/lock/subsys ]; then
+			mkdir -p /var/lock/subsys
+		fi
 		if [ ! -e /var/run/clamav ]; then
 			mkdir -p /var/run/clamav
 			chown clamav:clamav /var/run/clamav
