@@ -20,7 +20,7 @@ if ($debug){print "### Searching for available Disks ###\n";}
 foreach (@devices){
     chomp $_;
     my @array = split(/\//,$_);
-    $diskstats = `cat /tmp/hddstats-$array[$#array]`;
+    $diskstats = `cat /var/run/hddstats-$array[$#array]`;
     chomp $diskstats;
     $newdiskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
     chomp $newdiskstats;
@@ -28,14 +28,14 @@ foreach (@devices){
     chomp $status;
 
     if ($debug){print "Device ".$_." IDE Power status:".$status."\n";}
-    if (-e "/tmp/hddshutdown-$array[$#array]" && $status !~/standby/)
+    if (-e "/var/run/hddshutdown-$array[$#array]" && $status !~/standby/)
     {
 	if ($debug){print "Remove wrong standby marking\n";}
-	if ( -e "/tmp/hddshutdown-$array[$#array]" ) { system("unlink /tmp/hddshutdown-$array[$#array]"); } 
+	if ( -e "/var/run/hddshutdown-$array[$#array]" ) { system("unlink /var/run/hddshutdown-$array[$#array]"); } 
     }
 
     if ($debug){print "Device ".$_." has ".$newdiskstats." write and read Requests, was ".$diskstats." at last run.\n";}
-    if ($diskstats eq $newdiskstats && (! -e "/tmp/hddshutdown-$array[$#array]") )
+    if ($diskstats eq $newdiskstats && (! -e "/var/run/hddshutdown-$array[$#array]") )
     {
 	if ($debug){print "Setting Device ".$_." to standby ... ";}
 	$status = `hdparm -y /dev/$_ 2>&1`;
@@ -43,7 +43,7 @@ foreach (@devices){
 	if ($status !~/Invalid/) 
 	{  
     	    if ($debug){print "OK\n";}
-    	    system("touch /tmp/hddshutdown-$array[$#array]");
+	    system("touch /var/run/hddshutdown-$array[$#array]");
 	}
 	else
 	{
@@ -53,9 +53,9 @@ foreach (@devices){
     if ($diskstats ne $newdiskstats)
     {
 	if ($debug){print "Device ".$_." is active.\n";}
-	if ( -e "/tmp/hddshutdown-$array[$#array]" ) { system("unlink /tmp/hddshutdown-$array[$#array]"); }
+	if ( -e "/var/run/hddshutdown-$array[$#array]" ) { system("unlink /var/run/hddshutdown-$array[$#array]"); }
     }
-    system("echo $newdiskstats > /tmp/hddstats-$array[$#array]");
+    system("echo $newdiskstats > /var/run/hddstats-$array[$#array]");
 }
 
 # end

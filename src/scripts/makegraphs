@@ -60,7 +60,7 @@ sub updatehdddata{
 		print "Error in RRD::create for hddshutdown-".$array[$#array].": $ERROR\n" if $ERROR;
 	}
 
-	if (-e "/tmp/hddshutdown-".$array[$#array]) {$standby = 1;}
+	if (-e "/var/run/hddshutdown-".$array[$#array]) {$standby = 1;}
 	else {$standby = 0;}
 
 	RRDs::update ("$mainsettings{'RRDLOG'}/hddshutdown-".$array[$#array].".rrd", "-t", "standby", "N:$standby");
@@ -83,9 +83,9 @@ sub updatehdddata{
 	if (!$standby){
 		$temp = 0;
 		my $smart_output = '';
-		system("$path_smartctl -iHA -d ata /dev/$disk > /tmp/smartctl_out_hddtemp-$disk");
-		if ( -e "/tmp/smartctl_out_hddtemp-".$array[$#array] ){
-			my $hdd_output = `cat /tmp/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
+		system("$path_smartctl -iHA -d ata /dev/$disk > /var/run/smartctl_out_hddtemp-$disk");
+		if ( -e "/var/run/smartctl_out_hddtemp-".$array[$#array] ){
+			my $hdd_output = `cat /var/run/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
 			my @t = split(/\s+/,$hdd_output);
 			$temp = $t[9];
 		}else{$temp = 0;}
@@ -103,7 +103,7 @@ sub updatehdddata{
 system ('/usr/bin/vnstat -u');
 
 my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
-system("unlink /tmp/hddstatus && touch /tmp/hddstatus");
+system("unlink /var/run/hddstatus && touch /var/run/hddstatus");
 foreach (@disks){
 	my $disk = $_;
 	chomp $disk;
@@ -114,7 +114,7 @@ foreach (@disks){
 	my $newdiskstats = "";
 	my @array = split(/\//,$disk);
 
-	$diskstats = `cat /tmp/hddstats-$array[$#array]`;
+	$diskstats = `cat /var/run/hddstats-$array[$#array]`;
 	chomp $diskstats;
 	my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
 	chomp $newdiskstats;
@@ -122,13 +122,13 @@ foreach (@disks){
 	chomp $status;
 
 	if ($status !~/standby/ || $diskstats ne $newdiskstats){
-		if (-e "/tmp/hddshutdown-".$array[$#array]){system("unlink /tmp/hddshutdown-".$array[$#array]);}
+		if (-e "/var/run/hddshutdown-".$array[$#array]){system("unlink /var/run/hddshutdown-".$array[$#array]);}
 	}
 
-	if (-e "/tmp/hddshutdown-".$array[$#array]){$status = " standby\n";}
+	if (-e "/var/run/hddshutdown-".$array[$#array]){$status = " standby\n";}
 	else{$status = " active\n";}
 
-	open(DATEI, ">>/tmp/hddstatus") || die "Datei nicht gefunden";
+	open(DATEI, ">>/var/run/hddstatus") || die "Datei nicht gefunden";
 	print DATEI $disk."-".$status;
 	close(DATEI);
 
