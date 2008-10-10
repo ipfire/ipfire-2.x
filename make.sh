@@ -344,12 +344,12 @@ buildipfire() {
 #  ipfiremake sane		KMOD=1	SMP=1
 #  ipfiremake openswan		KMOD=1	SMP=1
   ipfiremake linux25
-  ipfiremake atl2			KVER=2.6.25.17
-  ipfiremake kqemu			KVER=2.6.25.17
-  ipfiremake v4l-dvb			KVER=2.6.25.17
-  ipfiremake madwifi			KVER=2.6.25.17
-  ipfiremake alsa		KMOD=1	KVER=2.6.25.17
-#  ipfiremake openswan		KMOD=1	KVER=2.6.25.17
+  ipfiremake atl2			KVER=2.6.25.18
+  ipfiremake kqemu			KVER=2.6.25.18
+  ipfiremake v4l-dvb			KVER=2.6.25.18
+  ipfiremake madwifi			KVER=2.6.25.18
+  ipfiremake alsa		KMOD=1	KVER=2.6.25.18
+#  ipfiremake openswan		KMOD=1	KVER=2.6.25.18
   ipfiremake linux
   ipfiremake atl2
   ipfiremake r8168
