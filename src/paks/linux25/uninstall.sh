@@ -23,4 +23,4 @@
 #
 . /opt/pakfire/lib/functions.sh
 remove_files
-mv -f /boot/grub/grub-backup-2.6.25.17.conf /boot/grub/grub.conf
+mv -f /boot/grub/grub-backup-2.6.25.*.conf /boot/grub/grub.conf
