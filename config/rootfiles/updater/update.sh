@@ -26,7 +26,7 @@
 #
 OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
 NEWVERSION="2.3"
-KVER="2.6.23.17"
+KVER="2.6.25.18"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
@@ -162,9 +162,9 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
 #
 grep -v "tmpfs" /etc/fstab > /tmp/fstab.tmp
 echo "#none	/tmp		tmpfs	defaults	0	0" >> /tmp/fstab.tmp
-echo "none	/var/log/rrd	tmpfs	defaults,size=64M	0	0" >> /tmp/fstab.tmp
-echo "none	/var/lock	tmpfs	defaults,size=16M	0	0" >> /tmp/fstab.tmp
-echo "none	/var/run	tmpfs	defaults,size=16M	0	0" >> /tmp/fstab.tmp
+echo "none	/var/log/rrd	tmpfs	defaults,size=112M	0	0" >> /tmp/fstab.tmp
+echo "none	/var/lock	tmpfs	defaults,size=8M	0	0" >> /tmp/fstab.tmp
+echo "none	/var/run	tmpfs	defaults,size=8M	0	0" >> /tmp/fstab.tmp
 mv /tmp/fstab.tmp /etc/fstab
 #
 # Change version of Pakfire.conf
@@ -201,6 +201,10 @@ if [ -e /var/log/vnstat ]; then
     cp -pR /var/log/vnstat /var/log/rrd.bak/vnstat
     mv /var/log/vnstat /var/log/rrd/vnstat
 fi
+#
+# Fix qos.sh 
+#
+sed -i 's|rmmod imq|#rmmod imq|g' /var/ipfire/qos/bin/qos.sh
 #
 # Core 17
 #

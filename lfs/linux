@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .17
-VER        = 2.6.23.17
+PATCHLEVEL = .18
+VER        = 2.6.25.18
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -42,7 +42,6 @@ else
 	TARGET = $(DIR_INFO)/linux-$(VER)
 endif
 
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -50,19 +49,22 @@ objects =$(DL_FILE) \
 	mISDN-1_1_8.tar.gz \
 	squashfs3.4.tar.gz \
 	netfilter-layer7-v2.20.tar.gz \
-	patch-2.6.16-nath323-1.3.bz2
+	patch-2.6.16-nath323-1.3.bz2 \
+	reiser4-for-2.6.25.patch.bz2
 	
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.20.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.20.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
 mISDN-1_1_8.tar.gz			= $(URL_IPFIRE)/mISDN-1_1_8.tar.gz
+reiser4-for-2.6.25.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.25.patch.bz2
 
-$(DL_FILE)_MD5				= a0300a393ac91ce9c64bf31522b45e2e
+$(DL_FILE)_MD5				= f0e4680a17ba0071d1579b890e201951
 netfilter-layer7-v2.20.tar.gz_MD5	= 525a821c973b730c8feaf9eedb57d1e4
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
 mISDN-1_1_8.tar.gz_MD5	          	= 29c55ffe0b35668a41eaed3b1c3ddfe2
+reiser4-for-2.6.25.patch.bz2_MD5	= 4294bbcb39e5ee859b94b09ff4fb1e0c
 
 install : $(TARGET)
 
@@ -72,6 +74,8 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
+dist:
+	@$(PAK)
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
@@ -91,15 +95,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/linux* $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	ln -s linux-$(VER) /usr/src/linux
 
-	# Security fix for CIFS & Netfilter SNMP
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.20.21-additional_check_on_BER_decoding.patch
-
-	# Add devolo MicroLink ADSL Fun USB ID's to ueagle-atm
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.23-ueagle-atm-devolo_usb_id.patch
-
+	# Not report deprecated syscall 1.23 (for kudzu)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
+    
 	# Fix crash on Twinhead H12Y notebooks
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-h12y-mmio-quirks.patch
 
@@ -107,27 +108,27 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
 
 	# Reiser4
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/reiser4-for-2.6.23.patch
-
+	cd $(DIR_APP) && bzip2 -d -c $(DIR_DL)/reiser4-for-2.6.25.patch.bz2 | patch -Np1
+	
 	# SquashFS
 	cd $(DIR_SRC) && rm -rf squashfs*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/squashfs3.4.tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.4/kernel-patches/linux-2.6.23/squashfs3.4-patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.4/kernel-patches/linux-2.6.25/squashfs3.4-patch
 
 	# ip_conntrack permissions from 440 to 444
 #	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
-	
+
 	# ipp2p 0.8.2-pomng
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.23.17-ipp2p-0.8.2-pomng.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.17-ipp2p-0.8.2-pomng.patch
 
 	# Layer7-patch
 	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.20
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.20.tar.gz
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.20/for_older_kernels/kernel-2.6.22-2.6.24-layer7-2.18.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.20/kernel-2.6.25-layer7-2.20.patch
 
 	# Linux Intermediate Queueing Device
 ifeq "$(XEN)" ""
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.23-imq.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25-imq5.diff
 endif
 
 	# mISDN
@@ -173,6 +174,10 @@ ifeq "$(SMP)" ""
 	# Only do this once on the non-SMP pass	
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 endif 
+
+	# Rename ide-cd module to match with old kernel
+	mv /lib/modules/$(VER)-ipfire/kernel/drivers/ide/ide-cd_mod.ko \
+	    /lib/modules/$(VER)-ipfire/kernel/drivers/ide/ide-cd.ko
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)
