@@ -48,6 +48,7 @@ var/ipfire/sensors/
 var/ipfire/menu.d/20-status.menu
 var/ipfire/graphs.pl
 var/ipfire/firebuild
+var/ipfire/qos/bin/makeqosscripts.pl
 var/ipfire/proxy/advanced/useragents
 srv/web/ipfire/html/images/updbooster/
 srv/web/ipfire/cgi-bin/updatexlrator.cgi

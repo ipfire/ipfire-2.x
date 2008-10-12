@@ -120,6 +120,8 @@ case "${DO}" in
 
 		# Stopping dnsmasq if network all networks shutdown
 		[ "${ALL}" == "1" ] && /etc/rc.d/init.d/dnsmasq stop
+
+		exit 0
 		;;
 
 	restart)

@@ -648,27 +648,27 @@ print <<END
   ;;
   clear|stop)
 	### RESET EVERYTHING TO A KNOWN STATE
-	killall qosd
+	killall qosd >/dev/null 2>&1
 	(sleep 3 && killall -9 qosd &>/dev/null) &
 	# DELETE QDISCS
-	tc qdisc del dev $qossettings{'RED_DEV'} root
-	tc qdisc del dev $qossettings{'IMQ_DEV'} root
+	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
+	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
 	# STOP IMQ-DEVICE
-	ip link set $qossettings{'IMQ_DEV'} down
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0
-	rmmod imq
+	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0 >/dev/null 2>&1
+	# rmmod imq # this crash on 2.6.25.xx
 	# REMOVE & FLUSH CHAINS
-	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
-	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS
-	iptables -t mangle --flush  QOS-OUT
-	iptables -t mangle --delete-chain QOS-OUT
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
-	iptables -t mangle --flush  QOS-INC
-	iptables -t mangle --delete-chain QOS-INC
-	iptables -t mangle --flush  QOS-TOS
-	iptables -t mangle --delete-chain QOS-TOS
-	rmmod sch_htb
+	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT >/dev/null 2>&1
+	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
+	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
+	iptables -t mangle --delete-chain QOS-OUT >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
+	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
+	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
+	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
+	iptables -t mangle --delete-chain QOS-TOS >/dev/null 2>&1
+	rmmod sch_htb >/dev/null 2>&1
 	echo "Quality of Service was successfully cleared!"
   ;;
   gen|generate)
