@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.3-beta5"
+VERSION="2.3-test"
 GIT_BRANCH=master:master										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
@@ -932,7 +932,7 @@ git)
 	  	[ -z $GIT_USER ] && exiterror "You have to setup GIT_USER first."
 			GIT_URL="ssh://${GIT_USER}@git.ipfire.org/pub/git/ipfire-2.x"
 			
-	  	git push ${GIT_URL} ${GIT_BRANCH}
+		git push ${GIT_URL} ${GIT_BRANCH} $3
 	  	;;
 	  log)
 		[ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
