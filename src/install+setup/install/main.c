@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 	}
 
 	mysystem("/sbin/modprobe ide-generic");
-	mysystem("/sbin/modprobe generic");
+	// mysystem("/sbin/modprobe generic");
 	mysystem("/sbin/modprobe ide-cd");
 	mysystem("/sbin/modprobe ide-disk");
 	mysystem("/sbin/modprobe uhci-hcd");
