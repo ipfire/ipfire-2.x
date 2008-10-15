@@ -1,0 +1,15 @@
+diff -Naur atl2-2.0.5.org/atl2_main.c atl2-2.0.5/atl2_main.c
+--- atl2-2.0.5.org/atl2_main.c	2008-08-04 17:53:21.000000000 +0200
++++ atl2-2.0.5/atl2_main.c	2008-10-15 18:53:12.000000000 +0200
+@@ -572,8 +572,10 @@
+ 		atomic_set(&adapter->txd_read_ptr, (int)txd_read_ptr);
+ 
+ 		// tx statistics:
+-		if (txs->ok)
++		if (txs->ok) {
++			adapter->net_stats.tx_bytes += txs->pkt_size;
+ 			adapter->net_stats.tx_packets++;
++		}
+ 		else
+ 			adapter->net_stats.tx_errors++;
+ 

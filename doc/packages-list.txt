@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.3-beta5 ==
+== List of softwares used to build IPFire Version: 2.3-test ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -41,7 +41,7 @@
 * arping-2.05
 * as86-0.16.17
 * asterisk-1.4.18
-* atl2-2.0.4-kmod-2.6.25.18
+* atl2-2.0.5-kmod-2.6.25.18
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire
@@ -68,7 +68,7 @@
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-004
-* cups-1.3.7
+* cups-1.3.9
 * curl-7.15.3
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
