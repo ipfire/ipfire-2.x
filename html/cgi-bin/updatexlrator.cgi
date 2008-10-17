@@ -638,7 +638,7 @@ foreach (@vendors)
 	} elsif ($vendorid =~ /^Ipfire$/i)
 	{
 		print "<img src='/images/IPFire.png' width='18' height='18' alt='IPFire' />&nbsp;</td>\n";
-		print "<td class='base'>&nbsp;IPFiew&nbsp;</td>\n";
+		print "<td class='base'>&nbsp;IPFire&nbsp;</td>\n";
 	} else
 	{
 		if (-e "/srv/web/ipfire/html/images/updbooster/updxl-src-" . $vendorid . ".gif")
