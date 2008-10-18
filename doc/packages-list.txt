@@ -124,7 +124,7 @@
 * hdparm-8.9
 * hostapd-0.5.10
 * hplip-2.7.10
-* htop-0.7
+* htop-0.8.1
 * httpd-2.2.6
 * hwdata
 * iana-etc-2.10
@@ -215,7 +215,7 @@
 * nfs-utils-1.1.1
 * nmap-4.03
 * noip_updater_v1.6
-* ntfs-3g-1.2918
+* ntfs-3g-1.5012
 * ntp-4.2.2
 * ocaml-3.09.2
 * oinkmaster-2.0
@@ -298,7 +298,7 @@
 * vlc-0.8.6i
 * vnstat-1.6
 * vnstati-beta3
-* vsftpd-2.0.5
+* vsftpd-2.0.7
 * w_scan-20080105
 * wget-1.10.2
 * whatmask-1.2

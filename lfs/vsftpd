@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.5
+VER        = 2.0.7
 
 THISAPP    = vsftpd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vsftpd
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 146062e8b2f93af43ff6c2c770feea94
+$(DL_FILE)_MD5 = 3e39cb7b0bee306ad7df8e3552e15297
 
 install : $(TARGET)
 
