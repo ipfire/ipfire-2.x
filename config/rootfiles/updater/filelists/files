@@ -27,6 +27,7 @@ usr/local/bin/hddshutdown
 usr/local/bin/squidctrl
 usr/local/bin/setddns.pl
 srv/web/ipfire/cgi-bin/backup.cgi
+srv/web/ipfire/cgi-bin/webaccess.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
