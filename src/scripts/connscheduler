@@ -63,6 +63,9 @@ exit 0;
 #
 sub hangup
 {
+  # Kill connectd if running to prevent redial
+  system('/bin/killall', 'connectd');
+
   unless ( -e "${General::swroot}/red/active" )
   {
     &General::log("ConnSched already disconnected");
