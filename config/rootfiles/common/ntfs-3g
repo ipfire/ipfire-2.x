@@ -1,7 +1,7 @@
 bin/ntfs-3g
 lib/libntfs-3g.so
-lib/libntfs-3g.so.38
-lib/libntfs-3g.so.38.0.0
+lib/libntfs-3g.so.40
+lib/libntfs-3g.so.40.0.0
 sbin/mount.ntfs-3g
 usr/bin/ntfs-3g.probe
 #usr/include/ntfs-3g

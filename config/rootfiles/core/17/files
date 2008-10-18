@@ -6,8 +6,8 @@ usr/lib/squid/
 usr/sbin/squid
 bin/ntfs-3g
 lib/libntfs-3g.so
-lib/libntfs-3g.so.38
-lib/libntfs-3g.so.38.0.0
+lib/libntfs-3g.so.40
+lib/libntfs-3g.so.40.0.0
 srv/web/ipfire/cgi-bin/qos.cgi
 usr/local/bin/qosd
 var/ipfire/qos/bin
