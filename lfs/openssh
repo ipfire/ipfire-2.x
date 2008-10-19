@@ -39,10 +39,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-openssh-5.1p1-hpn13v5.diff = $(DL_FROM)/openssh-5.1p1-hpn13v5.diff
+openssh5.1-dynwindow_noneswitch.diff = $(DL_FROM)/openssh5.1-dynwindow_noneswitch.diff
 
 $(DL_FILE)_MD5 = 03f2d0c1b5ec60d4ac9997a146d2faec
-openssh-5.1p1-hpn13v5.diff_MD5 = a3d3deec7369363224d97df658440216
+openssh5.1-dynwindow_noneswitch.diff_MD5 = a3d3deec7369363224d97df658440216
 
 install : $(TARGET)
 
@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(PADLOCK)" "1"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssh-4.7p1-padlock.patch
 endif
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/openssh-5.1p1-hpn13v5.diff
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/openssh5.1-dynwindow_noneswitch.diff
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/ssh \
 		    --libexecdir=/usr/lib/openssh --with-md5-passwords \
