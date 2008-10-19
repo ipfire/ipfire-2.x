@@ -555,6 +555,8 @@ END
 102;$qossettings{'RED_DEV'};tcp;;;;53;
 102;$qossettings{'RED_DEV'};udp;;;;53;
 103;$qossettings{'RED_DEV'};esp;;;;;
+103;$qossettings{'RED_DEV'};tcp;;1194;;;
+103;$qossettings{'RED_DEV'};udp;;1194;;;
 103;$qossettings{'RED_DEV'};tcp;;;;1194;
 103;$qossettings{'RED_DEV'};udp;;;;1194;
 103;$qossettings{'RED_DEV'};udp;;4500;;4500;
@@ -564,9 +566,11 @@ END
 203;imq0;esp;;;;;
 203;imq0;tcp;;;;1194;
 203;imq0;udp;;;;1194;
+203;imq0;tcp;;1194;;;
+203;imq0;udp;;1194;;;
 203;imq0;udp;;4500;;4500;
 203;imq0;udp;;500;;500;
-204;imq0;tcp;;;;80;
+204;imq0;tcp;;80;;;
 END
 ;
 	close FILE;
