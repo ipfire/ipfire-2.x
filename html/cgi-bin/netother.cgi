@@ -70,6 +70,18 @@ if ( $querry[0] =~ "fwhits"){
 	&Header::openbox('100%', 'center', "Firewall Hits $Lang::tr{'graph'}");
 	&Graphs::makegraphbox("netother.cgi","fwhits","day");
 	&Header::closebox();
+	
+	&Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
+	$output = `/sbin/ip route show`;
+	$output = &Header::cleanhtml($output,"y");
+	print "<pre>$output</pre>\n";
+	&Header::closebox();
+
+	&Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
+	$output = `/sbin/ip neigh show`;
+	$output = &Header::cleanhtml($output,"y");
+	print "<pre>$output</pre>\n";
+	&Header::closebox();
 
 	&Header::closebigbox();
 	&Header::closepage();
