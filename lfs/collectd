@@ -43,8 +43,10 @@ DEPS       = ""
 objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+collectd-4.5.1.patch = $(DL_FROM)/collectd-4.5.1.patch
 
 $(DL_FILE)_MD5 = d85e00de03d40ca66d5eb4775e58fc1f
+collectd-4.5.1.patch_MD5 = ae8356e845a3afdb96118412c354693b
 
 install : $(TARGET)
 
@@ -77,6 +79,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/collectd-4.5.1.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
 		--disable-{apple_sensors,csv,ipvs,mbmon,memcached,mysql} \
 		--disable-{netlink,nginx,nut,perl,serial,snmp,tape,vserver,xmms} \
@@ -86,7 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-{network,nfs,ntpd,ping,processes,rrdtool,sensors,swap,syslog} \
 		--enable-{tcpconns,unixsock,users,wireless} \
 		--with-rrdtool=/usr/share/rrdtool-1.2.15 \
-		--with_own_libiptc
+		--with-libiptc
 	cd $(DIR_APP) && make install
 	cp -vf $(DIR_SRC)/config/collectd/collectd.conf /etc/
 	ln -f -s ../init.d/collectd /etc/rc.d/rc0.d/K50collectd 
