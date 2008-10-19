@@ -62,9 +62,9 @@ my $i;
 my $debug=0; # enable only for debugging
 
 if ($debug){
-	 print "Urlfilter = ".$proxysettings{'ENABLE_FILTER'}."\n";
-	 print "Clamav = ".$proxysettings{'ENABLE_CLAMAV'}."\n";
-	 print "Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'}."\n";
+	writetolog("Urlfilter = ".$proxysettings{'ENABLE_FILTER'});
+	writetolog("Clamav = ".$proxysettings{'ENABLE_CLAMAV'});
+	writetolog("Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'});
 	 }
 
 # open progamms
@@ -72,7 +72,7 @@ my $pidlist = [];
 my $rlist = [];
 my $wlist = [];
 for($i = 0; $i < @$redirectors; $i++) {
-			 if ($debug){print "Current redirector is ".$redirectors->[$i]."\n";}
+			 if ($debug){writetolog("Current redirector is ".$redirectors->[$i]);}
 			 $pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
 }
 
@@ -82,18 +82,27 @@ while($line = <>) {
                 $wlist->[$i]->print($line);
                 $return = $rlist->[$i]->getline;
                 last if($return ne "\n" and $return ne $line);
-								# break if redirector changes data
+		# break if redirector changes data
+		if ( $return eq "Processing file and database" ){
+			writetolog("Emergency - squidGuard not initialised please run squidGuard -C all");
+			last;
+		}
         }
         print $return;
 
-				if ($debug){
-        	 chomp $line;
-        	 chomp $return;
-        	 if ( $line ne $return ){
-        	 open(DATEI, ">>/var/log/squid/redirector_debug") || die "Unable to acces file /var/log/redirector_debug";
-					 print DATEI "Requested ".$line."\nAnswer    ".$return."\n";
-					 close(DATEI);
-					 }
-				}
+		if ($debug){
+			 chomp $line;
+			 chomp $return;
+			 if ( $line ne $return ){
+				 writetolog("Requested ".$line."\nAnswer    ".$return);
+			 }
+		}
 }
 exit 0;
+
+sub writetolog {
+	my $log = shift;
+	open(DATEI, ">>/var/log/squid/redirector_debug") || die "Unable to acces file /var/log/redirector_debug";
+	print DATEI $log."\n";
+	close(DATEI);
+}
