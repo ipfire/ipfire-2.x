@@ -36,13 +36,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) openssh5.1-dynwindow_noneswitch.diff.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-openssh5.1-dynwindow_noneswitch.diff = $(DL_FROM)/openssh5.1-dynwindow_noneswitch.diff
+openssh5.1-dynwindow_noneswitch.diff.gz = $(DL_FROM)/openssh5.1-dynwindow_noneswitch.diff.gz
 
 $(DL_FILE)_MD5 = 03f2d0c1b5ec60d4ac9997a146d2faec
-openssh5.1-dynwindow_noneswitch.diff_MD5 = a3d3deec7369363224d97df658440216
+openssh5.1-dynwindow_noneswitch.diff.gz_MD5 = 6b6ef30f4fefc462f61df57dd6ae8756
 
 install : $(TARGET)
 
@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(PADLOCK)" "1"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssh-4.7p1-padlock.patch
 endif
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/openssh5.1-dynwindow_noneswitch.diff
+	cd $(DIR_APP) && gzip -d $(DIR_DL)/openssh5.1-dynwindow_noneswitch.diff.gz | patch -Np1
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/ssh \
 		    --libexecdir=/usr/lib/openssh --with-md5-passwords \
