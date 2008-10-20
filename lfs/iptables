@@ -95,8 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure  --prefix=/usr --with-ksource=/usr/src/linux \
 				    --libdir=/lib --includedir=/usr/include --enable-libipq \
 				    --libexecdir=/lib --bindir=/sbin \
-				    --sbindir=/sbin --mandir=/usr/share/man \
-				    --enable-devel
+				    --sbindir=/sbin --mandir=/usr/share/man
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
