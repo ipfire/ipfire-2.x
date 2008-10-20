@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(PADLOCK)" "1"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssh-4.7p1-padlock.patch
 endif
-	cd $(DIR_APP) && gzip -d $(DIR_DL)/openssh5.1-dynwindow_noneswitch.diff.gz | patch -Np1
+	cd $(DIR_APP) && gzip -d -c $(DIR_DL)/openssh5.1-dynwindow_noneswitch.diff.gz | patch -Np1
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/ssh \
 		    --libexecdir=/usr/lib/openssh --with-md5-passwords \
