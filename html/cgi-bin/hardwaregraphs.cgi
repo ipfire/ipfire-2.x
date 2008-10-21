@@ -63,6 +63,14 @@ if ( $querry[0] =~ "hwtemp"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	&Graphs::updatehwvoltgraph($querry[1]);
+}elsif ( $querry[0] =~ "thermaltemp"){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updatethermaltempgraph($querry[1]);
+}elsif ( $querry[0] =~ "thermalcooling"){
+	print "Content-type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updatethermalcoolinggraph($querry[1]);
 }elsif ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" ){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
@@ -97,20 +105,33 @@ if ( $querry[0] =~ "hwtemp"){
 		&Header::closebox();
 	}
 
-	&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
-	&Header::closebox();
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone*` ) {
+	    &Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
+	    &Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
+	    &Header::closebox();
+	}
 
-	&Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
-	&Header::closebox();
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone*` ) {
+	    &Header::openbox('100%', 'center', "ACPI Thermal-Zone Cooling $Lang::tr{'graph'}");
+	    &Graphs::makegraphbox("hardwaregraphs.cgi","thermalcooling","day");
+	    &Header::closebox();
+	}
 
-	&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day","375");
-	&Header::closebox();
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sonsors-*` ) {
+	    &Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
+	    &Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
+	    &Header::closebox();
 
-	sensorsbox();
+	    &Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
+	    &Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
+	    &Header::closebox();
 
+	    &Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
+	    &Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day","375");
+	    &Header::closebox();
+
+	    sensorsbox();
+	}
 	&Header::closebigbox();
 	&Header::closepage();
 
