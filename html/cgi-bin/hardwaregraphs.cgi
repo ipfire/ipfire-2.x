@@ -117,7 +117,7 @@ if ( $querry[0] =~ "hwtemp"){
 	    &Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sonsors-*` ) {
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*` ) {
 	    &Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
 	    &Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
 	    &Header::closebox();
