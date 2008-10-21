@@ -64,7 +64,7 @@
 * centerim-4.22.1
 * clamav-0.94
 * cmake-2.4.8
-* collectd-4.4.3
+* collectd-4.5.1
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-004
@@ -125,7 +125,7 @@
 * hostapd-0.5.10
 * hplip-2.7.10
 * htop-0.8.1
-* httpd-2.2.6
+* httpd-2.2.10
 * hwdata
 * iana-etc-2.10
 * icecast-2.3.1
@@ -221,8 +221,8 @@
 * oinkmaster-2.0
 * openldap-2.3.20
 * openmailadmin-1.0.0
-* openssh-4.7p1
-* openssl-0.9.8g
+* openssh-5.1p1
+* openssl-0.9.8i
 * openswan-2.6.18
 * openswan-2.6.18-kmod-VER
 * openvpn-2.0.9
@@ -261,7 +261,7 @@
 * shadow-4.0.15
 * slang-1.4.9
 * smartmontools-5.36
-* snort-2.6.1.4
+* snort-2.6.1.5
 * sox-12.18.1
 * spandsp-0.0.4pre15
 * squashfs3.4
