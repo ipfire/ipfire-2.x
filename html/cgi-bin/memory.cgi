@@ -56,9 +56,11 @@ if ( $querry[0] =~ "memory"){
 	&Graphs::makegraphbox("memory.cgi","memory","day");
 	&Header::closebox();
 
-	&Header::openbox('100%', 'center', "Swap $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("memory.cgi","swap","day");
-	&Header::closebox();
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/swap` ) {
+	    &Header::openbox('100%', 'center', "Swap $Lang::tr{'graph'}");
+	    &Graphs::makegraphbox("memory.cgi","swap","day");
+	    &Header::closebox();
+	}
 	
 	&Header::openbox('100%', 'center', $Lang::tr{'memory'});
 	print "<table width='95%' cellspacing='5'>";
