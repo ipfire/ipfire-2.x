@@ -20,10 +20,23 @@ case "$1" in
 
 			if [ ! -e /etc/sysconfig/lm_sensors ]; then
 				echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
-				sed -i -e "s|LoadPlugin sensors|#LoadPlugin sensors|g" /etc/collectd.conf
+				sed -i -e "s|^LoadPlugin sensors|#LoadPlugin sensors|g" /etc/collectd.conf
 			fi
 		fi
+		
+		if [ ! -e  /sys/class/thermal/thermal_zone0 ]; then
+			sed -i -e "s|^LoadPlugin thermal|#LoadPlugin thermal|g" /etc/collectd.conf
+		else
+			sed -i -e "s|^#LoadPlugin thermal|LoadPlugin thermal|g" /etc/collectd.conf
+		fi
 
+		if [ "$(swapon -s | wc -l)" == "1" ]; then
+			sed -i -e "s|^LoadPlugin swap|#LoadPlugin swap|g" /etc/collectd.conf
+		else
+			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
+		fi
+		
+		
 		boot_mesg -n "Loading Sensor Modules..."
 		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
 		modprobe $modul > /dev/null 2>&1;
