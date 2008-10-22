@@ -1016,7 +1016,7 @@ sub updatecpufreqgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"COMMENT:".sprintf("%-29s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%-10s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
@@ -1055,14 +1055,13 @@ sub updatethermaltempgraph {
 		"--alt-y-grid",
 		"-w 600",
 		"-h 125",
-		"-l 0",
 		"-r",
 		"-t "."ACPI Thermal-Zone Temperature"." - ".$Lang::tr{$period},
 		"-v Grad Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"COMMENT:".sprintf("%-15s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%-10s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
@@ -1073,7 +1072,7 @@ sub updatethermaltempgraph {
 		my $j=$i+1;
 		push(@command,"DEF:temp".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/thermal-thermal_zone".$i."/temperature-temperature.rrd:value:AVERAGE"
 				,"CDEF:temp".$i."=temp".$i."_,1,/"
-				,"LINE2:temp".$i.$color{"color1$j"}."A0:Temp ".$i." "
+				,"LINE3:temp".$i.$color{"color1$j"}."A0:Temp ".$i." "
 				,"GPRINT:temp".$i.":MAX:%3.0lf Grad C"
 				,"GPRINT:temp".$i.":AVERAGE:%3.0lf Grad C"
 				,"GPRINT:temp".$i.":MIN:%3.0lf Grad C"
