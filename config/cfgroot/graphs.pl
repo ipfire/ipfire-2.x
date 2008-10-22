@@ -1057,7 +1057,7 @@ sub updatethermaltempgraph {
 		"-h 125",
 		"-l 0",
 		"-r",
-		"-t "."ACPI Thermal-Zone Temperature"." ".$Lang::tr{$period},
+		"-t "."ACPI Thermal-Zone Temperature"." - ".$Lang::tr{$period},
 		"-v Grad Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -1073,7 +1073,7 @@ sub updatethermaltempgraph {
 		my $j=$i+1;
 		push(@command,"DEF:temp".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/thermal-thermal_zone".$i."/temperature-temperature.rrd:value:AVERAGE"
 				,"CDEF:temp".$i."=temp".$i."_,1,/"
-				,"LINE1:temp".$i.$color{"color1$j"}."A0:Temp ".$i." "
+				,"LINE2:temp".$i.$color{"color1$j"}."A0:Temp ".$i." "
 				,"GPRINT:temp".$i.":MAX:%3.0lf Grad C"
 				,"GPRINT:temp".$i.":AVERAGE:%3.0lf Grad C"
 				,"GPRINT:temp".$i.":MIN:%3.0lf Grad C"
@@ -1083,50 +1083,6 @@ sub updatethermaltempgraph {
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
 	print "Error in RRD::graph for thermal temp: ".$ERROR."\n" if $ERROR;
-}
-
-sub updatethermalcoolinggraph {
-	my $thermalcount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/thermal-cooling_device* | wc -l`;
-	my $period    = $_[0];
-	my @command = (
-		"-",
-		"--start",
-		"-1".$period,
-		"-aPNG",
-		"-i",
-		"-z",
-		"-W www.ipfire.org",
-		"--alt-y-grid",
-		"-w 600",
-		"-h 125",
-		"-l 0",
-		"-r",
-		"-t "."ACPI Thermal-Zone Cooling Device"." ".$Lang::tr{$period},
-		"-v State",
-		"--color=SHADEA".$color{"color19"},
-		"--color=SHADEB".$color{"color19"},
-		"--color=BACK".$color{"color21"},
-		"COMMENT:".sprintf("%-15s",$Lang::tr{'caption'}),
-		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
-		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
-		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
-		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
-	);
-
-	for(my $i = 0; $i < $thermalcount; $i++) {
-		my $j=$i+1;
-		push(@command,"DEF:cooling".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/thermal-cooling_device".$i."/gauge-cooling_state.rrd:value:AVERAGE"
-				,"CDEF:cooling".$i."=cooling".$i."_,1,/"
-				,"LINE1:cooling".$i.$color{"color1$j"}."A0:cooling ".$i." "
-				,"GPRINT:cooling".$i.":MAX:%3.0lf"
-				,"GPRINT:cooling".$i.":AVERAGE:%3.0lf"
-				,"GPRINT:cooling".$i.":MIN:%3.0lf"
-				,"GPRINT:cooling".$i.":LAST:%3.0lf\\j");
-	}
-
-	RRDs::graph (@command);
-	$ERROR = RRDs::error;
-	print "Error in RRD::graph for thermal cooling: ".$ERROR."\n" if $ERROR;
 }
 
 
