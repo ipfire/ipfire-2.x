@@ -265,7 +265,7 @@
 * sox-12.18.1
 * spandsp-0.0.4pre15
 * squashfs3.4
-* squid-2.7.STABLE4
+* squid-2.7.STABLE5
 * squidGuard-1.3
 * squidclamav-3.6
 * sudo-1.6.8p12
