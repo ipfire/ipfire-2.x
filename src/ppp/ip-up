@@ -57,13 +57,15 @@ if [ "$TEST" == " 2 packets received" ]; then
 	echo "$5	gateway" >> /tmp/hosts
 else
 	#no answer
-	FIRE=`nslookup ping.ipfire.org | tail -2  | head -1 | cut -d" " -f2`;
-	if [ "$FIRE" == "server" ]; then
-	    #DNS lookup failed use direct ip
-	    echo "85.88.28.124	gateway" >> /tmp/hosts
-	else
+	HOST=`host ping.ipfire.org`;
+	FIRE=`echo $HOST | cut -d" " -f4`;
+	CHK=`echo $HOST | cut -d" " -f3`;
+	if [ "$CHK" == "address" ]; then
 	    #use ping.ipfire.org
 	    echo "$FIRE	gateway" >> /tmp/hosts
+	else
+	    #DNS lookup failed use direct ip
+	    echo "85.88.28.124	gateway" >> /tmp/hosts
 	fi
 fi
 mv /tmp/hosts /etc/hosts
