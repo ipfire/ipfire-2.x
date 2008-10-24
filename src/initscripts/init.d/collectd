@@ -13,6 +13,7 @@ fi
 
 case "$1" in
 	start)
+		# At first run search for sensors with sensors-detect
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
 			boot_mesg "Searching for Sensors..."
 			"yes" | /usr/sbin/sensors-detect > /dev/null
@@ -20,23 +21,9 @@ case "$1" in
 
 			if [ ! -e /etc/sysconfig/lm_sensors ]; then
 				echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
-				sed -i -e "s|^LoadPlugin sensors|#LoadPlugin sensors|g" /etc/collectd.conf
 			fi
 		fi
-		
-		if [ ! -e  /sys/class/thermal/thermal_zone0 ]; then
-			sed -i -e "s|^LoadPlugin thermal|#LoadPlugin thermal|g" /etc/collectd.conf
-		else
-			sed -i -e "s|^#LoadPlugin thermal|LoadPlugin thermal|g" /etc/collectd.conf
-		fi
 
-		if [ "$(swapon -s | wc -l)" == "1" ]; then
-			sed -i -e "s|^LoadPlugin swap|#LoadPlugin swap|g" /etc/collectd.conf
-		else
-			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
-		fi
-		
-		
 		boot_mesg -n "Loading Sensor Modules..."
 		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
 		modprobe $modul > /dev/null 2>&1;
@@ -48,6 +35,27 @@ case "$1" in
 		done
 		boot_mesg;
 		echo_ok;
+
+		# Enable sensors plugin if sensors found
+		if [ $( sensors 2>&1 | grep "No sensors found!" | wc -l ) == "1" ]; then
+			sed -i -e "s|^LoadPlugin sensors|#LoadPlugin sensors|g" /etc/collectd.conf
+		else
+			sed -i -e "s|^#LoadPlugin sensors|LoadPlugin sensors|g" /etc/collectd.conf
+		fi
+
+		# Enable thermal plugin if thermal_zone found
+		if [ ! -e  /sys/class/thermal/thermal_zone0 ]; then
+			sed -i -e "s|^LoadPlugin thermal|#LoadPlugin thermal|g" /etc/collectd.conf
+		else
+			sed -i -e "s|^#LoadPlugin thermal|LoadPlugin thermal|g" /etc/collectd.conf
+		fi
+
+		# Enable swap plugin if swap found
+		if [ "$(swapon -s | wc -l)" == "1" ]; then
+			sed -i -e "s|^LoadPlugin swap|#LoadPlugin swap|g" /etc/collectd.conf
+		else
+			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
+		fi
 
 		boot_mesg "Starting Collection daemon..."
 		/usr/sbin/collectd -C /etc/collectd.conf
