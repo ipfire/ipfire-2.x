@@ -234,7 +234,7 @@ echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/remove_obsolet
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/remove_obsolete_paks
-echo 'logger -p syslog.emerg -t core-upgrade-20 "Upgrade finished. Please reboot... "' >> /tmp/remove_obsolete_paks
+echo 'logger -p syslog.emerg -t core-upgrade-21 "Upgrade finished. Please reboot... "' >> /tmp/remove_obsolete_paks
 #
 chmod +x /tmp/remove_obsolete_paks
 /tmp/remove_obsolete_paks &
