@@ -177,7 +177,9 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    MAKETUNING="-j6"
+    if [ -z $MAKETUNING ]; then
+       MAKETUNING="-j6"
+    fi
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
@@ -350,7 +352,7 @@ buildipfire() {
   ipfiremake gdbm
   ipfiremake gmp
   ipfiremake pam
-  ipfiremake openssl			PADLOCK=1
+  ipfiremake openssl
   ipfiremake curl
   ipfiremake python
   ipfiremake libnet

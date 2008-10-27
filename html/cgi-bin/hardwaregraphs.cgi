@@ -83,8 +83,12 @@ if ( $querry[0] =~ "hwtemp"){
 			chomp($_);
 				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
 				my $label = $2.$3;$label=~ s/-//g;
-				if ( $sensorsettings{'LINE-'.$label} ne "on" ){$sensorsettings{'LINE-'.$label} = 'off';}
-				elsif ( $sensorsettings{'LINE-'.$label} eq "on" ){$sensorsettings{'LINE-'.$label} = 'checked';}
+				if ( $sensorsettings{'LINE-'.$label} ne "on" ){
+					$sensorsettings{'LINE-'.$label} = 'off';
+				} elsif ($sensorsettings{'LINE-'.$label} eq "on" ){
+					$sensorsettings{'LINE-'.$label} = 'checked';
+				}
+				$sensorsettings{'LABEL-'.$label} =~ s/\W//g;
 		}
 		&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 	}
@@ -102,31 +106,31 @@ if ( $querry[0] =~ "hwtemp"){
 	}
 
 	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone*` ) {
-	    &Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
-	    &Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
-	    &Header::closebox();
+		&Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
+		&Header::closebox();
 	}
 
 	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/temperature-*` ) {
-	    &Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
-	    &Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
-	    &Header::closebox();
+		&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
+		Header::closebox();
 	}
 
 	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/fanspeed-*` ) {
-	    &Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
-	    &Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
-	    &Header::closebox();
+		&Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
+		&Header::closebox();
 	}
 
 	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/voltage-*` ) {
-	    &Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
-	    &Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day","375");
-	    &Header::closebox();
+		&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day","375");
+		&Header::closebox();
 	}
 
 	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*` ) {
-	    sensorsbox();
+		sensorsbox();
 	}
 	&Header::closebigbox();
 	&Header::closepage();

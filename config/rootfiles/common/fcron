@@ -5,7 +5,6 @@ etc/fcron.daily
 etc/fcron.deny
 etc/fcron.hourly
 etc/fcron.minutely
-#etc/fcron.minutely/loadstat
 etc/fcron.monthly
 etc/fcron.weekly
 usr/bin/fcronsighup
