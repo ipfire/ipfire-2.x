@@ -91,8 +91,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod u-s /usr/bin/fcrontab /usr/bin/fcronsighup
 	mkdir -p /etc/fcron.minutely /etc/fcron.cyclic /etc/fcron.hourly \
 		/etc/fcron.daily /etc/fcron.weekly /etc/fcron.monthly
-	cp -vf $(DIR_CONF)/cron/minutely/* /etc/fcron.minutely
-	chmod -v 755 /etc/fcron.minutely/*
 	/usr/bin/fcrontab $(DIR_SRC)/config/cron/crontab
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
