@@ -404,14 +404,14 @@ sub dblist {
 			}
 		}
 	
-		opendir(DIR,"$Conf::dbdir/meta");
+		opendir(DIR,"$Conf::dbdir/installed");
 		my @files = readdir(DIR);
 		closedir(DIR);
 		foreach $file (@files) {
 			next if ( $file eq "." );
 			next if ( $file eq ".." );
 			next if ( $file =~ /^old/ );
-			open(FILE, "<$Conf::dbdir/meta/$file");
+			open(FILE, "<$Conf::dbdir/installed/$file");
 			@meta = <FILE>;
 			close(FILE);
 			foreach $line (@meta) {
