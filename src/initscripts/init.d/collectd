@@ -17,15 +17,16 @@ case "$1" in
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
 			boot_mesg "Searching for Sensors..."
 
-			# First scan
+			# pre scan and try to load modules
 			"yes" | /usr/sbin/sensors-detect > /dev/null
+			if [ -e /etc/sysconfig/lm_sensors ]; then
+				# Module load
+				for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
+					modprobe $modul > /dev/null 2>&1;
+				done
+			fi
 
-			# Module load
-			for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
-			    modprobe $modul > /dev/null 2>&1;
-			done
-
-			# Second scan
+			# Final scan
 			"yes" | /usr/sbin/sensors-detect > /dev/null
 			evaluate_retval
 
@@ -34,13 +35,13 @@ case "$1" in
 			fi
 		fi
 
-		boot_mesg -n "Loading Sensor Modules..."
+		boot_mesg -n "Loading Sensor Modules: "
 		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
 		modprobe $modul > /dev/null 2>&1;
 			if [ ${?} = 0 ]; then
 				boot_mesg -n "$SUCCESS$modul$NORMAL ";
 			else
-				boot_mesg -n "$FAILURE$modul$NORMAL ";
+				boot_mesg -n "$WARNING$modul$NORMAL ";
 			fi
 		done
 		boot_mesg;
