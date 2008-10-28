@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(KMOD)" "1"
-	cd $(DIR_APP) && make KERNELSRC=/usr/src/linux module
+	cd $(DIR_APP) && make KERNELSRC=/usr/src/linux module $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make minstall
 else
 	cd $(DIR_APP) && sed -i \

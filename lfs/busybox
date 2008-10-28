@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /install/initrd/{{,s}bin,etc}
 	cd $(DIR_APP) && cp -f $(DIR_SRC)/config/uClibc/busybox.config .config
 	cd $(DIR_APP) && make oldconfig
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	mkdir -p /install/initrd/usr/share/udhcpc
 	cd $(DIR_APP) && install -m 0755 examples/udhcp/simple.script \

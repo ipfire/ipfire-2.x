@@ -133,7 +133,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-rm -f $(DIR_SRC)/package.xml
 	cd $(DIR_SRC)/idn-* && phpize
 	cd $(DIR_SRC)/idn-* && ./configure --prefix=/usr --with-idn
-	cd $(DIR_SRC)/idn-* && make
+	cd $(DIR_SRC)/idn-* && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/idn-* && make install
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/Log-1.9.11.tgz
 	-rm -f $(DIR_SRC)/package.xml

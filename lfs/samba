@@ -89,7 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--enable-cups \
 				--with-cifsmount \
 				--with-syslog
-	cd $(DIR_APP)/source && make
+	cd $(DIR_APP)/source && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/source && make install
 	cp -vfp /usr/lib/samba/{libsmbclient.so.0,libtalloc.so.1,libtdb.so.1,libwbclient.so.0} /usr/lib
 	cd /usr/lib/ && ln -v -sf libsmbclient.so.0 libsmbclient.so

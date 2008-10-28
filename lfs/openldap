@@ -92,7 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		            --enable-ppolicy \
 		            --enable-valsort
 	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	chmod -v 755 /usr/lib/libl*-2.3.so.0.2.8
 	@rm -rf $(DIR_APP)

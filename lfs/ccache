@@ -72,7 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -p0 < $(DIR_SRC)/src/patches/$(THISAPP).patch
 	cd $(DIR_APP) && CFLAGS="-O2 -static" ./configure --prefix=$(ROOT)/usr/local
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	ln -sf ccache $(ROOT)/usr/local/bin/gcc
 	ln -sf ccache $(ROOT)/usr/local/bin/g++

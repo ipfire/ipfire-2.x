@@ -108,12 +108,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-0.0.39.tar.bz2
 	cd $(DIR_SRC)/libnfnetlink-0.0.39 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnfnetlink-0.0.39 && make
+	cd $(DIR_SRC)/libnfnetlink-0.0.39 && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/libnfnetlink-0.0.39 && make install
 
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_queue-0.0.16.tar.bz2
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.16 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnetfilter_queue-0.0.16 && make
+	cd $(DIR_SRC)/libnetfilter_queue-0.0.16 && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.16 && make install
 	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.39 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.16
 	@$(POSTBUILD)

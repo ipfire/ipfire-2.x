@@ -87,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 													-e 's@^TW_LOCAL_PASS=""@TW_LOCAL_PASS="ipfire"@' \
 													install/install.sh
 	cd $(DIR_APP)-src && ./configure --prefix=/usr --sysconfdir=/var/ipfire/tripwire
-	cd $(DIR_APP)-src && make $(MAKETUNING)
+	cd $(DIR_APP)-src && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)-src && for i in siggen tripwire twadmin twprint; do \
 													cp -vf $(DIR_APP)-src/bin/$$i /usr/sbin; \
 											 done

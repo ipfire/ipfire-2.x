@@ -96,20 +96,20 @@ ifeq "$(KMOD)" "1"
 	cd $(DIR_SRC)/alsa-driver-$(VER) && sed -i -e "s| soc/ | |g" Makefile
 	cd $(DIR_SRC)/alsa-driver-$(VER) && sed -i -e "s| soc||g" Makefile
 	cd $(DIR_SRC)/alsa-driver-$(VER) && ./configure --with-kernel=/usr/src/linux
-	cd $(DIR_SRC)/alsa-driver-$(VER) && make
+	cd $(DIR_SRC)/alsa-driver-$(VER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/alsa-driver-$(VER) && make install
 else
 	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --enable-static
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-utils-$(VER).tar.bz2
 	cd $(DIR_SRC)/alsa-utils-$(VER) && ./configure
-	cd $(DIR_SRC)/alsa-utils-$(VER) && make $(MAKETUNING)
+	cd $(DIR_SRC)/alsa-utils-$(VER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/alsa-utils-$(VER) && make install
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-firmware-$(VER).tar.bz2
 	cd $(DIR_SRC)/alsa-firmware-$(VER) && ./configure
-	cd $(DIR_SRC)/alsa-firmware-$(VER) && make $(MAKETUNING)
+	cd $(DIR_SRC)/alsa-firmware-$(VER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/alsa-firmware-$(VER) && make install
 endif
 	@rm -rf $(DIR_SRC)/alsa*

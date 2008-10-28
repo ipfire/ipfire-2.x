@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && cp $(DIR_SRC)/config/hostapd/config ./.config
 	cd $(DIR_APP) && sed -e "s@/usr/local@/usr@g" -i Makefile
-	cd $(DIR_APP) && make && make install
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE) && make install
 	cp -vrf $(DIR_SRC)/config/hostapd/hostapd.conf /etc/hostapd.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	mkdir -p /var/ipfire/wlanap

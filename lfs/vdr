@@ -95,9 +95,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/PLUGINS/src && tar jxf $(DIR_DL)/$(DL_FILE3)
 	cd $(DIR_APP)/PLUGINS/src && ln -s vidix-1.0.0 vidix
 	cd $(DIR_APP)/PLUGINS/src/vidix && ./configure
-	cd $(DIR_APP) && make VIDEODIR=/var/video plugins $(MAKETUNING)
-	cd $(DIR_APP) && make VIDEODIR=/var/video vdr $(MAKETUNING)
-	cd $(DIR_APP) && make DFB_SUPPORT=1  FB_SUPPORT=1  VIDIX_SUPPORT=1  $(MAKETUNING)
+	cd $(DIR_APP) && make VIDEODIR=/var/video plugins $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make VIDEODIR=/var/video vdr $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make DFB_SUPPORT=1  FB_SUPPORT=1  VIDIX_SUPPORT=1  $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make PREFIX=. DESTDIR=/opt/vdr/ install
 	-mkdir -p /opt/vdr/etc
 	cd $(DIR_APP) && install *.conf /opt/vdr/etc/

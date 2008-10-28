@@ -70,7 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	-mkdir -p /usr/lib/memtest86+
 	cd $(DIR_APP) && cp -f memtest.bin /usr/lib/memtest86+
 	@rm -rf $(DIR_APP)

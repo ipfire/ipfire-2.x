@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 #	cd $(DIR_APP) && sed -i -e "s@pam/pam@security/pam@g" {config-scripts/cups-pam.m4,scheduler/auth.c,configure}
 	cd $(DIR_APP) && ./configure --disable-nls --sysconfdir=/var/ipfire
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
 	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/cups /etc/rc.d/init.d

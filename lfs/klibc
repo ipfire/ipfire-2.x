@@ -76,9 +76,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		tar zxf $(DIR_DL)/klibc-extras-2.2.tar.gz
 	cd $(DIR_APP) && ln -fs ../linux linux
 	cd $(DIR_SRC)/klibc-extras && sed -i "s|^INSTALL = .*|INSTALL = /usr/bin/install -c -m 755|g" Makefile
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	cd $(DIR_SRC)/klibc-extras && make
+	cd $(DIR_SRC)/klibc-extras && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/klibc-extras && make install
 	ln -sf sh.shared /usr/lib/klibc/bin/sh
 	#mv /lib/klibc-*.so /lib/klibc-pFXBYGYRiBAAryaZ7Zw_ISKpcTk.so

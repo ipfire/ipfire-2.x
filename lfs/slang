@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/slang-1.4.9-uclibc.patch
 	cd $(DIR_APP) && ./configure --prefix=""
-	cd $(DIR_APP)/src && make
+	cd $(DIR_APP)/src && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/src && make install DESTDIR="/opt/$(MACHINE)-uClibc"
 	ln -sf libslang-utf8.a /opt/$(MACHINE)-uClibc/lib/libslang.a
 else
