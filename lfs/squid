@@ -77,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --localstatedir=/var --sysconfdir=/etc/squid \
 	   --disable-poll --disable-snmp --disable-icmp --disable-wccp \
 	   --disable-http-violations --disable-ident-lookups \
-	   --enable-storeio="aufs,coss,diskd,ufs" --enable-ssl \
+	   --enable-storeio="aufs,coss,diskd,ufs,null" --enable-ssl \
 	   --enable-underscores --enable-ntlm-fail-open --enable-arp-acl \
 	   --enable-http-violations --enable-auth=basic,ntlm \
 	   --enable-removal-policies="heap,lru" \

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,6 +18,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+#
+# (c) 2004-2008 marco.s - http://www.advproxy.net
+#
+# This code is distributed under the terms of the GPL
+#
+# $Id: advproxy.cgi,v 3.0.0 2008/08/18 00:00:00 marco.s Exp $
+#
 
 use strict;
 
@@ -112,8 +119,14 @@ my $acl_src_unrestricted_ip  = "$acldir/src_unrestricted_ip.acl";
 my $acl_src_unrestricted_mac = "$acldir/src_unrestricted_mac.acl";
 my $acl_src_noaccess_ip  = "$acldir/src_noaccess_ip.acl";
 my $acl_src_noaccess_mac = "$acldir/src_noaccess_mac.acl";
-my $acl_dst_nocache  = "$acldir/dst_nocache.acl";
 my $acl_dst_noauth   = "$acldir/dst_noauth.acl";
+my $acl_dst_noauth_dom = "$acldir/dst_noauth_dom.acl";
+my $acl_dst_noauth_net = "$acldir/dst_noauth_net.acl";
+my $acl_dst_noauth_url = "$acldir/dst_noauth_url.acl";
+my $acl_dst_nocache  = "$acldir/dst_nocache.acl";
+my $acl_dst_nocache_dom = "$acldir/dst_nocache_dom.acl";
+my $acl_dst_nocache_net = "$acldir/dst_nocache_net.acl";
+my $acl_dst_nocache_url = "$acldir/dst_nocache_url.acl";
 my $acl_dst_throttle = "$acldir/dst_throttle.acl";
 my $acl_ports_safe = "$acldir/ports_safe.acl";
 my $acl_ports_ssl  = "$acldir/ports_ssl.acl";
@@ -144,8 +157,14 @@ unless (-e $acl_src_unrestricted_ip)  { system("touch $acl_src_unrestricted_ip")
 unless (-e $acl_src_unrestricted_mac) { system("touch $acl_src_unrestricted_mac"); }
 unless (-e $acl_src_noaccess_ip)  { system("touch $acl_src_noaccess_ip"); }
 unless (-e $acl_src_noaccess_mac) { system("touch $acl_src_noaccess_mac"); }
-unless (-e $acl_dst_nocache)   { system("touch $acl_dst_nocache"); }
-unless (-e $acl_dst_noauth)    { system("touch $acl_dst_noauth"); }
+unless (-e $acl_dst_noauth)     { system("touch $acl_dst_noauth"); }
+unless (-e $acl_dst_noauth_dom) { system("touch $acl_dst_noauth_dom"); }
+unless (-e $acl_dst_noauth_net) { system("touch $acl_dst_noauth_net"); }
+unless (-e $acl_dst_noauth_url) { system("touch $acl_dst_noauth_url"); }
+unless (-e $acl_dst_nocache)     { system("touch $acl_dst_nocache"); }
+unless (-e $acl_dst_nocache_dom) { system("touch $acl_dst_nocache_dom"); }
+unless (-e $acl_dst_nocache_net) { system("touch $acl_dst_nocache_net"); }
+unless (-e $acl_dst_nocache_url) { system("touch $acl_dst_nocache_url"); }
 unless (-e $acl_dst_throttle)  { system("touch $acl_dst_throttle"); }
 unless (-e $acl_ports_safe) { system("touch $acl_ports_safe"); }
 unless (-e $acl_ports_ssl)  { system("touch $acl_ports_ssl"); }
@@ -329,8 +348,11 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	if (!($proxysettings{'CACHE_SIZE'} =~ /^\d+/) ||
 		($proxysettings{'CACHE_SIZE'} < 10))
 	{
-		$errormessage = $Lang::tr{'advproxy errmsg hdd cache size'};
-		goto ERROR;
+		if (!($proxysettings{'CACHE_SIZE'} eq '0'))
+		{
+			$errormessage = $Lang::tr{'advproxy errmsg hdd cache size'};
+			goto ERROR;
+		}
 	}
 	if (!($proxysettings{'CACHE_MEM'} =~ /^\d+/) ||
 		($proxysettings{'CACHE_MEM'} < 1))
@@ -503,6 +525,10 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 			$errormessage = $Lang::tr{'advproxy errmsg invalid bdc'};
 			goto ERROR;
 		}
+
+		$proxysettings{'NTLM_DOMAIN'} = lc($proxysettings{'NTLM_DOMAIN'});
+		$proxysettings{'NTLM_PDC'}    = lc($proxysettings{'NTLM_PDC'});
+		$proxysettings{'NTLM_BDC'}    = lc($proxysettings{'NTLM_BDC'});
 	}
 	if ($proxysettings{'AUTH_METHOD'} eq 'radius')
 	{
@@ -588,6 +614,9 @@ ERROR:
 
 		if (-e "${General::swroot}/proxy/settings") { &General::readhash("${General::swroot}/proxy/settings", \%stdproxysettings); }
 		$stdproxysettings{'PROXY_PORT'} = $proxysettings{'PROXY_PORT'};
+		$stdproxysettings{'UPSTREAM_PROXY'}    = $proxysettings{'UPSTREAM_PROXY'};
+		$stdproxysettings{'UPSTREAM_USER'}     = $proxysettings{'UPSTREAM_USER'};
+		$stdproxysettings{'UPSTREAM_PASSWORD'} = $proxysettings{'UPSTREAM_PASSWORD'};
 		$stdproxysettings{'ENABLE_FILTER'} = $proxysettings{'ENABLE_FILTER'};
 		$stdproxysettings{'ENABLE_UPDXLRATOR'} = $proxysettings{'ENABLE_UPDXLRATOR'};
 		$stdproxysettings{'ENABLE_CLAMAV'} = $proxysettings{'ENABLE_CLAMAV'};
@@ -953,19 +982,28 @@ print <<END
 	<td colspan='4' class='base'><b>$Lang::tr{'advproxy upstream proxy'}</b></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy via forwarding'}:</td><td><input type='checkbox' name='FORWARD_VIA' $checked{'FORWARD_VIA'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy upstream proxy host:port'}<img src='/blob.gif' alt='*' /></td><td><input type='text' name='UPSTREAM_PROXY' value='$proxysettings{'UPSTREAM_PROXY'}' /></td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy via forwarding'}:</td>
+	<td width='20%'><input type='checkbox' name='FORWARD_VIA' $checked{'FORWARD_VIA'}{'on'} /></td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy upstream proxy host:port'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='30%'><input type='text' name='UPSTREAM_PROXY' value='$proxysettings{'UPSTREAM_PROXY'}' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy client IP forwarding'}:</td><td><input type='checkbox' name='FORWARD_IPADDRESS' $checked{'FORWARD_IPADDRESS'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy upstream username'}<img src='/blob.gif' alt='*' /></td><td><input type='text' name='UPSTREAM_USER' value='$proxysettings{'UPSTREAM_USER'}' /></td>
+	<td class='base'>$Lang::tr{'advproxy client IP forwarding'}:</td>
+	<td><input type='checkbox' name='FORWARD_IPADDRESS' $checked{'FORWARD_IPADDRESS'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy upstream username'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td><input type='text' name='UPSTREAM_USER' value='$proxysettings{'UPSTREAM_USER'}' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy username forwarding'}:</td><td><input type='checkbox' name='FORWARD_USERNAME' $checked{'FORWARD_USERNAME'}{'on'} />
-  <td class='base'>$Lang::tr{'advproxy upstream password'}:<img src='/blob.gif' alt='*' /></td><td><input type='password' name='UPSTREAM_PASSWORD' value='$proxysettings{'UPSTREAM_PASSWORD'}' /></td>
+	<td class='base'>$Lang::tr{'advproxy username forwarding'}:</td>
+	<td><input type='checkbox' name='FORWARD_USERNAME' $checked{'FORWARD_USERNAME'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy upstream password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td><input type='password' name='UPSTREAM_PASSWORD' value='$proxysettings{'UPSTREAM_PASSWORD'}' /></td>
 </tr>
 <tr>
-	<td class='base' colspan='4'>$Lang::tr{'advproxy no connection auth'}:<input type='checkbox' name='NO_CONNECTION_AUTH' $checked{'NO_CONNECTION_AUTH'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy no connection auth'}:</td>
+	<td><input type='checkbox' name='NO_CONNECTION_AUTH' $checked{'NO_CONNECTION_AUTH'}{'on'} /></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
 </tr>
 </table>
 <hr size='1'>
@@ -974,9 +1012,16 @@ print <<END
 	<td colspan='4' class='base'><b>$Lang::tr{'advproxy log settings'}</b></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy log enabled'}:<input type='checkbox' name='LOGGING' $checked{'LOGGING'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy log query'}:<input type='checkbox' name='LOGQUERY' $checked{'LOGQUERY'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy log useragent'}:<input type='checkbox' name='LOGUSERAGENT' $checked{'LOGUSERAGENT'}{'on'} /></td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy log enabled'}:</td>
+	<td width='20%'><input type='checkbox' name='LOGGING' $checked{'LOGGING'}{'on'} /></td>
+	<td width='25%'class='base'>$Lang::tr{'advproxy log query'}:</td>
+	<td width='30%'><input type='checkbox' name='LOGQUERY' $checked{'LOGQUERY'}{'on'} /></td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td class='base'>$Lang::tr{'advproxy log useragent'}:</td>
+	<td><input type='checkbox' name='LOGUSERAGENT' $checked{'LOGUSERAGENT'}{'on'} /></td>
 </tr>
 </table>
 <hr size='1'>
@@ -985,7 +1030,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy cache management'}</b></td>
 </tr>
 <tr>
-	<td width='35%'></td><td width='15%'></td><td width='35%'></td><td width='15%'></td>
+	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'advproxy ram cache size'}:</td>
@@ -1023,7 +1068,7 @@ print <<END
 				<!-- intentionally left empty -->
 			</tr>
 			<tr>
-			<td align=center><textarea name='DST_NOCACHE' cols='32' rows='6' wrap='off'>
+			<td><textarea name='DST_NOCACHE' cols='32' rows='6' wrap='off'>
 END
 ;
 
@@ -2166,7 +2211,7 @@ if (-e $disgrp)
 
 # If the password file contains entries, print entries and action icons
 
-if ( $userdb ne "" ) {
+if ( ! -z "$userdb" ) {
 	print <<END
 	<tr>
 		<td width='30%' class='boldbase' align='center'><b><i>$Lang::tr{'advproxy NCSA username'}</i></b></td>
@@ -2419,10 +2464,11 @@ sub check_acls
 	undef $proxysettings{'DST_NOCACHE'};
 	foreach (@temp)
 	{
-		s/^\s+//g; s/\s+$//g;
+		s/^\s+//g;
+		unless (/^#/) { s/\s+//g; }
 		if ($_)
 		{
-			unless (/^\./) { $_ = '.'.$_; }
+			if (/^\./) { $_ = '*'.$_; }
 			$proxysettings{'DST_NOCACHE'} .= $_."\n";
 		}
 	}
@@ -2488,13 +2534,13 @@ sub check_acls
 	}
 
 	@temp = split(/\n/,$proxysettings{'DST_NOAUTH'});
-	undef $proxysettings{'DST_NOAUTH'};
 	foreach (@temp)
 	{
-		s/^\s+//g; s/\s+$//g;
+		s/^\s+//g;
+		unless (/^#/) { s/\s+//g; }
 		if ($_)
 		{
-			unless (/^\./) { $_ = '.'.$_; }
+			if (/^\./) { $_ = '*'.$_; }
 			$proxysettings{'DST_NOAUTH'} .= $_."\n";
 		}
 	}
@@ -2632,15 +2678,103 @@ sub write_acls
 	print FILE $proxysettings{'SRC_UNRESTRICTED_MAC'};
 	close(FILE);
 
+	open(FILE, ">$acl_dst_noauth");
+	flock(FILE, 2);
+	print FILE $proxysettings{'DST_NOAUTH'};
+	close(FILE);
+
+	open(FILE, ">$acl_dst_noauth_net");
+	close(FILE);
+	open(FILE, ">$acl_dst_noauth_dom");
+	close(FILE);
+	open(FILE, ">$acl_dst_noauth_url");
+	close(FILE);
+
+	@temp = split(/\n/,$proxysettings{'DST_NOAUTH'});
+	foreach(@temp)
+	{
+		unless (/^#/)
+		{
+			if (/^\*\.\w/)
+			{
+				s/^\*//;
+				open(FILE, ">>$acl_dst_noauth_dom");
+				flock(FILE, 2);
+				print FILE "$_\n";
+				close(FILE);
+			}
+			elsif (&General::validipormask($_))
+			{
+				open(FILE, ">>$acl_dst_noauth_net");
+				flock(FILE, 2);
+				print FILE "$_\n";
+				close(FILE);
+			}
+			elsif (/\d\d?\d?\.\d\d?\d?\.\d\d?\d?\.\d\d?\d?-\d\d?\d?\.\d\d?\d?\.\d\d?\d?\.\d\d?\d?/)
+			{
+				open(FILE, ">>$acl_dst_noauth_net");
+				flock(FILE, 2);
+				print FILE "$_\n";
+				close(FILE);
+			}
+			else
+			{
+				open(FILE, ">>$acl_dst_noauth_url");
+				flock(FILE, 2);
+				if (/^[fh]tt?ps?:\/\//) { print FILE "$_\n"; } else { print FILE "^[fh]tt?ps?://$_\n"; }
+				close(FILE);
+			}
+		}
+	}
+
 	open(FILE, ">$acl_dst_nocache");
 	flock(FILE, 2);
 	print FILE $proxysettings{'DST_NOCACHE'};
 	close(FILE);
 
-	open(FILE, ">$acl_dst_noauth");
-	flock(FILE, 2);
-	print FILE $proxysettings{'DST_NOAUTH'};
+	open(FILE, ">$acl_dst_nocache_net");
 	close(FILE);
+	open(FILE, ">$acl_dst_nocache_dom");
+	close(FILE);
+	open(FILE, ">$acl_dst_nocache_url");
+	close(FILE);
+
+	@temp = split(/\n/,$proxysettings{'DST_NOCACHE'});
+	foreach(@temp)
+	{
+		unless (/^#/)
+		{
+			if (/^\*\.\w/)
+			{
+				s/^\*//;
+				open(FILE, ">>$acl_dst_nocache_dom");
+				flock(FILE, 2);
+				print FILE "$_\n";
+				close(FILE);
+			}
+			elsif (&General::validipormask($_))
+			{
+				open(FILE, ">>$acl_dst_nocache_net");
+				flock(FILE, 2);
+				print FILE "$_\n";
+				close(FILE);
+			}
+			elsif (/\d\d?\d?\.\d\d?\d?\.\d\d?\d?\.\d\d?\d?-\d\d?\d?\.\d\d?\d?\.\d\d?\d?\.\d\d?\d?/)
+			{
+				open(FILE, ">>$acl_dst_nocache_net");
+				flock(FILE, 2);
+				print FILE "$_\n";
+				close(FILE);
+			}
+			else
+			{
+				open(FILE, ">>$acl_dst_nocache_url");
+				flock(FILE, 2);
+				if (/^[fh]tt?ps?:\/\//) { print FILE "$_\n"; } else { print FILE "^[fh]tt?ps?://$_\n"; }
+				close(FILE);
+			}
+		}
+	}
 
 	open(FILE, ">$acl_ports_safe");
 	flock(FILE, 2);
@@ -2745,8 +2879,8 @@ if (
      (dnsDomainIs(host, ".$mainsettings{'DOMAINNAME'}")) ||
      (isInNet(host, "10.0.0.0", "255.0.0.0")) ||
      (isInNet(host, "172.16.0.0", "255.240.0.0")) ||
-     (isInNet(host, "169.254.0.0", "255.255.0.0")) ||
-     (isInNet(host, "192.168.0.0", "255.255.0.0"))
+     (isInNet(host, "192.168.0.0", "255.255.0.0")) ||
+     (isInNet(host, "169.254.0.0", "255.255.0.0"))
    )
      return "DIRECT";
 
@@ -2863,15 +2997,22 @@ END
 		print FILE "\n";
 	}
 
-	print FILE <<END
+	if ($proxysettings{'CACHE_SIZE'} > 0)
+	{
+		print FILE "\n";
 
-acl QUERY urlpath_regex cgi-bin \\?
-cache deny QUERY
-END
-	;
-	if (!-z $acl_dst_nocache) {
-		print FILE "acl no_cache_domains dstdomain \"$acl_dst_nocache\"\n";
-		print FILE "cache deny no_cache_domains\n";
+		if (!-z $acl_dst_nocache_dom) {
+			print FILE "acl no_cache_domains dstdomain \"$acl_dst_nocache_dom\"\n";
+			print FILE "cache deny no_cache_domains\n";
+		}
+		if (!-z $acl_dst_nocache_net) {
+			print FILE "acl no_cache_domains dst \"$acl_dst_nocache_net\"\n";
+			print FILE "cache deny no_cache_ipaddr\n";
+		}
+		if (!-z $acl_dst_nocache_url) {
+			print FILE "acl no_cache_hosts url_regex -i \"$acl_dst_nocache_url\"\n";
+			print FILE "cache deny no_cache_hosts\n";
+		}
 	}
 
 	print FILE <<END
@@ -2883,10 +3024,15 @@ umask 022
 pid_filename /var/run/squid.pid
 
 cache_mem $proxysettings{'CACHE_MEM'} MB
-cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256
-
 END
 	;
+
+	if ($proxysettings{'CACHE_SIZE'} eq '0')
+	{
+		print FILE "cache_dir null /var/tmp\n\n";
+	} else {
+		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
+	}
 
 	if (($proxysettings{'ERR_DESIGN'} eq 'ipfire' ))
 	{
@@ -3079,8 +3225,11 @@ END
 		if (!($proxysettings{'AUTH_MAX_USERIP'} eq '')) { print FILE "\nacl concurrent max_user_ip -s $proxysettings{'AUTH_MAX_USERIP'}\n"; }
 		print FILE "\n";
 
-		if (!-z $acl_dst_noauth) { print FILE "acl to_domains_without_auth dstdomain \"$acl_dst_noauth\"\n"; }
+		if (!-z $acl_dst_noauth_net) { print FILE "acl to_ipaddr_without_auth dst \"$acl_dst_noauth_net\"\n"; }
+		if (!-z $acl_dst_noauth_dom) { print FILE "acl to_domains_without_auth dstdomain \"$acl_dst_noauth_dom\"\n"; }
+		if (!-z $acl_dst_noauth_url) { print FILE "acl to_hosts_without_auth url_regex -i \"$acl_dst_noauth_url\"\n"; }
 		print FILE "\n";
+
 	}
 
 	if ($proxysettings{'AUTH_METHOD'} eq 'ident')
@@ -3100,7 +3249,9 @@ END
 				print FILE "acl for_acl_users ident_regex -i \"$identdir/identauth.denyusers\"\n\n";
 			}
 		}
-		if (!-z $acl_dst_noauth) { print FILE "acl to_domains_without_auth dstdomain \"$acl_dst_noauth\"\n"; }
+		if (!-z $acl_dst_noauth_net) { print FILE "acl to_ipaddr_without_auth dst \"$acl_dst_noauth_net\"\n"; }
+		if (!-z $acl_dst_noauth_dom) { print FILE "acl to_domains_without_auth dstdomain \"$acl_dst_noauth_dom\"\n"; }
+		if (!-z $acl_dst_noauth_url) { print FILE "acl to_hosts_without_auth url_regex -i \"$acl_dst_noauth_url\"\n"; }
 		print FILE "\n";
 	}
 
@@ -3146,21 +3297,21 @@ if (@temp)
 }
 	print FILE <<END
 
-acl IPCop_http  port $http_port
-acl IPCop_https port $https_port
-acl IPCop_ips              dst $netsettings{'GREEN_ADDRESS'}
-acl IPCop_networks         src "$acl_src_subnets"
-acl IPCop_servers          dst "$acl_src_subnets"
-acl IPCop_green_network    src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
-acl IPCop_green_servers    dst $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
+acl IPFire_http  port $http_port
+acl IPFire_https port $https_port
+acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
+acl IPFire_networks         src "$acl_src_subnets"
+acl IPFire_servers          dst "$acl_src_subnets"
+acl IPFire_green_network    src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
+acl IPFire_green_servers    dst $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
 END
 	;
-	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPCop_blue_network     src $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
-	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPCop_blue_servers     dst $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
-	if (!-z $acl_src_banned_ip) { print FILE "acl IPCop_banned_ips       src \"$acl_src_banned_ip\"\n"; }
-	if (!-z $acl_src_banned_mac) { print FILE "acl IPCop_banned_mac       arp \"$acl_src_banned_mac\"\n"; }
-	if (!-z $acl_src_unrestricted_ip) { print FILE "acl IPCop_unrestricted_ips src \"$acl_src_unrestricted_ip\"\n"; }
-	if (!-z $acl_src_unrestricted_mac) { print FILE "acl IPCop_unrestricted_mac arp \"$acl_src_unrestricted_mac\"\n"; }
+	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_network     src $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
+	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_servers     dst $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
+	if (!-z $acl_src_banned_ip) { print FILE "acl IPFire_banned_ips       src \"$acl_src_banned_ip\"\n"; }
+	if (!-z $acl_src_banned_mac) { print FILE "acl IPFire_banned_mac       arp \"$acl_src_banned_mac\"\n"; }
+	if (!-z $acl_src_unrestricted_ip) { print FILE "acl IPFire_unrestricted_ips src \"$acl_src_unrestricted_ip\"\n"; }
+	if (!-z $acl_src_unrestricted_mac) { print FILE "acl IPFire_unrestricted_mac arp \"$acl_src_unrestricted_mac\"\n"; }
 	print FILE <<END
 acl CONNECT method CONNECT
 END
@@ -3170,8 +3321,8 @@ END
 		print FILE <<END
 
 #Classroom extensions
-acl IPCop_no_access_ips src "$acl_src_noaccess_ip"
-acl IPCop_no_access_mac arp "$acl_src_noaccess_mac"
+acl IPFire_no_access_ips src "$acl_src_noaccess_ip"
+acl IPFire_no_access_mac arp "$acl_src_noaccess_mac"
 END
 		;
 		print FILE "deny_info ";
@@ -3182,7 +3333,7 @@ END
 		} else {
 			print FILE "ERR_ACCESS_DENIED";
 		}
-		print FILE " IPCop_no_access_ips\n";
+		print FILE " IPFire_no_access_ips\n";
 		print FILE "deny_info ";
 		if ((($proxysettings{'ERR_DESIGN'} eq 'ipfire') && (-e "$errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")) ||
 		    (($proxysettings{'ERR_DESIGN'} eq 'squid') && (-e "$errordir/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")))
@@ -3191,11 +3342,11 @@ END
 		} else {
 			print FILE "ERR_ACCESS_DENIED";
 		}
-		print FILE " IPCop_no_access_mac\n";
+		print FILE " IPFire_no_access_mac\n";
 
 		print FILE <<END
-http_access deny IPCop_no_access_ips
-http_access deny IPCop_no_access_mac
+http_access deny IPFire_no_access_ips
+http_access deny IPFire_no_access_mac
 END
 	;
 	}
@@ -3210,7 +3361,7 @@ END
 	if (!-z $acl_include)
 	{
 		open (ACL, "$acl_include");
-		print FILE "\n#Start of custom includes\n";
+		print FILE "\n#Start of custom includes\n\n";
 		while (<ACL>) {
 			$_ =~ s/__GREEN_IP__/$netsettings{'GREEN_ADDRESS'}/;
 			$_ =~ s/__GREEN_NET__/$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}/;
@@ -3219,7 +3370,7 @@ END
 			$_ =~ s/__PROXY_PORT__/$proxysettings{'PROXY_PORT'}/;
 			print FILE $_;
 		}
-		print FILE "#End of custom includes\n";
+		print FILE "\n#End of custom includes\n";
 		close (ACL);
 	}
 	if ((!-z $extgrp) && ($proxysettings{'AUTH_METHOD'} eq 'ncsa') && ($proxysettings{'NCSA_BYPASS_REDIR'} eq 'on')) { print FILE "\nredirector_access deny for_extended_users\n"; }
@@ -3230,8 +3381,8 @@ END
 http_access allow         localhost
 
 #GUI admin if local machine connects
-http_access allow         IPCop_ips IPCop_networks IPCop_http
-http_access allow CONNECT IPCop_ips IPCop_networks IPCop_https
+http_access allow         IPFire_ips IPFire_networks IPFire_http
+http_access allow CONNECT IPFire_ips IPFire_networks IPFire_https
 
 #Deny not web services
 http_access deny          !Safe_ports
@@ -3311,14 +3462,14 @@ if ($delaypools) {
 		print FILE "\n";
 	}
 
-	print FILE "delay_access 1 deny  IPCop_ips\n";
-	if (!-z $acl_src_unrestricted_ip)  { print FILE "delay_access 1 deny  IPCop_unrestricted_ips\n"; }
-	if (!-z $acl_src_unrestricted_mac) { print FILE "delay_access 1 deny  IPCop_unrestricted_mac\n"; }
+	print FILE "delay_access 1 deny  IPFire_ips\n";
+	if (!-z $acl_src_unrestricted_ip)  { print FILE "delay_access 1 deny  IPFire_unrestricted_ips\n"; }
+	if (!-z $acl_src_unrestricted_mac) { print FILE "delay_access 1 deny  IPFire_unrestricted_mac\n"; }
 	if (($proxysettings{'AUTH_METHOD'} eq 'ncsa') && (!-z $extgrp)) { print FILE "delay_access 1 deny  for_extended_users\n"; }
 
 	if ($netsettings{'BLUE_DEV'})
 	{
-		print FILE "delay_access 1 allow IPCop_green_network";
+		print FILE "delay_access 1 allow IPFire_green_network";
 		if (!-z $acl_dst_throttle) { print FILE " for_throttled_urls"; }
 		print FILE "\n";
 		print FILE "delay_access 1 deny  all\n";
@@ -3330,11 +3481,11 @@ if ($delaypools) {
 
 	if ($netsettings{'BLUE_DEV'})
 	{
-		print FILE "delay_access 2 deny  IPCop_ips\n";
-		if (!-z $acl_src_unrestricted_ip)  { print FILE "delay_access 2 deny  IPCop_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "delay_access 2 deny  IPCop_unrestricted_mac\n"; }
+		print FILE "delay_access 2 deny  IPFire_ips\n";
+		if (!-z $acl_src_unrestricted_ip)  { print FILE "delay_access 2 deny  IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "delay_access 2 deny  IPFire_unrestricted_mac\n"; }
 		if (($proxysettings{'AUTH_METHOD'} eq 'ncsa') && (!-z $extgrp)) { print FILE "delay_access 2 deny  for_extended_users\n"; }
-		print FILE "delay_access 2 allow IPCop_blue_network";
+		print FILE "delay_access 2 allow IPFire_blue_network";
 		if (!-z $acl_dst_throttle) { print FILE " for_throttled_urls"; }
 		print FILE "\n";
 		print FILE "delay_access 2 deny  all\n";
@@ -3347,40 +3498,67 @@ if ($delaypools) {
 if ($proxysettings{'NO_PROXY_LOCAL'} eq 'on')
 {
 	print FILE "#Prevent internal proxy access to Green\n";
-	print FILE "http_access deny IPCop_green_servers !IPCop_green_network\n\n";
+	print FILE "http_access deny IPFire_green_servers !IPFire_green_network\n\n";
 }
 
 if ($proxysettings{'NO_PROXY_LOCAL_BLUE'} eq 'on')
 {
 	print FILE "#Prevent internal proxy access from Blue\n";
-	print FILE "http_access allow IPCop_blue_network IPCop_blue_servers\n";
-	print FILE "http_access deny  IPCop_blue_network IPCop_servers\n\n";
+	print FILE "http_access allow IPFire_blue_network IPFire_blue_servers\n";
+	print FILE "http_access deny  IPFire_blue_network IPFire_servers\n\n";
 }
 
 	print FILE <<END
 #Set custom configured ACLs
 END
 	;
-	if (!-z $acl_src_banned_ip) { print FILE "http_access deny  IPCop_banned_ips\n"; }
-	if (!-z $acl_src_banned_mac) { print FILE "http_access deny  IPCop_banned_mac\n"; }
+	if (!-z $acl_src_banned_ip) { print FILE "http_access deny  IPFire_banned_ips\n"; }
+	if (!-z $acl_src_banned_mac) { print FILE "http_access deny  IPFire_banned_mac\n"; }
 
 	if ((!-z $acl_dst_noauth) && (!($proxysettings{'AUTH_METHOD'} eq 'none')))
 	{
 		if (!-z $acl_src_unrestricted_ip)
 		{
-			print FILE "http_access allow IPCop_unrestricted_ips to_domains_without_auth\n";
+			if (!-z $acl_dst_noauth_net) { print FILE "http_access allow IPFire_unrestricted_ips to_ipaddr_without_auth\n"; }
+			if (!-z $acl_dst_noauth_dom) { print FILE "http_access allow IPFire_unrestricted_ips to_domains_without_auth\n"; }
+			if (!-z $acl_dst_noauth_url) { print FILE "http_access allow IPFire_unrestricted_ips to_hosts_without_auth\n"; }
 		}
 		if (!-z $acl_src_unrestricted_mac)
 		{
-			print FILE "http_access allow IPCop_unrestricted_mac to_domains_without_auth\n";
+			if (!-z $acl_dst_noauth_net) { print FILE "http_access allow IPFire_unrestricted_mac to_ipaddr_without_auth\n"; }
+			if (!-z $acl_dst_noauth_dom) { print FILE "http_access allow IPFire_unrestricted_mac to_domains_without_auth\n"; }
+			if (!-z $acl_dst_noauth_url) { print FILE "http_access allow IPFire_unrestricted_mac to_hosts_without_auth\n"; }
 		}
-		print FILE "http_access allow IPCop_networks";
-		if ($proxysettings{'TIME_ACCESS_MODE'} eq 'deny') {
-			print FILE " !within_timeframe";
-		} else {
-			print FILE " within_timeframe"; }
-		if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
-		print FILE " to_domains_without_auth\n";
+		if (!-z $acl_dst_noauth_net)
+		{
+			print FILE "http_access allow IPFire_networks";
+			if ($proxysettings{'TIME_ACCESS_MODE'} eq 'deny') {
+				print FILE " !within_timeframe";
+			} else {
+				print FILE " within_timeframe"; }
+			if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
+			print FILE " to_ipaddr_without_auth\n";
+		}
+		if (!-z $acl_dst_noauth_dom)
+		{
+			print FILE "http_access allow IPFire_networks";
+			if ($proxysettings{'TIME_ACCESS_MODE'} eq 'deny') {
+				print FILE " !within_timeframe";
+			} else {
+				print FILE " within_timeframe"; }
+			if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
+			print FILE " to_domains_without_auth\n";
+		}
+		if (!-z $acl_dst_noauth_url)
+		{
+			print FILE "http_access allow IPFire_networks";
+			if ($proxysettings{'TIME_ACCESS_MODE'} eq 'deny') {
+				print FILE " !within_timeframe";
+			} else {
+				print FILE " within_timeframe"; }
+			if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
+			print FILE " to_hosts_without_auth\n";
+		}
 	}
 
 	if (($proxysettings{'AUTH_METHOD'} eq 'ident') && ($proxysettings{'IDENT_REQUIRED'} eq 'on') && ($proxysettings{'AUTH_ALWAYS_REQUIRED'} eq 'on'))
@@ -3405,7 +3583,7 @@ END
 
 	if (!-z $acl_src_unrestricted_ip)
 	{
-		print FILE "http_access allow IPCop_unrestricted_ips";
+		print FILE "http_access allow IPFire_unrestricted_ips";
 		if ($proxysettings{'AUTH_ALWAYS_REQUIRED'} eq 'on')
 		{
 			if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
@@ -3450,7 +3628,7 @@ END
 
 	if (!-z $acl_src_unrestricted_mac)
 	{
-		print FILE "http_access allow IPCop_unrestricted_mac";
+		print FILE "http_access allow IPFire_unrestricted_mac";
 		if ($proxysettings{'AUTH_ALWAYS_REQUIRED'} eq 'on')
 		{
 			if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
@@ -3496,7 +3674,7 @@ END
 	if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
 	{
 		if (!-z $disgrp) { print FILE "http_access deny  for_disabled_users\n"; }
-		if (!-z $extgrp) { print FILE "http_access allow IPCop_networks for_extended_users\n"; }
+		if (!-z $extgrp) { print FILE "http_access allow IPFire_networks for_extended_users\n"; }
 	}
 
 	if (
@@ -3540,7 +3718,7 @@ END
 		print FILE " !on_ident_aware_hosts\n";
 	}
 
-	print FILE "http_access allow IPCop_networks";
+	print FILE "http_access allow IPFire_networks";
 	if (
 	    (
 	     ($proxysettings{'AUTH_METHOD'} eq 'ntlm') &&
@@ -3625,8 +3803,8 @@ END
 	if ($proxysettings{'SUPPRESS_VERSION'} eq 'on') { print FILE "httpd_suppress_version_string on\n\n" }
 
 	if ((!-z $mimetypes) && ($proxysettings{'ENABLE_MIME_FILTER'} eq 'on')) {
-		if (!-z $acl_src_unrestricted_ip)  { print FILE "http_reply_access allow IPCop_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "http_reply_access allow IPCop_unrestricted_mac\n"; }
+		if (!-z $acl_src_unrestricted_ip)  { print FILE "http_reply_access allow IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "http_reply_access allow IPFire_unrestricted_mac\n"; }
 		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
 		{
 			if (!-z $extgrp) { print FILE "http_reply_access allow for_extended_users\n"; }
@@ -3635,17 +3813,24 @@ END
 		print FILE "http_reply_access allow all\n\n";
 	}
 
-	print FILE <<END
+	if ($proxysettings{'CACHE_SIZE'} > 0)
+	{
+		print FILE <<END
 maximum_object_size $proxysettings{'MAX_SIZE'} KB
 minimum_object_size $proxysettings{'MIN_SIZE'} KB
 
+END
+		;
+	} else { print FILE "cache deny all\n\n";	}
+
+	print FILE <<END
 request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
 END
 	;
 	$replybodymaxsize = 1024 * $proxysettings{'MAX_INCOMING_SIZE'};
 	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
-		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size 0 allow IPCop_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size 0 allow IPCop_unrestricted_mac\n"; }
+		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size 0 allow IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size 0 allow IPFire_unrestricted_mac\n"; }
 		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
 		{
 			if (!-z $extgrp) { print FILE "reply_body_max_size 0 allow for_extended_users\n"; }
@@ -3679,7 +3864,8 @@ END
 		}
 		elsif ($proxysettings{'FORWARD_USERNAME'} eq 'on') { print FILE " login=*:password"; }
 
-		print FILE "\nnever_direct allow all\n\n";
+		print FILE "\nalways_direct allow IPFire_ips\n";
+		print FILE "never_direct  allow all\n\n";
 	}
 	if (($proxysettings{'ENABLE_FILTER'} eq 'on') || ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') || ($proxysettings{'ENABLE_CLAMAV'} eq 'on'))
 	{
