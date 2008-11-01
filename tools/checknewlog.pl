@@ -25,15 +25,24 @@ my @FILES = readdir(DIR);
 closedir(DIR);
 
 foreach(@FILES) {
-					my $Found = 0;
-					if ( $_ =~ /$\.log/ || $_ =~ /^\.+/ ){next;}
-#					print $_."\n";
-					open(DATEI, "<./log/$_") || die "File not found";
-					my @Lines = <DATEI>;
-					close(DATEI);
-					foreach (@Lines){
-									if ( $_ =~ /^\+/ ){$Found=1;}
-									
-					}
-					if ($Found){print "Changes in $_ check rootfile!\n";}
+#	print $_."\n";
+	my $Found = 0;
+
+	if ( $_ =~ /$\.log/ || $_ =~ /^\.+/  || $_=~ /-install/ || $_=~ /-tools/ || $_=~ /-config/ ){
+		next;
+	} elsif ( $_=~ /missing_rootfile/ ){
+		print "Rootfile for $_ missing!\n";
+	} else {
+		open(DATEI, "<./log/$_") || die "File not found";
+		my @Lines = <DATEI>;
+		close(DATEI);
+
+		foreach (@Lines){
+			if ( $_ =~ /^\+/ ){$Found=1;}
+		}
+
+		if ($Found){
+			print "Changes in $_ check rootfile!\n";
+		}
+	}
 }
