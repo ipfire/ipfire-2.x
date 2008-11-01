@@ -44,7 +44,7 @@ objects = $(DL_FILE) \
 	postfix-2.5.5.patch
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-postfix-2.5.5.patch = $(DL_FROM)/ postfix-2.5.5.patch
+postfix-2.5.5.patch = $(DL_FROM)/postfix-2.5.5.patch
 
 $(DL_FILE)_MD5 = 6b4b848bdd2239dddfc9d385e57e19ef
 postfix-2.5.5.patch_MD5 = 36cb54665d95016af4ce0cd5f85c20a8
