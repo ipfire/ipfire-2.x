@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.3
+VER        = 1.0.5
 
 THISAPP    = bzip2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8a716bebecb6e647d2e8a29ea5d8447f
+$(DL_FILE)_MD5 = 3c15a0c8d1d3ee1c46a1634d00617b1a
 
 install : $(TARGET)
 
@@ -78,7 +78,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-bzgrep_security-1.patch
 	cd $(DIR_APP) && sed -i 's@tempfile -d /tmp -p bz@mktemp -p /tmp@' bzdiff
 	cd $(DIR_APP) && make -f Makefile-libbz2_so
 	cd $(DIR_APP) && make clean
@@ -87,7 +86,6 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && cp -v bzip2-shared /bin/bzip2
 	cd $(DIR_APP) && cp -av libbz2.so* /lib
 	ln -sfv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so
-	rm -v /usr/bin/{bunzip2,bzcat,bzip2}
 	ln -sfv bzip2 /bin/bunzip2
 	ln -sfv bzip2 /bin/bzcat
 else
