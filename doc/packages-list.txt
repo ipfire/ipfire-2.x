@@ -56,6 +56,7 @@
 * bridge-utils-1.1
 * busybox-1.2.2
 * bwm-ng-0.6
+* bzip2-1.0.3
 * bzip2-1.0.5
 * calamaris-2.59
 * capi4k-utils-2005-07-18
@@ -239,6 +240,7 @@
 * pkg-config-0.20
 * popt-1.10.4
 * portmap_5beta
+* postfix-2.4.6
 * postfix-2.5.5
 * ppp-2.4.4
 * procps-3.2.6
