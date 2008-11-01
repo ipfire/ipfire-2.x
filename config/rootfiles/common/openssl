@@ -85,6 +85,7 @@ usr/bin/openssl
 #usr/lib/engines/lib4758cca.so
 #usr/lib/engines/libaep.so
 #usr/lib/engines/libatalla.so
+#usr/lib/engines/libcapi.so
 #usr/lib/engines/libchil.so
 #usr/lib/engines/libcswift.so
 #usr/lib/engines/libgmp.so
@@ -122,8 +123,8 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man1/mdc2.1
 #usr/share/man/man1/nseq.1
 #usr/share/man/man1/ocsp.1
-#usr/share/man/man1/openssl-passwd.1
 #usr/share/man/man1/openssl.1
+#usr/share/man/man1/passwd.1
 #usr/share/man/man1/pkcs12.1
 #usr/share/man/man1/pkcs7.1
 #usr/share/man/man1/pkcs8.1
@@ -387,6 +388,7 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man3/BUF_MEM_grow.3
 #usr/share/man/man3/BUF_MEM_new.3
 #usr/share/man/man3/BUF_strdup.3
+#usr/share/man/man3/CONF_modules_finish.3
 #usr/share/man/man3/CONF_modules_free.3
 #usr/share/man/man3/CONF_modules_load.3
 #usr/share/man/man3/CONF_modules_load_file.3
@@ -821,6 +823,7 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man3/SSL_SESSION_get_timeout.3
 #usr/share/man/man3/SSL_SESSION_set_ex_data.3
 #usr/share/man/man3/SSL_SESSION_set_time.3
+#usr/share/man/man3/SSL_SESSION_set_timeout.3
 #usr/share/man/man3/SSL_accept.3
 #usr/share/man/man3/SSL_add_client_CA.3
 #usr/share/man/man3/SSL_add_session.3
@@ -1090,9 +1093,6 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man3/lhash.3
 #usr/share/man/man3/md5.3
 #usr/share/man/man3/mdc2.3
-#usr/share/man/man3/openssl_err.3
-#usr/share/man/man3/openssl_rand.3
-#usr/share/man/man3/openssl_threads.3
 #usr/share/man/man3/pem.3
 #usr/share/man/man3/rc4.3
 #usr/share/man/man3/ripemd.3
@@ -1104,5 +1104,4 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man3/x509.3
 #usr/share/man/man5/config.5
 #usr/share/man/man5/x509v3_config.5
-#usr/share/man/man7/Modes_of_DES.7
 #usr/share/man/man7/des_modes.7

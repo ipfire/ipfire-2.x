@@ -1,10 +1,11 @@
 srv/web/ipfire/cgi-bin/wlanap.cgi
 var/ipfire/menu.d/EX-wlanap.menu
-var/ipfire/wlanap/settings
-var/ipfire/wlanap/hostapd.conf
-etc/hostapd.conf
 etc/init.d/hostapd
+usr/local/bin/wlanapctrl
+etc/hostapd.conf
 usr/bin/hostapd
 usr/bin/hostapd_cli
 var/ipfire/backup/addons/includes/hostapd
-usr/local/bin/wlanapctrl
+var/ipfire/wlanap
+var/ipfire/wlanap/hostapd.conf
+var/ipfire/wlanap/settings

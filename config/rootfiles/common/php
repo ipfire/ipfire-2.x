@@ -136,6 +136,14 @@ usr/bin/php
 #usr/include/php/ext/mbstring/oniguruma/php_onig_compat.h
 #usr/include/php/ext/mbstring/php_mbregex.h
 #usr/include/php/ext/pcre
+#usr/include/php/ext/pcre/pcrelib
+#usr/include/php/ext/pcre/pcrelib/config.h
+#usr/include/php/ext/pcre/pcrelib/pcre.h
+#usr/include/php/ext/pcre/pcrelib/pcre_internal.h
+#usr/include/php/ext/pcre/pcrelib/pcreposix.h
+#usr/include/php/ext/pcre/pcrelib/ucp.h
+#usr/include/php/ext/pcre/pcrelib/ucpinternal.h
+#usr/include/php/ext/pcre/pcrelib/ucptable.h
 #usr/include/php/ext/pcre/php_pcre.h
 #usr/include/php/ext/pdo
 #usr/include/php/ext/pdo/php_pdo.h

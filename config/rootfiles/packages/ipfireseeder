@@ -1,3 +1,3 @@
-etc/rc.d/init.d/ipfireseeder
 var/ipfire/seeder
+#var/ipfire/seeder/ipfire-2.1.i586-full.iso.torrent
 var/log/seeder

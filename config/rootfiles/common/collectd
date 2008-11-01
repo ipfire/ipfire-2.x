@@ -5,6 +5,8 @@ etc/rc.d/rc3.d/S21collectd
 etc/rc.d/rc6.d/K50collectd
 #usr/bin/collectd-nagios
 #usr/etc/collectd.conf
+#usr/bin/collectd-nagios
+#usr/etc/collectd.conf
 #usr/lib/collectd
 #usr/lib/collectd/apache.la
 usr/lib/collectd/apache.so
@@ -30,6 +32,8 @@ usr/lib/collectd/email.so
 usr/lib/collectd/entropy.so
 #usr/lib/collectd/exec.la
 usr/lib/collectd/exec.so
+usr/lib/collectd/filecount.la
+usr/lib/collectd/filecount.so
 #usr/lib/collectd/hddtemp.la
 usr/lib/collectd/hddtemp.so
 #usr/lib/collectd/interface.la
@@ -72,6 +76,8 @@ usr/lib/collectd/tail.so
 usr/lib/collectd/tcpconns.so
 #usr/lib/collectd/teamspeak2.la
 usr/lib/collectd/teamspeak2.so
+usr/lib/collectd/thermal.la
+usr/lib/collectd/thermal.so
 usr/lib/collectd/types.db
 #usr/lib/collectd/unixsock.la
 usr/lib/collectd/unixsock.so
@@ -90,6 +96,8 @@ usr/lib/collectd/wireless.so
 #usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Collectd/.packlist
 usr/sbin/collectd
 usr/sbin/collectdmon
+#usr/share/collectd
+#usr/share/collectd/postgresql_default.conf
 #usr/share/man/man1/collectd-nagios.1
 #usr/share/man/man1/collectd.1
 #usr/share/man/man1/collectdmon.1
