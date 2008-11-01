@@ -28,7 +28,7 @@ foreach(@FILES) {
 #	print $_."\n";
 	my $Found = 0;
 
-	if ( $_ =~ /$\.log/ || $_ =~ /^\.+/  || $_=~ /-install/ || $_=~ /-tools/ || $_=~ /-config/ ){
+	if ( $_ =~ /$\.log/ || $_ =~ /^\.+/  || $_=~ /-install/ || $_=~ /-tools/ || $_=~ /-config/ || $_=~ /-kmod-/){
 		next;
 	} elsif ( $_=~ /missing_rootfile/ ){
 		print "Rootfile for $_ missing!\n";
