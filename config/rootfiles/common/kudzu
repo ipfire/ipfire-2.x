@@ -28,6 +28,7 @@ sbin/kudzu
 #usr/lib/python2.4/site-packages/drv_libxml2.pyc
 #usr/lib/python2.4/site-packages/kudzu.py
 #usr/lib/python2.4/site-packages/kudzu.pyc
+#usr/lib/python2.4/site-packages/libxslt.pyc
 #usr/lib/python2.4/site-packages/libxml2.pyc
 #usr/lib/python2.4/site-packages/snack.pyc
 usr/sbin/kudzu

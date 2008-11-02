@@ -28,6 +28,8 @@ usr/bin/ps2ps
 usr/bin/pv.sh
 usr/bin/unix-lpr.sh
 usr/bin/wftopfa
+usr/lib/cups/filter/pstopxl
+usr/lib/cups/filter/pstoraster
 #usr/man/de
 #usr/man/de/man1
 #usr/man/de/man1/dvipdf.1
@@ -72,6 +74,8 @@ usr/bin/wftopfa
 #usr/man/man1/ps2pdfwr.1
 #usr/man/man1/ps2ps.1
 #usr/man/man1/wftopfa.1
+usr/share/cups/model/pxlcolor.ppd
+usr/share/cups/model/pxlmono.ppd
 #usr/share/ghostscript
 #usr/share/ghostscript/8.15
 #usr/share/ghostscript/8.15/Resource
@@ -684,3 +688,4 @@ usr/share/ghostscript/fonts/u004006t.pfm
 usr/share/ghostscript/fonts/z003034l.afm
 usr/share/ghostscript/fonts/z003034l.pfb
 usr/share/ghostscript/fonts/z003034l.pfm
+var/ipfire/cups/pstoraster.convs

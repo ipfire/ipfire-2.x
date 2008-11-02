@@ -32,7 +32,7 @@ usr/sbin/arpd
 #usr/share/doc/iproute2/arpd.sgml
 #usr/share/doc/iproute2/examples
 #usr/share/doc/iproute2/examples/README.cbq
-#usr/share/doc/iproute2/examples/README.iproute2#tc
+#usr/share/doc/iproute2/examples/README.iproute2+tc
 #usr/share/doc/iproute2/examples/SYN-DoS.rate.limit
 #usr/share/doc/iproute2/examples/cbq.init-v0.7.3
 #usr/share/doc/iproute2/examples/cbqinit.eth1

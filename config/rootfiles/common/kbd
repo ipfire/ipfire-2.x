@@ -28,7 +28,7 @@ bin/setfont
 #lib/kbd/consolefonts/GohaClassic-16.psfu.gz
 #lib/kbd/consolefonts/LatArCyrHeb-08.psfu.gz
 #lib/kbd/consolefonts/LatArCyrHeb-14.psfu.gz
-#lib/kbd/consolefonts/LatArCyrHeb-16#.psfu.gz
+lib/kbd/consolefonts/LatArCyrHeb-16+.psfu.gz
 lib/kbd/consolefonts/LatArCyrHeb-16.psfu.gz
 #lib/kbd/consolefonts/LatArCyrHeb-19.psfu.gz
 #lib/kbd/consolefonts/Mik_8x16.gz
@@ -152,14 +152,14 @@ lib/kbd/consolefonts/lat2-16.psfu.gz
 #lib/kbd/consolefonts/lat4-10.psfu.gz
 #lib/kbd/consolefonts/lat4-12.psfu.gz
 #lib/kbd/consolefonts/lat4-14.psfu.gz
-#lib/kbd/consolefonts/lat4-16#.psfu.gz
+#lib/kbd/consolefonts/lat4-16+.psfu.gz
 #lib/kbd/consolefonts/lat4-16.psfu.gz
 #lib/kbd/consolefonts/lat4-19.psfu.gz
 #lib/kbd/consolefonts/lat4a-08.psfu.gz
 #lib/kbd/consolefonts/lat4a-10.psfu.gz
 #lib/kbd/consolefonts/lat4a-12.psfu.gz
 #lib/kbd/consolefonts/lat4a-14.psfu.gz
-#lib/kbd/consolefonts/lat4a-16#.psfu.gz
+#lib/kbd/consolefonts/lat4a-16+.psfu.gz
 #lib/kbd/consolefonts/lat4a-16.psfu.gz
 #lib/kbd/consolefonts/lat4a-19.psfu.gz
 #lib/kbd/consolefonts/lat5-12.psfu.gz
@@ -556,6 +556,7 @@ usr/bin/deallocvt
 usr/bin/dumpkeys
 usr/bin/fgconsole
 usr/bin/getkeycodes
+usr/bin/getunimap
 #usr/bin/kbdrate
 usr/bin/loadunimap
 #usr/bin/mapscrn
@@ -566,7 +567,9 @@ usr/bin/loadunimap
 #usr/bin/resizecons
 usr/bin/setkeycodes
 usr/bin/setleds
+usr/bin/setlogcons
 usr/bin/setmetamode
+usr/bin/setvesablank
 usr/bin/showconsolefont
 usr/bin/showkey
 usr/bin/unicode_start
@@ -589,10 +592,12 @@ usr/bin/unicode_stop
 #usr/share/man/man1/unicode_stop.1
 #usr/share/man/man5/keymaps.5
 #usr/share/man/man8/getkeycodes.8
+#usr/share/man/man8/getunimap.8
 #usr/share/man/man8/kbdrate.8
 #usr/share/man/man8/loadunimap.8
 #usr/share/man/man8/mapscrn.8
 #usr/share/man/man8/resizecons.8
 #usr/share/man/man8/setfont.8
 #usr/share/man/man8/setkeycodes.8
+#usr/share/man/man8/setvesablank.8
 #usr/share/man/man8/showconsolefont.8

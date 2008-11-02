@@ -5,5 +5,5 @@ usr/bin/fetchmail
 #usr/lib/python2.4/site-packages/fetchmailconf.py
 #usr/lib/python2.4/site-packages/fetchmailconf.pyc
 #usr/lib/python2.4/site-packages/fetchmailconf.pyo
-#usr/man/man1/fetchmail.1
-#usr/man/man1/fetchmailconf.1
+#usr/share/man/man1/fetchmail.1
+#usr/share/man/man1/fetchmailconf.1

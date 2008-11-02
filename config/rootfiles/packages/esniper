@@ -15,7 +15,9 @@ srv/web/esniper/button/button.gif
 srv/web/esniper/button/button.ini
 srv/web/esniper/button/button.php
 srv/web/esniper/button/fonts
-srv/web/esniper/button/fonts/.ttf-fonts for button.php
+srv/web/esniper/button/fonts/.ttf-fonts
+#for
+#button.php
 srv/web/esniper/button/fonts/COPYRIGHT.TXT
 srv/web/esniper/button/fonts/README.TXT
 srv/web/esniper/button/fonts/RELEASENOTES.TXT

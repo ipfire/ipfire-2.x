@@ -1,6 +1,8 @@
 usr/bin/qemu
 usr/bin/qemu-i386
 usr/bin/qemu-img
+usr/bin/qemu-ppc
+usr/bin/qemu-system-ppc
 usr/share/qemu
 usr/share/qemu/bios.bin
 usr/share/qemu/keymaps

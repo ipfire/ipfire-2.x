@@ -111,11 +111,11 @@ usr/lib/libuuid.so
 #usr/man/man8/mke2fs.8
 #usr/man/man8/mkfs.ext2.8
 #usr/man/man8/mkfs.ext3.8
-#usr/man/man8/mklost#found.8
+#usr/man/man8/mklost+found.8
 #usr/man/man8/resize2fs.8
 #usr/man/man8/tune2fs.8
 #usr/sbin/filefrag
-usr/sbin/mklost+found
+#usr/sbin/mklost+found
 #usr/share/et
 #usr/share/et/et_c.awk
 #usr/share/et/et_h.awk

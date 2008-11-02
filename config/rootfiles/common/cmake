@@ -219,7 +219,7 @@
 #usr/local/share/cmake-2.4/Modules/Platform/Windows-bcc32.cmake
 #usr/local/share/cmake-2.4/Modules/Platform/Windows-cl.cmake
 #usr/local/share/cmake-2.4/Modules/Platform/Windows-cl.cmake.in
-#usr/local/share/cmake-2.4/Modules/Platform/Windows-g##.cmake
+#usr/local/share/cmake-2.4/Modules/Platform/Windows-g++.cmake
 #usr/local/share/cmake-2.4/Modules/Platform/Windows-g77.cmake
 #usr/local/share/cmake-2.4/Modules/Platform/Windows-gcc.cmake
 #usr/local/share/cmake-2.4/Modules/Platform/Windows-icl.cmake

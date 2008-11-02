@@ -6,6 +6,7 @@ sbin/getpcaps
 sbin/setpcaps
 sbin/sucap
 #usr/include/sys/capability.h
+usr/lib/libnewt.so.0.51
 #usr/man/man2
 #usr/man/man2/capget.2
 #usr/man/man2/capset.2

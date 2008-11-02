@@ -25,7 +25,8 @@ usr/lib/libvorbisfile.so.3.2.0
 #usr/share/doc/libvorbis-1.2.0/Vorbis_I_spec.html
 #usr/share/doc/libvorbis-1.2.0/Vorbis_I_spec.pdf
 #usr/share/doc/libvorbis-1.2.0/components.png
-#usr/share/doc/libvorbis-1.2.0/draft-kerr-avt-vorbis-rtp-03.txt
+#usr/share/doc/libvorbis-1.2.0/draft-ietf-avt-rtp-vorbis-06.txt
+#usr/share/doc/libvorbis-1.2.0/draft-ietf-avt-rtp-vorbis-06.xml
 #usr/share/doc/libvorbis-1.2.0/eightphase.png
 #usr/share/doc/libvorbis-1.2.0/evenlsp.png
 #usr/share/doc/libvorbis-1.2.0/floor1-1.png

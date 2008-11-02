@@ -31,3 +31,4 @@ usr/local/bin/timectrl
 #usr/local/bin/tripwirectrl
 usr/local/bin/upnpctrl
 usr/local/bin/wirelessctrl
+#usr/local/bin/wlanapctrl

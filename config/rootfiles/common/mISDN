@@ -39,9 +39,11 @@ usr/lib/libsuppserv.so
 #usr/lib/mISDN
 usr/lib/mISDN/mISDN.conf.bnx.xsl
 usr/lib/mISDN/mISDN.conf.hfcmulti.xsl
+usr/lib/mISDN/mISDN.conf.hfcsusb.xsl
 usr/lib/mISDN/mISDN.conf.inc.xsl
 usr/lib/mISDN/mISDN.conf.l1oip.xsl
 usr/lib/mISDN/mISDN.conf.mISDN_debugtool.xsl
 usr/lib/mISDN/mISDN.conf.mISDN_dsp.xsl
 usr/lib/mISDN/mISDN.conf.singlepci.xsl
+usr/lib/mISDN/mISDN.conf.xhfc.xsl
 usr/lib/mISDN/mISDN.conf.xsl

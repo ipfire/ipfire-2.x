@@ -6,6 +6,8 @@ etc/udev
 #etc/udev/rules.d/25-lfs.rules
 #etc/udev/rules.d/26-modprobe.rules
 #etc/udev/rules.d/27-firmware.rules
+#etc/udev/rules.d/30-persistent-network.rules
+#etc/udev/rules.d/55-scsi-cdrom.rules
 #etc/udev/rules.d/60-persistent-storage.rules
 #etc/udev/rules.d/81-cdrom.rules
 #etc/udev/udev.conf
