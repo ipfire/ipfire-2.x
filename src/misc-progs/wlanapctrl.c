@@ -16,11 +16,12 @@ int main(int argc, char *argv[]){
 		exit(1);
 
 	if (strcmp(argv[1], "start") == 0){
+		safe_system("cp /var/ipfire/wlanap/hostapd.* /etc/");
 		safe_system("/etc/init.d/hostapd start");
 	}else if (strcmp(argv[1], "stop") == 0){
 		safe_system("/etc/init.d/hostapd stop");
 	}else if (strcmp(argv[1], "restart") == 0){
-		safe_system("cp /var/ipfire/wlanap/hostapd.conf /etc/hostapd.conf");
+		safe_system("cp /var/ipfire/wlanap/hostapd.* /etc/");
 		safe_system("/etc/init.d/hostapd restart");
 	}else if (strcmp(argv[1], "status") == 0){
 		safe_system("/etc/init.d/hostapd status");

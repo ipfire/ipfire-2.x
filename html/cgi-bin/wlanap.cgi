@@ -25,8 +25,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/lang.pl';
@@ -56,7 +56,8 @@ my $txpower = '';
 &General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 
 $wlanapsettings{'APMODE'} = 'on';
-$wlanapsettings{'INTERFACE'} = $netsettings{'BLUE_DEV'};
+$wlanapsettings{'MACMODE'} = '0';
+$wlanapsettings{'INTERFACE'} = '';
 $wlanapsettings{'SSID'} = 'IPFire';
 $wlanapsettings{'HIDESSID'} = 'off';
 $wlanapsettings{'ENC'} = 'wpa2';               # none / wpa1 /wpa2
@@ -72,6 +73,7 @@ $wlanapsettings{'DRIVER'} = 'MADWIFI';
 my %cgiparams=();
 $cgiparams{'ACTION'} = '';
 $cgiparams{'APMODE'} = 'on';
+$cgiparams{'MACMODE'} = '0';
 $cgiparams{'SSID'} = 'IPFire';
 $cgiparams{'HIDESSID'} = 'off';
 $cgiparams{'ENC'} = 'wpa2';               # none / wep / wpa / wep+wpa
@@ -87,9 +89,12 @@ $cgiparams{'DEBUG'} = '4';
 
 if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 	$wlanapsettings{'SSID'}       = $cgiparams{'SSID'};
+	$wlanapsettings{'MACMODE'}    = $cgiparams{'MACMODE'};
+	$wlanapsettings{'ACCEPT_MACS'}= $cgiparams{'ACCEPT_MACS'};
+	$wlanapsettings{'DENY_MACS'}  = $cgiparams{'DENY_MACS'};
 	$wlanapsettings{'HIDESSID'}   = $cgiparams{'HIDESSID'};
 	$wlanapsettings{'ENC'}        = $cgiparams{'ENC'};
-	$wlanapsettings{'CHANNEL'}       = $cgiparams{'CHANNEL'};
+	$wlanapsettings{'CHANNEL'}    = $cgiparams{'CHANNEL'};
 	$wlanapsettings{'TXPOWER'}    = $cgiparams{'TXPOWER'};
 
 	$wlanapsettings{'PWD'}        = $cgiparams{'PWD'};
@@ -102,11 +107,14 @@ if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 	}
 
 	if ( $errormessage eq '' ){
-		&WriteConfig();
+		&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 		&WriteConfig_hostapd();
 
 		system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1");
 	}
+}elsif ( $cgiparams{'ACTION'} eq "$Lang::tr{'interface'}" ){
+	$wlanapsettings{'INTERFACE'}      = $cgiparams{'INTERFACE'};
+	&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 }elsif ( $cgiparams{'ACTION'} eq 'Start' ){
 	system("/usr/local/bin/wlanapctrl start >/dev/null 2>&1");
 }elsif ( $cgiparams{'ACTION'} eq 'Stop' ){
@@ -147,22 +155,49 @@ if ( $debug ){
 #
 my $wlan_card_status = 'dummy';
 my $wlan_ap_status = '';
-my $blue_message = "";
+my $message = "";
 
-if ( ($netsettings{'BLUE_DEV'} eq '') || ($netsettings{'BLUE_DRIVER'} eq '') ){
-	$blue_message = "No BLUE Interface.";
+$selected{'INTERFACE'}{'green0'} = '';
+$selected{'INTERFACE'}{'blue0'} = '';
+$selected{'ENC'}{$wlanapsettings{'INTERFACE'}} = "selected='selected'";
+
+if ( ($wlanapsettings{'INTERFACE'} eq '') ){
+	$message = "No WLan Interface selected.";
+	&Header::openbox('100%', 'center', "WLAN AP");
+print <<END
+$message<br />
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<select name='INTERFACE'>
+	<option value='green0' $selected{'INTERFACE'}{'green0'}>green0</option>
+END
+;
+	if ( $netsettings{'BLUE_DEV'} ne ''){
+		print "<option value='blue0' $selected{'INTERFACE'}{'blue0'}>blue0</option>";
+	}
+print <<END
+</select>
+<br />
+	<input type='hidden' name='ACTION' value='$Lang::tr{'interface'}' />
+	<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form>
+END
+;
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit;
 }else{
-	my $cmd_out = `/usr/sbin/iwconfig $netsettings{'BLUE_DEV'} 2>/dev/null`;
+	my $cmd_out = `/usr/sbin/iwconfig $wlanapsettings{'INTERFACE'} 2>/dev/null`;
 
 	if ( $cmd_out eq '' ){
-		$blue_message = "BLUE Interface is not a WLAN card.";
+		$message = "Interface is not a WLAN card.";
+		$wlan_card_status = '';
 	}else{
-		$cmd_out = `/sbin/ifconfig | /bin/grep $netsettings{'BLUE_DEV'}`;
+		$cmd_out = `/sbin/ifconfig | /bin/grep $wlanapsettings{'INTERFACE'}`;
 		if ( $cmd_out eq '' ){
 			$wlan_card_status = 'down';
 		}else{
 			$wlan_card_status = 'up';
-			$cmd_out = `/usr/sbin/iwconfig $netsettings{'BLUE_DEV'} | /bin/grep "Mode:Master"`;
+			$cmd_out = `/usr/sbin/iwconfig $wlanapsettings{'INTERFACE'} | /bin/grep "Mode:Master"`;
 			if ( $cmd_out ne '' ){
 				$wlan_ap_status = 'up';
 			}
@@ -173,14 +208,12 @@ if ( ($netsettings{'BLUE_DEV'} eq '') || ($netsettings{'BLUE_DRIVER'} eq '') ){
 my $checked_hidessid = '';
 $checked_hidessid = "checked='checked'" if ( $wlanapsettings{'HIDESSID'} eq 'on' );
 
-$selected{'ENC'}{'none'} = '';
-$selected{'ENC'}{'wpa1'} = '';
-$selected{'ENC'}{'wpa2'} = '';
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
+$selected{'MACMODE'}{$wlanapsettings{'MACMODE'}} = "selected='selected'";
 
-my @channellist_cmd = `iwlist $netsettings{'BLUE_DEV'} channel`;
+my @channellist_cmd = `iwlist $wlanapsettings{'INTERFACE'} channel`;
 # get available channels
 
 my @temp;
@@ -191,7 +224,7 @@ if ( $channel =~ /\d+/ ){push(@temp,$channel);}
 }
 my @channellist = @temp;
 
-my @txpower_cmd = `iwlist $netsettings{'BLUE_DEV'} txpower`;
+my @txpower_cmd = `iwlist $wlanapsettings{'INTERFACE'} txpower`;
 # get available channels
 
 my @temp;
@@ -203,18 +236,7 @@ if ( $txpower =~ /\d+/ ){push(@temp,$txpower."mW");}
 my @txpower = @temp;
 push(@txpower,"auto");
 
-$selected{'SYSLOGLEVEL'}{'0'} = '';
-$selected{'SYSLOGLEVEL'}{'1'} = '';
-$selected{'SYSLOGLEVEL'}{'2'} = '';
-$selected{'SYSLOGLEVEL'}{'3'} = '';
-$selected{'SYSLOGLEVEL'}{'4'} = '';
 $selected{'SYSLOGLEVEL'}{$wlanapsettings{'SYSLOGLEVEL'}} = "selected='selected'";
-
-$selected{'DEBUG'}{'0'} = '';
-$selected{'DEBUG'}{'1'} = '';
-$selected{'DEBUG'}{'2'} = '';
-$selected{'DEBUG'}{'3'} = '';
-$selected{'DEBUG'}{'4'} = '';
 $selected{'DEBUG'}{$wlanapsettings{'DEBUG'}} = "selected='selected'";
 
 #
@@ -232,17 +254,18 @@ if ( $wlan_card_status ne '' ){
 	print "<tr><td class='base'>Access Point</td>";
 	print $wlan_ap_status eq 'up' ? $status_started : $status_stopped;
 	if ( $wlan_card_status eq 'up' ){
-		print "<tr><td colspan='2' align='center'><input type='submit' name='ACTION' value='Stop' /><input type='hidden' name='RUNNING' value='on' /></td></tr>";
+		print "<tr><td colspan='2' align='center'><input type='submit' name='ACTION' value='Stop' />";
+		print "<input type='submit' name='ACTION' value='Restart' /></td></tr>";
 	}else{
 		print "<tr><td colspan='2' align='center'><input type='submit' name='ACTION' value='Start' /></td></tr>";
 	}
 }else{
-	print "<tr><td colspan='2' class='base'><b>$blue_message</b></td></tr>";
+	print "<tr><td colspan='2' class='base'><b>$message</b></td></tr>";
 }
 print "</table>";
 
 if ( $wlan_card_status eq '' ){
-	print "</form>";
+	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit 0;
@@ -298,18 +321,54 @@ print <<END
 	</select>
 </td></tr>
 </table>
+END
+;
+if ( $wlanapsettings{'INTERFACE'} =~ /green0/ ){
+	print <<END
+<br />
+<table width='95%' cellspacing='0'>
+<td width='25%' class='base'>Mac Filter:&nbsp;</td><td class='base' width='25%'>
+	<select name='MACMODE'>
+		<option value='0' $selected{'MACMODE'}{'0'}>0 (off)</option>
+		<option value='1' $selected{'MACMODE'}{'1'}>1 (Deny list)</option>
+		<option value='2' $selected{'MACMODE'}{'2'}>2 (Accept list)</option>
+	</select>
+</td><td colspan='2'></td></tr>
+<tr>
+	<td colspan='2' class='base'>Mac Accept List (one per line)</td>
+	<td colspan='2' class='base'>Mac Deny List (one per line)</td>
+</tr>
+<tr>
+	<td colspan='2'><textarea name='ACCEPT_MACS' cols='32' rows='3' wrap='off'>
+END
+;
+	print `cat /var/ipfire/wlanap/hostapd.accept`;
+print <<END
+</textarea></td>
+	<td colspan='2'><textarea name='DENY_MACS' cols='32' rows='3' wrap='off'>
+END
+;
+	print `cat /var/ipfire/wlanap/hostapd.deny`;
+	print <<END
+</textarea></td>
+</tr>
+</table>
+END
+;
+}
+print <<END
 <br />
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-												<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
+	<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
+	<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
 </tr>
 </table>
 END
 ;
 
 if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
-	 $status =  `wlanconfig $netsettings{'BLUE_DEV'} list`;
+	 $status =  `wlanconfig $wlanapsettings{'INTERFACE'} list`;
 }
 print <<END
 <br />
@@ -325,10 +384,6 @@ print "</form>";
 &Header::closebigbox();
 &Header::closepage();
 
-sub WriteConfig{
-	&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
-}
-
 sub WriteConfig_hostapd{
 	$wlanapsettings{'DRIVER_HOSTAPD'} = lc($wlanapsettings{'DRIVER'});
 
@@ -336,7 +391,7 @@ sub WriteConfig_hostapd{
 	print CONFIGFILE <<END
 ######################### basic hostapd configuration ##########################
 #
-interface=$netsettings{'BLUE_DEV'}
+interface=$wlanapsettings{'INTERFACE'}
 driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 logger_syslog=-1
 logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
@@ -346,7 +401,6 @@ dump_file=/tmp/hostapd.dump
 auth_algs=3
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
-macaddr_acl=0
 END
 ;
  if ( $wlanapsettings{'HIDESSID'} eq 'on' ){
@@ -364,7 +418,7 @@ END
 ;
 
  }
- 
+
  if ( $wlanapsettings{'ENC'} eq 'wpa1'){
 	print CONFIGFILE <<END
 ######################### wpa hostapd configuration ############################
@@ -386,5 +440,26 @@ wpa_pairwise=CCMP TKIP
 END
 ;
  }
+	print CONFIGFILE <<END
+########################### mac acl configuration ##############################
+macaddr_acl=$wlanapsettings{'MACMODE'}
+accept_mac_file=/etc/hostapd.accept
+deny_mac_file=/etc/hostapd.deny
+END
+;
 	close CONFIGFILE;
+
+	open (MACFILE, ">/var/ipfire/wlanap/hostapd.accept");
+	print MACFILE <<END
+$wlanapsettings{'ACCEPT_MACS'}
+END
+;
+	close MACFILE;
+
+	open (MACFILE, ">/var/ipfire/wlanap/hostapd.deny");
+	print MACFILE <<END
+$wlanapsettings{'DENY_MACS'}
+END
+;
+	close MACFILE;
 }
