@@ -87,5 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -v -m 644 vsftpd.conf.5 /usr/share/man/man5
 	cd $(DIR_APP) && install -v -m 644 $(DIR_SRC)/config/vsftpd/vsftpd.conf /etc
 	cd $(DIR_APP) && install -v -m 644 $(DIR_SRC)/config/vsftpd/vsftpd.user_list /etc
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/vsftpd \
+			/var/ipfire/backup/addons/includes/vsftpd
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
