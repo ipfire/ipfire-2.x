@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.2
+VER        = 3.5
 
 THISAPP    = module-init-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a1ad0a09d3231673f70d631f3f5040e9
+$(DL_FILE)_MD5 = 2b47686247fc9a99bfdb9dd1d1d80e6f
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/module-init-tools-3.2.2-modprobe-1.patch
 	cd $(DIR_APP) && ./configure --prefix=/ --disable-nls --enable-zlib
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make INSTALL=install install
