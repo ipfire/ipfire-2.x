@@ -55,6 +55,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /install/packages
 
 	find $(DIR_SRC)/config/rootfiles/updater/filelists/* -maxdepth 1 | xargs cat >> /tmp/ROOTFILES
+	cat /tmp/ROOTFILES \
+		| grep -v "etc/httpd/conf" \
+		| grep -v "etc/ssl/openssl.cnf" \
+		| grep -v "etc/ssh/sshd_config" \
+		| grep -v "etc/ipsec.conf" \
+		| grep -v "etc/ipsec.secrets" \
+		| grep -v "etc/snort/snort.conf" \
+		| grep -v "etc/squid/squid.conf" \
+		| grep -v "srv/web/ipfire/html/proxy.pac" \
+		| grep -v "srv/web/ipfire/html/wpad.dat" \
+		> /tmp/ROOTFILESNEW
+	mv -f /tmp/ROOTFILESNEW /tmp/ROOTFILES
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \

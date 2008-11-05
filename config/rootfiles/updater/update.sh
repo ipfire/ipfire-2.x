@@ -63,6 +63,14 @@ echo srv/web/ipfire/cgi-bin/traffics.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/graphs.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/qosgraph.cgi >> /opt/pakfire/tmp/ROOTFILES
 #
+
+# Remove some files from the rootfiles
+cat /opt/pakfire/tmp/ROOTFILES \
+	| grep -v "var/log/cache" \
+	| grep -v "var/updatecache" > /opt/pakfire/tmp/ROOTFILESNEW
+
+mv -f /opt/pakfire/tmp/ROOTFILESNEW /opt/pakfire/tmp/ROOTFILES
+
 tar czvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.gz \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
 echo
