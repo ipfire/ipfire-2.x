@@ -63,6 +63,14 @@ echo srv/web/ipfire/cgi-bin/traffics.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/graphs.cgi >> /opt/pakfire/tmp/ROOTFILES
 echo srv/web/ipfire/cgi-bin/qosgraph.cgi >> /opt/pakfire/tmp/ROOTFILES
 #
+
+# Remove some files from the rootfiles
+cat /opt/pakfire/tmp/ROOTFILES \
+	| grep -v "var/log/cache" \
+	| grep -v "var/updatecache" > /opt/pakfire/tmp/ROOTFILESNEW
+
+mv -f /opt/pakfire/tmp/ROOTFILESNEW /opt/pakfire/tmp/ROOTFILES
+
 tar czvf /var/ipfire/backup/update_$OLDVERSION-$NEWVERSION.tar.gz \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1 
 echo
@@ -241,3 +249,11 @@ chmod +x /tmp/remove_obsolete_paks
 echo
 echo Please wait until pakfire has ended...
 echo
+
+echo
+echo Finaly were going to renew all ssh keys
+echo
+
+rm -f /etc/ssh/ssh_host_rsa_key* && ssh-keygen -qf /etc/ssh/ssh_host_rsa_key -N ''
+rm -f /etc/ssh/ssh_host_key* && ssh-keygen -qf /etc/ssh/ssh_host_key -N '' -t rsa1
+rm -f /etc/ssh/ssh_host_dsa_key* && ssh-keygen -qf /etc/ssh/ssh_host_dsa_key -N '' -t dsa

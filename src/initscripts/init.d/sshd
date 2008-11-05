@@ -12,7 +12,14 @@
 
 case "$1" in
     start)
-    		[ -e "/var/ipfire/remote/enablessh" ] || exit 0 # SSH is not enabled
+    if [ ! -e /etc/ssh/ssh_host_rsa_key ]; then
+       echo "Generating SSH Keys"
+       ssh-keygen -qf /etc/ssh/ssh_host_rsa_key -N ''
+       ssh-keygen -qf /etc/ssh/ssh_host_key -N '' -t rsa1
+       ssh-keygen -qf /etc/ssh/ssh_host_dsa_key -N '' -t dsa
+    fi
+
+        [ -e "/var/ipfire/remote/enablessh" ] || exit 0 # SSH is not enabled
         boot_mesg "Starting SSH Server..."
         # Also prevent ssh from being killed by out of memory conditions
         loadproc /usr/sbin/sshd 
