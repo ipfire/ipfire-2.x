@@ -249,3 +249,11 @@ chmod +x /tmp/remove_obsolete_paks
 echo
 echo Please wait until pakfire has ended...
 echo
+
+echo
+echo Finaly were going to renew all ssh keys
+echo
+
+rm -f /etc/ssh/ssh_host_rsa_key* && ssh-keygen -qf /etc/ssh/ssh_host_rsa_key -N ''
+rm -f /etc/ssh/ssh_host_key* && ssh-keygen -qf /etc/ssh/ssh_host_key -N '' -t rsa1
+rm -f /etc/ssh/ssh_host_dsa_key* && ssh-keygen -qf /etc/ssh/ssh_host_dsa_key -N '' -t dsa
