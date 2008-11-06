@@ -184,6 +184,7 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_8
+* mISDNuser.git-8e7bf2f11cc108d4b52949c2a26e38df24821b01
 * madwifi-hal-2008-08-15-r3862-20080903-kmod-2.6.25.19
 * make-3.81
 * man-db-2.4.3

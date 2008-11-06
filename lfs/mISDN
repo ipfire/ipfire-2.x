@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = 1_1_8
+VER        = git-081106
 
-THISAPP    = mISDNuser-$(VER)
+THISAPP    = mISDNuser.git-8e7bf2f11cc108d4b52949c2a26e38df24821b01
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/mISDNuser.git
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7cf66625608736eb939cfcb2308f3edf
+$(DL_FILE)_MD5 = 4eddac75aac4b997e6f2061e10f20862
 
 install : $(TARGET)
 
@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make MISDNDIR=/usr/src/linux
 	cd $(DIR_APP) && make install MISDNDIR=/usr/src/linux
 	-mkdir -p /usr/lib/mISDN
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/mISDN-$(VER).tar.gz
-	cd $(DIR_SRC)/mISDN-$(VER) && cp -v config/*.xsl /usr/lib/mISDN
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/mISDN.git-12dca7cf4cf38590d30cdeaf8ced30aaca6d875f.tar.gz
+	cd $(DIR_SRC)/mISDN.git && cp -v config/*.xsl /usr/lib/mISDN
 	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)
