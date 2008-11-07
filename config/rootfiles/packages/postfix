@@ -115,6 +115,7 @@ usr/sbin/sendmail
 #usr/share/man/man8/trivial-rewrite.8
 #usr/share/man/man8/verify.8
 #usr/share/man/man8/virtual.8
+var/lib/postfix
 #var/spool/postfix
 var/spool/postfix/active
 var/spool/postfix/bounce

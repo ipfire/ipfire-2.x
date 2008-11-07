@@ -47,7 +47,7 @@ case "$1" in
 		$0 start
 		;;
 	status)
-		statusproc
+		statusproc /usr/lib/postfix/master
 		;;
 
 	*)
