@@ -7,5 +7,7 @@ usr/bin/hostapd
 usr/bin/hostapd_cli
 var/ipfire/backup/addons/includes/hostapd
 #var/ipfire/wlanap
+var/ipfire/wlanap/hostapd.accept
 var/ipfire/wlanap/hostapd.conf
+var/ipfire/wlanap/hostapd.deny
 var/ipfire/wlanap/settings

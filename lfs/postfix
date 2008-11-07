@@ -89,7 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -vf /etc/postfix/main.cf.default
 	cp -vf $(DIR_CONF)/postfix/* /etc/postfix
 	mv -vf /etc/postfix/aliases /etc/aliases
-	mkdir /var/lib/postfix
+	mkdir -p /var/lib/postfix
 	chown postfix.root /var/lib/postfix
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
