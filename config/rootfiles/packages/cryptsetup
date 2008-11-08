@@ -1,0 +1,9 @@
+usr/include/libcryptsetup.h
+usr/lib/cryptsetup
+usr/lib/libcryptsetup.la
+usr/lib/libcryptsetup.so
+usr/lib/libcryptsetup.so.0
+usr/lib/libcryptsetup.so.0.0.0
+usr/sbin/cryptsetup
+usr/share/locale/de/LC_MESSAGES/cryptsetup.mo
+#usr/share/man/man8/cryptsetup.8
