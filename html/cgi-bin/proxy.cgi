@@ -961,20 +961,29 @@ print <<END
 </table>
 <hr size='1'>
 <table width='100%'>
-<tr><td class='base' width='50%' ><b>$Lang::tr{'advproxy redirector children'}</b><input type='text' name='CHILDREN' value='$proxysettings{'CHILDREN'}' size='5' /></td>
+<tr><td class='base' colspan='4'><b>$Lang::tr{'advproxy redirector children'}</b></td></tr>
+<tr><td class='base' >$Lang::tr{'processes'}<input type='text' name='CHILDREN' value='$proxysettings{'CHILDREN'}' size='5' /></td>
 END
 ;
+my $count = `arp -a | wc -l`;
+if ( $count < 1 ){$count = 1;}
 if ( -e "/usr/bin/squidclamav" ) {
-	 print "<td class='base' width='33%'><b>$Lang::tr{'advproxy squidclamav'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_CLAMAV' $checked{'ENABLE_CLAMAV'}{'on'} /></td></tr>";
+	print "<td class='base'><b>".$Lang::tr{'advproxy squidclamav'}."</b><br />";
+	print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_CLAMAV' ".$checked{'ENABLE_CLAMAV'}{'on'}." /><br />";
+	print "+ ".int(sqrt($count) * 8);
+	print "</td>";
+} else {
+	print "<td></td>";
 }
-else
-{
-	 print "<td class='base' width='33%'></td></tr>";
-}
+print "<td class='base'><b>".$Lang::tr{'advproxy url filter'}."</b><br />";
+print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_FILTER' ".$checked{'ENABLE_FILTER'}{'on'}." /><br />";
+print "+ ".int(sqrt($count) * 6);
+print "</td>";
+print "<td class='base'><b>".$Lang::tr{'advproxy update accelerator'}."</b><br />";
+print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_UPDXLRATOR' ".$checked{'ENABLE_UPDXLRATOR'}{'on'}." /><br />";
+print "+ ".int(sqrt($count) * 6);
+print "</td></tr>";
 print <<END
-</tr>
-<tr><td class='base' width='50%'><b>$Lang::tr{'advproxy url filter'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
-<td class='base' width='50%'><b>$Lang::tr{'advproxy update accelerator'}</b> $Lang::tr{'advproxy enabled'}<input type='checkbox' name='ENABLE_UPDXLRATOR' $checked{'ENABLE_UPDXLRATOR'}{'on'} /></td></tr>
 </table>
 <hr size='1'>
 <table width='100%'>
