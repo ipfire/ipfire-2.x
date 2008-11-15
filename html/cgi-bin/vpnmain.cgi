@@ -2362,13 +2362,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp grouptype'}</td><td class='boldbase' valign='top'>
 		<select name='ESP_GROUPTYPE'>
-		<option value=''>$Lang::tr{'phase1 group'}</option>
-		<option value='modp4096' $checked{'ESP_GROUPTYPE'}{'modp4096'}>MODP-4096</option>
-		<option value='modp3072' $checked{'ESP_GROUPTYPE'}{'modp3072'}>MODP-3072</option>
-		<option value='modp2048' $checked{'ESP_GROUPTYPE'}{'modp2048'}>MODP-2048</option>
-		<option value='modp1536' $checked{'ESP_GROUPTYPE'}{'modp1536'}>MODP-1536</option>
-		<option value='modp1024' $checked{'ESP_GROUPTYPE'}{'modp1024'}>MODP-1024</option>
-		<option value='modp768'  $checked{'ESP_GROUPTYPE'}{'modp768'}>MODP-768</option></select></td>
+		<option value=''>$Lang::tr{'phase1 group'}</option></select></td>
 	</tr><tr>
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp keylife'}</td><td class='boldbase' valign='top'>
 		<input type='text' name='ESP_KEYLIFE' value='$cgiparams{'ESP_KEYLIFE'}' size='5' /> $Lang::tr{'hours'}</td>
