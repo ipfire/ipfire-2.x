@@ -11,23 +11,23 @@
 # /usr/local/bin/timecheck
 
 if [ -e /var/ipfire/time/enable ]; then
-	if [ $(cat /var/ipfire/time/settings | grep period) ] && [ -e /var/ipfire/time/counter ]; then
-		if [ $(cat /var/ipfire/time/counter) -gt 0 ]; then
-			echo $(($(cat /var/ipfire/time/counter)-5)) > /var/ipfire/time/counter
+	if [ $(cat /var/ipfire/time/settings | grep period) ] && [ -e /var/lock/time/counter ]; then
+		if [ $(cat /var/lock/time/counter) -gt 0 ]; then
+			echo $(($(cat /var/lock/time/counter)-5)) > /var/lock/time/counter
 		else
-			touch /var/ipfire/time/settimenow
-			rm -f /var/ipfire/time/counter
+			touch /var/lock/time/settimenow
+			rm -f /var/lock/time/counter
 		fi
 	else
 		# EAO added 2003-08-14 for v1.3.1
 		# if settings are restored from a backup
-		# /var/ipfire/time/counter will not exist
+		# /var/lock/time/counter will not exist
 		if [ $(cat /var/ipfire/time/settings | grep periodic) ]; then
-			touch /var/ipfire/time/settimenow
+			touch /var/lock/time/settimenow
 		fi
 	fi
 
-	if [ -e /var/ipfire/time/settimenow ]; then
+	if [ -e /var/lock/time/settimenow ]; then
 		if 	[ -e /var/ipfire/time/settime.conf ]; then
 			/usr/local/bin/settime $(cat /var/ipfire/time/settime.conf)
 		fi

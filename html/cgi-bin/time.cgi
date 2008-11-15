@@ -127,10 +127,10 @@ ERROR:
 		system ('/usr/bin/touch', "${General::swroot}/time/enable");
 		system ('/usr/local/bin/timectrl enable >/dev/null 2>&1');
 		&General::log($Lang::tr{'ntp syncro enabled'});
-		unlink "${General::swroot}/time/counter";
+		unlink "/var/lock/time/counter";
 		if ($timesettings{'UPDATE_METHOD'} eq 'periodically')
 		{
-			open(FILE, ">/${General::swroot}/time/counter") or die "Unable to write counter file";
+			open(FILE, ">/var/lock/time/counter") or die "Unable to write counter file";
 			flock(FILE, 2);
 			print FILE "$updateperiod\n";
 			close FILE;
@@ -147,7 +147,7 @@ ERROR:
 	else
 	{
 		unlink "${General::swroot}/time/enable";
-		unlink "${General::swroot}/time/settimenow";
+		unlink "/var/lock/time/settimenow";
 		unlink "${General::swroot}/time/allowclients"; # DPC added to 1.3.1
 		system ('/usr/local/bin/timectrl disable >/dev/null 2>&1');
 		&General::log($Lang::tr{'ntp syncro disabled'})
@@ -162,7 +162,7 @@ ERROR:
 $timesettings{'ACTION'} = &Header::cleanhtml ($timesettings{'ACTION'});
 if ($timesettings{'ACTION'} eq $Lang::tr{'set time now'} && $timesettings{'ENABLENTP'} eq 'on')
 {
-	system ('/usr/bin/touch', "${General::swroot}/time/settimenow");
+	system ('/usr/bin/touch', "/var/lock/time/settimenow");
 }
 
 &General::readhash("${General::swroot}/time/settings", \%timesettings);
@@ -210,7 +210,7 @@ $selected{'UPDATE_PERIOD'}{$timesettings{'UPDATE_PERIOD'}} = "selected='selected
 
 # added to v0.0.4 to refresh screen if syncro event queued 
 my $refresh = '';
-if ( -e "${General::swroot}/time/settimenow") {
+if ( -e "/var/lock/time/settimenow") {
 	$refresh = "<meta http-equiv='refresh' content='60;' />";
 }
 
@@ -240,10 +240,12 @@ print <<END
 END
 ;
 
-if ( -e "${General::swroot}/time/lastset")
+if ( -e "/var/lock/time/lastset")
 {
 	print "$Lang::tr{'clock last synchronized at'}\n";
-	my $output = `cat ${General::swroot}/time/lastset`;
+	open(FILE, "</var/lock/time/lastset") or die "Unable to read lastset";
+	my $output = <FILE>;
+	close FILE;
 	print $output;
 }
 else
@@ -292,7 +294,7 @@ print <<END
 END
 ;
 
-if ( -e "${General::swroot}/time/settimenow") {
+if ( -e "/var/lock/time/settimenow") {
 	print "<tr>\n<td align='center'><img src='/images/clock.gif' alt='' /></td>\n";
 	print "<td colspan='2'><font color='red'>$Lang::tr{'waiting to synchronize clock'}...</font></td></tr>\n";
 }
