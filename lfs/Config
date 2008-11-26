@@ -156,13 +156,13 @@ endif
 
 define CHECK
 	@echo -e "$(MESSAGE)Check: $($(notdir $@))"
-	wget -T 120 -t 1 --spider -nv $($(notdir $@)) -O /dev/null
+	wget -T 120 -t 1 --spider -nv -U "IPFireSourceGrabber/2.x" $($(notdir $@)) -O /dev/null
 	@touch $(DIR_CHK)/$(notdir $@)
 endef
 
 define LOAD
 	@echo -e "$(MESSAGE)Download: $($(notdir $@))"
-	wget -T 60 -t 1 -c -nv $($(notdir $@)) -O $(DIR_TMP)/$(notdir $@)
+	wget -T 60 -t 1 -c -nv -U "IPFireSourceGrabber/2.x" $($(notdir $@)) -O $(DIR_TMP)/$(notdir $@)
 	[ "$($(notdir $@)_MD5)" = `md5sum $(DIR_TMP)/$(notdir $@) | awk '{ print $$1 }'` ] # detect page not found answer
 	mv $(DIR_TMP)/$(notdir $@) $(DIR_DL)
 endef
