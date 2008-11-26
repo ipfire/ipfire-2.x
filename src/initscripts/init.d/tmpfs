@@ -25,6 +25,10 @@ case "$1" in
 		if [ ! -e /var/lock/subsys ]; then
 			mkdir -p /var/lock/subsys
 		fi
+		if [ ! -e /var/lock/time ]; then
+			mkdir -p /var/lock/time
+			chown nobody.root /var/lock/time
+		fi
 		if [ ! -e /var/run/clamav ]; then
 			mkdir -p /var/run/clamav
 			chown clamav:clamav /var/run/clamav
