@@ -11,9 +11,9 @@ case "$1" in
 		
 		boot_mesg "Starting Clamav Daemon..."
 		COUNTER=0
-		while [ "$COUNTER" -lt "10" ]; do
+		while [ "$COUNTER" -lt "30" ]; do
 			[ -e "/usr/share/clamav/main.cvd" ] && \
-				[ -e "/usr/share/clamav/daily.cvd" ] && \
+				[ -e "/usr/share/clamav/daily.cld" ] && \
 					break
 			sleep 5
 			COUNTER=$(($COUNTER + 1))
