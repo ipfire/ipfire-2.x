@@ -13,7 +13,7 @@ case "$1" in
 		COUNTER=0
 		while [ "$COUNTER" -lt "30" ]; do
 			[ -e "/usr/share/clamav/main.cvd" ] && \
-				[ -e "/usr/share/clamav/daily.cld" ] && \
+				[ -e "/usr/share/clamav/daily.c*d" ] && \
 					break
 			sleep 5
 			COUNTER=$(($COUNTER + 1))
