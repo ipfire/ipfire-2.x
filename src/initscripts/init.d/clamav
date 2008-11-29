@@ -6,19 +6,27 @@
 
 case "$1" in
 	start)
-		boot_mesg "Starting Clamav Definition Updater..."
-		loadproc /usr/bin/freshclam -d -c 10
+		if [ $(basename $0) == "clamav" ]; then 
+			boot_mesg "Starting Clamav Definition Updater..."
+			loadproc /usr/bin/freshclam -d -c 10
 		
-		boot_mesg "Starting Clamav Daemon..."
-		COUNTER=0
-		while [ "$COUNTER" -lt "30" ]; do
-			[ -e "/usr/share/clamav/main.cvd" ] && \
-				[ -e "/usr/share/clamav/daily.c*d" ] && \
-					break
-			sleep 5
-			COUNTER=$(($COUNTER + 1))
-		done
-		loadproc /usr/sbin/clamd
+			boot_mesg "Starting Clamav Daemon..."
+			COUNTER=0
+			while [ "$COUNTER" -lt "30" ]; do
+				[ -e "/usr/share/clamav/main.cvd" ] && \
+					[ -e "/usr/share/clamav/daily.cvd" ] || \
+					[ -e "/usr/share/clamav/daily.cld" ] && \
+				break
+				sleep 5
+				COUNTER=$(($COUNTER + 1))
+			done
+			loadproc /usr/sbin/clamd
+		else
+			boot_mesg "Starting Clamav in background..."
+			/etc/init.d/clamav start > /dev/tty12 < /dev/tty12 &
+			echo_ok;
+			exit 0;
+		fi
 		;;
 
 	stop)
