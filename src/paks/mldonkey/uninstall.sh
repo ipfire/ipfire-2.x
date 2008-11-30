@@ -23,5 +23,9 @@
 #
 . /opt/pakfire/lib/functions.sh
 /etc/init.d/mldonkey stop
+if [ ! -e /var/ipfire/backup/addons/includes/mldonkey ]; then
+    echo /opt/mldonkey/.mldonkey > /var/ipfire/backup/addons/includes/mldonkey
+fi
+make_backup ${NAME}
 remove_files
 rm -rf /etc/rc.d/rc*.d/*mldonkey

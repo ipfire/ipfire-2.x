@@ -89,5 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /var/log/mldonkey/{incoming,temp}
 	-mkdir -p /var/log/mldonkey/incoming/{directories,files}
 	chown -Rv mldonkey.mldonkey /var/log/mldonkey/{incoming,temp}
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/mldonkey \
+	                 /var/ipfire/backup/addons/includes/mldonkey
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

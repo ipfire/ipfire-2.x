@@ -205,7 +205,7 @@
 * mtd-CVS-20070507
 * mtools-3.9.10
 * mysql-5.0.24a
-* nagios-3.0
+* nagios-3.0.5
 * nano-1.2.5
 * nasm-0.98.39
 * ncftp-3.2.1-src
