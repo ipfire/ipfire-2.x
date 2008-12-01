@@ -1,6 +1,9 @@
 srv/web/ipfire/cgi-bin/wlanap.cgi
 var/ipfire/menu.d/EX-wlanap.menu
 etc/init.d/hostapd
+etc/hostapd.accept
+etc/hostapd.conf
+etc/hostapd.deny
 usr/local/bin/wlanapctrl
 etc/hostapd.conf
 usr/bin/hostapd
