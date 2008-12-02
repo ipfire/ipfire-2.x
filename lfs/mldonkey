@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/opt/mldonkey --enable-pthread-lib \
 				--disable-gnutella --disable-gnutella2 --disable-fasttrack
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make #$(MAKETUNING) $(EXTRA_MAKE)
 	-mkdir -p /opt/mldonkey
 	-mkdir -p /opt/mldonkey/.mldonkey
 	cd $(DIR_APP) && cp -f mlnet /opt/mldonkey
