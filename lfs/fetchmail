@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.3.8
+VER        = 6.3.9
 
 THISAPP    = fetchmail-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fetchmail
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 66b97500b0a1e3c0916b3b5314f597f5
+$(DL_FILE)_MD5 = 72c20ad2b9629f1a109668b05a84d823
 
 install : $(TARGET)
 
@@ -87,5 +87,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "#poll SERVERNAME :" >> ~/.fetchmailrc
 	echo "#    user <username> pass <password>;" >> ~/.fetchmailrc
 	echo "#    mda "/usr/bin/procmail -f %F -d %T";" >> ~/.fetchmailrc
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/fetchmail /var/ipfire/backup/addons/includes/fetchmail
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

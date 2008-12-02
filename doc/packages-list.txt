@@ -93,7 +93,7 @@
 * fbset-2.1
 * fcron-3.0.1
 * feedparser-4.1
-* fetchmail-6.3.8
+* fetchmail-6.3.9
 * ffmpeg-export-2008-04-13
 * file-4.17
 * findutils-4.2.27
@@ -205,7 +205,7 @@
 * mtd-CVS-20070507
 * mtools-3.9.10
 * mysql-5.0.24a
-* nagios-3.0
+* nagios-3.0.5
 * nano-1.2.5
 * nasm-0.98.39
 * ncftp-3.2.1-src
@@ -253,7 +253,7 @@
 * rssdler-0.4.0a
 * rsync-2.6.9
 * rtorrent-0.7.9
-* samba-3.2.4
+* samba-3.2.5
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
