@@ -1,3 +1,5 @@
 /etc/hostapd.conf
+/etc/hostapd.accept
+/etc/hostapd.deny
 /var/ipfire/wlanap/settings
 /var/ipfire/wlanap/hostapd.conf
