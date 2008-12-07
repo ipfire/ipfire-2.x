@@ -18,7 +18,7 @@ usr/bin/ulockmgr_server
 #usr/lib/libfuse.la
 usr/lib/libfuse.so
 usr/lib/libfuse.so.2
-usr/lib/libfuse.so.2.6.3
+usr/lib/libfuse.so.2.7.4
 #usr/lib/libulockmgr.a
 #usr/lib/libulockmgr.la
 usr/lib/libulockmgr.so
