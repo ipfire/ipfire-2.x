@@ -18,3 +18,7 @@ sbin/mount.ntfs-3g
 usr/bin/ntfs-3g.probe
 usr/lib/libntfs-3g.so
 usr/lib/pkgconfig/libntfs-3g.pc
+usr/lib/libltdl.so
+usr/lib/libltdl.so.3
+usr/lib/libltdl.so.3.1.4
+etc/sysctl.conf
