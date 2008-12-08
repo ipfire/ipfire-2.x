@@ -22,7 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-echo "/etc/hostapd.accept" >> /var/ipfire/backup/addons/includes/hostapd
-echo "/etc/hostapd.deny" >> /var/ipfire/backup/addons/includes/hostapd
 ./uninstall.sh
 ./install.sh
