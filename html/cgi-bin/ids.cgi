@@ -528,7 +528,12 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'guardian timelimit'}</td><td align='left'><input type='text' name='TIMELIMIT' value='$snortsettings{'GUARDIAN_TIMELIMIT'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'guardian logfile'}</td><td align='left'><input type='text' name='LOGFILE' value='$snortsettings{'GUARDIAN_LOGFILE'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'guardian alertfile'}</td><td align='left'><input type='text' name='ALERTFILE' value='$snortsettings{'GUARDIAN_ALERTFILE'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'guardian ignorefile'}</td><td align='left'><textarea name='IGNOREFILE_CONTENT' cols='32' rows='6' wrap='off'></textarea></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian ignorefile'}</td><td align='left'><textarea name='IGNOREFILE_CONTENT' cols='32' rows='6' wrap='off'>
+END
+;
+	print `cat /var/ipfire/guardian/guardian.ignore`;
+print <<END
+</textarea></td></tr>
 <tr><td align='center' colspan='2'><input type='hidden' name='ACTION2' value='guardian' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td></tr>
 </table>
 </form>
