@@ -1,4 +1,0 @@
-opt/pakfire/lib/functions.pl
-var/ipfire/urlfilter/bin/prebuild.pl
-srv/web/ipfire/cgi-bin/urlfilter.cgi
-usr/sbin/redirect_wrapper

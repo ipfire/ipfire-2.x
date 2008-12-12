@@ -22,5 +22,11 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+#Create a backupinclude if it not exist
+if [ ! -e "/var/ipfire/backup/addons/includes/fetchmail" ]; then
+   echo "/root/.fetchmailrc" > /var/ipfire/backup/addons/includes/fetchmail
+fi
+
 ./uninstall.sh
 ./install.sh

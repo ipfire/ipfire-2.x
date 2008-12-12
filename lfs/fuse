@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6.3
+VER        = 2.7.4
 
 THISAPP    = fuse-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3f4f5d07d12dedc0a3fd23472171fe94
+$(DL_FILE)_MD5 = 4879f06570d2225667534c37fea04213
 
 install : $(TARGET)
 

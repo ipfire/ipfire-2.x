@@ -25,8 +25,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/lang.pl';
@@ -88,18 +88,17 @@ $cgiparams{'DEBUG'} = '4';
 &Header::showhttpheaders();
 
 if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
-	$wlanapsettings{'SSID'}       = $cgiparams{'SSID'};
-	$wlanapsettings{'MACMODE'}    = $cgiparams{'MACMODE'};
-	$wlanapsettings{'ACCEPT_MACS'}= $cgiparams{'ACCEPT_MACS'};
-	$wlanapsettings{'DENY_MACS'}  = $cgiparams{'DENY_MACS'};
-	$wlanapsettings{'HIDESSID'}   = $cgiparams{'HIDESSID'};
-	$wlanapsettings{'ENC'}        = $cgiparams{'ENC'};
-	$wlanapsettings{'CHANNEL'}    = $cgiparams{'CHANNEL'};
-	$wlanapsettings{'TXPOWER'}    = $cgiparams{'TXPOWER'};
+	$wlanapsettings{'SSID'}		= $cgiparams{'SSID'};
+	$wlanapsettings{'MACMODE'}	= $cgiparams{'MACMODE'};
+	$wlanapsettings{'MACS'}		= $cgiparams{'MACS'};
+	$wlanapsettings{'HIDESSID'}	= $cgiparams{'HIDESSID'};
+	$wlanapsettings{'ENC'}		= $cgiparams{'ENC'};
+	$wlanapsettings{'CHANNEL'}	= $cgiparams{'CHANNEL'};
+	$wlanapsettings{'TXPOWER'}	= $cgiparams{'TXPOWER'};
 
-	$wlanapsettings{'PWD'}        = $cgiparams{'PWD'};
-	$wlanapsettings{'SYSLOGLEVEL'}= $cgiparams{'SYSLOGLEVEL'};
-	$wlanapsettings{'DEBUG'}      = $cgiparams{'DEBUG'};
+	$wlanapsettings{'PWD'}		= $cgiparams{'PWD'};
+	$wlanapsettings{'SYSLOGLEVEL'}	= $cgiparams{'SYSLOGLEVEL'};
+	$wlanapsettings{'DEBUG'}	= $cgiparams{'DEBUG'};
 
 	# verify WPA Passphrase, must be 8 .. 63 characters
 	if ( (length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63) ){
@@ -330,28 +329,15 @@ if ( $wlanapsettings{'INTERFACE'} =~ /green0/ ){
 <td width='25%' class='base'>Mac Filter:&nbsp;</td><td class='base' width='25%'>
 	<select name='MACMODE'>
 		<option value='0' $selected{'MACMODE'}{'0'}>0 (off)</option>
-		<option value='1' $selected{'MACMODE'}{'1'}>1 (Deny list)</option>
-		<option value='2' $selected{'MACMODE'}{'2'}>2 (Accept list)</option>
+		<option value='1' $selected{'MACMODE'}{'1'}>1 (Accept MACs)</option>
+		<option value='2' $selected{'MACMODE'}{'2'}>2 (Deny MACs)</option>
 	</select>
-</td><td colspan='2'></td></tr>
-<tr>
-	<td colspan='2' class='base'>Mac Accept List (one per line)</td>
-	<td colspan='2' class='base'>Mac Deny List (one per line)</td>
-</tr>
-<tr>
-	<td colspan='2'><textarea name='ACCEPT_MACS' cols='32' rows='3' wrap='off'>
+</td><td colspan='2'>Mac Adress List (one per line)<br /><textarea name='MACS' cols='20' rows='5' wrap='off'>
 END
 ;
-	print `cat /var/ipfire/wlanap/hostapd.accept`;
+	print `cat /var/ipfire/wlanap/macfile`;
 print <<END
 </textarea></td>
-	<td colspan='2'><textarea name='DENY_MACS' cols='32' rows='3' wrap='off'>
-END
-;
-	print `cat /var/ipfire/wlanap/hostapd.deny`;
-	print <<END
-</textarea></td>
-</tr>
 </table>
 END
 ;
@@ -440,25 +426,13 @@ wpa_pairwise=CCMP TKIP
 END
 ;
  }
-	print CONFIGFILE <<END
-########################### mac acl configuration ##############################
-macaddr_acl=$wlanapsettings{'MACMODE'}
-accept_mac_file=/etc/hostapd.accept
-deny_mac_file=/etc/hostapd.deny
-END
-;
 	close CONFIGFILE;
 
-	open (MACFILE, ">/var/ipfire/wlanap/hostapd.accept");
+$wlanapsettings{'MACS'} =~ s/\r//gi;
+chomp($wlanapsettings{'MACS'});
+	open (MACFILE, ">/var/ipfire/wlanap/macfile");
 	print MACFILE <<END
-$wlanapsettings{'ACCEPT_MACS'}
-END
-;
-	close MACFILE;
-
-	open (MACFILE, ">/var/ipfire/wlanap/hostapd.deny");
-	print MACFILE <<END
-$wlanapsettings{'DENY_MACS'}
+$wlanapsettings{'MACS'}
 END
 ;
 	close MACFILE;

@@ -1,3 +1,4 @@
 /etc/hostapd.conf
+/var/ipfire/wlanap/macfile
 /var/ipfire/wlanap/settings
 /var/ipfire/wlanap/hostapd.conf

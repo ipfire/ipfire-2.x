@@ -30,8 +30,8 @@ __PACKAGE__->mk_accessors(
 
 our $VERSION = '0.19.1';
 
-Readonly our $REUSE => 1;
-Readonly our $ONCE  => 0;
+Readonly our $REUSE => 0;
+Readonly our $ONCE  => 1;
 
 our @EXPORT = qw[ $REUSE $ONCE ];
 
@@ -50,7 +50,7 @@ our @EXPORT = qw[ $REUSE $ONCE ];
 #   - conntype => $type     : how the connection to mpd server is handled. it can be
 #               either $REUSE: reuse the same connection
 #                    or $ONCE: open a new connection per command (default)
-#   
+#
 sub new {
     my ($class, %opts) = @_;
 
@@ -66,7 +66,7 @@ sub new {
         _host     => $host,
         _port     => $port,
         _password => $password,
-        _conntype => exists $opts{conntype} ? $opts{conntype} : $ONCE,
+        _conntype => exists $opts{conntype} ? $opts{conntype} : $REUSE,
     };
     bless $self, $class;
 
