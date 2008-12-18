@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.1
+VER        = 2.0.0-rc2
 
 THISAPP    = splix-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = splix
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "cups"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 13af25dd72aae68b39eaf557d62957a5
+$(DL_FILE)_MD5 = 4381ccf9a38b08012dbdc3c0f28414fd
 
 install : $(TARGET)
 
