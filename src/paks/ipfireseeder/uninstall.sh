@@ -23,4 +23,12 @@
 #
 . /opt/pakfire/lib/functions.sh
 stop_service ${NAME}
+
+#prevent erasing the downloaded data at uninstall/update
+cat /opt/pakfire/db/rootfiles/ipfireseeder | \
+    grep -v "var/ipfire/seeder" | \
+    grep -v "var/log/seeder" > /opt/pakfire/db/rootfiles/ipfireseeder.tmp
+mv /opt/pakfire/db/rootfiles/ipfireseeder.tmp \
+    /opt/pakfire/db/rootfiles/ipfireseeder
+
 remove_files

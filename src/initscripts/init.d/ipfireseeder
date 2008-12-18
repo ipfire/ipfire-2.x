@@ -20,12 +20,14 @@ case "${1}" in
 	start)
 		boot_mesg "Starting IPFire Seeder..."
 		cd /var/log/seeder
-		loadproc screen -dmS seeder /usr/bin/rtorrent -o port_range=35700-35700 \
+		# loadproc 
+		screen -dmS seeder /usr/bin/rtorrent -o port_range=35700-35700 \
 			-o download_rate=180 -o upload_rate=15 \
 			-o min_peers=10 -o max_peers=30 \
 			-o min_peers_seed=1 -o max_peers_seed=5 \
 			-o max_uploads=3 \
-			/var/ipfire/seeder/*.torrent
+			/var/ipfire/seeder/*.torrent &
+		evaluate_retval
 		if ! grep -q "35700:35700" /var/ipfire/xtaccess/config ; then
 			echo "tcp,0.0.0.0/0,35700:35700,on,0.0.0.0,IPFireSeeder" >> /var/ipfire/xtaccess/config
 			/usr/local/bin/setxtaccess
