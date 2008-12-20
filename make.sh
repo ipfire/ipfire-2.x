@@ -334,6 +334,7 @@ buildipfire() {
   ipfiremake libpcap
   ipfiremake ppp
   ipfiremake rp-pppoe
+  ipfiremake pptp
   ipfiremake unzip
   ipfiremake linux
   ipfiremake atl2
@@ -584,6 +585,7 @@ buildipfire() {
   ipfiremake cryptsetup
   ipfiremake splix
   ipfiremake streamripper
+  ipfiremake sshfs
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -668,7 +670,7 @@ buildpackages() {
   fi
 
   # Create updater package
-  ipfiremake updater
+  #ipfiremake updater
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages

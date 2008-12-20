@@ -272,7 +272,7 @@ $proxysettings{'IDENT_USER_ACL'} = 'positive';
 $proxysettings{'ENABLE_FILTER'} = 'off';
 $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 $proxysettings{'ENABLE_CLAMAV'} = 'off';
-$proxysettings{'CHILDREN'} = '5';
+$proxysettings{'CHILDREN'} = '10';
 
 $ncsa_buttontext = $Lang::tr{'advproxy NCSA create user'};
 
@@ -332,14 +332,14 @@ if ($proxysettings{'ACTION'} eq $Lang::tr{'edit'})
 }
 
 if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}))
-{ 
-	if ($proxysettings{'ENABLE'} !~ /^(on|off)$/ || 
-	    $proxysettings{'TRANSPARENT'} !~ /^(on|off)$/ || 
-	    $proxysettings{'ENABLE_BLUE'} !~ /^(on|off)$/ || 
+{
+	if ($proxysettings{'ENABLE'} !~ /^(on|off)$/ ||
+	    $proxysettings{'TRANSPARENT'} !~ /^(on|off)$/ ||
+	    $proxysettings{'ENABLE_BLUE'} !~ /^(on|off)$/ ||
 	    $proxysettings{'TRANSPARENT_BLUE'} !~ /^(on|off)$/ ) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR;
-	} 
+	}
 	if (!(&General::validport($proxysettings{'PROXY_PORT'})))
 	{
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
@@ -359,7 +359,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	{
 		$errormessage = $Lang::tr{'advproxy errmsg mem cache size'};
 		goto ERROR;
-	}		
+	}
 	my @free = `/usr/bin/free`;
 	$free[1] =~ m/(\d+)/;
 	$cachemem = int $1 / 2048;
@@ -434,8 +434,8 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 				}
 			}
 		}
-		if ((!($proxysettings{'AUTH_MAX_USERIP'} eq '')) && 
-			((!($proxysettings{'AUTH_MAX_USERIP'} =~ /^\d+/)) || ($proxysettings{'AUTH_MAX_USERIP'} < 1) || ($proxysettings{'AUTH_MAX_USERIP'} > 255)))	
+		if ((!($proxysettings{'AUTH_MAX_USERIP'} eq '')) &&
+			((!($proxysettings{'AUTH_MAX_USERIP'} =~ /^\d+/)) || ($proxysettings{'AUTH_MAX_USERIP'} < 1) || ($proxysettings{'AUTH_MAX_USERIP'} > 255)))
 		{
 			$errormessage = $Lang::tr{'advproxy errmsg max userip'};
 			goto ERROR;
@@ -970,18 +970,18 @@ if ( $count < 1 ){$count = 1;}
 if ( -e "/usr/bin/squidclamav" ) {
 	print "<td class='base'><b>".$Lang::tr{'advproxy squidclamav'}."</b><br />";
 	print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_CLAMAV' ".$checked{'ENABLE_CLAMAV'}{'on'}." /><br />";
-	print "+ ".int(sqrt($count) * 8);
+	print "+ ".int(( $count**(1/3)) * 8);
 	print "</td>";
 } else {
 	print "<td></td>";
 }
 print "<td class='base'><b>".$Lang::tr{'advproxy url filter'}."</b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_FILTER' ".$checked{'ENABLE_FILTER'}{'on'}." /><br />";
-print "+ ".int(sqrt($count) * 6);
+print "+ ".int(($count**(1/3)) * 6);
 print "</td>";
 print "<td class='base'><b>".$Lang::tr{'advproxy update accelerator'}."</b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_UPDXLRATOR' ".$checked{'ENABLE_UPDXLRATOR'}{'on'}." /><br />";
-print "+ ".int(sqrt($count) * 6);
+print "+ ".int(($count**(1/3)) * 5);
 print "</td></tr>";
 print <<END
 </table>
@@ -1324,7 +1324,7 @@ END
 
 # -------------------------------------------------------------------
 
-print <<END 
+print <<END
 
 <table width='100%'>
 <tr>
@@ -1513,7 +1513,7 @@ print <<END
 	<td width='10%'><input type='checkbox' name='THROTTLE_MMEDIA' $checked{'THROTTLE_MMEDIA'}{'on'} /></td>
 	<td width='15%'>&nbsp;</td>
 	<td width='10%'>&nbsp;</td>
-</tr>	
+</tr>
 </table>
 <hr size='1'>
 <table width='100%'>
@@ -2913,7 +2913,7 @@ END
 			{
 				@temp = split(/\//);
 				if (
-					($temp[0] ne $netsettings{'GREEN_NETADDRESS'}) && ($temp[1] ne $netsettings{'GREEN_NETMASK'}) && 
+					($temp[0] ne $netsettings{'GREEN_NETADDRESS'}) && ($temp[1] ne $netsettings{'GREEN_NETMASK'}) &&
 					($temp[0] ne $netsettings{'BLUE_NETADDRESS'}) && ($temp[1] ne $netsettings{'BLUE_NETMASK'})
 					)
 				{
@@ -3031,6 +3031,7 @@ cache_effective_group squid
 umask 022
 
 pid_filename /var/run/squid.pid
+max_filedescriptors 1024
 
 cache_mem $proxysettings{'CACHE_MEM'} MB
 END
@@ -3184,7 +3185,7 @@ END
 						print MSNTCONF "allowusers $ntlmdir/msntauth.allowusers\n";
 					} else {
 						print MSNTCONF "denyusers $ntlmdir/msntauth.denyusers\n";
-					} 
+					}
 				}
 				close(MSNTCONF);
 			}
@@ -3268,7 +3269,7 @@ END
 
 	if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE "acl with_allowed_useragents browser $browser_regexp\n\n"; }
 
-	print FILE "acl within_timeframe time "; 
+	print FILE "acl within_timeframe time ";
 	if ($proxysettings{'TIME_MON'} eq 'on') { print FILE "M"; }
 	if ($proxysettings{'TIME_TUE'} eq 'on') { print FILE "T"; }
 	if ($proxysettings{'TIME_WED'} eq 'on') { print FILE "W"; }
@@ -3500,7 +3501,7 @@ if ($delaypools) {
 		print FILE "delay_access 2 deny  all\n";
 	}
 
-	print FILE "delay_initial_bucket_level 100\n"; 
+	print FILE "delay_initial_bucket_level 100\n";
 	print FILE "\n";
 }
 
@@ -3606,7 +3607,7 @@ END
 			if (($proxysettings{'AUTH_METHOD'} eq 'ntlm') && ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on'))
 			{
 				if ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on')
-				{	
+				{
 					if (($proxysettings{'NTLM_USER_ACL'} eq 'positive') && (!-z "$ntlmdir/msntauth.allowusers"))
 					{
 						print FILE " for_acl_users";
@@ -3651,7 +3652,7 @@ END
 			if (($proxysettings{'AUTH_METHOD'} eq 'ntlm') && ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on'))
 			{
 				if ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on')
-				{	
+				{
 					if (($proxysettings{'NTLM_USER_ACL'} eq 'positive') && (!-z "$ntlmdir/msntauth.allowusers"))
 					{
 						print FILE " for_acl_users";

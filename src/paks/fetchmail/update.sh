@@ -17,18 +17,16 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2008 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-stop_service ${NAME}
 
-#prevent erasing the downloaded data at uninstall/update
-cat /opt/pakfire/db/rootfiles/ipfireseeder | \
-    grep -v "var/ipfire/seeder" | \
-    grep -v "var/log/seeder" > /opt/pakfire/db/rootfiles/ipfireseeder.tmp
-mv /opt/pakfire/db/rootfiles/ipfireseeder.tmp \
-    /opt/pakfire/db/rootfiles/ipfireseeder
+#Create a backupinclude if it not exist
+if [ ! -e "/var/ipfire/backup/addons/includes/fetchmail" ]; then
+   echo "/root/.fetchmailrc" > /var/ipfire/backup/addons/includes/fetchmail
+fi
 
-remove_files
+./uninstall.sh
+./install.sh

@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ipfireseeder
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "rtorrent"
 
@@ -78,4 +78,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	-mkdir -p /var/log/seeder /var/ipfire/seeder
 	cp -vf $(DIR_DL)/$(DL_FILE) /var/ipfire/seeder
+	echo "Folder for IPFireseeder data" > /var/log/seeder/info
 	@$(POSTBUILD)
