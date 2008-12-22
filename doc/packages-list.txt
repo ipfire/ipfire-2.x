@@ -242,6 +242,7 @@
 * portmap_5beta
 * postfix-2.5.5
 * ppp-2.4.4
+* pptp-1.7.2
 * procps-3.2.6
 * psmisc-22.2
 * qemu-0.9.1
@@ -266,7 +267,7 @@
 * snort-2.6.1.5
 * sox-12.18.1
 * spandsp-0.0.4pre15
-* splix-1.1.1
+* splix-2.0.0-rc2
 * squashfs3.4
 * squid-2.7.STABLE5
 * squidGuard-1.3

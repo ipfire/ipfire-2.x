@@ -662,11 +662,11 @@ buildpackages() {
   $0 git log
 
   # Create images for install
-	ipfiremake cdrom ED=full
+	ipfiremake cdrom ED=$IPFVER
 	
   # Check if there is a loop device for building in virtual environments
   if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
-  	ipfiremake usb-stick
+	ipfiremake usb-stick ED=$IPFVER
   fi
 
   # Create updater package

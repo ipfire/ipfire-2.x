@@ -48,6 +48,12 @@ IMGfdd := /install/images/$(SNAME)-$(VERSION)-install-usb-fdd.$(MACHINE).img
 IMGhdd := /install/images/$(SNAME)-$(VERSION)-install-usb-hdd.$(MACHINE).img
 IMGfs  := /install/images/fs
 
+ifeq "$(ED)" "devel"
+	DISKSIZE=480000
+else
+	DISKSIZE=120000
+endif
+
 define COPY_TO_IMG
 	mkdosfs -n IPFIRE -F 16 -I $$IMAGE && \
 	for i in /0 `seq 0 7`; do \
@@ -80,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Partitionned images : make a file system bigger than iso size
 	# that fit on 128MB key to let free space available
 	# on the unique partition. Image will be compressed later
-	dd bs=1k if=/dev/zero of=$(IMGfs) count=120000
+	dd bs=1k if=/dev/zero of=$(IMGfs) count=$(DISKSIZE)
 	IMAGE=$(IMGfs); $(COPY_TO_IMG)
 	
 	# usb-hdd (64 heads, 32 sectors geometry, on a partition 1)
