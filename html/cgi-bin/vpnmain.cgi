@@ -2266,12 +2266,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'ESP_INTEGRITY'}{'md5'} = '';
     @temp = split('\|', $cgiparams{'ESP_INTEGRITY'});
     foreach my $key (@temp) {$checked{'ESP_INTEGRITY'}{$key} = "selected='selected'"; }
-    $checked{'ESP_GROUPTYPE'}{'modp768'} = '';
-    $checked{'ESP_GROUPTYPE'}{'modp1024'} = '';
-    $checked{'ESP_GROUPTYPE'}{'modp1536'} = '';
-    $checked{'ESP_GROUPTYPE'}{'modp2048'} = '';
-    $checked{'ESP_GROUPTYPE'}{'modp3072'} = '';
-    $checked{'ESP_GROUPTYPE'}{'modp4096'} = '';
     $checked{'ESP_GROUPTYPE'}{$cgiparams{'ESP_GROUPTYPE'}} = "selected='selected'";
 
     $checked{'AGGRMODE'} = $cgiparams{'AGGRMODE'} eq 'on' ? "checked='checked'" : '' ;
