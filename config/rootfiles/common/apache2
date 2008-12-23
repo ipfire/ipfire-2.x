@@ -321,6 +321,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/custom-error.html.es
 #srv/web/ipfire/manual/custom-error.html.ja.utf8
 #srv/web/ipfire/manual/custom-error.html.ko.euc-kr
+#srv/web/ipfire/manual/custom-error.html.tr.utf8
 #srv/web/ipfire/manual/developer
 #srv/web/ipfire/manual/developer/API.html
 #srv/web/ipfire/manual/developer/API.html.en
@@ -345,6 +346,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/dns-caveats.html.en
 #srv/web/ipfire/manual/dns-caveats.html.ja.utf8
 #srv/web/ipfire/manual/dns-caveats.html.ko.euc-kr
+#srv/web/ipfire/manual/dns-caveats.html.tr.utf8
 #srv/web/ipfire/manual/dso.html
 #srv/web/ipfire/manual/dso.html.en
 #srv/web/ipfire/manual/dso.html.ja.utf8
@@ -480,6 +482,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/misc/index.html
 #srv/web/ipfire/manual/misc/index.html.en
 #srv/web/ipfire/manual/misc/index.html.ko.euc-kr
+#srv/web/ipfire/manual/misc/index.html.tr.utf8
 #srv/web/ipfire/manual/misc/password_encryptions.html
 #srv/web/ipfire/manual/misc/password_encryptions.html.en
 #srv/web/ipfire/manual/misc/perf-tuning.html
@@ -767,6 +770,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/mod_suexec.html.en
 #srv/web/ipfire/manual/mod/mod_suexec.html.ja.utf8
 #srv/web/ipfire/manual/mod/mod_suexec.html.ko.euc-kr
+#srv/web/ipfire/manual/mod/mod_suexec.html.tr.utf8
 #srv/web/ipfire/manual/mod/mod_unique_id.html
 #srv/web/ipfire/manual/mod/mod_unique_id.html.en
 #srv/web/ipfire/manual/mod/mod_unique_id.html.ja.utf8
@@ -775,6 +779,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/mod_userdir.html.en
 #srv/web/ipfire/manual/mod/mod_userdir.html.ja.utf8
 #srv/web/ipfire/manual/mod/mod_userdir.html.ko.euc-kr
+#srv/web/ipfire/manual/mod/mod_userdir.html.tr.utf8
 #srv/web/ipfire/manual/mod/mod_usertrack.html
 #srv/web/ipfire/manual/mod/mod_usertrack.html.en
 #srv/web/ipfire/manual/mod/mod_version.html
@@ -806,6 +811,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/prefork.html.de
 #srv/web/ipfire/manual/mod/prefork.html.en
 #srv/web/ipfire/manual/mod/prefork.html.ja.utf8
+#srv/web/ipfire/manual/mod/prefork.html.tr.utf8
 #srv/web/ipfire/manual/mod/quickreference.html
 #srv/web/ipfire/manual/mod/quickreference.html.de
 #srv/web/ipfire/manual/mod/quickreference.html.en
@@ -818,6 +824,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/worker.html.de
 #srv/web/ipfire/manual/mod/worker.html.en
 #srv/web/ipfire/manual/mod/worker.html.ja.utf8
+#srv/web/ipfire/manual/mod/worker.html.tr.utf8
 #srv/web/ipfire/manual/mpm.html
 #srv/web/ipfire/manual/mpm.html.de
 #srv/web/ipfire/manual/mpm.html.en
@@ -864,9 +871,11 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/programs/ab.html
 #srv/web/ipfire/manual/programs/ab.html.en
 #srv/web/ipfire/manual/programs/ab.html.ko.euc-kr
+#srv/web/ipfire/manual/programs/ab.html.tr.utf8
 #srv/web/ipfire/manual/programs/apachectl.html
 #srv/web/ipfire/manual/programs/apachectl.html.en
 #srv/web/ipfire/manual/programs/apachectl.html.ko.euc-kr
+#srv/web/ipfire/manual/programs/apachectl.html.tr.utf8
 #srv/web/ipfire/manual/programs/apxs.html
 #srv/web/ipfire/manual/programs/apxs.html.en
 #srv/web/ipfire/manual/programs/apxs.html.ko.euc-kr
@@ -991,6 +1000,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/suexec.html.en
 #srv/web/ipfire/manual/suexec.html.ja.utf8
 #srv/web/ipfire/manual/suexec.html.ko.euc-kr
+#srv/web/ipfire/manual/suexec.html.tr.utf8
 #srv/web/ipfire/manual/upgrading.html
 #srv/web/ipfire/manual/upgrading.html.de
 #srv/web/ipfire/manual/upgrading.html.en
@@ -1141,6 +1151,7 @@ etc/httpd/conf/mime.types
 #usr/include/apache/mod_include.h
 #usr/include/apache/mod_log_config.h
 #usr/include/apache/mod_proxy.h
+#usr/include/apache/mod_rewrite.h
 #usr/include/apache/mod_ssl.h
 #usr/include/apache/mod_status.h
 #usr/include/apache/mpm.h
