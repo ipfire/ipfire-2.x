@@ -262,7 +262,6 @@ case "${1}" in
 				DNS=""
 				echo nameserver=$DNS1 > /etc/ppp/resolv.conf
 				echo nameserver=$DNS2 >> /etc/ppp/resolv.conf
-				
 			fi
 
 			### Dial On Demand		
@@ -328,6 +327,70 @@ case "${1}" in
 			/usr/bin/vnstat -u -i ppp0 -r --enable --force > /dev/null 2>&1
 			/etc/rc.d/init.d/connectd start
 
+		elif [ "${TYPE}" == "PPTP" ]; then
+			if ( ps ax | grep -q [p]ppd ); then
+			    boot_mesg "pppd is still running." ${FAILURE}
+			    echo_failure
+			    exit 1
+			fi
+
+			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
+
+			PPP_NIC=${DEVICE}
+
+			boot_mesg "Bringing up the PPTP interface on $PPP_NIC ..."
+			ip addr flush dev $PPP_NIC >/dev/null 2>&1
+			ip addr add 10.0.0.140/24 broadcast 10.0.0.255 dev $PPP_NIC
+
+			### DNS Config
+			#
+			if [ "${DNS}" == "Automatic" ]; then
+				DNS="usepeerdns"
+			else
+				DNS=""
+				echo nameserver=$DNS1 > /etc/ppp/resolv.conf
+				echo nameserver=$DNS2 >> /etc/ppp/resolv.conf
+			fi
+
+			###                      ###
+			### Configuring the pppd ###
+			###                      ###
+
+			### Dial On Demand
+			#
+			if [ "${RECONNECTION}" != "persistent" ]; then
+				if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
+					SECONDS=$[${TIMEOUT} * 60]
+				else
+					SECONDS=300
+				fi
+				if [ "${RECONNECTION}" == "dialondemand" ]; then
+					touch /var/ipfire/red/dial-on-demand
+					DEMAND="demand persist idle ${SECONDS} 10.112.112.112:10.112.112.113"
+					DEMAND+=" ipcp-accept-remote ipcp-accept-local noipdefault ktune"
+				fi
+			fi
+
+			### Standard PPP options we always use
+			#
+			PPP_STD_OPTIONS="$DNS defaultroute noipdefault noauth"
+			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach"
+			PPP_STD_OPTIONS+=" user ${USERNAME} remotename ${USERNAME} lcp-echo-interval 10"
+			PPP_STD_OPTIONS+=" lcp-echo-failure 10"
+
+			### Debugging
+			#
+			if [ "${DEBUG}" == "on" ]; then
+				DEBUG="debug"
+			else
+				DEBUG=""
+			fi
+
+			PPTP_CMD="pptp 10.0.0.138 --nolaunchpppd"
+
+			/usr/sbin/pppd pty "$PPTP_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC >/dev/null 2>&1 &
 		fi
 		;;
 
@@ -342,7 +405,7 @@ case "${1}" in
 				evaluate_retval
 			fi
 			run_subdir ${rc_base}/init.d/networking/red.down/
-			
+
 		elif [ "$TYPE" == "DHCP" ]; then
 			boot_mesg -n "Stopping dhcpcd on the ${DEVICE} interface..."
 			if [ -e $LEASEINFO ]; then
@@ -376,7 +439,7 @@ case "${1}" in
 				echo_warning
 			fi
 
-		elif [ "$TYPE" == "PPPOE" ]; then
+		if [ "$TYPE" == "PPPOE" ] || [ "$TYPE" == "PPTP" ]; then
 			boot_mesg "Bringing down the PPP interface ..."
 			## Disable vnstat collection
 			/usr/bin/vnstat -u -i ppp0 -r --disable > /dev/null 2>&1
@@ -395,6 +458,7 @@ case "${1}" in
 				fi
 			fi
 		fi
+
 		killall -w -s KILL /usr/sbin/pppd >/dev/null 2>&1
 		killall -w -s KILL br2684ctl >/dev/null 2>&1
 
