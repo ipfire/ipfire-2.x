@@ -74,7 +74,7 @@ etc/httpd/conf/server-tuning.conf
 etc/httpd/conf/ssl-global.conf
 etc/httpd/conf/uid.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
-etc/httpd/conf/vhosts.d/ipfire-interface.conf#usr/include/upnp
+etc/httpd/conf/vhosts.d/ipfire-interface.conf
 usr/lib/libixml.so
 usr/lib/libixml.so.2
 usr/lib/libthreadutil.so
