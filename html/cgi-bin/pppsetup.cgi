@@ -63,7 +63,7 @@ if ($pppsettings{'ACTION'} ne '' &&
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 {
-        unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp|pppoeatm)$/) {
+        unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp|pppoeatm|pptpatm)$/) {
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
         my $type = $pppsettings{'TYPE'};
@@ -142,20 +142,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 $errormessage = $Lang::tr{'only digits allowed in holdoff field'};
                 goto ERROR; }
 
-        if ($pppsettings{'TYPE'} eq 'pptp') {
-                $errormessage = '';
-                if ($pppsettings{'METHOD'} eq 'STATIC') {
-                        if (! &General::validip($pppsettings{'ROUTERIP'})) {
-                                $errormessage = $Lang::tr{'router ip'}.' '.$Lang::tr{'invalid ip'};
-                        }
-                } else {
-                        if (($pppsettings{'DHCP_HOSTNAME'} ne '') && (! &General::validfqdn($pppsettings{'DHCP_HOSTNAME'})) ) {
-                                $errormessage = $errormessage.' '.$Lang::tr{'hostname'}.' '.$Lang::tr{'invalid hostname'};
-                        }
-                }
-                if ($errormessage ne '') {goto ERROR; }
-        }
-        if ($pppsettings{'TYPE'} =~ /^(pppoeatm)$/) {
+        if ($pppsettings{'TYPE'} =~ /^(pppoeatm|pptpatm)$/) {
                 if ( ($pppsettings{'VPI'} eq '') || ($pppsettings{'VCI'} eq '') ) {
                         $errormessage = $Lang::tr{'invalid vpi vpci'};
                         goto ERROR; }
@@ -315,6 +302,8 @@ $selected{'TYPE'}{'modem'} = '';
 $selected{'TYPE'}{'serial'} = '';
 $selected{'TYPE'}{'pppoe'} = '';
 $selected{'TYPE'}{'pptp'} = '';
+$selected{'TYPE'}{'pppoeatm'} = '';
+$selected{'TYPE'}{'pptpatm'} = '';
 $selected{'TYPE'}{$pppsettings{'TYPE'}} = "selected='selected'";
 $checked{'DEBUG'}{'off'} = '';
 $checked{'DEBUG'}{'on'} = '';
@@ -490,6 +479,7 @@ print <<END
         <option value='modem' $selected{'TYPE'}{'modem'}>$Lang::tr{'modem'}</option>
         <option value='serial' $selected{'TYPE'}{'serial'}>$Lang::tr{'serial'}</option>
         <option value='pppoe' $selected{'TYPE'}{'pppoe'}>PPPoE</option>
+	<option value='pptp' $selected{'TYPE'}{'pptp'}>PPTP</option>
 END
 ;
 
@@ -498,14 +488,11 @@ chomp ($atmdev);
 if ($atmdev ne '') {
         print <<END
         <option value='pppoeatm' $selected{'TYPE'}{'pppoeatm'}>PPPoE over ATM-BRIDGE</option>
+        <option value='pptpatm' $selected{'TYPE'}{'pppoeatm'}>PPTP over ATM-BRIDGE</option>	
 END
 ;
 }
 }
-#if ($netsettings{'RED_TYPE'} eq 'PPTP') {#
-#        print "\t<option value='pptp' $selected{'TYPE'}{'pptp'}>PPTP</option>\n";
-#}
-#
 #if (0) {
 #       print <<END
 #       <option value='eciadsl' $selected{'TYPE'}{'eciadsl'}>ECI USB ADSL</option>
@@ -692,30 +679,25 @@ END
 
 if ($pppsettings{'TYPE'} eq 'pptp')
 {
+
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
         <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'pptp settings'}</b></td>
 </tr>
 <tr>
-        <td width='25%'>$Lang::tr{'phonebook entry'}</td>
-        <td colspan='2' width='50%'></td>
-        <td width='25%'><input type='text' name='PHONEBOOK' value='$pppsettings{'PHONEBOOK'}' /></td>
+        <td width='25%'>Peer</td>
+        <td colspan='3'><input size=50 type='text' name='PPTP_PEER' value='$pppsettings{'PPTP_PEER'}' /></td>
 </tr>
 <tr>
-        <td width='25%'><input type='radio' name='METHOD' value='STATIC' $checked{'METHOD'}{'STATIC'} />$Lang::tr{'static ip'}</td>
-        <td colspan='2' width='50%'>$Lang::tr{'router ip'}</td>
-        <td width='25%'><input type='text' name='ROUTERIP' value='$pppsettings{'ROUTERIP'}' /></td>
-</tr>
-<tr>
-        <td width='25%'><input type='radio' name='METHOD' value='DHCP' $checked{'METHOD'}{'DHCP'} />$Lang::tr{'dhcp mode'}</td>
-        <td colspan='2' width='50%'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-        <td width='25%'><input type='text' name='DHCP_HOSTNAME' value='$pppsettings{'DHCP_HOSTNAME'}' /></td>
+        <td width='25%'>My Netconfig</td>
+        <td colspan='3'><input size=50 type='text' name='PPTP_NICCFG' value='$pppsettings{'PPTP_NICCFG'}' /></td>
 </tr>
 END
 ;
 }
-if ($pppsettings{'TYPE'} =~ /^(pppoeatm)$/)
+
+if ($pppsettings{'TYPE'} =~ /^(pppoeatm|pptpatm)$/)
 {
 
 print <<END
@@ -880,7 +862,8 @@ sub initprofile
         $pppsettings{'ENCAP'} = '0';
         $pppsettings{'VPI'} = '1';
         $pppsettings{'VCI'} = '32';
-        $pppsettings{'PHONEBOOK'} = 'RELAY_PPP1';
+        $pppsettings{'PPTP_PEER'} = '10.0.0.138';
+	$pppsettings{'PPTP_NICCFG'} = '10.0.0.140/24 broadcast 10.0.0.255';
         $pppsettings{'PROTOCOL'} = 'RFC2364';
         $pppsettings{'METHOD'} = 'PPPOE_PLUGIN';
         if ( $pppsettings{'METHOD'} eq 'PPPOE_PLUGIN' ) {
