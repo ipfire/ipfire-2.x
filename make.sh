@@ -406,7 +406,6 @@ buildipfire() {
   ipfiremake whatmask
   ipfiremake iptables
   ipfiremake libupnp
-  ipfiremake linux-igd
   ipfiremake ipaddr
   ipfiremake iptstate
   ipfiremake iputils
@@ -586,6 +585,8 @@ buildipfire() {
   ipfiremake splix
   ipfiremake streamripper
   ipfiremake sshfs
+  ipfiremake libdlna
+  ipfiremake ushare
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild

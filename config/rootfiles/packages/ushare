@@ -1,0 +1,14 @@
+usr/bin/ushare
+#usr/etc/init.d
+#usr/etc/init.d/ushare
+#usr/etc/ushare.conf
+var/mp3/info
+var/video/info
+etc/rc.d/init.d/ushare
+etc/rc.d/rc0.d/K02ushare
+etc/rc.d/rc6.d/K02ushare
+etc/rc.d/rc3.d/S98ushare
+#usr/share/locale/de/LC_MESSAGES/ushare.mo
+#usr/share/locale/fr/LC_MESSAGES/ushare.mo
+#var/video
+

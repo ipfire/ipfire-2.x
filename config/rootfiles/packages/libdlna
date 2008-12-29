@@ -1,0 +1,6 @@
+#usr/include/dlna.h
+#usr/lib/libdlna.a
+usr/lib/libdlna.so
+usr/lib/libdlna.so.0
+usr/lib/libdlna.so.0.2.3
+#usr/lib/pkgconfig/libdlna.pc

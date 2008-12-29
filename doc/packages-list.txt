@@ -126,7 +126,7 @@
 * hostapd-0.5.11
 * hplip-2.7.10
 * htop-0.8.1
-* httpd-2.2.10
+* httpd-2.2.11
 * hwdata
 * iana-etc-2.10
 * icecast-2.3.1
@@ -153,6 +153,7 @@
 * libaal-1.0.5
 * libart_lgpl-2.3.17
 * libcap-1.10
+* libdlna-0.2.3
 * libdvbpsi5-0.1.6
 * libid3tag-0.15.1b
 * libidn-0.6.14
@@ -167,7 +168,7 @@
 * libsigc++-2.0.17
 * libtool-1.5.22
 * libtorrent-0.11.9
-* libupnp-1.3.1
+* libupnp-1.6.6
 * libusb-0.1.12
 * libvorbis-1.2.0
 * libwww-perl-5.803
@@ -176,7 +177,6 @@
 * linux-2.6.25.19
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
-* linuxigd-0.95
 * lm_sensors-3.0.3
 * logrotate-3.7.1
 * logwatch-7.3.6
@@ -271,7 +271,7 @@
 * squashfs3.4
 * squid-2.7.STABLE5
 * squidGuard-1.3
-* squidclamav-3.8
+* squidclamav-3.9
 * sshfs-fuse-2.2
 * streamripper-1.63.5
 * sudo-1.6.8p12
@@ -296,6 +296,7 @@
 * unzip552
 * urlgrabber-3.1.0
 * usbutils-0.72
+* ushare-1.1a
 * util-linux-2.12r
 * v4l-dvb-e9a442d3b53a-kmod-2.6.25.19
 * vdr-1.6.0
