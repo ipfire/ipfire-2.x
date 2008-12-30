@@ -330,7 +330,7 @@ case "${1}" in
 			
 			### Run everything
 			#
-			if [ "${METHOD}" == "PPPOE_PLUGIN" ]; then
+			if [ "$TYPE" == "pppoe" ] && [ "${METHOD}" == "PPPOE_PLUGIN" ]; then
 				/usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND >/dev/null 2>&1 &
 				evaluate_retval
 				# echo PLUGIN: /usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND
