@@ -25,7 +25,7 @@
 include Config
 
 PKG_NAME   = cryptsetup
-VER        = 1.0.5
+VER        = 1.0.6
 
 THISAPP    = cryptsetup-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cryptsetup
-PAK_VER    = 1
+PAK_VER    = 1.1
 
 DEPS       = ""
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0aa2f94c39123f1a0352983e5366179c
+$(DL_FILE)_MD5 = 00d452eb7a76e39f5749545d48934a10
 
 install : $(TARGET)
 
