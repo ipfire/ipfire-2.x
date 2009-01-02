@@ -488,7 +488,7 @@ chomp ($atmdev);
 if ($atmdev ne '') {
         print <<END
         <option value='pppoeatm' $selected{'TYPE'}{'pppoeatm'}>PPPoE over ATM-BRIDGE</option>
-        <option value='pptpatm' $selected{'TYPE'}{'pppoeatm'}>PPTP over ATM-BRIDGE</option>	
+        <option value='pptpatm' $selected{'TYPE'}{'pptpatm'}>PPTP over ATM-BRIDGE</option>	
 END
 ;
 }
