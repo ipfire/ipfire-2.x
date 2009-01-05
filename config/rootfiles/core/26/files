@@ -1,0 +1,3 @@
+usr/sbin/pptp
+etc/rc.d/init.d/networking/red
+srv/web/ipfire/cgi-bin/pppsetup.cgi

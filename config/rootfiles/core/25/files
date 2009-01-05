@@ -84,6 +84,3 @@ usr/lib/libthreadutil.so.2.2.3
 usr/lib/libupnp.so
 usr/lib/libupnp.so.3
 usr/lib/libupnp.so.3.0.5
-usr/sbin/pptp
-etc/rc.d/init.d/networking/red
-srv/web/ipfire/cgi-bin/pppsetup.cgi
