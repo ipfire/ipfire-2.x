@@ -295,8 +295,10 @@ case "${1}" in
 			
 			if [ "$TYPE" == "modem" ]; then
 				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /etc/ppp/dialer lock modem crtscts"
+				METHOD="PPPOE_PLUGIN"
 			elif [ "$TYPE" == "serial" ]; then
 				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /bin/true lock modem crtscts"
+				METHOD="PPPOE_PLUGIN"
 			fi
 		
 			### Standard PPP options we always use
@@ -326,11 +328,12 @@ case "${1}" in
 			#
 			if [ "$TYPE" == "pptp" ]; then
 				PPPOE_CMD="pptp $PPTP_PEER --nolaunchpppd"
+				METHOD=""
 			fi
 			
 			### Run everything
 			#
-			if [ "$TYPE" == "pppoe" ] && [ "${METHOD}" == "PPPOE_PLUGIN" ]; then
+			if [ "$METHOD" == "PPPOE_PLUGIN" ]; then
 				/usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND >/dev/null 2>&1 &
 				evaluate_retval
 				# echo PLUGIN: /usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND
