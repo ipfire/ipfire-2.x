@@ -198,8 +198,8 @@
 * mktemp-1.5
 * mldonkey-2.9.6
 * module-init-tools-3.5
-* mpc-0.12.1
-* mpd-0.13.2
+* mpc-0.14
+* mpd-0.14
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mtd-CVS-20070507
@@ -313,5 +313,5 @@
 * wireless_tools.30.pre6
 * wpa_supplicant-0.5.11
 * xfsprogs-2.9.4
-* xvidcore-1.1.0
+* xvidcore-1.2.1
 * zlib-1.2.3
