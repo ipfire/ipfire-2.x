@@ -23,6 +23,7 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+[ -d /var/mp3 ] ||  ( mkdir /var/mp3 && chown nobody.nobody /var/mp3 )
 start_service ${NAME}
 ln -svf  ../init.d/gnump3d /etc/rc.d/rc0.d/K00gnump3d
 ln -svf  ../init.d/gnump3d /etc/rc.d/rc3.d/S99gnump3d

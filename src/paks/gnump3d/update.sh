@@ -22,5 +22,9 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+#Remove userdate from rootfile
+cat /opt/pakfire/db/rootfiles/gnump3d | \
+    grep -v "var/mp3" > /opt/pakfire/db/rootfiles/gnump3d.tmp
+mv /opt/pakfire/db/rootfiles/gnump3d.tmp /opt/pakfire/db/rootfiles/gnump3d
 ./uninstall.sh
 ./install.sh
