@@ -9,6 +9,7 @@ printable   = yes
 public      = yes
 writable    = no
 create mode = 0700
+use client driver = yes
 
 [Drucker]
 security      = server
