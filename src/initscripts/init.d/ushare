@@ -39,7 +39,7 @@ case "$1" in
 
 		;;
 	status)
-		statusproc
+		statusproc /usr/bin/ushare
 		;;
 
 	*)
