@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libdlna
 PAK_VER    = 1
 
-DEPS       = "libupnp ffmpeg"
+DEPS       = "ffmpeg"
 
 ###############################################################################
 # Top-level Rules
