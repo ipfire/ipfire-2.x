@@ -1,3 +1,7 @@
 usr/sbin/pptp
 etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/pppsetup.cgi
+srv/web/ipfire/html/include/jquery-1.2.6.min.js
+srv/web/ipfire/html/themes/ipfire/include/functions.pl
+srv/web/ipfire/html/cgi-bin/proxy.cgi
+usr/sbin/updxlrator	
