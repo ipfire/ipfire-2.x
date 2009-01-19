@@ -128,7 +128,7 @@ else
 	echo "</Layout>" >> $(DIR_APP)/config.layout
 
 	cd $(DIR_APP) && ./configure --enable-layout=IPFire \
-				--enable-ssl --enable-mods-shared=all
+				--enable-ssl --enable-mods-shared=all --enable-proxy
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	chown -v root:root /usr/lib/apache/httpd.exp \
