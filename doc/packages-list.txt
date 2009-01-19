@@ -200,7 +200,7 @@
 * mldonkey-2.9.6
 * module-init-tools-3.5
 * mpc-0.14
-* mpd-0.14
+* mpd-0.14.1
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mtd-CVS-20070507
@@ -226,6 +226,7 @@
 * openmailadmin-1.0.0
 * openssh-5.1p1
 * openssl-0.9.8i
+* openssl-0.9.8j
 * openswan-2.6.18
 * openswan-2.6.18-kmod-VER
 * openvpn-2.0.9

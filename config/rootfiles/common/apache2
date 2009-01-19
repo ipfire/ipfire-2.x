@@ -1225,6 +1225,12 @@ usr/lib/apache/mod_logio.so
 usr/lib/apache/mod_mime.so
 usr/lib/apache/mod_mime_magic.so
 usr/lib/apache/mod_negotiation.so
+usr/lib/apache/mod_proxy.so
+usr/lib/apache/mod_proxy_ajp.so
+usr/lib/apache/mod_proxy_balancer.so
+usr/lib/apache/mod_proxy_connect.so
+usr/lib/apache/mod_proxy_ftp.so
+usr/lib/apache/mod_proxy_http.so
 usr/lib/apache/mod_rewrite.so
 usr/lib/apache/mod_setenvif.so
 usr/lib/apache/mod_speling.so
