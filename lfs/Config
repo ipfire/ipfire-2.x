@@ -33,7 +33,7 @@
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #
-URL_IPFIRE  = http://source.ipfire.org/othersrc
+URL_IPFIRE  = http://source.ipfire.org/source-2.x
 URL_TOOLCHAIN = http://source.ipfire.org/toolchains
 
 # Default compiler optimizations.
