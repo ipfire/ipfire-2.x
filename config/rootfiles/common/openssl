@@ -39,6 +39,8 @@ usr/bin/openssl
 #usr/include/openssl/engine.h
 #usr/include/openssl/err.h
 #usr/include/openssl/evp.h
+#usr/include/openssl/fips.h
+#usr/include/openssl/fips_rand.h
 #usr/include/openssl/hmac.h
 #usr/include/openssl/idea.h
 #usr/include/openssl/krb5_asn.h
@@ -92,6 +94,8 @@ usr/bin/openssl
 #usr/lib/engines/libnuron.so
 #usr/lib/engines/libsureware.so
 #usr/lib/engines/libubsec.so
+#usr/lib/fips_premain.c
+#usr/lib/fips_premain.c.sha1
 #usr/lib/libcrypto.a
 usr/lib/libcrypto.so
 usr/lib/libcrypto.so.0.9.8
