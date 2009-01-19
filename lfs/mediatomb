@@ -81,8 +81,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	cp -Rvd $(DIR_SRC)/config/mediatomb /var/ipfire
-	cmown -R nobody:nobody /var/ipfire/mediatomb
+	chown -R nobody:nobody /var/ipfire/mediatomb
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/mediatomb \
 	                 /var/ipfire/backup/addons/includes/mediatomb
+	echo Folder for music files > /var/mp3/info
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

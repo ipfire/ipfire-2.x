@@ -192,6 +192,7 @@
 * mbr-1.1.8
 * mc-4.6.1
 * mechanize-0.1.8
+* mediatomb-0.11.0
 * memtest86+-1.65
 * misc-progs
 * mkinitcpio-0.5.9
@@ -254,7 +255,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.4
 * rtorrent-0.7.9
-* samba-3.2.6
+* samba-3.2.7
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
@@ -268,6 +269,7 @@
 * sox-12.18.1
 * spandsp-0.0.4pre15
 * splix-2.0.0-rc2
+* sqlite-3.6.10
 * squashfs3.4
 * squid-2.7.STABLE5
 * squidGuard-1.3
@@ -280,6 +282,7 @@
 * syslinux-3.62
 * sysstat-6.0.2
 * sysvinit-2.86
+* taglib-1.5
 * tar-1.15.1
 * tcp_wrappers_7.6
 * tcpdump-3.8.3
