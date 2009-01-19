@@ -367,7 +367,7 @@ print <<END
 END
 ;
 
-foreach ($mpd->collection->all_artists()){
+foreach (sort($mpd->collection->all_artists())){
 	if ( $_ ne '' ){
 		print "<option>".encode('utf-8', $_)."</option>\n";
 	}
@@ -384,7 +384,7 @@ print <<END
 END
 ;
 
-foreach ($mpd->collection->all_albums()){
+foreach (sort($mpd->collection->all_albums())){
 	if ( $_ ne '' ){
 		print "<option>".encode('utf-8', $_)."</option>\n";
 	}
@@ -403,7 +403,7 @@ print <<END
 END
 ;
 
-foreach ($mpd->collection->all_years()){
+foreach (sort($mpd->collection->all_years())){
 	if ( $_ ne '' ){
 		print "<option>$_</option>\n";
 	}
@@ -420,7 +420,7 @@ print <<END
 END
 ;
 
-foreach ($mpd->collection->all_genre()){
+foreach (sort($mpd->collection->all_genre())){
 	if ( $_ ne '' ){
 		print "<option>$_</option>\n";
 	}
