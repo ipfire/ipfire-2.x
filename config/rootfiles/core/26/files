@@ -11,3 +11,9 @@ usr/lib/apache/mod_proxy_balancer.so
 usr/lib/apache/mod_proxy_connect.so
 usr/lib/apache/mod_proxy_ftp.so
 usr/lib/apache/mod_proxy_http.so
+etc/ssl/openssl.cnf
+usr/bin/openssl
+usr/lib/libcrypto.so
+usr/lib/libcrypto.so.0.9.8
+usr/lib/libssl.so
+usr/lib/libssl.so.0.9.8
