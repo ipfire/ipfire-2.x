@@ -225,7 +225,6 @@
 * openldap-2.3.20
 * openmailadmin-1.0.0
 * openssh-5.1p1
-* openssl-0.9.8i
 * openssl-0.9.8j
 * openswan-2.6.18
 * openswan-2.6.18-kmod-VER
@@ -274,6 +273,7 @@
 * squashfs3.4
 * squid-2.7.STABLE5
 * squidGuard-1.3
+* squidGuard-1.4
 * squidclamav-3.9
 * sshfs-fuse-2.2
 * streamripper-1.63.5
