@@ -272,7 +272,6 @@
 * sqlite-3.6.10
 * squashfs3.4
 * squid-2.7.STABLE5
-* squidGuard-1.3
 * squidGuard-1.4
 * squidclamav-3.9
 * sshfs-fuse-2.2
