@@ -36,16 +36,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	squidGuard-1.4.patch
+objects = $(DL_FILE) 
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-squidGuard-1.4.patch = $(DL_FROM)/squidGuard-1.4.patch
-
-$(DL_FILE)_MD5 = eec2b1234cd749a4171152af24aaf967
-
-squidGuard-1.4.patch_MD5 = 2220598c1705d7b4775dc547e5d27bec
+$(DL_FILE)_MD5 = de834150998c1386c30feae196f16b06
 
 install : $(TARGET)
 
@@ -75,7 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/squidGuard-1.4.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --datadir=/usr/share \
 		--sysconfdir=/etc --localstatedir=/var --infodir=/usr/info --mandir=/usr/man  \
 		--with-sg-config=/var/ipfire/urlfilter/squidGuard.conf \
