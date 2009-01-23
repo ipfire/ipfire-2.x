@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,7 +25,6 @@ use strict;
 use IPC::Open2;
 use IO::Handle;
 
-# define here your redirectors (use a comma sperated list)
 my $redirectors;
 
 require '/var/ipfire/general-functions.pl';
@@ -61,48 +60,61 @@ my $return;
 my $i;
 my $debug=0; # enable only for debugging
 
-if ($debug){
-	writetolog("Urlfilter = ".$proxysettings{'ENABLE_FILTER'});
-	writetolog("Clamav = ".$proxysettings{'ENABLE_CLAMAV'});
-	writetolog("Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'});
-	 }
+if ( -e "/var/ipfire/proxy/enable_redirector_debug" ){
+	$debug = 1;
+	writetolog("Urlfilter = ".$proxysettings{'ENABLE_FILTER'}." Clamav = ".$proxysettings{'ENABLE_CLAMAV'}." Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'});
+	}
 
 # open progamms
 my $pidlist = [];
 my $rlist = [];
 my $wlist = [];
+
 for($i = 0; $i < @$redirectors; $i++) {
-			 if ($debug){writetolog("Current redirector is ".$redirectors->[$i]);}
-			 $pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
-}
+	$pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
+	if ($debug){
+		writetolog("Current redirector is ".$redirectors->[$i]." number ".$i." PID ".$pidlist->[$i]);
+		}
+	}
 
 # wait for data...
 while($line = <>) {
-        for($i = 0; $i < @$redirectors; $i++) {
-                $wlist->[$i]->print($line);
-                $return = $rlist->[$i]->getline;
-                last if($return ne "\n" and $return ne $line);
-		# break if redirector changes data
+	$return = "";
+
+	for($i = 0; $i < @$redirectors; $i++) {
+		$wlist->[$i]->print($line);
+		$return = $rlist->[$i]->getline;
+
 		if ( $return eq "Processing file and database" ){
 			writetolog("Emergency - squidGuard not initialised please run squidGuard -C all");
-			last;
-		}
-        }
-        print $return;
+			}
 
 		if ($debug){
-			 chomp $line;
-			 chomp $return;
-			 if ( $line ne $return ){
-				 writetolog("Requested ".$line."\nAnswer    ".$return);
-			 }
+			my $dline = $line;my $dreturn = $return;chomp $dline;chomp $dreturn;
+			if ( $return eq $line or $return eq "\n" or $return eq "" ){
+				writetolog("Request equals result by ".$redirectors->[$i]." ".$dline);
+				}
+			else {
+				writetolog($redirectors->[$i]." answers ".$dreturn."\n   Querried ".$dline);
+				}
+			}
+
+		# break if redirector changes data
+		if($return ne "\n" and $return ne $line ){
+			if ( $redirectors->[$i] ne "/usr/sbin/updxlrator"){
+				writetolog($redirectors->[$i]." is stopping querry because block was found.");
+				$i = @$redirectors;
+				}
+			}
 		}
-}
+	print $return;
+	}
+
 exit 0;
 
 sub writetolog {
-	my $log = shift;
 	open(DATEI, ">>/var/log/squid/redirector_debug") || die "Unable to acces file /var/log/redirector_debug";
+	my $log = shift;
 	print DATEI $log."\n";
 	close(DATEI);
-}
+	}

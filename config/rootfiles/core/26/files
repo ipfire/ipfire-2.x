@@ -18,4 +18,5 @@ usr/lib/libcrypto.so.0.9.8
 usr/lib/libssl.so
 usr/lib/libssl.so.0.9.8
 usr/bin/squidGuard
-var/lib/squidguard
+var/lib/squidguardi
+usr/sbin/redirect_wrapper
