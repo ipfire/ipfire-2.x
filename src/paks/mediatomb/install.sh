@@ -24,4 +24,3 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
-/etc/init.d/mediatomb start -a /var/mp3

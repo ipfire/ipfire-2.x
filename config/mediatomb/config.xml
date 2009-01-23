@@ -33,6 +33,10 @@
     -->
   </server>
   <import hidden-files="no">
+    <autoscan use-inotify="auto">
+      <!-- Add /var/mp3 to mediatomb shares -->
+      <directory location="/var/mp3" mode="inotify" recursive="yes" hidden-files="yes"/>
+    </autoscan>
     <scripting script-charset="UTF-8">
       <virtual-layout type="builtin"/>
     </scripting>

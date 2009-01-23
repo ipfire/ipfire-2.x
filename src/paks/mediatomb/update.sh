@@ -24,3 +24,4 @@
 . /opt/pakfire/lib/functions.sh
 ./uninstall.sh
 ./install.sh
+/etc/init.d/mediatomb start
