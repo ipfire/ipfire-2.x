@@ -34,6 +34,7 @@ etc/rc.d/init.d/halt
 #etc/rc.d/init.d/ipfireseeder
 etc/rc.d/init.d/ipsec
 etc/rc.d/init.d/localnet
+#etc/rc.d/init.d/mediatomb
 #etc/rc.d/init.d/messagebus
 #etc/rc.d/init.d/mldonkey
 etc/rc.d/init.d/mISDN
@@ -88,6 +89,7 @@ etc/rc.d/init.d/snort
 #etc/rc.d/init.d/spamassassin
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/sshd
+#etc/rc.d/init.d/sslh
 etc/rc.d/init.d/swap
 etc/rc.d/init.d/sysctl
 etc/rc.d/init.d/sysklogd
@@ -97,11 +99,15 @@ etc/rc.d/init.d/template
 etc/rc.d/init.d/udev
 etc/rc.d/init.d/udev_retry
 etc/rc.d/init.d/upnpd
+#etc/rc.d/init.d/ushare
 #etc/rc.d/init.d/vdr
 #etc/rc.d/init.d/vsftpd
 #etc/rc.d/init.d/winbind
 #etc/rc.d/init.d/xinetd
 #etc/rc.d/rc0.d
+#etc/rc.d/rc0.d/K02mediatomb
+#etc/rc.d/rc0.d/K02sslh
+#etc/rc.d/rc0.d/K02ushare
 etc/rc.d/rc0.d/K08fcron
 etc/rc.d/rc0.d/K28apache
 etc/rc.d/rc0.d/K30sshd
@@ -127,9 +133,15 @@ etc/rc.d/rc3.d/S25random
 etc/rc.d/rc3.d/S30sshd
 etc/rc.d/rc3.d/S32apache
 etc/rc.d/rc3.d/S40fcron
+#etc/rc.d/rc3.d/S98mediatomb
 etc/rc.d/rc3.d/S98rc.local
+#etc/rc.d/rc3.d/S98sslh
+#etc/rc.d/rc3.d/S98ushare
 etc/rc.d/rc3.d/S99beep
 #etc/rc.d/rc6.d
+#etc/rc.d/rc6.d/K02mediatomb
+#etc/rc.d/rc6.d/K02sslh
+#etc/rc.d/rc6.d/K02ushare
 etc/rc.d/rc6.d/K08fcron
 etc/rc.d/rc6.d/K28apache
 etc/rc.d/rc6.d/K30sshd
