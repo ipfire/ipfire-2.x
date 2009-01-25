@@ -1,0 +1,49 @@
+#!/bin/sh
+# Begin $rc_base/init.d/sslh
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+
+#$LastChangedBy: bdubbs $
+#$Date: 2006-09-10 19:41:47 -0500 (Sun, 10 Sep 2006) $
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting SSLH Deamon..."
+		loadproc /usr/local/bin/sslh -u nobody -p `cat /var/ipfire/red/local-ipaddress`:443 -s localhost:222 -l localhost:444
+		evaluate_retval
+
+		if ! grep -q "443:443" /var/ipfire/xtaccess/config ; then
+			echo "tcp,0.0.0.0/0,443:443,on,0.0.0.0,SSLH" >> /var/ipfire/xtaccess/config
+			/usr/local/bin/setxtaccess
+		fi
+
+		
+		;;
+
+	stop)
+		boot_mesg "Stopping SSLH Deamon..."
+		killproc /usr/local/bin/sslh
+		evaluate_retval
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/local/bin/sslh
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/sslh
