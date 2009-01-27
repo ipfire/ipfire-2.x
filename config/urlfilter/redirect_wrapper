@@ -86,7 +86,7 @@ while($line = <>) {
 		$return = $rlist->[$i]->getline;
 
 		if ( $return eq "Processing file and database" ){
-			writetolog("Emergency - squidGuard not initialised please run squidGuard -C all");
+			system("logger -t ipfire 'Emergency - squidGuard not initialised please run squidGuard -C all'");
 			}
 
 		if ($debug){
@@ -102,7 +102,9 @@ while($line = <>) {
 		# break if redirector changes data
 		if($return ne "\n" and $return ne $line ){
 			if ( $redirectors->[$i] ne "/usr/sbin/updxlrator"){
-				writetolog($redirectors->[$i]." is stopping querry because block was found.");
+				if ($debug){
+					writetolog($redirectors->[$i]." is stopping querry because block was found.");
+					}
 				$i = @$redirectors;
 				}
 			}
