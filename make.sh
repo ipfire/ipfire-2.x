@@ -867,7 +867,7 @@ gettoolchain)
 		test -d $BASEDIR/cache/toolchains || mkdir $BASEDIR/cache/toolchains
 		echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 		cd $BASEDIR/cache/toolchains
-		wget $URL_TOOLCHAIN/$PACKAGE.tar.gz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
+		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.gz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
 		if [ $? -ne 0 ]; then
 			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
 		else
