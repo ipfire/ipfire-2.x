@@ -26,13 +26,6 @@ elsif ($ARGV[0] eq 'playadd') {
   if ($debug){print "Yes we are called and we will add $ARGV[1]\n";}
   system("mpc add \"$ARGV[1]\" >/dev/null && mpc play >/dev/null");
   }
-elsif ($ARGV[0] eq 'playlist') {
-  &checkmute();
-  &shuffle();
-  &clearplaylist();
-  if ($debug){print "Yes we are called and we will play your Playlist\n";}
-  system("mpc load playlist >/dev/null && mpc play >/dev/null");
-  }
 elsif ($ARGV[0] eq 'clearplaylist') {
   if ($debug){print "Deleting playlist\n";}
   &clearplaylist();

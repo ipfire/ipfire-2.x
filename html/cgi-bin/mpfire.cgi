@@ -231,8 +231,7 @@ if ( $mpfiresettings{'ACTION'} eq "scan" ){
 }elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){
 	$message=system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"","2>/dev/null");
 }elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){
-# on keypress play the playlist
-	$message=system("/usr/local/bin/mpfirectrl playlist 2>/dev/null");
+	$mpd->play();
 }elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){
 # on keypress clear the playlist
 	$mpd->playlist->clear();
