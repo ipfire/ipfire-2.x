@@ -110,6 +110,7 @@
 * gdbm-1.8.3
 * gettext-0.14.5
 * git-1.6.0
+* git-1.6.1.2
 * glib-2.16.5
 * glibc-2.3.6
 * gmp-4.2
@@ -230,6 +231,7 @@
 * openswan-2.6.18-kmod-VER
 * openvpn-2.0.9
 * p7zip_4.58
+* p7zip_4.61
 * pam_mysql-0.7RC1
 * patch-2.5.4
 * pciutils-2.2.3
