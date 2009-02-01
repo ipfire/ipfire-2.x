@@ -216,3 +216,15 @@ usr/share/git-core/templates/info/exclude
 #usr/share/gitk/lib/msgs/sv.msg
 #usr/share/man/man3/Git.3
 #usr/share/man/man3/private-Error.3
+usr/bin/git-cvsserver
+usr/bin/git-shell
+usr/libexec/git-core/git-gui--askpass
+usr/libexec/git-core/git-help
+usr/libexec/git-core/git-stage
+#usr/share/git-gui/lib/mergetool.tcl
+#usr/share/git-gui/lib/msgs/nb.msg
+#usr/share/git-gui/lib/remote_add.tcl
+#usr/share/git-gui/lib/search.tcl
+#usr/share/git-gui/lib/sshkey.tcl
+#usr/share/git-gui/lib/tools.tcl
+#usr/share/git-gui/lib/tools_dlg.tcl
