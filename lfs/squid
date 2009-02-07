@@ -86,7 +86,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-ntlm-auth-helpers="SMB" \
 	   --enable-useragent-log \
 	   --enable-referer-log \
-	   --with-maxfd=1024 \
 	   --with-pthreads --with-dl
 
 	cd $(DIR_APP) && make $(MAKETUNING)
