@@ -109,7 +109,6 @@
 * gd-2.0.33
 * gdbm-1.8.3
 * gettext-0.14.5
-* git-1.6.0
 * git-1.6.1.2
 * glib-2.16.5
 * glibc-2.3.6
@@ -230,7 +229,6 @@
 * openswan-2.6.18
 * openswan-2.6.18-kmod-VER
 * openvpn-2.0.9
-* p7zip_4.58
 * p7zip_4.61
 * pam_mysql-0.7RC1
 * patch-2.5.4
@@ -273,7 +271,7 @@
 * splix-2.0.0-rc2
 * sqlite-3.6.10
 * squashfs3.4
-* squid-2.7.STABLE5
+* squid-2.7.STABLE6
 * squidGuard-1.4
 * squidclamav-3.9
 * sshfs-fuse-2.2

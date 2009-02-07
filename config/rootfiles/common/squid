@@ -11,10 +11,10 @@ srv/web/ipfire/html/proxy.pac
 srv/web/ipfire/html/wpad.dat
 #usr/bin/RunCache
 #usr/bin/cossdump
-#usr/bin/squidclient
+usr/bin/squidclient
 #usr/lib/squid
 usr/lib/squid/auth
-#usr/lib/squid/cachemgr.cgi
+usr/lib/squid/cachemgr.cgi
 usr/lib/squid/diskd-daemon
 #usr/lib/squid/errors
 #usr/lib/squid/errors.ipfire

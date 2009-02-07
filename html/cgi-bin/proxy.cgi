@@ -3031,7 +3031,7 @@ cache_effective_group squid
 umask 022
 
 pid_filename /var/run/squid.pid
-max_filedescriptors 1024
+max_filedescriptors 4096
 
 cache_mem $proxysettings{'CACHE_MEM'} MB
 END

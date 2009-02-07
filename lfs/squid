@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.7.STABLE5
+VER        = 2.7.STABLE6
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5d495d285b3b951a5859c660463e9832
+$(DL_FILE)_MD5 = 6de3a6a7a56a7ecae092f2d31a04f039
 
 install : $(TARGET)
 
@@ -75,8 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --datadir=/usr/lib/squid \
 	   --mandir=/usr/share/man --libexecdir=/usr/lib/squid \
 	   --localstatedir=/var --sysconfdir=/etc/squid \
-	   --disable-poll --disable-snmp --disable-icmp --disable-wccp \
-	   --disable-http-violations --disable-ident-lookups \
+	   --disable-poll --disable-icmp --disable-wccp \
+	   --disable-ident-lookups \
 	   --enable-storeio="aufs,coss,diskd,ufs,null" --enable-ssl \
 	   --enable-underscores --enable-ntlm-fail-open --enable-arp-acl \
 	   --enable-http-violations --enable-auth=basic,ntlm \
@@ -86,6 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-ntlm-auth-helpers="SMB" \
 	   --enable-useragent-log \
 	   --enable-referer-log \
+           --enable-snmp \
 	   --with-pthreads --with-dl
 
 	cd $(DIR_APP) && make $(MAKETUNING)
