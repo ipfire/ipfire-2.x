@@ -1,3 +1,3 @@
-usr/local/bin/sslh
+usr/local/sbin/sslh
 #usr/local/share/man/man8/sslh.8.gz
 etc/rc.d/init.d/sslh
