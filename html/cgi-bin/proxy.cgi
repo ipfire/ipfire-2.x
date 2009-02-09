@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,11 +19,11 @@
 #                                                                             #
 ###############################################################################
 #
-# (c) 2004-2008 marco.s - http://www.advproxy.net
+# (c) 2004-2009 marco.s - http://www.advproxy.net
 #
 # This code is distributed under the terms of the GPL
 #
-# $Id: advproxy.cgi,v 3.0.0 2008/08/18 00:00:00 marco.s Exp $
+# $Id: advproxy.cgi,v 3.0.2 2009/02/04 00:00:00 marco.s Exp $
 #
 
 use strict;
@@ -2543,6 +2543,7 @@ sub check_acls
 	}
 
 	@temp = split(/\n/,$proxysettings{'DST_NOAUTH'});
+	undef $proxysettings{'DST_NOAUTH'};
 	foreach (@temp)
 	{
 		s/^\s+//g;
@@ -3015,7 +3016,7 @@ END
 			print FILE "cache deny no_cache_domains\n";
 		}
 		if (!-z $acl_dst_nocache_net) {
-			print FILE "acl no_cache_domains dst \"$acl_dst_nocache_net\"\n";
+			print FILE "acl no_cache_ipaddr dst \"$acl_dst_nocache_net\"\n";
 			print FILE "cache deny no_cache_ipaddr\n";
 		}
 		if (!-z $acl_dst_nocache_url) {
@@ -3031,7 +3032,6 @@ cache_effective_group squid
 umask 022
 
 pid_filename /var/run/squid.pid
-max_filedescriptors 4096
 
 cache_mem $proxysettings{'CACHE_MEM'} MB
 END
@@ -3839,14 +3839,14 @@ END
 	;
 	$replybodymaxsize = 1024 * $proxysettings{'MAX_INCOMING_SIZE'};
 	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
-		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size 0 allow IPFire_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size 0 allow IPFire_unrestricted_mac\n"; }
+		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size 0 deny IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size 0 deny IPFire_unrestricted_mac\n"; }
 		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
 		{
-			if (!-z $extgrp) { print FILE "reply_body_max_size 0 allow for_extended_users\n"; }
+			if (!-z $extgrp) { print FILE "reply_body_max_size 0 deny for_extended_users\n"; }
 		}
 	}
-	print FILE "reply_body_max_size $replybodymaxsize allow all\n\n";
+	print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
 
 	print FILE "visible_hostname";
 	if ($proxysettings{'VISIBLE_HOSTNAME'} eq '')
