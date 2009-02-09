@@ -18,3 +18,12 @@ usr/lib/squid/smb_auth.sh
 usr/lib/squid/squid_ldap_auth
 usr/lib/squid/unlinkd
 usr/sbin/squid
+var/ipfire/updatexlrator/bin/checkdeaddl
+var/ipfire/updatexlrator/bin/checkup
+var/ipfire/updatexlrator/bin/convert
+var/ipfire/updatexlrator/bin/download
+var/ipfire/updatexlrator/bin/lscache
+var/ipfire/updatexlrator/updxlrator-lib.pl
+srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+var/ipfire/langs
