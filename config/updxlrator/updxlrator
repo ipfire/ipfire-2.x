@@ -2,9 +2,11 @@
 #
 # This code is distributed under the terms of the GPL
 #
-# (c) 2006-2008 marco.s - http://update-accelerator.advproxy.net
+# (c) 2006-2009 marco.s - http://update-accelerator.advproxy.net
 #
-# $Id: updxlrator,v 2.0 2008/04/06 00:00:00 marco.s Exp $
+# Portions (c) 2008 by dotzball - http://www.blockouttraffic.de
+#
+# $Id: updxlrator,v 2.1 2009/01/10 00:00:00 marco.s Exp $
 #
 
 use strict;
@@ -16,6 +18,7 @@ my $swroot="/var/ipfire";
 my $updcachedir="/var/updatecache";
 my $apphome="/var/ipfire/updatexlrator";
 my $logfile="/var/log/updatexlrator/cache.log";
+my $wget="/usr/bin/wget";
 my $debug=(-e "$apphome/debug");
 my $http_port='81';
 my %netsettings=();
@@ -47,6 +50,8 @@ if (-e "$swroot/updatexlrator/settings")
 }
 if (!$maxusage) { $maxusage=75; };
 
+# dotzball: check for dead downloads
+system("$apphome/bin/checkdeaddl &");
 
 while (<>) {
 
@@ -129,7 +134,7 @@ while (<>) {
 	# -----------------------------------------------------------
 
 	if (
-	    (($source_url =~ m@^http://swcdn\.apple\.com/content/downloads/.*\.(tar)$@i) ||
+	     (($source_url =~ m@^http://swcdn\.apple\.com/content/downloads/.*\.(tar|pkg)$@i) ||
 	     ($source_url =~ m@^http://appldnld\.apple\.com\.edgesuite\.net/.*\.(exe|dmg)$@i) ||
 	     ($source_url =~ m@^http://.*\.g.akamai.net/.*/3093/1/.*\.(tar|pkg|dmg|exe)$@i))
 	   )
@@ -172,10 +177,10 @@ while (<>) {
 	# Section: AVG Downloads
 	# -----------------------------------------------------------
 
-	if ($source_url =~ m@^http://[^/]*\.(grisoft|avg)\.com/.*\.(bin)$@i)
-	{
-		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"AVG",$mirror);
-	}
+#	if ($source_url =~ m@^http://[^/]*\.(grisoft|avg)\.com/.*\.(bin)$@i)
+#	{
+#		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"AVG",$mirror);
+#	}
 
 	$request="$xlrator_url $hostaddr $username $method\n";
 
@@ -341,7 +346,7 @@ sub check_cache
 	if ($proxysettings{'UPSTREAM_PROXY'}) { &debuglog("Using upstream proxy $proxysettings{'UPSTREAM_PROXY'}"); }
 
 	$ENV{'http_proxy'} = $proxysettings{'UPSTREAM_PROXY'};
-	@http_header = `wget $login --user-agent="$useragent" --spider -S $sourceurl 2>&1`;
+	@http_header = `$wget $login --user-agent="$useragent" --spider -S $sourceurl 2>&1`;
 	$ENV{'http_proxy'} = '';
 
 	foreach (@http_header) 

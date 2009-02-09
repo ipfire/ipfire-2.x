@@ -1,0 +1,215 @@
+#!/usr/bin/perl
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) 2006-2008 marco.s - http://update-accelerator.advproxy.net
+#
+# Portions (c) 2008 by dotzball - http://www.blockouttraffic.de
+#
+# $Id: checkdeaddl,v 1.1 2008/11/29 00:00:00 marco.s Exp $
+#
+
+use strict;
+
+use Fcntl ':flock';  # import LOCK_* constants
+use HTTP::Date;
+
+require '/var/ipfire/updatexlrator/updxlrator-lib.pl';
+
+my $repository='/var/updatecache';
+my $logfile="/var/log/updatexlrator/download.log";
+my $logging=0;
+my $debug=0;
+my %proxysettings=();
+my %xlratorsettings=();
+my $updatefile='';
+my @downloads=();
+my $passive_mode=0;
+my $maxusage=0;
+my $nice='';
+my $lockfile = "/var/log/updatexlrator/checkdeaddl.lck";
+
+&debuglog("Check if there is a lock ");
+open SEM, ">$lockfile" or die "Can't write-open $lockfile: $!";
+flock SEM, LOCK_EX;
+&debuglog("No lock, proceed ");
+
+&writelog("Check for dead downloads ");
+
+if (-e "${UPDXLT::apphome}/settings")
+{
+	&UPDXLT::readhash("${UPDXLT::apphome}/settings", \%xlratorsettings);
+        if ($xlratorsettings{'ENABLE_LOG'} eq 'on') { $logging=1; };
+	if ($xlratorsettings{'PASSIVE_MODE'} eq 'on') {	$passive_mode=1; };
+	if ($xlratorsettings{'LOW_DOWNLOAD_PRIORITY'} eq 'on') { $nice='/bin/nice --adjustment=15 '; };
+	$maxusage = $xlratorsettings{'MAX_DISK_USAGE'};
+}
+else
+{
+	&writelog("Updatexlrator not enabled, exit");
+	exit 0;
+}
+if (!$maxusage) { $maxusage=75; };
+
+if($passive_mode || (&UPDXLT::diskusage($repository) > $maxusage))
+{
+	# nothing to do
+	&writelog("Running in passive mode or maximum diskusage exceeded, exit");
+	exit 0;
+}
+
+
+if (-e "${UPDXLT::swroot}/proxy/settings") { &UPDXLT::readhash("${UPDXLT::swroot}/proxy/settings", \%proxysettings); }
+
+if (-e "${UPDXLT::swroot}/proxy/advanced/settings")
+{
+	%proxysettings=();
+	&UPDXLT::readhash("${UPDXLT::swroot}/proxy/advanced/settings", \%proxysettings);
+}
+
+
+foreach my $dir (<$repository/download/*>)
+{
+	if (-d $dir)
+	{
+		foreach my $updatefile (<$dir/*>)
+		{
+			unless ($updatefile =~ /.info$/)
+			{
+				push(@downloads, $updatefile);
+			}
+		}
+	}
+}
+
+foreach my $updatefile (@downloads)
+{
+	if(-e "$updatefile.info")
+	{
+		&checkdeaddl($updatefile);
+	}
+}
+
+
+# clean lock file
+close(SEM);
+unlink "$lockfile";
+
+# -------------------------------------------------------------------
+
+sub checkdeaddl
+{
+	my $updatefile = shift;
+
+	my %dlinfo = ();
+	&UPDXLT::readhash("$updatefile.info", \%dlinfo);
+
+	my @http_header = ();
+	my $http_result = '000 n/a';
+	my $returncode = 0;
+	my $remote_size = 0;
+	my $remote_mtime = 0;
+	my $login = '';
+
+	my $cmd_ps = "/bin/ps aux | /bin/grep -E \"(download|wget).*$dlinfo{'SRCURL'}\" | /bin/grep -v \"/bin/grep\"";
+	my @runningdl = `$cmd_ps`;
+
+	if(@runningdl > 0)
+	{
+		# download is still running, no need to restart download
+		return;
+	}
+
+	if (($proxysettings{'UPSTREAM_PROXY'}) && ($proxysettings{'UPSTREAM_USER'}))
+	{
+		$login = "--proxy-user=\"$proxysettings{'UPSTREAM_USER'}\"";
+		if ($proxysettings{'UPSTREAM_PASSWORD'})
+		{
+			$login .= " --proxy-password=\"$proxysettings{'UPSTREAM_PASSWORD'}\"";
+		}
+	}
+
+	$ENV{'http_proxy'} = $proxysettings{'UPSTREAM_PROXY'};
+	@http_header = `${UPDXLT::wget} $login --user-agent="${UPDXLT::useragent}" --spider -S $dlinfo{'SRCURL'} 2>&1`;
+	$ENV{'http_proxy'} = '';
+
+	foreach (@http_header)
+	{
+		chomp;
+		if (/^\s*HTTP\/\d+\.\d+\s\d+\s+\w+/) { $http_result = $_; $http_result =~ s/^\s*HTTP\/\d+\.\d+\s+//; }
+		if (/^\s*Content-Length:\s/) { $remote_size = $_; $remote_size =~ s/[^0-9]//g; }
+		if (/^\s*Last-Modified:\s/) { $remote_mtime = $_; $remote_mtime =~ s/^\s*Last-Modified:\s//; $remote_mtime = HTTP::Date::str2time($remote_mtime) }
+	}
+
+	&writelog($updatefile);
+	&writelog("HTTP result: $http_result");
+	&writelog("Source time: $remote_mtime");
+	&writelog("Cached time: " . $dlinfo{'REMOTETIME'});
+
+	if ($http_result =~ /\d+\s+OK$/)
+	{
+		my $cmd = "$nice$UPDXLT::apphome/bin/download $dlinfo{'VENDORID'} $dlinfo{'SRCURL'} $dlinfo{'CFMIRROR'}";
+
+		if ($remote_size > &UPDXLT::diskfree($repository))
+		{
+			&writelog("Can't download file, because remote filesize exceeds maximum diskusage");
+		}
+		elsif ($remote_mtime == $dlinfo{'REMOTETIME'})
+		{
+			# still the same file, continue download
+			&writelog("Status: Ok, continue download");
+			$cmd .= " 1 &";
+			&debuglog("Running command $cmd");
+			system("$cmd");
+		}
+		else
+		{
+			# File is changed on remote site, download from scratch
+			&writelog("Status: Outdated, restart download from scratch");
+			unlink($updatefile);
+			$cmd .= " 0 &";
+			&debuglog("Running command $cmd");
+			system("$cmd");
+		}
+	} else {
+		$_ =  $http_result;
+		s/\D+//;
+		if ($_ eq '404')
+		{
+			&writelog("Status: No source");
+			$dlinfo{'STATUS'} = ${UPDXLT::sfNoSource};
+		} else {
+			&writelog("Status: Error");
+			$dlinfo{'STATUS'} = ${UPDXLT::sfUnknown};
+		}
+		&UPDXLT::writehash("$updatefile.info", \%dlinfo);
+	}
+}
+
+# -------------------------------------------------------------------
+
+sub writelog
+{
+	if ($logging)
+	{
+		open (LOGFILE,">>$logfile");
+		my @now = localtime(time);
+		printf LOGFILE "%04d-%02d-%02d %02d:%02d:%02d [%d] %s\n",$now[5]+1900,$now[4]+1,$now[3],$now[2],$now[1],$now[0],$$,$_[0];
+		close LOGFILE;
+	}
+}
+
+# -------------------------------------------------------------------
+
+sub debuglog
+{
+	if ($debug)
+	{
+		open(LOGFILE,">>/var/log/updatexlrator/debug.log");
+		my @now = localtime(time);
+		printf LOGFILE "%04d-%02d-%02d %02d:%02d:%02d [%d] [%s] %s\n",$now[5]+1900,$now[4]+1,$now[3],$now[2],$now[1],$now[0],$$,"updxlrator",$_[0];
+		close(LOGFILE);
+	}
+}
+
+# -------------------------------------------------------------------

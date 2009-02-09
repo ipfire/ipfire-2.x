@@ -1,8 +1,18 @@
 #!/usr/bin/perl
+#!/usr/bin/perl
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) 2006-2008 marco.s - http://update-accelerator.advproxy.net
+#
+# Portions (c) 2008 by dotzball - http://www.blockouttraffic.de
+#
+# $Id: updatexlrator.cgi,v 2.1.0 2008/07/16 00:00:00 marco.s Exp $
+#
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -22,7 +32,7 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
+#use warnings; no warnings 'once';# 'redefine', 'uninitialized';
 #use CGI::Carp 'fatalsToBrowser';
 
 use IO::Socket;
@@ -38,6 +48,7 @@ my %netsettings=();
 my %mainsettings=();
 my %proxysettings=();
 my %xlratorsettings=();
+my %dlinfo=();
 my $id=0;
 my @dfdata=();
 my $dfstr='';
@@ -79,6 +90,8 @@ my $errormessage='';
 
 my @repositorylist=();
 my @repositoryfiles=();
+my @downloadlist=();
+my @downloadfiles=();
 
 my @metadata=();
 
@@ -100,6 +113,9 @@ $xlratorsettings{'MAX_DOWNLOAD_RATE'} = '';
 $xlratorsettings{'ENABLE_AUTOCHECK'} = 'off';
 $xlratorsettings{'FULL_AUTOSYNC'} = 'off';
 $xlratorsettings{'NOT_ACCESSED_LAST'} = 'month1';
+$xlratorsettings{'REMOVE_NOSOURCE'} = 'off';
+$xlratorsettings{'REMOVE_OUTDATED'} = 'off';
+$xlratorsettings{'REMOVE_OBSOLETE'} = 'off';
 
 &Header::getcgihash(\%xlratorsettings);
 
@@ -258,22 +274,53 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr remove file'})
 
 	$updatefile = $xlratorsettings{'ID'};
 
-	if ($updatefile =~ /^download\//)
+	unless ($updatefile =~ /^download\//)
 	{
-		($uuid,$vendorid,$updatefile) = split('/',$updatefile);
-		if (-e "$repository/download/$vendorid/$updatefile") { system("rm $repository/download/$vendorid/$updatefile"); }
-	} else {
 		($vendorid,$uuid,$updatefile) = split('/',$updatefile);
 		if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
 	}
 }
 
+if (($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr cancel download'}) || ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr remove file'}))
+{
+	$updatefile = $xlratorsettings{'ID'};
+
+	if ($updatefile =~ /^download\//)
+	{
+		($uuid,$vendorid,$updatefile) = split('/',$updatefile);
+
+		if (-e "$repository/download/$vendorid/$updatefile.info")
+		{
+			&General::readhash("$repository/download/$vendorid/$updatefile.info", \%dlinfo);
+
+			$id = &getPID("\\s${General::swroot}/updatexlrator/bin/download\\s.*\\s".quotemeta($dlinfo{'SRCURL'})."\\s\\d\\s\\d\$");
+			if ($id) { system("/bin/kill -9 $id"); }
+			$id = &getPID("\\s/usr/bin/wget\\s.*\\s".quotemeta($dlinfo{'SRCURL'})."\$");
+			if ($id) { system("/bin/kill -9 $id"); }
+
+			system("rm $repository/download/$vendorid/$updatefile.info");
+		}
+
+		if (-e "$repository/download/$vendorid/$updatefile")
+		{
+			system("rm $repository/download/$vendorid/$updatefile");
+		}
+	}
+
+}
+
 $not_accessed_last =  $xlratorsettings{'NOT_ACCESSED_LAST'};
 undef($xlratorsettings{'NOT_ACCESSED_LAST'});
 
-if (-e "${General::swroot}/updatexlrator/settings") { &General::readhash("${General::swroot}/updatexlrator/settings", \%xlratorsettings); }
+if (-e "${General::swroot}/updatexlrator/settings")
+{
+	&General::readhash("${General::swroot}/updatexlrator/settings", \%xlratorsettings);
+}
 
-if ($xlratorsettings{'NOT_ACCESSED_LAST'} eq '') { $xlratorsettings{'NOT_ACCESSED_LAST'} = $not_accessed_last; } ;
+if ($xlratorsettings{'NOT_ACCESSED_LAST'} eq '')
+{
+	$xlratorsettings{'NOT_ACCESSED_LAST'} = $not_accessed_last;
+}
 
 ERROR:
 
@@ -292,8 +339,27 @@ $checked{'ENABLE_AUTOCHECK'}{$xlratorsettings{'ENABLE_AUTOCHECK'}} = "checked='c
 $checked{'FULL_AUTOSYNC'}{'off'} = '';
 $checked{'FULL_AUTOSYNC'}{'on'} = '';
 $checked{'FULL_AUTOSYNC'}{$xlratorsettings{'FULL_AUTOSYNC'}} = "checked='checked'";
+$checked{'REMOVE_NOSOURCE'}{'off'} = '';
+$checked{'REMOVE_NOSOURCE'}{'on'} = '';
+$checked{'REMOVE_NOSOURCE'}{$xlratorsettings{'REMOVE_NOSOURCE'}} = "checked='checked'";
+$checked{'REMOVE_OUTDATED'}{'off'} = '';
+$checked{'REMOVE_OUTDATED'}{'on'} = '';
+$checked{'REMOVE_OUTDATED'}{$xlratorsettings{'REMOVE_OUTDATED'}} = "checked='checked'";
+$checked{'REMOVE_OBSOLETE'}{'off'} = '';
+$checked{'REMOVE_OBSOLETE'}{'on'} = '';
+$checked{'REMOVE_OBSOLETE'}{$xlratorsettings{'REMOVE_OBSOLETE'}} = "checked='checked'";
 
+
+$selected{'AUTOCHECK_SCHEDULE'}{'daily'} = '';
+$selected{'AUTOCHECK_SCHEDULE'}{'weekly'} = '';
+$selected{'AUTOCHECK_SCHEDULE'}{'monthly'} = '';
 $selected{'AUTOCHECK_SCHEDULE'}{$xlratorsettings{'AUTOCHECK_SCHEDULE'}} = "selected='selected'";
+
+$selected{'NOT_ACCESSED_LAST'}{'week'} = '';
+$selected{'NOT_ACCESSED_LAST'}{'month1'} = '';
+$selected{'NOT_ACCESSED_LAST'}{'month3'} = '';
+$selected{'NOT_ACCESSED_LAST'}{'month6'} = '';
+$selected{'NOT_ACCESSED_LAST'}{'year'} = '';
 $selected{'NOT_ACCESSED_LAST'}{$xlratorsettings{'NOT_ACCESSED_LAST'}} = "selected='selected'";
 
 # ----------------------------------------------------
@@ -397,6 +463,171 @@ END
 
 print "</form>\n";
 
+# ----------------------------------------------------
+#   List pending downloads - if any
+# ----------------------------------------------------
+
+if (($xlratorsettings{'EXTENDED_GUI'} ne 'statistics') && ($xlratorsettings{'EXTENDED_GUI'} ne 'maintenance'))
+{
+	@downloadlist = <$repository/download/*>;
+
+	undef(@downloadfiles);
+	foreach (@downloadlist)
+	{
+		if (-d)
+		{
+			my @filelist = <$_/*>;
+			$vendorid = substr($_,rindex($_,"/")+1);
+			foreach(@filelist)
+			{
+				next if(/\.info$/);
+				$updatefile = substr($_,rindex($_,"/")+1);
+				$updatefile .= ":download/$vendorid/$updatefile";
+				$updatefile = " ".$updatefile;
+				push(@downloadfiles, $updatefile);
+			}
+		}
+	}
+
+	if (@downloadfiles)
+	{
+		&Header::openbox('100%', 'left', "$Lang::tr{'updxlrtr pending downloads'}");
+
+		print <<END
+<table>
+	<tr><td class='boldbase'><b>$Lang::tr{'updxlrtr current downloads'}</b></td></tr>
+</table>
+<table width='100%'>
+<colgroup span='3' width='2%'></colgroup>
+<colgroup span='1' width='0*'></colgroup>
+<colgroup span='3' width='5%'></colgroup>
+<colgroup span='1' width='2%'></colgroup>
+<tr>
+	<td class='base' align='center'>&nbsp;</td>
+	<td class='base' align='left' colspan='2'><i>$Lang::tr{'updxlrtr source'}</i></td>
+	<td class='base' align='center'><i>$Lang::tr{'updxlrtr filename'}</i></td>
+	<td class='base' align='center'><i>$Lang::tr{'updxlrtr filesize'}</i></td>
+	<td class='base' align='center'><i>$Lang::tr{'date'}</i></td>
+	<td class='base' align='center'><i>$Lang::tr{'updxlrtr progress'}</i></td>
+	<td class='base' align='center'>&nbsp;</td>
+</tr>
+END
+;
+		$id = 0;
+		foreach $updatefile (@downloadfiles)
+		{
+			$updatefile =~ s/.*://;
+			my $size_updatefile = 0;
+			my $mtime = 0;
+			if(-e "$repository/$updatefile") {
+				$size_updatefile = (-s "$repository/$updatefile");
+				$mtime = &getmtime("$repository/$updatefile");
+			}
+			if (-e "$repository/$updatefile.info") {
+				&General::readhash("$repository/$updatefile.info", \%dlinfo);
+			} else {
+				undef(%dlinfo);
+			}
+
+			$id++;
+			if ($id % 2) {
+				print "<tr bgcolor='$Header::table1colour'>\n"; }
+			else {
+				print "<tr bgcolor='$Header::table2colour'>\n"; }
+
+			$filesize = $size_updatefile;
+			1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
+
+			my ($SECdt,$MINdt,$HOURdt,$DAYdt,$MONTHdt,$YEARdt) = localtime($mtime);
+			$DAYdt   = sprintf ("%.02d",$DAYdt);
+			$MONTHdt = sprintf ("%.02d",$MONTHdt+1);
+			$YEARdt  = sprintf ("%.04d",$YEARdt+1900);
+			$filedate = $YEARdt."-".$MONTHdt."-".$DAYdt;
+
+			($uuid,$vendorid,$shortname) = split('/',$updatefile);
+
+		print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
+		if (&getPID("\\s/usr/bin/wget\\s.*\\s".quotemeta($dlinfo{'SRCURL'})."\$"))
+		{
+			print "<img src='/images/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' />&nbsp;</td>\n";
+		} else {
+			print "<img src='/images/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition suspended'}' />&nbsp;</td>\n";
+		}
+
+			print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
+			if ($vendorid =~ /^Adobe$/i)
+			{
+				print "<img src='/images/updxl-src-adobe.gif' alt='Adobe'}' />&nbsp;</td>\n";
+			} elsif ($vendorid =~ /^Microsoft$/i)
+			{
+				print "<img src='/images/updxl-src-windows.gif' alt='Microsoft'}' />&nbsp;</td>\n";
+			} elsif ($vendorid =~ /^Symantec$/i)
+			{
+				print "<img src='/images/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</td>\n";
+			} elsif ($vendorid =~ /^Linux$/i)
+			{
+				print "<img src='/images/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</td>\n";
+			} elsif ($vendorid =~ /^TrendMicro$/i)
+			{
+				print "<img src='/images/updxl-src-trendmicro.gif' alt='Trend Micro'}' />&nbsp;</td>\n";
+			} elsif ($vendorid =~ /^Apple$/i)
+			{
+				print "<img src='/images/updxl-src-apple.gif' alt='Apple'}' />&nbsp;</td>\n";
+			} elsif ($vendorid =~ /^Avast$/i)
+			{
+				print "<img src='/images/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
+			} else
+			{
+				if (-e "/home/httpd/html/images/updxl-src-" . $vendorid . ".gif")
+				{
+					print "<img src='/images/updxl-src-" . $vendorid . ".gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+				} else {
+					print "<img src='/images/updxl-src-unknown.gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+				}
+			}
+
+			$shortname = substr($updatefile,rindex($updatefile,"/")+1);
+			$shortname =~ s/(.*)_[\da-f]*(\.(exe|cab|psf)$)/$1_*$2/i;
+
+			$filesize = $dlinfo{'REMOTESIZE'};
+			1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
+			$dlinfo{'VENDORID'}=ucfirst $vendorid;
+
+			print <<END
+		<td class='base' align='center'>&nbsp;$dlinfo{'VENDORID'}&nbsp;</td>
+		<td class='base' align='left' title='cache:/$updatefile'>$shortname</td>
+		<td class='base' align='right'  nowrap='nowrap'>&nbsp;$filesize&nbsp;</td>
+		<td class='base' align='center' nowrap='nowrap'>&nbsp;$filedate&nbsp;</td>
+		<td class='base' align='center' nowrap='nowrap'>
+END
+;
+			my $percent="0%";
+			if ($dlinfo{'REMOTESIZE'} && $size_updatefile)
+			{
+				$percent=int(100 / ($dlinfo{'REMOTESIZE'} / $size_updatefile))."%";
+			}
+			print $percent; &percentbar($percent);
+			print <<END
+		</td>
+		<td align='center'>
+		<form method='post' name='frma$id' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='image' name='$Lang::tr{'updxlrtr cancel download'}' src='/images/delete.gif' title='$Lang::tr{'updxlrtr cancel download'}' alt='$Lang::tr{'updxlrtr cancel download'}' />
+		<input type='hidden' name='ID' value='$updatefile' />
+		<input type='hidden' name='ACTION' value='$Lang::tr{'updxlrtr cancel download'}' />
+		</form>
+		</td>
+	</tr>
+END
+;
+		}
+
+		print "</table>\n<br>\n<table>\n";
+		&printlegenddownload();
+		print "</table>\n";
+
+		&Header::closebox();
+	}
+}
 # =====================================================================================
 #  CACHE STATISTICS
 # =====================================================================================
@@ -422,6 +653,14 @@ foreach (@sources)
 {
 	$vendorid=substr($_,rindex($_,'/')+1,length($_));
 	push(@vendors,$vendorid);
+	$vendorstats{$vendorid."_filesize"} = 0;
+	$vendorstats{$vendorid."_requests"} = 0;
+	$vendorstats{$vendorid."_files"} = 0;
+	$vendorstats{$vendorid."_cachehits"} = 0;
+	$vendorstats{$vendorid."_0"} = 0;
+	$vendorstats{$vendorid."_1"} = 0;
+	$vendorstats{$vendorid."_2"} = 0;
+	$vendorstats{$vendorid."_3"} = 0;
 	@updatelist=<$_/*>;
 	foreach $data (@updatelist)
 	{
@@ -432,14 +671,24 @@ foreach (@sources)
 			close FILE;
 			chomp($sourceurl);
 			$updatefile = substr($sourceurl,rindex($sourceurl,'/')+1,length($sourceurl));
+
+			my $size_updatefile = 0;
+			if(-e "$data/$updatefile") {
+				$size_updatefile = (-s "$data/$updatefile");
+			}
+			else
+			{
+				# DEBUG
+				#die "file not found: $data/$updatefile\n";
+			}
 		#
 		# Total file size
 		#
-			$filesize += (-s "$data/$updatefile");
+			$filesize += $size_updatefile;
 		#
 		# File size for this source
 		#
-			$vendorstats{$vendorid."_filesize"} += (-s "$data/$updatefile");
+			$vendorstats{$vendorid."_filesize"} += $size_updatefile;
 		#
 		# Number of requests from cache for this source
 		#
@@ -470,11 +719,11 @@ foreach (@sources)
 		#
 		# Calculate cached traffic for this source
 		#
-			$vendorstats{$vendorid."_cachehits"} += $counts * (-s "$data/$updatefile");
+			$vendorstats{$vendorid."_cachehits"} += $counts * $size_updatefile;
 		#
 		# Calculate total cached traffic
 		#
-			$cachedtraffic += $counts * (-s "$data/$updatefile");
+			$cachedtraffic += $counts * $size_updatefile;
 
 		}
 	}
@@ -742,6 +991,7 @@ foreach (@sources)
 		$vendorid = substr($_,rindex($_,"/")+1);
 		foreach(@updatelist)
 		{
+			next if(/\.info$/);
 			$updatefile = substr($_,rindex($_,"/")+1);
 			$updatefile .= ":download/$vendorid/$updatefile";
 			$updatefile = " ".$updatefile;
@@ -833,29 +1083,67 @@ if (@repositoryfiles)
 <table width='100%'>
 <tr>
 	<td class='base' colspan='3'><input type='submit' name='ACTION' value='$Lang::tr{'updxlrtr purge'}' /> &nbsp;$Lang::tr{'updxlrtr all files'}</td>
-	<td class='base' width='25%'><input type='checkbox' name='REMOVE_OBSOLETE' $checked{'REMOVE_OBSOLETE'}{'on'} />&nbsp;$Lang::tr{'updxlrtr not accessed'}</td>
-	<td class='base' colspan='3'><select name='NOT_ACCESSED_LAST'>
-	<option value='week'   $selected{'NOT_ACCESSED_LAST'}{'week'}>$Lang::tr{'updxlrtr week'}</option>
-	<option value='month1' $selected{'NOT_ACCESSED_LAST'}{'month1'}>$Lang::tr{'updxlrtr month'}</option>
-	<option value='month3' $selected{'NOT_ACCESSED_LAST'}{'month3'}>$Lang::tr{'updxlrtr 3 months'}</option>
-	<option value='month6' $selected{'NOT_ACCESSED_LAST'}{'month6'}>$Lang::tr{'updxlrtr 6 months'}</option>
-	<option value='year'   $selected{'NOT_ACCESSED_LAST'}{'year'}>$Lang::tr{'updxlrtr year'}</option>
-	</select>
+	<td class='base' width='25%'>
+		<input type='checkbox' name='REMOVE_OBSOLETE' $checked{'REMOVE_OBSOLETE'}{'on'} />&nbsp;$Lang::tr{'updxlrtr not accessed'}
+	</td>
+	<td class='base' colspan='3'>
+		<select name='NOT_ACCESSED_LAST'>
+			<option value='week'   $selected{'NOT_ACCESSED_LAST'}{'week'}>$Lang::tr{'updxlrtr week'}</option>
+			<option value='month1' $selected{'NOT_ACCESSED_LAST'}{'month1'}>$Lang::tr{'updxlrtr month'}</option>
+			<option value='month3' $selected{'NOT_ACCESSED_LAST'}{'month3'}>$Lang::tr{'updxlrtr 3 months'}</option>
+			<option value='month6' $selected{'NOT_ACCESSED_LAST'}{'month6'}>$Lang::tr{'updxlrtr 6 months'}</option>
+			<option value='year'   $selected{'NOT_ACCESSED_LAST'}{'year'}>$Lang::tr{'updxlrtr year'}</option>
+		</select>
 	</td>
 </tr>
 <tr>
 </tr>
 <tr>
-	<td class='base' width='25%'><input type='checkbox' name='REMOVE_NOSOURCE' $checked{'REMOVE_NOSOURCE'}{'on'} />&nbsp;$Lang::tr{'updxlrtr marked as'}</td>
+	<td class='base' width='25%'>
+		<input type='checkbox' name='REMOVE_NOSOURCE' $checked{'REMOVE_NOSOURCE'}{'on'} />&nbsp;$Lang::tr{'updxlrtr marked as'}
+	</td>
 	<td class='base' width='3%'><img src='/images/updbooster/updxl-led-yellow.gif' alt='$Lang::tr{'updxlrtr condition nosource'}' /></td>
 	<td class='base' width='17%'>[<i>$Lang::tr{'updxlrtr condition nosource'}</i>]</td>
-	<td class='base' width='25%'><input type='checkbox' name='REMOVE_OUTDATED' $checked{'REMOVE_OUTDATED'}{'on'} />&nbsp;$Lang::tr{'updxlrtr marked as'}</td>
+	<td class='base' width='25%'>
+		<input type='checkbox' name='REMOVE_OUTDATED' $checked{'REMOVE_OUTDATED'}{'on'} />&nbsp;$Lang::tr{'updxlrtr marked as'}
+	</td>
 	<td class='base' width='3%'><img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' /></td>
 	<td class='base' width='27%'>[<i>$Lang::tr{'updxlrtr condition outdated'}</i>]</td>
 </tr>
 </table>
 </form>
 <hr size='1'>
+END
+;
+
+	&printcurrentfiles($Lang::tr{'updxlrtr current files'}, @repositoryfiles);
+	print "<br>\n<table>\n";
+	&printlegendicons();
+	&printlegendspacer();
+	&printlegendstatus();
+	&printlegendspacer();
+	&printlegendsource();
+	print "</table>\n";
+}
+
+&Header::closebox();
+
+}
+
+# =====================================================================================
+
+&Header::closebigbox();
+
+&Header::closepage();
+
+# -------------------------------------------------------------------
+
+sub printcurrentfiles
+{
+	my $title = shift;
+	my @files = @_;
+
+	print <<END
 <table>
 <tr><td class='boldbase'><b>$Lang::tr{'updxlrtr current files'}</b></td></tr>
 </table>
@@ -867,9 +1155,9 @@ if (@repositoryfiles)
 <tr>
 	<td class='base' align='center'>&nbsp;</td>
 	<td class='base' align='center'>&nbsp;</td>
-	<td class='base' align='center'><b>$Lang::tr{'updxlrtr filename'}</b></td>
-	<td class='base' align='center'><b>$Lang::tr{'updxlrtr filesize'}</b></td>
-	<td class='base' align='center'><b>$Lang::tr{'date'}</b></td>
+	<td class='base' align='center'><i>$Lang::tr{'updxlrtr filename'}</i></td>
+	<td class='base' align='center'><i>$Lang::tr{'updxlrtr filesize'}</i></td>
+	<td class='base' align='center'><i>$Lang::tr{'date'}</i></td>
 	<td class='base' align='center'><img src='/images/reload.gif' alt='$Lang::tr{'updxlrtr last access'}' /></td>
 	<td class='base' align='center'><img src='/images/updbooster/updxl-globe.gif' alt='$Lang::tr{'updxlrtr last checkup'}' /></td>
 	<td class='base' align='center'>&nbsp;</td>
@@ -877,19 +1165,26 @@ if (@repositoryfiles)
 END
 ;
 	$id = 0;
-	foreach $updatefile (@repositoryfiles)
+	foreach $updatefile (@files)
 	{
 		$updatefile =~ s/.*://;
+		my $size_updatefile = 0;
+		my $mtime = 0;
+		if(-e "$repository/$updatefile") {
+			$size_updatefile = (-s "$repository/$updatefile");
+			$mtime = &getmtime("$repository/$updatefile");
+		}
 
 		$id++;
 		if ($id % 2) {
 			print "<tr bgcolor='$Header::table1colour'>\n"; }
 		else {
 			print "<tr bgcolor='$Header::table2colour'>\n"; }
-		$filesize = (-s "$repository/$updatefile");
+
+		$filesize = $size_updatefile;
 		1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
 
-		my ($SECdt,$MINdt,$HOURdt,$DAYdt,$MONTHdt,$YEARdt) = localtime(&getmtime("$repository/$updatefile"));
+		my ($SECdt,$MINdt,$HOURdt,$DAYdt,$MONTHdt,$YEARdt) = localtime($mtime);
 		$DAYdt   = sprintf ("%.02d",$DAYdt);
 		$MONTHdt = sprintf ("%.02d",$MONTHdt+1);
 		$YEARdt  = sprintf ("%.04d",$YEARdt+1900);
@@ -1008,7 +1303,7 @@ END
 		}
 
 		$shortname = substr($updatefile,rindex($updatefile,"/")+1);
-		$shortname =~ s/(.*)_[\da-f]*(\.(exe|cab|psf)$)/\1_*\2/i;
+		$shortname =~ s/(.*)_[\da-f]*(\.(exe|cab|psf)$)/$1_*$2/i;
 
 print <<END
 		<td class='base' align='left' title='cache:/$updatefile'><a href="/updatecache/$updatefile">$shortname</a></td>
@@ -1028,10 +1323,41 @@ END
 ;
 	}
 
-print <<END
-</table>
-<br>
-<table>
+	print "</table>\n";
+
+}
+
+# -------------------------------------------------------------------
+
+sub printlegenddownload
+{
+	print <<END
+	<tr>
+		<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
+		<td class='base'>&nbsp;</td>
+		<td><img src='/images/updbooster/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr condition download'}</td>
+		<td class='base'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+		<td><img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition suspended'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr condition suspended'}</td>
+		<td class='base'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+		<td><img src='/images/delete.gif' alt='$Lang::tr{'updxlrtr cancel download'}' /></td>
+		<td class='base'>$Lang::tr{'updxlrtr cancel download'}</td>
+	</tr>
+END
+;
+}
+
+# -------------------------------------------------------------------
+
+sub printlegendicons
+{
+	print <<END
+
+
+
 	<tr>
 		<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
 		<td class='base'>&nbsp;</td>
@@ -1041,15 +1367,21 @@ print <<END
 		<td><img src='/images/updbooster/updxl-globe.gif' alt='$Lang::tr{'updxlrtr last checkup'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr last checkup'}</td>
 		<td class='base'>&nbsp;</td>
-		<td><img src='/images/delete.gif' alt='$Lang::tr{'updxlrtr remove file'}' /></td>
+		<td><img src='/images/updbooster/delete.gif' alt='$Lang::tr{'updxlrtr remove file'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr remove file'}</td>
 		<td class='base'>&nbsp;</td>
 		<td class='base'>&nbsp;</td>
 		<td class='base'>&nbsp;</td>
 	</tr>
-	<tr>
-		<td colspan='13'><br></td>
-	</tr>
+END
+;
+}
+
+# -------------------------------------------------------------------
+
+sub printlegendstatus
+{
+	print <<END
 	<tr>
 		<td class='base'>&nbsp; $Lang::tr{'status'}:</td>
 		<td class='base'>&nbsp;</td>
@@ -1062,7 +1394,8 @@ print <<END
 		<td align='center'><img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'updxlrtr condition outdated'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr condition outdated'}</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+
 		<td class='base'>&nbsp;</td>
 	</tr>
 	<tr>
@@ -1074,16 +1407,26 @@ print <<END
 		<td align='center'><img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition unknown'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr condition unknown'}</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'>&nbsp;</td>
 		<td class='base'>&nbsp;</td>
 		<td class='base'>&nbsp;</td>
-		<td align='center'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+		<td class='base'>&nbsp;</td>
+
 		<td class='base'>&nbsp;</td>
 	</tr>
+END
+;
+}
+
+# -------------------------------------------------------------------
+
+sub printlegendsource
+{
+	print <<END
 	<tr>
-		<td colspan='13'>&nbsp;<br></td>
-	</tr>
-	<tr>
+
+
+
 		<td class='base'>&nbsp; $Lang::tr{'updxlrtr source'}:</td>
 		<td class='base'>&nbsp;</td>
 		<td align='center'><img src='/images/updbooster/updxl-src-adobe.gif' alt='Adobe' /></td>
@@ -1131,23 +1474,23 @@ print <<END
 		<td align='center'></td>
 		<td class='base'>&nbsp;</td>
 	</tr>
-</table>
+
 END
 ;
 
 }
 
-&Header::closebox();
+# -------------------------------------------------------------------
 
+sub printlegendspacer
+{
+	print <<END
+	<tr>
+		<td colspan='13'>&nbsp;<br></td>
+	</tr>
+END
+;
 }
-
-# =====================================================================================
-
-# ----------------------------------------------------
-
-&Header::closebigbox();
-
-&Header::closepage();
 
 # -------------------------------------------------------------------
 
@@ -1176,6 +1519,13 @@ sub savesettings
 		symlink("/bin/false",$chk_cron_mly)
 	}
 
+	# don't save those variable to the settings file,
+	# but we wan't to have them in the hash again after saving to file
+	my $obsolete = $xlratorsettings{'REMOVE_OBSOLETE'};
+	my $nosource = $xlratorsettings{'REMOVE_NOSOURCE'};
+	my $outdated = $xlratorsettings{'REMOVE_OUTDATED'};
+	my $gui = $xlratorsettings{'EXTENDED_GUI'};
+
 	delete($xlratorsettings{'REMOVE_OBSOLETE'});
 	delete($xlratorsettings{'REMOVE_NOSOURCE'});
 	delete($xlratorsettings{'REMOVE_OUTDATED'});
@@ -1183,6 +1533,12 @@ sub savesettings
 	delete($xlratorsettings{'EXTENDED_GUI'});
 
 	&General::writehash("${General::swroot}/updatexlrator/settings", \%xlratorsettings);
+
+	# put temp variables back into the hash
+	$xlratorsettings{'REMOVE_OBSOLETE'} = $obsolete;
+	$xlratorsettings{'REMOVE_NOSOURCE'} = $nosource;
+	$xlratorsettings{'REMOVE_OUTDATED'} = $outdated;
+	$xlratorsettings{'EXTENDED_GUI'} = $gui;
 }
 
 # -------------------------------------------------------------------
@@ -1221,6 +1577,21 @@ sub getmtime
 	my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($_[0]);
 
 	return $mtime;
+}
+
+# -------------------------------------------------------------------
+
+sub getPID
+{
+	my $pid='';
+	my @psdata=`ps ax --no-heading`;
+
+	foreach (@psdata)
+	{
+		if (/$_[0]/) { ($pid)=/^\s*(\d+)/; }
+	}
+
+	return $pid;
 }
 
 # -------------------------------------------------------------------
