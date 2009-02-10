@@ -19,10 +19,10 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 init_networking() {
 	boot_mesg "Loading firewall modules into the kernel"
 	modprobe iptable_nat || failed=1
-	for i in $(find /lib/modules/$(uname -r) -name ip_conntrack*); do
+	for i in $(find /lib/modules/$(uname -r) -name nf_conntrack*); do
 		modprobe $(basename $i | cut -d. -f1) || failed=1
 	done
-	for i in $(find /lib/modules/$(uname -r) -name ip_nat*); do
+	for i in $(find /lib/modules/$(uname -r) -name nf_nat*); do
 		modprobe $(basename $i | cut -d. -f1) || failed=1
 	done
 	(exit ${failed})
