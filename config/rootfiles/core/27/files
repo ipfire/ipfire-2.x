@@ -27,3 +27,5 @@ var/ipfire/updatexlrator/updxlrator-lib.pl
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 var/ipfire/langs
+lib/modules/2.6.25.19-ipfire/kernel/drivers/net/imq.ko
+var/ipfire/qos/bin/makeqosscripts.pl
