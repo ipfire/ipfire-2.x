@@ -32,11 +32,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 3
+PAK_VER    = 4
 
 CHAN_CAPI  = chan_capi-1.0.2
 
-DEPS       = "sox libpri spandsp libmad"
+DEPS       = "libpri spandsp"
 
 ###############################################################################
 # Top-level Rules
