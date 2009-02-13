@@ -300,7 +300,6 @@
 * unzip552
 * urlgrabber-3.1.0
 * usbutils-0.72
-* ushare-1.1a
 * util-linux-2.12r
 * v4l-dvb-e9a442d3b53a-kmod-2.6.25.19
 * vdr-1.6.0

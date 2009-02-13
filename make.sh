@@ -571,7 +571,7 @@ buildipfire() {
   ipfiremake hostapd
   ipfiremake urlgrabber
   ipfiremake syslinux
-  ipfiremake tftp-hpa
+  ipfiremake tftpd
   ipfiremake cpufrequtils
   ipfiremake dbus
   ipfiremake bluetooth
@@ -585,8 +585,6 @@ buildipfire() {
   ipfiremake splix
   ipfiremake streamripper
   ipfiremake sshfs
-  ipfiremake libdlna
-  ipfiremake ushare
   ipfiremake sqlite
   ipfiremake taglib
   ipfiremake mediatomb

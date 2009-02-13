@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 1.1a
+VER        = 0.48
 
-THISAPP    = ushare-$(VER)
+THISAPP    = tftp-hpa-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = ushare
+PROG       = tftpd
 PAK_VER    = 1
 
-DEPS       = "libdlna"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5bbcdbf1ff85a9710fa3d4e82ccaa251
+$(DL_FILE)_MD5 = f2e0a1ca0c49ae46ecad26a54df3e887
 
 install : $(TARGET)
 
@@ -77,11 +77,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix='/usr' --enable-dlna
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --without-tcpwrappers
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	-mkdir -p /var/mp3 /var/video
-	echo Folder for media files > /var/video/info
-	echo Folder for music files > /var/mp3/info
+	mv -fv /usr/sbin/in.tftpd /usr/sbin/tftpd
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

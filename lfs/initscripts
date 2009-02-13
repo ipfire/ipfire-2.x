@@ -132,9 +132,6 @@ $(TARGET) :
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc0.d/K85tmpfs
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc3.d/S01tmpfs
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc6.d/K85tmpfs
-	ln -sf ../init.d/ushare      /etc/rc.d/rc3.d/S98ushare
-	ln -sf ../init.d/ushare      /etc/rc.d/rc0.d/K02ushare
-	ln -sf ../init.d/ushare      /etc/rc.d/rc6.d/K02ushare
 	ln -sf ../init.d/mediatomb   /etc/rc.d/rc3.d/S98mediatomb
 	ln -sf ../init.d/mediatomb   /etc/rc.d/rc0.d/K02mediatomb
 	ln -sf ../init.d/mediatomb   /etc/rc.d/rc6.d/K02mediatomb
