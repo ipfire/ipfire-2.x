@@ -38,3 +38,16 @@ sbin/mount.ntfs-3g
 usr/bin/ntfs-3g.probe
 usr/lib/libntfs-3g.so
 usr/lib/pkgconfig/libntfs-3g.pc
+etc/madwifi.conf
+etc/modprobe.d/madwifi
+usr/bin/80211debug
+usr/bin/80211stats
+usr/bin/ath_info
+usr/bin/athchans
+usr/bin/athctrl
+usr/bin/athdebug
+usr/bin/athkey
+usr/bin/athstats
+usr/bin/madwifi-unload
+usr/bin/wlanconfig
+usr/bin/wpakey
