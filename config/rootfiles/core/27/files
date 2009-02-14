@@ -30,3 +30,11 @@ var/ipfire/langs
 lib/modules/2.6.25.19-ipfire/kernel/drivers/net/imq.ko
 var/ipfire/qos/bin/makeqosscripts.pl
 etc/init.d/network
+bin/ntfs-3g
+lib/libntfs-3g.so
+lib/libntfs-3g.so.49
+lib/libntfs-3g.so.49.0.0
+sbin/mount.ntfs-3g
+usr/bin/ntfs-3g.probe
+usr/lib/libntfs-3g.so
+usr/lib/pkgconfig/libntfs-3g.pc
