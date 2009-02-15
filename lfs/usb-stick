@@ -44,8 +44,8 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGfdd := /install/images/$(SNAME)-$(VERSION)-install-usb-fdd.$(MACHINE).img
-IMGhdd := /install/images/$(SNAME)-$(VERSION)-install-usb-hdd.$(MACHINE).img
+IMGfdd := /install/images/$(SNAME)-$(VERSION)-install-usb-fdd.$(MACHINE)-$(ED)-core$(CORE).img
+IMGhdd := /install/images/$(SNAME)-$(VERSION)-install-usb-hdd.$(MACHINE)-$(ED)-core$(CORE).img
 IMGfs  := /install/images/fs
 
 ifeq "$(ED)" "devel"

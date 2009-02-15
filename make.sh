@@ -25,6 +25,7 @@
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
 VERSION="2.3"
+CORE="27"
 GIT_BRANCH=master:master										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
 CONFIG_ROOT=/var/ipfire					# Configuration rootdir
@@ -597,6 +598,7 @@ buildipfire() {
   git status >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
+  echo $(CORE) > $BASEDIR/build/opt/pakfire/db/core/mine
 }
 
 buildinstaller() {

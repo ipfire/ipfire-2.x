@@ -48,8 +48,6 @@ md5 :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf /install/cdrom /tmp/*
 
-	cp -f $(DIR_SRC)/config/rootfiles/cdrom_corever /opt/pakfire/db/core/mine
-
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
 	mkdir -p /install/cdrom/doc
@@ -91,4 +89,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 						xargs md5sum > md5sum.txt; \
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
     	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(ED).iso
+    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(ED)-core$(CORE).iso
