@@ -503,10 +503,6 @@ buildipfire() {
   ipfiremake lame
   ipfiremake sox
   ipfiremake libshout
-  ipfiremake icecast
-  ipfiremake icegenerator
-  ipfiremake mpd
-  ipfiremake mpc
   ipfiremake xvid
   ipfiremake libmpeg2
   ipfiremake cmake
@@ -561,6 +557,10 @@ buildipfire() {
   ipfiremake videolan
   ipfiremake vdr
   ipfiremake w_scan
+  ipfiremake icecast
+  ipfiremake icegenerator
+  ipfiremake mpd
+  ipfiremake mpc
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake bc
