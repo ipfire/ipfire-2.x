@@ -598,7 +598,7 @@ buildipfire() {
   git status >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
-  echo $(CORE) > $BASEDIR/build/opt/pakfire/db/core/mine
+  echo $CORE > $BASEDIR/build/opt/pakfire/db/core/mine
 }
 
 buildinstaller() {
