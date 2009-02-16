@@ -1,5 +1,5 @@
 info_begin
-mpd_version: 0.13.0
+mpd_version: MPD_VERSION
 fs_charset: UTF-8
 info_end
 songList begin

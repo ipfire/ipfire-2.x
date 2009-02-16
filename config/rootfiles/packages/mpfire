@@ -33,6 +33,7 @@ var/ipfire/mpfire/mpd.conf
 var/ipfire/mpfire/playlist.m3u
 var/ipfire/mpfire/settings
 var/ipfire/mpfire/webradio
+var/mp3/info
 usr/local/bin/mpfirectrl
 srv/web/ipfire/cgi-bin/mpfire.cgi
 srv/web/ipfire/html/images/mpfire
