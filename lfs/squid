@@ -86,20 +86,26 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-ntlm-auth-helpers="SMB" \
 	   --enable-useragent-log \
 	   --enable-referer-log \
-           --enable-snmp \
-	   --with-pthreads --with-dl
+	      --enable-snmp \
+	   --with-pthreads --with-dl \
+	   --with-maxfd="16384"
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
 	rm -f /etc/squid/squid.conf
 	ln -sf /var/ipfire/proxy/squid.conf /etc/squid/squid.conf
+	rm -f /etc/squid/cachemgr.conf
+	ln -sf /var/ipfire/proxy/cachemgr.conf /etc/squid/cachemgr.conf
 	rm -f /etc/squid/errors
 	ln -sf /usr/lib/squid/errors/English /etc/squid/errors
 
 	-mkdir -p /var/log/cache /var/log/squid /var/log/updatexlrator
 	touch /var/log/squid/access.log
 	chown -R squid:squid /var/log/squid /var/log/cache /var/log/updatexlrator
+
+	cp /usr/lib/squid/cachemgr.cgi /srv/web/ipfire/cgi-bin/cachemgr.cgi
+	chown nobody.nobody /srv/web/ipfire/cgi-bin/cachemgr.cgi
 
 	cp -f $(DIR_SRC)/config/updxlrator/updxlrator /usr/sbin/updxlrator
 	cp -f $(DIR_SRC)/config/updxlrator/checkup /var/ipfire/updatexlrator/bin/checkup

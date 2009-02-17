@@ -90,6 +90,10 @@ case "$1" in
 		$0 start
 		;;
 
+	reconfigure)
+	/usr/sbin/squid -k reconfigure
+		;;
+
 	status)
 		statusproc /usr/sbin/squid
 		statusproc /usr/lib/squid/unlinkd

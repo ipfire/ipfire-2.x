@@ -192,6 +192,7 @@ $proxysettings{'TRANSPARENT_BLUE'} = 'off';
 $proxysettings{'PROXY_PORT'} = '800';
 $proxysettings{'VISIBLE_HOSTNAME'} = '';
 $proxysettings{'ADMIN_MAIL_ADDRESS'} = '';
+$proxysettings{'ADMIN_PASSWORD'} = '';
 $proxysettings{'ERR_LANGUAGE'} = 'German';
 $proxysettings{'ERR_DESIGN'} = 'ipfire';
 $proxysettings{'SUPPRESS_VERSION'} = 'off';
@@ -203,8 +204,10 @@ $proxysettings{'UPSTREAM_PROXY'} = '';
 $proxysettings{'UPSTREAM_USER'} = '';
 $proxysettings{'UPSTREAM_PASSWORD'} = '';
 $proxysettings{'LOGGING'} = 'off';
+$proxysettings{'CACHEMGR'} = 'off';
 $proxysettings{'LOGQUERY'} = 'off';
 $proxysettings{'LOGUSERAGENT'} = 'off';
+$proxysettings{'FILEDESCRIPTORS'} = '4096';
 $proxysettings{'CACHE_MEM'} = '2';
 $proxysettings{'CACHE_SIZE'} = '50';
 $proxysettings{'MAX_SIZE'} = '4096';
@@ -331,7 +334,7 @@ if ($proxysettings{'ACTION'} eq $Lang::tr{'edit'})
 	$proxysettings{'NCSA_PASS_CONFIRM'} = $proxysettings{'NCSA_PASS'};
 }
 
-if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}))
+if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) || ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}))
 {
 	if ($proxysettings{'ENABLE'} !~ /^(on|off)$/ ||
 	    $proxysettings{'TRANSPARENT'} !~ /^(on|off)$/ ||
@@ -353,6 +356,12 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 			$errormessage = $Lang::tr{'advproxy errmsg hdd cache size'};
 			goto ERROR;
 		}
+	}
+	if (!($proxysettings{'FILEDESCRIPTORS'} =~ /^\d+/) ||
+		($proxysettings{'FILEDESCRIPTORS'} < 1) || ($proxysettings{'FILEDESCRIPTORS'} > 16384))
+	{
+		$errormessage = $Lang::tr{'proxy errmsg filedescriptors'};
+		goto ERROR;
 	}
 	if (!($proxysettings{'CACHE_MEM'} =~ /^\d+/) ||
 		($proxysettings{'CACHE_MEM'} < 1))
@@ -625,6 +634,8 @@ ERROR:
 		&writeconfig;
 		&writepacfile;
 
+		if ($proxysettings{'CACHEMGR'} eq 'on'){&writecachemgr;}
+
 		system ('/usr/local/bin/squidctrl', 'disable');
 		unlink "${General::swroot}/proxy/enable";
 		unlink "${General::swroot}/proxy/transparent";
@@ -643,7 +654,8 @@ ERROR:
 			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
 
 		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
-	}
+		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { system('/usr/local/bin/squidctrl reconfigure >/dev/null 2>&1'); }	
+  }
 }
 
 if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy clear cache'})
@@ -704,6 +716,9 @@ $checked{'OFFLINE_MODE'}{$proxysettings{'OFFLINE_MODE'}} = "checked='checked'";
 $checked{'LOGGING'}{'off'} = '';
 $checked{'LOGGING'}{'on'} = '';
 $checked{'LOGGING'}{$proxysettings{'LOGGING'}} = "checked='checked'";
+$checked{'CACHEMGR'}{'off'} = '';
+$checked{'CACHEMGR'}{'on'} = '';
+$checked{'CACHEMGR'}{$proxysettings{'CACHEMGR'}} = "checked='checked'";
 $checked{'LOGQUERY'}{'off'} = '';
 $checked{'LOGQUERY'}{'on'} = '';
 $checked{'LOGQUERY'}{$proxysettings{'LOGQUERY'}} = "checked='checked'";
@@ -915,8 +930,7 @@ if ($netsettings{'BLUE_DEV'}) {
 	print "<td colspan='2'>&nbsp;</td>";
 }
 print <<END
-	<td class='base'>$Lang::tr{'advproxy admin mail'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' name='ADMIN_MAIL_ADDRESS' value='$proxysettings{'ADMIN_MAIL_ADDRESS'}' /></td>
+	<td colspan='2'>&nbsp;</td>
 </tr>
 <tr>
 END
@@ -1037,6 +1051,18 @@ print <<END
 <table width='100%'>
 <tr>
 	<td colspan='4'><b>$Lang::tr{'advproxy cache management'}</b></td>
+</tr>
+<tr>
+	<td class='base'>$Lang::tr{'proxy cachemgr'}:</td>
+	<td><input type='checkbox' name='CACHEMGR' $checked{'CACHEMGR'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'advproxy admin mail'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td><input type='text' name='ADMIN_MAIL_ADDRESS' value='$proxysettings{'ADMIN_MAIL_ADDRESS'}' /></td>
+</tr>
+<tr>
+	<td class='base'>$Lang::tr{'proxy filedescriptors'}:</td>
+	<td><input type='text' name='FILEDESCRIPTORS' value='$proxysettings{'FILEDESCRIPTORS'}' size='5' /></td>
+	<td class='base'>$Lang::tr{'proxy admin password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td><input type='text' name='ADMIN_PASSWORD' value='$proxysettings{'ADMIN_PASSWORD'}' /></td>
 </tr>
 <tr>
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
@@ -2111,6 +2137,7 @@ print <<END
 <tr>
 	<td>&nbsp;</td>
 	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'proxy reconfigure'}' /></td>
 	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'advproxy save and restart'}' /></td>
 	<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'advproxy clear cache'}' /></td>
 	<td>&nbsp;</td>
@@ -3856,7 +3883,11 @@ END
 		print FILE " $proxysettings{'VISIBLE_HOSTNAME'}\n\n";
 	}
 
-	if (!($proxysettings{'ADMIN_MAIL_ADDRESS'} eq '')) { print FILE "cache_mgr $proxysettings{'ADMIN_MAIL_ADDRESS'}\n\n"; }
+	if (!($proxysettings{'ADMIN_MAIL_ADDRESS'} eq '')) { print FILE "cache_mgr $proxysettings{'ADMIN_MAIL_ADDRESS'}\n"; }
+	if (!($proxysettings{'ADMIN_PASSWORD'} eq '')) { print FILE "cachemgr_passwd $proxysettings{'ADMIN_PASSWORD'} all\n"; }
+	print FILE "\n";
+
+	print FILE "max_filedescriptors $proxysettings{'FILEDESCRIPTORS'}\n\n";
 
 	# Write the parent proxy info, if needed.
 	if ($remotehost ne '')
@@ -3951,6 +3982,17 @@ sub deluser
 	close(FILE);
 
 	return;
+}
+
+# -------------------------------------------------------------------
+
+sub writecachemgr
+{
+	open(FILE, ">${General::swroot}/proxy/cachemgr.conf");
+	flock(FILE, 2);
+	print FILE "$netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}\n";
+	print FILE "localhost";
+  return;
 }
 
 # -------------------------------------------------------------------

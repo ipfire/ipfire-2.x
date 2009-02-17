@@ -2039,6 +2039,11 @@
 'you can only define one roadwarrior connection when using pre-shared key authentication' => 'You can only define one Roadwarrior connection when using pre-shared key authentication.<br />Either you already have a Roadwarrior connection with pre-shared key authentication, or you\'re trying to add one now.',
 'your department' => 'Your Department',
 'your e-mail' => 'Your E-mail Address',
+'proxy errmsg filedescriptors' => 'Wrong amount of filedescriptors',
+'proxy filedescriptors' => 'Amount of fildescriptors',
+'proxy admin password' => 'Cache administrator password',
+'proxy cachemgr' => 'Activate cachemanager',
+'proxy reconfigure' => 'Save and Reload',
 );
 
 #EOF

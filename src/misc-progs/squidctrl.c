@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 
 	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\nsquidctrl (start|stop|restart|flush)\n\n");
+		fprintf(stderr, "\nNo argument given.\n\nsquidctrl (start|stop|restart|flush|reconfigure)\n\n");
 		exit(1);
 	}
 
@@ -29,6 +29,8 @@ int main(int argc, char *argv[]) {
 		safe_system("/etc/rc.d/init.d/squid stop");
 	} else if (strcmp(argv[1], "restart") == 0) {
 		safe_system("/etc/rc.d/init.d/squid restart");
+	} else if (strcmp(argv[1], "reconfigure") == 0) {
+		safe_system("/etc/rc.d/init.d/squid reconfigure");
 	} else if (strcmp(argv[1], "flush") == 0) {
 		safe_system("/etc/rc.d/init.d/squid flush");
 	} else if (strcmp(argv[1], "enable") == 0) {
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "disable") == 0) {
 		safe_system("rm -f /etc/rc.d/rc*.d/*squid >/dev/null 2>&1");
 	} else {
-		fprintf(stderr, "\nBad argument given.\n\nsquidctrl (start|stop|restart|flush)\n\n");
+		fprintf(stderr, "\nBad argument given.\n\nsquidctrl (start|stop|restart|flush|reconfigure)\n\n");
 		exit(1);
 	}
 

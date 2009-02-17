@@ -2006,6 +2006,11 @@
 'you can only define one roadwarrior connection when using pre-shared key authentication' => 'Sie können nur eine Roadwarrior Verbindung definieren, wenn die Pre-shared Schlüsselauthentifizierung verwendet wird.<br/>Entweder haben Sie bereits eine Roadwarrior Verbindung mit Pre-shared Schlüsselauthentifizierung, oder Sie versuchen gerade eine hinzuzufügen.',
 'your department' => 'Ihre Abteilung',
 'your e-mail' => 'Ihre E-mail Adresse',
+'proxy errmsg filedescriptors' => 'Ungültiger Anzahl Filedescriptoren',
+'proxy filedescriptors' => 'Anzahl Fildescriptoren',
+'proxy admin password' => 'Cache Administrator Passwort',
+'proxy cachemgr' => 'Cachemanager aktivieren',
+'proxy reconfigure' => 'Speichern und Laden',
 );
 
 #EOF
