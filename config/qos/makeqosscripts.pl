@@ -503,8 +503,8 @@ print <<END
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-INC
 	iptables -t mangle -A POSTROUTING -m mark ! --mark 0 -o ! $qossettings{'RED_DEV'} -j IMQ --todev 0
-	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle -I FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
+	iptables -t mangle -I FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
 
 	### SET TOS
 END
