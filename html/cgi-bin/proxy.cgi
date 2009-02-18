@@ -1,3 +1,4 @@
+
 #!/usr/bin/perl
 ###############################################################################
 #                                                                             #
@@ -3992,6 +3993,7 @@ sub writecachemgr
 	flock(FILE, 2);
 	print FILE "$netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}\n";
 	print FILE "localhost";
+	close(FILE);
   return;
 }
 
