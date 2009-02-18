@@ -317,7 +317,7 @@ if ( $mpfiresettings{'ACTION'} eq "scan" ){
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ####################################
 
-$mpfiresettings{'MUSICDIR'} = "/";
+$mpfiresettings{'MUSICDIR'} = "/var/mp3";
 &General::readhash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 
 ############################################################################################################################

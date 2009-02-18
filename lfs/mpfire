@@ -62,10 +62,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 755 $(DIR_SRC)/config/mpfire/mpfire.pl /var/ipfire/mpfire/bin
 	install -v -m 664 $(DIR_SRC)/config/mpfire/mpd.conf /var/ipfire/mpfire/
 	install -v -m 644 $(DIR_SRC)/config/mpfire/webradio /var/ipfire/mpfire/
-	install -v -m 644 $(DIR_SRC)/config/mpfire/mpd.db /var/ipfire/mpfire/db/mpd.db
+	echo "Folder for mpd database" > /var/ipfire/mpfire/db/info
 	chown root.nobody /var/ipfire/mpfire/{mpd.conf,playlist.m3u}
 	chown nobody.nobody /var/ipfire/mpfire/{settings,webradio}
-	chown root.nobody /var/ipfire/mpfire/db/mpd.db
 	chmod 664 /var/ipfire/mpfire/playlist.m3u
 	chmod 755 /srv/web/ipfire/html/images/mpfire
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/mpfire /var/ipfire/backup/addons/includes/mpfire
