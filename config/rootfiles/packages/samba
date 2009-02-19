@@ -160,6 +160,7 @@ usr/sbin/winbindd
 #usr/share/man/man8/vfs_readonly.8
 #usr/share/man/man8/vfs_recycle.8
 #usr/share/man/man8/vfs_shadow_copy.8
+#usr/share/man/man8/vfs_shadow_copy2.8
 #usr/share/man/man8/vfs_smb_traffic_analyzer.8
 #usr/share/man/man8/vfs_streams_depot.8
 #usr/share/man/man8/vfs_streams_xattr.8
