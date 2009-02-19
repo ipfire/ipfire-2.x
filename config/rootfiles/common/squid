@@ -9,12 +9,12 @@ etc/squid/squid.conf
 #etc/squid/squid.conf.default
 srv/web/ipfire/html/proxy.pac
 srv/web/ipfire/html/wpad.dat
+srv/web/ipfire/cgi-bin/cachemgr.cgi
 #usr/bin/RunCache
 #usr/bin/cossdump
 usr/bin/squidclient
 #usr/lib/squid
 usr/lib/squid/auth
-usr/lib/squid/cachemgr.cgi
 usr/lib/squid/diskd-daemon
 #usr/lib/squid/errors
 #usr/lib/squid/errors.ipfire
