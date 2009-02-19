@@ -54,3 +54,4 @@ usr/bin/athstats
 usr/bin/madwifi-unload
 usr/bin/wlanconfig
 usr/bin/wpakey
+usr/local/bin/rebuild-initrd

@@ -1,0 +1,43 @@
+#!/bin/bash
+############################################################################
+#                                                                          #
+# This file is part of the IPFire Firewall.                                #
+#                                                                          #
+# IPFire is free software; you can redistribute it and/or modify           #
+# it under the terms of the GNU General Public License as published by     #
+# the Free Software Foundation; either version 3 of the License, or        #
+# (at your option) any later version.                                      #
+#                                                                          #
+# IPFire is distributed in the hope that it will be useful,                #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+# GNU General Public License for more details.                             #
+#                                                                          #
+# You should have received a copy of the GNU General Public License        #
+# along with IPFire; if not, write to the Free Software                    #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
+#                                                                          #
+# Copyright (C) 2008 IPFire-Team <info@ipfire.org>.                        #
+#                                                                          #
+############################################################################
+#
+#
+KVER=`uname -r | cut -d"-" -f1`
+ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
+echo
+echo Rebuild the Initramdisk ...
+cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
+#
+# Made initramdisk
+#
+if [ "${ROOT:0:7}" == "/dev/sd" ]; then
+    # Remove ide hook if root is on sda 
+    sed -i "s| ide | |g" /etc/mkinitcpio.conf
+else
+if [ "${ROOT:0:7}" == "/dev/hd" ]; then
+    # Remove pata & sata hook if root is on hda 
+    sed -i "s| pata | |g" /etc/mkinitcpio.conf
+    sed -i "s| sata | |g" /etc/mkinitcpio.conf
+fi
+fi
+mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img

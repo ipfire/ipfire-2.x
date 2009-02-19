@@ -66,6 +66,7 @@ usr/local/bin/qosd
 usr/local/bin/readhash
 usr/local/bin/run-parts
 usr/local/bin/scanhd
+usr/local/bin/rebuild-initrd
 usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
