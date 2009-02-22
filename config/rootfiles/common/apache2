@@ -1298,6 +1298,7 @@ etc/httpd/conf/uid.conf
 #etc/httpd/conf/vhosts.d
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
+srv/web/ipfire/cgi-bin/atm-status.cgi
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/connections.cgi

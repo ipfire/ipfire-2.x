@@ -64,3 +64,8 @@
 				'title' => "$Lang::tr{'qos graphs'}",
 				'enabled' => 1,
 				};
+    $substatus->{'75.atm-status'} = {'caption' => 'Atm-status',
+				  'uri' => '/cgi-bin/atm-status.cgi',
+				  'title' => 'Atm-status',
+				  'enabled' => `find /sys/class/atm/*/device`,
+				  };
