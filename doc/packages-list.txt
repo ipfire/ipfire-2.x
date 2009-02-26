@@ -235,6 +235,7 @@
 * pcmciautils-014
 * pcre-7.7
 * perl-5.8.8
+* perl-gettext-1.05
 * php-5.2.4
 * phpSANE-0.3.3
 * pkg-config-0.20
