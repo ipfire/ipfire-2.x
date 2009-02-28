@@ -90,7 +90,9 @@ int main(int argc, char *argv[])
 	newtInit();
 	newtCls();
 
-	/* Do usb detection first for usb keyboard */
+	newtDrawRootText(14, 0, NAME " " VERSION " - " SLOGAN );
+	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
+
 	if (! (cmdfile = fopen("/proc/cmdline", "r")))
 	{
 		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
@@ -104,8 +106,11 @@ int main(int argc, char *argv[])
 		}		
 	}
 
+	// Starting hardware detection
+	runcommandwithstatus("/bin/probehw.sh", "Probing Hardware ...");
+
+	// Load common modules
 	mysystem("/sbin/modprobe ide-generic");
-	// mysystem("/sbin/modprobe generic");
 	mysystem("/sbin/modprobe ide-cd");
 	mysystem("/sbin/modprobe ide-disk");
 	mysystem("/sbin/modprobe uhci-hcd");
@@ -138,12 +143,7 @@ int main(int argc, char *argv[])
 	ctr = langtrs[choice];
 	strcpy(shortlangname, shortlangnames[choice]);
 
-	newtDrawRootText(14, 0, NAME " " VERSION " - " SLOGAN );
 	newtPushHelpLine(ctr[TR_HELPLINE]);
-	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
-
-	// Starting hardware detection
-	runcommandwithstatus("/bin/probehw.sh", ctr[TR_PROBING_HARDWARE]);
 
 	sprintf(message, ctr[TR_WELCOME], NAME);
 	newtWinMessage(title, ctr[TR_OK], message);
