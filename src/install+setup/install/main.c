@@ -106,6 +106,9 @@ int main(int argc, char *argv[])
 		}		
 	}
 
+	// Load ata-piix prior kudzu because kudzu use ata-generic for ich7
+	mysystem("/sbin/modprobe ata_piix");
+
 	// Starting hardware detection
 	runcommandwithstatus("/bin/probehw.sh", "Probing Hardware ...");
 
