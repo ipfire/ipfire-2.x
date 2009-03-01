@@ -1,0 +1,50 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/vdradmind
+#
+# Description : This is a script that starts vdradmind as deamon
+#
+# Authors     : Arne Fitzenreiter (arne@ipfire.org)
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting VDR Webadministration Tool..."
+		if [ "$(ps -A | grep vdradmind)" != "" ]; then
+		   boot_mesg "Error! Already running!"
+		   echo_failure
+		   exit 1;
+		fi
+		loadproc /opt/vdradmin/vdradmind.pl
+		;;
+		
+	stop)
+		boot_mesg "Stopping VDR Webadministration Tool..."
+		killproc /opt/vdradmin/vdradmind.pl
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/vdradmind
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/vdr

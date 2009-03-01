@@ -303,6 +303,7 @@
 * util-linux-2.12r
 * v4l-dvb-e9a442d3b53a-kmod-2.6.25.19
 * vdr-1.6.0
+* vdradmin-am-3.6.4
 * vim-7.0
 * vlan.1.9
 * vlc-0.8.6i
