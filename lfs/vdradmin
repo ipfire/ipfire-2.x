@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdradmin
 PAK_VER    = 1
 
-DEPS       = "perl-gettext"
+DEPS       = perl-gettext vdr
 
 ###############################################################################
 # Top-level Rules
@@ -79,5 +79,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_SRC) && mv -vf vdradmin-am-$(VER) vdradmin && mv -vf vdradmin /opt
-	#@rm -rf $(DIR_APP)
+	cp src/initscripts/init.d/vdradmin /etc/init.d
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

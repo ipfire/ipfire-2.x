@@ -74,6 +74,7 @@ case "$1" in
 		              IFACE=`/bin/cat /var/ipfire/red/iface 2>/dev/null | /usr/bin/tr -d '\012'`
 	                sed -e "s/^Interface.*/Interface       ${IFACE}/" /var/ipfire/guardian/guardian.conf > temp
 	                mv temp /var/ipfire/guardian/guardian.conf
+			chown nobody.root /var/ipfire/guardian/guardian.conf
 	              
                   boot_mesg "Starting Guardian..."
 		              loadproc /usr/local/bin/guardian.pl -c /var/ipfire/guardian/guardian.conf
