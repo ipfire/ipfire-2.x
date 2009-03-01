@@ -75,6 +75,7 @@ $qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'TOS'} = '';
 $qossettings{'VALID'} = 'yes';
+$qossettings{'IMQ_MODE'} = 'PREROUTING';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 
@@ -498,6 +499,9 @@ foreach $subclassentry (sort @subclasses) {
 		print "\ttc filter add dev $qossettings{'DEVICE'} parent 2:0 prio 0 protocol ip handle $qossettings{'SCLASS'} fw flowid 2:$qossettings{'SCLASS'}\n";
 	}
 }
+
+if ( $qossettings{'IMQ_MODE'} eq 'POSTROUTING' )
+{
 print <<END
 
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
@@ -509,6 +513,22 @@ print <<END
 	### SET TOS
 END
 ;
+}
+else
+{
+print <<END
+
+	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
+	iptables -t mangle -N QOS-INC
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0
+	iptables -t mangle -I PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
+
+	### SET TOS
+END
+;
+}
+
   	foreach $tosruleentry (sort @tosrules)
   	{
   		@tosruleline = split( /\;/, $tosruleentry );
@@ -655,15 +675,18 @@ print <<END
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
-	iptables -t mangle --delete POSTROUTING -m mark ! --mark 0 -o ! $qossettings{'RED_DEV'} -j IMQ --todev 0
+	iptables -t mangle --delete POSTROUTING -m mark ! --mark 0 -o ! $qossettings{'RED_DEV'} -j IMQ --todev 0 >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0  >/dev/null 2>&1
 	# rmmod imq # this crash on 2.6.25.xx
 	# REMOVE & FLUSH CHAINS
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-OUT >/dev/null 2>&1
-	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
+	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
+	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1

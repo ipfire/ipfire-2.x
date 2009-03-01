@@ -57,3 +57,4 @@ usr/bin/wpakey
 usr/local/bin/rebuild-initrd
 var/ipfire/menu.d/20-status.menu
 srv/web/ipfire/cgi-bin/atm-status.cgi
+usr/local/bin/backupiso

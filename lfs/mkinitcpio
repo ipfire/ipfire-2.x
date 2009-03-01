@@ -74,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i 's|^FILELIST=.*|FILELIST="$$(mktemp)"|g' /sbin/mkinitcpio
 	sed -i 's|^HOOKS=.*|HOOKS="base udev autodetect ide usb scsi pata sata filesystems"|g' /etc/mkinitcpio.conf
 	sed -i 's|^MODULES=.*|MODULES="reiser4 reiserfs ext3"|g' /etc/mkinitcpio.conf
-#	sed -i 's|ide-cd|ide-cd_mod|g' /lib/initcpio/install/ide
+	sed -i 's|ide-cd|ide-cd ide-generic|g' /lib/initcpio/install/ide
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
