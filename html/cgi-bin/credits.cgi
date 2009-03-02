@@ -68,7 +68,6 @@ Sponsor - Sven Nierlein
 (<a href='mailto:affect\@ipfire.org'>affect\@versatel.de</a>)<br />
 Sponsor  - Rene Zingel
 (<a href='mailto:linuxadmin\@ipfire.org'>linuxadmin\@ipfire.org</a>)<br />
-
 </p>
 <p>Some parts of the distribution are left ajar on third-party software, that is licensed under the GPL, too.<br />
 There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connection Scheduler, Hddtemp and Wake-on-LAN.<br />
