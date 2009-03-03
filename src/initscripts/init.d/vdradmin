@@ -1,6 +1,6 @@
 #!/bin/sh
 ########################################################################
-# Begin $rc_base/init.d/vdradmind
+# Begin $rc_base/init.d/vdradmin
 #
 # Description : This is a script that starts vdradmind as deamon
 #
@@ -18,12 +18,7 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting VDR Webadministration Tool..."
-		if [ "$(ps -A | grep vdradmind)" != "" ]; then
-		   boot_mesg "Error! Already running!"
-		   echo_failure
-		   exit 1;
-		fi
-		loadproc /opt/vdradmin/vdradmind.pl
+		loadproc /usr/bin/vdradmind
 		;;
 		
 	stop)
@@ -47,4 +42,4 @@ case "${1}" in
 		;;
 esac
 
-# End $rc_base/init.d/vdr
+# End $rc_base/init.d/vdradmin

@@ -81,6 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	export "LANG=de_DE"
 	cp $(DIR_SRC)/config/vdradmin/install-ipfire.sh $(DIR_APP)/
 	cd $(DIR_APP) && ./install-ipfire.sh
-	# cp src/initscripts/init.d/vdradmin /etc/init.d
+	install -v -m 644 $(DIR_SRC)/config/vdradmin/vdradmind.conf \
+		 /etc/vdradmin/vdradmind.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
