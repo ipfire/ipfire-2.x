@@ -64,6 +64,8 @@ Supporter, WIKI Administrator & Sponsor - Ronald Wiesinger
 (<a href='mailto:rowie\@ipfire.org'>rowie\@ipfire.org</a>)<br />
 Supporter, WIKI Administrator - Silvio Rechenbach
 (<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
+Sponsor - Peter Schaelchli
+(<a href='mailto:scp\@ipfire.org'>scp\@ipfire.org</a>)<br />
 Sponsor - Sven Nierlein
 (<a href='mailto:affect\@ipfire.org'>affect\@versatel.de</a>)<br />
 Sponsor  - Rene Zingel
