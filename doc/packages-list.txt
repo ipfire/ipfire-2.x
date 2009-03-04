@@ -181,6 +181,7 @@
 * logwatch-7.3.6
 * lsof-4.78
 * lynis-1.2.1
+* lynis-1.2.3
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser.git-8e7bf2f11cc108d4b52949c2a26e38df24821b01
@@ -223,7 +224,7 @@
 * oinkmaster-2.0
 * openldap-2.3.20
 * openmailadmin-1.0.0
-* openssh-5.1p1
+* openssh-5.2p1
 * openssl-0.9.8j
 * openswan-2.6.18
 * openswan-2.6.18-kmod-VER

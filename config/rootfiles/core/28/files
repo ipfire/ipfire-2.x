@@ -1,1 +1,15 @@
 etc/rc.d/init.d/snort
+etc/ssh/moduli
+etc/ssh/ssh_config
+etc/ssh/sshd_config
+usr/bin/scp
+usr/bin/sftp
+usr/bin/slogin
+usr/bin/ssh
+usr/bin/ssh-add
+usr/bin/ssh-agent
+usr/bin/ssh-keygen
+usr/bin/ssh-keyscan
+usr/lib/openssh/sftp-server
+usr/lib/openssh/ssh-keysign
+usr/sbin/sshd
