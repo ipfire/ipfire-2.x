@@ -13,3 +13,6 @@ usr/bin/ssh-keyscan
 usr/lib/openssh/sftp-server
 usr/lib/openssh/ssh-keysign
 usr/sbin/sshd
+usr/lib/libcurl.so
+usr/lib/libcurl.so.4
+usr/lib/libcurl.so.4.1.1
