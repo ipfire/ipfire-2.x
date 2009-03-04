@@ -949,21 +949,21 @@ git)
 	;;
 uploadsrc)
 	PWD=`pwd`
+	if [ -z $IPFIRE_USER ]; then
+		echo -n "You have to setup IPFIRE_USER first. See .config for details."
+		beautify message FAIL
+		exit 1
+	fi
+	URL_SOURCE=$(grep URL_SOURCE lfs/Config | awk '{ print $3 }')
+	REMOTE_FILES=$(echo "ls -1" | sftp -C ${IPFIRE_USER}@${URL_SOURCE})
+
 	cd $BASEDIR/cache/
-	echo -e "Uploading cache to ftp server:"
-	ncftpls -u $FTP_CACHE_USER -p $FTP_CACHE_PASS ftp://$FTP_CACHE_URL/$FTP_CACHE_PATH/ > /tmp/ftplist
-	for i in *; do
-		if [ "$(basename $i)" == "toolchains" ]; then continue; fi
-		grep -q $(basename $i) /tmp/ftplist
-		if [ "$?" -ne "0" ]; then
-			echo -ne "$(basename $i)"
-			ncftpput -u $FTP_CACHE_USER -p $FTP_CACHE_PASS $FTP_CACHE_URL $FTP_CACHE_PATH/ $(basename $i)
-			if [ "$?" -ne "0" ]; then
-				beautify message FAIL
-			fi
-		fi
+	for file in $(ls -1); do
+		grep -q "$file" <<<$REMOTE_FILES && continue
+		NEW_FILES="$NEW_FILES $file"
 	done
-	rm -f /tmp/ftplist
+	[ -n "$NEW_FILES" ] && scp -2 $NEW_FILES ${IPFIRE_USER}@${URL_SOURCE}
+	cd $BASEDIR
 	cd $PWD
 	exit 0
 	;;
