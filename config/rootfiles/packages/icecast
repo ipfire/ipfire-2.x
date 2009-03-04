@@ -51,3 +51,5 @@ usr/share/icecast/web/status.xsl
 usr/share/icecast/web/status2.xsl
 usr/share/icecast/web/style.css
 usr/share/icecast/web/tunein.png
+usr/share/doc/icecast/masterslave.png
+usr/share/doc/icecast/relay.png
