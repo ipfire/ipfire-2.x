@@ -1,3 +1,4 @@
+etc/ntp
 etc/rc.d/init.d/snort
 etc/ssh/moduli
 etc/ssh/ssh_config

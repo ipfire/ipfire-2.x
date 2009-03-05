@@ -1,4 +1,4 @@
-#etc/ntp
+etc/ntp
 etc/ntp.conf
 usr/bin/ntpd
 usr/bin/ntpdate
