@@ -70,7 +70,7 @@
 * cpufrequtils-004
 * cryptsetup-1.0.6
 * cups-1.3.9
-* curl-7.15.3
+* curl-7.19.4
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
 * db-4.4.20
@@ -129,7 +129,7 @@
 * httpd-2.2.11
 * hwdata
 * iana-etc-2.10
-* icecast-2.3.1
+* icecast-2.3.2
 * icegenerator-0.5.5-pre2
 * igmpproxy-src-0.1-beta2
 * inetutils-1.4.2
@@ -180,7 +180,6 @@
 * logrotate-3.7.1
 * logwatch-7.3.6
 * lsof-4.78
-* lynis-1.2.1
 * lynis-1.2.3
 * lzo-2.02
 * m4-1.4.4
@@ -192,7 +191,6 @@
 * mbr-1.1.8
 * mc-4.6.1
 * mechanize-0.1.8
-* mediatomb-0.11.0
 * memtest86+-1.65
 * misc-progs
 * mkinitcpio-0.5.9

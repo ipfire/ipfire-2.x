@@ -588,7 +588,7 @@ buildipfire() {
   ipfiremake sshfs
   ipfiremake sqlite
   ipfiremake taglib
-  ipfiremake mediatomb
+#  ipfiremake mediatomb
   ipfiremake sslh
   ipfiremake perl-gettext
   ipfiremake vdradmin
