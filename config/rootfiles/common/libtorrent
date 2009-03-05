@@ -43,3 +43,8 @@
 #usr/lib/libtorrent.so.10
 #usr/lib/libtorrent.so.10.0.8
 #usr/lib/pkgconfig/libtorrent.pc
+#usr/include/torrent/dht_manager.h
+#usr/include/torrent/peer/connection_list.h
+#usr/include/torrent/throttle.h
+#usr/lib/libtorrent.so.9
+#usr/lib/libtorrent.so.9.2.0

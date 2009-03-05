@@ -128,3 +128,6 @@ var/run
 var/run/utmp
 #var/spool
 var/tmp
+#usr/local/bin/asterisk
+#usr/local/bin/sanedloop
+#var/log/net-traffic.log

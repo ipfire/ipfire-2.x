@@ -7,3 +7,4 @@ usr/lib/libcryptsetup.so.0.0.0
 usr/sbin/cryptsetup
 usr/share/locale/de/LC_MESSAGES/cryptsetup.mo
 #usr/share/man/man8/cryptsetup.8
+#usr/share/locale/sv/LC_MESSAGES/cryptsetup.mo

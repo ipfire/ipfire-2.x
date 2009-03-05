@@ -625,3 +625,8 @@ usr/local/netpbm/misc/rgb.txt
 usr/local/netpbm/misc/palmcolor8.map
 usr/local/netpbm/misc/palmgray1.map
 usr/local/netpbm/misc/palmgray4.map
+#usr/local/netpbm
+#usr/local/netpbm/bin
+#usr/local/netpbm/include
+#usr/local/netpbm/lib/libnetpbm.so.10
+#usr/local/netpbm/lib/libnetpbm.so.10.26

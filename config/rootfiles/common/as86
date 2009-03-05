@@ -1,3 +1,4 @@
 #usr/bin/as86
 #usr/bin/as86_encap
 #var/ipfire/firebuild
+#opt/pakfire/db/core/mine

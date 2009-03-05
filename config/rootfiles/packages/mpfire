@@ -38,3 +38,4 @@ usr/local/bin/mpfirectrl
 srv/web/ipfire/cgi-bin/mpfire.cgi
 srv/web/ipfire/html/images/mpfire
 var/ipfire/menu.d/EX-mpfire.menu
+#var/mp3

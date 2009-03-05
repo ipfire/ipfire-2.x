@@ -176,3 +176,7 @@ etc/rc.d/init.d/tmpfs
 etc/rc.d/rc0.d/K85tmpfs
 etc/rc.d/rc3.d/S01tmpfs
 etc/rc.d/rc6.d/K85tmpfs
+#etc/rc.d/init.d/vdradmin
+#etc/rc.d/rc0.d/K01vdradmin
+#etc/rc.d/rc3.d/S99vdradmin
+#etc/rc.d/rc6.d/K01vdradmin

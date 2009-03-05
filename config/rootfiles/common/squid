@@ -1192,3 +1192,4 @@ var/log/cache
 var/log/squid/access.log
 var/log/updatexlrator
 #var/logs
+#usr/lib/squid/cachemgr.cgi

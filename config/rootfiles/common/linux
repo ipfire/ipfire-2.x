@@ -1490,3 +1490,14 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/source
 sbin/gen_init_cpio
 #usr/include/linux/mISDNif.h
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/l1oip.ko
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/mISDN_dsp_kb1ec.ko
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/mISDN_dsp_mec2.ko
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/mISDN_dsp_mg2ec.ko
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/mISDN_dsp_octwareec.ko
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/mISDN_dsp_oslec.ko
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/octvqe
+#lib/modules/2.6.25.19-ipfire/kernel/drivers/isdn/hardware/mISDN/octvqe/octvqe.ko
+#lib/modules/2.6.25.19-ipfire/modules.alias.bin
+#lib/modules/2.6.25.19-ipfire/modules.dep.bin
+#lib/modules/2.6.25.19-ipfire/modules.symbols.bin
