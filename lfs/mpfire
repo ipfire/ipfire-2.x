@@ -63,6 +63,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 664 $(DIR_SRC)/config/mpfire/mpd.conf /var/ipfire/mpfire/
 	install -v -m 644 $(DIR_SRC)/config/mpfire/webradio /var/ipfire/mpfire/
 	echo "Folder for mpd database" > /var/ipfire/mpfire/db/info
+	-mkdir -p /var/mp3
 	echo "Folder for music files" > /var/mp3/info
 	chown root.nobody /var/ipfire/mpfire/{mpd.conf,playlist.m3u}
 	chown nobody.nobody /var/ipfire/mpfire/{settings,webradio}
