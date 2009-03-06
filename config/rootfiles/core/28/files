@@ -17,3 +17,4 @@ usr/sbin/sshd
 usr/lib/libcurl.so
 usr/lib/libcurl.so.4
 usr/lib/libcurl.so.4.1.1
+lib/modules/2.6.25.19-ipfire/misc/kqemu.ko
