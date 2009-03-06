@@ -1,9 +1,11 @@
 usr/bin/qemu
 usr/bin/qemu-i386
 usr/bin/qemu-img
+usr/bin/qemu-nbd
 usr/bin/qemu-ppc
 usr/bin/qemu-system-ppc
 usr/share/qemu
+usr/share/qemu/bamboo.dtb
 usr/share/qemu/bios.bin
 usr/share/qemu/keymaps
 usr/share/qemu/keymaps/ar
@@ -41,8 +43,11 @@ usr/share/qemu/keymaps/sl
 usr/share/qemu/keymaps/sv
 usr/share/qemu/keymaps/th
 usr/share/qemu/keymaps/tr
+usr/share/qemu/openbios-ppc
 usr/share/qemu/openbios-sparc32
+usr/share/qemu/openbios-sparc64
 usr/share/qemu/ppc_rom.bin
+usr/share/qemu/pxe-e1000.bin
 usr/share/qemu/pxe-ne2k_pci.bin
 usr/share/qemu/pxe-pcnet.bin
 usr/share/qemu/pxe-rtl8139.bin
