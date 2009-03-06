@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.5.11
+VER        = 0.6.8
 
 THISAPP    = hostapd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d99d3566d5f15dfd24df37fcb2ee80ee
+$(DL_FILE)_MD5 = 4b183183e20af1386017e9f499184ee1
 
 install : $(TARGET)
 
@@ -77,9 +77,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp $(DIR_SRC)/config/hostapd/config ./.config
-	cd $(DIR_APP) && sed -e "s@/usr/local@/usr@g" -i Makefile
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE) && make install
+	cd $(DIR_APP) && cp $(DIR_SRC)/config/hostapd/config ./hostapd/.config
+#	cd $(DIR_APP) && sed -e "s@/usr/local@/usr@g" -i Makefile
+	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE) && make install
+	mv /usr/local/bin/hostap* /usr/bin/
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	mkdir -p /var/ipfire/wlanap
 	touch /var/ipfire/wlanap/settings
