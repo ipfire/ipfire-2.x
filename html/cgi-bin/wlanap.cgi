@@ -118,6 +118,8 @@ if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 	system("/usr/local/bin/wlanapctrl start >/dev/null 2>&1");
 }elsif ( $cgiparams{'ACTION'} eq 'Stop' ){
 	system("/usr/local/bin/wlanapctrl stop >/dev/null 2>&1");
+}elsif ( $cgiparams{'ACTION'} eq 'Restart' ){
+	system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1");
 }
 
 &Header::openpage('WLAN', 1, '', '');
@@ -247,6 +249,7 @@ print <<END
 <tr><td bgcolor='$color{'color20'}' colspan='2' align='left'><b>WLAN Services</b></td></tr>
 END
 ;
+print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
 if ( $wlan_card_status ne '' ){
 	print "<tr><td class='base'>WLAN card ($wlanapsettings{'DRIVER'})</td>";
 	print $wlan_card_status eq 'up' ? $status_started : $status_stopped;
@@ -261,6 +264,7 @@ if ( $wlan_card_status ne '' ){
 }else{
 	print "<tr><td colspan='2' class='base'><b>$message</b></td></tr>";
 }
+print "</form>";
 print "</table>";
 
 if ( $wlan_card_status eq '' ){
