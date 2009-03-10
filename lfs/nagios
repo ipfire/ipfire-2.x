@@ -85,7 +85,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/etc/nagios \
 			--datadir=/usr/share/nagios \
 			--sbindir=/usr/share/nagios/cgi-bin \
-			--localstatedir=/var \
+			--localstatedir=/var/nagios \
+			--libexecdir=/usr/lib/nagios \
 			--with-lockfile=/var/lock/nagios.lock \
 			--with-nagios-user=nobody \
 			--with-nagios-group=nobody \
@@ -96,8 +97,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-httpd-conf=/etc/httpd/conf/conf.d \
 			--enable-nanosleep
 	cd $(DIR_APP) && make all $(MAKETUNING)
-	cd $(DIR_APP) && make install install-init install-commandmode install-config
-	
+	cd $(DIR_APP) && make install install-init install-commandmode install-config install-webconf
+
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/nagios-plugins-1.4.13.tar.gz
 	cd $(DIR_SRC)/nagios-plugins* && ./configure --prefix=/usr \
 		--libexecdir=/usr/lib/nagios \
@@ -106,3 +107,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/nagios-plugins* && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+

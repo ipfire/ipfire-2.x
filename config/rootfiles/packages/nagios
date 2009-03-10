@@ -439,6 +439,6 @@ usr/share/nagios/stylesheets
 #usr/share/nagios/stylesheets/summary.css
 #usr/share/nagios/stylesheets/tac.css
 #usr/share/nagios/stylesheets/trends.css
-var/archives
-var/rw
-var/spool/checkresults
+var/nagios/archives
+var/nagios/rw
+var/nagios/spool/checkresults
