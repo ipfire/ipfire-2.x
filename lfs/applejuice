@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = applejuice
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "java"
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3902240094208758888a622d1cac1c1c
+$(DL_FILE)_MD5 = dc4ac444ff9ec9e1e841e856564d0234
 
 install : $(TARGET)
 
