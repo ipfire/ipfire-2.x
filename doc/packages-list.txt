@@ -37,7 +37,7 @@
 * alsa-lib-1.0.17-kmod-2.6.25.19
 * amavisd-new-2.5.2
 * apcupsd-3.14.4
-* applejuice-0.30
+* applejuice-0.31
 * arping-2.05
 * as86-0.16.17
 * asterisk-1.4.18
@@ -140,7 +140,7 @@
 * iptables-1.4.1.1
 * iptstate-2.1
 * iputils-ss020927
-* java-1.5.0_06-for-ipfire
+* java-1.6.0_12-for-ipfire
 * jpegsrc.v6b
 * kbd-1.12
 * klibc-1.5.14
