@@ -45,7 +45,7 @@
 				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$Lang::tr{'aliases'}",
-				  'enabled' => 0,
+				  'enabled' => 1,
 				  };
     $subnetwork->{'80.wakeonlan'} = {
 				  'caption' => $Lang::tr{'WakeOnLan'},
