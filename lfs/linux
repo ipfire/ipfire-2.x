@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .19
-VER        = 2.6.25.19
+PATCHLEVEL = .20
+VER        = 2.6.25.20
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -59,7 +59,7 @@ squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
 mISDN.git-12dca7cf4cf38590d30cdeaf8ced30aaca6d875f.tar.gz = $(URL_IPFIRE)/mISDN.git-12dca7cf4cf38590d30cdeaf8ced30aaca6d875f.tar.gz
 reiser4-for-2.6.25.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.25.patch.bz2
 
-$(DL_FILE)_MD5				= 1b20d2d2a5a0f119372a166eaf816e13
+$(DL_FILE)_MD5				= 0da698edccf03e2235abc2830a495114
 netfilter-layer7-v2.20.tar.gz_MD5	= 525a821c973b730c8feaf9eedb57d1e4
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
@@ -105,7 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-h12y-mmio-quirks.patch
 
 	# Openswan
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
+	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
 
 	# Reiser4
 	cd $(DIR_APP) && bzip2 -d -c $(DIR_DL)/reiser4-for-2.6.25.patch.bz2 | patch -Np1
