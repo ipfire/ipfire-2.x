@@ -1,2 +1,2 @@
-#lib/modules/2.6.25.19-ipfire/misc
-lib/modules/2.6.25.19-ipfire/misc/kqemu.ko
+#lib/modules/KVER-ipfire/misc
+lib/modules/KVER-ipfire/misc/kqemu.ko

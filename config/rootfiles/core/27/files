@@ -30,7 +30,7 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/cachemgr.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 var/ipfire/langs
-lib/modules/2.6.25.19-ipfire/kernel/drivers/net/imq.ko
+lib/modules/KVER-ipfire/kernel/drivers/net/imq.ko
 var/ipfire/qos/bin/makeqosscripts.pl
 etc/init.d/network
 bin/ntfs-3g
