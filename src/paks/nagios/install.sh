@@ -24,16 +24,6 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
-chown -R nobody:nobody /var/nagios
-cat > /etc/httpd/conf/vhosts.d/nagios.conf <<EOF
-Listen 1008
-
-<VirtualHost *:1007>
-
-include /etc/httpd/conf/conf.d/nagios.conf
-
-</VirtualHost>
-EOF
 htpasswd -bmc /etc/nagios/htpasswd.users nagiosadmin nagios
 /etc/init.d/apache restart
 start_service --background ${NAME}

@@ -105,6 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-nagios-user=nobody --with-nagios-group=nobody
 	cd $(DIR_SRC)/nagios-plugins* && make $(MAKETUNING)
 	cd $(DIR_SRC)/nagios-plugins* && make install
+	chown -R nobody:nobody /var/nagios
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 
