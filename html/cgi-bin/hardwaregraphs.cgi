@@ -113,7 +113,7 @@ if ( $querry[0] =~ "hwtemp"){
 
 	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/temperature-*` ) {
 		&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
+		&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day","375");
 		Header::closebox();
 	}
 
@@ -125,7 +125,7 @@ if ( $querry[0] =~ "hwtemp"){
 
 	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/voltage-*` ) {
 		&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day","375");
+		&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day","435");
 		&Header::closebox();
 	}
 
