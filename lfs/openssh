@@ -90,6 +90,8 @@ endif
 	    -e 's/^#\?IgnoreUserKnownHosts .*$$/IgnoreUserKnownHosts yes/' \
 	    -e 's/^#\?UsePAM .*$$//' \
 	    -e 's/^#\?X11Forwarding .*$$/X11Forwarding no/' \
+	    -e 's/^#\?SyslogFacility AUTH .*$$/SyslogFacility AUTH/' \
+	    -e 's/^#\?LogLevel INFO .*$$/LogLevel INFO/' \
 	    -e 's/^#\?AllowTcpForwarding .*$$/AllowTcpForwarding no/' \
 	    /etc/ssh/sshd_config
 	@rm -rf $(DIR_APP)
