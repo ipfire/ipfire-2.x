@@ -1,0 +1,550 @@
+diff -Naur openswan-2.6.20.org/linux/include/openswan/ipsec_kversion.h openswan-2.6.20/linux/include/openswan/ipsec_kversion.h
+--- openswan-2.6.20.org/linux/include/openswan/ipsec_kversion.h	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/include/openswan/ipsec_kversion.h	2009-03-14 22:36:22.000000000 +0100
+@@ -302,9 +302,11 @@
+ # define HAVE_KMEM_CACHE_MACRO
+ 
+ /* Try using the new kernel encaps hook for nat-t, instead of udp.c */
+-# ifdef NOT_YET_FINISHED
+-#  define HAVE_UDP_ENCAP_CONVERT
+-# endif
++#if !defined(CONFIG_IPSEC_NAT_TRAVERSAL) || CONFIG_IPSEC_NAT_TRAVERSAL == 0
++# define HAVE_UDP_ENCAP_CONVERT
++#else
++# warning "It seems you are using a post 2.6.22 kernel with the NAT-T-patch - please consider using the new ENCAP nat-traversal code"
++#endif
+ 
+ #endif
+ 
+diff -Naur openswan-2.6.20.org/linux/include/openswan/ipsec_param.h openswan-2.6.20/linux/include/openswan/ipsec_param.h
+--- openswan-2.6.20.org/linux/include/openswan/ipsec_param.h	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/include/openswan/ipsec_param.h	2009-03-14 22:36:22.000000000 +0100
+@@ -76,6 +76,12 @@
+ #endif /* __KERNEL__ */
+ 
+ /*
++ * These constants are used to indicate what type of NAT-T code is used
++ */
++#define NAT_OLD_STYLE 1
++#define NAT_NEW_STYLE 2
++
++/*
+  * This is for the SA reference table. This number is related to the
+  * maximum number of SAs that KLIPS can concurrently deal with, plus enough
+  * space for keeping expired SAs around.
+@@ -252,6 +258,10 @@
+ #endif
+ #endif
+ 
++#ifdef HAVE_UDP_ENCAP_CONVERT
++# define NAT_TRAVERSAL 1
++#endif
++
+ #ifndef IPSEC_DEFAULT_TTL
+ #define IPSEC_DEFAULT_TTL 64
+ #endif
+diff -Naur openswan-2.6.20.org/linux/include/openswan/ipsec_rcv.h openswan-2.6.20/linux/include/openswan/ipsec_rcv.h
+--- openswan-2.6.20.org/linux/include/openswan/ipsec_rcv.h	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/include/openswan/ipsec_rcv.h	2009-03-14 22:36:22.000000000 +0100
+@@ -136,7 +136,7 @@
+ 			struct ipcomphdr *compp;
+ 		} ipcompstuff;
+ 	} protostuff;
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	__u8		natt_type;
+ 	__u16		natt_sport;
+ 	__u16		natt_dport;
+diff -Naur openswan-2.6.20.org/linux/include/openswan/ipsec_tunnel.h openswan-2.6.20/linux/include/openswan/ipsec_tunnel.h
+--- openswan-2.6.20.org/linux/include/openswan/ipsec_tunnel.h	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/include/openswan/ipsec_tunnel.h	2009-03-14 22:36:22.000000000 +0100
+@@ -44,6 +44,12 @@
+ #define cf_name cf_u.cfu_name
+ };
+ 
++struct nattraversalconf
++{
++	uint32_t	cf_fd;
++	uint32_t	cf_type;
++};	
++
+ #define IPSEC_SET_DEV	(SIOCDEVPRIVATE)
+ #define IPSEC_DEL_DEV	(SIOCDEVPRIVATE + 1)
+ #define IPSEC_CLR_DEV	(SIOCDEVPRIVATE + 2)
+diff -Naur openswan-2.6.20.org/linux/include/openswan/ipsec_xmit.h openswan-2.6.20/linux/include/openswan/ipsec_xmit.h
+--- openswan-2.6.20.org/linux/include/openswan/ipsec_xmit.h	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/include/openswan/ipsec_xmit.h	2009-03-14 22:36:22.000000000 +0100
+@@ -124,7 +124,7 @@
+ #endif /* NET_21 */
+ 	uint32_t eroute_pid;
+ 	struct ipsec_sa ips;
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	uint8_t natt_type;
+ 	uint8_t natt_head;
+ 	uint16_t natt_sport;
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/ipsec_mast.c openswan-2.6.20/linux/net/ipsec/ipsec_mast.c
+--- openswan-2.6.20.org/linux/net/ipsec/ipsec_mast.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/ipsec_mast.c	2009-03-14 22:36:22.000000000 +0100
+@@ -235,7 +235,7 @@
+ 		goto cleanup;
+ 	}
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	/* do any final NAT-encapsulation */
+ 	stat = ipsec_nat_encap(ixs);
+ 	if(stat != IPSEC_XMIT_OK) {
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/ipsec_proc.c openswan-2.6.20/linux/net/ipsec/ipsec_proc.c
+--- openswan-2.6.20.org/linux/net/ipsec/ipsec_proc.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/ipsec_proc.c	2009-03-14 22:36:22.000000000 +0100
+@@ -368,7 +368,7 @@
+ 			}
+ #endif /* CONFIG_KLIPS_IPCOMP */
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 			{
+ 				char *natttype_name;
+ 
+@@ -635,11 +635,15 @@
+ 	return len;
+ }
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
+-unsigned int natt_available = 1;
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL)
++unsigned int natt_available = NAT_OLD_STYLE;
++#else
++#if defined(HAVE_UDP_ENCAP_CONVERT)
++unsigned int natt_available = NAT_NEW_STYLE;
+ #else
+ unsigned int natt_available = 0;
+ #endif
++#endif
+ module_param(natt_available,int,0644);
+ 
+ IPSEC_PROCFS_DEBUG_NO_STATIC
+@@ -654,11 +658,15 @@
+ 
+ 	len += ipsec_snprintf(buffer + len,
+ 			      length-len, "%d\n",
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
+-			      1
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL)
++			      NAT_OLD_STYLE
++#else
++#if defined(HAVE_UDP_ENCAP_CONVERT)
++                              NAT_NEW_STYLE
+ #else
+ 			      0
+ #endif
++#endif
+ 		);
+ 
+ 	*start = buffer + (offset - begin);	/* Start of wanted data */
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/ipsec_rcv.c openswan-2.6.20/linux/net/ipsec/ipsec_rcv.c
+--- openswan-2.6.20.org/linux/net/ipsec/ipsec_rcv.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/ipsec_rcv.c	2009-03-14 22:41:35.000000000 +0100
+@@ -1054,7 +1054,7 @@
+ 				    irs->sa_len ? irs->sa : " (error)");
+ 		}
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+                 if (irs->proto == IPPROTO_ESP) {
+                         KLIPS_PRINT(debug_rcv,
+                                 "klips_debug:ipsec_rcv: "
+@@ -1172,7 +1172,7 @@
+ 	 *      if skb->sk is guaranteed to be valid here.
+ 	 *  2005-04-16: mcr@xelerance.com
+ 	 */
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	/*
+ 	 *
+ 	 * XXX we should ONLY update pluto if the SA passes all checks,
+@@ -1638,7 +1638,7 @@
+ 	}
+ #endif /* CONFIG_KLIPS_IPCOMP */
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	if ((irs->natt_type) && (ipp->protocol != IPPROTO_IPIP)) {
+ 	  /**
+ 	   * NAT-Traversal and Transport Mode:
+@@ -1943,7 +1943,116 @@
+  */
+ int klips26_udp_encap_rcv(struct sock *sk, struct sk_buff *skb)
+ {
+-	return klips26_rcv_encap(skb, udp_sk(sk)->encap_type);
++        struct udp_sock *up = udp_sk(sk);
++        struct udphdr *uh;
++	struct iphdr *iph;
++        int iphlen, len;
++	int ret;
++
++        __u8 *udpdata;
++        __be32 *udpdata32;
++        __u16 encap_type = up->encap_type;
++
++	/* if this is not encapsulated socket, then just return now */
++	if (!encap_type)
++		return 1;
++
++        /* If this is a paged skb, make sure we pull up
++         * whatever data we need to look at. */
++        len = skb->len - sizeof(struct udphdr);
++        if (!pskb_may_pull(skb, sizeof(struct udphdr) + min(len, 8)))
++                return 1;
++
++        /* Now we can get the pointers */
++        uh = udp_hdr(skb);
++        udpdata = (__u8 *)uh + sizeof(struct udphdr);
++        udpdata32 = (__be32 *)udpdata;
++
++        switch (encap_type) {
++        default:
++        case UDP_ENCAP_ESPINUDP:
++                /* Check if this is a keepalive packet.  If so, eat it. */
++                if (len == 1 && udpdata[0] == 0xff) {
++			KLIPS_PRINT(debug_rcv,
++					"UDP_ENCAP_ESPINUDP: keepalive packet detected\n");
++			goto drop;
++                } else if (len > sizeof(struct ip_esp_hdr) && udpdata32[0] != 0) {
++			KLIPS_PRINT(debug_rcv,
++					"UDP_ENCAP_ESPINUDP: ESP IN UDP packet detected\n");
++			/* ESP Packet without Non-ESP header */
++			len = sizeof(struct udphdr);
++                } else {
++                        /* Must be an IKE packet.. pass it through */
++			KLIPS_PRINT(debug_rcv,
++					"UDP_ENCAP_ESPINUDP: IKE packet detected\n");
++                        return 1;
++		}
++                break;
++        case UDP_ENCAP_ESPINUDP_NON_IKE:
++		KLIPS_PRINT(debug_rcv,
++				"UDP_ENCAP_ESPINUDP_NON_IKE: %d\n",
++				udpdata32[0]);
++                /* Check if this is a keepalive packet.  If so, eat it. */
++                if (len == 1 && udpdata[0] == 0xff) {
++			KLIPS_PRINT(debug_rcv,
++					"UDP_ENCAP_ESPINUDP_NON_IKE: keepalive packet detected\n");
++			goto drop;
++                } else if (len > 2 * sizeof(u32) + sizeof(struct ip_esp_hdr) &&
++                        udpdata32[0] == 0 && udpdata32[1] == 0) {
++			KLIPS_PRINT(debug_rcv,
++					"UDP_ENCAP_ESPINUDP_NON_IKE: ESP IN UDP NON IKE packet detected\n");
++                        /* ESP Packet with Non-IKE marker */
++                        len = sizeof(struct udphdr) + 2 * sizeof(u32);
++                } else {
++                        /* Must be an IKE packet.. pass it through */
++			KLIPS_PRINT(debug_rcv,
++					"UDP_ENCAP_ESPINUDP_NON_IKE: IKE packet detected\n");
++                        return 1;
++		}
++                break;
++        }
++
++	/* At this point we are sure that this is an ESPinUDP packet,
++	 * so we need to remove 'len' bytes from the packet (the UDP
++	 * header and optional ESP marker bytes) and then modify the
++	 * protocol to ESP, and then call into the transform receiver.
++	 */
++	if (skb_cloned(skb) && pskb_expand_head(skb, 0, 0, GFP_ATOMIC)) {
++		KLIPS_PRINT(debug_rcv,
++				"clone or expand problem\n");
++		goto drop;
++	}
++
++	/* Now we can update and verify the packet length... */
++	iph = ip_hdr(skb);
++	iphlen = iph->ihl << 2;
++	iph->tot_len = htons(ntohs(iph->tot_len) - len);
++	if (skb->len < iphlen + len) {
++		/* packet is too small!?! */
++		KLIPS_PRINT(debug_rcv,
++				"packet too small\n");
++		goto drop;
++	}
++
++	/* pull the data buffer up to the ESP header and set the
++	 * transport header to point to ESP.  Keep UDP on the stack
++	 * for later.
++	 */
++	__skb_pull(skb, len);
++	skb_reset_transport_header(skb);
++
++	/* modify the protocol (it's ESP!) */
++	iph->protocol = IPPROTO_ESP;
++
++        /* process ESP */
++	KLIPS_PRINT(debug_rcv,
++		"starting processing ESP packet\n");
++	ret = klips26_rcv_encap(skb, encap_type);
++	return ret;
++
++drop:
++	kfree_skb(skb);
++	return 0;
+ }
+ 
+ int klips26_rcv_encap(struct sk_buff *skb, __u16 encap_type)
+@@ -2011,7 +2120,7 @@
+ 
+ 	irs->hard_header_len = skb->dev->hard_header_len;
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	switch(encap_type) {
+ 	case UDP_ENCAP_ESPINUDP:
+ 	  irs->natt_type = ESPINUDP_WITH_NON_ESP;
+@@ -2143,7 +2252,7 @@
+         irs->said.proto = 0;
+ 
+         irs->hard_header_len = 0;
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+         irs->natt_type = 0;
+         irs->natt_len = 0;
+ #endif
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/ipsec_sa.c openswan-2.6.20/linux/net/ipsec/ipsec_sa.c
+--- openswan-2.6.20.org/linux/net/ipsec/ipsec_sa.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/ipsec_sa.c	2009-03-14 22:36:22.000000000 +0100
+@@ -1011,7 +1011,7 @@
+ 	}
+ 	ips->ips_addr_p = NULL;
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	if(ips->ips_natt_oa) {
+ 		memset((caddr_t)(ips->ips_natt_oa), 0, ips->ips_natt_oa_size);
+ 		kfree(ips->ips_natt_oa);
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/ipsec_tunnel.c openswan-2.6.20/linux/net/ipsec/ipsec_tunnel.c
+--- openswan-2.6.20.org/linux/net/ipsec/ipsec_tunnel.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/ipsec_tunnel.c	2009-03-14 22:36:22.000000000 +0100
+@@ -99,6 +99,11 @@
+ #include <linux/udp.h>
+ #endif
+ 
++#ifdef HAVE_UDP_ENCAP_CONVERT
++#include <linux/file.h>
++#include "openswan/ipsec_rcv.h"
++#endif
++
+ static __u32 zeroes[64];
+ 
+ DEBUG_NO_STATIC int
+@@ -571,7 +576,7 @@
+ 		return;
+ 	}
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	stat = ipsec_nat_encap(ixs);
+ 	if(stat != IPSEC_XMIT_OK) {
+ 		goto cleanup;
+@@ -1403,19 +1408,27 @@
+ 
+ #ifdef HAVE_UDP_ENCAP_CONVERT
+ 	case IPSEC_UDP_ENCAP_CONVERT:
+-	{
+-		unsigned int *socknum =(unsigned int *)&ifr->ifr_data;
++	{	
++		struct nattraversalconf *nf = (struct nattraversalconf *)&ifr->ifr_data;
++		unsigned int socknum = nf->cf_fd;
++		unsigned int encaptype = nf->cf_type;
+ 		struct socket *sock;
++		struct sock *sk;
+ 		int err, fput_needed;
+ 
+ 		/* that's a static function in socket.c 
+  		 * sock = sockfd_lookup_light(*socknum, &err, &fput_needed); */
+-		sock = sockfd_lookup(*socknum, &err);
++		sock = sockfd_lookup(socknum, &err);
++		KLIPS_PRINT(debug_tunnel
++		            , "socknum: %u, err: %d\n"
++		            , socknum, err);
+ 		if (!sock)
+ 			goto encap_out;
+ 
++		sk = sock->sk;
++
+ 		/* check that it's a UDP socket */
+-		udp_sk(sk)->encap_type = UDP_ENCAP_ESPINUDP_NON_IKE;
++		udp_sk(sk)->encap_type = encaptype;
+ 		udp_sk(sk)->encap_rcv  = klips26_udp_encap_rcv;
+ 
+ 		KLIPS_PRINT(debug_tunnel
+@@ -1976,7 +1989,7 @@
+ 		ixs->ips.ips_ident_s.data = NULL;
+ 		ixs->ips.ips_ident_d.data = NULL;
+ 		ixs->outgoing_said.proto = 0;
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 		ixs->natt_type = 0, ixs->natt_head = 0;
+ 		ixs->natt_sport = 0, ixs->natt_dport = 0;
+ #endif
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/ipsec_xmit.c openswan-2.6.20/linux/net/ipsec/ipsec_xmit.c
+--- openswan-2.6.20.org/linux/net/ipsec/ipsec_xmit.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/ipsec_xmit.c	2009-03-14 22:36:22.000000000 +0100
+@@ -1597,7 +1597,7 @@
+ 			ixs->tailroom += ixs->blocksize != 1 ?
+ 				((ixs->blocksize - ((ixs->pyldsz + 2) % ixs->blocksize)) % ixs->blocksize) + 2 :
+ 				((4 - ((ixs->pyldsz + 2) % 4)) % 4) + 2;
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 		if ((ixs->ipsp->ips_natt_type) && (!ixs->natt_type)) {
+ 			ixs->natt_type = ixs->ipsp->ips_natt_type;
+ 			ixs->natt_sport = ixs->ipsp->ips_natt_sport;
+@@ -1762,7 +1762,7 @@
+ 	}
+ #endif /* MSS_HACK */
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+       if ((ixs->natt_type) && (ixs->outgoing_said.proto != IPPROTO_IPIP)) {
+ 	      /**
+ 	       * NAT-Traversal and Transport Mode:
+@@ -1929,7 +1929,7 @@
+ }
+ #endif /* NETDEV_23 */
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ enum ipsec_xmit_value ipsec_nat_encap(struct ipsec_xmit_state *ixs)
+ {
+ 	if (ixs->natt_type && ixs->natt_head) {
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/pfkey_v2_ext_process.c openswan-2.6.20/linux/net/ipsec/pfkey_v2_ext_process.c
+--- openswan-2.6.20.org/linux/net/ipsec/pfkey_v2_ext_process.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/pfkey_v2_ext_process.c	2009-03-14 22:36:22.000000000 +0100
+@@ -716,7 +716,7 @@
+ }
+ 
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ int
+ pfkey_x_nat_t_type_process(struct sadb_ext *pfkey_ext, struct pfkey_extracted_data* extr)
+ {
+diff -Naur openswan-2.6.20.org/linux/net/ipsec/pfkey_v2_parser.c openswan-2.6.20/linux/net/ipsec/pfkey_v2_parser.c
+--- openswan-2.6.20.org/linux/net/ipsec/pfkey_v2_parser.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/linux/net/ipsec/pfkey_v2_parser.c	2009-03-14 22:36:22.000000000 +0100
+@@ -405,7 +405,7 @@
+ 	struct sadb_msg *pfkey_reply = NULL;
+ 	struct socket_list *pfkey_socketsp;
+ 	uint8_t satype = ((struct sadb_msg*)extensions[K_SADB_EXT_RESERVED])->sadb_msg_satype;
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	struct ipsec_sa *nat_t_ips_saved = NULL;
+ #endif
+ 	KLIPS_PRINT(debug_pfkey,
+@@ -453,7 +453,7 @@
+ 		    sa_len ? sa : " (error)",
+ 		    extr->ips->ips_flags & EMT_INBOUND ? "in" : "out");
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	if (extr->ips->ips_natt_sport || extr->ips->ips_natt_dport) {
+ 		KLIPS_PRINT(debug_pfkey,
+ 			"klips_debug:pfkey_update_parse: only updating NAT-T ports "
+@@ -622,7 +622,7 @@
+ 			    pfkey_socketsp->socketp);
+ 	}
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	if (nat_t_ips_saved) {
+ 		/**
+ 		 * As we _really_ update existing SA, we keep tdbq and need to delete
+@@ -2547,7 +2547,7 @@
+ 	return error;
+ }
+ 
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ int
+ pfkey_nat_t_new_mapping(struct ipsec_sa *ipsp, struct sockaddr *ipaddr,
+ 	__u16 sport)
+@@ -2707,7 +2707,7 @@
+         pfkey_address_process,
+ 	pfkey_x_debug_process,
+         pfkey_x_protocol_process,
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	pfkey_x_nat_t_type_process,
+ 	pfkey_x_nat_t_port_process,
+ 	pfkey_x_nat_t_port_process,
+@@ -2812,7 +2812,7 @@
+ 	pfkey_x_addflow_parse,
+ 	pfkey_x_delflow_parse,
+ 	pfkey_x_msg_debug_parse,
+-#ifdef CONFIG_IPSEC_NAT_TRAVERSAL
++#if defined(CONFIG_IPSEC_NAT_TRAVERSAL) || defined(HAVE_UDP_ENCAP_CONVERT)
+ 	pfkey_x_nat_t_new_mapping_parse,
+ #else
+ 	NULL,
+diff -Naur openswan-2.6.20.org/programs/pluto/nat_traversal.c openswan-2.6.20/programs/pluto/nat_traversal.c
+--- openswan-2.6.20.org/programs/pluto/nat_traversal.c	2009-02-10 05:54:47.000000000 +0100
++++ openswan-2.6.20/programs/pluto/nat_traversal.c	2009-03-14 22:36:22.000000000 +0100
+@@ -24,11 +24,15 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <signal.h>     /* used only if MSG_NOSIGNAL not defined */
++#include <sys/ioctl.h>
++#include <net/if.h>
+ 
+ #include <openswan.h>
+ #include <openswan/ipsec_policy.h>
+ #include <openswan/pfkeyv2.h>
+ #include <openswan/pfkey.h>
++#include <openswan/ipsec_param.h>
++#include <openswan/ipsec_tunnel.h>
+ 
+ #include "sysdep.h"
+ #include "constants.h"
+@@ -68,6 +72,8 @@
+ 
+ #define DEFAULT_KEEP_ALIVE_PERIOD  20
+ 
++static unsigned int nat_traversal_type = 0;
++
+ bool nat_traversal_enabled = FALSE;
+ bool nat_traversal_support_non_ike = FALSE;
+ bool nat_traversal_support_port_floating = FALSE;
+@@ -101,6 +107,10 @@
+ 	      nat_traversal_support_port_floating=FALSE;
+ 	      openswan_log("  KLIPS does not have NAT-Traversal built in (see /proc/net/ipsec/natt)\n");
+ 	    }
++	    else {
++	      nat_traversal_type = atoi(&n);
++	      openswan_log("  KLIPS using NAT-Traversal Method %c\n", n);
++            }
+ 	    fclose(f);
+ 	  }
+ 	}
+@@ -667,7 +677,22 @@
+ int nat_traversal_espinudp_socket (int sk, const char *fam, u_int32_t type)
+ {
+ 	int r;
+-	r = setsockopt(sk, SOL_UDP, UDP_ESPINUDP, &type, sizeof(type));
++	if (nat_traversal_type == NAT_OLD_STYLE) {
++		loglog(RC_LOG_SERIOUS,
++			"NAT-Traversal: Trying old style NAT-T");
++		r = setsockopt(sk, SOL_UDP, UDP_ESPINUDP, &type, sizeof(type));
++	}
++	if (nat_traversal_type == NAT_NEW_STYLE) {
++		loglog(RC_LOG_SERIOUS,
++			"NAT-Traversal: Trying new style NAT-T");
++		struct ifreq ifr;
++		struct nattraversalconf *ntc=(struct nattraversalconf *)&ifr.ifr_data;
++		memset(&ifr, 0, sizeof(ifr));
++		strcpy(ifr.ifr_name, "ipsec0");
++		ntc->cf_fd = sk;
++		ntc->cf_type = type;
++		r = ioctl(sk, IPSEC_UDP_ENCAP_CONVERT, &ifr);
++	}
+ 	if ((r<0) && (errno == ENOPROTOOPT)) {
+ 		loglog(RC_LOG_SERIOUS,
+ 		       "NAT-Traversal: ESPINUDP(%d) not supported by kernel for family %s"
