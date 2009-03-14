@@ -1,4 +1,4 @@
-etc/httpd/conf/vhosts.d/esniper.conf
+etc/httpd/conf/vhosts.d/nagios.conf
 #etc/nagios
 etc/nagios/cgi.cfg
 etc/nagios/nagios.cfg
