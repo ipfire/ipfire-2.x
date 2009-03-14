@@ -36,7 +36,7 @@ PAK_VER    = 4
 
 CHAN_CAPI  = chan_capi-1.0.2
 
-DEPS       = "libpri spandsp"
+DEPS       = "libpri spandsp sox"
 
 ###############################################################################
 # Top-level Rules
