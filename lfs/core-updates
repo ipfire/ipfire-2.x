@@ -53,12 +53,33 @@ core/%:
 	rm -rf /install/packages/package
 	mkdir -p /install/packages/package
 	eval $$(cat /usr/src/config/rootfiles/$@/meta)
-	cp -f /usr/src/config/rootfiles/$@/update.sh /install/packages/package
-	cp -f /usr/src/config/rootfiles/$@/files /install/packages/package/ROOTFILES
-	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
+
+	#Generate ROOTFILES from filelists	
+	find $(DIR_SRC)/config/rootfiles/$@/filelists/* -maxdepth 1 | xargs cat >> /tmp/ROOTFILES.tmp
+
+	#remove excluded files from ROOTFILES
+	grep -f $(DIR_SRC)/config/rootfiles/$@/exclude -v /tmp/ROOTFILES.tmp > /tmp/ROOTFILES
+	rm -rf /tmp/ROOTFILES.tmp
+	
+	#Change KVER to Kernelversion
+	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
+	
+	#Remove doubled files with tar/untar/tar to save space
+	tar -c -C / --files-from=/tmp/ROOTFILES \
+		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
+		--exclude='proc/*' --exclude='tmp/ROOTFILES' \
+		--exclude-from=$(DIR_SRC)/config/rootfiles/$@/exclude
+	mv -f /tmp/ROOTFILES /install/packages/package/ROOTFILES
+	tar --preserve --numeric-owner -x  -C /tmp -f /$(SNAME).tar
+	rm -f /$(SNAME).tar
+	cd /tmp && tar cf /install/packages/package/files * && rm -rf *
+	cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
+	rm /install/packages/package/ROOTFILES
+	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
+
+	#build package
+	cp -f $(DIR_SRC)/config/rootfiles/$@/update.sh /install/packages/package
 	chmod 755 /install/packages/package/update.sh
-	cd / && tar cf /install/packages/package/files --files-from=/install/packages/package/ROOTFILES --exclude='#*'
-	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES
 	cd /install/packages/package && tar cf ../core-upgrade-$(VERSION)-$$(basename $@).ipfire \
 		update.sh files ROOTFILES
 	rm -rf /install/packages/package
