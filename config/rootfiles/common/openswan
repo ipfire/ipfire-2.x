@@ -333,3 +333,4 @@ var/run/pluto
 #usr/share/doc/openswan/ipsec_readwriteconf.8.html
 #usr/share/doc/openswan/ipsec_set_policy.3.html
 #usr/share/doc/openswan/ipsec_strerror.3.html
+#etc/ipsec.d/examples/ipv6.conf
