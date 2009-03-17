@@ -53,17 +53,15 @@ $pppsettings{'ACTION'} = '';
 &Header::getcgihash(\%pppsettings);
 
 if ($pppsettings{'ACTION'} ne '' &&
-        (-e '/var/run/ppp-ipcop.pid' || -e "${General::swroot}/red/active"))
-{
+        ( -e "${General::swroot}/red/active")){
         $errormessage = $Lang::tr{'unable to alter profiles while red is active'};
         # read in the current vars
         %pppsettings = ();
         $pppsettings{'VALID'} = '';
-        &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
-}
+        &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);}
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 {
-        unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp|pppoeatm|pptpatm)$/) {
+        unless ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn|pppoe|pptp|vdsl|pppoeatm|pptpatm)$/) {
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
         my $type = $pppsettings{'TYPE'};
@@ -92,7 +90,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 goto ERROR; }
         if ($pppsettings{'TYPE'} =~ /^(modem|isdn)$/) {
                 if ($pppsettings{'TELEPHONE'} eq '') {
-                        $errormessage = $Lang::tr{'telephone not set'}; 
+                        $errormessage = $Lang::tr{'telephone not set'};
                         goto ERROR; }
                 if (!($pppsettings{'TELEPHONE'} =~ /^[\d\*\#\,]+$/)) {
                         $errormessage = $Lang::tr{'bad characters in the telephone number field'};
@@ -100,7 +98,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
         }
         unless (($pppsettings{'PROTOCOL'} eq 'RFC1483' && $pppsettings{'METHOD'} =~ /^(STATIC|DHCP)$/)) {
                 if ($pppsettings{'USERNAME'} eq '') {
-                        $errormessage = $Lang::tr{'username not set'}; 
+                        $errormessage = $Lang::tr{'username not set'};
                         goto ERROR; }
                 if ($pppsettings{'PASSWORD'} eq '') {
                         $errormessage = $Lang::tr{'password not set'};
@@ -115,7 +113,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 goto ERROR; }
 
         if ($pppsettings{'LOGINSCRIPT'} =~ /[.\/ ]/ ) {
-                $errormessage = $Lang::tr{'bad characters in script field'}; 
+                $errormessage = $Lang::tr{'bad characters in script field'};
                 goto ERROR; }
 
         if ($pppsettings{'DNS1'})
@@ -155,8 +153,8 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 if ( $pppsettings{'PROTOCOL'} eq '' ) {
                         $errormessage = $Lang::tr{'invalid input'};
                         goto ERROR; }
-        } 
-        
+        }
+
         if ( ($pppsettings{'PROTOCOL'} eq 'RFC1483') && ($pppsettings{'METHOD'} eq '') && \
                 ($pppsettings{'TYPE'} !~ /^(alcatelusb|fritzdsl)$/)) {
                         $errormessage = $Lang::tr{'invalid input'};
@@ -227,7 +225,7 @@ if ($pppsettings{'ACTION'} eq $Lang::tr{'select'})
                 \%temppppsettings);
 
         # make link.
-        &updatesettings(); 
+        &updatesettings();
 
         # read in the new params "early" so we can write secrets.
         %pppsettings = ();
@@ -238,7 +236,7 @@ if ($pppsettings{'ACTION'} eq $Lang::tr{'select'})
 
         &writesecrets();
 
-        &General::log("$Lang::tr{'profile made current'} $pppsettings{'PROFILENAME'}"); 
+        &General::log("$Lang::tr{'profile made current'} $pppsettings{'PROFILENAME'}");
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'delete'})
 {
@@ -246,14 +244,14 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'delete'})
 
         my $profile = $pppsettings{'PROFILE'};
         truncate ("${General::swroot}/ppp/settings-$pppsettings{'PROFILE'}", 0);
-        
+
         %temppppsettings = ();
         $temppppsettings{'PROFILE'} = '';
         &General::readhash("${General::swroot}/ppp/settings-$pppsettings{'PROFILE'}",
                 \%temppppsettings);
 
         # make link.
-        &updatesettings(); 
+        &updatesettings();
 
         # read in the new params "early" so we can write secrets.
         %pppsettings = ();
@@ -302,6 +300,7 @@ $selected{'TYPE'}{'modem'} = '';
 $selected{'TYPE'}{'serial'} = '';
 $selected{'TYPE'}{'pppoe'} = '';
 $selected{'TYPE'}{'pptp'} = '';
+$selected{'TYPE'}{'vdsl'} = '';
 $selected{'TYPE'}{'pppoeatm'} = '';
 $selected{'TYPE'}{'pptpatm'} = '';
 $selected{'TYPE'}{$pppsettings{'TYPE'}} = "selected='selected'";
@@ -353,7 +352,7 @@ $checked{'DIALONDEMANDDNS'}{'on'} = '';
 $checked{'DIALONDEMANDDNS'}{$pppsettings{'DIALONDEMANDDNS'}} = "checked='checked'";
 
 $checked{'AUTOCONNECT'}{'off'} = '';
-$checked{'AUTOCONNECT'}{'on'} = ''; 
+$checked{'AUTOCONNECT'}{'on'} = '';
 $checked{'AUTOCONNECT'}{$pppsettings{'AUTOCONNECT'}} = "checked='checked'";
 
 $checked{'SENDCR'}{'off'} = '';
@@ -411,6 +410,10 @@ $checked{'DNS'}{'Automatic'} = '';
 $checked{'DNS'}{'Manual'} = '';
 $checked{'DNS'}{$pppsettings{'DNS'}} = "checked='checked'";
 
+$checked{'IPTV'}{'enable'} = '';
+$checked{'IPTV'}{'disable'} = '';
+$checked{'IPTV'}{$pppsettings{'IPTV'}} = "checked='checked'";
+
 &Header::openpage($Lang::tr{'ppp setup'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -425,7 +428,7 @@ if ($netsettings{'RED_TYPE'} ne 'PPPOE') {
 	&Header::closepage();
 	exit(1);
 }
- 
+
 if ($errormessage) {
         &Header::openbox('100%', 'center', $Lang::tr{'error messages'});
         print "<CLASS name='base'>$errormessage\n";
@@ -474,12 +477,13 @@ print <<END
         <select name='TYPE' style="width: 165px">
 END
 ;
-if ($netsettings{'RED_TYPE'} eq 'PPPOE') {
+if ($netsettings{'RED_TYPE'} eq 'PPPOE' ) {
 print <<END
-        <option value='modem' $selected{'TYPE'}{'modem'}>$Lang::tr{'modem'}</option>
-        <option value='serial' $selected{'TYPE'}{'serial'}>$Lang::tr{'serial'}</option>
-        <option value='pppoe' $selected{'TYPE'}{'pppoe'}>PPPoE</option>
+	<option value='modem' $selected{'TYPE'}{'modem'}>$Lang::tr{'modem'}</option>
+	<option value='serial' $selected{'TYPE'}{'serial'}>$Lang::tr{'serial'}</option>
+	<option value='pppoe' $selected{'TYPE'}{'pppoe'}>PPPoE</option>
 	<option value='pptp' $selected{'TYPE'}{'pptp'}>PPTP</option>
+	<option value='vdsl' $selected{'TYPE'}{'vdsl'}>VDSL</option>
 END
 ;
 
@@ -488,7 +492,7 @@ chomp ($atmdev);
 if ($atmdev ne '') {
         print <<END
         <option value='pppoeatm' $selected{'TYPE'}{'pppoeatm'}>PPPoE over ATM-BRIDGE</option>
-        <option value='pptpatm' $selected{'TYPE'}{'pptpatm'}>PPTP over ATM-BRIDGE</option>	
+        <option value='pptpatm' $selected{'TYPE'}{'pptpatm'}>PPTP over ATM-BRIDGE</option>
 END
 ;
 }
@@ -584,14 +588,14 @@ END
 </tr>
 END
 ;
-                } 
+                }
                 if ($pppsettings{'TYPE'} =~ /^(modem)$/ ) {
                         print "<tr><td colspan='3' width='75%'>$Lang::tr{'number'}</td>\n";
                         print "<td width='25%'><input type='text' name='TELEPHONE' value='$pppsettings{'TELEPHONE'}'></td><tr>\n";
                         if ($pppsettings{'TYPE'} eq 'modem' ) {
                                 print "<tr><td colspan='3' width='75%'>$Lang::tr{'modem speaker on'}</td>\n";
                                 print "<td width='25%'><input type='checkbox' name='SPEAKER' $checked{'SPEAKER'}{'on'} /></td></tr>\n";
-                        } 
+                        }
                 }
         }
         if ($pppsettings{'TYPE'} eq 'modem') {
@@ -620,7 +624,7 @@ END
         <td width='50%'><input type='checkbox' name='SENDCR' $checked{'SENDCR'}{'on'} /></td>
 </tr>
 END
-; 
+;
 }
 
 print <<END
@@ -722,10 +726,38 @@ print <<END
 </tr>
 END
 ;
-} 
+}
 
+        if ($pppsettings{'TYPE'} eq 'vdsl') {
+print <<END
+<tr>
+        <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>IPTV:</b></td>
+</tr>
+END
+;
+	if ( -e '/usr/local/bin/igmpproxy'){
+print <<END
+		<tr>
+		        <td colspan='3' width='100%'><input type='radio' name='IPTV' value='enable' $checked{'IPTV'}{'enable'}>$Lang::tr{'on'}</td>
+		        <td colspan='1' rowspan='2' width='100%'><textarea name='IPTVSERVERS' cols='16' wrap='off'>
+END
+;
+		print $pppsettings{'IPTVSERVERS'};
+print <<END
+</textarea></td>
+		</tr>
+		<tr>
+		        <td colspan='3' width='100%'><input type='radio' name='IPTV' value='disable' $checked{'IPTV'}{'disable'}>$Lang::tr{'off'}</td>
+		 </tr>
+END
+;
+	}
+	else {
+	print "<tr><td colspan='4' width='100%'>No IPTV possible install addon igmpproxy</td></tr>";
+	}
+}
 
-if ($pppsettings{'TYPE'} eq 'pppoe' || $pppsettings{'TYPE'} eq 'pppoeatm')
+if ($pppsettings{'TYPE'} eq 'pppoe' || $pppsettings{'TYPE'} eq 'pppoeatm' || $pppsettings{'TYPE'} eq 'vdsl')
 {
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
@@ -869,10 +901,10 @@ sub initprofile
         if ( $pppsettings{'METHOD'} eq 'PPPOE_PLUGIN' ) {
                 $pppsettings{'MTU'} = '1492';
                 $pppsettings{'MRU'} = '1492';
-  } else {
-        $pppsettings{'MTU'} = '1452';
+        } else {
+                $pppsettings{'MTU'} = '1452';
                 $pppsettings{'MRU'} = '1452';
-  }
+        }
         $pppsettings{'DIALMODE'} = 'T';
         $pppsettings{'MAXRETRIES'} = 5;
         $pppsettings{'HOLDOFF'} = 30;
@@ -882,7 +914,13 @@ sub initprofile
         $pppsettings{'DNS'} = 'Automatic';
         $pppsettings{'DEBUG'} = 'off';
         $pppsettings{'BACKUPPROFILE'} = $pppsettings{'PROFILE'};
-        
+        $pppsettings{'IPTVSERVERS'} = '192.168.2.51/32';
+        $pppsettings{'IPTV'} = 'disable';
+
+	if ( -e '/usr/local/bin/igmpproxy'){
+	        $pppsettings{'IPTV'} = 'enable';
+	}
+
         # Get PPPoE settings so we can see if PPPoE is enabled or not.
         &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
