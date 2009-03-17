@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.8.2
+VER        = 0.8.4
 
 THISAPP    = rtorrent-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rtorrent
-PAK_VER    = 3
+PAK_VER    = 4
 CFLAGS     =
 CXXFLAGS   =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a2456182e1767e5aed7341dbbd058f60
+$(DL_FILE)_MD5 = dc0f37d933b0b6c713ad617e09441f3b
 
 install : $(TARGET)
 
