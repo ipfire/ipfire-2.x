@@ -167,6 +167,7 @@
 * libsigc++-2.0.17
 * libtool-1.5.22
 * libtorrent-0.12.2
+* libtorrent-0.12.4
 * libupnp-1.6.6
 * libusb-0.1.12
 * libvorbis-1.2.0
@@ -176,6 +177,7 @@
 * linux-2.6.25.20
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
+* linux-libc-headers-2.6.12.0_rootfile
 * lm_sensors-3.0.3
 * logrotate-3.7.1
 * logwatch-7.3.6
@@ -254,6 +256,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.4
 * rtorrent-0.8.2
+* rtorrent-0.8.4
 * samba-3.2.8
 * sane-1.0.19
 * screen-4.0.3
@@ -309,6 +312,7 @@
 * vnstat-1.6
 * vnstati-beta3
 * vsftpd-2.0.7
+* vsftpd-2.1.0
 * w_scan-20080105
 * wget-1.10.2
 * whatmask-1.2
