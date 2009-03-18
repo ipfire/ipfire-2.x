@@ -85,10 +85,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir /opt/miau/config
 	install -v -m 644 $(DIR_SRC)/config/miau/miaurc \
 		 /opt/miau/config/miaurc
-	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/miau \
-		 /etc/init.d/miau
 	ln -sf ../init.d/miau /etc/rc.d/rc3.d/S60miau
-	ln -sf ../init.d/miau /etc/rc.d/rc0.d/K40miau
-	ln -sf ../init.d/miau /etc/rc.d/rc6.d/K40miau
+	ln -sf ../init.d/miau /etc/rc.d/rc0.d/K01miau
+	ln -sf ../init.d/miau /etc/rc.d/rc6.d/K01miau
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
