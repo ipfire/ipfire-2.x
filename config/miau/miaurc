@@ -79,7 +79,7 @@ username = "miau_bnc_on_ipfire"
 #
 # Example:
 #password = "foobar"
-password = "password"
+password = ""
 
 
 # listenport = "port": The port miau will wait for incoming connections.
@@ -239,8 +239,7 @@ listenhost = "0.0.0.0"
 #	"#lugop"
 #}
 channels = {
-	"#ipfire"
-}
+	}
 
 # rejoin = "state": Rejoin channels after disconnecting from the server.
 #
