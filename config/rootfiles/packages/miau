@@ -1,0 +1,17 @@
+/opt/miau
+/opt/miau/bin
+/opt/miau/bin/miau
+#opt/miau/bin/miau-check
+/opt/miau/config
+/opt/miau/config/miaurc
+#opt/miau/share
+#opt/miau/share/doc
+#opt/miau/share/doc/miau
+#opt/miau/share/doc/miau/examples
+#opt/miau/share/doc/miau/examples/miaurc
+#opt/miau/share/info
+#opt/miau/share/info/dir
+#opt/miau/share/info/miau.info
+#opt/miau/share/man
+#opt/miau/share/man/man1
+#opt/miau/share/man/man1/miau.1

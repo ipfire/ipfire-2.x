@@ -1,0 +1,45 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/miau
+#
+# Description : This is a script that starts miau as deamon
+#
+# Authors     : Schantl Stefan (Stevee@ipfire.org)
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting miau - another IRC-bouncer/proxy..."
+		loadproc /opt/miau/bin/miau -d /opt/miau/config
+		;;
+		
+	stop)
+		boot_mesg "Stopping miau - another IRC-bouncer/proxy..."
+		killproc /opt/miau/bin/miau
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /opt/miau/bin/miau
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/miau
