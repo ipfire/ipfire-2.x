@@ -24,6 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
+chown -R nobody:nobody /var/nagios
 htpasswd -bmc /etc/nagios/htpasswd.users nagiosadmin nagios
 /etc/init.d/apache restart
 start_service --background ${NAME}
