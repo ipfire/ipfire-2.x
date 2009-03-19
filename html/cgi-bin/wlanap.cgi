@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -249,23 +249,26 @@ print <<END
 <tr><td bgcolor='$color{'color20'}' colspan='2' align='left'><b>WLAN Services</b></td></tr>
 END
 ;
-print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
 if ( $wlan_card_status ne '' ){
 	print "<tr><td class='base'>WLAN card ($wlanapsettings{'DRIVER'})</td>";
 	print $wlan_card_status eq 'up' ? $status_started : $status_stopped;
 	print "<tr><td class='base'>Access Point</td>";
 	print $wlan_ap_status eq 'up' ? $status_started : $status_stopped;
-	if ( $wlan_card_status eq 'up' ){
-		print "<tr><td colspan='2' align='center'><input type='submit' name='ACTION' value='Stop' />";
-		print "<input type='submit' name='ACTION' value='Restart' /></td></tr>";
-	}else{
-		print "<tr><td colspan='2' align='center'><input type='submit' name='ACTION' value='Start' /></td></tr>";
-	}
 }else{
 	print "<tr><td colspan='2' class='base'><b>$message</b></td></tr>";
 }
-print "</form>";
 print "</table>";
+
+print <<END
+<br />
+<table width='95%' cellspacing='0'>
+<tr><td align='left' width='40%' />
+<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='Start' /><input type='image' alt='Start' title='Start' src='/images/go-up.png' /></form></td>
+<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='Stop' /><input type='image' alt='Stop' title='Stop' src='/images/go-down.png' /></form></td>
+<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='Restart' /><input type='image' alt='Restart' title='Restart' src='/images/view-refresh.png' /></form></td></tr>
+</table>
+END
+;
 
 if ( $wlan_card_status eq '' ){
 	&Header::closebox();
