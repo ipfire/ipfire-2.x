@@ -14,6 +14,7 @@
 #usr/lib/libcurl.a
 #usr/lib/libcurl.la
 usr/lib/libcurl.so
+usr/lib/libcurl.so.3
 usr/lib/libcurl.so.4
 usr/lib/libcurl.so.4.1.1
 #usr/lib/pkgconfig/libcurl.pc

@@ -73,5 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	# Create symlink to new curl lib for old binaries
+	ln -s libcurl.so.4 /usr/lib/libcurl.so.3
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
