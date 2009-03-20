@@ -36,17 +36,17 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 objects = 	$(DL_FILE) \
-			netfilter-layer7-v2.20.tar.gz \
+			netfilter-layer7-v2.21.tar.gz \
 			libnfnetlink-0.0.39.tar.bz2 \
 			libnetfilter_queue-0.0.16.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-netfilter-layer7-v2.20.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.20.tar.gz
+netfilter-layer7-v2.21.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.21.tar.gz
 libnfnetlink-0.0.39.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-0.0.39.tar.bz2
 libnetfilter_queue-0.0.16.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.16.tar.bz2
 
 $(DL_FILE)_MD5 = 723fa88d8a0915e184f99e03e9bf06cb
-netfilter-layer7-v2.20.tar.gz_MD5 = 525a821c973b730c8feaf9eedb57d1e4
+netfilter-layer7-v2.21.tar.gz_MD5 = 838422e7d9a06b42e682e9064e5210b5
 libnfnetlink-0.0.39.tar.bz2_MD5 = 348fed8c1edbe5b873ffc7b192140093
 libnetfilter_queue-0.0.16.tar.bz2_MD5 = b36664e6cd39edbfe46b416a86118add
 
@@ -80,8 +80,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.39 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.16
 
 	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.20.tar.gz
-	cd $(DIR_APP) && cp -vf $(DIR_SRC)/netfilter-layer7-v2.20/iptables-1.4.1.1-for-kernel-2.6.20forward/* \
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.21.tar.gz
+	cd $(DIR_APP) && cp -vf $(DIR_SRC)/netfilter-layer7-v2.21/iptables-1.4.1.1-for-kernel-2.6.20forward/* \
 	                 ./extensions/
 
 	# ipp2p 0.8.2-pomng
