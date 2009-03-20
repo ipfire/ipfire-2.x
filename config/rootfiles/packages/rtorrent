@@ -43,8 +43,8 @@ usr/bin/rtorrent
 #usr/include/torrent/tracker_list.h
 #usr/lib/libtorrent.la
 usr/lib/libtorrent.so
-usr/lib/libtorrent.so.9
-usr/lib/libtorrent.so.9.2.0
+usr/lib/libtorrent.so.11
+usr/lib/libtorrent.so.11.0.4
 #usr/lib/pkgconfig/libtorrent.pc
 #usr/include/sigc++-2.0
 #usr/include/sigc++-2.0/sigc++
