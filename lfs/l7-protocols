@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2008-04-23
+VER        = 2008-12-18
 
 THISAPP    = l7-protocols-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f71420848eb60f7fdca04c2e89c78ee5
+$(DL_FILE)_MD5 = 49c8d09b7134cc9eb0112427cb48332e
 
 install : $(TARGET)
 

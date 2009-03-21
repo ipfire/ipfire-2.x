@@ -303,3 +303,5 @@ etc/l7-protocols/protocols
 #etc/l7-protocols/testing/speeds-2007-10-02-450MHz
 #etc/l7-protocols/testing/test_speed-kernel.c
 #etc/l7-protocols/testing/test_speed-userspace.cpp
+#etc/l7-protocols/protocols/guildwars.pat
+#etc/l7-protocols/protocols/pplive.pat
