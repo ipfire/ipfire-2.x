@@ -137,7 +137,7 @@
 * iperf-2.0.4
 * ipfireseeder-1.00
 * iproute2-2.6.16-060323
-* iptables-1.4.1.1
+* iptables-1.4.2
 * iptstate-2.1
 * iputils-ss020927
 * java-1.6.0_12-for-ipfire

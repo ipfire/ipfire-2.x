@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.1.1
+VER        = 1.4.2
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -37,18 +37,18 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 objects = 	$(DL_FILE) \
 			netfilter-layer7-v2.21.tar.gz \
-			libnfnetlink-0.0.39.tar.bz2 \
-			libnetfilter_queue-0.0.16.tar.bz2
+			libnfnetlink-0.0.41.tar.bz2 \
+			libnetfilter_queue-0.0.17.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.21.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.21.tar.gz
-libnfnetlink-0.0.39.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-0.0.39.tar.bz2
-libnetfilter_queue-0.0.16.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.16.tar.bz2
+libnfnetlink-0.0.41.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-0.0.41.tar.bz2
+libnetfilter_queue-0.0.17.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.17.tar.bz2
 
-$(DL_FILE)_MD5 = 723fa88d8a0915e184f99e03e9bf06cb
+$(DL_FILE)_MD5 = a138d1c2e74321e0e4e228a9fb301c9a
 netfilter-layer7-v2.21.tar.gz_MD5 = 838422e7d9a06b42e682e9064e5210b5
-libnfnetlink-0.0.39.tar.bz2_MD5 = 348fed8c1edbe5b873ffc7b192140093
-libnetfilter_queue-0.0.16.tar.bz2_MD5 = b36664e6cd39edbfe46b416a86118add
+libnfnetlink-0.0.41.tar.bz2_MD5 = 5d844ea1f557bad0364d5b85cd10c796
+libnetfilter_queue-0.0.17.tar.bz2_MD5 = 2cde35e678ead3a8f9eb896bf807a159
 
 install : $(TARGET)
 
@@ -77,7 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.39 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.16
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.41 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
 
 	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.21.tar.gz
@@ -106,14 +106,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -vf libiptc/{*.o,*.a} \
 		/lib
 
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-0.0.39.tar.bz2
-	cd $(DIR_SRC)/libnfnetlink-0.0.39 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnfnetlink-0.0.39 && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/libnfnetlink-0.0.39 && make install
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-0.0.41.tar.bz2
+	cd $(DIR_SRC)/libnfnetlink-0.0.41 && ./configure --prefix=/usr
+	cd $(DIR_SRC)/libnfnetlink-0.0.41 && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/libnfnetlink-0.0.41 && make install
 
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_queue-0.0.16.tar.bz2
-	cd $(DIR_SRC)/libnetfilter_queue-0.0.16 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnetfilter_queue-0.0.16 && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/libnetfilter_queue-0.0.16 && make install
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.39 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.16
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_queue-0.0.17.tar.bz2
+	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && ./configure --prefix=/usr
+	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make install
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.41 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
 	@$(POSTBUILD)

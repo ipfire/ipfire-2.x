@@ -255,3 +255,9 @@ usr/lib/libnfnetlink.so.0.2.0
 #usr/share/man/man8/ip6tables-save.8
 #usr/share/man/man8/ip6tables.8
 #usr/share/man/man8/iptables-xml.8
+#lib/libxtables.la
+lib/libxtables.so
+lib/libxtables.so.0
+lib/libxtables.so.0.0.0
+#lib/pkgconfig
+#lib/pkgconfig/xtables.pc
