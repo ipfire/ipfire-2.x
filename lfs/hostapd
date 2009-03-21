@@ -77,10 +77,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp $(DIR_SRC)/config/hostapd/config ./hostapd/.config
-#	cd $(DIR_APP) && sed -e "s@/usr/local@/usr@g" -i Makefile
+	cd $(DIR_APP)/hostapd && cp $(DIR_SRC)/config/hostapd/config ./.config
+	cd $(DIR_APP)/hostapd && sed -e "s@/usr/local@/usr@g" -i Makefile
 	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE) && make install
-	mv /usr/local/bin/hostap* /usr/bin/
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	mkdir -p /var/ipfire/wlanap
 	touch /var/ipfire/wlanap/settings
