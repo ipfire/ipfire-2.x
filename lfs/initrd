@@ -64,8 +64,9 @@ $(TARGET) :
 	
 	cp -a /lib/modules/$(KVER)-ipfire/ /install/initrd/lib/modules/
 	
-	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,source,misc/*,kernel/{sound,drivers/{bluetooth,hwmon,media,video,watchdog}}} \
+	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,source,misc/*,kernel/{sound,drivers/{bluetooth,hwmon,gpu,rtc,isdn,media,video,watchdog}}} \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan* \
+		/install/initrd/lib/modules/$(KVER)-ipfire/net/{bridge,netfilter,ipsec}
 
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
 
