@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
-KVER="2.6.25.20"
+KVER="2.6.27.20"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden

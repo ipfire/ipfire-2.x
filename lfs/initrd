@@ -64,8 +64,8 @@ $(TARGET) :
 	
 	cp -a /lib/modules/$(KVER)-ipfire/ /install/initrd/lib/modules/
 	
-	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,source,misc/*,kernel/{sound,drivers/{media,video}}} \
-		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan*
+	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,source,misc/*,kernel/{sound,drivers/{bluetooth,hwmon,media,video,watchdog}}} \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan* \
 
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
 
@@ -79,6 +79,9 @@ $(TARGET) :
 	# make new dependencies for installer
 	depmod -a -F /boot/System.map-$(KVER)-ipfire \
 	    -b /install/initrd $(KVER)-ipfire
+
+	# Remove binary depmod files
+	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/modules.*.bin
 	    
 	mksquashfs /install/initrd /install/images/initrd
 	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log

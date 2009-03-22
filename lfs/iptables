@@ -87,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# ipp2p 0.8.2-pomng
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.1.1-ipp2p-0.8.2-pomng.patch
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.1-imq.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.2-imq.patch
 	chmod +x $(DIR_APP)/extensions/.IMQ-test*
 
 	# hack to disable IPv6 compilation as the configuration variable does not work when ip6.h is present
