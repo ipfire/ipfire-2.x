@@ -19,7 +19,7 @@ case "${1}" in
 	start)
 		boot_mesg "Starting miau - another IRC-bouncer/proxy..."
 		chown -R nobody.nobody /opt/miau
-		loadproc sudo -u nobody /opt/miau/bin/miau -d /opt/miau/config | head -n 0
+		loadproc sudo -u nobody /opt/miau/bin/miau -d /opt/miau/config > /dev/null
 		evaluate_retval
 		;;
 		
