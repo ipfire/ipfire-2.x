@@ -33,6 +33,8 @@
 * URI-1.35
 * Unix-Syslog-0.100
 * XML-Parser-2.34
+* alsa-lib-1.0.17
+* alsa-lib-1.0.17-kmod-2.6.25.20
 * alsa-lib-1.0.19
 * alsa-lib-1.0.19-kmod-2.6.27.20
 * amavisd-new-2.5.2
@@ -40,6 +42,8 @@
 * applejuice-0.31
 * arping-2.05
 * as86-0.16.17
+* asterisk-1.4.18
+* atl2-2.0.5-kmod-2.6.25.20
 * atl2-2.0.5-kmod-2.6.27.20
 * autoconf-2.59
 * automake-1.9.6
@@ -59,6 +63,7 @@
 * calamaris-2.59
 * capi4k-utils-2005-07-18
 * ccache-2.4
+* cdrtools-2.01
 * cdrtools-2.01.01
 * centerim-4.22.1
 * clamav-0.94.2
@@ -136,6 +141,7 @@
 * iperf-2.0.4
 * ipfireseeder-1.00
 * iproute2-2.6.16-060323
+* iptables-1.4.1.1
 * iptables-1.4.2
 * iptstate-2.1
 * iputils-ss020927
@@ -143,8 +149,10 @@
 * jpegsrc.v6b
 * kbd-1.12
 * klibc-1.5.14
+* kqemu-1.4.0pre1-kmod-2.6.25.20
 * kqemu-1.4.0pre1-kmod-2.6.27.20
 * kudzu-1.2.64
+* l7-protocols-2008-04-23
 * l7-protocols-2008-12-18
 * lame-3.97
 * lcd4linux-0.10.1-RC2
@@ -165,6 +173,7 @@
 * libshout-2.2.2
 * libsigc++-2.0.17
 * libtool-1.5.22
+* libtorrent-0.12.2
 * libtorrent-0.12.4
 * libupnp-1.6.6
 * libusb-0.1.12
@@ -172,9 +181,11 @@
 * libwww-perl-5.803
 * libxml2-2.6.26
 * libxslt-1.1.17
+* linux-2.6.25.20
 * linux-2.6.27.20
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
+* linux-libc-headers-2.6.12.0_rootfile
 * lm_sensors-3.0.3
 * logrotate-3.7.1
 * logwatch-7.3.6
@@ -183,6 +194,8 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-20090322
+* mISDNuser.git-8e7bf2f11cc108d4b52949c2a26e38df24821b01
+* madwifi-hal-0.10.5.6-r3942-20090205-kmod-2.6.25.20
 * madwifi-hal-0.10.5.6-r3942-20090205-kmod-2.6.27.20
 * make-3.81
 * man-db-2.4.3
@@ -246,6 +259,7 @@
 * procps-3.2.6
 * psmisc-22.2
 * qemu-0.10.0
+* qemu-0.10.1
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
@@ -253,6 +267,7 @@
 * rrdtool-1.2.15
 * rssdler-0.4.0a
 * rsync-3.0.4
+* rtorrent-0.8.2
 * rtorrent-0.8.4
 * samba-3.2.8
 * sane-1.0.19
@@ -300,6 +315,7 @@
 * urlgrabber-3.1.0
 * usbutils-0.72
 * util-linux-2.12r
+* v4l-dvb-e9a442d3b53a-kmod-2.6.25.20
 * v4l-dvb-e9a442d3b53a-kmod-2.6.27.20
 * vdr-1.6.0
 * vdradmin-am-3.6.4
@@ -314,6 +330,7 @@
 * whatmask-1.2
 * which-2.16
 * wireless_tools.30.pre6
+* wpa_supplicant-0.5.11
 * wpa_supplicant-0.6.8
 * xfsprogs-2.9.4
 * xvidcore-1.2.1

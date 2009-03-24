@@ -1,2 +1,2 @@
-etc/vsftpd.conf
-etc/vsftpd.user_list
+/etc/vsftpd.conf
+/etc/vsftpd.user_list
