@@ -17,12 +17,15 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2008 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2009 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
+#
+OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
+NEWVERSION="2.3"
 #
 KVER="2.6.27.20"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
@@ -42,12 +45,14 @@ echo update archive. This may take a while ...
 # Add some files that are not in the package to backup
 echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
 echo boot >> /opt/pakfire/tmp/ROOTFILES
+echo etc/issue >> /opt/pakfire/tmp/ROOTFILES
+echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
+echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
 #
-
 tar czvf /var/ipfire/backup/coreupdate28_$KVER.tar.gz.tar.gz \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1
 echo
-echo Update IPfire Kernel to $KVER ...
+echo Update IPfire to $NEWVERSION ...
 # Remove old kernel, configs, initrd, modules ...
 #
 rm -rf /boot/System.map-*
@@ -103,9 +108,23 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
+# Delete old lm-sensor modullist...
+#
+rm -rf /etc/sysconfig/lm_sensors
+#
 # Restart snort
 #
 /etc/init.d/snort restart
 #
+# Change version of Pakfire.conf
+#
+sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
+#
+# Create new issue
+#
+echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
+echo =================================== >> /etc/issue
+echo \\n running on \\s \\r \\m >> /etc/issue
+#
 # This core-update need a reboot
-/usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Upgrade finished. Please reboot... "' >> /tmp/remove_obsolete_paks
+/usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Upgrade finished. Please reboot... "
