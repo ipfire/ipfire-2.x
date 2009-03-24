@@ -56,6 +56,7 @@ my $txpower = '';
 &General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 
 $wlanapsettings{'APMODE'} = 'on';
+$wlanapsettings{'ACTION'} = '';
 $wlanapsettings{'MACMODE'} = '0';
 $wlanapsettings{'INTERFACE'} = '';
 $wlanapsettings{'SSID'} = 'IPFire';
@@ -69,37 +70,20 @@ $wlanapsettings{'DEBUG'} = '4';
 $wlanapsettings{'DRIVER'} = 'MADWIFI';
 
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
+&Header::getcgihash(\%wlanapsettings);
 
-my %cgiparams=();
-$cgiparams{'ACTION'} = '';
-$cgiparams{'APMODE'} = 'on';
-$cgiparams{'MACMODE'} = '0';
-$cgiparams{'SSID'} = 'IPFire';
-$cgiparams{'HIDESSID'} = 'off';
-$cgiparams{'ENC'} = 'wpa2';               # none / wep / wpa / wep+wpa
-$cgiparams{'TXPOWER'} = 'auto';
-$cgiparams{'CHANNEL'} = '05';
-$cgiparams{'PWD'} = 'IPFire-2.x';
-$cgiparams{'SYSLOGLEVEL'} = '0';
-$cgiparams{'DEBUG'} = '4';
-&Header::getcgihash(\%cgiparams);
+my @macs = $wlanapsettings{'MACS'};
 
+delete $wlanapsettings{'__CGI__'};
+delete $wlanapsettings{'x'};
+delete $wlanapsettings{'y'};
+delete $wlanapsettings{'MACS'};
+delete $wlanapsettings{'ACCEPT_MACS'};
+delete $wlanapsettings{'DENY_MACS'};
 
 &Header::showhttpheaders();
 
-if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
-	$wlanapsettings{'SSID'}		= $cgiparams{'SSID'};
-	$wlanapsettings{'MACMODE'}	= $cgiparams{'MACMODE'};
-	$wlanapsettings{'MACS'}		= $cgiparams{'MACS'};
-	$wlanapsettings{'HIDESSID'}	= $cgiparams{'HIDESSID'};
-	$wlanapsettings{'ENC'}		= $cgiparams{'ENC'};
-	$wlanapsettings{'CHANNEL'}	= $cgiparams{'CHANNEL'};
-	$wlanapsettings{'TXPOWER'}	= $cgiparams{'TXPOWER'};
-
-	$wlanapsettings{'PWD'}		= $cgiparams{'PWD'};
-	$wlanapsettings{'SYSLOGLEVEL'}	= $cgiparams{'SYSLOGLEVEL'};
-	$wlanapsettings{'DEBUG'}	= $cgiparams{'DEBUG'};
-
+if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 	# verify WPA Passphrase, must be 8 .. 63 characters
 	if ( (length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63) ){
 		$errormessage .= "Invalid length in WPA Passphrase. Must be between 8 and 63 characters.<br />";
@@ -111,20 +95,18 @@ if ( $cgiparams{'ACTION'} eq "$Lang::tr{'save'}" ){
 
 		system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1");
 	}
-}elsif ( $cgiparams{'ACTION'} eq "$Lang::tr{'interface'}" ){
-	$wlanapsettings{'INTERFACE'}      = $cgiparams{'INTERFACE'};
+}elsif ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'interface'}" ){
 	&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
-}elsif ( $cgiparams{'ACTION'} eq 'Start' ){
+}elsif ( $wlanapsettings{'ACTION'} eq 'Start' ){
 	system("/usr/local/bin/wlanapctrl start >/dev/null 2>&1");
-}elsif ( $cgiparams{'ACTION'} eq 'Stop' ){
+}elsif ( $wlanapsettings{'ACTION'} eq 'Stop' ){
 	system("/usr/local/bin/wlanapctrl stop >/dev/null 2>&1");
-}elsif ( $cgiparams{'ACTION'} eq 'Restart' ){
+}elsif ( $wlanapsettings{'ACTION'} eq 'Restart' ){
 	system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1");
 }
 
 &Header::openpage('WLAN', 1, '', '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
-print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
 
 if ( $errormessage ){
 	&Header::openbox('100%', 'center', $Lang::tr{'error messages'});
@@ -141,8 +123,8 @@ if ( $errormessage ){
 if ( $debug ){
 	&Header::openbox('100%', 'center', 'DEBUG');
 	my $debugCount = 0;
-	foreach my $line (sort keys %cgiparams) {
-		print "$line = '$cgiparams{$line}'<br />\n";
+	foreach my $line (sort keys %wlanapsettings) {
+		print "$line = '$wlanapsettings{$line}'<br />\n";
 		$debugCount++;
 	}
 	print "&nbsp;Count: $debugCount\n";
@@ -278,6 +260,7 @@ if ( $wlan_card_status eq '' ){
 }
 print <<END
 <br />
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='4' align='left'><b>WLAN Settings</b>
 <tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='40' value='$wlanapsettings{'SSID'}' /></td></tr>
@@ -435,12 +418,11 @@ END
  }
 	close CONFIGFILE;
 
-$wlanapsettings{'MACS'} =~ s/\r//gi;
-chomp($wlanapsettings{'MACS'});
 	open (MACFILE, ">/var/ipfire/wlanap/macfile");
-	print MACFILE <<END
-$wlanapsettings{'MACS'}
-END
-;
+	foreach(@macs){
+		$_ =~ s/\r//gi;
+		chomp($_);
+		if ( $_ ne "" ){print MACFILE $_;}
+	}
 	close MACFILE;
 }
