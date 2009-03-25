@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.65
+VER        = 2.11
 
 THISAPP    = memtest86+-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b3a18166532ae84aea20425c83626651
+$(DL_FILE)_MD5 = e457774139c0bfef899359df91f49b3e
 
 install : $(TARGET)
 
