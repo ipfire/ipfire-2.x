@@ -18,7 +18,8 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting VDR Webadministration Tool..."
-		loadproc /usr/bin/vdradmind
+		loadproc /usr/bin/vdradmind > /dev/null
+		evaluate_retval
 		;;
 		
 	stop)
