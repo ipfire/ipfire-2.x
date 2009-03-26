@@ -30,8 +30,7 @@ if [ ! -e "/var/ipfire/backup/addons/includes/vsftpd" ]; then
     echo /etc/vsftpd.user_list >> /var/ipfire/backup/addons/includes/vsftpd
 fi
 #Fix wrong backupinclude
-sed 's|^etc/vsftpd.conf|/etc/vsftpd.conf|g' /var/ipfire/backup/addons/includes/vsftpd
-sed 's|^vsftpd.user_list|/vsftpd.user_list|g' /var/ipfire/backup/addons/includes/vsftpd
+sed -i 's|^etc|/etc|g' /var/ipfire/backup/addons/includes/vsftpd
 make_backup ${NAME}
 #Remove userdate from rootfile
 cat /opt/pakfire/db/rootfiles/vsftpd | \
