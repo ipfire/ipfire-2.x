@@ -35,10 +35,10 @@ echo $MOUNT > /dev/null
 MOUNT=$_
 #
 # check if we the backup file already exist
-if [ -e /var/ipfire/backup/coreupdate28_$KVER.tar.gz ]; then
+if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 ]; then
     echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/coreupdate28_$KVER.tar.gz \
-       /var/ipfire/backup/coreupdate28_$KVER-old.tar.gz
+    mv -f /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
+       /var/ipfire/backup/core-upgrade_$KVER-old.tar.bz2
 fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
@@ -49,7 +49,7 @@ echo etc/issue >> /opt/pakfire/tmp/ROOTFILES
 echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
 #
-tar czvf /var/ipfire/backup/coreupdate28_$KVER.tar.gz.tar.gz \
+tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
    -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1
 echo
 echo Update IPfire to $NEWVERSION ...
