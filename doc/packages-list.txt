@@ -301,7 +301,6 @@
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-b386f0d3baaf-kmod-2.6.27.21
-* v4l-dvb-e9a442d3b53a-kmod-2.6.27.21
 * vdr-1.6.0
 * vdradmin-am-3.6.4
 * vim-7.0
