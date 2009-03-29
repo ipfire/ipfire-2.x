@@ -34,6 +34,8 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
+mISDN_VER  = mISDN-1_1_9
+
 # Normal build or SMP build.
 #
 ifeq "$(SMP)" "1"
@@ -46,7 +48,7 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	mISDN-20090322.tar.gz \
+	$(mISDN_VER).tar.gz \
 	squashfs3.4.tar.gz \
 	netfilter-layer7-v2.21.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2 \
@@ -56,14 +58,14 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.21.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.21.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
-mISDN-20090322.tar.gz 			= $(URL_IPFIRE)/mISDN-20090322.tar.gz
+$(mISDN_VER).tar.gz 			= $(URL_IPFIRE)/$(mISDN_VER).tar.gz
 reiser4-for-2.6.27.19.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.27.19.patch.bz2
 
 $(DL_FILE)_MD5				= 2912af7938fae1a3f2a9a6bcf8c0009f
 netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
-mISDN-20090322.tar.gz_MD5 		= 8495c13ef09dacf4a5e42b93da2ac3fc
+$(mISDN_VER).tar.gz_MD5 		= bb8beb974d581243442d89f66e6928da
 reiser4-for-2.6.27.19.patch.bz2_MD5	= 22988387f64f299489b90b484b2642cc
 
 install : $(TARGET)
@@ -131,10 +133,14 @@ ifeq "$(XEN)" ""
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27-imq.patch
 endif
 
-	# mISDN
-	cd $(DIR_SRC) && rm -rf mISDN-* && mkdir mISDN-socket
-	cd $(DIR_SRC)/mISDN-socket && tar xfz $(DIR_DL)/mISDN-20090322.tar.gz
-	cd $(DIR_SRC)/mISDN-socket && yes 'yes' | ./std2kern -k /usr/src/linux
+	# remove mISDNv2 from Kernel (incomaptible to asterisk)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27-disable_mISDNv2.patch
+	cd $(DIR_APP) rm -rf drivers/isdn/mISDN drivers/isdn/hardware/mISDN
+
+	# add mISDNv1
+	cd $(DIR_SRC) && rm -rf mISDN-*
+	cd $(DIR_SRC) && tar xfz $(DIR_DL)/$(mISDN_VER).tar.gz
+	cd $(DIR_SRC)/$(mISDN_VER) && yes 'yes' | ./std2kern -k /usr/src/linux
 	
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
@@ -181,3 +187,4 @@ endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)
+

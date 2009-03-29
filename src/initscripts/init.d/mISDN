@@ -660,7 +660,7 @@ function create_misdn_init_conf {
 #	and hfcmulti work properly.
 #
 poll=128
-dsp_poll=128
+dsp_poll=80
 dsp_options=0
 dtmfthreshold=100
 debug=0"

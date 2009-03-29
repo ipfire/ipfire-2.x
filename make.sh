@@ -508,7 +508,7 @@ buildipfire() {
   ipfiremake libmpeg2
   ipfiremake cmake
   ipfiremake libpri
-#  ipfiremake asterisk
+  ipfiremake asterisk
   ipfiremake gnump3d
   ipfiremake libsigc++
   ipfiremake applejuice

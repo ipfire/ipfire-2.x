@@ -1,0 +1,31 @@
+diff -Naur linux-2.6.27.21.org/drivers/isdn/hardware/Makefile linux-2.6.27.21/drivers/isdn/hardware/Makefile
+--- linux-2.6.27.21.org/drivers/isdn/hardware/Makefile	2009-03-23 23:04:09.000000000 +0100
++++ linux-2.6.27.21/drivers/isdn/hardware/Makefile	2009-03-29 11:08:02.000000000 +0200
+@@ -4,4 +4,3 @@
+ 
+ obj-$(CONFIG_CAPI_AVM)		+= avm/
+ obj-$(CONFIG_CAPI_EICON)	+= eicon/
+-obj-$(CONFIG_MISDN)		+= mISDN/
+diff -Naur linux-2.6.27.21.org/drivers/isdn/Kconfig linux-2.6.27.21/drivers/isdn/Kconfig
+--- linux-2.6.27.21.org/drivers/isdn/Kconfig	2009-03-23 23:04:09.000000000 +0100
++++ linux-2.6.27.21/drivers/isdn/Kconfig	2009-03-29 11:07:20.000000000 +0200
+@@ -21,8 +21,6 @@
+ 
+ if ISDN
+ 
+-source "drivers/isdn/mISDN/Kconfig"
+-
+ menuconfig ISDN_I4L
+ 	tristate "Old ISDN4Linux (deprecated)"
+ 	---help---
+diff -Naur linux-2.6.27.21.org/drivers/isdn/Makefile linux-2.6.27.21/drivers/isdn/Makefile
+--- linux-2.6.27.21.org/drivers/isdn/Makefile	2009-03-23 23:04:09.000000000 +0100
++++ linux-2.6.27.21/drivers/isdn/Makefile	2009-03-29 11:07:30.000000000 +0200
+@@ -4,7 +4,6 @@
+ 
+ obj-$(CONFIG_ISDN_I4L)			+= i4l/
+ obj-$(CONFIG_ISDN_CAPI)			+= capi/
+-obj-$(CONFIG_MISDN)			+= mISDN/
+ obj-$(CONFIG_ISDN)			+= hardware/
+ obj-$(CONFIG_ISDN_DIVERSION)		+= divert/
+ obj-$(CONFIG_ISDN_DRV_HISAX)		+= hisax/
