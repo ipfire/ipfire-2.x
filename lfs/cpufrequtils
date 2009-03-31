@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 004
+VER        = 005
 
 THISAPP    = cpufrequtils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cpufrequtils
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f868b9b6642c6c16b36cfd3eb627506a
+$(DL_FILE)_MD5 = 73a41589fe74b73fc530f4179f2c6142
 
 install : $(TARGET)
 
