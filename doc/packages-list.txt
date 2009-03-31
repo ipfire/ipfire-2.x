@@ -211,6 +211,7 @@
 * nasm-0.98.39
 * ncftp-3.2.1-src
 * ncurses-5.5
+* net-snmp-5.4.2.1
 * net-tools-1.60
 * netcat-0.7.1
 * netpbm-10.26.46

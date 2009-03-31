@@ -24,21 +24,16 @@
 
 include Config
 
-VER        = 2.6.21
+VER        = 5.4.2.1
 
-THISAPP    = openswan-$(VER)
+THISAPP    = net-snmp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(KMOD)" "1"
-ifeq "$(SMP)" "1"
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
-else
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$KVER
-endif
-else
 TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+PROG 	   = net-snmp
+PAK_VER	   = 1
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ba9da6c90e0f5fe856767d7510ce371f
+$(DL_FILE)_MD5 = 984932520143f0c8bf7b7ce1fc9e1da1
 
 install : $(TARGET)
 
@@ -57,6 +52,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -78,45 +76,23 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
-	#openswan internal nat-t patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.6.20-nat-t.patch
-
-ifeq "$(KMOD)" "1"
-	cd $(DIR_APP) && make KERNELSRC=/usr/src/linux module $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make minstall
-else
-	cd $(DIR_APP) && sed -i \
-		-e 's%^INC_USRLOCAL.*$$%INC_USRLOCAL=/usr%' \
-		-e 's%^USERCOMPILE.*$$%USERCOMPILE=$(CFLAGS)%' \
-		-e 's%^KLIPSCOMPILE.*$$%KLIPSCOMPILE=$(CFLAGS)%' \
-		-e 's%^XMLTO.*$$%#&%' Makefile.inc
-
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/openswan-2.6.20_noxmlto.patch
-
-	cd $(DIR_APP) && sed -i 's/-Werror//' programs/Makefile.program
-	
-	cd $(DIR_APP) && make programs
+	cd $(DIR_APP) && ./configure \
+				    --prefix=/usr/local \
+				    --with-default-snmp-version="2" \
+				    --with-sys-contact="root@" \
+				    --with-sys-location="localhost" \
+				    --with-logfile="/var/log/snmpd.log" \
+				    --with-persistent-directory="/var/net-snmp" \
+				    --libdir=/usr/lib \
+				    --sysconfdir="/etc" \
+				    --enable-mini-agent=yes 
+	cd $(DIR_APP) && make 
 	cd $(DIR_APP) && make install
-	
-	# don't know why make this doesnt made
-	cd $(DIR_APP) && cp -a programs/_confread/_confread.in /usr/lib/ipsec/_confread
-	
-	-rm -rfv /etc/rc*.d/*ipsec
-	cd $(DIR_SRC) && cp src/initscripts/init.d/ipsec /etc/rc.d/init.d/ipsec
-	rm -f /etc/ipsec.conf /etc/ipsec.secrets
-	ln -sf $(CONFIG_ROOT)/vpn/ipsec.conf /etc/ipsec.conf
-	ln -sf $(CONFIG_ROOT)/vpn/ipsec.secrets /etc/ipsec.secrets
-
-	rm -rf /etc/ipsec.d/{cacerts,certs,crls}
-	ln -sf $(CONFIG_ROOT)/ca    /etc/ipsec.d/cacerts
-	ln -sf $(CONFIG_ROOT)/certs /etc/ipsec.d/certs
-	ln -sf $(CONFIG_ROOT)/crls  /etc/ipsec.d/crls
-	
-	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.16-startklips-1.patch
-	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.16-updown.klips-1.patch
-#	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.4.9-updown_x509-1.patch
-	cd /etc/ipsec.d/policies && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.16-clear-1.patch
-endif	
-	#@rm -rf $(DIR_APP)
+	install -v -m644 $(DIR_SRC)/config/net-snmp/snmpd.conf /etc/snmpd.conf
+	install -v -m755 $(DIR_SRC)/src/initscripts/init.d/net-snmp /etc/init.d/net-snmp
+	ln -sf ../init.d/net-snmp /etc/rc.d/rc3.d/S65net-snmp
+	ln -sf ../init.d/net-snmp /etc/rc.d/rc0.d/K02net-snmp
+	ln -sf ../init.d/net-snmp /etc/rc.d/rc6.d/K02net-snmp
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+	
