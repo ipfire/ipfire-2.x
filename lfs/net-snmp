@@ -77,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-				    --prefix=/usr/local \
+				    --prefix=/usr \
 				    --with-default-snmp-version="2" \
 				    --with-sys-contact="root@" \
 				    --with-sys-location="localhost" \
