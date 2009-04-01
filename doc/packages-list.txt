@@ -67,7 +67,7 @@
 * collectd-4.5.1
 * coreutils-5.96
 * cpio-2.6
-* cpufrequtils-004
+* cpufrequtils-005
 * cryptsetup-1.0.6
 * cups-1.3.9
 * curl-7.19.4
@@ -210,6 +210,7 @@
 * nasm-0.98.39
 * ncftp-3.2.1-src
 * ncurses-5.5
+* net-snmp-5.4.2.1
 * net-tools-1.60
 * netcat-0.7.1
 * netpbm-10.26.46
@@ -225,8 +226,8 @@
 * openmailadmin-1.0.0
 * openssh-5.2p1
 * openssl-0.9.8k
-* openswan-2.6.20
-* openswan-2.6.20-kmod-VER
+* openswan-2.6.21
+* openswan-2.6.21-kmod-VER
 * openvpn-2.0.9
 * p7zip_4.65
 * pam_mysql-0.7RC1
@@ -284,7 +285,7 @@
 * sysstat-6.0.2
 * sysvinit-2.86
 * taglib-1.5
-* tar-1.15.1
+* tar-1.22
 * tcp_wrappers_7.6
 * tcpdump-3.8.3
 * tcptrack-1.3.0
