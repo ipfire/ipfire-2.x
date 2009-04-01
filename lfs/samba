@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.8
+VER        = 3.3.2
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 13
+PAK_VER    = 14
 
 DEPS       = "cups cyrus-sasl"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 06efd6e6cc4aac628a1a0b082e4be0f2
+$(DL_FILE)_MD5 = 5c5178ea2c5d9bd5f6569285f2e0e6d7
 
 install : $(TARGET)
 
@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP)/source && ./configure \
 				--prefix=/usr \
-				--libdir=/usr/lib/samba \
+				--libdir=/usr/lib/ \
 				--sysconfdir=/var/ipfire \
 				--localstatedir=/var \
 				--with-piddir=/var/run \
@@ -91,11 +91,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--with-syslog
 	cd $(DIR_APP)/source && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/source && make install
-	cp -vfp /usr/lib/samba/{libsmbclient.so.0,libtalloc.so.1,libtdb.so.1,libwbclient.so.0} /usr/lib
-	cd /usr/lib/ && ln -v -sf libsmbclient.so.0 libsmbclient.so
-	cd /usr/lib/ && ln -v -sf libtalloc.so.1 libtalloc.so
-	cd /usr/lib/ && ln -v -sf libtdb.so.1 libtdb.so
-	cd /usr/lib/ && ln -v -sf libwbclient.so.0 libwbclient.so
+#	cp -vfp /usr/lib/samba/{libsmbclient.so.0,libtalloc.so.1,libtdb.so.1,libwbclient.so.0} /usr/lib
+#	cd /usr/lib/ && ln -v -sf libsmbclient.so.0 libsmbclient.so
+#	cd /usr/lib/ && ln -v -sf libtalloc.so.1 libtalloc.so
+#	cd /usr/lib/ && ln -v -sf libtdb.so.1 libtdb.so
+#	cd /usr/lib/ && ln -v -sf libwbclient.so.0 libwbclient.so
 	cd $(DIR_APP)/source && chmod -v 644 /usr/include/libsmbclient.h
 	cd $(DIR_APP)/source && chmod -v 644 /usr/include/libsmbclient.h
 	cd $(DIR_APP)/source && install -v -m755 nsswitch/libnss_wins.so /lib

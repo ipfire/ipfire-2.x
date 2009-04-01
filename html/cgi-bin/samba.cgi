@@ -90,6 +90,8 @@ $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Never';
 $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
+$sambasettings{'SYSLOGLEVEL'} = '1';
+$sambasettings{'SYSLOGONLY'} = 'on';
 $sambasettings{'DOSCHARSET'} = 'CP850';
 $sambasettings{'UNIXCHARSET'} = 'UTF8';
 $sambasettings{'DISPLAYCHARSET'} = 'CP850';
@@ -154,6 +156,8 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
 	$sambasettings{'MAPTOGUEST'} = 'Never';
 	$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
+	$sambasettings{'SYSLOGLEVEL'} = '1';
+	$sambasettings{'SYSLOGONLY'} = 'on';
 	$sambasettings{'DOSCHARSET'} = 'CP850';
 	$sambasettings{'UNIXCHARSET'} = 'UTF8';
 	$sambasettings{'DISPLAYCHARSET'} = 'CP850';
@@ -240,6 +244,7 @@ if ($sambasettings{'WINSSUPPORT'} eq 'on'){ $sambasettings{'WINSSUPPORT'} = "tru
 if ($sambasettings{'LOCALMASTER'} eq 'on'){ $sambasettings{'LOCALMASTER'} = "true";} else { $sambasettings{'LOCALMASTER'} = "false";}
 if ($sambasettings{'DOMAINMASTER'} eq 'on'){ $sambasettings{'DOMAINMASTER'} = "true";} else { $sambasettings{'DOMAINMASTER'} = "false";}
 if ($sambasettings{'PREFERREDMASTER'} eq 'on'){ $sambasettings{'PREFERREDMASTER'} = "true";} else { $sambasettings{'PREFERREDMASTER'} = "false";}
+if ($sambasettings{'SYSLOGONLY'} eq 'on'){ $sambasettings{'SYSLOGONLY'} = "yes";} else { $sambasettings{'SYSLOGONLY'} = "no";}
 
 ############################################################################################################################
 ############################################# Schreiben der Samba globals ##################################################
@@ -286,7 +291,9 @@ log file       = /var/log/samba/samba-log.%m
 lock directory = /var/lock/samba
 pid directory  = /var/run/
 log level = $sambasettings{'LOGLEVEL'}
-	
+syslog = $sambasettings{'SYSLOGLEVEL'}
+syslog only = $sambasettings{'SYSLOGONLY'}
+
 preferred master = $sambasettings{'PREFERREDMASTER'}
 domain master = $sambasettings{'DOMAINMASTER'}
 local master = $sambasettings{'LOCALMASTER'}
@@ -352,6 +359,9 @@ if ($errormessage)
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
 
+$checked{'SYSLOGONLY'}{'off'} = '';
+$checked{'SYSLOGONLY'}{'on'} = '';
+$checked{'SYSLOGONLY'}{$sambasettings{'SYSLOGONLY'}} = "checked='checked'";
 $checked{'WINSSUPPORT'}{'off'} = '';
 $checked{'WINSSUPPORT'}{'on'} = '';
 $checked{'WINSSUPPORT'}{$sambasettings{'WINSSUPPORT'}} = "checked='checked'";
@@ -432,6 +442,9 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'display charset'}</td><td align='left'><input type='text' name='DISPLAYCHARSET' value='$sambasettings{'DISPLAYCHARSET'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'server string'}</td><td align='left'><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>Sys$Lang::tr{'log level'}</td><td align='left'><input type='text' name='SYSLOGLEVEL' value='$sambasettings{'SYSLOGLEVEL'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>Syslog only</td><td align='left'>on <input type='radio' name='SYSLOGONLY' value='on' $checked{'SYSLOGONLY'}{'on'} />/
+																							<input type='radio' name='LOCALMASTER' value='off' $checked{'LOCALMASTER'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
 																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
 																						<font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnsettings{'DOVPN_SUBNET'}</b></font></td></tr>

@@ -184,7 +184,6 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDNuser-1_1_9
-* mISDNuser-1_1_9.1
 * madwifi-hal-0.10.5.6-r3942-20090205-kmod-2.6.27.21
 * make-3.81
 * man-db-2.4.3
@@ -256,7 +255,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.4
 * rtorrent-0.8.4
-* samba-3.2.8
+* samba-3.3.2
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
