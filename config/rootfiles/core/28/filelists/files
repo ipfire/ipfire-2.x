@@ -21,6 +21,7 @@ usr/lib/libcurl.so.4.1.1
 lib/modules/KVER-ipfire/misc/kqemu.ko
 usr/local/bin/setaliases
 srv/web/ipfire/cgi-bin/aliases.cgi
+var/ipfire/menu.d/20-status.menu
 var/ipfire/menu.d/30-network.menu
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/credits.cgi

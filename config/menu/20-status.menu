@@ -67,5 +67,5 @@
     $substatus->{'75.atm-status'} = {'caption' => 'Atm-status',
 				  'uri' => '/cgi-bin/atm-status.cgi',
 				  'title' => 'Atm-status',
-				  'enabled' => `find /sys/class/atm/*/device`,
+				  'enabled' => `find /sys/class/atm/*/device 2>/dev/null`,
 				  };
