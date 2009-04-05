@@ -6,6 +6,7 @@
 * Compress-Zlib-1.35
 * Convert-TNEF-0.17
 * Convert-UUlib-1.06
+* DBI-1.607
 * DFB++-1.0.0
 * Digest-1.08
 * Digest-HMAC-1.01
