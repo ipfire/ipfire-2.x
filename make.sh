@@ -595,6 +595,7 @@ buildipfire() {
   ipfiremake miau
   ipfiremake net-snmp
   ipfiremake perl-DBI
+  ipfiremake perl-DBD-mysql
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
