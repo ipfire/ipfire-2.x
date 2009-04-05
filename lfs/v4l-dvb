@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = b386f0d3baaf
+VER        = 4cd17f5a20cc
 
 THISAPP    = v4l-dvb-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c1681dd766507fdac47cd615e79966ea
+$(DL_FILE)_MD5 = a49daede2f4a80b50f8c05eb516d153f
 
 install : $(TARGET)
 
