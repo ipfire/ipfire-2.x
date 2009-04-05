@@ -103,9 +103,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Not report deprecated syscall 1.23 (for kudzu)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
     
-	# Fix crash on Twinhead H12Y notebooks
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-h12y-mmio-quirks.patch
-
 	# Openswan
 	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
 
