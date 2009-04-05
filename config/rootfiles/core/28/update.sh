@@ -50,7 +50,7 @@ echo opt/pakfire/etc/pakfire.conf >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
 #
 tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
-   -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' -C / > /dev/null 2>&1
+    -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' > /dev/null 2>&1
 echo
 echo Update IPfire to $NEWVERSION ...
 # Remove old kernel, configs, initrd, modules ...
