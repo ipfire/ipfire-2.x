@@ -1,3 +1,5 @@
+etc/rc.d/init.d/mISDN
+usr/bin/isdnbridge
 usr/bin/loadfirm
 usr/bin/mISDNdebugtool
 usr/bin/misdnportinfo

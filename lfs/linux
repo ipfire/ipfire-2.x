@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-mISDN_VER  = mISDN-1_1_9
+mISDN_VER  = mISDN.git-ad5e8abaed89ce6539104b819eef011655cd0b04
 
 # Normal build or SMP build.
 #
@@ -65,7 +65,7 @@ $(DL_FILE)_MD5				= 2912af7938fae1a3f2a9a6bcf8c0009f
 netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
-$(mISDN_VER).tar.gz_MD5 		= bb8beb974d581243442d89f66e6928da
+$(mISDN_VER).tar.gz_MD5 		= 480a947458c3f254aba489a807f98a29
 reiser4-for-2.6.27.19.patch.bz2_MD5	= 22988387f64f299489b90b484b2642cc
 
 install : $(TARGET)
@@ -137,10 +137,11 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27-disable_mISDNv2.patch
 	cd $(DIR_APP) rm -rf drivers/isdn/mISDN drivers/isdn/hardware/mISDN
 
-	# add mISDNv1
+	# add mISDNv1.2
 	cd $(DIR_SRC) && rm -rf mISDN-*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/$(mISDN_VER).tar.gz
-	cd $(DIR_SRC)/$(mISDN_VER) && yes 'yes' | ./std2kern -k /usr/src/linux
+	cd $(DIR_SRC)/mISDN.git && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-remove2.6.27-dsp-features.diff
+	cd $(DIR_SRC)/mISDN.git && yes 'yes' | ./std2kern -k /usr/src/linux
 	
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper

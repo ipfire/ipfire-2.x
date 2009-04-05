@@ -17,3 +17,11 @@ blacklist l3udss1
 blacklist mISDN_capi
 blacklist mISDN_isac
 blacklist hfcsusb
+blacklist hfcpci
+blacklist hfcsmini
+blacklist l1oip
+blacklist mISDN_dsp
+blacklist netjetpci
+blacklist sedlfax
+blacklist w6692pci
+blacklist xhfc

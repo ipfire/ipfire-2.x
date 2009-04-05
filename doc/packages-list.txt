@@ -183,7 +183,7 @@
 * lynis-1.2.3
 * lzo-2.02
 * m4-1.4.4
-* mISDNuser-1_1_9
+* mISDNuser.git-f69adb52764c392135800f9a87c9018f9f268139
 * madwifi-hal-0.10.5.6-r3942-20090205-kmod-2.6.27.21
 * make-3.81
 * man-db-2.4.3
