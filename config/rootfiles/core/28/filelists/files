@@ -3,6 +3,7 @@ etc/rc.d/init.d/snort
 etc/ssh/moduli
 etc/ssh/ssh_config
 etc/ssh/sshd_config
+etc/modprobe.d/blacklist
 usr/bin/scp
 usr/bin/sftp
 usr/bin/slogin

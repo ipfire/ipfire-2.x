@@ -6,7 +6,7 @@
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 00.00
+# Version     : 01.00
 #
 # Notes       :
 #
@@ -20,14 +20,13 @@ case "${1}" in
 		boot_mesg -n "Starting cpufreq... "
 
 		# try cpufreq hardware depend modules
-		for module in acpi-cpufreq cpufreq-nforce2 e-powersaver \
-		    gx-suspmod longhaul longrun p4-clockmod powernow-k6 \
-		    powernow-k7 powernow-k8 speedstep-centrino speedstep-ich \
-		    speedstep-smi; do
-		    modprobe $module > /dev/null 2>&1;
-		    if [ ${?} = 0 ]; then
-			boot_mesg -n "$SUCCESS$module$NORMAL "
-		    fi
+		for i in $(find /lib/modules/$(uname -r)/kernel/arch/x86/kernel/cpu/cpufreq \
+		           ! -name speedstep-lib.ko | sort -d -r); do
+			module=$(basename $i | cut -d. -f1);
+			modprobe $module > /dev/null 2>&1;
+			if [ ${?} = 0 ]; then
+			    boot_mesg -n "$SUCCESS$module$NORMAL "
+			fi
 		done
 		boot_mesg ""
 
@@ -37,7 +36,7 @@ case "${1}" in
 		modprobe cpufreq_powersave
 		modprobe cpufreq_userspace
 
-		CPUCOUNT=`ls /sys/devices/system/cpu/cpu*/cpufreq/affected_cpus | wc -l`;
+		CPUCOUNT=`ls /sys/devices/system/cpu/cpu*/cpufreq/affected_cpus 2> /dev/null | wc -l `;
 		let CPUCOUNT-=1
 		# Set the governor to ondemand to test if it works 
 		cpufreq-set -g ondemand
@@ -63,3 +62,5 @@ case "${1}" in
 esac
 
 # End $rc_base/init.d/cpufreq
+
+

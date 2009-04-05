@@ -70,6 +70,7 @@ usr/lib/samba/vfs/acl_xattr.so
 usr/lib/samba/vfs/audit.so
 usr/lib/samba/vfs/cap.so
 usr/lib/samba/vfs/default_quota.so
+usr/lib/samba/vfs/dirsort.so
 usr/lib/samba/vfs/expand_msdfs.so
 usr/lib/samba/vfs/extd_audit.so
 usr/lib/samba/vfs/fake_perms.so
@@ -154,6 +155,7 @@ usr/sbin/winbindd
 #usr/share/man/man8/vfs_catia.8
 #usr/share/man/man8/vfs_commit.8
 #usr/share/man/man8/vfs_default_quota.8
+#usr/share/man/man8/vfs_dirsort.8
 #usr/share/man/man8/vfs_extd_audit.8
 #usr/share/man/man8/vfs_fake_perms.8
 #usr/share/man/man8/vfs_fileid.8

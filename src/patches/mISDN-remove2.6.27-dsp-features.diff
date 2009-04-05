@@ -1,0 +1,344 @@
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_cmx.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_cmx.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_cmx.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_cmx.c	2009-04-04 19:06:14.000000000 +0200
+@@ -1138,11 +1138,7 @@
+ 	 * also add delay if requested by PH_SIGNAL
+ 	 */
+ 	if (dsp->rx_W < 0) {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-		if (dsp->features.unclocked) {
+-#else
+ 		if (dsp->features.has_jitter) {
+-#endif
+ 			dsp->rx_R = (hh->dinfo & CMX_BUFF_MASK);
+ 			dsp->rx_W = (dsp->rx_R+dsp->cmx_delay) & CMX_BUFF_MASK;
+ 		} else {
+@@ -1151,11 +1147,7 @@
+ 		}
+ 	}
+ 	/* if frame contains time code, write directly */
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-	if (dsp->features.unclocked) {
+-#else
+         if (dsp->features.has_jitter) {
+-#endif
+ 		dsp->rx_W = (hh->dinfo & CMX_BUFF_MASK);
+ #warning remove me
+ 		printk(KERN_DEBUG "%s %08x\n", dsp->inst.name, hh->dinfo);
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp.h mISDN.git/drivers/isdn/hardware/mISDN/dsp.h
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp.h	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp.h	2009-04-04 19:04:43.000000000 +0200
+@@ -159,7 +159,6 @@
+  * general stuff *
+  *****************/
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 27)
+ struct dsp_features {
+ 	int		hfc_id;		// unique id to identify the chip (or -1) 
+ 	int		hfc_dtmf;	// set if HFCmulti card supports dtmf 
+@@ -170,7 +169,6 @@
+ 	int		pcm_banks;	// number of IO banks of pcm bus 
+ 	int		has_jitter;	// data is jittered and unsorted 
+ };
+-#endif
+ 
+ typedef struct _dsp {
+ 	struct list_head list;
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_hwec.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_hwec.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_hwec.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_hwec.c	2009-04-04 19:07:16.000000000 +0200
+@@ -30,24 +30,6 @@
+ #include <linux/mISDNif.h>
+ #include "dsp.h"
+ #include "helper.h"
+-
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static struct mISDN_dsp_element_arg args[] = {
+-        { "deftaps", "128", "Set the number of taps of cancellation." },
+-};
+-
+-static struct mISDN_dsp_element dsp_hwec_p = {
+-        .name = "hwec",
+-        .new = NULL,
+-        .free = NULL,
+-        .process_tx = NULL,
+-        .process_rx = NULL,
+-        .num_args = sizeof(args) / sizeof(struct mISDN_dsp_element_arg),
+-        .args = args,
+-};
+-struct mISDN_dsp_element *dsp_hwec = &dsp_hwec_p;
+-
+-#else
+ static mISDN_dsp_element_arg_t args[] = {
+ 	{ "deftaps", "128", "Set the number of taps of cancellation." },
+ };
+@@ -62,7 +44,6 @@
+ 	.args = args,
+ };
+ mISDN_dsp_element_t *dsp_hwec = &dsp_hwec_p;
+-#endif
+ 
+ void dsp_hwec_enable (dsp_t *dsp, const char *arg)
+ {
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_kb1ec.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_kb1ec.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_kb1ec.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_kb1ec.c	2009-04-04 19:07:35.000000000 +0200
+@@ -90,22 +90,6 @@
+ 	dsp_cancel_rx(p, data, len);
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static struct mISDN_dsp_element_arg args[] = {
+-        { "deftaps", "128", "Set the number of taps of cancellation." },
+-        { "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+-};
+-
+-static struct mISDN_dsp_element dsp_kb1ec = {
+-        .name = "kb1ec",
+-        .new = new,
+-        .free = free,
+-        .process_tx = process_tx,
+-        .process_rx = process_rx,
+-        .num_args = sizeof(args) / sizeof(struct mISDN_dsp_element_arg),
+-        .args = args,
+-};
+-#else
+ static mISDN_dsp_element_arg_t args[] = {
+ 	{ "deftaps", "128", "Set the number of taps of cancellation." },
+ 	{ "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+@@ -120,7 +104,6 @@
+ 	.num_args = sizeof(args) / sizeof(mISDN_dsp_element_arg_t),
+ 	.args = args,
+ };
+-#endif
+ 
+ #ifdef MODULE
+ static int __init dsp_kb1ec_init (void)
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_mec2.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_mec2.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_mec2.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_mec2.c	2009-04-04 19:08:03.000000000 +0200
+@@ -91,22 +91,6 @@
+ 	dsp_cancel_rx(p, data, len);
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static struct mISDN_dsp_element_arg args[] = {
+-        { "deftaps", "128", "Set the number of taps of cancellation." },
+-        { "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+-};
+-
+-static struct mISDN_dsp_element dsp_mec2 = {
+-        .name = "mec2",
+-        .new = new,
+-        .free = free,
+-        .process_tx = process_tx,
+-        .process_rx = process_rx,
+-        .num_args = sizeof(args) / sizeof(struct mISDN_dsp_element_arg),
+-        .args = args,
+-};
+-#else
+ static mISDN_dsp_element_arg_t args[] = {
+ 	{ "deftaps", "128", "Set the number of taps of cancellation." },
+ 	{ "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+@@ -121,7 +105,6 @@
+ 	.num_args = sizeof(args) / sizeof(mISDN_dsp_element_arg_t),
+ 	.args = args,
+ };
+-#endif
+ 
+ #ifdef MODULE
+ static int __init dsp_mec2_init (void)
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_mg2ec.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_mg2ec.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_mg2ec.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_mg2ec.c	2009-04-04 19:08:27.000000000 +0200
+@@ -90,22 +90,6 @@
+ 	dsp_cancel_rx(p, data, len);
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static struct mISDN_dsp_element_arg args[] = {
+-        { "deftaps", "128", "Set the number of taps of cancellation." },
+-        { "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+-};
+-
+-static struct mISDN_dsp_element dsp_mg2ec = {
+-        .name = "mg2ec",
+-        .new = new,
+-        .free = free,
+-        .process_tx = process_tx,
+-        .process_rx = process_rx,
+-        .num_args = sizeof(args) / sizeof(struct mISDN_dsp_element_arg),
+-        .args = args,
+-};
+-#else
+ static mISDN_dsp_element_arg_t args[] = {
+ 	{ "deftaps", "128", "Set the number of taps of cancellation." },
+ 	{ "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+@@ -120,7 +104,6 @@
+ 	.num_args = sizeof(args) / sizeof(mISDN_dsp_element_arg_t),
+ 	.args = args,
+ };
+-#endif
+ 
+ #ifdef MODULE
+ static int __init dsp_mg2ec_init (void)
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_octwareec.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_octwareec.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_octwareec.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_octwareec.c	2009-04-04 19:09:07.000000000 +0200
+@@ -91,22 +91,6 @@
+ 	dsp_cancel_rx(p, data, len);
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static struct mISDN_dsp_element_arg args[] = {
+-        { "deftaps", "128", "Set the number of taps of cancellation." },
+-        { "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+-};
+-
+-static struct mISDN_dsp_element dsp_octwareec = {
+-        .name = "octwareec",
+-        .new = new,
+-        .free = free,
+-        .process_tx = process_tx,
+-        .process_rx = process_rx,
+-        .num_args = sizeof(args) / sizeof(struct mISDN_dsp_element_arg),
+-        .args = args,
+-};
+-#else
+ static mISDN_dsp_element_arg_t args[] = {
+ 	{ "deftaps", "128", "Set the number of taps of cancellation." },
+ 	{ "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+@@ -121,7 +105,6 @@
+ 	.num_args = sizeof(args) / sizeof(mISDN_dsp_element_arg_t),
+ 	.args = args,
+ };
+-#endif
+ 
+ #ifdef MODULE
+ static int __init dsp_octwareec_init (void)
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_oslec.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_oslec.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_oslec.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_oslec.c	2009-04-04 19:09:34.000000000 +0200
+@@ -98,22 +98,6 @@
+ 	dsp_cancel_rx(p, data, len);
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static struct  mISDN_dsp_element_arg args[] = {
+-        { "deftaps", "128", "Set the number of taps of cancellation." },
+-        { "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+-};
+-
+-static struct mISDN_dsp_element dsp_oslec = {
+-        .name = "oslec",
+-        .new = new,
+-        .free = free,
+-        .process_tx = process_tx,
+-        .process_rx = process_rx,
+-        .num_args = sizeof(args) / sizeof(struct mISDN_dsp_element_arg),
+-        .args = args,
+-};
+-#else
+ static mISDN_dsp_element_arg_t args[] = {
+ 	{ "deftaps", "128", "Set the number of taps of cancellation." },
+ 	{ "training", "0", "Enable echotraining (0: disabled, 1: enabled)." },
+@@ -128,7 +112,6 @@
+ 	.num_args = sizeof(args) / sizeof(mISDN_dsp_element_arg_t),
+ 	.args = args,
+ };
+-#endif
+ 
+ #ifdef MODULE
+ static int __init dsp_oslec_init (void)
+diff -Naur mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_pipeline.c mISDN.git/drivers/isdn/hardware/mISDN/dsp_pipeline.c
+--- mISDN.git.org/drivers/isdn/hardware/mISDN/dsp_pipeline.c	2009-01-22 14:26:03.000000000 +0100
++++ mISDN.git/drivers/isdn/hardware/mISDN/dsp_pipeline.c	2009-04-04 19:13:05.000000000 +0200
+@@ -36,11 +36,7 @@
+ /* uncomment for debugging */
+ /*#define PIPELINE_DEBUG*/
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-extern struct mISDN_dsp_element *dsp_hwec;
+-#else
+ extern mISDN_dsp_element_t *dsp_hwec;
+-#endif
+ 
+ extern void dsp_hwec_enable          (dsp_t *dsp, const char *arg);
+ extern void dsp_hwec_disable         (dsp_t *dsp);
+@@ -48,21 +44,13 @@
+ extern void dsp_hwec_exit            (void);
+ 
+ typedef struct _dsp_pipeline_entry {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-	struct mISDN_dsp_element *elem;
+-#else
+ 	mISDN_dsp_element_t *elem;
+-#endif
+ 	void                *p;
+ 	struct list_head     list;
+ } dsp_pipeline_entry_t;
+ 
+ typedef struct _dsp_element_entry {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-	struct mISDN_dsp_element *elem;
+-	struct device  dev;
+-
+-#elif LINUX_VERSION_CODE == KERNEL_VERSION(2, 6, 26)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 26)
+ 	mISDN_dsp_element_t *elem;
+ 	struct device dev;
+ 
+@@ -95,11 +83,7 @@
+ #endif
+ };
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static ssize_t attr_show_args (struct device *dev, struct device_attribute *attr, char *buf) {
+-	struct mISDN_dsp_element *elem = dev_get_drvdata(dev);
+-
+-#elif LINUX_VERSION_CODE == KERNEL_VERSION(2, 6, 26)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 26)
+ static ssize_t attr_show_args (struct device *dev, struct device_attribute *attr, char *buf) {
+         mISDN_dsp_element_t *elem = dev_get_drvdata(dev);
+ 
+@@ -125,14 +109,7 @@
+ 	return(len);
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-static struct device_attribute element_attributes[] = {
+-        __ATTR(args, 0444, attr_show_args, NULL),
+-};
+-
+-int mISDN_dsp_element_register (struct mISDN_dsp_element *elem) {
+-
+-#elif LINUX_VERSION_CODE == KERNEL_VERSION(2, 6, 26)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 26)
+ static struct device_attribute element_attributes[] = {
+         __ATTR(args, 0444, attr_show_args, NULL),
+ };
+@@ -201,12 +178,7 @@
+ 	return re;
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-void mISDN_dsp_element_unregister (struct mISDN_dsp_element *elem) {
+-
+-#else
+ void mISDN_dsp_element_unregister (mISDN_dsp_element_t *elem) {
+-#endif
+ 	dsp_element_entry_t *entry, *n;
+ 	u_long flags;
+ 
+@@ -319,11 +291,7 @@
+ 	char *dup, *tok, *name, *args;
+ 	dsp_element_entry_t *entry, *n;
+ 	dsp_pipeline_entry_t *pipeline_entry;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
+-	struct mISDN_dsp_element *elem;
+-#else
+ 	mISDN_dsp_element_t *elem;
+-#endif
+ 	u_long elements_flags, pipeline_flags;
+ 
+ 	if (!pipeline)
