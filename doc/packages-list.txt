@@ -268,7 +268,7 @@
 * shadow-4.0.15
 * slang-1.4.9
 * smartmontools-5.36
-* snort-2.6.1.5
+* snort-2.8.3.2
 * sox-12.18.1
 * spandsp-0.0.4pre15
 * splix-2.0.0-rc2
