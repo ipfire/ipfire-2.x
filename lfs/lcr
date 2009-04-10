@@ -82,5 +82,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/lcr.git && ./configure --prefix=/usr
 	cd $(DIR_SRC)/lcr.git && make $(MAKETUNING)
 	cd $(DIR_SRC)/lcr.git && make install
+	mv /var/ipfire/lcr/routing.conf /var/ipfire/lcr/routing.conf.org
+	install -v -m 644 $(DIR_SRC)/config/lcr/routing.conf \
+	                        /var/ipfire/lcr/routing.conf
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/lcr \
+	                 /var/ipfire/backup/addons/includes/lcr			 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

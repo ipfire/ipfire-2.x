@@ -586,3 +586,7 @@ usr/share/snmp/snmpconf-data/snmptrapd-data/logging
 usr/share/snmp/snmpconf-data/snmptrapd-data/runtime
 usr/share/snmp/snmpconf-data/snmptrapd-data/snmpconf-config
 usr/share/snmp/snmpconf-data/snmptrapd-data/traphandle
+#usr/man/man3/snprint_value.3
+#usr/man/man3/snprint_variable.3
+#usr/man/man3/sprint_realloc_objid.3
+#usr/man/man3/sprint_realloc_value.3

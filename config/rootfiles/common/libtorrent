@@ -40,11 +40,9 @@
 #usr/include/torrent/tracker_list.h
 #usr/lib/libtorrent.la
 #usr/lib/libtorrent.so
-#usr/lib/libtorrent.so.10
-#usr/lib/libtorrent.so.10.0.8
+#usr/lib/libtorrent.so.11
+#usr/lib/libtorrent.so.11.0.4
 #usr/lib/pkgconfig/libtorrent.pc
 #usr/include/torrent/dht_manager.h
 #usr/include/torrent/peer/connection_list.h
 #usr/include/torrent/throttle.h
-#usr/lib/libtorrent.so.9
-#usr/lib/libtorrent.so.9.2.0
