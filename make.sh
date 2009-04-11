@@ -344,6 +344,7 @@ buildipfire() {
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
   ipfiremake openswan			KMOD=1
+  ipfiremake mISDN
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -411,7 +412,7 @@ buildipfire() {
   ipfiremake iptstate
   ipfiremake iputils
   ipfiremake l7-protocols
-  ipfiremake mISDN
+  ipfiremake mISDNuser
   ipfiremake capi4k-utils
   ipfiremake hwdata
   ipfiremake kudzu
@@ -596,6 +597,7 @@ buildipfire() {
   ipfiremake net-snmp
   ipfiremake perl-DBI
   ipfiremake perl-DBD-mysql
+  ipfiremake lcr
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild

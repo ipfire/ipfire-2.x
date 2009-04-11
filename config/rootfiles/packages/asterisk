@@ -177,7 +177,6 @@ usr/lib/asterisk/modules/chan_features.so
 usr/lib/asterisk/modules/chan_iax2.so
 usr/lib/asterisk/modules/chan_local.so
 usr/lib/asterisk/modules/chan_mgcp.so
-usr/lib/asterisk/modules/chan_misdn.so
 usr/lib/asterisk/modules/chan_ooh323.so
 usr/lib/asterisk/modules/chan_oss.so
 usr/lib/asterisk/modules/chan_phone.so

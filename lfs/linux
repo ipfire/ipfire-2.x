@@ -34,8 +34,6 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-mISDN_VER  = mISDN.git-ad5e8abaed89ce6539104b819eef011655cd0b04
-
 # Normal build or SMP build.
 #
 ifeq "$(SMP)" "1"
@@ -48,7 +46,6 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	$(mISDN_VER).tar.gz \
 	squashfs3.4.tar.gz \
 	netfilter-layer7-v2.21.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2 \
@@ -58,14 +55,12 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.21.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.21.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
-$(mISDN_VER).tar.gz 			= $(URL_IPFIRE)/$(mISDN_VER).tar.gz
 reiser4-for-2.6.27.19.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.27.19.patch.bz2
 
 $(DL_FILE)_MD5				= 2912af7938fae1a3f2a9a6bcf8c0009f
 netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
-$(mISDN_VER).tar.gz_MD5 		= 480a947458c3f254aba489a807f98a29
 reiser4-for-2.6.27.19.patch.bz2_MD5	= 22988387f64f299489b90b484b2642cc
 
 install : $(TARGET)
@@ -130,16 +125,6 @@ ifeq "$(XEN)" ""
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27-imq.patch
 endif
 
-	# remove mISDNv2 from Kernel (incomaptible to asterisk)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27-disable_mISDNv2.patch
-	cd $(DIR_APP) rm -rf drivers/isdn/mISDN drivers/isdn/hardware/mISDN
-
-	# add mISDNv1.2
-	cd $(DIR_SRC) && rm -rf mISDN-*
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/$(mISDN_VER).tar.gz
-	cd $(DIR_SRC)/mISDN.git && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-remove2.6.27-dsp-features.diff
-	cd $(DIR_SRC)/mISDN.git && yes 'yes' | ./std2kern -k /usr/src/linux
-	
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
 
@@ -183,6 +168,10 @@ endif
 	mv /lib/modules/$(VER)-ipfire/kernel/drivers/ide/ide-cd_mod.ko \
 	    /lib/modules/$(VER)-ipfire/kernel/drivers/ide/ide-cd.ko
 
-	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/mISDN-* $(DIR_SRC)/netfilter-layer7-*
+	# Remove mISDN modules
+	@rm -rf /lib/modules/$(VER)-ipfire/kernel/drivers/isdn/mISDN
+	@rm -rf /lib/modules/$(VER)-ipfire/kernel/drivers/isdn/hardware/mISDN
+
+	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)
 
