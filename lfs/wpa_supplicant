@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.6.8
+VER        = 0.6.9
 
 THISAPP    = wpa_supplicant-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,6 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wpa_supplicant
-PAK_VER    = 3
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e933332490e0e5acfef2279457f1070a
+$(DL_FILE)_MD5 = 0efb8fcedf0a8acf6f423dfdb0658fdd
 
 install : $(TARGET)
 

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = hal-0.10.5.6-r3942-20090205
+VER        = trunk-r3994-20090410
 
 THISAPP    = madwifi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 697f0c0ca8363fed78d67152119bcd46
+$(DL_FILE)_MD5 = 9dbd2c1fd3f1aa53f4bdc64531192587
 
 install : $(TARGET)
 
@@ -84,4 +84,8 @@ endif
 	# Set Countrycode to germany because some cards
 	# are not detected without cc
 	echo options ath_pci countrycode=276 > /etc/modprobe.d/madwifi
+
+	# create madwifi symlink for hostapd build
+	cd $(DIR_SRC) && ln -s $(THISAPP) madwifi
+
 	@$(POSTBUILD)
