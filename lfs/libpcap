@@ -71,10 +71,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libpcap-0.8.3-shared.patch
-#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/libpcap-0.8.3-ppp.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
 	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make shared
 	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install-shared-so
+	ln -svf libpcap.so.1.0.0 /usr/lib/libpcap.so.1.0
+	ln -svf libpcap.so.1.0 /usr/lib/libpcap.so.1
+	ln -svf libpcap.so.1 /usr/lib/libpcap.so	
 	cd $(DIR_APP) && cp -vf pcap-int.h /usr/include
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
