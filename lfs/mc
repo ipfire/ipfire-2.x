@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.6.1
+VER        = 4.6.2
 
 THISAPP    = mc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "glib"
 
@@ -40,11 +40,13 @@ DEPS       = "glib"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) $(THISAPP)-utf8.patch.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+$(THISAPP)-utf8.patch.gz = $(DL_FROM)/$(THISAPP)-utf8.patch.gz
 
-$(DL_FILE)_MD5 = 18b20db6e40480a53bac2870c56fc3c4
+$(DL_FILE)_MD5 = ec92966f4d0c8b50c344fe901859ae2a
+$(THISAPP)-utf8.patch.gz_MD5 = 9753f1d340c7e3f6f73242afcf12edd2
 
 install : $(TARGET)
 
@@ -77,10 +79,14 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	# Create a symlink because mc search for automake-1.10
+	ln -s automake-1.9 /usr/share/automake-1.10
+	cd $(DIR_APP) && zcat $(DIR_DL)/$(THISAPP)-utf8.patch.gz | patch -Np1
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 				--without-x --disable-nls \
 				--with-samba
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	rm /usr/share/automake-1.10
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

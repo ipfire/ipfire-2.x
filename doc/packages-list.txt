@@ -151,6 +151,7 @@
 * l7-protocols-2008-12-18
 * lame-3.97
 * lcd4linux-0.10.1-RC2
+* lcr.git-64143650bc9c04fadc99694c499cf34750bc2804
 * less-394
 * libaal-1.0.5
 * libart_lgpl-2.3.17
@@ -192,7 +193,7 @@
 * man-db-2.4.3
 * man-pages-2.34
 * mbr-1.1.8
-* mc-4.6.1
+* mc-4.6.2
 * mechanize-0.1.8
 * memtest86+-2.11
 * miau-0.6.5
