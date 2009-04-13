@@ -70,9 +70,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/mISDN.git && make force
-	cd $(DIR_SRC)/mISDN.git && make $(MAKETUNING)
-	cd $(DIR_SRC)/mISDN.git && make install
+	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make force
+	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make $(MAKETUNING)
+	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make install
 	mv /lib/modules/$(KVER)-ipfire/extra /lib/modules/$(KVER)-ipfire/mISDN
 	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)
