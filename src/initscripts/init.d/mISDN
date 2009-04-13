@@ -52,6 +52,16 @@ case "${1}" in
 		exit 0;
 		;;
 
+	config)
+		boot_mesg "mISDNv2 - config not needed!"
+		exit 0;
+		;;
+
+	scan)
+		boot_mesg "mISDNv2 - scan not supported!"
+		exit 0;
+		;;
+
 	*)
 		echo "Usage: ${0} {start}{stop}"
 		exit 1
