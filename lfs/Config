@@ -136,12 +136,14 @@ define POSTBUILD
 			echo "error $$LFS_SCRIPT not found in config/rootfiles"; \
 		fi; \
 		sed "s/KVER/$(KVER)/g" $$ROOTFILE > $(TARGET)_rootfile; \
+		IFS=`echo`; \
 		for line in `cat $(TARGET)_diff`; do \
-			if grep -qE "^#$$line$$" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
-			elif grep -qE "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
+			if grep -qG "^#$$line$$" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
+			elif grep -qG "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
 			else echo "+$$line" >> $(TARGET); \
 			fi; \
 		done; \
+		unset IFS; \
 		rm -f $(TARGET)_rootfile; \
 	else \
 		touch $(TARGET); \

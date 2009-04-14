@@ -51,7 +51,7 @@
 * bc-1.06
 * beep-1.2.2
 * bind-9.3.2
-* binutils-2.16.1
+* binutils-2.17
 * bison-2.2
 * bluez-libs-3.36
 * br2684ctl
