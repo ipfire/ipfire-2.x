@@ -107,7 +107,7 @@
 * fuse-2.7.4
 * fwhits
 * gawk-3.1.5
-* gcc-4.0.3
+* gcc-4.0.4
 * gd-2.0.33
 * gdbm-1.8.3
 * gettext-0.14.5

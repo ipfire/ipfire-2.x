@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 
 ifeq "$(LFS_PASS)" "install"
-	ln -f -s ../../../../../include/sysfs /opt/$(MACHINE)-uClibc/lib/gcc/$(MACHINE)-linux-uclibc/4.0.3/include/sysfs
+	ln -f -s ../../../../../include/sysfs /opt/$(MACHINE)-uClibc/lib/gcc/$(MACHINE)-linux-uclibc/4.0.4/include/sysfs
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && install -m 755 pccardctl /install/initrd/sbin/
 	ln -f -s pccardctl /install/initrd/sbin/lspcmcia
