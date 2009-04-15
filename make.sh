@@ -34,7 +34,7 @@ MAX_RETRIES=1										# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)
-
+TOOLCHAINVER=1
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
 # Debian specific settings
@@ -728,7 +728,7 @@ case "$1" in
 build)
 	clear
 	BUILDMACHINE=`uname -m`
-	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
+	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/cleanup-toolchain-2-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -862,14 +862,14 @@ toolchain)
 		build/{bin,etc,usr/bin,usr/local} \
 		build/tools/{bin,etc,*-linux-gnu,include,lib,libexec,sbin,share,var} \
 		log >> $LOGFILE
-	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz \
-		> cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.md5
+	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
+		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.md5
 	stdumount
 	;;
 gettoolchain)
 	BUILDMACHINE=`uname -m`
 	# arbitrary name to be updated in case of new toolchain package upload
-	PACKAGE=$SNAME-$VERSION-toolchain-$BUILDMACHINE
+	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE
 	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then
 		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
 		test -d $BASEDIR/cache/toolchains || mkdir $BASEDIR/cache/toolchains
