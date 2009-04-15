@@ -54,7 +54,7 @@ endif
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
+  EXTRA_CONFIG = --prefix=/tools --disable-nls --disable-werror
   EXTRA_MAKE = LDFLAGS="-all-static"
   EXTRA_INSTALL = 
 else
