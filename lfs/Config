@@ -142,6 +142,10 @@ define POSTBUILD
 			else echo "+$$line" >> $(TARGET); \
 			fi; \
 		done; \
+		for line in `grep -v "^#" $(TARGET)_rootfile`; do \
+			if ! grep -qG "^$$line$$" $(TARGET)_diff ; then echo "-$$line" >> $(TARGET); \
+			fi; \
+		done; \
 		rm -f $(TARGET)_rootfile; \
 	else \
 		touch $(TARGET); \
