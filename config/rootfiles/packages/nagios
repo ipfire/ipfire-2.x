@@ -445,3 +445,4 @@ var/nagios/archives
 var/nagios/rw
 var/nagios/spool
 var/nagios/spool/checkresults
+etc/httpd/conf/conf.d/nagios.conf

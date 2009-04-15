@@ -19,12 +19,7 @@
 #usr/include/libiberty.h
 #usr/include/symcat.h
 #usr/info/as.info
-#usr/info/as.info-1
-#usr/info/as.info-2
-#usr/info/as.info-3
 #usr/info/bfd.info
-#usr/info/bfd.info-1
-#usr/info/bfd.info-2
 #usr/info/binutils.info
 #usr/info/configure.info
 #usr/info/gprof.info
@@ -49,12 +44,12 @@
 #usr/lib/ldscripts/i386linux.xn
 #usr/lib/ldscripts/i386linux.xr
 #usr/lib/ldscripts/i386linux.xu
-#usr/lib/libbfd-2.16.1.so
+#usr/lib/libbfd-2.17.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
 #usr/lib/libiberty.a
-#usr/lib/libopcodes-2.16.1.so
+#usr/lib/libopcodes-2.17.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so

@@ -7,7 +7,7 @@
 #usr/share/aclocal/bison-i18n.m4
 #usr/share/bison
 #usr/share/bison/README
-#usr/share/bison/c##.m4
+#usr/share/bison/c++.m4
 #usr/share/bison/c.m4
 #usr/share/bison/glr.c
 #usr/share/bison/glr.cc
