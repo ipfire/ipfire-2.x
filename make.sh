@@ -593,6 +593,9 @@ buildipfire() {
   ipfiremake sslh
   ipfiremake perl-gettext
   ipfiremake vdradmin
+  ipfiremake linux-xen
+  ipfiremake x11libs
+  ipfiremake xen
   ipfiremake miau
   ipfiremake net-snmp
   ipfiremake perl-DBI
