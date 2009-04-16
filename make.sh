@@ -858,7 +858,7 @@ toolchain)
 	BUILDMACHINE=`uname -m`
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir $BASEDIR/cache/toolchains
-	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$BUILDMACHINE.tar.gz \
+	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
 		build/{bin,etc,usr/bin,usr/local} \
 		build/tools/{bin,etc,*-linux-gnu,include,lib,libexec,sbin,share,var} \
 		log >> $LOGFILE
