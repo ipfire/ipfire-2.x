@@ -1,0 +1,26 @@
+From: jbeulich@novell.com
+Subject: add 3.2.0-compatibility configure option
+Patch-mainline: obsolete
+
+Index: head-2008-10-24/drivers/xen/Kconfig
+===================================================================
+--- head-2008-10-24.orig/drivers/xen/Kconfig	2008-10-24 10:46:02.000000000 +0200
++++ head-2008-10-24/drivers/xen/Kconfig	2008-10-24 10:52:17.000000000 +0200
+@@ -267,6 +267,9 @@ choice
+ 	config XEN_COMPAT_030100_AND_LATER
+ 		bool "3.1.0 and later"
+ 
++	config XEN_COMPAT_030200_AND_LATER
++		bool "3.2.0 and later"
++
+ 	config XEN_COMPAT_LATEST_ONLY
+ 		bool "no compatibility code"
+ 
+@@ -275,6 +278,7 @@ endchoice
+ config XEN_COMPAT
+ 	hex
+ 	default 0xffffff if XEN_COMPAT_LATEST_ONLY
++	default 0x030200 if XEN_COMPAT_030200_AND_LATER
+ 	default 0x030100 if XEN_COMPAT_030100_AND_LATER
+ 	default 0x030004 if XEN_COMPAT_030004_AND_LATER
+ 	default 0x030002 if XEN_COMPAT_030002_AND_LATER

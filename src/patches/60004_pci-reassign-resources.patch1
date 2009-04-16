@@ -1,0 +1,307 @@
+Subject: xen/dom0: Reassign memory resources to device for pci passthrough
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg (tip 745:2268be46c75e)
+Patch-mainline: obsolete
+Acked-by: jbeulich@novell.com
+
+Index: head-2008-12-01/drivers/pci/Makefile
+===================================================================
+--- head-2008-12-01.orig/drivers/pci/Makefile	2008-12-01 10:53:15.000000000 +0100
++++ head-2008-12-01/drivers/pci/Makefile	2008-10-21 13:09:46.000000000 +0200
+@@ -4,6 +4,7 @@
+ 
+ obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o slot.o \
+ 			pci-driver.o search.o pci-sysfs.o rom.o setup-res.o
++obj-$(CONFIG_PCI_REASSIGN) += reassigndev.o
+ obj-$(CONFIG_PROC_FS) += proc.o
+ 
+ # Build PCI Express stuff if needed
+Index: head-2008-12-01/drivers/pci/pci.h
+===================================================================
+--- head-2008-12-01.orig/drivers/pci/pci.h	2008-12-01 10:53:15.000000000 +0100
++++ head-2008-12-01/drivers/pci/pci.h	2008-10-21 13:09:01.000000000 +0200
+@@ -144,3 +144,9 @@ struct pci_slot_attribute {
+ };
+ #define to_pci_slot_attr(s) container_of(s, struct pci_slot_attribute, attr)
+ 
++#ifdef CONFIG_PCI_REASSIGN
++extern int is_reassigndev(struct pci_dev *dev);
++extern void pci_disable_bridge_window(struct pci_dev *dev);
++#else
++#define is_reassigndev(dev) 0
++#endif
+Index: head-2008-12-01/drivers/pci/quirks.c
+===================================================================
+--- head-2008-12-01.orig/drivers/pci/quirks.c	2008-12-01 10:53:15.000000000 +0100
++++ head-2008-12-01/drivers/pci/quirks.c	2008-10-29 10:52:40.000000000 +0100
+@@ -24,6 +24,54 @@
+ #include <linux/kallsyms.h>
+ #include "pci.h"
+ 
++#ifdef CONFIG_PCI_REASSIGN
++/*
++ * This quirk function disables the device and releases resources
++ * which is specified by kernel's boot parameter 'reassigndev'.
++ * Later on, kernel will assign page-aligned memory resource back
++ * to that device.
++ */
++static void __devinit quirk_release_resources(struct pci_dev *dev)
++{
++	int i;
++	struct resource *r;
++
++	if (is_reassigndev(dev)) {
++		if (dev->hdr_type == PCI_HEADER_TYPE_NORMAL &&
++		    (dev->class >> 8) == PCI_CLASS_BRIDGE_HOST) {
++			/* PCI Host Bridge isn't a target device */
++			return;
++		}
++		printk(KERN_INFO
++			"PCI: Disable device and release resources [%s].\n",
++			pci_name(dev));
++		pci_disable_device(dev);
++
++		for (i=0; i < PCI_NUM_RESOURCES; i++) {
++			r = &dev->resource[i];
++			if (!(r->flags & IORESOURCE_MEM))
++				continue;
++
++			r->end = r->end - r->start;
++			r->start = 0;
++
++			if (i < PCI_BRIDGE_RESOURCES) {
++				pci_update_resource(dev, r, i);
++			}
++		}
++		/* need to disable bridge's resource window,
++		 * to make kernel enable to reassign new resource
++		 * window later on.
++		 */
++		if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE &&
++		    (dev->class >> 8) == PCI_CLASS_BRIDGE_PCI) {
++			pci_disable_bridge_window(dev);
++		}
++	}
++}
++DECLARE_PCI_FIXUP_HEADER(PCI_ANY_ID, PCI_ANY_ID, quirk_release_resources);
++#endif
++
+ /* The Mellanox Tavor device gives false positive parity errors
+  * Mark this device with a broken_parity_status, to allow
+  * PCI scanning code to "skip" this now blacklisted device.
+Index: head-2008-12-01/drivers/pci/reassigndev.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ head-2008-12-01/drivers/pci/reassigndev.c	2008-10-21 13:13:38.000000000 +0200
+@@ -0,0 +1,80 @@
++/*
++ * Copyright (c) 2008, NEC Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ */
++
++#include <linux/kernel.h>
++#include <linux/pci.h>
++#include <linux/string.h>
++#include "pci.h"
++
++
++#define	REASSIGNDEV_PARAM_MAX	(2048)
++#define	TOKEN_MAX	(12)	/* "SSSS:BB:DD.F" length is 12 */
++
++static char param_reassigndev[REASSIGNDEV_PARAM_MAX] = {0};
++
++static int __init reassigndev_setup(char *str)
++{
++	strncpy(param_reassigndev, str, REASSIGNDEV_PARAM_MAX);
++	param_reassigndev[REASSIGNDEV_PARAM_MAX - 1] = '\0';
++	return 1;
++}
++__setup("reassigndev=", reassigndev_setup);
++
++int is_reassigndev(struct pci_dev *dev)
++{
++	char dev_str[TOKEN_MAX+1];
++	int seg, bus, slot, func;
++	int len;
++	char *p, *next_str;
++
++	p = param_reassigndev;
++	for (; p; p = next_str + 1) {
++		next_str = strpbrk(p, ",");
++		if (next_str) {
++			len = next_str - p;
++		} else {
++			len = strlen(p);
++		}
++		if (len > 0 && len <= TOKEN_MAX) {
++			strncpy(dev_str, p, len);
++			*(dev_str + len) = '\0';
++
++			if (sscanf(dev_str, "%x:%x:%x.%x",
++				&seg, &bus, &slot, &func) != 4) {
++				if (sscanf(dev_str, "%x:%x.%x",
++					&bus, &slot, &func) == 3) {
++					seg = 0;
++				} else {
++					/* failed to scan strings */
++					seg = -1;
++					bus = -1;
++				}
++			}
++			if (seg == pci_domain_nr(dev->bus) &&
++			    bus == dev->bus->number &&
++			    slot == PCI_SLOT(dev->devfn) &&
++			    func == PCI_FUNC(dev->devfn)) {
++				/* It's a target device */
++				return 1;
++			}
++		}
++		if (!next_str)
++			break;
++	}
++
++	return 0;
++}
+Index: head-2008-12-01/drivers/pci/setup-bus.c
+===================================================================
+--- head-2008-12-01.orig/drivers/pci/setup-bus.c	2008-12-01 10:53:15.000000000 +0100
++++ head-2008-12-01/drivers/pci/setup-bus.c	2008-10-21 13:09:01.000000000 +0200
+@@ -26,6 +26,7 @@
+ #include <linux/cache.h>
+ #include <linux/slab.h>
+ 
++#include "pci.h"
+ 
+ static void pbus_assign_resources_sorted(struct pci_bus *bus)
+ {
+@@ -343,7 +344,8 @@ static int pbus_size_mem(struct pci_bus 
+ 
+ 	list_for_each_entry(dev, &bus->devices, bus_list) {
+ 		int i;
+-		
++		int reassign = is_reassigndev(dev);
++
+ 		for (i = 0; i < PCI_NUM_RESOURCES; i++) {
+ 			struct resource *r = &dev->resource[i];
+ 			resource_size_t r_size;
+@@ -351,6 +353,10 @@ static int pbus_size_mem(struct pci_bus 
+ 			if (r->parent || (r->flags & mask) != type)
+ 				continue;
+ 			r_size = r->end - r->start + 1;
++
++			if ((i < PCI_BRIDGE_RESOURCES) && reassign)
++				r_size = ALIGN(r_size, PAGE_SIZE);
++
+ 			/* For bridges size != alignment */
+ 			align = resource_alignment(r);
+ 			order = __ffs(align) - 20;
+Index: head-2008-12-01/drivers/pci/setup-res.c
+===================================================================
+--- head-2008-12-01.orig/drivers/pci/setup-res.c	2008-12-01 10:53:15.000000000 +0100
++++ head-2008-12-01/drivers/pci/setup-res.c	2008-12-01 11:10:02.000000000 +0100
+@@ -126,6 +126,21 @@ int pci_claim_resource(struct pci_dev *d
+ 	return err;
+ }
+ 
++#ifdef CONFIG_PCI_REASSIGN
++void pci_disable_bridge_window(struct pci_dev *dev)
++{
++	printk(KERN_DEBUG "PCI: Disable bridge window on %s\n", pci_name(dev));
++
++	/* MMIO Base/Limit */
++	pci_write_config_dword(dev, PCI_MEMORY_BASE, 0x0000fff0);
++
++	/* Prefetchable MMIO Base/Limit */
++	pci_write_config_dword(dev, PCI_PREF_LIMIT_UPPER32, 0);
++	pci_write_config_dword(dev, PCI_PREF_MEMORY_BASE, 0x0000fff0);
++	pci_write_config_dword(dev, PCI_PREF_BASE_UPPER32, 0xffffffff);
++}
++#endif
++
+ int pci_assign_resource(struct pci_dev *dev, int resno)
+ {
+ 	struct pci_bus *bus = dev->bus;
+@@ -144,6 +159,10 @@ int pci_assign_resource(struct pci_dev *
+ 			(unsigned long long)res->end, res->flags);
+ 		return -EINVAL;
+ 	}
++	if (resno < PCI_BRIDGE_RESOURCES
++	    && is_reassigndev(dev)
++	    && (res->flags & IORESOURCE_MEM))
++		align = ALIGN(align, PAGE_SIZE);
+ 
+ 	/* First, try exact prefetching match.. */
+ 	ret = pci_bus_alloc_resource(bus, res, size, align, min,
+@@ -169,8 +188,15 @@ int pci_assign_resource(struct pci_dev *
+ 			(unsigned long long)res->end);
+ 	} else {
+ 		res->flags &= ~IORESOURCE_STARTALIGN;
+-		if (resno < PCI_BRIDGE_RESOURCES)
++		if (resno < PCI_BRIDGE_RESOURCES) {
++#ifdef CONFIG_PCI_REASSIGN
++			printk(KERN_DEBUG "PCI: Assign resource(%d) on %s "
++				"%016llx - %016llx\n", resno, pci_name(dev),
++				(unsigned long long)res->start,
++				(unsigned long long)res->end);
++#endif
+ 			pci_update_resource(dev, res, resno);
++		}
+ 	}
+ 
+ 	return ret;
+@@ -208,6 +234,12 @@ int pci_assign_resource_fixed(struct pci
+ 			(unsigned long long)res->start,
+ 			(unsigned long long)res->end);
+ 	} else if (resno < PCI_BRIDGE_RESOURCES) {
++#ifdef CONFIG_PCI_REASSIGN
++		printk(KERN_DEBUG "PCI: Assign resource(%d) on %s "
++			"%016llx - %016llx\n", resno, pci_name(dev),
++			(unsigned long long)res->start,
++			(unsigned long long)res->end);
++#endif
+ 		pci_update_resource(dev, res, resno);
+ 	}
+ 
+@@ -220,6 +252,7 @@ EXPORT_SYMBOL_GPL(pci_assign_resource_fi
+ void pdev_sort_resources(struct pci_dev *dev, struct resource_list *head)
+ {
+ 	int i;
++	int reassigndev = is_reassigndev(dev);
+ 
+ 	for (i = 0; i < PCI_NUM_RESOURCES; i++) {
+ 		struct resource *r;
+@@ -242,12 +275,22 @@ void pdev_sort_resources(struct pci_dev 
+ 				(unsigned long long)r->end, r->flags);
+ 			continue;
+ 		}
++		if (i < PCI_BRIDGE_RESOURCES && (r->flags & IORESOURCE_MEM) &&
++		    reassigndev)
++			r_align = ALIGN(r_align, PAGE_SIZE);
++
+ 		for (list = head; ; list = list->next) {
+ 			resource_size_t align = 0;
+ 			struct resource_list *ln = list->next;
+ 
+-			if (ln)
++			if (ln) {
+ 				align = resource_alignment(ln->res);
++				if (ln->res - ln->dev->resource <
++				    PCI_BRIDGE_RESOURCES &&
++				    (ln->res->flags & IORESOURCE_MEM) &&
++				    is_reassigndev(ln->dev))
++					align = ALIGN(align, PAGE_SIZE);
++			}
+ 
+ 			if (r_align > align) {
+ 				tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
