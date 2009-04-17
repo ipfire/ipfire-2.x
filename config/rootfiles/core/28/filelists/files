@@ -27,3 +27,4 @@ var/ipfire/menu.d/30-network.menu
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/backup.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
