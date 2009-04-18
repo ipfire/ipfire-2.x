@@ -21,4 +21,7 @@
 
 kudzu -qps -c NETWORK | egrep "desc|network.hwaddr|driver" > /var/ipfire/ethernet/scanned_nics 2>/dev/null
 
+# Revert Accesspoint marking at mac address
+sed -i 's|hwaddr: 06:|hwaddr: 00:|g' /var/ipfire/ethernet/scanned_nics
+
 exit 0

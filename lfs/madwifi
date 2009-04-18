@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = trunk-r3994-20090410
+VER        = hal-testing-r4003-20090416
 
 THISAPP    = madwifi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9dbd2c1fd3f1aa53f4bdc64531192587
+$(DL_FILE)_MD5 = f9c591f16746a4ac4988ccbfedfe1a85
 
 install : $(TARGET)
 

@@ -5,52 +5,56 @@
 CHANNEL="05"
 TXPOWER="auto"
 INTERFACE="blue0"
+MACMODE="0"
+DRIVER="MADWIFI"
+
 eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
 
 case "${1}" in
 	start)
 		mkdir -p /var/run/hostapd
-		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
 
-		boot_mesg "Setting wlan $INTERFACE to Master mode... "
-
-		# Set Atheros Cards to master mode
-		if [ -d /proc/net/madwifi/ath0/ ]; then
-			/usr/bin/wlanconfig ath0 destroy > /dev/null
+		if [ "$DRIVER" == "MADWIFI" ]; then
+			if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
+				boot_mesg "Setting MADWIFI wlan $INTERFACE to Master mode... "
+				# Set Atheros Cards to master mode
+				/usr/bin/wlanconfig $INTERFACE destroy > /dev/null
+				/usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode ap > /dev/null
+			fi
 		fi
 
-		/usr/bin/wlanconfig $INTERFACE destroy > /dev/null
-		/usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode ap > /dev/null
+		boot_mesg "Starting hostapd... "
+		/usr/sbin/iwconfig $INTERFACE channel $CHANNEL
+		/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
+		/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
 
-		# Set other cards to master mode
-		#/usr/sbin/iwconfig blue0 mode master
+		if [ $DRIVER == "MADWIFI" ]; then
+
+			iwpriv $INTERFACE maccmd 3
+			if [ $MACMODE != 0 ]; then
+				FILE="/var/ipfire/wlanap/macfile"
+				exec < $FILE
+				while read LINE
+				do
+					iwpriv $INTERFACE addmac $LINE
+				done
+
+				iwpriv $INTERFACE maccmd $MACMODE
+			fi
+			# Disable background scann
+			iwpriv $INTERFACE bgscan 0
+			# Set beacon interval to 500
+			iwpriv $INTERFACE bintval 500
 		fi
 
 		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
 			boot_mesg "Error! Can't set wlan master mode"
 			echo_failure;
-			exit 1;
+			exit 0;
 		else
 			# enable wlan module of collectd
 			sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
-
-			boot_mesg "Starting hostapd... "
-			/usr/sbin/iwconfig $INTERFACE channel $CHANNEL
-			/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
-			/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
-			evaluate_retval
-		fi
-
-		iwpriv $INTERFACE maccmd 3
-		if [ $MACMODE != 0 ]; then
-			FILE="/var/ipfire/wlanap/macfile"
-			exec < $FILE
-			while read LINE
-			do
-				iwpriv $INTERFACE addmac $LINE
-			done
-
-			iwpriv $INTERFACE maccmd $MACMODE
+			echo_ok
 		fi
 		;;
 
