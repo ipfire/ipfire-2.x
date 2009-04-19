@@ -345,6 +345,7 @@ buildipfire() {
   ipfiremake alsa			KMOD=1
   ipfiremake openswan			KMOD=1
   ipfiremake mISDN
+  ipfiremake linux			XEN=1
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -593,7 +594,6 @@ buildipfire() {
   ipfiremake sslh
   ipfiremake perl-gettext
   ipfiremake vdradmin
-  ipfiremake linux-xen
   ipfiremake x11libs
   ipfiremake xen
   ipfiremake miau
