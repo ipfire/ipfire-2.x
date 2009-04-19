@@ -28,9 +28,12 @@ PATCHLEVEL = .21
 VER        = 2.6.27.21
 
 THISAPP    = linux-$(VER)-xen
-DL_FILE    = linux-$(VER)-xen.tar.bz2
+DL_FILE    = linux-$(VER).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+PROG       = linux-xen
+DEPS       = ""
+PAK_VER    = 1
 CFLAGS     =
 CXXFLAGS   =
 
