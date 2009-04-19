@@ -31,6 +31,9 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = xen
+PAK_VER    = 1
+DEPS       = "x11libs"
 
 ###############################################################################
 # Top-level Rules
@@ -49,6 +52,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
