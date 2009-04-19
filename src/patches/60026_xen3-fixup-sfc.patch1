@@ -1,0 +1,63 @@
+Subject: Fix Xen build wrt. SFC files coming from Solarflare.
+From: jbeulich@novell.com
+Patch-mainline: obsolete
+
+Index: head-2008-04-15/drivers/xen/sfc_netback/accel_solarflare.c
+===================================================================
+--- head-2008-04-15.orig/drivers/xen/sfc_netback/accel_solarflare.c	2008-04-18 18:23:11.000000000 +0200
++++ head-2008-04-15/drivers/xen/sfc_netback/accel_solarflare.c	2008-04-18 18:24:46.000000000 +0200
+@@ -173,7 +173,7 @@ static int efx_device_to_efab_nic_index(
+ 	int i;
+ 
+ 	for (i = 0; i < EFHW_MAX_NR_DEVS; i++) {
+-		struct efhw_nic *nic = efrm_nic_table.nic[i];
++		struct efhw_nic *nic = efrm_nic_tablep->nic[i];
+ 
+ 		/*
+ 		 * It's possible for the nic structure to have not
+Index: head-2008-04-15/drivers/xen/sfc_netback/ci/efrm/nic_table.h
+===================================================================
+--- head-2008-04-15.orig/drivers/xen/sfc_netback/ci/efrm/nic_table.h	2008-02-20 09:32:49.000000000 +0100
++++ head-2008-04-15/drivers/xen/sfc_netback/ci/efrm/nic_table.h	2008-04-18 18:25:47.000000000 +0200
+@@ -62,21 +62,21 @@ struct efrm_nic_table {
+ };
+ 
+ /* Resource driver structures used by other drivers as well */
+-extern struct efrm_nic_table efrm_nic_table;
++extern struct efrm_nic_table *efrm_nic_tablep;
+ 
+ static inline void efrm_nic_table_hold(void)
+ {
+-	atomic_inc(&efrm_nic_table.ref_count);
++	atomic_inc(&efrm_nic_tablep->ref_count);
+ }
+ 
+ static inline void efrm_nic_table_rele(void)
+ {
+-	atomic_dec(&efrm_nic_table.ref_count);
++	atomic_dec(&efrm_nic_tablep->ref_count);
+ }
+ 
+ static inline int efrm_nic_table_held(void)
+ {
+-	return (atomic_read(&efrm_nic_table.ref_count) != 0);
++	return (atomic_read(&efrm_nic_tablep->ref_count) != 0);
+ }
+ 
+ /* Run code block _x multiple times with variable nic set to each
+@@ -86,13 +86,13 @@ static inline int efrm_nic_table_held(vo
+ 	for ((_nic_i) = (efrm_nic_table_hold(), 0);			\
+ 	     (_nic_i) < EFHW_MAX_NR_DEVS || (efrm_nic_table_rele(), 0);	\
+ 	     (_nic_i)++)						\
+-		if (((_nic) = efrm_nic_table.nic[_nic_i]))
++		if (((_nic) = efrm_nic_tablep->nic[_nic_i]))
+ 
+ #define EFRM_FOR_EACH_NIC_IN_SET(_set, _i, _nic)			\
+ 	for ((_i) = (efrm_nic_table_hold(), 0);				\
+ 	     (_i) < EFHW_MAX_NR_DEVS || (efrm_nic_table_rele(), 0);	\
+ 	     ++(_i))							\
+-		if (((_nic) = efrm_nic_table.nic[_i]) &&		\
++		if (((_nic) = efrm_nic_tablep->nic[_i]) &&		\
+ 		    efrm_nic_set_read((_set), (_i)))
+ 
+ #endif /* __CI_EFRM_NIC_TABLE_H__ */

@@ -1,0 +1,219 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/39a8680e7a70
+# HG changeset 747 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1227879058 0
+# Node ID 39a8680e7a70a28ce639c507fb6a9bc0aa7d8f14
+# Parent  d545a95fca739d0b1963b73a9eb64ea64a244e76
+Subject: linux/x86: revert the effect of xen_limit_pages_to_max_mfn()
+Patch-mainline: obsolete
+
+Signed-off-by: Jan Beulich <jbeulich@novell.com>
+
+Index: head-2008-12-01/arch/x86/mm/hypervisor.c
+===================================================================
+--- head-2008-12-01.orig/arch/x86/mm/hypervisor.c	2008-10-29 09:55:56.000000000 +0100
++++ head-2008-12-01/arch/x86/mm/hypervisor.c	2008-12-01 11:25:57.000000000 +0100
+@@ -374,6 +374,15 @@ void xen_destroy_contiguous_region(unsig
+ }
+ EXPORT_SYMBOL_GPL(xen_destroy_contiguous_region);
+ 
++static void undo_limit_pages(struct page *pages, unsigned int order)
++{
++	BUG_ON(xen_feature(XENFEAT_auto_translated_physmap));
++	BUG_ON(order > MAX_CONTIG_ORDER);
++	xen_limit_pages_to_max_mfn(pages, order, 0);
++	ClearPageForeign(pages);
++	__free_pages(pages, order);
++}
++
+ int xen_limit_pages_to_max_mfn(
+ 	struct page *pages, unsigned int order, unsigned int address_bits)
+ {
+@@ -402,16 +411,28 @@ int xen_limit_pages_to_max_mfn(
+ 	if (unlikely(order > MAX_CONTIG_ORDER))
+ 		return -ENOMEM;
+ 
+-	bitmap_zero(limit_map, 1U << order);
++	if (address_bits) {
++		if (address_bits < PAGE_SHIFT)
++			return -EINVAL;
++		bitmap_zero(limit_map, 1U << order);
++	} else if (order) {
++		BUILD_BUG_ON(sizeof(pages->index) != sizeof(*limit_map));
++		for (i = 0; i < BITS_TO_LONGS(1U << order); ++i)
++			limit_map[i] = pages[i + 1].index;
++	} else
++		__set_bit(0, limit_map);
++
+ 	set_xen_guest_handle(exchange.in.extent_start, in_frames);
+ 	set_xen_guest_handle(exchange.out.extent_start, out_frames);
+ 
+ 	/* 0. Scrub the pages. */
+ 	for (i = 0, n = 0; i < 1U<<order ; i++) {
+ 		page = &pages[i];
+-		if (!(pfn_to_mfn(page_to_pfn(page)) >> (address_bits - PAGE_SHIFT)))
+-			continue;
+-		__set_bit(i, limit_map);
++		if (address_bits) {
++			if (!(pfn_to_mfn(page_to_pfn(page)) >> (address_bits - PAGE_SHIFT)))
++				continue;
++			__set_bit(i, limit_map);
++		}
+ 
+ 		if (!PageHighMem(page))
+ 			scrub_pages(page_address(page), 1);
+@@ -497,7 +518,19 @@ int xen_limit_pages_to_max_mfn(
+ 
+ 	balloon_unlock(flags);
+ 
+-	return success ? 0 : -ENOMEM;
++	if (!success)
++		return -ENOMEM;
++
++	if (address_bits) {
++		if (order) {
++			BUILD_BUG_ON(sizeof(*limit_map) != sizeof(pages->index));
++			for (i = 0; i < BITS_TO_LONGS(1U << order); ++i)
++				pages[i + 1].index = limit_map[i];
++		}
++		SetPageForeign(pages, undo_limit_pages);
++	}
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(xen_limit_pages_to_max_mfn);
+ 
+Index: head-2008-12-01/arch/x86/mm/pgtable_32-xen.c
+===================================================================
+--- head-2008-12-01.orig/arch/x86/mm/pgtable_32-xen.c	2007-10-09 11:48:25.000000000 +0200
++++ head-2008-12-01/arch/x86/mm/pgtable_32-xen.c	2008-12-01 11:25:57.000000000 +0100
+@@ -152,6 +152,12 @@ pte_t *pte_alloc_one_kernel(struct mm_st
+ 	return pte;
+ }
+ 
++static void _pte_free(struct page *page, unsigned int order)
++{
++	BUG_ON(order);
++	pte_free(page);
++}
++
+ struct page *pte_alloc_one(struct mm_struct *mm, unsigned long address)
+ {
+ 	struct page *pte;
+@@ -162,7 +168,7 @@ struct page *pte_alloc_one(struct mm_str
+ 	pte = alloc_pages(GFP_KERNEL|__GFP_REPEAT|__GFP_ZERO, 0);
+ #endif
+ 	if (pte) {
+-		SetPageForeign(pte, pte_free);
++		SetPageForeign(pte, _pte_free);
+ 		init_page_count(pte);
+ 	}
+ 	return pte;
+Index: head-2008-12-01/arch/x86/mm/pageattr_64-xen.c
+===================================================================
+--- head-2008-12-01.orig/arch/x86/mm/pageattr_64-xen.c	2008-07-21 11:00:32.000000000 +0200
++++ head-2008-12-01/arch/x86/mm/pageattr_64-xen.c	2008-12-01 11:25:57.000000000 +0100
+@@ -248,13 +248,19 @@ void _arch_exit_mmap(struct mm_struct *m
+ 		mm_unpin(mm);
+ }
+ 
++static void _pte_free(struct page *page, unsigned int order)
++{
++	BUG_ON(order);
++	pte_free(page);
++}
++
+ struct page *pte_alloc_one(struct mm_struct *mm, unsigned long address)
+ {
+ 	struct page *pte;
+ 
+ 	pte = alloc_pages(GFP_KERNEL|__GFP_REPEAT|__GFP_ZERO, 0);
+ 	if (pte) {
+-		SetPageForeign(pte, pte_free);
++		SetPageForeign(pte, _pte_free);
+ 		init_page_count(pte);
+ 	}
+ 	return pte;
+Index: head-2008-12-01/drivers/xen/core/gnttab.c
+===================================================================
+--- head-2008-12-01.orig/drivers/xen/core/gnttab.c	2008-12-01 11:23:17.000000000 +0100
++++ head-2008-12-01/drivers/xen/core/gnttab.c	2008-12-01 11:25:57.000000000 +0100
+@@ -505,8 +505,9 @@ static int gnttab_map(unsigned int start
+ 	return 0;
+ }
+ 
+-static void gnttab_page_free(struct page *page)
++static void gnttab_page_free(struct page *page, unsigned int order)
+ {
++	BUG_ON(order);
+ 	ClearPageForeign(page);
+ 	gnttab_reset_grant_page(page);
+ 	put_page(page);
+Index: head-2008-12-01/drivers/xen/netback/netback.c
+===================================================================
+--- head-2008-12-01.orig/drivers/xen/netback/netback.c	2008-12-01 11:23:17.000000000 +0100
++++ head-2008-12-01/drivers/xen/netback/netback.c	2008-12-01 11:25:57.000000000 +0100
+@@ -55,7 +55,6 @@ struct netbk_tx_pending_inuse {
+ };
+ 
+ static void netif_idx_release(u16 pending_idx);
+-static void netif_page_release(struct page *page);
+ static void make_tx_response(netif_t *netif, 
+ 			     netif_tx_request_t *txp,
+ 			     s8       st);
+@@ -1436,8 +1435,9 @@ static void netif_idx_release(u16 pendin
+ 	tasklet_schedule(&net_tx_tasklet);
+ }
+ 
+-static void netif_page_release(struct page *page)
++static void netif_page_release(struct page *page, unsigned int order)
+ {
++	BUG_ON(order);
+ 	netif_idx_release(netif_page_index(page));
+ }
+ 
+Index: head-2008-12-01/include/linux/page-flags.h
+===================================================================
+--- head-2008-12-01.orig/include/linux/page-flags.h	2008-12-01 11:23:17.000000000 +0100
++++ head-2008-12-01/include/linux/page-flags.h	2008-12-01 11:25:57.000000000 +0100
+@@ -275,15 +275,15 @@ CLEARPAGEFLAG(Uptodate, uptodate)
+ #define PageForeign(page)	test_bit(PG_foreign, &(page)->flags)
+ #define SetPageForeign(_page, dtor) do {		\
+ 	set_bit(PG_foreign, &(_page)->flags);		\
+-	BUG_ON((dtor) == (void (*)(struct page *))0);	\
++	BUG_ON((dtor) == (void (*)(struct page *, unsigned int))0); \
+ 	(_page)->index = (long)(dtor);			\
+ } while (0)
+ #define ClearPageForeign(page) do {			\
+ 	clear_bit(PG_foreign, &(page)->flags);		\
+ 	(page)->index = 0;				\
+ } while (0)
+-#define PageForeignDestructor(_page)			\
+-	((void (*)(struct page *))(_page)->index)(_page)
++#define PageForeignDestructor(_page, order)		\
++	((void (*)(struct page *, unsigned int))(_page)->index)(_page, order)
+ 
+ extern void cancel_dirty_page(struct page *page, unsigned int account_size);
+ 
+Index: head-2008-12-01/mm/page_alloc.c
+===================================================================
+--- head-2008-12-01.orig/mm/page_alloc.c	2008-12-01 11:23:17.000000000 +0100
++++ head-2008-12-01/mm/page_alloc.c	2008-12-01 11:25:57.000000000 +0100
+@@ -535,7 +535,7 @@ static void __free_pages_ok(struct page 
+ 
+ #ifdef CONFIG_XEN
+ 	if (PageForeign(page)) {
+-		PageForeignDestructor(page);
++		PageForeignDestructor(page, order);
+ 		return;
+ 	}
+ #endif
+@@ -1003,7 +1003,7 @@ static void free_hot_cold_page(struct pa
+ 
+ #ifdef CONFIG_XEN
+ 	if (PageForeign(page)) {
+-		PageForeignDestructor(page);
++		PageForeignDestructor(page, 0);
+ 		return;
+ 	}
+ #endif

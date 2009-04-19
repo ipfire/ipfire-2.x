@@ -1,0 +1,24 @@
+--- linux-2.6.27.21/include/linux/skbuff.h	2009-03-29 17:24:56.000000000 +0000
++++ linux-2.6.27.8/include/linux/skbuff.h	2009-03-29 17:38:37.000000000 +0000
+@@ -217,6 +217,8 @@
+  *	@local_df: allow local fragmentation
+  *	@cloned: Head may be cloned (check refcnt to be sure)
+  *	@nohdr: Payload reference only, must not modify header
++ *	@proto_data_valid: Protocol data validated since arriving at localhost
++ *	@proto_csum_blank: Protocol csum must be added before leaving localhost
+  *	@pkt_type: Packet class
+  *	@fclone: skbuff clone status
+  *	@ip_summed: Driver fed us an IP checksum
+@@ -320,7 +322,11 @@
+ #if defined(CONFIG_MAC80211) || defined(CONFIG_MAC80211_MODULE)
+ 	__u8			do_not_encrypt:1;
+ #endif
+-	/* 0/13/14 bit hole */
++#ifdef CONFIG_XEN
++	__u8			proto_data_valid:1,
++				proto_csum_blank:1;
++#endif
++	/* 10-16 bit hole */
+ 
+ #ifdef CONFIG_NET_DMA
+ 	dma_cookie_t		dma_cookie;
