@@ -72,7 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make force
 	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make $(MAKETUNING)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make install
+	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make install DEPMOD="depmod $(KVER)"
 	mv /lib/modules/$(KVER)-ipfire/extra /lib/modules/$(KVER)-ipfire/mISDN
 	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)
