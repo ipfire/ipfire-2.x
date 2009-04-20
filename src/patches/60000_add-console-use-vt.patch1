@@ -1,0 +1,58 @@
+Subject: add console_use_vt
+From: kraxel@suse.de
+Patch-mainline: no
+
+$subject says all
+
+---
+ drivers/char/tty_io.c   |    7 ++++++-
+ include/linux/console.h |    1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/char/tty_io.c
++++ b/drivers/char/tty_io.c
+@@ -136,6 +136,8 @@ LIST_HEAD(tty_drivers);			/* linked list
+ DEFINE_MUTEX(tty_mutex);
+ EXPORT_SYMBOL(tty_mutex);
+ 
++int console_use_vt = 1;
++
+ #ifdef CONFIG_UNIX98_PTYS
+ extern struct tty_driver *ptm_driver;	/* Unix98 pty masters; for /dev/ptmx */
+ static int ptmx_open(struct inode *, struct file *);
+@@ -2200,7 +2202,7 @@ retry_open:
+ 		goto got_driver;
+ 	}
+ #ifdef CONFIG_VT
+-	if (device == MKDEV(TTY_MAJOR, 0)) {
++	if (console_use_vt && device == MKDEV(TTY_MAJOR, 0)) {
+ 		extern struct tty_driver *console_driver;
+ 		driver = console_driver;
+ 		index = fg_console;
+@@ -3729,6 +3731,8 @@ static int __init tty_init(void)
+ #endif
+ 
+ #ifdef CONFIG_VT
++	if (!console_use_vt)
++		goto out_vt;
+ 	cdev_init(&vc0_cdev, &console_fops);
+ 	if (cdev_add(&vc0_cdev, MKDEV(TTY_MAJOR, 0), 1) ||
+ 	    register_chrdev_region(MKDEV(TTY_MAJOR, 0), 1, "/dev/vc/0") < 0)
+@@ -3736,6 +3740,7 @@ static int __init tty_init(void)
+ 	device_create_drvdata(tty_class, NULL, MKDEV(TTY_MAJOR, 0), NULL, "tty0");
+ 
+ 	vty_init();
++ out_vt:
+ #endif
+ 	return 0;
+ }
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -63,6 +63,7 @@ extern const struct consw dummy_con;	/* 
+ extern const struct consw vga_con;	/* VGA text console */
+ extern const struct consw newport_con;	/* SGI Newport console  */
+ extern const struct consw prom_con;	/* SPARC PROM console */
++extern int console_use_vt;
+ 
+ int con_is_bound(const struct consw *csw);
+ int register_con_driver(const struct consw *csw, int first, int last);

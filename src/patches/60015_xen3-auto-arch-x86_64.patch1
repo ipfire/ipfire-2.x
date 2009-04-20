@@ -1,0 +1,248 @@
+Subject: xen3 arch-x86_64
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg (tip 728:832aac894efd)
+Patch-mainline: obsolete
+Acked-by: jbeulich@novell.com
+
+Index: head-2008-11-25/arch/x86/kernel/asm-offsets_64.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/kernel/asm-offsets_64.c	2008-11-25 12:33:06.000000000 +0100
++++ head-2008-11-25/arch/x86/kernel/asm-offsets_64.c	2008-11-25 12:35:54.000000000 +0100
+@@ -122,8 +122,10 @@ int main(void)
+ 	ENTRY(cr8);
+ 	BLANK();
+ #undef ENTRY
++#ifndef CONFIG_X86_NO_TSS
+ 	DEFINE(TSS_ist, offsetof(struct tss_struct, x86_tss.ist));
+ 	BLANK();
++#endif
+ 	DEFINE(crypto_tfm_ctx_offset, offsetof(struct crypto_tfm, __crt_ctx));
+ 	BLANK();
+ 	DEFINE(__NR_syscall_max, sizeof(syscalls) - 1);
+Index: head-2008-11-25/arch/x86/kernel/machine_kexec_64.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/kernel/machine_kexec_64.c	2008-08-18 10:13:08.000000000 +0200
++++ head-2008-11-25/arch/x86/kernel/machine_kexec_64.c	2008-11-25 12:35:54.000000000 +0100
+@@ -27,6 +27,119 @@ static u64 kexec_pud1[512] PAGE_ALIGNED;
+ static u64 kexec_pmd1[512] PAGE_ALIGNED;
+ static u64 kexec_pte1[512] PAGE_ALIGNED;
+ 
++#ifdef CONFIG_XEN
++
++/* In the case of Xen, override hypervisor functions to be able to create
++ * a regular identity mapping page table...
++ */
++
++#include <xen/interface/kexec.h>
++#include <xen/interface/memory.h>
++
++#define x__pmd(x) ((pmd_t) { (x) } )
++#define x__pud(x) ((pud_t) { (x) } )
++#define x__pgd(x) ((pgd_t) { (x) } )
++
++#define x_pmd_val(x)   ((x).pmd)
++#define x_pud_val(x)   ((x).pud)
++#define x_pgd_val(x)   ((x).pgd)
++
++static inline void x_set_pmd(pmd_t *dst, pmd_t val)
++{
++	x_pmd_val(*dst) = x_pmd_val(val);
++}
++
++static inline void x_set_pud(pud_t *dst, pud_t val)
++{
++	x_pud_val(*dst) = phys_to_machine(x_pud_val(val));
++}
++
++static inline void x_pud_clear (pud_t *pud)
++{
++	x_pud_val(*pud) = 0;
++}
++
++static inline void x_set_pgd(pgd_t *dst, pgd_t val)
++{
++	x_pgd_val(*dst) = phys_to_machine(x_pgd_val(val));
++}
++
++static inline void x_pgd_clear (pgd_t * pgd)
++{
++	x_pgd_val(*pgd) = 0;
++}
++
++#define X__PAGE_KERNEL_LARGE_EXEC \
++         _PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_PSE
++#define X_KERNPG_TABLE _PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY
++
++#define __ma(x) (pfn_to_mfn(__pa((x)) >> PAGE_SHIFT) << PAGE_SHIFT)
++
++#if PAGES_NR > KEXEC_XEN_NO_PAGES
++#error PAGES_NR is greater than KEXEC_XEN_NO_PAGES - Xen support will break
++#endif
++
++#if PA_CONTROL_PAGE != 0
++#error PA_CONTROL_PAGE is non zero - Xen support will break
++#endif
++
++void machine_kexec_setup_load_arg(xen_kexec_image_t *xki, struct kimage *image)
++{
++	void *control_page;
++	void *table_page;
++
++	memset(xki->page_list, 0, sizeof(xki->page_list));
++
++	control_page = page_address(image->control_code_page) + PAGE_SIZE;
++	memcpy(control_page, relocate_kernel, PAGE_SIZE);
++
++	table_page = page_address(image->control_code_page);
++
++	xki->page_list[PA_CONTROL_PAGE] = __ma(control_page);
++	xki->page_list[PA_TABLE_PAGE] = __ma(table_page);
++
++	xki->page_list[PA_PGD] = __ma(kexec_pgd);
++	xki->page_list[PA_PUD_0] = __ma(kexec_pud0);
++	xki->page_list[PA_PUD_1] = __ma(kexec_pud1);
++	xki->page_list[PA_PMD_0] = __ma(kexec_pmd0);
++	xki->page_list[PA_PMD_1] = __ma(kexec_pmd1);
++	xki->page_list[PA_PTE_0] = __ma(kexec_pte0);
++	xki->page_list[PA_PTE_1] = __ma(kexec_pte1);
++}
++
++int __init machine_kexec_setup_resources(struct resource *hypervisor,
++					 struct resource *phys_cpus,
++					 int nr_phys_cpus)
++{
++	int k;
++
++	/* The per-cpu crash note resources belong to the hypervisor resource */
++	for (k = 0; k < nr_phys_cpus; k++)
++		request_resource(hypervisor, phys_cpus + k);
++
++	return 0;
++}
++
++void machine_kexec_register_resources(struct resource *res) { ; }
++
++#else /* CONFIG_XEN */
++
++#define x__pmd(x) __pmd(x)
++#define x__pud(x) __pud(x)
++#define x__pgd(x) __pgd(x)
++
++#define x_set_pmd(x, y) set_pmd(x, y)
++#define x_set_pud(x, y) set_pud(x, y)
++#define x_set_pgd(x, y) set_pgd(x, y)
++
++#define x_pud_clear(x) pud_clear(x)
++#define x_pgd_clear(x) pgd_clear(x)
++
++#define X__PAGE_KERNEL_LARGE_EXEC __PAGE_KERNEL_LARGE_EXEC
++#define X_KERNPG_TABLE _KERNPG_TABLE
++
++#endif /* CONFIG_XEN */
++
+ static void init_level2_page(pmd_t *level2p, unsigned long addr)
+ {
+ 	unsigned long end_addr;
+@@ -34,7 +147,7 @@ static void init_level2_page(pmd_t *leve
+ 	addr &= PAGE_MASK;
+ 	end_addr = addr + PUD_SIZE;
+ 	while (addr < end_addr) {
+-		set_pmd(level2p++, __pmd(addr | __PAGE_KERNEL_LARGE_EXEC));
++		x_set_pmd(level2p++, x__pmd(addr | X__PAGE_KERNEL_LARGE_EXEC));
+ 		addr += PMD_SIZE;
+ 	}
+ }
+@@ -59,12 +172,12 @@ static int init_level3_page(struct kimag
+ 		}
+ 		level2p = (pmd_t *)page_address(page);
+ 		init_level2_page(level2p, addr);
+-		set_pud(level3p++, __pud(__pa(level2p) | _KERNPG_TABLE));
++		x_set_pud(level3p++, x__pud(__pa(level2p) | X_KERNPG_TABLE));
+ 		addr += PUD_SIZE;
+ 	}
+ 	/* clear the unused entries */
+ 	while (addr < end_addr) {
+-		pud_clear(level3p++);
++		x_pud_clear(level3p++);
+ 		addr += PUD_SIZE;
+ 	}
+ out:
+@@ -95,12 +208,12 @@ static int init_level4_page(struct kimag
+ 		if (result) {
+ 			goto out;
+ 		}
+-		set_pgd(level4p++, __pgd(__pa(level3p) | _KERNPG_TABLE));
++		x_set_pgd(level4p++, x__pgd(__pa(level3p) | X_KERNPG_TABLE));
+ 		addr += PGDIR_SIZE;
+ 	}
+ 	/* clear the unused entries */
+ 	while (addr < end_addr) {
+-		pgd_clear(level4p++);
++		x_pgd_clear(level4p++);
+ 		addr += PGDIR_SIZE;
+ 	}
+ out:
+@@ -111,8 +224,14 @@ out:
+ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
+ {
+ 	pgd_t *level4p;
++	unsigned long x_max_pfn = max_pfn;
++
++#ifdef CONFIG_XEN
++	x_max_pfn = HYPERVISOR_memory_op(XENMEM_maximum_ram_page, NULL);
++#endif
++
+ 	level4p = (pgd_t *)__va(start_pgtable);
+-	return init_level4_page(image, level4p, 0, max_pfn << PAGE_SHIFT);
++	return init_level4_page(image, level4p, 0, x_max_pfn << PAGE_SHIFT);
+ }
+ 
+ int machine_kexec_prepare(struct kimage *image)
+@@ -136,6 +255,7 @@ void machine_kexec_cleanup(struct kimage
+ 	return;
+ }
+ 
++#ifndef CONFIG_XEN
+ /*
+  * Do not allocate memory (or fail in any way) in machine_kexec().
+  * We are past the point of no return, committed to rebooting now.
+@@ -176,6 +296,7 @@ void machine_kexec(struct kimage *image)
+ 	relocate_kernel((unsigned long)image->head, (unsigned long)page_list,
+ 			image->start);
+ }
++#endif
+ 
+ void arch_crash_save_vmcoreinfo(void)
+ {
+Index: head-2008-11-25/arch/x86/power/cpu_64.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/power/cpu_64.c	2008-11-25 12:33:06.000000000 +0100
++++ head-2008-11-25/arch/x86/power/cpu_64.c	2008-11-25 12:35:54.000000000 +0100
+@@ -135,6 +135,7 @@ void restore_processor_state(void)
+ 
+ static void fix_processor_context(void)
+ {
++#ifndef CONFIG_X86_NO_TSS
+ 	int cpu = smp_processor_id();
+ 	struct tss_struct *t = &per_cpu(init_tss, cpu);
+ 
+@@ -146,6 +147,7 @@ static void fix_processor_context(void)
+ 	set_tss_desc(cpu, t);
+ 
+ 	get_cpu_gdt_table(cpu)[GDT_ENTRY_TSS].type = 9;
++#endif
+ 
+ 	syscall_init();                         /* This sets MSR_*STAR and related */
+ 	load_TR_desc();				/* This does ltr */
+Index: head-2008-11-25/arch/x86/vdso/Makefile
+===================================================================
+--- head-2008-11-25.orig/arch/x86/vdso/Makefile	2008-11-25 12:33:06.000000000 +0100
++++ head-2008-11-25/arch/x86/vdso/Makefile	2008-11-25 12:35:54.000000000 +0100
+@@ -65,6 +65,8 @@ obj-$(VDSO32-y)			+= vdso32-syms.lds
+ vdso32.so-$(VDSO32-y)		+= int80
+ vdso32.so-$(CONFIG_COMPAT)	+= syscall
+ vdso32.so-$(VDSO32-y)		+= sysenter
++xen-vdso32-$(subst 1,$(CONFIG_COMPAT),$(shell expr $(CONFIG_XEN_COMPAT)0 '<' 0x0302000)) += int80
++vdso32.so-$(CONFIG_XEN)		+= $(xen-vdso32-y)
+ 
+ vdso32-images			= $(vdso32.so-y:%=vdso32-%.so)
+ 

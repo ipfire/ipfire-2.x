@@ -1,0 +1,168 @@
+Subject: kexec: Move asm segment handling code to the assembly file (x86_64)
+From: http://xenbits.xensource.com/xen-unstable.hg (tip 13816)
+Patch-mainline: obsolete
+
+This patch moves the idt, gdt, and segment handling code from machine_kexec.c
+to relocate_kernel.S.  The main reason behind this move is to avoid code 
+duplication in the Xen hypervisor. With this patch all code required to kexec
+is put on the control page.
+
+On top of that this patch also counts as a cleanup - I think it is much
+nicer to write assembly directly in assembly files than wrap inline assembly
+in C functions for no apparent reason.
+
+Signed-off-by: Magnus Damm <magnus@valinux.co.jp>
+Acked-by: jbeulich@novell.com
+---
+
+ Applies to 2.6.19-rc1.
+
+ machine_kexec.c   |   58 -----------------------------------------------------
+ relocate_kernel.S |   50 +++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 45 insertions(+), 63 deletions(-)
+
+Index: head-2008-08-18/arch/x86/kernel/machine_kexec_64.c
+===================================================================
+--- head-2008-08-18.orig/arch/x86/kernel/machine_kexec_64.c	2008-08-18 09:05:04.000000000 +0200
++++ head-2008-08-18/arch/x86/kernel/machine_kexec_64.c	2008-08-18 10:13:08.000000000 +0200
+@@ -115,47 +115,6 @@ static int init_pgtable(struct kimage *i
+ 	return init_level4_page(image, level4p, 0, max_pfn << PAGE_SHIFT);
+ }
+ 
+-static void set_idt(void *newidt, u16 limit)
+-{
+-	struct desc_ptr curidt;
+-
+-	/* x86-64 supports unaliged loads & stores */
+-	curidt.size    = limit;
+-	curidt.address = (unsigned long)newidt;
+-
+-	__asm__ __volatile__ (
+-		"lidtq %0\n"
+-		: : "m" (curidt)
+-		);
+-};
+-
+-
+-static void set_gdt(void *newgdt, u16 limit)
+-{
+-	struct desc_ptr curgdt;
+-
+-	/* x86-64 supports unaligned loads & stores */
+-	curgdt.size    = limit;
+-	curgdt.address = (unsigned long)newgdt;
+-
+-	__asm__ __volatile__ (
+-		"lgdtq %0\n"
+-		: : "m" (curgdt)
+-		);
+-};
+-
+-static void load_segments(void)
+-{
+-	__asm__ __volatile__ (
+-		"\tmovl %0,%%ds\n"
+-		"\tmovl %0,%%es\n"
+-		"\tmovl %0,%%ss\n"
+-		"\tmovl %0,%%fs\n"
+-		"\tmovl %0,%%gs\n"
+-		: : "a" (__KERNEL_DS) : "memory"
+-		);
+-}
+-
+ int machine_kexec_prepare(struct kimage *image)
+ {
+ 	unsigned long start_pgtable;
+@@ -214,23 +173,6 @@ void machine_kexec(struct kimage *image)
+ 	page_list[PA_TABLE_PAGE] =
+ 	  (unsigned long)__pa(page_address(image->control_code_page));
+ 
+-	/* The segment registers are funny things, they have both a
+-	 * visible and an invisible part.  Whenever the visible part is
+-	 * set to a specific selector, the invisible part is loaded
+-	 * with from a table in memory.  At no other time is the
+-	 * descriptor table in memory accessed.
+-	 *
+-	 * I take advantage of this here by force loading the
+-	 * segments, before I zap the gdt with an invalid value.
+-	 */
+-	load_segments();
+-	/* The gdt & idt are now invalid.
+-	 * If you want to load them you must set up your own idt & gdt.
+-	 */
+-	set_gdt(phys_to_virt(0),0);
+-	set_idt(phys_to_virt(0),0);
+-
+-	/* now call it */
+ 	relocate_kernel((unsigned long)image->head, (unsigned long)page_list,
+ 			image->start);
+ }
+Index: head-2008-08-18/arch/x86/kernel/relocate_kernel_64.S
+===================================================================
+--- head-2008-08-18.orig/arch/x86/kernel/relocate_kernel_64.S	2008-07-13 23:51:29.000000000 +0200
++++ head-2008-08-18/arch/x86/kernel/relocate_kernel_64.S	2008-08-18 10:13:08.000000000 +0200
+@@ -160,13 +160,39 @@ relocate_new_kernel:
+ 	movq	PTR(PA_PGD)(%rsi), %r9
+ 	movq	%r9, %cr3
+ 
++	/* setup idt */
++	movq    %r8, %rax
++	addq    $(idt_80 - relocate_kernel), %rax
++	lidtq   (%rax)
++
++	/* setup gdt */
++	movq    %r8, %rax
++	addq    $(gdt - relocate_kernel), %rax
++	movq    %r8, %r9
++	addq    $((gdt_80 - relocate_kernel) + 2), %r9
++	movq    %rax, (%r9)
++
++	movq    %r8, %rax
++	addq    $(gdt_80 - relocate_kernel), %rax
++	lgdtq   (%rax)
++
++	/* setup data segment registers */
++	xorl	%eax, %eax
++	movl    %eax, %ds
++	movl    %eax, %es
++	movl    %eax, %fs
++	movl    %eax, %gs
++	movl    %eax, %ss
++
+ 	/* setup a new stack at the end of the physical control page */
+ 	lea	PAGE_SIZE(%r8), %rsp
+ 
+-	/* jump to identity mapped page */
+-	addq	$(identity_mapped - relocate_kernel), %r8
+-	pushq	%r8
+-	ret
++	/* load new code segment and jump to identity mapped page */
++	movq	%r8, %rax
++	addq    $(identity_mapped - relocate_kernel), %rax
++	pushq	$(gdt_cs - gdt)
++	pushq	%rax
++	lretq
+ 
+ identity_mapped:
+ 	/* store the start address on the stack */
+@@ -262,5 +288,19 @@ identity_mapped:
+ 	xorq	%r13, %r13
+ 	xorq	%r14, %r14
+ 	xorq	%r15, %r15
+-
+ 	ret
++
++	.align  16
++gdt:
++	.quad	0x0000000000000000	/* NULL descriptor */
++gdt_cs:
++	.quad   0x00af9a000000ffff
++gdt_end:
++
++gdt_80:
++	.word	gdt_end - gdt - 1	/* limit */
++	.quad	0			/* base - filled in by code above */
++
++idt_80:
++	.word	0			/* limit */
++	.quad	0			/* base */

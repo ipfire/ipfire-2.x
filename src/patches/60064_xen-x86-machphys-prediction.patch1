@@ -1,0 +1,210 @@
+From: jbeulich@novell.com
+Subject: properly predict phys<->mach translations
+Patch-mainline: obsolete
+
+Index: head-2008-11-04/include/asm-x86/mach-xen/asm/maddr_32.h
+===================================================================
+--- head-2008-11-04.orig/include/asm-x86/mach-xen/asm/maddr_32.h	2008-11-04 11:54:55.000000000 +0100
++++ head-2008-11-04/include/asm-x86/mach-xen/asm/maddr_32.h	2008-10-17 12:45:23.000000000 +0200
+@@ -30,17 +30,19 @@ extern unsigned int   machine_to_phys_or
+ 
+ static inline unsigned long pfn_to_mfn(unsigned long pfn)
+ {
+-	if (xen_feature(XENFEAT_auto_translated_physmap))
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap)))
+ 		return pfn;
+-	BUG_ON(max_mapnr && pfn >= max_mapnr);
++	if (likely(max_mapnr))
++		BUG_ON(pfn >= max_mapnr);
+ 	return phys_to_machine_mapping[pfn] & ~FOREIGN_FRAME_BIT;
+ }
+ 
+ static inline int phys_to_machine_mapping_valid(unsigned long pfn)
+ {
+-	if (xen_feature(XENFEAT_auto_translated_physmap))
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap)))
+ 		return 1;
+-	BUG_ON(max_mapnr && pfn >= max_mapnr);
++	if (likely(max_mapnr))
++		BUG_ON(pfn >= max_mapnr);
+ 	return (phys_to_machine_mapping[pfn] != INVALID_P2M_ENTRY);
+ }
+ 
+@@ -48,7 +50,7 @@ static inline unsigned long mfn_to_pfn(u
+ {
+ 	unsigned long pfn;
+ 
+-	if (xen_feature(XENFEAT_auto_translated_physmap))
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap)))
+ 		return mfn;
+ 
+ 	if (unlikely((mfn >> machine_to_phys_order) != 0))
+@@ -95,17 +97,18 @@ static inline unsigned long mfn_to_pfn(u
+ static inline unsigned long mfn_to_local_pfn(unsigned long mfn)
+ {
+ 	unsigned long pfn = mfn_to_pfn(mfn);
+-	if ((pfn < max_mapnr)
+-	    && !xen_feature(XENFEAT_auto_translated_physmap)
+-	    && (phys_to_machine_mapping[pfn] != mfn))
++	if (likely(pfn < max_mapnr)
++	    && likely(!xen_feature(XENFEAT_auto_translated_physmap))
++	    && unlikely(phys_to_machine_mapping[pfn] != mfn))
+ 		return max_mapnr; /* force !pfn_valid() */
+ 	return pfn;
+ }
+ 
+ static inline void set_phys_to_machine(unsigned long pfn, unsigned long mfn)
+ {
+-	BUG_ON(max_mapnr && pfn >= max_mapnr);
+-	if (xen_feature(XENFEAT_auto_translated_physmap)) {
++	if (likely(max_mapnr))
++		BUG_ON(pfn >= max_mapnr);
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap))) {
+ 		BUG_ON(pfn != mfn && mfn != INVALID_P2M_ENTRY);
+ 		return;
+ 	}
+Index: head-2008-11-04/include/asm-x86/mach-xen/asm/maddr_64.h
+===================================================================
+--- head-2008-11-04.orig/include/asm-x86/mach-xen/asm/maddr_64.h	2008-11-04 11:54:55.000000000 +0100
++++ head-2008-11-04/include/asm-x86/mach-xen/asm/maddr_64.h	2008-10-17 12:46:35.000000000 +0200
+@@ -25,17 +25,19 @@ extern unsigned int   machine_to_phys_or
+ 
+ static inline unsigned long pfn_to_mfn(unsigned long pfn)
+ {
+-	if (xen_feature(XENFEAT_auto_translated_physmap))
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap)))
+ 		return pfn;
+-	BUG_ON(max_mapnr && pfn >= max_mapnr);
++	if (likely(max_mapnr))
++		BUG_ON(pfn >= max_mapnr);
+ 	return phys_to_machine_mapping[pfn] & ~FOREIGN_FRAME_BIT;
+ }
+ 
+ static inline int phys_to_machine_mapping_valid(unsigned long pfn)
+ {
+-	if (xen_feature(XENFEAT_auto_translated_physmap))
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap)))
+ 		return 1;
+-	BUG_ON(max_mapnr && pfn >= max_mapnr);
++	if (likely(max_mapnr))
++		BUG_ON(pfn >= max_mapnr);
+ 	return (phys_to_machine_mapping[pfn] != INVALID_P2M_ENTRY);
+ }
+ 
+@@ -43,7 +45,7 @@ static inline unsigned long mfn_to_pfn(u
+ {
+ 	unsigned long pfn;
+ 
+-	if (xen_feature(XENFEAT_auto_translated_physmap))
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap)))
+ 		return mfn;
+ 
+ 	if (unlikely((mfn >> machine_to_phys_order) != 0))
+@@ -90,17 +92,18 @@ static inline unsigned long mfn_to_pfn(u
+ static inline unsigned long mfn_to_local_pfn(unsigned long mfn)
+ {
+ 	unsigned long pfn = mfn_to_pfn(mfn);
+-	if ((pfn < max_mapnr)
+-	    && !xen_feature(XENFEAT_auto_translated_physmap)
+-	    && (phys_to_machine_mapping[pfn] != mfn))
++	if (likely(pfn < max_mapnr)
++	    && likely(!xen_feature(XENFEAT_auto_translated_physmap))
++	    && unlikely(phys_to_machine_mapping[pfn] != mfn))
+ 		return max_mapnr; /* force !pfn_valid() */
+ 	return pfn;
+ }
+ 
+ static inline void set_phys_to_machine(unsigned long pfn, unsigned long mfn)
+ {
+-	BUG_ON(max_mapnr && pfn >= max_mapnr);
+-	if (xen_feature(XENFEAT_auto_translated_physmap)) {
++	if (likely(max_mapnr))
++		BUG_ON(pfn >= max_mapnr);
++	if (unlikely(xen_feature(XENFEAT_auto_translated_physmap))) {
+ 		BUG_ON(pfn != mfn && mfn != INVALID_P2M_ENTRY);
+ 		return;
+ 	}
+Index: head-2008-11-04/include/asm-x86/mach-xen/asm/page.h
+===================================================================
+--- head-2008-11-04.orig/include/asm-x86/mach-xen/asm/page.h	2008-11-04 11:55:22.000000000 +0100
++++ head-2008-11-04/include/asm-x86/mach-xen/asm/page.h	2008-10-17 12:53:40.000000000 +0200
+@@ -102,7 +102,7 @@ static inline void copy_user_page(void *
+ #define __pgd_ma(x) ((pgd_t) { (x) } )
+ static inline pgd_t xen_make_pgd(pgdval_t val)
+ {
+-	if (val & _PAGE_PRESENT)
++	if (likely(val & _PAGE_PRESENT))
+ 		val = pte_phys_to_machine(val);
+ 	return (pgd_t) { val };
+ }
+@@ -112,10 +112,10 @@ static inline pgdval_t xen_pgd_val(pgd_t
+ {
+ 	pgdval_t ret = __pgd_val(pgd);
+ #if PAGETABLE_LEVELS == 2 && CONFIG_XEN_COMPAT <= 0x030002
+-	if (ret)
++	if (likely(ret))
+ 		ret = machine_to_phys(ret) | _PAGE_PRESENT;
+ #else
+-	if (ret & _PAGE_PRESENT)
++	if (likely(ret & _PAGE_PRESENT))
+ 		ret = pte_machine_to_phys(ret);
+ #endif
+ 	return ret;
+@@ -128,7 +128,7 @@ typedef struct { pudval_t pud; } pud_t;
+ #define __pud_ma(x) ((pud_t) { (x) } )
+ static inline pud_t xen_make_pud(pudval_t val)
+ {
+-	if (val & _PAGE_PRESENT)
++	if (likely(val & _PAGE_PRESENT))
+ 		val = pte_phys_to_machine(val);
+ 	return (pud_t) { val };
+ }
+@@ -137,7 +137,7 @@ static inline pud_t xen_make_pud(pudval_
+ static inline pudval_t xen_pud_val(pud_t pud)
+ {
+ 	pudval_t ret = __pud_val(pud);
+-	if (ret & _PAGE_PRESENT)
++	if (likely(ret & _PAGE_PRESENT))
+ 		ret = pte_machine_to_phys(ret);
+ 	return ret;
+ }
+@@ -156,7 +156,7 @@ typedef struct { pmdval_t pmd; } pmd_t;
+ #define __pmd_ma(x)	((pmd_t) { (x) } )
+ static inline pmd_t xen_make_pmd(pmdval_t val)
+ {
+-	if (val & _PAGE_PRESENT)
++	if (likely(val & _PAGE_PRESENT))
+ 		val = pte_phys_to_machine(val);
+ 	return (pmd_t) { val };
+ }
+@@ -166,10 +166,10 @@ static inline pmdval_t xen_pmd_val(pmd_t
+ {
+ 	pmdval_t ret = __pmd_val(pmd);
+ #if CONFIG_XEN_COMPAT <= 0x030002
+-	if (ret)
++	if (likely(ret))
+ 		ret = pte_machine_to_phys(ret) | _PAGE_PRESENT;
+ #else
+-	if (ret & _PAGE_PRESENT)
++	if (likely(ret & _PAGE_PRESENT))
+ 		ret = pte_machine_to_phys(ret);
+ #endif
+ 	return ret;
+@@ -188,7 +188,7 @@ static inline pmdval_t xen_pmd_val(pmd_t
+ #define __pte_ma(x) ((pte_t) { .pte = (x) } )
+ static inline pte_t xen_make_pte(pteval_t val)
+ {
+-	if ((val & (_PAGE_PRESENT|_PAGE_IO)) == _PAGE_PRESENT)
++	if (likely((val & (_PAGE_PRESENT|_PAGE_IO)) == _PAGE_PRESENT))
+ 		val = pte_phys_to_machine(val);
+ 	return (pte_t) { .pte = val };
+ }
+@@ -197,7 +197,7 @@ static inline pte_t xen_make_pte(pteval_
+ static inline pteval_t xen_pte_val(pte_t pte)
+ {
+ 	pteval_t ret = __pte_val(pte);
+-	if ((pte.pte_low & (_PAGE_PRESENT|_PAGE_IO)) == _PAGE_PRESENT)
++	if (likely((pte.pte_low & (_PAGE_PRESENT|_PAGE_IO)) == _PAGE_PRESENT))
+ 		ret = pte_machine_to_phys(ret);
+ 	return ret;
+ }

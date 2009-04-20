@@ -1,0 +1,65 @@
+From: jbeulich@novell.com
+Subject: make /proc/cpuinfo track CPU speed
+Patch-mainline: obsolete
+
+Index: head-2008-10-01/arch/x86/kernel/acpi/processor_extcntl_xen.c
+===================================================================
+--- head-2008-10-01.orig/arch/x86/kernel/acpi/processor_extcntl_xen.c	2008-10-01 15:43:24.000000000 +0200
++++ head-2008-10-01/arch/x86/kernel/acpi/processor_extcntl_xen.c	2008-10-01 16:44:34.000000000 +0200
+@@ -207,3 +207,14 @@ void arch_acpi_processor_init_extcntl(co
+ 	*ops = &xen_extcntl_ops;
+ }
+ EXPORT_SYMBOL(arch_acpi_processor_init_extcntl);
++
++unsigned int cpufreq_quick_get(unsigned int cpu)
++{
++	xen_platform_op_t op = {
++		.cmd			= XENPF_get_cpu_freq,
++		.interface_version	= XENPF_INTERFACE_VERSION,
++		.u.get_cpu_freq.vcpu	= cpu
++	};
++
++	return HYPERVISOR_platform_op(&op) == 0 ? op.u.get_cpu_freq.freq : 0;
++}
+Index: head-2008-10-01/include/linux/cpufreq.h
+===================================================================
+--- head-2008-10-01.orig/include/linux/cpufreq.h	2008-10-01 14:44:59.000000000 +0200
++++ head-2008-10-01/include/linux/cpufreq.h	2008-10-01 16:44:34.000000000 +0200
+@@ -282,7 +282,7 @@ int cpufreq_update_policy(unsigned int c
+ unsigned int cpufreq_get(unsigned int cpu);
+ 
+ /* query the last known CPU freq (in kHz). If zero, cpufreq couldn't detect it */
+-#ifdef CONFIG_CPU_FREQ
++#if defined(CONFIG_CPU_FREQ) || defined(CONFIG_PROCESSOR_EXTERNAL_CONTROL)
+ unsigned int cpufreq_quick_get(unsigned int cpu);
+ #else
+ static inline unsigned int cpufreq_quick_get(unsigned int cpu)
+Index: head-2008-10-01/include/xen/interface/platform.h
+===================================================================
+--- head-2008-10-01.orig/include/xen/interface/platform.h	2008-09-25 13:55:33.000000000 +0200
++++ head-2008-10-01/include/xen/interface/platform.h	2008-10-01 16:44:34.000000000 +0200
+@@ -312,6 +312,16 @@ struct xenpf_set_processor_pminfo {
+ typedef struct xenpf_set_processor_pminfo xenpf_set_processor_pminfo_t;
+ DEFINE_XEN_GUEST_HANDLE(xenpf_set_processor_pminfo_t);
+ 
++#define XENPF_get_cpu_freq        ('N' << 24)
++struct xenpf_get_cpu_freq {
++    /* IN variables */
++    uint32_t vcpu;
++    /* OUT variables */
++    uint32_t freq; /* in kHz */
++};
++typedef struct xenpf_get_cpu_freq xenpf_get_cpu_freq_t;
++DEFINE_XEN_GUEST_HANDLE(xenpf_get_cpu_freq_t);
++
+ struct xen_platform_op {
+     uint32_t cmd;
+     uint32_t interface_version; /* XENPF_INTERFACE_VERSION */
+@@ -327,6 +337,7 @@ struct xen_platform_op {
+         struct xenpf_change_freq       change_freq;
+         struct xenpf_getidletime       getidletime;
+         struct xenpf_set_processor_pminfo set_pminfo;
++        struct xenpf_get_cpu_freq      get_cpu_freq;
+         uint8_t                        pad[128];
+     } u;
+ };

@@ -24,13 +24,16 @@
 
 include Config
 
-VER        = 9bf7deaa4b8829ab8fbccb34529a17aab2ddea93
+VER        = core28-r1
 
-THISAPP    = mISDN.git-$(VER)
+THISAPP    = x11libs-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = x11libs
+PAK_VER    = 1
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a9e9aaff23cda58c4d71aab8eab9bba5
+$(DL_FILE)_MD5 = 4bd8907ab971fb8efacec575492d504b
 
 install : $(TARGET)
 
@@ -49,6 +52,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -70,9 +76,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make force
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make $(MAKETUNING)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make install DEPMOD="depmod $(KVER)"
-	mv /lib/modules/$(KVER)-ipfire/extra /lib/modules/$(KVER)-ipfire/mISDN
-	@rm -rf $(DIR_SRC)/mISDN*
+	export XORG_PREFIX="/usr"
+	export XORG_CONFIG="--prefix=$XORG_PREFIX --sysconfdir=/etc --mandir=$XORG_PREFIX/share/man --localstatedir=/var"
+	cd $(DIR_APP) && ./install-proto.sh
+	cd $(DIR_APP) && ./install-util.sh
+	cd $(DIR_APP) && tar xvjf libXau-1.0.4.tar.bz2 && cd libXau-1.0.4 && ./configure --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var && make && make install
+	cd $(DIR_APP) && tar xvjf libXdmcp-1.0.2.tar.bz2 && cd libXdmcp-1.0.2 && ./configure --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var && make && make install
+	cd $(DIR_APP) && tar xvjf xcb-proto-1.1.tar.bz2 && cd xcb-proto-1.1 && ./configure --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var && make && make install && install -dv -m755 /usr/share/doc/xcb-proto-1.1 && install -v -m644 doc/* /usr/share/doc/xcb-proto-1.1
+	## libpthread-stubs
+	cd $(DIR_APP) && tar xvjf libpthread-stubs-0.1.tar.bz2 && cd libpthread-stubs-0.1 && ./configure --prefix=/usr && make && make install
+	cd $(DIR_APP) && tar xvjf libxcb-1.1.tar.bz2 && cd libxcb-1.1 && ./configure --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var --docdir='${datadir}'/doc/libxcb-1.1 && make && make install && export LIBXCB_ALLOW_SLOPPY_LOCK=1
+	## gperf
+	cd $(DIR_APP) && tar xvzf gperf-3.0.3.tar.gz && cd gperf-3.0.3 && ./configure --prefix=/usr && make && makeinfo -o doc/gperf.txt --plaintext doc/gperf.texi && make install && install -v -m755 -d /usr/share/doc/gperf-3.0.3 && install -m644 -v doc/gperf.{dvi,ps,pdf,txt} /usr/share/doc/gperf-3.0.3
+	cd $(DIR_APP) && tar xvjf xcb-util-0.3.0.tar.bz2 && cd xcb-util-0.3.0 && ./configure --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var && make && make install
+	cd $(DIR_APP) && ./install-lib.sh
+	cd $(DIR_APP) && tar xvzf bin86-0.16.17.tar.gz && cd bin86-0.16.17 && make && make install
+	cd $(DIR_APP) && tar xvzf Dev86src-0.16.17.tar.gz && cd dev86-0.16.17 && make && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+

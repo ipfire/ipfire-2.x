@@ -1,0 +1,89 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.6
+
+Upstream 2.6.27.6 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.kernel.org/patch-2.6.27.5-6" by xen-port-patches.py
+
+Index: head-2008-11-17/arch/x86/Kconfig
+===================================================================
+--- head-2008-11-17.orig/arch/x86/Kconfig	2008-11-18 16:18:56.000000000 +0100
++++ head-2008-11-17/arch/x86/Kconfig	2008-11-18 16:19:14.000000000 +0100
+@@ -1143,6 +1143,7 @@ config HIGHPTE
+ config X86_RESERVE_LOW_64K
+         bool "Reserve low 64K of RAM on AMI/Phoenix BIOSen"
+ 	default y
++	depends on !XEN
+ 	help
+ 	 Reserve the first 64K of physical RAM on BIOSes that are known
+ 	 to potentially corrupt that memory range. A numbers of BIOSes are
+Index: head-2008-11-17/arch/x86/kernel/setup-xen.c
+===================================================================
+--- head-2008-11-17.orig/arch/x86/kernel/setup-xen.c	2008-11-17 13:42:08.000000000 +0100
++++ head-2008-11-17/arch/x86/kernel/setup-xen.c	2008-11-17 13:55:53.000000000 +0100
+@@ -645,6 +645,41 @@ static struct x86_quirks default_x86_qui
+ 
+ struct x86_quirks *x86_quirks __initdata = &default_x86_quirks;
+ 
++#ifdef CONFIG_X86_RESERVE_LOW_64K
++static int __init dmi_low_memory_corruption(const struct dmi_system_id *d)
++{
++	printk(KERN_NOTICE
++		"%s detected: BIOS may corrupt low RAM, working it around.\n",
++		d->ident);
++
++	e820_update_range(0, 0x10000, E820_RAM, E820_RESERVED);
++	sanitize_e820_map(e820.map, ARRAY_SIZE(e820.map), &e820.nr_map);
++
++	return 0;
++}
++#endif
++
++/* List of systems that have known low memory corruption BIOS problems */
++static struct dmi_system_id __initdata bad_bios_dmi_table[] = {
++#ifdef CONFIG_X86_RESERVE_LOW_64K
++	{
++		.callback = dmi_low_memory_corruption,
++		.ident = "AMI BIOS",
++		.matches = {
++			DMI_MATCH(DMI_BIOS_VENDOR, "American Megatrends Inc."),
++		},
++	},
++	{
++		.callback = dmi_low_memory_corruption,
++		.ident = "Phoenix BIOS",
++		.matches = {
++			DMI_MATCH(DMI_BIOS_VENDOR, "Phoenix Technologies, LTD"),
++		},
++	},
++#endif
++	{}
++};
++
+ /*
+  * Determine if we were loaded by an EFI loader.  If so, then we have also been
+  * passed the efi memmap, systab, etc., so we should use these data structures
+@@ -819,6 +854,11 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	finish_e820_parsing();
+ 
++	if (is_initial_xendomain()) {
++		dmi_scan_machine();
++		dmi_check_system(bad_bios_dmi_table);
++	}
++
+ #ifdef CONFIG_X86_32
+ 	probe_roms();
+ #endif
+@@ -922,9 +962,6 @@ void __init setup_arch(char **cmdline_p)
+ 	vsmp_init();
+ #endif
+ 
+-	if (is_initial_xendomain())
+-		dmi_scan_machine();
+-
+ 	io_delay_init();
+ 
+ #ifdef CONFIG_ACPI

@@ -1,0 +1,85 @@
+From: ccoffing@novell.com
+Subject: Expose min/max limits of domain ballooning
+Patch-mainline: obsolete
+References: 152667, 184727
+
+jb: Also added this to the sysfs representation.
+
+Index: head-2008-11-25/drivers/xen/balloon/balloon.c
+===================================================================
+--- head-2008-11-25.orig/drivers/xen/balloon/balloon.c	2008-11-25 13:33:56.000000000 +0100
++++ head-2008-11-25/drivers/xen/balloon/balloon.c	2008-11-25 13:34:52.000000000 +0100
+@@ -194,7 +194,7 @@ static unsigned long current_target(void
+ 	return target;
+ }
+ 
+-static unsigned long minimum_target(void)
++unsigned long balloon_minimum_target(void)
+ {
+ #ifndef CONFIG_XEN
+ #define max_pfn num_physpages
+@@ -421,7 +421,7 @@ void balloon_set_new_target(unsigned lon
+ {
+ 	/* No need for lock. Not read-modify-write updates. */
+ 	bs.hard_limit   = ~0UL;
+-	bs.target_pages = max(target, minimum_target());
++	bs.target_pages = max(target, balloon_minimum_target());
+ 	schedule_work(&balloon_worker);
+ }
+ 
+@@ -496,11 +496,14 @@ static int balloon_read(char *page, char
+ 		page,
+ 		"Current allocation: %8lu kB\n"
+ 		"Requested target:   %8lu kB\n"
++		"Minimum target:     %8lu kB\n"
++		"Maximum target:     %8lu kB\n"
+ 		"Low-mem balloon:    %8lu kB\n"
+ 		"High-mem balloon:   %8lu kB\n"
+ 		"Driver pages:       %8lu kB\n"
+ 		"Xen hard limit:     ",
+ 		PAGES2KB(bs.current_pages), PAGES2KB(bs.target_pages), 
++		PAGES2KB(balloon_minimum_target()), PAGES2KB(num_physpages),
+ 		PAGES2KB(bs.balloon_low), PAGES2KB(bs.balloon_high),
+ 		PAGES2KB(bs.driver_pages));
+ 
+Index: head-2008-11-25/drivers/xen/balloon/common.h
+===================================================================
+--- head-2008-11-25.orig/drivers/xen/balloon/common.h	2007-06-12 13:13:44.000000000 +0200
++++ head-2008-11-25/drivers/xen/balloon/common.h	2008-11-25 13:34:52.000000000 +0100
+@@ -47,6 +47,7 @@ struct balloon_stats {
+ 	unsigned long balloon_high;
+ };
+ 
++extern unsigned long num_physpages;
+ extern struct balloon_stats balloon_stats;
+ #define bs balloon_stats
+ 
+@@ -54,5 +55,6 @@ int balloon_sysfs_init(void);
+ void balloon_sysfs_exit(void);
+ 
+ void balloon_set_new_target(unsigned long target);
++unsigned long balloon_minimum_target(void);
+ 
+ #endif /* __XEN_BALLOON_COMMON_H__ */
+Index: head-2008-11-25/drivers/xen/balloon/sysfs.c
+===================================================================
+--- head-2008-11-25.orig/drivers/xen/balloon/sysfs.c	2008-11-25 13:34:32.000000000 +0100
++++ head-2008-11-25/drivers/xen/balloon/sysfs.c	2008-11-25 13:34:52.000000000 +0100
+@@ -53,6 +53,8 @@
+ 	static SYSDEV_ATTR(name, S_IRUGO, show_##name, NULL)
+ 
+ BALLOON_SHOW(current_kb, "%lu\n", PAGES2KB(bs.current_pages));
++BALLOON_SHOW(min_kb, "%lu\n", PAGES2KB(balloon_minimum_target()));
++BALLOON_SHOW(max_kb, "%lu\n", PAGES2KB(num_physpages));
+ BALLOON_SHOW(low_kb, "%lu\n", PAGES2KB(bs.balloon_low));
+ BALLOON_SHOW(high_kb, "%lu\n", PAGES2KB(bs.balloon_high));
+ BALLOON_SHOW(hard_limit_kb,
+@@ -97,6 +99,8 @@ static struct sysdev_attribute *balloon_
+ 
+ static struct attribute *balloon_info_attrs[] = {
+ 	&attr_current_kb.attr,
++	&attr_min_kb.attr,
++	&attr_max_kb.attr,
+ 	&attr_low_kb.attr,
+ 	&attr_high_kb.attr,
+ 	&attr_hard_limit_kb.attr,

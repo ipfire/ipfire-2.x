@@ -24,13 +24,16 @@
 
 include Config
 
-VER        = 9bf7deaa4b8829ab8fbccb34529a17aab2ddea93
+VER        = 3.4.0
 
-THISAPP    = mISDN.git-$(VER)
+THISAPP    = xen-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = xen
+PAK_VER    = 1
+DEPS       = "x11libs"
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a9e9aaff23cda58c4d71aab8eab9bba5
+$(DL_FILE)_MD5 = e8c908d0387269d905a673d29b703f1d
 
 install : $(TARGET)
 
@@ -49,6 +52,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -70,9 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make force
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make $(MAKETUNING)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make install DEPMOD="depmod $(KVER)"
-	mv /lib/modules/$(KVER)-ipfire/extra /lib/modules/$(KVER)-ipfire/mISDN
-	@rm -rf $(DIR_SRC)/mISDN*
+	cd $(DIR_APP) && make xen && make install-xen
+	cd $(DIR_APP) && make tools && make install-tools
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
