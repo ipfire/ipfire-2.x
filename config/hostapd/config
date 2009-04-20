@@ -17,26 +17,27 @@ CONFIG_DRIVER_HOSTAP=y
 
 # Driver interface for madwifi driver
 CONFIG_DRIVER_MADWIFI=y
-CFLAGS += -I../../madwifi # change to reflect local setup; directory for madwifi src
+CFLAGS += -I../../madwifi # change to the madwifi source directory
 
 # Driver interface for Prism54 driver
-#CONFIG_DRIVER_PRISM54=y
+CONFIG_DRIVER_PRISM54=y
 
-# Driver interface for drivers using Devicescape IEEE 802.11 stack
-#CONFIG_DRIVER_DEVICESCAPE=y
-# Currently, driver_devicescape.c build requires some additional parameters
-# to be able to include some of the kernel header files. Following lines can
-# be used to set these (WIRELESS_DEV must point to the root directory of the
-# wireless-dev.git tree).
-#WIRELESS_DEV=/usr/src/wireless-dev
-#CFLAGS += -I$(WIRELESS_DEV)/include
-#CFLAGS += -I$(WIRELESS_DEV)/net/d80211
-#CFLAGS += -D_LINUX_TYPES_H
+# Driver interface for drivers using the nl80211 kernel interface
+CONFIG_DRIVER_NL80211=y
+# driver_nl80211.c requires a rather new libnl (version 1.1) which may not be
+# shipped with your distribution yet. If that is the case, you need to build
+# newer libnl version and point the hostapd build to use it.
+#LIBNL=/usr/src/libnl
+#CFLAGS += -I$(LIBNL)/include
+#LIBS += -L$(LIBNL)/lib
 
 # Driver interface for FreeBSD net80211 layer (e.g., Atheros driver)
 #CONFIG_DRIVER_BSD=y
 #CFLAGS += -I/usr/local/include
 #LIBS += -L/usr/local/lib
+
+# Driver interface for no driver (e.g., RADIUS server only)
+#CONFIG_DRIVER_NONE=y
 
 # IEEE 802.11F/IAPP
 CONFIG_IAPP=y

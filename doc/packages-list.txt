@@ -67,6 +67,7 @@
 * clamav-0.94.2
 * cmake-2.4.8
 * collectd-4.5.1
+* compat-wireless-2009-03-30-kmod-2.6.27.21
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
@@ -142,6 +143,7 @@
 * iptables-1.4.2
 * iptstate-2.1
 * iputils-ss020927
+* iw-0.9.12
 * java-1.6.0_12-for-ipfire
 * jpegsrc.v6b
 * kbd-1.12
@@ -161,6 +163,7 @@
 * libidn-0.6.14
 * libmad-0.15.1b
 * libnet-1.1.2.1
+* libnl-1.1
 * libogg-1.1.3
 * libpcap-1.0.0
 * libpng-1.2.12
@@ -188,7 +191,7 @@
 * m4-1.4.4
 * mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93
 * mISDNuser.git-54928dec57bc846f2c2186f3640e69a053cd3641
-* madwifi-trunk-r3994-20090410-kmod-2.6.27.21
+* madwifi-hal-testing-r4003-20090416-kmod-2.6.27.21
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34

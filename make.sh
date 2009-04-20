@@ -345,6 +345,8 @@ buildipfire() {
   ipfiremake alsa			KMOD=1
   ipfiremake openswan			KMOD=1
   ipfiremake mISDN
+  ipfiremake which
+  ipfiremake compat-wireless
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -359,6 +361,7 @@ buildipfire() {
   ipfiremake curl
   ipfiremake python
   ipfiremake libnet
+  ipfiremake libnl
   ipfiremake libidn
   ipfiremake libjpeg
   ipfiremake libpng
@@ -529,7 +532,6 @@ buildipfire() {
   ipfiremake tripwire
   ipfiremake sysstat
   ipfiremake vsftpd
-  ipfiremake which
   ipfiremake openswan
   ipfiremake lsof
   ipfiremake centerim
@@ -569,6 +571,7 @@ buildipfire() {
   ipfiremake esniper
   ipfiremake vnstat
   ipfiremake vnstati
+  ipfiremake iw
   ipfiremake wpa_supplicant
   ipfiremake hostapd
   ipfiremake urlgrabber

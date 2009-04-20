@@ -77,9 +77,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	-cp /usr/src/linux/include/linux/genetlink.h /usr/include/linux/
+	-cp /usr/src/linux/include/linux/netfilter/nfnetlink.h /usr/include/linux/netfilter/
+	-cp /usr/src/linux/include/linux/netfilter/nfnetlink_compat.h /usr/include/linux/netfilter/
 	cd $(DIR_APP)/hostapd && cp $(DIR_SRC)/config/hostapd/config ./.config
 	cd $(DIR_APP)/hostapd && sed -e "s@/usr/local@/usr@g" -i Makefile
-	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE) && make install
+	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/hostapd && make install
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	mkdir -p /var/ipfire/wlanap
 	touch /var/ipfire/wlanap/settings

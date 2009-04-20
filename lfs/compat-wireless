@@ -24,14 +24,17 @@
 
 include Config
 
-VER        = 0.6.9
+VER        = 2009-03-30
 
-THISAPP    = wpa_supplicant-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = compat-wireless-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = wpa_supplicant
+ifeq "$(SMP)" ""
+  TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
+else
+  TARGET     = $(DIR_INFO)/$(THISAPP)-smp
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -41,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0efb8fcedf0a8acf6f423dfdb0658fdd
+$(DL_FILE)_MD5 = 88ea3e5b42ef5fbcec8b91043dd3aa76
 
 install : $(TARGET)
 
@@ -50,9 +53,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -73,10 +73,14 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/wpa_supplicant && cp $(DIR_SRC)/config/wpa_supplicant/config ./.config
-	cd $(DIR_APP)/wpa_supplicant && sed -e "s/wpa_cli\ dynamic_eap_methods/wpa_cli\ #dynamic_eap_methods/" -i Makefile
-	cd $(DIR_APP)/wpa_supplicant && sed -e "s@/usr/local@/usr@g" -i Makefile
-	cd $(DIR_APP)/wpa_supplicant && CFLAGS+=-I/usr/src/linux/include make && make install
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
+
+#	Apply some wlan-card patches
+	cd $(DIR_APP) && cat $(DIR_SRC)/src/patches/compat-wireless_*.patch | patch -Np1
+
+	cd $(DIR_APP) && sed -i -e "s|uname -r|echo $(KVER)-ipfire|g" Makefile
+	cd $(DIR_APP) && sed -i -e "s|/sbin/modprobe|echo|g" Makefile
+	cd $(DIR_APP) && sed -i -e "s|install: uninstall modules|install: modules|g" Makefile
+	cd $(DIR_APP) && sed -i -e "s|\t@# All the scripts|\nende:|g" Makefile
+	cd $(DIR_APP) && make KMODDIR=kernel install
 	@$(POSTBUILD)
