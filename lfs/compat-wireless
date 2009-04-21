@@ -24,17 +24,19 @@
 
 include Config
 
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
+
 VER        = 2009-03-30
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(SMP)" ""
-  TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)-smp
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -78,9 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	Apply some wlan-card patches
 	cd $(DIR_APP) && cat $(DIR_SRC)/src/patches/compat-wireless_*.patch | patch -Np1
 
-	cd $(DIR_APP) && sed -i -e "s|uname -r|echo $(KVER)-ipfire|g" Makefile
-	cd $(DIR_APP) && sed -i -e "s|/sbin/modprobe|echo|g" Makefile
+#	Build only the modules
 	cd $(DIR_APP) && sed -i -e "s|install: uninstall modules|install: modules|g" Makefile
 	cd $(DIR_APP) && sed -i -e "s|\t@# All the scripts|\nende:|g" Makefile
-	cd $(DIR_APP) && make KMODDIR=kernel install
+
+	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install
 	@$(POSTBUILD)

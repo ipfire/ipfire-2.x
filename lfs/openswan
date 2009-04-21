@@ -24,20 +24,23 @@
 
 include Config
 
+ifeq "$(XEM)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
+
 VER        = 2.6.21
 
 THISAPP    = openswan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+
 ifeq "$(KMOD)" "1"
-ifeq "$(SMP)" "1"
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
+	TARGET = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 else
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$KVER
-endif
-else
-TARGET     = $(DIR_INFO)/$(THISAPP)
+	TARGET = $(DIR_INFO)/$(THISAPP)
 endif
 
 ###############################################################################

@@ -24,13 +24,19 @@
 
 include Config
 
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
+
 VER        = 9bf7deaa4b8829ab8fbccb34529a17aab2ddea93
 
 THISAPP    = mISDN.git-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -70,9 +76,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make force
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make $(MAKETUNING)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-ipfire make install DEPMOD="depmod $(KVER)-ipfire"
-	mv /lib/modules/$(KVER)-ipfire/extra /lib/modules/$(KVER)-ipfire/mISDN
+	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-$(VERSUFIX) make force
+	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-$(VERSUFIX) make $(MAKETUNING)
+	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-$(VERSUFIX) \
+		INSTALL_PREFIX=/lib/modules/$(KVER)-$(VERSUFIX)/mISDN \
+		make modules-install
 	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)

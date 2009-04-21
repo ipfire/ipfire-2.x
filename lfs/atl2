@@ -24,18 +24,19 @@
 
 include Config
 
+ifeq "$(XEN)" "1"
+	VERSUFIX = ipfire-xen
+else
+	VERSUFIX = ipfire
+endif
+
 VER        = 2.0.5
 
 THISAPP    = atl2-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(SMP)" "1"
-	TARGET     = $(DIR_INFO)/$(THISAPP)-smp
-else
-	TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
-endif
-
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -79,12 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/atl2_add_tx_bytes_statistic.patch 
-ifeq "$(SMP)" "1"
-	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-ipfire-smp/build/ SUBDIRS=$(DIR_APP) modules
-	cd $(DIR_APP) && install -m 644 atl2.ko /lib/modules/$(KVER)-ipfire-smp/kernel/drivers/net 
-else
-	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-ipfire/build/ SUBDIRS=$(DIR_APP) modules
-	cd $(DIR_APP) && install -m 644 atl2.ko /lib/modules/$(KVER)-ipfire/kernel/drivers/net 
-endif
+	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP) modules
+	cd $(DIR_APP) && install -m 644 atl2.ko /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

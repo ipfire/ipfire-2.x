@@ -337,6 +337,16 @@ buildipfire() {
   ipfiremake rp-pppoe
   ipfiremake pptp
   ipfiremake unzip
+  ipfiremake which
+  ipfiremake linux			XEN=1
+  ipfiremake atl2			XEN=1
+  ipfiremake kqemu			XEN=1
+  ipfiremake v4l-dvb			XEN=1
+  ipfiremake madwifi			XEN=1
+#  ipfiremake alsa			XEN=1 KMOD=1
+  ipfiremake openswan			XEN=1 KMOD=1
+  ipfiremake mISDN			XEN=1
+  ipfiremake compat-wireless		XEN=1
   ipfiremake linux
   ipfiremake atl2
   ipfiremake kqemu
@@ -345,9 +355,7 @@ buildipfire() {
   ipfiremake alsa			KMOD=1
   ipfiremake openswan			KMOD=1
   ipfiremake mISDN
-  ipfiremake which
   ipfiremake compat-wireless
-  ipfiremake linux			XEN=1
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -598,7 +606,7 @@ buildipfire() {
   ipfiremake perl-gettext
   ipfiremake vdradmin
   ipfiremake x11libs
-  ipfiremake xen
+#  ipfiremake xen
   ipfiremake miau
   ipfiremake net-snmp
   ipfiremake perl-DBI

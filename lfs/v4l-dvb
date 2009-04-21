@@ -24,6 +24,12 @@
 
 include Config
 
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
+
 VER        = 4cd17f5a20cc
 
 THISAPP    = v4l-dvb-$(VER)
@@ -31,12 +37,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PAK_VER    = 2
-ifeq "$(SMP)" "1"
-	TARGET     = $(DIR_INFO)/$(THISAPP)-smp
-else
-	TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
-endif
-
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -79,13 +80,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(SMP)" "1"
-	cd $(DIR_APP) && make release VER=$(KVER)-ipfire-smp
-else
-	cd $(DIR_APP) && make release VER=$(KVER)-ipfire
-endif
+	cd $(DIR_APP) && make release VER=$(KVER)-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) all
 	cd $(DIR_APP) && make install
-	-ln -s $(DIR_APP)/ /usr/src/v4l-dvb
+	ln -sf $(DIR_APP)/ /usr/src/v4l-dvb
 #	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

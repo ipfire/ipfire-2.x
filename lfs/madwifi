@@ -24,17 +24,19 @@
 
 include Config
 
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
+
 VER        = hal-testing-r4003-20090416
 
 THISAPP    = madwifi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(SMP)" ""
-  TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)-smp
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -77,15 +79,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING) KERNELPATH=/usr/src/linux
 	cd $(DIR_APP) && make KERNELPATH=/usr/src/linux BINDIR=/usr/bin \
 				MANDIR=/usr/man install
-ifeq "$(SMP)" ""
-	cp $(DIR_SRC)/config/madwifi/madwifi.conf /etc/
-	ln -s $(DIR_APP) $(DIR_SRC)/madwifi 
-endif
+	cp -f $(DIR_SRC)/config/madwifi/madwifi.conf /etc/
+	ln -sf $(DIR_APP) $(DIR_SRC)/madwifi 
+
 	# Set Countrycode to germany because some cards
 	# are not detected without cc
 	echo options ath_pci countrycode=276 > /etc/modprobe.d/madwifi
 
 	# create madwifi symlink for hostapd build
-	cd $(DIR_SRC) && ln -s $(THISAPP) madwifi
+	cd $(DIR_SRC) && ln -sf $(THISAPP) madwifi
 
 	@$(POSTBUILD)

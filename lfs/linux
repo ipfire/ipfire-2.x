@@ -41,10 +41,11 @@ endif
 # Normal build or XEN build.
 #
 ifeq "$(XEN)" "1"
-	TARGET = $(DIR_INFO)/linux-$(VER)-xen
+	VERSUFIX=ipfire-xen
 else
-	TARGET = $(DIR_INFO)/linux-$(VER)
+	VERSUFIX=ipfire
 endif
+TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -207,59 +208,40 @@ endif
 	# Cleanup kernel source
 	cd $(DIR_APP) && make mrproper
 
-ifeq "$(XEN)" "1"
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-xen $(DIR_APP)/.config
-else
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE) $(DIR_APP)/.config
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
-endif
-
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
+	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-$(VERSUFIX)/' Makefile
 
 ifeq "$(XEN)" "1"
-	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire-xen/' Makefile
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)"
-	cd $(DIR_APP) && cp -v vmlinux /boot/vmlinuz-$(VER)-ipfire-xen
-	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire-xen
-	ln -sf vmlinuz-$(VER)-ipfire-xen /boot/vmlinuz-ipfire-xen
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
+	cd $(DIR_APP) && cp -v vmlinux /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
+	ln -sf vmlinuz-$(VER)--$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 else
-	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-ipfire/' Makefile
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
-	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-ipfire
-	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-ipfire
-	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-ipfire
-	ln -sf vmlinuz-$(VER)-ipfire /boot/vmlinuz-ipfire
-	ln -sf System.map-$(VER)-ipfire /boot/System.map-ipfire
+	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
+	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
+	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
+endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
-endif
 
 ifeq "$(XEN)" ""
 	# Only do this once on the non-XEN pass
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 endif 
 
-ifeq "$(XEN)" "1"
 	# Rename ide-cd module to match with old kernel
-	mv /lib/modules/$(VER)-ipfire-xen/kernel/drivers/ide/ide-cd_mod.ko \
-	    /lib/modules/$(VER)-ipfire-xen/kernel/drivers/ide/ide-cd.ko
+	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd_mod.ko \
+	   /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd.ko
 
 	# Remove mISDN modules
-	rm -rvf /lib/modules/$(VER)-ipfire-xen/kernel/drivers/isdn/mISDN
-	rm -rvf /lib/modules/$(VER)-ipfire-xen/kernel/drivers/isdn/hardware/mISDN
-else
-	# Rename ide-cd module to match with old kernel
-	mv /lib/modules/$(VER)-ipfire/kernel/drivers/ide/ide-cd_mod.ko \
-	    /lib/modules/$(VER)-ipfire/kernel/drivers/ide/ide-cd.ko
-
-	# Remove mISDN modules
-	rm -rvf /lib/modules/$(VER)-ipfire/kernel/drivers/isdn/mISDN
-	rm -rvf /lib/modules/$(VER)-ipfire/kernel/drivers/isdn/hardware/mISDN
-endif
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

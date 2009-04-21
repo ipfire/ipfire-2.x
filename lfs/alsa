@@ -24,25 +24,28 @@
 
 include Config
 
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
+
 VER        = 1.0.19
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(KMOD)" "1"
-ifeq "$(SMP)" "1"
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
-else
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)
-endif
-else
-TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
 PROG       = alsa
 PAK_VER    = 5
 
 DEPS       = ""
+
+ifeq "$(KMOD)" "1"
+	TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
+else
+	TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
