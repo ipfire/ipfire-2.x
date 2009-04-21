@@ -37,6 +37,9 @@ CXXFLAGS   =
 ifeq "$(firstword $(MAKEFILES))" "linux-xen"
 	XEN=1
 endif
+PROG	= linux-xen
+PAK_VER	= 1
+DEPS	= ""
 
 # Normal build or XEN build.
 #
@@ -216,16 +219,14 @@ endif
 ifeq "$(XEN)" "1"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)"
 	cd $(DIR_APP) && cp -v vmlinux /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
-	ln -sf vmlinuz-$(VER)--$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
-endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
