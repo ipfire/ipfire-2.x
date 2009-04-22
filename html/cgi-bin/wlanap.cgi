@@ -64,6 +64,7 @@ $wlanapsettings{'HIDESSID'} = 'off';
 $wlanapsettings{'ENC'} = 'wpa2';               # none / wpa1 /wpa2
 $wlanapsettings{'TXPOWER'} = 'auto';
 $wlanapsettings{'CHANNEL'} = '05';
+$wlanapsettings{'HW_MODE'} = 'g';
 $wlanapsettings{'PWD'} = 'IPFire-2.x';
 $wlanapsettings{'SYSLOGLEVEL'} = '0';
 $wlanapsettings{'DEBUG'} = '4';
@@ -194,6 +195,7 @@ $checked_hidessid = "checked='checked'" if ( $wlanapsettings{'HIDESSID'} eq 'on'
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
+$selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
 $selected{'MACMODE'}{$wlanapsettings{'MACMODE'}} = "selected='selected'";
 
 my @channellist_cmd = `iwlist $wlanapsettings{'INTERFACE'} channel`;
@@ -265,6 +267,14 @@ print <<END
 <tr><td bgcolor='$color{'color20'}' colspan='4' align='left'><b>WLAN Settings</b>
 <tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='40' value='$wlanapsettings{'SSID'}' /></td></tr>
 <tr><td width='25%' class='base'>Disable SSID broadcast:&nbsp;</td><td class='base' colspan='3'><input type='checkbox' name='HIDESSID' $checked_hidessid /></td></tr>
+<tr><td width='25%' class='base'>HW Mode:&nbsp;</td><td class='base' colspan='3'>
+	<select name='HW_MODE'>
+		<option value='a' $selected{'HW_MODE'}{'a'}>a</option>
+		<option value='b' $selected{'HW_MODE'}{'b'}>b</option>
+		<option value='g' $selected{'HW_MODE'}{'g'}>g</option>
+	</select>
+</td></tr>
+
 <tr><td width='25%' class='base'>Encryption:&nbsp;</td><td class='base' colspan='3'>
 	<select name='ENC'>
 		<option value='none' $selected{'ENC'}{'none'}>none</option>
@@ -346,6 +356,9 @@ END
 if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
 	 $status =  `wlanconfig $wlanapsettings{'INTERFACE'} list`;
 }
+if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
+	 $status =  `iw dev $wlanapsettings{'INTERFACE'} station dump`;
+}
 print <<END
 <br />
 <table width='95%' cellspacing='0'>
@@ -369,12 +382,14 @@ sub WriteConfig_hostapd{
 #
 interface=$wlanapsettings{'INTERFACE'}
 driver=$wlanapsettings{'DRIVER_HOSTAPD'}
+channel=$wlanapsettings{'CHANNEL'}
+hw_mode=$wlanapsettings{'HW_MODE'}
 logger_syslog=-1
 logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
 logger_stdout=-1
 logger_stdout_level=$wlanapsettings{'DEBUG'}
 dump_file=/tmp/hostapd.dump
-auth_algs=3
+auth_algs=1
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
 END
