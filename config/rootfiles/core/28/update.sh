@@ -25,7 +25,7 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
 OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
-NEWVERSION="2.3"
+NEWVERSION="2.5"
 #
 KVER="2.6.27.21"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
@@ -122,7 +122,7 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
 # Create new issue
 #
-echo IPFire v$NEWVERSION - www.ipfire.org > /etc/issue
+echo IPFire v$NEWVERSION beta1 - www.ipfire.org > /etc/issue
 echo =================================== >> /etc/issue
 echo \\n running on \\s \\r \\m >> /etc/issue
 #
