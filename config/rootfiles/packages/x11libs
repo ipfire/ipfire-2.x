@@ -1,5 +1,4 @@
 #doc
-#doc/libxcb-1.1
 #doc/libxcb-1.1/tutorial
 #doc/libxcb-1.1/tutorial/index.html
 #doc/libxcb-1.1/tutorial/xcb.css
@@ -2531,8 +2530,8 @@ usr/share/X11/locale
 #usr/share/man/man3/XtAppSetErrorHandler.3
 #usr/share/man/man3/XtAppSetErrorMsgHandler.3
 #usr/share/man/man3/XtAppSetExitFlag.3
-#man3/XtAppSetFallbackResources.3
-#man3/XtAppSetSelectionTimeout.3
+#usr/share/man/man3/XtAppSetFallbackResources.3
+#usr/share/man/man3/XtAppSetSelectionTimeout.3
 #usr/share/man/man3/XtAppSetTypeConverter.3
 #usr/share/man/man3/XtAppSetWarningHandler.3
 #usr/share/man/man3/XtAppSetWarningMsgHandler.3

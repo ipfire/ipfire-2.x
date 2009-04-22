@@ -88,12 +88,12 @@ define PREBUILD
 	# Fix installation on partial rebuild, so modules install where they should
 	# and not everytime on the last compiled kernel
 	if [ -f $(DIR_SRC)/linux-$(KVER) ]; then \
-		if [ "$(SMP)" = "" ]; then \
+		if [ "$(XEN)" = "" ]; then \
 			cd $(DIR_SRC)/linux-$(KVER) && \
 				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire+' Makefile; \
 		else \
 			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire-smp+' Makefile; \
+				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire-xen+' Makefile; \
 		fi; \
 	fi
 endef
@@ -122,7 +122,7 @@ define POSTBUILD
 	# $(TARGET)_rootfile : ROOTFILE with KVER replacement
 	# $(TARGET) : log result with {commented|include|added} files
 	if [ -s "$(TARGET)_diff" ]; then \
-		if [ "$(PASS)" = "SMP" ]; then LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))-smp; \
+		if [ "$(XEN)" = "1" ]; then LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))-xen; \
 		else LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
 		fi; \
 		echo $(LFS_SCRIPT); \
