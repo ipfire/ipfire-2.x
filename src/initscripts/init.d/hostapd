@@ -6,13 +6,55 @@ CHANNEL="05"
 TXPOWER="auto"
 INTERFACE="blue0"
 MACMODE="0"
-DRIVER="MADWIFI"
 
 eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
 
 case "${1}" in
 	start)
 		mkdir -p /var/run/hostapd
+
+		boot_mesg "Starting hostapd... "
+
+		# Check Interface configuration
+		if ! ip link show $INTERFACE > /dev/null 2>&1; then
+			boot_mesg "Interface $INTERFACE does'nt exist." ${FAILURE}
+			echo_failure
+			exit 0
+		fi
+		if [ "$(ip link show $INTERFACE | /bin/grep "ether")" == "" ]; then
+			boot_mesg "Interface $INTERFACE is assigned to wlan master device." ${FAILURE}
+			boot_mesg "Please reboot to fix this." ${FAILURE}
+			echo_failure
+			exit 0
+		fi
+		if [ "$(iwconfig $INTERFACE | /bin/grep "IEEE")" == "" ]; then
+			boot_mesg "Interface $INTERFACE is no wireless device." ${FAILURE}
+			echo_failure
+			exit 0
+		fi
+
+		# Detect driver
+		if [ -e "/sys/class/net/$INTERFACE/phy80211" ]; then
+			DRIVER="NL80211"
+			driver="nl80211"
+		elif [ -e "/sys/class/net/$INTERFACE/madwifi_name_type" ]; then
+			DRIVER="MADWIFI"
+			driver="madwifi"
+		else
+			boot_mesg "Interface $INTERFACE is a not supported wireless device." ${FAILURE}
+			echo_failure
+			exit 0
+		fi
+
+		echo driver=$driver > /etc/hostapd.conf.tmp
+		grep -v "^driver=" /etc/hostapd.conf >> /etc/hostapd.conf.tmp
+		mv /etc/hostapd.conf.tmp /etc/hostapd.conf
+
+		echo DRIVER=$DRIVER > /var/ipfire/wlanap/settings.tmp
+		grep -v "^DRIVER=" /var/ipfire/wlanap/settings >> /var/ipfire/wlanap/settings.tmp
+		chown nobody:nobody /var/ipfire/wlanap/settings.tmp
+		chmod 644 /var/ipfire/wlanap/settings.tmp
+		mv /var/ipfire/wlanap/settings.tmp /var/ipfire/wlanap/settings
 
 		if [ "$DRIVER" == "MADWIFI" ]; then
 			if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
@@ -23,13 +65,14 @@ case "${1}" in
 			fi
 		fi
 
-		boot_mesg "Starting hostapd... "
 		/usr/sbin/iwconfig $INTERFACE channel $CHANNEL
 		/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
+
 		/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf </dev/tty12 >/dev/tty12 2>&1 &
 
-		if [ $DRIVER == "MADWIFI" ]; then
+		sleep 1
 
+		if [ $DRIVER == "MADWIFI" ]; then
 			iwpriv $INTERFACE maccmd 3
 			if [ $MACMODE != 0 ]; then
 				FILE="/var/ipfire/wlanap/macfile"
@@ -41,11 +84,9 @@ case "${1}" in
 
 				iwpriv $INTERFACE maccmd $MACMODE
 			fi
-			# Disable background scann
-			iwpriv $INTERFACE bgscan 0
-			# Set beacon interval to 500
-			iwpriv $INTERFACE bintval 500
 		fi
+
+		sleep 1
 
 		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
 			boot_mesg "Error! Can't set wlan master mode"
