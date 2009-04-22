@@ -76,10 +76,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-$(VERSUFIX) make force
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-$(VERSUFIX) make $(MAKETUNING)
-	cd $(DIR_SRC)/mISDN.git && KVERS=$(KVER)-$(VERSUFIX) \
-		INSTALL_PREFIX=/lib/modules/$(KVER)-$(VERSUFIX)/mISDN \
-		make modules-install
+	cd $(DIR_SRC)/mISDN.git && make KVERS=$(KVER)-$(VERSUFIX) force
+	cd $(DIR_SRC)/mISDN.git && make KVERS=$(KVER)-$(VERSUFIX) $(MAKETUNING)
+	cd $(DIR_SRC)/mISDN.git && make KVERS=$(KVER)-$(VERSUFIX) \
+			INSTALL_PREFIX=$(DIR_SRC)/mISDN.git/dest/ \
+			modules-install
+	mv $(DIR_SRC)/mISDN.git/dest/lib/modules/*/extra \
+		/lib/modules/$(KVER)-$(VERSUFIX)/mISDN
 	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)
