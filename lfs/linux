@@ -34,12 +34,9 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-ifeq "$(firstword $(MAKEFILES))" "linux-xen"
-	XEN=1
-endif
-PROG	= linux-xen
-PAK_VER	= 1
-DEPS	= ""
+PROG	   = linux-xen
+PAK_VER    = 1
+DEPS	   = ""
 
 # Normal build or XEN build.
 #

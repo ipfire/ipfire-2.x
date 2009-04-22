@@ -606,7 +606,7 @@ buildipfire() {
   ipfiremake perl-gettext
   ipfiremake vdradmin
   ipfiremake x11libs
-#  ipfiremake xen
+  ipfiremake xen
   ipfiremake miau
   ipfiremake net-snmp
   ipfiremake perl-DBI
