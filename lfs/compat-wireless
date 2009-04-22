@@ -85,4 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e "s|\t@# All the scripts|\nende:|g" Makefile
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install
+
+	# Set Regulatory Domain to "EU" (use Channel 1-14 max. 20db)
+	echo options cfg80211 ieee80211_regdom=EU > /etc/modprobe.d/cfg80211
 	@$(POSTBUILD)
