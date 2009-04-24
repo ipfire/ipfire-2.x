@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.8.3.2
+VER        = 2.8.4
 
 THISAPP    = snort-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 Community-Rules-20070503.tar.gz = $(DL_FROM)/Community-Rules-20070503.tar.gz
 
-$(DL_FILE)_MD5 = f75547da33446ddb4ca07eefd9ce31dc
+$(DL_FILE)_MD5 = 193179da8db8aac5ee6b0a751ce7b76d
 Community-Rules-20070503.tar.gz_MD5 = f236b8a4ac12e99d3e7bd81bf3b5a482
 
 install : $(TARGET)
