@@ -56,7 +56,6 @@ $snortsettings{'ENABLE_SNORT'} = 'off';
 $snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
 $snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
 $snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
-$snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} = 'off';
 $snortsettings{'ENABLE_GUARDIAN'} = 'off';
 $snortsettings{'GUARDIAN_INTERFACE'} = `cat /var/ipfire/red/iface`;
 $snortsettings{'GUARDIAN_HOSTGATEWAYBYTE'} = '1';
@@ -111,17 +110,6 @@ if (-e "/etc/snort/snort.conf") {
 	foreach my $line (@snortconfig) {
 		# Trim the line
 		chomp $line;
-
-		if ($snortsettings{'ACTION'} eq $Lang::tr{'save'}) {
-			# Check for preprocessor settings
-			if ($line =~ /preprocessor http_inspect/) {
-				# Strip out leading # from rule line
-				$line =~ s/\# ?//i;
-				if (($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'off')) {
-					$line = "# $line";
-				}
-			}
-		}
 
 		# Check for a line with .rules
 		if ($line =~ /\.rules$/) {
@@ -384,9 +372,6 @@ $checked{'ENABLE_SNORT_BLUE'}{$snortsettings{'ENABLE_SNORT_BLUE'}} = "checked='c
 $checked{'ENABLE_SNORT_ORANGE'}{'off'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{'on'} = '';
 $checked{'ENABLE_SNORT_ORANGE'}{$snortsettings{'ENABLE_SNORT_ORANGE'}} = "checked='checked'";
-$checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{'off'} = '';
-$checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{'on'} = '';
-$checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{$snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}} = "checked='checked'";
 $checked{'ENABLE_GUARDIAN'}{'off'} = '';
 $checked{'ENABLE_GUARDIAN'}{'on'} = '';
 $checked{'ENABLE_GUARDIAN'}{$snortsettings{'ENABLE_GUARDIAN'}} = "checked='checked'";
@@ -452,14 +437,6 @@ if ( -e "/var/ipfire/guardian/guardian.conf" ) {
 
 print <<END
 </td></tr>
-<tr>
-	<td><hr /></td>
-</tr>
-<tr>
-	<td><b>$Lang::tr{'ids preprocessor'}</b></td>
-</tr>
-<tr>
-  	<td><input type='checkbox' name='ENABLE_PREPROCESSOR_HTTP_INSPECT' $checked{'ENABLE_PREPROCESSOR_HTTP_INSPECT'}{'on'} />  http_inspect $Lang::tr{'active'}
 <tr>
 	<td><hr /></td>
 </tr>
