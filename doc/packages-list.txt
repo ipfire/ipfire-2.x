@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.3 ==
+== List of softwares used to build IPFire Version: 2.5beta1 ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -151,6 +151,7 @@
 * kbd-1.12
 * klibc-1.5.14
 * kqemu-1.4.0pre1-kmod-2.6.27.21-ipfire
+* kqemu-1.4.0pre1-kmod-2.6.27.21-ipfire-xen
 * kudzu-1.2.64
 * l7-protocols-2008-12-18
 * lame-3.97

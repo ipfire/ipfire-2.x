@@ -1,4 +1,4 @@
-etc/madwifi.conf
+#etc/madwifi.conf
 etc/modprobe.d/madwifi
 usr/bin/80211debug
 usr/bin/80211stats
