@@ -24,7 +24,7 @@
 
 include Config
 
-ifeq "$(XEM)" "1"
+ifeq "$(XEN)" "1"
 	VERSUFIX=ipfire-xen
 else
 	VERSUFIX=ipfire
