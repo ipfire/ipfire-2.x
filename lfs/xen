@@ -27,7 +27,7 @@ include Config
 VER        = 3.4.0
 
 THISAPP    = xen-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP)-1.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e8c908d0387269d905a673d29b703f1d
+$(DL_FILE)_MD5 = 0a115fd5328cc7b521bbb36e7a84440b
 
 install : $(TARGET)
 
