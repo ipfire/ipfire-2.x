@@ -15,6 +15,8 @@
 #
 ########################################################################
 
+
+
 . /etc/sysconfig/rc 
 . ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
@@ -191,7 +193,17 @@ case "${1}" in
 			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
 			
 			PPP_NIC=${DEVICE}
-			
+
+			if [ "$TYPE" == "vdsl" ]; then
+				boot_mesg "Createing VLAN Interface ${DEVICE}.7 ..."
+				modprobe 8021q
+				vconfig add ${DEVICE} 7
+				PPP_NIC=${DEVICE}.7
+				sleep 0.2
+				ip link set ${PPP_NIC} up
+				TYPE="pppoe"
+			fi
+
 			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
 				PPP_NIC=nas0		
 				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
@@ -404,6 +416,15 @@ case "${1}" in
 		fi
 
 		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
+			link_status=`ip link show $DEVICE.7 2> /dev/null`
+			if [ -n "${link_status}" ]; then
+				if echo "${link_status}" | grep -q UP; then
+					boot_mesg "Bringing down the ${DEVICE}.7 interface..."
+					ip link set ${DEVICE}.7 down
+					vconfig del ${DEVICE} 7
+					evaluate_retval
+				fi
+			fi
 			link_status=`ip link show $DEVICE 2> /dev/null`
 			if [ -n "${link_status}" ]; then
 				if echo "${link_status}" | grep -q UP; then
