@@ -84,9 +84,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Set Countrycode to germany because some cards
 	# are not detected without cc
-	echo options ath_pci countrycode=276 > /etc/modprobe.d/madwifi
-	echo #blacklist ath_pci >> /etc/modprobe.d/madwifi
-	echo blacklist ath5k >> /etc/modprobe.d/madwifi
+	echo 'options ath_pci countrycode=276' > /etc/modprobe.d/madwifi
+	echo '#blacklist ath_pci' >> /etc/modprobe.d/madwifi
+	echo 'blacklist ath5k' >> /etc/modprobe.d/madwifi
 
 	# create madwifi symlink for hostapd build
 	cd $(DIR_SRC) && ln -sf $(THISAPP) madwifi
