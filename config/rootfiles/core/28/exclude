@@ -1,2 +1,3 @@
 etc/ipsec.conf
 etc/ipsec.secrets
+etc/udev/rules.d/30-persistent-network.rules

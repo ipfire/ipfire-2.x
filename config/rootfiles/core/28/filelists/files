@@ -1,6 +1,7 @@
 bin/probenic.sh
 etc/ntp
 etc/rc.d/init.d/snort
+etc/rc.d/init.d/networking/red
 etc/ssh/moduli
 etc/ssh/ssh_config
 etc/ssh/sshd_config

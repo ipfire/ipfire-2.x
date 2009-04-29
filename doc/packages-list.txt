@@ -67,7 +67,7 @@
 * centerim-4.22.1
 * clamav-0.94.2
 * cmake-2.4.8
-* collectd-4.5.1
+* collectd-4.5.3
 * compat-wireless-2009-03-30-kmod-2.6.27.21-ipfire
 * compat-wireless-2009-03-30-kmod-2.6.27.21-ipfire-xen
 * coreutils-5.96
@@ -241,6 +241,7 @@
 * openssl-0.9.8k
 * openswan-2.6.21
 * openswan-2.6.21-kmod-2.6.27.21-ipfire
+* openswan-2.6.21-kmod-2.6.27.21-ipfire-xen
 * openvpn-2.0.9
 * p7zip_4.65
 * pam_mysql-0.7RC1
