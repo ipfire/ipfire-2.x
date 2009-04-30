@@ -696,8 +696,6 @@ buildpackages() {
 	ipfiremake usb-stick ED=$IPFVER
   fi
 
-  # Create updater package
-  #ipfiremake updater
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
