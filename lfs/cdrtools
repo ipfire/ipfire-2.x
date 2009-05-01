@@ -70,8 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrtools-2.01-mkisofs_iconv-1.patch
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrtools-2.01-ascii-2.patch
 	cd $(DIR_APP) && make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root $(MAKETUNING)
 	cd $(DIR_APP) && make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root install
 	@rm -rf $(DIR_APP)

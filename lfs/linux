@@ -183,9 +183,6 @@ endif
 	# Not report deprecated syscall 1.23 (for kudzu)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
     
-	# Openswan
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openswan-2.4.x.kernel-2.6.23-natt.patch
-
 	# Reiser4
 	cd $(DIR_APP) && bzip2 -d -c $(DIR_DL)/reiser4-for-2.6.27.19.patch.bz2 | patch -Np1
 	
