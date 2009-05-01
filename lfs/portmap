@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 5beta
+VER        = 6.0
 
 THISAPP    = portmap_$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tgz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = portmap
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 781e16ed4487c4caa082c6fef09ead4f
+$(DL_FILE)_MD5 = ac108ab68bf0f34477f8317791aaf1ff
 
 install : $(TARGET)
 
@@ -76,9 +76,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/portmap-5beta-compilation_fixes-3.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/portmap-5beta-glibc_errno_fix-1.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvfz $(DIR_DL)/$(DL_FILE)
+#	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/portmap-5beta-compilation_fixes-3.patch
+#	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/portmap-5beta-glibc_errno_fix-1.patch
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

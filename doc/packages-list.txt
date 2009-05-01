@@ -255,7 +255,7 @@
 * phpSANE-0.3.3
 * pkg-config-0.20
 * popt-1.10.4
-* portmap_5beta
+* portmap_6.0
 * postfix-2.5.5
 * ppp-2.4.4
 * pptp-1.7.2
