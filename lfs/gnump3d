@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = gnump3d
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -78,6 +78,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-remove_badbannerlink.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-remove_cookie_expiration_date.patch
+	# gnump3d.org is not related with gnump3d anymore
+	# change the links to project page on gnu.org
+	cd $(DIR_APP) && find . -type f -exec sed -e 's|http://www.gnump3d.org|http://www.gnu.org/software/gnump3d|g' -i {} \;
+	cd $(DIR_APP) && find . -type f -exec sed -e 's|http://gnump3d.org|http://www.gnu.org/software/gnump3d|g' -i {} \;
+
 	cd $(DIR_APP) && make install
 	-mkdir /var/mp3
 	chown nobody.nobody /var/mp3

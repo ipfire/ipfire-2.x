@@ -1,0 +1,12 @@
+diff -Naur gnump3d-3.0.org/bin/gnump3d2 gnump3d-3.0/bin/gnump3d2
+--- gnump3d-3.0.org/bin/gnump3d2	2007-10-18 19:34:02.000000000 +0200
++++ gnump3d-3.0/bin/gnump3d2	2009-05-02 15:17:51.000000000 +0200
+@@ -1346,7 +1346,7 @@
+ 
+ 	my $val = $ARGUMENTS{ $key };
+ 
+-	$header .= "Set-Cookie: " . $key . "=" . $val . ";path=/; expires=Mon, 10-Mar-08 14:36:42 GMT;\r\n";
++	$header .= "Set-Cookie: " . $key . "=" . $val . ";path=/; \r\n";
+     }
+     print "Header: $header\n";
+ 

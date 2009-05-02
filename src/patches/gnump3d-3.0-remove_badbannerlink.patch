@@ -5,7 +5,7 @@
      }
  
 -    if ( $dir ne '/prefs/' ) {
-+    if ( ($dir ne '/prefs/')&&($dir ne '/tagbrowse/')&&($dir ne '/playlist/')&&($dir ne '/random/')&&($dir ne '/stats/') ) {
++    if ( ($dir ne '/prefs/')&&($dir ne '/tagbrowse/')&&($dir ne '/playlist/')&&($dir ne '/random/')&&($dir ne '/stats/')&&($dir ne '/recent/')&&($dir ne '/now/') ) {
          #
          # Interpolate links - chopping out trailing '/' if necessary.
          #
