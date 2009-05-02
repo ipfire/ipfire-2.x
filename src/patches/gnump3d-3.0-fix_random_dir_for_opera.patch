@@ -1,0 +1,12 @@
+diff -Naur gnump3d-3.0.org/lib/gnump3d/plugins/random.pm gnump3d-3.0/lib/gnump3d/plugins/random.pm
+--- gnump3d-3.0.org/lib/gnump3d/plugins/random.pm	2007-10-18 19:34:02.000000000 +0200
++++ gnump3d-3.0/lib/gnump3d/plugins/random.pm	2009-05-02 18:25:13.000000000 +0200
+@@ -525,7 +525,7 @@
+ 	$random= $1;
+       }
+ 
+-      &sendData($data, "HTTP/1.0 300 OK\nPragma: no-cache\nCache-control: no-cache\nLocation: /$random\n\n" );
++      &sendData($data, "HTTP/1.0 302 OK\nPragma: no-cache\nCache-control: no-cache\nLocation: /$random\n\n" );
+ 
+       exit;
+     }

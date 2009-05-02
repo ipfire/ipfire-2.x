@@ -79,15 +79,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-remove_badbannerlink.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-remove_cookie_expiration_date.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fix_random_dir_for_opera.patch
 	# gnump3d.org is not related with gnump3d anymore
 	# change the links to project page on gnu.org
 	cd $(DIR_APP) && find . -type f -exec sed -e 's|http://www.gnump3d.org|http://www.gnu.org/software/gnump3d|g' -i {} \;
 	cd $(DIR_APP) && find . -type f -exec sed -e 's|http://gnump3d.org|http://www.gnu.org/software/gnump3d|g' -i {} \;
 
 	cd $(DIR_APP) && make install
-	-mkdir /var/mp3
+	mkdir -p /var/mp3
+	echo Folder for music files > /var/mp3/info
 	chown nobody.nobody /var/mp3
 	install -m 644 $(DIR_SRC)/config/gnump3d/gnump3d.conf /etc/gnump3d/
-	-mkdir /var/mp3
+	ln -s /usr/bin/gnump3d-index /etc/fcron.daily/gnump3d-index
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
