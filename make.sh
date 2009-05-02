@@ -24,7 +24,7 @@
 
 NAME="IPFire"										# Software name
 SNAME="ipfire"									# Short name
-VERSION="2.5beta1"
+VERSION="2.5beta2"
 CORE="28"
 GIT_BRANCH=master:master										# Version number
 SLOGAN="www.ipfire.org"					# Software slogan
