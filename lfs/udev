@@ -81,6 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-096-netif_rename.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-CVE-2009-1186.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev install
