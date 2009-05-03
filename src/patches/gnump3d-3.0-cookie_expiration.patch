@@ -1,12 +1,14 @@
 diff -Naur gnump3d-3.0.org/bin/gnump3d2 gnump3d-3.0/bin/gnump3d2
 --- gnump3d-3.0.org/bin/gnump3d2	2007-10-18 19:34:02.000000000 +0200
-+++ gnump3d-3.0/bin/gnump3d2	2009-05-02 15:17:51.000000000 +0200
-@@ -1346,7 +1346,7 @@
++++ gnump3d-3.0/bin/gnump3d2	2009-05-03 11:46:09.000000000 +0200
+@@ -1345,8 +1345,8 @@
+         next if $key eq 'q' or $key eq 'play';
  
  	my $val = $ARGUMENTS{ $key };
- 
+-
 -	$header .= "Set-Cookie: " . $key . "=" . $val . ";path=/; expires=Mon, 10-Mar-08 14:36:42 GMT;\r\n";
-+	$header .= "Set-Cookie: " . $key . "=" . $val . ";path=/; \r\n";
++	my $exptime=gmtime(time()+365*24*3600) . " GMT" ;
++	$header .= "Set-Cookie: " . $key . "=" . $val . ";path=/; expires=" . $exptime . ";\r\n";
      }
      print "Header: $header\n";
  

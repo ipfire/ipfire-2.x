@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.5beta1 ==
+== List of softwares used to build IPFire Version: 2.5beta2 ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
