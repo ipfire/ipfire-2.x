@@ -220,6 +220,7 @@
 * mysql-5.0.24a
 * nagios-3.0.5
 * nano-1.2.5
+* nano-2.0.9
 * nasm-0.98.39
 * ncftp-3.2.1-src
 * ncurses-5.5
@@ -289,6 +290,7 @@
 * squid-2.7.STABLE6
 * squidGuard-1.4
 * squidclamav-3.9
+* squidclamav-4.0
 * sshfs-fuse-2.2
 * sslh-1.6g
 * streamripper-1.63.5

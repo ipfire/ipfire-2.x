@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.2.5
+VER        = 2.0.9
 
 THISAPP    = nano-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nano
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f2b3efbf1cf356d736740d531b6b22c4
+$(DL_FILE)_MD5 = 2be94dc43fb60fff4626a2401a977220
 
 install : $(TARGET)
 
@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    --enable-color --enable-multibuffer --enable-nanorc --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && install -v -m644 -D nanorc.sample /etc/nano/nanorc.sample
+	cd $(DIR_APP) && install -v -m644 -D doc/nanorc.sample /etc/nano/nanorc.sample
 	ln -sf /usr/bin/nano /usr/bin/pico
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
