@@ -47,7 +47,12 @@ case "$1" in
 		$0 start
 		;;
 	status)
-		statusproc /usr/lib/postfix/master
+		PID=`pidof /usr/lib/postfix/master`
+		MPID=`cat /var/spool/postfix/pid/master.pid`
+		if [ $MPID = $PID ]; then
+			echo -e "${INFO}postfix is running with Process"\
+			"ID(s) ${MPID}.${NORMAL}"
+		fi
 		;;
 
 	*)
