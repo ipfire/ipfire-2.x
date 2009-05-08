@@ -219,7 +219,6 @@
 * mtools-3.9.10
 * mysql-5.0.24a
 * nagios-3.0.5
-* nano-1.2.5
 * nano-2.0.9
 * nasm-0.98.39
 * ncftp-3.2.1-src
@@ -271,7 +270,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.4
 * rtorrent-0.8.4
-* samba-3.3.3
+* samba-3.3.4
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
@@ -289,7 +288,6 @@
 * squashfs3.4
 * squid-2.7.STABLE6
 * squidGuard-1.4
-* squidclamav-3.9
 * squidclamav-4.0
 * sshfs-fuse-2.2
 * sslh-1.6g
