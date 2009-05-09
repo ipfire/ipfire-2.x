@@ -1217,6 +1217,7 @@ else
 
 system("/usr/local/bin/sambactrl smbreload");
 refreshpage();
+}
 
 sub isrunning
 	{
