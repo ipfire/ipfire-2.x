@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.5.5
+VER        = 2.5.6
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -46,7 +46,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 postfix-2.5.5.patch = $(DL_FROM)/postfix-2.5.5.patch
 
-$(DL_FILE)_MD5 = 6b4b848bdd2239dddfc9d385e57e19ef
+$(DL_FILE)_MD5 = ec2cb63b53f5f36c3ca91da8f3bc9407
 postfix-2.5.5.patch_MD5 = 36cb54665d95016af4ce0cd5f85c20a8
 
 install : $(TARGET)

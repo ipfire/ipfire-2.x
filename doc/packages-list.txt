@@ -256,7 +256,7 @@
 * pkg-config-0.20
 * popt-1.10.4
 * portmap_6.0
-* postfix-2.5.5
+* postfix-2.5.6
 * ppp-2.4.4
 * pptp-1.7.2
 * procps-3.2.6
