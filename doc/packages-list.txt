@@ -65,7 +65,7 @@
 * ccache-2.4
 * cdrtools-2.01.01
 * centerim-4.22.1
-* clamav-0.94.2
+* clamav-0.95.1
 * cmake-2.4.8
 * collectd-4.5.3
 * compat-wireless-2009-03-30-kmod-2.6.27.21-ipfire
@@ -88,7 +88,7 @@
 * e2fsprogs-1.39
 * ebtables-v2.0.8-2
 * ed-0.2
-* elinks-0.11.4rc0
+* elinks-0.11.6
 * esniper-2-19-0
 * espgs-8.15.1
 * etherwake-1.09
