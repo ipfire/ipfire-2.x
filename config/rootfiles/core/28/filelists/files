@@ -1,5 +1,7 @@
 bin/probenic.sh
 etc/ntp
+etc/rc.d/init.d/beep
+etc/rc.d/init.d/console
 etc/rc.d/init.d/snort
 etc/rc.d/init.d/networking/red
 etc/ssh/moduli
