@@ -13,6 +13,13 @@ fi
 
 case "$1" in
 	start)
+		# If run from init and collectd already started then exit silent
+		if [ "$(basename $0)" != "collectd" ]; then
+			if [ "$(ps -A | grep " collectd$")" != "" ]; then
+				exit 0
+			fi
+		fi
+
 		# At first run search for sensors with sensors-detect
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
 			boot_mesg "Searching for Sensors..."
@@ -35,17 +42,21 @@ case "$1" in
 			fi
 		fi
 
-		boot_mesg -n "Loading Sensor Modules: "
-		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
-		modprobe $modul > /dev/null 2>&1;
-			if [ ${?} = 0 ]; then
-				boot_mesg -n "$SUCCESS$modul$NORMAL ";
-			else
-				boot_mesg -n "$WARNING$modul$NORMAL ";
-			fi
-		done
-		boot_mesg;
-		echo_ok;
+		# Load sensor modules only first start
+		if [ ! -e /var/lock/sensor_modules ]; then
+			touch /var/lock/sensor_modules
+			boot_mesg -n "Loading Sensor Modules: "
+			for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
+			modprobe $modul > /dev/null 2>&1;
+				if [ ${?} = 0 ]; then
+					boot_mesg -n "$SUCCESS$modul$NORMAL ";
+				else
+					boot_mesg -n "$WARNING$modul$NORMAL ";
+				fi
+			done
+			boot_mesg;
+			echo_ok;
+		fi
 
 		# Enable sensors plugin if sensors found
 		if [ $( sensors 2>&1 | grep "No sensors found!" | wc -l ) == "1" ]; then
