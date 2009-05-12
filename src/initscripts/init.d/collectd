@@ -84,13 +84,13 @@ case "$1" in
 		evaluate_retval
 		;;
 	stop)
+		boot_mesg "Stopping Collection daemon..."
+		killproc /usr/sbin/collectd
+		evaluate_retval
 		# Save the ramdisk at manual stop but not at shutdown
 		if [ "$(basename $0)" == "collectd" ]; then
 		    /etc/init.d/tmpfs backup
 		fi
-		boot_mesg "Stopping Collection daemon..."
-		killproc /usr/sbin/collectd
-		evaluate_retval
 		;;
 	restart)
 		${0} stop
