@@ -13,7 +13,7 @@ fi
 
 case "$1" in
 	start)
-		# If run from init and collectd already started then exit silent
+		# If run from init and collectd alrady started then exit silent
 		if [ "$(basename $0)" != "collectd" ]; then
 			if [ "$(ps -A | grep " collectd$")" != "" ]; then
 				exit 0
@@ -43,8 +43,8 @@ case "$1" in
 		fi
 
 		# Load sensor modules only first start
-		if [ ! -e /var/lock/sensor_modules ]; then
-			touch /var/lock/sensor_modules
+		if [ ! -e /var/lock/sensors_modules ]; then
+			touch /var/lock/sensors_modules
 			boot_mesg -n "Loading Sensor Modules: "
 			for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
 			modprobe $modul > /dev/null 2>&1;
@@ -67,9 +67,9 @@ case "$1" in
 
 		# Enable thermal plugin if thermal_zone found
 		if [ ! -e  /sys/class/thermal/thermal_zone0 ]; then
-			sed -i -e "s|^LoadPlugin thermal|#LoadPlugin thermal|g" /etc/collectd.conf
+			sed -i -e 's|^include "/etc/collectd.thermal"$|#include "/etc/collectd.thermal"|g' /etc/collectd.conf
 		else
-			sed -i -e "s|^#LoadPlugin thermal|LoadPlugin thermal|g" /etc/collectd.conf
+			sed -i -e 's|^#include "/etc/collectd.thermal"$|include "/etc/collectd.thermal"|g' /etc/collectd.conf
 		fi
 
 		# Enable swap plugin if swap found
