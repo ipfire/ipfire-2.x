@@ -366,6 +366,7 @@ case "${1}" in
 			/usr/bin/vnstat -u -i ppp0 -r --enable --force > /dev/null 2>&1
 			/etc/rc.d/init.d/connectd start
 			/etc/rc.d/init.d/collectd start
+			exit 0
 		fi
 		;;
 

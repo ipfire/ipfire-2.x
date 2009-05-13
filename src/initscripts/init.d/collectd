@@ -59,7 +59,7 @@ case "$1" in
 		fi
 
 		# Enable sensors plugin if sensors found
-		if [ $( sensors 2>&1 | grep "No sensors found!" | wc -l ) == "1" ]; then
+		if [ "$( sensors 2>&1 | grep 'No sensors found!' | wc -l )" == "1" ]; then
 			sed -i -e "s|^LoadPlugin sensors|#LoadPlugin sensors|g" /etc/collectd.conf
 		else
 			sed -i -e "s|^#LoadPlugin sensors|LoadPlugin sensors|g" /etc/collectd.conf

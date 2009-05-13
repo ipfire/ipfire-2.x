@@ -32,14 +32,19 @@ if [ "$DNS" == "Automatic" ]; then
 		echo -n "$MS_DNS1" > /var/ipfire/red/dns1
 		echo -n "$MS_DNS2" > /var/ipfire/red/dns2
 	else
-		echo -n "$PRIMARY_DNS" > /var/ipfire/red/dns1
-		echo -n "$SECONDARY_DNS" > /var/ipfire/red/dns2
+		if [ "$PRIMARY_DNS" != "10.11.12.13" || "$SECONDARY_DNS" != "10.11.12.14" ]; then
+			echo -n "$PRIMARY_DNS" > /var/ipfire/red/dns1
+			echo -n "$SECONDARY_DNS" > /var/ipfire/red/dns2
+		else
+			echo -n "$DNS1" > /var/ipfire/red/dns1
+			echo -n "$DNS2" > /var/ipfire/red/dns2
+		fi
 	fi
 else
 	echo -n "$DNS1" > /var/ipfire/red/dns1
 	echo -n "$DNS2" > /var/ipfire/red/dns2
 fi
-
+7
 echo -n "$1" > /var/ipfire/red/iface
 echo -n "$4" > /var/ipfire/red/local-ipaddress
 echo -n "$5" > /var/ipfire/red/remote-ipaddress
@@ -65,7 +70,7 @@ else
 	    echo "$FIRE	gateway" >> /tmp/hosts
 	else
 	    #DNS lookup failed use direct ip
-	    echo "85.88.28.124	gateway" >> /tmp/hosts
+	    echo "85.88.28.125	gateway" >> /tmp/hosts
 	fi
 fi
 mv /tmp/hosts /etc/hosts
