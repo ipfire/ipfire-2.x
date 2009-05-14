@@ -88,8 +88,9 @@ my $com = "/usr/sbin/chat -v -r /var/log/connect.log			\
 	OK			'$speaker'				\
 	OK			'$add_at2'				\
 	''			'$add_at3'				\
+	''			'sleep 5'				\
 	TIMEOUT			'$modemsettings{'TIMEOUT'}'		\
-	OK			'${dial}${telephone}'			\
+	OK			'\d${dial}${telephone}'			\
 	CONNECT			'${btfudge}'				";
 
 if ($loginscript)
