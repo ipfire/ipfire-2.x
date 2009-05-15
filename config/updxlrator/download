@@ -180,7 +180,7 @@ if ($_ == 0)
 	&UPDXLT::setcachestatus("$repository/$vendorid/$uuid/checkup.log",time);
 	&UPDXLT::setcachestatus("$repository/$vendorid/$uuid/access.log",time);
 
-	system("/usr/local/bin/squidctrl setperms");
+	system("/usr/local/bin/updxsetperms");
 	system("chmod 775 $repository/$vendorid/$uuid/*");
 
 	unlink ("$repository/download/$vendorid/$updatefile.info");

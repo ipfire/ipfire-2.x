@@ -37,3 +37,5 @@ srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 usr/local/bin/backupiso
+usr/local/bin/updxsetperms
+var/ipfire/updatexlrator/bin/download

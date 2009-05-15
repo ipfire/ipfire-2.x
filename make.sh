@@ -595,7 +595,7 @@ buildipfire() {
   ipfiremake netcat
   ipfiremake 7zip
   ipfiremake lynis
-  ipfiremake cryptsetup
+  #ipfiremake cryptsetup
   ipfiremake splix
   ipfiremake streamripper
   ipfiremake sshfs

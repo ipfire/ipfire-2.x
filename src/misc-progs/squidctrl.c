@@ -38,8 +38,6 @@ int main(int argc, char *argv[]) {
 		safe_system("ln -fs ../init.d/squid /etc/rc.d/rc6.d/K00squid >/dev/null 2>&1");
 	} else if (strcmp(argv[1], "disable") == 0) {
 		safe_system("rm -f /etc/rc.d/rc*.d/*squid >/dev/null 2>&1");
-	} else if (strcmp(argv[1], "setperms") == 0) {
-		safe_system("/etc/rc.d/init.d/squid setperms");
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\nsquidctrl (start|stop|restart|flush|reconfigure|setperms)\n\n");
 		exit(1);

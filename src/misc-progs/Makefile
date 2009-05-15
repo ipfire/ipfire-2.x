@@ -33,15 +33,17 @@ SUID_PROGS = setdmzholes setportfw setxtaccess \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
 	setaliases
+SUID_UPDX = updxsetperms
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
 	install -m 4750 -g nobody $(SUID_PROGS) /usr/local/bin
+	install -m 4750 -g squid $(SUID_UPDX) /usr/local/bin
 
-all : $(PROGS) $(SUID_PROGS)
+all : $(PROGS) $(SUID_PROGS) $(SUID_UPDX)
 
 clean : 
-	-rm -f $(PROGS) $(SUID_PROGS) *.o core
+	-rm -f $(PROGS) $(SUID_PROGS) $(SUID_UPDX) *.o core
 
 ######
 
@@ -54,6 +56,8 @@ setuid.o: setuid.c setuid.h
 $(SUID_PROGS): setuid.o
 
 $(PROGS): setuid.o
+
+$(SUID_UPDX): setuid.o
 
 logwatch: logwatch.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ logwatch.c setuid.o ../install+setup/libsmooth/varval.o -o $@
@@ -148,3 +152,5 @@ wlanapctrl: wlanapctrl.c setuid.o ../install+setup/libsmooth/varval.o
 setaliases: setaliases.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ setaliases.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
+updxsetperms: updxsetperms.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ updxsetperms.c setuid.o ../install+setup/libsmooth/varval.o -o $@
