@@ -71,7 +71,7 @@ case "${1}" in
 			grep -o '\btty[[:digit:]]*\b'`
 		do
 			openvt -f -w -c ${TTY#tty} -- \
-				/bin/sh -c "${MODE_COMMAND}"
+				/bin/sh -c "${MODE_COMMAND}" 2>/dev/null
 		done
 
 		# Set the font (if not already set above) and the keymap

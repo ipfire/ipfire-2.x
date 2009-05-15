@@ -315,7 +315,7 @@ END
 close FILE;
 	}
 
-	if ($sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' )
+	if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' )
 	{
 	open (FILE, ">${General::swroot}/samba/pdc") or die "Can't save the pdc settings: $!";
 	flock (FILE, 2);
@@ -334,12 +334,12 @@ END
 
 if ( -e "/var/ipfire/cups/enable")
 	{
-	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");refreshpage();}
+	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");refreshpage();}
 	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
 	}
 else
 	{
-	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");refreshpage();}
+	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");refreshpage();}
 	else{system("/usr/local/bin/sambactrl smbsafeconf");}
 	}
 
@@ -1206,12 +1206,12 @@ close FILE;
 
 if ( -e "/var/ipfire/cups/enable")
 	{
-	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");}
+	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");}
 	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
 	}
 else
 	{
-	if ( $sambasettings{'SECURITY'} eq 'User' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
+	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
 	else{system("/usr/local/bin/sambactrl smbsafeconf");}
 	}
 

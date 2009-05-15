@@ -19,7 +19,7 @@ LENGTH=40
 
 play () {
 
-	beep -l $LENGTH -f $1
+	beep -l $LENGTH -f $1 2> /dev/null
 
 }
 

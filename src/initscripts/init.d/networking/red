@@ -73,6 +73,10 @@ fi
 
 case "${1}" in
 	start)
+		# Stop collectd if running
+		if [ "$(ps -A | grep " collectd$")" != "" ]; then
+			/etc/rc.d/init.d/collectd stop
+		fi
 		if [ "${DEVICE}" != "${GREEN_DEV}" ] && [ "${DEVICE}" != "" ]; then
 			boot_mesg "Bringing up the ${DEVICE} interface..."
 			boot_mesg_flush
@@ -87,6 +91,7 @@ case "${1}" in
 			else
 				boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
 				echo_failure
+				/etc/rc.d/init.d/collectd start
 				exit 1
 			fi
 		fi
@@ -132,6 +137,7 @@ case "${1}" in
 				else
 					boot_mesg "dhcpcd already running!" ${WARNING}
 					echo_warning
+					/etc/rc.d/init.d/collectd start
 					exit 2
 				fi
 			fi
@@ -185,6 +191,7 @@ case "${1}" in
 			if ( ps ax | grep -q [p]ppd ); then 
 			    boot_mesg "pppd is still running." ${FAILURE}
 			    echo_failure
+			    /etc/init.d/collectd start
 			    exit 1
 			fi
 			
@@ -220,6 +227,7 @@ case "${1}" in
 				if [ "$PPP_NIC" == "" ]; then
 					boot_mesg "No device for red interface given. Check netsetup or dialprofile!" ${FAILURE}
 					echo_failure
+					/etc/rc.d/init.d/collectd start
 					exit 0
 				fi
 				boot_mesg "Bringing up the $TYPE interface on $PPP_NIC ..."
@@ -357,7 +365,8 @@ case "${1}" in
 			## Create & Enable vnstat
 			/usr/bin/vnstat -u -i ppp0 -r --enable --force > /dev/null 2>&1
 			/etc/rc.d/init.d/connectd start
-
+			/etc/rc.d/init.d/collectd start
+			exit 0
 		fi
 		;;
 

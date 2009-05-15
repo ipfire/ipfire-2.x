@@ -13,6 +13,13 @@ fi
 
 case "$1" in
 	start)
+		# If run from init and collectd alrady started then exit silent
+		if [ "$(basename $0)" != "collectd" ]; then
+			if [ "$(ps -A | grep " collectd$")" != "" ]; then
+				exit 0
+			fi
+		fi
+
 		# At first run search for sensors with sensors-detect
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
 			boot_mesg "Searching for Sensors..."
@@ -35,20 +42,24 @@ case "$1" in
 			fi
 		fi
 
-		boot_mesg -n "Loading Sensor Modules: "
-		for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
-		modprobe $modul > /dev/null 2>&1;
-			if [ ${?} = 0 ]; then
-				boot_mesg -n "$SUCCESS$modul$NORMAL ";
-			else
-				boot_mesg -n "$WARNING$modul$NORMAL ";
-			fi
-		done
-		boot_mesg;
-		echo_ok;
+		# Load sensor modules only first start
+		if [ ! -e /var/lock/sensors_modules ]; then
+			touch /var/lock/sensors_modules
+			boot_mesg -n "Loading Sensor Modules: "
+			for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
+			modprobe $modul > /dev/null 2>&1;
+				if [ ${?} = 0 ]; then
+					boot_mesg -n "$SUCCESS$modul$NORMAL ";
+				else
+					boot_mesg -n "$WARNING$modul$NORMAL ";
+				fi
+			done
+			boot_mesg;
+			echo_ok;
+		fi
 
 		# Enable sensors plugin if sensors found
-		if [ $( sensors 2>&1 | grep "No sensors found!" | wc -l ) == "1" ]; then
+		if [ "$( sensors 2>&1 | grep 'No sensors found!' | wc -l )" == "1" ]; then
 			sed -i -e "s|^LoadPlugin sensors|#LoadPlugin sensors|g" /etc/collectd.conf
 		else
 			sed -i -e "s|^#LoadPlugin sensors|LoadPlugin sensors|g" /etc/collectd.conf
@@ -56,9 +67,9 @@ case "$1" in
 
 		# Enable thermal plugin if thermal_zone found
 		if [ ! -e  /sys/class/thermal/thermal_zone0 ]; then
-			sed -i -e "s|^LoadPlugin thermal|#LoadPlugin thermal|g" /etc/collectd.conf
+			sed -i -e 's|^include "/etc/collectd.thermal"$|#include "/etc/collectd.thermal"|g' /etc/collectd.conf
 		else
-			sed -i -e "s|^#LoadPlugin thermal|LoadPlugin thermal|g" /etc/collectd.conf
+			sed -i -e 's|^#include "/etc/collectd.thermal"$|include "/etc/collectd.thermal"|g' /etc/collectd.conf
 		fi
 
 		# Enable swap plugin if swap found
@@ -73,13 +84,13 @@ case "$1" in
 		evaluate_retval
 		;;
 	stop)
+		boot_mesg "Stopping Collection daemon..."
+		killproc /usr/sbin/collectd
+		evaluate_retval
 		# Save the ramdisk at manual stop but not at shutdown
 		if [ "$(basename $0)" == "collectd" ]; then
 		    /etc/init.d/tmpfs backup
 		fi
-		boot_mesg "Stopping Collection daemon..."
-		killproc /usr/sbin/collectd
-		evaluate_retval
 		;;
 	restart)
 		${0} stop

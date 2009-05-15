@@ -18,7 +18,7 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting fetchmail daemon..."
-		/usr/bin/fetchmail --daemon 300 >/dev/null 2>&1
+		/usr/bin/fetchmail --daemon 300 -f '/root/.fetchmailrc' >/dev/null 2>&1
 		evaluate_retval
 		;;
 

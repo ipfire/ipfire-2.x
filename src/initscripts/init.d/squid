@@ -106,6 +106,9 @@ case "$1" in
 		sleep 1
 		$0 start
 		;;
+	setperms)
+		chown -R nobody.squid /var/updatecache/
+		;;
 
 	*)
 		echo "Usage: $0 {start|stop|restart|status|flush}"
