@@ -60,6 +60,7 @@
 * busybox-1.2.2
 * bwm-ng-0.6
 * bzip2-1.0.5
+* cacti-0.8.7d
 * calamaris-2.59
 * capi4k-utils-2005-07-18
 * ccache-2.4
@@ -219,7 +220,6 @@
 * mtools-3.9.10
 * mysql-5.0.24a
 * nagios-3.0.5
-* nano-1.2.5
 * nano-2.0.9
 * nasm-0.98.39
 * ncftp-3.2.1-src
@@ -289,7 +289,6 @@
 * squashfs3.4
 * squid-2.7.STABLE6
 * squidGuard-1.4
-* squidclamav-3.9
 * squidclamav-4.0
 * sshfs-fuse-2.2
 * sslh-1.6g
