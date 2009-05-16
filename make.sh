@@ -622,6 +622,7 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $CORE > $BASEDIR/build/opt/pakfire/db/core/mine
+  echo $NAME $VERSION - Core$CORE > $BASEDIR/build/etc/system-release
 }
 
 buildinstaller() {

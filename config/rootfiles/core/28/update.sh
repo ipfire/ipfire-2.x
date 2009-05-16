@@ -120,11 +120,5 @@ rm -rf /etc/sysconfig/lm_sensors
 #
 sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
-# Create new issue
-#
-echo IPFire v$NEWVERSION beta2 - www.ipfire.org > /etc/issue
-echo =================================== >> /etc/issue
-echo \\n running on \\s \\r \\m >> /etc/issue
-#
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Upgrade finished. Please reboot... "

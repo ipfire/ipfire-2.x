@@ -1,3 +1,5 @@
+etc/system-release
+etc/issue
 bin/probenic.sh
 etc/collectd.conf
 etc/collectd.thermal
