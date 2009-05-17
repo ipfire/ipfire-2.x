@@ -8,6 +8,7 @@ etc/rc.d/init.d/beep
 etc/rc.d/init.d/console
 etc/rc.d/init.d/collectd
 etc/rc.d/init.d/snort
+etc/rc.d/init.d/squid
 etc/rc.d/init.d/networking/red
 etc/ppp/ip-up
 etc/ssh/moduli
