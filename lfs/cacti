@@ -81,12 +81,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf /usr/share/cacti
 	mkdir /usr/share/cacti
 	cd $(DIR_APP) && mv -vf * /usr/share/cacti
-	cp -vf $(DIR_SRC)/config/cacti/cacti.conf /etc/httpd/conf/vhosts.d/	
-	cp -vf $(DIR_SRC)/config/cacti/cacti.cron /etc/fcron.cyclic/	
+	cp -vf $(DIR_SRC)/config/cacti/cacti.conf /etc/httpd/conf/vhosts.d/
+	install -v -m755 $(DIR_SRC)/config/cacti/cacti.cron /etc/fcron.cyclic/cacti.cron
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/cacti \
+	                 /var/ipfire/backup/addons/includes/cacti
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
-
-
-
-
-
