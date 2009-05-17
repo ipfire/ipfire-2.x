@@ -19,6 +19,12 @@
 
 . /etc/sysconfig/rc 
 . ${rc_functions}
+
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
+if [ "$RRDLOG" == "" ]; then
+	RRDLOG=/var/log/rrd
+fi
+
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 TYPE="${RED_TYPE}"
@@ -357,6 +363,9 @@ case "${1}" in
 			## Create & Enable vnstat
 			/usr/bin/vnstat -u -i ppp0 -r --enable --force > /dev/null 2>&1
 			/etc/rc.d/init.d/connectd start
+			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
+			rrdtool $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrf \
+				$(date +%s)::
 			exit 0
 		fi
 		;;
@@ -413,6 +422,9 @@ case "${1}" in
 			rm -f /var/ipfire/red/keepconnected
 			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
 			evaluate_retval
+			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
+			rrdtool $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrf \
+				$(date +%s)::
 		fi
 
 		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
