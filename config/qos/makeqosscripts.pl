@@ -111,6 +111,11 @@ print <<END
 # RED INTERFACE: 	$qossettings{'RED_DEV'}
 # IMQ DEVICE:		$qossettings{'IMQ_DEV'}
 
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
+if [ "$RRDLOG" == "" ]; then
+	RRDLOG=/var/log/rrd
+fi
+
 case "\$1" in
 
   status)
@@ -663,6 +668,10 @@ print <<END
 	( sleep 10 && /usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1) &
 	( sleep 10 && /usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1) &
 
+	for i in \$(ls \$RRDLOG/class_*.rrd); do
+		rrdtool update \$i \$(date +%s):
+	done
+
 	echo "Quality of Service was successfully started!"
 	exit 0
   ;;
@@ -692,6 +701,11 @@ print <<END
 	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-TOS >/dev/null 2>&1
 	rmmod sch_htb >/dev/null 2>&1
+
+	for i in \$(ls \$RRDLOG/class_*.rrd); do
+		rrdtool update \$i \$(date +%s):
+	done
+
 	echo "Quality of Service was successfully cleared!"
   ;;
   gen|generate)

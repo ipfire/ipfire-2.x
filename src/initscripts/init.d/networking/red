@@ -364,7 +364,7 @@ case "${1}" in
 			/usr/bin/vnstat -u -i ppp0 -r --enable --force > /dev/null 2>&1
 			/etc/rc.d/init.d/connectd start
 			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
-			rrdtool $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
+			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
 				$(date +%s)::
 			exit 0
 		fi
@@ -423,7 +423,7 @@ case "${1}" in
 			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
 			evaluate_retval
 			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
-			rrdtool $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
+			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
 				$(date +%s)::
 		fi
 
