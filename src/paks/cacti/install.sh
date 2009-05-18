@@ -26,4 +26,4 @@ extract_files
 mysqladmin --user=root -pmysqlfire create cacti
 mysql --user=root -pmysqlfire cacti < /usr/share/cacti/cacti.sql
 mysql --user=root -pmysqlfire -e "GRANT ALL ON cacti.* TO cactiuser@localhost IDENTIFIED BY 'cactiuser';" mysql
-/etc init.d/apache restart
+/etc/init.d/apache restart
