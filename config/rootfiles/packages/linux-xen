@@ -1269,6 +1269,7 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_TCPOPTSTRIP.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_TRACE.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_comment.ko
+#lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_connbytes.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_connlimit.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_connmark.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_conntrack.ko
@@ -1278,6 +1279,7 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_hashlimit.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_helper.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_iprange.ko
+#lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_layer7.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_length.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_limit.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/xt_mac.ko
