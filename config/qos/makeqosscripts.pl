@@ -111,8 +111,8 @@ print <<END
 # RED INTERFACE: 	$qossettings{'RED_DEV'}
 # IMQ DEVICE:		$qossettings{'IMQ_DEV'}
 
-eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
-if [ "$RRDLOG" == "" ]; then
+eval \$(/usr/local/bin/readhash /var/ipfire/main/settings)
+if [ "\$RRDLOG" == "" ]; then
 	RRDLOG=/var/log/rrd
 fi
 
