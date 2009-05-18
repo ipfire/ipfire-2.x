@@ -123,7 +123,6 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 # Regenerate qos-scripts
 [ -e /var/ipfire/qos/enable ] && /usr/local/bin/qosctrl stop
 /usr/local/bin/qosctrl generate
-[ -e /var/ipfire/qos/enable ] && /usr/local/bin/qosctrl start
 #
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Upgrade finished. Please reboot... "
