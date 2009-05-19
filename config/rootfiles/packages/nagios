@@ -1,4 +1,4 @@
-etc/httpd/conf/vhosts.d/nagios.conf
+etc/httpd/conf/conf.d/nagios.conf
 #etc/nagios
 etc/nagios/cgi.cfg
 etc/nagios/nagios.cfg
@@ -13,6 +13,9 @@ etc/nagios/objects/timeperiods.cfg
 etc/nagios/objects/windows.cfg
 etc/nagios/resource.cfg
 etc/rc.d/init.d/nagios
+etc/rc.d/rc0.d/K33nagios
+etc/rc.d/rc3.d/S67nagios
+etc/rc.d/rc6.d/K33nagios
 usr/bin/nagios
 usr/bin/nagiostats
 usr/bin/p1.pl
@@ -445,4 +448,4 @@ var/nagios/archives
 var/nagios/rw
 var/nagios/spool
 var/nagios/spool/checkresults
-etc/httpd/conf/conf.d/nagios.conf
+etc/httpd/conf/vhosts.d/nagios.conf
