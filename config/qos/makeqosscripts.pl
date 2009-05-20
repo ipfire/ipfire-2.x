@@ -255,6 +255,9 @@ foreach $subclassentry (sort @subclasses) {
 }
 print <<END
 
+	### add l7-filter to POSTROUTING chain to see all traffic
+	iptables -t mangle -A POSTROUTING -m layer7 --l7proto unset
+
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
 	iptables -t mangle -N QOS-TOS
@@ -700,6 +703,9 @@ print <<END
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-TOS >/dev/null 2>&1
+	# remove l7-filter
+	iptables -t mangle --delete POSTROUTING -m layer7 --l7proto unset
+
 	rmmod sch_htb >/dev/null 2>&1
 
 	for i in \$(ls \$RRDLOG/class_*.rrd); do
