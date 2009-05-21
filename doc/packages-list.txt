@@ -75,7 +75,6 @@
 * cpio-2.6
 * cpufrequtils-005
 * cups-1.3.9
-* curl-7.19.4
 * curl-7.19.5
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
@@ -233,7 +232,6 @@
 * nmap-4.76
 * noip_updater_v1.6
 * ntfs-3g-2009.2.1
-* ntp-4.2.2
 * ntp-4.2.4p7
 * ocaml-3.09.2
 * oinkmaster-2.0
