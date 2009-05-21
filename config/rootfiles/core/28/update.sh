@@ -123,6 +123,9 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 # Regenerate qos-scripts
 [ -e /var/ipfire/qos/enable ] && /usr/local/bin/qosctrl stop
 [ -e /var/ipfire/qos/enable ] && /usr/local/bin/qosctrl generate
+[ ! -e /var/ipfire/qos/enable ] && rm -f /var/ipfire/qos/bin/qos.sh
 #
 # This core-update need a reboot
-/usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Upgrade finished. Please reboot... "
+/usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Upgrade finished. If you use a customized grub.cfg"
+/usr/bin/logger -p syslog.emerg -t core-upgrade-28 "(eq. Serial Console or Custom Videomodes) Check it!"
+/usr/bin/logger -p syslog.emerg -t core-upgrade-28 " *** Please reboot... *** "
