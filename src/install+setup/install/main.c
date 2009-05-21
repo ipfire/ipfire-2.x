@@ -128,6 +128,8 @@ int main(int argc, char *argv[])
 	mysystem("/sbin/modprobe iso9660"); // CDROM
 	mysystem("/sbin/modprobe ext2"); // Boot patition
 	mysystem("/sbin/modprobe vfat"); // USB key
+
+	runcommandwithstatus("/bin/sleep 10", "Waiting for USB Hardware ...");
 	
 	/* German is the default */
 	for (choice = 0; langnames[choice]; choice++)
