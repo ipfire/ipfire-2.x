@@ -255,6 +255,9 @@ foreach $subclassentry (sort @subclasses) {
 }
 print <<END
 
+	### add l7-filter to POSTROUTING chain to see all traffic
+	iptables -t mangle -A POSTROUTING -m layer7 --l7proto unset
+
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
 	iptables -t mangle -N QOS-TOS
@@ -262,36 +265,36 @@ print <<END
 	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS
 
 	### MARK ACKs
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags SYN,RST SYN -j TOS --set-tos 4
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags SYN,RST SYN -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags SYN,RST SYN -j RETURN
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j TOS --set-tos 4
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j RETURN
 
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p icmp -m length --length 40:100 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p icmp -m length --length 40:100 -j RETURN
+	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --syn -m length --length 40:68 -j TOS --set-tos 4
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --syn -m length --length 40:68 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --syn -m length --length 40:68 -j RETURN
+	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j TOS --set-tos 4
+	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j TOS --set-tos 4
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j RETURN
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j TOS --set-tos 4
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j TOS --set-tos 4
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j RETURN
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j TOS --set-tos 4
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL RST -j TOS --set-tos 4
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL RST -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL RST -j RETURN
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j TOS --set-tos 4
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j RETURN
 
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,RST -j TOS --set-tos 4
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,RST -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,RST -j RETURN
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j TOS --set-tos 4
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j RETURN
 
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,FIN -j TOS --set-tos 4
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,FIN -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -p tcp --tcp-flags ALL ACK,FIN -j RETURN
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j TOS --set-tos 4
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j MARK --set-mark $qossettings{'ACK'}
+	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j RETURN
 
 	### SET TOS
 END
@@ -303,8 +306,8 @@ END
 		$qossettings{'TOS'} = abs $tosruleline[2] * 2;
   		if ( $tosruleline[1] eq $qossettings{'RED_DEV'} )
   		{
-			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j RETURN\n";
+			print "\tiptables -t mangle -A QOS-OUT -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "\tiptables -t mangle -A QOS-OUT -m tos --tos $qossettings{'TOS'} -j RETURN\n";
 		}
 	}
 
@@ -321,7 +324,7 @@ print "\n\t### SET PORT-RULES\n";
 			$qossettings{'QPORT'} = $portruleline[4];
 			$qossettings{'DIP'} = $portruleline[5];
 			$qossettings{'DPORT'} = $portruleline[6];
-			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
+			print "\tiptables -t mangle -A QOS-OUT ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -339,7 +342,7 @@ print "\n\t### SET PORT-RULES\n";
 				print "--dport $qossettings{'DPORT'} ";
 			}
 			print "-j MARK --set-mark $qossettings{'CLASS'}\n";
-			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
+			print "\tiptables -t mangle -A QOS-OUT ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -375,7 +378,7 @@ END
 			$qossettings{'L7PROT'} = $l7ruleline[2];
 			$qossettings{'QIP'} = $l7ruleline[3];
 			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
+  			print "\tiptables -t mangle -A QOS-OUT ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -383,7 +386,7 @@ END
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-  			print "\tiptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} ";
+  			print "\tiptables -t mangle -A QOS-OUT ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -397,7 +400,7 @@ END
 print <<END
 
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
-	iptables -t mangle -A QOS-OUT -o $qossettings{'RED_DEV'} -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_OUT'}
+	iptables -t mangle -A QOS-OUT -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_OUT'}
 
 	###
 	### $qossettings{'IMQ_DEV'}
@@ -541,8 +544,8 @@ END
 		$qossettings{'TOS'} = abs $tosruleline[2] * 2;
   		if ( $tosruleline[1] eq $qossettings{'IMQ_DEV'} )
   		{
-			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m tos --tos $qossettings{'TOS'} -j RETURN\n";
+			print "\tiptables -t mangle -A QOS-INC -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "\tiptables -t mangle -A QOS-INC -m tos --tos $qossettings{'TOS'} -j RETURN\n";
 		}
 
 	}
@@ -560,7 +563,7 @@ print "\n\t### SET PORT-RULES\n";
 			$qossettings{'QPORT'} = $portruleline[4];
 			$qossettings{'DIP'} = $portruleline[5];
 			$qossettings{'DPORT'} = $portruleline[6];
-			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
+			print "\tiptables -t mangle -A QOS-INC ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -578,7 +581,7 @@ print "\n\t### SET PORT-RULES\n";
 				print "--dport $qossettings{'DPORT'} ";
 			}
 			print "-j MARK --set-mark $qossettings{'CLASS'}\n";
-			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
+			print "\tiptables -t mangle -A QOS-INC ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -614,7 +617,7 @@ END
 			$qossettings{'L7PROT'} = $l7ruleline[2];
 			$qossettings{'QIP'} = $l7ruleline[3];
 			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
+  			print "\tiptables -t mangle -A QOS-INC ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -622,7 +625,7 @@ END
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-  			print "\tiptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} ";
+  			print "\tiptables -t mangle -A QOS-INC ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -635,7 +638,7 @@ END
 
 print <<END
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
-	iptables -t mangle -A QOS-INC -i $qossettings{'RED_DEV'} -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
+	iptables -t mangle -A QOS-INC -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
 
 	### SETTING TOS BITS
 END
@@ -700,6 +703,9 @@ print <<END
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-TOS >/dev/null 2>&1
+	# remove l7-filter
+	iptables -t mangle --delete POSTROUTING -m layer7 --l7proto unset
+
 	rmmod sch_htb >/dev/null 2>&1
 
 	for i in \$(ls \$RRDLOG/class_*.rrd); do

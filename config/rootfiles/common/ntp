@@ -4,6 +4,11 @@ usr/bin/ntpd
 usr/bin/ntpdate
 usr/bin/ntpdc
 usr/bin/sntp
+#usr/man/man1/ntp-keygen.1
+#usr/man/man1/ntpd.1
+#usr/man/man1/ntpdc.1
+#usr/man/man1/ntpdsim.1
+#usr/man/man1/ntpq.1
 #usr/man/man1/sntp.1
 usr/sbin/ntp-keygen
 usr/sbin/ntp-wait

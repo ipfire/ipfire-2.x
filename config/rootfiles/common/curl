@@ -54,6 +54,7 @@ usr/lib/libcurl.so.4.1.1
 #usr/share/man/man3/curl_multi_remove_handle.3
 #usr/share/man/man3/curl_multi_setopt.3
 #usr/share/man/man3/curl_multi_socket.3
+#usr/share/man/man3/curl_multi_socket_action.3
 #usr/share/man/man3/curl_multi_strerror.3
 #usr/share/man/man3/curl_multi_timeout.3
 #usr/share/man/man3/curl_share_cleanup.3
