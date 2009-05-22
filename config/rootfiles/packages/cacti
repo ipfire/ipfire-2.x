@@ -443,9 +443,9 @@ usr/share/cacti/lib/tree.php
 usr/share/cacti/lib/utility.php
 usr/share/cacti/lib/variables.php
 usr/share/cacti/lib/xml.php
-#usr/share/cacti/log
-usr/share/cacti/log/.htaccess
-usr/share/cacti/log/cacti.log
+usr/share/cacti/log
+var/cacti/log/.htaccess
+var/cacti/log/cacti.log
 usr/share/cacti/logout.php
 usr/share/cacti/poller.php
 usr/share/cacti/poller_commands.php
@@ -465,9 +465,9 @@ usr/share/cacti/resource/snmp_queries/kbridge.xml
 usr/share/cacti/resource/snmp_queries/net-snmp_disk.xml
 usr/share/cacti/resource/snmp_queries/netware_cpu.xml
 usr/share/cacti/resource/snmp_queries/netware_disk.xml
-#usr/share/cacti/rra
+usr/share/cacti/rra
 usr/share/cacti/rra.php
-usr/share/cacti/rra/.placeholder
+var/cacti/rra/.placeholder
 usr/share/cacti/script_server.php
 usr/share/cacti/script_server.pl
 #usr/share/cacti/scripts
