@@ -444,8 +444,6 @@ usr/share/cacti/lib/utility.php
 usr/share/cacti/lib/variables.php
 usr/share/cacti/lib/xml.php
 usr/share/cacti/log
-var/cacti/log/.htaccess
-var/cacti/log/cacti.log
 usr/share/cacti/logout.php
 usr/share/cacti/poller.php
 usr/share/cacti/poller_commands.php
@@ -467,7 +465,6 @@ usr/share/cacti/resource/snmp_queries/netware_cpu.xml
 usr/share/cacti/resource/snmp_queries/netware_disk.xml
 usr/share/cacti/rra
 usr/share/cacti/rra.php
-var/cacti/rra/.placeholder
 usr/share/cacti/script_server.php
 usr/share/cacti/script_server.pl
 #usr/share/cacti/scripts
@@ -497,4 +494,10 @@ usr/share/cacti/templates_import.php
 usr/share/cacti/tree.php
 usr/share/cacti/user_admin.php
 usr/share/cacti/utilities.php
+#var/cacti
+#var/cacti/log
+var/cacti/log/.htaccess
+var/cacti/log/cacti.log
+#var/cacti/rra
+var/cacti/rra/.placeholder
 var/ipfire/backup/addons/includes/cacti
