@@ -365,7 +365,7 @@ case "${1}" in
 			/etc/rc.d/init.d/connectd start
 			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
 			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
-				$(date +%s)::
+				$(date +%s):: > /dev/null 2>&1
 			exit 0
 		fi
 		;;
@@ -424,7 +424,7 @@ case "${1}" in
 			evaluate_retval
 			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
 			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
-				$(date +%s)::
+				$(date +%s):: > /dev/null 2>&1
 		fi
 
 		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
