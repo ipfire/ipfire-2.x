@@ -54,7 +54,7 @@ SIZEboot := 20
 IMGroot  := /install/images/rootfs
 SIZEroot := 500
 IMGvar   := /install/images/varfs
-SIZEvar  := 450
+SIZEvar  := 440
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(MNThdd) $(IMGinst) $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) && mkdir -p $(MNThdd)
@@ -76,11 +76,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mount -o loop $(IMGroot) $(MNThdd)
 	mkdir $(MNThdd)/boot
 	mkdir $(MNThdd)/var
+	mkdir $(MNThdd)/var/log
 	mount -o loop $(IMGboot) $(MNThdd)/boot
 	mount -o loop $(IMGvar)  $(MNThdd)/var
 
 	# Install IPFire
 	tar -C $(MNThdd)/ -xvjf /install/cdrom/$(SNAME)-$(VERSION).tbz2
+	echo "LANGUAGE=en" >> $(MNThdd)/var/ipfire/main/settings
+	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
+	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
 	touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
 	mv $(MNThdd)/bin/uname.bak $(MNThdd)/bin/uname
 	mkdir $(MNThdd)/proc
@@ -106,13 +110,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chroot $(MNThdd) /usr/sbin/grub-set-default 0
 
 	# Create a script for rebuild-initrd and setup
-	echo "#!/bin/bash"                                > $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/bin/rm -f /boot/ipfirerd-$(KVER).img"     >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/usr/local/bin/rebuild-initrd"             >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/usr/local/sbin/setup /dev/null INSTALL"   >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "rm -f /etc/rc.d/rcsysinit.d/S75firstsetup" >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "#!/bin/bash"                                   > $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "/bin/rm -f /boot/ipfirerd-$(KVER).img"        >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "/usr/local/bin/rebuild-initrd"                >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "/usr/local/sbin/setup /dev/null INSTALL"      >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "rm -f /etc/rc.d/rcsysinit.d/S75firstsetup \\" >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "&& /sbin/reboot"                              >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+
 	chmod +x $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	
+
 	# Unmount
 	umount $(MNThdd)/proc
 	umount $(MNThdd)/dev
