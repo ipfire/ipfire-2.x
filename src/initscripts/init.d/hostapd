@@ -17,7 +17,7 @@ case "${1}" in
 
 		# Check Interface configuration
 		if ! ip link show $INTERFACE > /dev/null 2>&1; then
-			boot_mesg "Interface $INTERFACE does'nt exist." ${FAILURE}
+			boot_mesg "Interface $INTERFACE doesn't exist." ${FAILURE}
 			echo_failure
 			exit 0
 		fi
@@ -70,7 +70,7 @@ case "${1}" in
 
 		/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
 
-		sleep 1
+		sleep 2
 
 		if [ $DRIVER == "MADWIFI" ]; then
 			iwpriv $INTERFACE maccmd 3
@@ -86,7 +86,7 @@ case "${1}" in
 			fi
 		fi
 
-		sleep 1
+		sleep 2
 
 		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
 			boot_mesg "Error! Can't set wlan master mode"
