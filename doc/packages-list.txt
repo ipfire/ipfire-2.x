@@ -190,14 +190,14 @@
 * logrotate-3.7.1
 * logwatch-7.3.6
 * lsof-4.78
-* lynis-1.2.3
+* lynis-1.2.6
 * lzo-2.02
 * m4-1.4.4
 * mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.23-ipfire
 * mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.23-ipfire-xen
 * mISDNuser.git-54928dec57bc846f2c2186f3640e69a053cd3641
-* madwifi-hal-testing-r4003-20090416-kmod-2.6.27.23-ipfire
-* madwifi-hal-testing-r4003-20090416-kmod-2.6.27.23-ipfire-xen
+* madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.23-ipfire
+* madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.23-ipfire-xen
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
@@ -261,7 +261,7 @@
 * pptp-1.7.2
 * procps-3.2.6
 * psmisc-22.2
-* qemu-0.10.2
+* qemu-0.10.5
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19

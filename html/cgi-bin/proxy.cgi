@@ -983,8 +983,13 @@ my $count = `arp -a | wc -l`;
 if ( $count < 1 ){$count = 1;}
 if ( -e "/usr/bin/squidclamav" ) {
 	print "<td class='base'><b>".$Lang::tr{'advproxy squidclamav'}."</b><br />";
-	print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_CLAMAV' ".$checked{'ENABLE_CLAMAV'}{'on'}." /><br />";
-	print "+ ".int(( $count**(1/3)) * 8);
+	if ( ! -e "/var/run/clamav/clamd.pid" ){
+		print "<font color='red'>clamav not running</font><br /><br />";
+		$proxysettings{'ENABLE_CLAMAV'} = 'off';
+		}
+	else {
+		print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_CLAMAV' ".$checked{'ENABLE_CLAMAV'}{'on'}." /><br />";
+		print "+ ".int(( $count**(1/3)) * 8);}
 	print "</td>";
 } else {
 	print "<td></td>";
