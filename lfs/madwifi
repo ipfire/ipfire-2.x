@@ -82,9 +82,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_SRC)/config/madwifi/madwifi.conf /etc/
 	ln -sf $(DIR_APP) $(DIR_SRC)/madwifi 
 
-	# Set Countrycode to germany because some cards
-	# are not detected without cc
-	echo 'options ath_pci countrycode=276' > /etc/modprobe.d/madwifi
+	# Add comment to set CountryCode to germany because some cards
+	# are not detected without cc but others doesn't like this
+	echo '#options ath_pci countrycode=276' > /etc/modprobe.d/madwifi
+	# Blacklist ath5k or madwifi for switching between the drivers
 	echo '#blacklist ath_pci' >> /etc/modprobe.d/madwifi
 	echo 'blacklist ath5k' >> /etc/modprobe.d/madwifi
 
