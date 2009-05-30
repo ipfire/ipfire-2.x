@@ -61,6 +61,10 @@ rm -rf /boot/ipfirerd-*
 rm -rf /boot/vmlinuz-*
 rm -rf /lib/modules/
 #
+# Backup grub.conf
+#
+cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
+#
 # Unpack the updated files
 #
 echo
@@ -76,6 +80,16 @@ echo Update grub configuration ...
 sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
 sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
 sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
+
+if [ "$(grep "^serial" /boot/grub/grub.conf.org)" == "" ]; then
+	echo "grub use default console ..."
+else
+	echo "grub use serial console ..."
+	sed -i -e "s|splashimage|#splashimage|g" /boot/grub/grub.conf
+	sed -i -e "s|#serial|serial|g" /boot/grub/grub.conf
+	sed -i -e "s|#terminal|terminal|g" /boot/grub/grub.conf
+	sed -i -e "s| panic=10 | console=ttyS0,38400n8 panic=10 |g" /boot/grub/grub.conf
+fi
 #
 # Made emergency - initramdisk
 #
@@ -127,5 +141,5 @@ sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Upgrade finished. If you use a customized grub.cfg"
-/usr/bin/logger -p syslog.emerg -t core-upgrade-28 "(eq. Serial Console or Custom Videomodes) Check it!"
+/usr/bin/logger -p syslog.emerg -t core-upgrade-28 "Check it before reboot !!!"
 /usr/bin/logger -p syslog.emerg -t core-upgrade-28 " *** Please reboot... *** "

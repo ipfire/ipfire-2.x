@@ -218,7 +218,7 @@
 * mtd-CVS-20070507
 * mtools-3.9.10
 * mysql-5.0.24a
-* nagios-3.0.5
+* nagios-3.0.6
 * nano-2.0.9
 * nasm-0.98.39
 * ncftp-3.2.1-src
@@ -235,6 +235,7 @@
 * ntp-4.2.4p7
 * ocaml-3.09.2
 * oinkmaster-2.0
+* open-vm-tools-2009.05.22-167859
 * openldap-2.3.20
 * openmailadmin-1.0.0
 * openssh-5.2p1
