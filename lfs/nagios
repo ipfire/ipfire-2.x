@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.5
+VER        = 3.0.6
 
 THISAPP    = nagios-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -46,7 +46,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 nagios-plugins-1.4.13.tar.gz = $(DL_FROM)/nagios-plugins-1.4.13.tar.gz
 
-$(DL_FILE)_MD5 = c607ffd5f4574cbea345bdf2e02dc480
+$(DL_FILE)_MD5 = 900e3f4164f4b2a18485420eeaefe812
 nagios-plugins-1.4.13.tar.gz_MD5 = be6cc7699fff3ee29d1fd4d562377386
 
 install : $(TARGET)
@@ -111,5 +111,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -s /etc/init.d/nagios /etc/rc.d/rc6.d/K33nagios
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+
 
 
