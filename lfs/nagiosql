@@ -88,3 +88,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown nobody /usr/share/nagiosql/config
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+
