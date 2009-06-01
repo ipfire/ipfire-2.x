@@ -219,6 +219,8 @@
 * mtools-3.9.10
 * mysql-5.0.24a
 * nagios-3.0.6
+* nagiosql-303
+* nagiosql303
 * nagiosql303-
 * nano-2.0.9
 * nasm-0.98.39

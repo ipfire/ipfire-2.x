@@ -30,8 +30,9 @@ THISAPP    = nagiosql$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/nagiosql3
-TARGET     = $(DIR_INFO)/$(THISAPP)-
-PROG       = nagiosql-
+TARGET     = $(DIR_INFO)/nagiosql-$(VER)
+
+PROG       = nagiosql
 PAK_VER    = 1
 
 DEPS       = "nagios"

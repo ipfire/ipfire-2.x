@@ -1,7 +1,5 @@
 #etc/nagiosql
-etc/nagiosql/.placeholder
 #etc/nagiosql/backup
-etc/nagiosql/backup/.placeholder
 #etc/nagiosql/backup/hosts
 etc/nagiosql/backup/hosts/.placeholder
 #etc/nagiosql/backup/services
@@ -402,4 +400,4 @@ usr/share/nagiosql
 #usr/share/nagiosql/templates/files/timeperiods.tpl.dat
 #usr/share/nagiosql/templates/index.tpl.htm
 #usr/share/nagiosql/templates/main.tpl.htm
-#etc/httpd/conf/vhosts.d/nagios.conf
+etc/httpd/conf/vhosts.d/nagios.conf
