@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .23
-VER        = 2.6.27.23
+PATCHLEVEL = .24
+VER        = 2.6.27.24
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -62,7 +62,7 @@ patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
 reiser4-for-2.6.27.19.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.27.19.patch.bz2
 
-$(DL_FILE)_MD5				= 42db72b93641da2fe9fb0eb2ae6388d6
+$(DL_FILE)_MD5				= 3e272117ceb50ad8ab3686ae00afa9d8
 netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
