@@ -264,9 +264,11 @@ if (-e "/etc/snort/snort.conf") {
 #######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
-	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
+	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
-	$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
+	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
 } else {
 	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";
 }
@@ -348,8 +350,8 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 			$realmd5 = `/usr/bin/md5sum $filename`;
 			chomp ($realmd5);
 			$realmd5 =~ s/^(\w+)\s.*$/$1/;
-			if ($md5 ne $realmd5) {
-				$errormessage = "$Lang::tr{'invalid md5sum'}";
+			if ( $md5 ne $realmd5 ) {
+				$errormessage = "$Lang::tr{'invalid md5sum'} - $md5 - $realmd5";
 			} else {
 				$results = "<b>$Lang::tr{'installed updates'}</b>\n<pre>";
 				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1`;
@@ -678,19 +680,30 @@ END
 
 sub getmd5 {
 	# Retrieve MD5 sum from $url.md5 file
-	#
-	my $md5buf = &geturl("$url.md5");
+
+	my $md5buf;
+	if ($snortsettings{'RULES'} eq 'subscripted') {
+		$md5buf = &geturl("http://dl.snort.org/reg-rules/snortrules-snapshot-2.8_s.tar.gz.md5?oink_code=$snortsettings{'OINKCODE'}");
+	} elsif ($snortsettings{'RULES'} eq 'registered') {
+		$md5buf = &geturl("http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz.md5?oink_code=$snortsettings{'OINKCODE'}");
+	} else {
+		$md5buf = &geturl("http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz.md5");
+	}
+
 	return undef unless $md5buf;
 
 	if (0) { # 1 to debug
 		my $filename='';
 		my $fh='';
-		($fh, $filename) = tempfile('/tmp/XXXXXXXX',SUFFIX => '.md5' );
+		($fh, $filename) = tempfile('/var/tmp/XXXXXXXX',SUFFIX => '.md5' );
 		binmode ($fh);
 		syswrite ($fh, $md5buf->content);
 		close($fh);
 	}
-	return $md5buf->content;
+	
+	my @temp=split(/= /,$md5buf->content);
+	
+	return $temp[1];
 }
 sub downloadrulesfile {
 	my $return = &geturl($url);
@@ -703,7 +716,7 @@ sub downloadrulesfile {
 
 	my $filename='';
 	my $fh='';
-	($fh, $filename) = tempfile('/tmp/XXXXXXXX',SUFFIX => '.tar.gz' );#oinkmaster work only with this extension
+	($fh, $filename) = tempfile('/var/tmp/XXXXXXXX',SUFFIX => '.tar.gz' );#oinkmaster work only with this extension
 	binmode ($fh);
 	syswrite ($fh, $return->content);
 	close($fh);
