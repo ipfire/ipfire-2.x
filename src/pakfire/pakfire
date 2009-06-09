@@ -136,25 +136,25 @@
 			exit 1;
 		}
 
-		&Pakfire::message("");
-		&Pakfire::message("");
-		&Pakfire::message("PAKFIRE INFO: Packages to install:");
-		foreach $pak (sort @paks) {
-		  my $size = &Pakfire::getsize("$pak");
-			$size = &Pakfire::beautifysize($size);
-		  &Pakfire::message("PAKFIRE INFO: $pak \t - $size");
-		}
-		
 		if (@deps) {
-			my %sort = map{ $_, 1 } @deps;
-			@deps = sort keys %sort;
+			#my %sort = map{ $_, 1 } @deps;
+			#@deps = sort keys %sort;
 			&Pakfire::message("");
 			&Pakfire::message("PAKFIRE INFO: Packages to install for dependencies:");
 		}
-		foreach $dep (sort @deps) {
+		foreach $dep (@deps) {
 		  my $size = &Pakfire::getsize("$dep");
 			$size = &Pakfire::beautifysize($size);
 		  &Pakfire::message("PAKFIRE INFO: $dep \t - $size");
+		}
+
+		&Pakfire::message("");
+		&Pakfire::message("");
+		&Pakfire::message("PAKFIRE INFO: Packages to install:");
+		foreach $pak (@paks) {
+		  my $size = &Pakfire::getsize("$pak");
+			$size = &Pakfire::beautifysize($size);
+		  &Pakfire::message("PAKFIRE INFO: $pak \t - $size");
 		}
 		
 		my $totalsize;
@@ -179,20 +179,26 @@
 			&Pakfire::logger("PAKFIRE INFO: Interaction skipped.");
 		}
 		
-		my %sort = map{ $_, 1 } @all;
-		@all = sort keys %sort;
+#		my %sort = map{ $_, 1 } @all;
+#		@all = sort keys %sort;
 
 		### Download first
-		foreach $pak (sort @all) {
+		foreach $pak (@all) {
 			&Pakfire::getpak("$pak", "");
 		}
 
 		&Pakfire::message("");
 
-		foreach $pak (sort @all) {
+		foreach $pak (@deps) {
 			&Pakfire::setuppak("$pak") if ($pak ne "");
 		}
 		
+
+		foreach $pak (@paks) {
+			&Pakfire::setuppak("$pak") if ($pak ne "");
+		}
+		
+
 	} elsif ("$ARGV[0]" eq "remove") {
 		shift;
 		
@@ -272,12 +278,12 @@
 		}
 		
 		### Download first
-		foreach $pak (sort @upgradepaks) {
+		foreach $pak (@upgradepaks) {
 			system("mv $Conf::dbdir/meta/meta-$pak $Conf::dbdir/meta/old-meta-$pak");
 			&Pakfire::getpak("$pak", "");
 		}
 		
-		foreach $pak (sort @upgradepaks) {
+		foreach $pak (@upgradepaks) {
 			if (&Pakfire::upgradepak("$pak")) {
 				system("mv $Conf::dbdir/meta/old-meta-$pak $Conf::dbdir/meta/meta-$pak");
 			}
