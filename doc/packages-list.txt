@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.5beta3 ==
+== List of softwares used to build IPFire Version: 2.5rc1 ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -220,8 +220,6 @@
 * mysql-5.0.24a
 * nagios-3.0.6
 * nagiosql-303
-* nagiosql303
-* nagiosql303-
 * nano-2.0.9
 * nasm-0.98.39
 * ncftp-3.2.1-src
