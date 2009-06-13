@@ -180,6 +180,7 @@ case "${1}" in
 				echo "$GATEWAY gateway"  >> /tmp/hosts
 				mv /tmp/hosts /etc/hosts
 				echo "$GATEWAY" > /var/ipfire/red/remote-ipaddress
+				touch /var/ipfire/red/active
 			else
 				echo ""
 				$(exit "$RET")
