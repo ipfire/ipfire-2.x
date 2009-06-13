@@ -44,3 +44,4 @@ usr/local/bin/backupiso
 usr/local/bin/updxsetperms
 var/ipfire/updatexlrator/bin/download
 var/ipfire/qos/bin/makeqosscripts.pl
+opt/pakfire/pakfire
