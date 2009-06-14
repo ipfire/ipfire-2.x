@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2009-06-11
+VER        = 2009-03-30
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b65341e3b1d2379ea2b078155a6d7cbb
+$(DL_FILE)_MD5 = 88ea3e5b42ef5fbcec8b91043dd3aa76
 
 install : $(TARGET)
 
@@ -78,8 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
 #	Apply some wlan-card patches
-	cd $(DIR_APP) && cat $(DIR_SRC)/src/patches/compat-wireless_rt2500pci-skb_allignment.patch \
-				| patch -Np1
+	cd $(DIR_APP) && cat $(DIR_SRC)/src/patches/compat-wireless_*.patch | patch -Np1
 
 #	Build only the modules
 	cd $(DIR_APP) && sed -i -e "s|install: uninstall modules|install: modules|g" Makefile
