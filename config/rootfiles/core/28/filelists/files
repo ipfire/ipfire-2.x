@@ -30,6 +30,7 @@ usr/lib/libcurl.so
 usr/lib/libcurl.so.3
 usr/lib/libcurl.so.4
 usr/lib/libcurl.so.4.1.1
+usr/local/sbin/setup
 lib/modules/KVER-ipfire/misc/kqemu.ko
 usr/local/bin/setaliases
 srv/web/ipfire/cgi-bin/aliases.cgi
