@@ -62,6 +62,8 @@ Developer & Webmaster - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
 Supporter, WIKI Administrator & Sponsor - Ronald Wiesinger
 (<a href='mailto:rowie\@ipfire.org'>rowie\@ipfire.org</a>)<br />
+Supporter, WIKI Administrator & Sponsor - Jan Paul T&uuml;cking
+(<a href='mailto:earl\@ipfire.org'>earl\@ipfire.org</a>)<br />
 Supporter, WIKI Administrator - Silvio Rechenbach
 (<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
 Sponsor - Peter Schaelchli
