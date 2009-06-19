@@ -136,6 +136,7 @@
 * iana-etc-2.10
 * icecast-2.3.2
 * icegenerator-0.5.5-pre2
+* iftop-0.17
 * igmpproxy-src-0.1-beta2
 * inetutils-1.4.2
 * ipaddr-1.2

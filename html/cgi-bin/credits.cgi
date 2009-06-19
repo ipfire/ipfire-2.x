@@ -36,7 +36,8 @@ require "${General::swroot}/header.pl";
 &Header::openbigbox('100%', 'center');
 
 &Header::openbox('100%', 'left', 'Version');
-print "This is IPFire ".`cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
+print "This is ".`cat /etc/system-release`;
+print " - Pakfire ".`cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
 print "<br>".`uname -a`;
 &Header::closebox();
 
