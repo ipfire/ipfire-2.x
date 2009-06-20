@@ -259,7 +259,7 @@
 * pkg-config-0.20
 * popt-1.10.4
 * portmap_6.0
-* postfix-2.5.6
+* postfix-2.6.2
 * ppp-2.4.4
 * pptp-1.7.2
 * procps-3.2.6
@@ -271,9 +271,9 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rssdler-0.4.0a
-* rsync-3.0.4
+* rsync-3.0.6
 * rtorrent-0.8.4
-* samba-3.3.4
+* samba-3.3.5
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
@@ -293,7 +293,7 @@
 * squidGuard-1.4
 * squidclamav-4.0
 * sshfs-fuse-2.2
-* sslh-1.6g
+* sslh-1.6i
 * streamripper-1.63.5
 * sudo-1.6.8p12
 * sysfsutils-1.3.0
@@ -328,7 +328,7 @@
 * vlc-0.8.6i
 * vnstat-1.6
 * vnstati-beta3
-* vsftpd-2.1.0
+* vsftpd-2.1.2
 * w_scan-20080105
 * wget-1.10.2
 * whatmask-1.2

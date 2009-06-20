@@ -138,6 +138,7 @@ usr/sbin/winbindd
 #usr/share/man/man8/mount.cifs.8
 #usr/share/man/man8/net.8
 #usr/share/man/man8/nmbd.8
+#usr/share/man/man8/pam_winbind.8
 #usr/share/man/man8/pdbedit.8
 #usr/share/man/man8/smbd.8
 #usr/share/man/man8/smbpasswd.8
