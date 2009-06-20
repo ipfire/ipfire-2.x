@@ -14,10 +14,6 @@ etc/postfix/master.cf
 etc/postfix/mysql-canonical.cf
 etc/postfix/mysql-mydestination.cf
 etc/postfix/mysql-virtual.cf
-etc/postfix/post-install
-etc/postfix/postfix-files
-etc/postfix/postfix-script
-etc/rc.d/init.d/postfix
 etc/postfix/relocated
 etc/postfix/transport
 etc/postfix/virtual
@@ -32,11 +28,18 @@ usr/lib/postfix/error
 usr/lib/postfix/flush
 usr/lib/postfix/lmtp
 usr/lib/postfix/local
+usr/lib/postfix/main.cf
 usr/lib/postfix/master
+usr/lib/postfix/master.cf
 usr/lib/postfix/nqmgr
 usr/lib/postfix/oqmgr
 usr/lib/postfix/pickup
 usr/lib/postfix/pipe
+usr/lib/postfix/post-install
+usr/lib/postfix/postfix-files
+usr/lib/postfix/postfix-script
+usr/lib/postfix/postfix-wrapper
+usr/lib/postfix/postmulti-script
 usr/lib/postfix/proxymap
 usr/lib/postfix/qmgr
 usr/lib/postfix/qmqpd
@@ -58,6 +61,7 @@ usr/sbin/postkick
 usr/sbin/postlock
 usr/sbin/postlog
 usr/sbin/postmap
+usr/sbin/postmulti
 usr/sbin/postqueue
 usr/sbin/postsuper
 usr/sbin/sendmail
@@ -72,6 +76,7 @@ usr/sbin/sendmail
 #usr/share/man/man1/postlock.1
 #usr/share/man/man1/postlog.1
 #usr/share/man/man1/postmap.1
+#usr/share/man/man1/postmulti.1
 #usr/share/man/man1/postqueue.1
 #usr/share/man/man1/postsuper.1
 #usr/share/man/man1/sendmail.1
@@ -90,6 +95,7 @@ usr/sbin/sendmail
 #usr/share/man/man5/pcre_table.5
 #usr/share/man/man5/pgsql_table.5
 #usr/share/man/man5/postconf.5
+#usr/share/man/man5/postfix-wrapper.5
 #usr/share/man/man5/regexp_table.5
 #usr/share/man/man5/relocated.5
 #usr/share/man/man5/tcp_table.5
@@ -137,3 +143,4 @@ var/spool/postfix/private
 var/spool/postfix/public
 var/spool/postfix/saved
 var/spool/postfix/trace
+etc/rc.d/init.d/postfix
