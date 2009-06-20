@@ -291,7 +291,6 @@ print <<END
     <td class='base' width='55%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
     <td width='40%' align='center'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
     <td width='5%' align='right'> 
-        <a href='${General::adminmanualurl}/section-dialup.html#services-extalias' target='_blank'><img src='/images/web-support.png' title='$Lang::tr{'online help en'}' /></a>
     </td>
 </tr>
 </table>
