@@ -59,6 +59,10 @@ Vice Project Leader - Christian Schmidt
 (<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
 Developer - Arne Fitzenreiter
 (<a href='mailto:arne\@ipfire.org'>arne\@ipfire.org</a>)<br />
+Developer - Stefan Schantl
+(<a href='mailto:Stevee\@ipfire.org'>Stevee\@ipfire.org</a>)<br />
+Developer (Addons) - Peter Pfeifer
+(<a href='mailto:peterman\@ipfire.org'>peterman\@ipfire.org</a>)<br />
 Developer & Webmaster - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
 Supporter, WIKI Administrator & Sponsor - Ronald Wiesinger
