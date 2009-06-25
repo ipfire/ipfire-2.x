@@ -701,9 +701,7 @@ sub getmd5 {
 		close($fh);
 	}
 	
-	my @temp=split(/= /,$md5buf->content);
-	
-	return $temp[1];
+	return $md5buf->content;
 }
 sub downloadrulesfile {
 	my $return = &geturl($url);
