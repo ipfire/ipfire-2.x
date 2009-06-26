@@ -212,6 +212,7 @@
 * mktemp-1.5
 * mldonkey-3.0.0
 * module-init-tools-3.5
+* motion-3.2.11
 * mpc-0.14
 * mpd-0.14.2
 * mpeg2dec-0.4.0b
@@ -274,6 +275,7 @@
 * rsync-3.0.6
 * rtorrent-0.8.4
 * samba-3.3.5
+* samba-3.3.6
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01

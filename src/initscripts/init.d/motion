@@ -1,0 +1,33 @@
+#!/bin/sh
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting motion webcam server..."
+		loadproc /usr/bin/motion
+		;;
+
+	stop)
+		boot_mesg "Stopping motion webcam server..."
+		killproc /usr/bin/motion
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/bin/motion
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/motion

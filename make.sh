@@ -475,7 +475,7 @@ buildipfire() {
   ipfiremake squid
   ipfiremake squidguard
   ipfiremake calamaris
-  #ipfiremake tcpdump
+  ipfiremake tcpdump
   ipfiremake traceroute
   ipfiremake vlan
   ipfiremake wireless
@@ -616,6 +616,7 @@ buildipfire() {
   ipfiremake open-vm-tools
   ipfiremake nagiosql
   ipfiremake iftop
+  ipfiremake motion
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
