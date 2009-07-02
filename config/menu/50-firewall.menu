@@ -40,3 +40,9 @@
 				'title' => "$Lang::tr{'options fw'}",
 				'enabled' => 1,
 				};
+    $subfirewall->{'70.iptables'} = {
+				'caption' => $Lang::tr{'ipts'},
+				'uri' => '/cgi-bin/iptables.cgi',
+				'title' => "$Lang::tr{'ipts'}",
+				'enabled' => 1,
+				};
