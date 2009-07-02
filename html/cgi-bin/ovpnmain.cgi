@@ -2944,9 +2944,9 @@ END
 	<td>&nbsp; </td>
 	<td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
 	<td class='base'>$Lang::tr{'click to enable'}</td>
-	<td>&nbsp; &nbsp; <img src='/images/media-floppy.png' alt='?FLOPPY' /></td>
+	<td> <img src='/images/media-floppy.png' alt='?FLOPPY' /></td>
 	<td class='base'>$Lang::tr{'download certificate'}</td>
-	<td>&nbsp; &nbsp; <img src='/images/openvpn.png' alt='?RELOAD'/></td>
+	<td> <img src='/images/openvpn.png' alt='?RELOAD'/></td>
 	<td class='base'>$Lang::tr{'dl client arch'}</td>
     </tr>
     </table>
