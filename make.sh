@@ -616,6 +616,7 @@ buildipfire() {
   ipfiremake open-vm-tools
   ipfiremake nagiosql
   ipfiremake iftop
+  ipfiremake motion
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -990,52 +991,6 @@ uploadsrc)
 	cd $BASEDIR
 	cd $PWD
 	exit 0
-	;;
-upload)
-	FTP_ISO_PORT=`echo "$FTP_ISO_URL" | awk -F: '{ print $2 }'`
-	FTP_ISO_URL=`echo "$FTP_ISO_URL" | awk -F: '{ print $1 }'`
-	if [ -z $FTP_ISO_PORT ]; then
-	    FTP_ISO_PORT=21
-	fi
-	cat <<EOF > .ftp-commands
-mkdir -p $FTP_ISO_PATH$SVN_REVISION
-mkdir -p $FTP_ISO_PATH$SVN_REVISION/paks
-quit
-EOF
-	ncftp -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL < .ftp-commands
-	rm -f .ftp-commands
-		
-	case "$2" in
-	  iso)
-		echo -e "Uploading the iso to $FTP_ISO_PATH/$SVN_REVISION."
-
-		md5sum ipfire-$VERSION.$MACHINE-full.iso > ipfire-$VERSION.$MACHINE-full.iso.md5
-		for i in svn_status ipfire-source-r$SVN_REVISION.tar.gz ipfire-$VERSION.$MACHINE-full.iso ipfire-$VERSION.$MACHINE-full.iso.md5 ipfire-$VERSION.$MACHINE-devel.iso ipfire-$VERSION.$MACHINE-devel.iso.md5; do
-				if [ -e "$i" ]; then
-			    ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/ $i
-					if [ "$?" -eq "0" ]; then
-						echo "The file with name $i was successfully uploaded to $FTP_ISO_URL$FTP_ISO_PATH$SVN_REVISION/."
-					else
-						echo "There was an error while uploading the file $i to the ftp server."
-						exit 1
-					fi
-				fi
-		done
-		rm -f ipfire-$VERSION.$MACHINE-full.iso.md5
-		if [ "$3" = "--with-sources-cd" ]; then
-			ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL $FTP_ISO_PATH/$SVN_REVISION/ ipfire-sources-cd-$VERSION.$MACHINE.iso
-		fi
-		;;
-	  paks)
-		ncftpput -u $FTP_ISO_USER -p $FTP_ISO_PASS -P $FTP_ISO_PORT $FTP_ISO_URL $FTP_ISO_PATH$SVN_REVISION/paks packages/*
-		if [ "$?" -eq "0" ]; then
-			echo -e "The packages were successfully uploaded to $FTP_ISO_URL$FTP_ISO_PATH$SVN_REVISION/."
-		else
-			echo -e "There was an error while uploading the packages to the ftp server."
-			exit 1
-		fi
-	  ;;
-	esac
 	;;
 batch)
 	if [ "$2" = "--background" ]; then

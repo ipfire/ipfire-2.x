@@ -141,6 +141,9 @@ $(TARGET) :
 	ln -sf ../init.d/vdradmin    /etc/rc.d/rc3.d/S99vdradmin
 	ln -sf ../init.d/vdradmin    /etc/rc.d/rc0.d/K01vdradmin
 	ln -sf ../init.d/vdradmin    /etc/rc.d/rc6.d/K01vdradmin
+	ln -sf ../init.d/motion      /etc/rc.d/rc3.d/S99motion
+	ln -sf ../init.d/motion      /etc/rc.d/rc0.d/K01motion
+	ln -sf ../init.d/motion      /etc/rc.d/rc6.d/K01motion
 
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules
