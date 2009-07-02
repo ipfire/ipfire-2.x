@@ -274,7 +274,6 @@
 * rssdler-0.4.0a
 * rsync-3.0.6
 * rtorrent-0.8.4
-* samba-3.3.5
 * samba-3.3.6
 * sane-1.0.19
 * screen-4.0.3

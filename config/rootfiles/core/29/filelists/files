@@ -1,3 +1,5 @@
+etc/collectd.conf
 etc/system-release
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+var/ipfire/menu.d/50-firewall.menu
