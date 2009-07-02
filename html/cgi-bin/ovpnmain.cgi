@@ -2678,7 +2678,7 @@ EOF
 	    <input type='image' name='$Lang::tr{'edit'}' src='/images/info.gif' alt='$Lang::tr{'show root certificate'}' title='$Lang::tr{'show root certificate'}' width='20' height='20' border='0' />
 	</td></form>
 	<form method='post' name='frmrootcrtb'><td width='3%' align='center'>
-	    <input type='image' name='$Lang::tr{'download root certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download root certificate'}' title='$Lang::tr{'download root certificate'}' border='0' />
+	    <input type='image' name='$Lang::tr{'download root certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download root certificate'}' title='$Lang::tr{'download root certificate'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'download root certificate'}' />
 	</td></form>
 	<td width='4%'>&nbsp;</td></tr>
@@ -2711,7 +2711,7 @@ END
 	    <input type='image' name='$Lang::tr{'show host certificate'}' src='/images/info.gif' alt='$Lang::tr{'show host certificate'}' title='$Lang::tr{'show host certificate'}' width='20' height='20' border='0' />
 	</td></form>
 	<form method='post' name='frmhostcrtb'><td width='3%' align='center'>
-	    <input type='image' name='$Lang::tr{'download host certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download host certificate'}' title='$Lang::tr{'download host certificate'}' border='0' />
+	    <input type='image' name='$Lang::tr{'download host certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download host certificate'}' title='$Lang::tr{'download host certificate'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'download host certificate'}' />
 	</td></form>
 	<td width='4%'>&nbsp;</td></tr>
@@ -2750,7 +2750,7 @@ END
 		<input type='hidden' name='KEY' value='$key' />
 	    </td></form>
 	    <form method='post' name='cafrm${key}b'><td align='center'>
-		<input type='image' name='$Lang::tr{'download ca certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download ca certificate'}' title='$Lang::tr{'download ca certificate'}' border='0' />
+		<input type='image' name='$Lang::tr{'download ca certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download ca certificate'}' title='$Lang::tr{'download ca certificate'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download ca certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
 	    </td></form>
@@ -2774,7 +2774,7 @@ END
 	<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
 	<td>&nbsp; &nbsp; <img src='/images/info.gif' alt='$Lang::tr{'show certificate'}' /></td>
 	<td class='base'>$Lang::tr{'show certificate'}</td>
-	<td>&nbsp; &nbsp; <img src='/images/floppy.gif' alt='$Lang::tr{'download certificate'}' /></td>
+	<td>&nbsp; &nbsp; <img src='/images/media-floppy.png' alt='$Lang::tr{'download certificate'}' /></td>
 	<td class='base'>$Lang::tr{'download certificate'}</td>
     </tr>
     </table>
@@ -2885,7 +2885,7 @@ END
 	if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") { 
 	    print <<END
 	    <form method='post' name='frm${key}c'><td align='center'>
-		<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/floppy.gif' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
+		<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/media-floppy.png' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
 		<input type='hidden' name='KEY' value='$key' />
 	    </td></form>
@@ -2893,7 +2893,7 @@ END
 	; } elsif ($confighash{$key}[4] eq 'cert') {
 	    print <<END
 	    <form method='post' name='frm${key}c'><td align='center'>
-		<input type='image' name='$Lang::tr{'download certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
+		<input type='image' name='$Lang::tr{'download certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
 	    </td></form>
@@ -2944,7 +2944,7 @@ END
 	<td>&nbsp; </td>
 	<td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
 	<td class='base'>$Lang::tr{'click to enable'}</td>
-	<td>&nbsp; &nbsp; <img src='/images/floppy.gif' alt='?FLOPPY' /></td>
+	<td>&nbsp; &nbsp; <img src='/images/media-floppy.png' alt='?FLOPPY' /></td>
 	<td class='base'>$Lang::tr{'download certificate'}</td>
 	<td>&nbsp; &nbsp; <img src='/images/openvpn.png' alt='?RELOAD'/></td>
 	<td class='base'>$Lang::tr{'dl client arch'}</td>
