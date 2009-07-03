@@ -59,6 +59,7 @@ lib/firmware/ti_5052.fw
 lib/firmware/tr_smctr.bin
 #lib/firmware/ttusb-budget
 lib/firmware/ttusb-budget/dspbootcode.bin
+lib/firmware/av7110/bootcode.bin
 #lib/firmware/vicam
 lib/firmware/vicam/firmware.fw
 lib/firmware/whiteheat.fw
