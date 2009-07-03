@@ -2,4 +2,8 @@ etc/collectd.conf
 etc/system-release
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/html/blob.gif
+srv/web/ipfire/html/images/info.gif
+srv/web/ipfire/html/images/openvpn.png
 var/ipfire/menu.d/50-firewall.menu
