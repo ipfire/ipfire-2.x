@@ -2,5 +2,9 @@ etc/collectd.conf
 etc/system-release
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/blob.gif
+srv/web/ipfire/images/info.gif
+srv/web/ipfire/images/openvpn.gif
 var/ipfire/menu.d/50-firewall.menu
 lib/firmware/av7110/bootcode.bin
