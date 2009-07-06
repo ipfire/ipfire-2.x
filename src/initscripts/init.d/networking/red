@@ -122,7 +122,10 @@ case "${1}" in
 			evaluate_retval
 			
 			run_subdir ${rc_base}/init.d/networking/red.up/
-			
+
+			# Configure aliases only if red static
+			/usr/local/bin/setaliases
+
 		elif [ "${TYPE}" == "DHCP" ]; then
 
 			if [ -e $LEASEINFO ]; then
