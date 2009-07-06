@@ -7,3 +7,6 @@ srv/web/ipfire/html/blob.gif
 srv/web/ipfire/html/images/info.gif
 srv/web/ipfire/html/images/openvpn.png
 var/ipfire/menu.d/50-firewall.menu
+lib/firmware/av7110/bootcode.bin
+var/ipfire/backup/include
+etc/rc.d/init.d/networking/red

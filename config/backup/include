@@ -3,7 +3,7 @@
 /var/ipfire/*/*.pem
 /var/ipfire/*/config
 /var/ipfire/*/enable
-/var/ipifre/*/*enable*
+/var/ipfire/*/*enable*
 /etc/passwd
 /etc/shadow
 /etc/group
@@ -30,3 +30,4 @@
 /etc/sysconfig/rc.local
 /root/.gitconfig
 /root/.bash_history
+/var/ipfire/ethernet/aliases

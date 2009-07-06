@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/nagiosql-$(VER)
 PROG       = nagiosql
 PAK_VER    = 1
 
-DEPS       = "nagios"
+DEPS       = "nagios mysql"
 
 ###############################################################################
 # Top-level Rules
@@ -85,7 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -vf $(DIR_SRC)/config/nagiosql/nagios.conf /etc/httpd/conf/vhosts.d/
 	cp -vrf $(DIR_SRC)/config/nagiosql/pear/HTML /usr/lib/php
 	cp -vrf $(DIR_SRC)/config/nagiosql/etc /
-	chown -R nobody /etc/nagiosql
+	chown -R nobody:nobody /etc/nagiosql
 	chown nobody /usr/share/nagiosql/config
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
