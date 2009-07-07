@@ -1,0 +1,21 @@
+diff -Naur hostapd-0.6.9.org/hostapd/ieee802_11.c hostapd-0.6.9/hostapd/ieee802_11.c
+--- hostapd-0.6.9.org/hostapd/ieee802_11.c	2009-03-23 15:06:28.000000000 +0100
++++ hostapd-0.6.9/hostapd/ieee802_11.c	2009-07-07 23:13:37.000000000 +0200
+@@ -1497,7 +1497,7 @@
+ 		hostapd_logger(hapd, mgmt->da, HOSTAPD_MODULE_IEEE80211,
+ 			       HOSTAPD_LEVEL_NOTICE,
+ 			       "did not acknowledge authentication response");
+-		return;
++		//return;
+ 	}
+ 
+ 	if (len < IEEE80211_HDRLEN + sizeof(mgmt->u.auth)) {
+@@ -1571,7 +1571,7 @@
+ 		hostapd_logger(hapd, mgmt->da, HOSTAPD_MODULE_IEEE80211,
+ 			       HOSTAPD_LEVEL_DEBUG,
+ 			       "did not acknowledge association response");
+-		return;
++		//return;
+ 	}
+ 
+ 	if (len < IEEE80211_HDRLEN + (reassoc ? sizeof(mgmt->u.reassoc_resp) :
