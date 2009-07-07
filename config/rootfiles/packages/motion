@@ -4,7 +4,7 @@ etc/rc.d/init.d/motion
 etc/rc.d/rc0.d/K01motion
 etc/rc.d/rc6.d/K01motion
 etc/rc.d/rc3.d/S99motion
-srv/motion/cam1/info
+var/ipfire/backup/addons/includes/motion
 #usr/share/doc/motion-3.2.11
 #usr/share/doc/motion-3.2.11/CHANGELOG
 #usr/share/doc/motion-3.2.11/COPYING

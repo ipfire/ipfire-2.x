@@ -6,7 +6,10 @@
 case "$1" in
 	start)
 		boot_mesg "Starting motion webcam server..."
-		loadproc /usr/bin/motion
+		chown :video /dev/video*
+		mkdir -p /var/motion/cam1
+		chown -R video: /var/motion/cam1
+		loadproc sudo -u video /usr/bin/motion
 		;;
 
 	stop)

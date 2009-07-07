@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cp -vf $(DIR_SRC)/config/motion/motion.conf /etc
-	mkdir -pv /srv/motion/cam1
-	echo Folder for cam1 images > /srv/motion/cam1/info
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/motion \
+			 /var/ipfire/backup/addons/includes/motion
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
