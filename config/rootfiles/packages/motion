@@ -1,15 +1,11 @@
-usr/bin/motion
+#etc/motion-dist.conf
 etc/motion.conf
-etc/rc.d/init.d/motion
-etc/rc.d/rc0.d/K01motion
-etc/rc.d/rc6.d/K01motion
-etc/rc.d/rc3.d/S99motion
-var/ipfire/backup/addons/includes/motion
+usr/bin/motion
 #usr/share/doc/motion-3.2.11
 #usr/share/doc/motion-3.2.11/CHANGELOG
 #usr/share/doc/motion-3.2.11/COPYING
 #usr/share/doc/motion-3.2.11/CREDITS
-#sr/share/doc/motion-3.2.11/INSTALL
+#usr/share/doc/motion-3.2.11/INSTALL
 #usr/share/doc/motion-3.2.11/README
 #usr/share/doc/motion-3.2.11/motion_guide.html
 #usr/share/man/man1/motion.1
@@ -23,3 +19,8 @@ var/ipfire/backup/addons/includes/motion
 #usr/share/motion-3.2.11/examples/thread2.conf
 #usr/share/motion-3.2.11/examples/thread3.conf
 #usr/share/motion-3.2.11/examples/thread4.conf
+var/ipfire/backup/addons/includes/motion
+etc/rc.d/init.d/motion
+etc/rc.d/rc0.d/K01motion
+etc/rc.d/rc6.d/K01motion
+etc/rc.d/rc3.d/S99motion
