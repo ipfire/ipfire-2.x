@@ -27,4 +27,4 @@
 ecxtract_files
 rm -rf /var/log/rrd*//collectd/localhost/disk-*[0-9]*
 /etc/init.d/collectd start
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
