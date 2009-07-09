@@ -11,3 +11,5 @@ lib/firmware/av7110/bootcode.bin
 var/ipfire/backup/include
 etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/aliases.cgi
+/var/ipfire/langs/list
+/var/ipfire/langs/de.pl
