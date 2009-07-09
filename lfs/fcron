@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.1
+VER        = 3.0.4
 
 THISAPP    = fcron-$(VER)
 DL_FILE    = $(THISAPP).src.tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8e5dcb3a646c11294294895954ef0a48
+$(DL_FILE)_MD5 = 5a26a1dfd91fdc7e87401e98aef870e6
 
 install : $(TARGET)
 
@@ -76,6 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    --without-sendmail		\
 	    --with-spooldir=/var/spool/cron 	\
 	    --with-fifodir=/var/run	 	\
+	    --sysconfdir=/etc		 	\
 	    --with-username=cron		\
 	    --with-groupname=cron		\
 	    --with-run-non-privileged=no	\

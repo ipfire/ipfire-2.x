@@ -96,7 +96,7 @@
 * expat-2.0.0
 * ez-ipupdate-3.0.11b8
 * fbset-2.1
-* fcron-3.0.1
+* fcron-3.0.4
 * feedparser-4.1
 * fetchmail-6.3.9
 * ffmpeg-export-2008-04-13
