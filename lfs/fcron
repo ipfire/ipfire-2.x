@@ -76,6 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    --without-sendmail		\
 	    --with-spooldir=/var/spool/cron 	\
 	    --with-fifodir=/var/run	 	\
+	    --with-piddir=/var/run	 	\
 	    --sysconfdir=/etc		 	\
 	    --with-username=cron		\
 	    --with-groupname=cron		\
