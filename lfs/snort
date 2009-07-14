@@ -36,14 +36,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	Community-Rules-20070503.tar.gz
+objects = $(DL_FILE) 
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-Community-Rules-20070503.tar.gz = $(DL_FROM)/Community-Rules-20070503.tar.gz
 
 $(DL_FILE)_MD5 = 193179da8db8aac5ee6b0a751ce7b76d
-Community-Rules-20070503.tar.gz_MD5 = f236b8a4ac12e99d3e7bd81bf3b5a482
 
 install : $(TARGET)
 
@@ -81,7 +78,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv /usr/bin/snort /usr/sbin/
 	-mkdir -p /etc/snort/rules
 
-	tar xvfz $(DIR_DL)/Community-Rules-20070503.tar.gz -C /etc/snort/
 	cd $(DIR_APP) && install -m 0644  \
 		etc/reference.config etc/classification.config /etc/snort/rules
 	cd $(DIR_APP) && install -m 0644 etc/unicode.map /etc/snort
