@@ -13,4 +13,7 @@ usr/bin/nsupdate
 var/ipfire/backup/include
 var/ipfire/langs/list
 var/ipfire/langs/de.pl
+var/ipfire/langs/en.pl
 var/ipfire/menu.d/50-firewall.menu
+var/ipfire/menu.d/30-network.menu
+srv/web/ipfire/cgi-bin/mac.cgi
