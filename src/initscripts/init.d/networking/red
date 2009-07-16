@@ -130,7 +130,10 @@ case "${1}" in
 			evaluate_retval
 			
 			run_subdir ${rc_base}/init.d/networking/red.up/
-			
+
+			# Configure aliases only if red static
+			/usr/local/bin/setaliases
+
 		elif [ "${TYPE}" == "DHCP" ]; then
 
 			if [ -e $LEASEINFO ]; then
@@ -246,6 +249,54 @@ case "${1}" in
 				sleep 0.2
 				ip link set ${PPP_NIC} up
 				TYPE="pppoe"
+
+
+				PIDFILE="/var/run/dhcpcd-${DEVICE}.8.pid"
+				LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.8.info"
+				DHCP_START="-N -R -L /var/ipfire/dhcpc -c /var/ipfire/dhcpc/dhcpcd.exe "
+				DHCP_STOP="-k -c /var/ipfire/dhcpc/dhcpcd.exe "
+
+
+				# Test to see if there is a stale pid file
+				if [ -f "$PIDFILE" ]; then
+					ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
+					if [ $? != 0 ]; then
+						rm -f /var/run/dhcpcd-${DEVICE}.8.pid > /dev/null
+					fi
+				fi
+				if [ ! -f "$PIDFILE" ]; then
+					#DHCP for VDSL IPTV
+					boot_mesg "Createing VLAN Interface ${DEVICE}.8 ..."
+					vconfig add ${DEVICE} 8
+
+					boot_mesg -n "Starting dhcpcd on the ${DEVICE}.8 interface..."
+
+					/sbin/dhcpcd ${DEVICE}.8 ${DHCP_START} >/dev/null 2>&1
+					RET="$?"
+
+					if [ "$RET" = "0" ]; then
+						. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.8.info
+						echo ""
+						echo_ok
+						boot_mesg "           DHCP Assigned Settings for ${DEVICE}.8:"
+						boot_mesg_flush
+						boot_mesg "           IP Address:      $IPADDR"
+						boot_mesg_flush
+						boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+						boot_mesg_flush
+						boot_mesg "           Subnet Mask:     $NETMASK"
+						boot_mesg_flush
+						boot_mesg "           Default Gateway: $GATEWAY"
+						boot_mesg_flush
+						boot_mesg "           DNS Server:      $DNS"
+						boot_mesg_flush
+
+						else
+							echo ""
+							$(exit "$RET")
+							evaluate_retval
+					fi
+				fi
 			fi
 
 			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
@@ -474,13 +525,14 @@ case "${1}" in
 					vconfig del ${DEVICE} 7
 					evaluate_retval
 				fi
-			fi
-			link_status=`ip link show $DEVICE 2> /dev/null`
-			if [ -n "${link_status}" ]; then
-				if echo "${link_status}" | grep -q UP; then
-					boot_mesg "Bringing down the ${DEVICE} interface..."
-					ip link set ${DEVICE} down
-					evaluate_retval
+			else
+				link_status=`ip link show $DEVICE 2> /dev/null`
+				if [ -n "${link_status}" ]; then
+					if echo "${link_status}" | grep -q UP; then
+						boot_mesg "Bringing down the ${DEVICE} interface..."
+						ip link set ${DEVICE} down
+						evaluate_retval
+					fi
 				fi
 			fi
 		fi
