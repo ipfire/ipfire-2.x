@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 /etc/init.d/collectd stop
-ecxtract_files
+extract_files
 rm -rf /var/log/rrd*//collectd/localhost/disk-*[0-9]*
 rm -rf /srv/web/ipfire/cgi-bin/networks.cgi
 /etc/init.d/collectd start
