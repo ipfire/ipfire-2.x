@@ -53,3 +53,9 @@
 				  'title' => "$Lang::tr{'WakeOnLan'}",
 				  'enabled' => 1,
 				  };
+	$subnetwork->{'90.macadress'} = {
+				  'caption' => $Lang::tr{'mac address'},
+				  'uri' => '/cgi-bin/mac.cgi',
+				  'title' => "$Lang::tr{'mac address'}",
+				  'enabled' => 1,
+				  };
