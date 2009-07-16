@@ -25,3 +25,5 @@
 extract_files
 restore_backup ${NAME}
 useradd -s /bin/false video
+#Ignore error if the user already exist
+exit 0
