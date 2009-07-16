@@ -17,3 +17,4 @@ var/ipfire/langs/en.pl
 var/ipfire/menu.d/50-firewall.menu
 var/ipfire/menu.d/30-network.menu
 srv/web/ipfire/cgi-bin/mac.cgi
+srv/web/ipfire/html/images/indicator.gif
