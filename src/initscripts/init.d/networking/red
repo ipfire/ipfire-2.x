@@ -26,6 +26,9 @@ if [ "$RRDLOG" == "" ]; then
 fi
 
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/mac/settings)
+
+MAC=$(tr - : <<<$MAC)
 
 TYPE="${RED_TYPE}"
 DEVICE="${RED_DEV}"
@@ -87,6 +90,11 @@ case "${1}" in
 				link_status=`ip link show ${DEVICE} 2> /dev/null`
 				if [ -n "${link_status}" ]; then
 					if ! echo "${link_status}" | grep -q UP; then
+						if [ -n "$MAC" ]; then
+							boot_mesg "Setting mac address on ${DEVICE} to ${MAC}"	
+							ip link set dev ${DEVICE} address ${MAC}
+							evaluate_retval		
+						fi
 						ip link set ${DEVICE} up
 					fi
 				fi
@@ -122,10 +130,7 @@ case "${1}" in
 			evaluate_retval
 			
 			run_subdir ${rc_base}/init.d/networking/red.up/
-
-			# Configure aliases only if red static
-			/usr/local/bin/setaliases
-
+			
 		elif [ "${TYPE}" == "DHCP" ]; then
 
 			if [ -e $LEASEINFO ]; then
