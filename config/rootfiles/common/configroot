@@ -55,6 +55,8 @@ var/ipfire/langs
 #var/ipfire/langs/list
 var/ipfire/logging
 #var/ipfire/logging/settings
+var/ipfire/mac
+#var/ipfire/mac/settings
 var/ipfire/main
 #var/ipfire/main/hosts
 #var/ipfire/main/settings
