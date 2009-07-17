@@ -47,15 +47,21 @@
 				  'title' => "$Lang::tr{'aliases'}",
 				  'enabled' => 1,
 				  };
-    $subnetwork->{'80.wakeonlan'} = {
+	$subnetwork->{'80.dnsmenu'} = {
+				  'caption' => $Lang::tr{'dns menu'},
+				  'uri' => '/cgi-bin/dns.cgi',
+				  'title' => "$Lang::tr{'dns menu'}",
+				  'enabled' => 1,
+				  };
+	$subnetwork->{'90.macadressmenu'} = {
+				  'caption' => $Lang::tr{'mac address menu'},
+				  'uri' => '/cgi-bin/mac.cgi',
+				  'title' => "$Lang::tr{'mac address menu'}",
+				  'enabled' => 1,
+				  };
+	 $subnetwork->{'99.wakeonlan'} = {
 				  'caption' => $Lang::tr{'WakeOnLan'},
 				  'uri' => '/cgi-bin/wakeonlan.cgi',
 				  'title' => "$Lang::tr{'WakeOnLan'}",
-				  'enabled' => 1,
-				  };
-	$subnetwork->{'90.macadress'} = {
-				  'caption' => $Lang::tr{'mac address'},
-				  'uri' => '/cgi-bin/mac.cgi',
-				  'title' => "$Lang::tr{'mac address'}",
 				  'enabled' => 1,
 				  };
