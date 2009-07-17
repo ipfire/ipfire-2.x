@@ -50,7 +50,7 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create all directories
-	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dmzholes \
+	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dmzholes dns \
 	    ethernet extrahd/bin fwlogs isdn key langs logging mac main  menu.d modem net-traffic \
 			net-traffic/templates nfs optionsfw outgoing/bin patches pakfire portfw \
 	    ppp private proxy/advanced/cre proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
