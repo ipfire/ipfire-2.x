@@ -29,3 +29,4 @@ rm -rf /var/log/rrd*//collectd/localhost/disk-*[0-9]*
 rm -rf /srv/web/ipfire/cgi-bin/networks.cgi
 /etc/init.d/collectd start
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+depmod -a
