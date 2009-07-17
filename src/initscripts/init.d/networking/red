@@ -26,6 +26,7 @@ if [ "$RRDLOG" == "" ]; then
 fi
 
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/mac/settings)
 
 MAC=$(tr - : <<<$MAC)
@@ -95,6 +96,7 @@ case "${1}" in
 							ip link set dev ${DEVICE} address ${MAC}
 							evaluate_retval		
 						fi
+						
 						ip link set ${DEVICE} up
 					fi
 				fi
@@ -210,9 +212,15 @@ case "${1}" in
 				boot_mesg_flush
 				boot_mesg "           DNS Server:      $DNS"
 				boot_mesg_flush
-				
-				echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
-				echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
+				if [ -n "$DNS0" ] && [ -n "$DNS1" ]; then
+					boot_mesg "Overwritting DNS-Server addresses with ${DNS0},${DNS1}"	
+					echo -n ${DNS0} > /var/ipfire/red/dns1
+					echo -n ${DNS1} > /var/ipfire/red/dns2			
+					evaluate_retval		
+				else
+					echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
+					echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
+				fi
 
 				. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.info
 				echo "$IPADDR"  > /var/ipfire/red/local-ipaddress
