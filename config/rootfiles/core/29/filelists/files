@@ -15,7 +15,10 @@ var/ipfire/langs/list
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/mac/settings
+var/ipfire/dns/settings
 var/ipfire/menu.d/50-firewall.menu
 var/ipfire/menu.d/30-network.menu
 srv/web/ipfire/cgi-bin/mac.cgi
+srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/html/images/indicator.gif
+srv/web/ipfire/html/images/dns_link.png
