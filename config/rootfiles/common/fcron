@@ -10,7 +10,7 @@ etc/fcron.weekly
 usr/bin/fcronsighup
 usr/bin/fcrontab
 usr/sbin/fcron
-#usr/share/doc/fcron-3.0.1
+#usr/share/doc/fcron-3.0.4
 #usr/share/doc/fcron-3.0.4/en
 #usr/share/doc/fcron-3.0.4/en/HTML
 #usr/share/doc/fcron-3.0.4/en/HTML/LEGALNOTICE.html
