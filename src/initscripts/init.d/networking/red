@@ -15,10 +15,13 @@
 #
 ########################################################################
 
-
-
 . /etc/sysconfig/rc 
 . ${rc_functions}
+
+#Define some defaults
+RED_VDSL_INET_VLAN=7
+RED_VDSL_IPTV_VLAN=8
+RED_VDSL_IPTV_DISABLE=0
 
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 if [ "$RRDLOG" == "" ]; then
@@ -250,59 +253,57 @@ case "${1}" in
 			PPP_NIC=${DEVICE}
 
 			if [ "$TYPE" == "vdsl" ]; then
-				boot_mesg "Createing VLAN Interface ${DEVICE}.7 ..."
+				boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_INET_VLAN} ..."
 				modprobe 8021q
-				vconfig add ${DEVICE} 7
-				PPP_NIC=${DEVICE}.7
+				vconfig add ${DEVICE} ${RED_VDSL_INET_VLAN}
+				PPP_NIC=${DEVICE}.${RED_VDSL_INET_VLAN}
 				sleep 0.2
 				ip link set ${PPP_NIC} up
 				TYPE="pppoe"
 
+				if [ "${RED_VDSL_IPTV_DISABLE}" == "0" ]; then
+					PIDFILE="/var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid"
+					LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info"
+					DHCP_START="-N -R -L /var/ipfire/dhcpc -c /var/ipfire/dhcpc/dhcpcd.exe "
+					DHCP_STOP="-k -c /var/ipfire/dhcpc/dhcpcd.exe "
 
-				PIDFILE="/var/run/dhcpcd-${DEVICE}.8.pid"
-				LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.8.info"
-				DHCP_START="-N -R -L /var/ipfire/dhcpc -c /var/ipfire/dhcpc/dhcpcd.exe "
-				DHCP_STOP="-k -c /var/ipfire/dhcpc/dhcpcd.exe "
-
-
-				# Test to see if there is a stale pid file
-				if [ -f "$PIDFILE" ]; then
-					ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
-					if [ $? != 0 ]; then
-						rm -f /var/run/dhcpcd-${DEVICE}.8.pid > /dev/null
+					# Test to see if there is a stale pid file
+					if [ -f "$PIDFILE" ]; then
+						ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
+						if [ $? != 0 ]; then
+							rm -f /var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid > /dev/null
+						fi
 					fi
-				fi
-				if [ ! -f "$PIDFILE" ]; then
-					#DHCP for VDSL IPTV
-					boot_mesg "Createing VLAN Interface ${DEVICE}.8 ..."
-					vconfig add ${DEVICE} 8
 
-					boot_mesg -n "Starting dhcpcd on the ${DEVICE}.8 interface..."
+					if [ ! -f "$PIDFILE" ]; then
+						boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_IPTV_VLAN} ..."
+						vconfig add ${DEVICE} ${RED_VDSL_IPTV_VLAN}
+						boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${RED_VDSL_IPTV_VLAN} interface..."
+						/sbin/dhcpcd ${DEVICE}.${RED_VDSL_IPTV_VLAN} ${DHCP_START} >/dev/null 2>&1
+						RET="$?"
 
-					/sbin/dhcpcd ${DEVICE}.8 ${DHCP_START} >/dev/null 2>&1
-					RET="$?"
-
-					if [ "$RET" = "0" ]; then
-						. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.8.info
-						echo ""
-						echo_ok
-						boot_mesg "           DHCP Assigned Settings for ${DEVICE}.8:"
-						boot_mesg_flush
-						boot_mesg "           IP Address:      $IPADDR"
-						boot_mesg_flush
-						boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
-						boot_mesg_flush
-						boot_mesg "           Subnet Mask:     $NETMASK"
-						boot_mesg_flush
-						boot_mesg "           Default Gateway: $GATEWAY"
-						boot_mesg_flush
-						boot_mesg "           DNS Server:      $DNS"
-						boot_mesg_flush
+						if [ "$RET" = "0" ]; then
+							. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info
+							echo ""
+							echo_ok
+							boot_mesg "           DHCP Assigned Settings for ${DEVICE}.${RED_VDSL_IPTV_VLAN}:"
+							boot_mesg_flush
+							boot_mesg "           IP Address:      $IPADDR"
+							boot_mesg_flush
+							boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+							boot_mesg_flush
+							boot_mesg "           Subnet Mask:     $NETMASK"
+							boot_mesg_flush
+							boot_mesg "           Default Gateway: $GATEWAY"
+							boot_mesg_flush
+							boot_mesg "           DNS Server:      $DNS"
+							boot_mesg_flush
 
 						else
 							echo ""
 							$(exit "$RET")
 							evaluate_retval
+						fi
 					fi
 				fi
 			fi
@@ -525,12 +526,12 @@ case "${1}" in
 		fi
 
 		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
-			link_status=`ip link show $DEVICE.7 2> /dev/null`
+			link_status=`ip link show $DEVICE.${RED_VDSL_INET_VLAN} 2> /dev/null`
 			if [ -n "${link_status}" ]; then
 				if echo "${link_status}" | grep -q UP; then
-					boot_mesg "Bringing down the ${DEVICE}.7 interface..."
-					ip link set ${DEVICE}.7 down
-					vconfig del ${DEVICE} 7
+					boot_mesg "Bringing down the ${DEVICE}.${RED_VDSL_INET_VLAN} interface..."
+					ip link set ${DEVICE}.${RED_VDSL_INET_VLAN} down
+					vconfig del ${DEVICE} ${RED_VDSL_INET_VLAN}
 					evaluate_retval
 				fi
 			else
