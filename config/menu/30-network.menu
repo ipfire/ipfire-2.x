@@ -13,7 +13,7 @@
 			        'title' => $Lang::tr{'url filter'},
 			        'enabled' => 1,
 			        };
-		$subnetwork->{'22.updxlrator'} = {'caption' => $Lang::tr{'update accelerator'},
+    $subnetwork->{'22.updxlrator'} = {'caption' => $Lang::tr{'update accelerator'},
 			        'uri' => '/cgi-bin/updatexlrator.cgi',
 			        'title' => $Lang::tr{'update accelerator'},
 			        'enabled' => 1,
@@ -45,7 +45,7 @@
 				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$Lang::tr{'aliases'}",
-				  'enabled' => 1,
+				  'enabled' => `grep "RED_TYPE=STATIC" /var/ipfire/ethernet/settings`,
 				  };
 	$subnetwork->{'80.dnsmenu'} = {
 				  'caption' => $Lang::tr{'dns menu'},
