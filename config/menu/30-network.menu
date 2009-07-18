@@ -51,7 +51,7 @@
 				  'caption' => $Lang::tr{'dns menu'},
 				  'uri' => '/cgi-bin/dns.cgi',
 				  'title' => "$Lang::tr{'dns menu'}",
-				  'enabled' => 1,
+				  'enabled' => `grep "RED_TYPE=DHCP" /var/ipfire/ethernet/settings`,
 				  };
 	$subnetwork->{'90.macadressmenu'} = {
 				  'caption' => $Lang::tr{'mac address menu'},
