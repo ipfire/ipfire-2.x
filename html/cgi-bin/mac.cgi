@@ -67,7 +67,7 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 		$errormessage = $Lang::tr{'mac address error not valid'};
 	}
 }
-if ($macsettings{'RECONNECT'} eq $Lang::tr{'mac reconnection'}) {
+if ($macsettings{'RECONNECT'} eq $Lang::tr{'reconnect'}) {
 	system("/usr/local/bin/redctrl restart >/dev/null 2>&1 &");
 	&Header::openbox('100%', 'left', $Lang::tr{'mac address recon'} );
 	print "<font class='base'>$Lang::tr{'mac address done'}</font>\n";
@@ -104,7 +104,7 @@ print <<END
     <td><div align="center">
       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
       &nbsp;&nbsp;&nbsp;&nbsp;
-      <input type='submit' name='RECONNECT' value='$Lang::tr{'mac reconnection'}' />
+      <input type='submit' name='RECONNECT' value='$Lang::tr{'reconnect'}' />
     </div></td>
   </tr>
 </table>

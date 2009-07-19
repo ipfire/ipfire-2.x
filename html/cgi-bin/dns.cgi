@@ -63,7 +63,7 @@ if ($dnssettings{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 }
 
-if ($dnssettings{'RECONNECT'} eq $Lang::tr{'dns reconnection'}) {
+if ($dnssettings{'RECONNECT'} eq $Lang::tr{'reconnect'}) {
 	system("/usr/local/bin/redctrl restart >/dev/null 2>&1 &");
 	&Header::openbox('100%', 'left', $Lang::tr{'dns address recon'} );
 	print "<font class='base'>$Lang::tr{'dns address done'}</font>\n";
@@ -104,7 +104,7 @@ print <<END
     <td colspan="2"><div align="center">
         <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type='submit' name='RECONNECT' value='$Lang::tr{'dns reconnection'}' />
+        <input type='submit' name='RECONNECT' value='$Lang::tr{'reconnect'}' />
         </div>
       </td>
   </tr>
