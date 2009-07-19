@@ -24,9 +24,14 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 /etc/init.d/collectd stop
+/etc/init.d/snort stop
 extract_files
 rm -rf /var/log/rrd*//collectd/localhost/disk-*[0-9]*
 rm -rf /srv/web/ipfire/cgi-bin/networks.cgi
+rm -rf /etc/snort/rules/community-*
+cat /etc/snort/snort.conf | grep -v community- > /tmp/snort.conf
+mv -f /tmp/snort.conf /etc/snort/snort.conf
 /etc/init.d/collectd start
+/etc/init.d/snort start
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 depmod -a
