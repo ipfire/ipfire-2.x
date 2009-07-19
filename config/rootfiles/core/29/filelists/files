@@ -4,6 +4,7 @@ etc/system-release
 lib/firmware/av7110/bootcode.bin
 srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/html/blob.gif
