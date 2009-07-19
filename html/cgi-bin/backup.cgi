@@ -230,9 +230,17 @@ delete $addons{$_};
 my $Datei = "/var/ipfire/backup/addons/backup/".$_.".ipf";
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024;
-$Size = sprintf("%2d", $Size);
+
 if ( -e $Datei ){
-print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+	if ($Size < 1) {
+			$Size = sprintf("%.2f", $Size);
+			print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+	} else {
+			$Size = sprintf("%2d", $Size);
+			print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+
+	}
+
 print <<END
 	<td align='right' width='5'>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
