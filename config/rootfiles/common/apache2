@@ -1306,6 +1306,7 @@ srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/connscheduler.cgi
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 #srv/web/ipfire/cgi-bin/dial
@@ -1335,6 +1336,7 @@ srv/web/ipfire/cgi-bin/logs.cgi
 #srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromport.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/summary.dat
 #srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
+srv/web/ipfire/cgi-bin/mac.cgi
 srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
@@ -1384,6 +1386,7 @@ srv/web/ipfire/html
 #srv/web/ipfire/html/images/boxtop3.png
 #srv/web/ipfire/html/images/clock.gif
 #srv/web/ipfire/html/images/delete.gif
+#srv/web/ipfire/html/images/dns_link.png
 #srv/web/ipfire/html/images/down.gif
 #srv/web/ipfire/html/images/download.png
 #srv/web/ipfire/html/images/edit.gif
