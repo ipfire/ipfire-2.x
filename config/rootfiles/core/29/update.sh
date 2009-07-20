@@ -34,4 +34,8 @@ mv -f /tmp/snort.conf /etc/snort/snort.conf
 /etc/init.d/collectd start
 /etc/init.d/snort start
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+#Remove some old compat-wireless modules (why they have change the path ?)
+rm -rf /lib/modules/2.6.27.25-ipfire/kernel/drivers/net/wireless/ath?k
+rm -rf /lib/modules/2.6.27.25-ipfire/kernel/drivers/net/wireless/rtl818?.ko
+#Rebuild module dep's
 depmod -a
