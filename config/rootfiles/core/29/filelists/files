@@ -23,3 +23,4 @@ srv/web/ipfire/cgi-bin/mac.cgi
 srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/html/images/indicator.gif
 srv/web/ipfire/html/images/dns_link.png
+srv/web/ipfire/cgi-bin/qos.cgi
