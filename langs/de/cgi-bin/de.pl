@@ -1369,6 +1369,7 @@
 'pulse' => 'Puls',
 'pulse dial' => 'Pulswahl:',
 'qos graphs' => 'Qos Diagramme',
+'qos warning' => 'Die Regel <strong>muss</strong> wieder gespeichert werden, ansonsten wird sie verworfen!',
 'quick playlist' => 'Quick Playlist',
 'ram' => 'RAM-Speicher',
 'read bytes' => 'Gelesene Bytes',

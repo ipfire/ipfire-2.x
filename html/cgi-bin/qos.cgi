@@ -1084,6 +1084,7 @@ END
 		<tr><td width='33%' align='right'>$Lang::tr{'destination ip'}:
 		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOLEVEL7' value='$Lang::tr{'save'}' />
+		<tr><td colspan="3" align='center'><font color="red"><em>$Lang::tr{'qos warning'}</em></font>
 		</table></form>
 END
 ;

@@ -1397,6 +1397,7 @@
 'pulse' => 'Pulse',
 'pulse dial' => 'Pulse dial:',
 'qos graphs' => 'Qos Graphs',
+'qos warning' => 'The rule <strong>must</strong> be saved, otherwise it will be discarded!',
 'quick control' => 'Quick Control',
 'quick playlist' => 'Quick Playlist',
 'ram' => 'RAM',
