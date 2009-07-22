@@ -96,7 +96,7 @@ if (-e "/etc/snort/snort.conf") {
 	open(FILE, "/etc/snort/snort.conf") or die 'Unable to read snort config file.';
 	@snortconfig = <FILE>;
 	close(FILE);
-	open(FILE, "/etc/snort/snort.conf") or die 'Unable to write snort config file.';
+	open(FILE, ">/etc/snort/snort.conf") or die 'Unable to write snort config file.';
 
     my @rules = `cd /etc/snort/rules/ && ls *.rules`;    # With this loop the rule might be display with correct rulepath set
   	foreach (@rules) {
