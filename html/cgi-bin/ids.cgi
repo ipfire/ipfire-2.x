@@ -456,9 +456,8 @@ print <<END
 </tr>
 <tr>
 	<td><br />
-		$Lang::tr{'ids rules license'} <a href='http://www.snort.org/' target='_blank'>http://www.snort.org</a>.<br />
-		<br />
-		$Lang::tr{'ids rules license2'} <a href='http://www.snort.org/reg-bin/userprefs.cgi' target='_blank'>USER PREFERENCES</a>, $Lang::tr{'ids rules license3'}<br />
+		$Lang::tr{'ids rules license'} <a href='https://www.snort.org/signup' target='_blank'>www.snort.org</a>$Lang::tr{'ids rules license1'}<br /><br />
+		$Lang::tr{'ids rules license2'} <a href='https://www.snort.org/account/oinkcode' target='_blank'>Get an Oinkcode</a>, $Lang::tr{'ids rules license3'}
 	</td>
 </tr>
 <tr>
