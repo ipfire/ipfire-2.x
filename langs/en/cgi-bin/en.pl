@@ -1405,6 +1405,8 @@
 'read list' => 'list with readonly hosts',
 'real address' => 'Real Address',
 'reboot' => 'Reboot',
+'reboot ask' => 'Reboot?',
+'reboot sure' => 'Are you sure that you want to restart?',
 'reboot schedule' => 'Schedule IPFire reboots',
 'rebooting' => 'Rebooting',
 'rebooting ipfire' => 'Rebooting IPFire',

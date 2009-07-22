@@ -1376,6 +1376,8 @@
 'read list' => 'Liste der Leseberechtigten',
 'real address' => 'Reale Addresse',
 'reboot' => 'Neustart',
+'reboot ask' => 'Neustart?',
+'reboot sure' => 'Sind Sie sicher das Sie neustarten wollen?',
 'reboot schedule' => 'Zeitsteuerung für IPFire Neustarts',
 'rebooting' => 'Starte neu ...',
 'rebooting ipfire' => 'Starte IPFire neu',
