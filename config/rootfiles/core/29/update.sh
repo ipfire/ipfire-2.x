@@ -31,6 +31,8 @@ rm -rf /srv/web/ipfire/cgi-bin/networks.cgi
 rm -rf /etc/snort/rules/community-*
 cat /etc/snort/snort.conf | grep -v community- > /tmp/snort.conf
 mv -f /tmp/snort.conf /etc/snort/snort.conf
+chown nobody.nobody /etc/snort/snort.conf
+chmod 644 /etc/snort/snort.conf
 /etc/init.d/collectd start
 /etc/init.d/snort start
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
