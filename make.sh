@@ -338,7 +338,7 @@ buildipfire() {
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
-  ipfiremake linux			XEN=1
+  ipfiremake linux-xen
   ipfiremake atl2			XEN=1
   ipfiremake kqemu			XEN=1
   ipfiremake v4l-dvb			XEN=1
