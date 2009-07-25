@@ -1,0 +1,23 @@
+From: Pavel Machek <pavel@suse.cz>
+Subject: mm: Do not disable memory hotplug when hibernation is enabled
+References: bnc#438914
+
+Signed-off-by: Rafael J. Wysocki <rjw@suse.de>
+
+diff -ur linux/mm/Kconfig linux.tmp/mm/Kconfig
+--- linux/mm/Kconfig	2008-10-27 10:10:59.000000000 +0100
++++ linux.tmp/mm/Kconfig	2008-10-29 10:02:41.000000000 +0100
+@@ -128,12 +128,9 @@
+ config MEMORY_HOTPLUG
+ 	bool "Allow for memory hot-add"
+ 	depends on SPARSEMEM || X86_64_ACPI_NUMA
+-	depends on HOTPLUG && !HIBERNATION && ARCH_ENABLE_MEMORY_HOTPLUG
++	depends on HOTPLUG && ARCH_ENABLE_MEMORY_HOTPLUG
+ 	depends on (IA64 || X86 || PPC64 || SUPERH || S390)
+ 
+-comment "Memory hotplug is currently incompatible with Software Suspend"
+-	depends on SPARSEMEM && HOTPLUG && HIBERNATION
+-
+ config MEMORY_HOTPLUG_SPARSE
+ 	def_bool y
+ 	depends on SPARSEMEM && MEMORY_HOTPLUG

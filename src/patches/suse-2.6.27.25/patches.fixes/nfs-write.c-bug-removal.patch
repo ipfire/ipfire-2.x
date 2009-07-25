@@ -1,0 +1,170 @@
+From: ffilz@us.ibm.com
+Subject: Revert "NFS: Allow redirtying of a completed unstable write."
+Patch-mainline: REVERT patch from 2.6.27
+References: 442267
+
+mainline commit e468bae97d243fe0e1515abaa1f7d0edf1476ad0
+introduces a BUG() that is apprently fairly easy to trigger.
+As it is just making a minor performance enhancement, it is best to
+revert the patch until the issue is better understood.
+
+Acked-by: NeilBrown <neilb@suse.de>
+Signed-off-by: Neil Brown <neilb@suse.de>
+
+---
+ fs/nfs/write.c |   65 ++++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 33 insertions(+), 32 deletions(-)
+
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -284,9 +284,12 @@ static int nfs_page_async_flush(struct n
+ 			return ret;
+ 		spin_lock(&inode->i_lock);
+ 	}
+-	if (test_bit(PG_CLEAN, &req->wb_flags)) {
++	if (test_bit(PG_NEED_COMMIT, &req->wb_flags)) {
++		/* This request is marked for commit */
+ 		spin_unlock(&inode->i_lock);
+-		BUG();
++		nfs_clear_page_tag_locked(req);
++		nfs_pageio_complete(pgio);
++		return 0;
+ 	}
+ 	if (nfs_set_page_writeback(page) != 0) {
+ 		spin_unlock(&inode->i_lock);
+@@ -460,6 +463,19 @@ nfs_mark_request_dirty(struct nfs_page *
+ 	__set_page_dirty_nobuffers(req->wb_page);
+ }
+ 
++/*
++ * Check if a request is dirty
++ */
++static inline int
++nfs_dirty_request(struct nfs_page *req)
++{
++	struct page *page = req->wb_page;
++
++	if (page == NULL || test_bit(PG_NEED_COMMIT, &req->wb_flags))
++		return 0;
++	return !PageWriteback(page);
++}
++
+ #if defined(CONFIG_NFS_V3) || defined(CONFIG_NFS_V4)
+ /*
+  * Add a request to the inode's commit list.
+@@ -472,7 +488,7 @@ nfs_mark_request_commit(struct nfs_page 
+ 
+ 	spin_lock(&inode->i_lock);
+ 	nfsi->ncommit++;
+-	set_bit(PG_CLEAN, &(req)->wb_flags);
++	set_bit(PG_NEED_COMMIT, &(req)->wb_flags);
+ 	radix_tree_tag_set(&nfsi->nfs_page_tree,
+ 			req->wb_index,
+ 			NFS_PAGE_TAG_COMMIT);
+@@ -483,19 +499,6 @@ nfs_mark_request_commit(struct nfs_page 
+ 	__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+ }
+ 
+-static int
+-nfs_clear_request_commit(struct nfs_page *req)
+-{
+-	struct page *page = req->wb_page;
+-
+-	if (test_and_clear_bit(PG_CLEAN, &(req)->wb_flags)) {
+-		dec_zone_page_state(page, NR_UNSTABLE_NFS);
+-		dec_bdi_stat(page_file_mapping(page)->backing_dev_info, BDI_RECLAIMABLE);
+-		return 1;
+-	}
+-	return 0;
+-}
+-
+ static inline
+ int nfs_write_need_commit(struct nfs_write_data *data)
+ {
+@@ -505,7 +508,7 @@ int nfs_write_need_commit(struct nfs_wri
+ static inline
+ int nfs_reschedule_unstable_write(struct nfs_page *req)
+ {
+-	if (test_and_clear_bit(PG_NEED_COMMIT, &req->wb_flags)) {
++	if (test_bit(PG_NEED_COMMIT, &req->wb_flags)) {
+ 		nfs_mark_request_commit(req);
+ 		return 1;
+ 	}
+@@ -521,12 +524,6 @@ nfs_mark_request_commit(struct nfs_page 
+ {
+ }
+ 
+-static inline int
+-nfs_clear_request_commit(struct nfs_page *req)
+-{
+-	return 0;
+-}
+-
+ static inline
+ int nfs_write_need_commit(struct nfs_write_data *data)
+ {
+@@ -584,8 +581,11 @@ static void nfs_cancel_commit_list(struc
+ 
+ 	while(!list_empty(head)) {
+ 		req = nfs_list_entry(head->next);
++		dec_zone_page_state(req->wb_page, NR_UNSTABLE_NFS);
++		dec_bdi_stat(req->wb_page->mapping->backing_dev_info,
++				BDI_RECLAIMABLE);
+ 		nfs_list_remove_request(req);
+-		nfs_clear_request_commit(req);
++		clear_bit(PG_NEED_COMMIT, &(req)->wb_flags);
+ 		nfs_inode_remove_request(req);
+ 		nfs_unlock_request(req);
+ 	}
+@@ -657,7 +657,8 @@ static struct nfs_page *nfs_try_to_updat
+ 		 * Note: nfs_flush_incompatible() will already
+ 		 * have flushed out requests having wrong owners.
+ 		 */
+-		if (offset > rqend
++		if (!nfs_dirty_request(req)
++		    || offset > rqend
+ 		    || end < req->wb_offset)
+ 			goto out_flushme;
+ 
+@@ -673,10 +674,6 @@ static struct nfs_page *nfs_try_to_updat
+ 		spin_lock(&inode->i_lock);
+ 	}
+ 
+-	if (nfs_clear_request_commit(req))
+-		radix_tree_tag_clear(&NFS_I(inode)->nfs_page_tree,
+-				req->wb_index, NFS_PAGE_TAG_COMMIT);
+-
+ 	/* Okay, the request matches. Update the region */
+ 	if (offset < req->wb_offset) {
+ 		req->wb_offset = offset;
+@@ -758,7 +755,8 @@ int nfs_flush_incompatible(struct file *
+ 		req = nfs_page_find_request(page);
+ 		if (req == NULL)
+ 			return 0;
+-		do_flush = req->wb_page != page || req->wb_context != ctx;
++		do_flush = req->wb_page != page || req->wb_context != ctx
++			|| !nfs_dirty_request(req);
+ 		nfs_release_request(req);
+ 		if (!do_flush)
+ 			return 0;
+@@ -1363,7 +1361,10 @@ static void nfs_commit_release(void *cal
+ 	while (!list_empty(&data->pages)) {
+ 		req = nfs_list_entry(data->pages.next);
+ 		nfs_list_remove_request(req);
+-		nfs_clear_request_commit(req);
++		clear_bit(PG_NEED_COMMIT, &(req)->wb_flags);
++		dec_zone_page_state(req->wb_page, NR_UNSTABLE_NFS);
++		dec_bdi_stat(req->wb_page->mapping->backing_dev_info,
++				BDI_RECLAIMABLE);
+ 
+ 		dprintk("NFS:       commit (%s/%lld %d@%lld)",
+ 			req->wb_context->path.dentry->d_inode->i_sb->s_id,
+@@ -1539,7 +1540,7 @@ int nfs_wb_page_cancel(struct inode *ino
+ 		req = nfs_page_find_request(page);
+ 		if (req == NULL)
+ 			goto out;
+-		if (test_bit(PG_CLEAN, &req->wb_flags)) {
++		if (test_bit(PG_NEED_COMMIT, &req->wb_flags)) {
+ 			nfs_release_request(req);
+ 			break;
+ 		}

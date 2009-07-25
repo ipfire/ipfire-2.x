@@ -1,0 +1,54 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Kernel Oops during path failover
+References: bnc#458393
+
+I've started a new test run with 10 multipath devices and 100
+testcycles (120sec off, 120 sec on). Test failed with an "Oops":
+
+Jan 24 00:19:35 z9lp02 kernel: Oops: 0038 [#1] SMP 
+Jan 24 00:19:35 z9lp02 kernel: Modules linked in: iptable_filter ip_tables
+x_tables dm_round_robin sg sd_mod crc_t10dif zfcp scsi_transport_fc scsi_tgt
+dm_multipath scsi_dh scsi_mod fuse loop dm_mod qeth_l3 ipv6 qeth qdio ccwgroup
+chsc_sch dasd_eckd_mod dasd_mod ext3 mbcache jbd
+Jan 24 00:19:35 z9lp02 kernel: Supported: Yes
+Jan 24 00:19:35 z9lp02 kernel: CPU: 3 Not tainted 2.6.27.12-2.7-default #1
+Jan 24 00:19:35 z9lp02 kernel: Process kblockd/3 (pid: 24, task:
+000000007fad6638, ksp: 000000007fadbd38)
+Jan 24 00:19:35 z9lp02 kernel: Krnl PSW : 0404e00180000000 0000000000192216
+(mempool_free+0x2e/0xc4)
+
+It looks as if we don't check the 'info' field before accessing it; it
+might well be NULL if the bio couldn't be initialized.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/md/dm.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/dm.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/dm.c
+@@ -714,13 +714,14 @@ static void free_bio_clone(struct reques
+ 	struct dm_rq_target_io *tio = clone->end_io_data;
+ 	struct mapped_device *md = tio->md;
+ 	struct bio *bio;
+-	struct dm_clone_bio_info *info;
+ 
+ 	while ((bio = clone->bio) != NULL) {
+ 		clone->bio = bio->bi_next;
+ 
+-		info = bio->bi_private;
+-		free_bio_info(md, info);
++		if (bio->bi_private) {
++			struct dm_clone_bio_info *info = bio->bi_private;
++			free_bio_info(md, info);
++		}
+ 
+ 		bio->bi_private = md->bs;
+ 		bio_put(bio);
+@@ -1483,6 +1484,7 @@ static int dm_prep_fn(struct request_que
+ 	tio->orig = rq;
+ 	tio->error = 0;
+ 	memset(&tio->info, 0, sizeof(tio->info));
++	memset(&tio->clone, 0, sizeof(tio->clone));
+ 
+ 	clone = &tio->clone;
+ 	if (setup_clone(clone, rq, tio)) {

@@ -1,0 +1,66 @@
+From: Nick Piggin <npiggin@suse.de>
+Subject: be more aggressive with zone reclaims
+References: bnc#476525
+Patch-mainline: no
+
+The zone reclaim design is not very good for parallel allocations.
+The primary problem is that only one thread is allowed to perform
+zone-reclaim at a time. If another thread needs memory from that
+zone/node, then its zone-reclaim will fail and it will be forced
+to fall back to allocating from another zone.
+
+Additionally, the default zone reclaim priority is insufficient
+for massively parallel allocations. Lower ZONE_RECLAIM_PRIORITY
+to fix it. This can result in higher latency spikes, but similar
+kind of page allocation latency can often be encountered as
+normal part of page reclaim when pagecache fills memory.
+
+Signed-off-by: Petr Tesarik <ptesarik@suse.cz>
+
+---
+ mm/vmscan.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/mm/vmscan.c	2008-10-20 17:24:19.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH/mm/vmscan.c	2009-06-29 12:59:09.000000000 +0200
+@@ -1988,7 +1988,7 @@ int zone_reclaim_mode __read_mostly;
+  * of a node considered for each zone_reclaim. 4 scans 1/16th of
+  * a zone.
+  */
+-#define ZONE_RECLAIM_PRIORITY 4
++#define ZONE_RECLAIM_PRIORITY 0
+ 
+ /*
+  * Percentage of pages in a zone that must be unmapped for zone_reclaim to
+@@ -2052,6 +2052,8 @@ static int __zone_reclaim(struct zone *z
+ 
+ 	slab_reclaimable = zone_page_state(zone, NR_SLAB_RECLAIMABLE);
+ 	if (slab_reclaimable > zone->min_slab_pages) {
++		unsigned long lru_pages = zone_page_state(zone, NR_ACTIVE)
++					+ zone_page_state(zone, NR_INACTIVE);
+ 		/*
+ 		 * shrink_slab() does not currently allow us to determine how
+ 		 * many pages were freed in this zone. So we take the current
+@@ -2062,10 +2064,7 @@ static int __zone_reclaim(struct zone *z
+ 		 * Note that shrink_slab will free memory on all zones and may
+ 		 * take a long time.
+ 		 */
+-		while (shrink_slab(sc.nr_scanned, gfp_mask, order) &&
+-			zone_page_state(zone, NR_SLAB_RECLAIMABLE) >
+-				slab_reclaimable - nr_pages)
+-			;
++		shrink_slab(sc.nr_scanned, gfp_mask, lru_pages);
+ 
+ 		/*
+ 		 * Update nr_reclaimed by the number of slab pages we
+@@ -2120,10 +2119,7 @@ int zone_reclaim(struct zone *zone, gfp_
+ 	if (node_state(node_id, N_CPU) && node_id != numa_node_id())
+ 		return 0;
+ 
+-	if (zone_test_and_set_flag(zone, ZONE_RECLAIM_LOCKED))
+-		return 0;
+ 	ret = __zone_reclaim(zone, gfp_mask, order);
+-	zone_clear_flag(zone, ZONE_RECLAIM_LOCKED);
+ 
+ 	return ret;
+ }

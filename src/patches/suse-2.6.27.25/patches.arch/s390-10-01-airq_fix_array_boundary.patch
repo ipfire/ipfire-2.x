@@ -1,0 +1,30 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: cio: airq - fix array boundary
+References: bnc#482818,LTC#51920
+
+Symptom:     Potential memory overwrite.
+Problem:     In airq array definitions use a length of MAX_ISC, which is
+             a valid isc number. So if drivers are using adapter
+             interrupts with the lowest isc memory may be overwritten.
+Solution:    Use array lengths of MAX_ISC+1
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/cio/airq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-sles11/drivers/s390/cio/airq.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/airq.c	2008-10-10 00:13:53.000000000 +0200
++++ linux-sles11/drivers/s390/cio/airq.c	2009-02-27 14:32:43.000000000 +0100
+@@ -34,8 +34,8 @@ struct airq_t {
+ 	void *drv_data;
+ };
+ 
+-static union indicator_t indicators[MAX_ISC];
+-static struct airq_t *airqs[MAX_ISC][NR_AIRQS];
++static union indicator_t indicators[MAX_ISC+1];
++static struct airq_t *airqs[MAX_ISC+1][NR_AIRQS];
+ 
+ static int register_airq(struct airq_t *airq, u8 isc)
+ {

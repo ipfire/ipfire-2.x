@@ -1,0 +1,175 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: kernel: fix dynamic TASK_SIZE handling.
+References: bnc#484767,LTC#52259
+
+Symptom:     System crash (memory overwrite) on access to /proc/<pid>/pagemap.
+Problem:     pagemap_read() is using TASK_SIZE_OF to determine the address
+             range for the generic page table walker. With dynamic page table
+             upgrades on s390, this does not reflect the true task size, but
+             the maximum task size, with the maximum level of page tables. If
+             a process has not yet mmapped enough memory, the page tables will
+             not be completely upgraded and the generic page table walker will
+             access (and write) beyond the page tables.
+Solution:    Change TASK_SIZE/TASK_SIZE_OF to reflect the current size of the
+             address space.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ arch/s390/include/asm/mman.h      |    5 +++
+ arch/s390/include/asm/processor.h |    5 +--
+ arch/s390/mm/mmap.c               |   48 +++++++++++++++++++++++++-------------
+ arch/s390/mm/pgtable.c            |    2 +
+ 4 files changed, 41 insertions(+), 19 deletions(-)
+
+Index: linux-2.6.27/arch/s390/include/asm/mman.h
+===================================================================
+--- linux-2.6.27.orig/arch/s390/include/asm/mman.h
++++ linux-2.6.27/arch/s390/include/asm/mman.h
+@@ -22,4 +22,9 @@
+ #define MCL_CURRENT	1		/* lock all current mappings */
+ #define MCL_FUTURE	2		/* lock all future mappings */
+ 
++#if defined(__KERNEL__) && !defined(__ASSEMBLY__) && defined(CONFIG_64BIT)
++int s390_mmap_check(unsigned long addr, unsigned long len);
++#define arch_mmap_check(addr,len,flags)	s390_mmap_check(addr,len)
++#endif
++
+ #endif /* __S390_MMAN_H__ */
+Index: linux-2.6.27/arch/s390/include/asm/processor.h
+===================================================================
+--- linux-2.6.27.orig/arch/s390/include/asm/processor.h
++++ linux-2.6.27/arch/s390/include/asm/processor.h
+@@ -60,7 +60,7 @@ extern void print_cpu_info(struct cpuinf
+ extern int get_cpu_capability(unsigned int *);
+ 
+ /*
+- * User space process size: 2GB for 31 bit, 4TB for 64 bit.
++ * User space process size: 2GB for 31 bit, 4TB or 8PT for 64 bit.
+  */
+ #ifndef __s390x__
+ 
+@@ -69,8 +69,7 @@ extern int get_cpu_capability(unsigned i
+ 
+ #else /* __s390x__ */
+ 
+-#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk,TIF_31BIT) ? \
+-					(1UL << 31) : (1UL << 53))
++#define TASK_SIZE_OF(tsk)	((tsk)->mm->context.asce_limit)
+ #define TASK_UNMAPPED_BASE	(test_thread_flag(TIF_31BIT) ? \
+ 					(1UL << 30) : (1UL << 41))
+ #define TASK_SIZE		TASK_SIZE_OF(current)
+Index: linux-2.6.27/arch/s390/mm/mmap.c
+===================================================================
+--- linux-2.6.27.orig/arch/s390/mm/mmap.c
++++ linux-2.6.27/arch/s390/mm/mmap.c
+@@ -35,7 +35,7 @@
+  * Leave an at least ~128 MB hole.
+  */
+ #define MIN_GAP (128*1024*1024)
+-#define MAX_GAP (TASK_SIZE/6*5)
++#define MAX_GAP (STACK_TOP/6*5)
+ 
+ static inline unsigned long mmap_base(void)
+ {
+@@ -46,7 +46,7 @@ static inline unsigned long mmap_base(vo
+ 	else if (gap > MAX_GAP)
+ 		gap = MAX_GAP;
+ 
+-	return TASK_SIZE - (gap & PAGE_MASK);
++	return STACK_TOP - (gap & PAGE_MASK);
+ }
+ 
+ static inline int mmap_is_legacy(void)
+@@ -89,42 +89,58 @@ EXPORT_SYMBOL_GPL(arch_pick_mmap_layout)
+ 
+ #else
+ 
++int s390_mmap_check(unsigned long addr, unsigned long len)
++{
++	if (!test_thread_flag(TIF_31BIT) &&
++	    len >= TASK_SIZE && TASK_SIZE < (1UL << 53))
++		return crst_table_upgrade(current->mm, 1UL << 53);
++	return 0;
++}
++
+ static unsigned long
+ s390_get_unmapped_area(struct file *filp, unsigned long addr,
+ 		unsigned long len, unsigned long pgoff, unsigned long flags)
+ {
+ 	struct mm_struct *mm = current->mm;
++	unsigned long area;
+ 	int rc;
+ 
+-	addr = arch_get_unmapped_area(filp, addr, len, pgoff, flags);
+-	if (addr & ~PAGE_MASK)
+-		return addr;
+-	if (unlikely(mm->context.asce_limit < addr + len)) {
+-		rc = crst_table_upgrade(mm, addr + len);
++	area = arch_get_unmapped_area(filp, addr, len, pgoff, flags);
++	if (!(area & ~PAGE_MASK))
++		return area;
++	if (area == -ENOMEM &&
++	    !test_thread_flag(TIF_31BIT) && TASK_SIZE < (1UL << 53)) {
++		/* Upgrade the page table to 4 levels and retry. */
++		rc = crst_table_upgrade(mm, 1UL << 53);
+ 		if (rc)
+ 			return (unsigned long) rc;
++		area = arch_get_unmapped_area(filp, addr, len, pgoff, flags);
+ 	}
+-	return addr;
++	return area;
+ }
+ 
+ static unsigned long
+-s390_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
++s390_get_unmapped_area_topdown(struct file *filp, const unsigned long addr,
+ 			  const unsigned long len, const unsigned long pgoff,
+ 			  const unsigned long flags)
+ {
+ 	struct mm_struct *mm = current->mm;
+-	unsigned long addr = addr0;
++	unsigned long area;
+ 	int rc;
+ 
+-	addr = arch_get_unmapped_area_topdown(filp, addr, len, pgoff, flags);
+-	if (addr & ~PAGE_MASK)
+-		return addr;
+-	if (unlikely(mm->context.asce_limit < addr + len)) {
+-		rc = crst_table_upgrade(mm, addr + len);
++	area = arch_get_unmapped_area_topdown(filp, addr, len, pgoff, flags);
++	if (!(area & ~PAGE_MASK))
++		return area;
++	if (area == -ENOMEM &&
++	    !test_thread_flag(TIF_31BIT) && TASK_SIZE < (1UL << 53)) {
++		/* Upgrade the page table to 4 levels and retry. */
++		rc = crst_table_upgrade(mm, 1UL << 53);
+ 		if (rc)
+ 			return (unsigned long) rc;
++		area = arch_get_unmapped_area_topdown(filp, addr, len,
++						      pgoff, flags);
+ 	}
+-	return addr;
++	return area;
+ }
+ /*
+  * This function, called very early during the creation of a new
+Index: linux-2.6.27/arch/s390/mm/pgtable.c
+===================================================================
+--- linux-2.6.27.orig/arch/s390/mm/pgtable.c
++++ linux-2.6.27/arch/s390/mm/pgtable.c
+@@ -117,6 +117,7 @@ repeat:
+ 		crst_table_init(table, entry);
+ 		pgd_populate(mm, (pgd_t *) table, (pud_t *) pgd);
+ 		mm->pgd = (pgd_t *) table;
++		mm->task_size = mm->context.asce_limit;
+ 		table = NULL;
+ 	}
+ 	spin_unlock(&mm->page_table_lock);
+@@ -154,6 +155,7 @@ void crst_table_downgrade(struct mm_stru
+ 			BUG();
+ 		}
+ 		mm->pgd = (pgd_t *) (pgd_val(*pgd) & _REGION_ENTRY_ORIGIN);
++		mm->task_size = mm->context.asce_limit;
+ 		crst_table_free(mm, (unsigned long *) pgd);
+ 	}
+ 	update_mm(mm, current);

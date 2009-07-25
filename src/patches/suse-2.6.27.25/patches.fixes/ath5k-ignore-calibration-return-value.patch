@@ -1,0 +1,50 @@
+From 8b0162a3dc5c30e862b7a73da29e32de3170f5e4 Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@openwrt.org>
+Date: Mon, 3 Nov 2008 11:27:38 +0100
+Subject: [PATCH] ath5k: ignore the return value of ath5k_hw_noise_floor_calibration
+References: bnc#446541
+Patch-mainline: 2.6.28-rc7
+
+Noise floor calibration occasionally fails on Atheros hardware.
+This is not fatal and can happen if there's simply too much
+noise on the air. Ignoring the calibration error is the right
+thing to do here, because when the error is ignored, the hardware
+will still work, whereas if the error causes the driver to bail out
+of a bigger configuration function and does not configure the tx
+queues or the IMR (as is the case in reset.c), the hw no longer
+works properly until the next reset.
+
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+ drivers/net/wireless/ath5k/hw.c  |    4 +---
+ drivers/net/wireless/ath5k/phy.c |    4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+--- a/drivers/net/wireless/ath5k/hw.c
++++ b/drivers/net/wireless/ath5k/hw.c
+@@ -1131,9 +1131,7 @@ int ath5k_hw_reset(struct ath5k_hw *ah,
+ 	 *
+ 	 * XXX: Find an interval that's OK for all cards...
+ 	 */
+-	ret = ath5k_hw_noise_floor_calibration(ah, channel->center_freq);
+-	if (ret)
+-		return ret;
++	ath5k_hw_noise_floor_calibration(ah, channel->center_freq);
+ 
+ 	/*
+ 	 * Reset queues and start beacon timers at the end of the reset routine
+--- a/drivers/net/wireless/ath5k/phy.c
++++ b/drivers/net/wireless/ath5k/phy.c
+@@ -2193,9 +2193,7 @@ static int ath5k_hw_rf5110_calibrate(str
+ 		return ret;
+ 	}
+ 
+-	ret = ath5k_hw_noise_floor_calibration(ah, channel->center_freq);
+-	if (ret)
+-		return ret;
++	ath5k_hw_noise_floor_calibration(ah, channel->center_freq);
+ 
+ 	/*
+ 	 * Re-enable RX/TX and beacons

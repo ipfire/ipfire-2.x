@@ -1,0 +1,139 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: hda - Support sync after writing a verb
+Patch-mainline: 
+References: bnc#502903
+
+This patch adds a debug mode to make the codec communication
+synchronous.  Define SND_HDA_SUPPORT_SYNC_WRITE in hda_codec.c,
+and the call of snd_hda_codec_write*() will become synchronous,
+i.e. wait for the reply from the codec at each time issuing a verb.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/hda_codec.c |   87 +++++++++++++++++++++++++---------------------
+ 1 file changed, 49 insertions(+), 38 deletions(-)
+
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -176,6 +176,27 @@
+ 				>> AC_DEFCFG_DEVICE_SHIFT];
+ }
+ 
++/*
++ * Send and receive a verb
++ */
++static int codec_exec_verb(struct hda_codec *codec, unsigned int cmd,
++			   unsigned int *res)
++{
++	struct hda_bus *bus = codec->bus;
++	int err;
++
++	if (res)
++		*res = -1;
++	snd_hda_power_up(codec);
++	mutex_lock(&bus->cmd_mutex);
++	err = bus->ops.command(bus, cmd);
++	if (!err && res)
++		*res = bus->ops.get_response(bus);
++	mutex_unlock(&bus->cmd_mutex);
++	snd_hda_power_down(codec);
++	return err;
++}
++
+ /**
+  * snd_hda_codec_read - send a command and get the response
+  * @codec: the HDA codec
+@@ -192,21 +213,17 @@
+ 				int direct,
+ 				unsigned int verb, unsigned int parm)
+ {
+-	struct hda_bus *bus = codec->bus;
++	unsigned cmd = make_codec_cmd(codec, nid, direct, verb, parm);
+ 	unsigned int res;
+-
+-	res = make_codec_cmd(codec, nid, direct, verb, parm);
+-	snd_hda_power_up(codec);
+-	mutex_lock(&bus->cmd_mutex);
+-	if (!bus->ops.command(bus, res))
+-		res = bus->ops.get_response(bus);
+-	else
+-		res = (unsigned int)-1;
+-	mutex_unlock(&bus->cmd_mutex);
+-	snd_hda_power_down(codec);
++	codec_exec_verb(codec, cmd, &res);
+ 	return res;
+ }
+ 
++/* Define the below to send and receive verbs synchronously.
++ * If you often get any codec communication errors, this is worth to try.
++ */
++#define SND_HDA_SUPPORT_SYNC_WRITE
++
+ /**
+  * snd_hda_codec_write - send a single command without waiting for response
+  * @codec: the HDA codec
+@@ -222,17 +239,13 @@
+ int snd_hda_codec_write(struct hda_codec *codec, hda_nid_t nid, int direct,
+ 			 unsigned int verb, unsigned int parm)
+ {
+-	struct hda_bus *bus = codec->bus;
++	unsigned int cmd = make_codec_cmd(codec, nid, direct, verb, parm);
++#ifdef SND_HDA_SUPPORT_SYNC_WRITE
+ 	unsigned int res;
+-	int err;
+-
+-	res = make_codec_cmd(codec, nid, direct, verb, parm);
+-	snd_hda_power_up(codec);
+-	mutex_lock(&bus->cmd_mutex);
+-	err = bus->ops.command(bus, res);
+-	mutex_unlock(&bus->cmd_mutex);
+-	snd_hda_power_down(codec);
+-	return err;
++	return codec_exec_verb(codec, cmd, &res);
++#else
++	return codec_exec_verb(codec, cmd, NULL);
++#endif
+ }
+ 
+ /**
+@@ -1876,24 +1889,22 @@
+ int snd_hda_codec_write_cache(struct hda_codec *codec, hda_nid_t nid,
+ 			      int direct, unsigned int verb, unsigned int parm)
+ {
+-	struct hda_bus *bus = codec->bus;
+-	unsigned int res;
+-	int err;
++	int err = snd_hda_codec_write(codec, nid, direct, verb, parm);
++	struct hda_cache_head *c;
++	u32 key;
+ 
+-	res = make_codec_cmd(codec, nid, direct, verb, parm);
+-	snd_hda_power_up(codec);
+-	mutex_lock(&bus->cmd_mutex);
+-	err = bus->ops.command(bus, res);
+-	if (!err) {
+-		struct hda_cache_head *c;
+-		u32 key = build_cmd_cache_key(nid, verb);
+-		c = get_alloc_hash(&codec->cmd_cache, key);
+-		if (c)
+-			c->val = parm;
+-	}
+-	mutex_unlock(&bus->cmd_mutex);
+-	snd_hda_power_down(codec);
+-	return err;
++	if (err < 0)
++		return err;
++	/* parm may contain the verb stuff for get/set amp */
++	verb = verb | (parm >> 8);
++	parm &= 0xff;
++	key = build_cmd_cache_key(nid, verb);
++	mutex_lock(&codec->bus->cmd_mutex);
++	c = get_alloc_hash(&codec->cmd_cache, key);
++	if (c)
++		c->val = parm;
++	mutex_unlock(&codec->bus->cmd_mutex);
++	return 0;
+ }
+ 
+ /* resume the all commands from the cache */

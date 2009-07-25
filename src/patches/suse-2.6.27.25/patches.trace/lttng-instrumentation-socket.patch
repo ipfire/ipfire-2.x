@@ -1,0 +1,113 @@
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: LTTng instrumentation - socket
+
+Original patch header:
+  LTTng instrumentation - socket
+  
+  Instrument socket creation and activity (msg send, receive). Socket "call"
+  instrumentation should be completed.
+  
+  Those tracepoints are used by LTTng.
+  
+  About the performance impact of tracepoints (which is comparable to markers),
+  even without immediate values optimizations, tests done by Hideo Aoki on ia64
+  show no regression. His test case was using hackbench on a kernel where
+  scheduler instrumentation (about 5 events in code scheduler code) was added.
+  See the "Tracepoints" patch header for performance result detail.
+  
+  Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+  CC: netdev@vger.kernel.org
+  CC: David S. Miller <davem@davemloft.net>
+  CC: Masami Hiramatsu <mhiramat@redhat.com>
+  CC: 'Peter Zijlstra' <peterz@infradead.org>
+  CC: "Frank Ch. Eigler" <fche@redhat.com>
+  CC: 'Ingo Molnar' <mingo@elte.hu>
+  CC: 'Hideo AOKI' <haoki@redhat.com>
+  CC: Takashi Nishiie <t-nishiie@np.css.fujitsu.com>
+  CC: 'Steven Rostedt' <rostedt@goodmis.org>
+  CC: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+
+Acked-by: Jan Blunck <jblunck@suse.de>
+--- 
+---
+ include/trace/socket.h |   26 ++++++++++++++++++++++++++
+ net/socket.c           |    7 +++++++
+ 2 files changed, 33 insertions(+)
+
+--- /dev/null
++++ b/include/trace/socket.h
+@@ -0,0 +1,26 @@
++#ifndef _TRACE_SOCKET_H
++#define _TRACE_SOCKET_H
++
++#include <net/sock.h>
++#include <linux/tracepoint.h>
++
++DEFINE_TRACE(socket_sendmsg,
++	TPPROTO(struct socket *sock, struct msghdr *msg, size_t size, int ret),
++	TPARGS(sock, msg, size, ret));
++DEFINE_TRACE(socket_recvmsg,
++	TPPROTO(struct socket *sock, struct msghdr *msg, size_t size, int flags,
++		int ret),
++	TPARGS(sock, msg, size, flags, ret));
++DEFINE_TRACE(socket_create,
++	TPPROTO(struct socket *sock, int fd),
++	TPARGS(sock, fd));
++/*
++ * socket_call
++ *
++ * TODO : This tracepoint should be expanded to cover each element of the
++ * switch in sys_socketcall().
++ */
++DEFINE_TRACE(socket_call,
++	TPPROTO(int call, unsigned long a0),
++	TPARGS(call, a0));
++#endif
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -96,6 +96,7 @@
+ 
+ #include <net/sock.h>
+ #include <linux/netfilter.h>
++#include <trace/socket.h>
+ 
+ static int sock_no_open(struct inode *irrelevant, struct file *dontcare);
+ static ssize_t sock_aio_read(struct kiocb *iocb, const struct iovec *iov,
+@@ -575,6 +576,7 @@ int sock_sendmsg(struct socket *sock, st
+ 	ret = __sock_sendmsg(&iocb, sock, msg, size);
+ 	if (-EIOCBQUEUED == ret)
+ 		ret = wait_on_sync_kiocb(&iocb);
++	trace_socket_sendmsg(sock, msg, size, ret);
+ 	return ret;
+ }
+ 
+@@ -654,10 +656,12 @@ int sock_recvmsg(struct socket *sock, st
+ 	int ret;
+ 
+ 	init_sync_kiocb(&iocb, NULL);
++
+ 	iocb.private = &siocb;
+ 	ret = __sock_recvmsg(&iocb, sock, msg, size, flags);
+ 	if (-EIOCBQUEUED == ret)
+ 		ret = wait_on_sync_kiocb(&iocb);
++	trace_socket_recvmsg(sock, msg, size, flags, ret);
+ 	return ret;
+ }
+ 
+@@ -1244,6 +1248,7 @@ SYSCALL_DEFINE3(socket, int, family, int
+ 	if (retval < 0)
+ 		goto out_release;
+ 
++	trace_socket_create(sock, retval);
+ out:
+ 	/* It may be already another descriptor 8) Not kernel problem. */
+ 	return retval;
+@@ -2131,6 +2136,8 @@ SYSCALL_DEFINE2(socketcall, int, call, u
+ 	a0 = a[0];
+ 	a1 = a[1];
+ 
++	trace_socket_call(call, a0);
++
+ 	switch (call) {
+ 	case SYS_SOCKET:
+ 		err = sys_socket(a0, a1, a[2]);

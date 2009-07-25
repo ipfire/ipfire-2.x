@@ -1,0 +1,47 @@
+From: Mike Christie <michaelc@cs.wisc.edu>
+Date: Wed Sep 24 11:46:15 2008 -0500
+Subject: fix locking in iscsi_eh_device_reset
+X-Git: a343914831a8e29d89af3b26495ab1136a9e3153
+References: bnc#498369
+
+We must be using the bh spin locking functions in
+iscsi_eh_device_reset becuase the session lock interacts with
+a thread and softirq.
+
+This patch also fixes up a bogus comment and check in fail_command,
+because no one drops the lock (bnx2i did but it is not going
+upstream yet and there were other refcount changes for that).
+
+Signed-off-by: Mike Christie <michaelc@cs.wisc.edu>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index 5aa0db1..801c7cf 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -404,11 +404,6 @@ static void fail_command(struct iscsi_conn *conn, struct iscsi_task *task,
+ 		conn->session->queued_cmdsn--;
+ 	else
+ 		conn->session->tt->cleanup_task(conn, task);
+-	/*
+-	 * Check if cleanup_task dropped the lock and the command completed,
+-	 */
+-	if (!task->sc)
+-		return;
+ 
+ 	sc->result = err;
+ 	if (!scsi_bidi_cmnd(sc))
+@@ -1829,10 +1824,10 @@ int iscsi_eh_device_reset(struct scsi_cmnd *sc)
+ 
+ 	iscsi_suspend_tx(conn);
+ 
+-	spin_lock(&session->lock);
++	spin_lock_bh(&session->lock);
+ 	fail_all_commands(conn, sc->device->lun, DID_ERROR);
+ 	conn->tmf_state = TMF_INITIAL;
+-	spin_unlock(&session->lock);
++	spin_unlock_bh(&session->lock);
+ 
+ 	iscsi_start_tx(conn);
+ 	goto done;

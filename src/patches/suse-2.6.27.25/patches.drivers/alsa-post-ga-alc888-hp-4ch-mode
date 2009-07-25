@@ -1,0 +1,67 @@
+From 3ea0d7cf472c6118bb8c0842d606f5436251e179 Mon Sep 17 00:00:00 2001
+From: Herton Ronaldo Krzesinski <herton@mandriva.com.br>
+Date: Wed, 4 Mar 2009 14:22:50 -0300
+Subject: ALSA: hda - Add 4 channel mode for 3stack-hp model (ALC888)
+Patch-mainline: 
+References: bnc#482796
+
+Add additional 4 channel mode for 3stack-hp models.
+
+Signed-off-by: Herton Ronaldo Krzesinski <herton@mandriva.com.br>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_realtek.c |   27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7865,24 +7865,45 @@ static struct hda_verb alc888_6st_dell_v
+ 	{ }
+ };
+ 
++/*
++ * 2ch mode
++ */
+ static struct hda_verb alc888_3st_hp_2ch_init[] = {
+ 	{ 0x18, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_VREF80 },
+ 	{ 0x18, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE },
+ 	{ 0x16, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_IN },
+ 	{ 0x16, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE },
+-	{ }
++	{ } /* end */
++};
++
++/*
++ * 4ch mode
++ */
++static struct hda_verb alc888_3st_hp_4ch_init[] = {
++	{ 0x18, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_VREF80 },
++	{ 0x18, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE },
++	{ 0x16, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT },
++	{ 0x16, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_UNMUTE },
++	{ 0x16, AC_VERB_SET_CONNECT_SEL, 0x01 },
++	{ } /* end */
+ };
+ 
++/*
++ * 6ch mode
++ */
+ static struct hda_verb alc888_3st_hp_6ch_init[] = {
+ 	{ 0x18, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT },
+ 	{ 0x18, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_UNMUTE },
++	{ 0x18, AC_VERB_SET_CONNECT_SEL, 0x02 },
+ 	{ 0x16, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT },
+ 	{ 0x16, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_UNMUTE },
+-	{ }
++	{ 0x16, AC_VERB_SET_CONNECT_SEL, 0x01 },
++	{ } /* end */
+ };
+ 
+-static struct hda_channel_mode alc888_3st_hp_modes[2] = {
++static struct hda_channel_mode alc888_3st_hp_modes[3] = {
+ 	{ 2, alc888_3st_hp_2ch_init },
++	{ 4, alc888_3st_hp_4ch_init },
+ 	{ 6, alc888_3st_hp_6ch_init },
+ };
+ 

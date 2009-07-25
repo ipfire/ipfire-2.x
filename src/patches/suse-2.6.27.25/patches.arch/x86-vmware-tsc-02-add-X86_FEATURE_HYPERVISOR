@@ -1,0 +1,38 @@
+From: Alok Kataria <akataria@vmware.com>
+Subject: x86: add X86_FEATURE_HYPERVISOR feature bit
+Patch-mainline:
+References: bnc#441338
+    
+Impact: Number declaration only.
+    
+Add X86_FEATURE_HYPERVISOR bit (CPUID level 1, ECX, bit 31).
+    
+Signed-off-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Alok N Kataria <akataria@vmware.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+
+ include/asm-x86/cpufeature.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+
+Index: linux-2.6.27.4-2-beta4/include/asm-x86/cpufeature.h
+===================================================================
+--- linux-2.6.27.4-2-beta4.orig/include/asm-x86/cpufeature.h	2008-11-10 12:41:49.000000000 -0800
++++ linux-2.6.27.4-2-beta4/include/asm-x86/cpufeature.h	2008-11-10 12:43:12.000000000 -0800
+@@ -97,6 +97,7 @@
+ #define X86_FEATURE_DCA		(4*32+18) /* Direct Cache Access */
+ #define X86_FEATURE_XMM4_2	(4*32+20) /* Streaming SIMD Extensions-4.2 */
+ #define X86_FEATURE_X2APIC	(4*32+21) /* x2APIC */
++#define X86_FEATURE_HYPERVISOR	(4*32+31) /* Running on a hypervisor */
+ 
+ /* VIA/Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001, word 5 */
+ #define X86_FEATURE_XSTORE	(5*32+ 2) /* on-CPU RNG present (xstore insn) */
+@@ -197,6 +198,7 @@
+ #define cpu_has_pat		boot_cpu_has(X86_FEATURE_PAT)
+ #define cpu_has_xmm4_2		boot_cpu_has(X86_FEATURE_XMM4_2)
+ #define cpu_has_x2apic		boot_cpu_has(X86_FEATURE_X2APIC)
++#define cpu_has_hypervisor	boot_cpu_has(X86_FEATURE_HYPERVISOR)
+ 
+ #if defined(CONFIG_X86_INVLPG) || defined(CONFIG_X86_64)
+ # define cpu_has_invlpg		1

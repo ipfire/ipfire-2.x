@@ -1,0 +1,47 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/4f998fd102e2
+# HG changeset 791 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1233750360 0
+# Node ID 4f998fd102e24daa471482730d1a3ff68faa1ad6
+# Parent  77e3b255381e02021d460d535e44b1040a180773
+Subject: linux: fix IRQ handling for PV passthrough
+References: bnc#463596
+Patch-mainline: obsolete
+
+For DomU-s registering PIRQ-s must be done separately, as they don't
+use the IO-APIC code.
+
+Additionally make sure the IRQ chip doesn't get set twice (and the
+event channel information overwritten) for an IRQ possibly in use by
+more than one device.
+
+Signed-off-by: Jan Beulich <jbeulich@novell.com>
+
+--- sle11-2009-02-05.orig/arch/x86/pci/pcifront.c	2009-02-05 10:01:48.000000000 +0100
++++ sle11-2009-02-05/arch/x86/pci/pcifront.c	2009-02-05 10:20:20.000000000 +0100
+@@ -8,12 +8,14 @@
+ #include <linux/init.h>
+ #include <linux/pci.h>
+ #include <asm/acpi.h>
++#include <xen/evtchn.h>
+ #include "pci.h"
+ 
+ static int pcifront_enable_irq(struct pci_dev *dev)
+ {
+ 	u8 irq;
+ 	pci_read_config_byte(dev, PCI_INTERRUPT_LINE, &irq);
++	evtchn_register_pirq(irq);
+ 	dev->irq = irq;
+ 
+ 	return 0;
+--- sle11-2009-02-05.orig/drivers/xen/core/evtchn.c	2009-02-05 10:20:03.000000000 +0100
++++ sle11-2009-02-05/drivers/xen/core/evtchn.c	2009-02-05 10:20:20.000000000 +0100
+@@ -1078,7 +1078,7 @@ void irq_resume(void)
+ void evtchn_register_pirq(int irq)
+ {
+ 	BUG_ON(irq < PIRQ_BASE || irq - PIRQ_BASE > NR_PIRQS);
+-	if (identity_mapped_irq(irq))
++	if (identity_mapped_irq(irq) || type_from_irq(irq) != IRQT_UNBOUND)
+ 		return;
+ 	irq_info[irq] = mk_irq_info(IRQT_PIRQ, irq, 0);
+ 	irq_desc[irq].chip = &pirq_type;

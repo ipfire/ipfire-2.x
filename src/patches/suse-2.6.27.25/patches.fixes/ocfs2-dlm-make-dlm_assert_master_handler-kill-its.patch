@@ -1,0 +1,43 @@
+From: Sunil Mushran <sunil.mushran@oracle.com>
+Date: Tue, 3 Feb 2009 12:37:16 -0800
+Subject: [PATCH] ocfs2/dlm: Make dlm_assert_master_handler() kill itself instead of the asserter
+Patch-mainline: 2.6.29
+
+In dlm_assert_master_handler(), if we get an incorrect assert master from a node
+that, we reply with EINVAL asking the asserter to die. The problem is that an
+assert is sent after so many hoops, it is invariably the node that thinks the
+asserter is wrong, is actually wrong. So instead of killing the asserter, this
+patch kills the assertee.
+
+This patch papers over a race that is still being addressed.
+
+Signed-off-by: Sunil Mushran <sunil.mushran@oracle.com>
+Acked-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/dlm/dlmmaster.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
+
+Index: linux-2.6.27-sle11_ocfs2_update2/fs/ocfs2/dlm/dlmmaster.c
+===================================================================
+--- linux-2.6.27-sle11_ocfs2_update2.orig/fs/ocfs2/dlm/dlmmaster.c
++++ linux-2.6.27-sle11_ocfs2_update2/fs/ocfs2/dlm/dlmmaster.c
+@@ -1832,12 +1832,12 @@ int dlm_assert_master_handler(struct o2n
+ 		if (!mle) {
+ 			if (res->owner != DLM_LOCK_RES_OWNER_UNKNOWN &&
+ 			    res->owner != assert->node_idx) {
+-				mlog(ML_ERROR, "assert_master from "
+-					  "%u, but current owner is "
+-					  "%u! (%.*s)\n",
+-				       assert->node_idx, res->owner,
+-				       namelen, name);
+-				goto kill;
++				mlog(ML_ERROR, "DIE! Mastery assert from %u, "
++				     "but current owner is %u! (%.*s)\n",
++				     assert->node_idx, res->owner, namelen,
++				     name);
++				__dlm_print_one_lock_resource(res);
++				BUG();
+ 			}
+ 		} else if (mle->type != DLM_MLE_MIGRATION) {
+ 			if (res->owner != DLM_LOCK_RES_OWNER_UNKNOWN) {

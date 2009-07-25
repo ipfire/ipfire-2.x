@@ -1,0 +1,54 @@
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: SUNRPC: Fix an Oops due to socket not set up yet...
+References: 474062
+Patch-mainline: v2.6.29-rc7
+
+Upstream commit fba91afbec2c004e2c8733ae9e0ca6998e962c64
+
+    SUNRPC: Fix an Oops due to socket not set up yet...
+    
+    We can Oops in both xs_udp_send_request() and xs_tcp_send_request() if the
+    call to xs_sendpages() returns an error due to the socket not yet being
+    set up.
+    Deal with that situation by returning a new error: ENOTSOCK, so that we
+    know to avoid dereferencing transport->sock.
+    
+Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+Signed-off-by: Suresh Jayaraman <sjayaraman@suse.de>
+---
+
+Index: linux-2.6.27-SLE11_BRANCH/net/sunrpc/xprtsock.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/net/sunrpc/xprtsock.c
++++ linux-2.6.27-SLE11_BRANCH/net/sunrpc/xprtsock.c
+@@ -469,7 +469,7 @@ static int xs_sendpages(struct socket *s
+ 	int err, sent = 0;
+ 
+ 	if (unlikely(!sock))
+-		return -ENOTCONN;
++		return -ENOTSOCK;
+ 
+ 	clear_bit(SOCK_ASYNC_NOSPACE, &sock->flags);
+ 	if (base != 0) {
+@@ -596,6 +596,10 @@ static int xs_udp_send_request(struct rp
+ 	}
+ 
+ 	switch (status) {
++	case -ENOTSOCK:
++		status = -ENOTCONN;
++		/* Should we call xs_close() here? */
++		break;
+ 	case -EAGAIN:
+ 		xs_nospace(task);
+ 		break;
+@@ -695,6 +699,10 @@ static int xs_tcp_send_request(struct rp
+ 	}
+ 
+ 	switch (status) {
++	case -ENOTSOCK:
++		status = -ENOTCONN;
++		/* Should we call xs_close() here? */
++		break;
+ 	case -EAGAIN:
+ 		xs_nospace(task);
+ 		break;

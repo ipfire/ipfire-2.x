@@ -1,0 +1,31 @@
+From: Yinghai Lu <yhlu.kernel@gmail.com>
+Subject: dmar: initialize the return value in dmar_parse_dev()
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 3f1fdb3673bb5638fa94186dc391cbc4879590bc
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+initialize the return value in dmar_parse_dev()
+
+Signed-off-by: Yinghai Lu <yhlu.kernel@gmail.com>
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ drivers/pci/dmar.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.26/drivers/pci/dmar.c
+===================================================================
+--- linux-2.6.26.orig/drivers/pci/dmar.c
++++ linux-2.6.26/drivers/pci/dmar.c
+@@ -193,7 +193,7 @@ dmar_parse_dev(struct dmar_drhd_unit *dm
+ {
+ 	struct acpi_dmar_hardware_unit *drhd;
+ 	static int include_all;
+-	int ret;
++	int ret = 0;
+ 
+ 	drhd = (struct acpi_dmar_hardware_unit *) dmaru->hdr;
+ 

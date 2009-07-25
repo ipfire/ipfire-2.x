@@ -1,0 +1,64 @@
+Date: Wed, 4 Feb 2009 10:47:37 -0600
+From: Robin Holt <holt@sgi.com>
+Subject: bte_copy of BTE_MAX_XFER trips BUG_ON -V2
+References: bnc#472894
+
+BTE_MAX_XFER is wrong.  It is one greater than the number of cache
+lines the BTE is actually able to transfer.  If you request a transfer
+of exactly BTE_MAX_XFER size, you trip a very cryptic BUG_ON() which
+should certainly be made more clear.
+
+This patch fixes that constant and also cleans up the BUG_ON()s in
+arch/ia64/sn/kernel/bte.c to test one condition per line.
+
+Signed-off-by: Robin Holt <holt@sgi.com>
+Acked-by: Raymund Will <rw@suse.de>
+
+---
+
+Changes since -V1:
+	Base the BTE_LEN_MASK upon a 1UL instead of 1 for correctness.
+
+
+ arch/ia64/include/asm/sn/bte.h |    4 ++--
+ arch/ia64/sn/kernel/bte.c      |    7 ++++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+Index: bte_fixup/arch/ia64/include/asm/sn/bte.h
+===================================================================
+--- bte_fixup.orig/arch/ia64/include/asm/sn/bte.h	2009-02-04 10:37:29.594750841 -0600
++++ bte_fixup/arch/ia64/include/asm/sn/bte.h	2009-02-04 10:40:32.495791608 -0600
+@@ -38,8 +38,8 @@
+ 
+ /* BTE status register only supports 16 bits for length field */
+ #define BTE_LEN_BITS (16)
+-#define BTE_LEN_MASK ((1 << BTE_LEN_BITS) - 1)
+-#define BTE_MAX_XFER ((1 << BTE_LEN_BITS) * L1_CACHE_BYTES)
++#define BTE_LEN_MASK ((1UL << BTE_LEN_BITS) - 1)
++#define BTE_MAX_XFER (BTE_LEN_MASK << L1_CACHE_SHIFT)
+ 
+ 
+ /* Define hardware */
+Index: bte_fixup/arch/ia64/sn/kernel/bte.c
+===================================================================
+--- bte_fixup.orig/arch/ia64/sn/kernel/bte.c	2009-02-04 10:37:30.026753839 -0600
++++ bte_fixup/arch/ia64/sn/kernel/bte.c	2009-02-04 10:40:11.711701203 -0600
+@@ -97,9 +97,10 @@ bte_result_t bte_copy(u64 src, u64 dest,
+ 		return BTE_SUCCESS;
+ 	}
+ 
+-	BUG_ON((len & L1_CACHE_MASK) ||
+-		 (src & L1_CACHE_MASK) || (dest & L1_CACHE_MASK));
+-	BUG_ON(!(len < ((BTE_LEN_MASK + 1) << L1_CACHE_SHIFT)));
++	BUG_ON(len & L1_CACHE_MASK);
++	BUG_ON(src & L1_CACHE_MASK);
++	BUG_ON(dest & L1_CACHE_MASK);
++	BUG_ON(len > BTE_MAX_XFER);
+ 
+ 	/*
+ 	 * Start with interface corresponding to cpu number
+--
+To unsubscribe from this list: send the line "unsubscribe linux-ia64" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+

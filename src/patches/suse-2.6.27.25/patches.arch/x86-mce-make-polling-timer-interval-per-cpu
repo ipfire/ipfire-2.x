@@ -1,0 +1,100 @@
+From: Andi Kleen <andi@firstfloor.org>
+Date: Thu, 9 Apr 2009 10:28:22 +0000 (+0200)
+Subject: x86, mce: make polling timer interval per CPU
+Patch-mainline: v2.6.30-rc5~52^2~1
+Git-commit: 6298c512bc1007c3ff5c9ce20e6996781651cc45
+References: bnc#507557
+
+x86, mce: make polling timer interval per CPU
+
+The polling timer while running per CPU still uses a global next_interval
+variable, which lead to some CPUs either polling too fast or too slow.
+This was not a serious problem because all errors get picked up eventually,
+but it's still better to avoid it. Turn next_interval into a per cpu variable.
+
+v2: Fix check_interval == 0 case (Hidetoshi Seto)
+
+[ Impact: minor bug fix ]
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
+Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+ arch/x86/kernel/cpu/mcheck/mce_64.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+--- a/arch/x86/kernel/cpu/mcheck/mce_64.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_64.c
+@@ -352,13 +352,14 @@ void mce_log_therm_throt_event(unsigned
+  */
+ 
+ static int check_interval = 5 * 60; /* 5 minutes */
+-static int next_interval; /* in jiffies */
++static DEFINE_PER_CPU(int, next_interval); /* in jiffies */
+ static void mcheck_timer(unsigned long);
+ static DEFINE_PER_CPU(struct timer_list, mce_timer);
+ 
+ static void mcheck_timer(unsigned long data)
+ {
+ 	struct timer_list *t = &per_cpu(mce_timer, data);
++	int *n;
+ 
+ 	WARN_ON(smp_processor_id() != data);
+ 
+@@ -369,14 +370,14 @@ static void mcheck_timer(unsigned long d
+ 	 * Alert userspace if needed.  If we logged an MCE, reduce the
+ 	 * polling interval, otherwise increase the polling interval.
+ 	 */
++	n = &__get_cpu_var(next_interval);
+ 	if (mce_notify_user()) {
+-		next_interval = max(next_interval/2, HZ/100);
++		*n = max(*n/2, HZ/100);
+ 	} else {
+-		next_interval = min(next_interval * 2,
+-				(int)round_jiffies_relative(check_interval*HZ));
++		*n = min(*n*2, (int)round_jiffies_relative(check_interval*HZ));
+ 	}
+ 
+-	t->expires = jiffies + next_interval;
++	t->expires = jiffies + *n;
+ 	add_timer(t);
+ }
+ 
+@@ -502,14 +503,13 @@ static void __cpuinit mce_cpu_features(s
+ static void mce_init_timer(void)
+ {
+ 	struct timer_list *t = &__get_cpu_var(mce_timer);
++	int *n = &__get_cpu_var(next_interval);
+ 
+-	/* data race harmless because everyone sets to the same value */
+-	if (!next_interval)
+-		next_interval = check_interval * HZ;
+-	if (!next_interval)
++	*n = check_interval * HZ;
++	if (!*n)
+ 		return;
+ 	setup_timer(t, mcheck_timer, smp_processor_id());
+-	t->expires = round_jiffies(jiffies + next_interval);
++	t->expires = round_jiffies(jiffies + *n);
+ 	add_timer(t);
+ }
+ 
+@@ -761,7 +761,6 @@ static void mce_cpu_restart(void *data)
+ /* Reinit MCEs after user configuration changes */
+ static void mce_restart(void)
+ {
+-	next_interval = check_interval * HZ;
+ 	on_each_cpu(mce_cpu_restart, NULL, 1);
+ }
+ 
+@@ -912,7 +911,8 @@ static int __cpuinit mce_cpu_callback(st
+ 		break;
+ 	case CPU_DOWN_FAILED:
+ 	case CPU_DOWN_FAILED_FROZEN:
+-		t->expires = round_jiffies(jiffies + next_interval);
++		t->expires = round_jiffies(jiffies +
++						__get_cpu_var(next_interval));
+ 		add_timer_on(t, cpu);
+ 		break;
+ 	}

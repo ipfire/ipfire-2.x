@@ -1,0 +1,499 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qdio: rework inbound buffer acknowledgement
+References: bnc#458339
+
+Symptom:     Inbound network traffic stall.
+Problem:     Under high load the qdio buffer that specifies the acknowledge
+	     mode can be overwritten.
+Solution:    Use automatic acknowledgement of incoming buffers in QEBSM mode
+	     to improve performance with QIOASSIST. 
+	     Move ACK for non-QEBSM mode always to the newest buffer to prevent
+  	     a race with qdio_stop_polling.
+	     Remove the polling spinlock, the upper layer drivers return new
+	     buffers in the same code path and could not run in parallel.
+	     Don't flood the error log in case of no-target-buffer-empty.
+	     In handle_inbound we check if we would overwrite an ACK'ed buffer,
+	     if so advance the pointer to the oldest ACK'ed buffer so we don't
+	     overwrite an empty buffer in qdio_stop_polling.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/cio/qdio.h         |   19 ++--
+ drivers/s390/cio/qdio_debug.c   |    7 +
+ drivers/s390/cio/qdio_main.c    |  181 ++++++++++++++++++++++++++--------------
+ drivers/s390/cio/qdio_perf.c    |    2 
+ drivers/s390/cio/qdio_perf.h    |    1 
+ drivers/s390/cio/qdio_setup.c   |    1 
+ drivers/s390/cio/qdio_thinint.c |    2 
+ 7 files changed, 139 insertions(+), 74 deletions(-)
+
+Index: linux-sles11/drivers/s390/cio/qdio.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio.h
++++ linux-sles11/drivers/s390/cio/qdio.h
+@@ -112,12 +112,12 @@ static inline int do_sqbs(u64 token, uns
+ }
+ 
+ static inline int do_eqbs(u64 token, unsigned char *state, int queue,
+-			  int *start, int *count)
++			  int *start, int *count, int ack)
+ {
+ 	register unsigned long _ccq asm ("0") = *count;
+ 	register unsigned long _token asm ("1") = token;
+ 	unsigned long _queuestart = ((unsigned long)queue << 32) | *start;
+-	unsigned long _state = 0;
++	unsigned long _state = (unsigned long)ack << 63;
+ 
+ 	asm volatile(
+ 		"	.insn	rrf,0xB99c0000,%1,%2,0,0"
+@@ -134,7 +134,7 @@ static inline int do_eqbs(u64 token, uns
+ static inline int do_sqbs(u64 token, unsigned char state, int queue,
+ 			  int *start, int *count) { return 0; }
+ static inline int do_eqbs(u64 token, unsigned char *state, int queue,
+-			  int *start, int *count) { return 0; }
++			  int *start, int *count, int ack) { return 0; }
+ #endif /* CONFIG_64BIT */
+ 
+ struct qdio_irq;
+@@ -187,11 +187,11 @@ struct qdio_input_q {
+ 	/* input buffer acknowledgement flag */
+ 	int polling;
+ 
++	/* how much sbals are acknowledged with qebsm */
++	int ack_count;
++
+ 	/* last time of noticing incoming data */
+ 	u64 timestamp;
+-
+-	/* lock for clearing the acknowledgement */
+-	spinlock_t lock;
+ };
+ 
+ struct qdio_output_q {
+@@ -348,10 +348,13 @@ static inline unsigned long long get_use
+ 	((bufnr + 1) & QDIO_MAX_BUFFERS_MASK)
+ #define add_buf(bufnr, inc) \
+ 	((bufnr + inc) & QDIO_MAX_BUFFERS_MASK)
++#define sub_buf(bufnr, dec) \
++	((bufnr - dec) & QDIO_MAX_BUFFERS_MASK)
+ 
+ /* prototypes for thin interrupt */
+ void qdio_sync_after_thinint(struct qdio_q *q);
+-int get_buf_state(struct qdio_q *q, unsigned int bufnr, unsigned char *state);
++int get_buf_state(struct qdio_q *q, unsigned int bufnr, unsigned char *state,
++		  int auto_ack);
+ void qdio_check_outbound_after_thinint(struct qdio_q *q);
+ int qdio_inbound_q_moved(struct qdio_q *q);
+ void qdio_kick_inbound_handler(struct qdio_q *q);
+@@ -385,6 +388,8 @@ int qdio_setup_irq(struct qdio_initializ
+ void qdio_print_subchannel_info(struct qdio_irq *irq_ptr,
+ 				struct ccw_device *cdev);
+ void qdio_release_memory(struct qdio_irq *irq_ptr);
++int qdio_setup_create_sysfs(struct ccw_device *cdev);
++void qdio_setup_destroy_sysfs(struct ccw_device *cdev);
+ int qdio_setup_init(void);
+ void qdio_setup_exit(void);
+ 
+Index: linux-sles11/drivers/s390/cio/qdio_debug.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_debug.c
++++ linux-sles11/drivers/s390/cio/qdio_debug.c
+@@ -59,16 +59,18 @@ static int qstat_show(struct seq_file *m
+ 	if (!q)
+ 		return 0;
+ 
+-	seq_printf(m, "device state indicator: %d\n", *q->irq_ptr->dsci);
++	seq_printf(m, "device state indicator: %d\n", *(u32 *)q->irq_ptr->dsci);
+ 	seq_printf(m, "nr_used: %d\n", atomic_read(&q->nr_buf_used));
+ 	seq_printf(m, "ftc: %d\n", q->first_to_check);
+ 	seq_printf(m, "last_move_ftc: %d\n", q->last_move_ftc);
+ 	seq_printf(m, "polling: %d\n", q->u.in.polling);
++	seq_printf(m, "ack count: %d\n", q->u.in.ack_count);
+ 	seq_printf(m, "slsb buffer states:\n");
++	seq_printf(m, "|0      |8      |16     |24     |32     |40     |48     |56  63|\n");
+ 
+ 	qdio_siga_sync_q(q);
+ 	for (i = 0; i < QDIO_MAX_BUFFERS_PER_Q; i++) {
+-		get_buf_state(q, i, &state);
++		get_buf_state(q, i, &state, 0);
+ 		switch (state) {
+ 		case SLSB_P_INPUT_NOT_INIT:
+ 		case SLSB_P_OUTPUT_NOT_INIT:
+@@ -100,6 +102,7 @@ static int qstat_show(struct seq_file *m
+ 			seq_printf(m, "\n");
+ 	}
+ 	seq_printf(m, "\n");
++	seq_printf(m, "|64     |72     |80     |88     |96     |104    |112    |   127|\n");
+ 	return 0;
+ }
+ 
+Index: linux-sles11/drivers/s390/cio/qdio_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_main.c
++++ linux-sles11/drivers/s390/cio/qdio_main.c
+@@ -112,12 +112,13 @@ static inline int qdio_check_ccq(struct 
+  * @state: state of the extracted buffers
+  * @start: buffer number to start at
+  * @count: count of buffers to examine
++ * @auto_ack: automatically acknowledge buffers
+  *
+  * Returns the number of successfull extracted equal buffer states.
+  * Stops processing if a state is different from the last buffers state.
+  */
+ static int qdio_do_eqbs(struct qdio_q *q, unsigned char *state,
+-			int start, int count)
++			int start, int count, int auto_ack)
+ {
+ 	unsigned int ccq = 0;
+ 	int tmp_count = count, tmp_start = start;
+@@ -129,7 +130,8 @@ static int qdio_do_eqbs(struct qdio_q *q
+ 	if (!q->is_input_q)
+ 		nr += q->irq_ptr->nr_input_qs;
+ again:
+-	ccq = do_eqbs(q->irq_ptr->sch_token, state, nr, &tmp_start, &tmp_count);
++	ccq = do_eqbs(q->irq_ptr->sch_token, state, nr, &tmp_start, &tmp_count,
++		      auto_ack);
+ 	rc = qdio_check_ccq(q, ccq);
+ 
+ 	/* At least one buffer was processed, return and extract the remaining
+@@ -172,6 +174,9 @@ static int qdio_do_sqbs(struct qdio_q *q
+ 	int nr = q->nr;
+ 	int rc;
+ 
++	if (!count)
++		return 0;
++
+ 	BUG_ON(!q->irq_ptr->sch_token);
+ 
+ 	if (!q->is_input_q)
+@@ -197,7 +202,8 @@ again:
+ 
+ /* returns number of examined buffers and their common state in *state */
+ static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
+-				 unsigned char *state, unsigned int count)
++				 unsigned char *state, unsigned int count,
++				 int auto_ack)
+ {
+ 	unsigned char __state = 0;
+ 	int i;
+@@ -206,7 +212,7 @@ static inline int get_buf_states(struct 
+ 	BUG_ON(count > QDIO_MAX_BUFFERS_PER_Q);
+ 
+ 	if (is_qebsm(q))
+-		return qdio_do_eqbs(q, state, bufnr, count);
++		return qdio_do_eqbs(q, state, bufnr, count, auto_ack);
+ 
+ 	for (i = 0; i < count; i++) {
+ 		if (!__state)
+@@ -220,9 +226,9 @@ static inline int get_buf_states(struct 
+ }
+ 
+ inline int get_buf_state(struct qdio_q *q, unsigned int bufnr,
+-		  unsigned char *state)
++		  unsigned char *state, int auto_ack)
+ {
+-	return get_buf_states(q, bufnr, state, 1);
++	return get_buf_states(q, bufnr, state, 1, auto_ack);
+ }
+ 
+ /* wrap-around safe setting of slsb states, returns number of changed buffers */
+@@ -367,29 +373,91 @@ void qdio_sync_after_thinint(struct qdio
+ 
+ inline void qdio_stop_polling(struct qdio_q *q)
+ {
+-	spin_lock_bh(&q->u.in.lock);
+-	if (!q->u.in.polling) {
+-		spin_unlock_bh(&q->u.in.lock);
++	if (!q->u.in.polling)
+ 		return;
+-	}
++
+ 	q->u.in.polling = 0;
+ 	qdio_perf_stat_inc(&perf_stats.debug_stop_polling);
+ 
+ 	/* show the card that we are not polling anymore */
+-	set_buf_state(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT);
+-	spin_unlock_bh(&q->u.in.lock);
++	if (is_qebsm(q)) {
++		set_buf_states(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT,
++			       q->u.in.ack_count);
++		q->u.in.ack_count = 0;
++	} else
++		set_buf_state(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT);
+ }
+ 
+-static void announce_buffer_error(struct qdio_q *q)
++static void announce_buffer_error(struct qdio_q *q, int count)
+ {
++	q->qdio_error = QDIO_ERROR_SLSB_STATE;
++
++	/* special handling for no target buffer empty */
++	if ((!q->is_input_q &&
++	    (q->sbal[q->first_to_check]->element[15].flags & 0xff) == 0x10)) {
++		qdio_perf_stat_inc(&perf_stats.outbound_target_full);
++		DBF_DEV_EVENT(DBF_INFO, q->irq_ptr, "OUTFULL FTC:%3d",
++			      q->first_to_check);
++		return;
++	}
++
+ 	DBF_ERROR("%4x BUF ERROR", SCH_NO(q));
+ 	DBF_ERROR((q->is_input_q) ? "IN:%2d" : "OUT:%2d", q->nr);
+-	DBF_ERROR("FTC:%3d", q->first_to_check);
++	DBF_ERROR("FTC:%3d C:%3d", q->first_to_check, count);
+ 	DBF_ERROR("F14:%2x F15:%2x",
+ 		  q->sbal[q->first_to_check]->element[14].flags & 0xff,
+ 		  q->sbal[q->first_to_check]->element[15].flags & 0xff);
++}
+ 
+-	q->qdio_error = QDIO_ERROR_SLSB_STATE;
++static inline void inbound_primed(struct qdio_q *q, int count)
++{
++	int new;
++
++	DBF_DEV_EVENT(DBF_INFO, q->irq_ptr, "in prim: %3d", count);
++
++	/* for QEBSM the ACK was already set by EQBS */
++	if (is_qebsm(q)) {
++		if (!q->u.in.polling) {
++			q->u.in.polling = 1;
++			q->u.in.ack_count = count;
++			q->last_move_ftc = q->first_to_check;
++			return;
++		}
++
++		/* delete the previous ACK's */
++		set_buf_states(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT,
++			       q->u.in.ack_count);
++		q->u.in.ack_count = count;
++		q->last_move_ftc = q->first_to_check;
++		return;
++	}
++
++	/*
++	 * ACK the newest buffer. The ACK will be removed in qdio_stop_polling
++	 * or by the next inbound run.
++	 */
++	new = add_buf(q->first_to_check, count - 1);
++	if (q->u.in.polling) {
++		/* reset the previous ACK but first set the new one */
++		set_buf_state(q, new, SLSB_P_INPUT_ACK);
++		set_buf_state(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT);
++	}
++	else {
++		q->u.in.polling = 1;
++		set_buf_state(q, q->first_to_check, SLSB_P_INPUT_ACK);
++	}
++
++	q->last_move_ftc = new;
++	count--;
++	if (!count)
++		return;
++
++	/*
++	 * Need to change all PRIMED buffers to NOT_INIT, otherwise
++	 * we're loosing initiative in the thinint code.
++	 */
++	set_buf_states(q, next_buf(q->first_to_check), SLSB_P_INPUT_NOT_INIT,
++		       count);
+ }
+ 
+ static int get_inbound_buffer_frontier(struct qdio_q *q)
+@@ -398,13 +466,6 @@ static int get_inbound_buffer_frontier(s
+ 	unsigned char state;
+ 
+ 	/*
+-	 * If we still poll don't update last_move_ftc, keep the
+-	 * previously ACK buffer there.
+-	 */
+-	if (!q->u.in.polling)
+-		q->last_move_ftc = q->first_to_check;
+-
+-	/*
+ 	 * Don't check 128 buffers, as otherwise qdio_inbound_q_moved
+ 	 * would return 0.
+ 	 */
+@@ -424,34 +485,13 @@ check_next:
+ 	if (q->first_to_check == stop)
+ 		goto out;
+ 
+-	count = get_buf_states(q, q->first_to_check, &state, count);
++	count = get_buf_states(q, q->first_to_check, &state, count, 1);
+ 	if (!count)
+ 		goto out;
+ 
+ 	switch (state) {
+ 	case SLSB_P_INPUT_PRIMED:
+-		DBF_DEV_EVENT(DBF_INFO, q->irq_ptr, "in prim: %3d", count);
+-
+-		/*
+-		 * Only ACK the first buffer. The ACK will be removed in
+-		 * qdio_stop_polling.
+-		 */
+-		if (q->u.in.polling)
+-			state = SLSB_P_INPUT_NOT_INIT;
+-		else {
+-			q->u.in.polling = 1;
+-			state = SLSB_P_INPUT_ACK;
+-		}
+-		set_buf_state(q, q->first_to_check, state);
+-
+-		/*
+-		 * Need to change all PRIMED buffers to NOT_INIT, otherwise
+-		 * we're loosing initiative in the thinint code.
+-		 */
+-		if (count > 1)
+-			set_buf_states(q, next_buf(q->first_to_check),
+-				       SLSB_P_INPUT_NOT_INIT, count - 1);
+-
++		inbound_primed(q, count);
+ 		/*
+ 		 * No siga-sync needed for non-qebsm here, as the inbound queue
+ 		 * will be synced on the next siga-r, resp.
+@@ -461,7 +501,7 @@ check_next:
+ 		atomic_sub(count, &q->nr_buf_used);
+ 		goto check_next;
+ 	case SLSB_P_INPUT_ERROR:
+-		announce_buffer_error(q);
++		announce_buffer_error(q, count);
+ 		/* process the buffer, the upper layer will take care of it */
+ 		q->first_to_check = add_buf(q->first_to_check, count);
+ 		atomic_sub(count, &q->nr_buf_used);
+@@ -507,7 +547,7 @@ static int qdio_inbound_q_done(struct qd
+ 	 */
+ 	qdio_siga_sync_q(q);
+ 
+-	get_buf_state(q, q->first_to_check, &state);
++	get_buf_state(q, q->first_to_check, &state, 0);
+ 	if (state == SLSB_P_INPUT_PRIMED)
+ 		/* we got something to do */
+ 		return 0;
+@@ -610,7 +650,7 @@ check_next:
+ 	if (q->first_to_check == stop)
+ 		return q->first_to_check;
+ 
+-	count = get_buf_states(q, q->first_to_check, &state, count);
++	count = get_buf_states(q, q->first_to_check, &state, count, 0);
+ 	if (!count)
+ 		return q->first_to_check;
+ 
+@@ -629,7 +669,7 @@ check_next:
+ 			break;
+ 		goto check_next;
+ 	case SLSB_P_OUTPUT_ERROR:
+-		announce_buffer_error(q);
++		announce_buffer_error(q, count);
+ 		/* process the buffer, the upper layer will take care of it */
+ 		q->first_to_check = add_buf(q->first_to_check, count);
+ 		atomic_sub(count, &q->nr_buf_used);
+@@ -1441,23 +1481,38 @@ static inline int buf_in_between(int buf
+ static void handle_inbound(struct qdio_q *q, unsigned int callflags,
+ 			   int bufnr, int count)
+ {
+-	unsigned long flags;
+-	int used, rc;
++	int used, rc, diff;
+ 
+-	/*
+-	 * do_QDIO could run in parallel with the queue tasklet so the
+-	 * upper-layer programm could empty the ACK'ed buffer here.
+-	 * If that happens we must clear the polling flag, otherwise
+-	 * qdio_stop_polling() could set the buffer to NOT_INIT after
+-	 * it was set to EMPTY which would kill us.
+-	 */
+-	spin_lock_irqsave(&q->u.in.lock, flags);
+-	if (q->u.in.polling)
+-		if (buf_in_between(q->last_move_ftc, bufnr, count))
++	if (!q->u.in.polling)
++		goto set;
++
++	/* protect against stop polling setting an ACK for an emptied slsb */
++	if (count == QDIO_MAX_BUFFERS_PER_Q) {
++		/* overwriting everything, just delete polling status */
++		q->u.in.polling = 0;
++		q->u.in.ack_count = 0;
++		goto set;
++	} else if (buf_in_between(q->last_move_ftc, bufnr, count)) {
++		if (is_qebsm(q)) {
++			/* partial overwrite, just update last_move_ftc */
++			diff = add_buf(bufnr, count);
++			diff = sub_buf(diff, q->last_move_ftc);
++			q->u.in.ack_count -= diff;
++			if (q->u.in.ack_count <= 0) {
++				q->u.in.polling = 0;
++				q->u.in.ack_count = 0;
++				/* TODO: must we set last_move_ftc to something meaningful? */
++				goto set;
++			}
++			q->last_move_ftc = add_buf(q->last_move_ftc, diff);
++		}
++		else
++			/* the only ACK will be deleted, so stop polling */
+ 			q->u.in.polling = 0;
++	}
+ 
++set:
+ 	count = set_buf_states(q, bufnr, SLSB_CU_INPUT_EMPTY, count);
+-	spin_unlock_irqrestore(&q->u.in.lock, flags);
+ 
+ 	used = atomic_add_return(count, &q->nr_buf_used) - count;
+ 	BUG_ON(used + count > QDIO_MAX_BUFFERS_PER_Q);
+@@ -1516,7 +1571,7 @@ static void handle_outbound(struct qdio_
+ 	}
+ 
+ 	/* try to fast requeue buffers */
+-	get_buf_state(q, prev_buf(bufnr), &state);
++	get_buf_state(q, prev_buf(bufnr), &state, 0);
+ 	if (state != SLSB_CU_OUTPUT_PRIMED)
+ 		qdio_kick_outbound_q(q);
+ 	else {
+Index: linux-sles11/drivers/s390/cio/qdio_perf.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_perf.c
++++ linux-sles11/drivers/s390/cio/qdio_perf.c
+@@ -74,6 +74,8 @@ static int qdio_perf_proc_show(struct se
+ 	seq_printf(m, "\n");
+ 	seq_printf(m, "Number of fast requeues (outg. SBAL w/o SIGA)\t: %li\n",
+ 		   (long)atomic_long_read(&perf_stats.fast_requeue));
++	seq_printf(m, "Number of outbound target full condition\t: %li\n",
++		   (long)atomic_long_read(&perf_stats.outbound_target_full));
+ 	seq_printf(m, "Number of outbound tasklet mod_timer calls\t: %li\n",
+ 		   (long)atomic_long_read(&perf_stats.debug_tl_out_timer));
+ 	seq_printf(m, "Number of stop polling calls\t\t\t: %li\n",
+Index: linux-sles11/drivers/s390/cio/qdio_perf.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_perf.h
++++ linux-sles11/drivers/s390/cio/qdio_perf.h
+@@ -36,6 +36,7 @@ struct qdio_perf_stats {
+ 	atomic_long_t inbound_handler;
+ 	atomic_long_t outbound_handler;
+ 	atomic_long_t fast_requeue;
++	atomic_long_t outbound_target_full;
+ 
+ 	/* for debugging */
+ 	atomic_long_t debug_tl_out_timer;
+Index: linux-sles11/drivers/s390/cio/qdio_setup.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_setup.c
++++ linux-sles11/drivers/s390/cio/qdio_setup.c
+@@ -167,7 +167,6 @@ static void setup_queues(struct qdio_irq
+ 		setup_queues_misc(q, irq_ptr, qdio_init->input_handler, i);
+ 
+ 		q->is_input_q = 1;
+-		spin_lock_init(&q->u.in.lock);
+ 		setup_storage_lists(q, irq_ptr, input_sbal_array, i);
+ 		input_sbal_array += QDIO_MAX_BUFFERS_PER_Q;
+ 
+Index: linux-sles11/drivers/s390/cio/qdio_thinint.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_thinint.c
++++ linux-sles11/drivers/s390/cio/qdio_thinint.c
+@@ -131,7 +131,7 @@ static inline int tiqdio_inbound_q_done(
+ 		return 1;
+ 
+ 	qdio_siga_sync_q(q);
+-	get_buf_state(q, q->first_to_check, &state);
++	get_buf_state(q, q->first_to_check, &state, 0);
+ 
+ 	if (state == SLSB_P_INPUT_PRIMED)
+ 		/* more work coming */

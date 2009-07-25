@@ -1,0 +1,86 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/5e1269aa5c29
+# HG changeset 761 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1228915952 0
+# Node ID 5e1269aa5c2933e0cb0272bf5867e1214174bfde
+# Parent  0d10be086a781afa2dd220e247e4a8047a296b38
+Subject: blktap, gntdev: fix highpte handling
+Patch-mainline: obsolete
+
+In case of highpte, virt_to_machine() can't be used. Introduce
+ptep_to_machine() and use it, also to simplify xen_l1_entry_update().
+
+Original patch from: Isaku Yamahata <yamahata@valinux.co.jp>
+Signed-off-by: Jan Beulich <jbeulich@novell.com>
+
+--- head-2008-12-15.orig/arch/x86/mm/hypervisor.c	2008-12-15 11:13:20.000000000 +0100
++++ head-2008-12-15/arch/x86/mm/hypervisor.c	2008-12-15 11:13:45.000000000 +0100
+@@ -47,12 +47,7 @@
+ void xen_l1_entry_update(pte_t *ptr, pte_t val)
+ {
+ 	mmu_update_t u;
+-#ifdef CONFIG_HIGHPTE
+-	u.ptr = ((unsigned long)ptr >= (unsigned long)high_memory) ?
+-		arbitrary_virt_to_machine(ptr) : virt_to_machine(ptr);
+-#else
+-	u.ptr = virt_to_machine(ptr);
+-#endif
++	u.ptr = ptep_to_machine(ptr);
+ 	u.val = __pte_val(val);
+ 	BUG_ON(HYPERVISOR_mmu_update(&u, 1, NULL, DOMID_SELF) < 0);
+ }
+--- head-2008-12-15.orig/drivers/xen/blktap/blktap.c	2008-12-15 11:13:20.000000000 +0100
++++ head-2008-12-15/drivers/xen/blktap/blktap.c	2008-12-15 11:13:45.000000000 +0100
+@@ -364,7 +364,7 @@ static pte_t blktap_clear_pte(struct vm_
+ 		BUG_ON(xen_feature(XENFEAT_auto_translated_physmap));
+ 
+ 		copy = *ptep;
+-		gnttab_set_unmap_op(&unmap[count], virt_to_machine(ptep), 
++		gnttab_set_unmap_op(&unmap[count], ptep_to_machine(ptep),
+ 				    GNTMAP_host_map 
+ 				    | GNTMAP_application_map 
+ 				    | GNTMAP_contains_pte,
+--- head-2008-12-15.orig/drivers/xen/gntdev/gntdev.c	2008-12-15 11:13:20.000000000 +0100
++++ head-2008-12-15/drivers/xen/gntdev/gntdev.c	2008-12-15 11:13:45.000000000 +0100
+@@ -769,7 +769,7 @@ static pte_t gntdev_clear_pte(struct vm_
+ 		    GNTDEV_INVALID_HANDLE && 
+ 		    !xen_feature(XENFEAT_auto_translated_physmap)) {
+ 			/* NOT USING SHADOW PAGE TABLES. */
+-			gnttab_set_unmap_op(&op, virt_to_machine(ptep), 
++			gnttab_set_unmap_op(&op, ptep_to_machine(ptep),
+ 					    GNTMAP_contains_pte,
+ 					    private_data->grants[slot_index]
+ 					    .u.valid.user_handle);
+--- head-2008-12-15.orig/include/asm-x86/mach-xen/asm/pgtable_32.h	2008-12-15 11:13:20.000000000 +0100
++++ head-2008-12-15/include/asm-x86/mach-xen/asm/pgtable_32.h	2008-12-15 11:13:45.000000000 +0100
+@@ -488,6 +488,19 @@ void make_pages_writable(void *va, unsig
+ 	(((maddr_t)pte_mfn(*virt_to_ptep(va)) << PAGE_SHIFT)		\
+ 	 | ((unsigned long)(va) & (PAGE_SIZE - 1)))
+ 
++#ifdef CONFIG_HIGHPTE
++#include <asm/io.h>
++struct page *kmap_atomic_to_page(void *);
++#define ptep_to_machine(ptep)						\
++({									\
++	pte_t *__ptep = (ptep);						\
++	page_to_phys(kmap_atomic_to_page(__ptep))			\
++		| ((unsigned long)__ptep & (PAGE_SIZE - 1));		\
++})
++#else
++#define ptep_to_machine(ptep)	virt_to_machine(ptep)
++#endif
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #ifdef CONFIG_FLATMEM
+--- head-2008-12-15.orig/include/asm-x86/mach-xen/asm/pgtable_64.h	2008-12-15 11:13:20.000000000 +0100
++++ head-2008-12-15/include/asm-x86/mach-xen/asm/pgtable_64.h	2008-12-15 11:13:45.000000000 +0100
+@@ -30,6 +30,8 @@ extern pte_t *lookup_address(unsigned lo
+ #define arbitrary_virt_to_machine(va)					\
+ 	(((maddr_t)pte_mfn(*virt_to_ptep(va)) << PAGE_SHIFT)		\
+ 	 | ((unsigned long)(va) & (PAGE_SIZE - 1)))
++
++#define ptep_to_machine(ptep)	virt_to_machine(ptep)
+ #endif
+ 
+ extern pud_t level3_kernel_pgt[512];

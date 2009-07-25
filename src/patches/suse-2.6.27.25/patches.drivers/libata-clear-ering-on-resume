@@ -1,0 +1,47 @@
+From: Tejun Heo <tj@kernel.org>
+Subject: libata: clear ering on resume
+References: bnc#486803
+
+Error timestamps are in jiffies which doesn't run while suspended and
+PHY events during resume isn't too uncommon.  When the two are
+combined, it can lead to unnecessary speed downs if the machine is
+suspended and resumed repeatedly.  Clear error history on resume.
+
+This was reported and verified in bnc#486803 by Vladimir Botka.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Vladimir Botka <vbotka@novell.com>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/ata/libata-eh.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -3158,6 +3158,8 @@ static void ata_eh_handle_port_suspend(s
+  */
+ static void ata_eh_handle_port_resume(struct ata_port *ap)
+ {
++	struct ata_link *link;
++	struct ata_device *dev;
+ 	unsigned long flags;
+ 	int rc = 0;
+ 
+@@ -3172,6 +3174,17 @@ static void ata_eh_handle_port_resume(st
+ 
+ 	WARN_ON(!(ap->pflags & ATA_PFLAG_SUSPENDED));
+ 
++	/*
++	 * Error timestamps are in jiffies which doesn't run while
++	 * suspended and PHY events during resume isn't too uncommon.
++	 * When the two are combined, it can lead to unnecessary speed
++	 * downs if the machine is suspended and resumed repeatedly.
++	 * Clear error history.
++	 */
++	ata_port_for_each_link(link, ap)
++		ata_link_for_each_dev(dev, link)
++			ata_ering_clear(&dev->ering);
++
+ 	ata_acpi_set_state(ap, PMSG_ON);
+ 
+ 	if (ap->ops->port_resume)

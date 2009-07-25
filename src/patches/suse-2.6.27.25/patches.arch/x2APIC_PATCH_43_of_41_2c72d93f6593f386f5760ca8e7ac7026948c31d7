@@ -1,0 +1,44 @@
+From: Yinghai Lu <yhlu.kernel@gmail.com>
+Subject: x2apic: fix reserved APIC register accesses in print_local_APIC()
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 2c72d93f6593f386f5760ca8e7ac7026948c31d7
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+APIC_ARBPRI is a reserved register for XAPIC and beyond.
+APIC_RRR is a reserved register except for 82489DX, APIC for Pentium processors.
+APIC_EOI is a write only register.
+APIC_DFR is reserved in x2apic mode.
+
+Access to these registers in x2apic will result in #GP fault. Fix these
+apic register accesses.
+
+Signed-off-by: Yinghai Lu <yhlu.kernel@gmail.com>
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: Maciej W. Rozycki <macro@linux-mips.org>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/io_apic_32.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+Index: linux-2.6.26/arch/x86/kernel/io_apic_32.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/io_apic_32.c
++++ linux-2.6.26/arch/x86/kernel/io_apic_32.c
+@@ -1500,9 +1500,11 @@ void /*__init*/ print_local_APIC(void *d
+ 	printk(KERN_DEBUG "... APIC TASKPRI: %08x (%02x)\n", v, v & APIC_TPRI_MASK);
+ 
+ 	if (APIC_INTEGRATED(ver)) {			/* !82489DX */
+-		v = apic_read(APIC_ARBPRI);
+-		printk(KERN_DEBUG "... APIC ARBPRI: %08x (%02x)\n", v,
+-			v & APIC_ARBPRI_MASK);
++		if (!APIC_XAPIC(ver)) {
++			v = apic_read(APIC_ARBPRI);
++			printk(KERN_DEBUG "... APIC ARBPRI: %08x (%02x)\n", v,
++			       v & APIC_ARBPRI_MASK);
++		}
+ 		v = apic_read(APIC_PROCPRI);
+ 		printk(KERN_DEBUG "... APIC PROCPRI: %08x\n", v);
+ 	}

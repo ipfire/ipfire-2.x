@@ -1,0 +1,75 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qeth: avoid crash after detach of replugged device
+References: bnc#487755,LTC#52681,LTC#52353
+
+Symptom:     kernel panic in qeth_l3_qdio_input_handler
+Problem:     If a qeth device is plugged off, setting the device
+             online stops in state HARDSETUP and a failure is
+             reported to the base cio-layer causing halt/clear to
+             be invoked. Replugging the device again triggers a
+             qeth recovery without notification of the cio-layer.
+             If a device is ungrouped in this state, the qeth
+             set_offline function is not invoked, because the
+             corresponding ccwgroup device is not in state ONLINE.
+             Then incoming traffic is still handled by the qdio
+             layer resulting in a crash in
+             qeth_l<x>_qdio_input_handler, because (part of) the
+             qeth data structures for this device are already
+             removed.
+Solution:    After replugging the device qeth recovery should lead
+             to a working net device. Thus a "LAN offline" result
+             when setting a qeth device online must not report a
+             failure to the base cio-layer.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/net/qeth_l2_main.c |    4 +++-
+ drivers/s390/net/qeth_l3_main.c |    4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+Index: linux-sles11/drivers/s390/net/qeth_l2_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_l2_main.c
++++ linux-sles11/drivers/s390/net/qeth_l2_main.c
+@@ -873,6 +873,7 @@ static void qeth_l2_remove_device(struct
+ {
+ 	struct qeth_card *card = dev_get_drvdata(&cgdev->dev);
+ 
++	qeth_set_allowed_threads(card, 0, 1);
+ 	wait_event(card->wait_q, qeth_threads_running(card, 0xffffffff) == 0);
+ 
+ 	if (cgdev->state == CCWGROUP_ONLINE) {
+@@ -1029,8 +1030,9 @@ static int __qeth_l2_set_online(struct c
+ 			dev_warn(&card->gdev->dev,
+ 				"The LAN is offline\n");
+ 			card->lan_online = 0;
++			return 0;
+ 		}
+-		return rc;
++		goto out_remove;
+ 	} else
+ 		card->lan_online = 1;
+ 
+Index: linux-sles11/drivers/s390/net/qeth_l3_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_l3_main.c
++++ linux-sles11/drivers/s390/net/qeth_l3_main.c
+@@ -3033,6 +3033,7 @@ static void qeth_l3_remove_device(struct
+ {
+ 	struct qeth_card *card = dev_get_drvdata(&cgdev->dev);
+ 
++	qeth_set_allowed_threads(card, 0, 1);
+ 	wait_event(card->wait_q, qeth_threads_running(card, 0xffffffff) == 0);
+ 
+ 	if (cgdev->state == CCWGROUP_ONLINE) {
+@@ -3107,8 +3108,9 @@ static int __qeth_l3_set_online(struct c
+ 			dev_warn(&card->gdev->dev,
+ 				"The LAN is offline\n");
+ 			card->lan_online = 0;
++			return 0;
+ 		}
+-		return rc;
++		goto out_remove;
+ 	} else
+ 		card->lan_online = 1;
+ 	qeth_set_large_send(card, card->options.large_send);

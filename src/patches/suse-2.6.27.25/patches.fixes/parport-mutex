@@ -1,0 +1,41 @@
+From: salina@us.ibm.com
+Subject: No lp_release_parport while write is going on
+References: 62947 - LTC11483
+
+This patch was done by IBM a while back, but apparently never made it
+into mainline. It fixes a problem in the lp driver that can cause oopses.
+
+Scenario:
+ process A:	calls lp_write, which in turn calls parport_ieee1284_write_compat,
+ 		and that invokes parport_wait_peripheral
+ process B:	meanwhile does an ioctl(LPGETSTATUS), which call lp_release_parport
+ 		when done. This function will set physport->cad = NULL.
+ process A:	parport_wait_peripheral tries to dereference physport->cad and
+ 		dies
+
+The patch below simply protects that code with the port_mutex in order to
+protect against simultaneous calls to lp_read/lp_write.
+
+Similar protection is probably required for ioctl(LPRESET).
+
+Signed-off-by: okir@suse.de
+
+---
+ drivers/char/lp.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/char/lp.c
++++ b/drivers/char/lp.c
+@@ -626,9 +626,12 @@ static int lp_ioctl(struct inode *inode,
+ 				return -EFAULT;
+ 			break;
+ 		case LPGETSTATUS:
++			if (mutex_lock_interruptible(&lp_table[minor].port_mutex))
++				return -EINTR;
+ 			lp_claim_parport_or_block (&lp_table[minor]);
+ 			status = r_str(minor);
+ 			lp_release_parport (&lp_table[minor]);
++			mutex_unlock(&lp_table[minor].port_mutex);
+ 
+ 			if (copy_to_user(argp, &status, sizeof(int)))
+ 				return -EFAULT;

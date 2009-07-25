@@ -1,0 +1,32 @@
+From: Mark Fasheh <mfasheh@suse.com>
+Subject: ocfs2: make la_debug_mutex static
+Patch-mainline: 2.6.28
+
+It can also be moved into ocfs2_la_debug_read().
+
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/localalloc.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.27/fs/ocfs2/localalloc.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/localalloc.c
++++ linux-2.6.27/fs/ocfs2/localalloc.c
+@@ -76,8 +76,6 @@ static int ocfs2_local_alloc_slide_windo
+ 
+ #ifdef CONFIG_OCFS2_FS_STATS
+ 
+-DEFINE_MUTEX(la_debug_mutex);
+-
+ static int ocfs2_la_debug_open(struct inode *inode, struct file *file)
+ {
+ 	file->private_data = inode->i_private;
+@@ -89,6 +87,7 @@ static int ocfs2_la_debug_open(struct in
+ static ssize_t ocfs2_la_debug_read(struct file *file, char __user *userbuf,
+ 				   size_t count, loff_t *ppos)
+ {
++	static DEFINE_MUTEX(la_debug_mutex);
+ 	struct ocfs2_super *osb = file->private_data;
+ 	int written, ret;
+ 	char *buf = osb->local_alloc_debug_buf;

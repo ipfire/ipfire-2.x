@@ -1,0 +1,70 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x86: apic_ops for lguest
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 511d9d34183662aada3890883e860b151d707e22
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+apic_ops for lguest.
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Acked-by: Yinghai Lu <yhlu.kernel@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/lguest/boot.c |   34 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.26/arch/x86/lguest/boot.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/lguest/boot.c
++++ linux-2.6.26/arch/x86/lguest/boot.c
+@@ -792,6 +792,37 @@ static u32 lguest_apic_read(u32 reg)
+ {
+ 	return 0;
+ }
++
++static u64 lguest_apic_icr_read(void)
++{
++	return 0;
++}
++
++static void lguest_apic_icr_write(u32 low, u32 id)
++{
++	/* Warn to see if there's any stray references */
++	WARN_ON(1);
++}
++
++static void lguest_apic_wait_icr_idle(void)
++{
++	return;
++}
++
++static u32 lguest_apic_safe_wait_icr_idle(void)
++{
++	return 0;
++}
++
++static struct apic_ops lguest_basic_apic_ops = {
++	.read = lguest_apic_read,
++	.write = lguest_apic_write,
++	.write_atomic = lguest_apic_write,
++	.icr_read = lguest_apic_icr_read,
++	.icr_write = lguest_apic_icr_write,
++	.wait_icr_idle = lguest_apic_wait_icr_idle,
++	.safe_wait_icr_idle = lguest_apic_safe_wait_icr_idle,
++};
+ #endif
+ 
+ /* STOP!  Until an interrupt comes in. */
+@@ -991,8 +1022,7 @@ __init void lguest_init(void)
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	/* apic read/write intercepts */
+-	pv_apic_ops.apic_write = lguest_apic_write;
+-	pv_apic_ops.apic_read = lguest_apic_read;
++	apic_ops = &lguest_basic_apic_ops;
+ #endif
+ 
+ 	/* time operations */

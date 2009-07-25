@@ -1,0 +1,51 @@
+From: Kurt Garloff <garloff@suse.de>
+Subject: Store SRAT table revision
+References: bnc#503038
+
+In SRAT v1, we had 8bit proximity domain (PXM) fields; SRAT v2 provides
+32bits for these. The new fields were reserved before.
+According to the ACPI spec, the OS must disregrard reserved fields.
+In order to know whether or not, we must know what version the SRAT
+table has.
+
+This patch stores the SRAT table revision for later consumption
+by arch specific __init functions.
+
+This is patch 1/3.
+
+Signed-off-by: Kurt Garloff <garloff@suse.de>
+
+---
+ drivers/acpi/numa.c      |    3 +++
+ include/acpi/acpi_numa.h |    1 +
+ 2 files changed, 4 insertions(+)
+
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -43,6 +43,8 @@ static int pxm_to_node_map[MAX_PXM_DOMAI
+ static int node_to_pxm_map[MAX_NUMNODES]
+ 				= { [0 ... MAX_NUMNODES - 1] = PXM_INVAL };
+ 
++unsigned char acpi_srat_revision __initdata;
++
+ int pxm_to_node(int pxm)
+ {
+ 	if (pxm < 0)
+@@ -225,6 +227,7 @@ static int __init acpi_parse_srat(struct
+ 		return -EINVAL;
+ 
+ 	srat = (struct acpi_table_srat *)table;
++	acpi_srat_revision = srat->header.revision;
+ 
+ 	return 0;
+ }
+--- a/include/acpi/acpi_numa.h
++++ b/include/acpi/acpi_numa.h
+@@ -15,6 +15,7 @@ extern int pxm_to_node(int);
+ extern int node_to_pxm(int);
+ extern void __acpi_map_pxm_to_node(int, int);
+ extern int acpi_map_pxm_to_node(int);
++extern unsigned char acpi_srat_revision;
+ 
+ #endif				/* CONFIG_ACPI_NUMA */
+ #endif				/* __ACP_NUMA_H */

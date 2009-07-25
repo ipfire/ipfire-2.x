@@ -1,0 +1,69 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: set nameserver port to offline on adapter deactivation.
+References: bnc#484767,LTC#52232
+
+Symptom:     Storage ports remain in offline state after adapter reactivation.
+Problem:     The nameserver port might be in state online when the adapter is 
+             offlined. On adapter reactivation the nameserver port is not
+             re-opened due to the PORT_ONLINE status. This results in an
+             unsuccessful recovery.
+Solution:    Force the nameserver port status to offline on all adapter
+             offline events ensuring a nameserver port open on adapter
+             reactivation.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/scsi/zfcp_aux.c |    1 -
+ drivers/s390/scsi/zfcp_erp.c |    1 +
+ drivers/s390/scsi/zfcp_ext.h |    1 +
+ drivers/s390/scsi/zfcp_fc.c  |    8 ++++++++
+ 4 files changed, 10 insertions(+), 1 deletion(-)
+
+--- a/drivers/s390/scsi/zfcp_aux.c
++++ b/drivers/s390/scsi/zfcp_aux.c
+@@ -553,7 +553,6 @@ void zfcp_adapter_dequeue(struct zfcp_ad
+ 
+ 	cancel_work_sync(&adapter->scan_work);
+ 	cancel_work_sync(&adapter->stat_work);
+-	cancel_delayed_work_sync(&adapter->nsp.work);
+ 	zfcp_adapter_scsi_unregister(adapter);
+ 	sysfs_remove_group(&adapter->ccw_device->dev.kobj,
+ 			   &zfcp_sysfs_adapter_attrs);
+--- a/drivers/s390/scsi/zfcp_erp.c
++++ b/drivers/s390/scsi/zfcp_erp.c
+@@ -738,6 +738,7 @@ static int zfcp_erp_adapter_strategy_gen
+ 	zfcp_qdio_close(adapter);
+ 	zfcp_fsf_req_dismiss_all(adapter);
+ 	adapter->fsf_req_seq_no = 0;
++	zfcp_fc_wka_port_force_offline(&adapter->nsp);
+ 	/* all ports and units are closed */
+ 	zfcp_erp_modify_adapter_status(adapter, 24, NULL,
+ 				       ZFCP_STATUS_COMMON_OPEN, ZFCP_CLEAR);
+--- a/drivers/s390/scsi/zfcp_ext.h
++++ b/drivers/s390/scsi/zfcp_ext.h
+@@ -103,6 +103,7 @@ extern void zfcp_fc_plogi_evaluate(struc
+ extern void zfcp_test_link(struct zfcp_port *);
+ extern void zfcp_fc_link_test_work(struct work_struct *);
+ extern void zfcp_fc_nameserver_init(struct zfcp_adapter *);
++extern void zfcp_fc_wka_port_force_offline(struct zfcp_wka_port *);
+ 
+ /* zfcp_fsf.c */
+ extern int zfcp_fsf_open_port(struct zfcp_erp_action *);
+--- a/drivers/s390/scsi/zfcp_fc.c
++++ b/drivers/s390/scsi/zfcp_fc.c
+@@ -115,6 +115,14 @@ void zfcp_fc_nameserver_init(struct zfcp
+ 	INIT_DELAYED_WORK(&wka_port->work, zfcp_wka_port_offline);
+ }
+ 
++void zfcp_fc_wka_port_force_offline(struct zfcp_wka_port *wka)
++{
++	cancel_delayed_work_sync(&wka->work);
++	mutex_lock(&wka->mutex);
++	wka->status = ZFCP_WKA_PORT_OFFLINE;
++	mutex_unlock(&wka->mutex);
++}
++
+ static void _zfcp_fc_incoming_rscn(struct zfcp_fsf_req *fsf_req, u32 range,
+ 				   struct fcp_rscn_element *elem)
+ {

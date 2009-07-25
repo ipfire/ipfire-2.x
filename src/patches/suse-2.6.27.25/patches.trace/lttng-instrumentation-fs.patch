@@ -1,0 +1,345 @@
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: LTTng instrumentation - fs
+
+Original patch header:
+  LTTng instrumentation - fs
+  
+  Core filesystem tracepoints.
+  
+  Tracepoints added :
+  
+  fs_buffer_wait_end
+  fs_buffer_wait_start
+  fs_close
+  fs_exec
+  fs_ioctl
+  fs_llseek
+  fs_lseek
+  fs_open
+  fs_poll
+  fs_pread64
+  fs_pwrite64
+  fs_read
+  fs_readv
+  fs_select
+  fs_write
+  fs_writev
+  
+  Instrument the core FS events, extracting the information when it is available.
+  e.g. the instrumentation of "reads" is inserted _after_ the read, when
+  the information is ready. This would not be possible if the instrumentation
+  would be placed elsewhere (at the beginning of the system call for instance).
+  
+  Those tracepoints are used by LTTng.
+  
+  About the performance impact of tracepoints (which is comparable to markers),
+  even without immediate values optimizations, tests done by Hideo Aoki on ia64
+  show no regression. His test case was using hackbench on a kernel where
+  scheduler instrumentation (about 5 events in code scheduler code) was added.
+  See the "Tracepoints" patch header for performance result detail.
+  
+  Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+  CC: Alexander Viro <viro@zeniv.linux.org.uk>
+  CC: Masami Hiramatsu <mhiramat@redhat.com>
+  CC: 'Peter Zijlstra' <peterz@infradead.org>
+  CC: "Frank Ch. Eigler" <fche@redhat.com>
+  CC: 'Ingo Molnar' <mingo@elte.hu>
+  CC: 'Hideo AOKI' <haoki@redhat.com>
+  CC: Takashi Nishiie <t-nishiie@np.css.fujitsu.com>
+  CC: 'Steven Rostedt' <rostedt@goodmis.org>
+  CC: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+  
+Acked-by: Jan Blunck <jblunck@suse.de>
+--- 
+---
+ fs/buffer.c        |    3 ++
+ fs/compat.c        |    2 +
+ fs/exec.c          |    2 +
+ fs/ioctl.c         |    3 ++
+ fs/open.c          |    3 ++
+ fs/read_write.c    |   19 +++++++++++++--
+ fs/select.c        |    3 ++
+ include/trace/fs.h |   65 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 98 insertions(+), 2 deletions(-)
+
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -41,6 +41,7 @@
+ #include <linux/bitops.h>
+ #include <linux/mpage.h>
+ #include <linux/bit_spinlock.h>
++#include <trace/fs.h>
+ 
+ static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
+ 
+@@ -89,7 +90,9 @@ void unlock_buffer(struct buffer_head *b
+  */
+ void __wait_on_buffer(struct buffer_head * bh)
+ {
++	trace_fs_buffer_wait_start(bh);
+ 	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
++	trace_fs_buffer_wait_end(bh);
+ }
+ 
+ static void
+--- a/fs/compat.c
++++ b/fs/compat.c
+@@ -51,6 +51,7 @@
+ #include <linux/poll.h>
+ #include <linux/mm.h>
+ #include <linux/eventpoll.h>
++#include <trace/fs.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -1411,6 +1412,7 @@ int compat_do_execve(char * filename,
+ 
+ 	retval = search_binary_handler(bprm, regs);
+ 	if (retval >= 0) {
++		trace_fs_exec(filename);
+ 		/* execve success */
+ 		security_bprm_free(bprm);
+ 		acct_update_integrals(current);
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -50,6 +50,7 @@
+ #include <linux/cn_proc.h>
+ #include <linux/audit.h>
+ #include <linux/tracehook.h>
++#include <trace/fs.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -1353,6 +1354,7 @@ int do_execve(char * filename,
+ 	current->flags &= ~PF_KTHREAD;
+ 	retval = search_binary_handler(bprm,regs);
+ 	if (retval >= 0) {
++		trace_fs_exec(filename);
+ 		/* execve success */
+ 		security_bprm_free(bprm);
+ 		acct_update_integrals(current);
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -13,6 +13,7 @@
+ #include <linux/security.h>
+ #include <linux/module.h>
+ #include <linux/uaccess.h>
++#include <trace/fs.h>
+ 
+ #include <asm/ioctls.h>
+ 
+@@ -205,6 +206,8 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd,
+ 	if (!filp)
+ 		goto out;
+ 
++	trace_fs_ioctl(fd, cmd, arg);
++
+ 	error = security_file_ioctl(filp, cmd, arg);
+ 	if (error)
+ 		goto out_fput;
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -29,6 +29,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/audit.h>
+ #include <linux/falloc.h>
++#include <trace/fs.h>
+ 
+ int vfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ {
+@@ -1044,6 +1045,7 @@ long do_sys_open(int dfd, const char __u
+ 				fsnotify_open(f->f_path.dentry);
+ 				fd_install(fd, f);
+ 			}
++			trace_fs_open(fd, tmp);
+ 		}
+ 		putname(tmp);
+ 	}
+@@ -1133,6 +1135,7 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+ 	filp = fdt->fd[fd];
+ 	if (!filp)
+ 		goto out_unlock;
++	trace_fs_close(fd);
+ 	rcu_assign_pointer(fdt->fd[fd], NULL);
+ 	FD_CLR(fd, fdt->close_on_exec);
+ 	__put_unused_fd(files, fd);
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -16,6 +16,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/pagemap.h>
+ #include <linux/splice.h>
++#include <trace/fs.h>
+ #include "read_write.h"
+ 
+ #include <asm/uaccess.h>
+@@ -130,6 +131,9 @@ SYSCALL_DEFINE3(lseek, unsigned int, fd,
+ 		if (res != (loff_t)retval)
+ 			retval = -EOVERFLOW;	/* LFS: should only happen on 32 bit platforms */
+ 	}
++
++	trace_fs_lseek(fd, offset, origin);
++
+ 	fput_light(file, fput_needed);
+ bad:
+ 	return retval;
+@@ -157,6 +161,8 @@ SYSCALL_DEFINE5(llseek, unsigned int, fd
+ 	offset = vfs_llseek(file, ((loff_t) offset_high << 32) | offset_low,
+ 			origin);
+ 
++	trace_fs_llseek(fd, offset, origin);
++
+ 	retval = (int)offset;
+ 	if (offset >= 0) {
+ 		retval = -EFAULT;
+@@ -344,6 +350,7 @@ SYSCALL_DEFINE3(read, unsigned int, fd,
+ 	if (file) {
+ 		loff_t pos = file_pos_read(file);
+ 		ret = vfs_read(file, buf, count, &pos);
++		trace_fs_read(fd, buf, count, ret);
+ 		file_pos_write(file, pos);
+ 		fput_light(file, fput_needed);
+ 	}
+@@ -362,6 +369,7 @@ SYSCALL_DEFINE3(write, unsigned int, fd,
+ 	if (file) {
+ 		loff_t pos = file_pos_read(file);
+ 		ret = vfs_write(file, buf, count, &pos);
++		trace_fs_write(fd, buf, count, ret);
+ 		file_pos_write(file, pos);
+ 		fput_light(file, fput_needed);
+ 	}
+@@ -382,8 +390,11 @@ SYSCALL_DEFINE(pread64)(unsigned int fd,
+ 	file = fget_light(fd, &fput_needed);
+ 	if (file) {
+ 		ret = -ESPIPE;
+-		if (file->f_mode & FMODE_PREAD)
++		if (file->f_mode & FMODE_PREAD) {
+ 			ret = vfs_read(file, buf, count, &pos);
++			trace_fs_pread64(fd, buf, count, pos, ret);
++		}
++
+ 		fput_light(file, fput_needed);
+ 	}
+ 
+@@ -411,8 +422,10 @@ SYSCALL_DEFINE(pwrite64)(unsigned int fd
+ 	file = fget_light(fd, &fput_needed);
+ 	if (file) {
+ 		ret = -ESPIPE;
+-		if (file->f_mode & FMODE_PWRITE)  
++		if (file->f_mode & FMODE_PWRITE) {
+ 			ret = vfs_write(file, buf, count, &pos);
++			trace_fs_pwrite64(fd, buf, count, pos, ret);
++		}
+ 		fput_light(file, fput_needed);
+ 	}
+ 
+@@ -665,6 +678,7 @@ SYSCALL_DEFINE3(readv, unsigned long, fd
+ 	if (file) {
+ 		loff_t pos = file_pos_read(file);
+ 		ret = vfs_readv(file, vec, vlen, &pos);
++		trace_fs_readv(fd, vec, vlen, ret);
+ 		file_pos_write(file, pos);
+ 		fput_light(file, fput_needed);
+ 	}
+@@ -686,6 +700,7 @@ SYSCALL_DEFINE3(writev, unsigned long, f
+ 	if (file) {
+ 		loff_t pos = file_pos_read(file);
+ 		ret = vfs_writev(file, vec, vlen, &pos);
++		trace_fs_writev(fd, vec, vlen, ret);
+ 		file_pos_write(file, pos);
+ 		fput_light(file, fput_needed);
+ 	}
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -24,6 +24,7 @@
+ #include <linux/fdtable.h>
+ #include <linux/fs.h>
+ #include <linux/rcupdate.h>
++#include <trace/fs.h>
+ 
+ #include <asm/uaccess.h>
+ 
+@@ -232,6 +233,7 @@ int do_select(int n, fd_set_bits *fds, s
+ 				file = fget_light(i, &fput_needed);
+ 				if (file) {
+ 					f_op = file->f_op;
++					trace_fs_select(i, *timeout);
+ 					mask = DEFAULT_POLLMASK;
+ 					if (f_op && f_op->poll)
+ 						mask = (*f_op->poll)(file, retval ? NULL : wait);
+@@ -561,6 +563,7 @@ static inline unsigned int do_pollfd(str
+ 		file = fget_light(fd, &fput_needed);
+ 		mask = POLLNVAL;
+ 		if (file != NULL) {
++			trace_fs_poll(fd);
+ 			mask = DEFAULT_POLLMASK;
+ 			if (file->f_op && file->f_op->poll)
+ 				mask = file->f_op->poll(file, pwait);
+--- /dev/null
++++ b/include/trace/fs.h
+@@ -0,0 +1,65 @@
++#ifndef _TRACE_FS_H
++#define _TRACE_FS_H
++
++#include <linux/buffer_head.h>
++#include <linux/tracepoint.h>
++
++DEFINE_TRACE(fs_buffer_wait_start,
++	TPPROTO(struct buffer_head *bh),
++	TPARGS(bh));
++DEFINE_TRACE(fs_buffer_wait_end,
++	TPPROTO(struct buffer_head *bh),
++	TPARGS(bh));
++DEFINE_TRACE(fs_exec,
++	TPPROTO(char *filename),
++	TPARGS(filename));
++DEFINE_TRACE(fs_ioctl,
++	TPPROTO(unsigned int fd, unsigned int cmd, unsigned long arg),
++	TPARGS(fd, cmd, arg));
++DEFINE_TRACE(fs_open,
++	TPPROTO(int fd, char *filename),
++	TPARGS(fd, filename));
++DEFINE_TRACE(fs_close,
++	TPPROTO(unsigned int fd),
++	TPARGS(fd));
++DEFINE_TRACE(fs_lseek,
++	TPPROTO(unsigned int fd, long offset, unsigned int origin),
++	TPARGS(fd, offset, origin));
++DEFINE_TRACE(fs_llseek,
++	TPPROTO(unsigned int fd, loff_t offset, unsigned int origin),
++	TPARGS(fd, offset, origin));
++
++/*
++ * Probes must be aware that __user * may be modified by concurrent userspace
++ * or kernel threads.
++ */
++DEFINE_TRACE(fs_read,
++	TPPROTO(unsigned int fd, char __user *buf, size_t count, ssize_t ret),
++	TPARGS(fd, buf, count, ret));
++DEFINE_TRACE(fs_write,
++	TPPROTO(unsigned int fd, const char __user *buf, size_t count,
++		ssize_t ret),
++	TPARGS(fd, buf, count, ret));
++DEFINE_TRACE(fs_pread64,
++	TPPROTO(unsigned int fd, char __user *buf, size_t count, loff_t pos,
++		ssize_t ret),
++	TPARGS(fd, buf, count, pos, ret));
++DEFINE_TRACE(fs_pwrite64,
++	TPPROTO(unsigned int fd, const char __user *buf, size_t count,
++		loff_t pos, ssize_t ret),
++	TPARGS(fd, buf, count, pos, ret));
++DEFINE_TRACE(fs_readv,
++	TPPROTO(unsigned long fd, const struct iovec __user *vec,
++		unsigned long vlen, ssize_t ret),
++	TPARGS(fd, vec, vlen, ret));
++DEFINE_TRACE(fs_writev,
++	TPPROTO(unsigned long fd, const struct iovec __user *vec,
++		unsigned long vlen, ssize_t ret),
++	TPARGS(fd, vec, vlen, ret));
++DEFINE_TRACE(fs_select,
++	TPPROTO(int fd, s64 timeout),
++	TPARGS(fd, timeout));
++DEFINE_TRACE(fs_poll,
++	TPPROTO(int fd),
++	TPARGS(fd));
++#endif

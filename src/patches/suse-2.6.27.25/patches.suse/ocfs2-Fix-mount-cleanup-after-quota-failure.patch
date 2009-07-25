@@ -1,0 +1,31 @@
+From: Jan Kara <jack@suse.cz>
+References: fate#302681
+Subject: ocfs2: Fix mount cleanup after quota failure
+Patch-mainline: 2.6.29?
+
+When we fail to initialize quotas during mount, the kernel oopses because
+we tried to clean-up superblock twice.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+
+---
+ fs/ocfs2/super.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@ -969,8 +969,13 @@ static int ocfs2_fill_super(struct super
+ 	if (!(sb->s_flags & MS_RDONLY)) {
+ 		status = ocfs2_enable_quotas(osb);
+ 		if (status < 0) {
++			/* We have to err-out specially here because
++			 * s_root is already set */
+ 			mlog_errno(status);
+-			goto read_super_error;
++			atomic_set(&osb->vol_state, VOLUME_DISABLED);
++			wake_up(&osb->osb_mount_event);
++			mlog_exit(status);
++			return status;
+ 		}
+ 	}
+ 

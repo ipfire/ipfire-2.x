@@ -1,0 +1,127 @@
+From: Stefan Roscher <stefan.roscher@de.ibm.com>
+Subject: Fix problem with max number of QPs and CQs
+References: bnc#441619
+
+Because ehca adapters can differ in the maximum number of QPs and CQs
+we have to save the maximum number of these ressources per adapter and not
+globally per ehca driver. This fix introduces 2 new members to the shca
+structure to store the maximum value for QPs and CQs per adapter.
+The module parameters are now used as initial values for those variables.
+If a user selects an invalid number of CQs or QPs we don't print an error any
+longer, instead we will inform the user with a warning and set the values to
+the respective maximum supported by the HW.
+
+Acked-by: John Jolly <jjolly@novell.com>
+
+Index: linux-2.6.27/drivers/infiniband/hw/ehca/ehca_classes.h
+===================================================================
+--- linux-2.6.27.orig/drivers/infiniband/hw/ehca/ehca_classes.h
++++ linux-2.6.27/drivers/infiniband/hw/ehca/ehca_classes.h
+@@ -128,6 +128,8 @@ struct ehca_shca {
+ 	/* MR pgsize: bit 0-3 means 4K, 64K, 1M, 16M respectively */
+ 	u32 hca_cap_mr_pgsize;
+ 	int max_mtu;
++	int max_num_qps;
++	int max_num_cqs;
+ 	atomic_t num_cqs;
+ 	atomic_t num_qps;
+ };
+Index: linux-2.6.27/drivers/infiniband/hw/ehca/ehca_cq.c
+===================================================================
+--- linux-2.6.27.orig/drivers/infiniband/hw/ehca/ehca_cq.c
++++ linux-2.6.27/drivers/infiniband/hw/ehca/ehca_cq.c
+@@ -132,9 +132,9 @@ struct ib_cq *ehca_create_cq(struct ib_d
+ 	if (cqe >= 0xFFFFFFFF - 64 - additional_cqe)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	if (!atomic_add_unless(&shca->num_cqs, 1, ehca_max_cq)) {
++	if (!atomic_add_unless(&shca->num_cqs, 1, shca->max_num_cqs)) {
+ 		ehca_err(device, "Unable to create CQ, max number of %i "
+-			"CQs reached.", ehca_max_cq);
++			"CQs reached.", shca->max_num_cqs);
+ 		ehca_err(device, "To increase the maximum number of CQs "
+ 			"use the number_of_cqs module parameter.\n");
+ 		return ERR_PTR(-ENOSPC);
+Index: linux-2.6.27/drivers/infiniband/hw/ehca/ehca_main.c
+===================================================================
+--- linux-2.6.27.orig/drivers/infiniband/hw/ehca/ehca_main.c
++++ linux-2.6.27/drivers/infiniband/hw/ehca/ehca_main.c
+@@ -368,22 +368,23 @@ static int ehca_sense_attributes(struct 
+ 			shca->hca_cap_mr_pgsize |= pgsize_map[i + 1];
+ 
+ 	/* Set maximum number of CQs and QPs to calculate EQ size */
+-	if (ehca_max_qp == -1)
+-		ehca_max_qp = min_t(int, rblock->max_qp, EHCA_MAX_NUM_QUEUES);
+-	else if (ehca_max_qp < 1 || ehca_max_qp > rblock->max_qp) {
+-		ehca_gen_err("Requested number of QPs is out of range (1 - %i) "
+-			"specified by HW", rblock->max_qp);
+-		ret = -EINVAL;
+-		goto sense_attributes1;
+-	}
+-
+-	if (ehca_max_cq == -1)
+-		ehca_max_cq = min_t(int, rblock->max_cq, EHCA_MAX_NUM_QUEUES);
+-	else if (ehca_max_cq < 1 || ehca_max_cq > rblock->max_cq) {
+-		ehca_gen_err("Requested number of CQs is out of range (1 - %i) "
+-			"specified by HW", rblock->max_cq);
+-		ret = -EINVAL;
+-		goto sense_attributes1;
++	if (shca->max_num_qps == -1)
++		shca->max_num_qps = min_t(int, rblock->max_qp,
++					  EHCA_MAX_NUM_QUEUES);
++	else if (shca->max_num_qps < 1 || shca->max_num_qps > rblock->max_qp) {
++		ehca_gen_warn("The requested number of QPs is out of range "
++			      "(1 - %i) specified by HW. Value is set to %i",
++			      rblock->max_qp, rblock->max_qp);
++		shca->max_num_qps = rblock->max_qp;
++	}
++
++	if (shca->max_num_cqs == -1)
++		shca->max_num_cqs = min_t(int, rblock->max_cq,
++					  EHCA_MAX_NUM_QUEUES);
++	else if (shca->max_num_cqs < 1 || shca->max_num_cqs > rblock->max_cq) {
++		ehca_gen_warn("The requested number of CQs is out of range "
++			      "(1 - %i) specified by HW. Value is set to %i",
++			      rblock->max_cq, rblock->max_cq);
+ 	}
+ 
+ 	/* query max MTU from first port -- it's the same for all ports */
+@@ -735,9 +736,13 @@ static int __devinit ehca_probe(struct o
+ 		ehca_gen_err("Cannot allocate shca memory.");
+ 		return -ENOMEM;
+ 	}
++
+ 	mutex_init(&shca->modify_mutex);
+ 	atomic_set(&shca->num_cqs, 0);
+ 	atomic_set(&shca->num_qps, 0);
++	shca->max_num_qps = ehca_max_qp;
++	shca->max_num_cqs = ehca_max_cq;
++
+ 	for (i = 0; i < ARRAY_SIZE(shca->sport); i++)
+ 		spin_lock_init(&shca->sport[i].mod_sqp_lock);
+ 
+@@ -757,7 +762,7 @@ static int __devinit ehca_probe(struct o
+ 		goto probe1;
+ 	}
+ 
+-	eq_size = 2 * ehca_max_cq + 4 * ehca_max_qp;
++	eq_size = 2 * shca->max_num_cqs + 4 * shca->max_num_qps;
+ 	/* create event queues */
+ 	ret = ehca_create_eq(shca, &shca->eq, EHCA_EQ, eq_size);
+ 	if (ret) {
+Index: linux-2.6.27/drivers/infiniband/hw/ehca/ehca_qp.c
+===================================================================
+--- linux-2.6.27.orig/drivers/infiniband/hw/ehca/ehca_qp.c
++++ linux-2.6.27/drivers/infiniband/hw/ehca/ehca_qp.c
+@@ -465,9 +465,9 @@ static struct ehca_qp *internal_create_q
+ 	u32 swqe_size = 0, rwqe_size = 0, ib_qp_num;
+ 	unsigned long flags;
+ 
+-	if (!atomic_add_unless(&shca->num_qps, 1, ehca_max_qp)) {
++	if (!atomic_add_unless(&shca->num_qps, 1, shca->max_num_qps)) {
+ 		ehca_err(pd->device, "Unable to create QP, max number of %i "
+-			 "QPs reached.", ehca_max_qp);
++			 "QPs reached.", shca->max_num_qps);
+ 		ehca_err(pd->device, "To increase the maximum number of QPs "
+ 			 "use the number_of_qps module parameter.\n");
+ 		return ERR_PTR(-ENOSPC);

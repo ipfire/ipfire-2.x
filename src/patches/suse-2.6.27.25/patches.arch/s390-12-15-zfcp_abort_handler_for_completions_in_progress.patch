@@ -1,0 +1,23 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Fix abort handler for FSF requests in completion
+References: bnc#487755,LTC#52848
+
+Symptom:     Kernel panic during FC switch port offline.
+Problem:     When the abort handler cannot find a pending FSF
+             request, the request completion could just be running.
+Solution:    Return FAILED in such a case by the abort handler.
+
+Acked-by: John Jolly <jjolly@suse.de>
+Index: linux-2.6.27.21-5.1.20090327_mz08/drivers/s390/scsi/zfcp_scsi.c
+===================================================================
+--- linux-2.6.27.21-5.1.20090327_mz08.orig/drivers/s390/scsi/zfcp_scsi.c
++++ linux-2.6.27.21-5.1.20090327_mz08/drivers/s390/scsi/zfcp_scsi.c
+@@ -175,7 +175,7 @@ static int zfcp_scsi_eh_abort_handler(st
+ 	if (!fsf_req) {
+ 		write_unlock_irqrestore(&adapter->abort_lock, flags);
+ 		zfcp_scsi_dbf_event_abort("lte1", adapter, scpnt, NULL, 0);
+-		return retval;
++		return FAILED; /* completion could be in progress */
+ 	}
+ 	fsf_req->data = NULL;
+ 

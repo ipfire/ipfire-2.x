@@ -1,0 +1,85 @@
+From: Tao Ma <tao.ma@oracle.com>
+Subject: [PATCH 06/16] ocfs2: Add helper function in uptodate.c for removing xattr clusters
+Patch-mainline: 2.6.28?
+References: FATE302067 
+
+The old uptodate only handles the issue of removing one buffer_head from
+ocfs2 inode's buffer cache. With xattr clusters, we may need to remove
+multiple buffer_head's at a time.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/uptodate.c |   32 ++++++++++++++++++++++++++------
+ fs/ocfs2/uptodate.h |    3 +++
+ 2 files changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/fs/ocfs2/uptodate.c b/fs/ocfs2/uptodate.c
+index 4da8851..e26459e 100644
+--- a/fs/ocfs2/uptodate.c
++++ b/fs/ocfs2/uptodate.c
+@@ -511,14 +511,10 @@ static void ocfs2_remove_metadata_tree(struct ocfs2_caching_info *ci,
+ 	ci->ci_num_cached--;
+ }
+ 
+-/* Called when we remove a chunk of metadata from an inode. We don't
+- * bother reverting things to an inlined array in the case of a remove
+- * which moves us back under the limit. */
+-void ocfs2_remove_from_cache(struct inode *inode,
+-			     struct buffer_head *bh)
++static void ocfs2_remove_block_from_cache(struct inode *inode,
++					  sector_t block)
+ {
+ 	int index;
+-	sector_t block = bh->b_blocknr;
+ 	struct ocfs2_meta_cache_item *item = NULL;
+ 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+ 	struct ocfs2_caching_info *ci = &oi->ip_metadata_cache;
+@@ -544,6 +540,30 @@ void ocfs2_remove_from_cache(struct inode *inode,
+ 		kmem_cache_free(ocfs2_uptodate_cachep, item);
+ }
+ 
++/*
++ * Called when we remove a chunk of metadata from an inode. We don't
++ * bother reverting things to an inlined array in the case of a remove
++ * which moves us back under the limit.
++ */
++void ocfs2_remove_from_cache(struct inode *inode,
++			     struct buffer_head *bh)
++{
++	sector_t block = bh->b_blocknr;
++
++	ocfs2_remove_block_from_cache(inode, block);
++}
++
++/* Called when we remove xattr clusters from an inode. */
++void ocfs2_remove_xattr_clusters_from_cache(struct inode *inode,
++					    sector_t block,
++					    u32 c_len)
++{
++	u64 i, b_len = ocfs2_clusters_to_blocks(inode->i_sb, 1) * c_len;
++
++	for (i = 0; i < b_len; i++, block++)
++		ocfs2_remove_block_from_cache(inode, block);
++}
++
+ int __init init_ocfs2_uptodate_cache(void)
+ {
+ 	ocfs2_uptodate_cachep = kmem_cache_create("ocfs2_uptodate",
+diff --git a/fs/ocfs2/uptodate.h b/fs/ocfs2/uptodate.h
+index 2e73206..531b4b3 100644
+--- a/fs/ocfs2/uptodate.h
++++ b/fs/ocfs2/uptodate.h
+@@ -40,6 +40,9 @@ void ocfs2_set_new_buffer_uptodate(struct inode *inode,
+ 				   struct buffer_head *bh);
+ void ocfs2_remove_from_cache(struct inode *inode,
+ 			     struct buffer_head *bh);
++void ocfs2_remove_xattr_clusters_from_cache(struct inode *inode,
++					    sector_t block,
++					    u32 c_len);
+ int ocfs2_buffer_read_ahead(struct inode *inode,
+ 			    struct buffer_head *bh);
+ 
+-- 
+1.5.4.5
+

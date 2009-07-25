@@ -1,0 +1,36 @@
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: dm table: drop reference at unbind
+References: bnc#457205
+Patch-mainline: 2.6.28-rc4
+Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+
+[PATCH 2/3] for bnc 457205
+
+mainline commit a1b51e98676932d031f5eec1325b2df4bbdc8f26
+
+    
+    Move one dm_table_put() so that the last reference in the thread
+    gets dropped in __unbind().
+    
+    This is required for a following patch,
+    dm-table-rework-reference-counting.patch, which will change the logic in
+    such a way that table destructor is called only at specific points in
+    the code.
+    
+    Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+    Signed-off-by: Alasdair G Kergon <agk@redhat.com>
+
+Index: linux-2.6.27/drivers/md/dm.c
+===================================================================
+--- linux-2.6.27.orig/drivers/md/dm.c
++++ linux-2.6.27/drivers/md/dm.c
+@@ -2055,8 +2055,8 @@ void dm_put(struct mapped_device *md)
+ 			dm_table_presuspend_targets(map);
+ 			dm_table_postsuspend_targets(map);
+ 		}
+-		__unbind(md);
+ 		dm_table_put(map);
++		__unbind(md);
+ 		free_dev(md);
+ 	}
+ }

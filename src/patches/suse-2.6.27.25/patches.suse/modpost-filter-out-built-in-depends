@@ -1,0 +1,27 @@
+From: Michal Marek <mmarek@suse.cz>
+Subject: modpost: filter out "built-in" depends
+References: bnc#450085
+
+In the binary spec files, we "annotate" the Module.symvers file with
+information where particular vmlinux exports come from. This annotation
+confuses modpost when building external modules. This patch makes modpost
+treat "built-in" exports as vmlinux exports, so that these don't show up
+in modules' depends: fields.
+
+Signed-off-by: Michal Marek <mmarek@suse.cz>
+---
+ scripts/mod/modpost.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -86,7 +86,8 @@ static int is_vmlinux(const char *modnam
+ 		myname = modname;
+ 
+ 	return (strcmp(myname, "vmlinux") == 0) ||
+-	       (strcmp(myname, "vmlinux.o") == 0);
++	       (strcmp(myname, "vmlinux.o") == 0) ||
++	       (strcmp(myname, "built-in") == 0);
+ }
+ 
+ void *do_nofail(void *ptr, const char *expr)

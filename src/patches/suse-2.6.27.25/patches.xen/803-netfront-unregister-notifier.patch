@@ -1,0 +1,44 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/86e119bc82c5
+# HG changeset 803 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1235992012 0
+# Node ID 86e119bc82c5137e502bc8f68f65aba37f0a1a02
+# Parent  979f8ccc314cd873e853fa9be6a72324c8ad119c
+Subject: netfront: Unregister inetdev notifiers on failure
+If you attempt to modprobe the pv-on-hvm netfront driver on a machine
+not running under Xen (say, bare-metal, or under another hypervisor), the
+netfront code correctly returns an ENODEV and fails to load.  However, if you
+then shutdown that machine, you will oops while tearing down the network.
+This is because we forget to unregister the the inetaddr_notifier on failure,
+and so the kernel takes a fatal page fault.  The attached patch just unregisters
+the notifier on failure, and solves the problem for me.
+
+Signed-off-by: Chris Lalancette <clalance@redhat.com>
+Acked-by: jbeulich@novell.com
+
+--- sle11-2009-03-04.orig/drivers/xen/netfront/netfront.c	2009-03-04 10:50:17.000000000 +0100
++++ sle11-2009-03-04/drivers/xen/netfront/netfront.c	2009-03-04 11:25:33.000000000 +0100
+@@ -2199,6 +2199,8 @@ static struct xenbus_driver netfront_dri
+ 
+ static int __init netif_init(void)
+ {
++	int err;
++
+ 	if (!is_running_on_xen())
+ 		return -ENODEV;
+ 
+@@ -2220,7 +2222,13 @@ static int __init netif_init(void)
+ 	(void)register_inetaddr_notifier(&notifier_inetdev);
+ #endif
+ 
+-	return xenbus_register_frontend(&netfront_driver);
++	err = xenbus_register_frontend(&netfront_driver);
++	if (err) {
++#ifdef CONFIG_INET
++		unregister_inetaddr_notifier(&notifier_inetdev);
++#endif
++	}
++	return err;
+ }
+ module_init(netif_init);
+ 

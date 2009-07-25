@@ -1,0 +1,43 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x86: use cpuid vector 0xb when available for detecting cpu topology
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: bbb65d2d365efe9951290e61678dcf81ec60add4
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+cpuid leaf 0xb provides extended topology enumeration. This interface provides
+the 32-bit x2APIC id of the logical processor and it also provides a new
+mechanism to detect SMT and core siblings (which provides increased
+addressability).
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+Automatically created from "patches.arch/x2APIC_PATCH_40_of_41_bbb65d2d365efe9951290e61678dcf81ec60add4" by xen-port-patches.py
+
+Index: head-2008-10-13/arch/x86/kernel/cpu/addon_cpuid_features.c
+===================================================================
+--- head-2008-10-13.orig/arch/x86/kernel/cpu/addon_cpuid_features.c	2008-10-13 13:52:01.000000000 +0200
++++ head-2008-10-13/arch/x86/kernel/cpu/addon_cpuid_features.c	2008-10-13 15:49:03.000000000 +0200
+@@ -69,7 +69,7 @@ void __cpuinit init_scattered_cpuid_feat
+  */
+ void __cpuinit detect_extended_topology(struct cpuinfo_x86 *c)
+ {
+-#ifdef CONFIG_SMP
++#if defined(CONFIG_SMP) && !defined(CONFIG_XEN)
+ 	unsigned int eax, ebx, ecx, edx, sub_index;
+ 	unsigned int ht_mask_width, core_plus_mask_width;
+ 	unsigned int core_select_mask, core_level_siblings;
+Index: linux-2.6.26/include/asm-x86/mach-xen/asm/processor.h
+===================================================================
+--- linux-2.6.26.orig/include/asm-x86/mach-xen/asm/processor.h
++++ linux-2.6.26/include/asm-x86/mach-xen/asm/processor.h
+@@ -161,6 +161,7 @@ extern void init_scattered_cpuid_feature
+ extern unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c);
+ extern unsigned short num_cache_leaves;
+ 
++extern void detect_extended_topology(struct cpuinfo_x86 *c);
+ #if defined(CONFIG_X86_HT) || defined(CONFIG_X86_64)
+ extern void detect_ht(struct cpuinfo_x86 *c);
+ #else

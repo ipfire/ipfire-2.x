@@ -1,0 +1,14 @@
+From: schwab@suse.de
+Subject: Don't clean <asm/nr-irqs.h>
+
+--- a/arch/ia64/kernel/Makefile
++++ b/arch/ia64/kernel/Makefile
+@@ -104,7 +104,7 @@ arch/$(SRCARCH)/kernel/nr-irqs.s: $(srctree)/arch/$(SRCARCH)/kernel/nr-irqs.c \
+ 	$(Q)mkdir -p $(dir $@)
+ 	$(call cmd,nr_irqs)
+ 
+-clean-files += $(objtree)/arch/ia64/include/asm/nr-irqs.h
++MRPROPER_FILES += $(objtree)/arch/ia64/include/asm/nr-irqs.h
+ 
+ #
+ # native ivt.S and entry.S

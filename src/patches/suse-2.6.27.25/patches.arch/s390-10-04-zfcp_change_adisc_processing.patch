@@ -1,0 +1,91 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: incorrect reaction on incoming RSCN.
+References: bnc#482818,LTC#51960
+
+Symptom:     After re-establishing a remote storage port connection
+             the port was never re-opened.
+Problem:     The port re-opening was prevented by a unfortunate
+	     status flag combination, verification.
+Solution:    Fix the oddities in the processing on RSCN receiption.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_dbf.c |    4 ++--
+ drivers/s390/scsi/zfcp_fc.c  |   18 +++++++-----------
+ drivers/s390/scsi/zfcp_fsf.c |    4 ----
+ 3 files changed, 9 insertions(+), 17 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_fsf.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_fsf.c
++++ linux-sles11/drivers/s390/scsi/zfcp_fsf.c
+@@ -1165,10 +1165,6 @@ int zfcp_fsf_send_els(struct zfcp_send_e
+ 	struct fsf_qtcb_bottom_support *bottom;
+ 	int ret = -EIO;
+ 
+-	if (unlikely(!(atomic_read(&els->port->status) &
+-		       ZFCP_STATUS_COMMON_UNBLOCKED)))
+-		return -EBUSY;
+-
+ 	spin_lock_bh(&adapter->req_q_lock);
+ 	if (zfcp_fsf_req_sbal_get(adapter))
+ 		goto out;
+Index: linux-sles11/drivers/s390/scsi/zfcp_dbf.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_dbf.c
++++ linux-sles11/drivers/s390/scsi/zfcp_dbf.c
+@@ -553,7 +553,7 @@ static const char *zfcp_rec_dbf_ids[] = 
+ 	[61]	= "",
+ 	[62]	= "request timeout",
+ 	[63]	= "adisc link test reject or timeout",
+-	[64]	= "adisc link test d_id changed",
++	[64]	= "adisc link test d_id changed or port not open",
+ 	[65]	= "adisc link test failed",
+ 	[66]	= "recovery out of memory",
+ 	[67]	= "adapter recovery repeated after state change",
+@@ -574,7 +574,7 @@ static const char *zfcp_rec_dbf_ids[] = 
+ 	[79]	= "link down",
+ 	[80]	= "exclusive read-only unit access unsupported",
+ 	[81]	= "shared read-write unit access unsupported",
+-	[82]	= "incoming rscn",
++	[82]	= "",
+ 	[83]	= "incoming wwpn",
+ 	[84]	= "wka port handle not valid close port",
+ 	[85]	= "online",
+Index: linux-sles11/drivers/s390/scsi/zfcp_fc.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_fc.c
++++ linux-sles11/drivers/s390/scsi/zfcp_fc.c
+@@ -122,16 +122,10 @@ static void _zfcp_fc_incoming_rscn(struc
+ 	struct zfcp_port *port;
+ 
+ 	read_lock_irqsave(&zfcp_data.config_lock, flags);
+-	list_for_each_entry(port, &fsf_req->adapter->port_list_head, list) {
+-		if (!(atomic_read(&port->status) & ZFCP_STATUS_PORT_PHYS_OPEN))
+-			/* Try to connect to unused ports anyway. */
+-			zfcp_erp_port_reopen(port,
+-					     ZFCP_STATUS_COMMON_ERP_FAILED,
+-					     82, fsf_req);
+-		else if ((port->d_id & range) == (elem->nport_did & range))
+-			/* Check connection status for connected ports */
++	list_for_each_entry(port, &fsf_req->adapter->port_list_head, list)
++		if ((port->d_id & range) == (elem->nport_did & range))
+ 			zfcp_test_link(port);
+-	}
++
+ 	read_unlock_irqrestore(&zfcp_data.config_lock, flags);
+ }
+ 
+@@ -375,8 +369,10 @@ static void zfcp_fc_adisc_handler(unsign
+ 	if (!port->wwnn)
+ 		port->wwnn = ls_adisc->wwnn;
+ 
+-	if (port->wwpn != ls_adisc->wwpn)
+-		zfcp_erp_port_reopen(port, 0, 64, NULL);
++	if ((port->wwpn != ls_adisc->wwpn) ||
++	    !(atomic_read(&port->status) & ZFCP_STATUS_COMMON_OPEN))
++		zfcp_erp_port_reopen(port, ZFCP_STATUS_COMMON_ERP_FAILED, 64,
++				     NULL);
+ 
+  out:
+ 	zfcp_port_put(port);

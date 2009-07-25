@@ -1,0 +1,76 @@
+From 60d90dc8151413ae21bc6adcf0cfd995628ae87f Mon Sep 17 00:00:00 2001
+From: Rafael J. Wysocki <rjw@sisk.pl>
+Date: Mon, 3 Nov 2008 19:01:05 +0900
+Subject: [PATCH] SATA AHCI: Blacklist system that spins off disks during ACPI power off
+References: bnc#441721
+
+Some notebooks from HP have the problem that their BIOSes attempt to
+spin down hard drives before entering ACPI system states S4 and S5.
+This leads to a yo-yo effect during system power-off shutdown and the
+last phase of hibernation when the disk is first spun down by the
+kernel and then almost immediately turned on and off by the BIOS.
+This, in turn, may result in shortening the disk's life times.
+
+To prevent this from happening we can blacklist the affected systems
+using DMI information.
+
+Blacklist HP nx6310 that uses the AHCI driver.
+
+Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Jeff Garzik <jgarzik@redhat.com>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/ata/ahci.c |   32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+Index: linux-2.6.27/drivers/ata/ahci.c
+===================================================================
+--- linux-2.6.27.orig/drivers/ata/ahci.c
++++ linux-2.6.27/drivers/ata/ahci.c
+@@ -2528,6 +2528,32 @@ static void ahci_p5wdh_workaround(struct
+ 	}
+ }
+ 
++static bool ahci_broken_system_poweroff(struct pci_dev *pdev)
++{
++	static const struct dmi_system_id broken_systems[] = {
++		{
++			.ident = "HP Compaq nx6310",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
++				DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6310"),
++			},
++			/* PCI slot number of the controller */
++			.driver_data = (void *)0x1FUL,
++		},
++
++		{ }	/* terminate list */
++	};
++	const struct dmi_system_id *dmi = dmi_first_match(broken_systems);
++
++	if (dmi) {
++		unsigned long slot = (unsigned long)dmi->driver_data;
++		/* apply the quirk only to on-board controllers */
++		return slot == PCI_SLOT(pdev->devfn);
++	}
++
++	return false;
++}
++
+ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	static int printed_version;
+@@ -2623,6 +2649,12 @@ static int ahci_init_one(struct pci_dev
+ 		}
+ 	}
+ 
++	if (ahci_broken_system_poweroff(pdev)) {
++		pi.flags |= ATA_FLAG_NO_POWEROFF_SPINDOWN;
++		dev_info(&pdev->dev,
++			"quirky BIOS, skipping spindown on poweroff\n");
++	}
++
+ 	/* CAP.NP sometimes indicate the index of the last enabled
+ 	 * port, at other times, that of the last possible port, so
+ 	 * determining the maximum port number requires looking at

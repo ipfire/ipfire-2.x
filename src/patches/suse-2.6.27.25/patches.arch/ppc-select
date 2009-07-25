@@ -1,0 +1,17 @@
+From: Paul Mackerras <paulus@samba.org>
+Subject: Fix wrong error code from ppc32 select syscall
+Acked-by: schwab@suse.de
+
+See <http://ozlabs.org/pipermail/linuxppc-dev/2008-October/063678.html>.
+
+--- linux-2.6.27/arch/powerpc/include/asm/systbl.h.~1~	2008-11-10 23:10:37.000000000 +0100
++++ linux-2.6.27/arch/powerpc/include/asm/systbl.h	2008-11-11 11:39:06.000000000 +0100
+@@ -145,7 +145,7 @@ SYSCALL_SPU(setfsuid)
+ SYSCALL_SPU(setfsgid)
+ SYSCALL_SPU(llseek)
+ COMPAT_SYS_SPU(getdents)
+-SYSX_SPU(sys_select,ppc32_select,ppc_select)
++SYSX_SPU(sys_select,ppc32_select,sys_select)
+ SYSCALL_SPU(flock)
+ SYSCALL_SPU(msync)
+ COMPAT_SYS_SPU(readv)

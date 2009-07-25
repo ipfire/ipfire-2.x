@@ -1,0 +1,28 @@
+From: James Smart <James.Smart@Emulex.Com>
+Date: Thu, 20 Nov 2008 15:58:01 +0000 (-0500)
+Subject: fc_transport: fix old bug on bitflag definitions
+X-Git-Url: http://git.kernel.org/?p=linux%2Fkernel%2Fgit%2Fjejb%2Fscsi-rc-fixes-2.6.git;a=commitdiff_plain;h=21098c68df7115554fe041170899bdff709efd08
+References: bnc#447814
+
+When the fastfail flag was added, it did not account for the flags
+being bit fields. Correct the definition so there is no longer a
+conflict.
+
+Signed-off-by: James Smart <james.smart@emulex.com>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+
+diff --git a/include/scsi/scsi_transport_fc.h b/include/scsi/scsi_transport_fc.h
+index 49d8913..6e04e6f 100644
+--- a/include/scsi/scsi_transport_fc.h
++++ b/include/scsi/scsi_transport_fc.h
+@@ -357,7 +357,7 @@ struct fc_rport {	/* aka fc_starget_attrs */
+ /* bit field values for struct fc_rport "flags" field: */
+ #define FC_RPORT_DEVLOSS_PENDING	0x01
+ #define FC_RPORT_SCAN_PENDING		0x02
+-#define FC_RPORT_FAST_FAIL_TIMEDOUT	0x03
++#define FC_RPORT_FAST_FAIL_TIMEDOUT	0x04
+ 
+ #define	dev_to_rport(d)				\
+ 	container_of(d, struct fc_rport, dev)

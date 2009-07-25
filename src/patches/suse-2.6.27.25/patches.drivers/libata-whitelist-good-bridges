@@ -1,0 +1,54 @@
+From 9ce8e3073d9cfd6f859c22a25441db41b85cbf6e Mon Sep 17 00:00:00 2001
+From: Jens Axboe <jens.axboe@oracle.com>
+Date: Wed, 27 Aug 2008 15:23:18 +0200
+Subject: [PATCH] libata: add whitelist for devices with known good pata-sata bridges
+
+libata currently imposes a UDMA5 max transfer rate and 200 sector max
+transfer size for SATA devices that sit behind a pata-sata bridge. Lots
+of devices have known good bridges that don't need this limit applied.
+The MTRON SSD disks are such devices. Transfer rates are increased by
+20-30% with the restriction removed.
+
+So add a "blacklist" entry for the MTRON devices, with a flag indicating
+that the bridge is known good.
+
+Signed-off-by: Jeff Garzik <jgarzik@redhat.com>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/ata/libata-core.c |    7 +++++++
+ include/linux/libata.h    |    1 +
+ 2 files changed, 8 insertions(+)
+
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -2163,6 +2163,10 @@ retry:
+ static inline u8 ata_dev_knobble(struct ata_device *dev)
+ {
+ 	struct ata_port *ap = dev->link->ap;
++
++	if (ata_dev_blacklisted(dev) & ATA_HORKAGE_BRIDGE_OK)
++		return 0;
++
+ 	return ((ap->cbl == ATA_CBL_SATA) && (!ata_id_is_sata(dev->id)));
+ }
+ 
+@@ -4141,6 +4145,9 @@ static const struct ata_blacklist_entry 
+ 	{ "TSSTcorp CDDVDW SH-S202N", "SB00",	  ATA_HORKAGE_IVB, },
+ 	{ "TSSTcorp CDDVDW SH-S202N", "SB01",	  ATA_HORKAGE_IVB, },
+ 
++	/* Devices that do not need bridging limits applied */
++	{ "MTRON MSP-SATA*",		NULL,	ATA_HORKAGE_BRIDGE_OK, },
++
+ 	/* End Marker */
+ 	{ }
+ };
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -371,6 +371,7 @@ enum {
+ 	ATA_HORKAGE_IPM		= (1 << 7),	/* Link PM problems */
+ 	ATA_HORKAGE_IVB		= (1 << 8),	/* cbl det validity bit bugs */
+ 	ATA_HORKAGE_STUCK_ERR	= (1 << 9),	/* stuck ERR on next PACKET */
++	ATA_HORKAGE_BRIDGE_OK	= (1 << 10),	/* no bridge limits */
+ 	ATA_HORKAGE_FIRMWARE_WARN = (1 << 12),	/* firwmare update warning */
+ 
+ 	 /* DMA mask for user DMA control: User visible values; DO NOT

@@ -1,0 +1,20 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] powerpc: spu_profiler build fix
+
+ This fixes the following build failure:  error: 'ppc_proc_freq' undeclared
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ arch/powerpc/oprofile/cell/spu_profiler.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/powerpc/oprofile/cell/spu_profiler.c
++++ b/arch/powerpc/oprofile/cell/spu_profiler.c
+@@ -16,6 +16,7 @@
+ #include <linux/smp.h>
+ #include <linux/slab.h>
+ #include <asm/cell-pmu.h>
++#include <asm/time.h>
+ #include "pr_util.h"
+ 
+ #define TRACE_ARRAY_SIZE 1024

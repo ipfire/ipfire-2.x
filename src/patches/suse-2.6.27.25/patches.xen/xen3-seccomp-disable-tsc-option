@@ -1,0 +1,55 @@
+From: Andrea Arcangeli <andrea@cpushare.com>
+Subject: [PATCH seccomp: make tsc disabling optional
+Patch-mainline: unknown
+References: 191123
+
+Make the TSC disable purely paranoid feature optional, so by default seccomp
+returns absolutely zerocost.
+
+Ported from 2.6.19 to 2.6.24-rc7 by Jeff Mahoney.
+Addition of x86-64 by Jan Beulich.
+
+Signed-off-by: Andrea Arcangeli <andrea@cpushare.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+Automatically created from "patches.fixes/seccomp-disable-tsc-option" by xen-port-patches.py
+
+Index: head-2008-10-01/arch/x86/kernel/process_32-xen.c
+===================================================================
+--- head-2008-10-01.orig/arch/x86/kernel/process_32-xen.c	2008-10-01 16:18:30.000000000 +0200
++++ head-2008-10-01/arch/x86/kernel/process_32-xen.c	2008-10-01 16:20:58.000000000 +0200
+@@ -383,6 +383,7 @@ static void hard_disable_TSC(void)
+ 
+ void disable_TSC(void)
+ {
++#ifdef CONFIG_SECCOMP_DISABLE_TSC
+ 	preempt_disable();
+ 	if (!test_and_set_thread_flag(TIF_NOTSC))
+ 		/*
+@@ -391,6 +392,7 @@ void disable_TSC(void)
+ 		 */
+ 		hard_disable_TSC();
+ 	preempt_enable();
++#endif
+ }
+ 
+ static void hard_enable_TSC(void)
+Index: head-2008-10-01/arch/x86/kernel/process_64-xen.c
+===================================================================
+--- head-2008-10-01.orig/arch/x86/kernel/process_64-xen.c	2008-10-01 16:20:19.000000000 +0200
++++ head-2008-10-01/arch/x86/kernel/process_64-xen.c	2008-10-01 16:20:58.000000000 +0200
+@@ -423,6 +423,7 @@ static void hard_disable_TSC(void)
+ 
+ void disable_TSC(void)
+ {
++#ifdef CONFIG_SECCOMP_DISABLE_TSC
+ 	preempt_disable();
+ 	if (!test_and_set_thread_flag(TIF_NOTSC))
+ 		/*
+@@ -431,6 +432,7 @@ void disable_TSC(void)
+ 		 */
+ 		hard_disable_TSC();
+ 	preempt_enable();
++#endif
+ }
+ 
+ static void hard_enable_TSC(void)

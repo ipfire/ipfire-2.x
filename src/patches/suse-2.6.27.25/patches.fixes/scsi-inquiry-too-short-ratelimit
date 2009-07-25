@@ -1,0 +1,23 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: INQUIRY result too short (5) message flood
+References: bnc#432535
+
+During installation with vioserver/vioclient lots of
+scsi scan: INQUIRY result too short (5), using 36
+messages are printed. These really should be ratelimited.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+index b14dc02..ac46d4b 100644
+--- a/drivers/scsi/scsi_scan.c
++++ b/drivers/scsi/scsi_scan.c
+@@ -680,7 +680,7 @@ static int scsi_probe_lun(struct scsi_device *sdev, unsigned char *inq_result,
+ 	 * and displaying garbage for the Vendor, Product, or Revision
+ 	 * strings.
+ 	 */
+-	if (sdev->inquiry_len < 36) {
++	if (sdev->inquiry_len < 36 && printk_ratelimit()) {
+ 		printk(KERN_INFO "scsi scan: INQUIRY result too short (%d),"
+ 				" using 36\n", sdev->inquiry_len);
+ 		sdev->inquiry_len = 36;

@@ -1,0 +1,76 @@
+From 07ae95f988a34465bdcb384bfa73c03424fe2312 Mon Sep 17 00:00:00 2001
+From: Andrew Patterson <andrew.patterson@hp.com>
+Date: Mon, 10 Nov 2008 15:31:05 -0700
+Subject: ACPI/PCI: PCI MSI _OSC support capabilities called when root bridge added
+Patch-mainline: 2.6.29
+References: bnc#438941
+
+The _OSC capability OSC_MSI_SUPPORT is set when the root bridge is added
+with pci_acpi_osc_support(), so we no longer need to do it in the PCI
+MSI driver.  Also adds the function pci_msi_enabled, which returns true
+if pci=nomsi is not on the kernel command-line.
+
+Signed-off-by: Andrew Patterson <andrew.patterson@hp.com>
+Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/acpi/pci_root.c |    2 ++
+ drivers/pci/msi.c       |   11 +++++++++++
+ include/linux/pci.h     |    7 +++++++
+ 3 files changed, 20 insertions(+)
+
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -350,6 +350,8 @@ static int __devinit acpi_pci_root_add(s
+ 	if (pcie_aspm_enabled())
+ 		flags |= OSC_ACTIVE_STATE_PWR_SUPPORT |
+ 			OSC_CLOCK_PWR_CAPABILITY_SUPPORT;
++	if (pci_msi_enabled())
++		flags |= OSC_MSI_SUPPORT;
+ 	if (flags != base_flags)
+ 		pci_acpi_osc_support(device->handle, flags);
+ 
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -757,6 +757,17 @@ void pci_no_msi(void)
+ 	pci_msi_enable = 0;
+ }
+ 
++/**
++ * pci_msi_enabled - is MSI enabled?
++ *
++ * Returns true if MSI has not been disabled by the command-line option
++ * pci=nomsi.
++ **/
++int pci_msi_enabled(void)
++{
++	return pci_msi_enable;
++}
++
+ void pci_msi_init_pci_dev(struct pci_dev *dev)
+ {
+ 	INIT_LIST_HEAD(&dev->msi_list);
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -767,6 +767,11 @@ static inline void msi_remove_pci_irq_ve
+ 
+ static inline void pci_restore_msi_state(struct pci_dev *dev)
+ { }
++
++static inline int pci_msi_enabled(void)
++{
++	return 0;
++}
+ #else
+ extern int pci_enable_msi(struct pci_dev *dev);
+ extern void pci_msi_shutdown(struct pci_dev *dev);
+@@ -777,6 +782,8 @@ extern void pci_msix_shutdown(struct pci
+ extern void pci_disable_msix(struct pci_dev *dev);
+ extern void msi_remove_pci_irq_vectors(struct pci_dev *dev);
+ extern void pci_restore_msi_state(struct pci_dev *dev);
++extern int pci_msi_enabled(void);
++
+ #endif
+ 
+ #ifndef CONFIG_PCIEASPM

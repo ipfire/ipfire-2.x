@@ -1,0 +1,32 @@
+Subject: Don't spu_acquire_saved unnecessarily in regs read
+From: Jeremy Kerr <jk@ozlabs.org>
+References: 447133 - LTC50070
+
+With most file readers (eg cat, dd), reading a context's regs file will
+result in two reads: the first to read the data, and the second to
+return EOF. Because each read performs a spu_acquire_saved, we end up
+descheduling and re-scheduling the context twice.
+
+This change does a simple check to see if we'd return EOF before
+calling spu_acquire_saved(), saving the extra schedule operation.
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+Signed-off-by: Olaf Hering <olh@suse.de>
+---
+ arch/powerpc/platforms/cell/spufs/file.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/arch/powerpc/platforms/cell/spufs/file.c
++++ b/arch/powerpc/platforms/cell/spufs/file.c
+@@ -551,6 +551,11 @@ spufs_regs_read(struct file *file, char 
+ 	int ret;
+ 	struct spu_context *ctx = file->private_data;
+ 
++	/* pre-check for file position: if we'd return EOF, there's no point
++	 * causing a deschedule */
++	if (*pos >= sizeof(ctx->csa.lscsa->gprs))
++		return 0;
++
+ 	ret = spu_acquire_saved(ctx);
+ 	if (ret)
+ 		return ret;

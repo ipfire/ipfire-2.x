@@ -1,0 +1,23 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] kdb: account for vm_committed_space -> vm_committed_as change
+References: bnc#505831
+
+ patches.fixes/mm-fix-Commited_AS-underflow-on-large-NR_CPUS changed
+ vm_committed_space to a percpu. This patch accounts for that in the kdb code.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/proc/proc_misc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/proc/proc_misc.c
++++ b/fs/proc/proc_misc.c
+@@ -258,7 +258,7 @@ kdb_meminfo_read_proc(void)
+ #define K(x) ((x) << (PAGE_SHIFT - 10))
+ 	si_meminfo(&i);
+ 	kdb_si_swapinfo(&i);
+-	committed = atomic_read(&vm_committed_space);
++	committed = percpu_counter_read_positive(&vm_committed_as);
+ 	allowed = ((totalram_pages - hugetlb_total_pages())
+ 		* sysctl_overcommit_ratio / 100) + total_swap_pages;
+ 

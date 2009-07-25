@@ -1,0 +1,50 @@
+Commit-Id: 458a9f617adfb2fc5f38e7673339115c4ba3290f
+From: Francois Romieu <romieu@fr.zoreil.com>
+Date: Sat, 2 Aug 2008 15:50:02 +0200
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#448168
+Subject: [PATCH] r8169: Tx performance tweak helper
+
+Signed-off-by: Francois Romieu <romieu@fr.zoreil.com>
+Cc: Edward Hsu <edward_hsu@realtek.com.tw>
+
+---
+ drivers/net/r8169.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+--- a/drivers/net/r8169.c
++++ b/drivers/net/r8169.c
+@@ -2079,12 +2079,20 @@ static void rtl_hw_start_8169(struct net
+ 	RTL_W16(IntrMask, tp->intr_event);
+ }
+ 
++static void rtl_tx_performance_tweak(struct pci_dev *pdev, u8 force)
++{
++	u8 ctl;
++
++	pci_read_config_byte(pdev, 0x69, &ctl);
++	ctl = (ctl & ~0x70) | force;
++	pci_write_config_byte(pdev, 0x69, ctl);
++}
++
+ static void rtl_hw_start_8168(struct net_device *dev)
+ {
+ 	struct rtl8169_private *tp = netdev_priv(dev);
+ 	void __iomem *ioaddr = tp->mmio_addr;
+ 	struct pci_dev *pdev = tp->pci_dev;
+-	u8 ctl;
+ 
+ 	RTL_W8(Cfg9346, Cfg9346_Unlock);
+ 
+@@ -2098,10 +2106,7 @@ static void rtl_hw_start_8168(struct net
+ 
+ 	RTL_W16(CPlusCmd, tp->cp_cmd);
+ 
+-	/* Tx performance tweak. */
+-	pci_read_config_byte(pdev, 0x69, &ctl);
+-	ctl = (ctl & ~0x70) | 0x50;
+-	pci_write_config_byte(pdev, 0x69, ctl);
++	rtl_tx_performance_tweak(pdev, 0x50);
+ 
+ 	RTL_W16(IntrMitigate, 0x5151);
+ 

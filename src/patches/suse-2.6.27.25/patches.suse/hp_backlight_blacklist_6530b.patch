@@ -1,0 +1,50 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: Blacklist HP laptop (6530b) to not use generic ACPI backlight interface
+References: bnc#491802
+Patch-Mainline: never, this will be IGD driven which is too risky to backport
+
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+---
+ drivers/acpi/video_detect.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/acpi/video_detect.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/acpi/video_detect.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/acpi/video_detect.c
+@@ -142,6 +142,25 @@ find_video(acpi_handle handle, u32 lvl,
+ 	return AE_OK;
+ }
+ 
++static int set_dmi_blacklisting(const struct dmi_system_id *id)
++{
++	printk(KERN_NOTICE "%s detected - adjusting backlight video\n",
++	       id->ident);
++	acpi_video_support |= (long)id->driver_data;
++	return 0;
++}
++
++static struct dmi_system_id video_backlight_blacklist[] = {
++	{ set_dmi_blacklisting,
++	  "HP 6530b", {
++		DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "6530b")
++		},
++	  (void *) ACPI_VIDEO_BACKLIGHT_DMI_VENDOR
++	},
++	  {},
++};
++
+ /*
+  * Returns the video capabilities of a specific ACPI graphics device
+  *
+@@ -176,6 +195,7 @@ long acpi_video_get_capabilities(acpi_ha
+ 		 *		ACPI_VIDEO_BACKLIGHT_DMI_VENDOR;
+ 		 *}
+ 		 */
++		dmi_check_system(video_backlight_blacklist);
+ 	} else {
+ 		status = acpi_bus_get_device(graphics_handle, &tmp_dev);
+ 		if (ACPI_FAILURE(status)) {

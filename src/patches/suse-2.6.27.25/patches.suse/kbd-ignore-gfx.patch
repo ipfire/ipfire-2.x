@@ -1,0 +1,37 @@
+From: Dirk Mueller <dmueller@novell.com>
+Subject: setfont breaks first Xserver start
+References: 302010
+Patch-Mainline: No
+
+The patch prevents setfont from accessing vga registers on the card when
+the card is in graphics mode KD_GRAPHICS as we assume, that someone else (ie.
+the Xserver) is in charge of the HW in which case accessing the vga registers
+may (at best) have no effect (not even the desired one) or (at worst) interfer
+with settings the graphics driver has made.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ drivers/video/console/vgacon.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/video/console/vgacon.c
++++ b/drivers/video/console/vgacon.c
+@@ -1240,7 +1240,7 @@ static int vgacon_font_set(struct vc_dat
+ 	unsigned charcount = font->charcount;
+ 	int rc;
+ 
+-	if (vga_video_type < VIDEO_TYPE_EGAM)
++	if (vga_video_type < VIDEO_TYPE_EGAM || vga_is_gfx)
+ 		return -EINVAL;
+ 
+ 	if (font->width != VGA_FONTWIDTH ||
+@@ -1258,7 +1258,7 @@ static int vgacon_font_set(struct vc_dat
+ 
+ static int vgacon_font_get(struct vc_data *c, struct console_font *font)
+ {
+-	if (vga_video_type < VIDEO_TYPE_EGAM)
++	if (vga_video_type < VIDEO_TYPE_EGAM || vga_is_gfx)
+ 		return -EINVAL;
+ 
+ 	font->width = VGA_FONTWIDTH;

@@ -1,0 +1,24 @@
+From: Petr Tesarik <ptesarik@suse.cz>
+Subject: Allow rwlocks to re-enable interrupts
+References: bnc#387784
+Mainline: no
+
+Pass the original flags to rwlock arch-code, so that it can re-enable
+interrupts if desired.
+
+Signed-off-by: Petr Tesarik <ptesarik@suse.cz>
+
+Automatically created from "patches.suse/rwlocks-enable-interrupts" by xen-port-patches.py
+
+--- sle11-2009-06-04.orig/include/asm-x86/mach-xen/asm/spinlock.h	2009-06-04 11:09:05.000000000 +0200
++++ sle11-2009-06-04/include/asm-x86/mach-xen/asm/spinlock.h	2009-06-04 11:09:50.000000000 +0200
+@@ -443,6 +443,9 @@ static inline void __raw_write_unlock(ra
+ 		     : "+m" (rw->lock) : "i" (RW_LOCK_BIAS) : "memory");
+ }
+ 
++#define __raw_read_lock_flags(lock, flags) __raw_read_lock(lock)
++#define __raw_write_lock_flags(lock, flags) __raw_write_lock(lock)
++
+ #define _raw_spin_relax(lock)	cpu_relax()
+ #define _raw_read_relax(lock)	cpu_relax()
+ #define _raw_write_relax(lock)	cpu_relax()

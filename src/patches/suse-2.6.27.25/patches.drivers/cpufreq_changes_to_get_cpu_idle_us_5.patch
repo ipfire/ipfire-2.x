@@ -1,0 +1,61 @@
+From: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>
+Subject: export get_cpu_idle_time_us() 
+
+export get_cpu_idle_time_us() for it to be used in ondemand governor.
+Last update time can be current time when the CPU is currently non-idle,
+accounting for the busy time since last idle.
+
+Signed-off-by: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+---
+ include/linux/tick.h     |    2 +-
+ kernel/time/tick-sched.c |   11 ++++++++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+Index: cpufreq.git/kernel/time/tick-sched.c
+===================================================================
+--- cpufreq.git.orig/kernel/time/tick-sched.c	2008-07-31 10:04:55.000000000 -0700
++++ cpufreq.git/kernel/time/tick-sched.c	2008-07-31 14:52:18.000000000 -0700
+@@ -20,6 +20,7 @@
+ #include <linux/profile.h>
+ #include <linux/sched.h>
+ #include <linux/tick.h>
++#include <linux/module.h>
+ 
+ #include <asm/irq_regs.h>
+ 
+@@ -184,9 +185,17 @@ u64 get_cpu_idle_time_us(int cpu, u64 *l
+ {
+ 	struct tick_sched *ts = &per_cpu(tick_cpu_sched, cpu);
+ 
+-	*last_update_time = ktime_to_us(ts->idle_lastupdate);
++	if (!tick_nohz_enabled)
++		return -1;
++
++	if (ts->idle_active)
++		*last_update_time = ktime_to_us(ts->idle_lastupdate);
++	else
++		*last_update_time = ktime_to_us(ktime_get());
++
+ 	return ktime_to_us(ts->idle_sleeptime);
+ }
++EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
+ 
+ /**
+  * tick_nohz_stop_sched_tick - stop the idle tick from the idle task
+Index: cpufreq.git/include/linux/tick.h
+===================================================================
+--- cpufreq.git.orig/include/linux/tick.h	2008-07-31 10:04:54.000000000 -0700
++++ cpufreq.git/include/linux/tick.h	2008-07-31 14:52:18.000000000 -0700
+@@ -123,7 +123,7 @@ static inline ktime_t tick_nohz_get_slee
+ 	return len;
+ }
+ static inline void tick_nohz_stop_idle(int cpu) { }
+-static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return 0; }
++static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
+ # endif /* !NO_HZ */
+ 
+ #endif
+
+-- 

@@ -1,0 +1,67 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: CPUFREQ: ondemand: Limit default sampling rate to 300ms max.
+References: bnc#464461
+Patch-Mainline: never, SLE11 only
+
+HW cpufreq drivers (e.g. all non-acpi AMD) may report too high latency values.
+The default sampling rate (how often the ondemand/conservative governor
+checks for frequency adjustments) may therefore be much too high,
+resulting in performance loss.
+
+Restrict default sampling rate to 300ms. 333ms sampling rate is field
+tested with userspace governors, 300ms should be a fine maximum default
+value for the ondemand kernel governor for all HW out there.
+
+Set default up_threshold to 40 on multi core systems.
+This should avoid effects where two CPU intensive threads are waiting on
+each other on separate cores. On a single core machine these would all be
+processed on one core resulting in higher utilization of the one core.
+
+---
+ drivers/cpufreq/cpufreq_ondemand.c |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+Index: linux-2.6.27/drivers/cpufreq/cpufreq_ondemand.c
+===================================================================
+--- linux-2.6.27.orig/drivers/cpufreq/cpufreq_ondemand.c
++++ linux-2.6.27/drivers/cpufreq/cpufreq_ondemand.c
+@@ -58,6 +58,7 @@ static unsigned int def_sampling_rate;
+ #define MAX_SAMPLING_RATE			(500 * def_sampling_rate)
+ #define DEF_SAMPLING_RATE_LATENCY_MULTIPLIER	(1000)
+ #define TRANSITION_LATENCY_LIMIT		(10 * 1000 * 1000)
++#define MAX_DEFAULT_SAMPLING_RATE		(300 * 1000)
+ 
+ static void do_dbs_timer(struct work_struct *work);
+ 
+@@ -558,6 +559,31 @@ static int cpufreq_governor_dbs(struct c
+ 			if (def_sampling_rate < MIN_STAT_SAMPLING_RATE)
+ 				def_sampling_rate = MIN_STAT_SAMPLING_RATE;
+ 
++			/* 
++			 * Cut def_sampling rate to 300ms if it was above,
++			 * still consider to not set it above latency
++			 * transition * 100
++			 */
++			if (def_sampling_rate > MAX_DEFAULT_SAMPLING_RATE) {
++				def_sampling_rate =
++					(MAX_DEFAULT_SAMPLING_RATE < MINIMUM_SAMPLING_RATE)
++					? MINIMUM_SAMPLING_RATE : MAX_DEFAULT_SAMPLING_RATE;
++				printk(KERN_INFO "CPUFREQ: ondemand sampling "
++				       "rate set to %d ms\n",
++				       def_sampling_rate / 1000);
++			}
++			/*
++			 * Be conservative in respect to performance.
++			 * If an application calculates using two threads
++			 * depending on each other, they will be run on several
++			 * CPU cores resulting on 50% load on both.
++			 * SLED might still want to prefer 80% up_threshold
++			 * by default, but we cannot differ that here.
++			 */
++			if (num_online_cpus() > 1)
++				dbs_tuners_ins.up_threshold =
++					DEF_FREQUENCY_UP_THRESHOLD / 2;
++
+ 			dbs_tuners_ins.sampling_rate = def_sampling_rate;
+ 		}
+ 		dbs_timer_init(this_dbs_info);

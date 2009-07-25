@@ -1,0 +1,44 @@
+From: Mohamed Abbas <mohamed.abbas@intel.com>
+Date: Wed, 11 Mar 2009 11:17:59 -0700
+Subject: [PATCH] iwlagn: fix warning when set WEP key
+Patch-mainline: 2.6.29? (wireless-testing: 31078197aa3ab891b1260627c0497e07060222c8)
+References: bnc#487247
+
+iwl_clear_station_table will be called every time rxon called.
+In this function ucode_key_table is set to 0 even though a static
+WEP security is set. This will cause in many warning and might be
+an issue if dynamic WEP is set. This patch make sure we keep track
+of all existing static WEP when this function is called.
+
+Signed-off-by: Mohamed Abbas <mohamed.abbas@intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
+Acked-by: Jiri Benc <jbenc@suse.cz>
+
+---
+ drivers/net/wireless/iwlwifi/iwl-core.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/net/wireless/iwlwifi/iwl-core.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/net/wireless/iwlwifi/iwl-core.c
+@@ -279,6 +279,7 @@ EXPORT_SYMBOL(iwl_hw_nic_init);
+ void iwl_clear_stations_table(struct iwl_priv *priv)
+ {
+ 	unsigned long flags;
++	int i;
+ 
+ 	spin_lock_irqsave(&priv->sta_lock, flags);
+ 
+@@ -293,6 +294,12 @@ void iwl_clear_stations_table(struct iwl
+ 	/* clean ucode key table bit map */
+ 	priv->ucode_key_table = 0;
+ 
++	/* keep track of static keys */
++	for (i = 0; i < WEP_KEYS_MAX ; i++) {
++		if (priv->wep_keys[i].key_size)
++			test_and_set_bit(i, &priv->ucode_key_table);
++	}
++
+ 	spin_unlock_irqrestore(&priv->sta_lock, flags);
+ }
+ EXPORT_SYMBOL(iwl_clear_stations_table);

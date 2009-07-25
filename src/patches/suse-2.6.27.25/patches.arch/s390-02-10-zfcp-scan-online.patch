@@ -1,0 +1,29 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: wait for port scan when setting FCP device online
+References: bnc#434333
+
+Description: wait for port scan when setting FCP device online
+Symptom: running chccwdev -e xxxx; echo ... > unit_add in a script
+         does not work
+Problem: The port scan in zfcp runs asynchronously to set_online
+Solution: Wait for the port scan to complete in the zfcp set_online
+          packets due to hardware problems, an additional check for
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_ccw.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/s390/scsi/zfcp_ccw.c	2008-10-17 18:26:54.000000000 +0200
++++ b/drivers/s390/scsi/zfcp_ccw.c	2008-10-17 18:31:42.000000000 +0200
+@@ -118,7 +118,9 @@ static int zfcp_ccw_set_online(struct cc
+ 	zfcp_erp_adapter_reopen(adapter, ZFCP_STATUS_COMMON_ERP_FAILED, 85,
+ 				NULL);
+ 	zfcp_erp_wait(adapter);
+-	goto out;
++	up(&zfcp_data.config_sema);
++	flush_work(&adapter->scan_work);
++	return 0;
+ 
+  out_scsi_register:
+ 	zfcp_erp_thread_kill(adapter);

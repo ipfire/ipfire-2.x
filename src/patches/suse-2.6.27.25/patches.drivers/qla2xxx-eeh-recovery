@@ -1,0 +1,110 @@
+From: David Wagner <david.wagner@qlogic.com>
+Subject: qla2xxx driver EEH unable to recover from injected PCI error
+References: bnc#442923
+
+qla2xxx driver EEH unable to recover from injected PCI errror. 
+Driver enters infinite EEH loop.
+With this patch the qla2xxx driver survives andy PCI error injection
+and properly terminates all commands.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ drivers/scsi/qla2xxx/qla_attr.c    |    9 ++++++++-
+ drivers/scsi/qla2xxx/qla_mbx.c     |    3 +++
+ drivers/scsi/qla2xxx/qla_os.c      |   14 +++++++++++---
+ drivers/scsi/qla2xxx/qla_version.h |    2 +-
+ 4 files changed, 23 insertions(+), 5 deletions(-)
+
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -1286,7 +1286,10 @@ qla2x00_dev_loss_tmo_callbk(struct fc_rp
+ 	if (!fcport)
+ 		return;
+ 
+-	qla2x00_abort_fcport_cmds(fcport);
++	if (unlikely(pci_channel_offline(fcport->ha->pdev)))
++		qla2x00_abort_all_cmds(fcport->ha, DID_NO_CONNECT << 16);
++	else
++		qla2x00_abort_fcport_cmds(fcport);
+ 
+ 	/*
+ 	 * Transport has effectively 'deleted' the rport, clear
+@@ -1306,6 +1309,10 @@ qla2x00_terminate_rport_io(struct fc_rpo
+ 	if (!fcport)
+ 		return;
+ 
++	if (unlikely(pci_channel_offline(fcport->ha->pdev))) {
++		qla2x00_abort_all_cmds(fcport->ha, DID_NO_CONNECT << 16);
++		return;
++	}
+ 	/*
+ 	 * At this point all fcport's software-states are cleared.  Perform any
+ 	 * final cleanup of firmware resources (PCBs and XCBs).
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -44,6 +44,9 @@ qla2x00_mailbox_command(scsi_qla_host_t 
+ 	unsigned long	wait_time;
+ 	scsi_qla_host_t *ha = to_qla_parent(pvha);
+ 
++	if (ha->pdev->error_state == pci_channel_io_perm_failure)
++		return QLA_FUNCTION_TIMEOUT;
++
+ 	reg = ha->iobase;
+ 	io_lock_on = ha->flags.init_done;
+ 
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -391,7 +391,10 @@ qla2x00_queuecommand(struct scsi_cmnd *c
+ 	int rval;
+ 
+ 	if (unlikely(pci_channel_offline(ha->pdev))) {
+-		cmd->result = DID_REQUEUE << 16;
++		if (ha->pdev->error_state == pci_channel_io_frozen)
++			cmd->result = DID_REQUEUE << 16;
++		else
++			cmd->result = DID_NO_CONNECT << 16;
+ 		goto qc_fail_command;
+ 	}
+ 
+@@ -457,7 +460,10 @@ qla24xx_queuecommand(struct scsi_cmnd *c
+ 	scsi_qla_host_t *pha = to_qla_parent(ha);
+ 
+ 	if (unlikely(pci_channel_offline(pha->pdev))) {
+-		cmd->result = DID_REQUEUE << 16;
++		if (ha->pdev->error_state == pci_channel_io_frozen)
++			cmd->result = DID_REQUEUE << 16;
++		else
++			cmd->result = DID_NO_CONNECT << 16;
+ 		goto qc24_fail_command;
+ 	}
+ 
+@@ -2762,6 +2768,8 @@ qla2x00_release_firmware(void)
+ static pci_ers_result_t
+ qla2xxx_pci_error_detected(struct pci_dev *pdev, pci_channel_state_t state)
+ {
++	scsi_qla_host_t *ha = pci_get_drvdata(pdev);
++
+ 	switch (state) {
+ 	case pci_channel_io_normal:
+ 		return PCI_ERS_RESULT_CAN_RECOVER;
+@@ -2769,7 +2777,7 @@ qla2xxx_pci_error_detected(struct pci_de
+ 		pci_disable_device(pdev);
+ 		return PCI_ERS_RESULT_NEED_RESET;
+ 	case pci_channel_io_perm_failure:
+-		qla2x00_remove_one(pdev);
++		qla2x00_abort_all_cmds(ha, DID_NO_CONNECT << 16);
+ 		return PCI_ERS_RESULT_DISCONNECT;
+ 	}
+ 	return PCI_ERS_RESULT_NEED_RESET;
+--- a/drivers/scsi/qla2xxx/qla_version.h
++++ b/drivers/scsi/qla2xxx/qla_version.h
+@@ -7,7 +7,7 @@
+ /*
+  * Driver version
+  */
+-#define QLA2XXX_VERSION      "8.02.01.02.11.0-k9"
++#define QLA2XXX_VERSION      "8.02.01.03.11.0-k9"
+ 
+ #define QLA_DRIVER_MAJOR_VER	8
+ #define QLA_DRIVER_MINOR_VER	2

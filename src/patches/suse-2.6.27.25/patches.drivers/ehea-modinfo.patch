@@ -1,0 +1,42 @@
+Subject: add alias entry for portN properties
+From: olh@suse.de
+References: 435215 - LTC48564
+
+Use separate table for alias entries in the ehea module,
+otherwise the probe() function will operate on the separate ports
+instead of the lhea-"root" entry of the device-tree
+
+---
+ drivers/net/ehea/ehea_main.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/ehea/ehea_main.c
++++ b/drivers/net/ehea/ehea_main.c
+@@ -111,6 +111,19 @@ static int __devinit ehea_probe_adapter(
+ 
+ static int __devexit ehea_remove(struct of_device *dev);
+ 
++static struct of_device_id ehea_module_device_table[] = {
++	{
++		.name = "lhea",
++		.compatible = "IBM,lhea",
++	},
++	{
++		.type = "network",
++		.compatible = "IBM,lhea-ethernet",
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, ehea_module_device_table);
++
+ static struct of_device_id ehea_device_table[] = {
+ 	{
+ 		.name = "lhea",
+@@ -118,7 +131,6 @@ static struct of_device_id ehea_device_t
+ 	},
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, ehea_device_table);
+ 
+ static struct of_platform_driver ehea_driver = {
+ 	.name = "ehea",

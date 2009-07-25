@@ -1,0 +1,235 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: reiserfs: remove IS_PRIVATE helpers
+
+ There are a number of helper functions for marking a reiserfs inode
+ private that were leftover from reiserfs did its own thing wrt to
+ private inodes. S_PRIVATE has been in the kernel for some time,
+ so this patch removes the helpers and uses IS_PRIVATE instead.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/inode.c            |    5 ++---
+ fs/reiserfs/namei.c            |    7 ++++---
+ fs/reiserfs/xattr.c            |   14 ++++++--------
+ fs/reiserfs/xattr_acl.c        |    6 +++---
+ fs/reiserfs/xattr_security.c   |    8 ++++----
+ fs/reiserfs/xattr_trusted.c    |    8 ++++----
+ include/linux/reiserfs_xattr.h |    8 --------
+ 7 files changed, 23 insertions(+), 33 deletions(-)
+
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1932,9 +1932,8 @@ int reiserfs_new_inode(struct reiserfs_t
+ 		reiserfs_warning(inode->i_sb, "jdm-13090",
+ 				 "ACLs aren't enabled in the fs, "
+ 				 "but vfs thinks they are!");
+-	} else if (is_reiserfs_priv_object(dir)) {
+-		reiserfs_mark_inode_private(inode);
+-	}
++	} else if (IS_PRIVATE(dir))
++		inode->i_flags |= S_PRIVATE;
+ 
+ 	insert_inode_hash(inode);
+ 	reiserfs_update_sd(th, inode);
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -358,9 +358,10 @@ static struct dentry *reiserfs_lookup(st
+ 			return ERR_PTR(-EACCES);
+ 		}
+ 
+-		/* Propogate the priv_object flag so we know we're in the priv tree */
+-		if (is_reiserfs_priv_object(dir))
+-			reiserfs_mark_inode_private(inode);
++		/* Propogate the private flag so we know we're
++		 * in the priv tree */
++		if (IS_PRIVATE(dir))
++			inode->i_flags |= S_PRIVATE;
+ 	}
+ 	reiserfs_write_unlock(dir->i_sb);
+ 	if (retval == IO_ERROR) {
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -633,14 +633,14 @@ __reiserfs_xattr_del(struct dentry *xadi
+ 	if (S_ISDIR(dentry->d_inode->i_mode))
+ 		goto out_file;
+ 
+-	if (!is_reiserfs_priv_object(dentry->d_inode)) {
++	if (!IS_PRIVATE(dentry->d_inode)) {
+ 		reiserfs_error(dir->i_sb, "jdm-20003",
+ 			       "OID %08x [%.*s/%.*s] doesn't have "
+ 			       "priv flag set [parent is %sset].",
+ 			       le32_to_cpu(INODE_PKEY(dentry->d_inode)->
+ 					   k_objectid), xadir->d_name.len,
+ 			       xadir->d_name.name, namelen, name,
+-			       is_reiserfs_priv_object(xadir->d_inode) ? "" :
++			       IS_PRIVATE(xadir->d_inode) ? "" :
+ 			       "not ");
+ 		dput(dentry);
+ 		return -EIO;
+@@ -701,8 +701,7 @@ int reiserfs_delete_xattrs(struct inode
+ 	int err = 0;
+ 
+ 	/* Skip out, an xattr has no xattrs associated with it */
+-	if (is_reiserfs_priv_object(inode) ||
+-	    get_inode_sd_version(inode) == STAT_DATA_V1 ||
++	if (IS_PRIVATE(inode) || get_inode_sd_version(inode) == STAT_DATA_V1 ||
+ 	    !reiserfs_xattrs(inode->i_sb)) {
+ 		return 0;
+ 	}
+@@ -786,8 +785,7 @@ int reiserfs_chown_xattrs(struct inode *
+ 	unsigned int ia_valid = attrs->ia_valid;
+ 
+ 	/* Skip out, an xattr has no xattrs associated with it */
+-	if (is_reiserfs_priv_object(inode) ||
+-	    get_inode_sd_version(inode) == STAT_DATA_V1 ||
++	if (IS_PRIVATE(inode) || get_inode_sd_version(inode) == STAT_DATA_V1 ||
+ 	    !reiserfs_xattrs(inode->i_sb)) {
+ 		return 0;
+ 	}
+@@ -1178,7 +1176,7 @@ int reiserfs_xattr_init(struct super_blo
+ 
+ 		if (!err && dentry) {
+ 			s->s_root->d_op = &xattr_lookup_poison_ops;
+-			reiserfs_mark_inode_private(dentry->d_inode);
++			dentry->d_inode->i_flags |= S_PRIVATE;
+ 			REISERFS_SB(s)->priv_root = dentry;
+ 		} else if (!(mount_flags & MS_RDONLY)) {	/* xattrs are unavailable */
+ 			/* If we're read-only it just means that the dir hasn't been
+@@ -1239,7 +1237,7 @@ int reiserfs_permission(struct inode *in
+ 	 * We don't do permission checks on the internal objects.
+ 	 * Permissions are determined by the "owning" object.
+ 	 */
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return 0;
+ 
+ 	/*
+--- a/fs/reiserfs/xattr_acl.c
++++ b/fs/reiserfs/xattr_acl.c
+@@ -335,8 +335,8 @@ reiserfs_inherit_default_acl(struct inod
+ 	/* Don't apply ACLs to objects in the .reiserfs_priv tree.. This
+ 	 * would be useless since permissions are ignored, and a pain because
+ 	 * it introduces locking cycles */
+-	if (is_reiserfs_priv_object(dir)) {
+-		reiserfs_mark_inode_private(inode);
++	if (IS_PRIVATE(dir)) {
++		inode->i_flags |= S_PRIVATE;
+ 		goto apply_umask;
+ 	}
+ 
+@@ -401,7 +401,7 @@ reiserfs_inherit_default_acl(struct inod
+ int reiserfs_cache_default_acl(struct inode *inode)
+ {
+ 	int ret = 0;
+-	if (reiserfs_posixacl(inode->i_sb) && !is_reiserfs_priv_object(inode)) {
++	if (reiserfs_posixacl(inode->i_sb) && !IS_PRIVATE(inode)) {
+ 		struct posix_acl *acl;
+ 		reiserfs_read_lock_xattr_i(inode);
+ 		reiserfs_read_lock_xattrs(inode->i_sb);
+--- a/fs/reiserfs/xattr_security.c
++++ b/fs/reiserfs/xattr_security.c
+@@ -12,7 +12,7 @@ security_get(struct inode *inode, const
+ 	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
+ 		return -EINVAL;
+ 
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return -EPERM;
+ 
+ 	return reiserfs_xattr_get(inode, name, buffer, size);
+@@ -25,7 +25,7 @@ security_set(struct inode *inode, const
+ 	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
+ 		return -EINVAL;
+ 
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return -EPERM;
+ 
+ 	return reiserfs_xattr_set(inode, name, buffer, size, flags);
+@@ -36,7 +36,7 @@ static int security_del(struct inode *in
+ 	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
+ 		return -EINVAL;
+ 
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return -EPERM;
+ 
+ 	return 0;
+@@ -47,7 +47,7 @@ security_list(struct inode *inode, const
+ {
+ 	int len = namelen;
+ 
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return 0;
+ 
+ 	if (out)
+--- a/fs/reiserfs/xattr_trusted.c
++++ b/fs/reiserfs/xattr_trusted.c
+@@ -16,7 +16,7 @@ trusted_get(struct inode *inode, const c
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return -EOPNOTSUPP;
+ 
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return -EPERM;
+ 
+ 	return reiserfs_xattr_get(inode, name, buffer, size);
+@@ -32,7 +32,7 @@ trusted_set(struct inode *inode, const c
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return -EOPNOTSUPP;
+ 
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return -EPERM;
+ 
+ 	return reiserfs_xattr_set(inode, name, buffer, size, flags);
+@@ -46,7 +46,7 @@ static int trusted_del(struct inode *ino
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return -EOPNOTSUPP;
+ 
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return -EPERM;
+ 
+ 	return 0;
+@@ -60,7 +60,7 @@ trusted_list(struct inode *inode, const
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return 0;
+ 
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return 0;
+ 
+ 	if (out)
+--- a/include/linux/reiserfs_xattr.h
++++ b/include/linux/reiserfs_xattr.h
+@@ -44,7 +44,6 @@ struct reiserfs_xattr_handler {
+ };
+ 
+ #ifdef CONFIG_REISERFS_FS_XATTR
+-#define is_reiserfs_priv_object(inode) IS_PRIVATE(inode)
+ #define has_xattr_dir(inode) (REISERFS_I(inode)->i_flags & i_has_xattr_dir)
+ ssize_t reiserfs_getxattr(struct dentry *dentry, const char *name,
+ 			  void *buffer, size_t size);
+@@ -104,11 +103,6 @@ static inline void reiserfs_read_unlock_
+ 	up_read(&REISERFS_I(inode)->xattr_sem);
+ }
+ 
+-static inline void reiserfs_mark_inode_private(struct inode *inode)
+-{
+-	inode->i_flags |= S_PRIVATE;
+-}
+-
+ static inline void reiserfs_init_xattr_rwsem(struct inode *inode)
+ {
+ 	init_rwsem(&REISERFS_I(inode)->xattr_sem);
+@@ -116,8 +110,6 @@ static inline void reiserfs_init_xattr_r
+ 
+ #else
+ 
+-#define is_reiserfs_priv_object(inode) 0
+-#define reiserfs_mark_inode_private(inode) do {;} while(0)
+ #define reiserfs_getxattr NULL
+ #define reiserfs_setxattr NULL
+ #define reiserfs_listxattr NULL

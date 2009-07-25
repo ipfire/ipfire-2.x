@@ -1,0 +1,71 @@
+From 4c1e9aa41b2f9afe8f26e2efe5bb4695f6c40772 Mon Sep 17 00:00:00 2001
+From: David Milburn <dmilburn@redhat.com>
+Date: Fri, 3 Apr 2009 15:36:41 -0500
+Subject: libata: ahci enclosure management bios workaround
+References: bnc#489005
+
+During driver initialization ahci_start_port may not be able
+to turn LEDs off because the hardware may still be transmitting
+a message. And since the BIOS may not be setting the LEDs to
+off the drive LEDs may end up in a fault state. This has
+been seen on ICH9r and ICH10r when configured in AHCI mode
+instead of RAID mode, this patch doesn't key off a specific
+set of device IDs but will give the EM transmit bit a chance
+to clear if busy.
+
+Signed-off-by: David Milburn <dmilburn@redhat.com>
+Signed-off-by: Jeff Garzik <jgarzik@redhat.com>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/ata/ahci.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/ata/ahci.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/ata/ahci.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/ata/ahci.c
+@@ -62,6 +62,7 @@ static ssize_t ahci_led_store(struct ata
+ static ssize_t ahci_transmit_led_message(struct ata_port *ap, u32 state,
+ 					ssize_t size);
+ #define MAX_SLOTS 8
++#define MAX_RETRY 15
+ 
+ enum {
+ 	AHCI_PCI_BAR		= 5,
+@@ -1095,6 +1096,8 @@ static void ahci_start_port(struct ata_p
+ 	struct ahci_port_priv *pp = ap->private_data;
+ 	struct ata_link *link;
+ 	struct ahci_em_priv *emp;
++	ssize_t rc;
++	int i;
+ 
+ 	/* enable FIS reception */
+ 	ahci_start_fis_rx(ap);
+@@ -1106,7 +1109,17 @@ static void ahci_start_port(struct ata_p
+ 	if (ap->flags & ATA_FLAG_EM) {
+ 		ata_port_for_each_link(link, ap) {
+ 			emp = &pp->em_priv[link->pmp];
+-			ahci_transmit_led_message(ap, emp->led_state, 4);
++
++			/* EM Transmit bit maybe busy during init */
++			for (i = 0; i < MAX_RETRY; i++) {
++				rc = ahci_transmit_led_message(ap,
++							       emp->led_state,
++							       4);
++				if (rc == -EBUSY)
++					udelay(100);
++				else
++					break;
++			}
+ 		}
+ 	}
+ 
+@@ -1308,7 +1321,7 @@ static ssize_t ahci_transmit_led_message
+ 	em_ctl = readl(mmio + HOST_EM_CTL);
+ 	if (em_ctl & EM_CTL_TM) {
+ 		spin_unlock_irqrestore(ap->lock, flags);
+-		return -EINVAL;
++		return -EBUSY;
+ 	}
+ 
+ 	/*

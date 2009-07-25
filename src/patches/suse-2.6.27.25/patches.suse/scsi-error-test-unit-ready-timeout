@@ -1,0 +1,34 @@
+From: garloff@suse.de
+Subject: Introduce own timeout for TEST_UNIT_READY
+Reference: SUSE41689
+
+In error recovery, a SCSI device may need more than the 10s SENSE_TIMEOUT
+to respond to TEST_UNIT_READY, as reported in novell bugzilla #56689.
+The patch introduces an own timeout for TEST_UNIT_READY which is set
+to 30s and used.
+
+Signed-off-by: Kurt Garloff <garloff@suse.de>
+
+---
+ drivers/scsi/scsi_error.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/scsi/scsi_error.c
++++ b/drivers/scsi/scsi_error.c
+@@ -42,6 +42,7 @@
+ #include "scsi_transport_api.h"
+ 
+ #define SENSE_TIMEOUT		(10*HZ)
++#define TEST_UNIT_READY_TIMEOUT	(30*HZ)
+ 
+ /*
+  * These should *probably* be handled by the host itself.
+@@ -938,7 +939,7 @@ static int scsi_eh_tur(struct scsi_cmnd
+ 	int retry_cnt = 1, rtn;
+ 
+ retry_tur:
+-	rtn = scsi_send_eh_cmnd(scmd, tur_command, 6, SENSE_TIMEOUT, 0);
++	rtn = scsi_send_eh_cmnd(scmd, tur_command, 6, TEST_UNIT_READY_TIMEOUT, 0);
+ 
+ 	SCSI_LOG_ERROR_RECOVERY(3, printk("%s: scmd %p rtn %x\n",
+ 		__func__, scmd, rtn));

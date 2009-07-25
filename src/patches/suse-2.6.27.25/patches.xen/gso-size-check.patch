@@ -1,0 +1,71 @@
+From: http://patchwork.ozlabs.org/patch/18346/
+Subject: gso: Ensure that the packet is long enough
+See also http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/d490aa798cc4
+
+When we get a GSO packet from an untrusted source, we need to
+ensure that it is sufficiently long so that we don't end up
+crashing.
+
+Based on discovery and patch by Ian Campbell.
+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Tested-by: Ian Campbell <ian.campbell@citrix.com>
+Acked-by: jbeulich@novell.com
+
+---
+ net/ipv4/tcp.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2390,7 +2390,7 @@ struct sk_buff *tcp_tso_segment(struct s
+ 	unsigned int seq;
+ 	__be32 delta;
+ 	unsigned int oldlen;
+-	unsigned int len;
++	unsigned int mss;
+ 
+ 	if (!pskb_may_pull(skb, sizeof(*th)))
+ 		goto out;
+@@ -2406,10 +2406,13 @@ struct sk_buff *tcp_tso_segment(struct s
+ 	oldlen = (u16)~skb->len;
+ 	__skb_pull(skb, thlen);
+ 
++	mss = skb_shinfo(skb)->gso_size;
++	if (unlikely(skb->len <= mss))
++		goto out;
++
+ 	if (skb_gso_ok(skb, features | NETIF_F_GSO_ROBUST)) {
+ 		/* Packet is from an untrusted source, reset gso_segs. */
+ 		int type = skb_shinfo(skb)->gso_type;
+-		int mss;
+ 
+ 		if (unlikely(type &
+ 			     ~(SKB_GSO_TCPV4 |
+@@ -2420,7 +2423,6 @@ struct sk_buff *tcp_tso_segment(struct s
+ 			     !(type & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6))))
+ 			goto out;
+ 
+-		mss = skb_shinfo(skb)->gso_size;
+ 		skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(skb->len, mss);
+ 
+ 		segs = NULL;
+@@ -2431,8 +2433,7 @@ struct sk_buff *tcp_tso_segment(struct s
+ 	if (IS_ERR(segs))
+ 		goto out;
+ 
+-	len = skb_shinfo(skb)->gso_size;
+-	delta = htonl(oldlen + (thlen + len));
++	delta = htonl(oldlen + (thlen + mss));
+ 
+ 	skb = segs;
+ 	th = tcp_hdr(skb);
+@@ -2448,7 +2449,7 @@ struct sk_buff *tcp_tso_segment(struct s
+ 			     csum_fold(csum_partial(skb_transport_header(skb),
+ 						    thlen, skb->csum));
+ 
+-		seq += len;
++		seq += mss;
+ 		skb = skb->next;
+ 		th = tcp_hdr(skb);
+ 

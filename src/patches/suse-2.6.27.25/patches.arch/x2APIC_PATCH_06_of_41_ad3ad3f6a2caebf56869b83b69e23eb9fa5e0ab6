@@ -1,0 +1,169 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: parse ioapic scope under vt-d structures
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: ad3ad3f6a2caebf56869b83b69e23eb9fa5e0ab6
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Parse the vt-d device scope structures to find the mapping between IO-APICs
+and the interrupt remapping hardware units.
+
+This will be used later for enabling Interrupt-remapping for IOAPIC devices.
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: akpm@linux-foundation.org
+Cc: arjan@linux.intel.com
+Cc: andi@firstfloor.org
+Cc: ebiederm@xmission.com
+Cc: jbarnes@virtuousgeek.org
+Cc: steiner@sgi.com
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ drivers/pci/Makefile         |    2 +
+ drivers/pci/dmar.c           |    3 +
+ drivers/pci/intel-iommu.h    |    2 +
+ drivers/pci/intr_remapping.c |   70 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/pci/intr_remapping.h |    6 +++
+ include/linux/dmar.h         |    1 
+ 6 files changed, 84 insertions(+)
+
+Index: linux-2.6.26/drivers/pci/Makefile
+===================================================================
+--- linux-2.6.26.orig/drivers/pci/Makefile
++++ linux-2.6.26/drivers/pci/Makefile
+@@ -26,6 +26,8 @@ obj-$(CONFIG_HT_IRQ) += htirq.o
+ # Build Intel IOMMU support
+ obj-$(CONFIG_DMAR) += dmar.o iova.o intel-iommu.o
+ 
++obj-$(CONFIG_INTR_REMAP) += dmar.o intr_remapping.o
++
+ #
+ # Some architectures use the generic PCI setup functions
+ #
+Index: linux-2.6.26/drivers/pci/dmar.c
+===================================================================
+--- linux-2.6.26.orig/drivers/pci/dmar.c
++++ linux-2.6.26/drivers/pci/dmar.c
+@@ -425,6 +425,9 @@ int __init dmar_table_init(void)
+ 	}
+ #endif
+ 
++#ifdef CONFIG_INTR_REMAP
++	parse_ioapics_under_ir();
++#endif
+ 	return 0;
+ }
+ 
+Index: linux-2.6.26/drivers/pci/intel-iommu.h
+===================================================================
+--- linux-2.6.26.orig/drivers/pci/intel-iommu.h
++++ linux-2.6.26/drivers/pci/intel-iommu.h
+@@ -114,6 +114,8 @@ static inline void dmar_writeq(void __io
+ #define ecap_max_iotlb_offset(e) \
+ 	(ecap_iotlb_offset(e) + ecap_niotlb_iunits(e) * 16)
+ #define ecap_coherent(e)	((e) & 0x1)
++#define ecap_eim_support(e)	((e >> 4) & 0x1)
++#define ecap_ir_support(e)	((e >> 3) & 0x1)
+ 
+ 
+ /* IOTLB_REG */
+Index: linux-2.6.26/drivers/pci/intr_remapping.c
+===================================================================
+--- /dev/null
++++ linux-2.6.26/drivers/pci/intr_remapping.c
+@@ -0,0 +1,70 @@
++#include <linux/dmar.h>
++#include <asm/io_apic.h>
++#include "intel-iommu.h"
++#include "intr_remapping.h"
++
++static struct ioapic_scope ir_ioapic[MAX_IO_APICS];
++static int ir_ioapic_num;
++
++static int ir_parse_ioapic_scope(struct acpi_dmar_header *header,
++				 struct intel_iommu *iommu)
++{
++	struct acpi_dmar_hardware_unit *drhd;
++	struct acpi_dmar_device_scope *scope;
++	void *start, *end;
++
++	drhd = (struct acpi_dmar_hardware_unit *)header;
++
++	start = (void *)(drhd + 1);
++	end = ((void *)drhd) + header->length;
++
++	while (start < end) {
++		scope = start;
++		if (scope->entry_type == ACPI_DMAR_SCOPE_TYPE_IOAPIC) {
++			if (ir_ioapic_num == MAX_IO_APICS) {
++				printk(KERN_WARNING "Exceeded Max IO APICS\n");
++				return -1;
++			}
++
++			printk(KERN_INFO "IOAPIC id %d under DRHD base"
++			       " 0x%Lx\n", scope->enumeration_id,
++			       drhd->address);
++
++			ir_ioapic[ir_ioapic_num].iommu = iommu;
++			ir_ioapic[ir_ioapic_num].id = scope->enumeration_id;
++			ir_ioapic_num++;
++		}
++		start += scope->length;
++	}
++
++	return 0;
++}
++
++/*
++ * Finds the assocaition between IOAPIC's and its Interrupt-remapping
++ * hardware unit.
++ */
++int __init parse_ioapics_under_ir(void)
++{
++	struct dmar_drhd_unit *drhd;
++	int ir_supported = 0;
++
++	for_each_drhd_unit(drhd) {
++		struct intel_iommu *iommu = drhd->iommu;
++
++		if (ecap_ir_support(iommu->ecap)) {
++			if (ir_parse_ioapic_scope(drhd->hdr, iommu))
++				return -1;
++
++			ir_supported = 1;
++		}
++	}
++
++	if (ir_supported && ir_ioapic_num != nr_ioapics) {
++		printk(KERN_WARNING
++		       "Not all IO-APIC's listed under remapping hardware\n");
++		return -1;
++	}
++
++	return ir_supported;
++}
+Index: linux-2.6.26/drivers/pci/intr_remapping.h
+===================================================================
+--- /dev/null
++++ linux-2.6.26/drivers/pci/intr_remapping.h
+@@ -0,0 +1,6 @@
++#include "intel-iommu.h"
++
++struct ioapic_scope {
++	struct intel_iommu *iommu;
++	unsigned int id;
++};
+Index: linux-2.6.26/include/linux/dmar.h
+===================================================================
+--- linux-2.6.26.orig/include/linux/dmar.h
++++ linux-2.6.26/include/linux/dmar.h
+@@ -47,6 +47,7 @@ extern int intel_iommu_init(void);
+ extern int dmar_table_init(void);
+ extern int early_dmar_detect(void);
+ extern int dmar_dev_scope_init(void);
++extern int parse_ioapics_under_ir(void);
+ 
+ extern struct list_head dmar_drhd_units;
+ extern struct list_head dmar_rmrr_units;

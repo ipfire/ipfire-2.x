@@ -1,0 +1,48 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/79e82ae1bad0
+# HG changeset 769 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1231154982 0
+# Node ID 79e82ae1bad02c0dfb504db3153599e52a0affb3
+# Parent  cfb171ddbb333df9671a1da62e40122a56213ab4
+Subject: evtchn: Fix CPU offlining to switch all affected ports
+belonging to a particular /dev/evcthn user.
+Patch-mainline: obsolete
+
+Original patch by James Harper <james.harper@bendigoit.com.au>
+
+Signed-off-by: Keir Fraser <keir.fraser@citrix.com>
+Acked-by: jbeulich@novell.com
+
+--- head-2009-01-06.orig/drivers/xen/evtchn/evtchn.c	2008-09-01 12:20:11.000000000 +0200
++++ head-2009-01-06/drivers/xen/evtchn/evtchn.c	2009-01-05 12:29:42.000000000 +0100
+@@ -497,20 +497,22 @@ static int __cpuinit evtchn_cpu_notify(s
+ {
+ 	int hotcpu = (unsigned long)hcpu;
+ 	cpumask_t map = cpu_online_map;
+-	int port, newcpu;
++	int i, j, newcpu;
+ 	struct per_user_data *u;
+ 
+ 	switch (action) {
+ 	case CPU_DOWN_PREPARE:
+ 		cpu_clear(hotcpu, map);
+ 		spin_lock_irq(&port_user_lock);
+-		for (port = 0; port < NR_EVENT_CHANNELS; port++) {
+-			if ((u = port_user[port]) != NULL && 
+-			    u->bind_cpu == hotcpu &&
+-			    (newcpu = next_bind_cpu(map)) < NR_CPUS) {
+-				rebind_evtchn_to_cpu(port, newcpu);
+-				u->bind_cpu = newcpu;
+-			}
++		for (i = 0; i < NR_EVENT_CHANNELS; i++) {
++			u = port_user[i];
++			if ((u == NULL) || (u->bind_cpu != hotcpu))
++				continue;
++			newcpu = next_bind_cpu(map);
++			for (j = i; j < NR_EVENT_CHANNELS; j++)
++				if (port_user[j] == u)
++					rebind_evtchn_to_cpu(j, newcpu);
++			u->bind_cpu = newcpu;
+ 		}
+ 		spin_unlock_irq(&port_user_lock);
+ 		break;

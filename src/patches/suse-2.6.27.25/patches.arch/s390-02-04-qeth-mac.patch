@@ -1,0 +1,31 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qeth: use firmware MAC-address for layer2 hsi-devices
+References: bnc#434333
+
+Symptom:     Real HiperSocket devices in layer2 show random MAC-address.
+Problem:     Usability
+Solution:    Use firmware MAC-address
+
+Signed-off-by: Ursula Braun <ursula.braun@de.ibm.com>
+Signed-off-by: Frank Blaschka <frank.blaschka@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ drivers/s390/net/qeth_l2_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Index: linux-sles11/drivers/s390/net/qeth_l2_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_l2_main.c
++++ linux-sles11/drivers/s390/net/qeth_l2_main.c
+@@ -562,7 +562,8 @@ static int qeth_l2_request_initial_mac(s
+ 			"device %s: x%x\n", CARD_BUS_ID(card), rc);
+ 	}
+ 
+-	if (card->info.guestlan) {
++	if ((card->info.type == QETH_CARD_TYPE_IQD) ||
++	    (card->info.guestlan)) {
+ 		rc = qeth_setadpparms_change_macaddr(card);
+ 		if (rc) {
+ 			QETH_DBF_MESSAGE(2, "couldn't get MAC address on "

@@ -1,0 +1,76 @@
+From: Andrea Arcangeli <andrea@cpushare.com>
+Subject: [PATCH seccomp: make tsc disabling optional
+Patch-mainline: unknown
+References: 191123
+
+Make the TSC disable purely paranoid feature optional, so by default seccomp
+returns absolutely zerocost.
+
+Ported from 2.6.19 to 2.6.24-rc7 by Jeff Mahoney.
+Addition of x86-64 by Jan Beulich.
+
+Signed-off-by: Andrea Arcangeli <andrea@cpushare.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+ arch/x86/Kconfig             |   12 ++++++++++++
+ arch/x86/kernel/process_32.c |    2 ++
+ arch/x86/kernel/process_64.c |    2 ++
+ 3 files changed, 16 insertions(+)
+
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1228,6 +1228,18 @@ config SECCOMP
+ 
+ 	  If unsure, say Y. Only embedded should say N here.
+ 
++config SECCOMP_DISABLE_TSC
++	bool "Disable the TSC for seccomp tasks"
++	depends on SECCOMP
++	default n
++	help
++	  This feature mathematically prevents covert channels
++	  for tasks running under SECCOMP. This can generate
++	  a minuscule overhead in the scheduler.
++
++	  If you care most about performance say N. Say Y only if you're
++	  paranoid about covert channels.
++
+ config CC_STACKPROTECTOR
+ 	bool "Enable -fstack-protector buffer overflow detection (EXPERIMENTAL)"
+ 	depends on X86_64 && EXPERIMENTAL && BROKEN
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -387,6 +387,7 @@ static void hard_disable_TSC(void)
+ 
+ void disable_TSC(void)
+ {
++#ifdef CONFIG_SECCOMP_DISABLE_TSC
+ 	preempt_disable();
+ 	if (!test_and_set_thread_flag(TIF_NOTSC))
+ 		/*
+@@ -395,6 +396,7 @@ void disable_TSC(void)
+ 		 */
+ 		hard_disable_TSC();
+ 	preempt_enable();
++#endif
+ }
+ 
+ static void hard_enable_TSC(void)
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -406,6 +406,7 @@ static void hard_disable_TSC(void)
+ 
+ void disable_TSC(void)
+ {
++#ifdef CONFIG_SECCOMP_DISABLE_TSC
+ 	preempt_disable();
+ 	if (!test_and_set_thread_flag(TIF_NOTSC))
+ 		/*
+@@ -414,6 +415,7 @@ void disable_TSC(void)
+ 		 */
+ 		hard_disable_TSC();
+ 	preempt_enable();
++#endif
+ }
+ 
+ static void hard_enable_TSC(void)

@@ -1,0 +1,489 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: [PATCH] Check for ACPI backlight support otherwise use vendor ACPI drivers
+Patch-Mainline: queued for .28 in Len's/ak's ACPI tree
+
+commit f43d728731c691772ddc29e50d25c68a859935b5
+
+If an ACPI graphics device supports backlight brightness functions (cmp. with
+latest ACPI spec Appendix B), let the ACPI video driver control backlight and
+switch backlight control off in vendor specific ACPI drivers (asus_acpi,
+thinkpad_acpi, eeepc, fujitsu_laptop, msi_laptop, sony_laptop, acer-wmi).
+
+Currently it is possible to load above drivers and let both poke on the
+brightness HW registers, the video and vendor specific ACPI drivers -> bad.
+
+This patch provides the basic support to check for BIOS capabilities before
+driver loading time. Driver specific modifications are in separate follow up
+patches.
+
+acpi_backlight=vendor/video
+      boot params forces video.ko or vendor specific drivers to keep its
+      fingers off backlight control even it would find needed functions.
+      The corresponding vendor specific driver be used then.
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ Documentation/kernel-parameters.txt |   13 +
+ drivers/acpi/Makefile               |    5 
+ drivers/acpi/scan.c                 |   32 ----
+ drivers/acpi/video.c                |   28 ++-
+ drivers/acpi/video_detect.c         |  268 ++++++++++++++++++++++++++++++++++++
+ include/linux/acpi.h                |   44 +++++
+ 6 files changed, 347 insertions(+), 43 deletions(-)
+ create mode 100644 drivers/acpi/video_detect.c
+
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -200,6 +200,19 @@ and is between 256 and 4096 characters. 
+ 			that require a timer override, but don't have
+ 			HPET
+ 
++	acpi_backlight=	[HW,ACPI]
++			acpi_backlight=vendor
++			acpi_backlight=video
++			If set to vendor, it enforces the use of a
++			vendor specific ACPI driver for backlight switching
++			(e.g. thinkpad_acpi, sony_acpi, etc.) instead
++			of the video.ko driver.
++
++	acpi_display_output=	[HW,ACPI]
++			acpi_display_output=vendor
++			acpi_display_output=video
++			See above.
++
+ 	acpi.debug_layer=	[HW,ACPI]
+ 			Format: <int>
+ 			Each bit of the <int> indicates an ACPI debug layer,
+--- a/drivers/acpi/Makefile
++++ b/drivers/acpi/Makefile
+@@ -46,7 +46,12 @@ obj-$(CONFIG_ACPI_BUTTON)	+= button.o
+ obj-$(CONFIG_ACPI_FAN)		+= fan.o
+ obj-$(CONFIG_ACPI_DOCK)		+= dock.o
+ obj-$(CONFIG_ACPI_BAY)		+= bay.o
++
+ obj-$(CONFIG_ACPI_VIDEO)	+= video.o
++ifdef CONFIG_ACPI_VIDEO
++obj-y				+= video_detect.o
++endif
++
+ obj-y				+= pci_root.o pci_link.o pci_irq.o pci_bind.o
+ obj-$(CONFIG_ACPI_PCI_SLOT)	+= pci_slot.o
+ obj-$(CONFIG_ACPI_POWER)	+= power.o
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -908,36 +908,6 @@ static void acpi_device_get_busid(struct
+ 	}
+ }
+ 
+-static int
+-acpi_video_bus_match(struct acpi_device *device)
+-{
+-	acpi_handle h_dummy;
+-
+-	if (!device)
+-		return -EINVAL;
+-
+-	/* Since there is no HID, CID for ACPI Video drivers, we have
+-	 * to check well known required nodes for each feature we support.
+-	 */
+-
+-	/* Does this device able to support video switching ? */
+-	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_DOD", &h_dummy)) &&
+-	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_DOS", &h_dummy)))
+-		return 0;
+-
+-	/* Does this device able to retrieve a video ROM ? */
+-	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_ROM", &h_dummy)))
+-		return 0;
+-
+-	/* Does this device able to configure which video head to be POSTed ? */
+-	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_VPO", &h_dummy)) &&
+-	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_GPD", &h_dummy)) &&
+-	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_SPD", &h_dummy)))
+-		return 0;
+-
+-	return -ENODEV;
+-}
+-
+ /*
+  * acpi_bay_match - see if a device is an ejectable driver bay
+  *
+@@ -1020,7 +990,7 @@ static void acpi_device_set_id(struct ac
+ 		   will get autoloaded and the device might still match
+ 		   against another driver.
+ 		*/
+-		if (ACPI_SUCCESS(acpi_video_bus_match(device)))
++		if (acpi_is_video_device(device))
+ 			cid_add = ACPI_VIDEO_HID;
+ 		else if (ACPI_SUCCESS(acpi_bay_match(device)))
+ 			cid_add = ACPI_BAY_HID;
+--- a/drivers/acpi/video.c
++++ b/drivers/acpi/video.c
+@@ -759,7 +759,8 @@ static void acpi_video_device_find_cap(s
+ 		device->cap._DSS = 1;
+ 	}
+ 
+-	max_level = acpi_video_init_brightness(device);
++	if (acpi_video_backlight_support())
++		max_level = acpi_video_init_brightness(device);
+ 
+ 	if (device->cap._BCL && device->cap._BCM && max_level > 0) {
+ 		int result;
+@@ -805,18 +806,21 @@ static void acpi_video_device_find_cap(s
+ 			printk(KERN_ERR PREFIX "Create sysfs link\n");
+ 
+ 	}
+-	if (device->cap._DCS && device->cap._DSS){
+-		static int count = 0;
+-		char *name;
+-		name = kzalloc(MAX_NAME_LEN, GFP_KERNEL);
+-		if (!name)
+-			return;
+-		sprintf(name, "acpi_video%d", count++);
+-		device->output_dev = video_output_register(name,
+-				NULL, device, &acpi_output_properties);
+-		kfree(name);
++
++	if (acpi_video_display_switch_support()) {
++
++		if (device->cap._DCS && device->cap._DSS) {
++			static int count;
++			char *name;
++			name = kzalloc(MAX_NAME_LEN, GFP_KERNEL);
++			if (!name)
++				return;
++			sprintf(name, "acpi_video%d", count++);
++			device->output_dev = video_output_register(name,
++					NULL, device, &acpi_output_properties);
++			kfree(name);
++		}
+ 	}
+-	return;
+ }
+ 
+ /*
+--- /dev/null
++++ b/drivers/acpi/video_detect.c
+@@ -0,0 +1,268 @@
++/*
++ *  Copyright (C) 2008       SuSE Linux Products GmbH
++ *                           Thomas Renninger <trenn@suse.de>
++ *
++ *  May be copied or modified under the terms of the GNU General Public License
++ *
++ * video_detect.c:
++ * Provides acpi_is_video_device() for early scanning of ACPI devices in scan.c
++ * There a Linux specific (Spec does not provide a HID for video devices) is
++ * assinged
++ *
++ * After PCI devices are glued with ACPI devices
++ * acpi_get_physical_pci_device() can be called to identify ACPI graphics
++ * devices for which a real graphics card is plugged in
++ *
++ * Now acpi_video_get_capabilities() can be called to check which
++ * capabilities the graphics cards plugged in support. The check for general
++ * video capabilities will be triggered by the first caller of
++ * acpi_video_get_capabilities(NULL); which will happen when the first
++ * backlight (or display output) switching supporting driver calls:
++ * acpi_video_backlight_support();
++ *
++ * Depending on whether ACPI graphics extensions (cmp. ACPI spec Appendix B)
++ * are available, video.ko should be used to handle the device.
++ *
++ * Otherwise vendor specific drivers like thinkpad_acpi, asus_acpi,
++ * sony_acpi,... can take care about backlight brightness and display output
++ * switching.
++ *
++ * If CONFIG_ACPI_VIDEO is neither set as "compiled in" (y) nor as a module (m)
++ * this file will not be compiled, acpi_video_get_capabilities() and
++ * acpi_video_backlight_support() will always return 0 and vendor specific
++ * drivers always can handle backlight.
++ *
++ */
++
++#include <linux/acpi.h>
++#include <linux/dmi.h>
++
++ACPI_MODULE_NAME("video");
++#define ACPI_VIDEO_COMPONENT		0x08000000
++#define _COMPONENT		ACPI_VIDEO_COMPONENT
++
++static long acpi_video_support;
++static bool acpi_video_caps_checked;
++
++static acpi_status
++acpi_backlight_cap_match(acpi_handle handle, u32 level, void *context,
++			  void **retyurn_value)
++{
++	long *cap = context;
++	acpi_handle h_dummy;
++
++	if (ACPI_SUCCESS(acpi_get_handle(handle, "_BCM", &h_dummy)) &&
++	    ACPI_SUCCESS(acpi_get_handle(handle, "_BCL", &h_dummy))) {
++		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found generic backlight "
++				  "support\n"));
++		*cap |= ACPI_VIDEO_BACKLIGHT;
++		/* We have backlight support, no need to scan further */
++		return AE_CTRL_TERMINATE;
++	}
++	return 0;
++}
++
++/* Returns true if the device is a video device which can be handled by
++ * video.ko.
++ * The device will get a Linux specific CID added in scan.c to
++ * identify the device as an ACPI graphics device
++ * Be aware that the graphics device may not be physically present
++ * Use acpi_video_get_capabilities() to detect general ACPI video
++ * capabilities of present cards
++ */
++long acpi_is_video_device(struct acpi_device *device)
++{
++	acpi_handle h_dummy;
++	long video_caps = 0;
++
++	if (!device)
++		return 0;
++
++	/* Does this device able to support video switching ? */
++	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_DOD", &h_dummy)) &&
++	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_DOS", &h_dummy)))
++		video_caps |= ACPI_VIDEO_OUTPUT_SWITCHING;
++
++	/* Does this device able to retrieve a video ROM ? */
++	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_ROM", &h_dummy)))
++		video_caps |= ACPI_VIDEO_ROM_AVAILABLE;
++
++	/* Does this device able to configure which video head to be POSTed ? */
++	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_VPO", &h_dummy)) &&
++	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_GPD", &h_dummy)) &&
++	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_SPD", &h_dummy)))
++		video_caps |= ACPI_VIDEO_DEVICE_POSTING;
++
++	/* Only check for backlight functionality if one of the above hit. */
++	if (video_caps)
++		acpi_walk_namespace(ACPI_TYPE_DEVICE, device->handle,
++				    ACPI_UINT32_MAX, acpi_backlight_cap_match,
++				    &video_caps, NULL);
++
++	return video_caps;
++}
++EXPORT_SYMBOL(acpi_is_video_device);
++
++static acpi_status
++find_video(acpi_handle handle, u32 lvl, void *context, void **rv)
++{
++	long *cap = context;
++	struct device *dev;
++	struct acpi_device *acpi_dev;
++
++	const struct acpi_device_id video_ids[] = {
++		{ACPI_VIDEO_HID, 0},
++		{"", 0},
++	};
++	if (acpi_bus_get_device(handle, &acpi_dev))
++		return AE_OK;
++
++	if (!acpi_match_device_ids(acpi_dev, video_ids)) {
++		dev = acpi_get_physical_pci_device(handle);
++		if (!dev)
++			return AE_OK;
++		put_device(dev);
++		*cap |= acpi_is_video_device(acpi_dev);
++	}
++	return AE_OK;
++}
++
++/*
++ * Returns the video capabilities of a specific ACPI graphics device
++ *
++ * if NULL is passed as argument all ACPI devices are enumerated and
++ * all graphics capabilities of physically present devices are
++ * summerized and returned. This is cached and done only once.
++ */
++long acpi_video_get_capabilities(acpi_handle graphics_handle)
++{
++	long caps = 0;
++	struct acpi_device *tmp_dev;
++	acpi_status status;
++
++	if (acpi_video_caps_checked && graphics_handle == NULL)
++		return acpi_video_support;
++
++	if (!graphics_handle) {
++		/* Only do the global walk through all graphics devices once */
++		acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
++				    ACPI_UINT32_MAX, find_video,
++				    &caps, NULL);
++		/* There might be boot param flags set already... */
++		acpi_video_support |= caps;
++		acpi_video_caps_checked = 1;
++		/* Add blacklists here. Be careful to use the right *DMI* bits
++		 * to still be able to override logic via boot params, e.g.:
++		 *
++		 *   if (dmi_name_in_vendors("XY")) {
++		 *	acpi_video_support |=
++		 *		ACPI_VIDEO_OUTPUT_SWITCHING_DMI_VENDOR;
++		 *	acpi_video_support |=
++		 *		ACPI_VIDEO_BACKLIGHT_DMI_VENDOR;
++		 *}
++		 */
++	} else {
++		status = acpi_bus_get_device(graphics_handle, &tmp_dev);
++		if (ACPI_FAILURE(status)) {
++			ACPI_EXCEPTION((AE_INFO, status, "Invalid device"));
++			return 0;
++		}
++		acpi_walk_namespace(ACPI_TYPE_DEVICE, graphics_handle,
++				    ACPI_UINT32_MAX, find_video,
++				    &caps, NULL);
++	}
++	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "We have 0x%lX video support %s %s\n",
++			  graphics_handle ? caps : acpi_video_support,
++			  graphics_handle ? "on device " : "in general",
++			  graphics_handle ? acpi_device_bid(tmp_dev) : ""));
++	return caps;
++}
++EXPORT_SYMBOL(acpi_video_get_capabilities);
++
++/* Returns true if video.ko can do backlight switching */
++int acpi_video_backlight_support(void)
++{
++	/*
++	 * We must check whether the ACPI graphics device is physically plugged
++	 * in. Therefore this must be called after binding PCI and ACPI devices
++	 */
++	if (!acpi_video_caps_checked)
++		acpi_video_get_capabilities(NULL);
++
++	/* First check for boot param -> highest prio */
++	if (acpi_video_support & ACPI_VIDEO_BACKLIGHT_FORCE_VENDOR)
++		return 0;
++	else if (acpi_video_support & ACPI_VIDEO_BACKLIGHT_FORCE_VIDEO)
++		return 1;
++
++	/* Then check for DMI blacklist -> second highest prio */
++	if (acpi_video_support & ACPI_VIDEO_BACKLIGHT_DMI_VENDOR)
++		return 0;
++	else if (acpi_video_support & ACPI_VIDEO_BACKLIGHT_DMI_VIDEO)
++		return 1;
++
++	/* Then go the default way */
++	return acpi_video_support & ACPI_VIDEO_BACKLIGHT;
++}
++EXPORT_SYMBOL(acpi_video_backlight_support);
++
++/*
++ * Returns true if video.ko can do display output switching.
++ * This does not work well/at all with binary graphics drivers
++ * which disable system io ranges and do it on their own.
++ */
++int acpi_video_display_switch_support(void)
++{
++	if (!acpi_video_caps_checked)
++		acpi_video_get_capabilities(NULL);
++
++	if (acpi_video_support & ACPI_VIDEO_OUTPUT_SWITCHING_FORCE_VENDOR)
++		return 0;
++	else if (acpi_video_support & ACPI_VIDEO_OUTPUT_SWITCHING_FORCE_VIDEO)
++		return 1;
++
++	if (acpi_video_support & ACPI_VIDEO_OUTPUT_SWITCHING_DMI_VENDOR)
++		return 0;
++	else if (acpi_video_support & ACPI_VIDEO_OUTPUT_SWITCHING_DMI_VIDEO)
++		return 1;
++
++	return acpi_video_support & ACPI_VIDEO_OUTPUT_SWITCHING;
++}
++EXPORT_SYMBOL(acpi_video_display_switch_support);
++
++/*
++ * Use acpi_display_output=vendor/video or acpi_backlight=vendor/video
++ * To force that backlight or display output switching is processed by vendor
++ * specific acpi drivers or video.ko driver.
++ */
++int __init acpi_backlight(char *str)
++{
++	if (str == NULL || *str == '\0')
++		return 1;
++	else {
++		if (!strcmp("vendor", str))
++			acpi_video_support |=
++				ACPI_VIDEO_BACKLIGHT_FORCE_VENDOR;
++		if (!strcmp("video", str))
++			acpi_video_support |=
++				ACPI_VIDEO_OUTPUT_SWITCHING_FORCE_VIDEO;
++	}
++	return 1;
++}
++__setup("acpi_backlight=", acpi_backlight);
++
++int __init acpi_display_output(char *str)
++{
++	if (str == NULL || *str == '\0')
++		return 1;
++	else {
++		if (!strcmp("vendor", str))
++			acpi_video_support |=
++				ACPI_VIDEO_OUTPUT_SWITCHING_FORCE_VENDOR;
++		if (!strcmp("video", str))
++			acpi_video_support |=
++				ACPI_VIDEO_OUTPUT_SWITCHING_FORCE_VIDEO;
++	}
++	return 1;
++}
++__setup("acpi_display_output=", acpi_display_output);
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -202,6 +202,50 @@ extern bool wmi_has_guid(const char *gui
+ 
+ #endif	/* CONFIG_ACPI_WMI */
+ 
++#define ACPI_VIDEO_OUTPUT_SWITCHING			0x0001
++#define ACPI_VIDEO_DEVICE_POSTING			0x0002
++#define ACPI_VIDEO_ROM_AVAILABLE			0x0004
++#define ACPI_VIDEO_BACKLIGHT				0x0008
++#define ACPI_VIDEO_BACKLIGHT_FORCE_VENDOR		0x0010
++#define ACPI_VIDEO_BACKLIGHT_FORCE_VIDEO		0x0020
++#define ACPI_VIDEO_OUTPUT_SWITCHING_FORCE_VENDOR	0x0040
++#define ACPI_VIDEO_OUTPUT_SWITCHING_FORCE_VIDEO		0x0080
++#define ACPI_VIDEO_BACKLIGHT_DMI_VENDOR			0x0100
++#define ACPI_VIDEO_BACKLIGHT_DMI_VIDEO			0x0200
++#define ACPI_VIDEO_OUTPUT_SWITCHING_DMI_VENDOR		0x0400
++#define ACPI_VIDEO_OUTPUT_SWITCHING_DMI_VIDEO		0x0800
++
++#if defined(CONFIG_ACPI_VIDEO) || defined(CONFIG_ACPI_VIDEO_MODULE)
++
++extern long acpi_video_get_capabilities(acpi_handle graphics_dev_handle);
++extern long acpi_is_video_device(struct acpi_device *device);
++extern int acpi_video_backlight_support(void);
++extern int acpi_video_display_switch_support(void);
++
++#else
++
++static inline long acpi_video_get_capabilities(acpi_handle graphics_dev_handle)
++{
++	return 0;
++}
++
++static inline long acpi_is_video_device(struct acpi_device *device)
++{
++	return 0;
++}
++
++static inline int acpi_video_backlight_support(void)
++{
++	return 0;
++}
++
++static inline int acpi_video_display_switch_support(void)
++{
++	return 0;
++}
++
++#endif /* defined(CONFIG_ACPI_VIDEO) || defined(CONFIG_ACPI_VIDEO_MODULE) */
++
+ extern int acpi_blacklisted(void);
+ #ifdef CONFIG_DMI
+ extern void acpi_dmi_osi_linux(int enable, const struct dmi_system_id *d);

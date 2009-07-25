@@ -1,0 +1,38 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qeth: fix offset error in non prealloc header path
+References: bnc#434333,LTC#48840
+
+Symptom:     bad or no VSWITCH/guest lan network traffic
+Problem:     Offset error in the non prealloc header path
+Solution:    For the non preallocated qeth header code path we should not
+             change the header length.
+
+Signed-off-by: Frank Blaschka <frank.blaschka@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ drivers/s390/net/qeth_core_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Index: linux-sles11/drivers/s390/net/qeth_core_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_core_main.c
++++ linux-sles11/drivers/s390/net/qeth_core_main.c
+@@ -3034,7 +3034,7 @@ static inline void __qeth_fill_buffer(st
+ 	struct qdio_buffer *buffer, int is_tso, int *next_element_to_fill,
+ 	int offset)
+ {
+-	int length = skb->len - offset;
++	int length = skb->len;
+ 	int length_here;
+ 	int element;
+ 	char *data;
+@@ -3046,6 +3046,7 @@ static inline void __qeth_fill_buffer(st
+ 
+ 	if (offset >= 0) {
+ 		data = skb->data + offset;
++		length -= offset;
+ 		first_lap = 0;
+ 	}
+ 

@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Generate architecture specific patch selection symbols
+
+if [ "$1" = "--list" ]; then
+    # List all known architectures
+    echo i386 mips{,64} sparc{,64} ppc{,64} s390{,x} ia64 x86_64 alpha parisc
+    exit 0
+fi
+
+if [ -z "$SYMBOLS" ]; then
+    if [ -n "$1" ]; then
+	ARCH="$1"
+    elif [ -n "$PATCH_ARCH" ]; then
+	ARCH="$PATCH_ARCH"
+    else
+	ARCH="`arch`"
+    fi
+    SYMBOLS="$ARCH"
+    case "$ARCH" in
+	(i?86)		SYMBOLS="$SYMBOLS IA32" ;;
+	(mips*)		SYMBOLS="$SYMBOLS MIPS" ;;
+	(sparc*)	SYMBOLS="$SYMBOLS SPARC" ;;
+	(ppc*)		SYMBOLS="$SYMBOLS PPC" ;;
+	(s390*)		SYMBOLS="$SYMBOLS S390" ;;
+	(ia64)		;;
+	(x86_64)	;;
+	(alpha)		;;
+	(parisc)	;;
+	(*)		# not a recognized architeture!
+			exit
+			;;
+    esac
+fi
+echo $SYMBOLS

@@ -1,0 +1,31 @@
+From: Alexey Starikovskiy <astarikovskiy@suse.de>
+Subject: ACPI: EC: Limit workaround for ASUS notebooks even more
+References: bnc#492658 bnc#496871 and others
+Patch-Mainline: yes
+Commit-ID: 235c4a59278eb07e61d909f1f0c233733034a8b3
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+References: http://bugzilla.kernel.org/show_bug.cgi?id=11884
+
+Signed-off-by: Alexey Starikovskiy <astarikovskiy@suse.de>
+Signed-off-by: Len Brown <len.brown@intel.com>
+
+---
+ drivers/acpi/ec.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/acpi/ec.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/acpi/ec.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/acpi/ec.c
+@@ -1017,7 +1017,8 @@ int __init acpi_ec_ecdt_probe(void)
+ 	 * which needs it, has fake EC._INI method, so use it as flag.
+ 	 * Keep boot_ec struct as it will be needed soon.
+ 	 */
+-	if (ACPI_FAILURE(acpi_get_handle(boot_ec->handle, "_INI", &dummy)))
++	if (!dmi_name_in_vendors("ASUS") ||
++	    ACPI_FAILURE(acpi_get_handle(boot_ec->handle, "_INI", &dummy)))
+ 		return -ENODEV;
+ install:
+ 	if (!ec_install_handlers(boot_ec)) {

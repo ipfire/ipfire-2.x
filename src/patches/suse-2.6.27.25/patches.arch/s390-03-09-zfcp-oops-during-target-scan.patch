@@ -1,0 +1,28 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: prevent SCSI target scan for vanished rport
+References: bnc#440610,LTC#49373
+
+Symptom:     Oops unable to handle ptr dereference
+Problem:     A rport might be referenced eventhough it vanished
+Solution:    Verify that rport is still existant and online
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_erp.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_erp.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_erp.c
++++ linux-sles11/drivers/s390/scsi/zfcp_erp.c
+@@ -1187,7 +1187,9 @@ static void zfcp_erp_scsi_scan(struct wo
+ 		container_of(work, struct zfcp_erp_add_work, work);
+ 	struct zfcp_unit *unit = p->unit;
+ 	struct fc_rport *rport = unit->port->rport;
+-	scsi_scan_target(&rport->dev, 0, rport->scsi_target_id,
++
++	if (rport && rport->port_state == FC_PORTSTATE_ONLINE)
++		scsi_scan_target(&rport->dev, 0, rport->scsi_target_id,
+ 			 scsilun_to_int((struct scsi_lun *)&unit->fcp_lun), 0);
+ 	atomic_clear_mask(ZFCP_STATUS_UNIT_SCSI_WORK_PENDING, &unit->status);
+ 	zfcp_unit_put(unit);

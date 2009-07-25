@@ -1,0 +1,138 @@
+From: Nick Piggin <npiggin@novell.com>
+Subject: Add mark_rodata_rw() to un-protect read-only kernel code pages
+References: bnc#439348
+
+CONFIG_RODATA presents a problem for antivirus vendors who do not have a
+clean user-space interface for getting virus scanning triggered, and
+currently resort to patching the kernel code instead (presumably the
+ystem call table). With CONFIG_RODATA enabled, the kernel rejects such
+write accesses.
+
+Add a new mark_rodata_rw() function to un-protect the read-only kernel code
+pages for now, and export mark_rodata_ro() and mark_rodata_rw() to modules.
+
+This is not meant as a permanent workaround, and will be removed again in the
+next release!
+
+Acked-by: Andres Gruenbacher <agruen@suse.de>
+
+Automatically created from "patches.suse/x86-mark_rodata_rw.patch" by xen-port-patches.py
+
+--- sle11-2009-03-16.orig/arch/x86/mm/init_32-xen.c	2009-03-16 16:38:33.000000000 +0100
++++ sle11-2009-03-16/arch/x86/mm/init_32-xen.c	2009-03-16 16:39:50.000000000 +0100
+@@ -1125,6 +1125,28 @@ void mark_rodata_ro(void)
+ 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
+ #endif
+ }
++EXPORT_SYMBOL(mark_rodata_ro);
++
++void mark_rodata_rw(void)
++{
++	unsigned long start = PFN_ALIGN(_text);
++	unsigned long size = PFN_ALIGN(_etext) - start;
++
++#ifndef CONFIG_DYNAMIC_FTRACE
++	/* Dynamic tracing modifies the kernel text section */
++	set_pages_rw_force(virt_to_page(start), size >> PAGE_SHIFT);
++	printk(KERN_INFO "Write enabling the kernel text: %luk\n",
++		size >> 10);
++
++#endif /* CONFIG_DYNAMIC_FTRACE */
++
++	start += size;
++	size = (unsigned long)__end_rodata - start;
++	set_pages_rw_force(virt_to_page(start), size >> PAGE_SHIFT);
++	printk(KERN_INFO "Write enabling the kernel read-only data: %luk\n",
++		size >> 10);
++}
++EXPORT_SYMBOL(mark_rodata_rw);
+ #endif
+ 
+ void free_init_pages(char *what, unsigned long begin, unsigned long end)
+--- sle11-2009-03-16.orig/arch/x86/mm/init_64-xen.c	2009-03-16 16:39:48.000000000 +0100
++++ sle11-2009-03-16/arch/x86/mm/init_64-xen.c	2009-03-16 16:39:50.000000000 +0100
+@@ -1202,7 +1202,24 @@ void mark_rodata_ro(void)
+ 	set_memory_ro(start, (end-start) >> PAGE_SHIFT);
+ #endif
+ }
++EXPORT_SYMBOL(mark_rodata_ro);
+ 
++void mark_rodata_rw(void)
++{
++	unsigned long start = PFN_ALIGN(_stext), end = PFN_ALIGN(__end_rodata);
++#ifdef CONFIG_DYNAMIC_FTRACE
++	unsigned long rodata_start =
++		((unsigned long)__start_rodata + PAGE_SIZE - 1) & PAGE_MASK;
++
++	/* Dynamic tracing modifies the kernel text section */
++	start = rodata_start;
++#endif
++
++	printk(KERN_INFO "Write enabling the kernel read-only data: %luk\n",
++	       (end - start) >> 10);
++	set_memory_rw_force(start, (end - start) >> PAGE_SHIFT);
++}
++EXPORT_SYMBOL(mark_rodata_rw);
+ #endif
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+--- sle11-2009-03-16.orig/arch/x86/mm/pageattr-xen.c	2009-03-16 16:38:38.000000000 +0100
++++ sle11-2009-03-16/arch/x86/mm/pageattr-xen.c	2009-03-16 16:39:50.000000000 +0100
+@@ -190,6 +190,8 @@ static void cpa_flush_range(unsigned lon
+ 	}
+ }
+ 
++static int static_protections_allow_rodata __read_mostly;
++
+ /*
+  * Certain areas of memory on x86 require very specific protection flags,
+  * for example the BIOS area or kernel text. Callers don't always get this
+@@ -223,8 +225,10 @@ static inline pgprot_t static_protection
+ 	 * catches all aliases.
+ 	 */
+ 	if (within(pfn, __pa((unsigned long)__start_rodata) >> PAGE_SHIFT,
+-		   __pa((unsigned long)__end_rodata) >> PAGE_SHIFT))
+-		pgprot_val(forbidden) |= _PAGE_RW;
++		   __pa((unsigned long)__end_rodata) >> PAGE_SHIFT)) {
++		if (!static_protections_allow_rodata)
++			pgprot_val(forbidden) |= _PAGE_RW;
++	}
+ 
+ 	prot = __pgprot(pgprot_val(prot) & ~pgprot_val(forbidden));
+ 
+@@ -1014,6 +1018,21 @@ int set_memory_rw(unsigned long addr, in
+ 	return change_page_attr_set(addr, numpages, __pgprot(_PAGE_RW));
+ }
+ 
++/* hack: bypass kernel rodata section static_protections check. */
++int set_memory_rw_force(unsigned long addr, int numpages)
++{
++	static DEFINE_MUTEX(lock);
++	int ret;
++
++	mutex_lock(&lock);
++	static_protections_allow_rodata = 1;
++	ret = change_page_attr_set(addr, numpages, __pgprot(_PAGE_RW));
++	static_protections_allow_rodata = 0;
++	mutex_unlock(&lock);
++
++	return ret;
++}
++
+ int set_memory_np(unsigned long addr, int numpages)
+ {
+ 	return change_page_attr_clear(addr, numpages, __pgprot(_PAGE_PRESENT));
+@@ -1071,6 +1090,13 @@ int set_pages_rw(struct page *page, int 
+ 	return set_memory_rw(addr, numpages);
+ }
+ 
++int set_pages_rw_force(struct page *page, int numpages)
++{
++	unsigned long addr = (unsigned long)page_address(page);
++
++	return set_memory_rw_force(addr, numpages);
++}
++
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+ 
+ static int __set_pages_p(struct page *page, int numpages)

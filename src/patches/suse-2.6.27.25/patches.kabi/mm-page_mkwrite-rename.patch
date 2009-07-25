@@ -1,0 +1,272 @@
+From: Nick Piggin <npiggin@suse.de>
+Subject: mm: page_mkwrite kABI compat 1
+Patch-upstream: never
+
+Rename page_mkwrite to page_mkwrite2, put it into a union, and in that union
+also add a new page_mkwrite which has the same prototype as the old one. Update
+all in-tree code to use page_mkwrite2 (can't initialize anonymous unions so
+it's a bit ugly :( ).
+
+[mmarek: added __GENKSYMS__ ifdef: ->_pmkw.page_mkwrite() will be the same
+ as ->page_mkwrite() in assembly, but for genksyms it's two different things.]
+
+Signed-off-by: Nick Piggin <npiggin@suse.de>
+---
+ drivers/video/fb_defio.c    |    2 +-
+ fs/buffer.c                 |   38 +++++++++++++++++++++++++++++++++++++-
+ fs/ext4/file.c              |    2 +-
+ fs/fuse/file.c              |    2 +-
+ fs/gfs2/ops_file.c          |    2 +-
+ fs/nfs/file.c               |    2 +-
+ fs/ocfs2/mmap.c             |    2 +-
+ fs/ubifs/file.c             |    2 +-
+ fs/xfs/linux-2.6/xfs_file.c |    4 ++--
+ include/linux/buffer_head.h |    4 +++-
+ include/linux/mm.h          |   19 ++++++++++++++++---
+ mm/memory.c                 |    8 ++++----
+ mm/mmap.c                   |    2 +-
+ 13 files changed, 70 insertions(+), 19 deletions(-)
+
+--- a/drivers/video/fb_defio.c
++++ b/drivers/video/fb_defio.c
+@@ -112,7 +112,7 @@ page_already_added:
+ 
+ static struct vm_operations_struct fb_deferred_io_vm_ops = {
+ 	.fault		= fb_deferred_io_fault,
+-	.page_mkwrite	= fb_deferred_io_mkwrite,
++	._pmkw.page_mkwrite2	= fb_deferred_io_mkwrite,
+ };
+ 
+ static int fb_deferred_io_set_page_dirty(struct page *page)
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -125,7 +125,7 @@ force_commit:
+ 
+ static struct vm_operations_struct ext4_file_vm_ops = {
+ 	.fault		= filemap_fault,
+-	.page_mkwrite   = ext4_page_mkwrite,
++	._pmkw.page_mkwrite2  = ext4_page_mkwrite,
+ };
+ 
+ static int ext4_file_mmap(struct file *file, struct vm_area_struct *vma)
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1235,7 +1235,7 @@ static int fuse_page_mkwrite(struct vm_a
+ static struct vm_operations_struct fuse_file_vm_ops = {
+ 	.close		= fuse_vma_close,
+ 	.fault		= filemap_fault,
+-	.page_mkwrite	= fuse_page_mkwrite,
++	._pmkw.page_mkwrite2	= fuse_page_mkwrite,
+ };
+ 
+ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
+--- a/fs/gfs2/ops_file.c
++++ b/fs/gfs2/ops_file.c
+@@ -421,7 +421,7 @@ out:
+ 
+ static struct vm_operations_struct gfs2_vm_ops = {
+ 	.fault = filemap_fault,
+-	.page_mkwrite = gfs2_page_mkwrite,
++	._pmkw.page_mkwrite2 = gfs2_page_mkwrite,
+ };
+ 
+ 
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -486,7 +486,7 @@ out_unlock:
+ 
+ static struct vm_operations_struct nfs_file_vm_ops = {
+ 	.fault = filemap_fault,
+-	.page_mkwrite = nfs_vm_page_mkwrite,
++	._pmkw.page_mkwrite2 = nfs_vm_page_mkwrite,
+ };
+ 
+ static int nfs_need_sync_write(struct file *filp, struct inode *inode)
+--- a/fs/ocfs2/mmap.c
++++ b/fs/ocfs2/mmap.c
+@@ -200,7 +200,7 @@ out:
+ 
+ static struct vm_operations_struct ocfs2_file_vm_ops = {
+ 	.fault		= ocfs2_fault,
+-	.page_mkwrite	= ocfs2_page_mkwrite,
++	._pmkw.page_mkwrite2	= ocfs2_page_mkwrite,
+ };
+ 
+ int ocfs2_mmap(struct file *file, struct vm_area_struct *vma)
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1234,7 +1234,7 @@ out_unlock:
+ 
+ static struct vm_operations_struct ubifs_file_vm_ops = {
+ 	.fault        = filemap_fault,
+-	.page_mkwrite = ubifs_vm_page_mkwrite,
++	._pmkw.page_mkwrite2 = ubifs_vm_page_mkwrite,
+ };
+ 
+ static int ubifs_file_mmap(struct file *file, struct vm_area_struct *vma)
+--- a/fs/xfs/linux-2.6/xfs_file.c
++++ b/fs/xfs/linux-2.6/xfs_file.c
+@@ -429,7 +429,7 @@ xfs_vm_page_mkwrite(
+ 	struct vm_area_struct	*vma,
+ 	struct vm_fault		*vmf)
+ {
+-	return block_page_mkwrite(vma, vmf, xfs_get_blocks);
++	return block_page_mkwrite2(vma, vmf, xfs_get_blocks);
+ }
+ 
+ const struct file_operations xfs_file_operations = {
+@@ -485,5 +485,5 @@ const struct file_operations xfs_dir_fil
+ 
+ static struct vm_operations_struct xfs_file_vm_ops = {
+ 	.fault		= filemap_fault,
+-	.page_mkwrite	= xfs_vm_page_mkwrite,
++	._pmkw.page_mkwrite2	= xfs_vm_page_mkwrite,
+ };
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -172,9 +172,22 @@ struct vm_operations_struct {
+ 	void (*close)(struct vm_area_struct * area);
+ 	int (*fault)(struct vm_area_struct *vma, struct vm_fault *vmf);
+ 
+-	/* notification that a previously read-only page is about to become
+-	 * writable, if an error is returned it will cause a SIGBUS */
+-	int (*page_mkwrite)(struct vm_area_struct *vma, struct vm_fault *vmf);
++#ifdef __GENKSYMS__
++	int (*page_mkwrite)(struct vm_area_struct *, struct page *);
++#else
++	union {
++		/*
++		 * XXX: this is an ABI compatibility hack.
++		 * Using the fixed page_mkwrite2 call requires VM_PAGE_MKWRITE2 to be
++		 * set in vma->vm_flags
++		 */
++
++		/* notification that a previously read-only page is about to become
++		 * writable, if an error is returned it will cause a SIGBUS */
++		int (*page_mkwrite)(struct vm_area_struct *, struct page *);
++		int (*page_mkwrite2)(struct vm_area_struct *vma, struct vm_fault *vmf);
++	} _pmkw;
++#endif
+ 
+ 	/* called by access_process_vm when get_user_pages() fails, typically
+ 	 * for use by special VMAs that can switch between memory and hardware
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2402,7 +2402,7 @@ int block_commit_write(struct page *page
+  * unlock the page.
+  */
+ int
+-block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
++block_page_mkwrite2(struct vm_area_struct *vma, struct vm_fault *vmf,
+ 		   get_block_t get_block)
+ {
+ 	struct page *page = vmf->page;
+@@ -2444,6 +2444,41 @@ out:
+ }
+ 
+ /*
++ * XXX: ABI hack
++ */
++int
++block_page_mkwrite(struct vm_area_struct *vma, struct page *page,
++		   get_block_t get_block)
++{
++	struct inode *inode = vma->vm_file->f_path.dentry->d_inode;
++	unsigned long end;
++	loff_t size;
++	int ret = -EINVAL;
++
++	lock_page(page);
++	size = i_size_read(inode);
++	if ((page->mapping != inode->i_mapping) ||
++	    (page_offset(page) > size)) {
++		/* page got truncated out from underneath us */
++		goto out_unlock;
++	}
++
++	/* page is wholly or partially inside EOF */
++	if (((page->index + 1) << PAGE_CACHE_SHIFT) > size)
++		end = size & ~PAGE_CACHE_MASK;
++	else
++		end = PAGE_CACHE_SIZE;
++
++	ret = block_prepare_write(page, 0, end, get_block);
++	if (!ret)
++		ret = block_commit_write(page, 0, end);
++
++out_unlock:
++	unlock_page(page);
++	return ret;
++}
++
++/*
+  * nobh_write_begin()'s prereads are special: the buffer_heads are freed
+  * immediately, while under the page lock.  So it needs a special end_io
+  * handler which does not touch the bh after unlocking it.
+@@ -3362,6 +3397,7 @@ EXPORT_SYMBOL(__wait_on_buffer);
+ EXPORT_SYMBOL(block_commit_write);
+ EXPORT_SYMBOL(block_prepare_write);
+ EXPORT_SYMBOL(block_page_mkwrite);
++EXPORT_SYMBOL(block_page_mkwrite2);
+ EXPORT_SYMBOL(block_read_full_page);
+ EXPORT_SYMBOL(block_sync_page);
+ EXPORT_SYMBOL(block_truncate_page);
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -222,7 +222,9 @@ int cont_write_begin(struct file *, stru
+ 			get_block_t *, loff_t *);
+ int generic_cont_expand_simple(struct inode *inode, loff_t size);
+ int block_commit_write(struct page *page, unsigned from, unsigned to);
+-int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
++int block_page_mkwrite(struct vm_area_struct *vma, struct page *page,
++				get_block_t get_block);
++int block_page_mkwrite2(struct vm_area_struct *vma, struct vm_fault *vmf,
+ 				get_block_t get_block);
+ void block_sync_page(struct page *);
+ sector_t generic_block_bmap(struct address_space *, sector_t, get_block_t *);
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1800,7 +1800,7 @@ static int do_wp_page(struct mm_struct *
+ 		 * read-only shared pages can get COWed by
+ 		 * get_user_pages(.write=1, .force=1).
+ 		 */
+-		if (vma->vm_ops && vma->vm_ops->page_mkwrite) {
++		if (vma->vm_ops && vma->vm_ops->_pmkw.page_mkwrite2) {
+ 			struct vm_fault vmf;
+ 			int tmp;
+ 
+@@ -1821,7 +1821,7 @@ static int do_wp_page(struct mm_struct *
+ 			page_cache_get(old_page);
+ 			pte_unmap_unlock(page_table, ptl);
+ 
+-			tmp = vma->vm_ops->page_mkwrite(vma, &vmf);
++			tmp = vma->vm_ops->_pmkw.page_mkwrite2(vma, &vmf);
+ 			if (unlikely(tmp &
+ 					(VM_FAULT_ERROR | VM_FAULT_NOPAGE))) {
+ 				ret = tmp;
+@@ -2517,12 +2517,12 @@ static int __do_fault(struct mm_struct *
+ 			 * address space wants to know that the page is about
+ 			 * to become writable
+ 			 */
+-			if (vma->vm_ops->page_mkwrite) {
++			if (vma->vm_ops->_pmkw.page_mkwrite2) {
+ 				int tmp;
+ 
+ 				unlock_page(page);
+ 				vmf.flags = FAULT_FLAG_WRITE|FAULT_FLAG_MKWRITE;
+-				tmp = vma->vm_ops->page_mkwrite(vma, &vmf);
++				tmp = vma->vm_ops->_pmkw.page_mkwrite2(vma, &vmf);
+ 				if (unlikely(tmp &
+ 					  (VM_FAULT_ERROR | VM_FAULT_NOPAGE))) {
+ 					ret = tmp;
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1071,7 +1071,7 @@ int vma_wants_writenotify(struct vm_area
+ 		return 0;
+ 
+ 	/* The backer wishes to know when pages are first written to? */
+-	if (vma->vm_ops && vma->vm_ops->page_mkwrite)
++	if (vma->vm_ops && vma->vm_ops->_pmkw.page_mkwrite)
+ 		return 1;
+ 
+ 	/* The open routine did something to the protections already? */

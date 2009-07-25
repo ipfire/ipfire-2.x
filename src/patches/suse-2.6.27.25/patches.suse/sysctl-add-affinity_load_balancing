@@ -1,0 +1,102 @@
+Subject: add affinity_load_balancing sysctl
+From: kraxel@suse.de
+References: 176738
+
+Add a sysctl to tweak how the kernel initially schedules threads to cpus.
+
+By default the kernel tries to keep threads on the local cpu (and local
+node on NUMA machines).  Depending on the application this may not deliver
+the best performance, especially applications with a large working set for
+each thread tend to perform better when being scheduled to different nodes
+because they can use caches of multiple nodes then.
+
+With this sysctl enabled the kernel will spread threads over the cpus given
+and doesn't try to keep them local.
+
+usage:
+  - set sysctl kernel.affinity_load_balancing = 1
+  - use taskset or numactl to specify which cpus your task should be
+    scheduled on.
+
+---
+ kernel/sched.c  |   28 ++++++++++++++++++++++++++++
+ kernel/sysctl.c |   12 ++++++++++++
+ 2 files changed, 40 insertions(+)
+
+--- a/kernel/sched.c
++++ b/kernel/sched.c
+@@ -2107,6 +2107,28 @@ find_idlest_cpu(struct sched_group *grou
+ 	return idlest;
+ }
+ 
++static int
++find_idlest_cpu_nodomain(struct task_struct *p, int this_cpu)
++{
++	cpumask_t tmp;
++	unsigned long load, min_load = ULONG_MAX;
++	int idlest = -1;
++	int i;
++
++	/* Traverse only the allowed CPUs */
++	cpus_and(tmp, cpu_online_map, p->cpus_allowed);
++
++	for_each_cpu_mask(i, tmp) {
++		load = target_load(i, 1);
++
++		if (load < min_load) {
++			min_load = load;
++			idlest = i;
++		}
++	}
++	return idlest;
++}
++
+ /*
+  * sched_balance_self: balance the current task (running on cpu) in domains
+  * that have the 'flag' flag set. In practice, this is SD_BALANCE_FORK and
+@@ -2118,11 +2140,17 @@ find_idlest_cpu(struct sched_group *grou
+  *
+  * preempt must be disabled.
+  */
++
++int affinity_load_balancing = 0;
++
+ static int sched_balance_self(int cpu, int flag)
+ {
+ 	struct task_struct *t = current;
+ 	struct sched_domain *tmp, *sd = NULL;
+ 
++	if (affinity_load_balancing && !cpus_full(t->cpus_allowed))
++		return find_idlest_cpu_nodomain(t, cpu);
++
+ 	for_each_domain(cpu, tmp) {
+ 		/*
+ 		 * If power savings logic is enabled for a domain, stop there.
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -237,6 +237,8 @@ static int min_wakeup_granularity_ns;			
+ static int max_wakeup_granularity_ns = NSEC_PER_SEC;	/* 1 second */
+ #endif
+ 
++extern int affinity_load_balancing;
++
+ static struct ctl_table kern_table[] = {
+ #ifdef CONFIG_SCHED_DEBUG
+ 	{
+@@ -872,6 +874,16 @@ static struct ctl_table kern_table[] = {
+  * NOTE: do not add new entries to this table unless you have read
+  * Documentation/sysctl/ctl_unnumbered.txt
+  */
++#ifdef CONFIG_SMP
++	{
++		.ctl_name	= CTL_UNNUMBERED,
++		.procname	= "affinity_load_balancing",
++		.data		= &affinity_load_balancing,
++		.maxlen		= sizeof(affinity_load_balancing),
++		.mode		= 0644,
++		.proc_handler	= &proc_dointvec,
++	},
++#endif
+ 	{ .ctl_name = 0 }
+ };
+ 

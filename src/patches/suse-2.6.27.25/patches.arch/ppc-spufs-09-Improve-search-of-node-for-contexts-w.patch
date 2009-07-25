@@ -1,0 +1,52 @@
+Subject: Improve search of node for contexts with SPU affinity
+From: Andre Detsch <adetsch@br.ibm.com>
+References: 447133 - LTC50070
+
+This patch improves redability of the code responsible for trying to find
+a node with enough SPUs not committed to other affinity gangs.
+
+An additional check is also added, to avoid taking into account gangs that
+have no SPU affinity.
+
+Signed-off-by: Andre Detsch <adetsch@br.ibm.com>
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+Signed-off-by: Olaf Hering <olh@suse.de>
+---
+ arch/powerpc/platforms/cell/spufs/sched.c |   19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+--- a/arch/powerpc/platforms/cell/spufs/sched.c
++++ b/arch/powerpc/platforms/cell/spufs/sched.c
+@@ -312,6 +312,15 @@ static struct spu *aff_ref_location(stru
+ 	 */
+ 	node = cpu_to_node(raw_smp_processor_id());
+ 	for (n = 0; n < MAX_NUMNODES; n++, node++) {
++		/*
++		 * "available_spus" counts how many spus are not potentially
++		 * going to be used by other affinity gangs whose reference
++		 * context is already in place. Although this code seeks to
++		 * avoid having affinity gangs with a summed amount of
++		 * contexts bigger than the amount of spus in the node,
++		 * this may happen sporadically. In this case, available_spus
++		 * becomes negative, which is harmless.
++		 */
+ 		int available_spus;
+ 
+ 		node = (node < MAX_NUMNODES) ? node : 0;
+@@ -321,12 +330,10 @@ static struct spu *aff_ref_location(stru
+ 		available_spus = 0;
+ 		mutex_lock(&cbe_spu_info[node].list_mutex);
+ 		list_for_each_entry(spu, &cbe_spu_info[node].spus, cbe_list) {
+-			if (spu->ctx && spu->ctx->gang
+-					&& spu->ctx->aff_offset == 0)
+-				available_spus -=
+-					(spu->ctx->gang->contexts - 1);
+-			else
+-				available_spus++;
++			if (spu->ctx && spu->ctx->gang && !spu->ctx->aff_offset
++					&& spu->ctx->gang->aff_ref_spu)
++				available_spus -= spu->ctx->gang->contexts;
++			available_spus++;
+ 		}
+ 		if (available_spus < ctx->gang->contexts) {
+ 			mutex_unlock(&cbe_spu_info[node].list_mutex);

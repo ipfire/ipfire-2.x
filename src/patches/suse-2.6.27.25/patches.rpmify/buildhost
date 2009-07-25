@@ -1,0 +1,33 @@
+From: Andreas Gruenbacher <agruen@suse.de>
+Subject: Hide the build hostname
+
+Instead of the real build host and user name, use "buildhost.suse.de"
+and "geeko".
+
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+
+ scripts/mkcompile_h |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+--- a/scripts/mkcompile_h
++++ b/scripts/mkcompile_h
+@@ -60,16 +60,9 @@ UTS_TRUNCATE="sed -e s/\(.\{1,$UTS_LEN\}
+   echo \#define UTS_VERSION \"`echo $UTS_VERSION | $UTS_TRUNCATE`\"
+ 
+   echo \#define LINUX_COMPILE_TIME \"`date +%T`\"
+-  echo \#define LINUX_COMPILE_BY \"`whoami`\"
+-  echo \#define LINUX_COMPILE_HOST \"`hostname | $UTS_TRUNCATE`\"
+-
+-  if [ -x /bin/dnsdomainname ]; then
+-    echo \#define LINUX_COMPILE_DOMAIN \"`dnsdomainname | $UTS_TRUNCATE`\"
+-  elif [ -x /bin/domainname ]; then
+-    echo \#define LINUX_COMPILE_DOMAIN \"`domainname | $UTS_TRUNCATE`\"
+-  else
+-    echo \#define LINUX_COMPILE_DOMAIN
+-  fi
++  echo \#define LINUX_COMPILE_BY \"geeko\"
++  echo \#define LINUX_COMPILE_HOST \"buildhost\"
++  echo \#define LINUX_COMPILE_DOMAIN \"suse.de\"
+ 
+   echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | tail -n 1`\"
+ ) > .tmpcompile

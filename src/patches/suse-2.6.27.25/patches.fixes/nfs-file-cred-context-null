@@ -1,0 +1,33 @@
+From: NeilBrown <neilb@suse.de>
+Subject: nfs_file_cred should cope if 'file' hasn't been opened properly
+Patch-mainline: Not relevant
+References: bnc#431785
+
+
+.. and so doesn't have a 'context'.  This can happen when e.g.
+a chmod on a device-special-file happens.  The object isn't opened over
+NFS so there is no open context, but we currently look for one when
+doing a setattr.
+
+Signed-off-by: Neil Brown <neilb@suse.de>
+
+---
+ include/linux/nfs_fs.h |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- linux-2.6.27-neilb.orig/include/linux/nfs_fs.h
++++ linux-2.6.27-neilb/include/linux/nfs_fs.h
+@@ -372,8 +372,11 @@ static inline struct nfs_open_context *n
+ 
+ static inline struct rpc_cred *nfs_file_cred(struct file *file)
+ {
+-	if (file != NULL)
+-		return nfs_file_open_context(file)->cred;
++	if (file != NULL) {
++		struct nfs_open_context *ctx = nfs_file_open_context(file);
++		if (ctx)
++			return ctx->cred;
++	}
+ 	return NULL;
+ }
+ 

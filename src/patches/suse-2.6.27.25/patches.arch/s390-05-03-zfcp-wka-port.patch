@@ -1,0 +1,43 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Fix opening of wka ports
+References: bnc#450096
+
+Symptom:     Opening the wka port twice in parallel leads to error
+             recovery.
+Problem:     Two port_open requests are sent and the second one
+             invalidates the existing port handle. Using the wrong
+             port handle later is unexpected and starts error
+             recovery.
+Solution:    Change the status check to only issue one port_open
+             request and do not accidentally overwrite the existing
+             port handle.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ drivers/s390/scsi/zfcp_fc.c  |    3 ++-
+ drivers/s390/scsi/zfcp_fsf.c |    1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/s390/scsi/zfcp_fc.c	2008-11-26 15:05:49.000000000 +0100
++++ b/drivers/s390/scsi/zfcp_fc.c	2008-11-26 15:13:11.000000000 +0100
+@@ -52,7 +52,8 @@ static int zfcp_wka_port_get(struct zfcp
+ 	if (mutex_lock_interruptible(&wka_port->mutex))
+ 		return -ERESTARTSYS;
+ 
+-	if (wka_port->status != ZFCP_WKA_PORT_ONLINE) {
++	if (wka_port->status == ZFCP_WKA_PORT_OFFLINE ||
++	    wka_port->status == ZFCP_WKA_PORT_CLOSING) {
+ 		wka_port->status = ZFCP_WKA_PORT_OPENING;
+ 		if (zfcp_fsf_open_wka_port(wka_port))
+ 			wka_port->status = ZFCP_WKA_PORT_OFFLINE;
+--- a/drivers/s390/scsi/zfcp_fsf.c	2008-11-26 15:05:51.000000000 +0100
++++ b/drivers/s390/scsi/zfcp_fsf.c	2008-11-26 15:13:11.000000000 +0100
+@@ -1588,6 +1588,7 @@ static void zfcp_fsf_open_wka_port_handl
+ 		wka_port->status = ZFCP_WKA_PORT_OFFLINE;
+ 		break;
+ 	case FSF_PORT_ALREADY_OPEN:
++		break;
+ 	case FSF_GOOD:
+ 		wka_port->handle = header->port_handle;
+ 		wka_port->status = ZFCP_WKA_PORT_ONLINE;

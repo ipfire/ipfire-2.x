@@ -1,0 +1,25 @@
+From: Andres Gruenbacher <agruen@suse.de>
+Subject: Also mark rodata pages executable in mark_rodata_rw()
+
+For review: do we also need to mark rodata pages executable in
+mark_rodata_rw() to fully undo mark_rodata_ro()?
+
+Signed-off-by: Andres Gruenbacher <agruen@suse.de>
+
+Automatically created from "patches.suse/x86-mark_rodata_rw-2.patch" by xen-port-patches.py
+
+--- head-2009-02-02.orig/arch/x86/mm/init_64-xen.c	2009-02-02 10:07:59.000000000 +0100
++++ head-2009-02-02/arch/x86/mm/init_64-xen.c	2009-02-02 10:08:33.000000000 +0100
+@@ -1234,6 +1234,12 @@ void mark_rodata_rw(void)
+ 	printk(KERN_INFO "Write enabling the kernel read-only data: %luk\n",
+ 	       (end - start) >> 10);
+ 	set_memory_rw_force(start, (end - start) >> PAGE_SHIFT);
++
++	/*
++	 * The rodata section should also be executable. (The kernel text
++	 * still is!)
++	 */
++	set_memory_x_force(rodata_start, (end - rodata_start) >> PAGE_SHIFT);
+ }
+ EXPORT_SYMBOL(mark_rodata_rw);
+ #endif

@@ -1,0 +1,124 @@
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: LTTng instrumentation - swap
+
+Original patch header:
+  LTTng instrumentation - swap
+  
+  Instrumentation of waits caused by swap activity. Also instrumentation
+  swapon/swapoff events to keep track of active swap partitions.
+  
+  Those tracepoints are used by LTTng.
+  
+  About the performance impact of tracepoints (which is comparable to markers),
+  even without immediate values optimizations, tests done by Hideo Aoki on ia64
+  show no regression. His test case was using hackbench on a kernel where
+  scheduler instrumentation (about 5 events in code scheduler code) was added.
+  See the "Tracepoints" patch header for performance result detail.
+  
+  Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+  CC: linux-mm@kvack.org
+  CC: Dave Hansen <haveblue@us.ibm.com>
+  CC: Masami Hiramatsu <mhiramat@redhat.com>
+  CC: 'Peter Zijlstra' <peterz@infradead.org>
+  CC: "Frank Ch. Eigler" <fche@redhat.com>
+  CC: 'Ingo Molnar' <mingo@elte.hu>
+  CC: 'Hideo AOKI' <haoki@redhat.com>
+  CC: Takashi Nishiie <t-nishiie@np.css.fujitsu.com>
+  CC: 'Steven Rostedt' <rostedt@goodmis.org>
+  CC: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+
+Acked-by: Jan Blunck <jblunck@suse.de>
+--- 
+---
+ include/trace/swap.h |   20 ++++++++++++++++++++
+ mm/memory.c          |    3 +++
+ mm/page_io.c         |    2 ++
+ mm/swapfile.c        |    3 +++
+ 4 files changed, 28 insertions(+)
+
+--- /dev/null
++++ b/include/trace/swap.h
+@@ -0,0 +1,20 @@
++#ifndef _TRACE_SWAP_H
++#define _TRACE_SWAP_H
++
++#include <linux/swap.h>
++#include <linux/tracepoint.h>
++
++DEFINE_TRACE(swap_in,
++	TPPROTO(struct page *page, swp_entry_t entry),
++	TPARGS(page, entry));
++DEFINE_TRACE(swap_out,
++	TPPROTO(struct page *page),
++	TPARGS(page));
++DEFINE_TRACE(swap_file_open,
++	TPPROTO(struct file *file, char *filename),
++	TPARGS(file, filename));
++DEFINE_TRACE(swap_file_close,
++	TPPROTO(struct file *file),
++	TPARGS(file));
++
++#endif
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -64,6 +64,8 @@
+ 
+ #include "internal.h"
+ 
++#include <trace/swap.h>
++
+ #ifndef CONFIG_NEED_MULTIPLE_NODES
+ /* use the per-pgdat data instead for discontigmem - mbligh */
+ unsigned long max_mapnr;
+@@ -2420,6 +2422,7 @@ static int do_swap_page(struct mm_struct
+ 		/* Had to read the page from swap area: Major fault */
+ 		ret = VM_FAULT_MAJOR;
+ 		count_vm_event(PGMAJFAULT);
++		trace_swap_in(page, entry);
+ 	}
+ 
+ 	if (mem_cgroup_charge(page, mm, GFP_KERNEL)) {
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -17,6 +17,7 @@
+ #include <linux/bio.h>
+ #include <linux/swapops.h>
+ #include <linux/writeback.h>
++#include <trace/swap.h>
+ #include <asm/pgtable.h>
+ 
+ static struct bio *get_swap_bio(gfp_t gfp_flags, pgoff_t index,
+@@ -114,6 +115,7 @@ int swap_writepage(struct page *page, st
+ 		rw |= (1 << BIO_RW_SYNC);
+ 	count_vm_event(PSWPOUT);
+ 	set_page_writeback(page);
++	trace_swap_out(page);
+ 	unlock_page(page);
+ 	submit_bio(rw, bio);
+ out:
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -36,6 +36,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/tlbflush.h>
+ #include <linux/swapops.h>
++#include <trace/swap.h>
+ 
+ static DEFINE_SPINLOCK(swap_lock);
+ static unsigned int nr_swapfiles;
+@@ -1325,6 +1326,7 @@ SYSCALL_DEFINE1(swapoff, const char __us
+ 	swap_map = p->swap_map;
+ 	p->swap_map = NULL;
+ 	p->flags = 0;
++	trace_swap_file_close(swap_file);
+ 	spin_unlock(&swap_lock);
+ 	mutex_unlock(&swapon_mutex);
+ 	vfree(swap_map);
+@@ -1704,6 +1706,7 @@ SYSCALL_DEFINE2(swapon, const char __use
+ 	} else {
+ 		swap_info[prev].next = p - swap_info;
+ 	}
++	trace_swap_file_open(swap_file, name);
+ 	spin_unlock(&swap_lock);
+ 	mutex_unlock(&swapon_mutex);
+ 	error = 0;

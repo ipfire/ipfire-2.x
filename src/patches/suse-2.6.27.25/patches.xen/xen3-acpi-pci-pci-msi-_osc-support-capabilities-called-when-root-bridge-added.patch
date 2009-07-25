@@ -1,0 +1,38 @@
+From 07ae95f988a34465bdcb384bfa73c03424fe2312 Mon Sep 17 00:00:00 2001
+From: Andrew Patterson <andrew.patterson@hp.com>
+Date: Mon, 10 Nov 2008 15:31:05 -0700
+Subject: ACPI/PCI: PCI MSI _OSC support capabilities called when root bridge added
+Patch-mainline: 2.6.29
+References: bnc#438941
+
+The _OSC capability OSC_MSI_SUPPORT is set when the root bridge is added
+with pci_acpi_osc_support(), so we no longer need to do it in the PCI
+MSI driver.  Also adds the function pci_msi_enabled, which returns true
+if pci=nomsi is not on the kernel command-line.
+
+Signed-off-by: Andrew Patterson <andrew.patterson@hp.com>
+Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.drivers/acpi-pci-pci-msi-_osc-support-capabilities-called-when-root-bridge-added.patch" by xen-port-patches.py
+
+--- sle11-2009-04-20.orig/drivers/pci/msi-xen.c	2009-04-24 13:36:45.000000000 +0200
++++ sle11-2009-04-20/drivers/pci/msi-xen.c	2009-01-09 11:10:27.000000000 +0100
+@@ -804,6 +804,17 @@ void pci_no_msi(void)
+ 	pci_msi_enable = 0;
+ }
+ 
++/**
++ * pci_msi_enabled - is MSI enabled?
++ *
++ * Returns true if MSI has not been disabled by the command-line option
++ * pci=nomsi.
++ **/
++int pci_msi_enabled(void)
++{
++	return pci_msi_enable;
++}
++
+ void pci_msi_init_pci_dev(struct pci_dev *dev)
+ {
+ #ifndef CONFIG_XEN

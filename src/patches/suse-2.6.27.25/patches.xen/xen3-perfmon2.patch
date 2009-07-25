@@ -1,0 +1,49 @@
+From: Cliff Wickman <cpw@sgi.com>
+Subject: perfmon2
+References: bnc#430298
+Patch-mainline: never
+
+This is Stephane Eranian's patch
+from http://perfmon2.sourceforge.net/
+but backfitted to the SuSE KOTD for 10/20/2008
+
+[greg's note: I really don't like this, as perfmon2 has been rejected
+from upstream, and perfmon3 is being worked on.  This should be going
+away for SP1, and no one should count on the userspace interface
+remaining the same...]
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.suse/perfmon2.patch" by xen-port-patches.py
+
+--- sle11-2009-03-24.orig/arch/x86/Kconfig	2009-02-05 10:41:12.000000000 +0100
++++ sle11-2009-03-24/arch/x86/Kconfig	2009-02-05 10:41:57.000000000 +0100
+@@ -1499,7 +1499,9 @@ config COMPAT_VDSO
+ 
+ 	  If unsure, say Y.
+ 
++if !XEN
+ source "arch/x86/perfmon/Kconfig"
++endif
+ 
+ endmenu
+ 
+--- sle11-2009-03-24.orig/arch/x86/ia32/ia32entry-xen.S	2009-03-24 10:19:57.000000000 +0100
++++ sle11-2009-03-24/arch/x86/ia32/ia32entry-xen.S	2009-03-24 10:20:46.000000000 +0100
+@@ -783,4 +783,16 @@ ia32_sys_call_table:
+ 	.quad sys_dup3			/* 330 */
+ 	.quad sys_pipe2
+ 	.quad sys_inotify_init1
++	.quad sys_pfm_create_context
++	.quad sys_pfm_write_pmcs
++	.quad sys_pfm_write_pmds	/* 335 */
++	.quad sys_pfm_read_pmds
++	.quad sys_pfm_load_context
++	.quad sys_pfm_start
++	.quad sys_pfm_stop
++	.quad sys_pfm_restart		/* 340 */
++	.quad sys_pfm_create_evtsets
++	.quad sys_pfm_getinfo_evtsets
++	.quad sys_pfm_delete_evtsets
++	.quad sys_pfm_unload_context
+ ia32_syscall_end:

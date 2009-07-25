@@ -1,0 +1,100 @@
+From 4e39432f4df544d3dfe4fc90a22d87de64d15815 Mon Sep 17 00:00:00 2001
+From: Taku Izumi <izumi.taku@jp.fujitsu.com>
+Date: Fri, 17 Oct 2008 13:49:46 +0900
+Subject: ACPI/PCI: Change pci_osc_control_set() to query control bits first
+Patch-mainline: 2.6.28
+References: bnc#438941
+
+Current pci_osc_control_set() evaluates _OSC without query for control
+bits, unless __pci_osc_support_set() is called beforehand. But as
+strongly recommended in PCI firmware specification, it should query
+control bits first.
+
+This patch changes pci_osc_control_set() to query control bits first
+even if __pci_osc_support_set() is not called beforehand.
+
+Signed-off-by: Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
+Signed-off-by: Taku Izumi <izumi.taku@jp.fujitsu.com>
+Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/pci/pci-acpi.c |   47 +++++++++++++++++++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 16 deletions(-)
+
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -120,14 +120,35 @@ out_kfree:
+ 	return status;
+ }
+ 
++static acpi_status __acpi_query_osc(u32 flags, struct acpi_osc_data *osc_data)
++{
++	acpi_status status;
++	u32 support_set;
++	struct acpi_osc_args osc_args;
++
++	/* do _OSC query for all possible controls */
++	support_set = osc_data->support_set | (flags & OSC_SUPPORT_MASKS);
++	osc_args.capbuf[OSC_QUERY_TYPE] = OSC_QUERY_ENABLE;
++	osc_args.capbuf[OSC_SUPPORT_TYPE] = support_set;
++	osc_args.capbuf[OSC_CONTROL_TYPE] = OSC_CONTROL_MASKS;
++
++	status = acpi_run_osc(osc_data->handle, &osc_args);
++	if (ACPI_SUCCESS(status)) {
++		osc_data->support_set = support_set;
++		osc_data->query_result = osc_args.query_result;
++		osc_data->is_queried = 1;
++	}
++
++	return status;
++}
++
+ static acpi_status acpi_query_osc(acpi_handle handle,
+ 				  u32 level, void *context, void **retval)
+ {
+ 	acpi_status status;
+ 	struct acpi_osc_data *osc_data;
+-	u32 flags = (unsigned long)context, support_set;
++	u32 flags = (unsigned long)context;
+ 	acpi_handle tmp;
+-	struct acpi_osc_args osc_args;
+ 
+ 	status = acpi_get_handle(handle, "_OSC", &tmp);
+ 	if (ACPI_FAILURE(status))
+@@ -141,18 +162,7 @@ static acpi_status acpi_query_osc(acpi_h
+ 		goto out;
+ 	}
+ 
+-	/* do _OSC query for all possible controls */
+-	support_set = osc_data->support_set | (flags & OSC_SUPPORT_MASKS);
+-	osc_args.capbuf[OSC_QUERY_TYPE] = OSC_QUERY_ENABLE;
+-	osc_args.capbuf[OSC_SUPPORT_TYPE] = support_set;
+-	osc_args.capbuf[OSC_CONTROL_TYPE] = OSC_CONTROL_MASKS;
+-
+-	status = acpi_run_osc(handle, &osc_args);
+-	if (ACPI_SUCCESS(status)) {
+-		osc_data->support_set = support_set;
+-		osc_data->query_result = osc_args.query_result;
+-		osc_data->is_queried = 1;
+-	}
++	status = __acpi_query_osc(flags, osc_data);
+ out:
+ 	mutex_unlock(&pci_acpi_lock);
+ 	return status;
+@@ -209,8 +219,13 @@ acpi_status pci_osc_control_set(acpi_han
+ 		goto out;
+ 	}
+ 
+-	if (osc_data->is_queried &&
+-	    ((osc_data->query_result & ctrlset) != ctrlset)) {
++	if (!osc_data->is_queried) {
++		status = __acpi_query_osc(osc_data->support_set, osc_data);
++		if (ACPI_FAILURE(status))
++			goto out;
++	}
++
++	if ((osc_data->query_result & ctrlset) != ctrlset) {
+ 		status = AE_SUPPORT;
+ 		goto out;
+ 	}

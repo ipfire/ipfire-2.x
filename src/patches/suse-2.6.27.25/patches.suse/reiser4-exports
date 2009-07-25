@@ -1,0 +1,53 @@
+From: ReiserFS Development <reiserfs-devel@vger.kernel.org>
+Subject: [PATCH] reiser4: add new exports for used symbols
+
+ This patch exports the following symbols for use in reiser4:
+
+ - __copy_from_user_ll_nocache
+ - __copy_from_user_ll_nocache_nozero
+ - __remove_from_page_cache
+ - remove_from_page_cache
+ - add_to_page_cache_lru
+ - find_get_pages
+ - handle_ra_miss
+
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+
+---
+ mm/filemap.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -134,6 +134,7 @@ void __remove_from_page_cache(struct pag
+ 		dec_bdi_stat(mapping->backing_dev_info, BDI_RECLAIMABLE);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(__remove_from_page_cache);
+ 
+ void remove_from_page_cache(struct page *page)
+ {
+@@ -145,6 +146,7 @@ void remove_from_page_cache(struct page
+ 	__remove_from_page_cache(page);
+ 	spin_unlock_irq(&mapping->tree_lock);
+ }
++EXPORT_SYMBOL_GPL(remove_from_page_cache);
+ 
+ static int sync_page(void *word)
+ {
+@@ -497,6 +499,7 @@ int add_to_page_cache_lru(struct page *p
+ 		lru_cache_add(page);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(add_to_page_cache_lru);
+ 
+ #ifdef CONFIG_NUMA
+ struct page *__page_cache_alloc(gfp_t gfp)
+@@ -796,6 +799,7 @@ repeat:
+ 	rcu_read_unlock();
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(find_get_pages);
+ 
+ /**
+  * find_get_pages_contig - gang contiguous pagecache lookup

@@ -1,0 +1,40 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] ext3: always mark super uptodate before dirty
+References: bnc#457043
+
+ The superblock's bh is something of an exception. It is only read
+ during mount and is only released during unmount. The in-memory
+ copy is invariably the most recent one.
+
+ If a write error occurs while syncing the superblock, it will be marked
+ !uptodate. When another error occurs, ext3_error will invoke
+ ext3_commit_super, which will mark the superblock dirty and try to
+ sync it out again. If the buffer is !uptodate, then mark_buffer_dirty
+ will issue a warning, but continue anyway.
+
+ This patch marks it uptodate before writing it out. This doesn't really
+ change anything other than silencing the warning in mark_buffer_dirty.
+ If the write succeeds, good. Otherwise, it will just have uptodate
+ cleared again.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/ext3/super.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/fs/ext3/super.c
++++ b/fs/ext3/super.c
+@@ -2265,6 +2265,13 @@ static void ext3_commit_super (struct su
+ 	es->s_free_blocks_count = cpu_to_le32(ext3_count_free_blocks(sb));
+ 	es->s_free_inodes_count = cpu_to_le32(ext3_count_free_inodes(sb));
+ 	BUFFER_TRACE(sbh, "marking dirty");
++
++	/* We only read the superblock once. The in-memory version is
++	 * always the most recent. If ext3_error is called after a
++	 * superblock write failure, it will be !uptodate. This write
++	 * will likely fail also, but it avoids the WARN_ON in
++	 * mark_buffer_dirty. */
++	set_buffer_uptodate(sbh);
+ 	mark_buffer_dirty(sbh);
+ 	if (sync)
+ 		sync_dirty_buffer(sbh);

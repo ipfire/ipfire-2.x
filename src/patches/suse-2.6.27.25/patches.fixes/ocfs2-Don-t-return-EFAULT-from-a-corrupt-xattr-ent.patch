@@ -1,0 +1,25 @@
+From: Joel Becker <joel.becker@oracle.com>
+Date: Mon, 20 Oct 2008 18:24:03 -0700
+Subject: ocfs2: Don't return -EFAULT from a corrupt xattr entry.
+
+If the xattr disk structures are corrupt, return -EIO, not -EFAULT.
+
+Signed-off-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/xattr.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/xattr.c
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/xattr.c
++++ linux-2.6.27-ocfs2/fs/ocfs2/xattr.c
+@@ -1239,7 +1239,7 @@ static int ocfs2_xattr_set_entry(struct
+ 
+ 	free = min_offs - ((void *)last - xs->base) - sizeof(__u32);
+ 	if (free < 0)
+-		return -EFAULT;
++		return -EIO;
+ 
+ 	if (!xs->not_found) {
+ 		size_t size = 0;

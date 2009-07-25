@@ -1,0 +1,148 @@
+From: Peter Zijlstra <a.p.zijlstra@chello.nl> 
+Subject: mm: gfp_to_alloc_flags()
+Patch-mainline: No
+References: FATE#303834
+
+Clean up the code by factoring out the gfp to alloc_flags mapping.
+
+[neilb@suse.de says]
+As the test:
+
+-       if (((p->flags & PF_MEMALLOC) || unlikely(test_thread_flag(TIF_MEMDIE)))
+-                       && !in_interrupt()) {
+-               if (!(gfp_mask & __GFP_NOMEMALLOC)) {
+
+has been replaced with a slightly weaker one:
+
++       if (alloc_flags & ALLOC_NO_WATERMARKS) {
+
+we need to ensure we don't recurse when PF_MEMALLOC is set
+
+Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Acked-by: Neil Brown <neilb@suse.de>
+Acked-by: Suresh Jayaraman <sjayaraman@suse.de>
+
+---
+ mm/page_alloc.c |   87 ++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 54 insertions(+), 33 deletions(-)
+
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1455,6 +1455,44 @@ try_next_zone:
+ }
+ 
+ /*
++ * get the deepest reaching allocation flags for the given gfp_mask
++ */
++static int gfp_to_alloc_flags(gfp_t gfp_mask)
++{
++	struct task_struct *p = current;
++	int alloc_flags = ALLOC_WMARK_MIN | ALLOC_CPUSET;
++	const gfp_t wait = gfp_mask & __GFP_WAIT;
++
++	/*
++	 * The caller may dip into page reserves a bit more if the caller
++	 * cannot run direct reclaim, or if the caller has realtime scheduling
++	 * policy or is asking for __GFP_HIGH memory.  GFP_ATOMIC requests will
++	 * set both ALLOC_HARDER (!wait) and ALLOC_HIGH (__GFP_HIGH).
++	 */
++	if (gfp_mask & __GFP_HIGH)
++		alloc_flags |= ALLOC_HIGH;
++
++	if (!wait) {
++		alloc_flags |= ALLOC_HARDER;
++		/*
++		 * Ignore cpuset if GFP_ATOMIC (!wait) rather than fail alloc.
++		 * See also cpuset_zone_allowed() comment in kernel/cpuset.c.
++		 */
++		alloc_flags &= ~ALLOC_CPUSET;
++	} else if (unlikely(rt_task(p)) && !in_interrupt())
++		alloc_flags |= ALLOC_HARDER;
++
++	if (likely(!(gfp_mask & __GFP_NOMEMALLOC))) {
++		if (!in_interrupt() &&
++		    ((p->flags & PF_MEMALLOC) ||
++		     unlikely(test_thread_flag(TIF_MEMDIE))))
++			alloc_flags |= ALLOC_NO_WATERMARKS;
++	}
++
++	return alloc_flags;
++}
++
++/*
+  * This is the 'heart' of the zoned buddy allocator.
+  */
+ struct page *
+@@ -1512,49 +1550,28 @@ restart:
+ 	 * OK, we're below the kswapd watermark and have kicked background
+ 	 * reclaim. Now things get more complex, so set up alloc_flags according
+ 	 * to how we want to proceed.
+-	 *
+-	 * The caller may dip into page reserves a bit more if the caller
+-	 * cannot run direct reclaim, or if the caller has realtime scheduling
+-	 * policy or is asking for __GFP_HIGH memory.  GFP_ATOMIC requests will
+-	 * set both ALLOC_HARDER (!wait) and ALLOC_HIGH (__GFP_HIGH).
+ 	 */
+-	alloc_flags = ALLOC_WMARK_MIN;
+-	if ((unlikely(rt_task(p)) && !in_interrupt()) || !wait)
+-		alloc_flags |= ALLOC_HARDER;
+-	if (gfp_mask & __GFP_HIGH)
+-		alloc_flags |= ALLOC_HIGH;
+-	if (wait)
+-		alloc_flags |= ALLOC_CPUSET;
++	alloc_flags = gfp_to_alloc_flags(gfp_mask);
+ 
+-	/*
+-	 * Go through the zonelist again. Let __GFP_HIGH and allocations
+-	 * coming from realtime tasks go deeper into reserves.
+-	 *
+-	 * This is the last chance, in general, before the goto nopage.
+-	 * Ignore cpuset if GFP_ATOMIC (!wait) rather than fail alloc.
+-	 * See also cpuset_zone_allowed() comment in kernel/cpuset.c.
+-	 */
++	/* This is the last chance, in general, before the goto nopage. */
+ 	page = get_page_from_freelist(gfp_mask, nodemask, order, zonelist,
+-						high_zoneidx, alloc_flags);
++			high_zoneidx, alloc_flags & ~ALLOC_NO_WATERMARKS);
+ 	if (page)
+ 		goto got_pg;
+ 
+ 	/* This allocation should allow future memory freeing. */
+-
+ rebalance:
+-	if (((p->flags & PF_MEMALLOC) || unlikely(test_thread_flag(TIF_MEMDIE)))
+-			&& !in_interrupt()) {
+-		if (!(gfp_mask & __GFP_NOMEMALLOC)) {
++	if (alloc_flags & ALLOC_NO_WATERMARKS) {
+ nofail_alloc:
+-			/* go through the zonelist yet again, ignoring mins */
+-			page = get_page_from_freelist(gfp_mask, nodemask, order,
++		/* go through the zonelist yet again, ignoring mins */
++		page = get_page_from_freelist(gfp_mask, nodemask, order,
+ 				zonelist, high_zoneidx, ALLOC_NO_WATERMARKS);
+-			if (page)
+-				goto got_pg;
+-			if (gfp_mask & __GFP_NOFAIL) {
+-				congestion_wait(WRITE, HZ/50);
+-				goto nofail_alloc;
+-			}
++		if (page)
++			goto got_pg;
++
++		if (wait && (gfp_mask & __GFP_NOFAIL)) {
++			congestion_wait(WRITE, HZ/50);
++			goto nofail_alloc;
+ 		}
+ 		goto nopage;
+ 	}
+@@ -1563,6 +1580,10 @@ nofail_alloc:
+ 	if (!wait)
+ 		goto nopage;
+ 
++	/* Avoid recursion of direct reclaim */
++	if (p->flags & PF_MEMALLOC)
++		goto nopage;
++
+ 	cond_resched();
+ 
+ 	/* We now go into synchronous reclaim */

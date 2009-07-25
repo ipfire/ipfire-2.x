@@ -1,0 +1,31 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: hda - Missing NULL check in hda_beep.c
+Patch-mainline: 
+References:
+
+Added a NULL check of input_allocate_device() in hda_beep.c.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/hda_beep.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/sound/pci/hda/hda_beep.c b/sound/pci/hda/hda_beep.c
+index b1796ae..3ecd7e7 100644
+--- a/sound/pci/hda/hda_beep.c
++++ b/sound/pci/hda/hda_beep.c
+@@ -88,6 +88,10 @@ int snd_hda_attach_beep_device(struct hda_codec *codec, int nid)
+ 	snprintf(beep->phys, sizeof(beep->phys),
+ 		"card%d/codec#%d/beep0", codec->bus->card->number, codec->addr);
+ 	input_dev = input_allocate_device();
++	if (!input_dev) {
++		kfree(beep);
++		return -ENOMEM;
++	}
+ 
+ 	/* setup digital beep device */
+ 	input_dev->name = "HDA Digital PCBeep";
+-- 
+1.6.0.4
+

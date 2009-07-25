@@ -1,0 +1,77 @@
+From bc79fc8409b3dccbde072e8113cc1fb3fd876fc5 Mon Sep 17 00:00:00 2001
+From: Rafael J. Wysocki <rjw@sisk.pl>
+Date: Wed, 29 Oct 2008 14:22:18 -0700
+Subject: [PATCH] e100: adapt to the reworked PCI PM
+References: bnc#504646
+Acked-by: Brandon Philips <bphilips@suse.de>
+
+Adapt the e100 driver to the reworked PCI PM
+
+* Use the observation that it is sufficient to call pci_enable_wake()
+  once, unless it fails
+
+Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+Tested-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Jeff Garzik <jeff@garzik.org>
+Cc: Frans Pop <elendil@planet.nl>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Jeff Garzik <jgarzik@redhat.com>
+---
+ drivers/net/e100.c |   16 ++++++++++------
+ 1 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/e100.c b/drivers/net/e100.c
+index bb4b6e2..084127f 100644
+--- a/drivers/net/e100.c
++++ b/drivers/net/e100.c
+@@ -2322,7 +2322,8 @@ static int e100_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
+ {
+ 	struct nic *nic = netdev_priv(netdev);
+ 
+-	if(wol->wolopts != WAKE_MAGIC && wol->wolopts != 0)
++	if ((wol->wolopts && wol->wolopts != WAKE_MAGIC) ||
++	    !device_can_wakeup(&nic->pdev->dev))
+ 		return -EOPNOTSUPP;
+ 
+ 	if(wol->wolopts)
+@@ -2330,6 +2331,8 @@ static int e100_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
+ 	else
+ 		nic->flags &= ~wol_magic;
+ 
++	device_set_wakeup_enable(&nic->pdev->dev, wol->wolopts);
++
+ 	e100_exec_cb(nic, NULL, e100_configure);
+ 
+ 	return 0;
+@@ -2733,8 +2736,10 @@ static int __devinit e100_probe(struct pci_dev *pdev,
+ 
+ 	/* Wol magic packet can be enabled from eeprom */
+ 	if((nic->mac >= mac_82558_D101_A4) &&
+-	   (nic->eeprom[eeprom_id] & eeprom_id_wol))
++	   (nic->eeprom[eeprom_id] & eeprom_id_wol)) {
+ 		nic->flags |= wol_magic;
++		device_set_wakeup_enable(&pdev->dev, true);
++	}
+ 
+ 	/* ack any pending wake events, disable PME */
+ 	pci_pme_active(pdev, false);
+@@ -2793,11 +2798,10 @@ static int e100_suspend(struct pci_dev *pdev, pm_message_t state)
+ 	pci_save_state(pdev);
+ 
+ 	if ((nic->flags & wol_magic) | e100_asf(nic)) {
+-		pci_enable_wake(pdev, PCI_D3hot, 1);
+-		pci_enable_wake(pdev, PCI_D3cold, 1);
++		if (pci_enable_wake(pdev, PCI_D3cold, true))
++			pci_enable_wake(pdev, PCI_D3hot, true);
+ 	} else {
+-		pci_enable_wake(pdev, PCI_D3hot, 0);
+-		pci_enable_wake(pdev, PCI_D3cold, 0);
++		pci_enable_wake(pdev, PCI_D3hot, false);
+ 	}
+ 
+ 	pci_disable_device(pdev);
+-- 
+1.6.2
+

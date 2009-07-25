@@ -1,0 +1,36 @@
+From: Matthew Ranostay <mranostay@embeddedalley.com>
+Subject: ALSA: hda: STAC_VREF_EVENT value change
+Patch-mainline: 
+References: bnc#444349
+
+Changed value for STAC_VREF_EVENT from 0x40 to 0x00 because the
+unsol response value is only 6-bits width and the former value
+was 1<<6 which is an overrun.
+
+Signed-off-by: Matthew Ranostay <mranostay@embeddedalley.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_sigmatel.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c
+index 1633ef2..f205570 100644
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -36,9 +36,11 @@
+ #include "hda_beep.h"
+ 
+ #define NUM_CONTROL_ALLOC	32
++
++#define STAC_VREF_EVENT		0x00
++#define STAC_INSERT_EVENT	0x10
+ #define STAC_PWR_EVENT		0x20
+ #define STAC_HP_EVENT		0x30
+-#define STAC_VREF_EVENT		0x40
+ 
+ enum {
+ 	STAC_REF,
+-- 
+1.6.0.4
+

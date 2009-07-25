@@ -1,0 +1,59 @@
+From 626542ca2277961aaa64855206574f8ca4f360e3 Mon Sep 17 00:00:00 2001
+From: Borislav Petkov <petkovbb@gmail.com>
+Date: Sun, 7 Jun 2009 15:37:05 +0200
+Subject: ide-tape: change IDE_AFLAG_IGNORE_DSC non-atomically
+Patch-mainline: yes
+References: bnc#509071
+
+There are two sites where the flag is being changed: ide_retry_pc
+and idetape_do_request. Both codepaths are protected by hwif->busy
+(ide_lock_port) and therefore we shouldn't need the atomic accesses.
+
+Spotted-by: Jiri Slaby <jirislaby@gmail.com>
+Signed-off-by: Borislav Petkov <petkovbb@gmail.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+ drivers/ide/ide-tape.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+--- a/drivers/ide/ide-tape.c
++++ b/drivers/ide/ide-tape.c
+@@ -736,7 +736,7 @@ static void idetape_retry_pc(ide_drive_t
+ 	pc = idetape_next_pc_storage(drive);
+ 	rq = idetape_next_rq_storage(drive);
+ 	idetape_create_request_sense_cmd(pc);
+-	set_bit(IDE_AFLAG_IGNORE_DSC, &drive->atapi_flags);
++	drive->atapi_flags |= IDE_AFLAG_IGNORE_DSC;
+ 	idetape_queue_pc_head(drive, pc, rq);
+ }
+ 
+@@ -1013,14 +1013,14 @@ static ide_startstop_t idetape_do_reques
+ 	stat = hwif->tp_ops->read_status(hwif);
+ 
+ 	if (!drive->dsc_overlap && !(rq->cmd[13] & REQ_IDETAPE_PC2))
+-		set_bit(IDE_AFLAG_IGNORE_DSC, &drive->atapi_flags);
++		drive->atapi_flags |= IDE_AFLAG_IGNORE_DSC;
+ 
+ 	if (drive->post_reset == 1) {
+-		set_bit(IDE_AFLAG_IGNORE_DSC, &drive->atapi_flags);
++		drive->atapi_flags |= IDE_AFLAG_IGNORE_DSC;
+ 		drive->post_reset = 0;
+ 	}
+ 
+-	if (!test_and_clear_bit(IDE_AFLAG_IGNORE_DSC, &drive->atapi_flags) &&
++	if (!(drive->atapi_flags & IDE_AFLAG_IGNORE_DSC) &&
+ 	    (stat & SEEK_STAT) == 0) {
+ 		if (postponed_rq == NULL) {
+ 			tape->dsc_polling_start = jiffies;
+@@ -1041,7 +1041,9 @@ static ide_startstop_t idetape_do_reques
+ 			tape->dsc_poll_freq = IDETAPE_DSC_MA_SLOW;
+ 		idetape_postpone_request(drive);
+ 		return ide_stopped;
+-	}
++	} else
++		drive->atapi_flags &= ~IDE_AFLAG_IGNORE_DSC;
++
+ 	if (rq->cmd[13] & REQ_IDETAPE_READ) {
+ 		pc = idetape_next_pc_storage(drive);
+ 		ide_tape_create_rw_cmd(tape, pc, rq, READ_6);

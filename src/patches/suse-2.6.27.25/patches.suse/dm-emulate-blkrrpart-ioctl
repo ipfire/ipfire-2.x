@@ -1,0 +1,50 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Emulate BLKRRPART on device-mapper
+
+Partitions on device-mapper devices are managed by kpartx (if at
+all). So if we were just to send out a 'change' event if someone
+called BLKRRPART on these devices, kpartx will be triggered via udev
+and can manage the partitions accordingly.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ drivers/md/dm.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -333,19 +333,25 @@ static int dm_blk_ioctl(struct inode *in
+ 	if (!map || !dm_table_get_size(map))
+ 		goto out;
+ 
+-	/* We only support devices that have a single target */
+-	if (dm_table_get_num_targets(map) != 1)
+-		goto out;
+-
+-	tgt = dm_table_get_target(map, 0);
+-
+ 	if (dm_suspended(md)) {
+ 		r = -EAGAIN;
+ 		goto out;
+ 	}
+ 
+-	if (tgt->type->ioctl)
+-		r = tgt->type->ioctl(tgt, inode, file, cmd, arg);
++	if (cmd == BLKRRPART) {
++		/* Emulate Re-read partitions table */
++		kobject_uevent(&md->disk->dev.kobj, KOBJ_CHANGE);
++		r = 0;
++	} else {
++		/* We only support devices that have a single target */
++		if (dm_table_get_num_targets(map) != 1)
++			goto out;
++
++		tgt = dm_table_get_target(map, 0);
++
++		if (tgt->type->ioctl)
++			r = tgt->type->ioctl(tgt, inode, file, cmd, arg);
++	}
+ 
+ out:
+ 	dm_table_put(map);

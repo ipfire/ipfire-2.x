@@ -1,0 +1,45 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: setup init_apic_ldr for UV
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 5c520a6724e912a7e6153b7597192edad6752750
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Jack Steiner <steiner@sgi.com>
+Cc: akpm@linux-foundation.org
+Cc: arjan@linux.intel.com
+Cc: andi@firstfloor.org
+Cc: ebiederm@xmission.com
+Cc: jbarnes@virtuousgeek.org
+Cc: steiner@sgi.com
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/genx2apic_uv_x.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+Index: linux-2.6.26/arch/x86/kernel/genx2apic_uv_x.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/genx2apic_uv_x.c
++++ linux-2.6.26/arch/x86/kernel/genx2apic_uv_x.c
+@@ -124,6 +124,10 @@ static int uv_apic_id_registered(void)
+ 	return 1;
+ }
+ 
++static inline void uv_init_apic_ldr(void)
++{
++}
++
+ static unsigned int uv_cpu_mask_to_apicid(cpumask_t cpumask)
+ {
+ 	int cpu;
+@@ -168,6 +172,7 @@ struct genapic apic_x2apic_uv_x = {
+ 	.target_cpus = uv_target_cpus,
+ 	.vector_allocation_domain = uv_vector_allocation_domain,/* Fixme ZZZ */
+ 	.apic_id_registered = uv_apic_id_registered,
++	.init_apic_ldr = uv_init_apic_ldr,
+ 	.send_IPI_all = uv_send_IPI_all,
+ 	.send_IPI_allbutself = uv_send_IPI_allbutself,
+ 	.send_IPI_mask = uv_send_IPI_mask,

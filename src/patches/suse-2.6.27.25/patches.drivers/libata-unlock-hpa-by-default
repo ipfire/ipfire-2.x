@@ -1,0 +1,23 @@
+From: Tejun Heo <teheo@suse.de>
+Subject: [PATCH] libata: unlock HPA by default
+References: 299267
+
+Unlock HPA by default.  This is to stay compatible with the old IDE
+drivers.
+
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/ata/libata-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -137,7 +137,7 @@ int libata_fua = 0;
+ module_param_named(fua, libata_fua, int, 0444);
+ MODULE_PARM_DESC(fua, "FUA support (0=off, 1=on)");
+ 
+-static int ata_ignore_hpa;
++static int ata_ignore_hpa = 1;
+ module_param_named(ignore_hpa, ata_ignore_hpa, int, 0644);
+ MODULE_PARM_DESC(ignore_hpa, "Ignore HPA limit (0=keep BIOS limits, 1=ignore limits, using full disk)");
+ 

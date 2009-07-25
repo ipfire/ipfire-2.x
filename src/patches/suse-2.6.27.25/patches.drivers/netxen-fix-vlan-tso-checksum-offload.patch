@@ -1,0 +1,69 @@
+From cdff1036492ac97b4213aeab2546914a633a7de7 Mon Sep 17 00:00:00 2001
+From: Dhananjay Phadke <dhananjay@netxen.com>
+Date: Mon, 26 Jan 2009 12:34:57 -0800
+Subject: netxen: fix vlan tso/checksum offload
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472416
+
+o set netdev->vlan_features appropriately.
+o fix tso descriptor initialization for vlan case.
+
+Signed-off-by: Dhananjay Phadke <dhananjay@netxen.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/netxen/netxen_nic_main.c |   31 ++++++++++++++++++++-----------
+ 1 files changed, 20 insertions(+), 11 deletions(-)
+
+Index: linux-2.6.27-kketmp/drivers/net/netxen/netxen_nic_main.c
+===================================================================
+--- linux-2.6.27-kketmp.orig/drivers/net/netxen/netxen_nic_main.c
++++ linux-2.6.27-kketmp/drivers/net/netxen/netxen_nic_main.c
+@@ -1155,6 +1155,14 @@ static bool netxen_tso_check(struct net_
+ {
+ 	bool tso = false;
+ 	u8 opcode = TX_ETHER_PKT;
++	__be16 protocol = skb->protocol;
++	u16 flags = 0;
++
++	if (protocol == __constant_htons(ETH_P_8021Q)) {
++		struct vlan_ethhdr *vh = (struct vlan_ethhdr *)skb->data;
++		protocol = vh->h_vlan_encapsulated_proto;
++		flags = FLAGS_VLAN_TAGGED;
++	}
+ 
+ 	if ((netdev->features & (NETIF_F_TSO | NETIF_F_TSO6)) &&
+ 			skb_shinfo(skb)->gso_size > 0) {
+@@ -1163,21 +1171,21 @@ static bool netxen_tso_check(struct net_
+ 		desc->total_hdr_length =
+ 			skb_transport_offset(skb) + tcp_hdrlen(skb);
+ 
+-		opcode = (skb->protocol == htons(ETH_P_IPV6)) ?
++		opcode = (protocol == __constant_htons(ETH_P_IPV6)) ?
+ 				TX_TCP_LSO6 : TX_TCP_LSO;
+ 		tso = true;
+ 
+ 	} else if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 		u8 l4proto;
+ 
+-		if (skb->protocol == htons(ETH_P_IP)) {
++		if (protocol == __constant_htons(ETH_P_IP)) {
+ 			l4proto = ip_hdr(skb)->protocol;
+ 
+ 			if (l4proto == IPPROTO_TCP)
+ 				opcode = TX_TCP_PKT;
+ 			else if(l4proto == IPPROTO_UDP)
+ 				opcode = TX_UDP_PKT;
+-		} else if (skb->protocol == htons(ETH_P_IPV6)) {
++		} else if (protocol == __constant_htons(ETH_P_IPV6)) {
+ 			l4proto = ipv6_hdr(skb)->nexthdr;
+ 
+ 			if (l4proto == IPPROTO_TCP)
+@@ -1188,7 +1196,7 @@ static bool netxen_tso_check(struct net_
+ 	}
+ 	desc->tcp_hdr_offset = skb_transport_offset(skb);
+ 	desc->ip_hdr_offset = skb_network_offset(skb);
+-	netxen_set_tx_flags_opcode(desc, 0, opcode);
++	netxen_set_tx_flags_opcode(desc, flags, opcode);
+ 	return tso;
+ }
+ 

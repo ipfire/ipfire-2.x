@@ -1,0 +1,49 @@
+From: Martin Peschke <mpeschke@linux.vnet.ibm.com>
+Subject: [Patch] sg: fix device number in blktrace data
+Date: 2009-01-30 14:46:23
+References: bnc#473537
+
+ Description: blktrace: scsi generic devices have no device number set
+ Symptom:     Start btrace on a SCSI generic device like in the sample output:
+               [root@t6315030 ~]# lsscsi -g | grep "sda "
+               [0:0:10:1075855393]disk IBM 2107900 1.50  /dev/sda  /dev/sg0
+               [root@t6315030 ~]# ls -la /dev/sda /dev/sg0
+               brw-rw---- 1 root disk  8, 0 2009-02-03 08:04 /dev/sda
+               crw-r----- 1 root disk 21, 0 2009-02-03 08:04 /dev/sg0
+               [root@t6315030 ~]# btrace /dev/sg0 | head
+               8,0  0  1 0.000000000  7700  A   R 6742 + 8 <- (8,1) 6680
+               0,0  0  2 0.000000235  7700  Q   R 6742 + 8 [ls]
+               0,0  0  3 0.000006860  7700  G   R 6742 + 8 [ls]
+               0,0  0  4 0.000010250  7700  P   N [ls]
+               0,0  0  5 0.000013172  7700  I   R 6742 + 8 [ls]
+               0,0  0  6 0.000017266  7700  U   N [ls] 1
+               0,0  0  7 0.000023078  7700  D   R 6742 + 8 [ls]
+               0,0  1  2 0.000446668     0  C   R 6742 + 8 [0]
+               8,0  1  3 0.000624106  7700  A   R 9699406 + 8 <- (8,1)
+               0,0  1  4 0.000624403  7700  Q   R 9699406 + 8 [ls]
+             Note that in the first column, the device number for the named
+             device (8:0) is reported correctly, while the device number for
+             the scsi generic device is reported as 0:0 instead of 21:0.
+ Problem:     The device number for the scsi generic device is not correctly
+              set during initialization of blktrace.
+ Solution:    Initialize with the correct device number, see
+              s390-sles11-fix-device-number-in-blktrace.patch
+
+Acked-by: Jan Blunck <jblunck@suse.de>
+---
+ drivers/scsi/sg.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: b/drivers/scsi/sg.c
+===================================================================
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1097,7 +1097,7 @@ sg_ioctl(struct inode *inode, struct fil
+ 	case BLKTRACESETUP:
+ 		return blk_trace_setup(sdp->device->request_queue,
+ 				       sdp->disk->disk_name,
+-				       sdp->device->sdev_gendev.devt,
++				       MKDEV(SCSI_GENERIC_MAJOR, sdp->index),
+ 				       (char *)arg);
+ 	case BLKTRACESTART:
+ 		return blk_trace_startstop(sdp->device->request_queue, 1);

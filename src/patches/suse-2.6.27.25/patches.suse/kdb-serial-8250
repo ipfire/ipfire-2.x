@@ -1,0 +1,29 @@
+Subject: Don't use <linux/kdb.h> outside CONFIG_KDB
+From: schwab@suse.de
+Patch-mainline: never
+
+---
+ drivers/serial/8250.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/serial/8250.c
++++ b/drivers/serial/8250.c
+@@ -43,8 +43,8 @@
+ #include <asm/irq.h>
+ 
+ #include "8250.h"
+-#include <linux/kdb.h>
+ #ifdef	CONFIG_KDB
++#include <linux/kdb.h>
+ /*
+  * kdb_serial_line records the serial line number of the first serial console.
+  * NOTE: The kernel ignores characters on the serial line unless a user space
+@@ -55,6 +55,8 @@
+ 
+ static int  kdb_serial_line = -1;
+ static const char *kdb_serial_ptr = kdb_serial_str;
++#else
++#define KDB_8250() 0
+ #endif	/* CONFIG_KDB */
+ 
+ /*

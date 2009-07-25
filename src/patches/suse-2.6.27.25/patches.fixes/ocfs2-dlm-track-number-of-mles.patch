@@ -1,0 +1,82 @@
+From: Sunil Mushran <sunil.mushran@oracle.com>
+Date: Thu, 26 Feb 2009 15:00:43 -0800
+Subject: ocfs2/dlm: Track number of mles
+Patch-mainline: 2.6.30
+References: bnc#408304
+
+The lifetime of a mle is limited to the duration of the lockres mastery
+process. While typically this lifetime is fairly short, we have noticed
+the number of mles explode under certain circumstances. This patch tracks
+the number of each different types of mles and should help us determine
+how best to speed up the mastery process.
+
+Signed-off-by: Sunil Mushran <sunil.mushran@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/dlm/dlmcommon.h |    5 ++++-
+ fs/ocfs2/dlm/dlmdomain.c |    5 +++++
+ fs/ocfs2/dlm/dlmmaster.c |    5 +++++
+ 3 files changed, 14 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-sle11_ocfs2_update/fs/ocfs2/dlm/dlmcommon.h
+===================================================================
+--- linux-2.6.27-sle11_ocfs2_update.orig/fs/ocfs2/dlm/dlmcommon.h
++++ linux-2.6.27-sle11_ocfs2_update/fs/ocfs2/dlm/dlmcommon.h
+@@ -52,7 +52,8 @@
+ enum dlm_mle_type {
+ 	DLM_MLE_BLOCK,
+ 	DLM_MLE_MASTER,
+-	DLM_MLE_MIGRATION
++	DLM_MLE_MIGRATION,
++	DLM_MLE_NUM_TYPES
+ };
+ 
+ struct dlm_lock_name {
+@@ -156,6 +157,8 @@ struct dlm_ctxt
+ 	struct list_head mle_hb_events;
+ 
+ 	/* these give a really vague idea of the system load */
++	atomic_t mle_tot_count[DLM_MLE_NUM_TYPES];
++	atomic_t mle_cur_count[DLM_MLE_NUM_TYPES];
+ 	atomic_t local_resources;
+ 	atomic_t remote_resources;
+ 	atomic_t unknown_resources;
+Index: linux-2.6.27-sle11_ocfs2_update/fs/ocfs2/dlm/dlmdomain.c
+===================================================================
+--- linux-2.6.27-sle11_ocfs2_update.orig/fs/ocfs2/dlm/dlmdomain.c
++++ linux-2.6.27-sle11_ocfs2_update/fs/ocfs2/dlm/dlmdomain.c
+@@ -1608,6 +1608,11 @@ static struct dlm_ctxt *dlm_alloc_ctxt(c
+ 	atomic_set(&dlm->remote_resources, 0);
+ 	atomic_set(&dlm->unknown_resources, 0);
+ 
++	for (i = 0; i < DLM_MLE_NUM_TYPES; ++i) {
++		atomic_set(&dlm->mle_tot_count[i], 0);
++		atomic_set(&dlm->mle_cur_count[i], 0);
++	}
++
+ 	spin_lock_init(&dlm->work_lock);
+ 	INIT_LIST_HEAD(&dlm->work_list);
+ 	INIT_WORK(&dlm->dispatched_work, dlm_dispatch_work);
+Index: linux-2.6.27-sle11_ocfs2_update/fs/ocfs2/dlm/dlmmaster.c
+===================================================================
+--- linux-2.6.27-sle11_ocfs2_update.orig/fs/ocfs2/dlm/dlmmaster.c
++++ linux-2.6.27-sle11_ocfs2_update/fs/ocfs2/dlm/dlmmaster.c
+@@ -325,6 +325,9 @@ static void dlm_init_mle(struct dlm_mast
+ 		mle->u.mlename.hash = dlm_lockid_hash(name, namelen);
+ 	}
+ 
++	atomic_inc(&dlm->mle_tot_count[mle->type]);
++	atomic_inc(&dlm->mle_cur_count[mle->type]);
++
+ 	/* copy off the node_map and register hb callbacks on our copy */
+ 	memcpy(mle->node_map, dlm->domain_map, sizeof(mle->node_map));
+ 	memcpy(mle->vote_map, dlm->domain_map, sizeof(mle->vote_map));
+@@ -467,6 +470,8 @@ static void dlm_mle_release(struct kref
+ 	/* detach the mle from the domain node up/down events */
+ 	__dlm_mle_detach_hb_events(dlm, mle);
+ 
++	atomic_dec(&dlm->mle_cur_count[mle->type]);
++
+ 	/* NOTE: kfree under spinlock here.
+ 	 * if this is bad, we can move this to a freelist. */
+ 	kmem_cache_free(dlm_mle_cache, mle);

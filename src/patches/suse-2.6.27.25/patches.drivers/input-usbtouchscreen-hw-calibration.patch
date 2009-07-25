@@ -1,0 +1,61 @@
+From: Dan Streetman <ddstreet@ieee.org>
+Subject: Input: usbtouchscreen - allow reporting calibrated data
+Patch-mainline: queued in input tree, will be in 2.6.29
+References: bnc#444814
+
+Input: usbtouchscreen - allow reporting calibrated data
+
+This patch adds a module parameter to report either the raw
+coordinate data or the hardware-calibrated coordinate data for
+MicroTouch/3M touchscreens.  The default is set to the raw
+coordinates for backwards compatibilty.
+
+Signed-off-by: Dan Streetman <ddstreet@ieee.org>
+Signed-off-by: Dmitry Torokhov <dtor@mail.ru>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+---
+
+diff --git a/drivers/input/touchscreen/usbtouchscreen.c b/drivers/input/touchscreen/usbtouchscreen.c
+index 5080b26..6d27a1d 100644
+--- a/drivers/input/touchscreen/usbtouchscreen.c
++++ b/drivers/input/touchscreen/usbtouchscreen.c
+@@ -60,6 +60,10 @@ static int swap_xy;
+ module_param(swap_xy, bool, 0644);
+ MODULE_PARM_DESC(swap_xy, "If set X and Y axes are swapped.");
+ 
++static int hwcalib_xy;
++module_param(hwcalib_xy, bool, 0644);
++MODULE_PARM_DESC(hwcalib_xy, "If set hw-calibrated X/Y are used if available");
++
+ /* device specifc data/functions */
+ struct usbtouch_usb;
+ struct usbtouch_device_info {
+@@ -260,8 +264,13 @@ static int panjit_read_data(struct usbtouch_usb *dev, unsigned char *pkt)
+ 
+ static int mtouch_read_data(struct usbtouch_usb *dev, unsigned char *pkt)
+ {
+-	dev->x = (pkt[8] << 8) | pkt[7];
+-	dev->y = (pkt[10] << 8) | pkt[9];
++	if (hwcalib_xy) {
++		dev->x = (pkt[4] << 8) | pkt[3];
++		dev->y = 0xffff - ((pkt[6] << 8) | pkt[5]);
++	} else {
++		dev->x = (pkt[8] << 8) | pkt[7];
++		dev->y = (pkt[10] << 8) | pkt[9];
++	}
+ 	dev->touch = (pkt[2] & 0x40) ? 1 : 0;
+ 
+ 	return 1;
+@@ -294,6 +303,12 @@ static int mtouch_init(struct usbtouch_usb *usbtouch)
+ 			return ret;
+ 	}
+ 
++	/* Default min/max xy are the raw values, override if using hw-calib */
++	if (hwcalib_xy) {
++		input_set_abs_params(usbtouch->input, ABS_X, 0, 0xffff, 0, 0);
++		input_set_abs_params(usbtouch->input, ABS_Y, 0, 0xffff, 0, 0);
++	}
++
+ 	return 0;
+ }
+ #endif

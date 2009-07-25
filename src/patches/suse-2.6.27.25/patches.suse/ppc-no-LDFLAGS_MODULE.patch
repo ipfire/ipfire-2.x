@@ -1,0 +1,32 @@
+Subject: arch/powerpc/lib/crtsavres.o is not available when linking external modules
+From: olh@suse.de
+Patch-mainline: never
+
+Maybe it helps.
+
+---
+ arch/powerpc/Makefile |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -83,15 +83,17 @@ ifeq ($(GCC_BROKEN_VEC),y)
+ 	KBUILD_CFLAGS += $(call cc-option,-mcpu=970)
+ else
+ 	KBUILD_CFLAGS += $(call cc-option,-mcpu=power4)
++# GCC_BROKEN_VEC
+ endif
+ else
+ 	KBUILD_CFLAGS += $(call cc-option,-mcpu=power4)
++# CONFIG_ALTIVEC
+ endif
+ else
+ 	KBUILD_CFLAGS += $(call cc-option,-mtune=power4)
++# CONFIG_POWER4_ONLY
+ endif
+-else
+-LDFLAGS_MODULE	+= arch/powerpc/lib/crtsavres.o
++# CONFIG_PPC64
+ endif
+ 
+ ifeq ($(CONFIG_TUNE_CELL),y)

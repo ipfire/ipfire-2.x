@@ -1,0 +1,84 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/a070228ac76e
+# HG changeset 762 patch
+# User Ian Campbell <ian.campbell@citrix.com>
+# Date 1229002728 0
+# Node ID a070228ac76e3f6cd2483e0cad03f1cccae7a0c8
+# Parent  5e1269aa5c2933e0cb0272bf5867e1214174bfde
+Subject: add hvc compatibility mode to xencons
+Patch-mainline: obsolete
+
+Makes switching back and forth with a pvops kernel easier. Taken from
+http://lists.alioth.debian.org/pipermail/pkg-xen-devel/2008-October/002098.html
+http://svn.debian.org/viewsvn/kernel?rev=12337&view=rev with thanks to
+Bastian Blank.
+
+Signed-off-by: Ian Campbell <ian.campbell@citrix.com>
+Acked-by: jbeulich@novell.com
+
+--- head-2008-12-15.orig/drivers/xen/console/console.c	2008-12-15 11:13:20.000000000 +0100
++++ head-2008-12-15/drivers/xen/console/console.c	2008-12-15 11:13:47.000000000 +0100
+@@ -66,13 +66,14 @@
+  *  'xencons=tty'  [XC_TTY]:     Console attached to '/dev/tty[0-9]+'.
+  *  'xencons=ttyS' [XC_SERIAL]:  Console attached to '/dev/ttyS[0-9]+'.
+  *  'xencons=xvc'  [XC_XVC]:     Console attached to '/dev/xvc0'.
++ *  'xencons=hvc'  [XC_HVC]:     Console attached to '/dev/hvc0'.
+  *  default:                     XC_XVC
+  * 
+  * NB. In mode XC_TTY, we create dummy consoles for tty2-63. This suppresses
+  * warnings from standard distro startup scripts.
+  */
+ static enum {
+-	XC_OFF, XC_TTY, XC_SERIAL, XC_XVC
++	XC_OFF, XC_TTY, XC_SERIAL, XC_XVC, XC_HVC
+ } xc_mode = XC_XVC;
+ static int xc_num = -1;
+ 
+@@ -80,6 +81,10 @@ static int xc_num = -1;
+ #define XEN_XVC_MAJOR 204
+ #define XEN_XVC_MINOR 191
+ 
++/* /dev/hvc0 device number */
++#define XEN_HVC_MAJOR 229
++#define XEN_HVC_MINOR 0
++
+ #ifdef CONFIG_MAGIC_SYSRQ
+ static unsigned long sysrq_requested;
+ extern int sysrq_enabled;
+@@ -102,6 +107,9 @@ static int __init xencons_setup(char *st
+ 	} else if (!strncmp(str, "xvc", 3)) {
+ 		xc_mode = XC_XVC;
+ 		str += 3;
++	} else if (!strncmp(str, "hvc", 3)) {
++		xc_mode = XC_HVC;
++		str += 3;
+ 	} else if (!strncmp(str, "off", 3)) {
+ 		xc_mode = XC_OFF;
+ 		str += 3;
+@@ -210,6 +218,14 @@ static int __init xen_console_init(void)
+ 			xc_num = 0;
+ 		break;
+ 
++	case XC_HVC:
++		strcpy(kcons_info.name, "hvc");
++		if (xc_num == -1)
++			xc_num = 0;
++		if (!is_initial_xendomain())
++			add_preferred_console(kcons_info.name, xc_num, NULL);
++		break;
++
+ 	case XC_SERIAL:
+ 		strcpy(kcons_info.name, "ttyS");
+ 		if (xc_num == -1)
+@@ -685,6 +701,12 @@ static int __init xencons_init(void)
+ 		DRV(xencons_driver)->minor_start = XEN_XVC_MINOR;
+ 		DRV(xencons_driver)->name_base   = xc_num;
+ 		break;
++	case XC_HVC:
++		DRV(xencons_driver)->name        = "hvc";
++		DRV(xencons_driver)->major       = XEN_HVC_MAJOR;
++		DRV(xencons_driver)->minor_start = XEN_HVC_MINOR;
++		DRV(xencons_driver)->name_base   = xc_num;
++		break;
+ 	case XC_SERIAL:
+ 		DRV(xencons_driver)->name        = "ttyS";
+ 		DRV(xencons_driver)->minor_start = 64 + xc_num;

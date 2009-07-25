@@ -1,0 +1,22 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: Fix section mismatch in fujitsu_laptop driver
+Patch-Mainline: not yet
+References: none
+
+---
+ drivers/misc/fujitsu-laptop.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.26/drivers/misc/fujitsu-laptop.c
+===================================================================
+--- linux-2.6.26.orig/drivers/misc/fujitsu-laptop.c
++++ linux-2.6.26/drivers/misc/fujitsu-laptop.c
+@@ -455,7 +455,7 @@ static int dmi_check_cb_s6410(const stru
+ 	return 0;
+ }
+ 
+-static struct dmi_system_id __initdata fujitsu_dmi_table[] = {
++static struct dmi_system_id fujitsu_dmi_table[] = {
+ 	{
+ 	 .ident = "Fujitsu Siemens",
+ 	 .matches = {

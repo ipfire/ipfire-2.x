@@ -1,0 +1,110 @@
+From: Yinghai Lu <yhlu.kernel@gmail.com>
+Subject: x86: mach_apicdef.h need to include before smp.h
+Patch-mainline: 2.6.28
+
+
+commit 4696ca5bfd2697f5686f96d59cf0b6de14869b4e
+Author: Yinghai Lu <yhlu.kernel@gmail.com>
+Date:   Fri Jul 11 18:43:10 2008 -0700
+
+x86: mach_apicdef.h need to include before smp.h
+
+smp.h internal has include, so need to include that at first
+when genericarch use them need to have different apicdef.h
+
+Signed-off-by: Yinghai Lu <yhlu.kernel@gmail.com>
+Cc: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+--- a/arch/x86/mach-generic/bigsmp.c
++++ b/arch/x86/mach-generic/bigsmp.c
+@@ -5,17 +5,16 @@
+ #define APIC_DEFINITION 1
+ #include <linux/threads.h>
+ #include <linux/cpumask.h>
+-#include <asm/smp.h>
+ #include <asm/mpspec.h>
+ #include <asm/genapic.h>
+ #include <asm/fixmap.h>
+ #include <asm/apicdef.h>
+ #include <linux/kernel.h>
+-#include <linux/smp.h>
+ #include <linux/init.h>
+ #include <linux/dmi.h>
+-#include <asm/mach-bigsmp/mach_apic.h>
+ #include <asm/mach-bigsmp/mach_apicdef.h>
++#include <linux/smp.h>
++#include <asm/mach-bigsmp/mach_apic.h>
+ #include <asm/mach-bigsmp/mach_ipi.h>
+ #include <asm/mach-default/mach_mpparse.h>
+ 
+diff --git a/arch/x86/mach-generic/es7000.c b/arch/x86/mach-generic/es7000.c
+index 4742626..9b30547 100644
+--- a/arch/x86/mach-generic/es7000.c
++++ b/arch/x86/mach-generic/es7000.c
+@@ -4,16 +4,15 @@
+ #define APIC_DEFINITION 1
+ #include <linux/threads.h>
+ #include <linux/cpumask.h>
+-#include <asm/smp.h>
+ #include <asm/mpspec.h>
+ #include <asm/genapic.h>
+ #include <asm/fixmap.h>
+ #include <asm/apicdef.h>
+ #include <linux/kernel.h>
+ #include <linux/string.h>
+-#include <linux/smp.h>
+ #include <linux/init.h>
+ #include <asm/mach-es7000/mach_apicdef.h>
++#include <linux/smp.h>
+ #include <asm/mach-es7000/mach_apic.h>
+ #include <asm/mach-es7000/mach_ipi.h>
+ #include <asm/mach-es7000/mach_mpparse.h>
+diff --git a/arch/x86/mach-generic/numaq.c b/arch/x86/mach-generic/numaq.c
+index 8091e68..95c07ef 100644
+--- a/arch/x86/mach-generic/numaq.c
++++ b/arch/x86/mach-generic/numaq.c
+@@ -4,7 +4,6 @@
+ #define APIC_DEFINITION 1
+ #include <linux/threads.h>
+ #include <linux/cpumask.h>
+-#include <linux/smp.h>
+ #include <asm/mpspec.h>
+ #include <asm/genapic.h>
+ #include <asm/fixmap.h>
+@@ -12,8 +11,9 @@
+ #include <linux/kernel.h>
+ #include <linux/string.h>
+ #include <linux/init.h>
+-#include <asm/mach-numaq/mach_apic.h>
+ #include <asm/mach-numaq/mach_apicdef.h>
++#include <linux/smp.h>
++#include <asm/mach-numaq/mach_apic.h>
+ #include <asm/mach-numaq/mach_ipi.h>
+ #include <asm/mach-numaq/mach_mpparse.h>
+ #include <asm/mach-numaq/mach_wakecpu.h>
+diff --git a/arch/x86/mach-generic/summit.c b/arch/x86/mach-generic/summit.c
+index a97ea0f..752edd9 100644
+--- a/arch/x86/mach-generic/summit.c
++++ b/arch/x86/mach-generic/summit.c
+@@ -4,17 +4,16 @@
+ #define APIC_DEFINITION 1
+ #include <linux/threads.h>
+ #include <linux/cpumask.h>
+-#include <asm/smp.h>
+ #include <asm/mpspec.h>
+ #include <asm/genapic.h>
+ #include <asm/fixmap.h>
+ #include <asm/apicdef.h>
+ #include <linux/kernel.h>
+ #include <linux/string.h>
+-#include <linux/smp.h>
+ #include <linux/init.h>
+-#include <asm/mach-summit/mach_apic.h>
+ #include <asm/mach-summit/mach_apicdef.h>
++#include <linux/smp.h>
++#include <asm/mach-summit/mach_apic.h>
+ #include <asm/mach-summit/mach_ipi.h>
+ #include <asm/mach-summit/mach_mpparse.h>
+ 

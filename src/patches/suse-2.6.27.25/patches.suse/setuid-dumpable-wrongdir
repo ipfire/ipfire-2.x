@@ -1,0 +1,49 @@
+From: Kurt Garloff <garloff@suse.de>
+Subject: suid-dumpable ended up in wrong sysctl dir
+Patch-mainline: never
+
+Diffing in sysctl.c is tricky, using more context is recommended.
+suid_dumpable ended up in fs/ instead of kernel/ and the reason
+is likely a patch with too little context.
+
+NOTE: This has been in the wrong dir fs/ since it was introduced by
+Alan Cox into mainline on 2005-06-23. However, SUSE shipped it
+in the correct directory kernel/ in SLES9.
+
+By now, it's just something that we are going to have to drag along for
+a long time until SLES 11/12/13 time frame...
+
+Signed-off-by: Kurt Garloff <garloff@suse.de>
+
+---
+ kernel/sysctl.c       |    8 ++++++++
+ kernel/sysctl_check.c |    1 +
+ 2 files changed, 9 insertions(+)
+
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -723,6 +723,14 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= &proc_dointvec,
+ 	},
+ #endif
++	{
++		.ctl_name	= KERN_SETUID_DUMPABLE,
++		.procname	= "suid_dumpable",
++		.data		= &suid_dumpable,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= &proc_dointvec,
++	},
+ #if defined(CONFIG_S390) && defined(CONFIG_SMP)
+ 	{
+ 		.ctl_name	= KERN_SPIN_RETRY,
+--- a/kernel/sysctl_check.c
++++ b/kernel/sysctl_check.c
+@@ -104,6 +104,7 @@ static const struct trans_ctl_table tran
+ 	{ KERN_MAX_LOCK_DEPTH,		"max_lock_depth" },
+ 	{ KERN_NMI_WATCHDOG,		"nmi_watchdog" },
+ 	{ KERN_PANIC_ON_NMI,		"panic_on_unrecovered_nmi" },
++	{ KERN_SETUID_DUMPABLE,		"suid_dumpable" },
+ 	{}
+ };
+ 

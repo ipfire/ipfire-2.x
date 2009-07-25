@@ -1,0 +1,57 @@
+From: Mark Fasheh <mfasheh@suse.com>
+Date: Fri, 21 Nov 2008 14:06:55 -0800
+Subject: ocfs2: fix regression in ocfs2_read_blocks_sync()
+
+We're panicing in ocfs2_read_blocks_sync() if a jbd-managed buffer is seen.
+At first glance, this seems ok but in reality it can happen. My test case
+was to just run 'exorcist'. A struct inode is being pushed out of memory but
+is then re-read at a later time, before the buffer has been checkpointed by
+jbd. This causes a BUG to be hit in ocfs2_read_blocks_sync().
+
+Reviewed-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/buffer_head_io.c |   15 ++++-----------
+ 1 files changed, 4 insertions(+), 11 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/buffer_head_io.c
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/buffer_head_io.c
++++ linux-2.6.27-ocfs2/fs/ocfs2/buffer_head_io.c
+@@ -112,7 +112,7 @@ int ocfs2_read_blocks_sync(struct ocfs2_
+ 		bh = bhs[i];
+ 
+ 		if (buffer_jbd(bh)) {
+-			mlog(ML_ERROR,
++			mlog(ML_BH_IO,
+ 			     "trying to sync read a jbd "
+ 			     "managed bh (blocknr = %llu), skipping\n",
+ 			     (unsigned long long)bh->b_blocknr);
+@@ -147,15 +147,10 @@ int ocfs2_read_blocks_sync(struct ocfs2_
+ 	for (i = nr; i > 0; i--) {
+ 		bh = bhs[i - 1];
+ 
+-		if (buffer_jbd(bh)) {
+-			mlog(ML_ERROR,
+-			     "the journal got the buffer while it was "
+-			     "locked for io! (blocknr = %llu)\n",
+-			     (unsigned long long)bh->b_blocknr);
+-			BUG();
+-		}
++		/* No need to wait on the buffer if it's managed by JBD. */
++		if (!buffer_jbd(bh))
++			wait_on_buffer(bh);
+ 
+-		wait_on_buffer(bh);
+ 		if (!buffer_uptodate(bh)) {
+ 			/* Status won't be cleared from here on out,
+ 			 * so we can safely record this and loop back
+@@ -251,8 +246,6 @@ int ocfs2_read_blocks(struct inode *inod
+ 			ignore_cache = 1;
+ 		}
+ 
+-		/* XXX: Can we ever get this and *not* have the cached
+-		 * flag set? */
+ 		if (buffer_jbd(bh)) {
+ 			if (ignore_cache)
+ 				mlog(ML_BH_IO, "trying to sync read a jbd "

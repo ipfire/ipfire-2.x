@@ -1,0 +1,50 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: [PATCH] thinkpad_acpi: fingers off backlight if video.ko is serving this functionality
+Patch-Mainline: queued for .28 in Len's/ak's ACPI tree
+
+commit bcca9a4a97b6e270793003d745d6f9439e1357a8
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ drivers/misc/thinkpad_acpi.c |   29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
+
+--- a/drivers/misc/thinkpad_acpi.c
++++ b/drivers/misc/thinkpad_acpi.c
+@@ -4918,16 +4918,25 @@ static int __init brightness_init(struct
+ 	 */
+ 	b = tpacpi_check_std_acpi_brightness_support();
+ 	if (b > 0) {
+-		if (thinkpad_id.vendor == PCI_VENDOR_ID_LENOVO) {
+-			printk(TPACPI_NOTICE
+-			       "Lenovo BIOS switched to ACPI backlight "
+-			       "control mode\n");
+-		}
+-		if (brightness_enable > 1) {
+-			printk(TPACPI_NOTICE
+-			       "standard ACPI backlight interface "
+-			       "available, not loading native one...\n");
+-			return 1;
++
++		if (acpi_video_backlight_support()) {
++			if (brightness_enable > 1) {
++				printk(TPACPI_NOTICE
++				       "Standard ACPI backlight interface "
++				       "available, not loading native one.\n");
++				return 1;
++			} else if (brightness_enable == 1) {
++				printk(TPACPI_NOTICE
++				       "Backlight control force, even standard "
++				       "ACPI backlight interface available\n");
++			}
++		} else {
++			if (brightness_enable > 1) {
++				printk(TPACPI_NOTICE
++				       "Standard ACPI backlight interface not "
++				       "available, thinkpad_acpi driver "
++				       "will take over control\n");
++			}
+ 		}
+ 	}
+ 

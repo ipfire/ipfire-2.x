@@ -1,0 +1,112 @@
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: x86: io-apic - interrupt remapping fix
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 77322deb4bc676a5ee645444e7ed1a89f854473d
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Interrupt remapping could lead to NULL dereference in case of
+kzalloc failed and memory leak in other way. So fix the
+both cases.
+
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/apic_64.c    |   13 ++++++++++---
+ arch/x86/kernel/io_apic_64.c |   19 +++++++++++++++++--
+ 2 files changed, 27 insertions(+), 5 deletions(-)
+
+Index: linux-2.6.26/arch/x86/kernel/apic_64.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/apic_64.c
++++ linux-2.6.26/arch/x86/kernel/apic_64.c
+@@ -969,7 +969,12 @@ void enable_IR_x2apic(void)
+ 
+ 	local_irq_save(flags);
+ 	mask_8259A();
+-	save_mask_IO_APIC_setup();
++
++	ret = save_mask_IO_APIC_setup();
++	if (ret) {
++		printk(KERN_INFO "Saving IO-APIC state failed: %d\n", ret);
++		goto end;
++	}
+ 
+ 	ret = enable_intr_remapping(1);
+ 
+@@ -979,14 +984,15 @@ void enable_IR_x2apic(void)
+ 	}
+ 
+ 	if (ret)
+-		goto end;
++		goto end_restore;
+ 
+ 	if (!x2apic) {
+ 		x2apic = 1;
+ 		apic_ops = &x2apic_ops;
+ 		enable_x2apic();
+ 	}
+-end:
++
++ end_restore:
+ 	if (ret)
+ 		/*
+ 		 * IR enabling failed
+@@ -995,6 +1001,7 @@ end:
+ 	else
+ 		reinit_intr_remapped_IO_APIC(x2apic_preenabled);
+ 
++ end:
+ 	unmask_8259A();
+ 	local_irq_restore(flags);
+ 
+Index: linux-2.6.26/arch/x86/kernel/io_apic_64.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/io_apic_64.c
++++ linux-2.6.26/arch/x86/kernel/io_apic_64.c
+@@ -474,7 +474,7 @@ int save_mask_IO_APIC_setup(void)
+ 			kzalloc(sizeof(struct IO_APIC_route_entry) *
+ 				nr_ioapic_registers[apic], GFP_KERNEL);
+ 		if (!early_ioapic_entries[apic])
+-			return -ENOMEM;
++			goto nomem;
+ 	}
+ 
+ 	for (apic = 0; apic < nr_ioapics; apic++)
+@@ -489,16 +489,31 @@ int save_mask_IO_APIC_setup(void)
+ 			}
+ 		}
+ 	return 0;
++
++ nomem:
++	for (; apic > 0; apic--)
++		kfree(early_ioapic_entries[apic]);
++	kfree(early_ioapic_entries[apic]);
++	memset(early_ioapic_entries, 0,
++	       ARRAY_SIZE(early_ioapic_entries));
++
++	return -ENOMEM;
++
+ }
+ 
+ void restore_IO_APIC_setup(void)
+ {
+ 	int apic, pin;
+ 
+-	for (apic = 0; apic < nr_ioapics; apic++)
++	for (apic = 0; apic < nr_ioapics; apic++) {
++		if (!early_ioapic_entries[apic])
++			break;
+ 		for (pin = 0; pin < nr_ioapic_registers[apic]; pin++)
+ 			ioapic_write_entry(apic, pin,
+ 					   early_ioapic_entries[apic][pin]);
++		kfree(early_ioapic_entries[apic]);
++		early_ioapic_entries[apic] = NULL;
++	}
+ }
+ 
+ void reinit_intr_remapped_IO_APIC(int intr_remapping)
