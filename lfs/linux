@@ -40,11 +40,7 @@ DEPS	   = ""
 
 # Normal build or XEN build.
 #
-ifeq "$(XEN)" "1"
-	VERSUFIX=ipfire-xen
-else
-	VERSUFIX=ipfire
-endif
+VERSUFIX=ipfire
 TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 
 ###############################################################################
@@ -103,83 +99,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.21-imq-test3.patch
 
-	# Xen
-ifeq "$(XEN)" "1"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60000_add-console-use-vt.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60001_linux-2.6.19-rc1-kexec-move_segment_code-i386.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60002_linux-2.6.19-rc1-kexec-move_segment_code-x86_64.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60003_ipv6-no-autoconf.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60004_pci-reassign-resources.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60005_sfc-driverlink.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60006_sfc-resource-driver.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60007_sfc-driverlink-conditional.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60008_xen3-auto-xen-arch.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60009_xen3-auto-xen-drivers.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60010_xen3-auto-include-xen-interface.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60011_xen3-auto-xen-kconfig.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xen_aio.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/skbuff-xen-imq.diff
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60012_xen3-auto-common.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60013_xen3-auto-arch-x86.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60014_xen3-auto-arch-i386.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60015_xen3-auto-arch-x86_64.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60016_xen3-fixup-xen.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60017_735-balloon-exit.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60018_737-kexec-free.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60019_740-blkback-resource-leak.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60020_746-pirq-status-page.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60021_747-x86-undo-mfn-limit.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60022_748-x86-ioapic-cleanup.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60023_xen3-fixup-kconfig.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60024_xen3-fixup-common.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60025_xen3-fixup-arch-x86.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60026_xen3-fixup-sfc.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60027_xen3-patch-2.6.18.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60028_xen3-patch-2.6.19.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60029_xen3-patch-2.6.20.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60030_xen3-patch-2.6.21.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60031_xen3-patch-2.6.22.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60032_xen3-patch-2.6.23.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60033_xen3-patch-2.6.24.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60034_xen3-patch-2.6.25.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60035_xen3-patch-2.6.26.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60036_xen3-patch-2.6.27.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60037_xen3-patch-2.6.27.1-2.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60038_xen3-patch-2.6.27.3-4.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60039_xen3-patch-2.6.27.4-5.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60040_xen3-patch-2.6.27.5-6.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60041_xen3-panic-on-io-nmi.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60042_xen-balloon-max-target.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60043_xen-blkback-cdrom.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60044_xen-blktap-write-barriers.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60045_xen-scsifront-block-timeout-update.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60046_xen-op-packet.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60047_xen-blkfront-cdrom.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60048_xen-sections.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60049_xen-kconfig-compat-3.2.0.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60050_xen-cpufreq-report.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60051_xen-rt2860-build.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60052_xen-sysdev-suspend.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60053_xen-ipi-per-cpu-irq.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60054_xen-virq-per-cpu-irq.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60055_xen-configurable-guest-devices.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60056_xen-netback-nr-irqs.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60057_xen-netback-notify-multi.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60058_xen-x86-panic-no-reboot.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60059_xen-x86-dcr-fallback.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60060_xen-x86-consistent-nmi.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60061_xen-x86-no-lapic.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60062_xen-x86-pmd-handling.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60063_xen-x86-bigmem.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60064_xen-x86-machphys-prediction.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60065_xen-x86-no-lazy-tlb.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60066_xen-x86-exit-mmap.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60067_xen-i386-panic-on-oops.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60068_xen-x86_64-pgd-pin.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60069_xen-x86_64-pgd-alloc-order.patch1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/60070_xen-x86_64-dump-user-pgt.patch1
-endif
-
 	# Not report deprecated syscall 1.23 (for kudzu)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
     
@@ -190,9 +109,6 @@ endif
 	cd $(DIR_SRC) && rm -rf squashfs*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/squashfs3.4.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.4/kernel-patches/linux-2.6.27-rc4/squashfs3.4-patch
-
-	# ip_conntrack permissions from 440 to 444
-#	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ip_conntrack_standalone-patch-for-ipfire.patch
 
 	# ipp2p 0.8.2-pomng
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.19-ipp2p-0.8.2-pomng.patch
@@ -210,13 +126,8 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-$(VERSUFIX)/' Makefile
 
-ifeq "$(XEN)" "1"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)"
-	cd $(DIR_APP) && cp -v vmlinux /boot/vmlinuz-$(VER)-$(VERSUFIX)
-else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
@@ -225,10 +136,8 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
 
-ifeq "$(XEN)" ""
 	# Only do this once on the non-XEN pass
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
-endif 
 
 	# Rename ide-cd module to match with old kernel
 	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd_mod.ko \
