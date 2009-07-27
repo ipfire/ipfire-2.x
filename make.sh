@@ -613,6 +613,7 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake lcr
   ipfiremake cacti
+  ipfiremake icecc
   ipfiremake open-vm-tools
   ipfiremake nagiosql
   ipfiremake iftop
