@@ -1,0 +1,54 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/icecream
+#
+# Description : This is a script that starts the icecream daemon.
+#
+# Authors     : Michael Tremer (mitch@ipfire.org)
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+SCHEDULER=minerva.ipfire.org
+JOBS=8
+PORT=10244
+
+case "${1}" in
+	start)
+		boot_mesg "Starting Icecream Daemon..."
+		/opt/icecream/sbin/iceccd -d -s ${SCHEDULER} -m ${JOBS} -p ${PORT}
+		evaluate_retval
+		if ! grep -q "${PORT}" /var/ipfire/xtaccess/config ; then
+			echo "tcp,0.0.0.0/0,${PORT},on,0.0.0.0,Icecream" >> /var/ipfire/xtaccess/config
+			/usr/local/bin/setxtaccess
+		fi
+		;;
+		
+	stop)
+		boot_mesg "Stopping Icecream Daemon..."
+		killproc /opt/icecream/sbin/iceccd
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /opt/icecream/sbin/iceccd
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/icecream
