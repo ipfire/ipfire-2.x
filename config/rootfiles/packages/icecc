@@ -19,4 +19,4 @@ etc/init.d/icecream
 #opt/icecream/lib/pkgconfig/icecc.pc
 #opt/icecream/sbin
 opt/icecream/sbin/iceccd
-#opt/icecream/sbin/scheduler
+opt/icecream/sbin/scheduler
