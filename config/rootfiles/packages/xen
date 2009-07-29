@@ -1,7 +1,7 @@
-boot/xen-3.4.0-rc3-pre.gz
+boot/xen-3.4.0.gz
 boot/xen-3.4.gz
 boot/xen-3.gz
-boot/xen-syms-3.4.0-rc3-pre
+boot/xen-syms-3.4.0
 boot/xen.gz
 etc/rc.d/init.d/xend
 etc/rc.d/init.d/xendomains
