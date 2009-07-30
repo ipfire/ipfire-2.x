@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.4.5
+VER        = 0.9.4.7
 
 THISAPP    = icecream-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c163118fcd64e3f3a001b3db9a63be32
+$(DL_FILE)_MD5 = ee78d11ae874fdd6f20f87af4280a733
 
 install : $(TARGET)
 
