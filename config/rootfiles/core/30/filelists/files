@@ -1,0 +1,6 @@
+lib/modules/2.6.27.25-ipfire/kernel/drivers/usb/serial/option.ko
+var/ipfire/langs/list
+var/ipfire/langs/de.pl
+var/ipfire/langs/en.pl
+srv/web/ipfire/cgi-bin/qos.cgi
+srv/web/ipfire/cgi-bin/index.cgi
