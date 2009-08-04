@@ -1,0 +1,25 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: ABI fix: add epoll_devs back to struct user_struct
+
+This is only to keep the ABI stable for now, this patch
+needs to be removed next chance we get when the ABI changes
+as it's not needed at all.
+
+This is here because 2.6.27.14 removes this field.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ include/linux/sched.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -589,6 +589,7 @@ struct user_struct {
+ 	atomic_t inotify_devs;	/* How many inotify devs does this user have opened? */
+ #endif
+ #ifdef CONFIG_EPOLL
++	atomic_t epoll_devs;	/* DO NOT USE, ONLY HERE TO KEEP ABI STABLE */
+ 	atomic_t epoll_watches;	/* The number of file descriptors currently watched */
+ #endif
+ #ifdef CONFIG_POSIX_MQUEUE

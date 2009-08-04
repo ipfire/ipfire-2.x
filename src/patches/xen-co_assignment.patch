@@ -1,0 +1,22 @@
+diff -r 6ab55f716ce3 tools/python/xen/util/pci.py
+--- a/tools/python/xen/util/pci.py  Thu Oct 09 17:18:11 2008 +0100
++++ b/tools/python/xen/util/pci.py  Fri Oct 10 13:16:00 2008 +0800
+@@ -696,6 +696,7 @@ class PciDevice:
+     def do_FLR(self):
+         """ Perform FLR (Functional Level Reset) for the device.
+         """
++        return
+         if self.dev_type == DEV_TYPE_PCIe_ENDPOINT:
+             # If PCIe device supports FLR, we use it.
+             if self.pcie_flr:
+diff -r 6ab55f716ce3 tools/python/xen/xend/server/pciif.py
+--- a/tools/python/xen/xend/server/pciif.py Thu Oct 09 17:18:11 2008 +0100
++++ b/tools/python/xen/xend/server/pciif.py Fri Oct 10 13:18:25 2008 +0800
+@@ -375,6 +375,7 @@ class PciController(DevController):
+             pci_dev_list = pci_dev_list + [(domain, bus, slot, func)]
+
+         for (domain, bus, slot, func) in pci_dev_list:
++            continue
+             try:
+                 dev = PciDevice(domain, bus, slot, func)
+             except Exception, e:

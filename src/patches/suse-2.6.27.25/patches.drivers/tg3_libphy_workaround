@@ -1,0 +1,62 @@
+From: Matt Carlson <Matt.Carlson@broadcom.net>
+Subject: tg3 libphy workaround
+Reference: bnc#68725
+Acked-by: Karsten Keil <kkeil@novell.com>
+
+Hi Philip.  Below is the SLES 11 patch that disables 5785 support and
+forces the 57780 to use the in-driver phy code rather than the phylib
+code.
+
+While I have your attention, are there any outstanding bootloader
+install bugs?  On my lab machine, I install SLES 11 onto partition 12
+and tell the installer to install the bootloader (GRUB) into the MBR
+of that partition.  I then reboot the machine and instruct the existing
+bootloader in partition 1 (GRUB again) to chainload to partition 12.
+
+It seems the SLES 11 installer somehow corrupts the MBR of the disk so
+that it no longer boots.  I've installed SLES 11 twice now and on the
+2nd install, I carefully navigated through the bootloader configuration
+portion.  I don't think I'm doing anything wrong.  Anyways, just an FYI...
+
+
+
+diff -Nrup 1/drivers/net/tg3.c 2/drivers/net/tg3.c
+--- 1/drivers/net/tg3.c	2009-01-14 15:19:32.000000000 -0800
++++ 2/drivers/net/tg3.c	2009-01-23 07:06:53.000000000 -0800
+@@ -205,7 +205,6 @@ static struct pci_device_id tg3_pci_tbl[
+ 	{PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_TIGON3_5723)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_TIGON3_5761)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_TIGON3_5761E)},
+-	{PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_TIGON3_5785)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, TG3PCI_DEVICE_TIGON3_57780)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, TG3PCI_DEVICE_TIGON3_57760)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, TG3PCI_DEVICE_TIGON3_57790)},
+@@ -12428,8 +12427,7 @@ static int __devinit tg3_get_invariants(
+ 	    GET_CHIP_REV(tp->pci_chip_rev_id) != CHIPREV_5700_BX)
+ 		tp->coalesce_mode |= HOSTCC_MODE_32BYTE;
+ 
+-	if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5785 ||
+-	    GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_57780)
++	if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5785)
+ 		tp->tg3_flags3 |= TG3_FLG3_USE_PHYLIB;
+ 
+ 	err = tg3_mdio_init(tp);
+@@ -13192,6 +13190,7 @@ static char * __devinit tg3_phy_string(s
+ 	case PHY_ID_BCM5756:	return "5722/5756";
+ 	case PHY_ID_BCM5906:	return "5906";
+ 	case PHY_ID_BCM5761:	return "5761";
++	case PHY_ID_BCM57780:	return "57780";
+ 	case PHY_ID_BCM8002:	return "8002/serdes";
+ 	case 0:			return "serdes";
+ 	default:		return "unknown";
+diff -Nrup 1/drivers/net/tg3.h 2/drivers/net/tg3.h
+--- 1/drivers/net/tg3.h	2009-01-14 15:19:30.000000000 -0800
++++ 2/drivers/net/tg3.h	2009-01-23 07:04:58.000000000 -0800
+@@ -2586,6 +2586,7 @@ struct tg3 {
+ #define PHY_ID_BCM5761			0xbc050fd0
+ #define PHY_ID_BCM5906			0xdc00ac40
+ #define PHY_ID_BCM8002			0x60010140
++#define PHY_ID_BCM57780			0x5c0d8990
+ #define PHY_ID_INVALID			0xffffffff
+ #define PHY_ID_REV_MASK			0x0000000f
+ #define PHY_REV_BCM5401_B0		0x1

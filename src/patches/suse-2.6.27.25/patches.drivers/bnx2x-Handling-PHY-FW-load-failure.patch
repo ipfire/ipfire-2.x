@@ -1,0 +1,35 @@
+From 16b311cc29806bb968746c1a752a087b32841af9 Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 06:44:24 +0000
+Subject: bnx2x: Handling PHY FW load failure
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+If the default PHY version (0x4321) is read - the PHY FW load failed
+
+Signed-off-by: Yaniv Rosner <yanivr@broadcom.com>
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_link.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_link.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_link.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_link.c
+@@ -4404,10 +4404,11 @@ static u8 bnx2x_8073_common_init_phy(str
+ 			      ext_phy_addr[port],
+ 			      MDIO_PMA_DEVAD,
+ 			      MDIO_PMA_REG_ROM_VER1, &fw_ver1);
+-		if (fw_ver1 == 0) {
++		if (fw_ver1 == 0 || fw_ver1 == 0x4321) {
+ 			DP(NETIF_MSG_LINK,
+-				 "bnx2x_8073_common_init_phy port %x "
+-				 "fw Download failed\n", port);
++				 "bnx2x_8073_common_init_phy port %x:"
++				 "Download failed. fw version = 0x%x\n",
++				 port, fw_ver1);
+ 			return -EINVAL;
+ 		}
+ 

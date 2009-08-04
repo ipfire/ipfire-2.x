@@ -1,0 +1,79 @@
+Subject: Re-dirty pages on ENOSPC when converting delayed allocations
+From: Lachlan McIlroy <lachlan@sgi.com>
+References: 433112 - LTC48749
+
+http://oss.sgi.com/archives/xfs/2008-10/msg00058.html
+
+If we get an error in xfs_page_state_convert() - and it's not EAGAIN - then
+we throw away the dirty page without converting the delayed allocation.  This
+leaves delayed allocations that can never be removed and confuses code that
+expects a flush of the file to clear them.  We need to re-dirty the page on
+error so we can try again later or report that the flush failed.
+
+
+This change is needed to handle the condition where we are at ENOSPC and we
+exhaust the reserved block pool (because many transactions are executing
+concurrently) and calls to xfs_trans_reserve() start failing with ENOSPC
+errors.
+
+
+Version 2 wont return EAGAIN from xfs_vm_writepage() and also converts an
+ENOSPC error to an EAGAIN for asynchronous writeback to avoid setting an
+error in the inode mapping when we don't need to.
+
+Signed-off-by: Olaf Hering <olh@suse.de>
+---
+ fs/xfs/linux-2.6/xfs_aops.c |   21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
+
+--- a/fs/xfs/linux-2.6/xfs_aops.c
++++ b/fs/xfs/linux-2.6/xfs_aops.c
+@@ -1147,16 +1147,6 @@ error:
+ 	if (iohead)
+ 		xfs_cancel_ioend(iohead);
+ 
+-	/*
+-	 * If it's delalloc and we have nowhere to put it,
+-	 * throw it away, unless the lower layers told
+-	 * us to try again.
+-	 */
+-	if (err != -EAGAIN) {
+-		if (!unmapped)
+-			block_invalidatepage(page, 0);
+-		ClearPageUptodate(page);
+-	}
+ 	return err;
+ }
+ 
+@@ -1185,7 +1175,7 @@ xfs_vm_writepage(
+ 	struct page		*page,
+ 	struct writeback_control *wbc)
+ {
+-	int			error;
++	int			error = 0;
+ 	int			need_trans;
+ 	int			delalloc, unmapped, unwritten;
+ 	struct inode		*inode = page->mapping->host;
+@@ -1231,19 +1221,16 @@ xfs_vm_writepage(
+ 	 * to real space and flush out to disk.
+ 	 */
+ 	error = xfs_page_state_convert(inode, page, wbc, 1, unmapped);
+-	if (error == -EAGAIN)
+-		goto out_fail;
+ 	if (unlikely(error < 0))
+-		goto out_unlock;
++		goto out_fail;
+ 
+ 	return 0;
+ 
+ out_fail:
+ 	redirty_page_for_writepage(wbc, page);
+ 	unlock_page(page);
+-	return 0;
+-out_unlock:
+-	unlock_page(page);
++	if (error == -EAGAIN)
++		error = 0;
+ 	return error;
+ }
+ 

@@ -1,0 +1,171 @@
+From: Martin Hicks <mort@sgi.com>
+Subject: KDB Backtrace Fixes
+References: bnc#501114
+
+ This patch fixes a failure in bb_all.
+
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+
+ arch/x86/kdb/kdba_bt.c |   61 ++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 51 insertions(+), 10 deletions(-)
+--- a/arch/x86/kdb/kdba_bt.c
++++ b/arch/x86/kdb/kdba_bt.c
+@@ -416,34 +416,29 @@ static struct bb_name_state bb_special_c
+ 	NS_MEM("ia32_ptregs_common", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("ia32_sysret", partial_pt_regs, 0),
+ 	NS_MEM("int_careful", partial_pt_regs, 0),
++	NS_MEM("ia32_badarg", partial_pt_regs, 0),
+ 	NS_MEM("int_restore_rest", full_pt_regs, 0),
+ 	NS_MEM("int_signal", full_pt_regs, 0),
+ 	NS_MEM("int_very_careful", partial_pt_regs, 0),
+-	NS_MEM("int_with_check", partial_pt_regs, 0),
+ #ifdef	CONFIG_TRACE_IRQFLAGS
+ 	NS_MEM("paranoid_exit0", full_pt_regs, 0),
+ #endif	/* CONFIG_TRACE_IRQFLAGS */
+ 	NS_MEM("paranoid_exit1", full_pt_regs, 0),
+ 	NS_MEM("ptregscall_common", partial_pt_regs_plus_1, 0),
+-	NS_MEM("restore_norax", partial_pt_regs, 0),
+-	NS_MEM("restore", partial_pt_regs, 0),
+ 	NS_MEM("ret_from_intr", partial_pt_regs_plus_2, 0),
+ 	NS_MEM("stub32_clone", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub32_execve", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub32_fork", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub32_iopl", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub32_rt_sigreturn", partial_pt_regs_plus_1, 0),
+-	NS_MEM("stub32_rt_sigsuspend", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub32_sigaltstack", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub32_sigreturn", partial_pt_regs_plus_1, 0),
+-	NS_MEM("stub32_sigsuspend", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub32_vfork", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub_clone", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub_execve", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub_fork", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub_iopl", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub_rt_sigreturn", partial_pt_regs_plus_1, 0),
+-	NS_MEM("stub_rt_sigsuspend", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub_sigaltstack", partial_pt_regs_plus_1, 0),
+ 	NS_MEM("stub_vfork", partial_pt_regs_plus_1, 0),
+ 
+@@ -464,6 +459,17 @@ static struct bb_name_state bb_special_c
+ 		BB_SKIP(RAX) | BB_SKIP(RCX)),
+ 	NS_MEM("ia32_badsys", partial_pt_regs, 0),
+ 
++#ifdef CONFIG_AUDITSYSCALL
++	NS_MEM_FROM("int_with_check", "sysexit_audit", partial_pt_regs,
++		BB_SKIP(R8) | BB_SKIP(R9) | BB_SKIP(R10) | BB_SKIP(R11) |
++		BB_SKIP(RAX)),
++	NS_MEM_FROM("int_with_check", "ia32_cstar_target", partial_pt_regs,
++		BB_SKIP(R8) | BB_SKIP(R9) | BB_SKIP(R10) | BB_SKIP(R11) |
++		BB_SKIP(RAX) | BB_SKIP(RCX)),
++#endif
++	NS_MEM("int_with_check", no_memory, 0),
++
++
+ 	/* Various bits of code branch to int_ret_from_sys_call, with slightly
+ 	 * different missing values in pt_regs.
+ 	 */
+@@ -540,11 +546,11 @@ static struct bb_name_state bb_special_c
+ 
+ 	NS_REG("bad_put_user",
+ 		all_regs,
+-		BB_SKIP(RAX) | BB_SKIP(RCX) | BB_SKIP(R8)),
++		BB_SKIP(RBX)),
+ 
+ 	NS_REG("bad_get_user",
+ 		all_regs,
+-		BB_SKIP(RAX) | BB_SKIP(RCX) | BB_SKIP(R8)),
++		BB_SKIP(RAX) | BB_SKIP(RDX)),
+ 
+ 	NS_REG("bad_to_user",
+ 		all_regs,
+@@ -585,11 +591,17 @@ static const char *bb_spurious[] = {
+ 	"rff_action",
+ 	"rff_trace",
+ 				/* system_call */
++	"system_call_after_swapgs",
++	"system_call_fastpath",
+ 	"ret_from_sys_call",
+ 	"sysret_check",
+ 	"sysret_careful",
+ 	"sysret_signal",
+ 	"badsys",
++#ifdef CONFIG_AUDITSYSCALL
++	"auditsys",
++	"sysret_audit",
++#endif
+ 	"tracesys",
+ 	"int_ret_from_sys_call",
+ 	"int_with_check",
+@@ -635,11 +647,22 @@ static const char *bb_spurious[] = {
+ 	"bad_gs",
+ 				/* ia32_sysenter_target */
+ 	"sysenter_do_call",
++	"sysenter_dispatch",
++	"sysexit_from_sys_call",
++#ifdef CONFIG_AUDITSYSCALL
++	"sysenter_auditsys",
++	"sysexit_audit",
++#endif
+ 	"sysenter_tracesys",
+ 				/* ia32_cstar_target */
+ 	"cstar_do_call",
++	"cstar_dispatch",
++	"sysretl_from_sys_call",
++#ifdef CONFIG_AUDITSYSCALL
++	"cstar_auditsys",
++	"sysretl_audit",
++#endif
+ 	"cstar_tracesys",
+-	"ia32_badarg",
+ 				/* ia32_syscall */
+ 	"ia32_do_syscall",
+ 	"ia32_sysret",
+@@ -1805,6 +1828,7 @@ enum bb_operand_usage {
+ 	BBOU_RSRDWSWD,				/* 15 */
+ 		/* opcode specific entries */
+ 	BBOU_ADD,
++	BBOU_AND,
+ 	BBOU_CALL,
+ 	BBOU_CBW,
+ 	BBOU_CMOV,
+@@ -1896,7 +1920,7 @@ static const struct bb_opcode_usage
+ bb_opcode_usage_all[] = {
+ 	{3, BBOU_RSRDWD,  "adc"},
+ 	{3, BBOU_ADD,     "add"},
+-	{3, BBOU_RSRDWD,  "and"},
++	{3, BBOU_AND,     "and"},
+ 	{3, BBOU_RSWD,    "bsf"},
+ 	{3, BBOU_RSWD,    "bsr"},
+ 	{5, BBOU_RSWS,    "bswap"},
+@@ -2952,6 +2976,12 @@ bb_sanity_check(int type)
+ 		      (strcmp(bb_func_name, "ptregscall_common") == 0 ||
+ 		       strcmp(bb_func_name, "ia32_ptregs_common") == 0))))
+ 			continue;
++		/* The put_user and save_paranoid functions are special.
++		 * %rbx gets clobbered */
++		if (expect == BBRG_RBX &&
++		    (strncmp(bb_func_name, "__put_user_", 11) == 0 ||
++		     strcmp(bb_func_name, "save_paranoid") == 0))
++			continue;
+ 		kdb_printf("%s: Expected %s, got %s",
+ 			   __FUNCTION__,
+ 			   bbrg_name[expect], bbrg_name[actual]);
+@@ -3445,6 +3475,17 @@ bb_usage(void)
+ 		} else {
+ 			usage = BBOU_RSRDWD;
+ 		}
++		break;
++	case BBOU_AND:
++		/* Special case when trying to round the stack pointer
++		 * to achieve byte alignment
++		 */
++		if (dst->reg && dst->base_rc == BBRG_RSP &&
++			src->immediate && strncmp(bb_func_name, "efi_call", 8) == 0) {
++				usage = BBOU_NOP;
++		} else {
++			usage = BBOU_RSRDWD;
++		}
+ 		break;
+ 	case BBOU_CALL:
+ 		/* Invalidate the scratch registers.  Functions sync_regs and

@@ -1,0 +1,250 @@
+From: Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
+Subject: Block integrity support for DM and MD
+References: FATE#304345
+
+This patch adds Data integrity support to DM and MD.
+It has been reworked to support request-based multipathing.
+
+Signed-off-by: Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
+Signed-off-by: Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ drivers/md/dm-table.c |   37 +++++++++++++++++++++++++++++++++++++
+ drivers/md/dm.c       |   22 ++++++++++++++++++++++
+ drivers/md/dm.h       |    1 +
+ drivers/md/md.c       |   34 ++++++++++++++++++++++++++++++++++
+ fs/bio-integrity.c    |    5 +++--
+ fs/bio.c              |    2 +-
+ include/linux/bio.h   |    4 ++--
+ 7 files changed, 100 insertions(+), 5 deletions(-)
+
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -951,6 +951,43 @@ void dm_table_set_restrictions(struct dm
+ 		queue_flag_set_unlocked(QUEUE_FLAG_STACKABLE, q);
+ }
+ 
++void dm_table_set_integrity(struct dm_table *t, struct mapped_device *md)
++{
++	struct list_head *devices = dm_table_get_devices(t);
++	struct dm_dev *prev, *cur;
++
++	/*
++	 * Run through all devices to ensure they have matching
++	 * integrity profile
++	 */
++	cur = prev = NULL;
++
++	list_for_each_entry(cur, devices, list) {
++
++		if (prev && blk_integrity_compare(prev->bdev->bd_disk,
++						  cur->bdev->bd_disk) < 0) {
++			printk(KERN_ERR "%s: %s %s Integrity mismatch!\n",
++			       __func__, prev->bdev->bd_disk->disk_name,
++			       cur->bdev->bd_disk->disk_name);
++			return;
++		}
++		prev = cur;
++	}
++
++	/* Register dm device as being integrity capable */
++	if (prev && bdev_get_integrity(prev->bdev)) {
++		struct gendisk *disk = dm_disk(md);
++
++		if (blk_integrity_register(dm_disk(md),
++					   bdev_get_integrity(prev->bdev)))
++			printk(KERN_ERR "%s: %s Could not register integrity!\n",
++			       __func__, disk->disk_name);
++		else
++			printk(KERN_INFO "Enabling data integrity on %s\n",
++			       disk->disk_name);
++	}
++}
++
+ unsigned int dm_table_get_num_targets(struct dm_table *t)
+ {
+ 	return t->num_targets;
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1022,6 +1022,13 @@ static struct bio *split_bvec(struct bio
+ 	clone->bi_size = to_bytes(len);
+ 	clone->bi_io_vec->bv_offset = offset;
+ 	clone->bi_io_vec->bv_len = clone->bi_size;
++	clone->bi_flags |= 1 << BIO_CLONED;
++
++	if (bio_integrity(bio)) {
++		bio_integrity_clone(clone, bio, GFP_NOIO, bs);
++		bio_integrity_trim(clone,
++				   bio_sector_offset(bio, idx, offset), len);
++	}
+ 
+ 	return clone;
+ }
+@@ -1044,6 +1051,14 @@ static struct bio *clone_bio(struct bio
+ 	clone->bi_size = to_bytes(len);
+ 	clone->bi_flags &= ~(1 << BIO_SEG_VALID);
+ 
++	if (bio_integrity(bio)) {
++		bio_integrity_clone(clone, bio, GFP_NOIO, bs);
++
++		if (idx != bio->bi_idx || clone->bi_size < bio->bi_size)
++			bio_integrity_trim(clone,
++					   bio_sector_offset(bio, idx, 0), len);
++	}
++
+ 	return clone;
+ }
+ 
+@@ -1365,6 +1380,11 @@ static int clone_request_bios(struct req
+ 		}
+ 
+ 		__bio_clone(clone_bio, bio);
++		if (bio_integrity(bio))
++			if (bio_integrity_clone(clone_bio, bio, GFP_ATOMIC,
++						md->bs) < 0)
++				goto free_and_out;
++
+ 		clone_bio->bi_destructor = dm_bio_destructor;
+ 		clone_bio->bi_end_io = end_clone_bio;
+ 		info->rq = clone;
+@@ -1835,6 +1855,7 @@ static void free_dev(struct mapped_devic
+ 		mempool_destroy(md->io_pool);
+ 	if (md->bs)
+ 		bioset_free(md->bs);
++	blk_integrity_unregister(md->disk);
+ 	del_gendisk(md->disk);
+ 	free_minor(minor);
+ 
+@@ -1910,6 +1931,7 @@ static int __bind(struct mapped_device *
+ 	write_lock(&md->map_lock);
+ 	md->map = t;
+ 	dm_table_set_restrictions(t, q);
++	dm_table_set_integrity(t, md);
+ 	if (!(dm_table_get_mode(t) & FMODE_WRITE)) {
+ 		set_disk_ro(md->disk, 1);
+ 	} else {
+--- a/drivers/md/dm.h
++++ b/drivers/md/dm.h
+@@ -51,6 +51,7 @@ void dm_table_event_callback(struct dm_t
+ struct dm_target *dm_table_get_target(struct dm_table *t, unsigned int index);
+ struct dm_target *dm_table_find_target(struct dm_table *t, sector_t sector);
+ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q);
++void dm_table_set_integrity(struct dm_table *t, struct mapped_device *md);
+ struct list_head *dm_table_get_devices(struct dm_table *t);
+ void dm_table_presuspend_targets(struct dm_table *t);
+ void dm_table_postsuspend_targets(struct dm_table *t);
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -1411,6 +1411,38 @@ static int match_mddev_units(mddev_t *md
+ 
+ static LIST_HEAD(pending_raid_disks);
+ 
++static void md_integrity_check(mdk_rdev_t *rdev, mddev_t *mddev)
++{
++	struct mdk_personality *pers = mddev->pers;
++	struct gendisk *disk = mddev->gendisk;
++	struct blk_integrity *bi_rdev = bdev_get_integrity(rdev->bdev);
++	struct blk_integrity *bi_mddev = blk_get_integrity(disk);
++
++	/* Data integrity passthrough not supported on RAID 4, 5 and 6 */
++	if (pers && pers->level >= 4 && pers->level <= 6)
++		return;
++
++	/* If rdev is integrity capable, register profile for mddev */
++	if (!bi_mddev && bi_rdev) {
++		if (blk_integrity_register(disk, bi_rdev))
++			printk(KERN_ERR "%s: %s Could not register integrity!\n",
++			       __func__, disk->disk_name);
++		else
++			printk(KERN_NOTICE "Enabling data integrity on %s\n",
++			       disk->disk_name);
++		return;
++	}
++
++	/* Check that mddev and rdev have matching profiles */
++	if (blk_integrity_compare(disk, rdev->bdev->bd_disk) < 0) {
++		printk(KERN_ERR "%s: %s/%s integrity mismatch!\n", __func__,
++		       disk->disk_name, rdev->bdev->bd_disk->disk_name);
++		printk(KERN_NOTICE "Disabling data integrity on %s\n",
++		       disk->disk_name);
++		blk_integrity_unregister(disk);
++	}
++}
++
+ static int bind_rdev_to_array(mdk_rdev_t * rdev, mddev_t * mddev)
+ {
+ 	char b[BDEVNAME_SIZE];
+@@ -1479,6 +1511,7 @@ static int bind_rdev_to_array(mdk_rdev_t
+ 	}
+ 	list_add_rcu(&rdev->same_set, &mddev->disks);
+ 	bd_claim_by_disk(rdev->bdev, rdev->bdev->bd_holder, mddev->gendisk);
++	md_integrity_check(rdev, mddev);
+ 	return 0;
+ 
+  fail:
+@@ -3965,6 +3998,7 @@ static int do_md_stop(mddev_t * mddev, i
+ 		printk(KERN_INFO "md: %s switched to read-only mode.\n",
+ 			mdname(mddev));
+ 	err = 0;
++	blk_integrity_unregister(disk);
+ 	md_new_event(mddev);
+ 	sysfs_notify(&mddev->kobj, NULL, "array_state");
+ out:
+--- a/fs/bio-integrity.c
++++ b/fs/bio-integrity.c
+@@ -655,19 +655,20 @@ EXPORT_SYMBOL(bio_integrity_split);
+  * bio_integrity_clone - Callback for cloning bios with integrity metadata
+  * @bio:	New bio
+  * @bio_src:	Original bio
++ * @gfp_mask:	Memory allocation mask
+  * @bs:		bio_set to allocate bip from
+  *
+  * Description:	Called to allocate a bip when cloning a bio
+  */
+ int bio_integrity_clone(struct bio *bio, struct bio *bio_src,
+-			struct bio_set *bs)
++			gfp_t gfp_mask, struct bio_set *bs)
+ {
+ 	struct bio_integrity_payload *bip_src = bio_src->bi_integrity;
+ 	struct bio_integrity_payload *bip;
+ 
+ 	BUG_ON(bip_src == NULL);
+ 
+-	bip = bio_integrity_alloc_bioset(bio, GFP_NOIO, bip_src->bip_vcnt, bs);
++	bip = bio_integrity_alloc_bioset(bio, gfp_mask, bip_src->bip_vcnt, bs);
+ 
+ 	if (bip == NULL)
+ 		return -EIO;
+--- a/fs/bio.c
++++ b/fs/bio.c
+@@ -256,7 +256,7 @@ struct bio *bio_clone(struct bio *bio, g
+ 	if (bio_integrity(bio)) {
+ 		int ret;
+ 
+-		ret = bio_integrity_clone(b, bio, fs_bio_set);
++		ret = bio_integrity_clone(b, bio, gfp_mask, fs_bio_set);
+ 
+ 		if (ret < 0)
+ 			return NULL;
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -501,7 +501,7 @@ extern void bio_integrity_endio(struct b
+ extern void bio_integrity_advance(struct bio *, unsigned int);
+ extern void bio_integrity_trim(struct bio *, unsigned int, unsigned int);
+ extern void bio_integrity_split(struct bio *, struct bio_pair *, int);
+-extern int bio_integrity_clone(struct bio *, struct bio *, struct bio_set *);
++extern int bio_integrity_clone(struct bio *, struct bio *, gfp_t, struct bio_set *);
+ extern int bioset_integrity_create(struct bio_set *, int);
+ extern void bioset_integrity_free(struct bio_set *);
+ extern void bio_integrity_init_slab(void);
+@@ -512,7 +512,7 @@ extern void bio_integrity_init_slab(void
+ #define bioset_integrity_create(a, b)	(0)
+ #define bio_integrity_prep(a)		(0)
+ #define bio_integrity_enabled(a)	(0)
+-#define bio_integrity_clone(a, b, c)	(0)
++#define bio_integrity_clone(a, b, c, d)	(0)
+ #define bioset_integrity_free(a)	do { } while (0)
+ #define bio_integrity_free(a, b)	do { } while (0)
+ #define bio_integrity_endio(a, b)	do { } while (0)

@@ -1,0 +1,39 @@
+From: Coly Li <coyli@suse.de>
+Date: Wed, 5 Nov 2008 15:16:24 +0800
+Subject: ocfs2: comments typo fix
+
+This patch fixes two typos in comments of ocfs2.
+
+Signed-off-by: Coly Li <coyli@suse.de>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/dlm/userdlm.h |    2 +-
+ fs/ocfs2/ocfs2.h       |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/dlm/userdlm.h
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/dlm/userdlm.h
++++ linux-2.6.27-ocfs2/fs/ocfs2/dlm/userdlm.h
+@@ -33,7 +33,7 @@
+ #include <linux/workqueue.h>
+ 
+ /* user_lock_res->l_flags flags. */
+-#define USER_LOCK_ATTACHED      (0x00000001) /* have we initialized
++#define USER_LOCK_ATTACHED      (0x00000001) /* we have initialized
+ 					       * the lvb */
+ #define USER_LOCK_BUSY          (0x00000002) /* we are currently in
+ 					       * dlm_lock */
+Index: linux-2.6.27-ocfs2/fs/ocfs2/ocfs2.h
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/ocfs2.h
++++ linux-2.6.27-ocfs2/fs/ocfs2/ocfs2.h
+@@ -85,7 +85,7 @@ enum ocfs2_unlock_action {
+ };
+ 
+ /* ocfs2_lock_res->l_flags flags. */
+-#define OCFS2_LOCK_ATTACHED      (0x00000001) /* have we initialized
++#define OCFS2_LOCK_ATTACHED      (0x00000001) /* we have initialized
+ 					       * the lvb */
+ #define OCFS2_LOCK_BUSY          (0x00000002) /* we are currently in
+ 					       * dlm_lock */

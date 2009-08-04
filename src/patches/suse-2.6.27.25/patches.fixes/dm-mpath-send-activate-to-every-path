@@ -1,0 +1,146 @@
+From 67a6e30aa338e2e4b8ec3629df247bd8f653988b Mon Sep 17 00:00:00 2001
+From: Hannes Reinecke <hare@suse.de>
+Date: Tue, 16 Dec 2008 09:25:25 +0100
+Subject: [PATCH] Handle multiple paths in a path group properly during pg_init
+
+All of the hardware handlers, do have a state now, and they are set to
+active and (some form of) inactive. All of them have prep_fn, which use
+this "state" to fail the I/O without it ever being sent to the device.
+
+As Babu has noted in his email, the pg_init/activate is sent on only one
+path and the "state" of that path is changed appropriately to "active"
+while other paths in the same path group are never changed as they never
+got an "activate".
+
+This patch makes changes in the dm-multipath layer to send an "activate"
+on each paths in the path groups.
+
+Signed-off-by: Chandra Seetharaman <sekharan@us.ibm.com>
+Acked-by: "Moger, Babu" <Babu.Moger@lsi.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/md/dm-mpath.c |   48 ++++++++++++++++--------------------------------
+ 1 files changed, 16 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index fa4a362..510fd26 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -33,6 +33,7 @@ struct pgpath {
+ 
+ 	struct dm_path path;
+ 	struct work_struct deactivate_path;
++       struct work_struct activate_path;
+ };
+ 
+ #define path_to_pgpath(__pgp) container_of((__pgp), struct pgpath, path)
+@@ -62,8 +63,6 @@ struct multipath {
+ 	spinlock_t lock;
+ 
+ 	const char *hw_handler_name;
+-	struct work_struct activate_path;
+-	struct pgpath *pgpath_to_activate;
+ 	unsigned nr_priority_groups;
+ 	struct list_head priority_groups;
+ 	unsigned pg_init_required;	/* pg_init needs calling? */
+@@ -126,6 +125,7 @@ static struct pgpath *alloc_pgpath(void)
+ 	if (pgpath) {
+ 		pgpath->is_active = 1;
+ 		INIT_WORK(&pgpath->deactivate_path, deactivate_path);
++		INIT_WORK(&pgpath->activate_path, activate_path);
+ 	}
+ 
+ 	return pgpath;
+@@ -165,10 +165,6 @@ static void free_pgpaths(struct list_head *pgpaths, struct dm_target *ti)
+ 	list_for_each_entry_safe(pgpath, tmp, pgpaths, list) {
+ 		list_del(&pgpath->list);
+ 		dm_put_device(ti, pgpath->path.dev);
+-		spin_lock_irqsave(&m->lock, flags);
+-		if (m->pgpath_to_activate == pgpath)
+-			m->pgpath_to_activate = NULL;
+-		spin_unlock_irqrestore(&m->lock, flags);
+ 		free_pgpath(pgpath);
+ 	}
+ }
+@@ -199,7 +195,6 @@ static struct multipath *alloc_multipath(struct dm_target *ti)
+ 		m->queue_io = 1;
+ 		INIT_WORK(&m->process_queued_ios, process_queued_ios);
+ 		INIT_WORK(&m->trigger_event, trigger_event);
+-		INIT_WORK(&m->activate_path, activate_path);
+ 		m->mpio_pool = mempool_create_slab_pool(MIN_IOS, _mpio_cache);
+ 		if (!m->mpio_pool) {
+ 			kfree(m);
+@@ -435,8 +430,8 @@ static void process_queued_ios(struct work_struct *work)
+ {
+ 	struct multipath *m =
+ 		container_of(work, struct multipath, process_queued_ios);
+-	struct pgpath *pgpath = NULL;
+-	unsigned init_required = 0, must_queue = 1;
++       struct pgpath *pgpath = NULL, *tmp;
++       unsigned must_queue = 1;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&m->lock, flags);
+@@ -454,19 +449,15 @@ static void process_queued_ios(struct work_struct *work)
+ 		must_queue = 0;
+ 
+ 	if (m->pg_init_required && !m->pg_init_in_progress && pgpath) {
+-		m->pgpath_to_activate = pgpath;
+ 		m->pg_init_count++;
+ 		m->pg_init_required = 0;
+-		m->pg_init_in_progress = 1;
+-		init_required = 1;
++		list_for_each_entry(tmp, &pgpath->pg->pgpaths, list) {
++			queue_work(kmpath_handlerd, &tmp->activate_path);
++			m->pg_init_in_progress++;
++		}
+ 	}
+-
+ out:
+ 	spin_unlock_irqrestore(&m->lock, flags);
+-
+-	if (init_required)
+-		queue_work(kmpath_handlerd, &m->activate_path);
+-
+ 	if (!must_queue)
+ 		dispatch_queued_ios(m);
+ }
+@@ -1125,27 +1116,20 @@ static void pg_init_done(struct dm_path *path, int errors)
+ 		pg->bypassed = 0;
+ 	}
+ 
+-	m->pg_init_in_progress = 0;
+-	queue_work(kmultipathd, &m->process_queued_ios);
+-	spin_unlock_irqrestore(&m->lock, flags);
++       m->pg_init_in_progress--;
++       if (!m->pg_init_in_progress)
++	       queue_work(kmultipathd, &m->process_queued_ios);
++       spin_unlock_irqrestore(&m->lock, flags);
+ }
+ 
+ static void activate_path(struct work_struct *work)
+ {
+ 	int ret;
+-	struct multipath *m =
+-		container_of(work, struct multipath, activate_path);
+-	struct dm_path *path;
+-	unsigned long flags;
++	struct pgpath *pgpath =
++		container_of(work, struct pgpath, activate_path);
+ 
+-	spin_lock_irqsave(&m->lock, flags);
+-	path = &m->pgpath_to_activate->path;
+-	m->pgpath_to_activate = NULL;
+-	spin_unlock_irqrestore(&m->lock, flags);
+-	if (!path)
+-		return;
+-	ret = scsi_dh_activate(bdev_get_queue(path->dev->bdev));
+-	pg_init_done(path, ret);
++	ret = scsi_dh_activate(bdev_get_queue(pgpath->path.dev->bdev));
++	pg_init_done(&pgpath->path, ret);
+ }
+ 
+ /*
+-- 
+1.5.3.2
+

@@ -1,0 +1,29 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qdio: fix broken memcpy
+References: bnc#458339
+
+Symptom:     qeth fails to detect multiple ports on OSA Express 3 cards.
+Problem:     The memcpy that stores the detected card features is broken.
+	     Therefore qeth reads a port count of zero and cannot detect
+	     multiple ports.
+Solution:    Fix the memcpy.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/cio/qdio_setup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-sles11/drivers/s390/cio/qdio_setup.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_setup.c
++++ linux-sles11/drivers/s390/cio/qdio_setup.c
+@@ -284,7 +284,7 @@ int qdio_setup_get_ssqd(struct qdio_irq 
+ 		memcpy(&irq_ptr->ssqd_desc, &ssqd->qdio_ssqd,
+ 		       sizeof(struct qdio_ssqd_desc));
+ 	else {
+-		memcpy(&data, &ssqd->qdio_ssqd,
++		memcpy(data, &ssqd->qdio_ssqd,
+ 		       sizeof(struct qdio_ssqd_desc));
+ 		free_page((unsigned long)ssqd);
+ 	}

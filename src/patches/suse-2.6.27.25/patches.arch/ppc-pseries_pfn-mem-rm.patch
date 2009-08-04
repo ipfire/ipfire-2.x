@@ -1,0 +1,46 @@
+Subject: Bug 435181 - DMEM add caused kernel opps after ehca rejected request
+From: olh@suse.de
+References: 435181
+
+---
+ arch/powerpc/platforms/pseries/hotplug-memory.c |   12 ++++++++++++
+ mm/memory_hotplug.c                             |    4 ++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -22,6 +22,18 @@ static int pseries_remove_lmb(unsigned l
+ 	int ret;
+ 
+ 	start_pfn = base >> PAGE_SHIFT;
++
++	if (!pfn_valid(start_pfn)) {
++		/*
++		 * Failing hotplug memory add will end up calling
++		 * remove device node to clean up. Since its already
++		 * added to lmbs, we need to remove it and pretend
++	 	 * success.
++		 */
++		lmb_remove(base, lmb_size);
++		return 0;
++	}
++
+ 	zone = page_zone(pfn_to_page(start_pfn));
+ 
+ 	/*
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -323,11 +323,11 @@ int __remove_pages(struct zone *zone, un
+ 	BUG_ON(phys_start_pfn & ~PAGE_SECTION_MASK);
+ 	BUG_ON(nr_pages % PAGES_PER_SECTION);
+ 
+-	release_mem_region(phys_start_pfn << PAGE_SHIFT, nr_pages * PAGE_SIZE);
+-
+ 	sections_to_remove = nr_pages / PAGES_PER_SECTION;
+ 	for (i = 0; i < sections_to_remove; i++) {
+ 		unsigned long pfn = phys_start_pfn + i*PAGES_PER_SECTION;
++		release_mem_region(pfn << PAGE_SHIFT,
++				   PAGES_PER_SECTION << PAGE_SHIFT);
+ 		ret = __remove_section(zone, __pfn_to_section(pfn));
+ 		if (ret)
+ 			break;

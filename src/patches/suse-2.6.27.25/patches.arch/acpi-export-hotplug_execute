@@ -1,0 +1,23 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: acpi: export acpi_os_hotplug_execute
+
+ The ACPI dock driver changes require acpi_os_hotplug_execute,
+ which wasn't exported.
+
+ This patch exports it.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ drivers/acpi/osl.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -797,6 +797,7 @@ acpi_status acpi_os_hotplug_execute(acpi
+ {
+ 	return __acpi_os_execute(0, function, context, 1);
+ }
++EXPORT_SYMBOL(acpi_os_hotplug_execute);
+ 
+ void acpi_os_wait_events_complete(void *context)
+ {

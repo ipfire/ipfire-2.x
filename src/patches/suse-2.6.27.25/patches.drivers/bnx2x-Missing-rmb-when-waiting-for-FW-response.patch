@@ -1,0 +1,28 @@
+From 5650d9d4cbf3898d3f9725ccad5dfca6bc086324 Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Thu, 22 Jan 2009 06:01:29 +0000
+Subject: bnx2x: Missing rmb when waiting for FW response
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+Waiting for the FW to response requires a memory barrier
+
+Signed-off-by: Michal Kalderon <michals@broadcom.com>
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -6625,6 +6625,7 @@ static int bnx2x_stop_leading(struct bnx
+ 		}
+ 		cnt--;
+ 		msleep(1);
++		rmb(); /* Refresh the dsb_sp_prod */
+ 	}
+ 	bp->state = BNX2X_STATE_CLOSING_WAIT4_UNLOAD;
+ 	bp->fp[0].state = BNX2X_FP_STATE_CLOSED;

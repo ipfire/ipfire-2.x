@@ -1,0 +1,29 @@
+From: Tao Ma <tao.ma@oracle.com>
+Date: Thu, 12 Mar 2009 06:24:23 +0800
+Subject: [PATCH] ocfs2: Fix a bug found by sparse check.
+Patch-mainline: 2.6.29
+
+We need to use le32_to_cpu to test rec->e_cpos in
+ocfs2_dinode_insert_check.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Acked-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/alloc.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-sle11_ocfs2_update2/fs/ocfs2/alloc.c
+===================================================================
+--- linux-2.6.27-sle11_ocfs2_update2.orig/fs/ocfs2/alloc.c
++++ linux-2.6.27-sle11_ocfs2_update2/fs/ocfs2/alloc.c
+@@ -174,7 +174,8 @@ static int ocfs2_dinode_insert_check(str
+ 
+ 	BUG_ON(OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL);
+ 	mlog_bug_on_msg(!ocfs2_sparse_alloc(osb) &&
+-			(OCFS2_I(inode)->ip_clusters != rec->e_cpos),
++			(OCFS2_I(inode)->ip_clusters !=
++			 le32_to_cpu(rec->e_cpos)),
+ 			"Device %s, asking for sparse allocation: inode %llu, "
+ 			"cpos %u, clusters %u\n",
+ 			osb->dev_str,

@@ -1,0 +1,248 @@
+From: jbeulich@novell.com
+Subject: make i386 and x86 NMI code consistent, disable all APIC-related stuff
+Patch-mainline: obsolete
+References: 191115
+
+--- head-2008-12-08.orig/arch/x86/kernel/Makefile	2008-12-08 13:37:43.000000000 +0100
++++ head-2008-12-08/arch/x86/kernel/Makefile	2008-12-08 13:39:19.000000000 +0100
+@@ -120,7 +120,6 @@ ifeq ($(CONFIG_X86_64),y)
+ 
+         obj-$(CONFIG_PCI_MMCONFIG)	+= mmconf-fam10h_64.o
+ 
+-	obj-$(CONFIG_XEN)		+= nmi.o
+ 	time_64-$(CONFIG_XEN)		+= time_32.o
+ endif
+ 
+--- head-2008-12-08.orig/arch/x86/kernel/cpu/Makefile	2008-12-08 13:37:45.000000000 +0100
++++ head-2008-12-08/arch/x86/kernel/cpu/Makefile	2008-12-08 13:39:19.000000000 +0100
+@@ -24,4 +24,4 @@ obj-$(CONFIG_CPU_FREQ)	+= cpufreq/
+ 
+ obj-$(CONFIG_X86_LOCAL_APIC) += perfctr-watchdog.o
+ 
+-disabled-obj-$(CONFIG_XEN) := hypervisor.o vmware.o
++disabled-obj-$(CONFIG_XEN) := hypervisor.o perfctr-watchdog.o vmware.o
+--- head-2008-12-08.orig/arch/x86/kernel/nmi.c	2008-12-08 13:25:43.000000000 +0100
++++ head-2008-12-08/arch/x86/kernel/nmi.c	2008-12-08 13:39:19.000000000 +0100
+@@ -27,7 +27,7 @@
+ #include <linux/kdebug.h>
+ #include <linux/smp.h>
+ 
+-#ifndef CONFIG_XEN
++#ifdef ARCH_HAS_NMI_WATCHDOG
+ #include <asm/i8259.h>
+ #endif
+ #include <asm/io_apic.h>
+@@ -41,6 +41,9 @@
+ #include <mach_traps.h>
+ 
+ int unknown_nmi_panic;
++
++#ifdef ARCH_HAS_NMI_WATCHDOG
++
+ int nmi_watchdog_enabled;
+ 
+ static cpumask_t backtrace_mask = CPU_MASK_NONE;
+@@ -181,10 +184,8 @@ int __init check_nmi_watchdog(void)
+ 	kfree(prev_nmi_count);
+ 	return 0;
+ error:
+-#ifndef CONFIG_XEN
+ 	if (nmi_watchdog == NMI_IO_APIC && !timer_through_8259)
+ 		disable_8259A_irq(0);
+-#endif
+ #ifdef CONFIG_X86_32
+ 	timer_ack = 0;
+ #endif
+@@ -460,6 +461,8 @@ nmi_watchdog_tick(struct pt_regs *regs, 
+ 	return rc;
+ }
+ 
++#endif /* ARCH_HAS_NMI_WATCHDOG */
++
+ #ifdef CONFIG_SYSCTL
+ 
+ static int __init setup_unknown_nmi_panic(char *str)
+@@ -479,6 +482,7 @@ static int unknown_nmi_panic_callback(st
+ 	return 0;
+ }
+ 
++#ifdef ARCH_HAS_NMI_WATCHDOG
+ /*
+  * proc handler for /proc/sys/kernel/nmi
+  */
+@@ -511,6 +515,7 @@ int proc_nmi_enabled(struct ctl_table *t
+ 	}
+ 	return 0;
+ }
++#endif
+ 
+ #endif /* CONFIG_SYSCTL */
+ 
+@@ -523,6 +528,7 @@ int do_nmi_callback(struct pt_regs *regs
+ 	return 0;
+ }
+ 
++#ifdef ARCH_HAS_NMI_WATCHDOG
+ void __trigger_all_cpu_backtrace(void)
+ {
+ 	int i;
+@@ -535,3 +541,4 @@ void __trigger_all_cpu_backtrace(void)
+ 		mdelay(1);
+ 	}
+ }
++#endif
+--- head-2008-12-08.orig/arch/x86/kernel/traps_32-xen.c	2008-12-08 13:37:51.000000000 +0100
++++ head-2008-12-08/arch/x86/kernel/traps_32-xen.c	2008-12-08 13:39:19.000000000 +0100
+@@ -823,12 +823,14 @@ static notrace __kprobes void default_do
+ 								== NOTIFY_STOP)
+ 			return;
+ #ifdef CONFIG_X86_LOCAL_APIC
++#ifdef ARCH_HAS_NMI_WATCHDOG
+ 		/*
+ 		 * Ok, so this is none of the documented NMI sources,
+ 		 * so it must be the NMI watchdog.
+ 		 */
+ 		if (nmi_watchdog_tick(regs, reason))
+ 			return;
++#endif
+ 		if (!do_nmi_callback(regs, cpu))
+ 			unknown_nmi_error(reason, regs);
+ #else
+--- head-2008-12-08.orig/arch/x86/kernel/traps_64-xen.c	2008-12-08 13:37:51.000000000 +0100
++++ head-2008-12-08/arch/x86/kernel/traps_64-xen.c	2008-12-08 13:39:19.000000000 +0100
+@@ -636,7 +636,7 @@ void die(const char *str, struct pt_regs
+ 	oops_end(flags, regs, SIGSEGV);
+ }
+ 
+-#if defined(CONFIG_X86_LOCAL_APIC) || defined(CONFIG_SYSCTL)
++#ifdef CONFIG_SYSCTL
+ notrace __kprobes void
+ die_nmi(char *str, struct pt_regs *regs, int do_panic)
+ {
+@@ -882,6 +882,7 @@ asmlinkage notrace __kprobes void defaul
+ 								== NOTIFY_STOP)
+ 			return;
+ #ifdef CONFIG_X86_LOCAL_APIC
++#ifdef ARCH_HAS_NMI_WATCHDOG
+ 		/*
+ 		 * Ok, so this is none of the documented NMI sources,
+ 		 * so it must be the NMI watchdog.
+@@ -891,6 +892,9 @@ asmlinkage notrace __kprobes void defaul
+ #endif
+ 		if (!do_nmi_callback(regs, cpu))
+ 			unknown_nmi_error(reason, regs);
++#else
++		unknown_nmi_error(reason, regs);
++#endif
+ 
+ 		return;
+ 	}
+--- head-2008-12-08.orig/arch/x86/mach-xen/setup.c	2008-12-08 13:25:43.000000000 +0100
++++ head-2008-12-08/arch/x86/mach-xen/setup.c	2008-12-08 13:39:19.000000000 +0100
+@@ -108,12 +108,10 @@ void __init machine_specific_arch_setup(
+ 		.address = CALLBACK_ADDR(system_call)
+ 	};
+ #endif
+-#if defined(CONFIG_X86_LOCAL_APIC) || defined(CONFIG_X86_32)
+ 	static struct callback_register __initdata nmi_cb = {
+ 		.type = CALLBACKTYPE_nmi,
+ 		.address = CALLBACK_ADDR(nmi)
+ 	};
+-#endif
+ 
+ 	ret = HYPERVISOR_callback_op(CALLBACKOP_register, &event);
+ 	if (ret == 0)
+@@ -137,7 +135,6 @@ void __init machine_specific_arch_setup(
+ #endif
+ 	BUG_ON(ret);
+ 
+-#if defined(CONFIG_X86_LOCAL_APIC) || defined(CONFIG_X86_32)
+ 	ret = HYPERVISOR_callback_op(CALLBACKOP_register, &nmi_cb);
+ #if CONFIG_XEN_COMPAT <= 0x030002
+ 	if (ret == -ENOSYS) {
+@@ -148,7 +145,6 @@ void __init machine_specific_arch_setup(
+ 		HYPERVISOR_nmi_op(XENNMI_register_callback, &cb);
+ 	}
+ #endif
+-#endif
+ 
+ #ifdef CONFIG_X86_32
+ 	/* Do an early initialization of the fixmap area */
+--- head-2008-12-08.orig/include/asm-x86/irq.h	2008-12-08 13:15:52.000000000 +0100
++++ head-2008-12-08/include/asm-x86/irq.h	2008-12-08 13:39:19.000000000 +0100
+@@ -15,7 +15,7 @@ static inline int irq_canonicalize(int i
+ 	return ((irq == 2) ? 9 : irq);
+ }
+ 
+-#ifdef CONFIG_X86_LOCAL_APIC
++#if defined(CONFIG_X86_LOCAL_APIC) && !defined(CONFIG_XEN)
+ # define ARCH_HAS_NMI_WATCHDOG
+ #endif
+ 
+--- head-2008-12-08.orig/include/asm-x86/nmi.h	2008-12-08 13:15:52.000000000 +0100
++++ head-2008-12-08/include/asm-x86/nmi.h	2008-12-08 13:39:19.000000000 +0100
+@@ -5,8 +5,6 @@
+ #include <asm/irq.h>
+ #include <asm/io.h>
+ 
+-#ifdef ARCH_HAS_NMI_WATCHDOG
+-
+ /**
+  * do_nmi_callback
+  *
+@@ -20,6 +18,11 @@ extern void default_do_nmi(struct pt_reg
+ #endif
+ 
+ extern void die_nmi(char *str, struct pt_regs *regs, int do_panic);
++
++extern int unknown_nmi_panic;
++
++#ifdef ARCH_HAS_NMI_WATCHDOG
++
+ extern int check_nmi_watchdog(void);
+ extern int nmi_watchdog_enabled;
+ extern int avail_to_resrv_perfctr_nmi_bit(unsigned int);
+@@ -46,7 +49,6 @@ struct ctl_table;
+ struct file;
+ extern int proc_nmi_enabled(struct ctl_table *, int , struct file *,
+ 			void __user *, size_t *, loff_t *);
+-extern int unknown_nmi_panic;
+ 
+ void __trigger_all_cpu_backtrace(void);
+ #define trigger_all_cpu_backtrace() __trigger_all_cpu_backtrace()
+@@ -69,7 +71,6 @@ static inline int nmi_watchdog_active(vo
+ 	 */
+ 	return nmi_watchdog & 0x3;
+ }
+-#endif
+ 
+ void lapic_watchdog_stop(void);
+ int lapic_watchdog_init(unsigned nmi_hz);
+@@ -78,6 +79,9 @@ unsigned lapic_adjust_nmi_hz(unsigned hz
+ int lapic_watchdog_ok(void);
+ void disable_lapic_nmi_watchdog(void);
+ void enable_lapic_nmi_watchdog(void);
++
++#endif
++
+ void stop_nmi(void);
+ void restart_nmi(void);
+ 
+--- head-2008-12-08.orig/kernel/sysctl.c	2008-12-08 13:17:58.000000000 +0100
++++ head-2008-12-08/kernel/sysctl.c	2008-12-08 13:39:19.000000000 +0100
+@@ -673,6 +673,7 @@ static struct ctl_table kern_table[] = {
+ 		.mode           = 0644,
+ 		.proc_handler   = &proc_dointvec,
+ 	},
++#ifdef ARCH_HAS_NMI_WATCHDOG
+ 	{
+ 		.procname       = "nmi_watchdog",
+ 		.data           = &nmi_watchdog_enabled,
+@@ -681,6 +682,7 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler   = &proc_nmi_enabled,
+ 	},
+ #endif
++#endif
+ #if defined(CONFIG_X86)
+ 	{
+ 		.ctl_name	= KERN_PANIC_ON_NMI,

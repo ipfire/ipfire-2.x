@@ -1,0 +1,30 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] novfs: mapping->tree_lock is a spin_lock
+
+ mapping->tree_lock changed from a read_lock to a spin_lock in 2.6.27.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/novfs/inode.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/fs/novfs/inode.c
++++ b/fs/novfs/inode.c
+@@ -2029,7 +2029,7 @@ int novfs_a_writepages(struct address_sp
+ 				memset(pages, 0,
+ 				       sizeof(struct page *) * max_page_lookup);
+ 
+-				read_lock_irq(&mapping->tree_lock);
++				spin_lock_irq(&mapping->tree_lock);
+ 
+ 				/*
+ 				 * Need to ask for one less then max_page_lookup or we
+@@ -2063,7 +2063,7 @@ int novfs_a_writepages(struct address_sp
+ 					page_cache_get(pages[i]);
+ 				}
+ 
+-				read_unlock_irq(&mapping->tree_lock);
++				spin_unlock_irq(&mapping->tree_lock);
+ 
+ 				if (nr_pages) {
+ 					index = pages[nr_pages - 1]->index + 1;

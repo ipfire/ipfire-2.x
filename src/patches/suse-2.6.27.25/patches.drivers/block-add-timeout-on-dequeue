@@ -1,0 +1,70 @@
+From: Tejun Heo <tj@kernel.org>
+Subject: block: add timer on blkdev_dequeue_request() not elv_next_request()
+References: bnc#440076
+
+Block queue supports two usage models - one where block driver peeks
+at the front of queue using elv_next_request(), processes it and
+finishes it and the other where block driver peeks at the front of
+queue, dequeue the request using blkdev_dequeue_request() and finishes
+it.  The latter is more flexible as it allows the driver to process
+multiple commands concurrently.
+
+These two inconsistent usage models affect the block layer
+implementation confusing.  For some, elv_next_request() is considered
+the issue point while others consider blkdev_dequeue_request() the
+issue point.
+
+Till now the inconsistency mostly affect only accounting, so it didn't
+really break anything seriously; however, with block layer timeout,
+this inconsistency hits hard.  Block layer considers
+elv_next_request() the issue point and adds timer but SCSI layer
+thinks it was just peeking and when the request can't process the
+command right away, it's just left there without further processing.
+This makes the request dangling on the timer list and, when the timer
+goes off, the request which the SCSI layer and below think is still on
+the block queue ends up in the EH queue, causing various problems - EH
+hang (failed count goes over busy count and EH never wakes up),
+WARN_ON() and oopses as low level driver trying to handle the unknown
+command, etc. depending on the timing.
+
+As SCSI midlayer is the only user of block layer timer at the moment,
+moving blk_add_timer() to elv_dequeue_request() fixes the problem;
+however, this two usage models definitely need to be cleaned up in the
+future.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ block/elevator.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+Index: linux-2.6.27/block/elevator.c
+===================================================================
+--- linux-2.6.27.orig/block/elevator.c
++++ linux-2.6.27/block/elevator.c
+@@ -773,12 +773,6 @@ struct request *elv_next_request(struct
+ 			 */
+ 			rq->cmd_flags |= REQ_STARTED;
+ 			blk_add_trace_rq(q, rq, BLK_TA_ISSUE);
+-
+-			/*
+-			 * We are now handing the request to the hardware,
+-			 * add the timeout handler
+-			 */
+-			blk_add_timer(rq);
+ 		}
+ 
+ 		if (!q->boundary_rq || q->boundary_rq == rq) {
+@@ -850,6 +844,12 @@ void elv_dequeue_request(struct request_
+ 	 */
+ 	if (blk_account_rq(rq))
+ 		q->in_flight++;
++
++	/*
++	 * We are now handing the request to the hardware, add the
++	 * timeout handler.
++	 */
++	blk_add_timer(rq);
+ }
+ EXPORT_SYMBOL(elv_dequeue_request);
+ 

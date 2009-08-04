@@ -1,0 +1,64 @@
+From: Jan Kara <jack@suse.cz>
+References: fate#302681
+Subject: ocfs2: Fix grace time syncing
+Patch-mainline: 2.6.29?
+
+Fix syncing of grace times with other nodes. Previously, grace time could never
+be reset to 0 even after user got below his softlimit.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+
+Index: linux-2.6.27/fs/ocfs2/quota_global.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/quota_global.c	2008-10-31 07:59:08.000000000 +0100
++++ linux-2.6.27/fs/ocfs2/quota_global.c	2008-10-31 08:03:32.000000000 +0100
+@@ -418,22 +418,35 @@
+ 		dquot->dq_dqb.dqb_curspace += spacechange;
+ 	if (!test_bit(DQ_LASTSET_B + QIF_INODES_B, &dquot->dq_flags))
+ 		dquot->dq_dqb.dqb_curinodes += inodechange;
+-	/* Now merge grace time changes... */
+-	if (!test_bit(DQ_LASTSET_B + QIF_BTIME_B, &dquot->dq_flags) &&
+-	    oldbtime > 0) {
+-		if (dquot->dq_dqb.dqb_btime > 0)
+-			dquot->dq_dqb.dqb_btime =
++	/* Set properly space grace time... */
++	if (dquot->dq_dqb.dqb_bsoftlimit &&
++	    dquot->dq_dqb.dqb_curspace > dquot->dq_dqb.dqb_bsoftlimit) {
++		if (!test_bit(DQ_LASTSET_B + QIF_BTIME_B, &dquot->dq_flags) &&
++		    oldbtime > 0) {
++			if (dquot->dq_dqb.dqb_btime > 0)
++				dquot->dq_dqb.dqb_btime =
+ 					min(dquot->dq_dqb.dqb_btime, oldbtime);
+-		else
+-			dquot->dq_dqb.dqb_btime = oldbtime;
+-	}
+-	if (!test_bit(DQ_LASTSET_B + QIF_ITIME_B, &dquot->dq_flags) &&
+-	    olditime > 0) {
+-		if (dquot->dq_dqb.dqb_itime > 0)
+-			dquot->dq_dqb.dqb_itime =
++			else
++				dquot->dq_dqb.dqb_btime = oldbtime;
++		}
++	} else {
++		dquot->dq_dqb.dqb_btime = 0;
++		clear_bit(DQ_BLKS_B, &dquot->dq_flags);
++	}
++	/* Set properly inode grace time... */
++	if (dquot->dq_dqb.dqb_isoftlimit &&
++	    dquot->dq_dqb.dqb_curinodes > dquot->dq_dqb.dqb_isoftlimit) {
++		if (!test_bit(DQ_LASTSET_B + QIF_ITIME_B, &dquot->dq_flags) &&
++		    olditime > 0) {
++			if (dquot->dq_dqb.dqb_itime > 0)
++				dquot->dq_dqb.dqb_itime =
+ 					min(dquot->dq_dqb.dqb_itime, olditime);
+-		else
+-			dquot->dq_dqb.dqb_itime = olditime;
++			else
++				dquot->dq_dqb.dqb_itime = olditime;
++		}
++	} else {
++		dquot->dq_dqb.dqb_itime = 0;
++		clear_bit(DQ_INODES_B, &dquot->dq_flags);
+ 	}
+ 	/* All information is properly updated, clear the flags */
+ 	__clear_bit(DQ_LASTSET_B + QIF_SPACE_B, &dquot->dq_flags);

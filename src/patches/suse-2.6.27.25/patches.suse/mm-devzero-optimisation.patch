@@ -1,0 +1,270 @@
+From: Nick Piggin <npiggin@suse.de>
+Subject: mm: /dev/zero optimisation
+References: bnc#430738
+Patch-mainline: no (could be submit)
+
+Patch for removal of ZERO_PAGE from main VM paths also removed the
+/dev/zero optimisation to map directly from ZERO_PAGE when doing
+mmap() and also the interesting read(2) "hack" where the MMU was
+used to make zero-filling the target buffer zero-copy.
+
+Some benchmarks have run into issues with this. Customers sometimes
+use these benchmarks to qualify and test systems, so even if the
+benchmarks themselves are "stupid", it saves some trouble to retain
+this optimisation for them. Also, while I don't think it was established
+that there is a "real" workload where this helps, but it can't be proven
+that one does not exist.
+
+Signed-off-by: Nick Piggin <npiggin@suse.de>
+---
+ drivers/char/mem.c |  105 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/mm.h |    2 +
+ mm/memory.c        |   90 ++++++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 195 insertions(+), 2 deletions(-)
+
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -702,6 +702,100 @@ static ssize_t splice_write_null(struct
+ 	return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_null);
+ }
+ 
++#if 1 //ndef CONFIG_XEN
++/*
++ * For fun, we are using the MMU for this.
++ */
++static inline size_t read_zero_pagealigned(char __user * buf, size_t size)
++{
++	struct mm_struct *mm;
++	struct vm_area_struct * vma;
++	unsigned long addr=(unsigned long)buf;
++
++	mm = current->mm;
++	/* Oops, this was forgotten before. -ben */
++	down_read(&mm->mmap_sem);
++
++	/* For private mappings, just map in zero pages. */
++	for (vma = find_vma(mm, addr); vma; vma = vma->vm_next) {
++		unsigned long count;
++
++		if (vma->vm_start > addr || (vma->vm_flags & VM_WRITE) == 0)
++			goto out_up;
++		if (vma->vm_flags & (VM_SHARED | VM_HUGETLB))
++			break;
++		count = vma->vm_end - addr;
++		if (count > size)
++			count = size;
++
++		zap_page_range(vma, addr, count, NULL);
++        	if (zeromap_page_range(vma, addr, count, PAGE_COPY))
++			break;
++
++		size -= count;
++		buf += count;
++		addr += count;
++		if (size == 0)
++			goto out_up;
++	}
++
++	up_read(&mm->mmap_sem);
++
++	/* The shared case is hard. Let's do the conventional zeroing. */
++	do {
++		unsigned long unwritten = clear_user(buf, PAGE_SIZE);
++		if (unwritten)
++			return size + unwritten - PAGE_SIZE;
++		cond_resched();
++		buf += PAGE_SIZE;
++		size -= PAGE_SIZE;
++	} while (size);
++
++	return size;
++out_up:
++	up_read(&mm->mmap_sem);
++	return size;
++}
++
++static ssize_t read_zero(struct file * file, char __user * buf,
++			 size_t count, loff_t *ppos)
++{
++	unsigned long left, unwritten, written = 0;
++
++	if (!count)
++		return 0;
++
++	if (!access_ok(VERIFY_WRITE, buf, count))
++		return -EFAULT;
++
++	left = count;
++
++	/* do we want to be clever? Arbitrary cut-off */
++	if (count >= PAGE_SIZE*4) {
++		unsigned long partial;
++
++		/* How much left of the page? */
++		partial = (PAGE_SIZE-1) & -(unsigned long) buf;
++		unwritten = clear_user(buf, partial);
++		written = partial - unwritten;
++		if (unwritten)
++			goto out;
++		left -= partial;
++		buf += partial;
++		unwritten = read_zero_pagealigned(buf, left & PAGE_MASK);
++		written += (left & PAGE_MASK) - unwritten;
++		if (unwritten)
++			goto out;
++		buf += left & PAGE_MASK;
++		left &= ~PAGE_MASK;
++	}
++	unwritten = clear_user(buf, left);
++	written += left - unwritten;
++out:
++	return written ? written : -EFAULT;
++}
++
++#else /* CONFIG_XEN */
+ static ssize_t read_zero(struct file * file, char __user * buf, 
+ 			 size_t count, loff_t *ppos)
+ {
+@@ -730,15 +824,24 @@ static ssize_t read_zero(struct file * f
+ 	}
+ 	return written ? written : -EFAULT;
+ }
++#endif /* CONFIG_XEN */
+ 
+ static int mmap_zero(struct file * file, struct vm_area_struct * vma)
+ {
++	int err = 0;
++
+ #ifndef CONFIG_MMU
+ 	return -ENOSYS;
+ #endif
++
+ 	if (vma->vm_flags & VM_SHARED)
+ 		return shmem_zero_setup(vma);
+-	return 0;
++#if 1 //ndef CONFIG_XEN
++	err = zeromap_page_range(vma, vma->vm_start,
++			vma->vm_end - vma->vm_start, vma->vm_page_prot);
++	BUG_ON(err == -EEXIST);
++#endif
++	return err;
+ }
+ 
+ static ssize_t write_full(struct file * file, const char __user * buf,
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -779,6 +779,8 @@ void free_pgd_range(struct mmu_gather *t
+ 		unsigned long end, unsigned long floor, unsigned long ceiling);
+ int copy_page_range(struct mm_struct *dst, struct mm_struct *src,
+ 			struct vm_area_struct *vma);
++int zeromap_page_range(struct vm_area_struct *vma, unsigned long from,
++			unsigned long size, pgprot_t prot);
+ void unmap_mapping_range(struct address_space *mapping,
+ 		loff_t const holebegin, loff_t const holelen, int even_cows);
+ int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1268,6 +1268,95 @@ int get_user_pages(struct task_struct *t
+ }
+ EXPORT_SYMBOL(get_user_pages);
+ 
++static int zeromap_pte_range(struct mm_struct *mm, pmd_t *pmd,
++			unsigned long addr, unsigned long end, pgprot_t prot)
++{
++	pte_t *pte;
++	spinlock_t *ptl;
++	int err = 0;
++
++	pte = pte_alloc_map_lock(mm, pmd, addr, &ptl);
++	if (!pte)
++		return -EAGAIN;
++	arch_enter_lazy_mmu_mode();
++	do {
++		struct page *page = ZERO_PAGE(addr);
++		pte_t zero_pte = pte_wrprotect(mk_pte(page, prot));
++
++		if (unlikely(!pte_none(*pte))) {
++			err = -EEXIST;
++			pte++;
++			break;
++		}
++		page_cache_get(page);
++		page_add_file_rmap(page);
++		inc_mm_counter(mm, file_rss);
++		set_pte_at(mm, addr, pte, zero_pte);
++	} while (pte++, addr += PAGE_SIZE, addr != end);
++	arch_leave_lazy_mmu_mode();
++	pte_unmap_unlock(pte - 1, ptl);
++	return err;
++}
++
++static inline int zeromap_pmd_range(struct mm_struct *mm, pud_t *pud,
++			unsigned long addr, unsigned long end, pgprot_t prot)
++{
++	pmd_t *pmd;
++	unsigned long next;
++	int err;
++
++	pmd = pmd_alloc(mm, pud, addr);
++	if (!pmd)
++		return -EAGAIN;
++	do {
++		next = pmd_addr_end(addr, end);
++		err = zeromap_pte_range(mm, pmd, addr, next, prot);
++		if (err)
++			break;
++	} while (pmd++, addr = next, addr != end);
++	return err;
++}
++
++static inline int zeromap_pud_range(struct mm_struct *mm, pgd_t *pgd,
++			unsigned long addr, unsigned long end, pgprot_t prot)
++{
++	pud_t *pud;
++	unsigned long next;
++	int err;
++
++	pud = pud_alloc(mm, pgd, addr);
++	if (!pud)
++		return -EAGAIN;
++	do {
++		next = pud_addr_end(addr, end);
++		err = zeromap_pmd_range(mm, pud, addr, next, prot);
++		if (err)
++			break;
++	} while (pud++, addr = next, addr != end);
++	return err;
++}
++
++int zeromap_page_range(struct vm_area_struct *vma,
++			unsigned long addr, unsigned long size, pgprot_t prot)
++{
++	pgd_t *pgd;
++	unsigned long next;
++	unsigned long end = addr + size;
++	struct mm_struct *mm = vma->vm_mm;
++	int err;
++
++	BUG_ON(addr >= end);
++	pgd = pgd_offset(mm, addr);
++	flush_cache_range(vma, addr, end);
++	do {
++		next = pgd_addr_end(addr, end);
++		err = zeromap_pud_range(mm, pgd, addr, next, prot);
++		if (err)
++			break;
++	} while (pgd++, addr = next, addr != end);
++	return err;
++}
++
+ pte_t *get_locked_pte(struct mm_struct *mm, unsigned long addr,
+ 			spinlock_t **ptl)
+ {
+@@ -1878,7 +1967,6 @@ gotten:
+ 
+ 	if (unlikely(anon_vma_prepare(vma)))
+ 		goto oom;
+-	VM_BUG_ON(old_page == ZERO_PAGE(0));
+ 	new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma, address);
+ 	if (!new_page)
+ 		goto oom;

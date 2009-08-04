@@ -1,0 +1,38 @@
+Subject: map scsi proc_name to module name
+From: olh@suse.de
+References: 459933 - LTC50724
+
+---
+ drivers/scsi/ibmvscsi/ibmvscsi.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/ibmvscsi/ibmvscsi.c
++++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+@@ -100,6 +100,9 @@ static struct scsi_transport_template *i
+ 
+ static struct ibmvscsi_ops *ibmvscsi_ops;
+ 
++#define IBMVSCSI_PROC_NAME "ibmvscsi"
++/* The driver is named ibmvscsic, map ibmvscsi to module name */
++MODULE_ALIAS(IBMVSCSI_PROC_NAME);
+ MODULE_DESCRIPTION("IBM Virtual SCSI");
+ MODULE_AUTHOR("Dave Boutcher");
+ MODULE_LICENSE("GPL");
+@@ -1612,7 +1615,7 @@ static struct device_attribute *ibmvscsi
+ static struct scsi_host_template driver_template = {
+ 	.module = THIS_MODULE,
+ 	.name = "IBM POWER Virtual SCSI Adapter " IBMVSCSI_VERSION,
+-	.proc_name = "ibmvscsi",
++	.proc_name = IBMVSCSI_PROC_NAME,
+ 	.queuecommand = ibmvscsi_queuecommand,
+ 	.eh_abort_handler = ibmvscsi_eh_abort_handler,
+ 	.eh_device_reset_handler = ibmvscsi_eh_device_reset_handler,
+@@ -1771,7 +1774,7 @@ static struct vio_driver ibmvscsi_driver
+ 	.remove = ibmvscsi_remove,
+ 	.get_desired_dma = ibmvscsi_get_desired_dma,
+ 	.driver = {
+-		.name = "ibmvscsi",
++		.name = IBMVSCSI_PROC_NAME,
+ 		.owner = THIS_MODULE,
+ 	}
+ };

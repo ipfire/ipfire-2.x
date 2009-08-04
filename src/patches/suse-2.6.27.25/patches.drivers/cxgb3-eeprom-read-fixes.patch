@@ -1,0 +1,49 @@
+Subject: [1/2,2.6.28] cxgb3 - eeprom read fixes
+Date: Sat, 08 Nov 2008 22:55:28 -0000
+From: Divy Le Ray <divy@chelsio.com>
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#446739
+
+From: Divy Le Ray <divy@chelsio.com>
+
+Protect against invalid phy entries in the eeprom.
+Extend eeprom access timeout.
+
+Signed-off-by: Divy Le Ray <divy@chelsio.com>
+---
+
+ drivers/net/cxgb3/t3_hw.c |    8 +++++++-
+ 1 files changed, 7 insertions(+), 1 deletions(-)
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe netdev" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+diff --git a/drivers/net/cxgb3/t3_hw.c b/drivers/net/cxgb3/t3_hw.c
+index 968f64b..9a0898b 100644
+--- a/drivers/net/cxgb3/t3_hw.c
++++ b/drivers/net/cxgb3/t3_hw.c
+@@ -572,7 +572,7 @@ struct t3_vpd {
+ 	u32 pad;		/* for multiple-of-4 sizing and alignment */
+ };
+ 
+-#define EEPROM_MAX_POLL   4
++#define EEPROM_MAX_POLL   40
+ #define EEPROM_STAT_ADDR  0x4000
+ #define VPD_BASE          0xc00
+ 
+@@ -3690,6 +3690,12 @@ int t3_prep_adapter(struct adapter *adapter, const struct adapter_info *ai,
+ 			;
+ 
+ 		pti = &port_types[adapter->params.vpd.port_type[j]];
++		if (!pti->phy_prep) {
++			CH_ALERT(adapter, "Invalid port type index %d\n",
++				 adapter->params.vpd.port_type[j]);
++			return -EINVAL;
++		}
++
+ 		ret = pti->phy_prep(&p->phy, adapter, ai->phy_base_addr + j,
+ 				    ai->mdio_ops);
+ 		if (ret)

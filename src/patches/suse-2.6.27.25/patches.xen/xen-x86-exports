@@ -1,0 +1,23 @@
+Subject: export a few more symbols
+From: jbeulich@novell.com
+Patch-mainline: obsolete
+References: bnc#458222
+
+--- sle11-2009-03-16.orig/arch/x86/mm/hypervisor.c	2009-03-16 16:40:37.000000000 +0100
++++ sle11-2009-03-16/arch/x86/mm/hypervisor.c	2009-03-16 16:40:44.000000000 +0100
+@@ -486,6 +486,7 @@ void xen_tlb_flush_all(void)
+ 	op.cmd = MMUEXT_TLB_FLUSH_ALL;
+ 	BUG_ON(HYPERVISOR_mmuext_op(&op, 1, NULL, DOMID_SELF) < 0);
+ }
++EXPORT_SYMBOL_GPL(xen_tlb_flush_all);
+ 
+ void xen_tlb_flush_mask(cpumask_t *mask)
+ {
+@@ -504,6 +505,7 @@ void xen_invlpg_all(unsigned long ptr)
+ 	op.arg1.linear_addr = ptr & PAGE_MASK;
+ 	BUG_ON(HYPERVISOR_mmuext_op(&op, 1, NULL, DOMID_SELF) < 0);
+ }
++EXPORT_SYMBOL_GPL(xen_invlpg_all);
+ 
+ void xen_invlpg_mask(cpumask_t *mask, unsigned long ptr)
+ {

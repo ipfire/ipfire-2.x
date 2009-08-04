@@ -1,0 +1,30 @@
+From 6813952021a7820a505002de260bda36978671f7 Mon Sep 17 00:00:00 2001
+From: JosephChan@via.com.tw <JosephChan@via.com.tw>
+Date: Fri, 16 Jan 2009 19:44:55 +0800
+Subject: libata: sata_via: Add VT8261 support
+Patch-mainline: 2.6.29
+References: bnc#474301
+
+From: JosephChan@via.com.tw <JosephChan@via.com.tw>
+
+commit 6813952021a7820a505002de260bda36978671f7 upstream.
+
+Signed-off-by: Joseph Chan <josephchan@via.com.tw>
+Signed-off-by: Jeff Garzik <jgarzik@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/ata/sata_via.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/ata/sata_via.c
++++ b/drivers/ata/sata_via.c
+@@ -92,6 +92,8 @@ static const struct pci_device_id svia_p
+ 	{ PCI_VDEVICE(VIA, 0x5372), vt6420 },
+ 	{ PCI_VDEVICE(VIA, 0x7372), vt6420 },
+ 	{ PCI_VDEVICE(VIA, 0x5287), vt8251 }, /* 2 sata chnls (Master/Slave) */
++	{ PCI_VDEVICE(VIA, 0x9000), vt8251 },
++	{ PCI_VDEVICE(VIA, 0x9040), vt8251 },
+ 
+ 	{ }	/* terminate list */
+ };

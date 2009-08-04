@@ -1,0 +1,58 @@
+From 680d7db88ace53c673e1c437c9b6abcc053e8d6f Mon Sep 17 00:00:00 2001
+From: Shyam Sundar <shyam.sundar@qlogic.com>
+Date: Fri, 24 Oct 2008 15:13:46 -0700
+Subject: revert - SCSI: qla2xxx: Do not honour max_vports from firmware for 2G ISPs and below.
+
+-------------------
+This is a revert of this patch that is included in 2.6.27.7
+as a further qla2xxx driver update in the series conflicts with this
+  - gregkh
+-------------------
+
+From: Shyam Sundar <shyam.sundar@qlogic.com>
+
+commit 680d7db88ace53c673e1c437c9b6abcc053e8d6f upstream.
+
+For 23XX ISPs, max_vports may return an invalid value.
+Do not honour it.
+
+Signed-off-by: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+
+---
+ drivers/scsi/qla2xxx/qla_init.c |    2 +-
+ drivers/scsi/qla2xxx/qla_mbx.c  |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -974,6 +974,7 @@ qla2x00_setup_chip(scsi_qla_host_t *ha)
+ 				    &ha->fw_minor_version,
+ 				    &ha->fw_subminor_version,
+ 				    &ha->fw_attributes, &ha->fw_memory_size);
++				qla2x00_resize_request_q(ha);
+ 				ha->flags.npiv_supported = 0;
+ 				if ((IS_QLA24XX(ha) || IS_QLA25XX(ha) ||
+ 				     IS_QLA84XX(ha)) &&
+@@ -985,7 +986,6 @@ qla2x00_setup_chip(scsi_qla_host_t *ha)
+ 						ha->max_npiv_vports =
+ 						    MIN_MULTI_ID_FABRIC - 1;
+ 				}
+-				qla2x00_resize_request_q(ha);
+ 
+ 				if (ql2xallocfwdump)
+ 					qla2x00_alloc_fw_dump(ha);
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -1964,7 +1964,7 @@ qla2x00_get_resource_cnts(scsi_qla_host_
+ 			*cur_iocb_cnt = mcp->mb[7];
+ 		if (orig_iocb_cnt)
+ 			*orig_iocb_cnt = mcp->mb[10];
+-		if (ha->flags.npiv_supported && max_npiv_vports)
++		if (max_npiv_vports)
+ 			*max_npiv_vports = mcp->mb[11];
+ 	}
+ 

@@ -1,0 +1,23 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: x86: Fix section conflict with kvm_setup_secondary_clock
+
+ This patch marks kvm_setup_secondary_clock as __cpuinit to fix
+ section mismatch warnings. It calls setup_secondary_APIC_clock, which
+ is marked __cpuinit.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ arch/x86/kernel/kvmclock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -100,7 +100,7 @@ static int kvm_register_clock(char *txt)
+ }
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+-static void kvm_setup_secondary_clock(void)
++static void __cpuinit kvm_setup_secondary_clock(void)
+ {
+ 	/*
+ 	 * Now that the first cpu already had this clocksource initialized,

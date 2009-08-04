@@ -1,1 +1,150 @@
-linux
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+PATCHLEVEL = .25
+VER        = 2.6.27.25
+
+THISAPP    = linux-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+CFLAGS     =
+CXXFLAGS   =
+
+PROG	   = linux-xen
+PAK_VER    = 4
+DEPS	   = ""
+
+# Normal build or XEN build.
+#
+VERSUFIX=ipfire-xen
+TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects =$(DL_FILE) \
+	squashfs3.4.tar.gz \
+	netfilter-layer7-v2.21.tar.gz \
+	patch-2.6.16-nath323-1.3.bz2 \
+	reiser4-for-2.6.27.19.patch.bz2
+	
+$(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
+netfilter-layer7-v2.21.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.21.tar.gz
+patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
+squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
+reiser4-for-2.6.27.19.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.27.19.patch.bz2
+
+$(DL_FILE)_MD5				= 5d6dcff157f30d742c9ee28ad4589779
+netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
+patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
+squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
+reiser4-for-2.6.27.19.patch.bz2_MD5	= 22988387f64f299489b90b484b2642cc
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	ln -s linux-$(VER) /usr/src/linux
+
+	# Apply Xen patches (provided by SuSE)
+	cd $(DIR_SRC)/src/patches/suse-$(VER) && \
+		for x in $$( $(DIR_SRC)/src/patches/suse-$(VER)/guards $$( $(DIR_SRC)/src/patches/suse-$(VER)/arch-symbols) < $(DIR_SRC)/src/patches/suse-$(VER)/series.conf); do \
+			patch -d $(DIR_APP) -p1 < $$x || break; \
+		done
+
+	# Linux Intermediate Queueing Device
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/imq-skbuff.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.21-imq-test3-xen.patch
+
+	# Not report deprecated syscall 1.23 (for kudzu)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
+    
+	# ipp2p 0.8.2-pomng
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.19-ipp2p-0.8.2-pomng.patch
+
+	# Layer7-patch
+	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.21
+	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.21.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.21/kernel-2.6.25-2.6.28-layer7-2.21.patch
+
+	# Cleanup kernel source
+	cd $(DIR_APP) && make mrproper
+
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
+	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
+	cd $(DIR_APP) && make CC="$(KGCC)" clean
+	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-$(VERSUFIX)/' Makefile
+
+
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" && make modules_install
+	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
+
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
+	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
+	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
+
+	# Rename ide-cd module to match with old kernel
+	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd_mod.ko \
+	   /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd.ko
+
+	# Remove mISDN modules
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
+
+	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
+	@$(POSTBUILD)
+

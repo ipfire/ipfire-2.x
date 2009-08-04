@@ -1,0 +1,45 @@
+From 113328306dbdfd5f146f257e447364dc66d025d4 Mon Sep 17 00:00:00 2001
+From: Jason Baron <jbaron@redhat.com>
+Date: Mon, 27 Oct 2008 12:05:14 -0400
+Subject: Driver core: fix 'dynamic_debug' cmd line parameter
+Patch-mainline: 2.6.28
+
+From: Jason Baron <jbaron@redhat.com>
+
+commit 113328306dbdfd5f146f257e447364dc66d025d4 upstream.
+
+In testing 2.6.28-rc1, I found that passing 'dynamic_printk' on the command
+line didn't activate the debug code. The problem is that dynamic_printk_setup()
+(which activates the debugging) is being called before dynamic_printk_init() is
+called (which initializes infrastructure). Fix this by setting setting the
+state to 'DYNAMIC_ENABLED_ALL' in dynamic_printk_setup(), which will also
+cause all subsequent modules to have debugging automatically started, which is
+probably the behavior we want.
+
+Signed-off-by: Jason Baron <jbaron@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ lib/dynamic_printk.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/lib/dynamic_printk.c
++++ b/lib/dynamic_printk.c
+@@ -402,6 +402,8 @@ static int __init dynamic_printk_init(vo
+ 				iter->logical_modname,
+ 				iter->flag_names, iter->hash, iter->hash2);
+ 	}
++	if (dynamic_enabled == DYNAMIC_ENABLED_ALL)
++		set_all(true);
+ 	return 0;
+ }
+ module_init(dynamic_printk_init);
+@@ -411,7 +413,7 @@ static int __init dynamic_printk_setup(c
+ {
+ 	if (str)
+ 		return -ENOENT;
+-	set_all(true);
++	dynamic_enabled = DYNAMIC_ENABLED_ALL;
+ 	return 0;
+ }
+ /* Use early_param(), so we can get debug output as early as possible */

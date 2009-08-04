@@ -1,0 +1,34 @@
+From: jbeulich@novell.com
+Subject: fix unwind annotations
+Patch-mainline: tbd
+
+Automatically created from "patches.arch/x86_64-unwind-annotations" by xen-port-patches.py
+
+Index: head-2008-10-24/arch/x86/kernel/entry_64-xen.S
+===================================================================
+--- head-2008-10-24.orig/arch/x86/kernel/entry_64-xen.S	2008-10-24 10:51:58.000000000 +0200
++++ head-2008-10-24/arch/x86/kernel/entry_64-xen.S	2008-10-24 10:52:01.000000000 +0200
+@@ -303,12 +303,13 @@ NMI_MASK = 0x80000000
+ ENTRY(ret_from_fork)
+ 	CFI_DEFAULT_STACK
+ 	push kernel_eflags(%rip)
+-	CFI_ADJUST_CFA_OFFSET 4
++	CFI_ADJUST_CFA_OFFSET 8
+ 	popf				# reset kernel eflags
+-	CFI_ADJUST_CFA_OFFSET -4
++	CFI_ADJUST_CFA_OFFSET -8
+ 	call schedule_tail
+ 	GET_THREAD_INFO(%rcx)
+ 	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT),TI_flags(%rcx)
++	CFI_REMEMBER_STATE
+ 	jnz rff_trace
+ rff_action:	
+ 	RESTORE_REST
+@@ -318,6 +319,7 @@ rff_action:	
+ 	jnz  int_ret_from_sys_call
+ 	RESTORE_TOP_OF_STACK %rdi,ARGOFFSET
+ 	jmp ret_from_sys_call
++	CFI_RESTORE_STATE
+ rff_trace:
+ 	movq %rsp,%rdi
+ 	call syscall_trace_leave

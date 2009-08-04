@@ -1,0 +1,169 @@
+From: Nick Piggin <npiggin@novell.com>
+Subject: Add mark_rodata_rw() to un-protect read-only kernel code pages
+References: bnc#439348
+
+CONFIG_RODATA presents a problem for antivirus vendors who do not have a
+clean user-space interface for getting virus scanning triggered, and
+currently resort to patching the kernel code instead (presumably the
+ystem call table). With CONFIG_RODATA enabled, the kernel rejects such
+write accesses.
+
+Add a new mark_rodata_rw() function to un-protect the read-only kernel code
+pages for now, and export mark_rodata_ro() and mark_rodata_rw() to modules.
+
+This is not meant as a permanent workaround, and will be removed again in the
+next release!
+
+Acked-by: Andres Gruenbacher <agruen@suse.de>
+
+---
+ arch/x86/mm/init_32.c        |   22 ++++++++++++++++++++++
+ arch/x86/mm/init_64.c        |   17 +++++++++++++++++
+ arch/x86/mm/pageattr.c       |   30 ++++++++++++++++++++++++++++--
+ include/asm-x86/cacheflush.h |    3 +++
+ 4 files changed, 70 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -1073,6 +1073,28 @@ void mark_rodata_ro(void)
+ 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
+ #endif
+ }
++EXPORT_SYMBOL(mark_rodata_ro);
++
++void mark_rodata_rw(void)
++{
++	unsigned long start = PFN_ALIGN(_text);
++	unsigned long size = PFN_ALIGN(_etext) - start;
++
++#ifndef CONFIG_DYNAMIC_FTRACE
++	/* Dynamic tracing modifies the kernel text section */
++	set_pages_rw_force(virt_to_page(start), size >> PAGE_SHIFT);
++	printk(KERN_INFO "Write enabling the kernel text: %luk\n",
++		size >> 10);
++
++#endif /* CONFIG_DYNAMIC_FTRACE */
++
++	start += size;
++	size = (unsigned long)__end_rodata - start;
++	set_pages_rw_force(virt_to_page(start), size >> PAGE_SHIFT);
++	printk(KERN_INFO "Write enabling the kernel read-only data: %luk\n",
++		size >> 10);
++}
++EXPORT_SYMBOL(mark_rodata_rw);
+ #endif
+ 
+ void free_init_pages(char *what, unsigned long begin, unsigned long end)
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -896,7 +896,24 @@ void mark_rodata_ro(void)
+ 	set_memory_ro(start, (end-start) >> PAGE_SHIFT);
+ #endif
+ }
++EXPORT_SYMBOL(mark_rodata_ro);
+ 
++void mark_rodata_rw(void)
++{
++	unsigned long start = PFN_ALIGN(_stext), end = PFN_ALIGN(__end_rodata);
++	unsigned long rodata_start =
++		((unsigned long)__start_rodata + PAGE_SIZE - 1) & PAGE_MASK;
++
++#ifdef CONFIG_DYNAMIC_FTRACE
++	/* Dynamic tracing modifies the kernel text section */
++	start = rodata_start;
++#endif
++
++	printk(KERN_INFO "Write enabling the kernel read-only data: %luk\n",
++	       (end - start) >> 10);
++	set_memory_rw_force(start, (end - start) >> PAGE_SHIFT);
++}
++EXPORT_SYMBOL(mark_rodata_rw);
+ #endif
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -190,6 +190,8 @@ static void cpa_flush_range(unsigned lon
+ 	}
+ }
+ 
++static int static_protections_allow_rodata __read_mostly;
++
+ /*
+  * Certain areas of memory on x86 require very specific protection flags,
+  * for example the BIOS area or kernel text. Callers don't always get this
+@@ -221,8 +223,10 @@ static inline pgprot_t static_protection
+ 	 * catches all aliases.
+ 	 */
+ 	if (within(pfn, __pa((unsigned long)__start_rodata) >> PAGE_SHIFT,
+-		   __pa((unsigned long)__end_rodata) >> PAGE_SHIFT))
+-		pgprot_val(forbidden) |= _PAGE_RW;
++		   __pa((unsigned long)__end_rodata) >> PAGE_SHIFT)) {
++		if (!static_protections_allow_rodata)
++			pgprot_val(forbidden) |= _PAGE_RW;
++	}
+ 
+ 	prot = __pgprot(pgprot_val(prot) & ~pgprot_val(forbidden));
+ 
+@@ -956,6 +960,21 @@ int set_memory_rw(unsigned long addr, in
+ 	return change_page_attr_set(addr, numpages, __pgprot(_PAGE_RW));
+ }
+ 
++/* hack: bypass kernel rodata section static_protections check. */
++int set_memory_rw_force(unsigned long addr, int numpages)
++{
++	static DEFINE_MUTEX(lock);
++	int ret;
++
++	mutex_lock(&lock);
++	static_protections_allow_rodata = 1;
++	ret = change_page_attr_set(addr, numpages, __pgprot(_PAGE_RW));
++	static_protections_allow_rodata = 0;
++	mutex_unlock(&lock);
++
++	return ret;
++}
++
+ int set_memory_np(unsigned long addr, int numpages)
+ {
+ 	return change_page_attr_clear(addr, numpages, __pgprot(_PAGE_PRESENT));
+@@ -1013,6 +1032,13 @@ int set_pages_rw(struct page *page, int
+ 	return set_memory_rw(addr, numpages);
+ }
+ 
++int set_pages_rw_force(struct page *page, int numpages)
++{
++	unsigned long addr = (unsigned long)page_address(page);
++
++	return set_memory_rw_force(addr, numpages);
++}
++
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+ 
+ static int __set_pages_p(struct page *page, int numpages)
+--- a/include/asm-x86/cacheflush.h
++++ b/include/asm-x86/cacheflush.h
+@@ -63,6 +63,7 @@ int set_memory_x(unsigned long addr, int
+ int set_memory_nx(unsigned long addr, int numpages);
+ int set_memory_ro(unsigned long addr, int numpages);
+ int set_memory_rw(unsigned long addr, int numpages);
++int set_memory_rw_force(unsigned long addr, int numpages);
+ int set_memory_np(unsigned long addr, int numpages);
+ int set_memory_4k(unsigned long addr, int numpages);
+ 
+@@ -92,6 +93,7 @@ int set_pages_x(struct page *page, int n
+ int set_pages_nx(struct page *page, int numpages);
+ int set_pages_ro(struct page *page, int numpages);
+ int set_pages_rw(struct page *page, int numpages);
++int set_pages_rw_force(struct page *page, int numpages);
+ 
+ 
+ void clflush_cache_range(void *addr, unsigned int size);
+@@ -100,6 +102,7 @@ void cpa_init(void);
+ 
+ #ifdef CONFIG_DEBUG_RODATA
+ void mark_rodata_ro(void);
++void mark_rodata_rw(void);
+ extern const int rodata_test_data;
+ #endif
+ 

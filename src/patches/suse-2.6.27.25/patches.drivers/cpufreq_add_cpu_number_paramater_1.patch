@@ -1,0 +1,111 @@
+From: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>
+Subject: cpufreq: Add a cpu parameter to __cpufreq_driver_getavg().
+
+Add a cpu parameter to __cpufreq_driver_getavg(). This is needed for software
+cpufreq coordination where policy->cpu may not be same as the CPU on which we
+want to getavg frequency. 
+
+A follow-on patch will use this parameter to getavg freq from all cpus
+in policy->cpus.
+
+Change since last patch. Fix the offline/online and suspend/resume
+oops reported by Youquan Song <youquan.song@intel.com>
+
+Signed-off-by: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+---
+ arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c |    5 +++--
+ drivers/cpufreq/cpufreq.c                  |    6 +++---
+ drivers/cpufreq/cpufreq_ondemand.c         |    2 +-
+ include/linux/cpufreq.h                    |    7 +++++--
+ 4 files changed, 12 insertions(+), 8 deletions(-)
+
+Index: cpufreq.git/drivers/cpufreq/cpufreq.c
+===================================================================
+--- cpufreq.git.orig/drivers/cpufreq/cpufreq.c	2008-08-04 10:28:26.000000000 -0700
++++ cpufreq.git/drivers/cpufreq/cpufreq.c	2008-08-04 10:31:27.000000000 -0700
+@@ -1485,7 +1485,7 @@ int cpufreq_driver_target(struct cpufreq
+ }
+ EXPORT_SYMBOL_GPL(cpufreq_driver_target);
+ 
+-int __cpufreq_driver_getavg(struct cpufreq_policy *policy)
++int __cpufreq_driver_getavg(struct cpufreq_policy *policy, unsigned int cpu)
+ {
+ 	int ret = 0;
+ 
+@@ -1493,8 +1493,8 @@ int __cpufreq_driver_getavg(struct cpufr
+ 	if (!policy)
+ 		return -EINVAL;
+ 
+-	if (cpu_online(policy->cpu) && cpufreq_driver->getavg)
+-		ret = cpufreq_driver->getavg(policy->cpu);
++	if (cpu_online(cpu) && cpufreq_driver->getavg)
++		ret = cpufreq_driver->getavg(policy, cpu);
+ 
+ 	cpufreq_cpu_put(policy);
+ 	return ret;
+Index: cpufreq.git/drivers/cpufreq/cpufreq_ondemand.c
+===================================================================
+--- cpufreq.git.orig/drivers/cpufreq/cpufreq_ondemand.c	2008-08-04 10:28:26.000000000 -0700
++++ cpufreq.git/drivers/cpufreq/cpufreq_ondemand.c	2008-08-04 10:31:27.000000000 -0700
+@@ -415,7 +415,7 @@ static void dbs_check_cpu(struct cpu_dbs
+ 	if (load < (dbs_tuners_ins.up_threshold - 10)) {
+ 		unsigned int freq_next, freq_cur;
+ 
+-		freq_cur = __cpufreq_driver_getavg(policy);
++		freq_cur = __cpufreq_driver_getavg(policy, policy->cpu);
+ 		if (!freq_cur)
+ 			freq_cur = policy->cur;
+ 
+Index: cpufreq.git/include/linux/cpufreq.h
+===================================================================
+--- cpufreq.git.orig/include/linux/cpufreq.h	2008-08-04 10:28:26.000000000 -0700
++++ cpufreq.git/include/linux/cpufreq.h	2008-08-04 10:31:27.000000000 -0700
+@@ -187,7 +187,8 @@ extern int __cpufreq_driver_target(struc
+ 				   unsigned int relation);
+ 
+ 
+-extern int __cpufreq_driver_getavg(struct cpufreq_policy *policy);
++extern int __cpufreq_driver_getavg(struct cpufreq_policy *policy,
++				   unsigned int cpu);
+ 
+ int cpufreq_register_governor(struct cpufreq_governor *governor);
+ void cpufreq_unregister_governor(struct cpufreq_governor *governor);
+@@ -226,7 +227,9 @@ struct cpufreq_driver {
+ 	unsigned int	(*get)	(unsigned int cpu);
+ 
+ 	/* optional */
+-	unsigned int (*getavg)	(unsigned int cpu);
++	unsigned int (*getavg)	(struct cpufreq_policy *policy,
++				 unsigned int cpu);
++
+ 	int	(*exit)		(struct cpufreq_policy *policy);
+ 	int	(*suspend)	(struct cpufreq_policy *policy, pm_message_t pmsg);
+ 	int	(*resume)	(struct cpufreq_policy *policy);
+Index: cpufreq.git/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c
+===================================================================
+--- cpufreq.git.orig/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c	2008-08-04 10:28:26.000000000 -0700
++++ cpufreq.git/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c	2008-08-04 10:31:27.000000000 -0700
+@@ -256,7 +256,8 @@ static u32 get_cur_val(const cpumask_t *
+  * Only IA32_APERF/IA32_MPERF ratio is architecturally defined and
+  * no meaning should be associated with absolute values of these MSRs.
+  */
+-static unsigned int get_measured_perf(unsigned int cpu)
++static unsigned int get_measured_perf(struct cpufreq_policy *policy,
++				      unsigned int cpu)
+ {
+ 	union {
+ 		struct {
+@@ -326,7 +327,7 @@ static unsigned int get_measured_perf(un
+ 
+ #endif
+ 
+-	retval = per_cpu(drv_data, cpu)->max_freq * perf_percent / 100;
++	retval = per_cpu(drv_data, policy->cpu)->max_freq * perf_percent / 100;
+ 
+ 	put_cpu();
+ 	set_cpus_allowed_ptr(current, &saved_mask);
+
+-- 
+

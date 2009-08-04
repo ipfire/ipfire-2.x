@@ -1,0 +1,45 @@
+From: Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
+Subject: dm-mpath: add a path selector interface
+References: FATE#303862,FATE#302108
+
+This patch adds a new hook for dm path selector: start_io.
+Target drivers should call this hook before submitting I/O to
+the selected path.
+Path selectors can use it to start accounting of the I/O.
+(e.g. counting the number of in-flight I/Os.)
+
+The code is based on the patch posted by Stefan Bader:
+https://www.redhat.com/archives/dm-devel/2005-October/msg00050.html
+
+
+Signed-off-by: Stefan Bader <stefan.bader@canonical.com>
+Signed-off-by: Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
+Signed-off-by: Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+Index: linux-2.6.27/drivers/md/dm-mpath.c
+===================================================================
+--- linux-2.6.27.orig/drivers/md/dm-mpath.c
++++ linux-2.6.27/drivers/md/dm-mpath.c
+@@ -359,6 +359,9 @@ static int map_io(struct multipath *m, s
+ 
+ 	mpio->pgpath = pgpath;
+ 
++	if (r == DM_MAPIO_REMAPPED && pgpath->pg->ps.type->start_io)
++		pgpath->pg->ps.type->start_io(&pgpath->pg->ps, &pgpath->path);
++
+ 	spin_unlock_irqrestore(&m->lock, flags);
+ 
+ 	return r;
+Index: linux-2.6.27/drivers/md/dm-path-selector.h
+===================================================================
+--- linux-2.6.27.orig/drivers/md/dm-path-selector.h
++++ linux-2.6.27/drivers/md/dm-path-selector.h
+@@ -75,6 +75,7 @@ struct path_selector_type {
+ 	int (*status) (struct path_selector *ps, struct dm_path *path,
+ 		       status_type_t type, char *result, unsigned int maxlen);
+ 
++	int (*start_io) (struct path_selector *ps, struct dm_path *path);
+ 	int (*end_io) (struct path_selector *ps, struct dm_path *path);
+ };
+ 

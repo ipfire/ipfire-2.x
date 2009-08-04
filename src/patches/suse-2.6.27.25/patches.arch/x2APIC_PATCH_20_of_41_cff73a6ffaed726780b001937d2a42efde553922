@@ -1,0 +1,106 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: introcude self IPI to genapic routines
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: cff73a6ffaed726780b001937d2a42efde553922
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Introduce self IPI op for genapic.
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: akpm@linux-foundation.org
+Cc: arjan@linux.intel.com
+Cc: andi@firstfloor.org
+Cc: ebiederm@xmission.com
+Cc: jbarnes@virtuousgeek.org
+Cc: steiner@sgi.com
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/genapic_64.c             |    2 +-
+ arch/x86/kernel/genapic_flat_64.c        |    2 ++
+ include/asm-x86/genapic_64.h             |    2 ++
+ include/asm-x86/hw_irq.h                 |    2 ++
+ include/asm-x86/mach-default/mach_apic.h |    1 +
+ 5 files changed, 8 insertions(+), 1 deletion(-)
+
+Index: linux-2.6.26/arch/x86/kernel/genapic_64.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/genapic_64.c
++++ linux-2.6.26/arch/x86/kernel/genapic_64.c
+@@ -61,7 +61,7 @@ void __init setup_apic_routing(void)
+ 
+ /* Same for both flat and physical. */
+ 
+-void send_IPI_self(int vector)
++void apic_send_IPI_self(int vector)
+ {
+ 	__send_IPI_shortcut(APIC_DEST_SELF, vector, APIC_DEST_PHYSICAL);
+ }
+Index: linux-2.6.26/arch/x86/kernel/genapic_flat_64.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/genapic_flat_64.c
++++ linux-2.6.26/arch/x86/kernel/genapic_flat_64.c
+@@ -131,6 +131,7 @@ struct genapic apic_flat =  {
+ 	.send_IPI_all = flat_send_IPI_all,
+ 	.send_IPI_allbutself = flat_send_IPI_allbutself,
+ 	.send_IPI_mask = flat_send_IPI_mask,
++	.send_IPI_self = apic_send_IPI_self,
+ 	.cpu_mask_to_apicid = flat_cpu_mask_to_apicid,
+ 	.phys_pkg_id = phys_pkg_id,
+ 	.read_apic_id = read_xapic_id,
+@@ -196,6 +197,7 @@ struct genapic apic_physflat =  {
+ 	.send_IPI_all = physflat_send_IPI_all,
+ 	.send_IPI_allbutself = physflat_send_IPI_allbutself,
+ 	.send_IPI_mask = physflat_send_IPI_mask,
++	.send_IPI_self = apic_send_IPI_self,
+ 	.cpu_mask_to_apicid = physflat_cpu_mask_to_apicid,
+ 	.phys_pkg_id = phys_pkg_id,
+ 	.read_apic_id = read_xapic_id,
+Index: linux-2.6.26/include/asm-x86/genapic_64.h
+===================================================================
+--- linux-2.6.26.orig/include/asm-x86/genapic_64.h
++++ linux-2.6.26/include/asm-x86/genapic_64.h
+@@ -24,6 +24,7 @@ struct genapic {
+ 	void (*send_IPI_mask)(cpumask_t mask, int vector);
+ 	void (*send_IPI_allbutself)(int vector);
+ 	void (*send_IPI_all)(int vector);
++	void (*send_IPI_self)(int vector);
+ 	/* */
+ 	unsigned int (*cpu_mask_to_apicid)(cpumask_t cpumask);
+ 	unsigned int (*phys_pkg_id)(int index_msb);
+@@ -36,6 +37,7 @@ extern struct genapic apic_flat;
+ extern struct genapic apic_physflat;
+ extern int acpi_madt_oem_check(char *, char *);
+ 
++extern void apic_send_IPI_self(int vector);
+ enum uv_system_type {UV_NONE, UV_LEGACY_APIC, UV_X2APIC, UV_NON_UNIQUE_APIC};
+ extern enum uv_system_type get_uv_system_type(void);
+ extern int is_uv_system(void);
+Index: linux-2.6.26/include/asm-x86/hw_irq.h
+===================================================================
+--- linux-2.6.26.orig/include/asm-x86/hw_irq.h
++++ linux-2.6.26/include/asm-x86/hw_irq.h
+@@ -73,7 +73,9 @@ extern void enable_IO_APIC(void);
+ #endif
+ 
+ /* IPI functions */
++#ifdef CONFIG_X86_32
+ extern void send_IPI_self(int vector);
++#endif
+ extern void send_IPI(int dest, int vector);
+ 
+ /* Statistics */
+Index: linux-2.6.26/include/asm-x86/mach-default/mach_apic.h
+===================================================================
+--- linux-2.6.26.orig/include/asm-x86/mach-default/mach_apic.h
++++ linux-2.6.26/include/asm-x86/mach-default/mach_apic.h
+@@ -31,6 +31,7 @@ static inline cpumask_t target_cpus(void
+ #define phys_pkg_id	(genapic->phys_pkg_id)
+ #define vector_allocation_domain    (genapic->vector_allocation_domain)
+ #define read_apic_id  (genapic->read_apic_id)
++#define send_IPI_self (genapic->send_IPI_self)
+ extern void setup_apic_routing(void);
+ #else
+ #define INT_DELIVERY_MODE dest_LowestPrio

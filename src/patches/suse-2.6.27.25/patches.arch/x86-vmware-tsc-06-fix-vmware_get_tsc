@@ -1,0 +1,46 @@
+From: Alok Kataria <akataria@vmware.com>
+Subject: x86: VMware: Fix vmware_get_tsc code
+Patch-mainline:
+References: bnc#441338
+
+Impact: Fix possible failure to calibrate the TSC on Vmware near 4 GHz
+
+The current version of the code to get the tsc frequency from
+the VMware hypervisor, will be broken on processor with frequency
+(4G-1) HZ, because on such processors eax will have UINT_MAX
+and that would be legitimate.
+We instead check that EBX did change to decide if we were able to
+read the frequency from the hypervisor.
+
+Signed-off-by: Alok N Kataria <akataria@vmware.com>
+Signed-off-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+
+ arch/x86/kernel/cpu/vmware.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+
+diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+index 2ac4394..a0905ec 100644
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -36,7 +36,7 @@
+ 			"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :	\
+ 			"0"(VMWARE_HYPERVISOR_MAGIC),			\
+ 			"1"(VMWARE_PORT_CMD_##cmd),			\
+-			"2"(VMWARE_HYPERVISOR_PORT), "3"(0) :		\
++			"2"(VMWARE_HYPERVISOR_PORT), "3"(UINT_MAX) :	\
+ 			"memory");
+ 
+ static inline int __vmware_platform(void)
+@@ -53,7 +53,7 @@ static unsigned long __vmware_get_tsc_khz(void)
+ 
+         VMWARE_PORT(GETHZ, eax, ebx, ecx, edx);
+ 
+-        if (eax == (uint32_t)-1)
++        if (ebx == UINT_MAX)
+                 return 0;
+         tsc_hz = eax | (((uint64_t)ebx) << 32);
+         do_div(tsc_hz, 1000);

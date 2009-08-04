@@ -1,0 +1,28 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: ABI fix: add s_syncing back to struct super_block
+
+This is only to keep the ABI stable for now, this patch
+needs to be removed next chance we get when the ABI changes
+as it's not needed at all.
+
+This is here because 2.6.27.13 removes this field.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ include/linux/fs.h |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1085,6 +1085,10 @@ struct super_block {
+ 	struct rw_semaphore	s_umount;
+ 	struct mutex		s_lock;
+ 	int			s_count;
++	/*******************************************************/
++	/* DO NOT USE s_syncing only here to keep API "stable" */
++	/*******************************************************/
++	int			s_syncing;
+ 	int			s_need_sync_fs;
+ 	atomic_t		s_active;
+ #ifdef CONFIG_SECURITY

@@ -1,0 +1,49 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: cio: ccwgroup online vs. ungroup race condition
+References: bnc#445100,LTC#50092
+
+Symptom:     Kernel oops when a ccwgroup ungroup operation is triggered while
+             online operation is still in progress.
+Problem:     Atomicity of ungroup operation is not guaranteed because of
+             missing locking.
+Solution:    Introduce locking to ungroup operation.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/cio/ccwgroup.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+Index: linux-sles11/drivers/s390/cio/ccwgroup.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/ccwgroup.c
++++ linux-sles11/drivers/s390/cio/ccwgroup.c
+@@ -89,15 +89,23 @@ ccwgroup_ungroup_store(struct device *de
+ 
+ 	gdev = to_ccwgroupdev(dev);
+ 
+-	if (gdev->state != CCWGROUP_OFFLINE)
+-		return -EINVAL;
+-
++	/* Prevent concurrent online/offline processing and ungrouping. */
++	if (atomic_cmpxchg(&gdev->onoff, 0, 1) != 0)
++		return -EAGAIN;
++	if (gdev->state != CCWGROUP_OFFLINE) {
++		rc = -EINVAL;
++		goto out;
++	}
+ 	/* Note that we cannot unregister the device from one of its
+ 	 * attribute methods, so we have to use this roundabout approach.
+ 	 */
+ 	rc = device_schedule_callback(dev, ccwgroup_ungroup_callback);
+-	if (rc)
+-		count = rc;
++out:
++	if (rc) {
++		/* Release onoff "lock" when ungrouping failed. */
++		atomic_set(&gdev->onoff, 0);
++		return rc;
++	}
+ 	return count;
+ }
+ 

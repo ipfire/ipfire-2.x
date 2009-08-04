@@ -1,0 +1,30 @@
+From: Alex Chiang <achiang@hp.com>
+Subject: IA64: first clear CPU from online map, then fixup IRQs.
+References: bnc#386714
+
+Acked-by: Raymund Will <rw@suse.de>
+
+---
+ arch/ia64/kernel/smpboot.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+--- a/arch/ia64/kernel/smpboot.c
++++ b/arch/ia64/kernel/smpboot.c
+@@ -741,14 +741,12 @@ int __cpu_disable(void)
+ 			return -EBUSY;
+ 	}
+ 
+-	if (migrate_platform_irqs(cpu)) {
+-		cpu_set(cpu, cpu_online_map);
+-		return (-EBUSY);
+-	}
++	if (migrate_platform_irqs(cpu))
++		return -EBUSY;
+ 
+ 	remove_siblinginfo(cpu);
+-	fixup_irqs();
+ 	cpu_clear(cpu, cpu_online_map);
++	fixup_irqs();
+ 	local_flush_tlb_all();
+ 	cpu_clear(cpu, cpu_callin_map);
+ 	return 0;

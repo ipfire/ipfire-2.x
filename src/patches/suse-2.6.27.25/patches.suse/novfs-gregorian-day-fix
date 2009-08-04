@@ -1,0 +1,31 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] novfs: Fix GregorianDay conflict
+
+ powerpc and sparc have their own non-static versions of GregorianDay
+ that conflict with this one.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/novfs/profile.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/fs/novfs/profile.c
++++ b/fs/novfs/profile.c
+@@ -314,7 +314,7 @@ static int month_days[12] = {
+ /*
+  * This only works for the Gregorian calendar - i.e. after 1752 (in the UK)
+  */
+-static void GregorianDay(struct local_rtc_time *tm)
++static void NovfsGregorianDay(struct local_rtc_time *tm)
+ {
+ 	int leapsToDate;
+ 	int lastYear;
+@@ -384,7 +384,7 @@ static void private_to_tm(int tim, struc
+ 	/*
+ 	 * Determine the day of week
+ 	 */
+-	GregorianDay(tm);
++	NovfsGregorianDay(tm);
+ }
+ 
+ char *ctime_r(time_t * clock, char *buf)

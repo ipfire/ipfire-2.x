@@ -1,0 +1,110 @@
+From: Neil Brown <neilb@suse.de>
+Subject: md: Allow write-intent bitmaps to have chunksize < PAGE_SIZE
+Patch-mainline: no
+References: 459557
+
+md currently insists that the chunk size used for write-intent
+bitmaps (the amount of data that corresponds to one chunk)
+be at least one page.
+
+The reason for this list restriction is lost in the mists of time,
+but a review of the code (and a vague memory) suggests that the only
+problem would be related to resync.  Resync tries very hard to
+work in multiples of a page, but also needs to sync with units
+of a bitmap_chunk too.
+
+This connection comes out in the bitmap_start_sync call.
+
+So change bitmap_start_sync to always work in multiples of a page.
+If the bitmap chunk size is less that one page, we flag multiple
+chunks as 'syncing' and generally make them all appear to the
+resync routines like one chunk.
+
+All other code either already works with data ranges that could
+span multiple chunks, or explicitly only cares about a single chunk.
+
+This is needed because some architectures use 64K pages in SLES11
+where they used 4K pages in SLES10.  So arrays created on SLES10
+might not work with SLES11 without this change.
+
+Also, the default chunk size is 4K, and so newly create arrays
+that use the default will not work.
+
+Signed-off-by: Neil Brown <neilb@suse.de>
+
+---
+ drivers/md/bitmap.c |   41 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 32 insertions(+), 9 deletions(-)
+
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -110,13 +110,12 @@ static int bitmap_checkpage(struct bitma
+ {
+ 	unsigned char *mappage;
+ 
+-	if (page >= bitmap->pages) {
+-		printk(KERN_ALERT
+-			"%s: invalid bitmap page request: %lu (> %lu)\n",
+-			bmname(bitmap), page, bitmap->pages-1);
++	if (page >= bitmap->pages)
++		/* This can happen if bitmap_start_sync goes beyond
++		 * End-of-device while looking for a whole page.
++		 * It is harmless.
++		 */
+ 		return -EINVAL;
+-	}
+-
+ 
+ 	if (bitmap->bp[page].hijacked) /* it's hijacked, don't try to alloc */
+ 		return 0;
+@@ -571,7 +570,7 @@ static int bitmap_read_sb(struct bitmap
+ 	else if (le32_to_cpu(sb->version) < BITMAP_MAJOR_LO ||
+ 		 le32_to_cpu(sb->version) > BITMAP_MAJOR_HI)
+ 		reason = "unrecognized superblock version";
+-	else if (chunksize < PAGE_SIZE)
++	else if (chunksize < 512)
+ 		reason = "bitmap chunksize too small";
+ 	else if ((1 << ffz(~chunksize)) != chunksize)
+ 		reason = "bitmap chunksize not a power of 2";
+@@ -1347,8 +1346,8 @@ void bitmap_endwrite(struct bitmap *bitm
+ 	}
+ }
+ 
+-int bitmap_start_sync(struct bitmap *bitmap, sector_t offset, int *blocks,
+-			int degraded)
++static int __bitmap_start_sync(struct bitmap *bitmap, sector_t offset, int *blocks,
++			       int degraded)
+ {
+ 	bitmap_counter_t *bmc;
+ 	int rv;
+@@ -1376,6 +1375,30 @@ int bitmap_start_sync(struct bitmap *bit
+ 	return rv;
+ }
+ 
++int bitmap_start_sync(struct bitmap *bitmap, sector_t offset, int *blocks,
++		      int degraded)
++{
++	/* bitmap_start_sync must always report on multiples of whole
++	 * pages, otherwise resync (which is very PAGE_SIZE based) will
++	 * get confused.
++	 * So call __bitmap_start_sync repeatedly (if needed) until
++	 * At least PAGE_SIZE>>9 blocks are covered.
++	 * Return the 'or' of the result.
++	 */
++	int rv = 0;
++	int blocks1;
++
++	*blocks = 0;
++	while (*blocks < (PAGE_SIZE>>9)) {
++		rv |= __bitmap_start_sync(bitmap, offset,
++					  &blocks1, degraded);
++		offset += blocks1;
++		*blocks += blocks1;
++	}
++	return rv;
++}
++
++
+ void bitmap_end_sync(struct bitmap *bitmap, sector_t offset, int *blocks, int aborted)
+ {
+ 	bitmap_counter_t *bmc;

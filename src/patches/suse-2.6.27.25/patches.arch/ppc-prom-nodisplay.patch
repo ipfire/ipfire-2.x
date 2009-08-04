@@ -1,0 +1,86 @@
+From: unknown@suse.de
+Subject: some crazy ppc patch
+
+add prom=nodisplay
+avoid crash in firmware on IBM B50 when OF stdout is on serial.
+
+ 0 > boot scsi/sd@4:1,yaboot |
+yaboot starting: loaded at 00200000 00222530 (0/0/00c1a078; sp: 00efffd0)
+brokenfirmware did not claim executable memory, fixed it myself
+Config file 'yaboot.cnf' read, 213 bytes
+
+Welcome to yaboot version 10.1.22-r945.SuSE
+booted from '/pci@80000000/scsi@10/sd@4:1,yaboot'
+Enter "help" to get some basic usage information
+boot:
+* linux
+boot: linux 3
+Please wait, loading kernel...
+Allocated 00600000 bytes for executable @ 02000000
+   Elf32 kernel loaded...
+Loading ramdisk...
+ramdisk loaded 0030e057 @ 04100000
+OF stdout device is: /pci@80000000/isa@b/serial@i3f8
+command line: root=/dev/system/root  xmon=on sysrq=1 quiet panic=12 3
+memory layout at init:   
+  memory_limit : 00000000 (16 MB aligned)
+  alloc_bottom : 0440f000
+  alloc_top    : 30000000
+  alloc_top_hi : 40000000
+  rmo_top      : 30000000
+  ram_top      : 40000000
+Looking for displays
+found display   : /pci@80000000/display@16, opening ...
+Unexpected Firmware Error:
+DEFAULT CATCH!, code=fff00300 at   %SRR0: 00c18ccc   %SRR1: 00003030
+ ok
+ 0 > reset-all
+
+
+---
+ arch/powerpc/kernel/prom_init.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -172,6 +172,7 @@ static unsigned long __initdata dt_strin
+ 
+ static unsigned long __initdata prom_initrd_start, prom_initrd_end;
+ 
++static int __initdata prom_no_display;
+ #ifdef CONFIG_PPC64
+ static int __initdata prom_iommu_force_on;
+ static int __initdata prom_iommu_off;
+@@ -555,9 +556,7 @@ unsigned long prom_memparse(const char *
+ static void __init early_cmdline_parse(void)
+ {
+ 	struct prom_t *_prom = &RELOC(prom);
+-#ifdef CONFIG_PPC64
+ 	const char *opt;
+-#endif
+ 	char *p;
+ 	int l = 0;
+ 
+@@ -572,6 +571,14 @@ static void __init early_cmdline_parse(v
+ #endif /* CONFIG_CMDLINE */
+ 	prom_printf("command line: %s\n", RELOC(prom_cmd_line));
+ 
++	opt = strstr(RELOC(prom_cmd_line), RELOC("prom="));
++	if (opt) {
++		opt += 5;
++		while (*opt && *opt == ' ')
++			opt++;
++		if (!strncmp(opt, RELOC("nodisplay"), 9))
++			RELOC(prom_no_display) = 1;
++	}
+ #ifdef CONFIG_PPC64
+ 	opt = strstr(RELOC(prom_cmd_line), RELOC("iommu="));
+ 	if (opt) {
+@@ -2400,6 +2407,7 @@ unsigned long __init prom_init(unsigned
+ 	/* 
+ 	 * Initialize display devices
+ 	 */
++	if (RELOC(prom_no_display) == 0)
+ 	prom_check_displays();
+ 
+ #ifdef CONFIG_PPC64

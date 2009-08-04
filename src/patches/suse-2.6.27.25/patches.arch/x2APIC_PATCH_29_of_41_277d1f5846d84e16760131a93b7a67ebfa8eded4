@@ -1,0 +1,34 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x2apic: uninline uv_init_apic_ldr()
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 277d1f5846d84e16760131a93b7a67ebfa8eded4
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Andrew says:
+> There's no point in declaring it inline if it's always called indirectly.
+
+And point taken!
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: akpm@linux-foundation.org
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/genx2apic_uv_x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.26/arch/x86/kernel/genx2apic_uv_x.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/genx2apic_uv_x.c
++++ linux-2.6.26/arch/x86/kernel/genx2apic_uv_x.c
+@@ -124,7 +124,7 @@ static int uv_apic_id_registered(void)
+ 	return 1;
+ }
+ 
+-static inline void uv_init_apic_ldr(void)
++static void uv_init_apic_ldr(void)
+ {
+ }
+ 

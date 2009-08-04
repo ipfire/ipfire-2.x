@@ -1,0 +1,25 @@
+From: Tejun Heo <tj@kernel.org>
+Subject: x86: fix iommu=nodac parameter handling
+References: bnc#463829
+
+nodac should forbid dac not instead of enabling it.  Fix it.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ arch/x86/kernel/pci-dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/arch/x86/kernel/pci-dma.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/arch/x86/kernel/pci-dma.c
++++ linux-2.6.27-SLE11_BRANCH/arch/x86/kernel/pci-dma.c
+@@ -175,7 +175,7 @@ static __init int iommu_setup(char *p)
+ 		if (!strncmp(p, "allowdac", 8))
+ 			forbid_dac = 0;
+ 		if (!strncmp(p, "nodac", 5))
+-			forbid_dac = -1;
++			forbid_dac = 1;
+ 		if (!strncmp(p, "usedac", 6)) {
+ 			forbid_dac = -1;
+ 			return 1;

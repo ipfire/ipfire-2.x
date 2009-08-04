@@ -1,0 +1,31 @@
+From 355a43e641b948a7b755cb4c2466ec548d5b495f Mon Sep 17 00:00:00 2001
+From: NeilBrown <neilb@suse.de>
+Date: Tue, 31 Mar 2009 14:27:02 +1100
+Subject: [PATCH] md: write bitmap information to devices that are undergoing recovery.
+
+When we add some spares to an array and start recovery, and we have
+a bitmap which is stored 'internally' on all devices, we call
+bitmap_write_all to make sure the bitmap is correct on the new
+device(s).
+However that doesn't work as write_sb_page only writes to
+'In_sync' devices, and devices undergoing recovery are not
+'In_sync' until recovery finishes.
+
+So extend write_sb_page (actually next_active_rdev) to include devices
+that are under recovery.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ drivers/md/bitmap.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/bitmap.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/bitmap.c
+@@ -265,7 +265,6 @@ static mdk_rdev_t *next_active_rdev(mdk_
+ 	list_for_each_continue_rcu(pos, &mddev->disks) {
+ 		rdev = list_entry(pos, mdk_rdev_t, same_set);
+ 		if (rdev->raid_disk >= 0 &&
+-		    test_bit(In_sync, &rdev->flags) &&
+ 		    !test_bit(Faulty, &rdev->flags)) {
+ 			/* this is a usable devices */
+ 			atomic_inc(&rdev->nr_pending);

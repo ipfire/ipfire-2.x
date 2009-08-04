@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2009-07-15
+VER        = 2009-06-30
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e1201ab3833e0057bfe760b625bb19e8
+$(DL_FILE)_MD5 = 68777ce2aa6b28dc3d37fc2b9a3a6d70
 
 install : $(TARGET)
 
@@ -77,6 +77,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
+	# Xen
+ifeq "$(XEN)" "1"
+#       some dirty hacks that it is building
+	mv /usr/src/linux/include/linux/tracepoint.h /usr/src/linux/include/linux/tracepoint.h.xen
+	touch /usr/src/linux/include/linux/tracepoint.h
+	cd /usr/src/ &&  patch -Np1 < $(DIR_SRC)/src/patches/compat-xen-1.patch
+endif
+
 #	Apply some wlan-card patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless_rt2500pci-skb_allignment.patch
 
@@ -86,6 +94,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install
 
+	# Xen
+ifeq "$(XEN)" "1"
+#       remove dirty hacks. restores to the status before the dirty hacks
+	cd /usr/src/ &&  patch -Np1 < $(DIR_SRC)/src/patches/compat-xen-2.patch
+	mv /usr/src/linux/include/linux/tracepoint.h.xen /usr/src/linux/include/linux/tracepoint.h
+endif
+
 	# Set Regulatory Domain to "EU" (use Channel 1-14 max. 20db)
 	echo options cfg80211 ieee80211_regdom=EU > /etc/modprobe.d/cfg80211
 
@@ -94,3 +109,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818?.ko
 
 	@$(POSTBUILD)
+

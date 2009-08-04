@@ -1,0 +1,221 @@
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: LTTng instrumentation - hugetlb
+
+Original patch header:
+  LTTng instrumentation - hugetlb
+  
+  Instrumentation of hugetlb activity (alloc/free/reserve/grab/release).
+  
+  Those tracepoints are used by LTTng.
+  
+  About the performance impact of tracepoints (which is comparable to markers),
+  even without immediate values optimizations, tests done by Hideo Aoki on ia64
+  show no regression. His test case was using hackbench on a kernel where
+  scheduler instrumentation (about 5 events in code scheduler code) was added.
+  See the "Tracepoints" patch header for performance result detail.
+  
+  Changelog :
+  - instrument page grab, buddy allocator alloc, page release.
+  
+  Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+  CC: William Lee Irwin III <wli@holomorphy.com>
+  CC: Masami Hiramatsu <mhiramat@redhat.com>
+  CC: 'Peter Zijlstra' <peterz@infradead.org>
+  CC: "Frank Ch. Eigler" <fche@redhat.com>
+  CC: 'Ingo Molnar' <mingo@elte.hu>
+  CC: 'Hideo AOKI' <haoki@redhat.com>
+  CC: Takashi Nishiie <t-nishiie@np.css.fujitsu.com>
+  CC: 'Steven Rostedt' <rostedt@goodmis.org>
+  CC: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+  
+Acked-by: Jan Blunck <jblunck@suse.de>
+--- 
+---
+ include/trace/hugetlb.h |   28 ++++++++++++++++++++++++
+ mm/hugetlb.c            |   56 +++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 67 insertions(+), 17 deletions(-)
+
+--- /dev/null
++++ b/include/trace/hugetlb.h
+@@ -0,0 +1,28 @@
++#ifndef _TRACE_HUGETLB_H
++#define _TRACE_HUGETLB_H
++
++#include <linux/tracepoint.h>
++
++DEFINE_TRACE(hugetlb_page_release,
++	TPPROTO(struct page *page),
++	TPARGS(page));
++DEFINE_TRACE(hugetlb_page_grab,
++	TPPROTO(struct page *page),
++	TPARGS(page));
++DEFINE_TRACE(hugetlb_buddy_pgalloc,
++	TPPROTO(struct page *page),
++	TPARGS(page));
++DEFINE_TRACE(hugetlb_page_alloc,
++	TPPROTO(struct page *page),
++	TPARGS(page));
++DEFINE_TRACE(hugetlb_page_free,
++	TPPROTO(struct page *page),
++	TPARGS(page));
++DEFINE_TRACE(hugetlb_pages_reserve,
++	TPPROTO(struct inode *inode, long from, long to, int ret),
++	TPARGS(inode, from, to, ret));
++DEFINE_TRACE(hugetlb_pages_unreserve,
++	TPPROTO(struct inode *inode, long offset, long freed),
++	TPARGS(inode, offset, freed));
++
++#endif
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -17,6 +17,7 @@
+ #include <linux/mutex.h>
+ #include <linux/bootmem.h>
+ #include <linux/sysfs.h>
++#include <trace/hugetlb.h>
+ 
+ #include <asm/page.h>
+ #include <asm/pgtable.h>
+@@ -492,6 +493,7 @@ static void update_and_free_page(struct
+ 
+ 	VM_BUG_ON(h->order >= MAX_ORDER);
+ 
++	trace_hugetlb_page_release(page);
+ 	h->nr_huge_pages--;
+ 	h->nr_huge_pages_node[page_to_nid(page)]--;
+ 	for (i = 0; i < pages_per_huge_page(h); i++) {
+@@ -526,6 +528,7 @@ static void free_huge_page(struct page *
+ 	int nid = page_to_nid(page);
+ 	struct address_space *mapping;
+ 
++	trace_hugetlb_page_free(page);
+ 	mapping = (struct address_space *) page_private(page);
+ 	set_page_private(page, 0);
+ 	BUG_ON(page_count(page));
+@@ -593,8 +596,10 @@ static struct page *alloc_fresh_huge_pag
+ {
+ 	struct page *page;
+ 
+-	if (h->order >= MAX_ORDER)
+-		return NULL;
++	if (h->order >= MAX_ORDER) {
++		page = NULL;
++		goto end;
++	}
+ 
+ 	page = alloc_pages_node(nid,
+ 		htlb_alloc_mask|__GFP_COMP|__GFP_THISNODE|
+@@ -603,11 +608,13 @@ static struct page *alloc_fresh_huge_pag
+ 	if (page) {
+ 		if (arch_prepare_hugepage(page)) {
+ 			__free_pages(page, huge_page_order(h));
+-			return NULL;
++			page = NULL;
++			goto end;
+ 		}
+ 		prep_new_huge_page(h, page, nid);
+ 	}
+-
++end:
++	trace_hugetlb_page_grab(page);
+ 	return page;
+ }
+ 
+@@ -691,7 +698,8 @@ static struct page *alloc_buddy_huge_pag
+ 	spin_lock(&hugetlb_lock);
+ 	if (h->surplus_huge_pages >= h->nr_overcommit_huge_pages) {
+ 		spin_unlock(&hugetlb_lock);
+-		return NULL;
++		page = NULL;
++		goto end;
+ 	} else {
+ 		h->nr_huge_pages++;
+ 		h->surplus_huge_pages++;
+@@ -729,7 +737,8 @@ static struct page *alloc_buddy_huge_pag
+ 		__count_vm_event(HTLB_BUDDY_PGALLOC_FAIL);
+ 	}
+ 	spin_unlock(&hugetlb_lock);
+-
++end:
++	trace_hugetlb_buddy_pgalloc(page);
+ 	return page;
+ }
+ 
+@@ -968,6 +977,7 @@ static struct page *alloc_huge_page(stru
+ 
+ 	vma_commit_reservation(h, vma, addr);
+ 
++	trace_hugetlb_page_alloc(page);
+ 	return page;
+ }
+ 
+@@ -2233,11 +2243,12 @@ int hugetlb_reserve_pages(struct inode *
+ 					long from, long to,
+ 					struct vm_area_struct *vma)
+ {
+-	long ret, chg;
++	int ret = 0;
++	long chg;
+ 	struct hstate *h = hstate_inode(inode);
+ 
+ 	if (vma && vma->vm_flags & VM_NORESERVE)
+-		return 0;
++		goto end;
+ 
+ 	/*
+ 	 * Shared mappings base their reservation on the number of pages that
+@@ -2249,8 +2260,10 @@ int hugetlb_reserve_pages(struct inode *
+ 		chg = region_chg(&inode->i_mapping->private_list, from, to);
+ 	else {
+ 		struct resv_map *resv_map = resv_map_alloc();
+-		if (!resv_map)
+-			return -ENOMEM;
++		if (!resv_map) {
++			ret = -ENOMEM;
++			goto end;
++		}
+ 
+ 		chg = to - from;
+ 
+@@ -2258,25 +2271,34 @@ int hugetlb_reserve_pages(struct inode *
+ 		set_vma_resv_flags(vma, HPAGE_RESV_OWNER);
+ 	}
+ 
+-	if (chg < 0)
+-		return chg;
++	if (chg < 0) {
++		ret = chg;
++		goto end;
++	}
+ 
+-	if (hugetlb_get_quota(inode->i_mapping, chg))
+-		return -ENOSPC;
++	if (hugetlb_get_quota(inode->i_mapping, chg)) {
++		ret = -ENOSPC;
++		goto end;
++	}
+ 	ret = hugetlb_acct_memory(h, chg);
+ 	if (ret < 0) {
+ 		hugetlb_put_quota(inode->i_mapping, chg);
+-		return ret;
++		goto end;
+ 	}
+ 	if (!vma || vma->vm_flags & VM_MAYSHARE)
+ 		region_add(&inode->i_mapping->private_list, from, to);
+-	return 0;
++end:
++	trace_hugetlb_pages_reserve(inode, from, to, ret);
++	return ret;
+ }
+ 
+ void hugetlb_unreserve_pages(struct inode *inode, long offset, long freed)
+ {
+ 	struct hstate *h = hstate_inode(inode);
+-	long chg = region_truncate(&inode->i_mapping->private_list, offset);
++	long chg;
++
++	trace_hugetlb_pages_unreserve(inode, offset, freed);
++	chg = region_truncate(&inode->i_mapping->private_list, offset);
+ 
+ 	spin_lock(&inode->i_lock);
+ 	inode->i_blocks -= blocks_per_huge_page(h);

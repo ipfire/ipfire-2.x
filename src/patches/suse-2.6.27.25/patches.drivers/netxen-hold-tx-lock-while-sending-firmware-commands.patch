@@ -1,0 +1,42 @@
+From 03e678ee968ae54b79c1580c2935895bd863ad95 Mon Sep 17 00:00:00 2001
+From: Dhananjay Phadke <dhananjay@netxen.com>
+Date: Wed, 14 Jan 2009 20:49:43 -0800
+Subject: netxen: hold tx lock while sending firmware commands
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472416
+
+Some firmware commands like mac address addition/deletion are sent
+on the transmit ring. So need to hold the tx lock before touching
+tx producer/consumer indices.
+
+Signed-off-by: Dhananjay Phadke <dhananjay@netxen.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/netxen/netxen_nic_hw.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/netxen/netxen_nic_hw.c b/drivers/net/netxen/netxen_nic_hw.c
+index e2d2a2f..821cff6 100644
+--- a/drivers/net/netxen/netxen_nic_hw.c
++++ b/drivers/net/netxen/netxen_nic_hw.c
+@@ -503,6 +503,8 @@ netxen_send_cmd_descs(struct netxen_adapter *adapter,
+ 
+ 	i = 0;
+ 
++	netif_tx_lock_bh(adapter->netdev);
++
+ 	producer = adapter->cmd_producer;
+ 	do {
+ 		cmd_desc = &cmd_desc_arr[i];
+@@ -527,6 +529,8 @@ netxen_send_cmd_descs(struct netxen_adapter *adapter,
+ 
+ 	netxen_nic_update_cmd_producer(adapter, adapter->cmd_producer);
+ 
++	netif_tx_unlock_bh(adapter->netdev);
++
+ 	return 0;
+ }
+ 
+-- 
+1.5.6.4
+

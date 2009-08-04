@@ -1,0 +1,104 @@
+From: Mike Travis <travis@sgi.com>
+Date: Fri, 5 Sep 2008 14:40:21 -0700
+Subject: [PATCH] x86: reduce stack requirements for send_call_func_ipi
+References: bnc#425240 FATE304266
+Patch-mainline: 2.6.28
+
+* By converting the internal x86 smp_ops function send_call_func_ipi
+    to pass a pointer to the cpumask_t variable, we greatly reduce the
+    stack space required when NR_CPUS=4096.
+
+    Further reduction will be realized when the send_IPI_mask interface
+    is changed in 2.6.28.
+
+Signed-off-by: Mike Travis <travis@sgi.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+---
+ arch/x86/kernel/smp.c |    6 +++---
+ arch/x86/xen/smp.c    |    6 +++---
+ include/asm-x86/smp.h |    6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
+index 361b7a4..0708394 100644
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -126,18 +126,18 @@ void native_send_call_func_single_ipi(int cpu)
+ 	send_IPI_mask(cpumask_of_cpu(cpu), CALL_FUNCTION_SINGLE_VECTOR);
+ }
+ 
+-void native_send_call_func_ipi(cpumask_t mask)
++void native_send_call_func_ipi(const cpumask_t *mask)
+ {
+ 	cpumask_t allbutself;
+ 
+ 	allbutself = cpu_online_map;
+ 	cpu_clear(smp_processor_id(), allbutself);
+ 
+-	if (cpus_equal(mask, allbutself) &&
++	if (cpus_equal(*mask, allbutself) &&
+ 	    cpus_equal(cpu_online_map, cpu_callout_map))
+ 		send_IPI_allbutself(CALL_FUNCTION_VECTOR);
+ 	else
+-		send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
++		send_IPI_mask(*mask, CALL_FUNCTION_VECTOR);
+ }
+ 
+ static void stop_this_cpu(void *dummy)
+diff --git a/arch/x86/xen/smp.c b/arch/x86/xen/smp.c
+index d8faf79..716588b 100644
+--- a/arch/x86/xen/smp.c
++++ b/arch/x86/xen/smp.c
+@@ -371,14 +371,14 @@ static void xen_send_IPI_mask(cpumask_t mask, enum ipi_vector vector)
+ 		xen_send_IPI_one(cpu, vector);
+ }
+ 
+-static void xen_smp_send_call_function_ipi(cpumask_t mask)
++static void xen_smp_send_call_function_ipi(const cpumask_t *mask)
+ {
+ 	int cpu;
+ 
+-	xen_send_IPI_mask(mask, XEN_CALL_FUNCTION_VECTOR);
++	xen_send_IPI_mask(*mask, XEN_CALL_FUNCTION_VECTOR);
+ 
+ 	/* Make sure other vcpus get a chance to run if they need to. */
+-	for_each_cpu_mask_nr(cpu, mask) {
++	for_each_cpu_mask_nr(cpu, *mask) {
+ 		if (xen_vcpu_stolen(cpu)) {
+ 			HYPERVISOR_sched_op(SCHEDOP_yield, 0);
+ 			break;
+diff --git a/include/asm-x86/smp.h b/include/asm-x86/smp.h
+index 3c877f7..8eee4ef 100644
+--- a/include/asm-x86/smp.h
++++ b/include/asm-x86/smp.h
+@@ -53,7 +53,7 @@ struct smp_ops {
+ 	void (*smp_send_stop)(void);
+ 	void (*smp_send_reschedule)(int cpu);
+ 
+-	void (*send_call_func_ipi)(cpumask_t mask);
++	void (*send_call_func_ipi)(const cpumask_t *mask);
+ 	void (*send_call_func_single_ipi)(int cpu);
+ };
+ 
+@@ -103,14 +103,14 @@ static inline void arch_send_call_function_single_ipi(int cpu)
+ 
+ static inline void arch_send_call_function_ipi(cpumask_t mask)
+ {
+-	smp_ops.send_call_func_ipi(mask);
++	smp_ops.send_call_func_ipi(&mask);
+ }
+ 
+ void native_smp_prepare_boot_cpu(void);
+ void native_smp_prepare_cpus(unsigned int max_cpus);
+ void native_smp_cpus_done(unsigned int max_cpus);
+ int native_cpu_up(unsigned int cpunum);
+-void native_send_call_func_ipi(cpumask_t mask);
++void native_send_call_func_ipi(const cpumask_t *mask);
+ void native_send_call_func_single_ipi(int cpu);
+ 
+ extern int __cpu_disable(void);
+-- 
+1.6.0.2
+

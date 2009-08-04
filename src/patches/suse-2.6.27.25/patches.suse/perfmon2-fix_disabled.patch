@@ -1,0 +1,19 @@
+From: Tony Jones <tonyj@suse.de>
+Subject: fix initializion of perfmon disabled
+Patch-mainline: never
+
+Initialize perfmon_disabled flag.
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+
+--- linux-2.6.27.orig/perfmon/perfmon_init.c
++++ linux-2.6.27/perfmon/perfmon_init.c
+@@ -50,7 +50,7 @@ DEFINE_PER_CPU(struct pfm_stats, pfm_sta
+ DEFINE_PER_CPU(struct hrtimer, pfm_hrtimer);
+ 
+ 
+-int perfmon_disabled;	/* >0 if perfmon is disabled */
++int perfmon_disabled = 0;	/* >0 if perfmon is disabled */
+ 
+ /*
+  * called from cpu_init() and pfm_pmu_register()

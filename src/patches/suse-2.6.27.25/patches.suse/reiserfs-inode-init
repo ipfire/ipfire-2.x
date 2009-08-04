@@ -1,0 +1,119 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: reiserfs: move static initialization to cache constructor
+
+ Currently reiserfs duplicates code in init_inode and reiserfs_new_inode.
+ Neither is called from the reiserfs_inode_cache constructor, init_once.
+
+ This patch moves the static initialization there.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/inode.c            |   26 --------------------------
+ fs/reiserfs/super.c            |   11 ++++++++++-
+ include/linux/reiserfs_xattr.h |    8 --------
+ 3 files changed, 10 insertions(+), 35 deletions(-)
+
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1123,17 +1123,6 @@ static void init_inode(struct inode *ino
+ 
+ 	copy_key(INODE_PKEY(inode), &(ih->ih_key));
+ 
+-	INIT_LIST_HEAD(&(REISERFS_I(inode)->i_prealloc_list));
+-	REISERFS_I(inode)->i_flags = 0;
+-	REISERFS_I(inode)->i_prealloc_block = 0;
+-	REISERFS_I(inode)->i_prealloc_count = 0;
+-	REISERFS_I(inode)->i_trans_id = 0;
+-	REISERFS_I(inode)->i_jl = NULL;
+-	mutex_init(&(REISERFS_I(inode)->i_mmap));
+-	reiserfs_init_acl_access(inode);
+-	reiserfs_init_acl_default(inode);
+-	reiserfs_init_xattr_rwsem(inode);
+-
+ 	if (stat_data_v1(ih)) {
+ 		struct stat_data_v1 *sd =
+ 		    (struct stat_data_v1 *)B_I_PITEM(bh, ih);
+@@ -1149,9 +1138,6 @@ static void init_inode(struct inode *ino
+ 		inode->i_atime.tv_sec = sd_v1_atime(sd);
+ 		inode->i_mtime.tv_sec = sd_v1_mtime(sd);
+ 		inode->i_ctime.tv_sec = sd_v1_ctime(sd);
+-		inode->i_atime.tv_nsec = 0;
+-		inode->i_ctime.tv_nsec = 0;
+-		inode->i_mtime.tv_nsec = 0;
+ 
+ 		inode->i_blocks = sd_v1_blocks(sd);
+ 		inode->i_generation = le32_to_cpu(INODE_PKEY(inode)->k_dir_id);
+@@ -1194,9 +1180,6 @@ static void init_inode(struct inode *ino
+ 		inode->i_mtime.tv_sec = sd_v2_mtime(sd);
+ 		inode->i_atime.tv_sec = sd_v2_atime(sd);
+ 		inode->i_ctime.tv_sec = sd_v2_ctime(sd);
+-		inode->i_ctime.tv_nsec = 0;
+-		inode->i_mtime.tv_nsec = 0;
+-		inode->i_atime.tv_nsec = 0;
+ 		inode->i_blocks = sd_v2_blocks(sd);
+ 		rdev = sd_v2_rdev(sd);
+ 		if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
+@@ -1821,18 +1804,9 @@ int reiserfs_new_inode(struct reiserfs_t
+ 	    U32_MAX /*NO_BYTES_IN_DIRECT_ITEM */ ;
+ 
+ 	INIT_LIST_HEAD(&(REISERFS_I(inode)->i_prealloc_list));
+-	REISERFS_I(inode)->i_flags = 0;
+-	REISERFS_I(inode)->i_prealloc_block = 0;
+-	REISERFS_I(inode)->i_prealloc_count = 0;
+-	REISERFS_I(inode)->i_trans_id = 0;
+-	REISERFS_I(inode)->i_jl = NULL;
+ 	REISERFS_I(inode)->i_attrs =
+ 	    REISERFS_I(dir)->i_attrs & REISERFS_INHERIT_MASK;
+ 	sd_attrs_to_i_attrs(REISERFS_I(inode)->i_attrs, inode);
+-	mutex_init(&(REISERFS_I(inode)->i_mmap));
+-	reiserfs_init_acl_access(inode);
+-	reiserfs_init_acl_default(inode);
+-	reiserfs_init_xattr_rwsem(inode);
+ 
+ 	if (old_format_only(sb))
+ 		make_le_item_head(&ih, NULL, KEY_FORMAT_3_5, SD_OFFSET,
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -524,8 +524,17 @@ static void init_once(void *foo)
+ {
+ 	struct reiserfs_inode_info *ei = (struct reiserfs_inode_info *)foo;
+ 
+-	INIT_LIST_HEAD(&ei->i_prealloc_list);
+ 	inode_init_once(&ei->vfs_inode);
++	INIT_LIST_HEAD(&ei->i_prealloc_list);
++	mutex_init(&ei->i_mmap);
++#ifdef CONFIG_REISERFS_FS_XATTR
++	init_rwsem(&ei->xattr_sem);
++#endif
++	ei->i_flags = 0;
++	ei->i_prealloc_block = 0;
++	ei->i_prealloc_count = 0;
++	ei->i_trans_id = 0;
++	ei->i_jl = NULL;
+ #ifdef CONFIG_REISERFS_FS_POSIX_ACL
+ 	ei->i_acl_access = NULL;
+ 	ei->i_acl_default = NULL;
+--- a/include/linux/reiserfs_xattr.h
++++ b/include/linux/reiserfs_xattr.h
+@@ -109,11 +109,6 @@ static inline void reiserfs_mark_inode_p
+ 	inode->i_flags |= S_PRIVATE;
+ }
+ 
+-static inline void reiserfs_init_xattr_rwsem(struct inode *inode)
+-{
+-	init_rwsem(&REISERFS_I(inode)->xattr_sem);
+-}
+-
+ #else
+ 
+ #define is_reiserfs_priv_object(inode) 0
+@@ -146,9 +141,6 @@ static inline int reiserfs_xattr_init(st
+ 	sb->s_flags = (sb->s_flags & ~MS_POSIXACL);	/* to be sure */
+ 	return 0;
+ };
+-static inline void reiserfs_init_xattr_rwsem(struct inode *inode)
+-{
+-}
+ #endif  /*  CONFIG_REISERFS_FS_XATTR  */
+ 
+ #endif  /*  __KERNEL__  */

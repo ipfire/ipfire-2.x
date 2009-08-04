@@ -1,0 +1,71 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: CPUFREQ: Introduce /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_transition_latency
+References: bnc#464461
+Patch-Mainline: not yet
+
+It's not only useful for the ondemand and conservative governors, but
+also for userspace daemons to know about the HW transition latency of
+the CPU.
+It is especially useful for userspace to know about this value when
+the ondemand or conservative governors are run. The sampling rate
+control value depends on it and for userspace being able to set sane
+tuning values there it has to know about the transition latency.
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+---
+ Documentation/cpu-freq/user-guide.txt |   12 ++++++++++++
+ drivers/cpufreq/cpufreq.c             |    3 +++
+ 2 files changed, 15 insertions(+)
+
+Index: linux-2.6.27/Documentation/cpu-freq/user-guide.txt
+===================================================================
+--- linux-2.6.27.orig/Documentation/cpu-freq/user-guide.txt
++++ linux-2.6.27/Documentation/cpu-freq/user-guide.txt
+@@ -142,6 +142,18 @@ cpuinfo_min_freq :		this file shows the
+ 				frequency the processor can run at(in kHz) 
+ cpuinfo_max_freq :		this file shows the maximum operating
+ 				frequency the processor can run at(in kHz) 
++cpuinfo_transition_latency	The time it takes on this CPU to
++				switch between two frequencies in nano
++				seconds. If unknown or known to be
++				that high that the driver does not
++				work with the ondemand governor, -1
++				(CPUFREQ_ETERNAL) will be returned.
++				Using this information can be useful
++				to choose an appropriate polling
++				frequency for a kernel governor or
++				userspace daemon. Make sure to not
++				switch the frequency too often
++				resulting in performance loss.
+ scaling_driver :		this file shows what cpufreq driver is
+ 				used to set the frequency on this CPU
+ 
+Index: linux-2.6.27/drivers/cpufreq/cpufreq.c
+===================================================================
+--- linux-2.6.27.orig/drivers/cpufreq/cpufreq.c
++++ linux-2.6.27/drivers/cpufreq/cpufreq.c
+@@ -455,6 +455,7 @@ static ssize_t show_##file_name				\
+ 
+ show_one(cpuinfo_min_freq, cpuinfo.min_freq);
+ show_one(cpuinfo_max_freq, cpuinfo.max_freq);
++show_one(cpuinfo_transition_latency, cpuinfo.transition_latency);
+ show_one(scaling_min_freq, min);
+ show_one(scaling_max_freq, max);
+ show_one(scaling_cur_freq, cur);
+@@ -660,6 +661,7 @@ __ATTR(_name, 0644, show_##_name, store_
+ define_one_ro0400(cpuinfo_cur_freq);
+ define_one_ro(cpuinfo_min_freq);
+ define_one_ro(cpuinfo_max_freq);
++define_one_ro(cpuinfo_transition_latency);
+ define_one_ro(scaling_available_governors);
+ define_one_ro(scaling_driver);
+ define_one_ro(scaling_cur_freq);
+@@ -673,6 +675,7 @@ define_one_rw(scaling_setspeed);
+ static struct attribute *default_attrs[] = {
+ 	&cpuinfo_min_freq.attr,
+ 	&cpuinfo_max_freq.attr,
++	&cpuinfo_transition_latency.attr,
+ 	&scaling_min_freq.attr,
+ 	&scaling_max_freq.attr,
+ 	&affected_cpus.attr,

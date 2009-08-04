@@ -1,0 +1,75 @@
+Patch-mainline: 2.6.30
+References: bnc#486430
+X-Git: 570b9d968bf9b16974252ef7cbce73fa6dac34f3 Mon Sep 17 00:00:00 2001
+From: Alasdair G Kergon <agk@redhat.com>
+Date: Thu, 2 Apr 2009 19:55:28 +0100
+Subject: [PATCH] dm table: fix upgrade mode race
+
+upgrade_mode() sets bdev to NULL temporarily, and does not have any
+locking to exclude anything from seeing that NULL.
+
+In dm_table_any_congested() bdev_get_queue() can dereference that NULL and
+cause a reported oops.
+
+Fix this by not changing that field during the mode upgrade.
+
+Cc: stable@kernel.org
+Cc: Neil Brown <neilb@suse.de>
+Signed-off-by: Alasdair G Kergon <agk@redhat.com>
+Acked-by: Neil Brown <neilb@suse.de>
+
+---
+ drivers/md/dm-table.c |   32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/dm-table.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/dm-table.c
+@@ -411,31 +411,33 @@ static int check_device_area(struct dm_d
+ }
+ 
+ /*
+- * This upgrades the mode on an already open dm_dev.  Being
++ * This upgrades the mode on an already open dm_dev, being
+  * careful to leave things as they were if we fail to reopen the
+- * device.
++ * device and not to touch the existing bdev field in case
++ * it is accessed concurrently inside dm_table_any_congested().
+  */
+ static int upgrade_mode(struct dm_dev *dd, int new_mode, struct mapped_device *md)
+ {
+ 	int r;
+-	struct dm_dev dd_copy;
+-	dev_t dev = dd->bdev->bd_dev;
++	struct dm_dev dd_new, dd_old;
+ 
+-	dd_copy = *dd;
++	dd_new = dd_old = *dd;
+ 
+-	dd->mode = new_mode;
+-	dd->bdev = NULL;
+-	r = open_dev(dd, dev, md);
++	dd_new.mode = new_mode;
++	dd_new.bdev = NULL;
++
++	r = open_dev(&dd_new, dd->bdev->bd_dev, md);
+ 	if (r == -EROFS) {
+-		dd->mode &= ~FMODE_WRITE;
+-		r = open_dev(dd, dev, md);
++		dd_new.mode &= ~FMODE_WRITE;
++		r = open_dev(&dd_new, dd->bdev->bd_dev, md);
+ 	}
+-	if (!r)
+-		close_dev(&dd_copy, md);
+-	else
+-		*dd = dd_copy;
++	if (r)
++		return r;
+ 
+-	return r;
++	dd->mode |= new_mode;
++	close_dev(&dd_old, md);
++
++	return 0;
+ }
+ 
+ /*

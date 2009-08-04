@@ -1,0 +1,65 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Deadlock during multipath failover
+References: bnc#475107
+
+During multipath failover tests with SCSI on System z, the kernel
+deadlocks in this situation:
+
+>  STACK:
+>  0 blk_add_timer+206 [0x2981ea]
+>  1 blk_rq_timed_out+132 [0x2982a8]
+>  2 blk_abort_request+114 [0x29833e]
+>  3 blk_abort_queue+92 [0x2983a8]
+>  4 deactivate_path+74 [0x3e00009625a]
+>  5 run_workqueue+236 [0x149e04]
+>  6 worker_thread+294 [0x149fce]
+>  7 kthread+110 [0x14f436]
+>  8 kernel_thread_starter+6 [0x10941a]
+
+blk_abort_queue takes the queue_lock with spinlock_irqsave and
+walks the timer_list with list_for_each_entry_safe. Since a
+path to a SCSI device just failed, the rport state is
+FC_PORTSTATE_BLOCKED. This rport state triggers blk_add_timer()
+that calls list_add_tail() to move the request to the end of
+timer_list. Thus, the list_for_each_entry_safe never reaches
+the end of the timer_list, it continously moves the requests
+to the end of the list.
+
+The rport state FC_PORTSTATE_BLOCKED would end when the function
+fc_timeout_deleted_rport() would run to remove the rport. But
+this function was schedules from queue_delayed_work.
+The timer already expired, but the timer function does not run,
+because the timer interrupt is disabled from the
+spinlock_irqsave call.
+
+But just using a list_splice_init() here we will be traversing
+our private list and break the deadlock.
+And the timer would be triggered correctly as blk_add_timer()
+will always add a one second delay here, during which we should
+be able to process the list.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ block/blk-timeout.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/block/blk-timeout.c
++++ b/block/blk-timeout.c
+@@ -150,12 +150,15 @@ void blk_abort_queue(struct request_queu
+ {
+ 	unsigned long flags;
+ 	struct request *rq, *tmp;
++	LIST_HEAD(list);
+ 
+ 	spin_lock_irqsave(q->queue_lock, flags);
+ 
+ 	elv_abort_queue(q);
+ 
+-	list_for_each_entry_safe(rq, tmp, &q->timeout_list, timeout_list)
++	list_splice_init(&q->timeout_list, &list);
++
++	list_for_each_entry_safe(rq, tmp, &list, timeout_list)
+ 		blk_abort_request(rq);
+ 
+ 	spin_unlock_irqrestore(q->queue_lock, flags);

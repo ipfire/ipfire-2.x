@@ -1,0 +1,101 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qeth: avoid crash in case of layer mismatch for VSWITCH
+References: bnc#458339
+
+Symptom:     Oops in dev_close invocation of qeth_recover
+Problem:     For z/VM GuestLAN or VSWITCH devices the transport
+             layer is configured in z/VM. The layer2 attribute of
+             a participating Linux device has to match the z/VM
+             definition. In case of a mismatch Linux currently
+             crashes in qeth recovery due to a reference to the
+             not yet existing net_device.
+Solution:    add a check for existence of net_device and add a
+             message pointing to the mismatch of layer definitions
+             in Linux and z/VM.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ drivers/s390/net/qeth_core_main.c |    4 ++++
+ drivers/s390/net/qeth_l2_main.c   |    8 +++++---
+ drivers/s390/net/qeth_l3_main.c   |    8 +++++---
+ 3 files changed, 14 insertions(+), 6 deletions(-)
+
+Index: linux-sles11/drivers/s390/net/qeth_core_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_core_main.c
++++ linux-sles11/drivers/s390/net/qeth_core_main.c
+@@ -571,6 +571,10 @@ static void qeth_send_control_data_cb(st
+ 	card = CARD_FROM_CDEV(channel->ccwdev);
+ 	if (qeth_check_idx_response(iob->data)) {
+ 		qeth_clear_ipacmd_list(card);
++		if (((iob->data[2] & 0xc0) == 0xc0) && iob->data[4] == 0xf6)
++			dev_err(&card->gdev->dev,
++				"The qeth device is not configured "
++				"for the OSI layer required by z/VM\n");
+ 		qeth_schedule_recovery(card);
+ 		goto out;
+ 	}
+Index: linux-sles11/drivers/s390/net/qeth_l3_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_l3_main.c
++++ linux-sles11/drivers/s390/net/qeth_l3_main.c
+@@ -2083,9 +2083,11 @@ static int qeth_l3_stop_card(struct qeth
+ 		if (recovery_mode)
+ 			qeth_l3_stop(card->dev);
+ 		else {
+-			rtnl_lock();
+-			dev_close(card->dev);
+-			rtnl_unlock();
++			if (card->dev) {
++				rtnl_lock();
++				dev_close(card->dev);
++				rtnl_unlock();
++			}
+ 		}
+ 		if (!card->use_hard_stop) {
+ 			rc = qeth_send_stoplan(card);
+Index: linux-sles11/Documentation/kmsg/s390/qeth
+===================================================================
+--- linux-sles11.orig/Documentation/kmsg/s390/qeth
++++ linux-sles11/Documentation/kmsg/s390/qeth
+@@ -438,6 +438,20 @@
+  */
+ 
+ /*?
++ * Text: "%s: The qeth device is not configured for the OSI layer required by z/VM\n"
++ * Severity: Error
++ * Description:
++ * A qeth device that connects to a virtual network on z/VM must be configured for the
++ * same Open Systems Interconnection (OSI) layer as the virtual network. An ETHERNET
++ * guest LAN or VSWITCH uses the data link layer (layer 2) while an IP guest LAN
++ * or VSWITCH uses the network layer (layer 3).
++ * User action:
++ * If you are connecting to an ETHERNET guest LAN or VSWITCH, set the layer2 sysfs
++ * attribute of the qeth device to 1. If you are connecting to an IP guest LAN or
++ * VSWITCH, set the layer2 sysfs attribute of the qeth device to 0.
++ */
++
++/*?
+  * Text: "%s: Starting source MAC-address support for %s failed\n"
+  * Severity: Warning
+  * Parameter:
+Index: linux-sles11/drivers/s390/net/qeth_l2_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_l2_main.c
++++ linux-sles11/drivers/s390/net/qeth_l2_main.c
+@@ -1139,9 +1139,11 @@ static int qeth_l2_recover(void *ptr)
+ 		dev_info(&card->gdev->dev,
+ 			"Device successfully recovered!\n");
+ 	else {
+-		rtnl_lock();
+-		dev_close(card->dev);
+-		rtnl_unlock();
++		if (card->dev) {
++			rtnl_lock();
++			dev_close(card->dev);
++			rtnl_unlock();
++		}
+ 		dev_warn(&card->gdev->dev, "The qeth device driver "
+ 			"failed to recover an error on the device\n");
+ 	}

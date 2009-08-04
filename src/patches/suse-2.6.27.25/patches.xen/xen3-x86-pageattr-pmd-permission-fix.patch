@@ -1,0 +1,77 @@
+From: Ingo Molnar <mingo@elte.hu>
+References: bnc#439348
+Subject: x86: use the right protections for split-up pagetables
+Patch-mainline: yes
+Git: 07a66d7c53a538e1a9759954a82bb6c07365eff9
+    
+    Steven Rostedt found a bug in where in his modified kernel
+    ftrace was unable to modify the kernel text, due to the PMD
+    itself having been marked read-only as well in
+    split_large_page().
+    
+    The fix, suggested by Linus, is to not try to 'clone' the
+    reference protection of a huge-page, but to use the standard
+    (and permissive) page protection bits of KERNPG_TABLE.
+    
+    The 'cloning' makes sense for the ptes but it's a confused and
+    incorrect concept at the page table level - because the
+    pagetable entry is a set of all ptes and hence cannot
+    'clone' any single protection attribute - the ptes can be any
+    mixture of protections.
+    
+    With the permissive KERNPG_TABLE, even if the pte protections
+    get changed after this point (due to ftrace doing code-patching
+    or other similar activities like kprobes), the resulting combined
+    protections will still be correct and the pte's restrictive
+    (or permissive) protections will control it.
+    
+    Also update the comment.
+    
+    This bug was there for a long time but has not caused visible
+    problems before as it needs a rather large read-only area to
+    trigger. Steve possibly hacked his kernel with some really
+    large arrays or so. Anyway, the bug is definitely worth fixing.
+    
+    [ Huang Ying also experienced problems in this area when writing
+      the EFI code, but the real bug in split_large_page() was not
+      realized back then. ]
+    
+    Reported-by: Steven Rostedt <rostedt@goodmis.org>
+    Reported-by: Huang Ying <ying.huang@intel.com>
+    Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+Acked-by: Nick Piggin <npiggin@suse.de>
+
+Automatically created from "patches.arch/x86-pageattr-pmd-permission-fix.patch" by xen-port-patches.py
+
+--- sle11-2009-03-16.orig/arch/x86/mm/pageattr-xen.c	2009-03-16 16:39:50.000000000 +0100
++++ sle11-2009-03-16/arch/x86/mm/pageattr-xen.c	2009-03-16 16:46:27.000000000 +0100
+@@ -573,22 +573,17 @@ static int split_large_page(pte_t *kpte,
+ 		set_pte(&pbase[i], pfn_pte_ma(mfn, ref_prot));
+ 
+ 	/*
+-	 * Install the new, split up pagetable. Important details here:
++	 * Install the new, split up pagetable.
+ 	 *
+-	 * On Intel the NX bit of all levels must be cleared to make a
+-	 * page executable. See section 4.13.2 of Intel 64 and IA-32
+-	 * Architectures Software Developer's Manual).
+-	 *
+-	 * Mark the entry present. The current mapping might be
+-	 * set to not present, which we preserved above.
++	 * We use the standard kernel pagetable protections for the new
++	 * pagetable protections, the actual ptes set above control the
++	 * primary protection behavior:
+ 	 */
+ 	if (!xen_feature(XENFEAT_writable_page_tables) &&
+ 	    HYPERVISOR_update_va_mapping((unsigned long)pbase,
+ 					 mk_pte(base, PAGE_KERNEL_RO), 0))
+ 		BUG();
+-	ref_prot = pte_pgprot(pte_mkexec(pte_clrhuge(*kpte)));
+-	pgprot_val(ref_prot) |= _PAGE_PRESENT;
+-	__set_pmd_pte(kpte, address, level, mk_pte(base, ref_prot));
++	__set_pmd_pte(kpte, address, level, mk_pte(base, __pgprot(_KERNPG_TABLE)));
+ 	base = NULL;
+ 
+ out_unlock:

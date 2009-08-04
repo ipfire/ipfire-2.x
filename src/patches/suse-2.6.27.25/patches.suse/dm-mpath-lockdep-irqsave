@@ -1,0 +1,95 @@
+From: Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
+Subject: dm: Fix lock dependency warning for request based dm
+References: bnc#477927
+
+> > From: Christof Schmitt <christof.schmitt@de.ibm.com>
+> > 
+> > Testing with request based dm multipathing and lock dependency checking
+> > revealed this problem. Fix this by disabling interrupts when acquiring the
+> > map_lock from the ioctl call in __bind and __unbind.
+> > 
+> > It seems that the problem has been introduced with this patch:
+> > http://lkml.indiana.edu/hypermail/linux/kernel/0810.0/1067.html
+
+Thank you for your testing request-based dm-multipath and the patch.
+
+Attached is a patch to fix it.
+Since request-based dm gets map_lock after taking queue_lock with
+interrupt disabled, we have to use save/restore variant.
+(By the way, although lockdep warns the deadlock possibility, currently
+ there should be no such code path in request-based dm where request_fn
+ is called from the interrupt context.)
+
+I have done simple build and boot testings, but haven't done other
+testings (e.g. stress testing) yet.
+I will include this patch to the next update after such testings.
+
+Thanks,
+Kiyoshi Ueda
+
+Signed-off-by: Nikanth karthikesan <knikanth@suse.de>
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/md/dm.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/dm.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/dm.c
+@@ -525,12 +525,13 @@ static int queue_io(struct mapped_device
+ struct dm_table *dm_get_table(struct mapped_device *md)
+ {
+ 	struct dm_table *t;
++	unsigned long flags;
+ 
+-	read_lock(&md->map_lock);
++	read_lock_irqsave(&md->map_lock, flags);
+ 	t = md->map;
+ 	if (t)
+ 		dm_table_get(t);
+-	read_unlock(&md->map_lock);
++	read_unlock_irqrestore(&md->map_lock, flags);
+ 
+ 	return t;
+ }
+@@ -1913,6 +1914,7 @@ static int __bind(struct mapped_device *
+ {
+ 	struct request_queue *q = md->queue;
+ 	sector_t size;
++	unsigned long flags;
+ 
+ 	size = dm_table_get_size(t);
+ 
+@@ -1942,7 +1944,7 @@ static int __bind(struct mapped_device *
+ 	if (dm_table_request_based(t) && !blk_queue_stopped(q))
+ 		stop_queue(q);
+ 
+-	write_lock(&md->map_lock);
++	write_lock_irqsave(&md->map_lock, flags);
+ 	md->map = t;
+ 	dm_table_set_restrictions(t, q);
+ 	dm_table_set_integrity(t, md);
+@@ -1951,7 +1953,7 @@ static int __bind(struct mapped_device *
+ 	} else {
+ 		set_disk_ro(md->disk, 0);
+ 	}
+-	write_unlock(&md->map_lock);
++	write_unlock_irqrestore(&md->map_lock, flags);
+ 
+ 	return 0;
+ }
+@@ -1959,14 +1961,15 @@ static int __bind(struct mapped_device *
+ static void __unbind(struct mapped_device *md)
+ {
+ 	struct dm_table *map = md->map;
++	unsigned long flags;
+ 
+ 	if (!map)
+ 		return;
+ 
+ 	dm_table_event_callback(map, NULL, NULL);
+-	write_lock(&md->map_lock);
++	write_lock_irqsave(&md->map_lock, flags);
+ 	md->map = NULL;
+-	write_unlock(&md->map_lock);
++	write_unlock_irqrestore(&md->map_lock, flags);
+ 	dm_table_destroy(map);
+ }
+ 

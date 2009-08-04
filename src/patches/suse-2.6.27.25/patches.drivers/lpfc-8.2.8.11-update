@@ -1,0 +1,489 @@
+From: Jamie Wellnitz <jamie.wellnitz@emulex.com>
+Subject: Update lpfc from 8.2.8.10 to 8.2.8.11
+References: bnc#464662
+
+Changes from 8.2.8.10 to 8.2.8.11:
+
+* Changed version number to 8.2.8.11
+* Implemented host memory based HGP pointers (CR 87327)
+* Removed de-reference of scsi device after scsi_done is called
+  (CR 87269)
+* Fixed system panic due to ndlp indirect reference to phba through
+  vport (CR 86370)
+* Fixed nodelist not empty when unloading the driver after target
+  reboot test (CR 86213)
+* Fixed a panic in mailbox timeout handler (CR 85228)
+
+Signed-off-by: Jamie Wellnitz <Jamie.Wellnitz@emulex.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+--
+diff -urpN a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+--- a/drivers/scsi/lpfc/lpfc_attr.c	2009-01-08 16:17:47.894022000 -0500
++++ b/drivers/scsi/lpfc/lpfc_attr.c	2009-01-08 16:17:48.134023000 -0500
+@@ -2277,6 +2277,16 @@ LPFC_VPORT_ATTR_R(lun_queue_depth, 30, 1
+ 		  "Max number of FCP commands we can queue to a specific LUN");
+ 
+ /*
++# hostmem_hgp:  This parameter is used to force driver to keep host group
++# pointers in host memory. When the parameter is set to zero, the driver
++# keeps the host group pointers in HBA memory otherwise the host group
++# pointers are kept in the host memory. Value range is [0,1]. Default value
++# is 0.
++*/
++LPFC_ATTR_R(hostmem_hgp, 0, 0, 1,
++	"Use host memory for host group pointers.");
++
++/*
+ # hba_queue_depth:  This parameter is used to limit the number of outstanding
+ # commands per lpfc HBA. Value range is [32,8192]. If this parameter
+ # value is greater than the maximum number of exchanges supported by the HBA,
+@@ -3191,6 +3201,7 @@ struct device_attribute *lpfc_hba_attrs[
+ 	&dev_attr_lpfc_sg_seg_cnt,
+ 	&dev_attr_lpfc_max_scsicmpl_time,
+ 	&dev_attr_lpfc_stat_data_ctrl,
++	&dev_attr_lpfc_hostmem_hgp,
+ 	NULL,
+ };
+ 
+@@ -4881,6 +4892,7 @@ lpfc_get_cfgparam(struct lpfc_hba *phba)
+ 	lpfc_use_msi_init(phba, lpfc_use_msi);
+ 	lpfc_enable_hba_reset_init(phba, lpfc_enable_hba_reset);
+ 	lpfc_enable_hba_heartbeat_init(phba, lpfc_enable_hba_heartbeat);
++	lpfc_hostmem_hgp_init(phba, lpfc_hostmem_hgp);
+ 	phba->cfg_poll = lpfc_poll;
+ 	phba->cfg_soft_wwnn = 0L;
+ 	phba->cfg_soft_wwpn = 0L;
+diff -urpN a/drivers/scsi/lpfc/lpfc_disc.h b/drivers/scsi/lpfc/lpfc_disc.h
+--- a/drivers/scsi/lpfc/lpfc_disc.h	2009-01-08 16:17:47.932022000 -0500
++++ b/drivers/scsi/lpfc/lpfc_disc.h	2009-01-08 16:17:48.172023000 -0500
+@@ -101,6 +101,7 @@ struct lpfc_nodelist {
+ 
+ 	struct timer_list   nlp_delayfunc;	/* Used for delayed ELS cmds */
+ 	struct timer_list   nlp_reauth_tmr;	/* Used for re-authentication */
++	struct lpfc_hba *phba;
+ 	struct fc_rport *rport;			/* Corresponding FC transport
+ 						   port structure */
+ 	struct lpfc_vport *vport;
+diff -urpN a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+--- a/drivers/scsi/lpfc/lpfc_els.c	2009-01-08 16:17:47.955022000 -0500
++++ b/drivers/scsi/lpfc/lpfc_els.c	2009-01-08 16:17:48.195023000 -0500
+@@ -6978,7 +6978,7 @@ static void lpfc_fabric_abort_vport(stru
+ void lpfc_fabric_abort_nport(struct lpfc_nodelist *ndlp)
+ {
+ 	LIST_HEAD(completions);
+-	struct lpfc_hba  *phba = ndlp->vport->phba;
++	struct lpfc_hba  *phba = ndlp->phba;
+ 	struct lpfc_iocbq *tmp_iocb, *piocb;
+ 	struct lpfc_sli_ring *pring = &phba->sli.ring[LPFC_ELS_RING];
+ 	IOCB_t *cmd;
+diff -urpN a/drivers/scsi/lpfc/lpfc.h b/drivers/scsi/lpfc/lpfc.h
+--- a/drivers/scsi/lpfc/lpfc.h	2009-01-08 16:17:47.958022000 -0500
++++ b/drivers/scsi/lpfc/lpfc.h	2009-01-08 16:17:48.198024000 -0500
+@@ -634,6 +634,7 @@ struct lpfc_hba {
+ 	uint32_t cfg_enable_hba_reset;
+ 	uint32_t cfg_enable_hba_heartbeat;
+ 	uint32_t cfg_pci_max_read;
++	uint32_t cfg_hostmem_hgp;
+ 
+ 	lpfc_vpd_t vpd;		/* vital product data */
+ 
+diff -urpN a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c	2009-01-08 16:17:47.970022000 -0500
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c	2009-01-08 16:17:48.210025000 -0500
+@@ -120,7 +120,7 @@ lpfc_terminate_rport_io(struct fc_rport 
+ 		return;
+ 	}
+ 
+-	phba  = ndlp->vport->phba;
++	phba  = ndlp->phba;
+ 
+ 	lpfc_debugfs_disc_trc(ndlp->vport, LPFC_DISC_TRC_RPORT,
+ 		"rport terminate: sid:x%x did:x%x flg:x%x",
+@@ -1912,9 +1912,14 @@ lpfc_disable_node(struct lpfc_vport *vpo
+  * @vport: Pointer to Virtual Port object.
+  * @ndlp: Pointer to FC node object.
+  * @did: FC_ID of the node.
+- * 	This function is always called when node object need to
+- * be initialized. It initializes all the fields of the node
+- * object.
++ *
++ * This function is always called when node object need to be initialized.
++ * It initializes all the fields of the node object. Although the reference
++ * to phba from @ndlp can be obtained indirectly through it's reference to
++ * @vport, a direct reference to phba is taken here by @ndlp. This is due
++ * to the life-span of the @ndlp might go beyond the existence of @vport as
++ * the final release of ndlp is determined by its reference count. And, the
++ * operation on @ndlp needs the reference to phba.
+  **/
+ static inline void
+ lpfc_initialize_node(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+@@ -1931,6 +1936,7 @@ lpfc_initialize_node(struct lpfc_vport *
+ 	ndlp->nlp_reauth_tmr.data = (unsigned long)ndlp;
+ 	ndlp->nlp_DID = did;
+ 	ndlp->vport = vport;
++	ndlp->phba = vport->phba;
+ 	ndlp->nlp_sid = NLP_NO_SID;
+ 	kref_init(&ndlp->kref);
+ 	NLP_INT_NODE_ACT(ndlp);
+@@ -3268,7 +3274,7 @@ lpfc_nlp_release(struct kref *kref)
+ 	lpfc_nlp_remove(ndlp->vport, ndlp);
+ 
+ 	/* clear the ndlp active flag for all release cases */
+-	phba = ndlp->vport->phba;
++	phba = ndlp->phba;
+ 	spin_lock_irqsave(&phba->ndlp_lock, flags);
+ 	NLP_CLR_NODE_ACT(ndlp);
+ 	spin_unlock_irqrestore(&phba->ndlp_lock, flags);
+@@ -3276,7 +3282,7 @@ lpfc_nlp_release(struct kref *kref)
+ 	/* free ndlp memory for final ndlp release */
+ 	if (NLP_CHK_FREE_REQ(ndlp)) {
+ 		kfree(ndlp->lat_data);
+-		mempool_free(ndlp, ndlp->vport->phba->nlp_mem_pool);
++		mempool_free(ndlp, ndlp->phba->nlp_mem_pool);
+ 	}
+ }
+ 
+@@ -3299,7 +3305,7 @@ lpfc_nlp_get(struct lpfc_nodelist *ndlp)
+ 		 * ndlp reference count that is in the process of being
+ 		 * released.
+ 		 */
+-		phba = ndlp->vport->phba;
++		phba = ndlp->phba;
+ 		spin_lock_irqsave(&phba->ndlp_lock, flags);
+ 		if (!NLP_CHK_NODE_ACT(ndlp) || NLP_CHK_FREE_ACK(ndlp)) {
+ 			spin_unlock_irqrestore(&phba->ndlp_lock, flags);
+@@ -3335,7 +3341,7 @@ lpfc_nlp_put(struct lpfc_nodelist *ndlp)
+ 	"node put:        did:x%x flg:x%x refcnt:x%x",
+ 		ndlp->nlp_DID, ndlp->nlp_flag,
+ 		atomic_read(&ndlp->kref.refcount));
+-	phba = ndlp->vport->phba;
++	phba = ndlp->phba;
+ 	spin_lock_irqsave(&phba->ndlp_lock, flags);
+ 	/* Check the ndlp memory free acknowledge flag to avoid the
+ 	 * possible race condition that kref_put got invoked again
+diff -urpN a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+--- a/drivers/scsi/lpfc/lpfc_init.c	2009-01-08 16:17:48.011024000 -0500
++++ b/drivers/scsi/lpfc/lpfc_init.c	2009-01-08 16:17:48.260024000 -0500
+@@ -3087,8 +3087,6 @@ lpfc_pci_remove_one(struct pci_dev *pdev
+ 
+ 	lpfc_free_sysfs_attr(vport);
+ 
+-	kthread_stop(phba->worker_thread);
+-
+ 	/* Release all the vports against this physical port */
+ 	vports = lpfc_create_vport_work_array(phba);
+ 	if (vports != NULL)
+@@ -3106,7 +3104,12 @@ lpfc_pci_remove_one(struct pci_dev *pdev
+ 	 * clears the rings, discards all mailbox commands, and resets
+ 	 * the HBA.
+ 	 */
++
++	/* HBA interrupt will be diabled after this call */
+ 	lpfc_sli_hba_down(phba);
++	/* Stop kthread signal shall trigger work_done one more time */
++	kthread_stop(phba->worker_thread);
++	/* Final cleanup of txcmplq and reset the HBA */
+ 	lpfc_sli_brdrestart(phba);
+ 
+ 	lpfc_stop_phba_timers(phba);
+diff -urpN a/drivers/scsi/lpfc/lpfc_mbox.c b/drivers/scsi/lpfc/lpfc_mbox.c
+--- a/drivers/scsi/lpfc/lpfc_mbox.c	2009-01-08 16:17:48.031024000 -0500
++++ b/drivers/scsi/lpfc/lpfc_mbox.c	2009-01-08 16:17:48.281022000 -0500
+@@ -1127,9 +1127,6 @@ lpfc_config_port(struct lpfc_hba *phba, 
+ 	mb->un.varCfgPort.pcbLow = putPaddrLow(pdma_addr);
+ 	mb->un.varCfgPort.pcbHigh = putPaddrHigh(pdma_addr);
+ 
+-	/* Always Host Group Pointer is in SLIM */
+-	mb->un.varCfgPort.hps = 1;
+-
+ 	/* If HBA supports SLI=3 ask for it */
+ 
+ 	if (phba->sli_rev == 3 && phba->vpd.sli3Feat.cerbm) {
+@@ -1208,28 +1205,41 @@ lpfc_config_port(struct lpfc_hba *phba, 
+ 	 *
+ 	 */
+ 
+-	if (phba->sli_rev == 3) {
+-		phba->host_gp = &mb_slim->us.s3.host[0];
+-		phba->hbq_put = &mb_slim->us.s3.hbq_put[0];
+-	} else {
+-		phba->host_gp = &mb_slim->us.s2.host[0];
++	if (phba->cfg_hostmem_hgp && phba->sli_rev != 3) {
++		phba->host_gp = &phba->mbox->us.s2.host[0];
+ 		phba->hbq_put = NULL;
+-	}
++		offset = (uint8_t *)&phba->mbox->us.s2.host -
++			(uint8_t *)phba->slim2p.virt;
++		pdma_addr = phba->slim2p.phys + offset;
++		phba->pcb->hgpAddrHigh = putPaddrHigh(pdma_addr);
++		phba->pcb->hgpAddrLow = putPaddrLow(pdma_addr);
++	} else {
++		/* Always Host Group Pointer is in SLIM */
++		mb->un.varCfgPort.hps = 1;
+ 
+-	/* mask off BAR0's flag bits 0 - 3 */
+-	phba->pcb->hgpAddrLow = (bar_low & PCI_BASE_ADDRESS_MEM_MASK) +
+-		(void __iomem *)phba->host_gp -
+-		(void __iomem *)phba->MBslimaddr;
+-	if (bar_low & PCI_BASE_ADDRESS_MEM_TYPE_64)
+-		phba->pcb->hgpAddrHigh = bar_high;
+-	else
+-		phba->pcb->hgpAddrHigh = 0;
+-	/* write HGP data to SLIM at the required longword offset */
+-	memset(&hgp, 0, sizeof(struct lpfc_hgp));
++		if (phba->sli_rev == 3) {
++			phba->host_gp = &mb_slim->us.s3.host[0];
++			phba->hbq_put = &mb_slim->us.s3.hbq_put[0];
++		} else {
++			phba->host_gp = &mb_slim->us.s2.host[0];
++			phba->hbq_put = NULL;
++		}
++
++		/* mask off BAR0's flag bits 0 - 3 */
++		phba->pcb->hgpAddrLow = (bar_low & PCI_BASE_ADDRESS_MEM_MASK) +
++			(void __iomem *)phba->host_gp -
++			(void __iomem *)phba->MBslimaddr;
++		if (bar_low & PCI_BASE_ADDRESS_MEM_TYPE_64)
++			phba->pcb->hgpAddrHigh = bar_high;
++		else
++			phba->pcb->hgpAddrHigh = 0;
++		/* write HGP data to SLIM at the required longword offset */
++		memset(&hgp, 0, sizeof(struct lpfc_hgp));
+ 
+-	for (i=0; i < phba->sli.num_rings; i++) {
+-		lpfc_memcpy_to_slim(phba->host_gp + i, &hgp,
++		for (i = 0; i < phba->sli.num_rings; i++) {
++			lpfc_memcpy_to_slim(phba->host_gp + i, &hgp,
+ 				    sizeof(*phba->host_gp));
++		}
+ 	}
+ 
+ 	/* Setup Port Group offset */
+diff -urpN a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
+--- a/drivers/scsi/lpfc/lpfc_scsi.c	2009-01-08 16:17:48.061026000 -0500
++++ b/drivers/scsi/lpfc/lpfc_scsi.c	2009-01-08 16:17:48.310022000 -0500
+@@ -198,14 +198,14 @@ lpfc_rampdown_queue_depth(struct lpfc_hb
+  */
+ static inline void
+ lpfc_rampup_queue_depth(struct lpfc_vport  *vport,
+-			struct scsi_device *sdev)
++			uint32_t queue_depth)
+ {
+ 	unsigned long flags;
+ 	struct lpfc_hba *phba = vport->phba;
+ 	uint32_t evt_posted;
+ 	atomic_inc(&phba->num_cmd_success);
+ 
+-	if (vport->cfg_lun_queue_depth <= sdev->queue_depth)
++	if (vport->cfg_lun_queue_depth <= queue_depth)
+ 		return;
+ 	spin_lock_irqsave(&phba->hbalock, flags);
+ 	if (((phba->last_ramp_up_time + QUEUE_RAMP_UP_INTERVAL) > jiffies) ||
+@@ -849,10 +849,12 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 	struct lpfc_nodelist *pnode = rdata->pnode;
+ 	struct scsi_cmnd *cmd = lpfc_cmd->pCmd;
+ 	int result;
+-	struct scsi_device *sdev, *tmp_sdev;
++	struct scsi_device *tmp_sdev;
+ 	int depth = 0;
+ 	unsigned long flags;
+ 	struct lpfc_fast_path_event *fast_path_evt;
++	struct Scsi_Host *shost = cmd->device->host;
++	uint32_t queue_depth, scsi_id;
+ 
+ 	lpfc_cmd->result = pIocbOut->iocb.un.ulpWord[4];
+ 	lpfc_cmd->status = pIocbOut->iocb.ulpStatus;
+@@ -942,11 +944,10 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 
+ 	lpfc_update_stats(phba, lpfc_cmd);
+ 	result = cmd->result;
+-	sdev = cmd->device;
+ 	if (vport->cfg_max_scsicmpl_time &&
+ 	   time_after(jiffies, lpfc_cmd->start_time +
+ 		msecs_to_jiffies(vport->cfg_max_scsicmpl_time))) {
+-		spin_lock_irqsave(sdev->host->host_lock, flags);
++		spin_lock_irqsave(shost->host_lock, flags);
+ 		if (pnode && NLP_CHK_NODE_ACT(pnode)) {
+ 			if (pnode->cmd_qdepth >
+ 				atomic_read(&pnode->cmd_pending) &&
+@@ -959,22 +960,26 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 
+ 			pnode->last_change_time = jiffies;
+ 		}
+-		spin_unlock_irqrestore(sdev->host->host_lock, flags);
++		spin_unlock_irqrestore(shost->host_lock, flags);
+ 	} else if (pnode && NLP_CHK_NODE_ACT(pnode)) {
+ 		if ((pnode->cmd_qdepth < LPFC_MAX_TGT_QDEPTH) &&
+ 		   time_after(jiffies, pnode->last_change_time +
+ 			      msecs_to_jiffies(LPFC_TGTQ_INTERVAL))) {
+-			spin_lock_irqsave(sdev->host->host_lock, flags);
++			spin_lock_irqsave(shost->host_lock, flags);
+ 			pnode->cmd_qdepth += pnode->cmd_qdepth *
+ 				LPFC_TGTQ_RAMPUP_PCENT / 100;
+ 			if (pnode->cmd_qdepth > LPFC_MAX_TGT_QDEPTH)
+ 				pnode->cmd_qdepth = LPFC_MAX_TGT_QDEPTH;
+ 			pnode->last_change_time = jiffies;
+-			spin_unlock_irqrestore(sdev->host->host_lock, flags);
++			spin_unlock_irqrestore(shost->host_lock, flags);
+ 		}
+ 	}
+ 
+ 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
++
++	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
++	queue_depth = cmd->device->queue_depth;
++	scsi_id = cmd->device->id;
+ 	cmd->scsi_done(cmd);
+ 
+ 	if (phba->cfg_poll & ENABLE_FCP_RING_POLLING) {
+@@ -982,28 +987,28 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 		 * If there is a thread waiting for command completion
+ 		 * wake up the thread.
+ 		 */
+-		spin_lock_irqsave(sdev->host->host_lock, flags);
++		spin_lock_irqsave(shost->host_lock, flags);
+ 		lpfc_cmd->pCmd = NULL;
+ 		if (lpfc_cmd->waitq)
+ 			wake_up(lpfc_cmd->waitq);
+-		spin_unlock_irqrestore(sdev->host->host_lock, flags);
++		spin_unlock_irqrestore(shost->host_lock, flags);
+ 		lpfc_release_scsi_buf(phba, lpfc_cmd);
+ 		return;
+ 	}
+ 
+ 
+ 	if (!result)
+-		lpfc_rampup_queue_depth(vport, sdev);
++		lpfc_rampup_queue_depth(vport, queue_depth);
+ 
+ 	if (!result && pnode && NLP_CHK_NODE_ACT(pnode) &&
+ 	   ((jiffies - pnode->last_ramp_up_time) >
+ 		LPFC_Q_RAMP_UP_INTERVAL * HZ) &&
+ 	   ((jiffies - pnode->last_q_full_time) >
+ 		LPFC_Q_RAMP_UP_INTERVAL * HZ) &&
+-	   (vport->cfg_lun_queue_depth > sdev->queue_depth)) {
+-		shost_for_each_device(tmp_sdev, sdev->host) {
++	   (vport->cfg_lun_queue_depth > queue_depth)) {
++		shost_for_each_device(tmp_sdev, shost) {
+ 			if (vport->cfg_lun_queue_depth > tmp_sdev->queue_depth){
+-				if (tmp_sdev->id != sdev->id)
++				if (tmp_sdev->id != scsi_id)
+ 					continue;
+ 				if (tmp_sdev->ordered_tags)
+ 					scsi_adjust_queue_depth(tmp_sdev,
+@@ -1019,7 +1024,7 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 		}
+ 		lpfc_send_sdev_queuedepth_change_event(phba, vport, pnode,
+ 			0xFFFFFFFF,
+-			sdev->queue_depth - 1, sdev->queue_depth);
++			queue_depth , queue_depth + 1);
+ 	}
+ 
+ 	/*
+@@ -1030,8 +1035,8 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 	    NLP_CHK_NODE_ACT(pnode)) {
+ 		pnode->last_q_full_time = jiffies;
+ 
+-		shost_for_each_device(tmp_sdev, sdev->host) {
+-			if (tmp_sdev->id != sdev->id)
++		shost_for_each_device(tmp_sdev, shost) {
++			if (tmp_sdev->id != scsi_id)
+ 				continue;
+ 			depth = scsi_track_queue_full(tmp_sdev,
+ 					tmp_sdev->queue_depth - 1);
+@@ -1043,7 +1048,7 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 		 * scsi_track_queue_full.
+ 		 */
+ 		if (depth == -1)
+-			depth = sdev->host->cmd_per_lun;
++			depth = shost->cmd_per_lun;
+ 
+ 		if (depth) {
+ 			lpfc_printf_vlog(vport, KERN_WARNING, LOG_FCP,
+@@ -1059,11 +1064,11 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
+ 	 * If there is a thread waiting for command completion
+ 	 * wake up the thread.
+ 	 */
+-	spin_lock_irqsave(sdev->host->host_lock, flags);
++	spin_lock_irqsave(shost->host_lock, flags);
+ 	lpfc_cmd->pCmd = NULL;
+ 	if (lpfc_cmd->waitq)
+ 		wake_up(lpfc_cmd->waitq);
+-	spin_unlock_irqrestore(sdev->host->host_lock, flags);
++	spin_unlock_irqrestore(shost->host_lock, flags);
+ 
+ 	lpfc_release_scsi_buf(phba, lpfc_cmd);
+ }
+diff -urpN a/drivers/scsi/lpfc/lpfc_security.c b/drivers/scsi/lpfc/lpfc_security.c
+--- a/drivers/scsi/lpfc/lpfc_security.c	2009-01-08 16:17:48.067023000 -0500
++++ b/drivers/scsi/lpfc/lpfc_security.c	2009-01-08 16:17:48.316022000 -0500
+@@ -230,7 +230,7 @@ lpfc_reauth_node(unsigned long ptr)
+ 	struct lpfc_work_evt  *evtp = &ndlp->els_reauth_evt;
+ 
+ 	ndlp = (struct lpfc_nodelist *) ptr;
+-	phba = ndlp->vport->phba;
++	phba = ndlp->phba;
+ 
+ 	spin_lock_irqsave(&phba->hbalock, flags);
+ 	if (!list_empty(&evtp->evt_listp)) {
+diff -urpN a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+--- a/drivers/scsi/lpfc/lpfc_sli.c	2009-01-08 16:17:48.087024000 -0500
++++ b/drivers/scsi/lpfc/lpfc_sli.c	2009-01-08 16:17:48.335025000 -0500
+@@ -3327,6 +3327,21 @@ lpfc_mbox_timeout_handler(struct lpfc_hb
+ 	struct lpfc_sli *psli = &phba->sli;
+ 	struct lpfc_sli_ring *pring;
+ 
++	/* Check the pmbox pointer first.  There is a race condition
++	 * between the mbox timeout handler getting executed in the
++	 * worklist and the mailbox actually completing. When this
++	 * race condition occurs, the mbox_active will be NULL.
++	 */
++	spin_lock_irq(&phba->hbalock);
++	if (pmbox == NULL) {
++		lpfc_printf_log(phba, KERN_WARNING,
++				LOG_MBOX | LOG_SLI,
++				"0353 Active Mailbox cleared - mailbox timeout "
++				"exiting\n");
++		spin_unlock_irq(&phba->hbalock);
++		return;
++	}
++
+ 	/* Mbox cmd <mbxCommand> timeout */
+ 	lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
+ 			"0310 Mailbox command x%x timeout Data: x%x x%x x%p\n",
+@@ -3334,6 +3349,7 @@ lpfc_mbox_timeout_handler(struct lpfc_hb
+ 			phba->pport->port_state,
+ 			phba->sli.sli_flag,
+ 			phba->sli.mbox_active);
++	spin_unlock_irq(&phba->hbalock);
+ 
+ 	/* Setting state unknown so lpfc_sli_abort_iocb_ring
+ 	 * would get IOCB_ERROR from lpfc_sli_issue_iocb, allowing
+diff -urpN a/drivers/scsi/lpfc/lpfc_version.h b/drivers/scsi/lpfc/lpfc_version.h
+--- a/drivers/scsi/lpfc/lpfc_version.h	2009-01-08 16:17:48.093023000 -0500
++++ b/drivers/scsi/lpfc/lpfc_version.h	2009-01-08 16:17:48.341024000 -0500
+@@ -1,7 +1,7 @@
+ /*******************************************************************
+  * This file is part of the Emulex Linux Device Driver for         *
+  * Fibre Channel Host Bus Adapters.                                *
+- * Copyright (C) 2004-2008 Emulex.  All rights reserved.           *
++ * Copyright (C) 2004-2009 Emulex.  All rights reserved.           *
+  * EMULEX and SLI are trademarks of Emulex.                        *
+  * www.emulex.com                                                  *
+  *                                                                 *
+@@ -18,7 +18,7 @@
+  * included with this package.                                     *
+  *******************************************************************/
+ 
+-#define LPFC_DRIVER_VERSION "8.2.8.10"
++#define LPFC_DRIVER_VERSION "8.2.8.11"
+ 
+ #define LPFC_DRIVER_NAME		"lpfc"
+ #define LPFC_SP_DRIVER_HANDLER_NAME	"lpfc:sp"
+@@ -26,4 +26,4 @@
+ 
+ #define LPFC_MODULE_DESC "Emulex LightPulse Fibre Channel SCSI driver " \
+ 		LPFC_DRIVER_VERSION
+-#define LPFC_COPYRIGHT "Copyright(c) 2004-2008 Emulex.  All rights reserved."
++#define LPFC_COPYRIGHT "Copyright(c) 2004-2009 Emulex.  All rights reserved."

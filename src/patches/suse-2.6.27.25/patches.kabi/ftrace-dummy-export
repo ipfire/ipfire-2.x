@@ -1,0 +1,38 @@
+From: Michal Marek <mmarek@suse.cz>
+Subject: Add mcount() dummy export
+
+Export a stub to avoid changing kabi checksums after CONFIG_FTRACE has been
+disabled.
+
+Signed-off-by: Michal Marek <mmarek@suse.cz>
+---
+ arch/x86/kernel/i386_ksyms_32.c  |    4 ++++
+ arch/x86/kernel/x8664_ksyms_64.c |    4 ++++
+ 2 files changed, 8 insertions(+)
+
+--- a/arch/x86/kernel/i386_ksyms_32.c
++++ b/arch/x86/kernel/i386_ksyms_32.c
+@@ -8,6 +8,10 @@
+ #ifdef CONFIG_FTRACE
+ /* mcount is defined in assembly */
+ EXPORT_SYMBOL(mcount);
++#else
++/* export a stub for kabi compatibility */
++void mcount(void) { }
++EXPORT_SYMBOL(mcount);
+ #endif
+ 
+ /* Networking helper routines. */
+--- a/arch/x86/kernel/x8664_ksyms_64.c
++++ b/arch/x86/kernel/x8664_ksyms_64.c
+@@ -15,6 +15,10 @@
+ #ifdef CONFIG_FTRACE
+ /* mcount is defined in assembly */
+ EXPORT_SYMBOL(mcount);
++#else
++/* export a stub for kabi compatibility */
++void mcount(void) { }
++EXPORT_SYMBOL(mcount);
+ #endif
+ 
+ EXPORT_SYMBOL(kernel_thread);

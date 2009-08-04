@@ -1,0 +1,76 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: [x86] system call notification with self_ptrace
+References: bnc#417299
+
+Implement PTRACE SELF for x86. See patches.suse/self-ptrace.patch
+for more documentation.
+
+Signed-off-by: Pierre Morel <pmorel@fr.ibm.com>
+Signed-off-by: Volker Sameske <sameske@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ arch/x86/kernel/ptrace.c    |   14 ++++++++++++++
+ arch/x86/kernel/signal_32.c |    5 +++++
+ arch/x86/kernel/signal_64.c |    5 +++++
+ 3 files changed, 24 insertions(+)
+
+--- linux-2.6.26.orig/arch/x86/kernel/ptrace.c	2008-09-26 10:21:51.000000000 +0200
++++ linux-2.6.26/arch/x86/kernel/ptrace.c	2008-09-26 10:22:23.000000000 +0200
+@@ -1429,6 +1429,17 @@ asmregparm long syscall_trace_enter(stru
+ 	/* do the secure computing check first */
+ 	secure_computing(regs->orig_ax);
+ 
++	if (is_self_ptracing(regs->orig_ax)) {
++		struct siginfo info;
++
++		memset(&info, 0, sizeof(struct siginfo));
++		info.si_signo = SIGSYS;
++		info.si_code = SYS_SYSCALL;
++		info.si_addr = (void *) regs->orig_ax;
++		send_sig_info(SIGSYS, &info, current);
++		return -1L; /* Skip system call, deliver signal. */
++	}
++
+ 	if (unlikely(test_thread_flag(TIF_SYSCALL_EMU)))
+ 		ret = -1L;
+ 
+@@ -1455,6 +1466,9 @@ asmregparm long syscall_trace_enter(stru
+ 
+ asmregparm void syscall_trace_leave(struct pt_regs *regs)
+ {
++	if (is_self_ptracing(regs->orig_ax)) {
++		return;
++	}
+ 	if (unlikely(current->audit_context))
+ 		audit_syscall_exit(AUDITSC_RESULT(regs->ax), regs->ax);
+ 
+--- linux-2.6.26.orig/arch/x86/kernel/signal_32.c	2008-09-26 10:21:51.000000000 +0200
++++ linux-2.6.26/arch/x86/kernel/signal_32.c	2008-09-26 10:22:23.000000000 +0200
+@@ -568,6 +568,11 @@ handle_signal(unsigned long sig, siginfo
+ 	recalc_sigpending();
+ 	spin_unlock_irq(&current->sighand->siglock);
+ 
++	if (current->instrumentation & PTS_SELF) {
++		clear_thread_flag(TIF_SYSCALL_TRACE);
++		current->instrumentation &= ~PTS_SELF;
++	}
++
+ 	return 0;
+ }
+ 
+--- linux-2.6.26.orig/arch/x86/kernel/signal_64.c	2008-09-26 10:21:51.000000000 +0200
++++ linux-2.6.26/arch/x86/kernel/signal_64.c	2008-09-26 10:22:23.000000000 +0200
+@@ -464,6 +464,11 @@ handle_signal(unsigned long sig, siginfo
+ 		spin_unlock_irq(&current->sighand->siglock);
+ 	}
+ 
++	if (current->instrumentation & PTS_SELF) {
++		clear_thread_flag(TIF_SYSCALL_TRACE);
++		current->instrumentation &= ~PTS_SELF;
++	}
++
+ 	return ret;
+ }
+ 

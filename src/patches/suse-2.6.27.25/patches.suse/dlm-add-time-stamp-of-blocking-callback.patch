@@ -1,0 +1,38 @@
+From: David Teigland <teigland@redhat.com>
+commit e3a84ad495d1fddb542e0922160f0194a1361950
+Author: David Teigland <teigland@redhat.com>
+Date:   Tue Dec 9 14:47:29 2008 -0600
+Subject: dlm: add time stamp of blocking callback
+    
+    Record the time the latest blocking callback was queued for
+    a lock.  This will be used for debugging in combination with
+    lock queue timestamp changes in the previous patch.
+    
+Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Coly Li <coly.li@suse.de>
+
+diff --git a/fs/dlm/dlm_internal.h b/fs/dlm/dlm_internal.h
+index e69135c..0c48829 100644
+--- a/fs/dlm/dlm_internal.h
++++ b/fs/dlm/dlm_internal.h
+@@ -245,6 +245,7 @@ struct dlm_lkb {
+ 	struct list_head	lkb_astqueue;	/* need ast to be sent */
+ 	struct list_head	lkb_ownqueue;	/* list of locks for a process */
+ 	struct list_head	lkb_time_list;
++	ktime_t			lkb_time_bast;	/* for debugging */
+ 	ktime_t			lkb_timestamp;
+ 	unsigned long		lkb_timeout_cs;
+ 
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index dfc57ae..6cfe65b 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -318,6 +318,8 @@ static inline void queue_cast_overlap(struct dlm_rsb *r, struct dlm_lkb *lkb)
+ 
+ static void queue_bast(struct dlm_rsb *r, struct dlm_lkb *lkb, int rqmode)
+ {
++	lkb->lkb_time_bast = ktime_get();
++
+ 	if (is_master_copy(lkb))
+ 		send_bast(r, lkb, rqmode);
+ 	else

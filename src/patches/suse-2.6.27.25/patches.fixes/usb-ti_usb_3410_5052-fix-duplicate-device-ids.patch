@@ -1,0 +1,27 @@
+From foo@baz Fri Jun 26 08:05:20 PDT 2009
+Date: Fri, 26 Jun 2009 08:05:20 -0700
+To: Greg KH <greg@kroah.com>
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: USB: ti_usb_3410_5052: fix duplicate device ids.
+References: bnc#395775
+Patch-mainline: 2.6.31
+
+commit 1a1fab513734b3a4fca1bee8229e5ff7e1cb873c accidentally added the
+device id to both tables in the driver, which causes problems as this is
+only a single port device, not a multiple port device.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ drivers/usb/serial/ti_usb_3410_5052.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/usb/serial/ti_usb_3410_5052.c
++++ b/drivers/usb/serial/ti_usb_3410_5052.c
+@@ -240,7 +240,6 @@ static struct usb_device_id ti_id_table_
+ 	{ USB_DEVICE(TI_VENDOR_ID, TI_5152_BOOT_PRODUCT_ID) },
+ 	{ USB_DEVICE(TI_VENDOR_ID, TI_5052_EEPROM_PRODUCT_ID) },
+ 	{ USB_DEVICE(TI_VENDOR_ID, TI_5052_FIRMWARE_PRODUCT_ID) },
+-	{ USB_DEVICE(IBM_VENDOR_ID, IBM_4543_PRODUCT_ID) },
+ };
+ 
+ static struct usb_device_id ti_id_table_combined[14+2*TI_EXTRA_VID_PID_COUNT+1] = {

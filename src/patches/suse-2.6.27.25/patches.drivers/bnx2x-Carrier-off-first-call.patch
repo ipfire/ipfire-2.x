@@ -1,0 +1,39 @@
+From 6eccabb301d442e6106ecc84b07a976c2816d9fb Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Thu, 22 Jan 2009 03:37:48 +0000
+Subject: bnx2x: Carrier off first call
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+Call carrier off should not be called after register_netdev since after
+register netdev open can be called at any time followed by an interrupt that
+will set it to carrier_on and the probe will resume control and set it to off
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -9831,6 +9831,8 @@ static int bnx2x_open(struct net_device 
+ {
+ 	struct bnx2x *bp = netdev_priv(dev);
+ 
++	netif_carrier_off(dev);
++
+ 	bnx2x_set_power_state(bp, PCI_D0);
+ 
+ 	return bnx2x_nic_load(bp, LOAD_OPEN);
+@@ -10335,8 +10337,6 @@ static int __devinit bnx2x_init_one(stru
+ 		goto init_one_exit;
+ 	}
+ 
+-	netif_carrier_off(dev);
+-
+ 	bp->common.name = board_info[ent->driver_data].name;
+ 	printk(KERN_INFO "%s: %s (%c%d) PCI-E x%d %s found at mem %lx,"
+ 	       " IRQ %d, ", dev->name, bp->common.name,

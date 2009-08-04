@@ -1,0 +1,21 @@
+From: Tejun Heo <tj@kernel.org>
+Subject: x86: fix iommu=nodac parameter handling
+References: bnc#463829, bnc#482220
+
+nodac should forbid dac not instead of enabling it.  Fix it.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+Automatically created from "patches.arch/x86-fix-nodac" by xen-port-patches.py
+
+--- sle11-2009-03-04.orig/arch/x86/kernel/pci-dma-xen.c	2009-03-04 11:29:03.000000000 +0100
++++ sle11-2009-03-04/arch/x86/kernel/pci-dma-xen.c	2009-03-04 11:37:52.000000000 +0100
+@@ -198,7 +198,7 @@ static __init int iommu_setup(char *p)
+ 		if (!strncmp(p, "allowdac", 8))
+ 			forbid_dac = 0;
+ 		if (!strncmp(p, "nodac", 5))
+-			forbid_dac = -1;
++			forbid_dac = 1;
+ 		if (!strncmp(p, "usedac", 6)) {
+ 			forbid_dac = -1;
+ 			return 1;

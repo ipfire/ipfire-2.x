@@ -1,0 +1,196 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/464a925d73f1
+# HG changeset 863 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1239969802 -3600
+# Node ID 464a925d73f141d8ca568026ee2e6635489affa2
+# Parent  dfd2adc5874021b52c13d317df1f55b46ec38e3d
+Subject: blktap: don't access deallocated data
+References: bnc#484210, bnc#485652
+Patch-mainline: obsolete
+
+Dereferencing filp->private_data->vma in the file_operations.release
+actor isn't permitted, as the vma generally has been destroyed by that
+time. The kfree()ing of vma->vm_private_data must be done in the
+vm_operations.close actor, and the call to zap_page_range() seems
+redundant with the caller of that actor altogether.
+
+Signed-off-by: Jan Beulich <jbeulich@novell.com>
+
+--- sle11-2009-04-20.orig/drivers/xen/blktap/blktap.c	2009-04-20 11:35:28.000000000 +0200
++++ sle11-2009-04-20/drivers/xen/blktap/blktap.c	2009-04-20 11:35:40.000000000 +0200
+@@ -293,6 +293,10 @@ static inline int OFFSET_TO_SEG(int offs
+ /******************************************************************
+  * BLKTAP VM OPS
+  */
++struct tap_vma_priv {
++	tap_blkif_t *info;
++	struct page *map[];
++};
+ 
+ static struct page *blktap_nopage(struct vm_area_struct *vma,
+ 				  unsigned long address,
+@@ -315,7 +319,7 @@ static pte_t blktap_clear_pte(struct vm_
+ 	int offset, seg, usr_idx, pending_idx, mmap_idx;
+ 	unsigned long uvstart = vma->vm_start + (RING_PAGES << PAGE_SHIFT);
+ 	unsigned long kvaddr;
+-	struct page **map;
++	struct tap_vma_priv *priv;
+ 	struct page *pg;
+ 	struct grant_handle_pair *khandle;
+ 	struct gnttab_unmap_grant_ref unmap[2];
+@@ -330,12 +334,12 @@ static pte_t blktap_clear_pte(struct vm_
+ 					       ptep, is_fullmm);
+ 
+ 	info = vma->vm_file->private_data;
+-	map = vma->vm_private_data;
++	priv = vma->vm_private_data;
+ 
+ 	/* TODO Should these be changed to if statements? */
+ 	BUG_ON(!info);
+ 	BUG_ON(!info->idx_map);
+-	BUG_ON(!map);
++	BUG_ON(!priv);
+ 
+ 	offset = (int) ((uvaddr - uvstart) >> PAGE_SHIFT);
+ 	usr_idx = OFFSET_TO_USR_IDX(offset);
+@@ -347,7 +351,7 @@ static pte_t blktap_clear_pte(struct vm_
+ 	kvaddr = idx_to_kaddr(mmap_idx, pending_idx, seg);
+ 	pg = pfn_to_page(__pa(kvaddr) >> PAGE_SHIFT);
+ 	ClearPageReserved(pg);
+-	map[offset + RING_PAGES] = NULL;
++	priv->map[offset + RING_PAGES] = NULL;
+ 
+ 	khandle = &pending_handle(mmap_idx, pending_idx, seg);
+ 
+@@ -388,9 +392,20 @@ static pte_t blktap_clear_pte(struct vm_
+ 	return copy;
+ }
+ 
++static void blktap_vma_close(struct vm_area_struct *vma)
++{
++	struct tap_vma_priv *priv = vma->vm_private_data;
++
++	if (priv) {
++		priv->info->vma = NULL;
++		kfree(priv);
++	}
++}
++
+ struct vm_operations_struct blktap_vm_ops = {
+ 	nopage:   blktap_nopage,
+ 	zap_pte:  blktap_clear_pte,
++	close:    blktap_vma_close,
+ };
+ 
+ /******************************************************************
+@@ -609,21 +624,6 @@ static int blktap_release(struct inode *
+ 	ClearPageReserved(virt_to_page(info->ufe_ring.sring));
+ 	free_page((unsigned long) info->ufe_ring.sring);
+ 
+-	/* Clear any active mappings and free foreign map table */
+-	if (info->vma) {
+-		struct mm_struct *mm = info->vma->vm_mm;
+-
+-		down_write(&mm->mmap_sem);
+-		zap_page_range(
+-			info->vma, info->vma->vm_start, 
+-			info->vma->vm_end - info->vma->vm_start, NULL);
+-		up_write(&mm->mmap_sem);
+-
+-		kfree(info->vma->vm_private_data);
+-
+-		info->vma = NULL;
+-	}
+-
+ 	if (info->idx_map) {
+ 		kfree(info->idx_map);
+ 		info->idx_map = NULL;
+@@ -662,8 +662,7 @@ static int blktap_release(struct inode *
+ static int blktap_mmap(struct file *filp, struct vm_area_struct *vma)
+ {
+ 	int size;
+-	struct page **map;
+-	int i;
++	struct tap_vma_priv *priv;
+ 	tap_blkif_t *info = filp->private_data;
+ 	int ret;
+ 
+@@ -700,18 +699,16 @@ static int blktap_mmap(struct file *filp
+ 	}
+ 
+ 	/* Mark this VM as containing foreign pages, and set up mappings. */
+-	map = kzalloc(((vma->vm_end - vma->vm_start) >> PAGE_SHIFT)
+-		      * sizeof(struct page *),
+-		      GFP_KERNEL);
+-	if (map == NULL) {
++	priv = kzalloc(sizeof(*priv) + ((vma->vm_end - vma->vm_start)
++					>> PAGE_SHIFT) * sizeof(*priv->map),
++		       GFP_KERNEL);
++	if (priv == NULL) {
+ 		WPRINTK("Couldn't alloc VM_FOREIGN map.\n");
+ 		goto fail;
+ 	}
++	priv->info = info;
+ 
+-	for (i = 0; i < ((vma->vm_end - vma->vm_start) >> PAGE_SHIFT); i++)
+-		map[i] = NULL;
+-    
+-	vma->vm_private_data = map;
++	vma->vm_private_data = priv;
+ 	vma->vm_flags |= VM_FOREIGN;
+ 	vma->vm_flags |= VM_DONTCOPY;
+ 
+@@ -1190,7 +1187,7 @@ static int blktap_read_ufe_ring(tap_blki
+ 		for (j = 0; j < pending_req->nr_pages; j++) {
+ 
+ 			unsigned long kvaddr, uvaddr;
+-			struct page **map = info->vma->vm_private_data;
++			struct tap_vma_priv *priv = info->vma->vm_private_data;
+ 			struct page *pg;
+ 			int offset;
+ 
+@@ -1201,7 +1198,7 @@ static int blktap_read_ufe_ring(tap_blki
+ 			ClearPageReserved(pg);
+ 			offset = (uvaddr - info->vma->vm_start) 
+ 				>> PAGE_SHIFT;
+-			map[offset] = NULL;
++			priv->map[offset] = NULL;
+ 		}
+ 		fast_flush_area(pending_req, pending_idx, usr_idx, info->minor);
+ 		info->idx_map[usr_idx] = INVALID_REQ;
+@@ -1359,6 +1356,7 @@ static void dispatch_rw_block_io(blkif_t
+ 	unsigned int nseg;
+ 	int ret, i, nr_sects = 0;
+ 	tap_blkif_t *info;
++	struct tap_vma_priv *priv;
+ 	blkif_request_t *target;
+ 	int pending_idx = RTN_PEND_IDX(pending_req,pending_req->mem_idx);
+ 	int usr_idx;
+@@ -1407,6 +1405,7 @@ static void dispatch_rw_block_io(blkif_t
+ 	pending_req->status    = BLKIF_RSP_OKAY;
+ 	pending_req->nr_pages  = nseg;
+ 	op = 0;
++	priv = info->vma->vm_private_data;
+ 	mm = info->vma->vm_mm;
+ 	if (!xen_feature(XENFEAT_auto_translated_physmap))
+ 		down_write(&mm->mmap_sem);
+@@ -1490,8 +1489,7 @@ static void dispatch_rw_block_io(blkif_t
+ 							  >> PAGE_SHIFT));
+ 			offset = (uvaddr - info->vma->vm_start) >> PAGE_SHIFT;
+ 			pg = pfn_to_page(__pa(kvaddr) >> PAGE_SHIFT);
+-			((struct page **)info->vma->vm_private_data)[offset] =
+-				pg;
++			priv->map[offset] = pg;
+ 		}
+ 	} else {
+ 		for (i = 0; i < nseg; i++) {
+@@ -1518,8 +1516,7 @@ static void dispatch_rw_block_io(blkif_t
+ 
+ 			offset = (uvaddr - info->vma->vm_start) >> PAGE_SHIFT;
+ 			pg = pfn_to_page(__pa(kvaddr) >> PAGE_SHIFT);
+-			((struct page **)info->vma->vm_private_data)[offset] =
+-				pg;
++			priv->map[offset] = pg;
+ 		}
+ 	}
+ 

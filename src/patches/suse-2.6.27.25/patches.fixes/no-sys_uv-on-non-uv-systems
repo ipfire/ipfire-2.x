@@ -1,0 +1,35 @@
+From: Russ Anderson <rja@sgi.com>
+Subject: [PATCH] sgi_uv: Don't publish /sys/firmware/sgi_uv on !uv systems
+References: bnc#482506
+Patch-mainline: Submitted Mar 6 2009 by SGI
+
+ MPT testing of sles11 found /sys/firmware/sgi_uv gets created on non-UV x86_64
+ systems.  This confuses MPT which uses /sys/firmware/sgi_uv to indicate the
+ platform is a UV system.
+
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+
+ arch/x86/kernel/uv_sysfs.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/arch/x86/kernel/uv_sysfs.c
++++ b/arch/x86/kernel/uv_sysfs.c
+@@ -21,6 +21,7 @@
+ 
+ #include <linux/sysdev.h>
+ #include <asm/uv/bios.h>
++#include <asm/genapic.h>
+ 
+ struct kobject *sgi_uv_kobj;
+ 
+@@ -46,6 +47,9 @@
+ static int __init sgi_uv_sysfs_init(void)
+ {
+ 	unsigned long ret;
++
++	if (!is_uv_system())
++		return -ENODEV;
+ 
+ 	if (!sgi_uv_kobj)
+ 		sgi_uv_kobj = kobject_create_and_add("sgi_uv", firmware_kobj);

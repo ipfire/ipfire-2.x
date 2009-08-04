@@ -1,0 +1,32 @@
+From: Ingo Molnar <mingo@elte.hu>
+Subject: x86, xen: fix apic_ops build on UP
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: caf43bf7c6a55e89b6df5179df434d67e24aa32e
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+fix:
+
+ arch/x86/xen/enlighten.c:615: error: variable ‘xen_basic_apic_ops’ has initializer but incomplete type
+ arch/x86/xen/enlighten.c:616: error: unknown field ‘read’ specified in initializer
+ [...]
+
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/xen/enlighten.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+Index: linux-2.6.26/arch/x86/xen/enlighten.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/xen/enlighten.c
++++ linux-2.6.26/arch/x86/xen/enlighten.c
+@@ -36,6 +36,7 @@
+ #include <xen/hvc-console.h>
+ 
+ #include <asm/paravirt.h>
++#include <asm/apic.h>
+ #include <asm/page.h>
+ #include <asm/xen/hypercall.h>
+ #include <asm/xen/hypervisor.h>

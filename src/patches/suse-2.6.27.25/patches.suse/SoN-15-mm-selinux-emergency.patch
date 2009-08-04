@@ -1,0 +1,30 @@
+From: Peter Zijlstra <a.p.zijlstra@chello.nl> 
+Subject: selinux: tag avc cache alloc as non-critical
+Patch-mainline: No
+References: FATE#303834
+
+Failing to allocate a cache entry will only harm performance not correctness.
+Do not consume valuable reserve pages for something like that.
+
+Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Acked-by: James Morris <jmorris@namei.org>
+Acked-by: Neil Brown <neilb@suse.de>
+Acked-by: Suresh Jayaraman <sjayaraman@suse.de>
+
+---
+ security/selinux/avc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.26/security/selinux/avc.c
+===================================================================
+--- linux-2.6.26.orig/security/selinux/avc.c
++++ linux-2.6.26/security/selinux/avc.c
+@@ -337,7 +337,7 @@ static struct avc_node *avc_alloc_node(v
+ {
+ 	struct avc_node *node;
+ 
+-	node = kmem_cache_zalloc(avc_node_cachep, GFP_ATOMIC);
++	node = kmem_cache_zalloc(avc_node_cachep, GFP_ATOMIC|__GFP_NOMEMALLOC);
+ 	if (!node)
+ 		goto out;
+ 

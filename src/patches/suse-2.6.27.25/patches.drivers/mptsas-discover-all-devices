@@ -1,0 +1,56 @@
+From: Jeremy Higdon <jeremy@sgi.com>
+Subject: mptsas driver fails to discover devices
+References: bnc#459932
+
+The mptsas driver has a serious regression in sles11rc1 in that it fails to
+discover devices that work fine with sles10sp2.
+
+I discovered that part of the problem was that the target number of the RAID
+volume was too high for the driver to discover it.
+
+The problem with the IS220 (LSI 1333 RAID) is that the driver is issuing its
+own Test Unit Read and that's apparently being considered a failure from the
+Unit Attention statuses.
+
+With this patch the system boots okay.
+
+Signed-off-by: Jeremy Higdon <jeremy@sgi.com>
+Signed-off-by: Sathya Prakash <sathya.prakash@lsi.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+--- /mnt/usr/src/linux/drivers/message/fusion/mptsas.c	2008-12-08 06:54:50.000000000 -0800
++++ linux/drivers/message/fusion/mptsas.c	2009-01-18 22:16:30.456811758 -0800
+@@ -1580,12 +1580,10 @@
+ 	enum device_state	state;
+ 	int			rc;
+ 	u8		skey, asc, ascq;
+-	u8		retry_ua;
+ 
+ 	if (count >= mpt_cmd_retry_count)
+ 		return DEVICE_ERROR;
+ 
+-	retry_ua = 0;
+ 	iocmd = kzalloc(sizeof(INTERNAL_CMD), GFP_KERNEL);
+ 	if (!iocmd) {
+ 		printk(MYIOC_s_ERR_FMT "%s: kzalloc(%zd) FAILED!\n",
+@@ -1646,10 +1644,8 @@
+ 		     __func__, channel, id, skey, asc, ascq));
+ 
+ 		if (skey == UNIT_ATTENTION) {
+-			if (!retry_ua) {
+-				retry_ua++;
+-				goto retry;
+-			}
++			state = DEVICE_RETRY;
++			break;
+ 		} else if (skey == NOT_READY) {
+ 			/*
+ 			 * medium isn't present
+@@ -3740,6 +3736,7 @@
+ 				return;
+ 			}
+ 		}
++		mpt_findImVolumes(ioc);
+ 
+ 	case MPTSAS_ADD_DEVICE:
+ 		memset(&sas_device, 0, sizeof(struct mptsas_devinfo));

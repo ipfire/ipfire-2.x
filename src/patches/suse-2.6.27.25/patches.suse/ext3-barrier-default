@@ -1,0 +1,50 @@
+From: Chris Mason <mason@suse.com>
+Subject: make ext3 mount default to barrier=1
+
+Hello everyone,
+
+This patch turns on barriers by default for ext3.  mount -o barrier=0
+will turn them off.  It also changes the ext3 fsync call to trigger a
+barrier when a commit isn't done.
+
+It should be safe, but some extra review would be appreciated.
+
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+
+---
+ fs/ext3/fsync.c |    4 ++++
+ fs/ext3/super.c |    2 ++
+ 2 files changed, 6 insertions(+)
+
+--- a/fs/ext3/fsync.c
++++ b/fs/ext3/fsync.c
+@@ -27,6 +27,7 @@
+ #include <linux/sched.h>
+ #include <linux/writeback.h>
+ #include <linux/jbd.h>
++#include <linux/blkdev.h>
+ #include <linux/ext3_fs.h>
+ #include <linux/ext3_jbd.h>
+ 
+@@ -84,7 +85,10 @@ int ext3_sync_file(struct file * file, s
+ 			.sync_mode = WB_SYNC_ALL,
+ 			.nr_to_write = 0, /* sys_fsync did this */
+ 		};
++		journal_t *journal = EXT3_SB(inode->i_sb)->s_journal;
+ 		ret = sync_inode(inode, &wbc);
++		if (journal && (journal->j_flags & JFS_BARRIER))
++			blkdev_issue_flush(inode->i_sb->s_bdev, NULL);
+ 	}
+ out:
+ 	return ret;
+--- a/fs/ext3/super.c
++++ b/fs/ext3/super.c
+@@ -1603,6 +1603,8 @@ static int ext3_fill_super (struct super
+ 	sbi->s_resuid = le16_to_cpu(es->s_def_resuid);
+ 	sbi->s_resgid = le16_to_cpu(es->s_def_resgid);
+ 
++	/* enable barriers by default */
++	set_opt(sbi->s_mount_opt, BARRIER);
+ 	set_opt(sbi->s_mount_opt, RESERVATION);
+ 
+ 	if (!parse_options ((char *) data, sb, &journal_inum, &journal_devnum,

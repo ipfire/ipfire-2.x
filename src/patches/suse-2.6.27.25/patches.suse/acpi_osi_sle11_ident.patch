@@ -1,0 +1,31 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: Provide possibility for vendors to fix BIOS issues for SLE11 only
+References: none
+Patch-Mainline: never
+
+These BIOS issues generally should be solved in the mainine kernel.
+But such ACPI interpreter fixes often are very intrusive and impossible to
+add as a maintenance update.
+This interface should only be used by vendors in emergency case, e.g.
+for important pre-loads. Use cases could be:
+  - BIOS cannot generally be fixed because it's already validated against
+    Windows OSes, with this patch a SLE11 specific BIOS fix can be added
+  - Kernel cannot be fixed, because the fix would be too intrusive
+In most cases both above scenarios would be valid.
+
+---
+ drivers/acpi/utilities/uteval.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+Index: linux-2.6.27/drivers/acpi/utilities/uteval.c
+===================================================================
+--- linux-2.6.27.orig/drivers/acpi/utilities/uteval.c
++++ linux-2.6.27/drivers/acpi/utilities/uteval.c
+@@ -69,6 +69,7 @@ static char *acpi_interfaces_supported[]
+ 	"Windows 2001.1",	/* Windows Server 2003 */
+ 	"Windows 2001.1 SP1",	/* Windows Server 2003 SP1 - Added 03/2006 */
+ 	"Windows 2006",		/* Windows Vista - Added 03/2006 */
++	"SLE11",		/* SLE11 identification */
+ 
+ 	/* Feature Group Strings */
+ 

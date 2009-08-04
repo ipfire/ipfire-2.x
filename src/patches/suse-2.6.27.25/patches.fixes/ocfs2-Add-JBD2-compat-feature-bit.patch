@@ -1,0 +1,38 @@
+From: Joel Becker <Joel.Becker@oracle.com>
+Date: Tue, 16 Dec 2008 18:10:18 -0800
+Subject: ocfs2: Add JBD2 compat feature bit.
+
+Define the OCFS2_FEATURE_COMPAT_JBD2 bit in the filesystem header.
+
+Signed-off-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/ocfs2_fs.h |    8 +++++++-
+ 1 files changed, 7 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/ocfs2_fs.h
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/ocfs2_fs.h
++++ linux-2.6.27-ocfs2/fs/ocfs2/ocfs2_fs.h
+@@ -86,7 +86,8 @@
+ #define OCFS2_CLEAR_INCOMPAT_FEATURE(sb,mask)			\
+ 	OCFS2_SB(sb)->s_feature_incompat &= ~(mask)
+ 
+-#define OCFS2_FEATURE_COMPAT_SUPP	OCFS2_FEATURE_COMPAT_BACKUP_SB
++#define OCFS2_FEATURE_COMPAT_SUPP	(OCFS2_FEATURE_COMPAT_BACKUP_SB	\
++					 | OCFS2_FEATURE_COMPAT_JBD2_SB)
+ #define OCFS2_FEATURE_INCOMPAT_SUPP	(OCFS2_FEATURE_INCOMPAT_LOCAL_MOUNT \
+ 					 | OCFS2_FEATURE_INCOMPAT_SPARSE_ALLOC \
+ 					 | OCFS2_FEATURE_INCOMPAT_INLINE_DATA \
+@@ -153,6 +154,11 @@
+ #define OCFS2_FEATURE_COMPAT_BACKUP_SB		0x0001
+ 
+ /*
++ * The filesystem will correctly handle journal feature bits.
++ */
++#define OCFS2_FEATURE_COMPAT_JBD2_SB		0x0002
++
++/*
+  * Unwritten extents support.
+  */
+ #define OCFS2_FEATURE_RO_COMPAT_UNWRITTEN	0x0001

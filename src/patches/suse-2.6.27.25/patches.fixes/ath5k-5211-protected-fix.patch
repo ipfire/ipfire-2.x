@@ -1,0 +1,29 @@
+From 0f9a52f34d44a985dd9db9a1c7bdea9a52d0fff7 Mon Sep 17 00:00:00 2001
+From: Jiri Slaby <jirislaby@gmail.com>
+Date: Sat, 25 Apr 2009 12:36:41 +0200
+Subject: ath5k: 5211, don't crypt every protected frame
+References: bnc#464360
+
+Set null key type even on ar5211, otherwise it en/decrypts every frame with
+protected bit set.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Luis R. Rodriguez <lrodriguez@atheros.com>
+Cc: Bob Copeland <me@bobcopeland.com>
+Acked-by: Nick Kossifidis <mickflemm@gmail.com>
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
+---
+ drivers/net/wireless/ath5k/hw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/ath5k/hw.c
++++ b/drivers/net/wireless/ath5k/hw.c
+@@ -3134,7 +3134,7 @@ int ath5k_hw_reset_key(struct ath5k_hw *
+ 	 * Note2: Windows driver (ndiswrapper) sets this to
+ 	 *        0x00000714 instead of 0x00000007
+ 	 */
+-	if (ah->ah_version > AR5K_AR5211)
++	if (ah->ah_version >= AR5K_AR5211)
+ 		ath5k_hw_reg_write(ah, AR5K_KEYTABLE_TYPE_NULL,
+ 				AR5K_KEYTABLE_TYPE(entry));
+ 

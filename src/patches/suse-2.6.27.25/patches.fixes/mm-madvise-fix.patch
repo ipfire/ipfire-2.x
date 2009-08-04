@@ -1,0 +1,57 @@
+From: Nick Piggin <npiggin@suse.de>
+Subject: mm: madvise correct return code
+References: bnc#352998
+
+madvise should return -EINVAL if passed in an invalid flag, even if the
+requested range is 0.
+
+Signed-off-by: Nick Piggin <npiggin@suse.de>
+---
+---
+ mm/madvise.c |   23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -247,12 +247,30 @@ madvise_vma(struct vm_area_struct *vma,
+ 		break;
+ 
+ 	default:
+-		error = -EINVAL;
++		BUG();
+ 		break;
+ 	}
+ 	return error;
+ }
+ 
++static int
++madvise_behavior_valid(int behavior)
++{
++	switch (behavior) {
++	case MADV_DOFORK:
++	case MADV_DONTFORK:
++	case MADV_NORMAL:
++	case MADV_SEQUENTIAL:
++	case MADV_RANDOM:
++	case MADV_REMOVE:
++	case MADV_WILLNEED:
++	case MADV_DONTNEED:
++		return 1;
++
++	default:
++		return 0;
++	}
++}
+ /*
+  * The madvise(2) system call.
+  *
+@@ -298,6 +316,9 @@ SYSCALL_DEFINE3(madvise, unsigned long,
+ 	int write;
+ 	size_t len;
+ 
++	if (!madvise_behavior_valid(behavior))
++		return error;
++
+ 	write = madvise_need_mmap_write(behavior);
+ 	if (write)
+ 		down_write(&current->mm->mmap_sem);

@@ -1,0 +1,61 @@
+From: SGI KDB Development <kdb@oss.sgi.com>
+Subject: kdb-v4.4-2.6.27-rc8-x86-1
+References: FATE#303971
+X-URL: ftp://oss.sgi.com/www/projects/kdb/download/v4.4/
+
+The KDB x86 code.
+
+Acked-by: Bernhard Walle <bwalle@suse.de>
+
+Automatically created from "patches.suse/kdb-x86" by xen-port-patches.py
+
+--- sle11-2009-06-04.orig/arch/x86/kdb/kdba_bt.c	2009-06-04 10:19:52.000000000 +0200
++++ sle11-2009-06-04/arch/x86/kdb/kdba_bt.c	2009-06-04 10:46:41.000000000 +0200
+@@ -683,7 +683,7 @@ static const char *bb_spurious[] = {
+ 				/* relocate_kernel */
+ 	"relocate_new_kernel",
+ #endif	/* CONFIG_KEXEC */
+-#ifdef	CONFIG_XEN
++#ifdef	CONFIG_PARAVIRT_XEN
+ 				/* arch/i386/xen/xen-asm.S */
+ 	"xen_irq_enable_direct_end",
+ 	"xen_irq_disable_direct_end",
+@@ -4757,7 +4757,7 @@ kdb_bb_all(int argc, const char **argv)
+ #ifdef	CONFIG_MATH_EMULATION
+ 		   " CONFIG_MATH_EMULATION"
+ #endif
+-#ifdef	CONFIG_XEN
++#ifdef	CONFIG_PARAVIRT_XEN
+ 		   " CONFIG_XEN"
+ #endif
+ #ifdef	CONFIG_DEBUG_INFO
+--- sle11-2009-06-04.orig/arch/x86/kdb/kdba_support.c	2009-06-04 10:17:48.000000000 +0200
++++ sle11-2009-06-04/arch/x86/kdb/kdba_support.c	2009-06-04 10:46:41.000000000 +0200
+@@ -49,7 +49,7 @@ extern void halt_current_cpu(struct pt_r
+ 
+ void kdba_kdump_shutdown_slave(struct pt_regs *regs)
+ {
+-#ifndef CONFIG_XEN
++#ifndef CONFIG_PARAVIRT_XEN
+ 	halt_current_cpu(regs);
+ #endif /* CONFIG_XEN */
+ }
+--- sle11-2009-06-04.orig/arch/x86/kernel/crash.c	2009-06-04 10:17:48.000000000 +0200
++++ sle11-2009-06-04/arch/x86/kernel/crash.c	2009-06-04 10:46:41.000000000 +0200
+@@ -224,14 +224,14 @@ void machine_crash_shutdown_begin(void)
+ 
+ 	/* Make a note of crashing cpu. Will be used in NMI callback.*/
+ 	crashing_cpu = safe_smp_processor_id();
+-#ifndef CONFIG_XEN
++#ifndef CONFIG_PARAVIRT_XEN
+ 	nmi_shootdown_cpus_init();
+ #endif /* CONFIG_XEN */
+ }
+ 
+ void machine_crash_shutdown_end(struct pt_regs *regs)
+ {
+-#ifndef CONFIG_XEN
++#ifndef CONFIG_PARAVIRT_XEN
+ 	wait_other_cpus();
+ 
+ 	local_irq_disable();

@@ -1,0 +1,36 @@
+From: jbeulich@novell.com
+Subject: also register pirq for DomU (which doesn't use the IO-APIC code)
+References: bnc#463596
+Patch-mainline: obsolete
+
+Additionally make sure IRQ chip and handler aren't getting set twice
+for an IRQ possibly in use by more than one device.
+
+--- head-2009-02-02.orig/arch/x86/pci/pcifront.c	2009-02-03 17:27:59.000000000 +0100
++++ head-2009-02-02/arch/x86/pci/pcifront.c	2009-02-03 11:22:28.000000000 +0100
+@@ -8,12 +8,14 @@
+ #include <linux/init.h>
+ #include <linux/pci.h>
+ #include <asm/acpi.h>
++#include <xen/evtchn.h>
+ #include "pci.h"
+ 
+ static int pcifront_enable_irq(struct pci_dev *dev)
+ {
+ 	u8 irq;
+ 	pci_read_config_byte(dev, PCI_INTERRUPT_LINE, &irq);
++	evtchn_register_pirq(irq);
+ 	dev->irq = irq;
+ 
+ 	return 0;
+--- head-2009-02-02.orig/drivers/xen/core/evtchn.c	2009-01-14 15:16:43.000000000 +0100
++++ head-2009-02-02/drivers/xen/core/evtchn.c	2009-02-03 17:34:44.000000000 +0100
+@@ -1561,7 +1561,7 @@ core_initcall(evtchn_register);
+ void evtchn_register_pirq(int irq)
+ {
+ 	BUG_ON(irq < PIRQ_BASE || irq - PIRQ_BASE > NR_PIRQS);
+-	if (identity_mapped_irq(irq))
++	if (identity_mapped_irq(irq) || type_from_irq(irq) != IRQT_UNBOUND)
+ 		return;
+ 	irq_info[irq] = mk_irq_info(IRQT_PIRQ, irq, 0);
+ 	set_irq_chip_and_handler_name(irq, &pirq_chip, handle_level_irq,

@@ -1,0 +1,60 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: generic irq migration support from process context
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 72b1e22dfcad1daca6906148fd956ffe404bb0bc
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Generic infrastructure for migrating the irq from the process context in the
+presence of CONFIG_GENERIC_PENDING_IRQ.
+
+This will be used later for migrating irq in the presence of
+interrupt-remapping.
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: akpm@linux-foundation.org
+Cc: arjan@linux.intel.com
+Cc: andi@firstfloor.org
+Cc: ebiederm@xmission.com
+Cc: jbarnes@virtuousgeek.org
+Cc: steiner@sgi.com
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ include/linux/irq.h |    1 +
+ kernel/irq/manage.c |    9 ++++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+Index: linux-2.6.26/include/linux/irq.h
+===================================================================
+--- linux-2.6.26.orig/include/linux/irq.h
++++ linux-2.6.26/include/linux/irq.h
+@@ -62,6 +62,7 @@ typedef	void (*irq_flow_handler_t)(unsig
+ #define IRQ_MOVE_PENDING	0x00200000	/* need to re-target IRQ destination */
+ #define IRQ_NO_BALANCING	0x00400000	/* IRQ is excluded from balancing */
+ #define IRQ_SPURIOUS_DISABLED	0x00800000	/* IRQ was disabled by the spurious trap */
++#define IRQ_MOVE_PCNTXT	0x01000000	/* IRQ migration from process context */
+ 
+ #ifdef CONFIG_IRQ_PER_CPU
+ # define CHECK_IRQ_PER_CPU(var) ((var) & IRQ_PER_CPU)
+Index: linux-2.6.26/kernel/irq/manage.c
+===================================================================
+--- linux-2.6.26.orig/kernel/irq/manage.c
++++ linux-2.6.26/kernel/irq/manage.c
+@@ -89,7 +89,14 @@ int irq_set_affinity(unsigned int irq, c
+ 	set_balance_irq_affinity(irq, cpumask);
+ 
+ #ifdef CONFIG_GENERIC_PENDING_IRQ
+-	set_pending_irq(irq, cpumask);
++	if (desc->status & IRQ_MOVE_PCNTXT) {
++		unsigned long flags;
++
++		spin_lock_irqsave(&desc->lock, flags);
++		desc->chip->set_affinity(irq, cpumask);
++		spin_unlock_irqrestore(&desc->lock, flags);
++	} else
++		set_pending_irq(irq, cpumask);
+ #else
+ 	desc->affinity = cpumask;
+ 	desc->chip->set_affinity(irq, cpumask);

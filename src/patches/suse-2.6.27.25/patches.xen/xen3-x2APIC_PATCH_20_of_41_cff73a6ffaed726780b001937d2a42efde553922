@@ -1,0 +1,81 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: introcude self IPI to genapic routines
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: cff73a6ffaed726780b001937d2a42efde553922
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Introduce self IPI op for genapic.
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: akpm@linux-foundation.org
+Cc: arjan@linux.intel.com
+Cc: andi@firstfloor.org
+Cc: ebiederm@xmission.com
+Cc: jbarnes@virtuousgeek.org
+Cc: steiner@sgi.com
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+Automatically created from "patches.arch/x2APIC_PATCH_20_of_41_cff73a6ffaed726780b001937d2a42efde553922" by xen-port-patches.py
+
+Index: head-2008-11-04/arch/x86/kernel/genapic_64-xen.c
+===================================================================
+--- head-2008-11-04.orig/arch/x86/kernel/genapic_64-xen.c	2008-11-04 11:55:22.000000000 +0100
++++ head-2008-11-04/arch/x86/kernel/genapic_64-xen.c	2008-11-04 14:40:00.000000000 +0100
+@@ -72,18 +72,12 @@ void __init setup_apic_routing(void)
+ 
+ /* Same for both flat and physical. */
+ 
+-#ifdef CONFIG_XEN
+-extern void xen_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest);
+-#endif
+-
+-void send_IPI_self(int vector)
+-{
+ #ifndef CONFIG_XEN
++void apic_send_IPI_self(int vector)
++{
+ 	__send_IPI_shortcut(APIC_DEST_SELF, vector, APIC_DEST_PHYSICAL);
+-#else
+-	xen_send_IPI_shortcut(APIC_DEST_SELF, vector, APIC_DEST_PHYSICAL);
+-#endif
+ }
++#endif
+ 
+ int __init acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+ {
+Index: head-2008-11-04/arch/x86/kernel/genapic_xen_64.c
+===================================================================
+--- head-2008-11-04.orig/arch/x86/kernel/genapic_xen_64.c	2008-11-04 11:55:22.000000000 +0100
++++ head-2008-11-04/arch/x86/kernel/genapic_xen_64.c	2008-11-04 14:41:17.000000000 +0100
+@@ -34,7 +34,8 @@ static inline void __send_IPI_one(unsign
+ 	notify_remote_via_irq(irq);
+ }
+ 
+-void xen_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest)
++static void xen_send_IPI_shortcut(unsigned int shortcut, int vector,
++				  unsigned int dest)
+ {
+ 	int cpu;
+ 
+@@ -116,6 +117,11 @@ static void xen_send_IPI_mask(cpumask_t 
+ 	local_irq_restore(flags);
+ }
+ 
++static void xen_send_IPI_self(int vector)
++{
++	xen_send_IPI_shortcut(APIC_DEST_SELF, vector, APIC_DEST_PHYSICAL);
++}
++
+ #ifdef CONFIG_XEN_PRIVILEGED_GUEST
+ static int xen_apic_id_registered(void)
+ {
+@@ -152,6 +158,7 @@ struct genapic apic_xen =  {
+ 	.send_IPI_all = xen_send_IPI_all,
+ 	.send_IPI_allbutself = xen_send_IPI_allbutself,
+ 	.send_IPI_mask = xen_send_IPI_mask,
++	.send_IPI_self = xen_send_IPI_self,
+ 	.cpu_mask_to_apicid = xen_cpu_mask_to_apicid,
+ 	.phys_pkg_id = phys_pkg_id,
+ };

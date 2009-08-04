@@ -1,0 +1,52 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: kernel: setting 32 bit personality doesn't work
+References: bnc#466462
+
+Symptom:     Setting the personality from 64 bit to 32 bit and afterwards
+             issueing a uname system call will return that the environment
+             is still 64 bit. Some executables that rely on a correct 32 bit
+             environment don't work.
+Problem:     The SET_PERSONALITY macro compares the whole personality field
+             on each execve with PER_LINUX32. If that doesn't match personality
+             is set to PER_LINUX. When some higher order bits in the personality
+             field are set the personality is incorrectly changed from
+             PER_LINUX32 to PER_LINUX on execve.
+Solution:    Use the personality() function to mask out bits that shouldn't be
+             taken into account when comparing personality types.
+
+Acked-by: Hannes Reinecke <hare@suse.de>
+---
+ arch/s390/include/asm/elf.h |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+Index: linux-sles11/arch/s390/include/asm/elf.h
+===================================================================
+--- linux-sles11.orig/arch/s390/include/asm/elf.h
++++ linux-sles11/arch/s390/include/asm/elf.h
+@@ -168,16 +168,16 @@ extern char elf_platform[];
+ #ifndef __s390x__
+ #define SET_PERSONALITY(ex, ibcs2) set_personality((ibcs2)?PER_SVR4:PER_LINUX)
+ #else /* __s390x__ */
+-#define SET_PERSONALITY(ex, ibcs2)			\
+-do {							\
+-	if (ibcs2)					\
+-		set_personality(PER_SVR4);		\
+-	else if (current->personality != PER_LINUX32)	\
+-		set_personality(PER_LINUX);		\
+-	if ((ex).e_ident[EI_CLASS] == ELFCLASS32)	\
+-		set_thread_flag(TIF_31BIT);		\
+-	else						\
+-		clear_thread_flag(TIF_31BIT);		\
++#define SET_PERSONALITY(ex, ibcs2)					\
++	do {								\
++	if (ibcs2)							\
++		set_personality(PER_SVR4);				\
++	else if (personality(current->personality) != PER_LINUX32)	\
++		set_personality(PER_LINUX);				\
++	if ((ex).e_ident[EI_CLASS] == ELFCLASS32)			\
++		set_thread_flag(TIF_31BIT);				\
++	else								\
++		clear_thread_flag(TIF_31BIT);				\
+ } while (0)
+ #endif /* __s390x__ */
+ 

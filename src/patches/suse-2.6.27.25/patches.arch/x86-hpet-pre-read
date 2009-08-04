@@ -1,0 +1,22 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: x86: workaround for mccreary HPET read problem
+Patch-mainline: 
+References: bnc#433746
+
+On mccreacy platform, the read of HPET CMP register seems not updated
+immediately after the write and returns the previous value instead.
+A workaround is to read the register twice.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -278,6 +278,7 @@ static int hpet_legacy_next_event(unsign
+ 	cnt += (u32) delta;
+ 	hpet_writel(cnt, HPET_T0_CMP);
+ 
++	hpet_readl(HPET_T0_CMP); /* pre-read for bnc#433746 */
+ 	/*
+ 	 * We need to read back the CMP register to make sure that
+ 	 * what we wrote hit the chip before we compare it to the

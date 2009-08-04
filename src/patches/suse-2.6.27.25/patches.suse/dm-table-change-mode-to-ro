@@ -1,0 +1,37 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Switch device-mapper tables to READ-WRITE
+References: bnc#440959
+
+Switching a device-mapper table to READ-ONLY works quite well, but
+we can't switch back to READ-WRITE as this change will be masked out.
+So get rid of this masking and use the flags directly.
+And implement a fallback to automatically switch to read-only.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+--- linux-2.6.27/drivers/md/dm-table.c.orig	2009-02-02 13:09:06.000000000 +0100
++++ linux-2.6.27/drivers/md/dm-table.c	2009-02-02 14:03:03.000000000 +0100
+@@ -423,9 +423,13 @@ static int upgrade_mode(struct dm_dev *d
+ 
+ 	dd_copy = *dd;
+ 
+-	dd->mode |= new_mode;
++	dd->mode = new_mode;
+ 	dd->bdev = NULL;
+ 	r = open_dev(dd, dev, md);
++	if (r == -EROFS) {
++		dd->mode &= ~FMODE_WRITE;
++		r = open_dev(dd, dev, md);
++	}
+ 	if (!r)
+ 		close_dev(&dd_copy, md);
+ 	else
+@@ -487,7 +491,7 @@ static int __table_get_device(struct dm_
+ 		atomic_set(&dd->count, 0);
+ 		list_add(&dd->list, &t->devices);
+ 
+-	} else if (dd->mode != (mode | dd->mode)) {
++	} else if (dd->mode != mode) {
+ 		r = upgrade_mode(dd, mode, t->md);
+ 		if (r)
+ 			return r;

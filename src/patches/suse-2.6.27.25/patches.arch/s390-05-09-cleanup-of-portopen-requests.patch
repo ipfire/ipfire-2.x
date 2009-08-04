@@ -1,0 +1,30 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: fix erp timeout cleanup for port open requests
+References: bnc#450096
+
+Symptom:     kernel panic on manylinux idle guests
+Problem:     If an open port fsf request times out (in erp) the
+             corresponding erp_action member of the fsf
+             request need to set to NULL. If the port structure
+             will be removed later-on there will be still a
+             reference in the fsf request to the non existing
+             erp_action otherwise.
+Solution:    setting erp_action to NULL
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_erp.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_erp.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_erp.c
++++ linux-sles11/drivers/s390/scsi/zfcp_erp.c
+@@ -474,6 +474,7 @@ static void zfcp_erp_strategy_check_fsfr
+ 				   ZFCP_STATUS_ERP_TIMEDOUT)) {
+ 			act->fsf_req->status |= ZFCP_STATUS_FSFREQ_DISMISSED;
+ 			zfcp_rec_dbf_event_action(142, act);
++			act->fsf_req->erp_action = NULL;
+ 		}
+ 		if (act->status & ZFCP_STATUS_ERP_TIMEDOUT)
+ 			zfcp_rec_dbf_event_action(143, act);

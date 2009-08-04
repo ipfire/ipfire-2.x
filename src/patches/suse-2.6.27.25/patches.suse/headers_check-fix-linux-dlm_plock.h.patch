@@ -1,0 +1,26 @@
+From: Jaswinder Singh Rajput <jaswinderrajput@gmail.com>
+commit 37eb1f4c3320ed505fbe59a916635b2342c740e4
+Author: Jaswinder Singh Rajput <jaswinderrajput@gmail.com>
+Date:   Fri Jan 30 20:51:30 2009 +0530
+Subject: headers_check fix: linux/dlm_plock.h
+    
+    fix the following 'make headers_check' warning:
+    
+      usr/include/linux/dlm_plock.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
+    
+Signed-off-by: Jaswinder Singh Rajput <jaswinderrajput@gmail.com>
+Signed-off-by: Coly Li <coly.li@suse.de>
+
+diff --git a/include/linux/dlm_plock.h b/include/linux/dlm_plock.h
+index 18d5fdb..2dd2124 100644
+--- a/include/linux/dlm_plock.h
++++ b/include/linux/dlm_plock.h
+@@ -9,6 +9,8 @@
+ #ifndef __DLM_PLOCK_DOT_H__
+ #define __DLM_PLOCK_DOT_H__
+ 
++#include <linux/types.h>
++
+ #define DLM_PLOCK_MISC_NAME		"dlm_plock"
+ 
+ #define DLM_PLOCK_VERSION_MAJOR	1

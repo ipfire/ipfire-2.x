@@ -1,0 +1,41 @@
+Subject: xen3 x86 build fixes.
+From: jbeulich@novell.com
+Patch-mainline: obsolete
+
+--- sle11-2009-06-04.orig/arch/x86/kdb/kdba_bt.c	2009-06-04 10:17:50.000000000 +0200
++++ sle11-2009-06-04/arch/x86/kdb/kdba_bt.c	2009-06-04 10:19:52.000000000 +0200
+@@ -3196,6 +3196,9 @@ bb_usage_mov(const struct bb_operand *sr
+ 	    bb_is_int_reg(dst->base_rc) &&
+ 	    full_register_dst) {
+ #ifdef	CONFIG_X86_32
++#ifndef TSS_sysenter_sp0
++#define TSS_sysenter_sp0 SYSENTER_stack_sp0
++#endif
+ 		/* mov from TSS_sysenter_sp0+offset to esp to fix up the
+ 		 * sysenter stack, it leaves esp well defined.  mov
+ 		 * TSS_ysenter_sp0+offset(%esp),%esp is followed by up to 5
+--- sle11-2009-06-04.orig/arch/x86/power/Makefile	2009-06-04 10:17:50.000000000 +0200
++++ sle11-2009-06-04/arch/x86/power/Makefile	2009-06-04 10:19:52.000000000 +0200
+@@ -1,2 +1,4 @@
+ obj-$(CONFIG_PM_SLEEP)		+= cpu_$(BITS).o
+ obj-$(CONFIG_HIBERNATION)	+= hibernate_$(BITS).o hibernate_asm_$(BITS).o
++
++disabled-obj-$(CONFIG_XEN)	:= cpu_$(BITS).o
+--- sle11-2009-06-04.orig/arch/x86/power/cpu_64.c	2009-06-04 10:18:37.000000000 +0200
++++ sle11-2009-06-04/arch/x86/power/cpu_64.c	2009-06-04 10:19:52.000000000 +0200
+@@ -135,7 +135,6 @@ void restore_processor_state(void)
+ 
+ static void fix_processor_context(void)
+ {
+-#ifndef CONFIG_X86_NO_TSS
+ 	int cpu = smp_processor_id();
+ 	struct tss_struct *t = &per_cpu(init_tss, cpu);
+ 
+@@ -147,7 +146,6 @@ static void fix_processor_context(void)
+ 	set_tss_desc(cpu, t);
+ 
+ 	get_cpu_gdt_table(cpu)[GDT_ENTRY_TSS].type = 9;
+-#endif
+ 
+ 	syscall_init();                         /* This sets MSR_*STAR and related */
+ 	load_TR_desc();				/* This does ltr */

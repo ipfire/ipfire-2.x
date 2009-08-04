@@ -1,0 +1,50 @@
+Subject: [PATCH] keep track of network interface renaming
+From: Olaf Hering <olh@suse.de>
+
+Keep track about which network interface names were renamed after the
+network device driver printed its banner. Example insanity:
+
+honeydew:~ # dmesg| grep -Ew '(eth[0-9]|rename|renamed)'
+e1000: eth0: e1000_probe: Intel(R) PRO/1000 Network Connection
+e1000: eth1: e1000_probe: Intel(R) PRO/1000 Network Connection
+e1000: eth2: e1000_probe: Intel(R) PRO/1000 Network Connection
+e1000: eth3: e1000_probe: Intel(R) PRO/1000 Network Connection
+dev_change_name: about to rename 'eth3' to 'eth0'
+dev_change_name: about to rename 'eth3' to 'ethxx3'
+eth3 renamed to ethxx3
+dev_change_name: about to rename 'ethxx3' to 'eth0'
+dev_change_name: about to rename 'eth0' to 'eth3'
+eth0 renamed to eth3
+dev_change_name: about to rename 'eth1' to 'eth2'
+dev_change_name: about to rename 'eth1' to 'ethxx1'
+eth1 renamed to ethxx1
+dev_change_name: about to rename 'ethxx1' to 'eth2'
+dev_change_name: about to rename 'eth2' to 'eth1'
+eth2 renamed to eth1
+dev_change_name: about to rename 'ethxx3' to 'eth0'
+ethxx3 renamed to eth0
+dev_change_name: about to rename 'ethxx1' to 'eth2'
+ethxx1 renamed to eth2
+e1000: eth0: e1000_watchdog_task: NIC Link is Up 100 Mbps Full Duplex
+
+
+
+Signed-off-by: Olaf Hering <olh@suse.de>
+
+ net/core/dev.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -922,7 +922,11 @@ int dev_change_name(struct net_device *d
+ 	else if (__dev_get_by_name(net, newname))
+ 		return -EEXIST;
+ 	else
++	{
++		if (strncmp(newname, dev->name, IFNAMSIZ))
++			printk(KERN_INFO "%s renamed to %s by %s [%u]\n", dev->name, newname, current->comm, current->pid);
+ 		strlcpy(dev->name, newname, IFNAMSIZ);
++	}
+ 
+ rollback:
+ 	err = device_rename(&dev->dev, dev->name);

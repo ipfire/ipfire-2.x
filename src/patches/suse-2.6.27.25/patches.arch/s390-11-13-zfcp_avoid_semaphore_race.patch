@@ -1,0 +1,56 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: avoid false ERP complete task due to semaphore race.
+References: bnc#484767,LTC#55250
+
+Symptom:     The adapter is not able to perform an initial exchange config.
+Problem:     The ERP thread is performing a task before it is executing the
+             corresponding down on the semaphore. The response handler of the
+             just started exchange config should wait for the completion by 
+             performing a down on this semaphore. Since this semaphore is still
+             positive from the ERP enqueue the handler won't wait and therefore 
+             the exchange config will always fail leaving the adapter in error.
+Solution:    Perform the down on the semaphore before starting an ERP task.
+             This is the logically correct order. Only walk the ERP loop
+             if there is a task to perform.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/scsi/zfcp_erp.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_erp.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_erp.c
++++ linux-sles11/drivers/s390/scsi/zfcp_erp.c
+@@ -1310,6 +1310,7 @@ static int zfcp_erp_thread(void *data)
+ 	struct list_head *next;
+ 	struct zfcp_erp_action *act;
+ 	unsigned long flags;
++	int ignore;
+ 
+ 	daemonize("zfcperp%s", adapter->ccw_device->dev.bus_id);
+ 	/* Block all signals */
+@@ -1319,6 +1320,11 @@ static int zfcp_erp_thread(void *data)
+ 
+ 	while (!(atomic_read(&adapter->status) &
+ 		 ZFCP_STATUS_ADAPTER_ERP_THREAD_KILL)) {
++
++		zfcp_rec_dbf_event_thread_lock(4, adapter);
++		ignore = down_interruptible(&adapter->erp_ready_sem);
++		zfcp_rec_dbf_event_thread_lock(5, adapter);
++
+ 		write_lock_irqsave(&adapter->erp_lock, flags);
+ 		next = adapter->erp_ready_head.next;
+ 		write_unlock_irqrestore(&adapter->erp_lock, flags);
+@@ -1330,10 +1336,6 @@ static int zfcp_erp_thread(void *data)
+ 			if (zfcp_erp_strategy(act) != ZFCP_ERP_DISMISSED)
+ 				zfcp_erp_wakeup(adapter);
+ 		}
+-
+-		zfcp_rec_dbf_event_thread_lock(4, adapter);
+-		down_interruptible(&adapter->erp_ready_sem);
+-		zfcp_rec_dbf_event_thread_lock(5, adapter);
+ 	}
+ 
+ 	atomic_clear_mask(ZFCP_STATUS_ADAPTER_ERP_THREAD_UP, &adapter->status);

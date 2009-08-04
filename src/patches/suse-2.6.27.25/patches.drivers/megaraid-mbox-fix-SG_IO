@@ -1,0 +1,65 @@
+From: Martin Wilck <martin.wilck@fujitsu-siemens.com>
+Subject: megaraid_mbox: Oops on SG_IO
+References: bnc#475619
+
+This patch fixes an Oops in megaraid_mbox that happens when a
+MODE_SENSE command for a logical drive is started viaioctl(SG_IO).
+
+The problem only occurs if the buffer specified by the user to receive
+the mode data resides in highmem and if the buffer is aligned for
+direct dma (no bounce buffer necessary). megaraid_mbox emulates
+the MODE_SENSE command and writes the data using memset() directly
+into user buffer. If the buffer is at a currently unmapped highmem
+page, this leads to an Oops.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+--- linux-2.6.27.7-9/drivers/scsi/megaraid/megaraid_mbox.c.orig	2008-10-10 00:13:53.000000000 +0200
++++ linux-2.6.27.7-9/drivers/scsi/megaraid/megaraid_mbox.c	2009-02-03 15:01:56.000000000 +0100
+@@ -1580,13 +1580,20 @@ megaraid_mbox_build_cmd(adapter_t *adapt
+ 		case MODE_SENSE:
+ 		{
+ 			struct scatterlist	*sgl;
+-			caddr_t			vaddr;
++			struct page		*pg;
++			unsigned char		*vaddr;
++			unsigned long		flags;
+ 
+ 			sgl = scsi_sglist(scp);
+-			if (sg_page(sgl)) {
+-				vaddr = (caddr_t) sg_virt(&sgl[0]);
++			pg = sg_page(sgl);
++			if (pg) {
++				local_irq_save(flags);
++				vaddr = kmap_atomic(pg, KM_BIO_SRC_IRQ) + sgl->offset;
+ 
+ 				memset(vaddr, 0, scp->cmnd[4]);
++
++				kunmap_atomic(vaddr, KM_BIO_SRC_IRQ);
++				local_irq_restore(flags);
+ 			}
+ 			else {
+ 				con_log(CL_ANN, (KERN_WARNING
+@@ -2324,9 +2331,20 @@ megaraid_mbox_dpc(unsigned long devp)
+ 		if (scp->cmnd[0] == INQUIRY && status == 0 && islogical == 0
+ 				&& IS_RAID_CH(raid_dev, scb->dev_channel)) {
+ 
++			struct page		*pg;
++			unsigned char		*vaddr;
++			unsigned long		flags;
++
+ 			sgl = scsi_sglist(scp);
+-			if (sg_page(sgl)) {
+-				c = *(unsigned char *) sg_virt(&sgl[0]);
++			pg = sg_page(sgl);
++			if (pg) {
++				local_irq_save(flags);
++				vaddr = kmap_atomic(pg, KM_BIO_SRC_IRQ) + sgl->offset;
++
++				c = *vaddr;
++
++				kunmap_atomic(vaddr, KM_BIO_SRC_IRQ);
++				local_irq_restore(flags);
+ 			} else {
+ 				con_log(CL_ANN, (KERN_WARNING
+ 						 "megaraid mailbox: invalid sg:%d\n",

@@ -1,0 +1,43 @@
+From 97ce0a7f9caf9d715cee815a016ee21575f71c95 Mon Sep 17 00:00:00 2001
+From: Dan Williams <dan.j.williams@gmail.com>
+Date: Wed, 24 Sep 2008 22:48:19 -0700
+Subject: [PATCH] md: fix input truncation in safe_delay_store()
+
+safe_delay_store() currently truncates the last character of input since
+it tells strlcpy that the buffer can only hold 'len' characters, off by
+one.  sysfs already null terminates the buffer, so just increase the
+last argument to strlcpy.
+
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ drivers/md/md.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/md.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/md.c
+@@ -2454,12 +2454,11 @@ safe_delay_store(mddev_t *mddev, const c
+ 	int i;
+ 	unsigned long msec;
+ 	char buf[30];
+-	char *e;
++
+ 	/* remove a period, and count digits after it */
+ 	if (len >= sizeof(buf))
+ 		return -EINVAL;
+-	strlcpy(buf, cbuf, len);
+-	buf[len] = 0;
++	strlcpy(buf, cbuf, sizeof(buf));
+ 	for (i=0; i<len; i++) {
+ 		if (dot) {
+ 			if (isdigit(buf[i])) {
+@@ -2472,8 +2471,7 @@ safe_delay_store(mddev_t *mddev, const c
+ 			buf[i] = 0;
+ 		}
+ 	}
+-	msec = simple_strtoul(buf, &e, 10);
+-	if (e == buf || (*e && *e != '\n'))
++	if (strict_strtoul(buf, 10, &msec) < 0)
+ 		return -EINVAL;
+ 	msec = (msec * 1000) / scale;
+ 	if (msec == 0)

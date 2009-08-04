@@ -1,0 +1,43 @@
+Subject: backward compatibility
+From: Gerd Hoffmann <kraxel@suse.de>
+Patch-mainline: obsolete
+
+---
+ linux-2.6-xen-sparse/drivers/xen/blkback/xenbus.c |    6 ++++++
+ linux-2.6-xen-sparse/drivers/xen/blktap/xenbus.c  |    6 ++++++
+ 2 files changed, 12 insertions(+)
+
+Index: head-2008-09-15/drivers/xen/blkback/xenbus.c
+===================================================================
+--- head-2008-09-15.orig/drivers/xen/blkback/xenbus.c	2008-09-15 14:32:56.000000000 +0200
++++ head-2008-09-15/drivers/xen/blkback/xenbus.c	2008-09-15 15:10:36.000000000 +0200
+@@ -496,6 +496,12 @@ static int connect_ring(struct backend_i
+ 		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_32;
+ 	else if (0 == strcmp(protocol, XEN_IO_PROTO_ABI_X86_64))
+ 		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_64;
++#if 1 /* maintain compatibility with early sles10-sp1 and paravirt netware betas */
++	else if (0 == strcmp(protocol, "1"))
++		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_32;
++	else if (0 == strcmp(protocol, "2"))
++		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_64;
++#endif
+ 	else {
+ 		xenbus_dev_fatal(dev, err, "unknown fe protocol %s", protocol);
+ 		return -1;
+Index: head-2008-09-15/drivers/xen/blktap/xenbus.c
+===================================================================
+--- head-2008-09-15.orig/drivers/xen/blktap/xenbus.c	2008-09-15 14:32:56.000000000 +0200
++++ head-2008-09-15/drivers/xen/blktap/xenbus.c	2008-09-15 15:10:36.000000000 +0200
+@@ -434,6 +434,12 @@ static int connect_ring(struct backend_i
+ 		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_32;
+ 	else if (0 == strcmp(protocol, XEN_IO_PROTO_ABI_X86_64))
+ 		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_64;
++#if 1 /* maintain compatibility with early sles10-sp1 and paravirt netware betas */
++	else if (0 == strcmp(protocol, "1"))
++		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_32;
++	else if (0 == strcmp(protocol, "2"))
++		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_64;
++#endif
+ 	else {
+ 		xenbus_dev_fatal(dev, err, "unknown fe protocol %s", protocol);
+ 		return -1;

@@ -1,0 +1,47 @@
+From 292cf4a8a989cb564a6a5f0ba7a66e08a095afa1 Mon Sep 17 00:00:00 2001
+From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Date: Wed, 15 Oct 2008 22:04:35 -0700
+Subject: [PATCH] tpm: work around bug in Broadcom BCM0102 chipset
+Patch-mainline: 2.6.28
+References: bnc#425747 FATE304221
+
+Patch tpm-correct-tpm-timeouts-to-jiffies-conversion reveals a bug in the
+Broadcom BCM0102 TPM chipset used in the Dell Latitude D820 - although
+most of the timeouts are returned in usecs as per the spec, one is
+apparently returned in msecs, which results in a too-small value leading
+to a timeout when the code treats it as usecs.  To prevent a regression,
+we check for the known too-short value and adjust it to a value that makes
+things work.
+
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc: Marcin Obara <marcin_obara@users.sourceforge.net>
+Cc: Marcel Selhorst <tpm@selhorst.net>
+Cc: Kylene Jo Hall <kjhall@us.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+ drivers/char/tpm/tpm.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm.c b/drivers/char/tpm/tpm.c
+index 6b5a0e0..aa899ce 100644
+--- a/drivers/char/tpm/tpm.c
++++ b/drivers/char/tpm/tpm.c
+@@ -557,6 +557,13 @@ duration:
+ 	    usecs_to_jiffies(be32_to_cpu
+ 			     (*((__be32 *) (data +
+ 					    TPM_GET_CAP_RET_UINT32_1_IDX))));
++	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
++	 * value wrong and apparently reports msecs rather than usecs. So we
++	 * fix up the resulting too-small TPM_SHORT value to make things work.
++	 */
++	if (chip->vendor.duration[TPM_SHORT] < (HZ/100))
++		chip->vendor.duration[TPM_SHORT] = HZ;
++
+ 	chip->vendor.duration[TPM_MEDIUM] =
+ 	    usecs_to_jiffies(be32_to_cpu
+ 			     (*((__be32 *) (data +
+-- 
+1.6.0.2
+

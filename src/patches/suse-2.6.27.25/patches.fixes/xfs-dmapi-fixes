@@ -1,0 +1,37 @@
+From: Bill O'Donnel <billodo@sgi.com>
+Subject: xfs/dmapi: fix crash on mount
+References: bnc#458027
+
+ This patch resolves a crash on mount problem with dmapi, relating to an
+ errant search and replace.
+
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+
+ fs/dmapi/dmapi_private.h |    4 ++--
+ fs/xfs/xfs_dmops.c       |    1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+--- a/fs/dmapi/dmapi_private.h	2009-01-14 17:19:28.000000000 -0600
++++ b/fs/dmapi/dmapi_private.h	2009-01-22 10:32:34.344811347 -0600
+@@ -37,8 +37,8 @@
+ #include "sv.h"
+ 
+ #ifdef CONFIG_PROC_FS
+-#define DMAPI_PROCFS		"orig/fs/dmapi_v2" /* DMAPI device in /proc. */
+-#define DMAPI_DBG_PROCFS	"orig/fs/dmapi_d" /* DMAPI debugging dir */
++#define DMAPI_PROCFS		"fs/dmapi_v2" /* DMAPI device in /proc. */
++#define DMAPI_DBG_PROCFS	"fs/dmapi_d" /* DMAPI debugging dir */
+ #endif
+ 
+ extern struct kmem_cache	*dm_fsreg_cachep;
+--- a/fs/xfs/xfs_dmops.c	2009-01-14 17:19:30.000000000 -0600
++++ b/fs/xfs/xfs_dmops.c	2009-01-22 10:32:27.888692190 -0600
+@@ -58,7 +58,6 @@
+ 		mp->m_dm_ops = &xfs_dmcore_stub;
+ 	}
+ 
+-	mp->m_dm_ops = &xfs_dmcore_stub;
+ 	return 0;
+ }
+ 

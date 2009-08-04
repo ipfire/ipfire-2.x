@@ -1,0 +1,159 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qdio: proper kill of qdio tasklets
+References: bnc#484767,LTC#52206
+
+Symptom:     kernel BUG at kernel/softirq.c:392!
+Problem:     The queue tasklets were stopped with tasklet_disable. Although
+             tasklet_disable prevents the tasklet from beeing executed it is
+             still possible that a tasklet is scheduled on a CPU at that point.
+             A following qdio_establish calls tasklet_init which clears the
+             tasklet count and the tasklet state leading to the oops.
+Solution:    Use tasklet_kill instead of tasklet_disbale. Since
+             tasklet_schedule must not be called after tasklet_kill use the
+             QDIO_IRQ_STATE_STOPPED to inidicate that a queue is going down
+             and prevent further tasklet schedules in that case.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/cio/qdio_main.c    |   35 ++++++++++++++++++++++++-----------
+ drivers/s390/cio/qdio_thinint.c |    8 ++++----
+ 2 files changed, 28 insertions(+), 15 deletions(-)
+
+Index: linux-sles11/drivers/s390/cio/qdio_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_main.c
++++ linux-sles11/drivers/s390/cio/qdio_main.c
+@@ -760,21 +760,17 @@ static void __qdio_outbound_processing(s
+ 	if (qdio_outbound_q_moved(q))
+ 		qdio_kick_outbound_handler(q);
+ 
+-	if (queue_type(q) == QDIO_ZFCP_QFMT) {
++	if (queue_type(q) == QDIO_ZFCP_QFMT)
+ 		if (!pci_out_supported(q) && !qdio_outbound_q_done(q))
+-			tasklet_schedule(&q->tasklet);
+-		return;
+-	}
++			goto sched;
+ 
+ 	/* bail out for HiperSockets unicast queues */
+ 	if (queue_type(q) == QDIO_IQDIO_QFMT && !multicast_outbound(q))
+ 		return;
+ 
+ 	if ((queue_type(q) == QDIO_IQDIO_QFMT) &&
+-	    (atomic_read(&q->nr_buf_used)) > QDIO_IQDIO_POLL_LVL) {
+-		tasklet_schedule(&q->tasklet);
+-		return;
+-	}
++	    (atomic_read(&q->nr_buf_used)) > QDIO_IQDIO_POLL_LVL)
++		goto sched;
+ 
+ 	if (q->u.out.pci_out_enabled)
+ 		return;
+@@ -792,6 +788,12 @@ static void __qdio_outbound_processing(s
+ 			qdio_perf_stat_inc(&perf_stats.debug_tl_out_timer);
+ 		}
+ 	}
++	return;
++
++sched:
++	if (unlikely(q->irq_ptr->state == QDIO_IRQ_STATE_STOPPED))
++		return;
++	tasklet_schedule(&q->tasklet);
+ }
+ 
+ /* outbound tasklet */
+@@ -804,6 +806,9 @@ void qdio_outbound_processing(unsigned l
+ void qdio_outbound_timer(unsigned long data)
+ {
+ 	struct qdio_q *q = (struct qdio_q *)data;
++
++	if (unlikely(q->irq_ptr->state == QDIO_IRQ_STATE_STOPPED))
++		return;
+ 	tasklet_schedule(&q->tasklet);
+ }
+ 
+@@ -845,6 +850,9 @@ static void qdio_int_handler_pci(struct 
+ 	int i;
+ 	struct qdio_q *q;
+ 
++	if (unlikely(irq_ptr->state == QDIO_IRQ_STATE_STOPPED))
++		return;
++
+ 	qdio_perf_stat_inc(&perf_stats.pci_int);
+ 
+ 	for_each_input_queue(irq_ptr, q, i)
+@@ -1072,11 +1080,11 @@ static void qdio_shutdown_queues(struct 
+ 	int i;
+ 
+ 	for_each_input_queue(irq_ptr, q, i)
+-		tasklet_disable(&q->tasklet);
++		tasklet_kill(&q->tasklet);
+ 
+ 	for_each_output_queue(irq_ptr, q, i) {
+-		tasklet_disable(&q->tasklet);
+ 		del_timer(&q->u.out.timer);
++		tasklet_kill(&q->tasklet);
+ 	}
+ }
+ 
+@@ -1107,6 +1115,12 @@ int qdio_shutdown(struct ccw_device *cde
+ 		return 0;
+ 	}
+ 
++	/*
++	 * Indicate that the device is going down. Scheduling the queue
++	 * tasklets is forbidden from here on.
++	 */
++	qdio_set_state(irq_ptr, QDIO_IRQ_STATE_STOPPED);
++
+ 	tiqdio_remove_input_queues(irq_ptr);
+ 	qdio_shutdown_queues(cdev);
+ 	qdio_shutdown_debug_entries(irq_ptr, cdev);
+@@ -1526,7 +1540,6 @@ static int handle_outbound(struct qdio_q
+ 		qdio_perf_stat_inc(&perf_stats.fast_requeue);
+ 	}
+ out:
+-	/* Fixme: could wait forever if called from process context */
+ 	tasklet_schedule(&q->tasklet);
+ 	return rc;
+ }
+Index: linux-sles11/drivers/s390/cio/qdio_thinint.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_thinint.c
++++ linux-sles11/drivers/s390/cio/qdio_thinint.c
+@@ -101,7 +101,6 @@ void tiqdio_add_input_queues(struct qdio
+ 		list_add_rcu(&q->entry, &tiq_list);
+ 	mutex_unlock(&tiq_list_lock);
+ 	xchg(irq_ptr->dsci, 1);
+-	tasklet_schedule(&tiqdio_tasklet);
+ }
+ 
+ /*
+@@ -159,7 +158,6 @@ static void __tiqdio_inbound_processing(
+ 	 */
+ 	qdio_check_outbound_after_thinint(q);
+ 
+-again:
+ 	if (!qdio_inbound_q_moved(q))
+ 		return;
+ 
+@@ -167,7 +165,8 @@ again:
+ 
+ 	if (!tiqdio_inbound_q_done(q)) {
+ 		qdio_perf_stat_inc(&perf_stats.thinint_inbound_loop);
+-		goto again;
++		if (likely(q->irq_ptr->state != QDIO_IRQ_STATE_STOPPED))
++			tasklet_schedule(&q->tasklet);
+ 	}
+ 
+ 	qdio_stop_polling(q);
+@@ -177,7 +176,8 @@ again:
+ 	 */
+ 	if (!tiqdio_inbound_q_done(q)) {
+ 		qdio_perf_stat_inc(&perf_stats.thinint_inbound_loop2);
+-		goto again;
++		if (likely(q->irq_ptr->state != QDIO_IRQ_STATE_STOPPED))
++			tasklet_schedule(&q->tasklet);
+ 	}
+ }
+ 

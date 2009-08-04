@@ -1,0 +1,139 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: print more information when an empty journal list is encountered
+References: bnc#447406 bnc#399966
+Patch-mainline: Never
+
+ BNC#447406 describes a BUG() at fs/reiserfs/journal.c:1036. This patch
+ dumps more information regarding the state of the list before failing.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/journal.c          |   21 ++++++++++++++++++++-
+ fs/reiserfs/prints.c           |   22 +++++++++++++++++++++-
+ include/linux/reiserfs_fs_sb.h |    6 ++++++
+ 3 files changed, 47 insertions(+), 2 deletions(-)
+
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -82,6 +82,8 @@ static struct workqueue_struct *commit_w
+ #define LIST_TOUCHED 1
+ #define LIST_DIRTY   2
+ #define LIST_COMMIT_PENDING  4	/* someone will commit this list */
++#define LIST_DEAD 8
++#define LIST_CURRENT 16
+ 
+ /* flags for do_journal_end */
+ #define FLUSH_ALL   1		/* flush commit and real blocks */
+@@ -1031,6 +1033,14 @@ static int flush_commit_list(struct supe
+ 	/* before we can put our commit blocks on disk, we have to make sure everyone older than
+ 	 ** us is on disk too
+ 	 */
++	if (jl->j_len <= 0) {
++		reiserfs_warning(s, "journal-d1", "%j; "
++				 "trans_id = %u; "
++				 "journal->trans_id = %u; "
++				 "oldest live jl->j_trans_id = %u\n",
++				 jl, trans_id, journal->j_trans_id,
++		JOURNAL_LIST_ENTRY(journal->j_journal_list.next)->j_trans_id);
++	}
+ 	BUG_ON(jl->j_len <= 0);
+ 	BUG_ON(trans_id == journal->j_trans_id);
+ 
+@@ -1636,7 +1646,7 @@ static int flush_journal_list(struct sup
+ 	jl->j_realblock = NULL;
+ 	jl->j_commit_bh = NULL;
+ 	jl->j_trans_id = 0;
+-	jl->j_state = 0;
++	jl->j_state = LIST_DEAD;
+ 	put_journal_list(s, jl);
+ 	if (flushall)
+ 		mutex_unlock(&journal->j_flush_mutex);
+@@ -2561,6 +2571,12 @@ static struct reiserfs_journal_list *all
+ 	INIT_LIST_HEAD(&jl->j_bh_list);
+ 	mutex_init(&jl->j_commit_mutex);
+ 	SB_JOURNAL(s)->j_num_lists++;
++	jl->j_magic1 = 0xa5a5a5a5;
++	jl->j_magic2 = 0xb4b4b4b4;
++	jl->j_magic3 = 0xc3c3c3c3;
++	jl->j_magic4 = 0xd2d2d2d2;
++	jl->j_magic5 = 0xe1e1e1e1;
++	jl->j_magic6 = 0x96969696;
+ 	get_journal_list(jl);
+ 	return jl;
+ }
+@@ -2824,6 +2840,7 @@ int journal_init(struct super_block *sb,
+ 
+ 	journal->j_list_bitmap_index = 0;
+ 	journal_list_init(sb);
++	journal->j_current_jl->j_state |= LIST_CURRENT;
+ 
+ 	memset(journal->j_list_hash_table, 0,
+ 	       JOURNAL_HASH_SIZE * sizeof(struct reiserfs_journal_cnode *));
+@@ -4162,6 +4179,8 @@ static int do_journal_end(struct reiserf
+ 	 */
+ 
+ 	journal->j_current_jl = alloc_journal_list(sb);
++	journal->j_current_jl->j_state |= LIST_CURRENT;
++	jl->j_state &= LIST_CURRENT;
+ 
+ 	/* now it is safe to insert this transaction on the main list */
+ 	list_add_tail(&jl->j_list, &journal->j_journal_list);
+--- a/fs/reiserfs/prints.c
++++ b/fs/reiserfs/prints.c
+@@ -157,13 +157,28 @@ static void sprintf_disk_child(char *buf
+ 		dc_size(dc));
+ }
+ 
++static void sprintf_journal_list(char *buf, struct reiserfs_journal_list *jl)
++{
++	sprintf(buf, "[j_start=%lu, j_state=%lu, j_len=%lu, j_nonzerolen=%d, "
++		     "j_commit_left=%u, j_older_commits_done=%u, j_trans_id=%u, "
++		     "j_timestamp=%ld, j_refcount=%d (%08x%08x%08x%08x%08x%08x)]",
++		     jl->j_start, jl->j_state, jl->j_len,
++		     atomic_read(&jl->j_nonzerolen),
++		     atomic_read(&jl->j_commit_left),
++		     atomic_read(&jl->j_older_commits_done),
++		     jl->j_trans_id, jl->j_timestamp, jl->j_refcount,
++		     jl->j_magic1, jl->j_magic2, jl->j_magic3, jl->j_magic4,
++		     jl->j_magic5, jl->j_magic6);
++}
++
+ static char *is_there_reiserfs_struct(char *fmt, int *what)
+ {
+ 	char *k = fmt;
+ 
+ 	while ((k = strchr(k, '%')) != NULL) {
+ 		if (k[1] == 'k' || k[1] == 'K' || k[1] == 'h' || k[1] == 't' ||
+-		    k[1] == 'z' || k[1] == 'b' || k[1] == 'y' || k[1] == 'a') {
++		    k[1] == 'z' || k[1] == 'b' || k[1] == 'y' || k[1] == 'a' ||
++		    k[1] == 'j') {
+ 			*what = k[1];
+ 			break;
+ 		}
+@@ -233,6 +248,11 @@ static void prepare_error_buf(const char
+ 					va_arg(args,
+ 					       struct reiserfs_de_head *));
+ 			break;
++		case 'j':
++			sprintf_journal_list(p,
++					va_arg(args,
++						struct reiserfs_journal_list *));
++			break;
+ 		}
+ 
+ 		p += strlen(p);
+--- a/include/linux/reiserfs_fs_sb.h
++++ b/include/linux/reiserfs_fs_sb.h
+@@ -149,6 +149,12 @@ struct reiserfs_list_bitmap {
+ ** and to make sure every real block in a transaction is on disk before allowing the log area
+ ** to be overwritten */
+ struct reiserfs_journal_list {
++	unsigned int j_magic1;
++	unsigned int j_magic2;
++	unsigned int j_magic3;
++	unsigned int j_magic4;
++	unsigned int j_magic5;
++	unsigned int j_magic6;
+ 	unsigned long j_start;
+ 	unsigned long j_state;
+ 	unsigned long j_len;

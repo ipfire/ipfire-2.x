@@ -1,0 +1,24 @@
+From 18b0033491f584a2d79697da714b1ef9d6b27d22 Mon Sep 17 00:00:00 2001
+From: Andre Noll <maan@systemlinux.org>
+Date: Tue, 31 Mar 2009 15:00:56 +1100
+Subject: [PATCH] md: raid5 run(): Fix max_degraded for raid level 4.
+
+raid4 allows only one failed disk.
+
+Signed-off-by: Andre Noll <maan@systemlinux.org>
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ drivers/md/raid5.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -4199,7 +4199,7 @@ static int run(mddev_t *mddev)
+ 		 */
+ 		sector_t here_new, here_old;
+ 		int old_disks;
+-		int max_degraded = (mddev->level == 5 ? 1 : 2);
++		int max_degraded = (mddev->level == 6 ? 2 : 1);
+ 
+ 		if (mddev->new_level != mddev->level ||
+ 		    mddev->new_layout != mddev->layout ||

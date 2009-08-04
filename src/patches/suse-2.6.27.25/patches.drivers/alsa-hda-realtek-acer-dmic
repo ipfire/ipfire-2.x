@@ -1,0 +1,113 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: hda - Split ALC268 acer model
+Patch-mainline: 
+References: bnc#420048
+
+There are actually two variants of ALC268 Acer implementation, one
+with an analog built-in mic (pin 0x19) and another with a digital
+mic (pin 0x12).  Created a new model, acer-dmic, for the latter case
+now.
+
+So far, all known models are assigned to be analog-mic, according to
+the BIOS setup.  If this doesn't match with the actual case, one needs
+to try model=acer-dmic, and fix the entry to point ALC268_ACER_DMIC
+if it works.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ Documentation/sound/alsa/ALSA-Configuration.txt |    1 
+ sound/pci/hda/patch_realtek.c                   |   44 ++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+
+--- a/Documentation/sound/alsa/ALSA-Configuration.txt
++++ b/Documentation/sound/alsa/ALSA-Configuration.txt
+@@ -844,6 +844,7 @@ Prior to version 0.9.0rc4 options had a 
+ 	  3stack	3-stack model
+ 	  toshiba	Toshiba A205
+ 	  acer		Acer laptops
++	  acer-dmic	Acer laptops with digital-mic
+ 	  acer-aspire	Acer Aspire One
+ 	  dell		Dell OEM laptops (Vostro 1200)
+ 	  zepto		Zepto laptops
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -114,6 +114,7 @@ enum {
+ 	ALC268_3ST,
+ 	ALC268_TOSHIBA,
+ 	ALC268_ACER,
++	ALC268_ACER_DMIC,
+ 	ALC268_ACER_ASPIRE_ONE,
+ 	ALC268_DELL,
+ 	ALC268_ZEPTO,
+@@ -10949,6 +10950,22 @@ static struct snd_kcontrol_new alc268_ac
+ 	{ }
+ };
+ 
++static struct snd_kcontrol_new alc268_acer_dmic_mixer[] = {
++	/* output mixer control */
++	HDA_BIND_VOL("Master Playback Volume", &alc268_acer_bind_master_vol),
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.name = "Master Playback Switch",
++		.info = snd_hda_mixer_amp_switch_info,
++		.get = snd_hda_mixer_amp_switch_get,
++		.put = alc268_acer_master_sw_put,
++		.private_value = HDA_COMPOSE_AMP_VAL(0x14, 3, 0, HDA_OUTPUT),
++	},
++	HDA_CODEC_VOLUME("Mic Boost", 0x18, 0, HDA_INPUT),
++	HDA_CODEC_VOLUME("Line In Boost", 0x1a, 0, HDA_INPUT),
++	{ }
++};
++
+ static struct hda_verb alc268_acer_aspire_one_verbs[] = {
+ 	{0x12, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_IN},
+ 	{0x15, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_HP},
+@@ -11281,6 +11298,15 @@ static struct hda_input_mux alc268_acer_
+ 	.num_items = 3,
+ 	.items = {
+ 		{ "Mic", 0x0 },
++		{ "Internal Mic", 0x1 },
++		{ "Line", 0x2 },
++	},
++};
++
++static struct hda_input_mux alc268_acer_dmic_capture_source = {
++	.num_items = 3,
++	.items = {
++		{ "Mic", 0x0 },
+ 		{ "Internal Mic", 0x6 },
+ 		{ "Line", 0x2 },
+ 	},
+@@ -11561,6 +11587,7 @@ static const char *alc268_models[ALC268_
+ 	[ALC268_3ST]		= "3stack",
+ 	[ALC268_TOSHIBA]	= "toshiba",
+ 	[ALC268_ACER]		= "acer",
++	[ALC268_ACER_DMIC]	= "acer-dmic",
+ 	[ALC268_ACER_ASPIRE_ONE]	= "acer-aspire",
+ 	[ALC268_DELL]		= "dell",
+ 	[ALC268_ZEPTO]		= "zepto",
+@@ -11656,6 +11683,23 @@ static struct alc_config_preset alc268_p
+ 		.unsol_event = alc268_acer_unsol_event,
+ 		.init_hook = alc268_acer_init_hook,
+ 	},
++	[ALC268_ACER_DMIC] = {
++		.mixers = { alc268_acer_dmic_mixer, alc268_capture_alt_mixer,
++			    alc268_beep_mixer },
++		.init_verbs = { alc268_base_init_verbs, alc268_eapd_verbs,
++				alc268_acer_verbs },
++		.num_dacs = ARRAY_SIZE(alc268_dac_nids),
++		.dac_nids = alc268_dac_nids,
++		.num_adc_nids = ARRAY_SIZE(alc268_adc_nids_alt),
++		.adc_nids = alc268_adc_nids_alt,
++		.capsrc_nids = alc268_capsrc_nids,
++		.hp_nid = 0x02,
++		.num_channel_mode = ARRAY_SIZE(alc268_modes),
++		.channel_mode = alc268_modes,
++		.input_mux = &alc268_acer_dmic_capture_source,
++		.unsol_event = alc268_acer_unsol_event,
++		.init_hook = alc268_acer_init_hook,
++	},
+ 	[ALC268_ACER_ASPIRE_ONE] = {
+ 		.mixers = { alc268_acer_aspire_one_mixer,
+ 				alc268_capture_alt_mixer },

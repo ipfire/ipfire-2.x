@@ -1,0 +1,32 @@
+From: Tony Jones <tonyj@suse.de>
+Subject: drop additional perfmon2 syscalls
+Patch-mainline: never
+
+Patch accepted from SGI (bnc#430298, FATE #303968) added 12 new syscalls
+which have been replaced (for SLES11) with an ioctl based interface.
+
+Remove the relevant syscalls.
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+
+Automatically created from "patches.suse/perfmon2-remove_syscalls.patch" by xen-port-patches.py
+
+--- sle11-2009-03-24.orig/arch/x86/ia32/ia32entry-xen.S	2009-03-24 10:20:46.000000000 +0100
++++ sle11-2009-03-24/arch/x86/ia32/ia32entry-xen.S	2009-03-24 10:20:51.000000000 +0100
+@@ -783,16 +783,4 @@ ia32_sys_call_table:
+ 	.quad sys_dup3			/* 330 */
+ 	.quad sys_pipe2
+ 	.quad sys_inotify_init1
+-	.quad sys_pfm_create_context
+-	.quad sys_pfm_write_pmcs
+-	.quad sys_pfm_write_pmds	/* 335 */
+-	.quad sys_pfm_read_pmds
+-	.quad sys_pfm_load_context
+-	.quad sys_pfm_start
+-	.quad sys_pfm_stop
+-	.quad sys_pfm_restart		/* 340 */
+-	.quad sys_pfm_create_evtsets
+-	.quad sys_pfm_getinfo_evtsets
+-	.quad sys_pfm_delete_evtsets
+-	.quad sys_pfm_unload_context
+ ia32_syscall_end:

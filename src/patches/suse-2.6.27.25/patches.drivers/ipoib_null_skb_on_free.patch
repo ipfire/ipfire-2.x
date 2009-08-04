@@ -1,0 +1,90 @@
+From:   Arthur Kepner <akepner@sgi.com>
+Subject: ipoib NULL skb pointers on free
+References: bnc#503635
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -200,6 +200,7 @@ static void ipoib_cm_free_rx_ring(struct
+ 			ipoib_cm_dma_unmap_rx(priv, IPOIB_CM_RX_SG - 1,
+ 					      rx_ring[i].mapping);
+ 			dev_kfree_skb_any(rx_ring[i].skb);
++			rx_ring[i].skb = NULL;
+ 		}
+ 
+ 	vfree(rx_ring);
+@@ -736,6 +737,7 @@ void ipoib_cm_send(struct net_device *de
+ 	if (unlikely(ib_dma_mapping_error(priv->ca, addr))) {
+ 		++dev->stats.tx_errors;
+ 		dev_kfree_skb_any(skb);
++		tx_req->skb = NULL;
+ 		return;
+ 	}
+ 
+@@ -747,6 +749,7 @@ void ipoib_cm_send(struct net_device *de
+ 		++dev->stats.tx_errors;
+ 		ib_dma_unmap_single(priv->ca, addr, skb->len, DMA_TO_DEVICE);
+ 		dev_kfree_skb_any(skb);
++		tx_req->skb = NULL;
+ 	} else {
+ 		dev->trans_start = jiffies;
+ 		++tx->tx_head;
+@@ -785,6 +788,7 @@ void ipoib_cm_handle_tx_wc(struct net_de
+ 	dev->stats.tx_bytes += tx_req->skb->len;
+ 
+ 	dev_kfree_skb_any(tx_req->skb);
++	tx_req->skb = NULL;
+ 
+ 	spin_lock_irqsave(&priv->tx_lock, flags);
+ 	++tx->tx_tail;
+@@ -1179,6 +1183,7 @@ timeout:
+ 		ib_dma_unmap_single(priv->ca, tx_req->mapping, tx_req->skb->len,
+ 				    DMA_TO_DEVICE);
+ 		dev_kfree_skb_any(tx_req->skb);
++		tx_req->skb = NULL;
+ 		++p->tx_tail;
+ 		spin_lock_irqsave(&priv->tx_lock, flags);
+ 		if (unlikely(--priv->tx_outstanding == ipoib_sendq_size >> 1) &&
+Index: linux-2.6.27-SLE11_BRANCH/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/infiniband/ulp/ipoib/ipoib_ib.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+@@ -377,12 +377,14 @@ static void ipoib_ib_handle_tx_wc(struct
+ 
+ 	tx_req = &priv->tx_ring[wr_id];
+ 
+-	ipoib_dma_unmap_tx(priv->ca, tx_req);
++	if (tx_req->skb) {
++		struct sk_buff *skb = tx_req->skb;
+ 
+-	++dev->stats.tx_packets;
+-	dev->stats.tx_bytes += tx_req->skb->len;
+-
+-	dev_kfree_skb_any(tx_req->skb);
++		ipoib_dma_unmap_tx(priv->ca, tx_req);
++		++dev->stats.tx_packets;
++		dev->stats.tx_bytes += skb->len;
++		dev_kfree_skb_any(skb);
++	}
+ 
+ 	++priv->tx_tail;
+ 	if (unlikely(--priv->tx_outstanding == ipoib_sendq_size >> 1) &&
+@@ -571,6 +573,7 @@ void ipoib_send(struct net_device *dev,
+ 	if (unlikely(ipoib_dma_map_tx(priv->ca, tx_req))) {
+ 		++dev->stats.tx_errors;
+ 		dev_kfree_skb_any(skb);
++		tx_req->skb = NULL;
+ 		return;
+ 	}
+ 
+@@ -593,6 +596,7 @@ void ipoib_send(struct net_device *dev,
+ 		--priv->tx_outstanding;
+ 		ipoib_dma_unmap_tx(priv->ca, tx_req);
+ 		dev_kfree_skb_any(skb);
++		tx_req->skb = NULL;
+ 		if (netif_queue_stopped(dev))
+ 			netif_wake_queue(dev);
+ 	} else {

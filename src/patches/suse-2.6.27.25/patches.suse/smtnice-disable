@@ -1,0 +1,29 @@
+From: npiggin@suse.de
+Subject: disable smtnice
+References: 163880
+Patch-mainline: obsolete
+
+SLES9 has SMT nice disabled for different reasons, but in 
+sles10, it creates significant contention on the runq
+locks.  Any scheduler intensive benchmark is slow with
+smt nice enabled.  This patch turns it off.
+
+Acked-by: mason@suse.de
+Acked-by: okir@suse.de
+
+---
+ include/linux/topology.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/include/linux/topology.h
++++ b/include/linux/topology.h
+@@ -99,8 +99,7 @@ void arch_update_cpu_topology(void);
+ 				| SD_BALANCE_FORK	\
+ 				| SD_BALANCE_EXEC	\
+ 				| SD_WAKE_AFFINE	\
+-				| SD_WAKE_IDLE		\
+-				| SD_SHARE_CPUPOWER,	\
++				| SD_WAKE_IDLE,		\
+ 	.last_balance		= jiffies,		\
+ 	.balance_interval	= 1,			\
+ }

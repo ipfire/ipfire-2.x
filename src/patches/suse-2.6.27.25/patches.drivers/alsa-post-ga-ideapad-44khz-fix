@@ -1,0 +1,66 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: Fix sample rate of Lenovo Ideapad to 44.1kHz
+Patch-mainline: 
+References: bnc#480391
+
+Noises can be heard on analog outputs of (some model of) Lenovo
+Ideapad due to the hardware problem, and the only workaround right now
+is to fix the sample rate to 44.1kHz.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_realtek.c |   34 +++++++++++++++++++++++++++++++---
+ 1 file changed, 31 insertions(+), 3 deletions(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -12340,6 +12340,27 @@ static int alc269_auto_create_analog_inp
+ #define alc269_pcm_digital_playback	alc880_pcm_digital_playback
+ #define alc269_pcm_digital_capture	alc880_pcm_digital_capture
+ 
++static struct hda_pcm_stream alc269_44k_pcm_analog_playback = {
++	.substreams = 1,
++	.channels_min = 2,
++	.channels_max = 8,
++	.rates = SNDRV_PCM_RATE_44100, /* fixed rate */
++	/* NID is set in alc_build_pcms */
++	.ops = {
++		.open = alc880_playback_pcm_open,
++		.prepare = alc880_playback_pcm_prepare,
++		.cleanup = alc880_playback_pcm_cleanup
++	},
++};
++
++static struct hda_pcm_stream alc269_44k_pcm_analog_capture = {
++	.substreams = 1,
++	.channels_min = 2,
++	.channels_max = 2,
++	.rates = SNDRV_PCM_RATE_44100, /* fixed rate */
++	/* NID is set in alc_build_pcms */
++};
++
+ /*
+  * BIOS auto configuration
+  */
+@@ -12541,9 +12562,16 @@ static int patch_alc269(struct hda_codec
+ 		setup_preset(spec, &alc269_presets[board_config]);
+ 
+ 	spec->stream_name_analog = "ALC269 Analog";
+-	spec->stream_analog_playback = &alc269_pcm_analog_playback;
+-	spec->stream_analog_capture = &alc269_pcm_analog_capture;
+-
++	if (codec->subsystem_id == 0x17aa3bf8) {
++		/* Due to a hardware problem on Lenovo Ideadpad, we need to
++		 * fix the sample rate of analog I/O to 44.1kHz
++		 */
++		spec->stream_analog_playback = &alc269_44k_pcm_analog_playback;
++		spec->stream_analog_capture = &alc269_44k_pcm_analog_capture;
++	} else {
++		spec->stream_analog_playback = &alc269_pcm_analog_playback;
++		spec->stream_analog_capture = &alc269_pcm_analog_capture;
++	}
+ 	spec->stream_name_digital = "ALC269 Digital";
+ 	spec->stream_digital_playback = &alc269_pcm_digital_playback;
+ 	spec->stream_digital_capture = &alc269_pcm_digital_capture;

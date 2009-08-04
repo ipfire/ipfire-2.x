@@ -1,0 +1,55 @@
+From: Eric Sandeen <sandeen@sandeen.net>
+Date: Sat, 23 May 2009 19:30:12 +0000 (-0500)
+Subject: xfs: fix overflow in xfs_growfs_data_private
+Patch-mainline: 2.6.30-rc8
+Git-commit: e6da7c9fed111ba1243297ee6eda8e24ae11c384
+References: bnc#506361
+
+xfs: fix overflow in xfs_growfs_data_private
+
+In the case where growing a filesystem would leave the last AG
+too small, the fixup code has an overflow in the calculation
+of the new size with one fewer ag, because "nagcount" is a 32
+bit number.  If the new filesystem has > 2^32 blocks in it
+this causes a problem resulting in an EINVAL return from growfs:
+
+ # xfs_io -f -c "truncate 19998630180864" fsfile
+ # mkfs.xfs -f -bsize=4096 -dagsize=76288719b,size=3905982455b fsfile
+ # mount -o loop fsfile /mnt
+ # xfs_growfs /mnt
+
+meta-data=/dev/loop0             isize=256    agcount=52,
+agsize=76288719 blks
+         =                       sectsz=512   attr=2
+data     =                       bsize=4096   blocks=3905982455, imaxpct=5
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0
+log      =internal               bsize=4096   blocks=32768, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=0
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+xfs_growfs: XFS_IOC_FSGROWFSDATA xfsctl failed: Invalid argument
+
+Reported-by: richard.ems@cape-horn-eng.com
+Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Felix Blyakher <felixb@sgi.com>
+Signed-off-by: Felix Blyakher <felixb@sgi.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+
+ fs/xfs/xfs_fsops.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
+index 8379e3b..cbd451b 100644
+--- a/fs/xfs/xfs_fsops.c
++++ b/fs/xfs/xfs_fsops.c
+@@ -160,7 +160,7 @@ xfs_growfs_data_private(
+ 	nagcount = new + (nb_mod != 0);
+ 	if (nb_mod && nb_mod < XFS_MIN_AG_BLOCKS) {
+ 		nagcount--;
+-		nb = nagcount * mp->m_sb.sb_agblocks;
++		nb = (xfs_rfsblock_t)nagcount * mp->m_sb.sb_agblocks;
+ 		if (nb < mp->m_sb.sb_dblocks)
+ 			return XFS_ERROR(EINVAL);
+ 	}

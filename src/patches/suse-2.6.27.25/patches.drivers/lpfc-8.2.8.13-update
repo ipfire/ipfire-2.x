@@ -1,0 +1,196 @@
+From: Laurie Barry <laurie.barry@emulex.com>
+Subject: Update lpfc from 8.2.8.12 to 8.2.8.13
+References: bnc#472608
+
+lpfc 8.2.8.13 fixes a few bugs found in our qual cycle on SLES 11 RC3:
+
+* Changed version number to 8.2.8.13
+* Added sysfs interface to update speed and topology parameter without link
+bounce (CR 87013)
+* Fixed loopback test failure (CR 87414)
+
+Acked-by: Hannes Reinecke <hare@suse.de>
+
+--
+diff -urpN a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+--- a/drivers/scsi/lpfc/lpfc_attr.c	2009-02-04 11:14:24.143349000 -0500
++++ b/drivers/scsi/lpfc/lpfc_attr.c	2009-02-04 11:14:24.291344000 -0500
+@@ -1,7 +1,7 @@
+ /*******************************************************************
+  * This file is part of the Emulex Linux Device Driver for         *
+  * Fibre Channel Host Bus Adapters.                                *
+- * Copyright (C) 2004-2008 Emulex.  All rights reserved.           *
++ * Copyright (C) 2004-2009 Emulex.  All rights reserved.           *
+  * EMULEX and SLI are trademarks of Emulex.                        *
+  * www.emulex.com                                                  *
+  * Portions Copyright (C) 2004-2005 Christoph Hellwig              *
+@@ -2449,18 +2449,41 @@ LPFC_VPORT_ATTR_R(scan_down, 1, 0, 1,
+  * non-zero return value from lpfc_issue_lip()
+  * -EINVAL val out of range
+  **/
+-static int
+-lpfc_topology_set(struct lpfc_hba *phba, int val)
++static ssize_t
++lpfc_topology_store(struct device *dev, struct device_attribute *attr,
++			const char *buf, size_t count)
+ {
++	struct Scsi_Host  *shost = class_to_shost(dev);
++	struct lpfc_vport *vport = (struct lpfc_vport *) shost->hostdata;
++	struct lpfc_hba   *phba = vport->phba;
++	int val = 0;
++	int nolip = 0;
++	const char *val_buf = buf;
+ 	int err;
+ 	uint32_t prev_val;
++
++	if (!strncmp(buf, "nolip ", strlen("nolip "))) {
++		nolip = 1;
++		val_buf = &buf[strlen("nolip ")];
++	}
++
++	if (!isdigit(val_buf[0]))
++		return -EINVAL;
++	if (sscanf(val_buf, "%i", &val) != 1)
++		return -EINVAL;
++
+ 	if (val >= 0 && val <= 6) {
+ 		prev_val = phba->cfg_topology;
+ 		phba->cfg_topology = val;
++		if (nolip)
++			return strlen(buf);
++
+ 		err = lpfc_issue_lip(lpfc_shost_from_vport(phba->pport));
+-		if (err)
++		if (err) {
+ 			phba->cfg_topology = prev_val;
+-		return err;
++			return -EINVAL;
++		} else
++			return strlen(buf);
+ 	}
+ 	lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
+ 		"%d:0467 lpfc_topology attribute cannot be set to %d, "
+@@ -2473,7 +2496,6 @@ module_param(lpfc_topology, int, 0);
+ MODULE_PARM_DESC(lpfc_topology, "Select Fibre Channel topology");
+ lpfc_param_show(topology)
+ lpfc_param_init(topology, 0, 0, 6)
+-lpfc_param_store(topology)
+ static DEVICE_ATTR(lpfc_topology, S_IRUGO | S_IWUSR,
+ 		lpfc_topology_show, lpfc_topology_store);
+ 
+@@ -2834,12 +2856,29 @@ static struct bin_attribute sysfs_drvr_s
+  * non-zero return value from lpfc_issue_lip()
+  * -EINVAL val out of range
+  **/
+-static int
+-lpfc_link_speed_set(struct lpfc_hba *phba, int val)
++static ssize_t
++lpfc_link_speed_store(struct device *dev, struct device_attribute *attr,
++		const char *buf, size_t count)
+ {
++	struct Scsi_Host  *shost = class_to_shost(dev);
++	struct lpfc_vport *vport = (struct lpfc_vport *) shost->hostdata;
++	struct lpfc_hba   *phba = vport->phba;
++	int val = 0;
++	int nolip = 0;
++	const char *val_buf = buf;
+ 	int err;
+ 	uint32_t prev_val;
+ 
++	if (!strncmp(buf, "nolip ", strlen("nolip "))) {
++		nolip = 1;
++		val_buf = &buf[strlen("nolip ")];
++	}
++
++	if (!isdigit(val_buf[0]))
++		return -EINVAL;
++	if (sscanf(val_buf, "%i", &val) != 1)
++		return -EINVAL;
++
+ 	if (((val == LINK_SPEED_1G) && !(phba->lmt & LMT_1Gb)) ||
+ 		((val == LINK_SPEED_2G) && !(phba->lmt & LMT_2Gb)) ||
+ 		((val == LINK_SPEED_4G) && !(phba->lmt & LMT_4Gb)) ||
+@@ -2847,14 +2886,19 @@ lpfc_link_speed_set(struct lpfc_hba *phb
+ 		((val == LINK_SPEED_10G) && !(phba->lmt & LMT_10Gb)))
+ 		return -EINVAL;
+ 
+-	if ((val >= 0 && val <= LPFC_MAX_LINK_SPEED)
++	if ((val >= 0 && val <= 8)
+ 		&& (LPFC_LINK_SPEED_BITMAP & (1 << val))) {
+ 		prev_val = phba->cfg_link_speed;
+ 		phba->cfg_link_speed = val;
++		if (nolip)
++			return strlen(buf);
++
+ 		err = lpfc_issue_lip(lpfc_shost_from_vport(phba->pport));
+-		if (err)
++		if (err) {
+ 			phba->cfg_link_speed = prev_val;
+-		return err;
++			return -EINVAL;
++		} else
++			return strlen(buf);
+ 	}
+ 
+ 	lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
+@@ -2901,7 +2945,6 @@ lpfc_link_speed_init(struct lpfc_hba *ph
+ 	return -EINVAL;
+ }
+ 
+-lpfc_param_store(link_speed)
+ static DEVICE_ATTR(lpfc_link_speed, S_IRUGO | S_IWUSR,
+ 		lpfc_link_speed_show, lpfc_link_speed_store);
+ 
+@@ -3981,6 +4024,10 @@ sysfs_mbox_read(struct kobject *kobj, st
+ 			    (sysfs_mbox->mbox->mb.un.varWords[1] == 1)) {
+ 				wait_4_menlo_maint = 1;
+ 				phba->wait_4_mlo_maint_flg = 1;
++			} else if (sysfs_mbox->mbox->mb.un.varWords[0] ==
++					SETVAR_MLORST) {
++				phba->link_flag &= ~LS_LOOPBACK_MODE;
++				phba->fc_topology = TOPOLOGY_PT_PT;
+ 			}
+ 			break;
+ 		case MBX_RUN_BIU_DIAG64:
+diff -urpN a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+--- a/drivers/scsi/lpfc/lpfc_els.c	2009-02-04 11:14:24.218344000 -0500
++++ b/drivers/scsi/lpfc/lpfc_els.c	2009-02-04 11:14:24.311341000 -0500
+@@ -2514,8 +2514,10 @@ lpfc_els_retry(struct lpfc_hba *phba, st
+ 		switch ((irsp->un.ulpWord[4] & 0xff)) {
+ 		case IOERR_LOOP_OPEN_FAILURE:
+ 			if (cmd == ELS_CMD_FLOGI) {
+-				if (PCI_DEVICE_ID_HORNET ==
+-					phba->pcidev->device) {
++				if ((PCI_DEVICE_ID_HORNET ==
++					phba->pcidev->device)
++				   && phba->link_flag ==
++					LS_LOOPBACK_MODE) {
+ 					phba->fc_topology = TOPOLOGY_LOOP;
+ 					phba->pport->fc_myDID = 0;
+ 					phba->alpa_map[0] = 0;
+diff -urpN a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c	2009-02-04 11:14:24.223338000 -0500
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c	2009-02-04 11:14:24.315342000 -0500
+@@ -2574,6 +2574,10 @@ lpfc_disc_list_loopmap(struct lpfc_vport
+ 	if (phba->fc_topology != TOPOLOGY_LOOP)
+ 		return;
+ 
++	if ((PCI_DEVICE_ID_HORNET == phba->pcidev->device)
++		&& (phba->link_flag & LS_LOOPBACK_MODE))
++		return;
++
+ 	/* Check for loop map present or not */
+ 	if (phba->alpa_map[0]) {
+ 		for (j = 1; j <= phba->alpa_map[0]; j++) {
+diff -urpN a/drivers/scsi/lpfc/lpfc_version.h b/drivers/scsi/lpfc/lpfc_version.h
+--- a/drivers/scsi/lpfc/lpfc_version.h	2009-02-04 11:14:24.270343000 -0500
++++ b/drivers/scsi/lpfc/lpfc_version.h	2009-02-04 11:14:24.351338000 -0500
+@@ -18,7 +18,7 @@
+  * included with this package.                                     *
+  *******************************************************************/
+ 
+-#define LPFC_DRIVER_VERSION "8.2.8.12"
++#define LPFC_DRIVER_VERSION "8.2.8.13"
+ 
+ #define LPFC_DRIVER_NAME		"lpfc"
+ #define LPFC_SP_DRIVER_HANDLER_NAME	"lpfc:sp"

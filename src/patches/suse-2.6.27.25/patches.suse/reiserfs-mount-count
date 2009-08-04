@@ -1,0 +1,65 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: reiserfs: add support for mount count incrementing
+
+ The following patch adds the fields for tracking mount counts and
+ last fsck timestamps to the superblock. It also increments the mount
+ count on every read-write mount. These fields have been reserved on
+ the reiserfs-devel list, and will be a part of the next reiserfsprogs
+ release.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/super.c            |    6 +++++-
+ include/linux/reiserfs_fs.h    |    6 +++++-
+ include/linux/reiserfs_fs_sb.h |    3 +++
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1278,6 +1278,8 @@ static int reiserfs_remount(struct super
+ 		REISERFS_SB(s)->s_mount_state = sb_umount_state(rs);
+ 		s->s_flags &= ~MS_RDONLY;
+ 		set_sb_umount_state(rs, REISERFS_ERROR_FS);
++		if (!old_format_only(s))
++			set_sb_mnt_count(rs, sb_mnt_count(rs) + 1);
+ 		/* mark_buffer_dirty (SB_BUFFER_WITH_SB (s), 1); */
+ 		journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB(s));
+ 		REISERFS_SB(s)->s_mount_state = REISERFS_VALID_FS;
+@@ -1817,7 +1819,9 @@ static int reiserfs_fill_super(struct su
+ 			} else if (!silent) {
+ 				reiserfs_info(s, "using 3.5.x disk format\n");
+ 			}
+-		}
++		} else
++			set_sb_mnt_count(rs, sb_mnt_count(rs) + 1);
++
+ 
+ 		journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB(s));
+ 		errval = journal_end(&th, s, 1);
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -171,7 +171,11 @@ struct reiserfs_super_block {
+ 	__le32 s_flags;		/* Right now used only by inode-attributes, if enabled */
+ 	unsigned char s_uuid[16];	/* filesystem unique identifier */
+ 	unsigned char s_label[16];	/* filesystem volume label */
+-	char s_unused[88];	/* zero filled by mkreiserfs and
++	__le16 s_mnt_count;		/* Count of mounts since last fsck */
++	__le16 s_max_mnt_count;		/* Maximum mounts before check */
++	__le32 s_lastcheck;		/* Timestamp of last fsck */
++	__le32 s_check_interval;	/* Interval between checks */
++	char s_unused[76];	/* zero filled by mkreiserfs and
+ 				 * reiserfs_convert_objectid_map_v1()
+ 				 * so any additions must be updated
+ 				 * there as well. */
+--- a/include/linux/reiserfs_fs_sb.h
++++ b/include/linux/reiserfs_fs_sb.h
+@@ -73,6 +73,9 @@ typedef enum {
+ #define sb_version(sbp)            (le16_to_cpu((sbp)->s_v1.s_version))
+ #define set_sb_version(sbp,v)      ((sbp)->s_v1.s_version = cpu_to_le16(v))
+ 
++#define sb_mnt_count(sbp)	   (le16_to_cpu((sbp)->s_mnt_count))
++#define set_sb_mnt_count(sbp, v)   ((sbp)->s_mnt_count = cpu_to_le16(v))
++
+ #define sb_reserved_for_journal(sbp) \
+               (le16_to_cpu((sbp)->s_v1.s_reserved_for_journal))
+ #define set_sb_reserved_for_journal(sbp,v) \

@@ -1,0 +1,42 @@
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 19 Mar 2009 18:10:17 +0000 (-0700)
+Subject: Add '-fwrapv' to gcc CFLAGS
+Patch-mainline: 2.6.29
+Git-commit: 68df3755e383e6fecf2354a67b08f92f18536594
+References: bko#12597 bnc#487106
+
+Add '-fwrapv' to gcc CFLAGS
+
+This makes sure that gcc doesn't try to optimize away wrapping
+arithmetic, which the kernel occasionally uses for overflow testing, ie
+things like
+
+	if (ptr + offset < ptr)
+
+which technically is undefined for non-unsigned types. See
+
+	http://bugzilla.kernel.org/show_bug.cgi?id=12597
+
+for details.
+
+Not all versions of gcc support it, so we need to make it conditional
+(it looks like it was introduced in gcc-3.4).
+
+Reminded-by: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+
+ Makefile |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/Makefile
++++ b/Makefile
+@@ -341,6 +341,7 @@ KBUILD_CPPFLAGS := -D__KERNEL__ $(LINUXI
+ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+ 		   -fno-strict-aliasing -fno-common \
+ 		   -Werror-implicit-function-declaration
++KBUILD_CFLAGS	+= $(call cc-option,-fwrapv)
+ KBUILD_AFLAGS   := -D__ASSEMBLY__
+ 
+ # Warn about unsupported modules in kernels built inside Autobuild

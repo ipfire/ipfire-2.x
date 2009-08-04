@@ -1,0 +1,43 @@
+From: David Chinner <david@fromorbit.com>
+Subject: [XFS] XFS: Check for valid transaction headers in recovery
+References: bnc#450658
+Patch-mainline: ?
+    
+When we are about to add a new item to a transaction in recovery, we need
+to check that it is valid first. Currently we just assert that header
+magic number matches, but in production systems that is not present and we
+add a corrupted transaction to the list to be processed. This results in a
+kernel oops later when processing the corrupted transaction.
+
+Instead, if we detect a corrupted transaction, abort recovery and leave
+the user to clean up the mess that has occurred.
+
+SGI-PV: 988145
+
+SGI-Modid: xfs-linux-melb:xfs-kern:32356a
+
+Signed-off-by: David Chinner <david@fromorbit.com>
+Signed-off-by: Tim Shimmin <tes@sgi.com>
+Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+Signed-off-by: Lachlan McIlroy <lachlan@sgi.com>
+Acked-by: Jan Kara <jack@suse.cz>
+
+Index: linux-2.6.27.5-2/fs/xfs/xfs_log_recover.c
+===================================================================
+--- linux-2.6.27.5-2.orig/fs/xfs/xfs_log_recover.c	2008-12-03 11:58:01.136714829 +1100
++++ linux-2.6.27.5-2/fs/xfs/xfs_log_recover.c	2008-12-03 11:59:11.531741273 +1100
+@@ -1419,7 +1419,13 @@ xlog_recover_add_to_trans(
+ 		return 0;
+ 	item = trans->r_itemq;
+ 	if (item == NULL) {
+-		ASSERT(*(uint *)dp == XFS_TRANS_HEADER_MAGIC);
++		/* we need to catch log corruptions here */
++		if (*(uint *)dp != XFS_TRANS_HEADER_MAGIC) {
++			xlog_warn("XFS: xlog_recover_add_to_trans: "
++				  "bad header magic number");
++			ASSERT(0);
++			return XFS_ERROR(EIO);
++		}
+ 		if (len == sizeof(xfs_trans_header_t))
+ 			xlog_recover_add_item(&trans->r_itemq);
+ 		memcpy(&trans->r_theader, dp, len); /* d, s, l */

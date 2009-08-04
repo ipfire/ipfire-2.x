@@ -1,0 +1,32 @@
+From: Joe Perches <joe@perches.com>
+commit 44ad532b3277f0cae55bfe0625d3140cf73af450
+Author: Joe Perches <joe@perches.com>
+Date:   Thu Jan 22 13:24:49 2009 -0800
+Subject: dlm: use ipv6_addr_copy
+    
+Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Coly Li <coly.li@suse.de>
+
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index 103a5eb..bf09262 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -53,6 +53,7 @@
+ #include <linux/mutex.h>
+ #include <linux/sctp.h>
+ #include <net/sctp/user.h>
++#include <net/ipv6.h>
+ 
+ #include "dlm_internal.h"
+ #include "lowcomms.h"
+@@ -250,8 +251,7 @@ static int nodeid_to_addr(int nodeid, struct sockaddr *retaddr)
+ 	} else {
+ 		struct sockaddr_in6 *in6  = (struct sockaddr_in6 *) &addr;
+ 		struct sockaddr_in6 *ret6 = (struct sockaddr_in6 *) retaddr;
+-		memcpy(&ret6->sin6_addr, &in6->sin6_addr,
+-		       sizeof(in6->sin6_addr));
++		ipv6_addr_copy(&ret6->sin6_addr, &in6->sin6_addr);
+ 	}
+ 
+ 	return 0;

@@ -1,0 +1,39 @@
+From 70b9986ca4baaf6deb6f0e01d50f72457579adea Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 06:43:48 +0000
+Subject: bnx2x: Free IRQ
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+Error check could result with not freeing the IRQ
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -6687,6 +6687,9 @@ static int bnx2x_nic_unload(struct bnx2x
+ 		 (DRV_PULSE_ALWAYS_ALIVE | bp->fw_drv_pulse_wr_seq));
+ 	bnx2x_stats_handle(bp, STATS_EVENT_STOP);
+ 
++	/* Release IRQs */
++	bnx2x_free_irq(bp);
++
+ 	/* Wait until tx fast path tasks complete */
+ 	for_each_queue(bp, i) {
+ 		struct bnx2x_fastpath *fp = &bp->fp[i];
+@@ -6714,9 +6717,6 @@ static int bnx2x_nic_unload(struct bnx2x
+ 	/* Give HW time to discard old tx messages */
+ 	msleep(1);
+ 
+-	/* Release IRQs */
+-	bnx2x_free_irq(bp);
+-
+ 	if (CHIP_IS_E1(bp)) {
+ 		struct mac_configuration_cmd *config =
+ 						bnx2x_sp(bp, mcast_config);

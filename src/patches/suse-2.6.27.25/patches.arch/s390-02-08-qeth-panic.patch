@@ -1,0 +1,43 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qeth: avoid skb_under_panic for malformatted inbound data
+References: bnc#434333
+
+Symptom:     kernel dump
+Problem:     malformatted inbound packets due to hardware problems
+Solution:    make the qeth driver more robust in case of malformatted inbound
+             packets due to hardware problems, an additional check for
+             OSN-card-type is added for OSN-type packets.
+
+Signed-off-by: Ursula Braun <ursula.braun@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ drivers/s390/net/qeth_l2_main.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+Index: linux-sles11/drivers/s390/net/qeth_l2_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_l2_main.c
++++ linux-sles11/drivers/s390/net/qeth_l2_main.c
+@@ -453,12 +453,15 @@ static void qeth_l2_process_inbound_buff
+ 			netif_rx(skb);
+ 			break;
+ 		case QETH_HEADER_TYPE_OSN:
+-			skb_push(skb, sizeof(struct qeth_hdr));
+-			skb_copy_to_linear_data(skb, hdr,
++			if (card->info.type == QETH_CARD_TYPE_OSN) {
++				skb_push(skb, sizeof(struct qeth_hdr));
++				skb_copy_to_linear_data(skb, hdr,
+ 						sizeof(struct qeth_hdr));
+-			len = skb->len;
+-			card->osn_info.data_cb(skb);
+-			break;
++				len = skb->len;
++				card->osn_info.data_cb(skb);
++				break;
++			}
++			/* else unknown */
+ 		default:
+ 			dev_kfree_skb_any(skb);
+ 			QETH_DBF_TEXT(TRACE, 3, "inbunkno");

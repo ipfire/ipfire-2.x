@@ -1,0 +1,72 @@
+From: Yinghai Lu <yhlu.kernel@gmail.com>
+Subject: x86: add apic probe for genapic 64bit - fix
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: d25ae38b7e005af03843833bbd811ffe8c5f8cb4
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+intr_remapping_enabled get assigned later, so need to check that
+in setup_apic_routing
+
+Signed-off-by: Yinghai Lu <yhlu.kernel@gmail.com>
+Cc: Jack Steiner <steiner@sgi.com>
+Cc: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/genapic_64.c        |    6 ++++++
+ arch/x86/kernel/genx2apic_cluster.c |    2 +-
+ arch/x86/kernel/genx2apic_phys.c    |    2 +-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.26/arch/x86/kernel/genapic_64.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/genapic_64.c
++++ linux-2.6.26/arch/x86/kernel/genapic_64.c
+@@ -16,6 +16,7 @@
+ #include <linux/ctype.h>
+ #include <linux/init.h>
+ #include <linux/hardirq.h>
++#include <linux/dmar.h>
+ 
+ #include <asm/smp.h>
+ #include <asm/ipi.h>
+@@ -42,6 +43,11 @@ static struct genapic *apic_probe[] __in
+  */
+ void __init setup_apic_routing(void)
+ {
++	if (genapic == &apic_x2apic_phys || genapic == &apic_x2apic_cluster) {
++		if (!intr_remapping_enabled)
++			genapic = &apic_flat;
++	}
++
+ 	if (genapic == &apic_flat) {
+ 		if (max_physical_apicid >= 8)
+ 			genapic = &apic_physflat;
+Index: linux-2.6.26/arch/x86/kernel/genx2apic_cluster.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/genx2apic_cluster.c
++++ linux-2.6.26/arch/x86/kernel/genx2apic_cluster.c
+@@ -14,7 +14,7 @@ DEFINE_PER_CPU(u32, x86_cpu_to_logical_a
+ 
+ static int __init x2apic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+ {
+-	if (cpu_has_x2apic && intr_remapping_enabled)
++	if (cpu_has_x2apic)
+ 		return 1;
+ 
+ 	return 0;
+Index: linux-2.6.26/arch/x86/kernel/genx2apic_phys.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/genx2apic_phys.c
++++ linux-2.6.26/arch/x86/kernel/genx2apic_phys.c
+@@ -23,7 +23,7 @@ early_param("x2apic_phys", set_x2apic_ph
+ 
+ static int __init x2apic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+ {
+-	if (cpu_has_x2apic && intr_remapping_enabled && x2apic_phys)
++	if (cpu_has_x2apic && x2apic_phys)
+ 		return 1;
+ 
+ 	return 0;

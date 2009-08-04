@@ -1,0 +1,31 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Fixup return value in scsi_host_lookup()
+References: bnc#468654
+
+scsi_host_lookup should always return an ERR_PTR() value if
+it fails. This has changed in mainline where it returns a
+NULL pointer on failure, but changing it now would be a
+nasty kabi breakage. So stick with the established usage.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+--- linux-2.6.27-SLE11_BRANCH/drivers/scsi/hosts.c.orig	2008-10-10 00:13:53.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH/drivers/scsi/hosts.c	2009-02-05 11:23:43.910605056 +0100
+@@ -464,7 +464,7 @@ static int __scsi_host_match(struct devi
+ struct Scsi_Host *scsi_host_lookup(unsigned short hostnum)
+ {
+ 	struct device *cdev;
+-	struct Scsi_Host *shost = ERR_PTR(-ENXIO);
++	struct Scsi_Host *shost = NULL;
+ 
+ 	cdev = class_find_device(&shost_class, NULL, &hostnum,
+ 				 __scsi_host_match);
+@@ -472,7 +472,7 @@ struct Scsi_Host *scsi_host_lookup(unsig
+ 		shost = scsi_host_get(class_to_shost(cdev));
+ 		put_device(cdev);
+ 	}
+-	return shost;
++	return shost ? shost : ERR_PTR(-ENXIO);
+ }
+ EXPORT_SYMBOL(scsi_host_lookup);
+ 

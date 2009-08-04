@@ -1,0 +1,4874 @@
+From: www.kernel.org
+Subject: Linux 2.6.21
+Patch-mainline: 2.6.21
+
+Automatically created from "patches.kernel.org/patch-2.6.21" by xen-port-patches.py
+
+Acked-by: jbeulich@novell.com
+
+--- sle11-2009-05-14.orig/arch/x86/Kconfig	2009-02-05 10:22:19.000000000 +0100
++++ sle11-2009-05-14/arch/x86/Kconfig	2009-03-04 11:25:55.000000000 +0100
+@@ -50,13 +50,15 @@ config GENERIC_CMOS_UPDATE
+ 
+ config CLOCKSOURCE_WATCHDOG
+ 	def_bool y
++	depends on !X86_XEN
+ 
+ config GENERIC_CLOCKEVENTS
+ 	def_bool y
++	depends on !X86_XEN
+ 
+ config GENERIC_CLOCKEVENTS_BROADCAST
+ 	def_bool y
+-	depends on X86_64 || (X86_32 && X86_LOCAL_APIC)
++	depends on X86_64 || (X86_32 && X86_LOCAL_APIC && !X86_XEN)
+ 
+ config LOCKDEP_SUPPORT
+ 	def_bool y
+--- sle11-2009-05-14.orig/arch/x86/kernel/Makefile	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/Makefile	2009-03-04 11:25:55.000000000 +0100
+@@ -124,7 +124,7 @@ ifeq ($(CONFIG_X86_64),y)
+ 	pci-dma_64-$(CONFIG_XEN)	+= pci-dma_32.o
+ endif
+ 
+-disabled-obj-$(CONFIG_XEN) := early-quirks.o i8253.o i8259_$(BITS).o reboot.o \
+-	smpboot_$(BITS).o tsc_$(BITS).o
++disabled-obj-$(CONFIG_XEN) := early-quirks.o hpet.o i8253.o i8259_$(BITS).o reboot.o \
++	smpboot_$(BITS).o tsc_$(BITS).o tsc_sync.o
+ disabled-obj-$(CONFIG_XEN_UNPRIVILEGED_GUEST) += mpparse_64.o
+ %/head_$(BITS).o %/head_$(BITS).s: $(if $(CONFIG_XEN),EXTRA_AFLAGS,dummy) :=
+--- sle11-2009-05-14.orig/arch/x86/kernel/apic_32-xen.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/apic_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -25,6 +25,8 @@
+ #include <linux/kernel_stat.h>
+ #include <linux/sysdev.h>
+ #include <linux/cpu.h>
++#include <linux/clockchips.h>
++#include <linux/acpi_pmtmr.h>
+ #include <linux/module.h>
+ 
+ #include <asm/atomic.h>
+@@ -56,83 +58,26 @@ static cpumask_t timer_bcast_ipi;
+  */
+ 
+ /*
+- * Debug level
++ * Debug level, exported for io_apic.c
+  */
+ int apic_verbosity;
+ 
+ #ifndef CONFIG_XEN
+ static int modern_apic(void)
+ {
+-	unsigned int lvr, version;
+ 	/* AMD systems use old APIC versions, so check the CPU */
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
+-		boot_cpu_data.x86 >= 0xf)
++	    boot_cpu_data.x86 >= 0xf)
+ 		return 1;
+-	lvr = apic_read(APIC_LVR);
+-	version = GET_APIC_VERSION(lvr);
+-	return version >= 0x14;
++	return lapic_get_version() >= 0x14;
+ }
+ #endif /* !CONFIG_XEN */
+ 
+-/*
+- * 'what should we do if we get a hw irq event on an illegal vector'.
+- * each architecture has to answer this themselves.
+- */
+-void ack_bad_irq(unsigned int irq)
+-{
+-	printk("unexpected IRQ trap at vector %02x\n", irq);
+-	/*
+-	 * Currently unexpected vectors happen only on SMP and APIC.
+-	 * We _must_ ack these because every local APIC has only N
+-	 * irq slots per priority level, and a 'hanging, unacked' IRQ
+-	 * holds up an irq slot - in excessive cases (when multiple
+-	 * unexpected vectors occur) that might lock up the APIC
+-	 * completely.
+-	 * But only ack when the APIC is enabled -AK
+-	 */
+-	if (cpu_has_apic)
+-		ack_APIC_irq();
+-}
+-
+ int get_physical_broadcast(void)
+ {
+         return 0xff;
+ }
+ 
+-#ifndef CONFIG_XEN
+-#ifndef CONFIG_SMP
+-static void up_apic_timer_interrupt_call(void)
+-{
+-	int cpu = smp_processor_id();
+-
+-	/*
+-	 * the NMI deadlock-detector uses this.
+-	 */
+-	per_cpu(irq_stat, cpu).apic_timer_irqs++;
+-
+-	smp_local_timer_interrupt();
+-}
+-#endif
+-
+-void smp_send_timer_broadcast_ipi(void)
+-{
+-	cpumask_t mask;
+-
+-	cpus_and(mask, cpu_online_map, timer_bcast_ipi);
+-	if (!cpus_empty(mask)) {
+-#ifdef CONFIG_SMP
+-		send_IPI_mask(mask, LOCAL_TIMER_VECTOR);
+-#else
+-		/*
+-		 * We can directly call the apic timer interrupt handler
+-		 * in UP case. Minus all irq related functions
+-		 */
+-		up_apic_timer_interrupt_call();
+-#endif
+-	}
+-}
+-#endif
+-
+ int setup_profiling_timer(unsigned int multiplier)
+ {
+ 	return -EINVAL;
+--- sle11-2009-05-14.orig/arch/x86/kernel/cpu/common-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/cpu/common-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -610,7 +610,7 @@ void __init early_cpu_init(void)
+ struct pt_regs * __devinit idle_regs(struct pt_regs *regs)
+ {
+ 	memset(regs, 0, sizeof(struct pt_regs));
+-	regs->xgs = __KERNEL_PDA;
++	regs->xfs = __KERNEL_PDA;
+ 	return regs;
+ }
+ 
+@@ -667,12 +667,12 @@ struct i386_pda boot_pda = {
+ 	.pcurrent = &init_task,
+ };
+ 
+-static inline void set_kernel_gs(void)
++static inline void set_kernel_fs(void)
+ {
+-	/* Set %gs for this CPU's PDA.  Memory clobber is to create a
++	/* Set %fs for this CPU's PDA.  Memory clobber is to create a
+ 	   barrier with respect to any PDA operations, so the compiler
+ 	   doesn't move any before here. */
+-	asm volatile ("mov %0, %%gs" : : "r" (__KERNEL_PDA) : "memory");
++	asm volatile ("mov %0, %%fs" : : "r" (__KERNEL_PDA) : "memory");
+ }
+ 
+ /* Initialize the CPU's GDT and PDA.  The boot CPU does this for
+@@ -730,7 +730,7 @@ void __cpuinit cpu_set_gdt(int cpu)
+ 	}
+ 	BUG_ON(HYPERVISOR_set_gdt(frames, (cpu_gdt_descr->size + 1) / 8));
+ 
+-	set_kernel_gs();
++	set_kernel_fs();
+ }
+ 
+ /* Common CPU init for both boot and secondary CPUs */
+@@ -775,8 +775,8 @@ static void __cpuinit _cpu_init(int cpu,
+ 	__set_tss_desc(cpu, GDT_ENTRY_DOUBLEFAULT_TSS, &doublefault_tss);
+ #endif
+ 
+-	/* Clear %fs. */
+-	asm volatile ("mov %0, %%fs" : : "r" (0));
++	/* Clear %gs. */
++	asm volatile ("mov %0, %%gs" : : "r" (0));
+ 
+ 	/* Clear all 6 debug registers: */
+ 	set_debugreg(0, 0);
+--- sle11-2009-05-14.orig/arch/x86/kernel/e820_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/e820_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -14,6 +14,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/page.h>
+ #include <asm/e820.h>
++#include <asm/setup.h>
+ #include <xen/interface/memory.h>
+ 
+ #ifdef CONFIG_EFI
+@@ -157,21 +158,22 @@ static struct resource standard_io_resou
+ 	.flags	= IORESOURCE_BUSY | IORESOURCE_IO
+ } };
+ 
+-static int romsignature(const unsigned char *x)
++#define ROMSIGNATURE 0xaa55
++
++static int __init romsignature(const unsigned char *rom)
+ {
+ 	unsigned short sig;
+-	int ret = 0;
+-	if (probe_kernel_address((const unsigned short *)x, sig) == 0)
+-		ret = (sig == 0xaa55);
+-	return ret;
++
++	return probe_kernel_address((const unsigned short *)rom, sig) == 0 &&
++	       sig == ROMSIGNATURE;
+ }
+ 
+ static int __init romchecksum(unsigned char *rom, unsigned long length)
+ {
+-	unsigned char *p, sum = 0;
++	unsigned char sum;
+ 
+-	for (p = rom; p < rom + length; p++)
+-		sum += *p;
++	for (sum = 0; length; length--)
++		sum += *rom++;
+ 	return sum == 0;
+ }
+ 
+--- sle11-2009-05-14.orig/arch/x86/kernel/entry_32-xen.S	2009-05-14 11:08:06.000000000 +0200
++++ sle11-2009-05-14/arch/x86/kernel/entry_32-xen.S	2009-05-14 11:09:56.000000000 +0200
+@@ -30,7 +30,7 @@
+  *	18(%esp) - %eax
+  *	1C(%esp) - %ds
+  *	20(%esp) - %es
+- *	24(%esp) - %gs
++ *	24(%esp) - %fs
+  *	28(%esp) - orig_eax
+  *	2C(%esp) - %eip
+  *	30(%esp) - %cs
+@@ -102,9 +102,9 @@ NMI_MASK	= 0x80000000
+ 
+ #define SAVE_ALL \
+ 	cld; \
+-	pushl %gs; \
++	pushl %fs; \
+ 	CFI_ADJUST_CFA_OFFSET 4;\
+-	/*CFI_REL_OFFSET gs, 0;*/\
++	/*CFI_REL_OFFSET fs, 0;*/\
+ 	pushl %es; \
+ 	CFI_ADJUST_CFA_OFFSET 4;\
+ 	/*CFI_REL_OFFSET es, 0;*/\
+@@ -136,7 +136,7 @@ NMI_MASK	= 0x80000000
+ 	movl %edx, %ds; \
+ 	movl %edx, %es; \
+ 	movl $(__KERNEL_PDA), %edx; \
+-	movl %edx, %gs
++	movl %edx, %fs
+ 
+ #define RESTORE_INT_REGS \
+ 	popl %ebx;	\
+@@ -169,9 +169,9 @@ NMI_MASK	= 0x80000000
+ 2:	popl %es;	\
+ 	CFI_ADJUST_CFA_OFFSET -4;\
+ 	/*CFI_RESTORE es;*/\
+-3:	popl %gs;	\
++3:	popl %fs;	\
+ 	CFI_ADJUST_CFA_OFFSET -4;\
+-	/*CFI_RESTORE gs;*/\
++	/*CFI_RESTORE fs;*/\
+ .pushsection .fixup,"ax";	\
+ 4:	movl $0,(%esp);	\
+ 	jmp 1b;		\
+@@ -230,6 +230,7 @@ ENTRY(ret_from_fork)
+ 	CFI_ADJUST_CFA_OFFSET -4
+ 	jmp syscall_exit
+ 	CFI_ENDPROC
++END(ret_from_fork)
+ 
+ /*
+  * Return to user mode is not as complex as all this looks,
+@@ -261,6 +262,7 @@ ENTRY(resume_userspace)
+ 					# int/exception return?
+ 	jne work_pending
+ 	jmp restore_all
++END(ret_from_exception)
+ 
+ #ifdef CONFIG_PREEMPT
+ ENTRY(resume_kernel)
+@@ -275,6 +277,7 @@ need_resched:
+ 	jz restore_all
+ 	call preempt_schedule_irq
+ 	jmp need_resched
++END(resume_kernel)
+ #endif
+ 	CFI_ENDPROC
+ 
+@@ -352,16 +355,17 @@ sysenter_past_esp:
+ 	movl PT_OLDESP(%esp), %ecx
+ 	xorl %ebp,%ebp
+ 	TRACE_IRQS_ON
+-1:	mov  PT_GS(%esp), %gs
++1:	mov  PT_FS(%esp), %fs
+ 	ENABLE_INTERRUPTS_SYSEXIT
+ 	CFI_ENDPROC
+ .pushsection .fixup,"ax"
+-2:	movl $0,PT_GS(%esp)
++2:	movl $0,PT_FS(%esp)
+ 	jmp 1b
+ .section __ex_table,"a"
+ 	.align 4
+ 	.long 1b,2b
+ .popsection
++ENDPROC(sysenter_entry)
+ 
+ 	# pv sysenter call handler stub
+ ENTRY(sysenter_entry_pv)
+@@ -533,6 +537,7 @@ hypervisor_iret:
+ 	jmp  hypercall_page + (__HYPERVISOR_iret * 32)
+ #endif
+ 	CFI_ENDPROC
++ENDPROC(system_call)
+ 
+ 	# perform work that needs to be done immediately before resumption
+ 	ALIGN
+@@ -578,6 +583,7 @@ work_notifysig_v86:
+ 	xorl %edx, %edx
+ 	call do_notify_resume
+ 	jmp resume_userspace_sig
++END(work_pending)
+ 
+ 	# perform syscall exit tracing
+ 	ALIGN
+@@ -593,6 +599,7 @@ syscall_trace_entry:
+ 	cmpl $(nr_syscalls), %eax
+ 	jnae syscall_call
+ 	jmp syscall_exit
++END(syscall_trace_entry)
+ 
+ 	# perform syscall exit tracing
+ 	ALIGN
+@@ -606,6 +613,7 @@ syscall_exit_work:
+ 	movl $1, %edx
+ 	call do_syscall_trace
+ 	jmp resume_userspace
++END(syscall_exit_work)
+ 	CFI_ENDPROC
+ 
+ 	RING0_INT_FRAME			# can't unwind into user space anyway
+@@ -616,16 +624,18 @@ syscall_fault:
+ 	GET_THREAD_INFO(%ebp)
+ 	movl $-EFAULT,PT_EAX(%esp)
+ 	jmp resume_userspace
++END(syscall_fault)
+ 
+ syscall_badsys:
+ 	movl $-ENOSYS,PT_EAX(%esp)
+ 	jmp resume_userspace
++END(syscall_badsys)
+ 	CFI_ENDPROC
+ 
+ #ifndef CONFIG_XEN
+ #define FIXUP_ESPFIX_STACK \
+ 	/* since we are on a wrong stack, we cant make it a C code :( */ \
+-	movl %gs:PDA_cpu, %ebx; \
++	movl %fs:PDA_cpu, %ebx; \
+ 	PER_CPU(cpu_gdt_descr, %ebx); \
+ 	movl GDS_address(%ebx), %ebx; \
+ 	GET_DESC_BASE(GDT_ENTRY_ESPFIX_SS, %ebx, %eax, %ax, %al, %ah); \
+@@ -656,9 +666,9 @@ syscall_badsys:
+ ENTRY(interrupt)
+ .text
+ 
+-vector=0
+ ENTRY(irq_entries_start)
+ 	RING0_INT_FRAME
++vector=0
+ .rept NR_IRQS
+ 	ALIGN
+  .if vector
+@@ -667,11 +677,16 @@ ENTRY(irq_entries_start)
+ 1:	pushl $~(vector)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp common_interrupt
+-.data
++ .previous
+ 	.long 1b
+-.text
++ .text
+ vector=vector+1
+ .endr
++END(irq_entries_start)
++
++.previous
++END(interrupt)
++.previous
+ 
+ /*
+  * the CPU automatically disables interrupts when executing an IRQ vector,
+@@ -684,6 +699,7 @@ common_interrupt:
+ 	movl %esp,%eax
+ 	call do_IRQ
+ 	jmp ret_from_intr
++ENDPROC(common_interrupt)
+ 	CFI_ENDPROC
+ 
+ #define BUILD_INTERRUPT(name, nr)	\
+@@ -696,10 +712,16 @@ ENTRY(name)				\
+ 	movl %esp,%eax;			\
+ 	call smp_/**/name;		\
+ 	jmp ret_from_intr;		\
+-	CFI_ENDPROC
++	CFI_ENDPROC;			\
++ENDPROC(name)
+ 
+ /* The include is where all of the SMP etc. interrupts come from */
+ #include "entry_arch.h"
++
++/* This alternate entry is needed because we hijack the apic LVTT */
++#if defined(CONFIG_VMI) && defined(CONFIG_X86_LOCAL_APIC)
++BUILD_INTERRUPT(apic_vmi_timer_interrupt,LOCAL_TIMER_VECTOR)
++#endif
+ #else
+ #define UNWIND_ESPFIX_STACK
+ #endif
+@@ -710,7 +732,7 @@ KPROBE_ENTRY(page_fault)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	ALIGN
+ error_code:
+-	/* the function address is in %gs's slot on the stack */
++	/* the function address is in %fs's slot on the stack */
+ 	pushl %es
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	/*CFI_REL_OFFSET es, 0*/
+@@ -739,20 +761,20 @@ error_code:
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	CFI_REL_OFFSET ebx, 0
+ 	cld
+-	pushl %gs
++	pushl %fs
+ 	CFI_ADJUST_CFA_OFFSET 4
+-	/*CFI_REL_OFFSET gs, 0*/
++	/*CFI_REL_OFFSET fs, 0*/
+ 	movl $(__KERNEL_PDA), %ecx
+-	movl %ecx, %gs
++	movl %ecx, %fs
+ 	UNWIND_ESPFIX_STACK
+ 	popl %ecx
+ 	CFI_ADJUST_CFA_OFFSET -4
+ 	/*CFI_REGISTER es, ecx*/
+-	movl PT_GS(%esp), %edi		# get the function address
++	movl PT_FS(%esp), %edi		# get the function address
+ 	movl PT_ORIG_EAX(%esp), %edx	# get the error code
+ 	movl $-1, PT_ORIG_EAX(%esp)	# no syscall to restart
+-	mov  %ecx, PT_GS(%esp)
+-	/*CFI_REL_OFFSET gs, ES*/
++	mov  %ecx, PT_FS(%esp)
++	/*CFI_REL_OFFSET fs, ES*/
+ 	movl $(__USER_DS), %ecx
+ 	movl %ecx, %ds
+ 	movl %ecx, %es
+@@ -844,7 +866,7 @@ critical_fixup_table:
+ 	.byte 6				# pop  %eax
+ 	.byte 7				# pop  %ds
+ 	.byte 8				# pop  %es
+-	.byte 9,9			# pop  %gs
++	.byte 9,9			# pop  %fs
+ 	.byte 10,10,10			# add  $4,%esp
+ 	.byte 11			# iret
+ 	.byte -1,-1,-1,-1		# movb $1,1(%esi) = __DISABLE_INTERRUPTS
+@@ -909,6 +931,7 @@ ENTRY(coprocessor_error)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(coprocessor_error)
+ 
+ ENTRY(simd_coprocessor_error)
+ 	RING0_INT_FRAME
+@@ -918,6 +941,7 @@ ENTRY(simd_coprocessor_error)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(simd_coprocessor_error)
+ 
+ ENTRY(device_not_available)
+ 	RING0_INT_FRAME
+@@ -940,6 +964,7 @@ device_available_emulate:
+ 	call math_state_restore
+ 	jmp ret_from_exception
+ 	CFI_ENDPROC
++END(device_not_available)
+ 
+ #ifndef CONFIG_XEN
+ /*
+@@ -1101,10 +1126,12 @@ ENTRY(native_iret)
+ 	.align 4
+ 	.long 1b,iret_exc
+ .previous
++END(native_iret)
+ 
+ ENTRY(native_irq_enable_sysexit)
+ 	sti
+ 	sysexit
++END(native_irq_enable_sysexit)
+ #endif
+ 
+ KPROBE_ENTRY(int3)
+@@ -1127,6 +1154,7 @@ ENTRY(overflow)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(overflow)
+ 
+ ENTRY(bounds)
+ 	RING0_INT_FRAME
+@@ -1136,6 +1164,7 @@ ENTRY(bounds)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(bounds)
+ 
+ ENTRY(invalid_op)
+ 	RING0_INT_FRAME
+@@ -1145,6 +1174,7 @@ ENTRY(invalid_op)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(invalid_op)
+ 
+ ENTRY(coprocessor_segment_overrun)
+ 	RING0_INT_FRAME
+@@ -1154,6 +1184,7 @@ ENTRY(coprocessor_segment_overrun)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(coprocessor_segment_overrun)
+ 
+ ENTRY(invalid_TSS)
+ 	RING0_EC_FRAME
+@@ -1161,6 +1192,7 @@ ENTRY(invalid_TSS)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(invalid_TSS)
+ 
+ ENTRY(segment_not_present)
+ 	RING0_EC_FRAME
+@@ -1168,6 +1200,7 @@ ENTRY(segment_not_present)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(segment_not_present)
+ 
+ ENTRY(stack_segment)
+ 	RING0_EC_FRAME
+@@ -1175,6 +1208,7 @@ ENTRY(stack_segment)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(stack_segment)
+ 
+ KPROBE_ENTRY(general_protection)
+ 	RING0_EC_FRAME
+@@ -1190,6 +1224,7 @@ ENTRY(alignment_check)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(alignment_check)
+ 
+ ENTRY(divide_error)
+ 	RING0_INT_FRAME
+@@ -1199,6 +1234,7 @@ ENTRY(divide_error)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(divide_error)
+ 
+ #ifdef CONFIG_X86_MCE
+ ENTRY(machine_check)
+@@ -1209,6 +1245,7 @@ ENTRY(machine_check)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(machine_check)
+ #endif
+ 
+ #ifndef CONFIG_XEN
+@@ -1228,6 +1265,7 @@ ENTRY(fixup_4gb_segment)
+ 	CFI_ADJUST_CFA_OFFSET 4
+ 	jmp error_code
+ 	CFI_ENDPROC
++END(spurious_interrupt_bug)
+ 
+ ENTRY(kernel_thread_helper)
+ 	pushl $0		# fake return address for unwinder
+--- sle11-2009-05-14.orig/arch/x86/kernel/head_32-xen.S	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/head_32-xen.S	2009-03-04 11:25:55.000000000 +0100
+@@ -27,6 +27,7 @@
+ #define X86_CAPABILITY	new_cpu_data+CPUINFO_x86_capability
+ #define X86_VENDOR_ID	new_cpu_data+CPUINFO_x86_vendor_id
+ 
++.section .text.head,"ax",@progbits
+ #define VIRT_ENTRY_OFFSET 0x0
+ .org VIRT_ENTRY_OFFSET
+ ENTRY(startup_32)
+@@ -60,11 +61,11 @@ ENTRY(startup_32)
+ 
+ 	movb $1,X86_HARD_MATH
+ 
+-	xorl %eax,%eax			# Clear FS
+-	movl %eax,%fs
++	xorl %eax,%eax		# Clear GS
++	movl %eax,%gs
+ 
+ 	movl $(__KERNEL_PDA),%eax
+-	mov  %eax,%gs
++	mov  %eax,%fs
+ 
+ 	cld			# gcc2 wants the direction flag cleared at all times
+ 
+@@ -75,7 +76,7 @@ ENTRY(startup_32)
+  * Point the GDT at this CPU's PDA.  This will be
+  * cpu_gdt_table and boot_pda.
+  */
+-setup_pda:
++ENTRY(setup_pda)
+ 	/* get the PDA pointer */
+ 	movl $boot_pda, %eax
+ 
+--- sle11-2009-05-14.orig/arch/x86/kernel/io_apic_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/io_apic_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -167,7 +167,7 @@ static inline void io_apic_write(unsigne
+  */
+ static inline void io_apic_modify(unsigned int apic, unsigned int reg, unsigned int value)
+ {
+-	volatile struct io_apic *io_apic = io_apic_base(apic);
++	volatile struct io_apic __iomem *io_apic = io_apic_base(apic);
+ 	if (sis_apic_bug)
+ 		writel(reg, &io_apic->index);
+ 	writel(value, &io_apic->data);
+@@ -392,7 +392,7 @@ static void set_ioapic_affinity_irq(unsi
+ 			break;
+ 		entry = irq_2_pin + entry->next;
+ 	}
+-	set_native_irq_info(irq, cpumask);
++	irq_desc[irq].affinity = cpumask;
+ 	spin_unlock_irqrestore(&ioapic_lock, flags);
+ }
+ 
+@@ -531,8 +531,8 @@ static void do_irq_balance(void)
+ 		package_index = CPU_TO_PACKAGEINDEX(i);
+ 		for (j = 0; j < NR_IRQS; j++) {
+ 			unsigned long value_now, delta;
+-			/* Is this an active IRQ? */
+-			if (!irq_desc[j].action)
++			/* Is this an active IRQ or balancing disabled ? */
++			if (!irq_desc[j].action || irq_balancing_disabled(j))
+ 				continue;
+ 			if ( package_index == i )
+ 				IRQ_DELTA(package_index,j) = 0;
+@@ -785,7 +785,7 @@ failed:
+ 	return 0;
+ }
+ 
+-int __init irqbalance_disable(char *str)
++int __devinit irqbalance_disable(char *str)
+ {
+ 	irqbalance_disabled = 1;
+ 	return 1;
+@@ -1329,11 +1329,9 @@ static void ioapic_register_intr(int irq
+ 			trigger == IOAPIC_LEVEL)
+ 		set_irq_chip_and_handler_name(irq, &ioapic_chip,
+ 					 handle_fasteoi_irq, "fasteoi");
+-	else {
+-		irq_desc[irq].status |= IRQ_DELAYED_DISABLE;
++	else
+ 		set_irq_chip_and_handler_name(irq, &ioapic_chip,
+ 					 handle_edge_irq, "edge");
+-	}
+ 	set_intr_gate(vector, interrupt[irq]);
+ }
+ #else
+@@ -1407,7 +1405,6 @@ static void __init setup_IO_APIC_irqs(vo
+ 		}
+ 		spin_lock_irqsave(&ioapic_lock, flags);
+ 		__ioapic_write_entry(apic, pin, entry);
+-		set_native_irq_info(irq, TARGET_CPUS);
+ 		spin_unlock_irqrestore(&ioapic_lock, flags);
+ 	}
+ 	}
+@@ -1638,7 +1635,7 @@ void /*__init*/ print_local_APIC(void * 
+ 	v = apic_read(APIC_LVR);
+ 	printk(KERN_INFO "... APIC VERSION: %08x\n", v);
+ 	ver = GET_APIC_VERSION(v);
+-	maxlvt = get_maxlvt();
++	maxlvt = lapic_get_maxlvt();
+ 
+ 	v = apic_read(APIC_TASKPRI);
+ 	printk(KERN_DEBUG "... APIC TASKPRI: %08x (%02x)\n", v, v & APIC_TPRI_MASK);
+@@ -1976,7 +1973,7 @@ static void __init setup_ioapic_ids_from
+ #endif
+ 
+ #ifndef CONFIG_XEN
+-static int no_timer_check __initdata;
++int no_timer_check __initdata;
+ 
+ static int __init notimercheck(char *s)
+ {
+@@ -2369,7 +2366,7 @@ static inline void __init check_timer(vo
+ 
+ 	disable_8259A_irq(0);
+ 	set_irq_chip_and_handler_name(0, &lapic_chip, handle_fasteoi_irq,
+-				      "fasteio");
++				      "fasteoi");
+ 	apic_write_around(APIC_LVT0, APIC_DM_FIXED | vector);	/* Fixed mode */
+ 	enable_8259A_irq(0);
+ 
+@@ -2662,7 +2659,7 @@ static void set_msi_irq_affinity(unsigne
+ 	msg.address_lo |= MSI_ADDR_DEST_ID(dest);
+ 
+ 	write_msi_msg(irq, &msg);
+-	set_native_irq_info(irq, mask);
++	irq_desc[irq].affinity = mask;
+ }
+ #endif /* CONFIG_SMP */
+ 
+@@ -2681,25 +2678,32 @@ static struct irq_chip msi_chip = {
+ 	.retrigger	= ioapic_retrigger_irq,
+ };
+ 
+-int arch_setup_msi_irq(unsigned int irq, struct pci_dev *dev)
++int arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc)
+ {
+ 	struct msi_msg msg;
+-	int ret;
++	int irq, ret;
++	irq = create_irq();
++	if (irq < 0)
++		return irq;
++
++	set_irq_msi(irq, desc);
+ 	ret = msi_compose_msg(dev, irq, &msg);
+-	if (ret < 0)
++	if (ret < 0) {
++		destroy_irq(irq);
+ 		return ret;
++	}
+ 
+ 	write_msi_msg(irq, &msg);
+ 
+ 	set_irq_chip_and_handler_name(irq, &msi_chip, handle_edge_irq,
+ 				      "edge");
+ 
+-	return 0;
++	return irq;
+ }
+ 
+ void arch_teardown_msi_irq(unsigned int irq)
+ {
+-	return;
++	destroy_irq(irq);
+ }
+ 
+ #endif /* CONFIG_PCI_MSI */
+@@ -2739,7 +2743,7 @@ static void set_ht_irq_affinity(unsigned
+ 	dest = cpu_mask_to_apicid(mask);
+ 
+ 	target_ht_irq(irq, dest);
+-	set_native_irq_info(irq, mask);
++	irq_desc[irq].affinity = mask;
+ }
+ #endif
+ 
+@@ -2947,7 +2951,6 @@ int io_apic_set_pci_routing (int ioapic,
+ 
+ 	spin_lock_irqsave(&ioapic_lock, flags);
+ 	__ioapic_write_entry(ioapic, pin, entry);
+-	set_native_irq_info(irq, TARGET_CPUS);
+ 	spin_unlock_irqrestore(&ioapic_lock, flags);
+ 
+ 	return 0;
+--- sle11-2009-05-14.orig/arch/x86/kernel/irq_32-xen.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/irq_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -10,7 +10,6 @@
+  * io_apic.c.)
+  */
+ 
+-#include <asm/uaccess.h>
+ #include <linux/module.h>
+ #include <linux/seq_file.h>
+ #include <linux/interrupt.h>
+@@ -19,19 +18,34 @@
+ #include <linux/cpu.h>
+ #include <linux/delay.h>
+ 
++#include <asm/apic.h>
++#include <asm/uaccess.h>
++
+ DEFINE_PER_CPU(irq_cpustat_t, irq_stat) ____cacheline_internodealigned_in_smp;
+ EXPORT_PER_CPU_SYMBOL(irq_stat);
+ 
+-#ifndef CONFIG_X86_LOCAL_APIC
+ /*
+  * 'what should we do if we get a hw irq event on an illegal vector'.
+  * each architecture has to answer this themselves.
+  */
+ void ack_bad_irq(unsigned int irq)
+ {
+-	printk("unexpected IRQ trap at vector %02x\n", irq);
+-}
++	printk(KERN_ERR "unexpected IRQ trap at vector %02x\n", irq);
++
++#if defined(CONFIG_X86_LOCAL_APIC) && !defined(CONFIG_XEN)
++	/*
++	 * Currently unexpected vectors happen only on SMP and APIC.
++	 * We _must_ ack these because every local APIC has only N
++	 * irq slots per priority level, and a 'hanging, unacked' IRQ
++	 * holds up an irq slot - in excessive cases (when multiple
++	 * unexpected vectors occur) that might lock up the APIC
++	 * completely.
++	 * But only ack when the APIC is enabled -AK
++	 */
++	if (cpu_has_apic)
++		ack_APIC_irq();
+ #endif
++}
+ 
+ #ifdef CONFIG_4KSTACKS
+ /*
+--- sle11-2009-05-14.orig/arch/x86/kernel/microcode-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/microcode-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -108,7 +108,7 @@ static ssize_t microcode_write (struct f
+ 	return ret;
+ }
+ 
+-static struct file_operations microcode_fops = {
++static const struct file_operations microcode_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.write		= microcode_write,
+ 	.open		= microcode_open,
+--- sle11-2009-05-14.orig/arch/x86/kernel/mpparse_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/mpparse_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -1079,7 +1079,7 @@ int mp_register_gsi(u32 gsi, int trigger
+ 	static int		gsi_to_irq[MAX_GSI_NUM];
+ 
+ 	/* Don't set up the ACPI SCI because it's already set up */
+-	if (acpi_fadt.sci_int == gsi)
++	if (acpi_gbl_FADT.sci_interrupt == gsi)
+ 		return gsi;
+ 
+ 	ioapic = mp_find_ioapic(gsi);
+@@ -1136,7 +1136,7 @@ int mp_register_gsi(u32 gsi, int trigger
+ 			/*
+ 			 * Don't assign IRQ used by ACPI SCI
+ 			 */
+-			if (gsi == acpi_fadt.sci_int)
++			if (gsi == acpi_gbl_FADT.sci_interrupt)
+ 				gsi = pci_irq++;
+ 			gsi_to_irq[irq] = gsi;
+ 		} else {
+--- sle11-2009-05-14.orig/arch/x86/kernel/pci-dma-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/pci-dma-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -311,7 +311,7 @@ int dma_declare_coherent_memory(struct d
+ 	return DMA_MEMORY_IO;
+ 
+  free1_out:
+-	kfree(dev->dma_mem->bitmap);
++	kfree(dev->dma_mem);
+  out:
+ 	if (mem_base)
+ 		iounmap(mem_base);
+--- sle11-2009-05-14.orig/arch/x86/kernel/pcspeaker.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/arch/x86/kernel/pcspeaker.c	2009-03-04 11:25:55.000000000 +0100
+@@ -7,6 +7,11 @@ static __init int add_pcspkr(void)
+ 	struct platform_device *pd;
+ 	int ret;
+ 
++#ifdef CONFIG_XEN
++	if (!is_initial_xendomain())
++		return 0;
++#endif
++
+ 	pd = platform_device_alloc("pcspkr", -1);
+ 	if (!pd)
+ 		return -ENOMEM;
+--- sle11-2009-05-14.orig/arch/x86/kernel/process_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/process_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -38,6 +38,7 @@
+ #include <linux/ptrace.h>
+ #include <linux/random.h>
+ #include <linux/personality.h>
++#include <linux/tick.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/pgtable.h>
+@@ -160,6 +161,7 @@ void cpu_idle(void)
+ 
+ 	/* endless idle loop with no priority at all */
+ 	while (1) {
++		tick_nohz_stop_sched_tick();
+ 		while (!need_resched()) {
+ 			void (*idle)(void);
+ 
+@@ -175,6 +177,7 @@ void cpu_idle(void)
+ 			__get_cpu_var(irq_stat).idle_timestamp = jiffies;
+ 			idle();
+ 		}
++		tick_nohz_restart_sched_tick();
+ 		preempt_enable_no_resched();
+ 		schedule();
+ 		preempt_disable();
+@@ -247,8 +250,8 @@ void show_regs(struct pt_regs * regs)
+ 		regs->eax,regs->ebx,regs->ecx,regs->edx);
+ 	printk("ESI: %08lx EDI: %08lx EBP: %08lx",
+ 		regs->esi, regs->edi, regs->ebp);
+-	printk(" DS: %04x ES: %04x GS: %04x\n",
+-	       0xffff & regs->xds,0xffff & regs->xes, 0xffff & regs->xgs);
++	printk(" DS: %04x ES: %04x FS: %04x\n",
++	       0xffff & regs->xds,0xffff & regs->xes, 0xffff & regs->xfs);
+ 
+ 	cr0 = read_cr0();
+ 	cr2 = read_cr2();
+@@ -279,7 +282,7 @@ int kernel_thread(int (*fn)(void *), voi
+ 
+ 	regs.xds = __USER_DS;
+ 	regs.xes = __USER_DS;
+-	regs.xgs = __KERNEL_PDA;
++	regs.xfs = __KERNEL_PDA;
+ 	regs.orig_eax = -1;
+ 	regs.eip = (unsigned long) kernel_thread_helper;
+ 	regs.xcs = __KERNEL_CS | get_kernel_rpl();
+@@ -356,7 +359,7 @@ int copy_thread(int nr, unsigned long cl
+ 
+ 	p->thread.eip = (unsigned long) ret_from_fork;
+ 
+-	savesegment(fs,p->thread.fs);
++	savesegment(gs,p->thread.gs);
+ 
+ 	tsk = current;
+ 	if (unlikely(test_tsk_thread_flag(tsk, TIF_IO_BITMAP))) {
+@@ -434,8 +437,8 @@ void dump_thread(struct pt_regs * regs, 
+ 	dump->regs.eax = regs->eax;
+ 	dump->regs.ds = regs->xds;
+ 	dump->regs.es = regs->xes;
+-	savesegment(fs,dump->regs.fs);
+-	dump->regs.gs = regs->xgs;
++	dump->regs.fs = regs->xfs;
++	savesegment(gs,dump->regs.gs);
+ 	dump->regs.orig_eax = regs->orig_eax;
+ 	dump->regs.eip = regs->eip;
+ 	dump->regs.cs = regs->xcs;
+@@ -637,16 +640,6 @@ struct task_struct fastcall * __switch_t
+ 		prefetch(&next->i387.fxsave);
+ 
+ 	/*
+-	 * Restore %fs if needed.
+-	 *
+-	 * Glibc normally makes %fs be zero.
+-	 */
+-	if (unlikely(next->fs))
+-		loadsegment(fs, next->fs);
+-
+-	write_pda(pcurrent, next_p);
+-
+-	/*
+ 	 * Now maybe handle debug registers
+ 	 */
+ 	if (unlikely(task_thread_info(next_p)->flags & _TIF_WORK_CTXSW))
+@@ -654,6 +647,15 @@ struct task_struct fastcall * __switch_t
+ 
+ 	disable_tsc(prev_p, next_p);
+ 
++	/*
++	 * Leave lazy mode, flushing any hypercalls made here.
++	 * This must be done before restoring TLS segments so
++	 * the GDT and LDT are properly updated, and must be
++	 * done before math_state_restore, so the TS bit is up
++	 * to date.
++	 */
++	arch_leave_lazy_cpu_mode();
++
+ 	/* If the task has used fpu the last 5 timeslices, just do a full
+ 	 * restore of the math state immediately to avoid the trap; the
+ 	 * chances of needing FPU soon are obviously high now
+@@ -661,6 +663,14 @@ struct task_struct fastcall * __switch_t
+ 	if (next_p->fpu_counter > 5)
+ 		math_state_restore();
+ 
++	/*
++	 * Restore %gs if needed (which is common)
++	 */
++	if (prev->gs | next->gs)
++		loadsegment(gs, next->gs);
++
++	write_pda(pcurrent, next_p);
++
+ 	return prev_p;
+ }
+ 
+--- sle11-2009-05-14.orig/arch/x86/kernel/setup_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/setup_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -33,7 +33,6 @@
+ #include <linux/initrd.h>
+ #include <linux/bootmem.h>
+ #include <linux/seq_file.h>
+-#include <linux/platform_device.h>
+ #include <linux/console.h>
+ #include <linux/mca.h>
+ #include <linux/root_dev.h>
+@@ -148,7 +147,7 @@ unsigned long saved_videomode;
+ #define RAMDISK_PROMPT_FLAG		0x8000
+ #define RAMDISK_LOAD_FLAG		0x4000	
+ 
+-static char command_line[COMMAND_LINE_SIZE];
++static char __initdata command_line[COMMAND_LINE_SIZE];
+ 
+ unsigned char __initdata boot_params[PARAM_SIZE];
+ 
+@@ -647,8 +646,8 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	if ((i = MAX_GUEST_CMDLINE) > COMMAND_LINE_SIZE)
+ 		i = COMMAND_LINE_SIZE;
+-	memcpy(saved_command_line, xen_start_info->cmd_line, i);
+-	saved_command_line[i - 1] = '\0';
++	memcpy(boot_command_line, xen_start_info->cmd_line, i);
++	boot_command_line[i - 1] = '\0';
+ 	parse_early_param();
+ 
+ 	if (user_defined_memmap) {
+@@ -656,11 +655,19 @@ void __init setup_arch(char **cmdline_p)
+ 		print_memory_map("user");
+ 	}
+ 
+-	strlcpy(command_line, saved_command_line, COMMAND_LINE_SIZE);
++	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+ 	*cmdline_p = command_line;
+ 
+ 	max_low_pfn = setup_memory();
+ 
++#ifdef CONFIG_VMI
++	/*
++	 * Must be after max_low_pfn is determined, and before kernel
++	 * pagetables are setup.
++	 */
++	vmi_init();
++#endif
++
+ 	/*
+ 	 * NOTE: before this point _nobody_ is allowed to allocate
+ 	 * any memory using the bootmem allocator.  Although the
+@@ -823,7 +830,6 @@ void __init setup_arch(char **cmdline_p)
+ 		conswitchp = &dummy_con;
+ #endif
+ 	}
+-	tsc_init();
+ }
+ 
+ static int
+@@ -833,31 +839,3 @@ xen_panic_event(struct notifier_block *t
+ 	/* we're never actually going to get here... */
+ 	return NOTIFY_DONE;
+ }
+-
+-static __init int add_pcspkr(void)
+-{
+-	struct platform_device *pd;
+-	int ret;
+-
+-	if (!is_initial_xendomain())
+-		return 0;
+-
+-	pd = platform_device_alloc("pcspkr", -1);
+-	if (!pd)
+-		return -ENOMEM;
+-
+-	ret = platform_device_add(pd);
+-	if (ret)
+-		platform_device_put(pd);
+-
+-	return ret;
+-}
+-device_initcall(add_pcspkr);
+-
+-/*
+- * Local Variables:
+- * mode:c
+- * c-file-style:"k&r"
+- * c-basic-offset:8
+- * End:
+- */
+--- sle11-2009-05-14.orig/arch/x86/kernel/smp_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/smp_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -335,8 +335,7 @@ static void flush_tlb_others(cpumask_t c
+ 	/*
+ 	 * i'm not happy about this global shared spinlock in the
+ 	 * MM hot path, but we'll see how contended it is.
+-	 * Temporarily this turns IRQs off, so that lockups are
+-	 * detected by the NMI watchdog.
++	 * AK: x86-64 has a faster method that could be ported.
+ 	 */
+ 	spin_lock(&tlbstate_lock);
+ 	
+@@ -361,7 +360,7 @@ static void flush_tlb_others(cpumask_t c
+ 
+ 	while (!cpus_empty(flush_cpumask))
+ 		/* nothing. lockup detection does not belong here */
+-		mb();
++		cpu_relax();
+ 
+ 	flush_mm = NULL;
+ 	flush_va = 0;
+--- sle11-2009-05-14.orig/arch/x86/kernel/time_32-xen.c	2009-03-24 10:08:30.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/time_32-xen.c	2009-03-24 10:11:08.000000000 +0100
+@@ -51,6 +51,7 @@
+ #include <linux/kernel_stat.h>
+ #include <linux/posix-timers.h>
+ #include <linux/cpufreq.h>
++#include <linux/clocksource.h>
+ 
+ #include <asm/io.h>
+ #include <asm/smp.h>
+@@ -75,25 +76,17 @@
+ #include <xen/evtchn.h>
+ #include <xen/interface/vcpu.h>
+ 
+-#if defined (__i386__)
+-#include <asm/i8259.h>
++#ifdef CONFIG_X86_32
+ #include <asm/i8253.h>
+ DEFINE_SPINLOCK(i8253_lock);
+ EXPORT_SYMBOL(i8253_lock);
+-#endif
+-
+-#define XEN_SHIFT 22
+-
+ int pit_latch_buggy;              /* extern */
+-
+-#if defined(__x86_64__)
+-unsigned long vxtime_hz = PIT_TICK_RATE;
+-struct vxtime_data __vxtime __section_vxtime;   /* for vsyscalls */
++#else
+ volatile unsigned long __jiffies __section_jiffies = INITIAL_JIFFIES;
+-struct timespec __xtime __section_xtime;
+-struct timezone __sys_tz __section_sys_tz;
+ #endif
+ 
++#define XEN_SHIFT 22
++
+ unsigned int cpu_khz;	/* Detected as we calibrate the TSC */
+ EXPORT_SYMBOL(cpu_khz);
+ 
+@@ -113,9 +106,6 @@ static DEFINE_PER_CPU(struct shadow_time
+ static struct timespec shadow_tv;
+ static u32 shadow_tv_version;
+ 
+-static struct timeval monotonic_tv;
+-static spinlock_t monotonic_lock = SPIN_LOCK_UNLOCKED;
+-
+ /* Keep track of last time we did processing/updating of jiffies and xtime. */
+ static u64 processed_system_time;   /* System time (ns) at last processing. */
+ static DEFINE_PER_CPU(u64, processed_system_time);
+@@ -228,7 +218,7 @@ static inline u64 scale_delta(u64 delta,
+ 	return product;
+ }
+ 
+-void init_cpu_khz(void)
++static void init_cpu_khz(void)
+ {
+ 	u64 __cpu_khz = 1000000ULL << 32;
+ 	struct vcpu_time_info *info = &vcpu_info(0)->time;
+@@ -247,16 +237,6 @@ static u64 get_nsec_offset(struct shadow
+ 	return scale_delta(delta, shadow->tsc_to_nsec_mul, shadow->tsc_shift);
+ }
+ 
+-#ifdef CONFIG_X86_64
+-static unsigned long get_usec_offset(struct shadow_time_info *shadow)
+-{
+-	u64 now, delta;
+-	rdtscll(now);
+-	delta = now - shadow->tsc_timestamp;
+-	return scale_delta(delta, shadow->tsc_to_usec_mul, shadow->tsc_shift);
+-}
+-#endif
+-
+ static void __update_wallclock(time_t sec, long nsec)
+ {
+ 	long wtm_nsec, xtime_nsec;
+@@ -369,139 +349,6 @@ void rtc_cmos_write(unsigned char val, u
+ }
+ EXPORT_SYMBOL(rtc_cmos_write);
+ 
+-#ifdef CONFIG_X86_64
+-
+-/*
+- * This version of gettimeofday has microsecond resolution
+- * and better than microsecond precision on fast x86 machines with TSC.
+- */
+-void do_gettimeofday(struct timeval *tv)
+-{
+-	unsigned long seq;
+-	unsigned long usec, sec;
+-	unsigned long flags;
+-	s64 nsec;
+-	unsigned int cpu;
+-	struct shadow_time_info *shadow;
+-	u32 local_time_version;
+-
+-	cpu = get_cpu();
+-	shadow = &per_cpu(shadow_time, cpu);
+-
+-	do {
+-		local_time_version = shadow->version;
+-		seq = read_seqbegin(&xtime_lock);
+-
+-		usec = get_usec_offset(shadow);
+-
+-		sec = xtime.tv_sec;
+-		usec += (xtime.tv_nsec / NSEC_PER_USEC);
+-
+-		nsec = shadow->system_timestamp - processed_system_time;
+-		__normalize_time(&sec, &nsec);
+-		usec += (long)nsec / NSEC_PER_USEC;
+-
+-		if (unlikely(!time_values_up_to_date(cpu))) {
+-			/*
+-			 * We may have blocked for a long time,
+-			 * rendering our calculations invalid
+-			 * (e.g. the time delta may have
+-			 * overflowed). Detect that and recalculate
+-			 * with fresh values.
+-			 */
+-			get_time_values_from_xen(cpu);
+-			continue;
+-		}
+-	} while (read_seqretry(&xtime_lock, seq) ||
+-		 (local_time_version != shadow->version));
+-
+-	put_cpu();
+-
+-	while (usec >= USEC_PER_SEC) {
+-		usec -= USEC_PER_SEC;
+-		sec++;
+-	}
+-
+-	spin_lock_irqsave(&monotonic_lock, flags);
+-	if ((sec > monotonic_tv.tv_sec) ||
+-	    ((sec == monotonic_tv.tv_sec) && (usec > monotonic_tv.tv_usec)))
+-	{
+-		monotonic_tv.tv_sec = sec;
+-		monotonic_tv.tv_usec = usec;
+-	} else {
+-		sec = monotonic_tv.tv_sec;
+-		usec = monotonic_tv.tv_usec;
+-	}
+-	spin_unlock_irqrestore(&monotonic_lock, flags);
+-
+-	tv->tv_sec = sec;
+-	tv->tv_usec = usec;
+-}
+-
+-EXPORT_SYMBOL(do_gettimeofday);
+-
+-int do_settimeofday(struct timespec *tv)
+-{
+-	time_t sec;
+-	s64 nsec;
+-	unsigned int cpu;
+-	struct shadow_time_info *shadow;
+-	struct xen_platform_op op;
+-
+-	if ((unsigned long)tv->tv_nsec >= NSEC_PER_SEC)
+-		return -EINVAL;
+-
+-	cpu = get_cpu();
+-	shadow = &per_cpu(shadow_time, cpu);
+-
+-	write_seqlock_irq(&xtime_lock);
+-
+-	/*
+-	 * Ensure we don't get blocked for a long time so that our time delta
+-	 * overflows. If that were to happen then our shadow time values would
+-	 * be stale, so we can retry with fresh ones.
+-	 */
+-	for (;;) {
+-		nsec = tv->tv_nsec - get_nsec_offset(shadow);
+-		if (time_values_up_to_date(cpu))
+-			break;
+-		get_time_values_from_xen(cpu);
+-	}
+-	sec = tv->tv_sec;
+-	__normalize_time(&sec, &nsec);
+-
+-	if (is_initial_xendomain() && !independent_wallclock) {
+-		op.cmd = XENPF_settime;
+-		op.u.settime.secs        = sec;
+-		op.u.settime.nsecs       = nsec;
+-		op.u.settime.system_time = shadow->system_timestamp;
+-		WARN_ON(HYPERVISOR_platform_op(&op));
+-		update_wallclock();
+-	} else if (independent_wallclock) {
+-		nsec -= shadow->system_timestamp;
+-		__normalize_time(&sec, &nsec);
+-		__update_wallclock(sec, nsec);
+-	}
+-	ntp_clear();
+-
+-	/* Reset monotonic gettimeofday() timeval. */
+-	spin_lock(&monotonic_lock);
+-	monotonic_tv.tv_sec = 0;
+-	monotonic_tv.tv_usec = 0;
+-	spin_unlock(&monotonic_lock);
+-
+-	write_sequnlock_irq(&xtime_lock);
+-
+-	put_cpu();
+-
+-	clock_was_set();
+-	return 0;
+-}
+-
+-EXPORT_SYMBOL(do_settimeofday);
+-
+-#endif
+-
+ static void sync_xen_wallclock(unsigned long dummy);
+ static DEFINE_TIMER(sync_xen_wallclock_timer, sync_xen_wallclock, 0, 0);
+ static void sync_xen_wallclock(unsigned long dummy)
+@@ -550,15 +397,7 @@ static int set_rtc_mmss(unsigned long no
+ 	return retval;
+ }
+ 
+-#ifdef CONFIG_X86_64
+-/* monotonic_clock(): returns # of nanoseconds passed since time_init()
+- *		Note: This function is required to return accurate
+- *		time even in the absence of multiple timer ticks.
+- */
+-unsigned long long monotonic_clock(void)
+-#else
+ unsigned long long sched_clock(void)
+-#endif
+ {
+ 	unsigned int cpu = get_cpu();
+ 	struct shadow_time_info *shadow = &per_cpu(shadow_time, cpu);
+@@ -578,21 +417,18 @@ unsigned long long sched_clock(void)
+ 
+ 	return time;
+ }
+-#ifdef CONFIG_X86_64
+-EXPORT_SYMBOL(monotonic_clock);
+-
+-unsigned long long sched_clock(void)
+-{
+-	return monotonic_clock();
+-}
+-#endif
+ 
+ unsigned long profile_pc(struct pt_regs *regs)
+ {
+ 	unsigned long pc = instruction_pointer(regs);
+ 
+ #if defined(CONFIG_SMP) || defined(__x86_64__)
+-	if (!user_mode_vm(regs) && in_lock_functions(pc)) {
++# ifdef __i386__
++	if (!v8086_mode(regs) && SEGMENT_IS_KERNEL_CODE(regs->xcs)
++# else
++	if (!user_mode(regs)
++# endif
++	    && in_lock_functions(pc)) {
+ # ifdef CONFIG_FRAME_POINTER
+ #  ifdef __i386__
+ 		return ((unsigned long *)regs->ebp)[1];
+@@ -601,14 +437,11 @@ unsigned long profile_pc(struct pt_regs 
+ #  endif
+ # else
+ #  ifdef __i386__
+-		unsigned long *sp;
+-		if ((regs->xcs & 2) == 0)
+-			sp = (unsigned long *)&regs->esp;
+-		else
+-			sp = (unsigned long *)regs->esp;
++		unsigned long *sp = (unsigned long *)&regs->esp;
+ #  else
+ 		unsigned long *sp = (unsigned long *)regs->rsp;
+ #  endif
++
+ 		/* Return address is either directly at stack pointer
+ 		   or above a saved eflags. Eflags has bits 22-31 zero,
+ 		   kernel addresses don't. */
+@@ -761,19 +594,6 @@ irqreturn_t timer_interrupt(int irq, voi
+ 	return IRQ_HANDLED;
+ }
+ 
+-#ifndef CONFIG_X86_64
+-
+-void tsc_init(void)
+-{
+-	init_cpu_khz();
+-	printk(KERN_INFO "Xen reported: %u.%03u MHz processor.\n",
+-	       cpu_khz / 1000, cpu_khz % 1000);
+-
+-	use_tsc_delay();
+-}
+-
+-#include <linux/clocksource.h>
+-
+ void mark_tsc_unstable(void)
+ {
+ #ifndef CONFIG_XEN /* XXX Should tell the hypervisor about this fact. */
+@@ -829,21 +649,9 @@ static struct clocksource clocksource_xe
+ 	.mask			= CLOCKSOURCE_MASK(64),
+ 	.mult			= 1 << XEN_SHIFT,		/* time directly in nanoseconds */
+ 	.shift			= XEN_SHIFT,
+-	.is_continuous		= 1,
++	.flags			= CLOCK_SOURCE_IS_CONTINUOUS,
+ };
+ 
+-static int __init init_xen_clocksource(void)
+-{
+-	clocksource_xen.mult = clocksource_khz2mult(cpu_khz,
+-						clocksource_xen.shift);
+-
+-	return clocksource_register(&clocksource_xen);
+-}
+-
+-module_init(init_xen_clocksource);
+-
+-#endif
+-
+ static void init_missing_ticks_accounting(unsigned int cpu)
+ {
+ 	struct vcpu_register_runstate_memory_area area;
+@@ -864,7 +672,7 @@ static void init_missing_ticks_accountin
+ }
+ 
+ /* not static: needed by APM */
+-unsigned long get_cmos_time(void)
++unsigned long read_persistent_clock(void)
+ {
+ 	unsigned long retval;
+ 	unsigned long flags;
+@@ -877,11 +685,11 @@ unsigned long get_cmos_time(void)
+ 
+ 	return retval;
+ }
+-EXPORT_SYMBOL(get_cmos_time);
+ 
+ static void sync_cmos_clock(unsigned long dummy);
+ 
+ static DEFINE_TIMER(sync_cmos_timer, sync_cmos_clock, 0, 0);
++int no_sync_cmos_clock;
+ 
+ static void sync_cmos_clock(unsigned long dummy)
+ {
+@@ -925,7 +733,8 @@ static void sync_cmos_clock(unsigned lon
+ 
+ void notify_arch_cmos_timer(void)
+ {
+-	mod_timer(&sync_cmos_timer, jiffies + 1);
++	if (!no_sync_cmos_clock)
++		mod_timer(&sync_cmos_timer, jiffies + 1);
+ 	mod_timer(&sync_xen_wallclock_timer, jiffies + 1);
+ }
+ 
+@@ -958,29 +767,11 @@ static int time_init_device(void)
+ 
+ device_initcall(time_init_device);
+ 
+-#ifdef CONFIG_HPET_TIMER
+ extern void (*late_time_init)(void);
+-/* Duplicate of time_init() below, with hpet_enable part added */
+-static void __init hpet_time_init(void)
+-{
+-	struct timespec ts;
+-	ts.tv_sec = get_cmos_time();
+-	ts.tv_nsec = (INITIAL_JIFFIES % HZ) * (NSEC_PER_SEC / HZ);
+-
+-	do_settimeofday(&ts);
+-
+-	if ((hpet_enable() >= 0) && hpet_use_timer) {
+-		printk("Using HPET for base-timer\n");
+-	}
+-
+-	do_time_init();
+-}
+-#endif
+ 
+ /* Dynamically-mapped IRQ. */
+ DEFINE_PER_CPU(int, timer_irq);
+ 
+-extern void (*late_time_init)(void);
+ static void setup_cpu0_timer_irq(void)
+ {
+ 	per_cpu(timer_irq, 0) =
+@@ -988,7 +779,7 @@ static void setup_cpu0_timer_irq(void)
+ 			VIRQ_TIMER,
+ 			0,
+ 			timer_interrupt,
+-			SA_INTERRUPT,
++			IRQF_DISABLED|IRQF_NOBALANCING,
+ 			"timer0",
+ 			NULL);
+ 	BUG_ON(per_cpu(timer_irq, 0) < 0);
+@@ -1000,16 +791,9 @@ static struct vcpu_set_periodic_timer xe
+ 
+ void __init time_init(void)
+ {
+-#ifdef CONFIG_HPET_TIMER
+-	if (is_hpet_capable()) {
+-		/*
+-		 * HPET initialization needs to do memory-mapped io. So, let
+-		 * us do a late initialization after mem_init().
+-		 */
+-		late_time_init = hpet_time_init;
+-		return;
+-	}
+-#endif
++	init_cpu_khz();
++	printk(KERN_INFO "Xen reported: %u.%03u MHz processor.\n",
++	       cpu_khz / 1000, cpu_khz % 1000);
+ 
+ 	switch (HYPERVISOR_vcpu_op(VCPUOP_set_periodic_timer, 0,
+ 				   &xen_set_periodic_tick)) {
+@@ -1028,18 +812,12 @@ void __init time_init(void)
+ 	per_cpu(processed_system_time, 0) = processed_system_time;
+ 	init_missing_ticks_accounting(0);
+ 
+-	update_wallclock();
++	clocksource_register(&clocksource_xen);
+ 
+-#ifdef CONFIG_X86_64
+-	init_cpu_khz();
+-	printk(KERN_INFO "Xen reported: %u.%03u MHz processor.\n",
+-	       cpu_khz / 1000, cpu_khz % 1000);
++	update_wallclock();
+ 
+-	vxtime.mode = VXTIME_TSC;
+-	vxtime.quot = (1000000L << 32) / vxtime_hz;
+-	vxtime.tsc_quot = (1000L << 32) / cpu_khz;
+-	sync_core();
+-	rdtscll(vxtime.last_tsc);
++#ifndef CONFIG_X86_64
++	use_tsc_delay();
+ #endif
+ 
+ 	/* Cannot request_irq() until kmem is initialised. */
+@@ -1196,7 +974,7 @@ int __cpuinit local_setup_timer(unsigned
+ 	irq = bind_virq_to_irqhandler(VIRQ_TIMER,
+ 				      cpu,
+ 				      timer_interrupt,
+-				      SA_INTERRUPT,
++				      IRQF_DISABLED|IRQF_NOBALANCING,
+ 				      timer_name[cpu],
+ 				      NULL);
+ 	if (irq < 0)
+@@ -1285,7 +1063,7 @@ static ctl_table xen_table[] = {
+ };
+ static int __init xen_sysctl_init(void)
+ {
+-	(void)register_sysctl_table(xen_table, 0);
++	(void)register_sysctl_table(xen_table);
+ 	return 0;
+ }
+ __initcall(xen_sysctl_init);
+--- sle11-2009-05-14.orig/arch/x86/kernel/traps_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/traps_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -100,6 +100,7 @@ asmlinkage void fixup_4gb_segment(void);
+ asmlinkage void machine_check(void);
+ 
+ int kstack_depth_to_print = 24;
++static unsigned int code_bytes = 64;
+ ATOMIC_NOTIFIER_HEAD(i386die_chain);
+ 
+ int register_die_notifier(struct notifier_block *nb)
+@@ -297,10 +298,11 @@ void show_registers(struct pt_regs *regs
+ 	int i;
+ 	int in_kernel = 1;
+ 	unsigned long esp;
+-	unsigned short ss;
++	unsigned short ss, gs;
+ 
+ 	esp = (unsigned long) (&regs->esp);
+ 	savesegment(ss, ss);
++	savesegment(gs, gs);
+ 	if (user_mode_vm(regs)) {
+ 		in_kernel = 0;
+ 		esp = regs->esp;
+@@ -319,8 +321,8 @@ void show_registers(struct pt_regs *regs
+ 		regs->eax, regs->ebx, regs->ecx, regs->edx);
+ 	printk(KERN_EMERG "esi: %08lx   edi: %08lx   ebp: %08lx   esp: %08lx\n",
+ 		regs->esi, regs->edi, regs->ebp, esp);
+-	printk(KERN_EMERG "ds: %04x   es: %04x   ss: %04x\n",
+-		regs->xds & 0xffff, regs->xes & 0xffff, ss);
++	printk(KERN_EMERG "ds: %04x   es: %04x   fs: %04x  gs: %04x  ss: %04x\n",
++	       regs->xds & 0xffff, regs->xes & 0xffff, regs->xfs & 0xffff, gs, ss);
+ 	printk(KERN_EMERG "Process %.*s (pid: %d, ti=%p task=%p task.ti=%p)",
+ 		TASK_COMM_LEN, current->comm, current->pid,
+ 		current_thread_info(), current, current->thread_info);
+@@ -330,7 +332,8 @@ void show_registers(struct pt_regs *regs
+ 	 */
+ 	if (in_kernel) {
+ 		u8 *eip;
+-		int code_bytes = 64;
++		unsigned int code_prologue = code_bytes * 43 / 64;
++		unsigned int code_len = code_bytes;
+ 		unsigned char c;
+ 
+ 		printk("\n" KERN_EMERG "Stack: ");
+@@ -338,14 +341,14 @@ void show_registers(struct pt_regs *regs
+ 
+ 		printk(KERN_EMERG "Code: ");
+ 
+-		eip = (u8 *)regs->eip - 43;
++		eip = (u8 *)regs->eip - code_prologue;
+ 		if (eip < (u8 *)PAGE_OFFSET ||
+ 			probe_kernel_address(eip, c)) {
+ 			/* try starting at EIP */
+ 			eip = (u8 *)regs->eip;
+-			code_bytes = 32;
++			code_len = code_len - code_prologue + 1;
+ 		}
+-		for (i = 0; i < code_bytes; i++, eip++) {
++		for (i = 0; i < code_len; i++, eip++) {
+ 			if (eip < (u8 *)PAGE_OFFSET ||
+ 				probe_kernel_address(eip, c)) {
+ 				printk(" Bad EIP value.");
+@@ -1134,3 +1137,13 @@ static int __init kstack_setup(char *s)
+ 	return 1;
+ }
+ __setup("kstack=", kstack_setup);
++
++static int __init code_bytes_setup(char *s)
++{
++	code_bytes = simple_strtoul(s, NULL, 0);
++	if (code_bytes > 8192)
++		code_bytes = 8192;
++
++	return 1;
++}
++__setup("code_bytes=", code_bytes_setup);
+--- sle11-2009-05-14.orig/arch/x86/mm/fault_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/mm/fault_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -46,43 +46,17 @@ int unregister_page_fault_notifier(struc
+ }
+ EXPORT_SYMBOL_GPL(unregister_page_fault_notifier);
+ 
+-static inline int notify_page_fault(enum die_val val, const char *str,
+-			struct pt_regs *regs, long err, int trap, int sig)
++static inline int notify_page_fault(struct pt_regs *regs, long err)
+ {
+ 	struct die_args args = {
+ 		.regs = regs,
+-		.str = str,
++		.str = "page fault",
+ 		.err = err,
+-		.trapnr = trap,
+-		.signr = sig
++		.trapnr = 14,
++		.signr = SIGSEGV
+ 	};
+-	return atomic_notifier_call_chain(&notify_page_fault_chain, val, &args);
+-}
+-
+-/*
+- * Unlock any spinlocks which will prevent us from getting the
+- * message out 
+- */
+-void bust_spinlocks(int yes)
+-{
+-	int loglevel_save = console_loglevel;
+-
+-	if (yes) {
+-		oops_in_progress = 1;
+-		return;
+-	}
+-#ifdef CONFIG_VT
+-	unblank_screen();
+-#endif
+-	oops_in_progress = 0;
+-	/*
+-	 * OK, the message is on the console.  Now we call printk()
+-	 * without oops_in_progress set so that printk will give klogd
+-	 * a poke.  Hold onto your hats...
+-	 */
+-	console_loglevel = 15;		/* NMI oopser may have shut the console up */
+-	printk(" ");
+-	console_loglevel = loglevel_save;
++	return atomic_notifier_call_chain(&notify_page_fault_chain,
++	                                  DIE_PAGE_FAULT, &args);
+ }
+ 
+ /*
+@@ -476,8 +450,7 @@ fastcall void __kprobes do_page_fault(st
+ 		/* Can take a spurious fault if mapping changes R/O -> R/W. */
+ 		if (spurious_fault(regs, address, error_code))
+ 			return;
+-		if (notify_page_fault(DIE_PAGE_FAULT, "page fault", regs, error_code, 14,
+-						SIGSEGV) == NOTIFY_STOP)
++		if (notify_page_fault(regs, error_code) == NOTIFY_STOP)
+ 			return;
+ 		/* 
+ 		 * Don't take the mm semaphore here. If we fixup a prefetch
+@@ -486,8 +459,7 @@ fastcall void __kprobes do_page_fault(st
+ 		goto bad_area_nosemaphore;
+ 	}
+ 
+-	if (notify_page_fault(DIE_PAGE_FAULT, "page fault", regs, error_code, 14,
+-					SIGSEGV) == NOTIFY_STOP)
++	if (notify_page_fault(regs, error_code) == NOTIFY_STOP)
+ 		return;
+ 
+ 	/* It's safe to allow irq's after cr2 has been saved and the vmalloc
+--- sle11-2009-05-14.orig/arch/x86/mm/highmem_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/mm/highmem_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -33,14 +33,16 @@ static void *__kmap_atomic(struct page *
+ 
+ 	/* even !CONFIG_PREEMPT needs this, for in_atomic in do_page_fault */
+ 	pagefault_disable();
++
++	idx = type + KM_TYPE_NR*smp_processor_id();
++	BUG_ON(!pte_none(*(kmap_pte-idx)));
++
+ 	if (!PageHighMem(page))
+ 		return page_address(page);
+ 
+-	idx = type + KM_TYPE_NR*smp_processor_id();
+ 	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
+-	if (!pte_none(*(kmap_pte-idx)))
+-		BUG();
+ 	set_pte_at(&init_mm, vaddr, kmap_pte-idx, mk_pte(page, prot));
++	/*arch_flush_lazy_mmu_mode();*/
+ 
+ 	return (void*) vaddr;
+ }
+@@ -94,6 +96,7 @@ void *kmap_atomic_pfn(unsigned long pfn,
+ 	idx = type + KM_TYPE_NR*smp_processor_id();
+ 	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
+ 	set_pte(kmap_pte-idx, pfn_pte(pfn, kmap_prot));
++	/*arch_flush_lazy_mmu_mode();*/
+ 
+ 	return (void*) vaddr;
+ }
+--- sle11-2009-05-14.orig/arch/x86/mm/init_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/mm/init_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -66,6 +66,7 @@ static pmd_t * __init one_md_table_init(
+ 		
+ #ifdef CONFIG_X86_PAE
+ 	pmd_table = (pmd_t *) alloc_bootmem_low_pages(PAGE_SIZE);
++	paravirt_alloc_pd(__pa(pmd_table) >> PAGE_SHIFT);
+ 	make_lowmem_page_readonly(pmd_table, XENFEAT_writable_page_tables);
+ 	set_pgd(pgd, __pgd(__pa(pmd_table) | _PAGE_PRESENT));
+ 	pud = pud_offset(pgd, 0);
+@@ -87,6 +88,7 @@ static pte_t * __init one_page_table_ini
+ {
+ 	if (pmd_none(*pmd)) {
+ 		pte_t *page_table = (pte_t *) alloc_bootmem_low_pages(PAGE_SIZE);
++		paravirt_alloc_pt(__pa(page_table) >> PAGE_SHIFT);
+ 		make_lowmem_page_readonly(page_table,
+ 					  XENFEAT_writable_page_tables);
+ 		set_pmd(pmd, __pmd(__pa(page_table) | _PAGE_TABLE));
+--- sle11-2009-05-14.orig/arch/x86/mm/pgtable_32-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/mm/pgtable_32-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -149,6 +149,8 @@ void __set_fixmap (enum fixed_addresses 
+ void __init reserve_top_address(unsigned long reserve)
+ {
+ 	BUG_ON(fixmaps > 0);
++	printk(KERN_INFO "Reserving virtual address space above 0x%08x\n",
++	       (int)-reserve);
+ 	__FIXADDR_TOP = -reserve - PAGE_SIZE;
+ 	__VMALLOC_RESERVE += reserve;
+ }
+@@ -258,6 +260,12 @@ void pgd_ctor(void *pgd, struct kmem_cac
+ 				swapper_pg_dir + USER_PTRS_PER_PGD,
+ 				KERNEL_PGD_PTRS);
+ 		memset(pgd, 0, USER_PTRS_PER_PGD*sizeof(pgd_t));
++
++		/* must happen under lock */
++		paravirt_alloc_pd_clone(__pa(pgd) >> PAGE_SHIFT,
++			__pa(swapper_pg_dir) >> PAGE_SHIFT,
++			USER_PTRS_PER_PGD, PTRS_PER_PGD - USER_PTRS_PER_PGD);
++
+ 		pgd_list_add(pgd);
+ 		spin_unlock_irqrestore(&pgd_lock, flags);
+ 	}
+@@ -268,6 +276,7 @@ void pgd_dtor(void *pgd, struct kmem_cac
+ {
+ 	unsigned long flags; /* can be called from interrupt context */
+ 
++	paravirt_release_pd(__pa(pgd) >> PAGE_SHIFT);
+ 	spin_lock_irqsave(&pgd_lock, flags);
+ 	pgd_list_del(pgd);
+ 	spin_unlock_irqrestore(&pgd_lock, flags);
+@@ -292,6 +301,7 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 			pmd_t *pmd = kmem_cache_alloc(pmd_cache, GFP_KERNEL);
+ 			if (!pmd)
+ 				goto out_oom;
++			paravirt_alloc_pd(__pa(pmd) >> PAGE_SHIFT);
+ 			set_pgd(&pgd[i], __pgd(1 + __pa(pmd)));
+ 		}
+ 		return pgd;
+@@ -314,6 +324,7 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 		pmd[i] = kmem_cache_alloc(pmd_cache, GFP_KERNEL);
+ 		if (!pmd[i])
+ 			goto out_oom;
++		paravirt_alloc_pd(__pa(pmd) >> PAGE_SHIFT);
+ 	}
+ 
+ 	spin_lock_irqsave(&pgd_lock, flags);
+@@ -354,12 +365,17 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 
+ out_oom:
+ 	if (HAVE_SHARED_KERNEL_PMD) {
+-		for (i--; i >= 0; i--)
+-			kmem_cache_free(pmd_cache,
+-					(void *)__va(pgd_val(pgd[i])-1));
++		for (i--; i >= 0; i--) {
++			pgd_t pgdent = pgd[i];
++			void* pmd = (void *)__va(pgd_val(pgdent)-1);
++			paravirt_release_pd(__pa(pmd) >> PAGE_SHIFT);
++			kmem_cache_free(pmd_cache, pmd);
++		}
+ 	} else {
+-		for (i--; i >= 0; i--)
++		for (i--; i >= 0; i--) {
++			paravirt_release_pd(__pa(pmd[i]) >> PAGE_SHIFT);
+ 			kmem_cache_free(pmd_cache, pmd[i]);
++		}
+ 		kfree(pmd);
+ 	}
+ 	kmem_cache_free(pgd_cache, pgd);
+@@ -383,7 +399,9 @@ void pgd_free(pgd_t *pgd)
+ 	/* in the PAE case user pgd entries are overwritten before usage */
+ 	if (PTRS_PER_PMD > 1) {
+ 		for (i = 0; i < USER_PTRS_PER_PGD; ++i) {
+-			pmd_t *pmd = (void *)__va(pgd_val(pgd[i])-1);
++			pgd_t pgdent = pgd[i];
++			void* pmd = (void *)__va(pgd_val(pgdent)-1);
++			paravirt_release_pd(__pa(pmd) >> PAGE_SHIFT);
+ 			kmem_cache_free(pmd_cache, pmd);
+ 		}
+ 
+--- sle11-2009-05-14.orig/arch/x86/ia32/ia32entry-xen.S	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/arch/x86/ia32/ia32entry-xen.S	2009-03-04 11:25:55.000000000 +0100
+@@ -465,7 +465,7 @@ ia32_sys_call_table:
+ 	.quad sys32_vm86_warning	/* vm86old */ 
+ 	.quad compat_sys_wait4
+ 	.quad sys_swapoff		/* 115 */
+-	.quad sys32_sysinfo
++	.quad compat_sys_sysinfo
+ 	.quad sys32_ipc
+ 	.quad sys_fsync
+ 	.quad stub32_sigreturn
+@@ -510,7 +510,7 @@ ia32_sys_call_table:
+ 	.quad sys_sched_yield
+ 	.quad sys_sched_get_priority_max
+ 	.quad sys_sched_get_priority_min  /* 160 */
+-	.quad sys_sched_rr_get_interval
++	.quad sys32_sched_rr_get_interval
+ 	.quad compat_sys_nanosleep
+ 	.quad sys_mremap
+ 	.quad sys_setresuid16
+@@ -668,4 +668,5 @@ ia32_sys_call_table:
+ 	.quad compat_sys_vmsplice
+ 	.quad compat_sys_move_pages
+ 	.quad sys_getcpu
++	.quad sys_epoll_pwait
+ ia32_syscall_end:		
+--- sle11-2009-05-14.orig/arch/x86/kernel/acpi/sleep_64-xen.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/arch/x86/kernel/acpi/sleep_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -59,7 +59,7 @@ unsigned long acpi_wakeup_address = 0;
+ unsigned long acpi_video_flags;
+ extern char wakeup_start, wakeup_end;
+ 
+-extern unsigned long FASTCALL(acpi_copy_wakeup_routine(unsigned long));
++extern unsigned long acpi_copy_wakeup_routine(unsigned long);
+ 
+ static pgd_t low_ptr;
+ 
+@@ -67,8 +67,10 @@ static void init_low_mapping(void)
+ {
+ 	pgd_t *slot0 = pgd_offset(current->mm, 0UL);
+ 	low_ptr = *slot0;
++	/* FIXME: We're playing with the current task's page tables here, which
++	 * is potentially dangerous on SMP systems.
++	 */
+ 	set_pgd(slot0, *pgd_offset(current->mm, PAGE_OFFSET));
+-	WARN_ON(num_online_cpus() != 1);
+ 	local_flush_tlb();
+ }
+ #endif
+--- sle11-2009-05-14.orig/arch/x86/kernel/e820_64-xen.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/e820_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -88,6 +88,13 @@ static inline int bad_addr(unsigned long
+ 		return 1;
+ 	}
+ 
++#ifdef CONFIG_NUMA
++	/* NUMA memory to node map */
++	if (last >= nodemap_addr && addr < nodemap_addr + nodemap_size) {
++		*addrp = nodemap_addr + nodemap_size;
++		return 1;
++	}
++#endif
+ 	/* XXX ramdisk image here? */ 
+ #else
+ 	if (last < (table_end<<PAGE_SHIFT)) {
+@@ -213,6 +220,37 @@ unsigned long __init e820_end_of_ram(voi
+ }
+ 
+ /*
++ * Find the hole size in the range.
++ */
++unsigned long __init e820_hole_size(unsigned long start, unsigned long end)
++{
++	unsigned long ram = 0;
++	int i;
++
++	for (i = 0; i < e820.nr_map; i++) {
++		struct e820entry *ei = &e820.map[i];
++		unsigned long last, addr;
++
++		if (ei->type != E820_RAM ||
++		    ei->addr+ei->size <= start ||
++		    ei->addr >= end)
++			continue;
++
++		addr = round_up(ei->addr, PAGE_SIZE);
++		if (addr < start)
++			addr = start;
++
++		last = round_down(ei->addr + ei->size, PAGE_SIZE);
++		if (last >= end)
++			last = end;
++
++		if (last > addr)
++			ram += last - addr;
++	}
++	return ((end - start) - ram);
++}
++
++/*
+  * Mark e820 reserved areas as busy for the resource manager.
+  */
+ void __init e820_reserve_resources(struct e820entry *e820, int nr_map)
+@@ -738,7 +776,7 @@ static int __init parse_memmap_opt(char 
+ }
+ early_param("memmap", parse_memmap_opt);
+ 
+-void finish_e820_parsing(void)
++void __init finish_e820_parsing(void)
+ {
+ 	if (userdef) {
+ 		printk(KERN_INFO "user-defined physical RAM map:\n");
+--- sle11-2009-05-14.orig/arch/x86/kernel/entry_64-xen.S	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/entry_64-xen.S	2009-03-04 11:25:55.000000000 +0100
+@@ -629,6 +629,9 @@ END(invalidate_interrupt\num)
+ ENTRY(call_function_interrupt)
+ 	apicinterrupt CALL_FUNCTION_VECTOR,smp_call_function_interrupt
+ END(call_function_interrupt)
++ENTRY(irq_move_cleanup_interrupt)
++	apicinterrupt IRQ_MOVE_CLEANUP_VECTOR,smp_irq_move_cleanup_interrupt
++END(irq_move_cleanup_interrupt)
+ #endif
+ 
+ ENTRY(apic_timer_interrupt)
+--- sle11-2009-05-14.orig/arch/x86/kernel/genapic_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/genapic_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -65,8 +65,8 @@ void __init clustered_apic_check(void)
+ 	 * Some x86_64 machines use physical APIC mode regardless of how many
+ 	 * procs/clusters are present (x86_64 ES7000 is an example).
+ 	 */
+-	if (acpi_fadt.revision > FADT2_REVISION_ID)
+-		if (acpi_fadt.force_apic_physical_destination_mode) {
++	if (acpi_gbl_FADT.header.revision > FADT2_REVISION_ID)
++		if (acpi_gbl_FADT.flags & ACPI_FADT_APIC_PHYSICAL) {
+ 			genapic = &apic_cluster;
+ 			goto print;
+ 		}
+--- sle11-2009-05-14.orig/arch/x86/kernel/head64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/head64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -45,8 +45,6 @@ static void __init clear_bss(void)
+ #define OLD_CL_BASE_ADDR        0x90000
+ #define OLD_CL_OFFSET           0x90022
+ 
+-extern char saved_command_line[];
+-
+ static void __init copy_bootdata(char *real_mode_data)
+ {
+ #ifndef CONFIG_XEN
+@@ -62,14 +60,14 @@ static void __init copy_bootdata(char *r
+ 		new_data = OLD_CL_BASE_ADDR + * (u16 *) OLD_CL_OFFSET;
+ 	}
+ 	command_line = (char *) ((u64)(new_data));
+-	memcpy(saved_command_line, command_line, COMMAND_LINE_SIZE);
++	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+ #else
+ 	int max_cmdline;
+ 	
+ 	if ((max_cmdline = MAX_GUEST_CMDLINE) > COMMAND_LINE_SIZE)
+ 		max_cmdline = COMMAND_LINE_SIZE;
+-	memcpy(saved_command_line, xen_start_info->cmd_line, max_cmdline);
+-	saved_command_line[max_cmdline-1] = '\0';
++	memcpy(boot_command_line, xen_start_info->cmd_line, max_cmdline);
++	boot_command_line[max_cmdline-1] = '\0';
+ #endif
+ }
+ 
+--- sle11-2009-05-14.orig/arch/x86/kernel/io_apic_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/io_apic_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -36,6 +36,7 @@
+ #include <acpi/acpi_bus.h>
+ #endif
+ 
++#include <asm/idle.h>
+ #include <asm/io.h>
+ #include <asm/smp.h>
+ #include <asm/desc.h>
+@@ -47,7 +48,20 @@
+ #include <asm/msidef.h>
+ #include <asm/hypertransport.h>
+ 
+-static int assign_irq_vector(int irq, cpumask_t mask, cpumask_t *result);
++struct irq_cfg {
++#ifndef CONFIG_XEN
++	cpumask_t domain;
++	cpumask_t old_domain;
++#endif
++	unsigned move_cleanup_count;
++	u8 vector;
++	u8 move_in_progress : 1;
++};
++
++/* irq_cfg is indexed by the sum of all RTEs in all I/O APICs. */
++struct irq_cfg irq_cfg[NR_IRQS] __read_mostly;
++
++static int assign_irq_vector(int irq, cpumask_t mask);
+ 
+ #define __apicdebuginit  __init
+ 
+@@ -89,7 +103,7 @@ int nr_ioapic_registers[MAX_IO_APICS];
+  * Rough estimation of how many shared IRQs there are, can
+  * be changed anytime.
+  */
+-#define MAX_PLUS_SHARED_IRQS NR_IRQ_VECTORS
++#define MAX_PLUS_SHARED_IRQS NR_IRQS
+ #define PIN_MAP_SIZE (MAX_PLUS_SHARED_IRQS + NR_IRQS)
+ 
+ /*
+@@ -262,21 +276,19 @@ static void __target_IO_APIC_irq(unsigne
+ 
+ static void set_ioapic_affinity_irq(unsigned int irq, cpumask_t mask)
+ {
++	struct irq_cfg *cfg = irq_cfg + irq;
+ 	unsigned long flags;
+ 	unsigned int dest;
+ 	cpumask_t tmp;
+-	int vector;
+ 
+ 	cpus_and(tmp, mask, cpu_online_map);
+ 	if (cpus_empty(tmp))
+-		tmp = TARGET_CPUS;
+-
+-	cpus_and(mask, tmp, CPU_MASK_ALL);
++		return;
+ 
+-	vector = assign_irq_vector(irq, mask, &tmp);
+-	if (vector < 0)
++	if (assign_irq_vector(irq, mask))
+ 		return;
+ 
++	cpus_and(tmp, cfg->domain, mask);
+ 	dest = cpu_mask_to_apicid(tmp);
+ 
+ 	/*
+@@ -285,8 +297,8 @@ static void set_ioapic_affinity_irq(unsi
+ 	dest = SET_APIC_LOGICAL_ID(dest);
+ 
+ 	spin_lock_irqsave(&ioapic_lock, flags);
+-	__target_IO_APIC_irq(irq, dest, vector);
+-	set_native_irq_info(irq, mask);
++	__target_IO_APIC_irq(irq, dest, cfg->vector);
++	irq_desc[irq].affinity = mask;
+ 	spin_unlock_irqrestore(&ioapic_lock, flags);
+ }
+ #endif
+@@ -332,11 +344,11 @@ static void add_pin_to_irq(unsigned int 
+ 		reg = io_apic_read(entry->apic, 0x10 + R + pin*2);	\
+ 		reg ACTION;						\
+ 		io_apic_modify(entry->apic, reg);			\
++		FINAL;							\
+ 		if (!entry->next)					\
+ 			break;						\
+ 		entry = irq_2_pin + entry->next;			\
+ 	}								\
+-	FINAL;								\
+ }
+ 
+ #define DO_ACTION(name,R,ACTION, FINAL)					\
+@@ -669,77 +681,62 @@ static int pin_2_irq(int idx, int apic, 
+ 	return irq;
+ }
+ 
+-static inline int IO_APIC_irq_trigger(int irq)
+-{
+-	int apic, idx, pin;
+-
+-	for (apic = 0; apic < nr_ioapics; apic++) {
+-		for (pin = 0; pin < nr_ioapic_registers[apic]; pin++) {
+-			idx = find_irq_entry(apic,pin,mp_INT);
+-			if ((idx != -1) && (irq == pin_2_irq(idx,apic,pin)))
+-				return irq_trigger(idx);
+-		}
+-	}
+-	/*
+-	 * nonexistent IRQs are edge default
+-	 */
+-	return 0;
+-}
+-
+-/* irq_vectors is indexed by the sum of all RTEs in all I/O APICs. */
+-static u8 irq_vector[NR_IRQ_VECTORS] __read_mostly;
+-
+-static int __assign_irq_vector(int irq, cpumask_t mask, cpumask_t *result)
++static int __assign_irq_vector(int irq, cpumask_t mask)
+ {
+-	int vector;
+ 	struct physdev_irq irq_op;
++	struct irq_cfg *cfg;
+   
+-	BUG_ON((unsigned)irq >= NR_IRQ_VECTORS);
++	BUG_ON((unsigned)irq >= NR_IRQS);
+ 
+ 	if (irq < PIRQ_BASE || irq - PIRQ_BASE >= NR_PIRQS)
+ 		return -EINVAL;
+ 
+-	cpus_and(*result, mask, cpu_online_map);
++	cfg = &irq_cfg[irq];
++
++	if ((cfg->move_in_progress) || cfg->move_cleanup_count)
++		return -EBUSY;
+ 
+-	if (irq_vector[irq] > 0)
+-		return irq_vector[irq];
++	if (cfg->vector)
++		return 0;
+ 
+ 	irq_op.irq = irq;
+ 	if (HYPERVISOR_physdev_op(PHYSDEVOP_alloc_irq_vector, &irq_op))
+ 		return -ENOSPC;
+ 
+-	vector = irq_op.vector;
+-	irq_vector[irq] = vector;
++	cfg->vector = irq_op.vector;
+ 
+-	return vector;
++	return 0;
+ }
+ 
+-static int assign_irq_vector(int irq, cpumask_t mask, cpumask_t *result)
++static int assign_irq_vector(int irq, cpumask_t mask)
+ {
+-	int vector;
++	int err;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&vector_lock, flags);
+-	vector = __assign_irq_vector(irq, mask, result);
++	err = __assign_irq_vector(irq, mask);
+ 	spin_unlock_irqrestore(&vector_lock, flags);
+-	return vector;
++	return err;
+ }
+ 
+ #ifndef CONFIG_XEN
+ static void __clear_irq_vector(int irq)
+ {
++	struct irq_cfg *cfg;
+ 	cpumask_t mask;
+ 	int cpu, vector;
+ 
+-	BUG_ON(!irq_vector[irq]);
++	BUG_ON((unsigned)irq >= NR_IRQS);
++	cfg = &irq_cfg[irq];
++	BUG_ON(!cfg->vector);
+ 
+-	vector = irq_vector[irq];
+-	cpus_and(mask, irq_domain[irq], cpu_online_map);
++	vector = cfg->vector;
++	cpus_and(mask, cfg->domain, cpu_online_map);
+ 	for_each_cpu_mask(cpu, mask)
+ 		per_cpu(vector_irq, cpu)[vector] = -1;
+ 
+-	irq_vector[irq] = 0;
+-	irq_domain[irq] = CPU_MASK_NONE;
++	cfg->vector = 0;
++	cfg->domain = CPU_MASK_NONE;
+ }
+ 
+ void __setup_vector_irq(int cpu)
+@@ -749,10 +746,10 @@ void __setup_vector_irq(int cpu)
+ 	int irq, vector;
+ 
+ 	/* Mark the inuse vectors */
+-	for (irq = 0; irq < NR_IRQ_VECTORS; ++irq) {
+-		if (!cpu_isset(cpu, irq_domain[irq]))
++	for (irq = 0; irq < NR_IRQS; ++irq) {
++		if (!cpu_isset(cpu, irq_cfg[irq].domain))
+ 			continue;
+-		vector = irq_vector[irq];
++		vector = irq_cfg[irq].vector;
+ 		per_cpu(vector_irq, cpu)[vector] = irq;
+ 	}
+ 	/* Mark the free vectors */
+@@ -760,41 +757,49 @@ void __setup_vector_irq(int cpu)
+ 		irq = per_cpu(vector_irq, cpu)[vector];
+ 		if (irq < 0)
+ 			continue;
+-		if (!cpu_isset(cpu, irq_domain[irq]))
++		if (!cpu_isset(cpu, irq_cfg[irq].domain))
+ 			per_cpu(vector_irq, cpu)[vector] = -1;
+ 	}
+ }
+ 
+-extern void (*interrupt[NR_IRQS])(void);
+-
+ static struct irq_chip ioapic_chip;
+ 
+-#define IOAPIC_AUTO	-1
+-#define IOAPIC_EDGE	0
+-#define IOAPIC_LEVEL	1
+-
+-static void ioapic_register_intr(int irq, int vector, unsigned long trigger)
++static void ioapic_register_intr(int irq, unsigned long trigger)
+ {
+-	if ((trigger == IOAPIC_AUTO && IO_APIC_irq_trigger(irq)) ||
+-			trigger == IOAPIC_LEVEL)
++	if (trigger)
+ 		set_irq_chip_and_handler_name(irq, &ioapic_chip,
+ 					      handle_fasteoi_irq, "fasteoi");
+-	else {
+-		irq_desc[irq].status |= IRQ_DELAYED_DISABLE;
++	else
+ 		set_irq_chip_and_handler_name(irq, &ioapic_chip,
+ 					      handle_edge_irq, "edge");
+-	}
+ }
+ #else
+-#define ioapic_register_intr(irq, vector, trigger) evtchn_register_pirq(irq)
++#define ioapic_register_intr(irq, trigger) evtchn_register_pirq(irq)
+ #endif /* !CONFIG_XEN */
+ 
+-static void __init setup_IO_APIC_irq(int apic, int pin, int idx, int irq)
++static void setup_IO_APIC_irq(int apic, int pin, unsigned int irq,
++			      int trigger, int polarity)
+ {
++	struct irq_cfg *cfg = irq_cfg + irq;
+ 	struct IO_APIC_route_entry entry;
+-	int vector;
+-	unsigned long flags;
++	cpumask_t mask;
++
++	if (!IO_APIC_IRQ(irq))
++		return;
+ 
++	mask = TARGET_CPUS;
++	if (assign_irq_vector(irq, mask))
++		return;
++
++#ifndef CONFIG_XEN
++	cpus_and(mask, cfg->domain, mask);
++#endif
++
++	apic_printk(APIC_VERBOSE,KERN_DEBUG
++		    "IOAPIC[%d]: Set routing entry (%d-%d -> 0x%x -> "
++		    "IRQ %d Mode:%i Active:%i)\n",
++		    apic, mp_ioapics[apic].mpc_apicid, pin, cfg->vector,
++		    irq, trigger, polarity);
+ 
+ 	/*
+ 	 * add it to the IO-APIC irq-routing table:
+@@ -803,41 +808,23 @@ static void __init setup_IO_APIC_irq(int
+ 
+ 	entry.delivery_mode = INT_DELIVERY_MODE;
+ 	entry.dest_mode = INT_DEST_MODE;
++	entry.dest = cpu_mask_to_apicid(mask);
+ 	entry.mask = 0;				/* enable IRQ */
+-	entry.dest.logical.logical_dest = cpu_mask_to_apicid(TARGET_CPUS);
+-
+-	entry.trigger = irq_trigger(idx);
+-	entry.polarity = irq_polarity(idx);
++	entry.trigger = trigger;
++	entry.polarity = polarity;
++	entry.vector = cfg->vector;
+ 
+-	if (irq_trigger(idx)) {
+-		entry.trigger = 1;
++	/* Mask level triggered irqs.
++	 * Use IRQ_DELAYED_DISABLE for edge triggered irqs.
++	 */
++	if (trigger)
+ 		entry.mask = 1;
+-		entry.dest.logical.logical_dest = cpu_mask_to_apicid(TARGET_CPUS);
+-	}
+-
+-	if (/* !apic && */ !IO_APIC_IRQ(irq))
+-		return;
+ 
+-	if (IO_APIC_IRQ(irq)) {
+-		cpumask_t mask;
+-		vector = assign_irq_vector(irq, TARGET_CPUS, &mask);
+-		if (vector < 0)
+-			return;
+-
+-		entry.dest.logical.logical_dest = cpu_mask_to_apicid(mask);
+-		entry.vector = vector;
+-
+-		ioapic_register_intr(irq, vector, IOAPIC_AUTO);
+-		if (!apic && (irq < 16))
+-			disable_8259A_irq(irq);
+-	}
++	ioapic_register_intr(irq, trigger);
++	if (irq < 16)
++		disable_8259A_irq(irq);
+ 
+ 	ioapic_write_entry(apic, pin, entry);
+-
+-	spin_lock_irqsave(&ioapic_lock, flags);
+-	set_native_irq_info(irq, TARGET_CPUS);
+-	spin_unlock_irqrestore(&ioapic_lock, flags);
+-
+ }
+ 
+ static void __init setup_IO_APIC_irqs(void)
+@@ -862,8 +849,8 @@ static void __init setup_IO_APIC_irqs(vo
+ 		irq = pin_2_irq(idx, apic, pin);
+ 		add_pin_to_irq(irq, apic, pin);
+ 
+-		setup_IO_APIC_irq(apic, pin, idx, irq);
+-
++		setup_IO_APIC_irq(apic, pin, irq,
++				  irq_trigger(idx), irq_polarity(idx));
+ 	}
+ 	}
+ 
+@@ -894,7 +881,7 @@ static void __init setup_ExtINT_IRQ0_pin
+ 	 */
+ 	entry.dest_mode = INT_DEST_MODE;
+ 	entry.mask = 0;					/* unmask IRQ now */
+-	entry.dest.logical.logical_dest = cpu_mask_to_apicid(TARGET_CPUS);
++	entry.dest = cpu_mask_to_apicid(TARGET_CPUS);
+ 	entry.delivery_mode = INT_DELIVERY_MODE;
+ 	entry.polarity = 0;
+ 	entry.trigger = 0;
+@@ -994,18 +981,17 @@ void __apicdebuginit print_IO_APIC(void)
+ 
+ 	printk(KERN_DEBUG ".... IRQ redirection table:\n");
+ 
+-	printk(KERN_DEBUG " NR Log Phy Mask Trig IRR Pol"
+-			  " Stat Dest Deli Vect:   \n");
++	printk(KERN_DEBUG " NR Dst Mask Trig IRR Pol"
++			  " Stat Dmod Deli Vect:   \n");
+ 
+ 	for (i = 0; i <= reg_01.bits.entries; i++) {
+ 		struct IO_APIC_route_entry entry;
+ 
+ 		entry = ioapic_read_entry(apic, i);
+ 
+-		printk(KERN_DEBUG " %02x %03X %02X  ",
++		printk(KERN_DEBUG " %02x %03X ",
+ 			i,
+-			entry.dest.logical.logical_dest,
+-			entry.dest.physical.physical_dest
++			entry.dest
+ 		);
+ 
+ 		printk("%1d    %1d    %1d   %1d   %1d    %1d    %1d    %02X\n",
+@@ -1269,8 +1255,7 @@ void disable_IO_APIC(void)
+ 		entry.dest_mode       = 0; /* Physical */
+ 		entry.delivery_mode   = dest_ExtINT; /* ExtInt */
+ 		entry.vector          = 0;
+-		entry.dest.physical.physical_dest =
+-					GET_APIC_ID(apic_read(APIC_ID));
++		entry.dest          = GET_APIC_ID(apic_read(APIC_ID));
+ 
+ 		/*
+ 		 * Add it to the IO-APIC irq-routing table:
+@@ -1355,16 +1340,15 @@ static unsigned int startup_ioapic_irq(u
+ 
+ static int ioapic_retrigger_irq(unsigned int irq)
+ {
++	struct irq_cfg *cfg = &irq_cfg[irq];
+ 	cpumask_t mask;
+-	unsigned vector;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&vector_lock, flags);
+-	vector = irq_vector[irq];
+ 	cpus_clear(mask);
+-	cpu_set(first_cpu(irq_domain[irq]), mask);
++	cpu_set(first_cpu(cfg->domain), mask);
+ 
+-	send_IPI_mask(mask, vector);
++	send_IPI_mask(mask, cfg->vector);
+ 	spin_unlock_irqrestore(&vector_lock, flags);
+ 
+ 	return 1;
+@@ -1379,8 +1363,68 @@ static int ioapic_retrigger_irq(unsigned
+  * races.
+  */
+ 
++#ifdef CONFIG_SMP
++asmlinkage void smp_irq_move_cleanup_interrupt(void)
++{
++	unsigned vector, me;
++	ack_APIC_irq();
++	exit_idle();
++	irq_enter();
++
++	me = smp_processor_id();
++	for (vector = FIRST_EXTERNAL_VECTOR; vector < NR_VECTORS; vector++) {
++		unsigned int irq;
++		struct irq_desc *desc;
++		struct irq_cfg *cfg;
++		irq = __get_cpu_var(vector_irq)[vector];
++		if (irq >= NR_IRQS)
++			continue;
++
++		desc = irq_desc + irq;
++		cfg = irq_cfg + irq;
++		spin_lock(&desc->lock);
++		if (!cfg->move_cleanup_count)
++			goto unlock;
++
++		if ((vector == cfg->vector) && cpu_isset(me, cfg->domain))
++			goto unlock;
++
++		__get_cpu_var(vector_irq)[vector] = -1;
++		cfg->move_cleanup_count--;
++unlock:
++		spin_unlock(&desc->lock);
++	}
++
++	irq_exit();
++}
++
++static void irq_complete_move(unsigned int irq)
++{
++	struct irq_cfg *cfg = irq_cfg + irq;
++	unsigned vector, me;
++
++	if (likely(!cfg->move_in_progress))
++		return;
++
++	vector = ~get_irq_regs()->orig_rax;
++	me = smp_processor_id();
++	if ((vector == cfg->vector) &&
++	    cpu_isset(smp_processor_id(), cfg->domain)) {
++		cpumask_t cleanup_mask;
++
++		cpus_and(cleanup_mask, cfg->old_domain, cpu_online_map);
++		cfg->move_cleanup_count = cpus_weight(cleanup_mask);
++		send_IPI_mask(cleanup_mask, IRQ_MOVE_CLEANUP_VECTOR);
++		cfg->move_in_progress = 0;
++	}
++}
++#else
++static inline void irq_complete_move(unsigned int irq) {}
++#endif
++
+ static void ack_apic_edge(unsigned int irq)
+ {
++	irq_complete_move(irq);
+ 	move_native_irq(irq);
+ 	ack_APIC_irq();
+ }
+@@ -1389,6 +1433,7 @@ static void ack_apic_level(unsigned int 
+ {
+ 	int do_unmask_irq = 0;
+ 
++	irq_complete_move(irq);
+ #if defined(CONFIG_GENERIC_PENDING_IRQ) || defined(CONFIG_IRQBALANCE)
+ 	/* If we are moving the irq we need to mask it */
+ 	if (unlikely(irq_desc[irq].status & IRQ_MOVE_PENDING)) {
+@@ -1440,7 +1485,7 @@ static inline void init_IO_APIC_traps(vo
+ 	 */
+ 	for (irq = 0; irq < NR_IRQS ; irq++) {
+ 		int tmp = irq;
+-		if (IO_APIC_IRQ(tmp) && !irq_vector[tmp]) {
++		if (IO_APIC_IRQ(tmp) && !irq_cfg[tmp].vector) {
+ 			/*
+ 			 * Hmm.. We don't have an entry for this,
+ 			 * so default to an old-fashioned 8259
+@@ -1538,7 +1583,7 @@ static inline void unlock_ExtINT_logic(v
+ 
+ 	entry1.dest_mode = 0;			/* physical delivery */
+ 	entry1.mask = 0;			/* unmask IRQ now */
+-	entry1.dest.physical.physical_dest = hard_smp_processor_id();
++	entry1.dest = hard_smp_processor_id();
+ 	entry1.delivery_mode = dest_ExtINT;
+ 	entry1.polarity = entry0.polarity;
+ 	entry1.trigger = 0;
+@@ -1582,15 +1627,14 @@ static inline void unlock_ExtINT_logic(v
+  */
+ static inline void check_timer(void)
+ {
++	struct irq_cfg *cfg = irq_cfg + 0;
+ 	int apic1, pin1, apic2, pin2;
+-	int vector;
+-	cpumask_t mask;
+ 
+ 	/*
+ 	 * get/set the timer IRQ vector:
+ 	 */
+ 	disable_8259A_irq(0);
+-	vector = assign_irq_vector(0, TARGET_CPUS, &mask);
++	assign_irq_vector(0, TARGET_CPUS);
+ 
+ 	/*
+ 	 * Subtle, code in do_timer_interrupt() expects an AEOI
+@@ -1610,7 +1654,7 @@ static inline void check_timer(void)
+ 	apic2 = ioapic_i8259.apic;
+ 
+ 	apic_printk(APIC_VERBOSE,KERN_INFO "..TIMER: vector=0x%02X apic1=%d pin1=%d apic2=%d pin2=%d\n",
+-		vector, apic1, pin1, apic2, pin2);
++		cfg->vector, apic1, pin1, apic2, pin2);
+ 
+ 	if (pin1 != -1) {
+ 		/*
+@@ -1641,7 +1685,7 @@ static inline void check_timer(void)
+ 		/*
+ 		 * legacy devices should be connected to IO APIC #0
+ 		 */
+-		setup_ExtINT_IRQ0_pin(apic2, pin2, vector);
++		setup_ExtINT_IRQ0_pin(apic2, pin2, cfg->vector);
+ 		if (timer_irq_works()) {
+ 			apic_printk(APIC_VERBOSE," works.\n");
+ 			nmi_watchdog_default();
+@@ -1666,14 +1710,14 @@ static inline void check_timer(void)
+ 
+ 	disable_8259A_irq(0);
+ 	irq_desc[0].chip = &lapic_irq_type;
+-	apic_write(APIC_LVT0, APIC_DM_FIXED | vector);	/* Fixed mode */
++	apic_write(APIC_LVT0, APIC_DM_FIXED | cfg->vector);	/* Fixed mode */
+ 	enable_8259A_irq(0);
+ 
+ 	if (timer_irq_works()) {
+ 		apic_printk(APIC_VERBOSE," works.\n");
+ 		return;
+ 	}
+-	apic_write(APIC_LVT0, APIC_LVT_MASKED | APIC_DM_FIXED | vector);
++	apic_write(APIC_LVT0, APIC_LVT_MASKED | APIC_DM_FIXED | cfg->vector);
+ 	apic_printk(APIC_VERBOSE," failed.\n");
+ 
+ 	apic_printk(APIC_VERBOSE, KERN_INFO "...trying to set up timer as ExtINT IRQ...");
+@@ -1828,19 +1872,16 @@ int create_irq(void)
+ 	/* Allocate an unused irq */
+ 	int irq;
+ 	int new;
+-	int vector = 0;
+ 	unsigned long flags;
+-	cpumask_t mask;
+ 
+ 	irq = -ENOSPC;
+ 	spin_lock_irqsave(&vector_lock, flags);
+ 	for (new = (NR_IRQS - 1); new >= 0; new--) {
+ 		if (platform_legacy_irq(new))
+ 			continue;
+-		if (irq_vector[new] != 0)
++		if (irq_cfg[new].vector != 0)
+ 			continue;
+-		vector = __assign_irq_vector(new, TARGET_CPUS, &mask);
+-		if (likely(vector > 0))
++		if (__assign_irq_vector(new, TARGET_CPUS) == 0)
+ 			irq = new;
+ 		break;
+ 	}
+@@ -1871,12 +1912,15 @@ void destroy_irq(unsigned int irq)
+ #if defined(CONFIG_PCI_MSI) && !defined(CONFIG_XEN)
+ static int msi_compose_msg(struct pci_dev *pdev, unsigned int irq, struct msi_msg *msg)
+ {
+-	int vector;
++	struct irq_cfg *cfg = irq_cfg + irq;
++	int err;
+ 	unsigned dest;
+ 	cpumask_t tmp;
+ 
+-	vector = assign_irq_vector(irq, TARGET_CPUS, &tmp);
+-	if (vector >= 0) {
++	tmp = TARGET_CPUS;
++	err = assign_irq_vector(irq, tmp);
++	if (!err) {
++		cpus_and(tmp, cfg->domain, tmp);
+ 		dest = cpu_mask_to_apicid(tmp);
+ 
+ 		msg->address_hi = MSI_ADDR_BASE_HI;
+@@ -1896,40 +1940,38 @@ static int msi_compose_msg(struct pci_de
+ 			((INT_DELIVERY_MODE != dest_LowestPrio) ?
+ 				MSI_DATA_DELIVERY_FIXED:
+ 				MSI_DATA_DELIVERY_LOWPRI) |
+-			MSI_DATA_VECTOR(vector);
++			MSI_DATA_VECTOR(cfg->vector);
+ 	}
+-	return vector;
++	return err;
+ }
+ 
+ #ifdef CONFIG_SMP
+ static void set_msi_irq_affinity(unsigned int irq, cpumask_t mask)
+ {
++	struct irq_cfg *cfg = irq_cfg + irq;
+ 	struct msi_msg msg;
+ 	unsigned int dest;
+ 	cpumask_t tmp;
+-	int vector;
+ 
+ 	cpus_and(tmp, mask, cpu_online_map);
+ 	if (cpus_empty(tmp))
+-		tmp = TARGET_CPUS;
+-
+-	cpus_and(mask, tmp, CPU_MASK_ALL);
++		return;
+ 
+-	vector = assign_irq_vector(irq, mask, &tmp);
+-	if (vector < 0)
++	if (assign_irq_vector(irq, mask))
+ 		return;
+ 
++	cpus_and(tmp, cfg->domain, mask);
+ 	dest = cpu_mask_to_apicid(tmp);
+ 
+ 	read_msi_msg(irq, &msg);
+ 
+ 	msg.data &= ~MSI_DATA_VECTOR_MASK;
+-	msg.data |= MSI_DATA_VECTOR(vector);
++	msg.data |= MSI_DATA_VECTOR(cfg->vector);
+ 	msg.address_lo &= ~MSI_ADDR_DEST_ID_MASK;
+ 	msg.address_lo |= MSI_ADDR_DEST_ID(dest);
+ 
+ 	write_msi_msg(irq, &msg);
+-	set_native_irq_info(irq, mask);
++	irq_desc[irq].affinity = mask;
+ }
+ #endif /* CONFIG_SMP */
+ 
+@@ -1948,24 +1990,31 @@ static struct irq_chip msi_chip = {
+ 	.retrigger	= ioapic_retrigger_irq,
+ };
+ 
+-int arch_setup_msi_irq(unsigned int irq, struct pci_dev *dev)
++int arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc)
+ {
+ 	struct msi_msg msg;
+-	int ret;
++	int irq, ret;
++	irq = create_irq();
++	if (irq < 0)
++		return irq;
++
++	set_irq_msi(irq, desc);
+ 	ret = msi_compose_msg(dev, irq, &msg);
+-	if (ret < 0)
++	if (ret < 0) {
++		destroy_irq(irq);
+ 		return ret;
++	}
+ 
+ 	write_msi_msg(irq, &msg);
+ 
+ 	set_irq_chip_and_handler_name(irq, &msi_chip, handle_edge_irq, "edge");
+ 
+-	return 0;
++	return irq;
+ }
+ 
+ void arch_teardown_msi_irq(unsigned int irq)
+ {
+-	return;
++	destroy_irq(irq);
+ }
+ 
+ #endif /* CONFIG_PCI_MSI */
+@@ -1993,24 +2042,22 @@ static void target_ht_irq(unsigned int i
+ 
+ static void set_ht_irq_affinity(unsigned int irq, cpumask_t mask)
+ {
++	struct irq_cfg *cfg = irq_cfg + irq;
+ 	unsigned int dest;
+ 	cpumask_t tmp;
+-	int vector;
+ 
+ 	cpus_and(tmp, mask, cpu_online_map);
+ 	if (cpus_empty(tmp))
+-		tmp = TARGET_CPUS;
+-
+-	cpus_and(mask, tmp, CPU_MASK_ALL);
++		return;
+ 
+-	vector = assign_irq_vector(irq, mask, &tmp);
+-	if (vector < 0)
++	if (assign_irq_vector(irq, mask))
+ 		return;
+ 
++	cpus_and(tmp, cfg->domain, mask);
+ 	dest = cpu_mask_to_apicid(tmp);
+ 
+-	target_ht_irq(irq, dest, vector);
+-	set_native_irq_info(irq, mask);
++	target_ht_irq(irq, dest, cfg->vector);
++	irq_desc[irq].affinity = mask;
+ }
+ #endif
+ 
+@@ -2027,14 +2074,17 @@ static struct irq_chip ht_irq_chip = {
+ 
+ int arch_setup_ht_irq(unsigned int irq, struct pci_dev *dev)
+ {
+-	int vector;
++	struct irq_cfg *cfg = irq_cfg + irq;
++	int err;
+ 	cpumask_t tmp;
+ 
+-	vector = assign_irq_vector(irq, TARGET_CPUS, &tmp);
+-	if (vector >= 0) {
++	tmp = TARGET_CPUS;
++	err = assign_irq_vector(irq, tmp);
++	if (!err) {
+ 		struct ht_irq_msg msg;
+ 		unsigned dest;
+ 
++		cpus_and(tmp, cfg->domain, tmp);
+ 		dest = cpu_mask_to_apicid(tmp);
+ 
+ 		msg.address_hi = HT_IRQ_HIGH_DEST_ID(dest);
+@@ -2042,7 +2092,7 @@ int arch_setup_ht_irq(unsigned int irq, 
+ 		msg.address_lo =
+ 			HT_IRQ_LOW_BASE |
+ 			HT_IRQ_LOW_DEST_ID(dest) |
+-			HT_IRQ_LOW_VECTOR(vector) |
++			HT_IRQ_LOW_VECTOR(cfg->vector) |
+ 			((INT_DEST_MODE == 0) ?
+ 				HT_IRQ_LOW_DM_PHYSICAL :
+ 				HT_IRQ_LOW_DM_LOGICAL) |
+@@ -2057,7 +2107,7 @@ int arch_setup_ht_irq(unsigned int irq, 
+ 		set_irq_chip_and_handler_name(irq, &ht_irq_chip,
+ 					      handle_edge_irq, "edge");
+ 	}
+-	return vector;
++	return err;
+ }
+ #endif /* CONFIG_HT_IRQ */
+ 
+@@ -2082,13 +2132,8 @@ int __init io_apic_get_redir_entries (in
+ }
+ 
+ 
+-int io_apic_set_pci_routing (int ioapic, int pin, int irq, int edge_level, int active_high_low)
++int io_apic_set_pci_routing (int ioapic, int pin, int irq, int triggering, int polarity)
+ {
+-	struct IO_APIC_route_entry entry;
+-	unsigned long flags;
+-	int vector;
+-	cpumask_t mask;
+-
+ 	if (!IO_APIC_IRQ(irq)) {
+ 		apic_printk(APIC_QUIET,KERN_ERR "IOAPIC[%d]: Invalid reference to IRQ 0\n",
+ 			ioapic);
+@@ -2101,42 +2146,7 @@ int io_apic_set_pci_routing (int ioapic,
+ 	if (irq >= 16)
+ 		add_pin_to_irq(irq, ioapic, pin);
+ 
+-
+-	vector = assign_irq_vector(irq, TARGET_CPUS, &mask);
+-	if (vector < 0)
+-		return vector;
+-
+-	/*
+-	 * Generate a PCI IRQ routing entry and program the IOAPIC accordingly.
+-	 * Note that we mask (disable) IRQs now -- these get enabled when the
+-	 * corresponding device driver registers for this IRQ.
+-	 */
+-
+-	memset(&entry,0,sizeof(entry));
+-
+-	entry.delivery_mode = INT_DELIVERY_MODE;
+-	entry.dest_mode = INT_DEST_MODE;
+-	entry.dest.logical.logical_dest = cpu_mask_to_apicid(mask);
+-	entry.trigger = edge_level;
+-	entry.polarity = active_high_low;
+-	entry.mask = 1;					 /* Disabled (masked) */
+-	entry.vector = vector & 0xff;
+-
+-	apic_printk(APIC_VERBOSE,KERN_DEBUG "IOAPIC[%d]: Set PCI routing entry (%d-%d -> 0x%x -> "
+-		"IRQ %d Mode:%i Active:%i)\n", ioapic, 
+-	       mp_ioapics[ioapic].mpc_apicid, pin, entry.vector, irq,
+-	       edge_level, active_high_low);
+-
+-	ioapic_register_intr(irq, entry.vector, edge_level);
+-
+-	if (!ioapic && (irq < 16))
+-		disable_8259A_irq(irq);
+-
+-	ioapic_write_entry(ioapic, pin, entry);
+-
+-	spin_lock_irqsave(&ioapic_lock, flags);
+-	set_native_irq_info(irq, TARGET_CPUS);
+-	spin_unlock_irqrestore(&ioapic_lock, flags);
++	setup_IO_APIC_irq(ioapic, pin, irq, triggering, polarity);
+ 
+ 	return 0;
+ }
+@@ -2169,8 +2179,10 @@ void __init setup_ioapic_dest(void)
+ 			 * when you have too many devices, because at that time only boot
+ 			 * cpu is online.
+ 			 */
+-			if(!irq_vector[irq])
+-				setup_IO_APIC_irq(ioapic, pin, irq_entry, irq);
++			if (!irq_cfg[irq].vector)
++				setup_IO_APIC_irq(ioapic, pin, irq,
++						  irq_trigger(irq_entry),
++						  irq_polarity(irq_entry));
+ 			else
+ 				set_ioapic_affinity_irq(irq, TARGET_CPUS);
+ 		}
+--- sle11-2009-05-14.orig/arch/x86/kernel/irq_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/irq_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -18,6 +18,7 @@
+ #include <asm/uaccess.h>
+ #include <asm/io_apic.h>
+ #include <asm/idle.h>
++#include <asm/smp.h>
+ 
+ atomic_t irq_err_count;
+ 
+@@ -120,9 +121,15 @@ asmlinkage unsigned int do_IRQ(struct pt
+ 
+ 	if (likely(irq < NR_IRQS))
+ 		generic_handle_irq(irq);
+-	else if (printk_ratelimit())
+-		printk(KERN_EMERG "%s: %d.%d No irq handler for irq\n",
+-			__func__, smp_processor_id(), irq);
++	else {
++#ifndef CONFIG_XEN
++		if (!disable_apic)
++			ack_APIC_irq();
++#endif
++		if (printk_ratelimit())
++			printk(KERN_EMERG "%s: %d.%d No irq handler for irq\n",
++				__func__, smp_processor_id(), irq);
++	}
+ 
+ 	/*irq_exit();*/
+ 
+--- sle11-2009-05-14.orig/arch/x86/kernel/mpparse_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/mpparse_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -60,9 +60,9 @@ unsigned long mp_lapic_addr = 0;
+ /* Processor that is doing the boot up */
+ unsigned int boot_cpu_id = -1U;
+ /* Internal processor count */
+-unsigned int num_processors __initdata = 0;
++unsigned int num_processors __cpuinitdata = 0;
+ 
+-unsigned disabled_cpus __initdata;
++unsigned disabled_cpus __cpuinitdata;
+ 
+ /* Bitmask of physically existing CPUs */
+ physid_mask_t phys_cpu_present_map = PHYSID_MASK_NONE;
+@@ -808,7 +808,7 @@ int mp_register_gsi(u32 gsi, int trigger
+ 		return gsi;
+ 
+ 	/* Don't set up the ACPI SCI because it's already set up */
+-	if (acpi_fadt.sci_int == gsi)
++	if (acpi_gbl_FADT.sci_interrupt == gsi)
+ 		return gsi;
+ 
+ 	ioapic = mp_find_ioapic(gsi);
+--- sle11-2009-05-14.orig/arch/x86/kernel/process_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/process_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -338,14 +338,17 @@ void load_gs_index(unsigned gs)
+ void flush_thread(void)
+ {
+ 	struct task_struct *tsk = current;
+-	struct thread_info *t = current_thread_info();
+ 
+-	if (t->flags & _TIF_ABI_PENDING) {
+-		t->flags ^= (_TIF_ABI_PENDING | _TIF_IA32);
+-		if (t->flags & _TIF_IA32)
++	if (test_tsk_thread_flag(tsk, TIF_ABI_PENDING)) {
++		clear_tsk_thread_flag(tsk, TIF_ABI_PENDING);
++		if (test_tsk_thread_flag(tsk, TIF_IA32)) {
++			clear_tsk_thread_flag(tsk, TIF_IA32);
++		} else {
++			set_tsk_thread_flag(tsk, TIF_IA32);
+ 			current_thread_info()->status |= TS_COMPAT;
++		}
+ 	}
+-	t->flags &= ~_TIF_DEBUG;
++	clear_tsk_thread_flag(tsk, TIF_DEBUG);
+ 
+ 	tsk->thread.debugreg0 = 0;
+ 	tsk->thread.debugreg1 = 0;
+--- sle11-2009-05-14.orig/arch/x86/kernel/setup_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/setup_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -141,7 +141,7 @@ EXPORT_SYMBOL_GPL(edid_info);
+ 
+ extern int root_mountflags;
+ 
+-char command_line[COMMAND_LINE_SIZE];
++char __initdata command_line[COMMAND_LINE_SIZE];
+ 
+ struct resource standard_io_resources[] = {
+ 	{ .name = "dma1", .start = 0x00, .end = 0x1f,
+@@ -179,134 +179,6 @@ struct resource code_resource = {
+ 	.flags = IORESOURCE_RAM,
+ };
+ 
+-#define IORESOURCE_ROM (IORESOURCE_BUSY | IORESOURCE_READONLY | IORESOURCE_MEM)
+-
+-static struct resource system_rom_resource = {
+-	.name = "System ROM",
+-	.start = 0xf0000,
+-	.end = 0xfffff,
+-	.flags = IORESOURCE_ROM,
+-};
+-
+-static struct resource extension_rom_resource = {
+-	.name = "Extension ROM",
+-	.start = 0xe0000,
+-	.end = 0xeffff,
+-	.flags = IORESOURCE_ROM,
+-};
+-
+-static struct resource adapter_rom_resources[] = {
+-	{ .name = "Adapter ROM", .start = 0xc8000, .end = 0,
+-		.flags = IORESOURCE_ROM },
+-	{ .name = "Adapter ROM", .start = 0, .end = 0,
+-		.flags = IORESOURCE_ROM },
+-	{ .name = "Adapter ROM", .start = 0, .end = 0,
+-		.flags = IORESOURCE_ROM },
+-	{ .name = "Adapter ROM", .start = 0, .end = 0,
+-		.flags = IORESOURCE_ROM },
+-	{ .name = "Adapter ROM", .start = 0, .end = 0,
+-		.flags = IORESOURCE_ROM },
+-	{ .name = "Adapter ROM", .start = 0, .end = 0,
+-		.flags = IORESOURCE_ROM }
+-};
+-
+-static struct resource video_rom_resource = {
+-	.name = "Video ROM",
+-	.start = 0xc0000,
+-	.end = 0xc7fff,
+-	.flags = IORESOURCE_ROM,
+-};
+-
+-static struct resource video_ram_resource = {
+-	.name = "Video RAM area",
+-	.start = 0xa0000,
+-	.end = 0xbffff,
+-	.flags = IORESOURCE_RAM,
+-};
+-
+-#define romsignature(x) (*(unsigned short *)(x) == 0xaa55)
+-
+-static int __init romchecksum(unsigned char *rom, unsigned long length)
+-{
+-	unsigned char *p, sum = 0;
+-
+-	for (p = rom; p < rom + length; p++)
+-		sum += *p;
+-	return sum == 0;
+-}
+-
+-static void __init probe_roms(void)
+-{
+-	unsigned long start, length, upper;
+-	unsigned char *rom;
+-	int	      i;
+-
+-#ifdef CONFIG_XEN
+-	/* Nothing to do if not running in dom0. */
+-	if (!is_initial_xendomain())
+-		return;
+-#endif
+-
+-	/* video rom */
+-	upper = adapter_rom_resources[0].start;
+-	for (start = video_rom_resource.start; start < upper; start += 2048) {
+-		rom = isa_bus_to_virt(start);
+-		if (!romsignature(rom))
+-			continue;
+-
+-		video_rom_resource.start = start;
+-
+-		/* 0 < length <= 0x7f * 512, historically */
+-		length = rom[2] * 512;
+-
+-		/* if checksum okay, trust length byte */
+-		if (length && romchecksum(rom, length))
+-			video_rom_resource.end = start + length - 1;
+-
+-		request_resource(&iomem_resource, &video_rom_resource);
+-		break;
+-			}
+-
+-	start = (video_rom_resource.end + 1 + 2047) & ~2047UL;
+-	if (start < upper)
+-		start = upper;
+-
+-	/* system rom */
+-	request_resource(&iomem_resource, &system_rom_resource);
+-	upper = system_rom_resource.start;
+-
+-	/* check for extension rom (ignore length byte!) */
+-	rom = isa_bus_to_virt(extension_rom_resource.start);
+-	if (romsignature(rom)) {
+-		length = extension_rom_resource.end - extension_rom_resource.start + 1;
+-		if (romchecksum(rom, length)) {
+-			request_resource(&iomem_resource, &extension_rom_resource);
+-			upper = extension_rom_resource.start;
+-		}
+-	}
+-
+-	/* check for adapter roms on 2k boundaries */
+-	for (i = 0; i < ARRAY_SIZE(adapter_rom_resources) && start < upper;
+-	     start += 2048) {
+-		rom = isa_bus_to_virt(start);
+-		if (!romsignature(rom))
+-			continue;
+-
+-		/* 0 < length <= 0x7f * 512, historically */
+-		length = rom[2] * 512;
+-
+-		/* but accept any length that fits if checksum okay */
+-		if (!length || start + length > upper || !romchecksum(rom, length))
+-			continue;
+-
+-		adapter_rom_resources[i].start = start;
+-		adapter_rom_resources[i].end = start + length - 1;
+-		request_resource(&iomem_resource, &adapter_rom_resources[i]);
+-
+-		start = adapter_rom_resources[i++].end & ~2047UL;
+-	}
+-}
+-
+ #ifdef CONFIG_PROC_VMCORE
+ /* elfcorehdr= specifies the location of elf core header
+  * stored by the crashed kernel. This option will be passed
+@@ -403,7 +275,7 @@ void __init setup_arch(char **cmdline_p)
+ #ifdef CONFIG_XEN
+ 	extern struct e820map machine_e820;
+ 
+-	printk(KERN_INFO "Command line: %s\n", saved_command_line);
++	printk(KERN_INFO "Command line: %s\n", boot_command_line);
+ 
+ 	/* Register a call for panic conditions. */
+ 	atomic_notifier_chain_register(&panic_notifier_list, &xen_panic_block);
+@@ -430,7 +302,7 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	ARCH_SETUP
+ #else
+-	printk(KERN_INFO "Command line: %s\n", saved_command_line);
++	printk(KERN_INFO "Command line: %s\n", boot_command_line);
+ 
+  	ROOT_DEV = old_decode_dev(ORIG_ROOT_DEV);
+  	screen_info = SCREEN_INFO;
+@@ -461,7 +333,7 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	early_identify_cpu(&boot_cpu_data);
+ 
+-	strlcpy(command_line, saved_command_line, COMMAND_LINE_SIZE);
++	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+ 	*cmdline_p = command_line;
+ 
+ 	parse_early_param();
+@@ -531,6 +403,11 @@ void __init setup_arch(char **cmdline_p)
+ 	/* reserve ebda region */
+ 	if (ebda_addr)
+ 		reserve_bootmem_generic(ebda_addr, ebda_size);
++#ifdef CONFIG_NUMA
++	/* reserve nodemap region */
++	if (nodemap_addr)
++		reserve_bootmem_generic(nodemap_addr, nodemap_size);
++#endif
+ 
+ #ifdef CONFIG_SMP
+ 	/*
+@@ -731,10 +608,8 @@ void __init setup_arch(char **cmdline_p)
+ #endif
+ 
+ 	/*
+-	 * Request address space for all standard RAM and ROM resources
+-	 * and also for regions reported as reserved by the e820.
++	 * We trust e820 completely. No explicit ROM probing in memory.
+ 	 */
+-	probe_roms();
+ #ifdef CONFIG_XEN
+ 	if (is_initial_xendomain())
+ 		e820_reserve_resources(machine_e820.map, machine_e820.nr_map);
+@@ -743,8 +618,6 @@ void __init setup_arch(char **cmdline_p)
+ 	e820_mark_nosave_regions();
+ #endif
+ 
+-	request_resource(&iomem_resource, &video_ram_resource);
+-
+ 	{
+ 	unsigned i;
+ 	/* request I/O space for devices used on all i[345]86 PCs */
+@@ -1321,7 +1194,8 @@ static int show_cpuinfo(struct seq_file 
+ 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ 		NULL, NULL, NULL, "syscall", NULL, NULL, NULL, NULL,
+ 		NULL, NULL, NULL, NULL, "nx", NULL, "mmxext", NULL,
+-		NULL, "fxsr_opt", NULL, "rdtscp", NULL, "lm", "3dnowext", "3dnow",
++		NULL, "fxsr_opt", "pdpe1gb", "rdtscp", NULL, "lm",
++		"3dnowext", "3dnow",
+ 
+ 		/* Transmeta-defined */
+ 		"recovery", "longrun", NULL, "lrti", NULL, NULL, NULL, NULL,
+@@ -1339,7 +1213,7 @@ static int show_cpuinfo(struct seq_file 
+ 		/* Intel-defined (#2) */
+ 		"pni", NULL, NULL, "monitor", "ds_cpl", "vmx", "smx", "est",
+ 		"tm2", "ssse3", "cid", NULL, NULL, "cx16", "xtpr", NULL,
+-		NULL, NULL, "dca", NULL, NULL, NULL, NULL, NULL,
++		NULL, NULL, "dca", NULL, NULL, NULL, NULL, "popcnt",
+ 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ 
+ 		/* VIA/Cyrix/Centaur-defined */
+@@ -1349,8 +1223,10 @@ static int show_cpuinfo(struct seq_file 
+ 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ 
+ 		/* AMD-defined (#2) */
+-		"lahf_lm", "cmp_legacy", "svm", NULL, "cr8_legacy", NULL, NULL, NULL,
+-		NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
++		"lahf_lm", "cmp_legacy", "svm", "extapic", "cr8_legacy",
++		"altmovcr8", "abm", "sse4a",
++		"misalignsse", "3dnowprefetch",
++		"osvw", "ibs", NULL, NULL, NULL, NULL,
+ 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ 	};
+@@ -1361,6 +1237,9 @@ static int show_cpuinfo(struct seq_file 
+ 		"ttp",  /* thermal trip */
+ 		"tm",
+ 		"stc",
++		"100mhzsteps",
++		"hwpstate",
++		NULL,	/* tsc invariant mapped to constant_tsc */
+ 		NULL,
+ 		/* nothing */	/* constant_tsc - moved to flags */
+ 	};
+@@ -1477,26 +1356,3 @@ struct seq_operations cpuinfo_op = {
+ 	.stop =	c_stop,
+ 	.show =	show_cpuinfo,
+ };
+-
+-#if defined(CONFIG_INPUT_PCSPKR) || defined(CONFIG_INPUT_PCSPKR_MODULE)
+-#include <linux/platform_device.h>
+-static __init int add_pcspkr(void)
+-{
+-	struct platform_device *pd;
+-	int ret;
+-
+-	if (!is_initial_xendomain())
+-		return 0;
+-
+-	pd = platform_device_alloc("pcspkr", -1);
+-	if (!pd)
+-		return -ENOMEM;
+-
+-	ret = platform_device_add(pd);
+-	if (ret)
+-		platform_device_put(pd);
+-
+-	return ret;
+-}
+-device_initcall(add_pcspkr);
+-#endif
+--- sle11-2009-05-14.orig/arch/x86/kernel/vsyscall_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/kernel/vsyscall_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -26,6 +26,7 @@
+ #include <linux/seqlock.h>
+ #include <linux/jiffies.h>
+ #include <linux/sysctl.h>
++#include <linux/clocksource.h>
+ #include <linux/getcpu.h>
+ #include <linux/cpu.h>
+ #include <linux/smp.h>
+@@ -34,6 +35,7 @@
+ #include <asm/vsyscall.h>
+ #include <asm/pgtable.h>
+ #include <asm/page.h>
++#include <asm/unistd.h>
+ #include <asm/fixmap.h>
+ #include <asm/errno.h>
+ #include <asm/io.h>
+@@ -44,56 +46,41 @@
+ #define __vsyscall(nr) __attribute__ ((unused,__section__(".vsyscall_" #nr)))
+ #define __syscall_clobber "r11","rcx","memory"
+ 
+-int __sysctl_vsyscall __section_sysctl_vsyscall = 1;
+-seqlock_t __xtime_lock __section_xtime_lock = SEQLOCK_UNLOCKED;
++struct vsyscall_gtod_data_t {
++	seqlock_t lock;
++	int sysctl_enabled;
++	struct timeval wall_time_tv;
++	struct timezone sys_tz;
++	cycle_t offset_base;
++	struct clocksource clock;
++};
+ int __vgetcpu_mode __section_vgetcpu_mode;
+ 
+-#include <asm/unistd.h>
+-
+-static __always_inline void timeval_normalize(struct timeval * tv)
++struct vsyscall_gtod_data_t __vsyscall_gtod_data __section_vsyscall_gtod_data =
+ {
+-	time_t __sec;
+-
+-	__sec = tv->tv_usec / 1000000;
+-	if (__sec) {
+-		tv->tv_usec %= 1000000;
+-		tv->tv_sec += __sec;
+-	}
+-}
++	.lock = SEQLOCK_UNLOCKED,
++	.sysctl_enabled = 1,
++};
+ 
+-static __always_inline void do_vgettimeofday(struct timeval * tv)
++void update_vsyscall(struct timespec *wall_time, struct clocksource *clock)
+ {
+-	long sequence, t;
+-	unsigned long sec, usec;
++	unsigned long flags;
+ 
+-	do {
+-		sequence = read_seqbegin(&__xtime_lock);
+-		
+-		sec = __xtime.tv_sec;
+-		usec = __xtime.tv_nsec / 1000;
+-
+-		if (__vxtime.mode != VXTIME_HPET) {
+-			t = get_cycles_sync();
+-			if (t < __vxtime.last_tsc)
+-				t = __vxtime.last_tsc;
+-			usec += ((t - __vxtime.last_tsc) *
+-				 __vxtime.tsc_quot) >> 32;
+-			/* See comment in x86_64 do_gettimeofday. */
+-		} else {
+-			usec += ((readl((void __iomem *)
+-				   fix_to_virt(VSYSCALL_HPET) + 0xf0) -
+-				  __vxtime.last) * __vxtime.quot) >> 32;
+-		}
+-	} while (read_seqretry(&__xtime_lock, sequence));
+-
+-	tv->tv_sec = sec + usec / 1000000;
+-	tv->tv_usec = usec % 1000000;
++	write_seqlock_irqsave(&vsyscall_gtod_data.lock, flags);
++	/* copy vsyscall data */
++	vsyscall_gtod_data.clock = *clock;
++	vsyscall_gtod_data.wall_time_tv.tv_sec = wall_time->tv_sec;
++	vsyscall_gtod_data.wall_time_tv.tv_usec = wall_time->tv_nsec/1000;
++	vsyscall_gtod_data.sys_tz = sys_tz;
++	write_sequnlock_irqrestore(&vsyscall_gtod_data.lock, flags);
+ }
+ 
+-/* RED-PEN may want to readd seq locking, but then the variable should be write-once. */
++/* RED-PEN may want to readd seq locking, but then the variable should be
++ * write-once.
++ */
+ static __always_inline void do_get_tz(struct timezone * tz)
+ {
+-	*tz = __sys_tz;
++	*tz = __vsyscall_gtod_data.sys_tz;
+ }
+ 
+ static __always_inline int gettimeofday(struct timeval *tv, struct timezone *tz)
+@@ -101,7 +88,8 @@ static __always_inline int gettimeofday(
+ 	int ret;
+ 	asm volatile("vsysc2: syscall"
+ 		: "=a" (ret)
+-		: "0" (__NR_gettimeofday),"D" (tv),"S" (tz) : __syscall_clobber );
++		: "0" (__NR_gettimeofday),"D" (tv),"S" (tz)
++		: __syscall_clobber );
+ 	return ret;
+ }
+ 
+@@ -114,10 +102,44 @@ static __always_inline long time_syscall
+ 	return secs;
+ }
+ 
++static __always_inline void do_vgettimeofday(struct timeval * tv)
++{
++	cycle_t now, base, mask, cycle_delta;
++	unsigned long seq, mult, shift, nsec_delta;
++	cycle_t (*vread)(void);
++	do {
++		seq = read_seqbegin(&__vsyscall_gtod_data.lock);
++
++		vread = __vsyscall_gtod_data.clock.vread;
++		if (unlikely(!__vsyscall_gtod_data.sysctl_enabled || !vread)) {
++			gettimeofday(tv,NULL);
++			return;
++		}
++		now = vread();
++		base = __vsyscall_gtod_data.clock.cycle_last;
++		mask = __vsyscall_gtod_data.clock.mask;
++		mult = __vsyscall_gtod_data.clock.mult;
++		shift = __vsyscall_gtod_data.clock.shift;
++
++		*tv = __vsyscall_gtod_data.wall_time_tv;
++
++	} while (read_seqretry(&__vsyscall_gtod_data.lock, seq));
++
++	/* calculate interval: */
++	cycle_delta = (now - base) & mask;
++	/* convert to nsecs: */
++	nsec_delta = (cycle_delta * mult) >> shift;
++
++	/* convert to usecs and add to timespec: */
++	tv->tv_usec += nsec_delta / NSEC_PER_USEC;
++	while (tv->tv_usec > USEC_PER_SEC) {
++		tv->tv_sec += 1;
++		tv->tv_usec -= USEC_PER_SEC;
++	}
++}
++
+ int __vsyscall(0) vgettimeofday(struct timeval * tv, struct timezone * tz)
+ {
+-	if (!__sysctl_vsyscall)
+-		return gettimeofday(tv,tz);
+ 	if (tv)
+ 		do_vgettimeofday(tv);
+ 	if (tz)
+@@ -129,11 +151,11 @@ int __vsyscall(0) vgettimeofday(struct t
+  * unlikely */
+ time_t __vsyscall(1) vtime(time_t *t)
+ {
+-	if (!__sysctl_vsyscall)
++	if (unlikely(!__vsyscall_gtod_data.sysctl_enabled))
+ 		return time_syscall(t);
+ 	else if (t)
+-		*t = __xtime.tv_sec;		
+-	return __xtime.tv_sec;
++		*t = __vsyscall_gtod_data.wall_time_tv.tv_sec;
++	return __vsyscall_gtod_data.wall_time_tv.tv_sec;
+ }
+ 
+ /* Fast way to get current CPU and node.
+@@ -210,7 +232,7 @@ static int vsyscall_sysctl_change(ctl_ta
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	if (!sysctl_vsyscall) {
++	if (!vsyscall_gtod_data.sysctl_enabled) {
+ 		writew(SYSCALL, map1);
+ 		writew(SYSCALL, map2);
+ 	} else {
+@@ -232,16 +254,17 @@ static int vsyscall_sysctl_nostrat(ctl_t
+ 
+ static ctl_table kernel_table2[] = {
+ 	{ .ctl_name = 99, .procname = "vsyscall64",
+-	  .data = &sysctl_vsyscall, .maxlen = sizeof(int), .mode = 0644,
++	  .data = &vsyscall_gtod_data.sysctl_enabled, .maxlen = sizeof(int),
++	  .mode = 0644,
+ 	  .strategy = vsyscall_sysctl_nostrat,
+ 	  .proc_handler = vsyscall_sysctl_change },
+-	{ 0, }
++	{}
+ };
+ 
+ static ctl_table kernel_root_table2[] = {
+ 	{ .ctl_name = CTL_KERN, .procname = "kernel", .mode = 0555,
+ 	  .child = kernel_table2 },
+-	{ 0 },
++	{}
+ };
+ 
+ #endif
+@@ -304,14 +327,14 @@ static int __init vsyscall_init(void)
+ 	BUG_ON((unsigned long) &vgetcpu != VSYSCALL_ADDR(__NR_vgetcpu));
+ 	map_vsyscall();
+ #ifdef CONFIG_XEN
+-	sysctl_vsyscall = 0; /* disable vgettimeofay() */
++	vsyscall_gtod_data.sysctl_enabled = 0; /* disable vgettimeofay() */
+  	if (boot_cpu_has(X86_FEATURE_RDTSCP))
+ 		vgetcpu_mode = VGETCPU_RDTSCP;
+ 	else
+ 		vgetcpu_mode = VGETCPU_LSL;
+ #endif
+ #ifdef CONFIG_SYSCTL
+-	register_sysctl_table(kernel_root_table2, 0);
++	register_sysctl_table(kernel_root_table2);
+ #endif
+ 	on_each_cpu(cpu_vsyscall_init, NULL, 0, 1);
+ 	hotcpu_notifier(cpu_vsyscall_notifier, 0);
+--- sle11-2009-05-14.orig/arch/x86/mm/fault_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/mm/fault_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -56,38 +56,17 @@ int unregister_page_fault_notifier(struc
+ }
+ EXPORT_SYMBOL_GPL(unregister_page_fault_notifier);
+ 
+-static inline int notify_page_fault(enum die_val val, const char *str,
+-			struct pt_regs *regs, long err, int trap, int sig)
++static inline int notify_page_fault(struct pt_regs *regs, long err)
+ {
+ 	struct die_args args = {
+ 		.regs = regs,
+-		.str = str,
++		.str = "page fault",
+ 		.err = err,
+-		.trapnr = trap,
+-		.signr = sig
++		.trapnr = 14,
++		.signr = SIGSEGV
+ 	};
+-	return atomic_notifier_call_chain(&notify_page_fault_chain, val, &args);
+-}
+-
+-void bust_spinlocks(int yes)
+-{
+-	int loglevel_save = console_loglevel;
+-	if (yes) {
+-		oops_in_progress = 1;
+-	} else {
+-#ifdef CONFIG_VT
+-		unblank_screen();
+-#endif
+-		oops_in_progress = 0;
+-		/*
+-		 * OK, the message is on the console.  Now we call printk()
+-		 * without oops_in_progress set so that printk will give klogd
+-		 * a poke.  Hold onto your hats...
+-		 */
+-		console_loglevel = 15;		/* NMI oopser may have shut the console up */
+-		printk(" ");
+-		console_loglevel = loglevel_save;
+-	}
++	return atomic_notifier_call_chain(&notify_page_fault_chain,
++	                                  DIE_PAGE_FAULT, &args);
+ }
+ 
+ /* Sometimes the CPU reports invalid exceptions on prefetch.
+@@ -437,8 +416,7 @@ asmlinkage void __kprobes do_page_fault(
+ 		/* Can take a spurious fault if mapping changes R/O -> R/W. */
+ 		if (spurious_fault(regs, address, error_code))
+ 			return;
+-		if (notify_page_fault(DIE_PAGE_FAULT, "page fault", regs, error_code, 14,
+-						SIGSEGV) == NOTIFY_STOP)
++		if (notify_page_fault(regs, error_code) == NOTIFY_STOP)
+ 			return;
+ 		/*
+ 		 * Don't take the mm semaphore here. If we fixup a prefetch
+@@ -447,8 +425,7 @@ asmlinkage void __kprobes do_page_fault(
+ 		goto bad_area_nosemaphore;
+ 	}
+ 
+-	if (notify_page_fault(DIE_PAGE_FAULT, "page fault", regs, error_code, 14,
+-					SIGSEGV) == NOTIFY_STOP)
++	if (notify_page_fault(regs, error_code) == NOTIFY_STOP)
+ 		return;
+ 
+ 	if (likely(regs->eflags & X86_EFLAGS_IF))
+--- sle11-2009-05-14.orig/arch/x86/mm/init_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/mm/init_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -1108,20 +1108,30 @@ int kern_addr_valid(unsigned long addr) 
+ extern int exception_trace, page_fault_trace;
+ 
+ static ctl_table debug_table2[] = {
+-	{ 99, "exception-trace", &exception_trace, sizeof(int), 0644, NULL,
+-	  proc_dointvec },
+-	{ 0, }
++	{
++		.ctl_name	= 99,
++		.procname	= "exception-trace",
++		.data		= &exception_trace,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec
++	},
++	{}
+ }; 
+ 
+ static ctl_table debug_root_table2[] = { 
+-	{ .ctl_name = CTL_DEBUG, .procname = "debug", .mode = 0555, 
+-	   .child = debug_table2 }, 
+-	{ 0 }, 
++	{
++		.ctl_name = CTL_DEBUG,
++		.procname = "debug",
++		.mode = 0555,
++		.child = debug_table2
++	},
++	{}
+ }; 
+ 
+ static __init int x8664_sysctl_init(void)
+ { 
+-	register_sysctl_table(debug_root_table2, 1);
++	register_sysctl_table(debug_root_table2);
+ 	return 0;
+ }
+ __initcall(x8664_sysctl_init);
+--- sle11-2009-05-14.orig/arch/x86/mm/pageattr_64-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/arch/x86/mm/pageattr_64-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -350,8 +350,8 @@ static void flush_kernel_map(void *arg)
+ 		void *adr = page_address(pg);
+ 		if (cpu_has_clflush)
+ 			cache_flush_page(adr);
+-		__flush_tlb_one(adr);
+ 	}
++	__flush_tlb_all();
+ }
+ 
+ static inline void flush_map(struct list_head *l)
+@@ -376,6 +376,7 @@ static void revert_page(unsigned long ad
+ 	pud_t *pud;
+ 	pmd_t *pmd;
+ 	pte_t large_pte;
++	unsigned long pfn;
+ 
+ 	pgd = pgd_offset_k(address);
+ 	BUG_ON(pgd_none(*pgd));
+@@ -383,7 +384,8 @@ static void revert_page(unsigned long ad
+ 	BUG_ON(pud_none(*pud));
+ 	pmd = pmd_offset(pud, address);
+ 	BUG_ON(__pmd_val(*pmd) & _PAGE_PSE);
+-	large_pte = mk_pte_phys(__pa(address) & LARGE_PAGE_MASK, ref_prot);
++	pfn = (__pa(address) & LARGE_PAGE_MASK) >> PAGE_SHIFT;
++	large_pte = pfn_pte(pfn, ref_prot);
+ 	large_pte = pte_mkhuge(large_pte);
+ 	set_pte((pte_t *)pmd, large_pte);
+ }      
+--- sle11-2009-05-14.orig/drivers/acpi/processor_extcntl.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-05-14/drivers/acpi/processor_extcntl.c	2009-03-04 11:25:55.000000000 +0100
+@@ -32,9 +32,8 @@
+ 
+ #define ACPI_PROCESSOR_COMPONENT        0x01000000
+ #define ACPI_PROCESSOR_CLASS            "processor"
+-#define ACPI_PROCESSOR_DRIVER_NAME      "ACPI Processor Driver"
+ #define _COMPONENT              ACPI_PROCESSOR_COMPONENT
+-ACPI_MODULE_NAME("acpi_processor")
++ACPI_MODULE_NAME("processor_extcntl")
+ 
+ static int processor_extcntl_parse_csd(struct acpi_processor *pr);
+ static int processor_extcntl_get_performance(struct acpi_processor *pr);
+@@ -56,24 +55,17 @@ static int processor_notify_smm(void)
+ 		return 0;
+ 
+ 	/* Can't write pstate_cnt to smi_cmd if either value is zero */
+-	if ((!acpi_fadt.smi_cmd) || (!acpi_fadt.pstate_cnt)) {
++	if (!acpi_gbl_FADT.smi_command || !acpi_gbl_FADT.pstate_control) {
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO,"No SMI port or pstate_cnt\n"));
+ 		return 0;
+ 	}
+ 
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+ 		"Writing pstate_cnt [0x%x] to smi_cmd [0x%x]\n",
+-		acpi_fadt.pstate_cnt, acpi_fadt.smi_cmd));
++		acpi_gbl_FADT.pstate_control, acpi_gbl_FADT.smi_command));
+ 
+-	/* FADT v1 doesn't support pstate_cnt, many BIOS vendors use
+-	 * it anyway, so we need to support it... */
+-	if (acpi_fadt_is_v1) {
+-		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+-			"Using v1.0 FADT reserved value for pstate_cnt\n"));
+-	}
+-
+-	status = acpi_os_write_port(acpi_fadt.smi_cmd,
+-				    (u32) acpi_fadt.pstate_cnt, 8);
++	status = acpi_os_write_port(acpi_gbl_FADT.smi_command,
++				    acpi_gbl_FADT.pstate_control, 8);
+ 	if (ACPI_FAILURE(status)) 
+ 		return status;
+ 
+--- sle11-2009-05-14.orig/drivers/char/tpm/tpm_xen.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/drivers/char/tpm/tpm_xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -481,7 +481,6 @@ static struct xenbus_device_id tpmfront_
+ 
+ static struct xenbus_driver tpmfront = {
+ 	.name = "vtpm",
+-	.owner = THIS_MODULE,
+ 	.ids = tpmfront_ids,
+ 	.probe = tpmfront_probe,
+ 	.remove =  tpmfront_remove,
+@@ -491,9 +490,9 @@ static struct xenbus_driver tpmfront = {
+ 	.suspend_cancel = tpmfront_suspend_cancel,
+ };
+ 
+-static void __init init_tpm_xenbus(void)
++static int __init init_tpm_xenbus(void)
+ {
+-	xenbus_register_frontend(&tpmfront);
++	return xenbus_register_frontend(&tpmfront);
+ }
+ 
+ static int tpmif_allocate_tx_buffers(struct tpm_private *tp)
+--- sle11-2009-05-14.orig/drivers/pci/msi-xen.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/drivers/pci/msi-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -44,6 +44,36 @@ struct msi_pirq_entry {
+ 	int entry_nr;
+ };
+ 
++static void msi_set_enable(struct pci_dev *dev, int enable)
++{
++	int pos;
++	u16 control;
++
++	pos = pci_find_capability(dev, PCI_CAP_ID_MSI);
++	if (pos) {
++		pci_read_config_word(dev, pos + PCI_MSI_FLAGS, &control);
++		control &= ~PCI_MSI_FLAGS_ENABLE;
++		if (enable)
++			control |= PCI_MSI_FLAGS_ENABLE;
++		pci_write_config_word(dev, pos + PCI_MSI_FLAGS, control);
++	}
++}
++
++static void msix_set_enable(struct pci_dev *dev, int enable)
++{
++	int pos;
++	u16 control;
++
++	pos = pci_find_capability(dev, PCI_CAP_ID_MSIX);
++	if (pos) {
++		pci_read_config_word(dev, pos + PCI_MSIX_FLAGS, &control);
++		control &= ~PCI_MSIX_FLAGS_ENABLE;
++		if (enable)
++			control |= PCI_MSIX_FLAGS_ENABLE;
++		pci_write_config_word(dev, pos + PCI_MSIX_FLAGS, control);
++	}
++}
++
+ static struct msi_dev_list *get_msi_dev_pirq_list(struct pci_dev *dev)
+ {
+ 	struct msi_dev_list *msi_dev_list, *ret = NULL;
+@@ -235,126 +265,26 @@ static int msi_map_vector(struct pci_dev
+ 
+ static int msi_init(void)
+ {
+-	static int status = 0;
+-
+-	if (pci_msi_quirk) {
+-		pci_msi_enable = 0;
+-		printk(KERN_WARNING "PCI: MSI quirk detected. MSI disabled.\n");
+-		status = -EINVAL;
+-	}
+-
+-	return status;
+-}
+-
+-void pci_scan_msi_device(struct pci_dev *dev) { }
+-
+-void disable_msi_mode(struct pci_dev *dev, int pos, int type)
+-{
+-	u16 control;
+-
+-	pci_read_config_word(dev, msi_control_reg(pos), &control);
+-	if (type == PCI_CAP_ID_MSI) {
+-		/* Set enabled bits to single MSI & enable MSI_enable bit */
+-		msi_disable(control);
+-		pci_write_config_word(dev, msi_control_reg(pos), control);
+-		dev->msi_enabled = 0;
+-	} else {
+-		msix_disable(control);
+-		pci_write_config_word(dev, msi_control_reg(pos), control);
+-		dev->msix_enabled = 0;
+-	}
+-
+-	pci_intx(dev, 1);  /* enable intx */
+-}
+-
+-static void enable_msi_mode(struct pci_dev *dev, int pos, int type)
+-{
+-	u16 control;
+-
+-	pci_read_config_word(dev, msi_control_reg(pos), &control);
+-	if (type == PCI_CAP_ID_MSI) {
+-		/* Set enabled bits to single MSI & enable MSI_enable bit */
+-		msi_enable(control, 1);
+-		pci_write_config_word(dev, msi_control_reg(pos), control);
+-		dev->msi_enabled = 1;
+-	} else {
+-		msix_enable(control);
+-		pci_write_config_word(dev, msi_control_reg(pos), control);
+-		dev->msix_enabled = 1;
+-	}
+-
+-	pci_intx(dev, 0);  /* disable intx */
++	return 0;
+ }
+ 
+ #ifdef CONFIG_PM
+-int pci_save_msi_state(struct pci_dev *dev)
++static void __pci_restore_msi_state(struct pci_dev *dev)
+ {
+-	int pos;
+-
+-	pos = pci_find_capability(dev, PCI_CAP_ID_MSI);
+-	if (pos <= 0 || dev->no_msi)
+-		return 0;
++	int pirq;
+ 
+ 	if (!dev->msi_enabled)
+-		return 0;
+-
+-	/* Restore dev->irq to its default pin-assertion vector */
+-	msi_unmap_pirq(dev, dev->irq);
+-	/* Disable MSI mode */
+-	disable_msi_mode(dev, pos, PCI_CAP_ID_MSI);
+-	/* Set the flags for use of restore */
+-	dev->msi_enabled = 1;
+-	return 0;
+-}
+-
+-void pci_restore_msi_state(struct pci_dev *dev)
+-{
+-	int pos, pirq;
+-
+-	pos = pci_find_capability(dev, PCI_CAP_ID_MSI);
+-	if (pos <= 0)
+ 		return;
+ 
+-	if (!dev->msi_enabled)
+-		return;
++	pci_intx(dev, 0);		/* disable intx */
++	msi_set_enable(dev, 0);
+ 
+ 	pirq = msi_map_pirq_to_vector(dev, dev->irq, 0, 0);
+ 	if (pirq < 0)
+ 		return;
+-	enable_msi_mode(dev, pos, PCI_CAP_ID_MSI);
+ }
+ 
+-int pci_save_msix_state(struct pci_dev *dev)
+-{
+-	int pos;
+-	unsigned long flags;
+-	struct msi_dev_list *msi_dev_entry;
+-	struct msi_pirq_entry *pirq_entry, *tmp;
+-
+-	pos = pci_find_capability(dev, PCI_CAP_ID_MSIX);
+-	if (pos <= 0 || dev->no_msi)
+-		return 0;
+-
+-	/* save the capability */
+-	if (!dev->msix_enabled)
+-		return 0;
+-
+-	msi_dev_entry = get_msi_dev_pirq_list(dev);
+-
+-	spin_lock_irqsave(&msi_dev_entry->pirq_list_lock, flags);
+-        list_for_each_entry_safe(pirq_entry, tmp,
+-                                 &msi_dev_entry->pirq_list_head, list)
+-		msi_unmap_pirq(dev, pirq_entry->pirq);
+-	spin_unlock_irqrestore(&msi_dev_entry->pirq_list_lock, flags);
+-
+-	disable_msi_mode(dev, pos, PCI_CAP_ID_MSIX);
+-	/* Set the flags for use of restore */
+-	dev->msix_enabled = 1;
+-
+-	return 0;
+-}
+-
+-void pci_restore_msix_state(struct pci_dev *dev)
++static void __pci_restore_msix_state(struct pci_dev *dev)
+ {
+ 	int pos;
+ 	unsigned long flags;
+@@ -369,6 +299,9 @@ void pci_restore_msix_state(struct pci_d
+ 	if (!dev->msix_enabled)
+ 		return;
+ 
++	pci_intx(dev, 0);		/* disable intx */
++	msix_set_enable(dev, 0);
++
+ 	msi_dev_entry = get_msi_dev_pirq_list(dev);
+ 	table_base = find_table_base(dev, pos);
+ 	if (!table_base)
+@@ -386,10 +319,14 @@ void pci_restore_msix_state(struct pci_d
+ 			       pirq_entry->pirq, rc);
+ 	}
+ 	spin_unlock_irqrestore(&msi_dev_entry->pirq_list_lock, flags);
++}
+ 
+-	enable_msi_mode(dev, pos, PCI_CAP_ID_MSIX);
++void pci_restore_msi_state(struct pci_dev *dev)
++{
++	__pci_restore_msi_state(dev);
++	__pci_restore_msix_state(dev);
+ }
+-#endif
++#endif	/* CONFIG_PM */
+ 
+ /**
+  * msi_capability_init - configure device's MSI capability structure
+@@ -405,6 +342,8 @@ static int msi_capability_init(struct pc
+ 	int pos, pirq;
+ 	u16 control;
+ 
++	msi_set_enable(dev, 0);	/* Ensure msi is disabled as I set it up */
++
+ 	pos = pci_find_capability(dev, PCI_CAP_ID_MSI);
+ 	pci_read_config_word(dev, msi_control_reg(pos), &control);
+ 
+@@ -413,7 +352,8 @@ static int msi_capability_init(struct pc
+ 		return -EBUSY;
+ 
+ 	/* Set MSI enabled bits	 */
+-	enable_msi_mode(dev, pos, PCI_CAP_ID_MSI);
++	pci_intx(dev, 0);		/* disable intx */
++	msi_set_enable(dev, 1);
+ 	dev->msi_enabled = 1;
+ 
+ 	dev->irq = pirq;
+@@ -441,6 +381,8 @@ static int msix_capability_init(struct p
+ 	if (!msi_dev_entry)
+ 		return -ENOMEM;
+ 
++	msix_set_enable(dev, 0);/* Ensure msix is disabled as I set it up */
++
+ 	pos = pci_find_capability(dev, PCI_CAP_ID_MSIX);
+ 	table_base = find_table_base(dev, pos);
+ 	if (!table_base)
+@@ -484,7 +426,8 @@ static int msix_capability_init(struct p
+ 		return avail;
+ 	}
+ 
+-	enable_msi_mode(dev, pos, PCI_CAP_ID_MSIX);
++	pci_intx(dev, 0);		/* disable intx */
++	msix_set_enable(dev, 1);
+ 	dev->msix_enabled = 1;
+ 
+ 	return 0;
+@@ -567,17 +510,14 @@ int pci_enable_msi(struct pci_dev* dev)
+ 	/* Check whether driver already requested for MSI-X irqs */
+ 	if (dev->msix_enabled) {
+ 		printk(KERN_INFO "PCI: %s: Can't enable MSI.  "
+-		       "Device already has MSI-X irq assigned\n",
+-			   pci_name(dev));
+-		dev->irq = temp;
++			"Device already has MSI-X enabled\n",
++			pci_name(dev));
+ 		return -EINVAL;
+ 	}
+ 
+ 	status = msi_capability_init(dev);
+ 	if ( !status )
+ 		dev->irq_old = temp;
+-    else
+-		dev->irq = temp;
+ 
+ 	return status;
+ }
+@@ -585,7 +525,6 @@ int pci_enable_msi(struct pci_dev* dev)
+ extern void pci_frontend_disable_msi(struct pci_dev* dev);
+ void pci_disable_msi(struct pci_dev* dev)
+ {
+-	int pos;
+ 	int pirq;
+ 
+ 	if (!pci_msi_enable)
+@@ -602,8 +541,7 @@ void pci_disable_msi(struct pci_dev* dev
+ 	}
+ #endif
+ 
+-	pos = pci_find_capability(dev, PCI_CAP_ID_MSI);
+-	if (!pos)
++	if (!dev->msi_enabled)
+ 		return;
+ 
+ 	pirq = dev->irq;
+@@ -612,7 +550,9 @@ void pci_disable_msi(struct pci_dev* dev
+ 	msi_unmap_pirq(dev, pirq);
+ 
+ 	/* Disable MSI mode */
+-	disable_msi_mode(dev, pos, PCI_CAP_ID_MSI);
++	msi_set_enable(dev, 0);
++	pci_intx(dev, 1);		/* enable intx */
++	dev->msi_enabled = 0;
+ }
+ 
+ /**
+@@ -705,7 +645,6 @@ int pci_enable_msix(struct pci_dev* dev,
+ 		printk(KERN_INFO "PCI: %s: Can't enable MSI-X.  "
+ 		       "Device already has an MSI irq assigned\n",
+ 		       pci_name(dev));
+-		dev->irq = temp;
+ 		return -EINVAL;
+ 	}
+ 
+@@ -713,8 +652,6 @@ int pci_enable_msix(struct pci_dev* dev,
+ 
+ 	if ( !status )
+ 		dev->irq_old = temp;
+-	else
+-		dev->irq = temp;
+ 
+ 	return status;
+ }
+@@ -722,10 +659,6 @@ int pci_enable_msix(struct pci_dev* dev,
+ extern void pci_frontend_disable_msix(struct pci_dev* dev);
+ void pci_disable_msix(struct pci_dev* dev)
+ {
+-	int pos;
+-	u16 control;
+-
+-
+ 	if (!pci_msi_enable)
+ 		return;
+ 	if (!dev)
+@@ -751,18 +684,15 @@ void pci_disable_msix(struct pci_dev* de
+ 	}
+ #endif
+ 
+-	pos = pci_find_capability(dev, PCI_CAP_ID_MSIX);
+-	if (!pos)
+-		return;
+-
+-	pci_read_config_word(dev, msi_control_reg(pos), &control);
+-	if (!(control & PCI_MSIX_FLAGS_ENABLE))
++	if (!dev->msix_enabled)
+ 		return;
+ 
+ 	msi_remove_pci_irq_vectors(dev);
+ 
+ 	/* Disable MSI mode */
+-	disable_msi_mode(dev, pos, PCI_CAP_ID_MSIX);
++	msix_set_enable(dev, 0);
++	pci_intx(dev, 1);		/* enable intx */
++	dev->msix_enabled = 0;
+ }
+ 
+ /**
+--- sle11-2009-05-14.orig/drivers/xen/balloon/sysfs.c	2008-11-25 13:31:07.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/balloon/sysfs.c	2009-03-04 11:25:55.000000000 +0100
+@@ -34,6 +34,7 @@
+ #include <linux/stat.h>
+ #include <linux/string.h>
+ #include <linux/sysdev.h>
++#include <linux/module.h>
+ #include "common.h"
+ 
+ #ifdef HAVE_XEN_PLATFORM_COMPAT_H
+--- sle11-2009-05-14.orig/drivers/xen/blkback/xenbus.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/blkback/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -527,7 +527,6 @@ static const struct xenbus_device_id blk
+ 
+ static struct xenbus_driver blkback = {
+ 	.name = "vbd",
+-	.owner = THIS_MODULE,
+ 	.ids = blkback_ids,
+ 	.probe = blkback_probe,
+ 	.remove = blkback_remove,
+@@ -537,5 +536,6 @@ static struct xenbus_driver blkback = {
+ 
+ void blkif_xenbus_init(void)
+ {
+-	xenbus_register_backend(&blkback);
++	if (xenbus_register_backend(&blkback))
++		BUG();
+ }
+--- sle11-2009-05-14.orig/drivers/xen/blkfront/blkfront.c	2009-03-24 10:08:27.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/blkfront/blkfront.c	2009-03-24 10:08:49.000000000 +0100
+@@ -902,7 +902,6 @@ MODULE_ALIAS("xen:vbd");
+ 
+ static struct xenbus_driver blkfront = {
+ 	.name = "vbd",
+-	.owner = THIS_MODULE,
+ 	.ids = blkfront_ids,
+ 	.probe = blkfront_probe,
+ 	.remove = blkfront_remove,
+--- sle11-2009-05-14.orig/drivers/xen/blktap/xenbus.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/blktap/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -465,7 +465,6 @@ static const struct xenbus_device_id blk
+ 
+ static struct xenbus_driver blktap = {
+ 	.name = "tap",
+-	.owner = THIS_MODULE,
+ 	.ids = blktap_ids,
+ 	.probe = blktap_probe,
+ 	.remove = blktap_remove,
+@@ -475,5 +474,6 @@ static struct xenbus_driver blktap = {
+ 
+ void tap_blkif_xenbus_init(void)
+ {
+-	xenbus_register_backend(&blktap);
++	if (xenbus_register_backend(&blktap))
++		BUG();
+ }
+--- sle11-2009-05-14.orig/drivers/xen/core/evtchn.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/core/evtchn.c	2009-03-04 11:25:55.000000000 +0100
+@@ -145,7 +145,7 @@ static void bind_evtchn_to_cpu(unsigned 
+ 	BUG_ON(!test_bit(chn, s->evtchn_mask));
+ 
+ 	if (irq != -1)
+-		set_native_irq_info(irq, cpumask_of_cpu(cpu));
++		irq_desc[irq].affinity = cpumask_of_cpu(cpu);
+ 
+ 	clear_bit(chn, (unsigned long *)cpu_evtchn_mask[cpu_evtchn[chn]]);
+ 	set_bit(chn, (unsigned long *)cpu_evtchn_mask[cpu]);
+@@ -158,7 +158,7 @@ static void init_evtchn_cpu_bindings(voi
+ 
+ 	/* By default all event channels notify CPU#0. */
+ 	for (i = 0; i < NR_IRQS; i++)
+-		set_native_irq_info(i, cpumask_of_cpu(0));
++		irq_desc[i].affinity = cpumask_of_cpu(0);
+ 
+ 	memset(cpu_evtchn, 0, sizeof(cpu_evtchn));
+ 	memset(cpu_evtchn_mask[0], ~0, sizeof(cpu_evtchn_mask[0]));
+@@ -736,6 +736,7 @@ static struct irq_chip dynirq_chip = {
+ 	.name     = "Dynamic",
+ 	.startup  = startup_dynirq,
+ 	.shutdown = mask_dynirq,
++	.disable  = mask_dynirq,
+ 	.mask     = mask_dynirq,
+ 	.unmask   = unmask_dynirq,
+ 	.mask_ack = ack_dynirq,
+--- sle11-2009-05-14.orig/drivers/xen/core/smpboot.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/core/smpboot.c	2009-03-04 11:25:55.000000000 +0100
+@@ -117,7 +117,7 @@ static int __cpuinit xen_smp_intr_init(u
+ 	rc = bind_ipi_to_irqhandler(RESCHEDULE_VECTOR,
+ 				    cpu,
+ 				    smp_reschedule_interrupt,
+-				    SA_INTERRUPT,
++				    IRQF_DISABLED|IRQF_NOBALANCING,
+ 				    resched_name[cpu],
+ 				    NULL);
+ 	if (rc < 0)
+@@ -128,7 +128,7 @@ static int __cpuinit xen_smp_intr_init(u
+ 	rc = bind_ipi_to_irqhandler(CALL_FUNCTION_VECTOR,
+ 				    cpu,
+ 				    smp_call_function_interrupt,
+-				    SA_INTERRUPT,
++				    IRQF_DISABLED|IRQF_NOBALANCING,
+ 				    callfunc_name[cpu],
+ 				    NULL);
+ 	if (rc < 0)
+@@ -257,7 +257,7 @@ void __init smp_prepare_cpus(unsigned in
+ {
+ 	unsigned int cpu;
+ 	struct task_struct *idle;
+-	int apicid, acpiid;
++	int apicid;
+ 	struct vcpu_get_physid cpu_id;
+ #ifdef __x86_64__
+ 	struct desc_ptr *gdt_descr;
+@@ -266,14 +266,8 @@ void __init smp_prepare_cpus(unsigned in
+ #endif
+ 
+ 	apicid = 0;
+-	if (HYPERVISOR_vcpu_op(VCPUOP_get_physid, 0, &cpu_id) == 0) {
++	if (HYPERVISOR_vcpu_op(VCPUOP_get_physid, 0, &cpu_id) == 0)
+ 		apicid = xen_vcpu_physid_to_x86_apicid(cpu_id.phys_id);
+-		acpiid = xen_vcpu_physid_to_x86_acpiid(cpu_id.phys_id);
+-#ifdef CONFIG_ACPI
+-		if (acpiid != 0xff)
+-			x86_acpiid_to_apicid[acpiid] = apicid;
+-#endif
+-	}
+ 	boot_cpu_data.apicid = apicid;
+ 	cpu_data[0] = boot_cpu_data;
+ 
+@@ -329,14 +323,8 @@ void __init smp_prepare_cpus(unsigned in
+ 			XENFEAT_writable_descriptor_tables);
+ 
+ 		apicid = cpu;
+-		if (HYPERVISOR_vcpu_op(VCPUOP_get_physid, cpu, &cpu_id) == 0) {
++		if (HYPERVISOR_vcpu_op(VCPUOP_get_physid, cpu, &cpu_id) == 0)
+ 			apicid = xen_vcpu_physid_to_x86_apicid(cpu_id.phys_id);
+-			acpiid = xen_vcpu_physid_to_x86_acpiid(cpu_id.phys_id);
+-#ifdef CONFIG_ACPI
+-			if (acpiid != 0xff)
+-				x86_acpiid_to_apicid[acpiid] = apicid;
+-#endif
+-		}
+ 		cpu_data[cpu] = boot_cpu_data;
+ 		cpu_data[cpu].apicid = apicid;
+ 
+--- sle11-2009-05-14.orig/drivers/xen/fbfront/xenfb.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/fbfront/xenfb.c	2009-03-04 11:25:55.000000000 +0100
+@@ -857,7 +857,6 @@ MODULE_ALIAS("xen:vfb");
+ 
+ static struct xenbus_driver xenfb_driver = {
+ 	.name = "vfb",
+-	.owner = THIS_MODULE,
+ 	.ids = xenfb_ids,
+ 	.probe = xenfb_probe,
+ 	.remove = xenfb_remove,
+--- sle11-2009-05-14.orig/drivers/xen/fbfront/xenkbd.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/fbfront/xenkbd.c	2009-03-04 11:25:55.000000000 +0100
+@@ -323,7 +323,6 @@ MODULE_ALIAS("xen:vkbd");
+ 
+ static struct xenbus_driver xenkbd_driver = {
+ 	.name = "vkbd",
+-	.owner = THIS_MODULE,
+ 	.ids = xenkbd_ids,
+ 	.probe = xenkbd_probe,
+ 	.remove = xenkbd_remove,
+--- sle11-2009-05-14.orig/drivers/xen/netback/xenbus.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/netback/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -439,7 +439,6 @@ static const struct xenbus_device_id net
+ 
+ static struct xenbus_driver netback = {
+ 	.name = "vif",
+-	.owner = THIS_MODULE,
+ 	.ids = netback_ids,
+ 	.probe = netback_probe,
+ 	.remove = netback_remove,
+@@ -450,5 +449,6 @@ static struct xenbus_driver netback = {
+ 
+ void netif_xenbus_init(void)
+ {
+-	xenbus_register_backend(&netback);
++	if (xenbus_register_backend(&netback))
++		BUG();
+ }
+--- sle11-2009-05-14.orig/drivers/xen/netfront/netfront.c	2009-03-30 16:34:59.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/netfront/netfront.c	2009-03-30 16:35:44.000000000 +0200
+@@ -1892,20 +1892,19 @@ static struct ethtool_ops network_ethtoo
+ };
+ 
+ #ifdef CONFIG_SYSFS
+-static ssize_t show_rxbuf_min(struct class_device *cd, char *buf)
++static ssize_t show_rxbuf_min(struct device *dev,
++			      struct device_attribute *attr, char *buf)
+ {
+-	struct net_device *netdev = container_of(cd, struct net_device,
+-						 class_dev);
+-	struct netfront_info *info = netdev_priv(netdev);
++	struct netfront_info *info = netdev_priv(to_net_dev(dev));
+ 
+ 	return sprintf(buf, "%u\n", info->rx_min_target);
+ }
+ 
+-static ssize_t store_rxbuf_min(struct class_device *cd,
++static ssize_t store_rxbuf_min(struct device *dev,
++			       struct device_attribute *attr,
+ 			       const char *buf, size_t len)
+ {
+-	struct net_device *netdev = container_of(cd, struct net_device,
+-						 class_dev);
++	struct net_device *netdev = to_net_dev(dev);
+ 	struct netfront_info *np = netdev_priv(netdev);
+ 	char *endp;
+ 	unsigned long target;
+@@ -1935,20 +1934,19 @@ static ssize_t store_rxbuf_min(struct cl
+ 	return len;
+ }
+ 
+-static ssize_t show_rxbuf_max(struct class_device *cd, char *buf)
++static ssize_t show_rxbuf_max(struct device *dev,
++			      struct device_attribute *attr, char *buf)
+ {
+-	struct net_device *netdev = container_of(cd, struct net_device,
+-						 class_dev);
+-	struct netfront_info *info = netdev_priv(netdev);
++	struct netfront_info *info = netdev_priv(to_net_dev(dev));
+ 
+ 	return sprintf(buf, "%u\n", info->rx_max_target);
+ }
+ 
+-static ssize_t store_rxbuf_max(struct class_device *cd,
++static ssize_t store_rxbuf_max(struct device *dev,
++			       struct device_attribute *attr,
+ 			       const char *buf, size_t len)
+ {
+-	struct net_device *netdev = container_of(cd, struct net_device,
+-						 class_dev);
++	struct net_device *netdev = to_net_dev(dev);
+ 	struct netfront_info *np = netdev_priv(netdev);
+ 	char *endp;
+ 	unsigned long target;
+@@ -1978,16 +1976,15 @@ static ssize_t store_rxbuf_max(struct cl
+ 	return len;
+ }
+ 
+-static ssize_t show_rxbuf_cur(struct class_device *cd, char *buf)
++static ssize_t show_rxbuf_cur(struct device *dev,
++			      struct device_attribute *attr, char *buf)
+ {
+-	struct net_device *netdev = container_of(cd, struct net_device,
+-						 class_dev);
+-	struct netfront_info *info = netdev_priv(netdev);
++	struct netfront_info *info = netdev_priv(to_net_dev(dev));
+ 
+ 	return sprintf(buf, "%u\n", info->rx_target);
+ }
+ 
+-static const struct class_device_attribute xennet_attrs[] = {
++static struct device_attribute xennet_attrs[] = {
+ 	__ATTR(rxbuf_min, S_IRUGO|S_IWUSR, show_rxbuf_min, store_rxbuf_min),
+ 	__ATTR(rxbuf_max, S_IRUGO|S_IWUSR, show_rxbuf_max, store_rxbuf_max),
+ 	__ATTR(rxbuf_cur, S_IRUGO, show_rxbuf_cur, NULL),
+@@ -1999,8 +1996,8 @@ static int xennet_sysfs_addif(struct net
+ 	int error = 0;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(xennet_attrs); i++) {
+-		error = class_device_create_file(&netdev->class_dev, 
+-						 &xennet_attrs[i]);
++		error = device_create_file(&netdev->dev,
++					   &xennet_attrs[i]);
+ 		if (error)
+ 			goto fail;
+ 	}
+@@ -2008,8 +2005,7 @@ static int xennet_sysfs_addif(struct net
+ 
+  fail:
+ 	while (--i >= 0)
+-		class_device_remove_file(&netdev->class_dev,
+-					 &xennet_attrs[i]);
++		device_remove_file(&netdev->dev, &xennet_attrs[i]);
+ 	return error;
+ }
+ 
+@@ -2017,10 +2013,8 @@ static void xennet_sysfs_delif(struct ne
+ {
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(xennet_attrs); i++) {
+-		class_device_remove_file(&netdev->class_dev,
+-					 &xennet_attrs[i]);
+-	}
++	for (i = 0; i < ARRAY_SIZE(xennet_attrs); i++)
++		device_remove_file(&netdev->dev, &xennet_attrs[i]);
+ }
+ 
+ #endif /* CONFIG_SYSFS */
+@@ -2186,7 +2180,6 @@ MODULE_ALIAS("xen:vif");
+ 
+ static struct xenbus_driver netfront_driver = {
+ 	.name = "vif",
+-	.owner = THIS_MODULE,
+ 	.ids = netfront_ids,
+ 	.probe = netfront_probe,
+ 	.remove = __devexit_p(netfront_remove),
+--- sle11-2009-05-14.orig/drivers/xen/pciback/xenbus.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/pciback/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -682,7 +682,6 @@ static const struct xenbus_device_id xen
+ 
+ static struct xenbus_driver xenbus_pciback_driver = {
+ 	.name 			= "pciback",
+-	.owner 			= THIS_MODULE,
+ 	.ids 			= xenpci_ids,
+ 	.probe 			= pciback_xenbus_probe,
+ 	.remove 		= pciback_xenbus_remove,
+--- sle11-2009-05-14.orig/drivers/xen/pcifront/xenbus.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/pcifront/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -436,7 +436,6 @@ MODULE_ALIAS("xen:pci");
+ 
+ static struct xenbus_driver xenbus_pcifront_driver = {
+ 	.name 			= "pcifront",
+-	.owner 			= THIS_MODULE,
+ 	.ids 			= xenpci_ids,
+ 	.probe 			= pcifront_xenbus_probe,
+ 	.remove 		= pcifront_xenbus_remove,
+--- sle11-2009-05-14.orig/drivers/xen/scsiback/xenbus.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/scsiback/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -350,7 +350,6 @@ static struct xenbus_device_id scsiback_
+ 
+ static struct xenbus_driver scsiback = {
+ 	.name			= "vscsi",
+-	.owner			= THIS_MODULE,
+ 	.ids			= scsiback_ids,
+ 	.probe			= scsiback_probe,
+ 	.remove			= scsiback_remove,
+--- sle11-2009-05-14.orig/drivers/xen/scsifront/xenbus.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/scsifront/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -401,7 +401,6 @@ static struct xenbus_device_id scsifront
+ 
+ static struct xenbus_driver scsifront_driver = {
+ 	.name			= "vscsi",
+-	.owner			= THIS_MODULE,
+ 	.ids			= scsifront_ids,
+ 	.probe			= scsifront_probe,
+ 	.remove			= scsifront_remove,
+--- sle11-2009-05-14.orig/drivers/xen/tpmback/common.h	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/tpmback/common.h	2009-03-04 11:25:55.000000000 +0100
+@@ -54,11 +54,11 @@ typedef struct tpmif_st {
+ 
+ void tpmif_disconnect_complete(tpmif_t * tpmif);
+ tpmif_t *tpmif_find(domid_t domid, struct backend_info *bi);
+-void tpmif_interface_init(void);
++int tpmif_interface_init(void);
+ void tpmif_interface_exit(void);
+ void tpmif_schedule_work(tpmif_t * tpmif);
+ void tpmif_deschedule_work(tpmif_t * tpmif);
+-void tpmif_xenbus_init(void);
++int tpmif_xenbus_init(void);
+ void tpmif_xenbus_exit(void);
+ int tpmif_map(tpmif_t *tpmif, unsigned long shared_page, unsigned int evtchn);
+ irqreturn_t tpmif_be_int(int irq, void *dev_id);
+--- sle11-2009-05-14.orig/drivers/xen/tpmback/interface.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/tpmback/interface.c	2009-03-04 11:25:55.000000000 +0100
+@@ -156,13 +156,14 @@ void tpmif_disconnect_complete(tpmif_t *
+ 	free_tpmif(tpmif);
+ }
+ 
+-void __init tpmif_interface_init(void)
++int __init tpmif_interface_init(void)
+ {
+ 	tpmif_cachep = kmem_cache_create("tpmif_cache", sizeof (tpmif_t),
+ 					 0, 0, NULL, NULL);
++	return tpmif_cachep ? 0 : -ENOMEM;
+ }
+ 
+-void __exit tpmif_interface_exit(void)
++void tpmif_interface_exit(void)
+ {
+ 	kmem_cache_destroy(tpmif_cachep);
+ }
+--- sle11-2009-05-14.orig/drivers/xen/tpmback/tpmback.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/tpmback/tpmback.c	2009-03-04 11:25:55.000000000 +0100
+@@ -923,22 +923,30 @@ static int __init tpmback_init(void)
+ 	spin_lock_init(&tpm_schedule_list_lock);
+ 	INIT_LIST_HEAD(&tpm_schedule_list);
+ 
+-	tpmif_interface_init();
+-	tpmif_xenbus_init();
++	rc = tpmif_interface_init();
++	if (!rc) {
++		rc = tpmif_xenbus_init();
++		if (rc)
++			tpmif_interface_exit();
++	}
++	if (rc) {
++		misc_deregister(&vtpms_miscdevice);
++		return rc;
++	}
+ 
+ 	printk(KERN_ALERT "Successfully initialized TPM backend driver.\n");
+ 
+ 	return 0;
+ }
+-
+ module_init(tpmback_init);
+ 
+-void __exit tpmback_exit(void)
++static void __exit tpmback_exit(void)
+ {
+ 	vtpm_release_packets(NULL, 0);
+ 	tpmif_xenbus_exit();
+ 	tpmif_interface_exit();
+ 	misc_deregister(&vtpms_miscdevice);
+ }
++module_exit(tpmback_exit)
+ 
+ MODULE_LICENSE("Dual BSD/GPL");
+--- sle11-2009-05-14.orig/drivers/xen/tpmback/xenbus.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/tpmback/xenbus.c	2009-03-04 11:25:55.000000000 +0100
+@@ -270,7 +270,6 @@ static const struct xenbus_device_id tpm
+ 
+ static struct xenbus_driver tpmback = {
+ 	.name = "vtpm",
+-	.owner = THIS_MODULE,
+ 	.ids = tpmback_ids,
+ 	.probe = tpmback_probe,
+ 	.remove = tpmback_remove,
+@@ -278,9 +277,9 @@ static struct xenbus_driver tpmback = {
+ };
+ 
+ 
+-void tpmif_xenbus_init(void)
++int tpmif_xenbus_init(void)
+ {
+-	xenbus_register_backend(&tpmback);
++	return xenbus_register_backend(&tpmback);
+ }
+ 
+ void tpmif_xenbus_exit(void)
+--- sle11-2009-05-14.orig/drivers/xen/xenbus/xenbus_probe.c	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/xenbus/xenbus_probe.c	2009-03-04 11:25:55.000000000 +0100
+@@ -365,7 +365,9 @@ static void xenbus_dev_shutdown(struct d
+ }
+ 
+ int xenbus_register_driver_common(struct xenbus_driver *drv,
+-				  struct xen_bus_type *bus)
++				  struct xen_bus_type *bus,
++				  struct module *owner,
++				  const char *mod_name)
+ {
+ 	int ret;
+ 
+@@ -375,7 +377,10 @@ int xenbus_register_driver_common(struct
+ 	drv->driver.name = drv->name;
+ 	drv->driver.bus = &bus->bus;
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,10)
+-	drv->driver.owner = drv->owner;
++	drv->driver.owner = owner;
++#endif
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,21)
++	drv->driver.mod_name = mod_name;
+ #endif
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,16)
+ 	drv->driver.probe = xenbus_dev_probe;
+@@ -389,13 +394,15 @@ int xenbus_register_driver_common(struct
+ 	return ret;
+ }
+ 
+-int xenbus_register_frontend(struct xenbus_driver *drv)
++int __xenbus_register_frontend(struct xenbus_driver *drv,
++			       struct module *owner, const char *mod_name)
+ {
+ 	int ret;
+ 
+ 	drv->read_otherend_details = read_backend_details;
+ 
+-	ret = xenbus_register_driver_common(drv, &xenbus_frontend);
++	ret = xenbus_register_driver_common(drv, &xenbus_frontend,
++					    owner, mod_name);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -404,7 +411,7 @@ int xenbus_register_frontend(struct xenb
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(xenbus_register_frontend);
++EXPORT_SYMBOL_GPL(__xenbus_register_frontend);
+ 
+ void xenbus_unregister_driver(struct xenbus_driver *drv)
+ {
+--- sle11-2009-05-14.orig/drivers/xen/xenbus/xenbus_probe.h	2008-11-25 12:35:56.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/xenbus/xenbus_probe.h	2009-03-04 11:25:55.000000000 +0100
+@@ -63,7 +63,9 @@ extern int xenbus_match(struct device *_
+ extern int xenbus_dev_probe(struct device *_dev);
+ extern int xenbus_dev_remove(struct device *_dev);
+ extern int xenbus_register_driver_common(struct xenbus_driver *drv,
+-					 struct xen_bus_type *bus);
++					 struct xen_bus_type *bus,
++					 struct module *owner,
++					 const char *mod_name);
+ extern int xenbus_probe_node(struct xen_bus_type *bus,
+ 			     const char *type,
+ 			     const char *nodename);
+--- sle11-2009-05-14.orig/drivers/xen/xenbus/xenbus_probe_backend.c	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/drivers/xen/xenbus/xenbus_probe_backend.c	2009-03-04 11:25:55.000000000 +0100
+@@ -172,13 +172,15 @@ static int xenbus_uevent_backend(struct 
+ 	return 0;
+ }
+ 
+-int xenbus_register_backend(struct xenbus_driver *drv)
++int __xenbus_register_backend(struct xenbus_driver *drv,
++			       struct module *owner, const char *mod_name)
+ {
+ 	drv->read_otherend_details = read_frontend_details;
+ 
+-	return xenbus_register_driver_common(drv, &xenbus_backend);
++	return xenbus_register_driver_common(drv, &xenbus_backend,
++					     owner, mod_name);
+ }
+-EXPORT_SYMBOL_GPL(xenbus_register_backend);
++EXPORT_SYMBOL_GPL(__xenbus_register_backend);
+ 
+ /* backend/<typename>/<frontend-uuid>/<name> */
+ static int xenbus_probe_backend_unit(const char *dir,
+--- sle11-2009-05-14.orig/drivers/xen/xenoprof/xenoprofile.c	2009-03-04 11:28:34.000000000 +0100
++++ sle11-2009-05-14/drivers/xen/xenoprof/xenoprofile.c	2009-03-04 11:25:55.000000000 +0100
+@@ -235,7 +235,7 @@ static int bind_virq(void)
+ 		result = bind_virq_to_irqhandler(VIRQ_XENOPROF,
+ 						 i,
+ 						 xenoprof_ovf_interrupt,
+-						 SA_INTERRUPT,
++						 IRQF_DISABLED|IRQF_NOBALANCING,
+ 						 "xenoprof",
+ 						 NULL);
+ 
+--- sle11-2009-05-14.orig/include/asm-x86/i8253.h	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/include/asm-x86/i8253.h	2009-03-04 11:25:55.000000000 +0100
+@@ -8,10 +8,14 @@
+ 
+ extern spinlock_t i8253_lock;
+ 
++#ifdef CONFIG_GENERIC_CLOCKEVENTS
++
+ extern struct clock_event_device *global_clock_event;
+ 
+ extern void setup_pit_timer(void);
+ 
++#endif
++
+ #define inb_pit		inb_p
+ #define outb_pit	outb_p
+ 
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/desc_32.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/desc_32.h	2009-03-04 11:25:55.000000000 +0100
+@@ -21,7 +21,7 @@ struct Xgt_desc_struct {
+ 
+ extern struct Xgt_desc_struct idt_descr;
+ DECLARE_PER_CPU(struct Xgt_desc_struct, cpu_gdt_descr);
+-
++extern struct Xgt_desc_struct early_gdt_descr;
+ 
+ static inline struct desc_struct *get_cpu_gdt_table(unsigned int cpu)
+ {
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/hypervisor.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/hypervisor.h	2009-03-04 11:28:11.000000000 +0100
+@@ -158,6 +158,19 @@ static inline void arch_leave_lazy_mmu_m
+ #define arch_use_lazy_mmu_mode() unlikely(__get_cpu_var(xen_lazy_mmu))
+ #endif
+ 
++#if 0 /* All uses are in places potentially called asynchronously, but
++       * asynchronous code should rather not make use of lazy mode at all.
++       * Therefore, all uses of this function get commented out, proper
++       * detection of asynchronous invocations is added whereever needed,
++       * and this function is disabled to catch any new (improper) uses.
++       */
++static inline void arch_flush_lazy_mmu_mode(void)
++{
++	if (arch_use_lazy_mmu_mode())
++		xen_multicall_flush(false);
++}
++#endif
++
+ #else /* !CONFIG_XEN || MODULE */
+ 
+ static inline void xen_multicall_flush(bool ignore) {}
+@@ -215,7 +228,7 @@ HYPERVISOR_block(
+ 	return rc;
+ }
+ 
+-static inline void /*__noreturn*/
++static inline void __noreturn
+ HYPERVISOR_shutdown(
+ 	unsigned int reason)
+ {
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/mmu_context_32.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/mmu_context_32.h	2009-03-04 11:25:55.000000000 +0100
+@@ -27,13 +27,13 @@ static inline void enter_lazy_tlb(struct
+ static inline void __prepare_arch_switch(void)
+ {
+ 	/*
+-	 * Save away %fs. No need to save %gs, as it was saved on the
++	 * Save away %gs. No need to save %fs, as it was saved on the
+ 	 * stack on entry.  No need to save %es and %ds, as those are
+ 	 * always kernel segments while inside the kernel.
+ 	 */
+-	asm volatile ( "mov %%fs,%0"
+-		: "=m" (current->thread.fs));
+-	asm volatile ( "movl %0,%%fs"
++	asm volatile ( "mov %%gs,%0"
++		: "=m" (current->thread.gs));
++	asm volatile ( "movl %0,%%gs"
+ 		: : "r" (0) );
+ }
+ 
+@@ -95,7 +95,7 @@ static inline void switch_mm(struct mm_s
+ }
+ 
+ #define deactivate_mm(tsk, mm)			\
+-	asm("movl %0,%%fs": :"r" (0));
++	asm("movl %0,%%gs": :"r" (0));
+ 
+ static inline void activate_mm(struct mm_struct *prev, struct mm_struct *next)
+ {
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/pgalloc_32.h	2009-05-14 10:56:29.000000000 +0200
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/pgalloc_32.h	2009-03-04 11:25:55.000000000 +0100
+@@ -6,12 +6,23 @@
+ #include <linux/mm.h>		/* for struct page */
+ #include <asm/io.h>		/* for phys_to_virt and page_to_pseudophys */
+ 
+-#define pmd_populate_kernel(mm, pmd, pte) \
+-		set_pmd(pmd, __pmd(_PAGE_TABLE + __pa(pte)))
++#define paravirt_alloc_pt(pfn) do { } while (0)
++#define paravirt_alloc_pd(pfn) do { } while (0)
++#define paravirt_alloc_pd(pfn) do { } while (0)
++#define paravirt_alloc_pd_clone(pfn, clonepfn, start, count) do { } while (0)
++#define paravirt_release_pt(pfn) do { } while (0)
++#define paravirt_release_pd(pfn) do { } while (0)
++
++#define pmd_populate_kernel(mm, pmd, pte)			\
++do {								\
++	paravirt_alloc_pt(__pa(pte) >> PAGE_SHIFT);		\
++	set_pmd(pmd, __pmd(_PAGE_TABLE + __pa(pte)));		\
++} while (0)
+ 
+ #define pmd_populate(mm, pmd, pte) 					\
+ do {									\
+ 	unsigned long pfn = page_to_pfn(pte);				\
++	paravirt_alloc_pt(pfn);						\
+ 	if (test_bit(PG_pinned, &virt_to_page((mm)->pgd)->flags)) {	\
+ 		if (!PageHighMem(pte))					\
+ 			BUG_ON(HYPERVISOR_update_va_mapping(		\
+@@ -42,7 +53,11 @@ static inline void pte_free_kernel(pte_t
+ 
+ extern void pte_free(struct page *pte);
+ 
+-#define __pte_free_tlb(tlb,pte) tlb_remove_page((tlb),(pte))
++#define __pte_free_tlb(tlb,pte) 					\
++do {									\
++	paravirt_release_pt(page_to_pfn(pte));				\
++	tlb_remove_page((tlb),(pte));					\
++} while (0)
+ 
+ #ifdef CONFIG_X86_PAE
+ /*
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/pgtable_32.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/pgtable_32.h	2009-03-04 11:25:55.000000000 +0100
+@@ -275,6 +275,7 @@ static inline pte_t pte_mkhuge(pte_t pte
+  */
+ #define pte_update(mm, addr, ptep)		do { } while (0)
+ #define pte_update_defer(mm, addr, ptep)	do { } while (0)
++#define paravirt_map_pt_hook(slot, va, pfn)	do { } while (0)
+ 
+ /*
+  * We only update the dirty/accessed state if we set
+@@ -490,12 +491,24 @@ extern pte_t *lookup_address(unsigned lo
+ #endif
+ 
+ #if defined(CONFIG_HIGHPTE)
+-#define pte_offset_map(dir, address) \
+-	((pte_t *)kmap_atomic_pte(pmd_page(*(dir)),KM_PTE0) + \
+-	 pte_index(address))
+-#define pte_offset_map_nested(dir, address) \
+-	((pte_t *)kmap_atomic_pte(pmd_page(*(dir)),KM_PTE1) + \
+-	 pte_index(address))
++#define pte_offset_map(dir, address)				\
++({								\
++	pte_t *__ptep;						\
++	unsigned pfn = pmd_val(*(dir)) >> PAGE_SHIFT;		\
++	__ptep = (pte_t *)kmap_atomic_pte(pfn_to_page(pfn),KM_PTE0); \
++	paravirt_map_pt_hook(KM_PTE0,__ptep, pfn);		\
++	__ptep = __ptep + pte_index(address);			\
++	__ptep;							\
++})
++#define pte_offset_map_nested(dir, address)			\
++({								\
++	pte_t *__ptep;						\
++	unsigned pfn = pmd_val(*(dir)) >> PAGE_SHIFT;		\
++	__ptep = (pte_t *)kmap_atomic_pte(pfn_to_page(pfn),KM_PTE1); \
++	paravirt_map_pt_hook(KM_PTE1,__ptep, pfn);		\
++	__ptep = __ptep + pte_index(address);			\
++	__ptep;							\
++})
+ #define pte_unmap(pte) kunmap_atomic(pte, KM_PTE0)
+ #define pte_unmap_nested(pte) kunmap_atomic(pte, KM_PTE1)
+ #else
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/processor_32.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/processor_32.h	2009-03-04 11:25:55.000000000 +0100
+@@ -431,7 +431,7 @@ struct thread_struct {
+ 	.vm86_info = NULL,						\
+ 	.sysenter_cs = __KERNEL_CS,					\
+ 	.io_bitmap_ptr = NULL,						\
+-	.gs = __KERNEL_PDA,						\
++	.fs = __KERNEL_PDA,						\
+ }
+ 
+ /*
+@@ -449,8 +449,8 @@ struct thread_struct {
+ }
+ 
+ #define start_thread(regs, new_eip, new_esp) do {		\
+-	__asm__("movl %0,%%fs": :"r" (0));			\
+-	regs->xgs = 0;						\
++	__asm__("movl %0,%%gs": :"r" (0));			\
++	regs->xfs = 0;						\
+ 	set_fs(USER_DS);					\
+ 	regs->xds = __USER_DS;					\
+ 	regs->xes = __USER_DS;					\
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/segment_32.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/segment_32.h	2009-03-04 11:25:55.000000000 +0100
+@@ -83,14 +83,8 @@
+  * The GDT has 32 entries
+  */
+ #define GDT_ENTRIES 32
+-
+ #define GDT_SIZE (GDT_ENTRIES * 8)
+ 
+-/* Matches __KERNEL_CS and __USER_CS (they must be 2 entries apart) */
+-#define SEGMENT_IS_FLAT_CODE(x)  (((x) & 0xec) == GDT_ENTRY_KERNEL_CS * 8)
+-/* Matches PNP_CS32 and PNP_CS16 (they must be consecutive) */
+-#define SEGMENT_IS_PNP_CODE(x)   (((x) & 0xf4) == GDT_ENTRY_PNPBIOS_BASE * 8)
+-
+ /* Simple and small GDT entries for booting only */
+ 
+ #define GDT_ENTRY_BOOT_CS		2
+@@ -132,4 +126,21 @@
+ #define SEGMENT_GDT		0x0
+ 
+ #define get_kernel_rpl()  (xen_feature(XENFEAT_supervisor_mode_kernel)?0:1)
++
++/*
++ * Matching rules for certain types of segments.
++ */
++
++/* Matches only __KERNEL_CS, ignoring PnP / USER / APM segments */
++#define SEGMENT_IS_KERNEL_CODE(x) (((x) & ~3) == GDT_ENTRY_KERNEL_CS * 8 \
++                                   || ((x) & ~3) == (FLAT_KERNEL_CS & ~3))
++
++/* Matches __KERNEL_CS and __USER_CS (they must be 2 entries apart) */
++#define SEGMENT_IS_FLAT_CODE(x)  (((x) & ~0x13) == GDT_ENTRY_KERNEL_CS * 8 \
++                                  || ((x) & ~3) == (FLAT_KERNEL_CS & ~3) \
++                                  || ((x) & ~3) == (FLAT_USER_CS & ~3))
++
++/* Matches PNP_CS32 and PNP_CS16 (they must be consecutive) */
++#define SEGMENT_IS_PNP_CODE(x)   (((x) & ~0x0b) == GDT_ENTRY_PNPBIOS_BASE * 8)
++
+ #endif
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/smp_32.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/smp_32.h	2009-03-04 11:25:55.000000000 +0100
+@@ -52,6 +52,11 @@ extern void cpu_exit_clear(void);
+ extern void cpu_uninit(void);
+ #endif
+ 
++#ifndef CONFIG_PARAVIRT
++#define startup_ipi_hook(phys_apicid, start_eip, start_esp) 		\
++do { } while (0)
++#endif
++
+ /*
+  * This function is needed by all SMP systems. It must _always_ be valid
+  * from the initial startup. We map APIC_BASE very early in page_setup(),
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/dma-mapping_64.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/dma-mapping_64.h	2009-03-04 11:25:55.000000000 +0100
+@@ -9,7 +9,6 @@
+ 
+ #include <asm/scatterlist.h>
+ #include <asm/io.h>
+-#include <asm/swiotlb.h>
+ 
+ struct dma_mapping_ops {
+ 	int             (*mapping_error)(dma_addr_t dma_addr);
+@@ -67,6 +66,9 @@ static inline int dma_mapping_error(dma_
+ #define dma_alloc_noncoherent(d, s, h, f) dma_alloc_coherent(d, s, h, f)
+ #define dma_free_noncoherent(d, s, v, h) dma_free_coherent(d, s, v, h)
+ 
++#define dma_alloc_noncoherent(d, s, h, f) dma_alloc_coherent(d, s, h, f)
++#define dma_free_noncoherent(d, s, v, h) dma_free_coherent(d, s, v, h)
++
+ extern void *dma_alloc_coherent(struct device *dev, size_t size,
+ 				dma_addr_t *dma_handle, gfp_t gfp);
+ extern void dma_free_coherent(struct device *dev, size_t size, void *vaddr,
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/pgtable_64.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/pgtable_64.h	2009-03-04 11:25:55.000000000 +0100
+@@ -416,15 +416,6 @@ static inline int pmd_large(pmd_t pte) {
+ #define mk_pte(page, pgprot)	pfn_pte(page_to_pfn(page), (pgprot))
+ #define mk_pte_huge(entry) (__pte_val(entry) |= _PAGE_PRESENT | _PAGE_PSE)
+  
+-/* physical address -> PTE */
+-static inline pte_t mk_pte_phys(unsigned long physpage, pgprot_t pgprot)
+-{ 
+-	unsigned long pteval;
+-	pteval = physpage | pgprot_val(pgprot);
+-	pteval &= __supported_pte_mask;
+-	return __pte(pteval);
+-}
+- 
+ /* Change flags of a PTE */
+ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+ { 
+--- sle11-2009-05-14.orig/include/asm-x86/mach-xen/asm/smp_64.h	2008-12-15 11:26:44.000000000 +0100
++++ sle11-2009-05-14/include/asm-x86/mach-xen/asm/smp_64.h	2009-03-04 11:25:55.000000000 +0100
+@@ -7,6 +7,7 @@
+ #include <linux/threads.h>
+ #include <linux/cpumask.h>
+ #include <linux/bitops.h>
++#include <linux/init.h>
+ extern int disable_apic;
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+@@ -73,7 +74,7 @@ extern int __cpu_disable(void);
+ extern void __cpu_die(unsigned int cpu);
+ extern void prefill_possible_map(void);
+ extern unsigned num_processors;
+-extern unsigned disabled_cpus;
++extern unsigned __cpuinitdata disabled_cpus;
+ 
+ #define NO_PROC_ID		0xFF		/* No processor magic marker */
+ 
+--- sle11-2009-05-14.orig/include/xen/xenbus.h	2008-11-25 12:35:56.000000000 +0100
++++ sle11-2009-05-14/include/xen/xenbus.h	2009-03-04 11:25:55.000000000 +0100
+@@ -93,8 +93,7 @@ struct xenbus_device_id
+ 
+ /* A xenbus driver. */
+ struct xenbus_driver {
+-	char *name;
+-	struct module *owner;
++	const char *name;
+ 	const struct xenbus_device_id *ids;
+ 	int (*probe)(struct xenbus_device *dev,
+ 		     const struct xenbus_device_id *id);
+@@ -115,8 +114,25 @@ static inline struct xenbus_driver *to_x
+ 	return container_of(drv, struct xenbus_driver, driver);
+ }
+ 
+-int xenbus_register_frontend(struct xenbus_driver *drv);
+-int xenbus_register_backend(struct xenbus_driver *drv);
++int __must_check __xenbus_register_frontend(struct xenbus_driver *drv,
++					    struct module *owner,
++					    const char *mod_name);
++
++static inline int __must_check
++xenbus_register_frontend(struct xenbus_driver *drv)
++{
++	return __xenbus_register_frontend(drv, THIS_MODULE, KBUILD_MODNAME);
++}
++
++int __must_check __xenbus_register_backend(struct xenbus_driver *drv,
++					   struct module *owner,
++					   const char *mod_name);
++static inline int __must_check
++xenbus_register_backend(struct xenbus_driver *drv)
++{
++	return __xenbus_register_backend(drv, THIS_MODULE, KBUILD_MODNAME);
++}
++
+ void xenbus_unregister_driver(struct xenbus_driver *drv);
+ 
+ struct xenbus_transaction
+--- sle11-2009-05-14.orig/lib/swiotlb-xen.c	2009-03-20 10:00:58.000000000 +0100
++++ sle11-2009-05-14/lib/swiotlb-xen.c	2009-03-04 11:25:55.000000000 +0100
+@@ -135,8 +135,8 @@ __setup("swiotlb=", setup_io_tlb_npages)
+  * Statically reserve bounce buffer space and initialize bounce buffer data
+  * structures for the software IO TLB used to implement the PCI DMA API.
+  */
+-void
+-swiotlb_init_with_default_size (size_t default_size)
++void __init
++swiotlb_init_with_default_size(size_t default_size)
+ {
+ 	unsigned long i, bytes;
+ 	int rc;
+@@ -221,7 +221,7 @@ swiotlb_init_with_default_size (size_t d
+ 	       dma_bits);
+ }
+ 
+-void
++void __init
+ swiotlb_init(void)
+ {
+ 	long ram_end;
+@@ -457,8 +457,8 @@ swiotlb_full(struct device *dev, size_t 
+ 	 * When the mapping is small enough return a static buffer to limit
+ 	 * the damage, or panic when the transfer is too big.
+ 	 */
+-	printk(KERN_ERR "PCI-DMA: Out of SW-IOMMU space for %lu bytes at "
+-	       "device %s\n", (unsigned long)size, dev ? dev->bus_id : "?");
++	printk(KERN_ERR "PCI-DMA: Out of SW-IOMMU space for %zu bytes at "
++	       "device %s\n", size, dev ? dev->bus_id : "?");
+ 
+ 	if (size > io_tlb_overflow && do_panic) {
+ 		if (dir == PCI_DMA_FROMDEVICE || dir == PCI_DMA_BIDIRECTIONAL)
+@@ -602,7 +602,7 @@ swiotlb_map_sg(struct device *hwdev, str
+ 				sg[0].dma_length = 0;
+ 				return 0;
+ 			}
+-			sg->dma_address = (dma_addr_t)virt_to_bus(map);
++			sg->dma_address = virt_to_bus(map);
+ 		} else
+ 			sg->dma_address = dev_addr;
+ 		sg->dma_length = sg->length;
+@@ -624,8 +624,7 @@ swiotlb_unmap_sg(struct device *hwdev, s
+ 
+ 	for (i = 0; i < nelems; i++, sg++)
+ 		if (in_swiotlb_aperture(sg->dma_address))
+-			unmap_single(hwdev, 
+-				     (void *)bus_to_virt(sg->dma_address),
++			unmap_single(hwdev, bus_to_virt(sg->dma_address),
+ 				     sg->dma_length, dir);
+ 		else
+ 			gnttab_dma_unmap_page(sg->dma_address);
+@@ -648,8 +647,7 @@ swiotlb_sync_sg_for_cpu(struct device *h
+ 
+ 	for (i = 0; i < nelems; i++, sg++)
+ 		if (in_swiotlb_aperture(sg->dma_address))
+-			sync_single(hwdev,
+-				    (void *)bus_to_virt(sg->dma_address),
++			sync_single(hwdev, bus_to_virt(sg->dma_address),
+ 				    sg->dma_length, dir);
+ }
+ 
+@@ -663,8 +661,7 @@ swiotlb_sync_sg_for_device(struct device
+ 
+ 	for (i = 0; i < nelems; i++, sg++)
+ 		if (in_swiotlb_aperture(sg->dma_address))
+-			sync_single(hwdev,
+-				    (void *)bus_to_virt(sg->dma_address),
++			sync_single(hwdev, bus_to_virt(sg->dma_address),
+ 				    sg->dma_length, dir);
+ }
+ 

@@ -1,0 +1,30 @@
+From: Steven Whitehouse <swhiteho@redhat.com>
+commit d61e9aac96317a43c192f1faabfa95d4d675b7ce
+Author: Steven Whitehouse <swhiteho@redhat.com>
+Date:   Wed Dec 10 09:31:02 2008 -0600
+Subject: dlm: replace schedule with cond_resched
+    
+    This is a one-liner to use cond_resched() rather than schedule()
+    in the ast delivery loop. It should not be necessary to schedule
+    every time, so this will save some cpu time while continuing to
+    allow scheduling when required.
+    
+Signed-off-by: Steven Whitehouse <swhiteho@redhat.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Coly Li <coly.li@suse.de>
+
+---
+ fs/dlm/ast.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/dlm/ast.c
++++ b/fs/dlm/ast.c
+@@ -98,7 +98,7 @@ static void process_asts(void)
+ 		   and may result in the lkb being freed */
+ 		dlm_put_lkb(lkb);
+ 
+-		schedule();
++		cond_resched();
+ 	}
+ }
+ 

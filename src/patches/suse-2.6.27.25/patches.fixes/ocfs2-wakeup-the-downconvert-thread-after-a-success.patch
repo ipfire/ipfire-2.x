@@ -1,0 +1,34 @@
+From: Sunil Mushran <sunil.mushran@oracle.com>
+Date: Thu, 29 Jan 2009 17:12:31 -0800
+Subject: [PATCH] ocfs2: Wakeup the downconvert thread after a successful cancel convert
+Patch-mainline: 2.6.29
+
+When two nodes holding PR locks on a resource concurrently attempt to
+upconvert the locks to EX, the master sends a BAST to one of the nodes. This
+message tells that node to first cancel convert the upconvert request,
+followed by downconvert to a NL. Only when this lock is downconverted to NL,
+can the master upconvert the first node's lock to EX.
+
+While the fs was doing the cancel convert, it was forgetting to wake up the
+dc thread after a successful cancel, leading to a deadlock.
+
+Reported-and-Tested-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Sunil Mushran <sunil.mushran@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/dlmglue.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2866,6 +2866,10 @@ static void ocfs2_unlock_ast(void *opaqu
+ 	case OCFS2_UNLOCK_CANCEL_CONVERT:
+ 		mlog(0, "Cancel convert success for %s\n", lockres->l_name);
+ 		lockres->l_action = OCFS2_AST_INVALID;
++		/* Downconvert thread may have requeued this lock, we
++		 * need to wake it. */
++		if (lockres->l_flags & OCFS2_LOCK_BLOCKED)
++			ocfs2_wake_downconvert_thread(ocfs2_get_lockres_osb(lockres));
+ 		break;
+ 	case OCFS2_UNLOCK_DROP_LOCK:
+ 		lockres->l_level = DLM_LOCK_IV;

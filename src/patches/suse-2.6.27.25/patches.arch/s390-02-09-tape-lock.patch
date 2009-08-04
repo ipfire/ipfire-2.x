@@ -1,0 +1,87 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: tape device driver: improve locking
+References: bnc#434333
+
+Symptom:     1. message "Badness at include/linux/blkdev.h"
+             2. lockdep message "INFO: inconsistent lock state"
+Problem:     1. Tape block device driver does not hold request queue lock
+                when completing request via __blk_end_request.
+             2. During open() processing tape device driver receives
+                interrupt while holding the tape device lock.
+Solution:    1. Use blk_end_request rather than __blk_end_request
+             2. Use spin_lock_irq to disable interrupts rather than spin_lock.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/char/tape_block.c |    6 ++++--
+ drivers/s390/char/tape_core.c  |    8 ++++----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+Index: temp_orig/drivers/s390/char/tape_block.c
+===================================================================
+--- temp_orig.orig/drivers/s390/char/tape_block.c
++++ temp_orig/drivers/s390/char/tape_block.c
+@@ -76,7 +76,7 @@ tapeblock_trigger_requeue(struct tape_de
+ static void
+ tapeblock_end_request(struct request *req, int error)
+ {
+-	if (__blk_end_request(req, error, blk_rq_bytes(req)))
++	if (blk_end_request(req, error, blk_rq_bytes(req)))
+ 		BUG();
+ }
+ 
+@@ -166,7 +166,7 @@ tapeblock_requeue(struct work_struct *wo
+ 		nr_queued++;
+ 	spin_unlock(get_ccwdev_lock(device->cdev));
+ 
+-	spin_lock(&device->blk_data.request_queue_lock);
++	spin_lock_irq(&device->blk_data.request_queue_lock);
+ 	while (
+ 		!blk_queue_plugged(queue) &&
+ 		elv_next_request(queue)   &&
+@@ -176,7 +176,9 @@ tapeblock_requeue(struct work_struct *wo
+ 		if (rq_data_dir(req) == WRITE) {
+ 			DBF_EVENT(1, "TBLOCK: Rejecting write request\n");
+ 			blkdev_dequeue_request(req);
++			spin_unlock_irq(&device->blk_data.request_queue_lock);
+ 			tapeblock_end_request(req, -EIO);
++			spin_lock_irq(&device->blk_data.request_queue_lock);
+ 			continue;
+ 		}
+ 		blkdev_dequeue_request(req);
+Index: temp_orig/drivers/s390/char/tape_core.c
+===================================================================
+--- temp_orig.orig/drivers/s390/char/tape_core.c
++++ temp_orig/drivers/s390/char/tape_core.c
+@@ -1199,7 +1199,7 @@ tape_open(struct tape_device *device)
+ {
+ 	int rc;
+ 
+-	spin_lock(get_ccwdev_lock(device->cdev));
++	spin_lock_irq(get_ccwdev_lock(device->cdev));
+ 	if (device->tape_state == TS_NOT_OPER) {
+ 		DBF_EVENT(6, "TAPE:nodev\n");
+ 		rc = -ENODEV;
+@@ -1217,7 +1217,7 @@ tape_open(struct tape_device *device)
+ 		tape_state_set(device, TS_IN_USE);
+ 		rc = 0;
+ 	}
+-	spin_unlock(get_ccwdev_lock(device->cdev));
++	spin_unlock_irq(get_ccwdev_lock(device->cdev));
+ 	return rc;
+ }
+ 
+@@ -1227,11 +1227,11 @@ tape_open(struct tape_device *device)
+ int
+ tape_release(struct tape_device *device)
+ {
+-	spin_lock(get_ccwdev_lock(device->cdev));
++	spin_lock_irq(get_ccwdev_lock(device->cdev));
+ 	if (device->tape_state == TS_IN_USE)
+ 		tape_state_set(device, TS_UNUSED);
+ 	module_put(device->discipline->owner);
+-	spin_unlock(get_ccwdev_lock(device->cdev));
++	spin_unlock_irq(get_ccwdev_lock(device->cdev));
+ 	return 0;
+ }
+ 

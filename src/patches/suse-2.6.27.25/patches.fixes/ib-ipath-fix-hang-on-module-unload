@@ -1,0 +1,41 @@
+From: Yannick Cote <yannick.cote@qlogic.com>
+Date: Tue, 30 Sep 2008 04:24:04 +0000 (-0700)
+Subject: IB/ipath: Fix hang on module unload
+Patch-mainline: 2.6.28-rc1
+Git-commit: e441d6342890838bfc6d64ca2f0964aca08ae2a2
+References: bnc#495068
+
+IB/ipath: Fix hang on module unload
+
+Handle the case where posting a send is requested when the link is
+down.  This fixes <https://bugs.openfabrics.org/show_bug.cgi?id=1117>.
+
+Signed-off-by: Yannick Cote <yannick.cote@qlogic.com>
+Signed-off-by: Roland Dreier <rolandd@cisco.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+
+ drivers/infiniband/hw/ipath/ipath_verbs.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/infiniband/hw/ipath/ipath_verbs.c b/drivers/infiniband/hw/ipath/ipath_verbs.c
+index b766e40..eabc424 100644
+--- a/drivers/infiniband/hw/ipath/ipath_verbs.c
++++ b/drivers/infiniband/hw/ipath/ipath_verbs.c
+@@ -340,9 +340,16 @@ static int ipath_post_one_send(struct ipath_qp *qp, struct ib_send_wr *wr)
+ 	int acc;
+ 	int ret;
+ 	unsigned long flags;
++	struct ipath_devdata *dd = to_idev(qp->ibqp.device)->dd;
+ 
+ 	spin_lock_irqsave(&qp->s_lock, flags);
+ 
++	if (qp->ibqp.qp_type != IB_QPT_SMI &&
++	    !(dd->ipath_flags & IPATH_LINKACTIVE)) {
++		ret = -ENETDOWN;
++		goto bail;
++	}
++
+ 	/* Check that state is OK to post send. */
+ 	if (unlikely(!(ib_ipath_state_ops[qp->state] & IPATH_POST_SEND_OK)))
+ 		goto bail_inval;

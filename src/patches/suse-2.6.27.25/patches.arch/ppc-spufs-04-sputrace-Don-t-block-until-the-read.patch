@@ -1,0 +1,32 @@
+Subject: Don't block until the read buffer is full
+From: Jeremy Kerr <jk@ozlabs.org>
+References: 447133 - LTC50070
+
+Currently, read() on the sputrace buffer will only return data when
+the user buffer is exhausted. This may mean that we never see the
+end of the event log, unless we read() with exactly the right-sized
+buffer.
+
+This change makes sputrace_read not block if we have data ready to
+return.
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+Signed-off-by: Olaf Hering <olh@suse.de>
+---
+ arch/powerpc/platforms/cell/spufs/sputrace.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/arch/powerpc/platforms/cell/spufs/sputrace.c
++++ b/arch/powerpc/platforms/cell/spufs/sputrace.c
+@@ -80,6 +80,11 @@ static ssize_t sputrace_read(struct file
+ 		char tbuf[128];
+ 		int width;
+ 
++		/* If we have data ready to return, don't block waiting
++		 * for more */
++		if (cnt > 0 && sputrace_used() == 0)
++			break;
++
+ 		error = wait_event_interruptible(sputrace_wait,
+ 						 sputrace_used() > 0);
+ 		if (error)

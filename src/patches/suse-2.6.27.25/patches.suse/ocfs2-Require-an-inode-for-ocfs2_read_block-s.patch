@@ -1,0 +1,824 @@
+From: Joel Becker <joel.becker@oracle.com>
+Subject: ocfs2: Require an inode for ocfs2_read_block(s)().
+Patch-mainline: 2.6.28
+
+Now that synchronous readers are using ocfs2_read_blocks_sync(), all
+callers of ocfs2_read_blocks() are passing an inode.  Use it
+unconditionally.  Since it's there, we don't need to pass the
+ocfs2_super either.
+
+Signed-off-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/alloc.c          |   30 ++++++++----------
+ fs/ocfs2/aops.c           |   10 ++----
+ fs/ocfs2/buffer_head_io.c |   35 +++++++--------------
+ fs/ocfs2/buffer_head_io.h |   18 ++++-------
+ fs/ocfs2/dir.c            |   12 ++++----
+ fs/ocfs2/dlmglue.c        |    9 ++---
+ fs/ocfs2/extent_map.c     |   12 ++++----
+ fs/ocfs2/file.c           |   12 +++----
+ fs/ocfs2/inode.c          |    6 +--
+ fs/ocfs2/journal.c        |    2 +-
+ fs/ocfs2/localalloc.c     |    8 ++--
+ fs/ocfs2/namei.c          |    5 +--
+ fs/ocfs2/resize.c         |    4 +-
+ fs/ocfs2/slot_map.c       |    5 +--
+ fs/ocfs2/suballoc.c       |   17 +++++-----
+ fs/ocfs2/symlink.c        |    5 +--
+ fs/ocfs2/xattr.c          |   74 +++++++++++++++++++++-----------------------
+ 17 files changed, 116 insertions(+), 148 deletions(-)
+
+Index: linux-2.6.27/fs/ocfs2/alloc.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/alloc.c
++++ linux-2.6.27/fs/ocfs2/alloc.c
+@@ -705,8 +705,8 @@ int ocfs2_num_free_extents(struct ocfs2_
+ 	last_eb_blk = ocfs2_et_get_last_eb_blk(et);
+ 
+ 	if (last_eb_blk) {
+-		retval = ocfs2_read_block(osb, last_eb_blk,
+-					  &eb_bh, OCFS2_BH_CACHED, inode);
++		retval = ocfs2_read_block(inode, last_eb_blk,
++					  &eb_bh, OCFS2_BH_CACHED);
+ 		if (retval < 0) {
+ 			mlog_errno(retval);
+ 			goto bail;
+@@ -1176,8 +1176,7 @@ static int ocfs2_find_branch_target(stru
+ 		brelse(bh);
+ 		bh = NULL;
+ 
+-		status = ocfs2_read_block(osb, blkno, &bh, OCFS2_BH_CACHED,
+-					  inode);
++		status = ocfs2_read_block(inode, blkno, &bh, OCFS2_BH_CACHED);
+ 		if (status < 0) {
+ 			mlog_errno(status);
+ 			goto bail;
+@@ -1550,8 +1549,7 @@ static int __ocfs2_find_path(struct inod
+ 
+ 		brelse(bh);
+ 		bh = NULL;
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), blkno,
+-				       &bh, OCFS2_BH_CACHED, inode);
++		ret = ocfs2_read_block(inode, blkno, &bh, OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -4305,9 +4303,9 @@ static int ocfs2_figure_insert_type(stru
+ 		 * ocfs2_figure_insert_type() and ocfs2_add_branch()
+ 		 * may want it later.
+ 		 */
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++		ret = ocfs2_read_block(inode,
+ 				       ocfs2_et_get_last_eb_blk(et), &bh,
+-				       OCFS2_BH_CACHED, inode);
++				       OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_exit(ret);
+ 			goto out;
+@@ -4773,9 +4771,9 @@ static int __ocfs2_mark_extent_written(s
+ 	if (path->p_tree_depth) {
+ 		struct ocfs2_extent_block *eb;
+ 
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++		ret = ocfs2_read_block(inode,
+ 				       ocfs2_et_get_last_eb_blk(et),
+-				       &last_eb_bh, OCFS2_BH_CACHED, inode);
++				       &last_eb_bh, OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_exit(ret);
+ 			goto out;
+@@ -4932,9 +4930,9 @@ static int ocfs2_split_tree(struct inode
+ 
+ 	depth = path->p_tree_depth;
+ 	if (depth > 0) {
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++		ret = ocfs2_read_block(inode,
+ 				       ocfs2_et_get_last_eb_blk(et),
+-				       &last_eb_bh, OCFS2_BH_CACHED, inode);
++				       &last_eb_bh, OCFS2_BH_CACHED);
+ 		if (ret < 0) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -5601,8 +5599,8 @@ static int ocfs2_get_truncate_log_info(s
+ 		goto bail;
+ 	}
+ 
+-	status = ocfs2_read_block(osb, OCFS2_I(inode)->ip_blkno, &bh,
+-				  OCFS2_BH_CACHED, inode);
++	status = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno, &bh,
++				  OCFS2_BH_CACHED);
+ 	if (status < 0) {
+ 		iput(inode);
+ 		mlog_errno(status);
+@@ -7000,8 +6998,8 @@ int ocfs2_prepare_truncate(struct ocfs2_
+ 	ocfs2_init_dealloc_ctxt(&(*tc)->tc_dealloc);
+ 
+ 	if (fe->id2.i_list.l_tree_depth) {
+-		status = ocfs2_read_block(osb, le64_to_cpu(fe->i_last_eb_blk),
+-					  &last_eb_bh, OCFS2_BH_CACHED, inode);
++		status = ocfs2_read_block(inode, le64_to_cpu(fe->i_last_eb_blk),
++					  &last_eb_bh, OCFS2_BH_CACHED);
+ 		if (status < 0) {
+ 			mlog_errno(status);
+ 			goto bail;
+Index: linux-2.6.27/fs/ocfs2/aops.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/aops.c
++++ linux-2.6.27/fs/ocfs2/aops.c
+@@ -68,9 +68,8 @@ static int ocfs2_symlink_get_block(struc
+ 		goto bail;
+ 	}
+ 
+-	status = ocfs2_read_block(OCFS2_SB(inode->i_sb),
+-				  OCFS2_I(inode)->ip_blkno,
+-				  &bh, OCFS2_BH_CACHED, inode);
++	status = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno,
++				  &bh, OCFS2_BH_CACHED);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto bail;
+@@ -260,13 +259,12 @@ static int ocfs2_readpage_inline(struct
+ {
+ 	int ret;
+ 	struct buffer_head *di_bh = NULL;
+-	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+ 
+ 	BUG_ON(!PageLocked(page));
+ 	BUG_ON(!(OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL));
+ 
+-	ret = ocfs2_read_block(osb, OCFS2_I(inode)->ip_blkno, &di_bh,
+-			       OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno, &di_bh,
++			       OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+Index: linux-2.6.27/fs/ocfs2/buffer_head_io.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/buffer_head_io.c
++++ linux-2.6.27/fs/ocfs2/buffer_head_io.c
+@@ -170,22 +170,20 @@ bail:
+ 	return status;
+ }
+ 
+-int ocfs2_read_blocks(struct ocfs2_super *osb, u64 block, int nr,
+-		      struct buffer_head *bhs[], int flags,
+-		      struct inode *inode)
++int ocfs2_read_blocks(struct inode *inode, u64 block, int nr,
++		      struct buffer_head *bhs[], int flags)
+ {
+ 	int status = 0;
+-	struct super_block *sb;
+ 	int i, ignore_cache = 0;
+ 	struct buffer_head *bh;
+ 
+-	mlog_entry("(block=(%llu), nr=(%d), flags=%d, inode=%p)\n",
+-		   (unsigned long long)block, nr, flags, inode);
++	mlog_entry("(inode=%p, block=(%llu), nr=(%d), flags=%d)\n",
++		   inode, (unsigned long long)block, nr, flags);
+ 
+-	BUG_ON((flags & OCFS2_BH_READAHEAD) &&
+-	       (!inode || !(flags & OCFS2_BH_CACHED)));
++	BUG_ON(!inode);
++	BUG_ON((flags & OCFS2_BH_READAHEAD) && !(flags & OCFS2_BH_CACHED));
+ 
+-	if (osb == NULL || osb->sb == NULL || bhs == NULL) {
++	if (bhs == NULL) {
+ 		status = -EINVAL;
+ 		mlog_errno(status);
+ 		goto bail;
+@@ -204,19 +202,12 @@ int ocfs2_read_blocks(struct ocfs2_super
+ 		goto bail;
+ 	}
+ 
+-	sb = osb->sb;
+-
+-	if (flags & OCFS2_BH_CACHED && !inode)
+-		flags &= ~OCFS2_BH_CACHED;
+-
+-	if (inode)
+-		mutex_lock(&OCFS2_I(inode)->ip_io_mutex);
++	mutex_lock(&OCFS2_I(inode)->ip_io_mutex);
+ 	for (i = 0 ; i < nr ; i++) {
+ 		if (bhs[i] == NULL) {
+-			bhs[i] = sb_getblk(sb, block++);
++			bhs[i] = sb_getblk(inode->i_sb, block++);
+ 			if (bhs[i] == NULL) {
+-				if (inode)
+-					mutex_unlock(&OCFS2_I(inode)->ip_io_mutex);
++				mutex_unlock(&OCFS2_I(inode)->ip_io_mutex);
+ 				status = -EIO;
+ 				mlog_errno(status);
+ 				goto bail;
+@@ -347,11 +338,9 @@ int ocfs2_read_blocks(struct ocfs2_super
+ 		/* Always set the buffer in the cache, even if it was
+ 		 * a forced read, or read-ahead which hasn't yet
+ 		 * completed. */
+-		if (inode)
+-			ocfs2_set_buffer_uptodate(inode, bh);
++		ocfs2_set_buffer_uptodate(inode, bh);
+ 	}
+-	if (inode)
+-		mutex_unlock(&OCFS2_I(inode)->ip_io_mutex);
++	mutex_unlock(&OCFS2_I(inode)->ip_io_mutex);
+ 
+ 	mlog(ML_BH_IO, "block=(%llu), nr=(%d), cached=%s, flags=0x%x\n", 
+ 	     (unsigned long long)block, nr,
+Index: linux-2.6.27/fs/ocfs2/buffer_head_io.h
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/buffer_head_io.h
++++ linux-2.6.27/fs/ocfs2/buffer_head_io.h
+@@ -31,21 +31,19 @@
+ void ocfs2_end_buffer_io_sync(struct buffer_head *bh,
+ 			     int uptodate);
+ 
+-static inline int ocfs2_read_block(struct ocfs2_super          *osb,
++static inline int ocfs2_read_block(struct inode	       *inode,
+ 				   u64                  off,
+ 				   struct buffer_head **bh,
+-				   int                  flags,
+-				   struct inode        *inode);
++				   int                  flags);
+ 
+ int ocfs2_write_block(struct ocfs2_super          *osb,
+ 		      struct buffer_head  *bh,
+ 		      struct inode        *inode);
+-int ocfs2_read_blocks(struct ocfs2_super          *osb,
++int ocfs2_read_blocks(struct inode	  *inode,
+ 		      u64                  block,
+ 		      int                  nr,
+ 		      struct buffer_head  *bhs[],
+-		      int                  flags,
+-		      struct inode        *inode);
++		      int                  flags);
+ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 			   unsigned int nr, struct buffer_head *bhs[]);
+ 
+@@ -55,9 +53,8 @@ int ocfs2_write_super_or_backup(struct o
+ #define OCFS2_BH_CACHED            1
+ #define OCFS2_BH_READAHEAD         8
+ 
+-static inline int ocfs2_read_block(struct ocfs2_super * osb, u64 off,
+-				   struct buffer_head **bh, int flags,
+-				   struct inode *inode)
++static inline int ocfs2_read_block(struct inode *inode, u64 off,
++				   struct buffer_head **bh, int flags)
+ {
+ 	int status = 0;
+ 
+@@ -67,8 +64,7 @@ static inline int ocfs2_read_block(struc
+ 		goto bail;
+ 	}
+ 
+-	status = ocfs2_read_blocks(osb, off, 1, bh,
+-				   flags, inode);
++	status = ocfs2_read_blocks(inode, off, 1, bh, flags);
+ 
+ bail:
+ 	return status;
+Index: linux-2.6.27/fs/ocfs2/dir.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/dir.c
++++ linux-2.6.27/fs/ocfs2/dir.c
+@@ -188,8 +188,8 @@ static struct buffer_head *ocfs2_find_en
+ 	struct ocfs2_dinode *di;
+ 	struct ocfs2_inline_data *data;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(dir->i_sb), OCFS2_I(dir)->ip_blkno,
+-			       &di_bh, OCFS2_BH_CACHED, dir);
++	ret = ocfs2_read_block(dir, OCFS2_I(dir)->ip_blkno, &di_bh,
++			       OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -417,8 +417,8 @@ static inline int ocfs2_delete_entry_id(
+ 	struct ocfs2_dinode *di;
+ 	struct ocfs2_inline_data *data;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(dir->i_sb), OCFS2_I(dir)->ip_blkno,
+-			       &di_bh, OCFS2_BH_CACHED, dir);
++	ret = ocfs2_read_block(dir, OCFS2_I(dir)->ip_blkno,
++			       &di_bh, OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -596,8 +596,8 @@ static int ocfs2_dir_foreach_blk_id(stru
+ 	struct ocfs2_inline_data *data;
+ 	struct ocfs2_dir_entry *de;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), OCFS2_I(inode)->ip_blkno,
+-			       &di_bh, OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno,
++			       &di_bh, OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog(ML_ERROR, "Unable to read inode block for dir %llu\n",
+ 		     (unsigned long long)OCFS2_I(inode)->ip_blkno);
+Index: linux-2.6.27/fs/ocfs2/dlmglue.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/dlmglue.c
++++ linux-2.6.27/fs/ocfs2/dlmglue.c
+@@ -2024,8 +2024,8 @@ static int ocfs2_inode_lock_update(struc
+ 	} else {
+ 		/* Boo, we have to go to disk. */
+ 		/* read bh, cast, ocfs2_refresh_inode */
+-		status = ocfs2_read_block(OCFS2_SB(inode->i_sb), oi->ip_blkno,
+-					  bh, OCFS2_BH_CACHED, inode);
++		status = ocfs2_read_block(inode, oi->ip_blkno,
++					  bh, OCFS2_BH_CACHED);
+ 		if (status < 0) {
+ 			mlog_errno(status);
+ 			goto bail_refresh;
+@@ -2086,11 +2086,10 @@ static int ocfs2_assign_bh(struct inode
+ 		return 0;
+ 	}
+ 
+-	status = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++	status = ocfs2_read_block(inode,
+ 				  OCFS2_I(inode)->ip_blkno,
+ 				  ret_bh,
+-				  OCFS2_BH_CACHED,
+-				  inode);
++				  OCFS2_BH_CACHED);
+ 	if (status < 0)
+ 		mlog_errno(status);
+ 
+Index: linux-2.6.27/fs/ocfs2/extent_map.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/extent_map.c
++++ linux-2.6.27/fs/ocfs2/extent_map.c
+@@ -335,9 +335,9 @@ static int ocfs2_figure_hole_clusters(st
+ 		if (le64_to_cpu(eb->h_next_leaf_blk) == 0ULL)
+ 			goto no_more_extents;
+ 
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++		ret = ocfs2_read_block(inode,
+ 				       le64_to_cpu(eb->h_next_leaf_blk),
+-				       &next_eb_bh, OCFS2_BH_CACHED, inode);
++				       &next_eb_bh, OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -458,8 +458,8 @@ int ocfs2_get_clusters(struct inode *ino
+ 	if (ret == 0)
+ 		goto out;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), OCFS2_I(inode)->ip_blkno,
+-			       &di_bh, OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno,
++			       &di_bh, OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+Index: linux-2.6.27/fs/ocfs2/file.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/file.c
++++ linux-2.6.27/fs/ocfs2/file.c
+@@ -545,8 +545,8 @@ static int __ocfs2_extend_allocation(str
+ 	 */
+ 	BUG_ON(mark_unwritten && !ocfs2_sparse_alloc(osb));
+ 
+-	status = ocfs2_read_block(osb, OCFS2_I(inode)->ip_blkno, &bh,
+-				  OCFS2_BH_CACHED, inode);
++	status = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno, &bh,
++				  OCFS2_BH_CACHED);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto leave;
+@@ -1132,8 +1132,7 @@ static int ocfs2_write_remove_suid(struc
+ 	struct buffer_head *bh = NULL;
+ 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
+-			       oi->ip_blkno, &bh, OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, oi->ip_blkno, &bh, OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -1159,9 +1158,8 @@ static int ocfs2_allocate_unwritten_exte
+ 	struct buffer_head *di_bh = NULL;
+ 
+ 	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL) {
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
+-				       OCFS2_I(inode)->ip_blkno, &di_bh,
+-				       OCFS2_BH_CACHED, inode);
++		ret = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno,
++				       &di_bh, OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+Index: linux-2.6.27/fs/ocfs2/inode.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/inode.c
++++ linux-2.6.27/fs/ocfs2/inode.c
+@@ -461,8 +461,7 @@ static int ocfs2_read_locked_inode(struc
+ 	}
+ 
+ 	if (can_lock)
+-		status = ocfs2_read_block(osb, args->fi_blkno, &bh, 0,
+-					  inode);
++		status = ocfs2_read_block(inode, args->fi_blkno, &bh, 0);
+ 	else
+ 		status = ocfs2_read_blocks_sync(osb, args->fi_blkno, 1, &bh);
+ 	if (status < 0) {
+@@ -1166,8 +1165,7 @@ struct buffer_head *ocfs2_bread(struct i
+ 		goto fail;
+ 	}
+ 
+-	tmperr = ocfs2_read_block(OCFS2_SB(inode->i_sb), p_blkno, &bh,
+-				  readflags, inode);
++	tmperr = ocfs2_read_block(inode, p_blkno, &bh, readflags);
+ 	if (tmperr < 0)
+ 		goto fail;
+ 
+Index: linux-2.6.27/fs/ocfs2/journal.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/journal.c
++++ linux-2.6.27/fs/ocfs2/journal.c
+@@ -1134,7 +1134,7 @@ static int ocfs2_read_journal_inode(stru
+ 	}
+ 	SET_INODE_JOURNAL(inode);
+ 
+-	status = ocfs2_read_block(osb, OCFS2_I(inode)->ip_blkno, bh, 0, inode);
++	status = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno, bh, 0);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto bail;
+Index: linux-2.6.27/fs/ocfs2/localalloc.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/localalloc.c
++++ linux-2.6.27/fs/ocfs2/localalloc.c
+@@ -248,8 +248,8 @@ int ocfs2_load_local_alloc(struct ocfs2_
+ 		goto bail;
+ 	}
+ 
+-	status = ocfs2_read_block(osb, OCFS2_I(inode)->ip_blkno,
+-				  &alloc_bh, 0, inode);
++	status = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno,
++				  &alloc_bh, 0);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto bail;
+@@ -459,8 +459,8 @@ int ocfs2_begin_local_alloc_recovery(str
+ 
+ 	mutex_lock(&inode->i_mutex);
+ 
+-	status = ocfs2_read_block(osb, OCFS2_I(inode)->ip_blkno,
+-				  &alloc_bh, 0, inode);
++	status = ocfs2_read_block(inode, OCFS2_I(inode)->ip_blkno,
++				  &alloc_bh, 0);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto bail;
+Index: linux-2.6.27/fs/ocfs2/namei.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/namei.c
++++ linux-2.6.27/fs/ocfs2/namei.c
+@@ -1752,10 +1752,9 @@ static int ocfs2_orphan_add(struct ocfs2
+ 
+ 	mlog_entry("(inode->i_ino = %lu)\n", inode->i_ino);
+ 
+-	status = ocfs2_read_block(osb,
++	status = ocfs2_read_block(orphan_dir_inode,
+ 				  OCFS2_I(orphan_dir_inode)->ip_blkno,
+-				  &orphan_dir_bh, OCFS2_BH_CACHED,
+-				  orphan_dir_inode);
++				  &orphan_dir_bh, OCFS2_BH_CACHED);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto leave;
+Index: linux-2.6.27/fs/ocfs2/resize.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/resize.c
++++ linux-2.6.27/fs/ocfs2/resize.c
+@@ -332,8 +332,8 @@ int ocfs2_group_extend(struct inode * in
+ 	lgd_blkno = ocfs2_which_cluster_group(main_bm_inode,
+ 					      first_new_cluster - 1);
+ 
+-	ret = ocfs2_read_block(osb, lgd_blkno, &group_bh, OCFS2_BH_CACHED,
+-			       main_bm_inode);
++	ret = ocfs2_read_block(main_bm_inode, lgd_blkno, &group_bh,
++			       OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		goto out_unlock;
+Index: linux-2.6.27/fs/ocfs2/slot_map.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/slot_map.c
++++ linux-2.6.27/fs/ocfs2/slot_map.c
+@@ -150,8 +150,7 @@ int ocfs2_refresh_slot_info(struct ocfs2
+ 	 * be !NULL.  Thus, ocfs2_read_blocks() will ignore blocknr.  If
+ 	 * this is not true, the read of -1 (UINT64_MAX) will fail.
+ 	 */
+-	ret = ocfs2_read_blocks(osb, -1, si->si_blocks, si->si_bh, 0,
+-				si->si_inode);
++	ret = ocfs2_read_blocks(si->si_inode, -1, si->si_blocks, si->si_bh, 0);
+ 	if (ret == 0) {
+ 		spin_lock(&osb->osb_lock);
+ 		ocfs2_update_slot_info(si);
+@@ -404,7 +403,7 @@ static int ocfs2_map_slot_buffers(struct
+ 		     (unsigned long long)blkno);
+ 
+ 		bh = NULL;  /* Acquire a fresh bh */
+-		status = ocfs2_read_block(osb, blkno, &bh, 0, si->si_inode);
++		status = ocfs2_read_block(si->si_inode, blkno, &bh, 0);
+ 		if (status < 0) {
+ 			mlog_errno(status);
+ 			goto bail;
+Index: linux-2.6.27/fs/ocfs2/suballoc.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/suballoc.c
++++ linux-2.6.27/fs/ocfs2/suballoc.c
+@@ -1172,8 +1172,8 @@ static int ocfs2_search_one_group(struct
+ 	struct ocfs2_group_desc *gd;
+ 	struct inode *alloc_inode = ac->ac_inode;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(alloc_inode->i_sb), gd_blkno,
+-			       &group_bh, OCFS2_BH_CACHED, alloc_inode);
++	ret = ocfs2_read_block(alloc_inode, gd_blkno,
++			       &group_bh, OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		return ret;
+@@ -1242,9 +1242,9 @@ static int ocfs2_search_chain(struct ocf
+ 	     bits_wanted, chain,
+ 	     (unsigned long long)OCFS2_I(alloc_inode)->ip_blkno);
+ 
+-	status = ocfs2_read_block(OCFS2_SB(alloc_inode->i_sb),
++	status = ocfs2_read_block(alloc_inode,
+ 				  le64_to_cpu(cl->cl_recs[chain].c_blkno),
+-				  &group_bh, OCFS2_BH_CACHED, alloc_inode);
++				  &group_bh, OCFS2_BH_CACHED);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto bail;
+@@ -1272,9 +1272,9 @@ static int ocfs2_search_chain(struct ocf
+ 		next_group = le64_to_cpu(bg->bg_next_group);
+ 		prev_group_bh = group_bh;
+ 		group_bh = NULL;
+-		status = ocfs2_read_block(OCFS2_SB(alloc_inode->i_sb),
++		status = ocfs2_read_block(alloc_inode,
+ 					  next_group, &group_bh,
+-					  OCFS2_BH_CACHED, alloc_inode);
++					  OCFS2_BH_CACHED);
+ 		if (status < 0) {
+ 			mlog_errno(status);
+ 			goto bail;
+@@ -1777,7 +1777,6 @@ int ocfs2_free_suballoc_bits(handle_t *h
+ {
+ 	int status = 0;
+ 	u32 tmp_used;
+-	struct ocfs2_super *osb = OCFS2_SB(alloc_inode->i_sb);
+ 	struct ocfs2_dinode *fe = (struct ocfs2_dinode *) alloc_bh->b_data;
+ 	struct ocfs2_chain_list *cl = &fe->id2.i_chain;
+ 	struct buffer_head *group_bh = NULL;
+@@ -1796,8 +1795,8 @@ int ocfs2_free_suballoc_bits(handle_t *h
+ 	     (unsigned long long)OCFS2_I(alloc_inode)->ip_blkno, count,
+ 	     (unsigned long long)bg_blkno, start_bit);
+ 
+-	status = ocfs2_read_block(osb, bg_blkno, &group_bh, OCFS2_BH_CACHED,
+-				  alloc_inode);
++	status = ocfs2_read_block(alloc_inode, bg_blkno, &group_bh,
++				  OCFS2_BH_CACHED);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		goto bail;
+Index: linux-2.6.27/fs/ocfs2/symlink.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/symlink.c
++++ linux-2.6.27/fs/ocfs2/symlink.c
+@@ -84,11 +84,10 @@ static char *ocfs2_fast_symlink_getlink(
+ 
+ 	mlog_entry_void();
+ 
+-	status = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++	status = ocfs2_read_block(inode,
+ 				  OCFS2_I(inode)->ip_blkno,
+ 				  bh,
+-				  OCFS2_BH_CACHED,
+-				  inode);
++				  OCFS2_BH_CACHED);
+ 	if (status < 0) {
+ 		mlog_errno(status);
+ 		link = ERR_PTR(status);
+Index: linux-2.6.27/fs/ocfs2/xattr.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/xattr.c
++++ linux-2.6.27/fs/ocfs2/xattr.c
+@@ -553,9 +553,9 @@ static int ocfs2_xattr_block_list(struct
+ 	if (!di->i_xattr_loc)
+ 		return ret;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++	ret = ocfs2_read_block(inode,
+ 			       le64_to_cpu(di->i_xattr_loc),
+-			       &blk_bh, OCFS2_BH_CACHED, inode);
++			       &blk_bh, OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		return ret;
+@@ -688,8 +688,8 @@ static int ocfs2_xattr_get_value_outside
+ 		blkno = ocfs2_clusters_to_blocks(inode->i_sb, p_cluster);
+ 		/* Copy ocfs2_xattr_value */
+ 		for (i = 0; i < num_clusters * bpc; i++, blkno++) {
+-			ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), blkno,
+-					       &bh, OCFS2_BH_CACHED, inode);
++			ret = ocfs2_read_block(inode, blkno,
++					       &bh, OCFS2_BH_CACHED);
+ 			if (ret) {
+ 				mlog_errno(ret);
+ 				goto out;
+@@ -780,9 +780,9 @@ static int ocfs2_xattr_block_get(struct
+ 
+ 	memset(&xs->bucket, 0, sizeof(xs->bucket));
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++	ret = ocfs2_read_block(inode,
+ 			       le64_to_cpu(di->i_xattr_loc),
+-			       &blk_bh, OCFS2_BH_CACHED, inode);
++			       &blk_bh, OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		return ret;
+@@ -938,8 +938,8 @@ static int __ocfs2_xattr_set_value_outsi
+ 		blkno = ocfs2_clusters_to_blocks(inode->i_sb, p_cluster);
+ 
+ 		for (i = 0; i < num_clusters * bpc; i++, blkno++) {
+-			ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), blkno,
+-					       &bh, OCFS2_BH_CACHED, inode);
++			ret = ocfs2_read_block(inode, blkno,
++					       &bh, OCFS2_BH_CACHED);
+ 			if (ret) {
+ 				mlog_errno(ret);
+ 				goto out_commit;
+@@ -1530,8 +1530,8 @@ static int ocfs2_xattr_free_block(struct
+ 	u64 blk, bg_blkno;
+ 	u16 bit;
+ 
+-	ret = ocfs2_read_block(osb, block, &blk_bh,
+-			       OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, block, &blk_bh,
++			       OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -1789,9 +1789,9 @@ static int ocfs2_xattr_block_find(struct
+ 	if (!di->i_xattr_loc)
+ 		return ret;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++	ret = ocfs2_read_block(inode,
+ 			       le64_to_cpu(di->i_xattr_loc),
+-			       &blk_bh, OCFS2_BH_CACHED, inode);
++			       &blk_bh, OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		return ret;
+@@ -2232,9 +2232,9 @@ static int ocfs2_find_xe_in_bucket(struc
+ 			break;
+ 		}
+ 
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb),
++		ret = ocfs2_read_block(inode,
+ 				       header_bh->b_blocknr + block_off,
+-				       &name_bh, OCFS2_BH_CACHED, inode);
++				       &name_bh, OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			break;
+@@ -2285,8 +2285,7 @@ static int ocfs2_xattr_bucket_find(struc
+ 	u32 last_hash;
+ 	u64 blkno;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), p_blkno,
+-			       &bh, OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, p_blkno, &bh, OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -2302,8 +2301,7 @@ static int ocfs2_xattr_bucket_find(struc
+ 
+ 		blkno = p_blkno + bucket * blk_per_bucket;
+ 
+-		ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), blkno,
+-				       &bh, OCFS2_BH_CACHED, inode);
++		ret = ocfs2_read_block(inode, blkno, &bh, OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -2375,10 +2373,9 @@ static int ocfs2_xattr_bucket_find(struc
+ 		 * If we have found the xattr enty, read all the blocks in
+ 		 * this bucket.
+ 		 */
+-		ret = ocfs2_read_blocks(OCFS2_SB(inode->i_sb),
+-					xs->bucket.bhs[0]->b_blocknr + 1,
++		ret = ocfs2_read_blocks(inode, xs->bucket.bhs[0]->b_blocknr + 1,
+ 					blk_per_bucket - 1, &xs->bucket.bhs[1],
+-					OCFS2_BH_CACHED, inode);
++					OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -2454,9 +2451,8 @@ static int ocfs2_iterate_xattr_buckets(s
+ 	     clusters, blkno);
+ 
+ 	for (i = 0; i < num_buckets; i++, blkno += blk_per_bucket) {
+-		ret = ocfs2_read_blocks(OCFS2_SB(inode->i_sb),
+-					blkno, blk_per_bucket,
+-					bucket.bhs, OCFS2_BH_CACHED, inode);
++		ret = ocfs2_read_blocks(inode, blkno, blk_per_bucket,
++					bucket.bhs, OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -2721,10 +2717,10 @@ static int ocfs2_xattr_update_xattr_sear
+ 
+ 	if (!xs->not_found) {
+ 		if (OCFS2_XATTR_BUCKET_SIZE != blocksize) {
+-			ret = ocfs2_read_blocks(OCFS2_SB(inode->i_sb),
++			ret = ocfs2_read_blocks(inode,
+ 					xs->bucket.bhs[0]->b_blocknr + 1,
+ 					blk_per_bucket - 1, &xs->bucket.bhs[1],
+-					OCFS2_BH_CACHED, inode);
++					OCFS2_BH_CACHED);
+ 			if (ret) {
+ 				mlog_errno(ret);
+ 				return ret;
+@@ -2929,8 +2925,8 @@ static int ocfs2_defrag_xattr_bucket(str
+ 	if (!bhs)
+ 		return -ENOMEM;
+ 
+-	ret = ocfs2_read_blocks(osb, blkno, blk_per_bucket, bhs,
+-				OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_blocks(inode, blkno, blk_per_bucket, bhs,
++				OCFS2_BH_CACHED);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -3130,8 +3126,8 @@ static int ocfs2_mv_xattr_bucket_cross_c
+ 			goto out;
+ 		}
+ 
+-		ret = ocfs2_read_block(osb, prev_blkno,
+-				       &old_bh, OCFS2_BH_CACHED, inode);
++		ret = ocfs2_read_block(inode, prev_blkno,
++				       &old_bh, OCFS2_BH_CACHED);
+ 		if (ret < 0) {
+ 			mlog_errno(ret);
+ 			brelse(new_bh);
+@@ -3184,9 +3180,9 @@ static int ocfs2_read_xattr_bucket(struc
+ 	u16 i, blk_per_bucket = ocfs2_blocks_per_xattr_bucket(inode->i_sb);
+ 
+ 	if (!new)
+-		return ocfs2_read_blocks(OCFS2_SB(inode->i_sb), blkno,
++		return ocfs2_read_blocks(inode, blkno,
+ 					 blk_per_bucket, bhs,
+-					 OCFS2_BH_CACHED, inode);
++					 OCFS2_BH_CACHED);
+ 
+ 	for (i = 0; i < blk_per_bucket; i++) {
+ 		bhs[i] = sb_getblk(inode->i_sb, blkno + i);
+@@ -3501,7 +3497,7 @@ static int ocfs2_cp_xattr_cluster(struct
+ 	ocfs2_journal_dirty(handle, first_bh);
+ 
+ 	/* update the new bucket header. */
+-	ret = ocfs2_read_block(osb, to_blk_start, &bh, OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, to_blk_start, &bh, OCFS2_BH_CACHED);
+ 	if (ret < 0) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -3888,8 +3884,8 @@ static int ocfs2_add_new_xattr_bucket(st
+ 		goto out;
+ 	}
+ 
+-	ret = ocfs2_read_block(osb, p_blkno,
+-			       &first_bh, OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, p_blkno,
++			       &first_bh, OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -4131,10 +4127,10 @@ static int ocfs2_xattr_set_entry_in_buck
+ 	     (unsigned long long)xs->bucket.bhs[0]->b_blocknr);
+ 
+ 	if (!xs->bucket.bhs[1]) {
+-		ret = ocfs2_read_blocks(osb,
++		ret = ocfs2_read_blocks(inode,
+ 					xs->bucket.bhs[0]->b_blocknr + 1,
+ 					blk_per_bucket - 1, &xs->bucket.bhs[1],
+-					OCFS2_BH_CACHED, inode);
++					OCFS2_BH_CACHED);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -4240,8 +4236,8 @@ static int ocfs2_xattr_bucket_value_trun
+ 	BUG_ON(value_blk != (offset + OCFS2_XATTR_ROOT_SIZE - 1) / blocksize);
+ 	value_blk += header_bh->b_blocknr;
+ 
+-	ret = ocfs2_read_block(OCFS2_SB(inode->i_sb), value_blk,
+-			       &value_bh, OCFS2_BH_CACHED, inode);
++	ret = ocfs2_read_block(inode, value_blk,
++			       &value_bh, OCFS2_BH_CACHED);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;

@@ -1,0 +1,26 @@
+From 5a40e08e666e8caa1227333de41fd1e2cd84d4f5 Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 06:44:04 +0000
+Subject: bnx2x: Read chip ID
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -6978,7 +6978,7 @@ static void __devinit bnx2x_get_common_h
+ 	id |= ((val & 0xf) << 12);
+ 	val = REG_RD(bp, MISC_REG_CHIP_METAL);
+ 	id |= ((val & 0xff) << 4);
+-	REG_RD(bp, MISC_REG_BOND_ID);
++	val = REG_RD(bp, MISC_REG_BOND_ID);
+ 	id |= (val & 0xf);
+ 	bp->common.chip_id = id;
+ 	bp->link_params.chip_id = bp->common.chip_id;

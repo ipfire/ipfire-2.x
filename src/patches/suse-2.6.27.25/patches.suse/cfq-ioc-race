@@ -1,0 +1,34 @@
+From: Nikanth Karthikesan <knikanth@suse.de>
+Subject: [PATCH] Exiting queue and task might race to free cic
+References: bnc#444346
+Patch-Mainline: No. being discussed.
+Signed-off-by: Nikanth Karthikesan <knaikanth@suse.de>
+
+When a queue exits the queue lock is taken and cfq_exit_queue() would
+free all the cic's associated with the queue. But when a task exits,
+cfq_exit_io_context() gets cic one by one and then locks the associated
+queue to call __cfq_exit_single_io_context. In the window between
+getting a cic from the ioc and locking the queue, the queue might have 
+exited on another cpu.
+
+Index: b/block/cfq-iosched.c
+===================================================================
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -1310,7 +1310,15 @@ static void cfq_exit_single_io_context(s
+ 		unsigned long flags;
+ 
+ 		spin_lock_irqsave(q->queue_lock, flags);
+-		__cfq_exit_single_io_context(cfqd, cic);
++
++		/*
++		 * Ensure we get a fresh copy of the ->key to prevent
++		 * race between exiting task and queue
++		 */
++		smp_read_barrier_depends();
++		if (likely(cic->key))
++			__cfq_exit_single_io_context(cfqd, cic);
++
+ 		spin_unlock_irqrestore(q->queue_lock, flags);
+ 	}
+ }

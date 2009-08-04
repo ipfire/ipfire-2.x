@@ -1,0 +1,45 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/5b779f810966
+# HG changeset 801 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1235991476 0
+# Node ID 5b779f8109662803b7d292ef1effbf68be3319d2
+# Parent  ae2cf9ef03acd34c2fd747c924aa9660467055a1
+Subject: pciback: Fix invalid use of pci_match_id()
+
+We cannot use pci_match_id() because the first argument (tmp_quirk->devid)
+is not an array of pci device ids. Instead this patch adds a utility
+function to compare a pci_device_id and a pci_dev.
+
+Signed-off-by: Yosuke Iwamatsu <y-iwamatsu@ab.jp.nec.com>
+Acked-by: jbeulich@novell.com
+
+--- sle11-2009-03-04.orig/drivers/xen/pciback/conf_space_quirks.c	2008-09-01 12:20:11.000000000 +0200
++++ sle11-2009-03-04/drivers/xen/pciback/conf_space_quirks.c	2009-03-04 11:25:24.000000000 +0100
+@@ -13,13 +13,25 @@
+ 
+ LIST_HEAD(pciback_quirks);
+ 
++static inline const struct pci_device_id *
++match_one_device(const struct pci_device_id *id, const struct pci_dev *dev)
++{
++	if ((id->vendor == PCI_ANY_ID || id->vendor == dev->vendor) &&
++	    (id->device == PCI_ANY_ID || id->device == dev->device) &&
++	    (id->subvendor == PCI_ANY_ID || id->subvendor == dev->subsystem_vendor) &&
++	    (id->subdevice == PCI_ANY_ID || id->subdevice == dev->subsystem_device) &&
++	    !((id->class ^ dev->class) & id->class_mask))
++		return id;
++	return NULL;
++}
++
+ struct pciback_config_quirk *pciback_find_quirk(struct pci_dev *dev)
+ {
+ 	struct pciback_config_quirk *tmp_quirk;
+ 
+ 	list_for_each_entry(tmp_quirk, &pciback_quirks, quirks_list)
+-	    if (pci_match_id(&tmp_quirk->devid, dev))
+-		goto out;
++		if (match_one_device(&tmp_quirk->devid, dev) != NULL)
++			goto out;
+ 	tmp_quirk = NULL;
+ 	printk(KERN_DEBUG
+ 	       "quirk didn't match any device pciback knows about\n");

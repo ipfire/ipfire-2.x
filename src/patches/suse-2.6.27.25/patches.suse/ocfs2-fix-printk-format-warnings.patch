@@ -1,0 +1,52 @@
+From: Mark Fasheh <mfasheh@suse.com>
+Subject: ocfs2: fix printk format warnings
+Patch-mainline: 2.6.28?
+References: FATE302067 
+
+This patch fixes the following build warnings:
+
+fs/ocfs2/xattr.c: In function 'ocfs2_half_xattr_bucket':
+fs/ocfs2/xattr.c:3282: warning: format '%d' expects type 'int', but argument 7 has type 'long int'
+fs/ocfs2/xattr.c:3282: warning: format '%d' expects type 'int', but argument 8 has type 'long int'
+fs/ocfs2/xattr.c:3282: warning: format '%d' expects type 'int', but argument 7 has type 'long int'
+fs/ocfs2/xattr.c:3282: warning: format '%d' expects type 'int', but argument 8 has type 'long int'
+fs/ocfs2/xattr.c:3282: warning: format '%d' expects type 'int', but argument 7 has type 'long int'
+fs/ocfs2/xattr.c:3282: warning: format '%d' expects type 'int', but argument 8 has type 'long int'
+fs/ocfs2/xattr.c: In function 'ocfs2_xattr_set_entry_in_bucket':
+fs/ocfs2/xattr.c:4092: warning: format '%d' expects type 'int', but argument 6 has type 'size_t'
+fs/ocfs2/xattr.c:4092: warning: format '%d' expects type 'int', but argument 6 has type 'size_t'
+fs/ocfs2/xattr.c:4092: warning: format '%d' expects type 'int', but argument 6 has type 'size_t'
+
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/xattr.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index 505fb40..6b7685e 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -3280,7 +3280,8 @@ static int ocfs2_half_xattr_bucket(struct inode *inode,
+ 	xe = &xh->xh_entries[start];
+ 	len = sizeof(struct ocfs2_xattr_entry) * (count - start);
+ 	mlog(0, "mv xattr entry len %d from %d to %d\n", len,
+-	     (char *)xe - (char *)xh, (char *)xh->xh_entries - (char *)xh);
++	     (int)((char *)xe - (char *)xh),
++	     (int)((char *)xh->xh_entries - (char *)xh));
+ 	memmove((char *)xh->xh_entries, (char *)xe, len);
+ 	xe = &xh->xh_entries[count - start];
+ 	len = sizeof(struct ocfs2_xattr_entry) * start;
+@@ -4089,8 +4090,8 @@ static int ocfs2_xattr_set_entry_in_bucket(struct inode *inode,
+ 	u16 blk_per_bucket = ocfs2_blocks_per_xattr_bucket(inode->i_sb);
+ 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+ 
+-	mlog(0, "Set xattr entry len = %d index = %d in bucket %llu\n",
+-	     xi->value_len, xi->name_index,
++	mlog(0, "Set xattr entry len = %lu index = %d in bucket %llu\n",
++	     (unsigned long)xi->value_len, xi->name_index,
+ 	     (unsigned long long)xs->bucket.bhs[0]->b_blocknr);
+ 
+ 	if (!xs->bucket.bhs[1]) {
+-- 
+1.5.4.5
+

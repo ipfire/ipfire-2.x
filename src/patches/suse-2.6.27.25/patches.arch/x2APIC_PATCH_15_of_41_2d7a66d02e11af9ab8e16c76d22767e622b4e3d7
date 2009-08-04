@@ -1,0 +1,78 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: Interrupt-remapping and x2apic support, fix
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 2d7a66d02e11af9ab8e16c76d22767e622b4e3d7
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Yinghai Lu wrote:
+
+> Setting APIC routing to physical flat
+> Kernel panic - not syncing: Boot APIC ID in local APIC unexpected (0 vs 4)
+> Pid: 1, comm: swapper Not tainted 2.6.26-rc9-tip-01763-g74f94b1-dirty #320
+>
+> Call Trace:
+>  [<ffffffff80a21505>] ? set_cpu_sibling_map+0x38c/0x3bd
+>  [<ffffffff80245215>] ? read_xapic_id+0x25/0x3e
+>  [<ffffffff80e5a2c3>] ? verify_local_APIC+0x139/0x1b9
+>  [<ffffffff80245215>] ? read_xapic_id+0x25/0x3e
+>  [<ffffffff80e589af>] ? native_smp_prepare_cpus+0x224/0x2e9
+>  [<ffffffff80e4881a>] ? kernel_init+0x64/0x341
+>  [<ffffffff8022a439>] ? child_rip+0xa/0x11
+>  [<ffffffff80e487b6>] ? kernel_init+0x0/0x341
+>  [<ffffffff8022a42f>] ? child_rip+0x0/0x11
+>
+>
+> guess read_apic_id changing cuase some problem...
+
+genapic's read_apic_id() returns the actual apic id extracted from
+the APIC_ID register. And in some cases like UV, read_apic_id()
+returns completely different values from APIC ID register.
+
+Use the native apic register read, rather than genapic read_apic_id()
+in verify_local_APIC()
+
+And also, lapic_suspend() should also use native apic register read.
+
+Reported-by: Yinghai Lu <yhlu.kernel@gmail.com>
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "arjan@linux.intel.com" <arjan@linux.intel.com>
+Cc: "andi@firstfloor.org" <andi@firstfloor.org>
+Cc: "ebiederm@xmission.com" <ebiederm@xmission.com>
+Cc: "jbarnes@virtuousgeek.org" <jbarnes@virtuousgeek.org>
+Cc: "steiner@sgi.com" <steiner@sgi.com>
+Cc: "jeremy@goop.org" <jeremy@goop.org>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/apic_64.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Index: linux-2.6.26/arch/x86/kernel/apic_64.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/apic_64.c
++++ linux-2.6.26/arch/x86/kernel/apic_64.c
+@@ -629,10 +629,10 @@ int __init verify_local_APIC(void)
+ 	/*
+ 	 * The ID register is read/write in a real APIC.
+ 	 */
+-	reg0 = read_apic_id();
++	reg0 = apic_read(APIC_ID);
+ 	apic_printk(APIC_DEBUG, "Getting ID: %x\n", reg0);
+ 	apic_write(APIC_ID, reg0 ^ APIC_ID_MASK);
+-	reg1 = read_apic_id();
++	reg1 = apic_read(APIC_ID);
+ 	apic_printk(APIC_DEBUG, "Getting ID: %x\n", reg1);
+ 	apic_write(APIC_ID, reg0);
+ 	if (reg1 != (reg0 ^ APIC_ID_MASK))
+@@ -1136,7 +1136,7 @@ static int lapic_suspend(struct sys_devi
+ 
+ 	maxlvt = lapic_get_maxlvt();
+ 
+-	apic_pm_state.apic_id = read_apic_id();
++	apic_pm_state.apic_id = apic_read(APIC_ID);
+ 	apic_pm_state.apic_taskpri = apic_read(APIC_TASKPRI);
+ 	apic_pm_state.apic_ldr = apic_read(APIC_LDR);
+ 	apic_pm_state.apic_dfr = apic_read(APIC_DFR);
