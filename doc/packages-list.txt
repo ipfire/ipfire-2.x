@@ -44,6 +44,7 @@
 * as86-0.16.17
 * asterisk-1.4.18
 * atl2-2.0.5-kmod-2.6.27.25-ipfire
+* atl2-2.0.5-kmod-2.6.27.25-ipfire-xen
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire
@@ -69,6 +70,7 @@
 * cmake-2.4.8
 * collectd-4.5.3
 * compat-wireless-2009-06-30-kmod-2.6.27.25-ipfire
+* compat-wireless-2009-06-30-kmod-2.6.27.25-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
@@ -83,6 +85,8 @@
 * diffutils-2.8.1
 * dnsmasq-2.47
 * dosfstools-2.11
+* e1000e-1.0.2.5-kmod-2.6.27.25-ipfire
+* e1000e-1.0.2.5-kmod-2.6.27.25-ipfire-xen
 * e2fsprogs-1.39
 * ebtables-v2.0.8-2
 * ed-0.2
@@ -128,6 +132,8 @@
 * hdparm-8.9
 * hostapd-0.6.9
 * hplip-2.7.10
+* hso-1.9-kmod-2.6.27.25-ipfire
+* hso-1.9-kmod-2.6.27.25-ipfire-xen
 * htop-0.8.1
 * httpd-2.2.11
 * hwdata
@@ -151,6 +157,7 @@
 * kbd-1.12
 * klibc-1.5.14
 * kqemu-1.4.0pre1-kmod-2.6.27.25-ipfire
+* kqemu-1.4.0pre1-kmod-2.6.27.25-ipfire-xen
 * kudzu-1.2.64
 * l7-protocols-2009-05-10
 * lame-3.97
@@ -182,6 +189,7 @@
 * libxml2-2.6.26
 * libxslt-1.1.17
 * linux-2.6.27.25-ipfire
+* linux-2.6.27.25-ipfire-xen
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * lm_sensors-3.0.3
@@ -192,8 +200,10 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.25-ipfire
+* mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.25-ipfire-xen
 * mISDNuser.git-54928dec57bc846f2c2186f3640e69a053cd3641
 * madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.25-ipfire
+* madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.25-ipfire-xen
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
@@ -240,6 +250,7 @@
 * openssl-0.9.8k
 * openswan-2.6.21
 * openswan-2.6.21-kmod-2.6.27.25-ipfire
+* openswan-2.6.21-kmod-2.6.27.25-ipfire-xen
 * openvpn-2.0.9
 * p7zip_4.65
 * pam_mysql-0.7RC1
@@ -315,6 +326,7 @@
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-bff77ec33116-kmod-2.6.27.25-ipfire
+* v4l-dvb-bff77ec33116-kmod-2.6.27.25-ipfire-xen
 * vdr-1.6.0
 * vdradmin-am-3.6.4
 * vim-7.0
