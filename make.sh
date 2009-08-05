@@ -340,6 +340,7 @@ buildipfire() {
   ipfiremake which
   ipfiremake linux-xen
   ipfiremake atl2			XEN=1
+  ipfiremake e1000e			XEN=1
   ipfiremake kqemu			XEN=1
   ipfiremake v4l-dvb			XEN=1
   ipfiremake madwifi			XEN=1
@@ -349,6 +350,7 @@ buildipfire() {
   ipfiremake compat-wireless		XEN=1
   ipfiremake linux
   ipfiremake atl2
+  ipfiremake e1000e
   ipfiremake kqemu
   ipfiremake v4l-dvb
   ipfiremake madwifi
