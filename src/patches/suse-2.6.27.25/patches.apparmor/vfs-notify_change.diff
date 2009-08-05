@@ -1,0 +1,291 @@
+From: Tony Jones <tonyj@suse.de>
+Subject: Add a vfsmount parameter to notify_change()
+
+The vfsmount parameter must be set appropriately for files visibile
+outside the kernel. Files that are only used in a filesystem (e.g.,
+reiserfs xattr files) will have a NULL vfsmount.
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ fs/attr.c           |    3 ++-
+ fs/ecryptfs/inode.c |    4 +++-
+ fs/exec.c           |    3 ++-
+ fs/hpfs/namei.c     |    2 +-
+ fs/namei.c          |    2 +-
+ fs/nfsd/vfs.c       |    8 ++++----
+ fs/open.c           |   28 +++++++++++++++-------------
+ fs/utimes.c         |    2 +-
+ include/linux/fs.h  |    6 +++---
+ mm/filemap.c        |    2 +-
+ 10 files changed, 33 insertions(+), 27 deletions(-)
+
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -100,7 +100,8 @@ int inode_setattr(struct inode * inode,
+ }
+ EXPORT_SYMBOL(inode_setattr);
+ 
+-int notify_change(struct dentry * dentry, struct iattr * attr)
++int notify_change(struct dentry *dentry, struct vfsmount *mnt,
++		  struct iattr *attr)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	mode_t mode = inode->i_mode;
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -850,6 +850,7 @@ static int ecryptfs_setattr(struct dentr
+ {
+ 	int rc = 0;
+ 	struct dentry *lower_dentry;
++	struct vfsmount *lower_mnt;
+ 	struct inode *inode;
+ 	struct inode *lower_inode;
+ 	struct ecryptfs_crypt_stat *crypt_stat;
+@@ -860,6 +861,7 @@ static int ecryptfs_setattr(struct dentr
+ 	inode = dentry->d_inode;
+ 	lower_inode = ecryptfs_inode_to_lower(inode);
+ 	lower_dentry = ecryptfs_dentry_to_lower(dentry);
++	lower_mnt = ecryptfs_dentry_to_lower_mnt(dentry);
+ 	mutex_lock(&crypt_stat->cs_mutex);
+ 	if (S_ISDIR(dentry->d_inode->i_mode))
+ 		crypt_stat->flags &= ~(ECRYPTFS_ENCRYPTED);
+@@ -911,7 +913,7 @@ static int ecryptfs_setattr(struct dentr
+ 		ia->ia_valid &= ~ATTR_MODE;
+ 
+ 	mutex_lock(&lower_dentry->d_inode->i_mutex);
+-	rc = notify_change(lower_dentry, ia);
++	rc = notify_change(lower_dentry, lower_mnt, ia);
+ 	mutex_unlock(&lower_dentry->d_inode->i_mutex);
+ out:
+ 	fsstack_copy_attr_all(inode, lower_inode, NULL);
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1841,7 +1841,8 @@ int do_coredump(long signr, int exit_cod
+ 		goto close_fail;
+ 	if (!file->f_op->write)
+ 		goto close_fail;
+-	if (!ispipe && do_truncate(file->f_path.dentry, 0, 0, file) != 0)
++	if (!ispipe &&
++	    do_truncate(file->f_path.dentry, file->f_path.mnt, 0, 0, file) != 0)
+ 		goto close_fail;
+ 
+ 	retval = binfmt->core_dump(signr, regs, file, core_limit);
+--- a/fs/hpfs/namei.c
++++ b/fs/hpfs/namei.c
+@@ -426,7 +426,7 @@ again:
+ 			/*printk("HPFS: truncating file before delete.\n");*/
+ 			newattrs.ia_size = 0;
+ 			newattrs.ia_valid = ATTR_SIZE | ATTR_CTIME;
+-			err = notify_change(dentry, &newattrs);
++			err = notify_change(dentry, NULL, &newattrs);
+ 			put_write_access(inode);
+ 			if (!err)
+ 				goto again;
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1619,7 +1619,7 @@ int may_open(struct nameidata *nd, int a
+ 		if (!error) {
+ 			DQUOT_INIT(inode);
+ 
+-			error = do_truncate(dentry, 0,
++			error = do_truncate(dentry, nd->path.mnt, 0,
+ 					    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
+ 					    NULL);
+ 		}
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -397,7 +397,7 @@ nfsd_setattr(struct svc_rqst *rqstp, str
+ 	err = nfserr_notsync;
+ 	if (!check_guard || guardtime == inode->i_ctime.tv_sec) {
+ 		fh_lock(fhp);
+-		host_err = notify_change(dentry, iap);
++		host_err = notify_change(dentry, fhp->fh_export->ex_path.mnt, iap);
+ 		/* to get NFSERR_JUKEBOX on the wire, need -ETIMEDOUT */
+ 		if (host_err == -EAGAIN)
+ 			host_err = -ETIMEDOUT;
+@@ -964,13 +964,13 @@ out:
+ 	return err;
+ }
+ 
+-static void kill_suid(struct dentry *dentry)
++static void kill_suid(struct dentry *dentry, struct vfsmount *mnt)
+ {
+ 	struct iattr	ia;
+ 	ia.ia_valid = ATTR_KILL_SUID | ATTR_KILL_SGID | ATTR_KILL_PRIV;
+ 
+ 	mutex_lock(&dentry->d_inode->i_mutex);
+-	notify_change(dentry, &ia);
++	notify_change(dentry, mnt, &ia);
+ 	mutex_unlock(&dentry->d_inode->i_mutex);
+ }
+ 
+@@ -1033,7 +1033,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, s
+ 
+ 	/* clear setuid/setgid flag after write */
+ 	if (host_err >= 0 && (inode->i_mode & (S_ISUID | S_ISGID)))
+-		kill_suid(dentry);
++		kill_suid(dentry, exp->ex_path.mnt);
+ 
+ 	if (host_err >= 0 && stable) {
+ 		static ino_t	last_ino;
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -195,8 +195,8 @@ out:
+ 	return error;
+ }
+ 
+-int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
+-	struct file *filp)
++int do_truncate(struct dentry *dentry, struct vfsmount *mnt, loff_t length,
++		unsigned int time_attrs, struct file *filp)
+ {
+ 	int err;
+ 	struct iattr newattrs;
+@@ -216,7 +216,7 @@ int do_truncate(struct dentry *dentry, l
+ 	newattrs.ia_valid |= should_remove_suid(dentry);
+ 
+ 	mutex_lock(&dentry->d_inode->i_mutex);
+-	err = notify_change(dentry, &newattrs);
++	err = notify_change(dentry, mnt, &newattrs);
+ 	mutex_unlock(&dentry->d_inode->i_mutex);
+ 	return err;
+ }
+@@ -272,7 +272,7 @@ static long do_sys_truncate(const char _
+ 	error = locks_verify_truncate(inode, NULL, length);
+ 	if (!error) {
+ 		DQUOT_INIT(inode);
+-		error = do_truncate(path.dentry, length, 0, NULL);
++		error = do_truncate(path.dentry, path.mnt, length, 0, NULL);
+ 	}
+ 
+ put_write_and_out:
+@@ -327,7 +327,8 @@ static long do_sys_ftruncate(unsigned in
+ 
+ 	error = locks_verify_truncate(inode, file, length);
+ 	if (!error)
+-		error = do_truncate(dentry, length, ATTR_MTIME|ATTR_CTIME, file);
++		error = do_truncate(dentry, file->f_path.mnt, length,
++				    ATTR_MTIME|ATTR_CTIME, file);
+ out_putf:
+ 	fput(file);
+ out:
+@@ -624,7 +625,7 @@ SYSCALL_DEFINE2(fchmod, unsigned int, fd
+ 		mode = inode->i_mode;
+ 	newattrs.ia_mode = (mode & S_IALLUGO) | (inode->i_mode & ~S_IALLUGO);
+ 	newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+-	err = notify_change(dentry, &newattrs);
++	err = notify_change(dentry, file->f_path.mnt, &newattrs);
+ 	mutex_unlock(&inode->i_mutex);
+ 	mnt_drop_write(file->f_path.mnt);
+ out_putf:
+@@ -653,7 +654,7 @@ SYSCALL_DEFINE3(fchmodat, int, dfd, cons
+ 		mode = inode->i_mode;
+ 	newattrs.ia_mode = (mode & S_IALLUGO) | (inode->i_mode & ~S_IALLUGO);
+ 	newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+-	error = notify_change(path.dentry, &newattrs);
++	error = notify_change(path.dentry, path.mnt, &newattrs);
+ 	mutex_unlock(&inode->i_mutex);
+ 	mnt_drop_write(path.mnt);
+ dput_and_out:
+@@ -667,7 +668,8 @@ SYSCALL_DEFINE2(chmod, const char __user
+ 	return sys_fchmodat(AT_FDCWD, filename, mode);
+ }
+ 
+-static int chown_common(struct dentry * dentry, uid_t user, gid_t group)
++static int chown_common(struct dentry * dentry, struct vfsmount *mnt,
++			uid_t user, gid_t group)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	int error;
+@@ -686,7 +688,7 @@ static int chown_common(struct dentry *
+ 		newattrs.ia_valid |=
+ 			ATTR_KILL_SUID | ATTR_KILL_SGID | ATTR_KILL_PRIV;
+ 	mutex_lock(&inode->i_mutex);
+-	error = notify_change(dentry, &newattrs);
++	error = notify_change(dentry, mnt, &newattrs);
+ 	mutex_unlock(&inode->i_mutex);
+ 
+ 	return error;
+@@ -703,7 +705,7 @@ SYSCALL_DEFINE3(chown, const char __user
+ 	error = mnt_want_write(path.mnt);
+ 	if (error)
+ 		goto out_release;
+-	error = chown_common(path.dentry, user, group);
++	error = chown_common(path.dentry, path.mnt, user, group);
+ 	mnt_drop_write(path.mnt);
+ out_release:
+ 	path_put(&path);
+@@ -728,7 +730,7 @@ SYSCALL_DEFINE5(fchownat, int, dfd, cons
+ 	error = mnt_want_write(path.mnt);
+ 	if (error)
+ 		goto out_release;
+-	error = chown_common(path.dentry, user, group);
++	error = chown_common(path.dentry, path.mnt, user, group);
+ 	mnt_drop_write(path.mnt);
+ out_release:
+ 	path_put(&path);
+@@ -747,7 +749,7 @@ SYSCALL_DEFINE3(lchown, const char __use
+ 	error = mnt_want_write(path.mnt);
+ 	if (error)
+ 		goto out_release;
+-	error = chown_common(path.dentry, user, group);
++	error = chown_common(path.dentry, path.mnt, user, group);
+ 	mnt_drop_write(path.mnt);
+ out_release:
+ 	path_put(&path);
+@@ -770,7 +772,7 @@ SYSCALL_DEFINE3(fchown, unsigned int, fd
+ 		goto out_fput;
+ 	dentry = file->f_path.dentry;
+ 	audit_inode(NULL, dentry);
+-	error = chown_common(dentry, user, group);
++	error = chown_common(dentry, file->f_path.mnt, user, group);
+ 	mnt_drop_write(file->f_path.mnt);
+ out_fput:
+ 	fput(file);
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -102,7 +102,7 @@ static int utimes_common(struct path *pa
+ 		}
+ 	}
+ 	mutex_lock(&inode->i_mutex);
+-	error = notify_change(path->dentry, &newattrs);
++	error = notify_change(path->dentry, path->mnt, &newattrs);
+ 	mutex_unlock(&inode->i_mutex);
+ 
+ mnt_drop_write_and_out:
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1636,8 +1636,8 @@ static inline int break_lease(struct ino
+ 
+ /* fs/open.c */
+ 
+-extern int do_truncate(struct dentry *, loff_t start, unsigned int time_attrs,
+-		       struct file *filp);
++extern int do_truncate(struct dentry *, struct vfsmount *, loff_t start,
++		       unsigned int time_attrs, struct file *filp);
+ extern long do_sys_open(int dfd, const char __user *filename, int flags,
+ 			int mode);
+ extern struct file *filp_open(const char *, int, int);
+@@ -1798,7 +1798,7 @@ extern int do_remount_sb(struct super_bl
+ #ifdef CONFIG_BLOCK
+ extern sector_t bmap(struct inode *, sector_t);
+ #endif
+-extern int notify_change(struct dentry *, struct iattr *);
++extern int notify_change(struct dentry *, struct vfsmount *, struct iattr *);
+ extern int inode_permission(struct inode *, int);
+ extern int generic_permission(struct inode *, int,
+ 		int (*check_acl)(struct inode *, int));
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1831,7 +1831,7 @@ static int __remove_suid(struct path *pa
+ 	struct iattr newattrs;
+ 
+ 	newattrs.ia_valid = ATTR_FORCE | kill;
+-	return notify_change(path->dentry, &newattrs);
++	return notify_change(path->dentry, path->mnt, &newattrs);
+ }
+ 
+ int file_remove_suid(struct file *file)

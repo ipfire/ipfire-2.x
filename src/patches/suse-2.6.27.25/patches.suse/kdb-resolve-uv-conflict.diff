@@ -1,0 +1,224 @@
+From: Jay Lan <jlan@sgi.com>
+Subject: [PATCH] Resolve KDB conflicts with UV
+References: bnc#440376
+
+Hi Keith,
+
+On Wed, Oct 29, 2008 at 03:57:25PM +1100, Keith Owens wrote:
+> However there is a separate problem with your patch.  You now wait in
+> smp_kdb_stop() until all cpus are in KDB.  If any cpu is completely
+> hung so it cannot be interrupted then smp_kdb_stop() will never return
+> and KDB will now appear to hang.
+> 
+> The existing code avoids this by
+> 
+>   kdb() -> smp_kdb_stop() - issue KDB_VECTOR as normal interrupt but do not wait for cpus
+>   kdb() -> kdba_main_loop()
+>     kdba_main_loop() -> kdb_save_running()
+>       kdb_save_running() -> kdb_main_loop()
+>         kdb_main_loop() -> kdb_wait_for_cpus()
+> 
+> kdb_wait_for_cpus() waits until the other cpus are in KDB.  If a cpu
+> does not respond to KDB_VECTOR after a few seconds then
+> kdb_wait_for_cpus() hits the missing cpus with NMI.
+> 
+> This two step approach (send KDB_VECTOR as normal interrupt, wait then
+> send NMI) is used because NMI can be serviced at any time, even when
+> the target cpu is in the middle of servicing an interrupt.  This can
+> result in incomplete register state which leads to broken backtraces.
+> IOW, sending NMI first would actually make debugging harder.
+> 
+> Given the above logic, if you are going to take over an existing
+> interrupt vector then the vector needs to be acquired near the start of
+> kdb() and released near the end of kdb(), and only on the master cpu.
+> 
+> Note: there is no overwhelming need for KDB_VECTOR to have a high
+> priority.  As long as it is received within a few seconds then all is
+> well.
+
+Thanks for the explanation.  I see your point.
+
+How about if we keep the two step approach, but take over the vector
+when we need it, in step one.  Then give it back when the step two
+ wait is over.
+(assuming we don't take over a vector needed for the NMI)
+
+Like this:
+
+Signed-off-by: Jay Lan <jlan@sgi.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+
+---
+ arch/ia64/include/asm/kdb.h   |    4 ++++
+ arch/x86/kdb/kdbasupport_32.c |   22 ++++++++++++++++++----
+ arch/x86/kdb/kdbasupport_64.c |   23 +++++++++++++++++++----
+ include/asm-x86/irq_vectors.h |   11 ++++++-----
+ include/asm-x86/kdb.h         |    4 ++++
+ kdb/kdbmain.c                 |    2 ++
+ 6 files changed, 53 insertions(+), 13 deletions(-)
+
+--- a/arch/ia64/include/asm/kdb.h
++++ b/arch/ia64/include/asm/kdb.h
+@@ -42,4 +42,8 @@ kdba_funcptr_value(void *fp)
+ 	return *(unsigned long *)fp;
+ }
+ 
++#ifdef CONFIG_SMP
++#define kdba_giveback_vector(vector) (0)
++#endif
++
+ #endif	/* !_ASM_KDB_H */
+--- a/arch/x86/kdb/kdbasupport_32.c
++++ b/arch/x86/kdb/kdbasupport_32.c
+@@ -883,9 +883,6 @@ kdba_cpu_up(void)
+ static int __init
+ kdba_arch_init(void)
+ {
+-#ifdef	CONFIG_SMP
+-	set_intr_gate(KDB_VECTOR, kdb_interrupt);
+-#endif
+ 	set_intr_gate(KDBENTER_VECTOR, kdb_call);
+ 	return 0;
+ }
+@@ -1027,14 +1024,31 @@ kdba_verify_rw(unsigned long addr, size_
+ 
+ #include <mach_ipi.h>
+ 
++gate_desc save_idt[NR_VECTORS];
++
++void kdba_takeover_vector(int vector)
++{
++	memcpy(&save_idt[vector], &idt_table[vector], sizeof(gate_desc));
++	set_intr_gate(KDB_VECTOR, kdb_interrupt);
++	return;
++}
++
++void kdba_giveback_vector(int vector)
++{
++	native_write_idt_entry(idt_table, vector, &save_idt[vector]);
++	return;
++}
++
+ /* When first entering KDB, try a normal IPI.  That reduces backtrace problems
+  * on the other cpus.
+  */
+ void
+ smp_kdb_stop(void)
+ {
+-	if (!KDB_FLAG(NOIPI))
++	if (!KDB_FLAG(NOIPI)) {
++		kdba_takeover_vector(KDB_VECTOR);
+ 		send_IPI_allbutself(KDB_VECTOR);
++	}
+ }
+ 
+ /* The normal KDB IPI handler */
+--- a/arch/x86/kdb/kdbasupport_64.c
++++ b/arch/x86/kdb/kdbasupport_64.c
+@@ -21,6 +21,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/kdebug.h>
++#include <linux/cpumask.h>
+ #include <asm/processor.h>
+ #include <asm/msr.h>
+ #include <asm/uaccess.h>
+@@ -900,9 +901,6 @@ kdba_cpu_up(void)
+ static int __init
+ kdba_arch_init(void)
+ {
+-#ifdef	CONFIG_SMP
+-	set_intr_gate(KDB_VECTOR, kdb_interrupt);
+-#endif
+ 	set_intr_gate(KDBENTER_VECTOR, kdb_call);
+ 	return 0;
+ }
+@@ -976,14 +974,31 @@ kdba_set_current_task(const struct task_
+ 
+ #include <mach_ipi.h>
+ 
++gate_desc save_idt[NR_VECTORS];
++
++void kdba_takeover_vector(int vector)
++{
++	memcpy(&save_idt[vector], &idt_table[vector], sizeof(gate_desc));
++	set_intr_gate(KDB_VECTOR, kdb_interrupt);
++	return;
++}
++
++void kdba_giveback_vector(int vector)
++{
++	native_write_idt_entry(idt_table, vector, &save_idt[vector]);
++	return;
++}
++
+ /* When first entering KDB, try a normal IPI.  That reduces backtrace problems
+  * on the other cpus.
+  */
+ void
+ smp_kdb_stop(void)
+ {
+-	if (!KDB_FLAG(NOIPI))
++	if (!KDB_FLAG(NOIPI)) {
++		kdba_takeover_vector(KDB_VECTOR);
+ 		send_IPI_allbutself(KDB_VECTOR);
++	}
+ }
+ 
+ /* The normal KDB IPI handler */
+--- a/include/asm-x86/irq_vectors.h
++++ b/include/asm-x86/irq_vectors.h
+@@ -66,7 +66,6 @@
+ # define RESCHEDULE_VECTOR		0xfc
+ # define CALL_FUNCTION_VECTOR		0xfb
+ # define CALL_FUNCTION_SINGLE_VECTOR	0xfa
+-#define	KDB_VECTOR			0xf9
+ # define THERMAL_APIC_VECTOR		0xf0
+ 
+ #else
+@@ -79,10 +78,6 @@
+ #define THERMAL_APIC_VECTOR		0xfa
+ #define THRESHOLD_APIC_VECTOR		0xf9
+ #define UV_BAU_MESSAGE			0xf8
+-/* Overload KDB_VECTOR with UV_BAU_MESSAGE. By the time the UV hardware is
+- * ready, we should have moved to a dynamically allocated vector scheme.
+- */
+-#define KDB_VECTOR			0xf8
+ #define INVALIDATE_TLB_VECTOR_END	0xf7
+ #define INVALIDATE_TLB_VECTOR_START	0xf0	/* f0-f7 used for TLB flush */
+ 
+@@ -91,6 +86,12 @@
+ #endif
+ 
+ /*
++ * KDB_VECTOR will take over vector 0xfe when it is needed, as in theory
++ * it should not be used anyway.
++ */
++#define KDB_VECTOR			0xfe
++
++/*
+  * Local APIC timer IRQ vector is on a different priority level,
+  * to work around the 'lost local interrupt if more than 2 IRQ
+  * sources per level' errata.
+--- a/include/asm-x86/kdb.h
++++ b/include/asm-x86/kdb.h
+@@ -131,4 +131,8 @@ kdba_funcptr_value(void *fp)
+ 	return (unsigned long)fp;
+ }
+ 
++#ifdef CONFIG_SMP
++extern void kdba_giveback_vector(int);
++#endif
++
+ #endif	/* !_ASM_KDB_H */
+--- a/kdb/kdbmain.c
++++ b/kdb/kdbmain.c
+@@ -1666,6 +1666,8 @@ kdb_wait_for_cpus(void)
+ 					wait == 1 ? " is" : "s are",
+ 					wait == 1 ? "its" : "their");
+ 	}
++	/* give back the vector we took over in smp_kdb_stop */
++	kdba_giveback_vector(KDB_VECTOR);
+ #endif	/* CONFIG_SMP */
+ }
+ 

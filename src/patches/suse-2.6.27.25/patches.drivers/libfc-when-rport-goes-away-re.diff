@@ -1,0 +1,41 @@
+From: Abhijeet Joglekar <abjoglek@cisco.com>
+Subject: libfc: when rport goes away (re-plogi), clean up exchanges to/from rport
+References: bnc #465596
+
+When a rport goes away, libFC does a plogi which will reset exchanges
+    at the rport. Clean exchanges at our end, both in transport and libFC.
+    If transport hooks into exch_mgr_reset, it will call back into
+    fc_exch_mgr_reset() to clean up libFC exchanges.
+
+Signed-off-by: Abhijeet Joglekar <abjoglek@cisco.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/libfc/fc_rport.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+
+--- a/drivers/scsi/libfc/fc_rport.c
++++ b/drivers/scsi/libfc/fc_rport.c
+@@ -215,6 +215,7 @@ static void fc_rport_state_enter(struct
+ 
+ static void fc_rport_work(struct work_struct *work)
+ {
++	u32 port_id;
+ 	struct fc_rport_libfc_priv *rdata =
+ 		container_of(work, struct fc_rport_libfc_priv, event_work);
+ 	enum fc_rport_event event;
+@@ -280,8 +281,12 @@ static void fc_rport_work(struct work_st
+ 			rport_ops->event_callback(lport, rport, event);
+ 		if (trans_state == FC_PORTSTATE_ROGUE)
+ 			put_device(&rport->dev);
+-		else
++		else {
++			port_id = rport->port_id;
+ 			fc_remote_port_delete(rport);
++			lport->tt.exch_mgr_reset(lport, 0, port_id);
++			lport->tt.exch_mgr_reset(lport, port_id, 0);
++		}
+ 	} else
+ 		mutex_unlock(&rdata->rp_mutex);
+ }

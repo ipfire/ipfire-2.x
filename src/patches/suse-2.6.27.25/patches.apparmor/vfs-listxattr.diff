@@ -1,0 +1,101 @@
+From: Tony Jones <tonyj@suse.de>
+Subject: Add a struct vfsmount parameter to vfs_listxattr()
+
+The vfsmount will be passed down to the LSM hook so that LSMs can compute
+pathnames.
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ fs/xattr.c            |   25 ++++++++++++++-----------
+ include/linux/xattr.h |    2 +-
+ 2 files changed, 15 insertions(+), 12 deletions(-)
+
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -168,18 +168,20 @@ nolsm:
+ EXPORT_SYMBOL_GPL(vfs_getxattr);
+ 
+ ssize_t
+-vfs_listxattr(struct dentry *d, char *list, size_t size)
++vfs_listxattr(struct dentry *dentry, struct vfsmount *mnt, char *list,
++	      size_t size)
+ {
++	struct inode *inode = dentry->d_inode;
+ 	ssize_t error;
+ 
+-	error = security_inode_listxattr(d);
++	error = security_inode_listxattr(dentry);
+ 	if (error)
+ 		return error;
+ 	error = -EOPNOTSUPP;
+-	if (d->d_inode->i_op && d->d_inode->i_op->listxattr) {
+-		error = d->d_inode->i_op->listxattr(d, list, size);
+-	} else {
+-		error = security_inode_listsecurity(d->d_inode, list, size);
++	if (inode->i_op && inode->i_op->listxattr)
++		error = inode->i_op->listxattr(dentry, list, size);
++	else {
++		error = security_inode_listsecurity(inode, list, size);
+ 		if (size && error > size)
+ 			error = -ERANGE;
+ 	}
+@@ -396,7 +398,8 @@ SYSCALL_DEFINE4(fgetxattr, int, fd, cons
+  * Extended attribute LIST operations
+  */
+ static ssize_t
+-listxattr(struct dentry *d, char __user *list, size_t size)
++listxattr(struct dentry *dentry, struct vfsmount *mnt, char __user *list,
++	  size_t size)
+ {
+ 	ssize_t error;
+ 	char *klist = NULL;
+@@ -409,7 +412,7 @@ listxattr(struct dentry *d, char __user 
+ 			return -ENOMEM;
+ 	}
+ 
+-	error = vfs_listxattr(d, klist, size);
++	error = vfs_listxattr(dentry, mnt, klist, size);
+ 	if (error > 0) {
+ 		if (size && copy_to_user(list, klist, error))
+ 			error = -EFAULT;
+@@ -431,7 +434,7 @@ SYSCALL_DEFINE3(listxattr, const char __
+ 	error = user_path(pathname, &path);
+ 	if (error)
+ 		return error;
+-	error = listxattr(path.dentry, list, size);
++	error = listxattr(path.dentry, path.mnt, list, size);
+ 	path_put(&path);
+ 	return error;
+ }
+@@ -445,7 +448,7 @@ SYSCALL_DEFINE3(llistxattr, const char _
+ 	error = user_lpath(pathname, &path);
+ 	if (error)
+ 		return error;
+-	error = listxattr(path.dentry, list, size);
++	error = listxattr(path.dentry, path.mnt, list, size);
+ 	path_put(&path);
+ 	return error;
+ }
+@@ -459,7 +462,7 @@ SYSCALL_DEFINE3(flistxattr, int, fd, cha
+ 	if (!f)
+ 		return error;
+ 	audit_inode(NULL, f->f_path.dentry);
+-	error = listxattr(f->f_path.dentry, list, size);
++	error = listxattr(f->f_path.dentry, f->f_path.mnt, list, size);
+ 	fput(f);
+ 	return error;
+ }
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -49,7 +49,7 @@ struct xattr_handler {
+ 
+ ssize_t xattr_getsecurity(struct inode *, const char *, void *, size_t);
+ ssize_t vfs_getxattr(struct dentry *, struct vfsmount *, const char *, void *, size_t);
+-ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
++ssize_t vfs_listxattr(struct dentry *d, struct vfsmount *, char *list, size_t size);
+ int vfs_setxattr(struct dentry *, struct vfsmount *, const char *, const void *, size_t, int);
+ int vfs_removexattr(struct dentry *, const char *);
+ 

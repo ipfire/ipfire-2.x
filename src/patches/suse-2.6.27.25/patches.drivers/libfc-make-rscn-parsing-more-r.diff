@@ -1,0 +1,59 @@
+From: Chris Leech <christopher.leech@intel.com>
+Subject: [FcOE] make RSCN parsing more robust
+References: bnc #459142
+
+RSCN parsing needs to verify that the payload length specified in the RSCN ELS
+message does not exceed the size of the actual frame received.
+
+Signed-off-by: Chris Leech <christopher.leech@intel.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/libfc/fc_disc.c |   19 +++++++++++++++----
+ 1 files changed, 15 insertions(+), 4 deletions(-)
+
+
+diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
+index 0416041..8b609e4 100644
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -173,17 +173,27 @@ static void fc_disc_recv_rscn_req(struct fc_seq *sp, struct fc_frame *fp,
+ 	FC_DEBUG_DISC("Received an RSCN event on port (%6x)\n",
+ 		      fc_host_port_id(lport->host));
+ 
++	/* make sure the frame contains an RSCN message */
+ 	rp = fc_frame_payload_get(fp, sizeof(*rp));
+-
+-	if (!rp || rp->rscn_page_len != sizeof(*pp))
++	if (!rp)
+ 		goto reject;
+-
++	/* make sure the page length is as expected (4 bytes) */
++	if (rp->rscn_page_len != sizeof(*pp))
++		goto reject;
++	/* get the RSCN payload length */
+ 	len = ntohs(rp->rscn_plen);
+ 	if (len < sizeof(*rp))
+ 		goto reject;
++	/* make sure the frame contains the expected payload */
++	rp = fc_frame_payload_get(fp, len);
++	if (!rp)
++		goto reject;
++	/* payload must be a multiple of the RSCN page size */
+ 	len -= sizeof(*rp);
++	if (len % sizeof(*pp))
++		goto reject;
+ 
+-	for (pp = (void *)(rp + 1); len; len -= sizeof(*pp), pp++) {
++	for (pp = (void *)(rp + 1); len > 0; len -= sizeof(*pp), pp++) {
+ 		ev_qual = pp->rscn_page_flags >> ELS_RSCN_EV_QUAL_BIT;
+ 		ev_qual &= ELS_RSCN_EV_QUAL_MASK;
+ 		fmt = pp->rscn_page_flags >> ELS_RSCN_ADDR_FMT_BIT;
+@@ -239,6 +249,7 @@ static void fc_disc_recv_rscn_req(struct fc_seq *sp, struct fc_frame *fp,
+ 	fc_frame_free(fp);
+ 	return;
+ reject:
++	FC_DEBUG_DISC("Received a bad RSCN frame\n");
+ 	rjt_data.fp = NULL;
+ 	rjt_data.reason = ELS_RJT_LOGIC;
+ 	rjt_data.explan = ELS_EXPL_NONE;

@@ -1,0 +1,37 @@
+From: Andreas Gruenbacher <agruen@suse.de>
+Subject: Add ``cloneconfig'' target
+
+Cloneconfig takes the first configuration it finds which appears
+to belong to the running kernel, and configures the kernel sources
+to match this configuration as closely as possible.
+
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+
+ scripts/kconfig/Makefile |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -61,6 +61,22 @@ allnoconfig: $(obj)/conf
+ allmodconfig: $(obj)/conf
+ 	$< -m $(Kconfig)
+ 
++UNAME_RELEASE := $(shell uname -r)
++CLONECONFIG := $(firstword $(wildcard /proc/config.gz \
++				      /lib/modules/$(UNAME_RELEASE)/.config \
++				      /etc/kernel-config \
++				      /boot/config-$(UNAME_RELEASE)))
++cloneconfig: $(obj)/conf
++	$(Q)case "$(CLONECONFIG)" in				\
++	'')	echo -e "The configuration of the running"	\
++			"kernel could not be determined\n";	\
++		false ;;					\
++	*.gz)	gzip -cd $(CLONECONFIG) > .config.running ;;	\
++	*)	cat $(CLONECONFIG) > .config.running ;;		\
++	esac &&							\
++	echo -e "Cloning configuration file $(CLONECONFIG)\n"
++	$(Q)$< -D .config.running arch/$(SRCARCH)/Kconfig
++
+ defconfig: $(obj)/conf
+ ifeq ($(KBUILD_DEFCONFIG),)
+ 	$< -d $(Kconfig)

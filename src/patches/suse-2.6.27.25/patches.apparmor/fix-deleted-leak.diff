@@ -1,0 +1,25 @@
+From: John Johansen <jrjohansen@verizon.net>
+Subject: [PATCH] AppArmor: Fix leak of filename for deleted files
+
+ This patch fixes a memory leak where the name doesn't get freed when
+ a file has been deleted.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ security/apparmor/main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/security/apparmor/main.c
++++ b/security/apparmor/main.c
+@@ -500,10 +500,10 @@ static char *aa_get_name(struct dentry *
+ 			*buffer = buf;
+ 			return name;
+ 		}
++		kfree(buf);
+ 		if (PTR_ERR(name) != -ENAMETOOLONG)
+ 			return name;
+ 
+-		kfree(buf);
+ 		size <<= 1;
+ 		if (size > apparmor_path_max)
+ 			return ERR_PTR(-ENAMETOOLONG);

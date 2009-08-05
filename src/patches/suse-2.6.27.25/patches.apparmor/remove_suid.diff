@@ -1,0 +1,41 @@
+From: Andreas Gruenbacher <agruen@suse.de>
+Subject: Pass struct path down to remove_suid and children
+
+Required by a later patch that adds a struct vfsmount parameter to
+notify_change().
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+
+ mm/filemap.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1826,12 +1826,12 @@ int should_remove_suid(struct dentry *de
+ }
+ EXPORT_SYMBOL(should_remove_suid);
+ 
+-static int __remove_suid(struct dentry *dentry, int kill)
++static int __remove_suid(struct path *path, int kill)
+ {
+ 	struct iattr newattrs;
+ 
+ 	newattrs.ia_valid = ATTR_FORCE | kill;
+-	return notify_change(dentry, &newattrs);
++	return notify_change(path->dentry, &newattrs);
+ }
+ 
+ int file_remove_suid(struct file *file)
+@@ -1846,7 +1846,7 @@ int file_remove_suid(struct file *file)
+ 	if (killpriv)
+ 		error = security_inode_killpriv(dentry);
+ 	if (!error && killsuid)
+-		error = __remove_suid(dentry, killsuid);
++		error = __remove_suid(&file->f_path, killsuid);
+ 
+ 	return error;
+ }

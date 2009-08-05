@@ -1,0 +1,137 @@
+From: Tony Jones <tonyj@suse.de>
+Subject: Add struct vfsmount parameter to vfs_mkdir()
+
+The vfsmount will be passed down to the LSM hook so that LSMs can compute
+pathnames.
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ fs/ecryptfs/inode.c   |    5 ++++-
+ fs/namei.c            |    5 +++--
+ fs/nfsd/nfs4recover.c |    3 ++-
+ fs/nfsd/vfs.c         |    8 +++++---
+ include/linux/fs.h    |    2 +-
+ kernel/cgroup.c       |    2 +-
+ 6 files changed, 16 insertions(+), 9 deletions(-)
+
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -501,11 +501,14 @@ static int ecryptfs_mkdir(struct inode *
+ {
+ 	int rc;
+ 	struct dentry *lower_dentry;
++	struct vfsmount *lower_mnt;
+ 	struct dentry *lower_dir_dentry;
+ 
+ 	lower_dentry = ecryptfs_dentry_to_lower(dentry);
++	lower_mnt = ecryptfs_dentry_to_lower_mnt(dentry);
+ 	lower_dir_dentry = lock_parent(lower_dentry);
+-	rc = vfs_mkdir(lower_dir_dentry->d_inode, lower_dentry, mode);
++	rc = vfs_mkdir(lower_dir_dentry->d_inode, lower_dentry, lower_mnt,
++		       mode);
+ 	if (rc || !lower_dentry->d_inode)
+ 		goto out;
+ 	rc = ecryptfs_interpose(lower_dentry, dentry, dir->i_sb, 0);
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2077,7 +2077,8 @@ SYSCALL_DEFINE3(mknod, const char __user
+ 	return sys_mknodat(AT_FDCWD, filename, mode, dev);
+ }
+ 
+-int vfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
++int vfs_mkdir(struct inode *dir, struct dentry *dentry, struct vfsmount *mnt,
++	      int mode)
+ {
+ 	int error = may_create(dir, dentry, 1);
+ 
+@@ -2120,7 +2121,7 @@ SYSCALL_DEFINE3(mkdirat, int, dfd, const
+ 	error = mnt_want_write(nd.path.mnt);
+ 	if (error)
+ 		goto out_dput;
+-	error = vfs_mkdir(nd.path.dentry->d_inode, dentry, mode);
++	error = vfs_mkdir(nd.path.dentry->d_inode, dentry, nd.path.mnt, mode);
+ 	mnt_drop_write(nd.path.mnt);
+ out_dput:
+ 	dput(dentry);
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -158,7 +158,8 @@ nfsd4_create_clid_dir(struct nfs4_client
+ 	status = mnt_want_write(rec_dir.path.mnt);
+ 	if (status)
+ 		goto out_put;
+-	status = vfs_mkdir(rec_dir.path.dentry->d_inode, dentry, S_IRWXU);
++	status = vfs_mkdir(rec_dir.path.dentry->d_inode, dentry,
++			   rec_dir.path.mnt, S_IRWXU);
+ 	mnt_drop_write(rec_dir.path.mnt);
+ out_put:
+ 	dput(dentry);
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1215,6 +1215,7 @@ nfsd_create(struct svc_rqst *rqstp, stru
+ 		int type, dev_t rdev, struct svc_fh *resfhp)
+ {
+ 	struct dentry	*dentry, *dchild = NULL;
++	struct svc_export *exp;
+ 	struct inode	*dirp;
+ 	__be32		err;
+ 	__be32		err2;
+@@ -1232,6 +1233,7 @@ nfsd_create(struct svc_rqst *rqstp, stru
+ 		goto out;
+ 
+ 	dentry = fhp->fh_dentry;
++	exp = fhp->fh_export;
+ 	dirp = dentry->d_inode;
+ 
+ 	err = nfserr_notdir;
+@@ -1248,7 +1250,7 @@ nfsd_create(struct svc_rqst *rqstp, stru
+ 		host_err = PTR_ERR(dchild);
+ 		if (IS_ERR(dchild))
+ 			goto out_nfserr;
+-		err = fh_compose(resfhp, fhp->fh_export, dchild, fhp);
++		err = fh_compose(resfhp, exp, dchild, fhp);
+ 		if (err)
+ 			goto out;
+ 	} else {
+@@ -1298,7 +1300,7 @@ nfsd_create(struct svc_rqst *rqstp, stru
+ 		host_err = vfs_create(dirp, dchild, iap->ia_mode, NULL);
+ 		break;
+ 	case S_IFDIR:
+-		host_err = vfs_mkdir(dirp, dchild, iap->ia_mode);
++		host_err = vfs_mkdir(dirp, dchild, exp->ex_path.mnt, iap->ia_mode);
+ 		break;
+ 	case S_IFCHR:
+ 	case S_IFBLK:
+@@ -1312,7 +1314,7 @@ nfsd_create(struct svc_rqst *rqstp, stru
+ 		goto out_nfserr;
+ 	}
+ 
+-	if (EX_ISSYNC(fhp->fh_export)) {
++	if (EX_ISSYNC(exp)) {
+ 		err = nfserrno(nfsd_sync_dir(dentry));
+ 		write_inode_now(dchild->d_inode, 1);
+ 	}
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1178,7 +1178,7 @@ extern void unlock_super(struct super_bl
+  */
+ extern int vfs_permission(struct nameidata *, int);
+ extern int vfs_create(struct inode *, struct dentry *, int, struct nameidata *);
+-extern int vfs_mkdir(struct inode *, struct dentry *, int);
++extern int vfs_mkdir(struct inode *, struct dentry *, struct vfsmount *, int);
+ extern int vfs_mknod(struct inode *, struct dentry *, int, dev_t);
+ extern int vfs_symlink(struct inode *, struct dentry *, const char *);
+ extern int vfs_link(struct dentry *, struct inode *, struct dentry *);
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@ -2911,7 +2911,7 @@ int cgroup_clone(struct task_struct *tsk
+ 	}
+ 
+ 	/* Create the cgroup directory, which also creates the cgroup */
+-	ret = vfs_mkdir(inode, dentry, S_IFDIR | 0755);
++	ret = vfs_mkdir(inode, dentry, NULL, S_IFDIR | 0755);
+ 	child = __d_cgrp(dentry);
+ 	dput(dentry);
+ 	if (ret) {

@@ -1,0 +1,69 @@
+From: Russ Anderson <rja@sgi.com>
+Subject: Add UV bios call to change memory protections.
+References: bnc#442455
+
+
+Add UV bios call to change memory protections.
+
+Signed-off-by: Russ Anderson <rja@sgi.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+
+---
+ arch/x86/kernel/bios_uv.c |    8 ++++++++
+ include/asm-x86/uv/bios.h |   10 +++++++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+Index: linux/arch/x86/kernel/bios_uv.c
+===================================================================
+--- linux.orig/arch/x86/kernel/bios_uv.c	2008-11-05 11:12:16.101949483 -0600
++++ linux/arch/x86/kernel/bios_uv.c	2008-11-05 11:13:15.289411601 -0600
+@@ -134,6 +134,14 @@ uv_bios_mq_watchlist_free(int blade, int
+ }
+ EXPORT_SYMBOL_GPL(uv_bios_mq_watchlist_free);
+ 
++s64
++uv_bios_change_memprotect(u64 paddr, u64 len, enum uv_memprotect perms)
++{
++	return uv_bios_call_irqsave(UV_BIOS_MEMPROTECT, paddr, len,
++					perms, 0, 0);
++}
++EXPORT_SYMBOL_GPL(uv_bios_change_memprotect);
++
+ s64 uv_bios_freq_base(u64 clock_type, u64 *ticks_per_second)
+ {
+ 	return uv_bios_call(UV_BIOS_FREQ_BASE, clock_type,
+Index: linux/include/asm-x86/uv/bios.h
+===================================================================
+--- linux.orig/include/asm-x86/uv/bios.h	2008-11-05 11:12:16.117951501 -0600
++++ linux/include/asm-x86/uv/bios.h	2008-11-05 11:13:15.301413114 -0600
+@@ -34,7 +34,8 @@ enum uv_bios_cmd {
+ 	UV_BIOS_GET_SN_INFO,
+ 	UV_BIOS_FREQ_BASE,
+ 	UV_BIOS_WATCHLIST_ALLOC,
+-	UV_BIOS_WATCHLIST_FREE
++	UV_BIOS_WATCHLIST_FREE,
++	UV_BIOS_MEMPROTECT
+ };
+ 
+ /*
+@@ -82,6 +83,12 @@ union uv_watchlist_u {
+ 	};
+ };
+ 
++enum uv_memprotect {
++	UV_MEMPROT_RESTRICT_ACCESS,
++	UV_MEMPROT_ALLOW_AMO,
++	UV_MEMPROT_ALLOW_RW
++};
++
+ /*
+  * bios calls have 6 parameters
+  */
+@@ -94,6 +101,7 @@ extern s64 uv_bios_freq_base(u64, u64 *)
+ extern int uv_bios_mq_watchlist_alloc(int, void *, unsigned int,
+ 					unsigned long *);
+ extern int uv_bios_mq_watchlist_free(int, int);
++extern s64 uv_bios_change_memprotect(u64, u64, enum uv_memprotect);
+ 
+ extern void uv_bios_init(void);
+ 

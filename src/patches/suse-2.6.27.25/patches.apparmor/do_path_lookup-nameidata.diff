@@ -1,0 +1,42 @@
+From: Andreas Gruenbacher <agruen@suse.de>
+Subject: Switch to vfs_permission() in do_path_lookup()
+
+Switch from file_permission() to vfs_permission() in do_path_lookup():
+this avoids calling permission() with a NULL nameidata here.
+
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ fs/namei.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1085,24 +1085,21 @@ static int do_path_lookup(int dfd, const
+ 		path_get(&fs->pwd);
+ 		read_unlock(&fs->lock);
+ 	} else {
+-		struct dentry *dentry;
+-
+ 		file = fget_light(dfd, &fput_needed);
+ 		retval = -EBADF;
+ 		if (!file)
+ 			goto out_fail;
+ 
+-		dentry = file->f_path.dentry;
++		nd->path = file->f_path;
+ 
+ 		retval = -ENOTDIR;
+-		if (!S_ISDIR(dentry->d_inode->i_mode))
++		if (!S_ISDIR(nd->path.dentry->d_inode->i_mode))
+ 			goto fput_fail;
+ 
+ 		retval = file_permission(file, MAY_EXEC);
+ 		if (retval)
+ 			goto fput_fail;
+ 
+-		nd->path = file->f_path;
+ 		path_get(&file->f_path);
+ 
+ 		fput_light(file, fput_needed);

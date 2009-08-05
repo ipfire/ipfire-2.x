@@ -1,0 +1,28 @@
+From: John Johansen <jjohansen@suse.de>
+Subject: AppArmor: reintroduce ATTR_FILE
+
+The fsetattr patch removed ATTR_FILE but AppArmor needs it to distinguish
+file based writes.
+
+Note: Now that LSMs must be static, it would be better to add a file
+pointer argument to security_operations->inode_setattr() instead. Then
+move the fs.h chunk to patches.apparmor/fsetattr-restore-ia_file. -jeffm
+
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ fs/open.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -208,6 +208,9 @@ int do_truncate(struct dentry *dentry, s
+ 	newattrs.ia_size = length;
+ 	newattrs.ia_valid = ATTR_SIZE | time_attrs;
+ 
++	if (filp)
++		newattrs.ia_valid |= ATTR_FILE;
++
+ 	/* Remove suid/sgid on truncate too */
+ 	newattrs.ia_valid |= should_remove_suid(dentry);
+ 

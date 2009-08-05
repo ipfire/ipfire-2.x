@@ -1,0 +1,108 @@
+From: John Johansen <jjohansen@suse.de>
+Subject: fix log messages to enable tools profile learning
+Patch-mainline: no
+References: bnc#447564  
+
+The allocation of the child pid is done after the LSM clone hook, which
+breaks the AppArmor tools fork tracking, for profiles learning.  Output
+the parent pid with each log message to enable the tools to handle fork
+tracking.
+
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ security/apparmor/lsm.c              |   28 ----------------------------
+ security/apparmor/main.c             |   10 +++++-----
+ security/apparmor/module_interface.c |    2 +-
+ 3 files changed, 6 insertions(+), 34 deletions(-)
+
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -143,20 +143,6 @@ static int param_set_aa_enabled(const ch
+ 	return 0;
+ }
+ 
+-static int aa_reject_syscall(struct task_struct *task, gfp_t flags,
+-			     const char *name)
+-{
+-	struct aa_profile *profile = aa_get_profile(task);
+-	int error = 0;
+-
+-	if (profile) {
+-		error = aa_audit_syscallreject(profile, flags, name);
+-		aa_put_profile(profile);
+-	}
+-
+-	return error;
+-}
+-
+ static int apparmor_ptrace(struct task_struct *parent,
+ 			   struct task_struct *child)
+ {
+@@ -292,17 +278,6 @@ static int apparmor_bprm_secureexec(stru
+ 	return ret;
+ }
+ 
+-static int apparmor_sb_mount(char *dev_name, struct path *path, char *type,
+-			      unsigned long flags, void *data)
+-{
+-	return aa_reject_syscall(current, GFP_KERNEL, "mount");
+-}
+-
+-static int apparmor_umount(struct vfsmount *mnt, int flags)
+-{
+-	return aa_reject_syscall(current, GFP_KERNEL, "umount");
+-}
+-
+ static int apparmor_inode_mkdir(struct inode *dir, struct dentry *dentry,
+ 				struct vfsmount *mnt, int mask)
+ {
+@@ -925,9 +900,6 @@ struct security_operations apparmor_ops
+ 	.bprm_set_security =		apparmor_bprm_set_security,
+ 	.bprm_secureexec =		apparmor_bprm_secureexec,
+ 
+-	.sb_mount =			apparmor_sb_mount,
+-	.sb_umount =			apparmor_umount,
+-
+ 	.inode_mkdir =			apparmor_inode_mkdir,
+ 	.inode_rmdir =			apparmor_inode_rmdir,
+ 	.inode_create =			apparmor_inode_create,
+--- a/security/apparmor/main.c
++++ b/security/apparmor/main.c
+@@ -229,9 +229,13 @@ static int aa_audit_base(struct aa_profi
+ 		audit_log_format(ab, " protocol=%d", sa->protocol);
+ 	}
+ 
+-        audit_log_format(ab, " pid=%d", current->pid);
++	audit_log_format(ab, " pid=%d", current->pid);
+ 
+ 	if (profile) {
++		if (!sa->parent)
++			audit_log_format(ab, " parent=%d",
++					 current->real_parent->pid);
++
+ 		audit_log_format(ab, " profile=");
+ 		audit_log_untrustedstring(ab, profile->name);
+ 
+@@ -1006,10 +1010,6 @@ repeat:
+ 
+ 		unlock_profile(profile);
+ 
+-		if (APPARMOR_COMPLAIN(child_cxt) &&
+-		    profile == profile->ns->null_complain_profile) {
+-			aa_audit_hint(profile, &sa);
+-		}
+ 		aa_put_profile(profile);
+ 	} else
+ 		aa_free_task_context(child_cxt);
+--- a/security/apparmor/module_interface.c
++++ b/security/apparmor/module_interface.c
+@@ -126,7 +126,7 @@ static int aa_is_nameX(struct aa_ext *e,
+ 	 * AA_NAME tag value is a u16.
+ 	 */
+ 	if (aa_is_X(e, AA_NAME)) {
+-		char *tag;
++		char *tag = NULL;
+ 		size_t size = aa_is_u16_chunk(e, &tag);
+ 		/* if a name is specified it must match. otherwise skip tag */
+ 		if (name && (!size || strcmp(name, tag)))

@@ -1,0 +1,54 @@
+From: Danny Kukawka <dkukawka@suse.de>
+Subject: iwlwifi: fix led naming
+    
+Fixed led device naming for the iwl driver. Due to the
+documentation of the led subsystem/class the naming should be
+"devicename:colour:function" while not applying sections
+should be left blank.
+    
+This should lead to e.g. "iwl-phy0::RX" instead of "iwl-phy0:RX".
+
+Signed-off-by: Danny Kukawka <dkukawka@suse.de>
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+--
+ drivers/net/wireless/iwlwifi/iwl-led.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/drivers/net/wireless/iwlwifi/iwl-led.c
++++ b/drivers/net/wireless/iwlwifi/iwl-led.c
+@@ -353,7 +353,7 @@ int iwl_leds_register(struct iwl_priv *p
+ 
+ 	trigger = ieee80211_get_radio_led_name(priv->hw);
+ 	snprintf(priv->led[IWL_LED_TRG_RADIO].name,
+-		 sizeof(priv->led[IWL_LED_TRG_RADIO].name), "iwl-%s:radio",
++		 sizeof(priv->led[IWL_LED_TRG_RADIO].name), "iwl-%s::radio",
+ 		 wiphy_name(priv->hw->wiphy));
+ 
+ 	priv->led[IWL_LED_TRG_RADIO].led_on = iwl4965_led_on_reg;
+@@ -367,7 +367,7 @@ int iwl_leds_register(struct iwl_priv *p
+ 
+ 	trigger = ieee80211_get_assoc_led_name(priv->hw);
+ 	snprintf(priv->led[IWL_LED_TRG_ASSOC].name,
+-		 sizeof(priv->led[IWL_LED_TRG_ASSOC].name), "iwl-%s:assoc",
++		 sizeof(priv->led[IWL_LED_TRG_ASSOC].name), "iwl-%s::assoc",
+ 		 wiphy_name(priv->hw->wiphy));
+ 
+ 	ret = iwl_leds_register_led(priv, &priv->led[IWL_LED_TRG_ASSOC],
+@@ -383,7 +383,7 @@ int iwl_leds_register(struct iwl_priv *p
+ 
+ 	trigger = ieee80211_get_rx_led_name(priv->hw);
+ 	snprintf(priv->led[IWL_LED_TRG_RX].name,
+-		 sizeof(priv->led[IWL_LED_TRG_RX].name), "iwl-%s:RX",
++		 sizeof(priv->led[IWL_LED_TRG_RX].name), "iwl-%s::RX",
+ 		 wiphy_name(priv->hw->wiphy));
+ 
+ 	ret = iwl_leds_register_led(priv, &priv->led[IWL_LED_TRG_RX],
+@@ -398,7 +398,7 @@ int iwl_leds_register(struct iwl_priv *p
+ 
+ 	trigger = ieee80211_get_tx_led_name(priv->hw);
+ 	snprintf(priv->led[IWL_LED_TRG_TX].name,
+-		 sizeof(priv->led[IWL_LED_TRG_TX].name), "iwl-%s:TX",
++		 sizeof(priv->led[IWL_LED_TRG_TX].name), "iwl-%s::TX",
+ 		 wiphy_name(priv->hw->wiphy));
+ 
+ 	ret = iwl_leds_register_led(priv, &priv->led[IWL_LED_TRG_TX],
