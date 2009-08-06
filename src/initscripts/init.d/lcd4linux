@@ -22,11 +22,8 @@ case "$1" in
 		;;
 
 	reload)
-		boot_mesg "Reloading smbd..."
-		reloadproc /usr/sbin/smbd
-
-		boot_mesg "Reloading nmbd..."
-		reloadproc /usr/sbin/nmbd
+		boot_mesg "Reloading lcd4linux..."
+		reloadproc /usr/bin/lcd4linux
 		;;
 
 	restart)
