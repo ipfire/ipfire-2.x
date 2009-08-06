@@ -1407,6 +1407,7 @@
 'reboot' => 'Reboot',
 'reboot ask' => 'Reboot?',
 'reboot sure' => 'Are you sure that you want to reboot?',
+'reboot question' => 'Extra query for restart and shutdown',
 'reboot schedule' => 'Schedule IPFire reboots',
 'rebooting' => 'Rebooting',
 'rebooting ipfire' => 'Rebooting IPFire',

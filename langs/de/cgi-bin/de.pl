@@ -1379,6 +1379,7 @@
 'reboot ask' => 'Neustart?',
 'reboot sure' => 'Sind Sie sicher, dass Sie neustarten wollen?',
 'reboot schedule' => 'Zeitsteuerung für IPFire Neustarts',
+'reboot question' => 'Extra Abfrage bei neustart und herunterfahren einschalten',
 'rebooting' => 'Starte neu ...',
 'rebooting ipfire' => 'Starte IPFire neu',
 'reconnect' => 'Neu Verbinden',

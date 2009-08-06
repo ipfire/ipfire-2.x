@@ -166,54 +166,70 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'}) {
 }
 
 if ($death == 0 && $rebirth == 0) {
-
-if ($cgiparams{'ACTION'} eq $Lang::tr{'reboot ask'}) {
-	print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='100%'>
-  <tr>
-    <td colspan="3" align='left'><font color="red">$Lang::tr{'reboot sure'}</font></td>
-    </tr>
-  <tr>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot'}' /></td>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown ask'}' /></td>
-</tr>
-</table>
-</form>
-END
-;
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown ask'}) {
-	print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='100%'>
-  <tr>
-    <td colspan="3" align='right'><font color="red">$Lang::tr{'shutdown sure'}</font></td>
-    </tr>
-  <tr>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot ask'}' /></td>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' /></td>
-</tr>
-</table>
-</form>
-END
-;
-} else {
+ 	
+if ($mainsettings{'REBOOTQUESTION'} eq "off") {	
 print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='100%'>
-<tr>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot ask'}' /></td>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown ask'}' /></td>
-</tr>
-</table>
-</form>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%'>
+	<tr>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot'}' /></td>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' /></td>
+	</tr>
+	</table>
+	</form>
 END
 ;
+} else {		
+	if ($cgiparams{'ACTION'} eq $Lang::tr{'reboot ask'}) {
+print <<END
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%'>
+	  <tr>
+	    <td colspan="3" align='left'><font color="red">$Lang::tr{'reboot sure'}</font></td>
+	    </tr>
+	  <tr>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot'}' /></td>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown ask'}' /></td>
+	</tr>
+	</table>
+	</form>
+END
+;
+	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown ask'}) {
+print <<END
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%'>
+	  <tr>
+	    <td colspan="3" align='right'><font color="red">$Lang::tr{'shutdown sure'}</font></td>
+	    </tr>
+	  <tr>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot ask'}' /></td>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
+		<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' /></td>
+	</tr>
+	</table>
+	</form>
+END
+;
+	} else {
+print <<END
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='100%'>
+		<tr>
+			<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot ask'}' /></td>
+			<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'refresh'}' /></td>
+			<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown ask'}' /></td>
+		</tr>
+		</table>
+		</form>
+END
+;
+	}
 }
 print <<END;
+
 
 <!-- Table of networks -->
 <table border='0' width=80%>
