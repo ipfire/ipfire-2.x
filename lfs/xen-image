@@ -1,0 +1,136 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER = ipfire
+
+THISAPP    = xen-image
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+###############################################################################
+# Installation Details
+###############################################################################
+IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(MACHINE)-$(ED)-core$(CORE).tar.bz2
+MNThdd   := /install/harddisk
+
+IMGroot  := /install/images/$(SNAME)/$(SNAME).img
+IMGswap  := /install/images/$(SNAME)/swap.img
+SIZEroot := 1024
+SIZEswap := 512
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	rm -rf $(MNThdd) $(IMGinst) $(IMGroot) && mkdir -p $(MNThdd)
+	mkdir -p /install/images/$(SNAME)/boot
+
+	#Create swapimage
+	dd bs=1M if=/dev/zero of=$(IMGswap) count=$(SIZEswap)
+	mkswap $(IMGswap)
+
+	#Create rootimage
+	dd bs=1M if=/dev/zero of=$(IMGroot) count=$(SIZEroot)
+	mkfs.ext3 -F $(IMGroot)
+
+	# Mount Images (ext3 mount create a inaccessible ".journal"
+	mount -o loop -t ext2 $(IMGroot) $(MNThdd)
+	mkdir $(MNThdd)/boot
+	mkdir $(MNThdd)/var
+	mkdir $(MNThdd)/var/log
+
+	# Install IPFire without kernel modules
+	tar -C $(MNThdd)/ -xvjf /install/cdrom/$(SNAME)-$(VERSION).tbz2 \
+		--exclude=lib/modules* --exclude=boot*
+
+	#Install Xen Kernel
+	tar -C $(MNThdd)/opt/pakfire/tmp -xvf /install/packages/linux-xen-$(KVER)-*.ipfire
+	chroot $(MNThdd) /opt/pakfire/tmp/install.sh
+	rm -rf $(MNThdd)/opt/pakfire/tmp/*
+
+	#Set default configuration
+	echo "LANGUAGE=en" >> $(MNThdd)/var/ipfire/main/settings
+	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
+	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
+	touch $(MNThdd)/lib/modules/$(KVER)-ipfire-xen/modules.dep
+	mv $(MNThdd)/bin/uname.bak $(MNThdd)/bin/uname
+	mkdir $(MNThdd)/proc
+	mount --bind /proc $(MNThdd)/proc
+	mount --bind /dev  $(MNThdd)/dev
+	mount --bind /sys  $(MNThdd)/sys
+	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+	sed -i -e "s|DEVICE1|#boot-disabled|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE2|/dev/xvdb1|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE3|/dev/xvda1|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE4|#var-disabled|g" $(MNThdd)/etc/fstab
+
+	sed -i -e "s|FSTYPE|ext3|g" $(MNThdd)/etc/fstab
+	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
+	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
+
+	#Remove File System modules because they are included to kernel
+	sed -i -e "s|reiser4 reiserfs ext3| |g" $(MNThdd)/etc/mkinitcpio.conf
+
+	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-xen.img -k $(KVER)-ipfire-xen
+	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf
+
+	# Create a script for rebuild-initrd and setup
+	echo "#!/bin/bash"                                   > $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "/usr/local/sbin/setup /dev/null INSTALL"      >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "rm -f /etc/rc.d/rcsysinit.d/S75firstsetup \\" >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	echo "&& /sbin/reboot"                              >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	chmod +x $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+
+	#Remove root / fstab check
+	rm -rf $(MNThdd)/etc/rc.d/rcsysinit.d/S19checkfstab
+
+	#Copy initramdisk, kernel and config
+	cp -f $(MNThdd)/boot/ipfirerd-$(KVER)-xen.img \
+		/install/images/$(SNAME)/boot
+	cp -f $(MNThdd)/boot/vmlinuz-$(KVER)-ipfire-xen \
+		/install/images/$(SNAME)/boot
+	cp $(DIR_SRC)/config/xen-image/* \
+		/install/images/$(SNAME)
+	sed -i -e "s|KVER|$(KVER)|g" /install/images/$(SNAME)/ipfire.cfg
+
+	# Unmount
+	umount $(MNThdd)/proc
+	umount $(MNThdd)/dev
+	umount $(MNThdd)/sys
+	umount $(MNThdd)
+
+	# Compress Image
+	cd /install/images/ && tar -cvjf $(IMGinst) $(SNAME)
+
+	rm -rf $(MNThdd) /install/images/$(SNAME)

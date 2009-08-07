@@ -46,7 +46,7 @@ etc/xen/xend-pci-permissive.sxp
 etc/xen/xend-pci-quirks.sxp
 etc/xen/xm-config.xml
 etc/xen/xmexample.hvm
-etc/xen/xmexample.hvm-dm
+#etc/xen/xmexample.hvm-dm
 etc/xen/xmexample.hvm-stubdom
 etc/xen/xmexample.nbd
 etc/xen/xmexample.pv-grub
