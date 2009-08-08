@@ -122,11 +122,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/setclock
 	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/keymap
 
-	#Remove autoload of some acpi modules
+	#Remove autoload of acpi modules
 	sed -i -e "s|^ac|#ac|g" $(MNThdd)/etc/sysconfig/modules
 	sed -i -e "s|^battery|#battery|g" $(MNThdd)/etc/sysconfig/modules
 	sed -i -e "s|^button|#button|g" $(MNThdd)/etc/sysconfig/modules
 	sed -i -e "s|^fan|#fan|g" $(MNThdd)/etc/sysconfig/modules
+	sed -i -e "s|^processor|#processor|g" $(MNThdd)/etc/sysconfig/modules
+	sed -i -e "s|^thermal|#thermal|g" $(MNThdd)/etc/sysconfig/modules
+	sed -i -e "s|^video|#video|g" $(MNThdd)/etc/sysconfig/modules
+
+	#Remove autoload lp module (why this is missing ???)
+	sed -i -e "s|^lp|#lp|g" $(MNThdd)/etc/sysconfig/modules
 
 	#Change pakfire trunk
 	sed -i -e "s|$(VERSION)|$(VERSION)-xen|g" \
