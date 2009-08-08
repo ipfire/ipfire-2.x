@@ -64,8 +64,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	dd bs=1M if=/dev/zero of=$(IMGroot) count=$(SIZEroot)
 	mkfs.ext3 -F $(IMGroot)
 
-	# Mount Images (ext3 mount create a inaccessible ".journal"
-	mount -o loop -t ext2 $(IMGroot) $(MNThdd)
+	# Mount Images
+	mount -o loop $(IMGroot) $(MNThdd)
 	mkdir $(MNThdd)/boot
 	mkdir $(MNThdd)/var
 	mkdir $(MNThdd)/var/log
@@ -114,6 +114,23 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#Remove root / fstab check
 	rm -rf $(MNThdd)/etc/rc.d/rcsysinit.d/S19checkfstab
+
+	#Add xvc0 to securetty
+	echo xvc0 >> $(MNThdd)/etc/securetty
+
+	#Disable some initskripts
+	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/setclock
+	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/keymap
+
+	#Remove autoload of some acpi modules
+	sed -i -e "s|^ac|#ac|g" $(MNThdd)/etc/sysconfig/modules
+	sed -i -e "s|^battery|#battery|g" $(MNThdd)/etc/sysconfig/modules
+	sed -i -e "s|^button|#button|g" $(MNThdd)/etc/sysconfig/modules
+	sed -i -e "s|^fan|#fan|g" $(MNThdd)/etc/sysconfig/modules
+
+	#Change pakfire trunk
+	sed -i -e "s|$(VERSION)|$(VERSION)-xen|g" \
+		$(MNThdd)/opt/pakfire/etc/pakfire.conf
 
 	#Copy initramdisk, kernel and config
 	cp -f $(MNThdd)/boot/ipfirerd-$(KVER)-xen.img \

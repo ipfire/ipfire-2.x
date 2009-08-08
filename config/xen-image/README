@@ -3,8 +3,8 @@ Howto install Ipfire as a paravirtualized DomU:
 - download image
 - extract the downloaded file, be careful, you need at least 4gb
 - edit the file ipfire.cfg
-- start ipfire:  "xm create -c ipfire.cfg"
-- go to console: "xm console ipfire-xen"
+- start ipfire:  "xm create ipfire.cfg"
+- if you get no errormessage go to console: "xm console ipfire-xen"
 - after booting, the setup will started to do basic settings and reboot
 
 This setup is for 2 interfaces (green and red). if you want more, like orange and blue, edit the ipfire.cfg and execute "setup" to adjust yout config.
@@ -19,7 +19,4 @@ other usefull commands from the Dom0:
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Todo:
-- prevent loading some modules like ac, battery and so on
-- remove setclock initscript
-- remove keymap initscript
-- add hvc0 to /etc/securetty
+- check Xen Kernel config (filesystems should not included to kernel!!!!)

@@ -48,6 +48,9 @@ md5 :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf /install/cdrom /tmp/*
 
+	#Clear mtab (prevents .journal problems)
+	echo > /etc/mtab
+
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
 	mkdir -p /install/cdrom/doc
