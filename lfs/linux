@@ -40,7 +40,11 @@ DEPS	   = ""
 
 # Normal build or XEN build.
 #
-VERSUFIX=ipfire
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
 TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 
 ###############################################################################
@@ -96,22 +100,35 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	ln -s linux-$(VER) /usr/src/linux
 
+ifeq "$(XEN)" "1"
+	# Apply Xen patches (provided by SuSE)
+	cd $(DIR_SRC)/src/patches/suse-$(VER) && \
+		for x in $$( $(DIR_SRC)/src/patches/suse-$(VER)/guards $$( $(DIR_SRC)/src/patches/suse-$(VER)/arch-symbols) < $(DIR_SRC)/src/patches/suse-$(VER)/series.conf); do \
+			patch -d $(DIR_APP) -p1 < $$x || break; \
+		done
+
+	# Linux Intermediate Queueing Device
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/imq-skbuff.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.21-imq-test3-xen.patch
+else
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.21-imq-test3.patch
+endif
 
-	# Not report deprecated syscall 1.23 (for kudzu)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
-    
 	# Add Vodafone K3565-Z USB ID's to option driver
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.25-option_add_vf-k3565-z_usbids.patch
 
+	# Not report deprecated syscall 1.23 (for kudzu)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
+ifeq "$(XEN)" ""
 	# Reiser4
-	cd $(DIR_APP) && bzip2 -d -c $(DIR_DL)/reiser4-for-2.6.27.19.patch.bz2 | patch -Np1
-	
-	# SquashFS
+	-cd $(DIR_APP) && bzip2 -d -c $(DIR_DL)/reiser4-for-2.6.27.19.patch.bz2 | patch -Np1
+
+	# SquashFS (already in Suse Patchset)
 	cd $(DIR_SRC) && rm -rf squashfs*
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/squashfs3.4.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/squashfs3.4/kernel-patches/linux-2.6.27-rc4/squashfs3.4-patch
+endif
 
 	# ipp2p 0.8.2-pomng
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.19-ipp2p-0.8.2-pomng.patch
@@ -129,8 +146,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-$(VERSUFIX)/' Makefile
 
+ifeq "$(XEN)" "1"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
+	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
+else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
@@ -139,8 +161,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
 
+ifeq "$(XEN)" ""
 	# Only do this once on the non-XEN pass
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
+endif
 
 	# Rename ide-cd module to match with old kernel
 	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd_mod.ko \

@@ -338,7 +338,7 @@ buildipfire() {
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
-  ipfiremake linux-xen
+  ipfiremake linux			XEN=1
   ipfiremake atl2			XEN=1
   ipfiremake hso			XEN=1
   ipfiremake e1000e			XEN=1

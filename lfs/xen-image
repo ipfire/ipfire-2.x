@@ -99,8 +99,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
 	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
 
-	#Remove File System modules because they are included to kernel
-	sed -i -e "s|reiser4 reiserfs ext3| |g" $(MNThdd)/etc/mkinitcpio.conf
+	#Remove reiser4 because it is not work with xen-kernel
+	sed -i -e "s|reiser4 | |g" $(MNThdd)/etc/mkinitcpio.conf
 
 	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-xen.img -k $(KVER)-ipfire-xen
 	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf
@@ -130,9 +130,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|^processor|#processor|g" $(MNThdd)/etc/sysconfig/modules
 	sed -i -e "s|^thermal|#thermal|g" $(MNThdd)/etc/sysconfig/modules
 	sed -i -e "s|^video|#video|g" $(MNThdd)/etc/sysconfig/modules
-
-	#Remove autoload lp module (why this is missing ???)
-	sed -i -e "s|^lp|#lp|g" $(MNThdd)/etc/sysconfig/modules
 
 	#Change pakfire trunk
 	sed -i -e "s|$(VERSION)|$(VERSION)-xen|g" \
