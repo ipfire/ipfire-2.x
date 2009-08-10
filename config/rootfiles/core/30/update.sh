@@ -38,10 +38,25 @@ if [ "$ctdisk" == " ../../xvda3" ]; then
 	# Fix network assignment because 30-persistent-network.rules are overwritten by setup
 	# (eg. If you try to configure red=dhcp)
 	#
-	echo 'KERNEL=="eth0", NAME=="green0"'  >  /etc/udev/rules.d/29-ct-server-network.rules
-	echo 'KERNEL=="eth1", NAME=="red0"'    >> /etc/udev/rules.d/29-ct-server-network.rules
-	echo 'KERNEL=="eth2", NAME=="blue0"'   >> /etc/udev/rules.d/29-ct-server-network.rules
-	echo 'KERNEL=="eth3", NAME=="orange0"' >> /etc/udev/rules.d/29-ct-server-network.rules
+	echo 'KERNEL=="eth0", NAME="green0"'  >  /etc/udev/rules.d/29-ct-server-network.rules
+	echo 'KERNEL=="eth1", NAME="red0"'    >> /etc/udev/rules.d/29-ct-server-network.rules
+	echo 'KERNEL=="eth2", NAME="blue0"'   >> /etc/udev/rules.d/29-ct-server-network.rules
+	echo 'KERNEL=="eth3", NAME="orange0"' >> /etc/udev/rules.d/29-ct-server-network.rules
+	#
+	# Remove acpi modules autoload
+	#
+	sed -i 's|^ac|#ac|g' /etc/sysconfig/modules
+	sed -i 's|^battery|#battery|g' /etc/sysconfig/modules
+	sed -i 's|^button|#button|g' /etc/sysconfig/modules
+	sed -i 's|^fan|#fan|g' /etc/sysconfig/modules
+	sed -i 's|^processor|#processor|g' /etc/sysconfig/modules
+	sed -i 's|^thermal|#thermal|g' /etc/sysconfig/modules
+	sed -i 's|^video|#video|g' /etc/sysconfig/modules
+	#
+	# Disable some initskripts
+	#
+	echo "#!/bin/bash" > /etc/rc.d/init.d/setclock
+	echo "#!/bin/bash" > /etc/rc.d/init.d/keymap
 	#
 	# Change pakfire trunk from 2.5 to 2.5-ct
 	#
