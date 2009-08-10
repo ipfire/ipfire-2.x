@@ -28,3 +28,22 @@ extract_files
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #Rebuild module dep's
 depmod -a
+#
+# Test if this is a ct'server
+#
+ctdisk=`ls -l /dev/disk/by-uuid/0bd2211e-4268-442d-9f42-9fb1f8234a7e 2>/dev/null | cut -d">" -f2`
+if [ "$ctdisk" == " ../../xvda3" ]; then
+	echo "This is a ct-server..."
+	#
+	# Fix network assignment because 30-persistent-network.rules are overwritten by setup
+	# (eg. If you try to configure red=dhcp)
+	#
+	echo 'KERNEL=="eth0", NAME=="green0"'  >  /etc/udev/rules.d/29-ct-server-network.rules
+	echo 'KERNEL=="eth1", NAME=="red0"'    >> /etc/udev/rules.d/29-ct-server-network.rules
+	echo 'KERNEL=="eth2", NAME=="blue0"'   >> /etc/udev/rules.d/29-ct-server-network.rules
+	echo 'KERNEL=="eth3", NAME=="orange0"' >> /etc/udev/rules.d/29-ct-server-network.rules
+	#
+	# Change pakfire trunk from 2.5 to 2.5-ct
+	#
+	sed -i 's|"2.5"|"2.5-ct"|g' /opt/pakfire/etc/pakfire.conf
+fi
