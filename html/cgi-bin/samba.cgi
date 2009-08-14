@@ -60,6 +60,10 @@ my %shares = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
+my @ovpnnetwork = split(/\//,$ovpnsettings{'DOVPN_SUBNET'});
+my @ovpnip      = split(/\./,$ovpnnetwork[0]);
+$ovpnip[3]=$ovpnip[3]+1;
+
 ############################################################################################################################
 ############################################# Samba Dienste fr Statusberprfung ##########################################
 
@@ -230,7 +234,7 @@ $sambasettings{'INTERFACES'} = '';
 if ($sambasettings{'GREEN'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'GREEN_DEV'}";}
 if ($sambasettings{'BLUE'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'BLUE_DEV'}";}
 if ($sambasettings{'ORANGE'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'ORANGE_DEV'}";}
-if ($sambasettings{'VPN'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $ovpnsettings{'DOVPN_SUBNET'}";}
+if ($sambasettings{'VPN'} eq 'on'){$sambasettings{'INTERFACES'} .= " ";}
 if ($sambasettings{'OTHERINTERFACES'} ne ''){ $sambasettings{'INTERFACES'} .= " $sambasettings{'OTHERINTERFACES'}";}
 
 ############################################################################################################################
@@ -447,7 +451,7 @@ print <<END
 																							<input type='radio' name='LOCALMASTER' value='off' $checked{'LOCALMASTER'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
 																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
-																						<font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnsettings{'DOVPN_SUBNET'}</b></font></td></tr>
+																						<font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnip[0].$ovpnip[1].$ovpnip[2].$ovpnip[3]/$ovpnnetwork[1]</b></font></td></tr>
 <tr><td align='left' width='40%'></td><td align='left'>on <input type='radio' name='GREEN' value='on' $checked{'GREEN'}{'on'} />/
 																	<input type='radio' name='GREEN' value='off' $checked{'GREEN'}{'off'} /> off |
 																	<font size='2' color='$Header::colourgreen'><b>   $Lang::tr{'green'}  -  $netsettings{'GREEN_DEV'}</b></font></td></tr>
