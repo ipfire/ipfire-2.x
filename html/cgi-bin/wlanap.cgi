@@ -395,12 +395,13 @@ END
 
  }else{
  	print CONFIGFILE <<END
-hw_mode=$wlanapsettings{'HW_MODE'}END
+hw_mode=$wlanapsettings{'HW_MODE'}
+END
 ;
 
  }
 
-
+print CONFIGFILE <<END
 logger_syslog=-1
 logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
 logger_stdout=-1
