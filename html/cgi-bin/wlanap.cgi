@@ -272,6 +272,7 @@ print <<END
 		<option value='a' $selected{'HW_MODE'}{'a'}>a</option>
 		<option value='b' $selected{'HW_MODE'}{'b'}>b</option>
 		<option value='g' $selected{'HW_MODE'}{'g'}>g</option>
+		<option value='n' $selected{'HW_MODE'}{'n'}>n</option>
 	</select>
 </td></tr>
 
@@ -383,7 +384,23 @@ sub WriteConfig_hostapd{
 interface=$wlanapsettings{'INTERFACE'}
 driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 channel=$wlanapsettings{'CHANNEL'}
-hw_mode=$wlanapsettings{'HW_MODE'}
+END
+;
+ if ( $wlanapsettings{'HW_MODE'} eq 'n' ){
+	print CONFIGFILE <<END
+hw_mode=g
+ieee80211n=1
+END
+;
+
+ }else{
+ 	print CONFIGFILE <<END
+hw_mode=$wlanapsettings{'HW_MODE'}END
+;
+
+ }
+
+
 logger_syslog=-1
 logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
 logger_stdout=-1
