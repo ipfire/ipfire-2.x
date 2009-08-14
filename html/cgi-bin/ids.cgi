@@ -64,7 +64,6 @@ $snortsettings{'GUARDIAN_ALERTFILE'} = '/var/log/snort/alert';
 $snortsettings{'GUARDIAN_IGNOREFILE'} = '/var/ipfire/guardian/guardian.ignore';
 $snortsettings{'GUARDIAN_TARGETFILE'} = '/var/ipfire/guardian/guardian.target';
 $snortsettings{'GUARDIAN_TIMELIMIT'} = '86400';
-$snortsettings{'GUARDIAN_IGNOREFILE_CONTENT'} = `cat $snortsettings{'GUARDIAN_IGNOREFILE'}`;
 $snortsettings{'ACTION'} = '';
 $snortsettings{'ACTION2'} = '';
 $snortsettings{'RULES'} = '';
@@ -105,7 +104,7 @@ if (-e "/etc/snort/snort.conf") {
     if ( $temp =~ /$_/ ){next;}
     else { push(@snortconfig,"#include \$RULE_PATH/".$_);}
   	}
-  	
+
 	# Loop over each line
 	foreach my $line (@snortconfig) {
 		# Trim the line
@@ -226,7 +225,7 @@ if (-e "/etc/snort/snort.conf") {
 				if (!exists $snortsettings{"SNORT_RULE_$rule"}) {
 					$line = "# $line";
 				}
-				
+
 			}
 
 			# Check for rule state
@@ -285,19 +284,19 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} e
 		system ('/usr/bin/touch', "${General::swroot}/snort/enable");
 	} else {
 		unlink "${General::swroot}/snort/enable";
-	} 
+	}
 	if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on')
 	{
 		system ('/usr/bin/touch', "${General::swroot}/snort/enable_green");
 	} else {
 		unlink "${General::swroot}/snort/enable_green";
-	} 
+	}
 	if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on')
 	{
 		system ('/usr/bin/touch', "${General::swroot}/snort/enable_blue");
 	} else {
 		unlink "${General::swroot}/snort/enable_blue";
-	} 
+	}
 	if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on')
 	{
 		system ('/usr/bin/touch', "${General::swroot}/snort/enable_orange");
@@ -309,7 +308,7 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} e
 		system ('/usr/bin/touch', "${General::swroot}/snort/enable_preprocessor_http_inspect");
 	} else {
 		unlink "${General::swroot}/snort/enable_preprocessor_http_inspect";
-	}		
+	}
 	if ($snortsettings{'ENABLE_GUARDIAN'} eq 'on')
 	{
 		system ('/usr/bin/touch', "${General::swroot}/guardian/enable");
@@ -321,7 +320,7 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} e
 
 } elsif ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "guardian" ){
 			open(IGNOREFILE, ">$snortsettings{'GUARDIAN_IGNOREFILE'}") or die "Unable to write guardian ignore file $snortsettings{'GUARDIAN_IGNOREFILE'}";
-				print IGNOREFILE $snortsettings{'GUARDIAN_IGNOREFILE_CONTENT'};
+				print IGNOREFILE $snortsettings{'IGNOREFILE_CONTENT'};
 			close(IGNOREFILE);
 			open(GUARDIAN, ">/var/ipfire/guardian/guardian.conf") or die "Unable to write guardian conf /var/ipfire/guardian/guardian.conf";
 				print GUARDIAN <<END
@@ -388,7 +387,7 @@ $selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
 ####################### Added for snort rules control #################################
 print "<SCRIPT LANGUAGE='JavaScript' SRC='/include/snortupdateutility.js'></SCRIPT>";
 print <<END
-<STYLE TYPE="text/css">   
+<STYLE TYPE="text/css">
 <!--
 .section {
 	border: groove;
@@ -528,7 +527,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
 		# Output display table for rule files
 		print "<TABLE width='100%'><TR><TD VALIGN='TOP'><TABLE>";
-		
+
 		print "<form method='post'>";
 
 		# Local vars
@@ -640,7 +639,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 					# Increment count
 					$ruledefdisplaycnt++;
 				}
-	
+
 				# If do not have second rule for row, create empty cell
 				if (($ruledefdisplaycnt % 2) != 0) {
 					print "<TD CLASS='base'></TD>";
@@ -699,7 +698,7 @@ sub getmd5 {
 		syswrite ($fh, $md5buf->content);
 		close($fh);
 	}
-	
+
 	return $md5buf->content;
 }
 sub downloadrulesfile {
