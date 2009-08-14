@@ -8,3 +8,4 @@ srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
+opt/pakfire/pakfire
