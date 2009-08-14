@@ -1,4 +1,4 @@
-#usr/bin/curl
+usr/bin/curl
 #usr/bin/curl-config
 #usr/include/curl
 #usr/include/curl/curl.h
