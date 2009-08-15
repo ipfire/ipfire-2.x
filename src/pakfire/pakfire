@@ -138,7 +138,7 @@
 
 		if (@deps) {
 			my %sort = map{ $_, 1 } @deps;
-			@deps = sort keys %sort;
+			@deps = keys %sort;
 			&Pakfire::message("");
 			&Pakfire::message("PAKFIRE INFO: Packages to install for dependencies:");
 		}
