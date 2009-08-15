@@ -1,0 +1,41 @@
+diff -Naur grub-0.97.org/util/grub-install.in grub-0.97/util/grub-install.in
+--- grub-0.97.org/util/grub-install.in	2004-07-24 20:57:31.000000000 +0200
++++ grub-0.97/util/grub-install.in	2009-08-14 20:01:20.000000000 +0200
+@@ -96,12 +96,12 @@
+     # Break the device name into the disk part and the partition part.
+     case "$host_os" in
+     linux*)
+-	tmp_disk=`echo "$1" | sed -e 's%\([sh]d[a-z]\)[0-9]*$%\1%' \
++	tmp_disk=`echo "$1" | sed -e 's%\([vsh]d[a-z]\)[0-9]*$%\1%' \
+ 				  -e 's%\(d[0-9]*\)p[0-9]*$%\1%' \
+ 				  -e 's%\(fd[0-9]*\)$%\1%' \
+ 				  -e 's%/part[0-9]*$%/disc%' \
+ 				  -e 's%\(c[0-7]d[0-9]*\).*$%\1%'`
+-	tmp_part=`echo "$1" | sed -e 's%.*/[sh]d[a-z]\([0-9]*\)$%\1%' \
++	tmp_part=`echo "$1" | sed -e 's%.*/[vsh]d[a-z]\([0-9]*\)$%\1%' \
+ 				  -e 's%.*d[0-9]*p%%' \
+ 				  -e 's%.*/fd[0-9]*$%%' \
+ 				  -e 's%.*/floppy/[0-9]*$%%' \
+@@ -333,6 +333,10 @@
+ if test -f "$device_map"; then
+     :
+ else
++
++  tmp_disk=`echo "$1" | grep "/dev/vd"`
++  if test "x$tmp_disk" = x; then
++
+     # Create a safe temporary file.
+     test -n "$mklog" && log_file=`$mklog`
+ 
+@@ -345,6 +349,11 @@
+     fi
+ 
+     rm -f $log_file
++
++  else
++	echo "Create fake device.map for vitio device $1" 1>&2
++	echo "(hd0)    $1" > $device_map
++  fi
+ fi
+ 
+ # Make sure that there is no duplicated entry.
