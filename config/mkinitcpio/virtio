@@ -1,0 +1,24 @@
+# vim: set ft=sh:
+
+install ()
+{
+    MODULES=" $(checked_modules "block/virtio_blk") "
+
+    MODULES=$(echo ${MODULES}) #trim whitespace
+    if [ "x${MODULES}" != "x" ]; then
+        MODULES="${MODULES} virtio_pci"
+    fi
+
+    BINARIES=""
+    FILES=""
+    SCRIPT=""
+}
+
+help ()
+{
+cat<<HELPEOF
+  This hook loads the necessary modules for an virtio root device.
+  Detection will take place at runtime. To minimize the modules
+  in the image, add the autodetect hook too.
+HELPEOF
+}

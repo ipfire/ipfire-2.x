@@ -27,6 +27,7 @@ lib/initcpio
 #lib/initcpio/install/resume
 #lib/initcpio/install/sata
 #lib/initcpio/install/scsi
+#lib/initcpio/install/virtio
 #lib/initcpio/install/usb
 #lib/initcpio/install/usbinput
 sbin/mkinitcpio
