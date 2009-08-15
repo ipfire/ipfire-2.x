@@ -33,7 +33,7 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 |
 			umount /harddisk 2> /dev/null
 			echo -n "$DEVICE" > /tmp/dest_device
 			echo "${DEVICE} - yes, it is our destination"
-			exit 0
+			exit 0 # IDE / use DEVICE for grub
 		fi
 done
 
@@ -56,7 +56,7 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 
 				umount /harddisk 2> /dev/null
 				echo -n "$DEVICE" > /tmp/dest_device
 				echo "${DEVICE} - yes, it is our destination"
-				exit 1
+				exit 1 # SCSI/USB (always use /dev/sda as bootdevicename)
 			fi
 		fi
 done
@@ -86,10 +86,39 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 
 				else
 					echo -n "$DEVICE" > /tmp/dest_device
 					echo "${DEVICE} - yes, it is our destination"
-					exit 2
+					exit 2 # Raid ( /dev/device/diskx )
 				fi
 			fi
 		fi
 done
+
+# Virtio devices
+echo "--> Virtio"
+for DEVICE in vda vdb vdc vdd; do
+		if [ ! -e /dev/${DEVICE} ]; then
+			continue
+		else
+			mount /dev/${DEVICE} /harddisk 2> /dev/null
+			if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+				umount /harddisk 2> /dev/null
+				echo "${DEVICE} is source drive - SKIP"
+				continue
+			else
+				umount /harddisk 2> /dev/null
+				mount /dev/${DEVICE}1 /harddisk 2> /dev/null
+				if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+					umount /harddisk 2> /dev/null
+					echo "${DEVICE}1 is source drive - SKIP"
+					continue
+				else
+					umount /harddisk 2> /dev/null
+					echo -n "$DEVICE" > /tmp/dest_device
+					echo "${DEVICE} - yes, it is our destination"
+					exit 0 # like ide / use device for grub
+				fi
+			fi
+		fi
+done
+
 
 exit 10 # Nothing found
