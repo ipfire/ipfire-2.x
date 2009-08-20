@@ -189,8 +189,9 @@ END
 	}
 }
 
-my $checked_hidessid = '';
-$checked_hidessid = "checked='checked'" if ( $wlanapsettings{'HIDESSID'} eq 'on' );
+$checked{'HIDESSID'}{'off'} = '';
+$checked{'HIDESSID'}{'on'} = '';
+$checked{'HIDESSID'}{$wlanapsettings{'HIDESSID'}} = "checked='checked'";
 
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
@@ -266,7 +267,8 @@ print <<END
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='4' align='left'><b>WLAN Settings</b>
 <tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='40' value='$wlanapsettings{'SSID'}' /></td></tr>
-<tr><td width='25%' class='base'>Disable SSID broadcast:&nbsp;</td><td class='base' colspan='3'><input type='checkbox' name='HIDESSID' $checked_hidessid /></td></tr>
+<tr><td width='25%' class='base'>Disable SSID broadcast:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} />/
+			<input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> off</td></tr>
 <tr><td width='25%' class='base'>HW Mode:&nbsp;</td><td class='base' colspan='3'>
 	<select name='HW_MODE'>
 		<option value='a' $selected{'HW_MODE'}{'a'}>a</option>

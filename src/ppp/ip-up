@@ -58,7 +58,7 @@ run_subdir ${rc_base}/init.d/networking/red.up/
 #Check if gateway has answerd to ping, if not replace with ping.ipfire.org
 TEST=`/usr/bin/ping -c 2 $5 2>/dev/null | tail -2 | head -1 | cut -d"," -f2`;
 
-grep -v "gateway" /etc/hosts > /tmp/hosts
+grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
 
 if [ "$TEST" == " 2 received" ]; then
 	#ping the ppp-gateway
