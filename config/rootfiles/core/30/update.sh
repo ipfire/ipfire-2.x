@@ -62,3 +62,8 @@ if [ "$ctdisk" == " ../../xvda3" ]; then
 	#
 	sed -i 's|"2.5"|"2.5-ct"|g' /opt/pakfire/etc/pakfire.conf
 fi
+# On ct' Server the pakfire uuid file exist but it is empty
+# delete this empty file so pakfire generate a uuid
+if [ ! -s "/opt/pakfire/db/uuid" ]; then
+	rm -f /opt/pakfire/db/uuid
+fi
