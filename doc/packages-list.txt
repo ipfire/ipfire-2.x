@@ -341,8 +341,6 @@
 * which-2.16
 * wireless_tools.30.pre6
 * wpa_supplicant-0.6.9
-* x11libs-core28-r1
-* xen-3.4.0
 * xfsprogs-2.9.4
 * xvidcore-1.2.1
 * zlib-1.2.3

@@ -1,7 +1,6 @@
 etc/rc.d/rc0.d/K02net-snmp
 etc/rc.d/rc3.d/S65net-snmp
 etc/rc.d/rc6.d/K02net-snmp
-etc/init.d/net-snmp
 etc/snmpd.conf
 usr/bin/encode_keychange
 usr/bin/fixproc
@@ -388,10 +387,10 @@ usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/SNMP/autosplit.ix
 #usr/man/man3/snmp_timeout.3
 #usr/man/man3/snmp_trap_api.3
 #usr/man/man3/snprint_objid.3
-##usr/man/man3/snprint_value.3
-##usr/man/man3/snprint_variable.3
-##usr/man/man3/sprint_realloc_objid.3
-##usr/man/man3/sprint_realloc_value.3
+#usr/man/man3/snprint_value.3
+#usr/man/man3/snprint_variable.3
+#usr/man/man3/sprint_realloc_objid.3
+#usr/man/man3/sprint_realloc_value.3
 #usr/man/man3/sprint_realloc_variable.3
 #usr/man/man3/unregister_app_config_handler.3
 #usr/man/man3/unregister_config_handler.3
@@ -531,6 +530,7 @@ usr/share/snmp/mibs/NET-SNMP-EXAMPLES-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-EXTEND-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-TC.txt
+usr/share/snmp/mibs/NET-SNMP-VACM-MIB.txt
 usr/share/snmp/mibs/NOTIFICATION-LOG-MIB.txt
 usr/share/snmp/mibs/RFC-1215.txt
 usr/share/snmp/mibs/RFC1155-SMI.txt
@@ -586,7 +586,4 @@ usr/share/snmp/snmpconf-data/snmptrapd-data/logging
 usr/share/snmp/snmpconf-data/snmptrapd-data/runtime
 usr/share/snmp/snmpconf-data/snmptrapd-data/snmpconf-config
 usr/share/snmp/snmpconf-data/snmptrapd-data/traphandle
-#usr/man/man3/snprint_value.3
-#usr/man/man3/snprint_variable.3
-#usr/man/man3/sprint_realloc_objid.3
-#usr/man/man3/sprint_realloc_value.3
+etc/init.d/net-snmp

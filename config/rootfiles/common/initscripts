@@ -34,6 +34,7 @@ etc/rc.d/init.d/halt
 #etc/rc.d/init.d/icecream
 #etc/rc.d/init.d/ipfireseeder
 etc/rc.d/init.d/ipsec
+#etc/rc.d/init.d/lcd4linux
 #etc/rc.d/init.d/lcr
 etc/rc.d/init.d/localnet
 #etc/rc.d/init.d/mediatomb
