@@ -1,3 +1,4 @@
+etc/system-release
 lib/modules/2.6.27.25-ipfire/kernel/drivers/net/e1000e/e1000e.ko
 lib/modules/2.6.27.25-ipfire/kernel/drivers/net/usb/hso.ko
 lib/modules/2.6.27.25-ipfire/kernel/drivers/usb/serial/option.ko
