@@ -319,7 +319,6 @@ sub writeserverconf {
     print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n";
     print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
-    print CONF "script-security 3 system\n";
     print CONF "tls-server\n";
     print CONF "ca /var/ipfire/ovpn/ca/cacert.pem\n";
     print CONF "cert /var/ipfire/ovpn/certs/servercert.pem\n";
