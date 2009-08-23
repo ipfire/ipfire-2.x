@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2009-06-30
+VER        = 2009-08-21
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 68777ce2aa6b28dc3d37fc2b9a3a6d70
+$(DL_FILE)_MD5 = 36193f34a14f1d681bcff7a2db5cf178
 
 install : $(TARGET)
 
@@ -88,11 +88,15 @@ endif
 #	Apply some wlan-card patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless_rt2500pci-skb_allignment.patch
 
-#	Build only the modules
-	cd $(DIR_APP) && sed -i -e "s|install: uninstall modules|install: modules|g" Makefile
-	cd $(DIR_APP) && sed -i -e "s|\t@# All the scripts|\nende:|g" Makefile
+#	Enable B43 NPHY / PHY_LP
+	echo "CONFIG_B43_NPHY=y" >> $(DIR_APP)/config.mk
+	echo "CONFIG_B43_PHY_LP=y" >> $(DIR_APP)/config.mk
 
-	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install
+	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install-modules
+
+	# The makefile put the modules to a wrong place move back...
+	cp -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib /
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib
 
 	# Xen
 ifeq "$(XEN)" "1"
@@ -108,5 +112,6 @@ endif
 	# place of newer kernels and so not overwrite it...
 	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818?.ko
 
+	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 
