@@ -23,8 +23,112 @@
 #
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
-extract_files
-#Rebuild language cache
+#
+KVER="2.6.27.31"
+ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
+MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
+# Nur den letzten Parameter verwenden
+echo $MOUNT > /dev/null
+MOUNT=$_
+#
+# check if we the backup file already exist
+if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 ]; then
+    echo Moving backup to backup-old ...
+    mv -f /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
+       /var/ipfire/backup/core-upgrade_$KVER-old.tar.bz2
+fi
+echo First we made a backup of all files that was inside of the
+echo update archive. This may take a while ...
+# Add some files that are not in the package to backup
+echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
+echo boot >> /opt/pakfire/tmp/ROOTFILES
+echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
+#
+tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
+    -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' > /dev/null 2>&1
+echo
+echo Update Kernel to $KVER ...
+# Remove old kernel, configs, initrd, modules ...
+#
+rm -rf /boot/System.map-*
+rm -rf /boot/config-*
+rm -rf /boot/ipfirerd-*
+rm -rf /boot/vmlinuz-*
+rm -rf /lib/modules/
+#
+# Backup grub.conf
+#
+cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
+#
+# Unpack the updated files
+#
+echo
+echo Unpack the updated files ...
+#
+tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
+	--no-overwrite-dir
+#
+# Modify grub.conf
+#
+echo
+echo Update grub configuration ...
+sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
+sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
+sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
+
+if [ "$(grep "^serial" /boot/grub/grub.conf.org)" == "" ]; then
+	echo "grub use default console ..."
+else
+	echo "grub use serial console ..."
+	sed -i -e "s|splashimage|#splashimage|g" /boot/grub/grub.conf
+	sed -i -e "s|#serial|serial|g" /boot/grub/grub.conf
+	sed -i -e "s|#terminal|terminal|g" /boot/grub/grub.conf
+	sed -i -e "s| panic=10 | console=ttyS0,38400n8 panic=10 |g" /boot/grub/grub.conf
+fi
+#
+# Made emergency - initramdisk
+#
+echo
+echo Create new Initramdisks ...
+cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
+sed -i "s| autodetect | |g" /etc/mkinitcpio.conf
+mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER-emergency.img
+cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
+#
+# Made initramdisk
+#
+if [ "${ROOT:0:7}" == "/dev/sd" ]; then
+    # Remove ide hook if root is on sda
+    sed -i "s| ide | |g" /etc/mkinitcpio.conf
+else
+if [ "${ROOT:0:7}" == "/dev/hd" ]; then
+    # Remove pata & sata hook if root is on hda
+    sed -i "s| pata | |g" /etc/mkinitcpio.conf
+    sed -i "s| sata | |g" /etc/mkinitcpio.conf
+fi
+fi
+mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
+#
+# ReInstall grub
+#
+grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
+#
+# Rebuild Language
+#
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-#Rebuild module dep's
-#depmod -a
+#
+# Add "script-security 3 system" to openvpn config
+#
+if [ ! -s "/var/ipfire/ovpn/server.conf" ]; then
+	grep -q "script-security" /var/ipfire/ovpn/server.conf \
+	|| echo "script-security 3 system" >> /var/ipfire/ovpn/server.conf
+fi
+#
+# Delete old lm-sensor modullist...
+#
+rm -rf /etc/sysconfig/lm_sensors
+#
+# This core-update need a reboot
+/usr/bin/logger -p syslog.emerg -t core-upgrade-31 "Upgrade finished. If you use a customized grub.cfg"
+/usr/bin/logger -p syslog.emerg -t core-upgrade-31 "Check it before reboot !!!"
+/usr/bin/logger -p syslog.emerg -t core-upgrade-31 " *** Please reboot... *** "
