@@ -67,3 +67,4 @@ fi
 if [ ! -s "/opt/pakfire/db/uuid" ]; then
 	rm -f /opt/pakfire/db/uuid
 fi
+cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.org

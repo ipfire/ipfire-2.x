@@ -14,3 +14,6 @@ srv/web/ipfire/html/themes/maniac/include/style.css
 opt/pakfire/pakfire
 usr/bin/curl
 etc/ppp/ip-up
+usr/sbin/grub-install
+lib/initcpio/install/virtio
+etc/mkinitcpio.conf
