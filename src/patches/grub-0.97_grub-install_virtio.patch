@@ -21,7 +21,7 @@ diff -Naur grub-0.97.org/util/grub-install.in grub-0.97/util/grub-install.in
      :
  else
 +
-+  tmp_disk=`echo "$1" | grep "/dev/vd"`
++  tmp_disk=`echo "$install_device" | grep "/dev/vd"`
 +  if test "x$tmp_disk" = x; then
 +
      # Create a safe temporary file.
