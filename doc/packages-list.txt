@@ -242,7 +242,7 @@
 * openssl-0.9.8k
 * openswan-2.6.21
 * openswan-2.6.21-kmod-2.6.27.31-ipfire
-* openvpn-2.0.9
+* openvpn-2.1_rc19
 * p7zip_4.65
 * pam_mysql-0.7RC1
 * patch-2.5.4

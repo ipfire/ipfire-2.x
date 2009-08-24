@@ -1,2 +1,2 @@
 usr/sbin/openvpn
-html/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi

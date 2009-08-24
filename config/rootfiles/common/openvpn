@@ -1,5 +1,6 @@
-#usr/man/man8/openvpn.8
 usr/sbin/openvpn
+#usr/share/doc/openvpn
+#usr/share/man/man8/openvpn.8
 var/ipfire/ovpn
 var/ipfire/ovpn/ca
 var/ipfire/ovpn/caconfig
