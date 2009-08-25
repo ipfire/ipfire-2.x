@@ -1,0 +1,46 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/net-snmp
+#
+# Description : This is a script that starts net-snmp as deamon
+#
+# Authors     : Peter Pfeiffer (peterman@ipfire.org)
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting net-snmp - SNMPD..."
+		loadproc /usr/sbin/snmpd -c /etc/snmpd.conf > /dev/null
+		evaluate_retval
+		;;
+		
+	stop)
+		boot_mesg "Stopping net-snmp - SNMPD..."
+		killproc /usr/sbin/snmpd
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/snmpd
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/net-snmp
