@@ -54,7 +54,7 @@ SIZEboot := 20
 IMGroot  := /install/images/rootfs
 SIZEroot := 500
 IMGvar   := /install/images/varfs
-SIZEvar  := 440
+SIZEvar  := 430
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(MNThdd) $(IMGinst) $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) && mkdir -p $(MNThdd)
