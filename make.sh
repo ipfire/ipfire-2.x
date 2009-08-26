@@ -612,7 +612,7 @@ buildipfire() {
 #  ipfiremake x11libs
 #  ipfiremake xen
   ipfiremake miau
-  ipfiremake net-snmp
+  ipfiremake netsnmpd
   ipfiremake perl-DBI
   ipfiremake perl-DBD-mysql
   ipfiremake lcr
