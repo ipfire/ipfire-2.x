@@ -64,9 +64,14 @@ $(TARGET) :
 	
 	cp -a /lib/modules/$(KVER)-ipfire/ /install/initrd/lib/modules/
 	
-	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,mISDN,source,misc/*,kernel/{sound,drivers/{bluetooth,hwmon,gpu,rtc,isdn,media,video,watchdog}}} \
+	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,mISDN,source,misc/*,kernel/{sound,drivers/{acpi,bluetooth,cpufreq,hwmon,gpu,rtc,isdn,media,video,watchdog}}} \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan* \
 		/install/initrd/lib/modules/$(KVER)-ipfire/net/{bridge,netfilter,ipsec}
+
+	# ... acpi/dock.ko is needed for libata
+	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi
+	cp -a /lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko
 
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
 
