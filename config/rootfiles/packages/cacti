@@ -18,6 +18,7 @@ usr/share/cacti/cli/add_perms.php
 usr/share/cacti/cli/add_tree.php
 usr/share/cacti/cli/copy_user.php
 usr/share/cacti/cli/host_update_template.php
+usr/share/cacti/cli/import_template.php
 usr/share/cacti/cli/poller_data_sources_reapply_names.php
 usr/share/cacti/cli/poller_graphs_reapply_names.php
 usr/share/cacti/cli/poller_output_empty.php
@@ -35,10 +36,7 @@ usr/share/cacti/data_templates.php
 #usr/share/cacti/docs
 #usr/share/cacti/docs/CHANGELOG
 #usr/share/cacti/docs/CONTRIB
-#usr/share/cacti/docs/INSTALL
 #usr/share/cacti/docs/README
-#usr/share/cacti/docs/REQUIREMENTS
-#usr/share/cacti/docs/UPGRADE
 #usr/share/cacti/docs/html
 #usr/share/cacti/docs/html/LICENSE.html
 #usr/share/cacti/docs/html/advanced_topics.html
@@ -115,7 +113,6 @@ usr/share/cacti/data_templates.php
 #usr/share/cacti/docs/html/install_windows.html
 #usr/share/cacti/docs/html/installation.html
 #usr/share/cacti/docs/html/making_scripts_work_with_cacti.html
-#usr/share/cacti/docs/html/manual.css
 #usr/share/cacti/docs/html/migration_php_scripts_to_script_server.html
 #usr/share/cacti/docs/html/new_graphs.html
 #usr/share/cacti/docs/html/operating_principles.html
@@ -143,8 +140,8 @@ usr/share/cacti/data_templates.php
 #usr/share/cacti/docs/html/variables.html
 #usr/share/cacti/docs/pdf
 #usr/share/cacti/docs/pdf/README
-#usr/share/cacti/docs/text
-#usr/share/cacti/docs/text/manual.txt
+#usr/share/cacti/docs/txt
+#usr/share/cacti/docs/txt/manual.txt
 usr/share/cacti/gprint_presets.php
 usr/share/cacti/graph.php
 usr/share/cacti/graph_image.php
@@ -313,6 +310,7 @@ usr/share/cacti/index.php
 #usr/share/cacti/install/0_8_7a_to_0_8_7b.php
 #usr/share/cacti/install/0_8_7b_to_0_8_7c.php
 #usr/share/cacti/install/0_8_7c_to_0_8_7d.php
+#usr/share/cacti/install/0_8_7d_to_0_8_7e.php
 #usr/share/cacti/install/0_8_to_0_8_1.php
 usr/share/cacti/install/index.php
 usr/share/cacti/install/install_finish.gif
@@ -497,6 +495,7 @@ usr/share/cacti/utilities.php
 #var/cacti
 #var/cacti/log
 var/cacti/log/.htaccess
+var/cacti/log/.placeholder
 var/cacti/log/cacti.log
 #var/cacti/rra
 var/cacti/rra/.placeholder
