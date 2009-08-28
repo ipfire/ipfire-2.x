@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.8.7d
+VER        = 0.8.7e
 
 THISAPP    = cacti-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0822068bfa547278e94d3143ef9279e0
+$(DL_FILE)_MD5 = 7563a58a57d2c6cc0da28cc341a30969
 
 install : $(TARGET)
 

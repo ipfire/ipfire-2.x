@@ -191,4 +191,4 @@ etc/rc.d/rc6.d/K85tmpfs
 #etc/rc.d/rc0.d/K01miau
 #etc/rc.d/rc3.d/S99miau
 #etc/rc.d/rc6.d/K01miau
-#etc/rc.d/init.d/net-snmp
+#etc/rc.d/init.d/netsnmpd
