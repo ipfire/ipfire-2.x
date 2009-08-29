@@ -103,7 +103,7 @@ if ($cgiparams{'SUBMIT'} eq $tr{'advproxy chgwebpwd change password'})
 		$errormessage = $tr{'advproxy errmsg password incorrect'};
 		goto ERROR;
 	}
-	$returncode = system("/usr/bin/htpasswd -b $userdb $username $cgiparams{'NEW_PASSWORD_1'}");
+	$returncode = system("/usr/sbin/htpasswd -b $userdb $username $cgiparams{'NEW_PASSWORD_1'}");
 	if ($returncode == 0)
 	{
 		$success = 1;
