@@ -68,7 +68,7 @@
 * clamav-0.95.2
 * cmake-2.4.8
 * collectd-4.5.3
-* compat-wireless-2009-08-21-kmod-2.6.27.31-ipfire
+* compat-wireless-2.6.31-rc7-kmod-2.6.27.31-ipfire
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
