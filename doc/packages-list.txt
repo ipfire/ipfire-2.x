@@ -153,6 +153,7 @@
 * iputils-ss020927
 * iw-0.9.15
 * java-1.6.0_12-for-ipfire
+* joe-3.7
 * jpegsrc.v6b
 * kbd-1.12
 * klibc-1.5.14
