@@ -1,2 +1,3 @@
 etc/system-release
 boot/grub/grub.conf
+etc/ppp/ip-up
