@@ -1,0 +1,3 @@
+usr/sbin/smartctl
+etc/rc.d/init.d/smartenabler
+usr/local/bin/smartctrl

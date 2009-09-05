@@ -83,7 +83,7 @@ sub updatehdddata{
 	if (!$standby){
 		$temp = 0;
 		my $smart_output = '';
-		system("$path_smartctl -iHA -d ata /dev/$disk > /var/run/smartctl_out_hddtemp-$disk");
+		system("$path_smartctl -iHA /dev/$disk > /var/run/smartctl_out_hddtemp-$disk");
 		if ( -e "/var/run/smartctl_out_hddtemp-".$array[$#array] ){
 			my $hdd_output = `cat /var/run/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
 			my @t = split(/\s+/,$hdd_output);
