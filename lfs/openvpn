@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -vp /var/ipfire/ovpn/ca
 	-mkdir -vp /var/ipfire/ovpn/crls
 	touch /var/ipfire/ovpn/ovpn-leases.db
-        chmod 700 /var/ipfire/ovpn/ovpn-leases.db
+	chmod 700 /var/ipfire/ovpn/ovpn-leases.db
 	chown -R nobody:nobody /var/ipfire/ovpn
 	chown root.nobody /var/log/ovpnserver.log
 	chmod 755 /var/ipfire/ovpn/verify
