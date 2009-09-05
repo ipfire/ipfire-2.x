@@ -47,7 +47,7 @@ else
 	echo -n "$DNS1" > /var/ipfire/red/dns1
 	echo -n "$DNS2" > /var/ipfire/red/dns2
 fi
-7
+
 echo -n "$1" > /var/ipfire/red/iface
 echo -n "$4" > /var/ipfire/red/local-ipaddress
 echo -n "$5" > /var/ipfire/red/remote-ipaddress
