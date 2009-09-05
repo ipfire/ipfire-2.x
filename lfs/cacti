@@ -78,21 +78,20 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	@rm -rf /usr/share/cacti
-	mkdir /usr/share/cacti
+	@rm -rf /var/cacti /usr/share/cacti
+	mkdir -pv /var/cacti /usr/share/cacti
+
 	cd $(DIR_APP) && mv -vf * /usr/share/cacti
 	cp -vf $(DIR_SRC)/config/cacti/cacti.conf /etc/httpd/conf/vhosts.d/
 	install -v -m 755 $(DIR_SRC)/config/cacti/cacti.cron /etc/fcron.cyclic/cacti.cron
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/cacti \
 	                 /var/ipfire/backup/addons/includes/cacti
-	mkdir -pv /var/cacti || true
-	mkdir -pv /var/cacti/rra || true                                    
-	mkdir -pv /var/cacti/log || true
-	mv -vf /usr/share/cacti/log/* /var/cacti/log/
-	mv -vf /usr/share/cacti/rra/* /var/cacti/rra
+
+	mv -vf /usr/share/cacti/log /var/cacti
+	mv -vf /usr/share/cacti/rra /var/cacti
 	ln -s /var/cacti/log /usr/share/cacti/log
 	ln -s /var/cacti/rra /usr/share/cacti/rra
+
 	chown -R nobody:nobody /var/cacti/rra /var/cacti/log
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
-
