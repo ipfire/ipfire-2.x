@@ -85,9 +85,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 755 $(DIR_SRC)/config/cacti/cacti.cron /etc/fcron.cyclic/cacti.cron
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/cacti \
 	                 /var/ipfire/backup/addons/includes/cacti
-	if [ ! -x "/var/cacti" ]; then mkdir /var/cacti;fi
-	if [ ! -x "/var/cacti/rra" ]; then mkdir /var/cacti/rra; fi
-	if [ ! -x "/var/cacti/log" ]; then mkdir /var/cacti/log; fi
+	mkdir -pv /var/cacti || true
+	mkdir -pv /var/cacti/rra || true                                    
+	mkdir -pv /var/cacti/log || true
 	mv -vf /usr/share/cacti/log/* /var/cacti/log/
 	mv -vf /usr/share/cacti/rra/* /var/cacti/rra
 	ln -s /var/cacti/log /usr/share/cacti/log
