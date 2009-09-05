@@ -119,10 +119,20 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 # Add "script-security 3 system" to openvpn config
 #
-if [ ! -s "/var/ipfire/ovpn/server.conf" ]; then
+if [ ! -x "/var/ipfire/ovpn/server.conf" ]; then
 	grep -q "script-security" /var/ipfire/ovpn/server.conf \
 	|| echo "script-security 3 system" >> /var/ipfire/ovpn/server.conf
 fi
+
+if [ ! -x "/var/ipfire/ovpn/server.conf" ]; then
+	grep -q "ipp-persist" /var/ipfire/ovpn/server.conf \
+	|| echo "ipp-persist /var/ipfire/ovpn/ovpn-leases.db" >> /var/ipfire/ovpn/server.conf
+fi
+
+if [ ! -x "/var/ipfire/ovpn/ovpn-leases.db" ]; then
+	touch /var/ipfire/ovpn/ovpn-leases.db
+fi
+        
 #
 # Delete old lm-sensor modullist...
 #

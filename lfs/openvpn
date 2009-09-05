@@ -75,8 +75,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && cp -Rvf $(DIR_SRC)/config/ovpn /var/ipfire
-	-mkdir -p /var/ipfire/ovpn/ca
-	-mkdir -p /var/ipfire/ovpn/crls
+	-mkdir -vp /var/ipfire/ovpn/ca
+	-mkdir -vp /var/ipfire/ovpn/crls
+	touch /var/ipfire/ovpn/ovpn-leases.db
+        chmod 700 /var/ipfire/ovpn/ovpn-leases.db
 	chown -R nobody:nobody /var/ipfire/ovpn
 	chown root.nobody /var/log/ovpnserver.log
 	chmod 755 /var/ipfire/ovpn/verify

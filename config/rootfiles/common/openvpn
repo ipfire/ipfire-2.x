@@ -13,3 +13,4 @@ var/ipfire/ovpn/openssl/ovpn.cnf
 var/ipfire/ovpn/ovpnconfig
 var/ipfire/ovpn/settings
 var/ipfire/ovpn/verify
+var/ipfire/ovpn/ovpn-leases.db
