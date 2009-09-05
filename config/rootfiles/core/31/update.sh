@@ -117,7 +117,7 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
-# Add "script-security 3 system" to openvpn config
+# Add some entries to openvpn config
 #
 if [ ! -x "/var/ipfire/ovpn/server.conf" ]; then
 	grep -q "script-security" /var/ipfire/ovpn/server.conf \
@@ -131,8 +131,9 @@ fi
 
 if [ ! -x "/var/ipfire/ovpn/ovpn-leases.db" ]; then
 	touch /var/ipfire/ovpn/ovpn-leases.db
+	chmod 700 /var/ipfire/ovpn/ovpn-leases.db
+	chown nobody:nobody /var/ipfire/ovpn/ovpn-leases.db
 fi
-        
 #
 # Delete old lm-sensor modullist...
 #
