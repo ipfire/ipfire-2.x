@@ -125,13 +125,13 @@ if [ ! -x "/var/ipfire/ovpn/server.conf" ]; then
 fi
 
 if [ ! -x "/var/ipfire/ovpn/server.conf" ]; then
-	grep -q "ipp-persist" /var/ipfire/ovpn/server.conf \
-	|| echo "ipp-persist /var/ipfire/ovpn/ovpn-leases.db" >> /var/ipfire/ovpn/server.conf
+	grep -q "ifconfig-pool-persist" /var/ipfire/ovpn/server.conf \
+	|| echo "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600" >> /var/ipfire/ovpn/server.conf
 fi
 
 if [ ! -x "/var/ipfire/ovpn/ovpn-leases.db" ]; then
 	touch /var/ipfire/ovpn/ovpn-leases.db
-	chmod 700 /var/ipfire/ovpn/ovpn-leases.db
+	chmod 600 /var/ipfire/ovpn/ovpn-leases.db
 	chown nobody:nobody /var/ipfire/ovpn/ovpn-leases.db
 fi
 #
