@@ -77,7 +77,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-usb
+	cd $(DIR_APP) && ./configure --prefix=/usr --enable-usb --enable-cgi \
+					--with-cgi-bin=/srv/web/ipfire/cgi-bin
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	install -v -m755 $(DIR_SRC)/config/apcupsd/apcupsd /etc/init.d/apcupsd
