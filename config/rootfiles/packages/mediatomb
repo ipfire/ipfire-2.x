@@ -3,6 +3,7 @@ usr/bin/mediatomb
 #usr/share/mediatomb
 #usr/share/mediatomb/js
 usr/share/mediatomb/js/common.js
+usr/share/mediatomb/js/import-dvd.js
 usr/share/mediatomb/js/import.js
 usr/share/mediatomb/js/playlists.js
 usr/share/mediatomb/mappings.xml
@@ -94,9 +95,9 @@ usr/share/mediatomb/web/std_treelook.css
 usr/share/mediatomb/web/top.html
 usr/share/mediatomb/web/topleft.html
 usr/share/mediatomb/web/topright.html
+var/ipfire/backup/addons/includes/mediatomb
 var/ipfire/mediatomb
 #var/ipfire/mediatomb/config.xml
-var/ipfire/backup/addons/includes/mediatomb
 etc/rc.d/init.d/mediatomb
 etc/rc.d/rc0.d/K02mediatomb
 etc/rc.d/rc6.d/K02mediatomb

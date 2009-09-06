@@ -47,12 +47,13 @@ else
 	echo -n "$DNS1" > /var/ipfire/red/dns1
 	echo -n "$DNS2" > /var/ipfire/red/dns2
 fi
-7
+
 echo -n "$1" > /var/ipfire/red/iface
 echo -n "$4" > /var/ipfire/red/local-ipaddress
 echo -n "$5" > /var/ipfire/red/remote-ipaddress
 touch /var/ipfire/red/active
 
+/sbin/ip route replace default via ${IPREMOTE} dev ppp0
 run_subdir ${rc_base}/init.d/networking/red.up/
 
 #Check if gateway has answerd to ping, if not replace with ping.ipfire.org
@@ -79,3 +80,4 @@ fi
 mv /tmp/hosts /etc/hosts
 
 [ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep up
+
