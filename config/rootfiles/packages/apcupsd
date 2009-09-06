@@ -16,3 +16,7 @@ sbin/smtp
 #usr/share/hal/fdi/policy/20thirdparty
 #usr/share/hal/fdi/policy/20thirdparty/80-apcupsd-ups-policy.fdi
 #usr/share/man/man8/apcupsd.8
+etc/rc.d/init.d/apcupsd
+etc/rc.d/rc0.d/K35apcupsd
+etc/rc.d/rc3.d/S65apcupsd
+etc/rc.d/rc6.d/K35apcupsd
