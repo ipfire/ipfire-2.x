@@ -333,6 +333,7 @@
 'alt system' => 'System',
 'alt vpn' => 'VPNs',
 'and' => 'Und',
+'apcupsd' => 'APCUPSD',
 'apply' => 'Jetzt anwenden',
 'april' => 'April',
 'archive not exist' => 'Konfigurationsarchiv existiert nicht',
