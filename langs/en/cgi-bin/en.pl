@@ -338,6 +338,7 @@
 'alt vpn' => 'VPNs',
 'and' => 'And',
 'ansi t1.483' => 'TO BE REMOVED',
+'apcupsd' => 'APCUPSD',
 'apply' => 'Apply now',
 'april' => 'April',
 'archive not exist' => 'Configuration archive does not exist',
