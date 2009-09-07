@@ -48,9 +48,9 @@ case "${1}" in
 			boot_mesg -n " in read-only mode.\n\nAfter you"
 			boot_mesg -n " press Enter, this system will be"
 			boot_mesg -n " halted and powered off."
-			boot_mesg -n "\n\nPress enter to continue..." ${INFO}
+			boot_mesg -n "\n\nPress enter to continue or wait a minute..." ${INFO}
 			boot_mesg "" ${NORMAL}
-			read ENTER
+			read -t 60 ENTER
 			${rc_base}/init.d/halt stop
 		fi
 
@@ -90,9 +90,9 @@ case "${1}" in
 			boot_mesg -n " errors require this system to be"
 			boot_mesg -n " rebooted.\n\nAfter you press enter,"
 			boot_mesg -n " this system will be rebooted"
-			boot_mesg -n "\n\nPress Enter to continue..." ${INFO}
+			boot_mesg -n "\n\nPress Enter to continue or wait a minute..." ${INFO}
 			boot_mesg "" ${NORMAL}
-			read ENTER
+			read -t 60 ENTER
 			reboot -f
 		fi
 
@@ -107,9 +107,9 @@ case "${1}" in
 			boot_mesg -n " System Administrator.\n\nAfter you"
 			boot_mesg -n " press Enter, this system will be"
 			boot_mesg -n " halted and powered off."
-			boot_mesg -n "\n\nPress Enter to continue..." ${INFO}
+			boot_mesg -n "\n\nPress Enter to continue or wait a minute..." ${INFO}
 			boot_mesg "" ${NORMAL}
-			read ENTER
+			read -t 60 ENTER
 		  ${rc_base}/init.d/halt stop
 		fi
 

@@ -155,9 +155,9 @@ print_error_msg()
 	boot_mesg -n " ipfire, please be so kind to inform us at"
 	boot_mesg " info@ipfire.org.\n"
 	boot_mesg_flush
-	boot_mesg -n "Press Enter to continue or wait 3 minutes..." ${INFO}
+	boot_mesg -n "Press Enter to continue or wait a minute..." ${INFO}
 	boot_mesg "" ${NORMAL}
-	read -t 180 ENTER
+	read -t 60 ENTER
 }
 
 check_script_status()
