@@ -14,8 +14,6 @@ var/ipfire/connscheduler
 #var/ipfire/connscheduler/lib.pl
 var/ipfire/countries.pl
 var/ipfire/crls
-var/ipfire/dns
-#var/ipfire/dns/settings
 var/ipfire/ddns
 #var/ipfire/ddns/config
 #var/ipfire/ddns/ipcache
@@ -29,6 +27,8 @@ var/ipfire/dhcp
 var/ipfire/dhcpc
 var/ipfire/dmzholes
 #var/ipfire/dmzholes/config
+var/ipfire/dns
+#var/ipfire/dns/settings
 var/ipfire/ethernet
 #var/ipfire/ethernet/aliases
 #var/ipfire/ethernet/known_nics
@@ -72,6 +72,7 @@ var/ipfire/menu.d/50-firewall.menu
 var/ipfire/menu.d/60-ipfire.menu
 var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-addonsvc.menu
+#var/ipfire/menu.d/EX-apcupsd.menu
 #var/ipfire/menu.d/EX-asterisk.menu
 #var/ipfire/menu.d/EX-bluetooth.menu
 #var/ipfire/menu.d/EX-mpfire.menu

@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
                 exit(1);
 	}
 
-        sprintf(command, "smartctl -iHA /dev/%s", argv[1]);
+        sprintf(command, "smartctl -x /dev/%s", argv[1]);
         safe_system(command);
 
         return 0;
