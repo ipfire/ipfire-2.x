@@ -1,0 +1,82 @@
+From: Balbir Singh <balbir@linux.vnet.ibm.com>
+Date:	Thu, 01 May 2008 02:48:58 -0700
+Subject: memcg: disable the memory controller by default
+
+Due to the overhead of the memory controller the memory controller is now
+disabled by default.  This patch adds cgroup_enable.
+
+[akpm@linux-foundation.org: `inline __init' doesn't make sense]
+Signed-off-by: Balbir Singh <balbir@linux.vnet.ibm.com>
+Cc: AMAMOTO Takashi <yamamoto@valinux.co.jp>
+Acked-by: Paul Menage <menage@google.com>
+Cc: Pavel Emelianov <xemul@openvz.org>
+Acked-by: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Cc: <stable@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+
+ Documentation/kernel-parameters.txt |    3 +++
+ kernel/cgroup.c                     |   17 +++++++++++++----
+ mm/memcontrol.c                     |    1 +
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -423,8 +423,11 @@ and is between 256 and 4096 characters. 
+ 			See Documentation/s390/CommonIO for details.
+ 
+ 	cgroup_disable= [KNL] Disable a particular controller
++	cgroup_enable=  [KNL] Enable a particular controller
++			For both cgroup_enable and cgroup_enable
+ 			Format: {name of the controller(s) to disable}
+ 				{Currently supported controllers - "memory"}
++				{Memory controller is disabled by default}
+ 
+ 	checkreqprot	[SELINUX] Set initial checkreqprot flag value.
+ 			Format: { "0" | "1" }
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@ -3099,7 +3099,7 @@ static void cgroup_release_agent(struct 
+ 	mutex_unlock(&cgroup_mutex);
+ }
+ 
+-static int __init cgroup_disable(char *str)
++static int __init cgroup_turnonoff(char *str, int disable)
+ {
+ 	int i;
+ 	char *token;
+@@ -3112,13 +3112,22 @@ static int __init cgroup_disable(char *s
+ 			struct cgroup_subsys *ss = subsys[i];
+ 
+ 			if (!strcmp(token, ss->name)) {
+-				ss->disabled = 1;
+-				printk(KERN_INFO "Disabling %s control group"
+-					" subsystem\n", ss->name);
++				ss->disabled = disable;
+ 				break;
+ 			}
+ 		}
+ 	}
+ 	return 1;
+ }
++
++static int __init cgroup_disable(char *str)
++{
++	return cgroup_turnonoff(str, 1);
++}
+ __setup("cgroup_disable=", cgroup_disable);
++
++static int __init cgroup_enable(char *str)
++{
++	return cgroup_turnonoff(str, 0);
++}
++__setup("cgroup_enable=", cgroup_enable);
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1241,4 +1241,5 @@ struct cgroup_subsys mem_cgroup_subsys =
+ 	.populate = mem_cgroup_populate,
+ 	.attach = mem_cgroup_move_task,
+ 	.early_init = 0,
++	.disabled = 1,
+ };

@@ -1,0 +1,31 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Let actcli handle control file errors
+References: bnc#487755,LTC#52571
+
+Symptom:     actcli returns "No such device or address", although the
+             access control tables have been updated or could be
+             updated with the -F flag.
+Problem:     The FCP channel reports an FSF status indicating, that
+             the channel is in use or that the -F flag has been
+             used. zfcp did present the "No such device.." problem for
+             any error for the "control file download command" which
+             is wrong.
+Solution:    Don't report "No such device or address" from zfcp for
+             errors specific to the "control file download command".
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_fsf.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_fsf.c	2009-04-02 16:20:24.000000000 +0200
++++ b/drivers/s390/scsi/zfcp_fsf.c	2009-04-02 16:23:30.000000000 +0200
+@@ -2496,8 +2496,6 @@ out:
+ 
+ static void zfcp_fsf_control_file_handler(struct zfcp_fsf_req *req)
+ {
+-	if (req->qtcb->header.fsf_status != FSF_GOOD)
+-		req->status |= ZFCP_STATUS_FSFREQ_ERROR;
+ }
+ 
+ /**

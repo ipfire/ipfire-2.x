@@ -1,0 +1,50 @@
+From: NeilBrown <neilb@suse.de>
+Subject: reset TCP connect timeout on successful connection.
+Patch-mainline: no - see below
+References: bnc#498708
+
+Currently, every time an NFS server closes a TCP connection, the
+client will double its time out (up to 300 seconds) before attempting
+to reconnect.
+The timeout should only double while it fails.  On success it should
+reset the timeout.
+
+This patch resets the timeout on a successful connection.
+It also ensures that we the timeout it doubled, it does not remain at
+0.  This should fix a behaviour which has been observed where the
+client hammers on the server until it accepts a connection.
+
+Note: this has not been accepted upstream.
+The stated reason is that some (Netapp?) servers are prone to accept
+a connection and then drop it immediately.  This would defeat the backoff.
+While this should be fixed there are complexities in getting it right,
+and the current patch is at least an improvement.
+(there where already cases where the client would retry at a high
+ rate and the new case is, I think, quite remote).
+When things are sorted out with upstream, we can get a better fix.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+
+---
+ net/sunrpc/xprtsock.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -1143,6 +1143,7 @@ static void xs_tcp_state_change(struct s
+ 				TCP_RCV_COPY_FRAGHDR | TCP_RCV_COPY_XID;
+ 
+ 			xprt_wake_pending_tasks(xprt, 0);
++			xprt->reestablish_timeout = XS_TCP_INIT_REEST_TO;
+ 		}
+ 		spin_unlock_bh(&xprt->transport_lock);
+ 		break;
+@@ -1785,6 +1786,8 @@ static void xs_connect(struct rpc_task *
+ 				   &transport->connect_worker,
+ 				   xprt->reestablish_timeout);
+ 		xprt->reestablish_timeout <<= 1;
++		if (xprt->reestablish_timeout < XS_TCP_INIT_REEST_TO)
++			xprt->reestablish_timeout = XS_TCP_INIT_REEST_TO;
+ 		if (xprt->reestablish_timeout > XS_TCP_MAX_REEST_TO)
+ 			xprt->reestablish_timeout = XS_TCP_MAX_REEST_TO;
+ 	} else {

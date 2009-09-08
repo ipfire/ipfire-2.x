@@ -1,0 +1,27 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Handle "forced close" correctly in the erp
+References: bnc#518291,LTC#54458
+
+Symptom:     After a remote port problem, the zfcp erp does not
+             recover from the problem.
+Problem:     After trying the "forced close" step from the erp the
+             the check of the flag indicating if the port is still
+             open is wrong.
+Solution:    Fix the check of the open flag.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_erp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/s390/scsi/zfcp_erp.c	2009-06-23 14:11:53.000000000 +0200
++++ b/drivers/s390/scsi/zfcp_erp.c	2009-06-23 14:11:57.000000000 +0200
+@@ -796,7 +796,7 @@ static int zfcp_erp_port_forced_strategy
+ 			return ZFCP_ERP_FAILED;
+ 
+ 	case ZFCP_ERP_STEP_PHYS_PORT_CLOSING:
+-		if (status & ZFCP_STATUS_PORT_PHYS_OPEN)
++		if (!(status & ZFCP_STATUS_PORT_PHYS_OPEN))
+ 			return ZFCP_ERP_SUCCEEDED;
+ 	}
+ 	return ZFCP_ERP_FAILED;

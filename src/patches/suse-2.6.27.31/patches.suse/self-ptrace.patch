@@ -1,0 +1,142 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: [PATCH] system call notification with self_ptrace
+References: bnc#417299
+
+PTRACE SELF
+
+This patch adds a new functionality to ptrace: system call notification to
+the current process.
+When a process requests self ptrace, with the new request PTRACE_SELF_ON:
+
+ 1.  the next system call performed by the process will not be executed
+ 2.  self ptrace will be disabled for the process
+ 3.  a SIGSYS signal will be sent to the process.
+
+With an appropriate SIGSYS signal handler, the process can access its own
+data structures to
+
+ 1.  get the system call number from the siginfo structure
+ 2.  get the system call arguments from the stack
+ 3.  instrument the system call with other system calls
+ 4.  emulate the system call with other system calls
+ 5.  change the arguments of the system call
+ 6.  perform the system call for good
+ 7.  change the return value of the system call
+ 8.  request self ptrace again before returning.
+
+The new request PTRACE_SELF_OFF disables self ptrace.
+
+
+Signed-off-by: Pierre Morel <pmorel@fr.ibm.com>
+Signed-off-by: Volker Sameske <sameske@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ include/asm-generic/siginfo.h |    6 ++++++
+ include/linux/ptrace.h        |   18 ++++++++++++++++++
+ include/linux/sched.h         |    1 +
+ kernel/ptrace.c               |   32 ++++++++++++++++++++++++++++++++
+ 4 files changed, 57 insertions(+)
+
+--- a/include/asm-generic/siginfo.h
++++ b/include/asm-generic/siginfo.h
+@@ -224,6 +224,12 @@ typedef struct siginfo {
+ #define NSIGPOLL	6
+ 
+ /*
++ * SIGSYS si_codes
++ */
++#define SYS_SYSCALL    (__SI_FAULT|1)  /* system call notification */
++#define NSIGSYS        1
++
++/*
+  * sigevent definitions
+  * 
+  * It seems likely that SIGEV_THREAD will have to be handled from 
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -27,6 +27,10 @@
+ #define PTRACE_GETSIGINFO	0x4202
+ #define PTRACE_SETSIGINFO	0x4203
+ 
++/* PTRACE SELF requests					*/
++#define PTRACE_SELF_ON		0x4281
++#define PTRACE_SELF_OFF		0x4282
++
+ /* options set using PTRACE_SETOPTIONS */
+ #define PTRACE_O_TRACESYSGOOD	0x00000001
+ #define PTRACE_O_TRACEFORK	0x00000002
+@@ -78,7 +82,21 @@
+ 
+ #include <linux/compiler.h>		/* For unlikely.  */
+ #include <linux/sched.h>		/* For struct task_struct.  */
++#include <linux/unistd.h>		/* For syscall definitions  */
++
++#define PTS_INSTRUMENTED	0x00000001
++#define PTS_SELF	0x00000002
+ 
++static inline int is_self_ptracing(unsigned long syscall)
++{
++	if (!(current->instrumentation & PTS_SELF))
++		return 0;
++	if (syscall == __NR_rt_sigreturn)
++		return 0;
++	if (syscall == __NR_ptrace)
++		return 0;
++	return 1;
++}
+ 
+ extern long arch_ptrace(struct task_struct *child, long request, long addr, long data);
+ extern struct task_struct *ptrace_get_task_struct(pid_t pid);
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1308,6 +1308,7 @@ struct task_struct {
+ 	int latency_record_count;
+ 	struct latency_record latency_record[LT_SAVECOUNT];
+ #endif
++	u64	instrumentation;
+ };
+ 
+ /*
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -554,6 +554,38 @@ SYSCALL_DEFINE4(ptrace, long, request, l
+ 	 * This lock_kernel fixes a subtle race with suid exec
+ 	 */
+ 	lock_kernel();
++	if (request == PTRACE_SELF_ON) {
++		task_lock(current);
++		if (current->ptrace) {
++			task_unlock(current);
++			ret = -EPERM;
++			goto out;
++		}
++		set_thread_flag(TIF_SYSCALL_TRACE);
++		current->instrumentation |= PTS_INSTRUMENTED|PTS_SELF;
++		task_unlock(current);
++		ret = 0;
++		goto out;
++	}
++	if (request == PTRACE_SELF_OFF) {
++		task_lock(current);
++		if (current->ptrace) {
++			task_unlock(current);
++			ret = -EPERM;
++			goto out;
++		}
++		clear_thread_flag(TIF_SYSCALL_TRACE);
++		current->instrumentation &= ~PTS_SELF;
++		task_unlock(current);
++		ret = 0;
++		goto out;
++	}
++
++	if (current->instrumentation) {
++		ret = -EPERM;
++		goto out;
++	}
++
+ 	if (request == PTRACE_TRACEME) {
+ 		ret = ptrace_traceme();
+ 		if (!ret)

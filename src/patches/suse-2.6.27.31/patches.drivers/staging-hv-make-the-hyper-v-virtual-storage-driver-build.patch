@@ -1,0 +1,77 @@
+From foo@baz Tue Jul 14 10:18:50 PDT 2009
+Date: Tue, 14 Jul 2009 10:18:50 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: hv: make the Hyper-V virtual storage driver build
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+The #define KERNEL_2_6_27 needs to be set, and I adjusted the include
+directories a bit to get things to build properly.
+
+I also fixed up the direct access of bus_id, as that field is now gone.
+Some minor scsi api changes were needed as well.
+
+The hv_storvsc code should now build properly, with no errors.
+
+Cc: Hank Janssen <hjanssen@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/hv/StorVsc.c     |    9 +++++----
+ drivers/staging/hv/storvsc_drv.c |    9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+--- a/drivers/staging/hv/StorVsc.c
++++ b/drivers/staging/hv/StorVsc.c
+@@ -21,12 +21,13 @@
+  *
+  */
+ 
++#define KERNEL_2_6_27
+ 
+-#include "logging.h"
++#include "include/logging.h"
+ 
+-#include "StorVscApi.h"
+-#include "VmbusPacketFormat.h"
+-#include "vstorage.h"
++#include "include/StorVscApi.h"
++#include "include/VmbusPacketFormat.h"
++#include "include/vstorage.h"
+ 
+ 
+ //
+--- a/drivers/staging/hv/storvsc_drv.c
++++ b/drivers/staging/hv/storvsc_drv.c
+@@ -21,6 +21,7 @@
+  *
+  */
+ 
++#define KERNEL_2_6_27
+ 
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -40,10 +41,10 @@
+ #include <scsi/scsi_dbg.h>
+ #endif
+ 
+-#include "logging.h"
+-#include "vmbus.h"
++#include "include/logging.h"
++#include "include/vmbus.h"
+ 
+-#include "StorVscApi.h"
++#include "include/StorVscApi.h"
+ 
+ //
+ // #defines
+@@ -296,7 +297,7 @@ static int storvsc_probe(struct device *
+ #if defined(KERNEL_2_6_27)
+ 	host_device_ctx->request_pool =
+ 	    kmem_cache_create
+-	    (device_ctx->device.bus_id,
++	    (dev_name(&device_ctx->device),
+ 	     sizeof(struct storvsc_cmd_request) + storvsc_drv_obj->RequestExtSize,
+ 	     0,
+ 	     SLAB_HWCACHE_ALIGN, NULL);

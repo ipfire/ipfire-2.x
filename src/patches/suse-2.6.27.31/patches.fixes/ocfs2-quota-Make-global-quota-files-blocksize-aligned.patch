@@ -1,0 +1,38 @@
+From 96e8cc43fbecaee5a2b9eee4ec27a765474e7671 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 17 Jun 2009 17:35:07 +0200
+Subject: [PATCH 1/6] ocfs2: Make global quota files blocksize aligned
+
+Change i_size of global quota files so that it always remains aligned to block
+size. This is mainly because the end of quota block may contain checksum (if
+checksumming is enabled) and it's a bit awkward for it to be "outside" of quota
+file (and it makes life harder for ocfs2-tools).
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/ocfs2/quota_global.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/fs/ocfs2/quota_global.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/ocfs2/quota_global.c	2009-07-16 13:21:13.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH/fs/ocfs2/quota_global.c	2009-07-16 13:25:41.000000000 +0200
+@@ -145,14 +145,16 @@
+ 	}
+ 	mutex_lock_nested(&gqinode->i_mutex, I_MUTEX_QUOTA);
+ 	if (gqinode->i_size < off + len) {
++	     	loff_t rounded_end = ALIGN(off + len, sb->s_blocksize);
++
+ 		down_write(&OCFS2_I(gqinode)->ip_alloc_sem);
+-		err = ocfs2_extend_no_holes(gqinode, off + len, off);
++		err = ocfs2_extend_no_holes(gqinode, rounded_end, off);
+ 		up_write(&OCFS2_I(gqinode)->ip_alloc_sem);
+ 		if (err < 0)
+ 			goto out;
+ 		err = ocfs2_simple_size_update(gqinode,
+ 					       oinfo->dqi_gqi_bh,
+-					       off + len);
++					       rounded_end);
+ 		if (err < 0)
+ 			goto out;
+ 	}

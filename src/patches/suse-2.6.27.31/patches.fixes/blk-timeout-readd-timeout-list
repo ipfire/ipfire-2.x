@@ -1,0 +1,38 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Kernel bug in kmpathd during FC cable pulls
+References: bnc#476330
+
+Kernel bug in kmpathd during FC cable pulls.
+After one FC cable pull cycle system produced call trace.
+
+As it turned out blk_abort_requests() will not touch
+any requests for which the endio processing has already
+started. So we need to splice those requests back onto
+the timeout list for endio processing to be able to
+continue properly.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+diff --git a/block/blk-timeout.c b/block/blk-timeout.c
+index 4cc0205..bcadbb2 100644
+--- a/block/blk-timeout.c
++++ b/block/blk-timeout.c
+@@ -145,6 +145,8 @@ void blk_add_timer(struct request *req)
+  * blk_abort_queue -- Abort all request on given queue
+  * @queue:	pointer to queue
+  *
++ * We have to use list_splice() here as blk_abort_request()
++ * might add requests back on the timeout list.
+  */
+ void blk_abort_queue(struct request_queue *q)
+ {
+@@ -161,6 +163,9 @@ void blk_abort_queue(struct request_queue *q)
+ 	list_for_each_entry_safe(rq, tmp, &list, timeout_list)
+ 		blk_abort_request(rq);
+ 
++	/* Add remaining requests back on the list */
++	list_splice(&list, &q->timeout_list);
++
+ 	spin_unlock_irqrestore(q->queue_lock, flags);
+ 
+ }

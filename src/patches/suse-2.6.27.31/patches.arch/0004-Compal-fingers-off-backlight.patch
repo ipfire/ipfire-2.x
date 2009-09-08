@@ -1,0 +1,39 @@
+From: Thomas Renninger <trenn@suse.de>
+Subject: [PATCH] compal: fingers off backlight if video.ko is serving this functionality
+Patch-Mainline: queued for .28 in Len's/ak's ACPI tree
+
+commit efbc58e3236022d040e1c1f177ee5971d46b034f
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ drivers/misc/compal-laptop.c |   12 +++++++-----
+ 1 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/misc/compal-laptop.c b/drivers/misc/compal-laptop.c
+index 344b790..11003bb 100644
+--- a/drivers/misc/compal-laptop.c
++++ b/drivers/misc/compal-laptop.c
+@@ -326,12 +326,14 @@ static int __init compal_init(void)
+ 
+ 	/* Register backlight stuff */
+ 
+-	compalbl_device = backlight_device_register("compal-laptop", NULL, NULL,
+-						&compalbl_ops);
+-	if (IS_ERR(compalbl_device))
+-		return PTR_ERR(compalbl_device);
++	if (!acpi_video_backlight_support()) {
++		compalbl_device = backlight_device_register("compal-laptop", NULL, NULL,
++							    &compalbl_ops);
++		if (IS_ERR(compalbl_device))
++			return PTR_ERR(compalbl_device);
+ 
+-	compalbl_device->props.max_brightness = COMPAL_LCD_LEVEL_MAX-1;
++		compalbl_device->props.max_brightness = COMPAL_LCD_LEVEL_MAX-1;
++	}
+ 
+ 	ret = platform_driver_register(&compal_driver);
+ 	if (ret)
+-- 
+1.5.4.5
+

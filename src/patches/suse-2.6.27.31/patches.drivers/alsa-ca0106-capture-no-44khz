@@ -1,0 +1,33 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: disable 44.1kHz capture on CA0106
+Patch-mainline: 
+References: bnc#447624
+
+The capture with 44.1kHz on CA0106 seems to cause the playback problem
+that doesn't suppor 44.1kHz.  A simple fix is to disabling 44.1kHz
+support.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+
+diff --git a/sound/pci/ca0106/ca0106_main.c b/sound/pci/ca0106/ca0106_main.c
+index 5763174..c2e5c97 100644
+--- a/sound/pci/ca0106/ca0106_main.c
++++ b/sound/pci/ca0106/ca0106_main.c
+@@ -305,9 +305,15 @@ static struct snd_pcm_hardware snd_ca0106_capture_hw = {
+ 				 SNDRV_PCM_INFO_BLOCK_TRANSFER |
+ 				 SNDRV_PCM_INFO_MMAP_VALID),
+ 	.formats =		SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
++#if 0
+ 	.rates =		(SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000 |
+ 				 SNDRV_PCM_RATE_96000 | SNDRV_PCM_RATE_192000),
+ 	.rate_min =		44100,
++#else
++	.rates =		(SNDRV_PCM_RATE_48000 |
++				 SNDRV_PCM_RATE_96000 | SNDRV_PCM_RATE_192000),
++	.rate_min =		48000,
++#endif
+ 	.rate_max =		192000,
+ 	.channels_min =		2,
+ 	.channels_max =		2,

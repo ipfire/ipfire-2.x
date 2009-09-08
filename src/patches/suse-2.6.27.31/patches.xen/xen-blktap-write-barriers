@@ -1,0 +1,105 @@
+From: kwolf@suse.de
+Subject: blktap: Write Barriers
+Patch-mainline: obsolete
+
+--- sle11-2009-04-20.orig/drivers/xen/blktap/blktap.c	2009-04-20 11:40:25.000000000 +0200
++++ sle11-2009-04-20/drivers/xen/blktap/blktap.c	2009-04-20 11:41:45.000000000 +0200
+@@ -1321,6 +1321,9 @@ static int do_block_io_op(blkif_t *blkif
+ 			dispatch_rw_block_io(blkif, &req, pending_req);
+ 			break;
+ 
++		case BLKIF_OP_WRITE_BARRIER:
++			/* TODO Some counter? */
++			/* Fall through */
+ 		case BLKIF_OP_WRITE:
+ 			blkif->st_wr_req++;
+ 			dispatch_rw_block_io(blkif, &req, pending_req);
+@@ -1352,7 +1355,7 @@ static void dispatch_rw_block_io(blkif_t
+ 				 pending_req_t *pending_req)
+ {
+ 	extern void ll_rw_block(int rw, int nr, struct buffer_head * bhs[]);
+-	int op, operation = (req->operation == BLKIF_OP_WRITE) ? WRITE : READ;
++	int op, operation;
+ 	struct gnttab_map_grant_ref map[BLKIF_MAX_SEGMENTS_PER_REQUEST*2];
+ 	unsigned int nseg;
+ 	int ret, i, nr_sects = 0;
+@@ -1364,6 +1367,21 @@ static void dispatch_rw_block_io(blkif_t
+ 	uint16_t mmap_idx = pending_req->mem_idx;
+ 	struct mm_struct *mm;
+ 
++	switch (req->operation) {
++	case BLKIF_OP_READ:
++		operation = READ;
++		break;
++	case BLKIF_OP_WRITE:
++		operation = WRITE;
++		break;
++	case BLKIF_OP_WRITE_BARRIER:
++		operation = WRITE_BARRIER;
++		break;
++	default:
++		operation = 0; /* make gcc happy */
++		BUG();
++	}
++
+ 	if (blkif->dev_num < 0 || blkif->dev_num > MAX_TAP_DEV)
+ 		goto fail_response;
+ 
+@@ -1402,7 +1420,7 @@ static void dispatch_rw_block_io(blkif_t
+ 
+ 	pending_req->blkif     = blkif;
+ 	pending_req->id        = req->id;
+-	pending_req->operation = operation;
++	pending_req->operation = req->operation;
+ 	pending_req->status    = BLKIF_RSP_OKAY;
+ 	pending_req->nr_pages  = nseg;
+ 	op = 0;
+@@ -1420,7 +1438,7 @@ static void dispatch_rw_block_io(blkif_t
+ 		kvaddr = idx_to_kaddr(mmap_idx, pending_idx, i);
+ 
+ 		flags = GNTMAP_host_map;
+-		if (operation == WRITE)
++		if (operation != READ)
+ 			flags |= GNTMAP_readonly;
+ 		gnttab_set_map_op(&map[op], kvaddr, flags,
+ 				  req->seg[i].gref, blkif->domid);
+@@ -1437,7 +1455,7 @@ static void dispatch_rw_block_io(blkif_t
+ 
+ 			flags = GNTMAP_host_map | GNTMAP_application_map
+ 				| GNTMAP_contains_pte;
+-			if (operation == WRITE)
++			if (operation != READ)
+ 				flags |= GNTMAP_readonly;
+ 			gnttab_set_map_op(&map[op], ptep, flags,
+ 					  req->seg[i].gref, blkif->domid);
+--- sle11-2009-04-20.orig/drivers/xen/blktap/xenbus.c	2008-09-15 15:10:39.000000000 +0200
++++ sle11-2009-04-20/drivers/xen/blktap/xenbus.c	2008-11-10 12:14:32.000000000 +0100
+@@ -395,7 +395,28 @@ static void connect(struct backend_info 
+ 	int err;
+ 
+ 	struct xenbus_device *dev = be->dev;
++	struct xenbus_transaction xbt;
+ 
++	/* Write feature-barrier to xenstore */
++again:
++	err = xenbus_transaction_start(&xbt);
++	if (err) {
++		xenbus_dev_fatal(dev, err, "starting transaction");
++		return;
++	}
++
++	err = xenbus_printf(xbt, dev->nodename, "feature-barrier",  "1");
++	if (err) {
++		xenbus_dev_fatal(dev, err, "writing feature-barrier");
++		xenbus_transaction_end(xbt, 1);
++		return;
++	}
++
++	err = xenbus_transaction_end(xbt, 0);
++	if (err == -EAGAIN)
++		goto again;
++
++	/* Switch state */
+ 	err = xenbus_switch_state(dev, XenbusStateConnected);
+ 	if (err)
+ 		xenbus_dev_fatal(dev, err, "switching to Connected state",

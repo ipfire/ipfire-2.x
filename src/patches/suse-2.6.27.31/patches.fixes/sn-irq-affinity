@@ -1,0 +1,67 @@
+From: Tony Ernst <tee@sgi.com>
+Subject: sn2: preserve irq affinity set in PROM
+Patch-mainline: No, this is a one-off from the mainline fix
+References: bnc#457679
+
+ The latest SLES11 has numerous changes in the
+ request_irq() path, the one of issue is irq_select_affinity(),
+ which reassigns an IRQ to a CPU. And, in the case of SN2 Altix,
+ it assigns every IRQ to the same CPU; CPU0 in most cases, except
+ on systems like rappel where it's CPU1, due to the Shub1.1 restrictions.
+
+ This is a problem. Unlike most platforms, on Altix, the assignment
+ of an IRQ to a CPU is determined and setup in the PROM, and the kernel
+ is not expected to change this, except in the case of a manual
+ redirect/migration.
+
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+ arch/ia64/sn/kernel/irq.c |    5 +++++
+ include/linux/irq.h       |    1 +
+ kernel/irq/manage.c       |   11 +++++++++++
+ 3 files changed, 17 insertions(+)
+
+--- a/arch/ia64/sn/kernel/irq.c	2008-10-09 17:13:53.000000000 -0500
++++ b/arch/ia64/sn/kernel/irq.c	2008-12-18 13:34:46.822283902 -0600
+@@ -391,6 +391,11 @@
+ #ifdef CONFIG_SMP
+ 	cpuphys = cpu_physical_id(cpu);
+ 	set_irq_affinity_info(sn_irq_info->irq_irq, cpuphys, 0);
++	/*
++	 * Affinity was set by the PROM, prevent it from
++	 * being reset by the request_irq() path.
++	 */
++	irq_desc[sn_irq_info->irq_irq].status |= IRQ_AFFINITY_SET;
+ #endif
+ }
+ 
+--- a/include/linux/irq.h	2008-12-16 11:27:10.000000000 -0600
++++ b/include/linux/irq.h	2008-12-18 13:49:23.519706754 -0600
+@@ -63,6 +63,7 @@
+ #define IRQ_NO_BALANCING	0x00400000	/* IRQ is excluded from balancing */
+ #define IRQ_SPURIOUS_DISABLED	0x00800000	/* IRQ was disabled by the spurious trap */
+ #define IRQ_MOVE_PCNTXT	0x01000000	/* IRQ migration from process context */
++#define IRQ_AFFINITY_SET	0x02000000      /* IRQ affinity was previously set */
+ 
+ #ifdef CONFIG_IRQ_PER_CPU
+ # define CHECK_IRQ_PER_CPU(var) ((var) & IRQ_PER_CPU)
+--- a/kernel/irq/manage.c	2008-12-16 11:27:10.000000000 -0600
++++ b/kernel/irq/manage.c	2008-12-18 13:36:15.693395542 -0600
+@@ -117,6 +117,17 @@
+ 
+ 	cpus_and(mask, cpu_online_map, irq_default_affinity);
+ 
++	/*
++	 * Preserve the affinity that was previously set, but make
++	 * sure one of the targets is online.
++	 */
++	if (irq_desc[irq].status & IRQ_AFFINITY_SET) {
++		if (cpus_intersects(irq_desc[irq].affinity, cpu_online_map))
++			mask = irq_desc[irq].affinity;
++		else
++			irq_desc[irq].status &= ~IRQ_AFFINITY_SET;
++	}
++
+ 	irq_desc[irq].affinity = mask;
+ 	irq_desc[irq].chip->set_affinity(irq, mask);
+ 

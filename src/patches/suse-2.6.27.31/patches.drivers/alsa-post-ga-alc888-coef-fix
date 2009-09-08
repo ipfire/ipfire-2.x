@@ -1,0 +1,27 @@
+From 37db623ae2a7bde234a8ed683d0d13d6f939199c Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 5 Mar 2009 09:40:16 +0100
+Subject: ALSA: hda - Fix check of ALC888S-VC in alc888_coef_init()
+Patch-mainline: 
+References: bnc#482796
+
+Fixed the wrong bits check to identify ALC888S-VC model in
+alc888_coef_init().
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_realtek.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -884,7 +884,7 @@ static void alc888_coef_init(struct hda_
+ 	snd_hda_codec_write(codec, 0x20, 0, AC_VERB_SET_COEF_INDEX, 0);
+ 	tmp = snd_hda_codec_read(codec, 0x20, 0, AC_VERB_GET_PROC_COEF, 0);
+ 	snd_hda_codec_write(codec, 0x20, 0, AC_VERB_SET_COEF_INDEX, 7);
+-	if ((tmp & 0xf0) == 2)
++	if ((tmp & 0xf0) == 0x20)
+ 		/* alc888S-VC */
+ 		snd_hda_codec_read(codec, 0x20, 0,
+ 				   AC_VERB_SET_PROC_COEF, 0x830);

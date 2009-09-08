@@ -1,0 +1,84 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qeth: handle error codes from z/VM VSwitch Port Isolation
+References: bnc#499845,LTC#53307
+
+Symptom:     Message "Error in registering MAC address on device"
+Problem:     Usually z/VM guests are allowed to change the MAC address
+             of a VSWITCH device. This is no longer true, if 
+             z/VM Virtual Switch Port Isolation is active (see 
+             z/VM Apars VM64281 and VM64463). The corresponding
+             error code should be translated into a meaningful		
+             message.
+Solution:    qeth driver issues message 
+                "MAC address <x> is not authorized"
+             if z/VM Virtual Switch Port Isolation forbids setting
+             of a locally defined virtual MAC address.		
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/net/qeth_core_mpc.c |    2 ++
+ drivers/s390/net/qeth_core_mpc.h |    2 ++
+ drivers/s390/net/qeth_l2_main.c  |   24 ++++++++++++++++++++++++
+ 3 files changed, 28 insertions(+)
+
+Index: linux-sles11/drivers/s390/net/qeth_core_mpc.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_core_mpc.c
++++ linux-sles11/drivers/s390/net/qeth_core_mpc.c
+@@ -181,6 +181,8 @@ static struct ipa_rc_msg qeth_ipa_rc_msg
+ 	{IPA_RC_L2_ADDR_TABLE_FULL,	"Layer2 address table full"},
+ 	{IPA_RC_L2_DUP_LAYER3_MAC,	"Duplicate with layer 3 MAC"},
+ 	{IPA_RC_L2_GMAC_NOT_FOUND,	"GMAC not found"},
++	{IPA_RC_L2_MAC_NOT_AUTH_BY_HYP,	"L2 mac not authorized by hypervisor"},
++	{IPA_RC_L2_MAC_NOT_AUTH_BY_ADP,	"L2 mac not authorized by adapter"},
+ 	{IPA_RC_L2_MAC_NOT_FOUND,	"L2 mac address not found"},
+ 	{IPA_RC_L2_INVALID_VLAN_ID,	"L2 invalid vlan id"},
+ 	{IPA_RC_L2_DUP_VLAN_ID,		"L2 duplicate vlan id"},
+Index: linux-sles11/drivers/s390/net/qeth_core_mpc.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_core_mpc.h
++++ linux-sles11/drivers/s390/net/qeth_core_mpc.h
+@@ -168,6 +168,8 @@ enum qeth_ipa_return_codes {
+ 	IPA_RC_L2_ADDR_TABLE_FULL	= 0x2006,
+ 	IPA_RC_L2_DUP_LAYER3_MAC	= 0x200a,
+ 	IPA_RC_L2_GMAC_NOT_FOUND	= 0x200b,
++	IPA_RC_L2_MAC_NOT_AUTH_BY_HYP	= 0x200c,
++	IPA_RC_L2_MAC_NOT_AUTH_BY_ADP	= 0x200d,
+ 	IPA_RC_L2_MAC_NOT_FOUND		= 0x2010,
+ 	IPA_RC_L2_INVALID_VLAN_ID	= 0x2015,
+ 	IPA_RC_L2_DUP_VLAN_ID		= 0x2016,
+Index: linux-sles11/drivers/s390/net/qeth_l2_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/qeth_l2_main.c
++++ linux-sles11/drivers/s390/net/qeth_l2_main.c
+@@ -504,6 +504,30 @@ static int qeth_l2_send_setmac_cb(struct
+ 	if (cmd->hdr.return_code) {
+ 		QETH_DBF_TEXT_(TRACE, 2, "L2er%x", cmd->hdr.return_code);
+ 		card->info.mac_bits &= ~QETH_LAYER2_MAC_REGISTERED;
++		switch (cmd->hdr.return_code) {
++		case IPA_RC_L2_DUP_MAC:
++		case IPA_RC_L2_DUP_LAYER3_MAC:
++			dev_warn(&card->gdev->dev,
++				"MAC address "
++				"%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x "
++				"already exists\n",
++				card->dev->dev_addr[0], card->dev->dev_addr[1],
++				card->dev->dev_addr[2], card->dev->dev_addr[3],
++				card->dev->dev_addr[4], card->dev->dev_addr[5]);
++			break;
++		case IPA_RC_L2_MAC_NOT_AUTH_BY_HYP:
++		case IPA_RC_L2_MAC_NOT_AUTH_BY_ADP:
++			dev_warn(&card->gdev->dev,
++				"MAC address "
++				"%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x "
++				"is not authorized\n",
++				card->dev->dev_addr[0], card->dev->dev_addr[1],
++				card->dev->dev_addr[2], card->dev->dev_addr[3],
++				card->dev->dev_addr[4], card->dev->dev_addr[5]);
++			break;
++		default:
++			break;
++		}
+ 		cmd->hdr.return_code = -EIO;
+ 	} else {
+ 		card->info.mac_bits |= QETH_LAYER2_MAC_REGISTERED;

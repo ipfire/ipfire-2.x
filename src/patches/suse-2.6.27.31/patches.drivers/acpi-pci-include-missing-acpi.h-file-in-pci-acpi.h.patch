@@ -1,0 +1,29 @@
+From 8b62091e20215730be1b94b7cd135a78a3e692ca Mon Sep 17 00:00:00 2001
+From: Andrew Patterson <andrew.patterson@hp.com>
+Date: Mon, 10 Nov 2008 15:30:40 -0700
+Subject: ACPI/PCI: include missing acpi.h file in pci-acpi.h.
+Patch-mainline: 2.6.29
+References: bnc#438941
+
+The pci-acpi.h file will not compile without including linux/acpi.h.
+
+Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
+Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+
+ include/linux/pci-acpi.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/include/linux/pci-acpi.h
++++ b/include/linux/pci-acpi.h
+@@ -8,6 +8,8 @@
+ #ifndef _PCI_ACPI_H_
+ #define _PCI_ACPI_H_
+ 
++#include <linux/acpi.h>
++
+ #define OSC_QUERY_TYPE			0
+ #define OSC_SUPPORT_TYPE 		1
+ #define OSC_CONTROL_TYPE		2

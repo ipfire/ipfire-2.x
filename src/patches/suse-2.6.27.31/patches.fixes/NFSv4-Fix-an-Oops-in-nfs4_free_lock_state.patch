@@ -1,0 +1,38 @@
+Patch-mainline: 2.6.31
+From: b64aec8d1e1d8482a7b6cca60c8105c756bf1fe4 Mon Sep 17 00:00:00 2001
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Date: Tue, 21 Jul 2009 16:47:46 -0400
+Subject: [PATCH] NFSv4: Fix an Oops in nfs4_free_lock_state
+
+The oops http://www.kerneloops.org/raw.php?rawid=537858&msgid= appears to
+be due to the nfs4_lock_state->ls_state field being uninitialised. This
+happens if the call to nfs4_free_lock_state() is triggered at the end of
+nfs4_get_lock_state().
+
+The fix is to move the initialisation of ls_state into the allocator.
+
+Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+Acked-by: NeilBrown <neilb@suse.de>
+
+---
+ fs/nfs/nfs4state.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/nfs/nfs4state.c
++++ linux-2.6.27-SLE11_BRANCH/fs/nfs/nfs4state.c
+@@ -545,6 +545,7 @@ static struct nfs4_lock_state *nfs4_allo
+ 	INIT_LIST_HEAD(&lsp->ls_sequence.list);
+ 	lsp->ls_seqid.sequence = &lsp->ls_sequence;
+ 	atomic_set(&lsp->ls_count, 1);
++	lsp->ls_state = state;
+ 	lsp->ls_owner = fl_owner;
+ 	spin_lock(&clp->cl_lock);
+ 	nfs_alloc_unique_id(&clp->cl_lockowner_id, &lsp->ls_id, 1, 64);
+@@ -580,7 +581,6 @@ static struct nfs4_lock_state *nfs4_get_
+ 		if (lsp != NULL)
+ 			break;
+ 		if (new != NULL) {
+-			new->ls_state = state;
+ 			list_add(&new->ls_locks, &state->lock_states);
+ 			set_bit(LK_STATE_IN_USE, &state->flags);
+ 			lsp = new;

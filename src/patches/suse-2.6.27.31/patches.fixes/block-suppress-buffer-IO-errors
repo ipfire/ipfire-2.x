@@ -1,0 +1,148 @@
+Subject: block: Supress Buffer I/O errors when SCSI REQ_QUIET flag set
+From: Keith Mannthey <kmannth@us.ibm.com>
+Date: Mon Dec 29 08:28:44 2008 +0100:
+Git: 08bafc0341f2f7920e9045bc32c40299cac8c21b
+References: bnc#464155
+
+Allow the scsi request REQ_QUIET flag to be propagated to the buffer
+file system layer. The basic ideas is to pass the flag from the scsi
+request to the bio (block IO) and then to the buffer layer.  The buffer
+layer can then suppress needless printks.
+
+This patch declutters the kernel log by removed the 40-50 (per lun)
+buffer io error messages seen during a boot in my multipath setup . It
+is a good chance any real errors will be missed in the "noise" it the
+logs without this patch.
+
+During boot I see blocks of messages like
+"
+__ratelimit: 211 callbacks suppressed
+Buffer I/O error on device sdm, logical block 5242879
+Buffer I/O error on device sdm, logical block 5242879
+Buffer I/O error on device sdm, logical block 5242847
+Buffer I/O error on device sdm, logical block 1
+Buffer I/O error on device sdm, logical block 5242878
+Buffer I/O error on device sdm, logical block 5242879
+Buffer I/O error on device sdm, logical block 5242879
+Buffer I/O error on device sdm, logical block 5242879
+Buffer I/O error on device sdm, logical block 5242879
+Buffer I/O error on device sdm, logical block 5242872
+"
+in my logs.
+
+My disk environment is multipath fiber channel using the SCSI_DH_RDAC
+code and multipathd.  This topology includes an "active" and "ghost"
+path for each lun. IO's to the "ghost" path will never complete and the
+SCSI layer, via the scsi device handler rdac code, quick returns the IOs
+to theses paths and sets the REQ_QUIET scsi flag to suppress the scsi
+layer messages.
+
+ I am wanting to extend the QUIET behavior to include the buffer file
+system layer to deal with these errors as well. I have been running this
+patch for a while now on several boxes without issue.  A few runs of
+bonnie++ show no noticeable difference in performance in my setup.
+
+Thanks for John Stultz for the quiet_error finalization.
+
+Submitted-by:  Keith Mannthey <kmannth@us.ibm.com>
+Signed-off-by: Jens Axboe <jens.axboe@oracle.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ block/blk-core.c            |    3 +++
+ fs/buffer.c                 |   19 +++++++++++++++----
+ include/linux/bio.h         |    1 +
+ include/linux/buffer_head.h |    1 +
+ 4 files changed, 20 insertions(+), 4 deletions(-)
+
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -138,6 +138,9 @@ static void req_bio_endio(struct request
+ 			nbytes = bio->bi_size;
+ 		}
+ 
++		if (unlikely(rq->cmd_flags & REQ_QUIET))
++			set_bit(BIO_QUIET, &bio->bi_flags);
++
+ 		bio->bi_size -= nbytes;
+ 		bio->bi_sector += (nbytes >> 9);
+ 
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -100,10 +100,18 @@ __clear_page_buffers(struct page *page)
+ 	page_cache_release(page);
+ }
+ 
++
++static int quiet_error(struct buffer_head *bh)
++{
++	if (!test_bit(BH_Quiet, &bh->b_state) && printk_ratelimit())
++		return 0;
++	return 1;
++}
++
++
+ static void buffer_io_error(struct buffer_head *bh)
+ {
+ 	char b[BDEVNAME_SIZE];
+-
+ 	printk(KERN_ERR "Buffer I/O error on device %s, logical block %Lu\n",
+ 			bdevname(bh->b_bdev, b),
+ 			(unsigned long long)bh->b_blocknr);
+@@ -145,7 +153,7 @@ void end_buffer_write_sync(struct buffer
+ 	if (uptodate) {
+ 		set_buffer_uptodate(bh);
+ 	} else {
+-		if (!buffer_eopnotsupp(bh) && printk_ratelimit()) {
++		if (!buffer_eopnotsupp(bh) && !quiet_error(bh)) {
+ 			buffer_io_error(bh);
+ 			printk(KERN_WARNING "lost page write due to "
+ 					"I/O error on %s\n",
+@@ -395,7 +403,7 @@ static void end_buffer_async_read(struct
+ 		set_buffer_uptodate(bh);
+ 	} else {
+ 		clear_buffer_uptodate(bh);
+-		if (printk_ratelimit())
++		if (!quiet_error(bh))
+ 			buffer_io_error(bh);
+ 		SetPageError(page);
+ 	}
+@@ -456,7 +464,7 @@ static void end_buffer_async_write(struc
+ 	if (uptodate) {
+ 		set_buffer_uptodate(bh);
+ 	} else {
+-		if (printk_ratelimit()) {
++		if (!quiet_error(bh)) {
+ 			buffer_io_error(bh);
+ 			printk(KERN_WARNING "lost page write due to "
+ 					"I/O error on %s\n",
+@@ -2958,6 +2966,9 @@ static void end_bio_bh_io_sync(struct bi
+ 		set_bit(BH_Eopnotsupp, &bh->b_state);
+ 	}
+ 
++	if (unlikely (test_bit(BIO_QUIET,&bio->bi_flags)))
++		set_bit(BH_Quiet, &bh->b_state);
++
+ 	bh->b_end_io(bh, test_bit(BIO_UPTODATE, &bio->bi_flags));
+ 	bio_put(bio);
+ }
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -116,6 +116,7 @@ struct bio {
+ #define BIO_EOPNOTSUPP	7	/* not supported */
+ #define BIO_CPU_AFFINE	8	/* complete bio on same CPU as submitted */
+ #define BIO_FS_INTEGRITY 10	/* fs owns integrity data, not block layer */
++#define BIO_QUIET	11	/* Make BIO Quiet */
+ #define bio_flagged(bio, flag)	((bio)->bi_flags & (1 << (flag)))
+ 
+ /*
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -35,6 +35,7 @@ enum bh_state_bits {
+ 	BH_Ordered,	/* ordered write */
+ 	BH_Eopnotsupp,	/* operation not supported (barrier) */
+ 	BH_Unwritten,	/* Buffer is allocated on disk but not written */
++	BH_Quiet,	/* Buffer Error Prinks to be quiet */
+ 
+ 	BH_PrivateStart,/* not a state bit, but the first bit available
+ 			 * for private allocation by other entities

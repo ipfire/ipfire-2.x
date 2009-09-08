@@ -1,0 +1,294 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: hda - simplify hda_bus ops callbacks
+Patch-mainline: 2.6.29-rc1
+References: 
+
+The hda_bus ops callback take struct hda_bus pointer.
+Also, the command callback takes the composed command word, instead of
+each small bits in arguments.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/hda_codec.c |   59 +++++++++++++++++++++++++++++++++++-----------
+ sound/pci/hda/hda_codec.h |    7 ++---
+ sound/pci/hda/hda_intel.c |   55 +++++++++++++++++-------------------------
+ 3 files changed, 71 insertions(+), 50 deletions(-)
+
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -107,6 +107,23 @@
+ static inline void hda_keep_power_on(struct hda_codec *codec) {}
+ #endif
+ 
++/*
++ * Compose a 32bit command word to be sent to the HD-audio controller
++ */
++static inline unsigned int
++make_codec_cmd(struct hda_codec *codec, hda_nid_t nid, int direct,
++	       unsigned int verb, unsigned int parm)
++{
++	u32 val;
++
++	val = (u32)(codec->addr & 0x0f) << 28;
++	val |= (u32)direct << 27;
++	val |= (u32)nid << 20;
++	val |= verb << 8;
++	val |= parm;
++	return val;
++}
++
+ /**
+  * snd_hda_codec_read - send a command and get the response
+  * @codec: the HDA codec
+@@ -123,14 +140,17 @@
+ 				int direct,
+ 				unsigned int verb, unsigned int parm)
+ {
++	struct hda_bus *bus = codec->bus;
+ 	unsigned int res;
++
++	res = make_codec_cmd(codec, nid, direct, verb, parm);
+ 	snd_hda_power_up(codec);
+-	mutex_lock(&codec->bus->cmd_mutex);
+-	if (!codec->bus->ops.command(codec, nid, direct, verb, parm))
+-		res = codec->bus->ops.get_response(codec);
++	mutex_lock(&bus->cmd_mutex);
++	if (!bus->ops.command(bus, res))
++		res = bus->ops.get_response(bus);
+ 	else
+ 		res = (unsigned int)-1;
+-	mutex_unlock(&codec->bus->cmd_mutex);
++	mutex_unlock(&bus->cmd_mutex);
+ 	snd_hda_power_down(codec);
+ 	return res;
+ }
+@@ -150,11 +170,15 @@
+ int snd_hda_codec_write(struct hda_codec *codec, hda_nid_t nid, int direct,
+ 			 unsigned int verb, unsigned int parm)
+ {
++	struct hda_bus *bus = codec->bus;
++	unsigned int res;
+ 	int err;
++
++	res = make_codec_cmd(codec, nid, direct, verb, parm);
+ 	snd_hda_power_up(codec);
+-	mutex_lock(&codec->bus->cmd_mutex);
+-	err = codec->bus->ops.command(codec, nid, direct, verb, parm);
+-	mutex_unlock(&codec->bus->cmd_mutex);
++	mutex_lock(&bus->cmd_mutex);
++	err = bus->ops.command(bus, res);
++	mutex_unlock(&bus->cmd_mutex);
+ 	snd_hda_power_down(codec);
+ 	return err;
+ }
+@@ -1796,10 +1820,14 @@
+ int snd_hda_codec_write_cache(struct hda_codec *codec, hda_nid_t nid,
+ 			      int direct, unsigned int verb, unsigned int parm)
+ {
++	struct hda_bus *bus = codec->bus;
++	unsigned int res;
+ 	int err;
++
++	res = make_codec_cmd(codec, nid, direct, verb, parm);
+ 	snd_hda_power_up(codec);
+-	mutex_lock(&codec->bus->cmd_mutex);
+-	err = codec->bus->ops.command(codec, nid, direct, verb, parm);
++	mutex_lock(&bus->cmd_mutex);
++	err = bus->ops.command(bus, res);
+ 	if (!err) {
+ 		struct hda_cache_head *c;
+ 		u32 key = build_cmd_cache_key(nid, verb);
+@@ -1807,7 +1835,7 @@
+ 		if (c)
+ 			c->val = parm;
+ 	}
+-	mutex_unlock(&codec->bus->cmd_mutex);
++	mutex_unlock(&bus->cmd_mutex);
+ 	snd_hda_power_down(codec);
+ 	return err;
+ }
+@@ -2507,6 +2535,7 @@
+ {
+ 	struct hda_codec *codec =
+ 		container_of(work, struct hda_codec, power_work.work);
++	struct hda_bus *bus = codec->bus;
+ 
+ 	if (!codec->power_on || codec->power_count) {
+ 		codec->power_transition = 0;
+@@ -2514,8 +2543,8 @@
+ 	}
+ 
+ 	hda_call_codec_suspend(codec);
+-	if (codec->bus->ops.pm_notify)
+-		codec->bus->ops.pm_notify(codec);
++	if (bus->ops.pm_notify)
++		bus->ops.pm_notify(bus);
+ }
+ 
+ static void hda_keep_power_on(struct hda_codec *codec)
+@@ -2526,13 +2555,15 @@
+ 
+ void snd_hda_power_up(struct hda_codec *codec)
+ {
++	struct hda_bus *bus = codec->bus;
++
+ 	codec->power_count++;
+ 	if (codec->power_on || codec->power_transition)
+ 		return;
+ 
+ 	codec->power_on = 1;
+-	if (codec->bus->ops.pm_notify)
+-		codec->bus->ops.pm_notify(codec);
++	if (bus->ops.pm_notify)
++		bus->ops.pm_notify(bus);
+ 	hda_call_codec_resume(codec);
+ 	cancel_delayed_work(&codec->power_work);
+ 	codec->power_transition = 0;
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -536,15 +536,14 @@
+ /* bus operators */
+ struct hda_bus_ops {
+ 	/* send a single command */
+-	int (*command)(struct hda_codec *codec, hda_nid_t nid, int direct,
+-		       unsigned int verb, unsigned int parm);
++	int (*command)(struct hda_bus *bus, unsigned int cmd);
+ 	/* get a response from the last command */
+-	unsigned int (*get_response)(struct hda_codec *codec);
++	unsigned int (*get_response)(struct hda_bus *bus);
+ 	/* free the private data */
+ 	void (*private_free)(struct hda_bus *);
+ #ifdef CONFIG_SND_HDA_POWER_SAVE
+ 	/* notify power-up/down from codec to controller */
+-	void (*pm_notify)(struct hda_codec *codec);
++	void (*pm_notify)(struct hda_bus *bus);
+ #endif
+ };
+ 
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -527,9 +527,9 @@
+ }
+ 
+ /* send a command */
+-static int azx_corb_send_cmd(struct hda_codec *codec, u32 val)
++static int azx_corb_send_cmd(struct hda_bus *bus, u32 val)
+ {
+-	struct azx *chip = codec->bus->private_data;
++	struct azx *chip = bus->private_data;
+ 	unsigned int wp;
+ 
+ 	/* add command to corb */
+@@ -577,9 +577,9 @@
+ }
+ 
+ /* receive a response */
+-static unsigned int azx_rirb_get_response(struct hda_codec *codec)
++static unsigned int azx_rirb_get_response(struct hda_bus *bus)
+ {
+-	struct azx *chip = codec->bus->private_data;
++	struct azx *chip = bus->private_data;
+ 	unsigned long timeout;
+ 
+  again:
+@@ -596,7 +596,7 @@
+ 		}
+ 		if (time_after(jiffies, timeout))
+ 			break;
+-		if (codec->bus->needs_damn_long_delay)
++		if (bus->needs_damn_long_delay)
+ 			msleep(2); /* temporary workaround */
+ 		else {
+ 			udelay(10);
+@@ -646,9 +646,9 @@
+  */
+ 
+ /* send a command */
+-static int azx_single_send_cmd(struct hda_codec *codec, u32 val)
++static int azx_single_send_cmd(struct hda_bus *bus, u32 val)
+ {
+-	struct azx *chip = codec->bus->private_data;
++	struct azx *chip = bus->private_data;
+ 	int timeout = 50;
+ 
+ 	while (timeout--) {
+@@ -671,9 +671,9 @@
+ }
+ 
+ /* receive a response */
+-static unsigned int azx_single_get_response(struct hda_codec *codec)
++static unsigned int azx_single_get_response(struct hda_bus *bus)
+ {
+-	struct azx *chip = codec->bus->private_data;
++	struct azx *chip = bus->private_data;
+ 	int timeout = 50;
+ 
+ 	while (timeout--) {
+@@ -696,38 +696,29 @@
+  */
+ 
+ /* send a command */
+-static int azx_send_cmd(struct hda_codec *codec, hda_nid_t nid,
+-			int direct, unsigned int verb,
+-			unsigned int para)
+-{
+-	struct azx *chip = codec->bus->private_data;
+-	u32 val;
+-
+-	val = (u32)(codec->addr & 0x0f) << 28;
+-	val |= (u32)direct << 27;
+-	val |= (u32)nid << 20;
+-	val |= verb << 8;
+-	val |= para;
+-	chip->last_cmd = val;
++static int azx_send_cmd(struct hda_bus *bus, unsigned int val)
++{
++	struct azx *chip = bus->private_data;
+ 
++	chip->last_cmd = val;
+ 	if (chip->single_cmd)
+-		return azx_single_send_cmd(codec, val);
++		return azx_single_send_cmd(bus, val);
+ 	else
+-		return azx_corb_send_cmd(codec, val);
++		return azx_corb_send_cmd(bus, val);
+ }
+ 
+ /* get a response */
+-static unsigned int azx_get_response(struct hda_codec *codec)
++static unsigned int azx_get_response(struct hda_bus *bus)
+ {
+-	struct azx *chip = codec->bus->private_data;
++	struct azx *chip = bus->private_data;
+ 	if (chip->single_cmd)
+-		return azx_single_get_response(codec);
++		return azx_single_get_response(bus);
+ 	else
+-		return azx_rirb_get_response(codec);
++		return azx_rirb_get_response(bus);
+ }
+ 
+ #ifdef CONFIG_SND_HDA_POWER_SAVE
+-static void azx_power_notify(struct hda_codec *codec);
++static void azx_power_notify(struct hda_bus *bus);
+ #endif
+ 
+ /* reset codec link */
+@@ -1905,13 +1896,13 @@
+ 
+ #ifdef CONFIG_SND_HDA_POWER_SAVE
+ /* power-up/down the controller */
+-static void azx_power_notify(struct hda_codec *codec)
++static void azx_power_notify(struct hda_bus *bus)
+ {
+-	struct azx *chip = codec->bus->private_data;
++	struct azx *chip = bus->private_data;
+ 	struct hda_codec *c;
+ 	int power_on = 0;
+ 
+-	list_for_each_entry(c, &codec->bus->codec_list, list) {
++	list_for_each_entry(c, &bus->codec_list, list) {
+ 		if (c->power_on) {
+ 			power_on = 1;
+ 			break;

@@ -1,0 +1,121 @@
+From 3f3b7c1aed70fa25c6811f830c5fb1a7054681ae Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 17 Jul 2009 14:36:59 +0200
+Subject: ALSA: hda - Fix ALC268 parser for mono speaker
+Patch-mainline: 
+References: bnc#467846
+
+- Parse the mono output pin 0x16 correctly even as the primary output
+- Create "Speaker" volume control if the primary output is a speaker
+- Fix the wrong direction of (optional) "Mono" switch
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_realtek.c |   62 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -11421,26 +11421,38 @@ static int alc268_new_analog_output(stru
+ 				    const char *ctlname, int idx)
+ {
+ 	char name[32];
++	hda_nid_t dac;
+ 	int err;
+ 
+ 	sprintf(name, "%s Playback Volume", ctlname);
+-	if (nid == 0x14) {
+-		err = add_control(spec, ALC_CTL_WIDGET_VOL, name,
+-				  HDA_COMPOSE_AMP_VAL(0x02, 3, idx,
+-						      HDA_OUTPUT));
+-		if (err < 0)
+-			return err;
+-	} else if (nid == 0x15) {
++	switch (nid) {
++	case 0x14:
++	case 0x16:
++		dac = 0x02;
++		break;
++	case 0x15:
++		dac = 0x03;
++		break;
++	default:
++		return 0;
++	}
++	if (spec->multiout.dac_nids[0] != dac &&
++	    spec->multiout.dac_nids[1] != dac) {
+ 		err = add_control(spec, ALC_CTL_WIDGET_VOL, name,
+-				  HDA_COMPOSE_AMP_VAL(0x03, 3, idx,
++				  HDA_COMPOSE_AMP_VAL(dac, 3, idx,
+ 						      HDA_OUTPUT));
+ 		if (err < 0)
+ 			return err;
+-	} else
+-		return -1;
++		spec->multiout.dac_nids[spec->multiout.num_dacs++] = dac;
++	}
++
+ 	sprintf(name, "%s Playback Switch", ctlname);
+-	err = add_control(spec, ALC_CTL_WIDGET_MUTE, name,
++	if (nid != 0x16)
++		err = add_control(spec, ALC_CTL_WIDGET_MUTE, name,
+ 			  HDA_COMPOSE_AMP_VAL(nid, 3, idx, HDA_OUTPUT));
++	else /* mono */
++		err = add_control(spec, ALC_CTL_WIDGET_MUTE, name,
++			  HDA_COMPOSE_AMP_VAL(nid, 2, idx, HDA_OUTPUT));
+ 	if (err < 0)
+ 		return err;
+ 	return 0;
+@@ -11453,14 +11465,19 @@ static int alc268_auto_create_multi_out_
+ 	hda_nid_t nid;
+ 	int err;
+ 
+-	spec->multiout.num_dacs = 2;	/* only use one dac */
+ 	spec->multiout.dac_nids = spec->private_dac_nids;
+-	spec->multiout.dac_nids[0] = 2;
+-	spec->multiout.dac_nids[1] = 3;
+ 
+ 	nid = cfg->line_out_pins[0];
+-	if (nid)
+-		alc268_new_analog_output(spec, nid, "Front", 0);
++	if (nid) {
++		const char *name;
++		if (cfg->line_out_type == AUTO_PIN_SPEAKER_OUT)
++			name = "Speaker";
++		else
++			name = "Front";
++		err = alc268_new_analog_output(spec, nid, name, 0);
++		if (err < 0)
++			return err;
++	}
+ 
+ 	nid = cfg->speaker_pins[0];
+ 	if (nid == 0x1d) {
+@@ -11469,16 +11486,23 @@ static int alc268_auto_create_multi_out_
+ 				  HDA_COMPOSE_AMP_VAL(nid, 3, 0, HDA_INPUT));
+ 		if (err < 0)
+ 			return err;
++	} else {
++		err = alc268_new_analog_output(spec, nid, "Speaker", 0);
++		if (err < 0)
++			return err;
+ 	}
+ 	nid = cfg->hp_pins[0];
+-	if (nid)
+-		alc268_new_analog_output(spec, nid, "Headphone", 0);
++	if (nid) {
++		err = alc268_new_analog_output(spec, nid, "Headphone", 0);
++		if (err < 0)
++			return err;
++	}
+ 
+ 	nid = cfg->line_out_pins[1] | cfg->line_out_pins[2];
+ 	if (nid == 0x16) {
+ 		err = add_control(spec, ALC_CTL_WIDGET_MUTE,
+ 				  "Mono Playback Switch",
+-				  HDA_COMPOSE_AMP_VAL(nid, 2, 0, HDA_INPUT));
++				  HDA_COMPOSE_AMP_VAL(nid, 2, 0, HDA_OUTPUT));
+ 		if (err < 0)
+ 			return err;
+ 	}

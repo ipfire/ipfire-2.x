@@ -1,0 +1,29 @@
+From a5f67a04d998b0b6e4beb1de8f1247dd93ac1ff4 Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 21:28:13 -0800
+Subject: bnx2x: Fixing the doorbell size
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+The size of the doorbell is 4KB, this bug become visible when using
+more than 8 queues
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x.h
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x.h
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x.h
+@@ -739,7 +739,7 @@ struct bnx2x {
+ 	struct bnx2x_fastpath	fp[MAX_CONTEXT];
+ 	void __iomem		*regview;
+ 	void __iomem		*doorbells;
+-#define BNX2X_DB_SIZE		(16*2048)
++#define BNX2X_DB_SIZE		(16*BCM_PAGE_SIZE)
+ 
+ 	struct net_device	*dev;
+ 	struct pci_dev		*pdev;

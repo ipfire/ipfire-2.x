@@ -1,0 +1,35 @@
+From: Mike Reed <mdr@sgi.com>
+Subject: MPT Fusion doesn't return all sense data
+References: bnc#466179
+
+This patch removes an inappropriate sizeof() test which truncated the amount of
+sense data returned to the size of a pointer.
+
+Signed-off-by: Mike Reed <mdr@sgi.com>
+Signed-off-by: Sathya Prakash <sathya.prakash@lsi.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+--- a/drivers/message/fusion/mptscsih.c	2009-01-08 12:46:11.000000000 -0600
++++ b/drivers/message/fusion/mptscsih.c	2009-01-13 13:33:16.239522030 -0600
+@@ -112,8 +112,6 @@ int 		mptscsih_suspend(struct pci_dev *p
+ int 		mptscsih_resume(struct pci_dev *pdev);
+ #endif
+ 
+-#define SNS_LEN(scp)	sizeof((scp)->sense_buffer)
+-
+ /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
+ /**
+  *	mptscsih_getFreeChainBuffer - Function to get a free chain
+@@ -2594,7 +2592,11 @@ mptscsih_copy_sense_data(struct scsi_cmn
+ 		/* Copy the sense received into the scsi command block. */
+ 		req_index = le16_to_cpu(mf->u.frame.hwhdr.msgctxu.fld.req_idx);
+ 		sense_data = ((u8 *)ioc->sense_buf_pool + (req_index * MPT_SENSE_BUFFER_ALLOC));
+-		memcpy(sc->sense_buffer, sense_data, SNS_LEN(sc));
++
++		if (sense_count > SCSI_SENSE_BUFFERSIZE)
++			sense_count = SCSI_SENSE_BUFFERSIZE;
++
++		memcpy(sc->sense_buffer, sense_data, sense_count);
+ 
+ 		/* Log SMART data (asc = 0x5D, non-IM case only) if required.
+ 		 */

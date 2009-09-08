@@ -1,0 +1,162 @@
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: LTTng instrumentation - irq
+
+Original patch header:
+  LTTng instrumentation - irq
+  
+  Instrumentation of IRQ related events : irq, softirq, tasklet entry and exit and
+  softirq "raise" events.
+  
+  It allows tracers to perform latency analysis on those various types of
+  interrupts and to detect interrupts with max/min/avg duration. It helps
+  detecting driver or hardware problems which cause an ISR to take ages to
+  execute. It has been shown to be the case with bogus hardware causing an mmio
+  read to take a few milliseconds.
+  
+  Those tracepoints are used by LTTng.
+  
+  About the performance impact of tracepoints (which is comparable to markers),
+  even without immediate values optimizations, tests done by Hideo Aoki on ia64
+  show no regression. His test case was using hackbench on a kernel where
+  scheduler instrumentation (about 5 events in code scheduler code) was added.
+  See the "Tracepoints" patch header for performance result detail.
+  
+  Changelog:
+  - Add retval as irq_exit argument.
+  
+  Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+  CC: Thomas Gleixner <tglx@linutronix.de>
+  CC: Russell King <rmk+lkml@arm.linux.org.uk>
+  CC: Masami Hiramatsu <mhiramat@redhat.com>
+  CC: 'Peter Zijlstra' <peterz@infradead.org>
+  CC: "Frank Ch. Eigler" <fche@redhat.com>
+  CC: 'Ingo Molnar' <mingo@elte.hu>
+  CC: 'Hideo AOKI' <haoki@redhat.com>
+  CC: Takashi Nishiie <t-nishiie@np.css.fujitsu.com>
+  CC: 'Steven Rostedt' <rostedt@goodmis.org>
+  CC: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+
+Acked-by: Jan Blunck <jblunck@suse.de>
+--- 
+---
+ include/trace/irq.h |   36 ++++++++++++++++++++++++++++++++++++
+ kernel/irq/handle.c |    6 ++++++
+ kernel/softirq.c    |    8 ++++++++
+ 3 files changed, 50 insertions(+)
+
+--- /dev/null
++++ b/include/trace/irq.h
+@@ -0,0 +1,36 @@
++#ifndef _TRACE_IRQ_H
++#define _TRACE_IRQ_H
++
++#include <linux/kdebug.h>
++#include <linux/interrupt.h>
++#include <linux/tracepoint.h>
++
++DEFINE_TRACE(irq_entry,
++	TPPROTO(unsigned int id, struct pt_regs *regs),
++	TPARGS(id, regs));
++DEFINE_TRACE(irq_exit,
++	TPPROTO(irqreturn_t retval),
++	TPARGS(retval));
++DEFINE_TRACE(irq_softirq_entry,
++	TPPROTO(struct softirq_action *h, struct softirq_action *softirq_vec),
++	TPARGS(h, softirq_vec));
++DEFINE_TRACE(irq_softirq_exit,
++	TPPROTO(struct softirq_action *h, struct softirq_action *softirq_vec),
++	TPARGS(h, softirq_vec));
++DEFINE_TRACE(irq_softirq_raise,
++	TPPROTO(unsigned int nr),
++	TPARGS(nr));
++DEFINE_TRACE(irq_tasklet_low_entry,
++	TPPROTO(struct tasklet_struct *t),
++	TPARGS(t));
++DEFINE_TRACE(irq_tasklet_low_exit,
++	TPPROTO(struct tasklet_struct *t),
++	TPARGS(t));
++DEFINE_TRACE(irq_tasklet_high_entry,
++	TPPROTO(struct tasklet_struct *t),
++	TPARGS(t));
++DEFINE_TRACE(irq_tasklet_high_exit,
++	TPPROTO(struct tasklet_struct *t),
++	TPARGS(t));
++
++#endif
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -15,6 +15,7 @@
+ #include <linux/random.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel_stat.h>
++#include <trace/irq.h>
+ 
+ #include "internals.h"
+ 
+@@ -130,6 +131,9 @@ irqreturn_t handle_IRQ_event(unsigned in
+ {
+ 	irqreturn_t ret, retval = IRQ_NONE;
+ 	unsigned int status = 0;
++	struct pt_regs *regs = get_irq_regs();
++
++	trace_irq_entry(irq, regs);
+ 
+ 	handle_dynamic_tick(action);
+ 
+@@ -148,6 +152,8 @@ irqreturn_t handle_IRQ_event(unsigned in
+ 		add_interrupt_randomness(irq);
+ 	local_irq_disable();
+ 
++	trace_irq_exit(retval);
++
+ 	return retval;
+ }
+ 
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -21,6 +21,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/smp.h>
+ #include <linux/tick.h>
++#include <trace/irq.h>
+ 
+ #include <asm/irq.h>
+ /*
+@@ -205,7 +206,9 @@ restart:
+ 
+ 	do {
+ 		if (pending & 1) {
++			trace_irq_softirq_entry(h, softirq_vec);
+ 			h->action(h);
++			trace_irq_softirq_exit(h, softirq_vec);
+ 			rcu_bh_qsctr_inc(cpu);
+ 		}
+ 		h++;
+@@ -297,6 +300,7 @@ void irq_exit(void)
+  */
+ inline void raise_softirq_irqoff(unsigned int nr)
+ {
++	trace_irq_softirq_raise(nr);
+ 	__raise_softirq_irqoff(nr);
+ 
+ 	/*
+@@ -383,7 +387,9 @@ static void tasklet_action(struct softir
+ 			if (!atomic_read(&t->count)) {
+ 				if (!test_and_clear_bit(TASKLET_STATE_SCHED, &t->state))
+ 					BUG();
++				trace_irq_tasklet_low_entry(t);
+ 				t->func(t->data);
++				trace_irq_tasklet_low_exit(t);
+ 				tasklet_unlock(t);
+ 				continue;
+ 			}
+@@ -418,7 +424,9 @@ static void tasklet_hi_action(struct sof
+ 			if (!atomic_read(&t->count)) {
+ 				if (!test_and_clear_bit(TASKLET_STATE_SCHED, &t->state))
+ 					BUG();
++				trace_irq_tasklet_high_entry(t);
+ 				t->func(t->data);
++				trace_irq_tasklet_high_exit(t);
+ 				tasklet_unlock(t);
+ 				continue;
+ 			}

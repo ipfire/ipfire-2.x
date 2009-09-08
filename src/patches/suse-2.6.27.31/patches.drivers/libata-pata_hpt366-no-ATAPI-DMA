@@ -1,0 +1,28 @@
+From: Tejun Heo <tj@kernel.org>
+Subject: pata_hpt366: no ATAPI DMA
+References: bnc#362159
+
+IDE hpt366 driver doesn't allow DMA for ATAPI devices and MWDMA2 on
+ATAPI device locks up pata_hpt366.  Follow the suit.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/ata/pata_hpt366.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+Index: work/drivers/ata/pata_hpt366.c
+===================================================================
+--- work.orig/drivers/ata/pata_hpt366.c
++++ work/drivers/ata/pata_hpt366.c
+@@ -183,7 +183,9 @@ static unsigned long hpt366_filter(struc
+ 			mask &= ~(0xF8 << ATA_SHIFT_UDMA);
+ 		if (hpt_dma_blacklisted(adev, "UDMA4", bad_ata66_4))
+ 			mask &= ~(0xF0 << ATA_SHIFT_UDMA);
+-	}
++	} else if (adev->class == ATA_DEV_ATAPI)
++		mask &= ~(ATA_MASK_MWDMA | ATA_MASK_UDMA);
++
+ 	return ata_bmdma_mode_filter(adev, mask);
+ }
+ 

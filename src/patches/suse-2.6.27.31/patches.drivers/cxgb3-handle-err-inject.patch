@@ -1,0 +1,29 @@
+From:       wenxiong@us.ibm.com
+Subject:    network command hung the system after manully errinjct 6 times EEH
+            errors.
+References: bnc#497648
+
+Acked-by: John Jolly <jjolly@suse.de>
+diff -Nuarp cxgb3.sles11_ga/drivers/net/cxgb3/cxgb3_main.c cxgb3.patch.51726/drivers/net/cxgb3/cxgb3_main.c
+--- cxgb3.sles11_ga/drivers/net/cxgb3/cxgb3_main.c	2009-05-05 14:21:10.000000000 -0500
++++ cxgb3.patch.51726/drivers/net/cxgb3/cxgb3_main.c	2009-05-05 15:37:03.000000000 -0500
+@@ -1222,6 +1222,9 @@ static int cxgb_close(struct net_device
+ 	struct port_info *pi = netdev_priv(dev);
+ 	struct adapter *adapter = pi->adapter;
+ 
++	if (!adapter->open_device_map)
++		return 0;
++
+ 	t3_port_intr_disable(adapter, pi->port_id);
+ 	netif_stop_queue(dev);
+ 	pi->phy.ops->power_down(&pi->phy, 1);
+@@ -2738,6 +2741,9 @@ static pci_ers_result_t t3_io_error_dete
+ 	struct adapter *adapter = pci_get_drvdata(pdev);
+ 	int ret;
+ 
++	if (state == pci_channel_io_perm_failure)
++		return PCI_ERS_RESULT_DISCONNECT;
++
+ 	ret = t3_adapter_error(adapter, 0);
+ 
+ 	/* Request a slot reset. */

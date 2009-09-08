@@ -1,0 +1,111 @@
+From: Milton Miller <miltonm@bga.com>
+Subject: powerpc/xics: EOI unmapped irqs after disabling them
+Date: Fri Oct 10 01:56:23 2008 +0000
+X-Git-Tag: v2.6.28-rc1~569^2~27
+X-Git-Url: http://git.kernel.org/?p=linux%2Fkernel%2Fgit%2Ftorvalds%2Flinux-2.6.git;a=commitdiff_plain;h=8767e9badca7cdf0adc2564d7524092d47ababf3
+Patch-mainline: v2.6.28-rc1
+References: bnc#459065
+
+When reciving an irq vector that does not have a linux mapping, the kernel
+prints a message and calls RTAS to disable the irq source.   Previously
+the kernel did not EOI the interrupt, causing the source to think it is
+still being processed by software.  While this does add an additional
+layer of protection against interrupt storms had RTAS failed to disable
+the source, it also prevents the interrupt from working when a driver
+later enables it.  (We could alternatively send an EOI on startup, but
+that strategy would likely fail on an emulated xics.)
+
+All interrupts should be disabled when the kernel starts, but this can
+be observed if a driver does not shutdown an interrupt in its reboot
+hook before starting a new kernel with kexec.
+
+Michael reports this can be reproduced trivially by banging the keyboard
+while kexec'ing on a P5 LPAR: even though the hvc_console driver request's
+the console irq later in boot, the console is non-functional because
+we're receiving no console interrupts.
+
+Reported-By: Michael Ellerman
+Signed-off-by: Milton Miller <miltonm@bga.com>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Acked-by: Petr Tesarik <ptesarik@suse.cz>
+
+---
+ arch/powerpc/platforms/pseries/xics.c |   53 ++++++++++++++++++++++++++--------
+ 1 file changed, 41 insertions(+), 12 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/arch/powerpc/platforms/pseries/xics.c	2009-04-16 10:33:47.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH/arch/powerpc/platforms/pseries/xics.c	2009-04-16 10:52:29.000000000 +0200
+@@ -335,32 +335,61 @@ static void xics_eoi_lpar(unsigned int v
+ 	lpar_xirr_info_set((0xff << 24) | irq);
+ }
+ 
+-static inline unsigned int xics_remap_irq(unsigned int vec)
++static inline unsigned int xics_xirr_vector(unsigned int xirr)
+ {
+-	unsigned int irq;
++	/*
++	 * The top byte is the old cppr, to be restored on EOI.
++	 * The remaining 24 bits are the vector.
++	 */
++	return xirr & 0x00ffffff;
++}
+ 
+-	vec &= 0x00ffffff;
++static void xics_mask_unknown_vec(unsigned int vec)
++{
++	printk(KERN_ERR "Interrupt %u (real) is invalid, disabling it.\n", vec);
++	xics_mask_real_irq(vec);
++}
++
++static unsigned int xics_get_irq_direct(void)
++{
++	unsigned int xirr = direct_xirr_info_get();
++	unsigned int vec = xics_xirr_vector(xirr);
++	unsigned int irq;
+ 
+ 	if (vec == XICS_IRQ_SPURIOUS)
+ 		return NO_IRQ;
++
+ 	irq = irq_radix_revmap(xics_host, vec);
+ 	if (likely(irq != NO_IRQ))
+ 		return irq;
+ 
+-	printk(KERN_ERR "Interrupt %u (real) is invalid,"
+-	       " disabling it.\n", vec);
+-	xics_mask_real_irq(vec);
+-	return NO_IRQ;
+-}
++	/* We don't have a linux mapping, so have rtas mask it. */
++	xics_mask_unknown_vec(vec);
+ 
+-static unsigned int xics_get_irq_direct(void)
+-{
+-	return xics_remap_irq(direct_xirr_info_get());
++	/* We might learn about it later, so EOI it */
++	direct_xirr_info_set(xirr);
++	return NO_IRQ;
+ }
+ 
+ static unsigned int xics_get_irq_lpar(void)
+ {
+-	return xics_remap_irq(lpar_xirr_info_get());
++	unsigned int xirr = lpar_xirr_info_get();
++	unsigned int vec = xics_xirr_vector(xirr);
++	unsigned int irq;
++
++	if (vec == XICS_IRQ_SPURIOUS)
++		return NO_IRQ;
++
++	irq = irq_radix_revmap(xics_host, vec);
++	if (likely(irq != NO_IRQ))
++		return irq;
++
++	/* We don't have a linux mapping, so have RTAS mask it. */
++	xics_mask_unknown_vec(vec);
++
++	/* We might learn about it later, so EOI it */
++	lpar_xirr_info_set(xirr);
++	return NO_IRQ;
+ }
+ 
+ #ifdef CONFIG_SMP

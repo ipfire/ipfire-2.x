@@ -1,0 +1,33 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: lcs: invalid return codes from hard_start_xmit.
+References: bnc#484767,LTC#52201
+
+Symptom: Messages about invalid return codes in /var/log/messages. The data
+transmission works ok.
+Problem: LCS hard_start_xmit returns non-standard Return Codes.
+Solution: Now lcs returns only either NETDEV_TX_OK or NETDEV_TX_BUSY.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+Index: linux-sles11/drivers/s390/net/lcs.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/net/lcs.c
++++ linux-sles11/drivers/s390/net/lcs.c
+@@ -1553,7 +1553,7 @@ __lcs_start_xmit(struct lcs_card *card, 
+ 	if (skb == NULL) {
+ 		card->stats.tx_dropped++;
+ 		card->stats.tx_errors++;
+-		return -EIO;
++		return 0;
+ 	}
+ 	if (card->state != DEV_STATE_UP) {
+ 		dev_kfree_skb(skb);
+@@ -1578,7 +1578,7 @@ __lcs_start_xmit(struct lcs_card *card, 
+ 		card->tx_buffer = lcs_get_buffer(&card->write);
+ 		if (card->tx_buffer == NULL) {
+ 			card->stats.tx_dropped++;
+-			rc = -EBUSY;
++			rc = NETDEV_TX_BUSY;
+ 			goto out;
+ 		}
+ 		card->tx_buffer->callback = lcs_txbuffer_cb;

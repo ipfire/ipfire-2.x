@@ -1,0 +1,26 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: video: Fix section mismatch in carminefb
+
+ This patch fixes a section mismatch in carminefb. alloc_carmine_fb
+ accesses carminefb_fix, which is __devinitdata. This is safe since
+ alloc_carmine_fb is called from carminefb_probe, which is __devinit.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ drivers/video/carminefb.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/drivers/video/carminefb.c
++++ b/drivers/video/carminefb.c
+@@ -535,8 +535,9 @@ static struct fb_ops carminefb_ops = {
+ 	.fb_setcolreg	= carmine_setcolreg,
+ };
+ 
+-static int alloc_carmine_fb(void __iomem *regs, void __iomem *smem_base,
+-		int smem_offset, struct device *device, struct fb_info **rinfo)
++static int __devinit alloc_carmine_fb(void __iomem *regs,
++		void __iomem *smem_base, int smem_offset,
++		struct device *device, struct fb_info **rinfo)
+ {
+ 	int ret;
+ 	struct fb_info *info;

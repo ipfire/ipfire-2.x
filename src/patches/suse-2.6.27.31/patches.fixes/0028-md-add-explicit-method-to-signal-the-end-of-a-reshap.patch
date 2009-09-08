@@ -1,0 +1,176 @@
+From cea9c22800773cecb1d41f4a6139f9eb6a95368b Mon Sep 17 00:00:00 2001
+From: NeilBrown <neilb@suse.de>
+Date: Tue, 31 Mar 2009 15:15:05 +1100
+Subject: [PATCH] md: add explicit method to signal the end of a reshape.
+
+Currently raid5 (the only module that supports restriping)
+notices that the reshape has finished be sync_request being
+given a large value, and handles any cleanup them.
+
+This patch changes it so md_check_recovery calls into an
+explicit finish_reshape method as well.
+
+The clean-up from sync_request can do things that need to be
+done promptly, typically things local to the raid5_conf_t
+structure.
+
+The "finish_reshape" method is called under the mddev_lock
+so it can do things involving reconfiguring the device.
+
+This allows us to get rid of md_set_array_sectors_locked, which
+would have caused a deadlock if you tried to stop and array
+while a reshape was happening.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ drivers/md/md.c           |   11 ++--------
+ drivers/md/raid5.c        |   50 +++++++++++++++++++++++++++-------------------
+ include/linux/raid/md_k.h |    2 -
+ 3 files changed, 34 insertions(+), 29 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/md.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/md.c
+@@ -4759,14 +4759,6 @@ void md_set_array_sectors(mddev_t *mddev
+ }
+ EXPORT_SYMBOL(md_set_array_sectors);
+ 
+-void md_set_array_sectors_lock(mddev_t *mddev, sector_t array_sectors)
+-{
+-	mddev_lock(mddev);
+-	md_set_array_sectors(mddev, array_sectors);
+-	mddev_unlock(mddev);
+-}
+-EXPORT_SYMBOL(md_set_array_sectors_lock);
+-
+ static int update_size(mddev_t *mddev, sector_t num_sectors)
+ {
+ 	mdk_rdev_t * rdev;
+@@ -6313,6 +6305,9 @@ void md_check_recovery(mddev_t *mddev)
+ 					sysfs_notify(&mddev->kobj, NULL,
+ 						     "degraded");
+ 			}
++			if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
++			    mddev->pers->finish_reshape)
++				mddev->pers->finish_reshape(mddev);
+ 			md_update_sb(mddev, 1);
+ 
+ 			/* if array is no-longer degraded, then any saved_raid_disk
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/raid5.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/raid5.c
+@@ -3853,6 +3853,7 @@ static inline sector_t sync_request(mdde
+ 	if (sector_nr >= max_sector) {
+ 		/* just being told to finish up .. nothing much to do */
+ 		unplug_slaves(mddev);
++
+ 		if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery)) {
+ 			end_reshape(conf);
+ 			return 0;
+@@ -4798,43 +4799,49 @@ static int raid5_start_reshape(mddev_t *
+ 
+ static void end_reshape(raid5_conf_t *conf)
+ {
+-	struct block_device *bdev;
+ 
+ 	if (!test_bit(MD_RECOVERY_INTR, &conf->mddev->recovery)) {
+-		mddev_t *mddev = conf->mddev;
+-
+-		md_set_array_sectors_lock(mddev, raid5_size(mddev, 0,
+-						       conf->raid_disks));
+-		set_capacity(mddev->gendisk, mddev->array_sectors);
+-		mddev->changed = 1;
+-		conf->previous_raid_disks = conf->raid_disks;
+ 
+-		bdev = bdget_disk(conf->mddev->gendisk, 0);
+-		if (bdev) {
+-			mutex_lock(&bdev->bd_inode->i_mutex);
+-			i_size_write(bdev->bd_inode,
+-				     (loff_t)conf->mddev->array_sectors << 9);
+-			mutex_unlock(&bdev->bd_inode->i_mutex);
+-			bdput(bdev);
+-		}
+ 		spin_lock_irq(&conf->device_lock);
++		conf->previous_raid_disks = conf->raid_disks;
+ 		conf->expand_progress = MaxSector;
+ 		spin_unlock_irq(&conf->device_lock);
+-		conf->mddev->reshape_position = MaxSector;
+ 
+ 		/* read-ahead size must cover two whole stripes, which is
+ 		 * 2 * (datadisks) * chunksize where 'n' is the number of raid devices
+ 		 */
+ 		{
+-			int data_disks = conf->previous_raid_disks - conf->max_degraded;
+-			int stripe = data_disks *
+-				(conf->mddev->chunk_size / PAGE_SIZE);
++			int data_disks = conf->raid_disks - conf->max_degraded;
++			int stripe = data_disks * (conf->chunk_size
++						   / PAGE_SIZE);
+ 			if (conf->mddev->queue->backing_dev_info.ra_pages < 2 * stripe)
+ 				conf->mddev->queue->backing_dev_info.ra_pages = 2 * stripe;
+ 		}
+ 	}
+ }
+ 
++static void raid5_finish_reshape(mddev_t *mddev)
++{
++	struct block_device *bdev;
++
++	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
++
++		md_set_array_sectors(mddev, raid5_size(mddev, 0, 0));
++		set_capacity(mddev->gendisk, mddev->array_sectors);
++		mddev->changed = 1;
++		mddev->reshape_position = MaxSector;
++
++		bdev = bdget_disk(mddev->gendisk, 0);
++		if (bdev) {
++			mutex_lock(&bdev->bd_inode->i_mutex);
++			i_size_write(bdev->bd_inode,
++				     (loff_t)mddev->array_sectors << 9);
++			mutex_unlock(&bdev->bd_inode->i_mutex);
++			bdput(bdev);
++		}
++	}
++}
++
+ static void raid5_quiesce(mddev_t *mddev, int state)
+ {
+ 	raid5_conf_t *conf = mddev_to_conf(mddev);
+@@ -4883,6 +4890,7 @@ static struct mdk_personality raid6_pers
+ #ifdef CONFIG_MD_RAID5_RESHAPE
+ 	.check_reshape	= raid5_check_reshape,
+ 	.start_reshape  = raid5_start_reshape,
++	.finish_reshape = raid5_finish_reshape,
+ #endif
+ 	.quiesce	= raid5_quiesce,
+ };
+@@ -4905,6 +4913,7 @@ static struct mdk_personality raid5_pers
+ #ifdef CONFIG_MD_RAID5_RESHAPE
+ 	.check_reshape	= raid5_check_reshape,
+ 	.start_reshape  = raid5_start_reshape,
++	.finish_reshape = raid5_finish_reshape,
+ #endif
+ 	.quiesce	= raid5_quiesce,
+ };
+@@ -4928,6 +4937,7 @@ static struct mdk_personality raid4_pers
+ #ifdef CONFIG_MD_RAID5_RESHAPE
+ 	.check_reshape	= raid5_check_reshape,
+ 	.start_reshape  = raid5_start_reshape,
++	.finish_reshape = raid5_finish_reshape,
+ #endif
+ 	.quiesce	= raid5_quiesce,
+ };
+--- linux-2.6.27-SLE11_BRANCH.orig/include/linux/raid/md_k.h
++++ linux-2.6.27-SLE11_BRANCH/include/linux/raid/md_k.h
+@@ -310,6 +310,7 @@ struct mdk_personality
+ 	sector_t (*size) (mddev_t *mddev, sector_t sectors, int raid_disks);
+ 	int (*check_reshape) (mddev_t *mddev);
+ 	int (*start_reshape) (mddev_t *mddev);
++	void (*finish_reshape) (mddev_t *mddev);
+ 	int (*reconfig) (mddev_t *mddev, int layout, int chunk_size);
+ 	/* quiesce moves between quiescence states
+ 	 * 0 - fully active
+@@ -396,4 +397,3 @@ static inline void safe_put_page(struct 
+ #endif /* CONFIG_BLOCK */
+ #endif
+ 
+-extern void md_set_array_sectors_lock(mddev_t *mddev, sector_t array_sectors);

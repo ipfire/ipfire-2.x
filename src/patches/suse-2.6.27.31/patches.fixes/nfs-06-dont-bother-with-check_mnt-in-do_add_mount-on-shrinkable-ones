@@ -1,0 +1,29 @@
+Git: dd5cae6e9772ecc62fd374f7a8ec10eb51c96c4d
+From: Al Viro <viro@zeniv.linux.org.uk>
+Subject: Don't bother with check_mnt() in do_add_mount() on shrinkable ones
+Date: Tue Apr 7 12:21:18 2009 -0400
+Patch-mainline: 2.7.30
+References: bnc#490030, bnc#531633
+
+These guys are what we add as submounts; checks for "is that attached in
+our namespace" are simply irrelevant for those and counterproductive for
+use of private vfsmount trees a-la what NFS folks want.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Acked-by: NeilBrown <neilb@suse.de>
+
+---
+ fs/namespace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/namespace.c
++++ linux-2.6.27-SLE11_BRANCH/fs/namespace.c
+@@ -1658,7 +1658,7 @@ int do_add_mount(struct vfsmount *newmnt
+ 	       follow_down(&path->mnt, &path->dentry))
+ 		;
+ 	err = -EINVAL;
+-	if (!check_mnt(path->mnt))
++	if (!(mnt_flags & MNT_SHRINKABLE) && !check_mnt(path->mnt))
+ 		goto unlock;
+ 
+ 	/* Refuse the same filesystem on the same mount point */

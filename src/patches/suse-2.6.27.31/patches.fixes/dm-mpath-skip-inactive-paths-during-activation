@@ -1,0 +1,37 @@
+From: Hannes Reinecke <hare@suse.de>
+Date: Fri, 14 Aug 2009 16:04:05 +0200
+Subject: dm-mpath: Skip inactive paths when activating pathgroup
+References: bnc#524797
+
+Whenever switch pathgroup happens device mapper will try to activate all the
+paths in the new path group. There is no check to see if the path has already
+failed. Eventually the failed path will report error. This will reset the
+current_pgpath and current_pg. The will result in infinite loop. I have added a
+check to skip the activate_path for the failed path. This fixes the problem.
+
+Signed-off-by: Babu Moger <babu.moger@lsi.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/md/dm-mpath.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index ffe3a30..642f85f 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -465,9 +465,10 @@ static void process_queued_ios(struct work_struct *work)
+ 		m->pg_init_count++;
+ 		m->pg_init_required = 0;
+ 		list_for_each_entry(tmp, &pgpath->pg->pgpaths, list) {
+-			/* Skip disabled paths */
+-			if (!tmp->path.dev)
++			/* Skip disabled or failed paths */
++			if (!tmp->path.dev || !tmp->is_active)
+ 				continue;
++
+ 			queue_work(kmpath_handlerd, &tmp->activate_path);
+ 			m->pg_init_in_progress++;
+ 		}
+-- 
+1.6.0.2
+

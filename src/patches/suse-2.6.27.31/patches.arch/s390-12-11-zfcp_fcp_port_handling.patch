@@ -1,0 +1,100 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Fix oops when port disappears
+References: bnc#487755,LTC#52844
+
+Symptom:     Kernel oops when port disappears.
+Problem:     The zfcp_port might have been removed, while the FC
+             fast_io_fail timer is still running and could trigger
+             the terminate_rport_io callback.
+Solution:    Set the pointer to the zfcp_port to NULL and check 
+             accordingly before using it.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_aux.c  |    3 +--
+ drivers/s390/scsi/zfcp_fsf.c  |    4 ++++
+ drivers/s390/scsi/zfcp_scsi.c |   25 +++++++++++++++++++------
+ 3 files changed, 24 insertions(+), 8 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_aux.c
++++ b/drivers/s390/scsi/zfcp_aux.c
+@@ -677,8 +677,7 @@ void zfcp_port_dequeue(struct zfcp_port
+ 	list_del(&port->list);
+ 	write_unlock_irq(&zfcp_data.config_lock);
+ 	if (port->rport)
+-		fc_remote_port_delete(port->rport);
+-	port->rport = NULL;
++		port->rport->dd_data = NULL;
+ 	zfcp_adapter_put(port->adapter);
+ 	sysfs_remove_group(&port->sysfs_device.kobj, &zfcp_sysfs_port_attrs);
+ 	device_unregister(&port->sysfs_device);
+--- a/drivers/s390/scsi/zfcp_fsf.c
++++ b/drivers/s390/scsi/zfcp_fsf.c
+@@ -175,12 +175,16 @@ static void zfcp_fsf_link_down_info_eval
+ 					 struct fsf_link_down_info *link_down)
+ {
+ 	struct zfcp_adapter *adapter = req->adapter;
++	unsigned long flags;
+ 
+ 	if (atomic_read(&adapter->status) & ZFCP_STATUS_ADAPTER_LINK_UNPLUGGED)
+ 		return;
+ 
+ 	atomic_set_mask(ZFCP_STATUS_ADAPTER_LINK_UNPLUGGED, &adapter->status);
++
++	read_lock_irqsave(&zfcp_data.config_lock, flags);
+ 	zfcp_scsi_schedule_rports_block(adapter);
++	read_unlock_irqrestore(&zfcp_data.config_lock, flags);
+ 
+ 	if (!link_down)
+ 		goto out;
+--- a/drivers/s390/scsi/zfcp_scsi.c
++++ b/drivers/s390/scsi/zfcp_scsi.c
+@@ -491,10 +491,12 @@ static void zfcp_set_rport_dev_loss_tmo(
+  */
+ static void zfcp_scsi_dev_loss_tmo_callbk(struct fc_rport *rport)
+ {
+-	struct zfcp_port *port = rport->dd_data;
++	struct zfcp_port *port;
+ 
+ 	write_lock_irq(&zfcp_data.config_lock);
+-	port->rport = NULL;
++	port = rport->dd_data;
++	if (port)
++		port->rport = NULL;
+ 	write_unlock_irq(&zfcp_data.config_lock);
+ }
+ 
+@@ -508,9 +510,18 @@ static void zfcp_scsi_dev_loss_tmo_callb
+  */
+ static void zfcp_scsi_terminate_rport_io(struct fc_rport *rport)
+ {
+-	struct zfcp_port *port = rport->dd_data;
++	struct zfcp_port *port;
+ 
+-	zfcp_erp_port_reopen(port, 0, 152, NULL);
++	write_lock_irq(&zfcp_data.config_lock);
++	port = rport->dd_data;
++	if (port)
++		zfcp_port_get(port);
++	write_unlock_irq(&zfcp_data.config_lock);
++
++	if (port) {
++		zfcp_erp_port_reopen(port, 0, 152, NULL);
++		zfcp_port_put(port);
++	}
+ }
+ 
+ static void zfcp_scsi_rport_register(struct zfcp_port *port)
+@@ -539,8 +550,10 @@ static void zfcp_scsi_rport_register(str
+ 
+ static void zfcp_scsi_rport_block(struct zfcp_port *port)
+ {
+-	if (port->rport)
+-		fc_remote_port_delete(port->rport);
++	struct fc_rport *rport = port->rport;
++
++	if (rport)
++		fc_remote_port_delete(rport);
+ }
+ 
+ void zfcp_scsi_schedule_rport_register(struct zfcp_port *port)

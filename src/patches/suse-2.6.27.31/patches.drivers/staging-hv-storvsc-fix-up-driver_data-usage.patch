@@ -1,0 +1,59 @@
+From foo@baz Fri Jul 24 10:58:22 PDT 2009
+Date: Fri, 24 Jul 2009 10:58:22 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: hv: storvsc: fix up driver_data usage
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+driver_data is gone now from struct device, so use the proper functions
+to access it instead.
+
+Thanks to Bill Pemberton for pointing out this build error.
+
+Cc: Bill Pemberton <wfp5p@viridian.itc.Virginia.EDU>
+Cc: Hank Janssen <hjanssen@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/hv/storvsc_drv.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/drivers/staging/hv/storvsc_drv.c
++++ b/drivers/staging/hv/storvsc_drv.c
+@@ -279,7 +279,7 @@ static int storvsc_probe(struct device *
+ 		return -ENOMEM;
+ 	}
+ 
+-	device->driver_data = host;
++	dev_set_drvdata(device, host);
+ 
+ 	host_device_ctx = (struct host_device_context*)host->hostdata;
+ 	memset(host_device_ctx, 0, sizeof(struct host_device_context));
+@@ -380,7 +380,7 @@ static int storvsc_remove(struct device 
+ 	struct device_context *device_ctx = device_to_device_context(device);
+ 	DEVICE_OBJECT* device_obj = &device_ctx->device_obj;
+ 
+-	struct Scsi_Host *host = (struct Scsi_Host *)device->driver_data;
++	struct Scsi_Host *host = dev_get_drvdata(device);
+ 	struct host_device_context *host_device_ctx=(struct host_device_context*)host->hostdata;
+ 
+ 
+@@ -1125,7 +1125,7 @@ static void storvsc_host_rescan_callback
+ 	DEVICE_OBJECT* device_obj = (DEVICE_OBJECT*)context;
+ #endif
+ 	struct device_context* device_ctx = to_device_context(device_obj);
+-	struct Scsi_Host *host = (struct Scsi_Host *)device_ctx->device.driver_data;
++	struct Scsi_Host *host = dev_get_drvdata(&device_ctx->device);
+ 	struct scsi_device *sdev;
+ 	struct host_device_context *host_device_ctx;
+ 	struct scsi_device **sdevs_remove_list;
+@@ -1293,7 +1293,7 @@ static int storvsc_report_luns(struct sc
+ static void storvsc_host_rescan(DEVICE_OBJECT* device_obj)
+ {
+ 	struct device_context* device_ctx = to_device_context(device_obj);
+-	struct Scsi_Host *host = (struct Scsi_Host *)device_ctx->device.driver_data;
++	struct Scsi_Host *host = dev_get_drvdata(&device_ctx->device);
+ 	struct host_device_context *host_device_ctx;
+ 
+ 	DPRINT_ENTER(STORVSC_DRV);

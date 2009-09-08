@@ -338,17 +338,17 @@ buildipfire() {
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
-#  ipfiremake linux			XEN=1
-#  ipfiremake atl2			XEN=1
-#  ipfiremake hso			XEN=1
-#  ipfiremake e1000e			XEN=1
-#  ipfiremake kqemu			XEN=1
-#  ipfiremake v4l-dvb			XEN=1
-#  ipfiremake madwifi			XEN=1
-##  ipfiremake alsa			XEN=1 KMOD=1
-#  ipfiremake openswan			XEN=1 KMOD=1
-#  ipfiremake mISDN			XEN=1
-#  ipfiremake compat-wireless		XEN=1
+  ipfiremake linux			XEN=1
+  ipfiremake atl2			XEN=1
+  ipfiremake hso			XEN=1
+  ipfiremake e1000e			XEN=1
+  ipfiremake kqemu			XEN=1
+  ipfiremake v4l-dvb			XEN=1
+  ipfiremake madwifi			XEN=1
+#  ipfiremake alsa			XEN=1 KMOD=1
+  ipfiremake openswan			XEN=1 KMOD=1
+  ipfiremake mISDN			XEN=1
+  ipfiremake compat-wireless		XEN=1
   ipfiremake linux
   ipfiremake atl2
   ipfiremake hso

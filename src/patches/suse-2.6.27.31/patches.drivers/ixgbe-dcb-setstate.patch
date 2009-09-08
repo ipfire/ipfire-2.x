@@ -1,0 +1,132 @@
+From: John Ronciak <john.ronciak@intel.com>
+Subject: Bugfix for ixgbe and kernel DCB netlink code
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#458194
+
+The patch file ixgbe-dcb-setstate.patch, created against the SLES11 Beta6
+kernel source, contains the following fixes:
+
+Change to ixgbe:
+-          Fix the DCB setstate operation function to check and not attempt to
+enable DCB if MSI-X is not enabled.  Return a success/failure status to the DCB
+netlink layer.
+
+Change to DCB netlink in kernel:
+-          Accept a success/failure status from the DCB setstate operation
+function. 
+
+-          Fix the dcbnl_setnumtcs routine to check for the presence of the
+setnumtcs operation function (instead of setstate)
+
+We are in the process of pushing these changes to the upstream kernel as well.
+
+diff -Naurp linux-2.6.27.7-4/drivers/net/ixgbe/ixgbe_dcb_nl.c linux-2.6.27.7-4-new/drivers/net/ixgbe/ixgbe_dcb_nl.c
+--- linux-2.6.27.7-4/drivers/net/ixgbe/ixgbe_dcb_nl.c	2008-12-10 14:12:15.000000000 -0800
++++ linux-2.6.27.7-4-new/drivers/net/ixgbe/ixgbe_dcb_nl.c	2008-12-09 15:50:21.000000000 -0800
+@@ -126,7 +126,7 @@ static u16 ixgbe_dcb_select_queue(struct
+ 	return 0;
+ }
+ 
+-static void ixgbe_dcbnl_set_state(struct net_device *netdev, u8 state)
++static u8 ixgbe_dcbnl_set_state(struct net_device *netdev, u8 state)
+ {
+ 	struct ixgbe_adapter *adapter = netdev_priv(netdev);
+ 
+@@ -135,25 +135,30 @@ static void ixgbe_dcbnl_set_state(struct
+ 	if (state > 0) {
+ 		/* Turn on DCB */
+ 		if (adapter->flags & IXGBE_FLAG_DCB_ENABLED) {
+-			return;
+-		} else {
+-			if (netif_running(netdev))
+-				netdev->stop(netdev);
+-			ixgbe_reset_interrupt_capability(adapter);
+-			ixgbe_napi_del_all(adapter);
+-			kfree(adapter->tx_ring);
+-			kfree(adapter->rx_ring);
+-			adapter->tx_ring = NULL;
+-			adapter->rx_ring = NULL;
+-			netdev->select_queue = &ixgbe_dcb_select_queue;
++			return 0;
++		} 
+ 
+-			adapter->flags &= ~IXGBE_FLAG_RSS_ENABLED;
+-			adapter->flags |= IXGBE_FLAG_DCB_ENABLED;
+-			ixgbe_init_interrupt_scheme(adapter);
+-			ixgbe_napi_add_all(adapter);
+-			if (netif_running(netdev))
+-				netdev->open(netdev);
+-		}
++		if (!(adapter->flags & IXGBE_FLAG_MSIX_ENABLED)) {
++			DPRINTK(DRV, ERR, "Enable Failed, needs MSI-X\n");
++			return 1;
++		} 
++
++		if (netif_running(netdev))
++			netdev->stop(netdev);
++		ixgbe_reset_interrupt_capability(adapter);
++		ixgbe_napi_del_all(adapter);
++		kfree(adapter->tx_ring);
++		kfree(adapter->rx_ring);
++		adapter->tx_ring = NULL;
++		adapter->rx_ring = NULL;
++		netdev->select_queue = &ixgbe_dcb_select_queue;
++
++		adapter->flags &= ~IXGBE_FLAG_RSS_ENABLED;
++		adapter->flags |= IXGBE_FLAG_DCB_ENABLED;
++		ixgbe_init_interrupt_scheme(adapter);
++		ixgbe_napi_add_all(adapter);
++		if (netif_running(netdev))
++			netdev->open(netdev);
+ 	} else {
+ 		/* Turn off DCB */
+ 		if (adapter->flags & IXGBE_FLAG_DCB_ENABLED) {
+@@ -173,10 +178,9 @@ static void ixgbe_dcbnl_set_state(struct
+ 			ixgbe_napi_add_all(adapter);
+ 			if (netif_running(netdev))
+ 				netdev->open(netdev);
+-		} else {
+-			return;
+ 		}
+ 	}
++	return 0;
+ }
+ 
+ static void ixgbe_dcbnl_get_perm_hw_addr(struct net_device *netdev,
+diff -Naurp linux-2.6.27.7-4/include/net/dcbnl.h linux-2.6.27.7-4-new/include/net/dcbnl.h
+--- linux-2.6.27.7-4/include/net/dcbnl.h	2008-12-10 14:00:13.000000000 -0800
++++ linux-2.6.27.7-4-new/include/net/dcbnl.h	2008-12-10 14:22:03.000000000 -0800
+@@ -13,7 +13,7 @@
+  */
+ struct dcbnl_rtnl_ops {
+ 	u8   (*getstate)(struct net_device *);
+-	void (*setstate)(struct net_device *, u8);
++	u8   (*setstate)(struct net_device *, u8);
+ 	void (*getpermhwaddr)(struct net_device *, u8 *);
+ 	void (*setpgtccfgtx)(struct net_device *, int, u8, u8, u8, u8);
+ 	void (*setpgbwgcfgtx)(struct net_device *, int, u8);
+diff -Naurp linux-2.6.27.7-4/net/dcb/dcbnl.c linux-2.6.27.7-4-new/net/dcb/dcbnl.c
+--- linux-2.6.27.7-4/net/dcb/dcbnl.c	2008-12-10 13:59:34.000000000 -0800
++++ linux-2.6.27.7-4-new/net/dcb/dcbnl.c	2008-12-10 14:26:41.000000000 -0800
+@@ -437,7 +437,7 @@ static int dcbnl_setnumtcs(struct net_de
+ 	u8 value;
+ 	int i;
+ 
+-	if (!tb[DCB_ATTR_NUMTCS] || !netdev->dcbnl_ops->setstate)
++	if (!tb[DCB_ATTR_NUMTCS] || !netdev->dcbnl_ops->setnumtcs)
+ 		return ret;
+ 
+ 	ret = nla_parse_nested(data, DCB_NUMTCS_ATTR_MAX, tb[DCB_ATTR_NUMTCS],
+@@ -682,10 +682,8 @@ static int dcbnl_setstate(struct net_dev
+ 
+ 	value = nla_get_u8(tb[DCB_ATTR_STATE]);
+ 
+-	netdev->dcbnl_ops->setstate(netdev, value);
+-
+-	ret = dcbnl_reply(0, RTM_SETDCB, DCB_CMD_SSTATE, DCB_ATTR_STATE,
+-				pid, seq, flags);
++	ret = dcbnl_reply(netdev->dcbnl_ops->setstate(netdev, value),
++		RTM_SETDCB, DCB_CMD_SSTATE, DCB_ATTR_STATE, pid, seq, flags);
+ 
+ 	return ret;
+ }

@@ -1,0 +1,71 @@
+From foo@baz Tue Jul 14 10:24:38 PDT 2009
+Date: Tue, 14 Jul 2009 10:24:38 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: hv: make the Hyper-V virtual block driver build
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+The #define KERNEL_2_6_27 needs to be set, and I adjusted the include
+directories a bit to get things to build properly.
+
+I also fixed up the direct access of bus_id, as that field is now gone.
+Lots of block api changes were needed, and I don't think I got it
+all correct.  It would be great of someone who knows the block api better
+could review it.
+
+The hv_blkvsc code should now build, with no errors.
+
+Cc: Hank Janssen <hjanssen@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+
+---
+ drivers/staging/hv/BlkVsc.c     |    2 +-
+ drivers/staging/hv/blkvsc_drv.c |    9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+--- a/drivers/staging/hv/BlkVsc.c
++++ b/drivers/staging/hv/BlkVsc.c
+@@ -21,7 +21,7 @@
+  */
+ 
+ 
+-#include "../storvsc/StorVsc.c"
++#include "StorVsc.c"
+ 
+ static const char* gBlkDriverName="blkvsc";
+ 
+--- a/drivers/staging/hv/blkvsc_drv.c
++++ b/drivers/staging/hv/blkvsc_drv.c
+@@ -20,6 +20,7 @@
+  *
+  */
+ 
++#define KERNEL_2_6_27
+ 
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -34,10 +35,10 @@
+ #include <scsi/scsi_eh.h>
+ #include <scsi/scsi_dbg.h>
+ 
+-#include "logging.h"
+-#include "vmbus.h"
++#include "include/logging.h"
++#include "include/vmbus.h"
+ 
+-#include "StorVscApi.h"
++#include "include/StorVscApi.h"
+ 
+ //
+ // #defines
+@@ -313,7 +314,7 @@ static int blkvsc_probe(struct device *d
+ 	ASSERT(sizeof(struct blkvsc_request_group) <= sizeof(struct blkvsc_request));
+ 
+ #ifdef KERNEL_2_6_27
+-        blkdev->request_pool = kmem_cache_create(device_ctx->device.bus_id,
++        blkdev->request_pool = kmem_cache_create(dev_name(&device_ctx->device),
+                 sizeof(struct blkvsc_request) + storvsc_drv_obj->RequestExtSize, 0,
+                 SLAB_HWCACHE_ALIGN, NULL);
+ #else

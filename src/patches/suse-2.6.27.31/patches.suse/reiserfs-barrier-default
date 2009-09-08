@@ -1,0 +1,26 @@
+From: Chris Mason <mason@suse.com>
+Subject: Make reiserfs default to barrier=flush
+X-Patch-Mainline: Submitted Fri Aug  4 09:55:00 EDT 2006 mason
+
+Change the default reiserfs mount option to barrier=flush
+
+ fs/reiserfs/super.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1714,9 +1714,12 @@ static int reiserfs_fill_super(struct su
+ 	} else {
+ 		reiserfs_info(s, "using writeback data mode\n");
+ 	}
+-	if (reiserfs_barrier_flush(s)) {
++	/* make barrer=flush the default */
++
++	if (!reiserfs_barrier_none(s))
++		REISERFS_SB(s)->s_mount_opt |= (1 << REISERFS_BARRIER_FLUSH);
++	if (reiserfs_barrier_flush(s))
+ 		printk("reiserfs: using flush barriers\n");
+-	}
+ 	// set_device_ro(s->s_dev, 1) ;
+ 	if (journal_init(s, jdev_name, old_format, commit_max_age)) {
+ 		SWARN(silent, s, "sh-2022",

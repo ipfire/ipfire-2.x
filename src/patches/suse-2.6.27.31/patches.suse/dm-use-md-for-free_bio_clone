@@ -1,0 +1,80 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Kernel oops in free_bio_clone()
+References: bnc#472360
+
+Bug is here:
+
+static int setup_clone(struct request *clone, struct request *rq,
+               struct dm_rq_target_io *tio)
+{
+    int r;
+
+    blk_rq_init(NULL, clone);
+
+    r = clone_request_bios(clone, rq, tio->md);
+    if (r)
+        return r;
+
+    copy_request_info(clone, rq);
+    clone->start_time = jiffies;
+    clone->end_io = end_clone_request;
+    clone->end_io_data = tio;
+
+    return 0;
+}
+
+clone_request_bios() might end up calling free_bio_clone(), which references:
+
+static void free_bio_clone(struct request *clone)
+{
+    struct dm_rq_target_io *tio = clone->end_io_data;
+    struct mapped_device *md = tio->md;
+...
+
+but end_io_data will be set only _after_ the call to clone_request_bios().
+So we should be passing the 'md' argument directly here to avoid this
+bug and several pointless derefencings.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+--- linux-2.6.27-SLE11_BRANCH/drivers/md/dm.c.orig	2009-02-04 10:33:22.656627650 +0100
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/dm.c	2009-02-05 11:03:35.843251773 +0100
+@@ -709,10 +709,8 @@ static void end_clone_bio(struct bio *cl
+ 	blk_update_request(tio->orig, 0, nr_bytes);
+ }
+ 
+-static void free_bio_clone(struct request *clone)
++static void free_bio_clone(struct request *clone, struct mapped_device *md)
+ {
+-	struct dm_rq_target_io *tio = clone->end_io_data;
+-	struct mapped_device *md = tio->md;
+ 	struct bio *bio;
+ 
+ 	while ((bio = clone->bio) != NULL) {
+@@ -743,7 +741,7 @@ static void dm_unprep_request(struct req
+ 	rq->special = NULL;
+ 	rq->cmd_flags &= ~REQ_DONTPREP;
+ 
+-	free_bio_clone(clone);
++	free_bio_clone(clone, tio->md);
+ 	dec_rq_pending(tio);
+ 	free_rq_tio(tio->md, tio);
+ }
+@@ -820,7 +818,7 @@ static void dm_end_request(struct reques
+ 			rq->sense_len = clone->sense_len;
+ 	}
+ 
+-	free_bio_clone(clone);
++	free_bio_clone(clone, tio->md);
+ 	dec_rq_pending(tio);
+ 	free_rq_tio(tio->md, tio);
+ 
+@@ -1406,7 +1404,7 @@ static int clone_request_bios(struct req
+ 	return 0;
+ 
+ free_and_out:
+-	free_bio_clone(clone);
++	free_bio_clone(clone, md);
+ 
+ 	return -ENOMEM;
+ }

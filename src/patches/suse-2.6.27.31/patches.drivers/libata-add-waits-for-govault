@@ -1,0 +1,36 @@
+From: Tejun Heo <teheo@suse.de>
+Date: Wed, 7 Feb 2007 12:37:41 -0800
+Subject: [PATCH] libata: add waits for GoVault
+References: 246451
+
+Iomega GoVault drives need specific waits here and there.  Upstream
+approach hasn't been determined yet.  This is temp solution from Gary
+Hade.  Read the following thread for details.
+
+http://thread.gmane.org/gmane.linux.ide/14545/focus=14663
+
+With recent changes in the reset sequence (ATA_TMOUT_FF_WAIT and
+prefer-hardreset), the only thing which needs adjustment is
+ATA_TMOUT_FF_WAIT (the prereset wait part is unnecessary as the wait
+is necessary only for softreset when SCR registers are accessible and
+in those cases libata now always uses hardreset which doesn't require
+such wait).
+
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ include/linux/libata.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.27/include/linux/libata.h
+===================================================================
+--- linux-2.6.27.orig/include/linux/libata.h
++++ linux-2.6.27/include/linux/libata.h
+@@ -250,7 +250,7 @@ enum {
+ 	 * HHD424020F7SV00.  Increase to 2secs when parallel probing
+ 	 * is in place.
+ 	 */
+-	ATA_TMOUT_FF_WAIT	=  800,
++	ATA_TMOUT_FF_WAIT	=  2000,
+ 
+ 	/* Spec mandates to wait for ">= 2ms" before checking status
+ 	 * after reset.  We wait 150ms, because that was the magic

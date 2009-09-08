@@ -1,0 +1,1116 @@
+From: Mike Christie <michaelc@cs.wisc.edu>
+Subject: Separate failfast into multiple bits
+References: FATE#303485,FATE#303484
+
+This is a combined patch from linux-2.6.git. Commit IDs:
+
+f0c0a376d0fcd4c5579ecf5e95f88387cba85211
+c5e98e912c5423a0ec2eed7aa1064578d44f8a8e
+7b594131c4f38edeb13d8c6c0147949173c47013
+d6d13ee19da6d291c99f980dcb76f6b7dc676804
+a93ce0244f2e94dd48e0b4a2742a4e3bf196ab53
+fff9d40ce0eb4b46f3e186823ceab6bc02c3e5d3
+9cc328f502eacfcc52ab1c1bf9a7729cf12f14be
+a4dfaa6f2e55b736adf2719133996f7e7dc309bc
+56d7fcfa815564b40a1b0ec7a30ea8cb3bc0713e
+f46e307da925a7b71a0018c0510cdc6e588b87fc
+056a44834950ffa51fafa6c76a720fa32e86851a
+6000a368cd8e6da1caf101411bdb494cd6fb8b09
+4a27446f3e39b06c28d1c8e31d33a5340826ed5c
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ block/blk-core.c                            |   11 ++
+ drivers/md/dm-mpath.c                       |    2 
+ drivers/md/multipath.c                      |    4 -
+ drivers/s390/block/dasd_diag.c              |    2 
+ drivers/s390/block/dasd_eckd.c              |    2 
+ drivers/s390/block/dasd_fba.c               |    2 
+ drivers/scsi/constants.c                    |    3 
+ drivers/scsi/device_handler/scsi_dh_alua.c  |    3 
+ drivers/scsi/device_handler/scsi_dh_emc.c   |    3 
+ drivers/scsi/device_handler/scsi_dh_hp_sw.c |    6 +
+ drivers/scsi/device_handler/scsi_dh_rdac.c  |    3 
+ drivers/scsi/ibmvscsi/ibmvfc.c              |    2 
+ drivers/scsi/libiscsi.c                     |   16 ++--
+ drivers/scsi/lpfc/lpfc_hbadisc.c            |    8 --
+ drivers/scsi/lpfc/lpfc_scsi.c               |    9 +-
+ drivers/scsi/qla2xxx/qla_attr.c             |    1 
+ drivers/scsi/qla2xxx/qla_isr.c              |   14 +++
+ drivers/scsi/qla2xxx/qla_os.c               |   26 +++---
+ drivers/scsi/qla4xxx/ql4_isr.c              |    4 -
+ drivers/scsi/qla4xxx/ql4_os.c               |    2 
+ drivers/scsi/scsi.c                         |   10 ++
+ drivers/scsi/scsi_error.c                   |   53 +++++++++++++-
+ drivers/scsi/scsi_lib.c                     |  106 +++++++++++++++++++++++-----
+ drivers/scsi/scsi_priv.h                    |    1 
+ drivers/scsi/scsi_scan.c                    |    1 
+ drivers/scsi/scsi_transport_fc.c            |   47 +++++++-----
+ drivers/scsi/scsi_transport_iscsi.c         |    4 -
+ drivers/scsi/scsi_transport_spi.c           |    4 -
+ include/linux/bio.h                         |   38 +++++++---
+ include/linux/blkdev.h                      |   15 +++
+ include/scsi/scsi.h                         |    6 +
+ include/scsi/scsi_device.h                  |   10 ++
+ include/scsi/scsi_transport_fc.h            |    8 +-
+ 33 files changed, 311 insertions(+), 115 deletions(-)
+
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1100,8 +1100,15 @@ void init_request_from_bio(struct reques
+ 	/*
+ 	 * inherit FAILFAST from bio (for read-ahead, and explicit FAILFAST)
+ 	 */
+-	if (bio_rw_ahead(bio) || bio_failfast(bio))
+-		req->cmd_flags |= REQ_FAILFAST;
++	if (bio_rw_ahead(bio))
++		req->cmd_flags |= (REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT |
++				   REQ_FAILFAST_DRIVER);
++	if (bio_failfast_dev(bio))
++		req->cmd_flags |= REQ_FAILFAST_DEV;
++	if (bio_failfast_transport(bio))
++		req->cmd_flags |= REQ_FAILFAST_TRANSPORT;
++	if (bio_failfast_driver(bio))
++		req->cmd_flags |= REQ_FAILFAST_DRIVER;
+ 
+ 	/*
+ 	 * REQ_BARRIER implies no merging, but lets make it explicit
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -857,7 +857,7 @@ static int multipath_map(struct dm_targe
+ 	dm_bio_record(&mpio->details, bio);
+ 
+ 	map_context->ptr = mpio;
+-	bio->bi_rw |= (1 << BIO_RW_FAILFAST);
++	bio->bi_rw |= (1 << BIO_RW_FAILFAST_TRANSPORT);
+ 	r = map_io(m, bio, mpio, 0);
+ 	if (r < 0 || r == DM_MAPIO_REQUEUE)
+ 		mempool_free(mpio, m->mpio_pool);
+--- a/drivers/md/multipath.c
++++ b/drivers/md/multipath.c
+@@ -172,7 +172,7 @@ static int multipath_make_request (struc
+ 	mp_bh->bio = *bio;
+ 	mp_bh->bio.bi_sector += multipath->rdev->data_offset;
+ 	mp_bh->bio.bi_bdev = multipath->rdev->bdev;
+-	mp_bh->bio.bi_rw |= (1 << BIO_RW_FAILFAST);
++	mp_bh->bio.bi_rw |= (1 << BIO_RW_FAILFAST_TRANSPORT);
+ 	mp_bh->bio.bi_end_io = multipath_end_request;
+ 	mp_bh->bio.bi_private = mp_bh;
+ 	generic_make_request(&mp_bh->bio);
+@@ -398,7 +398,7 @@ static void multipathd (mddev_t *mddev)
+ 			*bio = *(mp_bh->master_bio);
+ 			bio->bi_sector += conf->multipaths[mp_bh->path].rdev->data_offset;
+ 			bio->bi_bdev = conf->multipaths[mp_bh->path].rdev->bdev;
+-			bio->bi_rw |= (1 << BIO_RW_FAILFAST);
++			bio->bi_rw |= (1 << BIO_RW_FAILFAST_TRANSPORT);
+ 			bio->bi_end_io = multipath_end_request;
+ 			bio->bi_private = mp_bh;
+ 			generic_make_request(bio);
+--- a/drivers/s390/block/dasd_diag.c
++++ b/drivers/s390/block/dasd_diag.c
+@@ -544,7 +544,7 @@ static struct dasd_ccw_req *dasd_diag_bu
+ 	}
+ 	cqr->retries = DIAG_MAX_RETRIES;
+ 	cqr->buildclk = get_clock();
+-	if (req->cmd_flags & REQ_FAILFAST)
++	if (blk_noretry_request(req))
+ 		set_bit(DASD_CQR_FLAGS_FAILFAST, &cqr->flags);
+ 	cqr->startdev = memdev;
+ 	cqr->memdev = memdev;
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -1700,7 +1700,7 @@ static struct dasd_ccw_req *dasd_eckd_bu
+ 			recid++;
+ 		}
+ 	}
+-	if (req->cmd_flags & REQ_FAILFAST)
++	if (blk_noretry_request(req))
+ 		set_bit(DASD_CQR_FLAGS_FAILFAST, &cqr->flags);
+ 	cqr->startdev = startdev;
+ 	cqr->memdev = startdev;
+--- a/drivers/s390/block/dasd_fba.c
++++ b/drivers/s390/block/dasd_fba.c
+@@ -355,7 +355,7 @@ static struct dasd_ccw_req *dasd_fba_bui
+ 			recid++;
+ 		}
+ 	}
+-	if (req->cmd_flags & REQ_FAILFAST)
++	if (blk_noretry_request(req))
+ 		set_bit(DASD_CQR_FLAGS_FAILFAST, &cqr->flags);
+ 	cqr->startdev = memdev;
+ 	cqr->memdev = memdev;
+--- a/drivers/scsi/constants.c
++++ b/drivers/scsi/constants.c
+@@ -1364,7 +1364,8 @@ EXPORT_SYMBOL(scsi_print_sense);
+ static const char * const hostbyte_table[]={
+ "DID_OK", "DID_NO_CONNECT", "DID_BUS_BUSY", "DID_TIME_OUT", "DID_BAD_TARGET",
+ "DID_ABORT", "DID_PARITY", "DID_ERROR", "DID_RESET", "DID_BAD_INTR",
+-"DID_PASSTHROUGH", "DID_SOFT_ERROR", "DID_IMM_RETRY", "DID_REQUEUE"};
++"DID_PASSTHROUGH", "DID_SOFT_ERROR", "DID_IMM_RETRY", "DID_REQUEUE",
++"DID_TRANSPORT_DISRUPTED", "DID_TRANSPORT_FAILFAST" };
+ #define NUM_HOSTBYTE_STRS ARRAY_SIZE(hostbyte_table)
+ 
+ static const char * const driverbyte_table[]={
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -109,7 +109,8 @@ static struct request *get_alua_req(stru
+ 	}
+ 
+ 	rq->cmd_type = REQ_TYPE_BLOCK_PC;
+-	rq->cmd_flags |= REQ_FAILFAST | REQ_NOMERGE;
++	rq->cmd_flags |= REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT |
++			 REQ_FAILFAST_DRIVER | REQ_NOMERGE;
+ 	rq->retries = ALUA_FAILOVER_RETRIES;
+ 	rq->timeout = ALUA_FAILOVER_TIMEOUT;
+ 
+--- a/drivers/scsi/device_handler/scsi_dh_emc.c
++++ b/drivers/scsi/device_handler/scsi_dh_emc.c
+@@ -303,7 +303,8 @@ static struct request *get_req(struct sc
+ 
+ 	rq->cmd[4] = len;
+ 	rq->cmd_type = REQ_TYPE_BLOCK_PC;
+-	rq->cmd_flags |= REQ_FAILFAST;
++	rq->cmd_flags |= REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT |
++			 REQ_FAILFAST_DRIVER;
+ 	rq->timeout = CLARIION_TIMEOUT;
+ 	rq->retries = CLARIION_RETRIES;
+ 
+--- a/drivers/scsi/device_handler/scsi_dh_hp_sw.c
++++ b/drivers/scsi/device_handler/scsi_dh_hp_sw.c
+@@ -112,7 +112,8 @@ static int hp_sw_tur(struct scsi_device
+ 		return SCSI_DH_RES_TEMP_UNAVAIL;
+ 
+ 	req->cmd_type = REQ_TYPE_BLOCK_PC;
+-	req->cmd_flags |= REQ_FAILFAST;
++	req->cmd_flags |= REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT |
++			  REQ_FAILFAST_DRIVER;
+ 	req->cmd_len = COMMAND_SIZE(TEST_UNIT_READY);
+ 	req->cmd[0] = TEST_UNIT_READY;
+ 	req->timeout = HP_SW_TIMEOUT;
+@@ -204,7 +205,8 @@ static int hp_sw_start_stop(struct scsi_
+ 		return SCSI_DH_RES_TEMP_UNAVAIL;
+ 
+ 	req->cmd_type = REQ_TYPE_BLOCK_PC;
+-	req->cmd_flags |= REQ_FAILFAST;
++	req->cmd_flags |= REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT |
++			  REQ_FAILFAST_DRIVER;
+ 	req->cmd_len = COMMAND_SIZE(START_STOP);
+ 	req->cmd[0] = START_STOP;
+ 	req->cmd[4] = 1;	/* Start spin cycle */
+--- a/drivers/scsi/device_handler/scsi_dh_rdac.c
++++ b/drivers/scsi/device_handler/scsi_dh_rdac.c
+@@ -226,7 +226,8 @@ static struct request *get_rdac_req(stru
+ 	}
+ 
+ 	rq->cmd_type = REQ_TYPE_BLOCK_PC;
+-	rq->cmd_flags |= REQ_FAILFAST | REQ_NOMERGE;
++	rq->cmd_flags |= REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT |
++			 REQ_FAILFAST_DRIVER;
+ 	rq->retries = RDAC_RETRIES;
+ 	rq->timeout = RDAC_TIMEOUT;
+ 
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -2032,8 +2032,6 @@ static void ibmvfc_terminate_rport_io(st
+ 		spin_unlock_irqrestore(shost->host_lock, flags);
+ 	} else
+ 		ibmvfc_issue_fc_host_lip(shost);
+-
+-	scsi_target_unblock(&rport->dev);
+ 	LEAVE;
+ }
+ 
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -1194,15 +1194,13 @@ int iscsi_queuecommand(struct scsi_cmnd
+ 		switch (session->state) {
+ 		case ISCSI_STATE_IN_RECOVERY:
+ 			reason = FAILURE_SESSION_IN_RECOVERY;
+-			sc->result = DID_IMM_RETRY << 16;
+-			break;
++			goto reject;
+ 		case ISCSI_STATE_LOGGING_OUT:
+ 			reason = FAILURE_SESSION_LOGGING_OUT;
+-			sc->result = DID_IMM_RETRY << 16;
+-			break;
++			goto reject;
+ 		case ISCSI_STATE_RECOVERY_FAILED:
+ 			reason = FAILURE_SESSION_RECOVERY_TIMEOUT;
+-			sc->result = DID_NO_CONNECT << 16;
++			sc->result = DID_TRANSPORT_FAILFAST << 16;
+ 			break;
+ 		case ISCSI_STATE_TERMINATE:
+ 			reason = FAILURE_SESSION_TERMINATE;
+@@ -1267,7 +1265,7 @@ reject:
+ 	spin_unlock(&session->lock);
+ 	debug_scsi("cmd 0x%x rejected (%d)\n", sc->cmnd[0], reason);
+ 	spin_lock(host->host_lock);
+-	return SCSI_MLQUEUE_HOST_BUSY;
++	return SCSI_MLQUEUE_TARGET_BUSY;
+ 
+ fault:
+ 	spin_unlock(&session->lock);
+@@ -2337,8 +2335,10 @@ static void iscsi_start_session_recovery
+ 	 * flush queues.
+ 	 */
+ 	spin_lock_bh(&session->lock);
+-	fail_all_commands(conn, -1,
+-			STOP_CONN_RECOVER ? DID_BUS_BUSY : DID_ERROR);
++	if (STOP_CONN_RECOVER)
++		fail_all_commands(conn, -1, DID_TRANSPORT_DISRUPTED);
++	else
++		fail_all_commands(conn, -1, DID_ERROR);
+ 	flush_control_queues(session, conn);
+ 	spin_unlock_bh(&session->lock);
+ 	mutex_unlock(&session->eh_mutex);
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -88,14 +88,6 @@ lpfc_terminate_rport_io(struct fc_rport
+ 			&phba->sli.ring[phba->sli.fcp_ring],
+ 			ndlp->nlp_sid, 0, LPFC_CTX_TGT);
+ 	}
+-
+-	/*
+-	 * A device is normally blocked for rediscovery and unblocked when
+-	 * devloss timeout happens.  In case a vport is removed or driver
+-	 * unloaded before devloss timeout happens, we need to unblock here.
+-	 */
+-	scsi_target_unblock(&rport->dev);
+-	return;
+ }
+ 
+ /*
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -966,10 +966,9 @@ lpfc_queuecommand(struct scsi_cmnd *cmnd
+ 	 * Catch race where our node has transitioned, but the
+ 	 * transport is still transitioning.
+ 	 */
+-	if (!ndlp || !NLP_CHK_NODE_ACT(ndlp)) {
+-		cmnd->result = ScsiResult(DID_BUS_BUSY, 0);
+-		goto out_fail_command;
+-	}
++	if (!ndlp || !NLP_CHK_NODE_ACT(ndlp))
++		goto out_target_busy;
++
+ 	lpfc_cmd = lpfc_get_scsi_buf(phba);
+ 	if (lpfc_cmd == NULL) {
+ 		lpfc_adjust_queue_depth(phba);
+@@ -1014,6 +1013,8 @@ lpfc_queuecommand(struct scsi_cmnd *cmnd
+ 	lpfc_release_scsi_buf(phba, lpfc_cmd);
+  out_host_busy:
+ 	return SCSI_MLQUEUE_HOST_BUSY;
++ out_target_busy:
++	return SCSI_MLQUEUE_TARGET_BUSY;
+ 
+  out_fail_command:
+ 	done(cmnd);
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -1005,7 +1005,6 @@ qla2x00_terminate_rport_io(struct fc_rpo
+ 	}
+ 
+ 	qla2x00_abort_fcport_cmds(fcport);
+-	scsi_target_unblock(&rport->dev);
+ }
+ 
+ static int
+--- a/drivers/scsi/qla2xxx/qla_isr.c
++++ b/drivers/scsi/qla2xxx/qla_isr.c
+@@ -1184,7 +1184,12 @@ qla2x00_status_entry(scsi_qla_host_t *ha
+ 		    cp->serial_number, comp_status,
+ 		    atomic_read(&fcport->state)));
+ 
+-		cp->result = DID_BUS_BUSY << 16;
++		/*
++		 * We are going to have the fc class block the rport
++		 * while we try to recover so instruct the mid layer
++		 * to requeue until the class decides how to handle this.
++		 */
++		cp->result = DID_TRANSPORT_DISRUPTED << 16;
+ 		if (atomic_read(&fcport->state) == FCS_ONLINE)
+ 			qla2x00_mark_device_lost(fcport->ha, fcport, 1, 1);
+ 		break;
+@@ -1211,7 +1216,12 @@ qla2x00_status_entry(scsi_qla_host_t *ha
+ 		break;
+ 
+ 	case CS_TIMEOUT:
+-		cp->result = DID_BUS_BUSY << 16;
++		/*
++		 * We are going to have the fc class block the rport
++		 * while we try to recover so instruct the mid layer
++		 * to requeue until the class decides how to handle this.
++		 */
++		cp->result = DID_TRANSPORT_DISRUPTED << 16;
+ 
+ 		if (IS_FWI2_CAPABLE(ha)) {
+ 			DEBUG2(printk(KERN_INFO
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -394,10 +394,8 @@ qla2x00_queuecommand(struct scsi_cmnd *c
+ 	}
+ 
+ 	/* Close window on fcport/rport state-transitioning. */
+-	if (fcport->drport) {
+-		cmd->result = DID_IMM_RETRY << 16;
+-		goto qc_fail_command;
+-	}
++	if (fcport->drport)
++		goto qc_target_busy;
+ 
+ 	if (atomic_read(&fcport->state) != FCS_ONLINE) {
+ 		if (atomic_read(&fcport->state) == FCS_DEVICE_DEAD ||
+@@ -405,7 +403,7 @@ qla2x00_queuecommand(struct scsi_cmnd *c
+ 			cmd->result = DID_NO_CONNECT << 16;
+ 			goto qc_fail_command;
+ 		}
+-		goto qc_host_busy;
++		goto qc_target_busy;
+ 	}
+ 
+ 	spin_unlock_irq(ha->host->host_lock);
+@@ -428,10 +426,11 @@ qc_host_busy_free_sp:
+ 
+ qc_host_busy_lock:
+ 	spin_lock_irq(ha->host->host_lock);
+-
+-qc_host_busy:
+ 	return SCSI_MLQUEUE_HOST_BUSY;
+ 
++qc_target_busy:
++	return SCSI_MLQUEUE_TARGET_BUSY;
++
+ qc_fail_command:
+ 	done(cmd);
+ 
+@@ -461,10 +460,8 @@ qla24xx_queuecommand(struct scsi_cmnd *c
+ 	}
+ 
+ 	/* Close window on fcport/rport state-transitioning. */
+-	if (fcport->drport) {
+-		cmd->result = DID_IMM_RETRY << 16;
+-		goto qc24_fail_command;
+-	}
++	if (fcport->drport)
++		goto qc24_target_busy;
+ 
+ 	if (atomic_read(&fcport->state) != FCS_ONLINE) {
+ 		if (atomic_read(&fcport->state) == FCS_DEVICE_DEAD ||
+@@ -472,7 +469,7 @@ qla24xx_queuecommand(struct scsi_cmnd *c
+ 			cmd->result = DID_NO_CONNECT << 16;
+ 			goto qc24_fail_command;
+ 		}
+-		goto qc24_host_busy;
++		goto qc24_target_busy;
+ 	}
+ 
+ 	spin_unlock_irq(ha->host->host_lock);
+@@ -495,10 +492,11 @@ qc24_host_busy_free_sp:
+ 
+ qc24_host_busy_lock:
+ 	spin_lock_irq(ha->host->host_lock);
+-
+-qc24_host_busy:
+ 	return SCSI_MLQUEUE_HOST_BUSY;
+ 
++qc24_target_busy:
++	return SCSI_MLQUEUE_TARGET_BUSY;
++
+ qc24_fail_command:
+ 	done(cmd);
+ 
+--- a/drivers/scsi/qla4xxx/ql4_isr.c
++++ b/drivers/scsi/qla4xxx/ql4_isr.c
+@@ -139,7 +139,7 @@ static void qla4xxx_status_entry(struct
+ 			      ha->host_no, cmd->device->channel,
+ 			      cmd->device->id, cmd->device->lun));
+ 
+-		cmd->result = DID_BUS_BUSY << 16;
++		cmd->result = DID_TRANSPORT_DISRUPTED << 16;
+ 
+ 		/*
+ 		 * Mark device missing so that we won't continue to send
+@@ -243,7 +243,7 @@ static void qla4xxx_status_entry(struct
+ 		if (atomic_read(&ddb_entry->state) == DDB_STATE_ONLINE)
+ 			qla4xxx_mark_device_missing(ha, ddb_entry);
+ 
+-		cmd->result = DID_BUS_BUSY << 16;
++		cmd->result = DID_TRANSPORT_DISRUPTED << 16;
+ 		break;
+ 
+ 	case SCS_QUEUE_FULL:
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -439,7 +439,7 @@ static int qla4xxx_queuecommand(struct s
+ 			cmd->result = DID_NO_CONNECT << 16;
+ 			goto qc_fail_command;
+ 		}
+-		goto qc_host_busy;
++		return SCSI_MLQUEUE_TARGET_BUSY;
+ 	}
+ 
+ 	if (test_bit(DPC_RESET_HA_INTR, &ha->dpc_flags))
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -754,8 +754,12 @@ int scsi_dispatch_cmd(struct scsi_cmnd *
+ 	}
+ 	spin_unlock_irqrestore(host->host_lock, flags);
+ 	if (rtn) {
+-		scsi_queue_insert(cmd, (rtn == SCSI_MLQUEUE_DEVICE_BUSY) ?
+-						rtn : SCSI_MLQUEUE_HOST_BUSY);
++		if (rtn != SCSI_MLQUEUE_DEVICE_BUSY &&
++		    rtn != SCSI_MLQUEUE_TARGET_BUSY)
++			rtn = SCSI_MLQUEUE_HOST_BUSY;
++
++		scsi_queue_insert(cmd, rtn);
++
+ 		SCSI_LOG_MLQUEUE(3,
+ 		    printk("queuecommand : request rejected\n"));
+ 	}
+@@ -800,6 +804,7 @@ static struct scsi_driver *scsi_cmd_to_d
+ void scsi_finish_command(struct scsi_cmnd *cmd)
+ {
+ 	struct scsi_device *sdev = cmd->device;
++	struct scsi_target *starget = scsi_target(sdev);
+ 	struct Scsi_Host *shost = sdev->host;
+ 	struct scsi_driver *drv;
+ 	unsigned int good_bytes;
+@@ -815,6 +820,7 @@ void scsi_finish_command(struct scsi_cmn
+ 	 * XXX(hch): What about locking?
+          */
+         shost->host_blocked = 0;
++	starget->target_blocked = 0;
+         sdev->device_blocked = 0;
+ 
+ 	/*
+--- a/drivers/scsi/scsi_error.c
++++ b/drivers/scsi/scsi_error.c
+@@ -1219,6 +1219,40 @@ static void scsi_eh_offline_sdevs(struct
+ }
+ 
+ /**
++ * scsi_noretry_cmd - determinte if command should be failed fast
++ * @scmd:	SCSI cmd to examine.
++ */
++int scsi_noretry_cmd(struct scsi_cmnd *scmd)
++{
++	switch (host_byte(scmd->result)) {
++	case DID_OK:
++		break;
++	case DID_BUS_BUSY:
++		return blk_failfast_transport(scmd->request);
++	case DID_PARITY:
++		return blk_failfast_dev(scmd->request);
++	case DID_ERROR:
++		if (msg_byte(scmd->result) == COMMAND_COMPLETE &&
++		    status_byte(scmd->result) == RESERVATION_CONFLICT)
++			return 0;
++		/* fall through */
++	case DID_SOFT_ERROR:
++		return blk_failfast_driver(scmd->request);
++	}
++
++	switch (status_byte(scmd->result)) {
++	case CHECK_CONDITION:
++		/*
++		 * assume caller has checked sense and determinted
++		 * the check condition was retryable.
++		 */
++		return blk_failfast_dev(scmd->request);
++	}
++
++	return 0;
++}
++
++/**
+  * scsi_decide_disposition - Disposition a cmd on return from LLD.
+  * @scmd:	SCSI cmd to examine.
+  *
+@@ -1290,7 +1324,20 @@ int scsi_decide_disposition(struct scsi_
+ 
+ 	case DID_REQUEUE:
+ 		return ADD_TO_MLQUEUE;
+-
++	case DID_TRANSPORT_DISRUPTED:
++		/*
++		 * LLD/transport was disrupted during processing of the IO.
++		 * The transport class is now blocked/blocking,
++		 * and the transport will decide what to do with the IO
++		 * based on its timers and recovery capablilities.
++		 */
++		return ADD_TO_MLQUEUE;
++	case DID_TRANSPORT_FAILFAST:
++		/*
++		 * The transport decided to failfast the IO (most likely
++		 * the fast io fail tmo fired), so send IO directly upwards.
++		 */
++		return SUCCESS;
+ 	case DID_ERROR:
+ 		if (msg_byte(scmd->result) == COMMAND_COMPLETE &&
+ 		    status_byte(scmd->result) == RESERVATION_CONFLICT)
+@@ -1383,7 +1430,7 @@ int scsi_decide_disposition(struct scsi_
+ 	 * even if the request is marked fast fail, we still requeue
+ 	 * for queue congestion conditions (QUEUE_FULL or BUSY) */
+ 	if ((++scmd->retries) <= scmd->allowed
+-	    && !blk_noretry_request(scmd->request)) {
++	    && !scsi_noretry_cmd(scmd)) {
+ 		return NEEDS_RETRY;
+ 	} else {
+ 		/*
+@@ -1508,7 +1555,7 @@ void scsi_eh_flush_done_q(struct list_he
+ 	list_for_each_entry_safe(scmd, next, done_q, eh_entry) {
+ 		list_del_init(&scmd->eh_entry);
+ 		if (scsi_device_online(scmd->device) &&
+-		    !blk_noretry_request(scmd->request) &&
++		    !scsi_noretry_cmd(scmd) &&
+ 		    (++scmd->retries <= scmd->allowed)) {
+ 			SCSI_LOG_ERROR_RECOVERY(3, printk("%s: flush"
+ 							  " retry cmd: %p\n",
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -114,6 +114,7 @@ int scsi_queue_insert(struct scsi_cmnd *
+ {
+ 	struct Scsi_Host *host = cmd->device->host;
+ 	struct scsi_device *device = cmd->device;
++	struct scsi_target *starget = scsi_target(device);
+ 	struct request_queue *q = device->request_queue;
+ 	unsigned long flags;
+ 
+@@ -133,10 +134,17 @@ int scsi_queue_insert(struct scsi_cmnd *
+ 	 * if a command is requeued with no other commands outstanding
+ 	 * either for the device or for the host.
+ 	 */
+-	if (reason == SCSI_MLQUEUE_HOST_BUSY)
++	switch (reason) {
++	case SCSI_MLQUEUE_HOST_BUSY:
+ 		host->host_blocked = host->max_host_blocked;
+-	else if (reason == SCSI_MLQUEUE_DEVICE_BUSY)
++		break;
++	case SCSI_MLQUEUE_DEVICE_BUSY:
+ 		device->device_blocked = device->max_device_blocked;
++		break;
++	case SCSI_MLQUEUE_TARGET_BUSY:
++		starget->target_blocked = starget->max_target_blocked;
++		break;
++	}
+ 
+ 	/*
+ 	 * Decrement the counters, since these commands are no longer
+@@ -460,10 +468,12 @@ static void scsi_init_cmd_errh(struct sc
+ void scsi_device_unbusy(struct scsi_device *sdev)
+ {
+ 	struct Scsi_Host *shost = sdev->host;
++	struct scsi_target *starget = scsi_target(sdev);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(shost->host_lock, flags);
+ 	shost->host_busy--;
++	starget->target_busy--;
+ 	if (unlikely(scsi_host_in_recovery(shost) &&
+ 		     (shost->host_failed || shost->host_eh_scheduled)))
+ 		scsi_eh_wakeup(shost);
+@@ -519,6 +529,13 @@ static void scsi_single_lun_run(struct s
+ 	spin_unlock_irqrestore(shost->host_lock, flags);
+ }
+ 
++static inline int scsi_target_is_busy(struct scsi_target *starget)
++{
++	return ((starget->can_queue > 0 &&
++		 starget->target_busy >= starget->can_queue) ||
++		 starget->target_blocked);
++}
++
+ /*
+  * Function:	scsi_run_queue()
+  *
+@@ -533,7 +550,7 @@ static void scsi_single_lun_run(struct s
+  */
+ static void scsi_run_queue(struct request_queue *q)
+ {
+-	struct scsi_device *sdev = q->queuedata;
++	struct scsi_device *starved_head = NULL, *sdev = q->queuedata;
+ 	struct Scsi_Host *shost = sdev->host;
+ 	unsigned long flags;
+ 
+@@ -560,6 +577,21 @@ static void scsi_run_queue(struct reques
+ 		 */
+ 		sdev = list_entry(shost->starved_list.next,
+ 					  struct scsi_device, starved_entry);
++		/*
++		 * The *queue_ready functions can add a device back onto the
++		 * starved list's tail, so we must check for a infinite loop.
++		 */
++		if (sdev == starved_head)
++			break;
++		if (!starved_head)
++			starved_head = sdev;
++
++		if (scsi_target_is_busy(scsi_target(sdev))) {
++			list_move_tail(&sdev->starved_entry,
++				       &shost->starved_list);
++			continue;
++		}
++
+ 		list_del_init(&sdev->starved_entry);
+ 		spin_unlock(shost->host_lock);
+ 
+@@ -575,13 +607,6 @@ static void scsi_run_queue(struct reques
+ 		spin_unlock(sdev->request_queue->queue_lock);
+ 
+ 		spin_lock(shost->host_lock);
+-		if (unlikely(!list_empty(&sdev->starved_entry)))
+-			/*
+-			 * sdev lost a race, and was put back on the
+-			 * starved list. This is unlikely but without this
+-			 * in theory we could loop forever.
+-			 */
+-			break;
+ 	}
+ 	spin_unlock_irqrestore(shost->host_lock, flags);
+ 
+@@ -681,7 +706,7 @@ static struct scsi_cmnd *scsi_end_reques
+ 			leftover = req->data_len;
+ 
+ 		/* kill remainder if no retrys */
+-		if (error && blk_noretry_request(req))
++		if (error && scsi_noretry_cmd(cmd))
+ 			blk_end_request(req, error, leftover);
+ 		else {
+ 			if (requeue) {
+@@ -1344,6 +1369,52 @@ static inline int scsi_dev_queue_ready(s
+ 	return 1;
+ }
+ 
++
++/*
++ * scsi_target_queue_ready: checks if there we can send commands to target
++ * @sdev: scsi device on starget to check.
++ *
++ * Called with the host lock held.
++ */
++static inline int scsi_target_queue_ready(struct Scsi_Host *shost,
++					   struct scsi_device *sdev)
++{
++	struct scsi_target *starget = scsi_target(sdev);
++
++	if (starget->single_lun) {
++		if (starget->starget_sdev_user &&
++		    starget->starget_sdev_user != sdev)
++			return 0;
++		starget->starget_sdev_user = sdev;
++	}
++
++	if (starget->target_busy == 0 && starget->target_blocked) {
++		/*
++		 * unblock after target_blocked iterates to zero
++		 */
++		if (--starget->target_blocked == 0) {
++			SCSI_LOG_MLQUEUE(3, starget_printk(KERN_INFO, starget,
++					 "unblocking target at zero depth\n"));
++		} else {
++			blk_plug_device(sdev->request_queue);
++			return 0;
++		}
++	}
++
++	if (scsi_target_is_busy(starget)) {
++		if (list_empty(&sdev->starved_entry)) {
++			list_add_tail(&sdev->starved_entry,
++				      &shost->starved_list);
++			return 0;
++		}
++	}
++
++	/* We're OK to process the command, so we can't be starved */
++	if (!list_empty(&sdev->starved_entry))
++		list_del_init(&sdev->starved_entry);
++	return 1;
++}
++
+ /*
+  * scsi_host_queue_ready: if we can send requests to shost, return 1 else
+  * return 0. We must end up running the queue again whenever 0 is
+@@ -1390,6 +1461,7 @@ static void scsi_kill_request(struct req
+ {
+ 	struct scsi_cmnd *cmd = req->special;
+ 	struct scsi_device *sdev = cmd->device;
++	struct scsi_target *starget = scsi_target(sdev);
+ 	struct Scsi_Host *shost = sdev->host;
+ 
+ 	blkdev_dequeue_request(req);
+@@ -1413,6 +1485,7 @@ static void scsi_kill_request(struct req
+ 	spin_unlock(sdev->request_queue->queue_lock);
+ 	spin_lock(shost->host_lock);
+ 	shost->host_busy++;
++	starget->target_busy++;
+ 	spin_unlock(shost->host_lock);
+ 	spin_lock(sdev->request_queue->queue_lock);
+ 
+@@ -1550,14 +1623,13 @@ static void scsi_request_fn(struct reque
+ 			goto not_ready;
+ 		}
+ 
++		if (!scsi_target_queue_ready(shost, sdev))
++			goto not_ready;
++
+ 		if (!scsi_host_queue_ready(q, shost, sdev))
+ 			goto not_ready;
+-		if (scsi_target(sdev)->single_lun) {
+-			if (scsi_target(sdev)->starget_sdev_user &&
+-			    scsi_target(sdev)->starget_sdev_user != sdev)
+-				goto not_ready;
+-			scsi_target(sdev)->starget_sdev_user = sdev;
+-		}
++
++		scsi_target(sdev)->target_busy++;
+ 		shost->host_busy++;
+ 
+ 		/*
+--- a/drivers/scsi/scsi_priv.h
++++ b/drivers/scsi/scsi_priv.h
+@@ -59,6 +59,7 @@ void scsi_eh_ready_devs(struct Scsi_Host
+ 			struct list_head *done_q);
+ int scsi_eh_get_sense(struct list_head *work_q,
+ 		      struct list_head *done_q);
++int scsi_noretry_cmd(struct scsi_cmnd *scmd);
+ 
+ /* scsi_lib.c */
+ extern int scsi_maybe_unblock_host(struct scsi_device *sdev);
+--- a/drivers/scsi/scsi_scan.c
++++ b/drivers/scsi/scsi_scan.c
+@@ -419,6 +419,7 @@ static struct scsi_target *scsi_alloc_ta
+ 	dev->type = &scsi_target_type;
+ 	starget->id = id;
+ 	starget->channel = channel;
++	starget->can_queue = 0;
+ 	INIT_LIST_HEAD(&starget->siblings);
+ 	INIT_LIST_HEAD(&starget->devices);
+ 	starget->state = STARGET_CREATED;
+--- a/drivers/scsi/scsi_transport_fc.c
++++ b/drivers/scsi/scsi_transport_fc.c
+@@ -2133,8 +2133,7 @@ fc_attach_transport(struct fc_function_t
+ 	SETUP_PRIVATE_RPORT_ATTRIBUTE_RD(roles);
+ 	SETUP_PRIVATE_RPORT_ATTRIBUTE_RD(port_state);
+ 	SETUP_PRIVATE_RPORT_ATTRIBUTE_RD(scsi_target_id);
+-	if (ft->terminate_rport_io)
+-		SETUP_PRIVATE_RPORT_ATTRIBUTE_RW(fast_io_fail_tmo);
++	SETUP_PRIVATE_RPORT_ATTRIBUTE_RW(fast_io_fail_tmo);
+ 
+ 	BUG_ON(count > FC_RPORT_NUM_ATTRS);
+ 
+@@ -2328,6 +2327,22 @@ fc_remove_host(struct Scsi_Host *shost)
+ }
+ EXPORT_SYMBOL(fc_remove_host);
+ 
++static void fc_terminate_rport_io(struct fc_rport *rport)
++{
++	struct Scsi_Host *shost = rport_to_shost(rport);
++	struct fc_internal *i = to_fc_internal(shost->transportt);
++
++	/* Involve the LLDD if possible to terminate all io on the rport. */
++	if (i->f->terminate_rport_io)
++		i->f->terminate_rport_io(rport);
++
++	/*
++	 * must unblock to flush queued IO. The caller will have set
++	 * the port_state or flags, so that fc_remote_port_chkready will
++	 * fail IO.
++	 */
++	scsi_target_unblock(&rport->dev);
++}
+ 
+ /**
+  * fc_starget_delete - called to delete the scsi decendents of an rport
+@@ -2340,13 +2355,8 @@ fc_starget_delete(struct work_struct *wo
+ {
+ 	struct fc_rport *rport =
+ 		container_of(work, struct fc_rport, stgt_delete_work);
+-	struct Scsi_Host *shost = rport_to_shost(rport);
+-	struct fc_internal *i = to_fc_internal(shost->transportt);
+-
+-	/* Involve the LLDD if possible to terminate all io on the rport. */
+-	if (i->f->terminate_rport_io)
+-		i->f->terminate_rport_io(rport);
+ 
++	fc_terminate_rport_io(rport);
+ 	scsi_remove_target(&rport->dev);
+ }
+ 
+@@ -2372,10 +2382,7 @@ fc_rport_final_delete(struct work_struct
+ 	if (rport->flags & FC_RPORT_SCAN_PENDING)
+ 		scsi_flush_work(shost);
+ 
+-	/* involve the LLDD to terminate all pending i/o */
+-	if (i->f->terminate_rport_io)
+-		i->f->terminate_rport_io(rport);
+-
++	fc_terminate_rport_io(rport);
+ 	/*
+ 	 * Cancel any outstanding timers. These should really exist
+ 	 * only when rmmod'ing the LLDD and we're asking for
+@@ -2639,7 +2646,8 @@ fc_remote_port_add(struct Scsi_Host *sho
+ 
+ 				spin_lock_irqsave(shost->host_lock, flags);
+ 
+-				rport->flags &= ~FC_RPORT_DEVLOSS_PENDING;
++				rport->flags &= ~(FC_RPORT_FAST_FAIL_TIMEDOUT |
++						  FC_RPORT_DEVLOSS_PENDING);
+ 
+ 				/* if target, initiate a scan */
+ 				if (rport->scsi_target_id != -1) {
+@@ -2702,6 +2710,7 @@ fc_remote_port_add(struct Scsi_Host *sho
+ 			rport->port_id = ids->port_id;
+ 			rport->roles = ids->roles;
+ 			rport->port_state = FC_PORTSTATE_ONLINE;
++			rport->flags &= ~FC_RPORT_FAST_FAIL_TIMEDOUT;
+ 
+ 			if (fci->f->dd_fcrport_size)
+ 				memset(rport->dd_data, 0,
+@@ -2784,7 +2793,6 @@ void
+ fc_remote_port_delete(struct fc_rport  *rport)
+ {
+ 	struct Scsi_Host *shost = rport_to_shost(rport);
+-	struct fc_internal *i = to_fc_internal(shost->transportt);
+ 	int timeout = rport->dev_loss_tmo;
+ 	unsigned long flags;
+ 
+@@ -2830,7 +2838,7 @@ fc_remote_port_delete(struct fc_rport  *
+ 
+ 	/* see if we need to kill io faster than waiting for device loss */
+ 	if ((rport->fast_io_fail_tmo != -1) &&
+-	    (rport->fast_io_fail_tmo < timeout) && (i->f->terminate_rport_io))
++	    (rport->fast_io_fail_tmo < timeout))
+ 		fc_queue_devloss_work(shost, &rport->fail_io_work,
+ 					rport->fast_io_fail_tmo * HZ);
+ 
+@@ -2906,7 +2914,8 @@ fc_remote_port_rolechg(struct fc_rport
+ 			fc_flush_devloss(shost);
+ 
+ 		spin_lock_irqsave(shost->host_lock, flags);
+-		rport->flags &= ~FC_RPORT_DEVLOSS_PENDING;
++		rport->flags &= ~(FC_RPORT_FAST_FAIL_TIMEDOUT |
++				  FC_RPORT_DEVLOSS_PENDING);
+ 		spin_unlock_irqrestore(shost->host_lock, flags);
+ 
+ 		/* ensure any stgt delete functions are done */
+@@ -3001,6 +3010,7 @@ fc_timeout_deleted_rport(struct work_str
+ 	rport->supported_classes = FC_COS_UNSPECIFIED;
+ 	rport->roles = FC_PORT_ROLE_UNKNOWN;
+ 	rport->port_state = FC_PORTSTATE_NOTPRESENT;
++	rport->flags &= ~FC_RPORT_FAST_FAIL_TIMEDOUT;
+ 
+ 	/* remove the identifiers that aren't used in the consisting binding */
+ 	switch (fc_host->tgtid_bind_type) {
+@@ -3043,13 +3053,12 @@ fc_timeout_fail_rport_io(struct work_str
+ {
+ 	struct fc_rport *rport =
+ 		container_of(work, struct fc_rport, fail_io_work.work);
+-	struct Scsi_Host *shost = rport_to_shost(rport);
+-	struct fc_internal *i = to_fc_internal(shost->transportt);
+ 
+ 	if (rport->port_state != FC_PORTSTATE_BLOCKED)
+ 		return;
+ 
+-	i->f->terminate_rport_io(rport);
++	rport->flags |= FC_RPORT_FAST_FAIL_TIMEDOUT;
++	fc_terminate_rport_io(rport);
+ }
+ 
+ /**
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -374,10 +374,10 @@ int iscsi_session_chkready(struct iscsi_
+ 		err = 0;
+ 		break;
+ 	case ISCSI_SESSION_FAILED:
+-		err = DID_IMM_RETRY << 16;
++		err = DID_TRANSPORT_DISRUPTED << 16;
+ 		break;
+ 	case ISCSI_SESSION_FREE:
+-		err = DID_NO_CONNECT << 16;
++		err = DID_TRANSPORT_FAILFAST << 16;
+ 		break;
+ 	default:
+ 		err = DID_NO_CONNECT << 16;
+--- a/drivers/scsi/scsi_transport_spi.c
++++ b/drivers/scsi/scsi_transport_spi.c
+@@ -109,7 +109,9 @@ static int spi_execute(struct scsi_devic
+ 	for(i = 0; i < DV_RETRIES; i++) {
+ 		result = scsi_execute(sdev, cmd, dir, buffer, bufflen,
+ 				      sense, DV_TIMEOUT, /* retries */ 1,
+-				      REQ_FAILFAST);
++				      REQ_FAILFAST_DEV |
++				      REQ_FAILFAST_TRANSPORT |
++				      REQ_FAILFAST_DRIVER);
+ 		if (result & DRIVER_SENSE) {
+ 			struct scsi_sense_hdr sshdr_tmp;
+ 			if (!sshdr)
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -130,21 +130,36 @@ struct bio {
+ /*
+  * bio bi_rw flags
+  *
+- * bit 0 -- read (not set) or write (set)
++ * bit 0 -- data direction
++ *	If not set, bio is a read from device. If set, it's a write to device.
+  * bit 1 -- rw-ahead when set
+  * bit 2 -- barrier
+- * bit 3 -- fail fast, don't want low level driver retries
+- * bit 4 -- synchronous I/O hint: the block layer will unplug immediately
+- * bit 5 -- metadata request
+- * bit 6 -- discard sectors
++ *	Insert a serialization point in the IO queue, forcing previously
++ *	submitted IO to be completed before this oen is issued.
++ * bit 3 -- synchronous I/O hint: the block layer will unplug immediately
++ *	Note that this does NOT indicate that the IO itself is sync, just
++ *	that the block layer will not postpone issue of this IO by plugging.
++ * bit 4 -- metadata request
++ *	Used for tracing to differentiate metadata and data IO. May also
++ *	get some preferential treatment in the IO scheduler
++ * bit 5 -- discard sectors
++ *	Informs the lower level device that this range of sectors is no longer
++ *	used by the file system and may thus be freed by the device. Used
++ *	for flash based storage.
++ * bit 6 -- fail fast device errors
++ * bit 7 -- fail fast transport errors
++ * bit 8 -- fail fast driver errors
++ *	Don't want driver retries for any fast fail whatever the reason.
+  */
+ #define BIO_RW		0	/* Must match RW in req flags (blkdev.h) */
+ #define BIO_RW_AHEAD	1	/* Must match FAILFAST in req flags */
+ #define BIO_RW_BARRIER	2
+-#define BIO_RW_FAILFAST	3
+-#define BIO_RW_SYNC	4
+-#define BIO_RW_META	5
+-#define BIO_RW_DISCARD	6
++#define BIO_RW_SYNC	3
++#define BIO_RW_META	4
++#define BIO_RW_DISCARD	5
++#define BIO_RW_FAILFAST_DEV		6
++#define BIO_RW_FAILFAST_TRANSPORT	7
++#define BIO_RW_FAILFAST_DRIVER		8
+ 
+ /*
+  * upper 16 bits of bi_rw define the io priority of this bio
+@@ -171,7 +186,10 @@ struct bio {
+ #define bio_sectors(bio)	((bio)->bi_size >> 9)
+ #define bio_barrier(bio)	((bio)->bi_rw & (1 << BIO_RW_BARRIER))
+ #define bio_sync(bio)		((bio)->bi_rw & (1 << BIO_RW_SYNC))
+-#define bio_failfast(bio)	((bio)->bi_rw & (1 << BIO_RW_FAILFAST))
++#define bio_failfast_dev(bio)	((bio)->bi_rw &	(1 << BIO_RW_FAILFAST_DEV))
++#define bio_failfast_transport(bio)	\
++	((bio)->bi_rw & (1 << BIO_RW_FAILFAST_TRANSPORT))
++#define bio_failfast_driver(bio) ((bio)->bi_rw & (1 << BIO_RW_FAILFAST_DRIVER))
+ #define bio_rw_ahead(bio)	((bio)->bi_rw & (1 << BIO_RW_AHEAD))
+ #define bio_rw_meta(bio)	((bio)->bi_rw & (1 << BIO_RW_META))
+ #define bio_discard(bio)	((bio)->bi_rw & (1 << BIO_RW_DISCARD))
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -86,7 +86,9 @@ enum {
+  */
+ enum rq_flag_bits {
+ 	__REQ_RW,		/* not set, read. set, write */
+-	__REQ_FAILFAST,		/* no low level driver retries */
++	__REQ_FAILFAST_DEV,	/* no driver retries of device errors */
++	__REQ_FAILFAST_TRANSPORT, /* no driver retries of transport errors */
++	__REQ_FAILFAST_DRIVER,	/* no driver retries of driver errors */
+ 	__REQ_DISCARD,		/* request to discard sectors */
+ 	__REQ_SORTED,		/* elevator knows about this request */
+ 	__REQ_SOFTBARRIER,	/* may not be passed by ioscheduler */
+@@ -110,8 +112,10 @@ enum rq_flag_bits {
+ };
+ 
+ #define REQ_RW		(1 << __REQ_RW)
++#define REQ_FAILFAST_DEV	(1 << __REQ_FAILFAST_DEV)
++#define REQ_FAILFAST_TRANSPORT	(1 << __REQ_FAILFAST_TRANSPORT)
++#define REQ_FAILFAST_DRIVER	(1 << __REQ_FAILFAST_DRIVER)
+ #define REQ_DISCARD	(1 << __REQ_DISCARD)
+-#define REQ_FAILFAST	(1 << __REQ_FAILFAST)
+ #define REQ_SORTED	(1 << __REQ_SORTED)
+ #define REQ_SOFTBARRIER	(1 << __REQ_SOFTBARRIER)
+ #define REQ_HARDBARRIER	(1 << __REQ_HARDBARRIER)
+@@ -551,7 +555,12 @@ enum {
+ #define blk_special_request(rq)	((rq)->cmd_type == REQ_TYPE_SPECIAL)
+ #define blk_sense_request(rq)	((rq)->cmd_type == REQ_TYPE_SENSE)
+ 
+-#define blk_noretry_request(rq)	((rq)->cmd_flags & REQ_FAILFAST)
++#define blk_failfast_dev(rq)	((rq)->cmd_flags & REQ_FAILFAST_DEV)
++#define blk_failfast_transport(rq) ((rq)->cmd_flags & REQ_FAILFAST_TRANSPORT)
++#define blk_failfast_driver(rq)	((rq)->cmd_flags & REQ_FAILFAST_DRIVER)
++#define blk_noretry_request(rq)	(blk_failfast_dev(rq) ||	\
++				 blk_failfast_transport(rq) ||	\
++				 blk_failfast_driver(rq))
+ #define blk_rq_started(rq)	((rq)->cmd_flags & REQ_STARTED)
+ 
+ #define blk_account_rq(rq)	(blk_rq_started(rq) && (blk_fs_request(rq) || blk_discard_rq(rq)))
+--- a/include/scsi/scsi.h
++++ b/include/scsi/scsi.h
+@@ -381,6 +381,11 @@ static inline int scsi_is_wlun(unsigned
+ #define DID_IMM_RETRY   0x0c	/* Retry without decrementing retry count  */
+ #define DID_REQUEUE	0x0d	/* Requeue command (no immediate retry) also
+ 				 * without decrementing the retry count	   */
++#define DID_TRANSPORT_DISRUPTED 0x0e /* Transport error disrupted execution
++				      * and the driver blocked the port to
++				      * recover the link. Transport class will
++				      * retry or fail IO */
++#define DID_TRANSPORT_FAILFAST	0x0f /* Transport class fastfailed the io */
+ #define DRIVER_OK       0x00	/* Driver status                           */
+ 
+ /*
+@@ -426,6 +431,7 @@ static inline int scsi_is_wlun(unsigned
+ #define SCSI_MLQUEUE_HOST_BUSY   0x1055
+ #define SCSI_MLQUEUE_DEVICE_BUSY 0x1056
+ #define SCSI_MLQUEUE_EH_RETRY    0x1057
++#define SCSI_MLQUEUE_TARGET_BUSY 0x1058
+ 
+ /*
+  *  Use these to separate status msg and our bytes
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -238,6 +238,16 @@ struct scsi_target {
+ 						 * for the device at a time. */
+ 	unsigned int		pdt_1f_for_no_lun;	/* PDT = 0x1f */
+ 						/* means no lun present */
++	/* commands actually active on LLD. protected by host lock. */
++	unsigned int		target_busy;
++	/*
++	 * LLDs should set this in the slave_alloc host template callout.
++	 * If set to zero then there is not limit.
++	 */
++	unsigned int		can_queue;
++	unsigned int		target_blocked;
++	unsigned int		max_target_blocked;
++#define SCSI_DEFAULT_TARGET_BLOCKED	3
+ 
+ 	char			scsi_level;
+ 	struct execute_work	ew;
+--- a/include/scsi/scsi_transport_fc.h
++++ b/include/scsi/scsi_transport_fc.h
+@@ -357,6 +357,7 @@ struct fc_rport {	/* aka fc_starget_attr
+ /* bit field values for struct fc_rport "flags" field: */
+ #define FC_RPORT_DEVLOSS_PENDING	0x01
+ #define FC_RPORT_SCAN_PENDING		0x02
++#define FC_RPORT_FAST_FAIL_TIMEDOUT	0x03
+ 
+ #define	dev_to_rport(d)				\
+ 	container_of(d, struct fc_rport, dev)
+@@ -678,12 +679,15 @@ fc_remote_port_chkready(struct fc_rport
+ 		if (rport->roles & FC_PORT_ROLE_FCP_TARGET)
+ 			result = 0;
+ 		else if (rport->flags & FC_RPORT_DEVLOSS_PENDING)
+-			result = DID_IMM_RETRY << 16;
++			result = DID_TRANSPORT_DISRUPTED << 16;
+ 		else
+ 			result = DID_NO_CONNECT << 16;
+ 		break;
+ 	case FC_PORTSTATE_BLOCKED:
+-		result = DID_IMM_RETRY << 16;
++		if (rport->flags & FC_RPORT_FAST_FAIL_TIMEDOUT)
++			result = DID_TRANSPORT_FAILFAST << 16;
++		else
++			result = DID_TRANSPORT_DISRUPTED << 16;
+ 		break;
+ 	default:
+ 		result = DID_NO_CONNECT << 16;

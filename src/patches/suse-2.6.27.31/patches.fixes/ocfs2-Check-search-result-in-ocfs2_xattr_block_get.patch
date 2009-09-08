@@ -1,0 +1,40 @@
+From: Tiger Yang <tiger.yang@oracle.com>
+Date: Sun, 2 Nov 2008 19:04:21 +0800
+Subject: ocfs2: Check search result in ocfs2_xattr_block_get()
+
+ocfs2_xattr_block_get() calls ocfs2_xattr_search() to find an external
+xattr, but doesn't check the search result that is passed back via struct
+ocfs2_xattr_search. Add a check for search result, and pass back -ENODATA if
+the xattr search failed. This avoids a later NULL pointer error.
+
+Signed-off-by: Tiger Yang <tiger.yang@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/xattr.c |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/xattr.c
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/xattr.c
++++ linux-2.6.27-ocfs2/fs/ocfs2/xattr.c
+@@ -777,6 +777,11 @@ static int ocfs2_xattr_block_get(struct
+ 		goto cleanup;
+ 	}
+ 
++	if (xs->not_found) {
++		ret = -ENODATA;
++		goto cleanup;
++	}
++
+ 	xb = (struct ocfs2_xattr_block *)xs->xattr_bh->b_data;
+ 	size = le64_to_cpu(xs->here->xe_value_size);
+ 	if (buffer) {
+@@ -860,7 +865,7 @@ static int ocfs2_xattr_get(struct inode
+ 	down_read(&oi->ip_xattr_sem);
+ 	ret = ocfs2_xattr_ibody_get(inode, name_index, name, buffer,
+ 				    buffer_size, &xis);
+-	if (ret == -ENODATA)
++	if (ret == -ENODATA && di->i_xattr_loc)
+ 		ret = ocfs2_xattr_block_get(inode, name_index, name, buffer,
+ 					    buffer_size, &xbs);
+ 	up_read(&oi->ip_xattr_sem);

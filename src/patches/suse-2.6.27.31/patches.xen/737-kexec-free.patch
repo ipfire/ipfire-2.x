@@ -1,0 +1,26 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/6bb7f500d5e4
+# HG changeset 737 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1227611796 0
+# Node ID 6bb7f500d5e4a68007607863fa7bfe0c69d6eec7
+# Parent  1b68d09b868fdcd724c6b86eb2790748a9fd0bb7
+Subject: kexec: Don't pass limit_pages_to_max_mfn() regions to xen_destroy_contiguous_region().
+Patch-mainline: obsolete
+
+Signed-off-by: Keir Fraser <keir.fraser@citrix.com>
+Acked-by: jbeulich@novell.com
+
+Index: head-2008-11-25/kernel/kexec.c
+===================================================================
+--- head-2008-11-25.orig/kernel/kexec.c	2008-11-25 12:35:50.000000000 +0100
++++ head-2008-11-25/kernel/kexec.c	2008-11-25 13:31:12.000000000 +0100
+@@ -397,9 +397,6 @@ static void kimage_free_pages(struct pag
+ 	count = 1 << order;
+ 	for (i = 0; i < count; i++)
+ 		ClearPageReserved(page + i);
+-#ifdef CONFIG_XEN
+-	xen_destroy_contiguous_region((unsigned long)page_address(page), order);
+-#endif
+ 	__free_pages(page, order);
+ }
+ 

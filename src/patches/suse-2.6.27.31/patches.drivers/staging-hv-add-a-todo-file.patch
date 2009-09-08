@@ -1,0 +1,35 @@
+From foo@baz Wed Jul 15 10:21:36 PDT 2009
+Date: Wed, 15 Jul 2009 10:21:36 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: hv: add a TODO file
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+First cut at what needs to be done to this codebase.
+
+Cc: Hank Janssen <hjanssen@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/hv/TODO |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+--- /dev/null
++++ b/drivers/staging/hv/TODO
+@@ -0,0 +1,15 @@
++TODO:
++	- fix checkpatch warnings/errors
++	- fix sparse issues
++	- remove compatibility layer
++	- fix HANDLE usage to be "real" pointers
++	- audit the vmbus to verify it is working properly with the
++	  driver model
++	- see if the vmbus can be merged with the other virtual busses
++	  in the kernel
++	- audit the network driver
++	- audit the block driver
++	- audit the scsi driver
++
++Please send patches for this code to Greg Kroah-Hartman <gregkh@suse.de>
++and Hank Janssen <hjanssen@microsoft.com>

@@ -1,0 +1,58 @@
+From c50ff7c04225c945b13d410d50fde6ff6c59d7ee Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 6 Mar 2009 09:43:58 +0100
+Subject: ALSA: hda - Fix headphone-detect regression with multiple HP jacks
+Patch-mainline: 
+References: bnc#479558, bnc#482052
+
+The recent changes over the DAC detection mechanism in patch_sigmatel.c
+breaks the HP detection on the machines with multiple HP jacks.
+It's basically because of the workaround to support the multi-channel
+output.  Since the HP detection is more important feature, disable
+the HP-swap workaroud temporarily.
+
+Reference: Novell bnc#482052
+	https://bugzilla.novell.com/show_bug.cgi?id=482052
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_sigmatel.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -1205,7 +1205,7 @@ static const char *slave_vols[] = {
+ 	"LFE Playback Volume",
+ 	"Side Playback Volume",
+ 	"Headphone Playback Volume",
+-	"Headphone Playback Volume",
++	"Headphone2 Playback Volume",
+ 	"Speaker Playback Volume",
+ 	"External Speaker Playback Volume",
+ 	"Speaker2 Playback Volume",
+@@ -1219,7 +1219,7 @@ static const char *slave_sws[] = {
+ 	"LFE Playback Switch",
+ 	"Side Playback Switch",
+ 	"Headphone Playback Switch",
+-	"Headphone Playback Switch",
++	"Headphone2 Playback Switch",
+ 	"Speaker Playback Switch",
+ 	"External Speaker Playback Switch",
+ 	"Speaker2 Playback Switch",
+@@ -3477,6 +3477,7 @@ static int stac92xx_parse_auto_config(st
+ 	if (! spec->autocfg.line_outs)
+ 		return 0; /* can't find valid pin config */
+ 
++#if 0 /* FIXME: temporarily disabled */
+ 	/* If we have no real line-out pin and multiple hp-outs, HPs should
+ 	 * be set up as multi-channel outputs.
+ 	 */
+@@ -3496,6 +3497,7 @@ static int stac92xx_parse_auto_config(st
+ 		spec->autocfg.line_out_type = AUTO_PIN_HP_OUT;
+ 		spec->autocfg.hp_outs = 0;
+ 	}
++#endif /* FIXME: temporarily disabled */
+ 	if (spec->autocfg.mono_out_pin) {
+ 		int dir = get_wcaps(codec, spec->autocfg.mono_out_pin) &
+ 			(AC_WCAP_OUT_AMP | AC_WCAP_IN_AMP);

@@ -1,0 +1,97 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Kernel bug triggered in multipath
+References: bnc#486001
+
+Starting multipath on a cciss device will cause a kernel
+warning to be triggered. Problem is that we're using the
+->queuedata field of the request_queue to derefence the
+scsi device; however, for other (non-SCSI) devices this
+points to a totally different structure.
+So we should rather be using accessors here which make
+sure we're only returning valid SCSI device structures.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ drivers/scsi/device_handler/scsi_dh.c |   10 +++++-----
+ drivers/scsi/scsi_lib.c               |   11 +++++++++++
+ include/scsi/scsi_device.h            |    1 +
+ 3 files changed, 17 insertions(+), 5 deletions(-)
+
+--- a/drivers/scsi/device_handler/scsi_dh.c
++++ b/drivers/scsi/device_handler/scsi_dh.c
+@@ -427,7 +427,7 @@ int scsi_dh_activate(struct request_queu
+ 	struct scsi_device_handler *scsi_dh = NULL;
+ 
+ 	spin_lock_irqsave(q->queue_lock, flags);
+-	sdev = q->queuedata;
++	sdev = scsi_device_from_queue(q);
+ 	if (sdev && sdev->scsi_dh_data)
+ 		scsi_dh = sdev->scsi_dh_data->scsi_dh;
+ 	if (!scsi_dh || !get_device(&sdev->sdev_gendev))
+@@ -456,7 +456,7 @@ int scsi_dh_handler_exist(const char *na
+ EXPORT_SYMBOL_GPL(scsi_dh_handler_exist);
+ 
+ /*
+- * scsi_dh_handler_attach - Attach device handler
++ * scsi_dh_attach - Attach device handler
+  * @sdev - sdev the handler should be attached to
+  * @name - name of the handler to attach
+  */
+@@ -472,7 +472,7 @@ int scsi_dh_attach(struct request_queue 
+ 		return -EINVAL;
+ 
+ 	spin_lock_irqsave(q->queue_lock, flags);
+-	sdev = q->queuedata;
++	sdev = scsi_device_from_queue(q);
+ 	if (!sdev || !get_device(&sdev->sdev_gendev))
+ 		err = -ENODEV;
+ 	spin_unlock_irqrestore(q->queue_lock, flags);
+@@ -487,7 +487,7 @@ int scsi_dh_attach(struct request_queue 
+ EXPORT_SYMBOL_GPL(scsi_dh_attach);
+ 
+ /*
+- * scsi_dh_handler_detach - Detach device handler
++ * scsi_dh_detach - Detach device handler
+  * @sdev - sdev the handler should be detached from
+  *
+  * This function will detach the device handler only
+@@ -501,7 +501,7 @@ void scsi_dh_detach(struct request_queue
+ 	struct scsi_device_handler *scsi_dh = NULL;
+ 
+ 	spin_lock_irqsave(q->queue_lock, flags);
+-	sdev = q->queuedata;
++	sdev = scsi_device_from_queue(q);
+ 	if (!sdev || !get_device(&sdev->sdev_gendev))
+ 		sdev = NULL;
+ 	spin_unlock_irqrestore(q->queue_lock, flags);
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1696,6 +1696,17 @@ static void scsi_request_fn(struct reque
+ 	spin_lock_irq(q->queue_lock);
+ }
+ 
++struct scsi_device *scsi_device_from_queue(struct request_queue *q)
++{
++	struct scsi_device *sdev = NULL;
++
++	if (q->request_fn == scsi_request_fn)
++		sdev = q->queuedata;
++
++	return sdev;
++}
++EXPORT_SYMBOL_GPL(scsi_device_from_queue);
++
+ u64 scsi_calculate_bounce_limit(struct Scsi_Host *shost)
+ {
+ 	struct device *host_dev;
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -291,6 +291,7 @@ extern void starget_for_each_device(stru
+ extern void __starget_for_each_device(struct scsi_target *, void *,
+ 				      void (*fn)(struct scsi_device *,
+ 						 void *));
++extern struct scsi_device *scsi_device_from_queue(struct request_queue *);
+ 
+ /* only exposed to implement shost_for_each_device */
+ extern struct scsi_device *__scsi_iterate_devices(struct Scsi_Host *,

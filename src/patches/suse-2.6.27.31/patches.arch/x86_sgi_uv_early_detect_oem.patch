@@ -1,0 +1,33 @@
+From: Jack Steiner <steiner@sgi.com>
+Subject: x86, uv: add early detection of UV system types
+References: bnc#429984
+Patch-Mainline: yes
+
+I missed one line of the UV infrastructure patch.
+
+The code is already upstream as part of a larger UV patch
+but was somehow lost from the final UV infrastructure patch that was
+sent to SuSE.
+
+This change is necessary to detect that the system is a UV system prior
+to parsing the SRAT processor information.
+
+Mainline Commit: 2e42060c19cb79adacc48beb5e9ec5361df976a2
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+---
+ arch/x86/kernel/setup.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -818,6 +818,8 @@ void __init setup_arch(char **cmdline_p)
+ 	 */
+ 	acpi_boot_table_init();
+ 
++	early_acpi_boot_init();
++
+ #ifdef CONFIG_ACPI_NUMA
+ 	/*
+ 	 * Parse SRAT to discover nodes.

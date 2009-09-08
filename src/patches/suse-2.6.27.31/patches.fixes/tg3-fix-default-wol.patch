@@ -1,0 +1,46 @@
+From: Rafael J. Wysocki <rjw@suse.de>
+Subject: net (tg3): Fix failure to enable WoL by default when possible
+References: bnc#447371
+
+tg3 is supposed to enable WoL by default on adapters which support
+that, but it fails to do so unless the adapter's
+/sys/devices/.../power/wakeup file contains 'enabled' during the
+initialization of the adapter.  Fix that by making tg3 update the
+device's 'should_wakeup' bit automatically whenever WoL should be
+enabled by default.
+
+Signed-off-by: Rafael J. Wysocki <rjw@suse.de>
+---
+ drivers/net/tg3.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+Index: linux-2.6.27/drivers/net/tg3.c
+===================================================================
+--- linux-2.6.27.orig/drivers/net/tg3.c
++++ linux-2.6.27/drivers/net/tg3.c
+@@ -11340,9 +11340,10 @@ static void __devinit tg3_get_eeprom_hw_
+ 		if (val & VCPU_CFGSHDW_ASPM_DBNC)
+ 			tp->tg3_flags |= TG3_FLAG_ASPM_WORKAROUND;
+ 		if ((val & VCPU_CFGSHDW_WOL_ENABLE) &&
+-		    (val & VCPU_CFGSHDW_WOL_MAGPKT) &&
+-		    device_may_wakeup(&tp->pdev->dev))
++		    (val & VCPU_CFGSHDW_WOL_MAGPKT)) {
+ 			tp->tg3_flags |= TG3_FLAG_WOL_ENABLE;
++			device_set_wakeup_enable(&tp->pdev->dev, true);
++		}
+ 		return;
+ 	}
+ 
+@@ -11472,9 +11473,10 @@ static void __devinit tg3_get_eeprom_hw_
+ 			tp->tg3_flags &= ~TG3_FLAG_WOL_CAP;
+ 
+ 		if ((tp->tg3_flags & TG3_FLAG_WOL_CAP) &&
+-		    (nic_cfg & NIC_SRAM_DATA_CFG_WOL_ENABLE) &&
+-		    device_may_wakeup(&tp->pdev->dev))
++		    (nic_cfg & NIC_SRAM_DATA_CFG_WOL_ENABLE)) {
+ 			tp->tg3_flags |= TG3_FLAG_WOL_ENABLE;
++		    	device_set_wakeup_enable(&tp->pdev->dev, true);
++		}
+ 
+ 		if (cfg2 & (1 << 17))
+ 			tp->tg3_flags2 |= TG3_FLG2_CAPACITIVE_COUPLING;

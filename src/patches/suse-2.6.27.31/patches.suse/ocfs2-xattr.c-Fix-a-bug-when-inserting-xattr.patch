@@ -1,0 +1,31 @@
+From: Tao Ma <tao.ma@oracle.com>
+Subject: ocfs2/xattr.c: Fix a bug when inserting xattr.
+Patch-mainline: 2.6.28
+
+During the process of xatt insertion, we use binary search
+to find the right place and "low" is set to it. But when
+there is one xattr which has the same name hash as the inserted
+one, low is the wrong value. So set it to the right position.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/xattr.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27/fs/ocfs2/xattr.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/xattr.c
++++ linux-2.6.27/fs/ocfs2/xattr.c
+@@ -4019,8 +4019,10 @@ static void ocfs2_xattr_set_entry_normal
+ 			else if (name_hash <
+ 				 le32_to_cpu(tmp_xe->xe_name_hash))
+ 				high = tmp - 1;
+-			else
++			else {
++				low = tmp;
+ 				break;
++			}
+ 		}
+ 
+ 		xe = &xh->xh_entries[low];

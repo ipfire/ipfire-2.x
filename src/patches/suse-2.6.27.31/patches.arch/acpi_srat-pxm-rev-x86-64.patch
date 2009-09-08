@@ -1,0 +1,41 @@
+From: Kurt Garloff <garloff@suse.de>
+Subject: Use SRAT table rev to use 8bit or 32bit PXM fields (x86-64)
+References: bnc#503038
+
+In SRAT v1, we had 8bit proximity domain (PXM) fields; SRAT v2 provides
+32bits for these. The new fields were reserved before.
+According to the ACPI spec, the OS must disregrard reserved fields.
+
+x86-64 was rather inconsistent prior to this patch; it used 8 bits 
+for the pxm field in cpu_affinity, but 32 bits in mem_affinity.
+This patch makes it consistent: Either use 8 bits consistently (SRAT
+rev 1 or lower) or 32 bits (SRAT rev 2 or higher).
+
+This is patch 2/3.
+
+Signed-off-by: Kurt Garloff <garloff@suse.de>
+
+---
+ arch/x86/mm/srat_64.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/arch/x86/mm/srat_64.c
++++ b/arch/x86/mm/srat_64.c
+@@ -133,6 +133,8 @@ acpi_numa_processor_affinity_init(struct
+ 	if ((pa->flags & ACPI_SRAT_CPU_ENABLED) == 0)
+ 		return;
+ 	pxm = pa->proximity_domain_lo;
++	if (acpi_srat_revision >= 2)
++		pxm |= *((unsigned int*)pa->proximity_domain_hi) << 8;
+ 	node = setup_node(pxm);
+ 	if (node < 0) {
+ 		printk(KERN_ERR "SRAT: Too many proximity domains %x\n", pxm);
+@@ -243,6 +245,8 @@ acpi_numa_memory_affinity_init(struct ac
+ 	start = ma->base_address;
+ 	end = start + ma->length;
+ 	pxm = ma->proximity_domain;
++	if (acpi_srat_revision <= 1)
++		pxm &= 0xff;
+ 	node = setup_node(pxm);
+ 	if (node < 0) {
+ 		printk(KERN_ERR "SRAT: Too many proximity domains.\n");

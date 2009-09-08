@@ -1,0 +1,34 @@
+From foo@baz Mon Nov 17 15:55:52 PST 2008
+Date: Mon, 17 Nov 2008 15:55:52 -0800
+To: Greg KH <greg@kroah.com>
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: rt2860: enable WPA_SUPPLICANT support
+Patch-mainline: 2.6.29
+References: bnc#437959
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+This is needed in order to get NetworkManager to work properly
+with this driver.
+
+More details can be found at
+	https://bugzilla.novell.com/show_bug.cgi?id=437959
+
+Cc: Helmut Schaa <hschaa@novell.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/rt2860/Makefile |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/staging/rt2860/Makefile
++++ b/drivers/staging/rt2860/Makefile
+@@ -6,6 +6,8 @@ EXTRA_CFLAGS += -DRT2860
+ EXTRA_CFLAGS += -DCONFIG_STA_SUPPORT
+ EXTRA_CFLAGS += -DDBG
+ EXTRA_CFLAGS += -DDOT11_N_SUPPORT
++EXTRA_CFLAGS += -DWPA_SUPPLICANT_SUPPORT
++EXTRA_CFLAGS += -DNATIVE_WPA_SUPPLICANT_SUPPORT
+ 
+ rt2860sta-objs :=	\
+ 	common/md5.o		\

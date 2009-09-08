@@ -1,0 +1,116 @@
+From cf8d2c11cb77f129675478792122f50827e5b0ae Mon Sep 17 00:00:00 2001
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Date: Mon, 22 Jun 2009 15:09:13 -0400
+Subject: [PATCH 2/5] VFS: Add VFS helper functions for setting up private namespaces
+
+The purpose of this patch is to improve the remote mount path lookup
+support for distributed filesystems such as the NFSv4 client.
+
+When given a mount command of the form "mount server:/foo/bar /mnt", the
+NFSv4 client is required to look up the filehandle for "server:/", and
+then look up each component of the remote mount path "foo/bar" in order
+to find the directory that is actually going to be mounted on /mnt.
+Following that remote mount path may involve following symlinks,
+crossing server-side mount points and even following referrals to
+filesystem volumes on other servers.
+
+Since the standard VFS path lookup code already supports walking paths
+that contain all these features (using in-kernel automounts for
+following referrals) we would like to be able to reuse that rather than
+duplicate the full path traversal functionality in the NFSv4 client code.
+
+This patch therefore defines a VFS helper function create_mnt_ns(), that
+sets up a temporary filesystem namespace and attaches a root filesystem to
+it. It exports the create_mnt_ns() and put_mnt_ns() function for use by
+filesystem modules.
+
+Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: NeilBrown <neilb@suse.de>
+---
+ fs/namespace.c                |   45 ++++++++++++++++++++++++++++++++++--------
+ include/linux/mnt_namespace.h |    1 
+ 2 files changed, 38 insertions(+), 8 deletions(-)
+
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1939,6 +1939,21 @@ dput_out:
+ 	return retval;
+ }
+ 
++static struct mnt_namespace *alloc_mnt_ns(void)
++{
++	struct mnt_namespace *new_ns;
++
++	new_ns = kmalloc(sizeof(struct mnt_namespace), GFP_KERNEL);
++	if (!new_ns)
++		return ERR_PTR(-ENOMEM);
++	atomic_set(&new_ns->count, 1);
++	new_ns->root = NULL;
++	INIT_LIST_HEAD(&new_ns->list);
++	init_waitqueue_head(&new_ns->poll);
++	new_ns->event = 0;
++	return new_ns;
++}
++
+ /*
+  * Allocate a new namespace structure and populate it with contents
+  * copied from the namespace of the passed in task structure.
+@@ -1950,14 +1965,9 @@ static struct mnt_namespace *dup_mnt_ns(
+ 	struct vfsmount *rootmnt = NULL, *pwdmnt = NULL;
+ 	struct vfsmount *p, *q;
+ 
+-	new_ns = kmalloc(sizeof(struct mnt_namespace), GFP_KERNEL);
+-	if (!new_ns)
+-		return ERR_PTR(-ENOMEM);
+-
+-	atomic_set(&new_ns->count, 1);
+-	INIT_LIST_HEAD(&new_ns->list);
+-	init_waitqueue_head(&new_ns->poll);
+-	new_ns->event = 0;
++	new_ns = alloc_mnt_ns();
++	if (IS_ERR(new_ns))
++		return new_ns;
+ 
+ 	down_write(&namespace_sem);
+ 	/* First pass: copy the tree topology */
+@@ -2021,6 +2031,24 @@ struct mnt_namespace *copy_mnt_ns(unsign
+ 	return new_ns;
+ }
+ 
++/**
++ * create_mnt_ns - creates a private namespace and adds a root filesystem
++ * @mnt: pointer to the new root filesystem mountpoint
++ */
++struct mnt_namespace *create_mnt_ns(struct vfsmount *mnt)
++{
++	struct mnt_namespace *new_ns;
++
++	new_ns = alloc_mnt_ns();
++	if (!IS_ERR(new_ns)) {
++		mnt->mnt_ns = new_ns;
++		new_ns->root = mnt;
++		list_add(&new_ns->list, &new_ns->root->mnt_list);
++	}
++	return new_ns;
++}
++EXPORT_SYMBOL(create_mnt_ns);
++
+ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+ 		char __user *, type, unsigned long, flags, void __user *, data)
+ {
+@@ -2328,3 +2356,4 @@ void put_mnt_ns(struct mnt_namespace *ns
+ 	release_mounts(&umount_list);
+ 	kfree(ns);
+ }
++EXPORT_SYMBOL(put_mnt_ns);
+--- a/include/linux/mnt_namespace.h
++++ b/include/linux/mnt_namespace.h
+@@ -22,6 +22,7 @@ struct proc_mounts {
+ 	int event;
+ };
+ 
++extern struct mnt_namespace *create_mnt_ns(struct vfsmount *mnt);
+ extern struct mnt_namespace *copy_mnt_ns(unsigned long, struct mnt_namespace *,
+ 		struct fs_struct *);
+ extern void put_mnt_ns(struct mnt_namespace *ns);

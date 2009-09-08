@@ -1,0 +1,22 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] SoN: Fix initialization of ipv4_route_lock
+References: bnc#435994
+
+ It's CONFIG_PROC_FS, not CONFIG_PROCFS.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ net/ipv4/route.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -3330,7 +3330,7 @@ int __init ip_rt_init(void)
+ 	ipv4_dst_ops.gc_thresh = (rt_hash_mask + 1);
+ 	ip_rt_max_size = (rt_hash_mask + 1) * 16;
+ 
+-#ifdef CONFIG_PROCFS
++#ifdef CONFIG_PROC_FS
+ 	mutex_init(&ipv4_route_lock);
+ #endif
+ 

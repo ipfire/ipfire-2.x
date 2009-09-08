@@ -1,0 +1,66 @@
+From: Anton Blanchard <anton@samba.org>
+Subject: mm: enable hashdist by default on 64bit NUMA
+References: bnc#501160
+Patch-upstream: yes
+Git: c2fdf3a9b2d52842808a8e551b53b55dd9b45030
+
+    mm: enable hashdist by default on 64bit NUMA
+    
+    On PowerPC we allocate large boot time hashes on node 0.  This leads to an
+    imbalance in the free memory, for example on a 64GB box (4 x 16GB nodes):
+    
+    Free memory:
+    Node 0: 97.03%
+    Node 1: 98.54%
+    Node 2: 98.42%
+    Node 3: 98.53%
+    
+    If we switch to using vmalloc (like ia64 and x86-64) things are more
+    balanced:
+    
+    Free memory:
+    Node 0: 97.53%
+    Node 1: 98.35%
+    Node 2: 98.33%
+    Node 3: 98.33%
+    
+    For many HPC applications we are limited by the free available memory on
+    the smallest node, so even though the same amount of memory is used the
+    better balancing helps.
+    
+    Since all 64bit NUMA capable architectures should have sufficient vmalloc
+    space, it makes sense to enable it via CONFIG_64BIT.
+    
+    Signed-off-by: Anton Blanchard <anton@samba.org>
+    Acked-by: David S. Miller <davem@davemloft.net>
+    Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+    Acked-by: Ralf Baechle <ralf@linux-mips.org>
+    Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+    Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+    Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+    Cc: Richard Henderson <rth@twiddle.net>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+Acked-by: Nick Piggin <npiggin@suse.de>
+
+---
+ include/linux/bootmem.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/include/linux/bootmem.h
++++ b/include/linux/bootmem.h
+@@ -144,10 +144,10 @@ extern void *alloc_large_system_hash(con
+ 
+ #define HASH_EARLY	0x00000001	/* Allocating during early boot? */
+ 
+-/* Only NUMA needs hash distribution.
+- * IA64 and x86_64 have sufficient vmalloc space.
++/* Only NUMA needs hash distribution. 64bit NUMA architectures have
++ * sufficient vmalloc space.
+  */
+-#if defined(CONFIG_NUMA) && (defined(CONFIG_IA64) || defined(CONFIG_X86_64))
++#if defined(CONFIG_NUMA) && defined(CONFIG_64BIT)
+ #define HASHDIST_DEFAULT 1
+ #else
+ #define HASHDIST_DEFAULT 0

@@ -1,0 +1,34 @@
+From: Mark Fasheh <mfasheh@suse.com>
+Date: Tue May 19 15:58:33 PDT 2009
+Subject: ocfs2: really add ACL Kconfig
+Patch-mainline: 2.6.29
+Refrences: bnc#499278
+
+The patch patches.suse/ocfs2-add-mount-option-and-Kconfig-option-for-acl.patch
+was supposed to add Kconfig and mount options for ocfs2 ACL support.
+
+Unfortunately, the Kconfig change got left out. This fixes the problem by adding
+the appropriate lines to fs/Kconfig.
+
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+
+Index: linux-2.6.27-SLE11_BRANCH/fs/Kconfig
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/Kconfig
++++ linux-2.6.27-SLE11_BRANCH/fs/Kconfig
+@@ -507,6 +507,15 @@ config OCFS2_COMPAT_JBD
+ 	  is backwards compatible with JBD.  It is safe to say N here.
+ 	  However, if you really want to use the original JBD, say Y here.
+ 
++config OCFS2_FS_POSIX_ACL
++	bool "OCFS2 POSIX Access Control Lists"
++	depends on OCFS2_FS
++	select FS_POSIX_ACL
++	default n
++	help
++	  Posix Access Control Lists (ACLs) support permissions for users and
++	  groups beyond the owner/group/world scheme.
++
+ endif # BLOCK
+ 
+ config DNOTIFY

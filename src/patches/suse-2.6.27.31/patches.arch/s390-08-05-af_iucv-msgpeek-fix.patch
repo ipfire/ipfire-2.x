@@ -1,0 +1,39 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: af_iucv: System hang if recvmsg() is used with MSG_PEEK
+References: bnc#466462,LTC#51136
+
+Symptom:     Receiving socket data with MSG_PEEK flag set causes systen hang
+Problem:     If iucv_sock_recvmsg() is called with MSG_PEEK flag set,
+             the skb is enqueued twice. If the socket is then closed, the
+             pointer to the skb is also freed twice and causes a kernel oops.
+Solution:    Remove the skb_queue_head() call for MSG_PEEK, because the
+             skb_recv_datagram() function already handles MSG_PEEK (it
+             actually does not dequeue the skb).
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ net/iucv/af_iucv.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/net/iucv/af_iucv.c
++++ b/net/iucv/af_iucv.c
+@@ -789,6 +789,8 @@ static int iucv_sock_recvmsg(struct kioc
+ 
+ 	target = sock_rcvlowat(sk, flags & MSG_WAITALL, len);
+ 
++	/* receive/dequeue next skb:
++	 * the function understands MSG_PEEK and, thus, does not dequeue skb */
+ 	skb = skb_recv_datagram(sk, flags, noblock, &err);
+ 	if (!skb) {
+ 		if (sk->sk_shutdown & RCV_SHUTDOWN)
+@@ -836,9 +838,7 @@ static int iucv_sock_recvmsg(struct kioc
+ 				iucv_process_message_q(sk);
+ 			spin_unlock_bh(&iucv->message_q.lock);
+ 		}
+-
+-	} else
+-		skb_queue_head(&sk->sk_receive_queue, skb);
++	}
+ 
+ done:
+ 	return err ? : copied;

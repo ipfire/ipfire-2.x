@@ -1,0 +1,93 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: sclp: consider "mem=" kernel parameter for standby memory
+References: bnc#477666,LTC#51741
+
+Symptom:     zfcpdump exits with "panic: out of memory"
+Problem:     Standby memory detected with the sclp interface always gets
+             registered with add_memory calls without considering the
+             limitations that the "mem=" kernel paramater imply.
+             zfcpdump uses "mem=32M". In case there is approximately 2GB of
+             standby memory present all usable memory will be used for
+             struct pages needed for standby memory. This in turn leads
+             to an early out of memory situation and a panic.
+Solution:    Only register standby memory that is below the address specified
+             with the "mem=" kernel parameter.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ arch/s390/include/asm/setup.h |    2 ++
+ arch/s390/kernel/setup.c      |    9 +++++++--
+ drivers/s390/char/sclp_cmd.c  |    5 +++++
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+
+Index: linux-sles11/arch/s390/include/asm/setup.h
+===================================================================
+--- linux-sles11.orig/arch/s390/include/asm/setup.h
++++ linux-sles11/arch/s390/include/asm/setup.h
+@@ -43,6 +43,8 @@ struct mem_chunk {
+ 
+ extern struct mem_chunk memory_chunk[];
+ extern unsigned long real_memory_size;
++extern int memory_end_set;
++extern unsigned long memory_end;
+ 
+ void detect_memory_layout(struct mem_chunk chunk[]);
+ 
+Index: linux-sles11/arch/s390/kernel/setup.c
+===================================================================
+--- linux-sles11.orig/arch/s390/kernel/setup.c
++++ linux-sles11/arch/s390/kernel/setup.c
+@@ -81,7 +81,9 @@ char elf_platform[ELF_PLATFORM_SIZE];
+ 
+ struct mem_chunk __initdata memory_chunk[MEMORY_CHUNKS];
+ volatile int __cpu_logical_map[NR_CPUS]; /* logical cpu to cpu address */
+-static unsigned long __initdata memory_end;
++
++int __initdata memory_end_set;
++unsigned long __initdata memory_end;
+ 
+ /*
+  * This is set up by the setup-routine at boot-time
+@@ -280,6 +282,7 @@ void (*pm_power_off)(void) = machine_pow
+ static int __init early_parse_mem(char *p)
+ {
+ 	memory_end = memparse(p, &p);
++	memory_end_set = 1;
+ 	return 0;
+ }
+ early_param("mem", early_parse_mem);
+@@ -501,8 +504,10 @@ static void __init setup_memory_end(void
+ 	int i;
+ 
+ #if defined(CONFIG_ZFCPDUMP) || defined(CONFIG_ZFCPDUMP_MODULE)
+-	if (ipl_info.type == IPL_TYPE_FCP_DUMP)
++	if (ipl_info.type == IPL_TYPE_FCP_DUMP) {
+ 		memory_end = ZFCPDUMP_HSA_SIZE;
++		memory_end_set = 1;
++	}
+ #endif
+ 	memory_size = 0;
+ 	memory_end &= PAGE_MASK;
+Index: linux-sles11/drivers/s390/char/sclp_cmd.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/char/sclp_cmd.c
++++ linux-sles11/drivers/s390/char/sclp_cmd.c
+@@ -18,6 +18,7 @@
+ #include <linux/memory.h>
+ #include <asm/chpid.h>
+ #include <asm/sclp.h>
++#include <asm/setup.h>
+ 
+ #include "sclp.h"
+ 
+@@ -470,6 +471,10 @@ static void __init add_memory_merged(u16
+ 		goto skip_add;
+ 	if (start + size > VMEM_MAX_PHYS)
+ 		size = VMEM_MAX_PHYS - start;
++	if (memory_end_set && (start >= memory_end))
++		goto skip_add;
++	if (memory_end_set && (start + size > memory_end))
++		size = memory_end - start;
+ 	add_memory(0, start, size);
+ skip_add:
+ 	first_rn = rn;

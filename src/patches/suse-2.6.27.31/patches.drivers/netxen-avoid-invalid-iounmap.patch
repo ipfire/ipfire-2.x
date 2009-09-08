@@ -1,0 +1,36 @@
+From 3bfafd6b136bea2de9bd96c01b7e3808635a15b2 Mon Sep 17 00:00:00 2001
+From: Dhananjay Phadke <dhananjay@netxen.com>
+Date: Fri, 16 Jan 2009 11:03:01 -0800
+Subject: netxen: avoid invalid iounmap
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472416
+
+For NX3031 only one I/O range is mapped, so unmapping other
+two which are used by older chips, causes this warning on
+ppc64.
+
+"Attempt to iounmap early bolted mapping at 0x0000000000000000"
+
+Signed-off-by: Dhananjay Phadke <dhananjay@netxen.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/netxen/netxen_nic_main.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.27-kketmp/drivers/net/netxen/netxen_nic_main.c
+===================================================================
+--- linux-2.6.27-kketmp.orig/drivers/net/netxen/netxen_nic_main.c
++++ linux-2.6.27-kketmp/drivers/net/netxen/netxen_nic_main.c
+@@ -993,8 +993,10 @@ static void __devexit netxen_nic_remove(
+ 
+ 	iounmap(adapter->ahw.db_base);
+ 	iounmap(adapter->ahw.pci_base0);
+-	iounmap(adapter->ahw.pci_base1);
+-	iounmap(adapter->ahw.pci_base2);
++	if (adapter->ahw.pci_base1 != NULL)
++		iounmap(adapter->ahw.pci_base1);
++	if (adapter->ahw.pci_base2 != NULL)
++		iounmap(adapter->ahw.pci_base2);
+ 
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);

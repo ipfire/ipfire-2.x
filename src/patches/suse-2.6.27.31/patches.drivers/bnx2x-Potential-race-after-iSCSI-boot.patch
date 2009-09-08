@@ -1,0 +1,62 @@
+From b4661739c67acd15a02f8e112f8cc52d24b609ed Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 06:43:56 +0000
+Subject: bnx2x: Potential race after iSCSI boot
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+The lock was release too soon. Make sure the HW is marked as locked until the
+boot driver was unloaded from FW perspective
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |   14 +++++++++-----
+ 1 files changed, 9 insertions(+), 5 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -6877,10 +6877,6 @@ static void __devinit bnx2x_undi_unload(
+ 		 */
+ 		bnx2x_acquire_hw_lock(bp, HW_LOCK_RESOURCE_UNDI);
+ 		val = REG_RD(bp, DORQ_REG_NORM_CID_OFST);
+-		if (val == 0x7)
+-			REG_WR(bp, DORQ_REG_NORM_CID_OFST, 0);
+-		bnx2x_release_hw_lock(bp, HW_LOCK_RESOURCE_UNDI);
+-
+ 		if (val == 0x7) {
+ 			u32 reset_code = DRV_MSG_CODE_UNLOAD_REQ_WOL_DIS;
+ 			/* save our func */
+@@ -6888,6 +6884,9 @@ static void __devinit bnx2x_undi_unload(
+ 			u32 swap_en;
+ 			u32 swap_val;
+ 
++			/* clear the UNDI indication */
++			REG_WR(bp, DORQ_REG_NORM_CID_OFST, 0);
++
+ 			BNX2X_DEV_INFO("UNDI is active! reset device\n");
+ 
+ 			/* try unload UNDI on port 0 */
+@@ -6913,6 +6912,9 @@ static void __devinit bnx2x_undi_unload(
+ 				bnx2x_fw_command(bp, reset_code);
+ 			}
+ 
++			/* now it's safe to release the lock */
++			bnx2x_release_hw_lock(bp, HW_LOCK_RESOURCE_UNDI);
++
+ 			REG_WR(bp, (BP_PORT(bp) ? HC_REG_CONFIG_1 :
+ 				    HC_REG_CONFIG_0), 0x1000);
+ 
+@@ -6957,7 +6959,9 @@ static void __devinit bnx2x_undi_unload(
+ 			bp->fw_seq =
+ 			       (SHMEM_RD(bp, func_mb[bp->func].drv_mb_header) &
+ 				DRV_MSG_SEQ_NUMBER_MASK);
+-		}
++
++		} else
++			bnx2x_release_hw_lock(bp, HW_LOCK_RESOURCE_UNDI);
+ 	}
+ }
+ 

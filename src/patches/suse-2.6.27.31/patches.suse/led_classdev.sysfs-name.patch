@@ -1,0 +1,55 @@
+Subject: use correct name for /sys/devices/virtual/leds/ entries
+From: olh@suse.de
+References: 468350
+
+the low hanging fruits
+
+---
+ drivers/leds/leds-cobalt-qube.c   |    2 +-
+ drivers/leds/leds-cobalt-raq.c    |    4 ++--
+ drivers/leds/ledtrig-default-on.c |    2 +-
+ drivers/macintosh/via-pmu-led.c   |    2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+--- a/drivers/leds/leds-cobalt-qube.c
++++ b/drivers/leds/leds-cobalt-qube.c
+@@ -28,7 +28,7 @@ static void qube_front_led_set(struct le
+ }
+ 
+ static struct led_classdev qube_front_led = {
+-	.name			= "qube-front",
++	.name			= "qube::front",
+ 	.brightness		= LED_FULL,
+ 	.brightness_set		= qube_front_led_set,
+ 	.default_trigger	= "ide-disk",
+--- a/drivers/leds/leds-cobalt-raq.c
++++ b/drivers/leds/leds-cobalt-raq.c
+@@ -49,7 +49,7 @@ static void raq_web_led_set(struct led_c
+ }
+ 
+ static struct led_classdev raq_web_led = {
+-	.name		= "raq-web",
++	.name		= "raq::web",
+ 	.brightness_set	= raq_web_led_set,
+ };
+ 
+@@ -70,7 +70,7 @@ static void raq_power_off_led_set(struct
+ }
+ 
+ static struct led_classdev raq_power_off_led = {
+-	.name			= "raq-power-off",
++	.name			= "raq::power-off",
+ 	.brightness_set		= raq_power_off_led_set,
+ 	.default_trigger	= "power-off",
+ };
+--- a/drivers/macintosh/via-pmu-led.c
++++ b/drivers/macintosh/via-pmu-led.c
+@@ -72,7 +72,7 @@ static void pmu_led_set(struct led_class
+ }
+ 
+ static struct led_classdev pmu_led = {
+-	.name = "pmu-front-led",
++	.name = "pmu-led::front",
+ #ifdef CONFIG_ADB_PMU_LED_IDE
+ 	.default_trigger = "ide-disk",
+ #endif

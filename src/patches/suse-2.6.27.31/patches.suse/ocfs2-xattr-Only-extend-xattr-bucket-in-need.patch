@@ -1,0 +1,36 @@
+From: Tao Ma <tao.ma@oracle.com>
+Date: Wed, 12 Nov 2008 08:26:57 +0800
+Subject: ocfs2/xattr: Only extend xattr bucket in need.
+Patch-mainline: 2.6.29
+
+When the first block of a bucket is filled up with xattr
+entries, we normally extend the bucket. But if we are
+just replace one xattr with small length, we don't need
+to extend it. This is important since we will calculate
+what we need before the transaction and in this situation
+no resources will be allocated.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/xattr.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index d8fc714..4501c63 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -4564,7 +4564,9 @@ try_again:
+ 	     free, need, max_free, le16_to_cpu(xh->xh_free_start),
+ 	     le16_to_cpu(xh->xh_name_value_len));
+ 
+-	if (free < need || count == ocfs2_xattr_max_xe_in_bucket(inode->i_sb)) {
++	if (free < need ||
++	    (xs->not_found &&
++	     count == ocfs2_xattr_max_xe_in_bucket(inode->i_sb))) {
+ 		if (need <= max_free &&
+ 		    count < ocfs2_xattr_max_xe_in_bucket(inode->i_sb)) {
+ 			/*
+-- 
+1.5.6
+

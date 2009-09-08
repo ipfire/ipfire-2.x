@@ -1,0 +1,41 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: invalid return value on failing fsf_req creation
+References: bnc#450096
+
+Symptom:     I/O stops unrecoverably
+Problem:     An ERR_PTR is returned where a NULL value is expected
+Solution:    Fix the two instances
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_fsf.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_fsf.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_fsf.c
++++ linux-sles11/drivers/s390/scsi/zfcp_fsf.c
+@@ -932,8 +932,10 @@ struct zfcp_fsf_req *zfcp_fsf_abort_fcp_
+ 		goto out;
+ 	req = zfcp_fsf_req_create(adapter, FSF_QTCB_ABORT_FCP_CMND,
+ 				  req_flags, adapter->pool.fsf_req_abort);
+-	if (IS_ERR(req))
++	if (IS_ERR(req)) {
++		req = NULL;
+ 		goto out;
++	}
+ 
+ 	if (unlikely(!(atomic_read(&unit->status) &
+ 		       ZFCP_STATUS_COMMON_UNBLOCKED)))
+@@ -2448,8 +2450,10 @@ struct zfcp_fsf_req *zfcp_fsf_send_fcp_c
+ 		goto out;
+ 	req = zfcp_fsf_req_create(adapter, FSF_QTCB_FCP_CMND, req_flags,
+ 				  adapter->pool.fsf_req_scsi);
+-	if (IS_ERR(req))
++	if (IS_ERR(req)) {
++		req = NULL;
+ 		goto out;
++	}
+ 
+ 	req->status |= ZFCP_STATUS_FSFREQ_TASK_MANAGEMENT;
+ 	req->data = unit;

@@ -1,0 +1,106 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/63be3e5e2f1a
+# HG changeset 805+806 patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1236264120 0
+# Node ID 63be3e5e2f1a132ce062c446a7d742e3523cf16b
+# Parent  f3de83c4677ff77eaf445b3182f00169f6982ce3
+Subject: linux/blkfront: use blk_rq_map_sg to generate ring entries
+Patch-mainline: 2.6.29
+References: bnc#470238
+
+Signed-off-by: Jens Axboe <jens.axboe@oracle.com>
+Signed-off-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+Signed-off-by: Jan Beulich <jbeulich@novell.com>
+
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/0430b1dbfb3a
+blkfront: Fix the build by expanding sg_init_table() in place.
+
+Signed-off-by: Keir Fraser <keir.fraser@citrix.com>
+
+--- sle11-2009-03-24.orig/drivers/xen/blkfront/blkfront.c	2009-03-24 10:00:15.000000000 +0100
++++ sle11-2009-03-24/drivers/xen/blkfront/blkfront.c	2009-03-05 15:42:00.000000000 +0100
+@@ -40,6 +40,7 @@
+ #include <linux/cdrom.h>
+ #include <linux/sched.h>
+ #include <linux/interrupt.h>
++#include <linux/scatterlist.h>
+ #include <scsi/scsi.h>
+ #include <xen/evtchn.h>
+ #include <xen/xenbus.h>
+@@ -232,6 +233,8 @@ static int setup_blkring(struct xenbus_d
+ 	SHARED_RING_INIT(sring);
+ 	FRONT_RING_INIT(&info->ring, sring, PAGE_SIZE);
+ 
++	memset(info->sg, 0, sizeof(info->sg));
++
+ 	err = xenbus_grant_ring(dev, virt_to_mfn(info->ring.sring));
+ 	if (err < 0) {
+ 		free_page((unsigned long)sring);
+@@ -587,13 +590,11 @@ static int blkif_queue_request(struct re
+ 	struct blkfront_info *info = req->rq_disk->private_data;
+ 	unsigned long buffer_mfn;
+ 	blkif_request_t *ring_req;
+-	struct bio *bio;
+-	struct bio_vec *bvec;
+-	int idx;
+ 	unsigned long id;
+ 	unsigned int fsect, lsect;
+-	int ref;
++	int i, ref;
+ 	grant_ref_t gref_head;
++	struct scatterlist *sg;
+ 
+ 	if (unlikely(info->connected != BLKIF_STATE_CONNECTED))
+ 		return 1;
+@@ -622,14 +623,13 @@ static int blkif_queue_request(struct re
+ 	if (blk_barrier_rq(req))
+ 		ring_req->operation = BLKIF_OP_WRITE_BARRIER;
+ 
+-	ring_req->nr_segments = 0;
+-	rq_for_each_bio (bio, req) {
+-		bio_for_each_segment (bvec, bio, idx) {
+-			BUG_ON(ring_req->nr_segments
+-			       == BLKIF_MAX_SEGMENTS_PER_REQUEST);
+-			buffer_mfn = page_to_phys(bvec->bv_page) >> PAGE_SHIFT;
+-			fsect = bvec->bv_offset >> 9;
+-			lsect = fsect + (bvec->bv_len >> 9) - 1;
++	ring_req->nr_segments = blk_rq_map_sg(req->q, req, info->sg);
++	BUG_ON(ring_req->nr_segments > BLKIF_MAX_SEGMENTS_PER_REQUEST);
++	for (i = 0; i < ring_req->nr_segments; ++i) {
++			sg = info->sg + i;
++			buffer_mfn = page_to_phys(sg->page) >> PAGE_SHIFT;
++			fsect = sg->offset >> 9;
++			lsect = fsect + (sg->length >> 9) - 1;
+ 			/* install a grant reference. */
+ 			ref = gnttab_claim_grant_reference(&gref_head);
+ 			BUG_ON(ref == -ENOSPC);
+@@ -640,17 +640,12 @@ static int blkif_queue_request(struct re
+ 				buffer_mfn,
+ 				rq_data_dir(req) ? GTF_readonly : 0 );
+ 
+-			info->shadow[id].frame[ring_req->nr_segments] =
+-				mfn_to_pfn(buffer_mfn);
+-
+-			ring_req->seg[ring_req->nr_segments] =
++			info->shadow[id].frame[i] = mfn_to_pfn(buffer_mfn);
++			ring_req->seg[i] =
+ 				(struct blkif_request_segment) {
+ 					.gref       = ref,
+ 					.first_sect = fsect,
+ 					.last_sect  = lsect };
+-
+-			ring_req->nr_segments++;
+-		}
+ 	}
+ 
+ 	info->ring.req_prod_pvt++;
+--- sle11-2009-03-24.orig/drivers/xen/blkfront/block.h	2009-03-24 10:00:15.000000000 +0100
++++ sle11-2009-03-24/drivers/xen/blkfront/block.h	2009-03-05 15:42:00.000000000 +0100
+@@ -103,6 +103,7 @@ struct blkfront_info
+ 	int connected;
+ 	int ring_ref;
+ 	blkif_front_ring_t ring;
++	struct scatterlist sg[BLKIF_MAX_SEGMENTS_PER_REQUEST];
+ 	unsigned int irq;
+ 	struct xlbd_major_info *mi;
+ 	request_queue_t *rq;

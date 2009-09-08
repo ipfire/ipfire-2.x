@@ -1,0 +1,31 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.8
+
+Upstream 2.6.27.8 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.kernel.org/patch-2.6.27.7-8" by xen-port-patches.py
+
+--- sle11-2009-03-04.orig/arch/x86/kernel/setup-xen.c	2009-03-12 16:34:07.000000000 +0100
++++ sle11-2009-03-04/arch/x86/kernel/setup-xen.c	2009-02-16 16:49:24.000000000 +0100
+@@ -673,7 +673,7 @@ static struct dmi_system_id __initdata b
+ 		.callback = dmi_low_memory_corruption,
+ 		.ident = "Phoenix BIOS",
+ 		.matches = {
+-			DMI_MATCH(DMI_BIOS_VENDOR, "Phoenix Technologies, LTD"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "Phoenix Technologies"),
+ 		},
+ 	},
+ #endif
+--- sle11-2009-03-04.orig/include/asm-x86/mach-xen/asm/pci.h	2009-03-04 11:29:03.000000000 +0100
++++ sle11-2009-03-04/include/asm-x86/mach-xen/asm/pci.h	2009-03-12 16:36:00.000000000 +0100
+@@ -93,7 +93,7 @@ static inline void early_quirks(void) { 
+ #ifdef CONFIG_X86_32
+ # include "pci_32.h"
+ #else
+-# include "pci_64.h"
++# include "../../pci_64.h"
+ #endif
+ 
+ /* implement the pci_ DMA API in terms of the generic device dma_ one */

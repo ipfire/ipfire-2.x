@@ -1,0 +1,183 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: qdio: move ACK to newest buffer for devices without QEBSM
+References: bnc#484767,LTC#52208
+
+Symptom:     Lower performance of non-QEBSM qdio devices under heavy traffic
+Problem:     The ACKnowledgement state is set on the first SBAL so in case of
+             multiple PRIMED buffers the firmware has to scan all buffers.
+Solution:    The ACKnowledgement state is set on the newest SBAL so an
+             adapter interrupt surpression check needs to scan fewer SBALs.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/cio/qdio.h       |    5 ++++-
+ drivers/s390/cio/qdio_debug.c |    3 ++-
+ drivers/s390/cio/qdio_main.c  |   41 ++++++++++++++++++++---------------------
+ 3 files changed, 26 insertions(+), 23 deletions(-)
+
+Index: linux-sles11/drivers/s390/cio/qdio.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio.h
++++ linux-sles11/drivers/s390/cio/qdio.h
+@@ -186,6 +186,9 @@ struct qdio_input_q {
+ 	/* input buffer acknowledgement flag */
+ 	int polling;
+ 
++	/* first ACK'ed buffer */
++	int ack_start;
++
+ 	/* how much sbals are acknowledged with qebsm */
+ 	int ack_count;
+ 
+@@ -231,7 +234,7 @@ struct qdio_q {
+ 	int first_to_check;
+ 
+ 	/* first_to_check of the last time */
+-	int last_move_ftc;
++	int last_move;
+ 
+ 	/* beginning position for calling the program */
+ 	int first_to_kick;
+Index: linux-sles11/drivers/s390/cio/qdio_debug.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_debug.c
++++ linux-sles11/drivers/s390/cio/qdio_debug.c
+@@ -62,8 +62,9 @@ static int qstat_show(struct seq_file *m
+ 	seq_printf(m, "device state indicator: %d\n", *(u32 *)q->irq_ptr->dsci);
+ 	seq_printf(m, "nr_used: %d\n", atomic_read(&q->nr_buf_used));
+ 	seq_printf(m, "ftc: %d\n", q->first_to_check);
+-	seq_printf(m, "last_move_ftc: %d\n", q->last_move_ftc);
++	seq_printf(m, "last_move: %d\n", q->last_move);
+ 	seq_printf(m, "polling: %d\n", q->u.in.polling);
++	seq_printf(m, "ack start: %d\n", q->u.in.ack_start);
+ 	seq_printf(m, "ack count: %d\n", q->u.in.ack_count);
+ 	seq_printf(m, "slsb buffer states:\n");
+ 	seq_printf(m, "|0      |8      |16     |24     |32     |40     |48     |56  63|\n");
+Index: linux-sles11/drivers/s390/cio/qdio_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_main.c
++++ linux-sles11/drivers/s390/cio/qdio_main.c
+@@ -371,11 +371,11 @@ inline void qdio_stop_polling(struct qdi
+ 
+ 	/* show the card that we are not polling anymore */
+ 	if (is_qebsm(q)) {
+-		set_buf_states(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT,
++		set_buf_states(q, q->u.in.ack_start, SLSB_P_INPUT_NOT_INIT,
+ 			       q->u.in.ack_count);
+ 		q->u.in.ack_count = 0;
+ 	} else
+-		set_buf_state(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT);
++		set_buf_state(q, q->u.in.ack_start, SLSB_P_INPUT_NOT_INIT);
+ }
+ 
+ static void announce_buffer_error(struct qdio_q *q, int count)
+@@ -410,15 +410,15 @@ static inline void inbound_primed(struct
+ 		if (!q->u.in.polling) {
+ 			q->u.in.polling = 1;
+ 			q->u.in.ack_count = count;
+-			q->last_move_ftc = q->first_to_check;
++			q->u.in.ack_start = q->first_to_check;
+ 			return;
+ 		}
+ 
+ 		/* delete the previous ACK's */
+-		set_buf_states(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT,
++		set_buf_states(q, q->u.in.ack_start, SLSB_P_INPUT_NOT_INIT,
+ 			       q->u.in.ack_count);
+ 		q->u.in.ack_count = count;
+-		q->last_move_ftc = q->first_to_check;
++		q->u.in.ack_start = q->first_to_check;
+ 		return;
+ 	}
+ 
+@@ -430,14 +430,13 @@ static inline void inbound_primed(struct
+ 	if (q->u.in.polling) {
+ 		/* reset the previous ACK but first set the new one */
+ 		set_buf_state(q, new, SLSB_P_INPUT_ACK);
+-		set_buf_state(q, q->last_move_ftc, SLSB_P_INPUT_NOT_INIT);
+-	}
+-	else {
++		set_buf_state(q, q->u.in.ack_start, SLSB_P_INPUT_NOT_INIT);
++	} else {
+ 		q->u.in.polling = 1;
+-		set_buf_state(q, q->first_to_check, SLSB_P_INPUT_ACK);
++		set_buf_state(q, new, SLSB_P_INPUT_ACK);
+ 	}
+ 
+-	q->last_move_ftc = new;
++	q->u.in.ack_start = new;
+ 	count--;
+ 	if (!count)
+ 		return;
+@@ -446,7 +445,7 @@ static inline void inbound_primed(struct
+ 	 * Need to change all PRIMED buffers to NOT_INIT, otherwise
+ 	 * we're loosing initiative in the thinint code.
+ 	 */
+-	set_buf_states(q, next_buf(q->first_to_check), SLSB_P_INPUT_NOT_INIT,
++	set_buf_states(q, q->first_to_check, SLSB_P_INPUT_NOT_INIT,
+ 		       count);
+ }
+ 
+@@ -514,7 +513,8 @@ int qdio_inbound_q_moved(struct qdio_q *
+ 
+ 	bufnr = get_inbound_buffer_frontier(q);
+ 
+-	if ((bufnr != q->last_move_ftc) || q->qdio_error) {
++	if ((bufnr != q->last_move) || q->qdio_error) {
++		q->last_move = bufnr;
+ 		if (!need_siga_sync(q) && !pci_out_supported(q))
+ 			q->u.in.timestamp = get_usecs();
+ 
+@@ -689,8 +689,8 @@ static inline int qdio_outbound_q_moved(
+ 
+ 	bufnr = get_outbound_buffer_frontier(q);
+ 
+-	if ((bufnr != q->last_move_ftc) || q->qdio_error) {
+-		q->last_move_ftc = bufnr;
++	if ((bufnr != q->last_move) || q->qdio_error) {
++		q->last_move = bufnr;
+ 		DBF_DEV_EVENT(DBF_INFO, q->irq_ptr, "out moved:%1d", q->nr);
+ 		return 1;
+ 	} else
+@@ -732,7 +732,7 @@ static void qdio_kick_outbound_handler(s
+ 	int start, end, count;
+ 
+ 	start = q->first_to_kick;
+-	end = q->last_move_ftc;
++	end = q->last_move;
+ 	if (end >= start)
+ 		count = end - start;
+ 	else
+@@ -748,7 +748,7 @@ static void qdio_kick_outbound_handler(s
+ 		   q->irq_ptr->int_parm);
+ 
+ 	/* for the next time: */
+-	q->first_to_kick = q->last_move_ftc;
++	q->first_to_kick = q->last_move;
+ 	q->qdio_error = 0;
+ }
+ 
+@@ -1453,19 +1453,18 @@ static int handle_inbound(struct qdio_q 
+ 		q->u.in.polling = 0;
+ 		q->u.in.ack_count = 0;
+ 		goto set;
+-	} else if (buf_in_between(q->last_move_ftc, bufnr, count)) {
++	} else if (buf_in_between(q->u.in.ack_start, bufnr, count)) {
+ 		if (is_qebsm(q)) {
+-			/* partial overwrite, just update last_move_ftc */
++			/* partial overwrite, just update ack_start */
+ 			diff = add_buf(bufnr, count);
+-			diff = sub_buf(diff, q->last_move_ftc);
++			diff = sub_buf(diff, q->u.in.ack_start);
+ 			q->u.in.ack_count -= diff;
+ 			if (q->u.in.ack_count <= 0) {
+ 				q->u.in.polling = 0;
+ 				q->u.in.ack_count = 0;
+-				/* TODO: must we set last_move_ftc to something meaningful? */
+ 				goto set;
+ 			}
+-			q->last_move_ftc = add_buf(q->last_move_ftc, diff);
++			q->u.in.ack_start = add_buf(q->u.in.ack_start, diff);
+ 		}
+ 		else
+ 			/* the only ACK will be deleted, so stop polling */

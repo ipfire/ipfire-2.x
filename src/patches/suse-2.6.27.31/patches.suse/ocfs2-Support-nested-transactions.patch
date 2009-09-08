@@ -1,0 +1,53 @@
+From: Jan Kara <jack@suse.cz>
+References: fate#302681
+Subject: [PATCH 19/28] ocfs2: Support nested transactions
+Patch-mainline: 2.6.29?
+
+OCFS2 can easily support nested transactions. We just have to
+take care and not spoil statistics acquire semaphore unnecessarily.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/ocfs2/journal.c |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
+
+Index: linux-2.6.27/fs/ocfs2/journal.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/journal.c	2008-10-24 11:40:35.000000000 +0200
++++ linux-2.6.27/fs/ocfs2/journal.c	2008-10-24 14:19:31.000000000 +0200
+@@ -256,11 +256,9 @@
+ 	BUG_ON(osb->journal->j_state == OCFS2_JOURNAL_FREE);
+ 	BUG_ON(max_buffs <= 0);
+ 
+-	/* JBD might support this, but our journalling code doesn't yet. */
+-	if (journal_current_handle()) {
+-		mlog(ML_ERROR, "Recursive transaction attempted!\n");
+-		BUG();
+-	}
++	/* Nested transaction? Just return the handle... */
++	if (journal_current_handle())
++		return jbd2_journal_start(journal, max_buffs);
+ 
+ 	down_read(&osb->journal->j_trans_barrier);
+ 
+@@ -285,16 +283,18 @@
+ int ocfs2_commit_trans(struct ocfs2_super *osb,
+ 		       handle_t *handle)
+ {
+-	int ret;
++	int ret, nested;
+ 	struct ocfs2_journal *journal = osb->journal;
+ 
+ 	BUG_ON(!handle);
+ 
++	nested = handle->h_ref > 1;
+ 	ret = jbd2_journal_stop(handle);
+ 	if (ret < 0)
+ 		mlog_errno(ret);
+ 
+-	up_read(&journal->j_trans_barrier);
++	if (!nested)
++		up_read(&journal->j_trans_barrier);
+ 
+ 	return ret;
+ }

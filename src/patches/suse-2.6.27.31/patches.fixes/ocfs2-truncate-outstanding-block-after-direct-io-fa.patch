@@ -1,0 +1,33 @@
+From: Dmitri Monakhov <dmonakhov@openvz.org>
+Date: Mon, 27 Oct 2008 13:01:49 -0700
+Subject: ocfs2: truncate outstanding block after direct io failure
+
+Signed-off-by: Dmitri Monakhov <dmonakhov@openvz.org>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Mark Fasheh <mark.fasheh@oracle.com>
+Cc: Joel Becker <Joel.Becker@oracle.com>
+Cc: Nick Piggin <nickpiggin@yahoo.com.au>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/file.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/file.c
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/file.c
++++ linux-2.6.27-ocfs2/fs/ocfs2/file.c
+@@ -1866,6 +1866,13 @@ relock:
+ 		written = generic_file_direct_write(iocb, iov, &nr_segs, *ppos,
+ 						    ppos, count, ocount);
+ 		if (written < 0) {
++			/*
++			 * direct write may have instantiated a few
++			 * blocks outside i_size. Trim these off again.
++			 * Don't need i_size_read because we hold i_mutex.
++			 */
++			if (*ppos + count > inode->i_size)
++				vmtruncate(inode, inode->i_size);
+ 			ret = written;
+ 			goto out_dio;
+ 		}

@@ -1,0 +1,39 @@
+From: Lachlan McIlroy <lachlan@sgi.com>
+Subject: [XFS] Wait for all I/O on truncate to zero file size
+Patch-mainline: ?
+References: bnc#450658
+    
+It's possible to have outstanding xfs_ioend_t's queued when the file size
+is zero. This can happen in the direct I/O path when a direct I/O write
+fails due to ENOSPC. In this case the xfs_ioend_t will still be queued (ie
+xfs_end_io_direct() does not know that the I/O failed so can't force the
+xfs_ioend_t to be flushed synchronously).
+
+When we truncate a file on unlink we don't know to wait for these
+xfs_ioend_ts and we can have a use-after-free situation if the inode is
+reclaimed before the xfs_ioend_t is finally processed.
+
+As was suggested by Dave Chinner lets wait for all I/Os to complete when
+truncating the file size to zero.
+
+SGI-PV: 981668
+
+SGI-Modid: xfs-linux-melb:xfs-kern:32216a
+
+Signed-off-by: Lachlan McIlroy <lachlan@sgi.com>
+Signed-off-by: Christoph Hellwig <hch@infradead.org>
+Acked-by: Jan Kara <jack@suse.cz>
+
+Index: linux-2.6.27.5-2/fs/xfs/xfs_inode.c
+===================================================================
+--- linux-2.6.27.5-2.orig/fs/xfs/xfs_inode.c	2008-12-03 11:58:00.992733026 +1100
++++ linux-2.6.27.5-2/fs/xfs/xfs_inode.c	2008-12-03 11:59:17.542975042 +1100
+@@ -1414,7 +1414,7 @@ xfs_itruncate_start(
+ 	mp = ip->i_mount;
+ 
+ 	/* wait for the completion of any pending DIOs */
+-	if (new_size < ip->i_size)
++	if (new_size == 0 || new_size < ip->i_size)
+ 		vn_iowait(ip);
+ 
+ 	/*

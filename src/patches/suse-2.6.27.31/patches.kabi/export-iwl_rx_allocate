@@ -1,0 +1,18 @@
+From: Michal Marek <mmarek@suse.cz>
+Subject: reintroduce EXPORT_SYMBOL(iwl_rx_allocate)
+
+2.6.27.12 removed the export with no explanation in the commit message.
+Reintroduce the export to keep the SLE11 kabi. This can be removed in SP1.
+
+Index: b/drivers/net/wireless/iwlwifi/iwl-rx.c
+===================================================================
+--- a/drivers/net/wireless/iwlwifi/iwl-rx.c
++++ b/drivers/net/wireless/iwlwifi/iwl-rx.c
+@@ -292,6 +292,7 @@ void iwl_rx_allocate(struct iwl_priv *pr
+ 		spin_unlock_irqrestore(&rxq->lock, flags);
+ 	}
+ }
++EXPORT_SYMBOL(iwl_rx_allocate);
+ 
+ void iwl_rx_replenish(struct iwl_priv *priv)
+ {

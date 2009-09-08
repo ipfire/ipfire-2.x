@@ -1,0 +1,68 @@
+From: Nick Piggin <npiggin@suse.de>
+Subject: mm: improve vmalloc reporting
+Patch-upstream: no (could be merged)
+References: bnc#511079
+
+Add a dump_stack and some information about allocation size when vmalloc
+fails, and also pass down caller information for some of the vmalloc
+variants (rather than report those variants themselves as the caller
+in /proc/vmallocinfo).
+
+Signed-off-by: Nick Piggin <npiggin@suse.de>
+---
+ mm/vmalloc.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+Index: linux-2.6.27/mm/vmalloc.c
+===================================================================
+--- linux-2.6.27.orig/mm/vmalloc.c
++++ linux-2.6.27/mm/vmalloc.c
+@@ -279,8 +279,11 @@ found:
+ out:
+ 	write_unlock(&vmlist_lock);
+ 	kfree(area);
+-	if (printk_ratelimit())
++	if (printk_ratelimit()) {
+ 		printk(KERN_WARNING "allocation failed: out of vmalloc space - use vmalloc=<size> to increase size.\n");
++		printk(KERN_WARNING "vmalloc size=%lx flags=%lx start=%lx end=%lx node=%d gfp=%lx\n", size, flags, start, end, node, (unsigned long)gfp_mask);
++		dump_stack();
++	}
+ 	return NULL;
+ }
+ 
+@@ -604,7 +607,7 @@ void *vmalloc_user(unsigned long size)
+ 	struct vm_struct *area;
+ 	void *ret;
+ 
+-	ret = __vmalloc(size, GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO, PAGE_KERNEL);
++	ret = __vmalloc_node(size, GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO, PAGE_KERNEL, -1, __builtin_return_address(0));
+ 	if (ret) {
+ 		write_lock(&vmlist_lock);
+ 		area = __find_vm_area(ret);
+@@ -651,7 +654,7 @@ EXPORT_SYMBOL(vmalloc_node);
+ 
+ void *vmalloc_exec(unsigned long size)
+ {
+-	return __vmalloc(size, GFP_KERNEL | __GFP_HIGHMEM, PAGE_KERNEL_EXEC);
++	return __vmalloc_node(size, GFP_KERNEL | __GFP_HIGHMEM, PAGE_KERNEL_EXEC, -1, __builtin_return_address(0));
+ }
+ 
+ #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+@@ -671,7 +674,7 @@ void *vmalloc_exec(unsigned long size)
+  */
+ void *vmalloc_32(unsigned long size)
+ {
+-	return __vmalloc(size, GFP_VMALLOC32, PAGE_KERNEL);
++	return __vmalloc_node(size, GFP_VMALLOC32, PAGE_KERNEL, -1, __builtin_return_address(0));
+ }
+ EXPORT_SYMBOL(vmalloc_32);
+ 
+@@ -687,7 +690,7 @@ void *vmalloc_32_user(unsigned long size
+ 	struct vm_struct *area;
+ 	void *ret;
+ 
+-	ret = __vmalloc(size, GFP_VMALLOC32 | __GFP_ZERO, PAGE_KERNEL);
++	ret = __vmalloc_node(size, GFP_VMALLOC32 | __GFP_ZERO, PAGE_KERNEL, -1, __builtin_return_address(0));
+ 	if (ret) {
+ 		write_lock(&vmlist_lock);
+ 		area = __find_vm_area(ret);

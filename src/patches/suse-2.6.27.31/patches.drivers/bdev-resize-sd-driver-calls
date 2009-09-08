@@ -1,0 +1,38 @@
+Subject: SCSI sd driver calls revalidate_disk wrapper.
+From: Andrew Patterson <andrew.patterson@hp.com>
+Date: Thu Oct 9 08:56:13 2008 +0200:
+Git: f98a8cae12f2b2a8f9bfd7a53c990a1a405e880e
+References: FATE#302348,FATE#303786
+
+Modify the SCSI disk driver to call the revalidate_disk()
+wrapper. This allows us to do some housekeeping such as accounting for
+a disk being resized online. The wrapper will call
+sd_revalidate_disk() at the appropriate time.
+
+Signed-off-by: Andrew Patterson <andrew.patterson@hp.com>
+Signed-off-by: Jens Axboe <jens.axboe@oracle.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/sd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -160,7 +160,7 @@ sd_store_cache_type(struct device *dev, 
+ 			sd_print_sense_hdr(sdkp, &sshdr);
+ 		return -EINVAL;
+ 	}
+-	sd_revalidate_disk(sdkp->disk);
++	revalidate_disk(sdkp->disk);
+ 	return count;
+ }
+ 
+@@ -911,7 +911,7 @@ static void sd_rescan(struct device *dev
+ 	struct scsi_disk *sdkp = scsi_disk_get_from_dev(dev);
+ 
+ 	if (sdkp) {
+-		sd_revalidate_disk(sdkp->disk);
++		revalidate_disk(sdkp->disk);
+ 		scsi_disk_put(sdkp);
+ 	}
+ }

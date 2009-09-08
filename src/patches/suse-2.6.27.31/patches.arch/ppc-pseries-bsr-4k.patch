@@ -1,0 +1,57 @@
+Subject: Unable to Use Small BSR register on Power LPAR
+From: Sonny Rao <sonnyrao@us.ibm.com>
+References: 443673 - LTC49749
+
+Fix the BSR driver to allow small BSR devices on a 64k page kernel.  
+Previously the driver would reject the mmap since the size was smaller
+than PAGESIZE. This patch adds a  check for this case and uses remap_4k_pfn().
+
+Also, take out code to set vm_flags, as the remap_pfn functions will
+do this for us.
+
+Signed-off-by: Sonny Rao <sonnyrao@us.ibm.com>
+Signed-off-by: Olaf Hering <olh@suse.de>
+
+---
+ drivers/char/bsr.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+--- a/drivers/char/bsr.c
++++ b/drivers/char/bsr.c
+@@ -27,6 +27,7 @@
+ #include <linux/cdev.h>
+ #include <linux/list.h>
+ #include <linux/mm.h>
++#include <asm/pgtable.h>
+ #include <asm/io.h>
+ 
+ /*
+@@ -115,15 +116,22 @@ static int bsr_mmap(struct file *filp, s
+ {
+ 	unsigned long size   = vma->vm_end - vma->vm_start;
+ 	struct bsr_dev *dev = filp->private_data;
++	int ret;
+ 
+-	if (size > dev->bsr_len || (size & (PAGE_SIZE-1)))
+-		return -EINVAL;
+-
+-	vma->vm_flags |= (VM_IO | VM_DONTEXPAND);
+ 	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+ 
+-	if (io_remap_pfn_range(vma, vma->vm_start, dev->bsr_addr >> PAGE_SHIFT,
+-			       size, vma->vm_page_prot))
++	/* check for the case of a small BSR device and map one 4k page for it*/
++	if (dev->bsr_len < PAGE_SIZE && size == PAGE_SIZE)
++		ret = remap_4k_pfn(vma, vma->vm_start, dev->bsr_addr >> 12,
++				   vma->vm_page_prot);
++	else if (size <= dev->bsr_len)
++		ret = io_remap_pfn_range(vma, vma->vm_start,
++					 dev->bsr_addr >> PAGE_SHIFT,
++					 size, vma->vm_page_prot);
++	else
++		return -EINVAL;
++
++	if (ret)
+ 		return -EAGAIN;
+ 
+ 	return 0;

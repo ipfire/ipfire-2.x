@@ -1,0 +1,58 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: af_iucv: Fix race when queuing incoming iucv messages
+References: bnc#499845,LTC#53033
+
+Symptom:     A socket application does not receive any new data even
+             if incoming IUCV messages are received and queued.
+Problem:     AF_IUCV runs into a race when queueing incoming iucv
+             messages and receiving the resulting backlog.
+             If the Linux system is under pressure (high load or
+             steal time), the message queue grows up, but messages
+             are not received and queued onto the backlog queue.
+             In that case, applications do not receive any data with
+             recvmsg() even if AF_IUCV puts incoming messages onto
+             the message queue.
+Solution:    The race can be avoided if the message queue
+             spinlock in the message_pending callback is
+             spreaded across the entire callback function.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ net/iucv/af_iucv.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+--- a/net/iucv/af_iucv.c
++++ b/net/iucv/af_iucv.c
+@@ -1089,6 +1089,8 @@ static void iucv_callback_rx(struct iucv
+ 	if (sk->sk_shutdown & RCV_SHUTDOWN)
+ 		return;
+ 
++	spin_lock(&iucv->message_q.lock);
++
+ 	if (!list_empty(&iucv->message_q.list) ||
+ 	    !skb_queue_empty(&iucv->backlog_skb_q))
+ 		goto save_message;
+@@ -1102,11 +1104,8 @@ static void iucv_callback_rx(struct iucv
+ 	if (!skb)
+ 		goto save_message;
+ 
+-	spin_lock(&iucv->message_q.lock);
+ 	iucv_process_message(sk, skb, path, msg);
+-	spin_unlock(&iucv->message_q.lock);
+-
+-	return;
++	goto out_unlock;
+ 
+ save_message:
+ 	save_msg = kzalloc(sizeof(struct sock_msg_q), GFP_ATOMIC | GFP_DMA);
+@@ -1115,8 +1114,9 @@ save_message:
+ 	save_msg->path = path;
+ 	save_msg->msg = *msg;
+ 
+-	spin_lock(&iucv->message_q.lock);
+ 	list_add_tail(&save_msg->list, &iucv->message_q.list);
++
++out_unlock:
+ 	spin_unlock(&iucv->message_q.lock);
+ }
+ 

@@ -1,0 +1,112 @@
+From: Petr Tesarik <ptesarik@suse.cz>
+Subject: [ia64] re-enable interrupts when waiting for a rwlock
+References: bnc#387784
+Mainline: no
+
+Re-enable interrupts for _read_lock_irqsave() and _write_lock_irqsave()
+while waiting for the lock if interrupts were enabled in the caller.
+
+Signed-off-by: Petr Tesarik <ptesarik@suse.cz>
+
+---
+ arch/ia64/include/asm/spinlock.h |   49 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 6 deletions(-)
+
+--- linux-2.6.26.orig/arch/ia64/include/asm/spinlock.h	2008-09-26 13:02:50.000000000 +0200
++++ linux-2.6.26/arch/ia64/include/asm/spinlock.h	2008-09-26 15:54:11.000000000 +0200
+@@ -120,6 +120,35 @@ do {											\
+ #define __raw_read_can_lock(rw)		(*(volatile int *)(rw) >= 0)
+ #define __raw_write_can_lock(rw)	(*(volatile int *)(rw) == 0)
+ 
++#ifdef ASM_SUPPORTED
++#define __raw_read_lock_flags(rw, flags)					\
++do {										\
++	__asm__ __volatile__ (							\
++		"tbit.nz p6,p0 = %1,%2\n"					\
++		"br.few 3f\n"							\
++		"1:\n"								\
++		"fetchadd4.rel r2 = [%0],-1;;\n"				\
++		"(p6) ssm psr.i\n"						\
++		"2:\n"								\
++		"hint @pause\n"							\
++		"ld4 r2 = [%0];;\n"						\
++		"cmp4.lt p7,p0 = r2,r0\n"					\
++		"(p7) br.cond.spnt.few 2b\n"					\
++		"(p6) rsm psr.i;;\n"						\
++		"3:\n"								\
++		"fetchadd4.acq r2 = [%0],1;;\n"					\
++		"cmp4.lt p7,p0 = r2,r0\n"					\
++		"(p7) br.cond.spnt.few 1b\n"					\
++		:: "r"(rw), "r"(flags), "i"(IA64_PSR_I_BIT)			\
++		: "p6", "p7", "r2", "memory");					\
++} while(0)
++
++#define __raw_read_lock(lock) __raw_read_lock_flags(lock, 0)
++
++#else /* !ASM_SUPPORTED */
++
++#define __raw_read_lock_flags(rw, flags) __raw_read_lock(rw)
++
+ #define __raw_read_lock(rw)								\
+ do {											\
+ 	raw_rwlock_t *__read_lock_ptr = (rw);						\
+@@ -131,6 +160,8 @@ do {											\
+ 	}										\
+ } while (0)
+ 
++#endif /* !ASM_SUPPORTED */
++
+ #define __raw_read_unlock(rw)					\
+ do {								\
+ 	raw_rwlock_t *__read_lock_ptr = (rw);			\
+@@ -138,21 +169,28 @@ do {								\
+ } while (0)
+ 
+ #ifdef ASM_SUPPORTED
+-#define __raw_write_lock(rw)							\
++#define __raw_write_lock_flags(rw, flags)					\
+ do {										\
+  	__asm__ __volatile__ (							\
+ 		"mov ar.ccv = r0\n"						\
++		"tbit.nz p6,p0 = %1,%2\n"					\
+ 		"dep r29 = -1, r0, 31, 1;;\n"					\
+ 		"1:\n"								\
++		"(p6) ssm psr.i\n"						\
++		"2:\n"								\
+ 		"ld4 r2 = [%0];;\n"						\
+ 		"cmp4.eq p0,p7 = r0,r2\n"					\
+-		"(p7) br.cond.spnt.few 1b \n"					\
++		"(p7) br.cond.spnt.few 2b \n"					\
++		"(p6) rsm psr.i;;\n"						\
+ 		"cmpxchg4.acq r2 = [%0], r29, ar.ccv;;\n"			\
+ 		"cmp4.eq p0,p7 = r0, r2\n"					\
+ 		"(p7) br.cond.spnt.few 1b;;\n"					\
+-		:: "r"(rw) : "ar.ccv", "p7", "r2", "r29", "memory");		\
++		:: "r"(rw), "r"(flags), "i"(IA64_PSR_I_BIT)			\
++		: "ar.ccv", "p6", "p7", "r2", "r29", "memory");			\
+ } while(0)
+ 
++#define __raw_write_lock(rw) __raw_write_lock_flags(rw, 0)
++
+ #define __raw_write_trylock(rw)							\
+ ({										\
+ 	register long result;							\
+@@ -174,6 +212,8 @@ static inline void __raw_write_unlock(ra
+ 
+ #else /* !ASM_SUPPORTED */
+ 
++#define __raw_write_lock_flags(l, flags) __raw_write_lock(l)
++
+ #define __raw_write_lock(l)								\
+ ({											\
+ 	__u64 ia64_val, ia64_set_val = ia64_dep_mi(-1, 0, 31, 1);			\
+@@ -213,9 +253,6 @@ static inline int __raw_read_trylock(raw
+ 	return (u32)ia64_cmpxchg4_acq((__u32 *)(x), new.word, old.word) == old.word;
+ }
+ 
+-#define __raw_read_lock_flags(lock, flags) __raw_read_lock(lock)
+-#define __raw_write_lock_flags(lock, flags) __raw_write_lock(lock)
+-
+ #define _raw_spin_relax(lock)	cpu_relax()
+ #define _raw_read_relax(lock)	cpu_relax()
+ #define _raw_write_relax(lock)	cpu_relax()

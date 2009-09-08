@@ -1,0 +1,45 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.20
+
+Upstream 2.6.27.20 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.kernel.org/patch-2.6.27.19-20" by xen-port-patches.py
+
+--- sle11-2009-03-24.orig/arch/x86/ia32/ia32entry-xen.S	2009-03-24 10:19:55.000000000 +0100
++++ sle11-2009-03-24/arch/x86/ia32/ia32entry-xen.S	2009-03-24 10:19:57.000000000 +0100
+@@ -373,9 +373,9 @@ ENTRY(ia32_syscall)
+ 	orl   $TS_COMPAT,TI_status(%r10)
+ 	testl $_TIF_WORK_SYSCALL_ENTRY,TI_flags(%r10)
+ 	jnz ia32_tracesys
+-ia32_do_syscall:	
+ 	cmpl $(IA32_NR_syscalls-1),%eax
+-	ja  int_ret_from_sys_call	/* ia32_tracesys has set RAX(%rsp) */
++	ja ia32_badsys
++ia32_do_call:
+ 	IA32_ARG_FIXUP
+ 	call *ia32_sys_call_table(,%rax,8) # xxx: rip relative
+ ia32_sysret:
+@@ -390,7 +390,9 @@ ia32_tracesys:			 
+ 	call syscall_trace_enter
+ 	LOAD_ARGS32 ARGOFFSET  /* reload args from stack in case ptrace changed it */
+ 	RESTORE_REST
+-	jmp ia32_do_syscall
++	cmpl $(IA32_NR_syscalls-1),%eax
++	ja  int_ret_from_sys_call	/* ia32_tracesys has set RAX(%rsp) */
++	jmp ia32_do_call
+ END(ia32_syscall)
+ 
+ ia32_badsys:
+--- sle11-2009-03-24.orig/arch/x86/kernel/io_apic_64-xen.c	2009-03-24 10:19:55.000000000 +0100
++++ sle11-2009-03-24/arch/x86/kernel/io_apic_64-xen.c	2009-03-24 10:19:57.000000000 +0100
+@@ -1737,7 +1737,7 @@ static inline void __init check_timer(vo
+ 			setup_timer_IRQ0_pin(apic1, pin1, cfg->vector);
+ 		}
+ 		unmask_IO_APIC_irq(0);
+-		if (!no_timer_check && timer_irq_works()) {
++		if (no_timer_check || timer_irq_works()) {
+ 			if (nmi_watchdog == NMI_IO_APIC) {
+ 				setup_nmi();
+ 				enable_8259A_irq(0);

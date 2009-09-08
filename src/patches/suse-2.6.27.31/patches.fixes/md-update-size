@@ -1,0 +1,28 @@
+From: NeilBrown <neilb@suse.de>
+References: bnc#509495
+Subject: Update size of md device as soon as it is successfully assemble.
+
+It is import that we get the size of an md device 'right' before
+generating the KOBJ_CHANGE message.  If we don't, then if a program
+runs as a result of that message and open the md device before the
+mdadm which created the device closes it, the new program will see a
+size of zero which will be confusing.
+
+So call revalidate_disk, which checks and updates the size.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+
+---
+ drivers/md/md.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/md/md.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/md/md.c
+@@ -3892,6 +3892,7 @@ static int do_md_run(mddev_t * mddev)
+ 	md_wakeup_thread(mddev->thread);
+ 	md_wakeup_thread(mddev->sync_thread); /* possibly kick off a reshape */
+ 
++	revalidate_disk(mddev->gendisk);
+ 	mddev->changed = 1;
+ 	md_new_event(mddev);
+ 	sysfs_notify(&mddev->kobj, NULL, "array_state");

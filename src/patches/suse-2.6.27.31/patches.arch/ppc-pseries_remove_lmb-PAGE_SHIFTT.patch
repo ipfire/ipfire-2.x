@@ -1,0 +1,32 @@
+Subject: Bug 431380 – UPT-LTE: mem dlpar remove generates oops(.pseries_remove_lmb+0x28/0xb8)
+From: Nathan Fontenot <nfont@austin.ibm.com>
+References: 431380 - LTC48430
+
+
+Testing hotplug memory remove has revealed that we can oops in
+pseries_lmb_remove().  The incorrect shift causes a NULL pointer
+dereference in the page_zone() inline routine.
+
+I have only been able to reproduce the oops on kernels with large pages
+enabled.
+
+Tested on Power5 and Power6 with and without large pages enabled.
+
+
+Signed-off-by: Olaf Hering <olh@suse.de>
+
+---
+ arch/powerpc/platforms/pseries/hotplug-memory.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -21,7 +21,7 @@ static int pseries_remove_lmb(unsigned l
+ 	struct zone *zone;
+ 	int ret;
+ 
+-	start_pfn = base >> PFN_SECTION_SHIFT;
++	start_pfn = base >> PAGE_SHIFT;
+ 	zone = page_zone(pfn_to_page(start_pfn));
+ 
+ 	/*

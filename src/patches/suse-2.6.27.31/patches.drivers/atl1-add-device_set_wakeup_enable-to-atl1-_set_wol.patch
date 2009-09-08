@@ -1,0 +1,31 @@
+From: Brandon Philips <brandon@ifup.org>
+Subject: [PATCH] atl1e: add device_set_wakeup_enable to atl1e_set_wol
+References: bnc#493214
+
+Tell PCI core that atl1e can wakeup the system when WOL is
+enabled by calling device_set_wakeup_enable. 
+
+Joerg noted that his atl1e device WOL fine after enabling it with
+ethtool and changing /sys/class/net/eth0/device/power/wakeup to enabled
+Tested on atl1e: https://bugzilla.novell.com/show_bug.cgi?id=493214
+
+Tested by: Joerg Reuter <jreuter@novell.com>
+Signed-off-by: Brandon Philips <bphilips@suse.de>
+
+---
+ drivers/net/atl1e/atl1e_ethtool.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/net/atl1e/atl1e_ethtool.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/net/atl1e/atl1e_ethtool.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/net/atl1e/atl1e_ethtool.c
+@@ -365,6 +365,8 @@ static int atl1e_set_wol(struct net_devi
+ 	if (wol->wolopts & WAKE_PHY)
+ 		adapter->wol |= AT_WUFC_LNKC;
+ 
++	device_set_wakeup_enable(&adapter->pdev->dev, adapter->wol);
++
+ 	return 0;
+ }
+ 

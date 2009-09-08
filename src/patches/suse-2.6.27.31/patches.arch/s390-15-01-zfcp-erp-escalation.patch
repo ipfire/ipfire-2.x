@@ -1,0 +1,113 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Fix erp escalation procedure
+References: bnc#518291,LTC#54456
+
+Symptom:     After a failure the zfcp erp gives up.
+Problem:     When a zfcp erp step fails the zfcp erp might end without
+             setting the driver internal flags appropriately.
+Solution:    Fix the erp escalation procedure. If a erp action fails,
+             retry it until the retry counter exceeds. This ensures
+             that the erp continues or the failed flag is set
+             correctly. If for some reason another action is
+             necessary, this will be triggered from outside the erp,
+             to avoid global recoveries for single port failures.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_dbf.c |    8 ++----
+ drivers/s390/scsi/zfcp_erp.c |   50 ++++++++++++++++++++-----------------------
+ 2 files changed, 27 insertions(+), 31 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_erp.c	2009-06-23 10:45:52.000000000 +0200
++++ b/drivers/s390/scsi/zfcp_erp.c	2009-06-23 14:13:30.000000000 +0200
+@@ -549,40 +549,35 @@ static void _zfcp_erp_unit_reopen_all(st
+ 		_zfcp_erp_unit_reopen(unit, clear, id, ref);
+ }
+ 
+-static void zfcp_erp_strategy_followup_actions(struct zfcp_erp_action *act)
++static void zfcp_erp_strategy_followup_failed(struct zfcp_erp_action *act)
+ {
+-	struct zfcp_adapter *adapter = act->adapter;
+-	struct zfcp_port *port = act->port;
+-	struct zfcp_unit *unit = act->unit;
+-	u32 status = act->status;
+-
+-	/* initiate follow-up actions depending on success of finished action */
+ 	switch (act->action) {
+-
+ 	case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
+-		if (status == ZFCP_ERP_SUCCEEDED)
+-			_zfcp_erp_port_reopen_all(adapter, 0, 70, NULL);
+-		else
+-			_zfcp_erp_adapter_reopen(adapter, 0, 71, NULL);
++		_zfcp_erp_adapter_reopen(act->adapter, 0, 71, NULL);
+ 		break;
+-
+ 	case ZFCP_ERP_ACTION_REOPEN_PORT_FORCED:
+-		if (status == ZFCP_ERP_SUCCEEDED)
+-			_zfcp_erp_port_reopen(port, 0, 72, NULL);
+-		else
+-			_zfcp_erp_adapter_reopen(adapter, 0, 73, NULL);
++		_zfcp_erp_port_forced_reopen(act->port, 0, 73, NULL);
+ 		break;
+-
+ 	case ZFCP_ERP_ACTION_REOPEN_PORT:
+-		if (status == ZFCP_ERP_SUCCEEDED)
+-			_zfcp_erp_unit_reopen_all(port, 0, 74, NULL);
+-		else
+-			_zfcp_erp_port_forced_reopen(port, 0, 75, NULL);
++		_zfcp_erp_port_reopen(act->port, 0, 75, NULL);
+ 		break;
+-
+ 	case ZFCP_ERP_ACTION_REOPEN_UNIT:
+-		if (status != ZFCP_ERP_SUCCEEDED)
+-			_zfcp_erp_port_reopen(unit->port, 0, 76, NULL);
++		_zfcp_erp_unit_reopen(act->unit, 0, 76, NULL);
++		break;
++	}
++}
++
++static void zfcp_erp_strategy_followup_success(struct zfcp_erp_action *act)
++{
++	switch (act->action) {
++	case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
++		_zfcp_erp_port_reopen_all(act->adapter, 0, 70, NULL);
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_PORT_FORCED:
++		_zfcp_erp_port_reopen(act->port, 0, 72, NULL);
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_PORT:
++		_zfcp_erp_unit_reopen_all(act->port, 0, 74, NULL);
+ 		break;
+ 	}
+ }
+@@ -1297,7 +1292,10 @@ static int zfcp_erp_strategy(struct zfcp
+ 	retval = zfcp_erp_strategy_statechange(erp_action, retval);
+ 	if (retval == ZFCP_ERP_EXIT)
+ 		goto unlock;
+-	zfcp_erp_strategy_followup_actions(erp_action);
++	if (retval == ZFCP_ERP_SUCCEEDED)
++		zfcp_erp_strategy_followup_success(erp_action);
++	if (retval == ZFCP_ERP_FAILED)
++		zfcp_erp_strategy_followup_failed(erp_action);
+ 
+  unlock:
+ 	write_unlock(&adapter->erp_lock);
+--- a/drivers/s390/scsi/zfcp_dbf.c	2009-06-23 10:45:52.000000000 +0200
++++ b/drivers/s390/scsi/zfcp_dbf.c	2009-06-23 14:20:41.000000000 +0200
+@@ -563,12 +563,10 @@ static const char *zfcp_rec_dbf_ids[] = 
+ 	[71]	= "adapter recovery escalation after failed adapter recovery",
+ 	[72]	= "port recovery follow-up after successful physical port "
+ 		  "recovery",
+-	[73]	= "adapter recovery escalation after failed physical port "
+-		  "recovery",
++	[73]	= "physical port recovery retry after failure",
+ 	[74]	= "unit recovery follow-up after successful port recovery",
+-	[75]	= "physical port recovery escalation after failed port "
+-		  "recovery",
+-	[76]	= "port recovery escalation after failed unit recovery",
++	[75]	= "port recovery retry after failure",
++	[76]	= "unit recovery retry after failure",
+ 	[77]	= "",
+ 	[78]	= "duplicate request id",
+ 	[79]	= "link down",

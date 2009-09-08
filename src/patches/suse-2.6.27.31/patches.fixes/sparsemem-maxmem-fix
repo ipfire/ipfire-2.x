@@ -1,0 +1,42 @@
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Limit MAXMEM on 64bit
+Patch-Mainline: Yes
+
+on 64-bit x86 the physical memory limit is controlled by the sparsemem
+bits - which are 44 bits right now. But MAXMEM (the max pfn number
+e820 parsing will allow to enter our sizing routines) is set to
+0x00003fffffffffff, i.e. 46 bits - that's too large because it overlaps
+into the vmalloc range.
+
+So couple MAXMEM to MAX_PHYSMEM_BITS, and add a comment that the
+maximum of MAX_PHYSMEM_BITS is 45 bits.
+
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+Index: linux-2.6.27-SLE11_BRANCH/include/asm-x86/pgtable_64.h
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/include/asm-x86/pgtable_64.h
++++ linux-2.6.27-SLE11_BRANCH/include/asm-x86/pgtable_64.h
+@@ -146,7 +146,7 @@ static inline void native_pgd_clear(pgd_
+ #define PGDIR_MASK	(~(PGDIR_SIZE - 1))
+ 
+ 
+-#define MAXMEM		 _AC(0x00003fffffffffff, UL)
++#define MAXMEM		 _AC(__AC(1, UL) << MAX_PHYSMEM_BITS, UL)
+ #define VMALLOC_START    _AC(0xffffc20000000000, UL)
+ #define VMALLOC_END      _AC(0xffffe1ffffffffff, UL)
+ #define VMEMMAP_START	 _AC(0xffffe20000000000, UL)
+Index: linux-2.6.27-SLE11_BRANCH/include/asm-x86/sparsemem.h
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/include/asm-x86/sparsemem.h
++++ linux-2.6.27-SLE11_BRANCH/include/asm-x86/sparsemem.h
+@@ -27,7 +27,7 @@
+ #else /* CONFIG_X86_32 */
+ # define SECTION_SIZE_BITS	27 /* matt - 128 is convenient right now */
+ # define MAX_PHYSADDR_BITS	44
+-# define MAX_PHYSMEM_BITS	44
++# define MAX_PHYSMEM_BITS	44 /* Can be max 45 bits */
+ #endif
+ 
+ #endif /* CONFIG_SPARSEMEM */

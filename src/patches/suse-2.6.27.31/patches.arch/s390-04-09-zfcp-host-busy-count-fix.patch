@@ -1,0 +1,34 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: prevent double decrement on host_busy counter
+References: bnc#445100
+
+Symptom:     SCSI host hangs
+Problem:     double finish triggerd for one request
+Solution:    respond, act according to SCSI_mid_low API
+
+The zfcp_scsi_queuecommand was not acting according to the standard
+when respective unit was not available. In this case an -EBUSY was
+returned, which is not valid in itself, and in addition scsi_done 
+was called. This combination is not allowed and was leading to a
+double finish of the request and therefor double decrement of the
+host_busy counter.
+
+Signed-off-by: Swen Schillig <swen@vnet.ibm.com>
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_scsi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_scsi.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_scsi.c
++++ linux-sles11/drivers/s390/scsi/zfcp_scsi.c
+@@ -90,7 +90,7 @@ static int zfcp_scsi_queuecommand(struct
+ 	ret = zfcp_fsf_send_fcp_command_task(adapter, unit, scpnt, 0,
+ 					     ZFCP_REQ_AUTO_CLEANUP);
+ 	if (unlikely(ret == -EBUSY))
+-		zfcp_scsi_command_fail(scpnt, DID_NO_CONNECT);
++		return SCSI_MLQUEUE_DEVICE_BUSY;
+ 	else if (unlikely(ret < 0))
+ 		return SCSI_MLQUEUE_HOST_BUSY;
+ 

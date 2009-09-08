@@ -1,0 +1,37 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Wrong placement of linebreak in message
+References: bnc#450096
+
+Symptom:     Closing parenthesis missing in message output.
+Problem:     Typo in message.
+Solution:    Fix message text, put the parenthesis before the
+             linebreak.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ Documentation/kmsg/s390/zfcp |    2 +-
+ drivers/s390/scsi/zfcp_fsf.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_fsf.c	2008-11-26 10:51:05.000000000 +0100
++++ b/drivers/s390/scsi/zfcp_fsf.c	2008-11-26 10:51:06.000000000 +0100
+@@ -1903,7 +1903,7 @@ static void zfcp_fsf_open_unit_handler(s
+ 				dev_err(&adapter->ccw_device->dev,
+ 					"Shared read-write access not "
+ 					"supported (unit 0x%016Lx, port "
+-					"0x%016Lx\n)",
++					"0x%016Lx)\n",
+ 					(unsigned long long)unit->fcp_lun,
+ 					(unsigned long long)unit->port->wwpn);
+ 				zfcp_erp_unit_failed(unit, 36, req);
+--- a/Documentation/kmsg/s390/zfcp	2008-11-26 10:12:47.000000000 +0100
++++ b/Documentation/kmsg/s390/zfcp	2008-11-26 10:53:58.000000000 +0100
+@@ -753,7 +753,7 @@
+  */
+ 
+ /*?
+- * Text: "%s: Shared read-write access not supported (unit 0x%016Lx, port 0x%016Lx\n)"
++ * Text: "%s: Shared read-write access not supported (unit 0x%016Lx, port 0x%016Lx)\n"
+  * Severity: Error
+  * Parameter:
+  *   @1: bus ID of the zfcp device

@@ -1,0 +1,48 @@
+From 7cde1c8b79f913a0158bae4f4c612de2cb98e7e4 Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Thu, 22 Jan 2009 06:01:25 +0000
+Subject: bnx2x: Calling napi_del
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+rmmod might hang without this patch since the reference counter is not going
+down
+
+Signed-off-by: Yitchak Gertner <gertner@broadcom.com>
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -6550,6 +6550,8 @@ load_error2:
+ 	bnx2x_free_irq(bp);
+ load_error1:
+ 	bnx2x_napi_disable(bp);
++	for_each_queue(bp, i)
++		netif_napi_del(&bnx2x_fp(bp, i, napi));
+ 	bnx2x_free_mem(bp);
+ 
+ 	/* TBD we really need to reset the chip
+@@ -6858,6 +6860,8 @@ unload_error:
+ 	bnx2x_free_skbs(bp);
+ 	for_each_queue(bp, i)
+ 		bnx2x_free_rx_sge_range(bp, bp->fp + i, NUM_RX_SGE);
++	for_each_queue(bp, i)
++		netif_napi_del(&bnx2x_fp(bp, i, napi));
+ 	bnx2x_free_mem(bp);
+ 
+ 	bp->state = BNX2X_STATE_CLOSED;
+@@ -10484,6 +10488,8 @@ static int bnx2x_eeh_nic_unload(struct b
+ 	bnx2x_free_skbs(bp);
+ 	for_each_queue(bp, i)
+ 		bnx2x_free_rx_sge_range(bp, bp->fp + i, NUM_RX_SGE);
++	for_each_queue(bp, i)
++		netif_napi_del(&bnx2x_fp(bp, i, napi));
+ 	bnx2x_free_mem(bp);
+ 
+ 	bp->state = BNX2X_STATE_CLOSED;

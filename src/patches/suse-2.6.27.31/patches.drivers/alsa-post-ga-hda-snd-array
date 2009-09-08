@@ -1,0 +1,100 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: Backport snd_array_*() for HD-audio driver
+Patch-mainline:
+References: bnc#511306
+
+Backport snd_array_*() from the recent kernel to update the
+HD-audio driver code.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/hda_codec.c |   37 +++++++++++++++++++++++++++++++++++++
+ sound/pci/hda/hda_codec.h |   30 ++++++++++++++++++++++++++++++
+ 2 files changed, 67 insertions(+)
+
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -3366,6 +3366,43 @@
+ #endif
+ 
+ /*
++ * generic arrays
++ */
++
++/* get a new element from the given array
++ * if it exceeds the pre-allocated array size, re-allocate the array
++ */
++void *snd_array_new(struct snd_array *array)
++{
++	if (array->used >= array->alloced) {
++		int num = array->alloced + array->alloc_align;
++		void *nlist;
++		if (num >= 4096)
++			return NULL;
++		nlist = kcalloc(num + 1, array->elem_size, GFP_KERNEL);
++		if (!nlist)
++			return NULL;
++		if (array->list) {
++			memcpy(nlist, array->list,
++			       array->elem_size * array->alloced);
++			kfree(array->list);
++		}
++		array->list = nlist;
++		array->alloced = num;
++	}
++	return snd_array_elem(array, array->used++);
++}
++
++/* free the given array elements */
++void snd_array_free(struct snd_array *array)
++{
++	kfree(array->list);
++	array->used = 0;
++	array->alloced = 0;
++	array->list = NULL;
++}
++
++/*
+  * used by hda_proc.c and hda_eld.c
+  */
+ void snd_print_pcm_rates(int pcm, char *buf, int buflen)
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -520,6 +520,36 @@
+ #define HDA_MAX_CODEC_ADDRESS	0x0f
+ 
+ /*
++ * generic arrays
++ */
++struct snd_array {
++	unsigned int used;
++	unsigned int alloced;
++	unsigned int elem_size;
++	unsigned int alloc_align;
++	void *list;
++};
++
++void *snd_array_new(struct snd_array *array);
++void snd_array_free(struct snd_array *array);
++static inline void snd_array_init(struct snd_array *array, unsigned int size,
++				  unsigned int align)
++{
++	array->elem_size = size;
++	array->alloc_align = align;
++}
++
++static inline void *snd_array_elem(struct snd_array *array, unsigned int idx)
++{
++	return array->list + idx * array->elem_size;
++}
++
++static inline unsigned int snd_array_index(struct snd_array *array, void *ptr)
++{
++	return (unsigned long)(ptr - array->list) / array->elem_size;
++}
++
++/*
+  * Structures
+  */
+ 

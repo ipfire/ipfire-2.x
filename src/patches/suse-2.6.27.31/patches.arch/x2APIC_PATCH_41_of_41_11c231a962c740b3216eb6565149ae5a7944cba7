@@ -1,0 +1,37 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x86: use x2apic id reported by cpuid during topology discovery, fix
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 11c231a962c740b3216eb6565149ae5a7944cba7
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+v2: Fix for !SMP build
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ arch/x86/kernel/cpu/addon_cpuid_features.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+Index: linux-2.6.26/arch/x86/kernel/cpu/addon_cpuid_features.c
+===================================================================
+--- linux-2.6.26.orig/arch/x86/kernel/cpu/addon_cpuid_features.c
++++ linux-2.6.26/arch/x86/kernel/cpu/addon_cpuid_features.c
+@@ -69,6 +69,7 @@ void __cpuinit init_scattered_cpuid_feat
+  */
+ void __cpuinit detect_extended_topology(struct cpuinfo_x86 *c)
+ {
++#ifdef CONFIG_SMP
+ 	unsigned int eax, ebx, ecx, edx, sub_index;
+ 	unsigned int ht_mask_width, core_plus_mask_width;
+ 	unsigned int core_select_mask, core_level_siblings;
+@@ -132,6 +133,7 @@ void __cpuinit detect_extended_topology(
+ 		printk(KERN_INFO  "CPU: Processor Core ID: %d\n",
+ 		       c->cpu_core_id);
+ 	return;
++#endif
+ }
+ 
+ #ifdef CONFIG_X86_PAT

@@ -1,0 +1,77 @@
+From fab7b7090ac16e340e35e2bd0a64afe7a7f068ef Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 15 Jul 2009 13:21:53 +0200
+Subject: [PATCH 6/6] ocfs2: Remove syncjiff field from quota info
+
+syncjiff is just a converted value of syncms. Some places which
+are updating syncms forgot to update syncjiff as well. Since the
+conversion is just a simple division / multiplication and it does
+not happen frequently, just remove the syncjiff field to avoid
+forgotten conversions.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/ocfs2/aops.c         |    4 +++-
+ fs/ocfs2/quota.h        |    1 -
+ fs/ocfs2/quota_global.c |    5 ++---
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/fs/ocfs2/aops.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/ocfs2/aops.c	2009-07-16 13:16:26.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH/fs/ocfs2/aops.c	2009-07-16 14:03:35.000000000 +0200
+@@ -145,9 +145,11 @@
+ 	mlog_entry("(0x%p, %llu, 0x%p, %d)\n", inode,
+ 		   (unsigned long long)iblock, bh_result, create);
+ 
+-	if (OCFS2_I(inode)->ip_flags & OCFS2_INODE_SYSTEM_FILE)
++	if (OCFS2_I(inode)->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
+ 		mlog(ML_NOTICE, "get_block on system inode 0x%p (%lu)\n",
+ 		     inode, inode->i_ino);
++		dump_stack();
++	}
+ 
+ 	if (S_ISLNK(inode->i_mode)) {
+ 		/* this always does I/O for some reason. */
+Index: linux-2.6.27-SLE11_BRANCH/fs/ocfs2/quota.h
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/ocfs2/quota.h	2009-07-16 13:16:26.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH/fs/ocfs2/quota.h	2009-07-16 14:03:35.000000000 +0200
+@@ -55,7 +55,6 @@
+ 	unsigned int dqi_chunks;	/* Number of chunks in local quota file */
+ 	unsigned int dqi_blocks;	/* Number of blocks allocated for local quota file */
+ 	unsigned int dqi_syncms;	/* How often should we sync with other nodes */
+-	unsigned int dqi_syncjiff;	/* Precomputed dqi_syncms in jiffies */
+ 	struct list_head dqi_chunk;	/* List of chunks */
+ 	struct inode *dqi_gqinode;	/* Global quota file inode */
+ 	struct ocfs2_lock_res dqi_gqlock;	/* Lock protecting quota information structure */
+Index: linux-2.6.27-SLE11_BRANCH/fs/ocfs2/quota_global.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/ocfs2/quota_global.c	2009-07-16 13:25:41.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH/fs/ocfs2/quota_global.c	2009-07-16 14:04:51.000000000 +0200
+@@ -277,7 +277,6 @@
+ 	info->dqi_bgrace = le32_to_cpu(dinfo.dqi_bgrace);
+ 	info->dqi_igrace = le32_to_cpu(dinfo.dqi_igrace);
+ 	oinfo->dqi_syncms = le32_to_cpu(dinfo.dqi_syncms);
+-	oinfo->dqi_syncjiff = msecs_to_jiffies(oinfo->dqi_syncms);
+ 	oinfo->dqi_gi.dqi_blocks = le32_to_cpu(dinfo.dqi_blocks);
+ 	oinfo->dqi_gi.dqi_free_blk = le32_to_cpu(dinfo.dqi_free_blk);
+ 	oinfo->dqi_gi.dqi_free_entry = le32_to_cpu(dinfo.dqi_free_entry);
+@@ -288,7 +287,7 @@
+ 	setup_timer(&oinfo->dqi_sync_timer, qsync_timer_fn,
+ 		    (unsigned long)oinfo);
+ 	mod_timer(&oinfo->dqi_sync_timer,
+-		  round_jiffies(jiffies + oinfo->dqi_syncjiff));
++		  round_jiffies(jiffies+msecs_to_jiffies(oinfo->dqi_syncms)));
+ out_err:
+ 	mlog_exit(status);
+ 	return status;
+@@ -547,7 +546,7 @@
+ 
+ 	pdflush_operation(ocfs2_do_qsync, oinfo_ptr);
+ 	mod_timer(&oinfo->dqi_sync_timer,
+-		  round_jiffies(jiffies + oinfo->dqi_syncjiff));
++		  round_jiffies(jiffies+msecs_to_jiffies(oinfo->dqi_syncms)));
+ }
+ 
+ /*

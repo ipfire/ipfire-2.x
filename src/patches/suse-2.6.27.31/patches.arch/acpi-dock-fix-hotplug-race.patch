@@ -1,0 +1,160 @@
+From: Shaohua Li <shaohua.li@intel.com>
+Subject: fix hotplug race
+Patch-mainline: submitted 2008-08-28
+References: fate#304731,bnc#401740
+
+hotplug notification handler and drivers' notification handler are all
+running in one workqueue. Before hotplug removes an acpi device, the
+device driver's notification handler is already be recorded to run just
+after global notification handler. After hotplug notification handler
+runs, acpica will notice a NULL notification handler and crash. This
+patch runs hotplug in other workqueue and wait for all acpi notication
+handlers finish. This is found in battery hotplug, but actually all
+hotplug can be affected.
+
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Shaohua Li <shaohua.li@intel.com>
+Signed-off-by: Holger Macht <hmacht@suse.de>
+---
+
+---
+ drivers/acpi/dock.c     |   25 ++++++++++++++++++++++++-
+ drivers/acpi/osl.c      |   46 +++++++++++++++++++++++++++++++++++++++++-----
+ include/acpi/acpiosxf.h |    3 +++
+ 3 files changed, 68 insertions(+), 6 deletions(-)
+
+--- a/drivers/acpi/dock.c
++++ b/drivers/acpi/dock.c
+@@ -748,6 +748,20 @@ static void dock_notify(acpi_handle hand
+ 	}
+ }
+ 
++struct dock_data {
++	acpi_handle handle;
++	unsigned long event;
++	struct dock_station *ds;
++};
++
++static void acpi_dock_deferred_cb(void *context)
++{
++	struct dock_data *data = (struct dock_data *)context;
++
++	dock_notify(data->handle, data->event, data->ds);
++	kfree(data);
++}
++
+ static int acpi_dock_notifier_call(struct notifier_block *this,
+ 	unsigned long event, void *data)
+ {
+@@ -759,7 +773,16 @@ static int acpi_dock_notifier_call(struc
+ 		return 0;
+ 	list_for_each_entry(dock_station, &dock_stations, sibiling) {
+ 		if (dock_station->handle == handle) {
+-			dock_notify(handle, event, dock_station);
++			struct dock_data *dock_data;
++
++			dock_data = kmalloc(sizeof(*dock_data), GFP_KERNEL);
++			if (!dock_data)
++				return 0;
++			dock_data->handle = handle;
++			dock_data->event = event;
++			dock_data->ds = dock_station;
++			acpi_os_hotplug_execute(acpi_dock_deferred_cb,
++				dock_data);
+ 			return 0 ;
+ 		}
+ 	}
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -705,6 +705,22 @@ static void acpi_os_execute_deferred(str
+ 	return;
+ }
+ 
++static void acpi_os_execute_hp_deferred(struct work_struct *work)
++{
++	struct acpi_os_dpc *dpc = container_of(work, struct acpi_os_dpc, work);
++	if (!dpc) {
++		printk(KERN_ERR PREFIX "Invalid (NULL) context\n");
++		return;
++	}
++
++	acpi_os_wait_events_complete(NULL);
++
++	dpc->function(dpc->context);
++	kfree(dpc);
++
++	return;
++}
++
+ /*******************************************************************************
+  *
+  * FUNCTION:    acpi_os_execute
+@@ -720,12 +736,13 @@ static void acpi_os_execute_deferred(str
+  *
+  ******************************************************************************/
+ 
+-acpi_status acpi_os_execute(acpi_execute_type type,
+-			    acpi_osd_exec_callback function, void *context)
++static acpi_status __acpi_os_execute(acpi_execute_type type,
++	acpi_osd_exec_callback function, void *context, int hp)
+ {
+ 	acpi_status status = AE_OK;
+ 	struct acpi_os_dpc *dpc;
+ 	struct workqueue_struct *queue;
++	int ret;
+ 	ACPI_DEBUG_PRINT((ACPI_DB_EXEC,
+ 			  "Scheduling function [%p(%p)] for deferred execution.\n",
+ 			  function, context));
+@@ -749,9 +766,17 @@ acpi_status acpi_os_execute(acpi_execute
+ 	dpc->function = function;
+ 	dpc->context = context;
+ 
+-	INIT_WORK(&dpc->work, acpi_os_execute_deferred);
+-	queue = (type == OSL_NOTIFY_HANDLER) ? kacpi_notify_wq : kacpid_wq;
+-	if (!queue_work(queue, &dpc->work)) {
++	if (!hp) {
++		INIT_WORK(&dpc->work, acpi_os_execute_deferred);
++		queue = (type == OSL_NOTIFY_HANDLER) ?
++			kacpi_notify_wq : kacpid_wq;
++		ret = queue_work(queue, &dpc->work);
++	} else {
++		INIT_WORK(&dpc->work, acpi_os_execute_hp_deferred);
++		ret = schedule_work(&dpc->work);
++	}
++
++	if (!ret) {
+ 		ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+ 			  "Call to queue_work() failed.\n"));
+ 		status = AE_ERROR;
+@@ -760,8 +785,19 @@ acpi_status acpi_os_execute(acpi_execute
+ 	return_ACPI_STATUS(status);
+ }
+ 
++acpi_status acpi_os_execute(acpi_execute_type type,
++			    acpi_osd_exec_callback function, void *context)
++{
++	return __acpi_os_execute(type, function, context, 0);
++}
+ EXPORT_SYMBOL(acpi_os_execute);
+ 
++acpi_status acpi_os_hotplug_execute(acpi_osd_exec_callback function,
++	void *context)
++{
++	return __acpi_os_execute(0, function, context, 1);
++}
++
+ void acpi_os_wait_events_complete(void *context)
+ {
+ 	flush_workqueue(kacpid_wq);
+--- a/include/acpi/acpiosxf.h
++++ b/include/acpi/acpiosxf.h
+@@ -193,6 +193,9 @@ acpi_status
+ acpi_os_execute(acpi_execute_type type,
+ 		acpi_osd_exec_callback function, void *context);
+ 
++acpi_status
++acpi_os_hotplug_execute(acpi_osd_exec_callback function, void *context);
++
+ void acpi_os_wait_events_complete(void *context);
+ 
+ void acpi_os_sleep(acpi_integer milliseconds);

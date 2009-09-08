@@ -1,0 +1,337 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: routines managing Interrupt remapping table entries.
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: b6fcb33ad6c05f152a672f7c96c1fab006527b80
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Routines handling the management of interrupt remapping table entries.
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: akpm@linux-foundation.org
+Cc: arjan@linux.intel.com
+Cc: andi@firstfloor.org
+Cc: ebiederm@xmission.com
+Cc: jbarnes@virtuousgeek.org
+Cc: steiner@sgi.com
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ drivers/pci/intel-iommu.h    |    4 
+ drivers/pci/intr_remapping.c |  243 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/dmar.h         |   12 ++
+ 3 files changed, 259 insertions(+)
+
+Index: linux-2.6.26/drivers/pci/intel-iommu.h
+===================================================================
+--- linux-2.6.26.orig/drivers/pci/intel-iommu.h
++++ linux-2.6.26/drivers/pci/intel-iommu.h
+@@ -123,6 +123,7 @@ static inline void dmar_writeq(void __io
+ #define ecap_qis(e)		((e) & 0x2)
+ #define ecap_eim_support(e)	((e >> 4) & 0x1)
+ #define ecap_ir_support(e)	((e >> 3) & 0x1)
++#define ecap_max_handle_mask(e) ((e >> 20) & 0xf)
+ 
+ 
+ /* IOTLB_REG */
+@@ -255,6 +256,8 @@ struct q_inval {
+ #define INTR_REMAP_PAGE_ORDER	8
+ #define INTR_REMAP_TABLE_REG_SIZE	0xf
+ 
++#define INTR_REMAP_TABLE_ENTRIES	65536
++
+ struct ir_table {
+ 	struct irte *base;
+ };
+@@ -300,4 +303,5 @@ extern void free_iommu(struct intel_iomm
+ extern int dmar_enable_qi(struct intel_iommu *iommu);
+ extern void qi_global_iec(struct intel_iommu *iommu);
+ 
++extern void qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
+ #endif
+Index: linux-2.6.26/drivers/pci/intr_remapping.c
+===================================================================
+--- linux-2.6.26.orig/drivers/pci/intr_remapping.c
++++ linux-2.6.26/drivers/pci/intr_remapping.c
+@@ -2,6 +2,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/jiffies.h>
+ #include <linux/pci.h>
++#include <linux/irq.h>
+ #include <asm/io_apic.h>
+ #include "intel-iommu.h"
+ #include "intr_remapping.h"
+@@ -10,6 +11,248 @@ static struct ioapic_scope ir_ioapic[MAX
+ static int ir_ioapic_num;
+ int intr_remapping_enabled;
+ 
++static struct {
++	struct intel_iommu *iommu;
++	u16 irte_index;
++	u16 sub_handle;
++	u8  irte_mask;
++} irq_2_iommu[NR_IRQS];
++
++static DEFINE_SPINLOCK(irq_2_ir_lock);
++
++int irq_remapped(int irq)
++{
++	if (irq > NR_IRQS)
++		return 0;
++
++	if (!irq_2_iommu[irq].iommu)
++		return 0;
++
++	return 1;
++}
++
++int get_irte(int irq, struct irte *entry)
++{
++	int index;
++
++	if (!entry || irq > NR_IRQS)
++		return -1;
++
++	spin_lock(&irq_2_ir_lock);
++	if (!irq_2_iommu[irq].iommu) {
++		spin_unlock(&irq_2_ir_lock);
++		return -1;
++	}
++
++	index = irq_2_iommu[irq].irte_index + irq_2_iommu[irq].sub_handle;
++	*entry = *(irq_2_iommu[irq].iommu->ir_table->base + index);
++
++	spin_unlock(&irq_2_ir_lock);
++	return 0;
++}
++
++int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
++{
++	struct ir_table *table = iommu->ir_table;
++	u16 index, start_index;
++	unsigned int mask = 0;
++	int i;
++
++	if (!count)
++		return -1;
++
++	/*
++	 * start the IRTE search from index 0.
++	 */
++	index = start_index = 0;
++
++	if (count > 1) {
++		count = __roundup_pow_of_two(count);
++		mask = ilog2(count);
++	}
++
++	if (mask > ecap_max_handle_mask(iommu->ecap)) {
++		printk(KERN_ERR
++		       "Requested mask %x exceeds the max invalidation handle"
++		       " mask value %Lx\n", mask,
++		       ecap_max_handle_mask(iommu->ecap));
++		return -1;
++	}
++
++	spin_lock(&irq_2_ir_lock);
++	do {
++		for (i = index; i < index + count; i++)
++			if  (table->base[i].present)
++				break;
++		/* empty index found */
++		if (i == index + count)
++			break;
++
++		index = (index + count) % INTR_REMAP_TABLE_ENTRIES;
++
++		if (index == start_index) {
++			spin_unlock(&irq_2_ir_lock);
++			printk(KERN_ERR "can't allocate an IRTE\n");
++			return -1;
++		}
++	} while (1);
++
++	for (i = index; i < index + count; i++)
++		table->base[i].present = 1;
++
++	irq_2_iommu[irq].iommu = iommu;
++	irq_2_iommu[irq].irte_index =  index;
++	irq_2_iommu[irq].sub_handle = 0;
++	irq_2_iommu[irq].irte_mask = mask;
++
++	spin_unlock(&irq_2_ir_lock);
++
++	return index;
++}
++
++static void qi_flush_iec(struct intel_iommu *iommu, int index, int mask)
++{
++	struct qi_desc desc;
++
++	desc.low = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
++		   | QI_IEC_SELECTIVE;
++	desc.high = 0;
++
++	qi_submit_sync(&desc, iommu);
++}
++
++int map_irq_to_irte_handle(int irq, u16 *sub_handle)
++{
++	int index;
++
++	spin_lock(&irq_2_ir_lock);
++	if (irq >= NR_IRQS || !irq_2_iommu[irq].iommu) {
++		spin_unlock(&irq_2_ir_lock);
++		return -1;
++	}
++
++	*sub_handle = irq_2_iommu[irq].sub_handle;
++	index = irq_2_iommu[irq].irte_index;
++	spin_unlock(&irq_2_ir_lock);
++	return index;
++}
++
++int set_irte_irq(int irq, struct intel_iommu *iommu, u16 index, u16 subhandle)
++{
++	spin_lock(&irq_2_ir_lock);
++	if (irq >= NR_IRQS || irq_2_iommu[irq].iommu) {
++		spin_unlock(&irq_2_ir_lock);
++		return -1;
++	}
++
++	irq_2_iommu[irq].iommu = iommu;
++	irq_2_iommu[irq].irte_index = index;
++	irq_2_iommu[irq].sub_handle = subhandle;
++	irq_2_iommu[irq].irte_mask = 0;
++
++	spin_unlock(&irq_2_ir_lock);
++
++	return 0;
++}
++
++int clear_irte_irq(int irq, struct intel_iommu *iommu, u16 index)
++{
++	spin_lock(&irq_2_ir_lock);
++	if (irq >= NR_IRQS || !irq_2_iommu[irq].iommu) {
++		spin_unlock(&irq_2_ir_lock);
++		return -1;
++	}
++
++	irq_2_iommu[irq].iommu = NULL;
++	irq_2_iommu[irq].irte_index = 0;
++	irq_2_iommu[irq].sub_handle = 0;
++	irq_2_iommu[irq].irte_mask = 0;
++
++	spin_unlock(&irq_2_ir_lock);
++
++	return 0;
++}
++
++int modify_irte(int irq, struct irte *irte_modified)
++{
++	int index;
++	struct irte *irte;
++	struct intel_iommu *iommu;
++
++	spin_lock(&irq_2_ir_lock);
++	if (irq >= NR_IRQS || !irq_2_iommu[irq].iommu) {
++		spin_unlock(&irq_2_ir_lock);
++		return -1;
++	}
++
++	iommu = irq_2_iommu[irq].iommu;
++
++	index = irq_2_iommu[irq].irte_index + irq_2_iommu[irq].sub_handle;
++	irte = &iommu->ir_table->base[index];
++
++	set_64bit((unsigned long *)irte, irte_modified->low | (1 << 1));
++	__iommu_flush_cache(iommu, irte, sizeof(*irte));
++
++	qi_flush_iec(iommu, index, 0);
++
++	spin_unlock(&irq_2_ir_lock);
++	return 0;
++}
++
++int flush_irte(int irq)
++{
++	int index;
++	struct intel_iommu *iommu;
++
++	spin_lock(&irq_2_ir_lock);
++	if (irq >= NR_IRQS || !irq_2_iommu[irq].iommu) {
++		spin_unlock(&irq_2_ir_lock);
++		return -1;
++	}
++
++	iommu = irq_2_iommu[irq].iommu;
++
++	index = irq_2_iommu[irq].irte_index + irq_2_iommu[irq].sub_handle;
++
++	qi_flush_iec(iommu, index, irq_2_iommu[irq].irte_mask);
++	spin_unlock(&irq_2_ir_lock);
++
++	return 0;
++}
++
++int free_irte(int irq)
++{
++	int index, i;
++	struct irte *irte;
++	struct intel_iommu *iommu;
++
++	spin_lock(&irq_2_ir_lock);
++	if (irq >= NR_IRQS || !irq_2_iommu[irq].iommu) {
++		spin_unlock(&irq_2_ir_lock);
++		return -1;
++	}
++
++	iommu = irq_2_iommu[irq].iommu;
++
++	index = irq_2_iommu[irq].irte_index + irq_2_iommu[irq].sub_handle;
++	irte = &iommu->ir_table->base[index];
++
++	if (!irq_2_iommu[irq].sub_handle) {
++		for (i = 0; i < (1 << irq_2_iommu[irq].irte_mask); i++)
++			set_64bit((unsigned long *)irte, 0);
++		qi_flush_iec(iommu, index, irq_2_iommu[irq].irte_mask);
++	}
++
++	irq_2_iommu[irq].iommu = NULL;
++	irq_2_iommu[irq].irte_index = 0;
++	irq_2_iommu[irq].sub_handle = 0;
++	irq_2_iommu[irq].irte_mask = 0;
++
++	spin_unlock(&irq_2_ir_lock);
++
++	return 0;
++}
++
+ static void iommu_set_intr_remapping(struct intel_iommu *iommu, int mode)
+ {
+ 	u64 addr;
+Index: linux-2.6.26/include/linux/dmar.h
+===================================================================
+--- linux-2.6.26.orig/include/linux/dmar.h
++++ linux-2.6.26/include/linux/dmar.h
+@@ -98,7 +98,19 @@ struct irte {
+ 		__u64 high;
+ 	};
+ };
++extern int get_irte(int irq, struct irte *entry);
++extern int modify_irte(int irq, struct irte *irte_modified);
++extern int alloc_irte(struct intel_iommu *iommu, int irq, u16 count);
++extern int set_irte_irq(int irq, struct intel_iommu *iommu, u16 index,
++   			u16 sub_handle);
++extern int map_irq_to_irte_handle(int irq, u16 *sub_handle);
++extern int clear_irte_irq(int irq, struct intel_iommu *iommu, u16 index);
++extern int flush_irte(int irq);
++extern int free_irte(int irq);
++
++extern int irq_remapped(int irq);
+ #else
++#define irq_remapped(irq)		(0)
+ #define enable_intr_remapping(mode)	(-1)
+ #define intr_remapping_enabled		(0)
+ #endif

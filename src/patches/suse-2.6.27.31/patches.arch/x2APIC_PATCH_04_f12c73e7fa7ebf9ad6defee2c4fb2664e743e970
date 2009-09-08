@@ -1,0 +1,127 @@
+From: Yinghai Lu <yhlu.kernel@gmail.com>
+Subject: dmar: fix using early fixmap mapping for DMAR table parsing
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: f12c73e7fa7ebf9ad6defee2c4fb2664e743e970
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Very early detection of the DMAR tables will setup fixmap mapping. For
+parsing these tables later (while enabling dma and/or interrupt remapping),
+early fixmap mapping shouldn't be used. Fix it by calling table detection
+routines again, which will call generic apci_get_table() for setting up
+the correct mapping.
+
+Signed-off-by: Yinghai Lu <yhlu.kernel@gmail.com>
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ drivers/pci/dmar.c   |   49 ++++++++++++++++++++++++++++---------------------
+ include/linux/dmar.h |    1 -
+ 2 files changed, 28 insertions(+), 22 deletions(-)
+
+Index: linux-2.6.26/drivers/pci/dmar.c
+===================================================================
+--- linux-2.6.26.orig/drivers/pci/dmar.c
++++ linux-2.6.26/drivers/pci/dmar.c
+@@ -289,6 +289,24 @@ dmar_table_print_dmar_entry(struct acpi_
+ 	}
+ }
+ 
++/**
++ * dmar_table_detect - checks to see if the platform supports DMAR devices
++ */
++static int __init dmar_table_detect(void)
++{
++	acpi_status status = AE_OK;
++
++	/* if we could find DMAR table, then there are DMAR devices */
++	status = acpi_get_table(ACPI_SIG_DMAR, 0,
++				(struct acpi_table_header **)&dmar_tbl);
++
++	if (ACPI_SUCCESS(status) && !dmar_tbl) {
++		printk (KERN_WARNING PREFIX "Unable to map DMAR\n");
++		status = AE_NOT_FOUND;
++	}
++
++	return (ACPI_SUCCESS(status) ? 1 : 0);
++}
+ 
+ /**
+  * parse_dmar_table - parses the DMA reporting table
+@@ -300,6 +318,12 @@ parse_dmar_table(void)
+ 	struct acpi_dmar_header *entry_header;
+ 	int ret = 0;
+ 
++	/*
++	 * Do it again, earlier dmar_tbl mapping could be mapped with
++	 * fixed map.
++	 */
++	dmar_table_detect();
++
+ 	dmar = (struct acpi_table_dmar *)dmar_tbl;
+ 	if (!dmar)
+ 		return -ENODEV;
+@@ -432,30 +456,11 @@ int __init dmar_table_init(void)
+ 	return 0;
+ }
+ 
+-/**
+- * early_dmar_detect - checks to see if the platform supports DMAR devices
+- */
+-int __init early_dmar_detect(void)
+-{
+-	acpi_status status = AE_OK;
+-
+-	/* if we could find DMAR table, then there are DMAR devices */
+-	status = acpi_get_table(ACPI_SIG_DMAR, 0,
+-				(struct acpi_table_header **)&dmar_tbl);
+-
+-	if (ACPI_SUCCESS(status) && !dmar_tbl) {
+-		printk (KERN_WARNING PREFIX "Unable to map DMAR\n");
+-		status = AE_NOT_FOUND;
+-	}
+-
+-	return (ACPI_SUCCESS(status) ? 1 : 0);
+-}
+-
+ void __init detect_intel_iommu(void)
+ {
+ 	int ret;
+ 
+-	ret = early_dmar_detect();
++	ret = dmar_table_detect();
+ 
+ #ifdef CONFIG_DMAR
+ 	{
+@@ -481,14 +486,16 @@ void __init detect_intel_iommu(void)
+ 			       " x2apic support\n");
+ 
+ 			dmar_disabled = 1;
+-			return;
++			goto end;
+ 		}
+ 
+ 		if (ret && !no_iommu && !iommu_detected && !swiotlb &&
+ 		    !dmar_disabled)
+ 			iommu_detected = 1;
+ 	}
++end:
+ #endif
++	dmar_tbl = NULL;
+ }
+ 
+ 
+Index: linux-2.6.26/include/linux/dmar.h
+===================================================================
+--- linux-2.6.26.orig/include/linux/dmar.h
++++ linux-2.6.26/include/linux/dmar.h
+@@ -45,7 +45,6 @@ extern struct list_head dmar_drhd_units;
+ 	list_for_each_entry(drhd, &dmar_drhd_units, list)
+ 
+ extern int dmar_table_init(void);
+-extern int early_dmar_detect(void);
+ extern int dmar_dev_scope_init(void);
+ 
+ /* Intel IOMMU detection */

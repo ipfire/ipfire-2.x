@@ -1,0 +1,351 @@
+From: Andreas Gruenbacher <agruen@suse.de>
+Subject: Novell/external support flag in modules
+
+Upon module load, check if a module is supported, and set the
+N (TAINT_NO_SUPPORT) or X (TAINT_EXTERNAL_SUPPORT) tail flags
+for unsupported or externally suported modules.
+
+Changes:
+* Feb 21 2008 - jeffm
+- 2.6.25 claimed -S and bumped the flags up a bit, modpost now uses -N
+
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+
+---
+
+ Documentation/kernel-parameters.txt |    6 +++
+ Documentation/sysctl/kernel.txt     |   12 ++++++
+ Makefile                            |    5 ++
+ include/linux/kernel.h              |    8 ++++
+ kernel/module.c                     |   41 ++++++++++++++++++++++
+ kernel/panic.c                      |    8 +++-
+ kernel/sysctl.c                     |   10 +++++
+ scripts/Makefile.modpost            |    4 +-
+ scripts/mod/modpost.c               |   65 +++++++++++++++++++++++++++++++++++-
+ 9 files changed, 155 insertions(+), 4 deletions(-)
+
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -2113,6 +2113,12 @@ and is between 256 and 4096 characters.
+ 			pernode	    one pool for each NUMA node (equivalent
+ 				    to global on non-NUMA machines)
+ 
++	unsupported	Allow loading of unsupported kernel modules:
++			0 = only allow supported modules,
++			1 = warn when loading unsupported modules,
++			2 = don't warn.
++
++
+ 	swiotlb=	[IA-64] Number of I/O TLB slabs
+ 
+ 	switches=	[HW,M68k]
+--- a/Documentation/sysctl/kernel.txt
++++ b/Documentation/sysctl/kernel.txt
+@@ -369,4 +369,16 @@ can be ORed together:
+   2 - A module was force loaded by insmod -f.
+       Set by modutils >= 2.4.9 and module-init-tools.
+   4 - Unsafe SMP processors: SMP with CPUs not designed for SMP.
++ 0x40000000 - An unsupported kernel module was loaded.
++ 0x80000000 - An kernel module with external support was loaded.
++
++==============================================================
++
++unsupported:
++
++Allow to load unsupported kernel modules:
++
++  0 - refuse to load unsupported modules,
++  1 - warn when loading unsupported modules,
++  2 - don't warn.
+ 
+--- a/Makefile
++++ b/Makefile
+@@ -344,6 +344,11 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstric
+ 		   -fno-delete-null-pointer-checks
+ KBUILD_AFLAGS   := -D__ASSEMBLY__
+ 
++# Warn about unsupported modules in kernels built inside Autobuild
++ifneq ($(wildcard /.buildenv),)
++CFLAGS		+= -DUNSUPPORTED_MODULES=2
++endif
++
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+ KERNELVERSION = $(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -236,6 +236,7 @@ extern int panic_timeout;
+ extern int panic_on_oops;
+ extern int panic_on_unrecovered_nmi;
+ extern int tainted;
++extern int unsupported;
+ extern const char *print_tainted(void);
+ extern void add_taint(unsigned);
+ extern int root_mountflags;
+@@ -261,6 +262,13 @@ extern enum system_states {
+ #define TAINT_OVERRIDDEN_ACPI_TABLE	(1<<8)
+ #define TAINT_WARN			(1<<9)
+ 
++/*
++ * Take the upper bits to hopefully allow them
++ * to stay the same for more than one release.
++ */
++#define TAINT_NO_SUPPORT		(1<<30)
++#define TAINT_EXTERNAL_SUPPORT		(1<<31)
++
+ extern void dump_stack(void) __cold;
+ 
+ enum {
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -60,6 +60,20 @@
+ /* If this is set, the section belongs in the init part of the module */
+ #define INIT_OFFSET_MASK (1UL << (BITS_PER_LONG-1))
+ 
++/* Allow unsupported modules switch. */
++#ifdef UNSUPPORTED_MODULES
++int unsupported = UNSUPPORTED_MODULES;
++#else
++int unsupported = 2;  /* don't warn when loading unsupported modules. */
++#endif
++
++static int __init unsupported_setup(char *str)
++{
++	get_option(&str, &unsupported);
++	return 1;
++}
++__setup("unsupported=", unsupported_setup);
++
+ /* List of modules, protected by module_mutex or preempt_disable
+  * (add/delete uses stop_machine). */
+ static DEFINE_MUTEX(module_mutex);
+@@ -1806,6 +1820,7 @@ static noinline struct module *load_modu
+ 	Elf_Ehdr *hdr;
+ 	Elf_Shdr *sechdrs;
+ 	char *secstrings, *args, *modmagic, *strtab = NULL;
++	char *supported;
+ 	unsigned int i;
+ 	unsigned int symindex = 0;
+ 	unsigned int strindex = 0;
+@@ -1960,6 +1975,28 @@ static noinline struct module *load_modu
+ 		goto free_hdr;
+ 	}
+ 
++	supported = get_modinfo(sechdrs, infoindex, "supported");
++	if (supported) {
++		if (!strcmp(supported, "external"))
++			add_taint_module(mod, TAINT_EXTERNAL_SUPPORT);
++		else if (strcmp(supported, "yes"))
++			supported = NULL;
++	}
++	if (!supported) {
++		if (unsupported == 0) {
++			printk(KERN_WARNING "%s: module not supported by "
++			       "Novell, refusing to load. To override, echo "
++			       "1 > /proc/sys/kernel/unsupported\n", mod->name);
++			err = -ENOEXEC;
++			goto free_hdr;
++		}
++		add_taint_module(mod, TAINT_NO_SUPPORT);
++		if (unsupported == 1) {
++			printk(KERN_WARNING "%s: module not supported by "
++			       "Novell, setting U taint flag.\n", mod->name);
++		}
++	}
++
+ 	/* Now copy in args */
+ 	args = strndup_user(uargs, ~0UL >> 1);
+ 	if (IS_ERR(args)) {
+@@ -2554,6 +2591,10 @@ static char *module_flags(struct module
+ 			buf[bx++] = 'P';
+ 		if (mod->taints & TAINT_FORCED_MODULE)
+ 			buf[bx++] = 'F';
++		if (mod->taints & TAINT_NO_SUPPORT)
++			buf[bx++] = 'N';
++		if (mod->taints & TAINT_EXTERNAL_SUPPORT)
++			buf[bx++] = 'X';
+ 		/*
+ 		 * TAINT_FORCED_RMMOD: could be added.
+ 		 * TAINT_UNSAFE_SMP, TAINT_MACHINE_CHECK, TAINT_BAD_PAGE don't
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -155,6 +155,8 @@ EXPORT_SYMBOL(panic);
+  *  'U' - Userspace-defined naughtiness.
+  *  'A' - ACPI table overridden.
+  *  'W' - Taint on warning.
++ *  'N' - Unsuported modules loaded.
++ *  'X' - Modules with external support loaded.
+  *
+  *	The string is overwritten by the next call to print_taint().
+  */
+@@ -163,7 +165,7 @@ const char *print_tainted(void)
+ {
+ 	static char buf[20];
+ 	if (tainted) {
+-		snprintf(buf, sizeof(buf), "Tainted: %c%c%c%c%c%c%c%c%c%c",
++		snprintf(buf, sizeof(buf), "Tainted: %c%c%c%c%c%c%c%c%c%c%c%c",
+ 			tainted & TAINT_PROPRIETARY_MODULE ? 'P' : 'G',
+ 			tainted & TAINT_FORCED_MODULE ? 'F' : ' ',
+ 			tainted & TAINT_UNSAFE_SMP ? 'S' : ' ',
+@@ -173,7 +175,9 @@ const char *print_tainted(void)
+ 			tainted & TAINT_USER ? 'U' : ' ',
+ 			tainted & TAINT_DIE ? 'D' : ' ',
+ 			tainted & TAINT_OVERRIDDEN_ACPI_TABLE ? 'A' : ' ',
+-			tainted & TAINT_WARN ? 'W' : ' ');
++			tainted & TAINT_WARN ? 'W' : ' ',
++			tainted & TAINT_NO_SUPPORT ? 'N' : ' ',
++			tainted & TAINT_EXTERNAL_SUPPORT ? 'X' : ' ');
+ 	}
+ 	else
+ 		snprintf(buf, sizeof(buf), "Not tainted");
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -550,6 +550,16 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= &proc_dointvec,
+ 	},
++#ifdef CONFIG_MODULES
++	{
++		.ctl_name	= CTL_UNNUMBERED,
++		.procname	= "unsupported",
++		.data		= &unsupported,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= &proc_dointvec,
++	},
++#endif
+ 	{
+ 		.ctl_name	= KERN_RANDOM,
+ 		.procname	= "random",
+--- a/scripts/Makefile.modpost
++++ b/scripts/Makefile.modpost
+@@ -88,7 +88,9 @@ modpost = scripts/mod/modpost
+  $(if $(CONFIG_MARKERS),-K $(kernelmarkersfile)) \
+  $(if $(CONFIG_MARKERS),-M $(markersfile))	 \
+  $(if $(KBUILD_EXTMOD)$(KBUILD_MODPOST_WARN),-w) \
+- $(if $(cross_build),-c)
++ $(if $(cross_build),-c)			 \
++ -N $(firstword $(wildcard $(dir $(MODVERDIR))/Module.supported \
++				  $(objtree)/Module.supported /dev/null))
+ 
+ quiet_cmd_modpost = MODPOST $(words $(filter-out vmlinux FORCE, $^)) modules
+       cmd_modpost = $(modpost) -s
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1545,6 +1545,48 @@ static void get_markers(struct elf_info
+ 		}
+ }
+ 
++void *supported_file;
++unsigned long supported_size;
++
++const char *supported(struct module *mod)
++{
++	unsigned long pos = 0;
++	char *line;
++
++	/* In a first shot, do a simple linear scan. */
++	while ((line = get_next_line(&pos, supported_file,
++				     supported_size))) {
++		const char *basename, *how = "yes";
++		char *l = line;
++
++		/* optional type-of-support flag */
++		for (l = line; *l != '\0'; l++) {
++			if (*l == ' ' || *l == '\t') {
++				*l = '\0';
++				how = l + 1;
++				break;
++			}
++		}
++
++		/* skip directory components */
++		if ((l = strrchr(line, '/')))
++			line = l + 1;
++		/* strip .ko extension */
++		l = line + strlen(line);
++		if (l - line > 3 && !strcmp(l-3, ".ko"))
++			*(l-3) = '\0';
++
++		/* skip directory components */
++		if ((basename = strrchr(mod->name, '/')))
++			basename++;
++		else
++			basename = mod->name;
++		if (!strcmp(basename, line))
++			return how;
++	}
++	return NULL;
++}
++
+ static void read_symbols(char *modname)
+ {
+ 	const char *symname;
+@@ -1726,6 +1768,13 @@ static void add_header(struct buffer *b,
+ 	buf_printf(b, "};\n");
+ }
+ 
++void add_supported_flag(struct buffer *b, struct module *mod)
++{
++	const char *how = supported(mod);
++	if (how)
++		buf_printf(b, "\nMODULE_INFO(supported, \"%s\");\n", how);
++}
++
+ /**
+  * Record CRCs for unresolved symbols
+  **/
+@@ -1866,6 +1915,13 @@ static void write_if_changed(struct buff
+ 	fclose(file);
+ }
+ 
++void read_supported(const char *fname)
++{
++	supported_file = grab_file(fname, &supported_size);
++	if (!supported_file)
++		; /* ignore error */
++}
++
+ /* parse Module.symvers file. line format:
+  * 0x12345678<tab>symbol<tab>module[[<tab>export]<tab>something]
+  **/
+@@ -2051,12 +2107,13 @@ int main(int argc, char **argv)
+ 	char *dump_write = NULL;
+ 	char *markers_read = NULL;
+ 	char *markers_write = NULL;
++	const char *supported = NULL;
+ 	int opt;
+ 	int err;
+ 	struct ext_sym_list *extsym_iter;
+ 	struct ext_sym_list *extsym_start = NULL;
+ 
+-	while ((opt = getopt(argc, argv, "i:I:e:cmsSo:awM:K:")) != -1) {
++	while ((opt = getopt(argc, argv, "i:I:e:cmsSo:awM:K:N:")) != -1) {
+ 		switch (opt) {
+ 		case 'i':
+ 			kernel_read = optarg;
+@@ -2100,11 +2157,16 @@ int main(int argc, char **argv)
+ 			case 'K':
+ 				markers_read = optarg;
+ 				break;
++		case 'N':
++			supported = optarg;
++			break;
+ 		default:
+ 			exit(1);
+ 		}
+ 	}
+ 
++	if (supported)
++		read_supported(supported);
+ 	if (kernel_read)
+ 		read_dump(kernel_read, 1);
+ 	if (module_read)
+@@ -2136,6 +2198,7 @@ int main(int argc, char **argv)
+ 		buf.pos = 0;
+ 
+ 		add_header(&buf, mod);
++		add_supported_flag(&buf, mod);
+ 		err |= add_versions(&buf, mod);
+ 		add_depends(&buf, mod, modules);
+ 		add_moddevtable(&buf, mod);

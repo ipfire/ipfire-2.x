@@ -1,0 +1,39 @@
+From foo@baz Tue Jul 14 10:19:52 PDT 2009
+Date: Tue, 14 Jul 2009 10:19:52 -0700
+To: Greg KH <greg@kroah.com>
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: hv: add the Hyper-V virtual scsi driver to the build
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+Add the Hyper-V virtual scsi driver to the kernel build system.
+
+Cc: Hank Janssen <hjanssen@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/hv/Kconfig  |    6 ++++++
+ drivers/staging/hv/Makefile |    2 ++
+ 2 files changed, 8 insertions(+)
+
+--- a/drivers/staging/hv/Kconfig
++++ b/drivers/staging/hv/Kconfig
+@@ -6,3 +6,9 @@ config HYPERV
+ 	  Select this option to run Linux as a Hyper-V client operating
+ 	  system.
+ 
++config HYPERV_STORAGE
++	tristate "Microsoft Hyper-V virtual storage driver"
++	depends on HYPERV && SCSI
++	default n
++	help
++	 Select this option to enable the Hyper-V virtual storage driver.
+--- a/drivers/staging/hv/Makefile
++++ b/drivers/staging/hv/Makefile
+@@ -1,3 +1,5 @@
+ obj-$(CONFIG_HYPERV)		+= hv_vmbus.o
++obj-$(CONFIG_HYPERV_STORAGE)	+= hv_storvsc.o
+ 
+ hv_vmbus-objs := vmbus_drv.o osd.o Sources.o
++hv_storvsc-objs := storvsc_drv.o osd.o StorVsc.o

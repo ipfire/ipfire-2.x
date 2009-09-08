@@ -1,0 +1,38 @@
+From: schwab@suse.de
+Subject: Fix msr check in compat_sys_swapcontext
+References: 441498
+
+The new context may not be 16-byte aligned, so the real address of the
+mcontext structure should be read from the uc_regs pointer instead of
+directly using the (unaligned) uc_mcontext field.
+
+Signed-off-by: Andreas Schwab <schwab@suse.de>
+
+---
+---
+ arch/powerpc/kernel/signal_32.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -941,9 +941,17 @@ long sys_swapcontext(struct ucontext __u
+ #ifdef CONFIG_PPC64
+ 	unsigned long new_msr = 0;
+ 
+-	if (new_ctx &&
+-	    get_user(new_msr, &new_ctx->uc_mcontext.mc_gregs[PT_MSR]))
+-		return -EFAULT;
++	if (new_ctx) {
++		struct mcontext __user *mcp;
++		u32 cmcp;
++
++		/* Get pointer to the real mcontext. */
++		if (get_user(cmcp, &new_ctx->uc_regs))
++			return -EFAULT;
++		mcp = (struct mcontext __user *)(u64)cmcp;
++		if (get_user(new_msr, &mcp->mc_gregs[PT_MSR]))
++			return -EFAULT;
++	}
+ 	/*
+ 	 * Check that the context is not smaller than the original
+ 	 * size (with VMX but without VSX)

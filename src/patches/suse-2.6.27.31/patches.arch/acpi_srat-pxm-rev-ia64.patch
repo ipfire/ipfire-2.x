@@ -1,0 +1,58 @@
+From: Kurt Garloff <garloff@suse.de>
+Subject: Use SRAT table rev to use 8bit or 16/32bit PXM fields (ia64)
+References: bnc#503038
+
+In SRAT v1, we had 8bit proximity domain (PXM) fields; SRAT v2 provides
+32bits for these. The new fields were reserved before.
+According to the ACPI spec, the OS must disregrard reserved fields.
+
+ia64 did handle the PXM fields almost consistently, but depending on 
+sgi's sn2 platform. This patch leaves the sn2 logic in, but does also
+use 16/32 bits for PXM if the SRAT has rev 2 or higher.
+
+The patch also adds __init to the two pxm accessor functions, as they
+access __initdata now and are called from an __init function only anyway.
+
+Note that the code only uses 16 bits for the PXM field in the processor
+proximity field; the patch does not address this as 16 bits are more than
+enough.
+
+This is patch 3/3.
+
+Signed-off-by: Kurt Garloff <garloff@suse.de>
+
+---
+ arch/ia64/kernel/acpi.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+--- a/arch/ia64/kernel/acpi.c
++++ b/arch/ia64/kernel/acpi.c
+@@ -430,22 +430,24 @@ static u32 __devinitdata pxm_flag[PXM_FL
+ static struct acpi_table_slit __initdata *slit_table;
+ cpumask_t early_cpu_possible_map = CPU_MASK_NONE;
+ 
+-static int get_processor_proximity_domain(struct acpi_srat_cpu_affinity *pa)
++static int __init
++get_processor_proximity_domain(struct acpi_srat_cpu_affinity *pa)
+ {
+ 	int pxm;
+ 
+ 	pxm = pa->proximity_domain_lo;
+-	if (ia64_platform_is("sn2"))
++	if (ia64_platform_is("sn2") || acpi_srat_revision >= 2)
+ 		pxm += pa->proximity_domain_hi[0] << 8;
+ 	return pxm;
+ }
+ 
+-static int get_memory_proximity_domain(struct acpi_srat_mem_affinity *ma)
++static int __init
++get_memory_proximity_domain(struct acpi_srat_mem_affinity *ma)
+ {
+ 	int pxm;
+ 
+ 	pxm = ma->proximity_domain;
+-	if (!ia64_platform_is("sn2"))
++	if (!ia64_platform_is("sn2") && acpi_srat_revision <= 1)
+ 		pxm &= 0xff;
+ 
+ 	return pxm;

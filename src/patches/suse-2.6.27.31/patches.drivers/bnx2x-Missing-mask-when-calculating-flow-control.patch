@@ -1,0 +1,27 @@
+From ad33ea3a8d2ec324dc0f46b6ae404d824d2b349b Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 21:24:57 -0800
+Subject: bnx2x: Missing mask when calculating flow control
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -1902,7 +1902,8 @@ static int bnx2x_set_spio(struct bnx2x *
+ 
+ static void bnx2x_calc_fc_adv(struct bnx2x *bp)
+ {
+-	switch (bp->link_vars.ieee_fc) {
++	switch (bp->link_vars.ieee_fc &
++		MDIO_COMBO_IEEE0_AUTO_NEG_ADV_PAUSE_MASK) {
+ 	case MDIO_COMBO_IEEE0_AUTO_NEG_ADV_PAUSE_NONE:
+ 		bp->port.advertising &= ~(ADVERTISED_Asym_Pause |
+ 					  ADVERTISED_Pause);

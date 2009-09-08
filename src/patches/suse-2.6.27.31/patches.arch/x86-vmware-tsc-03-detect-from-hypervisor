@@ -1,0 +1,372 @@
+From: Alok Kataria <akataria@vmware.com>
+Subject: x86: Hypervisor detection and get tsc_freq from hypervisor
+Patch-mainline:
+References: bnc#441338
+    
+Impact: Changes timebase calibration on Vmware.
+    
+v3->v2 : Abstract the hypervisor detection and feature (tsc_freq) request
+         behind a hypervisor.c file
+v2->v1 : Add a x86_hyper_vendor field to the cpuinfo_x86 structure.
+         This avoids multiple calls to the hypervisor detection function.
+    
+This patch adds function to detect if we are running under VMware.
+The current way to check if we are on VMware is following,
+#  check if "hypervisor present bit" is set, if so read the 0x40000000
+   cpuid leaf and check for "VMwareVMware" signature.
+#  if the above fails, check the DMI vendors name for "VMware" string
+   if we find one we query the VMware hypervisor port to check if we are
+   under VMware.
+    
+The DMI + "VMware hypervisor port check" is needed for older VMware products,
+which don't implement the hypervisor signature cpuid leaf.
+Also note that since we are checking for the DMI signature the hypervisor
+port should never be accessed on native hardware.
+    
+This patch also adds a hypervisor_get_tsc_freq function, instead of
+calibrating the frequency which can be error prone in virtualized
+environment, we ask the hypervisor for it. We get the frequency from
+the hypervisor by accessing the hypervisor port if we are running on VMware.
+Other hypervisors too can add code to the generic routine to get frequency on
+their platform.
+    
+Signed-off-by: Alok N Kataria <akataria@vmware.com>
+Signed-off-by: Dan Hecht <dhecht@vmware.com>
+Signed-off-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+
+ arch/x86/kernel/cpu/Makefile     |    1 
+ arch/x86/kernel/cpu/common.c     |    2 
+ arch/x86/kernel/cpu/common_64.c  |    2 
+ arch/x86/kernel/cpu/hypervisor.c |   48 +++++++++++++++++++++
+ arch/x86/kernel/cpu/vmware.c     |   88 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/setup.c          |    7 +++
+ arch/x86/kernel/tsc.c            |    9 +++
+ include/asm-x86/hypervisor.h     |   26 +++++++++++
+ include/asm-x86/processor.h      |    4 +
+ include/asm-x86/vmware.h         |   26 +++++++++++
+ 10 files changed, 212 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/kernel/cpu/hypervisor.c
+ create mode 100644 arch/x86/kernel/cpu/vmware.c
+ create mode 100644 include/asm-x86/hypervisor.h
+ create mode 100644 include/asm-x86/vmware.h
+
+
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -4,6 +4,7 @@
+ 
+ obj-y			:= intel_cacheinfo.o addon_cpuid_features.o
+ obj-y			+= proc.o feature_names.o
++obj-y			+= vmware.o hypervisor.o
+ 
+ obj-$(CONFIG_X86_32)	+= common.o bugs.o
+ obj-$(CONFIG_X86_64)	+= common_64.o bugs_64.o
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -14,6 +14,7 @@
+ #include <asm/mce.h>
+ #include <asm/pat.h>
+ #include <asm/asm.h>
++#include <asm/hypervisor.h>
+ #ifdef CONFIG_X86_LOCAL_APIC
+ #include <asm/mpspec.h>
+ #include <asm/apic.h>
+@@ -505,6 +506,7 @@ static void __cpuinit identify_cpu(struc
+ 				c->x86, c->x86_model);
+ 	}
+ 
++	init_hypervisor(c);
+ 	/*
+ 	 * On SMP, boot_cpu_data holds the common feature set between
+ 	 * all CPUs; so make sure that we indicate which features are
+--- a/arch/x86/kernel/cpu/common_64.c
++++ b/arch/x86/kernel/cpu/common_64.c
+@@ -34,6 +34,7 @@
+ #include <asm/sections.h>
+ #include <asm/setup.h>
+ #include <asm/genapic.h>
++#include <asm/hypervisor.h>
+ 
+ #include "cpu.h"
+ 
+@@ -387,6 +388,7 @@ static void __cpuinit identify_cpu(struc
+ 
+ 	detect_ht(c);
+ 
++	init_hypervisor(c);
+ 	/*
+ 	 * On SMP, boot_cpu_data holds the common feature set between
+ 	 * all CPUs; so make sure that we indicate which features are
+--- /dev/null
++++ b/arch/x86/kernel/cpu/hypervisor.c
+@@ -0,0 +1,48 @@
++/*
++ * Common hypervisor code
++ *
++ * Copyright (C) 2008, VMware, Inc.
++ * Author : Alok N Kataria <akataria@vmware.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
++ * NON INFRINGEMENT.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ */
++
++#include <asm/processor.h>
++#include <asm/vmware.h>
++
++static inline void __cpuinit
++detect_hypervisor_vendor(struct cpuinfo_x86 *c)
++{
++	if (vmware_platform()) {
++		c->x86_hyper_vendor = X86_HYPER_VENDOR_VMWARE;
++	} else {
++		c->x86_hyper_vendor = X86_HYPER_VENDOR_NONE;
++	}
++}
++
++unsigned long get_hypervisor_tsc_freq(void)
++{
++	if (boot_cpu_data.x86_hyper_vendor == X86_HYPER_VENDOR_VMWARE)
++		return vmware_get_tsc_khz();
++	return 0;
++}
++
++void __cpuinit init_hypervisor(struct cpuinfo_x86 *c)
++{
++	detect_hypervisor_vendor(c);
++}
++
+--- /dev/null
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -0,0 +1,88 @@
++/*
++ * VMware Detection code.
++ *
++ * Copyright (C) 2008, VMware, Inc.
++ * Author : Alok N Kataria <akataria@vmware.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
++ * NON INFRINGEMENT.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ */
++
++#include <linux/dmi.h>
++#include <asm/div64.h>
++
++#define CPUID_VMWARE_INFO_LEAF	0x40000000
++#define VMWARE_HYPERVISOR_MAGIC	0x564D5868
++#define VMWARE_HYPERVISOR_PORT	0x5658
++
++#define VMWARE_PORT_CMD_GETVERSION	10
++#define VMWARE_PORT_CMD_GETHZ		45
++
++#define VMWARE_PORT(cmd, eax, ebx, ecx, edx)				\
++	__asm__("inl (%%dx)" :						\
++			"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :	\
++			"0"(VMWARE_HYPERVISOR_MAGIC),			\
++			"1"(VMWARE_PORT_CMD_##cmd),			\
++			"2"(VMWARE_HYPERVISOR_PORT), "3"(0) :		\
++			"memory");
++
++static inline int __vmware_platform(void)
++{
++	uint32_t eax, ebx, ecx, edx;
++	VMWARE_PORT(GETVERSION, eax, ebx, ecx, edx);
++	return eax != (uint32_t)-1 && ebx == VMWARE_HYPERVISOR_MAGIC;
++}
++
++static unsigned long __vmware_get_tsc_khz(void)
++{
++        uint64_t tsc_hz;
++        uint32_t eax, ebx, ecx, edx;
++
++        VMWARE_PORT(GETHZ, eax, ebx, ecx, edx);
++
++        if (eax == (uint32_t)-1)
++                return 0;
++        tsc_hz = eax | (((uint64_t)ebx) << 32);
++        do_div(tsc_hz, 1000);
++        BUG_ON(tsc_hz >> 32);
++        return tsc_hz;
++}
++
++int vmware_platform(void)
++{
++	if (cpu_has_hypervisor) {
++		unsigned int eax, ebx, ecx, edx;
++		char hyper_vendor_id[13];
++
++		cpuid(CPUID_VMWARE_INFO_LEAF, &eax, &ebx, &ecx, &edx);
++		memcpy(hyper_vendor_id + 0, &ebx, 4);
++		memcpy(hyper_vendor_id + 4, &ecx, 4);
++		memcpy(hyper_vendor_id + 8, &edx, 4);
++		hyper_vendor_id[12] = '\0';
++		if (!strcmp(hyper_vendor_id, "VMwareVMware"))
++			return 1;
++	} else if (dmi_available && dmi_name_in_vendors("VMware") &&
++		   __vmware_platform())
++		return 1;
++
++	return 0;
++}
++
++unsigned long vmware_get_tsc_khz(void)
++{
++	BUG_ON(!vmware_platform());
++	return __vmware_get_tsc_khz();
++}
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -98,6 +98,7 @@
+ 
+ #include <mach_apic.h>
+ #include <asm/paravirt.h>
++#include <asm/hypervisor.h>
+ 
+ #include <asm/percpu.h>
+ #include <asm/topology.h>
+@@ -896,6 +897,12 @@ void __init setup_arch(char **cmdline_p)
+ 	e820_reserve_resources();
+ 	e820_mark_nosave_regions(max_low_pfn);
+ 
++	/*
++	 * VMware detection requires dmi to be available, so this
++	 * needs to be done after dmi_scan_machine, for the BP.
++	 */
++	init_hypervisor(&boot_cpu_data);
++
+ #ifdef CONFIG_X86_32
+ 	request_resource(&iomem_resource, &video_ram_resource);
+ #endif
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -15,6 +15,7 @@
+ #include <asm/vgtod.h>
+ #include <asm/time.h>
+ #include <asm/delay.h>
++#include <asm/hypervisor.h>
+ 
+ unsigned int cpu_khz;           /* TSC clocks / usec, not used here */
+ EXPORT_SYMBOL(cpu_khz);
+@@ -189,9 +190,15 @@ unsigned long native_calibrate_tsc(void)
+ {
+ 	u64 tsc1, tsc2, delta, pm1, pm2, hpet1, hpet2;
+ 	unsigned long tsc_pit_min = ULONG_MAX, tsc_ref_min = ULONG_MAX;
+-	unsigned long flags;
++	unsigned long flags, tsc_khz;
+ 	int hpet = is_hpet_enabled(), i;
+ 
++	tsc_khz = get_hypervisor_tsc_freq();
++	if (tsc_khz) {
++		printk(KERN_INFO "TSC: Frequency read from the hypervisor\n");
++		return tsc_khz;
++	}
++
+ 	/*
+ 	 * Run 5 calibration loops to get the lowest frequency value
+ 	 * (the best estimate). We use two different calibration modes
+--- /dev/null
++++ b/include/asm-x86/hypervisor.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2008, VMware, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
++ * NON INFRINGEMENT.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ */
++#ifndef ASM_X86__HYPERVISOR_H
++#define ASM_X86__HYPERVISOR_H
++
++extern unsigned long get_hypervisor_tsc_freq(void);
++extern void init_hypervisor(struct cpuinfo_x86 *c);
++
++#endif
+--- a/include/asm-x86/processor.h
++++ b/include/asm-x86/processor.h
+@@ -109,6 +109,7 @@ struct cpuinfo_x86 {
+ 	/* Index into per_cpu list: */
+ 	u16			cpu_index;
+ #endif
++	unsigned int		x86_hyper_vendor;
+ } __attribute__((__aligned__(SMP_CACHE_BYTES)));
+ 
+ #define X86_VENDOR_INTEL	0
+@@ -122,6 +123,9 @@ struct cpuinfo_x86 {
+ 
+ #define X86_VENDOR_UNKNOWN	0xff
+ 
++#define X86_HYPER_VENDOR_NONE  0
++#define X86_HYPER_VENDOR_VMWARE 1
++
+ /*
+  * capabilities of CPUs
+  */
+--- /dev/null
++++ b/include/asm-x86/vmware.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2008, VMware, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
++ * NON INFRINGEMENT.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ */
++#ifndef ASM_X86__VMWARE_H
++#define ASM_X86__VMWARE_H
++
++extern unsigned long vmware_get_tsc_khz(void);
++extern int vmware_platform(void);
++
++#endif

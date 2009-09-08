@@ -1,0 +1,240 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: hda - keep internal structure binary compatibility
+Patch-mainline: NEVER EVER PUSH THIS EVIL!!
+References: bnc#497341
+
+Add evil hacks to keep the *INTERNAL* binary compatibility, which
+agrmodem driver pokes around.  We fake the old bus_ops.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/hda_codec.c |   28 ++++++++++++++++++++++++++++
+ sound/pci/hda/hda_codec.h |   22 +++++++++++++++++++---
+ sound/pci/hda/hda_intel.c |   39 ++++++++++++++++++++++++++++-----------
+ 3 files changed, 75 insertions(+), 14 deletions(-)
+
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -549,6 +549,17 @@
+ #endif
+ };
+ 
++/* old hda_bus_ops struct -- just for really evil binary compatibility issues */
++struct hda_old_bus_ops {
++	int (*command)(struct hda_codec *codec, hda_nid_t nid, int direct,
++		       unsigned int verb, unsigned int parm);
++	unsigned int (*get_response)(struct hda_codec *codec);
++	void (*private_free)(struct hda_bus *);
++#ifdef CONFIG_SND_HDA_POWER_SAVE
++	void (*pm_notify)(struct hda_codec *codec);
++#endif
++};
++
+ /* template to pass to the bus constructor */
+ struct hda_bus_template {
+ 	void *private_data;
+@@ -570,7 +581,7 @@
+ 	void *private_data;
+ 	struct pci_dev *pci;
+ 	const char *modelname;
+-	struct hda_bus_ops ops;
++	struct hda_old_bus_ops old_ops; /* old ops; for binary compatibility */
+ 
+ 	/* codec linked list */
+ 	struct list_head codec_list;
+@@ -581,8 +592,6 @@
+ 
+ 	/* unsolicited event queue */
+ 	struct hda_bus_unsolicited *unsol;
+-	char workq_name[16];
+-	struct workqueue_struct *workq;	/* common workqueue for codecs */
+ 
+ 	struct snd_info_entry *proc;
+ 
+@@ -594,6 +603,13 @@
+ 	unsigned int rirb_error:1;	/* error in codec communication */
+ 	unsigned int response_reset:1;	/* controller was reset */
+ 	unsigned int in_reset:1;	/* during reset operation */
++
++	/* real ops */
++	struct hda_bus_ops ops;
++
++	/* additional workq stuff */
++	char workq_name[16];
++	struct workqueue_struct *workq;	/* common workqueue for codecs */
+ };
+ 
+ /*
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -306,9 +306,6 @@
+ 	unsigned int period_bytes; /* size of the period in bytes */
+ 	unsigned int frags;	/* number for period in the play buffer */
+ 	unsigned int fifo_size;	/* FIFO size */
+-	unsigned int start_flag: 1;	/* stream full start flag */
+-	unsigned long start_jiffies;	/* start + minimum jiffies */
+-	unsigned long min_jiffies;	/* minimum jiffies before position is valid */
+ 
+ 	void __iomem *sd_addr;	/* stream descriptor pointer */
+ 
+@@ -327,6 +324,7 @@
+ 	unsigned int opened :1;
+ 	unsigned int running :1;
+ 	unsigned int irq_pending :1;
++	unsigned int irq_ignore :1; /* not used; just placeholder for compat */
+ 	/*
+ 	 * For VIA:
+ 	 *  A flag to ensure DMA position is 0
+@@ -335,6 +333,14 @@
+ 	unsigned int insufficient :1;
+ };
+ 
++/* new stuff; moved here to keep bloody binary compatibility */
++struct azx_dev_ext {
++	unsigned int start_flag: 1;	/* stream full start flag */
++	unsigned long start_jiffies;	/* start + minimum jiffies */
++	unsigned long min_jiffies;	/* minimum jiffies before position is valid */
++
++};
++
+ /* CORB/RIRB */
+ struct azx_rb {
+ 	u32 *buf;		/* CORB/RIRB buffer
+@@ -377,7 +383,6 @@
+ 
+ 	/* HD codec */
+ 	unsigned short codec_mask;
+-	int  codec_probe_mask; /* copied from probe_mask option */
+ 	struct hda_bus *bus;
+ 
+ 	/* CORB/RIRB */
+@@ -407,6 +412,10 @@
+ 
+ 	/* reboot notifier (for mysterious hangup problem at power-down) */
+ 	struct notifier_block reboot_notifier;
++
++	/* moved here for binary compatibility */
++	struct azx_dev_ext *azx_dev_ext;
++	int  codec_probe_mask; /* copied from probe_mask option */
+ };
+ 
+ /* driver types */
+@@ -1497,6 +1506,7 @@
+ 	struct azx_pcm *apcm = snd_pcm_substream_chip(substream);
+ 	struct azx *chip = apcm->chip;
+ 	struct azx_dev *azx_dev = get_azx_dev(substream);
++	struct azx_dev_ext *azx_dev_ext;
+ 	struct hda_pcm_stream *hinfo = apcm->hinfo[substream->stream];
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	unsigned int bufsize, period_bytes, format_val;
+@@ -1531,7 +1541,8 @@
+ 			return err;
+ 	}
+ 
+-	azx_dev->min_jiffies = (runtime->period_size * HZ) /
++	azx_dev_ext = &chip->azx_dev_ext[azx_dev->index];
++	azx_dev_ext->min_jiffies = (runtime->period_size * HZ) /
+ 						(runtime->rate * 2);
+ 	azx_setup_controller(chip, azx_dev);
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+@@ -1548,6 +1559,7 @@
+ 	struct azx_pcm *apcm = snd_pcm_substream_chip(substream);
+ 	struct azx *chip = apcm->chip;
+ 	struct azx_dev *azx_dev;
++	struct azx_dev_ext *azx_dev_ext;
+ 	struct snd_pcm_substream *s;
+ 	int rstart = 0, start, nsync = 0, sbits = 0;
+ 	int nwait, timeout;
+@@ -1586,9 +1598,10 @@
+ 		if (s->pcm->card != substream->pcm->card)
+ 			continue;
+ 		azx_dev = get_azx_dev(s);
++		azx_dev_ext = &chip->azx_dev_ext[azx_dev->index];
+ 		if (rstart) {
+-			azx_dev->start_flag = 1;
+-			azx_dev->start_jiffies = jiffies + azx_dev->min_jiffies;
++			azx_dev_ext->start_flag = 1;
++			azx_dev_ext->start_jiffies = jiffies + azx_dev_ext->min_jiffies;
+ 		}
+ 		if (start)
+ 			azx_stream_start(chip, azx_dev);
+@@ -1738,11 +1751,12 @@
+ static int azx_position_ok(struct azx *chip, struct azx_dev *azx_dev)
+ {
+ 	unsigned int pos;
++	struct azx_dev_ext *azx_dev_ext = &chip->azx_dev_ext[azx_dev->index];
+ 
+-	if (azx_dev->start_flag &&
+-	    time_before_eq(jiffies, azx_dev->start_jiffies))
++	if (azx_dev_ext->start_flag &&
++	    time_before_eq(jiffies, azx_dev_ext->start_jiffies))
+ 		return -1;	/* bogus (too early) interrupt */
+-	azx_dev->start_flag = 0;
++	azx_dev_ext->start_flag = 0;
+ 
+ 	pos = azx_get_position(chip, azx_dev);
+ 	if (chip->position_fix == POS_FIX_AUTO) {
+@@ -2144,6 +2158,7 @@
+ 	pci_release_regions(chip->pci);
+ 	pci_disable_device(chip->pci);
+ 	kfree(chip->azx_dev);
++	kfree(chip->azx_dev_ext);
+ 	kfree(chip);
+ 
+ 	return 0;
+@@ -2376,7 +2391,9 @@
+ 	chip->num_streams = chip->playback_streams + chip->capture_streams;
+ 	chip->azx_dev = kcalloc(chip->num_streams, sizeof(*chip->azx_dev),
+ 				GFP_KERNEL);
+-	if (!chip->azx_dev) {
++	chip->azx_dev_ext = kcalloc(chip->num_streams,
++				    sizeof(*chip->azx_dev_ext), GFP_KERNEL);
++	if (!chip->azx_dev || !chip->azx_dev_ext) {
+ 		snd_printk(KERN_ERR "cannot malloc azx_dev\n");
+ 		goto errout;
+ 	}
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -485,6 +485,28 @@
+ 	return snd_hda_bus_free(bus);
+ }
+ 
++/*
++ * backward-compatible ops
++ */
++static int old_bus_ops_command(struct hda_codec *codec, hda_nid_t nid,
++			       int direct, unsigned int verb, unsigned int parm)
++{
++	unsigned int cmd = make_codec_cmd(codec, nid, direct, verb, parm);
++	return codec->bus->ops.command(codec->bus, cmd);
++}
++
++static unsigned int old_bus_ops_get_response(struct hda_codec *codec)
++{
++	return codec->bus->ops.get_response(codec->bus);
++}
++
++#ifdef CONFIG_SND_HDA_POWER_SAVE
++static void old_bus_ops_pm_notify(struct hda_codec *codec)
++{
++	codec->bus->ops.pm_notify(codec->bus);
++}
++#endif
++
+ /**
+  * snd_hda_bus_new - create a HDA bus
+  * @card: the card entry
+@@ -520,6 +542,12 @@
+ 	bus->pci = temp->pci;
+ 	bus->modelname = temp->modelname;
+ 	bus->ops = temp->ops;
++	bus->old_ops.command = old_bus_ops_command;
++	bus->old_ops.get_response = old_bus_ops_get_response;
++	bus->old_ops.private_free = bus->ops.private_free;
++#ifdef CONFIG_SND_HDA_POWER_SAVE
++	bus->old_ops.pm_notify = old_bus_ops_pm_notify;
++#endif
+ 
+ 	mutex_init(&bus->cmd_mutex);
+ 	INIT_LIST_HEAD(&bus->codec_list);

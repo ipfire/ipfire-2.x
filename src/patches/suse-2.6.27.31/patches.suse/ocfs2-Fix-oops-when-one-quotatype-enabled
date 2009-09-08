@@ -1,0 +1,41 @@
+From: Jan Kara <jack@suse.cz>
+References: fate#302681
+Subject: ocfs2: Fix oops when only usrquota or grpquota feature is enabled
+Patch-mainline: 2.6.29?
+
+This patch fixes oops when only usrquota or grpquota feature is enabled on the
+filesystem. We should not look at quota info header when it does not exist...
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+
+Index: linux-2.6.27/fs/ocfs2/quota_global.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/quota_global.c	2008-11-20 21:11:35.000000000 +0100
++++ linux-2.6.27/fs/ocfs2/quota_global.c	2008-11-20 21:45:26.000000000 +0100
+@@ -768,6 +768,8 @@
+ 	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
+ 		if (type != -1 && cnt != type)
+ 			continue;
++		if (!sb_has_quota_active(sb, cnt))
++			continue;
+ 		oinfo = sb_dqinfo(sb, cnt)->dqi_priv;
+ 		status = ocfs2_lock_global_qf(oinfo, 0);
+ 		if (status < 0)
+@@ -836,6 +838,8 @@
+ 	struct ocfs2_mem_dqinfo *oinfo;
+ 
+ 	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
++		if (!sb_has_quota_active(sb, cnt))
++			continue;
+ 		oinfo = sb_dqinfo(sb, cnt)->dqi_priv;
+ 		status = ocfs2_lock_global_qf(oinfo, 1);
+ 		if (status < 0)
+@@ -873,6 +877,8 @@
+ 
+ 	mlog_entry_void();
+ 	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
++		if (!sb_has_quota_active(sb, cnt))
++			continue;
+ 		oinfo = sb_dqinfo(sb, cnt)->dqi_priv;
+ 		status = ocfs2_lock_global_qf(oinfo, 0);
+ 		if (status < 0)

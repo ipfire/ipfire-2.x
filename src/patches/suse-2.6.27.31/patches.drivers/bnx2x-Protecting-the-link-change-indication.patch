@@ -1,0 +1,51 @@
+From a5e9a7cfad5fd301ce2b7869bbf386b70aa39e7c Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 21:26:01 -0800
+Subject: bnx2x: Protecting the link change indication
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+Without this lock, in some race conditions the driver missed link
+change indication
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -2237,9 +2237,7 @@ static void bnx2x_link_attn(struct bnx2x
+ 	/* Make sure that we are synced with the current statistics */
+ 	bnx2x_stats_handle(bp, STATS_EVENT_STOP);
+ 
+-	bnx2x_acquire_phy_lock(bp);
+ 	bnx2x_link_update(&bp->link_params, &bp->link_vars);
+-	bnx2x_release_phy_lock(bp);
+ 
+ 	if (bp->link_vars.link_up) {
+ 
+@@ -2488,6 +2486,8 @@ static void bnx2x_attn_int_asserted(stru
+ 	if (asserted & ATTN_HARD_WIRED_MASK) {
+ 		if (asserted & ATTN_NIG_FOR_FUNC) {
+ 
++			bnx2x_acquire_phy_lock(bp);
++
+ 			/* save nig interrupt mask */
+ 			bp->nig_mask = REG_RD(bp, nig_int_mask_addr);
+ 			REG_WR(bp, nig_int_mask_addr, 0);
+@@ -2543,8 +2543,10 @@ static void bnx2x_attn_int_asserted(stru
+ 	REG_WR(bp, hc_addr, asserted);
+ 
+ 	/* now set back the mask */
+-	if (asserted & ATTN_NIG_FOR_FUNC)
++	if (asserted & ATTN_NIG_FOR_FUNC) {
+ 		REG_WR(bp, nig_int_mask_addr, bp->nig_mask);
++		bnx2x_release_phy_lock(bp);
++	}
+ }
+ 
+ static inline void bnx2x_attn_int_deasserted0(struct bnx2x *bp, u32 attn)

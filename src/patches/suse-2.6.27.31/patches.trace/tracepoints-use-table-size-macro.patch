@@ -1,0 +1,58 @@
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: Tracepoints use TABLE_SIZE macro
+
+Steven Rostedt <rostedt@goodmis.org> :
+
+Wouldn't it look nicer to have: (TRACEPOINT_TABLE_SIZE - 1) ?
+
+me :
+
+Sure,
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: akpm@linux-foundation.org
+CC: Ingo Molnar <mingo@elte.hu>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Masami Hiramatsu <mhiramat@redhat.com>
+CC: "Frank Ch. Eigler" <fche@redhat.com>
+CC: Hideo AOKI <haoki@redhat.com>
+CC: Takashi Nishiie <t-nishiie@np.css.fujitsu.com>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+Acked-by: Jan Blunck <jblunck@suse.de>
+---
+ kernel/tracepoint.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Index: linux-2.6-lttng/kernel/tracepoint.c
+===================================================================
+--- linux-2.6-lttng.orig/kernel/tracepoint.c	2008-07-24 16:33:52.000000000 -0400
++++ linux-2.6-lttng/kernel/tracepoint.c	2008-07-24 16:34:57.000000000 -0400
+@@ -177,7 +177,7 @@ static struct tracepoint_entry *get_trac
+ 	struct tracepoint_entry *e;
+ 	u32 hash = jhash(name, strlen(name), 0);
+ 
+-	head = &tracepoint_table[hash & ((1 << TRACEPOINT_HASH_BITS)-1)];
++	head = &tracepoint_table[hash & (TRACEPOINT_TABLE_SIZE - 1)];
+ 	hlist_for_each_entry(e, node, head, hlist) {
+ 		if (!strcmp(name, e->name))
+ 			return e;
+@@ -197,7 +197,7 @@ static struct tracepoint_entry *add_trac
+ 	size_t name_len = strlen(name) + 1;
+ 	u32 hash = jhash(name, name_len-1, 0);
+ 
+-	head = &tracepoint_table[hash & ((1 << TRACEPOINT_HASH_BITS)-1)];
++	head = &tracepoint_table[hash & (TRACEPOINT_TABLE_SIZE - 1)];
+ 	hlist_for_each_entry(e, node, head, hlist) {
+ 		if (!strcmp(name, e->name)) {
+ 			printk(KERN_NOTICE
+@@ -233,7 +233,7 @@ static int remove_tracepoint(const char 
+ 	size_t len = strlen(name) + 1;
+ 	u32 hash = jhash(name, len-1, 0);
+ 
+-	head = &tracepoint_table[hash & ((1 << TRACEPOINT_HASH_BITS)-1)];
++	head = &tracepoint_table[hash & (TRACEPOINT_TABLE_SIZE - 1)];
+ 	hlist_for_each_entry(e, node, head, hlist) {
+ 		if (!strcmp(name, e->name)) {
+ 			found = 1;

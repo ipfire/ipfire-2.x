@@ -1,0 +1,98 @@
+Subject: Fix dropped interrupts
+From: Brian King <brking@linux.vnet.ibm.com>
+References: 473115 - LTC51485
+
+This patch fixes a problem of possible dropped interrupts. Currently, the ibmvfc
+driver has a race condition where after ibmvfc_interrupt gets run, the platform
+code clears the interrupt. This can result in lost interrupts and, in worst case
+scenarios, result in command timeouts. Fix this by implementing a tasklet
+similar to what the ibmvscsi driver does so that interrupt processing is no longer
+done in the actual interrupt handler, which eliminates the race.
+
+Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
+Signed-off-by: Olaf Hering <olh@suse.de>
+---
+
+ drivers/scsi/ibmvscsi/ibmvfc.c |   25 +++++++++++++++++++++++--
+ drivers/scsi/ibmvscsi/ibmvfc.h |    1 +
+ 2 files changed, 24 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -640,6 +640,7 @@ static void ibmvfc_release_crq_queue(str
+ 
+ 	ibmvfc_dbg(vhost, "Releasing CRQ\n");
+ 	free_irq(vdev->irq, vhost);
++	tasklet_kill(&vhost->tasklet);
+ 	do {
+ 		rc = plpar_hcall_norets(H_FREE_CRQ, vdev->unit_address);
+ 	} while (rc == H_BUSY || H_IS_LONG_BUSY(rc));
+@@ -2697,6 +2698,25 @@ static struct ibmvfc_crq *ibmvfc_next_cr
+ static irqreturn_t ibmvfc_interrupt(int irq, void *dev_instance)
+ {
+ 	struct ibmvfc_host *vhost = (struct ibmvfc_host *)dev_instance;
++	unsigned long flags;
++
++	spin_lock_irqsave(vhost->host->host_lock, flags);
++	vio_disable_interrupts(to_vio_dev(vhost->dev));
++	tasklet_schedule(&vhost->tasklet);
++	spin_unlock_irqrestore(vhost->host->host_lock, flags);
++	return IRQ_HANDLED;
++}
++
++/**
++ * ibmvfc_tasklet - Interrupt handler tasklet
++ * @data:		ibmvfc host struct
++ *
++ * Returns:
++ *	Nothing
++ **/
++static void ibmvfc_tasklet(void *data)
++{
++	struct ibmvfc_host *vhost = data;
+ 	struct vio_dev *vdev = to_vio_dev(vhost->dev);
+ 	struct ibmvfc_crq *crq;
+ 	struct ibmvfc_async_crq *async;
+@@ -2704,7 +2724,6 @@ static irqreturn_t ibmvfc_interrupt(int 
+ 	int done = 0;
+ 
+ 	spin_lock_irqsave(vhost->host->host_lock, flags);
+-	vio_disable_interrupts(to_vio_dev(vhost->dev));
+ 	while (!done) {
+ 		/* Pull all the valid messages off the CRQ */
+ 		while ((crq = ibmvfc_next_crq(vhost)) != NULL) {
+@@ -2732,7 +2751,6 @@ static irqreturn_t ibmvfc_interrupt(int 
+ 	}
+ 
+ 	spin_unlock_irqrestore(vhost->host->host_lock, flags);
+-	return IRQ_HANDLED;
+ }
+ 
+ /**
+@@ -3857,6 +3875,8 @@ static int ibmvfc_init_crq(struct ibmvfc
+ 
+ 	retrc = 0;
+ 
++	tasklet_init(&vhost->tasklet, (void *)ibmvfc_tasklet, (unsigned long)vhost);
++
+ 	if ((rc = request_irq(vdev->irq, ibmvfc_interrupt, 0, IBMVFC_NAME, vhost))) {
+ 		dev_err(dev, "Couldn't register irq 0x%x. rc=%d\n", vdev->irq, rc);
+ 		goto req_irq_failed;
+@@ -3872,6 +3892,7 @@ static int ibmvfc_init_crq(struct ibmvfc
+ 	return retrc;
+ 
+ req_irq_failed:
++	tasklet_kill(&vhost->tasklet);
+ 	do {
+ 		rc = plpar_hcall_norets(H_FREE_CRQ, vdev->unit_address);
+ 	} while (rc == H_BUSY || H_IS_LONG_BUSY(rc));
+--- a/drivers/scsi/ibmvscsi/ibmvfc.h
++++ b/drivers/scsi/ibmvscsi/ibmvfc.h
+@@ -684,6 +684,7 @@ struct ibmvfc_host {
+ 	char partition_name[97];
+ 	void (*job_step) (struct ibmvfc_host *);
+ 	struct task_struct *work_thread;
++	struct tasklet_struct tasklet;
+ 	wait_queue_head_t init_wait_q;
+ 	wait_queue_head_t work_wait_q;
+ };

@@ -1,0 +1,29 @@
+From: Dean Roe <roe@sgi.com>
+Subject: Prevent NULL pointer deref in grab_swap_token
+References: 159260
+
+grab_swap_token() assumes that the current process has an mm struct,
+which is not true for kernel threads invoking get_user_pages().  Since
+this should be extremely rare, just return from grab_swap_token()
+without doing anything.
+
+Signed-off-by: Dean Roe <roe@sgi.com>
+Acked-by: mason@suse.de
+Acked-by: okir@suse.de
+
+
+ mm/thrash.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/mm/thrash.c
++++ b/mm/thrash.c
+@@ -31,6 +31,9 @@ void grab_swap_token(void)
+ 	int current_interval;
+ 
+ 	global_faults++;
++	if (current->mm == NULL)
++		return;
++
+ 
+ 	current_interval = global_faults - current->mm->faultstamp;
+ 

@@ -1,0 +1,31 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: fix remote port status check
+References: bnc#450096
+
+Symptom:     SCSI disks dropped out during FC switch error injection
+Problem:     For an incoming rscn it was checked by the 
+             ZFCP_STATUS_PORT_DID_DID define to re-open a remote port
+             or to test the connection. Since this define was re-used
+             it was also necessary to replace that define.
+Solution:    Replaced ZFCP_STATUS_PORT_DID_DID with 
+             ZFCP_STATUS_PORT_PHYS_OPEN.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_fc.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_fc.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_fc.c
++++ linux-sles11/drivers/s390/scsi/zfcp_fc.c
+@@ -128,8 +128,7 @@ static void _zfcp_fc_incoming_rscn(struc
+ 
+ 	read_lock_irqsave(&zfcp_data.config_lock, flags);
+ 	list_for_each_entry(port, &fsf_req->adapter->port_list_head, list) {
+-		/* FIXME: ZFCP_STATUS_PORT_DID_DID check is racy */
+-		if (!(atomic_read(&port->status) & ZFCP_STATUS_PORT_DID_DID))
++		if (!(atomic_read(&port->status) & ZFCP_STATUS_PORT_PHYS_OPEN))
+ 			/* Try to connect to unused ports anyway. */
+ 			zfcp_erp_port_reopen(port,
+ 					     ZFCP_STATUS_COMMON_ERP_FAILED,

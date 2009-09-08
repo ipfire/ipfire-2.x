@@ -1,0 +1,32 @@
+From: Rajashekhar M A <rajs@netapp.com>
+Subject: I/O errors for ALUA state transitions
+References: bnc#491289
+
+When a SLES11 host is configured with a few LUNs and IO is running,
+injecting FC faults repeatedly leads to path recovery problems.
+The LUNs have 4 paths each and 3 of them come back active after
+say an FC fault which makes two of the paths go down, instead of
+all 4. This happens after several iterations of continuous FC faults.
+
+Reason here is that we're returning an I/O error whenever we're
+encountering sense code 06/04/0a (LOGICAL UNIT NOT ACCESSIBLE,
+ASYMMETRIC ACCESS STATE TRANSITION) instead of retrying.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ drivers/scsi/scsi_error.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/scsi/scsi_error.c
++++ b/drivers/scsi/scsi_error.c
+@@ -383,7 +383,8 @@ static int scsi_check_sense(struct scsi_
+ 		 * if the device is in the process of becoming ready, we 
+ 		 * should retry.
+ 		 */
+-		if ((sshdr.asc == 0x04) && (sshdr.ascq == 0x01))
++		if ((sshdr.asc == 0x04) &&
++		    (sshdr.ascq == 0x01 || sshdr.ascq == 0x0a))
+ 			return NEEDS_RETRY;
+ 		/*
+ 		 * if the device is not started, we need to wake

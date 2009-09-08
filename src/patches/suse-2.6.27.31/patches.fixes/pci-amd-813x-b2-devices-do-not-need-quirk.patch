@@ -1,0 +1,37 @@
+From: Stefan Assmann <sassmann@novell.com>
+Subject: PCI: AMD 813x B2 devices do not need quirk
+References: bnc#477675
+Patch-mainline: 2.6.30
+
+Turns out that the new AMD 813x devices do not need the
+quirk_disable_amd_813x_boot_interrupt quirk to be run on them, if it is,
+no interrupts are seen on the PCI-X adapter.
+
+From: Stefan Assmann <sassmann@novell.com>
+Reported-by: Jamie Wellnitz <Jamie.Wellnitz@emulex.com>
+Tested-by: Jamie Wellnitz <Jamie.Wellnitz@emulex.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/pci/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -1509,6 +1509,7 @@ DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_S
+  */
+ #define AMD_813X_MISC			0x40
+ #define AMD_813X_NOIOAMODE		(1<<0)
++#define AMD_813X_REV_B2			0x13
+ 
+ static void quirk_disable_amd_813x_boot_interrupt(struct pci_dev *dev)
+ {
+@@ -1516,6 +1517,8 @@ static void quirk_disable_amd_813x_boot_
+ 
+ 	if (noioapicquirk)
+ 		return;
++	if (dev->revision == AMD_813X_REV_B2)
++		return;
+ 
+ 	pci_read_config_dword(dev, AMD_813X_MISC, &pci_config_dword);
+ 	pci_config_dword &= ~AMD_813X_NOIOAMODE;

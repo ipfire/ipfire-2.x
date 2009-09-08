@@ -1,0 +1,29 @@
+From: Tejun Heo <teheo@suse.de>
+Subject: libata: prefer libata drivers over ide ones
+References: bnc#433105
+
+When loading modules, modprobe follows modules.order which is
+generated according to the link order.  libata ones have been our
+primary ATA drivers for some time now and having ide drivers before
+libata ones trigger unexpected behaviors.  Prefer libata over ide.
+
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.26/drivers/Makefile
+===================================================================
+--- linux-2.6.26.orig/drivers/Makefile
++++ linux-2.6.26/drivers/Makefile
+@@ -37,9 +37,9 @@ obj-y				+= base/ block/ misc/ mfd/ net/
+ obj-$(CONFIG_NUBUS)		+= nubus/
+ obj-$(CONFIG_ATM)		+= atm/
+ obj-y				+= macintosh/
+-obj-$(CONFIG_IDE)		+= ide/
+ obj-$(CONFIG_SCSI)		+= scsi/
+ obj-$(CONFIG_ATA)		+= ata/
++obj-$(CONFIG_IDE)		+= ide/
+ obj-$(CONFIG_FUSION)		+= message/
+ obj-$(CONFIG_FIREWIRE)		+= firewire/
+ obj-y				+= ieee1394/

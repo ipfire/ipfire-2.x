@@ -1,0 +1,262 @@
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: LTTng instrumentation - scheduler
+
+Original patch header:
+  LTTng instrumentation - scheduler
+  
+  Instrument the scheduler activity (sched_switch, migration, wakeups, wait for a
+  task, signal delivery) and process/thread creation/destruction (fork, exit,
+  kthread stop). Actually, kthread creation is not instrumented in this patch
+  because it is architecture dependent. It allows to connect tracers such as
+  ftrace which detects scheduling latencies, good/bad scheduler decisions. Tools
+  like LTTng can export this scheduler information along with instrumentation of
+  the rest of the kernel activity to perform post-mortem analysis on the scheduler
+  activity.
+  
+  About the performance impact of tracepoints (which is comparable to markers),
+  even without immediate values optimizations, tests done by Hideo Aoki on ia64
+  show no regression. His test case was using hackbench on a kernel where
+  scheduler instrumentation (about 5 events in code scheduler code) was added.
+  See the "Tracepoints" patch header for performance result detail.
+  
+  Changelog :
+  - Change instrumentation location and parameter to match ftrace instrumentation,
+  previously done with kernel markers.
+  
+  Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+  CC: 'Peter Zijlstra' <peterz@infradead.org>
+  CC: 'Steven Rostedt' <rostedt@goodmis.org>
+  CC: Thomas Gleixner <tglx@linutronix.de>
+  CC: Masami Hiramatsu <mhiramat@redhat.com>
+  CC: "Frank Ch. Eigler" <fche@redhat.com>
+  CC: 'Ingo Molnar' <mingo@elte.hu>
+  CC: 'Hideo AOKI' <haoki@redhat.com>
+  CC: Takashi Nishiie <t-nishiie@np.css.fujitsu.com>
+  CC: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+
+Acked-by: Jan Blunck <jblunck@suse.de>
+--- 
+---
+ include/trace/sched.h |   45 +++++++++++++++++++++++++++++++++++++++++++++
+ kernel/exit.c         |   10 +++++++++-
+ kernel/fork.c         |    3 +++
+ kernel/kthread.c      |    5 +++++
+ kernel/sched.c        |   17 ++++++-----------
+ kernel/signal.c       |    3 +++
+ 6 files changed, 71 insertions(+), 12 deletions(-)
+
+--- /dev/null
++++ b/include/trace/sched.h
+@@ -0,0 +1,45 @@
++#ifndef _TRACE_SCHED_H
++#define _TRACE_SCHED_H
++
++#include <linux/sched.h>
++#include <linux/tracepoint.h>
++
++DEFINE_TRACE(sched_kthread_stop,
++	TPPROTO(struct task_struct *t),
++	TPARGS(t));
++DEFINE_TRACE(sched_kthread_stop_ret,
++	TPPROTO(int ret),
++	TPARGS(ret));
++DEFINE_TRACE(sched_wait_task,
++	TPPROTO(struct rq *rq, struct task_struct *p),
++	TPARGS(rq, p));
++DEFINE_TRACE(sched_wakeup,
++	TPPROTO(struct rq *rq, struct task_struct *p),
++	TPARGS(rq, p));
++DEFINE_TRACE(sched_wakeup_new,
++	TPPROTO(struct rq *rq, struct task_struct *p),
++	TPARGS(rq, p));
++DEFINE_TRACE(sched_switch,
++	TPPROTO(struct rq *rq, struct task_struct *prev,
++		struct task_struct *next),
++	TPARGS(rq, prev, next));
++DEFINE_TRACE(sched_migrate_task,
++	TPPROTO(struct rq *rq, struct task_struct *p, int dest_cpu),
++	TPARGS(rq, p, dest_cpu));
++DEFINE_TRACE(sched_process_free,
++	TPPROTO(struct task_struct *p),
++	TPARGS(p));
++DEFINE_TRACE(sched_process_exit,
++	TPPROTO(struct task_struct *p),
++	TPARGS(p));
++DEFINE_TRACE(sched_process_wait,
++	TPPROTO(struct pid *pid),
++	TPARGS(pid));
++DEFINE_TRACE(sched_process_fork,
++	TPPROTO(struct task_struct *parent, struct task_struct *child),
++	TPARGS(parent, child));
++DEFINE_TRACE(sched_signal_send,
++	TPPROTO(int sig, struct task_struct *p),
++	TPARGS(sig, p));
++
++#endif
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -50,6 +50,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/task_io_accounting_ops.h>
+ #include <linux/tracehook.h>
++#include <trace/sched.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/unistd.h>
+@@ -152,7 +153,10 @@ static void __exit_signal(struct task_st
+ 
+ static void delayed_put_task_struct(struct rcu_head *rhp)
+ {
+-	put_task_struct(container_of(rhp, struct task_struct, rcu));
++	struct task_struct *tsk = container_of(rhp, struct task_struct, rcu);
++
++	trace_sched_process_free(tsk);
++	put_task_struct(tsk);
+ }
+ 
+ 
+@@ -1076,6 +1080,8 @@ NORET_TYPE void do_exit(long code)
+ 
+ 	if (group_dead)
+ 		acct_process();
++	trace_sched_process_exit(tsk);
++
+ 	exit_sem(tsk);
+ 	exit_files(tsk);
+ 	exit_fs(tsk);
+@@ -1679,6 +1685,8 @@ static long do_wait(enum pid_type type, 
+ 	struct task_struct *tsk;
+ 	int retval;
+ 
++	trace_sched_process_wait(pid);
++
+ 	add_wait_queue(&current->signal->wait_chldexit,&wait);
+ repeat:
+ 	/*
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -58,6 +58,7 @@
+ #include <linux/tty.h>
+ #include <linux/proc_fs.h>
+ #include <linux/blkdev.h>
++#include <trace/sched.h>
+ 
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
+@@ -1363,6 +1364,8 @@ long do_fork(unsigned long clone_flags,
+ 	if (!IS_ERR(p)) {
+ 		struct completion vfork;
+ 
++		trace_sched_process_fork(current, p);
++
+ 		nr = task_pid_vnr(p);
+ 
+ 		if (clone_flags & CLONE_PARENT_SETTID)
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -13,6 +13,7 @@
+ #include <linux/file.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <trace/sched.h>
+ 
+ #define KTHREAD_NICE_LEVEL (-5)
+ 
+@@ -206,6 +207,8 @@ int kthread_stop(struct task_struct *k)
+ 	/* It could exit after stop_info.k set, but before wake_up_process. */
+ 	get_task_struct(k);
+ 
++	trace_sched_kthread_stop(k);
++
+ 	/* Must init completion *before* thread sees kthread_stop_info.k */
+ 	init_completion(&kthread_stop_info.done);
+ 	smp_wmb();
+@@ -221,6 +224,8 @@ int kthread_stop(struct task_struct *k)
+ 	ret = kthread_stop_info.err;
+ 	mutex_unlock(&kthread_stop_lock);
+ 
++	trace_sched_kthread_stop_ret(ret);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL(kthread_stop);
+--- a/kernel/sched.c
++++ b/kernel/sched.c
+@@ -71,6 +71,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/ctype.h>
+ #include <linux/ftrace.h>
++#include <trace/sched.h>
+ #include <linux/perfmon_kern.h>
+ 
+ #include <asm/tlb.h>
+@@ -1914,6 +1915,7 @@ unsigned long wait_task_inactive(struct 
+ 		 * just go back and repeat.
+ 		 */
+ 		rq = task_rq_lock(p, &flags);
++		trace_sched_wait_task(rq, p);
+ 		running = task_running(rq, p);
+ 		on_rq = p->se.on_rq;
+ 		ncsw = 0;
+@@ -2306,9 +2308,7 @@ out_activate:
+ 	success = 1;
+ 
+ out_running:
+-	trace_mark(kernel_sched_wakeup,
+-		"pid %d state %ld ## rq %p task %p rq->curr %p",
+-		p->pid, p->state, rq, p, rq->curr);
++	trace_sched_wakeup(rq, p);
+ 	check_preempt_curr(rq, p);
+ 
+ 	p->state = TASK_RUNNING;
+@@ -2441,9 +2441,7 @@ void wake_up_new_task(struct task_struct
+ 		p->sched_class->task_new(rq, p);
+ 		inc_nr_running(rq);
+ 	}
+-	trace_mark(kernel_sched_wakeup_new,
+-		"pid %d state %ld ## rq %p task %p rq->curr %p",
+-		p->pid, p->state, rq, p, rq->curr);
++	trace_sched_wakeup_new(rq, p);
+ 	check_preempt_curr(rq, p);
+ #ifdef CONFIG_SMP
+ 	if (p->sched_class->task_wake_up)
+@@ -2616,11 +2614,7 @@ context_switch(struct rq *rq, struct tas
+ 	struct mm_struct *mm, *oldmm;
+ 
+ 	prepare_task_switch(rq, prev, next);
+-	trace_mark(kernel_sched_schedule,
+-		"prev_pid %d next_pid %d prev_state %ld "
+-		"## rq %p prev %p next %p",
+-		prev->pid, next->pid, prev->state,
+-		rq, prev, next);
++	trace_sched_switch(rq, prev, next);
+ 	mm = next->mm;
+ 	oldmm = prev->active_mm;
+ 	/*
+@@ -2860,6 +2854,7 @@ static void sched_migrate_task(struct ta
+ 	    || unlikely(!cpu_active(dest_cpu)))
+ 		goto out;
+ 
++	trace_sched_migrate_task(rq, p, dest_cpu);
+ 	/* force the process onto the specified CPU */
+ 	if (migrate_task(p, dest_cpu, &req)) {
+ 		/* Need to wait for migration thread (might exit: take ref). */
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -27,6 +27,7 @@
+ #include <linux/freezer.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/nsproxy.h>
++#include <trace/sched.h>
+ 
+ #include <asm/param.h>
+ #include <asm/uaccess.h>
+@@ -803,6 +804,8 @@ static int send_signal(int sig, struct s
+ 	struct sigpending *pending;
+ 	struct sigqueue *q;
+ 
++	trace_sched_signal_send(sig, t);
++
+ 	assert_spin_locked(&t->sighand->siglock);
+ 	if (!prepare_signal(sig, t))
+ 		return 0;

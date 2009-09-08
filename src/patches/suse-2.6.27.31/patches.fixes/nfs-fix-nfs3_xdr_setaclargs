@@ -1,0 +1,30 @@
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: NFS: Fix the XDR iovec calculation in nfs3_xdr_setaclargs
+References: 465854
+Patch-mainline: Queued-up
+
+Commit ae46141ff08f1965b17c531b571953c39ce8b9e2 (NFSv3: Fix posix ACL code)
+introduces a bug in the calculation of the XDR header iovec. In the case
+where we are inlining the acls, we need to adjust the length of the iovec
+req->rq_svec, in addition to adjusting the total buffer length.
+
+Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+Signed-off-by: Suresh Jayaraman <sjayaraman@suse.de>
+---
+ fs/nfs/nfs3xdr.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/fs/nfs/nfs3xdr.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/nfs/nfs3xdr.c
++++ linux-2.6.27-SLE11_BRANCH/fs/nfs/nfs3xdr.c
+@@ -716,7 +716,8 @@ nfs3_xdr_setaclargs(struct rpc_rqst *req
+ 	if (args->npages != 0)
+ 		xdr_encode_pages(buf, args->pages, 0, args->len);
+ 	else
+-		req->rq_slen += args->len;
++		req->rq_slen = xdr_adjust_iovec(req->rq_svec,
++				p + XDR_QUADLEN(args->len));
+ 
+ 	err = nfsacl_encode(buf, base, args->inode,
+ 			    (args->mask & NFS_ACL) ?

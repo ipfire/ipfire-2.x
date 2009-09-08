@@ -1,0 +1,618 @@
+From: Mark Fasheh <mfasheh@suse.com>
+Subject: ocfs2: Don't check for NULL before brelse()
+Patch-mainline: 2.6.28
+
+This is pointless as brelse() already does the check.
+
+Signed-off-by: Mark Fasheh
+---
+ fs/ocfs2/alloc.c      |   33 ++++++-------------
+ fs/ocfs2/aops.c       |    3 +-
+ fs/ocfs2/dir.c        |   24 +++++---------
+ fs/ocfs2/file.c       |    9 ++---
+ fs/ocfs2/inode.c      |    7 ++--
+ fs/ocfs2/ioctl.c      |    3 +-
+ fs/ocfs2/journal.c    |    9 ++---
+ fs/ocfs2/localalloc.c |   15 +++------
+ fs/ocfs2/namei.c      |   83 +++++++++++++++---------------------------------
+ fs/ocfs2/suballoc.c   |   29 ++++++----------
+ fs/ocfs2/super.c      |    3 +-
+ fs/ocfs2/symlink.c    |    3 +-
+ 12 files changed, 74 insertions(+), 147 deletions(-)
+
+Index: linux-2.6.27/fs/ocfs2/alloc.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/alloc.c
++++ linux-2.6.27/fs/ocfs2/alloc.c
+@@ -719,8 +719,7 @@ int ocfs2_num_free_extents(struct ocfs2_
+ 
+ 	retval = le16_to_cpu(el->l_count) - le16_to_cpu(el->l_next_free_rec);
+ bail:
+-	if (eb_bh)
+-		brelse(eb_bh);
++	brelse(eb_bh);
+ 
+ 	mlog_exit(retval);
+ 	return retval;
+@@ -806,8 +805,7 @@ static int ocfs2_create_new_meta_bhs(str
+ bail:
+ 	if (status < 0) {
+ 		for(i = 0; i < wanted; i++) {
+-			if (bhs[i])
+-				brelse(bhs[i]);
++			brelse(bhs[i]);
+ 			bhs[i] = NULL;
+ 		}
+ 	}
+@@ -1017,8 +1015,7 @@ static int ocfs2_add_branch(struct ocfs2
+ bail:
+ 	if (new_eb_bhs) {
+ 		for (i = 0; i < new_blocks; i++)
+-			if (new_eb_bhs[i])
+-				brelse(new_eb_bhs[i]);
++			brelse(new_eb_bhs[i]);
+ 		kfree(new_eb_bhs);
+ 	}
+ 
+@@ -1116,8 +1113,7 @@ static int ocfs2_shift_tree_depth(struct
+ 	new_eb_bh = NULL;
+ 	status = 0;
+ bail:
+-	if (new_eb_bh)
+-		brelse(new_eb_bh);
++	brelse(new_eb_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1177,10 +1173,8 @@ static int ocfs2_find_branch_target(stru
+ 			goto bail;
+ 		}
+ 
+-		if (bh) {
+-			brelse(bh);
+-			bh = NULL;
+-		}
++		brelse(bh);
++		bh = NULL;
+ 
+ 		status = ocfs2_read_block(osb, blkno, &bh, OCFS2_BH_CACHED,
+ 					  inode);
+@@ -1199,8 +1193,7 @@ static int ocfs2_find_branch_target(stru
+ 
+ 		if (le16_to_cpu(el->l_next_free_rec) <
+ 		    le16_to_cpu(el->l_count)) {
+-			if (lowest_bh)
+-				brelse(lowest_bh);
++			brelse(lowest_bh);
+ 			lowest_bh = bh;
+ 			get_bh(lowest_bh);
+ 		}
+@@ -1214,8 +1207,7 @@ static int ocfs2_find_branch_target(stru
+ 
+ 	*target_bh = lowest_bh;
+ bail:
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -4480,8 +4472,7 @@ int ocfs2_insert_extent(struct ocfs2_sup
+ 		ocfs2_extent_map_insert_rec(inode, &rec);
+ 
+ bail:
+-	if (last_eb_bh)
+-		brelse(last_eb_bh);
++	brelse(last_eb_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -5686,8 +5677,7 @@ int ocfs2_begin_truncate_log_recovery(st
+ bail:
+ 	if (tl_inode)
+ 		iput(tl_inode);
+-	if (tl_bh)
+-		brelse(tl_bh);
++	brelse(tl_bh);
+ 
+ 	if (status < 0 && (*tl_copy)) {
+ 		kfree(*tl_copy);
+@@ -7124,8 +7114,7 @@ static void ocfs2_free_truncate_context(
+ 		mlog(ML_NOTICE,
+ 		     "Truncate completion has non-empty dealloc context\n");
+ 
+-	if (tc->tc_last_eb_bh)
+-		brelse(tc->tc_last_eb_bh);
++	brelse(tc->tc_last_eb_bh);
+ 
+ 	kfree(tc);
+ }
+Index: linux-2.6.27/fs/ocfs2/aops.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/aops.c
++++ linux-2.6.27/fs/ocfs2/aops.c
+@@ -128,8 +128,7 @@ static int ocfs2_symlink_get_block(struc
+ 	err = 0;
+ 
+ bail:
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	mlog_exit(err);
+ 	return err;
+Index: linux-2.6.27/fs/ocfs2/dir.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/dir.c
++++ linux-2.6.27/fs/ocfs2/dir.c
+@@ -716,8 +716,7 @@ static int ocfs2_dir_foreach_blk_el(stru
+ 			for (i = ra_sectors >> (sb->s_blocksize_bits - 9);
+ 			     i > 0; i--) {
+ 				tmp = ocfs2_bread(inode, ++blk, &err, 1);
+-				if (tmp)
+-					brelse(tmp);
++				brelse(tmp);
+ 			}
+ 			last_ra_blk = blk;
+ 			ra_sectors = 8;
+@@ -899,10 +898,8 @@ int ocfs2_find_files_on_disk(const char
+ leave:
+ 	if (status < 0) {
+ 		*dirent = NULL;
+-		if (*dirent_bh) {
+-			brelse(*dirent_bh);
+-			*dirent_bh = NULL;
+-		}
++		brelse(*dirent_bh);
++		*dirent_bh = NULL;
+ 	}
+ 
+ 	mlog_exit(status);
+@@ -951,8 +948,7 @@ int ocfs2_check_dir_for_entry(struct ino
+ 
+ 	ret = 0;
+ bail:
+-	if (dirent_bh)
+-		brelse(dirent_bh);
++	brelse(dirent_bh);
+ 
+ 	mlog_exit(ret);
+ 	return ret;
+@@ -1127,8 +1123,7 @@ static int ocfs2_fill_new_dir_el(struct
+ 
+ 	status = 0;
+ bail:
+-	if (new_bh)
+-		brelse(new_bh);
++	brelse(new_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1574,8 +1569,7 @@ bail:
+ 	if (meta_ac)
+ 		ocfs2_free_alloc_context(meta_ac);
+ 
+-	if (new_bh)
+-		brelse(new_bh);
++	brelse(new_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1702,8 +1696,7 @@ static int ocfs2_find_dir_space_el(struc
+ 
+ 	status = 0;
+ bail:
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1762,7 +1755,6 @@ int ocfs2_prepare_dir_for_insert(struct
+ 	*ret_de_bh = bh;
+ 	bh = NULL;
+ out:
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 	return ret;
+ }
+Index: linux-2.6.27/fs/ocfs2/file.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/file.c
++++ linux-2.6.27/fs/ocfs2/file.c
+@@ -671,10 +671,8 @@ leave:
+ 		restart_func = 0;
+ 		goto restart_all;
+ 	}
+-	if (bh) {
+-		brelse(bh);
+-		bh = NULL;
+-	}
++	brelse(bh);
++	bh = NULL;
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -991,8 +989,7 @@ bail_unlock_rw:
+ 	if (size_change)
+ 		ocfs2_rw_unlock(inode, 1);
+ bail:
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+Index: linux-2.6.27/fs/ocfs2/inode.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/inode.c
++++ linux-2.6.27/fs/ocfs2/inode.c
+@@ -1174,10 +1174,9 @@ struct buffer_head *ocfs2_bread(struct i
+ 	return bh;
+ 
+ fail:
+-	if (bh) {
+-		brelse(bh);
+-		bh = NULL;
+-	}
++	brelse(bh);
++	bh = NULL;
++
+ 	*err = -EIO;
+ 	return NULL;
+ }
+Index: linux-2.6.27/fs/ocfs2/ioctl.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/ioctl.c
++++ linux-2.6.27/fs/ocfs2/ioctl.c
+@@ -102,8 +102,7 @@ bail_unlock:
+ bail:
+ 	mutex_unlock(&inode->i_mutex);
+ 
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+Index: linux-2.6.27/fs/ocfs2/journal.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/journal.c
++++ linux-2.6.27/fs/ocfs2/journal.c
+@@ -554,8 +554,7 @@ done:
+ 	if (status < 0) {
+ 		if (inode_lock)
+ 			ocfs2_inode_unlock(inode, 1);
+-		if (bh != NULL)
+-			brelse(bh);
++		brelse(bh);
+ 		if (inode) {
+ 			OCFS2_I(inode)->ip_open_count--;
+ 			iput(inode);
+@@ -869,8 +868,7 @@ static int ocfs2_force_read_journal(stru
+ 
+ bail:
+ 	for(i = 0; i < CONCURRENT_JOURNAL_FILL; i++)
+-		if (bhs[i])
+-			brelse(bhs[i]);
++		brelse(bhs[i]);
+ 	mlog_exit(status);
+ 	return status;
+ }
+@@ -1286,8 +1284,7 @@ done:
+ 	if (inode)
+ 		iput(inode);
+ 
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+Index: linux-2.6.27/fs/ocfs2/localalloc.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/localalloc.c
++++ linux-2.6.27/fs/ocfs2/localalloc.c
+@@ -294,8 +294,7 @@ int ocfs2_load_local_alloc(struct ocfs2_
+ 
+ bail:
+ 	if (status < 0)
+-		if (alloc_bh)
+-			brelse(alloc_bh);
++		brelse(alloc_bh);
+ 	if (inode)
+ 		iput(inode);
+ 
+@@ -411,8 +410,7 @@ out_commit:
+ 	ocfs2_commit_trans(osb, handle);
+ 
+ out_unlock:
+-	if (main_bm_bh)
+-		brelse(main_bm_bh);
++	brelse(main_bm_bh);
+ 
+ 	ocfs2_inode_unlock(main_bm_inode, 1);
+ 
+@@ -488,8 +486,7 @@ bail:
+ 		*alloc_copy = NULL;
+ 	}
+ 
+-	if (alloc_bh)
+-		brelse(alloc_bh);
++	brelse(alloc_bh);
+ 
+ 	if (inode) {
+ 		mutex_unlock(&inode->i_mutex);
+@@ -557,8 +554,7 @@ out_unlock:
+ out_mutex:
+ 	mutex_unlock(&main_bm_inode->i_mutex);
+ 
+-	if (main_bm_bh)
+-		brelse(main_bm_bh);
++	brelse(main_bm_bh);
+ 
+ 	iput(main_bm_inode);
+ 
+@@ -1281,8 +1277,7 @@ bail:
+ 	if (handle)
+ 		ocfs2_commit_trans(osb, handle);
+ 
+-	if (main_bm_bh)
+-		brelse(main_bm_bh);
++	brelse(main_bm_bh);
+ 
+ 	if (main_bm_inode)
+ 		iput(main_bm_inode);
+Index: linux-2.6.27/fs/ocfs2/namei.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/namei.c
++++ linux-2.6.27/fs/ocfs2/namei.c
+@@ -328,14 +328,9 @@ leave:
+ 	if (status == -ENOSPC)
+ 		mlog(0, "Disk is full\n");
+ 
+-	if (new_fe_bh)
+-		brelse(new_fe_bh);
+-
+-	if (de_bh)
+-		brelse(de_bh);
+-
+-	if (parent_fe_bh)
+-		brelse(parent_fe_bh);
++	brelse(new_fe_bh);
++	brelse(de_bh);
++	brelse(parent_fe_bh);
+ 
+ 	if ((status < 0) && inode)
+ 		iput(inode);
+@@ -648,12 +643,9 @@ out_unlock_inode:
+ out:
+ 	ocfs2_inode_unlock(dir, 1);
+ 
+-	if (de_bh)
+-		brelse(de_bh);
+-	if (fe_bh)
+-		brelse(fe_bh);
+-	if (parent_fe_bh)
+-		brelse(parent_fe_bh);
++	brelse(de_bh);
++	brelse(fe_bh);
++	brelse(parent_fe_bh);
+ 
+ 	mlog_exit(err);
+ 
+@@ -852,17 +844,10 @@ leave:
+ 		iput(orphan_dir);
+ 	}
+ 
+-	if (fe_bh)
+-		brelse(fe_bh);
+-
+-	if (dirent_bh)
+-		brelse(dirent_bh);
+-
+-	if (parent_node_bh)
+-		brelse(parent_node_bh);
+-
+-	if (orphan_entry_bh)
+-		brelse(orphan_entry_bh);
++	brelse(fe_bh);
++	brelse(dirent_bh);
++	brelse(parent_node_bh);
++	brelse(orphan_entry_bh);
+ 
+ 	mlog_exit(status);
+ 
+@@ -1373,24 +1358,15 @@ bail:
+ 
+ 	if (new_inode)
+ 		iput(new_inode);
+-	if (newfe_bh)
+-		brelse(newfe_bh);
+-	if (old_inode_bh)
+-		brelse(old_inode_bh);
+-	if (old_dir_bh)
+-		brelse(old_dir_bh);
+-	if (new_dir_bh)
+-		brelse(new_dir_bh);
+-	if (new_de_bh)
+-		brelse(new_de_bh);
+-	if (old_de_bh)
+-		brelse(old_de_bh);
+-	if (old_inode_de_bh)
+-		brelse(old_inode_de_bh);
+-	if (orphan_entry_bh)
+-		brelse(orphan_entry_bh);
+-	if (insert_entry_bh)
+-		brelse(insert_entry_bh);
++	brelse(newfe_bh);
++	brelse(old_inode_bh);
++	brelse(old_dir_bh);
++	brelse(new_dir_bh);
++	brelse(new_de_bh);
++	brelse(old_de_bh);
++	brelse(old_inode_de_bh);
++	brelse(orphan_entry_bh);
++	brelse(insert_entry_bh);
+ 
+ 	mlog_exit(status);
+ 
+@@ -1493,8 +1469,7 @@ bail:
+ 
+ 	if (bhs) {
+ 		for(i = 0; i < blocks; i++)
+-			if (bhs[i])
+-				brelse(bhs[i]);
++			brelse(bhs[i]);
+ 		kfree(bhs);
+ 	}
+ 
+@@ -1660,12 +1635,9 @@ bail:
+ 
+ 	ocfs2_inode_unlock(dir, 1);
+ 
+-	if (new_fe_bh)
+-		brelse(new_fe_bh);
+-	if (parent_fe_bh)
+-		brelse(parent_fe_bh);
+-	if (de_bh)
+-		brelse(de_bh);
++	brelse(new_fe_bh);
++	brelse(parent_fe_bh);
++	brelse(de_bh);
+ 	if (inode_ac)
+ 		ocfs2_free_alloc_context(inode_ac);
+ 	if (data_ac)
+@@ -1760,8 +1732,7 @@ leave:
+ 		iput(orphan_dir_inode);
+ 	}
+ 
+-	if (orphan_dir_bh)
+-		brelse(orphan_dir_bh);
++	brelse(orphan_dir_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1830,8 +1801,7 @@ static int ocfs2_orphan_add(struct ocfs2
+ 	     (unsigned long long)OCFS2_I(inode)->ip_blkno, osb->slot_num);
+ 
+ leave:
+-	if (orphan_dir_bh)
+-		brelse(orphan_dir_bh);
++	brelse(orphan_dir_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1899,8 +1869,7 @@ int ocfs2_orphan_del(struct ocfs2_super
+ 	}
+ 
+ leave:
+-	if (target_de_bh)
+-		brelse(target_de_bh);
++	brelse(target_de_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+Index: linux-2.6.27/fs/ocfs2/suballoc.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/suballoc.c
++++ linux-2.6.27/fs/ocfs2/suballoc.c
+@@ -130,10 +130,8 @@ void ocfs2_free_ac_resource(struct ocfs2
+ 		iput(inode);
+ 		ac->ac_inode = NULL;
+ 	}
+-	if (ac->ac_bh) {
+-		brelse(ac->ac_bh);
+-		ac->ac_bh = NULL;
+-	}
++	brelse(ac->ac_bh);
++	ac->ac_bh = NULL;
+ }
+ 
+ void ocfs2_free_alloc_context(struct ocfs2_alloc_context *ac)
+@@ -401,8 +399,7 @@ bail:
+ 	if (ac)
+ 		ocfs2_free_alloc_context(ac);
+ 
+-	if (bg_bh)
+-		brelse(bg_bh);
++	brelse(bg_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -494,8 +491,7 @@ static int ocfs2_reserve_suballoc_bits(s
+ 	get_bh(bh);
+ 	ac->ac_bh = bh;
+ bail:
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1270,10 +1266,9 @@ static int ocfs2_search_chain(struct ocf
+ 		if (!bg->bg_next_group)
+ 			break;
+ 
+-		if (prev_group_bh) {
+-			brelse(prev_group_bh);
+-			prev_group_bh = NULL;
+-		}
++		brelse(prev_group_bh);
++		prev_group_bh = NULL;
++
+ 		next_group = le64_to_cpu(bg->bg_next_group);
+ 		prev_group_bh = group_bh;
+ 		group_bh = NULL;
+@@ -1368,10 +1363,8 @@ static int ocfs2_search_chain(struct ocf
+ 	*bg_blkno = le64_to_cpu(bg->bg_blkno);
+ 	*bits_left = le16_to_cpu(bg->bg_free_bits_count);
+ bail:
+-	if (group_bh)
+-		brelse(group_bh);
+-	if (prev_group_bh)
+-		brelse(prev_group_bh);
++	brelse(group_bh);
++	brelse(prev_group_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+@@ -1845,8 +1838,7 @@ int ocfs2_free_suballoc_bits(handle_t *h
+ 	}
+ 
+ bail:
+-	if (group_bh)
+-		brelse(group_bh);
++	brelse(group_bh);
+ 
+ 	mlog_exit(status);
+ 	return status;
+Index: linux-2.6.27/fs/ocfs2/super.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/super.c
++++ linux-2.6.27/fs/ocfs2/super.c
+@@ -762,8 +762,7 @@ static int ocfs2_fill_super(struct super
+ 	return status;
+ 
+ read_super_error:
+-	if (bh != NULL)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	if (inode)
+ 		iput(inode);
+Index: linux-2.6.27/fs/ocfs2/symlink.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/symlink.c
++++ linux-2.6.27/fs/ocfs2/symlink.c
+@@ -158,8 +158,7 @@ bail:
+ 		kunmap(page);
+ 		page_cache_release(page);
+ 	}
+-	if (bh)
+-		brelse(bh);
++	brelse(bh);
+ 
+ 	return ERR_PTR(status);
+ }

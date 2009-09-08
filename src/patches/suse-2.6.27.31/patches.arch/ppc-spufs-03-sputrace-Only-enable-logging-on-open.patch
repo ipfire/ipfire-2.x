@@ -1,0 +1,83 @@
+Subject: Only enable logging on open(), prevent multiple openers
+From: Jeremy Kerr <jk@ozlabs.org>
+References: 447133 - LTC50070
+
+Currently, sputrace will start logging to the event buffer before the
+log buffer has been open()ed. This results in a heap of "lost samples"
+warnings if the sputrace file hasn't yet been opened.
+
+Since the buffer is reset on open() anyway, there's no need to enable
+logging when no-one has opened the log.
+
+Because open clears the log, make it return EBUSY for mutliple open
+calls.
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+Signed-off-by: Olaf Hering <olh@suse.de>
+---
+ arch/powerpc/platforms/cell/spufs/sputrace.c |   32 ++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
+
+--- a/arch/powerpc/platforms/cell/spufs/sputrace.c
++++ b/arch/powerpc/platforms/cell/spufs/sputrace.c
+@@ -40,6 +40,7 @@ static DECLARE_WAIT_QUEUE_HEAD(sputrace_
+ static ktime_t sputrace_start;
+ static unsigned long sputrace_head, sputrace_tail;
+ static struct sputrace *sputrace_log;
++static int sputrace_logging;
+ 
+ static int sputrace_used(void)
+ {
+@@ -109,24 +110,49 @@ static ssize_t sputrace_read(struct file
+ 
+ static int sputrace_open(struct inode *inode, struct file *file)
+ {
++	int rc;
++
+ 	spin_lock(&sputrace_lock);
++	if (sputrace_logging) {
++		rc = -EBUSY;
++		goto out;
++	}
++
++	sputrace_logging = 1;
+ 	sputrace_head = sputrace_tail = 0;
+ 	sputrace_start = ktime_get();
++	rc = 0;
++
++out:
+ 	spin_unlock(&sputrace_lock);
++	return rc;
++}
+ 
++static int sputrace_release(struct inode *inode, struct file *file)
++{
++	spin_lock(&sputrace_lock);
++	sputrace_logging = 0;
++	spin_unlock(&sputrace_lock);
+ 	return 0;
+ }
+ 
+ static const struct file_operations sputrace_fops = {
+-	.owner	= THIS_MODULE,
+-	.open	= sputrace_open,
+-	.read	= sputrace_read,
++	.owner   = THIS_MODULE,
++	.open    = sputrace_open,
++	.read    = sputrace_read,
++	.release = sputrace_release,
+ };
+ 
+ static void sputrace_log_item(const char *name, struct spu_context *ctx,
+ 		struct spu *spu)
+ {
+ 	spin_lock(&sputrace_lock);
++
++	if (!sputrace_logging) {
++		spin_unlock(&sputrace_lock);
++		return;
++	}
++
+ 	if (sputrace_avail() > 1) {
+ 		struct sputrace *t = sputrace_log + sputrace_head;
+ 

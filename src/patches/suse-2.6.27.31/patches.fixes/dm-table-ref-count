@@ -1,0 +1,241 @@
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: dm table: rework reference counting
+Patch-mainline: 2.6.28
+References: bnc#457205
+Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+
+[PATCH 3/3] for bnc 457205.
+
+mainline commit d58168763f74d1edbc296d7038c60efe6493fdd4
+
+    
+    Rework table reference counting.
+    
+    The existing code uses a reference counter. When the last reference is
+    dropped and the counter reaches zero, the table destructor is called.
+    Table reference counters are acquired/released from upcalls from other
+    kernel code (dm_any_congested, dm_merge_bvec, dm_unplug_all).
+    If the reference counter reaches zero in one of the upcalls, the table
+    destructor is called from almost random kernel code.
+    
+    This leads to various problems:
+    * dm_any_congested being called under a spinlock, which calls the
+      destructor, which calls some sleeping function.
+    * the destructor attempting to take a lock that is already taken by the
+      same process.
+    * stale reference from some other kernel code keeps the table
+      constructed, which keeps some devices open, even after successful
+      return from "dmsetup remove". This can confuse lvm and prevent closing
+      of underlying devices or reusing device minor numbers.
+    
+    The patch changes reference counting so that the table destructor can be
+    called only at predetermined places.
+    
+    The table has always exactly one reference from either mapped_device->map
+    or hash_cell->new_map. After this patch, this reference is not counted
+    in table->holders.  A pair of dm_create_table/dm_destroy_table functions
+    is used for table creation/destruction.
+    
+    Temporary references from the other code increase table->holders. A pair
+    of dm_table_get/dm_table_put functions is used to manipulate it.
+    
+    When the table is about to be destroyed, we wait for table->holders to
+    reach 0. Then, we call the table destructor.  We use active waiting with
+    msleep(1), because the situation happens rarely (to one user in 5 years)
+    and removing the device isn't performance-critical task: the user doesn't
+    care if it takes one tick more or not.
+    
+    This way, the destructor is called only at specific points
+    (dm_table_destroy function) and the above problems associated with lazy
+    destruction can't happen.
+    
+    Finally remove the temporary protection added to dm_any_congested().
+    
+    Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+    Signed-off-by: Alasdair G Kergon <agk@redhat.com>
+
+---
+ drivers/md/dm-ioctl.c |   10 ++++------
+ drivers/md/dm-table.c |   28 +++++++++++++++++++++++-----
+ drivers/md/dm.c       |   14 +++++---------
+ drivers/md/dm.h       |    1 +
+ 4 files changed, 33 insertions(+), 20 deletions(-)
+
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1644,8 +1644,6 @@ static int dm_any_congested(void *conges
+ 	struct mapped_device *md = (struct mapped_device *) congested_data;
+ 	struct dm_table *map;
+ 
+-	atomic_inc(&md->pending);
+-
+ 	if (!test_bit(DMF_BLOCK_IO, &md->flags)) {
+ 		map = dm_get_table(md);
+ 		if (map) {
+@@ -1662,10 +1660,6 @@ static int dm_any_congested(void *conges
+ 	}
+ 
+ 
+-	if (!atomic_dec_return(&md->pending))
+-		/* nudge anyone waiting on suspend queue */
+-		wake_up(&md->wait);
+-
+ 	return r;
+ }
+ 
+@@ -1926,10 +1920,12 @@ static int __bind(struct mapped_device *
+ 
+ 	if (md->suspended_bdev)
+ 		__set_size(md, size);
+-	if (size == 0)
++
++	if (!size) {
++		dm_table_destroy(t);
+ 		return 0;
++	}
+ 
+-	dm_table_get(t);
+ 	dm_table_event_callback(t, event_callback, md);
+ 
+ 	/*
+@@ -1967,7 +1963,7 @@ static void __unbind(struct mapped_devic
+ 	write_lock(&md->map_lock);
+ 	md->map = NULL;
+ 	write_unlock(&md->map_lock);
+-	dm_table_put(map);
++	dm_table_destroy(map);
+ }
+ 
+ /*
+--- a/drivers/md/dm.h
++++ b/drivers/md/dm.h
+@@ -46,6 +46,7 @@ struct dm_table;
+ /*-----------------------------------------------------------------
+  * Internal table functions.
+  *---------------------------------------------------------------*/
++void dm_table_destroy(struct dm_table *t);
+ void dm_table_event_callback(struct dm_table *t,
+ 			     void (*fn)(void *), void *context);
+ struct dm_target *dm_table_get_target(struct dm_table *t, unsigned int index);
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -233,7 +233,7 @@ static void __hash_remove(struct hash_ce
+ 	}
+ 
+ 	if (hc->new_map)
+-		dm_table_put(hc->new_map);
++		dm_table_destroy(hc->new_map);
+ 	dm_put(hc->md);
+ 	free_cell(hc);
+ }
+@@ -828,8 +828,8 @@ static int do_resume(struct dm_ioctl *pa
+ 
+ 		r = dm_swap_table(md, new_map);
+ 		if (r) {
++			dm_table_destroy(new_map);
+ 			dm_put(md);
+-			dm_table_put(new_map);
+ 			return r;
+ 		}
+ 
+@@ -837,8 +837,6 @@ static int do_resume(struct dm_ioctl *pa
+ 			set_disk_ro(dm_disk(md), 0);
+ 		else
+ 			set_disk_ro(dm_disk(md), 1);
+-
+-		dm_table_put(new_map);
+ 	}
+ 
+ 	if (dm_suspended(md))
+@@ -1094,7 +1092,7 @@ static int table_load(struct dm_ioctl *p
+ 	}
+ 
+ 	if (hc->new_map)
+-		dm_table_put(hc->new_map);
++		dm_table_destroy(hc->new_map);
+ 	hc->new_map = t;
+ 	up_write(&_hash_lock);
+ 
+@@ -1123,7 +1121,7 @@ static int table_clear(struct dm_ioctl *
+ 	}
+ 
+ 	if (hc->new_map) {
+-		dm_table_put(hc->new_map);
++		dm_table_destroy(hc->new_map);
+ 		hc->new_map = NULL;
+ 	}
+ 
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1,6 +1,6 @@
+ /*
+  * Copyright (C) 2001 Sistina Software (UK) Limited.
+- * Copyright (C) 2004 Red Hat, Inc. All rights reserved.
++ * Copyright (C) 2004-2008 Red Hat, Inc. All rights reserved.
+  *
+  * This file is released under the GPL.
+  */
+@@ -15,6 +15,7 @@
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/mutex.h>
++#include <linux/delay.h>
+ #include <asm/atomic.h>
+ 
+ #define DM_MSG_PREFIX "table"
+@@ -24,6 +25,19 @@
+ #define KEYS_PER_NODE (NODE_SIZE / sizeof(sector_t))
+ #define CHILDREN_PER_NODE (KEYS_PER_NODE + 1)
+ 
++/*
++ * The table has always exactly one reference from either mapped_device->map
++ * or hash_cell->new_map. This reference is not counted in table->holders.
++ * A pair of dm_create_table/dm_destroy_table functions is used for table
++ * creation/destruction.
++ *
++ * Temporary references from the other code increase table->holders. A pair
++ * of dm_table_get/dm_table_put functions is used to manipulate it.
++ *
++ * When the table is about to be destroyed, we wait for table->holders to
++ * drop to zero.
++ */
++
+ struct dm_table {
+ 	struct mapped_device *md;
+ 	atomic_t holders;
+@@ -231,7 +245,7 @@ int dm_table_create(struct dm_table **re
+ 		return -ENOMEM;
+ 
+ 	INIT_LIST_HEAD(&t->devices);
+-	atomic_set(&t->holders, 1);
++	atomic_set(&t->holders, 0);
+ 
+ 	if (!num_targets)
+ 		num_targets = KEYS_PER_NODE;
+@@ -260,10 +274,14 @@ static void free_devices(struct list_hea
+ 	}
+ }
+ 
+-static void table_destroy(struct dm_table *t)
++void dm_table_destroy(struct dm_table *t)
+ {
+ 	unsigned int i;
+ 
++	while (atomic_read(&t->holders))
++		msleep(1);
++	smp_mb();
++
+ 	/* free the indexes (see dm_table_complete) */
+ 	if (t->depth >= 2)
+ 		vfree(t->index[t->depth - 2]);
+@@ -301,8 +319,8 @@ void dm_table_put(struct dm_table *t)
+ 	if (!t)
+ 		return;
+ 
+-	if (atomic_dec_and_test(&t->holders))
+-		table_destroy(t);
++	smp_mb__before_atomic_dec();
++	atomic_dec(&t->holders);
+ }
+ 
+ /*

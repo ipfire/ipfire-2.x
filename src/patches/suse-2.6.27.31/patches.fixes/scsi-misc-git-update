@@ -1,0 +1,1347 @@
+From: James Bottomley <james.bottomley@hansenpartnership.com>
+Subject: SCSI misc fixes
+References: FATE#303485,FATE#303484
+
+This patch pulls in the latest patches from the scsi-misc tree.
+The functions are required by the various driver updates.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ Documentation/scsi/scsi_fc_transport.txt    |   36 +
+ drivers/mmc/card/block.c                    |   10 
+ drivers/scsi/device_handler/scsi_dh_emc.c   |    1 
+ drivers/scsi/device_handler/scsi_dh_hp_sw.c |    2 
+ drivers/scsi/device_handler/scsi_dh_rdac.c  |    2 
+ drivers/scsi/libiscsi.c                     |    2 
+ drivers/scsi/scsi.c                         |   13 
+ drivers/scsi/scsi_lib.c                     |   39 +-
+ drivers/scsi/scsi_netlink.c                 |  523 +++++++++++++++++++++++++++-
+ drivers/scsi/scsi_scan.c                    |   20 -
+ drivers/scsi/scsi_sysfs.c                   |    1 
+ drivers/scsi/scsi_transport_fc.c            |   54 +-
+ drivers/scsi/sd.c                           |   29 -
+ include/linux/string_helpers.h              |   16 
+ include/scsi/scsi_device.h                  |   21 -
+ include/scsi/scsi_netlink.h                 |   62 +++
+ include/scsi/scsi_transport_fc.h            |   23 +
+ lib/Makefile                                |    3 
+ lib/string_helpers.c                        |   64 +++
+ 19 files changed, 834 insertions(+), 87 deletions(-)
+
+--- a/Documentation/scsi/scsi_fc_transport.txt
++++ b/Documentation/scsi/scsi_fc_transport.txt
+@@ -436,6 +436,42 @@ Other:
+     was updated to remove all vports for the fc_host as well.
+ 
+ 
++Transport supplied functions
++----------------------------
++
++The following functions are supplied by the FC-transport for use by LLDs.
++
++   fc_vport_create - create a vport
++   fc_vport_terminate - detach and remove a vport
++
++Details:
++
++/**
++ * fc_vport_create - Admin App or LLDD requests creation of a vport
++ * @shost:     scsi host the virtual port is connected to.
++ * @ids:       The world wide names, FC4 port roles, etc for
++ *              the virtual port.
++ *
++ * Notes:
++ *     This routine assumes no locks are held on entry.
++ */
++struct fc_vport *
++fc_vport_create(struct Scsi_Host *shost, struct fc_vport_identifiers *ids)
++
++/**
++ * fc_vport_terminate - Admin App or LLDD requests termination of a vport
++ * @vport:      fc_vport to be terminated
++ *
++ * Calls the LLDD vport_delete() function, then deallocates and removes
++ * the vport from the shost and object tree.
++ *
++ * Notes:
++ *      This routine assumes no locks are held on entry.
++ */
++int
++fc_vport_terminate(struct fc_vport *vport)
++
++
+ Credits
+ =======
+ The following people have contributed to this document:
+--- a/drivers/mmc/card/block.c
++++ b/drivers/mmc/card/block.c
+@@ -29,6 +29,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/mutex.h>
+ #include <linux/scatterlist.h>
++#include <linux/string_helpers.h>
+ 
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
+@@ -532,6 +533,8 @@ static int mmc_blk_probe(struct mmc_card
+ 	struct mmc_blk_data *md;
+ 	int err;
+ 
++	char cap_str[10];
++
+ 	/*
+ 	 * Check that the card supports the command class(es) we need.
+ 	 */
+@@ -546,10 +549,11 @@ static int mmc_blk_probe(struct mmc_card
+ 	if (err)
+ 		goto out;
+ 
+-	printk(KERN_INFO "%s: %s %s %lluKiB %s\n",
++	string_get_size(get_capacity(md->disk) << 9, STRING_UNITS_2,
++			cap_str, sizeof(cap_str));
++	printk(KERN_INFO "%s: %s %s %s %s\n",
+ 		md->disk->disk_name, mmc_card_id(card), mmc_card_name(card),
+-		(unsigned long long)(get_capacity(md->disk) >> 1),
+-		md->read_only ? "(ro)" : "");
++		cap_str, md->read_only ? "(ro)" : "");
+ 
+ 	mmc_set_drvdata(card, md);
+ 	add_disk(md->disk);
+--- a/drivers/scsi/device_handler/scsi_dh_emc.c
++++ b/drivers/scsi/device_handler/scsi_dh_emc.c
+@@ -278,7 +278,6 @@ static struct request *get_req(struct sc
+ 		return NULL;
+ 	}
+ 
+-	memset(rq->cmd, 0, BLK_MAX_CDB);
+ 	rq->cmd_len = COMMAND_SIZE(cmd);
+ 	rq->cmd[0] = cmd;
+ 
+--- a/drivers/scsi/device_handler/scsi_dh_hp_sw.c
++++ b/drivers/scsi/device_handler/scsi_dh_hp_sw.c
+@@ -114,7 +114,6 @@ static int hp_sw_tur(struct scsi_device 
+ 	req->cmd_type = REQ_TYPE_BLOCK_PC;
+ 	req->cmd_flags |= REQ_FAILFAST;
+ 	req->cmd_len = COMMAND_SIZE(TEST_UNIT_READY);
+-	memset(req->cmd, 0, MAX_COMMAND_SIZE);
+ 	req->cmd[0] = TEST_UNIT_READY;
+ 	req->timeout = HP_SW_TIMEOUT;
+ 	req->sense = h->sense;
+@@ -207,7 +206,6 @@ static int hp_sw_start_stop(struct scsi_
+ 	req->cmd_type = REQ_TYPE_BLOCK_PC;
+ 	req->cmd_flags |= REQ_FAILFAST;
+ 	req->cmd_len = COMMAND_SIZE(START_STOP);
+-	memset(req->cmd, 0, MAX_COMMAND_SIZE);
+ 	req->cmd[0] = START_STOP;
+ 	req->cmd[4] = 1;	/* Start spin cycle */
+ 	req->timeout = HP_SW_TIMEOUT;
+--- a/drivers/scsi/device_handler/scsi_dh_rdac.c
++++ b/drivers/scsi/device_handler/scsi_dh_rdac.c
+@@ -225,8 +225,6 @@ static struct request *get_rdac_req(stru
+ 		return NULL;
+ 	}
+ 
+-	memset(rq->cmd, 0, BLK_MAX_CDB);
+-
+ 	rq->cmd_type = REQ_TYPE_BLOCK_PC;
+ 	rq->cmd_flags |= REQ_FAILFAST | REQ_NOMERGE;
+ 	rq->retries = RDAC_RETRIES;
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -1456,7 +1456,7 @@ static void fail_all_commands(struct isc
+ 		if (lun == task->sc->device->lun || lun == -1) {
+ 			debug_scsi("failing in progress sc %p itt 0x%x\n",
+ 				   task->sc, task->itt);
+-			fail_command(conn, task, DID_BUS_BUSY << 16);
++			fail_command(conn, task, error << 16);
+ 		}
+ 	}
+ }
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -668,13 +668,14 @@ int scsi_dispatch_cmd(struct scsi_cmnd *
+ 		goto out;
+ 	}
+ 
+-	/* Check to see if the scsi lld put this device into state SDEV_BLOCK. */
+-	if (unlikely(cmd->device->sdev_state == SDEV_BLOCK)) {
++	/* Check to see if the scsi lld made this device blocked. */
++	if (unlikely(scsi_device_blocked(cmd->device))) {
+ 		/* 
+-		 * in SDEV_BLOCK, the command is just put back on the device
+-		 * queue.  The suspend state has already blocked the queue so
+-		 * future requests should not occur until the device 
+-		 * transitions out of the suspend state.
++		 * in blocked state, the command is just put back on
++		 * the device queue.  The suspend state has already
++		 * blocked the queue so future requests should not
++		 * occur until the device transitions out of the
++		 * suspend state.
+ 		 */
+ 
+ 		scsi_queue_insert(cmd, SCSI_MLQUEUE_DEVICE_BUSY);
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1250,6 +1250,7 @@ int scsi_prep_state_check(struct scsi_de
+ 			break;
+ 		case SDEV_QUIESCE:
+ 		case SDEV_BLOCK:
++		case SDEV_CREATED_BLOCK:
+ 			/*
+ 			 * If the devices is blocked we defer normal commands.
+ 			 */
+@@ -2073,10 +2074,13 @@ scsi_device_set_state(struct scsi_device
+ 
+ 	switch (state) {
+ 	case SDEV_CREATED:
+-		/* There are no legal states that come back to
+-		 * created.  This is the manually initialised start
+-		 * state */
+-		goto illegal;
++		switch (oldstate) {
++		case SDEV_CREATED_BLOCK:
++			break;
++		default:
++			goto illegal;
++		}
++		break;
+ 			
+ 	case SDEV_RUNNING:
+ 		switch (oldstate) {
+@@ -2114,8 +2118,17 @@ scsi_device_set_state(struct scsi_device
+ 
+ 	case SDEV_BLOCK:
+ 		switch (oldstate) {
+-		case SDEV_CREATED:
+ 		case SDEV_RUNNING:
++		case SDEV_CREATED_BLOCK:
++			break;
++		default:
++			goto illegal;
++		}
++		break;
++
++	case SDEV_CREATED_BLOCK:
++		switch (oldstate) {
++		case SDEV_CREATED:
+ 			break;
+ 		default:
+ 			goto illegal;
+@@ -2403,8 +2416,12 @@ scsi_internal_device_block(struct scsi_d
+ 	int err = 0;
+ 
+ 	err = scsi_device_set_state(sdev, SDEV_BLOCK);
+-	if (err)
+-		return err;
++	if (err) {
++		err = scsi_device_set_state(sdev, SDEV_CREATED_BLOCK);
++
++		if (err)
++			return err;
++	}
+ 
+ 	/* 
+ 	 * The device has transitioned to SDEV_BLOCK.  Stop the
+@@ -2447,8 +2464,12 @@ scsi_internal_device_unblock(struct scsi
+ 	 * and goose the device queue if successful.  
+ 	 */
+ 	err = scsi_device_set_state(sdev, SDEV_RUNNING);
+-	if (err)
+-		return err;
++	if (err) {
++		err = scsi_device_set_state(sdev, SDEV_CREATED);
++
++		if (err)
++			return err;
++	}
+ 
+ 	spin_lock_irqsave(q->queue_lock, flags);
+ 	blk_start_queue(q);
+--- a/drivers/scsi/scsi_netlink.c
++++ b/drivers/scsi/scsi_netlink.c
+@@ -21,6 +21,7 @@
+ #include <linux/time.h>
+ #include <linux/jiffies.h>
+ #include <linux/security.h>
++#include <linux/delay.h>
+ #include <net/sock.h>
+ #include <net/netlink.h>
+ 
+@@ -30,6 +31,39 @@
+ struct sock *scsi_nl_sock = NULL;
+ EXPORT_SYMBOL_GPL(scsi_nl_sock);
+ 
++static DEFINE_SPINLOCK(scsi_nl_lock);
++static struct list_head scsi_nl_drivers;
++
++static u32	scsi_nl_state;
++#define STATE_EHANDLER_BSY		0x00000001
++
++struct scsi_nl_transport {
++	int (*msg_handler)(struct sk_buff *);
++	void (*event_handler)(struct notifier_block *, unsigned long, void *);
++	unsigned int refcnt;
++	int flags;
++};
++
++/* flags values (bit flags) */
++#define HANDLER_DELETING		0x1
++
++static struct scsi_nl_transport transports[SCSI_NL_MAX_TRANSPORTS] =
++	{ {NULL, }, };
++
++
++struct scsi_nl_drvr {
++	struct list_head next;
++	int (*dmsg_handler)(struct Scsi_Host *shost, void *payload,
++				 u32 len, u32 pid);
++	void (*devt_handler)(struct notifier_block *nb,
++				 unsigned long event, void *notify_ptr);
++	struct scsi_host_template *hostt;
++	u64 vendor_id;
++	unsigned int refcnt;
++	int flags;
++};
++
++
+ 
+ /**
+  * scsi_nl_rcv_msg - Receive message handler.
+@@ -45,8 +79,9 @@ scsi_nl_rcv_msg(struct sk_buff *skb)
+ {
+ 	struct nlmsghdr *nlh;
+ 	struct scsi_nl_hdr *hdr;
+-	uint32_t rlen;
+-	int err;
++	unsigned long flags;
++	u32 rlen;
++	int err, tport;
+ 
+ 	while (skb->len >= NLMSG_SPACE(0)) {
+ 		err = 0;
+@@ -65,7 +100,7 @@ scsi_nl_rcv_msg(struct sk_buff *skb)
+ 
+ 		if (nlh->nlmsg_type != SCSI_TRANSPORT_MSG) {
+ 			err = -EBADMSG;
+-			return;
++			goto next_msg;
+ 		}
+ 
+ 		hdr = NLMSG_DATA(nlh);
+@@ -83,12 +118,27 @@ scsi_nl_rcv_msg(struct sk_buff *skb)
+ 		if (nlh->nlmsg_len < (sizeof(*nlh) + hdr->msglen)) {
+ 			printk(KERN_WARNING "%s: discarding partial message\n",
+ 				 __func__);
+-			return;
++			goto next_msg;
+ 		}
+ 
+ 		/*
+-		 * We currently don't support anyone sending us a message
++		 * Deliver message to the appropriate transport
+ 		 */
++		spin_lock_irqsave(&scsi_nl_lock, flags);
++
++		tport = hdr->transport;
++		if ((tport < SCSI_NL_MAX_TRANSPORTS) &&
++		    !(transports[tport].flags & HANDLER_DELETING) &&
++		    (transports[tport].msg_handler)) {
++			transports[tport].refcnt++;
++			spin_unlock_irqrestore(&scsi_nl_lock, flags);
++			err = transports[tport].msg_handler(skb);
++			spin_lock_irqsave(&scsi_nl_lock, flags);
++			transports[tport].refcnt--;
++		} else
++			err = -ENOENT;
++
++		spin_unlock_irqrestore(&scsi_nl_lock, flags);
+ 
+ next_msg:
+ 		if ((err) || (nlh->nlmsg_flags & NLM_F_ACK))
+@@ -110,14 +160,42 @@ static int
+ scsi_nl_rcv_event(struct notifier_block *this, unsigned long event, void *ptr)
+ {
+ 	struct netlink_notify *n = ptr;
++	struct scsi_nl_drvr *driver;
++	unsigned long flags;
++	int tport;
+ 
+ 	if (n->protocol != NETLINK_SCSITRANSPORT)
+ 		return NOTIFY_DONE;
+ 
++	spin_lock_irqsave(&scsi_nl_lock, flags);
++	scsi_nl_state |= STATE_EHANDLER_BSY;
++
++	/*
++	 * Pass event on to any transports that may be listening
++	 */
++	for (tport = 0; tport < SCSI_NL_MAX_TRANSPORTS; tport++) {
++		if (!(transports[tport].flags & HANDLER_DELETING) &&
++		    (transports[tport].event_handler)) {
++			spin_unlock_irqrestore(&scsi_nl_lock, flags);
++			transports[tport].event_handler(this, event, ptr);
++			spin_lock_irqsave(&scsi_nl_lock, flags);
++		}
++	}
++
+ 	/*
+-	 * Currently, we are not tracking PID's, etc. There is nothing
+-	 * to handle.
++	 * Pass event on to any drivers that may be listening
+ 	 */
++	list_for_each_entry(driver, &scsi_nl_drivers, next) {
++		if (!(driver->flags & HANDLER_DELETING) &&
++		    (driver->devt_handler)) {
++			spin_unlock_irqrestore(&scsi_nl_lock, flags);
++			driver->devt_handler(this, event, ptr);
++			spin_lock_irqsave(&scsi_nl_lock, flags);
++		}
++	}
++
++	scsi_nl_state &= ~STATE_EHANDLER_BSY;
++	spin_unlock_irqrestore(&scsi_nl_lock, flags);
+ 
+ 	return NOTIFY_DONE;
+ }
+@@ -128,7 +206,281 @@ static struct notifier_block scsi_netlin
+ 
+ 
+ /**
+- * scsi_netlink_init - Called by SCSI subsystem to intialize the SCSI transport netlink interface
++ * GENERIC SCSI transport receive and event handlers
++ **/
++
++/**
++ * scsi_generic_msg_handler - receive message handler for GENERIC transport
++ * 			 messages
++ *
++ * @skb:		socket receive buffer
++ *
++ **/
++static int
++scsi_generic_msg_handler(struct sk_buff *skb)
++{
++	struct nlmsghdr *nlh = nlmsg_hdr(skb);
++	struct scsi_nl_hdr *snlh = NLMSG_DATA(nlh);
++	struct scsi_nl_drvr *driver;
++	struct Scsi_Host *shost;
++	unsigned long flags;
++	int err = 0, match, pid;
++
++	pid = NETLINK_CREDS(skb)->pid;
++
++	switch (snlh->msgtype) {
++	case SCSI_NL_SHOST_VENDOR:
++		{
++		struct scsi_nl_host_vendor_msg *msg = NLMSG_DATA(nlh);
++
++		/* Locate the driver that corresponds to the message */
++		spin_lock_irqsave(&scsi_nl_lock, flags);
++		match = 0;
++		list_for_each_entry(driver, &scsi_nl_drivers, next) {
++			if (driver->vendor_id == msg->vendor_id) {
++				match = 1;
++				break;
++			}
++		}
++
++		if ((!match) || (!driver->dmsg_handler)) {
++			spin_unlock_irqrestore(&scsi_nl_lock, flags);
++			err = -ESRCH;
++			goto rcv_exit;
++		}
++
++		if (driver->flags & HANDLER_DELETING) {
++			spin_unlock_irqrestore(&scsi_nl_lock, flags);
++			err = -ESHUTDOWN;
++			goto rcv_exit;
++		}
++
++		driver->refcnt++;
++		spin_unlock_irqrestore(&scsi_nl_lock, flags);
++
++
++		/* if successful, scsi_host_lookup takes a shost reference */
++		shost = scsi_host_lookup(msg->host_no);
++		if (!shost) {
++			err = -ENODEV;
++			goto driver_exit;
++		}
++
++		/* is this host owned by the vendor ? */
++		if (shost->hostt != driver->hostt) {
++			err = -EINVAL;
++			goto vendormsg_put;
++		}
++
++		/* pass message on to the driver */
++		err = driver->dmsg_handler(shost, (void *)&msg[1],
++					 msg->vmsg_datalen, pid);
++
++vendormsg_put:
++		/* release reference by scsi_host_lookup */
++		scsi_host_put(shost);
++
++driver_exit:
++		/* release our own reference on the registration object */
++		spin_lock_irqsave(&scsi_nl_lock, flags);
++		driver->refcnt--;
++		spin_unlock_irqrestore(&scsi_nl_lock, flags);
++		break;
++		}
++
++	default:
++		err = -EBADR;
++		break;
++	}
++
++rcv_exit:
++	if (err)
++		printk(KERN_WARNING "%s: Msgtype %d failed - err %d\n",
++			 __func__, snlh->msgtype, err);
++	return err;
++}
++
++
++/**
++ * scsi_nl_add_transport -
++ *    Registers message and event handlers for a transport. Enables
++ *    receipt of netlink messages and events to a transport.
++ *
++ * @tport:		transport registering handlers
++ * @msg_handler:	receive message handler callback
++ * @event_handler:	receive event handler callback
++ **/
++int
++scsi_nl_add_transport(u8 tport,
++	int (*msg_handler)(struct sk_buff *),
++	void (*event_handler)(struct notifier_block *, unsigned long, void *))
++{
++	unsigned long flags;
++	int err = 0;
++
++	if (tport >= SCSI_NL_MAX_TRANSPORTS)
++		return -EINVAL;
++
++	spin_lock_irqsave(&scsi_nl_lock, flags);
++
++	if (scsi_nl_state & STATE_EHANDLER_BSY) {
++		spin_unlock_irqrestore(&scsi_nl_lock, flags);
++		msleep(1);
++		spin_lock_irqsave(&scsi_nl_lock, flags);
++	}
++
++	if (transports[tport].msg_handler || transports[tport].event_handler) {
++		err = -EALREADY;
++		goto register_out;
++	}
++
++	transports[tport].msg_handler = msg_handler;
++	transports[tport].event_handler = event_handler;
++	transports[tport].flags = 0;
++	transports[tport].refcnt = 0;
++
++register_out:
++	spin_unlock_irqrestore(&scsi_nl_lock, flags);
++
++	return err;
++}
++EXPORT_SYMBOL_GPL(scsi_nl_add_transport);
++
++
++/**
++ * scsi_nl_remove_transport -
++ *    Disable transport receiption of messages and events
++ *
++ * @tport:		transport deregistering handlers
++ *
++ **/
++void
++scsi_nl_remove_transport(u8 tport)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&scsi_nl_lock, flags);
++	if (scsi_nl_state & STATE_EHANDLER_BSY) {
++		spin_unlock_irqrestore(&scsi_nl_lock, flags);
++		msleep(1);
++		spin_lock_irqsave(&scsi_nl_lock, flags);
++	}
++
++	if (tport < SCSI_NL_MAX_TRANSPORTS) {
++		transports[tport].flags |= HANDLER_DELETING;
++
++		while (transports[tport].refcnt != 0) {
++			spin_unlock_irqrestore(&scsi_nl_lock, flags);
++			schedule_timeout_uninterruptible(HZ/4);
++			spin_lock_irqsave(&scsi_nl_lock, flags);
++		}
++		transports[tport].msg_handler = NULL;
++		transports[tport].event_handler = NULL;
++		transports[tport].flags = 0;
++	}
++
++	spin_unlock_irqrestore(&scsi_nl_lock, flags);
++
++	return;
++}
++EXPORT_SYMBOL_GPL(scsi_nl_remove_transport);
++
++
++/**
++ * scsi_nl_add_driver -
++ *    A driver is registering its interfaces for SCSI netlink messages
++ *
++ * @vendor_id:          A unique identification value for the driver.
++ * @hostt:		address of the driver's host template. Used
++ *			to verify an shost is bound to the driver
++ * @nlmsg_handler:	receive message handler callback
++ * @nlevt_handler:	receive event handler callback
++ *
++ * Returns:
++ *   0 on Success
++ *   error result otherwise
++ **/
++int
++scsi_nl_add_driver(u64 vendor_id, struct scsi_host_template *hostt,
++	int (*nlmsg_handler)(struct Scsi_Host *shost, void *payload,
++				 u32 len, u32 pid),
++	void (*nlevt_handler)(struct notifier_block *nb,
++				 unsigned long event, void *notify_ptr))
++{
++	struct scsi_nl_drvr *driver;
++	unsigned long flags;
++
++	driver = kzalloc(sizeof(*driver), GFP_KERNEL);
++	if (unlikely(!driver)) {
++		printk(KERN_ERR "%s: allocation failure\n", __func__);
++		return -ENOMEM;
++	}
++
++	driver->dmsg_handler = nlmsg_handler;
++	driver->devt_handler = nlevt_handler;
++	driver->hostt = hostt;
++	driver->vendor_id = vendor_id;
++
++	spin_lock_irqsave(&scsi_nl_lock, flags);
++	if (scsi_nl_state & STATE_EHANDLER_BSY) {
++		spin_unlock_irqrestore(&scsi_nl_lock, flags);
++		msleep(1);
++		spin_lock_irqsave(&scsi_nl_lock, flags);
++	}
++	list_add_tail(&driver->next, &scsi_nl_drivers);
++	spin_unlock_irqrestore(&scsi_nl_lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(scsi_nl_add_driver);
++
++
++/**
++ * scsi_nl_remove_driver -
++ *    An driver is unregistering with the SCSI netlink messages
++ *
++ * @vendor_id:          The unique identification value for the driver.
++ **/
++void
++scsi_nl_remove_driver(u64 vendor_id)
++{
++	struct scsi_nl_drvr *driver;
++	unsigned long flags;
++
++	spin_lock_irqsave(&scsi_nl_lock, flags);
++	if (scsi_nl_state & STATE_EHANDLER_BSY) {
++		spin_unlock_irqrestore(&scsi_nl_lock, flags);
++		msleep(1);
++		spin_lock_irqsave(&scsi_nl_lock, flags);
++	}
++
++	list_for_each_entry(driver, &scsi_nl_drivers, next) {
++		if (driver->vendor_id == vendor_id) {
++			driver->flags |= HANDLER_DELETING;
++			while (driver->refcnt != 0) {
++				spin_unlock_irqrestore(&scsi_nl_lock, flags);
++				schedule_timeout_uninterruptible(HZ/4);
++				spin_lock_irqsave(&scsi_nl_lock, flags);
++			}
++			list_del(&driver->next);
++			kfree(driver);
++			spin_unlock_irqrestore(&scsi_nl_lock, flags);
++			return;
++		}
++	}
++
++	spin_unlock_irqrestore(&scsi_nl_lock, flags);
++
++	printk(KERN_ERR "%s: removal of driver failed - vendor_id 0x%llx\n",
++	       __func__, (unsigned long long)vendor_id);
++	return;
++}
++EXPORT_SYMBOL_GPL(scsi_nl_remove_driver);
++
++
++/**
++ * scsi_netlink_init - Called by SCSI subsystem to intialize
++ * 	the SCSI transport netlink interface
+  *
+  **/
+ void
+@@ -136,6 +488,8 @@ scsi_netlink_init(void)
+ {
+ 	int error;
+ 
++	INIT_LIST_HEAD(&scsi_nl_drivers);
++
+ 	error = netlink_register_notifier(&scsi_netlink_notifier);
+ 	if (error) {
+ 		printk(KERN_ERR "%s: register of event handler failed - %d\n",
+@@ -150,8 +504,15 @@ scsi_netlink_init(void)
+ 		printk(KERN_ERR "%s: register of recieve handler failed\n",
+ 				__func__);
+ 		netlink_unregister_notifier(&scsi_netlink_notifier);
++		return;
+ 	}
+ 
++	/* Register the entry points for the generic SCSI transport */
++	error = scsi_nl_add_transport(SCSI_NL_TRANSPORT,
++				scsi_generic_msg_handler, NULL);
++	if (error)
++		printk(KERN_ERR "%s: register of GENERIC transport handler"
++				"  failed - %d\n", __func__, error);
+ 	return;
+ }
+ 
+@@ -163,6 +524,8 @@ scsi_netlink_init(void)
+ void
+ scsi_netlink_exit(void)
+ {
++	scsi_nl_remove_transport(SCSI_NL_TRANSPORT);
++
+ 	if (scsi_nl_sock) {
+ 		netlink_kernel_release(scsi_nl_sock);
+ 		netlink_unregister_notifier(&scsi_netlink_notifier);
+@@ -172,3 +535,147 @@ scsi_netlink_exit(void)
+ }
+ 
+ 
++/*
++ * Exported Interfaces
++ */
++
++/**
++ * scsi_nl_send_transport_msg -
++ *    Generic function to send a single message from a SCSI transport to
++ *    a single process
++ *
++ * @pid:		receiving pid
++ * @hdr:		message payload
++ *
++ **/
++void
++scsi_nl_send_transport_msg(u32 pid, struct scsi_nl_hdr *hdr)
++{
++	struct sk_buff *skb;
++	struct nlmsghdr	*nlh;
++	const char *fn;
++	char *datab;
++	u32 len, skblen;
++	int err;
++
++	if (!scsi_nl_sock) {
++		err = -ENOENT;
++		fn = "netlink socket";
++		goto msg_fail;
++	}
++
++	len = NLMSG_SPACE(hdr->msglen);
++	skblen = NLMSG_SPACE(len);
++
++	skb = alloc_skb(skblen, GFP_KERNEL);
++	if (!skb) {
++		err = -ENOBUFS;
++		fn = "alloc_skb";
++		goto msg_fail;
++	}
++
++	nlh = nlmsg_put(skb, pid, 0, SCSI_TRANSPORT_MSG, len - sizeof(*nlh), 0);
++	if (!nlh) {
++		err = -ENOBUFS;
++		fn = "nlmsg_put";
++		goto msg_fail_skb;
++	}
++	datab = NLMSG_DATA(nlh);
++	memcpy(datab, hdr, hdr->msglen);
++
++	err = nlmsg_unicast(scsi_nl_sock, skb, pid);
++	if (err < 0) {
++		fn = "nlmsg_unicast";
++		/* nlmsg_unicast already kfree_skb'd */
++		goto msg_fail;
++	}
++
++	return;
++
++msg_fail_skb:
++	kfree_skb(skb);
++msg_fail:
++	printk(KERN_WARNING
++		"%s: Dropped Message : pid %d Transport %d, msgtype x%x, "
++		"msglen %d: %s : err %d\n",
++		__func__, pid, hdr->transport, hdr->msgtype, hdr->msglen,
++		fn, err);
++	return;
++}
++EXPORT_SYMBOL_GPL(scsi_nl_send_transport_msg);
++
++
++/**
++ * scsi_nl_send_vendor_msg - called to send a shost vendor unique message
++ *                      to a specific process id.
++ *
++ * @pid:		process id of the receiver
++ * @host_no:		host # sending the message
++ * @vendor_id:		unique identifier for the driver's vendor
++ * @data_len:		amount, in bytes, of vendor unique payload data
++ * @data_buf:		pointer to vendor unique data buffer
++ *
++ * Returns:
++ *   0 on succesful return
++ *   otherwise, failing error code
++ *
++ * Notes:
++ *	This routine assumes no locks are held on entry.
++ */
++int
++scsi_nl_send_vendor_msg(u32 pid, unsigned short host_no, u64 vendor_id,
++			 char *data_buf, u32 data_len)
++{
++	struct sk_buff *skb;
++	struct nlmsghdr	*nlh;
++	struct scsi_nl_host_vendor_msg *msg;
++	u32 len, skblen;
++	int err;
++
++	if (!scsi_nl_sock) {
++		err = -ENOENT;
++		goto send_vendor_fail;
++	}
++
++	len = SCSI_NL_MSGALIGN(sizeof(*msg) + data_len);
++	skblen = NLMSG_SPACE(len);
++
++	skb = alloc_skb(skblen, GFP_KERNEL);
++	if (!skb) {
++		err = -ENOBUFS;
++		goto send_vendor_fail;
++	}
++
++	nlh = nlmsg_put(skb, 0, 0, SCSI_TRANSPORT_MSG,
++				skblen - sizeof(*nlh), 0);
++	if (!nlh) {
++		err = -ENOBUFS;
++		goto send_vendor_fail_skb;
++	}
++	msg = NLMSG_DATA(nlh);
++
++	INIT_SCSI_NL_HDR(&msg->snlh, SCSI_NL_TRANSPORT,
++				SCSI_NL_SHOST_VENDOR, len);
++	msg->vendor_id = vendor_id;
++	msg->host_no = host_no;
++	msg->vmsg_datalen = data_len;	/* bytes */
++	memcpy(&msg[1], data_buf, data_len);
++
++	err = nlmsg_unicast(scsi_nl_sock, skb, pid);
++	if (err)
++		/* nlmsg_multicast already kfree_skb'd */
++		goto send_vendor_fail;
++
++	return 0;
++
++send_vendor_fail_skb:
++	kfree_skb(skb);
++send_vendor_fail:
++	printk(KERN_WARNING
++		"%s: Dropped SCSI Msg : host %d vendor_unique - err %d\n",
++		__func__, host_no, err);
++	return err;
++}
++EXPORT_SYMBOL(scsi_nl_send_vendor_msg);
++
++
+--- a/drivers/scsi/scsi_scan.c
++++ b/drivers/scsi/scsi_scan.c
+@@ -730,6 +730,8 @@ static int scsi_probe_lun(struct scsi_de
+ static int scsi_add_lun(struct scsi_device *sdev, unsigned char *inq_result,
+ 		int *bflags, int async)
+ {
++	int ret;
++
+ 	/*
+ 	 * XXX do not save the inquiry, since it can change underneath us,
+ 	 * save just vendor/model/rev.
+@@ -885,7 +887,17 @@ static int scsi_add_lun(struct scsi_devi
+ 
+ 	/* set the device running here so that slave configure
+ 	 * may do I/O */
+-	scsi_device_set_state(sdev, SDEV_RUNNING);
++	ret = scsi_device_set_state(sdev, SDEV_RUNNING);
++	if (ret) {
++		ret = scsi_device_set_state(sdev, SDEV_BLOCK);
++
++		if (ret) {
++			sdev_printk(KERN_ERR, sdev,
++				    "in wrong state %s to complete scan\n",
++				    scsi_device_state_name(sdev->sdev_state));
++			return SCSI_SCAN_NO_RESPONSE;
++		}
++	}
+ 
+ 	if (*bflags & BLIST_MS_192_BYTES_FOR_3F)
+ 		sdev->use_192_bytes_for_3f = 1;
+@@ -899,7 +911,7 @@ static int scsi_add_lun(struct scsi_devi
+ 	transport_configure_device(&sdev->sdev_gendev);
+ 
+ 	if (sdev->host->hostt->slave_configure) {
+-		int ret = sdev->host->hostt->slave_configure(sdev);
++		ret = sdev->host->hostt->slave_configure(sdev);
+ 		if (ret) {
+ 			/*
+ 			 * if LLDD reports slave not present, don't clutter
+@@ -994,7 +1006,7 @@ static int scsi_probe_and_add_lun(struct
+ 	 */
+ 	sdev = scsi_device_lookup_by_target(starget, lun);
+ 	if (sdev) {
+-		if (rescan || sdev->sdev_state != SDEV_CREATED) {
++		if (rescan || !scsi_device_created(sdev)) {
+ 			SCSI_LOG_SCAN_BUS(3, printk(KERN_INFO
+ 				"scsi scan: device exists on %s\n",
+ 				sdev->sdev_gendev.bus_id));
+@@ -1467,7 +1479,7 @@ static int scsi_report_lun_scan(struct s
+ 	kfree(lun_data);
+  out:
+ 	scsi_device_put(sdev);
+-	if (sdev->sdev_state == SDEV_CREATED)
++	if (scsi_device_created(sdev))
+ 		/*
+ 		 * the sdev we used didn't appear in the report luns scan
+ 		 */
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -34,6 +34,7 @@ static const struct {
+ 	{ SDEV_QUIESCE, "quiesce" },
+ 	{ SDEV_OFFLINE,	"offline" },
+ 	{ SDEV_BLOCK,	"blocked" },
++	{ SDEV_CREATED_BLOCK, "created-blocked" },
+ };
+ 
+ const char *scsi_device_state_name(enum scsi_device_state state)
+--- a/drivers/scsi/scsi_transport_fc.c
++++ b/drivers/scsi/scsi_transport_fc.c
+@@ -40,31 +40,7 @@
+ 
+ static int fc_queue_work(struct Scsi_Host *, struct work_struct *);
+ static void fc_vport_sched_delete(struct work_struct *work);
+-
+-/*
+- * This is a temporary carrier for creating a vport. It will eventually
+- * be replaced  by a real message definition for sgio or netlink.
+- *
+- * fc_vport_identifiers: This set of data contains all elements
+- * to uniquely identify and instantiate a FC virtual port.
+- *
+- * Notes:
+- *   symbolic_name: The driver is to append the symbolic_name string data
+- *      to the symbolic_node_name data that it generates by default.
+- *      the resulting combination should then be registered with the switch.
+- *      It is expected that things like Xen may stuff a VM title into
+- *      this field.
+- */
+-struct fc_vport_identifiers {
+-	u64 node_name;
+-	u64 port_name;
+-	u32 roles;
+-	bool disable;
+-	enum fc_port_type vport_type;	/* only FC_PORTTYPE_NPIV allowed */
+-	char symbolic_name[FC_VPORT_SYMBOLIC_NAMELEN];
+-};
+-
+-static int fc_vport_create(struct Scsi_Host *shost, int channel,
++static int fc_vport_setup(struct Scsi_Host *shost, int channel,
+ 	struct device *pdev, struct fc_vport_identifiers  *ids,
+ 	struct fc_vport **vport);
+ 
+@@ -1760,7 +1736,7 @@ store_fc_host_vport_create(struct device
+ 	vid.disable = false;		/* always enabled */
+ 
+ 	/* we only allow support on Channel 0 !!! */
+-	stat = fc_vport_create(shost, 0, &shost->shost_gendev, &vid, &vport);
++	stat = fc_vport_setup(shost, 0, &shost->shost_gendev, &vid, &vport);
+ 	return stat ? stat : count;
+ }
+ static FC_DEVICE_ATTR(host, vport_create, S_IWUSR, NULL,
+@@ -3103,7 +3079,7 @@ fc_scsi_scan_rport(struct work_struct *w
+ 
+ 
+ /**
+- * fc_vport_create - allocates and creates a FC virtual port.
++ * fc_vport_setup - allocates and creates a FC virtual port.
+  * @shost:	scsi host the virtual port is connected to.
+  * @channel:	Channel on shost port connected to.
+  * @pdev:	parent device for vport
+@@ -3118,7 +3094,7 @@ fc_scsi_scan_rport(struct work_struct *w
+  *	This routine assumes no locks are held on entry.
+  */
+ static int
+-fc_vport_create(struct Scsi_Host *shost, int channel, struct device *pdev,
++fc_vport_setup(struct Scsi_Host *shost, int channel, struct device *pdev,
+ 	struct fc_vport_identifiers  *ids, struct fc_vport **ret_vport)
+ {
+ 	struct fc_host_attrs *fc_host = shost_to_fc_host(shost);
+@@ -3231,6 +3207,28 @@ delete_vport:
+ 	return error;
+ }
+ 
++/**
++ * fc_vport_create - Admin App or LLDD requests creation of a vport
++ * @shost:	scsi host the virtual port is connected to.
++ * @channel:	channel on shost port connected to.
++ * @ids:	The world wide names, FC4 port roles, etc for
++ *              the virtual port.
++ *
++ * Notes:
++ *	This routine assumes no locks are held on entry.
++ */
++struct fc_vport *
++fc_vport_create(struct Scsi_Host *shost, int channel,
++	struct fc_vport_identifiers *ids)
++{
++	int stat;
++	struct fc_vport *vport;
++
++	stat = fc_vport_setup(shost, channel, &shost->shost_gendev,
++		 ids, &vport);
++	return stat ? NULL : vport;
++}
++EXPORT_SYMBOL(fc_vport_create);
+ 
+ /**
+  * fc_vport_terminate - Admin App or LLDD requests termination of a vport
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -47,6 +47,7 @@
+ #include <linux/blkpg.h>
+ #include <linux/delay.h>
+ #include <linux/mutex.h>
++#include <linux/string_helpers.h>
+ #include <asm/uaccess.h>
+ 
+ #include <scsi/scsi.h>
+@@ -1436,27 +1437,21 @@ got_data:
+ 		 */
+ 		sector_size = 512;
+ 	}
++	blk_queue_hardsect_size(sdp->request_queue, sector_size);
++
+ 	{
+-		/*
+-		 * The msdos fs needs to know the hardware sector size
+-		 * So I have created this table. See ll_rw_blk.c
+-		 * Jacques Gelinas (Jacques@solucorp.qc.ca)
+-		 */
+-		int hard_sector = sector_size;
+-		sector_t sz = (sdkp->capacity/2) * (hard_sector/256);
+-		struct request_queue *queue = sdp->request_queue;
+-		sector_t mb = sz;
+-
+-		blk_queue_hardsect_size(queue, hard_sector);
+-		/* avoid 64-bit division on 32-bit platforms */
+-		sector_div(sz, 625);
+-		mb -= sz - 974;
+-		sector_div(mb, 1950);
++		char cap_str_2[10], cap_str_10[10];
++		u64 sz = sdkp->capacity << ffz(~sector_size);
++
++		string_get_size(sz, STRING_UNITS_2, cap_str_2,
++				sizeof(cap_str_2));
++		string_get_size(sz, STRING_UNITS_10, cap_str_10,
++				sizeof(cap_str_10));
+ 
+ 		sd_printk(KERN_NOTICE, sdkp,
+-			  "%llu %d-byte hardware sectors (%llu MB)\n",
++			  "%llu %d-byte hardware sectors: (%s/%s)\n",
+ 			  (unsigned long long)sdkp->capacity,
+-			  hard_sector, (unsigned long long)mb);
++			  sector_size, cap_str_10, cap_str_2);
+ 	}
+ 
+ 	/* Rescale capacity to 512-byte units */
+--- /dev/null
++++ b/include/linux/string_helpers.h
+@@ -0,0 +1,16 @@
++#ifndef _LINUX_STRING_HELPERS_H_
++#define _LINUX_STRING_HELPERS_H_
++
++#include <linux/types.h>
++
++/* Descriptions of the types of units to
++ * print in */
++enum string_size_units {
++	STRING_UNITS_10,	/* use powers of 10^3 (standard SI) */
++	STRING_UNITS_2,		/* use binary powers of 2^10 */
++};
++
++int string_get_size(u64 size, enum string_size_units units,
++		    char *buf, int len);
++
++#endif
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -42,9 +42,11 @@ enum scsi_device_state {
+ 				 * originate in the mid-layer) */
+ 	SDEV_OFFLINE,		/* Device offlined (by error handling or
+ 				 * user request */
+-	SDEV_BLOCK,		/* Device blocked by scsi lld.  No scsi 
+-				 * commands from user or midlayer should be issued
+-				 * to the scsi lld. */
++	SDEV_BLOCK,		/* Device blocked by scsi lld.  No
++				 * scsi commands from user or midlayer
++				 * should be issued to the scsi
++				 * lld. */
++	SDEV_CREATED_BLOCK,	/* same as above but for created devices */
+ };
+ 
+ enum scsi_device_event {
+@@ -384,10 +386,23 @@ static inline unsigned int sdev_id(struc
+ #define scmd_id(scmd) sdev_id((scmd)->device)
+ #define scmd_channel(scmd) sdev_channel((scmd)->device)
+ 
++/*
++ * checks for positions of the SCSI state machine
++ */
+ static inline int scsi_device_online(struct scsi_device *sdev)
+ {
+ 	return sdev->sdev_state != SDEV_OFFLINE;
+ }
++static inline int scsi_device_blocked(struct scsi_device *sdev)
++{
++	return sdev->sdev_state == SDEV_BLOCK ||
++		sdev->sdev_state == SDEV_CREATED_BLOCK;
++}
++static inline int scsi_device_created(struct scsi_device *sdev)
++{
++	return sdev->sdev_state == SDEV_CREATED ||
++		sdev->sdev_state == SDEV_CREATED_BLOCK;
++}
+ 
+ /* accessor functions for the SCSI parameters */
+ static inline int scsi_device_sync(struct scsi_device *sdev)
+--- a/include/scsi/scsi_netlink.h
++++ b/include/scsi/scsi_netlink.h
+@@ -22,6 +22,9 @@
+ #ifndef SCSI_NETLINK_H
+ #define SCSI_NETLINK_H
+ 
++#include <linux/netlink.h>
++
++
+ /*
+  * This file intended to be included by both kernel and user space
+  */
+@@ -55,7 +58,41 @@ struct scsi_nl_hdr {
+ #define SCSI_NL_TRANSPORT_FC			1
+ #define SCSI_NL_MAX_TRANSPORTS			2
+ 
+-/* scsi_nl_hdr->msgtype values are defined in each transport */
++/* Transport-based scsi_nl_hdr->msgtype values are defined in each transport */
++
++/*
++ * GENERIC SCSI scsi_nl_hdr->msgtype Values
++ */
++	/* kernel -> user */
++#define SCSI_NL_SHOST_VENDOR			0x0001
++	/* user -> kernel */
++/* SCSI_NL_SHOST_VENDOR msgtype is kernel->user and user->kernel */
++
++
++/*
++ * Message Structures :
++ */
++
++/* macro to round up message lengths to 8byte boundary */
++#define SCSI_NL_MSGALIGN(len)		(((len) + 7) & ~7)
++
++
++/*
++ * SCSI HOST Vendor Unique messages :
++ *   SCSI_NL_SHOST_VENDOR
++ *
++ * Note: The Vendor Unique message payload will begin directly after
++ * 	 this structure, with the length of the payload per vmsg_datalen.
++ *
++ * Note: When specifying vendor_id, be sure to read the Vendor Type and ID
++ *   formatting requirements specified below
++ */
++struct scsi_nl_host_vendor_msg {
++	struct scsi_nl_hdr snlh;		/* must be 1st element ! */
++	uint64_t vendor_id;
++	uint16_t host_no;
++	uint16_t vmsg_datalen;
++} __attribute__((aligned(sizeof(uint64_t))));
+ 
+ 
+ /*
+@@ -83,5 +120,28 @@ struct scsi_nl_hdr {
+ 	}
+ 
+ 
++#ifdef __KERNEL__
++
++#include <scsi/scsi_host.h>
++
++/* Exported Kernel Interfaces */
++int scsi_nl_add_transport(u8 tport,
++	 int (*msg_handler)(struct sk_buff *),
++	void (*event_handler)(struct notifier_block *, unsigned long, void *));
++void scsi_nl_remove_transport(u8 tport);
++
++int scsi_nl_add_driver(u64 vendor_id, struct scsi_host_template *hostt,
++	int (*nlmsg_handler)(struct Scsi_Host *shost, void *payload,
++				 u32 len, u32 pid),
++	void (*nlevt_handler)(struct notifier_block *nb,
++				 unsigned long event, void *notify_ptr));
++void scsi_nl_remove_driver(u64 vendor_id);
++
++void scsi_nl_send_transport_msg(u32 pid, struct scsi_nl_hdr *hdr);
++int scsi_nl_send_vendor_msg(u32 pid, unsigned short host_no, u64 vendor_id,
++			 char *data_buf, u32 data_len);
++
++#endif /* __KERNEL__ */
++
+ #endif /* SCSI_NETLINK_H */
+ 
+--- a/include/scsi/scsi_transport_fc.h
++++ b/include/scsi/scsi_transport_fc.h
+@@ -167,6 +167,26 @@ enum fc_tgtid_binding_type  {
+ struct device_attribute dev_attr_vport_##_name = 	\
+ 	__ATTR(_name,_mode,_show,_store)
+ 
++/*
++ * fc_vport_identifiers: This set of data contains all elements
++ * to uniquely identify and instantiate a FC virtual port.
++ *
++ * Notes:
++ *   symbolic_name: The driver is to append the symbolic_name string data
++ *      to the symbolic_node_name data that it generates by default.
++ *      the resulting combination should then be registered with the switch.
++ *      It is expected that things like Xen may stuff a VM title into
++ *      this field.
++ */
++#define FC_VPORT_SYMBOLIC_NAMELEN		64
++struct fc_vport_identifiers {
++	u64 node_name;
++	u64 port_name;
++	u32 roles;
++	bool disable;
++	enum fc_port_type vport_type;	/* only FC_PORTTYPE_NPIV allowed */
++	char symbolic_name[FC_VPORT_SYMBOLIC_NAMELEN];
++};
+ 
+ /*
+  * FC Virtual Port Attributes
+@@ -197,7 +217,6 @@ struct device_attribute dev_attr_vport_#
+  * managed by the transport w/o driver interaction.
+  */
+ 
+-#define FC_VPORT_SYMBOLIC_NAMELEN		64
+ struct fc_vport {
+ 	/* Fixed Attributes */
+ 
+@@ -732,6 +751,8 @@ void fc_host_post_vendor_event(struct Sc
+ 	 *   be sure to read the Vendor Type and ID formatting requirements
+ 	 *   specified in scsi_netlink.h
+ 	 */
++struct fc_vport *fc_vport_create(struct Scsi_Host *shost, int channel,
++		struct fc_vport_identifiers *);
+ int fc_vport_terminate(struct fc_vport *vport);
+ 
+ #endif /* SCSI_TRANSPORT_FC_H */
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -19,7 +19,8 @@ lib-$(CONFIG_SMP) += cpumask.o
+ lib-y	+= kobject.o kref.o klist.o
+ 
+ obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
+-	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o
++	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
++	 string_helpers.o
+ 
+ ifeq ($(CONFIG_DEBUG_KOBJECT),y)
+ CFLAGS_kobject.o += -DDEBUG
+--- /dev/null
++++ b/lib/string_helpers.c
+@@ -0,0 +1,64 @@
++/*
++ * Helpers for formatting and printing strings
++ *
++ * Copyright 31 August 2008 James Bottomley
++ */
++#include <linux/kernel.h>
++#include <linux/math64.h>
++#include <linux/module.h>
++#include <linux/string_helpers.h>
++
++/**
++ * string_get_size - get the size in the specified units
++ * @size:	The size to be converted
++ * @units:	units to use (powers of 1000 or 1024)
++ * @buf:	buffer to format to
++ * @len:	length of buffer
++ *
++ * This function returns a string formatted to 3 significant figures
++ * giving the size in the required units.  Returns 0 on success or
++ * error on failure.  @buf is always zero terminated.
++ *
++ */
++int string_get_size(u64 size, const enum string_size_units units,
++		    char *buf, int len)
++{
++	const char *units_10[] = { "B", "KB", "MB", "GB", "TB", "PB",
++				   "EB", "ZB", "YB", NULL};
++	const char *units_2[] = {"B", "KiB", "MiB", "GiB", "TiB", "PiB",
++				 "EiB", "ZiB", "YiB", NULL };
++	const char **units_str[] = {
++		[STRING_UNITS_10] =  units_10,
++		[STRING_UNITS_2] = units_2,
++	};
++	const int divisor[] = {
++		[STRING_UNITS_10] = 1000,
++		[STRING_UNITS_2] = 1024,
++	};
++	int i, j;
++	u64 remainder = 0, sf_cap;
++	char tmp[8];
++
++	tmp[0] = '\0';
++
++	for (i = 0; size > divisor[units] && units_str[units][i]; i++)
++		remainder = do_div(size, divisor[units]);
++
++	sf_cap = size;
++	for (j = 0; sf_cap*10 < 1000; j++)
++		sf_cap *= 10;
++
++	if (j) {
++		remainder *= 1000;
++		do_div(remainder, divisor[units]);
++		snprintf(tmp, sizeof(tmp), ".%03lld",
++			 (unsigned long long)remainder);
++		tmp[j+1] = '\0';
++	}
++
++	snprintf(buf, len, "%lld%s%s", (unsigned long long)size,
++		 tmp, units_str[units][i]);
++
++	return 0;
++}
++EXPORT_SYMBOL(string_get_size);

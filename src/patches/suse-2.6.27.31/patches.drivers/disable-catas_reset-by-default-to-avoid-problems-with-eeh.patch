@@ -1,0 +1,48 @@
+From: Xiuling Ma <xma@us.ibm.com>
+Subject: [PATCH] disable catas_reset by default to avoid problems with EEH
+References: bnc#456389
+
+PPC machines with EEH and Mellanox ib/net cards with catastrophic error
+recovery that encounter a PCI bus error can crash and become
+unresponsive.
+
+Disable the card reset to avoid this. 
+
+NOTE: an upstream fix will come later once IBM can review a couple of
+approaches I suggested since this fix is brute force. This driver didn't have
+this reset on error feature in SLES10 so it isn't a feature removal.
+
+Signed-off-by: Xiuling Ma <xma@us.ibm.com>
+Acked-by: Brandon Philips <bphilips@suse.de>
+
+---
+ drivers/infiniband/hw/mthca/mthca_catas.c |    2 +-
+ drivers/net/mlx4/catas.c                  |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-2.6/drivers/infiniband/hw/mthca/mthca_catas.c
+===================================================================
+--- linux-2.6.orig/drivers/infiniband/hw/mthca/mthca_catas.c
++++ linux-2.6/drivers/infiniband/hw/mthca/mthca_catas.c
+@@ -51,7 +51,7 @@ static LIST_HEAD(catas_list);
+ static struct workqueue_struct *catas_wq;
+ static struct work_struct catas_work;
+ 
+-static int catas_reset_disable;
++static int catas_reset_disable = 1;
+ module_param_named(catas_reset_disable, catas_reset_disable, int, 0644);
+ MODULE_PARM_DESC(catas_reset_disable, "disable reset on catastrophic event if nonzero");
+ 
+Index: linux-2.6/drivers/net/mlx4/catas.c
+===================================================================
+--- linux-2.6.orig/drivers/net/mlx4/catas.c
++++ linux-2.6/drivers/net/mlx4/catas.c
+@@ -45,7 +45,7 @@ static LIST_HEAD(catas_list);
+ static struct workqueue_struct *catas_wq;
+ static struct work_struct catas_work;
+ 
+-static int internal_err_reset = 1;
++static int internal_err_reset = 0;
+ module_param(internal_err_reset, int, 0644);
+ MODULE_PARM_DESC(internal_err_reset,
+ 		 "Reset device on internal errors if non-zero (default 1)");

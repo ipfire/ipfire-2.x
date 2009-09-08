@@ -1,0 +1,51 @@
+From 632da4d66324b5baf947a048dd1f1e9093b6dd90 Mon Sep 17 00:00:00 2001
+From: Eilon Greenstein <eilong@broadcom.com>
+Date: Wed, 14 Jan 2009 06:44:10 +0000
+Subject: bnx2x: Overstepping array bounds
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472500
+
+If the page size is > 8KB this violation happens
+
+Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bnx2x_main.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+Index: linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+===================================================================
+--- linux-2.6.27-bnx2x_2.orig/drivers/net/bnx2x_main.c
++++ linux-2.6.27-bnx2x_2/drivers/net/bnx2x_main.c
+@@ -9431,6 +9431,7 @@ static inline u32 bnx2x_xmit_type(struct
+ 	return rc;
+ }
+ 
++#if (MAX_SKB_FRAGS >= MAX_FETCH_BD - 3)
+ /* check if packet requires linearization (packet is too fragmented) */
+ static int bnx2x_pkt_req_lin(struct bnx2x *bp, struct sk_buff *skb,
+ 			     u32 xmit_type)
+@@ -9508,6 +9509,7 @@ exit_lbl:
+ 
+ 	return to_copy;
+ }
++#endif
+ 
+ /* called with netif_tx_lock
+  * bnx2x_tx_int() runs without netif_tx_lock unless it needs to call
+@@ -9548,6 +9550,7 @@ static int bnx2x_start_xmit(struct sk_bu
+ 	   skb->ip_summed, skb->protocol, ipv6_hdr(skb)->nexthdr,
+ 	   ip_hdr(skb)->protocol, skb_shinfo(skb)->gso_type, xmit_type);
+ 
++#if (MAX_SKB_FRAGS >= MAX_FETCH_BD - 3)
+ 	/* First, check if we need to linearize the skb
+ 	   (due to FW restrictions) */
+ 	if (bnx2x_pkt_req_lin(bp, skb, xmit_type)) {
+@@ -9560,6 +9563,7 @@ static int bnx2x_start_xmit(struct sk_bu
+ 			return NETDEV_TX_OK;
+ 		}
+ 	}
++#endif
+ 
+ 	/*
+ 	Please read carefully. First we use one BD which we mark as start,

@@ -1,0 +1,31 @@
+Subject: [SCSI] scsi_lib: only call scsi_unprep_request() under queue lock
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Date: Sat Dec 13 14:31:03 2008 -0600:
+Git: 02bd3499a3be984f1e88821c3ed252c8c49c498e
+References: bnc#464155
+
+It's called under that lock everywhere else and it does alter the
+request state, so it should be.
+
+This one occurance in scsi_requeue_command() could open a window where
+req->special is set to NULL while the requests is going through either
+timeout or completion processing leading to NULL pointer derefs of the
+sort complained of in bugzillas 12020 and 12195.
+
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index fa45a1a..148d3af 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -648,8 +648,8 @@ static void scsi_requeue_command(struct request_queue *q, struct scsi_cmnd *cmd)
+ 	struct request *req = cmd->request;
+ 	unsigned long flags;
+ 
+-	scsi_unprep_request(req);
+ 	spin_lock_irqsave(q->queue_lock, flags);
++	scsi_unprep_request(req);
+ 	blk_requeue_request(q, req);
+ 	spin_unlock_irqrestore(q->queue_lock, flags);
+ 

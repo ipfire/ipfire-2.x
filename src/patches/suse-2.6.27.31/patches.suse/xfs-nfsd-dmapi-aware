@@ -1,0 +1,181 @@
+From: Greg Banks
+Subject: Make NFSD DMAPI aware
+References: 74107, 173874, bnc#450658
+Patch-mainline: obstruction...
+
+G'day,
+
+The NFSv3 protocol specifies an error, NFS3ERR_JUKEBOX, which a server
+should return when an I/O operation will take a very long time.
+This causes a different pattern of retries in clients, and avoids
+a number of serious problems associated with I/Os which take longer
+than an RPC timeout.  The Linux knfsd server has code to generate the
+jukebox error and many NFS clients are known to have working code to
+handle it.
+
+One scenario in which a server should emit the JUKEBOX error is when
+a file data which the client is attempting to access is managed by
+an HSM (Hierarchical Storage Manager) and is not present on the disk
+and needs to be brought in from tape.  Due to the nature of tapes this
+operation can take minutes rather than the milliseconds normally seen
+for local file data.
+
+Currently the Linux knfsd handles this situation poorly.  A READ NFS
+call will cause the nfsd thread handling it to block until the file
+is available, without sending a reply to the NFS client.  After a
+few seconds the client retries, and this second READ call causes
+another nfsd to block behind the first one.  A few seconds later and
+the client's retries have blocked *all* the nfsd threads, and all NFS
+service from the server stops until the original file arrives on disk.
+
+WRITEs and SETATTRs which truncate the file are marginally better, in
+that the knfsd dupcache will catch the retries and drop them without
+blocking an nfsd (the dupcache *will* catch the retries because the
+cache entry remains in RC_INPROG state and is not reused until the
+first call finishes).  However the first call still blocks, so given
+WRITEs to enough offline files the server can still be locked up.
+
+There are also client-side implications, depending on the client
+implementation.  For example, on a Linux client an RPC retry loop uses
+an RPC request slot, so reads from enough separate offline files can
+lock up a mountpoint.
+
+This patch seeks to remedy the interaction between knfsd and HSMs by
+providing mechanisms to allow knfsd to tell an underlying filesystem
+(which supports HSMs) not to block for reads, writes and truncates
+of offline files.  It's a port of a Linux 2.4 patch used in SGI's
+ProPack distro for the last 12 months.  The patch:
+
+*  provides a new ATTR_NO_BLOCK flag which the kernel can
+   use to tell a filesystem's inode_ops->setattr() operation not
+   to block when truncating an offline file.  XFS already obeys
+   this flag (inside a #ifdef)
+   
+*  changes knfsd to provide ATTR_NO_BLOCK when it does the VFS
+   calls to implement the SETATTR NFS call.
+
+*  changes knfsd to supply the O_NONBLOCK flag in the temporary
+   struct file it uses for VFS reads and writes, in order to ask
+   the filesystem not to block when reading or writing an offline
+   file.  XFS already obeys this new semantic for O_NONBLOCK
+   (and in SLES9 so does JFS).
+
+*  adds code to translate the -EAGAIN the filesystem returns when
+   it would have blocked, to the -ETIMEDOUT that knfsd expects.
+
+
+Signed-off-by: Greg Banks <gnb@melbourne.sgi.com>
+(SLES9 patch Acked-by: okir@suse.de)
+Signed-off-by: NeilBrown <neilb@suse.de>
+Acked-by: Jan Kara <jack@suse.cz>
+
+ fs/nfsd/vfs.c               |   32 ++++++++++++++++++++++++++++++--
+ fs/xfs/linux-2.6/xfs_iops.c |    7 ++++++-
+ include/linux/fs.h          |    1 +
+ 3 files changed, 37 insertions(+), 3 deletions(-)
+
+
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -358,6 +358,15 @@ nfsd_setattr(struct svc_rqst *rqstp, str
+ 			goto out_nfserr;
+ 		}
+ 		DQUOT_INIT(inode);
++
++		/*
++		 * Tell a Hierarchical Storage Manager (e.g. via DMAPI) to
++		 * return EAGAIN when an action would take minutes instead of
++		 * milliseconds so that NFS can reply to the client with
++		 * NFSERR_JUKEBOX instead of blocking an nfsd thread.
++		 */
++		if (rqstp->rq_vers >= 3)
++			iap->ia_valid |= ATTR_NO_BLOCK;
+ 	}
+ 
+ 	/* sanitize the mode change */
+@@ -389,6 +398,9 @@ nfsd_setattr(struct svc_rqst *rqstp, str
+ 	if (!check_guard || guardtime == inode->i_ctime.tv_sec) {
+ 		fh_lock(fhp);
+ 		host_err = notify_change(dentry, iap);
++		/* to get NFSERR_JUKEBOX on the wire, need -ETIMEDOUT */
++		if (host_err == -EAGAIN)
++			host_err = -ETIMEDOUT;
+ 		err = nfserrno(host_err);
+ 		fh_unlock(fhp);
+ 	}
+@@ -906,6 +918,10 @@ nfsd_vfs_read(struct svc_rqst *rqstp, st
+ 	if (ra && ra->p_set)
+ 		file->f_ra = ra->p_ra;
+ 
++	/* Support HSMs -- see comment in nfsd_setattr() */
++	if (rqstp->rq_vers >= 3)
++		file->f_flags |= O_NONBLOCK;
++
+ 	if (file->f_op->splice_read && rqstp->rq_splice_ok) {
+ 		struct splice_desc sd = {
+ 			.len		= 0,
+@@ -938,8 +954,12 @@ nfsd_vfs_read(struct svc_rqst *rqstp, st
+ 		*count = host_err;
+ 		err = 0;
+ 		fsnotify_access(file->f_path.dentry);
+-	} else 
++	} else {
++		/* to get NFSERR_JUKEBOX on the wire, need -ETIMEDOUT */
++		if (host_err == -EAGAIN)
++			host_err = -ETIMEDOUT;
+ 		err = nfserrno(host_err);
++	}
+ out:
+ 	return err;
+ }
+@@ -998,6 +1018,10 @@ nfsd_vfs_write(struct svc_rqst *rqstp, s
+ 	if (stable && !EX_WGATHER(exp))
+ 		file->f_flags |= O_SYNC;
+ 
++	/* Support HSMs -- see comment in nfsd_setattr() */
++	if (rqstp->rq_vers >= 3)
++		file->f_flags |= O_NONBLOCK;
++
+ 	/* Write the data. */
+ 	oldfs = get_fs(); set_fs(KERNEL_DS);
+ 	host_err = vfs_writev(file, (struct iovec __user *)vec, vlen, &offset);
+@@ -1050,8 +1074,12 @@ nfsd_vfs_write(struct svc_rqst *rqstp, s
+ 	dprintk("nfsd: write complete host_err=%d\n", host_err);
+ 	if (host_err >= 0)
+ 		err = 0;
+-	else 
++	else {
++		/* to get NFSERR_JUKEBOX on the wire, need -ETIMEDOUT */
++		if (host_err == -EAGAIN)
++			host_err = -ETIMEDOUT;
+ 		err = nfserrno(host_err);
++	}
+ out:
+ 	return err;
+ }
+--- a/fs/xfs/linux-2.6/xfs_iops.c
++++ b/fs/xfs/linux-2.6/xfs_iops.c
+@@ -601,7 +601,12 @@ xfs_vn_setattr(
+ 	struct dentry	*dentry,
+ 	struct iattr	*iattr)
+ {
+-	return -xfs_setattr(XFS_I(dentry->d_inode), iattr, 0, NULL);
++	int flags = 0;
++#ifdef ATTR_NO_BLOCK
++	if (iattr->ia_valid & ATTR_NO_BLOCK)
++		flags |= O_NONBLOCK;
++#endif
++	return -xfs_setattr(XFS_I(dentry->d_inode), iattr, flags, NULL);
+ }
+ 
+ /*
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -342,6 +342,7 @@ typedef void (dio_iodone_t)(struct kiocb
+ #define ATTR_KILL_PRIV	(1 << 14)
+ #define ATTR_OPEN	(1 << 15) /* Truncating from open(O_TRUNC) */
+ #define ATTR_TIMES_SET	(1 << 16)
++#define ATTR_NO_BLOCK 	(1 << 17) /* Return EAGAIN and don't block on long truncates */
+ 
+ /*
+  * This is the Inode Attributes structure, used for notify_change().  It

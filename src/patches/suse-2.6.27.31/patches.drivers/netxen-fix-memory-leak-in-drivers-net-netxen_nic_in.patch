@@ -1,0 +1,40 @@
+From 584dbe9475313e117abf9d2af88164edfd429c9a Mon Sep 17 00:00:00 2001
+From: =?utf-8?q?Daniel=20Marjam=C3=A4ki?= <danielm77@spray.se>
+Date: Thu, 29 Jan 2009 08:55:56 +0000
+Subject: netxen: fix memory leak in drivers/net/netxen_nic_init.c
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Acked-by: Karsten Keil <kkeil@novell.com>
+Reference: bnc#472416
+
+For kernel bugzilla #12537:
+http://bugzilla.kernel.org/show_bug.cgi?id=12537
+
+Free memory.
+
+Signed-off-by: Daniel Marjamäki <danielm77@spray.se>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/netxen/netxen_nic_init.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/netxen/netxen_nic_init.c b/drivers/net/netxen/netxen_nic_init.c
+index ca7c8d8..ffd37be 100644
+--- a/drivers/net/netxen/netxen_nic_init.c
++++ b/drivers/net/netxen/netxen_nic_init.c
+@@ -947,8 +947,10 @@ int netxen_pinit_from_rom(struct netxen_adapter *adapter, int verbose)
+ 	}
+ 	for (i = 0; i < n; i++) {
+ 		if (netxen_rom_fast_read(adapter, 8*i + 4*offset, &val) != 0 ||
+-		netxen_rom_fast_read(adapter, 8*i + 4*offset + 4, &addr) != 0)
++		netxen_rom_fast_read(adapter, 8*i + 4*offset + 4, &addr) != 0) {
++			kfree(buf);
+ 			return -EIO;
++		}
+ 
+ 		buf[i].addr = addr;
+ 		buf[i].data = val;
+-- 
+1.5.6.4
+

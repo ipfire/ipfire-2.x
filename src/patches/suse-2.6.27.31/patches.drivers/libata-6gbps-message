@@ -1,0 +1,39 @@
+From: Shane Huang <shane.huang@amd.com>
+Subject: [PATCH] Add SATA GEN3 related messages
+References: bnc#522911
+
+The present AHCI driver seems to support SATA GEN 3 speed, but the related
+messages should be modified.
+
+Signed-off-by: Shane Huang <shane.huang@amd.com>
+Signed-off-by: Tejun Heo <teheo@suse.de>
+---
+ drivers/ata/ahci.c        |    2 ++
+ drivers/ata/libata-core.c |    1 +
+ 2 files changed, 3 insertions(+)
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/ata/ahci.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/ata/ahci.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/ata/ahci.c
+@@ -2441,6 +2441,8 @@ static void ahci_print_info(struct ata_h
+ 		speed_s = "1.5";
+ 	else if (speed == 2)
+ 		speed_s = "3";
++	else if (speed == 3)
++		speed_s = "6";
+ 	else
+ 		speed_s = "?";
+ 
+Index: linux-2.6.27-SLE11_BRANCH/drivers/ata/libata-core.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/ata/libata-core.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/ata/libata-core.c
+@@ -930,6 +930,7 @@ static const char *sata_spd_string(unsig
+ 	static const char * const spd_str[] = {
+ 		"1.5 Gbps",
+ 		"3.0 Gbps",
++		"6.0 Gbps",
+ 	};
+ 
+ 	if (spd == 0 || (spd - 1) >= ARRAY_SIZE(spd_str))

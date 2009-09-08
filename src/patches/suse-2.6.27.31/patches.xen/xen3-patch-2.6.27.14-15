@@ -1,0 +1,93 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.15
+
+Upstream 2.6.27.15 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.kernel.org/patch-2.6.27.14-15" by xen-port-patches.py
+
+--- sle11-2009-03-16.orig/arch/x86/mm/pageattr-xen.c	2009-03-16 16:38:32.000000000 +0100
++++ sle11-2009-03-16/arch/x86/mm/pageattr-xen.c	2009-03-16 16:38:34.000000000 +0100
+@@ -602,6 +602,36 @@ out_unlock:
+ 	return 0;
+ }
+ 
++static int __cpa_process_fault(struct cpa_data *cpa, unsigned long vaddr,
++			       int primary)
++{
++	/*
++	 * Ignore all non primary paths.
++	 */
++	if (!primary)
++		return 0;
++
++	/*
++	 * Ignore the NULL PTE for kernel identity mapping, as it is expected
++	 * to have holes.
++	 * Also set numpages to '1' indicating that we processed cpa req for
++	 * one virtual address page and its pfn. TBD: numpages can be set based
++	 * on the initial value and the level returned by lookup_address().
++	 */
++	if (within(vaddr, PAGE_OFFSET,
++		   PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT))) {
++		cpa->numpages = 1;
++		cpa->pfn = __pa(vaddr) >> PAGE_SHIFT;
++		return 0;
++	} else {
++		WARN(1, KERN_WARNING "CPA: called for zero pte. "
++			"vaddr = %lx cpa->vaddr = %lx\n", vaddr,
++			cpa->vaddr);
++
++		return -EINVAL;
++	}
++}
++
+ static int __change_page_attr(struct cpa_data *cpa, int primary)
+ {
+ 	unsigned long address = cpa->vaddr;
+@@ -612,17 +642,11 @@ static int __change_page_attr(struct cpa
+ repeat:
+ 	kpte = lookup_address(address, &level);
+ 	if (!kpte)
+-		return 0;
++		return __cpa_process_fault(cpa, address, primary);
+ 
+ 	old_pte = *kpte;
+-	if (!__pte_val(old_pte)) {
+-		if (!primary)
+-			return 0;
+-		WARN(1, KERN_WARNING "CPA: called for zero pte. "
+-		       "vaddr = %lx cpa->vaddr = %lx\n", address,
+-		       cpa->vaddr);
+-		return -EINVAL;
+-	}
++	if (!__pte_val(old_pte))
++		return __cpa_process_fault(cpa, address, primary);
+ 
+ 	if (level == PG_LEVEL_4K) {
+ 		pte_t new_pte;
+@@ -697,12 +721,7 @@ static int cpa_process_alias(struct cpa_
+ 	 * mapping already:
+ 	 */
+ 	if (!(within(cpa->vaddr, PAGE_OFFSET,
+-		    PAGE_OFFSET + (max_low_pfn_mapped << PAGE_SHIFT))
+-#ifdef CONFIG_X86_64
+-		|| within(cpa->vaddr, PAGE_OFFSET + (1UL<<32),
+-		    PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT))
+-#endif
+-	)) {
++		    PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT)))) {
+ 
+ 		alias_cpa = *cpa;
+ 		alias_cpa.vaddr = (unsigned long) __va(cpa->pfn << PAGE_SHIFT);
+--- sle11-2009-03-16.orig/arch/x86/pci/irq-xen.c	2009-03-16 16:38:32.000000000 +0100
++++ sle11-2009-03-16/arch/x86/pci/irq-xen.c	2009-03-16 16:38:34.000000000 +0100
+@@ -579,6 +579,7 @@ static __init int intel_router_probe(str
+ 	case PCI_DEVICE_ID_INTEL_ICH7_1:
+ 	case PCI_DEVICE_ID_INTEL_ICH7_30:
+ 	case PCI_DEVICE_ID_INTEL_ICH7_31:
++	case PCI_DEVICE_ID_INTEL_TGP_LPC:
+ 	case PCI_DEVICE_ID_INTEL_ESB2_0:
+ 	case PCI_DEVICE_ID_INTEL_ICH8_0:
+ 	case PCI_DEVICE_ID_INTEL_ICH8_1:

@@ -1,0 +1,48 @@
+From ccac18563cb9ba20a4afc722878804bcf2936170 Mon Sep 17 00:00:00 2001
+From: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Date: Mon, 16 Feb 2009 08:19:31 -0800
+Subject: qla2xxx: Correct endianness issue during flash manipulation.
+References: bnc#476206
+
+The flash data was incorrectly being converted (cpu_to_le32())
+when using the bulk-flash-write mailbox command (ISP25xx and
+above).
+
+Signed-off-by: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/qla2xxx/qla_sup.c |    7 ++-----
+ 1 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_sup.c b/drivers/scsi/qla2xxx/qla_sup.c
+index 6729a39..a0b5ece 100644
+--- a/drivers/scsi/qla2xxx/qla_sup.c
++++ b/drivers/scsi/qla2xxx/qla_sup.c
+@@ -957,12 +957,11 @@ qla24xx_write_flash_data(scsi_qla_host_t *ha, uint32_t *dwptr, uint32_t faddr,
+     uint32_t dwords)
+ {
+ 	int ret;
+-	uint32_t liter, miter;
++	uint32_t liter;
+ 	uint32_t sec_mask, rest_addr;
+ 	uint32_t fdata, findex;
+ 	dma_addr_t optrom_dma;
+ 	void *optrom = NULL;
+-	uint32_t *s, *d;
+ 
+ 	ret = QLA_SUCCESS;
+ 
+@@ -1010,9 +1009,7 @@ qla24xx_write_flash_data(scsi_qla_host_t *ha, uint32_t *dwptr, uint32_t faddr,
+ 		/* Go with burst-write. */
+ 		if (optrom && (liter + OPTROM_BURST_DWORDS) <= dwords) {
+ 			/* Copy data to DMA'ble buffer. */
+-			for (miter = 0, s = optrom, d = dwptr;
+-			    miter < OPTROM_BURST_DWORDS; miter++, s++, d++)
+-				*s = cpu_to_le32(*d);
++			memcpy(optrom, dwptr, OPTROM_BURST_SIZE);
+ 
+ 			ret = qla2x00_load_ram(ha, optrom_dma,
+ 			    flash_data_to_access_addr(faddr),
+-- 
+1.6.0.4.781.gf2070
+

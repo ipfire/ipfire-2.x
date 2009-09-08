@@ -1,0 +1,48 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: remove unit will fail if add unit is not finished
+References: bnc#484767,LTC#48795
+
+Symptom:     On some hardware it can take some time to add a unit. If
+             some remove this unit during this process the remove will
+             fail.
+Problem:     There exists some SCSI work which needs to be finished
+             before removing this unit.
+Solution:    Wait until all SCSI work is done for that unit.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_sysfs.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_sysfs.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_sysfs.c
++++ linux-sles11/drivers/s390/scsi/zfcp_sysfs.c
+@@ -253,12 +253,21 @@ static ssize_t zfcp_sysfs_unit_remove_st
+ 
+ 	write_lock_irq(&zfcp_data.config_lock);
+ 	unit = zfcp_get_unit_by_lun(port, fcp_lun);
+-	if (unit && (atomic_read(&unit->refcount) == 0)) {
+-		zfcp_unit_get(unit);
+-		atomic_set_mask(ZFCP_STATUS_COMMON_REMOVE, &unit->status);
+-		list_move(&unit->list, &unit_remove_lh);
+-	} else
+-		unit = NULL;
++	if (unit) {
++		write_unlock_irq(&zfcp_data.config_lock);
++		/* wait for possible timeout during SCSI probe */
++		flush_work(&unit->scsi_work);
++		write_lock_irq(&zfcp_data.config_lock);
++
++		if (atomic_read(&unit->refcount) == 0) {
++			zfcp_unit_get(unit);
++			atomic_set_mask(ZFCP_STATUS_COMMON_REMOVE,
++					&unit->status);
++			list_move(&unit->list, &unit_remove_lh);
++		} else {
++			unit = NULL;
++		}
++	}
+ 
+ 	write_unlock_irq(&zfcp_data.config_lock);
+ 

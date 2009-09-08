@@ -1,0 +1,47 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: SCSI queue ERP deadlock
+References: bnc#487755,LTC#52401
+
+Symptom:     The I/O stalls if the an error injection is triggerd on
+             the storage side.
+Problem:     The ERP is waiting for the fc tranport class to finish a
+             task which has triggered a task for the SCSI error handler
+             which in turn is waiting for the ERP to finish ->deadlock.
+Solution:    Don't let the ERP wait for anything and move the fulfillment
+             check of the scheduled task to the async running job (scsi scan)
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/scsi/zfcp_erp.c  |    1 -
+ drivers/s390/scsi/zfcp_scsi.c |    6 +++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_erp.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_erp.c
++++ linux-sles11/drivers/s390/scsi/zfcp_erp.c
+@@ -1192,7 +1192,6 @@ static void zfcp_erp_action_cleanup(stru
+ 
+ 	switch (act->action) {
+ 	case ZFCP_ERP_ACTION_REOPEN_UNIT:
+-		flush_work(&port->rport_work);
+ 		if ((result == ZFCP_ERP_SUCCEEDED) && !unit->device) {
+ 			atomic_set_mask(ZFCP_STATUS_UNIT_REGISTERED,
+ 					&unit->status);
+Index: linux-sles11/drivers/s390/scsi/zfcp_scsi.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_scsi.c
++++ linux-sles11/drivers/s390/scsi/zfcp_scsi.c
+@@ -592,7 +593,10 @@ void zfcp_scsi_scan(struct work_struct *
+ {
+ 	struct zfcp_unit *unit = container_of(work, struct zfcp_unit,
+ 					      scsi_work);
+-	struct fc_rport *rport = unit->port->rport;
++	struct fc_rport *rport;
++
++	flush_work(&unit->port->rport_work);
++	rport = unit->port->rport;
+ 
+ 	if (rport && rport->port_state == FC_PORTSTATE_ONLINE)
+ 		scsi_scan_target(&rport->dev, 0, rport->scsi_target_id,

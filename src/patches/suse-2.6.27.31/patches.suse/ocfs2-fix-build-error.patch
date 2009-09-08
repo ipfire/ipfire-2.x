@@ -1,0 +1,72 @@
+From: Mark Fasheh <mfasheh@suse.com>
+Subject: ocfs2: fix build error
+Patch-mainline: 2.6.28
+
+I merged the latest ocfs2_read_blocks() changes in xattr.c wrong. This makes
+Ocfs2 compile again.
+
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/xattr.c |   14 ++++++--------
+ 1 files changed, 6 insertions(+), 8 deletions(-)
+
+Index: linux-2.6.27/fs/ocfs2/xattr.c
+===================================================================
+--- linux-2.6.27.orig/fs/ocfs2/xattr.c
++++ linux-2.6.27/fs/ocfs2/xattr.c
+@@ -2365,7 +2365,7 @@ static int ocfs2_xattr_bucket_find(struc
+ 		 */
+ 		ret = ocfs2_read_blocks(inode, xs->bucket.bhs[0]->b_blocknr + 1,
+ 					blk_per_bucket - 1, &xs->bucket.bhs[1],
+-					OCFS2_BH_CACHED);
++					0);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -2442,7 +2442,7 @@ static int ocfs2_iterate_xattr_buckets(s
+ 
+ 	for (i = 0; i < num_buckets; i++, blkno += blk_per_bucket) {
+ 		ret = ocfs2_read_blocks(inode, blkno, blk_per_bucket,
+-					bucket.bhs, OCFS2_BH_CACHED);
++					bucket.bhs, 0);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;
+@@ -2710,7 +2710,7 @@ static int ocfs2_xattr_update_xattr_sear
+ 			ret = ocfs2_read_blocks(inode,
+ 					xs->bucket.bhs[0]->b_blocknr + 1,
+ 					blk_per_bucket - 1, &xs->bucket.bhs[1],
+-					OCFS2_BH_CACHED);
++					0);
+ 			if (ret) {
+ 				mlog_errno(ret);
+ 				return ret;
+@@ -2914,8 +2914,7 @@ static int ocfs2_defrag_xattr_bucket(str
+ 	if (!bhs)
+ 		return -ENOMEM;
+ 
+-	ret = ocfs2_read_blocks(inode, blkno, blk_per_bucket, bhs,
+-				OCFS2_BH_CACHED);
++	ret = ocfs2_read_blocks(inode, blkno, blk_per_bucket, bhs, 0);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -3169,8 +3168,7 @@ static int ocfs2_read_xattr_bucket(struc
+ 
+ 	if (!new)
+ 		return ocfs2_read_blocks(inode, blkno,
+-					 blk_per_bucket, bhs,
+-					 OCFS2_BH_CACHED);
++					 blk_per_bucket, bhs, 0);
+ 
+ 	for (i = 0; i < blk_per_bucket; i++) {
+ 		bhs[i] = sb_getblk(inode->i_sb, blkno + i);
+@@ -4117,7 +4115,7 @@ static int ocfs2_xattr_set_entry_in_buck
+ 		ret = ocfs2_read_blocks(inode,
+ 					xs->bucket.bhs[0]->b_blocknr + 1,
+ 					blk_per_bucket - 1, &xs->bucket.bhs[1],
+-					OCFS2_BH_CACHED);
++					0);
+ 		if (ret) {
+ 			mlog_errno(ret);
+ 			goto out;

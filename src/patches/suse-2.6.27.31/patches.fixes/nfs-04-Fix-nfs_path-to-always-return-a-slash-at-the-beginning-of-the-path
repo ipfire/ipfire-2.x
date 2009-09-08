@@ -1,0 +1,26 @@
+From 0b75b35c7cad33e7613f5adf28fa10fe8b09b1c3 Mon Sep 17 00:00:00 2001
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Date: Mon, 22 Jun 2009 15:09:14 -0400
+Subject: [PATCH 4/5] NFS: Fix nfs_path() to always return a '/' at the beginning of the path
+
+Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: NeilBrown <neilb@suse.de>
+---
+ fs/nfs/namespace.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/nfs/namespace.c
++++ linux-2.6.27-SLE11_BRANCH/fs/nfs/namespace.c
+@@ -65,6 +65,11 @@ char *nfs_path(const char *base,
+ 		dentry = dentry->d_parent;
+ 	}
+ 	spin_unlock(&dcache_lock);
++	if (*end != '/') {
++		if (--buflen < 0)
++			goto Elong;
++		*--end = '/';
++	}
+ 	namelen = strlen(base);
+ 	/* Strip off excess slashes in base string */
+ 	while (namelen > 0 && base[namelen - 1] == '/')

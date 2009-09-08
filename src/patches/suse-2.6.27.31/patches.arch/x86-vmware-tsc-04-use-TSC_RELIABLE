@@ -1,0 +1,121 @@
+From: Alok Kataria <akataria@vmware.com>
+Subject: x86: USE the synthetic TSC_RELIABLE feature bit.
+Patch-mainline:
+References: bnc#441338
+
+Impact: Changes timebase calibration on Vmware.
+
+Use the synthetic TSC_RELIABLE bit to workaround virtualization anomalies.
+
+Virtual TSCs can be kept nearly in sync, but because the virtual TSC
+offset is set by software, it's not perfect.  So, the TSC
+synchronization test can fail. Even then the TSC can be used as a
+clocksource since the VMware platform exports a reliable TSC to the
+guest for timekeeping purposes. Use this bit to check if we need to
+skip the TSC sync checks.
+
+Along with this also set the CONSTANT_TSC bit when on VMware, since we
+still want to use TSC as clocksource on VM running over hardware which
+has unsynchronized TSC's (opteron's), since the hypervisor will take
+care of providing consistent TSC to the guest.
+
+Signed-off-by: Alok N Kataria <akataria@vmware.com>
+Signed-off-by: Dan Hecht <dhecht@vmware.com>
+Signed-off-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+
+ arch/x86/kernel/cpu/hypervisor.c |   11 ++++++++++-
+ arch/x86/kernel/cpu/vmware.c     |   18 ++++++++++++++++++
+ arch/x86/kernel/tsc_sync.c       |    8 +++++++-
+ include/asm-x86/vmware.h         |    1 +
+ 4 files changed, 36 insertions(+), 2 deletions(-)
+
+
+diff --git a/arch/x86/kernel/cpu/hypervisor.c b/arch/x86/kernel/cpu/hypervisor.c
+index 7bd5506..35ae2b7 100644
+--- a/arch/x86/kernel/cpu/hypervisor.c
++++ b/arch/x86/kernel/cpu/hypervisor.c
+@@ -41,8 +41,17 @@ unsigned long get_hypervisor_tsc_freq(void)
+ 	return 0;
+ }
+ 
++static inline void __cpuinit
++hypervisor_set_feature_bits(struct cpuinfo_x86 *c)
++{
++	if (boot_cpu_data.x86_hyper_vendor == X86_HYPER_VENDOR_VMWARE) {
++		vmware_set_feature_bits(c);
++		return;
++	}
++}
++
+ void __cpuinit init_hypervisor(struct cpuinfo_x86 *c)
+ {
+ 	detect_hypervisor_vendor(c);
++	hypervisor_set_feature_bits(c);
+ }
+-
+diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+index d5d1b75..2ac4394 100644
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -86,3 +86,21 @@ unsigned long vmware_get_tsc_khz(void)
+ 	BUG_ON(!vmware_platform());
+ 	return __vmware_get_tsc_khz();
+ }
++
++/*
++ * VMware hypervisor takes care of exporting a reliable TSC to the guest.
++ * Still, due to timing difference when running on virtual cpus, the TSC can
++ * be marked as unstable in some cases. For example, the TSC sync check at
++ * bootup can fail due to a marginal offset between vcpus' TSCs (though the
++ * TSCs do not drift from each other).  Also, the ACPI PM timer clocksource
++ * is not suitable as a watchdog when running on a hypervisor because the
++ * kernel may miss a wrap of the counter if the vcpu is descheduled for a
++ * long time. To skip these checks at runtime we set these capability bits,
++ * so that the kernel could just trust the hypervisor with providing a
++ * reliable virtual TSC that is suitable for timekeeping.
++ */
++void __cpuinit vmware_set_feature_bits(struct cpuinfo_x86 *c)
++{
++	set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
++	set_cpu_cap(c, X86_FEATURE_TSC_RELIABLE);
++}
+diff --git a/arch/x86/kernel/tsc_sync.c b/arch/x86/kernel/tsc_sync.c
+index 9ffb01c..5977c40 100644
+--- a/arch/x86/kernel/tsc_sync.c
++++ b/arch/x86/kernel/tsc_sync.c
+@@ -108,6 +108,12 @@ void __cpuinit check_tsc_sync_source(int cpu)
+ 	if (unsynchronized_tsc())
+ 		return;
+ 
++	if (boot_cpu_has(X86_FEATURE_TSC_RELIABLE)) {
++		printk(KERN_INFO
++		       "Skipping synchronization checks as TSC is reliable.\n");
++		return;
++	}
++
+ 	printk(KERN_INFO "checking TSC synchronization [CPU#%d -> CPU#%d]:",
+ 			  smp_processor_id(), cpu);
+ 
+@@ -161,7 +167,7 @@ void __cpuinit check_tsc_sync_target(void)
+ {
+ 	int cpus = 2;
+ 
+-	if (unsynchronized_tsc())
++	if (unsynchronized_tsc() || boot_cpu_has(X86_FEATURE_TSC_RELIABLE))
+ 		return;
+ 
+ 	/*
+diff --git a/include/asm-x86/vmware.h b/include/asm-x86/vmware.h
+index 02dfea5..c11b7e1 100644
+--- a/include/asm-x86/vmware.h
++++ b/include/asm-x86/vmware.h
+@@ -22,5 +22,6 @@
+ 
+ extern unsigned long vmware_get_tsc_khz(void);
+ extern int vmware_platform(void);
++extern void vmware_set_feature_bits(struct cpuinfo_x86 *c);
+ 
+ #endif

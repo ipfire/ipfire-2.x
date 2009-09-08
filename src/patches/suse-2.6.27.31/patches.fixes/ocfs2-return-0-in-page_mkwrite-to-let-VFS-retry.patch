@@ -1,0 +1,34 @@
+From: Tao Ma <tao.ma@oracle.com>
+Date: Mon, 6 Oct 2008 16:59:55 +0800
+Subject: ocfs2: return 0 in page_mkwrite to let VFS retry.
+
+In ocfs2_page_mkwrite, we return -EINVAL when we found the page mapping
+isn't updated, and it will cause the user space program get SIGBUS and
+exit. The reason is that during race writeable mmap, we will do
+unmap_mapping_range in ocfs2_data_downconvert_worker. The good thing is
+that if we reuturn 0 in page_mkwrite, VFS will retry fault and then
+call page_mkwrite again, so it is safe to return 0 here.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/mmap.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/mmap.c
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/mmap.c
++++ linux-2.6.27-ocfs2/fs/ocfs2/mmap.c
+@@ -113,7 +113,11 @@ static int __ocfs2_page_mkwrite(struct i
+ 	 * ocfs2_write_begin_nolock().
+ 	 */
+ 	if (!PageUptodate(page) || page->mapping != inode->i_mapping) {
+-		ret = -EINVAL;
++		/*
++		 * the page has been umapped in ocfs2_data_downconvert_worker.
++		 * So return 0 here and let VFS retry.
++		 */
++		ret = 0;
+ 		goto out;
+ 	}
+ 

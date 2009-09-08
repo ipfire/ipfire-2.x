@@ -1,0 +1,86 @@
+From: Peter Zijlstra <a.p.zijlstra@chello.nl> 
+Subject: mm: allow PF_MEMALLOC from softirq context
+Patch-mainline: No
+References: FATE#303834
+
+This is needed to allow network softirq packet processing to make use of
+PF_MEMALLOC.
+
+Currently softirq context cannot use PF_MEMALLOC due to it not being associated
+with a task, and therefore not having task flags to fiddle with - thus the gfp
+to alloc flag mapping ignores the task flags when in interrupts (hard or soft)
+context.
+
+Allowing softirqs to make use of PF_MEMALLOC therefore requires some trickery.
+We basically borrow the task flags from whatever process happens to be
+preempted by the softirq.
+
+So we modify the gfp to alloc flags mapping to not exclude task flags in
+softirq context, and modify the softirq code to save, clear and restore the
+PF_MEMALLOC flag.
+
+The save and clear, ensures the preempted task's PF_MEMALLOC flag doesn't
+leak into the softirq. The restore ensures a softirq's PF_MEMALLOC flag cannot
+leak back into the preempted process.
+
+Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Acked-by: Neil Brown <neilb@suse.de>
+Acked-by: Suresh Jayaraman <sjayaraman@suse.de>
+
+---
+ include/linux/sched.h |    7 +++++++
+ kernel/softirq.c      |    3 +++
+ mm/page_alloc.c       |    7 ++++---
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1555,6 +1555,13 @@ extern cputime_t task_gtime(struct task_
+ #define tsk_used_math(p) ((p)->flags & PF_USED_MATH)
+ #define used_math() tsk_used_math(current)
+ 
++static inline void tsk_restore_flags(struct task_struct *p,
++				     unsigned long pflags, unsigned long mask)
++{
++	p->flags &= ~mask;
++	p->flags |= pflags & mask;
++}
++
+ #ifdef CONFIG_SMP
+ extern int set_cpus_allowed_ptr(struct task_struct *p,
+ 				const cpumask_t *new_mask);
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -188,6 +188,8 @@ asmlinkage void __do_softirq(void)
+ 	__u32 pending;
+ 	int max_restart = MAX_SOFTIRQ_RESTART;
+ 	int cpu;
++	unsigned long pflags = current->flags;
++	current->flags &= ~PF_MEMALLOC;
+ 
+ 	pending = local_softirq_pending();
+ 	account_system_vtime(current);
+@@ -228,6 +230,7 @@ restart:
+ 
+ 	account_system_vtime(current);
+ 	_local_bh_enable();
++	tsk_restore_flags(current, pflags, PF_MEMALLOC);
+ }
+ 
+ #ifndef __ARCH_HAS_DO_SOFTIRQ
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1483,9 +1483,10 @@ int gfp_to_alloc_flags(gfp_t gfp_mask)
+ 		alloc_flags |= ALLOC_HARDER;
+ 
+ 	if (likely(!(gfp_mask & __GFP_NOMEMALLOC))) {
+-		if (!in_interrupt() &&
+-		    ((p->flags & PF_MEMALLOC) ||
+-		     unlikely(test_thread_flag(TIF_MEMDIE))))
++		if (!in_irq() && (p->flags & PF_MEMALLOC))
++			alloc_flags |= ALLOC_NO_WATERMARKS;
++		else if (!in_interrupt() &&
++				unlikely(test_thread_flag(TIF_MEMDIE)))
+ 			alloc_flags |= ALLOC_NO_WATERMARKS;
+ 	}
+ 

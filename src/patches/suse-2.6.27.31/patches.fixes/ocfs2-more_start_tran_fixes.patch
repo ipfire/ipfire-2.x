@@ -1,0 +1,39 @@
+From: Tao Ma <tao.ma@oracle.com>
+Date: Fri, 24 Oct 2008 07:57:28 +0800
+Subject: ocfs2: Fix check of return value of ocfs2_start_trans() in xattr.c.
+
+On failure, ocfs2_start_trans() returns values like ERR_PTR(-ENOMEM),
+so we should check whether handle is NULL. Fix them to use IS_ERR().
+Jan has made the patch for other part in ocfs2(thank Jan for it), so
+this is just the fix for fs/ocfs2/xattr.c.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/xattr.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.27-ocfs2/fs/ocfs2/xattr.c
+===================================================================
+--- linux-2.6.27-ocfs2.orig/fs/ocfs2/xattr.c
++++ linux-2.6.27-ocfs2/fs/ocfs2/xattr.c
+@@ -4092,7 +4092,7 @@ static int ocfs2_xattr_value_update_size
+ 	handle_t *handle = NULL;
+ 
+ 	handle = ocfs2_start_trans(osb, 1);
+-	if (handle == NULL) {
++	if (IS_ERR(handle)) {
+ 		ret = -ENOMEM;
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -4259,7 +4259,7 @@ static int ocfs2_rm_xattr_cluster(struct
+ 	}
+ 
+ 	handle = ocfs2_start_trans(osb, OCFS2_REMOVE_EXTENT_CREDITS);
+-	if (handle == NULL) {
++	if (IS_ERR(handle)) {
+ 		ret = -ENOMEM;
+ 		mlog_errno(ret);
+ 		goto out;

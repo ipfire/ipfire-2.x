@@ -1,0 +1,153 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: cio: ccwgroup - fix unbind behaviour
+References: bnc#482818,LTC#52098
+
+Symptom:     Oops after unbinding a ccwgroup device.
+Problem:     There is no special callback to tell a driver to unbind
+             a device - the normal remove is called. In this case
+             the device remains partly registered in the driver core.
+Solution:    Use a bus notifier function to handle this special case
+             and call ungroup since this virtual device can not exist
+             without a driver.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/cio/ccwgroup.c |   73 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 56 insertions(+), 17 deletions(-)
+
+Index: linux-sles11/drivers/s390/cio/ccwgroup.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/ccwgroup.c	2009-03-09 15:36:56.000000000 +0100
++++ linux-sles11/drivers/s390/cio/ccwgroup.c	2009-03-09 15:53:56.000000000 +0100
+@@ -313,16 +313,32 @@ error:
+ }
+ EXPORT_SYMBOL(ccwgroup_create_from_string);
+ 
+-static int __init
+-init_ccwgroup (void)
++static int ccwgroup_notifier(struct notifier_block *nb, unsigned long action,
++			     void *data);
++
++static struct notifier_block ccwgroup_nb = {
++	.notifier_call = ccwgroup_notifier
++};
++
++static int __init init_ccwgroup(void)
+ {
+-	return bus_register (&ccwgroup_bus_type);
++	int ret;
++
++	ret = bus_register(&ccwgroup_bus_type);
++	if (ret)
++		return ret;
++
++	ret = bus_register_notifier(&ccwgroup_bus_type, &ccwgroup_nb);
++	if (ret)
++		bus_unregister(&ccwgroup_bus_type);
++
++	return ret;
+ }
+ 
+-static void __exit
+-cleanup_ccwgroup (void)
++static void __exit cleanup_ccwgroup(void)
+ {
+-	bus_unregister (&ccwgroup_bus_type);
++	bus_unregister_notifier(&ccwgroup_bus_type, &ccwgroup_nb);
++	bus_unregister(&ccwgroup_bus_type);
+ }
+ 
+ module_init(init_ccwgroup);
+@@ -390,27 +406,28 @@ ccwgroup_online_store (struct device *de
+ 	unsigned long value;
+ 	int ret;
+ 
+-	gdev = to_ccwgroupdev(dev);
+ 	if (!dev->driver)
+-		return count;
++		return -ENODEV;
++
++	gdev = to_ccwgroupdev(dev);
++	gdrv = to_ccwgroupdrv(dev->driver);
+ 
+-	gdrv = to_ccwgroupdrv (gdev->dev.driver);
+ 	if (!try_module_get(gdrv->owner))
+ 		return -EINVAL;
+ 
+ 	ret = strict_strtoul(buf, 0, &value);
+ 	if (ret)
+ 		goto out;
+-	ret = count;
++
+ 	if (value == 1)
+-		ccwgroup_set_online(gdev);
++		ret = ccwgroup_set_online(gdev);
+ 	else if (value == 0)
+-		ccwgroup_set_offline(gdev);
++		ret = ccwgroup_set_offline(gdev);
+ 	else
+ 		ret = -EINVAL;
+ out:
+ 	module_put(gdrv->owner);
+-	return ret;
++	return (ret == 0) ? count : ret;
+ }
+ 
+ static ssize_t
+@@ -452,13 +469,18 @@ ccwgroup_remove (struct device *dev)
+ 	struct ccwgroup_device *gdev;
+ 	struct ccwgroup_driver *gdrv;
+ 
++	device_remove_file(dev, &dev_attr_online);
++	device_remove_file(dev, &dev_attr_ungroup);
++
++	if (!dev->driver)
++		return 0;
++
+ 	gdev = to_ccwgroupdev(dev);
+ 	gdrv = to_ccwgroupdrv(dev->driver);
+ 
+-	device_remove_file(dev, &dev_attr_online);
+-
+-	if (gdrv && gdrv->remove)
++	if (gdrv->remove)
+ 		gdrv->remove(gdev);
++
+ 	return 0;
+ }
+ 
+@@ -467,9 +489,13 @@ static void ccwgroup_shutdown(struct dev
+ 	struct ccwgroup_device *gdev;
+ 	struct ccwgroup_driver *gdrv;
+ 
++	if (!dev->driver)
++		return;
++
+ 	gdev = to_ccwgroupdev(dev);
+ 	gdrv = to_ccwgroupdrv(dev->driver);
+-	if (gdrv && gdrv->shutdown)
++
++	if (gdrv->shutdown)
+ 		gdrv->shutdown(gdev);
+ }
+ 
+@@ -482,6 +508,19 @@ static struct bus_type ccwgroup_bus_type
+ 	.shutdown = ccwgroup_shutdown,
+ };
+ 
++
++static int ccwgroup_notifier(struct notifier_block *nb, unsigned long action,
++			     void *data)
++{
++	struct device *dev = data;
++
++	if (action == BUS_NOTIFY_UNBIND_DRIVER)
++		device_schedule_callback(dev, ccwgroup_ungroup_callback);
++
++	return NOTIFY_OK;
++}
++
++
+ /**
+  * ccwgroup_driver_register() - register a ccw group driver
+  * @cdriver: driver to be registered

@@ -1,0 +1,160 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/329ea0ccb344
+# HG changeset patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1244206880 -3600
+# Node ID 329ea0ccb344c636e918cc3cd2677c24b03af5bd
+# Parent  f59c5daed527f3a7ddf1270480ec63028c206f31
+Subject: balloon: try harder to balloon up under memory pressure.
+Patch-mainline: obsolete
+
+Currently if the balloon driver is unable to increase the guest's
+reservation it assumes the failure was due to reaching its full
+allocation, gives up on the ballooning operation and records the limit
+it reached as the "hard limit". The driver will not try again until
+the target is set again (even to the same value).
+
+However it is possible that ballooning has in fact failed due to
+memory pressure in the host and therefore it is desirable to keep
+attempting to reach the target in case memory becomes available. The
+most likely scenario is that some guests are ballooning down while
+others are ballooning up and therefore there is temporary memory
+pressure while things stabilise. You would not expect a well behaved
+toolstack to ask a domain to balloon to more than its allocation nor
+would you expect it to deliberately over-commit memory by setting
+balloon targets which exceed the total host memory.
+
+This patch drops the concept of a hard limit and causes the balloon
+driver to retry increasing the reservation on a timer in the same
+manner as when decreasing the reservation.
+
+Also if we partially succeed in increasing the reservation
+(i.e. receive less pages than we asked for) then we may as well keep
+those pages rather than returning them to Xen.
+
+Signed-off-by: Ian Campbell <ian.campbell@citrix.com>
+Acked-by: jbeulich@novell.com
+
+--- sle11-2009-06-29.orig/drivers/xen/balloon/balloon.c	2008-11-25 13:31:07.000000000 +0100
++++ sle11-2009-06-29/drivers/xen/balloon/balloon.c	2009-06-29 15:24:00.000000000 +0200
+@@ -188,7 +188,7 @@ static void balloon_alarm(unsigned long 
+ 
+ static unsigned long current_target(void)
+ {
+-	unsigned long target = min(bs.target_pages, bs.hard_limit);
++	unsigned long target = bs.target_pages;
+ 	if (target > (bs.current_pages + bs.balloon_low + bs.balloon_high))
+ 		target = bs.current_pages + bs.balloon_low + bs.balloon_high;
+ 	return target;
+@@ -255,26 +255,12 @@ static int increase_reservation(unsigned
+ 	}
+ 
+ 	set_xen_guest_handle(reservation.extent_start, frame_list);
+-	reservation.nr_extents   = nr_pages;
+-	rc = HYPERVISOR_memory_op(
+-		XENMEM_populate_physmap, &reservation);
+-	if (rc < nr_pages) {
+-		if (rc > 0) {
+-			int ret;
+-
+-			/* We hit the Xen hard limit: reprobe. */
+-			reservation.nr_extents = rc;
+-			ret = HYPERVISOR_memory_op(XENMEM_decrease_reservation,
+-					&reservation);
+-			BUG_ON(ret != rc);
+-		}
+-		if (rc >= 0)
+-			bs.hard_limit = (bs.current_pages + rc -
+-					 bs.driver_pages);
++	reservation.nr_extents = nr_pages;
++	rc = HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
++	if (rc < 0)
+ 		goto out;
+-	}
+ 
+-	for (i = 0; i < nr_pages; i++) {
++	for (i = 0; i < rc; i++) {
+ 		page = balloon_retrieve();
+ 		BUG_ON(page == NULL);
+ 
+@@ -302,13 +288,13 @@ static int increase_reservation(unsigned
+ 		balloon_free_page(page);
+ 	}
+ 
+-	bs.current_pages += nr_pages;
++	bs.current_pages += rc;
+ 	totalram_pages = bs.current_pages;
+ 
+  out:
+ 	balloon_unlock(flags);
+ 
+-	return 0;
++	return rc < 0 ? rc : rc != nr_pages;
+ }
+ 
+ static int decrease_reservation(unsigned long nr_pages)
+@@ -420,7 +406,6 @@ static void balloon_process(void *unused
+ void balloon_set_new_target(unsigned long target)
+ {
+ 	/* No need for lock. Not read-modify-write updates. */
+-	bs.hard_limit   = ~0UL;
+ 	bs.target_pages = max(target, minimum_target());
+ 	schedule_work(&balloon_worker);
+ }
+@@ -498,17 +483,11 @@ static int balloon_read(char *page, char
+ 		"Requested target:   %8lu kB\n"
+ 		"Low-mem balloon:    %8lu kB\n"
+ 		"High-mem balloon:   %8lu kB\n"
+-		"Driver pages:       %8lu kB\n"
+-		"Xen hard limit:     ",
++		"Driver pages:       %8lu kB\n",
+ 		PAGES2KB(bs.current_pages), PAGES2KB(bs.target_pages), 
+ 		PAGES2KB(bs.balloon_low), PAGES2KB(bs.balloon_high),
+ 		PAGES2KB(bs.driver_pages));
+ 
+-	if (bs.hard_limit != ~0UL)
+-		len += sprintf(page + len, "%8lu kB\n",
+-			       PAGES2KB(bs.hard_limit));
+-	else
+-		len += sprintf(page + len, "     ??? kB\n");
+ 
+ 	*eof = 1;
+ 	return len;
+@@ -539,7 +518,6 @@ static int __init balloon_init(void)
+ 	bs.balloon_low   = 0;
+ 	bs.balloon_high  = 0;
+ 	bs.driver_pages  = 0UL;
+-	bs.hard_limit    = ~0UL;
+ 
+ 	init_timer(&balloon_timer);
+ 	balloon_timer.data = 0;
+--- sle11-2009-06-29.orig/drivers/xen/balloon/common.h	2009-06-29 15:14:51.000000000 +0200
++++ sle11-2009-06-29/drivers/xen/balloon/common.h	2009-06-29 15:24:00.000000000 +0200
+@@ -35,8 +35,6 @@ struct balloon_stats {
+ 	/* We aim for 'current allocation' == 'target allocation'. */
+ 	unsigned long current_pages;
+ 	unsigned long target_pages;
+-	/* We may hit the hard limit in Xen. If we do then we remember it. */
+-	unsigned long hard_limit;
+ 	/*
+ 	 * Drivers may alter the memory reservation independently, but they
+ 	 * must inform the balloon driver so we avoid hitting the hard limit.
+--- sle11-2009-06-29.orig/drivers/xen/balloon/sysfs.c	2008-11-25 13:31:07.000000000 +0100
++++ sle11-2009-06-29/drivers/xen/balloon/sysfs.c	2009-06-29 15:24:00.000000000 +0200
+@@ -53,9 +53,6 @@
+ BALLOON_SHOW(current_kb, "%lu\n", PAGES2KB(bs.current_pages));
+ BALLOON_SHOW(low_kb, "%lu\n", PAGES2KB(bs.balloon_low));
+ BALLOON_SHOW(high_kb, "%lu\n", PAGES2KB(bs.balloon_high));
+-BALLOON_SHOW(hard_limit_kb,
+-	     (bs.hard_limit!=~0UL) ? "%lu\n" : "???\n",
+-	     (bs.hard_limit!=~0UL) ? PAGES2KB(bs.hard_limit) : 0);
+ BALLOON_SHOW(driver_kb, "%lu\n", PAGES2KB(bs.driver_pages));
+ 
+ static ssize_t show_target_kb(struct sys_device *dev, char *buf)
+@@ -96,7 +93,6 @@ static struct attribute *balloon_info_at
+ 	&attr_current_kb.attr,
+ 	&attr_low_kb.attr,
+ 	&attr_high_kb.attr,
+-	&attr_hard_limit_kb.attr,
+ 	&attr_driver_kb.attr,
+ 	NULL
+ };

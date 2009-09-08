@@ -1,0 +1,59 @@
+From: Michael Reed <mdr@sgi.com>
+Subject: ioc4 request module
+Patch-mainline: ?
+References: bnc#429215
+
+It modifies ioc4.c to call request_module() for each of the two modules
+which support the hardware.
+
+The patch uses a workqueue to prevent a deadlock.  It seems to do the right
+thing on my system, but I don't have a way to install test it.  If this works
+and you find it acceptable, I'll try to get it pushed upstream next week.
+
+Mike
+
+Acked-by: Raymund Will <rw@suse.de>
+
+--- linux-2.6.27-rc6-7.2/drivers/misc/ioc4.c	2008-07-13 16:51:29.000000000 -0500
++++ b/drivers/misc/ioc4.c	2008-10-03 15:58:40.225723102 -0500
+@@ -269,6 +269,17 @@ ioc4_variant(struct ioc4_driver_data *id
+ 	return IOC4_VARIANT_PCI_RT;
+ }
+ 
++static void
++ioc4_load_modules(struct work_struct *work)
++{
++	/* arg just has to be freed */
++
++	request_module("sgiioc4");
++	request_module("ioc4_serial");
++
++	kfree(work);
++}
++
+ /* Adds a new instance of an IOC4 card */
+ static int
+ ioc4_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+@@ -378,6 +389,22 @@ ioc4_probe(struct pci_dev *pdev, const s
+ 	}
+ 	mutex_unlock(&ioc4_mutex);
+ 
++	if (idd->idd_variant != IOC4_VARIANT_PCI_RT) {
++		struct work_struct *work;
++		work = kzalloc(sizeof(struct work_struct), GFP_KERNEL);
++		if (!work) {
++			printk(KERN_WARNING
++			       "%s: IOC4 unable to allocate memory for "
++			       "load of sub-modules.\n",
++			       __FUNCTION__);
++		}
++		else {
++			printk(KERN_INFO "IOC4 loading ioc4 submodule\n");
++			INIT_WORK(work, ioc4_load_modules);
++			schedule_work(work);
++		}
++	}
++
+ 	return 0;
+ 
+ out_misc_region:

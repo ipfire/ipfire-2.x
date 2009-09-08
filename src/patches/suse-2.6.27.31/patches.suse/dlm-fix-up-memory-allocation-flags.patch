@@ -1,0 +1,72 @@
+From: Steven Whitehouse <swhiteho@redhat.com>
+commit d6d7b702a3a1ca50f7ca2bebaa79c80425156bac
+Author: Steven Whitehouse <swhiteho@redhat.com>
+Date:   Wed Nov 12 16:49:48 2008 -0600
+Subject: dlm: fix up memory allocation flags
+    
+    Use ls_allocation for memory allocations, which a cluster fs sets to
+    GFP_NOFS.  Use GFP_NOFS for allocations when no lockspace struct is
+    available.  Taking dlm locks needs to avoid calling back into the
+    cluster fs because write-out can require taking dlm locks.
+    
+Cc: Christine Caulfield <ccaulfie@redhat.com>
+Signed-off-by: Steven Whitehouse <swhiteho@redhat.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Coly Li <coly.li@suse.de>
+
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index 3962262..1e72031 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -295,6 +295,7 @@ static int add_sock(struct socket *sock, struct connection *con)
+ 	con->sock->sk->sk_write_space = lowcomms_write_space;
+ 	con->sock->sk->sk_state_change = lowcomms_state_change;
+ 	con->sock->sk->sk_user_data = con;
++	con->sock->sk->sk_allocation = GFP_NOFS;
+ 	return 0;
+ }
+ 
+diff --git a/fs/dlm/memory.c b/fs/dlm/memory.c
+index 54c14c6..c1775b8 100644
+--- a/fs/dlm/memory.c
++++ b/fs/dlm/memory.c
+@@ -39,7 +39,7 @@ char *dlm_allocate_lvb(struct dlm_ls *ls)
+ {
+ 	char *p;
+ 
+-	p = kzalloc(ls->ls_lvblen, GFP_KERNEL);
++	p = kzalloc(ls->ls_lvblen, ls->ls_allocation);
+ 	return p;
+ }
+ 
+@@ -57,7 +57,7 @@ struct dlm_rsb *dlm_allocate_rsb(struct dlm_ls *ls, int namelen)
+ 
+ 	DLM_ASSERT(namelen <= DLM_RESNAME_MAXLEN,);
+ 
+-	r = kzalloc(sizeof(*r) + namelen, GFP_KERNEL);
++	r = kzalloc(sizeof(*r) + namelen, ls->ls_allocation);
+ 	return r;
+ }
+ 
+@@ -72,7 +72,7 @@ struct dlm_lkb *dlm_allocate_lkb(struct dlm_ls *ls)
+ {
+ 	struct dlm_lkb *lkb;
+ 
+-	lkb = kmem_cache_zalloc(lkb_cache, GFP_KERNEL);
++	lkb = kmem_cache_zalloc(lkb_cache, ls->ls_allocation);
+ 	return lkb;
+ }
+ 
+diff --git a/fs/dlm/midcomms.c b/fs/dlm/midcomms.c
+index 07ac709..f3396c6 100644
+--- a/fs/dlm/midcomms.c
++++ b/fs/dlm/midcomms.c
+@@ -112,7 +112,7 @@ int dlm_process_incoming_buffer(int nodeid, const void *base,
+ 		   ordinary messages). */
+ 
+ 		if (msglen > sizeof(__tmp) && p == &__tmp.p) {
+-			p = kmalloc(dlm_config.ci_buffer_size, GFP_KERNEL);
++			p = kmalloc(dlm_config.ci_buffer_size, GFP_NOFS);
+ 			if (p == NULL)
+ 				return ret;
+ 		}

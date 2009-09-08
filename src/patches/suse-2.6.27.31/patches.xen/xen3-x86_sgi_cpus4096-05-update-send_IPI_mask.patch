@@ -1,0 +1,505 @@
+From: Mike Travis <travis@sgi.com>
+Subject: x86 cpumask: Updates to support NR_CPUS=4096
+References: bnc#425240 FATE304266
+Patch-mainline: 2.6.28
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+  * Add for_each_cpu_mask_and() function to eliminate need for a common use
+    of a temporary cpumask_t variable. 
+
+  * Change genapic interfaces to accept cpumask_t pointers where possible.
+    Modify external callers to use cpumask_t pointers in function calls.
+
+  * Create new send_IPI_mask_allbutself which is the same as the
+    send_IPI_mask functions but removes smp_processor_id() from list.
+    This removes another common need for a temporary cpumask_t variable.
+
+  * Use node_to_cpumask_ptr in place of node_to_cpumask to reduce stack
+    requirements in sched.c.
+
+  * Modify arch/x86/Kconfig to enable MAXSMP and 4096 cpus.
+
+Signed-off-by: Mike Travis <travis@sgi.com>
+Acked-by: Rusty Russell <rusty@rustcorp.com.au>
+Signed-off-by: Jiri Slaby <jslaby@suse.de> [bigsmp cpu_mask_to_apicid fix]
+Automatically created from "patches.arch/x86_sgi_cpus4096-05-update-send_IPI_mask.patch" by xen-port-patches.py
+
+Index: head-2008-11-25/arch/x86/kernel/genapic_xen_64.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/kernel/genapic_xen_64.c	2008-11-25 14:37:42.000000000 +0100
++++ head-2008-11-25/arch/x86/kernel/genapic_xen_64.c	2008-11-25 13:12:11.000000000 +0100
+@@ -34,9 +34,10 @@ static inline void __send_IPI_one(unsign
+ 	notify_remote_via_irq(irq);
+ }
+ 
+-static void xen_send_IPI_shortcut(unsigned int shortcut, int vector,
+-				  unsigned int dest)
++static void xen_send_IPI_shortcut(unsigned int shortcut,
++				  const cpumask_t *cpumask, int vector)
+ {
++	unsigned long flags;
+ 	int cpu;
+ 
+ 	switch (shortcut) {
+@@ -44,20 +45,26 @@ static void xen_send_IPI_shortcut(unsign
+ 		__send_IPI_one(smp_processor_id(), vector);
+ 		break;
+ 	case APIC_DEST_ALLBUT:
++		local_irq_save(flags);
++		WARN_ON(!cpus_subset(*cpumask, cpu_online_map));
+ 		for_each_possible_cpu(cpu) {
+ 			if (cpu == smp_processor_id())
+ 				continue;
+-			if (cpu_isset(cpu, cpu_online_map)) {
++			if (cpu_isset(cpu, *cpumask)) {
+ 				__send_IPI_one(cpu, vector);
+ 			}
+ 		}
++		local_irq_restore(flags);
+ 		break;
+ 	case APIC_DEST_ALLINC:
++		local_irq_save(flags);
++		WARN_ON(!cpus_subset(*cpumask, cpu_online_map));
+ 		for_each_possible_cpu(cpu) {
+-			if (cpu_isset(cpu, cpu_online_map)) {
++			if (cpu_isset(cpu, *cpumask)) {
+ 				__send_IPI_one(cpu, vector);
+ 			}
+ 		}
++		local_irq_restore(flags);
+ 		break;
+ 	default:
+ 		printk("XXXXXX __send_IPI_shortcut %08x vector %d\n", shortcut,
+@@ -66,14 +73,15 @@ static void xen_send_IPI_shortcut(unsign
+ 	}
+ }
+ 
+-static cpumask_t xen_target_cpus(void)
++static const cpumask_t *xen_target_cpus(void)
+ {
+-	return cpu_online_map;
++	return &cpu_online_map;
+ }
+ 
+-static cpumask_t xen_vector_allocation_domain(int cpu)
++static void xen_vector_allocation_domain(int cpu, cpumask_t *retmask)
+ {
+-	return cpumask_of_cpu(cpu);
++	cpus_clear(*retmask);
++	cpu_set(cpu, *retmask);
+ }
+ 
+ /*
+@@ -84,42 +92,30 @@ static void xen_init_apic_ldr(void)
+ {
+ }
+ 
+-static void xen_send_IPI_allbutself(int vector)
++static void xen_send_IPI_mask(const cpumask_t *cpumask, int vector)
+ {
+-	/*
+-	 * if there are no other CPUs in the system then
+-	 * we get an APIC send error if we try to broadcast.
+-	 * thus we have to avoid sending IPIs in this case.
+-	 */
+-	if (num_online_cpus() > 1)
+-		xen_send_IPI_shortcut(APIC_DEST_ALLBUT, vector, APIC_DEST_LOGICAL);
++	xen_send_IPI_shortcut(APIC_DEST_ALLINC, cpumask, vector);
+ }
+ 
+-static void xen_send_IPI_all(int vector)
++static void xen_send_IPI_mask_allbutself(const cpumask_t *cpumask,
++					 int vector)
+ {
+-	xen_send_IPI_shortcut(APIC_DEST_ALLINC, vector, APIC_DEST_LOGICAL);
++	xen_send_IPI_shortcut(APIC_DEST_ALLBUT, cpumask, vector);
+ }
+ 
+-static void xen_send_IPI_mask(cpumask_t cpumask, int vector)
++static void xen_send_IPI_allbutself(int vector)
+ {
+-	unsigned long mask = cpus_addr(cpumask)[0];
+-	unsigned int cpu;
+-	unsigned long flags;
+-
+-	local_irq_save(flags);
+-	WARN_ON(mask & ~cpus_addr(cpu_online_map)[0]);
++	xen_send_IPI_shortcut(APIC_DEST_ALLBUT, &cpu_online_map, vector);
++}
+ 
+-	for_each_possible_cpu(cpu) {
+-		if (cpu_isset(cpu, cpumask)) {
+-			__send_IPI_one(cpu, vector);
+-		}
+-	}
+-	local_irq_restore(flags);
++static void xen_send_IPI_all(int vector)
++{
++	xen_send_IPI_shortcut(APIC_DEST_ALLINC, &cpu_online_map, vector);
+ }
+ 
+ static void xen_send_IPI_self(int vector)
+ {
+-	xen_send_IPI_shortcut(APIC_DEST_SELF, vector, APIC_DEST_PHYSICAL);
++	xen_send_IPI_shortcut(APIC_DEST_SELF, NULL, vector);
+ }
+ 
+ #ifdef CONFIG_XEN_PRIVILEGED_GUEST
+@@ -130,9 +126,9 @@ static int xen_apic_id_registered(void)
+ }
+ #endif
+ 
+-static unsigned int xen_cpu_mask_to_apicid(cpumask_t cpumask)
++static unsigned int xen_cpu_mask_to_apicid(const cpumask_t *cpumask)
+ {
+-	return cpus_addr(cpumask)[0] & APIC_ALL_CPUS;
++	return cpus_addr(*cpumask)[0] & APIC_ALL_CPUS;
+ }
+ 
+ static unsigned int phys_pkg_id(int index_msb)
+@@ -158,6 +154,7 @@ struct genapic apic_xen =  {
+ 	.send_IPI_all = xen_send_IPI_all,
+ 	.send_IPI_allbutself = xen_send_IPI_allbutself,
+ 	.send_IPI_mask = xen_send_IPI_mask,
++	.send_IPI_mask_allbutself = xen_send_IPI_mask_allbutself,
+ 	.send_IPI_self = xen_send_IPI_self,
+ 	.cpu_mask_to_apicid = xen_cpu_mask_to_apicid,
+ 	.phys_pkg_id = phys_pkg_id,
+Index: head-2008-11-25/arch/x86/kernel/io_apic_32-xen.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/kernel/io_apic_32-xen.c	2008-11-25 14:37:42.000000000 +0100
++++ head-2008-11-25/arch/x86/kernel/io_apic_32-xen.c	2008-11-25 14:37:47.000000000 +0100
+@@ -393,11 +393,11 @@ static void set_ioapic_affinity_irq(unsi
+ 
+ 	cpus_and(tmp, cpumask, cpu_online_map);
+ 	if (cpus_empty(tmp))
+-		tmp = TARGET_CPUS;
++		tmp = *TARGET_CPUS;
+ 
+ 	cpus_and(cpumask, tmp, CPU_MASK_ALL);
+ 
+-	apicid_value = cpu_mask_to_apicid(cpumask);
++	apicid_value = cpu_mask_to_apicid(&cpumask);
+ 	/* Prepare to do the io_apic_write */
+ 	apicid_value = apicid_value << 24;
+ 	spin_lock_irqsave(&ioapic_lock, flags);
+@@ -981,7 +981,7 @@ void __init setup_ioapic_dest(void)
+ 			if (irq_entry == -1)
+ 				continue;
+ 			irq = pin_2_irq(irq_entry, ioapic, pin);
+-			set_ioapic_affinity_irq(irq, TARGET_CPUS);
++			set_ioapic_affinity_irq(irq, *TARGET_CPUS);
+ 		}
+ 
+ 	}
+@@ -2602,13 +2602,13 @@ static void set_msi_irq_affinity(unsigne
+ 
+ 	cpus_and(tmp, mask, cpu_online_map);
+ 	if (cpus_empty(tmp))
+-		tmp = TARGET_CPUS;
++		tmp = *TARGET_CPUS;
+ 
+ 	vector = assign_irq_vector(irq);
+ 	if (vector < 0)
+ 		return;
+ 
+-	dest = cpu_mask_to_apicid(mask);
++	dest = cpu_mask_to_apicid(&mask);
+ 
+ 	read_msi_msg(irq, &msg);
+ 
+@@ -2695,11 +2695,11 @@ static void set_ht_irq_affinity(unsigned
+ 
+ 	cpus_and(tmp, mask, cpu_online_map);
+ 	if (cpus_empty(tmp))
+-		tmp = TARGET_CPUS;
++		tmp = *TARGET_CPUS;
+ 
+ 	cpus_and(mask, tmp, CPU_MASK_ALL);
+ 
+-	dest = cpu_mask_to_apicid(mask);
++	dest = cpu_mask_to_apicid(&mask);
+ 
+ 	target_ht_irq(irq, dest);
+ 	irq_desc[irq].affinity = mask;
+@@ -2729,7 +2729,7 @@ int arch_setup_ht_irq(unsigned int irq, 
+ 
+ 		cpus_clear(tmp);
+ 		cpu_set(vector >> 8, tmp);
+-		dest = cpu_mask_to_apicid(tmp);
++		dest = cpu_mask_to_apicid(&tmp);
+ 
+ 		msg.address_hi = HT_IRQ_HIGH_DEST_ID(dest);
+ 
+Index: head-2008-11-25/arch/x86/kernel/io_apic_64-xen.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/kernel/io_apic_64-xen.c	2008-11-25 14:37:42.000000000 +0100
++++ head-2008-11-25/arch/x86/kernel/io_apic_64-xen.c	2008-11-25 14:29:21.000000000 +0100
+@@ -66,7 +66,7 @@ struct irq_cfg {
+ /* irq_cfg is indexed by the sum of all RTEs in all I/O APICs. */
+ static struct irq_cfg irq_cfg[NR_IRQS] __read_mostly;
+ 
+-static int assign_irq_vector(int irq, cpumask_t mask);
++static int assign_irq_vector(int irq, const cpumask_t *mask);
+ 
+ #ifndef CONFIG_XEN
+ int first_system_vector = 0xfe;
+@@ -337,11 +337,11 @@ static void set_ioapic_affinity_irq(unsi
+ 	if (cpus_empty(tmp))
+ 		return;
+ 
+-	if (assign_irq_vector(irq, mask))
++	if (assign_irq_vector(irq, &mask))
+ 		return;
+ 
+ 	cpus_and(tmp, cfg->domain, mask);
+-	dest = cpu_mask_to_apicid(tmp);
++	dest = cpu_mask_to_apicid(&tmp);
+ 
+ 	/*
+ 	 * Only the high 8 bits are valid.
+@@ -749,7 +749,7 @@ void unlock_vector_lock(void)
+ 	spin_unlock(&vector_lock);
+ }
+ 
+-static int __assign_irq_vector(int irq, cpumask_t mask)
++static int __assign_irq_vector(int irq, const cpumask_t *mask)
+ {
+ 	struct physdev_irq irq_op;
+ 	struct irq_cfg *cfg;
+@@ -776,7 +776,7 @@ static int __assign_irq_vector(int irq, 
+ 	return 0;
+ }
+ 
+-static int assign_irq_vector(int irq, cpumask_t mask)
++static int assign_irq_vector(int irq, const cpumask_t *mask)
+ {
+ 	int err;
+ 	unsigned long flags;
+@@ -858,8 +858,8 @@ static void setup_IO_APIC_irq(int apic, 
+ 	if (!IO_APIC_IRQ(irq))
+ 		return;
+ 
+-	mask = TARGET_CPUS;
+-	if (assign_irq_vector(irq, mask))
++	mask = *TARGET_CPUS;
++	if (assign_irq_vector(irq, &mask))
+ 		return;
+ 
+ #ifndef CONFIG_XEN
+@@ -879,7 +879,7 @@ static void setup_IO_APIC_irq(int apic, 
+ 
+ 	entry.delivery_mode = INT_DELIVERY_MODE;
+ 	entry.dest_mode = INT_DEST_MODE;
+-	entry.dest = cpu_mask_to_apicid(mask);
++	entry.dest = cpu_mask_to_apicid(&mask);
+ 	entry.mask = 0;				/* enable IRQ */
+ 	entry.trigger = trigger;
+ 	entry.polarity = polarity;
+@@ -1385,7 +1385,7 @@ static int ioapic_retrigger_irq(unsigned
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&vector_lock, flags);
+-	send_IPI_mask(cpumask_of_cpu(first_cpu(cfg->domain)), cfg->vector);
++	send_IPI_mask(&cpumask_of_cpu(first_cpu(cfg->domain)), cfg->vector);
+ 	spin_unlock_irqrestore(&vector_lock, flags);
+ 
+ 	return 1;
+@@ -1450,7 +1450,7 @@ static void irq_complete_move(unsigned i
+ 
+ 		cpus_and(cleanup_mask, cfg->old_domain, cpu_online_map);
+ 		cfg->move_cleanup_count = cpus_weight(cleanup_mask);
+-		send_IPI_mask(cleanup_mask, IRQ_MOVE_CLEANUP_VECTOR);
++		send_IPI_mask(&cleanup_mask, IRQ_MOVE_CLEANUP_VECTOR);
+ 		cfg->move_in_progress = 0;
+ 	}
+ }
+@@ -2009,11 +2009,11 @@ static int msi_compose_msg(struct pci_de
+ 	unsigned dest;
+ 	cpumask_t tmp;
+ 
+-	tmp = TARGET_CPUS;
+-	err = assign_irq_vector(irq, tmp);
++	tmp = *TARGET_CPUS;
++	err = assign_irq_vector(irq, &tmp);
+ 	if (!err) {
+ 		cpus_and(tmp, cfg->domain, tmp);
+-		dest = cpu_mask_to_apicid(tmp);
++		dest = cpu_mask_to_apicid(&tmp);
+ 
+ 		msg->address_hi = MSI_ADDR_BASE_HI;
+ 		msg->address_lo =
+@@ -2049,11 +2049,11 @@ static void set_msi_irq_affinity(unsigne
+ 	if (cpus_empty(tmp))
+ 		return;
+ 
+-	if (assign_irq_vector(irq, mask))
++	if (assign_irq_vector(irq, &mask))
+ 		return;
+ 
+ 	cpus_and(tmp, cfg->domain, mask);
+-	dest = cpu_mask_to_apicid(tmp);
++	dest = cpu_mask_to_apicid(&tmp);
+ 
+ 	read_msi_msg(irq, &msg);
+ 
+@@ -2122,11 +2122,11 @@ static void dmar_msi_set_affinity(unsign
+ 	if (cpus_empty(tmp))
+ 		return;
+ 
+-	if (assign_irq_vector(irq, mask))
++	if (assign_irq_vector(irq, &mask))
+ 		return;
+ 
+ 	cpus_and(tmp, cfg->domain, mask);
+-	dest = cpu_mask_to_apicid(tmp);
++	dest = cpu_mask_to_apicid(&tmp);
+ 
+ 	dmar_msi_read(irq, &msg);
+ 
+@@ -2198,11 +2198,11 @@ static void set_ht_irq_affinity(unsigned
+ 	if (cpus_empty(tmp))
+ 		return;
+ 
+-	if (assign_irq_vector(irq, mask))
++	if (assign_irq_vector(irq, &mask))
+ 		return;
+ 
+ 	cpus_and(tmp, cfg->domain, mask);
+-	dest = cpu_mask_to_apicid(tmp);
++	dest = cpu_mask_to_apicid(&tmp);
+ 
+ 	target_ht_irq(irq, dest, cfg->vector);
+ 	irq_desc[irq].affinity = mask;
+@@ -2226,14 +2226,14 @@ int arch_setup_ht_irq(unsigned int irq, 
+ 	int err;
+ 	cpumask_t tmp;
+ 
+-	tmp = TARGET_CPUS;
+-	err = assign_irq_vector(irq, tmp);
++	tmp = *TARGET_CPUS;
++	err = assign_irq_vector(irq, &tmp);
+ 	if (!err) {
+ 		struct ht_irq_msg msg;
+ 		unsigned dest;
+ 
+ 		cpus_and(tmp, cfg->domain, tmp);
+-		dest = cpu_mask_to_apicid(tmp);
++		dest = cpu_mask_to_apicid(&tmp);
+ 
+ 		msg.address_hi = HT_IRQ_HIGH_DEST_ID(dest);
+ 
+@@ -2351,7 +2351,7 @@ void __init setup_ioapic_dest(void)
+ 						  irq_trigger(irq_entry),
+ 						  irq_polarity(irq_entry));
+ 			else
+-				set_ioapic_affinity_irq(irq, TARGET_CPUS);
++				set_ioapic_affinity_irq(irq, *TARGET_CPUS);
+ 		}
+ 
+ 	}
+Index: head-2008-11-25/arch/x86/kernel/ipi-xen.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/kernel/ipi-xen.c	2008-11-25 14:37:42.000000000 +0100
++++ head-2008-11-25/arch/x86/kernel/ipi-xen.c	2008-11-25 13:12:11.000000000 +0100
+@@ -148,12 +148,11 @@ static inline void __send_IPI_dest_field
+ /*
+  * This is only used on smaller machines.
+  */
+-void send_IPI_mask_bitmask(cpumask_t cpumask, int vector)
++void send_IPI_mask_bitmask(const cpumask_t *cpumask, int vector)
+ {
+ #ifndef CONFIG_XEN
+-	unsigned long mask = cpus_addr(cpumask)[0];
++	unsigned long mask = cpus_addr(*cpumask)[0];
+ #else
+-	cpumask_t mask;
+ 	unsigned int cpu;
+ #endif
+ 	unsigned long flags;
+@@ -163,16 +162,15 @@ void send_IPI_mask_bitmask(cpumask_t cpu
+ 	WARN_ON(mask & ~cpus_addr(cpu_online_map)[0]);
+ 	__send_IPI_dest_field(mask, vector);
+ #else
+-	cpus_andnot(mask, cpumask, cpu_online_map);
+-	WARN_ON(!cpus_empty(mask));
++	WARN_ON(!cpus_subset(*cpumask, cpu_online_map));
+ 	for_each_online_cpu(cpu)
+-		if (cpu_isset(cpu, cpumask))
++		if (cpu_isset(cpu, *cpumask))
+ 			__send_IPI_one(cpu, vector);
+ #endif
+ 	local_irq_restore(flags);
+ }
+ 
+-void send_IPI_mask_sequence(cpumask_t mask, int vector)
++void send_IPI_mask_sequence(const cpumask_t *mask, int vector)
+ {
+ #ifndef CONFIG_XEN
+ 	unsigned long flags;
+@@ -185,15 +183,34 @@ void send_IPI_mask_sequence(cpumask_t ma
+ 	 */
+ 
+ 	local_irq_save(flags);
+-	for_each_possible_cpu(query_cpu) {
+-		if (cpu_isset(query_cpu, mask)) {
++	for_each_cpu_mask_and(query_cpu, *mask, cpu_online_map)
++		__send_IPI_dest_field(cpu_to_logical_apicid(query_cpu), vector);
++	local_irq_restore(flags);
++#else
++	send_IPI_mask_bitmask(mask, vector);
++#endif
++}
++
++void send_IPI_mask_allbutself(const cpumask_t *mask, int vector)
++{
++#ifndef CONFIG_XEN
++	unsigned long flags;
++	unsigned int query_cpu;
++	unsigned int this_cpu = smp_processor_id();
++
++	/* See Hack comment above */
++
++	local_irq_save(flags);
++	for_each_cpu_mask_and(query_cpu, *mask, cpu_online_map)
++		if (query_cpu != this_cpu)
+ 			__send_IPI_dest_field(cpu_to_logical_apicid(query_cpu),
+ 					      vector);
+-		}
+-	}
+ 	local_irq_restore(flags);
+ #else
+-	send_IPI_mask_bitmask(mask, vector);
++	cpumask_t allbut = *mask;
++
++	cpu_clear(smp_processor_id(), allbut);
++	send_IPI_mask_bitmask(&allbut, vector);
+ #endif
+ }
+ 
+Index: head-2008-11-25/arch/x86/kernel/smp-xen.c
+===================================================================
+--- head-2008-11-25.orig/arch/x86/kernel/smp-xen.c	2008-11-04 11:59:11.000000000 +0100
++++ head-2008-11-25/arch/x86/kernel/smp-xen.c	2008-11-25 13:12:11.000000000 +0100
+@@ -118,17 +118,17 @@ void xen_smp_send_reschedule(int cpu)
+ 		WARN_ON(1);
+ 		return;
+ 	}
+-	send_IPI_mask(cpumask_of_cpu(cpu), RESCHEDULE_VECTOR);
++	send_IPI_mask(&cpumask_of_cpu(cpu), RESCHEDULE_VECTOR);
+ }
+ 
+ void xen_send_call_func_single_ipi(int cpu)
+ {
+-	send_IPI_mask(cpumask_of_cpu(cpu), CALL_FUNC_SINGLE_VECTOR);
++	send_IPI_mask(&cpumask_of_cpu(cpu), CALL_FUNC_SINGLE_VECTOR);
+ }
+ 
+ void xen_send_call_func_ipi(const cpumask_t *mask)
+ {
+-	send_IPI_mask(*mask, CALL_FUNCTION_VECTOR);
++	send_IPI_mask_allbutself(mask, CALL_FUNCTION_VECTOR);
+ }
+ 
+ static void stop_this_cpu(void *dummy)
