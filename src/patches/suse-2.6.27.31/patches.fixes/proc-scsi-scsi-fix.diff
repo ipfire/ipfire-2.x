@@ -1,0 +1,110 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] scsi: iterate over devices individually for /proc/scsi/scsi
+References: 263731
+Patch-mainline: Probably never, hch wants to kill /proc/scsi/scsi anyway.
+
+ On systems with very large numbers (> 1600 or so) of SCSI devices,
+ cat /proc/scsi/scsi ends up failing with -ENOMEM. This is due to
+ the show routine simply iterating over all of the devices with
+ bus_for_each_dev(), and trying to dump all of them into the buffer
+ at the same time. On my test system (using scsi_debug with 4064 devices),
+ the output ends up being ~ 632k, far more than kmalloc will typically allow.
+
+ This patch defines its own seq_file opreations to iterate over the scsi
+ devices.The result is that each show() operation only dumps ~ 180 bytes
+ into the buffer at a time so we don't run out of memory.
+
+ If the "Attached devices" header isn't required, we can dump the
+ sfile->private bit completely.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+
+---
+
+ drivers/scsi/scsi_proc.c |   58 ++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 52 insertions(+), 6 deletions(-)
+
+--- a/drivers/scsi/scsi_proc.c
++++ b/drivers/scsi/scsi_proc.c
+@@ -389,13 +389,59 @@ static ssize_t proc_scsi_write(struct fi
+  * @s: output goes here
+  * @p: not used
+  */
+-static int proc_scsi_show(struct seq_file *s, void *p)
++static int always_match(struct device *dev, void *data)
+ {
+-	seq_printf(s, "Attached devices:\n");
+-	bus_for_each_dev(&scsi_bus_type, NULL, s, proc_print_scsidevice);
+-	return 0;
++	return 1;
+ }
+ 
++static inline struct device *next_scsi_device(struct device *start)
++{
++	struct device *next = bus_find_device(&scsi_bus_type, start, NULL,
++					      always_match);
++	put_device(start);
++	return next;
++}
++
++static void *scsi_seq_start(struct seq_file *sfile, loff_t *pos)
++{
++	struct device *dev = NULL;
++	loff_t n = *pos;
++
++	while ((dev = next_scsi_device(dev))) {
++		if (!n--)
++			break;
++		sfile->private++;
++	}
++	return dev;
++}
++
++static void *scsi_seq_next(struct seq_file *sfile, void *v, loff_t *pos)
++{
++	(*pos)++;
++	sfile->private++;
++	return next_scsi_device(v);
++}
++
++static void scsi_seq_stop(struct seq_file *sfile, void *v)
++{
++	put_device(v);
++}
++
++static int scsi_seq_show(struct seq_file *sfile, void *dev)
++{
++	if (!sfile->private)
++		seq_puts(sfile, "Attached devices:\n");
++
++	return proc_print_scsidevice(dev, sfile);
++}
++
++static struct seq_operations scsi_seq_ops = {
++	.start	= scsi_seq_start,
++	.next	= scsi_seq_next,
++	.stop	= scsi_seq_stop,
++	.show	= scsi_seq_show
++};
++
+ /**
+  * proc_scsi_open - glue function
+  * @inode: not used
+@@ -409,7 +455,7 @@ static int proc_scsi_open(struct inode *
+ 	 * We don't really need this for the write case but it doesn't
+ 	 * harm either.
+ 	 */
+-	return single_open(file, proc_scsi_show, NULL);
++	return seq_open(file, &scsi_seq_ops);
+ }
+ 
+ static const struct file_operations proc_scsi_operations = {
+@@ -418,7 +464,7 @@ static const struct file_operations proc
+ 	.read		= seq_read,
+ 	.write		= proc_scsi_write,
+ 	.llseek		= seq_lseek,
+-	.release	= single_release,
++	.release	= seq_release,
+ };
+ 
+ /**

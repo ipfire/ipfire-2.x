@@ -1,0 +1,60 @@
+From: Jay Lan <jlan@sgi.com>
+Subject: Fix CONFIG_KDB_KDUMP on xSeries
+Patch-mainline: not yet
+References: bnc#436454
+
+This patch fixes a problem that the capture kernel crashes with various
+backtraces after the machine has been crashed (both sysrq-trigger and panic()).
+Machines were that problem could reproduced at SUSE were molitor.suse.de and
+korner.suse.de.
+
+KDB was turned off in that scenarios.
+
+That patch succeeds in following scenarios:
+
+  a) kdb=0
+     modprobe crasher call_panic
+
+  b) kdb=1/0
+     echo c > /proc/sysrq-trigger
+
+  b) kdb=1
+     ESC KDB
+     kdb> kdump
+
+But it fails in:
+
+  kdb=1
+  modprobe crasher call_panic
+
+That has to be investigated. But I think that's unrelated to that patch,
+and it's no regression.
+
+
+Signed-off-by: Jay Lan <jlan@sgi.com>
+Signed-off-by: Bernhard Walle <bwalle@suse.de>
+
+---
+ arch/x86/kdb/kdba_support.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+--- a/arch/x86/kdb/kdba_support.c
++++ b/arch/x86/kdb/kdba_support.c
+@@ -35,8 +35,6 @@ void kdba_kdump_prepare(struct pt_regs *
+ 	if (regs == NULL)
+ 		regs = &r;
+ 
+-	machine_crash_shutdown_begin();
+-
+ 	for (i = 1; i < NR_CPUS; ++i) {
+ 		if (!cpu_online(i))
+ 			continue;
+@@ -44,7 +42,7 @@ void kdba_kdump_prepare(struct pt_regs *
+ 		KDB_STATE_SET_CPU(KEXEC, i);
+ 	}
+ 
+-	machine_crash_shutdown_end(regs);
++	machine_crash_shutdown(regs);
+ }
+ 
+ extern void halt_current_cpu(struct pt_regs *);

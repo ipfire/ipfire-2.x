@@ -1,0 +1,114 @@
+From: Chris Leech <christopher.leech@intel.com>
+Subject: [FcOE] make sure we access the CRC safely
+References: bnc #459142
+
+Even when fcoe verified that the EOF and CRC trailer bytes were there, when
+the CRC check was delayed for solicited SCSI data libfc would look past what
+was marked as valid data in the frame to find the CRC in the FCoE trailer.
+
+Instead, pass the CRC to libfc in the context block.
+
+Signed-off-by: Chris Leech <christopher.leech@intel.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/fcoe/libfcoe.c   |   20 ++++++++++++++------
+ drivers/scsi/libfc/fc_fcp.c   |    2 +-
+ drivers/scsi/libfc/fc_frame.c |    2 +-
+ include/scsi/fc_frame.h       |    3 +++
+ 4 files changed, 19 insertions(+), 8 deletions(-)
+
+
+--- a/drivers/scsi/fcoe/libfcoe.c
++++ b/drivers/scsi/fcoe/libfcoe.c
+@@ -527,7 +527,7 @@ int fcoe_percpu_receive_thread(void *arg
+ 	struct fcoe_dev_stats *stats;
+ 	struct fc_frame_header *fh;
+ 	struct sk_buff *skb;
+-	struct fcoe_crc_eof *cp;
++	struct fcoe_crc_eof crc_eof;
+ 	struct fc_frame *fp;
+ 	u8 *mac = NULL;
+ 	struct fcoe_softc *fc;
+@@ -604,13 +604,21 @@ int fcoe_percpu_receive_thread(void *arg
+ 		}
+ 
+ 		fp = (struct fc_frame *)skb;
+-		cp = (struct fcoe_crc_eof *)(skb->data + fr_len);
+ 		fc_frame_init(fp);
+ 		fr_dev(fp) = lp;
+ 		fr_sof(fp) = hp->fcoe_sof;
+-		fr_eof(fp) = cp->fcoe_eof;
+-		/* trim off the CRC and EOF trailer*/
+-		skb_trim(skb, fr_len);
++
++		/* Copy out the CRC and EOF trailer for access */
++		if (skb_copy_bits(skb, fr_len, &crc_eof, sizeof(crc_eof))) {
++			kfree_skb(skb);
++			continue;
++		}
++		fr_eof(fp) = crc_eof.fcoe_eof;
++		fr_crc(fp) = crc_eof.fcoe_crc32;
++		if (pskb_trim(skb, fr_len)) {
++			kfree_skb(skb);
++			continue;
++		}
+ 
+ 		/*
+ 		 * We only check CRC if no offload is available and if it is
+@@ -629,7 +637,7 @@ int fcoe_percpu_receive_thread(void *arg
+ 			continue;
+ 		}
+ 		if (fr_flags(fp) & FCPHF_CRC_UNCHECKED) {
+-			if (le32_to_cpu(cp->fcoe_crc32) !=
++			if (le32_to_cpu(fr_crc(fp)) !=
+ 			    ~crc32(~0, skb->data, fr_len)) {
+ 				if (debug_fcoe || stats->InvalidCRCCount < 5)
+ 					printk(KERN_WARNING "fcoe: dropping "
+--- a/drivers/scsi/libfc/fc_fcp.c
++++ b/drivers/scsi/libfc/fc_fcp.c
+@@ -356,7 +356,7 @@ static void fc_fcp_recv_data(struct fc_f
+ 			len += 4 - (len % 4);
+ 		}
+ 
+-		if (~crc != le32_to_cpu(*(__le32 *)(buf + len))) {
++		if (~crc != le32_to_cpu(fr_crc(fp))) {
+ crc_err:
+ 			stats = lp->dev_stats[smp_processor_id()];
+ 			stats->ErrorFrames++;
+--- a/drivers/scsi/libfc/fc_frame.c
++++ b/drivers/scsi/libfc/fc_frame.c
+@@ -42,7 +42,7 @@ u32 fc_frame_crc_check(struct fc_frame *
+ 	len = (fr_len(fp) + 3) & ~3;	/* round up length to include fill */
+ 	bp = (const u8 *) fr_hdr(fp);
+ 	crc = ~crc32(~0, bp, len);
+-	error = crc ^ *(u32 *) (bp + len);
++	error = crc ^ fr_crc(fp);
+ 	return error;
+ }
+ EXPORT_SYMBOL(fc_frame_crc_check);
+--- a/include/scsi/fc_frame.h
++++ b/include/scsi/fc_frame.h
+@@ -56,6 +56,7 @@
+ #define fr_max_payload(fp)	(fr_cb(fp)->fr_max_payload)
+ #define fr_cmd(fp)	(fr_cb(fp)->fr_cmd)
+ #define fr_dir(fp)	(fr_cmd(fp)->sc_data_direction)
++#define fr_crc(fp)	(fr_cb(fp)->fr_crc)
+ 
+ struct fc_frame {
+ 	struct sk_buff skb;
+@@ -66,12 +67,14 @@ struct fcoe_rcv_info {
+ 	struct fc_lport	*fr_dev;	/* transport layer private pointer */
+ 	struct fc_seq	*fr_seq;	/* for use with exchange manager */
+ 	struct scsi_cmnd *fr_cmd;	/* for use of scsi command */
++	u32		fr_crc;
+ 	u16		fr_max_payload;	/* max FC payload */
+ 	enum fc_sof	fr_sof;		/* start of frame delimiter */
+ 	enum fc_eof	fr_eof;		/* end of frame delimiter */
+ 	u8		fr_flags;	/* flags - see below */
+ };
+ 
++
+ /*
+  * Get fc_frame pointer for an skb that's already been imported.
+  */

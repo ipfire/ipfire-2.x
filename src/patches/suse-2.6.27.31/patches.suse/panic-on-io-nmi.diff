@@ -1,0 +1,116 @@
+From: Kurt Garloff <garloff@suse.de>
+Subject: [PATCH] X86: sysctl to allow panic on IOCK NMI error
+References: bnc427979
+
+This patch introduces a sysctl /proc/sys/kernel/panic_on_io_nmi.,
+which defaults to 0 (off).
+When enabled, the kernel panics when the kernel receives an NMI
+caused by an IO error.
+
+The IO error triggered NMI indicates a serious system condition,
+which could result in IO data corruption. Rather than contiuing,
+panicing and dumping might be a better choice, so one can figure
+out what's causing the IO error.
+This could be especially important to companies running IO intensive
+applications where corruption must be avoided, e.g. a banks databases.
+
+
+Signed-off-by: Roberto Angelino <robertangelino@gmail.com>
+
+
+---
+ arch/x86/kernel/traps_32.c |    4 ++++
+ arch/x86/kernel/traps_64.c |    4 ++++
+ include/linux/kernel.h     |    1 +
+ include/linux/sysctl.h     |    1 +
+ kernel/sysctl.c            |    8 ++++++++
+ kernel/sysctl_check.c      |    1 +
+ 6 files changed, 19 insertions(+)
+
+--- a/arch/x86/kernel/traps_32.c
++++ b/arch/x86/kernel/traps_32.c
+@@ -83,6 +83,7 @@ gate_desc idt_table[256]
+ 	__attribute__((__section__(".data.idt"))) = { { { { 0, 0 } } }, };
+ 
+ int panic_on_unrecovered_nmi;
++int panic_on_io_nmi;
+ int kstack_depth_to_print = 24;
+ static unsigned int code_bytes = 64;
+ #ifdef CONFIG_STACK_UNWIND
+@@ -779,6 +780,9 @@ io_check_error(unsigned char reason, str
+ 	printk(KERN_EMERG "NMI: IOCK error (debug interrupt?)\n");
+ 	show_registers(regs);
+ 
++	if (panic_on_io_nmi)
++		panic("NMI IOCK error: Not continuing");
++
+ 	/* Re-enable the IOCK line, wait for a few seconds */
+ 	reason = (reason & 0xf) | 8;
+ 	outb(reason, 0x61);
+--- a/arch/x86/kernel/traps_64.c
++++ b/arch/x86/kernel/traps_64.c
+@@ -56,6 +56,7 @@
+ #include <mach_traps.h>
+ 
+ int panic_on_unrecovered_nmi;
++int panic_on_io_nmi;
+ int kstack_depth_to_print = 12;
+ static unsigned int code_bytes = 64;
+ #ifdef CONFIG_STACK_UNWIND
+@@ -840,6 +841,9 @@ io_check_error(unsigned char reason, str
+ 	printk("NMI: IOCK error (debug interrupt?)\n");
+ 	show_registers(regs);
+ 
++	if (panic_on_io_nmi)
++		panic("NMI IOCK error: Not continuing");
++
+ 	/* Re-enable the IOCK line, wait for a few seconds */
+ 	reason = (reason & 0xf) | 8;
+ 	outb(reason, 0x61);
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -236,6 +236,7 @@ extern int oops_in_progress;		/* If set,
+ extern int panic_timeout;
+ extern int panic_on_oops;
+ extern int panic_on_unrecovered_nmi;
++extern int panic_on_io_nmi;
+ extern int tainted;
+ extern int unsupported;
+ extern const char *print_tainted(void);
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -165,6 +165,7 @@ enum
+ 	KERN_PANIC_ON_NMI=76, /* int: whether we will panic on an unrecovered */
+ 	KERN_KDB=77,		/* int: kdb on/off */
+ 	KERN_DUMP_AFTER_NOTIFIER=78, /* int: kdump after panic_notifier (SUSE only) */
++	KERN_PANIC_ON_IO_NMI=79, /* int: whether we will panic on an io NMI */
+ };
+ 
+ 
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -691,6 +691,14 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= &proc_dointvec,
+ 	},
+ 	{
++		.ctl_name	= KERN_PANIC_ON_IO_NMI,
++		.procname	= "panic_on_io_nmi",
++		.data		= &panic_on_io_nmi,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= &proc_dointvec,
++	},
++	{
+ 		.ctl_name	= KERN_BOOTLOADER_TYPE,
+ 		.procname	= "bootloader_type",
+ 		.data		= &bootloader_type,
+--- a/kernel/sysctl_check.c
++++ b/kernel/sysctl_check.c
+@@ -104,6 +104,7 @@ static const struct trans_ctl_table tran
+ 	{ KERN_MAX_LOCK_DEPTH,		"max_lock_depth" },
+ 	{ KERN_NMI_WATCHDOG,		"nmi_watchdog" },
+ 	{ KERN_PANIC_ON_NMI,		"panic_on_unrecovered_nmi" },
++	{ KERN_PANIC_ON_IO_NMI,		"panic_on_io_nmi" },
+ 	{ KERN_SETUID_DUMPABLE,		"suid_dumpable" },
+ 	{ KERN_KDB,			"kdb" },
+ 	{ KERN_DUMP_AFTER_NOTIFIER,	"dump_after_notifier" },

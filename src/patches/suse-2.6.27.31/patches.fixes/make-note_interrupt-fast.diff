@@ -1,0 +1,160 @@
+From: Bernhard Walle <bwalle@suse.de>
+Subject: [PATCH] Fix performance regression on large IA64 systems
+References: bnc #469589
+
+This patch tries to address a performance regression discovered by SGI.
+
+Patch b60c1f6ffd88850079ae419aa933ab0eddbd5535 removes the call
+to note_interrupt() in __do_IRQ(). Patch d85a60d85ea5b7c597508c1510c88e657773d378
+adds it again. Because it's needed for irqpoll.
+
+That patch now introduces a new parameter 'only_fixup' for note_interrupt().
+This parameter determines two cases:
+
+  TRUE  => The function should be only executed when irqfixup is set.
+           Either 'irqpoll' or 'irqfixup' directly set that.
+
+  FALSE => Just the behaviour as note_interrupt() always had.
+
+Now the patch converts all calls of note_interrupt() to only_fixup=FALSE,
+except the call that has been removed by b60c1f6ffd88850079ae419aa933ab0eddbd5535.
+So that call is always done, but the body is only executed when either
+'irqpoll' or 'irqfixup' are specified.
+
+This patch is not meant for mainline inclusion in the first run!
+
+
+Signed-off-by: Bernhard Walle <bwalle@suse.de>
+
+---
+ arch/arm/mach-ns9xxx/irq.c              |    2 +-
+ arch/powerpc/platforms/cell/interrupt.c |    2 +-
+ include/linux/irq.h                     |    2 +-
+ kernel/irq/chip.c                       |   10 +++++-----
+ kernel/irq/handle.c                     |    4 ++--
+ kernel/irq/spurious.c                   |   13 ++++++++++++-
+ 6 files changed, 22 insertions(+), 11 deletions(-)
+
+--- a/arch/arm/mach-ns9xxx/irq.c
++++ b/arch/arm/mach-ns9xxx/irq.c
+@@ -86,7 +86,7 @@ static void handle_prio_irq(unsigned int
+ 	/* XXX: There is no direct way to access noirqdebug, so check
+ 	 * unconditionally for spurious irqs...
+ 	 * Maybe this function should go to kernel/irq/chip.c? */
+-	note_interrupt(irq, desc, action_ret);
++	note_interrupt(irq, desc, action_ret, 0);
+ 
+ 	spin_lock(&desc->lock);
+ 	desc->status &= ~IRQ_INPROGRESS;
+--- a/arch/powerpc/platforms/cell/interrupt.c
++++ b/arch/powerpc/platforms/cell/interrupt.c
+@@ -270,7 +270,7 @@ static void handle_iic_irq(unsigned int
+ 		spin_unlock(&desc->lock);
+ 		action_ret = handle_IRQ_event(irq, action);
+ 		if (!noirqdebug)
+-			note_interrupt(irq, desc, action_ret);
++			note_interrupt(irq, desc, action_ret, 0);
+ 		spin_lock(&desc->lock);
+ 
+ 	} while ((desc->status & (IRQ_PENDING | IRQ_DISABLED)) == IRQ_PENDING);
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -296,7 +296,7 @@ static inline void generic_handle_irq(un
+ 
+ /* Handling of unhandled and spurious interrupts: */
+ extern void note_interrupt(unsigned int irq, struct irq_desc *desc,
+-			   int action_ret);
++			   int action_ret, int only_fixup);
+ 
+ /* Resending of interrupts :*/
+ void check_irq_resend(struct irq_desc *desc, unsigned int irq);
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -324,7 +324,7 @@ handle_simple_irq(unsigned int irq, stru
+ 
+ 	action_ret = handle_IRQ_event(irq, action);
+ 	if (!noirqdebug)
+-		note_interrupt(irq, desc, action_ret);
++		note_interrupt(irq, desc, action_ret, 0);
+ 
+ 	spin_lock(&desc->lock);
+ 	desc->status &= ~IRQ_INPROGRESS;
+@@ -370,7 +370,7 @@ handle_level_irq(unsigned int irq, struc
+ 
+ 	action_ret = handle_IRQ_event(irq, action);
+ 	if (!noirqdebug)
+-		note_interrupt(irq, desc, action_ret);
++		note_interrupt(irq, desc, action_ret, 0);
+ 
+ 	spin_lock(&desc->lock);
+ 	desc->status &= ~IRQ_INPROGRESS;
+@@ -423,7 +423,7 @@ handle_fasteoi_irq(unsigned int irq, str
+ 
+ 	action_ret = handle_IRQ_event(irq, action);
+ 	if (!noirqdebug)
+-		note_interrupt(irq, desc, action_ret);
++		note_interrupt(irq, desc, action_ret, 0);
+ 
+ 	spin_lock(&desc->lock);
+ 	desc->status &= ~IRQ_INPROGRESS;
+@@ -503,7 +503,7 @@ handle_edge_irq(unsigned int irq, struct
+ 		spin_unlock(&desc->lock);
+ 		action_ret = handle_IRQ_event(irq, action);
+ 		if (!noirqdebug)
+-			note_interrupt(irq, desc, action_ret);
++			note_interrupt(irq, desc, action_ret, 0);
+ 		spin_lock(&desc->lock);
+ 
+ 	} while ((desc->status & (IRQ_PENDING | IRQ_DISABLED)) == IRQ_PENDING);
+@@ -532,7 +532,7 @@ handle_percpu_irq(unsigned int irq, stru
+ 
+ 	action_ret = handle_IRQ_event(irq, desc->action);
+ 	if (!noirqdebug)
+-		note_interrupt(irq, desc, action_ret);
++		note_interrupt(irq, desc, action_ret, 0);
+ 
+ 	if (desc->chip->eoi)
+ 		desc->chip->eoi(irq);
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -187,7 +187,7 @@ unsigned int __do_IRQ(unsigned int irq)
+ 		if (likely(!(desc->status & IRQ_DISABLED))) {
+ 			action_ret = handle_IRQ_event(irq, desc->action);
+ 			if (!noirqdebug)
+-				note_interrupt(irq, desc, action_ret);
++				note_interrupt(irq, desc, action_ret, 1);
+ 		}
+ 		desc->chip->end(irq);
+ 		return 1;
+@@ -241,7 +241,7 @@ unsigned int __do_IRQ(unsigned int irq)
+ 
+ 		action_ret = handle_IRQ_event(irq, action);
+ 		if (!noirqdebug)
+-			note_interrupt(irq, desc, action_ret);
++			note_interrupt(irq, desc, action_ret, 0);
+ 
+ 		spin_lock(&desc->lock);
+ 		if (likely(!(desc->status & IRQ_PENDING)))
+--- a/kernel/irq/spurious.c
++++ b/kernel/irq/spurious.c
+@@ -171,8 +171,19 @@ static inline int try_misrouted_irq(unsi
+ }
+ 
+ void note_interrupt(unsigned int irq, struct irq_desc *desc,
+-		    irqreturn_t action_ret)
++		    irqreturn_t action_ret, int only_fixup)
+ {
++	/*
++	 * The parameter "only_fixup" means that the function should be only
++	 * executed if this parameter is set to 1 and the function should
++	 * not be executed if the parameter is 0.
++	 *
++	 * We need that because irqfixup is static to the function but
++	 * this function is called from kernel/irq/handle.c.
++	 */
++	if (only_fixup && irqfixup == 0)
++		return;
++
+ 	if (unlikely(action_ret != IRQ_HANDLED)) {
+ 		/*
+ 		 * If we are seeing only the odd spurious IRQ caused by

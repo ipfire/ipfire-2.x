@@ -1,0 +1,58 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] vfs: restore ia_file for compatibility with external modules
+References: bnc#381259
+
+ patches.apparmor/fsetattr.diff eliminated ia_file and ATTR_FILE in favor
+ of providing a ->fsetattr call that used a file pointer. Until this
+ patch is accepted into mainline, this patch provides the backward
+ compatibility for external file system modules.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/attr.c          |   13 ++++++++++++-
+ include/linux/fs.h |   11 +++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -168,8 +168,19 @@ int fnotify_change(struct dentry *dentry
+ 		if (!error) {
+ 			if (file && file->f_op && file->f_op->fsetattr)
+ 				error = file->f_op->fsetattr(file, attr);
+-			else
++			else {
++				/* External file system still expect to be
++				 * passed a file pointer via ia_file and
++				 * have it announced via ATTR_FILE. This
++				 * just makes it so they don't need to
++				 * change their API just for us. External
++				 * callers will have set these themselves. */
++				if (file) {
++					attr->ia_valid |= ATTR_FILE;
++					attr->ia_file = file;
++				}
+ 				error = inode->i_op->setattr(dentry, attr);
++			}
+ 		}
+ 	} else {
+ 		error = inode_change_ok(inode, attr);
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -367,6 +367,17 @@ struct iattr {
+ 	struct timespec	ia_atime;
+ 	struct timespec	ia_mtime;
+ 	struct timespec	ia_ctime;
++
++	/*
++	 * Not an attribute, but an auxilary info for filesystems wanting to
++	 * implement an ftruncate() like method.  NOTE: filesystem should
++	 * check for (ia_valid & ATTR_FILE), and not for (ia_file != NULL).
++	 *
++	 * NOTE: With patches.apparmor/fsetattr.diff applied, this is
++	 * for compatibility with external file system modules only. There
++	 * should not be any in-kernel users left.
++	 */
++	struct file	*ia_file;
+ };
+ 
+ /*

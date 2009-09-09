@@ -1,0 +1,29 @@
+From: Robert Love <robert.w.love@intel.com>
+Subject: [FcOE] Add fc_disc.c locking comment block
+References: bnc #459142
+
+Signed-off-by: Robert Love <robert.w.love@intel.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/libfc/fc_disc.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -24,6 +24,14 @@
+  * also handles RSCN events and re-discovery if necessary.
+  */
+ 
++/*
++ * DISC LOCKING
++ *
++ * The disc mutex is can be locked when acquiring rport locks, but may not
++ * be held when acquiring the lport lock. Refer to fc_lport.c for more
++ * details.
++ */
++
+ #include <linux/timer.h>
+ #include <linux/err.h>
+ #include <asm/unaligned.h>

@@ -1,0 +1,109 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: fix memory alignment for GPN_FT requests.
+References: bnc#466462
+
+Symptom:     An unexpected adapter reopen can be triggered in case
+             of a wrongly aligned GPN_FT nameserver request.
+Problem:     A request which is stored across a page is not allowed.
+             The standard memory allocation does not guarantee to have
+             all requested memory within one page.
+Solution:    Make sure the requested memory is always within one page.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/scsi/zfcp_aux.c |    7 +++++++
+ drivers/s390/scsi/zfcp_def.h |    9 +++++++++
+ drivers/s390/scsi/zfcp_fc.c  |   13 +++----------
+ 3 files changed, 19 insertions(+), 10 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_aux.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_aux.c
++++ linux-sles11/drivers/s390/scsi/zfcp_aux.c
+@@ -175,6 +175,11 @@ static int __init zfcp_module_init(void)
+ 	if (!zfcp_data.gid_pn_cache)
+ 		goto out_gid_cache;
+ 
++	zfcp_data.gpn_ft_cache = zfcp_cache_create(
++			sizeof(struct ct_iu_gpn_ft_req), "zfcp_gpn");
++	if (!zfcp_data.gpn_ft_cache)
++		goto out_gpn_cache;
++
+ 	zfcp_data.work_queue = create_singlethread_workqueue("zfcp_wq");
+ 
+ 	INIT_LIST_HEAD(&zfcp_data.adapter_list_head);
+@@ -209,6 +214,8 @@ out_ccw_register:
+ out_misc:
+ 	fc_release_transport(zfcp_data.scsi_transport_template);
+ out_transport:
++	kmem_cache_destroy(zfcp_data.gpn_ft_cache);
++out_gpn_cache:
+ 	kmem_cache_destroy(zfcp_data.gid_pn_cache);
+ out_gid_cache:
+ 	kmem_cache_destroy(zfcp_data.sr_buffer_cache);
+Index: linux-sles11/drivers/s390/scsi/zfcp_def.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_def.h
++++ linux-sles11/drivers/s390/scsi/zfcp_def.h
+@@ -333,6 +333,14 @@ struct ct_iu_gid_pn_resp {
+ 	u32 d_id;
+ } __attribute__ ((packed));
+ 
++struct ct_iu_gpn_ft_req {
++	struct ct_hdr header;
++	u8 flags;
++	u8 domain_id_scope;
++	u8 area_id_scope;
++	u8 fc4_type;
++} __attribute__ ((packed));
++
+ /**
+  * struct zfcp_send_ct - used to pass parameters to function zfcp_fsf_send_ct
+  * @wka_port: port where the request is sent to
+@@ -595,6 +603,7 @@ struct zfcp_data {
+ 	struct kmem_cache	*fsf_req_qtcb_cache;
+ 	struct kmem_cache	*sr_buffer_cache;
+ 	struct kmem_cache	*gid_pn_cache;
++	struct kmem_cache	*gpn_ft_cache;
+ 	struct workqueue_struct	*work_queue;
+ };
+ 
+Index: linux-sles11/drivers/s390/scsi/zfcp_fc.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_fc.c
++++ linux-sles11/drivers/s390/scsi/zfcp_fc.c
+@@ -10,14 +10,6 @@
+ 
+ #include "zfcp_ext.h"
+ 
+-struct ct_iu_gpn_ft_req {
+-	struct ct_hdr header;
+-	u8 flags;
+-	u8 domain_id_scope;
+-	u8 area_id_scope;
+-	u8 fc4_type;
+-} __attribute__ ((packed));
+-
+ struct gpn_ft_resp_acc {
+ 	u8 control;
+ 	u8 port_id[3];
+@@ -450,7 +442,8 @@ static void zfcp_free_sg_env(struct zfcp
+ {
+ 	struct scatterlist *sg = &gpn_ft->sg_req;
+ 
+-	kfree(sg_virt(sg)); /* free request buffer */
++	/* free request buffer */
++	kmem_cache_free(zfcp_data.gpn_ft_cache, sg_virt(sg));
+ 	zfcp_sg_free_table(gpn_ft->sg_resp, buf_num);
+ 
+ 	kfree(gpn_ft);
+@@ -465,7 +458,7 @@ static struct zfcp_gpn_ft *zfcp_alloc_sg
+ 	if (!gpn_ft)
+ 		return NULL;
+ 
+-	req = kzalloc(sizeof(struct ct_iu_gpn_ft_req), GFP_KERNEL);
++	req = kmem_cache_alloc(zfcp_data.gpn_ft_cache, GFP_KERNEL);
+ 	if (!req) {
+ 		kfree(gpn_ft);
+ 		gpn_ft = NULL;

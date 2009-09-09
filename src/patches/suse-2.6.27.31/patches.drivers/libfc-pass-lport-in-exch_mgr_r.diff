@@ -1,0 +1,90 @@
+From: Abhijeet Joglekar <abjoglek@cisco.com>
+Subject: libfc: Pass lport in exch_mgr_reset
+References: bnc #465596
+
+fc_exch_mgr structure is private to fc_exch.c. To export exch_mgr_reset to
+transport, transport needs access to the exch manager. Change
+exch_mgr_reset to use lport param which is the shared structure between
+libFC and transport.
+
+Alternatively, fc_exch_mgr definition can be moved to libfc.h so that lport
+can be accessed from mp*.
+
+Signed-off-by: Abhijeet Joglekar <abjoglek@cisco.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/libfc/fc_exch.c  |    3 ++-
+ drivers/scsi/libfc/fc_lport.c |    4 ++--
+ drivers/scsi/libfc/fc_rport.c |    4 ++--
+ include/scsi/libfc.h          |    4 ++--
+ 4 files changed, 8 insertions(+), 7 deletions(-)
+
+
+--- a/drivers/scsi/libfc/fc_exch.c
++++ b/drivers/scsi/libfc/fc_exch.c
+@@ -1478,10 +1478,11 @@ static void fc_exch_reset(struct fc_exch
+  * If sid is non-zero, reset only exchanges we source from that FID.
+  * If did is non-zero, reset only exchanges destined to that FID.
+  */
+-void fc_exch_mgr_reset(struct fc_exch_mgr *mp, u32 sid, u32 did)
++void fc_exch_mgr_reset(struct fc_lport *lp, u32 sid, u32 did)
+ {
+ 	struct fc_exch *ep;
+ 	struct fc_exch *next;
++	struct fc_exch_mgr *mp = lp->emp;
+ 
+ 	spin_lock_bh(&mp->em_lock);
+ restart:
+--- a/drivers/scsi/libfc/fc_lport.c
++++ b/drivers/scsi/libfc/fc_lport.c
+@@ -640,7 +640,7 @@ int fc_lport_destroy(struct fc_lport *lp
+ {
+ 	lport->tt.frame_send = fc_frame_drop;
+ 	lport->tt.fcp_abort_io(lport);
+-	lport->tt.exch_mgr_reset(lport->emp, 0, 0);
++	lport->tt.exch_mgr_reset(lport, 0, 0);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(fc_lport_destroy);
+@@ -951,7 +951,7 @@ static void fc_lport_enter_reset(struct 
+ 
+ 	lport->tt.disc_stop(lport);
+ 
+-	lport->tt.exch_mgr_reset(lport->emp, 0, 0);
++	lport->tt.exch_mgr_reset(lport, 0, 0);
+ 	fc_host_fabric_name(lport->host) = 0;
+ 	fc_host_port_id(lport->host) = 0;
+ 
+--- a/drivers/scsi/libfc/fc_rport.c
++++ b/drivers/scsi/libfc/fc_rport.c
+@@ -1302,7 +1302,7 @@ void fc_rport_terminate_io(struct fc_rpo
+ 	struct fc_rport_libfc_priv *rdata = rport->dd_data;
+ 	struct fc_lport *lport = rdata->local_port;
+ 
+-	lport->tt.exch_mgr_reset(lport->emp, 0, rport->port_id);
+-	lport->tt.exch_mgr_reset(lport->emp, rport->port_id, 0);
++	lport->tt.exch_mgr_reset(lport, 0, rport->port_id);
++	lport->tt.exch_mgr_reset(lport, rport->port_id, 0);
+ }
+ EXPORT_SYMBOL(fc_rport_terminate_io);
+--- a/include/scsi/libfc.h
++++ b/include/scsi/libfc.h
+@@ -469,7 +469,7 @@ struct libfc_function_template {
+ 	 * If s_id is non-zero, reset only exchanges originating from that FID.
+ 	 * If d_id is non-zero, reset only exchanges sending to that FID.
+ 	 */
+-	void (*exch_mgr_reset)(struct fc_exch_mgr *,
++	void (*exch_mgr_reset)(struct fc_lport *,
+ 			       u32 s_id, u32 d_id);
+ 
+ 	void (*rport_flush_queue)(void);
+@@ -908,7 +908,7 @@ struct fc_seq *fc_seq_start_next(struct 
+  * If s_id is non-zero, reset only exchanges originating from that FID.
+  * If d_id is non-zero, reset only exchanges sending to that FID.
+  */
+-void fc_exch_mgr_reset(struct fc_exch_mgr *, u32 s_id, u32 d_id);
++void fc_exch_mgr_reset(struct fc_lport *, u32 s_id, u32 d_id);
+ 
+ /*
+  * Functions for fc_functions_template

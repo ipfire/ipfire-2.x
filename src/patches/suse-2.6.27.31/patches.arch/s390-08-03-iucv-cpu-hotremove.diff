@@ -1,0 +1,83 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: iucv: failing cpu hot remove for inactive iucv
+References: bnc#466462,LTC#51104
+
+Symptom:     cpu hot remove rejected with NOTIFY_BAD
+Problem:     If the iucv module is compiled in / loaded but no user
+             is registered, cpu hot remove doesn't work. The iucv
+             cpu hotplug notifier on CPU_DOWN_PREPARE checks, if
+             the iucv_buffer_cpumask would be empty after the
+             corresponding bit would be cleared. However the bit
+             was never set since iucv wasn't enabled. That causes
+             all cpu hot unplug operations to fail in this scenario.
+Solution:    Use iucv_path_table as an indicator whether iucv is
+             enabled or not.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ net/iucv/iucv.c |   18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+Index: linux-sles11/net/iucv/iucv.c
+===================================================================
+--- linux-sles11.orig/net/iucv/iucv.c
++++ linux-sles11/net/iucv/iucv.c
+@@ -516,6 +516,7 @@ static int iucv_enable(void)
+ 	size_t alloc_size;
+ 	int cpu, rc;
+ 
++	get_online_cpus();
+ 	rc = -ENOMEM;
+ 	alloc_size = iucv_max_pathid * sizeof(struct iucv_path);
+ 	iucv_path_table = kzalloc(alloc_size, GFP_KERNEL);
+@@ -523,19 +524,17 @@ static int iucv_enable(void)
+ 		goto out;
+ 	/* Declare per cpu buffers. */
+ 	rc = -EIO;
+-	get_online_cpus();
+ 	for_each_online_cpu(cpu)
+ 		smp_call_function_single(cpu, iucv_declare_cpu, NULL, 1);
+ 	if (cpus_empty(iucv_buffer_cpumask))
+ 		/* No cpu could declare an iucv buffer. */
+-		goto out_path;
++		goto out;
+ 	put_online_cpus();
+ 	return 0;
+-
+-out_path:
+-	put_online_cpus();
+-	kfree(iucv_path_table);
+ out:
++	kfree(iucv_path_table);
++	iucv_path_table = NULL;
++	put_online_cpus();
+ 	return rc;
+ }
+ 
+@@ -550,8 +549,9 @@ static void iucv_disable(void)
+ {
+ 	get_online_cpus();
+ 	on_each_cpu(iucv_retrieve_cpu, NULL, 1);
+-	put_online_cpus();
+ 	kfree(iucv_path_table);
++	iucv_path_table = NULL;
++	put_online_cpus();
+ }
+ 
+ static int __cpuinit iucv_cpu_notify(struct notifier_block *self,
+@@ -588,10 +588,14 @@ static int __cpuinit iucv_cpu_notify(str
+ 	case CPU_ONLINE_FROZEN:
+ 	case CPU_DOWN_FAILED:
+ 	case CPU_DOWN_FAILED_FROZEN:
++		if (!iucv_path_table)
++			break;
+ 		smp_call_function_single(cpu, iucv_declare_cpu, NULL, 1);
+ 		break;
+ 	case CPU_DOWN_PREPARE:
+ 	case CPU_DOWN_PREPARE_FROZEN:
++		if (!iucv_path_table)
++			break;
+ 		cpumask = iucv_buffer_cpumask;
+ 		cpu_clear(cpu, cpumask);
+ 		if (cpus_empty(cpumask))

@@ -1,0 +1,78 @@
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Subject: Fix oops in set_map_drive
+References: bnc#446824, bnc#444469
+
+The oops was caused because of an unconditional free because of the
+merge changes.
+The error was caused because novfs_set_map_drive was not being called
+with the right args, which caused it to request for incorrect memory
+size.
+Cleaned up some debug messages as well, and corrected debug messages.
+
+
+---
+ fs/novfs/daemon.c |    9 +++++----
+ fs/novfs/inode.c  |   11 -----------
+ 2 files changed, 5 insertions(+), 15 deletions(-)
+
+Index: linux-2.6.27/fs/novfs/daemon.c
+===================================================================
+--- linux-2.6.27.orig/fs/novfs/daemon.c	2008-12-02 14:57:29.000000000 +0530
++++ linux-2.6.27/fs/novfs/daemon.c	2008-12-02 15:03:15.000000000 +0530
+@@ -1936,7 +1936,7 @@ static int set_map_drive(struct novfs_xp
+ 		full_name_hash(drivemap->name,
+ 				symInfo.linkOffsetLength - 1);
+ 	drivemap->namelen = symInfo.linkOffsetLength - 1;
+-	DbgPrint("NwdSetMapDrive: hash=0x%x path=%s\n",
++	DbgPrint("set_map_drive: hash=0x%lx path=%s\n",
+ 			drivemap->hash, drivemap->name);
+ 
+ 	dm = (struct drive_map *) & DriveMapList.next;
+@@ -1945,8 +1945,8 @@ static int set_map_drive(struct novfs_xp
+ 
+ 	list_for_each(list, &DriveMapList) {
+ 		dm = list_entry(list, struct drive_map, list);
+-		DbgPrint("NwdSetMapDrive: dm=0x%p\n"
+-				"   hash:    0x%x\n"
++		DbgPrint("set_map_drive: dm=0x%p\n"
++				"   hash:    0x%lx\n"
+ 				"   namelen: %d\n"
+ 				"   name:    %s\n",
+ 				dm, dm->hash, dm->namelen, dm->name);
+@@ -1971,7 +1971,8 @@ static int set_map_drive(struct novfs_xp
+ 					&dm->list);
+ 		}
+ 	}
+-	kfree(drivemap);
++	else
++		kfree(drivemap);
+ 	up(&DriveMapLock);
+ 	return (retVal);
+ }
+Index: linux-2.6.27/fs/novfs/inode.c
+===================================================================
+--- linux-2.6.27.orig/fs/novfs/inode.c	2008-12-02 15:01:46.000000000 +0530
++++ linux-2.6.27/fs/novfs/inode.c	2008-12-02 15:01:52.000000000 +0530
+@@ -4055,22 +4055,11 @@ int __init init_novfs(void)
+ 
+ void __exit exit_novfs(void)
+ {
+-	printk(KERN_INFO "exit_novfs\n");
+-
+ 	novfs_scope_exit();
+-	printk(KERN_INFO "exit_novfs after Scope_Uninit\n");
+-
+ 	novfs_daemon_queue_exit();
+-	printk(KERN_INFO "exit_novfs after Uninit_Daemon_Queue\n");
+-
+ 	novfs_profile_exit();
+-	printk(KERN_INFO "exit_novfs after profile_exit\n");
+-
+ 	novfs_proc_exit();
+-	printk(KERN_INFO "exit_novfs Uninit_Procfs_Interface\n");
+-
+ 	unregister_filesystem(&novfs_fs_type);
+-	printk(KERN_INFO "exit_novfs: Exit\n");
+ 
+ 	if (novfs_current_mnt) {
+ 		kfree(novfs_current_mnt);

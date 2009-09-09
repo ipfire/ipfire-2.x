@@ -1,0 +1,172 @@
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH] ext3: Avoid false EIO errors
+References: bnc#479730
+
+Sometimes block_write_begin() can map buffers in a page but later we fail to
+copy data into those buffers (because the source page has been paged out in the
+mean time). We then end up with !uptodate mapped buffers. To add a bit more to
+the confusion, block_write_end() does not commit any data (and thus does not
+any mark buffers as uptodate) if we didn't succeed with copying all the data.
+
+Commit f4fc66a894546bdc88a775d0e83ad20a65210bcb (ext3: convert to new aops)
+missed these cases and thus we were inserting non-uptodate buffers to
+transaction's list which confuses JBD code and it reports IO errors, aborts
+a transaction and generally makes users afraid about their data ;-P.
+
+This patch fixes the problem by reorganizing ext3_..._write_end() code to
+first call block_write_end() to mark buffers with valid data uptodate and
+after that we file only uptodate buffers to transaction's lists. Also
+fix a problem where we could leave blocks allocated beyond i_size (i_disksize
+in fact).
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+
+---
+ fs/ext3/inode.c |   99 +++++++++++++++++++++++---------------------------------
+ 1 file changed, 42 insertions(+), 57 deletions(-)
+
+--- a/fs/ext3/inode.c
++++ b/fs/ext3/inode.c
+@@ -1195,6 +1195,18 @@ int ext3_journal_dirty_data(handle_t *ha
+ 	return err;
+ }
+ 
++/* For ordered writepage and write_end functions */
++static int journal_dirty_data_fn(handle_t *handle, struct buffer_head *bh)
++{
++	/*
++	 * Write could have mapped the buffer but it didn't copy the data in
++	 * yet. So avoid filing such buffer into a transaction.
++	 */
++	if (buffer_mapped(bh) && buffer_uptodate(bh))
++		return ext3_journal_dirty_data(handle, bh);
++	return 0;
++}
++
+ /* For write_end() in data=journal mode */
+ static int write_end_fn(handle_t *handle, struct buffer_head *bh)
+ {
+@@ -1205,26 +1217,29 @@ static int write_end_fn(handle_t *handle
+ }
+ 
+ /*
+- * Generic write_end handler for ordered and writeback ext3 journal modes.
+- * We can't use generic_write_end, because that unlocks the page and we need to
+- * unlock the page after ext3_journal_stop, but ext3_journal_stop must run
+- * after block_write_end.
++ * This is nasty and subtle: ext3_write_begin() could have allocated blocks
++ * for the whole page but later we failed to copy the data in. So the disk
++ * size we really have allocated is pos + len (block_write_end() has zeroed
++ * the freshly allocated buffers so we aren't going to write garbage). But we
++ * want to keep i_size at the place where data copying finished so that we
++ * don't confuse readers. The worst what can happen is that we expose a page
++ * of zeros at the end of file after a crash...
+  */
+-static int ext3_generic_write_end(struct file *file,
+-				struct address_space *mapping,
+-				loff_t pos, unsigned len, unsigned copied,
+-				struct page *page, void *fsdata)
++static void update_file_sizes(struct inode *inode, loff_t pos, unsigned len,
++			      unsigned copied)
+ {
+-	struct inode *inode = file->f_mapping->host;
++	int mark_dirty = 0;
+ 
+-	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
+-
+-	if (pos+copied > inode->i_size) {
+-		i_size_write(inode, pos+copied);
+-		mark_inode_dirty(inode);
++	if (pos + len > EXT3_I(inode)->i_disksize) {
++		mark_dirty = 1;
++		EXT3_I(inode)->i_disksize = pos + len;
+ 	}
+-
+-	return copied;
++	if (pos + copied > inode->i_size) {
++		i_size_write(inode, pos + copied);
++		mark_dirty = 1;
++	}
++	if (mark_dirty)
++		mark_inode_dirty(inode);
+ }
+ 
+ /*
+@@ -1244,29 +1259,17 @@ static int ext3_ordered_write_end(struct
+ 	unsigned from, to;
+ 	int ret = 0, ret2;
+ 
++	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
++
++	/* See comment at update_file_sizes() for why we check buffers upto
++	 * from + len */
+ 	from = pos & (PAGE_CACHE_SIZE - 1);
+ 	to = from + len;
+-
+ 	ret = walk_page_buffers(handle, page_buffers(page),
+-		from, to, NULL, ext3_journal_dirty_data);
++		from, to, NULL, journal_dirty_data_fn);
+ 
+-	if (ret == 0) {
+-		/*
+-		 * generic_write_end() will run mark_inode_dirty() if i_size
+-		 * changes.  So let's piggyback the i_disksize mark_inode_dirty
+-		 * into that.
+-		 */
+-		loff_t new_i_size;
+-
+-		new_i_size = pos + copied;
+-		if (new_i_size > EXT3_I(inode)->i_disksize)
+-			EXT3_I(inode)->i_disksize = new_i_size;
+-		ret2 = ext3_generic_write_end(file, mapping, pos, len, copied,
+-							page, fsdata);
+-		copied = ret2;
+-		if (ret2 < 0)
+-			ret = ret2;
+-	}
++	if (ret == 0)
++		update_file_sizes(inode, pos, len, copied);
+ 	ret2 = ext3_journal_stop(handle);
+ 	if (!ret)
+ 		ret = ret2;
+@@ -1283,22 +1286,11 @@ static int ext3_writeback_write_end(stru
+ {
+ 	handle_t *handle = ext3_journal_current_handle();
+ 	struct inode *inode = file->f_mapping->host;
+-	int ret = 0, ret2;
+-	loff_t new_i_size;
++	int ret;
+ 
+-	new_i_size = pos + copied;
+-	if (new_i_size > EXT3_I(inode)->i_disksize)
+-		EXT3_I(inode)->i_disksize = new_i_size;
+-
+-	ret2 = ext3_generic_write_end(file, mapping, pos, len, copied,
+-							page, fsdata);
+-	copied = ret2;
+-	if (ret2 < 0)
+-		ret = ret2;
+-
+-	ret2 = ext3_journal_stop(handle);
+-	if (!ret)
+-		ret = ret2;
++	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
++	update_file_sizes(inode, pos, len, copied);
++	ret = ext3_journal_stop(handle);
+ 	unlock_page(page);
+ 	page_cache_release(page);
+ 
+@@ -1412,13 +1404,6 @@ static int bput_one(handle_t *handle, st
+ 	return 0;
+ }
+ 
+-static int journal_dirty_data_fn(handle_t *handle, struct buffer_head *bh)
+-{
+-	if (buffer_mapped(bh))
+-		return ext3_journal_dirty_data(handle, bh);
+-	return 0;
+-}
+-
+ /*
+  * Note that we always start a transaction even if we're not journalling
+  * data.  This is to preserve ordering: any hole instantiation within
