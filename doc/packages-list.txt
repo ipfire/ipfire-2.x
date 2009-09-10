@@ -250,9 +250,9 @@
 * openmailadmin-1.0.0
 * openssh-5.2p1
 * openssl-0.9.8k
-* openswan-2.6.22
-* openswan-2.6.22-kmod-2.6.27.31-ipfire
-* openswan-2.6.22-kmod-2.6.27.31-ipfire-xen
+* openswan-2.6.23
+* openswan-2.6.23-kmod-2.6.27.31-ipfire
+* openswan-2.6.23-kmod-2.6.27.31-ipfire-xen
 * openvpn-2.1_rc19
 * p7zip_4.65
 * pam_mysql-0.7RC1
