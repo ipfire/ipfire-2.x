@@ -713,13 +713,13 @@ buildpackages() {
 
   ipfirepackages
 
-#  # Check if there is a loop device for building in virtual environments
-#  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
-#        cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
-#	ipfiremake xen-image ED=$IPFVER
-#	rm -rf $LFS/install/packages/linux-xen-*.ipfire
-#  fi
-#  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
+  # Check if there is a loop device for building in virtual environments
+  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
+        cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
+	ipfiremake xen-image ED=$IPFVER
+	rm -rf $LFS/install/packages/linux-xen-*.ipfire
+  fi
+  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   # Cleanup
   stdumount
