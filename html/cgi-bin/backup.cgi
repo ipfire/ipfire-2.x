@@ -189,18 +189,18 @@ foreach (@backups){
 chomp($_);
 my $Datei = "/var/ipfire/backup/".$_;
 my @Info = stat($Datei);
-my $Size = $Info[7] / 1024;
-$Size = sprintf("%02d", $Size);
-print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
+my $Size = $Info[7] / 1024 / 1024;
+$Size = sprintf("%0.2f", $Size);
+print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size MB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 foreach (@backupisos){
 chomp($_);
 my $Datei = "/var/tmp/backupiso/".$_;
 my @Info = stat($Datei);
-my $Size = $Info[7] / 1024;
-$Size = sprintf("%02d", $Size);
-print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='downloadiso' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
+my $Size = $Info[7] / 1024 / 1024;
+$Size = sprintf("%0.2f", $Size);
+print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size MB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='downloadiso' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 print <<END
