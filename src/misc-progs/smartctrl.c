@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
         }
 
 
-        sprintf(command, "/tmp/hddshutdown-%s", argv[1]);
+        sprintf(command, "/var/run/hddshutdown-%s", argv[1]);
         FILE *fp = fopen(command,"r");
 	if( fp ) {
 		fclose(fp);
