@@ -70,6 +70,13 @@ if ($dnssettings{'RECONNECT'} eq $Lang::tr{'reconnect'}) {
 	&Header::closebox();	
 }
 
+if ($dnssettings{'DELETE'} eq $Lang::tr{'delete'}) {
+	system("cat /dev/null > ${General::swroot}/dns/settings &");
+	&Header::openbox('100%', 'left', $Lang::tr{'dns address deleted'} );
+	print "<font class='base'>$Lang::tr{'dns address deleted txt'}</font>\n";
+	&Header::closebox();	
+}
+
 # DPC move error message to top so it is seen!
 if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
@@ -103,6 +110,8 @@ print <<END
   <tr>
     <td colspan="2"><div align="center">
         <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type='submit' name='DELETE' value='$Lang::tr{'delete'}' />
         &nbsp;&nbsp;&nbsp;&nbsp;
         <input type='submit' name='RECONNECT' value='$Lang::tr{'reconnect'}' />
         </div>
