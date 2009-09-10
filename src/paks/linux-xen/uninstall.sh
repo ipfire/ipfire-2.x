@@ -22,41 +22,5 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-extract_files
-#
-KVER=2.6.25.18
-ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
-MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
-# Nur den letzten Parameter verwenden
-echo $MOUNT > /dev/null
-MOUNT=$_
-ENTRY=`grep "savedefault" /boot/grub/grub.conf | tail -n 1`
-# Nur den letzten Parameter verwenden
-echo $ENTRY > /dev/null
-let ENTRY=$_+1
-#
-# backup grub.conf
-#
-cp /boot/grub/grub.conf /boot/grub/grub-backup-$KVER.conf
-#
-# Add new Entry to grub.conf
-#
-echo "" >> /boot/grub/grub.conf
-echo "title IPFire alternative Kernel:$KVER" >> /boot/grub/grub.conf
-echo "  root (hd0,0)" >> /boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire root=$ROOT rootdelay=10 panic=10 $MOUNT" >> /boot/grub/grub.conf
-echo "  initrd /ipfirerd-$KVER.img" >> /boot/grub/grub.conf
-echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
-#
-# Made initramdisk
-#
-mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
-#
-# ReInstall grub
-#
-grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
-#
-# Create new module depency
-#
-depmod -a $KVER-ipfire
-
+remove_files
+mv -f /boot/grub/grub-backup-2.6.27.*.-xen.conf /boot/grub/grub.conf

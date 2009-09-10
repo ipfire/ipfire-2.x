@@ -22,5 +22,36 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-remove_files
-mv -f /boot/grub/grub-backup-2.6.25.*.conf /boot/grub/grub.conf
+extract_files
+#
+KVER=2.6.27.31
+ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
+MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
+# Nur den letzten Parameter verwenden
+echo $MOUNT > /dev/null
+MOUNT=$_
+ENTRY=`grep "savedefault" /boot/grub/grub.conf | tail -n 1`
+# Nur den letzten Parameter verwenden
+echo $ENTRY > /dev/null
+let ENTRY=$_+1
+#
+# backup grub.conf
+#
+cp /boot/grub/grub.conf /boot/grub/grub-backup-$KVER-xen.conf
+#
+# Add new Entry to grub.conf
+#
+echo "" >> /boot/grub/grub.conf
+echo "title IPFire Xen-Kernel:$KVER" >> /boot/grub/grub.conf
+echo "  root (hd0,0)" >> /boot/grub/grub.conf
+echo "  kernel /vmlinuz-$KVER-ipfire-xen root=$ROOT rootdelay=10 panic=10 $MOUNT" >> /boot/grub/grub.conf
+echo "  initrd /ipfirerd-$KVER-xen.img" >> /boot/grub/grub.conf
+echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
+#
+# Made initramdisk
+#
+mkinitcpio -k $KVER-ipfire-xen -g /boot/ipfirerd-$KVER-xen.img
+#
+# Create new module depency
+#
+depmod -a $KVER-ipfire-xen
