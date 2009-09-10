@@ -115,7 +115,7 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 # Rebuild Language
 #
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 # Add some entries to openvpn config
 #
