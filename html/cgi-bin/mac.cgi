@@ -73,6 +73,12 @@ if ($macsettings{'RECONNECT'} eq $Lang::tr{'reconnect'}) {
 	print "<font class='base'>$Lang::tr{'mac address done'}</font>\n";
 	&Header::closebox();	
 }
+if ($macsettings{'DELETE'} eq $Lang::tr{'delete'} ) {
+	system("cat /dev/null > ${General::swroot}/mac/settings &");
+	&Header::openbox('100%', 'left', $Lang::tr{'mac address deleted'} );
+	print "<font class='base'>$Lang::tr{'mac address deleted txt'}</font>\n";
+	&Header::closebox();	
+}
 
 # DPC move error message to top so it is seen!
 if ($errormessage) {
@@ -103,6 +109,8 @@ print <<END
   <tr>
     <td><div align="center">
       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <input type='submit' name='DELETE' value='$Lang::tr{'delete'}' />
       &nbsp;&nbsp;&nbsp;&nbsp;
       <input type='submit' name='RECONNECT' value='$Lang::tr{'reconnect'}' />
     </div></td>
