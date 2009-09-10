@@ -54,7 +54,8 @@ rm -rf /boot/System.map-*
 rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
 rm -rf /boot/vmlinuz-*
-rm -rf /lib/modules/
+# Don't remove old xen modules. Kernel may stored outside.
+rm -rf /lib/modules/*-ipfire
 #
 # Backup grub.conf
 #
