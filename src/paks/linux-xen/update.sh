@@ -22,5 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-./uninstall.sh
+#Don't remove old xen kernel at update
+#./uninstall.sh
 ./install.sh
