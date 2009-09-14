@@ -1087,7 +1087,7 @@
 'mac address saved' => 'Successfully saved!',
 'mac address saved txt' => 'The MAC address has been successfully saved, but changes will only take effect after reboot or reconnection.',
 'mac address deleted' => 'Successfully deleted!',
-'mac address deleted txt' => 'The MAC address has been successfully deleted, but changes will only take effect after reboot or reconnection.',
+'mac address deleted txt' => 'The MAC address has been successfully deleted, but changes will only take effect after <strong>reboot</strong>.',
 'mac address recon' => 'Trying to reconnect!',
 'mac address done' => 'The MAC address settings are going to be saved.',
 'mac desc' => 'Here you are able to change the MAC address on red0. The address must be entered in hexadecimal (0-9,a-f), a valid entry is <br />e.g. 00-01-02-0e-b8-d6 or 00:01:02:0e:b8:d6.',
