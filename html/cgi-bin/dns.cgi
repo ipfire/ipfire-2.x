@@ -63,14 +63,14 @@ if ($dnssettings{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 }
 
-if ($dnssettings{'RECONNECT'} eq $Lang::tr{'reconnect'}) {
+if ($dnssettings{'ACTION'} eq $Lang::tr{'reconnect'}) {
 	system("/usr/local/bin/redctrl restart >/dev/null 2>&1 &");
 	&Header::openbox('100%', 'left', $Lang::tr{'dns address recon'} );
 	print "<font class='base'>$Lang::tr{'dns address done'}</font>\n";
 	&Header::closebox();	
 }
 
-if ($dnssettings{'DELETE'} eq $Lang::tr{'delete'}) {
+if ($dnssettings{'ACTION'} eq $Lang::tr{'delete'}) {
 	system("cat /dev/null > ${General::swroot}/dns/settings &");
 	&Header::openbox('100%', 'left', $Lang::tr{'dns address deleted'} );
 	print "<font class='base'>$Lang::tr{'dns address deleted txt'}</font>\n";
@@ -98,22 +98,75 @@ print <<END
   </tr>
   <tr>
     <td width="25%"><font class='base'>$Lang::tr{'dns new 0'}</font></td>
+END
+;     
+if ($dnssettings{'ACTION'} eq $Lang::tr{'delete'}) {
+print <<END    
+    <td width="75%"><input type="text" name="DNS0" maxlength="15" value=""/></td>
+END
+; 
+} else {   
+print <<END
     <td width="75%"><input type="text" name="DNS0" maxlength="15" value="$dnssettings{"DNS0"}"/></td>
+END
+;  
+}
+print <<END
   </tr>
   <tr>
     <td><font class='base'>$Lang::tr{'dns new 1'}</font></td>
+END
+;     
+if ($dnssettings{'ACTION'} eq $Lang::tr{'delete'}) {
+print <<END
+    <td><input type="text" name="DNS1" maxlength="15" value=""/></td>
+END
+; 
+} else {   
+print <<END
     <td><input type="text" name="DNS1" maxlength="15" value="$dnssettings{"DNS1"}"/></td>
+END
+; 
+}
+print <<END 
   </tr>
   <tr>
     <td colspan="2"><hr /></td>
   </tr>
   <tr>
     <td colspan="2"><div align="center">
+END
+;     
+if ($dnssettings{'ACTION'} eq $Lang::tr{'save'} && $errormessage eq "") {
+print <<END 	  
         <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type='submit' name='DELETE' value='$Lang::tr{'delete'}' />
+        <input type='submit' name='ACTION' value='$Lang::tr{'delete'}' />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type='submit' name='RECONNECT' value='$Lang::tr{'reconnect'}' />
+        <input type='submit' name='ACTION' value='$Lang::tr{'reconnect'}' />
+END
+; 
+} elsif ($dnssettings{'ACTION'} eq $Lang::tr{'delete'}) {
+print <<END 	  
+        <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type='submit' name='ACTION' value='$Lang::tr{'reconnect'}' />
+END
+;
+} elsif ($dnssettings{'ACTION'} eq $Lang::tr{'save'}) {
+print <<END 	  
+        <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+END
+; 
+} else {   
+print <<END
+        <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type='submit' name='ACTION' value='$Lang::tr{'delete'}' />
+END
+;  
+} 
+print <<END     
         </div>
       </td>
   </tr>
