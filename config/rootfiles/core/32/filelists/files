@@ -6,3 +6,4 @@ srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
+srv/web/ipfire/cgi-bin/index.cgi
