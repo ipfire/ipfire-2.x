@@ -220,8 +220,8 @@
 * mldonkey-3.0.0
 * module-init-tools-3.5
 * motion-3.2.11
-* mpc-0.14
-* mpd-0.14.2
+* mpc-0.17
+* mpd-0.15.3
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mtd-CVS-20070507
@@ -243,6 +243,7 @@
 * noip_updater_v1.6
 * ntfs-3g-2009.2.1
 * ntp-4.2.4p7
+* nut-2.4.1
 * ocaml-3.09.2
 * oinkmaster-2.0
 * open-vm-tools-2009.05.22-167859
