@@ -1057,7 +1057,7 @@
 'mac address saved' => 'Erfolgreich gespeichert!',
 'mac address saved txt' => 'Die MAC-Adresse wurde erfolgreich gespeichert. Änderungen werden jedoch erst nach einem Neustart oder einer Wiederverbindung übernommen.',
 'mac address deleted' => 'Erfolgreich gelöscht! ',
-'mac address deleted txt' => 'Mac Adresse wurde erfolgreich gelöscht. Änderungen werden jedoch erst nach einem Neustart oder einer Wiederverbindung übernommen.',
+'mac address deleted txt' => 'Mac Adresse wurde erfolgreich gelöscht. Änderungen werden jedoch erst nach einem <strong>Neustart</strong> übernommen.',
 'mac address recon' => 'Es wird neu Verbunden!',
 'mac address done' => 'Die MAC-Adressen Einstellungen werden übernommen',
 'mac desc' => 'Sie können an dieser Stelle die MAC-Adresse von red0 ändern. Die Adresse muss in hexadezimal (0-9,a-f) eingegeben werden, eine gültige Eingaben ist z.B. 00-01-02-0e-b8-d6 oder 00:01:02:0e:b8:d6.',
