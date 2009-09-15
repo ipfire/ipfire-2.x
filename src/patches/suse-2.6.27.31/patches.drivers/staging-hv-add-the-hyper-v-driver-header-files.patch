@@ -1,0 +1,1098 @@
+From bee20ea87b3e6f246b387f707983a0ef47c8a15b Mon Sep 17 00:00:00 2001
+From: Hank Janssen <hjanssen@microsoft.com>
+Date: Mon, 13 Jul 2009 15:19:28 -0700
+Subject: Staging: hv: add the Hyper-V driver header files
+
+From: Hank Janssen <hjanssen@microsoft.com>
+
+These are the header files for the different Linux Hyper-V drivers to
+use.
+
+Signed-off-by: Hank Janssen <hjanssen@microsoft.com>
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ drivers/staging/hv/include/NetVscApi.h  |  145 +++++++++++++++++
+ drivers/staging/hv/include/StorVscApi.h |  137 ++++++++++++++++
+ drivers/staging/hv/include/VmbusApi.h   |  262 +++++++++++++++++++++++++++++++
+ drivers/staging/hv/include/logging.h    |  134 ++++++++++++++++
+ drivers/staging/hv/include/osd.h        |  263 ++++++++++++++++++++++++++++++++
+ drivers/staging/hv/include/vmbus.h      |  111 +++++++++++++
+ 6 files changed, 1052 insertions(+)
+ create mode 100644 drivers/staging/hv/include/NetVscApi.h
+ create mode 100644 drivers/staging/hv/include/StorVscApi.h
+ create mode 100644 drivers/staging/hv/include/VmbusApi.h
+ create mode 100644 drivers/staging/hv/include/logging.h
+ create mode 100644 drivers/staging/hv/include/osd.h
+ create mode 100644 drivers/staging/hv/include/vmbus.h
+
+--- /dev/null
++++ b/drivers/staging/hv/include/logging.h
+@@ -0,0 +1,134 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _LOGGING_H_
++#define _LOGGING_H_
++
++//#include <linux/init.h>
++//#include <linux/module.h>
++
++#include "osd.h"
++
++#define VMBUS				0x0001
++#define STORVSC				0x0002
++#define NETVSC				0x0004
++#define INPUTVSC			0x0008
++#define BLKVSC				0x0010
++#define VMBUS_DRV			0x0100
++#define STORVSC_DRV			0x0200
++#define NETVSC_DRV			0x0400
++#define INPUTVSC_DRV		0x0800
++#define BLKVSC_DRV			0x1000
++
++#define ALL_MODULES			(VMBUS		|\
++							STORVSC		|\
++							NETVSC		|\
++							INPUTVSC	|\
++							BLKVSC		|\
++							VMBUS_DRV	|\
++							STORVSC_DRV	|\
++							NETVSC_DRV	|\
++							INPUTVSC_DRV|\
++							BLKVSC_DRV)
++
++// Logging Level
++#define CRITICAL_LVL				2
++#define ERROR_LVL					3
++#define WARNING_LVL					4
++#define INFO_LVL					6
++#define DEBUG_LVL					7
++#define DEBUG_LVL_ENTEREXIT			8
++#define DEBUG_RING_LVL				9
++
++extern unsigned int vmbus_loglevel;
++
++#define ASSERT(expr)	\
++        if (!(expr)) {	\
++		LogMsg("<%d>Assertion failed! %s,%s,%s,line=%d\n", CRITICAL_LVL, #expr,__FILE__,__FUNCTION__,__LINE__);	\
++		__asm__ __volatile__("int3");	\
++        }
++
++#define DPRINT(mod, lvl, fmt, args...) do {\
++	if (mod & (HIWORD(vmbus_loglevel))) \
++		(lvl <= LOWORD(vmbus_loglevel))?(LogMsg("<%d>" #mod": %s() " fmt "\n", DEBUG_LVL, __FUNCTION__, ## args)):(0);\
++	} while (0)
++
++#define DPRINT_DBG(mod, fmt, args...) do {\
++	if (mod & (HIWORD(vmbus_loglevel))) \
++		(DEBUG_LVL <= LOWORD(vmbus_loglevel))?(LogMsg("<%d>" #mod": %s() " fmt "\n", DEBUG_LVL, __FUNCTION__, ## args)):(0);\
++	} while (0)
++
++#define DPRINT_INFO(mod, fmt, args...) do {\
++	if (mod & (HIWORD(vmbus_loglevel))) \
++		(INFO_LVL <= LOWORD(vmbus_loglevel))?(LogMsg("<%d>" #mod": " fmt "\n", INFO_LVL, ## args)):(0);\
++	} while (0)
++
++#define DPRINT_WARN(mod, fmt, args...) do {\
++	if (mod & (HIWORD(vmbus_loglevel))) \
++		(WARNING_LVL <= LOWORD(vmbus_loglevel))?(LogMsg("<%d>" #mod": WARNING! " fmt "\n", WARNING_LVL, ## args)):(0);\
++	} while (0)
++
++#define DPRINT_ERR(mod, fmt, args...) do {\
++	if (mod & (HIWORD(vmbus_loglevel))) \
++		(ERROR_LVL <= LOWORD(vmbus_loglevel))?(LogMsg("<%d>" #mod": %s() ERROR!! " fmt "\n", ERROR_LVL, __FUNCTION__, ## args)):(0);\
++	} while (0)
++
++#ifdef DEBUG
++#define DPRINT_ENTER(mod) do {\
++	if (mod & (HIWORD(vmbus_loglevel))) \
++		(DEBUG_LVL_ENTEREXIT <= LOWORD(vmbus_loglevel))?(LogMsg("<%d>" "["#mod"]: %s() enter\n", DEBUG_LVL, __FUNCTION__)):(0);\
++	} while (0)
++
++#define DPRINT_EXIT(mod) do {\
++	if (mod & (HIWORD(vmbus_loglevel))) \
++		(DEBUG_LVL_ENTEREXIT <= LOWORD(vmbus_loglevel))?(LogMsg("<%d>" "["#mod"]: %s() exit\n", DEBUG_LVL, __FUNCTION__)):(0);\
++	} while (0)
++#else
++#define DPRINT_ENTER(mod)
++#define DPRINT_EXIT(mod)
++#endif
++
++static inline void PrintBytes(const unsigned char* bytes, int len)
++{
++	int i=0;
++
++	LogMsg("\n<< ");
++	for (i=0; i< len; i++)
++	{
++		LogMsg("0x%x ", bytes[i]);
++	}
++	LogMsg(">>\n");
++}
++
++//
++// Inline
++//
++//static inline void GuidToStr(const GUID g, char *str)
++//{
++//	sprintf(str, "{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++//	g[3], g[2], g[1], g[0], g[5], g[4], g[7], g[6], g[8], g[9], g[10], g[11], g[12], g[13], g[14], g[15]);
++//
++//}
++
++#endif //_LOGGING_H_
+--- /dev/null
++++ b/drivers/staging/hv/include/NetVscApi.h
+@@ -0,0 +1,145 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _NETVSC_API_H_
++#define _NETVSC_API_H_
++
++#include "VmbusApi.h"
++
++//
++// Defines
++//
++#define NETVSC_DEVICE_RING_BUFFER_SIZE			64*PAGE_SIZE
++
++#define HW_MACADDR_LEN		6
++
++//
++// Fwd declaration
++//
++typedef struct _NETVSC_PACKET	*PNETVSC_PACKET;
++
++
++//
++// Data types
++//
++
++typedef int (*PFN_ON_OPEN)(DEVICE_OBJECT *Device);
++typedef int (*PFN_ON_CLOSE)(DEVICE_OBJECT *Device);
++
++typedef void (*PFN_QUERY_LINKSTATUS)(DEVICE_OBJECT *Device);
++typedef int (*PFN_ON_SEND)(DEVICE_OBJECT *dev, PNETVSC_PACKET packet);
++typedef void (*PFN_ON_SENDRECVCOMPLETION)(PVOID Context);
++
++typedef int (*PFN_ON_RECVCALLBACK)(DEVICE_OBJECT *dev, PNETVSC_PACKET packet);
++typedef void (*PFN_ON_LINKSTATUS_CHANGED)(DEVICE_OBJECT *dev, UINT32 Status);
++
++// Represent the xfer page packet which contains 1 or more netvsc packet
++typedef struct _XFERPAGE_PACKET {
++	DLIST_ENTRY			ListEntry;
++
++	// # of netvsc packets this xfer packet contains
++	UINT32				Count;
++} XFERPAGE_PACKET;
++
++
++// The number of pages which are enough to cover jumbo frame buffer.
++#define NETVSC_PACKET_MAXPAGE  4
++
++// Represent netvsc packet which contains 1 RNDIS and 1 ethernet frame within the RNDIS
++typedef struct _NETVSC_PACKET {
++	// Bookkeeping stuff
++	DLIST_ENTRY				ListEntry;
++
++	DEVICE_OBJECT			*Device;
++	BOOL					IsDataPacket;
++
++	// Valid only for receives when we break a xfer page packet into multiple netvsc packets
++	XFERPAGE_PACKET		*XferPagePacket;
++
++	union {
++		struct{
++			UINT64						ReceiveCompletionTid;
++			PVOID						ReceiveCompletionContext;
++			PFN_ON_SENDRECVCOMPLETION	OnReceiveCompletion;
++		} Recv;
++		struct{
++			UINT64						SendCompletionTid;
++			PVOID						SendCompletionContext;
++			PFN_ON_SENDRECVCOMPLETION	OnSendCompletion;
++		} Send;
++	} Completion;
++
++	// This points to the memory after PageBuffers
++	PVOID					Extension;
++
++	UINT32					TotalDataBufferLength;
++	// Points to the send/receive buffer where the ethernet frame is
++	UINT32					PageBufferCount;
++	PAGE_BUFFER				PageBuffers[NETVSC_PACKET_MAXPAGE];
++
++} NETVSC_PACKET;
++
++
++// Represents the net vsc driver
++typedef struct _NETVSC_DRIVER_OBJECT {
++	DRIVER_OBJECT				Base; // Must be the first field
++
++	UINT32						RingBufferSize;
++	UINT32						RequestExtSize;
++
++	// Additional num  of page buffers to allocate
++	UINT32						AdditionalRequestPageBufferCount;
++
++	// This is set by the caller to allow us to callback when we receive a packet
++	// from the "wire"
++	PFN_ON_RECVCALLBACK			OnReceiveCallback;
++
++	PFN_ON_LINKSTATUS_CHANGED	OnLinkStatusChanged;
++
++	// Specific to this driver
++	PFN_ON_OPEN					OnOpen;
++	PFN_ON_CLOSE				OnClose;
++	PFN_ON_SEND					OnSend;
++	//PFN_ON_RECVCOMPLETION	OnReceiveCompletion;
++
++	//PFN_QUERY_LINKSTATUS		QueryLinkStatus;
++
++	void*						Context;
++} NETVSC_DRIVER_OBJECT;
++
++
++typedef struct _NETVSC_DEVICE_INFO {
++    UCHAR	MacAddr[6];
++    BOOL	LinkState;	// 0 - link up, 1 - link down
++} NETVSC_DEVICE_INFO;
++
++//
++// Interface
++//
++int
++NetVscInitialize(
++	DRIVER_OBJECT* drv
++	);
++
++#endif // _NETVSC_API_H_
+--- /dev/null
++++ b/drivers/staging/hv/include/osd.h
+@@ -0,0 +1,263 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _OSD_H_
++#define _OSD_H_
++
++//
++// Defines
++//
++
++#ifndef PAGE_SIZE
++#define PAGE_SIZE 0x1000
++#endif
++
++#ifndef PAGE_SHIFT
++#define PAGE_SHIFT 12
++#endif
++
++#ifndef memcpy
++#define memcpy		__builtin_memcpy
++#endif
++
++#ifndef memset
++#define memset		__builtin_memset
++#endif
++
++#ifndef memcmp
++#define memcmp		__builtin_memcmp
++#endif
++
++#ifndef strcpy
++#define strcpy		__builtin_strcpy
++#endif
++
++//
++//#ifndef sprintf
++//#define sprintf				__builtin_sprintf
++//#endif
++
++#define STRUCT_PACKED		__attribute__((__packed__))
++#define STRUCT_ALIGNED(x)	__attribute__((__aligned__(x)))
++
++#define UNUSED_VAR(v)		v  __attribute__((__unused__))
++
++#define ALIGN_UP(value, align)			( ((value) & (align-1))? ( ((value) + (align-1)) & ~(align-1) ): (value) )
++#define ALIGN_DOWN(value, align)		( (value) & ~(align-1) )
++#define NUM_PAGES_SPANNED(addr, len)	( (ALIGN_UP(addr+len, PAGE_SIZE) - ALIGN_DOWN(addr, PAGE_SIZE)) >> PAGE_SHIFT )
++
++#define MIN(a, b)       ((a) < (b)? (a): (b))
++#define MAX(a, b)       ((a) > (b)? (a): (b))
++
++#define LOWORD(dw)		((unsigned short) (dw))
++#define HIWORD(dw)		((unsigned short) (((unsigned int) (dw) >> 16) & 0xFFFF))
++
++#define FIELD_OFFSET(t, f)    ((unsigned int)(unsigned long)&(((t *)0)->f))
++
++#ifdef FALSE
++#undef FALSE
++#endif
++#define FALSE 0
++
++#ifdef TRUE
++#undef TRUE
++#endif
++#define TRUE  1
++
++#ifndef NULL
++#define NULL  (void *)0
++#endif
++
++typedef struct _DLIST_ENTRY {
++   struct _DLIST_ENTRY *Flink;
++   struct _DLIST_ENTRY *Blink;
++} DLIST_ENTRY;
++
++//
++// unsigned types
++//
++typedef unsigned char		UINT8;
++typedef unsigned short		UINT16;
++typedef unsigned int		UINT32;
++#ifdef __x86_64__
++typedef unsigned long		UINT64;
++#else
++typedef unsigned long long	UINT64;
++#endif
++
++typedef unsigned long long	ULONGLONG;
++typedef unsigned int		ULONG;
++typedef unsigned short		USHORT;
++typedef unsigned char		UCHAR;
++
++//
++// signed types
++//
++typedef char				INT8;
++typedef short				INT16;
++typedef int					INT32;
++#ifdef __x86_64__
++typedef long				INT64;
++#else
++typedef long long		INT64;
++#endif
++
++typedef int					LONG;
++typedef char				CHAR;
++typedef long long			LONGLONG;
++
++//
++// Other types
++//
++typedef unsigned long		SIZE_T;
++typedef void				VOID;
++//typedef unsigned char		GUID[16];
++typedef void*				PVOID;
++typedef unsigned char		BOOL;
++typedef unsigned char		BOOLEAN;
++typedef void*				HANDLE;
++typedef UINT32				DWORD;
++typedef char*				PCHAR;
++typedef unsigned char		BYTE;
++
++typedef unsigned long		ULONG_PTR;
++
++typedef struct {
++	unsigned char	Data[16];
++} GUID;
++
++typedef void (*PFN_WORKITEM_CALLBACK)(void* context);
++typedef void (*PFN_TIMER_CALLBACK)(void* context);
++
++
++#ifdef __x86_64__
++
++#define RDMSR(reg, v) {                                                        \
++    UINT32 h, l;                                                                 \
++     __asm__ __volatile__("rdmsr"                                                               \
++    : "=a" (l), "=d" (h)                                                       \
++    : "c" (reg));                                                              \
++    v = (((UINT64)h) << 32) | l;                                                         \
++}
++
++#define WRMSR(reg, v) {                                                        \
++    UINT32 h, l;                                                               \
++    l = (UINT32)(((UINT64)(v)) & 0xFFFFFFFF);                                  \
++    h = (UINT32)((((UINT64)(v)) >> 32) & 0xFFFFFFFF);                          \
++     __asm__ __volatile__("wrmsr"                                              \
++    : /* no outputs */                                                         \
++    : "c" (reg), "a" (l), "d" (h));                                            \
++}
++
++#else
++
++#define RDMSR(reg, v) 			                                               \
++     __asm__ __volatile__("rdmsr" 	                                           \
++    : "=A" (v) 			                                                       \
++    : "c" (reg))
++
++#define WRMSR(reg, v) 			                                               \
++     __asm__ __volatile__("wrmsr" 	                                           \
++    : /* no outputs */ 				                                           \
++    : "c" (reg), "A" ((UINT64)v))
++
++#endif
++
++
++static inline void do_cpuid(unsigned int op, unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int *edx)
++{
++	__asm__ __volatile__("cpuid" : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx) : "0" (op), "c" (ecx));
++}
++
++//
++// Osd routines
++//
++extern void LogMsg(const char *fmt, ...);
++
++extern void BitSet(unsigned int* addr, int value);
++extern void BitClear(unsigned int* addr, int value);
++extern int BitTest(unsigned int* addr, int value);
++extern int BitTestAndClear(unsigned int* addr, int value);
++extern int BitTestAndSet(unsigned int* addr, int value);
++
++extern int InterlockedIncrement(int *val);
++extern int InterlockedDecrement(int *val);
++extern int InterlockedCompareExchange(int *val, int new, int curr);
++
++extern void Sleep(unsigned long usecs);
++
++extern void* VirtualAllocExec(unsigned int size);
++extern void VirtualFree(void* VirtAddr);
++
++extern void* PageAlloc(unsigned int count);
++extern void PageFree(void* page, unsigned int count);
++
++extern void* MemMapIO(unsigned long phys, unsigned long size);
++extern void MemUnmapIO(void* virt);
++
++extern void* MemAlloc(unsigned int size);
++extern void* MemAllocZeroed(unsigned int size);
++extern void* MemAllocAtomic(unsigned int size);
++extern void MemFree(void* buf);
++extern void MemoryFence(VOID);
++
++extern HANDLE TimerCreate(PFN_TIMER_CALLBACK pfnTimerCB, void* context);
++extern void TimerClose(HANDLE hTimer);
++extern int TimerStop(HANDLE hTimer);
++extern void TimerStart(HANDLE hTimer, UINT32 expirationInUs);
++extern SIZE_T GetTickCount(void);
++
++extern HANDLE WaitEventCreate(void);
++extern void WaitEventClose(HANDLE hWait);
++extern void WaitEventSet(HANDLE hWait);
++extern int	WaitEventWait(HANDLE hWait);
++
++// If >0, hWait got signaled. If ==0, timeout. If < 0, error
++extern int	WaitEventWaitEx(HANDLE hWait, UINT32 TimeoutInMs);
++
++extern HANDLE SpinlockCreate(void);
++extern void SpinlockClose(HANDLE hSpin);
++extern void SpinlockAcquire(HANDLE hSpin);
++extern void	SpinlockRelease(HANDLE hSpin);
++
++
++#define GetVirtualAddress Physical2LogicalAddr
++void* Physical2LogicalAddr(ULONG_PTR PhysAddr);
++
++#define GetPhysicalAddress Logical2PhysicalAddr
++ULONG_PTR Logical2PhysicalAddr(PVOID LogicalAddr);
++
++ULONG_PTR Virtual2Physical(PVOID VirtAddr);
++
++void* PageMapVirtualAddress(unsigned long Pfn);
++void PageUnmapVirtualAddress(void* VirtAddr);
++
++
++extern HANDLE WorkQueueCreate(char* name);
++extern void WorkQueueClose(HANDLE hWorkQueue);
++extern int WorkQueueQueueWorkItem(HANDLE hWorkQueue, PFN_WORKITEM_CALLBACK workItem, void* context);
++
++extern void QueueWorkItem(PFN_WORKITEM_CALLBACK workItem, void* context);
++
++#endif // _OSD_H_
+--- /dev/null
++++ b/drivers/staging/hv/include/StorVscApi.h
+@@ -0,0 +1,137 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _STORVSC_API_H_
++#define _STORVSC_API_H_
++
++#include "VmbusApi.h"
++
++//
++// Defines
++//
++
++#define STORVSC_RING_BUFFER_SIZE			10*PAGE_SIZE
++#define BLKVSC_RING_BUFFER_SIZE				20*PAGE_SIZE
++
++#define STORVSC_MAX_IO_REQUESTS				64
++
++// In Hyper-V, each port/path/target maps to 1 scsi host adapter.
++// In reality, the path/target is not used (ie always set to 0) so
++// our scsi host adapter essentially has 1 bus with 1 target that contains
++// up to 256 luns.
++
++#define STORVSC_MAX_LUNS_PER_TARGET			64
++#define STORVSC_MAX_TARGETS					1
++#define STORVSC_MAX_CHANNELS				1
++
++
++// Fwd decl
++//
++//struct VMBUS_CHANNEL;
++typedef struct _STORVSC_REQUEST* PSTORVSC_REQUEST;
++
++//
++// Data types
++//
++typedef int (*PFN_ON_IO_REQUEST)(PDEVICE_OBJECT Device, PSTORVSC_REQUEST Request);
++typedef void (*PFN_ON_IO_REQUEST_COMPLTN)(PSTORVSC_REQUEST Request);
++
++typedef int (*PFN_ON_HOST_RESET)(PDEVICE_OBJECT Device);
++typedef void (*PFN_ON_HOST_RESCAN)(PDEVICE_OBJECT Device);
++
++
++// Matches Windows-end
++typedef enum _STORVSC_REQUEST_TYPE{
++	WRITE_TYPE,
++	READ_TYPE,
++	UNKNOWN_TYPE,
++} STORVSC_REQUEST_TYPE;
++
++
++typedef struct _STORVSC_REQUEST {
++	STORVSC_REQUEST_TYPE		Type;
++	UINT32					Host;
++	UINT32					Bus;
++	UINT32					TargetId;
++	UINT32					LunId;
++	UINT8*					Cdb;
++	UINT32					CdbLen;
++	UINT32					Status;
++	UINT32					BytesXfer;
++
++	UCHAR*					SenseBuffer;
++	UINT32					SenseBufferSize;
++
++	PVOID					Context;
++
++	PFN_ON_IO_REQUEST_COMPLTN	OnIOCompletion;
++
++	// This points to the memory after DataBuffer
++	PVOID					Extension;
++
++	MULTIPAGE_BUFFER		DataBuffer;
++} STORVSC_REQUEST;
++
++
++// Represents the block vsc driver
++typedef struct _STORVSC_DRIVER_OBJECT {
++	DRIVER_OBJECT			Base; // Must be the first field
++
++	// Set by caller (in bytes)
++	UINT32					RingBufferSize;
++
++	// Allocate this much private extension for each I/O request
++	UINT32					RequestExtSize;
++
++	// Maximum # of requests in flight per channel/device
++	UINT32					MaxOutstandingRequestsPerChannel;
++
++	// Set by the caller to allow us to re-enumerate the bus on the host
++	PFN_ON_HOST_RESCAN		OnHostRescan;
++
++	// Specific to this driver
++	PFN_ON_IO_REQUEST		OnIORequest;
++	PFN_ON_HOST_RESET		OnHostReset;
++
++} STORVSC_DRIVER_OBJECT;
++
++typedef struct _STORVSC_DEVICE_INFO {
++	ULONG	PortNumber;
++    UCHAR	PathId;
++    UCHAR	TargetId;
++} STORVSC_DEVICE_INFO;
++
++//
++// Interface
++//
++int
++StorVscInitialize(
++	DRIVER_OBJECT	*Driver
++	);
++
++int
++BlkVscInitialize(
++	DRIVER_OBJECT	*Driver
++	);
++#endif // _STORVSC_API_H_
+--- /dev/null
++++ b/drivers/staging/hv/include/VmbusApi.h
+@@ -0,0 +1,262 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _VMBUS_API_H_
++#define _VMBUS_API_H_
++
++#include "osd.h"
++
++//
++// Defines
++//
++
++#define MAX_PAGE_BUFFER_COUNT				16
++#define MAX_MULTIPAGE_BUFFER_COUNT			32 // 128K
++
++
++//
++// Fwd declarations
++//
++typedef struct _DRIVER_OBJECT *PDRIVER_OBJECT;
++typedef struct _DEVICE_OBJECT *PDEVICE_OBJECT;
++
++//
++// Data types
++//
++
++#pragma pack(push,1)
++
++// Single-page buffer
++typedef struct _PAGE_BUFFER {
++	UINT32	Length;
++	UINT32	Offset;
++	UINT64	Pfn;
++} PAGE_BUFFER;
++
++// Multiple-page buffer
++typedef struct _MULTIPAGE_BUFFER {
++	// Length and Offset determines the # of pfns in the array
++	UINT32	Length;
++	UINT32	Offset;
++	UINT64	PfnArray[MAX_MULTIPAGE_BUFFER_COUNT];
++}MULTIPAGE_BUFFER;
++
++//0x18 includes the proprietary packet header
++#define MAX_PAGE_BUFFER_PACKET			(0x18 + (sizeof(PAGE_BUFFER) * MAX_PAGE_BUFFER_COUNT))
++#define MAX_MULTIPAGE_BUFFER_PACKET		(0x18 + sizeof(MULTIPAGE_BUFFER))
++
++
++#pragma pack(pop)
++
++// All drivers
++typedef int (*PFN_ON_DEVICEADD)(PDEVICE_OBJECT Device, void* AdditionalInfo);
++typedef int (*PFN_ON_DEVICEREMOVE)(PDEVICE_OBJECT Device);
++typedef char** (*PFN_ON_GETDEVICEIDS)(void);
++typedef void (*PFN_ON_CLEANUP)(PDRIVER_OBJECT Driver);
++
++// Vmbus extensions
++//typedef int (*PFN_ON_MATCH)(PDEVICE_OBJECT dev, PDRIVER_OBJECT drv);
++//typedef int (*PFN_ON_PROBE)(PDEVICE_OBJECT dev);
++typedef int	(*PFN_ON_ISR)(PDRIVER_OBJECT drv);
++typedef void (*PFN_ON_DPC)(PDRIVER_OBJECT drv);
++typedef void (*PFN_GET_CHANNEL_OFFERS)(void);
++
++typedef PDEVICE_OBJECT (*PFN_ON_CHILDDEVICE_CREATE)(GUID DeviceType, GUID DeviceInstance, void *Context);
++typedef void (*PFN_ON_CHILDDEVICE_DESTROY)(PDEVICE_OBJECT Device);
++typedef int (*PFN_ON_CHILDDEVICE_ADD)(PDEVICE_OBJECT RootDevice, PDEVICE_OBJECT ChildDevice);
++typedef void (*PFN_ON_CHILDDEVICE_REMOVE)(PDEVICE_OBJECT Device);
++
++// Vmbus channel interface
++typedef void (*VMBUS_CHANNEL_CALLBACK)(PVOID context);
++
++typedef int	(*VMBUS_CHANNEL_OPEN)(
++	PDEVICE_OBJECT		Device,
++	UINT32				SendBufferSize,
++	UINT32				RecvRingBufferSize,
++	PVOID				UserData,
++	UINT32				UserDataLen,
++	VMBUS_CHANNEL_CALLBACK ChannelCallback,
++	PVOID				Context
++	);
++
++typedef void (*VMBUS_CHANNEL_CLOSE)(
++	PDEVICE_OBJECT		Device
++	);
++
++typedef int	(*VMBUS_CHANNEL_SEND_PACKET)(
++	PDEVICE_OBJECT		Device,
++	const PVOID			Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId,
++	UINT32				Type,
++	UINT32				Flags
++);
++
++typedef int	(*VMBUS_CHANNEL_SEND_PACKET_PAGEBUFFER)(
++	PDEVICE_OBJECT		Device,
++	PAGE_BUFFER			PageBuffers[],
++	UINT32				PageCount,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++	);
++
++typedef int	(*VMBUS_CHANNEL_SEND_PACKET_MULTIPAGEBUFFER)(
++	PDEVICE_OBJECT		Device,
++	MULTIPAGE_BUFFER	*MultiPageBuffer,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++);
++
++typedef int	(*VMBUS_CHANNEL_RECV_PACKET)(
++	PDEVICE_OBJECT		Device,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	);
++
++typedef int	(*VMBUS_CHANNEL_RECV_PACKET_PAW)(
++	PDEVICE_OBJECT		Device,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	);
++
++typedef int	(*VMBUS_CHANNEL_ESTABLISH_GPADL)(
++	PDEVICE_OBJECT		Device,
++	PVOID				Buffer,	// from kmalloc()
++	UINT32				BufferLen,		// page-size multiple
++	UINT32*				GpadlHandle
++	);
++
++typedef int	(*VMBUS_CHANNEL_TEARDOWN_GPADL)(
++	PDEVICE_OBJECT		Device,
++	UINT32				GpadlHandle
++	);
++
++
++typedef struct _PORT_INFO {
++	UINT32		InterruptMask;
++	UINT32		ReadIndex;
++	UINT32		WriteIndex;
++	UINT32		BytesAvailToRead;
++	UINT32		BytesAvailToWrite;
++} PORT_INFO;
++
++
++typedef struct _DEVICE_INFO {
++	UINT32		ChannelId;
++	UINT32		ChannelState;
++	GUID		ChannelType;
++	GUID		ChannelInstance;
++
++	UINT32						MonitorId;
++	UINT32						ServerMonitorPending;
++	UINT32						ServerMonitorLatency;
++	UINT32						ServerMonitorConnectionId;
++	UINT32						ClientMonitorPending;
++	UINT32						ClientMonitorLatency;
++	UINT32						ClientMonitorConnectionId;
++
++	PORT_INFO	Inbound;
++	PORT_INFO	Outbound;
++} DEVICE_INFO;
++
++typedef void (*VMBUS_GET_CHANNEL_INFO)(PDEVICE_OBJECT Device, DEVICE_INFO* DeviceInfo);
++
++typedef struct _VMBUS_CHANNEL_INTERFACE {
++	VMBUS_CHANNEL_OPEN							Open;
++	VMBUS_CHANNEL_CLOSE							Close;
++	VMBUS_CHANNEL_SEND_PACKET					SendPacket;
++	VMBUS_CHANNEL_SEND_PACKET_PAGEBUFFER		SendPacketPageBuffer;
++	VMBUS_CHANNEL_SEND_PACKET_MULTIPAGEBUFFER	SendPacketMultiPageBuffer;
++	VMBUS_CHANNEL_RECV_PACKET					RecvPacket;
++	VMBUS_CHANNEL_RECV_PACKET_PAW				RecvPacketRaw;
++	VMBUS_CHANNEL_ESTABLISH_GPADL				EstablishGpadl;
++	VMBUS_CHANNEL_TEARDOWN_GPADL				TeardownGpadl;
++	VMBUS_GET_CHANNEL_INFO						GetInfo;
++} VMBUS_CHANNEL_INTERFACE;
++
++typedef void (*VMBUS_GET_CHANNEL_INTERFACE)(VMBUS_CHANNEL_INTERFACE *Interface);
++
++// Base driver object
++typedef struct _DRIVER_OBJECT {
++	const char*				name;
++	GUID					deviceType; // the device type supported by this driver
++
++	PFN_ON_DEVICEADD		OnDeviceAdd;
++	PFN_ON_DEVICEREMOVE		OnDeviceRemove;
++	PFN_ON_GETDEVICEIDS		OnGetDeviceIds; // device ids supported by this driver
++	PFN_ON_CLEANUP			OnCleanup;
++
++	VMBUS_CHANNEL_INTERFACE VmbusChannelInterface;
++} DRIVER_OBJECT;
++
++
++// Base device object
++typedef struct _DEVICE_OBJECT {
++	DRIVER_OBJECT*		Driver;		// the driver for this device
++	char				name[64];
++	GUID				deviceType; // the device type id of this device
++	GUID				deviceInstance; // the device instance id of this device
++	void*				context;
++	void*				Extension;		// Device extension;
++} DEVICE_OBJECT;
++
++
++// Vmbus driver object
++typedef struct _VMBUS_DRIVER_OBJECT {
++	DRIVER_OBJECT		Base; // !! Must be the 1st field !!
++
++	// Set by the caller
++	PFN_ON_CHILDDEVICE_CREATE	OnChildDeviceCreate;
++	PFN_ON_CHILDDEVICE_DESTROY	OnChildDeviceDestroy;
++	PFN_ON_CHILDDEVICE_ADD		OnChildDeviceAdd;
++	PFN_ON_CHILDDEVICE_REMOVE	OnChildDeviceRemove;
++
++	// Set by the callee
++	//PFN_ON_MATCH		OnMatch;
++	//PFN_ON_PROBE		OnProbe;
++	PFN_ON_ISR				OnIsr;
++	PFN_ON_DPC				OnMsgDpc;
++	PFN_ON_DPC				OnEventDpc;
++	PFN_GET_CHANNEL_OFFERS	GetChannelOffers;
++
++	VMBUS_GET_CHANNEL_INTERFACE GetChannelInterface;
++	VMBUS_GET_CHANNEL_INFO		GetChannelInfo;
++} VMBUS_DRIVER_OBJECT;
++
++
++//
++// Interface
++//
++int
++VmbusInitialize(
++	DRIVER_OBJECT* drv
++	);
++
++#endif // _VMBUS_API_H_
+--- /dev/null
++++ b/drivers/staging/hv/include/vmbus.h
+@@ -0,0 +1,111 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _VMBUS_H_
++#define _VMBUS_H_
++
++#include <linux/device.h>
++
++#include "VmbusApi.h"
++
++//
++// Data types
++//
++
++typedef int (*PFN_DRIVERINITIALIZE)(DRIVER_OBJECT *drv);
++typedef int (*PFN_DRIVEREXIT)(DRIVER_OBJECT *drv);
++
++struct driver_context {
++	GUID					class_id;
++
++	struct device_driver	driver;
++
++	// Use these methods instead of the struct device_driver so 2.6 kernel stops complaining
++	int (*probe)(struct device *);
++	int (*remove)(struct device *);
++	void (*shutdown)(struct device *);
++};
++
++struct device_context {
++	struct work_struct              probe_failed_work_item;
++	GUID					class_id;
++	GUID					device_id;
++	int						probe_error;
++	struct device			device;
++	DEVICE_OBJECT			device_obj;
++};
++
++
++//
++// Global
++//
++
++//
++// Inlines
++//
++static inline struct device_context *to_device_context(DEVICE_OBJECT *device_obj)
++{
++	return container_of(device_obj, struct device_context, device_obj);
++}
++
++static inline struct device_context *device_to_device_context(struct device *device)
++{
++	return container_of(device, struct device_context, device);
++}
++
++static inline struct driver_context *driver_to_driver_context(struct device_driver *driver)
++{
++	return container_of(driver, struct driver_context, driver);
++}
++
++#if defined(KERNEL_2_6_5)
++static inline void* kzalloc(int size, int flags)
++{
++	void *p;
++	p = kmalloc(size, flags);
++	if (p) memset(p, 0, size);
++
++	return p;
++}
++#endif // KERNEL_2_6_5
++
++//
++// Vmbus interface
++//
++void
++vmbus_child_driver_register(
++	struct driver_context* driver_ctx
++	);
++
++void
++vmbus_child_driver_unregister(
++	struct driver_context *driver_ctx
++	);
++
++void
++vmbus_get_interface(
++	VMBUS_CHANNEL_INTERFACE *interface
++	);
++
++#endif // _VMBUS_H_

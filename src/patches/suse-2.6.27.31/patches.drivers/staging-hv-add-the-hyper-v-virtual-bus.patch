@@ -1,0 +1,7192 @@
+From foo@baz Mon Jul 13 16:02:34 PDT 2009
+Date: Mon, 13 Jul 2009 16:02:34 -0700
+From: Hank Janssen <hjanssen@microsoft.com>
+Subject: Staging: hv: add the Hyper-V virtual bus
+
+From: Hank Janssen <hjanssen@microsoft.com>
+
+This is the virtual bus that all of the Linux Hyper-V drivers use.
+
+Signed-off-by: Hank Janssen <hjanssen@microsoft.com>
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/hv/Channel.c          | 1199 +++++++++++++++++++++++++++++++++
+ drivers/staging/hv/Channel.h          |  157 ++++
+ drivers/staging/hv/ChannelInterface.c |  222 ++++++
+ drivers/staging/hv/ChannelInterface.h |   41 +
+ drivers/staging/hv/ChannelMgmt.c      |  826 ++++++++++++++++++++++
+ drivers/staging/hv/ChannelMgmt.h      |  156 ++++
+ drivers/staging/hv/Connection.c       |  432 +++++++++++
+ drivers/staging/hv/Hv.c               |  672 ++++++++++++++++++
+ drivers/staging/hv/Hv.h               |  184 +++++
+ drivers/staging/hv/RingBuffer.c       |  630 +++++++++++++++++
+ drivers/staging/hv/RingBuffer.h       |  123 +++
+ drivers/staging/hv/Sources.c          |   31 
+ drivers/staging/hv/VersionInfo.h      |   29 
+ drivers/staging/hv/Vmbus.c            |  508 ++++++++++++++
+ drivers/staging/hv/VmbusPrivate.h     |  170 ++++
+ drivers/staging/hv/osd.c              |  500 +++++++++++++
+ drivers/staging/hv/vmbus_drv.c        | 1228 ++++++++++++++++++++++++++++++++++
+ 17 files changed, 7108 insertions(+)
+
+--- /dev/null
++++ b/drivers/staging/hv/Channel.c
+@@ -0,0 +1,1199 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include "osd.h"
++#include "logging.h"
++
++#include "VmbusPrivate.h"
++
++//
++// Internal routines
++//
++static int
++VmbusChannelCreateGpadlHeader(
++	PVOID					Kbuffer,	// must be phys and virt contiguous
++	UINT32					Size,		// page-size multiple
++	VMBUS_CHANNEL_MSGINFO	**msgInfo,
++	UINT32					*MessageCount
++	);
++
++static void
++DumpVmbusChannel(
++	VMBUS_CHANNEL			*Channel
++	);
++
++
++static void
++VmbusChannelSetEvent(
++	VMBUS_CHANNEL			*Channel
++	);
++
++
++#if 0
++static void
++DumpMonitorPage(
++	HV_MONITOR_PAGE *MonitorPage
++	)
++{
++	int i=0;
++	int j=0;
++
++	DPRINT_DBG(VMBUS, "monitorPage - %p, trigger state - %d", MonitorPage, MonitorPage->TriggerState);
++
++	for (i=0; i<4; i++)
++	{
++		DPRINT_DBG(VMBUS, "trigger group (%d) - %llx", i, MonitorPage->TriggerGroup[i].AsUINT64);
++	}
++
++	for (i=0; i<4; i++)
++	{
++		for (j=0; j<32; j++)
++		{
++			DPRINT_DBG(VMBUS, "latency (%d)(%d) - %llx", i, j, MonitorPage->Latency[i][j]);
++		}
++	}
++	for (i=0; i<4; i++)
++	{
++		for (j=0; j<32; j++)
++		{
++			DPRINT_DBG(VMBUS, "param-conn id (%d)(%d) - %d", i, j, MonitorPage->Parameter[i][j].ConnectionId.AsUINT32);
++			DPRINT_DBG(VMBUS, "param-flag (%d)(%d) - %d", i, j, MonitorPage->Parameter[i][j].FlagNumber);
++
++		}
++	}
++}
++#endif
++
++/*++
++
++Name:
++	VmbusChannelSetEvent()
++
++Description:
++	Trigger an event notification on the specified channel.
++
++--*/
++static void
++VmbusChannelSetEvent(
++	VMBUS_CHANNEL			*Channel
++	)
++{
++	HV_MONITOR_PAGE *monitorPage;
++
++	DPRINT_ENTER(VMBUS);
++
++	if (Channel->OfferMsg.MonitorAllocated)
++	{
++		// Each UINT32 represents 32 channels
++		BitSet((UINT32*)gVmbusConnection.SendInterruptPage + (Channel->OfferMsg.ChildRelId >> 5), Channel->OfferMsg.ChildRelId & 31);
++
++		monitorPage = (HV_MONITOR_PAGE*)gVmbusConnection.MonitorPages;
++		monitorPage++; // Get the child to parent monitor page
++
++		BitSet((UINT32*) &monitorPage->TriggerGroup[Channel->MonitorGroup].Pending, Channel->MonitorBit);
++	}
++	else
++	{
++		VmbusSetEvent(Channel->OfferMsg.ChildRelId);
++	}
++
++	DPRINT_EXIT(VMBUS);
++}
++
++#if 0
++static void
++VmbusChannelClearEvent(
++	VMBUS_CHANNEL			*Channel
++	)
++{
++	HV_MONITOR_PAGE *monitorPage;
++
++	DPRINT_ENTER(VMBUS);
++
++	if (Channel->OfferMsg.MonitorAllocated)
++	{
++		// Each UINT32 represents 32 channels
++		BitClear((UINT32*)gVmbusConnection.SendInterruptPage + (Channel->OfferMsg.ChildRelId >> 5), Channel->OfferMsg.ChildRelId & 31);
++
++		monitorPage = (HV_MONITOR_PAGE*)gVmbusConnection.MonitorPages;
++		monitorPage++; // Get the child to parent monitor page
++
++		BitClear((UINT32*) &monitorPage->TriggerGroup[Channel->MonitorGroup].Pending, Channel->MonitorBit);
++	}
++
++	DPRINT_EXIT(VMBUS);
++}
++
++#endif
++/*++;
++
++Name:
++	VmbusChannelGetDebugInfo()
++
++Description:
++	Retrieve various channel debug info
++
++--*/
++void
++VmbusChannelGetDebugInfo(
++	VMBUS_CHANNEL				*Channel,
++	VMBUS_CHANNEL_DEBUG_INFO	*DebugInfo
++	)
++{
++	HV_MONITOR_PAGE *monitorPage;
++    UINT8 monitorGroup    = (UINT8)Channel->OfferMsg.MonitorId / 32;
++    UINT8 monitorOffset   = (UINT8)Channel->OfferMsg.MonitorId % 32;
++	//UINT32 monitorBit	= 1 << monitorOffset;
++
++	DebugInfo->RelId = Channel->OfferMsg.ChildRelId;
++	DebugInfo->State = Channel->State;
++	memcpy(&DebugInfo->InterfaceType, &Channel->OfferMsg.Offer.InterfaceType, sizeof(GUID));
++	memcpy(&DebugInfo->InterfaceInstance, &Channel->OfferMsg.Offer.InterfaceInstance, sizeof(GUID));
++
++	monitorPage = (HV_MONITOR_PAGE*)gVmbusConnection.MonitorPages;
++
++	DebugInfo->MonitorId = Channel->OfferMsg.MonitorId;
++
++	DebugInfo->ServerMonitorPending = monitorPage->TriggerGroup[monitorGroup].Pending;
++	DebugInfo->ServerMonitorLatency = monitorPage->Latency[monitorGroup][ monitorOffset];
++	DebugInfo->ServerMonitorConnectionId = monitorPage->Parameter[monitorGroup][ monitorOffset].ConnectionId.u.Id;
++
++	monitorPage++;
++
++	DebugInfo->ClientMonitorPending = monitorPage->TriggerGroup[monitorGroup].Pending;
++	DebugInfo->ClientMonitorLatency = monitorPage->Latency[monitorGroup][ monitorOffset];
++	DebugInfo->ClientMonitorConnectionId = monitorPage->Parameter[monitorGroup][ monitorOffset].ConnectionId.u.Id;
++
++	RingBufferGetDebugInfo(&Channel->Inbound, &DebugInfo->Inbound);
++	RingBufferGetDebugInfo(&Channel->Outbound, &DebugInfo->Outbound);
++}
++
++
++/*++;
++
++Name:
++	VmbusChannelOpen()
++
++Description:
++	Open the specified channel.
++
++--*/
++int
++VmbusChannelOpen(
++	VMBUS_CHANNEL			*NewChannel,
++	UINT32					SendRingBufferSize,
++	UINT32					RecvRingBufferSize,
++	PVOID					UserData,
++	UINT32					UserDataLen,
++	PFN_CHANNEL_CALLBACK	pfnOnChannelCallback,
++	PVOID					Context
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL_OPEN_CHANNEL* openMsg;
++	VMBUS_CHANNEL_MSGINFO* openInfo;
++	void *in, *out;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Aligned to page size
++	ASSERT(!(SendRingBufferSize & (PAGE_SIZE -1)));
++	ASSERT(!(RecvRingBufferSize & (PAGE_SIZE -1)));
++
++	NewChannel->OnChannelCallback = pfnOnChannelCallback;
++	NewChannel->ChannelCallbackContext = Context;
++
++	// Allocate the ring buffer
++	out = PageAlloc((SendRingBufferSize + RecvRingBufferSize) >> PAGE_SHIFT);
++	//out = MemAllocZeroed(sendRingBufferSize + recvRingBufferSize);
++	ASSERT(out);
++	ASSERT(((ULONG_PTR)out & (PAGE_SIZE-1)) == 0);
++
++	in = (void*)((ULONG_PTR)out + SendRingBufferSize);
++
++	NewChannel->RingBufferPages = out;
++	NewChannel->RingBufferPageCount = (SendRingBufferSize + RecvRingBufferSize) >> PAGE_SHIFT;
++
++	RingBufferInit(&NewChannel->Outbound, out, SendRingBufferSize);
++
++	RingBufferInit(&NewChannel->Inbound, in, RecvRingBufferSize);
++
++	// Establish the gpadl for the ring buffer
++	DPRINT_DBG(VMBUS, "Establishing ring buffer's gpadl for channel %p...", NewChannel);
++
++	NewChannel->RingBufferGpadlHandle = 0;
++
++	ret = VmbusChannelEstablishGpadl(NewChannel,
++		NewChannel->Outbound.RingBuffer,
++		SendRingBufferSize + RecvRingBufferSize,
++		&NewChannel->RingBufferGpadlHandle);
++
++	DPRINT_DBG(VMBUS, "channel %p <relid %d gpadl 0x%x send ring %p size %d recv ring %p size %d, downstreamoffset %d>",
++		NewChannel,
++		NewChannel->OfferMsg.ChildRelId,
++		NewChannel->RingBufferGpadlHandle,
++		NewChannel->Outbound.RingBuffer,
++		NewChannel->Outbound.RingSize,
++		NewChannel->Inbound.RingBuffer,
++		NewChannel->Inbound.RingSize,
++		SendRingBufferSize);
++
++	// Create and init the channel open message
++	openInfo =
++		(VMBUS_CHANNEL_MSGINFO*)MemAlloc(sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_OPEN_CHANNEL));
++	ASSERT(openInfo != NULL);
++
++	openInfo->WaitEvent = WaitEventCreate();
++
++	openMsg = (VMBUS_CHANNEL_OPEN_CHANNEL*)openInfo->Msg;
++	openMsg->Header.MessageType				= ChannelMessageOpenChannel;
++	openMsg->OpenId							= NewChannel->OfferMsg.ChildRelId; // FIXME
++    openMsg->ChildRelId						= NewChannel->OfferMsg.ChildRelId;
++    openMsg->RingBufferGpadlHandle			= NewChannel->RingBufferGpadlHandle;
++    ASSERT(openMsg->RingBufferGpadlHandle);
++    openMsg->DownstreamRingBufferPageOffset		= SendRingBufferSize >> PAGE_SHIFT;
++    openMsg->ServerContextAreaGpadlHandle	= 0; // TODO
++
++	ASSERT(UserDataLen <= MAX_USER_DEFINED_BYTES);
++	if (UserDataLen)
++	{
++		memcpy(openMsg->UserData, UserData, UserDataLen);
++	}
++
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++	INSERT_TAIL_LIST(&gVmbusConnection.ChannelMsgList, &openInfo->MsgListEntry);
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	DPRINT_DBG(VMBUS, "Sending channel open msg...");
++
++	ret = VmbusPostMessage(openMsg, sizeof(VMBUS_CHANNEL_OPEN_CHANNEL));
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS, "unable to open channel - %d", ret);
++		goto Cleanup;
++	}
++
++	// FIXME: Need to time-out here
++	WaitEventWait(openInfo->WaitEvent);
++
++	if (openInfo->Response.OpenResult.Status == 0)
++	{
++		DPRINT_INFO(VMBUS, "channel <%p> open success!!", NewChannel);
++	}
++	else
++	{
++		DPRINT_INFO(VMBUS, "channel <%p> open failed - %d!!", NewChannel, openInfo->Response.OpenResult.Status);
++	}
++
++Cleanup:
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++	REMOVE_ENTRY_LIST(&openInfo->MsgListEntry);
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	WaitEventClose(openInfo->WaitEvent);
++	MemFree(openInfo);
++
++	DPRINT_EXIT(VMBUS);
++
++	return 0;
++}
++
++/*++;
++
++Name:
++	DumpGpadlBody()
++
++Description:
++	Dump the gpadl body message to the console for debugging purposes.
++
++--*/
++static void DumpGpadlBody(
++	VMBUS_CHANNEL_GPADL_BODY	*Gpadl,
++	UINT32						Len)
++{
++	int i=0;
++	int pfnCount=0;
++
++	pfnCount = (Len - sizeof(VMBUS_CHANNEL_GPADL_BODY))/ sizeof(UINT64);
++	DPRINT_DBG(VMBUS, "gpadl body - len %d pfn count %d", Len, pfnCount);
++
++	for (i=0; i< pfnCount; i++)
++	{
++		DPRINT_DBG(VMBUS, "gpadl body  - %d) pfn %llu", i, Gpadl->Pfn[i]);
++	}
++}
++
++
++/*++;
++
++Name:
++	DumpGpadlHeader()
++
++Description:
++	Dump the gpadl header message to the console for debugging purposes.
++
++--*/
++static void DumpGpadlHeader(
++	VMBUS_CHANNEL_GPADL_HEADER	*Gpadl
++	)
++{
++	int i=0,j=0;
++	int pageCount=0;
++
++
++	DPRINT_DBG(VMBUS, "gpadl header - relid %d, range count %d, range buflen %d",
++				Gpadl->ChildRelId,
++				Gpadl->RangeCount,
++				Gpadl->RangeBufLen);
++	for (i=0; i< Gpadl->RangeCount; i++)
++	{
++		pageCount = Gpadl->Range[i].ByteCount >> PAGE_SHIFT;
++		pageCount = (pageCount > 26)? 26 : pageCount;
++
++		DPRINT_DBG(VMBUS, "gpadl range %d - len %d offset %d page count %d",
++			i, Gpadl->Range[i].ByteCount, Gpadl->Range[i].ByteOffset, pageCount);
++
++		for (j=0; j< pageCount; j++)
++		{
++			DPRINT_DBG(VMBUS, "%d) pfn %llu", j, Gpadl->Range[i].PfnArray[j]);
++		}
++	}
++}
++
++/*++;
++
++Name:
++	VmbusChannelCreateGpadlHeader()
++
++Description:
++	Creates a gpadl for the specified buffer
++
++--*/
++static int
++VmbusChannelCreateGpadlHeader(
++	PVOID					Kbuffer,	// from kmalloc()
++	UINT32					Size,		// page-size multiple
++	VMBUS_CHANNEL_MSGINFO	**MsgInfo,
++	UINT32					*MessageCount)
++{
++	int i;
++	int pageCount;
++    unsigned long long pfn;
++	VMBUS_CHANNEL_GPADL_HEADER* gpaHeader;
++	VMBUS_CHANNEL_GPADL_BODY* gpadlBody;
++	VMBUS_CHANNEL_MSGINFO* msgHeader;
++	VMBUS_CHANNEL_MSGINFO* msgBody;
++	UINT32				msgSize;
++
++	int pfnSum, pfnCount, pfnLeft, pfnCurr, pfnSize;
++
++	//ASSERT( (kbuffer & (PAGE_SIZE-1)) == 0);
++	ASSERT( (Size & (PAGE_SIZE-1)) == 0);
++
++	pageCount = Size >> PAGE_SHIFT;
++	pfn = GetPhysicalAddress(Kbuffer) >> PAGE_SHIFT;
++
++	// do we need a gpadl body msg
++	pfnSize = MAX_SIZE_CHANNEL_MESSAGE - sizeof(VMBUS_CHANNEL_GPADL_HEADER) - sizeof(GPA_RANGE);
++	pfnCount = pfnSize / sizeof(UINT64);
++
++	if (pageCount > pfnCount) // we need a gpadl body
++	{
++		// fill in the header
++		msgSize = sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_GPADL_HEADER) + sizeof(GPA_RANGE) + pfnCount*sizeof(UINT64);
++		msgHeader =  MemAllocZeroed(msgSize);
++
++		INITIALIZE_LIST_HEAD(&msgHeader->SubMsgList);
++		msgHeader->MessageSize=msgSize;
++
++		gpaHeader = (VMBUS_CHANNEL_GPADL_HEADER*)msgHeader->Msg;
++		gpaHeader->RangeCount = 1;
++		gpaHeader->RangeBufLen = sizeof(GPA_RANGE) + pageCount*sizeof(UINT64);
++		gpaHeader->Range[0].ByteOffset = 0;
++		gpaHeader->Range[0].ByteCount = Size;
++		for (i=0; i<pfnCount; i++)
++		{
++			gpaHeader->Range[0].PfnArray[i] = pfn+i;
++		}
++		*MsgInfo = msgHeader;
++		*MessageCount = 1;
++
++		pfnSum = pfnCount;
++		pfnLeft = pageCount - pfnCount;
++
++		// how many pfns can we fit
++		pfnSize = MAX_SIZE_CHANNEL_MESSAGE - sizeof(VMBUS_CHANNEL_GPADL_BODY);
++		pfnCount = pfnSize / sizeof(UINT64);
++
++		// fill in the body
++		while (pfnLeft)
++		{
++			if (pfnLeft > pfnCount)
++			{
++				pfnCurr = pfnCount;
++			}
++			else
++			{
++				pfnCurr = pfnLeft;
++			}
++
++			msgSize = sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_GPADL_BODY) + pfnCurr*sizeof(UINT64);
++			msgBody =  MemAllocZeroed(msgSize);
++			ASSERT(msgBody);
++			msgBody->MessageSize = msgSize;
++			(*MessageCount)++;
++			gpadlBody = (VMBUS_CHANNEL_GPADL_BODY*)msgBody->Msg;
++
++			// FIXME: Gpadl is UINT32 and we are using a pointer which could be 64-bit
++			//gpadlBody->Gpadl = kbuffer;
++			for (i=0; i<pfnCurr; i++)
++			{
++				gpadlBody->Pfn[i] = pfn + pfnSum + i;
++			}
++
++			// add to msg header
++			INSERT_TAIL_LIST(&msgHeader->SubMsgList, &msgBody->MsgListEntry);
++			pfnSum += pfnCurr;
++			pfnLeft -= pfnCurr;
++		}
++	}
++	else
++	{
++		// everything fits in a header
++		msgSize = sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_GPADL_HEADER) + sizeof(GPA_RANGE) + pageCount*sizeof(UINT64);
++		msgHeader =  MemAllocZeroed(msgSize);
++		msgHeader->MessageSize=msgSize;
++
++		gpaHeader = (VMBUS_CHANNEL_GPADL_HEADER*)msgHeader->Msg;
++		gpaHeader->RangeCount = 1;
++		gpaHeader->RangeBufLen = sizeof(GPA_RANGE) + pageCount*sizeof(UINT64);
++		gpaHeader->Range[0].ByteOffset = 0;
++		gpaHeader->Range[0].ByteCount = Size;
++		for (i=0; i<pageCount; i++)
++		{
++			gpaHeader->Range[0].PfnArray[i] = pfn+i;
++		}
++
++		*MsgInfo = msgHeader;
++		*MessageCount = 1;
++	}
++
++	return 0;
++}
++
++
++/*++;
++
++Name:
++	VmbusChannelEstablishGpadl()
++
++Description:
++	Estabish a GPADL for the specified buffer
++
++--*/
++int
++VmbusChannelEstablishGpadl(
++	VMBUS_CHANNEL	*Channel,
++	PVOID			Kbuffer,	// from kmalloc()
++	UINT32			Size,		// page-size multiple
++	UINT32			*GpadlHandle
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL_GPADL_HEADER* gpadlMsg;
++	VMBUS_CHANNEL_GPADL_BODY* gpadlBody;
++	//VMBUS_CHANNEL_GPADL_CREATED* gpadlCreated;
++
++	VMBUS_CHANNEL_MSGINFO *msgInfo;
++	VMBUS_CHANNEL_MSGINFO *subMsgInfo;
++
++	UINT32 msgCount;
++	LIST_ENTRY* anchor;
++	LIST_ENTRY* curr;
++	UINT32 nextGpadlHandle;
++
++	DPRINT_ENTER(VMBUS);
++
++	nextGpadlHandle = gVmbusConnection.NextGpadlHandle;
++	InterlockedIncrement((int*)&gVmbusConnection.NextGpadlHandle);
++
++	VmbusChannelCreateGpadlHeader(Kbuffer, Size, &msgInfo, &msgCount);
++	ASSERT(msgInfo != NULL);
++	ASSERT(msgCount >0);
++
++	msgInfo->WaitEvent = WaitEventCreate();
++	gpadlMsg = (VMBUS_CHANNEL_GPADL_HEADER*)msgInfo->Msg;
++	gpadlMsg->Header.MessageType = ChannelMessageGpadlHeader;
++	gpadlMsg->ChildRelId = Channel->OfferMsg.ChildRelId;
++	gpadlMsg->Gpadl = nextGpadlHandle;
++
++	DumpGpadlHeader(gpadlMsg);
++
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++	INSERT_TAIL_LIST(&gVmbusConnection.ChannelMsgList, &msgInfo->MsgListEntry);
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	DPRINT_DBG(VMBUS, "buffer %p, size %d msg cnt %d", Kbuffer, Size, msgCount);
++
++	DPRINT_DBG(VMBUS, "Sending GPADL Header - len %d", msgInfo->MessageSize - sizeof(VMBUS_CHANNEL_MSGINFO));
++
++	ret = VmbusPostMessage(gpadlMsg, msgInfo->MessageSize - sizeof(VMBUS_CHANNEL_MSGINFO));
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS, "Unable to open channel - %d", ret);
++		goto Cleanup;
++	}
++
++	if (msgCount>1)
++	{
++		ITERATE_LIST_ENTRIES(anchor, curr, &msgInfo->SubMsgList)
++		{
++			subMsgInfo = (VMBUS_CHANNEL_MSGINFO*) curr;
++			gpadlBody = (VMBUS_CHANNEL_GPADL_BODY*)subMsgInfo->Msg;
++
++			gpadlBody->Header.MessageType = ChannelMessageGpadlBody;
++			gpadlBody->Gpadl = nextGpadlHandle;
++
++			DPRINT_DBG(VMBUS, "Sending GPADL Body - len %d", subMsgInfo->MessageSize - sizeof(VMBUS_CHANNEL_MSGINFO));
++
++			DumpGpadlBody(gpadlBody, subMsgInfo->MessageSize - sizeof(VMBUS_CHANNEL_MSGINFO));
++			ret = VmbusPostMessage(gpadlBody, subMsgInfo->MessageSize - sizeof(VMBUS_CHANNEL_MSGINFO));
++			ASSERT(ret == 0);
++		}
++	}
++	WaitEventWait(msgInfo->WaitEvent);
++
++	// At this point, we received the gpadl created msg
++	DPRINT_DBG(VMBUS, "Received GPADL created (relid %d, status %d handle %x)",
++		Channel->OfferMsg.ChildRelId,
++		msgInfo->Response.GpadlCreated.CreationStatus,
++		gpadlMsg->Gpadl);
++
++	*GpadlHandle = gpadlMsg->Gpadl;
++
++Cleanup:
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++	REMOVE_ENTRY_LIST(&msgInfo->MsgListEntry);
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	WaitEventClose(msgInfo->WaitEvent);
++	MemFree(msgInfo);
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++
++/*++;
++
++Name:
++	VmbusChannelTeardownGpadl()
++
++Description:
++	Teardown the specified GPADL handle
++
++--*/
++int
++VmbusChannelTeardownGpadl(
++	VMBUS_CHANNEL	*Channel,
++	UINT32			GpadlHandle
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL_GPADL_TEARDOWN *msg;
++	VMBUS_CHANNEL_MSGINFO* info;
++
++	DPRINT_ENTER(VMBUS);
++
++	ASSERT(GpadlHandle != 0);
++
++	info =
++		(VMBUS_CHANNEL_MSGINFO*)MemAlloc(sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_GPADL_TEARDOWN));
++	ASSERT(info != NULL);
++
++	info->WaitEvent = WaitEventCreate();
++
++	msg = (VMBUS_CHANNEL_GPADL_TEARDOWN*)info->Msg;
++
++	msg->Header.MessageType = ChannelMessageGpadlTeardown;
++    msg->ChildRelId  = Channel->OfferMsg.ChildRelId;
++    msg->Gpadl       = GpadlHandle;
++
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++	INSERT_TAIL_LIST(&gVmbusConnection.ChannelMsgList, &info->MsgListEntry);
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	ret = VmbusPostMessage(msg, sizeof(VMBUS_CHANNEL_GPADL_TEARDOWN));
++	if (ret != 0)
++	{
++		// TODO:
++	}
++
++	WaitEventWait(info->WaitEvent);
++
++	// Received a torndown response
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++	REMOVE_ENTRY_LIST(&info->MsgListEntry);
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	WaitEventClose(info->WaitEvent);
++	MemFree(info);
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	VmbusChannelClose()
++
++Description:
++	Close the specified channel
++
++--*/
++VOID
++VmbusChannelClose(
++	VMBUS_CHANNEL	*Channel
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL_CLOSE_CHANNEL* msg;
++	VMBUS_CHANNEL_MSGINFO* info;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Stop callback and cancel the timer asap
++	Channel->OnChannelCallback = NULL;
++	TimerStop(Channel->PollTimer);
++
++	// Send a closing message
++	info =
++		(VMBUS_CHANNEL_MSGINFO*)MemAlloc(sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_CLOSE_CHANNEL));
++	ASSERT(info != NULL);
++
++	//info->waitEvent = WaitEventCreate();
++
++	msg = (VMBUS_CHANNEL_CLOSE_CHANNEL*)info->Msg;
++	msg->Header.MessageType				= ChannelMessageCloseChannel;
++    msg->ChildRelId						= Channel->OfferMsg.ChildRelId;
++
++	ret = VmbusPostMessage(msg, sizeof(VMBUS_CHANNEL_CLOSE_CHANNEL));
++	if (ret != 0)
++	{
++		// TODO:
++	}
++
++	// Tear down the gpadl for the channel's ring buffer
++	if (Channel->RingBufferGpadlHandle)
++	{
++		VmbusChannelTeardownGpadl(Channel, Channel->RingBufferGpadlHandle);
++	}
++
++	// TODO: Send a msg to release the childRelId
++
++	// Cleanup the ring buffers for this channel
++	RingBufferCleanup(&Channel->Outbound);
++	RingBufferCleanup(&Channel->Inbound);
++
++	PageFree(Channel->RingBufferPages, Channel->RingBufferPageCount);
++
++	MemFree(info);
++
++	// If we are closing the channel during an error path in opening the channel, don't free the channel
++	// since the caller will free the channel
++	if (Channel->State == CHANNEL_OPEN_STATE)
++	{
++		SpinlockAcquire(gVmbusConnection.ChannelLock);
++		REMOVE_ENTRY_LIST(&Channel->ListEntry);
++		SpinlockRelease(gVmbusConnection.ChannelLock);
++
++		FreeVmbusChannel(Channel);
++	}
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelSendPacket()
++
++Description:
++	Send the specified buffer on the given channel
++
++--*/
++int
++VmbusChannelSendPacket(
++	VMBUS_CHANNEL		*Channel,
++	const PVOID			Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId,
++	VMBUS_PACKET_TYPE	Type,
++	UINT32				Flags
++)
++{
++	int ret=0;
++	VMPACKET_DESCRIPTOR desc;
++	UINT32 packetLen = sizeof(VMPACKET_DESCRIPTOR) + BufferLen;
++	UINT32 packetLenAligned = ALIGN_UP(packetLen, sizeof(UINT64));
++	SG_BUFFER_LIST bufferList[3];
++	UINT64 alignedData=0;
++
++	DPRINT_ENTER(VMBUS);
++	DPRINT_DBG(VMBUS, "channel %p buffer %p len %d", Channel, Buffer, BufferLen);
++
++	DumpVmbusChannel(Channel);
++
++	ASSERT((packetLenAligned - packetLen) < sizeof(UINT64));
++
++	// Setup the descriptor
++	desc.Type = Type;//VmbusPacketTypeDataInBand;
++	desc.Flags = Flags;//VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED;
++    desc.DataOffset8 = sizeof(VMPACKET_DESCRIPTOR) >> 3; // in 8-bytes granularity
++    desc.Length8 = (UINT16)(packetLenAligned >> 3);
++    desc.TransactionId = RequestId;
++
++	bufferList[0].Data = &desc;
++	bufferList[0].Length = sizeof(VMPACKET_DESCRIPTOR);
++
++	bufferList[1].Data = Buffer;
++	bufferList[1].Length = BufferLen;
++
++	bufferList[2].Data = &alignedData;
++	bufferList[2].Length = packetLenAligned - packetLen;
++
++	ret = RingBufferWrite(
++		&Channel->Outbound,
++		bufferList,
++		3);
++
++	// TODO: We should determine if this is optional
++	if (ret == 0 && !GetRingBufferInterruptMask(&Channel->Outbound))
++	{
++		VmbusChannelSetEvent(Channel);
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	VmbusChannelSendPacketPageBuffer()
++
++Description:
++	Send a range of single-page buffer packets using a GPADL Direct packet type.
++
++--*/
++int
++VmbusChannelSendPacketPageBuffer(
++	VMBUS_CHANNEL		*Channel,
++	PAGE_BUFFER			PageBuffers[],
++	UINT32				PageCount,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++)
++{
++	int ret=0;
++	int i=0;
++	VMBUS_CHANNEL_PACKET_PAGE_BUFFER desc;
++	UINT32 descSize;
++	UINT32 packetLen;
++	UINT32 packetLenAligned;
++	SG_BUFFER_LIST bufferList[3];
++	UINT64 alignedData=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	ASSERT(PageCount <= MAX_PAGE_BUFFER_COUNT);
++
++	DumpVmbusChannel(Channel);
++
++	// Adjust the size down since VMBUS_CHANNEL_PACKET_PAGE_BUFFER is the largest size we support
++	descSize = sizeof(VMBUS_CHANNEL_PACKET_PAGE_BUFFER) - ((MAX_PAGE_BUFFER_COUNT - PageCount)*sizeof(PAGE_BUFFER));
++	packetLen = descSize + BufferLen;
++	packetLenAligned = ALIGN_UP(packetLen, sizeof(UINT64));
++
++	ASSERT((packetLenAligned - packetLen) < sizeof(UINT64));
++
++	// Setup the descriptor
++	desc.Type = VmbusPacketTypeDataUsingGpaDirect;
++	desc.Flags = VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED;
++    desc.DataOffset8 = descSize >> 3; // in 8-bytes grandularity
++    desc.Length8 = (UINT16)(packetLenAligned >> 3);
++    desc.TransactionId = RequestId;
++	desc.RangeCount = PageCount;
++
++	for (i=0; i<PageCount; i++)
++	{
++		desc.Range[i].Length = PageBuffers[i].Length;
++		desc.Range[i].Offset = PageBuffers[i].Offset;
++		desc.Range[i].Pfn	 = PageBuffers[i].Pfn;
++	}
++
++	bufferList[0].Data = &desc;
++	bufferList[0].Length = descSize;
++
++	bufferList[1].Data = Buffer;
++	bufferList[1].Length = BufferLen;
++
++	bufferList[2].Data = &alignedData;
++	bufferList[2].Length = packetLenAligned - packetLen;
++
++	ret = RingBufferWrite(
++		&Channel->Outbound,
++		bufferList,
++		3);
++
++	// TODO: We should determine if this is optional
++	if (ret == 0 && !GetRingBufferInterruptMask(&Channel->Outbound))
++	{
++		VmbusChannelSetEvent(Channel);
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++
++/*++
++
++Name:
++	VmbusChannelSendPacketMultiPageBuffer()
++
++Description:
++	Send a multi-page buffer packet using a GPADL Direct packet type.
++
++--*/
++int
++VmbusChannelSendPacketMultiPageBuffer(
++	VMBUS_CHANNEL		*Channel,
++	MULTIPAGE_BUFFER	*MultiPageBuffer,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++)
++{
++	int ret=0;
++	VMBUS_CHANNEL_PACKET_MULITPAGE_BUFFER desc;
++	UINT32 descSize;
++	UINT32 packetLen;
++	UINT32 packetLenAligned;
++	SG_BUFFER_LIST bufferList[3];
++	UINT64 alignedData=0;
++	UINT32 PfnCount = NUM_PAGES_SPANNED(MultiPageBuffer->Offset, MultiPageBuffer->Length);
++
++	DPRINT_ENTER(VMBUS);
++
++	DumpVmbusChannel(Channel);
++
++	DPRINT_DBG(VMBUS, "data buffer - offset %u len %u pfn count %u", MultiPageBuffer->Offset, MultiPageBuffer->Length, PfnCount);
++
++	ASSERT(PfnCount > 0);
++	ASSERT(PfnCount <= MAX_MULTIPAGE_BUFFER_COUNT);
++
++	// Adjust the size down since VMBUS_CHANNEL_PACKET_MULITPAGE_BUFFER is the largest size we support
++	descSize = sizeof(VMBUS_CHANNEL_PACKET_MULITPAGE_BUFFER) - ((MAX_MULTIPAGE_BUFFER_COUNT - PfnCount)*sizeof(UINT64));
++	packetLen = descSize + BufferLen;
++	packetLenAligned = ALIGN_UP(packetLen, sizeof(UINT64));
++
++	ASSERT((packetLenAligned - packetLen) < sizeof(UINT64));
++
++	// Setup the descriptor
++	desc.Type = VmbusPacketTypeDataUsingGpaDirect;
++	desc.Flags = VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED;
++    desc.DataOffset8 = descSize >> 3; // in 8-bytes grandularity
++    desc.Length8 = (UINT16)(packetLenAligned >> 3);
++    desc.TransactionId = RequestId;
++	desc.RangeCount = 1;
++
++	desc.Range.Length = MultiPageBuffer->Length;
++	desc.Range.Offset = MultiPageBuffer->Offset;
++
++	memcpy(desc.Range.PfnArray, MultiPageBuffer->PfnArray, PfnCount*sizeof(UINT64));
++
++	bufferList[0].Data = &desc;
++	bufferList[0].Length = descSize;
++
++	bufferList[1].Data = Buffer;
++	bufferList[1].Length = BufferLen;
++
++	bufferList[2].Data = &alignedData;
++	bufferList[2].Length = packetLenAligned - packetLen;
++
++	ret = RingBufferWrite(
++		&Channel->Outbound,
++		bufferList,
++		3);
++
++	// TODO: We should determine if this is optional
++	if (ret == 0 && !GetRingBufferInterruptMask(&Channel->Outbound))
++	{
++		VmbusChannelSetEvent(Channel);
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	VmbusChannelRecvPacket()
++
++Description:
++	Retrieve the user packet on the specified channel
++
++--*/
++// TODO: Do we ever receive a gpa direct packet other than the ones we send ?
++int
++VmbusChannelRecvPacket(
++	VMBUS_CHANNEL		*Channel,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	)
++{
++	VMPACKET_DESCRIPTOR desc;
++	UINT32 packetLen;
++	UINT32 userLen;
++	int ret;
++
++	DPRINT_ENTER(VMBUS);
++
++	*BufferActualLen = 0;
++	*RequestId = 0;
++
++	SpinlockAcquire(Channel->InboundLock);
++
++	ret = RingBufferPeek(&Channel->Inbound, &desc, sizeof(VMPACKET_DESCRIPTOR));
++	if (ret != 0)
++	{
++		SpinlockRelease(Channel->InboundLock);
++
++		//DPRINT_DBG(VMBUS, "nothing to read!!");
++		DPRINT_EXIT(VMBUS);
++		return 0;
++	}
++
++	//VmbusChannelClearEvent(Channel);
++
++	packetLen = desc.Length8 << 3;
++	userLen = packetLen - (desc.DataOffset8 << 3);
++	//ASSERT(userLen > 0);
++
++	DPRINT_DBG(VMBUS, "packet received on channel %p relid %d <type %d flag %d tid %llx pktlen %d datalen %d> ",
++		Channel,
++		Channel->OfferMsg.ChildRelId,
++		desc.Type,
++		desc.Flags,
++		desc.TransactionId, packetLen, userLen);
++
++	*BufferActualLen = userLen;
++
++	if (userLen > BufferLen)
++	{
++		SpinlockRelease(Channel->InboundLock);
++
++		DPRINT_ERR(VMBUS, "buffer too small - got %d needs %d", BufferLen, userLen);
++		DPRINT_EXIT(VMBUS);
++
++		return -1;
++	}
++
++	*RequestId = desc.TransactionId;
++
++	// Copy over the packet to the user buffer
++	ret = RingBufferRead(&Channel->Inbound, Buffer, userLen, (desc.DataOffset8 << 3));
++
++	SpinlockRelease(Channel->InboundLock);
++
++	DPRINT_EXIT(VMBUS);
++
++	return 0;
++}
++
++/*++
++
++Name:
++	VmbusChannelRecvPacketRaw()
++
++Description:
++	Retrieve the raw packet on the specified channel
++
++--*/
++int
++VmbusChannelRecvPacketRaw(
++	VMBUS_CHANNEL		*Channel,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	)
++{
++	VMPACKET_DESCRIPTOR desc;
++	UINT32 packetLen;
++	UINT32 userLen;
++	int ret;
++
++	DPRINT_ENTER(VMBUS);
++
++	*BufferActualLen = 0;
++	*RequestId = 0;
++
++	SpinlockAcquire(Channel->InboundLock);
++
++	ret = RingBufferPeek(&Channel->Inbound, &desc, sizeof(VMPACKET_DESCRIPTOR));
++	if (ret != 0)
++	{
++		SpinlockRelease(Channel->InboundLock);
++
++		//DPRINT_DBG(VMBUS, "nothing to read!!");
++		DPRINT_EXIT(VMBUS);
++		return 0;
++	}
++
++	//VmbusChannelClearEvent(Channel);
++
++	packetLen = desc.Length8 << 3;
++	userLen = packetLen - (desc.DataOffset8 << 3);
++
++	DPRINT_DBG(VMBUS, "packet received on channel %p relid %d <type %d flag %d tid %llx pktlen %d datalen %d> ",
++		Channel,
++		Channel->OfferMsg.ChildRelId,
++		desc.Type,
++		desc.Flags,
++		desc.TransactionId, packetLen, userLen);
++
++	*BufferActualLen = packetLen;
++
++	if (packetLen > BufferLen)
++	{
++		SpinlockRelease(Channel->InboundLock);
++
++		DPRINT_ERR(VMBUS, "buffer too small - needed %d bytes but got space for only %d bytes", packetLen, BufferLen);
++		DPRINT_EXIT(VMBUS);
++		return -2;
++	}
++
++	*RequestId = desc.TransactionId;
++
++	// Copy over the entire packet to the user buffer
++	ret = RingBufferRead(&Channel->Inbound, Buffer, packetLen, 0);
++
++	SpinlockRelease(Channel->InboundLock);
++
++	DPRINT_EXIT(VMBUS);
++
++	return 0;
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnChannelEvent()
++
++Description:
++	Channel event callback
++
++--*/
++void
++VmbusChannelOnChannelEvent(
++	VMBUS_CHANNEL		*Channel
++	)
++{
++	DumpVmbusChannel(Channel);
++	ASSERT(Channel->OnChannelCallback);
++#ifdef ENABLE_POLLING
++	TimerStop(Channel->PollTimer);
++	Channel->OnChannelCallback(Channel->ChannelCallbackContext);
++	TimerStart(Channel->PollTimer, 100 /* 100us */);
++#else
++	Channel->OnChannelCallback(Channel->ChannelCallbackContext);
++#endif
++}
++
++/*++
++
++Name:
++	VmbusChannelOnTimer()
++
++Description:
++	Timer event callback
++
++--*/
++void
++VmbusChannelOnTimer(
++	void		*Context
++	)
++{
++	VMBUS_CHANNEL *channel = (VMBUS_CHANNEL*)Context;
++
++	if (channel->OnChannelCallback)
++	{
++		channel->OnChannelCallback(channel->ChannelCallbackContext);
++#ifdef ENABLE_POLLING
++		TimerStart(channel->PollTimer, 100 /* 100us */);
++#endif
++	}
++}
++
++
++/*++
++
++Name:
++	DumpVmbusChannel()
++
++Description:
++	Dump vmbus channel info to the console
++
++--*/
++static void
++DumpVmbusChannel(
++	VMBUS_CHANNEL		*Channel
++	)
++{
++	DPRINT_DBG(VMBUS, "Channel (%d)", Channel->OfferMsg.ChildRelId);
++	DumpRingInfo(&Channel->Outbound, "Outbound ");
++	DumpRingInfo(&Channel->Inbound, "Inbound ");
++}
++
++
++// eof
+--- /dev/null
++++ b/drivers/staging/hv/Channel.h
+@@ -0,0 +1,157 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _CHANNEL_H_
++#define _CHANNEL_H_
++
++#include "osd.h"
++#include "ChannelMgmt.h"
++
++#pragma pack(push,1)
++
++
++// The format must be the same as VMDATA_GPA_DIRECT
++typedef struct _VMBUS_CHANNEL_PACKET_PAGE_BUFFER {
++    UINT16				Type;
++    UINT16				DataOffset8;
++    UINT16				Length8;
++    UINT16				Flags;
++    UINT64				TransactionId;
++	UINT32				Reserved;
++	UINT32				RangeCount;
++    PAGE_BUFFER			Range[MAX_PAGE_BUFFER_COUNT];
++} VMBUS_CHANNEL_PACKET_PAGE_BUFFER;
++
++
++// The format must be the same as VMDATA_GPA_DIRECT
++typedef struct _VMBUS_CHANNEL_PACKET_MULITPAGE_BUFFER {
++    UINT16				Type;
++    UINT16				DataOffset8;
++    UINT16				Length8;
++    UINT16				Flags;
++    UINT64				TransactionId;
++	UINT32				Reserved;
++	UINT32				RangeCount;		// Always 1 in this case
++	MULTIPAGE_BUFFER	Range;
++} VMBUS_CHANNEL_PACKET_MULITPAGE_BUFFER;
++
++#pragma pack(pop)
++
++//
++// Routines
++//
++
++INTERNAL int
++VmbusChannelOpen(
++	VMBUS_CHANNEL			*Channel,
++	UINT32					SendRingBufferSize,
++	UINT32					RecvRingBufferSize,
++	PVOID					UserData,
++	UINT32					UserDataLen,
++	PFN_CHANNEL_CALLBACK	pfnOnChannelCallback,
++	PVOID					Context
++	);
++
++INTERNAL void
++VmbusChannelClose(
++	VMBUS_CHANNEL		*Channel
++	);
++
++INTERNAL int
++VmbusChannelSendPacket(
++	VMBUS_CHANNEL		*Channel,
++	const PVOID			Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId,
++	VMBUS_PACKET_TYPE	Type,
++	UINT32				Flags
++);
++
++INTERNAL int
++VmbusChannelSendPacketPageBuffer(
++	VMBUS_CHANNEL		*Channel,
++	PAGE_BUFFER			PageBuffers[],
++	UINT32				PageCount,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++	);
++
++INTERNAL int
++VmbusChannelSendPacketMultiPageBuffer(
++	VMBUS_CHANNEL		*Channel,
++	MULTIPAGE_BUFFER	*MultiPageBuffer,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++);
++
++INTERNAL int
++VmbusChannelEstablishGpadl(
++	VMBUS_CHANNEL		*Channel,
++	PVOID				Kbuffer,	// from kmalloc()
++	UINT32				Size,		// page-size multiple
++	UINT32				*GpadlHandle
++	);
++
++INTERNAL int
++VmbusChannelTeardownGpadl(
++	VMBUS_CHANNEL	*Channel,
++	UINT32			GpadlHandle
++	);
++
++INTERNAL int
++VmbusChannelRecvPacket(
++	VMBUS_CHANNEL		*Channel,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	);
++
++INTERNAL int
++VmbusChannelRecvPacketRaw(
++	VMBUS_CHANNEL		*Channel,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	);
++
++INTERNAL void
++VmbusChannelOnChannelEvent(
++	VMBUS_CHANNEL		*Channel
++	);
++
++INTERNAL void
++VmbusChannelGetDebugInfo(
++	VMBUS_CHANNEL				*Channel,
++	VMBUS_CHANNEL_DEBUG_INFO	*DebugInfo
++	);
++
++INTERNAL void
++VmbusChannelOnTimer(
++	void		*Context
++	);
++#endif //_CHANNEL_H_
+--- /dev/null
++++ b/drivers/staging/hv/ChannelInterface.c
+@@ -0,0 +1,222 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++#include "VmbusPrivate.h"
++
++INTERNAL int
++IVmbusChannelOpen(
++	PDEVICE_OBJECT		Device,
++	UINT32				SendBufferSize,
++	UINT32				RecvRingBufferSize,
++	PVOID				UserData,
++	UINT32				UserDataLen,
++	VMBUS_CHANNEL_CALLBACK ChannelCallback,
++	PVOID				Context
++	)
++{
++	return VmbusChannelOpen( (VMBUS_CHANNEL*)Device->context,
++								SendBufferSize,
++								RecvRingBufferSize,
++								UserData,
++								UserDataLen,
++								ChannelCallback,
++								Context);
++}
++
++
++INTERNAL void
++IVmbusChannelClose(
++	PDEVICE_OBJECT		Device
++	)
++{
++	VmbusChannelClose((VMBUS_CHANNEL*)Device->context);
++}
++
++
++INTERNAL int
++IVmbusChannelSendPacket(
++	PDEVICE_OBJECT		Device,
++	const PVOID			Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId,
++	UINT32				Type,
++	UINT32				Flags
++	)
++{
++	return VmbusChannelSendPacket((VMBUS_CHANNEL*)Device->context,
++									Buffer,
++									BufferLen,
++									RequestId,
++									Type,
++									Flags);
++}
++
++INTERNAL int
++IVmbusChannelSendPacketPageBuffer(
++	PDEVICE_OBJECT		Device,
++	PAGE_BUFFER			PageBuffers[],
++	UINT32				PageCount,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++	)
++{
++	return VmbusChannelSendPacketPageBuffer((VMBUS_CHANNEL*)Device->context,
++												PageBuffers,
++												PageCount,
++												Buffer,
++												BufferLen,
++												RequestId);
++}
++
++INTERNAL int
++IVmbusChannelSendPacketMultiPageBuffer(
++	PDEVICE_OBJECT		Device,
++	MULTIPAGE_BUFFER	*MultiPageBuffer,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT64				RequestId
++	)
++{
++	return VmbusChannelSendPacketMultiPageBuffer((VMBUS_CHANNEL*)Device->context,
++													MultiPageBuffer,
++													Buffer,
++													BufferLen,
++													RequestId);
++}
++
++INTERNAL int
++IVmbusChannelRecvPacket (
++	PDEVICE_OBJECT		Device,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	)
++{
++	return VmbusChannelRecvPacket((VMBUS_CHANNEL*)Device->context,
++									Buffer,
++									BufferLen,
++									BufferActualLen,
++									RequestId);
++}
++
++INTERNAL int
++IVmbusChannelRecvPacketRaw(
++	PDEVICE_OBJECT		Device,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				BufferActualLen,
++	UINT64*				RequestId
++	)
++{
++	return VmbusChannelRecvPacketRaw((VMBUS_CHANNEL*)Device->context,
++										Buffer,
++										BufferLen,
++										BufferActualLen,
++										RequestId);
++}
++
++INTERNAL int
++IVmbusChannelEstablishGpadl(
++	PDEVICE_OBJECT		Device,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32*				GpadlHandle
++	)
++{
++	return VmbusChannelEstablishGpadl((VMBUS_CHANNEL*)Device->context,
++										Buffer,
++										BufferLen,
++										GpadlHandle);
++}
++
++INTERNAL int
++IVmbusChannelTeardownGpadl(
++   PDEVICE_OBJECT		Device,
++   UINT32				GpadlHandle
++	)
++{
++	return VmbusChannelTeardownGpadl((VMBUS_CHANNEL*)Device->context,
++										GpadlHandle);
++
++}
++
++INTERNAL void
++GetChannelInterface(
++	VMBUS_CHANNEL_INTERFACE *ChannelInterface
++	)
++{
++	ChannelInterface->Open						= IVmbusChannelOpen;
++	ChannelInterface->Close						= IVmbusChannelClose;
++	ChannelInterface->SendPacket				= IVmbusChannelSendPacket;
++	ChannelInterface->SendPacketPageBuffer		= IVmbusChannelSendPacketPageBuffer;
++	ChannelInterface->SendPacketMultiPageBuffer = IVmbusChannelSendPacketMultiPageBuffer;
++	ChannelInterface->RecvPacket				= IVmbusChannelRecvPacket;
++	ChannelInterface->RecvPacketRaw				= IVmbusChannelRecvPacketRaw;
++	ChannelInterface->EstablishGpadl			= IVmbusChannelEstablishGpadl;
++	ChannelInterface->TeardownGpadl				= IVmbusChannelTeardownGpadl;
++	ChannelInterface->GetInfo					= GetChannelInfo;
++}
++
++
++INTERNAL void
++GetChannelInfo(
++	PDEVICE_OBJECT		Device,
++	DEVICE_INFO			*DeviceInfo
++			   )
++{
++	VMBUS_CHANNEL_DEBUG_INFO debugInfo;
++
++	if (Device->context)
++	{
++		VmbusChannelGetDebugInfo((VMBUS_CHANNEL*)Device->context, &debugInfo);
++
++		DeviceInfo->ChannelId = debugInfo.RelId;
++		DeviceInfo->ChannelState = debugInfo.State;
++		memcpy(&DeviceInfo->ChannelType, &debugInfo.InterfaceType, sizeof(GUID));
++		memcpy(&DeviceInfo->ChannelInstance, &debugInfo.InterfaceInstance, sizeof(GUID));
++
++		DeviceInfo->MonitorId = debugInfo.MonitorId;
++
++		DeviceInfo->ServerMonitorPending = debugInfo.ServerMonitorPending;
++		DeviceInfo->ServerMonitorLatency = debugInfo.ServerMonitorLatency;
++		DeviceInfo->ServerMonitorConnectionId = debugInfo.ServerMonitorConnectionId;
++
++		DeviceInfo->ClientMonitorPending = debugInfo.ClientMonitorPending;
++		DeviceInfo->ClientMonitorLatency = debugInfo.ClientMonitorLatency;
++		DeviceInfo->ClientMonitorConnectionId = debugInfo.ClientMonitorConnectionId;
++
++		DeviceInfo->Inbound.InterruptMask = debugInfo.Inbound.CurrentInterruptMask;
++		DeviceInfo->Inbound.ReadIndex = debugInfo.Inbound.CurrentReadIndex;
++		DeviceInfo->Inbound.WriteIndex = debugInfo.Inbound.CurrentWriteIndex;
++		DeviceInfo->Inbound.BytesAvailToRead = debugInfo.Inbound.BytesAvailToRead;
++		DeviceInfo->Inbound.BytesAvailToWrite = debugInfo.Inbound.BytesAvailToWrite;
++
++		DeviceInfo->Outbound.InterruptMask = debugInfo.Outbound.CurrentInterruptMask;
++		DeviceInfo->Outbound.ReadIndex = debugInfo.Outbound.CurrentReadIndex;
++		DeviceInfo->Outbound.WriteIndex = debugInfo.Outbound.CurrentWriteIndex;
++		DeviceInfo->Outbound.BytesAvailToRead = debugInfo.Outbound.BytesAvailToRead;
++		DeviceInfo->Outbound.BytesAvailToWrite = debugInfo.Outbound.BytesAvailToWrite;
++	}
++}
+--- /dev/null
++++ b/drivers/staging/hv/ChannelInterface.h
+@@ -0,0 +1,41 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _CHANNEL_INTERFACE_H_
++#define _CHANNEL_INTERFACE_H_
++
++#include "VmbusApi.h"
++
++INTERNAL void
++GetChannelInterface(
++	VMBUS_CHANNEL_INTERFACE *ChannelInterface
++	);
++
++INTERNAL void
++GetChannelInfo(
++	PDEVICE_OBJECT		Device,
++	DEVICE_INFO			*DeviceInfo
++	);
++
++#endif // _CHANNEL_INTERFACE_H_
+--- /dev/null
++++ b/drivers/staging/hv/ChannelMgmt.c
+@@ -0,0 +1,826 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include "osd.h"
++#include "logging.h"
++
++#include "VmbusPrivate.h"
++
++//
++// Defines
++//
++
++//
++// Data types
++//
++
++typedef void (*PFN_CHANNEL_MESSAGE_HANDLER)(VMBUS_CHANNEL_MESSAGE_HEADER* msg);
++
++typedef struct _VMBUS_CHANNEL_MESSAGE_TABLE_ENTRY {
++	VMBUS_CHANNEL_MESSAGE_TYPE	messageType;
++	PFN_CHANNEL_MESSAGE_HANDLER messageHandler;
++} VMBUS_CHANNEL_MESSAGE_TABLE_ENTRY;
++
++//
++// Internal routines
++//
++
++static void
++VmbusChannelOnOffer(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	);
++static void
++VmbusChannelOnOpenResult(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	);
++
++static void
++VmbusChannelOnOfferRescind(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	);
++
++static void
++VmbusChannelOnGpadlCreated(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	);
++
++static void
++VmbusChannelOnGpadlTorndown(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	);
++
++static void
++VmbusChannelOnOffersDelivered(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	);
++
++static void
++VmbusChannelOnVersionResponse(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	);
++
++static void
++VmbusChannelProcessOffer(
++	PVOID context
++	);
++
++static void
++VmbusChannelProcessRescindOffer(
++	PVOID context
++	);
++
++
++//
++// Globals
++//
++
++#define MAX_NUM_DEVICE_CLASSES_SUPPORTED 4
++
++const GUID gSupportedDeviceClasses[MAX_NUM_DEVICE_CLASSES_SUPPORTED]= {
++	//{ba6163d9-04a1-4d29-b605-72e2ffb1dc7f}
++	{.Data  = {0xd9, 0x63, 0x61, 0xba, 0xa1, 0x04, 0x29, 0x4d, 0xb6, 0x05, 0x72, 0xe2, 0xff, 0xb1, 0xdc, 0x7f}},// Storage - SCSI
++	//{F8615163-DF3E-46c5-913F-F2D2F965ED0E}
++	{.Data = {0x63, 0x51, 0x61, 0xF8, 0x3E, 0xDF, 0xc5, 0x46, 0x91, 0x3F, 0xF2, 0xD2, 0xF9, 0x65, 0xED, 0x0E}},	// Network
++	//{CFA8B69E-5B4A-4cc0-B98B-8BA1A1F3F95A}
++	{.Data = {0x9E, 0xB6, 0xA8, 0xCF, 0x4A, 0x5B, 0xc0, 0x4c, 0xB9, 0x8B, 0x8B, 0xA1, 0xA1, 0xF3, 0xF9, 0x5A}}, // Input
++	//{32412632-86cb-44a2-9b5c-50d1417354f5}
++	{.Data = {0x32, 0x26, 0x41, 0x32, 0xcb, 0x86, 0xa2, 0x44, 0x9b, 0x5c, 0x50, 0xd1, 0x41, 0x73, 0x54, 0xf5}}, // IDE
++
++};
++
++// Channel message dispatch table
++VMBUS_CHANNEL_MESSAGE_TABLE_ENTRY gChannelMessageTable[ChannelMessageCount]= {
++    {ChannelMessageInvalid,					NULL},
++    {ChannelMessageOfferChannel,            VmbusChannelOnOffer},
++    {ChannelMessageRescindChannelOffer,     VmbusChannelOnOfferRescind},
++    {ChannelMessageRequestOffers,           NULL},
++    {ChannelMessageAllOffersDelivered,      VmbusChannelOnOffersDelivered},
++    {ChannelMessageOpenChannel,             NULL},
++    {ChannelMessageOpenChannelResult,       VmbusChannelOnOpenResult},
++    {ChannelMessageCloseChannel,            NULL},
++    {ChannelMessageGpadlHeader,             NULL},
++    {ChannelMessageGpadlBody,               NULL},
++	{ChannelMessageGpadlCreated,			VmbusChannelOnGpadlCreated},
++    {ChannelMessageGpadlTeardown,           NULL},
++    {ChannelMessageGpadlTorndown,           VmbusChannelOnGpadlTorndown},
++    {ChannelMessageRelIdReleased,           NULL},
++	{ChannelMessageInitiateContact,			NULL},
++	{ChannelMessageVersionResponse,			VmbusChannelOnVersionResponse},
++	{ChannelMessageUnload,					NULL},
++};
++
++/*++
++
++Name:
++	AllocVmbusChannel()
++
++Description:
++	Allocate and initialize a vmbus channel object
++
++--*/
++VMBUS_CHANNEL* AllocVmbusChannel(void)
++{
++	VMBUS_CHANNEL* channel;
++
++	channel = (VMBUS_CHANNEL*) MemAllocAtomic(sizeof(VMBUS_CHANNEL));
++	if (!channel)
++	{
++		return NULL;
++	}
++
++	memset(channel, 0,sizeof(VMBUS_CHANNEL));
++	channel->InboundLock = SpinlockCreate();
++	if (!channel->InboundLock)
++	{
++		MemFree(channel);
++		return NULL;
++	}
++
++	channel->PollTimer = TimerCreate(VmbusChannelOnTimer, channel);
++	if (!channel->PollTimer)
++	{
++		SpinlockClose(channel->InboundLock);
++		MemFree(channel);
++		return NULL;
++	}
++
++	//channel->dataWorkQueue = WorkQueueCreate("data");
++	channel->ControlWQ = WorkQueueCreate("control");
++	if (!channel->ControlWQ)
++	{
++		TimerClose(channel->PollTimer);
++		SpinlockClose(channel->InboundLock);
++		MemFree(channel);
++		return NULL;
++	}
++
++	return channel;
++}
++
++/*++
++
++Name:
++	ReleaseVmbusChannel()
++
++Description:
++	Release the vmbus channel object itself
++
++--*/
++static inline void ReleaseVmbusChannel(void* Context)
++{
++	VMBUS_CHANNEL* channel = (VMBUS_CHANNEL*)Context;
++
++	DPRINT_ENTER(VMBUS);
++
++	DPRINT_DBG(VMBUS, "releasing channel (%p)", channel);
++	WorkQueueClose(channel->ControlWQ);
++	DPRINT_DBG(VMBUS, "channel released (%p)", channel);
++
++	MemFree(channel);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++/*++
++
++Name:
++	FreeVmbusChannel()
++
++Description:
++	Release the resources used by the vmbus channel object
++
++--*/
++void FreeVmbusChannel(VMBUS_CHANNEL* Channel)
++{
++	SpinlockClose(Channel->InboundLock);
++	TimerClose(Channel->PollTimer);
++
++	// We have to release the channel's workqueue/thread in the vmbus's workqueue/thread context
++	// ie we can't destroy ourselves.
++	WorkQueueQueueWorkItem(gVmbusConnection.WorkQueue, ReleaseVmbusChannel, (void*)Channel);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelProcessOffer()
++
++Description:
++	Process the offer by creating a channel/device associated with this offer
++
++--*/
++static void
++VmbusChannelProcessOffer(
++	PVOID context
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL* newChannel=(VMBUS_CHANNEL*)context;
++	LIST_ENTRY* anchor;
++	LIST_ENTRY* curr;
++	BOOL fNew=TRUE;
++	VMBUS_CHANNEL* channel;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Make sure this is a new offer
++	SpinlockAcquire(gVmbusConnection.ChannelLock);
++
++	ITERATE_LIST_ENTRIES(anchor, curr, &gVmbusConnection.ChannelList)
++	{
++		channel = CONTAINING_RECORD(curr, VMBUS_CHANNEL, ListEntry);
++
++		if (!memcmp(&channel->OfferMsg.Offer.InterfaceType, &newChannel->OfferMsg.Offer.InterfaceType,sizeof(GUID)) &&
++			!memcmp(&channel->OfferMsg.Offer.InterfaceInstance, &newChannel->OfferMsg.Offer.InterfaceInstance, sizeof(GUID)))
++		{
++			fNew = FALSE;
++			break;
++		}
++	}
++
++	if (fNew)
++	{
++		INSERT_TAIL_LIST(&gVmbusConnection.ChannelList, &newChannel->ListEntry);
++	}
++	SpinlockRelease(gVmbusConnection.ChannelLock);
++
++	if (!fNew)
++	{
++		DPRINT_DBG(VMBUS, "Ignoring duplicate offer for relid (%d)", newChannel->OfferMsg.ChildRelId);
++		FreeVmbusChannel(newChannel);
++		DPRINT_EXIT(VMBUS);
++		return;
++	}
++
++	// Start the process of binding this offer to the driver
++	// We need to set the DeviceObject field before calling VmbusChildDeviceAdd()
++	newChannel->DeviceObject = VmbusChildDeviceCreate(
++		newChannel->OfferMsg.Offer.InterfaceType,
++		newChannel->OfferMsg.Offer.InterfaceInstance,
++		newChannel);
++
++	DPRINT_DBG(VMBUS, "child device object allocated - %p", newChannel->DeviceObject);
++
++	// Add the new device to the bus. This will kick off device-driver binding
++	// which eventually invokes the device driver's AddDevice() method.
++	ret = VmbusChildDeviceAdd(newChannel->DeviceObject);
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS, "unable to add child device object (relid %d)",
++			newChannel->OfferMsg.ChildRelId);
++
++		SpinlockAcquire(gVmbusConnection.ChannelLock);
++		REMOVE_ENTRY_LIST(&newChannel->ListEntry);
++		SpinlockRelease(gVmbusConnection.ChannelLock);
++
++		FreeVmbusChannel(newChannel);
++	}
++	else
++	{
++		// This state is used to indicate a successful open so that when we do close the channel normally,
++		// we can cleanup properly
++		newChannel->State = CHANNEL_OPEN_STATE;
++	}
++	DPRINT_EXIT(VMBUS);
++}
++
++/*++
++
++Name:
++	VmbusChannelProcessRescindOffer()
++
++Description:
++	Rescind the offer by initiating a device removal
++
++--*/
++static void
++VmbusChannelProcessRescindOffer(
++	PVOID context
++	)
++{
++	VMBUS_CHANNEL* channel=(VMBUS_CHANNEL*)context;
++
++	DPRINT_ENTER(VMBUS);
++
++	VmbusChildDeviceRemove(channel->DeviceObject);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnOffer()
++
++Description:
++	Handler for channel offers from vmbus in parent partition. We ignore all offers except
++	network and storage offers. For each network and storage offers, we create a channel object
++	and queue a work item to the channel object to process the offer synchronously
++
++--*/
++static void
++VmbusChannelOnOffer(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	)
++{
++	VMBUS_CHANNEL_OFFER_CHANNEL* offer = (VMBUS_CHANNEL_OFFER_CHANNEL*)hdr;
++	VMBUS_CHANNEL* newChannel;
++
++	GUID *guidType;
++	GUID *guidInstance;
++	int i;
++	int fSupported=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	for (i=0; i<MAX_NUM_DEVICE_CLASSES_SUPPORTED; i++)
++	{
++		if (memcmp(&offer->Offer.InterfaceType, &gSupportedDeviceClasses[i], sizeof(GUID)) == 0)
++		{
++			fSupported = 1;
++			break;
++		}
++	}
++
++	if (!fSupported)
++	{
++		DPRINT_DBG(VMBUS, "Ignoring channel offer notification for child relid %d", offer->ChildRelId);
++		DPRINT_EXIT(VMBUS);
++
++		return;
++	}
++
++	guidType = &offer->Offer.InterfaceType;
++	guidInstance = &offer->Offer.InterfaceInstance;
++
++	DPRINT_INFO(VMBUS, "Channel offer notification - child relid %d monitor id %d allocated %d, "
++		"type {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x} "
++		"instance {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		offer->ChildRelId,
++		offer->MonitorId,
++		offer->MonitorAllocated,
++		guidType->Data[3], guidType->Data[2], guidType->Data[1], guidType->Data[0], guidType->Data[5], guidType->Data[4], guidType->Data[7], guidType->Data[6], guidType->Data[8], guidType->Data[9], guidType->Data[10], guidType->Data[11], guidType->Data[12], guidType->Data[13], guidType->Data[14], guidType->Data[15],
++		guidInstance->Data[3], guidInstance->Data[2], guidInstance->Data[1], guidInstance->Data[0], guidInstance->Data[5], guidInstance->Data[4], guidInstance->Data[7], guidInstance->Data[6], guidInstance->Data[8], guidInstance->Data[9], guidInstance->Data[10], guidInstance->Data[11], guidInstance->Data[12], guidInstance->Data[13], guidInstance->Data[14], guidInstance->Data[15]);
++
++	// Allocate the channel object and save this offer.
++	newChannel = AllocVmbusChannel();
++	if (!newChannel)
++	{
++		DPRINT_ERR(VMBUS, "unable to allocate channel object");
++		return;
++	}
++
++	DPRINT_DBG(VMBUS, "channel object allocated - %p", newChannel);
++
++	memcpy(&newChannel->OfferMsg, offer, sizeof(VMBUS_CHANNEL_OFFER_CHANNEL));
++	newChannel->MonitorGroup = (UINT8)offer->MonitorId / 32;
++	newChannel->MonitorBit = (UINT8)offer->MonitorId % 32;
++
++	// TODO: Make sure the offer comes from our parent partition
++	WorkQueueQueueWorkItem(newChannel->ControlWQ, VmbusChannelProcessOffer, newChannel);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnOfferRescind()
++
++Description:
++	Rescind offer handler. We queue a work item to process this offer
++	synchronously
++
++--*/
++static void
++VmbusChannelOnOfferRescind(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	)
++{
++	VMBUS_CHANNEL_RESCIND_OFFER* rescind = (VMBUS_CHANNEL_RESCIND_OFFER*)hdr;
++	VMBUS_CHANNEL* channel;
++
++	DPRINT_ENTER(VMBUS);
++
++	channel = GetChannelFromRelId(rescind->ChildRelId);
++	if (channel == NULL)
++	{
++		DPRINT_DBG(VMBUS, "channel not found for relId %d", rescind->ChildRelId);
++		return;
++	}
++
++	WorkQueueQueueWorkItem(channel->ControlWQ, VmbusChannelProcessRescindOffer, channel);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnOffersDelivered()
++
++Description:
++	This is invoked when all offers have been delivered.
++	Nothing to do here.
++
++--*/
++static void
++VmbusChannelOnOffersDelivered(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	)
++{
++	DPRINT_ENTER(VMBUS);
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnOpenResult()
++
++Description:
++	Open result handler. This is invoked when we received a response
++	to our channel open request. Find the matching request, copy the
++	response and signal the requesting thread.
++
++--*/
++static void
++VmbusChannelOnOpenResult(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	)
++{
++	VMBUS_CHANNEL_OPEN_RESULT* result = (VMBUS_CHANNEL_OPEN_RESULT*)hdr;
++	LIST_ENTRY* anchor;
++	LIST_ENTRY* curr;
++	VMBUS_CHANNEL_MSGINFO* msgInfo;
++	VMBUS_CHANNEL_MESSAGE_HEADER* requestHeader;
++	VMBUS_CHANNEL_OPEN_CHANNEL* openMsg;
++
++	DPRINT_ENTER(VMBUS);
++
++	DPRINT_DBG(VMBUS, "vmbus open result - %d", result->Status);
++
++	// Find the open msg, copy the result and signal/unblock the wait event
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++
++	ITERATE_LIST_ENTRIES(anchor, curr, &gVmbusConnection.ChannelMsgList)
++	{
++		msgInfo = (VMBUS_CHANNEL_MSGINFO*) curr;
++		requestHeader = (VMBUS_CHANNEL_MESSAGE_HEADER*)msgInfo->Msg;
++
++		if (requestHeader->MessageType == ChannelMessageOpenChannel)
++		{
++			openMsg = (VMBUS_CHANNEL_OPEN_CHANNEL*)msgInfo->Msg;
++			if (openMsg->ChildRelId == result->ChildRelId &&
++				openMsg->OpenId == result->OpenId)
++			{
++				memcpy(&msgInfo->Response.OpenResult, result, sizeof(VMBUS_CHANNEL_OPEN_RESULT));
++				WaitEventSet(msgInfo->WaitEvent);
++				break;
++			}
++		}
++	}
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnGpadlCreated()
++
++Description:
++	GPADL created handler. This is invoked when we received a response
++	to our gpadl create request. Find the matching request, copy the
++	response and signal the requesting thread.
++
++--*/
++static void
++VmbusChannelOnGpadlCreated(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	)
++{
++	VMBUS_CHANNEL_GPADL_CREATED *gpadlCreated = (VMBUS_CHANNEL_GPADL_CREATED*)hdr;
++	LIST_ENTRY *anchor;
++	LIST_ENTRY *curr;
++	VMBUS_CHANNEL_MSGINFO *msgInfo;
++	VMBUS_CHANNEL_MESSAGE_HEADER *requestHeader;
++	VMBUS_CHANNEL_GPADL_HEADER *gpadlHeader;
++
++	DPRINT_ENTER(VMBUS);
++
++	DPRINT_DBG(VMBUS, "vmbus gpadl created result - %d", gpadlCreated->CreationStatus);
++
++	// Find the establish msg, copy the result and signal/unblock the wait event
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++
++	ITERATE_LIST_ENTRIES(anchor, curr, &gVmbusConnection.ChannelMsgList)
++	{
++		msgInfo = (VMBUS_CHANNEL_MSGINFO*) curr;
++		requestHeader = (VMBUS_CHANNEL_MESSAGE_HEADER*)msgInfo->Msg;
++
++		if (requestHeader->MessageType == ChannelMessageGpadlHeader)
++		{
++			gpadlHeader = (VMBUS_CHANNEL_GPADL_HEADER*)requestHeader;
++
++			if ((gpadlCreated->ChildRelId == gpadlHeader->ChildRelId) &&
++					(gpadlCreated->Gpadl == gpadlHeader->Gpadl))
++			{
++				memcpy(&msgInfo->Response.GpadlCreated, gpadlCreated, sizeof(VMBUS_CHANNEL_GPADL_CREATED));
++				WaitEventSet(msgInfo->WaitEvent);
++				break;
++			}
++		}
++	}
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnGpadlTorndown()
++
++Description:
++	GPADL torndown handler. This is invoked when we received a response
++	to our gpadl teardown request. Find the matching request, copy the
++	response and signal the requesting thread.
++
++--*/
++static void
++VmbusChannelOnGpadlTorndown(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	)
++{
++	VMBUS_CHANNEL_GPADL_TORNDOWN* gpadlTorndown  = (VMBUS_CHANNEL_GPADL_TORNDOWN*)hdr;
++	LIST_ENTRY* anchor;
++	LIST_ENTRY* curr;
++	VMBUS_CHANNEL_MSGINFO* msgInfo;
++	VMBUS_CHANNEL_MESSAGE_HEADER *requestHeader;
++	VMBUS_CHANNEL_GPADL_TEARDOWN *gpadlTeardown;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Find the open msg, copy the result and signal/unblock the wait event
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++
++	ITERATE_LIST_ENTRIES(anchor, curr, &gVmbusConnection.ChannelMsgList)
++	{
++		msgInfo = (VMBUS_CHANNEL_MSGINFO*) curr;
++		requestHeader = (VMBUS_CHANNEL_MESSAGE_HEADER*)msgInfo->Msg;
++
++		if (requestHeader->MessageType == ChannelMessageGpadlTeardown)
++		{
++			gpadlTeardown = (VMBUS_CHANNEL_GPADL_TEARDOWN*)requestHeader;
++
++			if (gpadlTorndown->Gpadl == gpadlTeardown->Gpadl)
++			{
++				memcpy(&msgInfo->Response.GpadlTorndown, gpadlTorndown, sizeof(VMBUS_CHANNEL_GPADL_TORNDOWN));
++				WaitEventSet(msgInfo->WaitEvent);
++				break;
++			}
++		}
++	}
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelOnVersionResponse()
++
++Description:
++	Version response handler. This is invoked when we received a response
++	to our initiate contact request. Find the matching request, copy the
++	response and signal the requesting thread.
++
++--*/
++static void
++VmbusChannelOnVersionResponse(
++	PVMBUS_CHANNEL_MESSAGE_HEADER hdr
++	)
++{
++	LIST_ENTRY* anchor;
++	LIST_ENTRY* curr;
++	VMBUS_CHANNEL_MSGINFO *msgInfo;
++	VMBUS_CHANNEL_MESSAGE_HEADER *requestHeader;
++	VMBUS_CHANNEL_INITIATE_CONTACT *initiate;
++	VMBUS_CHANNEL_VERSION_RESPONSE *versionResponse  = (VMBUS_CHANNEL_VERSION_RESPONSE*)hdr;
++
++	DPRINT_ENTER(VMBUS);
++
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++
++	ITERATE_LIST_ENTRIES(anchor, curr, &gVmbusConnection.ChannelMsgList)
++	{
++		msgInfo = (VMBUS_CHANNEL_MSGINFO*) curr;
++		requestHeader = (VMBUS_CHANNEL_MESSAGE_HEADER*)msgInfo->Msg;
++
++		if (requestHeader->MessageType == ChannelMessageInitiateContact)
++		{
++			initiate = (VMBUS_CHANNEL_INITIATE_CONTACT*)requestHeader;
++			memcpy(&msgInfo->Response.VersionResponse, versionResponse, sizeof(VMBUS_CHANNEL_VERSION_RESPONSE));
++			WaitEventSet(msgInfo->WaitEvent);
++		}
++	}
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusOnChannelMessage()
++
++Description:
++	Handler for channel protocol messages.
++	This is invoked in the vmbus worker thread context.
++
++--*/
++VOID
++VmbusOnChannelMessage(
++	void *Context
++	)
++{
++	HV_MESSAGE *msg=(HV_MESSAGE*)Context;
++	VMBUS_CHANNEL_MESSAGE_HEADER* hdr;
++	int size;
++
++	DPRINT_ENTER(VMBUS);
++
++	hdr = (VMBUS_CHANNEL_MESSAGE_HEADER*)msg->u.Payload;
++	size=msg->Header.PayloadSize;
++
++	DPRINT_DBG(VMBUS, "message type %d size %d", hdr->MessageType, size);
++
++	if (hdr->MessageType >= ChannelMessageCount)
++	{
++		DPRINT_ERR(VMBUS, "Received invalid channel message type %d size %d", hdr->MessageType, size);
++		PrintBytes((unsigned char *)msg->u.Payload, size);
++		MemFree(msg);
++		return;
++	}
++
++	if (gChannelMessageTable[hdr->MessageType].messageHandler)
++	{
++		gChannelMessageTable[hdr->MessageType].messageHandler(hdr);
++	}
++	else
++	{
++		DPRINT_ERR(VMBUS, "Unhandled channel message type %d", hdr->MessageType);
++	}
++
++	// Free the msg that was allocated in VmbusOnMsgDPC()
++	MemFree(msg);
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusChannelRequestOffers()
++
++Description:
++	Send a request to get all our pending offers.
++
++--*/
++int
++VmbusChannelRequestOffers(
++	VOID
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL_MESSAGE_HEADER* msg;
++	VMBUS_CHANNEL_MSGINFO* msgInfo;
++
++	DPRINT_ENTER(VMBUS);
++
++	msgInfo =
++		(VMBUS_CHANNEL_MSGINFO*)MemAlloc(sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_MESSAGE_HEADER));
++	ASSERT(msgInfo != NULL);
++
++	msgInfo->WaitEvent = WaitEventCreate();
++	msg = (VMBUS_CHANNEL_MESSAGE_HEADER*)msgInfo->Msg;
++
++	msg->MessageType = ChannelMessageRequestOffers;
++
++	/*SpinlockAcquire(gVmbusConnection.channelMsgLock);
++	INSERT_TAIL_LIST(&gVmbusConnection.channelMsgList, &msgInfo->msgListEntry);
++	SpinlockRelease(gVmbusConnection.channelMsgLock);*/
++
++	ret = VmbusPostMessage(msg, sizeof(VMBUS_CHANNEL_MESSAGE_HEADER));
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS, "Unable to request offers - %d", ret);
++
++		/*SpinlockAcquire(gVmbusConnection.channelMsgLock);
++		REMOVE_ENTRY_LIST(&msgInfo->msgListEntry);
++		SpinlockRelease(gVmbusConnection.channelMsgLock);*/
++
++		goto Cleanup;
++	}
++	//WaitEventWait(msgInfo->waitEvent);
++
++	/*SpinlockAcquire(gVmbusConnection.channelMsgLock);
++	REMOVE_ENTRY_LIST(&msgInfo->msgListEntry);
++	SpinlockRelease(gVmbusConnection.channelMsgLock);*/
++
++
++Cleanup:
++	if (msgInfo)
++	{
++		WaitEventClose(msgInfo->WaitEvent);
++		MemFree(msgInfo);
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++/*++
++
++Name:
++	VmbusChannelReleaseUnattachedChannels()
++
++Description:
++	Release channels that are unattached/unconnected ie (no drivers associated)
++
++--*/
++void
++VmbusChannelReleaseUnattachedChannels(
++	VOID
++	)
++{
++	LIST_ENTRY *entry;
++	VMBUS_CHANNEL *channel;
++	VMBUS_CHANNEL *start=NULL;
++
++	SpinlockAcquire(gVmbusConnection.ChannelLock);
++
++	while (!IsListEmpty(&gVmbusConnection.ChannelList))
++	{
++		entry = TOP_LIST_ENTRY(&gVmbusConnection.ChannelList);
++		channel = CONTAINING_RECORD(entry, VMBUS_CHANNEL, ListEntry);
++
++		if (channel == start)
++			break;
++
++		if (!channel->DeviceObject->Driver)
++		{
++			REMOVE_ENTRY_LIST(&channel->ListEntry);
++			DPRINT_INFO(VMBUS, "Releasing unattached device object %p", channel->DeviceObject);
++
++			VmbusChildDeviceRemove(channel->DeviceObject);
++			FreeVmbusChannel(channel);
++		}
++		else
++		{
++			if (!start)
++			{
++				start = channel;
++			}
++		}
++	}
++
++	SpinlockRelease(gVmbusConnection.ChannelLock);
++}
++
++// eof
++
+--- /dev/null
++++ b/drivers/staging/hv/ChannelMgmt.h
+@@ -0,0 +1,156 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _CHANNEL_MGMT_H_
++#define _CHANNEL_MGMT_H_
++
++#include "osd.h"
++#include "List.h"
++#include "RingBuffer.h"
++
++#include "VmbusChannelInterface.h"
++#include "ChannelMessages.h"
++
++
++
++typedef void (*PFN_CHANNEL_CALLBACK)(PVOID context);
++
++typedef enum {
++	CHANNEL_OFFER_STATE,
++	CHANNEL_OPENING_STATE,
++	CHANNEL_OPEN_STATE,
++} VMBUS_CHANNEL_STATE;
++
++typedef struct _VMBUS_CHANNEL {
++	LIST_ENTRY					ListEntry;
++
++	DEVICE_OBJECT*				DeviceObject;
++
++	HANDLE						PollTimer; // SA-111 workaround
++
++	VMBUS_CHANNEL_STATE			State;
++
++	VMBUS_CHANNEL_OFFER_CHANNEL OfferMsg;
++	// These are based on the OfferMsg.MonitorId. Save it here for easy access.
++	UINT8						MonitorGroup;
++	UINT8						MonitorBit;
++
++	UINT32						RingBufferGpadlHandle;
++
++	// Allocated memory for ring buffer
++	VOID*						RingBufferPages;
++	UINT32						RingBufferPageCount;
++	RING_BUFFER_INFO			Outbound;	// send to parent
++	RING_BUFFER_INFO			Inbound;	// receive from parent
++	HANDLE						InboundLock;
++	HANDLE						ControlWQ;
++
++	// Channel callback are invoked in this workqueue context
++	//HANDLE						dataWorkQueue;
++
++	PFN_CHANNEL_CALLBACK		OnChannelCallback;
++	PVOID						ChannelCallbackContext;
++
++} VMBUS_CHANNEL;
++
++
++typedef struct _VMBUS_CHANNEL_DEBUG_INFO {
++	UINT32						RelId;
++	VMBUS_CHANNEL_STATE			State;
++	GUID						InterfaceType;
++    GUID						InterfaceInstance;
++	UINT32						MonitorId;
++	UINT32						ServerMonitorPending;
++	UINT32						ServerMonitorLatency;
++	UINT32						ServerMonitorConnectionId;
++	UINT32						ClientMonitorPending;
++	UINT32						ClientMonitorLatency;
++	UINT32						ClientMonitorConnectionId;
++
++	RING_BUFFER_DEBUG_INFO		Inbound;
++	RING_BUFFER_DEBUG_INFO		Outbound;
++} VMBUS_CHANNEL_DEBUG_INFO;
++
++
++typedef union {
++	VMBUS_CHANNEL_VERSION_SUPPORTED		VersionSupported;
++	VMBUS_CHANNEL_OPEN_RESULT			OpenResult;
++	VMBUS_CHANNEL_GPADL_TORNDOWN		GpadlTorndown;
++	VMBUS_CHANNEL_GPADL_CREATED			GpadlCreated;
++	VMBUS_CHANNEL_VERSION_RESPONSE		VersionResponse;
++} VMBUS_CHANNEL_MESSAGE_RESPONSE;
++
++
++// Represents each channel msg on the vmbus connection
++// This is a variable-size data structure depending on
++// the msg type itself
++typedef struct _VMBUS_CHANNEL_MSGINFO {
++	// Bookkeeping stuff
++	LIST_ENTRY		MsgListEntry;
++
++	// So far, this is only used to handle gpadl body message
++	LIST_ENTRY		SubMsgList;
++
++	// Synchronize the request/response if needed
++	HANDLE			WaitEvent;
++
++	VMBUS_CHANNEL_MESSAGE_RESPONSE Response;
++
++	UINT32			MessageSize;
++	// The channel message that goes out on the "wire".
++	// It will contain at minimum the VMBUS_CHANNEL_MESSAGE_HEADER header
++	unsigned char	Msg[0];
++} VMBUS_CHANNEL_MSGINFO;
++
++
++//
++// Routines
++//
++
++INTERNAL VMBUS_CHANNEL*
++AllocVmbusChannel(
++	void
++	);
++
++INTERNAL void
++FreeVmbusChannel(
++	VMBUS_CHANNEL *Channel
++	);
++
++INTERNAL void
++VmbusOnChannelMessage(
++	void *Context
++	);
++
++INTERNAL int
++VmbusChannelRequestOffers(
++	void
++	);
++
++INTERNAL void
++VmbusChannelReleaseUnattachedChannels(
++	void
++	);
++
++#endif //_CHANNEL_MGMT_H_
+--- /dev/null
++++ b/drivers/staging/hv/Connection.c
+@@ -0,0 +1,432 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include "logging.h"
++
++#include "VmbusPrivate.h"
++
++//
++// Globals
++//
++
++
++VMBUS_CONNECTION gVmbusConnection = {
++	.ConnectState		= Disconnected,
++	.NextGpadlHandle	= 0xE1E10,
++};
++
++
++/*++
++
++Name:
++	VmbusConnect()
++
++Description:
++	Sends a connect request on the partition service connection
++
++--*/
++int
++VmbusConnect(
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL_MSGINFO *msgInfo=NULL;
++	VMBUS_CHANNEL_INITIATE_CONTACT *msg;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Make sure we are not connecting or connected
++	if (gVmbusConnection.ConnectState != Disconnected)
++		return -1;
++
++	// Initialize the vmbus connection
++	gVmbusConnection.ConnectState = Connecting;
++	gVmbusConnection.WorkQueue = WorkQueueCreate("vmbusQ");
++
++	INITIALIZE_LIST_HEAD(&gVmbusConnection.ChannelMsgList);
++	gVmbusConnection.ChannelMsgLock = SpinlockCreate();
++
++	INITIALIZE_LIST_HEAD(&gVmbusConnection.ChannelList);
++	gVmbusConnection.ChannelLock = SpinlockCreate();
++
++	// Setup the vmbus event connection for channel interrupt abstraction stuff
++	gVmbusConnection.InterruptPage = PageAlloc(1);
++	if (gVmbusConnection.InterruptPage == NULL)
++	{
++		ret = -1;
++		goto Cleanup;
++	}
++
++	gVmbusConnection.RecvInterruptPage = gVmbusConnection.InterruptPage;
++	gVmbusConnection.SendInterruptPage = (void*)((ULONG_PTR)gVmbusConnection.InterruptPage + (PAGE_SIZE >> 1));
++
++	// Setup the monitor notification facility. The 1st page for parent->child and the 2nd page for child->parent
++	gVmbusConnection.MonitorPages = PageAlloc(2);
++	if (gVmbusConnection.MonitorPages == NULL)
++	{
++		ret = -1;
++		goto Cleanup;
++	}
++
++	msgInfo = (VMBUS_CHANNEL_MSGINFO*)MemAllocZeroed(sizeof(VMBUS_CHANNEL_MSGINFO) + sizeof(VMBUS_CHANNEL_INITIATE_CONTACT));
++	if (msgInfo == NULL)
++	{
++		ret = -1;
++		goto Cleanup;
++	}
++
++	msgInfo->WaitEvent = WaitEventCreate();
++	msg = (VMBUS_CHANNEL_INITIATE_CONTACT*)msgInfo->Msg;
++
++	msg->Header.MessageType = ChannelMessageInitiateContact;
++	msg->VMBusVersionRequested = VMBUS_REVISION_NUMBER;
++	msg->InterruptPage = GetPhysicalAddress(gVmbusConnection.InterruptPage);
++	msg->MonitorPage1 = GetPhysicalAddress(gVmbusConnection.MonitorPages);
++	msg->MonitorPage2 = GetPhysicalAddress((PVOID)((ULONG_PTR)gVmbusConnection.MonitorPages + PAGE_SIZE));
++
++	// Add to list before we send the request since we may receive the response
++	// before returning from this routine
++	SpinlockAcquire(gVmbusConnection.ChannelMsgLock);
++	INSERT_TAIL_LIST(&gVmbusConnection.ChannelMsgList, &msgInfo->MsgListEntry);
++	SpinlockRelease(gVmbusConnection.ChannelMsgLock);
++
++	DPRINT_DBG(VMBUS, "Vmbus connection -  interrupt pfn %llx, monitor1 pfn %llx,, monitor2 pfn %llx",
++		msg->InterruptPage, msg->MonitorPage1, msg->MonitorPage2);
++
++	DPRINT_DBG(VMBUS, "Sending channel initiate msg...");
++
++	ret = VmbusPostMessage(msg, sizeof(VMBUS_CHANNEL_INITIATE_CONTACT));
++	if (ret != 0)
++	{
++		REMOVE_ENTRY_LIST(&msgInfo->MsgListEntry);
++		goto Cleanup;
++	}
++
++	// Wait for the connection response
++	WaitEventWait(msgInfo->WaitEvent);
++
++	REMOVE_ENTRY_LIST(&msgInfo->MsgListEntry);
++
++	// Check if successful
++	if (msgInfo->Response.VersionResponse.VersionSupported)
++	{
++		DPRINT_INFO(VMBUS, "Vmbus connected!!");
++		gVmbusConnection.ConnectState = Connected;
++
++	}
++	else
++	{
++		DPRINT_ERR(VMBUS, "Vmbus connection failed!!...current version (%d) not supported", VMBUS_REVISION_NUMBER);
++		ret = -1;
++
++		goto Cleanup;
++	}
++
++
++	WaitEventClose(msgInfo->WaitEvent);
++	MemFree(msgInfo);
++	DPRINT_EXIT(VMBUS);
++
++	return 0;
++
++Cleanup:
++
++	gVmbusConnection.ConnectState = Disconnected;
++
++	WorkQueueClose(gVmbusConnection.WorkQueue);
++	SpinlockClose(gVmbusConnection.ChannelLock);
++	SpinlockClose(gVmbusConnection.ChannelMsgLock);
++
++	if (gVmbusConnection.InterruptPage)
++	{
++		PageFree(gVmbusConnection.InterruptPage, 1);
++		gVmbusConnection.InterruptPage = NULL;
++	}
++
++	if (gVmbusConnection.MonitorPages)
++	{
++		PageFree(gVmbusConnection.MonitorPages, 2);
++		gVmbusConnection.MonitorPages = NULL;
++	}
++
++	if (msgInfo)
++	{
++		if (msgInfo->WaitEvent)
++			WaitEventClose(msgInfo->WaitEvent);
++
++		MemFree(msgInfo);
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	VmbusDisconnect()
++
++Description:
++	Sends a disconnect request on the partition service connection
++
++--*/
++int
++VmbusDisconnect(
++	VOID
++	)
++{
++	int ret=0;
++	VMBUS_CHANNEL_UNLOAD *msg;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Make sure we are connected
++	if (gVmbusConnection.ConnectState != Connected)
++		return -1;
++
++	msg = MemAllocZeroed(sizeof(VMBUS_CHANNEL_UNLOAD));
++
++	msg->MessageType = ChannelMessageUnload;
++
++	ret = VmbusPostMessage(msg, sizeof(VMBUS_CHANNEL_UNLOAD));
++
++	if (ret != 0)
++	{
++		goto Cleanup;
++	}
++
++	PageFree(gVmbusConnection.InterruptPage, 1);
++
++	// TODO: iterate thru the msg list and free up
++
++	SpinlockClose(gVmbusConnection.ChannelMsgLock);
++
++	WorkQueueClose(gVmbusConnection.WorkQueue);
++
++	gVmbusConnection.ConnectState = Disconnected;
++
++	DPRINT_INFO(VMBUS, "Vmbus disconnected!!");
++
++Cleanup:
++	if (msg)
++	{
++		MemFree(msg);
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	GetChannelFromRelId()
++
++Description:
++	Get the channel object given its child relative id (ie channel id)
++
++--*/
++VMBUS_CHANNEL*
++GetChannelFromRelId(
++	UINT32 relId
++	)
++{
++	VMBUS_CHANNEL* channel;
++	VMBUS_CHANNEL* foundChannel=NULL;
++	LIST_ENTRY* anchor;
++	LIST_ENTRY* curr;
++
++	SpinlockAcquire(gVmbusConnection.ChannelLock);
++	ITERATE_LIST_ENTRIES(anchor, curr, &gVmbusConnection.ChannelList)
++	{
++		channel = CONTAINING_RECORD(curr, VMBUS_CHANNEL, ListEntry);
++
++		if (channel->OfferMsg.ChildRelId == relId)
++		{
++			foundChannel = channel;
++			break;
++		}
++	}
++	SpinlockRelease(gVmbusConnection.ChannelLock);
++
++	return foundChannel;
++}
++
++
++
++/*++
++
++Name:
++	VmbusProcessChannelEvent()
++
++Description:
++	Process a channel event notification
++
++--*/
++static void
++VmbusProcessChannelEvent(
++	PVOID context
++	)
++{
++	VMBUS_CHANNEL* channel;
++	UINT32 relId = (UINT32)(ULONG_PTR)context;
++
++	ASSERT(relId > 0);
++
++	// Find the channel based on this relid and invokes
++	// the channel callback to process the event
++	channel = GetChannelFromRelId(relId);
++
++	if (channel)
++	{
++		VmbusChannelOnChannelEvent(channel);
++		//WorkQueueQueueWorkItem(channel->dataWorkQueue, VmbusChannelOnChannelEvent, (void*)channel);
++	}
++	else
++	{
++        DPRINT_ERR(VMBUS, "channel not found for relid - %d.", relId);
++	}
++}
++
++
++/*++
++
++Name:
++	VmbusOnEvents()
++
++Description:
++	Handler for events
++
++--*/
++VOID
++VmbusOnEvents(
++  VOID
++	)
++{
++	int dword;
++	//int maxdword = PAGE_SIZE >> 3; // receive size is 1/2 page and divide that by 4 bytes
++	int maxdword = MAX_NUM_CHANNELS_SUPPORTED >> 5;
++	int bit;
++	int relid;
++	UINT32* recvInterruptPage = gVmbusConnection.RecvInterruptPage;
++	//VMBUS_CHANNEL_MESSAGE* receiveMsg;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Check events
++	if (recvInterruptPage)
++	{
++		for (dword = 0; dword < maxdword; dword++)
++		{
++			if (recvInterruptPage[dword])
++			{
++				for (bit = 0; bit < 32; bit++)
++				{
++					if (BitTestAndClear(&recvInterruptPage[dword], bit))
++					{
++						relid = (dword << 5) + bit;
++
++						DPRINT_DBG(VMBUS, "event detected for relid - %d", relid);
++
++						if (relid == 0) // special case - vmbus channel protocol msg
++						{
++							DPRINT_DBG(VMBUS, "invalid relid - %d", relid);
++
++							continue;						}
++						else
++						{
++							//QueueWorkItem(VmbusProcessEvent, (void*)relid);
++							//ret = WorkQueueQueueWorkItem(gVmbusConnection.workQueue, VmbusProcessChannelEvent, (void*)relid);
++							VmbusProcessChannelEvent((void*)(ULONG_PTR)relid);
++						}
++					}
++				}
++			}
++		 }
++	}
++	DPRINT_EXIT(VMBUS);
++
++	return;
++}
++
++/*++
++
++Name:
++	VmbusPostMessage()
++
++Description:
++	Send a msg on the vmbus's message connection
++
++--*/
++int
++VmbusPostMessage(
++	PVOID			buffer,
++	SIZE_T			bufferLen
++	)
++{
++	int ret=0;
++	HV_CONNECTION_ID connId;
++
++
++	connId.AsUINT32 =0;
++	connId.u.Id = VMBUS_MESSAGE_CONNECTION_ID;
++	ret = HvPostMessage(
++			connId,
++			1,
++			buffer,
++			bufferLen);
++
++	return  ret;
++}
++
++/*++
++
++Name:
++	VmbusSetEvent()
++
++Description:
++	Send an event notification to the parent
++
++--*/
++int
++VmbusSetEvent(UINT32 childRelId)
++{
++	int ret=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Each UINT32 represents 32 channels
++	BitSet((UINT32*)gVmbusConnection.SendInterruptPage + (childRelId >> 5), childRelId & 31);
++	ret = HvSignalEvent();
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++// EOF
+--- /dev/null
++++ b/drivers/staging/hv/Hv.c
+@@ -0,0 +1,672 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include "logging.h"
++#include "VmbusPrivate.h"
++
++//
++// Globals
++//
++
++// The one and only
++HV_CONTEXT gHvContext={
++	.SynICInitialized = FALSE,
++	.HypercallPage = NULL,
++	.SignalEventParam = NULL,
++	.SignalEventBuffer = NULL,
++};
++
++
++/*++
++
++Name:
++	HvQueryHypervisorPresence()
++
++Description:
++	Query the cpuid for presense of windows hypervisor
++
++--*/
++static int
++HvQueryHypervisorPresence (
++    void
++    )
++{
++    unsigned int eax;
++    unsigned int ebx;
++    unsigned int ecx;
++    unsigned int edx;
++    unsigned int op;
++
++    eax = 0;
++    ebx = 0;
++    ecx = 0;
++    edx = 0;
++    op = HvCpuIdFunctionVersionAndFeatures;
++    do_cpuid(op, &eax, &ebx, &ecx, &edx);
++
++	return (ecx & HV_PRESENT_BIT);
++}
++
++
++/*++
++
++Name:
++	HvQueryHypervisorInfo()
++
++Description:
++	Get version info of the windows hypervisor
++
++--*/
++static int
++HvQueryHypervisorInfo (
++    void
++    )
++{
++    unsigned int eax;
++    unsigned int ebx;
++    unsigned int ecx;
++    unsigned int edx;
++    unsigned int maxLeaf;
++    unsigned int op;
++
++    //
++    // Its assumed that this is called after confirming that Viridian is present.
++    // Query id and revision.
++    //
++
++    eax = 0;
++    ebx = 0;
++    ecx = 0;
++    edx = 0;
++    op = HvCpuIdFunctionHvVendorAndMaxFunction;
++    do_cpuid(op, &eax, &ebx, &ecx, &edx);
++
++    DPRINT_INFO(VMBUS, "Vendor ID: %c%c%c%c%c%c%c%c%c%c%c%c",
++           (ebx & 0xFF),
++           ((ebx >> 8) & 0xFF),
++           ((ebx >> 16) & 0xFF),
++           ((ebx >> 24) & 0xFF),
++           (ecx & 0xFF),
++           ((ecx >> 8) & 0xFF),
++           ((ecx >> 16) & 0xFF),
++           ((ecx >> 24) & 0xFF),
++           (edx & 0xFF),
++           ((edx >> 8) & 0xFF),
++           ((edx >> 16) & 0xFF),
++           ((edx >> 24) & 0xFF));
++
++    maxLeaf = eax;
++    eax = 0;
++    ebx = 0;
++    ecx = 0;
++    edx = 0;
++    op = HvCpuIdFunctionHvInterface;
++    do_cpuid(op, &eax, &ebx, &ecx, &edx);
++
++    DPRINT_INFO(VMBUS, "Interface ID: %c%c%c%c",
++           (eax & 0xFF),
++           ((eax >> 8) & 0xFF),
++           ((eax >> 16) & 0xFF),
++           ((eax >> 24) & 0xFF));
++
++	 if (maxLeaf >= HvCpuIdFunctionMsHvVersion) {
++        eax = 0;
++        ebx = 0;
++        ecx = 0;
++        edx = 0;
++        op = HvCpuIdFunctionMsHvVersion;
++        do_cpuid(op, &eax, &ebx, &ecx, &edx);
++        DPRINT_INFO(VMBUS, "OS Build:%d-%d.%d-%d-%d.%d",
++               eax,
++               ebx >> 16,
++               ebx & 0xFFFF,
++               ecx,
++               edx >> 24,
++               edx & 0xFFFFFF);
++    }
++    return maxLeaf;
++}
++
++
++/*++
++
++Name:
++	HvDoHypercall()
++
++Description:
++	Invoke the specified hypercall
++
++--*/
++static UINT64
++HvDoHypercall (
++    UINT64  Control,
++    void*   Input,
++    void*   Output
++    )
++{
++#ifdef x86_64
++    UINT64 hvStatus=0;
++    UINT64 inputAddress = (Input)? GetPhysicalAddress(Input) : 0;
++	UINT64 outputAddress = (Output)? GetPhysicalAddress(Output) : 0;
++    volatile void* hypercallPage = gHvContext.HypercallPage;
++
++    DPRINT_DBG(VMBUS, "Hypercall <control %llx input phys %llx virt %p output phys %llx virt %p hypercall %p>",
++		Control,
++		inputAddress,
++		Input,
++		outputAddress,
++		Output,
++		hypercallPage);
++
++	__asm__ __volatile__ ("mov %0, %%r8" : : "r" (outputAddress):  "r8");
++	__asm__ __volatile__ ("call *%3" : "=a"(hvStatus): "c" (Control), "d" (inputAddress), "m" (hypercallPage));
++
++    DPRINT_DBG(VMBUS, "Hypercall <return %llx>",  hvStatus);
++
++    return hvStatus;
++
++#else
++
++    UINT32 controlHi = Control >> 32;
++    UINT32 controlLo = Control & 0xFFFFFFFF;
++    UINT32 hvStatusHi = 1;
++    UINT32 hvStatusLo = 1;
++    UINT64 inputAddress = (Input) ? GetPhysicalAddress(Input) : 0;
++    UINT32 inputAddressHi = inputAddress >> 32;
++    UINT32 inputAddressLo = inputAddress & 0xFFFFFFFF;
++	UINT64 outputAddress = (Output) ?GetPhysicalAddress(Output) : 0;
++    UINT32 outputAddressHi = outputAddress >> 32;
++    UINT32 outputAddressLo = outputAddress & 0xFFFFFFFF;
++    volatile void* hypercallPage = gHvContext.HypercallPage;
++
++    DPRINT_DBG(VMBUS, "Hypercall <control %llx input %p output %p>",
++		Control,
++		Input,
++		Output);
++
++	__asm__ __volatile__ ("call *%8" : "=d"(hvStatusHi), "=a"(hvStatusLo) : "d" (controlHi), "a" (controlLo), "b" (inputAddressHi), "c" (inputAddressLo), "D"(outputAddressHi), "S"(outputAddressLo), "m" (hypercallPage));
++
++
++    DPRINT_DBG(VMBUS, "Hypercall <return %llx>",  hvStatusLo | ((UINT64)hvStatusHi << 32));
++
++    return (hvStatusLo | ((UINT64)hvStatusHi << 32));
++#endif // x86_64
++}
++
++/*++
++
++Name:
++	HvInit()
++
++Description:
++	Main initialization routine. This routine must be called
++	before any other routines in here are called
++
++--*/
++static int
++HvInit (
++    void
++    )
++{
++	int ret=0;
++    int maxLeaf;
++	HV_X64_MSR_HYPERCALL_CONTENTS hypercallMsr;
++	void* virtAddr=0;
++	ULONG_PTR physAddr=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	memset(gHvContext.synICEventPage, 0, sizeof(HANDLE)*MAX_NUM_CPUS);
++	memset(gHvContext.synICMessagePage, 0, sizeof(HANDLE)*MAX_NUM_CPUS);
++
++	if (!HvQueryHypervisorPresence())
++	{
++		DPRINT_ERR(VMBUS, "No Windows hypervisor detected!!");
++		goto Cleanup;
++	}
++
++	DPRINT_INFO(VMBUS, "Windows hypervisor detected! Retrieving more info...");
++
++    maxLeaf = HvQueryHypervisorInfo();
++    //HvQueryHypervisorFeatures(maxLeaf);
++
++	// Determine if we are running on xenlinux (ie x2v shim) or native linux
++	gHvContext.GuestId = ReadMsr(HV_X64_MSR_GUEST_OS_ID);
++
++	if (gHvContext.GuestId == 0)
++	{
++		// Write our OS info
++		WriteMsr(HV_X64_MSR_GUEST_OS_ID, HV_LINUX_GUEST_ID);
++
++		gHvContext.GuestId = HV_LINUX_GUEST_ID;
++	}
++
++	// See if the hypercall page is already set
++	hypercallMsr.AsUINT64 = ReadMsr(HV_X64_MSR_HYPERCALL);
++
++	if (gHvContext.GuestId == HV_LINUX_GUEST_ID)
++	{
++		// Allocate the hypercall page memory
++		//virtAddr = PageAlloc(1);
++		virtAddr = VirtualAllocExec(PAGE_SIZE);
++
++		if (!virtAddr)
++		{
++			DPRINT_ERR(VMBUS, "unable to allocate hypercall page!!");
++			goto Cleanup;
++		}
++
++		hypercallMsr.Enable = 1;
++		//hypercallMsr.GuestPhysicalAddress = Logical2PhysicalAddr(virtAddr) >> PAGE_SHIFT;
++		hypercallMsr.GuestPhysicalAddress = Virtual2Physical(virtAddr) >> PAGE_SHIFT;
++		WriteMsr(HV_X64_MSR_HYPERCALL, hypercallMsr.AsUINT64);
++
++        // Confirm that hypercall page did get setup.
++		hypercallMsr.AsUINT64 = 0;
++		hypercallMsr.AsUINT64 = ReadMsr(HV_X64_MSR_HYPERCALL);
++
++		if (!hypercallMsr.Enable)
++		{
++			DPRINT_ERR(VMBUS, "unable to set hypercall page!!");
++			goto Cleanup;
++		}
++
++		gHvContext.HypercallPage = virtAddr;
++	}
++	else
++	{
++		DPRINT_ERR(VMBUS, "Unknown guest id (0x%llx)!!", gHvContext.GuestId);
++		goto Cleanup;
++	}
++
++    DPRINT_INFO(VMBUS, "Hypercall page VA=0x%08x, PA=0x%08x",
++               (unsigned long)gHvContext.HypercallPage,
++               (unsigned long)hypercallMsr.GuestPhysicalAddress << PAGE_SHIFT);
++
++	// Setup the global signal event param for the signal event hypercall
++	gHvContext.SignalEventBuffer = MemAlloc(sizeof(HV_INPUT_SIGNAL_EVENT_BUFFER));
++	if (!gHvContext.SignalEventBuffer)
++	{
++		goto Cleanup;
++	}
++
++	gHvContext.SignalEventParam = (PHV_INPUT_SIGNAL_EVENT)(ALIGN_UP((ULONG_PTR)gHvContext.SignalEventBuffer, HV_HYPERCALL_PARAM_ALIGN));
++	gHvContext.SignalEventParam->ConnectionId.AsUINT32 = 0;
++	gHvContext.SignalEventParam->ConnectionId.u.Id = VMBUS_EVENT_CONNECTION_ID;
++	gHvContext.SignalEventParam->FlagNumber = 0;
++	gHvContext.SignalEventParam->RsvdZ = 0;
++
++    //DPRINT_DBG(VMBUS, "My id %llu", HvGetCurrentPartitionId());
++
++	DPRINT_EXIT(VMBUS);
++
++    return ret;
++
++Cleanup:
++	if (virtAddr)
++	{
++		if (hypercallMsr.Enable)
++		{
++			hypercallMsr.AsUINT64 = 0;
++			WriteMsr(HV_X64_MSR_HYPERCALL, hypercallMsr.AsUINT64);
++		}
++
++		VirtualFree(virtAddr);
++	}
++	ret = -1;
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	HvCleanup()
++
++Description:
++	Cleanup routine. This routine is called normally during driver unloading or exiting.
++
++--*/
++void
++HvCleanup (
++    void
++    )
++{
++	HV_X64_MSR_HYPERCALL_CONTENTS hypercallMsr;
++
++	DPRINT_ENTER(VMBUS);
++
++	if (gHvContext.SignalEventBuffer)
++	{
++		MemFree(gHvContext.SignalEventBuffer);
++		gHvContext.SignalEventBuffer = NULL;
++		gHvContext.SignalEventParam = NULL;
++	}
++
++	if (gHvContext.GuestId == HV_LINUX_GUEST_ID)
++	{
++		if (gHvContext.HypercallPage)
++		{
++			hypercallMsr.AsUINT64 = 0;
++			WriteMsr(HV_X64_MSR_HYPERCALL, hypercallMsr.AsUINT64);
++			VirtualFree(gHvContext.HypercallPage);
++			gHvContext.HypercallPage = NULL;
++		}
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++}
++
++
++/*++
++
++Name:
++	HvPostMessage()
++
++Description:
++	Post a message using the hypervisor message IPC. This
++	involves a hypercall.
++
++--*/
++HV_STATUS
++HvPostMessage(
++	HV_CONNECTION_ID connectionId,
++	HV_MESSAGE_TYPE  messageType,
++	PVOID            payload,
++	SIZE_T           payloadSize
++	)
++{
++	struct alignedInput {
++		UINT64					alignment8;
++		HV_INPUT_POST_MESSAGE	msg;
++	};
++
++	PHV_INPUT_POST_MESSAGE alignedMsg;
++	HV_STATUS status;
++	ULONG_PTR addr;
++
++	if (payloadSize > HV_MESSAGE_PAYLOAD_BYTE_COUNT)
++	{
++		return -1;
++	}
++
++	addr = (ULONG_PTR)MemAllocAtomic(sizeof(struct alignedInput));
++
++	if (!addr)
++	{
++		return -1;
++	}
++
++	alignedMsg = (PHV_INPUT_POST_MESSAGE)(ALIGN_UP(addr, HV_HYPERCALL_PARAM_ALIGN));
++
++	alignedMsg->ConnectionId = connectionId;
++	alignedMsg->MessageType = messageType;
++	alignedMsg->PayloadSize = payloadSize;
++	memcpy((void*)alignedMsg->Payload, payload, payloadSize);
++
++	status = HvDoHypercall(HvCallPostMessage, alignedMsg, 0) & 0xFFFF;
++
++	MemFree((void*)addr);
++
++	return status;
++}
++
++
++/*++
++
++Name:
++	HvSignalEvent()
++
++Description:
++	Signal an event on the specified connection using the hypervisor event IPC. This
++	involves a hypercall.
++
++--*/
++HV_STATUS
++HvSignalEvent(
++	)
++{
++	HV_STATUS status;
++
++	status = HvDoHypercall(HvCallSignalEvent, gHvContext.SignalEventParam, 0) & 0xFFFF;
++
++	return status;
++}
++
++
++/*++
++
++Name:
++	HvSynicInit()
++
++Description:
++	Initialize the Synthethic Interrupt Controller. If it is already initialized by
++	another entity (ie x2v shim), we need to retrieve the initialized message and event pages.
++	Otherwise, we create and initialize the message and event pages.
++
++--*/
++int
++HvSynicInit (
++	UINT32 irqVector
++	)
++{
++	UINT64			version;
++	HV_SYNIC_SIMP	simp;
++	HV_SYNIC_SIEFP	siefp;
++    HV_SYNIC_SINT	sharedSint;
++	HV_SYNIC_SCONTROL sctrl;
++	UINT64			guestID;
++	int ret=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	if (!gHvContext.HypercallPage)
++	{
++		DPRINT_EXIT(VMBUS);
++		return ret;
++	}
++
++	// Check the version
++	version = ReadMsr(HV_X64_MSR_SVERSION);
++
++	DPRINT_INFO(VMBUS, "SynIC version: %llx", version);
++
++	// TODO: Handle SMP
++	if (gHvContext.GuestId == HV_XENLINUX_GUEST_ID)
++	{
++		DPRINT_INFO(VMBUS, "Skipping SIMP and SIEFP setup since it is already set.");
++
++		simp.AsUINT64 = ReadMsr(HV_X64_MSR_SIMP);
++		siefp.AsUINT64 = ReadMsr(HV_X64_MSR_SIEFP);
++
++		DPRINT_DBG(VMBUS, "Simp: %llx, Sifep: %llx", simp.AsUINT64, siefp.AsUINT64);
++
++		// Determine if we are running on xenlinux (ie x2v shim) or native linux
++		guestID = ReadMsr(HV_X64_MSR_GUEST_OS_ID);
++
++		if (guestID == HV_LINUX_GUEST_ID)
++		{
++			gHvContext.synICMessagePage[0] = GetVirtualAddress(simp.BaseSimpGpa << PAGE_SHIFT);
++			gHvContext.synICEventPage[0] = GetVirtualAddress(siefp.BaseSiefpGpa << PAGE_SHIFT);
++		}
++		else
++		{
++			DPRINT_ERR(VMBUS, "unknown guest id!!");
++			goto Cleanup;
++		}
++		DPRINT_DBG(VMBUS, "MAPPED: Simp: %p, Sifep: %p", gHvContext.synICMessagePage[0], gHvContext.synICEventPage[0]);
++	}
++	else
++	{
++		gHvContext.synICMessagePage[0] = PageAlloc(1);
++		if (gHvContext.synICMessagePage[0] == NULL)
++		{
++			DPRINT_ERR(VMBUS, "unable to allocate SYNIC message page!!");
++			goto Cleanup;
++		}
++
++		gHvContext.synICEventPage[0] = PageAlloc(1);
++		if (gHvContext.synICEventPage[0] == NULL)
++		{
++			DPRINT_ERR(VMBUS, "unable to allocate SYNIC event page!!");
++			goto Cleanup;
++		}
++
++		//
++		// Setup the Synic's message page
++		//
++		simp.AsUINT64 = ReadMsr(HV_X64_MSR_SIMP);
++		simp.SimpEnabled = 1;
++		simp.BaseSimpGpa = GetPhysicalAddress(gHvContext.synICMessagePage[0]) >> PAGE_SHIFT;
++
++		DPRINT_DBG(VMBUS, "HV_X64_MSR_SIMP msr set to: %llx", simp.AsUINT64);
++
++		WriteMsr(HV_X64_MSR_SIMP, simp.AsUINT64);
++
++		//
++		// Setup the Synic's event page
++		//
++		siefp.AsUINT64 = ReadMsr(HV_X64_MSR_SIEFP);
++		siefp.SiefpEnabled = 1;
++		siefp.BaseSiefpGpa = GetPhysicalAddress(gHvContext.synICEventPage[0]) >> PAGE_SHIFT;
++
++		DPRINT_DBG(VMBUS, "HV_X64_MSR_SIEFP msr set to: %llx", siefp.AsUINT64);
++
++		WriteMsr(HV_X64_MSR_SIEFP, siefp.AsUINT64);
++	}
++	//
++    // Setup the interception SINT.
++    //
++	//WriteMsr((HV_X64_MSR_SINT0 + HV_SYNIC_INTERCEPTION_SINT_INDEX),
++    //             interceptionSint.AsUINT64);
++
++    //
++    // Setup the shared SINT.
++    //
++	sharedSint.AsUINT64 = ReadMsr(HV_X64_MSR_SINT0 + VMBUS_MESSAGE_SINT);
++
++	sharedSint.AsUINT64 = 0;
++    sharedSint.Vector = irqVector; //HV_SHARED_SINT_IDT_VECTOR + 0x20;
++    sharedSint.Masked = FALSE;
++    sharedSint.AutoEoi = TRUE;
++
++	DPRINT_DBG(VMBUS, "HV_X64_MSR_SINT1 msr set to: %llx", sharedSint.AsUINT64);
++
++	WriteMsr(HV_X64_MSR_SINT0 + VMBUS_MESSAGE_SINT, sharedSint.AsUINT64);
++
++	// Enable the global synic bit
++	sctrl.AsUINT64 = ReadMsr(HV_X64_MSR_SCONTROL);
++	sctrl.Enable = 1;
++
++    WriteMsr(HV_X64_MSR_SCONTROL, sctrl.AsUINT64);
++
++	gHvContext.SynICInitialized = TRUE;
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++
++Cleanup:
++	ret = -1;
++
++	if (gHvContext.GuestId == HV_LINUX_GUEST_ID)
++	{
++		if (gHvContext.synICEventPage[0])
++		{
++			PageFree(gHvContext.synICEventPage[0],1);
++		}
++
++		if (gHvContext.synICMessagePage[0])
++		{
++			PageFree(gHvContext.synICMessagePage[0], 1);
++		}
++	}
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++
++}
++
++/*++
++
++Name:
++	HvSynicCleanup()
++
++Description:
++	Cleanup routine for HvSynicInit().
++
++--*/
++VOID
++HvSynicCleanup(
++	VOID
++	)
++{
++    HV_SYNIC_SINT	sharedSint;
++	HV_SYNIC_SIMP	simp;
++	HV_SYNIC_SIEFP	siefp;
++
++	DPRINT_ENTER(VMBUS);
++
++	if (!gHvContext.SynICInitialized)
++	{
++		DPRINT_EXIT(VMBUS);
++		return;
++	}
++
++	sharedSint.AsUINT64 = ReadMsr(HV_X64_MSR_SINT0 + VMBUS_MESSAGE_SINT);
++
++	sharedSint.Masked = 1;
++
++	// Disable the interrupt
++    WriteMsr(HV_X64_MSR_SINT0 + VMBUS_MESSAGE_SINT, sharedSint.AsUINT64);
++
++	// Disable and free the resources only if we are running as native linux
++	// since in xenlinux, we are sharing the resources with the x2v shim
++	if (gHvContext.GuestId == HV_LINUX_GUEST_ID)
++	{
++		simp.AsUINT64 = ReadMsr(HV_X64_MSR_SIMP);
++		simp.SimpEnabled = 0;
++		simp.BaseSimpGpa = 0;
++
++		WriteMsr(HV_X64_MSR_SIMP, simp.AsUINT64);
++
++		siefp.AsUINT64 = ReadMsr(HV_X64_MSR_SIEFP);
++		siefp.SiefpEnabled = 0;
++		siefp.BaseSiefpGpa = 0;
++
++		WriteMsr(HV_X64_MSR_SIEFP, siefp.AsUINT64);
++
++		PageFree(gHvContext.synICMessagePage[0], 1);
++		PageFree(gHvContext.synICEventPage[0], 1);
++	}
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++// eof
+--- /dev/null
++++ b/drivers/staging/hv/Hv.h
+@@ -0,0 +1,184 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef __HV_H__
++#define __HV_H__
++
++#include "osd.h"
++
++#include "HvTypes.h"
++#include "HvStatus.h"
++//#include "HvVmApi.h"
++//#include "HvKeApi.h"
++//#include "HvMmApi.h"
++//#include "HvCpuApi.h"
++#include "HvHalApi.h"
++#include "HvVpApi.h"
++//#include "HvTrApi.h"
++#include "HvSynicApi.h"
++//#include "HvAmApi.h"
++//#include "HvHkApi.h"
++//#include "HvValApi.h"
++#include "HvHcApi.h"
++#include "HvPtApi.h"
++
++enum
++{
++    VMBUS_MESSAGE_CONNECTION_ID = 1,
++    VMBUS_MESSAGE_PORT_ID       = 1,
++    VMBUS_EVENT_CONNECTION_ID   = 2,
++    VMBUS_EVENT_PORT_ID         = 2,
++    VMBUS_MONITOR_CONNECTION_ID = 3,
++    VMBUS_MONITOR_PORT_ID       = 3,
++    VMBUS_MESSAGE_SINT          = 2
++};
++//
++// #defines
++//
++#define HV_PRESENT_BIT				0x80000000
++
++#define HV_XENLINUX_GUEST_ID_LO     0x00000000
++#define HV_XENLINUX_GUEST_ID_HI		0x0B00B135
++#define HV_XENLINUX_GUEST_ID		(((UINT64)HV_XENLINUX_GUEST_ID_HI << 32) | HV_XENLINUX_GUEST_ID_LO)
++
++#define HV_LINUX_GUEST_ID_LO		0x00000000
++#define HV_LINUX_GUEST_ID_HI		0xB16B00B5
++#define HV_LINUX_GUEST_ID			(((UINT64)HV_LINUX_GUEST_ID_HI << 32) | HV_LINUX_GUEST_ID_LO)
++
++#define HV_CPU_POWER_MANAGEMENT     (1 << 0)
++#define HV_RECOMMENDATIONS_MAX      4
++
++#define HV_X64_MAX                  5
++#define HV_CAPS_MAX                 8
++
++
++#define HV_HYPERCALL_PARAM_ALIGN	sizeof(UINT64)
++
++//
++// Service definitions
++//
++#define HV_SERVICE_PARENT_PORT (0)
++#define HV_SERVICE_PARENT_CONNECTION (0)
++
++#define HV_SERVICE_CONNECT_RESPONSE_SUCCESS             (0)
++#define HV_SERVICE_CONNECT_RESPONSE_INVALID_PARAMETER   (1)
++#define HV_SERVICE_CONNECT_RESPONSE_UNKNOWN_SERVICE     (2)
++#define HV_SERVICE_CONNECT_RESPONSE_CONNECTION_REJECTED (3)
++
++#define HV_SERVICE_CONNECT_REQUEST_MESSAGE_ID		(1)
++#define HV_SERVICE_CONNECT_RESPONSE_MESSAGE_ID		(2)
++#define HV_SERVICE_DISCONNECT_REQUEST_MESSAGE_ID	(3)
++#define HV_SERVICE_DISCONNECT_RESPONSE_MESSAGE_ID	(4)
++#define HV_SERVICE_MAX_MESSAGE_ID					(4)
++
++#define HV_SERVICE_PROTOCOL_VERSION (0x0010)
++#define HV_CONNECT_PAYLOAD_BYTE_COUNT 64
++
++//#define VMBUS_REVISION_NUMBER	6
++//#define VMBUS_PORT_ID			11		// Our local vmbus's port and connection id. Anything >0 is fine
++
++// 628180B8-308D-4c5e-B7DB-1BEB62E62EF4
++static const GUID VMBUS_SERVICE_ID = {.Data = {0xb8, 0x80, 0x81, 0x62, 0x8d, 0x30, 0x5e, 0x4c, 0xb7, 0xdb, 0x1b, 0xeb, 0x62, 0xe6, 0x2e, 0xf4} };
++
++#define MAX_NUM_CPUS	1
++
++
++typedef struct {
++	UINT64					Align8;
++	HV_INPUT_SIGNAL_EVENT	Event;
++} HV_INPUT_SIGNAL_EVENT_BUFFER;
++
++typedef struct {
++	UINT64	GuestId;			// XenLinux or native Linux. If XenLinux, the hypercall and synic pages has already been initialized
++	void*	HypercallPage;
++
++	BOOL	SynICInitialized;
++	// This is used as an input param to HvCallSignalEvent hypercall. The input param is immutable
++	// in our usage and must be dynamic mem (vs stack or global).
++	HV_INPUT_SIGNAL_EVENT_BUFFER *SignalEventBuffer;
++	HV_INPUT_SIGNAL_EVENT *SignalEventParam; // 8-bytes aligned of the buffer above
++
++	HANDLE	synICMessagePage[MAX_NUM_CPUS];
++	HANDLE	synICEventPage[MAX_NUM_CPUS];
++} HV_CONTEXT;
++
++extern HV_CONTEXT gHvContext;
++
++
++//
++// Inline routines
++//
++static inline unsigned long long ReadMsr(int msr)
++{
++	unsigned long long val;
++
++	RDMSR(msr, val);
++
++	return val;
++}
++
++static inline void WriteMsr(int msr, UINT64 val)
++{
++	WRMSR(msr, val);
++
++	return;
++}
++
++//
++// Hv Interface
++//
++INTERNAL int
++HvInit(
++    VOID
++    );
++
++INTERNAL VOID
++HvCleanup(
++    VOID
++    );
++
++INTERNAL HV_STATUS
++HvPostMessage(
++	HV_CONNECTION_ID connectionId,
++	HV_MESSAGE_TYPE  messageType,
++	PVOID            payload,
++	SIZE_T           payloadSize
++	);
++
++INTERNAL HV_STATUS
++HvSignalEvent(
++	VOID
++	);
++
++INTERNAL int
++HvSynicInit(
++	UINT32		irqVector
++	);
++
++INTERNAL VOID
++HvSynicCleanup(
++	VOID
++	);
++
++#endif // __HV_H__
+--- /dev/null
++++ b/drivers/staging/hv/osd.c
+@@ -0,0 +1,500 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/types.h>
++#include <linux/mm.h>
++#include <linux/highmem.h>
++#include <linux/vmalloc.h>
++//#include <linux/config.h>
++#include <linux/ioport.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/wait.h>
++#include <linux/spinlock.h>
++#include <linux/workqueue.h>
++#include <linux/kernel.h>
++#include <linux/timer.h>
++#include <linux/jiffies.h>
++#include <linux/delay.h>
++#include <linux/time.h>
++
++#include <asm/io.h>
++#include <asm/bitops.h>
++#include <asm/kmap_types.h>
++#include <asm/atomic.h>
++
++#include "osd.h"
++
++//
++// Data types
++//
++typedef struct _TIMER {
++	struct timer_list timer;
++	PFN_TIMER_CALLBACK callback;
++	void* context;
++}TIMER;
++
++
++typedef struct _WAITEVENT {
++	int	condition;
++	wait_queue_head_t event;
++} WAITEVENT;
++
++typedef struct _SPINLOCK {
++	spinlock_t		lock;
++	unsigned long	flags;
++} SPINLOCK;
++
++typedef struct _WORKQUEUE {
++	struct workqueue_struct *queue;
++} WORKQUEUE;
++
++typedef struct _WORKITEM {
++	struct work_struct work;
++	PFN_WORKITEM_CALLBACK callback;
++	void* context;
++} WORKITEM;
++
++
++//
++// Global
++//
++
++void LogMsg(const char *fmt, ...)
++{
++#ifdef KERNEL_2_6_5
++	char buf[1024];
++#endif
++	va_list args;
++
++	va_start(args, fmt);
++#ifdef KERNEL_2_6_5
++	vsnprintf(buf, 1024, fmt, args);
++	va_end(args);
++	printk(buf);
++#else
++	vprintk(fmt, args);
++	va_end(args);
++#endif
++}
++
++void BitSet(unsigned int* addr, int bit)
++{
++	set_bit(bit, (unsigned long*)addr);
++}
++
++int BitTest(unsigned int* addr, int bit)
++{
++	return test_bit(bit, (unsigned long*)addr);
++}
++
++void BitClear(unsigned int* addr, int bit)
++{
++	clear_bit(bit, (unsigned long*)addr);
++}
++
++int BitTestAndClear(unsigned int* addr, int bit)
++{
++	return test_and_clear_bit(bit, (unsigned long*)addr);
++}
++
++int BitTestAndSet(unsigned int* addr, int bit)
++{
++	return test_and_set_bit(bit, (unsigned long*)addr);
++}
++
++
++int InterlockedIncrement(int *val)
++{
++#ifdef KERNEL_2_6_5
++	int i;
++	local_irq_disable();
++	i = atomic_read((atomic_t*)val);
++	atomic_set((atomic_t*)val, i+1);
++	local_irq_enable();
++	return i+1;
++#else
++	return atomic_inc_return((atomic_t*)val);
++#endif
++}
++
++int InterlockedDecrement(int *val)
++{
++#ifdef KERNEL_2_6_5
++	int i;
++	local_irq_disable();
++	i = atomic_read((atomic_t*)val);
++	atomic_set((atomic_t*)val, i-1);
++	local_irq_enable();
++	return i-1;
++#else
++	return atomic_dec_return((atomic_t*)val);
++#endif
++}
++
++#ifndef atomic_cmpxchg
++#define atomic_cmpxchg(v, old, new) ((int)cmpxchg(&((v)->counter), old, new))
++#endif
++int InterlockedCompareExchange(int *val, int new, int curr)
++{
++	//return ((int)cmpxchg(((atomic_t*)val), curr, new));
++	return atomic_cmpxchg((atomic_t*)val, curr, new);
++
++}
++
++void Sleep(unsigned long usecs)
++{
++	udelay(usecs);
++}
++
++void* VirtualAllocExec(unsigned int size)
++{
++#ifdef __x86_64__
++	return __vmalloc(size, GFP_KERNEL, PAGE_KERNEL_EXEC);
++#else
++	return __vmalloc(size, GFP_KERNEL, __pgprot(__PAGE_KERNEL & (~_PAGE_NX)));
++#endif
++}
++
++void VirtualFree(void* VirtAddr)
++{
++	return vfree(VirtAddr);
++}
++
++void* PageAlloc(unsigned int count)
++{
++	void *p;
++	p = (void *)__get_free_pages(GFP_KERNEL, get_order(count * PAGE_SIZE));
++	if (p) memset(p, 0, count * PAGE_SIZE);
++	return p;
++
++	//struct page* page = alloc_page(GFP_KERNEL|__GFP_ZERO);
++	//void *p;
++
++	////BUGBUG: We need to use kmap in case we are in HIMEM region
++	//p = page_address(page);
++	//if (p) memset(p, 0, PAGE_SIZE);
++	//return p;
++}
++
++void PageFree(void* page, unsigned int count)
++{
++	free_pages((unsigned long)page, get_order(count * PAGE_SIZE));
++	/*struct page* p = virt_to_page(page);
++	__free_page(p);*/
++}
++
++
++void* PageMapVirtualAddress(unsigned long Pfn)
++{
++	return kmap_atomic(pfn_to_page(Pfn), KM_IRQ0);
++}
++
++void PageUnmapVirtualAddress(void* VirtAddr)
++{
++	kunmap_atomic(VirtAddr, KM_IRQ0);
++}
++
++void* MemAlloc(unsigned int size)
++{
++	return kmalloc(size, GFP_KERNEL);
++}
++
++void* MemAllocZeroed(unsigned int size)
++{
++	void *p = kmalloc(size, GFP_KERNEL);
++	if (p) memset(p, 0, size);
++	return p;
++}
++
++void* MemAllocAtomic(unsigned int size)
++{
++	return kmalloc(size, GFP_ATOMIC);
++}
++
++void MemFree(void* buf)
++{
++	kfree(buf);
++}
++
++void *MemMapIO(unsigned long phys, unsigned long size)
++{
++#if X2V_LINUX
++#ifdef __x86_64__
++	return (void*)(phys + 0xFFFF83000C000000);
++#else // i386
++	return (void*)(phys + 0xfb000000);
++#endif
++#else
++	return (void*)GetVirtualAddress(phys); //return ioremap_nocache(phys, size);
++#endif
++}
++
++void MemUnmapIO(void *virt)
++{
++	//iounmap(virt);
++}
++
++void MemoryFence()
++{
++	mb();
++}
++
++void TimerCallback(unsigned long data)
++{
++	TIMER* t = (TIMER*)data;
++
++	t->callback(t->context);
++}
++
++HANDLE TimerCreate(PFN_TIMER_CALLBACK pfnTimerCB, void* context)
++{
++	TIMER* t = kmalloc(sizeof(TIMER), GFP_KERNEL);
++	if (!t)
++	{
++		return NULL;
++	}
++
++	t->callback = pfnTimerCB;
++	t->context = context;
++
++	init_timer(&t->timer);
++	t->timer.data = (unsigned long)t;
++	t->timer.function = TimerCallback;
++
++	return t;
++}
++
++void TimerStart(HANDLE hTimer, UINT32 expirationInUs)
++{
++	TIMER* t  = (TIMER* )hTimer;
++
++	t->timer.expires = jiffies + usecs_to_jiffies(expirationInUs);
++	add_timer(&t->timer);
++}
++
++int TimerStop(HANDLE hTimer)
++{
++	TIMER* t  = (TIMER* )hTimer;
++
++	return del_timer(&t->timer);
++}
++
++void TimerClose(HANDLE hTimer)
++{
++	TIMER* t  = (TIMER* )hTimer;
++
++	del_timer(&t->timer);
++	kfree(t);
++}
++
++SIZE_T GetTickCount(void)
++{
++	return jiffies;
++}
++
++signed long long GetTimestamp(void)
++{
++	struct timeval t;
++
++	do_gettimeofday(&t);
++
++	return  timeval_to_ns(&t);
++}
++
++HANDLE WaitEventCreate(void)
++{
++	WAITEVENT* wait = kmalloc(sizeof(WAITEVENT), GFP_KERNEL);
++	if (!wait)
++	{
++		return NULL;
++	}
++
++	wait->condition = 0;
++	init_waitqueue_head(&wait->event);
++	return wait;
++}
++
++void WaitEventClose(HANDLE hWait)
++{
++	WAITEVENT* waitEvent = (WAITEVENT* )hWait;
++	kfree(waitEvent);
++}
++
++void WaitEventSet(HANDLE hWait)
++{
++	WAITEVENT* waitEvent = (WAITEVENT* )hWait;
++	waitEvent->condition = 1;
++	wake_up_interruptible(&waitEvent->event);
++}
++
++int WaitEventWait(HANDLE hWait)
++{
++	int ret=0;
++	WAITEVENT* waitEvent = (WAITEVENT* )hWait;
++
++	ret= wait_event_interruptible(waitEvent->event,
++		waitEvent->condition);
++	waitEvent->condition = 0;
++	return ret;
++}
++
++int WaitEventWaitEx(HANDLE hWait, UINT32 TimeoutInMs)
++{
++	int ret=0;
++	WAITEVENT* waitEvent = (WAITEVENT* )hWait;
++
++	ret= wait_event_interruptible_timeout(waitEvent->event,
++											waitEvent->condition,
++											msecs_to_jiffies(TimeoutInMs));
++	waitEvent->condition = 0;
++	return ret;
++}
++
++HANDLE SpinlockCreate(VOID)
++{
++	SPINLOCK* spin = kmalloc(sizeof(SPINLOCK), GFP_KERNEL);
++	if (!spin)
++	{
++		return NULL;
++	}
++	spin_lock_init(&spin->lock);
++
++	return spin;
++}
++
++VOID SpinlockAcquire(HANDLE hSpin)
++{
++	SPINLOCK* spin = (SPINLOCK* )hSpin;
++
++	spin_lock_irqsave(&spin->lock, spin->flags);
++}
++
++VOID SpinlockRelease(HANDLE hSpin)
++{
++	SPINLOCK* spin = (SPINLOCK* )hSpin;
++
++	spin_unlock_irqrestore(&spin->lock, spin->flags);
++}
++
++VOID SpinlockClose(HANDLE hSpin)
++{
++	SPINLOCK* spin = (SPINLOCK* )hSpin;
++	kfree(spin);
++}
++
++void* Physical2LogicalAddr(ULONG_PTR PhysAddr)
++{
++	void* logicalAddr = phys_to_virt(PhysAddr);
++	BUG_ON(!virt_addr_valid(logicalAddr));
++	return logicalAddr;
++}
++
++ULONG_PTR Logical2PhysicalAddr(PVOID LogicalAddr)
++{
++	BUG_ON(!virt_addr_valid(LogicalAddr));
++	return virt_to_phys(LogicalAddr);
++}
++
++
++ULONG_PTR Virtual2Physical(PVOID VirtAddr)
++{
++	ULONG_PTR pfn = vmalloc_to_pfn(VirtAddr);
++
++	return pfn << PAGE_SHIFT;
++}
++
++#ifdef KERNEL_2_6_27
++void WorkItemCallback(struct work_struct *work)
++#else
++void WorkItemCallback(void* work)
++#endif
++{
++	WORKITEM* w = (WORKITEM*)work;
++
++	w->callback(w->context);
++
++	kfree(w);
++}
++
++HANDLE WorkQueueCreate(char* name)
++{
++	WORKQUEUE *wq = kmalloc(sizeof(WORKQUEUE), GFP_KERNEL);
++	if (!wq)
++	{
++		return NULL;
++	}
++	wq->queue = create_workqueue(name);
++
++	return wq;
++}
++
++void WorkQueueClose(HANDLE hWorkQueue)
++{
++	WORKQUEUE *wq = (WORKQUEUE *)hWorkQueue;
++
++	destroy_workqueue(wq->queue);
++
++	return;
++}
++
++int WorkQueueQueueWorkItem(HANDLE hWorkQueue, PFN_WORKITEM_CALLBACK workItem, void* context)
++{
++	WORKQUEUE *wq = (WORKQUEUE *)hWorkQueue;
++
++	WORKITEM* w = kmalloc(sizeof(WORKITEM), GFP_ATOMIC);
++	if (!w)
++	{
++		return -1;
++	}
++
++	w->callback = workItem,
++	w->context = context;
++#ifdef KERNEL_2_6_27
++	INIT_WORK(&w->work, WorkItemCallback);
++#else
++	INIT_WORK(&w->work, WorkItemCallback, w);
++#endif
++	return queue_work(wq->queue, &w->work);
++}
++
++void QueueWorkItem(PFN_WORKITEM_CALLBACK workItem, void* context)
++{
++	WORKITEM* w = kmalloc(sizeof(WORKITEM), GFP_ATOMIC);
++	if (!w)
++	{
++		return;
++	}
++
++	w->callback = workItem,
++	w->context = context;
++#ifdef KERNEL_2_6_27
++	INIT_WORK(&w->work, WorkItemCallback);
++#else
++	INIT_WORK(&w->work, WorkItemCallback, w);
++#endif
++	schedule_work(&w->work);
++}
+--- /dev/null
++++ b/drivers/staging/hv/RingBuffer.c
+@@ -0,0 +1,630 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include "logging.h"
++#include "RingBuffer.h"
++
++//
++// #defines
++//
++
++// Amount of space to write to
++#define BYTES_AVAIL_TO_WRITE(r, w, z) ((w) >= (r))?((z) - ((w) - (r))):((r) - (w))
++
++
++/*++
++
++Name:
++	GetRingBufferAvailBytes()
++
++Description:
++	Get number of bytes available to read and to write to
++	for the specified ring buffer
++
++--*/
++static inline void
++GetRingBufferAvailBytes(RING_BUFFER_INFO *rbi, UINT32 *read, UINT32 *write)
++{
++	UINT32 read_loc,write_loc;
++
++	// Capture the read/write indices before they changed
++	read_loc = rbi->RingBuffer->ReadIndex;
++	write_loc = rbi->RingBuffer->WriteIndex;
++
++	*write = BYTES_AVAIL_TO_WRITE(read_loc, write_loc, rbi->RingDataSize);
++	*read = rbi->RingDataSize - *write;
++}
++
++/*++
++
++Name:
++	GetNextWriteLocation()
++
++Description:
++	Get the next write location for the specified ring buffer
++
++--*/
++static inline UINT32
++GetNextWriteLocation(RING_BUFFER_INFO* RingInfo)
++{
++	UINT32 next = RingInfo->RingBuffer->WriteIndex;
++
++	ASSERT(next < RingInfo->RingDataSize);
++
++	return next;
++}
++
++/*++
++
++Name:
++	SetNextWriteLocation()
++
++Description:
++	Set the next write location for the specified ring buffer
++
++--*/
++static inline void
++SetNextWriteLocation(RING_BUFFER_INFO* RingInfo, UINT32 NextWriteLocation)
++{
++	RingInfo->RingBuffer->WriteIndex = NextWriteLocation;
++}
++
++/*++
++
++Name:
++	GetNextReadLocation()
++
++Description:
++	Get the next read location for the specified ring buffer
++
++--*/
++static inline UINT32
++GetNextReadLocation(RING_BUFFER_INFO* RingInfo)
++{
++	UINT32 next = RingInfo->RingBuffer->ReadIndex;
++
++	ASSERT(next < RingInfo->RingDataSize);
++
++	return next;
++}
++
++/*++
++
++Name:
++	GetNextReadLocationWithOffset()
++
++Description:
++	Get the next read location + offset for the specified ring buffer.
++	This allows the caller to skip
++
++--*/
++static inline UINT32
++GetNextReadLocationWithOffset(RING_BUFFER_INFO* RingInfo, UINT32 Offset)
++{
++	UINT32 next = RingInfo->RingBuffer->ReadIndex;
++
++	ASSERT(next < RingInfo->RingDataSize);
++	next += Offset;
++	next %= RingInfo->RingDataSize;
++
++	return next;
++}
++
++/*++
++
++Name:
++	SetNextReadLocation()
++
++Description:
++	Set the next read location for the specified ring buffer
++
++--*/
++static inline void
++SetNextReadLocation(RING_BUFFER_INFO* RingInfo, UINT32 NextReadLocation)
++{
++	RingInfo->RingBuffer->ReadIndex = NextReadLocation;
++}
++
++
++/*++
++
++Name:
++	GetRingBuffer()
++
++Description:
++	Get the start of the ring buffer
++
++--*/
++static inline PVOID
++GetRingBuffer(RING_BUFFER_INFO* RingInfo)
++{
++	return (PVOID)RingInfo->RingBuffer->Buffer;
++}
++
++
++/*++
++
++Name:
++	GetRingBufferSize()
++
++Description:
++	Get the size of the ring buffer
++
++--*/
++static inline UINT32
++GetRingBufferSize(RING_BUFFER_INFO* RingInfo)
++{
++	return RingInfo->RingDataSize;
++}
++
++/*++
++
++Name:
++	GetRingBufferIndices()
++
++Description:
++	Get the read and write indices as UINT64 of the specified ring buffer
++
++--*/
++static inline UINT64
++GetRingBufferIndices(RING_BUFFER_INFO* RingInfo)
++{
++	return ((UINT64)RingInfo->RingBuffer->WriteIndex << 32) || RingInfo->RingBuffer->ReadIndex;
++}
++
++
++/*++
++
++Name:
++	DumpRingInfo()
++
++Description:
++	Dump out to console the ring buffer info
++
++--*/
++void
++DumpRingInfo(RING_BUFFER_INFO* RingInfo, char *Prefix)
++{
++	UINT32 bytesAvailToWrite;
++	UINT32 bytesAvailToRead;
++
++	GetRingBufferAvailBytes(RingInfo, &bytesAvailToRead, &bytesAvailToWrite);
++
++	DPRINT(VMBUS, DEBUG_RING_LVL, "%s <<ringinfo %p buffer %p avail write %u avail read %u read idx %u write idx %u>>",
++		Prefix,
++		RingInfo,
++		RingInfo->RingBuffer->Buffer,
++		bytesAvailToWrite,
++		bytesAvailToRead,
++		RingInfo->RingBuffer->ReadIndex,
++		RingInfo->RingBuffer->WriteIndex);
++}
++
++//
++// Internal routines
++//
++static UINT32
++CopyToRingBuffer(
++	RING_BUFFER_INFO	*RingInfo,
++	UINT32				StartWriteOffset,
++	PVOID				Src,
++	UINT32				SrcLen);
++
++static UINT32
++CopyFromRingBuffer(
++	RING_BUFFER_INFO	*RingInfo,
++	PVOID				Dest,
++	UINT32				DestLen,
++	UINT32				StartReadOffset);
++
++
++
++/*++
++
++Name:
++	RingBufferGetDebugInfo()
++
++Description:
++	Get various debug metrics for the specified ring buffer
++
++--*/
++void
++RingBufferGetDebugInfo(
++	RING_BUFFER_INFO		*RingInfo,
++	RING_BUFFER_DEBUG_INFO	*DebugInfo
++	)
++{
++	UINT32 bytesAvailToWrite;
++	UINT32 bytesAvailToRead;
++
++	if (RingInfo->RingBuffer)
++	{
++		GetRingBufferAvailBytes(RingInfo, &bytesAvailToRead, &bytesAvailToWrite);
++
++		DebugInfo->BytesAvailToRead = bytesAvailToRead;
++		DebugInfo->BytesAvailToWrite = bytesAvailToWrite;
++		DebugInfo->CurrentReadIndex = RingInfo->RingBuffer->ReadIndex;
++		DebugInfo->CurrentWriteIndex = RingInfo->RingBuffer->WriteIndex;
++
++		DebugInfo->CurrentInterruptMask = RingInfo->RingBuffer->InterruptMask;
++	}
++}
++
++
++/*++
++
++Name:
++	GetRingBufferInterruptMask()
++
++Description:
++	Get the interrupt mask for the specified ring buffer
++
++--*/
++UINT32
++GetRingBufferInterruptMask(
++	RING_BUFFER_INFO *rbi
++	)
++{
++	return rbi->RingBuffer->InterruptMask;
++}
++
++/*++
++
++Name:
++	RingBufferInit()
++
++Description:
++	Initialize the ring buffer
++
++--*/
++int
++RingBufferInit(
++	RING_BUFFER_INFO	*RingInfo,
++	VOID				*Buffer,
++	UINT32				BufferLen
++	)
++{
++	ASSERT(sizeof(RING_BUFFER) == PAGE_SIZE);
++
++	memset(RingInfo, 0, sizeof(RING_BUFFER_INFO));
++
++	RingInfo->RingBuffer = (RING_BUFFER*)Buffer;
++	RingInfo->RingBuffer->ReadIndex = RingInfo->RingBuffer->WriteIndex = 0;
++
++	RingInfo->RingSize = BufferLen;
++	RingInfo->RingDataSize = BufferLen - sizeof(RING_BUFFER);
++
++	RingInfo->RingLock = SpinlockCreate();
++
++	return 0;
++}
++
++/*++
++
++Name:
++	RingBufferCleanup()
++
++Description:
++	Cleanup the ring buffer
++
++--*/
++void
++RingBufferCleanup(
++	RING_BUFFER_INFO* RingInfo
++	)
++{
++	SpinlockClose(RingInfo->RingLock);
++}
++
++/*++
++
++Name:
++	RingBufferWrite()
++
++Description:
++	Write to the ring buffer
++
++--*/
++int
++RingBufferWrite(
++	RING_BUFFER_INFO*	OutRingInfo,
++	SG_BUFFER_LIST		SgBuffers[],
++	UINT32				SgBufferCount
++	)
++{
++	int i=0;
++	UINT32 byteAvailToWrite;
++	UINT32 byteAvailToRead;
++	UINT32 totalBytesToWrite=0;
++
++	volatile UINT32 nextWriteLocation;
++	UINT64 prevIndices=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	for (i=0; i < SgBufferCount; i++)
++	{
++		totalBytesToWrite += SgBuffers[i].Length;
++	}
++
++	totalBytesToWrite += sizeof(UINT64);
++
++	SpinlockAcquire(OutRingInfo->RingLock);
++
++	GetRingBufferAvailBytes(OutRingInfo, &byteAvailToRead, &byteAvailToWrite);
++
++	DPRINT_DBG(VMBUS, "Writing %u bytes...", totalBytesToWrite);
++
++	//DumpRingInfo(OutRingInfo, "BEFORE ");
++
++	// If there is only room for the packet, assume it is full. Otherwise, the next time around, we think the ring buffer
++	// is empty since the read index == write index
++	if (byteAvailToWrite <= totalBytesToWrite)
++	{
++		DPRINT_DBG(VMBUS, "No more space left on outbound ring buffer (needed %u, avail %u)", totalBytesToWrite, byteAvailToWrite);
++
++		SpinlockRelease(OutRingInfo->RingLock);
++
++		DPRINT_EXIT(VMBUS);
++
++		return -1;
++	}
++
++	// Write to the ring buffer
++	nextWriteLocation = GetNextWriteLocation(OutRingInfo);
++
++	for (i=0; i < SgBufferCount; i++)
++	{
++		 nextWriteLocation = CopyToRingBuffer(OutRingInfo,
++												nextWriteLocation,
++												SgBuffers[i].Data,
++												SgBuffers[i].Length);
++	}
++
++	// Set previous packet start
++	prevIndices = GetRingBufferIndices(OutRingInfo);
++
++	nextWriteLocation = CopyToRingBuffer(OutRingInfo,
++												nextWriteLocation,
++												&prevIndices,
++												sizeof(UINT64));
++
++	// Make sure we flush all writes before updating the writeIndex
++	MemoryFence();
++
++	// Now, update the write location
++	SetNextWriteLocation(OutRingInfo, nextWriteLocation);
++
++	//DumpRingInfo(OutRingInfo, "AFTER ");
++
++	SpinlockRelease(OutRingInfo->RingLock);
++
++	DPRINT_EXIT(VMBUS);
++
++	return 0;
++}
++
++
++/*++
++
++Name:
++	RingBufferPeek()
++
++Description:
++	Read without advancing the read index
++
++--*/
++int
++RingBufferPeek(
++	RING_BUFFER_INFO*	InRingInfo,
++	void*				Buffer,
++	UINT32				BufferLen
++	)
++{
++	UINT32 bytesAvailToWrite;
++	UINT32 bytesAvailToRead;
++	UINT32 nextReadLocation=0;
++
++	SpinlockAcquire(InRingInfo->RingLock);
++
++	GetRingBufferAvailBytes(InRingInfo, &bytesAvailToRead, &bytesAvailToWrite);
++
++	// Make sure there is something to read
++	if (bytesAvailToRead < BufferLen )
++	{
++		//DPRINT_DBG(VMBUS, "got callback but not enough to read <avail to read %d read size %d>!!", bytesAvailToRead, BufferLen);
++
++		SpinlockRelease(InRingInfo->RingLock);
++
++		return -1;
++	}
++
++	// Convert to byte offset
++	nextReadLocation = GetNextReadLocation(InRingInfo);
++
++	nextReadLocation = CopyFromRingBuffer(InRingInfo,
++											Buffer,
++											BufferLen,
++											nextReadLocation);
++
++	SpinlockRelease(InRingInfo->RingLock);
++
++	return 0;
++}
++
++
++/*++
++
++Name:
++	RingBufferRead()
++
++Description:
++	Read and advance the read index
++
++--*/
++int
++RingBufferRead(
++	RING_BUFFER_INFO*	InRingInfo,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32				Offset
++	)
++{
++	UINT32 bytesAvailToWrite;
++	UINT32 bytesAvailToRead;
++	UINT32 nextReadLocation=0;
++	UINT64 prevIndices=0;
++
++	ASSERT(BufferLen > 0);
++
++	SpinlockAcquire(InRingInfo->RingLock);
++
++	GetRingBufferAvailBytes(InRingInfo, &bytesAvailToRead, &bytesAvailToWrite);
++
++	DPRINT_DBG(VMBUS, "Reading %u bytes...", BufferLen);
++
++	//DumpRingInfo(InRingInfo, "BEFORE ");
++
++	// Make sure there is something to read
++	if (bytesAvailToRead < BufferLen )
++	{
++		DPRINT_DBG(VMBUS, "got callback but not enough to read <avail to read %d read size %d>!!", bytesAvailToRead, BufferLen);
++
++		SpinlockRelease(InRingInfo->RingLock);
++
++		return -1;
++	}
++
++	nextReadLocation = GetNextReadLocationWithOffset(InRingInfo, Offset);
++
++	nextReadLocation = CopyFromRingBuffer(InRingInfo,
++											Buffer,
++											BufferLen,
++											nextReadLocation);
++
++	nextReadLocation = CopyFromRingBuffer(InRingInfo,
++											&prevIndices,
++											sizeof(UINT64),
++											nextReadLocation);
++
++	// Make sure all reads are done before we update the read index since
++	// the writer may start writing to the read area once the read index is updated
++	MemoryFence();
++
++	// Update the read index
++	SetNextReadLocation(InRingInfo, nextReadLocation);
++
++	//DumpRingInfo(InRingInfo, "AFTER ");
++
++	SpinlockRelease(InRingInfo->RingLock);
++
++	return 0;
++}
++
++
++/*++
++
++Name:
++	CopyToRingBuffer()
++
++Description:
++	Helper routine to copy from source to ring buffer.
++	Assume there is enough room. Handles wrap-around in dest case only!!
++
++--*/
++UINT32
++CopyToRingBuffer(
++	RING_BUFFER_INFO	*RingInfo,
++	UINT32				StartWriteOffset,
++	PVOID				Src,
++	UINT32				SrcLen)
++{
++	PVOID ringBuffer=GetRingBuffer(RingInfo);
++	UINT32 ringBufferSize=GetRingBufferSize(RingInfo);
++	UINT32 fragLen;
++
++	if (SrcLen > ringBufferSize - StartWriteOffset) // wrap-around detected!
++	{
++		DPRINT_DBG(VMBUS, "wrap-around detected!");
++
++		fragLen = ringBufferSize - StartWriteOffset;
++		memcpy(ringBuffer + StartWriteOffset, Src, fragLen);
++		memcpy(ringBuffer, Src + fragLen, SrcLen - fragLen);
++	}
++	else
++	{
++		memcpy(ringBuffer + StartWriteOffset, Src, SrcLen);
++	}
++
++	StartWriteOffset += SrcLen;
++	StartWriteOffset %= ringBufferSize;
++
++	return StartWriteOffset;
++}
++
++
++/*++
++
++Name:
++	CopyFromRingBuffer()
++
++Description:
++	Helper routine to copy to source from ring buffer.
++	Assume there is enough room. Handles wrap-around in src case only!!
++
++--*/
++UINT32
++CopyFromRingBuffer(
++	RING_BUFFER_INFO	*RingInfo,
++	PVOID				Dest,
++	UINT32				DestLen,
++	UINT32				StartReadOffset)
++{
++	PVOID ringBuffer=GetRingBuffer(RingInfo);
++	UINT32 ringBufferSize=GetRingBufferSize(RingInfo);
++
++	UINT32 fragLen;
++
++	if (DestLen > ringBufferSize - StartReadOffset) // wrap-around detected at the src
++	{
++		DPRINT_DBG(VMBUS, "src wrap-around detected!");
++
++		fragLen = ringBufferSize - StartReadOffset;
++
++		memcpy(Dest, ringBuffer + StartReadOffset, fragLen);
++		memcpy(Dest + fragLen, ringBuffer, DestLen - fragLen);
++	}
++	else
++	{
++		memcpy(Dest, ringBuffer + StartReadOffset, DestLen);
++	}
++
++	StartReadOffset += DestLen;
++	StartReadOffset %= ringBufferSize;
++
++	return StartReadOffset;
++}
++
++
++// eof
+--- /dev/null
++++ b/drivers/staging/hv/RingBuffer.h
+@@ -0,0 +1,123 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _RING_BUFFER_H_
++#define _RING_BUFFER_H_
++
++#include "osd.h"
++
++typedef struct _SG_BUFFER_LIST {
++	PVOID	Data;
++	UINT32	Length;
++} SG_BUFFER_LIST;
++
++typedef struct _RING_BUFFER {
++    volatile UINT32	WriteIndex;     // Offset in bytes from the start of ring data below
++    volatile UINT32	ReadIndex;      // Offset in bytes from the start of ring data below
++
++	volatile UINT32 InterruptMask;
++	UINT8	Reserved[4084];			// Pad it to PAGE_SIZE so that data starts on page boundary
++	// NOTE: The InterruptMask field is used only for channels but since our vmbus connection
++	// also uses this data structure and its data starts here, we commented out this field.
++	// volatile UINT32 InterruptMask;
++	// Ring data starts here + RingDataStartOffset !!! DO NOT place any fields below this !!!
++    UINT8		Buffer[0];
++} STRUCT_PACKED RING_BUFFER;
++
++typedef struct _RING_BUFFER_INFO {
++    RING_BUFFER*	RingBuffer;
++    UINT32			RingSize;			// Include the shared header
++	HANDLE			RingLock;
++
++    UINT32			RingDataSize;		// < ringSize
++	UINT32			RingDataStartOffset;
++
++} RING_BUFFER_INFO;
++
++
++typedef struct _RING_BUFFER_DEBUG_INFO {
++	UINT32		CurrentInterruptMask;
++	UINT32		CurrentReadIndex;
++	UINT32		CurrentWriteIndex;
++	UINT32		BytesAvailToRead;
++	UINT32		BytesAvailToWrite;
++}RING_BUFFER_DEBUG_INFO;
++
++
++//
++// Interface
++//
++
++INTERNAL int
++RingBufferInit(
++	RING_BUFFER_INFO	*RingInfo,
++	PVOID				Buffer,
++	UINT32				BufferLen
++	);
++
++INTERNAL void
++RingBufferCleanup(
++	RING_BUFFER_INFO	*RingInfo
++	);
++
++INTERNAL int
++RingBufferWrite(
++	RING_BUFFER_INFO	*RingInfo,
++	SG_BUFFER_LIST		SgBuffers[],
++	UINT32				SgBufferCount
++	);
++
++INTERNAL int
++RingBufferPeek(
++	RING_BUFFER_INFO	*RingInfo,
++	PVOID				Buffer,
++	UINT32				BufferLen
++	);
++
++INTERNAL int
++RingBufferRead(
++	RING_BUFFER_INFO	*RingInfo,
++	PVOID				Buffer,
++	UINT32				BufferLen,
++	UINT32				Offset
++	);
++
++INTERNAL UINT32
++GetRingBufferInterruptMask(
++	RING_BUFFER_INFO *RingInfo
++	);
++
++INTERNAL void
++DumpRingInfo(
++	RING_BUFFER_INFO* RingInfo,
++	char *Prefix
++	);
++
++INTERNAL void
++RingBufferGetDebugInfo(
++	RING_BUFFER_INFO		*RingInfo,
++	RING_BUFFER_DEBUG_INFO	*DebugInfo
++	);
++
++#endif // _RING_BUFFER_H_
+--- /dev/null
++++ b/drivers/staging/hv/Sources.c
+@@ -0,0 +1,31 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include "Vmbus.c"
++#include "Hv.c"
++#include "Connection.c"
++#include "Channel.c"
++#include "ChannelMgmt.c"
++#include "ChannelInterface.c"
++#include "RingBuffer.c"
+--- /dev/null
++++ b/drivers/staging/hv/VersionInfo.h
+@@ -0,0 +1,29 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#pragma once
++
++const char VersionDate[]=__DATE__;
++const char VersionTime[]=__TIME__;
++const char VersionDesc[]= "Version 2.0";
+--- /dev/null
++++ b/drivers/staging/hv/Vmbus.c
+@@ -0,0 +1,508 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include "logging.h"
++#include "VersionInfo.h"
++#include "VmbusPrivate.h"
++
++//
++// Globals
++//
++static const char* gDriverName="vmbus";
++
++// Windows vmbus does not defined this. We defined this to be consistent with other devices
++//{c5295816-f63a-4d5f-8d1a-4daf999ca185}
++static const GUID gVmbusDeviceType={
++	.Data = {0x16, 0x58, 0x29, 0xc5, 0x3a, 0xf6, 0x5f, 0x4d, 0x8d, 0x1a, 0x4d, 0xaf, 0x99, 0x9c, 0xa1, 0x85}
++};
++
++//{ac3760fc-9adf-40aa-9427-a70ed6de95c5}
++static const GUID gVmbusDeviceId={
++	.Data = {0xfc, 0x60, 0x37, 0xac, 0xdf, 0x9a, 0xaa, 0x40, 0x94, 0x27, 0xa7, 0x0e, 0xd6, 0xde, 0x95, 0xc5}
++};
++
++static DRIVER_OBJECT* gDriver; // vmbus driver object
++static DEVICE_OBJECT* gDevice; // vmbus root device
++
++
++//
++// Internal routines
++//
++
++static void
++VmbusGetChannelInterface(
++	VMBUS_CHANNEL_INTERFACE *Interface
++	);
++
++static void
++VmbusGetChannelInfo(
++	DEVICE_OBJECT	*DeviceObject,
++	DEVICE_INFO		*DeviceInfo
++	);
++
++static void
++VmbusGetChannelOffers(
++	void
++	);
++
++static int
++VmbusOnDeviceAdd(
++	DEVICE_OBJECT	*Device,
++	void			*AdditionalInfo
++	);
++
++static int
++VmbusOnDeviceRemove(
++	DEVICE_OBJECT* dev
++	);
++
++static void
++VmbusOnCleanup(
++	DRIVER_OBJECT* drv
++	);
++
++static int
++VmbusOnISR(
++	DRIVER_OBJECT* drv
++	);
++
++static void
++VmbusOnMsgDPC(
++	DRIVER_OBJECT* drv
++	);
++
++static void
++VmbusOnEventDPC(
++	DRIVER_OBJECT* drv
++	);
++
++/*++;
++
++Name:
++	VmbusInitialize()
++
++Description:
++	Main entry point
++
++--*/
++int
++VmbusInitialize(
++	DRIVER_OBJECT* drv
++	)
++{
++	VMBUS_DRIVER_OBJECT* driver = (VMBUS_DRIVER_OBJECT*)drv;
++	int ret=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	DPRINT_INFO(VMBUS, "+++++++ Build Date=%s %s +++++++", VersionDate, VersionTime);
++	DPRINT_INFO(VMBUS, "+++++++ Build Description=%s +++++++", VersionDesc);
++
++	DPRINT_INFO(VMBUS, "+++++++ Vmbus supported version = %d +++++++", VMBUS_REVISION_NUMBER);
++	DPRINT_INFO(VMBUS, "+++++++ Vmbus using SINT %d +++++++", VMBUS_MESSAGE_SINT);
++
++	DPRINT_DBG(VMBUS, "sizeof(VMBUS_CHANNEL_PACKET_PAGE_BUFFER)=%d, sizeof(VMBUS_CHANNEL_PACKET_MULITPAGE_BUFFER)=%d",
++		sizeof(VMBUS_CHANNEL_PACKET_PAGE_BUFFER), sizeof(VMBUS_CHANNEL_PACKET_MULITPAGE_BUFFER));
++
++	drv->name = gDriverName;
++	memcpy(&drv->deviceType, &gVmbusDeviceType, sizeof(GUID));
++
++	// Setup dispatch table
++	driver->Base.OnDeviceAdd		= VmbusOnDeviceAdd;
++	driver->Base.OnDeviceRemove		= VmbusOnDeviceRemove;
++	driver->Base.OnCleanup			= VmbusOnCleanup;
++	driver->OnIsr					= VmbusOnISR;
++	driver->OnMsgDpc				= VmbusOnMsgDPC;
++	driver->OnEventDpc				= VmbusOnEventDPC;
++	driver->GetChannelOffers		= VmbusGetChannelOffers;
++	driver->GetChannelInterface		= VmbusGetChannelInterface;
++	driver->GetChannelInfo			= VmbusGetChannelInfo;
++
++	// Hypervisor initialization...setup hypercall page..etc
++	ret = HvInit();
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS, "Unable to initialize the hypervisor - 0x%x", ret);
++	}
++
++	gDriver = drv;
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++;
++
++Name:
++	VmbusGetChannelOffers()
++
++Description:
++	Retrieve the channel offers from the parent partition
++
++--*/
++
++static void
++VmbusGetChannelOffers(void)
++{
++	DPRINT_ENTER(VMBUS);
++	VmbusChannelRequestOffers();
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++;
++
++Name:
++	VmbusGetChannelInterface()
++
++Description:
++	Get the channel interface
++
++--*/
++static void
++VmbusGetChannelInterface(
++	VMBUS_CHANNEL_INTERFACE *Interface
++	)
++{
++	GetChannelInterface(Interface);
++}
++
++
++/*++;
++
++Name:
++	VmbusGetChannelInterface()
++
++Description:
++	Get the device info for the specified device object
++
++--*/
++static void
++VmbusGetChannelInfo(
++	DEVICE_OBJECT	*DeviceObject,
++	DEVICE_INFO		*DeviceInfo
++	)
++{
++	GetChannelInfo(DeviceObject, DeviceInfo);
++}
++
++
++
++/*++
++
++Name:
++	VmbusCreateChildDevice()
++
++Description:
++	Creates the child device on the bus that represents the channel offer
++
++--*/
++
++DEVICE_OBJECT*
++VmbusChildDeviceCreate(
++	GUID DeviceType,
++	GUID DeviceInstance,
++	void *Context)
++{
++	VMBUS_DRIVER_OBJECT* vmbusDriver = (VMBUS_DRIVER_OBJECT*)gDriver;
++
++	return vmbusDriver->OnChildDeviceCreate(
++		DeviceType,
++		DeviceInstance,
++		Context);
++}
++
++
++/*++
++
++Name:
++	VmbusChildDeviceAdd()
++
++Description:
++	Registers the child device with the vmbus
++
++--*/
++int
++VmbusChildDeviceAdd(
++   DEVICE_OBJECT* ChildDevice)
++{
++	VMBUS_DRIVER_OBJECT* vmbusDriver = (VMBUS_DRIVER_OBJECT*)gDriver;
++
++	return vmbusDriver->OnChildDeviceAdd(gDevice, ChildDevice);
++}
++
++
++/*++
++
++Name:
++	VmbusChildDeviceRemove()
++
++Description:
++	Unregisters the child device from the vmbus
++
++--*/
++void
++VmbusChildDeviceRemove(
++   DEVICE_OBJECT* ChildDevice)
++{
++	VMBUS_DRIVER_OBJECT* vmbusDriver = (VMBUS_DRIVER_OBJECT*)gDriver;
++
++	vmbusDriver->OnChildDeviceRemove(ChildDevice);
++}
++
++/*++
++
++Name:
++	VmbusChildDeviceDestroy()
++
++Description:
++	Release the child device from the vmbus
++
++--*/
++//void
++//VmbusChildDeviceDestroy(
++//	DEVICE_OBJECT* ChildDevice
++//	)
++//{
++//	VMBUS_DRIVER_OBJECT* vmbusDriver = (VMBUS_DRIVER_OBJECT*)gDriver;
++//
++//	vmbusDriver->OnChildDeviceDestroy(ChildDevice);
++//}
++
++/*++
++
++Name:
++	VmbusOnDeviceAdd()
++
++Description:
++	Callback when the root bus device is added
++
++--*/
++static int
++VmbusOnDeviceAdd(
++	DEVICE_OBJECT	*dev,
++	void			*AdditionalInfo
++	)
++{
++	UINT32 *irqvector = (UINT32*) AdditionalInfo;
++	int ret=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	gDevice = dev;
++
++	memcpy(&gDevice->deviceType, &gVmbusDeviceType, sizeof(GUID));
++	memcpy(&gDevice->deviceInstance, &gVmbusDeviceId, sizeof(GUID));
++
++	//strcpy(dev->name, "vmbus");
++	// SynIC setup...
++	ret = HvSynicInit(*irqvector);
++
++	// Connect to VMBus in the root partition
++	ret = VmbusConnect();
++
++	//VmbusSendEvent(device->localPortId+1);
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	VmbusOnDeviceRemove()
++
++Description:
++	Callback when the root bus device is removed
++
++--*/
++int VmbusOnDeviceRemove(
++	DEVICE_OBJECT* dev
++	)
++{
++	int ret=0;
++
++	DPRINT_ENTER(VMBUS);
++
++	VmbusChannelReleaseUnattachedChannels();
++
++	VmbusDisconnect();
++
++	HvSynicCleanup();
++
++	DPRINT_EXIT(VMBUS);
++
++	return ret;
++}
++
++
++/*++
++
++Name:
++	VmbusOnCleanup()
++
++Description:
++	Perform any cleanup when the driver is removed
++
++--*/
++void
++VmbusOnCleanup(
++	DRIVER_OBJECT* drv
++	)
++{
++	//VMBUS_DRIVER_OBJECT* driver = (VMBUS_DRIVER_OBJECT*)drv;
++
++	DPRINT_ENTER(VMBUS);
++
++	HvCleanup();
++
++	DPRINT_EXIT(VMBUS);
++}
++
++
++/*++
++
++Name:
++	VmbusOnMsgDPC()
++
++Description:
++	DPC routine to handle messages from the hypervisior
++
++--*/
++void
++VmbusOnMsgDPC(
++	DRIVER_OBJECT* drv
++	)
++{
++	void *page_addr = gHvContext.synICMessagePage[0];
++
++	HV_MESSAGE* msg = (HV_MESSAGE*)page_addr + VMBUS_MESSAGE_SINT;
++	HV_MESSAGE *copied;
++	while (1)
++	{
++		if (msg->Header.MessageType == HvMessageTypeNone) // no msg
++		{
++			break;
++		}
++		else
++		{
++			copied = MemAllocAtomic(sizeof(HV_MESSAGE));
++			if (copied == NULL)
++			{
++				continue;
++			}
++
++			memcpy(copied, msg, sizeof(HV_MESSAGE));
++			WorkQueueQueueWorkItem(gVmbusConnection.WorkQueue, VmbusOnChannelMessage, (void*)copied);
++		}
++
++		msg->Header.MessageType = HvMessageTypeNone;
++
++		// Make sure the write to MessageType (ie set to HvMessageTypeNone) happens
++		// before we read the MessagePending and EOMing. Otherwise, the EOMing will not deliver
++		// any more messages since there is no empty slot
++		MemoryFence();
++
++		if (msg->Header.MessageFlags.MessagePending)
++		{
++			// This will cause message queue rescan to possibly deliver another msg from the hypervisor
++			WriteMsr(HV_X64_MSR_EOM, 0);
++		}
++	}
++}
++
++/*++
++
++Name:
++	VmbusOnEventDPC()
++
++Description:
++	DPC routine to handle events from the hypervisior
++
++--*/
++void
++VmbusOnEventDPC(
++	DRIVER_OBJECT* drv
++	)
++{
++	// TODO: Process any events
++	VmbusOnEvents();
++}
++
++
++/*++
++
++Name:
++	VmbusOnISR()
++
++Description:
++	ISR routine
++
++--*/
++int
++VmbusOnISR(
++	DRIVER_OBJECT* drv
++	)
++{
++	//VMBUS_DRIVER_OBJECT* driver = (VMBUS_DRIVER_OBJECT*)drv;
++
++	int ret=0;
++	//struct page* page;
++	void *page_addr;
++	HV_MESSAGE* msg;
++	HV_SYNIC_EVENT_FLAGS* event;
++
++	//page = SynICMessagePage[0];
++	//page_addr = page_address(page);
++	page_addr = gHvContext.synICMessagePage[0];
++	msg = (HV_MESSAGE*)page_addr + VMBUS_MESSAGE_SINT;
++
++	DPRINT_ENTER(VMBUS);
++
++	// Check if there are actual msgs to be process
++	if (msg->Header.MessageType != HvMessageTypeNone)
++    {
++		DPRINT_DBG(VMBUS, "received msg type %d size %d", msg->Header.MessageType, msg->Header.PayloadSize);
++		ret |= 0x1;
++    }
++
++	// TODO: Check if there are events to be process
++	page_addr = gHvContext.synICEventPage[0];
++	event = (HV_SYNIC_EVENT_FLAGS*)page_addr + VMBUS_MESSAGE_SINT;
++
++	// Since we are a child, we only need to check bit 0
++	if (BitTestAndClear(&event->Flags32[0], 0))
++	{
++		DPRINT_DBG(VMBUS, "received event %d", event->Flags32[0]);
++		ret |= 0x2;
++	}
++
++	DPRINT_EXIT(VMBUS);
++	return ret;
++}
++
++// eof
+--- /dev/null
++++ b/drivers/staging/hv/vmbus_drv.c
+@@ -0,0 +1,1228 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/sysctl.h>
++
++#include "logging.h"
++#include "vmbus.h"
++
++//
++// Defines
++//
++
++// FIXME! We need to do this dynamically for PIC and APIC system
++#define VMBUS_IRQ				0x5
++#ifdef KERNEL_2_6_27
++#define VMBUS_IRQ_VECTOR     IRQ5_VECTOR
++#endif
++//
++// Data types
++//
++
++// Main vmbus driver data structure
++struct vmbus_driver_context {
++	// !! These must be the first 2 fields !!
++	// The driver field is not used in here. Instead, the bus field is
++	// used to represent the driver
++	struct driver_context	drv_ctx;
++	VMBUS_DRIVER_OBJECT		drv_obj;
++
++	struct bus_type			bus;
++	struct tasklet_struct	msg_dpc;
++	struct tasklet_struct	event_dpc;
++
++	// The bus root device
++	struct device_context	device_ctx;
++};
++
++//
++// Static decl
++//
++static int vmbus_match(struct device *device, struct device_driver *driver);
++static int vmbus_probe(struct device *device);
++static int vmbus_remove(struct device *device);
++static void vmbus_shutdown(struct device *device);
++#if defined(KERNEL_2_6_5) || defined(KERNEL_2_6_9)
++#elif defined(KERNEL_2_6_27)
++static int vmbus_uevent(struct device *device, struct kobj_uevent_env *env);
++#else
++static int vmbus_uevent(struct device *device, char **envp, int num_envp, char *buffer, int buffer_size);
++#endif
++static void vmbus_msg_dpc(unsigned long data);
++static void vmbus_event_dpc(unsigned long data);
++
++#ifdef KERNEL_2_6_27
++static irqreturn_t vmbus_isr(int irq, void* dev_id);
++#else
++static int vmbus_isr(int irq, void* dev_id, struct pt_regs *regs);
++#endif
++
++static void vmbus_device_release(struct device *device);
++static void vmbus_bus_release(struct device *device);
++
++static DEVICE_OBJECT* vmbus_child_device_create(GUID type, GUID instance, void* context);
++static void vmbus_child_device_destroy(DEVICE_OBJECT* device_obj);
++static int vmbus_child_device_register(DEVICE_OBJECT* root_device_obj, DEVICE_OBJECT* child_device_obj);
++static void vmbus_child_device_unregister(DEVICE_OBJECT* child_device_obj);
++static void vmbus_child_device_get_info(DEVICE_OBJECT *device_obj, DEVICE_INFO *device_info);
++
++//static ssize_t vmbus_show_class_id(struct device *dev, struct device_attribute *attr, char *buf);
++//static ssize_t vmbus_show_device_id(struct device *dev, struct device_attribute *attr, char *buf);
++
++static ssize_t vmbus_show_device_attr(struct device *dev, struct device_attribute *dev_attr, char *buf);
++
++//
++// Global
++//
++
++// Global logging setting
++
++//unsigned int vmbus_loglevel= (((VMBUS | VMBUS_DRV)<<16) | DEBUG_LVL_ENTEREXIT);
++//unsigned int vmbus_loglevel= (ALL_MODULES << 16 | DEBUG_LVL_ENTEREXIT);
++unsigned int vmbus_loglevel= (ALL_MODULES << 16 | INFO_LVL);
++EXPORT_SYMBOL(vmbus_loglevel);
++
++static int vmbus_irq = VMBUS_IRQ;
++
++// Setup /proc/sys/bus/vmbus/vmbus_loglevel
++// Allow usage of sysctl cmd to set the logging level
++static struct ctl_table_header *vmbus_ctl_table_hdr;
++
++static ctl_table vmbus_dev_ctl_table[] = {
++	{ .ctl_name	= 8461,
++	  .procname	= "vmbus_loglevel",
++	  .data		= &vmbus_loglevel,
++	  .maxlen	= sizeof(vmbus_loglevel),
++	  .mode		= 0644,
++	  .proc_handler	= &proc_dointvec },
++	{ }
++};
++
++static ctl_table vmbus_ctl_table[] = {
++	{ .ctl_name	= CTL_DEV,
++	  .procname	= "vmbus",
++	  .mode		= 0555,
++	  .child	= vmbus_dev_ctl_table },
++	{ }
++};
++
++static ctl_table vmus_root_ctl_table[] = {
++	{ .ctl_name	= CTL_BUS,
++	  .procname	= "bus",
++	  .mode		= 0555,
++	  .child	= vmbus_ctl_table },
++	{ }
++};
++
++#if defined(KERNEL_2_6_5) || defined(KERNEL_2_6_9)
++#else
++//
++// Set up per device attributes in /sys/bus/vmbus/devices/<bus device>
++//
++static struct device_attribute vmbus_device_attrs[] = {
++	__ATTR(id, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(state, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(class_id, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(device_id, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(monitor_id, S_IRUGO, vmbus_show_device_attr, NULL),
++
++	__ATTR(server_monitor_pending, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(server_monitor_latency, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(server_monitor_conn_id, S_IRUGO, vmbus_show_device_attr, NULL),
++
++	__ATTR(client_monitor_pending, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(client_monitor_latency, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(client_monitor_conn_id, S_IRUGO, vmbus_show_device_attr, NULL),
++
++	__ATTR(out_intr_mask, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(out_read_index, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(out_write_index, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(out_read_bytes_avail, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(out_write_bytes_avail, S_IRUGO, vmbus_show_device_attr, NULL),
++
++	__ATTR(in_intr_mask, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(in_read_index, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(in_write_index, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(in_read_bytes_avail, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR(in_write_bytes_avail, S_IRUGO, vmbus_show_device_attr, NULL),
++	__ATTR_NULL
++};
++#endif
++
++// The one and only one
++static struct vmbus_driver_context g_vmbus_drv={
++	.bus.name	= "vmbus",
++	.bus.match	= vmbus_match,
++#if defined(KERNEL_2_6_5) || defined(KERNEL_2_6_9)
++#else
++	.bus.shutdown = vmbus_shutdown,
++	.bus.remove = vmbus_remove,
++	.bus.probe	= vmbus_probe,
++	.bus.uevent = vmbus_uevent,
++	.bus.dev_attrs = vmbus_device_attrs,
++#endif
++};
++
++//
++// Routines
++//
++
++
++/*++
++
++Name:	vmbus_show_device_attr()
++
++Desc:	Show the device attribute in sysfs. This is invoked when user does a "cat /sys/bus/vmbus/devices/<bus device>/<attr name>"
++
++--*/
++static ssize_t vmbus_show_device_attr(struct device *dev, struct device_attribute *dev_attr, char *buf)
++{
++	struct device_context *device_ctx = device_to_device_context(dev);
++	DEVICE_INFO device_info;
++
++	memset(&device_info, 0, sizeof(DEVICE_INFO));
++
++	vmbus_child_device_get_info(&device_ctx->device_obj, &device_info);
++
++	if (!strcmp(dev_attr->attr.name, "class_id"))
++	{
++		return sprintf(buf, "{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}\n",
++			device_info.ChannelType.Data[3], device_info.ChannelType.Data[2], device_info.ChannelType.Data[1], device_info.ChannelType.Data[0],
++			device_info.ChannelType.Data[5], device_info.ChannelType.Data[4],
++			device_info.ChannelType.Data[7], device_info.ChannelType.Data[6],
++			device_info.ChannelType.Data[8], device_info.ChannelType.Data[9], device_info.ChannelType.Data[10], device_info.ChannelType.Data[11], device_info.ChannelType.Data[12], device_info.ChannelType.Data[13], device_info.ChannelType.Data[14], device_info.ChannelType.Data[15]);
++
++	}
++	else if (!strcmp(dev_attr->attr.name, "device_id"))
++	{
++		return sprintf(buf, "{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}\n",
++			device_info.ChannelInstance.Data[3], device_info.ChannelInstance.Data[2], device_info.ChannelInstance.Data[1], device_info.ChannelInstance.Data[0],
++			device_info.ChannelInstance.Data[5], device_info.ChannelInstance.Data[4],
++			device_info.ChannelInstance.Data[7], device_info.ChannelInstance.Data[6],
++			device_info.ChannelInstance.Data[8], device_info.ChannelInstance.Data[9], device_info.ChannelInstance.Data[10], device_info.ChannelInstance.Data[11], device_info.ChannelInstance.Data[12], device_info.ChannelInstance.Data[13], device_info.ChannelInstance.Data[14], device_info.ChannelInstance.Data[15]);
++	}
++	else if (!strcmp(dev_attr->attr.name, "state"))
++	{
++		return sprintf(buf, "%d\n", device_info.ChannelState);
++	}
++	else if (!strcmp(dev_attr->attr.name, "id"))
++	{
++		return sprintf(buf, "%d\n", device_info.ChannelId);
++	}
++	else if (!strcmp(dev_attr->attr.name, "out_intr_mask"))
++	{
++		return sprintf(buf, "%d\n", device_info.Outbound.InterruptMask);
++	}
++	else if (!strcmp(dev_attr->attr.name, "out_read_index"))
++	{
++		return sprintf(buf, "%d\n", device_info.Outbound.ReadIndex);
++	}
++	else if (!strcmp(dev_attr->attr.name, "out_write_index"))
++	{
++		return sprintf(buf, "%d\n", device_info.Outbound.WriteIndex);
++	}
++	else if (!strcmp(dev_attr->attr.name, "out_read_bytes_avail"))
++	{
++		return sprintf(buf, "%d\n", device_info.Outbound.BytesAvailToRead);
++	}
++	else if (!strcmp(dev_attr->attr.name, "out_write_bytes_avail"))
++	{
++		return sprintf(buf, "%d\n", device_info.Outbound.BytesAvailToWrite);
++	}
++	else if (!strcmp(dev_attr->attr.name, "in_intr_mask"))
++	{
++		return sprintf(buf, "%d\n", device_info.Inbound.InterruptMask);
++	}
++	else if (!strcmp(dev_attr->attr.name, "in_read_index"))
++	{
++		return sprintf(buf, "%d\n", device_info.Inbound.ReadIndex);
++	}
++	else if (!strcmp(dev_attr->attr.name, "in_write_index"))
++	{
++		return sprintf(buf, "%d\n", device_info.Inbound.WriteIndex);
++	}
++	else if (!strcmp(dev_attr->attr.name, "in_read_bytes_avail"))
++	{
++		return sprintf(buf, "%d\n", device_info.Inbound.BytesAvailToRead);
++	}
++	else if (!strcmp(dev_attr->attr.name, "in_write_bytes_avail"))
++	{
++		return sprintf(buf, "%d\n", device_info.Inbound.BytesAvailToWrite);
++	}
++	else if (!strcmp(dev_attr->attr.name, "monitor_id"))
++	{
++		return sprintf(buf, "%d\n", device_info.MonitorId);
++	}
++	else if (!strcmp(dev_attr->attr.name, "server_monitor_pending"))
++	{
++		return sprintf(buf, "%d\n", device_info.ServerMonitorPending);
++	}
++	else if (!strcmp(dev_attr->attr.name, "server_monitor_latency"))
++	{
++		return sprintf(buf, "%d\n", device_info.ServerMonitorLatency);
++	}
++	else if (!strcmp(dev_attr->attr.name, "server_monitor_conn_id"))
++	{
++		return sprintf(buf, "%d\n", device_info.ServerMonitorConnectionId);
++	}
++	else if (!strcmp(dev_attr->attr.name, "client_monitor_pending"))
++	{
++		return sprintf(buf, "%d\n", device_info.ClientMonitorPending);
++	}
++	else if (!strcmp(dev_attr->attr.name, "client_monitor_latency"))
++	{
++		return sprintf(buf, "%d\n", device_info.ClientMonitorLatency);
++	}
++	else if (!strcmp(dev_attr->attr.name, "client_monitor_conn_id"))
++	{
++		return sprintf(buf, "%d\n", device_info.ClientMonitorConnectionId);
++	}
++	else
++	{
++		return 0;
++	}
++}
++
++/*++
++
++Name:	vmbus_show_class_id()
++
++Desc:	Show the device class id in sysfs
++
++--*/
++//static ssize_t vmbus_show_class_id(struct device *dev, struct device_attribute *attr, char *buf)
++//{
++//	struct device_context *device_ctx = device_to_device_context(dev);
++//	return sprintf(buf, "{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}\n",
++//		device_ctx->class_id[3], device_ctx->class_id[2], device_ctx->class_id[1], device_ctx->class_id[0],
++//		device_ctx->class_id[5], device_ctx->class_id[4],
++//		device_ctx->class_id[7], device_ctx->class_id[6],
++//		device_ctx->class_id[8], device_ctx->class_id[9], device_ctx->class_id[10], device_ctx->class_id[11], device_ctx->class_id[12], device_ctx->class_id[13], device_ctx->class_id[14], device_ctx->class_id[15]);
++//}
++
++/*++
++
++Name:	vmbus_show_device_id()
++
++Desc:	Show the device instance id in sysfs
++
++--*/
++//static ssize_t vmbus_show_device_id(struct device *dev, struct device_attribute *attr, char *buf)
++//{
++//	struct device_context *device_ctx = device_to_device_context(dev);
++//	return sprintf(buf, "{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}\n",
++//		device_ctx->device_id[3], device_ctx->device_id[2], device_ctx->device_id[1], device_ctx->device_id[0],
++//		device_ctx->device_id[5], device_ctx->device_id[4],
++//		device_ctx->device_id[7], device_ctx->device_id[6],
++//		device_ctx->device_id[8], device_ctx->device_id[9], device_ctx->device_id[10], device_ctx->device_id[11], device_ctx->device_id[12], device_ctx->device_id[13], device_ctx->device_id[14], device_ctx->device_id[15]);
++//}
++
++/*++
++
++Name:	vmbus_bus_init()
++
++Desc:	Main vmbus driver initialization routine. Here, we
++		- initialize the vmbus driver context
++		- setup various driver entry points
++		- invoke the vmbus hv main init routine
++		- get the irq resource
++		- invoke the vmbus to add the vmbus root device
++		- setup the vmbus root device
++		- retrieve the channel offers
++--*/
++int vmbus_bus_init(PFN_DRIVERINITIALIZE pfn_drv_init)
++{
++	int ret=0;
++	unsigned int vector=0;
++
++	struct vmbus_driver_context *vmbus_drv_ctx=&g_vmbus_drv;
++	VMBUS_DRIVER_OBJECT *vmbus_drv_obj=&g_vmbus_drv.drv_obj;
++
++	struct device_context *dev_ctx=&g_vmbus_drv.device_ctx;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// Set this up to allow lower layer to callback to add/remove child devices on the bus
++	vmbus_drv_obj->OnChildDeviceCreate = vmbus_child_device_create;
++	vmbus_drv_obj->OnChildDeviceDestroy = vmbus_child_device_destroy;
++	vmbus_drv_obj->OnChildDeviceAdd = vmbus_child_device_register;
++	vmbus_drv_obj->OnChildDeviceRemove = vmbus_child_device_unregister;
++
++	// Call to bus driver to initialize
++	ret = pfn_drv_init(&vmbus_drv_obj->Base);
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS_DRV, "Unable to initialize vmbus (%d)", ret);
++		goto cleanup;
++	}
++
++	// Sanity checks
++	if (!vmbus_drv_obj->Base.OnDeviceAdd)
++	{
++		DPRINT_ERR(VMBUS_DRV, "OnDeviceAdd() routine not set");
++		ret = -1;
++		goto cleanup;
++	}
++
++	vmbus_drv_ctx->bus.name = vmbus_drv_obj->Base.name;
++
++	// Initialize the bus context
++	tasklet_init(&vmbus_drv_ctx->msg_dpc, vmbus_msg_dpc, (unsigned long)vmbus_drv_obj);
++	tasklet_init(&vmbus_drv_ctx->event_dpc, vmbus_event_dpc, (unsigned long)vmbus_drv_obj);
++
++	// Now, register the bus driver with LDM
++	bus_register(&vmbus_drv_ctx->bus);
++
++	// Get the interrupt resource
++#ifdef KERNEL_2_6_27
++	ret = request_irq(vmbus_irq,
++			  vmbus_isr,
++			  IRQF_SAMPLE_RANDOM,
++			  vmbus_drv_obj->Base.name,
++			  NULL);
++#else
++	ret = request_irq(vmbus_irq,
++			  vmbus_isr,
++			  SA_SAMPLE_RANDOM,
++			  vmbus_drv_obj->Base.name,
++			  NULL);
++#endif
++
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS_DRV, "ERROR - Unable to request IRQ %d", vmbus_irq);
++
++		bus_unregister(&vmbus_drv_ctx->bus);
++
++		ret = -1;
++		goto cleanup;
++	}
++#ifdef KERNEL_2_6_27
++	vector = VMBUS_IRQ_VECTOR;
++#else
++#if X2V_LINUX
++	vector = vmbus_irq + FIRST_DEVICE_VECTOR - 2;
++#else
++	vector = vmbus_irq + FIRST_EXTERNAL_VECTOR;
++#endif
++#endif
++
++	DPRINT_INFO(VMBUS_DRV, "irq 0x%x vector 0x%x", vmbus_irq, vector);
++
++	// Call to bus driver to add the root device
++	memset(dev_ctx, 0, sizeof(struct device_context));
++
++	ret = vmbus_drv_obj->Base.OnDeviceAdd(&dev_ctx->device_obj, &vector);
++	if (ret != 0)
++	{
++		DPRINT_ERR(VMBUS_DRV, "ERROR - Unable to add vmbus root device");
++
++		free_irq(vmbus_irq, NULL);
++
++		bus_unregister(&vmbus_drv_ctx->bus);
++
++		ret = -1;
++		goto cleanup;
++	}
++	//strcpy(dev_ctx->device.bus_id, dev_ctx->device_obj.name);
++	sprintf(dev_ctx->device.bus_id, "vmbus_0_0");
++	memcpy(&dev_ctx->class_id, &dev_ctx->device_obj.deviceType, sizeof(GUID));
++	memcpy(&dev_ctx->device_id, &dev_ctx->device_obj.deviceInstance, sizeof(GUID));
++
++	// No need to bind a driver to the root device.
++	dev_ctx->device.parent = NULL;
++	dev_ctx->device.bus = &vmbus_drv_ctx->bus; //NULL; // vmbus_remove() does not get invoked
++
++	// Setup the device dispatch table
++	dev_ctx->device.release = vmbus_bus_release;
++
++	// Setup the bus as root device
++	device_register(&dev_ctx->device);
++
++	vmbus_drv_obj->GetChannelOffers();
++
++cleanup:
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return ret;
++}
++
++
++/*++
++
++Name:	vmbus_bus_exit()
++
++Desc:	Terminate the vmbus driver. This routine is opposite of vmbus_bus_init()
++
++--*/
++void vmbus_bus_exit(void)
++{
++	VMBUS_DRIVER_OBJECT *vmbus_drv_obj=&g_vmbus_drv.drv_obj;
++	struct vmbus_driver_context *vmbus_drv_ctx=&g_vmbus_drv;
++
++	struct device_context *dev_ctx=&g_vmbus_drv.device_ctx;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// Remove the root device
++	if (vmbus_drv_obj->Base.OnDeviceRemove)
++		vmbus_drv_obj->Base.OnDeviceRemove(&dev_ctx->device_obj);
++
++	if (vmbus_drv_obj->Base.OnCleanup)
++		vmbus_drv_obj->Base.OnCleanup(&vmbus_drv_obj->Base);
++
++	// Unregister the root bus device
++	device_unregister(&dev_ctx->device);
++
++	bus_unregister(&vmbus_drv_ctx->bus);
++
++	free_irq(vmbus_irq, NULL);
++
++	tasklet_kill(&vmbus_drv_ctx->msg_dpc);
++	tasklet_kill(&vmbus_drv_ctx->event_dpc);
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return;
++}
++
++/*++
++
++Name:	vmbus_child_driver_register()
++
++Desc:	Register a vmbus's child driver
++
++--*/
++void vmbus_child_driver_register(struct driver_context* driver_ctx)
++{
++	VMBUS_DRIVER_OBJECT *vmbus_drv_obj=&g_vmbus_drv.drv_obj;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_INFO(VMBUS_DRV, "child driver (%p) registering - name %s", driver_ctx, driver_ctx->driver.name);
++
++	// The child driver on this vmbus
++	driver_ctx->driver.bus = &g_vmbus_drv.bus;
++
++	driver_register(&driver_ctx->driver);
++
++	vmbus_drv_obj->GetChannelOffers();
++
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++EXPORT_SYMBOL(vmbus_child_driver_register);
++
++/*++
++
++Name:	vmbus_child_driver_unregister()
++
++Desc:	Unregister a vmbus's child driver
++
++--*/
++void vmbus_child_driver_unregister(struct driver_context* driver_ctx)
++{
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_INFO(VMBUS_DRV, "child driver (%p) unregistering - name %s", driver_ctx, driver_ctx->driver.name);
++
++	driver_unregister(&driver_ctx->driver);
++
++	driver_ctx->driver.bus = NULL;
++
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++EXPORT_SYMBOL(vmbus_child_driver_unregister);
++
++/*++
++
++Name:	vmbus_get_interface()
++
++Desc:	Get the vmbus channel interface. This is invoked by child/client driver that sits
++		above vmbus
++--*/
++void vmbus_get_interface(VMBUS_CHANNEL_INTERFACE *interface)
++{
++	VMBUS_DRIVER_OBJECT *vmbus_drv_obj=&g_vmbus_drv.drv_obj;
++
++	vmbus_drv_obj->GetChannelInterface(interface);
++}
++
++EXPORT_SYMBOL(vmbus_get_interface);
++
++
++/*++
++
++Name:	vmbus_child_device_get_info()
++
++Desc:	Get the vmbus child device info. This is invoked to display various device attributes in sysfs.
++--*/
++static void vmbus_child_device_get_info(DEVICE_OBJECT *device_obj, DEVICE_INFO *device_info)
++{
++	VMBUS_DRIVER_OBJECT *vmbus_drv_obj=&g_vmbus_drv.drv_obj;
++
++	vmbus_drv_obj->GetChannelInfo(device_obj, device_info);
++}
++
++
++/*++
++
++Name:	vmbus_child_device_create()
++
++Desc:	Creates and registers a new child device on the vmbus.
++
++--*/
++static DEVICE_OBJECT* vmbus_child_device_create(GUID type, GUID instance, void* context)
++{
++	struct device_context *child_device_ctx;
++	DEVICE_OBJECT* child_device_obj;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// Allocate the new child device
++	child_device_ctx = kzalloc(sizeof(struct device_context), GFP_KERNEL);
++	if (!child_device_ctx)
++	{
++		DPRINT_ERR(VMBUS_DRV, "unable to allocate device_context for child device");
++		DPRINT_EXIT(VMBUS_DRV);
++
++		return NULL;
++	}
++
++	DPRINT_DBG(VMBUS_DRV, "child device (%p) allocated - "
++		"type {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x},"
++		"id {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		&child_device_ctx->device,
++		type.Data[3], type.Data[2], type.Data[1], type.Data[0], type.Data[5], type.Data[4], type.Data[7], type.Data[6], type.Data[8], type.Data[9], type.Data[10], type.Data[11], type.Data[12], type.Data[13], type.Data[14], type.Data[15],
++		instance.Data[3], instance.Data[2], instance.Data[1], instance.Data[0], instance.Data[5], instance.Data[4], instance.Data[7], instance.Data[6], instance.Data[8], instance.Data[9], instance.Data[10], instance.Data[11], instance.Data[12], instance.Data[13], instance.Data[14], instance.Data[15]);
++
++	child_device_obj = &child_device_ctx->device_obj;
++	child_device_obj->context = context;
++	memcpy(&child_device_obj->deviceType, &type, sizeof(GUID));
++	memcpy(&child_device_obj->deviceInstance, &instance, sizeof(GUID));
++
++	memcpy(&child_device_ctx->class_id, &type, sizeof(GUID));
++	memcpy(&child_device_ctx->device_id, &instance, sizeof(GUID));
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return child_device_obj;
++}
++
++/*++
++
++Name:	vmbus_child_device_register()
++
++Desc:	Register the child device on the specified bus
++
++--*/
++static int vmbus_child_device_register(DEVICE_OBJECT* root_device_obj, DEVICE_OBJECT* child_device_obj)
++{
++	int ret=0;
++	struct device_context *root_device_ctx = to_device_context(root_device_obj);
++	struct device_context *child_device_ctx = to_device_context(child_device_obj);
++	static int device_num=0;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_DBG(VMBUS_DRV, "child device (%p) registering", child_device_ctx);
++	//
++	// Make sure we are not registered already
++	//
++	if (child_device_ctx->device.bus_id[0] != '\0')
++	{
++		DPRINT_ERR(VMBUS_DRV, "child device (%p) already registered - busid %s", child_device_ctx, child_device_ctx->device.bus_id);
++
++		ret = -1;
++		goto Cleanup;
++	}
++
++	// Set the device bus id. Otherwise, device_register()will fail.
++	sprintf(child_device_ctx->device.bus_id, "vmbus_0_%d", InterlockedIncrement(&device_num));
++
++	// The new device belongs to this bus
++	child_device_ctx->device.bus = &g_vmbus_drv.bus; //device->dev.bus;
++	child_device_ctx->device.parent = &root_device_ctx->device;
++	child_device_ctx->device.release = vmbus_device_release;
++
++	// Register with the LDM. This will kick off the driver/device binding...which will
++	// eventually call vmbus_match() and vmbus_probe()
++	ret = device_register(&child_device_ctx->device);
++
++	// vmbus_probe() error does not get propergate to device_register().
++	ret = child_device_ctx->probe_error;
++
++	if (ret)
++		DPRINT_ERR(VMBUS_DRV, "unable to register child device (%p) (%d)", &child_device_ctx->device);
++	else
++		DPRINT_INFO(VMBUS_DRV, "child device (%p) registered", &child_device_ctx->device);
++
++Cleanup:
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return ret;
++}
++
++/*++
++
++Name:	vmbus_child_device_unregister()
++
++Desc:	Remove the specified child device from the vmbus.
++
++--*/
++static void vmbus_child_device_unregister(DEVICE_OBJECT* device_obj)
++{
++	struct device_context *device_ctx = to_device_context(device_obj);
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_INFO(VMBUS_DRV, "unregistering child device (%p)", &device_ctx->device);
++
++	// Kick off the process of unregistering the device.
++	// This will call vmbus_remove() and eventually vmbus_device_release()
++	device_unregister(&device_ctx->device);
++
++	DPRINT_INFO(VMBUS_DRV, "child device (%p) unregistered", &device_ctx->device);
++
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++
++/*++
++
++Name:	vmbus_child_device_destroy()
++
++Desc:	Destroy the specified child device on the vmbus.
++
++--*/
++static void vmbus_child_device_destroy(DEVICE_OBJECT* device_obj)
++{
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++/*++
++
++Name:	vmbus_uevent()
++
++Desc:	This routine is invoked when a device is added or removed on the vmbus to generate a uevent to udev in the
++		userspace. The udev will then look at its rule and the uevent generated here to load the appropriate driver
++
++--*/
++#if defined(KERNEL_2_6_5) || defined(KERNEL_2_6_9)
++#elif defined(KERNEL_2_6_27)
++static int vmbus_uevent(struct device *device, struct kobj_uevent_env *env)
++{
++	struct device_context *device_ctx = device_to_device_context(device);
++	int i=0;
++	int len=0;
++	int ret;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_INFO(VMBUS_DRV, "generating uevent - VMBUS_DEVICE_CLASS_GUID={%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		device_ctx->class_id.Data[3], device_ctx->class_id.Data[2], device_ctx->class_id.Data[1], device_ctx->class_id.Data[0],
++		device_ctx->class_id.Data[5], device_ctx->class_id.Data[4],
++		device_ctx->class_id.Data[7], device_ctx->class_id.Data[6],
++		device_ctx->class_id.Data[8], device_ctx->class_id.Data[9], device_ctx->class_id.Data[10], device_ctx->class_id.Data[11],
++		device_ctx->class_id.Data[12], device_ctx->class_id.Data[13], device_ctx->class_id.Data[14], device_ctx->class_id.Data[15]);
++
++	env->envp_idx = i;
++	env->buflen = len;
++	ret = add_uevent_var(env,
++		"VMBUS_DEVICE_CLASS_GUID={%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		device_ctx->class_id.Data[3], device_ctx->class_id.Data[2], device_ctx->class_id.Data[1], device_ctx->class_id.Data[0],
++		device_ctx->class_id.Data[5], device_ctx->class_id.Data[4],
++		device_ctx->class_id.Data[7], device_ctx->class_id.Data[6],
++		device_ctx->class_id.Data[8], device_ctx->class_id.Data[9], device_ctx->class_id.Data[10], device_ctx->class_id.Data[11],
++		device_ctx->class_id.Data[12], device_ctx->class_id.Data[13], device_ctx->class_id.Data[14], device_ctx->class_id.Data[15]);
++
++	if (ret)
++	{
++		return ret;
++	}
++
++	ret = add_uevent_var(env,
++		"VMBUS_DEVICE_DEVICE_GUID={%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		device_ctx->device_id.Data[3], device_ctx->device_id.Data[2], device_ctx->device_id.Data[1], device_ctx->device_id.Data[0],
++		device_ctx->device_id.Data[5], device_ctx->device_id.Data[4],
++		device_ctx->device_id.Data[7], device_ctx->device_id.Data[6],
++		device_ctx->device_id.Data[8], device_ctx->device_id.Data[9], device_ctx->device_id.Data[10], device_ctx->device_id.Data[11],
++		device_ctx->device_id.Data[12], device_ctx->device_id.Data[13], device_ctx->device_id.Data[14], device_ctx->device_id.Data[15]);
++
++	if (ret)
++	{
++		return ret;
++	}
++
++	env->envp[env->envp_idx] = NULL;
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return 0;
++}
++
++#else
++static int vmbus_uevent(struct device *device, char **envp, int num_envp, char *buffer, int buffer_size)
++{
++	struct device_context *device_ctx = device_to_device_context(device);
++	int i=0;
++	int len=0;
++	int ret;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_INFO(VMBUS_DRV, "generating uevent - VMBUS_DEVICE_CLASS_GUID={%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		device_ctx->class_id.Data[3], device_ctx->class_id.Data[2], device_ctx->class_id.Data[1], device_ctx->class_id.Data[0],
++		device_ctx->class_id.Data[5], device_ctx->class_id.Data[4],
++		device_ctx->class_id.Data[7], device_ctx->class_id.Data[6],
++		device_ctx->class_id.Data[8], device_ctx->class_id.Data[9], device_ctx->class_id.Data[10], device_ctx->class_id.Data[11],
++		device_ctx->class_id.Data[12], device_ctx->class_id.Data[13], device_ctx->class_id.Data[14], device_ctx->class_id.Data[15]);
++
++	ret = add_uevent_var(envp, num_envp, &i, buffer, buffer_size, &len,
++		"VMBUS_DEVICE_CLASS_GUID={%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		device_ctx->class_id.Data[3], device_ctx->class_id.Data[2], device_ctx->class_id.Data[1], device_ctx->class_id.Data[0],
++		device_ctx->class_id.Data[5], device_ctx->class_id.Data[4],
++		device_ctx->class_id.Data[7], device_ctx->class_id.Data[6],
++		device_ctx->class_id.Data[8], device_ctx->class_id.Data[9], device_ctx->class_id.Data[10], device_ctx->class_id.Data[11],
++		device_ctx->class_id.Data[12], device_ctx->class_id.Data[13], device_ctx->class_id.Data[14], device_ctx->class_id.Data[15]);
++
++	if (ret)
++	{
++		return ret;
++	}
++
++	ret = add_uevent_var(envp, num_envp, &i, buffer, buffer_size, &len,
++		"VMBUS_DEVICE_DEVICE_GUID={%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x%02x%02x}",
++		device_ctx->device_id.Data[3], device_ctx->device_id.Data[2], device_ctx->device_id.Data[1], device_ctx->device_id.Data[0],
++		device_ctx->device_id.Data[5], device_ctx->device_id.Data[4],
++		device_ctx->device_id.Data[7], device_ctx->device_id.Data[6],
++		device_ctx->device_id.Data[8], device_ctx->device_id.Data[9], device_ctx->device_id.Data[10], device_ctx->device_id.Data[11],
++		device_ctx->device_id.Data[12], device_ctx->device_id.Data[13], device_ctx->device_id.Data[14], device_ctx->device_id.Data[15]);
++
++	if (ret)
++	{
++		return ret;
++	}
++
++	envp[i] = NULL;
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return 0;
++}
++#endif
++
++/*++
++
++Name:	vmbus_match()
++
++Desc:	Attempt to match the specified device to the specified driver
++
++--*/
++static int vmbus_match(struct device *device, struct device_driver *driver)
++{
++	int match=0;
++	struct driver_context *driver_ctx = driver_to_driver_context(driver);
++	struct device_context *device_ctx = device_to_device_context(device);
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// We found our driver ?
++	if (memcmp(&device_ctx->class_id, &driver_ctx->class_id, sizeof(GUID)) == 0)
++	{
++		// !! NOTE: The driver_ctx is not a vmbus_drv_ctx. We typecast it here to access the
++		// DRIVER_OBJECT field
++		struct vmbus_driver_context *vmbus_drv_ctx = (struct vmbus_driver_context*)driver_ctx;
++		device_ctx->device_obj.Driver = &vmbus_drv_ctx->drv_obj.Base;
++		DPRINT_INFO(VMBUS_DRV, "device object (%p) set to driver object (%p)", &device_ctx->device_obj, device_ctx->device_obj.Driver);
++
++		match = 1;
++	}
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return match;
++}
++
++
++/*++
++
++Name:	vmbus_probe_failed_cb()
++
++Desc:	Callback when a driver probe failed in vmbus_probe(). We need a callback because
++		we cannot invoked device_unregister() inside vmbus_probe() since vmbus_probe() may be
++		invoked inside device_register() i.e. we cannot call device_unregister() inside
++		device_register()
++--*/
++#ifdef KERNEL_2_6_27
++static void vmbus_probe_failed_cb(struct work_struct *context)
++#else
++static void vmbus_probe_failed_cb(void* context)
++#endif
++{
++	struct device_context *device_ctx = (struct device_context*)context;
++
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// Kick off the process of unregistering the device.
++	// This will call vmbus_remove() and eventually vmbus_device_release()
++	device_unregister(&device_ctx->device);
++
++	//put_device(&device_ctx->device);
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++
++/*++
++
++Name:	vmbus_probe()
++
++Desc:	Add the new vmbus's child device
++
++--*/
++static int vmbus_probe(struct device *child_device)
++{
++	int ret=0;
++	struct driver_context *driver_ctx = driver_to_driver_context(child_device->driver);
++	struct device_context *device_ctx = device_to_device_context(child_device);
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// Let the specific open-source driver handles the probe if it can
++	if (driver_ctx->probe)
++	{
++		ret = device_ctx->probe_error = driver_ctx->probe(child_device);
++		if (ret != 0)
++		{
++			DPRINT_ERR(VMBUS_DRV, "probe() failed for device %s (%p) on driver %s (%d)...", child_device->bus_id, child_device, child_device->driver->name, ret);
++
++#ifdef KERNEL_2_6_27
++			INIT_WORK(&device_ctx->probe_failed_work_item, vmbus_probe_failed_cb);
++#else
++			INIT_WORK(&device_ctx->probe_failed_work_item, vmbus_probe_failed_cb, device_ctx);
++#endif
++			schedule_work(&device_ctx->probe_failed_work_item);
++		}
++	}
++	else
++	{
++		DPRINT_ERR(VMBUS_DRV, "probe() method not set for driver - %s", child_device->driver->name);
++		ret = -1;
++	}
++
++	DPRINT_EXIT(VMBUS_DRV);
++	return ret;
++}
++
++
++/*++
++
++Name:	vmbus_remove()
++
++Desc:	Remove a vmbus device
++
++--*/
++static int vmbus_remove(struct device *child_device)
++{
++	int ret=0;
++	struct driver_context *driver_ctx;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// Special case root bus device
++	if (child_device->parent == NULL)
++	{
++		// No-op since it is statically defined and handle in vmbus_bus_exit()
++		DPRINT_EXIT(VMBUS_DRV);
++		return 0;
++	}
++
++	if (child_device->driver)
++	{
++		driver_ctx = driver_to_driver_context(child_device->driver);
++
++		// Let the specific open-source driver handles the removal if it can
++		if (driver_ctx->remove)
++		{
++			ret = driver_ctx->remove(child_device);
++		}
++		else
++		{
++			DPRINT_ERR(VMBUS_DRV, "remove() method not set for driver - %s", child_device->driver->name);
++			ret = -1;
++		}
++	}
++	else
++	{
++
++	}
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return 0;
++}
++
++/*++
++
++Name:	vmbus_shutdown()
++
++Desc:	Shutdown a vmbus device
++
++--*/
++static void vmbus_shutdown(struct device *child_device)
++{
++	struct driver_context *driver_ctx;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	// Special case root bus device
++	if (child_device->parent == NULL)
++	{
++		// No-op since it is statically defined and handle in vmbus_bus_exit()
++		DPRINT_EXIT(VMBUS_DRV);
++		return;
++	}
++
++	// The device may not be attached yet
++	if (!child_device->driver)
++	{
++		DPRINT_EXIT(VMBUS_DRV);
++		return;
++	}
++
++	driver_ctx = driver_to_driver_context(child_device->driver);
++
++	// Let the specific open-source driver handles the removal if it can
++	if (driver_ctx->shutdown)
++	{
++		driver_ctx->shutdown(child_device);
++	}
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return;
++}
++
++/*++
++
++Name:	vmbus_bus_release()
++
++Desc:	Final callback release of the vmbus root device
++
++--*/
++static void vmbus_bus_release(struct device *device)
++{
++	DPRINT_ENTER(VMBUS_DRV);
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++/*++
++
++Name:	vmbus_device_release()
++
++Desc:	Final callback release of the vmbus child device
++
++--*/
++static void vmbus_device_release(struct device *device)
++{
++	struct device_context *device_ctx = device_to_device_context(device);
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	//vmbus_child_device_destroy(&device_ctx->device_obj);
++	kfree(device_ctx);
++
++	// !!DO NOT REFERENCE device_ctx anymore at this point!!
++
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return;
++}
++
++/*++
++
++Name:	vmbus_msg_dpc()
++
++Desc:	Tasklet routine to handle hypervisor messages
++
++--*/
++static void vmbus_msg_dpc(unsigned long data)
++{
++	VMBUS_DRIVER_OBJECT* vmbus_drv_obj = (VMBUS_DRIVER_OBJECT*)data;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	ASSERT(vmbus_drv_obj->OnMsgDpc != NULL);
++
++	// Call to bus driver to handle interrupt
++	vmbus_drv_obj->OnMsgDpc(&vmbus_drv_obj->Base);
++
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++/*++
++
++Name:	vmbus_msg_dpc()
++
++Desc:	Tasklet routine to handle hypervisor events
++
++--*/
++static void vmbus_event_dpc(unsigned long data)
++{
++	VMBUS_DRIVER_OBJECT* vmbus_drv_obj = (VMBUS_DRIVER_OBJECT*)data;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	ASSERT(vmbus_drv_obj->OnEventDpc != NULL);
++
++	// Call to bus driver to handle interrupt
++	vmbus_drv_obj->OnEventDpc(&vmbus_drv_obj->Base);
++
++	DPRINT_EXIT(VMBUS_DRV);
++}
++
++/*++
++
++Name:	vmbus_msg_dpc()
++
++Desc:	ISR routine
++
++--*/
++#ifdef KERNEL_2_6_27
++static irqreturn_t vmbus_isr(int irq, void* dev_id)
++#else
++static int vmbus_isr(int irq, void* dev_id, struct pt_regs *regs)
++#endif
++{
++	int ret=0;
++	VMBUS_DRIVER_OBJECT* vmbus_driver_obj = &g_vmbus_drv.drv_obj;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	ASSERT(vmbus_driver_obj->OnIsr != NULL);
++
++	// Call to bus driver to handle interrupt
++	ret = vmbus_driver_obj->OnIsr(&vmbus_driver_obj->Base);
++
++	// Schedules a dpc if necessary
++	if (ret > 0)
++	{
++		if (test_bit(0, (unsigned long*)&ret))
++		{
++			tasklet_schedule(&g_vmbus_drv.msg_dpc);
++		}
++
++		if (test_bit(1, (unsigned long*)&ret))
++		{
++			tasklet_schedule(&g_vmbus_drv.event_dpc);
++		}
++
++		DPRINT_EXIT(VMBUS_DRV);
++		return IRQ_HANDLED;
++	}
++	else
++	{
++		DPRINT_EXIT(VMBUS_DRV);
++		return IRQ_NONE;
++	}
++}
++
++MODULE_LICENSE("GPL");
++
++
++/*++
++
++Name:	vmbus_init()
++
++Desc:	Main vmbus driver entry routine
++
++--*/
++static int __init vmbus_init(void)
++{
++	int ret=0;
++
++	DPRINT_ENTER(VMBUS_DRV);
++
++	DPRINT_INFO(VMBUS_DRV,
++		"Vmbus initializing.... current log level 0x%x (%x,%x)",
++		vmbus_loglevel, HIWORD(vmbus_loglevel), LOWORD(vmbus_loglevel));
++#ifdef KERNEL_2_6_27
++//Todo: it is used for loglevel, to be ported to new kernel.
++#else
++	vmbus_ctl_table_hdr = register_sysctl_table(vmus_root_ctl_table, 0);
++	if (!vmbus_ctl_table_hdr)
++	{
++		DPRINT_EXIT(VMBUS_DRV);
++		return -ENOMEM;
++	}
++#endif
++
++	ret = vmbus_bus_init(VmbusInitialize);
++
++	DPRINT_EXIT(VMBUS_DRV);
++	return ret;
++}
++
++
++
++/*++
++
++Name:	vmbus_init()
++
++Desc:	Main vmbus driver exit routine
++
++--*/
++static void __exit vmbus_exit(void)
++{
++	DPRINT_ENTER(VMBUS_DRV);
++
++	vmbus_bus_exit();
++#ifdef KERNEL_2_6_27
++//Todo: it is used for loglevel, to be ported to new kernel.
++#else
++	unregister_sysctl_table(vmbus_ctl_table_hdr);
++#endif
++	DPRINT_EXIT(VMBUS_DRV);
++
++	return;
++}
++
++#if defined(KERNEL_2_6_5)
++#else
++module_param(vmbus_irq, int, S_IRUGO);
++module_param(vmbus_loglevel, int, S_IRUGO);
++#endif
++
++module_init(vmbus_init);
++module_exit(vmbus_exit);
++// eof
+--- /dev/null
++++ b/drivers/staging/hv/VmbusPrivate.h
+@@ -0,0 +1,170 @@
++/*
++ *
++ * Copyright (c) 2009, Microsoft Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++ * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Authors:
++ *   Haiyang Zhang <haiyangz@microsoft.com>
++ *   Hank Janssen  <hjanssen@microsoft.com>
++ *
++ */
++
++
++#ifndef _VMBUS_PRIVATE_H_
++#define _VMBUS_PRIVATE_H_
++
++#ifndef INTERNAL
++#define INTERNAL static
++#endif
++
++#include "Hv.h"
++#include "VmbusApi.h"
++#include "Channel.h"
++#include "ChannelMgmt.h"
++#include "ChannelInterface.h"
++//#include "ChannelMessages.h"
++#include "RingBuffer.h"
++//#include "Packet.h"
++#include "List.h"
++
++//
++// Defines
++//
++
++// Maximum channels is determined by the size of the interrupt page which is PAGE_SIZE. 1/2 of PAGE_SIZE is for
++// send endpoint interrupt and the other is receive endpoint interrupt
++#define MAX_NUM_CHANNELS				(PAGE_SIZE >> 1) << 3  // 16348 channels
++
++// The value here must be in multiple of 32
++// TODO: Need to make this configurable
++#define MAX_NUM_CHANNELS_SUPPORTED		256
++
++//
++// Data types
++//
++
++typedef enum {
++	Disconnected,
++	Connecting,
++	Connected,
++	Disconnecting
++} VMBUS_CONNECT_STATE;
++
++#define MAX_SIZE_CHANNEL_MESSAGE			HV_MESSAGE_PAYLOAD_BYTE_COUNT
++
++typedef struct _VMBUS_CONNECTION {
++
++	VMBUS_CONNECT_STATE					ConnectState;
++
++	UINT32								NextGpadlHandle;
++
++	// Represents channel interrupts. Each bit position
++	// represents a channel.
++	// When a channel sends an interrupt via VMBUS, it
++	// finds its bit in the sendInterruptPage, set it and
++	// calls Hv to generate a port event. The other end
++	// receives the port event and parse the recvInterruptPage
++	// to see which bit is set
++	VOID*								InterruptPage;
++	VOID*								SendInterruptPage;
++	VOID*								RecvInterruptPage;
++
++	// 2 pages - 1st page for parent->child notification and 2nd is child->parent notification
++	VOID*								MonitorPages;
++	LIST_ENTRY							ChannelMsgList;
++	HANDLE								ChannelMsgLock;
++
++	// List of channels
++	LIST_ENTRY							ChannelList;
++	HANDLE								ChannelLock;
++
++	HANDLE								WorkQueue;
++} VMBUS_CONNECTION;
++
++
++typedef struct _VMBUS_MSGINFO {
++	// Bookkeeping stuff
++	LIST_ENTRY			MsgListEntry;
++
++	// Synchronize the request/response if needed
++	HANDLE				WaitEvent;
++
++	// The message itself
++	unsigned char		Msg[0];
++} VMBUS_MSGINFO;
++
++
++//
++// Externs
++//
++extern VMBUS_CONNECTION gVmbusConnection;
++
++//
++// General vmbus interface
++//
++INTERNAL DEVICE_OBJECT*
++VmbusChildDeviceCreate(
++	GUID deviceType,
++	GUID deviceInstance,
++	void *context);
++
++INTERNAL int
++VmbusChildDeviceAdd(
++	DEVICE_OBJECT* Device);
++
++INTERNAL void
++VmbusChildDeviceRemove(
++   DEVICE_OBJECT* Device);
++
++//INTERNAL void
++//VmbusChildDeviceDestroy(
++//	DEVICE_OBJECT*);
++
++INTERNAL VMBUS_CHANNEL*
++GetChannelFromRelId(
++	UINT32 relId
++	);
++
++//
++// Connection interface
++//
++INTERNAL int
++VmbusConnect(
++	VOID
++	);
++
++INTERNAL int
++VmbusDisconnect(
++	VOID
++	);
++
++INTERNAL int
++VmbusPostMessage(
++	PVOID			buffer,
++	SIZE_T			bufSize
++	);
++
++INTERNAL int
++VmbusSetEvent(
++	UINT32 childRelId
++	);
++
++INTERNAL VOID
++VmbusOnEvents(
++  VOID
++	);
++
++
++#endif // _VMBUS_PRIVATE_H_

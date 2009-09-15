@@ -54,7 +54,8 @@ rm -rf /boot/System.map-*
 rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
 rm -rf /boot/vmlinuz-*
-rm -rf /lib/modules/
+# Don't remove old xen modules. Kernel may stored outside.
+rm -rf /lib/modules/*-ipfire
 #
 # Backup grub.conf
 #
@@ -115,7 +116,7 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 # Rebuild Language
 #
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 # Add some entries to openvpn config
 #

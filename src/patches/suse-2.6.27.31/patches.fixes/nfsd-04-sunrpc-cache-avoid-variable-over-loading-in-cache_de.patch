@@ -1,0 +1,59 @@
+Patch-mainline: submitted 04aug2009
+References: bnc#498708
+From: NeilBrown <neilb@suse.de>
+Date: Tue, 4 Aug 2009 15:06:38 +1000
+Subject: [PATCH 06/12] sunrpc/cache: avoid variable over-loading in cache_defer_req
+
+In cache_defer_req, 'dreq' is used for two significantly different
+values that happen to be of the same type.
+
+This is both confusing, and make it hard to extend the range of one of
+the values as we will in the next patch.
+So introduce 'discard' to take one of the values.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+
+---
+ net/sunrpc/cache.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/net/sunrpc/cache.c
++++ linux-2.6.27-SLE11_BRANCH/net/sunrpc/cache.c
+@@ -562,7 +562,7 @@ static int cache_defer_cnt;
+ 
+ static int cache_defer_req(struct cache_req *req, struct cache_head *item)
+ {
+-	struct cache_deferred_req *dreq;
++	struct cache_deferred_req *dreq, *discard;
+ 	int hash = DFR_HASH(item);
+ 
+ 	if (cache_defer_cnt >= DFR_MAX) {
+@@ -587,20 +587,20 @@ static int cache_defer_req(struct cache_
+ 	list_add(&dreq->hash, &cache_defer_hash[hash]);
+ 
+ 	/* it is in, now maybe clean up */
+-	dreq = NULL;
++	discard = NULL;
+ 	if (++cache_defer_cnt > DFR_MAX) {
+-		dreq = list_entry(cache_defer_list.prev,
+-				  struct cache_deferred_req, recent);
++		discard = list_entry(cache_defer_list.prev,
++				     struct cache_deferred_req, recent);
+-		list_del_init(&dreq->recent);
+-		list_del_init(&dreq->hash);
++		list_del_init(&discard->recent);
++		list_del_init(&discard->hash);
+ 		cache_defer_cnt--;
+ 	}
+ 	spin_unlock(&cache_defer_lock);
+ 
+-	if (dreq) {
++	if (discard)
+ 		/* there was one too many */
+-		dreq->revisit(dreq, 1);
+-	}
++		discard->revisit(discard, 1);
++
+ 	if (!test_bit(CACHE_PENDING, &item->flags)) {
+ 		/* must have just been validated... */
+ 		cache_revisit_request(item);

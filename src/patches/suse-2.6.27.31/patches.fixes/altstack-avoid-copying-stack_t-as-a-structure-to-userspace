@@ -1,0 +1,66 @@
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 1 Aug 2009 17:34:56 +0000 (-0700)
+Subject: do_sigaltstack: avoid copying 'stack_t' as a structure to user space
+Git-commit: 0083fc2c50e6c5127c2802ad323adf8143ab7856
+Patch-mainline: 2.6.31
+References: bnc#527848
+
+do_sigaltstack: avoid copying 'stack_t' as a structure to user space
+
+Ulrich Drepper correctly points out that there is generally padding in
+the structure on 64-bit hosts, and that copying the structure from
+kernel to user space can leak information from the kernel stack in those
+padding bytes.
+
+Avoid the whole issue by just copying the three members one by one
+instead, which also means that the function also can avoid the need for
+a stack frame.  This also happens to match how we copy the new structure
+from user space, so it all even makes sense.
+
+[ The obvious solution of adding a memset() generates horrid code, gcc
+  does really stupid things. ]
+
+Reported-by: Ulrich Drepper <drepper@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+
+ kernel/signal.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2353,11 +2353,9 @@ do_sigaltstack (const stack_t __user *us
+ 	stack_t oss;
+ 	int error;
+ 
+-	if (uoss) {
+-		oss.ss_sp = (void __user *) current->sas_ss_sp;
+-		oss.ss_size = current->sas_ss_size;
+-		oss.ss_flags = sas_ss_flags(sp);
+-	}
++	oss.ss_sp = (void __user *) current->sas_ss_sp;
++	oss.ss_size = current->sas_ss_size;
++	oss.ss_flags = sas_ss_flags(sp);
+ 
+ 	if (uss) {
+ 		void __user *ss_sp;
+@@ -2400,13 +2398,16 @@ do_sigaltstack (const stack_t __user *us
+ 		current->sas_ss_size = ss_size;
+ 	}
+ 
++	error = 0;
+ 	if (uoss) {
+ 		error = -EFAULT;
+-		if (copy_to_user(uoss, &oss, sizeof(oss)))
++		if (!access_ok(VERIFY_WRITE, uoss, sizeof(*uoss)))
+ 			goto out;
++		error = __put_user(oss.ss_sp, &uoss->ss_sp) |
++			__put_user(oss.ss_size, &uoss->ss_size) |
++			__put_user(oss.ss_flags, &uoss->ss_flags);
+ 	}
+ 
+-	error = 0;
+ out:
+ 	return error;
+ }

@@ -1,0 +1,77 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Upstream 2.6.27.26 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.kernel.org/patch-2.6.27.25-26" by xen-port-patches.py
+
+--- sle11-2009-07-31.orig/arch/x86/kernel/setup-xen.c	2009-06-29 15:38:34.000000000 +0200
++++ sle11-2009-07-31/arch/x86/kernel/setup-xen.c	2009-07-31 15:08:11.000000000 +0200
+@@ -290,15 +290,13 @@ static inline void copy_edd(void)
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 
+-#if defined(CONFIG_X86_32) && !defined(CONFIG_XEN)
+-
+ #define MAX_MAP_CHUNK	(NR_FIX_BTMAPS << PAGE_SHIFT)
+ static void __init relocate_initrd(void)
+ {
+-
++#ifndef CONFIG_XEN
+ 	u64 ramdisk_image = boot_params.hdr.ramdisk_image;
+ 	u64 ramdisk_size  = boot_params.hdr.ramdisk_size;
+-	u64 end_of_lowmem = max_low_pfn << PAGE_SHIFT;
++	u64 end_of_lowmem = max_low_pfn_mapped << PAGE_SHIFT;
+ 	u64 ramdisk_here;
+ 	unsigned long slop, clen, mapaddr;
+ 	char *p, *q;
+@@ -353,8 +351,14 @@ static void __init relocate_initrd(void)
+ 		" %08llx - %08llx\n",
+ 		ramdisk_image, ramdisk_image + ramdisk_size - 1,
+ 		ramdisk_here, ramdisk_here + ramdisk_size - 1);
+-}
++#else
++	printk(KERN_ERR "initrd extends beyond end of memory "
++	       "(0x%08lx > 0x%08lx)\ndisabling initrd\n",
++	       __pa(xen_start_info->mod_start) + xen_start_info->mod_len,
++	       max_low_pfn_mapped << PAGE_SHIFT);
++	initrd_start = 0;
+ #endif
++}
+ 
+ static void __init reserve_initrd(void)
+ {
+@@ -362,7 +366,7 @@ static void __init reserve_initrd(void)
+ 	u64 ramdisk_image = boot_params.hdr.ramdisk_image;
+ 	u64 ramdisk_size  = boot_params.hdr.ramdisk_size;
+ 	u64 ramdisk_end   = ramdisk_image + ramdisk_size;
+-	u64 end_of_lowmem = max_low_pfn << PAGE_SHIFT;
++	u64 end_of_lowmem = max_low_pfn_mapped << PAGE_SHIFT;
+ 
+ 	if (!boot_params.hdr.type_of_loader ||
+ 	    !ramdisk_image || !ramdisk_size)
+@@ -371,7 +375,7 @@ static void __init reserve_initrd(void)
+ 	unsigned long ramdisk_image = __pa(xen_start_info->mod_start);
+ 	unsigned long ramdisk_size  = xen_start_info->mod_len;
+ 	unsigned long ramdisk_end   = ramdisk_image + ramdisk_size;
+-	unsigned long end_of_lowmem = max_low_pfn << PAGE_SHIFT;
++	unsigned long end_of_lowmem = max_low_pfn_mapped << PAGE_SHIFT;
+ 
+ 	if (!xen_start_info->mod_start || !ramdisk_size)
+ 		return;		/* No initrd provided by bootloader */
+@@ -404,14 +408,8 @@ static void __init reserve_initrd(void)
+ 		return;
+ 	}
+ 
+-#if defined(CONFIG_X86_32) && !defined(CONFIG_XEN)
+ 	relocate_initrd();
+-#else
+-	printk(KERN_ERR "initrd extends beyond end of memory "
+-	       "(0x%08lx > 0x%08lx)\ndisabling initrd\n",
+-	       ramdisk_end, end_of_lowmem);
+-	initrd_start = 0;
+-#endif
++
+ 	free_early(ramdisk_image, ramdisk_end);
+ }
+ #else

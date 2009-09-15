@@ -1,0 +1,109 @@
+From 0ef5f8f6159e44b4faa997be08d1a3bcbf44ad08 Mon Sep 17 00:00:00 2001
+From: Andrew Patterson <andrew.patterson@hp.com>
+Date: Mon, 10 Nov 2008 15:30:50 -0700
+Subject: ACPI/PCI: PCI extended config _OSC support called when root bridge added
+Patch-mainline: 2.6.29
+References: bnc#438941
+
+The _OSC capability OSC_EXT_PCI_CONFIG_SUPPORT is set when the root
+bridge is added with pci_acpi_osc_support() if we can access PCI
+extended config space.
+
+This adds the function pci_ext_cfg_avail which returns true if we can
+access PCI extended config space (offset greater than 0xff). It
+currently only returns false if arch=x86 and raw_pci_ext_ops is not set
+(which might happen if pci=nommcfg is set on the kernel command-line).
+
+Signed-off-by: Andrew Patterson <andrew.patterson@hp.com>
+Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ arch/x86/pci/common.c   |    8 ++++++++
+ drivers/acpi/pci_root.c |   10 ++++++++--
+ drivers/pci/pci.c       |   13 +++++++++++++
+ include/linux/pci.h     |    2 ++
+ 4 files changed, 31 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/pci/common.c
++++ b/arch/x86/pci/common.c
+@@ -563,6 +563,14 @@ void pcibios_disable_device (struct pci_
+ 		pcibios_disable_irq(dev);
+ }
+ 
++int pci_ext_cfg_avail(struct pci_dev *dev)
++{
++	if (raw_pci_ext_ops)
++		return 1;
++	else
++		return 0;
++}
++
+ struct pci_bus * __devinit pci_scan_bus_on_node(int busno, struct pci_ops *ops, int node)
+ {
+ 	struct pci_bus *bus = NULL;
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -194,7 +194,7 @@ static int __devinit acpi_pci_root_add(s
+ 	unsigned long long value = 0;
+ 	acpi_handle handle = NULL;
+ 	struct acpi_device *child;
+-	u32 flags;
++	u32 flags, base_flags;
+ 
+ 
+ 	if (!device)
+@@ -216,7 +216,7 @@ static int __devinit acpi_pci_root_add(s
+ 	 * All supported architectures that use ACPI have support for
+ 	 * PCI domains, so we indicate this in _OSC support capabilities.
+ 	 */
+-	flags = OSC_PCI_SEGMENT_GROUPS_SUPPORT;
++	flags = base_flags = OSC_PCI_SEGMENT_GROUPS_SUPPORT;
+ 	pci_acpi_osc_support(device->handle, flags);
+ 
+ 	/* 
+@@ -344,6 +344,12 @@ static int __devinit acpi_pci_root_add(s
+ 	list_for_each_entry(child, &device->children, node)
+ 		acpi_pci_bridge_scan(child);
+ 
++	/* Indicate support for various _OSC capabilities. */
++	if (pci_ext_cfg_avail(root->bus->self))
++		flags |= OSC_EXT_PCI_CONFIG_SUPPORT;
++	if (flags != base_flags)
++		pci_acpi_osc_support(device->handle, flags);
++
+       end:
+ 	if (result) {
+ 		if (!list_empty(&root->node))
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1900,6 +1900,19 @@ static void __devinit pci_no_domains(voi
+ #endif
+ }
+ 
++/**
++ * pci_ext_cfg_enabled - can we access extended PCI config space?
++ * @dev: The PCI device of the root bridge.
++ *
++ * Returns 1 if we can access PCI extended config space (offsets
++ * greater than 0xff). This is the default implementation. Architecture
++ * implementations can override this.
++ */
++int __attribute__ ((weak)) pci_ext_cfg_avail(struct pci_dev *dev)
++{
++	return 1;
++}
++
+ static int __devinit pci_init(void)
+ {
+ 	struct pci_dev *dev = NULL;
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1128,5 +1128,7 @@ static inline void pci_mmcfg_early_init(
+ static inline void pci_mmcfg_late_init(void) { }
+ #endif
+ 
++int pci_ext_cfg_avail(struct pci_dev *dev);
++
+ #endif /* __KERNEL__ */
+ #endif /* LINUX_PCI_H */

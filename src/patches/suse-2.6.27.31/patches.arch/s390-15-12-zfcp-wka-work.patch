@@ -1,0 +1,26 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: zfcp: Cancel WKA port work on adapter dequeue
+References: bnc#518291,LTC#54988  
+
+Symptom:     Oops when enabling / disabling lots of FCP subchannels
+	     while setting the chpid off / on.
+Problem:     The delayed_work for the directory server wka port is
+	     being executed after the adapter struct has been removed.
+Solution:    Before removing the adapter struct make sure that the
+             delayed_work is not running.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+ drivers/s390/scsi/zfcp_aux.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/s390/scsi/zfcp_aux.c
++++ b/drivers/s390/scsi/zfcp_aux.c
+@@ -552,6 +552,7 @@ void zfcp_adapter_dequeue(struct zfcp_ad
+ 
+ 	cancel_work_sync(&adapter->scan_work);
+ 	cancel_work_sync(&adapter->stat_work);
++	zfcp_fc_wka_port_force_offline(&adapter->nsp);
+ 	zfcp_adapter_scsi_unregister(adapter);
+ 	sysfs_remove_group(&adapter->ccw_device->dev.kobj,
+ 			   &zfcp_sysfs_adapter_attrs);

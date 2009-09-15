@@ -338,17 +338,17 @@ buildipfire() {
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
-#  ipfiremake linux			XEN=1
-#  ipfiremake atl2			XEN=1
-#  ipfiremake hso			XEN=1
-#  ipfiremake e1000e			XEN=1
-#  ipfiremake kqemu			XEN=1
-#  ipfiremake v4l-dvb			XEN=1
-#  ipfiremake madwifi			XEN=1
-##  ipfiremake alsa			XEN=1 KMOD=1
-#  ipfiremake openswan			XEN=1 KMOD=1
-#  ipfiremake mISDN			XEN=1
-#  ipfiremake compat-wireless		XEN=1
+  ipfiremake linux			XEN=1
+  ipfiremake atl2			XEN=1
+  ipfiremake hso			XEN=1
+  ipfiremake e1000e			XEN=1
+  ipfiremake kqemu			XEN=1
+  ipfiremake v4l-dvb			XEN=1
+  ipfiremake madwifi			XEN=1
+#  ipfiremake alsa			XEN=1 KMOD=1
+  ipfiremake openswan			XEN=1 KMOD=1
+  ipfiremake mISDN			XEN=1
+  ipfiremake compat-wireless		XEN=1
   ipfiremake linux
   ipfiremake atl2
   ipfiremake hso
@@ -713,13 +713,15 @@ buildpackages() {
 
   ipfirepackages
 
-#  # Check if there is a loop device for building in virtual environments
-#  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
-#        cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
-#	ipfiremake xen-image ED=$IPFVER
-#	rm -rf $LFS/install/packages/linux-xen-*.ipfire
-#  fi
-#  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
+  # Check if there is a loop device for building in virtual environments
+  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
+        cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
+        cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
+	ipfiremake xen-image ED=$IPFVER
+	rm -rf $LFS/install/packages/linux-xen-*.ipfire
+	rm -rf $LFS/install/packages/meta-linux-xen
+  fi
+  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   # Cleanup
   stdumount

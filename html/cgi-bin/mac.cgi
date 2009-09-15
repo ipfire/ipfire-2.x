@@ -67,11 +67,25 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 		$errormessage = $Lang::tr{'mac address error not valid'};
 	}
 }
-if ($macsettings{'RECONNECT'} eq $Lang::tr{'reconnect'}) {
+if ($macsettings{'ACTION'} eq $Lang::tr{'reconnect'}) {
 	system("/usr/local/bin/redctrl restart >/dev/null 2>&1 &");
 	&Header::openbox('100%', 'left', $Lang::tr{'mac address recon'} );
 	print "<font class='base'>$Lang::tr{'mac address done'}</font>\n";
 	&Header::closebox();	
+}
+if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
+	system("cat /dev/null > ${General::swroot}/mac/settings &");
+	&Header::openbox('100%', 'left', $Lang::tr{'mac address deleted'} );
+	print "<font class='base'>$Lang::tr{'mac address deleted txt'}</font>\n";
+	&Header::closebox();	
+}
+if ($macsettings{'ACTION'} eq $Lang::tr{'reboot'}) {
+	&General::log($Lang::tr{'rebooting ipfire'});
+	system("/usr/local/bin/ipfirereboot boot");
+	&Header::openbox('100%', 'left', $Lang::tr{'rebooting ipfire'} );
+	print "&nbsp;&nbsp;<img src='/images/indicator.gif' /><br /><br />";
+	print "<meta http-equiv='refresh' content='120;'>";
+	&Header::closebox();
 }
 
 # DPC move error message to top so it is seen!
@@ -95,23 +109,69 @@ print <<END
   </tr>
   <tr>
     <td><font class='base'>$Lang::tr{'mac new'}&nbsp;</font>
+END
+;
+if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
+print <<END 
+      <input type="text" name="MAC" maxlength="17" value=''/></td>
+END
+;
+} else {   
+print <<END
       <input type="text" name="MAC" maxlength="17" value='$macsettings{"MAC"}'/></td>
+END
+;  
+} 
+print <<END    
   </tr>
   <tr>
     <td><hr /></td>
   </tr>
   <tr>
     <td><div align="center">
+END
+;
+if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
+print <<END
       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
       &nbsp;&nbsp;&nbsp;&nbsp;
-      <input type='submit' name='RECONNECT' value='$Lang::tr{'reconnect'}' />
+      <input type='submit' name='ACTION' value='$Lang::tr{'delete'}' />
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <input type='submit' name='ACTION' value='$Lang::tr{'reboot'}' />
+END
+;
+} elsif ($macsettings{'ACTION'} eq $Lang::tr{'save'} && $errormessage eq "") {	
+print <<END
+      <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <input type='submit' name='ACTION' value='$Lang::tr{'delete'}' />
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <input type='submit' name='ACTION' value='$Lang::tr{'reconnect'}' />
+END
+;
+} elsif ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {	
+print <<END
+      <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+END
+;
+} else {	
+print <<END
+      <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <input type='submit' name='ACTION' value='$Lang::tr{'delete'}' />
+END
+;
+}
+print <<END
     </div></td>
   </tr>
+  
+
+
 </table>
 
 END
 ;
-
 &Header::closebox();
 
 print "</form>\n";

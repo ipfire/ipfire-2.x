@@ -1,0 +1,31 @@
+From: Jack Steiner <steiner@sgi.com>
+Subject: x86, uv: add early detection of UV system types
+References: bnc#429984
+Patch-Mainline: yes
+
+I missed one line of the UV infrastructure patch.
+
+The code is already upstream as part of a larger UV patch
+but was somehow lost from the final UV infrastructure patch that was
+sent to SuSE.
+
+This change is necessary to detect that the system is a UV system prior
+to parsing the SRAT processor information.
+
+Mainline Commit: 2e42060c19cb79adacc48beb5e9ec5361df976a2
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Automatically created from "patches.arch/x86_sgi_uv_early_detect_oem.patch" by xen-port-patches.py
+
+--- sle11-2009-07-31.orig/arch/x86/kernel/setup-xen.c	2009-07-31 15:13:15.000000000 +0200
++++ sle11-2009-07-31/arch/x86/kernel/setup-xen.c	2009-07-31 15:13:24.000000000 +0200
+@@ -958,6 +958,8 @@ void __init setup_arch(char **cmdline_p)
+ 	 */
+ 	acpi_boot_table_init();
+ 
++	early_acpi_boot_init();
++
+ #ifdef CONFIG_ACPI_NUMA
+ 	/*
+ 	 * Parse SRAT to discover nodes.

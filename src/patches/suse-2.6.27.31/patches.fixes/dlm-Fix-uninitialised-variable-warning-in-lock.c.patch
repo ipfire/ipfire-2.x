@@ -1,0 +1,37 @@
+From a566a6b11c86147fe9fc9db7ab15f9eecca3e862 Mon Sep 17 00:00:00 2001
+From: Steven Whitehouse <swhiteho@redhat.com>
+Date: Mon, 15 Jun 2009 08:26:48 +0100
+Subject: [PATCH] dlm: Fix uninitialised variable warning in lock.c
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+  CC [M]  fs/dlm/lock.o
+fs/dlm/lock.c: In function ‘find_rsb’:
+fs/dlm/lock.c:438: warning: ‘r’ may be used uninitialized in this function
+
+Since r is used on the error path to set r_ret, set it to NULL.
+
+Signed-off-by: Steven Whitehouse <swhiteho@redhat.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Coly Li <coly.li@suse.de>
+---
+ fs/dlm/lock.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index 205ec95..eb507c4 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -435,7 +435,7 @@ static int search_rsb(struct dlm_ls *ls, char *name, int len, int b,
+ static int find_rsb(struct dlm_ls *ls, char *name, int namelen,
+ 		    unsigned int flags, struct dlm_rsb **r_ret)
+ {
+-	struct dlm_rsb *r, *tmp;
++	struct dlm_rsb *r = NULL, *tmp;
+ 	uint32_t hash, bucket;
+ 	int error = -EINVAL;
+ 
+-- 
+1.6.0.2
+

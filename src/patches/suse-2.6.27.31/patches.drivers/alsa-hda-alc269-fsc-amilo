@@ -1,0 +1,102 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: hda - Add ALC269 fujitsu model
+Patch-mainline: 
+References: bnc#440626
+
+Added a dedicated quirk model for FSC Amilo with ALC269.
+The patch is almost same as in sound git tree, but it has a fix
+for capture mixer setup (missing patch-series in SUSE kernel tree).
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+
+---
+ Documentation/sound/alsa/ALSA-Configuration.txt |    2 +
+ sound/pci/hda/patch_realtek.c                   |   29 +++++++++++++++++++++++-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
+
+--- a/Documentation/sound/alsa/ALSA-Configuration.txt
++++ b/Documentation/sound/alsa/ALSA-Configuration.txt
+@@ -857,6 +857,8 @@ Prior to version 0.9.0rc4 options had a
+ 	  quanta	Quanta FL1
+ 	  eeepc-p703	ASUS Eeepc P703 P900A
+ 	  eeepc-p901	ASUS Eeepc P901 S101
++	  fujitsu	FSC Amilo
++	  auto		auto-config reading BIOS (default)
+ 
+ 	ALC662/663
+ 	  3stack-dig	3-stack (2-channel) with SPDIF
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -130,6 +130,7 @@ enum {
+ 	ALC269_QUANTA_FL1,
+ 	ALC269_ASUS_EEEPC_P703,
+ 	ALC269_ASUS_EEEPC_P901,
++	ALC269_FUJITSU,
+ 	ALC269_AUTO,
+ 	ALC269_MODEL_LAST /* last tag */
+ };
+@@ -1621,6 +1622,7 @@ static const char *alc_slave_vols[] = {
+ 	"Speaker Playback Volume",
+ 	"Mono Playback Volume",
+ 	"Line-Out Playback Volume",
++	"PCM Playback Volume",
+ 	NULL,
+ };
+ 
+@@ -11937,6 +11939,15 @@ static struct snd_kcontrol_new alc269_ca
+ static struct snd_kcontrol_new alc269_epc_capture_mixer[] = {
+ 	HDA_CODEC_VOLUME("Capture Volume", 0x08, 0x0, HDA_INPUT),
+ 	HDA_CODEC_MUTE("Capture Switch", 0x08, 0x0, HDA_INPUT),
++	HDA_CODEC_VOLUME("Mic Boost", 0x18, 0, HDA_INPUT),
++	{ } /* end */
++};
++
++/* FSC amilo */
++static struct snd_kcontrol_new alc269_fujitsu_mixer[] = {
++	HDA_CODEC_MUTE("Speaker Playback Switch", 0x14, 0x0, HDA_OUTPUT),
++	HDA_CODEC_MUTE("Headphone Playback Switch", 0x15, 0x0, HDA_OUTPUT),
++	HDA_BIND_VOL("PCM Playback Volume", &alc269_epc_bind_vol),
+ 	{ } /* end */
+ };
+ 
+@@ -12359,7 +12370,8 @@ static const char *alc269_models[ALC269_
+ 	[ALC269_BASIC]			= "basic",
+ 	[ALC269_QUANTA_FL1]		= "quanta",
+ 	[ALC269_ASUS_EEEPC_P703]	= "eeepc-p703",
+-	[ALC269_ASUS_EEEPC_P901]	= "eeepc-p901"
++	[ALC269_ASUS_EEEPC_P901]	= "eeepc-p901",
++	[ALC269_FUJITSU]		= "fujitsu"
+ };
+ 
+ static struct snd_pci_quirk alc269_cfg_tbl[] = {
+@@ -12370,6 +12382,7 @@ static struct snd_pci_quirk alc269_cfg_t
+ 		      ALC269_ASUS_EEEPC_P901),
+ 	SND_PCI_QUIRK(0x1043, 0x834a, "ASUS Eeepc S101",
+ 		      ALC269_ASUS_EEEPC_P901),
++	SND_PCI_QUIRK(0x1734, 0x115d, "FSC Amilo", ALC269_FUJITSU),
+ 	{}
+ };
+ 
+@@ -12414,6 +12427,20 @@ static struct alc_config_preset alc269_p
+ 		.init_verbs = { alc269_init_verbs,
+ 				alc269_eeepc_dmic_init_verbs },
+ 		.num_dacs = ARRAY_SIZE(alc269_dac_nids),
++		.dac_nids = alc269_dac_nids,
++		.hp_nid = 0x03,
++		.num_channel_mode = ARRAY_SIZE(alc269_modes),
++		.channel_mode = alc269_modes,
++		.input_mux = &alc269_eeepc_dmic_capture_source,
++		.unsol_event = alc269_eeepc_dmic_unsol_event,
++		.init_hook = alc269_eeepc_dmic_inithook,
++	},
++	[ALC269_FUJITSU] = {
++		.mixers = { alc269_fujitsu_mixer, alc269_beep_mixer,
++			    alc269_epc_capture_mixer },
++		.init_verbs = { alc269_init_verbs,
++				alc269_eeepc_dmic_init_verbs },
++		.num_dacs = ARRAY_SIZE(alc269_dac_nids),
+ 		.dac_nids = alc269_dac_nids,
+ 		.hp_nid = 0x03,
+ 		.num_channel_mode = ARRAY_SIZE(alc269_modes),

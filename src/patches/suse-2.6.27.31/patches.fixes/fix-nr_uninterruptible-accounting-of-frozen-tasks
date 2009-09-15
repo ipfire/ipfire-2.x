@@ -1,0 +1,73 @@
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Rafael Wysocki <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, Nathan Lynch <ntl@pobox.com>, Nigel Cunningham <nigel@tuxonice.net>, <stable@kernel.org>, containers@lists.linux-foundation.org, linux-pm@lists.linux-foundation.org, Matt Helsley <matthltc@us.ibm.com>
+Subject: [patch 2/2] sched: fix nr_uninterruptible accounting of frozen tasks really
+References: bnc#529660
+
+commit e3c8ca8336 (sched: do not count frozen tasks toward load) broke
+the nr_uninterruptible accounting on freeze/thaw. On freeze the task
+is excluded from accounting with a check for (task->flags &
+PF_FROZEN), but that flag is cleared before the task is thawed. So
+while we prevent that the freezing task with state
+TASK_UNINTERRUPTIBLE is accounted to nr_uninterruptible we decrement
+nr_uninterruptible on thaw.
+
+Use a separate flag which is handled by the freezing task itself. Set
+it before calling the scheduler with TASK_UNINTERRUPTIBLE state and
+clear it after we return from frozen state.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Nathan Lynch <ntl@pobox.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Nigel Cunningham <nigel@tuxonice.net>
+Cc: <stable@kernel.org>
+Cc: containers@lists.linux-foundation.org
+Cc: linux-pm@lists.linux-foundation.org
+Cc: Matt Helsley <matthltc@us.ibm.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+ include/linux/sched.h |    3 ++-
+ kernel/freezer.c      |    7 +++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -203,7 +203,7 @@ extern unsigned long long time_sync_thre
+ 			((task->state & (__TASK_STOPPED | __TASK_TRACED)) != 0)
+ #define task_contributes_to_load(task)	\
+ 				((task->state & TASK_UNINTERRUPTIBLE) != 0 && \
+-				 (task->flags & PF_FROZEN) == 0)
++				 (task->flags & PF_FREEZING) == 0)
+ 
+ #define __set_task_state(tsk, state_value)		\
+ 	do { (tsk)->state = (state_value); } while (0)
+@@ -1507,6 +1507,7 @@ extern cputime_t task_gtime(struct task_
+ #define PF_MEMALLOC	0x00000800	/* Allocating memory */
+ #define PF_FLUSHER	0x00001000	/* responsible for disk writeback */
+ #define PF_USED_MATH	0x00002000	/* if unset the fpu must be initialized before use */
++#define PF_FREEZING	0x00004000	/* freeze in progress. do not account to load */
+ #define PF_NOFREEZE	0x00008000	/* this thread should not be frozen */
+ #define PF_FROZEN	0x00010000	/* frozen for system suspend */
+ #define PF_FSTRANS	0x00020000	/* inside a filesystem transaction */
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -44,12 +44,19 @@ void refrigerator(void)
+ 	recalc_sigpending(); /* We sent fake signal, clean it up */
+ 	spin_unlock_irq(&current->sighand->siglock);
+ 
++	/* prevent accounting of that task to load */
++	current->flags |= PF_FREEZING;
++
+ 	for (;;) {
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+ 		if (!frozen(current))
+ 			break;
+ 		schedule();
+ 	}
++
++	/* Remove the accounting blocker */
++	current->flags &= ~PF_FREEZING;
++
+ 	pr_debug("%s left refrigerator\n", current->comm);
+ 	__set_current_state(save);
+ }

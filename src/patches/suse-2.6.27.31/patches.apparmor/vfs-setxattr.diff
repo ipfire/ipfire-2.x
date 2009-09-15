@@ -1,0 +1,165 @@
+From: Tony Jones <tonyj@suse.de>
+Subject: Add a struct vfsmount parameter to vfs_setxattr()
+
+The vfsmount will be passed down to the LSM hook so that LSMs can compute
+pathnames.
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ fs/nfsd/vfs.c         |   16 +++++++++++-----
+ fs/xattr.c            |   16 ++++++++--------
+ include/linux/xattr.h |    3 ++-
+ 3 files changed, 21 insertions(+), 14 deletions(-)
+
+Index: linux-2.6.27/fs/nfsd/vfs.c
+===================================================================
+--- linux-2.6.27.orig/fs/nfsd/vfs.c
++++ linux-2.6.27/fs/nfsd/vfs.c
+@@ -438,7 +438,8 @@ static ssize_t nfsd_getxattr(struct dent
+ 
+ #if defined(CONFIG_NFSD_V4)
+ static int
+-set_nfsv4_acl_one(struct dentry *dentry, struct posix_acl *pacl, char *key)
++set_nfsv4_acl_one(struct dentry *dentry, struct vfsmount *mnt,
++		  struct posix_acl *pacl, char *key)
+ {
+ 	int len;
+ 	size_t buflen;
+@@ -457,7 +458,7 @@ set_nfsv4_acl_one(struct dentry *dentry,
+ 		goto out;
+ 	}
+ 
+-	error = vfs_setxattr(dentry, key, buf, len, 0);
++	error = vfs_setxattr(dentry, mnt, key, buf, len, 0);
+ out:
+ 	kfree(buf);
+ 	return error;
+@@ -470,6 +471,7 @@ nfsd4_set_nfs4_acl(struct svc_rqst *rqst
+ 	__be32 error;
+ 	int host_error;
+ 	struct dentry *dentry;
++	struct vfsmount *mnt;
+ 	struct inode *inode;
+ 	struct posix_acl *pacl = NULL, *dpacl = NULL;
+ 	unsigned int flags = 0;
+@@ -480,6 +482,7 @@ nfsd4_set_nfs4_acl(struct svc_rqst *rqst
+ 		return error;
+ 
+ 	dentry = fhp->fh_dentry;
++	mnt = fhp->fh_export->ex_path.mnt;
+ 	inode = dentry->d_inode;
+ 	if (S_ISDIR(inode->i_mode))
+ 		flags = NFS4_ACL_DIR;
+@@ -490,12 +493,14 @@ nfsd4_set_nfs4_acl(struct svc_rqst *rqst
+ 	} else if (host_error < 0)
+ 		goto out_nfserr;
+ 
+-	host_error = set_nfsv4_acl_one(dentry, pacl, POSIX_ACL_XATTR_ACCESS);
++	host_error = set_nfsv4_acl_one(dentry, mnt, pacl,
++				       POSIX_ACL_XATTR_ACCESS);
+ 	if (host_error < 0)
+ 		goto out_release;
+ 
+ 	if (S_ISDIR(inode->i_mode))
+-		host_error = set_nfsv4_acl_one(dentry, dpacl, POSIX_ACL_XATTR_DEFAULT);
++		host_error = set_nfsv4_acl_one(dentry, mnt, dpacl,
++					       POSIX_ACL_XATTR_DEFAULT);
+ 
+ out_release:
+ 	posix_acl_release(pacl);
+@@ -2123,7 +2128,8 @@ nfsd_set_posix_acl(struct svc_fh *fhp, i
+ 	if (error)
+ 		goto getout;
+ 	if (size)
+-		error = vfs_setxattr(fhp->fh_dentry, name, value, size, 0);
++		error = vfs_setxattr(fhp->fh_dentry, fhp->fh_export->ex_path.mnt,
++				     name, value, size,0);
+ 	else {
+ 		if (!S_ISDIR(inode->i_mode) && type == ACL_TYPE_DEFAULT)
+ 			error = 0;
+Index: linux-2.6.27/fs/xattr.c
+===================================================================
+--- linux-2.6.27.orig/fs/xattr.c
++++ linux-2.6.27/fs/xattr.c
+@@ -67,8 +67,8 @@ xattr_permission(struct inode *inode, co
+ }
+ 
+ int
+-vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+-		size_t size, int flags)
++vfs_setxattr(struct dentry *dentry, struct vfsmount *mnt, const char *name,
++	     const void *value, size_t size, int flags)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	int error;
+@@ -218,8 +218,8 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
+  * Extended attribute SET operations
+  */
+ static long
+-setxattr(struct dentry *d, const char __user *name, const void __user *value,
+-	 size_t size, int flags)
++setxattr(struct dentry *dentry, struct vfsmount *mnt, const char __user *name,
++	 const void __user *value, size_t size, int flags)
+ {
+ 	int error;
+ 	void *kvalue = NULL;
+@@ -246,7 +246,7 @@ setxattr(struct dentry *d, const char __
+ 		}
+ 	}
+ 
+-	error = vfs_setxattr(d, kname, kvalue, size, flags);
++	error = vfs_setxattr(dentry, mnt, kname, kvalue, size, flags);
+ 	kfree(kvalue);
+ 	return error;
+ }
+@@ -263,7 +263,7 @@ SYSCALL_DEFINE5(setxattr, const char __u
+ 		return error;
+ 	error = mnt_want_write(path.mnt);
+ 	if (!error) {
+-		error = setxattr(path.dentry, name, value, size, flags);
++		error = setxattr(path.dentry, path.mnt, name, value, size, flags);
+ 		mnt_drop_write(path.mnt);
+ 	}
+ 	path_put(&path);
+@@ -282,7 +282,7 @@ SYSCALL_DEFINE5(lsetxattr, const char __
+ 		return error;
+ 	error = mnt_want_write(path.mnt);
+ 	if (!error) {
+-		error = setxattr(path.dentry, name, value, size, flags);
++		error = setxattr(path.dentry, path.mnt, name, value, size, flags);
+ 		mnt_drop_write(path.mnt);
+ 	}
+ 	path_put(&path);
+@@ -303,7 +303,7 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, cons
+ 	audit_inode(NULL, dentry);
+ 	error = mnt_want_write_file(f->f_path.mnt, f);
+ 	if (!error) {
+-		error = setxattr(dentry, name, value, size, flags);
++		error = setxattr(dentry, f->f_vfsmnt, name, value, size, flags);
+ 		mnt_drop_write(f->f_path.mnt);
+ 	}
+ 	fput(f);
+Index: linux-2.6.27/include/linux/xattr.h
+===================================================================
+--- linux-2.6.27.orig/include/linux/xattr.h
++++ linux-2.6.27/include/linux/xattr.h
+@@ -16,6 +16,7 @@
+ #ifdef  __KERNEL__
+ 
+ #include <linux/types.h>
++#include <linux/mount.h>
+ 
+ /* Namespaces */
+ #define XATTR_OS2_PREFIX "os2."
+@@ -49,7 +50,7 @@ struct xattr_handler {
+ ssize_t xattr_getsecurity(struct inode *, const char *, void *, size_t);
+ ssize_t vfs_getxattr(struct dentry *, const char *, void *, size_t);
+ ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
+-int vfs_setxattr(struct dentry *, const char *, const void *, size_t, int);
++int vfs_setxattr(struct dentry *, struct vfsmount *, const char *, const void *, size_t, int);
+ int vfs_removexattr(struct dentry *, const char *);
+ 
+ ssize_t generic_getxattr(struct dentry *dentry, const char *name, void *buffer, size_t size);

@@ -1,0 +1,42 @@
+From foo@baz Tue Jul 14 10:25:53 PDT 2009
+Date: Tue, 14 Jul 2009 10:25:53 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: hv: add the Hyper-V virtual block driver to the build
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+Add the Hyper-V virtual block driver to the kernel build system.
+
+Cc: Hank Janssen <hjanssen@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+
+---
+ drivers/staging/hv/Kconfig  |    7 +++++++
+ drivers/staging/hv/Makefile |    2 ++
+ 2 files changed, 9 insertions(+)
+
+--- a/drivers/staging/hv/Kconfig
++++ b/drivers/staging/hv/Kconfig
+@@ -12,3 +12,10 @@ config HYPERV_STORAGE
+ 	default n
+ 	help
+ 	 Select this option to enable the Hyper-V virtual storage driver.
++
++config HYPERV_BLOCK
++	tristate "Microsoft Hyper-V virtual block driver"
++	depends on HYPERV && BLOCK
++	default n
++	help
++	  Select this option to enable the Hyper-V virtual block driver.
+--- a/drivers/staging/hv/Makefile
++++ b/drivers/staging/hv/Makefile
+@@ -1,5 +1,7 @@
+ obj-$(CONFIG_HYPERV)		+= hv_vmbus.o
+ obj-$(CONFIG_HYPERV_STORAGE)	+= hv_storvsc.o
++obj-$(CONFIG_HYPERV_BLOCK)	+= hv_blkvsc.o
+ 
+ hv_vmbus-objs := vmbus_drv.o osd.o Sources.o
+ hv_storvsc-objs := storvsc_drv.o osd.o StorVsc.o
++hv_blkvsc-objs := blkvsc_drv.o osd.o BlkVsc.o

@@ -1,0 +1,29 @@
+From foo@baz Thu Jul 16 22:31:14 PDT 2009
+Date: Thu, 16 Jul 2009 22:31:15 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: hv: use the correct #ifdef for x86-64
+
+From: Greg Kroah-Hartman <gregkh@suse.de>
+
+x86-64 needs a different config check.  Thanks to Hank for the debugging
+to determine the fix for this.
+
+Cc: Hank Janssen <hjanssen@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/hv/Hv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/staging/hv/Hv.c
++++ b/drivers/staging/hv/Hv.c
+@@ -165,7 +165,7 @@ HvDoHypercall (
+     void*   Output
+     )
+ {
+-#ifdef x86_64
++#ifdef CONFIG_X86_64
+     UINT64 hvStatus=0;
+     UINT64 inputAddress = (Input)? GetPhysicalAddress(Input) : 0;
+ 	UINT64 outputAddress = (Output)? GetPhysicalAddress(Output) : 0;

@@ -1,0 +1,69 @@
+From: Brandon Philips <bphilips@suse.de>
+Subject: [PATCH] quickcam_messenger.c: add support for all quickcam
+	Messengers of the same family
+References: bnc#441650
+Patch-Mainline: never, gspca_stv06xx.ko should be used for 2.6.30+
+
+Add three devices that are supported by out of tree drivers to the
+quickcam_messenger driver. Also, remove the sensor_id check since it seems to
+just check the PID.
+
+The quickcam messenger plus (0x08F6) is supported by Christian's out of tree
+driver[1] but two users have confirmed that the in tree quickcam_messenger
+driver works for their devices if the IDs are added:
+
+ https://bugzilla.novell.com/show_bug.cgi?id=441650#c3
+ https://bugs.launchpad.net/ubuntu/+source/linux-source-2.6.15/+bug/22070/comments/33
+ https://bugs.launchpad.net/ubuntu/+source/linux-source-2.6.15/+bug/22070/comments/34
+
+[1] http://home.mag.cx/messenger/source/
+
+Information on removal of the driver:
+ http://article.gmane.org/gmane.linux.drivers.video-input-infrastructure/8982/
+
+Signed-off-by: Brandon Philips <bphilips@suse.de>
+Acked-by: Jaya Kumar <jayakumar.lkml@gmail.com>
+
+---
+ drivers/media/video/usbvideo/quickcam_messenger.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+Index: linux-2.6/drivers/media/video/usbvideo/quickcam_messenger.c
+===================================================================
+--- linux-2.6.orig/drivers/media/video/usbvideo/quickcam_messenger.c
++++ linux-2.6/drivers/media/video/usbvideo/quickcam_messenger.c
+@@ -56,9 +56,6 @@ static const int debug;
+ #define DRIVER_VERSION "v0.01"
+ #define DRIVER_DESC "Logitech Quickcam Messenger USB"
+ 
+-#define USB_LOGITECH_VENDOR_ID	0x046D
+-#define USB_QCM_PRODUCT_ID	0x08F0
+-
+ #define MAX_CAMERAS	1
+ 
+ #define MAX_COLOUR	32768
+@@ -77,7 +74,10 @@ static int whiteness =	MAX_WHITENESS;
+ static struct usbvideo *cams;
+ 
+ static struct usb_device_id qcm_table [] = {
+-	{ USB_DEVICE(USB_LOGITECH_VENDOR_ID, USB_QCM_PRODUCT_ID) },
++	{ USB_DEVICE(0x046D, 0x08F0) },         /* QuickCam Messenger */
++	{ USB_DEVICE(0x046D, 0x08F5) },         /* QuickCam Communicate */
++	{ USB_DEVICE(0x046D, 0x08F6) },         /* QuickCam Messenger (new) */
++	{ USB_DEVICE(0x046D, 0x08DA) },         /* QuickCam Messenger (new) */
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(usb, qcm_table);
+@@ -998,11 +998,6 @@ good_videoep:
+ 		err("Couldn't read sensor values. Err %d\n",err);
+ 		return err;
+ 	}
+-	if (sensor_id != cpu_to_le16(0x08F0)) {
+-		err("Sensor ID %x != %x. Unsupported. Sorry\n",
+-			le16_to_cpu(sensor_id), (0x08F0));
+-		return -ENODEV;
+-	}
+ 
+ 	uvd = usbvideo_AllocateDevice(cams);
+ 	if (!uvd)
+

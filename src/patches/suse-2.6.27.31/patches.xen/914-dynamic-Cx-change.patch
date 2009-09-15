@@ -1,0 +1,24 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/c27fe3158f21
+# HG changeset patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1246890052 -3600
+# Node ID c27fe3158f211e6b331827084916fe6d464910a2
+# Parent  b086278a440602f2509380d0f718343e910483eb
+Subject: x86: Handle dynamic Cx state changes correctly.
+Patch-mainline: obsolete
+
+Signed-off-by: Keir Fraser <keir.fraser@citrix.com>
+Acked-by: jbeulich@novell.com
+
+--- sle11-2009-07-31.orig/arch/x86/kernel/acpi/processor_extcntl_xen.c	2009-07-31 14:49:20.000000000 +0200
++++ sle11-2009-07-31/arch/x86/kernel/acpi/processor_extcntl_xen.c	2009-07-31 14:52:14.000000000 +0200
+@@ -44,9 +44,6 @@ static int xen_cx_notifier(struct acpi_p
+ 	struct xen_processor_cx *data, *buf;
+ 	struct acpi_processor_cx *cx;
+ 
+-	if (action == PROCESSOR_PM_CHANGE)
+-		return -EINVAL;
+-
+ 	/* Convert to Xen defined structure and hypercall */
+ 	buf = kzalloc(pr->power.count * sizeof(struct xen_processor_cx),
+ 			GFP_KERNEL);

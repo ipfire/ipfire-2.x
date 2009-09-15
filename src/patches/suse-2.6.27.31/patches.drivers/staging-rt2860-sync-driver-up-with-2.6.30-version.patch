@@ -1,0 +1,5283 @@
+From foo@baz Mon Jul 27 15:37:03 PDT 2009
+Date: Mon, 27 Jul 2009 15:37:03 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Staging: rt2860: sync driver up with 2.6.30 version
+References: bnc#512070
+Patch-mainline: 2.6.30
+
+This is needed to get the driver to work properly with some hardware types.
+
+The 2.6.30 version was backported, minus the netdev_ops changes, which
+will not work in the 2.6.27 kernel version.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/staging/rt2860/2860_main_dev.c        |   64 +----
+ drivers/staging/rt2860/Makefile               |    1 
+ drivers/staging/rt2860/TODO                   |    4 
+ drivers/staging/rt2860/common/ba_action.c     |   18 -
+ drivers/staging/rt2860/common/cmm_data.c      |   32 --
+ drivers/staging/rt2860/common/cmm_data_2860.c |  150 +++++++++----
+ drivers/staging/rt2860/common/cmm_info.c      |    8 
+ drivers/staging/rt2860/common/cmm_sync.c      |    2 
+ drivers/staging/rt2860/common/cmm_wpa.c       |   40 +++
+ drivers/staging/rt2860/common/dfs.c           |    4 
+ drivers/staging/rt2860/common/mlme.c          |  289 ++++++++++++++++++++------
+ drivers/staging/rt2860/common/rtmp_init.c     |  196 ++++++++++++-----
+ drivers/staging/rt2860/common/spectrum.c      |   44 +--
+ drivers/staging/rt2860/config.mk              |    4 
+ drivers/staging/rt2860/oid.h                  |    2 
+ drivers/staging/rt2860/rt2860.h               |   26 --
+ drivers/staging/rt2860/rt28xx.h               |    4 
+ drivers/staging/rt2860/rt_ate.c               |   50 +---
+ drivers/staging/rt2860/rt_ate.h               |    6 
+ drivers/staging/rt2860/rt_config.h            |    2 
+ drivers/staging/rt2860/rt_linux.c             |   45 ----
+ drivers/staging/rt2860/rt_linux.h             |   51 +---
+ drivers/staging/rt2860/rt_main_dev.c          |  183 ++--------------
+ drivers/staging/rt2860/rt_profile.c           |   29 +-
+ drivers/staging/rt2860/rtmp.h                 |   61 ++---
+ drivers/staging/rt2860/rtmp_def.h             |   31 +-
+ drivers/staging/rt2860/sta/assoc.c            |   23 --
+ drivers/staging/rt2860/sta/connect.c          |   45 ++--
+ drivers/staging/rt2860/sta/dls.c              |    4 
+ drivers/staging/rt2860/sta/rtmp_data.c        |   29 +-
+ drivers/staging/rt2860/sta/sync.c             |   18 -
+ drivers/staging/rt2860/sta/wpa.c              |   10 
+ drivers/staging/rt2860/sta_ioctl.c            |  278 ++++++++++++++-----------
+ drivers/staging/rt2860/wpa.h                  |    1 
+ 34 files changed, 935 insertions(+), 819 deletions(-)
+
+--- a/drivers/staging/rt2860/2860_main_dev.c
++++ b/drivers/staging/rt2860/2860_main_dev.c
+@@ -90,12 +90,10 @@ void init_thread_task(PRTMP_ADAPTER pAd)
+ static void __exit rt2860_cleanup_module(void);
+ static int __init rt2860_init_module(void);
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ #ifdef CONFIG_PM
+ static int rt2860_suspend(struct pci_dev *pci_dev, pm_message_t state);
+ static int rt2860_resume(struct pci_dev *pci_dev);
+ #endif // CONFIG_PM //
+-#endif
+ 
+ 
+ //
+@@ -128,22 +126,15 @@ static struct pci_driver rt2860_driver =
+     name:       "rt2860",
+     id_table:   rt2860_pci_tbl,
+     probe:      rt2860_init_one,
+-#if LINUX_VERSION_CODE >= 0x20412
+     remove:     __devexit_p(rt2860_remove_one),
+-#else
+-    remove:     __devexit(rt2860_remove_one),
+-#endif
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ #ifdef CONFIG_PM
+ 	suspend:	rt2860_suspend,
+ 	resume:		rt2860_resume,
+ #endif
+-#endif
+ };
+ 
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ #ifdef CONFIG_PM
+ 
+ VOID RT2860RejectPendingPackets(
+@@ -170,7 +161,7 @@ static int rt2860_suspend(
+ 	}
+ 	else
+ 	{
+-		pAd = (PRTMP_ADAPTER)net_dev->priv;
++		pAd = net_dev->ml_priv;
+ 
+ 		/* we can not use IFF_UP because ra0 down but ra1 up */
+ 		/* and 1 suspend/resume function for 1 module, not for each interface */
+@@ -249,7 +240,7 @@ static int rt2860_resume(
+ 		DBGPRINT(RT_DEBUG_ERROR, ("net_dev == NULL!\n"));
+ 	}
+ 	else
+-		pAd = (PRTMP_ADAPTER)net_dev->priv;
++		pAd = net_dev->ml_priv;
+ 
+ 	if (pAd != NULL)
+ 	{
+@@ -284,16 +275,11 @@ static int rt2860_resume(
+ 	return 0;
+ }
+ #endif // CONFIG_PM //
+-#endif
+ 
+ 
+ static INT __init rt2860_init_module(VOID)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ 	return pci_register_driver(&rt2860_driver);
+-#else
+-    return pci_module_init(&rt2860_driver);
+-#endif
+ }
+ 
+ 
+@@ -336,7 +322,7 @@ static VOID __devexit rt2860_remove_one(
+     IN  struct pci_dev  *pci_dev)
+ {
+     struct net_device   *net_dev = pci_get_drvdata(pci_dev);
+-    RTMP_ADAPTER        *pAd = net_dev->priv;
++    RTMP_ADAPTER        *pAd = net_dev->ml_priv;
+ 
+     DBGPRINT(RT_DEBUG_TRACE, ("===> rt2860_remove_one\n"));
+ 
+@@ -374,11 +360,7 @@ static VOID __devexit rt2860_remove_one(
+ 	}
+ 
+ 	// Free pre-allocated net_device memory
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ 	free_netdev(net_dev);
+-#else
+-	kfree(net_dev);
+-#endif
+ }
+ 
+ //
+@@ -758,16 +740,13 @@ static void ac0_dma_done_tasklet(unsigne
+ int print_int_count;
+ 
+ IRQ_HANDLE_TYPE
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
+ rt2860_interrupt(int irq, void *dev_instance)
+-#else
+-rt2860_interrupt(int irq, void *dev_instance, struct pt_regs *regs)
+-#endif
+ {
+ 	struct net_device *net_dev = (struct net_device *) dev_instance;
+-	PRTMP_ADAPTER pAd = (PRTMP_ADAPTER) net_dev->priv;
++	PRTMP_ADAPTER pAd = net_dev->ml_priv;
+ 	INT_SOURCE_CSR_STRUC	IntSource;
+ 	POS_COOKIE pObj;
++	BOOLEAN	bOldValue;
+ 
+ 	pObj = (POS_COOKIE) pAd->OS_Cookie;
+ 
+@@ -800,20 +779,19 @@ rt2860_interrupt(int irq, void *dev_inst
+ 	// RT2661 => when ASIC is sleeping, MAC register cannot be read and written.
+ 	// RT2860 => when ASIC is sleeping, MAC register can be read and written.
+ 
++	bOldValue = pAd->bPCIclkOff;
++	pAd->bPCIclkOff = FALSE;
+ 	{
+ 		RTMP_IO_READ32(pAd, INT_SOURCE_CSR, &IntSource.word);
+ 		RTMP_IO_WRITE32(pAd, INT_SOURCE_CSR, IntSource.word); // write 1 to clear
+ 	}
++	pAd->bPCIclkOff = bOldValue;
+ 
+ 	// Do nothing if Reset in progress
+ 	if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RESET_IN_PROGRESS) ||
+ 		RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS))
+ 	{
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+-        return  IRQ_HANDLED;
+-#else
+-        return;
+-#endif
++		return IRQ_HANDLED;
+ 	}
+ 
+ 	//
+@@ -822,8 +800,6 @@ rt2860_interrupt(int irq, void *dev_inst
+ 	// The priority can be adjust by altering processing if statement
+ 	//
+ 
+-    pAd->bPCIclkOff = FALSE;
+-
+ 	// If required spinlock, each interrupt service routine has to acquire
+ 	// and release itself.
+ 	//
+@@ -832,11 +808,8 @@ rt2860_interrupt(int irq, void *dev_inst
+ 	if (IntSource.word == 0xffffffff)
+ 	{
+ 		RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST | fRTMP_ADAPTER_HALT_IN_PROGRESS);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+-        return  IRQ_HANDLED;
+-#else
+-        return;
+-#endif
++		printk("snowpin - IntSource.word == 0xffffffff\n");
++		return IRQ_HANDLED;
+ 	}
+ 
+ 	if (IntSource.word & TxCoherent)
+@@ -970,10 +943,7 @@ rt2860_interrupt(int irq, void *dev_inst
+ 	}
+ #endif // CONFIG_STA_SUPPORT //
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+     return  IRQ_HANDLED;
+-#endif
+-
+ }
+ 
+ /*
+@@ -1022,15 +992,11 @@ BOOLEAN RT28XXNetDevInit(
+ 	IN RTMP_ADAPTER 		*pAd)
+ {
+ 	struct pci_dev *pci_dev = (struct pci_dev *)_dev_p;
+-    CHAR	*print_name;
++    const CHAR	*print_name;
+     ULONG	csr_addr;
+ 
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+-    print_name = pci_dev ? pci_name(pci_dev) : "rt2860";
+-#else
+-    print_name = pci_dev ? pci_dev->slot_name : "rt2860";
+-#endif // LINUX_VERSION_CODE //
++	print_name = pci_dev ? pci_name(pci_dev) : "rt2860";
+ 
+ 	net_dev->base_addr = 0;
+ 	net_dev->irq = 0;
+@@ -1202,7 +1168,7 @@ VOID RT28xx_UpdateBeaconToAsic(
+ 	UCHAR			bcn_idx = 0;
+ 
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s() : No valid Interface be found.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s() : No valid Interface be found.\n", __func__));
+ 		return;
+ 	}
+ 
+@@ -1300,7 +1266,7 @@ VOID rt2860_stop(struct net_device *net_
+ 		DBGPRINT(RT_DEBUG_ERROR, ("net_dev == NULL!\n"));
+ 	}
+ 	else
+-		pAd = (PRTMP_ADAPTER)net_dev->priv;
++		pAd = net_dev->ml_priv;
+ 
+ 	if (pAd != NULL)
+ 	{
+--- a/drivers/staging/rt2860/Makefile
++++ b/drivers/staging/rt2860/Makefile
+@@ -2,7 +2,6 @@ obj-$(CONFIG_RT2860)	+= rt2860sta.o
+ 
+ # TODO: all of these should be removed
+ EXTRA_CFLAGS += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
+-EXTRA_CFLAGS += -DRT2860
+ EXTRA_CFLAGS += -DCONFIG_STA_SUPPORT
+ EXTRA_CFLAGS += -DDBG
+ EXTRA_CFLAGS += -DDOT11_N_SUPPORT
+--- a/drivers/staging/rt2860/TODO
++++ b/drivers/staging/rt2860/TODO
+@@ -1,6 +1,6 @@
+ I'm hesitant to add a TODO file here, as the wireless developers would
+ really have people help them out on the "clean" rt2860 driver that can
+-be found at the rt2860.sf.net site.
++be found at the http://rt2x00.serialmonkey.com/ site.
+ 
+ But, if you wish to clean up this driver instead, here's a short list of
+ things that need to be done to get it into a more mergable shape:
+@@ -8,7 +8,7 @@ things that need to be done to get it in
+ TODO:
+ 	- checkpatch.pl clean
+ 	- sparse clean
+-	- port to in-kernel 80211 stack
++	- port to in-kernel 80211 stack and common rt2x00 infrastructure
+ 	- remove reading from /etc/ config files
+ 	- review by the wireless developer community
+ 
+--- a/drivers/staging/rt2860/common/ba_action.c
++++ b/drivers/staging/rt2860/common/ba_action.c
+@@ -599,7 +599,7 @@ VOID BAOriSessionAdd(
+ 
+ 		pBAEntry->ORIBATimer.TimerValue = 0;	//pFrame->TimeOutValue;
+ 
+-		DBGPRINT(RT_DEBUG_TRACE,("%s : TXBAbitmap = %x, BAWinSize = %d, TimeOut = %ld\n", __FUNCTION__, pEntry->TXBAbitmap,
++		DBGPRINT(RT_DEBUG_TRACE,("%s : TXBAbitmap = %x, BAWinSize = %d, TimeOut = %ld\n", __func__, pEntry->TXBAbitmap,
+ 								 pBAEntry->BAWinSize, pBAEntry->ORIBATimer.TimerValue));
+ 
+ 		// SEND BAR ;
+@@ -673,7 +673,7 @@ BOOLEAN BARecSessionAdd(
+ 		ba_refresh_reordering_mpdus(pAd, pBAEntry);
+ 	}
+ 
+-	DBGPRINT(RT_DEBUG_TRACE,("%s(%ld): Idx = %d, BAWinSize(req %d) = %d\n", __FUNCTION__, pAd->BATable.numAsRecipient, Idx,
++	DBGPRINT(RT_DEBUG_TRACE,("%s(%ld): Idx = %d, BAWinSize(req %d) = %d\n", __func__, pAd->BATable.numAsRecipient, Idx,
+ 							 pFrame->BaParm.BufSize, BAWinSize));
+ 
+ 	// Start fill in parameters.
+@@ -915,7 +915,7 @@ VOID BAOriSessionTearDown(
+ 		return;
+ 	}
+ 
+-	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __FUNCTION__, Wcid, TID));
++	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __func__, Wcid, TID));
+ 
+ 	pBAEntry = &pAd->BATable.BAOriEntry[Idx];
+ 	DBGPRINT(RT_DEBUG_TRACE,("\t===>Idx = %ld, Wcid=%d.TID=%d, ORI_BA_Status = %d \n", Idx, Wcid, TID, pBAEntry->ORI_BA_Status));
+@@ -974,7 +974,7 @@ VOID BARecSessionTearDown(
+ 	if (Idx == 0)
+ 		return;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __FUNCTION__, Wcid, TID));
++	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __func__, Wcid, TID));
+ 
+ 
+ 	pBAEntry = &pAd->BATable.BARecEntry[Idx];
+@@ -1185,7 +1185,7 @@ VOID PeerAddBAReqAction(
+ 	PULONG      ptemp;
+ 	PMAC_TABLE_ENTRY	pMacEntry;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> (Wcid = %d)\n", __FUNCTION__, Elem->Wcid));
++	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> (Wcid = %d)\n", __func__, Elem->Wcid));
+ 
+ 	//hex_dump("AddBAReq", Elem->Msg, Elem->MsgLen);
+ 
+@@ -1269,7 +1269,7 @@ VOID PeerAddBAReqAction(
+ 	MiniportMMRequest(pAd, QID_AC_BE, pOutBuffer, FrameLen);
+ 	MlmeFreeMemory(pAd, pOutBuffer);
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s(%d): TID(%d), BufSize(%d) <== \n", __FUNCTION__, Elem->Wcid, ADDframe.BaParm.TID,
++	DBGPRINT(RT_DEBUG_TRACE, ("%s(%d): TID(%d), BufSize(%d) <== \n", __func__, Elem->Wcid, ADDframe.BaParm.TID,
+ 							  ADDframe.BaParm.BufSize));
+ }
+ 
+@@ -1288,7 +1288,7 @@ VOID PeerAddBARspAction(
+ 	if (Elem->Wcid >= MAX_LEN_OF_MAC_TABLE)
+ 		return;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> Wcid(%d)\n", __FUNCTION__, Elem->Wcid));
++	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> Wcid(%d)\n", __func__, Elem->Wcid));
+ 
+ 	//hex_dump("PeerAddBARspAction()", Elem->Msg, Elem->MsgLen);
+ 
+@@ -1329,7 +1329,7 @@ VOID PeerDelBAAction(
+ 	//PUCHAR				pOutBuffer = NULL;
+ 	PFRAME_DELBA_REQ    pDelFrame = NULL;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE,("%s ==>\n", __FUNCTION__));
++	DBGPRINT(RT_DEBUG_TRACE,("%s ==>\n", __func__));
+ 	//DELBA Request from unknown peer, ignore this.
+ 	if (PeerDelBAActionSanity(pAd, Elem->Wcid, Elem->Msg, Elem->MsgLen))
+ 	{
+@@ -1366,7 +1366,7 @@ BOOLEAN CntlEnqueueForRecv(
+ 
+ 	TID = (UCHAR)pFrame->BARControl.TID;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s(): BAR-Wcid(%ld), Tid (%d)\n", __FUNCTION__, Wcid, TID));
++	DBGPRINT(RT_DEBUG_TRACE, ("%s(): BAR-Wcid(%ld), Tid (%d)\n", __func__, Wcid, TID));
+ 	//hex_dump("BAR", (PCHAR) pFrame, MsgLen);
+ 	// Do nothing if the driver is starting halt state.
+ 	// This might happen when timer already been fired before cancel timer with mlmehalt
+--- a/drivers/staging/rt2860/common/cmm_data.c
++++ b/drivers/staging/rt2860/common/cmm_data.c
+@@ -105,9 +105,7 @@ NDIS_STATUS MiniportMMRequest(
+ 	PNDIS_PACKET	pPacket;
+ 	NDIS_STATUS  	Status = NDIS_STATUS_SUCCESS;
+ 	ULONG	 		FreeNum;
+-#ifdef RT2860
+ 	unsigned long	IrqFlags = 0;
+-#endif // RT2860 //
+ 	UCHAR			IrqState;
+ 	UCHAR			rtmpHwHdr[TXINFO_SIZE + TXWI_SIZE]; //RTMP_HW_HDR_LEN];
+ 
+@@ -118,10 +116,9 @@ NDIS_STATUS MiniportMMRequest(
+ 	// 2860C use Tx Ring
+ 
+ 	IrqState = pAd->irq_disabled;
+-#ifdef RT2860
++
+ 	if ((pAd->MACVersion == 0x28600100) && (!IrqState))
+ 		RTMP_IRQ_LOCK(&pAd->irq_lock, IrqFlags);
+-#endif // RT2860 //
+ 
+ 	do
+ 	{
+@@ -175,17 +172,14 @@ NDIS_STATUS MiniportMMRequest(
+ 
+ 	} while (FALSE);
+ 
+-#ifdef RT2860
+ 	// 2860C use Tx Ring
+ 	if ((pAd->MACVersion == 0x28600100) && (!IrqState))
+ 		RTMP_IRQ_UNLOCK(&pAd->irq_lock, IrqFlags);
+-#endif // RT2860 //
+ 
+ 	return Status;
+ }
+ 
+ 
+-#ifdef RT2860
+ NDIS_STATUS MiniportMMRequestUnlock(
+ 	IN	PRTMP_ADAPTER	pAd,
+ 	IN	UCHAR			QueIdx,
+@@ -253,7 +247,6 @@ NDIS_STATUS MiniportMMRequestUnlock(
+ 
+ 	return Status;
+ }
+-#endif // RT2860 //
+ 
+ 
+ /*
+@@ -290,17 +283,14 @@ NDIS_STATUS MlmeHardTransmit(
+ 		return NDIS_STATUS_FAILURE;
+ 	}
+ 
+-#ifdef RT2860
+ 	if ( pAd->MACVersion == 0x28600100 )
+ 		return MlmeHardTransmitTxRing(pAd,QueIdx,pPacket);
+ 	else
+-#endif // RT2860 //
+ 		return MlmeHardTransmitMgmtRing(pAd,QueIdx,pPacket);
+ 
+ }
+ 
+ 
+-#ifdef RT2860
+ NDIS_STATUS MlmeHardTransmitTxRing(
+ 	IN	PRTMP_ADAPTER	pAd,
+ 	IN	UCHAR	QueIdx,
+@@ -366,7 +356,7 @@ NDIS_STATUS MlmeHardTransmitTxRing(
+ 	{
+ 		// outgoing frame always wakeup PHY to prevent frame lost
+ 		if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
+-			AsicForceWakeup(pAd, TRUE);
++			AsicForceWakeup(pAd, FROM_TX);
+ 	}
+ #endif // CONFIG_STA_SUPPORT //
+ 	pFirstTxWI	=(PTXWI_STRUC)pSrcBufVA;
+@@ -509,7 +499,6 @@ NDIS_STATUS MlmeHardTransmitTxRing(
+ 
+ 	return NDIS_STATUS_SUCCESS;
+ }
+-#endif // RT2860 //
+ 
+ 
+ NDIS_STATUS MlmeHardTransmitMgmtRing(
+@@ -541,7 +530,7 @@ NDIS_STATUS MlmeHardTransmitMgmtRing(
+ 	{
+ 		// outgoing frame always wakeup PHY to prevent frame lost
+ 		if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
+-			AsicForceWakeup(pAd, TRUE);
++			AsicForceWakeup(pAd, FROM_TX);
+ 	}
+ #endif // CONFIG_STA_SUPPORT //
+ 
+@@ -943,9 +932,6 @@ BOOLEAN RTMP_FillTxBlkInfo(
+ 	}
+ 
+ 	return TRUE;
+-
+-FillTxBlkErr:
+-	return FALSE;
+ }
+ 
+ 
+@@ -1079,7 +1065,6 @@ VOID RTMPDeQueuePacket(
+ 				break;
+ 			}
+ 
+-#ifdef RT2860
+ 			FreeNumber[QueIdx] = GET_TXRING_FREENO(pAd, QueIdx);
+ 
+ #ifdef DBG_DIAGNOSE
+@@ -1104,7 +1089,6 @@ VOID RTMPDeQueuePacket(
+ 				RTMPFreeTXDUponTxDmaDone(pAd, QueIdx);
+ 				FreeNumber[QueIdx] = GET_TXRING_FREENO(pAd, QueIdx);
+ 			}
+-#endif // RT2860 //
+ 
+ 			// probe the Queue Head
+ 			pQueue = &pAd->TxSwQueue[QueIdx];
+@@ -1183,12 +1167,10 @@ VOID RTMPDeQueuePacket(
+ 				Status = STAHardTransmit(pAd, pTxBlk, QueIdx);
+ #endif // CONFIG_STA_SUPPORT //
+ 
+-#ifdef RT2860
+ 			DEQUEUE_UNLOCK(&pAd->irq_lock, bIntContext, IrqFlags);
+ 			// static rate also need NICUpdateFifoStaCounters() function.
+ 			//if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_TX_RATE_SWITCH_ENABLED))
+ 				NICUpdateFifoStaCounters(pAd);
+-#endif // RT2860 //
+ 		}
+ 
+ 		RT28XX_STOP_DEQUEUE(pAd, QueIdx, IrqFlags);
+@@ -1767,7 +1749,6 @@ PQUEUE_HEADER	RTMPCheckTxSwQueue(
+ }
+ 
+ 
+-#ifdef RT2860
+ BOOLEAN  RTMPFreeTXDUponTxDmaDone(
+ 	IN PRTMP_ADAPTER	pAd,
+ 	IN UCHAR			QueIdx)
+@@ -2312,7 +2293,6 @@ VOID DBGPRINT_RX_RING(
+ 	DBGPRINT_RAW(RT_DEBUG_TRACE,(" 	RxSwReadIdx [%d]=", AC0freeIdx));
+ 	DBGPRINT_RAW(RT_DEBUG_TRACE,("	pending-NDIS=%ld\n", pAd->RalinkCounters.PendingNdisPacketCount));
+ }
+-#endif // RT2860 //
+ 
+ /*
+ 	========================================================================
+@@ -2637,9 +2617,7 @@ MAC_TABLE_ENTRY *MacTableInsertEntry(
+ 					pEntry->AuthMode = pAd->StaCfg.AuthMode;
+ 					pEntry->WepStatus = pAd->StaCfg.WepStatus;
+ 					pEntry->PrivacyFilter = Ndis802_11PrivFilterAcceptAll;
+-#ifdef RT2860
+ 					AsicRemovePairwiseKeyEntry(pAd, pEntry->apidx, (UCHAR)i);
+-#endif // RT2860 //
+ 				}
+ #endif // CONFIG_STA_SUPPORT //
+ 			}
+@@ -2790,7 +2768,7 @@ BOOLEAN MacTableDeleteEntry(
+ 		}
+ 		else
+ 		{
+-			printk("\n%s: Impossible Wcid = %d !!!!!\n", __FUNCTION__, wcid);
++			printk("\n%s: Impossible Wcid = %d !!!!!\n", __func__, wcid);
+ 		}
+ 	}
+ 
+@@ -2826,9 +2804,7 @@ VOID MacTableReset(
+ 
+ 	for (i=1; i<MAX_LEN_OF_MAC_TABLE; i++)
+ 	{
+-#ifdef RT2860
+ 		RT28XX_STA_ENTRY_MAC_RESET(pAd, i);
+-#endif // RT2860 //
+ 		if (pAd->MacTab.Content[i].ValidAsCLI == TRUE)
+ 	   {
+ 
+--- a/drivers/staging/rt2860/common/cmm_data_2860.c
++++ b/drivers/staging/rt2860/common/cmm_data_2860.c
+@@ -634,7 +634,7 @@ VOID RT28xxPciAsicRadioOff(
+ 	}
+ 
+     // Once go into this function, disable tx because don't want too many packets in queue to prevent HW stops.
+-	pAd->bPCIclkOffDisableTx = TRUE;
++	RTMP_SET_PSFLAG(pAd, fRTMP_PS_DISABLE_TX);
+ 
+ 	if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+ 	{
+@@ -651,7 +651,7 @@ VOID RT28xxPciAsicRadioOff(
+ 			{
+ 				DBGPRINT(RT_DEBUG_TRACE, ("TbTTTime = 0x%x , give up this sleep. \n", TbTTTime));
+ 	            OPSTATUS_CLEAR_FLAG(pAd, fOP_STATUS_DOZE);
+-	            pAd->bPCIclkOffDisableTx = FALSE;
++				RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_DISABLE_TX);
+ 				return;
+ 			}
+ 			else
+@@ -688,18 +688,25 @@ VOID RT28xxPciAsicRadioOff(
+ 	if (i >= 50)
+ 	{
+ 		DBGPRINT(RT_DEBUG_TRACE, ("DMA keeps busy.  return on RT28xxPciAsicRadioOff ()\n"));
+-		pAd->bPCIclkOffDisableTx = FALSE;
+ 		RTMP_IO_READ32(pAd, WPDMA_GLO_CFG, &DmaCfg.word);
+ 		DmaCfg.field.EnableTxDMA = 1;
+ 		RTMP_IO_WRITE32(pAd, WPDMA_GLO_CFG, DmaCfg.word);
++		pAd->CheckDmaBusyCount++;
+ 		return;
+ 	}
++	else
++	{
++		pAd->CheckDmaBusyCount = 0;
++	}
+ 
+     RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_IDLE_RADIO_OFF);
+ 
+     // Set to 1R.
+-    tempBBP_R3 = (pAd->StaCfg.BBPR3 & 0xE7);
+-	RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, tempBBP_R3);
++	if (pAd->Antenna.field.RxPath > 1)
++	{
++		tempBBP_R3 = (pAd->StaCfg.BBPR3 & 0xE7);
++		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, tempBBP_R3);
++	}
+ 
+ 	// In Radio Off, we turn off RF clk, So now need to call ASICSwitchChannel again.
+ 	if (INFRA_ON(pAd) && (pAd->CommonCfg.CentralChannel != pAd->CommonCfg.Channel)
+@@ -714,8 +721,15 @@ VOID RT28xxPciAsicRadioOff(
+ 		AsicTurnOffRFClk(pAd, pAd->CommonCfg.Channel);
+ 	}
+ 
+-    // When PCI clock is off, don't want to service interrupt.
+-	RTMP_IO_WRITE32(pAd, INT_MASK_CSR, AutoWakeupInt);
++	if (Level != RTMP_HALT)
++	{
++		// Change Interrupt bitmask.
++		RTMP_IO_WRITE32(pAd, INT_MASK_CSR, AutoWakeupInt);
++	}
++	else
++	{
++		NICDisableInterrupt(pAd);
++	}
+ 
+     RTMP_IO_WRITE32(pAd, RX_CRX_IDX, pAd->RxRing.RxCpuIdx);
+ 	// Disable MAC Rx
+@@ -726,7 +740,8 @@ VOID RT28xxPciAsicRadioOff(
+ 	//  2. Send Sleep command
+ 	RTMP_IO_WRITE32(pAd, H2M_MAILBOX_STATUS, 0xffffffff);
+ 	RTMP_IO_WRITE32(pAd, H2M_MAILBOX_CID, 0xffffffff);
+-	AsicSendCommandToMcu(pAd, 0x30, PowerSafeCID, 0xff, 0x00);   // send POWER-SAVE command to MCU. Timeout unit:40us.
++	// send POWER-SAVE command to MCU. high-byte = 1 save power as much as possible. high byte = 0 save less power
++	AsicSendCommandToMcu(pAd, 0x30, PowerSafeCID, 0xff, 0x1);
+ 	//  2-1. Wait command success
+ 	// Status = 1 : success, Status = 2, already sleep, Status = 3, Maybe MAC is busy so can't finish this task.
+ 	brc = AsicCheckCommanOk(pAd, PowerSafeCID);
+@@ -734,7 +749,7 @@ VOID RT28xxPciAsicRadioOff(
+     if (brc == FALSE)
+     {
+         // try again
+-    	AsicSendCommandToMcu(pAd, 0x30, PowerSafeCID, 0xff, 0x00);   // send POWER-SAVE command to MCU. Timeout unit:40us.
++    	AsicSendCommandToMcu(pAd, 0x30, PowerSafeCID, 0xff, 0x01);   // send POWER-SAVE command to MCU. Timeout unit:40us.
+     	//RTMPusecDelay(200);
+     	brc = AsicCheckCommanOk(pAd, PowerSafeCID);
+     }
+@@ -759,7 +774,7 @@ VOID RT28xxPciAsicRadioOff(
+ 	do
+ 	{
+ 		RTMP_IO_READ32(pAd, WPDMA_GLO_CFG, &DmaCfg.word);
+-		if (DmaCfg.field.RxDMABusy == 0)
++		if ((DmaCfg.field.RxDMABusy == 0) && (DmaCfg.field.TxDMABusy == 0))
+ 			break;
+ 		RTMPusecDelay(20);
+ 		i++;
+@@ -767,13 +782,12 @@ VOID RT28xxPciAsicRadioOff(
+ 
+ 	if (i >= 50)
+ 	{
++		pAd->CheckDmaBusyCount++;
+ 		DBGPRINT(RT_DEBUG_TRACE, ("DMA Rx keeps busy.  on RT28xxPciAsicRadioOff ()\n"));
+ 	}
+-	// disable DMA Rx.
++	else
+ 	{
+-		RTMP_IO_READ32(pAd, WPDMA_GLO_CFG, &DmaCfg.word);
+-		DmaCfg.field.EnableRxDMA = 0;
+-		RTMP_IO_WRITE32(pAd, WPDMA_GLO_CFG, DmaCfg.word);
++		pAd->CheckDmaBusyCount = 0;
+ 	}
+ 
+ 	if (Level == DOT11POWERSAVE)
+@@ -799,7 +813,7 @@ VOID RT28xxPciAsicRadioOff(
+ 	if (Level == RTMP_HALT)
+ 	{
+ 		if ((brc == TRUE) && (i < 50))
+-			RTMPPCIeLinkCtrlSetting(pAd, 1);
++			RTMPPCIeLinkCtrlSetting(pAd, 0);
+ 	}
+ 	//  4. Set PCI configuration Space Link Comtrol fields.  Only Radio Off needs to call this function
+ 	else
+@@ -808,7 +822,7 @@ VOID RT28xxPciAsicRadioOff(
+ 			RTMPPCIeLinkCtrlSetting(pAd, 3);
+ 	}
+ 
+-    pAd->bPCIclkOffDisableTx = FALSE;
++	RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_DISABLE_TX);
+ }
+ 
+ 
+@@ -835,7 +849,8 @@ BOOLEAN RT28xxPciAsicRadioOn(
+ 	{
+ 	    pAd->Mlme.bPsPollTimerRunning = FALSE;
+ 		RTMPCancelTimer(&pAd->Mlme.PsPollTimer,	&Cancelled);
+-		if ((Level == GUIRADIO_OFF) || (Level == GUI_IDLE_POWER_SAVE))
++		if ((Level == GUIRADIO_OFF) || (Level == GUI_IDLE_POWER_SAVE)
++		|| (RTMP_TEST_PSFLAG(pAd, fRTMP_PS_SET_PCI_CLK_OFF_COMMAND)))
+ 		{
+ 			DBGPRINT(RT_DEBUG_TRACE, ("RT28xxPciAsicRadioOn ()\n"));
+ 			// 1. Set PCI Link Control in Configuration Space.
+@@ -845,15 +860,14 @@ BOOLEAN RT28xxPciAsicRadioOn(
+ 	}
+ 
+     pAd->bPCIclkOff = FALSE;
+-
++	RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, 0x3a80);
+ 	// 2. Send wake up command.
+-	AsicSendCommandToMcu(pAd, 0x31, PowerWakeCID, 0x00, 0x00);
++	AsicSendCommandToMcu(pAd, 0x31, PowerWakeCID, 0x00, 0x02);
+ 
+ 	// 2-1. wait command ok.
+ 	brv = AsicCheckCommanOk(pAd, PowerWakeCID);
+     if (brv)
+     {
+-    	//RTMP_IO_WRITE32(pAd, INT_MASK_CSR, (DELAYINTMASK|RxINT));
+     	NICEnableInterrupt(pAd);
+ 
+     	// 3. Enable Tx DMA.
+@@ -893,13 +907,10 @@ BOOLEAN RT28xxPciAsicRadioOn(
+ 
+ VOID RT28xxPciStaAsicForceWakeup(
+ 	IN PRTMP_ADAPTER pAd,
+-	IN BOOLEAN       bFromTx)
++	IN UCHAR    	 Level)
+ {
+     AUTO_WAKEUP_STRUC	AutoWakeupCfg;
+ 
+-    if (!OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
+-        return;
+-
+     if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_WAKEUP_NOW))
+     {
+         DBGPRINT(RT_DEBUG_TRACE, ("waking up now!\n"));
+@@ -907,38 +918,48 @@ VOID RT28xxPciStaAsicForceWakeup(
+     }
+ 
+     OPSTATUS_SET_FLAG(pAd, fOP_STATUS_WAKEUP_NOW);
++	RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_GO_TO_SLEEP_NOW);
+ 
+     if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+     {
+         // Support PCIe Advance Power Save
+-    	if (bFromTx == TRUE)
++    	if (((Level == FROM_TX) && (pAd->Mlme.bPsPollTimerRunning == TRUE)) ||
++			(Level == RTMP_HALT))
+     	{
+             pAd->Mlme.bPsPollTimerRunning = FALSE;
+     		RTMPPCIeLinkCtrlValueRestore(pAd, RESTORE_WAKEUP);
+-    		RTMPusecDelay(3000);
++    		RTMPusecDelay(5000);
+             DBGPRINT(RT_DEBUG_TRACE, ("=======AsicForceWakeup===bFromTx\n"));
+     	}
+ 
+ 		AutoWakeupCfg.word = 0;
+ 		RTMP_IO_WRITE32(pAd, AUTO_WAKEUP_CFG, AutoWakeupCfg.word);
+ 
+-        if (RT28xxPciAsicRadioOn(pAd, DOT11POWERSAVE))
+-        {
+-            // In Radio Off, we turn off RF clk, So now need to call ASICSwitchChannel again.
+-        	if (INFRA_ON(pAd) && (pAd->CommonCfg.CentralChannel != pAd->CommonCfg.Channel)
+-        		&& (pAd->MlmeAux.HtCapability.HtCapInfo.ChannelWidth == BW_40))
+-        	{
+-        		// Must using 40MHz.
+-        		AsicSwitchChannel(pAd, pAd->CommonCfg.CentralChannel, FALSE);
+-        		AsicLockChannel(pAd, pAd->CommonCfg.CentralChannel);
+-        	}
+-        	else
+-        	{
+-        		// Must using 20MHz.
+-        		AsicSwitchChannel(pAd, pAd->CommonCfg.Channel, FALSE);
+-        		AsicLockChannel(pAd, pAd->CommonCfg.Channel);
+-        	}
+-        }
++		// If this is called from Halt. ALWAYS force wakeup!!!
++		if (Level == RTMP_HALT)
++		{
++			RT28xxPciAsicRadioOn(pAd, RTMP_HALT);
++		}
++		else
++		{
++			if (RT28xxPciAsicRadioOn(pAd, DOT11POWERSAVE))
++			{
++				// In Radio Off, we turn off RF clk, So now need to call ASICSwitchChannel again.
++				if (INFRA_ON(pAd) && (pAd->CommonCfg.CentralChannel != pAd->CommonCfg.Channel)
++					&& (pAd->MlmeAux.HtCapability.HtCapInfo.ChannelWidth == BW_40))
++				{
++					// Must using 40MHz.
++					AsicSwitchChannel(pAd, pAd->CommonCfg.CentralChannel, FALSE);
++					AsicLockChannel(pAd, pAd->CommonCfg.CentralChannel);
++				}
++				else
++				{
++					// Must using 20MHz.
++					AsicSwitchChannel(pAd, pAd->CommonCfg.Channel, FALSE);
++					AsicLockChannel(pAd, pAd->CommonCfg.Channel);
++				}
++			}
++		}
+     }
+     else
+     {
+@@ -1002,7 +1023,7 @@ VOID RT28xxPciStaAsicSleepThenAutoWakeup
+         AutoWakeupCfg.field.AutoLeadTime = 5;
+         RTMP_IO_WRITE32(pAd, AUTO_WAKEUP_CFG, AutoWakeupCfg.word);
+         AsicSendCommandToMcu(pAd, 0x30, 0xff, 0xff, 0x00);   // send POWER-SAVE command to MCU. Timeout 40us.
+-        DBGPRINT(RT_DEBUG_TRACE, ("<-- %s, TbttNumToNextWakeUp=%d \n", __FUNCTION__, TbttNumToNextWakeUp));
++        DBGPRINT(RT_DEBUG_TRACE, ("<-- %s, TbttNumToNextWakeUp=%d \n", __func__, TbttNumToNextWakeUp));
+     }
+     OPSTATUS_SET_FLAG(pAd, fOP_STATUS_DOZE);
+ }
+@@ -1115,13 +1136,14 @@ VOID RT28xxPciMlmeRadioOn(
+     if (!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF))
+    		return;
+ 
+-    DBGPRINT(RT_DEBUG_TRACE,("%s===>\n", __FUNCTION__));
++    DBGPRINT(RT_DEBUG_TRACE,("%s===>\n", __func__));
+ 
+     if ((pAd->OpMode == OPMODE_AP) ||
+         ((pAd->OpMode == OPMODE_STA) && (!OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))))
+     {
+     	NICResetFromError(pAd);
+ 
++    	/*
+     	RTMPRingCleanUp(pAd, QID_AC_BK);
+     	RTMPRingCleanUp(pAd, QID_AC_BE);
+     	RTMPRingCleanUp(pAd, QID_AC_VI);
+@@ -1129,6 +1151,7 @@ VOID RT28xxPciMlmeRadioOn(
+     	RTMPRingCleanUp(pAd, QID_HCCA);
+     	RTMPRingCleanUp(pAd, QID_MGMT);
+     	RTMPRingCleanUp(pAd, QID_RX);
++		*/
+ 
+     	// Enable Tx/Rx
+     	RTMPEnableRxTx(pAd);
+@@ -1162,20 +1185,25 @@ VOID RT28xxPciMlmeRadioOFF(
+     WPDMA_GLO_CFG_STRUC	GloCfg;
+ 	UINT32	i;
+ 
++	if (pAd->StaCfg.bRadio == TRUE)
++	{
++		DBGPRINT(RT_DEBUG_TRACE,("-->MlmeRadioOff() return on bRadio == TRUE; \n"));
++		return;
++	}
++
+     if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF))
+     	return;
+ 
+-    DBGPRINT(RT_DEBUG_TRACE,("%s===>\n", __FUNCTION__));
++    DBGPRINT(RT_DEBUG_TRACE,("%s===>\n", __func__));
+ 
+ 	// Set LED
+ 	RTMPSetLED(pAd, LED_RADIO_OFF);
+-	// Set Radio off flag
+-	RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF);
+ 
+ #ifdef CONFIG_STA_SUPPORT
+ 	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+     {
+     	BOOLEAN		Cancelled;
++
+     	if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_BSS_SCAN_IN_PROGRESS))
+     	{
+ 			RTMPCancelTimer(&pAd->MlmeAux.ScanTimer, &Cancelled);
+@@ -1185,6 +1213,15 @@ VOID RT28xxPciMlmeRadioOFF(
+ 		if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+         {
+             BOOLEAN Cancelled;
++
++			// Always radio on since the NIC needs to set the MCU command (LED_RADIO_OFF).
++			if ((pAd->OpMode == OPMODE_STA) && 
++			     (IDLE_ON(pAd)) && 
++			     (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_IDLE_RADIO_OFF)))
++			{
++				RT28xxPciAsicRadioOn(pAd, GUI_IDLE_POWER_SAVE);
++			}
++
+             pAd->Mlme.bPsPollTimerRunning = FALSE;
+             RTMPCancelTimer(&pAd->Mlme.PsPollTimer,	&Cancelled);
+ 	        RTMPCancelTimer(&pAd->Mlme.RadioOnOffTimer,	&Cancelled);
+@@ -1197,9 +1234,26 @@ VOID RT28xxPciMlmeRadioOFF(
+         //==========================================
+         // Clean up old bss table
+         BssTableInit(&pAd->ScanTab);
++
++		RTMPRingCleanUp(pAd, QID_AC_BK);
++    	RTMPRingCleanUp(pAd, QID_AC_BE);
++    	RTMPRingCleanUp(pAd, QID_AC_VI);
++    	RTMPRingCleanUp(pAd, QID_AC_VO);
++    	RTMPRingCleanUp(pAd, QID_HCCA);
++    	RTMPRingCleanUp(pAd, QID_MGMT);
++    	RTMPRingCleanUp(pAd, QID_RX);
++
++		if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
++		{
++			RTMPSetTimer(&pAd->Mlme.RadioOnOffTimer, 500);
++			return;
++		}
+     }
+ #endif // CONFIG_STA_SUPPORT //
+ 
++	// Set Radio off flag
++	RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF);
++
+ 	// Disable Tx/Rx DMA
+ 	RTMP_IO_READ32(pAd, WPDMA_GLO_CFG, &GloCfg.word);	   // disable DMA
+ 	GloCfg.field.EnableTxDMA = 0;
+--- a/drivers/staging/rt2860/common/cmm_info.c
++++ b/drivers/staging/rt2860/common/cmm_info.c
+@@ -814,7 +814,6 @@ INT	Show_DescInfo_Proc(
+ 	IN	PRTMP_ADAPTER	pAd,
+ 	IN	PUCHAR			arg)
+ {
+-#ifdef RT2860
+ 	INT i, QueIdx=0;
+ 	PRT28XX_RXD_STRUC pRxD;
+     PTXD_STRUC pTxD;
+@@ -845,7 +844,6 @@ INT	Show_DescInfo_Proc(
+ 	    hex_dump("Rx Descriptor", (char *)pRxD, 16);
+ 		printk("pRxD->DDONE = %x\n", pRxD->DDONE);
+ 	}
+-#endif // RT2860 //
+ 
+ 	return TRUE;
+ }
+@@ -1803,9 +1801,7 @@ VOID	RTMPAddWcidAttributeEntry(
+ 	}
+ 
+ 	// For key index and ext IV bit, so only need to update the position(offset+3).
+-#ifdef RT2860
+ 	RTMP_IO_WRITE8(pAd, offset+3, IVEIV);
+-#endif // RT2860 //
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE,("RTMPAddWcidAttributeEntry: WCID #%d, KeyIndex #%d, Alg=%s\n",Wcid, KeyIdx, CipherName[CipherAlg]));
+ 	DBGPRINT(RT_DEBUG_TRACE,("	WCIDAttri = 0x%x \n",  WCIDAttri));
+@@ -2039,7 +2035,7 @@ VOID RTMPIoctlGetMacTable(
+ 	wrq->u.data.length = sizeof(RT_802_11_MAC_TABLE);
+ 	if (copy_to_user(wrq->u.data.pointer, &MacTab, wrq->u.data.length))
+ 	{
+-		DBGPRINT(RT_DEBUG_TRACE, ("%s: copy_to_user() fail\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_TRACE, ("%s: copy_to_user() fail\n", __func__));
+ 	}
+ 
+ 	msg = (CHAR *) kmalloc(sizeof(CHAR)*(MAX_LEN_OF_MAC_TABLE*MAC_LINE_LEN), MEM_ALLOC_FLAG);
+@@ -2827,9 +2823,7 @@ INT	Set_OpMode_Proc(
+ 
+ 	Value = simple_strtol(arg, 0, 10);
+ 
+-#ifdef RT2860
+ 	if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_IN_USE))
+-#endif // RT2860 //
+ 	{
+ 		DBGPRINT(RT_DEBUG_ERROR, ("Can not switch operate mode on interface up !! \n"));
+ 		return FALSE;
+--- a/drivers/staging/rt2860/common/cmm_sync.c
++++ b/drivers/staging/rt2860/common/cmm_sync.c
+@@ -470,7 +470,7 @@ VOID ScanNextChannel(
+ 		{
+ 		// BBP and RF are not accessible in PS mode, we has to wake them up first
+ 		if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
+-			AsicForceWakeup(pAd, TRUE);
++				AsicForceWakeup(pAd, FROM_TX);
+ 
+ 			// leave PSM during scanning. otherwise we may lost ProbeRsp & BEACON
+ 			if (pAd->StaCfg.Psm == PWR_SAVE)
+--- a/drivers/staging/rt2860/common/cmm_wpa.c
++++ b/drivers/staging/rt2860/common/cmm_wpa.c
+@@ -39,8 +39,10 @@
+ // WPA OUI
+ UCHAR		OUI_WPA_NONE_AKM[4]		= {0x00, 0x50, 0xF2, 0x00};
+ UCHAR       OUI_WPA_VERSION[4]      = {0x00, 0x50, 0xF2, 0x01};
++UCHAR       OUI_WPA_WEP40[4]      = {0x00, 0x50, 0xF2, 0x01};
+ UCHAR       OUI_WPA_TKIP[4]     = {0x00, 0x50, 0xF2, 0x02};
+ UCHAR       OUI_WPA_CCMP[4]     = {0x00, 0x50, 0xF2, 0x04};
++UCHAR       OUI_WPA_WEP104[4]      = {0x00, 0x50, 0xF2, 0x05};
+ UCHAR       OUI_WPA_8021X_AKM[4]	= {0x00, 0x50, 0xF2, 0x01};
+ UCHAR       OUI_WPA_PSK_AKM[4]      = {0x00, 0x50, 0xF2, 0x02};
+ // WPA2 OUI
+@@ -49,6 +51,7 @@ UCHAR       OUI_WPA2_TKIP[4]        = {0
+ UCHAR       OUI_WPA2_CCMP[4]        = {0x00, 0x0F, 0xAC, 0x04};
+ UCHAR       OUI_WPA2_8021X_AKM[4]   = {0x00, 0x0F, 0xAC, 0x01};
+ UCHAR       OUI_WPA2_PSK_AKM[4]   	= {0x00, 0x0F, 0xAC, 0x02};
++UCHAR       OUI_WPA2_WEP104[4]   = {0x00, 0x0F, 0xAC, 0x05};
+ // MSA OUI
+ UCHAR   	OUI_MSA_8021X_AKM[4]    = {0x00, 0x0F, 0xAC, 0x05};		// Not yet final - IEEE 802.11s-D1.06
+ UCHAR   	OUI_MSA_PSK_AKM[4]   	= {0x00, 0x0F, 0xAC, 0x06};		// Not yet final - IEEE 802.11s-D1.06
+@@ -367,6 +370,24 @@ static VOID RTMPInsertRsnIeCipher(
+                 break;
+         }
+ 
++#ifdef CONFIG_STA_SUPPORT
++		if ((pAd->OpMode == OPMODE_STA) &&
++			(pAd->StaCfg.GroupCipher != Ndis802_11Encryption2Enabled) &&
++			(pAd->StaCfg.GroupCipher != Ndis802_11Encryption3Enabled))
++		{
++			UINT GroupCipher = pAd->StaCfg.GroupCipher;
++			switch(GroupCipher)
++			{
++				case Ndis802_11GroupWEP40Enabled:
++					NdisMoveMemory(pRsnie_cipher->mcast, OUI_WPA2_WEP40, 4);
++					break;
++				case Ndis802_11GroupWEP104Enabled:
++					NdisMoveMemory(pRsnie_cipher->mcast, OUI_WPA2_WEP104, 4);
++					break;
++			}
++		}
++#endif // CONFIG_STA_SUPPORT //
++
+ 		// swap for big-endian platform
+ 		pRsnie_cipher->version = cpu2le16(pRsnie_cipher->version);
+ 	    pRsnie_cipher->ucount = cpu2le16(pRsnie_cipher->ucount);
+@@ -427,11 +448,28 @@ static VOID RTMPInsertRsnIeCipher(
+                 break;
+         }
+ 
++#ifdef CONFIG_STA_SUPPORT
++		if ((pAd->OpMode == OPMODE_STA) &&
++			(pAd->StaCfg.GroupCipher != Ndis802_11Encryption2Enabled) &&
++			(pAd->StaCfg.GroupCipher != Ndis802_11Encryption3Enabled))
++		{
++			UINT GroupCipher = pAd->StaCfg.GroupCipher;
++			switch(GroupCipher)
++			{
++				case Ndis802_11GroupWEP40Enabled:
++					NdisMoveMemory(pRsnie_cipher->mcast, OUI_WPA_WEP40, 4);
++					break;
++				case Ndis802_11GroupWEP104Enabled:
++					NdisMoveMemory(pRsnie_cipher->mcast, OUI_WPA_WEP104, 4);
++					break;
++			}
++		}
++#endif // CONFIG_STA_SUPPORT //
++
+ 		// swap for big-endian platform
+ 		pRsnie_cipher->version = cpu2le16(pRsnie_cipher->version);
+ 	    pRsnie_cipher->ucount = cpu2le16(pRsnie_cipher->ucount);
+ 	}
+-
+ }
+ 
+ /*
+--- a/drivers/staging/rt2860/common/dfs.c
++++ b/drivers/staging/rt2860/common/dfs.c
+@@ -428,7 +428,7 @@ INT Set_ChMovingTime_Proc(
+ 
+ 	pAd->CommonCfg.RadarDetect.ChMovingTime = Value;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __FUNCTION__,
++	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __func__,
+ 		pAd->CommonCfg.RadarDetect.ChMovingTime));
+ 
+ 	return TRUE;
+@@ -444,7 +444,7 @@ INT Set_LongPulseRadarTh_Proc(
+ 
+ 	pAd->CommonCfg.RadarDetect.LongPulseRadarTh = Value;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __FUNCTION__,
++	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __func__,
+ 		pAd->CommonCfg.RadarDetect.LongPulseRadarTh));
+ 
+ 	return TRUE;
+--- a/drivers/staging/rt2860/common/mlme.c
++++ b/drivers/staging/rt2860/common/mlme.c
+@@ -527,7 +527,6 @@ NDIS_STATUS MlmeInit(
+ 
+ 
+ #ifdef CONFIG_STA_SUPPORT
+-#ifdef RT2860
+ 		IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+ 		{
+ 	        if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+@@ -537,7 +536,6 @@ NDIS_STATUS MlmeInit(
+ 	    		RTMPInitTimer(pAd, &pAd->Mlme.RadioOnOffTimer, GET_TIMER_FUNCTION(RadioOnExec), pAd, FALSE);
+ 	        }
+ 		}
+-#endif // RT2860 //
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ 	} while (FALSE);
+@@ -711,13 +709,11 @@ VOID MlmeHalt(
+ 		RTMPCancelTimer(&pAd->MlmeAux.AuthTimer,		&Cancelled);
+ 		RTMPCancelTimer(&pAd->MlmeAux.BeaconTimer,		&Cancelled);
+ 		RTMPCancelTimer(&pAd->MlmeAux.ScanTimer,		&Cancelled);
+-#ifdef RT2860
+ 	    if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+ 	    {
+ 	   	    RTMPCancelTimer(&pAd->Mlme.PsPollTimer,		&Cancelled);
+ 		    RTMPCancelTimer(&pAd->Mlme.RadioOnOffTimer,		&Cancelled);
+ 		}
+-#endif // RT2860 //
+ 
+ #ifdef QOS_DLS_SUPPORT
+ 		for (i=0; i<MAX_NUM_OF_DLS_ENTRY; i++)
+@@ -808,21 +804,34 @@ VOID MlmePeriodicExec(
+ 	ULONG			TxTotalCnt;
+ 	PRTMP_ADAPTER	pAd = (RTMP_ADAPTER *)FunctionContext;
+ 
++	//Baron 2008/07/10
++	//printk("Baron_Test:\t%s", RTMPGetRalinkEncryModeStr(pAd->StaCfg.WepStatus));
++	//If the STA security setting is OPEN or WEP, pAd->StaCfg.WpaSupplicantUP = 0.
++	//If the STA security setting is WPAPSK or WPA2PSK, pAd->StaCfg.WpaSupplicantUP = 1.
++	if(pAd->StaCfg.WepStatus<2)
++	{
++		pAd->StaCfg.WpaSupplicantUP = 0;
++	}
++	else
++	{
++		pAd->StaCfg.WpaSupplicantUP = 1;
++	}
++
+ #ifdef CONFIG_STA_SUPPORT
+-#ifdef RT2860
+ 	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+ 	{
+ 	    // If Hardware controlled Radio enabled, we have to check GPIO pin2 every 2 second.
+ 		// Move code to here, because following code will return when radio is off
+-		if ((pAd->Mlme.PeriodicRound % (MLME_TASK_EXEC_MULTIPLE * 2) == 0) && (pAd->StaCfg.bHardwareRadio == TRUE) &&
++		if ((pAd->Mlme.PeriodicRound % (MLME_TASK_EXEC_MULTIPLE * 2) == 0) &&
++			(pAd->StaCfg.bHardwareRadio == TRUE) &&
++			(RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_START_UP)) &&
+ 			(!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST)) &&
+-			(!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS)) &&
+-			(pAd->bPCIclkOff == FALSE))
++			(!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS)))
+ 		{
+ 			UINT32				data = 0;
+ 
+ 			// Read GPIO pin2 as Hardware controlled radio state
+-			RTMP_IO_READ32(pAd, GPIO_CTRL_CFG, &data);
++			RTMP_IO_FORCE_READ32(pAd, GPIO_CTRL_CFG, &data);
+ 			if (data & 0x04)
+ 			{
+ 				pAd->StaCfg.bHwRadio = TRUE;
+@@ -849,7 +858,6 @@ VOID MlmePeriodicExec(
+ 			}
+ 		}
+ 	}
+-#endif // RT2860 //
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ 	// Do nothing if the driver is starting halt state.
+@@ -860,6 +868,45 @@ VOID MlmePeriodicExec(
+ 								fRTMP_ADAPTER_RESET_IN_PROGRESS))))
+ 		return;
+ 
++	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
++	{
++		if ((pAd->RalinkCounters.LastReceivedByteCount == pAd->RalinkCounters.ReceivedByteCount) && (pAd->StaCfg.bRadio == TRUE))
++		{
++			// If ReceiveByteCount doesn't change,  increase SameRxByteCount by 1.
++			pAd->SameRxByteCount++;
++		}
++		else
++			pAd->SameRxByteCount = 0;
++
++		// If after BBP, still not work...need to check to reset PBF&MAC.
++		if (pAd->SameRxByteCount == 702)
++		{
++			pAd->SameRxByteCount = 0;
++			AsicResetPBF(pAd);
++			AsicResetMAC(pAd);
++		}
++
++		// If SameRxByteCount keeps happens for 2 second in infra mode, or for 60 seconds in idle mode.
++		if (((INFRA_ON(pAd)) && (pAd->SameRxByteCount > 20)) || ((IDLE_ON(pAd)) && (pAd->SameRxByteCount > 600)))
++		{
++			if ((pAd->StaCfg.bRadio == TRUE) && (pAd->SameRxByteCount < 700))
++			{
++				DBGPRINT(RT_DEBUG_TRACE, ("--->  SameRxByteCount = %lu !!!!!!!!!!!!!!! \n", pAd->SameRxByteCount));
++				pAd->SameRxByteCount = 700;
++				AsicResetBBP(pAd);
++			}
++		}
++
++		// Update lastReceiveByteCount.
++		pAd->RalinkCounters.LastReceivedByteCount = pAd->RalinkCounters.ReceivedByteCount;
++
++		if ((pAd->CheckDmaBusyCount > 3) && (IDLE_ON(pAd)))
++		{
++			pAd->CheckDmaBusyCount = 0;
++			AsicResetFromDMABusy(pAd);
++		}
++	}
++
+ 	RT28XX_MLME_PRE_SANITY_CHECK(pAd);
+ 
+ #ifdef RALINK_ATE
+@@ -1022,9 +1069,7 @@ VOID MlmePeriodicExec(
+ #ifdef CONFIG_STA_SUPPORT
+ 		IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+ 		{
+-#ifdef RT2860
+ 			if (!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST) && (pAd->bPCIclkOff == FALSE))
+-#endif // RT2860 //
+ 			{
+ 				// When Adhoc beacon is enabled and RTS/CTS is enabled, there is a chance that hardware MAC FSM will run into a deadlock
+ 				// and sending CTS-to-self over and over.
+@@ -1081,6 +1126,19 @@ VOID STAMlmePeriodicExec(
+     		pAd->StaCfg.bBlockAssoc = FALSE;
+     }
+ 
++	//Baron 2008/07/10
++	//printk("Baron_Test:\t%s", RTMPGetRalinkEncryModeStr(pAd->StaCfg.WepStatus));
++	//If the STA security setting is OPEN or WEP, pAd->StaCfg.WpaSupplicantUP = 0.
++	//If the STA security setting is WPAPSK or WPA2PSK, pAd->StaCfg.WpaSupplicantUP = 1.
++	if(pAd->StaCfg.WepStatus<2)
++	{
++		pAd->StaCfg.WpaSupplicantUP = 0;
++	}
++	else
++	{
++		pAd->StaCfg.WpaSupplicantUP = 1;
++	}
++
+     if ((pAd->PreMediaState != pAd->IndicateMediaState) && (pAd->CommonCfg.bWirelessEvent))
+ 	{
+ 		if (pAd->IndicateMediaState == NdisMediaStateConnected)
+@@ -1090,6 +1148,15 @@ VOID STAMlmePeriodicExec(
+ 		pAd->PreMediaState = pAd->IndicateMediaState;
+ 	}
+ 
++	if ((pAd->OpMode == OPMODE_STA) && (IDLE_ON(pAd)) &&
++        (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE)) &&
++		(pAd->Mlme.SyncMachine.CurrState == SYNC_IDLE) &&
++		(pAd->Mlme.CntlMachine.CurrState == CNTL_IDLE) &&
++		(RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_START_UP)) &&
++		(!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_IDLE_RADIO_OFF)))
++	{
++		RT28xxPciAsicRadioOff(pAd, GUI_IDLE_POWER_SAVE, 0);
++	}
+ 
+ 
+ 
+@@ -2781,7 +2848,7 @@ VOID MlmeCheckPsmChange(
+ 	if (INFRA_ON(pAd) &&
+ 		(PowerMode != Ndis802_11PowerModeCAM) &&
+ 		(pAd->StaCfg.Psm == PWR_ACTIVE) &&
+-		(pAd->Mlme.CntlMachine.CurrState == CNTL_IDLE))
++		RTMP_TEST_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP))
+ 	{
+ 		NdisGetSystemUpTime(&pAd->Mlme.LastSendNULLpsmTime);
+ 		pAd->RalinkCounters.RxCountSinceLastNULL = 0;
+@@ -4065,7 +4132,9 @@ VOID BssTableSsidSort(
+ 							continue;
+ 
+ 					// check group cipher
+-					if (pAd->StaCfg.WepStatus < pInBss->WPA.GroupCipher)
++					if ((pAd->StaCfg.WepStatus < pInBss->WPA.GroupCipher) &&
++						(pInBss->WPA.GroupCipher != Ndis802_11GroupWEP40Enabled) &&
++						(pInBss->WPA.GroupCipher != Ndis802_11GroupWEP104Enabled))
+ 						continue;
+ 
+ 					// check pairwise cipher, skip if none matched
+@@ -4084,7 +4153,9 @@ VOID BssTableSsidSort(
+ 							continue;
+ 
+ 					// check group cipher
+-					if (pAd->StaCfg.WepStatus < pInBss->WPA2.GroupCipher)
++					if ((pAd->StaCfg.WepStatus < pInBss->WPA.GroupCipher) &&
++						(pInBss->WPA2.GroupCipher != Ndis802_11GroupWEP40Enabled) &&
++						(pInBss->WPA2.GroupCipher != Ndis802_11GroupWEP104Enabled))
+ 						continue;
+ 
+ 					// check pairwise cipher, skip if none matched
+@@ -4371,8 +4442,10 @@ VOID BssCipherParse(
+ 				switch (*pTmp)
+ 				{
+ 					case 1:
+-					case 5:	// Although WEP is not allowed in WPA related auth mode, we parse it anyway
+-						pBss->WPA.GroupCipher = Ndis802_11Encryption1Enabled;
++						pBss->WPA.GroupCipher = Ndis802_11GroupWEP40Enabled;
++						break;
++					case 5:
++						pBss->WPA.GroupCipher = Ndis802_11GroupWEP104Enabled;
+ 						break;
+ 					case 2:
+ 						pBss->WPA.GroupCipher = Ndis802_11Encryption2Enabled;
+@@ -4489,8 +4562,10 @@ VOID BssCipherParse(
+ 				switch (pCipher->Type)
+ 				{
+ 					case 1:
+-					case 5:	// Although WEP is not allowed in WPA related auth mode, we parse it anyway
+-						pBss->WPA2.GroupCipher = Ndis802_11Encryption1Enabled;
++						pBss->WPA2.GroupCipher = Ndis802_11GroupWEP40Enabled;
++						break;
++					case 5:
++						pBss->WPA2.GroupCipher = Ndis802_11GroupWEP104Enabled;
+ 						break;
+ 					case 2:
+ 						pBss->WPA2.GroupCipher = Ndis802_11Encryption2Enabled;
+@@ -4953,16 +5028,13 @@ BOOLEAN MlmeDequeue(
+ VOID	MlmeRestartStateMachine(
+ 	IN	PRTMP_ADAPTER	pAd)
+ {
+-#ifdef RT2860
+ 	MLME_QUEUE_ELEM		*Elem = NULL;
+-#endif // RT2860 //
+ #ifdef CONFIG_STA_SUPPORT
+ 	BOOLEAN				Cancelled;
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE, ("MlmeRestartStateMachine \n"));
+ 
+-#ifdef RT2860
+ 	NdisAcquireSpinLock(&pAd->Mlme.TaskLock);
+ 	if(pAd->Mlme.bRunning)
+ 	{
+@@ -4990,7 +5062,6 @@ VOID	MlmeRestartStateMachine(
+ 			DBGPRINT_ERR(("MlmeRestartStateMachine: MlmeQueue empty\n"));
+ 		}
+ 	}
+-#endif // RT2860 //
+ 
+ #ifdef CONFIG_STA_SUPPORT
+ 	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+@@ -5039,12 +5110,10 @@ VOID	MlmeRestartStateMachine(
+ 	}
+ #endif // CONFIG_STA_SUPPORT //
+ 
+-#ifdef RT2860
+ 	// Remove running state
+ 	NdisAcquireSpinLock(&pAd->Mlme.TaskLock);
+ 	pAd->Mlme.bRunning = FALSE;
+ 	NdisReleaseSpinLock(&pAd->Mlme.TaskLock);
+-#endif // RT2860 //
+ }
+ 
+ /*! \brief	test if the MLME Queue is empty
+@@ -6149,6 +6218,12 @@ VOID AsicAdjustTxPower(
+ 	ULONG		TxPwr[5];
+ 	CHAR		Value;
+ 
++	if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE)
++		|| (pAd->bPCIclkOff == TRUE)
++		|| RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_IDLE_RADIO_OFF)
++		|| RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_BSS_SCAN_IN_PROGRESS))
++		return;
++
+ 	if (pAd->CommonCfg.BBPCurrentBW == BW_40)
+ 	{
+ 		if (pAd->CommonCfg.CentralChannel > 14)
+@@ -6493,10 +6568,10 @@ VOID AsicForceSleep(
+  */
+ VOID AsicForceWakeup(
+ 	IN PRTMP_ADAPTER pAd,
+-	IN BOOLEAN    bFromTx)
++	IN UCHAR    	 Level)
+ {
+     DBGPRINT(RT_DEBUG_TRACE, ("--> AsicForceWakeup \n"));
+-    RT28XX_STA_FORCE_WAKEUP(pAd, bFromTx);
++    RT28XX_STA_FORCE_WAKEUP(pAd, Level);
+ }
+ #endif // CONFIG_STA_SUPPORT //
+ /*
+@@ -6710,7 +6785,6 @@ VOID AsicEnableIbssSync(
+ 	csr9.field.bTsfTicking = 0;
+ 	RTMP_IO_WRITE32(pAd, BCN_TIME_CFG, csr9.word);
+ 
+-#ifdef RT2860
+ 	// move BEACON TXD and frame content to on-chip memory
+ 	ptr = (PUCHAR)&pAd->BeaconTxWI;
+ 	for (i=0; i<TXWI_SIZE; i+=4)  // 16-byte TXWI field
+@@ -6728,7 +6802,6 @@ VOID AsicEnableIbssSync(
+ 		RTMP_IO_WRITE32(pAd, HW_BEACON_BASE0 + TXWI_SIZE + i, longptr);
+ 		ptr +=4;
+ 	}
+-#endif // RT2860 //
+ 
+ 	// start sending BEACON
+ 	csr9.field.BeaconInterval = pAd->CommonCfg.BeaconPeriod << 4; // ASIC register in units of 1/16 TU
+@@ -7097,9 +7170,7 @@ VOID AsicAddSharedKeyEntry(
+ {
+ 	ULONG offset; //, csr0;
+ 	SHAREDKEY_MODE_STRUC csr1;
+-#ifdef RT2860
+ 	INT   i;
+-#endif // RT2860 //
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE, ("AsicAddSharedKeyEntry BssIndex=%d, KeyIdx=%d\n", BssIndex,KeyIdx));
+ //============================================================================================
+@@ -7121,7 +7192,6 @@ VOID AsicAddSharedKeyEntry(
+ 	//
+ 	// fill key material - key + TX MIC + RX MIC
+ 	//
+-#ifdef RT2860
+ 	offset = SHARED_KEY_TABLE_BASE + (4*BssIndex + KeyIdx)*HW_KEY_ENTRY_SIZE;
+ 	for (i=0; i<MAX_LEN_OF_SHARE_KEY; i++)
+ 	{
+@@ -7145,7 +7215,6 @@ VOID AsicAddSharedKeyEntry(
+ 			RTMP_IO_WRITE8(pAd, offset + i, pRxMic[i]);
+ 		}
+ 	}
+-#endif // RT2860 //
+ 
+ 
+ 	//
+@@ -7320,9 +7389,7 @@ VOID AsicAddKeyEntry(
+ 	PUCHAR		pTxtsc = pCipherKey->TxTsc;
+ 	UCHAR		CipherAlg = pCipherKey->CipherAlg;
+ 	SHAREDKEY_MODE_STRUC csr1;
+-#ifdef RT2860
+ 	UCHAR		i;
+-#endif // RT2860 //
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE, ("==> AsicAddKeyEntry\n"));
+ 	//
+@@ -7337,7 +7404,6 @@ VOID AsicAddKeyEntry(
+ 	// 2.) Set Key to Asic
+ 	//
+ 	//for (i = 0; i < KeyLen; i++)
+-#ifdef RT2860
+ 	for (i = 0; i < MAX_LEN_OF_PEER_KEY; i++)
+ 	{
+ 		RTMP_IO_WRITE8(pAd, offset + i, pKey[i]);
+@@ -7363,7 +7429,6 @@ VOID AsicAddKeyEntry(
+ 			RTMP_IO_WRITE8(pAd, offset + i, pRxMic[i]);
+ 		}
+ 	}
+-#endif // RT2860 //
+ 
+ 
+ 	//
+@@ -7372,7 +7437,6 @@ VOID AsicAddKeyEntry(
+ 	//
+ 	if (bTxKey)
+ 	{
+-#ifdef RT2860
+ 		offset = MAC_IVEIV_TABLE_BASE + (WCID * HW_IVEIV_ENTRY_SIZE);
+ 		//
+ 		// Write IV
+@@ -7395,7 +7459,6 @@ VOID AsicAddKeyEntry(
+ 		{
+ 			RTMP_IO_WRITE8(pAd, offset + i, pTxtsc[i + 2]);
+ 		}
+-#endif // RT2860 //
+ 
+ 		AsicUpdateWCIDAttribute(pAd, WCID, BssIndex, CipherAlg, bUsePairewiseKeyTable);
+ 	}
+@@ -7461,12 +7524,10 @@ VOID AsicAddPairwiseKeyEntry(
+ 
+ 	// EKEY
+ 	offset = PAIRWISE_KEY_TABLE_BASE + (WCID * HW_KEY_ENTRY_SIZE);
+-#ifdef RT2860
+ 	for (i=0; i<MAX_LEN_OF_PEER_KEY; i++)
+ 	{
+ 		RTMP_IO_WRITE8(pAd, offset + i, pKey[i]);
+ 	}
+-#endif // RT2860 //
+ 	for (i=0; i<MAX_LEN_OF_PEER_KEY; i+=4)
+ 	{
+ 		UINT32 Value;
+@@ -7478,22 +7539,18 @@ VOID AsicAddPairwiseKeyEntry(
+ 	//  MIC KEY
+ 	if (pTxMic)
+ 	{
+-#ifdef RT2860
+ 		for (i=0; i<8; i++)
+ 		{
+ 			RTMP_IO_WRITE8(pAd, offset+i, pTxMic[i]);
+ 		}
+-#endif // RT2860 //
+ 	}
+ 	offset += 8;
+ 	if (pRxMic)
+ 	{
+-#ifdef RT2860
+ 		for (i=0; i<8; i++)
+ 		{
+ 			RTMP_IO_WRITE8(pAd, offset+i, pRxMic[i]);
+ 		}
+-#endif // RT2860 //
+ 	}
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE,("AsicAddPairwiseKeyEntry: WCID #%d Alg=%s\n",WCID, CipherName[CipherAlg]));
+@@ -7542,11 +7599,9 @@ BOOLEAN AsicSendCommandToMcu(
+ 	HOST_CMD_CSR_STRUC	H2MCmd;
+ 	H2M_MAILBOX_STRUC	H2MMailbox;
+ 	ULONG				i = 0;
+-#ifdef RT2860
+ #ifdef RALINK_ATE
+ 	static UINT32 j = 0;
+ #endif // RALINK_ATE //
+-#endif // RT2860 //
+ 	do
+ 	{
+ 		RTMP_IO_READ32(pAd, H2M_MAILBOX_CSR, &H2MMailbox.word);
+@@ -7558,7 +7613,6 @@ BOOLEAN AsicSendCommandToMcu(
+ 
+ 	if (i >= 100)
+ 	{
+-#ifdef RT2860
+ #ifdef RALINK_ATE
+ 		if (pAd->ate.bFWLoading == TRUE)
+ 		{
+@@ -7583,14 +7637,33 @@ BOOLEAN AsicSendCommandToMcu(
+ 		}
+ 		else
+ #endif // RALINK_ATE //
+-#endif // RT2860 //
+ 		{
++			UINT32 Data;
++
++			// Reset DMA
++			RTMP_IO_READ32(pAd, PBF_SYS_CTRL, &Data);
++			Data |= 0x2;
++			RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
++
++			// After Reset DMA, DMA index will become Zero. So Driver need to reset all ring indexs too.
++			// Reset DMA/CPU ring index
++			RTMPRingCleanUp(pAd, QID_AC_BK);
++			RTMPRingCleanUp(pAd, QID_AC_BE);
++			RTMPRingCleanUp(pAd, QID_AC_VI);
++			RTMPRingCleanUp(pAd, QID_AC_VO);
++			RTMPRingCleanUp(pAd, QID_HCCA);
++			RTMPRingCleanUp(pAd, QID_MGMT);
++			RTMPRingCleanUp(pAd, QID_RX);
++
++			// Clear Reset
++			RTMP_IO_READ32(pAd, PBF_SYS_CTRL, &Data);
++			Data &= 0xfffffffd;
++			RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
+ 		DBGPRINT_ERR(("H2M_MAILBOX still hold by MCU. command fail\n"));
+ 		}
+-		return FALSE;
++		//return FALSE;
+ 	}
+ 
+-#ifdef RT2860
+ #ifdef RALINK_ATE
+ 	else if (pAd->ate.bFWLoading == TRUE)
+ 	{
+@@ -7600,7 +7673,6 @@ BOOLEAN AsicSendCommandToMcu(
+ 		j = 0;
+ 	}
+ #endif // RALINK_ATE //
+-#endif // RT2860 //
+ 
+ 	H2MMailbox.field.Owner	  = 1;	   // pass ownership to MCU
+ 	H2MMailbox.field.CmdToken = Token;
+@@ -7619,7 +7691,6 @@ BOOLEAN AsicSendCommandToMcu(
+ 	return TRUE;
+ }
+ 
+-#ifdef RT2860
+ BOOLEAN AsicCheckCommanOk(
+ 	IN PRTMP_ADAPTER pAd,
+ 	IN UCHAR		 Command)
+@@ -7684,7 +7755,6 @@ BOOLEAN AsicCheckCommanOk(
+ 
+ 	return FALSE;
+ }
+-#endif // RT2860 //
+ 
+ /*
+ 	========================================================================
+@@ -8096,10 +8166,8 @@ VOID AsicEvaluateRxAnt(
+ 	}
+ 	RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, BBPR3);
+ #ifdef CONFIG_STA_SUPPORT
+-#ifdef RT2860
+ 	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+     	pAd->StaCfg.BBPR3 = BBPR3;
+-#endif // RT2860 //
+ #endif // CONFIG_STA_SUPPORT //
+ 	if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_MEDIA_STATE_CONNECTED)
+ 		)
+@@ -8211,9 +8279,7 @@ VOID AsicRxAntEvalTimeout(
+ 			BBPR3 |= (0x0);
+ 		}
+ 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, BBPR3);
+-#ifdef RT2860
+-    pAd->StaCfg.BBPR3 = BBPR3;
+-#endif // RT2860 //
++		pAd->StaCfg.BBPR3 = BBPR3;
+ 	}
+ 
+ #endif // CONFIG_STA_SUPPORT //
+@@ -8439,10 +8505,7 @@ VOID AsicStaBbpTuning(
+ 		&& (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_MEDIA_STATE_CONNECTED)
+ 			)
+ 		&& !(OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
+-#ifdef RT2860
+-		&& (pAd->bPCIclkOff == FALSE)
+-#endif // RT2860 //
+-		)
++		&& (pAd->bPCIclkOff == FALSE))
+ 	{
+ 		RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R66, &OrigR66Value);
+ 		R66 = OrigR66Value;
+@@ -8518,6 +8581,106 @@ VOID AsicStaBbpTuning(
+ 
+ 	}
+ }
++
++VOID AsicResetFromDMABusy(
++	IN PRTMP_ADAPTER pAd)
++{
++	UINT32		Data;
++	BOOLEAN		bCtrl = FALSE;
++
++	DBGPRINT(RT_DEBUG_TRACE, ("--->  AsicResetFromDMABusy  !!!!!!!!!!!!!!!!!!!!!!! \n"));
++
++	// Be sure restore link control value so we can write register.
++	RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
++	if (RTMP_TEST_PSFLAG(pAd, fRTMP_PS_SET_PCI_CLK_OFF_COMMAND))
++	{
++		DBGPRINT(RT_DEBUG_TRACE,("AsicResetFromDMABusy==>\n"));
++		RTMPPCIeLinkCtrlValueRestore(pAd, RESTORE_HALT);
++		RTMPusecDelay(6000);
++		pAd->bPCIclkOff = FALSE;
++		bCtrl = TRUE;
++	}
++	// Reset DMA
++	RTMP_IO_READ32(pAd, PBF_SYS_CTRL, &Data);
++	Data |= 0x2;
++	RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
++
++	// After Reset DMA, DMA index will become Zero. So Driver need to reset all ring indexs too.
++	// Reset DMA/CPU ring index
++	RTMPRingCleanUp(pAd, QID_AC_BK);
++	RTMPRingCleanUp(pAd, QID_AC_BE);
++	RTMPRingCleanUp(pAd, QID_AC_VI);
++	RTMPRingCleanUp(pAd, QID_AC_VO);
++	RTMPRingCleanUp(pAd, QID_HCCA);
++	RTMPRingCleanUp(pAd, QID_MGMT);
++	RTMPRingCleanUp(pAd, QID_RX);
++
++	// Clear Reset
++	RTMP_IO_READ32(pAd, PBF_SYS_CTRL, &Data);
++	Data &= 0xfffffffd;
++	RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
++
++	// If in Radio off, should call RTMPPCIePowerLinkCtrl again.
++	if ((bCtrl == TRUE) && (pAd->StaCfg.bRadio == FALSE))
++		RTMPPCIeLinkCtrlSetting(pAd, 3);
++
++	RTMP_SET_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
++	RTMP_CLEAR_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST | fRTMP_ADAPTER_HALT_IN_PROGRESS);
++	DBGPRINT(RT_DEBUG_TRACE, ("<---  AsicResetFromDMABusy !!!!!!!!!!!!!!!!!!!!!!!  \n"));
++}
++
++VOID AsicResetBBP(
++	IN PRTMP_ADAPTER pAd)
++{
++	DBGPRINT(RT_DEBUG_TRACE, ("--->  Asic HardReset BBP  !!!!!!!!!!!!!!!!!!!!!!! \n"));
++
++	RTMP_IO_WRITE32(pAd, MAC_SYS_CTRL, 0x0);
++	RTMP_IO_WRITE32(pAd, MAC_SYS_CTRL, 0x2);
++	RTMP_IO_WRITE32(pAd, MAC_SYS_CTRL, 0xc);
++
++	// After hard-reset BBP, initialize all BBP values.
++	NICRestoreBBPValue(pAd);
++	DBGPRINT(RT_DEBUG_TRACE, ("<---  Asic HardReset BBP !!!!!!!!!!!!!!!!!!!!!!!  \n"));
++}
++
++VOID AsicResetMAC(
++	IN PRTMP_ADAPTER pAd)
++{
++	ULONG		Data;
++
++	DBGPRINT(RT_DEBUG_TRACE, ("--->  AsicResetMAC   !!!! \n"));
++	RTMP_IO_READ32(pAd, PBF_SYS_CTRL, &Data);
++	Data |= 0x4;
++	RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
++	Data &= 0xfffffffb;
++	RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
++
++	DBGPRINT(RT_DEBUG_TRACE, ("<---  AsicResetMAC   !!!! \n"));
++}
++
++VOID AsicResetPBF(
++	IN PRTMP_ADAPTER pAd)
++{
++	ULONG		Value1, Value2;
++	ULONG		Data;
++
++	RTMP_IO_READ32(pAd, TXRXQ_PCNT, &Value1);
++	RTMP_IO_READ32(pAd, PBF_DBG, &Value2);
++
++	Value2 &= 0xff;
++	// sum should be equals to 0xff, which is the total buffer size.
++	if ((Value1 + Value2) < 0xff)
++	{
++		DBGPRINT(RT_DEBUG_TRACE, ("--->  Asic HardReset PBF !!!! \n"));
++		RTMP_IO_READ32(pAd, PBF_SYS_CTRL, &Data);
++		Data |= 0x8;
++		RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
++		Data &= 0xfffffff7;
++		RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, Data);
++
++		DBGPRINT(RT_DEBUG_TRACE, ("<---  Asic HardReset PBF !!!! \n"));
++	}
++}
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ VOID RTMPSetAGCInitValue(
+--- a/drivers/staging/rt2860/common/rtmp_init.c
++++ b/drivers/staging/rt2860/common/rtmp_init.c
+@@ -39,6 +39,7 @@
+ */
+ #include "../rt_config.h"
+ #include 	"firmware.h"
++#include <linux/bitrev.h>
+ 
+ UCHAR    BIT8[] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+ ULONG    BIT32[] = {0x00000001, 0x00000002, 0x00000004, 0x00000008,
+@@ -89,20 +90,6 @@ const unsigned short ccitt_16Table[] = {
+ #define ByteCRC16(v, crc) \
+ 	(unsigned short)((crc << 8) ^  ccitt_16Table[((crc >> 8) ^ (v)) & 255])
+ 
+-unsigned char BitReverse(unsigned char x)
+-{
+-	int i;
+-	unsigned char Temp=0;
+-	for(i=0; ; i++)
+-	{
+-		if(x & 0x80)	Temp |= 0x80;
+-		if(i==7)		break;
+-		x	<<= 1;
+-		Temp >>= 1;
+-	}
+-	return Temp;
+-}
+-
+ //
+ // BBP register initialization set
+ //
+@@ -162,9 +149,7 @@ RTMP_REG_PAIR	MACRegTable[] =	{
+ 	{GF20_PROT_CFG,			0x01744004},    // set 19:18 --> Short NAV for MIMO PS
+ 	{GF40_PROT_CFG,			0x03F44084},
+ 	{MM20_PROT_CFG,			0x01744004},
+-#ifdef RT2860
+ 	{MM40_PROT_CFG,			0x03F54084},
+-#endif // RT2860 //
+ 	{TXOP_CTRL_CFG,			0x0000583f, /*0x0000243f*/ /*0x000024bf*/},	//Extension channel backoff.
+ 	{TX_RTS_CFG,			0x00092b20},
+ 	{EXP_ACK_TIME,			0x002400ca},	// default value
+@@ -201,9 +186,7 @@ RTMP_REG_PAIR	STAMACRegTable[] =	{
+ #define FIRMWAREIMAGEV1_LENGTH	0x1000
+ #define FIRMWAREIMAGEV2_LENGTH	0x1000
+ 
+-#ifdef RT2860
+ #define FIRMWARE_MINOR_VERSION	2
+-#endif // RT2860 //
+ 
+ 
+ /*
+@@ -261,9 +244,7 @@ NDIS_STATUS	RTMPAllocAdapterBlock(
+ 
+ 		// Init spin locks
+ 		NdisAllocateSpinLock(&pAd->MgmtRingLock);
+-#ifdef RT2860
+ 		NdisAllocateSpinLock(&pAd->RxRingLock);
+-#endif // RT2860 //
+ 
+ 		for (index =0 ; index < NUM_OF_TX_RING; index++)
+ 		{
+@@ -1568,10 +1549,7 @@ VOID	NICInitAsicFromEEPROM(
+ 		pAd->LedCntl.word = 0x01;
+ 		pAd->Led1 = 0x5555;
+ 		pAd->Led2 = 0x2221;
+-
+-#ifdef RT2860
+ 		pAd->Led3 = 0xA9F8;
+-#endif // RT2860 //
+ 	}
+ 
+ 	AsicSendCommandToMcu(pAd, 0x52, 0xff, (UCHAR)pAd->Led1, (UCHAR)(pAd->Led1 >> 8));
+@@ -1607,12 +1585,10 @@ VOID	NICInitAsicFromEEPROM(
+ 		else
+ 		{
+ 			RTMPSetLED(pAd, LED_RADIO_ON);
+-#ifdef RT2860
+ 			AsicSendCommandToMcu(pAd, 0x30, 0xff, 0xff, 0x02);
+ 			AsicSendCommandToMcu(pAd, 0x31, PowerWakeCID, 0x00, 0x00);
+ 			// 2-1. wait command ok.
+ 			AsicCheckCommanOk(pAd, PowerWakeCID);
+-#endif // RT2860 //
+ 		}
+ 	}
+ #endif // CONFIG_STA_SUPPORT //
+@@ -1690,10 +1666,8 @@ NDIS_STATUS	NICInitializeAdapter(
+ {
+ 	NDIS_STATUS     Status = NDIS_STATUS_SUCCESS;
+ 	WPDMA_GLO_CFG_STRUC	GloCfg;
+-#ifdef RT2860
+ 	UINT32			Value;
+ 	DELAY_INT_CFG_STRUC	IntCfg;
+-#endif // RT2860 //
+ 	ULONG	i =0, j=0;
+ 	AC_TXOP_CSR0_STRUC	csr0;
+ 
+@@ -1732,11 +1706,9 @@ retry:
+ 
+ 	// asic simulation sequence put this ahead before loading firmware.
+ 	// pbf hardware reset
+-#ifdef RT2860
+ 	RTMP_IO_WRITE32(pAd, WPDMA_RST_IDX, 0x1003f);	// 0x10000 for reset rx, 0x3f resets all 6 tx rings.
+ 	RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, 0xe1f);
+ 	RTMP_IO_WRITE32(pAd, PBF_SYS_CTRL, 0xe00);
+-#endif // RT2860 //
+ 
+ 	// Initialze ASIC for TX & Rx operation
+ 	if (NICInitializeAsic(pAd , bHardReset) != NDIS_STATUS_SUCCESS)
+@@ -1750,7 +1722,6 @@ retry:
+ 	}
+ 
+ 
+-#ifdef RT2860
+ 	// Write AC_BK base address register
+ 	Value = RTMP_GetPhysicalAddressLow(pAd->TxRing[QID_AC_BK].Cell[0].AllocPa);
+ 	RTMP_IO_WRITE32(pAd, TX_BASE_PTR1, Value);
+@@ -1823,7 +1794,6 @@ retry:
+ 	// Write RX_RING_CSR register
+ 	Value = RX_RING_SIZE;
+ 	RTMP_IO_WRITE32(pAd, RX_MAX_CNT, Value);
+-#endif // RT2860 //
+ 
+ 
+ 	// WMM parameter
+@@ -1842,7 +1812,6 @@ retry:
+ 	RTMP_IO_WRITE32(pAd, WMM_TXOP1_CFG, csr0.word);
+ 
+ 
+-#ifdef RT2860
+ 	// 3. Set DMA global configuration except TX_DMA_EN and RX_DMA_EN bits:
+ 	i = 0;
+ 	do
+@@ -1861,7 +1830,6 @@ retry:
+ 
+ 	IntCfg.word = 0;
+ 	RTMP_IO_WRITE32(pAd, DELAY_INT_CFG, IntCfg.word);
+-#endif // RT2860 //
+ 
+ 
+ 	// reset action
+@@ -1902,7 +1870,6 @@ NDIS_STATUS	NICInitializeAsic(
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE, ("--> NICInitializeAsic\n"));
+ 
+-#ifdef RT2860
+ 	if (bHardReset == TRUE)
+ 	{
+ 		RTMP_IO_WRITE32(pAd, MAC_SYS_CTRL, 0x3);
+@@ -1927,7 +1894,6 @@ NDIS_STATUS	NICInitializeAsic(
+ 		}
+ 	}
+ #endif // CONFIG_STA_SUPPORT //
+-#endif // RT2860 //
+ 
+ 
+ 	//
+@@ -2054,6 +2020,131 @@ NDIS_STATUS	NICInitializeAsic(
+ 	return NDIS_STATUS_SUCCESS;
+ }
+ 
++
++VOID NICRestoreBBPValue(
++	IN PRTMP_ADAPTER pAd)
++{
++	UCHAR		index;
++	UCHAR		Value = 0;
++	ULONG		Data;
++
++	DBGPRINT(RT_DEBUG_TRACE, ("--->  NICRestoreBBPValue !!!!!!!!!!!!!!!!!!!!!!!  \n"));
++	// Initialize BBP register to default value (rtmp_init.c)
++	for (index = 0; index < NUM_BBP_REG_PARMS; index++)
++	{
++		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBPRegTable[index].Register, BBPRegTable[index].Value);
++	}
++	// copy from (rtmp_init.c)
++	if (pAd->MACVersion == 0x28600100)
++	{
++		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R69, 0x16);
++		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R73, 0x12);
++	}
++
++	// copy from (connect.c LinkUp function)
++	if (INFRA_ON(pAd))
++	{
++		// Change to AP channel
++		if ((pAd->CommonCfg.CentralChannel > pAd->CommonCfg.Channel) && (pAd->MlmeAux.HtCapability.HtCapInfo.ChannelWidth == BW_40))
++		{
++			// Must using 40MHz.
++			pAd->CommonCfg.BBPCurrentBW = BW_40;
++			AsicSwitchChannel(pAd, pAd->CommonCfg.CentralChannel, FALSE);
++			AsicLockChannel(pAd, pAd->CommonCfg.CentralChannel);
++
++			RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R4, &Value);
++			Value &= (~0x18);
++			Value |= 0x10;
++			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R4, Value);
++
++			//  RX : control channel at lower
++			RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R3, &Value);
++			Value &= (~0x20);
++			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, Value);
++			// Record BBPR3 setting, But don't keep R Antenna # information.
++			pAd->StaCfg.BBPR3 = Value;
++
++			RTMP_IO_READ32(pAd, TX_BAND_CFG, &Data);
++			Data &= 0xfffffffe;
++			RTMP_IO_WRITE32(pAd, TX_BAND_CFG, Data);
++
++			if (pAd->MACVersion == 0x28600100)
++			{
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R69, 0x1A);
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R70, 0x0A);
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R73, 0x16);
++				DBGPRINT(RT_DEBUG_TRACE, ("!!!rt2860C !!! \n" ));
++			}
++
++			DBGPRINT(RT_DEBUG_TRACE, ("!!!40MHz Lower LINK UP !!! Control Channel at Below. Central = %d \n", pAd->CommonCfg.CentralChannel ));
++		}
++		else if ((pAd->CommonCfg.CentralChannel < pAd->CommonCfg.Channel) && (pAd->MlmeAux.HtCapability.HtCapInfo.ChannelWidth == BW_40))
++		{
++			// Must using 40MHz.
++			pAd->CommonCfg.BBPCurrentBW = BW_40;
++			AsicSwitchChannel(pAd, pAd->CommonCfg.CentralChannel, FALSE);
++			AsicLockChannel(pAd, pAd->CommonCfg.CentralChannel);
++
++			RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R4, &Value);
++			Value &= (~0x18);
++			Value |= 0x10;
++			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R4, Value);
++
++			RTMP_IO_READ32(pAd, TX_BAND_CFG, &Data);
++			Data |= 0x1;
++			RTMP_IO_WRITE32(pAd, TX_BAND_CFG, Data);
++
++			RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R3, &Value);
++			Value |= (0x20);
++			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, Value);
++			// Record BBPR3 setting, But don't keep R Antenna # information.
++			pAd->StaCfg.BBPR3 = Value;
++
++			if (pAd->MACVersion == 0x28600100)
++			{
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R69, 0x1A);
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R70, 0x0A);
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R73, 0x16);
++				DBGPRINT(RT_DEBUG_TRACE, ("!!!rt2860C !!! \n" ));
++			}
++
++			DBGPRINT(RT_DEBUG_TRACE, ("!!!40MHz Upper LINK UP !!! Control Channel at UpperCentral = %d \n", pAd->CommonCfg.CentralChannel ));
++		}
++		else
++		{
++			pAd->CommonCfg.BBPCurrentBW = BW_20;
++			AsicSwitchChannel(pAd, pAd->CommonCfg.Channel, FALSE);
++			AsicLockChannel(pAd, pAd->CommonCfg.Channel);
++
++			RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R4, &Value);
++			Value &= (~0x18);
++			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R4, Value);
++
++			RTMP_IO_READ32(pAd, TX_BAND_CFG, &Data);
++			Data &= 0xfffffffe;
++			RTMP_IO_WRITE32(pAd, TX_BAND_CFG, Data);
++
++			RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R3, &Value);
++			Value &= (~0x20);
++			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, Value);
++			// Record BBPR3 setting, But don't keep R Antenna # information.
++			pAd->StaCfg.BBPR3 = Value;
++
++			if (pAd->MACVersion == 0x28600100)
++			{
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R69, 0x16);
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R70, 0x08);
++				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R73, 0x11);
++				DBGPRINT(RT_DEBUG_TRACE, ("!!!rt2860C !!! \n" ));
++			}
++
++			DBGPRINT(RT_DEBUG_TRACE, ("!!!20MHz LINK UP !!! \n" ));
++		}
++	}
++
++	DBGPRINT(RT_DEBUG_TRACE, ("<---  NICRestoreBBPValue !!!!!!!!!!!!!!!!!!!!!!!  \n"));
++}
++
+ /*
+ 	========================================================================
+ 
+@@ -2555,7 +2646,7 @@ NDIS_STATUS NICLoadFirmware(
+ #ifdef BIN_IN_FILE
+ #define NICLF_DEFAULT_USE()	\
+ 	flg_default_firm_use = TRUE; \
+-	printk("%s - Use default firmware!\n", __FUNCTION__);
++	printk("%s - Use default firmware!\n", __func__);
+ 
+ 	NDIS_STATUS		Status = NDIS_STATUS_SUCCESS;
+ 	PUCHAR			src;
+@@ -2570,7 +2661,7 @@ NDIS_STATUS NICLoadFirmware(
+ 	BOOLEAN			flg_default_firm_use = FALSE;
+ 
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("===> %s\n", __FUNCTION__));
++	DBGPRINT(RT_DEBUG_TRACE, ("===> %s\n", __func__));
+ 
+ 	/* init */
+ 	pFirmwareImage = NULL;
+@@ -2593,7 +2684,7 @@ NDIS_STATUS NICLoadFirmware(
+     if (pFirmwareImage == NULL)
+ 	{
+ 		/* allocate fail, use default firmware array in firmware.h */
+-		printk("%s - Allocate memory fail!\n", __FUNCTION__);
++		printk("%s - Allocate memory fail!\n", __func__);
+ 		NICLF_DEFAULT_USE();
+     }
+ 	else
+@@ -2614,7 +2705,7 @@ NDIS_STATUS NICLoadFirmware(
+ 			if (IS_ERR(srcf))
+ 			{
+ 				printk("%s - Error %ld opening %s\n",
+-					   __FUNCTION__, -PTR_ERR(srcf), src);
++					   __func__, -PTR_ERR(srcf), src);
+ 				NICLF_DEFAULT_USE();
+ 				break;
+ 			} /* End of if */
+@@ -2622,7 +2713,7 @@ NDIS_STATUS NICLoadFirmware(
+ 			/* the object must have a read method */
+ 			if ((srcf->f_op == NULL) || (srcf->f_op->read == NULL))
+ 			{
+-				printk("%s - %s does not have a write method\n", __FUNCTION__, src);
++				printk("%s - %s does not have a write method\n", __func__, src);
+ 				NICLF_DEFAULT_USE();
+ 				break;
+ 			} /* End of if */
+@@ -2636,7 +2727,7 @@ NDIS_STATUS NICLoadFirmware(
+ 			if (FileLength != MAX_FIRMWARE_IMAGE_SIZE)
+ 			{
+ 				printk("%s: error file length (=%d) in RT2860AP.BIN\n",
+-					   __FUNCTION__, FileLength);
++					   __func__, FileLength);
+ 				NICLF_DEFAULT_USE();
+ 				break;
+ 			}
+@@ -2648,18 +2739,18 @@ NDIS_STATUS NICLoadFirmware(
+ 
+ 				/* calculate firmware CRC */
+ 				for(i=0; i<(MAX_FIRMWARE_IMAGE_SIZE-2); i++, ptr++)
+-					crc = ByteCRC16(BitReverse(*ptr), crc);
++					crc = ByteCRC16(bitrev8(*ptr), crc);
+ 				/* End of for */
+ 
+ 				if ((pFirmwareImage[MAX_FIRMWARE_IMAGE_SIZE-2] != \
+-								(UCHAR)BitReverse((UCHAR)(crc>>8))) ||
++								(UCHAR)bitrev8((UCHAR)(crc>>8))) ||
+ 					(pFirmwareImage[MAX_FIRMWARE_IMAGE_SIZE-1] != \
+-								(UCHAR)BitReverse((UCHAR)crc)))
++								(UCHAR)bitrev8((UCHAR)crc)))
+ 				{
+ 					/* CRC fail */
+ 					printk("%s: CRC = 0x%02x 0x%02x "
+ 						   "error, should be 0x%02x 0x%02x\n",
+-						   __FUNCTION__,
++						   __func__,
+ 						   pFirmwareImage[MAX_FIRMWARE_IMAGE_SIZE-2],
+ 						   pFirmwareImage[MAX_FIRMWARE_IMAGE_SIZE-1],
+ 						   (UCHAR)(crc>>8), (UCHAR)(crc));
+@@ -2678,7 +2769,7 @@ NDIS_STATUS NICLoadFirmware(
+ 											((FIRMWARE_MAJOR_VERSION << 8) +
+ 									  	 	 FIRMWARE_MINOR_VERSION))
+ 					{
+-						printk("%s: firmware version too old!\n", __FUNCTION__);
++						printk("%s: firmware version too old!\n", __func__);
+ 						NICLF_DEFAULT_USE();
+ 						break;
+ 					} /* End of if */
+@@ -2783,7 +2874,7 @@ NDIS_STATUS NICLoadFirmware(
+ 	} /* End of if */
+ 
+     DBGPRINT(RT_DEBUG_TRACE,
+-			 ("<=== %s (status=%d)\n", __FUNCTION__, Status));
++			 ("<=== %s (status=%d)\n", __func__, Status));
+     return Status;
+ } /* End of NICLoadFirmware */
+ 
+@@ -3041,11 +3132,10 @@ VOID	UserCfgInit(
+ 	pAd->CommonCfg.BBPCurrentBW = BW_20;
+ 
+ 	pAd->LedCntl.word = 0;
+-#ifdef RT2860
+ 	pAd->LedIndicatorStregth = 0;
+ 	pAd->RLnkCtrlOffset = 0;
+ 	pAd->HostLnkCtrlOffset = 0;
+-#endif // RT2860 //
++	pAd->CheckDmaBusyCount = 0;
+ 
+ 	pAd->bAutoTxAgcA = FALSE;			// Default is OFF
+ 	pAd->bAutoTxAgcG = FALSE;			// Default is OFF
+@@ -3305,9 +3395,7 @@ VOID	UserCfgInit(
+ 	pAd->ate.bRxFer = 0;
+ 	pAd->ate.bQATxStart = FALSE;
+ 	pAd->ate.bQARxStart = FALSE;
+-#ifdef RT2860
+ 	pAd->ate.bFWLoading = FALSE;
+-#endif // RT2860 //
+ #ifdef RALINK_28xx_QA
+ 	//pAd->ate.Repeat = 0;
+ 	pAd->ate.TxStatus = 0;
+@@ -3317,11 +3405,9 @@ VOID	UserCfgInit(
+ 
+ 
+ 	pAd->CommonCfg.bWiFiTest = FALSE;
+-#ifdef RT2860
+-    pAd->bPCIclkOff = FALSE;
+-#endif // RT2860 //
+-
++	pAd->bPCIclkOff = FALSE;
+ 
++	RTMP_SET_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
+ 	DBGPRINT(RT_DEBUG_TRACE, ("<-- UserCfgInit\n"));
+ }
+ 
+--- a/drivers/staging/rt2860/common/spectrum.c
++++ b/drivers/staging/rt2860/common/spectrum.c
+@@ -49,7 +49,7 @@ VOID MeasureReqTabInit(
+ 	if (pAd->CommonCfg.pMeasureReqTab)
+ 		NdisZeroMemory(pAd->CommonCfg.pMeasureReqTab, sizeof(MEASURE_REQ_TAB));
+ 	else
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pMeasureReqTab.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pMeasureReqTab.\n", __func__));
+ 
+ 	return;
+ }
+@@ -77,7 +77,7 @@ static PMEASURE_REQ_ENTRY MeasureReqLook
+ 
+ 	if (pTab == NULL)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __func__));
+ 		return NULL;
+ 	}
+ 
+@@ -114,7 +114,7 @@ static PMEASURE_REQ_ENTRY MeasureReqInse
+ 
+ 	if(pTab == NULL)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __func__));
+ 		return NULL;
+ 	}
+ 
+@@ -175,7 +175,7 @@ static PMEASURE_REQ_ENTRY MeasureReqInse
+ 		else
+ 		{
+ 			pEntry = NULL;
+-			DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab tab full.\n", __FUNCTION__));
++			DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab tab full.\n", __func__));
+ 		}
+ 
+ 		// add this Neighbor entry into HASH table
+@@ -210,7 +210,7 @@ static VOID MeasureReqDelete(
+ 
+ 	if(pTab == NULL)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __func__));
+ 		return;
+ 	}
+ 
+@@ -267,7 +267,7 @@ VOID TpcReqTabInit(
+ 	if (pAd->CommonCfg.pTpcReqTab)
+ 		NdisZeroMemory(pAd->CommonCfg.pTpcReqTab, sizeof(TPC_REQ_TAB));
+ 	else
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pTpcReqTab.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pTpcReqTab.\n", __func__));
+ 
+ 	return;
+ }
+@@ -295,7 +295,7 @@ static PTPC_REQ_ENTRY TpcReqLookUp(
+ 
+ 	if (pTab == NULL)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __func__));
+ 		return NULL;
+ 	}
+ 
+@@ -333,7 +333,7 @@ static PTPC_REQ_ENTRY TpcReqInsert(
+ 
+ 	if(pTab == NULL)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __func__));
+ 		return NULL;
+ 	}
+ 
+@@ -394,7 +394,7 @@ static PTPC_REQ_ENTRY TpcReqInsert(
+ 		else
+ 		{
+ 			pEntry = NULL;
+-			DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab tab full.\n", __FUNCTION__));
++			DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab tab full.\n", __func__));
+ 		}
+ 
+ 		// add this Neighbor entry into HASH table
+@@ -429,7 +429,7 @@ static VOID TpcReqDelete(
+ 
+ 	if(pTab == NULL)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __func__));
+ 		return;
+ 	}
+ 
+@@ -782,7 +782,7 @@ VOID EnqueueMeasurementReq(
+ 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
+ 	if(NStatus != NDIS_STATUS_SUCCESS)
+ 	{
+-		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
+ 		return;
+ 	}
+ 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
+@@ -844,7 +844,7 @@ VOID EnqueueMeasurementRep(
+ 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
+ 	if(NStatus != NDIS_STATUS_SUCCESS)
+ 	{
+-		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
+ 		return;
+ 	}
+ 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
+@@ -898,7 +898,7 @@ VOID EnqueueTPCReq(
+ 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
+ 	if(NStatus != NDIS_STATUS_SUCCESS)
+ 	{
+-		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
+ 		return;
+ 	}
+ 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
+@@ -950,7 +950,7 @@ VOID EnqueueTPCRep(
+ 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
+ 	if(NStatus != NDIS_STATUS_SUCCESS)
+ 	{
+-		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
+ 		return;
+ 	}
+ 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
+@@ -1003,7 +1003,7 @@ VOID EnqueueChSwAnn(
+ 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
+ 	if(NStatus != NDIS_STATUS_SUCCESS)
+ 	{
+-		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
+ 		return;
+ 	}
+ 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
+@@ -1596,7 +1596,7 @@ static VOID PeerMeasureReportAction(
+ 
+ 	if ((pMeasureReportInfo = kmalloc(sizeof(MEASURE_RPI_REPORT), GFP_ATOMIC)) == NULL)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s unable to alloc memory for measure report buffer (size=%d).\n", __FUNCTION__, sizeof(MEASURE_RPI_REPORT)));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s unable to alloc memory for measure report buffer (size=%zu).\n", __func__, sizeof(MEASURE_RPI_REPORT)));
+ 		return;
+ 	}
+ 
+@@ -1705,7 +1705,7 @@ static VOID PeerTpcRepAction(
+ 		{
+ 			TpcReqDelete(pAd, pEntry->DialogToken);
+ 			DBGPRINT(RT_DEBUG_TRACE, ("%s: DialogToken=%x, TxPwr=%d, LinkMargin=%d\n",
+-				__FUNCTION__, DialogToken, TpcRepInfo.TxPwr, TpcRepInfo.LinkMargin));
++				__func__, DialogToken, TpcRepInfo.TxPwr, TpcRepInfo.LinkMargin));
+ 		}
+ 	}
+ 
+@@ -1821,7 +1821,7 @@ INT Set_MeasureReq_Proc(
+ 				MeasureReqType = simple_strtol(thisChar, 0, 16);
+ 				if (MeasureReqType > 3)
+ 				{
+-					DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow MeasureReqType(%d)\n", __FUNCTION__, MeasureReqType));
++					DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow MeasureReqType(%d)\n", __func__, MeasureReqType));
+ 					return TRUE;
+ 				}
+ 				break;
+@@ -1833,10 +1833,10 @@ INT Set_MeasureReq_Proc(
+ 		ArgIdx++;
+ 	}
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d, MeasureReqType=%d MeasureCh=%d\n", __FUNCTION__, Aid, MeasureReqType, MeasureCh));
++	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d, MeasureReqType=%d MeasureCh=%d\n", __func__, Aid, MeasureReqType, MeasureCh));
+ 	if (!VALID_WCID(Aid))
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __FUNCTION__, Aid));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __func__, Aid));
+ 		return TRUE;
+ 	}
+ 
+@@ -1861,10 +1861,10 @@ INT Set_TpcReq_Proc(
+ 
+ 	Aid = simple_strtol(arg, 0, 16);
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d\n", __FUNCTION__, Aid));
++	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d\n", __func__, Aid));
+ 	if (!VALID_WCID(Aid))
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __FUNCTION__, Aid));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __func__, Aid));
+ 		return TRUE;
+ 	}
+ 
+--- a/drivers/staging/rt2860/config.mk
++++ b/drivers/staging/rt2860/config.mk
+@@ -108,10 +108,6 @@ ifeq ($(HAS_EXT_BUILD_CHANNEL_LIST),y)
+ WFLAGS += -DEXT_BUILD_CHANNEL_LIST
+ endif
+ 
+-ifeq ($(CHIPSET),2860)
+-WFLAGS +=-DRT2860
+-endif
+-
+ ifeq ($(CHIPSET),2870)
+ WFLAGS +=-DRT2870
+ endif
+--- a/drivers/staging/rt2860/oid.h
++++ b/drivers/staging/rt2860/oid.h
+@@ -544,6 +544,8 @@ typedef enum _NDIS_802_11_WEP_STATUS
+     Ndis802_11Encryption3KeyAbsent,
+     Ndis802_11Encryption4Enabled,	// TKIP or AES mix
+     Ndis802_11Encryption4KeyAbsent,
++    Ndis802_11GroupWEP40Enabled,
++	Ndis802_11GroupWEP104Enabled,
+ } NDIS_802_11_WEP_STATUS, *PNDIS_802_11_WEP_STATUS,
+   NDIS_802_11_ENCRYPTION_STATUS, *PNDIS_802_11_ENCRYPTION_STATUS;
+ 
+--- a/drivers/staging/rt2860/rt2860.h
++++ b/drivers/staging/rt2860/rt2860.h
+@@ -46,18 +46,10 @@
+ 	Status = NDIS_STATUS_SUCCESS;
+ 
+ /* function declarations */
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ #define IRQ_HANDLE_TYPE  irqreturn_t
+-#else
+-#define IRQ_HANDLE_TYPE  void
+-#endif
+ 
+ IRQ_HANDLE_TYPE
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
+ rt2860_interrupt(int irq, void *dev_instance);
+-#else
+-rt2860_interrupt(int irq, void *dev_instance, struct pt_regs *regs);
+-#endif
+ 
+ /* ----------------- Frimware Related MACRO ----------------- */
+ #define RT28XX_WRITE_FIRMWARE(_pAd, _pFwImage, _FwLen)				\
+@@ -237,12 +229,10 @@ rt2860_interrupt(int irq, void *dev_inst
+ #define RTMP_MSI_DISABLE(_pAd)
+ #endif // PCI_MSI_SUPPORT //
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24)
+ #define SA_SHIRQ IRQF_SHARED
+-#endif
+ 
+ #define RT28XX_IRQ_REQUEST(net_dev)							\
+-{	PRTMP_ADAPTER _pAd = (PRTMP_ADAPTER)((net_dev)->priv);	\
++{	PRTMP_ADAPTER _pAd = (PRTMP_ADAPTER)((net_dev)->ml_priv);	\
+ 	POS_COOKIE _pObj = (POS_COOKIE)(_pAd->OS_Cookie);		\
+ 	RTMP_MSI_ENABLE(_pAd);									\
+ 	if ((retval = request_irq(_pObj->pci_dev->irq, 		\
+@@ -251,20 +241,12 @@ rt2860_interrupt(int irq, void *dev_inst
+ 		printk("RT2860: request_irq  ERROR(%d)\n", retval);	\
+ 	return retval; } }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ #define RT28XX_IRQ_RELEASE(net_dev)								\
+-{	PRTMP_ADAPTER _pAd = (PRTMP_ADAPTER)((net_dev)->priv);		\
++{	PRTMP_ADAPTER _pAd = (PRTMP_ADAPTER)((net_dev)->ml_priv);		\
+ 	POS_COOKIE _pObj = (POS_COOKIE)(_pAd->OS_Cookie);			\
+ 	synchronize_irq(_pObj->pci_dev->irq);						\
+ 	free_irq(_pObj->pci_dev->irq, (net_dev));					\
+ 	RTMP_MSI_DISABLE(_pAd); }
+-#else
+-#define RT28XX_IRQ_RELEASE(net_dev)								\
+-{	PRTMP_ADAPTER _pAd = (PRTMP_ADAPTER)((net_dev)->priv);		\
+-	POS_COOKIE _pObj = (POS_COOKIE)(_pAd->OS_Cookie);			\
+-	free_irq(_pObj->pci_dev->irq, (net_dev));					\
+-	RTMP_MSI_DISABLE(_pAd); }
+-#endif
+ 
+ #define RT28XX_IRQ_INIT(pAd)										\
+ 	{	pAd->int_enable_reg = ((DELAYINTMASK) |						\
+@@ -333,8 +315,8 @@ rt2860_interrupt(int irq, void *dev_inst
+     reg16 = cpu2le16(Configuration);                        \
+     pci_write_config_word(pci_dev, offset, reg16);          \
+ 
+-#define RT28XX_STA_FORCE_WAKEUP(pAd, bFromTx) \
+-    RT28xxPciStaAsicForceWakeup(pAd, bFromTx);
++#define RT28XX_STA_FORCE_WAKEUP(pAd, Level) \
++    RT28xxPciStaAsicForceWakeup(pAd, Level);
+ 
+ #define RT28XX_STA_SLEEP_THEN_AUTO_WAKEUP(pAd, TbttNumToNextWakeUp) \
+     RT28xxPciStaAsicSleepThenAutoWakeup(pAd, TbttNumToNextWakeUp);
+--- a/drivers/staging/rt2860/rt28xx.h
++++ b/drivers/staging/rt2860/rt28xx.h
+@@ -1670,11 +1670,9 @@ typedef struct _HW_WCID_ENTRY {  // 8-by
+ #define E2PROM_CSR          0x0004
+ #define IO_CNTL_CSR         0x77d0
+ 
+-#ifdef RT2860
+ // 8051 firmware image for RT2860 - base address = 0x4000
+ #define FIRMWARE_IMAGE_BASE     0x2000
+ #define MAX_FIRMWARE_IMAGE_SIZE 0x2000    // 8kbyte
+-#endif // RT2860 //
+ 
+ 
+ // ================================================================
+@@ -2029,7 +2027,6 @@ typedef	struct	PACKED _TXWI_STRUC {
+ //
+ // Rx descriptor format, Rx	Ring
+ //
+-#ifdef RT2860
+ #ifdef RT_BIG_ENDIAN
+ typedef	struct	PACKED _RXD_STRUC	{
+ 	// Word 0
+@@ -2098,7 +2095,6 @@ typedef	struct	PACKED _RXD_STRUC	{
+ 	UINT32		Rsv1:13;
+ }	RXD_STRUC, *PRXD_STRUC, RT28XX_RXD_STRUC, *PRT28XX_RXD_STRUC;
+ #endif
+-#endif // RT2860 //
+ //
+ // RXWI wireless information format, in PBF. invisible in driver.
+ //
+--- a/drivers/staging/rt2860/rt_ate.c
++++ b/drivers/staging/rt2860/rt_ate.c
+@@ -68,7 +68,6 @@ static int CheckMCSValid(
+ 	IN UCHAR Mode,
+ 	IN UCHAR Mcs);
+ 
+-#ifdef RT2860
+ static VOID ATEWriteTxWI(
+ 	IN	PRTMP_ADAPTER	pAd,
+ 	IN	PTXWI_STRUC 	pOutTxWI,
+@@ -87,7 +86,6 @@ static VOID ATEWriteTxWI(
+ 	IN	UCHAR			Txopmode,
+ 	IN	BOOLEAN			CfAck,
+ 	IN	HTTRANSMIT_SETTING	*pTransmit);
+-#endif // RT2860 //
+ 
+ 
+ static VOID SetJapanFilter(
+@@ -95,7 +93,6 @@ static VOID SetJapanFilter(
+ 
+ /*=========================end of prototype=========================*/
+ 
+-#ifdef RT2860
+ static INT TxDmaBusy(
+ 	IN PRTMP_ADAPTER pAd)
+ {
+@@ -153,7 +150,6 @@ static VOID RtmpDmaEnable(
+ 
+ 	return;
+ }
+-#endif // RT2860 //
+ 
+ 
+ static VOID BbpSoftReset(
+@@ -291,7 +287,7 @@ static INT ATETxPwrHandler(
+ 				Bbp94 = BBPR94_DEFAULT;
+ 			}
+ 
+-			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%ld, BBP_R94=%d)\n", __FUNCTION__, TxPower, R, Bbp94));
++			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%ld, BBP_R94=%d)\n", __func__, TxPower, R, Bbp94));
+ 		}
+ 		else// 5.5 GHz
+ 		{
+@@ -318,7 +314,7 @@ static INT ATETxPwrHandler(
+ 				R = (ULONG) TxPower;
+ 			}
+ 
+-			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%lu)\n", __FUNCTION__, TxPower, R));
++			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%lu)\n", __func__, TxPower, R));
+ 		}
+ 
+ 		if (pAd->ate.Channel <= 14)
+@@ -431,7 +427,7 @@ static INT ATETxPwrHandler(
+ 		Bbp94 = BBPR94_DEFAULT;
+ 	}
+ 
+-	ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R3=%ld, BBP_R94=%d)\n", __FUNCTION__, TxPower, R, Bbp94));
++	ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R3=%ld, BBP_R94=%d)\n", __func__, TxPower, R, Bbp94));
+ 
+ 		if (pAd->ate.Channel <= 14)
+ 		{
+@@ -488,7 +484,6 @@ static INT ATETxPwrHandler(
+         TRUE if all parameters are OK, FALSE otherwise
+     ==========================================================================
+ */
+-#ifdef RT2860
+ static INT	ATECmdHandler(
+ 	IN	PRTMP_ADAPTER	pAd,
+ 	IN	PUCHAR			arg)
+@@ -1297,7 +1292,6 @@ static INT	ATECmdHandler(
+ 
+ 	return TRUE;
+ }
+-#endif // RT2860 //
+ /*                                                           */
+ /*                                                           */
+ /*=======================End of RT2860=======================*/
+@@ -2098,7 +2092,7 @@ INT Set_ATE_Load_E2P_Proc(
+ 	UINT32			FileLength = 0;
+ 	UINT32 			value = simple_strtol(arg, 0, 10);
+ 
+-	ATEDBGPRINT(RT_DEBUG_ERROR, ("===> %s (value=%d)\n\n", __FUNCTION__, value));
++	ATEDBGPRINT(RT_DEBUG_ERROR, ("===> %s (value=%d)\n\n", __func__, value));
+ 
+ 	if (value > 0)
+ 	{
+@@ -2122,14 +2116,14 @@ INT Set_ATE_Load_E2P_Proc(
+ 
+ 			if (IS_ERR(srcf))
+ 			{
+-				ate_print("%s - Error %ld opening %s\n", __FUNCTION__, -PTR_ERR(srcf), src);
++				ate_print("%s - Error %ld opening %s\n", __func__, -PTR_ERR(srcf), src);
+ 				break;
+ 			}
+ 
+ 			/* the object must have a read method */
+ 			if ((srcf->f_op == NULL) || (srcf->f_op->read == NULL))
+ 			{
+-				ate_print("%s - %s does not have a read method\n", __FUNCTION__, src);
++				ate_print("%s - %s does not have a read method\n", __func__, src);
+ 				break;
+ 			}
+ 
+@@ -2142,7 +2136,7 @@ INT Set_ATE_Load_E2P_Proc(
+ 			if (FileLength != EEPROM_SIZE)
+ 			{
+ 				ate_print("%s: error file length (=%d) in e2p.bin\n",
+-					   __FUNCTION__, FileLength);
++					   __func__, FileLength);
+ 				break;
+ 			}
+ 			else
+@@ -2174,7 +2168,7 @@ INT Set_ATE_Load_E2P_Proc(
+ 		current->fsuid = orgfsuid;
+ 		current->fsgid = orgfsgid;
+ 	}
+-    ATEDBGPRINT(RT_DEBUG_ERROR, ("<=== %s (ret=%d)\n", __FUNCTION__, ret));
++    ATEDBGPRINT(RT_DEBUG_ERROR, ("<=== %s (ret=%d)\n", __func__, ret));
+ 
+     return ret;
+ 
+@@ -2187,12 +2181,12 @@ INT Set_ATE_Load_E2P_Proc(
+ 	USHORT 			WriteEEPROM[(EEPROM_SIZE/2)];
+ 	struct iwreq	*wrq = (struct iwreq *)arg;
+ 
+-	ATEDBGPRINT(RT_DEBUG_TRACE, ("===> %s (wrq->u.data.length = %d)\n\n", __FUNCTION__, wrq->u.data.length));
++	ATEDBGPRINT(RT_DEBUG_TRACE, ("===> %s (wrq->u.data.length = %d)\n\n", __func__, wrq->u.data.length));
+ 
+ 	if (wrq->u.data.length != EEPROM_SIZE)
+ 	{
+ 		ate_print("%s: error length (=%d) from host\n",
+-			   __FUNCTION__, wrq->u.data.length);
++			   __func__, wrq->u.data.length);
+ 		return FALSE;
+ 	}
+ 	else/* (wrq->u.data.length == EEPROM_SIZE) */
+@@ -2211,7 +2205,7 @@ INT Set_ATE_Load_E2P_Proc(
+ 		} while(FALSE);
+ 		}
+ 
+-    ATEDBGPRINT(RT_DEBUG_TRACE, ("<=== %s\n", __FUNCTION__));
++    ATEDBGPRINT(RT_DEBUG_TRACE, ("<=== %s\n", __func__));
+ 
+     return TRUE;
+ 
+@@ -2907,7 +2901,6 @@ VOID ATEAsicAdjustTxPower(
+ 		None
+ 	========================================================================
+ */
+-#ifdef RT2860
+ static VOID ATEWriteTxWI(
+ 	IN	PRTMP_ADAPTER	pAd,
+ 	IN	PTXWI_STRUC 	pOutTxWI,
+@@ -2972,7 +2965,6 @@ static VOID ATEWriteTxWI(
+ 
+         return;
+ }
+-#endif // RT2860 //
+ 
+ /*
+ 	========================================================================
+@@ -3249,13 +3241,11 @@ VOID RTMPStationStart(
+     IN  PRTMP_ADAPTER   pAd)
+ {
+     ATEDBGPRINT(RT_DEBUG_TRACE, ("==> RTMPStationStart\n"));
+-#ifdef RT2860
+-	pAd->Mlme.CntlMachine.CurrState = CNTL_IDLE;
++epAd->Mlme.CntlMachine.CurrState = CNTL_IDLE;
+ 	//
+ 	// We did not cancel this timer when entering ATE mode.
+ 	//
+ //	RTMPSetTimer(&pAd->Mlme.PeriodicTimer, MLME_TASK_EXEC_INTV);
+-#endif // RT2860 //
+ 	ATEDBGPRINT(RT_DEBUG_TRACE, ("<== RTMPStationStart\n"));
+ }
+ #endif // CONFIG_STA_SUPPORT //
+@@ -3268,7 +3258,6 @@ VOID RTMPStationStart(
+ 		This routine should only be used in ATE mode.
+ 	==========================================================================
+  */
+-#ifdef RT2860
+ static INT ATESetUpFrame(
+ 	IN PRTMP_ADAPTER pAd,
+ 	IN UINT32 TxIdx)
+@@ -3353,7 +3342,7 @@ static INT ATESetUpFrame(
+ 	if (pPacket == NULL)
+ 	{
+ 		pAd->ate.TxCount = 0;
+-		ATEDBGPRINT(RT_DEBUG_TRACE, ("%s fail to alloc packet space.\n", __FUNCTION__));
++		ATEDBGPRINT(RT_DEBUG_TRACE, ("%s fail to alloc packet space.\n", __func__));
+ 		return -1;
+ 	}
+ 	pTxRing->Cell[TxIdx].pNextNdisPacket = pPacket;
+@@ -3455,7 +3444,6 @@ static INT ATESetUpFrame(
+ /*                                                           */
+ /*                                                           */
+ /*=======================End of RT2860=======================*/
+-#endif // RT2860 //
+ 
+ 
+ VOID rt_ee_read_all(PRTMP_ADAPTER pAd, USHORT *Data)
+@@ -3646,7 +3634,7 @@ VOID RtmpDoAte(
+ 
+ 	Command_Id = ntohs(pRaCfg->command_id);
+ 
+-	ATEDBGPRINT(RT_DEBUG_TRACE,("\n%s: Command_Id = 0x%04x !\n", __FUNCTION__, Command_Id));
++	ATEDBGPRINT(RT_DEBUG_TRACE,("\n%s: Command_Id = 0x%04x !\n", __func__, Command_Id));
+ 
+ 	switch (Command_Id)
+ 	{
+@@ -4578,9 +4566,7 @@ VOID RtmpDoAte(
+ 						{
+ 							if (pAdapter->ate.TxCount == 0)
+ 							{
+-#ifdef RT2860
+ 								pAdapter->ate.TxCount = 0xFFFFFFFF;
+-#endif // RT2860 //
+ 							}
+ 							ATEDBGPRINT(RT_DEBUG_TRACE,("START TXFRAME\n"));
+ 							pAdapter->ate.bQATxStart = TRUE;
+@@ -5375,7 +5361,6 @@ TX_START_ERROR:
+ 
+ 				memcpy((PUCHAR)&value, (PUCHAR)&(pRaCfg->status), 2);
+ 				value = ntohs(value);
+-#ifdef RT2860
+ 				/* TX_FRAME_COUNT == 0 means tx infinitely */
+ 				if (value == 0)
+ 				{
+@@ -5387,7 +5372,6 @@ TX_START_ERROR:
+ 
+ 				}
+ 				else
+-#endif // RT2860 //
+ 				{
+ 					sprintf((PCHAR)str, "%d", value);
+ 					Set_ATE_TX_COUNT_Proc(pAdapter, str);
+@@ -5690,7 +5674,7 @@ BOOLEAN SyncTxRxConfig(PRTMP_ADAPTER pAd
+ 					pAd->ate.TxAntennaSel = 2;
+ 		            break;
+ 		        default:
+-		            DBGPRINT(RT_DEBUG_TRACE, ("%s -- Sth. wrong!  : return FALSE; \n", __FUNCTION__));
++		            DBGPRINT(RT_DEBUG_TRACE, ("%s -- Sth. wrong!  : return FALSE; \n", __func__));
+ 		            return FALSE;
+ 		    }
+ 			break;/* case BBP_R1 */
+@@ -5728,13 +5712,13 @@ BOOLEAN SyncTxRxConfig(PRTMP_ADAPTER pAd
+ 					pAd->ate.RxAntennaSel = 3;
+ 		            break;
+ 		        default:
+-		            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Impossible!  : return FALSE; \n", __FUNCTION__));
++		            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Impossible!  : return FALSE; \n", __func__));
+ 		            return FALSE;
+ 		    }
+ 			break;/* case BBP_R3 */
+ 
+         default:
+-            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Sth. wrong!  : return FALSE; \n", __FUNCTION__));
++            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Sth. wrong!  : return FALSE; \n", __func__));
+             return FALSE;
+ 
+ 	}
+--- a/drivers/staging/rt2860/rt_ate.h
++++ b/drivers/staging/rt2860/rt_ate.h
+@@ -31,12 +31,10 @@
+ #ifndef UCOS
+ #define ate_print printk
+ #define ATEDBGPRINT DBGPRINT
+-#ifdef RT2860
+ #define EEPROM_SIZE								0x200
+ #ifdef CONFIG_STA_SUPPORT
+ #define EEPROM_BIN_FILE_NAME  "/etc/Wireless/RT2860STA/e2p.bin"
+ #endif // CONFIG_STA_SUPPORT //
+-#endif // RT2860 //
+ 
+ #else // !UCOS //
+ #define fATE_LOAD_EEPROM						0x0C43
+@@ -69,7 +67,6 @@ do{   int (*org_remote_display)(char *)
+ #define ATE_ON(_p)              (((_p)->ate.Mode) != ATE_STOP)
+ 
+ /* RT2880_iNIC will define "RT2860". */
+-#ifdef RT2860
+ #define ATE_BBP_IO_READ8_BY_REG_ID(_A, _I, _pV)        \
+ {                                                       \
+     BBP_CSR_CFG_STRUC  BbpCsr;                             \
+@@ -131,10 +128,8 @@ do{   int (*org_remote_display)(char *)
+         ATEDBGPRINT(RT_DEBUG_ERROR, ("BBP write R%d fail\n", _I));     \
+     }                                                   \
+ }
+-#endif // RT2860 //
+ 
+ /* RT2880_iNIC will define RT2860. */
+-#ifdef RT2860
+ #define EEPROM_SIZE								0x200
+ /* iNIC has its own EEPROM_BIN_FILE_NAME */
+ #ifndef UCOS
+@@ -142,7 +137,6 @@ do{   int (*org_remote_display)(char *)
+ #define EEPROM_BIN_FILE_NAME  "/etc/Wireless/RT2860STA/e2p.bin"
+ #endif // CONFIG_STA_SUPPORT //
+ #endif // !UCOS //
+-#endif // RT2860 //
+ 
+ 
+ 
+--- a/drivers/staging/rt2860/rt_config.h
++++ b/drivers/staging/rt2860/rt_config.h
+@@ -53,9 +53,7 @@
+ #include    "rtmp_def.h"
+ #include    "rt28xx.h"
+ 
+-#ifdef RT2860
+ #include	"rt2860.h"
+-#endif // RT2860 //
+ 
+ 
+ #include    "oid.h"
+--- a/drivers/staging/rt2860/rt_linux.c
++++ b/drivers/staging/rt2860/rt_linux.c
+@@ -48,10 +48,8 @@ BUILD_TIMER_FUNCTION(LeapAuthTimeout);
+ #endif
+ BUILD_TIMER_FUNCTION(StaQuickResponeForRateUpExec);
+ BUILD_TIMER_FUNCTION(WpaDisassocApAndBlockAssoc);
+-#ifdef RT2860
+ BUILD_TIMER_FUNCTION(PsPollWakeExec);
+ BUILD_TIMER_FUNCTION(RadioOnExec);
+-#endif // RT2860 //
+ #ifdef QOS_DLS_SUPPORT
+ BUILD_TIMER_FUNCTION(DlsTimeoutAction);
+ #endif // QOS_DLS_SUPPORT //
+@@ -293,9 +291,7 @@ VOID	RTMPFreeAdapter(
+ 
+ 	NdisFreeSpinLock(&pAd->MgmtRingLock);
+ 
+-#ifdef RT2860
+ 	NdisFreeSpinLock(&pAd->RxRingLock);
+-#endif // RT2860 //
+ 
+ 	for (index =0 ; index < NUM_OF_TX_RING; index++)
+ 	{
+@@ -406,7 +402,7 @@ NDIS_STATUS RTMPAllocateNdisPacket(
+  	skb_put(GET_OS_PKT_TYPE(pPacket), HeaderLen+DataLen);
+ 
+ 	RTMP_SET_PACKET_SOURCE(pPacket, PKTSRC_NDIS);
+-//	printk("%s : pPacket = %p, len = %d\n", __FUNCTION__, pPacket, GET_OS_PKT_LEN(pPacket));
++//	printk("%s : pPacket = %p, len = %d\n", __func__, pPacket, GET_OS_PKT_LEN(pPacket));
+ 	*ppPacket = pPacket;
+ 	return NDIS_STATUS_SUCCESS;
+ }
+@@ -773,13 +769,13 @@ VOID RTMPSendWirelessEvent(
+ 
+ 	if (event_table_len == 0)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s : The type(%0x02x) is not valid.\n", __FUNCTION__, type));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s : The type(%0x02x) is not valid.\n", __func__, type));
+ 		return;
+ 	}
+ 
+ 	if (event >= event_table_len)
+ 	{
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s : The event(%0x02x) is not valid.\n", __FUNCTION__, event));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s : The event(%0x02x) is not valid.\n", __func__, event));
+ 		return;
+ 	}
+ 
+@@ -817,14 +813,14 @@ VOID RTMPSendWirelessEvent(
+ 		//send wireless event
+ 	    wireless_send_event(pAd->net_dev, IWEVCUSTOM, &wrqu, pBuf);
+ 
+-		//DBGPRINT(RT_DEBUG_TRACE, ("%s : %s\n", __FUNCTION__, pBuf));
++		//DBGPRINT(RT_DEBUG_TRACE, ("%s : %s\n", __func__, pBuf));
+ 
+ 		kfree(pBuf);
+ 	}
+ 	else
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s : Can't allocate memory for wireless event.\n", __FUNCTION__));
++		DBGPRINT(RT_DEBUG_ERROR, ("%s : Can't allocate memory for wireless event.\n", __func__));
+ #else
+-	DBGPRINT(RT_DEBUG_ERROR, ("%s : The Wireless Extension MUST be v15 or newer.\n", __FUNCTION__));
++	DBGPRINT(RT_DEBUG_ERROR, ("%s : The Wireless Extension MUST be v15 or newer.\n", __func__));
+ #endif  /* WIRELESS_EXT >= 15 */
+ }
+ 
+@@ -848,13 +844,13 @@ void send_monitor_packets(
+     ASSERT(pRxBlk->pRxPacket);
+     if (pRxBlk->DataSize < 10)
+     {
+-        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too small! (%d)\n", __FUNCTION__, pRxBlk->DataSize));
++        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too small! (%d)\n", __func__, pRxBlk->DataSize));
+ 		goto err_free_sk_buff;
+     }
+ 
+     if (pRxBlk->DataSize + sizeof(wlan_ng_prism2_header) > RX_BUFFER_AGGRESIZE)
+     {
+-        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too large! (%d)\n", __FUNCTION__, pRxBlk->DataSize + sizeof(wlan_ng_prism2_header)));
++        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too large! (%zu)\n", __func__, pRxBlk->DataSize + sizeof(wlan_ng_prism2_header)));
+ 		goto err_free_sk_buff;
+     }
+ 
+@@ -910,7 +906,7 @@ void send_monitor_packets(
+ 
+     if (skb_headroom(pOSPkt) < (sizeof(wlan_ng_prism2_header)+ header_len)) {
+         if (pskb_expand_head(pOSPkt, (sizeof(wlan_ng_prism2_header) + header_len), 0, GFP_ATOMIC)) {
+-	        DBGPRINT(RT_DEBUG_ERROR, ("%s : Reallocate header size of sk_buff fail!\n", __FUNCTION__));
++	        DBGPRINT(RT_DEBUG_ERROR, ("%s : Reallocate header size of sk_buff fail!\n", __func__));
+ 			goto err_free_sk_buff;
+ 	    } //end if
+     } //end if
+@@ -1005,35 +1001,14 @@ err_free_sk_buff:
+ 
+ void rtmp_os_thread_init(PUCHAR pThreadName, PVOID pNotify)
+ {
+-
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ 	daemonize(pThreadName /*"%s",pAd->net_dev->name*/);
+ 
+ 	allow_signal(SIGTERM);
+ 	allow_signal(SIGKILL);
+ 	current->flags |= PF_NOFREEZE;
+-#else
+-	unsigned long flags;
+-
+-	daemonize();
+-	reparent_to_init();
+-	strcpy(current->comm, pThreadName);
+-
+-	siginitsetinv(&current->blocked, sigmask(SIGTERM) | sigmask(SIGKILL));
+-
+-	/* Allow interception of SIGKILL only
+-	 * Don't allow other signals to interrupt the transmission */
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,4,22)
+-	spin_lock_irqsave(&current->sigmask_lock, flags);
+-	flush_signals(current);
+-	recalc_sigpending(current);
+-	spin_unlock_irqrestore(&current->sigmask_lock, flags);
+-#endif
+-#endif
+ 
+-    /* signal that we've started the thread */
++	/* signal that we've started the thread */
+ 	complete(pNotify);
+-
+ }
+ 
+ void RTMP_IndicateMediaState(
+--- a/drivers/staging/rt2860/rt_linux.h
++++ b/drivers/staging/rt2860/rt_linux.h
+@@ -65,7 +65,6 @@
+ #include <linux/vmalloc.h>
+ 
+ 
+-#include <linux/wireless.h>
+ #include <net/iw_handler.h>
+ 
+ // load firmware
+@@ -90,28 +89,22 @@ typedef int (*HARD_START_XMIT_FUNC)(stru
+ // add by kathy
+ 
+ #ifdef CONFIG_STA_SUPPORT
+-#ifdef RT2860
+ #define STA_PROFILE_PATH			"/etc/Wireless/RT2860STA/RT2860STA.dat"
+ #define STA_RTMP_FIRMWARE_FILE_NAME "/etc/Wireless/RT2860STA/RT2860STA.bin"
+ #define STA_NIC_DEVICE_NAME			"RT2860STA"
+-#define STA_DRIVER_VERSION			"1.8.0.0"
++#define STA_DRIVER_VERSION			"1.8.1.1"
+ #ifdef MULTIPLE_CARD_SUPPORT
+ #define CARD_INFO_PATH			"/etc/Wireless/RT2860STA/RT2860STACard.dat"
+ #endif // MULTIPLE_CARD_SUPPORT //
+-#endif // RT2860 //
+ 
+ 
+ #endif // CONFIG_STA_SUPPORT //
+ 
+-#ifdef RT2860
+ #ifndef PCI_DEVICE
+ #define PCI_DEVICE(vend,dev) \
+ 	.vendor = (vend), .device = (dev), \
+ 	.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+ #endif // PCI_DEVICE //
+-#endif // RT2860 //
+-
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ 
+ #define RTMP_TIME_AFTER(a,b)		\
+ 	(typecheck(unsigned long, (unsigned long)a) && \
+@@ -123,23 +116,15 @@ typedef int (*HARD_START_XMIT_FUNC)(stru
+ 	 typecheck(unsigned long, (unsigned long)b) && \
+ 	 ((long)(a) - (long)(b) >= 0))
+ #define RTMP_TIME_BEFORE(a,b)	RTMP_TIME_AFTER_EQ(b,a)
+-#else
+-#define RTMP_TIME_AFTER(a,b) time_after(a, b)
+-#endif
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+ #define RT_MOD_INC_USE_COUNT() \
+ 	if (!try_module_get(THIS_MODULE)) \
+ 	{ \
+-		DBGPRINT(RT_DEBUG_ERROR, ("%s: cannot reserve module\n", __FUNCTION__)); \
++		DBGPRINT(RT_DEBUG_ERROR, ("%s: cannot reserve module\n", __func__)); \
+ 		return -1; \
+ 	}
+ 
+ #define RT_MOD_DEC_USE_COUNT() module_put(THIS_MODULE);
+-#else
+-#define RT_MOD_INC_USE_COUNT()	MOD_INC_USE_COUNT;
+-#define RT_MOD_DEC_USE_COUNT() MOD_DEC_USE_COUNT;
+-#endif
+ 
+ #define OS_HZ			HZ
+ 
+@@ -171,21 +156,12 @@ typedef int (*HARD_START_XMIT_FUNC)(stru
+ #define NDIS_PACKET_TYPE_ALL_MULTICAST	3
+ #endif // CONFIG_STA_SUPPORT //
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)
+ typedef	struct pid *	THREAD_PID;
+ #define	THREAD_PID_INIT_VALUE	NULL
+ #define	GET_PID(_v)	find_get_pid(_v)
+ #define	GET_PID_NUMBER(_v)	pid_nr(_v)
+ #define CHECK_PID_LEGALITY(_pid)	if (pid_nr(_pid) >= 0)
+ #define KILL_THREAD_PID(_A, _B, _C)	kill_pid(_A, _B, _C)
+-#else
+-typedef	pid_t	THREAD_PID;
+-#define	THREAD_PID_INIT_VALUE	-1
+-#define	GET_PID(_v)	_v
+-#define	GET_PID_NUMBER(_v)	_v
+-#define CHECK_PID_LEGALITY(_pid)	if (_pid >= 0)
+-#define KILL_THREAD_PID(_A, _B, _C)	kill_proc(_A, _B, _C)
+-#endif
+ 
+ struct os_lock  {
+ 	spinlock_t		lock;
+@@ -194,11 +170,9 @@ struct os_lock  {
+ 
+ 
+ struct os_cookie {
+-#ifdef RT2860
+ 	struct pci_dev 			*pci_dev;
+ 	struct pci_dev 			*parent_pci_dev;
+ 	dma_addr_t		  		pAd_pa;
+-#endif // RT2860 //
+ 
+ 
+ 	struct tasklet_struct 	rx_done_task;
+@@ -209,9 +183,7 @@ struct os_cookie {
+ 	struct tasklet_struct 	ac3_dma_done_task;
+ 	struct tasklet_struct 	hcca_dma_done_task;
+ 	struct tasklet_struct	tbtt_task;
+-#ifdef RT2860
+ 	struct tasklet_struct	fifo_statistic_full_task;
+-#endif // RT2860 //
+ 
+ 
+ 	unsigned long			apd_pid; //802.1x daemon pid
+@@ -266,7 +238,6 @@ void linux_pci_unmap_single(void *handle
+ 
+ #define RT2860_PCI_DEVICE_ID		0x0601
+ 
+-#ifdef RT2860
+ #define PCI_MAP_SINGLE(_handle, _ptr, _size, _sd_idx, _dir) \
+ 	linux_pci_map_single(_handle, _ptr, _size, _sd_idx, _dir)
+ 
+@@ -281,7 +252,6 @@ void linux_pci_unmap_single(void *handle
+ 
+ #define DEV_ALLOC_SKB(_length) \
+ 	dev_alloc_skb(_length)
+-#endif // RT2860 //
+ 
+ 
+ 
+@@ -401,7 +371,6 @@ extern ULONG    RTDebugLevel;
+ 	spin_unlock_irqrestore((spinlock_t *)(__lock), ((unsigned long)__irqflag));	\
+ }
+ 
+-#ifdef RT2860
+ #if defined(INF_TWINPASS) || defined(INF_DANUBE) || defined(IKANOS_VX_1X0)
+ //Patch for ASIC turst read/write bug, needs to remove after metel fix
+ #define RTMP_IO_READ32(_A, _R, _pV)									\
+@@ -413,6 +382,12 @@ extern ULONG    RTDebugLevel;
+ 	(*_pV = SWAP32(*((UINT32 *)(_pV))));                           \
+     }                                                                   \
+ }
++#define RTMP_IO_FORCE_READ32(_A, _R, _pV)							\
++{																	\
++	(*_pV = readl((void *)((_A)->CSRBaseAddress + MAC_CSR0)));		\
++	(*_pV = readl((void *)((_A)->CSRBaseAddress + (_R))));			\
++	(*_pV = SWAP32(*((UINT32 *)(_pV))));                           \
++}
+ #define RTMP_IO_READ8(_A, _R, _pV)									\
+ {																	\
+ 	(*_pV = readl((void *)((_A)->CSRBaseAddress + MAC_CSR0)));		\
+@@ -452,6 +427,11 @@ extern ULONG    RTDebugLevel;
+     else															\
+ 		*_pV = 0;													\
+ }
++#define RTMP_IO_FORCE_READ32(_A, _R, _pV)							\
++{																	\
++	(*_pV = readl((void *)((_A)->CSRBaseAddress + MAC_CSR0)));		\
++	(*_pV = readl((void *)((_A)->CSRBaseAddress + (_R))));			\
++}
+ #define RTMP_IO_READ8(_A, _R, _pV)								\
+ {																\
+ 	(*_pV = readl((void *)((_A)->CSRBaseAddress + MAC_CSR0)));			\
+@@ -492,7 +472,6 @@ extern ULONG    RTDebugLevel;
+ 	writew((_V), (PUSHORT)((_A)->CSRBaseAddress + (_R)));	\
+ }
+ #endif
+-#endif // RT2860 //
+ 
+ 
+ #ifndef wait_event_interruptible_timeout
+@@ -544,7 +523,6 @@ typedef void (*TIMER_FUNCTION)(unsigned
+ #define MlmeAllocateMemory(_pAd, _ppVA) os_alloc_mem(_pAd, _ppVA, MGMT_DMA_BUFFER_SIZE)
+ #define MlmeFreeMemory(_pAd, _pVA)     os_free_mem(_pAd, _pVA)
+ 
+-#ifdef RT2860
+ #define BUILD_TIMER_FUNCTION(_func)												\
+ void linux_##_func(unsigned long data)											\
+ {																				\
+@@ -554,7 +532,6 @@ void linux_##_func(unsigned long data)
+ 	if (pTimer->Repeat)															\
+ 		RTMP_OS_Add_Timer(&pTimer->TimerObj, pTimer->TimerValue);				\
+ }
+-#endif // RT2860 //
+ 
+ 
+ 
+@@ -907,7 +884,6 @@ int rt28xx_packet_xmit(struct sk_buff *s
+ 
+ void rtmp_os_thread_init(PUCHAR pThreadName, PVOID pNotify);
+ 
+-#ifdef RT2860
+ #if !defined(PCI_CAP_ID_EXP)
+ #define PCI_CAP_ID_EXP			    0x10
+ #endif
+@@ -921,6 +897,5 @@ void rtmp_os_thread_init(PUCHAR pThreadN
+ #endif
+ 
+ #define PCIBUS_INTEL_VENDOR         0x8086
+-#endif // RT2860 //
+ 
+ 
+--- a/drivers/staging/rt2860/rt_main_dev.c
++++ b/drivers/staging/rt2860/rt_main_dev.c
+@@ -58,11 +58,7 @@ UINT32 CW_MAX_IN_BITS;
+ 
+ char *mac = "";		   // default 00:00:00:00:00:00
+ char *hostname = "";		   // default CMPC
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,12)
+-MODULE_PARM (mac, "s");
+-#else
+ module_param (mac, charp, 0);
+-#endif
+ MODULE_PARM_DESC (mac, "rt28xx: wireless mac addr");
+ 
+ 
+@@ -75,9 +71,7 @@ extern void ba_reordering_resource_relea
+ #endif // DOT11_N_SUPPORT //
+ extern NDIS_STATUS NICLoadRateSwitchingParams(IN PRTMP_ADAPTER pAd);
+ 
+-#ifdef RT2860
+ extern void init_thread_task(PRTMP_ADAPTER pAd);
+-#endif // RT2860 //
+ 
+ // public function prototype
+ INT __devinit rt28xx_probe(IN void *_dev_p, IN void *_dev_id_p,
+@@ -87,13 +81,6 @@ INT __devinit rt28xx_probe(IN void *_dev
+ static int rt28xx_init(IN struct net_device *net_dev);
+ INT rt28xx_send_packets(IN struct sk_buff *skb_p, IN struct net_device *net_dev);
+ 
+-#if LINUX_VERSION_CODE <= 0x20402	// Red Hat 7.1
+-struct net_device *alloc_netdev(
+-	int sizeof_priv,
+-	const char *mask,
+-	void (*setup)(struct net_device *));
+-#endif // LINUX_VERSION_CODE //
+-
+ static void CfgInitHook(PRTMP_ADAPTER pAd);
+ 
+ #ifdef CONFIG_STA_SUPPORT
+@@ -135,7 +122,7 @@ Note:
+ */
+ int MainVirtualIF_close(IN struct net_device *net_dev)
+ {
+-    RTMP_ADAPTER *pAd = net_dev->priv;
++    RTMP_ADAPTER *pAd = net_dev->ml_priv;
+ 
+ 	// Sanity check for pAd
+ 	if (pAd == NULL)
+@@ -174,7 +161,7 @@ Note:
+ */
+ int MainVirtualIF_open(IN struct net_device *net_dev)
+ {
+-    RTMP_ADAPTER *pAd = net_dev->priv;
++    RTMP_ADAPTER *pAd = net_dev->ml_priv;
+ 
+ 	// Sanity check for pAd
+ 	if (pAd == NULL)
+@@ -216,7 +203,7 @@ Note:
+ int rt28xx_close(IN PNET_DEV dev)
+ {
+ 	struct net_device * net_dev = (struct net_device *)dev;
+-    RTMP_ADAPTER	*pAd = net_dev->priv;
++    RTMP_ADAPTER	*pAd = net_dev->ml_priv;
+ 	BOOLEAN 		Cancelled = FALSE;
+ 	UINT32			i = 0;
+ 
+@@ -235,15 +222,13 @@ int rt28xx_close(IN PNET_DEV dev)
+ #ifdef CONFIG_STA_SUPPORT
+ 	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+ 	{
+-#ifdef RT2860
+-		RTMPPCIeLinkCtrlValueRestore(pAd, RESTORE_CLOSE);
+-#endif // RT2860 //
+-
+ 		// If dirver doesn't wake up firmware here,
+ 		// NICLoadFirmware will hang forever when interface is up again.
+-		if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
++		if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE) ||
++			RTMP_SET_PSFLAG(pAd, fRTMP_PS_SET_PCI_CLK_OFF_COMMAND) ||
++			RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_IDLE_RADIO_OFF))
+         {
+-		    AsicForceWakeup(pAd, TRUE);
++		    AsicForceWakeup(pAd, RTMP_HALT);
+         }
+ 
+ #ifdef QOS_DLS_SUPPORT
+@@ -323,9 +308,7 @@ int rt28xx_close(IN PNET_DEV dev)
+ #endif // WPA_SUPPLICANT_SUPPORT //
+ 
+ 		MlmeRadioOff(pAd);
+-#ifdef RT2860
+ 		pAd->bPCIclkOff = FALSE;
+-#endif // RT2860 //
+ 	}
+ #endif // CONFIG_STA_SUPPORT //
+ 
+@@ -359,7 +342,6 @@ int rt28xx_close(IN PNET_DEV dev)
+ 	TpcReqTabExit(pAd);
+ 
+ 
+-#ifdef RT2860
+ 	if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_ACTIVE))
+ 	{
+ 		NICDisableInterrupt(pAd);
+@@ -375,7 +357,6 @@ int rt28xx_close(IN PNET_DEV dev)
+ 		RT28XX_IRQ_RELEASE(net_dev)
+ 		RTMP_CLEAR_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_IN_USE);
+ 	}
+-#endif // RT2860 //
+ 
+ 
+ 	// Free Ring or USB buffers
+@@ -396,7 +377,7 @@ int rt28xx_close(IN PNET_DEV dev)
+ 
+ static int rt28xx_init(IN struct net_device *net_dev)
+ {
+-	PRTMP_ADAPTER 			pAd = (PRTMP_ADAPTER)net_dev->priv;
++	PRTMP_ADAPTER 			pAd = (PRTMP_ADAPTER)net_dev->ml_priv;
+ 	UINT					index;
+ 	UCHAR					TmpPhy;
+ 	NDIS_STATUS				Status;
+@@ -439,12 +420,10 @@ static int rt28xx_init(IN struct net_dev
+ 
+ 	// Disable interrupts here which is as soon as possible
+ 	// This statement should never be true. We might consider to remove it later
+-#ifdef RT2860
+ 	if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_ACTIVE))
+ 	{
+ 		NICDisableInterrupt(pAd);
+ 	}
+-#endif // RT2860 //
+ 
+ 	Status = RTMPAllocTxRxRingMemory(pAd);
+ 	if (Status != NDIS_STATUS_SUCCESS)
+@@ -605,8 +584,8 @@ err1:
+ #endif // DOT11_N_SUPPORT //
+ 	RT28XX_IRQ_RELEASE(net_dev);
+ 
+-	// shall not set priv to NULL here because the priv didn't been free yet.
+-	//net_dev->priv = 0;
++	// shall not set ml_priv to NULL here because the ml_priv didn't been free yet.
++	//net_dev->ml_priv = 0;
+ #ifdef INF_AMAZON_SE
+ err0:
+ #endif // INF_AMAZON_SE //
+@@ -633,7 +612,7 @@ Note:
+ int rt28xx_open(IN PNET_DEV dev)
+ {
+ 	struct net_device * net_dev = (struct net_device *)dev;
+-	PRTMP_ADAPTER pAd = (PRTMP_ADAPTER)net_dev->priv;
++	PRTMP_ADAPTER pAd = net_dev->ml_priv;
+ 	int retval = 0;
+  	POS_COOKIE pObj;
+ 
+@@ -642,7 +621,7 @@ int rt28xx_open(IN PNET_DEV dev)
+ 	if (pAd == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -1;
+ 	}
+ 
+@@ -667,26 +646,6 @@ int rt28xx_open(IN PNET_DEV dev)
+ #endif // WIRELESS_EXT >= 12 //
+ #endif // CONFIG_APSTA_MIXED_SUPPORT //
+ 
+-#ifdef CONFIG_STA_SUPPORT
+-#ifdef RT2860
+-	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+-	{
+-    	// If dirver doesn't wake up firmware here,
+-    	// NICLoadFirmware will hang forever when interface is up again.
+-    	// RT2860 PCI
+-    	if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE) &&
+-        	OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+-    	{
+-        	AUTO_WAKEUP_STRUC AutoWakeupCfg;
+-			AsicForceWakeup(pAd, TRUE);
+-        	AutoWakeupCfg.word = 0;
+-	    	RTMP_IO_WRITE32(pAd, AUTO_WAKEUP_CFG, AutoWakeupCfg.word);
+-        	OPSTATUS_CLEAR_FLAG(pAd, fOP_STATUS_DOZE);
+-    	}
+-	}
+-#endif // RT2860 //
+-#endif // CONFIG_STA_SUPPORT //
+-
+ 	// Init
+  	pObj = (POS_COOKIE)pAd->OS_Cookie;
+ 
+@@ -753,10 +712,8 @@ int rt28xx_open(IN PNET_DEV dev)
+ 	}
+ 
+ #ifdef CONFIG_STA_SUPPORT
+-#ifdef RT2860
+ 	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+         RTMPInitPCIeLinkCtrlValue(pAd);
+-#endif // RT2860 //
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ 	return (retval);
+@@ -808,9 +765,7 @@ static NDIS_STATUS rt_ieee80211_if_setup
+ 	dev->stop = MainVirtualIF_close; //rt28xx_close;
+ 	dev->priv_flags = INT_MAIN;
+ 	dev->do_ioctl = rt28xx_ioctl;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24)
+-    dev->validate_addr = NULL;
+-#endif
++	dev->validate_addr = NULL;
+ 	// find available device name
+ 	for (i = 0; i < 8; i++)
+ 	{
+@@ -821,25 +776,11 @@ static NDIS_STATUS rt_ieee80211_if_setup
+ #endif // MULTIPLE_CARD_SUPPORT //
+ 		sprintf(slot_name, "ra%d", i);
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,24)
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26)
+-        device = dev_get_by_name(dev_net(dev), slot_name);
+-#else
+-        device = dev_get_by_name(dev->nd_net, slot_name);
+-#endif
+-#else
+-		device = dev_get_by_name(slot_name);
+-#endif
+-		if (device != NULL) dev_put(device);
+-#else
+-		for (device = dev_base; device != NULL; device = device->next)
+-		{
+-			if (strncmp(device->name, slot_name, 4) == 0)
+-				break;
+-		}
+-#endif
+-		if(device == NULL)
++		device = dev_get_by_name(dev_net(dev), slot_name);
++		if (device != NULL)
++			dev_put(device);
++
++		if (device == NULL)
+ 			break;
+ 	}
+ 
+@@ -1252,47 +1193,28 @@ INT __devinit   rt28xx_probe(
+     PRTMP_ADAPTER       pAd = (PRTMP_ADAPTER) NULL;
+     INT                 status;
+ 	PVOID				handle;
+-#ifdef RT2860
+ 	struct pci_dev *dev_p = (struct pci_dev *)_dev_p;
+-#endif // RT2860 //
+ 
+ 
+ #ifdef CONFIG_STA_SUPPORT
+     DBGPRINT(RT_DEBUG_TRACE, ("STA Driver version-%s\n", STA_DRIVER_VERSION));
+ #endif // CONFIG_STA_SUPPORT //
+ 
+-#if LINUX_VERSION_CODE <= 0x20402       // Red Hat 7.1
+-    net_dev = alloc_netdev(sizeof(PRTMP_ADAPTER), "eth%d", ether_setup);
+-#else
+     net_dev = alloc_etherdev(sizeof(PRTMP_ADAPTER));
+-#endif
+     if (net_dev == NULL)
+     {
+         printk("alloc_netdev failed\n");
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,15)
+-		module_put(THIS_MODULE);
+-#endif //LINUX_VERSION_CODE < KERNEL_VERSION(2,6,15)
+-#else
+-		MOD_DEC_USE_COUNT;
+-#endif
+         goto err_out;
+     }
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
+-    SET_MODULE_OWNER(net_dev);
+-#endif
+-
+ 	netif_stop_queue(net_dev);
+ #ifdef NATIVE_WPA_SUPPLICANT_SUPPORT
+ /* for supporting Network Manager */
+ /* Set the sysfs physical device reference for the network logical device
+  * if set prior to registration will cause a symlink during initialization.
+  */
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0))
+     SET_NETDEV_DEV(net_dev, &(dev_p->dev));
+-#endif
+ #endif // NATIVE_WPA_SUPPLICANT_SUPPORT //
+ 
+ 	// Allocate RTMP_ADAPTER miniport adapter structure
+@@ -1303,7 +1225,7 @@ INT __devinit   rt28xx_probe(
+ 	if (status != NDIS_STATUS_SUCCESS)
+ 		goto err_out_free_netdev;
+ 
+-	net_dev->priv = (PVOID)pAd;
++	net_dev->ml_priv = (PVOID)pAd;
+     pAd->net_dev = net_dev; // must be before RT28XXNetDevInit()
+ 
+ 	RT28XXNetDevInit(_dev_p, net_dev, pAd);
+@@ -1313,13 +1235,8 @@ INT __devinit   rt28xx_probe(
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ 	// Post config
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+-	if (RT28XXProbePostConfig(_dev_p, pAd, argc) == FALSE)
+-		goto err_out_unmap;
+-#else
+ 	if (RT28XXProbePostConfig(_dev_p, pAd, 0) == FALSE)
+ 		goto err_out_unmap;
+-#endif // LINUX_VERSION_CODE //
+ 
+ #ifdef CONFIG_STA_SUPPORT
+ 	pAd->OpMode = OPMODE_STA;
+@@ -1362,20 +1279,12 @@ err_out_unmap:
+ 	RT28XX_UNMAP();
+ 
+ err_out_free_netdev:
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+-    free_netdev(net_dev);
+-#else
+-	kfree(net_dev);
+-#endif
++	free_netdev(net_dev);
+ 
+ err_out:
+ 	RT28XX_PUT_DEVICE(dev_p);
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+-	return (LONG)NULL;
+-#else
+-    return -ENODEV; /* probe fail */
+-#endif // LINUX_VERSION_CODE //
++	return -ENODEV; /* probe fail */
+ } /* End of rt28xx_probe */
+ 
+ 
+@@ -1399,7 +1308,7 @@ Note:
+ int rt28xx_packet_xmit(struct sk_buff *skb)
+ {
+ 	struct net_device *net_dev = skb->dev;
+-	PRTMP_ADAPTER pAd = (PRTMP_ADAPTER) net_dev->priv;
++	PRTMP_ADAPTER pAd = net_dev->ml_priv;
+ 	int status = 0;
+ 	PNDIS_PACKET pPacket = (PNDIS_PACKET) skb;
+ 
+@@ -1478,7 +1387,7 @@ INT rt28xx_send_packets(
+ 	IN struct sk_buff 		*skb_p,
+ 	IN struct net_device 	*net_dev)
+ {
+-    RTMP_ADAPTER *pAd = net_dev->priv;
++    RTMP_ADAPTER *pAd = net_dev->ml_priv;
+ 	if (!(net_dev->flags & IFF_UP))
+ 	{
+ 		RELEASE_NDIS_PACKET(pAd, (PNDIS_PACKET)skb_p, NDIS_STATUS_FAILURE);
+@@ -1495,40 +1404,6 @@ INT rt28xx_send_packets(
+ 
+ 
+ 
+-#if LINUX_VERSION_CODE <= 0x20402	// Red Hat 7.1
+-struct net_device *alloc_netdev(
+-	int sizeof_priv,
+-	const char *mask,
+-	void (*setup)(struct net_device *))
+-{
+-    struct net_device	*dev;
+-    INT					alloc_size;
+-
+-
+-    /* ensure 32-byte alignment of the private area */
+-    alloc_size = sizeof (*dev) + sizeof_priv + 31;
+-
+-    dev = (struct net_device *) kmalloc(alloc_size, GFP_KERNEL);
+-    if (dev == NULL)
+-    {
+-        DBGPRINT(RT_DEBUG_ERROR,
+-				("alloc_netdev: Unable to allocate device memory.\n"));
+-        return NULL;
+-    }
+-
+-    memset(dev, 0, alloc_size);
+-
+-    if (sizeof_priv)
+-        dev->priv = (void *) (((long)(dev + 1) + 31) & ~31);
+-
+-    setup(dev);
+-    strcpy(dev->name, mask);
+-
+-    return dev;
+-}
+-#endif // LINUX_VERSION_CODE //
+-
+-
+ void CfgInitHook(PRTMP_ADAPTER pAd)
+ {
+ 	pAd->bBroadComHT = TRUE;
+@@ -1540,7 +1415,7 @@ void CfgInitHook(PRTMP_ADAPTER pAd)
+ struct iw_statistics *rt28xx_get_wireless_stats(
+     IN struct net_device *net_dev)
+ {
+-	PRTMP_ADAPTER pAd = (PRTMP_ADAPTER) net_dev->priv;
++	PRTMP_ADAPTER pAd = net_dev->ml_priv;
+ 
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE, ("rt28xx_get_wireless_stats --->\n"));
+@@ -1592,18 +1467,18 @@ INT rt28xx_ioctl(
+ 
+ 	if (net_dev->priv_flags == INT_MAIN)
+ 	{
+-		pAd = net_dev->priv;
++		pAd = net_dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = net_dev->priv;
+-		pAd = pVirtualAd->RtmpDev->priv;
++		pVirtualAd = net_dev->ml_priv;
++		pAd = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAd == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -1640,7 +1515,7 @@ struct net_device_stats *RT28xx_get_ethe
+     RTMP_ADAPTER *pAd = NULL;
+ 
+ 	if (net_dev)
+-		pAd = net_dev->priv;
++		pAd = net_dev->ml_priv;
+ 
+ 	if (pAd)
+ 	{
+--- a/drivers/staging/rt2860/rt_profile.c
++++ b/drivers/staging/rt2860/rt_profile.c
+@@ -925,9 +925,11 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 
+ 	// Save uid and gid used for filesystem access.
+ 	// Set user and group to 0 (root)
+-	orgfsuid = current->fsuid;
+-	orgfsgid = current->fsgid;
+-	current->fsuid=current->fsgid = 0;
++	orgfsuid = current_fsuid();
++	orgfsgid = current_fsgid();
++	/* Hm, can't really do this nicely anymore, so rely on these files
++	 * being set to the proper permission to read them... */
++	/* current->cred->fsuid = current->cred->fsgid = 0; */
+     orgfs = get_fs();
+     set_fs(KERNEL_DS);
+ 
+@@ -1022,7 +1024,7 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 								pAd->MlmeAux.SsidLen = pAd->CommonCfg.SsidLen;
+ 								NdisZeroMemory(pAd->MlmeAux.Ssid, NDIS_802_11_LENGTH_SSID);
+ 								NdisMoveMemory(pAd->MlmeAux.Ssid, tmpbuf, pAd->MlmeAux.SsidLen);
+-								DBGPRINT(RT_DEBUG_TRACE, ("%s::(SSID=%s)\n", __FUNCTION__, tmpbuf));
++								DBGPRINT(RT_DEBUG_TRACE, ("%s::(SSID=%s)\n", __func__, tmpbuf));
+ 							}
+ 						}
+ 					}
+@@ -1041,7 +1043,7 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 								pAd->StaCfg.BssType = BSS_INFRA;
+ 							// Reset Ralink supplicant to not use, it will be set to start when UI set PMK key
+ 							pAd->StaCfg.WpaState = SS_NOTUSE;
+-							DBGPRINT(RT_DEBUG_TRACE, ("%s::(NetworkType=%d)\n", __FUNCTION__, pAd->StaCfg.BssType));
++							DBGPRINT(RT_DEBUG_TRACE, ("%s::(NetworkType=%d)\n", __func__, pAd->StaCfg.BssType));
+ 						}
+ 					}
+ #endif // CONFIG_STA_SUPPORT //
+@@ -1335,7 +1337,7 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 
+ 				                        pAd->StaCfg.PortSecured = WPA_802_1X_PORT_NOT_SECURED;
+ 
+-							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __FUNCTION__, pAd->StaCfg.WepStatus));
++							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __func__, pAd->StaCfg.WepStatus));
+ 						}
+ #endif // CONFIG_STA_SUPPORT //
+ 					}
+@@ -1361,7 +1363,7 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 							pAd->StaCfg.OrigWepStatus 	= pAd->StaCfg.WepStatus;
+ 							pAd->StaCfg.bMixCipher 		= FALSE;
+ 
+-							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __FUNCTION__, pAd->StaCfg.WepStatus));
++							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __func__, pAd->StaCfg.WepStatus));
+ 						}
+ #endif // CONFIG_STA_SUPPORT //
+ 					}
+@@ -1398,7 +1400,7 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 							else
+ 							{
+ 								err = 1;
+-								DBGPRINT(RT_DEBUG_ERROR, ("%s::(WPAPSK key-string required 8 ~ 64 characters!)\n", __FUNCTION__));
++								DBGPRINT(RT_DEBUG_ERROR, ("%s::(WPAPSK key-string required 8 ~ 64 characters!)\n", __func__));
+ 							}
+ 
+ 							if (err == 0)
+@@ -1414,7 +1416,7 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 									pAd->StaCfg.WpaState = SS_NOTUSE;
+ 								}
+ 
+-								DBGPRINT(RT_DEBUG_TRACE, ("%s::(WPAPSK=%s)\n", __FUNCTION__, tmpbuf));
++								DBGPRINT(RT_DEBUG_TRACE, ("%s::(WPAPSK=%s)\n", __func__, tmpbuf));
+ 							}
+ 						}
+ 					}
+@@ -1449,7 +1451,7 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 					IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
+ 					{
+ 						//PSMode
+-						if (RTMPGetKeyParameter("PSMode", tmpbuf, 10, buffer))
++						if (RTMPGetKeyParameter("PSMode", tmpbuf, 32, buffer))
+ 						{
+ 							if (pAd->StaCfg.BssType == BSS_INFRA)
+ 							{
+@@ -1551,8 +1553,11 @@ NDIS_STATUS	RTMPReadParametersHook(
+ 	}
+ 
+ 	set_fs(orgfs);
+-	current->fsuid = orgfsuid;
+-	current->fsgid = orgfsgid;
++
++#if 0
++	current->cred->fsuid = orgfsuid;
++	current->cred->fsgid = orgfsgid;
++#endif
+ 
+ 	kfree(buffer);
+ 	kfree(tmpbuf);
+--- a/drivers/staging/rt2860/rtmp.h
++++ b/drivers/staging/rt2860/rtmp.h
+@@ -203,9 +203,7 @@ typedef	struct _ATE_INFO {
+ 	BOOLEAN	bRxFer;
+ 	BOOLEAN	bQATxStart; // Have compiled QA in and use it to ATE tx.
+ 	BOOLEAN	bQARxStart;	// Have compiled QA in and use it to ATE rx.
+-#ifdef RT2860
+ 	BOOLEAN	bFWLoading;	// Reload firmware when ATE is done.
+-#endif // RT2860 //
+ 	UINT32	RxTotalCnt;
+ 	UINT32	RxCntPerSec;
+ 
+@@ -366,6 +364,13 @@ typedef struct  _QUEUE_HEADER   {
+ #define RTMP_TEST_FLAG(_M, _F)      (((_M)->Flags & (_F)) != 0)
+ #define RTMP_TEST_FLAGS(_M, _F)     (((_M)->Flags & (_F)) == (_F))
+ 
++// Macro for power save flag.
++#define RTMP_SET_PSFLAG(_M, _F)       ((_M)->PSFlags |= (_F))
++#define RTMP_CLEAR_PSFLAG(_M, _F)     ((_M)->PSFlags &= ~(_F))
++#define RTMP_CLEAR_PSFLAGS(_M)        ((_M)->PSFlags = 0)
++#define RTMP_TEST_PSFLAG(_M, _F)      (((_M)->PSFlags & (_F)) != 0)
++#define RTMP_TEST_PSFLAGS(_M, _F)     (((_M)->PSFlags & (_F)) == (_F))
++
+ #define OPSTATUS_SET_FLAG(_pAd, _F)     ((_pAd)->CommonCfg.OpStatusFlags |= (_F))
+ #define OPSTATUS_CLEAR_FLAG(_pAd, _F)   ((_pAd)->CommonCfg.OpStatusFlags &= ~(_F))
+ #define OPSTATUS_TEST_FLAG(_pAd, _F)    (((_pAd)->CommonCfg.OpStatusFlags & (_F)) != 0)
+@@ -478,7 +483,6 @@ typedef struct  _QUEUE_HEADER   {
+ //
+ #define MAX_BUSY_COUNT  100         // Number of retry before failing access BBP & RF indirect register
+ //
+-#ifdef RT2860
+ #define RTMP_RF_IO_WRITE32(_A, _V)                  \
+ {                                                   \
+     PHY_CSR4_STRUC  Value;                          \
+@@ -642,7 +646,6 @@ typedef struct  _QUEUE_HEADER   {
+     }                                                   \
+     }                                                   \
+ }
+-#endif // RT2860 //
+ 
+ 
+ #define     MAP_CHANNEL_ID_TO_KHZ(ch, khz)  {               \
+@@ -894,7 +897,6 @@ typedef struct _RTMP_SCATTER_GATHER_LIST
+ // Enqueue this frame to MLME engine
+ // We need to enqueue the whole frame because MLME need to pass data type
+ // information from 802.11 header
+-#ifdef RT2860
+ #define REPORT_MGMT_FRAME_TO_MLME(_pAd, Wcid, _pFrame, _FrameSize, _Rssi0, _Rssi1, _Rssi2, _PlcpSignal)        \
+ {                                                                                       \
+     UINT32 High32TSF, Low32TSF;                                                          \
+@@ -902,7 +904,6 @@ typedef struct _RTMP_SCATTER_GATHER_LIST
+     RTMP_IO_READ32(_pAd, TSF_TIMER_DW0, &Low32TSF);                                        \
+     MlmeEnqueueForRecv(_pAd, Wcid, High32TSF, Low32TSF, (UCHAR)_Rssi0, (UCHAR)_Rssi1,(UCHAR)_Rssi2,_FrameSize, _pFrame, (UCHAR)_PlcpSignal);   \
+ }
+-#endif // RT2860 //
+ 
+ #define NDIS_QUERY_BUFFER(_NdisBuf, _ppVA, _pBufLen)                    \
+     NdisQueryBuffer(_NdisBuf, _ppVA, _pBufLen)
+@@ -919,9 +920,10 @@ typedef struct _RTMP_SCATTER_GATHER_LIST
+ #define STA_PORT_SECURED(_pAd) \
+ { \
+ 	_pAd->StaCfg.PortSecured = WPA_802_1X_PORT_SECURED; \
+-	NdisAcquireSpinLock(&_pAd->MacTabLock); \
++	RTMP_SET_PSFLAG(_pAd, fRTMP_PS_CAN_GO_SLEEP); \
++	NdisAcquireSpinLock(&(_pAd)->MacTabLock); \
+ 	_pAd->MacTab.Content[BSSID_WCID].PortSecured = _pAd->StaCfg.PortSecured; \
+-	NdisReleaseSpinLock(&_pAd->MacTabLock); \
++	NdisReleaseSpinLock(&(_pAd)->MacTabLock); \
+ }
+ #endif // CONFIG_STA_SUPPORT //
+ 
+@@ -1000,9 +1002,7 @@ typedef struct  _RTMP_REORDERBUF
+ 	UCHAR 		DataOffset;
+ 	USHORT 		Datasize;
+ 	ULONG                   AllocSize;
+-#ifdef RT2860
+ 	NDIS_PHYSICAL_ADDRESS   AllocPa;            // TxBuf physical address
+-#endif // RT2860 //
+ }   RTMP_REORDERBUF, *PRTMP_REORDERBUF;
+ 
+ //
+@@ -1101,6 +1101,7 @@ typedef struct _COUNTER_802_11 {
+ 
+ typedef struct _COUNTER_RALINK {
+ 	ULONG           TransmittedByteCount;   // both successful and failure, used to calculate TX throughput
++	ULONG           LastReceivedByteCount;
+ 	ULONG           ReceivedByteCount;      // both CRC okay and CRC error, used to calculate RX throughput
+ 	ULONG           BeenDisassociatedCount;
+ 	ULONG           BadCQIAutoRecoveryCount;
+@@ -1436,11 +1437,9 @@ typedef struct _MLME_STRUCT {
+ 	RALINK_TIMER_STRUCT     APSDPeriodicTimer;
+ 	RALINK_TIMER_STRUCT     LinkDownTimer;
+ 	RALINK_TIMER_STRUCT     LinkUpTimer;
+-#ifdef RT2860
+     UCHAR                   bPsPollTimerRunning;
+     RALINK_TIMER_STRUCT     PsPollTimer;
+ 	RALINK_TIMER_STRUCT     RadioOnOffTimer;
+-#endif // RT2860 //
+ 	ULONG                   PeriodicRound;
+ 	ULONG                   OneSecPeriodicRound;
+ 
+@@ -2228,9 +2227,7 @@ typedef struct _STA_ADMIN_CONFIG {
+ 	RT_HT_PHY_INFO					DesiredHtPhyInfo;
+ 	BOOLEAN							bAutoTxRateSwitch;
+ 
+-#ifdef RT2860
+     UCHAR       BBPR3;
+-#endif // RT2860 //
+ 
+ #ifdef EXT_BUILD_CHANNEL_LIST
+ 	UCHAR				IEEE80211dClientMode;
+@@ -2663,7 +2660,6 @@ typedef struct _RTMP_ADAPTER
+ 	PNET_DEV				net_dev;
+ 	ULONG					VirtualIfCnt;
+ 
+-#ifdef RT2860
+     USHORT		            LnkCtrlBitMask;
+     USHORT		            RLnkCtrlConfiguration;
+     USHORT                  RLnkCtrlOffset;
+@@ -2671,7 +2667,9 @@ typedef struct _RTMP_ADAPTER
+     USHORT                  HostLnkCtrlOffset;
+ 	USHORT		            PCIePowerSaveLevel;
+    	BOOLEAN					bPCIclkOff;						// flag that indicate if the PICE power status in Configuration SPace..
+-	BOOLEAN					bPCIclkOffDisableTx;			//
++   	ULONG					CheckDmaBusyCount;  // Check Interrupt Status Register Count.
++   	USHORT					ThisTbttNumToNextWakeUp;
++	ULONG					SameRxByteCount;
+ 
+ 
+ /*****************************************************************************************/
+@@ -2688,7 +2686,6 @@ typedef struct _RTMP_ADAPTER
+ 	RTMP_DMABUF             RxDescRing;                 // Shared memory for RX descriptors
+ 	RTMP_DMABUF             TxDescRing[NUM_OF_TX_RING]; 	// Shared memory for Tx descriptors
+ 	RTMP_TX_RING            TxRing[NUM_OF_TX_RING];     	// AC0~4 + HCCA
+-#endif // RT2860 //
+ 
+ 
+ 	NDIS_SPIN_LOCK          irq_lock;
+@@ -2721,10 +2718,8 @@ typedef struct _RTMP_ADAPTER
+ /*      Rx related parameters                                                           */
+ /*****************************************************************************************/
+ 
+-#ifdef RT2860
+ 	RTMP_RX_RING            RxRing;
+ 	NDIS_SPIN_LOCK          RxRingLock;                 // Rx Ring spinlock
+-#endif // RT2860 //
+ 
+ 
+ 
+@@ -2895,6 +2890,7 @@ typedef struct _RTMP_ADAPTER
+ 
+ 	// flags, see fRTMP_ADAPTER_xxx flags
+ 	ULONG                   Flags;                      // Represent current device status
++	ULONG                   PSFlags;                    // Power Save operation flag.
+ 
+ 	// current TX sequence #
+ 	USHORT                  Sequence;
+@@ -3181,7 +3177,6 @@ typedef struct _TX_BLK_
+ //------------------------------------------------------------------------------------------
+ 
+ 
+-#ifdef RT2860
+ //
+ // Enable & Disable NIC interrupt via writing interrupt mask register
+ // Since it use ADAPTER structure, it have to be put after structure definition.
+@@ -3214,7 +3209,6 @@ __inline    VOID    NICEnableInterrupt(
+ 	//RTMP_IO_WRITE32(pAd, PBF_INT_ENA, 0x00000030); // 1 : enable
+ 	RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_ACTIVE);
+ }
+-#endif // RT2860 //
+ 
+ #ifdef RT_BIG_ENDIAN
+ static inline VOID	WriteBackToDescriptor(
+@@ -3291,7 +3285,6 @@ static inline VOID	RTMPWIEndianChange(
+ 		Call this function when read or update descriptor
+ 	========================================================================
+ */
+-#ifdef RT2860
+ static inline VOID	RTMPDescriptorEndianChange(
+ 	IN	PUCHAR			pData,
+ 	IN	ULONG			DescriptorType)
+@@ -3301,7 +3294,6 @@ static inline VOID	RTMPDescriptorEndianC
+ 	*((UINT32 *)(pData +12)) = SWAP32(*((UINT32 *)(pData + 12)));	// Byte 12~15
+ 	*((UINT32 *)(pData + 4)) = SWAP32(*((UINT32 *)(pData + 4)));				// Byte 4~7, this must be swapped last
+ }
+-#endif // RT2860 //
+ 
+ /*
+ 	========================================================================
+@@ -3550,6 +3542,9 @@ NDIS_STATUS NICInitializeAsic(
+ 	IN  PRTMP_ADAPTER   pAd,
+ 	IN  BOOLEAN		bHardReset);
+ 
++VOID NICRestoreBBPValue(
++	IN PRTMP_ADAPTER pAd);
++
+ VOID NICIssueReset(
+ 	IN  PRTMP_ADAPTER   pAd);
+ 
+@@ -4208,7 +4203,7 @@ VOID AsicForceSleep(
+ 
+ VOID AsicForceWakeup(
+ 	IN PRTMP_ADAPTER pAd,
+-	IN BOOLEAN    bFromTx);
++	IN UCHAR    	 Level);
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ VOID AsicSetBssid(
+@@ -4304,11 +4299,9 @@ BOOLEAN AsicSendCommandToMcu(
+ 	IN UCHAR         Arg0,
+ 	IN UCHAR         Arg1);
+ 
+-#ifdef RT2860
+ BOOLEAN AsicCheckCommanOk(
+ 	IN PRTMP_ADAPTER pAd,
+ 	IN UCHAR		 Command);
+-#endif // RT2860 //
+ 
+ VOID MacAddrRandomBssid(
+ 	IN  PRTMP_ADAPTER   pAd,
+@@ -6978,7 +6971,6 @@ void kill_thread_task(PRTMP_ADAPTER pAd)
+ 
+ void tbtt_tasklet(unsigned long data);
+ 
+-#ifdef RT2860
+ //
+ // Function Prototype in cmm_data_2860.c
+ //
+@@ -7069,7 +7061,7 @@ BOOLEAN RT28xxPciAsicRadioOn(
+ 
+ VOID RT28xxPciStaAsicForceWakeup(
+ 	IN PRTMP_ADAPTER pAd,
+-	IN BOOLEAN       bFromTx);
++	IN UCHAR    	 Level);
+ 
+ VOID RT28xxPciStaAsicSleepThenAutoWakeup(
+ 	IN PRTMP_ADAPTER pAd,
+@@ -7093,7 +7085,6 @@ VOID RT28xxPciMlmeRadioOn(
+ 
+ VOID RT28xxPciMlmeRadioOFF(
+ 	IN PRTMP_ADAPTER pAd);
+-#endif // RT2860 //
+ 
+ VOID AsicTurnOffRFClk(
+ 	IN PRTMP_ADAPTER    pAd,
+@@ -7132,6 +7123,18 @@ PCHAR   RTMPGetRalinkEncryModeStr(
+ #ifdef CONFIG_STA_SUPPORT
+ VOID AsicStaBbpTuning(
+ 	IN PRTMP_ADAPTER pAd);
++
++VOID AsicResetFromDMABusy(
++	IN PRTMP_ADAPTER pAd);
++
++VOID AsicResetBBP(
++	IN PRTMP_ADAPTER pAd);
++
++VOID AsicResetMAC(
++	IN PRTMP_ADAPTER pAd);
++
++VOID AsicResetPBF(
++	IN PRTMP_ADAPTER pAd);
+ #endif // CONFIG_STA_SUPPORT //
+ 
+ void RTMP_IndicateMediaState(
+--- a/drivers/staging/rt2860/rtmp_def.h
++++ b/drivers/staging/rt2860/rtmp_def.h
+@@ -111,7 +111,6 @@
+ // Entry number for each DMA descriptor ring
+ //
+ 
+-#ifdef RT2860
+ #define TX_RING_SIZE            64 //64
+ #define MGMT_RING_SIZE          128
+ #define RX_RING_SIZE            128 //64
+@@ -119,7 +118,6 @@
+ #define MAX_DMA_DONE_PROCESS    TX_RING_SIZE
+ #define MAX_TX_DONE_PROCESS     TX_RING_SIZE //8
+ #define LOCAL_TXBUF_SIZE        2
+-#endif // RT2860 //
+ 
+ 
+ #ifdef MULTIPLE_CARD_SUPPORT
+@@ -212,6 +210,19 @@
+ #define fOP_STATUS_WAKEUP_NOW               0x00008000
+ #define fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE       0x00020000
+ 
++//
++//  RTMP_ADAPTER PSFlags : related to advanced power save.
++//
++// Indicate whether driver can go to sleep mode from now. This flag is useful AFTER link up
++#define fRTMP_PS_CAN_GO_SLEEP          0x00000001
++// Indicate whether driver has issue a LinkControl command to PCIe L1
++#define fRTMP_PS_SET_PCI_CLK_OFF_COMMAND          0x00000002
++// Indicate driver should disable kick off hardware to send packets from now.
++#define fRTMP_PS_DISABLE_TX         0x00000004
++// Indicate driver should IMMEDIATELY fo to sleep after receiving AP's beacon in which  doesn't indicate unicate nor multicast packets for me
++//. This flag is used ONLY in RTMPHandleRxDoneInterrupt routine.
++#define fRTMP_PS_GO_TO_SLEEP_NOW         0x00000008
++
+ #ifdef DOT11N_DRAFT3
+ #define fOP_STATUS_SCAN_2040               	    0x00040000
+ #endif // DOT11N_DRAFT3 //
+@@ -333,7 +344,7 @@
+ /* sanity check for apidx */
+ #define MBSS_MR_APIDX_SANITY_CHECK(apidx) \
+     { if (apidx > MAX_MBSSID_NUM) { \
+-          printk("%s> Error! apidx = %d > MAX_MBSSID_NUM!\n", __FUNCTION__, apidx); \
++          printk("%s> Error! apidx = %d > MAX_MBSSID_NUM!\n", __func__, apidx); \
+ 	  apidx = MAIN_MBSSID; } }
+ 
+ #define VALID_WCID(_wcid)	((_wcid) > 0 && (_wcid) < MAX_LEN_OF_MAC_TABLE )
+@@ -1514,12 +1525,14 @@
+ #define MCAST_HTMIX		3
+ #endif // MCAST_RATE_SPECIFIC //
+ 
+-// For AsicRadioOff/AsicRadioOn function
+-#define DOT11POWERSAVE		0
+-#define GUIRADIO_OFF		1
+-#define RTMP_HALT		    2
+-#define GUI_IDLE_POWER_SAVE		3
+-// --
++// For AsicRadioOff/AsicRadioOn/AsicForceWakeup function
++// This is to indicate from where to call this function.
++#define DOT11POWERSAVE		0	// TO do .11 power save sleep
++#define GUIRADIO_OFF		1	// To perform Radio OFf command from GUI
++#define RTMP_HALT			2	// Called from Halt handler.
++#define GUI_IDLE_POWER_SAVE	3	// Call to sleep before link up with AP
++#define FROM_TX				4	// Force wake up from Tx packet.
++
+ 
+ 
+ // definition for WpaSupport flag
+--- a/drivers/staging/rt2860/sta/assoc.c
++++ b/drivers/staging/rt2860/sta/assoc.c
+@@ -473,12 +473,7 @@ VOID MlmeAssocReqAction(
+ 				RSNIe = IE_WPA2;
+ 			}
+ 
+-#ifdef NATIVE_WPA_SUPPLICANT_SUPPORT
+-#ifdef SIOCSIWGENIE
+-			if (pAd->StaCfg.WpaSupplicantUP != 1)
+-#endif // SIOCSIWGENIE //
+-#endif // NATIVE_WPA_SUPPLICANT_SUPPORT //
+-            	RTMPMakeRSNIE(pAd, pAd->StaCfg.AuthMode, pAd->StaCfg.WepStatus, BSS0);
++            RTMPMakeRSNIE(pAd, pAd->StaCfg.AuthMode, pAd->StaCfg.WepStatus, BSS0);
+ 
+             // Check for WPA PMK cache list
+ 			if (pAd->StaCfg.AuthMode == Ndis802_11AuthModeWPA2)
+@@ -504,17 +499,6 @@ VOID MlmeAssocReqAction(
+ 				}
+ 			}
+ 
+-#ifdef NATIVE_WPA_SUPPLICANT_SUPPORT
+-#ifdef SIOCSIWGENIE
+-			if (pAd->StaCfg.WpaSupplicantUP == 1)
+-			{
+-				MakeOutgoingFrame(pOutBuffer + FrameLen,    		&tmp,
+-		                        	pAd->StaCfg.RSNIE_Len,			pAd->StaCfg.RSN_IE,
+-		                        	END_OF_ARGS);
+-			}
+-			else
+-#endif
+-#endif // NATIVE_WPA_SUPPLICANT_SUPPORT //
+ 			{
+ 				MakeOutgoingFrame(pOutBuffer + FrameLen,    		&tmp,
+ 				              		1,                              &RSNIe,
+@@ -525,11 +509,6 @@ VOID MlmeAssocReqAction(
+ 
+ 			FrameLen += tmp;
+ 
+-#ifdef NATIVE_WPA_SUPPLICANT_SUPPORT
+-#ifdef SIOCSIWGENIE
+-			if (pAd->StaCfg.WpaSupplicantUP != 1)
+-#endif
+-#endif // NATIVE_WPA_SUPPLICANT_SUPPORT //
+ 			{
+ 	            // Append Variable IE
+ 	            NdisMoveMemory(pAd->StaCfg.ReqVarIEs + VarIesOffset, &RSNIe, 1);
+--- a/drivers/staging/rt2860/sta/connect.c
++++ b/drivers/staging/rt2860/sta/connect.c
+@@ -337,6 +337,10 @@ VOID CntlOidSsidProc(
+ 	MLME_DISASSOC_REQ_STRUCT   DisassocReq;
+ 	ULONG					   Now;
+ 
++	// BBP and RF are not accessible in PS mode, we has to wake them up first
++	if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
++		AsicForceWakeup(pAd, RTMP_HALT);
++
+ 	// Step 1. record the desired user settings to MlmeAux
+ 	NdisZeroMemory(pAd->MlmeAux.Ssid, MAX_LEN_OF_SSID);
+ 	NdisMoveMemory(pAd->MlmeAux.Ssid, pOidSsid->Ssid, pOidSsid->SsidLength);
+@@ -1240,6 +1244,13 @@ VOID LinkUp(
+ 	UCHAR	Value = 0, idx;
+ 	MAC_TABLE_ENTRY *pEntry = NULL, *pCurrEntry;
+ 
++	if (RTMP_TEST_PSFLAG(pAd, fRTMP_PS_SET_PCI_CLK_OFF_COMMAND))
++	{
++		RTMPPCIeLinkCtrlValueRestore(pAd, RESTORE_HALT);
++		RTMPusecDelay(6000);
++		pAd->bPCIclkOff = FALSE;
++	}
++
+ 	pEntry = &pAd->MacTab.Content[BSSID_WCID];
+ 
+ 	//
+@@ -1264,7 +1275,6 @@ VOID LinkUp(
+ 	//rt2860b. Don't know why need this
+ 	SwitchBetweenWepAndCkip(pAd);
+ 
+-#ifdef RT2860
+ 	// Before power save before link up function, We will force use 1R.
+ 	// So after link up, check Rx antenna # again.
+ 	RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R3, &Value);
+@@ -1282,7 +1292,6 @@ VOID LinkUp(
+ 	}
+ 	RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, Value);
+ 	pAd->StaCfg.BBPR3 = Value;
+-#endif // RT2860 //
+ 
+ 	if (BssType == BSS_ADHOC)
+ 	{
+@@ -1330,9 +1339,7 @@ VOID LinkUp(
+ 		RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R3, &Value);
+ 		Value &= (~0x20);
+ 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, Value);
+-#ifdef RT2860
+         pAd->StaCfg.BBPR3 = Value;
+-#endif // RT2860 //
+ 
+ 		RTMP_IO_READ32(pAd, TX_BAND_CFG, &Data);
+ 		Data &= 0xfffffffe;
+@@ -1367,9 +1374,7 @@ VOID LinkUp(
+ 		RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R3, &Value);
+ 	    Value |= (0x20);
+ 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, Value);
+-#ifdef RT2860
+         pAd->StaCfg.BBPR3 = Value;
+-#endif // RT2860 //
+ 
+ 		if (pAd->MACVersion == 0x28600100)
+ 		{
+@@ -1400,9 +1405,7 @@ VOID LinkUp(
+ 		RTMP_BBP_IO_READ8_BY_REG_ID(pAd, BBP_R3, &Value);
+ 		Value &= (~0x20);
+ 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, Value);
+-#ifdef RT2860
+         pAd->StaCfg.BBPR3 = Value;
+-#endif // RT2860 //
+ 
+ 		if (pAd->MACVersion == 0x28600100)
+ 		{
+@@ -1598,6 +1601,8 @@ VOID LinkUp(
+ 			IV = 0;
+ 			IV |= (pAd->StaCfg.DefaultKeyId << 30);
+ 			AsicUpdateWCIDIVEIV(pAd, BSSID_WCID, IV, 0);
++
++			RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
+ 		}
+ 		// NOTE:
+ 		// the decision of using "short slot time" or not may change dynamically due to
+@@ -1919,6 +1924,7 @@ VOID LinkUp(
+ 	}
+ 
+ 	RTMP_CLEAR_FLAG(pAd, fRTMP_ADAPTER_BSS_SCAN_IN_PROGRESS);
++	RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_GO_TO_SLEEP_NOW);
+ 
+ #ifdef DOT11_N_SUPPORT
+ #ifdef DOT11N_DRAFT3
+@@ -1961,6 +1967,7 @@ VOID LinkDown(
+ 	IN  BOOLEAN      IsReqFromAP)
+ {
+ 	UCHAR			    i, ByteValue = 0;
++	BOOLEAN		Cancelled;
+ 
+ 	// Do nothing if monitor mode is on
+ 	if (MONITOR_ON(pAd))
+@@ -1972,6 +1979,12 @@ VOID LinkDown(
+ 		return;
+ #endif // RALINK_ATE //
+ 
++	RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_GO_TO_SLEEP_NOW);
++	RTMPCancelTimer(&pAd->Mlme.PsPollTimer,		&Cancelled);
++
++	// Not allow go to sleep within linkdown function.
++	RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
++
+     if (pAd->CommonCfg.bWirelessEvent)
+ 	{
+ 		RTMPSendWirelessEvent(pAd, IW_STA_LINKDOWN_EVENT_FLAG, pAd->MacTab.Content[BSSID_WCID].Addr, BSS0, 0);
+@@ -1980,7 +1993,6 @@ VOID LinkDown(
+ 	DBGPRINT(RT_DEBUG_TRACE, ("!!! LINK DOWN !!!\n"));
+ 	OPSTATUS_CLEAR_FLAG(pAd, fOP_STATUS_AGGREGATION_INUSED);
+ 
+-#ifdef RT2860
+     if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+     {
+ 	    BOOLEAN Cancelled;
+@@ -1988,17 +2000,15 @@ VOID LinkDown(
+         RTMPCancelTimer(&pAd->Mlme.PsPollTimer,	&Cancelled);
+     }
+ 
+-    if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
++    if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE) ||
++		RTMP_TEST_PSFLAG(pAd, fRTMP_PS_SET_PCI_CLK_OFF_COMMAND) ||
++		RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_IDLE_RADIO_OFF))
+     {
+-        AUTO_WAKEUP_STRUC AutoWakeupCfg;
+-		AsicForceWakeup(pAd, TRUE);
+-        AutoWakeupCfg.word = 0;
+-	    RTMP_IO_WRITE32(pAd, AUTO_WAKEUP_CFG, AutoWakeupCfg.word);
++		AsicForceWakeup(pAd, RTMP_HALT);
+         OPSTATUS_CLEAR_FLAG(pAd, fOP_STATUS_DOZE);
+     }
+ 
+     pAd->bPCIclkOff = FALSE;
+-#endif // RT2860 //
+ 	if (ADHOC_ON(pAd))		// Adhoc mode link down
+ 	{
+ 		DBGPRINT(RT_DEBUG_TRACE, ("!!! LINK DOWN 1!!!\n"));
+@@ -2266,6 +2276,9 @@ VOID LinkDown(
+ 	RTMP_IO_WRITE32(pAd, MAX_LEN_CFG, 0x1fff);
+ 	RTMP_CLEAR_FLAG(pAd, fRTMP_ADAPTER_BSS_SCAN_IN_PROGRESS);
+ 
++	// Allow go to sleep after linkdown steps.
++	RTMP_SET_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
++
+ #ifdef WPA_SUPPLICANT_SUPPORT
+ #ifndef NATIVE_WPA_SUPPLICANT_SUPPORT
+ 	if (pAd->StaCfg.WpaSupplicantUP) {
+@@ -2510,7 +2523,6 @@ VOID AuthParmFill(
+ 
+ 	==========================================================================
+  */
+-#ifdef RT2860
+ VOID ComposePsPoll(
+ 	IN PRTMP_ADAPTER pAd)
+ {
+@@ -2534,7 +2546,6 @@ VOID ComposeNullFrame(
+ 	COPY_MAC_ADDR(pAd->NullFrame.Addr2, pAd->CurrentAddress);
+ 	COPY_MAC_ADDR(pAd->NullFrame.Addr3, pAd->CommonCfg.Bssid);
+ }
+-#endif // RT2860 //
+ 
+ 
+ 
+--- a/drivers/staging/rt2860/sta/dls.c
++++ b/drivers/staging/rt2860/sta/dls.c
+@@ -1419,7 +1419,6 @@ BOOLEAN RTMPRcvFrameDLSCheck(
+ 				//AsicAddKeyEntry(pAd, (USHORT)(i + 2), BSS0, 0, &PairwiseKey, TRUE, TRUE);	// reserve 0 for multicast, 1 for unicast
+ 				//AsicUpdateRxWCIDTable(pAd, (USHORT)(i + 2), pAddr);
+ 				// Add Pair-wise key to Asic
+-#ifdef RT2860
+             	AsicAddPairwiseKeyEntry(pAd,
+ 										pAd->StaCfg.DLSEntry[i].MacAddr,
+ 										(UCHAR)pAd->StaCfg.DLSEntry[i].MacTabMatchWCID,
+@@ -1431,7 +1430,6 @@ BOOLEAN RTMPRcvFrameDLSCheck(
+ 										  PairwiseKey.CipherAlg,
+ 										  pEntry);
+ 
+-#endif // RT2860 //
+ 				NdisMoveMemory(&pEntry->PairwiseKey, &PairwiseKey, sizeof(CIPHER_KEY));
+ 				DBGPRINT(RT_DEBUG_TRACE,("DLS - Receive STAKey Message-1 (Peer STA MAC Address STAKey) \n"));
+ 
+@@ -1477,7 +1475,6 @@ BOOLEAN RTMPRcvFrameDLSCheck(
+ 				//AsicAddKeyEntry(pAd, (USHORT)(i + 2), BSS0, 0, &PairwiseKey, TRUE, TRUE);	// reserve 0 for multicast, 1 for unicast
+ 				//AsicUpdateRxWCIDTable(pAd, (USHORT)(i + 2), pAddr);
+ 				// Add Pair-wise key to Asic
+-#ifdef RT2860
+             	AsicAddPairwiseKeyEntry(pAd,
+ 										pAd->StaCfg.DLSEntry[i].MacAddr,
+ 										(UCHAR)pAd->StaCfg.DLSEntry[i].MacTabMatchWCID,
+@@ -1488,7 +1485,6 @@ BOOLEAN RTMPRcvFrameDLSCheck(
+ 										  0,
+ 										  PairwiseKey.CipherAlg,
+ 										  pEntry);
+-#endif // RT2860 //
+ 				NdisMoveMemory(&pEntry->PairwiseKey, &PairwiseKey, sizeof(CIPHER_KEY));
+ 				DBGPRINT(RT_DEBUG_TRACE,("DLS - Receive STAKey Message-1 (Initiator STA MAC Address STAKey)\n"));
+ 
+--- a/drivers/staging/rt2860/sta/rtmp_data.c
++++ b/drivers/staging/rt2860/sta/rtmp_data.c
+@@ -75,7 +75,6 @@ VOID STARxEAPOLFrameIndicate(
+ 
+                     if (pAd->StaCfg.DesireSharedKey[idx].KeyLen > 0)
+     				{
+-#ifdef RT2860
+ 						MAC_TABLE_ENTRY *pEntry = &pAd->MacTab.Content[BSSID_WCID];
+ 
+ 						// Set key material and cipherAlg to Asic
+@@ -89,7 +88,6 @@ VOID STARxEAPOLFrameIndicate(
+ 
+                         pAd->IndicateMediaState = NdisMediaStateConnected;
+                         pAd->ExtraInfo = GENERAL_LINK_UP;
+-#endif // RT2860 //
+ 						// For Preventing ShardKey Table is cleared by remove key procedure.
+     					pAd->SharedKey[BSS0][idx].CipherAlg = CipherAlg;
+ 						pAd->SharedKey[BSS0][idx].KeyLen = pAd->StaCfg.DesireSharedKey[idx].KeyLen;
+@@ -693,14 +691,12 @@ BOOLEAN STARxDoneInterruptHandle(
+ 			break;
+ 		}
+ 
+-#ifdef RT2860
+ 		if (RxProcessed++ > MAX_RX_PROCESS_CNT)
+ 		{
+ 			// need to reschedule rx handle
+ 			bReschedule = TRUE;
+ 			break;
+ 		}
+-#endif // RT2860 //
+ 
+ 		RxProcessed ++; // test
+ 
+@@ -811,6 +807,13 @@ BOOLEAN STARxDoneInterruptHandle(
+ 		}
+ 	}
+ 
++	// fRTMP_PS_GO_TO_SLEEP_NOW is set if receiving beacon.
++	if (RTMP_TEST_PSFLAG(pAd, fRTMP_PS_GO_TO_SLEEP_NOW) && (INFRA_ON(pAd)))
++	{
++		RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_GO_TO_SLEEP_NOW);
++		AsicSleepThenAutoWakeup(pAd, pAd->ThisTbttNumToNextWakeUp);
++		bReschedule = FALSE;
++	}
+ 	return bReschedule;
+ }
+ 
+@@ -828,7 +831,7 @@ BOOLEAN STARxDoneInterruptHandle(
+ VOID	RTMPHandleTwakeupInterrupt(
+ 	IN PRTMP_ADAPTER pAd)
+ {
+-	AsicForceWakeup(pAd, FALSE);
++	AsicForceWakeup(pAd, DOT11POWERSAVE);
+ }
+ 
+ /*
+@@ -1220,7 +1223,6 @@ NDIS_STATUS STASendPacket(
+ 
+ 	========================================================================
+ */
+-#ifdef RT2860
+ NDIS_STATUS RTMPFreeTXDRequest(
+ 	IN		PRTMP_ADAPTER	pAd,
+ 	IN		UCHAR			QueIdx,
+@@ -1264,7 +1266,6 @@ NDIS_STATUS RTMPFreeTXDRequest(
+ 
+ 	return (Status);
+ }
+-#endif // RT2860 //
+ 
+ 
+ 
+@@ -1889,7 +1890,8 @@ VOID STA_AMPDU_Frame_Tx(
+ 		//
+ 		// Kick out Tx
+ 		//
+-		HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
++		if (!RTMP_TEST_PSFLAG(pAd, fRTMP_PS_DISABLE_TX))
++			HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
+ 
+ 		pAd->RalinkCounters.KickTxCount++;
+ 		pAd->RalinkCounters.OneSecTxDoneCount++;
+@@ -2019,7 +2021,8 @@ VOID STA_AMSDU_Frame_Tx(
+ 	//
+ 	// Kick out Tx
+ 	//
+-	HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
++	if (!RTMP_TEST_PSFLAG(pAd, fRTMP_PS_DISABLE_TX))
++		HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
+ }
+ #endif // DOT11_N_SUPPORT //
+ 
+@@ -2139,7 +2142,8 @@ VOID STA_Legacy_Frame_Tx(
+ 	//
+ 	// Kick out Tx
+ 	//
+-	HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
++	if (!RTMP_TEST_PSFLAG(pAd, fRTMP_PS_DISABLE_TX))
++		HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
+ }
+ 
+ 
+@@ -2249,7 +2253,8 @@ VOID STA_ARalink_Frame_Tx(
+ 	//
+ 	// Kick out Tx
+ 	//
+-	HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
++	if (!RTMP_TEST_PSFLAG(pAd, fRTMP_PS_DISABLE_TX))
++		HAL_KickOutTx(pAd, pTxBlk, pTxBlk->QueIdx);
+ 
+ }
+ 
+@@ -2526,7 +2531,7 @@ NDIS_STATUS STAHardTransmit(
+ 	if ((pAd->StaCfg.Psm == PWR_SAVE) && OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
+ 	{
+ 	    DBGPRINT_RAW(RT_DEBUG_TRACE, ("AsicForceWakeup At HardTx\n"));
+-		AsicForceWakeup(pAd, TRUE);
++		AsicForceWakeup(pAd, FROM_TX);
+ 	}
+ 
+ 	// It should not change PSM bit, when APSD turn on.
+--- a/drivers/staging/rt2860/sta/sync.c
++++ b/drivers/staging/rt2860/sta/sync.c
+@@ -228,7 +228,6 @@ VOID MlmeScanReqAction(
+ 	// Increase the scan retry counters.
+ 	pAd->StaCfg.ScanCnt++;
+ 
+-#ifdef RT2860
+     if ((OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE)) &&
+         (IDLE_ON(pAd)) &&
+ 		(pAd->StaCfg.bRadio == TRUE) &&
+@@ -236,7 +235,6 @@ VOID MlmeScanReqAction(
+ 	{
+ 		RT28xxPciAsicRadioOn(pAd, GUI_IDLE_POWER_SAVE);
+ 	}
+-#endif // RT2860 //
+ 
+ 	// first check the parameter sanity
+ 	if (MlmeScanReqSanity(pAd,
+@@ -349,7 +347,6 @@ VOID MlmeJoinReqAction(
+ 
+ 	DBGPRINT(RT_DEBUG_TRACE, ("SYNC - MlmeJoinReqAction(BSS #%ld)\n", pInfo->BssIdx));
+ 
+-#ifdef RT2860
+     if ((OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE)) &&
+         (IDLE_ON(pAd)) &&
+ 		(pAd->StaCfg.bRadio == TRUE) &&
+@@ -357,7 +354,6 @@ VOID MlmeJoinReqAction(
+ 	{
+ 		RT28xxPciAsicRadioOn(pAd, GUI_IDLE_POWER_SAVE);
+ 	}
+-#endif // RT2860 //
+ 
+ 	// reset all the timers
+ 	RTMPCancelTimer(&pAd->MlmeAux.ScanTimer, &TimerCancelled);
+@@ -1300,8 +1296,6 @@ VOID PeerBeacon(
+ 						{
+ 							if (pAd->StaCfg.Adhoc20NJoined == FALSE)
+ 							{
+-								UCHAR	ByteValue = 0;
+-
+ 								pAd->CommonCfg.CentralChannel = pAd->CommonCfg.Channel;
+ 
+ 								pAd->StaCfg.Adhoc20NJoined = TRUE;
+@@ -1534,13 +1528,10 @@ VOID PeerBeacon(
+ 				//  5. otherwise, put PHY back to sleep to save battery.
+ 				if (MessageToMe)
+ 				{
+-#ifdef RT2860
+ 					if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+ 					{
+ 						RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, pAd->StaCfg.BBPR3);
+-						// Turn clk to 80Mhz.
+ 					}
+-#endif // RT2860 //
+ 					if (pAd->CommonCfg.bAPSDCapable && pAd->CommonCfg.APEdcaParm.bAPSDCapable &&
+ 						pAd->CommonCfg.bAPSDAC_BE && pAd->CommonCfg.bAPSDAC_BK && pAd->CommonCfg.bAPSDAC_VI && pAd->CommonCfg.bAPSDAC_VO)
+ 					{
+@@ -1551,12 +1542,10 @@ VOID PeerBeacon(
+ 				}
+ 				else if (BcastFlag && (DtimCount == 0) && OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_RECEIVE_DTIM))
+ 				{
+-#ifdef RT2860
+ 					if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+ 					{
+ 						RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, pAd->StaCfg.BBPR3);
+ 					}
+-#endif // RT2860 //
+ 				}
+ 				else if ((pAd->TxSwQueue[QID_AC_BK].Number != 0)													||
+ 						(pAd->TxSwQueue[QID_AC_BE].Number != 0)														||
+@@ -1570,12 +1559,10 @@ VOID PeerBeacon(
+ 				{
+ 					// TODO: consider scheduled HCCA. might not be proper to use traditional DTIM-based power-saving scheme
+ 					// can we cheat here (i.e. just check MGMT & AC_BE) for better performance?
+-#ifdef RT2860
+ 					if (OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_ADVANCE_POWER_SAVE_PCIE_DEVICE))
+ 					{
+ 						RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R3, pAd->StaCfg.BBPR3);
+ 					}
+-#endif // RT2860 //
+ 				}
+ 				else
+ 				{
+@@ -1590,7 +1577,10 @@ VOID PeerBeacon(
+ 
+ 					if (!OPSTATUS_TEST_FLAG(pAd, fOP_STATUS_DOZE))
+ 					{
+-						AsicSleepThenAutoWakeup(pAd, TbttNumToNextWakeUp);
++						// Set a flag to go to sleep . Then after parse this RxDoneInterrupt, will go to sleep mode.
++						RTMP_SET_PSFLAG(pAd, fRTMP_PS_GO_TO_SLEEP_NOW);
++						pAd->ThisTbttNumToNextWakeUp = TbttNumToNextWakeUp;
++						//AsicSleepThenAutoWakeup(pAd, TbttNumToNextWakeUp);
+ 					}
+ 				}
+ 			}
+--- a/drivers/staging/rt2860/sta/wpa.c
++++ b/drivers/staging/rt2860/sta/wpa.c
+@@ -1384,6 +1384,10 @@ VOID	WpaGroupMsg1Action(
+ 			pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_TKIP;
+ 		else if (pAd->StaCfg.GroupCipher == Ndis802_11Encryption3Enabled)
+ 			pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_AES;
++		else if (pAd->StaCfg.GroupCipher == Ndis802_11GroupWEP40Enabled)
++			pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_WEP64;
++		else if (pAd->StaCfg.GroupCipher == Ndis802_11GroupWEP104Enabled)
++			pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_WEP128;
+ 
+     	//hex_dump("Group Key :", pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].Key, LEN_TKIP_EK);
+ 	}
+@@ -1760,7 +1764,7 @@ BOOLEAN ParseKeyData(
+ 	// Get GTK length - refer to IEEE 802.11i-2004 p.82
+ 	GTKLEN = pKDE->Len -6;
+ 
+-	if (GTKLEN < LEN_AES_KEY)
++	if (GTKLEN < MIN_LEN_OF_GTK)
+ 	{
+ 		DBGPRINT(RT_DEBUG_ERROR, ("ERROR: GTK Key length is too short (%d) \n", GTKLEN));
+         return FALSE;
+@@ -1786,6 +1790,10 @@ BOOLEAN ParseKeyData(
+ 		pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_TKIP;
+ 	else if (pAd->StaCfg.GroupCipher == Ndis802_11Encryption3Enabled)
+ 		pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_AES;
++	else if (pAd->StaCfg.GroupCipher == Ndis802_11GroupWEP40Enabled)
++		pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_WEP64;
++	else if (pAd->StaCfg.GroupCipher == Ndis802_11GroupWEP104Enabled)
++		pAd->SharedKey[BSS0][pAd->StaCfg.DefaultKeyId].CipherAlg = CIPHER_WEP128;
+ 
+ 	return TRUE;
+ 
+--- a/drivers/staging/rt2860/sta_ioctl.c
++++ b/drivers/staging/rt2860/sta_ioctl.c
+@@ -49,15 +49,9 @@ extern ULONG    RTDebugLevel;
+ 
+ #define GROUP_KEY_NO                4
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)
+ #define IWE_STREAM_ADD_EVENT(_A, _B, _C, _D, _E)		iwe_stream_add_event(_A, _B, _C, _D, _E)
+ #define IWE_STREAM_ADD_POINT(_A, _B, _C, _D, _E)		iwe_stream_add_point(_A, _B, _C, _D, _E)
+ #define IWE_STREAM_ADD_VALUE(_A, _B, _C, _D, _E, _F)	iwe_stream_add_value(_A, _B, _C, _D, _E, _F)
+-#else
+-#define IWE_STREAM_ADD_EVENT(_A, _B, _C, _D, _E)		iwe_stream_add_event(_B, _C, _D, _E)
+-#define IWE_STREAM_ADD_POINT(_A, _B, _C, _D, _E)		iwe_stream_add_point(_B, _C, _D, _E)
+-#define IWE_STREAM_ADD_VALUE(_A, _B, _C, _D, _E, _F)	iwe_stream_add_value(_B, _C, _D, _E, _F)
+-#endif
+ 
+ extern UCHAR    CipherWpa2Template[];
+ extern UCHAR    CipherWpaPskTkip[];
+@@ -358,6 +352,20 @@ VOID RTMPAddKey(
+ 
+     DBGPRINT(RT_DEBUG_TRACE, ("RTMPAddKey ------>\n"));
+ 
++	RTMP_CLEAR_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
++	if (RTMP_TEST_PSFLAG(pAd, fRTMP_PS_SET_PCI_CLK_OFF_COMMAND))
++	{
++		if (pAd->StaCfg.bRadio == FALSE)
++		{
++			RTMP_SET_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
++			return;
++		}
++		DBGPRINT(RT_DEBUG_TRACE,("RTMPWPAAddKeyProc1==>\n"));
++		RTMPPCIeLinkCtrlValueRestore(pAd, RESTORE_HALT);
++		RTMPusecDelay(6000);
++		pAd->bPCIclkOff = FALSE;
++	}
++
+ 	if (pAd->StaCfg.AuthMode >= Ndis802_11AuthModeWPA)
+ 	{
+ 		if (pKey->KeyIndex & 0x80000000)
+@@ -551,6 +559,8 @@ VOID RTMPAddKey(
+ 		}
+ 	}
+ end:
++	RTMP_SET_PSFLAG(pAd, fRTMP_PS_CAN_GO_SLEEP);
++    DBGPRINT(RT_DEBUG_INFO, ("<------ RTMPAddKey\n"));
+ 	return;
+ }
+ 
+@@ -571,11 +581,9 @@ rt_ioctl_giwname(struct net_device *dev,
+ 		   struct iw_request_info *info,
+ 		   char *name, char *extra)
+ {
+-//	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++//	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+-#ifdef RT2860
+     strncpy(name, "RT2860 Wireless", IFNAMSIZ);
+-#endif // RT2860 //
+ 	return 0;
+ }
+ 
+@@ -583,7 +591,7 @@ int rt_ioctl_siwfreq(struct net_device *
+ 			struct iw_request_info *info,
+ 			struct iw_freq *freq, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 	int 	chan = -1;
+ 
+     //check if the interface is down
+@@ -623,19 +631,19 @@ int rt_ioctl_giwfreq(struct net_device *
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -653,7 +661,7 @@ int rt_ioctl_siwmode(struct net_device *
+ 		   struct iw_request_info *info,
+ 		   __u32 *mode, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+ 	//check if the interface is down
+     if(!RTMP_TEST_FLAG(pAdapter, fRTMP_ADAPTER_INTERRUPT_IN_USE))
+@@ -670,11 +678,9 @@ int rt_ioctl_siwmode(struct net_device *
+ 		case IW_MODE_INFRA:
+ 			Set_NetworkType_Proc(pAdapter, "Infra");
+ 			break;
+-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,20))
+         case IW_MODE_MONITOR:
+ 			Set_NetworkType_Proc(pAdapter, "Monitor");
+ 			break;
+-#endif
+ 		default:
+ 			DBGPRINT(RT_DEBUG_TRACE, ("===>rt_ioctl_siwmode::SIOCSIWMODE (unknown %d)\n", *mode));
+ 			return -EINVAL;
+@@ -695,19 +701,19 @@ int rt_ioctl_giwmode(struct net_device *
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -715,12 +721,10 @@ int rt_ioctl_giwmode(struct net_device *
+ 		*mode = IW_MODE_ADHOC;
+     else if (INFRA_ON(pAdapter))
+ 		*mode = IW_MODE_INFRA;
+-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,20))
+     else if (MONITOR_ON(pAdapter))
+     {
+         *mode = IW_MODE_MONITOR;
+     }
+-#endif
+     else
+         *mode = IW_MODE_AUTO;
+ 
+@@ -732,7 +736,7 @@ int rt_ioctl_siwsens(struct net_device *
+ 		   struct iw_request_info *info,
+ 		   char *name, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+ 	//check if the interface is down
+     	if(!RTMP_TEST_FLAG(pAdapter, fRTMP_ADAPTER_INTERRUPT_IN_USE))
+@@ -763,19 +767,19 @@ int rt_ioctl_giwrange(struct net_device
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -857,7 +861,7 @@ int rt_ioctl_siwap(struct net_device *de
+ 		      struct iw_request_info *info,
+ 		      struct sockaddr *ap_addr, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+     NDIS_802_11_MAC_ADDRESS Bssid;
+ 
+ 	//check if the interface is down
+@@ -902,19 +906,19 @@ int rt_ioctl_giwap(struct net_device *de
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -984,7 +988,7 @@ int rt_ioctl_iwaplist(struct net_device
+ 			struct iw_request_info *info,
+ 			struct iw_point *data, char *extra)
+ {
+- 	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++ 	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+ 	struct sockaddr addr[IW_MAX_AP];
+ 	struct iw_quality qual[IW_MAX_AP];
+@@ -1020,7 +1024,7 @@ int rt_ioctl_siwscan(struct net_device *
+ 			struct iw_request_info *info,
+ 			struct iw_point *data, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+ 	ULONG								Now;
+ 	int Status = NDIS_STATUS_SUCCESS;
+@@ -1038,6 +1042,15 @@ int rt_ioctl_siwscan(struct net_device *
+         return -EINVAL;
+     }
+ 
++	if ((pAdapter->OpMode == OPMODE_STA) && (IDLE_ON(pAdapter))
++		&& (pAdapter->StaCfg.bRadio == TRUE)
++		&& (RTMP_TEST_FLAG(pAdapter, fRTMP_ADAPTER_IDLE_RADIO_OFF)))
++	{
++		RT28xxPciAsicRadioOn(pAdapter, GUI_IDLE_POWER_SAVE);
++	}
++	// Check if still radio off.
++	else if (pAdapter->bPCIclkOff == TRUE)
++		return 0;
+ 
+ #ifdef WPA_SUPPLICANT_SUPPORT
+ 	if (pAdapter->StaCfg.WpaSupplicantUP == WPA_SUPPLICANT_ENABLE)
+@@ -1102,7 +1115,7 @@ int rt_ioctl_giwscan(struct net_device *
+ 			struct iw_point *data, char *extra)
+ {
+ 
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 	int i=0;
+ 	char *current_ev = extra, *previous_ev = extra;
+ 	char *end_buf;
+@@ -1391,7 +1404,7 @@ int rt_ioctl_siwessid(struct net_device
+ 			 struct iw_request_info *info,
+ 			 struct iw_point *data, char *essid)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+ 	//check if the interface is down
+     if(!RTMP_TEST_FLAG(pAdapter, fRTMP_ADAPTER_INTERRUPT_IN_USE))
+@@ -1437,19 +1450,19 @@ int rt_ioctl_giwessid(struct net_device
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -1480,7 +1493,7 @@ int rt_ioctl_siwnickn(struct net_device
+ 			 struct iw_request_info *info,
+ 			 struct iw_point *data, char *nickname)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+     //check if the interface is down
+     if(!RTMP_TEST_FLAG(pAdapter, fRTMP_ADAPTER_INTERRUPT_IN_USE))
+@@ -1508,19 +1521,19 @@ int rt_ioctl_giwnickn(struct net_device
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -1537,7 +1550,7 @@ int rt_ioctl_siwrts(struct net_device *d
+ 		       struct iw_request_info *info,
+ 		       struct iw_param *rts, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 	u16 val;
+ 
+     //check if the interface is down
+@@ -1571,19 +1584,19 @@ int rt_ioctl_giwrts(struct net_device *d
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -1605,7 +1618,7 @@ int rt_ioctl_siwfrag(struct net_device *
+ 			struct iw_request_info *info,
+ 			struct iw_param *frag, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 	u16 val;
+ 
+ 	//check if the interface is down
+@@ -1637,19 +1650,19 @@ int rt_ioctl_giwfrag(struct net_device *
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -1673,7 +1686,7 @@ int rt_ioctl_siwencode(struct net_device
+ 			  struct iw_request_info *info,
+ 			  struct iw_point *erq, char *extra)
+ {
+-	PRTMP_ADAPTER pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAdapter = dev->ml_priv;
+ 
+ 	//check if the interface is down
+     	if(!RTMP_TEST_FLAG(pAdapter, fRTMP_ADAPTER_INTERRUPT_IN_USE))
+@@ -1756,7 +1769,7 @@ int rt_ioctl_siwencode(struct net_device
+             }
+         else
+ 			/* Don't complain if only change the mode */
+-			if(!erq->flags & IW_ENCODE_MODE) {
++			if (!(erq->flags & IW_ENCODE_MODE)) {
+ 				return -EINVAL;
+ 		}
+ 	}
+@@ -1780,19 +1793,19 @@ rt_ioctl_giwencode(struct net_device *de
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
++		pVirtualAd = dev->ml_priv;
+ 		if (pVirtualAd && pVirtualAd->RtmpDev)
+-			pAdapter = pVirtualAd->RtmpDev->priv;
++			pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -1860,19 +1873,19 @@ rt_ioctl_setparam(struct net_device *dev
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+ 	{
+-		pAdapter = dev->priv;
++		pAdapter = dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
+-		pAdapter = pVirtualAd->RtmpDev->priv;
++		pVirtualAd = dev->ml_priv;
++		pAdapter = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 	pObj = (POS_COOKIE) pAdapter->OS_Cookie;
+ 
+ 	if (pAdapter == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -1928,7 +1941,7 @@ rt_private_get_statistics(struct net_dev
+ 		struct iw_point *wrq, char *extra)
+ {
+ 	INT				Status = 0;
+-    PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) dev->priv;
++    PRTMP_ADAPTER   pAd = dev->ml_priv;
+ 
+     if (extra == NULL)
+     {
+@@ -2055,18 +2068,18 @@ rt_private_show(struct net_device *dev,
+     u32             subcmd = wrq->flags;
+ 
+ 	if (dev->priv_flags == INT_MAIN)
+-		pAd = dev->priv;
++		pAd = dev->ml_priv;
+ 	else
+ 	{
+-		pVirtualAd = dev->priv;
+-		pAd = pVirtualAd->RtmpDev->priv;
++		pVirtualAd = dev->ml_priv;
++		pAd = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 	pObj = (POS_COOKIE) pAd->OS_Cookie;
+ 
+ 	if (pAd == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+@@ -2161,12 +2174,6 @@ rt_private_show(struct net_device *dev,
+             wrq->length = strlen(extra) + 1; // 1: size of '\0'
+             break;
+         case RAIO_ON:
+-            if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_BSS_SCAN_IN_PROGRESS))
+-            {
+-                sprintf(extra, "Scanning\n");
+-                wrq->length = strlen(extra) + 1; // 1: size of '\0'
+-                break;
+-            }
+             pAd->StaCfg.bSwRadio = TRUE;
+             //if (pAd->StaCfg.bRadio != (pAd->StaCfg.bHwRadio && pAd->StaCfg.bSwRadio))
+             {
+@@ -2200,7 +2207,7 @@ rt_private_show(struct net_device *dev,
+ 			}
+ 			break;
+         default:
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s - unknow subcmd = %d\n", __FUNCTION__, subcmd));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s - unknow subcmd = %d\n", __func__, subcmd));
+             break;
+     }
+ 
+@@ -2213,13 +2220,13 @@ int rt_ioctl_siwmlme(struct net_device *
+ 			   union iwreq_data *wrqu,
+ 			   char *extra)
+ {
+-	PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER   pAd = dev->ml_priv;
+ 	struct iw_mlme *pMlme = (struct iw_mlme *)wrqu->data.pointer;
+ 	MLME_QUEUE_ELEM				MsgElem;
+ 	MLME_DISASSOC_REQ_STRUCT	DisAssocReq;
+ 	MLME_DEAUTH_REQ_STRUCT      DeAuthReq;
+ 
+-	DBGPRINT(RT_DEBUG_TRACE, ("====> %s\n", __FUNCTION__));
++	DBGPRINT(RT_DEBUG_TRACE, ("====> %s\n", __func__));
+ 
+ 	if (pMlme == NULL)
+ 		return -EINVAL;
+@@ -2228,7 +2235,7 @@ int rt_ioctl_siwmlme(struct net_device *
+ 	{
+ #ifdef IW_MLME_DEAUTH
+ 		case IW_MLME_DEAUTH:
+-			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DEAUTH\n", __FUNCTION__));
++			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DEAUTH\n", __func__));
+ 			COPY_MAC_ADDR(DeAuthReq.Addr, pAd->CommonCfg.Bssid);
+ 			DeAuthReq.Reason = pMlme->reason_code;
+ 			MsgElem.MsgLen = sizeof(MLME_DEAUTH_REQ_STRUCT);
+@@ -2243,7 +2250,7 @@ int rt_ioctl_siwmlme(struct net_device *
+ #endif // IW_MLME_DEAUTH //
+ #ifdef IW_MLME_DISASSOC
+ 		case IW_MLME_DISASSOC:
+-			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DISASSOC\n", __FUNCTION__));
++			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DISASSOC\n", __func__));
+ 			COPY_MAC_ADDR(DisAssocReq.Addr, pAd->CommonCfg.Bssid);
+ 			DisAssocReq.Reason =  pMlme->reason_code;
+ 
+@@ -2257,7 +2264,7 @@ int rt_ioctl_siwmlme(struct net_device *
+ 			break;
+ #endif // IW_MLME_DISASSOC //
+ 		default:
+-			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - Unknow Command\n", __FUNCTION__));
++			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - Unknow Command\n", __func__));
+ 			break;
+ 	}
+ 
+@@ -2270,7 +2277,7 @@ int rt_ioctl_siwauth(struct net_device *
+ 			  struct iw_request_info *info,
+ 			  union iwreq_data *wrqu, char *extra)
+ {
+-	PRTMP_ADAPTER   pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER   pAdapter = dev->ml_priv;
+ 	struct iw_param *param = &wrqu->param;
+ 
+     //check if the interface is down
+@@ -2290,7 +2297,7 @@ int rt_ioctl_siwauth(struct net_device *
+             else if (param->value == IW_AUTH_WPA_VERSION_WPA2)
+                 pAdapter->StaCfg.AuthMode = Ndis802_11AuthModeWPA2PSK;
+ 
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __FUNCTION__, param->value));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __func__, param->value));
+             break;
+     	case IW_AUTH_CIPHER_PAIRWISE:
+             if (param->value == IW_AUTH_CIPHER_NONE)
+@@ -2321,7 +2328,7 @@ int rt_ioctl_siwauth(struct net_device *
+                 pAdapter->StaCfg.OrigWepStatus = pAdapter->StaCfg.WepStatus;
+                 pAdapter->StaCfg.PairCipher = Ndis802_11Encryption3Enabled;
+             }
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_PAIRWISE - param->value = %d!\n", __FUNCTION__, param->value));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_PAIRWISE - param->value = %d!\n", __func__, param->value));
+             break;
+     	case IW_AUTH_CIPHER_GROUP:
+             if (param->value == IW_AUTH_CIPHER_NONE)
+@@ -2341,7 +2348,7 @@ int rt_ioctl_siwauth(struct net_device *
+             {
+                 pAdapter->StaCfg.GroupCipher = Ndis802_11Encryption3Enabled;
+             }
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_GROUP - param->value = %d!\n", __FUNCTION__, param->value));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_GROUP - param->value = %d!\n", __func__, param->value));
+             break;
+     	case IW_AUTH_KEY_MGMT:
+             if (param->value == IW_AUTH_KEY_MGMT_802_1X)
+@@ -2370,12 +2377,12 @@ int rt_ioctl_siwauth(struct net_device *
+             {
+ 				STA_PORT_SECURED(pAdapter);
+             }
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_KEY_MGMT - param->value = %d!\n", __FUNCTION__, param->value));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_KEY_MGMT - param->value = %d!\n", __func__, param->value));
+             break;
+     	case IW_AUTH_RX_UNENCRYPTED_EAPOL:
+             break;
+     	case IW_AUTH_PRIVACY_INVOKED:
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_PRIVACY_INVOKED - param->value = %d!\n", __FUNCTION__, param->value));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_PRIVACY_INVOKED - param->value = %d!\n", __func__, param->value));
+     		break;
+     	case IW_AUTH_DROP_UNENCRYPTED:
+             if (param->value != 0)
+@@ -2384,7 +2391,7 @@ int rt_ioctl_siwauth(struct net_device *
+ 			{
+ 				STA_PORT_SECURED(pAdapter);
+ 			}
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __FUNCTION__, param->value));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __func__, param->value));
+     		break;
+     	case IW_AUTH_80211_AUTH_ALG:
+ 			if (param->value & IW_AUTH_ALG_SHARED_KEY)
+@@ -2397,10 +2404,10 @@ int rt_ioctl_siwauth(struct net_device *
+ 			}
+             else
+ 				return -EINVAL;
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_80211_AUTH_ALG - param->value = %d!\n", __FUNCTION__, param->value));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_80211_AUTH_ALG - param->value = %d!\n", __func__, param->value));
+ 			break;
+     	case IW_AUTH_WPA_ENABLED:
+-    		DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_ENABLED - Driver supports WPA!(param->value = %d)\n", __FUNCTION__, param->value));
++    		DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_ENABLED - Driver supports WPA!(param->value = %d)\n", __func__, param->value));
+     		break;
+     	default:
+     		return -EOPNOTSUPP;
+@@ -2413,7 +2420,7 @@ int rt_ioctl_giwauth(struct net_device *
+ 			       struct iw_request_info *info,
+ 			       union iwreq_data *wrqu, char *extra)
+ {
+-	PRTMP_ADAPTER   pAdapter = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER   pAdapter = dev->ml_priv;
+ 	struct iw_param *param = &wrqu->param;
+ 
+     //check if the interface is down
+@@ -2450,6 +2457,20 @@ void fnSetCipherKey(
+     IN  BOOLEAN         bGTK,
+     IN  struct iw_encode_ext *ext)
+ {
++	RTMP_CLEAR_PSFLAG(pAdapter, fRTMP_PS_CAN_GO_SLEEP);
++	if (RTMP_TEST_PSFLAG(pAdapter, fRTMP_PS_SET_PCI_CLK_OFF_COMMAND))
++	{
++		if (pAdapter->StaCfg.bRadio == FALSE)
++		{
++			RTMP_SET_PSFLAG(pAdapter, fRTMP_PS_CAN_GO_SLEEP);
++			return;
++		}
++		DBGPRINT(RT_DEBUG_TRACE,("RTMPWPAAddKeyProc1==>\n"));
++		RTMPPCIeLinkCtrlValueRestore(pAdapter, RESTORE_HALT);
++		RTMPusecDelay(6000);
++		pAdapter->bPCIclkOff = FALSE;
++	}
++
+     NdisZeroMemory(&pAdapter->SharedKey[BSS0][keyIdx], sizeof(CIPHER_KEY));
+     pAdapter->SharedKey[BSS0][keyIdx].KeyLen = LEN_TKIP_EK;
+     NdisMoveMemory(pAdapter->SharedKey[BSS0][keyIdx].Key, ext->key, LEN_TKIP_EK);
+@@ -2480,6 +2501,8 @@ void fnSetCipherKey(
+     							  keyIdx,
+     							  pAdapter->SharedKey[BSS0][keyIdx].CipherAlg,
+     							  &pAdapter->MacTab.Content[BSSID_WCID]);
++
++	RTMP_SET_PSFLAG(pAdapter, fRTMP_PS_CAN_GO_SLEEP);
+ }
+ 
+ int rt_ioctl_siwencodeext(struct net_device *dev,
+@@ -2487,7 +2510,7 @@ int rt_ioctl_siwencodeext(struct net_dev
+ 			   union iwreq_data *wrqu,
+ 			   char *extra)
+ 			{
+-    PRTMP_ADAPTER   pAdapter = (PRTMP_ADAPTER) dev->priv;
++    PRTMP_ADAPTER   pAdapter = dev->ml_priv;
+ 	struct iw_point *encoding = &wrqu->encoding;
+ 	struct iw_encode_ext *ext = (struct iw_encode_ext *)extra;
+     int keyIdx, alg = ext->alg;
+@@ -2508,7 +2531,7 @@ int rt_ioctl_siwencodeext(struct net_dev
+ 		pAdapter->SharedKey[BSS0][keyIdx].CipherAlg = CIPHER_NONE;
+ 		AsicRemoveSharedKeyEntry(pAdapter, 0, (UCHAR)keyIdx);
+         NdisZeroMemory(&pAdapter->SharedKey[BSS0][keyIdx], sizeof(CIPHER_KEY));
+-        DBGPRINT(RT_DEBUG_TRACE, ("%s::Remove all keys!(encoding->flags = %x)\n", __FUNCTION__, encoding->flags));
++        DBGPRINT(RT_DEBUG_TRACE, ("%s::Remove all keys!(encoding->flags = %x)\n", __func__, encoding->flags));
+     }
+ 					else
+     {
+@@ -2520,15 +2543,15 @@ int rt_ioctl_siwencodeext(struct net_dev
+         if (ext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY)
+         {
+             pAdapter->StaCfg.DefaultKeyId = keyIdx;
+-            DBGPRINT(RT_DEBUG_TRACE, ("%s::DefaultKeyId = %d\n", __FUNCTION__, pAdapter->StaCfg.DefaultKeyId));
++            DBGPRINT(RT_DEBUG_TRACE, ("%s::DefaultKeyId = %d\n", __func__, pAdapter->StaCfg.DefaultKeyId));
+         }
+ 
+         switch (alg) {
+     		case IW_ENCODE_ALG_NONE:
+-                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_NONE\n", __FUNCTION__));
++                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_NONE\n", __func__));
+     			break;
+     		case IW_ENCODE_ALG_WEP:
+-                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_WEP - ext->key_len = %d, keyIdx = %d\n", __FUNCTION__, ext->key_len, keyIdx));
++                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_WEP - ext->key_len = %d, keyIdx = %d\n", __func__, ext->key_len, keyIdx));
+     			if (ext->key_len == MAX_WEP_KEY_SIZE)
+                 {
+         			pAdapter->SharedKey[BSS0][keyIdx].KeyLen = MAX_WEP_KEY_SIZE;
+@@ -2544,9 +2567,24 @@ int rt_ioctl_siwencodeext(struct net_dev
+ 
+                 NdisZeroMemory(pAdapter->SharedKey[BSS0][keyIdx].Key,  16);
+ 			    NdisMoveMemory(pAdapter->SharedKey[BSS0][keyIdx].Key, ext->key, ext->key_len);
++
++				if (pAdapter->StaCfg.GroupCipher == Ndis802_11GroupWEP40Enabled ||
++					pAdapter->StaCfg.GroupCipher == Ndis802_11GroupWEP104Enabled)
++				{
++					// Set Group key material to Asic
++					AsicAddSharedKeyEntry(pAdapter, BSS0, keyIdx, pAdapter->SharedKey[BSS0][keyIdx].CipherAlg, pAdapter->SharedKey[BSS0][keyIdx].Key, NULL, NULL);
++
++					// Update WCID attribute table and IVEIV table for this group key table
++					RTMPAddWcidAttributeEntry(pAdapter, BSS0, keyIdx, pAdapter->SharedKey[BSS0][keyIdx].CipherAlg, NULL);
++
++					STA_PORT_SECURED(pAdapter);
++
++    				// Indicate Connected for GUI
++    				pAdapter->IndicateMediaState = NdisMediaStateConnected;
++				}
+     			break;
+             case IW_ENCODE_ALG_TKIP:
+-                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_TKIP - keyIdx = %d, ext->key_len = %d\n", __FUNCTION__, keyIdx, ext->key_len));
++                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_TKIP - keyIdx = %d, ext->key_len = %d\n", __func__, keyIdx, ext->key_len));
+                 if (ext->key_len == 32)
+                 {
+                     if (ext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY)
+@@ -2596,7 +2634,7 @@ rt_ioctl_giwencodeext(struct net_device
+ 			  struct iw_request_info *info,
+ 			  union iwreq_data *wrqu, char *extra)
+ {
+-	PRTMP_ADAPTER pAd = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER pAd = dev->ml_priv;
+ 	PCHAR pKey = NULL;
+ 	struct iw_point *encoding = &wrqu->encoding;
+ 	struct iw_encode_ext *ext = (struct iw_encode_ext *)extra;
+@@ -2680,7 +2718,7 @@ int rt_ioctl_siwgenie(struct net_device
+ 			  struct iw_request_info *info,
+ 			  union iwreq_data *wrqu, char *extra)
+ {
+-	PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER   pAd = dev->ml_priv;
+ 
+ 	if (wrqu->data.length > MAX_LEN_OF_RSNIE ||
+ 	    (wrqu->data.length && extra == NULL))
+@@ -2705,7 +2743,7 @@ int rt_ioctl_giwgenie(struct net_device
+ 			       struct iw_request_info *info,
+ 			       union iwreq_data *wrqu, char *extra)
+ {
+-	PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER   pAd = dev->ml_priv;
+ 
+ 	if ((pAd->StaCfg.RSNIE_Len == 0) ||
+ 		(pAd->StaCfg.AuthMode < Ndis802_11AuthModeWPA))
+@@ -2751,7 +2789,7 @@ int rt_ioctl_siwpmksa(struct net_device
+ 			   union iwreq_data *wrqu,
+ 			   char *extra)
+ {
+-	PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) dev->priv;
++	PRTMP_ADAPTER   pAd = dev->ml_priv;
+ 	struct iw_pmksa *pPmksa = (struct iw_pmksa *)wrqu->data.pointer;
+ 	INT	CachedIdx = 0, idx = 0;
+ 
+@@ -2834,7 +2872,7 @@ rt_private_ioctl_bbp(struct net_device *
+ 	UINT32				bbpValue;
+ 	BOOLEAN				bIsPrintAllBBP = FALSE;
+ 	INT					Status = 0;
+-    PRTMP_ADAPTER       pAdapter = (PRTMP_ADAPTER) dev->priv;
++    PRTMP_ADAPTER       pAdapter = dev->ml_priv;
+ 
+ 
+ 	memset(extra, 0x00, IW_PRIV_SIZE_MASK);
+@@ -2961,7 +2999,7 @@ int rt_ioctl_siwrate(struct net_device *
+ 			struct iw_request_info *info,
+ 			union iwreq_data *wrqu, char *extra)
+ {
+-    PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) dev->priv;
++    PRTMP_ADAPTER   pAd = dev->ml_priv;
+     UINT32          rate = wrqu->bitrate.value, fixed = wrqu->bitrate.fixed;
+ 
+     //check if the interface is down
+@@ -3019,7 +3057,7 @@ int rt_ioctl_giwrate(struct net_device *
+ 			       struct iw_request_info *info,
+ 			       union iwreq_data *wrqu, char *extra)
+ {
+-    PRTMP_ADAPTER   pAd = (PRTMP_ADAPTER) dev->priv;
++    PRTMP_ADAPTER   pAd = dev->ml_priv;
+     int rate_index = 0, rate_count = 0;
+     HTTRANSMIT_SETTING ht_setting;
+     __s32 ralinkrate[] =
+@@ -4259,7 +4297,23 @@ INT RTMPSetInformation(
+                     }
+ 
+ #ifdef WPA_SUPPLICANT_SUPPORT
+-                    if (pAdapter->StaCfg.PortSecured == WPA_802_1X_PORT_SECURED)
++					if ((pAdapter->StaCfg.WpaSupplicantUP != 0) &&
++						(pAdapter->StaCfg.AuthMode >= Ndis802_11AuthModeWPA))
++					{
++						Key = pWepKey->KeyMaterial;
++
++						// Set Group key material to Asic
++    					AsicAddSharedKeyEntry(pAdapter, BSS0, KeyIdx, CipherAlg, Key, NULL, NULL);
++
++						// Update WCID attribute table and IVEIV table for this group key table
++						RTMPAddWcidAttributeEntry(pAdapter, BSS0, KeyIdx, CipherAlg, NULL);
++
++						STA_PORT_SECURED(pAdapter);
++
++        				// Indicate Connected for GUI
++        				pAdapter->IndicateMediaState = NdisMediaStateConnected;
++					}
++                    else if (pAdapter->StaCfg.PortSecured == WPA_802_1X_PORT_SECURED)
+ #endif // WPA_SUPPLICANT_SUPPORT
+                     {
+                         Key = pAdapter->SharedKey[BSS0][KeyIdx].Key;
+@@ -5265,7 +5319,6 @@ INT RTMPQueryInformation(
+ 		case RT_OID_802_11_PRODUCTID:
+ 			DBGPRINT(RT_DEBUG_TRACE, ("Query::RT_OID_802_11_PRODUCTID \n"));
+ 
+-#ifdef RT2860
+ 			{
+ 
+ 				USHORT  device_id;
+@@ -5275,7 +5328,6 @@ INT RTMPQueryInformation(
+ 					DBGPRINT(RT_DEBUG_TRACE, (" pci_dev = NULL\n"));
+ 				sprintf(tmp, "%04x %04x\n", NIC_PCI_VENDOR_ID, device_id);
+ 			}
+-#endif // RT2860 //
+ 			wrq->u.data.length = strlen(tmp);
+ 			Status = copy_to_user(wrq->u.data.pointer, tmp, wrq->u.data.length);
+ 			break;
+@@ -5409,19 +5461,19 @@ INT rt28xx_sta_ioctl(
+ 
+ 	if (net_dev->priv_flags == INT_MAIN)
+ 	{
+-		pAd = net_dev->priv;
++		pAd = net_dev->ml_priv;
+ 	}
+ 	else
+ 	{
+-		pVirtualAd = net_dev->priv;
+-		pAd = pVirtualAd->RtmpDev->priv;
++		pVirtualAd = net_dev->ml_priv;
++		pAd = pVirtualAd->RtmpDev->ml_priv;
+ 	}
+ 	pObj = (POS_COOKIE) pAd->OS_Cookie;
+ 
+ 	if (pAd == NULL)
+ 	{
+ 		/* if 1st open fail, pAd will be free;
+-		   So the net_dev->priv will be NULL in 2rd open */
++		   So the net_dev->ml_priv will be NULL in 2rd open */
+ 		return -ENETDOWN;
+ 	}
+ 
+--- a/drivers/staging/rt2860/wpa.h
++++ b/drivers/staging/rt2860/wpa.h
+@@ -90,6 +90,7 @@
+ #define TKIP_AP_RXMICK_OFFSET		(TKIP_AP_TXMICK_OFFSET+LEN_TKIP_TXMICK)
+ #define TKIP_GTK_LENGTH				((LEN_TKIP_EK)+(LEN_TKIP_RXMICK)+(LEN_TKIP_TXMICK))
+ #define LEN_PTK						((LEN_EAP_KEY)+(LEN_TKIP_KEY))
++#define MIN_LEN_OF_GTK				5
+ 
+ // RSN IE Length definition
+ #define MAX_LEN_OF_RSNIE         	90

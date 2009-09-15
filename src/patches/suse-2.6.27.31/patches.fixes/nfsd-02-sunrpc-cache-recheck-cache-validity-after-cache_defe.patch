@@ -1,0 +1,117 @@
+Patch-mainline: submitted 04aug2009
+References: bnc#498708
+From: NeilBrown <neilb@suse.de>
+Date: Tue, 4 Aug 2009 15:06:37 +1000
+Subject: [PATCH 04/12] sunrpc/cache: recheck cache validity after cache_defer_req
+
+If cache_defer_req did not leave the request on a queue, then it could
+possibly have waited long enough that the cache became valid.  So check the
+status after the call.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+
+---
+ net/sunrpc/cache.c |   53 +++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 33 insertions(+), 20 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/net/sunrpc/cache.c
++++ linux-2.6.27-SLE11_BRANCH/net/sunrpc/cache.c
+@@ -173,6 +173,22 @@ struct cache_head *sunrpc_cache_update(s
+ EXPORT_SYMBOL(sunrpc_cache_update);
+ 
+ static int cache_make_upcall(struct cache_detail *detail, struct cache_head *h);
++
++static inline int cache_is_valid(struct cache_detail *detail, struct cache_head *h)
++{
++	if (!test_bit(CACHE_VALID, &h->flags) ||
++	    h->expiry_time < get_seconds())
++		return -EAGAIN;
++	else if (detail->flush_time > h->last_refresh)
++		return -EAGAIN;
++	else {
++		/* entry is valid */
++		if (test_bit(CACHE_NEGATIVE, &h->flags))
++			return -ENOENT;
++		else
++			return 0;
++	}
++}
+ /*
+  * This is the generic cache management routine for all
+  * the authentication caches.
+@@ -181,8 +197,10 @@ static int cache_make_upcall(struct cach
+  *
+  *
+  * Returns 0 if the cache_head can be used, or cache_puts it and returns
+- * -EAGAIN if upcall is pending,
+- * -ETIMEDOUT if upcall failed and should be retried,
++ * -EAGAIN if upcall is pending and request has been queued
++ * -ETIMEDOUT if upcall failed or request could not be queue or
++ *           upcall completed but item is still invalid (implying that
++ *           the cache item has been replaced with a newer one).
+  * -ENOENT if cache entry was negative
+  */
+ int cache_check(struct cache_detail *detail,
+@@ -192,17 +210,7 @@ int cache_check(struct cache_detail *det
+ 	long refresh_age, age;
+ 
+ 	/* First decide return status as best we can */
+-	if (!test_bit(CACHE_VALID, &h->flags) ||
+-	    h->expiry_time < get_seconds())
+-		rv = -EAGAIN;
+-	else if (detail->flush_time > h->last_refresh)
+-		rv = -EAGAIN;
+-	else {
+-		/* entry is valid */
+-		if (test_bit(CACHE_NEGATIVE, &h->flags))
+-			rv = -ENOENT;
+-		else rv = 0;
+-	}
++	rv = cache_is_valid(detail, h);
+ 
+ 	/* now see if we want to start an upcall */
+ 	refresh_age = (h->expiry_time - h->last_refresh);
+@@ -234,10 +242,14 @@ int cache_check(struct cache_detail *det
+ 		}
+ 	}
+ 
+-	if (rv == -EAGAIN)
+-		if (cache_defer_req(rqstp, h) != 0)
+-			rv = -ETIMEDOUT;
+-
++	if (rv == -EAGAIN) {
++		if (cache_defer_req(rqstp, h) == 0) {
++			/* Request is not deferred */
++			rv = cache_is_valid(detail, h);
++			if (rv == -EAGAIN)
++				rv = -ETIMEDOUT;
++		}
++	}
+ 	if (rv)
+ 		cache_put(h, detail);
+ 	return rv;
+@@ -558,11 +570,11 @@ static int cache_defer_req(struct cache_
+ 		 * or continue and drop the oldest below
+ 		 */
+ 		if (net_random()&1)
+-			return -ETIMEDOUT;
++			return 0;
+ 	}
+ 	dreq = req->defer(req);
+ 	if (dreq == NULL)
+-		return -ETIMEDOUT;
++		return 0;
+ 
+ 	dreq->item = item;
+ 
+@@ -592,8 +604,9 @@ static int cache_defer_req(struct cache_
+ 	if (!test_bit(CACHE_PENDING, &item->flags)) {
+ 		/* must have just been validated... */
+ 		cache_revisit_request(item);
++		return 0;
+ 	}
+-	return 0;
++	return 1;
+ }
+ 
+ static void cache_revisit_request(struct cache_head *item)

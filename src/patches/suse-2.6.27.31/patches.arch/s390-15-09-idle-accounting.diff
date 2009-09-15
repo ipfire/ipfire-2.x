@@ -1,0 +1,47 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: kernel: fix idle time accounting
+References: bnc#518291,LTC#54879
+
+Symptom:     The idle time reported in /proc/stat is too large
+Problem:     The time spent with time ticks disabled is accounted twice,
+             once by the architecture backend and another time by the
+             generic timer code.
+Solution:    Stop accounting idle time in the generic timer code if
+             CONFIG_VIRT_CPU_ACCOUNTING is enabled.
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ kernel/time/tick-sched.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+Index: linux-sles11/kernel/time/tick-sched.c
+===================================================================
+--- linux-sles11.orig/kernel/time/tick-sched.c
++++ linux-sles11/kernel/time/tick-sched.c
+@@ -377,7 +377,9 @@ void tick_nohz_restart_sched_tick(void)
+ {
+ 	int cpu = smp_processor_id();
+ 	struct tick_sched *ts = &per_cpu(tick_cpu_sched, cpu);
++#ifndef CONFIG_VIRT_CPU_ACCOUNTING
+ 	unsigned long ticks;
++#endif
+ 	ktime_t now;
+ 
+ 	local_irq_disable();
+@@ -399,6 +401,7 @@ void tick_nohz_restart_sched_tick(void)
+ 	tick_do_update_jiffies64(now);
+ 	cpu_clear(cpu, nohz_cpu_mask);
+ 
++#ifndef CONFIG_VIRT_CPU_ACCOUNTING
+ 	/*
+ 	 * We stopped the tick in idle. Update process times would miss the
+ 	 * time we slept as update_process_times does only a 1 tick
+@@ -414,6 +417,7 @@ void tick_nohz_restart_sched_tick(void)
+ 				    jiffies_to_cputime(ticks));
+ 		sub_preempt_count(HARDIRQ_OFFSET);
+ 	}
++#endif
+ 
+ 	touch_softlockup_watchdog();
+ 	/*

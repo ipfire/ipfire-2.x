@@ -1,0 +1,35 @@
+From: http://xenbits.xensource.com/linux-2.6.18-xen.hg?rev/214ff2a7c990
+# HG changeset patch
+# User Keir Fraser <keir.fraser@citrix.com>
+# Date 1245146770 -3600
+# Node ID 214ff2a7c9900f5d8bac55a569224a0029173a0f
+# Parent  ca12928cdafe3fcb024520c4fe2479448f2c5f46
+Subject: Fix Makefile.xen generation when building external modules
+Patch-mainline: obsolete
+
+Otherwise, the file will be (attempted to be) put in the (possibly
+read-only) source tree.
+
+Signed-off-by: Jan Beulich <jbeulich@novell.com>
+
+--- sle11-2009-06-29.orig/scripts/Makefile.build	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-06-29/scripts/Makefile.build	2009-06-29 15:27:22.000000000 +0200
+@@ -74,7 +74,8 @@ $(warning kbuild: Makefile.build is incl
+ endif
+ 
+ ifeq ($(CONFIG_XEN),y)
+-$(objtree)/scripts/Makefile.xen: $(srctree)/scripts/Makefile.xen.awk $(srctree)/scripts/Makefile.build
++Makefile.xen := $(if $(KBUILD_EXTMOD),$(KBUILD_EXTMOD),$(objtree)/scripts)/Makefile.xen
++$(Makefile.xen): $(srctree)/scripts/Makefile.xen.awk $(srctree)/scripts/Makefile.build
+ 	@echo '  Updating $@'
+ 	$(if $(shell echo a | $(AWK) '{ print gensub(/a/, "AA", "g"); }'),\
+         ,$(error 'Your awk program does not define gensub.  Use gawk or another awk with gensub'))
+@@ -84,7 +85,7 @@ xen-src-single-used-m	:= $(patsubst $(sr
+ xen-single-used-m	:= $(xen-src-single-used-m:-xen.c=.o)
+ single-used-m		:= $(filter-out $(xen-single-used-m),$(single-used-m))
+ 
+--include $(objtree)/scripts/Makefile.xen
++-include $(Makefile.xen)
+ endif
+ 
+ # ===========================================================================

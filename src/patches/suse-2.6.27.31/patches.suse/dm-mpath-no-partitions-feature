@@ -1,0 +1,66 @@
+From: Hannes Reinecke <hare@suse.de>
+Subject: Disable partitions scan for multipathed devices
+References: bnc#402922,bnc#514767
+
+When multipath devices are being used as disks for VM Guests
+any partition scanning / setup should be done within the VM Guest,
+not from host. So we need to switch off partitions scanning via
+kpartx there.
+For this I've implemented a new feature 'no_partitions' which
+just serves as a notifier to kpartx to _not_ create partitions
+on these devices.
+
+Patch ported to SLES11.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+---
+ drivers/md/dm-mpath.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -55,6 +55,8 @@ struct priority_group {
+ 	struct list_head pgpaths;
+ };
+ 
++#define FEATURE_NO_PARTITIONS 1
++
+ /* Multipath context */
+ struct multipath {
+ 	struct list_head list;
+@@ -79,6 +81,7 @@ struct multipath {
+ 	unsigned saved_queue_if_no_path;/* Saved state during suspension */
+ 	unsigned pg_init_retries;	/* Number of times to retry pg_init */
+ 	unsigned pg_init_count;		/* Number of times pg_init called */
++	unsigned features;		/* Additional selected features */
+ 
+ 	struct work_struct process_queued_ios;
+ 	struct list_head queued_ios;
+@@ -802,6 +805,10 @@ static int parse_features(struct arg_set
+ 			continue;
+ 		}
+ 
++		if (!strnicmp(param_name, MESG_STR("no_partitions"))) {
++			m->features |= FEATURE_NO_PARTITIONS;
++			continue;
++		}
+ 		if (!strnicmp(param_name, MESG_STR("pg_init_retries")) &&
+ 		    (argc >= 1)) {
+ 			r = read_param(_params + 1, shift(as),
+@@ -1321,11 +1328,14 @@ static int multipath_status(struct dm_ta
+ 		DMEMIT("2 %u %u ", m->queue_size, m->pg_init_count);
+ 	else {
+ 		DMEMIT("%u ", m->queue_if_no_path +
+-			      (m->pg_init_retries > 0) * 2);
++			      (m->pg_init_retries > 0) * 2 +
++			      (m->features & FEATURE_NO_PARTITIONS));
+ 		if (m->queue_if_no_path)
+ 			DMEMIT("queue_if_no_path ");
+ 		if (m->pg_init_retries)
+ 			DMEMIT("pg_init_retries %u ", m->pg_init_retries);
++		if (m->features & FEATURE_NO_PARTITIONS)
++			DMEMIT("no_partitions ");
+ 	}
+ 
+ 	if (!m->hw_handler_name || type == STATUSTYPE_INFO)
