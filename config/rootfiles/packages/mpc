@@ -1,10 +1,11 @@
 usr/bin/mpc
 #usr/share/doc/mpc
 #usr/share/doc/mpc/AUTHORS
+#usr/share/doc/mpc/COPYING
+#usr/share/doc/mpc/NEWS
 #usr/share/doc/mpc/README
-#usr/share/doc/mpc/m3u-handler.sh
 #usr/share/doc/mpc/mpc-bashrc
+#usr/share/doc/mpc/mpd-m3u-handler.sh
+#usr/share/doc/mpc/mpd-pls-handler.sh
 #usr/share/doc/mpc/mppledit
-#usr/share/doc/mpc/pls-handler.sh
 #usr/share/man/man1/mpc.1
-usr/share/mpc
