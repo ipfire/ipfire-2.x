@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir $(MNThdd)/boot/grub
 	echo "title IPFire (XEN-Kernel)"           > $(MNThdd)/boot/grub/grub.conf
 	echo "  root(hd0,0)"                      >> $(MNThdd)/boot/grub/grub.conf
-	echo "  kernel /vmlinuz-$(KVER)-ipfire-xen root=/dev/xvda1 rootdelay=10 panic=10 rw" \
+	echo "  kernel /vmlinuz-$(KVER)-ipfire-xen root=/dev/xvda1 rootdelay=10 panic=10 ro" \
 						  >> $(MNThdd)/boot/grub/grub.conf
 	echo "  initrd /ipfirerd-$(KVER)-xen.img" >> $(MNThdd)/boot/grub/grub.conf
 	echo "  savedefault 1"                    >> $(MNThdd)/boot/grub/grub.conf
