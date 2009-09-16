@@ -52,11 +52,11 @@ uname -r ¦ grep "ipfire-xen";
 if [ ${?} = 0 ]; then
 	#Xen Kernel is active
 	#Set grub default entry to this kernel
-	sed -i -e "s|^default saved¦default $ENTRY|g" /boot/grub/grub.conf
+	sed -i -e "s¦^default saved¦default $ENTRY¦g" /boot/grub/grub.conf
 else
 	#Normal Kernel
 	#pygrub crash with "default saved"
-	sed -i -e "s|^default saved¦#default saved|g" /boot/grub/grub.conf
+	sed -i -e "s¦^default saved¦#default saved¦g" /boot/grub/grub.conf
 fi
 #
 # Made initramdisk
