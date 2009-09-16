@@ -43,10 +43,21 @@ cp /boot/grub/grub.conf /boot/grub/grub-backup-$KVER-xen.conf
 #
 echo "" >> /boot/grub/grub.conf
 echo "title IPFire (XEN-Kernel)" >> /boot/grub/grub.conf
-echo "  root (hd0,0)" >> /boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-xen root=$ROOT rootdelay=10 panic=10 $MOUNT" >> /boot/grub/grub.conf
+echo "  kernel /vmlinuz-$KVER-ipfire-xen root=$ROOT rootdelay=10 panic=10 console=xvc0 $MOUNT" >> /boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-xen.img" >> /boot/grub/grub.conf
-echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
+#
+# Test if we running already on xen
+#
+uname -r ¦ grep "ipfire-xen";
+if [ ${?} = 0 ]; then
+	#Xen Kernel is active
+	#Set grub default entry to this kernel
+	sed -i -e "s¦^default saved¦default $ENTRY¦g" /boot/grub/grub.conf
+else
+	#Normal Kernel
+	#pygrub crash with "default saved"
+	sed -i -e "s¦^default saved¦#default saved¦g" /boot/grub/grub.conf
+fi
 #
 # Made initramdisk
 #

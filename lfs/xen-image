@@ -81,12 +81,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#Create grub menuentry for pygrub
 	mkdir $(MNThdd)/boot/grub
-	echo "title IPFire (XEN-Kernel)"           > $(MNThdd)/boot/grub/grub.conf
-	echo "  root(hd0,0)"                      >> $(MNThdd)/boot/grub/grub.conf
-	echo "  kernel /vmlinuz-$(KVER)-ipfire-xen root=/dev/xvda1 rootdelay=10 panic=10 ro" \
+	echo "default 1"                           > $(MNThdd)/boot/grub/grub.conf
+	echo "title IPFire (XEN-Kernel)"          >> $(MNThdd)/boot/grub/grub.conf
+	echo "  kernel /vmlinuz-$(KVER)-ipfire-xen root=/dev/xvda1 rootdelay=10 panic=10 console=xvc0 ro" \
 						  >> $(MNThdd)/boot/grub/grub.conf
 	echo "  initrd /ipfirerd-$(KVER)-xen.img" >> $(MNThdd)/boot/grub/grub.conf
-	echo "  savedefault 1"                    >> $(MNThdd)/boot/grub/grub.conf
 	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
 
 	#Copy the meta-info of linux-xen package

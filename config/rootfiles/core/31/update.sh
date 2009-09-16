@@ -30,6 +30,9 @@ MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
 MOUNT=$_
+if [ ! $MOUNT == "rw" ]; then
+	MOUNT="ro"
+fi
 #
 # check if we the backup file already exist
 if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 ]; then
