@@ -55,7 +55,7 @@ IMGvar   := /install/images/$(SNAME)/$(SNAME)-var.img
 SIZEboot := 30
 SIZEswap := 512
 SIZEroot := 512
-SIZEvar  := 1024
+SIZEvar  := 950
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(MNThdd) $(IMGinst) $(IMGroot) && mkdir -p $(MNThdd)
@@ -151,8 +151,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo xvc0 >> $(MNThdd)/etc/securetty
 
 	#Add getty for xvc0
-	echo "#Enable login for XEN" >> $(MNThdd)/etc/securetty
-	echo "8:2345:respawn:/sbin/agetty xvc0 9600" >> $(MNThdd)/etc/securetty
+	echo "#Enable login for XEN" >> $(MNThdd)/etc/inittab
+	echo "8:2345:respawn:/sbin/agetty xvc0 9600" >> $(MNThdd)/etc/inittab
 
 	#Disable some initskripts
 	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/setclock
