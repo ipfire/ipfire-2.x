@@ -118,6 +118,9 @@ endif
 	# Add Vodafone K3565-Z USB ID's to option driver
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.25-option_add_vf-k3565-z_usbids.patch
 
+	# Add Alix to Led Driver
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.24-leds-alix.patch
+
 	# Not report deprecated syscall 1.23 (for kudzu)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
 ifeq "$(XEN)" ""

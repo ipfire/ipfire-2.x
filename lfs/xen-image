@@ -47,14 +47,23 @@ md5 :
 IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(MACHINE)-$(ED)-core$(CORE).tar.bz2
 MNThdd   := /install/harddisk
 
-IMGroot  := /install/images/$(SNAME)/$(SNAME).img
-IMGswap  := /install/images/$(SNAME)/swap.img
-SIZEroot := 1024
+IMGboot  := /install/images/$(SNAME)/$(SNAME)-boot.img
+IMGswap  := /install/images/$(SNAME)/$(SNAME)-swap.img
+IMGroot  := /install/images/$(SNAME)/$(SNAME)-root.img
+IMGvar   := /install/images/$(SNAME)/$(SNAME)-var.img
+
+SIZEboot := 30
 SIZEswap := 512
+SIZEroot := 512
+SIZEvar  := 950
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(MNThdd) $(IMGinst) $(IMGroot) && mkdir -p $(MNThdd)
-	mkdir -p /install/images/$(SNAME)/boot
+	mkdir -p /install/images/$(SNAME)   # /boot
+
+	#Create bootimage
+	dd bs=1M if=/dev/zero of=$(IMGboot) count=$(SIZEboot)
+	mkfs.ext3 -F $(IMGboot)
 
 	#Create swapimage
 	dd bs=1M if=/dev/zero of=$(IMGswap) count=$(SIZEswap)
@@ -64,11 +73,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	dd bs=1M if=/dev/zero of=$(IMGroot) count=$(SIZEroot)
 	mkfs.ext3 -F $(IMGroot)
 
+	#Create varimage
+	dd bs=1M if=/dev/zero of=$(IMGvar) count=$(SIZEvar)
+	mkfs.ext3 -F $(IMGvar)
+
 	# Mount Images
 	mount -o loop $(IMGroot) $(MNThdd)
 	mkdir $(MNThdd)/boot
 	mkdir $(MNThdd)/var
 	mkdir $(MNThdd)/var/log
+	mount -o loop $(IMGboot) $(MNThdd)/boot
+	mount -o loop $(IMGvar) $(MNThdd)/var
 
 	# Install IPFire without kernel modules
 	tar -C $(MNThdd)/ -xvjf /install/cdrom/$(SNAME)-$(VERSION).tbz2 \
@@ -81,11 +96,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#Create grub menuentry for pygrub
 	mkdir $(MNThdd)/boot/grub
-	echo "default 1"                           > $(MNThdd)/boot/grub/grub.conf
+	echo "timeout 10"                          > $(MNThdd)/boot/grub/grub.conf
+	echo "default 0"                          >> $(MNThdd)/boot/grub/grub.conf
 	echo "title IPFire (XEN-Kernel)"          >> $(MNThdd)/boot/grub/grub.conf
-	echo "  kernel /vmlinuz-$(KVER)-ipfire-xen root=/dev/xvda1 rootdelay=10 panic=10 console=xvc0 ro" \
+	echo "  kernel /vmlinuz-$(KVER)-ipfire-xen root=/dev/xvda3 rootdelay=10 panic=10 console=xvc0 ro" \
 						  >> $(MNThdd)/boot/grub/grub.conf
 	echo "  initrd /ipfirerd-$(KVER)-xen.img" >> $(MNThdd)/boot/grub/grub.conf
+	echo "# savedefault 0" >> $(MNThdd)/boot/grub/grub.conf
+
 	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
 
 	#Copy the meta-info of linux-xen package
@@ -103,10 +121,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mount --bind /dev  $(MNThdd)/dev
 	mount --bind /sys  $(MNThdd)/sys
 	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-	sed -i -e "s|DEVICE1|#boot-disabled|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE2|/dev/xvdb1|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE3|/dev/xvda1|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE4|#var-disabled|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE1|/dev/xvda1|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE2|/dev/xvda2|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE3|/dev/xvda3|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE4|/dev/xvda4|g" $(MNThdd)/etc/fstab
 
 	sed -i -e "s|FSTYPE|ext3|g" $(MNThdd)/etc/fstab
 	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
@@ -132,6 +150,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#Add xvc0 to securetty
 	echo xvc0 >> $(MNThdd)/etc/securetty
 
+	#Add getty for xvc0
+	echo "#Enable login for XEN" >> $(MNThdd)/etc/inittab
+	echo "8:2345:respawn:/sbin/agetty xvc0 9600" >> $(MNThdd)/etc/inittab
+
 	#Disable some initskripts
 	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/setclock
 	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/keymap
@@ -150,10 +172,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		$(MNThdd)/opt/pakfire/etc/pakfire.conf
 
 	#Copy initramdisk, kernel and config
-	cp -f $(MNThdd)/boot/ipfirerd-$(KVER)-xen.img \
-		/install/images/$(SNAME)/boot
-	cp -f $(MNThdd)/boot/vmlinuz-$(KVER)-ipfire-xen \
-		/install/images/$(SNAME)/boot
+	#cp -f $(MNThdd)/boot/ipfirerd-$(KVER)-xen.img \
+	#	/install/images/$(SNAME)/boot
+	#cp -f $(MNThdd)/boot/vmlinuz-$(KVER)-ipfire-xen \
+	#	/install/images/$(SNAME)/boot
 	cp $(DIR_SRC)/config/xen-image/* \
 		/install/images/$(SNAME)
 	sed -i -e "s|KVER|$(KVER)|g" /install/images/$(SNAME)/ipfire.cfg
@@ -162,6 +184,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	umount $(MNThdd)/proc
 	umount $(MNThdd)/dev
 	umount $(MNThdd)/sys
+	umount $(MNThdd)/var
+	umount $(MNThdd)/boot
 	umount $(MNThdd)
 
 	# Compress Image
