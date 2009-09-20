@@ -29,7 +29,6 @@
 * Net-IPv4Addr-0.10
 * Net-SSLeay-1.35
 * Net-Server-0.93
-* Net_SSLeay.pm-1.25
 * Python-2.4.3
 * SDL-1.2.11
 * Text-Tabs+Wrap-2005.0824
