@@ -25,4 +25,4 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 extract_files
 #Update Language cache
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
