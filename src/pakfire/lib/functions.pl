@@ -324,7 +324,11 @@ sub selectmirror {
 				$proto = $templine[0];
 				$host = $templine[1];
 				$path = $templine[2];
-				if (pinghost("$host")) {
+				if ($pakfiresettings{'HEALTHCHECK'} eq "off") {
+				 	logger("PING INFO: Healthcheck is disabled");
+					$found = 1;
+					return ($proto, $host, $path);
+				elsif (pinghost("$host")) {
 					$found = 1;
 					return ($proto, $host, $path);
 				}

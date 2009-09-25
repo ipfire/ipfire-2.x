@@ -1319,6 +1319,7 @@
 'pakfire configuration' => 'Pakfire Configuration',
 'pakfire core update auto' => 'Install core and addon updates automatically:',
 'pakfire core update level' => 'Core-Update-Level',
+'pakfire health check' => 'Check if mirror is reachable(ping)',
 'pakfire install description' => 'Please choose one or more items from the list below and click the plus to install.',
 'pakfire install package' => 'You want to install the following packages: ',
 'pakfire installed addons' => 'Installed Addons:',
