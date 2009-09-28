@@ -335,8 +335,8 @@ case "${1}" in
 						fi
 
 						if [ ! -f "$PIDFILE" ]; then
-							boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${RED_VDSL_IPTV_VLAN} interface..."
-							/sbin/dhcpcd ${DEVICE} ${DHCP_START} >/dev/null 2>&1
+							boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."
+							/sbin/dhcpcd ${DEVICE} -G ${DHCP_START} >/dev/null 2>&1
 							RET="$?"
 
 							if [ "$RET" = "0" ]; then
