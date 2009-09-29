@@ -24,5 +24,10 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 extract_files
+#
+# Fix tmpfs Backup cronjob entry
+grep -v "tmpfs backup" /var/spool/cron/root.orig > /var/tmp/root.tmp
+echo "17 5 * * *      /etc/init.d/tmpfs backup >/dev/null" >> /var/tmp/root.tmp
+fcrontab /var/tmp/root.tmp
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
