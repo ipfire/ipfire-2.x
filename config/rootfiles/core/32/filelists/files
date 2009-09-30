@@ -1,4 +1,5 @@
 etc/system-release
+bin/probenic.sh
 etc/rc.d/init.d/networking/red
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ids.cgi

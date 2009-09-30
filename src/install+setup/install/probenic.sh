@@ -19,7 +19,48 @@
 #                                                                             #
 ###############################################################################
 
-kudzu -qps -c NETWORK | egrep "desc|network.hwaddr|driver" > /var/ipfire/ethernet/scanned_nics 2>/dev/null
+if [ -e /var/ipfire/ethernet/scanned_nics ]; then
+	rm -f /var/ipfire/ethernet/scanned_nics
+fi
+touch /var/ipfire/ethernet/scanned_nics
+
+for card in `ls /sys/class/net`; do
+
+	#Check if this is an Ethernet device (type=1)
+	if [ `cat /sys/class/net/$card/type` == "1" ]; then
+		hwaddr=`cat /sys/class/net/$card/address`
+
+		#Check if mac is valid (not 00:00... or FF:FF...)
+		if [ ! "$hwaddr" == "00:00:00:00:00:00" ];then
+		if [ ! "$hwaddr" == "ff:ff:ff:ff:ff:ff" ];then
+
+			driver=`grep PHYSDEVDRIVER= /sys/class/net/$card/uevent | cut -d"=" -f2`
+			type=`grep PHYSDEVBUS= /sys/class/net/$card/uevent | cut -d"=" -f2`
+			description=`echo $type: $driver`
+
+			#Get more details for pci and usb devices
+			if [ "$type" == "pci" ]; then
+				slotname=`grep PCI_SLOT_NAME= /sys/class/net/$card/device/uevent | cut -d"=" -f2`
+				name=`lspci -s $slotname | cut -d':' -f3`
+				description=`echo $type:$name`
+			fi
+			if [ "$type" == "usb" ]; then
+				bus=`grep DEVICE= /sys/class/net/$card/device/uevent | cut -d"/" -f5`
+				dev=`grep DEVICE= /sys/class/net/$card/device/uevent | cut -d"/" -f6`
+				#work around the base8 convert
+				let bus=`echo 1$bus`-1000
+				let dev=`echo 1$dev`-1000
+				name=`lsusb -s $bus:$dev | cut -d':' -f3`
+				description=`echo $type: $name`
+			fi
+
+			echo desc: \"$description\"  >>/var/ipfire/ethernet/scanned_nics
+			echo driver: $driver         >>/var/ipfire/ethernet/scanned_nics
+			echo network.hwaddr: $hwaddr >>/var/ipfire/ethernet/scanned_nics
+		fi
+		fi
+	fi
+done
 
 # Revert Accesspoint marking at mac address
 sed -i 's|hwaddr: 06:|hwaddr: 00:|g' /var/ipfire/ethernet/scanned_nics
