@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -36,13 +36,21 @@ for card in `ls /sys/class/net`; do
 
 			driver=`grep PHYSDEVDRIVER= /sys/class/net/$card/uevent | cut -d"=" -f2`
 			type=`grep PHYSDEVBUS= /sys/class/net/$card/uevent | cut -d"=" -f2`
+
+			#Default if not avaiable in /sys/class/net
+			if [ "a$type" == "a" ]; then
+				type="???"
+			fi
+			if [ "a$driver" == "a" ]; then
+				driver="Unknown Network card"
+			fi
 			description=`echo $type: $driver`
 
 			#Get more details for pci and usb devices
 			if [ "$type" == "pci" ]; then
 				slotname=`grep PCI_SLOT_NAME= /sys/class/net/$card/device/uevent | cut -d"=" -f2`
-				name=`lspci -s $slotname | cut -d':' -f3`
-				description=`echo $type:$name`
+				name=`lspci -s $slotname | cut -d':' -f3 | cut -c 2-`
+				description=`echo $type: $name`
 			fi
 			if [ "$type" == "usb" ]; then
 				bus=`grep DEVICE= /sys/class/net/$card/device/uevent | cut -d"/" -f5`
@@ -50,7 +58,7 @@ for card in `ls /sys/class/net`; do
 				#work around the base8 convert
 				let bus=`echo 1$bus`-1000
 				let dev=`echo 1$dev`-1000
-				name=`lsusb -s $bus:$dev | cut -d':' -f3`
+				name=`lsusb -s $bus:$dev | cut -d':' -f3 | cut -c 6-`
 				description=`echo $type: $name`
 			fi
 
