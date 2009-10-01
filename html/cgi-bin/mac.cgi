@@ -22,8 +22,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -46,25 +46,34 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	$macsettings{'MAC'} =~ s/\-/:/g;
 	my @mac = split(/:/,$macsettings{"MAC"});
 	if ($#mac == 5) { 
-		if (($mac[0] eq "00")||($mac[0] eq "0")){
-			foreach (@mac) {
-				unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
-						$errormessage = $Lang::tr{'mac address error not valid'};
-						last;			
-				}			 
+		foreach (@mac) {
+			unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
+					$errormessage = $Lang::tr{'mac address error not valid'};
+					last;			
 			}
-		} else {	
-			$errormessage = $Lang::tr{'mac address error not 00'};
-		}
-		if ($errormessage eq "") {
-			$macsettings{'MAC'} =~ s/\:/-/g;
-			&General::writehash("${General::swroot}/mac/settings", \%macsettings);	
-			&Header::openbox('100%', 'left', $Lang::tr{'mac address saved'});								
-			print "<font class='base'>$Lang::tr{'mac address saved txt'}</font>\n";
-			&Header::closebox();		
 		}
 	} else {
 		$errormessage = $Lang::tr{'mac address error not valid'};
+	}
+	$macsettings{'MAC2'} =~ s/\-/:/g;
+	my @mac = split(/:/,$macsettings{"MAC2"});
+	if ($#mac == 5) { 
+		foreach (@mac) {
+			unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
+					$errormessage = $Lang::tr{'mac address error not valid'};
+					last;			
+			}
+		}
+	} else {
+		$errormessage = $Lang::tr{'mac address error not valid'};
+	}
+	if ($errormessage eq "") {
+		$macsettings{'MAC'} =~ s/\:/-/g;
+		$macsettings{'MAC2'} =~ s/\:/-/g;
+		&General::writehash("${General::swroot}/mac/settings", \%macsettings);	
+		&Header::openbox('100%', 'left', $Lang::tr{'mac address saved'});								
+		print "<font class='base'>$Lang::tr{'mac address saved txt'}</font>\n";
+		&Header::closebox();
 	}
 }
 if ($macsettings{'ACTION'} eq $Lang::tr{'reconnect'}) {
@@ -102,13 +111,13 @@ print <<END
 
 <table border="0"  width='100%'>
   <tr>
-    <td><font class='base'>$Lang::tr{'mac desc'}</font></td>
+    <td colspan=2><font class='base'>$Lang::tr{'mac desc'}</font></td>
   </tr>
   <tr>
-    <td>&nbsp;</td>
+    <td colspan=2>&nbsp;</td><td>&nbsp;</td>
   </tr>
   <tr>
-    <td><font class='base'>$Lang::tr{'mac new'}&nbsp;</font>
+    <td><font class='base'>$Lang::tr{'mac new'}&nbsp;</font></td><td>
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
@@ -125,10 +134,33 @@ END
 print <<END    
   </tr>
   <tr>
-    <td><hr /></td>
+    <td colspan=2>&nbsp;</td><td>&nbsp;</td>
   </tr>
   <tr>
-    <td><div align="center">
+    <td><font class='base'>$Lang::tr{'mac2 new'}&nbsp;</font></td><td>
+END
+;
+if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
+print <<END 
+      <input type="text" name="MAC2" maxlength="17" value=''/></td>
+END
+;
+} else {   
+print <<END
+      <input type="text" name="MAC2" maxlength="17" value='$macsettings{"MAC2"}'/></td>
+END
+;  
+} 
+print <<END    
+  </tr>
+  <tr>
+    <td colspan=2>&nbsp;</td><td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan=2><hr /></td>
+  </tr>
+  <tr>
+    <td colspan=2><div align="center">
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {

@@ -1062,7 +1062,7 @@
 'mac address done' => 'Die MAC-Adressen Einstellungen werden übernommen',
 'mac desc' => 'Sie können an dieser Stelle die MAC-Adresse von red0 ändern. Die Adresse muss in hexadezimal (0-9,a-f) eingegeben werden, eine gültige Eingaben ist z.B. 00-01-02-0e-b8-d6 oder 00:01:02:0e:b8:d6.',
 'mac new' => 'Neue MAC-Adresse:',
-'mac new' => 'Neue MAC-Adresse:',
+'mac2 new' => 'Neue MAC-Adresse 2 (vdsl-iptv):',
 'magic packet send to:' => 'Sende WOL-Paket an',
 'mailmethod' => 'Mail Methode',
 'mailprogramm' => 'Mail Programm',
