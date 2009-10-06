@@ -118,8 +118,9 @@ endif
 	# Set Regulatory Domain to "EU" (use Channel 1-14 max. 20db)
 	echo options cfg80211 ieee80211_regdom=EU > /etc/modprobe.d/cfg80211
 
-	# Remove original kernel rtl818x modules (compat wireless use the
-	# place of newer kernels and so not overwrite it...
+	# Remove original kernel modules (compat wireless use the
+	# place of newer kernels and so not overwrite it...)
+	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/ath?k
 	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818?.ko
 
 	-rm -rf $(DIR_APP)

@@ -69,8 +69,8 @@
 * clamav-0.95.2
 * cmake-2.4.8
 * collectd-4.5.3
-* compat-wireless-2009-06-17-kmod-2.6.27.31-ipfire
-* compat-wireless-2009-06-17-kmod-2.6.27.31-ipfire-xen
+* compat-wireless-2009-05-30-kmod-2.6.27.31-ipfire
+* compat-wireless-2009-05-30-kmod-2.6.27.31-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
@@ -282,7 +282,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.6
 * rtorrent-0.8.4
-* samba-3.3.7
+* samba-3.3.8
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01

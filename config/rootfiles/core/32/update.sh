@@ -31,3 +31,12 @@ echo "17 5 * * *      /etc/init.d/tmpfs backup >/dev/null" >> /var/tmp/root.tmp
 fcrontab /var/tmp/root.tmp
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+#Remove some non compat-wireless modules
+rm -rf /lib/modules/2.6.27.31-ipfire/kernel/drivers/net/wireless/ath?k
+rm -rf /lib/modules/2.6.27.31-ipfire/kernel/drivers/net/wireless/rtl818?.ko
+rm -rf /lib/modules/2.6.27.31-ipfire-xen/kernel/drivers/net/wireless/ath?k
+rm -rf /lib/modules/2.6.27.31-ipfire-xen/kernel/drivers/net/wireless/rtl818?.ko
+#Rebuild module dep's
+depmod -a
+#Don't report the exitcode of depmod
+exit 0
