@@ -22,8 +22,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -56,16 +56,19 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 		$errormessage = $Lang::tr{'mac address error not valid'};
 	}
 	$macsettings{'MAC2'} =~ s/\-/:/g;
-	my @mac = split(/:/,$macsettings{"MAC2"});
-	if ($#mac == 5) { 
-		foreach (@mac) {
-			unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
-					$errormessage = $Lang::tr{'mac address error not valid'};
-					last;			
+	
+	if ( not ($macsettings{'MAC2'} eq "" )) {
+		my @mac = split(/:/,$macsettings{"MAC2"});
+		if ($#mac == 5) { 
+			foreach (@mac) {
+				unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
+						$errormessage = $Lang::tr{'mac address error not valid'};
+						last;			
+				}
 			}
+		} else {
+			$errormessage = $Lang::tr{'mac address error not valid'};
 		}
-	} else {
-		$errormessage = $Lang::tr{'mac address error not valid'};
 	}
 	if ($errormessage eq "") {
 		$macsettings{'MAC'} =~ s/\:/-/g;
