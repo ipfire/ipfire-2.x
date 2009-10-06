@@ -33,6 +33,7 @@ eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/mac/settings)
 
 MAC=$(tr - : <<<$MAC)
+MAC2=$(tr - : <<<$MAC2)
 
 TYPE="${RED_TYPE}"
 DEVICE="${RED_DEV}"
@@ -94,9 +95,8 @@ case "${1}" in
 						if [ -n "$MAC" ]; then
 							boot_mesg "Setting mac address on ${DEVICE} to ${MAC}"	
 							ip link set dev ${DEVICE} address ${MAC}
-							evaluate_retval		
+							evaluate_retval
 						fi
-						
 						ip link set ${DEVICE} up
 					fi
 				fi
@@ -273,6 +273,11 @@ case "${1}" in
 					if [ ! -f "$PIDFILE" ]; then
 						boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_IPTV_VLAN} ..."
 						vconfig add ${DEVICE} ${RED_VDSL_IPTV_VLAN}
+						if [ -n "$MAC2" ]; then
+							boot_mesg "Setting mac address on ${DEVICE}.${RED_VDSL_IPTV_VLAN} to ${MAC2}"	
+							ip link set dev ${DEVICE}.${RED_VDSL_IPTV_VLAN} address ${MAC2}
+							evaluate_retval
+						fi
 						boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${RED_VDSL_IPTV_VLAN} interface..."
 						/sbin/dhcpcd ${DEVICE}.${RED_VDSL_IPTV_VLAN} ${DHCP_START} >/dev/null 2>&1
 						RET="$?"
