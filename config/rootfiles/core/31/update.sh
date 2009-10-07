@@ -123,17 +123,19 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 # Add some entries to openvpn config
 #
-if [ ! -x "/var/ipfire/ovpn/server.conf" ]; then
+if [ -e "/var/ipfire/ovpn/server.conf" ]; then
 	grep -q "script-security" /var/ipfire/ovpn/server.conf \
 	|| echo "script-security 3 system" >> /var/ipfire/ovpn/server.conf
 fi
 
-if [ ! -x "/var/ipfire/ovpn/server.conf" ]; then
+if [ -e "/var/ipfire/ovpn/server.conf" ]; then
 	grep -q "ifconfig-pool-persist" /var/ipfire/ovpn/server.conf \
 	|| echo "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600" >> /var/ipfire/ovpn/server.conf
 fi
+	chmod 644 /var/ipfire/ovpn/server.conf
+	chown nobody:nobody /var/ipfire/ovpn/server.conf
 
-if [ ! -x "/var/ipfire/ovpn/ovpn-leases.db" ]; then
+if [ ! -e "/var/ipfire/ovpn/ovpn-leases.db" ]; then
 	touch /var/ipfire/ovpn/ovpn-leases.db
 	chmod 600 /var/ipfire/ovpn/ovpn-leases.db
 	chown nobody:nobody /var/ipfire/ovpn/ovpn-leases.db
