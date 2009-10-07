@@ -328,6 +328,7 @@ sub selectmirror {
 				 	logger("PING INFO: Healthcheck is disabled");
 					$found = 1;
 					return ($proto, $host, $path);
+				}
 				elsif (pinghost("$host")) {
 					$found = 1;
 					return ($proto, $host, $path);
