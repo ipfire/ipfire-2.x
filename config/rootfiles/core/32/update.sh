@@ -29,6 +29,11 @@ extract_files
 grep -v "tmpfs backup" /var/spool/cron/root.orig > /var/tmp/root.tmp
 echo "17 5 * * *      /etc/init.d/tmpfs backup >/dev/null" >> /var/tmp/root.tmp
 fcrontab /var/tmp/root.tmp
+#Fix openvpn server permissions
+if [ -e "/var/ipfire/ovpn/server.conf" ]; then
+	chmod 644 /var/ipfire/ovpn/server.conf
+	chown nobody:nobody /var/ipfire/ovpn/server.conf
+fi
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #Remove some non compat-wireless modules
