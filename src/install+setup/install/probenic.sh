@@ -30,42 +30,50 @@ for card in `ls /sys/class/net`; do
 	if [ `cat /sys/class/net/$card/type` == "1" ]; then
 		hwaddr=`cat /sys/class/net/$card/address`
 
-		#Check if mac is valid (not 00:00... or FF:FF...)
-		if [ ! "$hwaddr" == "00:00:00:00:00:00" ];then
-		if [ ! "$hwaddr" == "ff:ff:ff:ff:ff:ff" ];then
+		#Check that is no VLAN if
+		if [[ ! "$card" =~ "[.]" ]]; then
 
-			driver=`grep PHYSDEVDRIVER= /sys/class/net/$card/uevent | cut -d"=" -f2`
-			type=`grep PHYSDEVBUS= /sys/class/net/$card/uevent | cut -d"=" -f2`
+			#check if this not a bridge
+			if [ ! -e /sys/class/net/$card/brforward ]; then
 
-			#Default if not avaiable in /sys/class/net
-			if [ "a$type" == "a" ]; then
-				type="???"
-			fi
-			if [ "a$driver" == "a" ]; then
-				driver="Unknown Network card"
-			fi
-			description=`echo $type: $driver`
+				#Check if mac is valid (not 00:00... or FF:FF...)
+				if [ ! "$hwaddr" == "00:00:00:00:00:00" ];then
+				if [ ! "$hwaddr" == "ff:ff:ff:ff:ff:ff" ];then
 
-			#Get more details for pci and usb devices
-			if [ "$type" == "pci" ]; then
-				slotname=`grep PCI_SLOT_NAME= /sys/class/net/$card/device/uevent | cut -d"=" -f2`
-				name=`lspci -s $slotname | cut -d':' -f3 | cut -c 2-`
-				description=`echo $type: $name`
-			fi
-			if [ "$type" == "usb" ]; then
-				bus=`grep DEVICE= /sys/class/net/$card/device/uevent | cut -d"/" -f5`
-				dev=`grep DEVICE= /sys/class/net/$card/device/uevent | cut -d"/" -f6`
-				#work around the base8 convert
-				let bus=`echo 1$bus`-1000
-				let dev=`echo 1$dev`-1000
-				name=`lsusb -s $bus:$dev | cut -d':' -f3 | cut -c 6-`
-				description=`echo $type: $name`
-			fi
+					driver=`grep PHYSDEVDRIVER= /sys/class/net/$card/uevent | cut -d"=" -f2`
+					type=`grep PHYSDEVBUS= /sys/class/net/$card/uevent | cut -d"=" -f2`
 
-			echo desc: \"$description\"  >>/var/ipfire/ethernet/scanned_nics
-			echo driver: $driver         >>/var/ipfire/ethernet/scanned_nics
-			echo network.hwaddr: $hwaddr >>/var/ipfire/ethernet/scanned_nics
-		fi
+					#Default if not avaiable in /sys/class/net
+					if [ "a$type" == "a" ]; then
+						type="???"
+					fi
+					if [ "a$driver" == "a" ]; then
+						driver="Unknown Network Interface ($card)"
+					fi
+					description=`echo $type: $driver`
+
+					#Get more details for pci and usb devices
+					if [ "$type" == "pci" ]; then
+						slotname=`grep PCI_SLOT_NAME= /sys/class/net/$card/device/uevent | cut -d"=" -f2`
+						name=`lspci -s $slotname | cut -d':' -f3 | cut -c 2-`
+						description=`echo $type: $name`
+					fi
+					if [ "$type" == "usb" ]; then
+						bus=`grep DEVICE= /sys/class/net/$card/device/uevent | cut -d"/" -f5`
+						dev=`grep DEVICE= /sys/class/net/$card/device/uevent | cut -d"/" -f6`
+						#work around the base8 convert
+						let bus=`echo 1$bus`-1000
+						let dev=`echo 1$dev`-1000
+						name=`lsusb -s $bus:$dev | cut -d':' -f3 | cut -c 6-`
+						description=`echo $type: $name`
+					fi
+
+					echo desc: \"$description\"  >>/var/ipfire/ethernet/scanned_nics
+					echo driver: $driver         >>/var/ipfire/ethernet/scanned_nics
+					echo network.hwaddr: $hwaddr >>/var/ipfire/ethernet/scanned_nics
+				fi
+				fi
+			fi
 		fi
 	fi
 done
