@@ -448,7 +448,7 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>Sys$Lang::tr{'log level'}</td><td align='left'><input type='text' name='SYSLOGLEVEL' value='$sambasettings{'SYSLOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>Syslog only</td><td align='left'>on <input type='radio' name='SYSLOGONLY' value='on' $checked{'SYSLOGONLY'}{'on'} />/
-																							<input type='radio' name='LOCALMASTER' value='off' $checked{'LOCALMASTER'}{'off'} /> off</td></tr>
+																							<input type='radio' name='SYSLOGONLY' value='off' $checked{'SYSLOGONLY'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
 																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
 																						<font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnip[0].$ovpnip[1].$ovpnip[2].$ovpnip[3]/$ovpnnetwork[1]</b></font></td></tr>
