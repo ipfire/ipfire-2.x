@@ -394,7 +394,7 @@ sub dblist {
 	close(FILE);
 
 	if ("$filter" eq "upgrade") {
-		if ("$forweb" ne "forweb") {getcoredb("noforce");}
+		if ("$forweb" ne "forweb" && "$forweb" ne "notice" ) {getcoredb("noforce");}
 		eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
 		if ("$core_release" > "$Conf::core_mine") {
 			if ("$forweb" eq "forweb") {
