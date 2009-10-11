@@ -28,6 +28,7 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "/opt/pakfire/lib/functions.pl";
 
 my %cgiparams=();
 my %pppsettings=();
@@ -421,6 +422,10 @@ if ($warnmessage) {
 }
 print <<END;
 </table>
+END
+;
+&Pakfire::dblist("upgrade", "notice");
+print <<END;
 
 END
 } else {
