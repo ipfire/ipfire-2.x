@@ -401,7 +401,7 @@ sub dblist {
 				print "<option value=\"core\">Core-Update -- $Conf::version -- Release: $Conf::core_mine -> $core_release</option>\n";
 			}
 			elsif ("$forweb" eq "notice") {
-				print "<a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $Conf::core_mine $Lang::tr{'core notice 2'} $core_release $Lang::tr{'core notice 3'}</a>";
+				print "<br /><br /><br /><a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $Conf::core_mine $Lang::tr{'core notice 2'} $core_release $Lang::tr{'core notice 3'}</a>";
 			} else {
 				my $command = "Core-Update $Conf::version\nRelease: $Conf::core_mine -> $core_release\n";
 				if ("$Pakfire::enable_colors" eq "1") {
@@ -437,7 +437,7 @@ sub dblist {
 			}
 			foreach $prog (@db) {
 				@templine = split(/\;/,$prog);
-				if (("$name" eq "$templine[0]") && ("$release" < "$templine[2]" )) {
+				if (("$name" eq "$templine[0]") && ("$release" < "$templine[2]" && "$forweb" ne "notice")) {
 					push(@updatepaks,$name);
 					if ("$forweb" eq "forweb") {
 						print "<option value=\"$name\">Update: $name -- Version: $version -> $templine[1] -- Release: $release -> $templine[2]</option>\n";
