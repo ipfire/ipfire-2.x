@@ -1,8 +1,11 @@
 etc/system-release
 bin/probenic.sh
+etc/rc.d/init.d/functions
+etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/networking/red
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/mac.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
