@@ -337,13 +337,13 @@ case "${1}" in
 						if [ -f "$PIDFILE" ]; then
 							ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
 							if [ $? != 0 ]; then
-								rm -f /var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid > /dev/null
+								rm -f /var/run/dhcpcd-${DEVICE}.pid > /dev/null
 							fi
 						fi
 
 						if [ ! -f "$PIDFILE" ]; then
 							boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."
-							/sbin/dhcpcd ${DEVICE} -G ${DHCP_START} >/dev/null 2>&1
+							/sbin/dhcpcd ${DEVICE} ${DHCP_START} >/dev/null 2>&1
 							RET="$?"
 
 							if [ "$RET" = "0" ]; then
