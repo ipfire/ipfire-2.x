@@ -1509,6 +1509,8 @@
 'sitekeyfile' => 'Sitekeyfile',
 'size' => 'Größe',
 'smart information' => 'SMART-Informationen',
+'smartwarn1' => 'Warnung! Gerät:',
+'smartwarn2' => 'meldet S.M.A.R.T. Fehler!!!',
 'smbreload' => 'Samba Dienste durchstarten',
 'smbrestart' => 'Samba neustarten',
 'smbstart' => 'Samba Dienste starten',

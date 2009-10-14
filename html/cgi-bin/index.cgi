@@ -417,6 +417,17 @@ foreach my $line (@df) {
 	}
 }
 
+# S.M.A.R.T. health warning
+my @files = `/bin/ls /var/run/smartctl_out_hddtemp-*`;
+foreach my $file (@files) {
+	chomp ($file);
+	my $disk=`echo $file | cut -d"-" -f2`;
+	chomp ($disk);
+	if (`/bin/grep "SAVE ALL DATA" $file`) {
+		$warnmessage .= "$Lang::tr{'smartwarn1'} $disk $Lang::tr{'smartwarn2'}<br>\n";
+	}
+}
+
 if ($warnmessage) {
 	print "<tr><td align='center' bgcolor=$Header::colourred colspan='3'><font color='white'>$warnmessage</font></table>";
 }
