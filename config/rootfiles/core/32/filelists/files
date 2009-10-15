@@ -11,4 +11,5 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 srv/web/ipfire/cgi-bin/index.cgi
 usr/local/bin/makegraphs
+usr/local/bin/setddns.pl
 usr/local/share/GeoIP/GeoIP.dat
