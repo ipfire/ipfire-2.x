@@ -83,7 +83,7 @@
 * dhcp-3.1.0
 * dhcpcd-2.0.8
 * diffutils-2.8.1
-* dnsmasq-2.47
+* dnsmasq-2.45
 * dosfstools-2.11
 * e1000e-1.0.2.5-kmod-2.6.27.31-ipfire
 * e1000e-1.0.2.5-kmod-2.6.27.31-ipfire-xen
@@ -319,7 +319,7 @@
 * texinfo-4.8
 * tftp-hpa-0.48
 * tiff-3.8.2
-* traceroute-2.0.12
+* traceroute-1.4a12
 * tripwire-2.4.1.2
 * tunctl
 * udev-096
