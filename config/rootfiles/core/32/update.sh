@@ -23,7 +23,13 @@
 #
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
+#
+#Stop squid
+/etc/init.d/squid stop
 extract_files
+#
+#Start squid
+/etc/init.d/squid start
 #
 # Fix tmpfs Backup cronjob entry
 grep -v "tmpfs backup" /var/spool/cron/root.orig > /var/tmp/root.tmp
