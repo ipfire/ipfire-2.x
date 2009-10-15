@@ -25,6 +25,7 @@
 include Config
 
 VER        = 1.17
+DATVER     = 15102009
 
 THISAPP    = Geo-IP-PurePerl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -36,13 +37,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) GeoIP.dat
+objects = $(DL_FILE) GeoIP.dat-$(DATVER).gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-GeoIP.dat = $(DL_FROM)/GeoIP.dat
+GeoIP.dat-$(DATVER).gz = $(DL_FROM)/GeoIP.dat-$(DATVER).gz
 
 $(DL_FILE)_MD5 = 42a6b9d4dd2563a20c8998556216e1de
-GeoIP.dat_MD5 = 55aa4d51f7920241296f2fc215d9e559
+GeoIP.dat-$(DATVER).gz_MD5 = bcdb40e805a64015d993ccd5ab1cd149
 
 install : $(TARGET)
 
@@ -76,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && mkdir -p /usr/local/share/GeoIP && \
-		cp -f $(DIR_DL)/GeoIP.dat /usr/local/share/GeoIP/GeoIP.dat
+		zcat $(DIR_DL)/GeoIP.dat-$(DATVER).gz > /usr/local/share/GeoIP/GeoIP.dat
 	cd $(DIR_APP) && chmod 777 /srv/web/ipfire/html/images/flags
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
