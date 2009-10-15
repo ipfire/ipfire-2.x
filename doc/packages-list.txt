@@ -319,7 +319,7 @@
 * texinfo-4.8
 * tftp-hpa-0.48
 * tiff-3.8.2
-* traceroute-1.4a12
+* traceroute-2.0.12
 * tripwire-2.4.1.2
 * tunctl
 * udev-096
