@@ -391,33 +391,31 @@ if ($ip ne $ipcache) {
 			    }
 			}
 			elsif ($settings{'SERVICE'} eq 'regfish') {
-			    # use proxy ?
-			    my %proxysettings;
-			    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
-			    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-				my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
-				Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
-			    }
-
-
-			    my ($out, $response) = Net::SSLeay::get_https(  'www.regfish.com',
-									    443,
-									    "/dyndns/2/?fqdn=$settings{'DOMAIN'}&ipv4=$ip&forcehost=1&authtype=secure&token=$settings{'LOGIN'}",
-	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
-									 );
-			    #Valid responses from service are:
-			    #success|100|update succeeded!
-			    #success|101|no update needed at this time..
-			    if ($response =~ m%HTTP/1\.. 200 OK%) {
-				if ( $out !~ m/(success\|(100|101)\|)/ig ) {
-				    &General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure ($out)");
-				} else {
-				    &General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : success");
-				    $success++;
+				# use proxy ?
+				my %proxysettings;
+				&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+				if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+					my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+					Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
 				}
-			    } else {
-			        &General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure (could not connect to server)");
-			    }
+				my ($out, $response) = Net::SSLeay::get_https(  'dyndns.regfish.de',
+										443,
+										"/?fqdn=$settings{'DOMAIN'}&ipv4=$ip&forcehost=1&authtype=secure&token=$settings{'LOGIN'}",
+										Net::SSLeay::make_headers('User-Agent' => 'Ipfire' )
+										);
+				#Valid responses from service are:
+				# success|100|update succeeded!
+				# success|101|no update needed at this time..
+				if ($response =~ m%HTTP/1\.. 200 OK%) {
+					if ( $out !~ m/(success\|(100|101)\|)/ig ) {
+						&General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure ($out)");
+					} else {
+						&General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : success");
+						$success++;
+					}
+				} else {
+					&General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure (could not connect to server)");
+				}
 			}
 			elsif ($settings{'SERVICE'} eq 'ovh') {
 				my %proxysettings;
