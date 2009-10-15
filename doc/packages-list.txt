@@ -298,7 +298,7 @@
 * splix-2.0.0-rc2
 * sqlite-3.6.10
 * squashfs3.4
-* squid-2.7.STABLE6
+* squid-2.7.STABLE7
 * squidGuard-1.4
 * squidclamav-4.0
 * sshfs-fuse-2.2

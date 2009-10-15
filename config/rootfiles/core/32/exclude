@@ -1,0 +1,4 @@
+srv/web/ipfire/html/proxy.pac
+srv/web/ipfire/html/wpad.dat
+var/log/squid/access.log
+var/log/updatexlrator
