@@ -1541,7 +1541,7 @@
 'sitekeyfile' => 'Sitekeyfile',
 'size' => 'Size',
 'smart information' => 'SMART information',
-'smartwarn1' => 'WARNING: Device:',
+'smartwarn1' => 'Device:',
 'smartwarn2' => 'report S.M.A.R.T. error',
 'smbreload' => 'Samba Dienste durchstarten',
 'smbrestart' => 'restart Samba',

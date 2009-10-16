@@ -403,7 +403,7 @@ foreach my $line (@df) {
 		if ($1<5) {
 			# available:plain value in MB, and not %used as 10% is too much to waste on small disk
 			# and root size should not vary during time
-			$warnmessage .= "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b> !\n";
+			$warnmessage .= "<li> $Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b> !</li>\n";
 		}
 		
 	} else {
@@ -412,7 +412,7 @@ foreach my $line (@df) {
 		if ($1>90) {
 			@temp = split(/ /,$line);
 			$temp2=int(100-$1);
-			$warnmessage .= "$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b> !\n";
+			$warnmessage .= "<li> $Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$temp2%</b> !</li>\n";
 		}
 	}
 }
@@ -424,7 +424,7 @@ foreach my $file (@files) {
 	my $disk=`echo $file | cut -d"-" -f2`;
 	chomp ($disk);
 	if (`/bin/grep "SAVE ALL DATA" $file`) {
-		$warnmessage .= "$Lang::tr{'smartwarn1'} $disk $Lang::tr{'smartwarn2'}<br>\n";
+		$warnmessage .= "<li> $Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'} !</li>\n\n";
 	}
 }
 
