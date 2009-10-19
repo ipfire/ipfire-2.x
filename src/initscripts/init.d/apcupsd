@@ -1,0 +1,27 @@
+#!/bin/sh
+# Begin $rc_base/init.d/apcupsd
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting apcupsd daemon..."
+		loadproc apcupsd
+		;;
+	stop)
+		boot_mesg "Stopping apcupsd daemon..."
+		killproc apcupsd
+		;;
+	status)
+		statusproc /sbin/apcupsd
+		;;
+	*)
+		echo "Usage: $0 (start|stop|status)"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/apcupsd
