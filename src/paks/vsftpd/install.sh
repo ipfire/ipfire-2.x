@@ -25,3 +25,6 @@
 extract_files
 restore_backup ${NAME}
 start_service --background ${NAME}
+
+# Disable vsftpd by default due to lack of configuration file
+/usr/local/bin/addonctrl vsftpd disable
