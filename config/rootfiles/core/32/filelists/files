@@ -13,6 +13,3 @@ srv/web/ipfire/cgi-bin/index.cgi
 usr/local/bin/makegraphs
 usr/local/bin/setddns.pl
 usr/local/share/GeoIP/GeoIP.dat
-lfs/vsftpd
-lfs/apcupsd
-src/initscripts/init.d/apcupsd
