@@ -23,4 +23,6 @@
 #
 . /opt/pakfire/lib/functions.sh
 ./uninstall.sh
-./install.sh
+extract_files
+restore_backup ${NAME}
+start_service --background ${NAME}

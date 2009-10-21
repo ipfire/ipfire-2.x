@@ -1,5 +1,8 @@
 var/ipfire/backup/addons/includes/vsftpd
 etc/rc.d/init.d/vsftpd
+etc/rc.d/rc0.d/K35vsftpd
+etc/rc.d/rc6.d/K35vsftpd
+etc/rc.d/rc3.d/S65vsftpd
 etc/vsftpd.conf
 etc/vsftpd.user_list
 home/ftp

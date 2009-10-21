@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -87,9 +87,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -v -m 644 vsftpd.conf.5 /usr/share/man/man5
 	cd $(DIR_APP) && install -v -m 644 $(DIR_SRC)/config/vsftpd/vsftpd.conf /etc
 	cd $(DIR_APP) && install -v -m 644 $(DIR_SRC)/config/vsftpd/vsftpd.user_list /etc
-	ln -s ../init.d/vsftpd /etc/rc.d/rc3.d/S65vsftpd
-	ln -s ../init.d/vsftpd /etc/rc.d/rc0.d/K35vsftpd
-	ln -s ../init.d/vsftpd /etc/rc.d/rc6.d/K35vsftpd
+	ln -sf ../init.d/vsftpd /etc/rc.d/rc3.d/S65vsftpd
+	ln -sf ../init.d/vsftpd /etc/rc.d/rc0.d/K35vsftpd
+	ln -sf ../init.d/vsftpd /etc/rc.d/rc6.d/K35vsftpd
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/vsftpd \
 			/var/ipfire/backup/addons/includes/vsftpd
 	@rm -rf $(DIR_APP)
