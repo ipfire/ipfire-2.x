@@ -1,0 +1,6 @@
+lib/modules/2.6.27.31-ipfire/kernel/drivers/net/r8101.ko
+lib/modules/2.6.27.31-ipfire/kernel/drivers/net/r8169.ko
+lib/modules/2.6.27.31-ipfire/kernel/drivers/net/r8168.ko
+lib/modules/2.6.27.31-ipfire-xen/kernel/drivers/net/r8101.ko
+lib/modules/2.6.27.31-ipfire-xen/kernel/drivers/net/r8169.ko
+lib/modules/2.6.27.31-ipfire-xen/kernel/drivers/net/r8168.ko
