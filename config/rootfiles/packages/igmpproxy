@@ -1,4 +1,4 @@
 etc/igmpproxy.conf
-usr/local/bin/igmpproxy
-#usr/share/man/man5/igmpproxy.conf.5
-#usr/share/man/man8/igmpproxy.8
+usr/local/sbin/igmpproxy
+#usr/local/share/man/man5/igmpproxy.conf.5
+#usr/local/share/man/man8/igmpproxy.8

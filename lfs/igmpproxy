@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 0.1-beta2
+VER        = 0.1
 
-THISAPP    = igmpproxy-src-$(VER)
+THISAPP    = igmpproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = igmpproxy
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2a5a59480f44d4b14077a6b5319e9940
+$(DL_FILE)_MD5 = c56f41ec195bc1fe016369bf74efc5a1
 
 install : $(TARGET)
 
@@ -77,7 +77,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/$(PROG)/src && make $(MAKETUNING)
-	cd $(DIR_SRC)/$(PROG)/src && make install
+	cd $(DIR_APP) && ./configure --sysconfdir=/etc
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

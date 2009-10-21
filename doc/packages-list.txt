@@ -142,7 +142,7 @@
 * icecream-0.9.4.8
 * icegenerator-0.5.5-pre2
 * iftop-0.17
-* igmpproxy-src-0.1-beta2
+* igmpproxy-0.1
 * inetutils-1.4.2
 * ipaddr-1.2
 * iperf-2.0.4
@@ -241,7 +241,7 @@
 * nfs-utils-1.1.1
 * nmap-4.76
 * noip_updater_v1.6
-* ntfs-3g-2009.2.1
+* ntfs-3g-2009.4.4
 * ntp-4.2.4p7
 * nut-2.4.1
 * ocaml-3.09.2
@@ -274,6 +274,12 @@
 * procps-3.2.6
 * psmisc-22.2
 * qemu-0.10.5
+* r8101-1.013.00-kmod-2.6.27.31-ipfire
+* r8101-1.013.00-kmod-2.6.27.31-ipfire-xen
+* r8168-8.014.00-kmod-2.6.27.31-ipfire
+* r8168-8.014.00-kmod-2.6.27.31-ipfire-xen
+* r8169-6.011.00-kmod-2.6.27.31-ipfire
+* r8169-6.011.00-kmod-2.6.27.31-ipfire-xen
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
@@ -282,7 +288,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.6
 * rtorrent-0.8.4
-* samba-3.3.8
+* samba-3.3.9
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
