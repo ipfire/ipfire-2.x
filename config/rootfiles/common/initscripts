@@ -7,6 +7,7 @@ etc/rc.d/helper/writeipac.pl
 #etc/rc.d/init.d/alsa
 #etc/rc.d/init.d/amavisd
 etc/rc.d/init.d/apache
+#etc/rc.d/init.d/apcupsd
 #etc/rc.d/init.d/applejuice
 #etc/rc.d/init.d/asterisk
 etc/rc.d/init.d/beep
