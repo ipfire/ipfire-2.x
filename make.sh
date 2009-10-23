@@ -22,18 +22,20 @@
 ############################################################################
 #
 
-NAME="IPFire"										# Software name
-SNAME="ipfire"									# Short name
-VERSION="2.5"
-CORE="32"
-GIT_BRANCH=master:master										# Version number
-SLOGAN="www.ipfire.org"					# Software slogan
-CONFIG_ROOT=/var/ipfire					# Configuration rootdir
-NICE=10													# Nice level
-MAX_RETRIES=1										# prefetch/check loop
+NAME="IPFire"							# Software name
+SNAME="ipfire"							# Short name
+VERSION="2.5"							# Version number
+CORE="33"							# Core Level (Filename)
+PAKFIRE_CORE="32"						# Core Level (PAKFIRE)
+GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
+SLOGAN="www.ipfire.org"						# Software slogan
+CONFIG_ROOT=/var/ipfire						# Configuration rootdir
+NICE=10								# Nice level
+MAX_RETRIES=1							# prefetch/check loop
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
-GIT_TAG=$(git tag | tail -1)
+GIT_TAG=$(git tag | tail -1)					# Git Tag
+GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=1
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
@@ -638,8 +640,12 @@ buildipfire() {
   git status >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
-  echo $CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  echo $NAME $VERSION - Core$CORE > $BASEDIR/build/etc/system-release
+  echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
+  if [ "$GIT_BRANCH" = "master" ]; then
+	echo "$NAME $VERSION - (Development Build: $GIT_LASTCOMMIT)" > $BASEDIR/build/etc/system-release
+  else
+	echo "$NAME $VERSION - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
+  fi
 }
 
 buildinstaller() {
@@ -985,7 +991,7 @@ git)
 	  	[ -z $GIT_USER ] && exiterror "You have to setup GIT_USER first."
 			GIT_URL="ssh://${GIT_USER}@git.ipfire.org/pub/git/ipfire-2.x"
 			
-		git push ${GIT_URL} ${GIT_BRANCH} $3
+		git push ${GIT_URL} $3
 	  	;;
 	  log)
 		[ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
