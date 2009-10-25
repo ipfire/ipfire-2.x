@@ -28,7 +28,7 @@ VER        = 0.97
 
 THISAPP    = Net-Server-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://search.cpan.org/CPAN/authors/id/R/RH/RHANDOM
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
