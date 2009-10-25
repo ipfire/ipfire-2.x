@@ -26,64 +26,22 @@ include Config
 
 VER        = 2008-04-13
 THISAPP    = ffmpeg-export-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = ffmpeg
+PROG       = ffmpeg-libs
 PAK_VER    = 3
 
-DEPS       = "ffmpeg-libs sdl lame libvorbis xvid"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+install : 
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+check : 
 
-$(DL_FILE)_MD5 = 017ab929ff92be552debb65c589c2183
+download :
 
-install : $(TARGET)
-
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
-
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
-
-md5 : $(subst %,%_MD5,$(objects))
+md5 :
 
 dist: 
 	@$(PAK)
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
-
-###############################################################################
-# Installation Details
-###############################################################################
-
-$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	ln -s $(THISAPP) /usr/src/ffmpeg
-	cd $(DIR_SRC)/ffmpeg && ./configure --prefix=/usr \
-                                     --enable-shared \
-				     --enable-postproc \
-				     --enable-gpl
-	cd $(DIR_SRC)/ffmpeg && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/ffmpeg && make install
-	cd $(DIR_SRC)/ffmpeg && make install-libs
-	ldconfig
-#	@rm -rf $(DIR_APP)
-	@$(POSTBUILD)
