@@ -77,8 +77,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/nut --with-usb --with-user=root --with-group=nut --with-wrap=no --with-udev-dir=/etc/udev
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/nut \
+			--with-usb --with-user=root --with-group=nut \
+			--with-wrap=no --with-udev-dir=/etc/udev
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/nut \
+			 /var/ipfire/backup/addons/includes/nut
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

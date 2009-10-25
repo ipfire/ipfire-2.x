@@ -79,6 +79,7 @@ etc/rc.d/init.d/networking/red.up/99-U-dialctrl.pl
 etc/rc.d/init.d/networking/red.up/99-pakfire-update
 #etc/rc.d/init.d/nfs-server
 etc/rc.d/init.d/ntp
+#etc/rc.d/init.d/nut
 #etc/rc.d/init.d/portmap
 #etc/rc.d/init.d/postfix
 etc/rc.d/init.d/random
