@@ -362,7 +362,7 @@ case "${1}" in
 								boot_mesg_flush
 								boot_mesg "           DNS Server:      $DNS"
 								boot_mesg_flush
-
+								/sbin/route add $PPTP_PEER gw $GATEWAY $PPP_NIC
 							else
 								echo ""
 								$(exit "$RET")
