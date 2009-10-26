@@ -1,1 +1,3 @@
 etc/system-release
+var/ipfire/outgoing/bin/outgoingfw.pl
+srv/web/ipfire/cgi-bin/outgoingfw.cgi

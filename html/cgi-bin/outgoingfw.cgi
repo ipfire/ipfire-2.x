@@ -456,7 +456,7 @@ sub addrule
 		    <td width='20%' align='right'>$Lang::tr{'active'}:
 		    <td width='30%' align='left'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} />
 		<tr><td width='20%' align='right'>$Lang::tr{'protocol'}:
-		    <td width='30%' align='left'><select name='PROT'><option value='tcp' $selected{'PROT'}{'all'}>All</option><option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option><option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option><option value='udp' $selected{'PROT'}{'udp'}>UDP</option></select>
+		    <td width='30%' align='left'><select name='PROT'><option value='all' $selected{'PROT'}{'all'}>All</option><option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option><option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option><option value='udp' $selected{'PROT'}{'udp'}>UDP</option></select>
 		    <td width='20%' align='right'>$Lang::tr{'policy'}:
 		    <td width='30%' align='left'>
 END
