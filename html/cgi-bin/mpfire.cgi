@@ -210,6 +210,7 @@ if ( $mpfiresettings{'ACTION'} eq "scan" ){
 	&General::readhash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 	&Header::getcgihash(\%mpfiresettings);
 	delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};
+	delete $mpfiresettings{'PAGE'};
 	&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 
 	open(DATEI, "<${General::swroot}/mpfire/mpd.conf") || die "Datei nicht gefunden";
