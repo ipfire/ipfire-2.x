@@ -25,4 +25,5 @@
 extract_files
 restore_backup ${NAME}
 # Disable vsftpd by default due to lack of configuration file
-/usr/local/bin/addonctrl vsftpd disable
+mkdir -p /etc/rc.d/rc3.d/off
+mv -f /etc/rc.d/rc3.d/S??${NAME} /etc/rc.d/rc3.d/off
