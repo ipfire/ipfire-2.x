@@ -195,7 +195,8 @@ if ($work ne ""){
 	exit;
 }
 
-if ( $mpfiresettings{'PAGE'} eq "" ){$mpfiresettings{'PAGE'} = "1";}
+if ( $mpfiresettings{'PAGE'} eq "" ){ $mpfiresettings{'PAGE'} = "1";};
+if ( $mpfiresettings{'FRAME'} eq "" ){$mpfiresettings{'FRAME'} = "webradio";};
 
 &Header::getcgihash(\%mpfiresettings);
 &Header::openpage($Lang::tr{'mpfire'}, 1,);
@@ -210,7 +211,7 @@ if ( $mpfiresettings{'ACTION'} eq "scan" ){
 	&General::readhash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 	&Header::getcgihash(\%mpfiresettings);
 	delete $mpfiresettings{'__CGI__'};delete $mpfiresettings{'x'};delete $mpfiresettings{'y'};
-	delete $mpfiresettings{'PAGE'};
+	delete $mpfiresettings{'PAGE'}; delete $mpfiresettings{'FRAME'};
 	&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 
 	open(DATEI, "<${General::swroot}/mpfire/mpd.conf") || die "Datei nicht gefunden";
@@ -355,6 +356,29 @@ print "<b>Songs:".$mpd->stats()->songs()."</b><br />";
 
 &Header::closebox();
 
+&Header::openbox('100%', 'center', '');
+print <<END
+<tr><td align='center' colspan='4'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+END
+;
+my @buttons=("webradio", "quick playlist","songs");
+foreach (@buttons){
+	if ( $mpfiresettings{'FRAME'} eq $_ ) {
+		print "<input type='submit' name='FRAME' value='$_' disabled />";
+	} else {
+		print "<input type='submit' name='FRAME' value='$_' />";
+	}
+}
+
+print <<END
+</form></td></tr>
+END
+;
+&Header::closebox();
+
+if ( $mpfiresettings{'FRAME'} eq "quick playlist" )
+{
 &Header::openbox('100%', 'center', $Lang::tr{'quick playlist'});
 # box to quickly select artist, album, year or genre and play the selection
 print "<table width='95%' cellspacing='0'>";
@@ -377,6 +401,7 @@ print <<END
 </select><br/>
 <input type='hidden' name='ACTION' value='playartist' />
 <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 </form></td>
 <td align='center'>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -394,6 +419,7 @@ print <<END
 </select><br/>
 <input type='hidden' name='ACTION' value='playalbum' />
 <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 </form></td>
 </tr>
 <tr><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'year'}</b></td><td align='center' bgcolor='$color{'color20'}'><b>$Lang::tr{'genre'}</b></td></tr>
@@ -413,6 +439,7 @@ print <<END
 </select><br/>
 <input type='hidden' name='ACTION' value='playyear' />
 <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 </form></td>
 <td align='center'>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -430,13 +457,17 @@ print <<END
 </select><br/>
 <input type='hidden' name='ACTION' value='playgenre' />
 <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 </form></td>
 </tr></table>
 END
 ;
 
 &Header::closebox();
+}
 
+if ( $mpfiresettings{'FRAME'} eq "songs" )
+{
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire search'});
 # box to quickly search artist, album or title
 print <<END
@@ -459,6 +490,7 @@ print <<END
 <td align='center' colspan='3'><input type='hidden' name='ACTION' value='search' /><input type='image' alt='$Lang::tr{'Scan for Songs'}' title='$Lang::tr{'Scan for Songs'}' src='/images/edit-find.png' /></td>
 </tr>
 </table>
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 </form>
 END
 ;
@@ -480,7 +512,7 @@ if ( $#songs > 100 ){
 			print"<br/>";
 		}
 	}
-
+	print "<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />";
 	print "</form></td></tr>";
 }
 print <<END
@@ -518,6 +550,7 @@ if ( $mpfiresettings{'PAGE'} eq 'all' ){
 <input type='hidden' name='ACTION' value='addtoplaylist' />
 <input type='hidden' name='FILE' value="$_" />
 <input type='hidden' name='PAGE' value='$mpfiresettings{'PAGE'}' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 <input type='hidden' name='SEARCH' value='$mpfiresettings{'SEARCH'}' />
 <input type='hidden' name='SEARCHITEM' value='$mpfiresettings{'SEARCHITEM'}' />
 <input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/list-add.png' />
@@ -526,6 +559,7 @@ if ( $mpfiresettings{'PAGE'} eq 'all' ){
 <input type='hidden' name='ACTION' value='>' />
 <input type='hidden' name='FILE' value="$_" />
 <input type='hidden' name='PAGE' value='$mpfiresettings{'PAGE'}' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 <input type='hidden' name='SEARCH' value='$mpfiresettings{'SEARCH'}' />
 <input type='hidden' name='SEARCHITEM' value='$mpfiresettings{'SEARCHITEM'}' />
 <input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
@@ -542,42 +576,10 @@ END
 
 print "</table>";
 &Header::closebox();
-
-&Header::openbox('100%', 'center', $Lang::tr{'mpfire playlist'});
-# box to show the current playlist given from mpc system command
-my @playlist = `mpc playlist 2>/dev/null`;
-
-print <<END
-<table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'current playlist'}</b></td></tr>
-<tr><td align='center' colspan='2' ><textarea cols='100' rows='10' name='playlist' style='font-size:11px;width:650px;' readonly='readonly'>
-END
-;
-
-foreach (@playlist){
-	$_=~s/&/&amp\;/g;;print $_;
 }
 
-print <<END
-</textarea></td></tr><tr>
-<td align='right'>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='ACTION' value='emptyplaylist' />
-<input type='image' alt='$Lang::tr{'clear playlist'}' title='$Lang::tr{'clear playlist'}' src='/images/user-trash.png' />
-</form>
-</td>
-<td align='left'>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='ACTION' value='playlist' />
-<input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
-</form>
-</td></tr>
-</table>
-END
-;
-
-&Header::closebox();
-
+if ( $mpfiresettings{'FRAME'} eq "webradio" )
+{
 &Header::openbox('100%', 'center', $Lang::tr{'mpfire webradio'});
 # box to select some webradio´s to be played by one click
 open(DATEI, "<${General::swroot}/mpfire/webradio") || die "Could not open playlist";
@@ -604,7 +606,9 @@ foreach (@webradio){
 	chomp $stream[1];chomp $stream[2];
 	print <<END
 <td align='left'><a href='$stream[2]' target='_blank'>$stream[1]</a></td>
-<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='middle' /></form></td>
+<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='middle' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
+</form></td>
 </tr>
 END
 ;
@@ -619,11 +623,51 @@ if ($lines % 2){
 
 print <<END
 <td align='center' colspan='2'><form method='post' action='$ENV{'SCRIPT_NAME'}'><br />http://<input type=text name='FILE' value='www.meineradiourl:1234' size='75' />
-<input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='top' /></form></td>
+<input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='top' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
+</form></td>
 </tr>
 END
 ;
 print "</table>";
+&Header::closebox();
+}
+
+&Header::openbox('100%', 'center', $Lang::tr{'mpfire playlist'});
+# box to show the current playlist given from mpc system command
+my @playlist = `mpc playlist 2>/dev/null`;
+
+print <<END
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'current playlist'}</b></td></tr>
+<tr><td align='center' colspan='2' ><textarea cols='100' rows='10' name='playlist' style='font-size:11px;width:650px;' readonly='readonly'>
+END
+;
+
+foreach (@playlist){
+	$_=~s/&/&amp\;/g;;print $_;
+}
+
+print <<END
+</textarea></td></tr><tr>
+<td align='right'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<input type='hidden' name='ACTION' value='emptyplaylist' />
+<input type='image' alt='$Lang::tr{'clear playlist'}' title='$Lang::tr{'clear playlist'}' src='/images/user-trash.png' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
+</form>
+</td>
+<td align='left'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<input type='hidden' name='ACTION' value='playlist' />
+<input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' />
+<input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
+</form>
+</td></tr>
+</table>
+END
+;
+
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();

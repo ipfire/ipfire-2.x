@@ -28,7 +28,6 @@
 * Net-DNS-0.47
 * Net-IPv4Addr-0.10
 * Net-SSLeay-1.35
-* Net-Server-0.93
 * Net-Server-0.97
 * Python-2.4.3
 * SDL-1.2.11
