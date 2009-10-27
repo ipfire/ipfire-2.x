@@ -1,5 +1,6 @@
 #usr/lib/perl5/site_perl/5.8.8/Net/Server
 usr/lib/perl5/site_perl/5.8.8/Net/Server.pm
+#usr/lib/perl5/site_perl/5.8.8/Net/Server.pod
 usr/lib/perl5/site_perl/5.8.8/Net/Server/Daemonize.pm
 usr/lib/perl5/site_perl/5.8.8/Net/Server/Fork.pm
 usr/lib/perl5/site_perl/5.8.8/Net/Server/INET.pm
