@@ -78,6 +78,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
+	#Save original r8169 module
+	-mv /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/r8169.ko \
+	    /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/r8169.ko.org
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/r8169_add_missing_pciids.patch
 	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP)/src modules
