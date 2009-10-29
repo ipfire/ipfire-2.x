@@ -15,3 +15,5 @@ usr/local/bin/makegraphs
 usr/local/bin/setddns.pl
 usr/local/share/GeoIP/GeoIP.dat
 usr/sbin/openvpn
+var/ipfire/outgoing/bin/outgoingfw.pl
+srv/web/ipfire/cgi-bin/outgoingfw.cgi
