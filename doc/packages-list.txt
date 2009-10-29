@@ -274,8 +274,8 @@
 * procps-3.2.6
 * psmisc-22.2
 * qemu-0.10.5
-* r8101-1.013.00-kmod-2.6.27.31-ipfire
-* r8101-1.013.00-kmod-2.6.27.31-ipfire-xen
+* r8101-kmod-2.6.27.31-ipfire
+* r8101-kmod-2.6.27.31-ipfire-xen
 * r8168-8.014.00-kmod-2.6.27.31-ipfire
 * r8168-8.014.00-kmod-2.6.27.31-ipfire-xen
 * r8169-6.011.00-kmod-2.6.27.31-ipfire
