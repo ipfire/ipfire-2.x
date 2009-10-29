@@ -30,11 +30,9 @@ else
 	VERSUFIX = ipfire
 endif
 
-VER        = 1.013.00
+VER        = ipfire-1
 
-THISAPP    = r8101-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
+THISAPP    = r8101
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
@@ -42,35 +40,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
-
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-
-$(DL_FILE)_MD5 = ecf97e7870444e8c639ec5dc5b19ba30
-
 install : $(TARGET)
 
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+check :
 
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
+download :
 
-md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	$(PAK)
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+md5 :
 
 ###############################################################################
 # Installation Details
@@ -78,9 +54,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/r8101_add_missing_pciids.patch
-	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP)/src modules
-	cd $(DIR_APP)/src && install -m 644 r8101.ko /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net 
+	@rm -rf $(DIR_APP) && cp -r $(DIR_SRC)/src/$(THISAPP) $(DIR_APP)
+	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP) modules
+	cd $(DIR_APP) && install -m 644 r8101.ko /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
