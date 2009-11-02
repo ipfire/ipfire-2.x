@@ -279,13 +279,13 @@
 		
 		### Download first
 		foreach $pak (@upgradepaks) {
-			system("mv $Conf::dbdir/meta/meta-$pak $Conf::dbdir/meta/old-meta-$pak");
+			#system("mv $Conf::dbdir/meta/meta-$pak $Conf::dbdir/meta/old-meta-$pak");
 			&Pakfire::getpak("$pak", "");
 		}
 		
 		foreach $pak (@upgradepaks) {
 			if (&Pakfire::upgradepak("$pak")) {
-				system("mv $Conf::dbdir/meta/old-meta-$pak $Conf::dbdir/meta/meta-$pak");
+				#system("mv $Conf::dbdir/meta/old-meta-$pak $Conf::dbdir/meta/meta-$pak");
 			}
 		}
 		

@@ -369,6 +369,51 @@ sub dbgetlist {
 		fetchfile("lists/packages_list.db", "");
 		move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
 	}
+
+	# Update the meta database if new packages was in the package list
+	my @meta;
+	my $file;
+	my $line;
+	my $prog;
+	my ($name, $version, $release);
+	my @templine;
+
+	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
+	my @db = <FILE>;
+	close(FILE);
+
+	opendir(DIR,"$Conf::dbdir/meta");
+	my @files = readdir(DIR);
+	closedir(DIR);
+	foreach $file (@files) {
+		next if ( $file eq "." );
+		next if ( $file eq ".." );
+		next if ( $file =~ /^old/ );
+		open(FILE, "<$Conf::dbdir/meta/$file");
+		@meta = <FILE>;
+		close(FILE);
+		foreach $line (@meta) {
+			@templine = split(/\: /,$line);
+			if ("$templine[0]" eq "Name") {
+				$name = $templine[1];
+				chomp($name);
+			} elsif ("$templine[0]" eq "ProgVersion") {
+				$version = $templine[1];
+				chomp($version);
+			} elsif ("$templine[0]" eq "Release") {
+				$release = $templine[1];
+				chomp($release);
+			}
+		}
+		foreach $prog (@db) {
+			@templine = split(/\;/,$prog);
+			if (("$name" eq "$templine[0]") && ("$release" ne "$templine[2]")) {
+				move("$Conf::dbdir/meta/meta-$name","$Conf::dbdir/meta/old_meta-$name");
+				fetchfile("meta/meta-$name", "");
+				move("$Conf::cachedir/meta-$name", "$Conf::dbdir/meta/meta-$name");
+			}
+		}
+	}
 }
 
 sub dblist {
