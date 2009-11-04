@@ -25,12 +25,16 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
 #Stop services
-
+#
+#Set vm.mmap_min_addr to block a kernel security hole
+grep -v "vm.mmap_min_addr" /etc/sysctl.conf > /var/tmp/sysctl.conf.tmp
+echo "vm.mmap_min_addr = 4096" >> /var/tmp/sysctl.conf.tmp
+mv /var/tmp/sysctl.conf.tmp /etc/sysctl.conf
+sysctl -w vm.mmap_min_addr="4096"
 #
 extract_files
 #
 #Start services
-
 #
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
