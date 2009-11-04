@@ -1542,7 +1542,7 @@
 'size' => 'Size',
 'smart information' => 'SMART information',
 'smartwarn1' => 'Device:',
-'smartwarn2' => 'report S.M.A.R.T. error',
+'smartwarn2' => 'reports S.M.A.R.T. error',
 'smbreload' => 'reload Samba',
 'smbrestart' => 'restart Samba',
 'smbstart' => 'Start Samba',
