@@ -39,6 +39,7 @@ extract_files
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #Rebuild module dep's
-#depmod -a
+depmod 2.6.27.31-ipfire
+depmod 2.6.27.31-ipfire-xen
 #Don't report the exitcode of depmod
 exit 0
