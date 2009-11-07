@@ -338,7 +338,7 @@
 'alt system' => 'System',
 'alt vpn' => 'VPNs',
 'and' => 'Und',
-'apcupsd' => 'APC-UPS status',
+'apcupsd' => 'APC-UPS Status',
 'apply' => 'Jetzt anwenden',
 'april' => 'April',
 'archive not exist' => 'Konfigurationsarchiv existiert nicht',
