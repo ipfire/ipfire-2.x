@@ -114,13 +114,13 @@ print <<END
 
 <table border="0"  width='100%'>
   <tr>
-    <td colspan=2><font class='base'>$Lang::tr{'mac desc'}</font></td>
+    <td colspan="2"><font class='base'>$Lang::tr{'mac desc'}</font></td>
   </tr>
   <tr>
-    <td colspan=2>&nbsp;</td><td>&nbsp;</td>
+    <td colspan="2">&nbsp;</td>
   </tr>
   <tr>
-    <td><font class='base'>$Lang::tr{'mac new'}&nbsp;</font></td><td>
+    <td width="25%"><font class='base'>$Lang::tr{'mac new'}&nbsp;</font></td><td>
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
@@ -136,8 +136,8 @@ END
 } 
 print <<END    
   </tr>
-  <tr>
-    <td colspan=2>&nbsp;</td><td>&nbsp;</td>
+    <tr>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <td><font class='base'>$Lang::tr{'mac2 new'}&nbsp;</font></td><td>
@@ -145,25 +145,22 @@ END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
 print <<END 
-      <input type="text" name="MAC2" maxlength="17" value=''/></td>
+      <input type="text" name="MAC2" maxlength="17" value=''/><img src='/blob.gif' alt='*' /></td>
 END
 ;
 } else {   
 print <<END
-      <input type="text" name="MAC2" maxlength="17" value='$macsettings{"MAC2"}'/></td>
+      <input type="text" name="MAC2" maxlength="17" value='$macsettings{"MAC2"}'/><img src='/blob.gif' alt='*' /></td>
 END
 ;  
 } 
 print <<END    
   </tr>
-  <tr>
-    <td colspan=2>&nbsp;</td><td>&nbsp;</td>
+    <tr>
+    <td colspan="2"><hr /></td>
   </tr>
   <tr>
-    <td colspan=2><hr /></td>
-  </tr>
-  <tr>
-    <td colspan=2><div align="center">
+    <td colspan="2"><div align="center">
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
@@ -200,8 +197,10 @@ END
 print <<END
     </div></td>
   </tr>
-  
-
+  <tr>
+    <td colspan="2"align='left'>
+        <img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+  </tr>
 
 </table>
 
