@@ -1545,7 +1545,7 @@
 'size' => 'Size',
 'smart information' => 'S.M.A.R.T. information',
 'smartwarn1' => 'Device:',
-'smartwarn2' => 'Reports S.M.A.R.T. error',
+'smartwarn2' => 'reports S.M.A.R.T. error',
 'smbreload' => 'Reload samba',
 'smbrestart' => 'Restart samba',
 'smbstart' => 'Start samba',
