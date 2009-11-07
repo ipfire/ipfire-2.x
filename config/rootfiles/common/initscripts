@@ -106,6 +106,7 @@ etc/rc.d/init.d/udev_retry
 etc/rc.d/init.d/upnpd
 #etc/rc.d/init.d/vdr
 #etc/rc.d/init.d/vsftpd
+#etc/rc.d/init.d/watchdog
 #etc/rc.d/init.d/winbind
 #etc/rc.d/init.d/xinetd
 #etc/rc.d/rc0.d
