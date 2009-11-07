@@ -313,6 +313,8 @@
 'advproxy visible hostname' => 'Sichtbarer Hostname',
 'advproxy web browser' => 'Web-Browser',
 'advproxy wednesday' => 'Mit',
+'advproxy on' => 'Proxy an',
+'advproxy off' => 'Proxy aus',
 'again' => 'Wiederholung:',
 'aktiv' => 'aktiv',
 'album' => 'Album',
@@ -336,6 +338,7 @@
 'alt system' => 'System',
 'alt vpn' => 'VPNs',
 'and' => 'Und',
+'apcupsd' => 'APC-UPS status',
 'apply' => 'Jetzt anwenden',
 'april' => 'April',
 'archive not exist' => 'Konfigurationsarchiv existiert nicht',
@@ -2056,7 +2059,6 @@
 'proxy admin password' => 'Cache Administrator Passwort',
 'proxy cachemgr' => 'Cachemanager aktivieren',
 'proxy reconfigure' => 'Speichern und Laden',
-'apcupsd' => 'APC-UPS Status',
 );
 
 #EOF

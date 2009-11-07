@@ -314,9 +314,9 @@ END
   		<td width='45%' align='center'>
 END
 		if ( `cat /var/ipfire/proxy/advanced/settings | grep ^ENABLE=on` ) { 
-			print "Proxy an"; 
+			print $Lang::tr{'advproxy on'}; 
 			if ( `cat /var/ipfire/proxy/advanced/settings | grep ^TRANSPARENT=on` ) { print " (transparent)"; }
-		}	else { print "Proxy aus"; }
+		}	else { print $Lang::tr{'advproxy off'};  }
 	}
 	if ( $netsettings{'BLUE_DEV'} ) { print <<END;
 		<tr><td align='center' bgcolor='$Header::colourblue' width='25%'><a href="/cgi-bin/wireless.cgi"><font size='2' color='white'><b>$Lang::tr{'wireless'}</b></font></a><br>
@@ -324,9 +324,9 @@ END
   		<td width='45%' align='center'>
 END
 		if ( `cat /var/ipfire/proxy/advanced/settings | grep ^ENABLE_BLUE=on` ) { 
-			print "Proxy an"; 
+			print $Lang::tr{'advproxy on'};  
 			if ( `cat /var/ipfire/proxy/advanced/settings | grep ^TRANSPARENT_BLUE=on` ) { print " (transparent)"; }
-		}	else { print "Proxy aus"; }
+		}	else { print $Lang::tr{'advproxy off'};  }
 	}
 	if ( $netsettings{'ORANGE_DEV'} ) { print <<END;
 		<tr><td align='center' bgcolor='$Header::colourorange' width='25%'><a href="/cgi-bin/dmzholes.cgi"><font size='2' color='white'><b>$Lang::tr{'dmz'}</b></font></a><br>
