@@ -2089,6 +2089,7 @@
 'proxy admin password' => 'Cache administrator password',
 'proxy cachemgr' => 'Activate cachemanager',
 'proxy reconfigure' => 'Save and Reload',
+'apcupsd' => 'APC-UPS Status',
 );
 
 #EOF
