@@ -3,12 +3,9 @@ usr/bin/qemu-i386
 usr/bin/qemu-img
 usr/bin/qemu-io
 usr/bin/qemu-nbd
-usr/bin/qemu-ppc
-usr/bin/qemu-system-ppc
 usr/share/qemu
 usr/share/qemu/bamboo.dtb
 usr/share/qemu/bios.bin
-usr/share/qemu/extboot.bin
 usr/share/qemu/keymaps
 usr/share/qemu/keymaps/ar
 usr/share/qemu/keymaps/common

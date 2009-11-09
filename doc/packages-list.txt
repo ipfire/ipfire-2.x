@@ -66,7 +66,6 @@
 * ccache-2.4
 * cdrtools-2.01.01
 * centerim-4.22.1
-* clamav-0.95.2
 * clamav-0.95.3
 * cmake-2.4.8
 * collectd-4.5.3
@@ -161,6 +160,7 @@
 * kqemu-1.4.0pre1-kmod-2.6.27.31-ipfire
 * kqemu-1.4.0pre1-kmod-2.6.27.31-ipfire-xen
 * kudzu-1.2.64
+* kvm-kmod-2.6.31.5-kmod-2.6.27.31-ipfire
 * l7-protocols-2009-05-10
 * lame-3.97
 * lcd4linux-0.10.1-RC2
@@ -274,7 +274,7 @@
 * pptp-1.7.2
 * procps-3.2.6
 * psmisc-22.2
-* qemu-0.10.5
+* qemu-0.11.0
 * r8101-kmod-2.6.27.31-ipfire
 * r8101-kmod-2.6.27.31-ipfire-xen
 * r8168-8.014.00-kmod-2.6.27.31-ipfire
