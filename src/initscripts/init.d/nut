@@ -1,17 +1,4 @@
 #! /bin/sh
-### BEGIN INIT INFO
-# Provides:          nut
-# Required-Start:    $local_fs $syslog $network
-# Required-Stop:     $local_fs $syslog $network
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Network UPS Tools initscript
-# Description:       This script take care of starting and stopping the
-#                    Network UPS Tools components. When needed, it also
-#                    handle the UPS hardware shutdown.
-### END INIT INFO
-
-# Author: Arnaud Quette <aquette@debian.org>
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
@@ -47,20 +34,10 @@ if [ "x$MODE" = "xnone" ] ; then
     exit 0
 fi
 
-pid_dir=/var/run/nut
-upsmon_pid=${pid_dir}/upsmon.pid
-upsd_pid=${pid_dir}/upsd.pid
 upsd=/usr/sbin/upsd
 upsdrvctl=/usr/bin/upsdrvctl
 upsmon=/usr/sbin/upsmon
 log=">/dev/null 2>/dev/null"
-
-# Check if /var/run/nut exists and has the correct perms
-check_var_directory() {
-	[ ! -d ${pid_dir} ] && mkdir -p ${pid_dir} \
-		&& chown root:nut ${pid_dir} \
-		&& chmod 770 ${pid_dir}
-}
 
 start_stop_server () {
   case "$MODE" in
@@ -69,9 +46,11 @@ start_stop_server () {
         start)
           ! $upsdrvctl start >/dev/null 2>&1 && boot_mesg "(upsdrvctl failed)"
           $upsd $UPSD_OPTIONS >/dev/null 2>&1
+          evaluate_retval
           ;;
         stop)
           $upsd -c stop >/dev/null 2>&1
+          evaluate_retval
           ! $upsdrvctl stop >/dev/null 2>&1 && boot_mesg "(upsdrvctl failed)"
           ;;
       esac
@@ -88,11 +67,36 @@ start_stop_client () {
       case "$1" in
         start)
           $upsmon $UPSMON_OPTIONS >/dev/null 2>&1
+          evaluate_retval
           ;;
         stop)
           $upsmon -c stop >/dev/null 2>&1
+          evaluate_retval
           ;;
       esac
+      ;;
+    none|*)
+      return 1
+      ;;
+  esac
+}
+
+status_server () {
+  case "$MODE" in
+    standalone|netserver)
+      statusproc $upsd
+      statusproc $upsmon
+      ;;
+    none|netclient|*)
+      return 1
+      ;;
+  esac
+}
+
+status_client () {
+  case "$MODE" in
+    standalone|netclient)
+      statusproc $upsmon
       ;;
     none|*)
       return 1
@@ -103,14 +107,13 @@ start_stop_client () {
 case "$1" in
 
   start)
-    boot_mesg "Starting $DESC"
-    check_var_directory
+    boot_mesg "Starting $DESC ..."
     start_stop_server start
     start_stop_client start
     ;;
 
   stop)
-    boot_mesg "Stopping $DESC"
+    boot_mesg "Stopping $DESC ..."
     start_stop_server stop
     start_stop_client stop
     ;;
@@ -120,12 +123,16 @@ case "$1" in
     $upsmon -c reload >/dev/null 2>&1
     ;;
 
+  status)
+    status_server
+    status_client
+    ;;
+
   restart|force-reload)
-    boot_mesg "Restarting $DESC"
+    boot_mesg "Restarting $DESC ..."
     start_stop_client stop
     start_stop_server stop
     sleep 5
-    check_var_directory
     start_stop_server start
     start_stop_client start
     ;;
@@ -165,7 +172,7 @@ case "$1" in
 
   *)
     N=/etc/init.d/$NAME
-    echo "Usage: $N {start|stop|reload|restart|force-reload|poweroff}" >&2
+    echo "Usage: $N {start|stop|status|reload|restart|force-reload|poweroff}" >&2
     exit 1
     ;;
 esac

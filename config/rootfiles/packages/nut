@@ -1,4 +1,5 @@
 var/ipfire/backup/addons/includes/nut
+var/state/ups
 etc/rc.d/init.d/nut
 #etc/nut
 etc/nut/nut.conf.sample
