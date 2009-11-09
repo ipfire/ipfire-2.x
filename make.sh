@@ -362,6 +362,7 @@ buildipfire() {
   ipfiremake r8169
   ipfiremake r8168
   ipfiremake kqemu
+  ipfiremake kvm-kmod
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
