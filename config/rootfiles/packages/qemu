@@ -1,12 +1,14 @@
 usr/bin/qemu
 usr/bin/qemu-i386
 usr/bin/qemu-img
+usr/bin/qemu-io
 usr/bin/qemu-nbd
 usr/bin/qemu-ppc
 usr/bin/qemu-system-ppc
 usr/share/qemu
 usr/share/qemu/bamboo.dtb
 usr/share/qemu/bios.bin
+usr/share/qemu/extboot.bin
 usr/share/qemu/keymaps
 usr/share/qemu/keymaps/ar
 usr/share/qemu/keymaps/common
@@ -43,9 +45,11 @@ usr/share/qemu/keymaps/sl
 usr/share/qemu/keymaps/sv
 usr/share/qemu/keymaps/th
 usr/share/qemu/keymaps/tr
+usr/share/qemu/multiboot.bin
 usr/share/qemu/openbios-ppc
 usr/share/qemu/openbios-sparc32
 usr/share/qemu/openbios-sparc64
+usr/share/qemu/petalogix-s3adsp1800.dtb
 usr/share/qemu/ppc_rom.bin
 usr/share/qemu/pxe-e1000.bin
 usr/share/qemu/pxe-ne2k_pci.bin
