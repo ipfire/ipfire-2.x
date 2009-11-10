@@ -82,7 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --kerneldir=/usr/src/linux
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && install -m 644 x86/*.ko \
-	    /lib/modules/$(KVER)-$(VERSUFIX)/kernel/arch/x86/
+	    /lib/modules/$(KVER)-$(VERSUFIX)/kernel/arch/x86/kvm/
 	cd $(DIR_APP) && cp -f include/asm/* /usr/include/asm
 	cd $(DIR_APP) && cp -f include/linux/* /usr/include/linux
 	@rm -rf $(DIR_APP)
