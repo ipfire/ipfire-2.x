@@ -30,14 +30,17 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 1.0.19
+VER        = 1.0.21a
+UVER       = 1.0.21
+FVER       = 1.0.20
+DVER       = 1.0.21
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = ""
 
@@ -51,17 +54,18 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) alsa-utils-$(VER).tar.bz2 alsa-firmware-$(VER).tar.bz2 alsa-driver-$(VER).tar.bz2
+objects = $(DL_FILE) alsa-utils-$(UVER).tar.bz2 alsa-firmware-$(FVER).tar.bz2 \
+		alsa-driver-$(DVER).tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-alsa-utils-$(VER).tar.bz2 = $(DL_FROM)/alsa-utils-$(VER).tar.bz2
-alsa-firmware-$(VER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(VER).tar.bz2
-alsa-driver-$(VER).tar.bz2 = $(DL_FROM)/alsa-driver-$(VER).tar.bz2
+alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
+alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
+alsa-driver-$(DVER).tar.bz2 = $(DL_FROM)/alsa-driver-$(DVER).tar.bz2
 
-$(DL_FILE)_MD5 = 73db3666c211e5fb023bb77450cf430d
-alsa-utils-$(VER).tar.bz2_MD5 = 5ff0379c707c1a29083233edc9ab4e06
-alsa-firmware-$(VER).tar.bz2_MD5 = bb93a1a58066bdb2308dc7b117df2b67
-alsa-driver-$(VER).tar.bz2_MD5 = 7045d69c49e70bb88278b8015d5eb509
+$(DL_FILE)_MD5 = 914685deb8c23cb4b940a4173cf8efe4
+alsa-utils-$(UVER).tar.bz2_MD5 = 3672287c2608040d111ce45495ba7602
+alsa-firmware-$(FVER).tar.bz2_MD5 = 75fe079c35c091cac49f3a60876bc26a
+alsa-driver-$(DVER).tar.bz2_MD5 = 3ee5ec5357f237dc78847feb85d8560d
 
 install : $(TARGET)
 
@@ -95,25 +99,25 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_SRC)/alsa*
 ifeq "$(KMOD)" "1"
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-driver-$(VER).tar.bz2
-	cd $(DIR_SRC)/alsa-driver-$(VER) && sed -i -e "s| soc/ | |g" Makefile
-	cd $(DIR_SRC)/alsa-driver-$(VER) && sed -i -e "s| soc||g" Makefile
-	cd $(DIR_SRC)/alsa-driver-$(VER) && ./configure --with-kernel=/usr/src/linux
-	cd $(DIR_SRC)/alsa-driver-$(VER) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/alsa-driver-$(VER) && make install
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-driver-$(DVER).tar.bz2
+	cd $(DIR_SRC)/alsa-driver-$(DVER) && sed -i -e "s| soc/ | |g" Makefile
+	cd $(DIR_SRC)/alsa-driver-$(DVER) && sed -i -e "s| soc||g" Makefile
+	cd $(DIR_SRC)/alsa-driver-$(DVER) && ./configure --with-kernel=/usr/src/linux
+	cd $(DIR_SRC)/alsa-driver-$(DVER) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/alsa-driver-$(DVER) && make install
 else
 	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --enable-static
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-utils-$(VER).tar.bz2
-	cd $(DIR_SRC)/alsa-utils-$(VER) && ./configure --disable-xmlto
-	cd $(DIR_SRC)/alsa-utils-$(VER) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/alsa-utils-$(VER) && make install
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-firmware-$(VER).tar.bz2
-	cd $(DIR_SRC)/alsa-firmware-$(VER) && ./configure
-	cd $(DIR_SRC)/alsa-firmware-$(VER) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/alsa-firmware-$(VER) && make install
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-utils-$(UVER).tar.bz2
+	cd $(DIR_SRC)/alsa-utils-$(UVER) && ./configure --disable-xmlto
+	cd $(DIR_SRC)/alsa-utils-$(UVER) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/alsa-utils-$(UVER) && make install
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-firmware-$(FVER).tar.bz2
+	cd $(DIR_SRC)/alsa-firmware-$(FVER) && ./configure
+	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make install
 endif
 	@rm -rf $(DIR_SRC)/alsa*
 	@$(POSTBUILD)
