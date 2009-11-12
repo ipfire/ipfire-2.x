@@ -568,7 +568,7 @@ case "${1}" in
 				if echo "${link_status}" | grep -q UP; then
 					boot_mesg "Bringing down the ${DEVICE}.${RED_VDSL_INET_VLAN} interface..."
 					ip link set ${DEVICE}.${RED_VDSL_INET_VLAN} down
-					vconfig del ${DEVICE} ${RED_VDSL_INET_VLAN}
+					vconfig rem ${DEVICE}.${RED_VDSL_INET_VLAN}
 					evaluate_retval
 				fi
 			else
