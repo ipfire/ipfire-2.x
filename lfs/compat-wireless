@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2009-05-30
+VER        = 2.6.32-rc6
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1f3924b3bf450713a88422e63c7481a3
+$(DL_FILE)_MD5 = 4c8eafa1c35d1ab9ca6fa66974abd802
 
 install : $(TARGET)
 
@@ -93,20 +93,11 @@ endif
 	echo "CONFIG_B43_PHY_LP=y" >> $(DIR_APP)/config.mk
 
 
-	# This is for stable version
-	# Build only the modules
-	cd $(DIR_APP) && sed -i -e "s|install: uninstall modules|install: modules|g" Makefile
-	cd $(DIR_APP) && sed -i -e "s|\t@# All the scripts|\nende:|g" Makefile
+	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install-modules
 
-	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install
-
-
-	# This is for new developer versions (New makefile)
-	#	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install-modules
-
-	#	# The makefile put the modules to a wrong place move back...
-	#	cp -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib /
-	#	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib
+	# The makefile put the modules to a wrong place move back...
+	cp -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib /
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib
 
 	# Xen
 ifeq "$(XEN)" "1"
@@ -122,6 +113,7 @@ endif
 	# place of newer kernels and so not overwrite it...)
 	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/ath?k
 	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818?.ko
+	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/ieee80211
 
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
