@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = bff77ec33116
+VER        = aba823ecaea6
 
 THISAPP    = v4l-dvb-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 70771b58c2ba1879b2fdda0c392671d9
+$(DL_FILE)_MD5 = 9e4ee9b64d0b13cb8b7e3818dbb43c63
 
 install : $(TARGET)
 
