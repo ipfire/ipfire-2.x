@@ -35,8 +35,8 @@
 * URI-1.35
 * Unix-Syslog-0.100
 * XML-Parser-2.34
-* alsa-lib-1.0.19
-* alsa-lib-1.0.19-kmod-2.6.27.39-ipfire
+* alsa-lib-1.0.21a
+* alsa-lib-1.0.21a-kmod-2.6.27.39-ipfire
 * amavisd-new-2.5.2
 * apcupsd-3.14.4
 * applejuice-0.31
@@ -68,6 +68,7 @@
 * clamav-0.95.3
 * cmake-2.4.8
 * collectd-4.5.3
+* compat-wireless-2.6.32-rc6-kmod-2.6.27.39-ipfire
 * compat-wireless-2009-05-30-kmod-2.6.27.39-ipfire
 * coreutils-5.96
 * cpio-2.6
@@ -323,7 +324,7 @@
 * urlgrabber-3.1.0
 * usbutils-0.72
 * util-linux-2.12r
-* v4l-dvb-bff77ec33116-kmod-2.6.27.39-ipfire
+* v4l-dvb-aba823ecaea6-kmod-2.6.27.39-ipfire
 * vdr-1.6.0
 * vdradmin-am-3.6.4
 * vim-7.0
