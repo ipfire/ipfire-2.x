@@ -4,6 +4,11 @@ boot/config-KVER-ipfire
 boot/vmlinuz-KVER-ipfire
 boot/vmlinuz-ipfire
 #lib/firmware/atmsar11.fw
+#lib/firmware/cpia2
+#lib/firmware/cpia2/stv0672_vp4.bin
+#lib/firmware/dabusb
+#lib/firmware/dabusb/bitstream.bin
+#lib/firmware/dabusb/firmware.fw
 #lib/firmware/dsp56k
 #lib/firmware/dsp56k/bootstrap.bin
 #lib/firmware/edgeport
@@ -26,10 +31,10 @@ boot/vmlinuz-ipfire
 #lib/firmware/ess/maestro3_assp_minisrc.fw
 #lib/firmware/intelliport2.bin
 #lib/firmware/kaweth
-lib/firmware/kaweth/new_code.bin
-lib/firmware/kaweth/new_code_fix.bin
-lib/firmware/kaweth/trigger_code.bin
-lib/firmware/kaweth/trigger_code_fix.bin
+#lib/firmware/kaweth/new_code.bin
+#lib/firmware/kaweth/new_code_fix.bin
+#lib/firmware/kaweth/trigger_code.bin
+#lib/firmware/kaweth/trigger_code_fix.bin
 #lib/firmware/keyspan
 #lib/firmware/keyspan/mpr.fw
 #lib/firmware/keyspan/usa18x.fw
@@ -57,6 +62,10 @@ lib/firmware/kaweth/trigger_code_fix.bin
 #lib/firmware/ti_3410.fw
 #lib/firmware/ti_5052.fw
 #lib/firmware/tr_smctr.bin
+#lib/firmware/ttusb-budget
+#lib/firmware/ttusb-budget/dspbootcode.bin
+#lib/firmware/vicam
+#lib/firmware/vicam/firmware.fw
 #lib/firmware/whiteheat.fw
 #lib/firmware/whiteheat_loader.fw
 #lib/firmware/yamaha

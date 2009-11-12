@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .31
-VER        = 2.6.27.31
+PATCHLEVEL = .39
+VER        = 2.6.27.39
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -35,7 +35,7 @@ CFLAGS     =
 CXXFLAGS   =
 
 PROG	   = linux-xen
-PAK_VER    = 5
+PAK_VER    = 6
 DEPS	   = ""
 
 # Normal build or XEN build.
@@ -62,7 +62,7 @@ patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
 reiser4-for-2.6.27.19.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.27.19.patch.bz2
 
-$(DL_FILE)_MD5				= b066c348e0fbfa700399d62d2fdfbf11
+$(DL_FILE)_MD5				= a1f935b170d9b63c0771a579b46c1123
 netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
