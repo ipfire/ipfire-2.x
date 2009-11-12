@@ -93,8 +93,6 @@ case "${1}" in
 			echo_failure;
 			exit 0;
 		else
-			# enable wlan module of collectd
-			sed -i -e "s|#LoadPlugin wireless|LoadPlugin wireless|g" /etc/collectd.conf
 			echo_ok
 		fi
 		;;
