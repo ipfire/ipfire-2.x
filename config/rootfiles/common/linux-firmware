@@ -1,5 +1,6 @@
 lib/firmware/atmsar11.fw
 #lib/firmware/cpia2
+lib/firmware/av7110/bootcode.bin
 lib/firmware/cpia2/stv0672_vp4.bin
 #lib/firmware/dabusb
 lib/firmware/dabusb/bitstream.bin
