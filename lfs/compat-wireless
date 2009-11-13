@@ -113,7 +113,7 @@ endif
 	# place of newer kernels and so not overwrite it...)
 	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/ath?k
 	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818?.ko
-	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/ieee80211
+	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/net/ieee80211
 
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
