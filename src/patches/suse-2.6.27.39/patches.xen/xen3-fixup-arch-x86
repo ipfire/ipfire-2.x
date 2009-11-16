@@ -1,0 +1,52 @@
+Subject: xen3 x86 build fixes.
+From: jbeulich@novell.com
+Patch-mainline: obsolete
+
+--- sle11-2009-10-16.orig/arch/x86/kdb/kdba_bt.c	2009-10-16 14:48:16.000000000 +0200
++++ sle11-2009-10-16/arch/x86/kdb/kdba_bt.c	2009-06-04 10:19:52.000000000 +0200
+@@ -3196,6 +3196,9 @@ bb_usage_mov(const struct bb_operand *sr
+ 	    bb_is_int_reg(dst->base_rc) &&
+ 	    full_register_dst) {
+ #ifdef	CONFIG_X86_32
++#ifndef TSS_sysenter_sp0
++#define TSS_sysenter_sp0 SYSENTER_stack_sp0
++#endif
+ 		/* mov from TSS_sysenter_sp0+offset to esp to fix up the
+ 		 * sysenter stack, it leaves esp well defined.  mov
+ 		 * TSS_ysenter_sp0+offset(%esp),%esp is followed by up to 5
+--- sle11-2009-10-16.orig/arch/x86/kernel/cpu/intel_cacheinfo.c	2008-10-10 00:13:53.000000000 +0200
++++ sle11-2009-10-16/arch/x86/kernel/cpu/intel_cacheinfo.c	2009-10-16 14:50:37.000000000 +0200
+@@ -455,7 +455,7 @@ unsigned int __cpuinit init_intel_cachei
+ static DEFINE_PER_CPU(struct _cpuid4_info *, cpuid4_info);
+ #define CPUID4_INFO_IDX(x, y)    (&((per_cpu(cpuid4_info, x))[y]))
+ 
+-#ifdef CONFIG_SMP
++#if defined(CONFIG_SMP) && !defined(CONFIG_XEN)
+ static void __cpuinit cache_shared_cpu_map_setup(unsigned int cpu, int index)
+ {
+ 	struct _cpuid4_info	*this_leaf, *sibling_leaf;
+--- sle11-2009-10-16.orig/arch/x86/power/Makefile	2009-10-16 14:48:16.000000000 +0200
++++ sle11-2009-10-16/arch/x86/power/Makefile	2009-06-04 10:19:52.000000000 +0200
+@@ -1,2 +1,4 @@
+ obj-$(CONFIG_PM_SLEEP)		+= cpu_$(BITS).o
+ obj-$(CONFIG_HIBERNATION)	+= hibernate_$(BITS).o hibernate_asm_$(BITS).o
++
++disabled-obj-$(CONFIG_XEN)	:= cpu_$(BITS).o
+--- sle11-2009-10-16.orig/arch/x86/power/cpu_64.c	2008-11-25 12:35:54.000000000 +0100
++++ sle11-2009-10-16/arch/x86/power/cpu_64.c	2009-06-04 10:19:52.000000000 +0200
+@@ -135,7 +135,6 @@ void restore_processor_state(void)
+ 
+ static void fix_processor_context(void)
+ {
+-#ifndef CONFIG_X86_NO_TSS
+ 	int cpu = smp_processor_id();
+ 	struct tss_struct *t = &per_cpu(init_tss, cpu);
+ 
+@@ -147,7 +146,6 @@ static void fix_processor_context(void)
+ 	set_tss_desc(cpu, t);
+ 
+ 	get_cpu_gdt_table(cpu)[GDT_ENTRY_TSS].type = 9;
+-#endif
+ 
+ 	syscall_init();                         /* This sets MSR_*STAR and related */
+ 	load_TR_desc();				/* This does ltr */

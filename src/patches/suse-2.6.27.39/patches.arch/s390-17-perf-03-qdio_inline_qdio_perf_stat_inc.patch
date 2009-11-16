@@ -1,0 +1,70 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: [PATCH] qdio: inline qdio_perf_stat_inc
+References: bnc#532063,LTC#55526
+
+From: Jan Glauber <jang@linux.vnet.ibm.com>
+
+Move qdio_perf_stat_inc to the header file so it can be inlined.
+Remove unused qdio_perf_stat_dec.
+
+Signed-off-by: Jan Glauber <jang@linux.vnet.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/cio/qdio_perf.c |   12 ------------
+ drivers/s390/cio/qdio_perf.h |   10 ++++++----
+ 2 files changed, 6 insertions(+), 16 deletions(-)
+
+Index: linux-sles11/drivers/s390/cio/qdio_perf.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_perf.c
++++ linux-sles11/drivers/s390/cio/qdio_perf.c
+@@ -25,18 +25,6 @@ struct qdio_perf_stats perf_stats;
+ static struct proc_dir_entry *qdio_perf_pde;
+ #endif
+ 
+-inline void qdio_perf_stat_inc(atomic_long_t *count)
+-{
+-	if (qdio_performance_stats)
+-		atomic_long_inc(count);
+-}
+-
+-inline void qdio_perf_stat_dec(atomic_long_t *count)
+-{
+-	if (qdio_performance_stats)
+-		atomic_long_dec(count);
+-}
+-
+ /*
+  * procfs functions
+  */
+Index: linux-sles11/drivers/s390/cio/qdio_perf.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_perf.h
++++ linux-sles11/drivers/s390/cio/qdio_perf.h
+@@ -9,7 +9,6 @@
+ #define QDIO_PERF_H
+ 
+ #include <linux/types.h>
+-#include <linux/device.h>
+ #include <asm/atomic.h>
+ 
+ struct qdio_perf_stats {
+@@ -46,10 +45,13 @@ struct qdio_perf_stats {
+ extern struct qdio_perf_stats perf_stats;
+ extern int qdio_performance_stats;
+ 
++static inline void qdio_perf_stat_inc(atomic_long_t *count)
++{
++	if (qdio_performance_stats)
++		atomic_long_inc(count);
++}
++
+ int qdio_setup_perf_stats(void);
+ void qdio_remove_perf_stats(void);
+ 
+-extern void qdio_perf_stat_inc(atomic_long_t *count);
+-extern void qdio_perf_stat_dec(atomic_long_t *count);
+-
+ #endif

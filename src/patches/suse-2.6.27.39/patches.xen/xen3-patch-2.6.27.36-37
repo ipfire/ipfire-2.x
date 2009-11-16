@@ -1,0 +1,176 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.37
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.kernel.org/patch-2.6.27.36-37" by xen-port-patches.py
+
+--- sle11-2009-10-16.orig/arch/x86/ia32/ia32entry-xen.S	2009-10-16 14:52:16.000000000 +0200
++++ sle11-2009-10-16/arch/x86/ia32/ia32entry-xen.S	2009-10-19 09:53:48.000000000 +0200
+@@ -21,8 +21,8 @@
+ #define __AUDIT_ARCH_LE	   0x40000000
+ 
+ #ifndef CONFIG_AUDITSYSCALL
+-#define sysexit_audit int_ret_from_sys_call
+-#define sysretl_audit int_ret_from_sys_call
++#define sysexit_audit ia32_ret_from_sys_call
++#define sysretl_audit ia32_ret_from_sys_call
+ #endif
+ 
+ #define IA32_NR_syscalls ((ia32_syscall_end - ia32_sys_call_table)/8)
+@@ -39,12 +39,12 @@
+ 	.endm 
+ 
+ 	/* clobbers %eax */	
+-	.macro  CLEAR_RREGS
++	.macro  CLEAR_RREGS offset=0, _r9=rax
+ 	xorl 	%eax,%eax
+-	movq	%rax,R11(%rsp)
+-	movq	%rax,R10(%rsp)
+-	movq	%rax,R9(%rsp)
+-	movq	%rax,R8(%rsp)
++	movq	%rax,\offset+R11(%rsp)
++	movq	%rax,\offset+R10(%rsp)
++	movq	%\_r9,\offset+R9(%rsp)
++	movq	%rax,\offset+R8(%rsp)
+ 	.endm
+ 
+ 	/*
+@@ -52,11 +52,10 @@
+ 	 * We don't reload %eax because syscall_trace_enter() returned
+ 	 * the value it wants us to use in the table lookup.
+ 	 */
+-	.macro LOAD_ARGS32 offset
+-	movl \offset(%rsp),%r11d
+-	movl \offset+8(%rsp),%r10d
++	.macro LOAD_ARGS32 offset, _r9=0
++	.if \_r9
+ 	movl \offset+16(%rsp),%r9d
+-	movl \offset+24(%rsp),%r8d
++	.endif
+ 	movl \offset+40(%rsp),%ecx
+ 	movl \offset+48(%rsp),%edx
+ 	movl \offset+56(%rsp),%esi
+@@ -135,7 +134,7 @@ ENTRY(ia32_sysenter_target)
+ 	SAVE_ARGS 0,0,1
+  	/* no need to do an access_ok check here because rbp has been
+  	   32bit zero extended */ 
+-1:	movl	(%rbp),%r9d
++1:	movl	(%rbp),%ebp
+  	.section __ex_table,"a"
+  	.quad 1b,ia32_badarg
+  	.previous	
+@@ -146,7 +145,7 @@ ENTRY(ia32_sysenter_target)
+ 	cmpl	$(IA32_NR_syscalls-1),%eax
+ 	ja	ia32_badsys
+ sysenter_do_call:
+-	IA32_ARG_FIXUP 1
++	IA32_ARG_FIXUP
+ sysenter_dispatch:
+ 	call	*ia32_sys_call_table(,%rax,8)
+ 	movq	%rax,RAX-ARGOFFSET(%rsp)
+@@ -155,7 +154,7 @@ sysenter_dispatch:
+ 	TRACE_IRQS_OFF
+ 	testl	$_TIF_ALLWORK_MASK,TI_flags(%r10)
+ 	jnz	sysexit_audit
+-	jmp int_ret_from_sys_call
++	jmp	ia32_ret_from_sys_call
+ 
+ #ifdef CONFIG_AUDITSYSCALL
+ 	.macro auditsys_entry_common
+@@ -178,7 +177,7 @@ sysenter_dispatch:
+ 
+ 	.macro auditsys_exit exit,ebpsave=RBP
+ 	testl $(_TIF_ALLWORK_MASK & ~_TIF_SYSCALL_AUDIT),TI_flags(%r10)
+-	jnz int_ret_from_sys_call
++	jnz ia32_ret_from_sys_call
+ 	TRACE_IRQS_ON
+ 	ENABLE_INTERRUPTS(CLBR_NONE)
+ 	movl %eax,%esi		/* second arg, syscall return value */
+@@ -189,6 +188,7 @@ sysenter_dispatch:
+ 	call audit_syscall_exit
+ 	movl \ebpsave-ARGOFFSET(%rsp),%ebp /* reload user register value */
+ 	movl $(_TIF_ALLWORK_MASK & ~_TIF_SYSCALL_AUDIT),%edi
++	CLEAR_RREGS -ARGOFFSET
+ 	DISABLE_INTERRUPTS(CLBR_NONE)
+ 	TRACE_IRQS_OFF
+ 	jmp int_with_check
+@@ -204,20 +204,17 @@ sysexit_audit:
+ #endif
+ 
+ sysenter_tracesys:
+-	xchgl	%r9d,%ebp
+ #ifdef CONFIG_AUDITSYSCALL
+ 	testl	$(_TIF_WORK_SYSCALL_ENTRY & ~_TIF_SYSCALL_AUDIT),TI_flags(%r10)
+ 	jz	sysenter_auditsys
+ #endif
+ 	SAVE_REST
+ 	CLEAR_RREGS
+-	movq	%r9,R9(%rsp)
+ 	movq	$-ENOSYS,RAX(%rsp)/* ptrace can change this for a bad syscall */
+ 	movq	%rsp,%rdi        /* &pt_regs -> arg1 */
+ 	call	syscall_trace_enter
+ 	LOAD_ARGS32 ARGOFFSET  /* reload args from stack in case ptrace changed it */
+ 	RESTORE_REST
+-	xchgl	%ebp,%r9d
+ 	cmpl	$(IA32_NR_syscalls-1),%eax
+ 	ja	int_ret_from_sys_call /* sysenter_tracesys has set RAX(%rsp) */
+ 	jmp	sysenter_do_call
+@@ -272,9 +269,9 @@ ENTRY(ia32_cstar_target)
+ 	orl   $TS_COMPAT,TI_status(%r10)
+ 	testl $_TIF_WORK_SYSCALL_ENTRY,TI_flags(%r10)
+ 	jnz   cstar_tracesys
+-cstar_do_call:	
+ 	cmpl $IA32_NR_syscalls-1,%eax
+ 	ja  ia32_badsys
++cstar_do_call:
+ 	IA32_ARG_FIXUP 1
+ cstar_dispatch:
+ 	call *ia32_sys_call_table(,%rax,8)
+@@ -283,7 +280,7 @@ cstar_dispatch:
+ 	DISABLE_INTERRUPTS(CLBR_NONE)
+ 	testl $_TIF_ALLWORK_MASK,TI_flags(%r10)
+ 	jnz sysretl_audit
+-	jmp int_ret_from_sys_call
++	jmp ia32_ret_from_sys_call
+ 	
+ #ifdef CONFIG_AUDITSYSCALL
+ cstar_auditsys:
+@@ -303,15 +300,13 @@ cstar_tracesys:
+ #endif
+ 	xchgl %r9d,%ebp
+ 	SAVE_REST
+-	CLEAR_RREGS
+-	movq %r9,R9(%rsp)
++	CLEAR_RREGS 0, r9
+ 	movq $-ENOSYS,RAX(%rsp)	/* ptrace can change this for a bad syscall */
+ 	movq %rsp,%rdi        /* &pt_regs -> arg1 */
+ 	call syscall_trace_enter
+-	LOAD_ARGS32 ARGOFFSET  /* reload args from stack in case ptrace changed it */
++	LOAD_ARGS32 ARGOFFSET, 1  /* reload args from stack in case ptrace changed it */
+ 	RESTORE_REST
+ 	xchgl %ebp,%r9d
+-	movl RSP-ARGOFFSET(%rsp), %r8d
+ 	cmpl $(IA32_NR_syscalls-1),%eax
+ 	ja int_ret_from_sys_call /* cstar_tracesys has set RAX(%rsp) */
+ 	jmp cstar_do_call
+@@ -376,6 +371,8 @@ ia32_do_call:
+ 	call *ia32_sys_call_table(,%rax,8) # xxx: rip relative
+ ia32_sysret:
+ 	movq %rax,RAX-ARGOFFSET(%rsp)
++ia32_ret_from_sys_call:
++	CLEAR_RREGS -ARGOFFSET
+ 	jmp int_ret_from_sys_call 
+ 
+ ia32_tracesys:			 
+@@ -393,8 +390,8 @@ END(ia32_syscall)
+ 
+ ia32_badsys:
+ 	movq $0,ORIG_RAX-ARGOFFSET(%rsp)
+-	movq $-ENOSYS,RAX-ARGOFFSET(%rsp)
+-	jmp int_ret_from_sys_call
++	movq $-ENOSYS,%rax
++	jmp ia32_sysret
+ 
+ quiet_ni_syscall:
+ 	movq $-ENOSYS,%rax

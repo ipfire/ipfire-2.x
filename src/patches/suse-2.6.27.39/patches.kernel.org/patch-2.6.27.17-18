@@ -1,0 +1,1692 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.18
+
+Upstream 2.6.27.18 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Makefile b/Makefile
+index 104fb0f..9273a73 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .17
++EXTRAVERSION = .18
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+index 3e80aa3..a6a4310 100644
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -410,7 +410,7 @@ inline unsigned long copy_fpr_from_user(struct task_struct *task,
+  * altivec/spe instructions at some point.
+  */
+ static int save_user_regs(struct pt_regs *regs, struct mcontext __user *frame,
+-		int sigret)
++		int sigret, int ctx_has_vsx_region)
+ {
+ 	unsigned long msr = regs->msr;
+ 
+@@ -451,7 +451,7 @@ static int save_user_regs(struct pt_regs *regs, struct mcontext __user *frame,
+ 	 * the saved MSR value to indicate that frame->mc_vregs
+ 	 * contains valid data
+ 	 */
+-	if (current->thread.used_vsr) {
++	if (current->thread.used_vsr && ctx_has_vsx_region) {
+ 		__giveup_vsx(current);
+ 		if (copy_vsx_to_user(&frame->mc_vsregs, current))
+ 			return 1;
+@@ -858,11 +858,11 @@ int handle_rt_signal32(unsigned long sig, struct k_sigaction *ka,
+ 	frame = &rt_sf->uc.uc_mcontext;
+ 	addr = frame;
+ 	if (vdso32_rt_sigtramp && current->mm->context.vdso_base) {
+-		if (save_user_regs(regs, frame, 0))
++		if (save_user_regs(regs, frame, 0, 1))
+ 			goto badframe;
+ 		regs->link = current->mm->context.vdso_base + vdso32_rt_sigtramp;
+ 	} else {
+-		if (save_user_regs(regs, frame, __NR_rt_sigreturn))
++		if (save_user_regs(regs, frame, __NR_rt_sigreturn, 1))
+ 			goto badframe;
+ 		regs->link = (unsigned long) frame->tramp;
+ 	}
+@@ -936,12 +936,13 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 		     int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+ {
+ 	unsigned char tmp;
++	int ctx_has_vsx_region = 0;
+ 
+ #ifdef CONFIG_PPC64
+ 	unsigned long new_msr = 0;
+ 
+ 	if (new_ctx &&
+-	    __get_user(new_msr, &new_ctx->uc_mcontext.mc_gregs[PT_MSR]))
++	    get_user(new_msr, &new_ctx->uc_mcontext.mc_gregs[PT_MSR]))
+ 		return -EFAULT;
+ 	/*
+ 	 * Check that the context is not smaller than the original
+@@ -956,16 +957,9 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 	if ((ctx_size < sizeof(struct ucontext)) &&
+ 	    (new_msr & MSR_VSX))
+ 		return -EINVAL;
+-#ifdef CONFIG_VSX
+-	/*
+-	 * If userspace doesn't provide enough room for VSX data,
+-	 * but current thread has used VSX, we don't have anywhere
+-	 * to store the full context back into.
+-	 */
+-	if ((ctx_size < sizeof(struct ucontext)) &&
+-	    (current->thread.used_vsr && old_ctx))
+-		return -EINVAL;
+-#endif
++	/* Does the context have enough room to store VSX data? */
++	if (ctx_size >= sizeof(struct ucontext))
++		ctx_has_vsx_region = 1;
+ #else
+ 	/* Context size is for future use. Right now, we only make sure
+ 	 * we are passed something we understand
+@@ -985,17 +979,17 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 		 */
+ 		mctx = (struct mcontext __user *)
+ 			((unsigned long) &old_ctx->uc_mcontext & ~0xfUL);
+-		if (!access_ok(VERIFY_WRITE, old_ctx, sizeof(*old_ctx))
+-		    || save_user_regs(regs, mctx, 0)
++		if (!access_ok(VERIFY_WRITE, old_ctx, ctx_size)
++		    || save_user_regs(regs, mctx, 0, ctx_has_vsx_region)
+ 		    || put_sigset_t(&old_ctx->uc_sigmask, &current->blocked)
+ 		    || __put_user(to_user_ptr(mctx), &old_ctx->uc_regs))
+ 			return -EFAULT;
+ 	}
+ 	if (new_ctx == NULL)
+ 		return 0;
+-	if (!access_ok(VERIFY_READ, new_ctx, sizeof(*new_ctx))
++	if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
+ 	    || __get_user(tmp, (u8 __user *) new_ctx)
+-	    || __get_user(tmp, (u8 __user *) (new_ctx + 1) - 1))
++	    || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
+ 		return -EFAULT;
+ 
+ 	/*
+@@ -1196,11 +1190,11 @@ int handle_signal32(unsigned long sig, struct k_sigaction *ka,
+ 		goto badframe;
+ 
+ 	if (vdso32_sigtramp && current->mm->context.vdso_base) {
+-		if (save_user_regs(regs, &frame->mctx, 0))
++		if (save_user_regs(regs, &frame->mctx, 0, 1))
+ 			goto badframe;
+ 		regs->link = current->mm->context.vdso_base + vdso32_sigtramp;
+ 	} else {
+-		if (save_user_regs(regs, &frame->mctx, __NR_sigreturn))
++		if (save_user_regs(regs, &frame->mctx, __NR_sigreturn, 1))
+ 			goto badframe;
+ 		regs->link = (unsigned long) frame->mctx.tramp;
+ 	}
+diff --git a/arch/powerpc/kernel/signal_64.c b/arch/powerpc/kernel/signal_64.c
+index 65ad925..e4acdbd 100644
+--- a/arch/powerpc/kernel/signal_64.c
++++ b/arch/powerpc/kernel/signal_64.c
+@@ -74,7 +74,8 @@ static const char fmt64[] = KERN_INFO \
+  */
+ 
+ static long setup_sigcontext(struct sigcontext __user *sc, struct pt_regs *regs,
+-		 int signr, sigset_t *set, unsigned long handler)
++		 int signr, sigset_t *set, unsigned long handler,
++		 int ctx_has_vsx_region)
+ {
+ 	/* When CONFIG_ALTIVEC is set, we _always_ setup v_regs even if the
+ 	 * process never used altivec yet (MSR_VEC is zero in pt_regs of
+@@ -121,7 +122,7 @@ static long setup_sigcontext(struct sigcontext __user *sc, struct pt_regs *regs,
+ 	 * then out to userspace.  Update v_regs to point after the
+ 	 * VMX data.
+ 	 */
+-	if (current->thread.used_vsr) {
++	if (current->thread.used_vsr && ctx_has_vsx_region) {
+ 		__giveup_vsx(current);
+ 		v_regs += ELF_NVRREG;
+ 		err |= copy_vsx_to_user(v_regs, current);
+@@ -284,9 +285,10 @@ int sys_swapcontext(struct ucontext __user *old_ctx,
+ 	unsigned char tmp;
+ 	sigset_t set;
+ 	unsigned long new_msr = 0;
++	int ctx_has_vsx_region = 0;
+ 
+ 	if (new_ctx &&
+-	    __get_user(new_msr, &new_ctx->uc_mcontext.gp_regs[PT_MSR]))
++	    get_user(new_msr, &new_ctx->uc_mcontext.gp_regs[PT_MSR]))
+ 		return -EFAULT;
+ 	/*
+ 	 * Check that the context is not smaller than the original
+@@ -301,28 +303,23 @@ int sys_swapcontext(struct ucontext __user *old_ctx,
+ 	if ((ctx_size < sizeof(struct ucontext)) &&
+ 	    (new_msr & MSR_VSX))
+ 		return -EINVAL;
+-#ifdef CONFIG_VSX
+-	/*
+-	 * If userspace doesn't provide enough room for VSX data,
+-	 * but current thread has used VSX, we don't have anywhere
+-	 * to store the full context back into.
+-	 */
+-	if ((ctx_size < sizeof(struct ucontext)) &&
+-	    (current->thread.used_vsr && old_ctx))
+-		return -EINVAL;
+-#endif
++	/* Does the context have enough room to store VSX data? */
++	if (ctx_size >= sizeof(struct ucontext))
++		ctx_has_vsx_region = 1;
++
+ 	if (old_ctx != NULL) {
+-		if (!access_ok(VERIFY_WRITE, old_ctx, sizeof(*old_ctx))
+-		    || setup_sigcontext(&old_ctx->uc_mcontext, regs, 0, NULL, 0)
++		if (!access_ok(VERIFY_WRITE, old_ctx, ctx_size)
++		    || setup_sigcontext(&old_ctx->uc_mcontext, regs, 0, NULL, 0,
++					ctx_has_vsx_region)
+ 		    || __copy_to_user(&old_ctx->uc_sigmask,
+ 				      &current->blocked, sizeof(sigset_t)))
+ 			return -EFAULT;
+ 	}
+ 	if (new_ctx == NULL)
+ 		return 0;
+-	if (!access_ok(VERIFY_READ, new_ctx, sizeof(*new_ctx))
++	if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
+ 	    || __get_user(tmp, (u8 __user *) new_ctx)
+-	    || __get_user(tmp, (u8 __user *) (new_ctx + 1) - 1))
++	    || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
+ 		return -EFAULT;
+ 
+ 	/*
+@@ -425,7 +422,7 @@ int handle_rt_signal64(int signr, struct k_sigaction *ka, siginfo_t *info,
+ 			  &frame->uc.uc_stack.ss_flags);
+ 	err |= __put_user(current->sas_ss_size, &frame->uc.uc_stack.ss_size);
+ 	err |= setup_sigcontext(&frame->uc.uc_mcontext, regs, signr, NULL,
+-				(unsigned long)ka->sa.sa_handler);
++				(unsigned long)ka->sa.sa_handler, 1);
+ 	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
+ 	if (err)
+ 		goto badframe;
+diff --git a/arch/powerpc/mm/fsl_booke_mmu.c b/arch/powerpc/mm/fsl_booke_mmu.c
+index ce10e2b..131d729 100644
+--- a/arch/powerpc/mm/fsl_booke_mmu.c
++++ b/arch/powerpc/mm/fsl_booke_mmu.c
+@@ -80,7 +80,7 @@ extern unsigned int tlbcam_index;
+ /*
+  * Return PA for this VA if it is mapped by a CAM, or 0
+  */
+-unsigned long v_mapped_by_tlbcam(unsigned long va)
++phys_addr_t v_mapped_by_tlbcam(unsigned long va)
+ {
+ 	int b;
+ 	for (b = 0; b < tlbcam_index; ++b)
+@@ -92,7 +92,7 @@ unsigned long v_mapped_by_tlbcam(unsigned long va)
+ /*
+  * Return VA for a given PA or 0 if not mapped
+  */
+-unsigned long p_mapped_by_tlbcam(unsigned long pa)
++unsigned long p_mapped_by_tlbcam(phys_addr_t pa)
+ {
+ 	int b;
+ 	for (b = 0; b < tlbcam_index; ++b)
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index 2001abd..05922b2 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -65,8 +65,8 @@ void setbat(int index, unsigned long virt, phys_addr_t phys,
+ 
+ #ifdef HAVE_TLBCAM
+ extern unsigned int tlbcam_index;
+-extern unsigned long v_mapped_by_tlbcam(unsigned long va);
+-extern unsigned long p_mapped_by_tlbcam(unsigned long pa);
++extern phys_addr_t v_mapped_by_tlbcam(unsigned long va);
++extern unsigned long p_mapped_by_tlbcam(phys_addr_t pa);
+ #else /* !HAVE_TLBCAM */
+ #define v_mapped_by_tlbcam(x)	(0UL)
+ #define p_mapped_by_tlbcam(x)	(0UL)
+diff --git a/arch/sparc64/Kconfig b/arch/sparc64/Kconfig
+index 36b4b7a..b376667 100644
+--- a/arch/sparc64/Kconfig
++++ b/arch/sparc64/Kconfig
+@@ -15,6 +15,7 @@ config SPARC64
+ 	select HAVE_FTRACE
+ 	select HAVE_IDE
+ 	select HAVE_LMB
++	select HAVE_SYSCALL_WRAPPERS
+ 	select HAVE_ARCH_KGDB
+ 	select USE_GENERIC_SMP_HELPERS if SMP
+ 	select HAVE_ARCH_TRACEHOOK
+diff --git a/arch/sparc64/kernel/sys_sparc.c b/arch/sparc64/kernel/sys_sparc.c
+index 39749e3..73b287e 100644
+--- a/arch/sparc64/kernel/sys_sparc.c
++++ b/arch/sparc64/kernel/sys_sparc.c
+@@ -397,7 +397,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm)
+ 	}
+ }
+ 
+-asmlinkage unsigned long sparc_brk(unsigned long brk)
++SYSCALL_DEFINE1(sparc_brk, unsigned long, brk)
+ {
+ 	/* People could try to be nasty and use ta 0x6d in 32bit programs */
+ 	if (test_thread_flag(TIF_32BIT) && brk >= STACK_TOP32)
+@@ -413,7 +413,7 @@ asmlinkage unsigned long sparc_brk(unsigned long brk)
+  * sys_pipe() is the normal C calling standard for creating
+  * a pipe. It's not the way unix traditionally does this, though.
+  */
+-asmlinkage long sparc_pipe(struct pt_regs *regs)
++SYSCALL_DEFINE1(sparc_pipe_real, struct pt_regs *, regs)
+ {
+ 	int fd[2];
+ 	int error;
+@@ -433,8 +433,8 @@ out:
+  * This is really horribly ugly.
+  */
+ 
+-asmlinkage long sys_ipc(unsigned int call, int first, unsigned long second,
+-			unsigned long third, void __user *ptr, long fifth)
++SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
++		unsigned long, third, void __user *, ptr, long, fifth)
+ {
+ 	long err;
+ 
+@@ -517,7 +517,7 @@ out:
+ 	return err;
+ }
+ 
+-asmlinkage long sparc64_newuname(struct new_utsname __user *name)
++SYSCALL_DEFINE1(sparc64_newuname, struct new_utsname __user *, name)
+ {
+ 	int ret = sys_newuname(name);
+ 	
+@@ -528,7 +528,7 @@ asmlinkage long sparc64_newuname(struct new_utsname __user *name)
+ 	return ret;
+ }
+ 
+-asmlinkage long sparc64_personality(unsigned long personality)
++SYSCALL_DEFINE1(sparc64_personality, unsigned long, personality)
+ {
+ 	int ret;
+ 
+@@ -562,9 +562,9 @@ int sparc_mmap_check(unsigned long addr, unsigned long len)
+ }
+ 
+ /* Linux version of mmap */
+-asmlinkage unsigned long sys_mmap(unsigned long addr, unsigned long len,
+-	unsigned long prot, unsigned long flags, unsigned long fd,
+-	unsigned long off)
++SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len,
++		unsigned long, prot, unsigned long, flags, unsigned long, fd,
++		unsigned long, off)
+ {
+ 	struct file * file = NULL;
+ 	unsigned long retval = -EBADF;
+@@ -587,7 +587,7 @@ out:
+ 	return retval;
+ }
+ 
+-asmlinkage long sys64_munmap(unsigned long addr, size_t len)
++SYSCALL_DEFINE2(64_munmap, unsigned long, addr, size_t, len)
+ {
+ 	long ret;
+ 
+@@ -604,9 +604,9 @@ extern unsigned long do_mremap(unsigned long addr,
+ 	unsigned long old_len, unsigned long new_len,
+ 	unsigned long flags, unsigned long new_addr);
+                 
+-asmlinkage unsigned long sys64_mremap(unsigned long addr,
+-	unsigned long old_len, unsigned long new_len,
+-	unsigned long flags, unsigned long new_addr)
++SYSCALL_DEFINE5(64_mremap, unsigned long, addr,	unsigned long, old_len,
++		unsigned long, new_len, unsigned long, flags,
++		unsigned long, new_addr)
+ {
+ 	unsigned long ret = -EINVAL;
+ 
+@@ -669,7 +669,7 @@ asmlinkage void sparc_breakpoint(struct pt_regs *regs)
+ 
+ extern void check_pending(int signum);
+ 
+-asmlinkage long sys_getdomainname(char __user *name, int len)
++SYSCALL_DEFINE2(getdomainname, char __user *, name, int, len)
+ {
+         int nlen, err;
+ 
+@@ -692,11 +692,10 @@ out:
+ 	return err;
+ }
+ 
+-asmlinkage long sys_utrap_install(utrap_entry_t type,
+-				  utrap_handler_t new_p,
+-				  utrap_handler_t new_d,
+-				  utrap_handler_t __user *old_p,
+-				  utrap_handler_t __user *old_d)
++SYSCALL_DEFINE5(utrap_install, utrap_entry_t, type,
++		utrap_handler_t, new_p, utrap_handler_t, new_d,
++		utrap_handler_t __user *, old_p,
++		utrap_handler_t __user *, old_d)
+ {
+ 	if (type < UT_INSTRUCTION_EXCEPTION || type > UT_TRAP_INSTRUCTION_31)
+ 		return -EINVAL;
+@@ -762,11 +761,9 @@ asmlinkage long sparc_memory_ordering(unsigned long model,
+ 	return 0;
+ }
+ 
+-asmlinkage long sys_rt_sigaction(int sig,
+-				 const struct sigaction __user *act,
+-				 struct sigaction __user *oact,
+-				 void __user *restorer,
+-				 size_t sigsetsize)
++SYSCALL_DEFINE5(rt_sigaction, int, sig, const struct sigaction __user *, act,
++		struct sigaction __user *, oact, void __user *, restorer,
++		size_t, sigsetsize)
+ {
+ 	struct k_sigaction new_ka, old_ka;
+ 	int ret;
+@@ -806,7 +803,8 @@ asmlinkage void update_perfctrs(void)
+ 	reset_pic();
+ }
+ 
+-asmlinkage long sys_perfctr(int opcode, unsigned long arg0, unsigned long arg1, unsigned long arg2)
++SYSCALL_DEFINE4(perfctr, int, opcode, unsigned long, arg0,
++		unsigned long, arg1, unsigned long, arg2)
+ {
+ 	int err = 0;
+ 
+diff --git a/arch/sparc64/kernel/syscalls.S b/arch/sparc64/kernel/syscalls.S
+index cd2d333..5a0b52e 100644
+--- a/arch/sparc64/kernel/syscalls.S
++++ b/arch/sparc64/kernel/syscalls.S
+@@ -21,7 +21,7 @@ execve_merge:
+ 
+ 	.align	32
+ sys_sparc_pipe:
+-	ba,pt	%xcc, sparc_pipe
++	ba,pt	%xcc, sys_sparc_pipe_real
+ 	 add	%sp, PTREGS_OFF, %o0
+ sys_nis_syscall:
+ 	ba,pt	%xcc, c_sys_nis_syscall
+diff --git a/arch/sparc64/kernel/systbls.S b/arch/sparc64/kernel/systbls.S
+index 26b39de..8fafe0b 100644
+--- a/arch/sparc64/kernel/systbls.S
++++ b/arch/sparc64/kernel/systbls.S
+@@ -21,7 +21,7 @@ sys_call_table32:
+ /*0*/	.word sys_restart_syscall, sys32_exit, sys_fork, sys_read, sys_write
+ /*5*/	.word sys32_open, sys_close, sys32_wait4, sys32_creat, sys_link
+ /*10*/  .word sys_unlink, sunos_execv, sys_chdir, sys_chown16, sys32_mknod
+-/*15*/	.word sys_chmod, sys_lchown16, sparc_brk, sys32_perfctr, sys32_lseek
++/*15*/	.word sys_chmod, sys_lchown16, sys_sparc_brk, sys32_perfctr, sys32_lseek
+ /*20*/	.word sys_getpid, sys_capget, sys_capset, sys_setuid16, sys_getuid16
+ /*25*/	.word sys32_vmsplice, compat_sys_ptrace, sys_alarm, sys32_sigaltstack, sys32_pause
+ /*30*/	.word compat_sys_utime, sys_lchown, sys_fchown, sys32_access, sys32_nice
+@@ -55,8 +55,8 @@ sys_call_table32:
+ /*170*/	.word sys32_lsetxattr, sys32_fsetxattr, sys_getxattr, sys_lgetxattr, compat_sys_getdents
+ 	.word sys_setsid, sys_fchdir, sys32_fgetxattr, sys_listxattr, sys_llistxattr
+ /*180*/	.word sys32_flistxattr, sys_removexattr, sys_lremovexattr, compat_sys_sigpending, sys_ni_syscall
+-	.word sys32_setpgid, sys32_fremovexattr, sys32_tkill, sys32_exit_group, sparc64_newuname
+-/*190*/	.word sys32_init_module, sparc64_personality, sys_remap_file_pages, sys32_epoll_create, sys32_epoll_ctl
++	.word sys32_setpgid, sys32_fremovexattr, sys32_tkill, sys32_exit_group, sys_sparc64_newuname
++/*190*/	.word sys32_init_module, sys_sparc64_personality, sys_remap_file_pages, sys32_epoll_create, sys32_epoll_ctl
+ 	.word sys32_epoll_wait, sys32_ioprio_set, sys_getppid, sys32_sigaction, sys_sgetmask
+ /*200*/	.word sys32_ssetmask, sys_sigsuspend, compat_sys_newlstat, sys_uselib, compat_sys_old_readdir
+ 	.word sys32_readahead, sys32_socketcall, sys32_syslog, sys32_lookup_dcookie, sys32_fadvise64
+@@ -95,7 +95,7 @@ sys_call_table:
+ /*0*/	.word sys_restart_syscall, sparc_exit, sys_fork, sys_read, sys_write
+ /*5*/	.word sys_open, sys_close, sys_wait4, sys_creat, sys_link
+ /*10*/  .word sys_unlink, sys_nis_syscall, sys_chdir, sys_chown, sys_mknod
+-/*15*/	.word sys_chmod, sys_lchown, sparc_brk, sys_perfctr, sys_lseek
++/*15*/	.word sys_chmod, sys_lchown, sys_sparc_brk, sys_perfctr, sys_lseek
+ /*20*/	.word sys_getpid, sys_capget, sys_capset, sys_setuid, sys_getuid
+ /*25*/	.word sys_vmsplice, sys_ptrace, sys_alarm, sys_sigaltstack, sys_nis_syscall
+ /*30*/	.word sys_utime, sys_nis_syscall, sys_nis_syscall, sys_access, sys_nice
+@@ -106,7 +106,7 @@ sys_call_table:
+ 	.word sys_reboot, sys_nis_syscall, sys_symlink, sys_readlink, sys_execve
+ /*60*/	.word sys_umask, sys_chroot, sys_newfstat, sys_fstat64, sys_getpagesize
+ 	.word sys_msync, sys_vfork, sys_pread64, sys_pwrite64, sys_nis_syscall
+-/*70*/	.word sys_nis_syscall, sys_mmap, sys_nis_syscall, sys64_munmap, sys_mprotect
++/*70*/	.word sys_nis_syscall, sys_mmap, sys_nis_syscall, sys_64_munmap, sys_mprotect
+ 	.word sys_madvise, sys_vhangup, sys_nis_syscall, sys_mincore, sys_getgroups
+ /*80*/	.word sys_setgroups, sys_getpgrp, sys_nis_syscall, sys_setitimer, sys_nis_syscall
+ 	.word sys_swapon, sys_getitimer, sys_nis_syscall, sys_sethostname, sys_nis_syscall
+@@ -129,8 +129,8 @@ sys_call_table:
+ /*170*/	.word sys_lsetxattr, sys_fsetxattr, sys_getxattr, sys_lgetxattr, sys_getdents
+ 	.word sys_setsid, sys_fchdir, sys_fgetxattr, sys_listxattr, sys_llistxattr
+ /*180*/	.word sys_flistxattr, sys_removexattr, sys_lremovexattr, sys_nis_syscall, sys_ni_syscall
+-	.word sys_setpgid, sys_fremovexattr, sys_tkill, sys_exit_group, sparc64_newuname
+-/*190*/	.word sys_init_module, sparc64_personality, sys_remap_file_pages, sys_epoll_create, sys_epoll_ctl
++	.word sys_setpgid, sys_fremovexattr, sys_tkill, sys_exit_group, sys_sparc64_newuname
++/*190*/	.word sys_init_module, sys_sparc64_personality, sys_remap_file_pages, sys_epoll_create, sys_epoll_ctl
+ 	.word sys_epoll_wait, sys_ioprio_set, sys_getppid, sys_nis_syscall, sys_sgetmask
+ /*200*/	.word sys_ssetmask, sys_nis_syscall, sys_newlstat, sys_uselib, sys_nis_syscall
+ 	.word sys_readahead, sys_socketcall, sys_syslog, sys_lookup_dcookie, sys_fadvise64
+@@ -142,7 +142,7 @@ sys_call_table:
+ 	.word sys_fstatfs64, sys_llseek, sys_mlock, sys_munlock, sys_mlockall
+ /*240*/	.word sys_munlockall, sys_sched_setparam, sys_sched_getparam, sys_sched_setscheduler, sys_sched_getscheduler
+ 	.word sys_sched_yield, sys_sched_get_priority_max, sys_sched_get_priority_min, sys_sched_rr_get_interval, sys_nanosleep
+-/*250*/	.word sys64_mremap, sys_sysctl, sys_getsid, sys_fdatasync, sys_nfsservctl
++/*250*/	.word sys_64_mremap, sys_sysctl, sys_getsid, sys_fdatasync, sys_nfsservctl
+ 	.word sys_sync_file_range, sys_clock_settime, sys_clock_gettime, sys_clock_getres, sys_clock_nanosleep
+ /*260*/	.word sys_sched_getaffinity, sys_sched_setaffinity, sys_timer_settime, sys_timer_gettime, sys_timer_getoverrun
+ 	.word sys_timer_delete, sys_timer_create, sys_ni_syscall, sys_io_setup, sys_io_destroy
+diff --git a/arch/sparc64/kernel/systbls.h b/arch/sparc64/kernel/systbls.h
+index bc9f5da..15c2d75 100644
+--- a/arch/sparc64/kernel/systbls.h
++++ b/arch/sparc64/kernel/systbls.h
+@@ -16,9 +16,6 @@ extern asmlinkage long sys_ipc(unsigned int call, int first,
+ 			       void __user *ptr, long fifth);
+ extern asmlinkage long sparc64_newuname(struct new_utsname __user *name);
+ extern asmlinkage long sparc64_personality(unsigned long personality);
+-extern asmlinkage unsigned long sys_mmap(unsigned long addr, unsigned long len,
+-					 unsigned long prot, unsigned long flags,
+-					 unsigned long fd, unsigned long off);
+ extern asmlinkage long sys64_munmap(unsigned long addr, size_t len);
+ extern asmlinkage unsigned long sys64_mremap(unsigned long addr,
+ 					     unsigned long old_len,
+diff --git a/arch/x86/kernel/vmi_32.c b/arch/x86/kernel/vmi_32.c
+index f370d38..c4e6cc9 100644
+--- a/arch/x86/kernel/vmi_32.c
++++ b/arch/x86/kernel/vmi_32.c
+@@ -430,6 +430,16 @@ static void vmi_release_pmd(u32 pfn)
+ }
+ 
+ /*
++ * We use the pgd_free hook for releasing the pgd page:
++ */
++static void vmi_pgd_free(struct mm_struct *mm, pgd_t *pgd)
++{
++	unsigned long pfn = __pa(pgd) >> PAGE_SHIFT;
++
++	vmi_ops.release_page(pfn, VMI_PAGE_L2);
++}
++
++/*
+  * Helper macros for MMU update flags.  We can defer updates until a flush
+  * or page invalidation only if the update is to the current address space
+  * (otherwise, there is no flush).  We must check against init_mm, since
+@@ -881,6 +891,7 @@ static inline int __init activate_vmi(void)
+ 	if (vmi_ops.release_page) {
+ 		pv_mmu_ops.release_pte = vmi_release_pte;
+ 		pv_mmu_ops.release_pmd = vmi_release_pmd;
++		pv_mmu_ops.pgd_free = vmi_pgd_free;
+ 	}
+ 
+ 	/* Set linear is needed in all cases */
+diff --git a/arch/x86/pci/fixup.c b/arch/x86/pci/fixup.c
+index 4bdaa59..315b071 100644
+--- a/arch/x86/pci/fixup.c
++++ b/arch/x86/pci/fixup.c
+@@ -496,18 +496,21 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SIEMENS, 0x0015,
+ 			  pci_siemens_interrupt_controller);
+ 
+ /*
+- * Regular PCI devices have 256 bytes, but AMD Family 10h Opteron ext config
+- * have 4096 bytes.  Even if the device is capable, that doesn't mean we can
+- * access it.  Maybe we don't have a way to generate extended config space
+- * accesses.   So check it
++ * Regular PCI devices have 256 bytes, but AMD Family 10h/11h CPUs have
++ * 4096 bytes configuration space for each function of their processor
++ * configuration space.
+  */
+-static void fam10h_pci_cfg_space_size(struct pci_dev *dev)
++static void amd_cpu_pci_cfg_space_size(struct pci_dev *dev)
+ {
+ 	dev->cfg_size = pci_cfg_space_size_ext(dev);
+ }
+-
+-DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1200, fam10h_pci_cfg_space_size);
+-DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1201, fam10h_pci_cfg_space_size);
+-DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1202, fam10h_pci_cfg_space_size);
+-DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1203, fam10h_pci_cfg_space_size);
+-DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1204, fam10h_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1200, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1201, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1202, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1203, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1204, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1300, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1301, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1302, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1303, amd_cpu_pci_cfg_space_size);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_AMD, 0x1304, amd_cpu_pci_cfg_space_size);
+diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+index 2c4ccec..154e7d6 100644
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -2694,12 +2694,13 @@ static int ata_eh_handle_dev_fail(struct ata_device *dev, int err)
+ 		/* give it just one more chance */
+ 		ehc->tries[dev->devno] = min(ehc->tries[dev->devno], 1);
+ 	case -EIO:
+-		if (ehc->tries[dev->devno] == 1 && dev->pio_mode > XFER_PIO_0) {
++		if (ehc->tries[dev->devno] == 1) {
+ 			/* This is the last chance, better to slow
+ 			 * down than lose it.
+ 			 */
+ 			sata_down_spd_limit(dev->link);
+-			ata_down_xfermask_limit(dev, ATA_DNXFER_PIO);
++			if (dev->pio_mode > XFER_PIO_0)
++				ata_down_xfermask_limit(dev, ATA_DNXFER_PIO);
+ 		}
+ 	}
+ 
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 1778e4a..814ffd9 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -547,6 +547,15 @@ static void do_nbd_request(struct request_queue * q)
+ 
+ 		BUG_ON(lo->magic != LO_MAGIC);
+ 
++		if (unlikely(!lo->sock)) {
++			printk(KERN_ERR "%s: Attempted send on closed socket\n",
++				lo->disk->disk_name);
++			req->errors++;
++			nbd_end_request(req);
++			spin_lock_irq(q->queue_lock);
++			continue;
++		}
++
+ 		spin_lock_irq(&lo->queue_lock);
+ 		list_add_tail(&req->queuelist, &lo->waiting_queue);
+ 		spin_unlock_irq(&lo->queue_lock);
+diff --git a/drivers/hid/usbhid/hid-quirks.c b/drivers/hid/usbhid/hid-quirks.c
+index e87956a..1371184 100644
+--- a/drivers/hid/usbhid/hid-quirks.c
++++ b/drivers/hid/usbhid/hid-quirks.c
+@@ -1130,24 +1130,16 @@ static void usbhid_fixup_button_consumer_descriptor(unsigned char *rdesc, int rs
+ }
+ 
+ /*
+- * Microsoft Wireless Desktop Receiver (Model 1028) has several
++ * Microsoft Wireless Desktop Receiver (Model 1028) has
+  * 'Usage Min/Max' where it ought to have 'Physical Min/Max'
+  */
+ static void usbhid_fixup_microsoft_descriptor(unsigned char *rdesc, int rsize)
+ {
+-	if (rsize == 571 && rdesc[284] == 0x19
+-	                 && rdesc[286] == 0x2a
+-	                 && rdesc[304] == 0x19
+-	                 && rdesc[306] == 0x29
+-	                 && rdesc[352] == 0x1a
+-	                 && rdesc[355] == 0x2a
+-			 && rdesc[557] == 0x19
++	if (rsize == 571 && rdesc[557] == 0x19
+ 			 && rdesc[559] == 0x29) {
+ 		printk(KERN_INFO "Fixing up Microsoft Wireless Receiver Model 1028 report descriptor\n");
+-		rdesc[284] = rdesc[304] = rdesc[557] = 0x35;
+-		rdesc[352] = 0x36;
+-		rdesc[286] = rdesc[355] = 0x46;
+-		rdesc[306] = rdesc[559] = 0x45;
++		rdesc[557] = 0x35;
++		rdesc[559] = 0x45;
+ 	}
+ }
+ 
+diff --git a/drivers/net/skfp/skfddi.c b/drivers/net/skfp/skfddi.c
+index a2b092b..b7d829f 100644
+--- a/drivers/net/skfp/skfddi.c
++++ b/drivers/net/skfp/skfddi.c
+@@ -998,9 +998,9 @@ static int skfp_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+ 		break;
+ 	case SKFP_CLR_STATS:	/* Zero out the driver statistics */
+ 		if (!capable(CAP_NET_ADMIN)) {
+-			memset(&lp->MacStat, 0, sizeof(lp->MacStat));
+-		} else {
+ 			status = -EPERM;
++		} else {
++			memset(&lp->MacStat, 0, sizeof(lp->MacStat));
+ 		}
+ 		break;
+ 	default:
+diff --git a/drivers/net/sky2.c b/drivers/net/sky2.c
+index b4be33a..b68bc39 100644
+--- a/drivers/net/sky2.c
++++ b/drivers/net/sky2.c
+@@ -1403,9 +1403,6 @@ static int sky2_up(struct net_device *dev)
+ 
+  	}
+ 
+-	if (netif_msg_ifup(sky2))
+-		printk(KERN_INFO PFX "%s: enabling interface\n", dev->name);
+-
+ 	netif_carrier_off(dev);
+ 
+ 	/* must be power of 2 */
+@@ -1484,6 +1481,9 @@ static int sky2_up(struct net_device *dev)
+ 	sky2_write32(hw, B0_IMSK, imask);
+ 
+ 	sky2_set_multicast(dev);
++
++	if (netif_msg_ifup(sky2))
++		printk(KERN_INFO PFX "%s: enabling interface\n", dev->name);
+ 	return 0;
+ 
+ err_out:
+diff --git a/drivers/net/sungem.c b/drivers/net/sungem.c
+index 4291458..88f9fd5 100644
+--- a/drivers/net/sungem.c
++++ b/drivers/net/sungem.c
+@@ -2205,6 +2205,8 @@ static int gem_do_start(struct net_device *dev)
+ 
+ 	gp->running = 1;
+ 
++	napi_enable(&gp->napi);
++
+ 	if (gp->lstate == link_up) {
+ 		netif_carrier_on(gp->dev);
+ 		gem_set_link_modes(gp);
+@@ -2222,6 +2224,8 @@ static int gem_do_start(struct net_device *dev)
+ 		spin_lock_irqsave(&gp->lock, flags);
+ 		spin_lock(&gp->tx_lock);
+ 
++		napi_disable(&gp->napi);
++
+ 		gp->running =  0;
+ 		gem_reset(gp);
+ 		gem_clean_rings(gp);
+@@ -2322,8 +2326,6 @@ static int gem_open(struct net_device *dev)
+ 	if (!gp->asleep)
+ 		rc = gem_do_start(dev);
+ 	gp->opened = (rc == 0);
+-	if (gp->opened)
+-		napi_enable(&gp->napi);
+ 
+ 	mutex_unlock(&gp->pm_mutex);
+ 
+@@ -2460,8 +2462,6 @@ static int gem_resume(struct pci_dev *pdev)
+ 
+ 		/* Re-attach net device */
+ 		netif_device_attach(dev);
+-
+-		napi_enable(&gp->napi);
+ 	}
+ 
+ 	spin_lock_irqsave(&gp->lock, flags);
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 6daea0c..f00fcb5 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -157,10 +157,16 @@ static int update_filter(struct tap_filter *filter, void __user *arg)
+ 
+ 	nexact = n;
+ 
+-	/* The rest is hashed */
++	/* Remaining multicast addresses are hashed,
++	 * unicast will leave the filter disabled. */
+ 	memset(filter->mask, 0, sizeof(filter->mask));
+-	for (; n < uf.count; n++)
++	for (; n < uf.count; n++) {
++		if (!is_multicast_ether_addr(addr[n].u)) {
++			err = 0; /* no filter */
++			goto done;
++		}
+ 		addr_hash_set(filter->mask, addr[n].u);
++	}
+ 
+ 	/* For ALLMULTI just set the mask to all ones.
+ 	 * This overrides the mask populated above. */
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 0196a0d..ce743ec 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -24,6 +24,7 @@
+ #include <linux/virtio.h>
+ #include <linux/virtio_net.h>
+ #include <linux/scatterlist.h>
++#include <linux/if_vlan.h>
+ 
+ static int napi_weight = 128;
+ module_param(napi_weight, int, 0444);
+@@ -33,7 +34,7 @@ module_param(csum, bool, 0444);
+ module_param(gso, bool, 0444);
+ 
+ /* FIXME: MTU in config. */
+-#define MAX_PACKET_LEN (ETH_HLEN+ETH_DATA_LEN)
++#define MAX_PACKET_LEN (ETH_HLEN + VLAN_HLEN + ETH_DATA_LEN)
+ 
+ struct virtnet_info
+ {
+diff --git a/drivers/net/wireless/iwlwifi/iwl-scan.c b/drivers/net/wireless/iwlwifi/iwl-scan.c
+index 3a90a67..87d020c 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-scan.c
++++ b/drivers/net/wireless/iwlwifi/iwl-scan.c
+@@ -704,7 +704,7 @@ static void iwl_bg_request_scan(struct work_struct *data)
+ 	u16 cmd_len;
+ 	enum ieee80211_band band;
+ 	u8 n_probes = 2;
+-	u8 rx_chain = 0x7; /* bitmap: ABC chains */
++	u8 rx_chain = priv->hw_params.valid_rx_ant;
+ 
+ 	conf = ieee80211_get_hw_conf(priv->hw);
+ 
+diff --git a/drivers/net/wireless/zd1211rw/zd_rf.c b/drivers/net/wireless/zd1211rw/zd_rf.c
+index ec41293..ead3073 100644
+--- a/drivers/net/wireless/zd1211rw/zd_rf.c
++++ b/drivers/net/wireless/zd1211rw/zd_rf.c
+@@ -86,6 +86,7 @@ int zd_rf_init_hw(struct zd_rf *rf, u8 type)
+ 	case AL7230B_RF:
+ 		r = zd_rf_init_al7230b(rf);
+ 		break;
++	case MAXIM_NEW_RF:
+ 	case UW2453_RF:
+ 		r = zd_rf_init_uw2453(rf);
+ 		break;
+diff --git a/drivers/net/wireless/zd1211rw/zd_usb.c b/drivers/net/wireless/zd1211rw/zd_usb.c
+index a3ccd8c..5d740b5 100644
+--- a/drivers/net/wireless/zd1211rw/zd_usb.c
++++ b/drivers/net/wireless/zd1211rw/zd_usb.c
+@@ -37,6 +37,7 @@
+ static struct usb_device_id usb_ids[] = {
+ 	/* ZD1211 */
+ 	{ USB_DEVICE(0x0ace, 0x1211), .driver_info = DEVICE_ZD1211 },
++	{ USB_DEVICE(0x0ace, 0xa211), .driver_info = DEVICE_ZD1211 },
+ 	{ USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211 },
+ 	{ USB_DEVICE(0x126f, 0xa006), .driver_info = DEVICE_ZD1211 },
+ 	{ USB_DEVICE(0x6891, 0xa727), .driver_info = DEVICE_ZD1211 },
+diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
+index 101ed49..032db81 100644
+--- a/drivers/parport/parport_serial.c
++++ b/drivers/parport/parport_serial.c
+@@ -64,6 +64,11 @@ struct parport_pc_pci {
+ 
+ static int __devinit netmos_parallel_init(struct pci_dev *dev, struct parport_pc_pci *card, int autoirq, int autodma)
+ {
++	/* the rule described below doesn't hold for this device */
++	if (dev->device == PCI_DEVICE_ID_NETMOS_9835 &&
++			dev->subsystem_vendor == PCI_VENDOR_ID_IBM &&
++			dev->subsystem_device == 0x0299)
++		return -ENODEV;
+ 	/*
+ 	 * Netmos uses the subdevice ID to indicate the number of parallel
+ 	 * and serial ports.  The form is 0x00PS, where <P> is the number of
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index fb28aca..521a2db 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -113,7 +113,7 @@ static struct w1_therm_family_converter w1_therm_families[] = {
+ 
+ static inline int w1_DS18B20_convert_temp(u8 rom[9])
+ {
+-	s16 t = (rom[1] << 8) | rom[0];
++	int t = ((s16)rom[1] << 8) | rom[0];
+ 	t = t*1000/16;
+ 	return t;
+ }
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 5235c67..c8f8d59 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -538,6 +538,7 @@ static int dev_ifsioc(unsigned int fd, unsigned int cmd, unsigned long arg)
+ 		 * cannot be fixed without breaking all existing apps.
+ 		 */
+ 		case TUNSETIFF:
++		case TUNGETIFF:
+ 		case SIOCGIFFLAGS:
+ 		case SIOCGIFMETRIC:
+ 		case SIOCGIFMTU:
+@@ -1982,6 +1983,11 @@ COMPATIBLE_IOCTL(TUNSETNOCSUM)
+ COMPATIBLE_IOCTL(TUNSETDEBUG)
+ COMPATIBLE_IOCTL(TUNSETPERSIST)
+ COMPATIBLE_IOCTL(TUNSETOWNER)
++COMPATIBLE_IOCTL(TUNSETLINK)
++COMPATIBLE_IOCTL(TUNSETGROUP)
++COMPATIBLE_IOCTL(TUNGETFEATURES)
++COMPATIBLE_IOCTL(TUNSETOFFLOAD)
++COMPATIBLE_IOCTL(TUNSETTXFILTER)
+ /* Big V */
+ COMPATIBLE_IOCTL(VT_SETMODE)
+ COMPATIBLE_IOCTL(VT_GETMODE)
+@@ -2573,6 +2579,7 @@ HANDLE_IOCTL(SIOCGIFPFLAGS, dev_ifsioc)
+ HANDLE_IOCTL(SIOCGIFTXQLEN, dev_ifsioc)
+ HANDLE_IOCTL(SIOCSIFTXQLEN, dev_ifsioc)
+ HANDLE_IOCTL(TUNSETIFF, dev_ifsioc)
++HANDLE_IOCTL(TUNGETIFF, dev_ifsioc)
+ HANDLE_IOCTL(SIOCETHTOOL, ethtool_ioctl)
+ HANDLE_IOCTL(SIOCBONDENSLAVE, bond_ioctl)
+ HANDLE_IOCTL(SIOCBONDRELEASE, bond_ioctl)
+diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
+index cf0d5c2..dc934da 100644
+--- a/fs/lockd/svclock.c
++++ b/fs/lockd/svclock.c
+@@ -418,7 +418,7 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_file *file,
+ 			goto out;
+ 		case -EAGAIN:
+ 			ret = nlm_lck_denied;
+-			goto out;
++			break;
+ 		case FILE_LOCK_DEFERRED:
+ 			if (wait)
+ 				break;
+@@ -434,6 +434,10 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_file *file,
+ 			goto out;
+ 	}
+ 
++	ret = nlm_lck_denied;
++	if (!wait)
++		goto out;
++
+ 	ret = nlm_lck_blocked;
+ 
+ 	/* Append to list of blocked */
+diff --git a/include/linux/ata.h b/include/linux/ata.h
+index 8a12d71..8297a3c 100644
+--- a/include/linux/ata.h
++++ b/include/linux/ata.h
+@@ -681,12 +681,17 @@ static inline int ata_id_current_chs_valid(const u16 *id)
+ 
+ static inline int ata_id_is_cfa(const u16 *id)
+ {
+-	if (id[ATA_ID_CONFIG] == 0x848A)	/* Standard CF */
++	if (id[ATA_ID_CONFIG] == 0x848A)	/* Traditional CF */
+ 		return 1;
+-	/* Could be CF hiding as standard ATA */
+-	if (ata_id_major_version(id) >= 3 &&
+-	    id[ATA_ID_COMMAND_SET_1] != 0xFFFF &&
+-	   (id[ATA_ID_COMMAND_SET_1] & (1 << 2)))
++	/*
++	 * CF specs don't require specific value in the word 0 anymore and yet
++	 * they forbid to report the ATA version in the word 80 and require the
++	 * CFA feature set support to be indicated in the word 83 in this case.
++	 * Unfortunately, some cards only follow either of this requirements,
++	 * and while those that don't indicate CFA feature support need some
++	 * sort of quirk list, it seems impractical for the ones that do...
++	 */
++	if ((id[ATA_ID_COMMAND_SET_2] & 0xC004) == 0x4004)
+ 		return 1;
+ 	return 0;
+ }
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index f54aa38..258a17b 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -95,13 +95,13 @@ struct old_linux_dirent;
+ #define __SC_TEST5(t5, a5, ...)	__SC_TEST(t5); __SC_TEST4(__VA_ARGS__)
+ #define __SC_TEST6(t6, a6, ...)	__SC_TEST(t6); __SC_TEST5(__VA_ARGS__)
+ 
+-#define SYSCALL_DEFINE0(name)   asmlinkage long sys_##name(void)
+-#define SYSCALL_DEFINE1(...)    SYSCALL_DEFINEx(1, __VA_ARGS__)
+-#define SYSCALL_DEFINE2(...)    SYSCALL_DEFINEx(2, __VA_ARGS__)
+-#define SYSCALL_DEFINE3(...)    SYSCALL_DEFINEx(3, __VA_ARGS__)
+-#define SYSCALL_DEFINE4(...)    SYSCALL_DEFINEx(4, __VA_ARGS__)
+-#define SYSCALL_DEFINE5(...)    SYSCALL_DEFINEx(5, __VA_ARGS__)
+-#define SYSCALL_DEFINE6(...)    SYSCALL_DEFINEx(6, __VA_ARGS__)
++#define SYSCALL_DEFINE0(name)	   asmlinkage long sys_##name(void)
++#define SYSCALL_DEFINE1(name, ...) SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
++#define SYSCALL_DEFINE2(name, ...) SYSCALL_DEFINEx(2, _##name, __VA_ARGS__)
++#define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
++#define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
++#define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
++#define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+ 
+ #ifdef CONFIG_PPC64
+ #define SYSCALL_ALIAS(alias, name)					\
+@@ -116,21 +116,21 @@ struct old_linux_dirent;
+ 
+ #define SYSCALL_DEFINE(name) static inline long SYSC_##name
+ #define SYSCALL_DEFINEx(x, name, ...)					\
+-	asmlinkage long sys_##name(__SC_DECL##x(__VA_ARGS__));		\
+-	static inline long SYSC_##name(__SC_DECL##x(__VA_ARGS__));	\
+-	asmlinkage long SyS_##name(__SC_LONG##x(__VA_ARGS__))		\
++	asmlinkage long sys##name(__SC_DECL##x(__VA_ARGS__));		\
++	static inline long SYSC##name(__SC_DECL##x(__VA_ARGS__));	\
++	asmlinkage long SyS##name(__SC_LONG##x(__VA_ARGS__))		\
+ 	{								\
+ 		__SC_TEST##x(__VA_ARGS__);				\
+-		return (long) SYSC_##name(__SC_CAST##x(__VA_ARGS__));	\
++		return (long) SYSC##name(__SC_CAST##x(__VA_ARGS__));	\
+ 	}								\
+-	SYSCALL_ALIAS(sys_##name, SyS_##name);				\
+-	static inline long SYSC_##name(__SC_DECL##x(__VA_ARGS__))
++	SYSCALL_ALIAS(sys##name, SyS##name);				\
++	static inline long SYSC##name(__SC_DECL##x(__VA_ARGS__))
+ 
+ #else /* CONFIG_HAVE_SYSCALL_WRAPPERS */
+ 
+ #define SYSCALL_DEFINE(name) asmlinkage long sys_##name
+ #define SYSCALL_DEFINEx(x, name, ...)					\
+-	asmlinkage long sys_##name(__SC_DECL##x(__VA_ARGS__))
++	asmlinkage long sys##name(__SC_DECL##x(__VA_ARGS__))
+ 
+ #endif /* CONFIG_HAVE_SYSCALL_WRAPPERS */
+ 
+diff --git a/include/net/sctp/checksum.h b/include/net/sctp/checksum.h
+index b799fb2..2fec3c3 100644
+--- a/include/net/sctp/checksum.h
++++ b/include/net/sctp/checksum.h
+@@ -79,5 +79,5 @@ static inline __be32 sctp_update_cksum(__u8 *buffer, __u16 length, __be32 crc32)
+ 
+ static inline __be32 sctp_end_cksum(__be32 crc32)
+ {
+-	return ~crc32;
++	return (__force __be32)~cpu_to_le32((__force u32)crc32);
+ }
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 8875822..5f7cdc2 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -985,13 +985,25 @@ continue_unlock:
+ 				}
+  			}
+ 
+-			if (wbc->sync_mode == WB_SYNC_NONE) {
++			if (wbc->nr_to_write > 0) {
+ 				wbc->nr_to_write--;
+-				if (wbc->nr_to_write <= 0) {
++				if (wbc->nr_to_write == 0 &&
++				    wbc->sync_mode == WB_SYNC_NONE) {
++					/*
++					 * We stop writing back only if we are
++					 * not doing integrity sync. In case of
++					 * integrity sync we have to keep going
++					 * because someone may be concurrently
++					 * dirtying pages, and we might have
++					 * synced a lot of newly appeared dirty
++					 * pages, but have not synced all of the
++					 * old dirty pages.
++					 */
+ 					done = 1;
+ 					break;
+ 				}
+ 			}
++
+ 			if (wbc->nonblocking && bdi_write_congested(bdi)) {
+ 				wbc->encountered_congestion = 1;
+ 				done = 1;
+@@ -1001,7 +1013,7 @@ continue_unlock:
+ 		pagevec_release(&pvec);
+ 		cond_resched();
+ 	}
+-	if (!cycled) {
++	if (!cycled && !done) {
+ 		/*
+ 		 * range_cyclic:
+ 		 * We hit the last page and there is more work to be done: wrap
+diff --git a/net/bluetooth/hidp/core.c b/net/bluetooth/hidp/core.c
+index 96434d7..0abd0ef 100644
+--- a/net/bluetooth/hidp/core.c
++++ b/net/bluetooth/hidp/core.c
+@@ -684,6 +684,10 @@ static const struct {
+ } hidp_blacklist[] = {
+ 	/* Apple wireless Mighty Mouse */
+ 	{ 0x05ac, 0x030c, HID_QUIRK_MIGHTYMOUSE | HID_QUIRK_INVERT_HWHEEL },
++	/* Apple Wireless Keyboard */
++	{ 0x05ac, 0x022c, HID_QUIRK_APPLE_NUMLOCK_EMULATION | HID_QUIRK_APPLE_HAS_FN },
++	{ 0x05ac, 0x022d, HID_QUIRK_APPLE_NUMLOCK_EMULATION | HID_QUIRK_APPLE_HAS_FN | HID_QUIRK_APPLE_ISO_KEYBOARD },
++	{ 0x05ac, 0x022e, HID_QUIRK_APPLE_NUMLOCK_EMULATION | HID_QUIRK_APPLE_HAS_FN },
+ 
+ 	{ }	/* Terminating entry */
+ };
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index ca1ccdf..53425fa 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -73,17 +73,13 @@ static struct kmem_cache *skbuff_fclone_cache __read_mostly;
+ static void sock_pipe_buf_release(struct pipe_inode_info *pipe,
+ 				  struct pipe_buffer *buf)
+ {
+-	struct sk_buff *skb = (struct sk_buff *) buf->private;
+-
+-	kfree_skb(skb);
++	put_page(buf->page);
+ }
+ 
+ static void sock_pipe_buf_get(struct pipe_inode_info *pipe,
+ 				struct pipe_buffer *buf)
+ {
+-	struct sk_buff *skb = (struct sk_buff *) buf->private;
+-
+-	skb_get(skb);
++	get_page(buf->page);
+ }
+ 
+ static int sock_pipe_buf_steal(struct pipe_inode_info *pipe,
+@@ -1262,9 +1258,19 @@ fault:
+  */
+ static void sock_spd_release(struct splice_pipe_desc *spd, unsigned int i)
+ {
+-	struct sk_buff *skb = (struct sk_buff *) spd->partial[i].private;
++	put_page(spd->pages[i]);
++}
+ 
+-	kfree_skb(skb);
++static inline struct page *linear_to_page(struct page *page, unsigned int len,
++					  unsigned int offset)
++{
++	struct page *p = alloc_pages(GFP_KERNEL, 0);
++
++	if (!p)
++		return NULL;
++	memcpy(page_address(p) + offset, page_address(page) + offset, len);
++
++	return p;
+ }
+ 
+ /*
+@@ -1272,16 +1278,23 @@ static void sock_spd_release(struct splice_pipe_desc *spd, unsigned int i)
+  */
+ static inline int spd_fill_page(struct splice_pipe_desc *spd, struct page *page,
+ 				unsigned int len, unsigned int offset,
+-				struct sk_buff *skb)
++				struct sk_buff *skb, int linear)
+ {
+ 	if (unlikely(spd->nr_pages == PIPE_BUFFERS))
+ 		return 1;
+ 
++	if (linear) {
++		page = linear_to_page(page, len, offset);
++		if (!page)
++			return 1;
++	} else
++		get_page(page);
++
+ 	spd->pages[spd->nr_pages] = page;
+ 	spd->partial[spd->nr_pages].len = len;
+ 	spd->partial[spd->nr_pages].offset = offset;
+-	spd->partial[spd->nr_pages].private = (unsigned long) skb_get(skb);
+ 	spd->nr_pages++;
++
+ 	return 0;
+ }
+ 
+@@ -1297,7 +1310,7 @@ static inline void __segment_seek(struct page **page, unsigned int *poff,
+ static inline int __splice_segment(struct page *page, unsigned int poff,
+ 				   unsigned int plen, unsigned int *off,
+ 				   unsigned int *len, struct sk_buff *skb,
+-				   struct splice_pipe_desc *spd)
++				   struct splice_pipe_desc *spd, int linear)
+ {
+ 	if (!*len)
+ 		return 1;
+@@ -1320,7 +1333,7 @@ static inline int __splice_segment(struct page *page, unsigned int poff,
+ 		/* the linear region may spread across several pages  */
+ 		flen = min_t(unsigned int, flen, PAGE_SIZE - poff);
+ 
+-		if (spd_fill_page(spd, page, flen, poff, skb))
++		if (spd_fill_page(spd, page, flen, poff, skb, linear))
+ 			return 1;
+ 
+ 		__segment_seek(&page, &poff, &plen, flen);
+@@ -1347,7 +1360,7 @@ static int __skb_splice_bits(struct sk_buff *skb, unsigned int *offset,
+ 	if (__splice_segment(virt_to_page(skb->data),
+ 			     (unsigned long) skb->data & (PAGE_SIZE - 1),
+ 			     skb_headlen(skb),
+-			     offset, len, skb, spd))
++			     offset, len, skb, spd, 1))
+ 		return 1;
+ 
+ 	/*
+@@ -1357,7 +1370,7 @@ static int __skb_splice_bits(struct sk_buff *skb, unsigned int *offset,
+ 		const skb_frag_t *f = &skb_shinfo(skb)->frags[seg];
+ 
+ 		if (__splice_segment(f->page, f->page_offset, f->size,
+-				     offset, len, skb, spd))
++				     offset, len, skb, spd, 0))
+ 			return 1;
+ 	}
+ 
+@@ -1370,7 +1383,7 @@ static int __skb_splice_bits(struct sk_buff *skb, unsigned int *offset,
+  * the frag list, if such a thing exists. We'd probably need to recurse to
+  * handle that cleanly.
+  */
+-int skb_splice_bits(struct sk_buff *__skb, unsigned int offset,
++int skb_splice_bits(struct sk_buff *skb, unsigned int offset,
+ 		    struct pipe_inode_info *pipe, unsigned int tlen,
+ 		    unsigned int flags)
+ {
+@@ -1383,16 +1396,6 @@ int skb_splice_bits(struct sk_buff *__skb, unsigned int offset,
+ 		.ops = &sock_pipe_buf_ops,
+ 		.spd_release = sock_spd_release,
+ 	};
+-	struct sk_buff *skb;
+-
+-	/*
+-	 * I'd love to avoid the clone here, but tcp_read_sock()
+-	 * ignores reference counts and unconditonally kills the sk_buff
+-	 * on return from the actor.
+-	 */
+-	skb = skb_clone(__skb, GFP_KERNEL);
+-	if (unlikely(!skb))
+-		return -ENOMEM;
+ 
+ 	/*
+ 	 * __skb_splice_bits() only fails if the output has no room left,
+@@ -1416,15 +1419,9 @@ int skb_splice_bits(struct sk_buff *__skb, unsigned int offset,
+ 	}
+ 
+ done:
+-	/*
+-	 * drop our reference to the clone, the pipe consumption will
+-	 * drop the rest.
+-	 */
+-	kfree_skb(skb);
+-
+ 	if (spd.nr_pages) {
++		struct sock *sk = skb->sk;
+ 		int ret;
+-		struct sock *sk = __skb->sk;
+ 
+ 		/*
+ 		 * Drop the socket lock, otherwise we have reverse
+@@ -2001,10 +1998,10 @@ unsigned int skb_seq_read(unsigned int consumed, const u8 **data,
+ 		return 0;
+ 
+ next_skb:
+-	block_limit = skb_headlen(st->cur_skb);
++	block_limit = skb_headlen(st->cur_skb) + st->stepped_offset;
+ 
+ 	if (abs_offset < block_limit) {
+-		*data = st->cur_skb->data + abs_offset;
++		*data = st->cur_skb->data + (abs_offset - st->stepped_offset);
+ 		return block_limit - abs_offset;
+ 	}
+ 
+@@ -2039,13 +2036,14 @@ next_skb:
+ 		st->frag_data = NULL;
+ 	}
+ 
+-	if (st->cur_skb->next) {
+-		st->cur_skb = st->cur_skb->next;
++	if (st->root_skb == st->cur_skb &&
++	    skb_shinfo(st->root_skb)->frag_list) {
++		st->cur_skb = skb_shinfo(st->root_skb)->frag_list;
+ 		st->frag_idx = 0;
+ 		goto next_skb;
+-	} else if (st->root_skb == st->cur_skb &&
+-		   skb_shinfo(st->root_skb)->frag_list) {
+-		st->cur_skb = skb_shinfo(st->root_skb)->frag_list;
++	} else if (st->cur_skb->next) {
++		st->cur_skb = st->cur_skb->next;
++		st->frag_idx = 0;
+ 		goto next_skb;
+ 	}
+ 
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 91f8bbc..b1b2f22 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -695,6 +695,8 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
+ 	if (len < 0)
+ 		return -EINVAL;
+ 
++	v.val = 0;
++
+ 	switch(optname) {
+ 	case SO_DEBUG:
+ 		v.val = sock_flag(sk, SOCK_DBG);
+diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
+index 42065ff..ff75000 100644
+--- a/net/ipv4/ipconfig.c
++++ b/net/ipv4/ipconfig.c
+@@ -1272,6 +1272,9 @@ __be32 __init root_nfs_parse_addr(char *name)
+ static int __init ip_auto_config(void)
+ {
+ 	__be32 addr;
++#ifdef IPCONFIG_DYNAMIC
++	int retries = CONF_OPEN_RETRIES;
++#endif
+ 
+ #ifdef CONFIG_PROC_FS
+ 	proc_net_fops_create(&init_net, "pnp", S_IRUGO, &pnp_seq_fops);
+@@ -1308,9 +1311,6 @@ static int __init ip_auto_config(void)
+ #endif
+ 	    ic_first_dev->next) {
+ #ifdef IPCONFIG_DYNAMIC
+-
+-		int retries = CONF_OPEN_RETRIES;
+-
+ 		if (ic_dynamic() < 0) {
+ 			ic_close_devs();
+ 
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index f57d576..9440ba6 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -518,8 +518,13 @@ static int tcp_splice_data_recv(read_descriptor_t *rd_desc, struct sk_buff *skb,
+ 				unsigned int offset, size_t len)
+ {
+ 	struct tcp_splice_state *tss = rd_desc->arg.data;
++	int ret;
+ 
+-	return skb_splice_bits(skb, offset, tss->pipe, tss->len, tss->flags);
++	ret = skb_splice_bits(skb, offset, tss->pipe, min(rd_desc->count, len),
++			      tss->flags);
++	if (ret > 0)
++		rd_desc->count -= ret;
++	return ret;
+ }
+ 
+ static int __tcp_splice_read(struct sock *sk, struct tcp_splice_state *tss)
+@@ -527,6 +532,7 @@ static int __tcp_splice_read(struct sock *sk, struct tcp_splice_state *tss)
+ 	/* Store TCP splice context information in read_descriptor_t. */
+ 	read_descriptor_t rd_desc = {
+ 		.arg.data = tss,
++		.count	  = tss->len,
+ 	};
+ 
+ 	return tcp_read_sock(sk, &rd_desc, tcp_splice_data_recv);
+@@ -611,11 +617,13 @@ ssize_t tcp_splice_read(struct socket *sock, loff_t *ppos,
+ 		tss.len -= ret;
+ 		spliced += ret;
+ 
++		if (!timeo)
++			break;
+ 		release_sock(sk);
+ 		lock_sock(sk);
+ 
+ 		if (sk->sk_err || sk->sk_state == TCP_CLOSE ||
+-		    (sk->sk_shutdown & RCV_SHUTDOWN) || !timeo ||
++		    (sk->sk_shutdown & RCV_SHUTDOWN) ||
+ 		    signal_pending(current))
+ 			break;
+ 	}
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 915e6b7..a9b62ee 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -959,9 +959,11 @@ static int __udp_queue_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 
+ 	if ((rc = sock_queue_rcv_skb(sk, skb)) < 0) {
+ 		/* Note that an ENOMEM error is charged twice */
+-		if (rc == -ENOMEM)
++		if (rc == -ENOMEM) {
+ 			UDP_INC_STATS_BH(sock_net(sk), UDP_MIB_RCVBUFERRORS,
+ 					 is_udplite);
++			atomic_inc(&sk->sk_drops);
++		}
+ 		goto drop;
+ 	}
+ 
+@@ -1172,7 +1174,7 @@ int __udp4_lib_rcv(struct sk_buff *skb, struct hlist_head udptable[],
+ 		   int proto)
+ {
+ 	struct sock *sk;
+-	struct udphdr *uh = udp_hdr(skb);
++	struct udphdr *uh;
+ 	unsigned short ulen;
+ 	struct rtable *rt = (struct rtable*)skb->dst;
+ 	__be32 saddr = ip_hdr(skb)->saddr;
+@@ -1185,6 +1187,7 @@ int __udp4_lib_rcv(struct sk_buff *skb, struct hlist_head udptable[],
+ 	if (!pskb_may_pull(skb, sizeof(struct udphdr)))
+ 		goto drop;		/* No space for header. */
+ 
++	uh   = udp_hdr(skb);
+ 	ulen = ntohs(uh->len);
+ 	if (ulen > skb->len)
+ 		goto short_packet;
+diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
+index 37a4e77..489a7fd 100644
+--- a/net/ipv6/ip6_flowlabel.c
++++ b/net/ipv6/ip6_flowlabel.c
+@@ -323,17 +323,21 @@ static struct ip6_flowlabel *
+ fl_create(struct net *net, struct in6_flowlabel_req *freq, char __user *optval,
+ 	  int optlen, int *err_p)
+ {
+-	struct ip6_flowlabel *fl;
++	struct ip6_flowlabel *fl = NULL;
+ 	int olen;
+ 	int addr_type;
+ 	int err;
+ 
++	olen = optlen - CMSG_ALIGN(sizeof(*freq));
++	err = -EINVAL;
++	if (olen > 64 * 1024)
++		goto done;
++
+ 	err = -ENOMEM;
+ 	fl = kzalloc(sizeof(*fl), GFP_KERNEL);
+ 	if (fl == NULL)
+ 		goto done;
+ 
+-	olen = optlen - CMSG_ALIGN(sizeof(*freq));
+ 	if (olen > 0) {
+ 		struct msghdr msg;
+ 		struct flowi flowi;
+diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+index 3df2c44..a423200 100644
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1091,6 +1091,18 @@ static inline int ip6_ufo_append_data(struct sock *sk,
+ 	return err;
+ }
+ 
++static inline struct ipv6_opt_hdr *ip6_opt_dup(struct ipv6_opt_hdr *src,
++					       gfp_t gfp)
++{
++	return src ? kmemdup(src, (src->hdrlen + 1) * 8, gfp) : NULL;
++}
++
++static inline struct ipv6_rt_hdr *ip6_rthdr_dup(struct ipv6_rt_hdr *src,
++						gfp_t gfp)
++{
++	return src ? kmemdup(src, (src->hdrlen + 1) * 8, gfp) : NULL;
++}
++
+ int ip6_append_data(struct sock *sk, int getfrag(void *from, char *to,
+ 	int offset, int len, int odd, struct sk_buff *skb),
+ 	void *from, int length, int transhdrlen,
+@@ -1116,17 +1128,37 @@ int ip6_append_data(struct sock *sk, int getfrag(void *from, char *to,
+ 		 * setup for corking
+ 		 */
+ 		if (opt) {
+-			if (np->cork.opt == NULL) {
+-				np->cork.opt = kmalloc(opt->tot_len,
+-						       sk->sk_allocation);
+-				if (unlikely(np->cork.opt == NULL))
+-					return -ENOBUFS;
+-			} else if (np->cork.opt->tot_len < opt->tot_len) {
+-				printk(KERN_DEBUG "ip6_append_data: invalid option length\n");
++			if (WARN_ON(np->cork.opt))
+ 				return -EINVAL;
+-			}
+-			memcpy(np->cork.opt, opt, opt->tot_len);
+-			inet->cork.flags |= IPCORK_OPT;
++
++			np->cork.opt = kmalloc(opt->tot_len, sk->sk_allocation);
++			if (unlikely(np->cork.opt == NULL))
++				return -ENOBUFS;
++
++			np->cork.opt->tot_len = opt->tot_len;
++			np->cork.opt->opt_flen = opt->opt_flen;
++			np->cork.opt->opt_nflen = opt->opt_nflen;
++
++			np->cork.opt->dst0opt = ip6_opt_dup(opt->dst0opt,
++							    sk->sk_allocation);
++			if (opt->dst0opt && !np->cork.opt->dst0opt)
++				return -ENOBUFS;
++
++			np->cork.opt->dst1opt = ip6_opt_dup(opt->dst1opt,
++							    sk->sk_allocation);
++			if (opt->dst1opt && !np->cork.opt->dst1opt)
++				return -ENOBUFS;
++
++			np->cork.opt->hopopt = ip6_opt_dup(opt->hopopt,
++							   sk->sk_allocation);
++			if (opt->hopopt && !np->cork.opt->hopopt)
++				return -ENOBUFS;
++
++			np->cork.opt->srcrt = ip6_rthdr_dup(opt->srcrt,
++							    sk->sk_allocation);
++			if (opt->srcrt && !np->cork.opt->srcrt)
++				return -ENOBUFS;
++
+ 			/* need source address above miyazawa*/
+ 		}
+ 		dst_hold(&rt->u.dst);
+@@ -1153,8 +1185,7 @@ int ip6_append_data(struct sock *sk, int getfrag(void *from, char *to,
+ 	} else {
+ 		rt = (struct rt6_info *)inet->cork.dst;
+ 		fl = &inet->cork.fl;
+-		if (inet->cork.flags & IPCORK_OPT)
+-			opt = np->cork.opt;
++		opt = np->cork.opt;
+ 		transhdrlen = 0;
+ 		exthdrlen = 0;
+ 		mtu = inet->cork.fragsize;
+@@ -1393,9 +1424,15 @@ error:
+ 
+ static void ip6_cork_release(struct inet_sock *inet, struct ipv6_pinfo *np)
+ {
+-	inet->cork.flags &= ~IPCORK_OPT;
+-	kfree(np->cork.opt);
+-	np->cork.opt = NULL;
++	if (np->cork.opt) {
++		kfree(np->cork.opt->dst0opt);
++		kfree(np->cork.opt->dst1opt);
++		kfree(np->cork.opt->hopopt);
++		kfree(np->cork.opt->srcrt);
++		kfree(np->cork.opt);
++		np->cork.opt = NULL;
++	}
++
+ 	if (inet->cork.dst) {
+ 		dst_release(inet->cork.dst);
+ 		inet->cork.dst = NULL;
+diff --git a/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c b/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
+index 14d47d8..0610123 100644
+--- a/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
++++ b/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
+@@ -49,8 +49,8 @@ static bool icmpv6_pkt_to_tuple(const struct sk_buff *skb,
+ static const u_int8_t invmap[] = {
+ 	[ICMPV6_ECHO_REQUEST - 128]	= ICMPV6_ECHO_REPLY + 1,
+ 	[ICMPV6_ECHO_REPLY - 128]	= ICMPV6_ECHO_REQUEST + 1,
+-	[ICMPV6_NI_QUERY - 128]		= ICMPV6_NI_QUERY + 1,
+-	[ICMPV6_NI_REPLY - 128]		= ICMPV6_NI_REPLY +1
++	[ICMPV6_NI_QUERY - 128]		= ICMPV6_NI_REPLY + 1,
++	[ICMPV6_NI_REPLY - 128]		= ICMPV6_NI_QUERY +1
+ };
+ 
+ static bool icmpv6_invert_tuple(struct nf_conntrack_tuple *tuple,
+diff --git a/net/mac80211/debugfs_sta.c b/net/mac80211/debugfs_sta.c
+index 79a0627..27bd353 100644
+--- a/net/mac80211/debugfs_sta.c
++++ b/net/mac80211/debugfs_sta.c
+@@ -200,7 +200,7 @@ static ssize_t sta_agg_status_write(struct file *file,
+ 		/* toggle Rx aggregation command */
+ 		tid_num = tid_num - 100;
+ 		if (tid_static_rx[tid_num] == 1) {
+-			strcpy(state, "off ");
++			strcpy(state, "off");
+ 			ieee80211_sta_stop_rx_ba_session(dev, da, tid_num, 0,
+ 					WLAN_REASON_QSTA_REQUIRE_SETUP);
+ 			sta->ampdu_mlme.tid_state_rx[tid_num] |=
+diff --git a/net/netfilter/xt_sctp.c b/net/netfilter/xt_sctp.c
+index e6e4681..aa7aec0 100644
+--- a/net/netfilter/xt_sctp.c
++++ b/net/netfilter/xt_sctp.c
+@@ -105,7 +105,7 @@ match_packet(const struct sk_buff *skb,
+ 
+ 	switch (chunk_match_type) {
+ 	case SCTP_CHUNK_MATCH_ALL:
+-		return SCTP_CHUNKMAP_IS_CLEAR(info->chunkmap);
++		return SCTP_CHUNKMAP_IS_CLEAR(chunkmapcopy);
+ 	case SCTP_CHUNK_MATCH_ANY:
+ 		return false;
+ 	case SCTP_CHUNK_MATCH_ONLY:
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index c718e7e..4b50878 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -77,6 +77,7 @@
+ #include <linux/poll.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
++#include <linux/mutex.h>
+ 
+ #ifdef CONFIG_INET
+ #include <net/inet_common.h>
+@@ -175,6 +176,7 @@ struct packet_sock {
+ #endif
+ 	struct packet_type	prot_hook;
+ 	spinlock_t		bind_lock;
++	struct mutex		pg_vec_lock;
+ 	unsigned int		running:1,	/* prot_hook is attached*/
+ 				auxdata:1,
+ 				origdev:1;
+@@ -220,13 +222,13 @@ static void *packet_lookup_frame(struct packet_sock *po, unsigned int position,
+ 	h.raw = po->pg_vec[pg_vec_pos] + (frame_offset * po->frame_size);
+ 	switch (po->tp_version) {
+ 	case TPACKET_V1:
+-		if (status != h.h1->tp_status ? TP_STATUS_USER :
+-						TP_STATUS_KERNEL)
++		if (status != (h.h1->tp_status ? TP_STATUS_USER :
++						TP_STATUS_KERNEL))
+ 			return NULL;
+ 		break;
+ 	case TPACKET_V2:
+-		if (status != h.h2->tp_status ? TP_STATUS_USER :
+-						TP_STATUS_KERNEL)
++		if (status != (h.h2->tp_status ? TP_STATUS_USER :
++						TP_STATUS_KERNEL))
+ 			return NULL;
+ 		break;
+ 	}
+@@ -1068,6 +1070,7 @@ static int packet_create(struct net *net, struct socket *sock, int protocol)
+ 	 */
+ 
+ 	spin_lock_init(&po->bind_lock);
++	mutex_init(&po->pg_vec_lock);
+ 	po->prot_hook.func = packet_rcv;
+ 
+ 	if (sock->type == SOCK_PACKET)
+@@ -1863,6 +1866,7 @@ static int packet_set_ring(struct sock *sk, struct tpacket_req *req, int closing
+ 	synchronize_net();
+ 
+ 	err = -EBUSY;
++	mutex_lock(&po->pg_vec_lock);
+ 	if (closing || atomic_read(&po->mapped) == 0) {
+ 		err = 0;
+ #define XC(a, b) ({ __typeof__ ((a)) __t; __t = (a); (a) = (b); __t; })
+@@ -1884,6 +1888,7 @@ static int packet_set_ring(struct sock *sk, struct tpacket_req *req, int closing
+ 		if (atomic_read(&po->mapped))
+ 			printk(KERN_DEBUG "packet_mmap: vma is busy: %d\n", atomic_read(&po->mapped));
+ 	}
++	mutex_unlock(&po->pg_vec_lock);
+ 
+ 	spin_lock(&po->bind_lock);
+ 	if (was_running && !po->running) {
+@@ -1916,7 +1921,7 @@ static int packet_mmap(struct file *file, struct socket *sock, struct vm_area_st
+ 
+ 	size = vma->vm_end - vma->vm_start;
+ 
+-	lock_sock(sk);
++	mutex_lock(&po->pg_vec_lock);
+ 	if (po->pg_vec == NULL)
+ 		goto out;
+ 	if (size != po->pg_vec_len*po->pg_vec_pages*PAGE_SIZE)
+@@ -1939,7 +1944,7 @@ static int packet_mmap(struct file *file, struct socket *sock, struct vm_area_st
+ 	err = 0;
+ 
+ out:
+-	release_sock(sk);
++	mutex_unlock(&po->pg_vec_lock);
+ 	return err;
+ }
+ #endif
+diff --git a/net/sctp/output.c b/net/sctp/output.c
+index 225c712..e4746fd 100644
+--- a/net/sctp/output.c
++++ b/net/sctp/output.c
+@@ -324,14 +324,16 @@ append:
+ 	switch (chunk->chunk_hdr->type) {
+ 	    case SCTP_CID_DATA:
+ 		retval = sctp_packet_append_data(packet, chunk);
++		if (SCTP_XMIT_OK != retval)
++			goto finish;
+ 		/* Disallow SACK bundling after DATA. */
+ 		packet->has_sack = 1;
+ 		/* Disallow AUTH bundling after DATA */
+ 		packet->has_auth = 1;
+ 		/* Let it be knows that packet has DATA in it */
+ 		packet->has_data = 1;
+-		if (SCTP_XMIT_OK != retval)
+-			goto finish;
++		/* timestamp the chunk for rtx purposes */
++		chunk->sent_at = jiffies;
+ 		break;
+ 	    case SCTP_CID_COOKIE_ECHO:
+ 		packet->has_cookie_echo = 1;
+@@ -470,7 +472,6 @@ int sctp_packet_transmit(struct sctp_packet *packet)
+ 			} else
+ 				chunk->resent = 1;
+ 
+-			chunk->sent_at = jiffies;
+ 			has_data = 1;
+ 		}
+ 
+diff --git a/net/sctp/outqueue.c b/net/sctp/outqueue.c
+index 4328ad5..fe11686 100644
+--- a/net/sctp/outqueue.c
++++ b/net/sctp/outqueue.c
+@@ -929,7 +929,6 @@ static int sctp_outq_flush(struct sctp_outq *q, int rtx_timeout)
+ 		}
+ 
+ 		/* Finally, transmit new packets.  */
+-		start_timer = 0;
+ 		while ((chunk = sctp_outq_dequeue_data(q)) != NULL) {
+ 			/* RFC 2960 6.5 Every DATA chunk MUST carry a valid
+ 			 * stream identifier.
+@@ -1028,7 +1027,7 @@ static int sctp_outq_flush(struct sctp_outq *q, int rtx_timeout)
+ 			list_add_tail(&chunk->transmitted_list,
+ 				      &transport->transmitted);
+ 
+-			sctp_transport_reset_timers(transport, start_timer-1);
++			sctp_transport_reset_timers(transport, 0);
+ 
+ 			q->empty = 0;
+ 
+diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+index 44ee94d..0865a89 100755
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -1758,6 +1758,40 @@ sub reset_state {
+     $state = 0;
+ }
+ 
++sub syscall_munge() {
++	my $void = 0;
++
++	$prototype =~ s@[\r\n\t]+@ @gos; # strip newlines/CR's/tabs
++##	if ($prototype =~ m/SYSCALL_DEFINE0\s*\(\s*(a-zA-Z0-9_)*\s*\)/) {
++	if ($prototype =~ m/SYSCALL_DEFINE0/) {
++		$void = 1;
++##		$prototype = "long sys_$1(void)";
++	}
++
++	$prototype =~ s/SYSCALL_DEFINE.*\(/long sys_/; # fix return type & func name
++	if ($prototype =~ m/long (sys_.*?),/) {
++		$prototype =~ s/,/\(/;
++	} elsif ($void) {
++		$prototype =~ s/\)/\(void\)/;
++	}
++
++	# now delete all of the odd-number commas in $prototype
++	# so that arg types & arg names don't have a comma between them
++	my $count = 0;
++	my $len = length($prototype);
++	if ($void) {
++		$len = 0;	# skip the for-loop
++	}
++	for (my $ix = 0; $ix < $len; $ix++) {
++		if (substr($prototype, $ix, 1) eq ',') {
++			$count++;
++			if ($count % 2 == 1) {
++				substr($prototype, $ix, 1) = ' ';
++			}
++		}
++	}
++}
++
+ sub process_state3_function($$) {
+     my $x = shift;
+     my $file = shift;
+@@ -1774,7 +1808,10 @@ sub process_state3_function($$) {
+ 	$prototype =~ s@/\*.*?\*/@@gos;	# strip comments.
+ 	$prototype =~ s@[\r\n]+@ @gos; # strip newlines/cr's.
+ 	$prototype =~ s@^\s+@@gos; # strip leading spaces
+-	dump_function($prototype,$file);
++	if ($prototype =~ /SYSCALL_DEFINE/) {
++		syscall_munge();
++	}
++	dump_function($prototype, $file);
+ 	reset_state();
+     }
+ }
+diff --git a/sound/drivers/mtpav.c b/sound/drivers/mtpav.c
+index b5e1a71..04d50aa 100644
+--- a/sound/drivers/mtpav.c
++++ b/sound/drivers/mtpav.c
+@@ -706,7 +706,6 @@ static int __devinit snd_mtpav_probe(struct platform_device *dev)
+ 	mtp_card->card = card;
+ 	mtp_card->irq = -1;
+ 	mtp_card->share_irq = 0;
+-	mtp_card->inmidiport = 0xffffffff;
+ 	mtp_card->inmidistate = 0;
+ 	mtp_card->outmidihwport = 0xffffffff;
+ 	init_timer(&mtp_card->timer);
+@@ -715,6 +714,8 @@ static int __devinit snd_mtpav_probe(struct platform_device *dev)
+ 
+ 	card->private_free = snd_mtpav_free;
+ 
++	mtp_card->inmidiport = mtp_card->num_ports + MTPAV_PIDX_BROADCAST;
++
+ 	err = snd_mtpav_get_ISA(mtp_card);
+ 	if (err < 0)
+ 		goto __error;

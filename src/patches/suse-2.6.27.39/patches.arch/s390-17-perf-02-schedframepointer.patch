@@ -1,0 +1,28 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: [PATCH] set SCHED_OMIT_FRAME_POINTER for s390
+References: bnc#532063,LTC#55526
+
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+
+The frame pointer is useless for s390 in the sched.c code.
+
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+Index: linux-sles11/arch/s390/Kconfig
+===================================================================
+--- linux-sles11.orig/arch/s390/Kconfig	2009-08-17 14:29:52.000000000 +0200
++++ linux-sles11/arch/s390/Kconfig	2009-08-17 14:45:07.000000000 +0200
+@@ -78,6 +78,10 @@
+ 	select HAVE_KVM if 64BIT
+ 	select HAVE_ARCH_TRACEHOOK
+ 
++config SCHED_OMIT_FRAME_POINTER
++	bool
++	default y
++
+ source "init/Kconfig"
+ 
+ source "kernel/Kconfig.freezer"

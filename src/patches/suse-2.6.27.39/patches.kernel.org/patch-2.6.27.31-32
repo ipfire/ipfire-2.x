@@ -1,0 +1,1923 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.32
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Makefile b/Makefile
+index fa0d21e..00dc0ee 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .31
++EXTRAVERSION = .32
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 3da2508..95c65e3 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -135,13 +135,6 @@ module_param(dbg, bool, 0644);
+ #define ACC_USER_MASK    PT_USER_MASK
+ #define ACC_ALL          (ACC_EXEC_MASK | ACC_WRITE_MASK | ACC_USER_MASK)
+ 
+-struct kvm_pv_mmu_op_buffer {
+-	void *ptr;
+-	unsigned len;
+-	unsigned processed;
+-	char buf[512] __aligned(sizeof(long));
+-};
+-
+ struct kvm_rmap_desc {
+ 	u64 *shadow_ptes[RMAP_EXT];
+ 	struct kvm_rmap_desc *more;
+@@ -305,7 +298,7 @@ static int mmu_topup_memory_caches(struct kvm_vcpu *vcpu)
+ 	if (r)
+ 		goto out;
+ 	r = mmu_topup_memory_cache(&vcpu->arch.mmu_rmap_desc_cache,
+-				   rmap_desc_cache, 1);
++				   rmap_desc_cache, 4);
+ 	if (r)
+ 		goto out;
+ 	r = mmu_topup_memory_cache_page(&vcpu->arch.mmu_page_cache, 8);
+@@ -1162,7 +1155,7 @@ static void mmu_set_spte(struct kvm_vcpu *vcpu, u64 *shadow_pte,
+ 	 */
+ 	spte = shadow_base_present_pte | shadow_dirty_mask;
+ 	if (!speculative)
+-		pte_access |= PT_ACCESSED_MASK;
++		spte |= shadow_accessed_mask;
+ 	if (!dirty)
+ 		pte_access &= ~ACC_WRITE_MASK;
+ 	if (pte_access & ACC_EXEC_MASK)
+@@ -1357,7 +1350,19 @@ static void mmu_free_roots(struct kvm_vcpu *vcpu)
+ 	vcpu->arch.mmu.root_hpa = INVALID_PAGE;
+ }
+ 
+-static void mmu_alloc_roots(struct kvm_vcpu *vcpu)
++static int mmu_check_root(struct kvm_vcpu *vcpu, gfn_t root_gfn)
++{
++	int ret = 0;
++
++	if (!kvm_is_visible_gfn(vcpu->kvm, root_gfn)) {
++		set_bit(KVM_REQ_TRIPLE_FAULT, &vcpu->requests);
++		ret = 1;
++	}
++
++	return ret;
++}
++
++static int mmu_alloc_roots(struct kvm_vcpu *vcpu)
+ {
+ 	int i;
+ 	gfn_t root_gfn;
+@@ -1372,13 +1377,15 @@ static void mmu_alloc_roots(struct kvm_vcpu *vcpu)
+ 		ASSERT(!VALID_PAGE(root));
+ 		if (tdp_enabled)
+ 			metaphysical = 1;
++		if (mmu_check_root(vcpu, root_gfn))
++			return 1;
+ 		sp = kvm_mmu_get_page(vcpu, root_gfn, 0,
+ 				      PT64_ROOT_LEVEL, metaphysical,
+ 				      ACC_ALL, NULL);
+ 		root = __pa(sp->spt);
+ 		++sp->root_count;
+ 		vcpu->arch.mmu.root_hpa = root;
+-		return;
++		return 0;
+ 	}
+ 	metaphysical = !is_paging(vcpu);
+ 	if (tdp_enabled)
+@@ -1395,6 +1402,8 @@ static void mmu_alloc_roots(struct kvm_vcpu *vcpu)
+ 			root_gfn = vcpu->arch.pdptrs[i] >> PAGE_SHIFT;
+ 		} else if (vcpu->arch.mmu.root_level == 0)
+ 			root_gfn = 0;
++		if (mmu_check_root(vcpu, root_gfn))
++			return 1;
+ 		sp = kvm_mmu_get_page(vcpu, root_gfn, i << 30,
+ 				      PT32_ROOT_LEVEL, metaphysical,
+ 				      ACC_ALL, NULL);
+@@ -1403,6 +1412,7 @@ static void mmu_alloc_roots(struct kvm_vcpu *vcpu)
+ 		vcpu->arch.mmu.pae_root[i] = root | PT_PRESENT_MASK;
+ 	}
+ 	vcpu->arch.mmu.root_hpa = __pa(vcpu->arch.mmu.pae_root);
++	return 0;
+ }
+ 
+ static gpa_t nonpaging_gva_to_gpa(struct kvm_vcpu *vcpu, gva_t vaddr)
+@@ -1646,8 +1656,10 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
+ 		goto out;
+ 	spin_lock(&vcpu->kvm->mmu_lock);
+ 	kvm_mmu_free_some_pages(vcpu);
+-	mmu_alloc_roots(vcpu);
++	r = mmu_alloc_roots(vcpu);
+ 	spin_unlock(&vcpu->kvm->mmu_lock);
++	if (r)
++		goto out;
+ 	kvm_x86_ops->set_cr3(vcpu, vcpu->arch.mmu.root_hpa);
+ 	kvm_mmu_flush_tlb(vcpu);
+ out:
+@@ -1983,14 +1995,6 @@ EXPORT_SYMBOL_GPL(kvm_disable_tdp);
+ 
+ static void free_mmu_pages(struct kvm_vcpu *vcpu)
+ {
+-	struct kvm_mmu_page *sp;
+-
+-	while (!list_empty(&vcpu->kvm->arch.active_mmu_pages)) {
+-		sp = container_of(vcpu->kvm->arch.active_mmu_pages.next,
+-				  struct kvm_mmu_page, link);
+-		kvm_mmu_zap_page(vcpu->kvm, sp);
+-		cond_resched();
+-	}
+ 	free_page((unsigned long)vcpu->arch.mmu.pae_root);
+ }
+ 
+@@ -2068,6 +2072,7 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm, int slot)
+ 			if (pt[i] & PT_WRITABLE_MASK)
+ 				pt[i] &= ~PT_WRITABLE_MASK;
+ 	}
++	kvm_flush_remote_tlbs(kvm);
+ }
+ 
+ void kvm_mmu_zap_all(struct kvm *kvm)
+@@ -2237,7 +2242,7 @@ static int kvm_pv_mmu_write(struct kvm_vcpu *vcpu,
+ 
+ static int kvm_pv_mmu_flush_tlb(struct kvm_vcpu *vcpu)
+ {
+-	kvm_x86_ops->tlb_flush(vcpu);
++	kvm_set_cr3(vcpu, vcpu->arch.cr3);
+ 	return 1;
+ }
+ 
+@@ -2291,18 +2296,18 @@ int kvm_pv_mmu_op(struct kvm_vcpu *vcpu, unsigned long bytes,
+ 		  gpa_t addr, unsigned long *ret)
+ {
+ 	int r;
+-	struct kvm_pv_mmu_op_buffer buffer;
++	struct kvm_pv_mmu_op_buffer *buffer = &vcpu->arch.mmu_op_buffer;
+ 
+-	buffer.ptr = buffer.buf;
+-	buffer.len = min_t(unsigned long, bytes, sizeof buffer.buf);
+-	buffer.processed = 0;
++	buffer->ptr = buffer->buf;
++	buffer->len = min_t(unsigned long, bytes, sizeof buffer->buf);
++	buffer->processed = 0;
+ 
+-	r = kvm_read_guest(vcpu->kvm, addr, buffer.buf, buffer.len);
++	r = kvm_read_guest(vcpu->kvm, addr, buffer->buf, buffer->len);
+ 	if (r)
+ 		goto out;
+ 
+-	while (buffer.len) {
+-		r = kvm_pv_mmu_op_one(vcpu, &buffer);
++	while (buffer->len) {
++		r = kvm_pv_mmu_op_one(vcpu, buffer);
+ 		if (r < 0)
+ 			goto out;
+ 		if (r == 0)
+@@ -2311,7 +2316,7 @@ int kvm_pv_mmu_op(struct kvm_vcpu *vcpu, unsigned long bytes,
+ 
+ 	r = 1;
+ out:
+-	*ret = buffer.processed;
++	*ret = buffer->processed;
+ 	return r;
+ }
+ 
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 8233b86..77cae01 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -429,7 +429,6 @@ static __init int svm_hardware_setup(void)
+ 
+ 	iopm_va = page_address(iopm_pages);
+ 	memset(iopm_va, 0xff, PAGE_SIZE * (1 << IOPM_ALLOC_ORDER));
+-	clear_bit(0x80, iopm_va); /* allow direct access to PC debug port */
+ 	iopm_base = page_to_pfn(iopm_pages) << PAGE_SHIFT;
+ 
+ 	if (boot_cpu_has(X86_FEATURE_NX))
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 7041cc5..4cee61a 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -898,11 +898,11 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, u32 msr_index, u64 data)
+ 	int ret = 0;
+ 
+ 	switch (msr_index) {
+-#ifdef CONFIG_X86_64
+ 	case MSR_EFER:
+ 		vmx_load_host_state(vmx);
+ 		ret = kvm_set_msr_common(vcpu, msr_index, data);
+ 		break;
++#ifdef CONFIG_X86_64
+ 	case MSR_FS_BASE:
+ 		vmcs_writel(GUEST_FS_BASE, data);
+ 		break;
+@@ -1789,7 +1789,7 @@ static void seg_setup(int seg)
+ 	vmcs_write16(sf->selector, 0);
+ 	vmcs_writel(sf->base, 0);
+ 	vmcs_write32(sf->limit, 0xffff);
+-	vmcs_write32(sf->ar_bytes, 0x93);
++	vmcs_write32(sf->ar_bytes, 0xf3);
+ }
+ 
+ static int alloc_apic_access_page(struct kvm *kvm)
+@@ -2036,6 +2036,7 @@ static int vmx_vcpu_reset(struct kvm_vcpu *vcpu)
+ 
+ 	fx_init(&vmx->vcpu);
+ 
++	seg_setup(VCPU_SREG_CS);
+ 	/*
+ 	 * GUEST_CS_BASE should really be 0xffff0000, but VT vm86 mode
+ 	 * insists on having GUEST_CS_BASE == GUEST_CS_SELECTOR << 4.  Sigh.
+@@ -2047,8 +2048,6 @@ static int vmx_vcpu_reset(struct kvm_vcpu *vcpu)
+ 		vmcs_write16(GUEST_CS_SELECTOR, vmx->vcpu.arch.sipi_vector << 8);
+ 		vmcs_writel(GUEST_CS_BASE, vmx->vcpu.arch.sipi_vector << 12);
+ 	}
+-	vmcs_write32(GUEST_CS_LIMIT, 0xffff);
+-	vmcs_write32(GUEST_CS_AR_BYTES, 0x9b);
+ 
+ 	seg_setup(VCPU_SREG_DS);
+ 	seg_setup(VCPU_SREG_ES);
+@@ -2583,6 +2582,12 @@ static int handle_vmcall(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
+ 	return 1;
+ }
+ 
++static int handle_vmx_insn(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
++{
++	kvm_queue_exception(vcpu, UD_VECTOR);
++	return 1;
++}
++
+ static int handle_wbinvd(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
+ {
+ 	skip_emulated_instruction(vcpu);
+@@ -2715,6 +2720,15 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu,
+ 	[EXIT_REASON_PENDING_INTERRUPT]       = handle_interrupt_window,
+ 	[EXIT_REASON_HLT]                     = handle_halt,
+ 	[EXIT_REASON_VMCALL]                  = handle_vmcall,
++	[EXIT_REASON_VMCLEAR]	              = handle_vmx_insn,
++	[EXIT_REASON_VMLAUNCH]                = handle_vmx_insn,
++	[EXIT_REASON_VMPTRLD]                 = handle_vmx_insn,
++	[EXIT_REASON_VMPTRST]                 = handle_vmx_insn,
++	[EXIT_REASON_VMREAD]                  = handle_vmx_insn,
++	[EXIT_REASON_VMRESUME]                = handle_vmx_insn,
++	[EXIT_REASON_VMWRITE]                 = handle_vmx_insn,
++	[EXIT_REASON_VMOFF]                   = handle_vmx_insn,
++	[EXIT_REASON_VMON]                    = handle_vmx_insn,
+ 	[EXIT_REASON_TPR_BELOW_THRESHOLD]     = handle_tpr_below_threshold,
+ 	[EXIT_REASON_APIC_ACCESS]             = handle_apic_access,
+ 	[EXIT_REASON_WBINVD]                  = handle_wbinvd,
+@@ -3300,7 +3314,8 @@ static int __init vmx_init(void)
+ 		bypass_guest_pf = 0;
+ 		kvm_mmu_set_base_ptes(VMX_EPT_READABLE_MASK |
+ 			VMX_EPT_WRITABLE_MASK |
+-			VMX_EPT_DEFAULT_MT << VMX_EPT_MT_EPTE_SHIFT);
++			VMX_EPT_DEFAULT_MT << VMX_EPT_MT_EPTE_SHIFT |
++			VMX_EPT_IGMT_BIT);
+ 		kvm_mmu_set_mask_ptes(0ull, 0ull, 0ull, 0ull,
+ 				VMX_EPT_EXECUTABLE_MASK);
+ 		kvm_enable_tdp();
+diff --git a/arch/x86/kvm/vmx.h b/arch/x86/kvm/vmx.h
+index 23e8373..198cdf3 100644
+--- a/arch/x86/kvm/vmx.h
++++ b/arch/x86/kvm/vmx.h
+@@ -370,6 +370,7 @@ enum vmcs_field {
+ #define VMX_EPT_READABLE_MASK			0x1ull
+ #define VMX_EPT_WRITABLE_MASK			0x2ull
+ #define VMX_EPT_EXECUTABLE_MASK			0x4ull
++#define VMX_EPT_IGMT_BIT    			(1ull << 6)
+ 
+ #define VMX_EPT_IDENTITY_PAGETABLE_ADDR		0xfffbc000ul
+ 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 0d682fc..f7c7142 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -318,6 +318,9 @@ EXPORT_SYMBOL_GPL(kvm_lmsw);
+ 
+ void kvm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+ {
++	unsigned long old_cr4 = vcpu->arch.cr4;
++	unsigned long pdptr_bits = X86_CR4_PGE | X86_CR4_PSE | X86_CR4_PAE;
++
+ 	if (cr4 & CR4_RESERVED_BITS) {
+ 		printk(KERN_DEBUG "set_cr4: #GP, reserved bits\n");
+ 		kvm_inject_gp(vcpu, 0);
+@@ -331,7 +334,8 @@ void kvm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+ 			kvm_inject_gp(vcpu, 0);
+ 			return;
+ 		}
+-	} else if (is_paging(vcpu) && !is_pae(vcpu) && (cr4 & X86_CR4_PAE)
++	} else if (is_paging(vcpu) && (cr4 & X86_CR4_PAE)
++		   && ((cr4 ^ old_cr4) & pdptr_bits)
+ 		   && !load_pdptrs(vcpu, vcpu->arch.cr3)) {
+ 		printk(KERN_DEBUG "set_cr4: #GP, pdptrs reserved bits\n");
+ 		kvm_inject_gp(vcpu, 0);
+@@ -752,6 +756,7 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
+ 	case MSR_IA32_MC0_MISC+8:
+ 	case MSR_IA32_MC0_MISC+12:
+ 	case MSR_IA32_MC0_MISC+16:
++	case MSR_IA32_MC0_MISC+20:
+ 	case MSR_IA32_UCODE_REV:
+ 	case MSR_IA32_EBL_CR_POWERON:
+ 		data = 0;
+@@ -982,9 +987,9 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ 
+ static int is_efer_nx(void)
+ {
+-	u64 efer;
++	unsigned long long efer = 0;
+ 
+-	rdmsrl(MSR_EFER, efer);
++	rdmsrl_safe(MSR_EFER, &efer);
+ 	return efer & EFER_NX;
+ }
+ 
+@@ -1303,28 +1308,33 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 	struct kvm_vcpu *vcpu = filp->private_data;
+ 	void __user *argp = (void __user *)arg;
+ 	int r;
++	struct kvm_lapic_state *lapic = NULL;
+ 
+ 	switch (ioctl) {
+ 	case KVM_GET_LAPIC: {
+-		struct kvm_lapic_state lapic;
++		lapic = kzalloc(sizeof(struct kvm_lapic_state), GFP_KERNEL);
+ 
+-		memset(&lapic, 0, sizeof lapic);
+-		r = kvm_vcpu_ioctl_get_lapic(vcpu, &lapic);
++		r = -ENOMEM;
++		if (!lapic)
++			goto out;
++		r = kvm_vcpu_ioctl_get_lapic(vcpu, lapic);
+ 		if (r)
+ 			goto out;
+ 		r = -EFAULT;
+-		if (copy_to_user(argp, &lapic, sizeof lapic))
++		if (copy_to_user(argp, lapic, sizeof(struct kvm_lapic_state)))
+ 			goto out;
+ 		r = 0;
+ 		break;
+ 	}
+ 	case KVM_SET_LAPIC: {
+-		struct kvm_lapic_state lapic;
+-
++		lapic = kmalloc(sizeof(struct kvm_lapic_state), GFP_KERNEL);
++		r = -ENOMEM;
++		if (!lapic)
++			goto out;
+ 		r = -EFAULT;
+-		if (copy_from_user(&lapic, argp, sizeof lapic))
++		if (copy_from_user(lapic, argp, sizeof(struct kvm_lapic_state)))
+ 			goto out;
+-		r = kvm_vcpu_ioctl_set_lapic(vcpu, &lapic);;
++		r = kvm_vcpu_ioctl_set_lapic(vcpu, lapic);
+ 		if (r)
+ 			goto out;
+ 		r = 0;
+@@ -1422,6 +1432,8 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 		r = -EINVAL;
+ 	}
+ out:
++	if (lapic)
++		kfree(lapic);
+ 	return r;
+ }
+ 
+@@ -1442,10 +1454,12 @@ static int kvm_vm_ioctl_set_nr_mmu_pages(struct kvm *kvm,
+ 		return -EINVAL;
+ 
+ 	down_write(&kvm->slots_lock);
++	spin_lock(&kvm->mmu_lock);
+ 
+ 	kvm_mmu_change_mmu_pages(kvm, kvm_nr_mmu_pages);
+ 	kvm->arch.n_requested_mmu_pages = kvm_nr_mmu_pages;
+ 
++	spin_unlock(&kvm->mmu_lock);
+ 	up_write(&kvm->slots_lock);
+ 	return 0;
+ }
+@@ -1612,7 +1626,9 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm,
+ 
+ 	/* If nothing is dirty, don't bother messing with page tables. */
+ 	if (is_dirty) {
++		spin_lock(&kvm->mmu_lock);
+ 		kvm_mmu_slot_remove_write_access(kvm, log->slot);
++		spin_unlock(&kvm->mmu_lock);
+ 		kvm_flush_remote_tlbs(kvm);
+ 		memslot = &kvm->memslots[log->slot];
+ 		n = ALIGN(memslot->npages, BITS_PER_LONG) / 8;
+@@ -1630,6 +1646,15 @@ long kvm_arch_vm_ioctl(struct file *filp,
+ 	struct kvm *kvm = filp->private_data;
+ 	void __user *argp = (void __user *)arg;
+ 	int r = -EINVAL;
++	/*
++	 * This union makes it completely explicit to gcc-3.x
++	 * that these two variables' stack usage should be
++	 * combined, not added together.
++	 */
++	union {
++		struct kvm_pit_state ps;
++		struct kvm_memory_alias alias;
++	} u;
+ 
+ 	switch (ioctl) {
+ 	case KVM_SET_TSS_ADDR:
+@@ -1661,17 +1686,14 @@ long kvm_arch_vm_ioctl(struct file *filp,
+ 	case KVM_GET_NR_MMU_PAGES:
+ 		r = kvm_vm_ioctl_get_nr_mmu_pages(kvm);
+ 		break;
+-	case KVM_SET_MEMORY_ALIAS: {
+-		struct kvm_memory_alias alias;
+-
++	case KVM_SET_MEMORY_ALIAS:
+ 		r = -EFAULT;
+-		if (copy_from_user(&alias, argp, sizeof alias))
++		if (copy_from_user(&u.alias, argp, sizeof(struct kvm_memory_alias)))
+ 			goto out;
+-		r = kvm_vm_ioctl_set_memory_alias(kvm, &alias);
++		r = kvm_vm_ioctl_set_memory_alias(kvm, &u.alias);
+ 		if (r)
+ 			goto out;
+ 		break;
+-	}
+ 	case KVM_CREATE_IRQCHIP:
+ 		r = -ENOMEM;
+ 		kvm->arch.vpic = kvm_create_pic(kvm);
+@@ -1713,65 +1735,77 @@ long kvm_arch_vm_ioctl(struct file *filp,
+ 	}
+ 	case KVM_GET_IRQCHIP: {
+ 		/* 0: PIC master, 1: PIC slave, 2: IOAPIC */
+-		struct kvm_irqchip chip;
++		struct kvm_irqchip *chip = kmalloc(sizeof(*chip), GFP_KERNEL);
+ 
+-		r = -EFAULT;
+-		if (copy_from_user(&chip, argp, sizeof chip))
++		r = -ENOMEM;
++		if (!chip)
+ 			goto out;
++		r = -EFAULT;
++		if (copy_from_user(chip, argp, sizeof *chip))
++			goto get_irqchip_out;
+ 		r = -ENXIO;
+ 		if (!irqchip_in_kernel(kvm))
+-			goto out;
+-		r = kvm_vm_ioctl_get_irqchip(kvm, &chip);
++			goto get_irqchip_out;
++		r = kvm_vm_ioctl_get_irqchip(kvm, chip);
+ 		if (r)
+-			goto out;
++			goto get_irqchip_out;
+ 		r = -EFAULT;
+-		if (copy_to_user(argp, &chip, sizeof chip))
+-			goto out;
++		if (copy_to_user(argp, chip, sizeof *chip))
++			goto get_irqchip_out;
+ 		r = 0;
++	get_irqchip_out:
++		kfree(chip);
++		if (r)
++			goto out;
+ 		break;
+ 	}
+ 	case KVM_SET_IRQCHIP: {
+ 		/* 0: PIC master, 1: PIC slave, 2: IOAPIC */
+-		struct kvm_irqchip chip;
++		struct kvm_irqchip *chip = kmalloc(sizeof(*chip), GFP_KERNEL);
+ 
+-		r = -EFAULT;
+-		if (copy_from_user(&chip, argp, sizeof chip))
++		r = -ENOMEM;
++		if (!chip)
+ 			goto out;
++		r = -EFAULT;
++		if (copy_from_user(chip, argp, sizeof *chip))
++			goto set_irqchip_out;
+ 		r = -ENXIO;
+ 		if (!irqchip_in_kernel(kvm))
+-			goto out;
+-		r = kvm_vm_ioctl_set_irqchip(kvm, &chip);
++			goto set_irqchip_out;
++		r = kvm_vm_ioctl_set_irqchip(kvm, chip);
+ 		if (r)
+-			goto out;
++			goto set_irqchip_out;
+ 		r = 0;
++	set_irqchip_out:
++		kfree(chip);
++		if (r)
++			goto out;
+ 		break;
+ 	}
+ 	case KVM_GET_PIT: {
+-		struct kvm_pit_state ps;
+ 		r = -EFAULT;
+-		if (copy_from_user(&ps, argp, sizeof ps))
++		if (copy_from_user(&u.ps, argp, sizeof(struct kvm_pit_state)))
+ 			goto out;
+ 		r = -ENXIO;
+ 		if (!kvm->arch.vpit)
+ 			goto out;
+-		r = kvm_vm_ioctl_get_pit(kvm, &ps);
++		r = kvm_vm_ioctl_get_pit(kvm, &u.ps);
+ 		if (r)
+ 			goto out;
+ 		r = -EFAULT;
+-		if (copy_to_user(argp, &ps, sizeof ps))
++		if (copy_to_user(argp, &u.ps, sizeof(struct kvm_pit_state)))
+ 			goto out;
+ 		r = 0;
+ 		break;
+ 	}
+ 	case KVM_SET_PIT: {
+-		struct kvm_pit_state ps;
+ 		r = -EFAULT;
+-		if (copy_from_user(&ps, argp, sizeof ps))
++		if (copy_from_user(&u.ps, argp, sizeof u.ps))
+ 			goto out;
+ 		r = -ENXIO;
+ 		if (!kvm->arch.vpit)
+ 			goto out;
+-		r = kvm_vm_ioctl_set_pit(kvm, &ps);
++		r = kvm_vm_ioctl_set_pit(kvm, &u.ps);
+ 		if (r)
+ 			goto out;
+ 		r = 0;
+@@ -2813,10 +2847,6 @@ static int __vcpu_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
+ 	down_read(&vcpu->kvm->slots_lock);
+ 	vapic_enter(vcpu);
+ 
+-preempted:
+-	if (vcpu->guest_debug.enabled)
+-		kvm_x86_ops->guest_debug_pre(vcpu);
+-
+ again:
+ 	if (vcpu->requests)
+ 		if (test_and_clear_bit(KVM_REQ_MMU_RELOAD, &vcpu->requests))
+@@ -2870,6 +2900,9 @@ again:
+ 		goto out;
+ 	}
+ 
++	if (vcpu->guest_debug.enabled)
++		kvm_x86_ops->guest_debug_pre(vcpu);
++
+ 	vcpu->guest_mode = 1;
+ 	/*
+ 	 * Make sure that guest_mode assignment won't happen after
+@@ -2944,7 +2977,7 @@ out:
+ 	if (r > 0) {
+ 		kvm_resched(vcpu);
+ 		down_read(&vcpu->kvm->slots_lock);
+-		goto preempted;
++		goto again;
+ 	}
+ 
+ 	post_kvm_run_save(vcpu, kvm_run);
+@@ -3294,11 +3327,33 @@ static int load_segment_descriptor_to_kvm_desct(struct kvm_vcpu *vcpu,
+ 	return 0;
+ }
+ 
++int kvm_load_realmode_segment(struct kvm_vcpu *vcpu, u16 selector, int seg)
++{
++	struct kvm_segment segvar = {
++		.base = selector << 4,
++		.limit = 0xffff,
++		.selector = selector,
++		.type = 3,
++		.present = 1,
++		.dpl = 3,
++		.db = 0,
++		.s = 1,
++		.l = 0,
++		.g = 0,
++		.avl = 0,
++		.unusable = 0,
++	};
++	kvm_x86_ops->set_segment(vcpu, &segvar, seg);
++	return 0;
++}
++
+ int kvm_load_segment_descriptor(struct kvm_vcpu *vcpu, u16 selector,
+ 				int type_bits, int seg)
+ {
+ 	struct kvm_segment kvm_seg;
+ 
++	if (!(vcpu->arch.cr0 & X86_CR0_PE))
++		return kvm_load_realmode_segment(vcpu, selector, seg);
+ 	if (load_segment_descriptor_to_kvm_desct(vcpu, selector, &kvm_seg))
+ 		return 1;
+ 	kvm_seg.type |= type_bits;
+@@ -3981,7 +4036,7 @@ int kvm_arch_set_memory_region(struct kvm *kvm,
+ 			userspace_addr = do_mmap(NULL, 0,
+ 						 npages * PAGE_SIZE,
+ 						 PROT_READ | PROT_WRITE,
+-						 MAP_SHARED | MAP_ANONYMOUS,
++						 MAP_PRIVATE | MAP_ANONYMOUS,
+ 						 0);
+ 			up_write(&current->mm->mmap_sem);
+ 
+@@ -4008,12 +4063,14 @@ int kvm_arch_set_memory_region(struct kvm *kvm,
+ 		}
+ 	}
+ 
++	spin_lock(&kvm->mmu_lock);
+ 	if (!kvm->arch.n_requested_mmu_pages) {
+ 		unsigned int nr_mmu_pages = kvm_mmu_calculate_mmu_pages(kvm);
+ 		kvm_mmu_change_mmu_pages(kvm, nr_mmu_pages);
+ 	}
+ 
+ 	kvm_mmu_slot_remove_write_access(kvm, mem->slot);
++	spin_unlock(&kvm->mmu_lock);
+ 	kvm_flush_remote_tlbs(kvm);
+ 
+ 	return 0;
+@@ -4022,6 +4079,7 @@ int kvm_arch_set_memory_region(struct kvm *kvm,
+ void kvm_arch_flush_shadow(struct kvm *kvm)
+ {
+ 	kvm_mmu_zap_all(kvm);
++	kvm_reload_remote_mmus(kvm);
+ }
+ 
+ int kvm_arch_vcpu_runnable(struct kvm_vcpu *vcpu)
+diff --git a/drivers/char/mxser.c b/drivers/char/mxser.c
+index ebda9a8..3340c62 100644
+--- a/drivers/char/mxser.c
++++ b/drivers/char/mxser.c
+@@ -1099,8 +1099,6 @@ static int mxser_open(struct tty_struct *tty, struct file *filp)
+ 	if (retval)
+ 		return retval;
+ 
+-	/* unmark here for very high baud rate (ex. 921600 bps) used */
+-	tty->low_latency = 1;
+ 	return 0;
+ }
+ 
+diff --git a/drivers/char/nozomi.c b/drivers/char/nozomi.c
+index 66a0f93..4dfb5a1 100644
+--- a/drivers/char/nozomi.c
++++ b/drivers/char/nozomi.c
+@@ -1584,7 +1584,6 @@ static int ntty_open(struct tty_struct *tty, struct file *file)
+ 
+ 	/* Enable interrupt downlink for channel */
+ 	if (port->tty_open_count == 1) {
+-		tty->low_latency = 1;
+ 		tty->driver_data = port;
+ 		port->tty = tty;
+ 		DBG1("open: %d", port->token_dl);
+diff --git a/drivers/net/ehea/ehea_main.c b/drivers/net/ehea/ehea_main.c
+index a6e730f..682f411 100644
+--- a/drivers/net/ehea/ehea_main.c
++++ b/drivers/net/ehea/ehea_main.c
+@@ -1530,6 +1530,9 @@ static int ehea_clean_portres(struct ehea_port *port, struct ehea_port_res *pr)
+ {
+ 	int ret, i;
+ 
++	if (pr->qp)
++		netif_napi_del(&pr->napi);
++
+ 	ret = ehea_destroy_qp(pr->qp);
+ 
+ 	if (!ret) {
+diff --git a/drivers/parport/share.c b/drivers/parport/share.c
+index a8a62bb..a592f29 100644
+--- a/drivers/parport/share.c
++++ b/drivers/parport/share.c
+@@ -614,7 +614,10 @@ parport_register_device(struct parport *port, const char *name,
+ 	 * pardevice fields. -arca
+ 	 */
+ 	port->ops->init_state(tmp, tmp->state);
+-	parport_device_proc_register(tmp);
++	if (!test_and_set_bit(PARPORT_DEVPROC_REGISTERED, &port->devflags)) {
++		port->proc_device = tmp;
++		parport_device_proc_register(tmp);
++	}
+ 	return tmp;
+ 
+  out_free_all:
+@@ -646,10 +649,14 @@ void parport_unregister_device(struct pardevice *dev)
+ 	}
+ #endif
+ 
+-	parport_device_proc_unregister(dev);
+-
+ 	port = dev->port->physport;
+ 
++	if (port->proc_device == dev) {
++		port->proc_device = NULL;
++		clear_bit(PARPORT_DEVPROC_REGISTERED, &port->devflags);
++		parport_device_proc_unregister(dev);
++	}
++
+ 	if (port->cad == dev) {
+ 		printk(KERN_DEBUG "%s: %s forgot to release port\n",
+ 		       port->name, dev->name);
+diff --git a/drivers/scsi/sr_ioctl.c b/drivers/scsi/sr_ioctl.c
+index ae87d08..25f2008 100644
+--- a/drivers/scsi/sr_ioctl.c
++++ b/drivers/scsi/sr_ioctl.c
+@@ -309,6 +309,11 @@ int sr_drive_status(struct cdrom_device_info *cdi, int slot)
+ 	if (0 == sr_test_unit_ready(cd->device, &sshdr))
+ 		return CDS_DISC_OK;
+ 
++	/* SK/ASC/ASCQ of 2/4/1 means "unit is becoming ready" */
++	if (scsi_sense_valid(&sshdr) && sshdr.sense_key == NOT_READY
++			&& sshdr.asc == 0x04 && sshdr.ascq == 0x01)
++		return CDS_DRIVE_NOT_READY;
++
+ 	if (!cdrom_get_media_event(cdi, &med)) {
+ 		if (med.media_present)
+ 			return CDS_DISC_OK;
+diff --git a/drivers/usb/serial/cyberjack.c b/drivers/usb/serial/cyberjack.c
+index b4d7235..7b3df8e 100644
+--- a/drivers/usb/serial/cyberjack.c
++++ b/drivers/usb/serial/cyberjack.c
+@@ -174,13 +174,6 @@ static int  cyberjack_open(struct tty_struct *tty,
+ 	dbg("%s - usb_clear_halt", __func__);
+ 	usb_clear_halt(port->serial->dev, port->write_urb->pipe);
+ 
+-	/* force low_latency on so that our tty_push actually forces
+-	 * the data through, otherwise it is scheduled, and with high
+-	 * data rates (like with OHCI) data can get lost.
+-	 */
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	priv = usb_get_serial_port_data(port);
+ 	spin_lock_irqsave(&priv->lock, flags);
+ 	priv->rdtodo = 0;
+diff --git a/drivers/usb/serial/cypress_m8.c b/drivers/usb/serial/cypress_m8.c
+index 22837a3..7eb473b 100644
+--- a/drivers/usb/serial/cypress_m8.c
++++ b/drivers/usb/serial/cypress_m8.c
+@@ -655,10 +655,6 @@ static int cypress_open(struct tty_struct *tty,
+ 	priv->rx_flags = 0;
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 
+-	/* setting to zero could cause data loss */
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	/* raise both lines and set termios */
+ 	spin_lock_irqsave(&priv->lock, flags);
+ 	priv->line_control = CONTROL_DTR | CONTROL_RTS;
+diff --git a/drivers/usb/serial/empeg.c b/drivers/usb/serial/empeg.c
+index a6ab5b5..28ee28c 100644
+--- a/drivers/usb/serial/empeg.c
++++ b/drivers/usb/serial/empeg.c
+@@ -478,12 +478,6 @@ static void empeg_set_termios(struct tty_struct *tty,
+ 	termios->c_cflag
+ 		|= CS8;		/* character size 8 bits */
+ 
+-	/*
+-	 * Force low_latency on; otherwise the pushes are scheduled;
+-	 * this is bad as it opens up the possibility of dropping bytes
+-	 * on the floor.  We don't want to drop bytes on the floor. :)
+-	 */
+-	tty->low_latency = 1;
+ 	tty_encode_baud_rate(tty, 115200, 115200);
+ }
+ 
+diff --git a/drivers/usb/serial/garmin_gps.c b/drivers/usb/serial/garmin_gps.c
+index d953820..d860071 100644
+--- a/drivers/usb/serial/garmin_gps.c
++++ b/drivers/usb/serial/garmin_gps.c
+@@ -972,14 +972,6 @@ static int garmin_open(struct tty_struct *tty,
+ 
+ 	dbg("%s - port %d", __func__, port->number);
+ 
+-	/*
+-	 * Force low_latency on so that our tty_push actually forces the data
+-	 * through, otherwise it is scheduled, and with high data rates (like
+-	 * with OHCI) data can get lost.
+-	 */
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	spin_lock_irqsave(&garmin_data_p->lock, flags);
+ 	garmin_data_p->mode  = initial_mode;
+ 	garmin_data_p->count = 0;
+diff --git a/drivers/usb/serial/generic.c b/drivers/usb/serial/generic.c
+index fe84c88..aa7f08b 100644
+--- a/drivers/usb/serial/generic.c
++++ b/drivers/usb/serial/generic.c
+@@ -122,12 +122,6 @@ int usb_serial_generic_open(struct tty_struct *tty,
+ 
+ 	dbg("%s - port %d", __func__, port->number);
+ 
+-	/* force low_latency on so that our tty_push actually forces the data
+-	   through, otherwise it is scheduled, and with high data rates (like
+-	   with OHCI) data can get lost. */
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	/* clear the throttle flags */
+ 	spin_lock_irqsave(&port->lock, flags);
+ 	port->throttled = 0;
+diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+index bfa508d..183045a 100644
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -193,8 +193,6 @@ static const struct divisor_table_entry divisor_table[] = {
+ /* local variables */
+ static int debug;
+ 
+-static int low_latency = 1;	/* tty low latency flag, on by default */
+-
+ static atomic_t CmdUrbs;	/* Number of outstanding Command Write Urbs */
+ 
+ 
+@@ -861,9 +859,6 @@ static int edge_open(struct tty_struct *tty,
+ 	if (edge_port == NULL)
+ 		return -ENODEV;
+ 
+-	if (tty)
+-		tty->low_latency = low_latency;
+-
+ 	/* see if we've set up our endpoint info yet (can't set it up
+ 	   in edge_startup as the structures were not set up at that time.) */
+ 	serial = port->serial;
+@@ -3281,6 +3276,3 @@ MODULE_FIRMWARE("edgeport/down2.fw");
+ 
+ module_param(debug, bool, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(debug, "Debug enabled or not");
+-
+-module_param(low_latency, bool, S_IRUGO | S_IWUSR);
+-MODULE_PARM_DESC(low_latency, "Low latency enabled or not");
+diff --git a/drivers/usb/serial/io_ti.c b/drivers/usb/serial/io_ti.c
+index cb4c543..0d744f0 100644
+--- a/drivers/usb/serial/io_ti.c
++++ b/drivers/usb/serial/io_ti.c
+@@ -76,7 +76,6 @@ struct edgeport_uart_buf_desc {
+ #define EDGE_READ_URB_STOPPING	1
+ #define EDGE_READ_URB_STOPPED	2
+ 
+-#define EDGE_LOW_LATENCY	1
+ #define EDGE_CLOSING_WAIT	4000	/* in .01 sec */
+ 
+ #define EDGE_OUT_BUF_SIZE	1024
+@@ -232,7 +231,6 @@ static unsigned short OperationalBuildNumber;
+ 
+ static int debug;
+ 
+-static int low_latency = EDGE_LOW_LATENCY;
+ static int closing_wait = EDGE_CLOSING_WAIT;
+ static int ignore_cpu_rev;
+ static int default_uart_mode;		/* RS232 */
+@@ -1838,9 +1836,6 @@ static int edge_open(struct tty_struct *tty,
+ 	if (edge_port == NULL)
+ 		return -ENODEV;
+ 
+-	if (tty)
+-		tty->low_latency = low_latency;
+-
+ 	port_number = port->number - port->serial->minor;
+ 	switch (port_number) {
+ 	case 0:
+@@ -2995,9 +2990,6 @@ MODULE_FIRMWARE("edgeport/down3.bin");
+ module_param(debug, bool, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(debug, "Debug enabled or not");
+ 
+-module_param(low_latency, bool, S_IRUGO | S_IWUSR);
+-MODULE_PARM_DESC(low_latency, "Low latency enabled or not");
+-
+ module_param(closing_wait, int, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(closing_wait, "Maximum wait for data to drain, in .01 secs");
+ 
+diff --git a/drivers/usb/serial/ipaq.c b/drivers/usb/serial/ipaq.c
+index cd9a2e1..ae0b0ff 100644
+--- a/drivers/usb/serial/ipaq.c
++++ b/drivers/usb/serial/ipaq.c
+@@ -635,13 +635,7 @@ static int ipaq_open(struct tty_struct *tty,
+ 		priv->free_len += PACKET_SIZE;
+ 	}
+ 
+-	/*
+-	 * Force low latency on. This will immediately push data to the line
+-	 * discipline instead of queueing.
+-	 */
+-
+ 	if (tty) {
+-		tty->low_latency = 1;
+ 		/* FIXME: These two are bogus */
+ 		tty->raw = 1;
+ 		tty->real_raw = 1;
+diff --git a/drivers/usb/serial/ipw.c b/drivers/usb/serial/ipw.c
+index a842025..b1c0c9a 100644
+--- a/drivers/usb/serial/ipw.c
++++ b/drivers/usb/serial/ipw.c
+@@ -206,9 +206,6 @@ static int ipw_open(struct tty_struct *tty,
+ 	if (!buf_flow_init)
+ 		return -ENOMEM;
+ 
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	/* --1: Tell the modem to initialize (we think) From sniffs this is
+ 	 *	always the first thing that gets sent to the modem during
+ 	 *	opening of the device */
+diff --git a/drivers/usb/serial/iuu_phoenix.c b/drivers/usb/serial/iuu_phoenix.c
+index ddff37f..d6da4c9 100644
+--- a/drivers/usb/serial/iuu_phoenix.c
++++ b/drivers/usb/serial/iuu_phoenix.c
+@@ -1046,7 +1046,6 @@ static int iuu_open(struct tty_struct *tty,
+ 		tty->termios->c_oflag = 0;
+ 		tty->termios->c_iflag = 0;
+ 		priv->termios_initialized = 1;
+-		tty->low_latency = 1;
+ 		priv->poll = 0;
+ 	 }
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+diff --git a/drivers/usb/serial/kobil_sct.c b/drivers/usb/serial/kobil_sct.c
+index deba28e..5326c59 100644
+--- a/drivers/usb/serial/kobil_sct.c
++++ b/drivers/usb/serial/kobil_sct.c
+@@ -231,13 +231,7 @@ static int kobil_open(struct tty_struct *tty,
+ 	/* someone sets the dev to 0 if the close method has been called */
+ 	port->interrupt_in_urb->dev = port->serial->dev;
+ 
+-
+-	/* force low_latency on so that our tty_push actually forces
+-	 * the data through, otherwise it is scheduled, and with high
+-	 * data rates (like with OHCI) data can get lost.
+-	 */
+ 	if (tty) {
+-		tty->low_latency = 1;
+ 
+ 		/* Default to echo off and other sane device settings */
+ 		tty->termios->c_lflag = 0;
+diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
+index 7c4917d..1c2402d 100644
+--- a/drivers/usb/serial/mos7720.c
++++ b/drivers/usb/serial/mos7720.c
+@@ -442,13 +442,6 @@ static int mos7720_open(struct tty_struct *tty,
+ 	data = 0x0c;
+ 	send_mos_cmd(serial, MOS_WRITE, port_number, 0x01, &data);
+ 
+-	/* force low_latency on so that our tty_push actually forces *
+-	 * the data through,otherwise it is scheduled, and with      *
+-	 * high data rates (like with OHCI) data can get lost.       */
+-
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	/* see if we've set up our endpoint info yet   *
+ 	 * (can't set it up in mos7720_startup as the  *
+ 	 * structures were not set up at that time.)   */
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index 09d8206..8befcbb 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -990,12 +990,6 @@ static int mos7840_open(struct tty_struct *tty,
+ 	status = mos7840_set_reg_sync(port, mos7840_port->ControlRegOffset,
+ 									Data);
+ 
+-	/* force low_latency on so that our tty_push actually forces *
+-	 * the data through,otherwise it is scheduled, and with      *
+-	 * high data rates (like with OHCI) data can get lost.       */
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	/* Check to see if we've set up our endpoint info yet    *
+ 	 * (can't set it up in mos7840_startup as the structures *
+ 	 * were not set up at that time.)                        */
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 211cd61..faa30ad 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -914,9 +914,6 @@ static int option_open(struct tty_struct *tty,
+ 				usb_pipeout(urb->pipe), 0); */
+ 	}
+ 
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	option_send_setup(tty, port);
+ 
+ 	return 0;
+diff --git a/drivers/usb/serial/sierra.c b/drivers/usb/serial/sierra.c
+index ea1a103..639328b 100644
+--- a/drivers/usb/serial/sierra.c
++++ b/drivers/usb/serial/sierra.c
+@@ -576,9 +576,6 @@ static int sierra_open(struct tty_struct *tty,
+ 		}
+ 	}
+ 
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	sierra_send_setup(tty, port);
+ 
+ 	/* start up the interrupt endpoint if we have one */
+diff --git a/drivers/usb/serial/ti_usb_3410_5052.c b/drivers/usb/serial/ti_usb_3410_5052.c
+index bc5e905..55b9d67 100644
+--- a/drivers/usb/serial/ti_usb_3410_5052.c
++++ b/drivers/usb/serial/ti_usb_3410_5052.c
+@@ -101,11 +101,10 @@
+ 
+ #define TI_TRANSFER_TIMEOUT	2
+ 
+-#define TI_DEFAULT_LOW_LATENCY	0
+ #define TI_DEFAULT_CLOSING_WAIT	4000		/* in .01 secs */
+ 
+ /* supported setserial flags */
+-#define TI_SET_SERIAL_FLAGS	(ASYNC_LOW_LATENCY)
++#define TI_SET_SERIAL_FLAGS	0
+ 
+ /* read urb states */
+ #define TI_READ_URB_RUNNING	0
+@@ -212,7 +211,6 @@ static int ti_buf_get(struct circ_buf *cb, char *buf, int count);
+ 
+ /* module parameters */
+ static int debug;
+-static int low_latency = TI_DEFAULT_LOW_LATENCY;
+ static int closing_wait = TI_DEFAULT_CLOSING_WAIT;
+ static ushort vendor_3410[TI_EXTRA_VID_PID_COUNT];
+ static unsigned int vendor_3410_count;
+@@ -333,10 +331,6 @@ MODULE_FIRMWARE("ti_5052.fw");
+ module_param(debug, bool, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(debug, "Enable debugging, 0=no, 1=yes");
+ 
+-module_param(low_latency, bool, S_IRUGO | S_IWUSR);
+-MODULE_PARM_DESC(low_latency,
+-		"TTY low_latency flag, 0=off, 1=on, default is off");
+-
+ module_param(closing_wait, int, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(closing_wait,
+     "Maximum wait for data to drain in close, in .01 secs, default is 4000");
+@@ -480,7 +474,6 @@ static int ti_startup(struct usb_serial *serial)
+ 		spin_lock_init(&tport->tp_lock);
+ 		tport->tp_uart_base_addr = (i == 0 ?
+ 				TI_UART1_BASE_ADDR : TI_UART2_BASE_ADDR);
+-		tport->tp_flags = low_latency ? ASYNC_LOW_LATENCY : 0;
+ 		tport->tp_closing_wait = closing_wait;
+ 		init_waitqueue_head(&tport->tp_msr_wait);
+ 		init_waitqueue_head(&tport->tp_write_wait);
+@@ -560,10 +553,6 @@ static int ti_open(struct tty_struct *tty,
+ 	if (mutex_lock_interruptible(&tdev->td_open_close_lock))
+ 		return -ERESTARTSYS;
+ 
+-	if (tty)
+-		tty->low_latency =
+-				(tport->tp_flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+-
+ 	port_number = port->number - port->serial->minor;
+ 
+ 	memset(&(tport->tp_icount), 0x00, sizeof(tport->tp_icount));
+@@ -1480,10 +1469,6 @@ static int ti_set_serial_info(struct ti_port *tport,
+ 		return -EFAULT;
+ 
+ 	tport->tp_flags = new_serial.flags & TI_SET_SERIAL_FLAGS;
+-	/* FIXME */
+-	if (port->port.tty)
+-		port->port.tty->low_latency =
+-			(tport->tp_flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+ 	tport->tp_closing_wait = new_serial.closing_wait;
+ 
+ 	return 0;
+diff --git a/drivers/usb/serial/visor.c b/drivers/usb/serial/visor.c
+index cf8924f..ec33fa5 100644
+--- a/drivers/usb/serial/visor.c
++++ b/drivers/usb/serial/visor.c
+@@ -296,14 +296,6 @@ static int visor_open(struct tty_struct *tty, struct usb_serial_port *port,
+ 	priv->throttled = 0;
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 
+-	/*
+-	 * Force low_latency on so that our tty_push actually forces the data
+-	 * through, otherwise it is scheduled, and with high data rates (like
+-	 * with OHCI) data can get lost.
+-	 */
+-	if (tty)
+-		tty->low_latency = 1;
+-
+ 	/* Start reading from the device */
+ 	usb_fill_bulk_urb(port->read_urb, serial->dev,
+ 			   usb_rcvbulkpipe(serial->dev,
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index a53da14..0f04b70 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -908,18 +908,17 @@ struct ocfs2_write_cluster_desc {
+ 	 */
+ 	unsigned	c_new;
+ 	unsigned	c_unwritten;
++	unsigned	c_needs_zero;
+ };
+ 
+-static inline int ocfs2_should_zero_cluster(struct ocfs2_write_cluster_desc *d)
+-{
+-	return d->c_new || d->c_unwritten;
+-}
+-
+ struct ocfs2_write_ctxt {
+ 	/* Logical cluster position / len of write */
+ 	u32				w_cpos;
+ 	u32				w_clen;
+ 
++	/* First cluster allocated in a nonsparse extend */
++	u32				w_first_new_cpos;
++
+ 	struct ocfs2_write_cluster_desc	w_desc[OCFS2_MAX_CLUSTERS_PER_PAGE];
+ 
+ 	/*
+@@ -997,6 +996,7 @@ static int ocfs2_alloc_write_ctxt(struct ocfs2_write_ctxt **wcp,
+ 		return -ENOMEM;
+ 
+ 	wc->w_cpos = pos >> osb->s_clustersize_bits;
++	wc->w_first_new_cpos = UINT_MAX;
+ 	cend = (pos + len - 1) >> osb->s_clustersize_bits;
+ 	wc->w_clen = cend - wc->w_cpos + 1;
+ 	get_bh(di_bh);
+@@ -1239,13 +1239,11 @@ static int ocfs2_write_cluster(struct address_space *mapping,
+ 			       struct ocfs2_write_ctxt *wc, u32 cpos,
+ 			       loff_t user_pos, unsigned user_len)
+ {
+-	int ret, i, new, should_zero = 0;
++	int ret, i, new;
+ 	u64 v_blkno, p_blkno;
+ 	struct inode *inode = mapping->host;
+ 
+ 	new = phys == 0 ? 1 : 0;
+-	if (new || unwritten)
+-		should_zero = 1;
+ 
+ 	if (new) {
+ 		u32 tmp_pos;
+@@ -1356,7 +1354,9 @@ static int ocfs2_write_cluster_by_desc(struct address_space *mapping,
+ 			local_len = osb->s_clustersize - cluster_off;
+ 
+ 		ret = ocfs2_write_cluster(mapping, desc->c_phys,
+-					  desc->c_unwritten, data_ac, meta_ac,
++					  desc->c_unwritten,
++					  desc->c_needs_zero,
++					  data_ac, meta_ac,
+ 					  wc, desc->c_cpos, pos, local_len);
+ 		if (ret) {
+ 			mlog_errno(ret);
+@@ -1406,14 +1406,14 @@ static void ocfs2_set_target_boundaries(struct ocfs2_super *osb,
+ 		 * newly allocated cluster.
+ 		 */
+ 		desc = &wc->w_desc[0];
+-		if (ocfs2_should_zero_cluster(desc))
++		if (desc->c_needs_zero)
+ 			ocfs2_figure_cluster_boundaries(osb,
+ 							desc->c_cpos,
+ 							&wc->w_target_from,
+ 							NULL);
+ 
+ 		desc = &wc->w_desc[wc->w_clen - 1];
+-		if (ocfs2_should_zero_cluster(desc))
++		if (desc->c_needs_zero)
+ 			ocfs2_figure_cluster_boundaries(osb,
+ 							desc->c_cpos,
+ 							NULL,
+@@ -1481,13 +1481,28 @@ static int ocfs2_populate_write_desc(struct inode *inode,
+ 			phys++;
+ 		}
+ 
++		/*
++		 * If w_first_new_cpos is < UINT_MAX, we have a non-sparse
++		 * file that got extended.  w_first_new_cpos tells us
++		 * where the newly allocated clusters are so we can
++		 * zero them.
++		 */
++		if (desc->c_cpos >= wc->w_first_new_cpos) {
++			BUG_ON(phys == 0);
++			desc->c_needs_zero = 1;
++		}
++
+ 		desc->c_phys = phys;
+ 		if (phys == 0) {
+ 			desc->c_new = 1;
++			desc->c_needs_zero = 1;
+ 			*clusters_to_alloc = *clusters_to_alloc + 1;
+ 		}
+-		if (ext_flags & OCFS2_EXT_UNWRITTEN)
++
++		if (ext_flags & OCFS2_EXT_UNWRITTEN) {
+ 			desc->c_unwritten = 1;
++			desc->c_needs_zero = 1;
++		}
+ 
+ 		num_clusters--;
+ 	}
+@@ -1644,10 +1659,13 @@ static int ocfs2_expand_nonsparse_inode(struct inode *inode, loff_t pos,
+ 	if (newsize <= i_size_read(inode))
+ 		return 0;
+ 
+-	ret = ocfs2_extend_no_holes(inode, newsize, newsize - len);
++	ret = ocfs2_extend_no_holes(inode, newsize, pos);
+ 	if (ret)
+ 		mlog_errno(ret);
+ 
++	wc->w_first_new_cpos =
++		ocfs2_clusters_for_bytes(inode->i_sb, i_size_read(inode));
++
+ 	return ret;
+ }
+ 
+@@ -1656,7 +1674,7 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
+ 			     struct page **pagep, void **fsdata,
+ 			     struct buffer_head *di_bh, struct page *mmap_page)
+ {
+-	int ret, credits = OCFS2_INODE_UPDATE_CREDITS;
++	int ret, cluster_of_pages, credits = OCFS2_INODE_UPDATE_CREDITS;
+ 	unsigned int clusters_to_alloc, extents_to_split;
+ 	struct ocfs2_write_ctxt *wc;
+ 	struct inode *inode = mapping->host;
+@@ -1724,8 +1742,19 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
+ 
+ 	}
+ 
+-	ocfs2_set_target_boundaries(osb, wc, pos, len,
+-				    clusters_to_alloc + extents_to_split);
++	/*
++	 * We have to zero sparse allocated clusters, unwritten extent clusters,
++	 * and non-sparse clusters we just extended.  For non-sparse writes,
++	 * we know zeros will only be needed in the first and/or last cluster.
++	 */
++	if (clusters_to_alloc || extents_to_split ||
++	    (wc->w_clen && (wc->w_desc[0].c_needs_zero ||
++			    wc->w_desc[wc->w_clen - 1].c_needs_zero)))
++		cluster_of_pages = 1;
++	else
++		cluster_of_pages = 0;
++
++	ocfs2_set_target_boundaries(osb, wc, pos, len, cluster_of_pages);
+ 
+ 	handle = ocfs2_start_trans(osb, credits);
+ 	if (IS_ERR(handle)) {
+@@ -1753,8 +1782,7 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
+ 	 * extent.
+ 	 */
+ 	ret = ocfs2_grab_pages_for_write(mapping, wc, wc->w_cpos, pos,
+-					 clusters_to_alloc + extents_to_split,
+-					 mmap_page);
++					 cluster_of_pages, mmap_page);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out_commit;
+diff --git a/include/asm-x86/kvm_host.h b/include/asm-x86/kvm_host.h
+index c2e34c2..cf7c887 100644
+--- a/include/asm-x86/kvm_host.h
++++ b/include/asm-x86/kvm_host.h
+@@ -195,6 +195,13 @@ struct kvm_mmu_page {
+ 	};
+ };
+ 
++struct kvm_pv_mmu_op_buffer {
++	void *ptr;
++	unsigned len;
++	unsigned processed;
++	char buf[512] __aligned(sizeof(long));
++};
++
+ /*
+  * x86 supports 3 paging modes (4-level 64-bit, 3-level 64-bit, and 2-level
+  * 32-bit).  The kvm_mmu structure abstracts the details of the current mmu
+@@ -237,6 +244,9 @@ struct kvm_vcpu_arch {
+ 	bool tpr_access_reporting;
+ 
+ 	struct kvm_mmu mmu;
++	/* only needed in kvm_pv_mmu_op() path, but it's hot so
++	 * put it here to avoid allocation */
++	struct kvm_pv_mmu_op_buffer mmu_op_buffer;
+ 
+ 	struct kvm_mmu_memory_cache mmu_pte_chain_cache;
+ 	struct kvm_mmu_memory_cache mmu_rmap_desc_cache;
+diff --git a/include/linux/parport.h b/include/linux/parport.h
+index 6a0d7cd..986252e 100644
+--- a/include/linux/parport.h
++++ b/include/linux/parport.h
+@@ -326,6 +326,10 @@ struct parport {
+ 	int spintime;
+ 	atomic_t ref_count;
+ 
++	unsigned long devflags;
++#define PARPORT_DEVPROC_REGISTERED	0
++	struct pardevice *proc_device;	/* Currently register proc device */
++
+ 	struct list_head full_list;
+ 	struct parport *slaves[3];
+ };
+diff --git a/include/linux/sunrpc/xprt.h b/include/linux/sunrpc/xprt.h
+index 4d80a11..75a87fe 100644
+--- a/include/linux/sunrpc/xprt.h
++++ b/include/linux/sunrpc/xprt.h
+@@ -260,6 +260,7 @@ void			xprt_conditional_disconnect(struct rpc_xprt *xprt, unsigned int cookie);
+ #define XPRT_BOUND		(4)
+ #define XPRT_BINDING		(5)
+ #define XPRT_CLOSING		(6)
++#define XPRT_CONNECTION_CLOSE	(8)
+ 
+ static inline void xprt_set_connected(struct rpc_xprt *xprt)
+ {
+diff --git a/kernel/fork.c b/kernel/fork.c
+index fcbd28c..3fdf3d5 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -767,11 +767,9 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+ 	struct signal_struct *sig;
+ 	int ret;
+ 
+-	if (clone_flags & CLONE_THREAD) {
+-		atomic_inc(&current->signal->count);
+-		atomic_inc(&current->signal->live);
++	if (clone_flags & CLONE_THREAD)
+ 		return 0;
+-	}
++
+ 	sig = kmem_cache_alloc(signal_cachep, GFP_KERNEL);
+ 	tsk->signal = sig;
+ 	if (!sig)
+@@ -844,16 +842,6 @@ void __cleanup_signal(struct signal_struct *sig)
+ 	kmem_cache_free(signal_cachep, sig);
+ }
+ 
+-static void cleanup_signal(struct task_struct *tsk)
+-{
+-	struct signal_struct *sig = tsk->signal;
+-
+-	atomic_dec(&sig->live);
+-
+-	if (atomic_dec_and_test(&sig->count))
+-		__cleanup_signal(sig);
+-}
+-
+ static void copy_flags(unsigned long clone_flags, struct task_struct *p)
+ {
+ 	unsigned long new_flags = p->flags;
+@@ -1201,6 +1189,8 @@ static struct task_struct *copy_process(unsigned long clone_flags,
+ 	}
+ 
+ 	if (clone_flags & CLONE_THREAD) {
++		atomic_inc(&current->signal->count);
++		atomic_inc(&current->signal->live);
+ 		p->group_leader = current->group_leader;
+ 		list_add_tail_rcu(&p->thread_group, &p->group_leader->thread_group);
+ 
+@@ -1261,7 +1251,8 @@ bad_fork_cleanup_mm:
+ 	if (p->mm)
+ 		mmput(p->mm);
+ bad_fork_cleanup_signal:
+-	cleanup_signal(p);
++	if (!(clone_flags & CLONE_THREAD))
++		__cleanup_signal(p->signal);
+ bad_fork_cleanup_sighand:
+ 	__cleanup_sighand(p->sighand);
+ bad_fork_cleanup_fs:
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index 96cff2f..9548d52 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -213,12 +213,12 @@ int kthread_stop(struct task_struct *k)
+ 	/* Now set kthread_should_stop() to true, and wake it up. */
+ 	kthread_stop_info.k = k;
+ 	wake_up_process(k);
+-	put_task_struct(k);
+ 
+ 	/* Once it dies, reset stop ptr, gather result and we're done. */
+ 	wait_for_completion(&kthread_stop_info.done);
+ 	kthread_stop_info.k = NULL;
+ 	ret = kthread_stop_info.err;
++	put_task_struct(k);
+ 	mutex_unlock(&kthread_stop_lock);
+ 
+ 	return ret;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 7d0a222..de2b649 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2353,11 +2353,9 @@ do_sigaltstack (const stack_t __user *uss, stack_t __user *uoss, unsigned long s
+ 	stack_t oss;
+ 	int error;
+ 
+-	if (uoss) {
+-		oss.ss_sp = (void __user *) current->sas_ss_sp;
+-		oss.ss_size = current->sas_ss_size;
+-		oss.ss_flags = sas_ss_flags(sp);
+-	}
++	oss.ss_sp = (void __user *) current->sas_ss_sp;
++	oss.ss_size = current->sas_ss_size;
++	oss.ss_flags = sas_ss_flags(sp);
+ 
+ 	if (uss) {
+ 		void __user *ss_sp;
+@@ -2400,13 +2398,16 @@ do_sigaltstack (const stack_t __user *uss, stack_t __user *uoss, unsigned long s
+ 		current->sas_ss_size = ss_size;
+ 	}
+ 
++	error = 0;
+ 	if (uoss) {
+ 		error = -EFAULT;
+-		if (copy_to_user(uoss, &oss, sizeof(oss)))
++		if (!access_ok(VERIFY_WRITE, uoss, sizeof(*uoss)))
+ 			goto out;
++		error = __put_user(oss.ss_sp, &uoss->ss_sp) |
++			__put_user(oss.ss_size, &uoss->ss_size) |
++			__put_user(oss.ss_flags, &uoss->ss_flags);
+ 	}
+ 
+-	error = 0;
+ out:
+ 	return error;
+ }
+diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+index 0c85042..8067dc7 100644
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -1245,6 +1245,7 @@ static int atalk_getname(struct socket *sock, struct sockaddr *uaddr,
+ 			return -ENOBUFS;
+ 
+ 	*uaddr_len = sizeof(struct sockaddr_at);
++	memset(&sat.sat_zero, 0, sizeof(sat.sat_zero));
+ 
+ 	if (peer) {
+ 		if (sk->sk_state != TCP_ESTABLISHED)
+diff --git a/net/can/raw.c b/net/can/raw.c
+index 6e0663f..08f31d4 100644
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -396,6 +396,7 @@ static int raw_getname(struct socket *sock, struct sockaddr *uaddr,
+ 	if (peer)
+ 		return -EOPNOTSUPP;
+ 
++	memset(addr, 0, sizeof(*addr));
+ 	addr->can_family  = AF_CAN;
+ 	addr->can_ifindex = ro->ifindex;
+ 
+diff --git a/net/econet/af_econet.c b/net/econet/af_econet.c
+index 8789d2b..9aae86f 100644
+--- a/net/econet/af_econet.c
++++ b/net/econet/af_econet.c
+@@ -520,6 +520,7 @@ static int econet_getname(struct socket *sock, struct sockaddr *uaddr,
+ 	if (peer)
+ 		return -EOPNOTSUPP;
+ 
++	memset(sec, 0, sizeof(*sec));
+ 	mutex_lock(&econet_mutex);
+ 
+ 	sk = sock->sk;
+diff --git a/net/irda/af_irda.c b/net/irda/af_irda.c
+index 3eb5bcc..b28409c 100644
+--- a/net/irda/af_irda.c
++++ b/net/irda/af_irda.c
+@@ -714,6 +714,7 @@ static int irda_getname(struct socket *sock, struct sockaddr *uaddr,
+ 	struct sock *sk = sock->sk;
+ 	struct irda_sock *self = irda_sk(sk);
+ 
++	memset(&saddr, 0, sizeof(saddr));
+ 	if (peer) {
+ 		if (sk->sk_state != TCP_ESTABLISHED)
+ 			return -ENOTCONN;
+diff --git a/net/llc/af_llc.c b/net/llc/af_llc.c
+index 5bcc452..90a55b1 100644
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -915,6 +915,7 @@ static int llc_ui_getname(struct socket *sock, struct sockaddr *uaddr,
+ 	struct llc_sock *llc = llc_sk(sk);
+ 	int rc = 0;
+ 
++	memset(&sllc, 0, sizeof(sllc));
+ 	lock_sock(sk);
+ 	if (sock_flag(sk, SOCK_ZAPPED))
+ 		goto out;
+diff --git a/net/netrom/af_netrom.c b/net/netrom/af_netrom.c
+index db9e263..ad72bde 100644
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -848,6 +848,7 @@ static int nr_getname(struct socket *sock, struct sockaddr *uaddr,
+ 		sax->fsa_ax25.sax25_family = AF_NETROM;
+ 		sax->fsa_ax25.sax25_ndigis = 1;
+ 		sax->fsa_ax25.sax25_call   = nr->user_addr;
++		memset(sax->fsa_digipeater, 0, sizeof(sax->fsa_digipeater));
+ 		sax->fsa_digipeater[0]     = nr->dest_addr;
+ 		*uaddr_len = sizeof(struct full_sockaddr_ax25);
+ 	} else {
+diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+index c062361..f132243 100644
+--- a/net/rose/af_rose.c
++++ b/net/rose/af_rose.c
+@@ -957,6 +957,7 @@ static int rose_getname(struct socket *sock, struct sockaddr *uaddr,
+ 	struct rose_sock *rose = rose_sk(sk);
+ 	int n;
+ 
++	memset(srose, 0, sizeof(*srose));
+ 	if (peer != 0) {
+ 		if (sk->sk_state != TCP_ESTABLISHED)
+ 			return -ENOTCONN;
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index 66cfe88..860b1d4 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -860,6 +860,7 @@ static inline void
+ rpc_task_force_reencode(struct rpc_task *task)
+ {
+ 	task->tk_rqstp->rq_snd_buf.len = 0;
++	task->tk_rqstp->rq_bytes_sent = 0;
+ }
+ 
+ static inline void
+diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
+index 99a52aa..b66be67 100644
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -645,10 +645,8 @@ xprt_init_autodisconnect(unsigned long data)
+ 	if (test_and_set_bit(XPRT_LOCKED, &xprt->state))
+ 		goto out_abort;
+ 	spin_unlock(&xprt->transport_lock);
+-	if (xprt_connecting(xprt))
+-		xprt_release_write(xprt, NULL);
+-	else
+-		queue_work(rpciod_workqueue, &xprt->task_cleanup);
++	set_bit(XPRT_CONNECTION_CLOSE, &xprt->state);
++	queue_work(rpciod_workqueue, &xprt->task_cleanup);
+ 	return;
+ out_abort:
+ 	spin_unlock(&xprt->transport_lock);
+diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+index 8f9295d..a283304 100644
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -748,6 +748,9 @@ out_release:
+  *
+  * This is used when all requests are complete; ie, no DRC state remains
+  * on the server we want to save.
++ *
++ * The caller _must_ be holding XPRT_LOCKED in order to avoid issues with
++ * xs_reset_transport() zeroing the socket from underneath a writer.
+  */
+ static void xs_close(struct rpc_xprt *xprt)
+ {
+@@ -781,6 +784,14 @@ clear_close_wait:
+ 	xprt_disconnect_done(xprt);
+ }
+ 
++static void xs_tcp_close(struct rpc_xprt *xprt)
++{
++	if (test_and_clear_bit(XPRT_CONNECTION_CLOSE, &xprt->state))
++		xs_close(xprt);
++	else
++		xs_tcp_shutdown(xprt);
++}
++
+ /**
+  * xs_destroy - prepare to shutdown a transport
+  * @xprt: doomed transport
+@@ -1676,11 +1687,21 @@ static void xs_tcp_connect_worker4(struct work_struct *work)
+ 				goto out_clear;
+ 			case -ECONNREFUSED:
+ 			case -ECONNRESET:
++			case -ENETUNREACH:
+ 				/* retry with existing socket, after a delay */
+-				break;
++				goto out_clear;
+ 			default:
+ 				/* get rid of existing socket, and retry */
+ 				xs_tcp_shutdown(xprt);
++				printk("%s: connect returned unhandled error %d\n",
++						__func__, status);
++			case -EADDRNOTAVAIL:
++				/* We're probably in TIME_WAIT. Get rid of existing socket,
++				 * and retry
++				 */
++				set_bit(XPRT_CONNECTION_CLOSE, &xprt->state);
++				xprt_force_disconnect(xprt);
++				status = -EAGAIN;
+ 		}
+ 	}
+ out:
+@@ -1735,11 +1756,21 @@ static void xs_tcp_connect_worker6(struct work_struct *work)
+ 				goto out_clear;
+ 			case -ECONNREFUSED:
+ 			case -ECONNRESET:
++			case -ENETUNREACH:
+ 				/* retry with existing socket, after a delay */
+-				break;
++				goto out_clear;
+ 			default:
+ 				/* get rid of existing socket, and retry */
+ 				xs_tcp_shutdown(xprt);
++				printk("%s: connect returned unhandled error %d\n",
++						__func__, status);
++			case -EADDRNOTAVAIL:
++				/* We're probably in TIME_WAIT. Get rid of existing socket,
++				 * and retry
++				 */
++				set_bit(XPRT_CONNECTION_CLOSE, &xprt->state);
++				xprt_force_disconnect(xprt);
++				status = -EAGAIN;
+ 		}
+ 	}
+ out:
+@@ -1871,7 +1902,7 @@ static struct rpc_xprt_ops xs_tcp_ops = {
+ 	.buf_free		= rpc_free,
+ 	.send_request		= xs_tcp_send_request,
+ 	.set_retrans_timeout	= xprt_set_retrans_timeout_def,
+-	.close			= xs_tcp_shutdown,
++	.close			= xs_tcp_close,
+ 	.destroy		= xs_destroy,
+ 	.print_stats		= xs_tcp_print_stats,
+ };
+diff --git a/sound/core/pcm_lib.c b/sound/core/pcm_lib.c
+index 1533f03..4cfbd79 100644
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -779,47 +779,24 @@ static int snd_interval_ratden(struct snd_interval *i,
+ int snd_interval_list(struct snd_interval *i, unsigned int count, unsigned int *list, unsigned int mask)
+ {
+         unsigned int k;
+-	int changed = 0;
++	struct snd_interval list_range;
+ 
+ 	if (!count) {
+ 		i->empty = 1;
+ 		return -EINVAL;
+ 	}
++	snd_interval_any(&list_range);
++	list_range.min = UINT_MAX;
++	list_range.max = 0;
+         for (k = 0; k < count; k++) {
+ 		if (mask && !(mask & (1 << k)))
+ 			continue;
+-                if (i->min == list[k] && !i->openmin)
+-                        goto _l1;
+-                if (i->min < list[k]) {
+-                        i->min = list[k];
+-			i->openmin = 0;
+-			changed = 1;
+-                        goto _l1;
+-                }
+-        }
+-        i->empty = 1;
+-        return -EINVAL;
+- _l1:
+-        for (k = count; k-- > 0;) {
+-		if (mask && !(mask & (1 << k)))
++		if (!snd_interval_test(i, list[k]))
+ 			continue;
+-                if (i->max == list[k] && !i->openmax)
+-                        goto _l2;
+-                if (i->max > list[k]) {
+-                        i->max = list[k];
+-			i->openmax = 0;
+-			changed = 1;
+-                        goto _l2;
+-                }
++		list_range.min = min(list_range.min, list[k]);
++		list_range.max = max(list_range.max, list[k]);
+         }
+-        i->empty = 1;
+-        return -EINVAL;
+- _l2:
+-	if (snd_interval_checkempty(i)) {
+-		i->empty = 1;
+-		return -EINVAL;
+-	}
+-        return changed;
++	return snd_interval_refine(i, &list_range);
+ }
+ 
+ EXPORT_SYMBOL(snd_interval_list);
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 07f8dcc..2581b8c 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5580,9 +5580,9 @@ static struct hda_verb alc885_mbp_ch2_init[] = {
+ };
+ 
+ /*
+- * 6ch mode
++ * 4ch mode
+  */
+-static struct hda_verb alc885_mbp_ch6_init[] = {
++static struct hda_verb alc885_mbp_ch4_init[] = {
+ 	{ 0x1a, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT },
+ 	{ 0x1a, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_UNMUTE},
+ 	{ 0x1a, AC_VERB_SET_CONNECT_SEL, 0x01 },
+@@ -5591,9 +5591,9 @@ static struct hda_verb alc885_mbp_ch6_init[] = {
+ 	{ } /* end */
+ };
+ 
+-static struct hda_channel_mode alc885_mbp_6ch_modes[2] = {
++static struct hda_channel_mode alc885_mbp_4ch_modes[2] = {
+ 	{ 2, alc885_mbp_ch2_init },
+-	{ 6, alc885_mbp_ch6_init },
++	{ 4, alc885_mbp_ch4_init },
+ };
+ 
+ 
+@@ -5628,10 +5628,11 @@ static struct snd_kcontrol_new alc882_base_mixer[] = {
+ };
+ 
+ static struct snd_kcontrol_new alc885_mbp3_mixer[] = {
+-	HDA_CODEC_VOLUME("Front Playback Volume", 0x0c, 0x00, HDA_OUTPUT),
+-	HDA_BIND_MUTE   ("Front Playback Switch", 0x0c, 0x02, HDA_INPUT),
+-	HDA_CODEC_MUTE  ("Speaker Playback Switch", 0x14, 0x00, HDA_OUTPUT),
+-	HDA_CODEC_VOLUME("Line-Out Playback Volume", 0x0d, 0x00, HDA_OUTPUT),
++	HDA_CODEC_VOLUME("Speaker Playback Volume", 0x0c, 0x00, HDA_OUTPUT),
++	HDA_BIND_MUTE   ("Speaker Playback Switch", 0x0c, 0x02, HDA_INPUT),
++	HDA_CODEC_VOLUME("Headphone Playback Volume", 0x0e, 0x00, HDA_OUTPUT),
++	HDA_BIND_MUTE   ("Headphone Playback Switch", 0x0e, 0x02, HDA_INPUT),
++	HDA_CODEC_VOLUME("Surround Playback Volume", 0x0d, 0x00, HDA_OUTPUT),
+ 	HDA_CODEC_VOLUME("Line Playback Volume", 0x0b, 0x02, HDA_INPUT),
+ 	HDA_CODEC_MUTE  ("Line Playback Switch", 0x0b, 0x02, HDA_INPUT),
+ 	HDA_CODEC_VOLUME("Mic Playback Volume", 0x0b, 0x00, HDA_INPUT),
+@@ -5879,14 +5880,18 @@ static struct hda_verb alc885_mbp3_init_verbs[] = {
+ 	{0x0d, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_ZERO},
+ 	{0x0d, AC_VERB_SET_AMP_GAIN_MUTE, AMP_IN_MUTE(0)},
+ 	{0x0d, AC_VERB_SET_AMP_GAIN_MUTE, AMP_IN_MUTE(1)},
++	/* HP mixer */
++	{0x0e, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_ZERO},
++	{0x0e, AC_VERB_SET_AMP_GAIN_MUTE, AMP_IN_MUTE(0)},
++	{0x0e, AC_VERB_SET_AMP_GAIN_MUTE, AMP_IN_MUTE(1)},
+ 	/* Front Pin: output 0 (0x0c) */
+ 	{0x14, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_OUT},
+ 	{0x14, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_UNMUTE},
+ 	{0x14, AC_VERB_SET_CONNECT_SEL, 0x00},
+-	/* HP Pin: output 0 (0x0d) */
++	/* HP Pin: output 0 (0x0e) */
+ 	{0x15, AC_VERB_SET_PIN_WIDGET_CONTROL, 0xc4},
+-	{0x15, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE},
+-	{0x15, AC_VERB_SET_CONNECT_SEL, 0x00},
++	{0x15, AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_UNMUTE},
++	{0x15, AC_VERB_SET_CONNECT_SEL, 0x02},
+ 	{0x15, AC_VERB_SET_UNSOLICITED_ENABLE, ALC880_HP_EVENT | AC_USRSP_EN},
+ 	/* Mic (rear) pin: input vref at 80% */
+ 	{0x18, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_VREF80},
+@@ -6326,10 +6331,11 @@ static struct alc_config_preset alc882_presets[] = {
+ 		.mixers = { alc885_mbp3_mixer, alc882_chmode_mixer },
+ 		.init_verbs = { alc885_mbp3_init_verbs,
+ 				alc880_gpio1_init_verbs },
+-		.num_dacs = ARRAY_SIZE(alc882_dac_nids),
++		.num_dacs = 2,
+ 		.dac_nids = alc882_dac_nids,
+-		.channel_mode = alc885_mbp_6ch_modes,
+-		.num_channel_mode = ARRAY_SIZE(alc885_mbp_6ch_modes),
++		.hp_nid = 0x04,
++		.channel_mode = alc885_mbp_4ch_modes,
++		.num_channel_mode = ARRAY_SIZE(alc885_mbp_4ch_modes),
+ 		.input_mux = &alc882_capture_source,
+ 		.dig_out_nid = ALC882_DIGOUT_NID,
+ 		.dig_in_nid = ALC882_DIGIN_NID,
+@@ -11634,6 +11640,8 @@ static int patch_alc269(struct hda_codec *codec)
+ 	spec->num_adc_nids = ARRAY_SIZE(alc269_adc_nids);
+ 	spec->capsrc_nids = alc269_capsrc_nids;
+ 
++	spec->vmaster_nid = 0x02;
++
+ 	codec->patch_ops = alc_patch_ops;
+ 	if (board_config == ALC269_AUTO)
+ 		spec->init_hook = alc269_auto_init;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 7dd9b0b..db062b5 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -406,6 +406,8 @@ static void kvm_destroy_vm(struct kvm *kvm)
+ #endif
+ #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+ 	mmu_notifier_unregister(&kvm->mmu_notifier, kvm->mm);
++#else
++	kvm_arch_flush_shadow(kvm);
+ #endif
+ 	kvm_arch_destroy_vm(kvm);
+ 	mmdrop(mm);
+@@ -548,6 +550,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 		if (!new.dirty_bitmap)
+ 			goto out_free;
+ 		memset(new.dirty_bitmap, 0, dirty_bytes);
++		if (old.npages)
++			kvm_arch_flush_shadow(kvm);
+ 	}
+ #endif /* not defined CONFIG_S390 */
+ 
+@@ -726,7 +730,7 @@ pfn_t gfn_to_pfn(struct kvm *kvm, gfn_t gfn)
+ 		return page_to_pfn(bad_page);
+ 	}
+ 
+-	npages = get_user_pages(current, current->mm, addr, 1, 1, 1, page,
++	npages = get_user_pages(current, current->mm, addr, 1, 1, 0, page,
+ 				NULL);
+ 
+ 	if (unlikely(npages != 1)) {
+@@ -1074,12 +1078,11 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, int n)
+ 
+ 	r = kvm_arch_vcpu_setup(vcpu);
+ 	if (r)
+-		goto vcpu_destroy;
++		return r;
+ 
+ 	mutex_lock(&kvm->lock);
+ 	if (kvm->vcpus[n]) {
+ 		r = -EEXIST;
+-		mutex_unlock(&kvm->lock);
+ 		goto vcpu_destroy;
+ 	}
+ 	kvm->vcpus[n] = vcpu;
+@@ -1095,8 +1098,8 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, int n)
+ unlink:
+ 	mutex_lock(&kvm->lock);
+ 	kvm->vcpus[n] = NULL;
+-	mutex_unlock(&kvm->lock);
+ vcpu_destroy:
++	mutex_unlock(&kvm->lock);
+ 	kvm_arch_vcpu_destroy(vcpu);
+ 	return r;
+ }
+@@ -1118,6 +1121,8 @@ static long kvm_vcpu_ioctl(struct file *filp,
+ 	struct kvm_vcpu *vcpu = filp->private_data;
+ 	void __user *argp = (void __user *)arg;
+ 	int r;
++	struct kvm_fpu *fpu = NULL;
++	struct kvm_sregs *kvm_sregs = NULL;
+ 
+ 	if (vcpu->kvm->mm != current->mm)
+ 		return -EIO;
+@@ -1165,25 +1170,28 @@ out_free2:
+ 		break;
+ 	}
+ 	case KVM_GET_SREGS: {
+-		struct kvm_sregs kvm_sregs;
+-
+-		memset(&kvm_sregs, 0, sizeof kvm_sregs);
+-		r = kvm_arch_vcpu_ioctl_get_sregs(vcpu, &kvm_sregs);
++		kvm_sregs = kzalloc(sizeof(struct kvm_sregs), GFP_KERNEL);
++		r = -ENOMEM;
++		if (!kvm_sregs)
++			goto out;
++		r = kvm_arch_vcpu_ioctl_get_sregs(vcpu, kvm_sregs);
+ 		if (r)
+ 			goto out;
+ 		r = -EFAULT;
+-		if (copy_to_user(argp, &kvm_sregs, sizeof kvm_sregs))
++		if (copy_to_user(argp, kvm_sregs, sizeof(struct kvm_sregs)))
+ 			goto out;
+ 		r = 0;
+ 		break;
+ 	}
+ 	case KVM_SET_SREGS: {
+-		struct kvm_sregs kvm_sregs;
+-
++		kvm_sregs = kmalloc(sizeof(struct kvm_sregs), GFP_KERNEL);
++		r = -ENOMEM;
++		if (!kvm_sregs)
++			goto out;
+ 		r = -EFAULT;
+-		if (copy_from_user(&kvm_sregs, argp, sizeof kvm_sregs))
++		if (copy_from_user(kvm_sregs, argp, sizeof(struct kvm_sregs)))
+ 			goto out;
+-		r = kvm_arch_vcpu_ioctl_set_sregs(vcpu, &kvm_sregs);
++		r = kvm_arch_vcpu_ioctl_set_sregs(vcpu, kvm_sregs);
+ 		if (r)
+ 			goto out;
+ 		r = 0;
+@@ -1264,25 +1272,28 @@ out_free2:
+ 		break;
+ 	}
+ 	case KVM_GET_FPU: {
+-		struct kvm_fpu fpu;
+-
+-		memset(&fpu, 0, sizeof fpu);
+-		r = kvm_arch_vcpu_ioctl_get_fpu(vcpu, &fpu);
++		fpu = kzalloc(sizeof(struct kvm_fpu), GFP_KERNEL);
++		r = -ENOMEM;
++		if (!fpu)
++			goto out;
++		r = kvm_arch_vcpu_ioctl_get_fpu(vcpu, fpu);
+ 		if (r)
+ 			goto out;
+ 		r = -EFAULT;
+-		if (copy_to_user(argp, &fpu, sizeof fpu))
++		if (copy_to_user(argp, fpu, sizeof(struct kvm_fpu)))
+ 			goto out;
+ 		r = 0;
+ 		break;
+ 	}
+ 	case KVM_SET_FPU: {
+-		struct kvm_fpu fpu;
+-
++		fpu = kmalloc(sizeof(struct kvm_fpu), GFP_KERNEL);
++		r = -ENOMEM;
++		if (!fpu)
++			goto out;
+ 		r = -EFAULT;
+-		if (copy_from_user(&fpu, argp, sizeof fpu))
++		if (copy_from_user(fpu, argp, sizeof(struct kvm_fpu)))
+ 			goto out;
+-		r = kvm_arch_vcpu_ioctl_set_fpu(vcpu, &fpu);
++		r = kvm_arch_vcpu_ioctl_set_fpu(vcpu, fpu);
+ 		if (r)
+ 			goto out;
+ 		r = 0;
+@@ -1292,6 +1303,8 @@ out_free2:
+ 		r = kvm_arch_vcpu_ioctl(filp, ioctl, arg);
+ 	}
+ out:
++	kfree(fpu);
++	kfree(kvm_sregs);
+ 	return r;
+ }
+ 

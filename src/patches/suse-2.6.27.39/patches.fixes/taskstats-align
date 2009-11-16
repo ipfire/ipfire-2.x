@@ -1,0 +1,61 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] delayacct: align to 8 byte boundary on 64-bit systems
+References: bnc#492547 bnc#448410
+
+ prepare_reply sets up an skb for the response. If I understand it correctly,
+ the payload contains:
+
+ +--------------------------------+
+ | genlmsghdr - 4 bytes           |
+ +--------------------------------+
+ | NLA header - 4 bytes           | /* Aggregate header */
+ +-+------------------------------+
+ | | NLA header - 4 bytes         | /* PID header */
+ | +------------------------------+
+ | | pid/tgid   - 4 bytes         |
+ | +------------------------------+
+ | | NLA header - 4 bytes         | /* stats header */
+ | + -----------------------------+ <- oops. aligned on 4 byte boundary
+ | | struct taskstats - 328 bytes |
+ +-+------------------------------+
+
+ The start of the taskstats struct must be 8 byte aligned on IA64 (and other
+ systems with 8 byte alignment rules for 64-bit types) or runtime alignment
+ warnings will be issued.
+
+ This patch pads the pid/tgid field out to sizeof(long), which forces
+ the alignment of taskstats. The getdelays userspace code is ok with this
+ since it assumes 32-bit pid/tgid and then honors that header's length field.
+
+ An array is used to avoid exposing kernel memory contents to userspace in the
+ response.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ kernel/taskstats.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/kernel/taskstats.c
++++ b/kernel/taskstats.c
+@@ -362,6 +362,12 @@ static struct taskstats *mk_reply(struct
+ 	struct nlattr *na, *ret;
+ 	int aggr;
+ 
++	/* If we don't pad, we end up with alignment on a 4 byte boundary.
++	 * This causes lots of runtime warnings on systems requiring 8 byte
++	 * alignment */
++	u32 pids[2] = { pid, 0 };
++	int pid_size = ALIGN(sizeof(pid), sizeof(long));
++
+ 	aggr = (type == TASKSTATS_TYPE_PID)
+ 			? TASKSTATS_TYPE_AGGR_PID
+ 			: TASKSTATS_TYPE_AGGR_TGID;
+@@ -369,7 +375,7 @@ static struct taskstats *mk_reply(struct
+ 	na = nla_nest_start(skb, aggr);
+ 	if (!na)
+ 		goto err;
+-	if (nla_put(skb, type, sizeof(pid), &pid) < 0)
++	if (nla_put(skb, type, pid_size, pids) < 0)
+ 		goto err;
+ 	ret = nla_reserve(skb, TASKSTATS_TYPE_STATS, sizeof(struct taskstats));
+ 	if (!ret)

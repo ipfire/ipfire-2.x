@@ -1,0 +1,39 @@
+From eab633021c26025b34f36f79f0311d3d99f40ceb Mon Sep 17 00:00:00 2001
+From: Andre Detsch <adetsch@br.ibm.com>
+Date: Tue, 30 Jun 2009 12:46:13 +0000
+Subject: [PATCH] e1000: return PCI_ERS_RESULT_DISCONNECT on permanent error
+References: bnc#534961
+Patch-mainline: v2.6.31-rc1-50-geab6330
+
+PCI drivers that implement the io_error_detected callback
+should return PCI_ERS_RESULT_DISCONNECT if the state
+passed in is pci_channel_io_perm_failure.  This state is
+not checked in many of the network drivers.
+
+The patch fixes the omission in the e1000 driver.
+
+Based on Mike Mason's similar patch for e1000e.
+
+Signed-off-by: Andre Detsch <adetsch@br.ibm.com>
+CC: Mike Mason <mmlnx@us.ibm.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Brandon Philips <bphilips@suse.de>
+---
+ drivers/net/e1000/e1000_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/net/e1000/e1000_main.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/net/e1000/e1000_main.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/net/e1000/e1000_main.c
+@@ -5170,6 +5170,9 @@ static pci_ers_result_t e1000_io_error_d
+ 
+ 	netif_device_detach(netdev);
+ 
++	if (state == pci_channel_io_perm_failure)
++		return PCI_ERS_RESULT_DISCONNECT;
++
+ 	if (netif_running(netdev))
+ 		e1000_down(adapter);
+ 	pci_disable_device(pdev);

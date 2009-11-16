@@ -1,0 +1,62 @@
+From: Hannes Reinecke <hare@suse.de>
+Date: Tue, 18 Aug 2009 10:01:42 +0200
+Subject: iscsi_tcp: propogate EAGAIN from sendpage to libiscsi
+References: bnc#472432
+X-Git: 32382492eb18e8e20be382a1743d0c08469d1e84
+
+The net layer might return -EAGAIN because it could not
+get space/mem within the sock sndtimeo or becuase the tcp/ip
+connection was down. For the latter we do not want to retry
+because the conn/session should just be shutdown and restarted.
+libiscsi knows the state of the session recovery so propogate
+this error to that layer. It will either do iscsi recovery
+or have us retry the operation. Right now if we have partially
+sent a pdu we would always retry the IO xmit slowing down
+recovery.
+
+Backported to SLES11.
+
+Signed-off-by: Mike Christie <michaelc@cs.wisc.edu>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/iscsi_tcp.c |   14 +++++++++-----
+ 1 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index 324e719..25094c9 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -317,8 +317,6 @@ iscsi_tcp_xmit_segment(struct iscsi_tcp_conn *tcp_conn,
+ 
+ 		if (r < 0) {
+ 			iscsi_tcp_segment_unmap(segment);
+-			if (copied || r == -EAGAIN)
+-				break;
+ 			return r;
+ 		}
+ 		copied += r;
+@@ -1150,11 +1148,17 @@ iscsi_xmit(struct iscsi_conn *conn)
+ 
+ 	while (1) {
+ 		rc = iscsi_tcp_xmit_segment(tcp_conn, segment);
+-		if (rc < 0) {
++		/*
++		 * We may not have been able to send data because the conn
++		 * is getting stopped. libiscsi will know so propogate err
++		 * for it to do the right thing.
++		 */
++		if (rc == -EAGAIN)
++			return rc;
++		else if (rc < 0) {
+ 			rc = ISCSI_ERR_CONN_FAILED;
+ 			goto error;
+-		}
+-		if (rc == 0)
++		} else if (rc == 0)
+ 			break;
+ 
+ 		consumed += rc;
+-- 
+1.6.0.2
+

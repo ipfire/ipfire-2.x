@@ -1,0 +1,1633 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Upstream 2.6.27.24 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
+index 8362860..0a7c8a9 100644
+--- a/Documentation/filesystems/Locking
++++ b/Documentation/filesystems/Locking
+@@ -502,23 +502,31 @@ prototypes:
+ 	void (*open)(struct vm_area_struct*);
+ 	void (*close)(struct vm_area_struct*);
+ 	int (*fault)(struct vm_area_struct*, struct vm_fault *);
+-	int (*page_mkwrite)(struct vm_area_struct *, struct page *);
++	int (*page_mkwrite)(struct vm_area_struct *, struct vm_fault *);
+ 	int (*access)(struct vm_area_struct *, unsigned long, void*, int, int);
+ 
+ locking rules:
+ 		BKL	mmap_sem	PageLocked(page)
+ open:		no	yes
+ close:		no	yes
+-fault:		no	yes
+-page_mkwrite:	no	yes		no
++fault:		no	yes		can return with page locked
++page_mkwrite:	no	yes		can return with page locked
+ access:		no	yes
+ 
+-	->page_mkwrite() is called when a previously read-only page is
+-about to become writeable. The file system is responsible for
+-protecting against truncate races. Once appropriate action has been
+-taking to lock out truncate, the page range should be verified to be
+-within i_size. The page mapping should also be checked that it is not
+-NULL.
++	->fault() is called when a previously not present pte is about
++to be faulted in. The filesystem must find and return the page associated
++with the passed in "pgoff" in the vm_fault structure. If it is possible that
++the page may be truncated and/or invalidated, then the filesystem must lock
++the page, then ensure it is not already truncated (the page lock will block
++subsequent truncate), and then return with VM_FAULT_LOCKED, and the page
++locked. The VM will unlock the page.
++
++	->page_mkwrite() is called when a previously read-only pte is
++about to become writeable. The filesystem again must ensure that there are
++no truncate/invalidate races, and then return with the page locked. If
++the page has been truncated, the filesystem should not look up a new page
++like the ->fault() handler, but simply return with VM_FAULT_NOPAGE, which
++will cause the VM to retry the fault.
+ 
+ 	->access() is called when get_user_pages() fails in
+ acces_process_vm(), typically used to debug a process through
+diff --git a/Makefile b/Makefile
+index a5c7ae5..2b8138a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .23
++EXTRAVERSION = .24
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
+index eb8f72c..0e034a4 100644
+--- a/drivers/i2c/algos/i2c-algo-bit.c
++++ b/drivers/i2c/algos/i2c-algo-bit.c
+@@ -104,7 +104,7 @@ static int sclhi(struct i2c_algo_bit_data *adap)
+ 		 * chips may hold it low ("clock stretching") while they
+ 		 * are processing data internally.
+ 		 */
+-		if (time_after_eq(jiffies, start + adap->timeout))
++		if (time_after(jiffies, start + adap->timeout))
+ 			return -ETIMEDOUT;
+ 		cond_resched();
+ 	}
+diff --git a/drivers/i2c/algos/i2c-algo-pca.c b/drivers/i2c/algos/i2c-algo-pca.c
+index d50b329..2346a89 100644
+--- a/drivers/i2c/algos/i2c-algo-pca.c
++++ b/drivers/i2c/algos/i2c-algo-pca.c
+@@ -270,10 +270,21 @@ static int pca_xfer(struct i2c_adapter *i2c_adap,
+ 
+ 		case 0x30: /* Data byte in I2CDAT has been transmitted; NOT ACK has been received */
+ 			DEB2("NOT ACK received after data byte\n");
++			pca_stop(adap);
+ 			goto out;
+ 
+ 		case 0x38: /* Arbitration lost during SLA+W, SLA+R or data bytes */
+ 			DEB2("Arbitration lost\n");
++			/*
++			 * The PCA9564 data sheet (2006-09-01) says "A
++			 * START condition will be transmitted when the
++			 * bus becomes free (STOP or SCL and SDA high)"
++			 * when the STA bit is set (p. 11).
++			 *
++			 * In case this won't work, try pca_reset()
++			 * instead.
++			 */
++			pca_start(adap);
+ 			goto out;
+ 
+ 		case 0x58: /* Data byte has been received; NOT ACK has been returned */
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 666b7ba..8c50857 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -986,6 +986,9 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 			oldindex = index;
+ 			oldpage = page;
+ 
++			bitmap->filemap[bitmap->file_pages++] = page;
++			bitmap->last_page_size = count;
++
+ 			if (outofdate) {
+ 				/*
+ 				 * if bitmap is out of date, dirty the
+@@ -998,15 +1001,9 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 				write_page(bitmap, page, 1);
+ 
+ 				ret = -EIO;
+-				if (bitmap->flags & BITMAP_WRITE_ERROR) {
+-					/* release, page not in filemap yet */
+-					put_page(page);
++				if (bitmap->flags & BITMAP_WRITE_ERROR)
+ 					goto err;
+-				}
+ 			}
+-
+-			bitmap->filemap[bitmap->file_pages++] = page;
+-			bitmap->last_page_size = count;
+ 		}
+ 		paddr = kmap_atomic(page, KM_USER0);
+ 		if (bitmap->flags & BITMAP_HOSTENDIAN)
+@@ -1016,9 +1013,11 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 		kunmap_atomic(paddr, KM_USER0);
+ 		if (b) {
+ 			/* if the disk bit is set, set the memory bit */
+-			bitmap_set_memory_bits(bitmap, i << CHUNK_BLOCK_SHIFT(bitmap),
+-					       ((i+1) << (CHUNK_BLOCK_SHIFT(bitmap)) >= start)
+-				);
++			int needed = ((sector_t)(i+1) << (CHUNK_BLOCK_SHIFT(bitmap))
++				      >= start);
++			bitmap_set_memory_bits(bitmap,
++					       (sector_t)i << CHUNK_BLOCK_SHIFT(bitmap),
++					       needed);
+ 			bit_cnt++;
+ 			set_page_attr(bitmap, page, BITMAP_PAGE_CLEAN);
+ 		}
+@@ -1154,8 +1153,9 @@ void bitmap_daemon_work(struct bitmap *bitmap)
+ 			spin_lock_irqsave(&bitmap->lock, flags);
+ 			clear_page_attr(bitmap, page, BITMAP_PAGE_CLEAN);
+ 		}
+-		bmc = bitmap_get_counter(bitmap, j << CHUNK_BLOCK_SHIFT(bitmap),
+-					&blocks, 0);
++		bmc = bitmap_get_counter(bitmap,
++					 (sector_t)j << CHUNK_BLOCK_SHIFT(bitmap),
++					 &blocks, 0);
+ 		if (bmc) {
+ /*
+   if (j < 100) printk("bitmap: j=%lu, *bmc = 0x%x\n", j, *bmc);
+@@ -1169,7 +1169,8 @@ void bitmap_daemon_work(struct bitmap *bitmap)
+ 			} else if (*bmc == 1) {
+ 				/* we can clear the bit */
+ 				*bmc = 0;
+-				bitmap_count_page(bitmap, j << CHUNK_BLOCK_SHIFT(bitmap),
++				bitmap_count_page(bitmap,
++						  (sector_t)j << CHUNK_BLOCK_SHIFT(bitmap),
+ 						  -1);
+ 
+ 				/* clear the bit */
+@@ -1485,7 +1486,7 @@ void bitmap_dirty_bits(struct bitmap *bitmap, unsigned long s, unsigned long e)
+ 	unsigned long chunk;
+ 
+ 	for (chunk = s; chunk <= e; chunk++) {
+-		sector_t sec = chunk << CHUNK_BLOCK_SHIFT(bitmap);
++		sector_t sec = (sector_t)chunk << CHUNK_BLOCK_SHIFT(bitmap);
+ 		bitmap_set_memory_bits(bitmap, sec, 1);
+ 		bitmap_file_set_bit(bitmap, sec);
+ 	}
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 60f3e59..ebbc3bb 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -2772,11 +2772,8 @@ array_state_store(mddev_t *mddev, const char *buf, size_t len)
+ 			} else
+ 				err = -EBUSY;
+ 			spin_unlock_irq(&mddev->write_lock);
+-		} else {
+-			mddev->ro = 0;
+-			mddev->recovery_cp = MaxSector;
+-			err = do_md_run(mddev);
+-		}
++		} else
++			err = -EINVAL;
+ 		break;
+ 	case active:
+ 		if (mddev->pers) {
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index dc50f98..b08dd95 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -1805,17 +1805,17 @@ static sector_t sync_request(mddev_t *mddev, sector_t sector_nr, int *skipped, i
+ 				r10_bio->sector = sect;
+ 
+ 				raid10_find_phys(conf, r10_bio);
+-				/* Need to check if this section will still be
++
++				/* Need to check if the array will still be
+ 				 * degraded
+ 				 */
+-				for (j=0; j<conf->copies;j++) {
+-					int d = r10_bio->devs[j].devnum;
+-					if (conf->mirrors[d].rdev == NULL ||
+-					    test_bit(Faulty, &conf->mirrors[d].rdev->flags)) {
++				for (j=0; j<conf->raid_disks; j++)
++					if (conf->mirrors[j].rdev == NULL ||
++					    test_bit(Faulty, &conf->mirrors[j].rdev->flags)) {
+ 						still_degraded = 1;
+ 						break;
+ 					}
+-				}
++
+ 				must_sync = bitmap_start_sync(mddev->bitmap, sect,
+ 							      &sync_blocks, still_degraded);
+ 
+diff --git a/drivers/net/ehea/ehea_main.c b/drivers/net/ehea/ehea_main.c
+index b70c531..a6e730f 100644
+--- a/drivers/net/ehea/ehea_main.c
++++ b/drivers/net/ehea/ehea_main.c
+@@ -529,14 +529,17 @@ static inline struct sk_buff *get_skb_by_index(struct sk_buff **skb_array,
+ 	x &= (arr_len - 1);
+ 
+ 	pref = skb_array[x];
+-	prefetchw(pref);
+-	prefetchw(pref + EHEA_CACHE_LINE);
+-
+-	pref = (skb_array[x]->data);
+-	prefetch(pref);
+-	prefetch(pref + EHEA_CACHE_LINE);
+-	prefetch(pref + EHEA_CACHE_LINE * 2);
+-	prefetch(pref + EHEA_CACHE_LINE * 3);
++	if (pref) {
++		prefetchw(pref);
++		prefetchw(pref + EHEA_CACHE_LINE);
++
++		pref = (skb_array[x]->data);
++		prefetch(pref);
++		prefetch(pref + EHEA_CACHE_LINE);
++		prefetch(pref + EHEA_CACHE_LINE * 2);
++		prefetch(pref + EHEA_CACHE_LINE * 3);
++	}
++
+ 	skb = skb_array[skb_index];
+ 	skb_array[skb_index] = NULL;
+ 	return skb;
+@@ -553,12 +556,14 @@ static inline struct sk_buff *get_skb_by_index_ll(struct sk_buff **skb_array,
+ 	x &= (arr_len - 1);
+ 
+ 	pref = skb_array[x];
+-	prefetchw(pref);
+-	prefetchw(pref + EHEA_CACHE_LINE);
++	if (pref) {
++		prefetchw(pref);
++		prefetchw(pref + EHEA_CACHE_LINE);
+ 
+-	pref = (skb_array[x]->data);
+-	prefetchw(pref);
+-	prefetchw(pref + EHEA_CACHE_LINE);
++		pref = (skb_array[x]->data);
++		prefetchw(pref);
++		prefetchw(pref + EHEA_CACHE_LINE);
++	}
+ 
+ 	skb = skb_array[wqe_index];
+ 	skb_array[wqe_index] = NULL;
+diff --git a/drivers/serial/mpc52xx_uart.c b/drivers/serial/mpc52xx_uart.c
+index 3612607..32e7acb 100644
+--- a/drivers/serial/mpc52xx_uart.c
++++ b/drivers/serial/mpc52xx_uart.c
+@@ -515,7 +515,7 @@ mpc52xx_uart_startup(struct uart_port *port)
+ 
+ 	/* Request IRQ */
+ 	ret = request_irq(port->irq, mpc52xx_uart_int,
+-		IRQF_DISABLED | IRQF_SAMPLE_RANDOM | IRQF_SHARED,
++		IRQF_DISABLED | IRQF_SAMPLE_RANDOM,
+ 		"mpc52xx_psc_uart", port);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/usb/gadget/usbstring.c b/drivers/usb/gadget/usbstring.c
+index 4154be3..58c4d37 100644
+--- a/drivers/usb/gadget/usbstring.c
++++ b/drivers/usb/gadget/usbstring.c
+@@ -38,7 +38,7 @@ static int utf8_to_utf16le(const char *s, __le16 *cp, unsigned len)
+ 				uchar = (c & 0x1f) << 6;
+ 
+ 				c = (u8) *s++;
+-				if ((c & 0xc0) != 0xc0)
++				if ((c & 0xc0) != 0x80)
+ 					goto fail;
+ 				c &= 0x3f;
+ 				uchar |= c;
+@@ -49,13 +49,13 @@ static int utf8_to_utf16le(const char *s, __le16 *cp, unsigned len)
+ 				uchar = (c & 0x0f) << 12;
+ 
+ 				c = (u8) *s++;
+-				if ((c & 0xc0) != 0xc0)
++				if ((c & 0xc0) != 0x80)
+ 					goto fail;
+ 				c &= 0x3f;
+ 				uchar |= c << 6;
+ 
+ 				c = (u8) *s++;
+-				if ((c & 0xc0) != 0xc0)
++				if ((c & 0xc0) != 0x80)
+ 					goto fail;
+ 				c &= 0x3f;
+ 				uchar |= c;
+diff --git a/drivers/video/fb_defio.c b/drivers/video/fb_defio.c
+index 4835bdc..d1c3cba 100644
+--- a/drivers/video/fb_defio.c
++++ b/drivers/video/fb_defio.c
+@@ -70,8 +70,9 @@ EXPORT_SYMBOL_GPL(fb_deferred_io_fsync);
+ 
+ /* vm_ops->page_mkwrite handler */
+ static int fb_deferred_io_mkwrite(struct vm_area_struct *vma,
+-				  struct page *page)
++				  struct vm_fault *vmf)
+ {
++	struct page *page = vmf->page;
+ 	struct fb_info *info = vma->vm_private_data;
+ 	struct fb_deferred_io *fbdefio = info->fbdefio;
+ 	struct page *cur;
+diff --git a/fs/buffer.c b/fs/buffer.c
+index a5d806d..abe9640 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2402,20 +2402,22 @@ int block_commit_write(struct page *page, unsigned from, unsigned to)
+  * unlock the page.
+  */
+ int
+-block_page_mkwrite(struct vm_area_struct *vma, struct page *page,
++block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+ 		   get_block_t get_block)
+ {
++	struct page *page = vmf->page;
+ 	struct inode *inode = vma->vm_file->f_path.dentry->d_inode;
+ 	unsigned long end;
+ 	loff_t size;
+-	int ret = -EINVAL;
++	int ret = VM_FAULT_NOPAGE; /* make the VM retry the fault */
+ 
+ 	lock_page(page);
+ 	size = i_size_read(inode);
+ 	if ((page->mapping != inode->i_mapping) ||
+ 	    (page_offset(page) > size)) {
+ 		/* page got truncated out from underneath us */
+-		goto out_unlock;
++		unlock_page(page);
++		goto out;
+ 	}
+ 
+ 	/* page is wholly or partially inside EOF */
+@@ -2428,8 +2430,16 @@ block_page_mkwrite(struct vm_area_struct *vma, struct page *page,
+ 	if (!ret)
+ 		ret = block_commit_write(page, 0, end);
+ 
+-out_unlock:
+-	unlock_page(page);
++	if (unlikely(ret)) {
++		unlock_page(page);
++		if (ret == -ENOMEM)
++			ret = VM_FAULT_OOM;
++		else /* -ENOSPC, -EIO, etc */
++			ret = VM_FAULT_SIGBUS;
++	} else
++		ret = VM_FAULT_LOCKED;
++
++out:
+ 	return ret;
+ }
+ 
+diff --git a/fs/cifs/cifs_unicode.h b/fs/cifs/cifs_unicode.h
+index 14eb9a2..604ce8a 100644
+--- a/fs/cifs/cifs_unicode.h
++++ b/fs/cifs/cifs_unicode.h
+@@ -64,6 +64,13 @@ int cifs_strtoUCS(__le16 *, const char *, int, const struct nls_table *);
+ #endif
+ 
+ /*
++ * To be safe - for UCS to UTF-8 with strings loaded with the rare long
++ * characters alloc more to account for such multibyte target UTF-8
++ * characters.
++ */
++#define UNICODE_NAME_MAX ((4 * NAME_MAX) + 2)
++
++/*
+  * UniStrcat:  Concatenate the second string to the first
+  *
+  * Returns:
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 9231e0a..cff0c53 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -91,23 +91,22 @@ static int
+ cifs_strncpy_to_host(char **dst, const char *src, const int maxlen,
+ 		 const bool is_unicode, const struct nls_table *nls_codepage)
+ {
+-	int plen;
++	int src_len, dst_len;
+ 
+ 	if (is_unicode) {
+-		plen = UniStrnlen((wchar_t *)src, maxlen);
+-		*dst = kmalloc(plen + 2, GFP_KERNEL);
++		src_len = UniStrnlen((wchar_t *)src, maxlen);
++		*dst = kmalloc((4 * src_len) + 2, GFP_KERNEL);
+ 		if (!*dst)
+ 			goto cifs_strncpy_to_host_ErrExit;
+-		cifs_strfromUCS_le(*dst, (__le16 *)src, plen, nls_codepage);
++		dst_len = cifs_strfromUCS_le(*dst, (__le16 *)src, src_len, nls_codepage);
++		(*dst)[dst_len + 1] = 0;
+ 	} else {
+-		plen = strnlen(src, maxlen);
+-		*dst = kmalloc(plen + 2, GFP_KERNEL);
++		src_len = strnlen(src, maxlen);
++		*dst = kmalloc(src_len + 1, GFP_KERNEL);
+ 		if (!*dst)
+ 			goto cifs_strncpy_to_host_ErrExit;
+-		strncpy(*dst, src, plen);
++		strlcpy(*dst, src, src_len + 1);
+ 	}
+-	(*dst)[plen] = 0;
+-	(*dst)[plen+1] = 0; /* harmless for ASCII case, needed for Unicode */
+ 	return 0;
+ 
+ cifs_strncpy_to_host_ErrExit:
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 21a1abf..d059b3f 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -3549,16 +3549,12 @@ CIFSTCon(unsigned int xid, struct cifsSesInfo *ses,
+ 			    BCC(smb_buffer_response)) {
+ 				kfree(tcon->nativeFileSystem);
+ 				tcon->nativeFileSystem =
+-				    kzalloc(2*(length + 1), GFP_KERNEL);
++				    kzalloc((4 * length) + 2, GFP_KERNEL);
+ 				if (tcon->nativeFileSystem)
+ 					cifs_strfromUCS_le(
+ 						tcon->nativeFileSystem,
+ 						(__le16 *) bcc_ptr,
+ 						length, nls_codepage);
+-				bcc_ptr += 2 * length;
+-				bcc_ptr[0] = 0;	/* null terminate the string */
+-				bcc_ptr[1] = 0;
+-				bcc_ptr += 2;
+ 			}
+ 			/* else do not bother copying these information fields*/
+ 		} else {
+diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+index b891553..6205593 100644
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -685,14 +685,15 @@ cifs_convertUCSpath(char *target, const __le16 *source, int maxlen,
+ 						NLS_MAX_CHARSET_SIZE);
+ 				if (len > 0) {
+ 					j += len;
+-					continue;
++					goto overrun_chk;
+ 				} else {
+ 					target[j] = '?';
+ 				}
+ 		}
+ 		j++;
+ 		/* make sure we do not overrun callers allocated temp buffer */
+-		if (j >= (2 * NAME_MAX))
++overrun_chk:
++		if (j >= UNICODE_NAME_MAX)
+ 			break;
+ 	}
+ cUCS_out:
+diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
+index 58d5729..2878892 100644
+--- a/fs/cifs/readdir.c
++++ b/fs/cifs/readdir.c
+@@ -1075,7 +1075,7 @@ int cifs_readdir(struct file *file, void *direntry, filldir_t filldir)
+ 		with the rare long characters alloc more to account for
+ 		such multibyte target UTF-8 characters. cifs_unicode.c,
+ 		which actually does the conversion, has the same limit */
+-		tmp_buf = kmalloc((2 * NAME_MAX) + 4, GFP_KERNEL);
++		tmp_buf = kmalloc(UNICODE_NAME_MAX, GFP_KERNEL);
+ 		for (i = 0; (i < num_to_fill) && (rc == 0); i++) {
+ 			if (current_entry == NULL) {
+ 				/* evaluate whether this case is an error */
+diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
+index 89fac77..3890cc2 100644
+--- a/fs/cifs/sess.c
++++ b/fs/cifs/sess.c
+@@ -202,27 +202,26 @@ static int decode_unicode_ssetup(char **pbcc_area, int bleft,
+ 	int words_left, len;
+ 	char *data = *pbcc_area;
+ 
+-
+-
+ 	cFYI(1, ("bleft %d", bleft));
+ 
+-
+-	/* SMB header is unaligned, so cifs servers word align start of
+-	   Unicode strings */
+-	data++;
+-	bleft--; /* Windows servers do not always double null terminate
+-		    their final Unicode string - in which case we
+-		    now will not attempt to decode the byte of junk
+-		    which follows it */
++	/*
++	 * Windows servers do not always double null terminate their final
++	 * Unicode string. Check to see if there are an uneven number of bytes
++	 * left. If so, then add an extra NULL pad byte to the end of the
++	 * response.
++	 *
++	 * See section 2.7.2 in "Implementing CIFS" for details
++	 */
++	if (bleft % 2) {
++		data[bleft] = 0;
++		++bleft;
++	}
+ 
+ 	words_left = bleft / 2;
+ 
+ 	/* save off server operating system */
+ 	len = UniStrnlen((wchar_t *) data, words_left);
+ 
+-/* We look for obvious messed up bcc or strings in response so we do not go off
+-   the end since (at least) WIN2K and Windows XP have a major bug in not null
+-   terminating last Unicode string in response  */
+ 	if (len >= words_left)
+ 		return rc;
+ 
+@@ -260,13 +259,10 @@ static int decode_unicode_ssetup(char **pbcc_area, int bleft,
+ 		return rc;
+ 
+ 	kfree(ses->serverDomain);
+-	ses->serverDomain = kzalloc(2 * (len + 1), GFP_KERNEL); /* BB FIXME wrong length */
+-	if (ses->serverDomain != NULL) {
++	ses->serverDomain = kzalloc((4 * len) + 2, GFP_KERNEL);
++	if (ses->serverDomain != NULL)
+ 		cifs_strfromUCS_le(ses->serverDomain, (__le16 *)data, len,
+ 				   nls_cp);
+-		ses->serverDomain[2*len] = 0;
+-		ses->serverDomain[(2*len) + 1] = 0;
+-	}
+ 	data += 2 * (len + 1);
+ 	words_left -= len + 1;
+ 
+@@ -616,12 +612,18 @@ CIFS_SessSetup(unsigned int xid, struct cifsSesInfo *ses, int first_time,
+ 	}
+ 
+ 	/* BB check if Unicode and decode strings */
+-	if (smb_buf->Flags2 & SMBFLG2_UNICODE)
++	if (smb_buf->Flags2 & SMBFLG2_UNICODE) {
++		/* unicode string area must be word-aligned */
++		if (((unsigned long) bcc_ptr - (unsigned long) smb_buf) % 2) {
++			++bcc_ptr;
++			--bytes_remaining;
++		}
+ 		rc = decode_unicode_ssetup(&bcc_ptr, bytes_remaining,
+-						   ses, nls_cp);
+-	else
++					   ses, nls_cp);
++	} else {
+ 		rc = decode_ascii_ssetup(&bcc_ptr, bytes_remaining,
+ 					 ses, nls_cp);
++	}
+ 
+ ssetup_exit:
+ 	if (spnego_key)
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 801de2c..fd5835b 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1132,7 +1132,7 @@ error_return:
+ 
+ SYSCALL_DEFINE1(epoll_create, int, size)
+ {
+-	if (size < 0)
++	if (size <= 0)
+ 		return -EINVAL;
+ 
+ 	return sys_epoll_create1(0);
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index f613d57..eadbee3 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1084,7 +1084,7 @@ extern int ext4_meta_trans_blocks(struct inode *, int nrblocks, int idxblocks);
+ extern int ext4_chunk_trans_blocks(struct inode *, int nrblocks);
+ extern int ext4_block_truncate_page(handle_t *handle,
+ 		struct address_space *mapping, loff_t from);
+-extern int ext4_page_mkwrite(struct vm_area_struct *vma, struct page *page);
++extern int ext4_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf);
+ 
+ /* ioctl.c */
+ extern long ext4_ioctl(struct file *, unsigned int, unsigned long);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index b233ade..63b911b 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4861,8 +4861,9 @@ static int ext4_bh_unmapped(handle_t *handle, struct buffer_head *bh)
+ 	return !buffer_mapped(bh);
+ }
+ 
+-int ext4_page_mkwrite(struct vm_area_struct *vma, struct page *page)
++int ext4_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
++	struct page *page = vmf->page;
+ 	loff_t size;
+ 	unsigned long len;
+ 	int ret = -EINVAL;
+@@ -4913,6 +4914,8 @@ int ext4_page_mkwrite(struct vm_area_struct *vma, struct page *page)
+ 		goto out_unlock;
+ 	ret = 0;
+ out_unlock:
++	if (ret)
++		ret = VM_FAULT_SIGBUS;
+ 	up_read(&inode->i_alloc_sem);
+ 	return ret;
+ }
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 08a109b..ac79b7e 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -117,11 +117,13 @@ SYSCALL_DEFINE2(dup2, unsigned int, oldfd, unsigned int, newfd)
+ {
+ 	if (unlikely(newfd == oldfd)) { /* corner case */
+ 		struct files_struct *files = current->files;
++		int retval = oldfd;
++
+ 		rcu_read_lock();
+ 		if (!fcheck_files(files, oldfd))
+-			oldfd = -EBADF;
++			retval = -EBADF;
+ 		rcu_read_unlock();
+-		return oldfd;
++		return retval;
+ 	}
+ 	return sys_dup3(oldfd, newfd, 0);
+ }
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 3ada9d7..0c92f15 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1219,8 +1219,9 @@ static void fuse_vma_close(struct vm_area_struct *vma)
+  * - sync(2)
+  * - try_to_free_pages() with order > PAGE_ALLOC_COSTLY_ORDER
+  */
+-static int fuse_page_mkwrite(struct vm_area_struct *vma, struct page *page)
++static int fuse_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
++	struct page *page = vmf->page;
+ 	/*
+ 	 * Don't use page->mapping as it may become NULL from a
+ 	 * concurrent truncate.
+diff --git a/fs/gfs2/ops_file.c b/fs/gfs2/ops_file.c
+index e9a366d..641c43b 100644
+--- a/fs/gfs2/ops_file.c
++++ b/fs/gfs2/ops_file.c
+@@ -338,8 +338,9 @@ static int gfs2_allocate_page_backing(struct page *page)
+  * blocks allocated on disk to back that page.
+  */
+ 
+-static int gfs2_page_mkwrite(struct vm_area_struct *vma, struct page *page)
++static int gfs2_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
++	struct page *page = vmf->page;
+ 	struct inode *inode = vma->vm_file->f_path.dentry->d_inode;
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+@@ -411,6 +412,10 @@ out_unlock:
+ 	gfs2_glock_dq(&gh);
+ out:
+ 	gfs2_holder_uninit(&gh);
++	if (ret == -ENOMEM)
++		ret = VM_FAULT_OOM;
++	else if (ret)
++		ret = VM_FAULT_SIGBUS;
+ 	return ret;
+ }
+ 
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index 74f92b7..bff8733 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1613,8 +1613,7 @@ static int nfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		} else if (atomic_read(&new_dentry->d_count) > 1)
+ 			/* dentry still busy? */
+ 			goto out;
+-	} else
+-		nfs_drop_nlink(new_inode);
++	}
+ 
+ go_ahead:
+ 	/*
+@@ -1627,10 +1626,8 @@ go_ahead:
+ 	}
+ 	nfs_inode_return_delegation(old_inode);
+ 
+-	if (new_inode != NULL) {
++	if (new_inode != NULL)
+ 		nfs_inode_return_delegation(new_inode);
+-		d_delete(new_dentry);
+-	}
+ 
+ 	error = NFS_PROTO(old_dir)->rename(old_dir, &old_dentry->d_name,
+ 					   new_dir, &new_dentry->d_name);
+@@ -1639,6 +1636,8 @@ out:
+ 	if (rehash)
+ 		d_rehash(rehash);
+ 	if (!error) {
++		if (new_inode != NULL)
++			nfs_drop_nlink(new_inode);
+ 		d_move(old_dentry, new_dentry);
+ 		nfs_set_verifier(new_dentry,
+ 					nfs_save_change_attribute(new_dir));
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 30541f0..4a57a0f 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -448,8 +448,9 @@ const struct address_space_operations nfs_file_aops = {
+ 	.launder_page = nfs_launder_page,
+ };
+ 
+-static int nfs_vm_page_mkwrite(struct vm_area_struct *vma, struct page *page)
++static int nfs_vm_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
++	struct page *page = vmf->page;
+ 	struct file *filp = vma->vm_file;
+ 	struct dentry *dentry = filp->f_path.dentry;
+ 	unsigned pagelen;
+@@ -476,11 +477,11 @@ static int nfs_vm_page_mkwrite(struct vm_area_struct *vma, struct page *page)
+ 		goto out_unlock;
+ 
+ 	ret = nfs_updatepage(filp, page, 0, pagelen);
+-	if (ret == 0)
+-		ret = pagelen;
+ out_unlock:
++	if (!ret)
++		return VM_FAULT_LOCKED;
+ 	unlock_page(page);
+-	return ret;
++	return VM_FAULT_SIGBUS;
+ }
+ 
+ static struct vm_operations_struct nfs_file_vm_ops = {
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index b0b07df..abffc90 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -1833,6 +1833,15 @@ nfsd4_encode_dirent_fattr(struct nfsd4_readdir *cd,
+ 	dentry = lookup_one_len(name, cd->rd_fhp->fh_dentry, namlen);
+ 	if (IS_ERR(dentry))
+ 		return nfserrno(PTR_ERR(dentry));
++	if (!dentry->d_inode) {
++		/*
++		 * nfsd_buffered_readdir drops the i_mutex between
++		 * readdir and calling this callback, leaving a window
++		 * where this directory entry could have gone away.
++		 */
++		dput(dentry);
++		return nfserr_noent;
++	}
+ 
+ 	exp_get(exp);
+ 	/*
+@@ -1895,6 +1904,7 @@ nfsd4_encode_dirent(void *ccdv, const char *name, int namlen,
+ 	struct nfsd4_readdir *cd = container_of(ccd, struct nfsd4_readdir, common);
+ 	int buflen;
+ 	__be32 *p = cd->buffer;
++	__be32 *cookiep;
+ 	__be32 nfserr = nfserr_toosmall;
+ 
+ 	/* In nfsv4, "." and ".." never make it onto the wire.. */
+@@ -1911,7 +1921,7 @@ nfsd4_encode_dirent(void *ccdv, const char *name, int namlen,
+ 		goto fail;
+ 
+ 	*p++ = xdr_one;                             /* mark entry present */
+-	cd->offset = p;                             /* remember pointer */
++	cookiep = p;
+ 	p = xdr_encode_hyper(p, NFS_OFFSET_MAX);    /* offset of next entry */
+ 	p = xdr_encode_array(p, name, namlen);      /* name length & name */
+ 
+@@ -1925,6 +1935,8 @@ nfsd4_encode_dirent(void *ccdv, const char *name, int namlen,
+ 		goto fail;
+ 	case nfserr_dropit:
+ 		goto fail;
++	case nfserr_noent:
++		goto skip_entry;
+ 	default:
+ 		/*
+ 		 * If the client requested the RDATTR_ERROR attribute,
+@@ -1943,6 +1955,8 @@ nfsd4_encode_dirent(void *ccdv, const char *name, int namlen,
+ 	}
+ 	cd->buflen -= (p - cd->buffer);
+ 	cd->buffer = p;
++	cd->offset = cookiep;
++skip_entry:
+ 	cd->common.err = nfs_ok;
+ 	return 0;
+ fail:
+diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+index 6f7ea0a..08af0ed 100644
+--- a/fs/ocfs2/file.c
++++ b/fs/ocfs2/file.c
+@@ -2075,6 +2075,22 @@ out_sems:
+ 	return written ? written : ret;
+ }
+ 
++static int ocfs2_splice_to_file(struct pipe_inode_info *pipe,
++				struct file *out,
++				struct splice_desc *sd)
++{
++	int ret;
++
++	ret = ocfs2_prepare_inode_for_write(out->f_path.dentry,	&sd->pos,
++					    sd->total_len, 0, NULL);
++	if (ret < 0) {
++		mlog_errno(ret);
++		return ret;
++	}
++
++	return splice_from_pipe_feed(pipe, sd, pipe_to_file);
++}
++
+ static ssize_t ocfs2_file_splice_write(struct pipe_inode_info *pipe,
+ 				       struct file *out,
+ 				       loff_t *ppos,
+@@ -2082,38 +2098,76 @@ static ssize_t ocfs2_file_splice_write(struct pipe_inode_info *pipe,
+ 				       unsigned int flags)
+ {
+ 	int ret;
+-	struct inode *inode = out->f_path.dentry->d_inode;
++	struct address_space *mapping = out->f_mapping;
++	struct inode *inode = mapping->host;
++	struct splice_desc sd = {
++		.total_len = len,
++		.flags = flags,
++		.pos = *ppos,
++		.u.file = out,
++	};
+ 
+ 	mlog_entry("(0x%p, 0x%p, %u, '%.*s')\n", out, pipe,
+ 		   (unsigned int)len,
+ 		   out->f_path.dentry->d_name.len,
+ 		   out->f_path.dentry->d_name.name);
+ 
+-	mutex_lock_nested(&inode->i_mutex, I_MUTEX_PARENT);
++	if (pipe->inode)
++		mutex_lock_nested(&pipe->inode->i_mutex, I_MUTEX_PARENT);
+ 
+-	ret = ocfs2_rw_lock(inode, 1);
+-	if (ret < 0) {
+-		mlog_errno(ret);
+-		goto out;
+-	}
++	splice_from_pipe_begin(&sd);
++	do {
++		ret = splice_from_pipe_next(pipe, &sd);
++		if (ret <= 0)
++			break;
+ 
+-	ret = ocfs2_prepare_inode_for_write(out->f_path.dentry, ppos, len, 0,
+-					    NULL);
+-	if (ret < 0) {
+-		mlog_errno(ret);
+-		goto out_unlock;
+-	}
++		mutex_lock_nested(&inode->i_mutex, I_MUTEX_CHILD);
++		ret = ocfs2_rw_lock(inode, 1);
++		if (ret < 0)
++			mlog_errno(ret);
++		else {
++			ret = ocfs2_splice_to_file(pipe, out, &sd);
++			ocfs2_rw_unlock(inode, 1);
++		}
++		mutex_unlock(&inode->i_mutex);
++	} while (ret > 0);
++	splice_from_pipe_end(pipe, &sd);
+ 
+ 	if (pipe->inode)
+-		mutex_lock_nested(&pipe->inode->i_mutex, I_MUTEX_CHILD);
+-	ret = generic_file_splice_write_nolock(pipe, out, ppos, len, flags);
+-	if (pipe->inode)
+ 		mutex_unlock(&pipe->inode->i_mutex);
+ 
+-out_unlock:
+-	ocfs2_rw_unlock(inode, 1);
+-out:
+-	mutex_unlock(&inode->i_mutex);
++	if (sd.num_spliced)
++		ret = sd.num_spliced;
++
++	if (ret > 0) {
++		unsigned long nr_pages;
++
++		*ppos += ret;
++		nr_pages = (ret + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT;
++
++		/*
++		 * If file or inode is SYNC and we actually wrote some data,
++		 * sync it.
++		 */
++		if (unlikely((out->f_flags & O_SYNC) || IS_SYNC(inode))) {
++			int err;
++
++			mutex_lock(&inode->i_mutex);
++			err = ocfs2_rw_lock(inode, 1);
++			if (err < 0) {
++				mlog_errno(err);
++			} else {
++				err = generic_osync_inode(inode, mapping,
++						  OSYNC_METADATA|OSYNC_DATA);
++				ocfs2_rw_unlock(inode, 1);
++			}
++			mutex_unlock(&inode->i_mutex);
++
++			if (err)
++				ret = err;
++		}
++		balance_dirty_pages_ratelimited_nr(mapping, nr_pages);
++	}
+ 
+ 	mlog_exit(ret);
+ 	return ret;
+diff --git a/fs/ocfs2/mmap.c b/fs/ocfs2/mmap.c
+index 3dc18d6..2383cbd 100644
+--- a/fs/ocfs2/mmap.c
++++ b/fs/ocfs2/mmap.c
+@@ -150,8 +150,9 @@ out:
+ 	return ret;
+ }
+ 
+-static int ocfs2_page_mkwrite(struct vm_area_struct *vma, struct page *page)
++static int ocfs2_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
++	struct page *page = vmf->page;
+ 	struct inode *inode = vma->vm_file->f_path.dentry->d_inode;
+ 	struct buffer_head *di_bh = NULL;
+ 	sigset_t blocked, oldset;
+@@ -192,7 +193,8 @@ out:
+ 	ret2 = ocfs2_vm_op_unblock_sigs(&oldset);
+ 	if (ret2 < 0)
+ 		mlog_errno(ret2);
+-
++	if (ret)
++		ret = VM_FAULT_SIGBUS;
+ 	return ret;
+ }
+ 
+diff --git a/fs/splice.c b/fs/splice.c
+index aea1eb4..2f2d8c1 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -553,8 +553,8 @@ static int pipe_to_sendpage(struct pipe_inode_info *pipe,
+  * SPLICE_F_MOVE isn't set, or we cannot move the page, we simply create
+  * a new page in the output file page cache and fill/dirty that.
+  */
+-static int pipe_to_file(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
+-			struct splice_desc *sd)
++int pipe_to_file(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
++		 struct splice_desc *sd)
+ {
+ 	struct file *file = sd->u.file;
+ 	struct address_space *mapping = file->f_mapping;
+@@ -598,108 +598,178 @@ static int pipe_to_file(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
+ out:
+ 	return ret;
+ }
++EXPORT_SYMBOL(pipe_to_file);
++
++static void wakeup_pipe_writers(struct pipe_inode_info *pipe)
++{
++	smp_mb();
++	if (waitqueue_active(&pipe->wait))
++		wake_up_interruptible(&pipe->wait);
++	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
++}
+ 
+ /**
+- * __splice_from_pipe - splice data from a pipe to given actor
++ * splice_from_pipe_feed - feed available data from a pipe to a file
+  * @pipe:	pipe to splice from
+  * @sd:		information to @actor
+  * @actor:	handler that splices the data
+  *
+  * Description:
+- *    This function does little more than loop over the pipe and call
+- *    @actor to do the actual moving of a single struct pipe_buffer to
+- *    the desired destination. See pipe_to_file, pipe_to_sendpage, or
+- *    pipe_to_user.
++
++ *    This function loops over the pipe and calls @actor to do the
++ *    actual moving of a single struct pipe_buffer to the desired
++ *    destination.  It returns when there's no more buffers left in
++ *    the pipe or if the requested number of bytes (@sd->total_len)
++ *    have been copied.  It returns a positive number (one) if the
++ *    pipe needs to be filled with more data, zero if the required
++ *    number of bytes have been copied and -errno on error.
+  *
++ *    This, together with splice_from_pipe_{begin,end,next}, may be
++ *    used to implement the functionality of __splice_from_pipe() when
++ *    locking is required around copying the pipe buffers to the
++ *    destination.
+  */
+-ssize_t __splice_from_pipe(struct pipe_inode_info *pipe, struct splice_desc *sd,
+-			   splice_actor *actor)
++int splice_from_pipe_feed(struct pipe_inode_info *pipe, struct splice_desc *sd,
++			  splice_actor *actor)
+ {
+-	int ret, do_wakeup, err;
+-
+-	ret = 0;
+-	do_wakeup = 0;
+-
+-	for (;;) {
+-		if (pipe->nrbufs) {
+-			struct pipe_buffer *buf = pipe->bufs + pipe->curbuf;
+-			const struct pipe_buf_operations *ops = buf->ops;
++	int ret;
+ 
+-			sd->len = buf->len;
+-			if (sd->len > sd->total_len)
+-				sd->len = sd->total_len;
++	while (pipe->nrbufs) {
++		struct pipe_buffer *buf = pipe->bufs + pipe->curbuf;
++		const struct pipe_buf_operations *ops = buf->ops;
+ 
+-			err = actor(pipe, buf, sd);
+-			if (err <= 0) {
+-				if (!ret && err != -ENODATA)
+-					ret = err;
++		sd->len = buf->len;
++		if (sd->len > sd->total_len)
++			sd->len = sd->total_len;
+ 
+-				break;
+-			}
++		ret = actor(pipe, buf, sd);
++		if (ret <= 0) {
++			if (ret == -ENODATA)
++				ret = 0;
++			return ret;
++		}
++		buf->offset += ret;
++		buf->len -= ret;
+ 
+-			ret += err;
+-			buf->offset += err;
+-			buf->len -= err;
++		sd->num_spliced += ret;
++		sd->len -= ret;
++		sd->pos += ret;
++		sd->total_len -= ret;
+ 
+-			sd->len -= err;
+-			sd->pos += err;
+-			sd->total_len -= err;
+-			if (sd->len)
+-				continue;
++		if (!buf->len) {
++			buf->ops = NULL;
++			ops->release(pipe, buf);
++			pipe->curbuf = (pipe->curbuf + 1) & (PIPE_BUFFERS - 1);
++			pipe->nrbufs--;
++			if (pipe->inode)
++				sd->need_wakeup = true;
++		}
+ 
+-			if (!buf->len) {
+-				buf->ops = NULL;
+-				ops->release(pipe, buf);
+-				pipe->curbuf = (pipe->curbuf + 1) & (PIPE_BUFFERS - 1);
+-				pipe->nrbufs--;
+-				if (pipe->inode)
+-					do_wakeup = 1;
+-			}
++		if (!sd->total_len)
++			return 0;
++	}
+ 
+-			if (!sd->total_len)
+-				break;
+-		}
++	return 1;
++}
++EXPORT_SYMBOL(splice_from_pipe_feed);
+ 
+-		if (pipe->nrbufs)
+-			continue;
++/**
++ * splice_from_pipe_next - wait for some data to splice from
++ * @pipe:	pipe to splice from
++ * @sd:		information about the splice operation
++ *
++ * Description:
++ *    This function will wait for some data and return a positive
++ *    value (one) if pipe buffers are available.  It will return zero
++ *    or -errno if no more data needs to be spliced.
++ */
++int splice_from_pipe_next(struct pipe_inode_info *pipe, struct splice_desc *sd)
++{
++	while (!pipe->nrbufs) {
+ 		if (!pipe->writers)
+-			break;
+-		if (!pipe->waiting_writers) {
+-			if (ret)
+-				break;
+-		}
++			return 0;
+ 
+-		if (sd->flags & SPLICE_F_NONBLOCK) {
+-			if (!ret)
+-				ret = -EAGAIN;
+-			break;
+-		}
++		if (!pipe->waiting_writers && sd->num_spliced)
++			return 0;
+ 
+-		if (signal_pending(current)) {
+-			if (!ret)
+-				ret = -ERESTARTSYS;
+-			break;
+-		}
++		if (sd->flags & SPLICE_F_NONBLOCK)
++			return -EAGAIN;
+ 
+-		if (do_wakeup) {
+-			smp_mb();
+-			if (waitqueue_active(&pipe->wait))
+-				wake_up_interruptible_sync(&pipe->wait);
+-			kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+-			do_wakeup = 0;
++		if (signal_pending(current))
++			return -ERESTARTSYS;
++
++		if (sd->need_wakeup) {
++			wakeup_pipe_writers(pipe);
++			sd->need_wakeup = false;
+ 		}
+ 
+ 		pipe_wait(pipe);
+ 	}
+ 
+-	if (do_wakeup) {
+-		smp_mb();
+-		if (waitqueue_active(&pipe->wait))
+-			wake_up_interruptible(&pipe->wait);
+-		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+-	}
++	return 1;
++}
++EXPORT_SYMBOL(splice_from_pipe_next);
+ 
+-	return ret;
++/**
++ * splice_from_pipe_begin - start splicing from pipe
++ * @pipe:	pipe to splice from
++ *
++ * Description:
++ *    This function should be called before a loop containing
++ *    splice_from_pipe_next() and splice_from_pipe_feed() to
++ *    initialize the necessary fields of @sd.
++ */
++void splice_from_pipe_begin(struct splice_desc *sd)
++{
++	sd->num_spliced = 0;
++	sd->need_wakeup = false;
++}
++EXPORT_SYMBOL(splice_from_pipe_begin);
++
++/**
++ * splice_from_pipe_end - finish splicing from pipe
++ * @pipe:	pipe to splice from
++ * @sd:		information about the splice operation
++ *
++ * Description:
++ *    This function will wake up pipe writers if necessary.  It should
++ *    be called after a loop containing splice_from_pipe_next() and
++ *    splice_from_pipe_feed().
++ */
++void splice_from_pipe_end(struct pipe_inode_info *pipe, struct splice_desc *sd)
++{
++	if (sd->need_wakeup)
++		wakeup_pipe_writers(pipe);
++}
++EXPORT_SYMBOL(splice_from_pipe_end);
++
++/**
++ * __splice_from_pipe - splice data from a pipe to given actor
++ * @pipe:	pipe to splice from
++ * @sd:		information to @actor
++ * @actor:	handler that splices the data
++ *
++ * Description:
++ *    This function does little more than loop over the pipe and call
++ *    @actor to do the actual moving of a single struct pipe_buffer to
++ *    the desired destination. See pipe_to_file, pipe_to_sendpage, or
++ *    pipe_to_user.
++ *
++ */
++ssize_t __splice_from_pipe(struct pipe_inode_info *pipe, struct splice_desc *sd,
++			   splice_actor *actor)
++{
++	int ret;
++
++	splice_from_pipe_begin(sd);
++	do {
++		ret = splice_from_pipe_next(pipe, sd);
++		if (ret > 0)
++			ret = splice_from_pipe_feed(pipe, sd, actor);
++	} while (ret > 0);
++	splice_from_pipe_end(pipe, sd);
++
++	return sd->num_spliced ? sd->num_spliced : ret;
+ }
+ EXPORT_SYMBOL(__splice_from_pipe);
+ 
+@@ -713,7 +783,7 @@ EXPORT_SYMBOL(__splice_from_pipe);
+  * @actor:	handler that splices the data
+  *
+  * Description:
+- *    See __splice_from_pipe. This function locks the input and output inodes,
++ *    See __splice_from_pipe. This function locks the pipe inode,
+  *    otherwise it's identical to __splice_from_pipe().
+  *
+  */
+@@ -722,7 +792,6 @@ ssize_t splice_from_pipe(struct pipe_inode_info *pipe, struct file *out,
+ 			 splice_actor *actor)
+ {
+ 	ssize_t ret;
+-	struct inode *inode = out->f_mapping->host;
+ 	struct splice_desc sd = {
+ 		.total_len = len,
+ 		.flags = flags,
+@@ -730,24 +799,11 @@ ssize_t splice_from_pipe(struct pipe_inode_info *pipe, struct file *out,
+ 		.u.file = out,
+ 	};
+ 
+-	/*
+-	 * The actor worker might be calling ->prepare_write and
+-	 * ->commit_write. Most of the time, these expect i_mutex to
+-	 * be held. Since this may result in an ABBA deadlock with
+-	 * pipe->inode, we have to order lock acquiry here.
+-	 *
+-	 * Outer lock must be inode->i_mutex, as pipe_wait() will
+-	 * release and reacquire pipe->inode->i_mutex, AND inode must
+-	 * never be a pipe.
+-	 */
+-	WARN_ON(S_ISFIFO(inode->i_mode));
+-	mutex_lock_nested(&inode->i_mutex, I_MUTEX_PARENT);
+ 	if (pipe->inode)
+-		mutex_lock_nested(&pipe->inode->i_mutex, I_MUTEX_CHILD);
++		mutex_lock(&pipe->inode->i_mutex);
+ 	ret = __splice_from_pipe(pipe, &sd, actor);
+ 	if (pipe->inode)
+ 		mutex_unlock(&pipe->inode->i_mutex);
+-	mutex_unlock(&inode->i_mutex);
+ 
+ 	return ret;
+ }
+@@ -838,17 +894,29 @@ generic_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 	};
+ 	ssize_t ret;
+ 
+-	WARN_ON(S_ISFIFO(inode->i_mode));
+-	mutex_lock_nested(&inode->i_mutex, I_MUTEX_PARENT);
+-	ret = file_remove_suid(out);
+-	if (likely(!ret)) {
+-		if (pipe->inode)
+-			mutex_lock_nested(&pipe->inode->i_mutex, I_MUTEX_CHILD);
+-		ret = __splice_from_pipe(pipe, &sd, pipe_to_file);
+-		if (pipe->inode)
+-			mutex_unlock(&pipe->inode->i_mutex);
+-	}
+-	mutex_unlock(&inode->i_mutex);
++	if (pipe->inode)
++		mutex_lock_nested(&pipe->inode->i_mutex, I_MUTEX_PARENT);
++
++	splice_from_pipe_begin(&sd);
++	do {
++		ret = splice_from_pipe_next(pipe, &sd);
++		if (ret <= 0)
++			break;
++
++		mutex_lock_nested(&inode->i_mutex, I_MUTEX_CHILD);
++		ret = file_remove_suid(out);
++		if (!ret)
++			ret = splice_from_pipe_feed(pipe, &sd, pipe_to_file);
++		mutex_unlock(&inode->i_mutex);
++	} while (ret > 0);
++	splice_from_pipe_end(pipe, &sd);
++
++	if (pipe->inode)
++		mutex_unlock(&pipe->inode->i_mutex);
++
++	if (sd.num_spliced)
++		ret = sd.num_spliced;
++
+ 	if (ret > 0) {
+ 		unsigned long nr_pages;
+ 
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index 40033dc..82b1c4a 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1140,8 +1140,9 @@ static int ubifs_releasepage(struct page *page, gfp_t unused_gfp_flags)
+  * mmap()d file has taken write protection fault and is being made
+  * writable. UBIFS must ensure page is budgeted for.
+  */
+-static int ubifs_vm_page_mkwrite(struct vm_area_struct *vma, struct page *page)
++static int ubifs_vm_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
++	struct page *page = vmf->page;
+ 	struct inode *inode = vma->vm_file->f_path.dentry->d_inode;
+ 	struct ubifs_info *c = inode->i_sb->s_fs_info;
+ 	struct timespec now = ubifs_current_time(inode);
+@@ -1153,7 +1154,7 @@ static int ubifs_vm_page_mkwrite(struct vm_area_struct *vma, struct page *page)
+ 	ubifs_assert(!(inode->i_sb->s_flags & MS_RDONLY));
+ 
+ 	if (unlikely(c->ro_media))
+-		return -EROFS;
++		return VM_FAULT_SIGBUS; /* -EROFS */
+ 
+ 	/*
+ 	 * We have not locked @page so far so we may budget for changing the
+@@ -1186,7 +1187,7 @@ static int ubifs_vm_page_mkwrite(struct vm_area_struct *vma, struct page *page)
+ 		if (err == -ENOSPC)
+ 			ubifs_warn("out of space for mmapped file "
+ 				   "(inode number %lu)", inode->i_ino);
+-		return err;
++		return VM_FAULT_SIGBUS;
+ 	}
+ 
+ 	lock_page(page);
+@@ -1226,6 +1227,8 @@ static int ubifs_vm_page_mkwrite(struct vm_area_struct *vma, struct page *page)
+ out_unlock:
+ 	unlock_page(page);
+ 	ubifs_release_budget(c, &req);
++	if (err)
++		err = VM_FAULT_SIGBUS;
+ 	return err;
+ }
+ 
+diff --git a/fs/xfs/linux-2.6/xfs_file.c b/fs/xfs/linux-2.6/xfs_file.c
+index 5311c1a..469502c 100644
+--- a/fs/xfs/linux-2.6/xfs_file.c
++++ b/fs/xfs/linux-2.6/xfs_file.c
+@@ -427,9 +427,9 @@ xfs_file_ioctl_invis(
+ STATIC int
+ xfs_vm_page_mkwrite(
+ 	struct vm_area_struct	*vma,
+-	struct page		*page)
++	struct vm_fault		*vmf)
+ {
+-	return block_page_mkwrite(vma, page, xfs_get_blocks);
++	return block_page_mkwrite(vma, vmf, xfs_get_blocks);
+ }
+ 
+ const struct file_operations xfs_file_operations = {
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index eadaab4..657c072 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -222,7 +222,7 @@ int cont_write_begin(struct file *, struct address_space *, loff_t,
+ 			get_block_t *, loff_t *);
+ int generic_cont_expand_simple(struct inode *inode, loff_t size);
+ int block_commit_write(struct page *page, unsigned from, unsigned to);
+-int block_page_mkwrite(struct vm_area_struct *vma, struct page *page,
++int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+ 				get_block_t get_block);
+ void block_sync_page(struct page *);
+ sector_t generic_block_bmap(struct address_space *, sector_t, get_block_t *);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 2a75579..ae9775d 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -138,6 +138,7 @@ extern pgprot_t protection_map[16];
+ 
+ #define FAULT_FLAG_WRITE	0x01	/* Fault was a write access */
+ #define FAULT_FLAG_NONLINEAR	0x02	/* Fault was via a nonlinear mapping */
++#define FAULT_FLAG_MKWRITE	0x04	/* Fault was mkwrite of existing pte */
+ 
+ 
+ /*
+@@ -173,7 +174,7 @@ struct vm_operations_struct {
+ 
+ 	/* notification that a previously read-only page is about to become
+ 	 * writable, if an error is returned it will cause a SIGBUS */
+-	int (*page_mkwrite)(struct vm_area_struct *vma, struct page *page);
++	int (*page_mkwrite)(struct vm_area_struct *vma, struct vm_fault *vmf);
+ 
+ 	/* called by access_process_vm when get_user_pages() fails, typically
+ 	 * for use by special VMAs that can switch between memory and hardware
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index 528dcb9..5f3faa9 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -36,6 +36,8 @@ struct splice_desc {
+ 		void *data;		/* cookie */
+ 	} u;
+ 	loff_t pos;			/* file position */
++	size_t num_spliced;		/* number of bytes already spliced */
++	bool need_wakeup;		/* need to wake up writer */
+ };
+ 
+ struct partial_page {
+@@ -66,6 +68,16 @@ extern ssize_t splice_from_pipe(struct pipe_inode_info *, struct file *,
+ 				splice_actor *);
+ extern ssize_t __splice_from_pipe(struct pipe_inode_info *,
+ 				  struct splice_desc *, splice_actor *);
++extern int splice_from_pipe_feed(struct pipe_inode_info *, struct splice_desc *,
++				 splice_actor *);
++extern int splice_from_pipe_next(struct pipe_inode_info *,
++				 struct splice_desc *);
++extern void splice_from_pipe_begin(struct splice_desc *);
++extern void splice_from_pipe_end(struct pipe_inode_info *,
++				 struct splice_desc *);
++extern int pipe_to_file(struct pipe_inode_info *, struct pipe_buffer *,
++			struct splice_desc *);
++
+ extern ssize_t splice_to_pipe(struct pipe_inode_info *,
+ 			      struct splice_pipe_desc *);
+ extern ssize_t splice_direct_to_actor(struct file *, struct splice_desc *,
+diff --git a/mm/memory.c b/mm/memory.c
+index 1002f47..3856c36 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1801,6 +1801,15 @@ static int do_wp_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		 * get_user_pages(.write=1, .force=1).
+ 		 */
+ 		if (vma->vm_ops && vma->vm_ops->page_mkwrite) {
++			struct vm_fault vmf;
++			int tmp;
++
++			vmf.virtual_address = (void __user *)(address &
++								PAGE_MASK);
++			vmf.pgoff = old_page->index;
++			vmf.flags = FAULT_FLAG_WRITE|FAULT_FLAG_MKWRITE;
++			vmf.page = old_page;
++
+ 			/*
+ 			 * Notify the address space that the page is about to
+ 			 * become writable so that it can prohibit this or wait
+@@ -1812,8 +1821,21 @@ static int do_wp_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			page_cache_get(old_page);
+ 			pte_unmap_unlock(page_table, ptl);
+ 
+-			if (vma->vm_ops->page_mkwrite(vma, old_page) < 0)
++			tmp = vma->vm_ops->page_mkwrite(vma, &vmf);
++			if (unlikely(tmp &
++					(VM_FAULT_ERROR | VM_FAULT_NOPAGE))) {
++				ret = tmp;
+ 				goto unwritable_page;
++			}
++			if (unlikely(!(tmp & VM_FAULT_LOCKED))) {
++				lock_page(old_page);
++				if (!old_page->mapping) {
++					ret = 0; /* retry the fault */
++					unlock_page(old_page);
++					goto unwritable_page;
++				}
++			} else
++				VM_BUG_ON(!PageLocked(old_page));
+ 
+ 			/*
+ 			 * Since we dropped the lock we need to revalidate
+@@ -1823,9 +1845,11 @@ static int do_wp_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			 */
+ 			page_table = pte_offset_map_lock(mm, pmd, address,
+ 							 &ptl);
+-			page_cache_release(old_page);
+-			if (!pte_same(*page_table, orig_pte))
++			if (!pte_same(*page_table, orig_pte)) {
++				unlock_page(old_page);
++				page_cache_release(old_page);
+ 				goto unlock;
++			}
+ 
+ 			page_mkwrite = 1;
+ 		}
+@@ -1930,9 +1954,6 @@ gotten:
+ unlock:
+ 	pte_unmap_unlock(page_table, ptl);
+ 	if (dirty_page) {
+-		if (vma->vm_file)
+-			file_update_time(vma->vm_file);
+-
+ 		/*
+ 		 * Yes, Virginia, this is actually required to prevent a race
+ 		 * with clear_page_dirty_for_io() from clearing the page dirty
+@@ -1941,21 +1962,46 @@ unlock:
+ 		 *
+ 		 * do_no_page is protected similarly.
+ 		 */
+-		wait_on_page_locked(dirty_page);
+-		set_page_dirty_balance(dirty_page, page_mkwrite);
++		if (!page_mkwrite) {
++			wait_on_page_locked(dirty_page);
++			set_page_dirty_balance(dirty_page, page_mkwrite);
++		}
+ 		put_page(dirty_page);
++		if (page_mkwrite) {
++			struct address_space *mapping = dirty_page->mapping;
++
++			set_page_dirty(dirty_page);
++			unlock_page(dirty_page);
++			page_cache_release(dirty_page);
++			if (mapping)	{
++				/*
++				 * Some device drivers do not set page.mapping
++				 * but still dirty their pages
++				 */
++				balance_dirty_pages_ratelimited(mapping);
++			}
++		}
++
++		/* file_update_time outside page_lock */
++		if (vma->vm_file)
++			file_update_time(vma->vm_file);
+ 	}
+ 	return ret;
+ oom_free_new:
+ 	page_cache_release(new_page);
+ oom:
+-	if (old_page)
++	if (old_page) {
++		if (page_mkwrite) {
++			unlock_page(old_page);
++			page_cache_release(old_page);
++		}
+ 		page_cache_release(old_page);
++	}
+ 	return VM_FAULT_OOM;
+ 
+ unwritable_page:
+ 	page_cache_release(old_page);
+-	return VM_FAULT_SIGBUS;
++	return ret;
+ }
+ 
+ /*
+@@ -2472,25 +2518,25 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			 * to become writable
+ 			 */
+ 			if (vma->vm_ops->page_mkwrite) {
++				int tmp;
++
+ 				unlock_page(page);
+-				if (vma->vm_ops->page_mkwrite(vma, page) < 0) {
+-					ret = VM_FAULT_SIGBUS;
+-					anon = 1; /* no anon but release vmf.page */
+-					goto out_unlocked;
+-				}
+-				lock_page(page);
+-				/*
+-				 * XXX: this is not quite right (racy vs
+-				 * invalidate) to unlock and relock the page
+-				 * like this, however a better fix requires
+-				 * reworking page_mkwrite locking API, which
+-				 * is better done later.
+-				 */
+-				if (!page->mapping) {
+-					ret = 0;
+-					anon = 1; /* no anon but release vmf.page */
+-					goto out;
++				vmf.flags = FAULT_FLAG_WRITE|FAULT_FLAG_MKWRITE;
++				tmp = vma->vm_ops->page_mkwrite(vma, &vmf);
++				if (unlikely(tmp &
++					  (VM_FAULT_ERROR | VM_FAULT_NOPAGE))) {
++					ret = tmp;
++					goto unwritable_page;
+ 				}
++				if (unlikely(!(tmp & VM_FAULT_LOCKED))) {
++					lock_page(page);
++					if (!page->mapping) {
++						ret = 0; /* retry the fault */
++						unlock_page(page);
++						goto unwritable_page;
++					}
++				} else
++					VM_BUG_ON(!PageLocked(page));
+ 				page_mkwrite = 1;
+ 			}
+ 		}
+@@ -2547,19 +2593,35 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	pte_unmap_unlock(page_table, ptl);
+ 
+ out:
+-	unlock_page(vmf.page);
+-out_unlocked:
+-	if (anon)
+-		page_cache_release(vmf.page);
+-	else if (dirty_page) {
+-		if (vma->vm_file)
+-			file_update_time(vma->vm_file);
++	if (dirty_page) {
++		struct address_space *mapping = page->mapping;
+ 
+-		set_page_dirty_balance(dirty_page, page_mkwrite);
++		if (set_page_dirty(dirty_page))
++			page_mkwrite = 1;
++		unlock_page(dirty_page);
+ 		put_page(dirty_page);
++		if (page_mkwrite && mapping) {
++			/*
++			 * Some device drivers do not set page.mapping but still
++			 * dirty their pages
++			 */
++			balance_dirty_pages_ratelimited(mapping);
++		}
++
++		/* file_update_time outside page_lock */
++		if (vma->vm_file)
++			file_update_time(vma->vm_file);
++	} else {
++		unlock_page(vmf.page);
++		if (anon)
++			page_cache_release(vmf.page);
+ 	}
+ 
+ 	return ret;
++
++unwritable_page:
++	page_cache_release(page);
++	return ret;
+ }
+ 
+ static int do_linear_fault(struct mm_struct *mm, struct vm_area_struct *vma,

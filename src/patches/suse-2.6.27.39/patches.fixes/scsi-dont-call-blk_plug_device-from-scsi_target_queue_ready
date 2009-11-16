@@ -1,0 +1,31 @@
+From: Mike Christie <michaelc@cs.wisc.edu>
+Date: Thu, 9 Apr 2009 15:57:10 -0500
+Subject: scsi_lib.c: fix q->lock not held warning when target is busy
+X-Git: b4efdd586bc08cdf5977cad0a90091f44546a930
+References: bnc#541403
+
+We cannot call blk_plug_device from scsi_target_queue_ready
+because the q lock is not held. And we do not need to call
+it from there because when we return 0, the scsi_request_fn
+not_ready handling will plug the queue for us if needed.
+
+Signed-off-by: Mike Christie <michaelc@cs.wisc.edu>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index d1cb64a..bb218c8 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1291,10 +1291,8 @@ static inline int scsi_target_queue_ready(struct Scsi_Host *shost,
+ 		if (--starget->target_blocked == 0) {
+ 			SCSI_LOG_MLQUEUE(3, starget_printk(KERN_INFO, starget,
+ 					 "unblocking target at zero depth\n"));
+-		} else {
+-			blk_plug_device(sdev->request_queue);
++		} else
+ 			return 0;
+-		}
+ 	}
+ 
+ 	if (scsi_target_is_busy(starget)) {

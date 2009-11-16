@@ -1,0 +1,47 @@
+From: Tony Ernst <tee@sgi.com>
+Subject: hide harmless xfs kabi changes to be compatible with the GA kernel
+
+In bug 482148, a KABI breakage was introduced into xfs. An SGI engineer
+approved this because it was internal to xfs, and he believed it wouldn't
+affect any of our other products. But the CRC checking doesn't work the way he
+thought it did. So we now have a problem where one of our add-ons gets a
+dependency error with the latest kernel update.
+
+So we've made a small patch that restores the old xfs CRC (same as SLES11 GA).
+We need to get this patch into the next SLES11 kernel update. I'll attach the
+patch.
+
+Acked-by: Michal Marek <mmarek@suse.cz>
+
+Index: linux-2.6.27.25-0.gwehrman/fs/xfs/quota/xfs_dquot.h
+===================================================================
+--- linux-2.6.27.25-0.gwehrman.orig/fs/xfs/quota/xfs_dquot.h
++++ linux-2.6.27.25-0.gwehrman/fs/xfs/quota/xfs_dquot.h
+@@ -83,8 +83,13 @@ typedef struct xfs_dquot {
+ 	xfs_qcnt_t	 q_res_rtbcount;/* total realtime blks used+reserved */
+ 	mutex_t		 q_qlock;	/* quota lock */
+ 	struct completion q_flush;	/* flush completion queue */
++#ifdef __GENKSYMS__
++	uint	          q_pincount;   /* dquot pin count */
++	sv_t		  q_pinwait;    /* dquot pinning wait queue */
++#else
+ 	atomic_t          q_pincount;   /* dquot pin count */
+ 	wait_queue_head_t q_pinwait;    /* dquot pinning wait queue */
++#endif
+ 
+ #ifdef XFS_DQUOT_TRACE
+ 	struct ktrace	*q_trace;	/* trace header structure */
+Index: linux-2.6.27.25-0.gwehrman/fs/xfs/quota/xfs_qm.h
+===================================================================
+--- linux-2.6.27.25-0.gwehrman.orig/fs/xfs/quota/xfs_qm.h
++++ linux-2.6.27.25-0.gwehrman/fs/xfs/quota/xfs_qm.h
+@@ -106,6 +106,9 @@ typedef struct xfs_qm {
+ typedef struct xfs_quotainfo {
+ 	xfs_inode_t	*qi_uquotaip;	 /* user quota inode */
+ 	xfs_inode_t	*qi_gquotaip;	 /* group quota inode */
++#ifdef __GENKSYMS__
++	spinlock_t	 qi_pinlock;	 /* dquot pinning lock */
++#endif
+ 	xfs_dqlist_t	 qi_dqlist;	 /* all dquots in filesys */
+ 	int		 qi_dqreclaims;	 /* a change here indicates
+ 					    a removal in the dqlist */

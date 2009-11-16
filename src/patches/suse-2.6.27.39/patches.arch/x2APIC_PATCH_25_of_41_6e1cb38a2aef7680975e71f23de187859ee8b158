@@ -1,0 +1,353 @@
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: x64, x2apic/intr-remap: add x2apic support, including enabling interrupt-remapping
+References: fate #303948 and fate #303984
+Patch-Mainline: queued for .28
+Commit-ID: 6e1cb38a2aef7680975e71f23de187859ee8b158
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+x2apic support.  Interrupt-remapping must be enabled before enabling x2apic,
+this is needed to ensure that IO interrupts continue to work properly after the
+cpu mode is changed to x2apic(which uses 32bit extended physical/cluster
+apic id).
+
+On systems where apicid's are > 255, BIOS can handover the control to OS in
+x2apic mode. Or if the OS handover was in legacy xapic mode, check
+if it is capable of x2apic mode. And if we succeed in enabling
+Interrupt-remapping, then we can enable x2apic mode in the CPU.
+
+Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: akpm@linux-foundation.org
+Cc: arjan@linux.intel.com
+Cc: andi@firstfloor.org
+Cc: ebiederm@xmission.com
+Cc: jbarnes@virtuousgeek.org
+Cc: steiner@sgi.com
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+---
+ Documentation/kernel-parameters.txt |    2 
+ arch/x86/kernel/acpi/boot.c         |    2 
+ arch/x86/kernel/apic_64.c           |  154 +++++++++++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/common_64.c     |    2 
+ arch/x86/kernel/mpparse.c           |    2 
+ arch/x86/kernel/setup.c             |    2 
+ arch/x86/kernel/smpboot.c           |    5 +
+ include/asm-x86/apic.h              |   14 +--
+ 8 files changed, 172 insertions(+), 11 deletions(-)
+
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -1428,6 +1428,8 @@ and is between 256 and 4096 characters. 
+ 
+ 	nolapic_timer	[X86-32,APIC] Do not use the local APIC timer.
+ 
++	nox2apic	[X86-64,APIC] Do not enable x2APIC mode.
++
+ 	noltlbs		[PPC] Do not use large page/tlb entries for kernel
+ 			lowmem mapping on PPC40x.
+ 
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -1351,7 +1351,9 @@ static void __init acpi_process_madt(voi
+ 				acpi_ioapic = 1;
+ 
+ 				smp_found_config = 1;
++#ifdef CONFIG_X86_32
+ 				setup_apic_routing();
++#endif
+ 			}
+ 		}
+ 		if (error == -EINVAL) {
+--- a/arch/x86/kernel/apic_64.c
++++ b/arch/x86/kernel/apic_64.c
+@@ -27,6 +27,7 @@
+ #include <linux/clockchips.h>
+ #include <linux/acpi_pmtmr.h>
+ #include <linux/module.h>
++#include <linux/dmar.h>
+ 
+ #include <asm/atomic.h>
+ #include <asm/smp.h>
+@@ -39,6 +40,7 @@
+ #include <asm/proto.h>
+ #include <asm/timex.h>
+ #include <asm/apic.h>
++#include <asm/i8259.h>
+ 
+ #include <mach_ipi.h>
+ #include <mach_apic.h>
+@@ -46,8 +48,12 @@
+ static int disable_apic_timer __cpuinitdata;
+ static int apic_calibrate_pmtmr __initdata;
+ int disable_apic;
++int disable_x2apic;
+ int x2apic;
+ 
++/* x2apic enabled before OS handover */
++int x2apic_preenabled;
++
+ /* Local APIC timer works in C2 */
+ int local_apic_timer_c2_ok;
+ EXPORT_SYMBOL_GPL(local_apic_timer_c2_ok);
+@@ -925,6 +931,125 @@ void __cpuinit end_local_APIC_setup(void
+ 	apic_pm_activate();
+ }
+ 
++void check_x2apic(void)
++{
++	int msr, msr2;
++
++	rdmsr(MSR_IA32_APICBASE, msr, msr2);
++
++	if (msr & X2APIC_ENABLE) {
++		printk("x2apic enabled by BIOS, switching to x2apic ops\n");
++		x2apic_preenabled = x2apic = 1;
++		apic_ops = &x2apic_ops;
++	}
++}
++
++void enable_x2apic(void)
++{
++	int msr, msr2;
++
++	rdmsr(MSR_IA32_APICBASE, msr, msr2);
++	if (!(msr & X2APIC_ENABLE)) {
++		printk("Enabling x2apic\n");
++		wrmsr(MSR_IA32_APICBASE, msr | X2APIC_ENABLE, 0);
++	}
++}
++
++void enable_IR_x2apic(void)
++{
++#ifdef CONFIG_INTR_REMAP
++	int ret;
++	unsigned long flags;
++
++	if (!cpu_has_x2apic)
++		return;
++
++	if (!x2apic_preenabled && disable_x2apic) {
++		printk(KERN_INFO
++		       "Skipped enabling x2apic and Interrupt-remapping "
++		       "because of nox2apic\n");
++		return;
++	}
++
++	if (x2apic_preenabled && disable_x2apic)
++		panic("Bios already enabled x2apic, can't enforce nox2apic");
++
++	if (!x2apic_preenabled && skip_ioapic_setup) {
++		printk(KERN_INFO
++		       "Skipped enabling x2apic and Interrupt-remapping "
++		       "because of skipping io-apic setup\n");
++		return;
++	}
++
++	ret = dmar_table_init();
++	if (ret) {
++		printk(KERN_INFO
++		       "dmar_table_init() failed with %d:\n", ret);
++
++		if (x2apic_preenabled)
++			panic("x2apic enabled by bios. But IR enabling failed");
++		else
++			printk(KERN_INFO
++			       "Not enabling x2apic,Intr-remapping\n");
++		return;
++	}
++
++	local_irq_save(flags);
++	mask_8259A();
++	save_mask_IO_APIC_setup();
++
++	ret = enable_intr_remapping(1);
++
++	if (ret && x2apic_preenabled) {
++		local_irq_restore(flags);
++		panic("x2apic enabled by bios. But IR enabling failed");
++	}
++
++	if (ret)
++		goto end;
++
++	if (!x2apic) {
++		x2apic = 1;
++		apic_ops = &x2apic_ops;
++		enable_x2apic();
++	}
++end:
++	if (ret)
++		/*
++		 * IR enabling failed
++		 */
++		restore_IO_APIC_setup();
++	else
++		reinit_intr_remapped_IO_APIC(x2apic_preenabled);
++
++	unmask_8259A();
++	local_irq_restore(flags);
++
++	if (!ret) {
++		if (!x2apic_preenabled)
++			printk(KERN_INFO
++			       "Enabled x2apic and interrupt-remapping\n");
++		else
++			printk(KERN_INFO
++			       "Enabled Interrupt-remapping\n");
++	} else
++		printk(KERN_ERR
++		       "Failed to enable Interrupt-remapping and x2apic\n");
++#else
++	if (!cpu_has_x2apic)
++		return;
++
++	if (x2apic_preenabled)
++		panic("x2apic enabled prior OS handover,"
++		      " enable CONFIG_INTR_REMAP");
++
++	printk(KERN_INFO "Enable CONFIG_INTR_REMAP for enabling intr-remapping "
++	       " and x2apic\n");
++#endif
++
++	return;
++}
++
+ /*
+  * Detect and enable local APICs on non-SMP boards.
+  * Original code written by Keir Fraser.
+@@ -972,6 +1097,11 @@ void __init early_init_lapic_mapping(voi
+  */
+ void __init init_apic_mappings(void)
+ {
++	if (x2apic) {
++		boot_cpu_physical_apicid = GET_APIC_ID(read_apic_id());
++		return;
++	}
++
+ 	/*
+ 	 * If no local APIC can be found then set up a fake all
+ 	 * zeroes page to simulate the local APIC and another
+@@ -1010,6 +1140,9 @@ int __init APIC_init_uniprocessor(void)
+ 		return -1;
+ 	}
+ 
++	enable_IR_x2apic();
++	setup_apic_routing();
++
+ 	verify_local_APIC();
+ 
+ 	connect_bsp_APIC();
+@@ -1263,10 +1396,14 @@ static int lapic_resume(struct sys_devic
+ 	maxlvt = lapic_get_maxlvt();
+ 
+ 	local_irq_save(flags);
+-	rdmsr(MSR_IA32_APICBASE, l, h);
+-	l &= ~MSR_IA32_APICBASE_BASE;
+-	l |= MSR_IA32_APICBASE_ENABLE | mp_lapic_addr;
+-	wrmsr(MSR_IA32_APICBASE, l, h);
++	if (!x2apic) {
++		rdmsr(MSR_IA32_APICBASE, l, h);
++		l &= ~MSR_IA32_APICBASE_BASE;
++		l |= MSR_IA32_APICBASE_ENABLE | mp_lapic_addr;
++		wrmsr(MSR_IA32_APICBASE, l, h);
++	} else
++		enable_x2apic();
++
+ 	apic_write(APIC_LVTERR, ERROR_APIC_VECTOR | APIC_LVT_MASKED);
+ 	apic_write(APIC_ID, apic_pm_state.apic_id);
+ 	apic_write(APIC_DFR, apic_pm_state.apic_dfr);
+@@ -1406,6 +1543,15 @@ __cpuinit int apic_is_clustered_box(void
+ 	return (clusters > 2);
+ }
+ 
++static __init int setup_nox2apic(char *str)
++{
++	disable_x2apic = 1;
++	clear_cpu_cap(&boot_cpu_data, X86_FEATURE_X2APIC);
++	return 0;
++}
++early_param("nox2apic", setup_nox2apic);
++
++
+ /*
+  * APIC command line parameters
+  */
+--- a/arch/x86/kernel/cpu/common_64.c
++++ b/arch/x86/kernel/cpu/common_64.c
+@@ -636,6 +636,8 @@ void __cpuinit cpu_init(void)
+ 	barrier();
+ 
+ 	check_efer();
++	if (cpu != 0 && x2apic)
++		enable_x2apic();
+ 
+ 	/*
+ 	 * set up and load the per-CPU TSS
+--- a/arch/x86/kernel/mpparse.c
++++ b/arch/x86/kernel/mpparse.c
+@@ -397,7 +397,9 @@ static int __init smp_read_mpc(struct mp
+        generic_bigsmp_probe();
+ #endif
+ 
++#ifdef CONFIG_X86_32
+ 	setup_apic_routing();
++#endif
+ 	if (!num_processors)
+ 		printk(KERN_ERR "MPTABLE: no processors registered!\n");
+ 	return num_processors;
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -769,6 +769,8 @@ void __init setup_arch(char **cmdline_p)
+ #else
+ 	num_physpages = max_pfn;
+ 
++	if (cpu_has_x2apic)
++		check_x2apic();
+ 
+ 	/* How many end-of-memory variables you have, grandma! */
+ 	/* need this before calling reserve_initrd */
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1169,6 +1169,11 @@ void __init native_smp_prepare_cpus(unsi
+ 	current_thread_info()->cpu = 0;  /* needed? */
+ 	set_cpu_sibling_map(0);
+ 
++#ifdef CONFIG_X86_64
++	enable_IR_x2apic();
++	setup_apic_routing();
++#endif
++
+ 	if (smp_sanity_check(max_cpus) < 0) {
+ 		printk(KERN_INFO "SMP disabled\n");
+ 		disable_smp();
+--- a/include/asm-x86/apic.h
++++ b/include/asm-x86/apic.h
+@@ -93,12 +93,13 @@ static inline u32 native_apic_msr_read(u
+ 	return low;
+ }
+ 
+-#ifdef CONFIG_X86_32
+-extern void apic_wait_icr_idle(void);
+-extern u32 safe_apic_wait_icr_idle(void);
+-extern void apic_icr_write(u32 low, u32 id);
+-#else
+-extern void x2apic_icr_write(u32 low, u32 id);
++#ifndef CONFIG_X86_32
++ extern int x2apic, x2apic_preenabled;
++ extern void check_x2apic(void);
++ extern void enable_x2apic(void);
++ extern void enable_IR_x2apic(void);
++ extern void x2apic_icr_write(u32 low, u32 id);
++#endif
+ 
+ struct apic_ops {
+ 	u32 (*read)(u32 reg);
+@@ -119,7 +120,6 @@ extern struct apic_ops *apic_ops;
+ #define apic_icr_write (apic_ops->icr_write)
+ #define apic_wait_icr_idle (apic_ops->wait_icr_idle)
+ #define safe_apic_wait_icr_idle (apic_ops->safe_wait_icr_idle)
+-#endif
+ 
+ extern int get_physical_broadcast(void);
+ 

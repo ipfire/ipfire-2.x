@@ -1,0 +1,35 @@
+From 82e12644cf5227dab15201fbcaf0ca6330ebd70f Mon Sep 17 00:00:00 2001
+From: Tao Ma <tao.ma@oracle.com>
+Date: Thu, 23 Jul 2009 08:12:58 +0800
+Subject: [PATCH] ocfs2: Use ocfs2_rec_clusters in ocfs2_adjust_adjacent_records.
+References: bnc#528427
+
+In ocfs2_adjust_adjacent_records, we will adjust adjacent records
+according to the extent_list in the lower level. But actually
+the lower level tree will either be a leaf or a branch. If we only
+use ocfs2_is_empty_extent we will meet with some problem if the lower
+tree is a branch (tree_depth > 1). So use !ocfs2_rec_clusters instead.
+And actually only the leaf record can have holes. So add a BUG_ON
+for non-leaf branch.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Signed-off-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/alloc.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/fs/ocfs2/alloc.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/ocfs2/alloc.c
++++ linux-2.6.27-SLE11_BRANCH/fs/ocfs2/alloc.c
+@@ -1769,7 +1769,8 @@ static void ocfs2_adjust_adjacent_record
+ 	 * immediately to their right.
+ 	 */
+ 	left_clusters = le32_to_cpu(right_child_el->l_recs[0].e_cpos);
+-	if (ocfs2_is_empty_extent(&right_child_el->l_recs[0])) {
++	if (!ocfs2_rec_clusters(right_child_el, &right_child_el->l_recs[0])) {
++		BUG_ON(right_child_el->l_tree_depth);
+ 		BUG_ON(le16_to_cpu(right_child_el->l_next_free_rec) <= 1);
+ 		left_clusters = le32_to_cpu(right_child_el->l_recs[1].e_cpos);
+ 	}

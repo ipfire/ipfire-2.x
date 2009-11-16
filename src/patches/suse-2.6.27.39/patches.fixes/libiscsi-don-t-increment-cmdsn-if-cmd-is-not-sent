@@ -1,0 +1,55 @@
+From: Hannes Reinecke <hare@suse.de>
+Date: Thu, 13 Aug 2009 10:55:44 +0200
+Subject: libiscsi: don't increment cmdsn if cmd is not sent
+X-Git: d3305f3407fa3e9452079ec6cc8379067456e4aa
+References: bnc#472432
+
+We increment session->cmdsn at the top of iscsi_prep_scsi_cmd_pdu, but
+if the prep  ecb or prep bidi or init_task calls fails then we leave the
+session->cmdsn incremented. This moves the cmdsn manipulation to the end
+of the function when we know it has succeeded.
+
+It also adds a session->cmdsn--; in queuecommand for if a driver like
+bnx2i tries to send a a task from that context but it fails. We do not
+have to do this in the xmit thread context because that code will retry
+the same task if the initial call fails.
+
+Signed-off-by: Mike Christie <michaelc@cs.wisc.edu>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/libiscsi.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index b1a1b61..b87ca12 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -224,8 +224,6 @@ static int iscsi_prep_scsi_cmd_pdu(struct iscsi_task *task)
+ 			return rc;
+ 	} else
+ 		hdr->itt = build_itt(task->itt, session->age);
+-	hdr->cmdsn = cpu_to_be32(session->cmdsn);
+-	session->cmdsn++;
+ 	hdr->exp_statsn = cpu_to_be32(conn->exp_statsn);
+ 	cmd_len = sc->cmd_len;
+ 	if (cmd_len < ISCSI_CDB_SIZE)
+@@ -310,6 +308,8 @@ static int iscsi_prep_scsi_cmd_pdu(struct iscsi_task *task)
+ 		return -EIO;
+ 
+ 	task->state = ISCSI_TASK_RUNNING;
++	hdr->cmdsn = cpu_to_be32(session->cmdsn);
++	session->cmdsn++;
+ 	list_move_tail(&task->running, &conn->run_list);
+ 
+ 	conn->scsicmd_pdus_cnt++;
+@@ -1309,6 +1309,7 @@ int iscsi_queuecommand(struct scsi_cmnd *sc, void (*done)(struct scsi_cmnd *))
+ 			goto fault;
+ 		}
+ 		if (session->tt->xmit_task(task)) {
++			session->cmdsn--;
+ 			sc->scsi_done = NULL;
+ 			iscsi_complete_command(task);
+ 			reason = FAILURE_SESSION_NOT_READY;
+-- 
+1.6.0.2
+

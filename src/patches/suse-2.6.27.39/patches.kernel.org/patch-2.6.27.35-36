@@ -1,0 +1,224 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.36
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Makefile b/Makefile
+index 5768979..e7046ea 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .35
++EXTRAVERSION = .36
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/drivers/isdn/gigaset/bas-gigaset.c b/drivers/isdn/gigaset/bas-gigaset.c
+index fcec2df..3990eae 100644
+--- a/drivers/isdn/gigaset/bas-gigaset.c
++++ b/drivers/isdn/gigaset/bas-gigaset.c
+@@ -2140,8 +2140,16 @@ static int gigaset_initcshw(struct cardstate *cs)
+ 	struct bas_cardstate *ucs;
+ 
+ 	cs->hw.bas = ucs = kmalloc(sizeof *ucs, GFP_KERNEL);
+-	if (!ucs)
++	if (!ucs) {
++		pr_err("out of memory\n");
++		return 0;
++	}
++	ucs->int_in_buf = kmalloc(IP_MSGSIZE, GFP_KERNEL);
++	if (!ucs->int_in_buf) {
++		kfree(ucs);
++		pr_err("out of memory\n");
+ 		return 0;
++	}
+ 
+ 	ucs->urb_cmd_in = NULL;
+ 	ucs->urb_cmd_out = NULL;
+@@ -2236,12 +2244,6 @@ static int gigaset_probe(struct usb_interface *interface,
+ 		}
+ 		hostif = interface->cur_altsetting;
+ 	}
+-	ucs->int_in_buf = kmalloc(IP_MSGSIZE, GFP_KERNEL);
+-	if (!ucs->int_in_buf) {
+-		kfree(ucs);
+-		pr_err("out of memory\n");
+-		return 0;
+-	}
+ 
+ 	/* Reject application specific interfaces
+ 	 */
+diff --git a/drivers/net/enc28j60.c b/drivers/net/enc28j60.c
+index aa0bf6e..49fc60d 100644
+--- a/drivers/net/enc28j60.c
++++ b/drivers/net/enc28j60.c
+@@ -919,7 +919,7 @@ static void enc28j60_hw_rx(struct net_device *ndev)
+ 	if (netif_msg_rx_status(priv))
+ 		enc28j60_dump_rsv(priv, __FUNCTION__, next_packet, len, rxstat);
+ 
+-	if (!RSV_GETBIT(rxstat, RSV_RXOK)) {
++	if (!RSV_GETBIT(rxstat, RSV_RXOK) || len > MAX_FRAMELEN) {
+ 		if (netif_msg_rx_err(priv))
+ 			dev_err(&ndev->dev, "Rx Error (%04x)\n", rxstat);
+ 		ndev->stats.rx_errors++;
+@@ -927,6 +927,8 @@ static void enc28j60_hw_rx(struct net_device *ndev)
+ 			ndev->stats.rx_crc_errors++;
+ 		if (RSV_GETBIT(rxstat, RSV_LENCHECKERR))
+ 			ndev->stats.rx_frame_errors++;
++		if (len > MAX_FRAMELEN)
++			ndev->stats.rx_over_errors++;
+ 	} else {
+ 		skb = dev_alloc_skb(len + NET_IP_ALIGN);
+ 		if (!skb) {
+diff --git a/drivers/net/pcmcia/pcnet_cs.c b/drivers/net/pcmcia/pcnet_cs.c
+index 7d6cf02..b429a0f 100644
+--- a/drivers/net/pcmcia/pcnet_cs.c
++++ b/drivers/net/pcmcia/pcnet_cs.c
+@@ -591,7 +591,7 @@ static int pcnet_config(struct pcmcia_device *link)
+     }
+ 
+     if ((link->conf.ConfigBase == 0x03c0)
+-	&& (link->manf_id == 0x149) && (link->card_id = 0xc1ab)) {
++	&& (link->manf_id == 0x149) && (link->card_id == 0xc1ab)) {
+ 	printk(KERN_INFO "pcnet_cs: this is an AX88190 card!\n");
+ 	printk(KERN_INFO "pcnet_cs: use axnet_cs instead.\n");
+ 	goto failed;
+diff --git a/drivers/net/wireless/p54/p54usb.c b/drivers/net/wireless/p54/p54usb.c
+index bfff6b5..b97a1c9 100644
+--- a/drivers/net/wireless/p54/p54usb.c
++++ b/drivers/net/wireless/p54/p54usb.c
+@@ -63,6 +63,7 @@ static struct usb_device_id p54u_table[] __devinitdata = {
+ 	{USB_DEVICE(0x0bf8, 0x1009)},   /* FUJITSU E-5400 USB D1700*/
+ 	{USB_DEVICE(0x0cde, 0x0006)},   /* Medion MD40900 */
+ 	{USB_DEVICE(0x0cde, 0x0008)},	/* Sagem XG703A */
++	{USB_DEVICE(0x0cde, 0x0015)},	/* Zcomax XG-705A */
+ 	{USB_DEVICE(0x0d8e, 0x3762)},	/* DLink DWL-G120 Cohiba */
+ 	{USB_DEVICE(0x09aa, 0x1000)},	/* Spinnaker Proto board */
+ 	{USB_DEVICE(0x124a, 0x4025)},	/* IOGear GWU513 (GW3887IK chip) */
+diff --git a/fs/inode.c b/fs/inode.c
+index 7b2acc1..79777d9 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -590,13 +590,15 @@ void unlock_new_inode(struct inode *inode)
+ 	}
+ #endif
+ 	/*
+-	 * This is special!  We do not need the spinlock
+-	 * when clearing I_LOCK, because we're guaranteed
+-	 * that nobody else tries to do anything about the
+-	 * state of the inode when it is locked, as we
+-	 * just created it (so there can be no old holders
+-	 * that haven't tested I_LOCK).
++	 * This is special!  We do not need the spinlock when clearing I_LOCK,
++	 * because we're guaranteed that nobody else tries to do anything about
++	 * the state of the inode when it is locked, as we just created it (so
++	 * there can be no old holders that haven't tested I_LOCK).
++	 * However we must emit the memory barrier so that other CPUs reliably
++	 * see the clearing of I_LOCK after the other inode initialisation has
++	 * completed.
+ 	 */
++	smp_mb();
+ 	WARN_ON((inode->i_state & (I_LOCK|I_NEW)) != (I_LOCK|I_NEW));
+ 	inode->i_state &= ~(I_LOCK|I_NEW);
+ 	wake_up_inode(inode);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 2885674..3a08c5a 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -983,6 +983,7 @@ __attribute__((weak)) int alloc_bootmem_huge_page(struct hstate *h)
+ 				NODE_DATA(h->hugetlb_next_nid),
+ 				huge_page_size(h), huge_page_size(h), 0);
+ 
++		hstate_next_node(h);
+ 		if (addr) {
+ 			/*
+ 			 * Use the beginning of the huge page to store the
+@@ -993,7 +994,6 @@ __attribute__((weak)) int alloc_bootmem_huge_page(struct hstate *h)
+ 			if (m)
+ 				goto found;
+ 		}
+-		hstate_next_node(h);
+ 		nr_nodes--;
+ 	}
+ 	return 0;
+diff --git a/mm/memory.c b/mm/memory.c
+index 3856c36..1300b70 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2422,7 +2422,8 @@ static int do_anonymous_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		goto oom_free_page;
+ 
+ 	entry = mk_pte(page, vma->vm_page_prot);
+-	entry = maybe_mkwrite(pte_mkdirty(entry), vma);
++	if (vma->vm_flags & VM_WRITE)
++		entry = pte_mkwrite(pte_mkdirty(entry));
+ 
+ 	page_table = pte_offset_map_lock(mm, pmd, address, &ptl);
+ 	if (!pte_none(*page_table))
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d330758..8b5aa8e 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -575,9 +575,9 @@ again:			remove_next = 1 + (end > next->vm_end);
+ 
+ 	/*
+ 	 * When changing only vma->vm_end, we don't really need
+-	 * anon_vma lock: but is that case worth optimizing out?
++	 * anon_vma lock.
+ 	 */
+-	if (vma->anon_vma)
++	if (vma->anon_vma && (insert || importer || start != vma->vm_start))
+ 		anon_vma = vma->anon_vma;
+ 	if (anon_vma) {
+ 		spin_lock(&anon_vma->lock);
+diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
+index 28c7157..cd9d526 100644
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -539,7 +539,7 @@ static int ax25_setsockopt(struct socket *sock, int level, int optname,
+ 	if (level != SOL_AX25)
+ 		return -ENOPROTOOPT;
+ 
+-	if (optlen < sizeof(int))
++	if (optlen < (int)sizeof(int))
+ 		return -EINVAL;
+ 
+ 	if (get_user(opt, (int __user *)optval))
+diff --git a/net/bridge/br_netfilter.c b/net/bridge/br_netfilter.c
+index 9abd450..f908d68 100644
+--- a/net/bridge/br_netfilter.c
++++ b/net/bridge/br_netfilter.c
+@@ -358,7 +358,7 @@ static int br_nf_pre_routing_finish(struct sk_buff *skb)
+ 				},
+ 				.proto = 0,
+ 			};
+-			struct in_device *in_dev = in_dev_get(dev);
++			struct in_device *in_dev = __in_dev_get_rcu(dev);
+ 
+ 			/* If err equals -EHOSTUNREACH the error is due to a
+ 			 * martian destination or due to the fact that
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 4b50878..ade1ebd 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -1500,7 +1500,7 @@ packet_setsockopt(struct socket *sock, int level, int optname, char __user *optv
+ static int packet_getsockopt(struct socket *sock, int level, int optname,
+ 			     char __user *optval, int __user *optlen)
+ {
+-	int len;
++	unsigned int len;
+ 	int val;
+ 	struct sock *sk = sock->sk;
+ 	struct packet_sock *po = pkt_sk(sk);
+@@ -1513,7 +1513,7 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
+ 	if (get_user(len, optlen))
+ 		return -EFAULT;
+ 
+-	if (len < 0)
++	if ((int)len < 0)
+ 		return -EINVAL;
+ 
+ 	switch(optname)	{

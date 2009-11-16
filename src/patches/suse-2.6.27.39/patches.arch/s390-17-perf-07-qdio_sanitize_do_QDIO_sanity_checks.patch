@@ -1,0 +1,58 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: [PATCH] qdio: Sanitize do_QDIO sanity checks
+References: bnc#532063,LTC#55526
+
+From: Jan Glauber <jang@linux.vnet.ibm.com>
+
+Remove unneeded sanity checks from do_QDIO since this is the hot path.
+Change the type of bufnr and count to unsigned int so the check for the
+maximum value works.
+
+Reported-by: Roel Kluin <roel.kluin@gmail.com>
+Signed-off-by: Jan Glauber <jang@linux.vnet.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ arch/s390/include/asm/qdio.h |    2 +-
+ drivers/s390/cio/qdio_main.c |    9 ++-------
+ 2 files changed, 3 insertions(+), 8 deletions(-)
+
+Index: linux-sles11/arch/s390/include/asm/qdio.h
+===================================================================
+--- linux-sles11.orig/arch/s390/include/asm/qdio.h
++++ linux-sles11/arch/s390/include/asm/qdio.h
+@@ -373,7 +373,7 @@ extern int qdio_establish(struct qdio_in
+ extern int qdio_activate(struct ccw_device *);
+ 
+ extern int do_QDIO(struct ccw_device *cdev, unsigned int callflags,
+-		   int q_nr, int bufnr, int count);
++		   int q_nr, unsigned int bufnr, unsigned int count);
+ extern int qdio_cleanup(struct ccw_device*, int);
+ extern int qdio_shutdown(struct ccw_device*, int);
+ extern int qdio_free(struct ccw_device *);
+Index: linux-sles11/drivers/s390/cio/qdio_main.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/qdio_main.c
++++ linux-sles11/drivers/s390/cio/qdio_main.c
+@@ -1582,18 +1582,13 @@ out:
+  * @count: how many buffers to process
+  */
+ int do_QDIO(struct ccw_device *cdev, unsigned int callflags,
+-	    int q_nr, int bufnr, int count)
++	    int q_nr, unsigned int bufnr, unsigned int count)
+ {
+ 	struct qdio_irq *irq_ptr;
+ 
+-	if ((bufnr > QDIO_MAX_BUFFERS_PER_Q) ||
+-	    (count > QDIO_MAX_BUFFERS_PER_Q) ||
+-	    (q_nr > QDIO_MAX_QUEUES_PER_IRQ))
++	if (bufnr >= QDIO_MAX_BUFFERS_PER_Q || count > QDIO_MAX_BUFFERS_PER_Q)
+ 		return -EINVAL;
+ 
+-	if (!count)
+-		return 0;
+-
+ 	irq_ptr = cdev->private->qdio_data;
+ 	if (!irq_ptr)
+ 		return -ENODEV;

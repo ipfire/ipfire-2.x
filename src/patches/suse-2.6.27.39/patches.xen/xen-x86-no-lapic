@@ -1,0 +1,1050 @@
+From: jbeulich@novell.com
+Subject: Disallow all accesses to the local APIC page
+Patch-mainline: obsolete
+References: 191115
+
+--- sle11-2009-08-26.orig/arch/x86/kernel/Makefile	2008-12-08 13:39:19.000000000 +0100
++++ sle11-2009-08-26/arch/x86/kernel/Makefile	2009-06-04 10:47:37.000000000 +0200
+@@ -120,9 +120,11 @@ ifeq ($(CONFIG_X86_64),y)
+ 
+         obj-$(CONFIG_PCI_MMCONFIG)	+= mmconf-fam10h_64.o
+ 
++	apic_64-$(CONFIG_XEN)		+= apic_32.o
+ 	time_64-$(CONFIG_XEN)		+= time_32.o
+ endif
+ 
+-disabled-obj-$(CONFIG_XEN) := %_uv.o crash.o early-quirks.o hpet.o i8253.o \
+-	i8259.o irqinit_$(BITS).o pci-swiotlb_64.o reboot.o smpboot.o \
+-	tlb_$(BITS).o tsc.o tsc_sync.o uv_%.o vsmp_64.o
++disabled-obj-$(CONFIG_XEN) := %_uv.o crash.o early-quirks.o genapic_flat_64.o \
++	genx2apic_%.o hpet.o i8253.o i8259.o irqinit_$(BITS).o \
++	pci-swiotlb_64.o reboot.o smpboot.o tlb_$(BITS).o tsc.o tsc_sync.o \
++	uv_%.o vsmp_64.o
+--- sle11-2009-08-26.orig/arch/x86/kernel/acpi/boot.c	2009-08-26 12:03:49.000000000 +0200
++++ sle11-2009-08-26/arch/x86/kernel/acpi/boot.c	2009-08-26 12:15:28.000000000 +0200
+@@ -89,7 +89,7 @@ int acpi_sci_override_gsi __initdata;
+ int acpi_skip_timer_override __initdata;
+ int acpi_use_timer_override __initdata;
+ 
+-#ifdef CONFIG_X86_LOCAL_APIC
++#if defined(CONFIG_X86_LOCAL_APIC) && !defined(CONFIG_XEN)
+ static u64 acpi_lapic_addr __initdata = APIC_DEFAULT_PHYS_BASE;
+ #endif
+ 
+@@ -237,12 +237,14 @@ static int __init acpi_parse_madt(struct
+ 		return -ENODEV;
+ 	}
+ 
++#ifndef CONFIG_XEN
+ 	if (madt->address) {
+ 		acpi_lapic_addr = (u64) madt->address;
+ 
+ 		printk(KERN_DEBUG PREFIX "Local APIC address 0x%08x\n",
+ 		       madt->address);
+ 	}
++#endif
+ 
+ 	acpi_madt_oem_check(madt->header.oem_id, madt->header.oem_table_id);
+ 
+@@ -315,6 +317,7 @@ static int __init
+ acpi_parse_lapic_addr_ovr(struct acpi_subtable_header * header,
+ 			  const unsigned long end)
+ {
++#ifndef CONFIG_XEN
+ 	struct acpi_madt_local_apic_override *lapic_addr_ovr = NULL;
+ 
+ 	lapic_addr_ovr = (struct acpi_madt_local_apic_override *)header;
+@@ -323,6 +326,7 @@ acpi_parse_lapic_addr_ovr(struct acpi_su
+ 		return -EINVAL;
+ 
+ 	acpi_lapic_addr = lapic_addr_ovr->address;
++#endif
+ 
+ 	return 0;
+ }
+@@ -902,10 +906,12 @@ static int mp_find_ioapic(int gsi)
+ static u8 __init uniq_ioapic_id(u8 id)
+ {
+ #ifdef CONFIG_X86_32
++#ifndef CONFIG_XEN
+ 	if ((boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) &&
+ 	    !APIC_XAPIC(apic_version[boot_cpu_physical_apicid]))
+ 		return io_apic_get_unique_id(nr_ioapics, id);
+ 	else
++#endif
+ 		return id;
+ #else
+ 	int i;
+@@ -1137,7 +1143,7 @@ int mp_register_gsi(u32 gsi, int trigger
+ 
+ 	ioapic_pin = gsi - mp_ioapic_routing[ioapic].gsi_base;
+ 
+-#ifdef CONFIG_X86_32
++#if defined(CONFIG_X86_32) && !defined(CONFIG_XEN)
+ 	if (ioapic_renumber_irq)
+ 		gsi = ioapic_renumber_irq(ioapic, gsi);
+ #endif
+--- sle11-2009-08-26.orig/arch/x86/kernel/apic_32-xen.c	2009-06-04 10:21:39.000000000 +0200
++++ sle11-2009-08-26/arch/x86/kernel/apic_32-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -1,60 +1,11 @@
+ /*
+- *	Local APIC handling, local APIC timers
+- *
+- *	(c) 1999, 2000 Ingo Molnar <mingo@redhat.com>
+- *
+- *	Fixes
+- *	Maciej W. Rozycki	:	Bits for genuine 82489DX APICs;
+- *					thanks to Eric Gilmore
+- *					and Rolf G. Tews
+- *					for testing these extensively.
+- *	Maciej W. Rozycki	:	Various updates and fixes.
+- *	Mikael Pettersson	:	Power Management for UP-APIC.
+- *	Pavel Machek and
+- *	Mikael Pettersson	:	PM converted to driver model.
++ *	Local APIC handling stubs
+  */
+ 
+ #include <linux/init.h>
+-
+-#include <linux/mm.h>
+-#include <linux/delay.h>
+-#include <linux/bootmem.h>
+ #include <linux/interrupt.h>
+-#include <linux/mc146818rtc.h>
+-#include <linux/kernel_stat.h>
+-#include <linux/sysdev.h>
+-#include <linux/cpu.h>
+-#include <linux/clockchips.h>
+-#include <linux/acpi_pmtmr.h>
+-#include <linux/module.h>
+ 
+-#include <asm/atomic.h>
+ #include <asm/smp.h>
+-#include <asm/mtrr.h>
+-#include <asm/mpspec.h>
+-#include <asm/desc.h>
+-#include <asm/arch_hooks.h>
+-#include <asm/hpet.h>
+-#include <asm/i8253.h>
+-#include <asm/nmi.h>
+-
+-#include <mach_apic.h>
+-#include <mach_apicdef.h>
+-#include <mach_ipi.h>
+-
+-#include "io_ports.h"
+-
+-#ifndef CONFIG_XEN
+-/*
+- * cpu_mask that denotes the CPUs that needs timer interrupt coming in as
+- * IPIs in place of local APIC timers
+- */
+-static cpumask_t timer_bcast_ipi;
+-#endif
+-
+-/*
+- * Knob to control our willingness to enable the local APIC.
+- */
+ 
+ /*
+  * Debug level, exported for io_apic.c
+@@ -64,33 +15,32 @@ unsigned int apic_verbosity;
+ /* Have we found an MP table */
+ int smp_found_config;
+ 
+-#ifndef CONFIG_XEN
+-static int modern_apic(void)
++static int __init apic_set_verbosity(char *str)
+ {
+-	/* AMD systems use old APIC versions, so check the CPU */
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86 >= 0xf)
+-		return 1;
+-	return lapic_get_version() >= 0x14;
++	if (strcmp("debug", str) == 0)
++		apic_verbosity = APIC_DEBUG;
++	else if (strcmp("verbose", str) == 0)
++		apic_verbosity = APIC_VERBOSE;
++	return 1;
+ }
+-#endif /* !CONFIG_XEN */
+ 
+-int get_physical_broadcast(void)
+-{
+-        return 0xff;
+-}
++__setup("apic=", apic_set_verbosity);
+ 
+ int setup_profiling_timer(unsigned int multiplier)
+ {
+ 	return -EINVAL;
+ }
+ 
++#ifndef CONFIG_SMP
+ /*
+  * This initializes the IO-APIC and APIC hardware if this is
+  * a UP kernel.
+  */
+ int __init APIC_init_uniprocessor(void)
+ {
++	if (!cpu_has_apic)
++		return -1;
++
+ #ifdef CONFIG_X86_IO_APIC
+ 	if (smp_found_config)
+ 		if (!skip_ioapic_setup && nr_ioapics)
+@@ -99,3 +49,4 @@ int __init APIC_init_uniprocessor(void)
+ 
+ 	return 0;
+ }
++#endif
+--- sle11-2009-08-26.orig/arch/x86/kernel/apic_64-xen.c	2009-06-04 10:21:39.000000000 +0200
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,188 +0,0 @@
+-/*
+- *	Local APIC handling, local APIC timers
+- *
+- *	(c) 1999, 2000 Ingo Molnar <mingo@redhat.com>
+- *
+- *	Fixes
+- *	Maciej W. Rozycki	:	Bits for genuine 82489DX APICs;
+- *					thanks to Eric Gilmore
+- *					and Rolf G. Tews
+- *					for testing these extensively.
+- *	Maciej W. Rozycki	:	Various updates and fixes.
+- *	Mikael Pettersson	:	Power Management for UP-APIC.
+- *	Pavel Machek and
+- *	Mikael Pettersson	:	PM converted to driver model.
+- */
+-
+-#include <linux/init.h>
+-
+-#include <linux/mm.h>
+-#include <linux/delay.h>
+-#include <linux/bootmem.h>
+-#include <linux/interrupt.h>
+-#include <linux/mc146818rtc.h>
+-#include <linux/kernel_stat.h>
+-#include <linux/sysdev.h>
+-#include <linux/module.h>
+-
+-#include <asm/atomic.h>
+-#include <asm/smp.h>
+-#include <asm/mtrr.h>
+-#include <asm/mpspec.h>
+-#include <asm/desc.h>
+-#include <asm/arch_hooks.h>
+-#include <asm/hpet.h>
+-#include <asm/idle.h>
+-
+-int disable_apic;
+-
+-/*
+- * Debug level, exported for io_apic.c
+- */
+-unsigned int apic_verbosity;
+-
+-/* Have we found an MP table */
+-int smp_found_config;
+-
+-/*
+- * The guts of the apic timer interrupt
+- */
+-static void local_apic_timer_interrupt(void)
+-{
+-#ifndef CONFIG_XEN
+-	int cpu = smp_processor_id();
+-	struct clock_event_device *evt = &per_cpu(lapic_events, cpu);
+-
+-	/*
+-	 * Normally we should not be here till LAPIC has been initialized but
+-	 * in some cases like kdump, its possible that there is a pending LAPIC
+-	 * timer interrupt from previous kernel's context and is delivered in
+-	 * new kernel the moment interrupts are enabled.
+-	 *
+-	 * Interrupts are enabled early and LAPIC is setup much later, hence
+-	 * its possible that when we get here evt->event_handler is NULL.
+-	 * Check for event_handler being NULL and discard the interrupt as
+-	 * spurious.
+-	 */
+-	if (!evt->event_handler) {
+-		printk(KERN_WARNING
+-		       "Spurious LAPIC timer interrupt on cpu %d\n", cpu);
+-		/* Switch it off */
+-		lapic_timer_setup(CLOCK_EVT_MODE_SHUTDOWN, evt);
+-		return;
+-	}
+-#endif
+-
+-	/*
+-	 * the NMI deadlock-detector uses this.
+-	 */
+-	add_pda(apic_timer_irqs, 1);
+-
+-#ifndef CONFIG_XEN
+-	evt->event_handler(evt);
+-#endif
+-}
+-
+-/*
+- * Local APIC timer interrupt. This is the most natural way for doing
+- * local interrupts, but local timer interrupts can be emulated by
+- * broadcast interrupts too. [in case the hw doesn't support APIC timers]
+- *
+- * [ if a single-CPU system runs an SMP kernel then we call the local
+- *   interrupt as well. Thus we cannot inline the local irq ... ]
+- */
+-void smp_apic_timer_interrupt(struct pt_regs *regs)
+-{
+-	struct pt_regs *old_regs = set_irq_regs(regs);
+-
+-	/*
+-	 * NOTE! We'd better ACK the irq immediately,
+-	 * because timer handling can be slow.
+-	 */
+-	ack_APIC_irq();
+-	/*
+-	 * update_process_times() expects us to have done irq_enter().
+-	 * Besides, if we don't timer interrupts ignore the global
+-	 * interrupt lock, which is the WrongThing (tm) to do.
+-	 */
+-	exit_idle();
+-	irq_enter();
+-	local_apic_timer_interrupt();
+-	irq_exit();
+-	set_irq_regs(old_regs);
+-}
+-
+-int setup_profiling_timer(unsigned int multiplier)
+-{
+-	return -EINVAL;
+-}
+-
+-/*
+- * This initializes the IO-APIC and APIC hardware if this is
+- * a UP kernel.
+- */
+-int __init APIC_init_uniprocessor(void)
+-{
+-#ifdef CONFIG_X86_IO_APIC
+-	if (smp_found_config && !skip_ioapic_setup && nr_ioapics)
+-		setup_IO_APIC();
+-#endif
+-
+-	return 1;
+-}
+-
+-/*
+- * Local APIC interrupts
+- */
+-
+-/*
+- * This interrupt should _never_ happen with our APIC/SMP architecture
+- */
+-asmlinkage void smp_spurious_interrupt(void)
+-{
+-	unsigned int v;
+-	exit_idle();
+-	irq_enter();
+-	/*
+-	 * Check if this really is a spurious interrupt and ACK it
+-	 * if it is a vectored one.  Just in case...
+-	 * Spurious interrupts should not be ACKed.
+-	 */
+-	v = apic_read(APIC_ISR + ((SPURIOUS_APIC_VECTOR & ~0x1f) >> 1));
+-	if (v & (1 << (SPURIOUS_APIC_VECTOR & 0x1f)))
+-		ack_APIC_irq();
+-
+-	add_pda(irq_spurious_count, 1);
+-	irq_exit();
+-}
+-
+-/*
+- * This interrupt should never happen with our APIC/SMP architecture
+- */
+-asmlinkage void smp_error_interrupt(void)
+-{
+-	unsigned int v, v1;
+-
+-	exit_idle();
+-	irq_enter();
+-	/* First tickle the hardware, only then report what went on. -- REW */
+-	v = apic_read(APIC_ESR);
+-	apic_write(APIC_ESR, 0);
+-	v1 = apic_read(APIC_ESR);
+-	ack_APIC_irq();
+-	atomic_inc(&irq_err_count);
+-
+-	/* Here is what the APIC error bits mean:
+-	   0: Send CS error
+-	   1: Receive CS error
+-	   2: Send accept error
+-	   3: Receive accept error
+-	   4: Reserved
+-	   5: Send illegal vector
+-	   6: Received illegal vector
+-	   7: Illegal register address
+-	*/
+-	printk (KERN_DEBUG "APIC error on CPU%d: %02x(%02x)\n",
+-		smp_processor_id(), v , v1);
+-	irq_exit();
+-}
+--- sle11-2009-08-26.orig/arch/x86/kernel/cpu/common-xen.c	2009-02-16 17:03:24.000000000 +0100
++++ sle11-2009-08-26/arch/x86/kernel/cpu/common-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -19,10 +19,6 @@
+ #include <asm/mpspec.h>
+ #include <asm/apic.h>
+ #include <mach_apic.h>
+-#else
+-#ifdef CONFIG_XEN
+-#define phys_pkg_id(a,b) a
+-#endif
+ #endif
+ #include <asm/hypervisor.h>
+ 
+--- sle11-2009-08-26.orig/arch/x86/kernel/genapic_64-xen.c	2008-11-04 14:40:00.000000000 +0100
++++ sle11-2009-08-26/arch/x86/kernel/genapic_64-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -18,7 +18,6 @@
+ #include <linux/hardirq.h>
+ 
+ #include <asm/smp.h>
+-#include <asm/ipi.h>
+ #include <asm/genapic.h>
+ 
+ #ifdef CONFIG_ACPI
+--- sle11-2009-08-26.orig/arch/x86/kernel/genapic_xen_64.c	2009-06-04 10:47:21.000000000 +0200
++++ sle11-2009-08-26/arch/x86/kernel/genapic_xen_64.c	2009-06-04 10:47:37.000000000 +0200
+@@ -18,7 +18,6 @@
+ #include <linux/init.h>
+ #ifdef CONFIG_XEN_PRIVILEGED_GUEST
+ #include <asm/smp.h>
+-#include <asm/ipi.h>
+ #else
+ #include <asm/apic.h>
+ #endif
+@@ -78,20 +77,6 @@ static const cpumask_t *xen_target_cpus(
+ 	return &cpu_online_map;
+ }
+ 
+-static void xen_vector_allocation_domain(int cpu, cpumask_t *retmask)
+-{
+-	cpus_clear(*retmask);
+-	cpu_set(cpu, *retmask);
+-}
+-
+-/*
+- * Set up the logical destination ID.
+- * Do nothing, not called now.
+- */
+-static void xen_init_apic_ldr(void)
+-{
+-}
+-
+ static void xen_send_IPI_mask(const cpumask_t *cpumask, int vector)
+ {
+ 	xen_send_IPI_shortcut(APIC_DEST_ALLINC, cpumask, vector);
+@@ -118,17 +103,9 @@ static void xen_send_IPI_self(int vector
+ 	xen_send_IPI_shortcut(APIC_DEST_SELF, NULL, vector);
+ }
+ 
+-#ifdef CONFIG_XEN_PRIVILEGED_GUEST
+-static int xen_apic_id_registered(void)
+-{
+-	/* better be set */
+-	return physid_isset(smp_processor_id(), phys_cpu_present_map);
+-}
+-#endif
+-
+ static unsigned int xen_cpu_mask_to_apicid(const cpumask_t *cpumask)
+ {
+-	return cpus_addr(*cpumask)[0] & APIC_ALL_CPUS;
++	return cpus_addr(*cpumask)[0];
+ }
+ 
+ static unsigned int phys_pkg_id(int index_msb)
+@@ -144,13 +121,8 @@ struct genapic apic_xen =  {
+ #ifdef CONFIG_XEN_PRIVILEGED_GUEST
+ 	.int_delivery_mode = dest_LowestPrio,
+ #endif
+-	.int_dest_mode = (APIC_DEST_LOGICAL != 0),
++	.int_dest_mode = 1,
+ 	.target_cpus = xen_target_cpus,
+-	.vector_allocation_domain = xen_vector_allocation_domain,
+-#ifdef CONFIG_XEN_PRIVILEGED_GUEST
+-	.apic_id_registered = xen_apic_id_registered,
+-#endif
+-	.init_apic_ldr = xen_init_apic_ldr,
+ 	.send_IPI_all = xen_send_IPI_all,
+ 	.send_IPI_allbutself = xen_send_IPI_allbutself,
+ 	.send_IPI_mask = xen_send_IPI_mask,
+--- sle11-2009-08-26.orig/arch/x86/kernel/io_apic_32-xen.c	2008-11-25 14:37:47.000000000 +0100
++++ sle11-2009-08-26/arch/x86/kernel/io_apic_32-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -48,7 +48,6 @@
+ #include <asm/hypertransport.h>
+ 
+ #include <mach_apic.h>
+-#include <mach_apicdef.h>
+ 
+ #ifdef CONFIG_XEN
+ #include <xen/interface/xen.h>
+@@ -63,20 +62,20 @@
+ unsigned long io_apic_irqs;
+ 
+ #define clear_IO_APIC() ((void)0)
+-#endif /* CONFIG_XEN */
+-
++#else
+ int (*ioapic_renumber_irq)(int ioapic, int irq);
+ atomic_t irq_mis_count;
+ 
+-#ifndef CONFIG_XEN
+ /* Where if anywhere is the i8259 connect in external int mode */
+ static struct { int pin, apic; } ioapic_i8259 = { -1, -1 };
+-#endif
++#endif /* CONFIG_XEN */
+ 
+ static DEFINE_SPINLOCK(ioapic_lock);
+ static DEFINE_SPINLOCK(vector_lock);
+ 
++#ifndef CONFIG_XEN
+ int timer_through_8259 __initdata;
++#endif
+ 
+ /*
+  *	Is the SiS APIC rmw bug present ?
+@@ -105,7 +104,9 @@ int mp_bus_id_to_type[MAX_MP_BUSSES];
+ 
+ DECLARE_BITMAP(mp_bus_not_pci, MAX_MP_BUSSES);
+ 
++#ifndef CONFIG_XEN
+ static int disable_timer_pin_1 __initdata;
++#endif
+ 
+ /*
+  * Rough estimation of how many shared IRQs there are, can
+@@ -1177,11 +1178,13 @@ static int pin_2_irq(int idx, int apic, 
+ 			irq += nr_ioapic_registers[i++];
+ 		irq += pin;
+ 
++#ifndef CONFIG_XEN
+ 		/*
+ 		 * For MPS mode, so far only needed by ES7000 platform
+ 		 */
+ 		if (ioapic_renumber_irq)
+ 			irq = ioapic_renumber_irq(apic, irq);
++#endif
+ 	}
+ 
+ 	/*
+@@ -2933,6 +2936,7 @@ int acpi_get_override_irq(int bus_irq, i
+ 
+ #endif /* CONFIG_ACPI */
+ 
++#ifndef CONFIG_XEN
+ static int __init parse_disable_timer_pin_1(char *arg)
+ {
+ 	disable_timer_pin_1 = 1;
+@@ -2946,6 +2950,7 @@ static int __init parse_enable_timer_pin
+ 	return 0;
+ }
+ early_param("enable_timer_pin_1", parse_enable_timer_pin_1);
++#endif
+ 
+ static int __init parse_noapic(char *arg)
+ {
+--- sle11-2009-08-26.orig/arch/x86/kernel/io_apic_64-xen.c	2008-11-25 14:29:21.000000000 +0100
++++ sle11-2009-08-26/arch/x86/kernel/io_apic_64-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -78,10 +78,6 @@ char system_vectors[NR_VECTORS] = { [0 .
+ 
+ int sis_apic_bug; /* not actually supported, dummy for compile */
+ 
+-static int no_timer_check;
+-
+-static int disable_timer_pin_1 __initdata;
+-
+ #ifdef CONFIG_XEN
+ #include <xen/interface/xen.h>
+ #include <xen/interface/physdev.h>
+@@ -96,6 +92,10 @@ unsigned long io_apic_irqs;
+ 
+ #define clear_IO_APIC() ((void)0)
+ #else
++static int no_timer_check;
++
++static int disable_timer_pin_1 __initdata;
++
+ int timer_through_8259 __initdata;
+ 
+ /* Where if anywhere is the i8259 connect in external int mode */
+@@ -487,6 +487,7 @@ static int __init parse_noapic(char *str
+ }
+ early_param("noapic", parse_noapic);
+ 
++#ifndef CONFIG_XEN
+ /* Actually the next is obsolete, but keep it for paranoid reasons -AK */
+ static int __init disable_timer_pin_setup(char *arg)
+ {
+@@ -494,6 +495,7 @@ static int __init disable_timer_pin_setu
+ 	return 1;
+ }
+ __setup("disable_timer_pin_1", disable_timer_pin_setup);
++#endif
+ 
+ 
+ /*
+@@ -1820,10 +1822,6 @@ static inline void __init check_timer(vo
+ out:
+ 	local_irq_restore(flags);
+ }
+-#else
+-#define check_timer() ((void)0)
+-int timer_uses_ioapic_pin_0 = 0;
+-#endif /* !CONFIG_XEN */
+ 
+ static int __init notimercheck(char *s)
+ {
+@@ -1831,6 +1829,10 @@ static int __init notimercheck(char *s)
+ 	return 1;
+ }
+ __setup("no_timer_check", notimercheck);
++#else
++#define check_timer() ((void)0)
++int timer_uses_ioapic_pin_0 = 0;
++#endif /* !CONFIG_XEN */
+ 
+ /*
+  *
+--- sle11-2009-08-26.orig/arch/x86/kernel/irq_32-xen.c	2009-06-04 10:47:21.000000000 +0200
++++ sle11-2009-08-26/arch/x86/kernel/irq_32-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -252,7 +252,9 @@ unsigned int do_IRQ(struct pt_regs *regs
+  * Interrupt statistics:
+  */
+ 
++#ifndef CONFIG_XEN
+ atomic_t irq_err_count;
++#endif
+ 
+ /*
+  * /proc/interrupts printing:
+@@ -308,7 +310,7 @@ skip:
+ 		for_each_online_cpu(j)
+ 			seq_printf(p, "%10u ", nmi_count(j));
+ 		seq_printf(p, "  Non-maskable interrupts\n");
+-#ifdef CONFIG_X86_LOCAL_APIC
++#if defined(CONFIG_X86_LOCAL_APIC) && !defined(CONFIG_XEN)
+ 		seq_printf(p, "LOC: ");
+ 		for_each_online_cpu(j)
+ 			seq_printf(p, "%10u ",
+@@ -341,6 +343,7 @@ skip:
+ 				per_cpu(irq_stat,j).irq_thermal_count);
+ 		seq_printf(p, "  Thermal event interrupts\n");
+ #endif
++#ifndef CONFIG_XEN
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 		seq_printf(p, "SPU: ");
+ 		for_each_online_cpu(j)
+@@ -352,6 +355,7 @@ skip:
+ #if defined(CONFIG_X86_IO_APIC)
+ 		seq_printf(p, "MIS: %10u\n", atomic_read(&irq_mis_count));
+ #endif
++#endif
+ 	}
+ 	return 0;
+ }
+@@ -384,12 +388,16 @@ u64 arch_irq_stat_cpu(unsigned int cpu)
+ 
+ u64 arch_irq_stat(void)
+ {
++#ifndef CONFIG_XEN
+ 	u64 sum = atomic_read(&irq_err_count);
+ 
+ #ifdef CONFIG_X86_IO_APIC
+ 	sum += atomic_read(&irq_mis_count);
+ #endif
+ 	return sum;
++#else
++	return 0;
++#endif
+ }
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+--- sle11-2009-08-26.orig/arch/x86/kernel/irq_64-xen.c	2009-06-04 10:47:21.000000000 +0200
++++ sle11-2009-08-26/arch/x86/kernel/irq_64-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -18,7 +18,9 @@
+ #include <asm/idle.h>
+ #include <asm/smp.h>
+ 
++#ifndef CONFIG_XEN
+ atomic_t irq_err_count;
++#endif
+ 
+ /*
+  * 'what should we do if we get a hw irq event on an illegal vector'.
+@@ -27,19 +29,6 @@ atomic_t irq_err_count;
+ void ack_bad_irq(unsigned int irq)
+ {
+ 	printk(KERN_WARNING "unexpected IRQ trap at irq %02x\n", irq);
+-#ifdef CONFIG_X86_LOCAL_APIC
+-	/*
+-	 * Currently unexpected vectors happen only on SMP and APIC.
+-	 * We _must_ ack these because every local APIC has only N
+-	 * irq slots per priority level, and a 'hanging, unacked' IRQ
+-	 * holds up an irq slot - in excessive cases (when multiple
+-	 * unexpected vectors occur) that might lock up the APIC
+-	 * completely.
+-	 * But don't ack when the APIC is disabled. -AK
+-	 */
+-	if (!disable_apic)
+-		ack_APIC_irq();
+-#endif
+ }
+ 
+ #ifdef CONFIG_DEBUG_STACKOVERFLOW
+@@ -119,7 +108,7 @@ skip:
+ 		for_each_online_cpu(j)
+ 			seq_printf(p, "%10u ", cpu_pda(j)->__nmi_count);
+ 		seq_printf(p, "  Non-maskable interrupts\n");
+-#ifdef CONFIG_X86_LOCAL_APIC
++#ifndef CONFIG_XEN
+ 		seq_printf(p, "LOC: ");
+ 		for_each_online_cpu(j)
+ 			seq_printf(p, "%10u ", cpu_pda(j)->apic_timer_irqs);
+@@ -151,13 +140,13 @@ skip:
+ 			seq_printf(p, "%10u ", cpu_pda(j)->irq_threshold_count);
+ 		seq_printf(p, "  Threshold APIC interrupts\n");
+ #endif
+-#ifdef CONFIG_X86_LOCAL_APIC
++#ifndef CONFIG_XEN
+ 		seq_printf(p, "SPU: ");
+ 		for_each_online_cpu(j)
+ 			seq_printf(p, "%10u ", cpu_pda(j)->irq_spurious_count);
+ 		seq_printf(p, "  Spurious interrupts\n");
+-#endif
+ 		seq_printf(p, "ERR: %10u\n", atomic_read(&irq_err_count));
++#endif
+ 	}
+ 	return 0;
+ }
+@@ -187,7 +176,11 @@ u64 arch_irq_stat_cpu(unsigned int cpu)
+ 
+ u64 arch_irq_stat(void)
+ {
++#ifndef CONFIG_XEN
+ 	return atomic_read(&irq_err_count);
++#else
++	return 0;
++#endif
+ }
+ 
+ /*
+--- sle11-2009-08-26.orig/arch/x86/kernel/mpparse-xen.c	2009-06-04 10:21:39.000000000 +0200
++++ sle11-2009-08-26/arch/x86/kernel/mpparse-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -31,7 +31,6 @@
+ 
+ #include <mach_apic.h>
+ #ifdef CONFIG_X86_32
+-#include <mach_apicdef.h>
+ #include <mach_mpparse.h>
+ #endif
+ 
+@@ -287,7 +286,9 @@ static int __init smp_check_mpc(struct m
+ 
+ 	printk(KERN_INFO "MPTABLE: Product ID: %s\n", str);
+ 
++#ifndef CONFIG_XEN
+ 	printk(KERN_INFO "MPTABLE: APIC at: 0x%X\n", mpc->mpc_lapic);
++#endif
+ 
+ 	return 1;
+ }
+@@ -315,9 +316,11 @@ static int __init smp_read_mpc(struct mp
+ 	} else
+ 		mps_oem_check(mpc, oem, str);
+ #endif
++#ifndef CONFIG_XEN
+ 	/* save the local APIC address, it might be non-default */
+ 	if (!acpi_lapic)
+ 		mp_lapic_addr = mpc->mpc_lapic;
++#endif
+ 
+ 	if (early)
+ 		return 1;
+@@ -548,10 +551,12 @@ static inline void __init construct_defa
+ 	int linttypes[2] = { mp_ExtINT, mp_NMI };
+ 	int i;
+ 
++#ifndef CONFIG_XEN
+ 	/*
+ 	 * local APIC has default address
+ 	 */
+ 	mp_lapic_addr = APIC_DEFAULT_PHYS_BASE;
++#endif
+ 
+ 	/*
+ 	 * 2 CPUs, numbered 0 & 1.
+@@ -627,10 +632,12 @@ static void __init __get_smp_config(unsi
+ 	 */
+ 	if (mpf->mpf_feature1 != 0) {
+ 		if (early) {
++#ifndef CONFIG_XEN
+ 			/*
+ 			 * local APIC has default address
+ 			 */
+ 			mp_lapic_addr = APIC_DEFAULT_PHYS_BASE;
++#endif
+ 			return;
+ 		}
+ 
+--- sle11-2009-08-26.orig/arch/x86/kernel/setup_percpu-xen.c	2009-06-04 10:21:39.000000000 +0200
++++ sle11-2009-08-26/arch/x86/kernel/setup_percpu-xen.c	2009-08-26 12:17:43.000000000 +0200
+@@ -17,14 +17,9 @@
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+ unsigned int num_processors;
+-unsigned disabled_cpus __cpuinitdata;
+ /* Processor that is doing the boot up */
+ unsigned int boot_cpu_physical_apicid = -1U;
+-unsigned int max_physical_apicid;
+ EXPORT_SYMBOL(boot_cpu_physical_apicid);
+-
+-/* Bitmask of physically existing CPUs */
+-physid_mask_t phys_cpu_present_map;
+ #endif
+ 
+ /* map cpu index to physical APIC ID */
+--- sle11-2009-08-26.orig/arch/x86/kernel/traps_64-xen.c	2008-12-08 13:39:19.000000000 +0100
++++ sle11-2009-08-26/arch/x86/kernel/traps_64-xen.c	2009-06-04 10:47:37.000000000 +0200
+@@ -1174,15 +1174,15 @@ asmlinkage void do_spurious_interrupt_bu
+ {
+ }
+ 
+-#if 0
++#ifndef CONFIG_XEN
+ asmlinkage void __attribute__((weak)) smp_thermal_interrupt(void)
+ {
+ }
+-#endif
+ 
+ asmlinkage void __attribute__((weak)) mce_threshold_interrupt(void)
+ {
+ }
++#endif
+ 
+ /*
+  * 'math_state_restore()' saves the current math information in the
+--- sle11-2009-08-26.orig/drivers/xen/core/smpboot.c	2009-06-04 10:47:28.000000000 +0200
++++ sle11-2009-08-26/drivers/xen/core/smpboot.c	2009-06-04 10:47:37.000000000 +0200
+@@ -346,7 +346,7 @@ void __init smp_prepare_cpus(unsigned in
+ 	 * Here we can be sure that there is an IO-APIC in the system. Let's
+ 	 * go and set it up:
+ 	 */
+-	if (!skip_ioapic_setup && nr_ioapics)
++	if (cpu_has_apic && !skip_ioapic_setup && nr_ioapics)
+ 		setup_IO_APIC();
+ #endif
+ }
+--- sle11-2009-08-26.orig/include/asm-x86/apic.h	2008-12-01 11:11:08.000000000 +0100
++++ sle11-2009-08-26/include/asm-x86/apic.h	2009-06-04 10:47:37.000000000 +0200
+@@ -5,7 +5,9 @@
+ #include <linux/delay.h>
+ 
+ #include <asm/alternative.h>
++#ifndef CONFIG_XEN
+ #include <asm/fixmap.h>
++#endif
+ #include <asm/apicdef.h>
+ #include <asm/processor.h>
+ #include <asm/system.h>
+@@ -40,6 +42,7 @@ extern void generic_apic_probe(void);
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 
+ extern unsigned int apic_verbosity;
++#ifndef CONFIG_XEN
+ extern int local_apic_timer_c2_ok;
+ 
+ extern int ioapic_force;
+@@ -149,6 +152,7 @@ static inline void ack_APIC_irq(void)
+ 	/* Docs say use 0 for future compatibility */
+ 	apic_write(APIC_EOI, 0);
+ }
++#endif
+ 
+ extern int lapic_get_maxlvt(void);
+ extern void clear_local_APIC(void);
+--- sle11-2009-08-26.orig/include/asm-x86/apicdef.h	2009-08-26 11:46:28.000000000 +0200
++++ sle11-2009-08-26/include/asm-x86/apicdef.h	2009-06-04 10:47:37.000000000 +0200
+@@ -1,6 +1,8 @@
+ #ifndef _ASM_X86_APICDEF_H
+ #define _ASM_X86_APICDEF_H
+ 
++#ifndef CONFIG_XEN
++
+ /*
+  * Constants for various Intel APICs. (local APIC, IOAPIC, etc.)
+  *
+@@ -132,6 +134,16 @@
+ #define APIC_BASE_MSR	0x800
+ #define X2APIC_ENABLE	(1UL << 10)
+ 
++#else /* CONFIG_XEN */
++
++enum {
++	APIC_DEST_ALLBUT = 0x1,
++	APIC_DEST_SELF,
++	APIC_DEST_ALLINC
++};
++
++#endif /* CONFIG_XEN */
++
+ #ifdef CONFIG_X86_32
+ # define MAX_IO_APICS 64
+ #else
+@@ -139,6 +151,8 @@
+ # define MAX_LOCAL_APIC 32768
+ #endif
+ 
++#ifndef CONFIG_XEN
++
+ /*
+  * All x86-64 systems are xAPIC compatible.
+  * In the following, "apicid" is a physical APIC ID.
+@@ -409,6 +423,8 @@ struct local_apic {
+ 
+ #undef u32
+ 
++#endif /* CONFIG_XEN */
++
+ #ifdef CONFIG_X86_32
+  #define BAD_APICID 0xFFu
+ #else
+--- sle11-2009-08-26.orig/include/asm-x86/ipi.h	2009-08-26 11:46:28.000000000 +0200
++++ sle11-2009-08-26/include/asm-x86/ipi.h	2009-06-04 10:47:37.000000000 +0200
+@@ -1,6 +1,8 @@
+ #ifndef __ASM_IPI_H
+ #define __ASM_IPI_H
+ 
++#ifndef CONFIG_XEN
++
+ /*
+  * Copyright 2004 James Cleverdon, IBM.
+  * Subject to the GNU Public License, v.2
+@@ -151,4 +153,6 @@ static inline void send_IPI_mask_allbuts
+ 	local_irq_restore(flags);
+ }
+ 
++#endif /* CONFIG_XEN */
++
+ #endif /* __ASM_IPI_H */
+--- sle11-2009-08-26.orig/include/asm-x86/mach-xen/asm/fixmap_32.h	2009-06-04 10:21:39.000000000 +0200
++++ sle11-2009-08-26/include/asm-x86/mach-xen/asm/fixmap_32.h	2009-06-04 10:47:37.000000000 +0200
+@@ -55,10 +55,10 @@ enum fixed_addresses {
+ 	FIX_VDSO,
+ 	FIX_DBGP_BASE,
+ 	FIX_EARLYCON_MEM_BASE,
++#ifndef CONFIG_XEN
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	FIX_APIC_BASE,	/* local (CPU) APIC) -- required for SMP or not */
+ #endif
+-#ifndef CONFIG_XEN
+ #ifdef CONFIG_X86_IO_APIC
+ 	FIX_IO_APIC_BASE_0,
+ 	FIX_IO_APIC_BASE_END = FIX_IO_APIC_BASE_0 + MAX_IO_APICS-1,
+--- sle11-2009-08-26.orig/include/asm-x86/mach-xen/asm/fixmap_64.h	2009-06-04 10:21:39.000000000 +0200
++++ sle11-2009-08-26/include/asm-x86/mach-xen/asm/fixmap_64.h	2009-06-04 10:47:37.000000000 +0200
+@@ -13,7 +13,6 @@
+ 
+ #include <linux/kernel.h>
+ #include <asm/acpi.h>
+-#include <asm/apicdef.h>
+ #include <asm/page.h>
+ #include <asm/vsyscall.h>
+ #include <asm/efi.h>
+@@ -41,10 +40,8 @@ enum fixed_addresses {
+ 	VSYSCALL_HPET,
+ 	FIX_DBGP_BASE,
+ 	FIX_EARLYCON_MEM_BASE,
+-#ifdef CONFIG_X86_LOCAL_APIC
+-	FIX_APIC_BASE,	/* local (CPU) APIC) -- required for SMP or not */
+-#endif
+ #ifndef CONFIG_XEN
++	FIX_APIC_BASE,	/* local (CPU) APIC) -- required for SMP or not */
+ 	FIX_IO_APIC_BASE_0,
+ 	FIX_IO_APIC_BASE_END = FIX_IO_APIC_BASE_0 + MAX_IO_APICS - 1,
+ #endif
+--- sle11-2009-08-26.orig/include/asm-x86/mach-xen/asm/smp.h	2008-11-04 14:07:28.000000000 +0100
++++ sle11-2009-08-26/include/asm-x86/mach-xen/asm/smp.h	2009-06-04 10:47:37.000000000 +0200
+@@ -16,7 +16,7 @@
+ # endif
+ #endif
+ #include <asm/pda.h>
+-#include <asm/thread_info.h>
++#include <linux/thread_info.h>
+ 
+ #define cpu_callout_map cpu_possible_map
+ extern cpumask_t cpu_initialized;
+@@ -178,7 +178,7 @@ DECLARE_PER_CPU(int, cpu_number);
+ #define stack_smp_processor_id() 	0
+ #endif
+ 
+-#ifdef CONFIG_X86_LOCAL_APIC
++#if defined(CONFIG_X86_LOCAL_APIC) && !defined(CONFIG_XEN)
+ 
+ static inline int logical_smp_processor_id(void)
+ {
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ sle11-2009-08-26/include/asm-x86/mach-xen/mach_apic.h	2009-06-04 10:47:37.000000000 +0200
+@@ -0,0 +1,54 @@
++#ifndef __ASM_MACH_APIC_H
++#define __ASM_MACH_APIC_H
++
++#include <asm/smp.h>
++
++#ifdef CONFIG_X86_64
++
++#include <asm/genapic.h>
++#define INT_DELIVERY_MODE (genapic->int_delivery_mode)
++#define INT_DEST_MODE (genapic->int_dest_mode)
++#define TARGET_CPUS	  (genapic->target_cpus())
++#define cpu_mask_to_apicid (genapic->cpu_mask_to_apicid)
++#define phys_pkg_id	(genapic->phys_pkg_id)
++#define send_IPI_self (genapic->send_IPI_self)
++extern void setup_apic_routing(void);
++
++#else
++
++#ifdef CONFIG_SMP
++#define TARGET_CPUS cpu_online_map
++#else
++#define TARGET_CPUS cpumask_of_cpu(0)
++#endif
++
++#define INT_DELIVERY_MODE dest_LowestPrio
++#define INT_DEST_MODE 1
++
++static inline u32 phys_pkg_id(u32 cpuid_apic, int index_msb)
++{
++	return cpuid_apic;
++}
++
++static inline void setup_apic_routing(void)
++{
++}
++
++static inline int multi_timer_check(int apic, int irq)
++{
++	return 0;
++}
++
++static inline int apicid_to_node(int logical_apicid)
++{
++	return 0;
++}
++
++static inline unsigned int cpu_mask_to_apicid(cpumask_t cpumask)
++{
++	return cpus_addr(cpumask)[0];
++}
++
++#endif /* CONFIG_X86_64 */
++
++#endif /* __ASM_MACH_APIC_H */

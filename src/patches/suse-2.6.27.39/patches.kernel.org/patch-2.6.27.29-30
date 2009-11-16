@@ -1,0 +1,983 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.30
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Makefile b/Makefile
+index 47d46f4..0eef388 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .29
++EXTRAVERSION = .30
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/parisc/kernel/cache.c b/arch/parisc/kernel/cache.c
+index 5259d8c..5d8fa67 100644
+--- a/arch/parisc/kernel/cache.c
++++ b/arch/parisc/kernel/cache.c
+@@ -398,12 +398,13 @@ EXPORT_SYMBOL(flush_kernel_icache_range_asm);
+ 
+ void clear_user_page_asm(void *page, unsigned long vaddr)
+ {
++	unsigned long flags;
+ 	/* This function is implemented in assembly in pacache.S */
+ 	extern void __clear_user_page_asm(void *page, unsigned long vaddr);
+ 
+-	purge_tlb_start();
++	purge_tlb_start(flags);
+ 	__clear_user_page_asm(page, vaddr);
+-	purge_tlb_end();
++	purge_tlb_end(flags);
+ }
+ 
+ #define FLUSH_THRESHOLD 0x80000 /* 0.5MB */
+@@ -444,20 +445,24 @@ extern void clear_user_page_asm(void *page, unsigned long vaddr);
+ 
+ void clear_user_page(void *page, unsigned long vaddr, struct page *pg)
+ {
++	unsigned long flags;
++
+ 	purge_kernel_dcache_page((unsigned long)page);
+-	purge_tlb_start();
++	purge_tlb_start(flags);
+ 	pdtlb_kernel(page);
+-	purge_tlb_end();
++	purge_tlb_end(flags);
+ 	clear_user_page_asm(page, vaddr);
+ }
+ EXPORT_SYMBOL(clear_user_page);
+ 
+ void flush_kernel_dcache_page_addr(void *addr)
+ {
++	unsigned long flags;
++
+ 	flush_kernel_dcache_page_asm(addr);
+-	purge_tlb_start();
++	purge_tlb_start(flags);
+ 	pdtlb_kernel(addr);
+-	purge_tlb_end();
++	purge_tlb_end(flags);
+ }
+ EXPORT_SYMBOL(flush_kernel_dcache_page_addr);
+ 
+@@ -490,8 +495,10 @@ void __flush_tlb_range(unsigned long sid, unsigned long start,
+ 	if (npages >= 512)  /* 2MB of space: arbitrary, should be tuned */
+ 		flush_tlb_all();
+ 	else {
++		unsigned long flags;
++
+ 		mtsp(sid, 1);
+-		purge_tlb_start();
++		purge_tlb_start(flags);
+ 		if (split_tlb) {
+ 			while (npages--) {
+ 				pdtlb(start);
+@@ -504,7 +511,7 @@ void __flush_tlb_range(unsigned long sid, unsigned long start,
+ 				start += PAGE_SIZE;
+ 			}
+ 		}
+-		purge_tlb_end();
++		purge_tlb_end(flags);
+ 	}
+ }
+ 
+diff --git a/arch/parisc/kernel/pci-dma.c b/arch/parisc/kernel/pci-dma.c
+index ccd61b9..6cc0be1 100644
+--- a/arch/parisc/kernel/pci-dma.c
++++ b/arch/parisc/kernel/pci-dma.c
+@@ -90,12 +90,14 @@ static inline int map_pte_uncached(pte_t * pte,
+ 	if (end > PMD_SIZE)
+ 		end = PMD_SIZE;
+ 	do {
++		unsigned long flags;
++
+ 		if (!pte_none(*pte))
+ 			printk(KERN_ERR "map_pte_uncached: page already exists\n");
+ 		set_pte(pte, __mk_pte(*paddr_ptr, PAGE_KERNEL_UNC));
+-		purge_tlb_start();
++		purge_tlb_start(flags);
+ 		pdtlb_kernel(orig_vaddr);
+-		purge_tlb_end();
++		purge_tlb_end(flags);
+ 		vaddr += PAGE_SIZE;
+ 		orig_vaddr += PAGE_SIZE;
+ 		(*paddr_ptr) += PAGE_SIZE;
+@@ -168,11 +170,13 @@ static inline void unmap_uncached_pte(pmd_t * pmd, unsigned long vaddr,
+ 	if (end > PMD_SIZE)
+ 		end = PMD_SIZE;
+ 	do {
++		unsigned long flags;
++
+ 		pte_t page = *pte;
+ 		pte_clear(&init_mm, vaddr, pte);
+-		purge_tlb_start();
++		purge_tlb_start(flags);
+ 		pdtlb_kernel(orig_vaddr);
+-		purge_tlb_end();
++		purge_tlb_end(flags);
+ 		vaddr += PAGE_SIZE;
+ 		orig_vaddr += PAGE_SIZE;
+ 		pte++;
+diff --git a/arch/x86/kernel/pci-gart_64.c b/arch/x86/kernel/pci-gart_64.c
+index be33a54..eed133e 100644
+--- a/arch/x86/kernel/pci-gart_64.c
++++ b/arch/x86/kernel/pci-gart_64.c
+@@ -658,8 +658,6 @@ static __init int init_k8_gatt(struct agp_kern_info *info)
+ 	memset(gatt, 0, gatt_size);
+ 	agp_gatt_table = gatt;
+ 
+-	enable_gart_translations();
+-
+ 	error = sysdev_class_register(&gart_sysdev_class);
+ 	if (!error)
+ 		error = sysdev_register(&device_gart);
+@@ -828,6 +826,14 @@ void __init gart_iommu_init(void)
+ 	wbinvd();
+ 
+ 	/*
++	 * Now all caches are flushed and we can safely enable
++	 * GART hardware.  Doing it early leaves the possibility
++	 * of stale cache entries that can lead to GART PTE
++	 * errors.
++	 */
++	enable_gart_translations();
++
++	/*
+ 	 * Try to workaround a bug (thanks to BenH):
+ 	 * Set unmapped entries to a scratch page instead of 0.
+ 	 * Any prefetches that hit unmapped entries won't get an bus abort
+diff --git a/block/Kconfig b/block/Kconfig
+index 1ab7c15..150e21d 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -67,9 +67,9 @@ config LSF
+ 	  If unsure, say Y.
+ 
+ config BLK_DEV_BSG
+-	bool "Block layer SG support v4 (EXPERIMENTAL)"
+-	depends on EXPERIMENTAL
+-	---help---
++	bool "Block layer SG support v4"
++	default y
++	help
+ 	  Saying Y here will enable generic SG (SCSI generic) v4 support
+ 	  for any block device.
+ 
+@@ -79,7 +79,10 @@ config BLK_DEV_BSG
+ 	  protocols (e.g. Task Management Functions and SMP in Serial
+ 	  Attached SCSI).
+ 
+-	  If unsure, say N.
++	  This option is required by recent UDEV versions to properly
++	  access device serial numbers, etc.
++
++	  If unsure, say Y.
+ 
+ config BLK_DEV_INTEGRITY
+ 	bool "Block layer data integrity support"
+diff --git a/drivers/firewire/fw-sbp2.c b/drivers/firewire/fw-sbp2.c
+index 716370c..e56f805 100644
+--- a/drivers/firewire/fw-sbp2.c
++++ b/drivers/firewire/fw-sbp2.c
+@@ -188,6 +188,12 @@ struct sbp2_target {
+ #define SBP2_RETRY_LIMIT		0xf		/* 15 retries */
+ #define SBP2_CYCLE_LIMIT		(0xc8 << 12)	/* 200 125us cycles */
+ 
++/*
++ * There is no transport protocol limit to the CDB length,  but we implement
++ * a fixed length only.  16 bytes is enough for disks larger than 2 TB.
++ */
++#define SBP2_MAX_CDB_SIZE		16
++
+ /* Unit directory keys */
+ #define SBP2_CSR_UNIT_CHARACTERISTICS	0x3a
+ #define SBP2_CSR_FIRMWARE_REVISION	0x3c
+@@ -293,7 +299,7 @@ struct sbp2_command_orb {
+ 		struct sbp2_pointer next;
+ 		struct sbp2_pointer data_descriptor;
+ 		__be32 misc;
+-		u8 command_block[12];
++		u8 command_block[SBP2_MAX_CDB_SIZE];
+ 	} request;
+ 	struct scsi_cmnd *cmd;
+ 	scsi_done_fn_t done;
+@@ -1159,6 +1165,8 @@ static int sbp2_probe(struct device *dev)
+ 	if (fw_device_enable_phys_dma(device) < 0)
+ 		goto fail_shost_put;
+ 
++	shost->max_cmd_len = SBP2_MAX_CDB_SIZE;
++
+ 	if (scsi_add_host(shost, &unit->device) < 0)
+ 		goto fail_shost_put;
+ 
+diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
+index d1b4985..fa72f5f 100644
+--- a/drivers/hwmon/smsc47m1.c
++++ b/drivers/hwmon/smsc47m1.c
+@@ -85,6 +85,7 @@ superio_exit(void)
+ #define SUPERIO_REG_ACT		0x30
+ #define SUPERIO_REG_BASE	0x60
+ #define SUPERIO_REG_DEVID	0x20
++#define SUPERIO_REG_DEVREV	0x21
+ 
+ /* Logical device registers */
+ 
+@@ -428,6 +429,9 @@ static int __init smsc47m1_find(unsigned short *addr,
+ 	 * The LPC47M292 (device id 0x6B) is somewhat compatible, but it
+ 	 * supports a 3rd fan, and the pin configuration registers are
+ 	 * unfortunately different.
++	 * The LPC47M233 has the same device id (0x6B) but is not compatible.
++	 * We check the high bit of the device revision register to
++	 * differentiate them.
+ 	 */
+ 	switch (val) {
+ 	case 0x51:
+@@ -447,6 +451,13 @@ static int __init smsc47m1_find(unsigned short *addr,
+ 		sio_data->type = smsc47m1;
+ 		break;
+ 	case 0x6B:
++		if (superio_inb(SUPERIO_REG_DEVREV) & 0x80) {
++			pr_debug(DRVNAME ": "
++				 "Found SMSC LPC47M233, unsupported\n");
++			superio_exit();
++			return -ENODEV;
++		}
++
+ 		pr_info(DRVNAME ": Found SMSC LPC47M292\n");
+ 		sio_data->type = smsc47m2;
+ 		break;
+diff --git a/drivers/i2c/chips/tsl2550.c b/drivers/i2c/chips/tsl2550.c
+index 1a9cc13..b96f302 100644
+--- a/drivers/i2c/chips/tsl2550.c
++++ b/drivers/i2c/chips/tsl2550.c
+@@ -27,7 +27,7 @@
+ #include <linux/delay.h>
+ 
+ #define TSL2550_DRV_NAME	"tsl2550"
+-#define DRIVER_VERSION		"1.1.1"
++#define DRIVER_VERSION		"1.1.2"
+ 
+ /*
+  * Defines
+@@ -189,13 +189,16 @@ static int tsl2550_calculate_lux(u8 ch0, u8 ch1)
+ 	u8 r = 128;
+ 
+ 	/* Avoid division by 0 and count 1 cannot be greater than count 0 */
+-	if (c0 && (c1 <= c0))
+-		r = c1 * 128 / c0;
++	if (c1 <= c0)
++		if (c0) {
++			r = c1 * 128 / c0;
++
++			/* Calculate LUX */
++			lux = ((c0 - c1) * ratio_lut[r]) / 256;
++		} else
++			lux = 0;
+ 	else
+-		return -1;
+-
+-	/* Calculate LUX */
+-	lux = ((c0 - c1) * ratio_lut[r]) / 256;
++		return -EAGAIN;
+ 
+ 	/* LUX range check */
+ 	return lux > TSL2550_MAX_LUX ? TSL2550_MAX_LUX : lux;
+diff --git a/drivers/ieee1394/sbp2.c b/drivers/ieee1394/sbp2.c
+index 0c0fdbb..e21c2d5 100644
+--- a/drivers/ieee1394/sbp2.c
++++ b/drivers/ieee1394/sbp2.c
+@@ -874,6 +874,7 @@ static struct sbp2_lu *sbp2_alloc_device(struct unit_directory *ud)
+ 	}
+ 
+ 	shost->hostdata[0] = (unsigned long)lu;
++	shost->max_cmd_len = SBP2_MAX_CDB_SIZE;
+ 
+ 	if (!scsi_add_host(shost, &ud->device)) {
+ 		lu->shost = shost;
+diff --git a/drivers/ieee1394/sbp2.h b/drivers/ieee1394/sbp2.h
+index 875428b..e547b16 100644
+--- a/drivers/ieee1394/sbp2.h
++++ b/drivers/ieee1394/sbp2.h
+@@ -25,6 +25,12 @@
+ #define SBP2_DEVICE_NAME		"sbp2"
+ 
+ /*
++ * There is no transport protocol limit to the CDB length,  but we implement
++ * a fixed length only.  16 bytes is enough for disks larger than 2 TB.
++ */
++#define SBP2_MAX_CDB_SIZE		16
++
++/*
+  * SBP-2 specific definitions
+  */
+ 
+@@ -51,7 +57,7 @@ struct sbp2_command_orb {
+ 	u32 data_descriptor_hi;
+ 	u32 data_descriptor_lo;
+ 	u32 misc;
+-	u8 cdb[12];
++	u8 cdb[SBP2_MAX_CDB_SIZE];
+ } __attribute__((packed));
+ 
+ #define SBP2_LOGIN_REQUEST		0x0
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index a726f3b..52174d9 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -321,6 +321,7 @@ config THINKPAD_ACPI_DOCK
+ 	bool "Legacy Docking Station Support"
+ 	depends on THINKPAD_ACPI
+ 	depends on ACPI_DOCK=n
++	depends on BROKEN
+ 	default n
+ 	---help---
+ 	  Allows the thinkpad_acpi driver to handle docking station events.
+@@ -334,7 +335,8 @@ config THINKPAD_ACPI_DOCK
+ config THINKPAD_ACPI_BAY
+ 	bool "Legacy Removable Bay Support"
+ 	depends on THINKPAD_ACPI
+-	default y
++	depends on BROKEN
++	default n
+ 	---help---
+ 	  Allows the thinkpad_acpi driver to handle removable bays.  It will
+ 	  electrically disable the device in the bay, and also generate
+diff --git a/drivers/net/usb/asix.c b/drivers/net/usb/asix.c
+index 375a0bd..ec4204a 100644
+--- a/drivers/net/usb/asix.c
++++ b/drivers/net/usb/asix.c
+@@ -1456,6 +1456,14 @@ static const struct usb_device_id	products [] = {
+ 	// ASIX 88772a
+ 	USB_DEVICE(0x0db0, 0xa877),
+ 	.driver_info = (unsigned long) &ax88772_info,
++}, {
++	// ABOCOM for pci
++	USB_DEVICE(0x14ea, 0xab11),
++	.driver_info = (unsigned long) &ax88178_info,
++}, {
++	// ASIX 88772a
++	USB_DEVICE(0x0db0, 0xa877),
++	.driver_info = (unsigned long) &ax88772_info,
+ },
+ 	{ },		// END
+ };
+diff --git a/drivers/scsi/libsas/sas_port.c b/drivers/scsi/libsas/sas_port.c
+index 139935a..ad02d57 100644
+--- a/drivers/scsi/libsas/sas_port.c
++++ b/drivers/scsi/libsas/sas_port.c
+@@ -56,7 +56,7 @@ static void sas_form_port(struct asd_sas_phy *phy)
+ 		}
+ 	}
+ 
+-	/* find a port */
++	/* see if the phy should be part of a wide port */
+ 	spin_lock_irqsave(&sas_ha->phy_port_lock, flags);
+ 	for (i = 0; i < sas_ha->num_phys; i++) {
+ 		port = sas_ha->sas_port[i];
+@@ -69,12 +69,23 @@ static void sas_form_port(struct asd_sas_phy *phy)
+ 			SAS_DPRINTK("phy%d matched wide port%d\n", phy->id,
+ 				    port->id);
+ 			break;
+-		} else if (*(u64 *) port->sas_addr == 0 && port->num_phys==0) {
+-			memcpy(port->sas_addr, phy->sas_addr, SAS_ADDR_SIZE);
+-			break;
+ 		}
+ 		spin_unlock(&port->phy_list_lock);
+ 	}
++	/* The phy does not match any existing port, create a new one */
++	if (i == sas_ha->num_phys) {
++		for (i = 0; i < sas_ha->num_phys; i++) {
++			port = sas_ha->sas_port[i];
++			spin_lock(&port->phy_list_lock);
++			if (*(u64 *)port->sas_addr == 0
++				&& port->num_phys == 0) {
++				memcpy(port->sas_addr, phy->sas_addr,
++					SAS_ADDR_SIZE);
++				break;
++			}
++			spin_unlock(&port->phy_list_lock);
++		}
++	}
+ 
+ 	if (i >= sas_ha->num_phys) {
+ 		printk(KERN_NOTICE "%s: couldn't find a free port, bug?\n",
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 1ff88af..33b2935 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -579,7 +579,7 @@ static int usbdev_open(struct inode *inode, struct file *file)
+ 	if (!ps)
+ 		goto out;
+ 
+-	ret = -ENOENT;
++	ret = -ENODEV;
+ 
+ 	/* usbdev device-node */
+ 	if (imajor(inode) == USB_DEVICE_MAJOR)
+@@ -1305,7 +1305,8 @@ static int get_urb32(struct usbdevfs_urb *kurb,
+ 		     struct usbdevfs_urb32 __user *uurb)
+ {
+ 	__u32  uptr;
+-	if (get_user(kurb->type, &uurb->type) ||
++	if (!access_ok(VERIFY_READ, uurb, sizeof(*uurb)) ||
++	    __get_user(kurb->type, &uurb->type) ||
+ 	    __get_user(kurb->endpoint, &uurb->endpoint) ||
+ 	    __get_user(kurb->status, &uurb->status) ||
+ 	    __get_user(kurb->flags, &uurb->flags) ||
+@@ -1522,8 +1523,9 @@ static int proc_ioctl_compat(struct dev_state *ps, compat_uptr_t arg)
+ 	u32 udata;
+ 
+ 	uioc = compat_ptr((long)arg);
+-	if (get_user(ctrl.ifno, &uioc->ifno) ||
+-	    get_user(ctrl.ioctl_code, &uioc->ioctl_code) ||
++	if (!access_ok(VERIFY_READ, uioc, sizeof(*uioc)) ||
++	    __get_user(ctrl.ifno, &uioc->ifno) ||
++	    __get_user(ctrl.ioctl_code, &uioc->ioctl_code) ||
+ 	    __get_user(udata, &uioc->data))
+ 		return -EFAULT;
+ 	ctrl.data = compat_ptr(udata);
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index 13b34bc..c3089c9 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -663,6 +663,9 @@ static struct usb_device_id id_table_combined [] = {
+ 	{ USB_DEVICE(ADI_VID, ADI_GNICE_PID),
+ 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+ 	{ USB_DEVICE(JETI_VID, JETI_SPC1201_PID) },
++	{ USB_DEVICE(BAYER_VID, BAYER_CONTOUR_CABLE_PID) },
++	{ USB_DEVICE(FTDI_VID, MARVELL_OPENRD_PID),
++		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+ 	{ },					/* Optional parameter entry */
+ 	{ }					/* Terminating entry */
+ };
+diff --git a/drivers/usb/serial/ftdi_sio.h b/drivers/usb/serial/ftdi_sio.h
+index 3425122..c1a6be7 100644
+--- a/drivers/usb/serial/ftdi_sio.h
++++ b/drivers/usb/serial/ftdi_sio.h
+@@ -897,6 +897,20 @@
+ #define JETI_SPC1201_PID	0x04b2
+ 
+ /*
++ * Bayer Ascensia Contour blood glucose meter USB-converter cable.
++ * http://winglucofacts.com/cables/
++ */
++#define BAYER_VID                      0x1A79
++#define BAYER_CONTOUR_CABLE_PID        0x6001
++
++/*
++ * Marvell OpenRD Base, Client
++ * http://www.open-rd.org
++ * OpenRD Base, Client use VID 0x0403
++ */
++#define MARVELL_OPENRD_PID	0x9e90
++
++/*
+  *   BmRequestType:  1100 0000b
+  *   bRequest:       FTDI_E2_READ
+  *   wValue:         0
+diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
+index 861e308..5d4f9d6 100644
+--- a/drivers/usb/storage/transport.c
++++ b/drivers/usb/storage/transport.c
+@@ -961,7 +961,7 @@ int usb_stor_Bulk_max_lun(struct us_data *us)
+ 				 US_BULK_GET_MAX_LUN, 
+ 				 USB_DIR_IN | USB_TYPE_CLASS | 
+ 				 USB_RECIP_INTERFACE,
+-				 0, us->ifnum, us->iobuf, 1, HZ);
++				 0, us->ifnum, us->iobuf, 1, 10*HZ);
+ 
+ 	US_DEBUGP("GetMaxLUN command result is %d, data is %d\n", 
+ 		  result, us->iobuf[0]);
+diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
+index 65115a5..17e9626 100644
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -989,6 +989,13 @@ UNUSUAL_DEV( 0x066f, 0x8000, 0x0001, 0x0001,
+ 		US_SC_DEVICE, US_PR_DEVICE, NULL,
+ 		US_FL_FIX_CAPACITY ),
+ 
++/* Reported by Rogerio Brito <rbrito@ime.usp.br> */
++UNUSUAL_DEV( 0x067b, 0x2317, 0x0001, 0x001,
++		"Prolific Technology, Inc.",
++		"Mass Storage Device",
++		US_SC_DEVICE, US_PR_DEVICE, NULL,
++		US_FL_NOT_LOCKABLE ),
++
+ /* Reported by Richard -=[]=- <micro_flyer@hotmail.com> */
+ /* Change to bcdDeviceMin (0x0100 to 0x0001) reported by
+  * Thomas Bartosik <tbartdev@gmx-topmail.de> */
+diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+index dfc0197..25200e6 100644
+--- a/fs/binfmt_flat.c
++++ b/fs/binfmt_flat.c
+@@ -824,15 +824,22 @@ static int load_flat_shared_library(int id, struct lib_info *libs)
+ 	if (IS_ERR(bprm.file))
+ 		return res;
+ 
++	bprm.cred = prepare_exec_creds();
++	res = -ENOMEM;
++	if (!bprm.cred)
++		goto out;
++
+ 	res = prepare_binprm(&bprm);
+ 
+ 	if (res <= (unsigned long)-4096)
+ 		res = load_flat_file(&bprm, libs, id, NULL);
+-	if (bprm.file) {
+-		allow_write_access(bprm.file);
+-		fput(bprm.file);
+-		bprm.file = NULL;
+-	}
++
++	abort_creds(bprm.cred);
++
++out:
++	allow_write_access(bprm.file);
++	fput(bprm.file);
++
+ 	return(res);
+ }
+ 
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 61cb48f..994ca87 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -1910,6 +1910,7 @@ COMPATIBLE_IOCTL(FIONCLEX)
+ COMPATIBLE_IOCTL(FIOASYNC)
+ COMPATIBLE_IOCTL(FIONBIO)
+ COMPATIBLE_IOCTL(FIONREAD)  /* This is also TIOCINQ */
++COMPATIBLE_IOCTL(FS_IOC_FIEMAP)
+ /* 0x00 */
+ COMPATIBLE_IOCTL(FIBMAP)
+ COMPATIBLE_IOCTL(FIGETBSZ)
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 08f6b04..630feb3 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -255,7 +255,7 @@ static void nfs_direct_read_release(void *calldata)
+ 
+ 	if (put_dreq(dreq))
+ 		nfs_direct_complete(dreq);
+-	nfs_readdata_release(calldata);
++	nfs_readdata_free(data);
+ }
+ 
+ static const struct rpc_call_ops nfs_read_direct_ops = {
+@@ -311,14 +311,14 @@ static ssize_t nfs_direct_read_schedule_segment(struct nfs_direct_req *dreq,
+ 					data->npages, 1, 0, data->pagevec, NULL);
+ 		up_read(&current->mm->mmap_sem);
+ 		if (result < 0) {
+-			nfs_readdata_release(data);
++			nfs_readdata_free(data);
+ 			break;
+ 		}
+ 		if ((unsigned)result < data->npages) {
+ 			bytes = result * PAGE_SIZE;
+ 			if (bytes <= pgbase) {
+ 				nfs_direct_release_pages(data->pagevec, result);
+-				nfs_readdata_release(data);
++				nfs_readdata_free(data);
+ 				break;
+ 			}
+ 			bytes -= pgbase;
+@@ -331,7 +331,7 @@ static ssize_t nfs_direct_read_schedule_segment(struct nfs_direct_req *dreq,
+ 		data->inode = inode;
+ 		data->cred = msg.rpc_cred;
+ 		data->args.fh = NFS_FH(inode);
+-		data->args.context = get_nfs_open_context(ctx);
++		data->args.context = ctx;
+ 		data->args.offset = pos;
+ 		data->args.pgbase = pgbase;
+ 		data->args.pages = data->pagevec;
+@@ -438,7 +438,7 @@ static void nfs_direct_free_writedata(struct nfs_direct_req *dreq)
+ 		struct nfs_write_data *data = list_entry(dreq->rewrite_list.next, struct nfs_write_data, pages);
+ 		list_del(&data->pages);
+ 		nfs_direct_release_pages(data->pagevec, data->npages);
+-		nfs_writedata_release(data);
++		nfs_writedata_free(data);
+ 	}
+ }
+ 
+@@ -531,7 +531,7 @@ static void nfs_direct_commit_release(void *calldata)
+ 
+ 	dprintk("NFS: %5u commit returned %d\n", data->task.tk_pid, status);
+ 	nfs_direct_write_complete(dreq, data->inode);
+-	nfs_commitdata_release(calldata);
++	nfs_commit_free(data);
+ }
+ 
+ static const struct rpc_call_ops nfs_commit_direct_ops = {
+@@ -564,7 +564,7 @@ static void nfs_direct_commit_schedule(struct nfs_direct_req *dreq)
+ 	data->args.fh = NFS_FH(data->inode);
+ 	data->args.offset = 0;
+ 	data->args.count = 0;
+-	data->args.context = get_nfs_open_context(dreq->ctx);
++	data->args.context = dreq->ctx;
+ 	data->res.count = 0;
+ 	data->res.fattr = &data->fattr;
+ 	data->res.verf = &data->verf;
+@@ -725,14 +725,14 @@ static ssize_t nfs_direct_write_schedule_segment(struct nfs_direct_req *dreq,
+ 					data->npages, 0, 0, data->pagevec, NULL);
+ 		up_read(&current->mm->mmap_sem);
+ 		if (result < 0) {
+-			nfs_writedata_release(data);
++			nfs_writedata_free(data);
+ 			break;
+ 		}
+ 		if ((unsigned)result < data->npages) {
+ 			bytes = result * PAGE_SIZE;
+ 			if (bytes <= pgbase) {
+ 				nfs_direct_release_pages(data->pagevec, result);
+-				nfs_writedata_release(data);
++				nfs_writedata_free(data);
+ 				break;
+ 			}
+ 			bytes -= pgbase;
+@@ -747,7 +747,7 @@ static ssize_t nfs_direct_write_schedule_segment(struct nfs_direct_req *dreq,
+ 		data->inode = inode;
+ 		data->cred = msg.rpc_cred;
+ 		data->args.fh = NFS_FH(inode);
+-		data->args.context = get_nfs_open_context(ctx);
++		data->args.context = ctx;
+ 		data->args.offset = pos;
+ 		data->args.pgbase = pgbase;
+ 		data->args.pages = data->pagevec;
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index f856004..ff41222 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -58,17 +58,15 @@ struct nfs_read_data *nfs_readdata_alloc(unsigned int pagecount)
+ 	return p;
+ }
+ 
+-static void nfs_readdata_free(struct nfs_read_data *p)
++void nfs_readdata_free(struct nfs_read_data *p)
+ {
+ 	if (p && (p->pagevec != &p->page_array[0]))
+ 		kfree(p->pagevec);
+ 	mempool_free(p, nfs_rdata_mempool);
+ }
+ 
+-void nfs_readdata_release(void *data)
++static void nfs_readdata_release(struct nfs_read_data *rdata)
+ {
+-	struct nfs_read_data *rdata = data;
+-
+ 	put_nfs_open_context(rdata->args.context);
+ 	nfs_readdata_free(rdata);
+ }
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 3229e21..84f4e75 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -84,17 +84,15 @@ struct nfs_write_data *nfs_writedata_alloc(unsigned int pagecount)
+ 	return p;
+ }
+ 
+-static void nfs_writedata_free(struct nfs_write_data *p)
++void nfs_writedata_free(struct nfs_write_data *p)
+ {
+ 	if (p && (p->pagevec != &p->page_array[0]))
+ 		kfree(p->pagevec);
+ 	mempool_free(p, nfs_wdata_mempool);
+ }
+ 
+-void nfs_writedata_release(void *data)
++static void nfs_writedata_release(struct nfs_write_data *wdata)
+ {
+-	struct nfs_write_data *wdata = data;
+-
+ 	put_nfs_open_context(wdata->args.context);
+ 	nfs_writedata_free(wdata);
+ }
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index a488f61..76f9ffc 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -240,22 +240,19 @@ static int check_mem_permission(struct task_struct *task)
+ struct mm_struct *mm_for_maps(struct task_struct *task)
+ {
+ 	struct mm_struct *mm = get_task_mm(task);
+-	if (!mm)
+-		return NULL;
+-	down_read(&mm->mmap_sem);
+-	task_lock(task);
+-	if (task->mm != mm)
+-		goto out;
+-	if (task->mm != current->mm &&
+-	    __ptrace_may_access(task, PTRACE_MODE_READ) < 0)
+-		goto out;
+-	task_unlock(task);
++
++	if (mm && mm != current->mm) {
++		/*
++		 * task->mm can be changed before security check,
++		 * in that case we must notice the change after.
++		 */
++		if (!ptrace_may_access(task, PTRACE_MODE_READ) ||
++		    mm != task->mm) {
++			mmput(mm);
++			mm = NULL;
++		}
++	}
+ 	return mm;
+-out:
+-	task_unlock(task);
+-	up_read(&mm->mmap_sem);
+-	mmput(mm);
+-	return NULL;
+ }
+ 
+ static int proc_pid_cmdline(struct task_struct *task, char * buffer)
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index c7f64a9..d8be92a 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -119,6 +119,7 @@ static void *m_start(struct seq_file *m, loff_t *pos)
+ 	mm = mm_for_maps(priv->task);
+ 	if (!mm)
+ 		return NULL;
++	down_read(&mm->mmap_sem);
+ 
+ 	tail_vma = get_gate_vma(priv->task);
+ 	priv->tail_vma = tail_vma;
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index 5d84e71..737d219 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -137,6 +137,7 @@ static void *m_start(struct seq_file *m, loff_t *pos)
+ 		priv->task = NULL;
+ 		return NULL;
+ 	}
++	down_read(&mm->mmap_sem);
+ 
+ 	/* start from the Nth VMA */
+ 	for (vml = mm->context.vmlist; vml; vml = vml->next)
+diff --git a/fs/sysfs/dir.c b/fs/sysfs/dir.c
+index aedaeba..6def64c 100644
+--- a/fs/sysfs/dir.c
++++ b/fs/sysfs/dir.c
+@@ -914,8 +914,10 @@ again:
+ 	/* Remove from old parent's list and insert into new parent's list. */
+ 	sysfs_unlink_sibling(sd);
+ 	sysfs_get(new_parent_sd);
++	drop_nlink(old_parent->d_inode);
+ 	sysfs_put(sd->s_parent);
+ 	sd->s_parent = new_parent_sd;
++	inc_nlink(new_parent->d_inode);
+ 	sysfs_link_sibling(sd);
+ 
+  out_unlock:
+diff --git a/include/asm-parisc/tlbflush.h b/include/asm-parisc/tlbflush.h
+index 1f6fd4f..9c5d646 100644
+--- a/include/asm-parisc/tlbflush.h
++++ b/include/asm-parisc/tlbflush.h
+@@ -12,14 +12,12 @@
+  * N class systems, only one PxTLB inter processor broadcast can be
+  * active at any one time on the Merced bus.  This tlb purge
+  * synchronisation is fairly lightweight and harmless so we activate
+- * it on all SMP systems not just the N class.  We also need to have
+- * preemption disabled on uniprocessor machines, and spin_lock does that
+- * nicely.
++ * it on all systems not just the N class.
+  */
+ extern spinlock_t pa_tlb_lock;
+ 
+-#define purge_tlb_start(x) spin_lock(&pa_tlb_lock)
+-#define purge_tlb_end(x) spin_unlock(&pa_tlb_lock)
++#define purge_tlb_start(flags)	spin_lock_irqsave(&pa_tlb_lock, flags)
++#define purge_tlb_end(flags)	spin_unlock_irqrestore(&pa_tlb_lock, flags)
+ 
+ extern void flush_tlb_all(void);
+ extern void flush_tlb_all_local(void *);
+@@ -63,14 +61,15 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
+ static inline void flush_tlb_page(struct vm_area_struct *vma,
+ 	unsigned long addr)
+ {
++	unsigned long flags;
+ 	/* For one page, it's not worth testing the split_tlb variable */
+ 
+ 	mb();
+ 	mtsp(vma->vm_mm->context,1);
+-	purge_tlb_start();
++	purge_tlb_start(flags);
+ 	pdtlb(addr);
+ 	pitlb(addr);
+-	purge_tlb_end();
++	purge_tlb_end(flags);
+ }
+ 
+ void __flush_tlb_range(unsigned long sid,
+diff --git a/include/asm-x86/irqflags.h b/include/asm-x86/irqflags.h
+index 424acb4..f57f2fb 100644
+--- a/include/asm-x86/irqflags.h
++++ b/include/asm-x86/irqflags.h
+@@ -12,9 +12,15 @@ static inline unsigned long native_save_fl(void)
+ {
+ 	unsigned long flags;
+ 
++	/*
++	 * Note: this needs to be "=r" not "=rm", because we have the
++	 * stack offset from what gcc expects at the time the "pop" is
++	 * executed, and so a memory reference with respect to the stack
++	 * would end up using the wrong address.
++	 */
+ 	asm volatile("# __raw_save_flags\n\t"
+ 		     "pushf ; pop %0"
+-		     : "=g" (flags)
++		     : "=r" (flags)
+ 		     : /* no input */
+ 		     : "memory");
+ 
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index 78a5922..0dee17c 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -461,7 +461,6 @@ extern int  nfs_writepages(struct address_space *, struct writeback_control *);
+ extern int  nfs_flush_incompatible(struct file *file, struct page *page);
+ extern int  nfs_updatepage(struct file *, struct page *, unsigned int, unsigned int);
+ extern int nfs_writeback_done(struct rpc_task *, struct nfs_write_data *);
+-extern void nfs_writedata_release(void *);
+ 
+ /*
+  * Try to write back everything synchronously (but check the
+@@ -476,7 +475,6 @@ extern int nfs_wb_page_cancel(struct inode *inode, struct page* page);
+ extern int  nfs_commit_inode(struct inode *, int);
+ extern struct nfs_write_data *nfs_commitdata_alloc(void);
+ extern void nfs_commit_free(struct nfs_write_data *wdata);
+-extern void nfs_commitdata_release(void *wdata);
+ #else
+ static inline int
+ nfs_commit_inode(struct inode *inode, int how)
+@@ -495,6 +493,7 @@ nfs_have_writebacks(struct inode *inode)
+  * Allocate nfs_write_data structures
+  */
+ extern struct nfs_write_data *nfs_writedata_alloc(unsigned int npages);
++extern void nfs_writedata_free(struct nfs_write_data *);
+ 
+ /*
+  * linux/fs/nfs/read.c
+@@ -503,12 +502,12 @@ extern int  nfs_readpage(struct file *, struct page *);
+ extern int  nfs_readpages(struct file *, struct address_space *,
+ 		struct list_head *, unsigned);
+ extern int  nfs_readpage_result(struct rpc_task *, struct nfs_read_data *);
+-extern void nfs_readdata_release(void *data);
+ 
+ /*
+  * Allocate nfs_read_data structures
+  */
+ extern struct nfs_read_data *nfs_readdata_alloc(unsigned int npages);
++extern void nfs_readdata_free(struct nfs_read_data *);
+ 
+ /*
+  * linux/fs/nfs3proc.c
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 843ce75..fcbd28c 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -536,18 +536,18 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
+ 	 * the value intact in a core dump, and to save the unnecessary
+ 	 * trouble otherwise.  Userland only wants this done for a sys_exit.
+ 	 */
+-	if (tsk->clear_child_tid
+-	    && !(tsk->flags & PF_SIGNALED)
+-	    && atomic_read(&mm->mm_users) > 1) {
+-		u32 __user * tidptr = tsk->clear_child_tid;
++	if (tsk->clear_child_tid) {
++		if (!(tsk->flags & PF_SIGNALED) &&
++		    atomic_read(&mm->mm_users) > 1) {
++			/*
++			 * We don't check the error code - if userspace has
++			 * not set up a proper pointer then tough luck.
++			 */
++			put_user(0, tsk->clear_child_tid);
++			sys_futex(tsk->clear_child_tid, FUTEX_WAKE,
++					1, NULL, NULL, 0);
++		}
+ 		tsk->clear_child_tid = NULL;
+-
+-		/*
+-		 * We don't check the error code - if userspace has
+-		 * not set up a proper pointer then tough luck.
+-		 */
+-		put_user(0, tidptr);
+-		sys_futex(tidptr, FUTEX_WAKE, 1, NULL, NULL, 0);
+ 	}
+ }
+ 
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 1ecbcf6..2885674 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2257,7 +2257,7 @@ void hugetlb_unreserve_pages(struct inode *inode, long offset, long freed)
+ 	long chg = region_truncate(&inode->i_mapping->private_list, offset);
+ 
+ 	spin_lock(&inode->i_lock);
+-	inode->i_blocks -= blocks_per_huge_page(h);
++	inode->i_blocks -= (blocks_per_huge_page(h) * freed);
+ 	spin_unlock(&inode->i_lock);
+ 
+ 	hugetlb_put_quota(inode->i_mapping, (chg - freed));
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 85799e8..c6ecf87 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -846,7 +846,7 @@ static struct page *__rmqueue(struct zone *zone, unsigned int order,
+  */
+ static int rmqueue_bulk(struct zone *zone, unsigned int order, 
+ 			unsigned long count, struct list_head *list,
+-			int migratetype)
++			int migratetype, int cold)
+ {
+ 	int i;
+ 	
+@@ -865,7 +865,10 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+ 		 * merge IO requests if the physical pages are ordered
+ 		 * properly.
+ 		 */
+-		list_add(&page->lru, list);
++		if (likely(cold == 0))
++			list_add(&page->lru, list);
++		else
++			list_add_tail(&page->lru, list);
+ 		set_page_private(page, migratetype);
+ 		list = &page->lru;
+ 	}
+@@ -1068,7 +1071,8 @@ again:
+ 		local_irq_save(flags);
+ 		if (!pcp->count) {
+ 			pcp->count = rmqueue_bulk(zone, 0,
+-					pcp->batch, &pcp->list, migratetype);
++					pcp->batch, &pcp->list,
++					migratetype, cold);
+ 			if (unlikely(!pcp->count))
+ 				goto failed;
+ 		}
+@@ -1087,7 +1091,8 @@ again:
+ 		/* Allocate more to the pcp list if necessary */
+ 		if (unlikely(&page->lru == &pcp->list)) {
+ 			pcp->count += rmqueue_bulk(zone, 0,
+-					pcp->batch, &pcp->list, migratetype);
++					pcp->batch, &pcp->list,
++					migratetype, cold);
+ 			page = list_entry(pcp->list.next, struct page, lru);
+ 		}
+ 
+diff --git a/net/socket.c b/net/socket.c
+index 3e2859c..058d965 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -695,7 +695,7 @@ static ssize_t sock_sendpage(struct file *file, struct page *page,
+ 	if (more)
+ 		flags |= MSG_MORE;
+ 
+-	return sock->ops->sendpage(sock, page, offset, size, flags);
++	return kernel_sendpage(sock, page, offset, size, flags);
+ }
+ 
+ static ssize_t sock_splice_read(struct file *file, loff_t *ppos,

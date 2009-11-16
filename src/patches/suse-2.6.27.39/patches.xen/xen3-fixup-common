@@ -1,0 +1,360 @@
+Subject: Fix xen build.
+From: jbeulich@novell.com
+Patch-mainline: obsolete
+
+--- sle11-2009-07-31.orig/drivers/acpi/hardware/hwsleep.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-07-31/drivers/acpi/hardware/hwsleep.c	2009-02-16 16:01:39.000000000 +0100
+@@ -430,6 +430,7 @@ ACPI_EXPORT_SYMBOL(acpi_enter_sleep_stat
+  *              THIS FUNCTION MUST BE CALLED WITH INTERRUPTS DISABLED
+  *
+  ******************************************************************************/
++#ifndef CONFIG_XEN
+ acpi_status asmlinkage acpi_enter_sleep_state_s4bios(void)
+ {
+ 	u32 in_value;
+@@ -479,6 +480,7 @@ acpi_status asmlinkage acpi_enter_sleep_
+ }
+ 
+ ACPI_EXPORT_SYMBOL(acpi_enter_sleep_state_s4bios)
++#endif
+ 
+ /*******************************************************************************
+  *
+--- sle11-2009-07-31.orig/drivers/base/cpu.c	2009-08-19 10:05:22.000000000 +0200
++++ sle11-2009-07-31/drivers/base/cpu.c	2009-02-17 11:26:03.000000000 +0100
+@@ -78,7 +78,7 @@ static inline void register_cpu_control(
+ }
+ #endif /* CONFIG_HOTPLUG_CPU */
+ 
+-#ifdef CONFIG_KEXEC
++#if defined(CONFIG_KEXEC) && !defined(CONFIG_XEN)
+ #include <linux/kexec.h>
+ 
+ static ssize_t show_crash_notes(struct sys_device *dev, struct sysdev_attribute *attr,
+@@ -173,7 +173,7 @@ int __cpuinit register_cpu(struct cpu *c
+ 	if (!error)
+ 		register_cpu_under_node(num, cpu_to_node(num));
+ 
+-#ifdef CONFIG_KEXEC
++#if defined(CONFIG_KEXEC) && !defined(CONFIG_XEN)
+ 	if (!error)
+ 		error = sysdev_create_file(&cpu->sysdev, &attr_crash_notes);
+ #endif
+--- sle11-2009-07-31.orig/drivers/ide/ide-lib.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-07-31/drivers/ide/ide-lib.c	2009-02-16 16:01:39.000000000 +0100
+@@ -177,6 +177,16 @@ void ide_toggle_bounce(ide_drive_t *driv
+ {
+ 	u64 addr = BLK_BOUNCE_HIGH;	/* dma64_addr_t */
+ 
++#ifndef CONFIG_XEN
++	if (!PCI_DMA_BUS_IS_PHYS) {
++		addr = BLK_BOUNCE_ANY;
++	} else if (on && drive->media == ide_disk) {
++		struct device *dev = drive->hwif->dev;
++
++		if (dev && dev->dma_mask)
++			addr = *dev->dma_mask;
++	}
++#else
+ 	if (on && drive->media == ide_disk) {
+ 		struct device *dev = drive->hwif->dev;
+ 
+@@ -185,6 +195,7 @@ void ide_toggle_bounce(ide_drive_t *driv
+ 		else if (dev && dev->dma_mask)
+ 			addr = *dev->dma_mask;
+ 	}
++#endif
+ 
+ 	if (drive->queue)
+ 		blk_queue_bounce_limit(drive->queue, addr);
+--- sle11-2009-07-31.orig/drivers/oprofile/buffer_sync.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-07-31/drivers/oprofile/buffer_sync.c	2009-02-16 16:01:39.000000000 +0100
+@@ -44,7 +44,9 @@ static cpumask_t marked_cpus = CPU_MASK_
+ static DEFINE_SPINLOCK(task_mortuary);
+ static void process_task_mortuary(void);
+ 
++#ifdef CONFIG_XEN
+ static int cpu_current_domain[NR_CPUS];
++#endif
+ 
+ /* Take ownership of the task struct and place it on the
+  * list for processing. Only after two full buffer syncs
+@@ -153,11 +155,13 @@ static void end_sync(void)
+ int sync_start(void)
+ {
+ 	int err;
++#ifdef CONFIG_XEN
+ 	int i;
+ 
+ 	for (i = 0; i < NR_CPUS; i++) {
+ 		cpu_current_domain[i] = COORDINATOR_DOMAIN;
+ 	}
++#endif
+ 
+ 	start_cpu_work();
+ 
+@@ -302,12 +306,14 @@ static void add_cpu_mode_switch(unsigned
+ 	}
+ }
+ 
++#ifdef CONFIG_XEN
+ static void add_domain_switch(unsigned long domain_id)
+ {
+ 	add_event_entry(ESCAPE_CODE);
+ 	add_event_entry(DOMAIN_SWITCH_CODE);
+ 	add_event_entry(domain_id);
+ }
++#endif
+ 
+ static void
+ add_user_ctx_switch(struct task_struct const * task, unsigned long cookie)
+@@ -531,11 +537,14 @@ void sync_buffer(int cpu)
+  
+ 	add_cpu_switch(cpu);
+ 
++#ifdef CONFIG_XEN
+ 	/* We need to assign the first samples in this CPU buffer to the
+ 	   same domain that we were processing at the last sync_buffer */
+ 	if (cpu_current_domain[cpu] != COORDINATOR_DOMAIN) {
+ 		add_domain_switch(cpu_current_domain[cpu]);
+ 	}
++#endif
++
+ 	/* Remember, only we can modify tail_pos */
+ 
+ 	available = get_slots(cpu_buf);
+@@ -553,8 +562,10 @@ void sync_buffer(int cpu)
+ 			} else if (s->event == CPU_TRACE_BEGIN) {
+ 				state = sb_bt_start;
+ 				add_trace_begin();
++#ifdef CONFIG_XEN
+ 			} else if (s->event == CPU_DOMAIN_SWITCH) {
+-					domain_switch = 1;				
++				domain_switch = 1;
++#endif
+ 			} else {
+ 				struct mm_struct * oldmm = mm;
+ 
+@@ -568,21 +579,21 @@ void sync_buffer(int cpu)
+ 				add_user_ctx_switch(new, cookie);
+ 			}
+ 		} else {
++#ifdef CONFIG_XEN
+ 			if (domain_switch) {
+ 				cpu_current_domain[cpu] = s->eip;
+ 				add_domain_switch(s->eip);
+ 				domain_switch = 0;
+-			} else {
+-				if (cpu_current_domain[cpu] !=
++			} else if (cpu_current_domain[cpu] !=
+ 				    COORDINATOR_DOMAIN) {
+-					add_sample_entry(s->eip, s->event);
+-				}
+-				else  if (state >= sb_bt_start &&
+-				    !add_sample(mm, s, cpu_mode)) {
+-					if (state == sb_bt_start) {
+-						state = sb_bt_ignore;
+-						atomic_inc(&oprofile_stats.bt_lost_no_mapping);
+-					}
++				add_sample_entry(s->eip, s->event);
++			} else
++#endif
++			if (state >= sb_bt_start &&
++			    !add_sample(mm, s, cpu_mode)) {
++				if (state == sb_bt_start) {
++					state = sb_bt_ignore;
++					atomic_inc(&oprofile_stats.bt_lost_no_mapping);
+ 				}
+ 			}
+ 		}
+@@ -591,10 +602,12 @@ void sync_buffer(int cpu)
+ 	}
+ 	release_mm(mm);
+ 
++#ifdef CONFIG_XEN
+ 	/* We reset domain to COORDINATOR at each CPU switch */
+ 	if (cpu_current_domain[cpu] != COORDINATOR_DOMAIN) {
+ 		add_domain_switch(COORDINATOR_DOMAIN);
+ 	}
++#endif
+ 
+ 	mark_done(cpu);
+ 
+--- sle11-2009-07-31.orig/drivers/oprofile/cpu_buffer.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-07-31/drivers/oprofile/cpu_buffer.c	2009-02-16 16:01:39.000000000 +0100
+@@ -38,7 +38,11 @@ static void wq_sync_buffer(struct work_s
+ #define DEFAULT_TIMER_EXPIRE (HZ / 10)
+ static int work_enabled;
+ 
++#ifndef CONFIG_XEN
++#define current_domain COORDINATOR_DOMAIN
++#else
+ static int32_t current_domain = COORDINATOR_DOMAIN;
++#endif
+ 
+ void free_cpu_buffers(void)
+ {
+@@ -303,6 +307,7 @@ void oprofile_add_trace(unsigned long pc
+ 	add_sample(cpu_buf, pc, 0);
+ }
+ 
++#ifdef CONFIG_XEN
+ int oprofile_add_domain_switch(int32_t domain_id)
+ {
+ 	struct oprofile_cpu_buffer * cpu_buf = &cpu_buffer[smp_processor_id()];
+@@ -321,6 +326,7 @@ int oprofile_add_domain_switch(int32_t d
+ 
+ 	return 1;
+ }
++#endif
+ 
+ /*
+  * This serves to avoid cpu buffer overflow, and makes sure
+--- sle11-2009-07-31.orig/drivers/oprofile/oprof.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-07-31/drivers/oprofile/oprof.c	2009-02-16 16:01:39.000000000 +0100
+@@ -37,6 +37,7 @@ static DEFINE_MUTEX(start_mutex);
+  */
+ static int timer = 0;
+ 
++#ifdef CONFIG_XEN
+ int oprofile_set_active(int active_domains[], unsigned int adomains)
+ {
+ 	int err;
+@@ -62,6 +63,7 @@ int oprofile_set_passive(int passive_dom
+ 	mutex_unlock(&start_mutex);
+ 	return err;
+ }
++#endif
+ 
+ int oprofile_setup(void)
+ {
+--- sle11-2009-07-31.orig/drivers/oprofile/oprofile_files.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-07-31/drivers/oprofile/oprofile_files.c	2009-02-16 16:01:39.000000000 +0100
+@@ -124,6 +124,8 @@ static const struct file_operations dump
+ 	.write		= dump_write,
+ };
+ 
++#ifdef CONFIG_XEN
++
+ #define TMPBUFSIZE 512
+ 
+ static unsigned int adomains = 0;
+@@ -313,12 +315,16 @@ static struct file_operations passive_do
+ 	.write		= pdomain_write,
+ };
+ 
++#endif /* CONFIG_XEN */
++
+ void oprofile_create_files(struct super_block * sb, struct dentry * root)
+ {
+ 	oprofilefs_create_file(sb, root, "enable", &enable_fops);
+ 	oprofilefs_create_file_perm(sb, root, "dump", &dump_fops, 0666);
++#ifdef CONFIG_XEN
+ 	oprofilefs_create_file(sb, root, "active_domains", &active_domain_ops);
+ 	oprofilefs_create_file(sb, root, "passive_domains", &passive_domain_ops);
++#endif
+ 	oprofilefs_create_file(sb, root, "buffer", &event_buffer_fops);
+ 	oprofilefs_create_ulong(sb, root, "buffer_size", &fs_buffer_size);
+ 	oprofilefs_create_ulong(sb, root, "buffer_watershed", &fs_buffer_watershed);
+--- sle11-2009-07-31.orig/include/linux/mm.h	2009-08-19 10:20:34.000000000 +0200
++++ sle11-2009-07-31/include/linux/mm.h	2009-08-19 10:21:35.000000000 +0200
+@@ -203,10 +203,12 @@ struct vm_operations_struct {
+ 	int (*access)(struct vm_area_struct *vma, unsigned long addr,
+ 		      void *buf, int len, int write);
+ 
++#ifdef CONFIG_XEN
+ 	/* Area-specific function for clearing the PTE at @ptep. Returns the
+ 	 * original value of @ptep. */
+ 	pte_t (*zap_pte)(struct vm_area_struct *vma, 
+ 			 unsigned long addr, pte_t *ptep, int is_fullmm);
++#endif
+ #ifdef CONFIG_NUMA
+ 	/*
+ 	 * set_policy() op must add a reference to any non-NULL @new mempolicy
+--- sle11-2009-07-31.orig/include/linux/oprofile.h	2009-06-26 16:58:14.000000000 +0200
++++ sle11-2009-07-31/include/linux/oprofile.h	2009-06-29 15:28:01.000000000 +0200
+@@ -16,8 +16,9 @@
+ #include <linux/types.h>
+ #include <linux/spinlock.h>
+ #include <asm/atomic.h>
+-
++#ifdef CONFIG_XEN
+ #include <xen/interface/xenoprof.h>
++#endif
+  
+ /* Each escaped entry is prefixed by ESCAPE_CODE
+  * then one of the following codes, then the
+@@ -53,11 +54,12 @@ struct oprofile_operations {
+ 	/* create any necessary configuration files in the oprofile fs.
+ 	 * Optional. */
+ 	int (*create_files)(struct super_block * sb, struct dentry * root);
++#ifdef CONFIG_XEN
+ 	/* setup active domains with Xen */
+ 	int (*set_active)(int *active_domains, unsigned int adomains);
+         /* setup passive domains with Xen */
+         int (*set_passive)(int *passive_domains, unsigned int pdomains);
+-	
++#endif
+ 	/* Do any necessary interrupt setup. Optional. */
+ 	int (*setup)(void);
+ 	/* Do any necessary interrupt shutdown. Optional. */
+--- sle11-2009-07-31.orig/kernel/kexec.c	2008-11-25 13:31:12.000000000 +0100
++++ sle11-2009-07-31/kernel/kexec.c	2009-02-17 11:27:16.000000000 +0100
+@@ -44,8 +44,10 @@
+ #include <linux/kdb.h>
+ #endif
+ 
++#ifndef CONFIG_XEN
+ /* Per cpu memory for storing cpu states in case of system crash. */
+ note_buf_t* crash_notes;
++#endif
+ int dump_after_notifier;
+ 
+ /* vmcoreinfo stuff */
+@@ -1167,6 +1169,7 @@ static void final_note(u32 *buf)
+ 	memcpy(buf, &note, sizeof(note));
+ }
+ 
++#ifndef CONFIG_XEN
+ void crash_save_cpu(struct pt_regs *regs, int cpu)
+ {
+ 	struct elf_prstatus prstatus;
+@@ -1192,6 +1195,7 @@ void crash_save_cpu(struct pt_regs *regs
+ 		      	      &prstatus, sizeof(prstatus));
+ 	final_note(buf);
+ }
++#endif
+ 
+ #ifdef CONFIG_SYSCTL
+ static ctl_table dump_after_notifier_table[] = {
+@@ -1219,6 +1223,7 @@ static ctl_table kexec_sys_table[] = {
+ 
+ static int __init crash_notes_memory_init(void)
+ {
++#ifndef CONFIG_XEN
+ 	/* Allocate memory for saving cpu registers. */
+ 	crash_notes = alloc_percpu(note_buf_t);
+ 	if (!crash_notes) {
+@@ -1226,6 +1231,7 @@ static int __init crash_notes_memory_ini
+ 		" states failed\n");
+ 		return -ENOMEM;
+ 	}
++#endif
+ #ifdef CONFIG_SYSCTL
+ 	register_sysctl_table(kexec_sys_table);
+ #endif
+--- sle11-2009-07-31.orig/mm/memory.c	2009-02-16 15:58:14.000000000 +0100
++++ sle11-2009-07-31/mm/memory.c	2009-02-16 16:01:39.000000000 +0100
+@@ -758,10 +758,12 @@ static unsigned long zap_pte_range(struc
+ 				     page->index > details->last_index))
+ 					continue;
+ 			}
++#ifdef CONFIG_XEN
+ 			if (unlikely(vma->vm_ops && vma->vm_ops->zap_pte))
+ 				ptent = vma->vm_ops->zap_pte(vma, addr, pte,
+ 							     tlb->fullmm);
+ 			else
++#endif
+ 				ptent = ptep_get_and_clear_full(mm, addr, pte,
+ 								tlb->fullmm);
+ 			tlb_remove_tlb_entry(tlb, pte, addr);

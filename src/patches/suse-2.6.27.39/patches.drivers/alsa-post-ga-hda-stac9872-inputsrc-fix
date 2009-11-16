@@ -1,0 +1,32 @@
+From: Takashi Iwai <tiwai@suse.de>
+Subject: ALSA: Fix Oops with STAC9872 codec
+Patch-mainline: 
+References: bnc#535497
+
+Fix Oops with STAC9872 codec due to the missing initialization of
+spec->num_analog_muxes.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_sigmatel.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -5925,6 +5925,7 @@
+ 		spec->adc_nids = vaio_adcs;
+ 		spec->num_pwrs = 0;
+ 		spec->input_mux = &vaio_mux;
++		spec->num_analog_muxes = vaio_mux.num_items;
+ 		spec->mux_nids = vaio_mux_nids;
+ 		codec->patch_ops = stac9872_vaio_patch_ops;
+ 		break;
+@@ -5940,6 +5941,7 @@
+ 		spec->num_pwrs = 0;
+ 		spec->adc_nids = vaio_adcs;
+ 		spec->input_mux = &vaio_mux;
++		spec->num_analog_muxes = vaio_mux.num_items;
+ 		spec->mux_nids = vaio_mux_nids;
+ 		codec->patch_ops = stac9872_patch_ops;
+ 		break;

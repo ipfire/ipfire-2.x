@@ -1,0 +1,541 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.35
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Makefile b/Makefile
+index 1debf9a..5768979 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .34
++EXTRAVERSION = .35
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/powerpc/include/asm/mmu-hash64.h b/arch/powerpc/include/asm/mmu-hash64.h
+index c2df53c..cd1f704 100644
+--- a/arch/powerpc/include/asm/mmu-hash64.h
++++ b/arch/powerpc/include/asm/mmu-hash64.h
+@@ -41,6 +41,7 @@ extern char initial_stab[];
+ 
+ #define SLB_NUM_BOLTED		3
+ #define SLB_CACHE_ENTRIES	8
++#define SLB_MIN_SIZE		32
+ 
+ /* Bits in the SLB ESID word */
+ #define SLB_ESID_V		ASM_CONST(0x0000000008000000) /* valid */
+@@ -299,6 +300,7 @@ extern void slb_flush_and_rebolt(void);
+ extern void stab_initialize(unsigned long stab);
+ 
+ extern void slb_vmalloc_update(void);
++extern void slb_set_size(u16 size);
+ #endif /* __ASSEMBLY__ */
+ 
+ /*
+diff --git a/arch/powerpc/kernel/lparcfg.c b/arch/powerpc/kernel/lparcfg.c
+index b3eef30..c729910 100644
+--- a/arch/powerpc/kernel/lparcfg.c
++++ b/arch/powerpc/kernel/lparcfg.c
+@@ -35,6 +35,7 @@
+ #include <asm/prom.h>
+ #include <asm/vdso_datapage.h>
+ #include <asm/vio.h>
++#include <asm/mmu.h>
+ 
+ #define MODULE_VERS "1.8"
+ #define MODULE_NAME "lparcfg"
+@@ -485,6 +486,8 @@ static int pseries_lparcfg_data(struct seq_file *m, void *v)
+ 
+ 	seq_printf(m, "shared_processor_mode=%d\n", lppaca[0].shared_proc);
+ 
++	seq_printf(m, "slb_size=%d\n", mmu_slb_size);
++
+ 	return 0;
+ }
+ 
+diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
+index 1f8505c..49e6d91 100644
+--- a/arch/powerpc/kernel/rtas.c
++++ b/arch/powerpc/kernel/rtas.c
+@@ -38,6 +38,7 @@
+ #include <asm/syscalls.h>
+ #include <asm/smp.h>
+ #include <asm/atomic.h>
++#include <asm/mmu.h>
+ 
+ struct rtas_t rtas = {
+ 	.lock = SPIN_LOCK_UNLOCKED
+@@ -665,6 +666,7 @@ static void rtas_percpu_suspend_me(void *info)
+ {
+ 	long rc;
+ 	unsigned long msr_save;
++	u16 slb_size = mmu_slb_size;
+ 	int cpu;
+ 	struct rtas_suspend_me_data *data =
+ 		(struct rtas_suspend_me_data *)info;
+@@ -686,13 +688,16 @@ static void rtas_percpu_suspend_me(void *info)
+ 		/* All other cpus are in H_JOIN, this cpu does
+ 		 * the suspend.
+ 		 */
++		slb_set_size(SLB_MIN_SIZE);
+ 		printk(KERN_DEBUG "calling ibm,suspend-me on cpu %i\n",
+ 		       smp_processor_id());
+ 		data->error = rtas_call(data->token, 0, 1, NULL);
+ 
+-		if (data->error)
++		if (data->error) {
+ 			printk(KERN_DEBUG "ibm,suspend-me returned %d\n",
+ 			       data->error);
++			slb_set_size(slb_size);
++		}
+ 	} else {
+ 		printk(KERN_ERR "H_JOIN on cpu %i failed with rc = %ld\n",
+ 		       smp_processor_id(), rc);
+diff --git a/arch/powerpc/mm/slb.c b/arch/powerpc/mm/slb.c
+index 89497fb..4d73765 100644
+--- a/arch/powerpc/mm/slb.c
++++ b/arch/powerpc/mm/slb.c
+@@ -247,14 +247,22 @@ void switch_slb(struct task_struct *tsk, struct mm_struct *mm)
+ static inline void patch_slb_encoding(unsigned int *insn_addr,
+ 				      unsigned int immed)
+ {
+-	/* Assume the instruction had a "0" immediate value, just
+-	 * "or" in the new value
+-	 */
+-	*insn_addr |= immed;
++	*insn_addr = (*insn_addr & 0xffff0000) | immed;
+ 	flush_icache_range((unsigned long)insn_addr, 4+
+ 			   (unsigned long)insn_addr);
+ }
+ 
++void slb_set_size(u16 size)
++{
++	extern unsigned int *slb_compare_rr_to_size;
++
++	if (mmu_slb_size == size)
++		return;
++
++	mmu_slb_size = size;
++	patch_slb_encoding(slb_compare_rr_to_size, mmu_slb_size);
++}
++
+ void slb_initialize(void)
+ {
+ 	unsigned long linear_llp, vmalloc_llp, io_llp;
+diff --git a/arch/powerpc/platforms/pseries/reconfig.c b/arch/powerpc/platforms/pseries/reconfig.c
+index 7637bd3..e67e18d 100644
+--- a/arch/powerpc/platforms/pseries/reconfig.c
++++ b/arch/powerpc/platforms/pseries/reconfig.c
+@@ -20,6 +20,7 @@
+ #include <asm/machdep.h>
+ #include <asm/uaccess.h>
+ #include <asm/pSeries_reconfig.h>
++#include <asm/mmu.h>
+ 
+ 
+ 
+@@ -439,9 +440,15 @@ static int do_update_property(char *buf, size_t bufsize)
+ 	if (!newprop)
+ 		return -ENOMEM;
+ 
++	if (!strcmp(name, "slb-size") || !strcmp(name, "ibm,slb-size"))
++		slb_set_size(*(int *)value);
++
+ 	oldprop = of_find_property(np, name,NULL);
+-	if (!oldprop)
++	if (!oldprop) {
++		if (strlen(name))
++			return prom_add_property(np, newprop);
+ 		return -ENODEV;
++	}
+ 
+ 	rc = prom_update_property(np, newprop, oldprop);
+ 	if (rc)
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 2bcf350..5cdd821 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -565,7 +565,13 @@ u64 ata_tf_read_block(struct ata_taskfile *tf, struct ata_device *dev)
+ 		head = tf->device & 0xf;
+ 		sect = tf->lbal;
+ 
+-		block = (cyl * dev->heads + head) * dev->sectors + sect;
++		if (!sect) {
++			ata_dev_printk(dev, KERN_WARNING, "device reported "
++				       "invalid CHS sector 0\n");
++			sect = 1; /* oh well */
++		}
++
++		block = (cyl * dev->heads + head) * dev->sectors + sect - 1;
+ 	}
+ 
+ 	return block;
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index ed1879c..4180b55 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -450,6 +450,12 @@ static int tpm_tis_init(struct device *dev, resource_size_t start,
+ 		goto out_err;
+ 	}
+ 
++	/* Default timeouts */
++	chip->vendor.timeout_a = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
++	chip->vendor.timeout_b = msecs_to_jiffies(TIS_LONG_TIMEOUT);
++	chip->vendor.timeout_c = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
++	chip->vendor.timeout_d = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
++
+ 	if (request_locality(chip, 0) != 0) {
+ 		rc = -ENODEV;
+ 		goto out_err;
+@@ -457,12 +463,6 @@ static int tpm_tis_init(struct device *dev, resource_size_t start,
+ 
+ 	vendor = ioread32(chip->vendor.iobase + TPM_DID_VID(0));
+ 
+-	/* Default timeouts */
+-	chip->vendor.timeout_a = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->vendor.timeout_b = msecs_to_jiffies(TIS_LONG_TIMEOUT);
+-	chip->vendor.timeout_c = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-	chip->vendor.timeout_d = msecs_to_jiffies(TIS_SHORT_TIMEOUT);
+-
+ 	dev_info(dev,
+ 		 "1.2 TPM (device-id 0x%X, rev-id %d)\n",
+ 		 vendor >> 16, ioread8(chip->vendor.iobase + TPM_RID(0)));
+diff --git a/drivers/ps3/ps3stor_lib.c b/drivers/ps3/ps3stor_lib.c
+index 55955f1..40169a1 100644
+--- a/drivers/ps3/ps3stor_lib.c
++++ b/drivers/ps3/ps3stor_lib.c
+@@ -23,6 +23,65 @@
+ #include <asm/lv1call.h>
+ #include <asm/ps3stor.h>
+ 
++/*
++ * A workaround for flash memory I/O errors when the internal hard disk
++ * has not been formatted for OtherOS use.  Delay disk close until flash
++ * memory is closed.
++ */
++
++static struct ps3_flash_workaround {
++	int flash_open;
++	int disk_open;
++	struct ps3_system_bus_device *disk_sbd;
++} ps3_flash_workaround;
++
++static int ps3stor_open_hv_device(struct ps3_system_bus_device *sbd)
++{
++	int error = ps3_open_hv_device(sbd);
++
++	if (error)
++		return error;
++
++	if (sbd->match_id == PS3_MATCH_ID_STOR_FLASH)
++		ps3_flash_workaround.flash_open = 1;
++
++	if (sbd->match_id == PS3_MATCH_ID_STOR_DISK)
++		ps3_flash_workaround.disk_open = 1;
++
++	return 0;
++}
++
++static int ps3stor_close_hv_device(struct ps3_system_bus_device *sbd)
++{
++	int error;
++
++	if (sbd->match_id == PS3_MATCH_ID_STOR_DISK
++		&& ps3_flash_workaround.disk_open
++		&& ps3_flash_workaround.flash_open) {
++		ps3_flash_workaround.disk_sbd = sbd;
++		return 0;
++	}
++
++	error = ps3_close_hv_device(sbd);
++
++	if (error)
++		return error;
++
++	if (sbd->match_id == PS3_MATCH_ID_STOR_DISK)
++		ps3_flash_workaround.disk_open = 0;
++
++	if (sbd->match_id == PS3_MATCH_ID_STOR_FLASH) {
++		ps3_flash_workaround.flash_open = 0;
++
++		if (ps3_flash_workaround.disk_sbd) {
++			ps3_close_hv_device(ps3_flash_workaround.disk_sbd);
++			ps3_flash_workaround.disk_open = 0;
++			ps3_flash_workaround.disk_sbd = NULL;
++		}
++	}
++
++	return 0;
++}
+ 
+ static int ps3stor_probe_access(struct ps3_storage_device *dev)
+ {
+@@ -90,7 +149,7 @@ int ps3stor_setup(struct ps3_storage_device *dev, irq_handler_t handler)
+ 	int error, res, alignment;
+ 	enum ps3_dma_page_size page_size;
+ 
+-	error = ps3_open_hv_device(&dev->sbd);
++	error = ps3stor_open_hv_device(&dev->sbd);
+ 	if (error) {
+ 		dev_err(&dev->sbd.core,
+ 			"%s:%u: ps3_open_hv_device failed %d\n", __func__,
+@@ -166,7 +225,7 @@ fail_free_irq:
+ fail_sb_event_receive_port_destroy:
+ 	ps3_sb_event_receive_port_destroy(&dev->sbd, dev->irq);
+ fail_close_device:
+-	ps3_close_hv_device(&dev->sbd);
++	ps3stor_close_hv_device(&dev->sbd);
+ fail:
+ 	return error;
+ }
+@@ -193,7 +252,7 @@ void ps3stor_teardown(struct ps3_storage_device *dev)
+ 			"%s:%u: destroy event receive port failed %d\n",
+ 			__func__, __LINE__, error);
+ 
+-	error = ps3_close_hv_device(&dev->sbd);
++	error = ps3stor_close_hv_device(&dev->sbd);
+ 	if (error)
+ 		dev_err(&dev->sbd.core,
+ 			"%s:%u: ps3_close_hv_device failed %d\n", __func__,
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index a6f8b8f..e012475 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -496,22 +496,22 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+ 		}
+ 	}
+ 
+-	/*
+-	 * Now fill out the bss section.  First pad the last page up
+-	 * to the page boundary, and then perform a mmap to make sure
+-	 * that there are zero-mapped pages up to and including the 
+-	 * last bss page.
+-	 */
+-	if (padzero(elf_bss)) {
+-		error = -EFAULT;
+-		goto out_close;
+-	}
++	if (last_bss > elf_bss) {
++		/*
++		 * Now fill out the bss section.  First pad the last page up
++		 * to the page boundary, and then perform a mmap to make sure
++		 * that there are zero-mapped pages up to and including the
++		 * last bss page.
++		 */
++		if (padzero(elf_bss)) {
++			error = -EFAULT;
++			goto out_close;
++		}
+ 
+-	/* What we have mapped so far */
+-	elf_bss = ELF_PAGESTART(elf_bss + ELF_MIN_ALIGN - 1);
++		/* What we have mapped so far */
++		elf_bss = ELF_PAGESTART(elf_bss + ELF_MIN_ALIGN - 1);
+ 
+-	/* Map the last of the bss segment */
+-	if (last_bss > elf_bss) {
++		/* Map the last of the bss segment */
+ 		down_write(&current->mm->mmap_sem);
+ 		error = do_brk(elf_bss, last_bss - elf_bss);
+ 		up_write(&current->mm->mmap_sem);
+diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
+index 4d617ea..988530d 100644
+--- a/fs/nfsd/nfs3proc.c
++++ b/fs/nfsd/nfs3proc.c
+@@ -201,6 +201,7 @@ nfsd3_proc_write(struct svc_rqst *rqstp, struct nfsd3_writeargs *argp,
+ 					 struct nfsd3_writeres  *resp)
+ {
+ 	__be32	nfserr;
++	unsigned long cnt = argp->len;
+ 
+ 	dprintk("nfsd: WRITE(3)    %s %d bytes at %ld%s\n",
+ 				SVCFH_fmt(&argp->fh),
+@@ -213,9 +214,9 @@ nfsd3_proc_write(struct svc_rqst *rqstp, struct nfsd3_writeargs *argp,
+ 	nfserr = nfsd_write(rqstp, &resp->fh, NULL,
+ 				   argp->offset,
+ 				   rqstp->rq_vec, argp->vlen,
+-				   argp->len,
++				   &cnt,
+ 				   &resp->committed);
+-	resp->count = argp->count;
++	resp->count = cnt;
+ 	RETURN_STATUS(nfserr);
+ }
+ 
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index e5b51ff..fddc656 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -685,6 +685,7 @@ nfsd4_write(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	struct file *filp = NULL;
+ 	u32 *p;
+ 	__be32 status = nfs_ok;
++	unsigned long cnt;
+ 
+ 	/* no need to check permission - this will be done in nfsd_write() */
+ 
+@@ -703,7 +704,7 @@ nfsd4_write(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 		return status;
+ 	}
+ 
+-	write->wr_bytes_written = write->wr_buflen;
++	cnt = write->wr_buflen;
+ 	write->wr_how_written = write->wr_stable_how;
+ 	p = (u32 *)write->wr_verifier.data;
+ 	*p++ = nfssvc_boot.tv_sec;
+@@ -711,10 +712,12 @@ nfsd4_write(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 
+ 	status =  nfsd_write(rqstp, &cstate->current_fh, filp,
+ 			     write->wr_offset, rqstp->rq_vec, write->wr_vlen,
+-			     write->wr_buflen, &write->wr_how_written);
++			     &cnt, &write->wr_how_written);
+ 	if (filp)
+ 		fput(filp);
+ 
++	write->wr_bytes_written = cnt;
++
+ 	if (status == nfserr_symlink)
+ 		status = nfserr_inval;
+ 	return status;
+diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
+index 0766f95..20c63b2 100644
+--- a/fs/nfsd/nfsproc.c
++++ b/fs/nfsd/nfsproc.c
+@@ -179,6 +179,7 @@ nfsd_proc_write(struct svc_rqst *rqstp, struct nfsd_writeargs *argp,
+ {
+ 	__be32	nfserr;
+ 	int	stable = 1;
++	unsigned long cnt = argp->len;
+ 
+ 	dprintk("nfsd: WRITE    %s %d bytes at %d\n",
+ 		SVCFH_fmt(&argp->fh),
+@@ -187,7 +188,7 @@ nfsd_proc_write(struct svc_rqst *rqstp, struct nfsd_writeargs *argp,
+ 	nfserr = nfsd_write(rqstp, fh_copy(&resp->fh, &argp->fh), NULL,
+ 				   argp->offset,
+ 				   rqstp->rq_vec, argp->vlen,
+-				   argp->len,
++			           &cnt,
+ 				   &stable);
+ 	return nfsd_return_attrs(nfserr, resp);
+ }
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 18060be..ac31e0c 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -957,7 +957,7 @@ static void kill_suid(struct dentry *dentry)
+ static __be32
+ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file *file,
+ 				loff_t offset, struct kvec *vec, int vlen,
+-	   			unsigned long cnt, int *stablep)
++				unsigned long *cnt, int *stablep)
+ {
+ 	struct svc_export	*exp;
+ 	struct dentry		*dentry;
+@@ -971,7 +971,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file *file,
+ 	err = nfserr_perm;
+ 
+ 	if ((fhp->fh_export->ex_flags & NFSEXP_MSNFS) &&
+-		(!lock_may_write(file->f_path.dentry->d_inode, offset, cnt)))
++		(!lock_may_write(file->f_path.dentry->d_inode, offset, *cnt)))
+ 		goto out;
+ #endif
+ 
+@@ -1003,7 +1003,8 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file *file,
+ 	host_err = vfs_writev(file, (struct iovec __user *)vec, vlen, &offset);
+ 	set_fs(oldfs);
+ 	if (host_err >= 0) {
+-		nfsdstats.io_write += cnt;
++		*cnt = host_err;
++		nfsdstats.io_write += host_err;
+ 		fsnotify_modify(file->f_path.dentry);
+ 	}
+ 
+@@ -1050,7 +1051,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file *file,
+ 	dprintk("nfsd: write complete host_err=%d\n", host_err);
+ 	if (host_err >= 0)
+ 		err = 0;
+-	else 
++	else
+ 		err = nfserrno(host_err);
+ out:
+ 	return err;
+@@ -1092,7 +1093,7 @@ out:
+  */
+ __be32
+ nfsd_write(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file *file,
+-		loff_t offset, struct kvec *vec, int vlen, unsigned long cnt,
++		loff_t offset, struct kvec *vec, int vlen, unsigned long *cnt,
+ 		int *stablep)
+ {
+ 	__be32			err = 0;
+diff --git a/fs/udf/lowlevel.c b/fs/udf/lowlevel.c
+index 703843f..1b88fd5 100644
+--- a/fs/udf/lowlevel.c
++++ b/fs/udf/lowlevel.c
+@@ -56,7 +56,12 @@ unsigned long udf_get_last_block(struct super_block *sb)
+ 	struct block_device *bdev = sb->s_bdev;
+ 	unsigned long lblock = 0;
+ 
+-	if (ioctl_by_bdev(bdev, CDROM_LAST_WRITTEN, (unsigned long) &lblock))
++	/*
++	 * ioctl failed or returned obviously bogus value?
++	 * Try using the device size...
++	 */
++	if (ioctl_by_bdev(bdev, CDROM_LAST_WRITTEN, (unsigned long) &lblock) ||
++	    lblock == 0)
+ 		lblock = bdev->bd_inode->i_size >> sb->s_blocksize_bits;
+ 
+ 	if (lblock)
+diff --git a/include/linux/nfsd/nfsd.h b/include/linux/nfsd/nfsd.h
+index 108f47e..9af9bca 100644
+--- a/include/linux/nfsd/nfsd.h
++++ b/include/linux/nfsd/nfsd.h
+@@ -105,7 +105,7 @@ void		nfsd_close(struct file *);
+ __be32 		nfsd_read(struct svc_rqst *, struct svc_fh *, struct file *,
+ 				loff_t, struct kvec *, int, unsigned long *);
+ __be32 		nfsd_write(struct svc_rqst *, struct svc_fh *,struct file *,
+-				loff_t, struct kvec *,int, unsigned long, int *);
++				loff_t, struct kvec *,int, unsigned long *, int *);
+ __be32		nfsd_readlink(struct svc_rqst *, struct svc_fh *,
+ 				char *, int *);
+ __be32		nfsd_symlink(struct svc_rqst *, struct svc_fh *,
+diff --git a/sound/pci/cs46xx/cs46xx_lib.h b/sound/pci/cs46xx/cs46xx_lib.h
+index 018a7de..ba12825 100644
+--- a/sound/pci/cs46xx/cs46xx_lib.h
++++ b/sound/pci/cs46xx/cs46xx_lib.h
+@@ -35,7 +35,7 @@
+ 
+ 
+ #ifdef CONFIG_SND_CS46XX_NEW_DSP
+-#define CS46XX_MIN_PERIOD_SIZE 1
++#define CS46XX_MIN_PERIOD_SIZE 64
+ #define CS46XX_MAX_PERIOD_SIZE 1024*1024
+ #else
+ #define CS46XX_MIN_PERIOD_SIZE 2048
+diff --git a/sound/pci/oxygen/oxygen_io.c b/sound/pci/oxygen/oxygen_io.c
+index 83f135f..6ebd2f3 100644
+--- a/sound/pci/oxygen/oxygen_io.c
++++ b/sound/pci/oxygen/oxygen_io.c
+@@ -214,17 +214,8 @@ EXPORT_SYMBOL(oxygen_write_spi);
+ 
+ void oxygen_write_i2c(struct oxygen *chip, u8 device, u8 map, u8 data)
+ {
+-	unsigned long timeout;
+-
+ 	/* should not need more than about 300 us */
+-	timeout = jiffies + msecs_to_jiffies(1);
+-	do {
+-		if (!(oxygen_read16(chip, OXYGEN_2WIRE_BUS_STATUS)
+-		      & OXYGEN_2WIRE_BUSY))
+-			break;
+-		udelay(1);
+-		cond_resched();
+-	} while (time_after_eq(timeout, jiffies));
++	msleep(1);
+ 
+ 	oxygen_write8(chip, OXYGEN_2WIRE_MAP, map);
+ 	oxygen_write8(chip, OXYGEN_2WIRE_DATA, data);

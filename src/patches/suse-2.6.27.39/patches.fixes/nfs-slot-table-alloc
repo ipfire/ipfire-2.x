@@ -1,0 +1,31 @@
+From: Michal Hocko <mhocko@novell.com>
+Subject: Don't fail allocations for the slot table when mounting an NFS filesystem
+Patch-mainline: no
+References: bnc#519820
+
+When the *_slot_table_entries exceeds 111, the slot_table_size
+exceeds 32K and an order-4 allocation is forced.  This does not
+retry nearly as much as order-3 so failure is more likely.
+But mount and autofs in particular doesn't cope well with failure.
+So force __GFP_REPEAT - the assumption is that people will only
+set the slot_table_size sysctl large on a machine with plenty
+of memory, so this should not block indefinitely.
+
+Acked-by: Neil Brown <neilb@suse.de>
+Signed-off-by: Neil Brown <neilb@suse.de>
+
+---
+ net/sunrpc/xprtsock.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/net/sunrpc/xprtsock.c
++++ linux-2.6.27-SLE11_BRANCH/net/sunrpc/xprtsock.c
+@@ -2011,7 +2011,7 @@ static struct rpc_xprt *xs_setup_xprt(st
+ 	xprt = &new->xprt;
+ 
+ 	xprt->max_reqs = slot_table_size;
+-	xprt->slot = kcalloc(xprt->max_reqs, sizeof(struct rpc_rqst), GFP_KERNEL);
++	xprt->slot = kcalloc(xprt->max_reqs, sizeof(struct rpc_rqst), GFP_KERNEL | __GFP_REPEAT);
+ 	if (xprt->slot == NULL) {
+ 		kfree(xprt);
+ 		dprintk("RPC:       xs_setup_xprt: couldn't allocate slot "

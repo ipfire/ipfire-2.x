@@ -1,0 +1,38 @@
+From: Brandon Philips <bphilips@suse.de>
+Subject: sky2: assume no link at probe
+References: bnc#539010
+Patch-Mainline: queued in net-2.6 2009-10-31 and trivial
+
+Before bringing up a sky2 interface up ethtool reports 
+"Link detected: yes". Do as ixgbe does and netif_carrier_off() on
+probe().
+
+Signed-off-by: Brandon Philips <bphilips@suse.de>
+
+---
+ drivers/net/sky2.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/drivers/net/sky2.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/drivers/net/sky2.c
++++ linux-2.6.27-SLE11_BRANCH/drivers/net/sky2.c
+@@ -1908,7 +1908,7 @@ static void sky2_link_down(struct sky2_p
+ 
+ 	netif_carrier_off(sky2->netdev);
+ 
+-	/* Turn on link LED */
++	/* Turn off link LED */
+ 	sky2_write8(hw, SK_REG(port, LNK_LED_REG), LINKLED_OFF);
+ 
+ 	if (netif_msg_link(sky2))
+@@ -4290,6 +4290,9 @@ static int __devinit sky2_probe(struct p
+ 		goto err_out_free_netdev;
+ 	}
+ 
++	/* assume no link at probe */
++	netif_carrier_off(dev);
++
+ 	netif_napi_add(dev, &hw->napi, sky2_poll, NAPI_WEIGHT);
+ 
+ 	err = request_irq(pdev->irq, sky2_intr,

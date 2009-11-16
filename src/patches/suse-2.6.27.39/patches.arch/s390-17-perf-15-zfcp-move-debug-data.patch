@@ -1,0 +1,618 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: [PATCH] zfcp: Move debug data from zfcp_data to own data structure
+References: bnc#532063,LTC#55526
+
+From: Christof Schmitt <christof.schmitt@de.ibm.com>
+
+The struct zfcp_adapter includes everything related to the debug
+traces. This introduces dependences between the definitions in
+zfcp_def.h and zfcp_dbf.h. Move all debug related data structures to a
+new data structure to break those dependencies and manage the debug
+data in zfcp_dbf.[hc].
+
+Signed-off-by: Christof Schmitt <christof.schmitt@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+---
+
+ drivers/s390/scsi/zfcp_aux.c |    4 
+ drivers/s390/scsi/zfcp_dbf.c |  217 ++++++++++++++++++++++++-------------------
+ drivers/s390/scsi/zfcp_dbf.h |   17 +++
+ drivers/s390/scsi/zfcp_def.h |   15 --
+ drivers/s390/scsi/zfcp_fsf.h |    3 
+ 5 files changed, 143 insertions(+), 113 deletions(-)
+
+Index: linux-sles11/drivers/s390/scsi/zfcp_aux.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_aux.c	2009-08-17 15:31:25.000000000 +0200
++++ linux-sles11/drivers/s390/scsi/zfcp_aux.c	2009-08-17 15:31:35.000000000 +0200
+@@ -494,10 +494,6 @@
+ 
+ 	spin_lock_init(&adapter->req_list_lock);
+ 
+-	spin_lock_init(&adapter->hba_dbf_lock);
+-	spin_lock_init(&adapter->san_dbf_lock);
+-	spin_lock_init(&adapter->scsi_dbf_lock);
+-	spin_lock_init(&adapter->rec_dbf_lock);
+ 	spin_lock_init(&adapter->req_q_lock);
+ 	spin_lock_init(&adapter->qdio_stat_lock);
+ 
+Index: linux-sles11/drivers/s390/scsi/zfcp_dbf.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_dbf.c	2009-08-17 15:31:25.000000000 +0200
++++ linux-sles11/drivers/s390/scsi/zfcp_dbf.c	2009-08-17 15:31:35.000000000 +0200
+@@ -3,13 +3,14 @@
+  *
+  * Debug traces for zfcp.
+  *
+- * Copyright IBM Corporation 2002, 2008
++ * Copyright IBM Corporation 2002, 2009
+  */
+ 
+ #define KMSG_COMPONENT "zfcp"
+ 
+ #include <linux/ctype.h>
+ #include <asm/debug.h>
++#include "zfcp_dbf.h"
+ #include "zfcp_ext.h"
+ 
+ static u32 dbfsize = 4;
+@@ -125,6 +126,7 @@
+ void zfcp_hba_dbf_event_fsf_response(struct zfcp_fsf_req *fsf_req)
+ {
+ 	struct zfcp_adapter *adapter = fsf_req->adapter;
++	struct zfcp_dbf *dbf = adapter->dbf;
+ 	struct fsf_qtcb *qtcb = fsf_req->qtcb;
+ 	union fsf_prot_status_qual *prot_status_qual =
+ 					&qtcb->prefix.prot_status_qual;
+@@ -133,12 +135,12 @@
+ 	struct zfcp_port *port;
+ 	struct zfcp_unit *unit;
+ 	struct zfcp_send_els *send_els;
+-	struct zfcp_hba_dbf_record *rec = &adapter->hba_dbf_buf;
++	struct zfcp_hba_dbf_record *rec = &dbf->hba_dbf_buf;
+ 	struct zfcp_hba_dbf_record_response *response = &rec->u.response;
+ 	int level;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->hba_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->hba_dbf_lock, flags);
+ 	memset(rec, 0, sizeof(*rec));
+ 	strncpy(rec->tag, "resp", ZFCP_DBF_TAG_SIZE);
+ 
+@@ -223,7 +225,7 @@
+ 		break;
+ 	}
+ 
+-	debug_event(adapter->hba_dbf, level, rec, sizeof(*rec));
++	debug_event(dbf->hba_dbf, level, rec, sizeof(*rec));
+ 
+ 	/* have fcp channel microcode fixed to use as little as possible */
+ 	if (fsf_req->fsf_command != FSF_QTCB_FCP_CMND) {
+@@ -231,11 +233,11 @@
+ 		char *buf = (char *)qtcb + qtcb->header.log_start;
+ 		int len = qtcb->header.log_length;
+ 		for (; len && !buf[len - 1]; len--);
+-		zfcp_dbf_hexdump(adapter->hba_dbf, rec, sizeof(*rec), level,
+-				 buf, len);
++		zfcp_dbf_hexdump(dbf->hba_dbf, rec, sizeof(*rec), level, buf,
++				 len);
+ 	}
+ 
+-	spin_unlock_irqrestore(&adapter->hba_dbf_lock, flags);
++	spin_unlock_irqrestore(&dbf->hba_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -247,10 +249,11 @@
+ void zfcp_hba_dbf_event_fsf_unsol(const char *tag, struct zfcp_adapter *adapter,
+ 				  struct fsf_status_read_buffer *status_buffer)
+ {
+-	struct zfcp_hba_dbf_record *rec = &adapter->hba_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_hba_dbf_record *rec = &dbf->hba_dbf_buf;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->hba_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->hba_dbf_lock, flags);
+ 	memset(rec, 0, sizeof(*rec));
+ 	strncpy(rec->tag, "stat", ZFCP_DBF_TAG_SIZE);
+ 	strncpy(rec->tag2, tag, ZFCP_DBF_TAG_SIZE);
+@@ -292,8 +295,8 @@
+ 		       &status_buffer->payload, rec->u.status.payload_size);
+ 	}
+ 
+-	debug_event(adapter->hba_dbf, 2, rec, sizeof(*rec));
+-	spin_unlock_irqrestore(&adapter->hba_dbf_lock, flags);
++	debug_event(dbf->hba_dbf, 2, rec, sizeof(*rec));
++	spin_unlock_irqrestore(&dbf->hba_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -307,17 +310,18 @@
+ 			     unsigned int qdio_error, int sbal_index,
+ 			     int sbal_count)
+ {
+-	struct zfcp_hba_dbf_record *r = &adapter->hba_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_hba_dbf_record *r = &dbf->hba_dbf_buf;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->hba_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->hba_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	strncpy(r->tag, "qdio", ZFCP_DBF_TAG_SIZE);
+ 	r->u.qdio.qdio_error = qdio_error;
+ 	r->u.qdio.sbal_index = sbal_index;
+ 	r->u.qdio.sbal_count = sbal_count;
+-	debug_event(adapter->hba_dbf, 0, r, sizeof(*r));
+-	spin_unlock_irqrestore(&adapter->hba_dbf_lock, flags);
++	debug_event(dbf->hba_dbf, 0, r, sizeof(*r));
++	spin_unlock_irqrestore(&dbf->hba_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -328,17 +332,18 @@
+ void zfcp_hba_dbf_event_berr(struct zfcp_adapter *adapter,
+ 			     struct zfcp_fsf_req *req)
+ {
+-	struct zfcp_hba_dbf_record *r = &adapter->hba_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_hba_dbf_record *r = &dbf->hba_dbf_buf;
+ 	struct fsf_status_read_buffer *sr_buf = req->data;
+ 	struct fsf_bit_error_payload *err = &sr_buf->payload.bit_error;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->hba_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->hba_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	strncpy(r->tag, "berr", ZFCP_DBF_TAG_SIZE);
+ 	memcpy(&r->u.berr, err, sizeof(struct fsf_bit_error_payload));
+-	debug_event(adapter->hba_dbf, 0, r, sizeof(*r));
+-	spin_unlock_irqrestore(&adapter->hba_dbf_lock, flags);
++	debug_event(dbf->hba_dbf, 0, r, sizeof(*r));
++	spin_unlock_irqrestore(&dbf->hba_dbf_lock, flags);
+ }
+ static void zfcp_hba_dbf_view_response(char **p,
+ 				       struct zfcp_hba_dbf_record_response *r)
+@@ -707,7 +712,8 @@
+  */
+ void zfcp_rec_dbf_event_thread(u8 id2, struct zfcp_adapter *adapter)
+ {
+-	struct zfcp_rec_dbf_record *r = &adapter->rec_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_rec_dbf_record *r = &dbf->rec_dbf_buf;
+ 	unsigned long flags = 0;
+ 	struct list_head *entry;
+ 	unsigned ready = 0, running = 0, total;
+@@ -718,15 +724,15 @@
+ 		running++;
+ 	total = adapter->erp_total_count;
+ 
+-	spin_lock_irqsave(&adapter->rec_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->rec_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	r->id = ZFCP_REC_DBF_ID_THREAD;
+ 	r->id2 = id2;
+ 	r->u.thread.total = total;
+ 	r->u.thread.ready = ready;
+ 	r->u.thread.running = running;
+-	debug_event(adapter->rec_dbf, 6, r, sizeof(*r));
+-	spin_unlock_irqrestore(&adapter->rec_dbf_lock, flags);
++	debug_event(dbf->rec_dbf, 6, r, sizeof(*r));
++	spin_unlock_irqrestore(&dbf->rec_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -749,10 +755,11 @@
+ 				      atomic_t *status, atomic_t *erp_count,
+ 				      u64 wwpn, u32 d_id, u64 fcp_lun)
+ {
+-	struct zfcp_rec_dbf_record *r = &adapter->rec_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_rec_dbf_record *r = &dbf->rec_dbf_buf;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->rec_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->rec_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	r->id = ZFCP_REC_DBF_ID_TARGET;
+ 	r->id2 = id2;
+@@ -762,8 +769,8 @@
+ 	r->u.target.d_id = d_id;
+ 	r->u.target.fcp_lun = fcp_lun;
+ 	r->u.target.erp_count = atomic_read(erp_count);
+-	debug_event(adapter->rec_dbf, 3, r, sizeof(*r));
+-	spin_unlock_irqrestore(&adapter->rec_dbf_lock, flags);
++	debug_event(dbf->rec_dbf, 3, r, sizeof(*r));
++	spin_unlock_irqrestore(&dbf->rec_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -824,10 +831,11 @@
+ 				void *action, struct zfcp_adapter *adapter,
+ 				struct zfcp_port *port, struct zfcp_unit *unit)
+ {
+-	struct zfcp_rec_dbf_record *r = &adapter->rec_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_rec_dbf_record *r = &dbf->rec_dbf_buf;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->rec_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->rec_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	r->id = ZFCP_REC_DBF_ID_TRIGGER;
+ 	r->id2 = id2;
+@@ -844,8 +852,8 @@
+ 		r->u.trigger.us = atomic_read(&unit->status);
+ 		r->u.trigger.fcp_lun = unit->fcp_lun;
+ 	}
+-	debug_event(adapter->rec_dbf, action ? 1 : 4, r, sizeof(*r));
+-	spin_unlock_irqrestore(&adapter->rec_dbf_lock, flags);
++	debug_event(dbf->rec_dbf, action ? 1 : 4, r, sizeof(*r));
++	spin_unlock_irqrestore(&dbf->rec_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -856,10 +864,11 @@
+ void zfcp_rec_dbf_event_action(u8 id2, struct zfcp_erp_action *erp_action)
+ {
+ 	struct zfcp_adapter *adapter = erp_action->adapter;
+-	struct zfcp_rec_dbf_record *r = &adapter->rec_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_rec_dbf_record *r = &dbf->rec_dbf_buf;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->rec_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->rec_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	r->id = ZFCP_REC_DBF_ID_ACTION;
+ 	r->id2 = id2;
+@@ -867,8 +876,8 @@
+ 	r->u.action.status = erp_action->status;
+ 	r->u.action.step = erp_action->step;
+ 	r->u.action.fsf_req = (unsigned long)erp_action->fsf_req;
+-	debug_event(adapter->rec_dbf, 5, r, sizeof(*r));
+-	spin_unlock_irqrestore(&adapter->rec_dbf_lock, flags);
++	debug_event(dbf->rec_dbf, 5, r, sizeof(*r));
++	spin_unlock_irqrestore(&dbf->rec_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -880,13 +889,14 @@
+ 	struct zfcp_send_ct *ct = (struct zfcp_send_ct *)fsf_req->data;
+ 	struct zfcp_wka_port *wka_port = ct->wka_port;
+ 	struct zfcp_adapter *adapter = wka_port->adapter;
++	struct zfcp_dbf *dbf = adapter->dbf;
+ 	struct ct_hdr *hdr = sg_virt(ct->req);
+-	struct zfcp_san_dbf_record *r = &adapter->san_dbf_buf;
++	struct zfcp_san_dbf_record *r = &dbf->san_dbf_buf;
+ 	struct zfcp_san_dbf_record_ct_request *oct = &r->u.ct_req;
+ 	int level = 3;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->san_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->san_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	strncpy(r->tag, "octc", ZFCP_DBF_TAG_SIZE);
+ 	r->fsf_reqid = (unsigned long)fsf_req;
+@@ -901,10 +911,10 @@
+ 	oct->max_res_size = hdr->max_res_size;
+ 	oct->len = min((int)ct->req->length - (int)sizeof(struct ct_hdr),
+ 		       ZFCP_DBF_SAN_MAX_PAYLOAD);
+-	debug_event(adapter->san_dbf, level, r, sizeof(*r));
+-	zfcp_dbf_hexdump(adapter->san_dbf, r, sizeof(*r), level,
++	debug_event(dbf->san_dbf, level, r, sizeof(*r));
++	zfcp_dbf_hexdump(dbf->san_dbf, r, sizeof(*r), level,
+ 			 (void *)hdr + sizeof(struct ct_hdr), oct->len);
+-	spin_unlock_irqrestore(&adapter->san_dbf_lock, flags);
++	spin_unlock_irqrestore(&dbf->san_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -917,12 +927,13 @@
+ 	struct zfcp_wka_port *wka_port = ct->wka_port;
+ 	struct zfcp_adapter *adapter = wka_port->adapter;
+ 	struct ct_hdr *hdr = sg_virt(ct->resp);
+-	struct zfcp_san_dbf_record *r = &adapter->san_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_san_dbf_record *r = &dbf->san_dbf_buf;
+ 	struct zfcp_san_dbf_record_ct_response *rct = &r->u.ct_resp;
+ 	int level = 3;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->san_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->san_dbf_lock, flags);
+ 	memset(r, 0, sizeof(*r));
+ 	strncpy(r->tag, "rctc", ZFCP_DBF_TAG_SIZE);
+ 	r->fsf_reqid = (unsigned long)fsf_req;
+@@ -937,10 +948,10 @@
+ 	rct->max_res_size = hdr->max_res_size;
+ 	rct->len = min((int)ct->resp->length - (int)sizeof(struct ct_hdr),
+ 		       ZFCP_DBF_SAN_MAX_PAYLOAD);
+-	debug_event(adapter->san_dbf, level, r, sizeof(*r));
+-	zfcp_dbf_hexdump(adapter->san_dbf, r, sizeof(*r), level,
++	debug_event(dbf->san_dbf, level, r, sizeof(*r));
++	zfcp_dbf_hexdump(dbf->san_dbf, r, sizeof(*r), level,
+ 			 (void *)hdr + sizeof(struct ct_hdr), rct->len);
+-	spin_unlock_irqrestore(&adapter->san_dbf_lock, flags);
++	spin_unlock_irqrestore(&dbf->san_dbf_lock, flags);
+ }
+ 
+ static void zfcp_san_dbf_event_els(const char *tag, int level,
+@@ -949,10 +960,11 @@
+ 				   int buflen)
+ {
+ 	struct zfcp_adapter *adapter = fsf_req->adapter;
+-	struct zfcp_san_dbf_record *rec = &adapter->san_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_san_dbf_record *rec = &dbf->san_dbf_buf;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&adapter->san_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->san_dbf_lock, flags);
+ 	memset(rec, 0, sizeof(*rec));
+ 	strncpy(rec->tag, tag, ZFCP_DBF_TAG_SIZE);
+ 	rec->fsf_reqid = (unsigned long)fsf_req;
+@@ -960,10 +972,10 @@
+ 	rec->s_id = s_id;
+ 	rec->d_id = d_id;
+ 	rec->u.els.ls_code = ls_code;
+-	debug_event(adapter->san_dbf, level, rec, sizeof(*rec));
+-	zfcp_dbf_hexdump(adapter->san_dbf, rec, sizeof(*rec), level,
++	debug_event(dbf->san_dbf, level, rec, sizeof(*rec));
++	zfcp_dbf_hexdump(dbf->san_dbf, rec, sizeof(*rec), level,
+ 			 buffer, min(buflen, ZFCP_DBF_SAN_MAX_PAYLOAD));
+-	spin_unlock_irqrestore(&adapter->san_dbf_lock, flags);
++	spin_unlock_irqrestore(&dbf->san_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -1067,14 +1079,15 @@
+ 				struct zfcp_fsf_req *fsf_req,
+ 				unsigned long old_req_id)
+ {
+-	struct zfcp_scsi_dbf_record *rec = &adapter->scsi_dbf_buf;
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_scsi_dbf_record *rec = &dbf->scsi_dbf_buf;
+ 	struct zfcp_dbf_dump *dump = (struct zfcp_dbf_dump *)rec;
+ 	unsigned long flags;
+ 	struct fcp_rsp_iu *fcp_rsp;
+ 	char *fcp_rsp_info = NULL, *fcp_sns_info = NULL;
+ 	int offset = 0, buflen = 0;
+ 
+-	spin_lock_irqsave(&adapter->scsi_dbf_lock, flags);
++	spin_lock_irqsave(&dbf->scsi_dbf_lock, flags);
+ 	do {
+ 		memset(rec, 0, sizeof(*rec));
+ 		if (offset == 0) {
+@@ -1133,9 +1146,9 @@
+ 			memcpy(dump->data, fcp_sns_info + offset, dump->size);
+ 			offset += dump->size;
+ 		}
+-		debug_event(adapter->scsi_dbf, level, rec, sizeof(*rec));
++		debug_event(dbf->scsi_dbf, level, rec, sizeof(*rec));
+ 	} while (offset < buflen);
+-	spin_unlock_irqrestore(&adapter->scsi_dbf_lock, flags);
++	spin_unlock_irqrestore(&dbf->scsi_dbf_lock, flags);
+ }
+ 
+ /**
+@@ -1239,6 +1252,22 @@
+ 	NULL
+ };
+ 
++static debug_info_t *zfcp_dbf_reg(const char *name, int level,
++				  struct debug_view *view, int size)
++{
++	struct debug_info *d;
++
++	d = debug_register(name, dbfsize, level, size);
++	if (!d)
++		return NULL;
++
++	debug_register_view(d, &debug_hex_ascii_view);
++	debug_register_view(d, view);
++	debug_set_level(d, level);
++
++	return d;
++}
++
+ /**
+  * zfcp_adapter_debug_register - registers debug feature for an adapter
+  * @adapter: pointer to adapter for which debug features should be registered
+@@ -1247,52 +1276,56 @@
+ int zfcp_adapter_debug_register(struct zfcp_adapter *adapter)
+ {
+ 	char dbf_name[DEBUG_MAX_NAME_LEN];
++	struct zfcp_dbf *dbf;
++
++	dbf = kmalloc(sizeof(struct zfcp_dbf), GFP_KERNEL);
++	if (!dbf)
++		return -ENOMEM;
++
++	spin_lock_init(&dbf->hba_dbf_lock);
++	spin_lock_init(&dbf->san_dbf_lock);
++	spin_lock_init(&dbf->scsi_dbf_lock);
++	spin_lock_init(&dbf->rec_dbf_lock);
+ 
+ 	/* debug feature area which records recovery activity */
+ 	sprintf(dbf_name, "zfcp_%s_rec", zfcp_get_busid_by_adapter(adapter));
+-	adapter->rec_dbf = debug_register(dbf_name, dbfsize, 1,
+-					  sizeof(struct zfcp_rec_dbf_record));
+-	if (!adapter->rec_dbf)
+-		goto failed;
+-	debug_register_view(adapter->rec_dbf, &debug_hex_ascii_view);
+-	debug_register_view(adapter->rec_dbf, &zfcp_rec_dbf_view);
+-	debug_set_level(adapter->rec_dbf, 3);
++	dbf->rec_dbf = zfcp_dbf_reg(dbf_name, 3, &zfcp_rec_dbf_view,
++				    sizeof(struct zfcp_rec_dbf_record));
++	if (!dbf->rec_dbf)
++		goto fail_rec;
+ 
+ 	/* debug feature area which records HBA (FSF and QDIO) conditions */
+ 	sprintf(dbf_name, "zfcp_%s_hba", zfcp_get_busid_by_adapter(adapter));
+-	adapter->hba_dbf = debug_register(dbf_name, dbfsize, 1,
+-					  sizeof(struct zfcp_hba_dbf_record));
+-	if (!adapter->hba_dbf)
+-		goto failed;
+-	debug_register_view(adapter->hba_dbf, &debug_hex_ascii_view);
+-	debug_register_view(adapter->hba_dbf, &zfcp_hba_dbf_view);
+-	debug_set_level(adapter->hba_dbf, 3);
++	dbf->hba_dbf = zfcp_dbf_reg(dbf_name, 3, &zfcp_hba_dbf_view,
++				    sizeof(struct zfcp_hba_dbf_record));
++	if (!dbf->hba_dbf)
++		goto fail_hba;
+ 
+ 	/* debug feature area which records SAN command failures and recovery */
+ 	sprintf(dbf_name, "zfcp_%s_san", zfcp_get_busid_by_adapter(adapter));
+-	adapter->san_dbf = debug_register(dbf_name, dbfsize, 1,
+-					  sizeof(struct zfcp_san_dbf_record));
+-	if (!adapter->san_dbf)
+-		goto failed;
+-	debug_register_view(adapter->san_dbf, &debug_hex_ascii_view);
+-	debug_register_view(adapter->san_dbf, &zfcp_san_dbf_view);
+-	debug_set_level(adapter->san_dbf, 6);
++	dbf->san_dbf = zfcp_dbf_reg(dbf_name, 6, &zfcp_san_dbf_view,
++				    sizeof(struct zfcp_san_dbf_record));
++	if (!dbf->san_dbf)
++		goto fail_san;
+ 
+ 	/* debug feature area which records SCSI command failures and recovery */
+ 	sprintf(dbf_name, "zfcp_%s_scsi", zfcp_get_busid_by_adapter(adapter));
+-	adapter->scsi_dbf = debug_register(dbf_name, dbfsize, 1,
+-					   sizeof(struct zfcp_scsi_dbf_record));
+-	if (!adapter->scsi_dbf)
+-		goto failed;
+-	debug_register_view(adapter->scsi_dbf, &debug_hex_ascii_view);
+-	debug_register_view(adapter->scsi_dbf, &zfcp_scsi_dbf_view);
+-	debug_set_level(adapter->scsi_dbf, 3);
++	dbf->scsi_dbf = zfcp_dbf_reg(dbf_name, 3, &zfcp_scsi_dbf_view,
++				     sizeof(struct zfcp_scsi_dbf_record));
++	if (!dbf->scsi_dbf)
++		goto fail_scsi;
+ 
++	adapter->dbf = dbf;
+ 	return 0;
+ 
+- failed:
+-	zfcp_adapter_debug_unregister(adapter);
+-
++fail_scsi:
++	debug_unregister(dbf->san_dbf);
++fail_san:
++	debug_unregister(dbf->hba_dbf);
++fail_hba:
++	debug_unregister(dbf->rec_dbf);
++fail_rec:
++	kfree(dbf);
+ 	return -ENOMEM;
+ }
+ 
+@@ -1302,12 +1335,10 @@
+  */
+ void zfcp_adapter_debug_unregister(struct zfcp_adapter *adapter)
+ {
+-	debug_unregister(adapter->scsi_dbf);
+-	debug_unregister(adapter->san_dbf);
+-	debug_unregister(adapter->hba_dbf);
+-	debug_unregister(adapter->rec_dbf);
+-	adapter->scsi_dbf = NULL;
+-	adapter->san_dbf = NULL;
+-	adapter->hba_dbf = NULL;
+-	adapter->rec_dbf = NULL;
++	debug_unregister(adapter->dbf->scsi_dbf);
++	debug_unregister(adapter->dbf->san_dbf);
++	debug_unregister(adapter->dbf->hba_dbf);
++	debug_unregister(adapter->dbf->rec_dbf);
++	kfree(adapter->dbf);
++	adapter->dbf = NULL;
+ }
+Index: linux-sles11/drivers/s390/scsi/zfcp_dbf.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_dbf.h	2009-08-17 15:31:25.000000000 +0200
++++ linux-sles11/drivers/s390/scsi/zfcp_dbf.h	2009-08-17 15:31:35.000000000 +0200
+@@ -2,7 +2,7 @@
+  * This file is part of the zfcp device driver for
+  * FCP adapters for IBM System z9 and zSeries.
+  *
+- * Copyright IBM Corp. 2008, 2008
++ * Copyright IBM Corp. 2008, 2009
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -221,4 +221,19 @@
+ 	u8 sns_info[ZFCP_DBF_SCSI_FCP_SNS_INFO];
+ } __attribute__ ((packed));
+ 
++struct zfcp_dbf {
++	debug_info_t			*rec_dbf;
++	debug_info_t			*hba_dbf;
++	debug_info_t			*san_dbf;
++	debug_info_t			*scsi_dbf;
++	spinlock_t			rec_dbf_lock;
++	spinlock_t			hba_dbf_lock;
++	spinlock_t			san_dbf_lock;
++	spinlock_t			scsi_dbf_lock;
++	struct zfcp_rec_dbf_record	rec_dbf_buf;
++	struct zfcp_hba_dbf_record	hba_dbf_buf;
++	struct zfcp_san_dbf_record	san_dbf_buf;
++	struct zfcp_scsi_dbf_record	scsi_dbf_buf;
++};
++
+ #endif /* ZFCP_DBF_H */
+Index: linux-sles11/drivers/s390/scsi/zfcp_def.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_def.h	2009-08-17 15:31:29.000000000 +0200
++++ linux-sles11/drivers/s390/scsi/zfcp_def.h	2009-08-17 15:31:35.000000000 +0200
+@@ -33,10 +33,8 @@
+ #include <asm/qdio.h>
+ #include <asm/debug.h>
+ #include <asm/ebcdic.h>
+-#include "zfcp_dbf.h"
+ #include "zfcp_fsf.h"
+ 
+-
+ /********************* GENERAL DEFINES *********************************/
+ 
+ #define REQUEST_LIST_SIZE 128
+@@ -499,18 +497,7 @@
+ 	u32			erp_low_mem_count; /* nr of erp actions waiting
+ 						      for memory */
+ 	struct zfcp_wka_port	nsp;		   /* adapter's nameserver */
+-	debug_info_t		*rec_dbf;
+-	debug_info_t		*hba_dbf;
+-	debug_info_t		*san_dbf;          /* debug feature areas */
+-	debug_info_t		*scsi_dbf;
+-	spinlock_t		rec_dbf_lock;
+-	spinlock_t		hba_dbf_lock;
+-	spinlock_t		san_dbf_lock;
+-	spinlock_t		scsi_dbf_lock;
+-	struct zfcp_rec_dbf_record	rec_dbf_buf;
+-	struct zfcp_hba_dbf_record	hba_dbf_buf;
+-	struct zfcp_san_dbf_record	san_dbf_buf;
+-	struct zfcp_scsi_dbf_record	scsi_dbf_buf;
++	struct zfcp_dbf         *dbf;		   /* debug traces */
+ 	struct zfcp_adapter_mempool	pool;      /* Adapter memory pools */
+ 	struct qdio_initialize  qdio_init_data;    /* for qdio_establish */
+ 	struct fc_host_statistics *fc_stats;
+Index: linux-sles11/drivers/s390/scsi/zfcp_fsf.h
+===================================================================
+--- linux-sles11.orig/drivers/s390/scsi/zfcp_fsf.h	2009-08-17 15:31:25.000000000 +0200
++++ linux-sles11/drivers/s390/scsi/zfcp_fsf.h	2009-08-17 15:31:35.000000000 +0200
+@@ -3,13 +3,14 @@
+  *
+  * Interface to the FSF support functions.
+  *
+- * Copyright IBM Corporation 2002, 2008
++ * Copyright IBM Corporation 2002, 2009
+  */
+ 
+ #ifndef FSF_H
+ #define FSF_H
+ 
+ #include <linux/pfn.h>
++#include <linux/scatterlist.h>
+ 
+ #define FSF_QTCB_CURRENT_VERSION		0x00000001
+ 

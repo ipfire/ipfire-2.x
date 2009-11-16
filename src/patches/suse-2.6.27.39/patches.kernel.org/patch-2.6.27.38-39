@@ -1,0 +1,923 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.39
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Makefile b/Makefile
+index 3be1470..2361e50 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .38
++EXTRAVERSION = .39
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+index 8c5e1de..5b1ccc2 100644
+--- a/arch/m68k/Kconfig
++++ b/arch/m68k/Kconfig
+@@ -572,7 +572,7 @@ config HPAPCI
+ 
+ config MVME147_SCC
+ 	bool "SCC support for MVME147 serial ports"
+-	depends on MVME147
++	depends on MVME147 && BROKEN
+ 	help
+ 	  This is the driver for the serial ports on the Motorola MVME147
+ 	  boards.  Everyone using one of these boards should say Y here.
+@@ -587,14 +587,14 @@ config SERIAL167
+ 
+ config MVME162_SCC
+ 	bool "SCC support for MVME162 serial ports"
+-	depends on MVME16x
++	depends on MVME16x && BROKEN
+ 	help
+ 	  This is the driver for the serial ports on the Motorola MVME162 and
+ 	  172 boards.  Everyone using one of these boards should say Y here.
+ 
+ config BVME6000_SCC
+ 	bool "SCC support for BVME6000 serial ports"
+-	depends on BVME6000
++	depends on BVME6000 && BROKEN
+ 	help
+ 	  This is the driver for the serial ports on the BVME4000 and BVME6000
+ 	  boards from BVM Ltd.  Everyone using one of these boards should say
+diff --git a/arch/x86/ia32/ia32entry.S b/arch/x86/ia32/ia32entry.S
+index 09b59b2..5d7f4af 100644
+--- a/arch/x86/ia32/ia32entry.S
++++ b/arch/x86/ia32/ia32entry.S
+@@ -204,7 +204,7 @@ sysexit_from_sys_call:
+ 	movl RDI-ARGOFFSET(%rsp),%r8d	/* reload 5th syscall arg */
+ 	.endm
+ 
+-	.macro auditsys_exit exit,ebpsave=RBP
++	.macro auditsys_exit exit
+ 	testl $(_TIF_ALLWORK_MASK & ~_TIF_SYSCALL_AUDIT),TI_flags(%r10)
+ 	jnz ia32_ret_from_sys_call
+ 	TRACE_IRQS_ON
+@@ -217,7 +217,6 @@ sysexit_from_sys_call:
+ 	call audit_syscall_exit
+ 	GET_THREAD_INFO(%r10)
+ 	movl RAX-ARGOFFSET(%rsp),%eax	/* reload syscall return value */
+-	movl \ebpsave-ARGOFFSET(%rsp),%ebp /* reload user register value */
+ 	movl $(_TIF_ALLWORK_MASK & ~_TIF_SYSCALL_AUDIT),%edi
+ 	cli
+ 	TRACE_IRQS_OFF
+@@ -351,7 +350,7 @@ cstar_auditsys:
+ 	jmp cstar_dispatch
+ 
+ sysretl_audit:
+-	auditsys_exit sysretl_from_sys_call, RCX /* user %ebp in RCX slot */
++	auditsys_exit sysretl_from_sys_call
+ #endif
+ 
+ cstar_tracesys:
+diff --git a/arch/x86/kernel/amd_iommu_init.c b/arch/x86/kernel/amd_iommu_init.c
+index 923e682..7d58f32 100644
+--- a/arch/x86/kernel/amd_iommu_init.c
++++ b/arch/x86/kernel/amd_iommu_init.c
+@@ -230,7 +230,7 @@ static void __init iommu_feature_enable(struct amd_iommu *iommu, u8 bit)
+ 	writel(ctrl, iommu->mmio_base + MMIO_CONTROL_OFFSET);
+ }
+ 
+-static void __init iommu_feature_disable(struct amd_iommu *iommu, u8 bit)
++static void iommu_feature_disable(struct amd_iommu *iommu, u8 bit)
+ {
+ 	u32 ctrl;
+ 
+@@ -430,6 +430,27 @@ static void set_dev_entry_bit(u16 devid, u8 bit)
+ 	amd_iommu_dev_table[devid].data[i] |= (1 << _bit);
+ }
+ 
++static int get_dev_entry_bit(u16 devid, u8 bit)
++{
++	int i = (bit >> 5) & 0x07;
++	int _bit = bit & 0x1f;
++
++	return (amd_iommu_dev_table[devid].data[i] & (1 << _bit)) >> _bit;
++}
++
++
++void amd_iommu_apply_erratum_63(u16 devid)
++{
++	int sysmgt;
++
++	sysmgt = get_dev_entry_bit(devid, DEV_ENTRY_SYSMGT1) |
++		(get_dev_entry_bit(devid, DEV_ENTRY_SYSMGT2) << 1);
++
++	if (sysmgt == 0x01)
++		set_dev_entry_bit(devid, DEV_ENTRY_IW);
++}
++
++
+ /* Writes the specific IOMMU for a device into the rlookup table */
+ static void __init set_iommu_for_device(struct amd_iommu *iommu, u16 devid)
+ {
+@@ -458,6 +479,8 @@ static void __init set_dev_entry_from_acpi(struct amd_iommu *iommu,
+ 	if (flags & ACPI_DEVFLAG_LINT1)
+ 		set_dev_entry_bit(devid, DEV_ENTRY_LINT1_PASS);
+ 
++	amd_iommu_apply_erratum_63(devid);
++
+ 	set_iommu_for_device(iommu, devid);
+ }
+ 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 60ebfd7..bf872f2 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1223,6 +1223,8 @@ static int kvm_dev_ioctl_get_supported_cpuid(struct kvm_cpuid2 *cpuid,
+ 
+ 	if (cpuid->nent < 1)
+ 		goto out;
++	if (cpuid->nent > KVM_MAX_CPUID_ENTRIES)
++		cpuid->nent = KVM_MAX_CPUID_ENTRIES;
+ 	r = -ENOMEM;
+ 	cpuid_entries = vmalloc(sizeof(struct kvm_cpuid_entry2) * cpuid->nent);
+ 	if (!cpuid_entries)
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index afa66f4..0450761 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1262,16 +1262,6 @@ acpi_add_single_object(struct acpi_device **child,
+ 	acpi_device_set_id(device, parent, handle, type);
+ 
+ 	/*
+-	 * The ACPI device is attached to acpi handle before getting
+-	 * the power/wakeup/peformance flags. Otherwise OS can't get
+-	 * the corresponding ACPI device by the acpi handle in the course
+-	 * of getting the power/wakeup/performance flags.
+-	 */
+-	result = acpi_device_set_context(device, type);
+-	if (result)
+-		goto end;
+-
+-	/*
+ 	 * Power Management
+ 	 * ----------------
+ 	 */
+@@ -1301,6 +1291,8 @@ acpi_add_single_object(struct acpi_device **child,
+ 			goto end;
+ 	}
+ 
++	if ((result = acpi_device_set_context(device, type)))
++		goto end;
+ 
+ 	result = acpi_device_register(device, parent);
+ 
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 5cdd821..8afc274 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4747,12 +4747,14 @@ void ata_qc_complete(struct ata_queued_cmd *qc)
+ 			qc->flags |= ATA_QCFLAG_FAILED;
+ 
+ 		if (unlikely(qc->flags & ATA_QCFLAG_FAILED)) {
+-			if (!ata_tag_internal(qc->tag)) {
+-				/* always fill result TF for failed qc */
+-				fill_result_tf(qc);
++			/* always fill result TF for failed qc */
++			fill_result_tf(qc);
++
++			if (!ata_tag_internal(qc->tag))
+ 				ata_qc_schedule_eh(qc);
+-				return;
+-			}
++			else
++				__ata_qc_complete(qc);
++			return;
+ 		}
+ 
+ 		/* read result TF if requested */
+diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+index 1e2bda7..296d833 100644
+--- a/drivers/base/driver.c
++++ b/drivers/base/driver.c
+@@ -227,7 +227,7 @@ int driver_register(struct device_driver *drv)
+ 		put_driver(other);
+ 		printk(KERN_ERR "Error: Driver '%s' is already registered, "
+ 			"aborting...\n", drv->name);
+-		return -EEXIST;
++		return -EBUSY;
+ 	}
+ 
+ 	ret = bus_add_driver(drv);
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index caff851..8b91700 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -310,7 +310,7 @@ config SPECIALIX
+ 
+ config SX
+ 	tristate "Specialix SX (and SI) card support"
+-	depends on SERIAL_NONSTANDARD && (PCI || EISA || ISA)
++	depends on SERIAL_NONSTANDARD && (PCI || EISA || ISA) && BROKEN
+ 	help
+ 	  This is a driver for the SX and SI multiport serial cards.
+ 	  Please read the file <file:Documentation/sx.txt> for details.
+@@ -321,7 +321,7 @@ config SX
+ 
+ config RIO
+ 	tristate "Specialix RIO system support"
+-	depends on SERIAL_NONSTANDARD
++	depends on SERIAL_NONSTANDARD && BROKEN
+ 	help
+ 	  This is a driver for the Specialix RIO, a smart serial card which
+ 	  drives an outboard box that can support up to 128 ports.  Product
+@@ -382,7 +382,7 @@ config NOZOMI
+ 
+ config A2232
+ 	tristate "Commodore A2232 serial support (EXPERIMENTAL)"
+-	depends on EXPERIMENTAL && ZORRO && BROKEN_ON_SMP
++	depends on EXPERIMENTAL && ZORRO && BROKEN
+ 	---help---
+ 	  This option supports the 2232 7-port serial card shipped with the
+ 	  Amiga 2000 and other Zorro-bus machines, dating from 1989.  At
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index d349c4a..6bb5157 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -623,6 +623,16 @@ static const struct dmi_system_id toshiba_dmi_table[] = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "TOSHIBA"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "PORTEGE M300"),
+ 		},
++
++	},
++	{
++		.ident = "Toshiba Portege M300",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "TOSHIBA"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Portable PC"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Version 1.0"),
++		},
++
+ 	},
+ 	{ }
+ };
+diff --git a/drivers/net/appletalk/ipddp.c b/drivers/net/appletalk/ipddp.c
+index 1071144..6d0107c 100644
+--- a/drivers/net/appletalk/ipddp.c
++++ b/drivers/net/appletalk/ipddp.c
+@@ -173,8 +173,7 @@ static int ipddp_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	((struct net_device_stats *) dev->priv)->tx_packets++;
+         ((struct net_device_stats *) dev->priv)->tx_bytes+=skb->len;
+ 
+-        if(aarp_send_ddp(rt->dev, skb, &rt->at, NULL) < 0)
+-                dev_kfree_skb(skb);
++	aarp_send_ddp(rt->dev, skb, &rt->at, NULL);
+ 
+         return 0;
+ }
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index f9f29c9..5a07b50 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -686,7 +686,7 @@ static int bond_update_speed_duplex(struct slave *slave)
+  */
+ static int bond_check_dev_link(struct bonding *bond, struct net_device *slave_dev, int reporting)
+ {
+-	static int (* ioctl)(struct net_device *, struct ifreq *, int);
++	int (* ioctl)(struct net_device *, struct ifreq *, int);
+ 	struct ifreq ifr;
+ 	struct mii_ioctl_data *mii;
+ 
+diff --git a/drivers/net/wireless/b43/rfkill.c b/drivers/net/wireless/b43/rfkill.c
+index 34ae125..f9c355e 100644
+--- a/drivers/net/wireless/b43/rfkill.c
++++ b/drivers/net/wireless/b43/rfkill.c
+@@ -36,7 +36,8 @@ static bool b43_is_hw_radio_enabled(struct b43_wldev *dev)
+ 		      & B43_MMIO_RADIO_HWENABLED_HI_MASK))
+ 			return 1;
+ 	} else {
+-		if (b43_read16(dev, B43_MMIO_RADIO_HWENABLED_LO)
++		if (b43_status(dev) >= B43_STAT_STARTED &&
++		    b43_read16(dev, B43_MMIO_RADIO_HWENABLED_LO)
+ 		    & B43_MMIO_RADIO_HWENABLED_LO_MASK)
+ 			return 1;
+ 	}
+diff --git a/drivers/net/wireless/libertas/if_usb.c b/drivers/net/wireless/libertas/if_usb.c
+index 632c291..5e37c2f 100644
+--- a/drivers/net/wireless/libertas/if_usb.c
++++ b/drivers/net/wireless/libertas/if_usb.c
+@@ -443,7 +443,7 @@ static int __if_usb_submit_rx_urb(struct if_usb_card *cardp,
+ 	/* Fill the receive configuration URB and initialise the Rx call back */
+ 	usb_fill_bulk_urb(cardp->rx_urb, cardp->udev,
+ 			  usb_rcvbulkpipe(cardp->udev, cardp->ep_in),
+-			  (void *) (skb->tail + (size_t) IPFIELD_ALIGN_OFFSET),
++			  skb->data + IPFIELD_ALIGN_OFFSET,
+ 			  MRVDRV_ETH_RX_PACKET_BUFFER_SIZE, callbackfn,
+ 			  cardp);
+ 
+diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
+index 963960d..eef4e86 100644
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -2758,7 +2758,7 @@ static void raycs_write(const char *name, write_proc_t *w, void *data)
+ static int write_essid(struct file *file, const char __user *buffer, unsigned long count, void *data)
+ {
+ 	static char proc_essid[33];
+-	int len = count;
++	unsigned int len = count;
+ 
+ 	if (len > 32)
+ 		len = 32;
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index 7716145..b38fe67 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -1918,6 +1918,10 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
+ 		}
+ 		size = size>>16;
+ 		size *= 4;
++		if (size > MAX_MESSAGE_SIZE) {
++			rcode = -EINVAL;
++			goto cleanup;
++		}
+ 		/* Copy in the user's I2O command */
+ 		if (copy_from_user (msg, user_msg, size)) {
+ 			rcode = -EFAULT;
+diff --git a/drivers/serial/8250_pci.c b/drivers/serial/8250_pci.c
+index 9f72ad7..3a56f92 100644
+--- a/drivers/serial/8250_pci.c
++++ b/drivers/serial/8250_pci.c
+@@ -1218,6 +1218,7 @@ enum pci_board_num_t {
+ 	pbn_exar_XR17C152,
+ 	pbn_exar_XR17C154,
+ 	pbn_exar_XR17C158,
++	pbn_exar_ibm_saturn,
+ 	pbn_pasemi_1682M,
+ };
+ 
+@@ -1746,6 +1747,13 @@ static struct pciserial_board pci_boards[] __devinitdata = {
+ 		.base_baud	= 921600,
+ 		.uart_offset	= 0x200,
+ 	},
++	[pbn_exar_ibm_saturn] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 1,
++		.base_baud	= 921600,
++		.uart_offset	= 0x200,
++	},
++
+ 	/*
+ 	 * PA Semi PWRficient PA6T-1682M on-chip UART
+ 	 */
+@@ -2217,6 +2225,9 @@ static struct pci_device_id serial_pci_tbl[] = {
+ 		PCI_SUBVENDOR_ID_CONNECT_TECH,
+ 		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_8_485, 0, 0,
+ 		pbn_b0_8_1843200_200 },
++	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C152,
++		PCI_VENDOR_ID_IBM, PCI_SUBDEVICE_ID_IBM_SATURN_SERIAL_ONE_PORT,
++		0, 0, pbn_exar_ibm_saturn },
+ 
+ 	{	PCI_VENDOR_ID_SEALEVEL, PCI_DEVICE_ID_SEALEVEL_U530,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+diff --git a/fs/hfsplus/wrapper.c b/fs/hfsplus/wrapper.c
+index 175d08e..bed78ac 100644
+--- a/fs/hfsplus/wrapper.c
++++ b/fs/hfsplus/wrapper.c
+@@ -99,6 +99,10 @@ int hfsplus_read_wrapper(struct super_block *sb)
+ 
+ 	if (hfsplus_get_last_session(sb, &part_start, &part_size))
+ 		return -EINVAL;
++	if ((u64)part_start + part_size > 0x100000000ULL) {
++		pr_err("hfs: volumes larger than 2TB are not supported yet\n");
++		return -EINVAL;
++	}
+ 	while (1) {
+ 		bh = sb_bread512(sb, part_start + HFSPLUS_VOLHEAD_SECTOR, vhdr);
+ 		if (!bh)
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 5ee23e7..9d6a0e4 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -983,7 +983,7 @@ static int nfs4_init_client(struct nfs_client *clp,
+ 					RPC_CLNT_CREATE_DISCRTRY);
+ 	if (error < 0)
+ 		goto error;
+-	memcpy(clp->cl_ipaddr, ip_addr, sizeof(clp->cl_ipaddr));
++	strlcpy(clp->cl_ipaddr, ip_addr, sizeof(clp->cl_ipaddr));
+ 
+ 	error = nfs_idmap_new(clp);
+ 	if (error < 0) {
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index c3fe156..e195f67 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1014,12 +1014,12 @@ static struct dentry *nfs_atomic_lookup(struct inode *dir, struct dentry *dentry
+ 				res = NULL;
+ 				goto out;
+ 			/* This turned out not to be a regular file */
+-			case -EISDIR:
+ 			case -ENOTDIR:
+ 				goto no_open;
+ 			case -ELOOP:
+ 				if (!(nd->intent.open.flags & O_NOFOLLOW))
+ 					goto no_open;
++			/* case -EISDIR: */
+ 			/* case -EINVAL: */
+ 			default:
+ 				goto out;
+@@ -1526,6 +1526,8 @@ nfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *dentry)
+ 		old_dentry->d_parent->d_name.name, old_dentry->d_name.name,
+ 		dentry->d_parent->d_name.name, dentry->d_name.name);
+ 
++	nfs_inode_return_delegation(inode);
++
+ 	d_drop(dentry);
+ 	error = NFS_PROTO(dir)->link(inode, dir, &dentry->d_name);
+ 	if (error == 0) {
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 630feb3..8a5c1d5 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -454,6 +454,7 @@ static void nfs_direct_write_reschedule(struct nfs_direct_req *dreq)
+ 	};
+ 	struct rpc_task_setup task_setup_data = {
+ 		.rpc_client = NFS_CLIENT(inode),
++		.rpc_message = &msg,
+ 		.callback_ops = &nfs_write_direct_ops,
+ 		.workqueue = nfsiod_workqueue,
+ 		.flags = RPC_TASK_ASYNC,
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index c910413..ad4e800 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -71,12 +71,17 @@ static int _nfs4_proc_getattr(struct nfs_server *server, struct nfs_fh *fhandle,
+ /* Prevent leaks of NFSv4 errors into userland */
+ int nfs4_map_errors(int err)
+ {
+-	if (err < -1000) {
++	if (err >= -1000)
++		return err;
++	switch (err) {
++	case -NFS4ERR_RESOURCE:
++		return -EREMOTEIO;
++	default:
+ 		dprintk("%s could not handle NFSv4 error %d\n",
+ 				__func__, -err);
+-		return -EIO;
++		break;
+ 	}
+-	return err;
++	return -EIO;
+ }
+ 
+ /*
+@@ -3550,15 +3555,23 @@ nfs4_proc_lock(struct file *filp, int cmd, struct file_lock *request)
+ 	if (request->fl_start < 0 || request->fl_end < 0)
+ 		return -EINVAL;
+ 
+-	if (IS_GETLK(cmd))
+-		return nfs4_proc_getlk(state, F_GETLK, request);
++	if (IS_GETLK(cmd)) {
++		if (state != NULL)
++			return nfs4_proc_getlk(state, F_GETLK, request);
++		return 0;
++	}
+ 
+ 	if (!(IS_SETLK(cmd) || IS_SETLKW(cmd)))
+ 		return -EINVAL;
+ 
+-	if (request->fl_type == F_UNLCK)
+-		return nfs4_proc_unlck(state, cmd, request);
++	if (request->fl_type == F_UNLCK) {
++		if (state != NULL)
++			return nfs4_proc_unlck(state, cmd, request);
++		return 0;
++	}
+ 
++	if (state == NULL)
++		return -ENOLCK;
+ 	do {
+ 		status = nfs4_proc_setlk(state, cmd, request);
+ 		if ((status != -EAGAIN) || IS_SETLK(cmd))
+diff --git a/fs/nfs/nfs4renewd.c b/fs/nfs/nfs4renewd.c
+index 3305acb..6ede673 100644
+--- a/fs/nfs/nfs4renewd.c
++++ b/fs/nfs/nfs4renewd.c
+@@ -125,12 +125,6 @@ nfs4_schedule_state_renewal(struct nfs_client *clp)
+ }
+ 
+ void
+-nfs4_renewd_prepare_shutdown(struct nfs_server *server)
+-{
+-	cancel_delayed_work(&server->nfs_client->cl_renewd);
+-}
+-
+-void
+ nfs4_kill_renewd(struct nfs_client *clp)
+ {
+ 	cancel_delayed_work_sync(&clp->cl_renewd);
+diff --git a/fs/nfs/nfs4xdr.c b/fs/nfs/nfs4xdr.c
+index b916297..5e26759 100644
+--- a/fs/nfs/nfs4xdr.c
++++ b/fs/nfs/nfs4xdr.c
+@@ -4671,7 +4671,6 @@ static struct {
+ 	{ NFS4ERR_SERVERFAULT,	-ESERVERFAULT	},
+ 	{ NFS4ERR_BADTYPE,	-EBADTYPE	},
+ 	{ NFS4ERR_LOCKED,	-EAGAIN		},
+-	{ NFS4ERR_RESOURCE,	-EREMOTEIO	},
+ 	{ NFS4ERR_SYMLINK,	-ELOOP		},
+ 	{ NFS4ERR_OP_ILLEGAL,	-EOPNOTSUPP	},
+ 	{ NFS4ERR_DEADLOCK,	-EDEADLK	},
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index e9b2017..3da0fa5 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2398,7 +2398,6 @@ static void nfs4_kill_super(struct super_block *sb)
+ 	nfs_return_all_delegations(sb);
+ 	kill_anon_super(sb);
+ 
+-	nfs4_renewd_prepare_shutdown(server);
+ 	nfs_free_server(server);
+ }
+ 
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 35d2cbb..f91375f 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -742,36 +742,55 @@ pipe_rdwr_release(struct inode *inode, struct file *filp)
+ static int
+ pipe_read_open(struct inode *inode, struct file *filp)
+ {
+-	/* We could have perhaps used atomic_t, but this and friends
+-	   below are the only places.  So it doesn't seem worthwhile.  */
++	int ret = -ENOENT;
++
+ 	mutex_lock(&inode->i_mutex);
+-	inode->i_pipe->readers++;
++
++	if (inode->i_pipe) {
++		ret = 0;
++		inode->i_pipe->readers++;
++	}
++
+ 	mutex_unlock(&inode->i_mutex);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int
+ pipe_write_open(struct inode *inode, struct file *filp)
+ {
++	int ret = -ENOENT;
++
+ 	mutex_lock(&inode->i_mutex);
+-	inode->i_pipe->writers++;
++
++	if (inode->i_pipe) {
++		ret = 0;
++		inode->i_pipe->writers++;
++	}
++
+ 	mutex_unlock(&inode->i_mutex);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int
+ pipe_rdwr_open(struct inode *inode, struct file *filp)
+ {
++	int ret = -ENOENT;
++
+ 	mutex_lock(&inode->i_mutex);
+-	if (filp->f_mode & FMODE_READ)
+-		inode->i_pipe->readers++;
+-	if (filp->f_mode & FMODE_WRITE)
+-		inode->i_pipe->writers++;
++
++	if (inode->i_pipe) {
++		ret = 0;
++		if (filp->f_mode & FMODE_READ)
++			inode->i_pipe->readers++;
++		if (filp->f_mode & FMODE_WRITE)
++			inode->i_pipe->writers++;
++	}
++
+ 	mutex_unlock(&inode->i_mutex);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /*
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 2651f80..cd85f00 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -200,6 +200,8 @@ extern struct ratelimit_state printk_ratelimit_state;
+ extern int printk_ratelimit(void);
+ extern bool printk_timed_ratelimit(unsigned long *caller_jiffies,
+ 				   unsigned int interval_msec);
++extern void printk_tick(void);
++extern int printk_needs_cpu(int);
+ #else
+ static inline int vprintk(const char *s, va_list args)
+ 	__attribute__ ((format (printf, 1, 0)));
+@@ -211,6 +213,8 @@ static inline int printk_ratelimit(void) { return 0; }
+ static inline bool printk_timed_ratelimit(unsigned long *caller_jiffies, \
+ 					  unsigned int interval_msec)	\
+ 		{ return false; }
++static inline void printk_tick(void) { }
++static inline int printk_needs_cpu(int) { return 0; }
+ #endif
+ 
+ extern void asmlinkage __attribute__((format(printf, 1, 2)))
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index ba91fe1..c869aee 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -478,6 +478,9 @@
+ #define PCI_DEVICE_ID_IBM_ICOM_V2_ONE_PORT_RVX_ONE_PORT_MDM_PCIE 0x0361
+ #define PCI_DEVICE_ID_IBM_ICOM_FOUR_PORT_MODEL	0x252
+ 
++#define PCI_SUBVENDOR_ID_IBM		0x1014
++#define PCI_SUBDEVICE_ID_IBM_SATURN_SERIAL_ONE_PORT	0x03d4
++
+ #define PCI_VENDOR_ID_UNISYS		0x1018
+ #define PCI_DEVICE_ID_UNISYS_DMA_DIRECTOR 0x001C
+ 
+diff --git a/include/net/irda/irda_device.h b/include/net/irda/irda_device.h
+index 3025ae1..94c852d 100644
+--- a/include/net/irda/irda_device.h
++++ b/include/net/irda/irda_device.h
+@@ -135,9 +135,11 @@ struct dongle_reg {
+ 
+ /* 
+  * Per-packet information we need to hide inside sk_buff 
+- * (must not exceed 48 bytes, check with struct sk_buff) 
++ * (must not exceed 48 bytes, check with struct sk_buff)
++ * The default_qdisc_pad field is a temporary hack.
+  */
+ struct irda_skb_cb {
++	unsigned int default_qdisc_pad;
+ 	magic_t magic;       /* Be sure that we can trust the information */
+ 	__u32   next_speed;  /* The Speed to be set *after* this frame */
+ 	__u16   mtt;         /* Minimum turn around time */
+diff --git a/kernel/printk.c b/kernel/printk.c
+index 0084812..204660d 100644
+--- a/kernel/printk.c
++++ b/kernel/printk.c
+@@ -977,10 +977,25 @@ int is_console_locked(void)
+ 	return console_locked;
+ }
+ 
+-void wake_up_klogd(void)
++static DEFINE_PER_CPU(int, printk_pending);
++
++void printk_tick(void)
+ {
+-	if (!oops_in_progress && waitqueue_active(&log_wait))
++	if (__get_cpu_var(printk_pending)) {
++		__get_cpu_var(printk_pending) = 0;
+ 		wake_up_interruptible(&log_wait);
++	}
++}
++
++int printk_needs_cpu(int cpu)
++{
++	return per_cpu(printk_pending, cpu);
++}
++
++void wake_up_klogd(void)
++{
++	if (waitqueue_active(&log_wait))
++		__get_cpu_var(printk_pending) = 1;
+ }
+ 
+ /**
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index cb02324..a7cb616 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -261,7 +261,7 @@ void tick_nohz_stop_sched_tick(int inidle)
+ 	next_jiffies = get_next_timer_interrupt(last_jiffies);
+ 	delta_jiffies = next_jiffies - last_jiffies;
+ 
+-	if (rcu_needs_cpu(cpu))
++	if (rcu_needs_cpu(cpu) || printk_needs_cpu(cpu))
+ 		delta_jiffies = 1;
+ 	/*
+ 	 * Do not stop the tick, if we are only one off
+diff --git a/kernel/timer.c b/kernel/timer.c
+index e9a0195..7acda56 100644
+--- a/kernel/timer.c
++++ b/kernel/timer.c
+@@ -978,6 +978,7 @@ void update_process_times(int user_tick)
+ 	run_local_timers();
+ 	if (rcu_pending(cpu))
+ 		rcu_check_callbacks(cpu, user_tick);
++	printk_tick();
+ 	scheduler_tick();
+ 	run_posix_cpu_timers(p);
+ }
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 83bea4f..7acf81c 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -985,7 +985,8 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 
+ 		if (!err && nr_failed && (flags & MPOL_MF_STRICT))
+ 			err = -EIO;
+-	}
++	} else
++		putback_lru_pages(&pagelist);
+ 
+ 	up_write(&mm->mmap_sem);
+ 	mpol_put(new);
+diff --git a/net/appletalk/aarp.c b/net/appletalk/aarp.c
+index b25c1e9..dd076ea 100644
+--- a/net/appletalk/aarp.c
++++ b/net/appletalk/aarp.c
+@@ -598,7 +598,7 @@ int aarp_send_ddp(struct net_device *dev, struct sk_buff *skb,
+ 
+ 	/* Non ELAP we cannot do. */
+ 	if (dev->type != ARPHRD_ETHER)
+-		return -1;
++		goto free_it;
+ 
+ 	skb->dev = dev;
+ 	skb->protocol = htons(ETH_P_ATALK);
+@@ -633,7 +633,7 @@ int aarp_send_ddp(struct net_device *dev, struct sk_buff *skb,
+ 	if (!a) {
+ 		/* Whoops slipped... good job it's an unreliable protocol 8) */
+ 		write_unlock_bh(&aarp_lock);
+-		return -1;
++		goto free_it;
+ 	}
+ 
+ 	/* Set up the queue */
+@@ -662,15 +662,21 @@ out_unlock:
+ 	write_unlock_bh(&aarp_lock);
+ 
+ 	/* Tell the ddp layer we have taken over for this frame. */
+-	return 0;
++	goto sent;
+ 
+ sendit:
+ 	if (skb->sk)
+ 		skb->priority = skb->sk->sk_priority;
+-	dev_queue_xmit(skb);
++	if (dev_queue_xmit(skb))
++		goto drop;
+ sent:
+-	return 1;
++	return NET_XMIT_SUCCESS;
++free_it:
++	kfree_skb(skb);
++drop:
++	return NET_XMIT_DROP;
+ }
++EXPORT_SYMBOL(aarp_send_ddp);
+ 
+ /*
+  *	An entry in the aarp unresolved queue has become resolved. Send
+diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+index 8067dc7..e99d337 100644
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -1277,8 +1277,10 @@ static int handle_ip_over_ddp(struct sk_buff *skb)
+ 	struct net_device_stats *stats;
+ 
+ 	/* This needs to be able to handle ipddp"N" devices */
+-	if (!dev)
+-		return -ENODEV;
++	if (!dev) {
++		kfree_skb(skb);
++		return NET_RX_DROP;
++	}
+ 
+ 	skb->protocol = htons(ETH_P_IP);
+ 	skb_pull(skb, 13);
+@@ -1288,8 +1290,7 @@ static int handle_ip_over_ddp(struct sk_buff *skb)
+ 	stats = dev->priv;
+ 	stats->rx_packets++;
+ 	stats->rx_bytes += skb->len + 13;
+-	netif_rx(skb);  /* Send the SKB up to a higher place. */
+-	return 0;
++	return netif_rx(skb);  /* Send the SKB up to a higher place. */
+ }
+ #else
+ /* make it easy for gcc to optimize this test out, i.e. kill the code */
+@@ -1297,9 +1298,8 @@ static int handle_ip_over_ddp(struct sk_buff *skb)
+ #define handle_ip_over_ddp(skb) 0
+ #endif
+ 
+-static void atalk_route_packet(struct sk_buff *skb, struct net_device *dev,
+-			       struct ddpehdr *ddp, __u16 len_hops,
+-			       int origlen)
++static int atalk_route_packet(struct sk_buff *skb, struct net_device *dev,
++			      struct ddpehdr *ddp, __u16 len_hops, int origlen)
+ {
+ 	struct atalk_route *rt;
+ 	struct atalk_addr ta;
+@@ -1366,8 +1366,6 @@ static void atalk_route_packet(struct sk_buff *skb, struct net_device *dev,
+ 		/* 22 bytes - 12 ether, 2 len, 3 802.2 5 snap */
+ 		struct sk_buff *nskb = skb_realloc_headroom(skb, 32);
+ 		kfree_skb(skb);
+-		if (!nskb)
+-			goto out;
+ 		skb = nskb;
+ 	} else
+ 		skb = skb_unshare(skb, GFP_ATOMIC);
+@@ -1376,12 +1374,16 @@ static void atalk_route_packet(struct sk_buff *skb, struct net_device *dev,
+ 	 * If the buffer didn't vanish into the lack of space bitbucket we can
+ 	 * send it.
+ 	 */
+-	if (skb && aarp_send_ddp(rt->dev, skb, &ta, NULL) == -1)
+-		goto free_it;
+-out:
+-	return;
++	if (skb == NULL)
++		goto drop;
++
++	if (aarp_send_ddp(rt->dev, skb, &ta, NULL) == NET_XMIT_DROP)
++		return NET_RX_DROP;
++	return NET_XMIT_SUCCESS;
+ free_it:
+ 	kfree_skb(skb);
++drop:
++	return NET_RX_DROP;
+ }
+ 
+ /**
+@@ -1455,8 +1457,7 @@ static int atalk_rcv(struct sk_buff *skb, struct net_device *dev,
+ 		/* Not ours, so we route the packet via the correct
+ 		 * AppleTalk iface
+ 		 */
+-		atalk_route_packet(skb, dev, ddp, len_hops, origlen);
+-		goto out;
++		return atalk_route_packet(skb, dev, ddp, len_hops, origlen);
+ 	}
+ 
+ 	/* if IP over DDP is not selected this code will be optimized out */
+@@ -1663,10 +1664,10 @@ static int atalk_sendmsg(struct kiocb *iocb, struct socket *sock, struct msghdr
+ 		if (skb2) {
+ 			loopback = 1;
+ 			SOCK_DEBUG(sk, "SK %p: send out(copy).\n", sk);
+-			if (aarp_send_ddp(dev, skb2,
+-					  &usat->sat_addr, NULL) == -1)
+-				kfree_skb(skb2);
+-				/* else queued/sent above in the aarp queue */
++			/*
++			 * If it fails it is queued/sent above in the aarp queue
++			 */
++			aarp_send_ddp(dev, skb2, &usat->sat_addr, NULL);
+ 		}
+ 	}
+ 
+@@ -1696,9 +1697,10 @@ static int atalk_sendmsg(struct kiocb *iocb, struct socket *sock, struct msghdr
+ 		    usat = &gsat;
+ 		}
+ 
+-		if (aarp_send_ddp(dev, skb, &usat->sat_addr, NULL) == -1)
+-			kfree_skb(skb);
+-		/* else queued/sent above in the aarp queue */
++		/*
++		 * If it fails it is queued/sent above in the aarp queue
++		 */
++		aarp_send_ddp(dev, skb, &usat->sat_addr, NULL);
+ 	}
+ 	SOCK_DEBUG(sk, "SK %p: Done write (%Zd).\n", sk, len);
+ 
+@@ -1877,7 +1879,6 @@ static struct packet_type ppptalk_packet_type = {
+ static unsigned char ddp_snap_id[] = { 0x08, 0x00, 0x07, 0x80, 0x9B };
+ 
+ /* Export symbols for use by drivers when AppleTalk is a module */
+-EXPORT_SYMBOL(aarp_send_ddp);
+ EXPORT_SYMBOL(atrtr_get_dev);
+ EXPORT_SYMBOL(atalk_find_dev_addr);
+ 
+diff --git a/net/sched/cls_api.c b/net/sched/cls_api.c
+index 8eb79e9..5b66371 100644
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@ -337,7 +337,7 @@ static int tcf_fill_node(struct sk_buff *skb, struct tcf_proto *tp,
+ 	tcm = NLMSG_DATA(nlh);
+ 	tcm->tcm_family = AF_UNSPEC;
+ 	tcm->tcm__pad1 = 0;
+-	tcm->tcm__pad1 = 0;
++	tcm->tcm__pad2 = 0;
+ 	tcm->tcm_ifindex = qdisc_dev(tp->q)->ifindex;
+ 	tcm->tcm_parent = tp->classid;
+ 	tcm->tcm_info = TC_H_MAKE(tp->prio, tp->protocol);
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 8e66fe0..facdaa9 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -1061,6 +1061,8 @@ restart:
+ 	err = -ECONNREFUSED;
+ 	if (other->sk_state != TCP_LISTEN)
+ 		goto out_unlock;
++	if (other->sk_shutdown & RCV_SHUTDOWN)
++		goto out_unlock;
+ 
+ 	if (unix_recvq_full(other)) {
+ 		err = -EAGAIN;

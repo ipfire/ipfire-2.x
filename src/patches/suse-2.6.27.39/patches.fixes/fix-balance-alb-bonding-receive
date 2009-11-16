@@ -1,0 +1,97 @@
+From: Jiri Pirko <jpirko@redhat.com>
+Date: Thu, 28 May 2009 01:05:00 +0000 (+0000)
+Subject: bonding: allow bond in mode balance-alb to work properly in bridge -try4.3
+Patch-mainline: v2.6.31-rc1
+Git-commit: 5d4e039b2cb1ca4de9774344ea7b61ad7fa1b0a1
+References: bnc#532443
+
+bonding: allow bond in mode balance-alb to work properly in bridge -try4.3
+
+[PATCH net-next] bonding: allow bond in mode balance-alb to work properly in bridge -try4.3
+
+(updated)
+changes v4.2 -> v4.3
+- memcpy the address always, not just in case it differs from master->dev_addr
+- compare_ether_addr_64bits() is not used so there is no direct need to make new
+  header file (I think it would be good to have bond stuff in separate file
+  anyway).
+
+changes v4.1 -> v4.2
+- use skb->pkt_type == PACKET_HOST compare rather then comparing skb dest addr
+  against skb->dev->dev_addr
+
+The problem is described in following bugzilla:
+https://bugzilla.redhat.com/show_bug.cgi?id=487763
+
+Basically here's what's going on. In every mode, bonding interface uses the same
+mac address for all enslaved devices (except fail_over_mac). Only balance-alb
+will simultaneously use multiple MAC addresses across different slaves. When you
+put this kind of bond device into a bridge it will only add one of mac adresses
+into a hash list of mac addresses, say X. This mac address is marked as local.
+But this bonding interface also has mac address Y. Now then packet arrives with
+destination address Y, this address is not marked as local and the packed looks
+like it needs to be forwarded. This packet is then lost which is wrong.
+
+Notice that interfaces can be added and removed from bond while it is in bridge.
+
+
+When the multiple addresses for bridge port approach failed to solve this issue
+due to STP I started to think other way to solve this. I returned to previous
+solution but tweaked one.
+
+This patch solves the situation in the bonding without touching bridge code.
+For every incoming frame to bonding the destination address is compared to
+current address of the slave device from which tha packet came. If these two
+match destination address is replaced by mac address of the master. This address
+is known by bridge so it is delivered properly. Note that the comparsion is not
+made directly, it's used skb->pkt_type == PACKET_HOST instead. This is "set"
+previously in eth_type_trans().
+
+I experimentally tried that this works as good as searching through the slave
+list (v4 of this patch).
+
+Jirka
+
+Signed-off-by: Jiri Pirko <jpirko@redhat.com>
+Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
+Signed-off-by: Andy Gospodarek <andy@greyhouse.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+---
+ include/linux/netdevice.h |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -1705,6 +1705,16 @@ static inline void netif_set_gso_max_siz
+ 	dev->gso_max_size = size;
+ }
+ 
++static inline void skb_bond_set_mac_by_master(struct sk_buff *skb,
++					      struct net_device *master)
++{
++	if (skb->pkt_type == PACKET_HOST) {
++		u16 *dest = (u16 *) eth_hdr(skb)->h_dest;
++
++		memcpy(dest, master->dev_addr, ETH_ALEN);
++	}
++}
++
+ /* On bonding slaves other than the currently active slave, suppress
+  * duplicates except for 802.3ad ETH_P_SLOW, alb non-mcast/bcast, and
+  * ARP on active-backup slaves with arp_validate enabled.
+@@ -1718,6 +1728,14 @@ static inline int skb_bond_should_drop(s
+ 		if (master->priv_flags & IFF_MASTER_ARPMON)
+ 			dev->last_rx = jiffies;
+ 
++		if ((master->priv_flags & IFF_MASTER_ALB) && master->br_port) {
++			/* Do address unmangle. The local destination address
++			 * will be always the one master has. Provides the right
++			 * functionality in a bridge.
++			 */
++			skb_bond_set_mac_by_master(skb, master);
++		}
++
+ 		if (dev->priv_flags & IFF_SLAVE_INACTIVE) {
+ 			if ((dev->priv_flags & IFF_SLAVE_NEEDARP) &&
+ 			    skb->protocol == __constant_htons(ETH_P_ARP))

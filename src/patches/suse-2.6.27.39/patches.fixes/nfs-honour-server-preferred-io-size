@@ -1,0 +1,31 @@
+From: NeilBrown <neilb@suse.de>
+Subject: NFS: Honour server-preferred io sizes
+Patch-mainline: not yet
+References: bnc#550648
+
+When interpreting the preferred IO size sent by the server, linux/nfs
+assumes that a non-zero setting means a user-specified setting so
+it ignores the server specified setting.
+
+This patch initialises rsize and wsize to zero so the server-preferred
+values get using (if no value is specified in a mount option).
+
+Signed-off-by: Neil Brown <neilb@suse.de>
+
+---
+ fs/nfs/super.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/nfs/super.c
++++ linux-2.6.27-SLE11_BRANCH/fs/nfs/super.c
+@@ -1536,8 +1536,8 @@ static int nfs_validate_mount_data(void 
+ 		goto out_no_data;
+ 
+ 	args->flags		= (NFS_MOUNT_VER3 | NFS_MOUNT_TCP);
+-	args->rsize		= NFS_MAX_FILE_IO_SIZE;
+-	args->wsize		= NFS_MAX_FILE_IO_SIZE;
++	args->rsize		= 0;
++	args->wsize		= 0;
+ 	args->acregmin		= NFS_DEF_ACREGMIN;
+ 	args->acregmax		= NFS_DEF_ACREGMAX;
+ 	args->acdirmin		= NFS_DEF_ACDIRMIN;

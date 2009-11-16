@@ -1,0 +1,56 @@
+From: Hannes Reinecke <hare@suse.de>
+Date: Tue, 18 Aug 2009 10:06:31 +0200
+Subject: libiscsi: have iscsi_data_in_rsp call iscsi_update_cmdsn
+References: bnc#472432
+X-Git: edbc9aa0580c0aca96ac8d11bfb2defa81d91bb3
+
+This has iscsi_data_in_rsp call iscsi_update_cmdsn when a pdu is
+completed like is done for other pdu's that are don.
+
+For iscsi_tcp, this means that it calls iscsi_update_cmdsn when
+it is handling the pdu internally to only transfer data, but if there is
+status then it does not need to call it since the completion handling
+will do it.
+
+Signed-off-by: Mike Christie <michaelc@cs.wisc.edu>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/iscsi_tcp.c |    8 +++++++-
+ drivers/scsi/libiscsi.c  |    1 +
+ 2 files changed, 8 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index babe81a..19fae4d 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -543,7 +543,13 @@ iscsi_data_in(struct iscsi_conn *conn, struct iscsi_task *task)
+ 	int datasn = be32_to_cpu(rhdr->datasn);
+ 	unsigned total_in_length = scsi_in(task->sc)->length;
+ 
+-	iscsi_update_cmdsn(conn->session, (struct iscsi_nopin*)rhdr);
++	/*
++	 * lib iscsi will update this in the completion handling if there
++	 * is status.
++	 */
++	if (!(rhdr->flags & ISCSI_FLAG_DATA_STATUS))
++		iscsi_update_cmdsn(conn->session, (struct iscsi_nopin*)rhdr);
++
+ 	if (tcp_conn->in.datalen == 0)
+ 		return 0;
+ 
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index 8905895..0611558 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -661,6 +661,7 @@ iscsi_data_in_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
+ 	if (!(rhdr->flags & ISCSI_FLAG_DATA_STATUS))
+ 		return;
+ 
++	iscsi_update_cmdsn(conn->session, (struct iscsi_nopin *)hdr);
+ 	sc->result = (DID_OK << 16) | rhdr->cmd_status;
+ 	conn->exp_statsn = be32_to_cpu(rhdr->statsn) + 1;
+ 	if (rhdr->flags & (ISCSI_FLAG_DATA_UNDERFLOW |
+-- 
+1.6.0.2
+

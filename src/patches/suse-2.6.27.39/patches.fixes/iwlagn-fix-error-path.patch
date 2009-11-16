@@ -1,0 +1,40 @@
+From: Helmut Schaa <helmut.schaa@googlemail.com>
+Subject: iwlagn: clean up error path in iwl_pci_probe
+Patch-mainline: not yet
+References: bnc#474043
+
+This avoids triggering a BUG_ON in pci_disable_msi in the error path.
+Furthermore remove the first call to pci_disable_device as it is already
+called at out_pci_disable_device.
+
+Both issues were introduced in the patch "iwlagn: fix hw-rfkill while
+the interface is down".
+
+Signed-off-by: Helmut Schaa <helmut.schaa@googlemail.com>
+Acked-by: Helmut Schaa <hschaa@suse.de>
+Acked-by: Jiri Benc <jbenc@suse.cz>
+---
+diff -urNp linux-2.6.27/drivers/net/wireless/iwlwifi/iwl-agn.c linux-2.6.27/drivers/net/wireless/iwlwifi/iwl-agn.c
+--- linux-2.6.27/drivers/net/wireless/iwlwifi/iwl-agn.c	2009-02-13 14:10:57.000000000 +0100
++++ linux-2.6.27/drivers/net/wireless/iwlwifi/iwl-agn.c	2009-02-13 14:09:10.000000000 +0100
+@@ -4307,7 +4307,7 @@ static int iwl4965_pci_probe(struct pci_
+ 	err = sysfs_create_group(&pdev->dev.kobj, &iwl4965_attribute_group);
+ 	if (err) {
+ 		IWL_ERROR("failed to create sysfs device attributes\n");
+-		goto out_uninit_drv;
++		goto out_free_irq;
+ 	}
+ 
+ 	iwl_setup_deferred_work(priv);
+@@ -4352,9 +4352,10 @@ static int iwl4965_pci_probe(struct pci_
+ 
+  out_remove_sysfs:
+ 	sysfs_remove_group(&pdev->dev.kobj, &iwl4965_attribute_group);
++ out_free_irq:
++	free_irq(priv->pci_dev->irq, priv);
+  out_disable_msi:
+ 	pci_disable_msi(priv->pci_dev);
+-	pci_disable_device(priv->pci_dev);
+  out_uninit_drv:
+ 	iwl_uninit_drv(priv);
+  out_free_eeprom:

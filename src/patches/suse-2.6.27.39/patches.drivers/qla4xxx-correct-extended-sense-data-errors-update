@@ -1,0 +1,120 @@
+From: David Wagner <david.wagner@qlogic.com>
+Date: Mon, 7 Sep 2009 14:17:49 +0200
+Subject: qla4xxx: Correct Extended Sense Data Errors - UPDATE
+References: bnc#483706
+
+Updated algorithm to use srb data variables instead of scsi command scratchpad
+data area, as scratchpad area is already used.
+
+Signed-off-by: David Wagner <david.wagner@qlogic.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/qla4xxx/ql4_def.h |    5 +++++
+ drivers/scsi/qla4xxx/ql4_isr.c |   34 +++++++++++++++-------------------
+ 2 files changed, 20 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/scsi/qla4xxx/ql4_def.h b/drivers/scsi/qla4xxx/ql4_def.h
+index f8ea527..7c6b22c 100644
+--- a/drivers/scsi/qla4xxx/ql4_def.h
++++ b/drivers/scsi/qla4xxx/ql4_def.h
+@@ -183,6 +183,11 @@ struct srb {
+ 	uint16_t iocb_cnt;	/* Number of used iocbs */
+ 	uint16_t cc_stat;
+ 	uint32_t dma_len;
++
++	/* Used for extended sense / status continuation */
++	uint8_t *req_sense_ptr;
++	uint16_t req_sense_len;
++	uint16_t reserved2;
+ };
+ 
+ 	/*
+diff --git a/drivers/scsi/qla4xxx/ql4_isr.c b/drivers/scsi/qla4xxx/ql4_isr.c
+index c3354b8..31df8c8 100644
+--- a/drivers/scsi/qla4xxx/ql4_isr.c
++++ b/drivers/scsi/qla4xxx/ql4_isr.c
+@@ -25,7 +25,7 @@ static void qla4xxx_copy_sense(struct scsi_qla_host *ha,
+ 	struct scsi_cmnd *cmd = srb->cmd;
+ 	uint16_t sense_len;
+ 
+-	memset(cmd->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
++	memset(cmd->sense_buffer, 0, sizeof(cmd->sense_buffer));
+ 	sense_len = le16_to_cpu(sts_entry->senseDataByteCnt);
+ 	if (sense_len == 0)
+ 		return;
+@@ -33,16 +33,15 @@ static void qla4xxx_copy_sense(struct scsi_qla_host *ha,
+ 	/* Save total available sense length,
+ 	 * not to exceed cmd's sense buffer size */
+ 	sense_len = min_t(uint16_t, sense_len, SCSI_SENSE_BUFFERSIZE);
+-	cmd->SCp.ptr = cmd->sense_buffer;
+-	cmd->SCp.this_residual = sense_len;
++	srb->req_sense_ptr = cmd->sense_buffer;
++	srb->req_sense_len = sense_len;
+ 
+ 	/* Copy sense from sts_entry pkt */
+ 	sense_len = min_t(uint16_t, sense_len, IOCB_MAX_SENSEDATA_LEN);
+ 	memcpy(cmd->sense_buffer, sts_entry->senseData, sense_len);
+ 
+ 	DEBUG2(printk("scsi%ld:%d:%d:%d: %s: sense key = %x, "
+-		"Addl.SenseLen - %02x, "
+-		"ASC/ASCQ = %02x/%02x\n", ha->host_no,
++		"ASL= %02x, ASC/ASCQ = %02x/%02x\n", ha->host_no,
+ 		cmd->device->channel, cmd->device->id,
+ 		cmd->device->lun, __func__,
+ 		sts_entry->senseData[2] & 0x0f,
+@@ -50,13 +49,13 @@ static void qla4xxx_copy_sense(struct scsi_qla_host *ha,
+ 		sts_entry->senseData[12],
+ 		sts_entry->senseData[13]));
+ 
+-	DEBUG5(qla4xxx_dump_buffer(cmd->SCp.ptr, sense_len));
++	DEBUG5(qla4xxx_dump_buffer(cmd->sense_buffer, sense_len));
+ 	srb->flags |= SRB_GOT_SENSE;
+ 
+ 	/* Update srb, in case a sts_cont pkt follows */
+-	cmd->SCp.ptr += sense_len;
+-	cmd->SCp.this_residual -= sense_len;
+-	if (cmd->SCp.this_residual != 0)
++	srb->req_sense_ptr += sense_len;
++	srb->req_sense_len -= sense_len;
++	if (srb->req_sense_len != 0)
+ 		ha->status_srb = srb;
+ 	else
+ 		ha->status_srb = NULL;
+@@ -77,11 +76,8 @@ qla4xxx_status_cont_entry(struct scsi_qla_host *ha,
+ 	struct scsi_cmnd *cmd;
+ 	uint8_t sense_len;
+ 
+-	if (srb == NULL) {
+-		DEBUG2(printk("scsi%ld: %s: Throw away extra STATUS CONTINUATION\n",
+-			ha->host_no, __func__));
++	if (srb == NULL)
+ 		return;
+-	}
+ 
+ 	cmd = srb->cmd;
+ 	if (cmd == NULL) {
+@@ -92,15 +88,15 @@ qla4xxx_status_cont_entry(struct scsi_qla_host *ha,
+ 	}
+ 
+ 	/* Copy sense data. */
+-	sense_len = min(cmd->SCp.this_residual, IOCB_MAX_EXT_SENSEDATA_LEN);
+-	memcpy(cmd->SCp.ptr, sts_cont->extSenseData, sense_len);
+-	DEBUG5(qla4xxx_dump_buffer(cmd->SCp.ptr, sense_len));
++	sense_len = min(srb->req_sense_len, (uint16_t) IOCB_MAX_EXT_SENSEDATA_LEN);
++	memcpy(srb->req_sense_ptr, sts_cont->extSenseData, sense_len);
++	DEBUG5(qla4xxx_dump_buffer(srb->req_sense_ptr, sense_len));
+ 
+-	cmd->SCp.ptr += sense_len;
+-	cmd->SCp.this_residual -= sense_len;
++	srb->req_sense_ptr += sense_len;
++	srb->req_sense_len -= sense_len;
+ 
+ 	/* Place command on done queue. */
+-	if (cmd->SCp.this_residual == 0) {
++	if (srb->req_sense_len == 0) {
+ 		qla4xxx_srb_compl(ha, srb);
+ 		ha->status_srb = NULL;
+ 	}
+-- 
+1.5.3.2
+

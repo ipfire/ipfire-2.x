@@ -1,0 +1,189 @@
+From: Nick Piggin <npiggin@suse.de>
+Subject: x86: contiguous kmap fix
+References: bnc#449812
+Patch-mainline: perhaps 2.6.30 (maybe .29)
+
+The early fixmap pmd entry inserted at the very top of the KVA is casing the
+subsequent fixmap mapping code to not provide physically linear pte pages over
+the kmap atomic portion of the fixmap (which relies on said property to calculate
+pte address).
+
+This has caused weird boot failures in kmap_atomic much later in the boot
+process (initial userspace faults) on a 32-bit PAE system with a larger number
+of CPUs (smaller CPU counts tend not to run over into the next page so don't
+show up the problem).
+
+Solve this by attempting to clear out the page table, and copy any of its
+entries to the new one. Also, add a bug if a nonlinear condition is encountered
+and can't be resolved, which might save some hours of debugging if this fragile
+scheme ever breaks again...
+
+Signed-off-by: Nick Piggin <npiggin@suse.de>
+
+Once we have such logic, we can also use it to eliminate the early ioremap
+trickery around the page table setup for the fixmap area. This also fixes
+potential issues with FIX_* entries sharing the leaf page table with the early
+ioremap ones getting discarded by early_ioremap_clear() and not restored by
+early_ioremap_reset(). It at once eliminates the temporary (and configuration,
+namely NR_CPUS, dependent) unavailability of early fixed mappings during the
+time the fixmap area page tables get constructed.
+
+Finally, also replace the hard coded calculation of the initial table space
+needed for the fixmap area with a proper one, allowing kernels configured for
+large CPU counts to actually boot.
+
+Signed-off-by: Jan Beulich <jbeulich@novell.com>
+
+Automatically created from "patches.arch/x86-fix-kmap-contig.patch" by xen-port-patches.py
+
+--- sle11-2009-09-18.orig/arch/x86/mm/init_32-xen.c	2009-03-16 16:39:50.000000000 +0100
++++ sle11-2009-09-18/arch/x86/mm/init_32-xen.c	2009-02-17 18:06:20.000000000 +0100
+@@ -148,6 +148,52 @@ static pte_t * __init one_page_table_ini
+ 	return pte_offset_kernel(pmd, 0);
+ }
+ 
++static pte_t *__init page_table_kmap_check(pte_t *pte, pmd_t *pmd,
++					   unsigned long vaddr, pte_t *lastpte)
++{
++#ifdef CONFIG_HIGHMEM
++	/*
++	 * Something (early fixmap) may already have put a pte
++	 * page here, which causes the page table allocation
++	 * to become nonlinear. Attempt to fix it, and if it
++	 * is still nonlinear then we have to bug.
++	 */
++	int pmd_idx_kmap_begin = fix_to_virt(FIX_KMAP_END) >> PMD_SHIFT;
++	int pmd_idx_kmap_end = fix_to_virt(FIX_KMAP_BEGIN) >> PMD_SHIFT;
++
++	if (pmd_idx_kmap_begin != pmd_idx_kmap_end
++	    && (vaddr >> PMD_SHIFT) >= pmd_idx_kmap_begin
++	    && (vaddr >> PMD_SHIFT) <= pmd_idx_kmap_end
++	    && ((__pa(pte) >> PAGE_SHIFT) < table_start
++		|| (__pa(pte) >> PAGE_SHIFT) >= table_end)) {
++		pte_t *newpte;
++		unsigned long phys;
++		int i;
++
++		BUG_ON(after_init_bootmem);
++		newpte = alloc_low_page(&phys);
++		for (i = 0; i < PTRS_PER_PTE; i++)
++			set_pte(newpte + i, pte[i]);
++
++		paravirt_alloc_pte(&init_mm, __pa(newpte) >> PAGE_SHIFT);
++		make_lowmem_page_readonly(newpte,
++					  XENFEAT_writable_page_tables);
++		set_pmd(pmd, __pmd(__pa(newpte)|_PAGE_TABLE));
++		BUG_ON(newpte != pte_offset_kernel(pmd, 0));
++		__flush_tlb_all();
++
++		paravirt_release_pte(__pa(pte) >> PAGE_SHIFT);
++		make_lowmem_page_writable(pte,
++					  XENFEAT_writable_page_tables);
++		pte = newpte;
++	}
++	BUG_ON(vaddr < fix_to_virt(FIX_KMAP_BEGIN - 1)
++	       && vaddr > fix_to_virt(FIX_KMAP_END)
++	       && lastpte && lastpte + PTRS_PER_PTE != pte);
++#endif
++	return pte;
++}
++
+ /*
+  * This function initializes a certain range of kernel virtual memory
+  * with new bootmem page tables, everywhere page tables are missing in
+@@ -164,6 +210,7 @@ page_table_range_init(unsigned long star
+ 	unsigned long vaddr;
+ 	pgd_t *pgd;
+ 	pmd_t *pmd;
++	pte_t *pte = NULL;
+ 
+ 	vaddr = start;
+ 	pgd_idx = pgd_index(vaddr);
+@@ -175,8 +222,9 @@ page_table_range_init(unsigned long star
+ 		pmd = pmd + pmd_index(vaddr);
+ 		for (; (pmd_idx < PTRS_PER_PMD) && (vaddr != end);
+ 							pmd++, pmd_idx++) {
+-			if (vaddr < hypervisor_virt_start)
+-				one_page_table_init(pmd);
++			BUG_ON(vaddr >= hypervisor_virt_start);
++			pte = page_table_kmap_check(one_page_table_init(pmd),
++			                            pmd, vaddr, pte);
+ 
+ 			vaddr += PMD_SIZE;
+ 		}
+@@ -443,7 +491,6 @@ static void __init early_ioremap_page_ta
+ 	 * Fixed mappings, only the page table structure has to be
+ 	 * created - mappings will be set by set_fixmap():
+ 	 */
+-	early_ioremap_clear();
+ 	vaddr = __fix_to_virt(__end_of_fixed_addresses - 1) & PMD_MASK;
+ 	end = (FIXADDR_TOP + PMD_SIZE - 1) & PMD_MASK;
+ 	page_table_range_init(vaddr, end, pgd_base);
+@@ -790,10 +837,7 @@ static void __init find_early_table_spac
+ 	tables += PAGE_ALIGN(ptes * sizeof(pte_t));
+ 
+ 	/* for fixmap */
+-	tables += PAGE_SIZE
+-	          * ((((FIXADDR_TOP + PMD_SIZE - 1) & PMD_MASK)
+-	              - (__fix_to_virt(__end_of_fixed_addresses - 1) & PMD_MASK))
+-	             >> PMD_SHIFT);
++	tables += PAGE_ALIGN(__end_of_fixed_addresses * sizeof(pte_t));
+ 
+ 	table_start = extend_init_mapping(tables);
+ 
+--- sle11-2009-09-18.orig/arch/x86/mm/ioremap-xen.c	2009-01-07 10:51:24.000000000 +0100
++++ sle11-2009-09-18/arch/x86/mm/ioremap-xen.c	2009-01-16 10:45:51.000000000 +0100
+@@ -669,35 +669,9 @@ void __init early_ioremap_init(void)
+ }
+ 
+ #ifdef CONFIG_X86_32
+-void __init early_ioremap_clear(void)
+-{
+-	pmd_t *pmd;
+-
+-	if (early_ioremap_debug)
+-		printk(KERN_INFO "early_ioremap_clear()\n");
+-
+-	pmd = early_ioremap_pmd(fix_to_virt(FIX_BTMAP_BEGIN));
+-	pmd_clear(pmd);
+-	make_lowmem_page_writable(bm_pte, XENFEAT_writable_page_tables);
+-	/* paravirt_release_pte(__pa(bm_pte) >> PAGE_SHIFT); */
+-	__flush_tlb_all();
+-}
+-
+ void __init early_ioremap_reset(void)
+ {
+-	enum fixed_addresses idx;
+-	unsigned long addr, phys;
+-	pte_t *pte;
+-
+ 	after_paging_init = 1;
+-	for (idx = FIX_BTMAP_BEGIN; idx >= FIX_BTMAP_END; idx--) {
+-		addr = fix_to_virt(idx);
+-		pte = early_ioremap_pte(addr);
+-		if (pte_present(*pte)) {
+-			phys = __pte_val(*pte) & PAGE_MASK;
+-			set_fixmap(idx, phys);
+-		}
+-	}
+ }
+ #endif /* CONFIG_X86_32 */
+ 
+--- sle11-2009-09-18.orig/include/asm-x86/mach-xen/asm/io.h	2009-09-24 11:02:00.000000000 +0200
++++ sle11-2009-09-18/include/asm-x86/mach-xen/asm/io.h	2009-09-24 11:02:57.000000000 +0200
+@@ -12,7 +12,6 @@
+  */
+ #ifndef __ASSEMBLY__
+ extern void early_ioremap_init(void);
+-extern void early_ioremap_clear(void);
+ extern void early_ioremap_reset(void);
+ extern void *early_ioremap(unsigned long offset, unsigned long size);
+ extern void early_iounmap(void *addr, unsigned long size);
+@@ -132,7 +131,6 @@ extern void __iomem *ioremap_wc(unsigned
+  * A boot-time mapping is currently limited to at most 16 pages.
+  */
+ extern void early_ioremap_init(void);
+-extern void early_ioremap_clear(void);
+ extern void early_ioremap_reset(void);
+ extern void *early_ioremap(unsigned long offset, unsigned long size);
+ extern void early_iounmap(void *addr, unsigned long size);

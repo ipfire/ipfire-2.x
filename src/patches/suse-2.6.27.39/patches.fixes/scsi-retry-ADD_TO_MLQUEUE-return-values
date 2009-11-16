@@ -1,0 +1,36 @@
+From: Hannes Reinecke <hare@suse.de>
+Date: Mon, 21 Sep 2009 15:09:12 +0200
+Subject: [PATCH] Retry ADD_TO_MLQUEUE return values for SCSI EH commands
+References: bnc#536117
+
+A target reset when I/O is ongoing might result
+an eventual device offline, as scsi_eh_completed_normally()
+might return ADD_TO_MLQUEUE in addition to the
+advertised SUCCESS, FAILED, and NEEDS_RETRY.
+
+Which is unfortunate as scsi_send_eh_cmnd() will
+therefore map ADD_TO_MLQUEUE to FAILED instead of
+the more appropriate NEEDS_RETRY.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/scsi_error.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
+index ab326be..98b9cc3 100644
+--- a/drivers/scsi/scsi_error.c
++++ b/drivers/scsi/scsi_error.c
+@@ -818,6 +818,9 @@ static int scsi_send_eh_cmnd(struct scsi_cmnd *scmd, unsigned char *cmnd,
+ 		case NEEDS_RETRY:
+ 		case FAILED:
+ 			break;
++		case ADD_TO_MLQUEUE:
++			rtn = NEEDS_RETRY;
++			break;
+ 		default:
+ 			rtn = FAILED;
+ 			break;
+-- 
+1.5.3.2
+

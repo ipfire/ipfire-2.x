@@ -1,0 +1,38 @@
+From 1f59390339f263c0fe7908fbe54466dbf3a64b58 Mon Sep 17 00:00:00 2001
+From: NeilBrown <neilb@suse.de>
+Date: Mon, 20 Apr 2009 11:50:24 +1000
+Subject: [PATCH] md: support bitmaps on RAID10 arrays larger then 2 terabytes
+
+.. and other arrays with components larger than 2 terabytes.
+
+We use a "long" rather than a "sector_t" in part of the bitmap
+size calculations, which is sad.
+
+Reported-by: "Mario 'BitKoenig' Holbe" <Mario.Holbe@TU-Ilmenau.DE>
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ drivers/md/bitmap.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -1587,7 +1587,7 @@ void bitmap_destroy(mddev_t *mddev)
+ int bitmap_create(mddev_t *mddev)
+ {
+ 	struct bitmap *bitmap;
+-	unsigned long blocks = mddev->resync_max_sectors;
++	sector_t blocks = mddev->resync_max_sectors;
+ 	unsigned long chunks;
+ 	unsigned long pages;
+ 	struct file *file = mddev->bitmap_file;
+@@ -1629,8 +1629,8 @@ int bitmap_create(mddev_t *mddev)
+ 	bitmap->chunkshift = ffz(~bitmap->chunksize);
+ 
+ 	/* now that chunksize and chunkshift are set, we can use these macros */
+- 	chunks = (blocks + CHUNK_BLOCK_RATIO(bitmap) - 1) /
+-			CHUNK_BLOCK_RATIO(bitmap);
++	chunks = (blocks + CHUNK_BLOCK_RATIO(bitmap) - 1) >>
++			CHUNK_BLOCK_SHIFT(bitmap);
+  	pages = (chunks + PAGE_COUNTER_RATIO - 1) / PAGE_COUNTER_RATIO;
+ 
+ 	BUG_ON(!pages);

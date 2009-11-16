@@ -1,0 +1,1798 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Upstream 2.6.27.25 release from kernel.org
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/Documentation/filesystems/ext4.txt b/Documentation/filesystems/ext4.txt
+index 0d53949..befe8d4 100644
+--- a/Documentation/filesystems/ext4.txt
++++ b/Documentation/filesystems/ext4.txt
+@@ -73,7 +73,7 @@ Mailing list: linux-ext4@vger.kernel.org
+ * extent format more robust in face of on-disk corruption due to magics,
+ * internal redunancy in tree
+ * improved file allocation (multi-block alloc)
+-* fix 32000 subdirectory limit
++* lift 32000 subdirectory limit imposed by i_links_count[1]
+ * nsec timestamps for mtime, atime, ctime, create time
+ * inode version field on disk (NFSv4, Lustre)
+ * reduced e2fsck time via uninit_bg feature
+@@ -88,6 +88,9 @@ Mailing list: linux-ext4@vger.kernel.org
+ * efficent new ordered mode in JBD2 and ext4(avoid using buffer head to force
+   the ordering)
+ 
++[1] Filesystems with a block size of 1k may see a limit imposed by the
++directory hash tree having a maximum depth of two.
++
+ 2.2 Candidate features for future inclusion
+ 
+ * Online defrag (patches available but not well tested)
+diff --git a/Makefile b/Makefile
+index 2b8138a..1314692 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 27
+-EXTRAVERSION = .24
++EXTRAVERSION = .25
+ NAME = Trembling Tortoise
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/sparc/include/asm/pil.h b/arch/sparc/include/asm/pil.h
+index 71819bb..6ea90d7 100644
+--- a/arch/sparc/include/asm/pil.h
++++ b/arch/sparc/include/asm/pil.h
+@@ -18,5 +18,6 @@
+ #define PIL_SMP_CTX_NEW_VERSION	4
+ #define PIL_DEVICE_IRQ		5
+ #define PIL_SMP_CALL_FUNC_SNGL	6
++#define PIL_KGDB_CAPTURE	8
+ 
+ #endif /* !(_SPARC64_PIL_H) */
+diff --git a/arch/sparc/include/asm/tlb_64.h b/arch/sparc/include/asm/tlb_64.h
+index ec81cde..0aaa086 100644
+--- a/arch/sparc/include/asm/tlb_64.h
++++ b/arch/sparc/include/asm/tlb_64.h
+@@ -58,6 +58,8 @@ static inline struct mmu_gather *tlb_gather_mmu(struct mm_struct *mm, unsigned i
+ static inline void tlb_flush_mmu(struct mmu_gather *mp)
+ {
+ 	if (mp->need_flush) {
++		if (!mp->fullmm)
++			flush_tlb_pending();
+ 		free_pages_and_swap_cache(mp->pages, mp->pages_nr);
+ 		mp->pages_nr = 0;
+ 		mp->need_flush = 0;
+@@ -78,8 +80,6 @@ static inline void tlb_finish_mmu(struct mmu_gather *mp, unsigned long start, un
+ 
+ 	if (mp->fullmm)
+ 		mp->fullmm = 0;
+-	else
+-		flush_tlb_pending();
+ 
+ 	/* keep the page table cache within bounds */
+ 	check_pgt_cache();
+diff --git a/arch/sparc/kernel/of_device.c b/arch/sparc/kernel/of_device.c
+index f58c537..e0bfc51 100644
+--- a/arch/sparc/kernel/of_device.c
++++ b/arch/sparc/kernel/of_device.c
+@@ -223,8 +223,25 @@ static unsigned long of_bus_pci_get_flags(const u32 *addr, unsigned long flags)
+ 
+ static int of_bus_sbus_match(struct device_node *np)
+ {
+-	return !strcmp(np->name, "sbus") ||
+-		!strcmp(np->name, "sbi");
++	struct device_node *dp = np;
++
++	while (dp) {
++		if (!strcmp(dp->name, "sbus") ||
++		    !strcmp(dp->name, "sbi"))
++			return 1;
++
++		/* Have a look at use_1to1_mapping().  We're trying
++		 * to match SBUS if that's the top-level bus and we
++		 * don't have some intervening real bus that provides
++		 * ranges based translations.
++		 */
++		if (of_find_property(dp, "ranges", NULL) != NULL)
++			break;
++
++		dp = dp->parent;
++	}
++
++	return 0;
+ }
+ 
+ static void of_bus_sbus_count_cells(struct device_node *child,
+diff --git a/arch/sparc64/kernel/irq.c b/arch/sparc64/kernel/irq.c
+index 7495bc7..0708a5b 100644
+--- a/arch/sparc64/kernel/irq.c
++++ b/arch/sparc64/kernel/irq.c
+@@ -318,17 +318,25 @@ static void sun4u_set_affinity(unsigned int virt_irq, cpumask_t mask)
+ 	sun4u_irq_enable(virt_irq);
+ }
+ 
++/* Don't do anything.  The desc->status check for IRQ_DISABLED in
++ * handler_irq() will skip the handler call and that will leave the
++ * interrupt in the sent state.  The next ->enable() call will hit the
++ * ICLR register to reset the state machine.
++ *
++ * This scheme is necessary, instead of clearing the Valid bit in the
++ * IMAP register, to handle the case of IMAP registers being shared by
++ * multiple INOs (and thus ICLR registers).  Since we use a different
++ * virtual IRQ for each shared IMAP instance, the generic code thinks
++ * there is only one user so it prematurely calls ->disable() on
++ * free_irq().
++ *
++ * We have to provide an explicit ->disable() method instead of using
++ * NULL to get the default.  The reason is that if the generic code
++ * sees that, it also hooks up a default ->shutdown method which
++ * invokes ->mask() which we do not want.  See irq_chip_set_defaults().
++ */
+ static void sun4u_irq_disable(unsigned int virt_irq)
+ {
+-	struct irq_handler_data *data = get_irq_chip_data(virt_irq);
+-
+-	if (likely(data)) {
+-		unsigned long imap = data->imap;
+-		unsigned long tmp = upa_readq(imap);
+-
+-		tmp &= ~IMAP_VALID;
+-		upa_writeq(tmp, imap);
+-	}
+ }
+ 
+ static void sun4u_irq_eoi(unsigned int virt_irq)
+@@ -739,7 +747,8 @@ void handler_irq(int irq, struct pt_regs *regs)
+ 
+ 		desc = irq_desc + virt_irq;
+ 
+-		desc->handle_irq(virt_irq, desc);
++		if (!(desc->status & IRQ_DISABLED))
++			desc->handle_irq(virt_irq, desc);
+ 
+ 		bucket_pa = next_pa;
+ 	}
+diff --git a/arch/sparc64/kernel/kgdb.c b/arch/sparc64/kernel/kgdb.c
+index fefbe6d..f5a0fd4 100644
+--- a/arch/sparc64/kernel/kgdb.c
++++ b/arch/sparc64/kernel/kgdb.c
+@@ -108,7 +108,7 @@ void gdb_regs_to_pt_regs(unsigned long *gdb_regs, struct pt_regs *regs)
+ }
+ 
+ #ifdef CONFIG_SMP
+-void smp_kgdb_capture_client(struct pt_regs *regs)
++void smp_kgdb_capture_client(int irq, struct pt_regs *regs)
+ {
+ 	unsigned long flags;
+ 
+diff --git a/arch/sparc64/kernel/of_device.c b/arch/sparc64/kernel/of_device.c
+index 100ebd5..d342723 100644
+--- a/arch/sparc64/kernel/of_device.c
++++ b/arch/sparc64/kernel/of_device.c
+@@ -278,8 +278,25 @@ static unsigned long of_bus_pci_get_flags(const u32 *addr, unsigned long flags)
+ 
+ static int of_bus_sbus_match(struct device_node *np)
+ {
+-	return !strcmp(np->name, "sbus") ||
+-		!strcmp(np->name, "sbi");
++	struct device_node *dp = np;
++
++	while (dp) {
++		if (!strcmp(dp->name, "sbus") ||
++		    !strcmp(dp->name, "sbi"))
++			return 1;
++
++		/* Have a look at use_1to1_mapping().  We're trying
++		 * to match SBUS if that's the top-level bus and we
++		 * don't have some intervening real bus that provides
++		 * ranges based translations.
++		 */
++		if (of_find_property(dp, "ranges", NULL) != NULL)
++			break;
++
++		dp = dp->parent;
++	}
++
++	return 0;
+ }
+ 
+ static void of_bus_sbus_count_cells(struct device_node *child,
+diff --git a/arch/sparc64/kernel/pci_common.c b/arch/sparc64/kernel/pci_common.c
+index 09a5ec2..d498c60 100644
+--- a/arch/sparc64/kernel/pci_common.c
++++ b/arch/sparc64/kernel/pci_common.c
+@@ -368,7 +368,7 @@ static void pci_register_iommu_region(struct pci_pbm_info *pbm)
+ 	const u32 *vdma = of_get_property(pbm->prom_node, "virtual-dma", NULL);
+ 
+ 	if (vdma) {
+-		struct resource *rp = kmalloc(sizeof(*rp), GFP_KERNEL);
++		struct resource *rp = kzalloc(sizeof(*rp), GFP_KERNEL);
+ 
+ 		if (!rp) {
+ 			prom_printf("Cannot allocate IOMMU resource.\n");
+diff --git a/arch/sparc64/kernel/smp.c b/arch/sparc64/kernel/smp.c
+index 2be166c..a0ad401 100644
+--- a/arch/sparc64/kernel/smp.c
++++ b/arch/sparc64/kernel/smp.c
+@@ -118,9 +118,9 @@ void __cpuinit smp_callin(void)
+ 	while (!cpu_isset(cpuid, smp_commenced_mask))
+ 		rmb();
+ 
+-	ipi_call_lock();
++	ipi_call_lock_irq();
+ 	cpu_set(cpuid, cpu_online_map);
+-	ipi_call_unlock();
++	ipi_call_unlock_irq();
+ 
+ 	/* idle thread is expected to have preempt disabled */
+ 	preempt_disable();
+@@ -1031,7 +1031,7 @@ void smp_fetch_global_regs(void)
+  *    If the address space is non-shared (ie. mm->count == 1) we avoid
+  *    cross calls when we want to flush the currently running process's
+  *    tlb state.  This is done by clearing all cpu bits except the current
+- *    processor's in current->active_mm->cpu_vm_mask and performing the
++ *    processor's in current->mm->cpu_vm_mask and performing the
+  *    flush locally only.  This will force any subsequent cpus which run
+  *    this task to flush the context from the local tlb if the process
+  *    migrates to another cpu (again).
+@@ -1074,7 +1074,7 @@ void smp_flush_tlb_pending(struct mm_struct *mm, unsigned long nr, unsigned long
+ 	u32 ctx = CTX_HWBITS(mm->context);
+ 	int cpu = get_cpu();
+ 
+-	if (mm == current->active_mm && atomic_read(&mm->mm_users) == 1)
++	if (mm == current->mm && atomic_read(&mm->mm_users) == 1)
+ 		mm->cpu_vm_mask = cpumask_of_cpu(cpu);
+ 	else
+ 		smp_cross_call_masked(&xcall_flush_tlb_pending,
+diff --git a/arch/sparc64/kernel/ttable.S b/arch/sparc64/kernel/ttable.S
+index 1ade3d6..89bf646 100644
+--- a/arch/sparc64/kernel/ttable.S
++++ b/arch/sparc64/kernel/ttable.S
+@@ -63,7 +63,13 @@ tl0_irq6:	TRAP_IRQ(smp_call_function_single_client, 6)
+ #else
+ tl0_irq6:	BTRAP(0x46)
+ #endif
+-tl0_irq7:	BTRAP(0x47) BTRAP(0x48) BTRAP(0x49)
++tl0_irq7:	BTRAP(0x47)
++#ifdef CONFIG_KGDB
++tl0_irq8:	TRAP_IRQ(smp_kgdb_capture_client, 8)
++#else
++tl0_irq8:	BTRAP(0x48)
++#endif
++tl0_irq9:	BTRAP(0x49)
+ tl0_irq10:	BTRAP(0x4a) BTRAP(0x4b) BTRAP(0x4c) BTRAP(0x4d)
+ tl0_irq14:	TRAP_IRQ(timer_interrupt, 14)
+ tl0_irq15:	TRAP_IRQ(handler_irq, 15)
+diff --git a/arch/sparc64/mm/ultra.S b/arch/sparc64/mm/ultra.S
+index 86773e8..f1d76cb 100644
+--- a/arch/sparc64/mm/ultra.S
++++ b/arch/sparc64/mm/ultra.S
+@@ -681,28 +681,8 @@ xcall_new_mmu_context_version:
+ #ifdef CONFIG_KGDB
+ 	.globl		xcall_kgdb_capture
+ xcall_kgdb_capture:
+-661:	rdpr		%pstate, %g2
+-	wrpr		%g2, PSTATE_IG | PSTATE_AG, %pstate
+-	.section	.sun4v_2insn_patch, "ax"
+-	.word		661b
+-	nop
+-	nop
+-	.previous
+-
+-	rdpr		%pil, %g2
+-	wrpr		%g0, 15, %pil
+-	sethi		%hi(109f), %g7
+-	ba,pt		%xcc, etrap_irq
+-109:	 or		%g7, %lo(109b), %g7
+-#ifdef CONFIG_TRACE_IRQFLAGS
+-	call		trace_hardirqs_off
+-	 nop
+-#endif
+-	call		smp_kgdb_capture_client
+-	 add		%sp, PTREGS_OFF, %o0
+-	/* Has to be a non-v9 branch due to the large distance. */
+-	ba		rtrap_xcall
+-	 ldx		[%sp + PTREGS_OFF + PT_V9_TSTATE], %l1
++	wr		%g0, (1 << PIL_KGDB_CAPTURE), %set_softint
++	retry
+ #endif
+ 
+ #endif /* CONFIG_SMP */
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 6d5a3c4..2781331 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -730,6 +730,9 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	finish_e820_parsing();
+ 
++	if (efi_enabled)
++		efi_init();
++
+ 	dmi_scan_machine();
+ 
+ 	dmi_check_system(bad_bios_dmi_table);
+@@ -743,8 +746,6 @@ void __init setup_arch(char **cmdline_p)
+ 	insert_resource(&iomem_resource, &data_resource);
+ 	insert_resource(&iomem_resource, &bss_resource);
+ 
+-	if (efi_enabled)
+-		efi_init();
+ 
+ #ifdef CONFIG_X86_32
+ 	if (ppro_with_ram_bug()) {
+diff --git a/arch/x86/mm/hugetlbpage.c b/arch/x86/mm/hugetlbpage.c
+index 8f307d9..f46c340 100644
+--- a/arch/x86/mm/hugetlbpage.c
++++ b/arch/x86/mm/hugetlbpage.c
+@@ -26,12 +26,16 @@ static unsigned long page_table_shareable(struct vm_area_struct *svma,
+ 	unsigned long sbase = saddr & PUD_MASK;
+ 	unsigned long s_end = sbase + PUD_SIZE;
+ 
++	/* Allow segments to share if only one is marked locked */
++	unsigned long vm_flags = vma->vm_flags & ~VM_LOCKED;
++	unsigned long svm_flags = svma->vm_flags & ~VM_LOCKED;
++
+ 	/*
+ 	 * match the virtual addresses, permission and the alignment of the
+ 	 * page table page.
+ 	 */
+ 	if (pmd_index(addr) != pmd_index(saddr) ||
+-	    vma->vm_flags != svma->vm_flags ||
++	    vm_flags != svm_flags ||
+ 	    sbase < svma->vm_start || svma->vm_end < s_end)
+ 		return 0;
+ 
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 7c3b8dc..5468c19 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -565,6 +565,17 @@ static int split_large_page(pte_t *kpte, unsigned long address)
+ 	ref_prot = pte_pgprot(pte_mkexec(pte_clrhuge(*kpte)));
+ 	pgprot_val(ref_prot) |= _PAGE_PRESENT;
+ 	__set_pmd_pte(kpte, address, mk_pte(base, ref_prot));
++
++	/*
++	 * Intel Atom errata AAH41 workaround.
++	 *
++	 * The real fix should be in hw or in a microcode update, but
++	 * we also probabilistically try to reduce the window of having
++	 * a large TLB mixed with 4K TLBs while instruction fetches are
++	 * going on.
++	 */
++	__flush_tlb_all();
++
+ 	base = NULL;
+ 
+ out_unlock:
+diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
+index 76d49eb..8a06160 100644
+--- a/arch/x86/pci/mmconfig-shared.c
++++ b/arch/x86/pci/mmconfig-shared.c
+@@ -255,7 +255,7 @@ static acpi_status __init check_mcfg_resource(struct acpi_resource *res,
+ 		if (!fixmem32)
+ 			return AE_OK;
+ 		if ((mcfg_res->start >= fixmem32->address) &&
+-		    (mcfg_res->end <= (fixmem32->address +
++		    (mcfg_res->end < (fixmem32->address +
+ 				      fixmem32->address_length))) {
+ 			mcfg_res->flags = 1;
+ 			return AE_CTRL_TERMINATE;
+@@ -272,7 +272,7 @@ static acpi_status __init check_mcfg_resource(struct acpi_resource *res,
+ 		return AE_OK;
+ 
+ 	if ((mcfg_res->start >= address.minimum) &&
+-	    (mcfg_res->end <= (address.minimum + address.address_length))) {
++	    (mcfg_res->end < (address.minimum + address.address_length))) {
+ 		mcfg_res->flags = 1;
+ 		return AE_CTRL_TERMINATE;
+ 	}
+@@ -298,7 +298,7 @@ static int __init is_acpi_reserved(u64 start, u64 end, unsigned not_used)
+ 	struct resource mcfg_res;
+ 
+ 	mcfg_res.start = start;
+-	mcfg_res.end = end;
++	mcfg_res.end = end - 1;
+ 	mcfg_res.flags = 0;
+ 
+ 	acpi_get_devices("PNP0C01", find_mboard_resource, &mcfg_res, NULL);
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index 81b40ed..5639e27 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -303,6 +303,9 @@ static void acpi_timer_check_state(int state, struct acpi_processor *pr,
+ 	struct acpi_processor_power *pwr = &pr->power;
+ 	u8 type = local_apic_timer_c2_ok ? ACPI_STATE_C3 : ACPI_STATE_C2;
+ 
++	if (boot_cpu_has(X86_FEATURE_AMDC1E))
++		type = ACPI_STATE_C1;
++
+ 	/*
+ 	 * Check, if one of the previous states already marked the lapic
+ 	 * unstable
+@@ -1154,6 +1157,7 @@ static int acpi_processor_power_verify(struct acpi_processor *pr)
+ 		switch (cx->type) {
+ 		case ACPI_STATE_C1:
+ 			cx->valid = 1;
++			acpi_timer_check_state(i, pr, cx);
+ 			break;
+ 
+ 		case ACPI_STATE_C2:
+@@ -1468,20 +1472,22 @@ static int acpi_idle_enter_c1(struct cpuidle_device *dev,
+ 
+ 	/* Do not access any ACPI IO ports in suspend path */
+ 	if (acpi_idle_suspend) {
+-		acpi_safe_halt();
+ 		local_irq_enable();
++		cpu_relax();
+ 		return 0;
+ 	}
+ 
+ 	if (pr->flags.bm_check)
+ 		acpi_idle_update_bm_rld(pr, cx);
+ 
++	acpi_state_timer_broadcast(pr, cx, 1);
+ 	t1 = inl(acpi_gbl_FADT.xpm_timer_block.address);
+ 	acpi_idle_do_entry(cx);
+ 	t2 = inl(acpi_gbl_FADT.xpm_timer_block.address);
+ 
+ 	local_irq_enable();
+ 	cx->usage++;
++	acpi_state_timer_broadcast(pr, cx, 0);
+ 
+ 	return ticks_elapsed_in_us(t1, t2);
+ }
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 7ce1ac4..201b2c1 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1626,15 +1626,20 @@ EXPORT_SYMBOL(secure_dccp_sequence_number);
+  * value is not cryptographically secure but for several uses the cost of
+  * depleting entropy is too high
+  */
++DEFINE_PER_CPU(__u32 [4], get_random_int_hash);
+ unsigned int get_random_int(void)
+ {
+-	/*
+-	 * Use IP's RNG. It suits our purpose perfectly: it re-keys itself
+-	 * every second, from the entropy pool (and thus creates a limited
+-	 * drain on it), and uses halfMD4Transform within the second. We
+-	 * also mix it with jiffies and the PID:
+-	 */
+-	return secure_ip_id((__force __be32)(current->pid + jiffies));
++	struct keydata *keyptr;
++	__u32 *hash = get_cpu_var(get_random_int_hash);
++	int ret;
++
++	keyptr = get_keyptr();
++	hash[0] += current->pid + jiffies + get_cycles();
++
++	ret = half_md4_transform(hash, keyptr->secret);
++	put_cpu_var(get_random_int_hash);
++
++	return ret;
+ }
+ 
+ /*
+diff --git a/drivers/char/tpm/tpm_bios.c b/drivers/char/tpm/tpm_bios.c
+index 68f052b..2db432d 100644
+--- a/drivers/char/tpm/tpm_bios.c
++++ b/drivers/char/tpm/tpm_bios.c
+@@ -214,7 +214,8 @@ static int get_event_name(char *dest, struct tcpa_event *event,
+ 			unsigned char * event_entry)
+ {
+ 	const char *name = "";
+-	char data[40] = "";
++	/* 41 so there is room for 40 data and 1 nul */
++	char data[41] = "";
+ 	int i, n_len = 0, d_len = 0;
+ 	struct tcpa_pc_event *pc_event;
+ 
+diff --git a/drivers/hwmon/lm78.c b/drivers/hwmon/lm78.c
+index ed7859f..affee01 100644
+--- a/drivers/hwmon/lm78.c
++++ b/drivers/hwmon/lm78.c
+@@ -178,7 +178,7 @@ static struct platform_driver lm78_isa_driver = {
+ 		.name	= "lm78",
+ 	},
+ 	.probe		= lm78_isa_probe,
+-	.remove		= lm78_isa_remove,
++	.remove		= __devexit_p(lm78_isa_remove),
+ };
+ 
+ 
+diff --git a/drivers/media/video/cx88/cx88-input.c b/drivers/media/video/cx88/cx88-input.c
+index 53526d9..dedf96b 100644
+--- a/drivers/media/video/cx88/cx88-input.c
++++ b/drivers/media/video/cx88/cx88-input.c
+@@ -48,8 +48,7 @@ struct cx88_IR {
+ 
+ 	/* poll external decoder */
+ 	int polling;
+-	struct work_struct work;
+-	struct timer_list timer;
++	struct delayed_work work;
+ 	u32 gpio_addr;
+ 	u32 last_gpio;
+ 	u32 mask_keycode;
+@@ -143,27 +142,19 @@ static void cx88_ir_handle_key(struct cx88_IR *ir)
+ 	}
+ }
+ 
+-static void ir_timer(unsigned long data)
+-{
+-	struct cx88_IR *ir = (struct cx88_IR *)data;
+-
+-	schedule_work(&ir->work);
+-}
+-
+ static void cx88_ir_work(struct work_struct *work)
+ {
+-	struct cx88_IR *ir = container_of(work, struct cx88_IR, work);
++	struct cx88_IR *ir = container_of(work, struct cx88_IR, work.work);
+ 
+ 	cx88_ir_handle_key(ir);
+-	mod_timer(&ir->timer, jiffies + msecs_to_jiffies(ir->polling));
++	schedule_delayed_work(&ir->work, msecs_to_jiffies(ir->polling));
+ }
+ 
+ void cx88_ir_start(struct cx88_core *core, struct cx88_IR *ir)
+ {
+ 	if (ir->polling) {
+-		setup_timer(&ir->timer, ir_timer, (unsigned long)ir);
+-		INIT_WORK(&ir->work, cx88_ir_work);
+-		schedule_work(&ir->work);
++		INIT_DELAYED_WORK(&ir->work, cx88_ir_work);
++		schedule_delayed_work(&ir->work, 0);
+ 	}
+ 	if (ir->sampling) {
+ 		core->pci_irqmask |= PCI_INT_IR_SMPINT;
+@@ -179,10 +170,8 @@ void cx88_ir_stop(struct cx88_core *core, struct cx88_IR *ir)
+ 		core->pci_irqmask &= ~PCI_INT_IR_SMPINT;
+ 	}
+ 
+-	if (ir->polling) {
+-		del_timer_sync(&ir->timer);
+-		flush_scheduled_work();
+-	}
++	if (ir->polling)
++		cancel_delayed_work_sync(&ir->work);
+ }
+ 
+ /* ---------------------------------------------------------------------- */
+diff --git a/drivers/net/bnx2.c b/drivers/net/bnx2.c
+index 2486a65..ba91aee 100644
+--- a/drivers/net/bnx2.c
++++ b/drivers/net/bnx2.c
+@@ -2574,6 +2574,7 @@ bnx2_get_hw_tx_cons(struct bnx2_napi *bnapi)
+ 	/* Tell compiler that status block fields can change. */
+ 	barrier();
+ 	cons = *bnapi->hw_tx_cons_ptr;
++	barrier();
+ 	if (unlikely((cons & MAX_TX_DESC_CNT) == MAX_TX_DESC_CNT))
+ 		cons++;
+ 	return cons;
+@@ -2849,6 +2850,7 @@ bnx2_get_hw_rx_cons(struct bnx2_napi *bnapi)
+ 	/* Tell compiler that status block fields can change. */
+ 	barrier();
+ 	cons = *bnapi->hw_rx_cons_ptr;
++	barrier();
+ 	if (unlikely((cons & MAX_RX_DESC_CNT) == MAX_RX_DESC_CNT))
+ 		cons++;
+ 	return cons;
+diff --git a/drivers/net/bonding/bond_alb.c b/drivers/net/bonding/bond_alb.c
+index 4489e58..e929e61 100644
+--- a/drivers/net/bonding/bond_alb.c
++++ b/drivers/net/bonding/bond_alb.c
+@@ -1716,9 +1716,6 @@ int bond_alb_set_mac_address(struct net_device *bond_dev, void *addr)
+ 		}
+ 	}
+ 
+-	write_unlock_bh(&bond->curr_slave_lock);
+-	read_unlock(&bond->lock);
+-
+ 	if (swap_slave) {
+ 		alb_swap_mac_addr(bond, swap_slave, bond->curr_active_slave);
+ 		alb_fasten_mac_swap(bond, swap_slave, bond->curr_active_slave);
+@@ -1726,16 +1723,15 @@ int bond_alb_set_mac_address(struct net_device *bond_dev, void *addr)
+ 		alb_set_slave_mac_addr(bond->curr_active_slave, bond_dev->dev_addr,
+ 				       bond->alb_info.rlb_enabled);
+ 
++		read_lock(&bond->lock);
+ 		alb_send_learning_packets(bond->curr_active_slave, bond_dev->dev_addr);
+ 		if (bond->alb_info.rlb_enabled) {
+ 			/* inform clients mac address has changed */
+ 			rlb_req_update_slave_clients(bond, bond->curr_active_slave);
+ 		}
++		read_unlock(&bond->lock);
+ 	}
+ 
+-	read_lock(&bond->lock);
+-	write_lock_bh(&bond->curr_slave_lock);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/e1000/e1000_main.c b/drivers/net/e1000/e1000_main.c
+index 6b96357..1f60117 100644
+--- a/drivers/net/e1000/e1000_main.c
++++ b/drivers/net/e1000/e1000_main.c
+@@ -4133,8 +4133,9 @@ static bool e1000_clean_rx_irq(struct e1000_adapter *adapter,
+ 		                 PCI_DMA_FROMDEVICE);
+ 
+ 		length = le16_to_cpu(rx_desc->length);
+-
+-		if (unlikely(!(status & E1000_RXD_STAT_EOP))) {
++		/* !EOP means multiple descriptors were used to store a single
++		 * packet, also make sure the frame isn't just CRC only */
++		if (unlikely(!(status & E1000_RXD_STAT_EOP) || (length <= 4))) {
+ 			/* All receives must fit into a single buffer */
+ 			E1000_DBG("%s: Receive packet consumed multiple"
+ 				  " buffers\n", netdev->name);
+diff --git a/drivers/net/igb/igb_ethtool.c b/drivers/net/igb/igb_ethtool.c
+index 89964fa..23110d8 100644
+--- a/drivers/net/igb/igb_ethtool.c
++++ b/drivers/net/igb/igb_ethtool.c
+@@ -2029,6 +2029,10 @@ static struct ethtool_ops igb_ethtool_ops = {
+ 	.get_ethtool_stats      = igb_get_ethtool_stats,
+ 	.get_coalesce           = igb_get_coalesce,
+ 	.set_coalesce           = igb_set_coalesce,
++	.get_flags              = ethtool_op_get_flags,
++#ifdef CONFIG_IGB_LRO
++	.set_flags              = ethtool_op_set_flags,
++#endif
+ };
+ 
+ void igb_set_ethtool_ops(struct net_device *netdev)
+diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
+index 4239450..1aa0388 100644
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -328,7 +328,8 @@ static u32 macvlan_ethtool_get_rx_csum(struct net_device *dev)
+ 	const struct macvlan_dev *vlan = netdev_priv(dev);
+ 	struct net_device *lowerdev = vlan->lowerdev;
+ 
+-	if (lowerdev->ethtool_ops->get_rx_csum == NULL)
++	if (lowerdev->ethtool_ops == NULL ||
++	    lowerdev->ethtool_ops->get_rx_csum == NULL)
+ 		return 0;
+ 	return lowerdev->ethtool_ops->get_rx_csum(lowerdev);
+ }
+diff --git a/drivers/net/myri10ge/myri10ge.c b/drivers/net/myri10ge/myri10ge.c
+index d6524db..7d41ec8 100644
+--- a/drivers/net/myri10ge/myri10ge.c
++++ b/drivers/net/myri10ge/myri10ge.c
+@@ -2379,6 +2379,7 @@ static int myri10ge_open(struct net_device *dev)
+ 		lro_mgr->lro_arr = ss->rx_done.lro_desc;
+ 		lro_mgr->get_frag_header = myri10ge_get_frag_header;
+ 		lro_mgr->max_aggr = myri10ge_lro_max_pkts;
++		lro_mgr->frag_align_pad = 2;
+ 		if (lro_mgr->max_aggr > MAX_SKB_FRAGS)
+ 			lro_mgr->max_aggr = MAX_SKB_FRAGS;
+ 
+diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
+index a0537f0..6221cdc 100644
+--- a/drivers/scsi/3w-xxxx.c
++++ b/drivers/scsi/3w-xxxx.c
+@@ -6,7 +6,7 @@
+    		     Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+                      Brad Strand <linux@3ware.com>
+ 
+-   Copyright (C) 1999-2007 3ware Inc.
++   Copyright (C) 1999-2009 3ware Inc.
+ 
+    Kernel compatiblity By: 	Andre Hedrick <andre@suse.com>
+    Non-Copyright (C) 2000	Andre Hedrick <andre@suse.com>
+@@ -1294,7 +1294,8 @@ static void tw_unmap_scsi_data(struct pci_dev *pdev, struct scsi_cmnd *cmd)
+ {
+ 	dprintk(KERN_WARNING "3w-xxxx: tw_unmap_scsi_data()\n");
+ 
+-	scsi_dma_unmap(cmd);
++	if (cmd->SCp.phase == TW_PHASE_SGLIST)
++		scsi_dma_unmap(cmd);
+ } /* End tw_unmap_scsi_data() */
+ 
+ /* This function will reset a device extension */
+diff --git a/drivers/scsi/3w-xxxx.h b/drivers/scsi/3w-xxxx.h
+index 0742e68..e938615 100644
+--- a/drivers/scsi/3w-xxxx.h
++++ b/drivers/scsi/3w-xxxx.h
+@@ -6,7 +6,7 @@
+    		     Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+                      Brad Strand <linux@3ware.com>
+ 
+-   Copyright (C) 1999-2007 3ware Inc.
++   Copyright (C) 1999-2009 3ware Inc.
+ 
+    Kernel compatiblity By:	Andre Hedrick <andre@suse.com>
+    Non-Copyright (C) 2000	Andre Hedrick <andre@suse.com>
+diff --git a/drivers/serial/icom.c b/drivers/serial/icom.c
+index 2b7531d..08eefec 100644
+--- a/drivers/serial/icom.c
++++ b/drivers/serial/icom.c
+@@ -1482,8 +1482,8 @@ static void icom_remove_adapter(struct icom_adapter *icom_adapter)
+ 
+ 	free_irq(icom_adapter->pci_dev->irq, (void *) icom_adapter);
+ 	iounmap(icom_adapter->base_addr);
+-	icom_free_adapter(icom_adapter);
+ 	pci_release_regions(icom_adapter->pci_dev);
++	icom_free_adapter(icom_adapter);
+ }
+ 
+ static void icom_kref_release(struct kref *kref)
+diff --git a/drivers/serial/mpc52xx_uart.c b/drivers/serial/mpc52xx_uart.c
+index 32e7acb..3485510 100644
+--- a/drivers/serial/mpc52xx_uart.c
++++ b/drivers/serial/mpc52xx_uart.c
+@@ -1000,7 +1000,7 @@ mpc52xx_console_setup(struct console *co, char *options)
+ 	pr_debug("mpc52xx_console_setup co=%p, co->index=%i, options=%s\n",
+ 		 co, co->index, options);
+ 
+-	if ((co->index < 0) || (co->index > MPC52xx_PSC_MAXNUM)) {
++	if ((co->index < 0) || (co->index >= MPC52xx_PSC_MAXNUM)) {
+ 		pr_debug("PSC%x out of range\n", co->index);
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/usb/host/isp1760-hcd.c b/drivers/usb/host/isp1760-hcd.c
+index 8017f1c..eb3b103 100644
+--- a/drivers/usb/host/isp1760-hcd.c
++++ b/drivers/usb/host/isp1760-hcd.c
+@@ -1645,6 +1645,7 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
+ 	u32 reg_base, or_reg, skip_reg;
+ 	unsigned long flags;
+ 	struct ptd ptd;
++	packet_enqueue *pe;
+ 
+ 	switch (usb_pipetype(urb->pipe)) {
+ 	case PIPE_ISOCHRONOUS:
+@@ -1656,6 +1657,7 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
+ 		reg_base = INT_REGS_OFFSET;
+ 		or_reg = HC_INT_IRQ_MASK_OR_REG;
+ 		skip_reg = HC_INT_PTD_SKIPMAP_REG;
++		pe = enqueue_an_INT_packet;
+ 		break;
+ 
+ 	default:
+@@ -1663,6 +1665,7 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
+ 		reg_base = ATL_REGS_OFFSET;
+ 		or_reg = HC_ATL_IRQ_MASK_OR_REG;
+ 		skip_reg = HC_ATL_PTD_SKIPMAP_REG;
++		pe =  enqueue_an_ATL_packet;
+ 		break;
+ 	}
+ 
+@@ -1674,6 +1677,7 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
+ 			u32 skip_map;
+ 			u32 or_map;
+ 			struct isp1760_qtd *qtd;
++			struct isp1760_qh *qh = ints->qh;
+ 
+ 			skip_map = isp1760_readl(hcd->regs + skip_reg);
+ 			skip_map |= 1 << i;
+@@ -1686,8 +1690,7 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
+ 			priv_write_copy(priv, (u32 *)&ptd, hcd->regs + reg_base
+ 					+ i * sizeof(ptd), sizeof(ptd));
+ 			qtd = ints->qtd;
+-
+-			clean_up_qtdlist(qtd);
++			qtd = clean_up_qtdlist(qtd);
+ 
+ 			free_mem(priv, ints->payload);
+ 
+@@ -1698,7 +1701,24 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
+ 			ints->payload = 0;
+ 
+ 			isp1760_urb_done(priv, urb, status);
++			if (qtd)
++				pe(hcd, qh, qtd);
+ 			break;
++
++		} else if (ints->qtd) {
++			struct isp1760_qtd *qtd, *prev_qtd = ints->qtd;
++
++			for (qtd = ints->qtd->hw_next; qtd; qtd = qtd->hw_next) {
++				if (qtd->urb == urb) {
++					prev_qtd->hw_next = clean_up_qtdlist(qtd);
++					isp1760_urb_done(priv, urb, status);
++					break;
++				}
++				prev_qtd = qtd;
++			}
++			/* we found the urb before the end of the list */
++			if (qtd)
++				break;
+ 		}
+ 		ints++;
+ 	}
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index eadbee3..1985721 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -248,6 +248,30 @@ struct flex_groups {
+ #define EXT4_FL_USER_VISIBLE		0x000BDFFF /* User visible flags */
+ #define EXT4_FL_USER_MODIFIABLE		0x000380FF /* User modifiable flags */
+ 
++/* Flags that should be inherited by new inodes from their parent. */
++#define EXT4_FL_INHERITED (EXT4_SECRM_FL | EXT4_UNRM_FL | EXT4_COMPR_FL |\
++			   EXT4_SYNC_FL | EXT4_IMMUTABLE_FL | EXT4_APPEND_FL |\
++			   EXT4_NODUMP_FL | EXT4_NOATIME_FL |\
++			   EXT4_NOCOMPR_FL | EXT4_JOURNAL_DATA_FL |\
++			   EXT4_NOTAIL_FL | EXT4_DIRSYNC_FL)
++
++/* Flags that are appropriate for regular files (all but dir-specific ones). */
++#define EXT4_REG_FLMASK (~(EXT4_DIRSYNC_FL | EXT4_TOPDIR_FL))
++
++/* Flags that are appropriate for non-directories/regular files. */
++#define EXT4_OTHER_FLMASK (EXT4_NODUMP_FL | EXT4_NOATIME_FL)
++
++/* Mask out flags that are inappropriate for the given type of inode. */
++static inline __u32 ext4_mask_flags(umode_t mode, __u32 flags)
++{
++	if (S_ISDIR(mode))
++		return flags;
++	else if (S_ISREG(mode))
++		return flags & EXT4_REG_FLMASK;
++	else
++		return flags & EXT4_OTHER_FLMASK;
++}
++
+ /*
+  * Inode dynamic state flags
+  */
+@@ -255,6 +279,7 @@ struct flex_groups {
+ #define EXT4_STATE_NEW			0x00000002 /* inode is newly created */
+ #define EXT4_STATE_XATTR		0x00000004 /* has in-inode xattrs */
+ #define EXT4_STATE_NO_EXPAND		0x00000008 /* No space for expansion */
++#define EXT4_STATE_DA_ALLOC_CLOSE	0x00000010 /* Alloc DA blks on close */
+ 
+ /* Used to pass group descriptor data when online resize is done */
+ struct ext4_new_group_input {
+@@ -302,7 +327,9 @@ struct ext4_new_group_data {
+ #define EXT4_IOC_GROUP_EXTEND		_IOW('f', 7, unsigned long)
+ #define EXT4_IOC_GROUP_ADD		_IOW('f', 8, struct ext4_new_group_input)
+ #define EXT4_IOC_MIGRATE		_IO('f', 9)
++ /* note ioctl 10 reserved for an early version of the FIEMAP ioctl */
+  /* note ioctl 11 reserved for filesystem-independent FIEMAP ioctl */
++#define EXT4_IOC_ALLOC_DA_BLKS		_IO('f', 12)
+ 
+ /*
+  * ioctl commands in 32 bit emulation
+@@ -1078,6 +1105,7 @@ extern int ext4_can_truncate(struct inode *inode);
+ extern void ext4_truncate (struct inode *);
+ extern void ext4_set_inode_flags(struct inode *);
+ extern void ext4_get_inode_flags(struct ext4_inode_info *);
++extern int ext4_alloc_da_blocks(struct inode *inode);
+ extern void ext4_set_aops(struct inode *inode);
+ extern int ext4_writepage_trans_blocks(struct inode *);
+ extern int ext4_meta_trans_blocks(struct inode *, int nrblocks, int idxblocks);
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index b24d3c5..f99635a 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -1118,7 +1118,8 @@ ext4_ext_search_right(struct inode *inode, struct ext4_ext_path *path,
+ 	struct ext4_extent_idx *ix;
+ 	struct ext4_extent *ex;
+ 	ext4_fsblk_t block;
+-	int depth, ee_len;
++	int depth;	/* Note, NOT eh_depth; depth from top of tree */
++	int ee_len;
+ 
+ 	BUG_ON(path == NULL);
+ 	depth = path->p_depth;
+@@ -1177,7 +1178,8 @@ ext4_ext_search_right(struct inode *inode, struct ext4_ext_path *path,
+ 		if (bh == NULL)
+ 			return -EIO;
+ 		eh = ext_block_hdr(bh);
+-		if (ext4_ext_check_header(inode, eh, depth)) {
++		/* subtract from p_depth to get proper eh_depth */
++		if (ext4_ext_check_header(inode, eh, path->p_depth - depth)) {
+ 			put_bh(bh);
+ 			return -EIO;
+ 		}
+@@ -1631,11 +1633,13 @@ ext4_ext_put_in_cache(struct inode *inode, ext4_lblk_t block,
+ {
+ 	struct ext4_ext_cache *cex;
+ 	BUG_ON(len == 0);
++	spin_lock(&EXT4_I(inode)->i_block_reservation_lock);
+ 	cex = &EXT4_I(inode)->i_cached_extent;
+ 	cex->ec_type = type;
+ 	cex->ec_block = block;
+ 	cex->ec_len = len;
+ 	cex->ec_start = start;
++	spin_unlock(&EXT4_I(inode)->i_block_reservation_lock);
+ }
+ 
+ /*
+@@ -1692,12 +1696,17 @@ ext4_ext_in_cache(struct inode *inode, ext4_lblk_t block,
+ 			struct ext4_extent *ex)
+ {
+ 	struct ext4_ext_cache *cex;
++	int ret = EXT4_EXT_CACHE_NO;
+ 
++	/*
++	 * We borrow i_block_reservation_lock to protect i_cached_extent
++	 */
++	spin_lock(&EXT4_I(inode)->i_block_reservation_lock);
+ 	cex = &EXT4_I(inode)->i_cached_extent;
+ 
+ 	/* has cache valid data? */
+ 	if (cex->ec_type == EXT4_EXT_CACHE_NO)
+-		return EXT4_EXT_CACHE_NO;
++		goto errout;
+ 
+ 	BUG_ON(cex->ec_type != EXT4_EXT_CACHE_GAP &&
+ 			cex->ec_type != EXT4_EXT_CACHE_EXTENT);
+@@ -1708,11 +1717,11 @@ ext4_ext_in_cache(struct inode *inode, ext4_lblk_t block,
+ 		ext_debug("%u cached by %u:%u:%llu\n",
+ 				block,
+ 				cex->ec_block, cex->ec_len, cex->ec_start);
+-		return cex->ec_type;
++		ret = cex->ec_type;
+ 	}
+-
+-	/* not in cache */
+-	return EXT4_EXT_CACHE_NO;
++errout:
++	spin_unlock(&EXT4_I(inode)->i_block_reservation_lock);
++	return ret;
+ }
+ 
+ /*
+@@ -2668,6 +2677,8 @@ int ext4_ext_get_blocks(handle_t *handle, struct inode *inode,
+ 				if (allocated > max_blocks)
+ 					allocated = max_blocks;
+ 				set_buffer_unwritten(bh_result);
++				bh_result->b_bdev = inode->i_sb->s_bdev;
++				bh_result->b_blocknr = newblock;
+ 				goto out2;
+ 			}
+ 
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 430eb79..c0d02f8 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -33,9 +33,14 @@
+  */
+ static int ext4_release_file (struct inode * inode, struct file * filp)
+ {
++	if (EXT4_I(inode)->i_state & EXT4_STATE_DA_ALLOC_CLOSE) {
++		ext4_alloc_da_blocks(inode);
++		EXT4_I(inode)->i_state &= ~EXT4_STATE_DA_ALLOC_CLOSE;
++	}
+ 	/* if we are the last writer on the inode, drop the block reservation */
+ 	if ((filp->f_mode & FMODE_WRITE) &&
+-			(atomic_read(&inode->i_writecount) == 1))
++			(atomic_read(&inode->i_writecount) == 1) &&
++		        !EXT4_I(inode)->i_reserved_data_blocks)
+ 	{
+ 		down_write(&EXT4_I(inode)->i_data_sem);
+ 		ext4_discard_reservation(inode);
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index cce841f..e8754fd 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -188,7 +188,7 @@ void ext4_free_inode (handle_t *handle, struct inode * inode)
+ 	struct ext4_group_desc * gdp;
+ 	struct ext4_super_block * es;
+ 	struct ext4_sb_info *sbi;
+-	int fatal = 0, err;
++	int fatal = 0, err, cleared;
+ 	ext4_group_t flex_group;
+ 
+ 	if (atomic_read(&inode->i_count) > 1) {
+@@ -242,10 +242,12 @@ void ext4_free_inode (handle_t *handle, struct inode * inode)
+ 		goto error_return;
+ 
+ 	/* Ok, now we can actually update the inode bitmaps.. */
+-	if (!ext4_clear_bit_atomic(sb_bgl_lock(sbi, block_group),
+-					bit, bitmap_bh->b_data))
+-		ext4_error (sb, "ext4_free_inode",
+-			      "bit already cleared for inode %lu", ino);
++	spin_lock(sb_bgl_lock(sbi, block_group));
++	cleared = ext4_clear_bit(bit, bitmap_bh->b_data);
++	spin_unlock(sb_bgl_lock(sbi, block_group));
++	if (!cleared)
++		ext4_error(sb, "ext4_free_inode",
++			   "bit already cleared for inode %lu", ino);
+ 	else {
+ 		gdp = ext4_get_group_desc (sb, block_group, &bh2);
+ 
+@@ -685,6 +687,7 @@ struct inode *ext4_new_inode(handle_t *handle, struct inode * dir, int mode)
+ 	struct inode *ret;
+ 	ext4_group_t i;
+ 	int free = 0;
++	static int once = 1;
+ 	ext4_group_t flex_group;
+ 
+ 	/* Cannot create files in a deleted directory */
+@@ -704,10 +707,12 @@ struct inode *ext4_new_inode(handle_t *handle, struct inode * dir, int mode)
+ 		ret2 = find_group_flex(sb, dir, &group);
+ 		if (ret2 == -1) {
+ 			ret2 = find_group_other(sb, dir, &group);
+-			if (ret2 == 0 && printk_ratelimit())
++			if (ret2 == 0 && once) {
++				once = 0;
+ 				printk(KERN_NOTICE "ext4: find_group_flex "
+ 				       "failed, fallback succeeded dir %lu\n",
+ 				       dir->i_ino);
++			}
+ 		}
+ 		goto got_group;
+ 	}
+@@ -861,16 +866,12 @@ got:
+ 	ei->i_disksize = 0;
+ 
+ 	/*
+-	 * Don't inherit extent flag from directory. We set extent flag on
+-	 * newly created directory and file only if -o extent mount option is
+-	 * specified
++	 * Don't inherit extent flag from directory, amongst others. We set
++	 * extent flag on newly created directory and file only if -o extent
++	 * mount option is specified
+ 	 */
+-	ei->i_flags = EXT4_I(dir)->i_flags & ~(EXT4_INDEX_FL|EXT4_EXTENTS_FL);
+-	if (S_ISLNK(mode))
+-		ei->i_flags &= ~(EXT4_IMMUTABLE_FL|EXT4_APPEND_FL);
+-	/* dirsync only applies to directories */
+-	if (!S_ISDIR(mode))
+-		ei->i_flags &= ~EXT4_DIRSYNC_FL;
++	ei->i_flags =
++		ext4_mask_flags(mode, EXT4_I(dir)->i_flags & EXT4_FL_INHERITED);
+ 	ei->i_file_acl = 0;
+ 	ei->i_dtime = 0;
+ 	ei->i_block_alloc_info = NULL;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 63b911b..aeebfc2 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1046,6 +1046,14 @@ static void ext4_da_update_reserve_space(struct inode *inode, int used)
+ 	EXT4_I(inode)->i_reserved_meta_blocks = mdb;
+ 	EXT4_I(inode)->i_allocated_meta_blocks = 0;
+ 	spin_unlock(&EXT4_I(inode)->i_block_reservation_lock);
++
++	/*
++	 * If we have done all the pending block allocations and if
++	 * there aren't any writers on the inode, we can discard the
++	 * inode's preallocations.
++	 */
++	if (!total && (atomic_read(&inode->i_writecount) == 0))
++		ext4_discard_reservation(inode);
+ }
+ 
+ /*
+@@ -1077,6 +1085,7 @@ int ext4_get_blocks_wrap(handle_t *handle, struct inode *inode, sector_t block,
+ 	int retval;
+ 
+ 	clear_buffer_mapped(bh);
++	clear_buffer_unwritten(bh);
+ 
+ 	/*
+ 	 * Try to see if we can get  the block without requesting
+@@ -1107,6 +1116,18 @@ int ext4_get_blocks_wrap(handle_t *handle, struct inode *inode, sector_t block,
+ 		return retval;
+ 
+ 	/*
++	 * When we call get_blocks without the create flag, the
++	 * BH_Unwritten flag could have gotten set if the blocks
++	 * requested were part of a uninitialized extent.  We need to
++	 * clear this flag now that we are committed to convert all or
++	 * part of the uninitialized extent to be an initialized
++	 * extent.  This is because we need to avoid the combination
++	 * of BH_Unwritten and BH_Mapped flags being simultaneously
++	 * set on the buffer_head.
++	 */
++	clear_buffer_unwritten(bh);
++
++	/*
+ 	 * New blocks allocate and/or writing to uninitialized extent
+ 	 * will possibly result in updating i_data, so we take
+ 	 * the write lock of i_data_sem, and call get_blocks()
+@@ -2097,6 +2118,10 @@ static int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
+ 				  struct buffer_head *bh_result, int create)
+ {
+ 	int ret = 0;
++	sector_t invalid_block = ~((sector_t) 0xffff);
++
++	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
++		invalid_block = ~0;
+ 
+ 	BUG_ON(create == 0);
+ 	BUG_ON(bh_result->b_size != inode->i_sb->s_blocksize);
+@@ -2118,11 +2143,18 @@ static int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
+ 			/* not enough space to reserve */
+ 			return ret;
+ 
+-		map_bh(bh_result, inode->i_sb, 0);
++		map_bh(bh_result, inode->i_sb, invalid_block);
+ 		set_buffer_new(bh_result);
+ 		set_buffer_delay(bh_result);
+ 	} else if (ret > 0) {
+ 		bh_result->b_size = (ret << inode->i_blkbits);
++		/*
++		 * With sub-block writes into unwritten extents
++		 * we also need to mark the buffer as new so that
++		 * the unwritten parts of the buffer gets correctly zeroed.
++		 */
++		if (buffer_unwritten(bh_result))
++			set_buffer_new(bh_result);
+ 		ret = 0;
+ 	}
+ 
+@@ -2585,6 +2617,48 @@ out:
+ 	return;
+ }
+ 
++/*
++ * Force all delayed allocation blocks to be allocated for a given inode.
++ */
++int ext4_alloc_da_blocks(struct inode *inode)
++{
++	if (!EXT4_I(inode)->i_reserved_data_blocks &&
++	    !EXT4_I(inode)->i_reserved_meta_blocks)
++		return 0;
++
++	/*
++	 * We do something simple for now.  The filemap_flush() will
++	 * also start triggering a write of the data blocks, which is
++	 * not strictly speaking necessary (and for users of
++	 * laptop_mode, not even desirable).  However, to do otherwise
++	 * would require replicating code paths in:
++	 *
++	 * ext4_da_writepages() ->
++	 *    write_cache_pages() ---> (via passed in callback function)
++	 *        __mpage_da_writepage() -->
++	 *           mpage_add_bh_to_extent()
++	 *           mpage_da_map_blocks()
++	 *
++	 * The problem is that write_cache_pages(), located in
++	 * mm/page-writeback.c, marks pages clean in preparation for
++	 * doing I/O, which is not desirable if we're not planning on
++	 * doing I/O at all.
++	 *
++	 * We could call write_cache_pages(), and then redirty all of
++	 * the pages by calling redirty_page_for_writeback() but that
++	 * would be ugly in the extreme.  So instead we would need to
++	 * replicate parts of the code in the above functions,
++	 * simplifying them becuase we wouldn't actually intend to
++	 * write out the pages, but rather only collect contiguous
++	 * logical block extents, call the multi-block allocator, and
++	 * then update the buffer heads with the block allocations.
++	 *
++	 * For now, though, we'll cheat by calling filemap_flush(),
++	 * which will map the blocks, and start the I/O, but not
++	 * actually wait for the I/O to complete.
++	 */
++	return filemap_flush(inode->i_mapping);
++}
+ 
+ /*
+  * bmap() is special.  It gets used by applications such as lilo and by
+@@ -3594,6 +3668,9 @@ void ext4_truncate(struct inode *inode)
+ 	if (!ext4_can_truncate(inode))
+ 		return;
+ 
++	if (inode->i_size == 0)
++		ei->i_state |= EXT4_STATE_DA_ALLOC_CLOSE;
++
+ 	if (EXT4_I(inode)->i_flags & EXT4_EXTENTS_FL) {
+ 		ext4_ext_truncate(inode);
+ 		return;
+@@ -4011,11 +4088,9 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
+ 	ei->i_flags = le32_to_cpu(raw_inode->i_flags);
+ 	inode->i_blocks = ext4_inode_blocks(raw_inode, ei);
+ 	ei->i_file_acl = le32_to_cpu(raw_inode->i_file_acl_lo);
+-	if (EXT4_SB(inode->i_sb)->s_es->s_creator_os !=
+-	    cpu_to_le32(EXT4_OS_HURD)) {
++	if (EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_64BIT))
+ 		ei->i_file_acl |=
+ 			((__u64)le16_to_cpu(raw_inode->i_file_acl_high)) << 32;
+-	}
+ 	inode->i_size = ext4_isize(raw_inode);
+ 	ei->i_disksize = inode->i_size;
+ 	inode->i_generation = le32_to_cpu(raw_inode->i_generation);
+@@ -4062,6 +4137,18 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
+ 			(__u64)(le32_to_cpu(raw_inode->i_version_hi)) << 32;
+ 	}
+ 
++	if (ei->i_file_acl &&
++	    ((ei->i_file_acl <
++	      (le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block) +
++	       EXT4_SB(sb)->s_gdb_count)) ||
++	     (ei->i_file_acl >= ext4_blocks_count(EXT4_SB(sb)->s_es)))) {
++		ext4_error(sb, __func__,
++			   "bad extended attribute block %llu in inode #%lu",
++			   ei->i_file_acl, inode->i_ino);
++		ret = -EIO;
++		goto bad_inode;
++	}
++
+ 	if (S_ISREG(inode->i_mode)) {
+ 		inode->i_op = &ext4_file_inode_operations;
+ 		inode->i_fop = &ext4_file_operations;
+@@ -4076,7 +4163,8 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
+ 			inode->i_op = &ext4_symlink_inode_operations;
+ 			ext4_set_aops(inode);
+ 		}
+-	} else {
++	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
++	      S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+ 		inode->i_op = &ext4_special_inode_operations;
+ 		if (raw_inode->i_block[0])
+ 			init_special_inode(inode, inode->i_mode,
+@@ -4084,6 +4172,13 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
+ 		else
+ 			init_special_inode(inode, inode->i_mode,
+ 			   new_decode_dev(le32_to_cpu(raw_inode->i_block[1])));
++	} else {
++		brelse(bh);
++		ret = -EIO;
++		ext4_error(inode->i_sb, __func__,
++			   "bogus i_mode (%o) for inode=%lu",
++			   inode->i_mode, inode->i_ino);
++		goto bad_inode;
+ 	}
+ 	brelse (iloc.bh);
+ 	ext4_set_inode_flags(inode);
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index 306bfd4..58dedf0 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -49,8 +49,7 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		if (err)
+ 			return err;
+ 
+-		if (!S_ISDIR(inode->i_mode))
+-			flags &= ~EXT4_DIRSYNC_FL;
++		flags = ext4_mask_flags(inode->i_mode, flags);
+ 
+ 		err = -EPERM;
+ 		mutex_lock(&inode->i_mutex);
+@@ -288,6 +287,20 @@ setversion_out:
+ 		return err;
+ 	}
+ 
++	case EXT4_IOC_ALLOC_DA_BLKS:
++	{
++		int err;
++		if (!is_owner_or_cap(inode))
++			return -EACCES;
++
++		err = mnt_want_write(filp->f_path.mnt);
++		if (err)
++			return err;
++		err = ext4_alloc_da_blocks(inode);
++		mnt_drop_write(filp->f_path.mnt);
++		return err;
++	}
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 39d7cc1..c7dc115 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -1450,7 +1450,7 @@ static void ext4_mb_measure_extent(struct ext4_allocation_context *ac,
+ 	struct ext4_free_extent *gex = &ac->ac_g_ex;
+ 
+ 	BUG_ON(ex->fe_len <= 0);
+-	BUG_ON(ex->fe_len >= EXT4_BLOCKS_PER_GROUP(ac->ac_sb));
++	BUG_ON(ex->fe_len > EXT4_BLOCKS_PER_GROUP(ac->ac_sb));
+ 	BUG_ON(ex->fe_start >= EXT4_BLOCKS_PER_GROUP(ac->ac_sb));
+ 	BUG_ON(ac->ac_status != AC_STATUS_CONTINUE);
+ 
+@@ -2698,7 +2698,7 @@ int ext4_mb_init(struct super_block *sb, int needs_recovery)
+ 	sbi->s_mb_maxs = kmalloc(i, GFP_KERNEL);
+ 	if (sbi->s_mb_maxs == NULL) {
+ 		clear_opt(sbi->s_mount_opt, MBALLOC);
+-		kfree(sbi->s_mb_maxs);
++		kfree(sbi->s_mb_offsets);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -3400,7 +3400,7 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
+ 	}
+ 	BUG_ON(start + size <= ac->ac_o_ex.fe_logical &&
+ 			start > ac->ac_o_ex.fe_logical);
+-	BUG_ON(size <= 0 || size >= EXT4_BLOCKS_PER_GROUP(ac->ac_sb));
++	BUG_ON(size <= 0 || size > EXT4_BLOCKS_PER_GROUP(ac->ac_sb));
+ 
+ 	/* now prepare goal request */
+ 
+@@ -3698,6 +3698,7 @@ static void ext4_mb_put_pa(struct ext4_allocation_context *ac,
+ 			struct super_block *sb, struct ext4_prealloc_space *pa)
+ {
+ 	unsigned long grp;
++	ext4_fsblk_t grp_blk;
+ 
+ 	if (!atomic_dec_and_test(&pa->pa_count) || pa->pa_free != 0)
+ 		return;
+@@ -3712,8 +3713,12 @@ static void ext4_mb_put_pa(struct ext4_allocation_context *ac,
+ 	pa->pa_deleted = 1;
+ 	spin_unlock(&pa->pa_lock);
+ 
+-	/* -1 is to protect from crossing allocation group */
+-	ext4_get_group_no_and_offset(sb, pa->pa_pstart - 1, &grp, NULL);
++	grp_blk = pa->pa_pstart;
++	/* If linear, pa_pstart may be in the next group when pa is used up */
++	if (pa->pa_linear)
++		grp_blk--;
++
++	ext4_get_group_no_and_offset(sb, grp_blk, &grp, NULL);
+ 
+ 	/*
+ 	 * possible race:
+@@ -4527,7 +4532,7 @@ static void ext4_mb_add_n_trim(struct ext4_allocation_context *ac)
+ 						pa_inode_list) {
+ 		spin_lock(&tmp_pa->pa_lock);
+ 		if (tmp_pa->pa_deleted) {
+-			spin_unlock(&pa->pa_lock);
++			spin_unlock(&tmp_pa->pa_lock);
+ 			continue;
+ 		}
+ 		if (!added && pa->pa_free < tmp_pa->pa_free) {
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 4f3628f..6a71680 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1055,8 +1055,16 @@ static struct dentry *ext4_lookup(struct inode * dir, struct dentry *dentry, str
+ 			return ERR_PTR(-EIO);
+ 		}
+ 		inode = ext4_iget(dir->i_sb, ino);
+-		if (IS_ERR(inode))
+-			return ERR_CAST(inode);
++		if (unlikely(IS_ERR(inode))) {
++			if (PTR_ERR(inode) == -ESTALE) {
++				ext4_error(dir->i_sb, __func__,
++						"deleted inode referenced: %u",
++						ino);
++				return ERR_PTR(-EIO);
++			} else {
++				return ERR_CAST(inode);
++			}
++		}
+ 	}
+ 	return d_splice_alias(inode, dentry);
+ }
+@@ -2306,7 +2314,7 @@ static int ext4_rename (struct inode * old_dir, struct dentry *old_dentry,
+ 	struct inode * old_inode, * new_inode;
+ 	struct buffer_head * old_bh, * new_bh, * dir_bh;
+ 	struct ext4_dir_entry_2 * old_de, * new_de;
+-	int retval;
++	int retval, force_da_alloc = 0;
+ 
+ 	old_bh = new_bh = dir_bh = NULL;
+ 
+@@ -2444,6 +2452,7 @@ static int ext4_rename (struct inode * old_dir, struct dentry *old_dentry,
+ 		ext4_mark_inode_dirty(handle, new_inode);
+ 		if (!new_inode->i_nlink)
+ 			ext4_orphan_add(handle, new_inode);
++		force_da_alloc = 1;
+ 	}
+ 	retval = 0;
+ 
+@@ -2452,6 +2461,8 @@ end_rename:
+ 	brelse (old_bh);
+ 	brelse (new_bh);
+ 	ext4_journal_stop(handle);
++	if (retval == 0 && force_da_alloc)
++		ext4_alloc_da_blocks(old_inode);
+ 	return retval;
+ }
+ 
+diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
+index 257ff26..bbe6d59 100644
+--- a/fs/jbd2/revoke.c
++++ b/fs/jbd2/revoke.c
+@@ -55,6 +55,25 @@
+  *			need do nothing.
+  * RevokeValid set, Revoked set:
+  *			buffer has been revoked.
++ *
++ * Locking rules:
++ * We keep two hash tables of revoke records. One hashtable belongs to the
++ * running transaction (is pointed to by journal->j_revoke), the other one
++ * belongs to the committing transaction. Accesses to the second hash table
++ * happen only from the kjournald and no other thread touches this table.  Also
++ * journal_switch_revoke_table() which switches which hashtable belongs to the
++ * running and which to the committing transaction is called only from
++ * kjournald. Therefore we need no locks when accessing the hashtable belonging
++ * to the committing transaction.
++ *
++ * All users operating on the hash table belonging to the running transaction
++ * have a handle to the transaction. Therefore they are safe from kjournald
++ * switching hash tables under them. For operations on the lists of entries in
++ * the hash table j_revoke_lock is used.
++ *
++ * Finally, also replay code uses the hash tables but at this moment noone else
++ * can touch them (filesystem isn't mounted yet) and hence no locking is
++ * needed.
+  */
+ 
+ #ifndef __KERNEL__
+@@ -401,8 +420,6 @@ int jbd2_journal_revoke(handle_t *handle, unsigned long long blocknr,
+  * the second time we would still have a pending revoke to cancel.  So,
+  * do not trust the Revoked bit on buffers unless RevokeValid is also
+  * set.
+- *
+- * The caller must have the journal locked.
+  */
+ int jbd2_journal_cancel_revoke(handle_t *handle, struct journal_head *jh)
+ {
+@@ -480,10 +497,7 @@ void jbd2_journal_switch_revoke_table(journal_t *journal)
+ /*
+  * Write revoke records to the journal for all entries in the current
+  * revoke hash, deleting the entries as we go.
+- *
+- * Called with the journal lock held.
+  */
+-
+ void jbd2_journal_write_revoke_records(journal_t *journal,
+ 				  transaction_t *transaction)
+ {
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index bff8733..c3fe156 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1925,7 +1925,8 @@ int nfs_permission(struct inode *inode, int mask)
+ 		case S_IFREG:
+ 			/* NFSv4 has atomic_open... */
+ 			if (nfs_server_capable(inode, NFS_CAP_ATOMIC_OPEN)
+-					&& (mask & MAY_OPEN))
++					&& (mask & MAY_OPEN)
++					&& !(mask & MAY_EXEC))
+ 				goto out;
+ 			break;
+ 		case S_IFDIR:
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 81e9a82..1ecbcf6 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -286,7 +286,7 @@ void resv_map_release(struct kref *ref)
+ static struct resv_map *vma_resv_map(struct vm_area_struct *vma)
+ {
+ 	VM_BUG_ON(!is_vm_hugetlb_page(vma));
+-	if (!(vma->vm_flags & VM_SHARED))
++	if (!(vma->vm_flags & VM_MAYSHARE))
+ 		return (struct resv_map *)(get_vma_private_data(vma) &
+ 							~HPAGE_RESV_MASK);
+ 	return 0;
+@@ -295,7 +295,7 @@ static struct resv_map *vma_resv_map(struct vm_area_struct *vma)
+ static void set_vma_resv_map(struct vm_area_struct *vma, struct resv_map *map)
+ {
+ 	VM_BUG_ON(!is_vm_hugetlb_page(vma));
+-	VM_BUG_ON(vma->vm_flags & VM_SHARED);
++	VM_BUG_ON(vma->vm_flags & VM_MAYSHARE);
+ 
+ 	set_vma_private_data(vma, (get_vma_private_data(vma) &
+ 				HPAGE_RESV_MASK) | (unsigned long)map);
+@@ -304,7 +304,7 @@ static void set_vma_resv_map(struct vm_area_struct *vma, struct resv_map *map)
+ static void set_vma_resv_flags(struct vm_area_struct *vma, unsigned long flags)
+ {
+ 	VM_BUG_ON(!is_vm_hugetlb_page(vma));
+-	VM_BUG_ON(vma->vm_flags & VM_SHARED);
++	VM_BUG_ON(vma->vm_flags & VM_MAYSHARE);
+ 
+ 	set_vma_private_data(vma, get_vma_private_data(vma) | flags);
+ }
+@@ -323,7 +323,7 @@ static void decrement_hugepage_resv_vma(struct hstate *h,
+ 	if (vma->vm_flags & VM_NORESERVE)
+ 		return;
+ 
+-	if (vma->vm_flags & VM_SHARED) {
++	if (vma->vm_flags & VM_MAYSHARE) {
+ 		/* Shared mappings always use reserves */
+ 		h->resv_huge_pages--;
+ 	} else if (is_vma_resv_set(vma, HPAGE_RESV_OWNER)) {
+@@ -339,14 +339,14 @@ static void decrement_hugepage_resv_vma(struct hstate *h,
+ void reset_vma_resv_huge_pages(struct vm_area_struct *vma)
+ {
+ 	VM_BUG_ON(!is_vm_hugetlb_page(vma));
+-	if (!(vma->vm_flags & VM_SHARED))
++	if (!(vma->vm_flags & VM_MAYSHARE))
+ 		vma->vm_private_data = (void *)0;
+ }
+ 
+ /* Returns true if the VMA has associated reserve pages */
+ static int vma_has_reserves(struct vm_area_struct *vma)
+ {
+-	if (vma->vm_flags & VM_SHARED)
++	if (vma->vm_flags & VM_MAYSHARE)
+ 		return 1;
+ 	if (is_vma_resv_set(vma, HPAGE_RESV_OWNER))
+ 		return 1;
+@@ -890,7 +890,7 @@ static int vma_needs_reservation(struct hstate *h,
+ 	struct address_space *mapping = vma->vm_file->f_mapping;
+ 	struct inode *inode = mapping->host;
+ 
+-	if (vma->vm_flags & VM_SHARED) {
++	if (vma->vm_flags & VM_MAYSHARE) {
+ 		pgoff_t idx = vma_hugecache_offset(h, vma, addr);
+ 		return region_chg(&inode->i_mapping->private_list,
+ 							idx, idx + 1);
+@@ -915,7 +915,7 @@ static void vma_commit_reservation(struct hstate *h,
+ 	struct address_space *mapping = vma->vm_file->f_mapping;
+ 	struct inode *inode = mapping->host;
+ 
+-	if (vma->vm_flags & VM_SHARED) {
++	if (vma->vm_flags & VM_MAYSHARE) {
+ 		pgoff_t idx = vma_hugecache_offset(h, vma, addr);
+ 		region_add(&inode->i_mapping->private_list, idx, idx + 1);
+ 
+@@ -1862,7 +1862,7 @@ retry_avoidcopy:
+ 	 * at the time of fork() could consume its reserves on COW instead
+ 	 * of the full address range.
+ 	 */
+-	if (!(vma->vm_flags & VM_SHARED) &&
++	if (!(vma->vm_flags & VM_MAYSHARE) &&
+ 			is_vma_resv_set(vma, HPAGE_RESV_OWNER) &&
+ 			old_page != pagecache_page)
+ 		outside_reserve = 1;
+@@ -1969,7 +1969,7 @@ retry:
+ 		clear_huge_page(page, address, huge_page_size(h));
+ 		__SetPageUptodate(page);
+ 
+-		if (vma->vm_flags & VM_SHARED) {
++		if (vma->vm_flags & VM_MAYSHARE) {
+ 			int err;
+ 			struct inode *inode = mapping->host;
+ 
+@@ -2073,7 +2073,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			goto out_unlock;
+ 		}
+ 
+-		if (!(vma->vm_flags & VM_SHARED))
++		if (!(vma->vm_flags & VM_MAYSHARE))
+ 			pagecache_page = hugetlbfs_pagecache_page(h,
+ 								vma, address);
+ 	}
+@@ -2223,7 +2223,7 @@ int hugetlb_reserve_pages(struct inode *inode,
+ 	 * to reserve the full area even if read-only as mprotect() may be
+ 	 * called to make the mapping read-write. Assume !vma is a shm mapping
+ 	 */
+-	if (!vma || vma->vm_flags & VM_SHARED)
++	if (!vma || vma->vm_flags & VM_MAYSHARE)
+ 		chg = region_chg(&inode->i_mapping->private_list, from, to);
+ 	else {
+ 		struct resv_map *resv_map = resv_map_alloc();
+@@ -2246,7 +2246,7 @@ int hugetlb_reserve_pages(struct inode *inode,
+ 		hugetlb_put_quota(inode->i_mapping, chg);
+ 		return ret;
+ 	}
+-	if (!vma || vma->vm_flags & VM_SHARED)
++	if (!vma || vma->vm_flags & VM_MAYSHARE)
+ 		region_add(&inode->i_mapping->private_list, from, to);
+ 	return 0;
+ }
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index a756847..86714d1 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -2449,7 +2449,7 @@ static inline void free_SAs(struct pktgen_dev *pkt_dev)
+ 	if (pkt_dev->cflows) {
+ 		/* let go of the SAs if we have them */
+ 		int i = 0;
+-		for (;  i < pkt_dev->nflows; i++){
++		for (;  i < pkt_dev->cflows; i++) {
+ 			struct xfrm_state *x = pkt_dev->flows[i].x;
+ 			if (x) {
+ 				xfrm_state_put(x);
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 0675991..7832287 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1992,7 +1992,7 @@ unsigned int skb_seq_read(unsigned int consumed, const u8 **data,
+ next_skb:
+ 	block_limit = skb_headlen(st->cur_skb) + st->stepped_offset;
+ 
+-	if (abs_offset < block_limit) {
++	if (abs_offset < block_limit && !st->frag_data) {
+ 		*data = st->cur_skb->data + (abs_offset - st->stepped_offset);
+ 		return block_limit - abs_offset;
+ 	}
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 7abc6b8..4eca4d3 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -931,6 +931,8 @@ static void tcp_init_metrics(struct sock *sk)
+ 	tcp_bound_rto(sk);
+ 	if (inet_csk(sk)->icsk_rto < TCP_TIMEOUT_INIT && !tp->rx_opt.saw_tstamp)
+ 		goto reset;
++
++cwnd:
+ 	tp->snd_cwnd = tcp_init_cwnd(tp, dst);
+ 	tp->snd_cwnd_stamp = tcp_time_stamp;
+ 	return;
+@@ -945,6 +947,7 @@ reset:
+ 		tp->mdev = tp->mdev_max = tp->rttvar = TCP_TIMEOUT_INIT;
+ 		inet_csk(sk)->icsk_rto = TCP_TIMEOUT_INIT;
+ 	}
++	goto cwnd;
+ }
+ 
+ static void tcp_update_reordering(struct sock *sk, const int metric,
+diff --git a/net/mac80211/rc80211_pid_algo.c b/net/mac80211/rc80211_pid_algo.c
+index a914ba7..4077676 100644
+--- a/net/mac80211/rc80211_pid_algo.c
++++ b/net/mac80211/rc80211_pid_algo.c
+@@ -367,8 +367,40 @@ static void rate_control_pid_rate_init(void *priv, void *priv_sta,
+ 	 * Until that method is implemented, we will use the lowest supported
+ 	 * rate as a workaround. */
+ 	struct ieee80211_supported_band *sband;
++	struct rc_pid_info *pinfo = priv;
++	struct rc_pid_rateinfo *rinfo = pinfo->rinfo;
++	int i, j, tmp;
++	bool s;
+ 
+ 	sband = local->hw.wiphy->bands[local->hw.conf.channel->band];
++
++	/* Sort the rates. This is optimized for the most common case (i.e.
++	 * almost-sorted CCK+OFDM rates). Kind of bubble-sort with reversed
++	 * mapping too. */
++	for (i = 0; i < sband->n_bitrates; i++) {
++		rinfo[i].index = i;
++		rinfo[i].rev_index = i;
++		if (RC_PID_FAST_START)
++			rinfo[i].diff = 0;
++		else
++			rinfo[i].diff = i * pinfo->norm_offset;
++	}
++	for (i = 1; i < sband->n_bitrates; i++) {
++		s = 0;
++		for (j = 0; j < sband->n_bitrates - i; j++)
++			if (unlikely(sband->bitrates[rinfo[j].index].bitrate >
++				     sband->bitrates[rinfo[j + 1].index].bitrate)) {
++				tmp = rinfo[j].index;
++				rinfo[j].index = rinfo[j + 1].index;
++				rinfo[j + 1].index = tmp;
++				rinfo[rinfo[j].index].rev_index = j;
++				rinfo[rinfo[j + 1].index].rev_index = j + 1;
++				s = 1;
++			}
++		if (!s)
++			break;
++	}
++
+ 	sta->txrate_idx = rate_lowest_index(local, sband, sta);
+ 	sta->fail_avg = 0;
+ }
+@@ -378,21 +410,23 @@ static void *rate_control_pid_alloc(struct ieee80211_local *local)
+ 	struct rc_pid_info *pinfo;
+ 	struct rc_pid_rateinfo *rinfo;
+ 	struct ieee80211_supported_band *sband;
+-	int i, j, tmp;
+-	bool s;
++	int i, max_rates = 0;
+ #ifdef CONFIG_MAC80211_DEBUGFS
+ 	struct rc_pid_debugfs_entries *de;
+ #endif
+ 
+-	sband = local->hw.wiphy->bands[local->hw.conf.channel->band];
+-
+ 	pinfo = kmalloc(sizeof(*pinfo), GFP_ATOMIC);
+ 	if (!pinfo)
+ 		return NULL;
+ 
++	for (i = 0; i < IEEE80211_NUM_BANDS; i++) {
++		sband = local->hw.wiphy->bands[i];
++		if (sband && sband->n_bitrates > max_rates)
++			max_rates = sband->n_bitrates;
++	}
+ 	/* We can safely assume that sband won't change unless we get
+ 	 * reinitialized. */
+-	rinfo = kmalloc(sizeof(*rinfo) * sband->n_bitrates, GFP_ATOMIC);
++	rinfo = kmalloc(sizeof(*rinfo) * max_rates, GFP_ATOMIC);
+ 	if (!rinfo) {
+ 		kfree(pinfo);
+ 		return NULL;
+@@ -410,33 +444,6 @@ static void *rate_control_pid_alloc(struct ieee80211_local *local)
+ 	pinfo->rinfo = rinfo;
+ 	pinfo->oldrate = 0;
+ 
+-	/* Sort the rates. This is optimized for the most common case (i.e.
+-	 * almost-sorted CCK+OFDM rates). Kind of bubble-sort with reversed
+-	 * mapping too. */
+-	for (i = 0; i < sband->n_bitrates; i++) {
+-		rinfo[i].index = i;
+-		rinfo[i].rev_index = i;
+-		if (RC_PID_FAST_START)
+-			rinfo[i].diff = 0;
+-		else
+-			rinfo[i].diff = i * pinfo->norm_offset;
+-	}
+-	for (i = 1; i < sband->n_bitrates; i++) {
+-		s = 0;
+-		for (j = 0; j < sband->n_bitrates - i; j++)
+-			if (unlikely(sband->bitrates[rinfo[j].index].bitrate >
+-				     sband->bitrates[rinfo[j + 1].index].bitrate)) {
+-				tmp = rinfo[j].index;
+-				rinfo[j].index = rinfo[j + 1].index;
+-				rinfo[j + 1].index = tmp;
+-				rinfo[rinfo[j].index].rev_index = j;
+-				rinfo[rinfo[j + 1].index].rev_index = j + 1;
+-				s = 1;
+-			}
+-		if (!s)
+-			break;
+-	}
+-
+ #ifdef CONFIG_MAC80211_DEBUGFS
+ 	de = &pinfo->dentries;
+ 	de->dir = debugfs_create_dir("rc80211_pid",
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f028f70..e2d25da 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4477,7 +4477,7 @@ static int selinux_ip_postroute_iptables_compat(struct sock *sk,
+ 	if (err)
+ 		return err;
+ 
+-	if (send_perm != 0)
++	if (!send_perm)
+ 		return 0;
+ 
+ 	err = sel_netport_sid(sk->sk_protocol,
+diff --git a/sound/usb/usbaudio.c b/sound/usb/usbaudio.c
+index 1710623..c10e476 100644
+--- a/sound/usb/usbaudio.c
++++ b/sound/usb/usbaudio.c
+@@ -3367,7 +3367,7 @@ static int snd_usb_create_quirk(struct snd_usb_audio *chip,
+ 		[QUIRK_MIDI_YAMAHA] = snd_usb_create_midi_interface,
+ 		[QUIRK_MIDI_MIDIMAN] = snd_usb_create_midi_interface,
+ 		[QUIRK_MIDI_NOVATION] = snd_usb_create_midi_interface,
+-		[QUIRK_MIDI_RAW] = snd_usb_create_midi_interface,
++		[QUIRK_MIDI_FASTLANE] = snd_usb_create_midi_interface,
+ 		[QUIRK_MIDI_EMAGIC] = snd_usb_create_midi_interface,
+ 		[QUIRK_MIDI_CME] = snd_usb_create_midi_interface,
+ 		[QUIRK_AUDIO_STANDARD_INTERFACE] = create_standard_audio_quirk,
+diff --git a/sound/usb/usbaudio.h b/sound/usb/usbaudio.h
+index 7cf18c3..7191d82 100644
+--- a/sound/usb/usbaudio.h
++++ b/sound/usb/usbaudio.h
+@@ -153,7 +153,7 @@ enum quirk_type {
+ 	QUIRK_MIDI_YAMAHA,
+ 	QUIRK_MIDI_MIDIMAN,
+ 	QUIRK_MIDI_NOVATION,
+-	QUIRK_MIDI_RAW,
++	QUIRK_MIDI_FASTLANE,
+ 	QUIRK_MIDI_EMAGIC,
+ 	QUIRK_MIDI_CME,
+ 	QUIRK_AUDIO_STANDARD_INTERFACE,
+diff --git a/sound/usb/usbmidi.c b/sound/usb/usbmidi.c
+index 940ae5a..cd2b622 100644
+--- a/sound/usb/usbmidi.c
++++ b/sound/usb/usbmidi.c
+@@ -1733,8 +1733,18 @@ int snd_usb_create_midi_interface(struct snd_usb_audio* chip,
+ 		umidi->usb_protocol_ops = &snd_usbmidi_novation_ops;
+ 		err = snd_usbmidi_detect_per_port_endpoints(umidi, endpoints);
+ 		break;
+-	case QUIRK_MIDI_RAW:
++	case QUIRK_MIDI_FASTLANE:
+ 		umidi->usb_protocol_ops = &snd_usbmidi_raw_ops;
++		/*
++		 * Interface 1 contains isochronous endpoints, but with the same
++		 * numbers as in interface 0.  Since it is interface 1 that the
++		 * USB core has most recently seen, these descriptors are now
++		 * associated with the endpoint numbers.  This will foul up our
++		 * attempts to submit bulk/interrupt URBs to the endpoints in
++		 * interface 0, so we have to make sure that the USB core looks
++		 * again at interface 0 by calling usb_set_interface() on it.
++		 */
++		usb_set_interface(umidi->chip->dev, 0, 0);
+ 		err = snd_usbmidi_detect_per_port_endpoints(umidi, endpoints);
+ 		break;
+ 	case QUIRK_MIDI_EMAGIC:
+diff --git a/sound/usb/usbquirks.h b/sound/usb/usbquirks.h
+index 9ea726c..076ca4c 100644
+--- a/sound/usb/usbquirks.h
++++ b/sound/usb/usbquirks.h
+@@ -1756,7 +1756,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
+ 		.data = & (const struct snd_usb_audio_quirk[]) {
+ 			{
+ 				.ifnum = 0,
+-				.type = QUIRK_MIDI_RAW
++				.type = QUIRK_MIDI_FASTLANE
+ 			},
+ 			{
+ 				.ifnum = 1,

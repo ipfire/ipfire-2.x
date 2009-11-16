@@ -1,0 +1,44 @@
+From: Rafael J. Wysocki <rjw@suse.de>
+Subject: x86: Decrease the level of some NUMA messages to KERN_DEBUG
+References: bnc#535380
+Patch-upstream: Yes
+
+This is a backport of upstream commit
+23b6c52cf558f2a1dc6c7010c601b3624eb4591f
+(x86: Decrease the level of some NUMA messages to KERN_DEBUG).
+
+Some NUMA messages in srat_32.c are confusing to users, because they
+seem to indicate errors, while in fact they reflect normal behaviour.
+
+Decrease the level of these messages to KERN_DEBUG so that they don't
+show up unnecessarily.
+
+Signed-off-by: Rafael J. Wysocki <rjw@suse.de>
+---
+ arch/x86/mm/srat_32.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/arch/x86/mm/srat_32.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/arch/x86/mm/srat_32.c
++++ linux-2.6.27-SLE11_BRANCH/arch/x86/mm/srat_32.c
+@@ -215,8 +215,8 @@ int __init get_memcfg_from_srat(void)
+ 		goto out_fail;
+ 
+ 	if (num_memory_chunks == 0) {
+-		printk(KERN_WARNING
+-			 "could not finy any ACPI SRAT memory areas.\n");
++		printk(KERN_DEBUG
++			 "could not find any ACPI SRAT memory areas.\n");
+ 		goto out_fail;
+ 	}
+ 
+@@ -277,7 +277,7 @@ int __init get_memcfg_from_srat(void)
+ 	}
+ 	return 1;
+ out_fail:
+-	printk(KERN_ERR "failed to get NUMA memory information from SRAT"
++	printk(KERN_DEBUG "failed to get NUMA memory information from SRAT"
+ 			" table\n");
+ 	return 0;
+ }

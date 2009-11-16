@@ -1,0 +1,65 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: [S390] omit frame pointers on s390 when possible
+References: bnc#532063,LTC#55526
+
+commit 75ee034addc9ac3f6a38a9e6b30e9b54be15d4e5
+Author: Heiko Carstens <heiko.carstens@de.ibm.com>
+Date:   Thu Apr 23 13:58:10 2009 +0200
+
+    [S390] omit frame pointers on s390 when possible
+    
+    Always omit frame pointers on s390. They aren't too useful for the
+    kernel since we have already the kernel stack backchain which allows
+    us to walk the kernel stack.
+    So eleminate the extra code for frame pointers. Only allow the extra
+    code for the function tracer since the gcc compile options -pg and
+    -fomit-frame-pointer are incompatible.
+    
+    Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+    Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ lib/Kconfig.debug |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+Index: linux-sles11/lib/Kconfig.debug
+===================================================================
+--- linux-sles11.orig/lib/Kconfig.debug
++++ linux-sles11/lib/Kconfig.debug
+@@ -394,7 +394,7 @@ config LOCKDEP
+ 	bool
+ 	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
+ 	select STACKTRACE
+-	select FRAME_POINTER if !MIPS && !PPC
++	select FRAME_POINTER if !MIPS && !PPC && !S390
+ 	select KALLSYMS
+ 	select KALLSYMS_ALL
+ 
+@@ -539,7 +539,7 @@ config DEBUG_SG
+ config FRAME_POINTER
+ 	bool "Compile the kernel with frame pointers"
+ 	depends on DEBUG_KERNEL && \
+-		(X86 || CRIS || M68K || M68KNOMMU || FRV || UML || S390 || \
++		(X86 || CRIS || M68K || M68KNOMMU || FRV || UML || \
+ 		 AVR32 || SUPERH || BLACKFIN || MN10300)
+ 	default y if DEBUG_INFO && UML
+ 	help
+@@ -694,14 +694,14 @@ config FAULT_INJECTION_STACKTRACE_FILTER
+ 	depends on FAULT_INJECTION_DEBUG_FS && STACKTRACE_SUPPORT
+ 	depends on !X86_64
+ 	select STACKTRACE
+-	select FRAME_POINTER if !PPC && !X86
++	select FRAME_POINTER if !PPC && !X86 && !S390
+ 	select UNWIND_INFO if X86 && !FRAME_POINTER
+ 	help
+ 	  Provide stacktrace filter for fault-injection capabilities
+ 
+ config LATENCYTOP
+ 	bool "Latency measuring infrastructure"
+-	select FRAME_POINTER if !MIPS && !PPC && !X86
++	select FRAME_POINTER if !MIPS && !PPC && !X86 && !S390
+ 	select UNWIND_INFO if X86 && !FRAME_POINTER
+ 	select KALLSYMS
+ 	select KALLSYMS_ALL

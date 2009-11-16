@@ -1,0 +1,52 @@
+From: Bruce Chang<BruceChang@via.com.tw>
+Subject: add Via chrome9 drm support
+
+Signed-off-by: Bruce Chang<BruceChang@via.com.tw>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.drivers/add-via-chrome9-drm-support.patch" by xen-port-patches.py
+
+--- sle11-2009-10-08.orig/drivers/gpu/drm/via_chrome9/via_chrome9_dma.c	2009-01-16 09:39:39.000000000 +0100
++++ sle11-2009-10-08/drivers/gpu/drm/via_chrome9/via_chrome9_dma.c	2009-10-08 12:19:47.000000000 +0200
+@@ -135,10 +135,17 @@ void via_chrome9_dma_init_inv(struct drm
+ 					0x83c5);
+ 			} while (sr6f & 0x80);
+ 
+-			for (i = 0; i < entries; i++)
+-				writel(page_to_pfn(vmalloc_to_page(
+-				(void *)addrlinear + PAGE_SIZE * i)) &
+-				0x3fffffff, pGARTTable + i + alignedoffset);
++			for (i = 0; i < entries; i++) {
++				unsigned long pfn;
++
++				pfn = vmalloc_to_pfn((void *)addrlinear
++						     + PAGE_SIZE * i);
++#ifdef CONFIG_XEN
++				pfn = pfn_to_mfn(pfn);
++#endif
++				writel(pfn & 0x3fffffff,
++				       pGARTTable + i + alignedoffset);
++			}
+ 
+ 			sr6f |= 0x80;
+ 			SetMMIORegisterU8(dev_priv->mmio->handle, 0x83c5, sr6f);
+@@ -270,10 +277,15 @@ AllocAndBindPCIEMemory(struct drm_via_ch
+ 	while (sr6f & 0x80)
+ 		;
+ 
+-	for (i = 0; i < entries; i++)
+-		writel(page_to_pfn
+-		       (vmalloc_to_page((void *) addrlinear + PAGE_SIZE * i)) &
+-		       0x3fffffff, pGARTTable + i + alignedoffset);
++	for (i = 0; i < entries; i++) {
++		unsigned long pfn;
++
++		pfn = vmalloc_to_pfn((void *)addrlinear + PAGE_SIZE * i);
++#ifdef CONFIG_XEN
++		pfn = pfn_to_mfn(pfn);
++#endif
++		writel(pfn & 0x3fffffff, pGARTTable + i + alignedoffset);
++	}
+ 
+ 	sr6f |= 0x80;
+ 	SetMMIORegisterU8(dev_priv->mmio->handle, 0x83c5, sr6f);

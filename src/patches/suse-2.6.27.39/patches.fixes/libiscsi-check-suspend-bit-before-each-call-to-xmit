@@ -1,0 +1,104 @@
+From: Hannes Reinecke <hare@suse.de>
+Date: Tue, 18 Aug 2009 10:26:50 +0200
+Subject: libiscsi: check suspend bit before each call to xmit_task
+References: bnc#472432
+X-Git: 70b31c152dc49ef70bd2b34ad53ccbd9bb4116d4
+
+If we had multiple tasks on the cmd or requeue  lists, and iscsi_tcp
+returns a error, the write_space function can still run and queue
+iscsi_data_xmit. If it was a legetimate problem and iscsi_conn_failure
+was run but we raced and iscsi_data_xmit was run first it could miss
+the suspend bit checks, and start trying to send data again and hit
+another timeout. A similar problem is present when using cxgb3i.
+
+This has libiscsi check the suspend bit before calling the xmit
+task callout, so we at least do not try sending multiple tasks
+(one could be sent).
+
+It also adds a check in iscsi_tcp before calling
+the send function. The extra call in iscsi_tcp is needed because
+we can call sendpage/sendmsg multiple times for the same pdu
+and between each call iscsi_conn_failure could be called.
+
+Backported to SLES11.
+
+Signed-off-by: Mike Christie <michaelc@cs.wisc.edu>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/libiscsi.c |   19 ++++++++++---------
+ 1 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index 0611558..95720cc 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -1150,6 +1150,9 @@ static int iscsi_xmit_task(struct iscsi_conn *conn)
+ 	struct iscsi_task *task = conn->task;
+ 	int rc;
+ 
++	if (test_bit(ISCSI_SUSPEND_BIT, &conn->suspend_tx))
++		return -ENODATA;
++
+ 	__iscsi_get_task(task);
+ 	spin_unlock_bh(&conn->session->lock);
+ 	rc = conn->session->tt->xmit_task(task);
+@@ -1192,7 +1195,7 @@ static int iscsi_data_xmit(struct iscsi_conn *conn)
+ 	int rc = 0;
+ 
+ 	spin_lock_bh(&conn->session->lock);
+-	if (unlikely(conn->suspend_tx)) {
++	if (test_bit(ISCSI_SUSPEND_BIT, &conn->suspend_tx)) {
+ 		debug_scsi("conn %d Tx suspended!\n", conn->id);
+ 		spin_unlock_bh(&conn->session->lock);
+ 		return -ENODATA;
+@@ -1200,8 +1203,8 @@ static int iscsi_data_xmit(struct iscsi_conn *conn)
+ 
+ 	if (conn->task) {
+ 		rc = iscsi_xmit_task(conn);
+-	        if (rc)
+-		        goto again;
++		if (rc)
++			goto done;
+ 	}
+ 
+ 	/*
+@@ -1220,7 +1223,7 @@ check_mgmt:
+ 		}
+ 		rc = iscsi_xmit_task(conn);
+ 		if (rc)
+-			goto again;
++			goto done;
+ 	}
+ 
+ 	/* process pending command queue */
+@@ -1240,7 +1243,7 @@ check_mgmt:
+ 		}
+ 		rc = iscsi_xmit_task(conn);
+ 		if (rc)
+-			goto again;
++			goto done;
+ 		/*
+ 		 * we could continuously get new task requests so
+ 		 * we need to check the mgmt queue for nops that need to
+@@ -1266,16 +1269,14 @@ check_mgmt:
+ 		list_move_tail(conn->requeue.next, &conn->run_list);
+ 		rc = iscsi_xmit_task(conn);
+ 		if (rc)
+-			goto again;
++			goto done;
+ 		if (!list_empty(&conn->mgmtqueue))
+ 			goto check_mgmt;
+ 	}
+ 	spin_unlock_bh(&conn->session->lock);
+ 	return -ENODATA;
+ 
+-again:
+-	if (unlikely(conn->suspend_tx))
+-		rc = -ENODATA;
++done:
+ 	spin_unlock_bh(&conn->session->lock);
+ 	return rc;
+ }
+-- 
+1.6.0.2
+

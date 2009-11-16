@@ -1,0 +1,56 @@
+From: Prarit Bhargava <prarit@redhat.com>
+Subject: [CPUFREQ] Create a blacklist for processors that should not load the acpi-cpufreq module.
+References: bnc#542505
+Patch-Mainline: yes
+Commit-ID: 1a8e42fa81e62d47cc471f7764f906bb42b27a54
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Create a blacklist for processors that should not load the acpi-cpufreq module.
+
+The initial entry in the blacklist function is the Intel 0f68 processor.  It's
+specification update mentions errata AL30 which implies that cpufreq should not
+run on this processor.
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Dave Jones <davej@redhat.com>
+
+diff --git a/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c b/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c
+index ae9b503..badce50 100644
+--- a/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c
++++ b/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c
+@@ -588,6 +588,21 @@ static const struct dmi_system_id sw_any_bug_dmi_table[] = {
+ 	},
+ 	{ }
+ };
++
++static int acpi_cpufreq_blacklist(struct cpuinfo_x86 *c)
++{
++	/* http://www.intel.com/Assets/PDF/specupdate/314554.pdf
++	 * AL30: A Machine Check Exception (MCE) Occurring during an
++	 * Enhanced Intel SpeedStep Technology Ratio Change May Cause
++	 * Both Processor Cores to Lock Up when HT is enabled*/
++	if (c->x86_vendor == X86_VENDOR_INTEL) {
++		if ((c->x86 == 15) &&
++		    (c->x86_model == 6) &&
++		    (c->x86_mask == 8) && smt_capable())
++			return -ENODEV;
++		}
++	return 0;
++}
+ #endif
+ 
+ static int acpi_cpufreq_cpu_init(struct cpufreq_policy *policy)
+@@ -602,6 +617,12 @@ static int acpi_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 
+ 	dprintk("acpi_cpufreq_cpu_init\n");
+ 
++#ifdef CONFIG_SMP
++	result = acpi_cpufreq_blacklist(c);
++	if (result)
++		return result;
++#endif
++
+ 	data = kzalloc(sizeof(struct acpi_cpufreq_data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;

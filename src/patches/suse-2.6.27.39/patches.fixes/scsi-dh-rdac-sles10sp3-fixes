@@ -1,0 +1,107 @@
+From: Vijay Kumar <vijay.chauhan@lsi.com>
+Date: Mon, 21 Sep 2009 15:00:22 +0200
+Subject: scsi_dh_rdac: Include fixes from SLES10 SP3
+References: bnc#539271
+
+This patch updates the scsi_dh_rdac device handler with
+fixes already present in SLES10 SP3:
+
+1) Adding sense 02/A1/02 in rdac_check_sense
+
+2) Changing mode_select_handle_sense format to switch-case
+
+3) Correcting entry for struct scsi_dh_devlist rdac; adding 3rd argument for
+{"LSI", "INF-01-00"}
+{"ENGENIO", "INF-01-00"}
+
+Signed-off-by: Vijay Kumar <vijay.chauhan@lsi.com>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/device_handler/scsi_dh_rdac.c |   48 +++++++++++++++++++--------
+ 1 files changed, 34 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/scsi/device_handler/scsi_dh_rdac.c b/drivers/scsi/device_handler/scsi_dh_rdac.c
+index 6d48426..0bd33ee 100644
+--- a/drivers/scsi/device_handler/scsi_dh_rdac.c
++++ b/drivers/scsi/device_handler/scsi_dh_rdac.c
+@@ -449,27 +449,41 @@ static int mode_select_handle_sense(struct scsi_device *sdev,
+ 				    unsigned char *sensebuf)
+ {
+ 	struct scsi_sense_hdr sense_hdr;
+-	int sense, err = SCSI_DH_IO, ret;
++	int err = SCSI_DH_IO, ret;
+ 
+ 	ret = scsi_normalize_sense(sensebuf, SCSI_SENSE_BUFFERSIZE, &sense_hdr);
+ 	if (!ret)
+ 		goto done;
+ 
+ 	err = SCSI_DH_OK;
+-	sense = (sense_hdr.sense_key << 16) | (sense_hdr.asc << 8) |
+-			sense_hdr.ascq;
+-	/* If it is retryable failure, submit the c9 inquiry again */
+-	if (sense_hdr.sense_key == 6 || sense == 0x59136 || sense == 0xb8b02) {
+-		/* 0x59136    - Command lock contention
+-		 * 0xb8b02    - Quiescense achieved
+-		 * 0x6xxxx    - Unit Attention
+-		 */
++
++	switch (sense_hdr.sense_key) {
++	case NO_SENSE:
++	case ABORTED_COMMAND:
++	case UNIT_ATTENTION:
++		err = SCSI_DH_RETRY;
++		break;
++	case NOT_READY:
++		if (sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x01)
++			/* LUN Not Ready and is in the Process
++			 * of becoming ready
++			 */
++		err = SCSI_DH_RETRY;
++		break;
++	case ILLEGAL_REQUEST:
++		if (sense_hdr.asc == 0x91 && sense_hdr.ascq == 0x36)
++			/*
++			 * Command Lock contention
++			 */
+ 		err = SCSI_DH_RETRY;
++		break;
++	default:
++		sdev_printk(KERN_INFO, sdev,
++			"MODE_SELECT failed with sense %02x/%02x/%02x.\n",
++			sense_hdr.sense_key, sense_hdr.asc, sense_hdr.ascq);
++
+ 	}
+ 
+-	if (sense)
+-		sdev_printk(KERN_INFO, sdev,
+-			"MODE_SELECT failed with sense 0x%x.\n", sense);
+ done:
+ 	return err;
+ }
+@@ -566,6 +580,12 @@ static int rdac_check_sense(struct scsi_device *sdev,
+ 			 * Just retry and wait.
+ 			 */
+ 			return ADD_TO_MLQUEUE;
++		if (sense_hdr->asc == 0xA1  && sense_hdr->ascq == 0x02)
++			/* LUN Not Ready - Quiescense in progress
++			 * or has been achieved
++			 * Just retry.
++			 */
++			return ADD_TO_MLQUEUE;
+ 		break;
+ 	case ILLEGAL_REQUEST:
+ 		if (sense_hdr->asc == 0x94 && sense_hdr->ascq == 0x01) {
+@@ -615,8 +635,8 @@ static const struct scsi_dh_devlist rdac_dev_list[] = {
+ 	{"DELL", "MD3000i", 0},
+ 	{"DELL", "MD32xx", 0},
+ 	{"DELL", "MD32xxi", 0},
+-	{"LSI", "INF-01-00"},
+-	{"ENGENIO", "INF-01-00"},
++	{"LSI", "INF-01-00", 0},
++	{"ENGENIO", "INF-01-00", 0},
+ 	{NULL, NULL, 0},
+ };
+ 
+-- 
+1.5.3.2
+

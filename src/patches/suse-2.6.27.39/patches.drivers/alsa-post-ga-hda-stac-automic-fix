@@ -1,0 +1,75 @@
+From 02d3332285377c9de395c2b5b792805d43923fd0 Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 1 Oct 2009 16:38:11 +0200
+Subject: ALSA: hda - Fix digita/analog mic auto-switching with IDT codecs
+Patch-mainline: 2.6.32-rc1
+References: bnc#511306
+
+When the auto-mic switching between an analog and a digital mic is
+needed with IDT codecs, the current driver doesn't reset the connection
+of the digital mux.
+
+This patch fixes the behavior by checking both mux connections properly.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+---
+ sound/pci/hda/patch_sigmatel.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -176,8 +176,8 @@
+ 
+ struct sigmatel_mic_route {
+ 	hda_nid_t pin;
+-	unsigned char mux_idx;
+-	unsigned char dmux_idx;
++	signed char mux_idx;
++	signed char dmux_idx;
+ };
+ 
+ struct sigmatel_spec {
+@@ -3326,18 +3326,26 @@
+ 			break;
+ 	if (i <= AUTO_PIN_FRONT_MIC) {
+ 		/* analog pin */
+-		mic->dmux_idx = 0;
+ 		i = get_connection_index(codec, spec->mux_nids[0], pin);
+ 		if (i < 0)
+ 			return -1;
+ 		mic->mux_idx = i;
++		mic->dmux_idx = -1;
++		if (spec->dmux_nids)
++			mic->dmux_idx = get_connection_index(codec,
++							     spec->dmux_nids[0],
++							     spec->mux_nids[0]);
+ 	}  else if (spec->dmux_nids) {
+ 		/* digital pin */
+-		mic->mux_idx = 0;
+ 		i = get_connection_index(codec, spec->dmux_nids[0], pin);
+ 		if (i < 0)
+ 			return -1;
+ 		mic->dmux_idx = i;
++		mic->mux_idx = -1;
++		if (spec->mux_nids)
++			mic->mux_idx = get_connection_index(codec,
++							    spec->mux_nids[0],
++							    spec->dmux_nids[0]);
+ 	}
+ 	return 0;
+ }
+@@ -4290,11 +4298,11 @@
+ 		mic = &spec->ext_mic;
+ 	else
+ 		mic = &spec->int_mic;
+-	if (mic->dmux_idx)
++	if (mic->dmux_idx >= 0)
+ 		snd_hda_codec_write_cache(codec, spec->dmux_nids[0], 0,
+ 					  AC_VERB_SET_CONNECT_SEL,
+ 					  mic->dmux_idx);
+-	else
++	if (mic->mux_idx >= 0)
+ 		snd_hda_codec_write_cache(codec, spec->mux_nids[0], 0,
+ 					  AC_VERB_SET_CONNECT_SEL,
+ 					  mic->mux_idx);

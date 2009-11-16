@@ -1,0 +1,68 @@
+commit 063c4c99630c0b06afad080d2a18bda64172c1a2
+Author: Lars Marowsky-Bree <lmb@suse.de>
+From: Lars Marowsky-Bree <lmb@suse.de>
+Date:   Tue Aug 11 16:18:23 2009 -0500
+Reference: bnc#524222
+Subject:    dlm: fix connection close handling
+    
+    Closing a connection to a node can create problems if there are
+    outstanding messages for that node.  The problems include dlm_send
+    spinning attempting to reconnect, or BUG from tcp_connect_to_sock()
+    attempting to use a partially closed connection.
+    
+    To cleanly close a connection, we now first attempt to send any pending
+    messages, cancel any remaining workqueue work, and flag the connection
+    as closed to avoid reconnect attempts.
+    
+Signed-off-by: Lars Marowsky-Bree <lmb@suse.de>
+Signed-off-by: Christine Caulfield <ccaulfie@redhat.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
+
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index 210d52c..bda690c 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -106,6 +106,7 @@ struct connection {
+ #define CF_CONNECT_PENDING 3
+ #define CF_INIT_PENDING 4
+ #define CF_IS_OTHERCON 5
++#define CF_CLOSE 6
+ 	struct list_head writequeue;  /* List of outgoing writequeue_entries */
+ 	spinlock_t writequeue_lock;
+ 	int (*rx_action) (struct connection *);	/* What to do when active */
+@@ -299,6 +300,8 @@ static void lowcomms_write_space(struct sock *sk)
+ 
+ static inline void lowcomms_connect_sock(struct connection *con)
+ {
++	if (test_bit(CF_CLOSE, &con->flags))
++		return;
+ 	if (!test_and_set_bit(CF_CONNECT_PENDING, &con->flags))
+ 		queue_work(send_workqueue, &con->swork);
+ }
+@@ -1368,6 +1371,13 @@ int dlm_lowcomms_close(int nodeid)
+ 	log_print("closing connection to node %d", nodeid);
+ 	con = nodeid2con(nodeid, 0);
+ 	if (con) {
++		clear_bit(CF_CONNECT_PENDING, &con->flags);
++		clear_bit(CF_WRITE_PENDING, &con->flags);
++		set_bit(CF_CLOSE, &con->flags);
++		if (cancel_work_sync(&con->swork))
++			log_print("canceled swork for node %d", nodeid);
++		if (cancel_work_sync(&con->rwork))
++			log_print("canceled rwork for node %d", nodeid);
+ 		clean_one_writequeue(con);
+ 		close_connection(con, true);
+ 	}
+@@ -1393,9 +1403,10 @@ static void process_send_sockets(struct work_struct *work)
+ 
+ 	if (test_and_clear_bit(CF_CONNECT_PENDING, &con->flags)) {
+ 		con->connect_action(con);
++		set_bit(CF_WRITE_PENDING, &con->flags);
+ 	}
+-	clear_bit(CF_WRITE_PENDING, &con->flags);
+-	send_to_sock(con);
++	if (test_and_clear_bit(CF_WRITE_PENDING, &con->flags))
++		send_to_sock(con);
+ }
+ 
+ 

@@ -1,0 +1,35 @@
+Date: Wed, 09 Sep 2009 15:31:16 -0700
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: KABI: fix struct parport abi change
+
+2.6.27.32 added a field to struct parport.
+
+As no external module should need this field, let's move it to the end,
+and mark it away from the kabi checker, to keep things from having
+problems.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ include/linux/parport.h |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+--- a/include/linux/parport.h
++++ b/include/linux/parport.h
+@@ -326,12 +326,14 @@ struct parport {
+ 	int spintime;
+ 	atomic_t ref_count;
+ 
++	struct list_head full_list;
++	struct parport *slaves[3];
++
++#ifndef __GENKSYMS__
+ 	unsigned long devflags;
+ #define PARPORT_DEVPROC_REGISTERED	0
+ 	struct pardevice *proc_device;	/* Currently register proc device */
+-
+-	struct list_head full_list;
+-	struct parport *slaves[3];
++#endif
+ };
+ 
+ #define DEFAULT_SPIN_TIME 500 /* us */

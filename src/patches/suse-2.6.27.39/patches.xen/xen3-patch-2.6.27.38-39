@@ -1,0 +1,35 @@
+From: Greg Kroah-Hartman <gregkh@suse.de>
+Subject: Linux 2.6.27.39
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+Automatically created from "patches.kernel.org/patch-2.6.27.38-39" by xen-port-patches.py
+
+--- sle11-2009-11-13.orig/arch/x86/ia32/ia32entry-xen.S	2009-10-19 09:53:48.000000000 +0200
++++ sle11-2009-11-13/arch/x86/ia32/ia32entry-xen.S	2009-11-13 10:50:10.000000000 +0100
+@@ -175,7 +175,7 @@ sysenter_dispatch:
+ 	movl RDI-ARGOFFSET(%rsp),%r8d	/* reload 5th syscall arg */
+ 	.endm
+ 
+-	.macro auditsys_exit exit,ebpsave=RBP
++	.macro auditsys_exit exit
+ 	testl $(_TIF_ALLWORK_MASK & ~_TIF_SYSCALL_AUDIT),TI_flags(%r10)
+ 	jnz ia32_ret_from_sys_call
+ 	TRACE_IRQS_ON
+@@ -186,7 +186,6 @@ sysenter_dispatch:
+ 	movzbl %al,%edi		/* zero-extend that into %edi */
+ 	inc %edi /* first arg, 0->1(AUDITSC_SUCCESS), 1->2(AUDITSC_FAILURE) */
+ 	call audit_syscall_exit
+-	movl \ebpsave-ARGOFFSET(%rsp),%ebp /* reload user register value */
+ 	movl $(_TIF_ALLWORK_MASK & ~_TIF_SYSCALL_AUDIT),%edi
+ 	CLEAR_RREGS -ARGOFFSET
+ 	DISABLE_INTERRUPTS(CLBR_NONE)
+@@ -290,7 +289,7 @@ cstar_auditsys:
+ 	jmp cstar_dispatch
+ 
+ sysretl_audit:
+-	auditsys_exit sysretl_from_sys_call, RCX /* user %ebp in RCX slot */
++	auditsys_exit sysretl_from_sys_call
+ #endif
+ 
+ cstar_tracesys:

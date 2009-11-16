@@ -1,0 +1,80 @@
+From: Andreas Herrmann <andreas.herrmann3@amd.com>
+Subject: x86, sched: Workaround broken sched domain creation for AMD Magny-Cours
+References: fate#307306
+Patch-Mainline: yes
+Commit-ID: 5a925b4282d7f805deafde62001a83dbaf8be275
+
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+
+Current sched domain creation code can't handle multi-node processors.
+When switching to power_savings scheduling errors show up and
+system might hang later on (due to broken sched domain hierarchy):
+
+  # echo 0  >> /sys/devices/system/cpu/sched_mc_power_savings
+  CPU0 attaching sched-domain:
+   domain 0: span 0-5 level MC
+    groups: 0 1 2 3 4 5
+    domain 1: span 0-23 level NODE
+     groups: 0-5 6-11 18-23 12-17
+  ...
+  # echo 1  >> /sys/devices/system/cpu/sched_mc_power_savings
+  CPU0 attaching sched-domain:
+   domain 0: span 0-11 level MC
+    groups: 0 1 2 3 4 5 6 7 8 9 10 11
+  ERROR: parent span is not a superset of domain->span
+    domain 1: span 0-5 level CPU
+  ERROR: domain->groups does not contain CPU0
+     groups: 6-11 (__cpu_power = 12288)
+  ERROR: groups don't span domain->span
+     domain 2: span 0-23 level NODE
+      groups:
+  ERROR: domain->cpu_power not set
+
+  ERROR: groups don't span domain->span
+  ...
+
+Fixing all aspects of power-savings scheduling for Magny-Cours needs
+some larger changes in the sched domain creation code.
+
+As a short-term and temporary workaround avoid the problems by
+extending "the worst possible hack" ;-(
+and always use llc_shared_map on AMD Magny-Cours when MC domain span
+is calculated.
+
+With this I get:
+
+  # echo 1  >> /sys/devices/system/cpu/sched_mc_power_savings
+  CPU0 attaching sched-domain:
+   domain 0: span 0-5 level MC
+    groups: 0 1 2 3 4 5
+    domain 1: span 0-5 level CPU
+     groups: 0-5 (__cpu_power = 6144)
+     domain 2: span 0-23 level NODE
+      groups: 0-5 (__cpu_power = 6144) 6-11 (__cpu_power = 6144) 18-23 (__cpu_power = 6144) 12-17 (__cpu_power = 6144)
+  ...
+
+I.e. no errors during sched domain creation, no system hangs, and also
+mc_power_savings scheduling works to a certain extend.
+
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Signed-off-by: Andreas Herrmann <andreas.herrmann3@amd.com>
+Signed-off-by: H. Peter Anvin <hpa@zytor.com>
+
+---
+ arch/x86/kernel/smpboot.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/arch/x86/kernel/smpboot.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/arch/x86/kernel/smpboot.c
++++ linux-2.6.27-SLE11_BRANCH/arch/x86/kernel/smpboot.c
+@@ -502,7 +502,8 @@ cpumask_t cpu_coregroup_map(int cpu)
+ 	 * For perf, we return last level cache shared map.
+ 	 * And for power savings, we return cpu_core_map
+ 	 */
+-	if (sched_mc_power_savings || sched_smt_power_savings)
++	if ((sched_mc_power_savings || sched_smt_power_savings) &&
++	    !(cpu_has(c, X86_FEATURE_AMD_DCM)))
+ 		return per_cpu(cpu_core_map, cpu);
+ 	else
+ 		return c->llc_shared_map;

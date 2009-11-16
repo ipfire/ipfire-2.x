@@ -1,0 +1,29 @@
+From 60e2ec48665b8495360ca4a6004c5cd52beb2bc1 Mon Sep 17 00:00:00 2001
+From: Tao Ma <tao.ma@oracle.com>
+Date: Wed, 12 Aug 2009 14:42:47 +0800
+Subject: [PATCH] ocfs2: release the buffer head in ocfs2_do_truncate.
+References: bnc#528427
+
+In ocfs2_do_truncate, we forget to release last_eb_bh which
+will cause memleak. So call brelse in the end.
+
+Signed-off-by: Tao Ma <tao.ma@oracle.com>
+Signed-off-by: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
+---
+ fs/ocfs2/alloc.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+Index: linux-2.6.27-SLE11_BRANCH/fs/ocfs2/alloc.c
+===================================================================
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/ocfs2/alloc.c
++++ linux-2.6.27-SLE11_BRANCH/fs/ocfs2/alloc.c
+@@ -6716,7 +6716,7 @@ static int ocfs2_do_truncate(struct ocfs
+ 	}
+ 	status = 0;
+ bail:
+-
++	brelse(last_eb_bh);
+ 	mlog_exit(status);
+ 	return status;
+ }

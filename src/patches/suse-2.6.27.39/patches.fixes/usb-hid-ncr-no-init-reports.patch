@@ -1,0 +1,65 @@
+From 5b915d9e6dc3d22fedde91dfef1cb1a8fa9a1870 Mon Sep 17 00:00:00 2001
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Thu, 5 Nov 2009 14:08:03 +0100
+Subject: [PATCH] HID: fixup quirk for NCR devices
+Reference: bnc#548807
+
+NCR devices are terminally broken by design -- they claim themselves to contain
+proper input applications in their HID report descriptor, but behave very badly
+if treated in standard way.
+
+According to NCR developers, the devices get confused when queried for reports
+in a standard way, rendering them unusable.
+
+NCR is shipping application called "RPSL" that can be used to drive these
+devices through hiddev, under the assumption that in-kernel driver doesn't
+perform initial report query.
+If it does, neither in-kernel nor hiddev-based driver can operate with these
+devices any more.
+
+Introduce a quirk that skips the report query for all NCR devices. The previous
+NOGET quirk was wrong and had been introduced because I misunderstood the nature
+of brokenness of these devices.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+
+Index: linux-2.6.27/include/linux/hid.h
+===================================================================
+--- linux-2.6.27.orig/include/linux/hid.h
++++ linux-2.6.27/include/linux/hid.h
+@@ -284,6 +284,7 @@ struct hid_item {
+ #define HID_QUIRK_MICROSOFT_KEYS		0x08000000
+ #define HID_QUIRK_FULLSPEED_INTERVAL		0x10000000
+ #define HID_QUIRK_APPLE_NUMLOCK_EMULATION	0x20000000
++#define HID_QUIRK_NO_INIT_REPORTS              0x40000000
+ 
+ /*
+  * Separate quirks for runtime report descriptor fixup
+Index: linux-2.6.27/drivers/hid/usbhid/hid-quirks.c
+===================================================================
+--- linux-2.6.27.orig/drivers/hid/usbhid/hid-quirks.c
++++ linux-2.6.27/drivers/hid/usbhid/hid-quirks.c
+@@ -993,7 +993,7 @@ u32 usbhid_lookup_quirk(const u16 idVend
+ 	if (idVendor == USB_VENDOR_ID_NCR &&
+ 			idProduct >= USB_DEVICE_ID_NCR_FIRST &&
+ 			idProduct <= USB_DEVICE_ID_NCR_LAST)
+-			return HID_QUIRK_NOGET;
++                       return HID_QUIRK_NO_INIT_REPORTS;
+ 
+ 	down_read(&dquirks_rwsem);
+ 	bl_entry = usbhid_exists_dquirk(idVendor, idProduct);
+Index: linux-2.6.27/drivers/hid/usbhid/hid-core.c
+===================================================================
+--- linux-2.6.27.orig/drivers/hid/usbhid/hid-core.c
++++ linux-2.6.27/drivers/hid/usbhid/hid-core.c
+@@ -980,7 +980,9 @@ static int hid_probe(struct usb_interfac
+ 	if (!(hid = usb_hid_configure(intf)))
+ 		return -ENODEV;
+ 
+-	usbhid_init_reports(hid);
++       if (!(hid->quirks & HID_QUIRK_NO_INIT_REPORTS))
++               usbhid_init_reports(hid);
++
+ 	hid_dump_device(hid);
+ 	if (hid->quirks & HID_QUIRK_RESET_LEDS)
+ 		usbhid_set_leds(hid);

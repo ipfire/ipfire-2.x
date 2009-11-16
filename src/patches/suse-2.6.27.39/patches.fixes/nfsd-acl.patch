@@ -1,0 +1,45 @@
+From: Frank Filz <ffilzlnx@us.ibm.com>
+Date: Wed, 21 Oct 2009 23:45:02 +0000 (-0700)
+Subject: nfsd: Fix sort_pacl in fs/nfsd/nf4acl.c to actually sort groups
+X-git-url: http://git.linux-nfs.org/?p=bfields%2Flinux.git;a=commitdiff_plain;h=aba24d71580180dfdf6a1a83a5858a1c048fd785
+Patch-mainline: not yet
+References: bnc#549748
+
+Nfsd: Fix sort_pacl in fs/nfsd/nf4acl.c to actually sort groups
+
+We have been doing some extensive testing of Linux support for ACLs on
+NFDS v4. We have noticed that the server rejects ACLs where the groups
+are out of order, for example, the following ACL is rejected:
+
+A::OWNER@:rwaxtTcCy
+A::user101@domain:rwaxtcy
+A::GROUP@:rwaxtcy
+A:g:group102@domain:rwaxtcy
+A:g:group101@domain:rwaxtcy
+A::EVERYONE@:rwaxtcy
+
+Examining the server code, I found that after converting an NFS v4 ACL
+to POSIX, sort_pacl is called to sort the user ACEs and group ACEs.
+Unfortunately, a minor bug causes the group sort to be skipped.
+
+Signed-off-by: Frank Filz <ffilzlnx@us.ibm.com>
+Signed-off-by: J. Bruce Fields <bfields@citi.umich.edu>
+Acked-by: NeilBrown <neilb@suse.de>
+
+---
+
+---
+ fs/nfsd/nfs4acl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-2.6.27-SLE11_BRANCH.orig/fs/nfsd/nfs4acl.c
++++ linux-2.6.27-SLE11_BRANCH/fs/nfsd/nfs4acl.c
+@@ -389,7 +389,7 @@ sort_pacl(struct posix_acl *pacl)
+ 	sort_pacl_range(pacl, 1, i-1);
+ 
+ 	BUG_ON(pacl->a_entries[i].e_tag != ACL_GROUP_OBJ);
+-	j = i++;
++	j = ++i;
+ 	while (pacl->a_entries[j].e_tag == ACL_GROUP)
+ 		j++;
+ 	sort_pacl_range(pacl, i, j-1);

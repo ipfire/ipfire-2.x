@@ -1,0 +1,149 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: cio: number of internal I/O retries
+References: bnc#533267,LTC#55492
+
+Symptom:     A device is untruly considered nonfunctional.
+Problem:     If a device has n paths and the device is not path-
+             grouped and an internal I/O command fails, then the
+             control unit presents the error sense n times on each
+             different path. cio does only 5 retries, i.e. devices
+             with 5 or more paths run out of retries before their
+             functional status can actually be determined. 	 
+Solution:    Increase the number of retries to 10.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+Index: linux-sles11/drivers/s390/cio/device_id.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/device_id.c	2009-08-17 14:49:43.000000000 +0200
++++ linux-sles11/drivers/s390/cio/device_id.c	2009-08-17 14:52:00.000000000 +0200
+@@ -164,7 +164,7 @@
+ 				return ret;
+ 		}
+ 		cdev->private->imask >>= 1;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 	}
+ 	return ret;
+ }
+@@ -176,7 +176,7 @@
+ 
+ 	memset (&cdev->private->senseid, 0, sizeof (struct senseid));
+ 	cdev->private->imask = 0x80;
+-	cdev->private->iretry = 5;
++	cdev->private->iretry = 10;
+ 	ret = __ccw_device_sense_id_start(cdev);
+ 	if (ret && ret != -EBUSY)
+ 		ccw_device_sense_id_done(cdev, ret);
+@@ -299,7 +299,7 @@
+ 	case -EACCES:		/* channel is not operational. */
+ 		sch->lpm &= ~cdev->private->imask;
+ 		cdev->private->imask >>= 1;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		/* fall through. */
+ 	case -EAGAIN:		/* try again. */
+ 		ret = __ccw_device_sense_id_start(cdev);
+Index: linux-sles11/drivers/s390/cio/device_pgid.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/device_pgid.c	2009-08-17 14:49:43.000000000 +0200
++++ linux-sles11/drivers/s390/cio/device_pgid.c	2009-08-17 14:52:00.000000000 +0200
+@@ -88,7 +88,7 @@
+ 
+ 		}
+ 		cdev->private->imask >>= 1;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		i++;
+ 	}
+ 
+@@ -105,7 +105,7 @@
+ 
+ 	cdev->private->state = DEV_STATE_SENSE_PGID;
+ 	cdev->private->imask = 0x80;
+-	cdev->private->iretry = 5;
++	cdev->private->iretry = 10;
+ 	memset (&cdev->private->pgid, 0, sizeof (cdev->private->pgid));
+ 	ret = __ccw_device_sense_pgid_start(cdev);
+ 	if (ret && ret != -EBUSY)
+@@ -215,7 +215,7 @@
+ 		/* Fall through. */
+ 	case 0:			/* Sense Path Group ID successful. */
+ 		cdev->private->imask >>= 1;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		/* Fall through. */
+ 	case -EAGAIN:		/* Try again. */
+ 		ret = __ccw_device_sense_pgid_start(cdev);
+@@ -404,7 +404,7 @@
+ 	sch = to_subchannel(cdev->dev.parent);
+ 	/* Repeat for all paths. */
+ 	for (; cdev->private->imask; cdev->private->imask >>= 1,
+-				     cdev->private->iretry = 5) {
++				     cdev->private->iretry = 10) {
+ 		if ((cdev->private->imask & sch->schib.pmcw.pam) == 0)
+ 			/* Path not available, try next. */
+ 			continue;
+@@ -460,7 +460,7 @@
+ 		sch->vpm |= sch->opm & cdev->private->imask;
+ 		/* Go on with next path. */
+ 		cdev->private->imask >>= 1;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		__ccw_device_verify_start(cdev);
+ 		break;
+ 	case -EOPNOTSUPP:
+@@ -475,7 +475,7 @@
+ 		/* Retry */
+ 		sch->vpm = 0;
+ 		cdev->private->imask = 0x80;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		/* fall through. */
+ 	case -EAGAIN:		/* Try again. */
+ 		__ccw_device_verify_start(cdev);
+@@ -485,7 +485,7 @@
+ 		break;
+ 	case -EACCES:		/* channel is not operational. */
+ 		cdev->private->imask >>= 1;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		__ccw_device_verify_start(cdev);
+ 		break;
+ 	}
+@@ -498,7 +498,7 @@
+ 
+ 	cdev->private->flags.pgid_single = 0;
+ 	cdev->private->imask = 0x80;
+-	cdev->private->iretry = 5;
++	cdev->private->iretry = 10;
+ 
+ 	/* Start with empty vpm. */
+ 	sch->vpm = 0;
+@@ -526,7 +526,7 @@
+ 			if (ret == 0)
+ 				return;
+ 		}
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		cdev->private->imask >>= 1;
+ 	}
+ 	ccw_device_disband_done(cdev, (sch->lpm != 0) ? 0 : -ENODEV);
+@@ -575,7 +575,7 @@
+ 		break;
+ 	case -EACCES:		/* channel is not operational. */
+ 		cdev->private->imask >>= 1;
+-		cdev->private->iretry = 5;
++		cdev->private->iretry = 10;
+ 		__ccw_device_disband_start(cdev);
+ 		break;
+ 	}
+@@ -588,7 +588,7 @@
+ 	ccw_device_set_timeout(cdev, 60*HZ);
+ 
+ 	cdev->private->flags.pgid_single = 0;
+-	cdev->private->iretry = 5;
++	cdev->private->iretry = 10;
+ 	cdev->private->imask = 0x80;
+ 	__ccw_device_disband_start(cdev);
+ }

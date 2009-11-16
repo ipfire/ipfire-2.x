@@ -1,0 +1,700 @@
+From: Penchala Narsimha Reddy Chilakala <ServeRAIDDriver@hcl.in>
+Subject: Problems with aacraid
+References: bnc#524242
+
+The attached patch aac24701 was generated for the following issues only:
+
+Issue:1
+--------
+         Behavior of the ternary operation in function aac_send_raw_srb () was
+observed incorrect in 64-bit version. This issue was because of missing
+parenthesis in the condition to check the sg count.
+
+Fix details:
+-------------
+          Fixed by adding parentheses.
+
+Issue:2
+--------
+        Driver IOCTLs is signaled with EINTR while waiting on response from the
+lower layers. Returning “EINTR” will never initiate internal retry. 
+
+Fix details:
+-------------
+        Fixed by replacing “EINTR” with “ERESTARTSYS” for mid-layer retries.
+
+Issue:3
+--------
+       The driver tends to not free the memory (FIB)  when the management
+request exits prematurely. The accumulation of such un-freed memory causes the
+driver to fail to allocate anymore memory (FIB) and hence return 0x70000 value
+to the upper layer, which puts the file system into read only mode.
+
+Fix details:
+-------------
+     The fix makes sure to free the memory(FIB) even if the request exits
+prematurely hence ensuring the driver wouldn’t run out of memory(FIBs)
+
+Issue:4
+--------
+	The driver exhibits performance problems as the execution of
+SYNCHRONIZE CACHE is quite time-consuming.
+
+Fix details:
+-------------
+	The issue is fixed by setting WCE=0 in the INQUIRY data, thus
+causing the SCSI midlayer not to issue any SYNCHRONIZE CACHE commands.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+
+diff -ru a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+--- a/drivers/scsi/aacraid/aachba.c	2009-09-16 16:40:05.000000000 +0530
++++ b/drivers/scsi/aacraid/aachba.c	2009-09-16 17:41:00.000000000 +0530
+@@ -143,7 +143,7 @@
+  */
+ 
+ static int nondasd = -1;
+-static int aac_cache;
++static int aac_cache = 2;	/* WCE=0 to avoid performance problems */
+ static int dacmode = -1;
+ int aac_msi;
+ int aac_commit = -1;
+@@ -157,7 +157,7 @@
+ MODULE_PARM_DESC(cache, "Disable Queue Flush commands:\n"
+ 	"\tbit 0 - Disable FUA in WRITE SCSI commands\n"
+ 	"\tbit 1 - Disable SYNCHRONIZE_CACHE SCSI command\n"
+-	"\tbit 2 - Disable only if Battery not protecting Cache");
++	"\tbit 2 - Disable only if Battery is protecting Cache");
+ module_param(dacmode, int, S_IRUGO|S_IWUSR);
+ MODULE_PARM_DESC(dacmode, "Control whether dma addressing is using 64 bit DAC."
+ 	" 0=off, 1=on");
+@@ -217,6 +217,14 @@
+ module_param_named(reset_devices, aac_reset_devices, int, S_IRUGO|S_IWUSR);
+ MODULE_PARM_DESC(reset_devices, "Force an adapter reset at initialization.");
+ 
++int aac_wwn = 1;
++module_param_named(wwn, aac_wwn, int, S_IRUGO|S_IWUSR);
++MODULE_PARM_DESC(wwn, "Select a WWN type for the arrays:\n"
++	"\t0 - Disable\n"
++	"\t1 - Array Meta Data Signature (default)\n"
++	"\t2 - Adapter Serial Number");
++
++
+ static inline int aac_valid_context(struct scsi_cmnd *scsicmd,
+ 		struct fib *fibptr) {
+ 	struct scsi_device *device;
+@@ -285,7 +293,10 @@
+ 			status = -EINVAL;
+ 		}
+ 	}
+-	aac_fib_complete(fibptr);
++	/* Do not set XferState to zero unless receives a response from F/W */
++	if (status >= 0)
++		aac_fib_complete(fibptr);
++
+ 	/* Send a CT_COMMIT_CONFIG to enable discovery of devices */
+ 	if (status >= 0) {
+ 		if ((aac_commit == 1) || commit_flag) {
+@@ -302,13 +313,18 @@
+ 				    FsaNormal,
+ 				    1, 1,
+ 				    NULL, NULL);
+-			aac_fib_complete(fibptr);
++			/* Do not set XferState to zero unless
++			 * receives a response from F/W */
++			if (status >= 0)
++				aac_fib_complete(fibptr);
+ 		} else if (aac_commit == 0) {
+ 			printk(KERN_WARNING
+ 			  "aac_get_config_status: Foreign device configurations are being ignored\n");
+ 		}
+ 	}
+-	aac_fib_free(fibptr);
++	/* FIB should be freed only after getting the response from the F/W */
++	if (status != -ERESTARTSYS)
++		aac_fib_free(fibptr);
+ 	return status;
+ }
+ 
+@@ -347,7 +363,9 @@
+ 		maximum_num_containers = le32_to_cpu(dresp->ContainerSwitchEntries);
+ 		aac_fib_complete(fibptr);
+ 	}
+-	aac_fib_free(fibptr);
++	/* FIB should be freed only after getting the response from the F/W */
++	if (status != -ERESTARTSYS)
++		aac_fib_free(fibptr);
+ 
+ 	if (maximum_num_containers < MAXIMUM_NUM_CONTAINERS)
+ 		maximum_num_containers = MAXIMUM_NUM_CONTAINERS;
+@@ -1206,9 +1224,8 @@
+ 
+ static int aac_scsi_32_64(struct fib * fib, struct scsi_cmnd * cmd)
+ {
+-	if ((sizeof(dma_addr_t) > 4) &&
+-	 (num_physpages > (0xFFFFFFFFULL >> PAGE_SHIFT)) &&
+-	 (fib->dev->adapter_info.options & AAC_OPT_SGMAP_HOST64))
++	if ((sizeof(dma_addr_t) > 4) && fib->dev->needs_dac &&
++	    (fib->dev->adapter_info.options & AAC_OPT_SGMAP_HOST64))
+ 		return FAILED;
+ 	return aac_scsi_32(fib, cmd);
+ }
+@@ -1238,8 +1255,12 @@
+ 			 NULL);
+ 
+ 	if (rcode < 0) {
+-		aac_fib_complete(fibptr);
+-		aac_fib_free(fibptr);
++		/* FIB should be freed only after
++		 * getting the response from the F/W */
++		if (rcode != -ERESTARTSYS) {
++			aac_fib_complete(fibptr);
++			aac_fib_free(fibptr);
++		}
+ 		return rcode;
+ 	}
+ 	memcpy(&dev->adapter_info, info, sizeof(*info));
+@@ -1263,6 +1284,12 @@
+ 
+ 		if (rcode >= 0)
+ 			memcpy(&dev->supplement_adapter_info, sinfo, sizeof(*sinfo));
++		if (rcode == -ERESTARTSYS) {
++			fibptr = aac_fib_alloc(dev);
++			if (!fibptr)
++				return -ENOMEM;
++		}
++
+ 	}
+ 
+ 
+@@ -1371,8 +1398,11 @@
+ 	if (dev->nondasd_support && !dev->in_reset)
+ 		printk(KERN_INFO "%s%d: Non-DASD support enabled.\n",dev->name, dev->id);
+ 
++	if (dma_get_required_mask(&dev->pdev->dev) > DMA_32BIT_MASK)
++		dev->needs_dac = 1;
+ 	dev->dac_support = 0;
+-	if( (sizeof(dma_addr_t) > 4) && (dev->adapter_info.options & AAC_OPT_SGMAP_HOST64)){
++	if ((sizeof(dma_addr_t) > 4) && dev->needs_dac &&
++	    (dev->adapter_info.options & AAC_OPT_SGMAP_HOST64)) {
+ 		if (!dev->in_reset)
+ 			printk(KERN_INFO "%s%d: 64bit support enabled.\n",
+ 				dev->name, dev->id);
+@@ -1382,6 +1412,15 @@
+ 	if(dacmode != -1) {
+ 		dev->dac_support = (dacmode!=0);
+ 	}
++
++	/* avoid problems with AAC_QUIRK_SCSI_32 controllers */
++	if (dev->dac_support &&	(aac_get_driver_ident(dev->cardtype)->quirks
++		& AAC_QUIRK_SCSI_32)) {
++		dev->nondasd_support = 0;
++		dev->jbod = 0;
++		expose_physicals = 0;
++	}
++
+ 	if(dev->dac_support != 0) {
+ 		if (!pci_set_dma_mask(dev->pdev, DMA_64BIT_MASK) &&
+ 			!pci_set_consistent_dma_mask(dev->pdev, DMA_64BIT_MASK)) {
+@@ -1451,9 +1490,11 @@
+ 			  (dev->scsi_host_ptr->sg_tablesize * 8) + 112;
+ 		}
+ 	}
+-
+-	aac_fib_complete(fibptr);
+-	aac_fib_free(fibptr);
++	/* FIB should be freed only after getting the response from the F/W */
++	if (rcode != -ERESTARTSYS) {
++		aac_fib_complete(fibptr);
++		aac_fib_free(fibptr);
++	}
+ 
+ 	return rcode;
+ }
+@@ -1614,6 +1655,7 @@
+ 	 *	Alocate and initialize a Fib
+ 	 */
+ 	if (!(cmd_fibcontext = aac_fib_alloc(dev))) {
++		printk(KERN_WARNING "aac_read: fib allocation failed\n");
+ 		return -1;
+ 	}
+ 
+@@ -1693,9 +1735,14 @@
+ 	 *	Allocate and initialize a Fib then setup a BlockWrite command
+ 	 */
+ 	if (!(cmd_fibcontext = aac_fib_alloc(dev))) {
+-		scsicmd->result = DID_ERROR << 16;
+-		scsicmd->scsi_done(scsicmd);
+-		return 0;
++		/* FIB temporarily unavailable,not catastrophic failure */
++
++		/* scsicmd->result = DID_ERROR << 16;
++		 * scsicmd->scsi_done(scsicmd);
++		 * return 0;
++		 */
++		printk(KERN_WARNING "aac_write: fib allocation failed\n");
++		return -1;
+ 	}
+ 
+ 	status = aac_adapter_write(cmd_fibcontext, scsicmd, lba, count, fua);
+@@ -2058,7 +2105,7 @@
+ 		dprintk((KERN_DEBUG "INQUIRY command, ID: %d.\n", cid));
+ 		memset(&inq_data, 0, sizeof (struct inquiry_data));
+ 
+-		if (scsicmd->cmnd[1] & 0x1) {
++		if ((scsicmd->cmnd[1] & 0x1) && aac_wwn) {
+ 			char *arr = (char *)&inq_data;
+ 
+ 			/* EVPD bit set */
+@@ -2081,7 +2128,12 @@
+ 				arr[1] = scsicmd->cmnd[2];
+ 				scsi_sg_copy_from_buffer(scsicmd, &inq_data,
+ 							 sizeof(inq_data));
+-				return aac_get_container_serial(scsicmd);
++				if (aac_wwn != 2)
++					return aac_get_container_serial(
++						scsicmd);
++				/* SLES 10 SP1 special */
++				scsicmd->result = DID_OK << 16 |
++				  COMMAND_COMPLETE << 8 | SAM_STAT_GOOD;
+ 			} else {
+ 				/* vpd page not implemented */
+ 				scsicmd->result = DID_OK << 16 |
+diff -ru a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
+--- a/drivers/scsi/aacraid/aacraid.h	2009-09-16 16:40:05.000000000 +0530
++++ b/drivers/scsi/aacraid/aacraid.h	2009-09-16 17:46:20.000000000 +0530
+@@ -12,7 +12,7 @@
+  *----------------------------------------------------------------------------*/
+ 
+ #ifndef AAC_DRIVER_BUILD
+-# define AAC_DRIVER_BUILD 2456
++# define AAC_DRIVER_BUILD 24701
+ # define AAC_DRIVER_BRANCH "-ms"
+ #endif
+ #define MAXIMUM_NUM_CONTAINERS	32
+@@ -865,7 +865,11 @@
+ 	u8	MfgPcbaSerialNo[12];
+ 	u8	MfgWWNName[8];
+ 	__le32	SupportedOptions2;
+-	__le32	ReservedGrowth[1];
++	__le32	StructExpansion;
++	/* StructExpansion == 1 */
++	__le32	FeatureBits3;
++	__le32	SupportedPerformanceModes;
++	__le32	ReservedForFutureGrowth[80];
+ };
+ #define AAC_FEATURE_FALCON	cpu_to_le32(0x00000010)
+ #define AAC_FEATURE_JBOD	cpu_to_le32(0x08000000)
+@@ -1020,6 +1024,7 @@
+ 	u8			jbod;
+ 	u8			cache_protected;
+ 	u8			dac_support;
++	u8			needs_dac;
+ 	u8			raid_scsi_mode;
+ 	u8			comm_interface;
+ #	define AAC_COMM_PRODUCER 0
+@@ -1031,6 +1036,9 @@
+ 	u8			printf_enabled;
+ 	u8			in_reset;
+ 	u8			msi;
++	int			management_fib_count;
++	spinlock_t		manage_lock;
++
+ };
+ 
+ #define aac_adapter_interrupt(dev) \
+diff -ru a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+--- a/drivers/scsi/aacraid/commctrl.c	2009-09-16 16:40:05.000000000 +0530
++++ b/drivers/scsi/aacraid/commctrl.c	2009-09-16 17:41:00.000000000 +0530
+@@ -143,7 +143,7 @@
+ 		fibptr->hw_fib_pa = hw_fib_pa;
+ 		fibptr->hw_fib_va = hw_fib;
+ 	}
+-	if (retval != -EINTR)
++	if (retval != -ERESTARTSYS)
+ 		aac_fib_free(fibptr);
+ 	return retval;
+ }
+@@ -312,7 +312,7 @@
+ 		}
+ 		if (f.wait) {
+ 			if(down_interruptible(&fibctx->wait_sem) < 0) {
+-				status = -EINTR;
++				status = -ERESTARTSYS;
+ 			} else {
+ 				/* Lock again and retry */
+ 				spin_lock_irqsave(&dev->fib_lock, flags);
+@@ -583,10 +583,10 @@
+ 				u64 addr;
+ 				void* p;
+ 				if (upsg->sg[i].count >
+-				    (dev->adapter_info.options &
++				    ((dev->adapter_info.options &
+ 				     AAC_OPT_NEW_COMM) ?
+ 				      (dev->scsi_host_ptr->max_sectors << 9) :
+-				      65536) {
++				      65536)) {
+ 					rcode = -EINVAL;
+ 					goto cleanup;
+ 				}
+@@ -635,10 +635,10 @@
+ 				u64 addr;
+ 				void* p;
+ 				if (usg->sg[i].count >
+-				    (dev->adapter_info.options &
++				    ((dev->adapter_info.options &
+ 				     AAC_OPT_NEW_COMM) ?
+ 				      (dev->scsi_host_ptr->max_sectors << 9) :
+-				      65536) {
++				      65536)) {
+ 					rcode = -EINVAL;
+ 					goto cleanup;
+ 				}
+@@ -685,10 +685,10 @@
+ 				uintptr_t addr;
+ 				void* p;
+ 				if (usg->sg[i].count >
+-				    (dev->adapter_info.options &
++				    ((dev->adapter_info.options &
+ 				     AAC_OPT_NEW_COMM) ?
+ 				      (dev->scsi_host_ptr->max_sectors << 9) :
+-				      65536) {
++				      65536)) {
+ 					rcode = -EINVAL;
+ 					goto cleanup;
+ 				}
+@@ -724,10 +724,10 @@
+ 				dma_addr_t addr;
+ 				void* p;
+ 				if (upsg->sg[i].count >
+-				    (dev->adapter_info.options &
++				    ((dev->adapter_info.options &
+ 				     AAC_OPT_NEW_COMM) ?
+ 				      (dev->scsi_host_ptr->max_sectors << 9) :
+-				      65536) {
++				      65536)) {
+ 					rcode = -EINVAL;
+ 					goto cleanup;
+ 				}
+@@ -762,8 +762,8 @@
+ 		psg->count = cpu_to_le32(sg_indx+1);
+ 		status = aac_fib_send(ScsiPortCommand, srbfib, actual_fibsize, FsaNormal, 1, 1, NULL, NULL);
+ 	}
+-	if (status == -EINTR) {
+-		rcode = -EINTR;
++	if (status == -ERESTARTSYS) {
++		rcode = -ERESTARTSYS;
+ 		goto cleanup;
+ 	}
+ 
+@@ -800,7 +800,7 @@
+ 	for(i=0; i <= sg_indx; i++){
+ 		kfree(sg_list[i]);
+ 	}
+-	if (rcode != -EINTR) {
++	if (rcode != -ERESTARTSYS) {
+ 		aac_fib_complete(srbfib);
+ 		aac_fib_free(srbfib);
+ 	}
+@@ -832,13 +832,22 @@
+ int aac_do_ioctl(struct aac_dev * dev, int cmd, void __user *arg)
+ {
+ 	int status;
+-
++	unsigned long mflags;
++	
+ 	/*
+ 	 *	HBA gets first crack
+ 	 */
+ 
++	spin_lock_irqsave(&dev->manage_lock, mflags);
++	if (dev->management_fib_count > AAC_NUM_MGT_FIB) {
++		printk(KERN_INFO "No management Fibs Available:%d\n",
++						dev->management_fib_count);
++		spin_unlock_irqrestore(&dev->manage_lock, mflags);
++		return -EBUSY;
++	}
++	spin_unlock_irqrestore(&dev->manage_lock, mflags);
+ 	status = aac_dev_ioctl(dev, cmd, arg);
+-	if(status != -ENOTTY)
++	if (status != -ENOTTY)
+ 		return status;
+ 
+ 	switch (cmd) {
+diff -ru a/drivers/scsi/aacraid/comminit.c b/drivers/scsi/aacraid/comminit.c
+--- a/drivers/scsi/aacraid/comminit.c	2009-09-16 16:40:05.000000000 +0530
++++ b/drivers/scsi/aacraid/comminit.c	2009-09-16 17:41:00.000000000 +0530
+@@ -54,6 +54,7 @@
+ 	const unsigned long printfbufsiz = 256;
+ 	struct aac_init *init;
+ 	dma_addr_t phys;
++	unsigned long aac_max_hostphysmempages;
+ 
+ 	size = fibsize + sizeof(struct aac_init) + commsize + commalign + printfbufsiz;
+ 
+@@ -90,7 +91,18 @@
+ 	init->AdapterFibsPhysicalAddress = cpu_to_le32((u32)phys);
+ 	init->AdapterFibsSize = cpu_to_le32(fibsize);
+ 	init->AdapterFibAlign = cpu_to_le32(sizeof(struct hw_fib));
+-	init->HostPhysMemPages = cpu_to_le32(AAC_MAX_HOSTPHYSMEMPAGES);
++	/*
++	 * number of 4k pages of host physical memory. The aacraid fw needs
++	 * this number to be less than 4gb worth of pages. New firmware doesn't
++	 * have any issues with the mapping system, but older Firmware did, and
++	 * had *troubles* dealing with the math overloading past 32 bits, thus
++	 * we must limit this field.
++	 */
++	aac_max_hostphysmempages = dma_get_required_mask(&dev->pdev->dev) >> 12;
++	if (aac_max_hostphysmempages < AAC_MAX_HOSTPHYSMEMPAGES)
++		init->HostPhysMemPages = cpu_to_le32(aac_max_hostphysmempages);
++	else
++		init->HostPhysMemPages = cpu_to_le32(AAC_MAX_HOSTPHYSMEMPAGES);
+ 
+ 	init->InitFlags = 0;
+ 	if (dev->comm_interface == AAC_COMM_MESSAGE) {
+@@ -182,7 +194,9 @@
+ 
+ 	if (status >= 0)
+ 		aac_fib_complete(fibctx);
+-	aac_fib_free(fibctx);
++	/* FIB should be freed only after getting the response from the F/W */
++	if (status != -ERESTARTSYS)
++		aac_fib_free(fibctx);
+ 	return status;
+ }
+ 
+@@ -292,6 +306,8 @@
+ 	/*
+ 	 *	Check the preferred comm settings, defaults from template.
+ 	 */
++	dev->management_fib_count = 0;
++	spin_lock_init(&dev->manage_lock);
+ 	dev->max_fib_size = sizeof(struct hw_fib);
+ 	dev->sg_tablesize = host->sg_tablesize = (dev->max_fib_size
+ 		- sizeof(struct aac_fibhdr)
+diff -ru a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+--- a/drivers/scsi/aacraid/commsup.c	2009-09-16 16:40:05.000000000 +0530
++++ b/drivers/scsi/aacraid/commsup.c	2009-09-16 17:41:00.000000000 +0530
+@@ -189,7 +189,14 @@
+ 
+ void aac_fib_free(struct fib *fibptr)
+ {
+-	unsigned long flags;
++	unsigned long flags, flagsv;
++
++	spin_lock_irqsave(&fibptr->event_lock, flagsv);
++	if (fibptr->done == 2) {
++		spin_unlock_irqrestore(&fibptr->event_lock, flagsv);
++		return;
++	}
++	spin_unlock_irqrestore(&fibptr->event_lock, flagsv);
+ 
+ 	spin_lock_irqsave(&fibptr->dev->fib_lock, flags);
+ 	if (unlikely(fibptr->flags & FIB_CONTEXT_FLAG_TIMED_OUT))
+@@ -473,14 +480,27 @@
+ 
+ 	if(wait)
+ 		spin_lock_irqsave(&fibptr->event_lock, flags);
+-	aac_adapter_deliver(fibptr);
++
++	if (aac_adapter_deliver(fibptr) != 0) {
++		printk(KERN_ERR "aac_fib_send: returned -EBUSY\n");
++		if (wait)
++			spin_unlock_irqrestore(&fibptr->event_lock, flags);
++		return -EBUSY;
++	}
++
+ 
+ 	/*
+ 	 *	If the caller wanted us to wait for response wait now.
+ 	 */
+ 
+ 	if (wait) {
++		unsigned long mflags;
+ 		spin_unlock_irqrestore(&fibptr->event_lock, flags);
++
++		spin_lock_irqsave(&dev->manage_lock, mflags);
++		dev->management_fib_count++;
++		spin_unlock_irqrestore(&dev->manage_lock, mflags);
++
+ 		/* Only set for first known interruptable command */
+ 		if (wait < 0) {
+ 			/*
+@@ -515,15 +535,14 @@
+ 				}
+ 				udelay(5);
+ 			}
+-		} else if (down_interruptible(&fibptr->event_wait)) {
+-			fibptr->done = 2;
+-			up(&fibptr->event_wait);
+-		}
++		} else
++			down_interruptible(&fibptr->event_wait);
++
+ 		spin_lock_irqsave(&fibptr->event_lock, flags);
+-		if ((fibptr->done == 0) || (fibptr->done == 2)) {
++		if (fibptr->done == 0) {
+ 			fibptr->done = 2; /* Tell interrupt we aborted */
+ 			spin_unlock_irqrestore(&fibptr->event_lock, flags);
+-			return -EINTR;
++			return -ERESTARTSYS;
+ 		}
+ 		spin_unlock_irqrestore(&fibptr->event_lock, flags);
+ 		BUG_ON(fibptr->done == 0);
+@@ -689,6 +708,7 @@
+ 
+ int aac_fib_complete(struct fib *fibptr)
+ {
++	unsigned long flags;
+ 	struct hw_fib * hw_fib = fibptr->hw_fib_va;
+ 
+ 	/*
+@@ -709,6 +729,13 @@
+ 	 *	command is complete that we had sent to the adapter and this
+ 	 *	cdb could be reused.
+ 	 */
++	spin_lock_irqsave(&fibptr->event_lock, flags);
++	if (fibptr->done == 2) {
++		spin_unlock_irqrestore(&fibptr->event_lock, flags);
++		return 0;
++	}
++	spin_unlock_irqrestore(&fibptr->event_lock, flags);
++
+ 	if((hw_fib->header.XferState & cpu_to_le32(SentFromHost)) &&
+ 		(hw_fib->header.XferState & cpu_to_le32(AdapterProcessed)))
+ 	{
+@@ -1355,7 +1382,10 @@
+ 
+ 			if (status >= 0)
+ 				aac_fib_complete(fibctx);
+-			aac_fib_free(fibctx);
++			/* FIB should be freed only after getting
++			 * the response from the F/W */
++			if (status != -ERESTARTSYS)
++				aac_fib_free(fibctx);
+ 		}
+ 	}
+ 
+@@ -1759,6 +1789,7 @@
+ 				struct fib *fibptr;
+ 
+ 				if ((fibptr = aac_fib_alloc(dev))) {
++					int status;
+ 					__le32 *info;
+ 
+ 					aac_fib_init(fibptr);
+@@ -1769,15 +1800,21 @@
+ 
+ 					*info = cpu_to_le32(now.tv_sec);
+ 
+-					(void)aac_fib_send(SendHostTime,
++					status = aac_fib_send(SendHostTime,
+ 						fibptr,
+ 						sizeof(*info),
+ 						FsaNormal,
+ 						1, 1,
+ 						NULL,
+ 						NULL);
+-					aac_fib_complete(fibptr);
+-					aac_fib_free(fibptr);
++					/* Do not set XferState to zero unless
++					 * receives a response from F/W */
++					if (status >= 0)
++						aac_fib_complete(fibptr);
++					/* FIB should be freed only after
++					 * getting the response from the F/W */
++					if (status != -ERESTARTSYS)
++						aac_fib_free(fibptr);
+ 				}
+ 				difference = (long)(unsigned)update_interval*HZ;
+ 			} else {
+diff -ru a/drivers/scsi/aacraid/dpcsup.c b/drivers/scsi/aacraid/dpcsup.c
+--- a/drivers/scsi/aacraid/dpcsup.c	2009-09-16 16:40:05.000000000 +0530
++++ b/drivers/scsi/aacraid/dpcsup.c	2009-09-16 17:41:00.000000000 +0530
+@@ -57,7 +57,7 @@
+ 	struct hw_fib * hwfib;
+ 	struct fib * fib;
+ 	int consumed = 0;
+-	unsigned long flags;
++	unsigned long flags, mflags;
+ 
+ 	spin_lock_irqsave(q->lock, flags);	
+ 	/*
+@@ -125,12 +125,21 @@
+ 		} else {
+ 			unsigned long flagv;
+ 			spin_lock_irqsave(&fib->event_lock, flagv);
+-			if (!fib->done)
++			if (!fib->done) {
+ 				fib->done = 1;
+-			up(&fib->event_wait);
++				up(&fib->event_wait);
++			}
+ 			spin_unlock_irqrestore(&fib->event_lock, flagv);
++
++			spin_lock_irqsave(&dev->manage_lock, mflags);
++			dev->management_fib_count--;
++			spin_unlock_irqrestore(&dev->manage_lock, mflags);
++
+ 			FIB_COUNTER_INCREMENT(aac_config.NormalRecved);
+ 			if (fib->done == 2) {
++				spin_lock_irqsave(&fib->event_lock, flagv);
++				fib->done = 0;
++				spin_unlock_irqrestore(&fib->event_lock, flagv);
+ 				aac_fib_complete(fib);
+ 				aac_fib_free(fib);
+ 			}
+@@ -232,6 +241,7 @@
+ 
+ unsigned int aac_intr_normal(struct aac_dev * dev, u32 index)
+ {
++	unsigned long mflags;
+ 	dprintk((KERN_INFO "aac_intr_normal(%p,%x)\n", dev, index));
+ 	if ((index & 0x00000002L)) {
+ 		struct hw_fib * hw_fib;
+@@ -320,11 +330,25 @@
+ 			unsigned long flagv;
+ 	  		dprintk((KERN_INFO "event_wait up\n"));
+ 			spin_lock_irqsave(&fib->event_lock, flagv);
+-			if (!fib->done)
++			if (!fib->done) {
+ 				fib->done = 1;
+-			up(&fib->event_wait);
++				up(&fib->event_wait);
++			}
+ 			spin_unlock_irqrestore(&fib->event_lock, flagv);
++
++			spin_lock_irqsave(&dev->manage_lock, mflags);
++			dev->management_fib_count--;
++			spin_unlock_irqrestore(&dev->manage_lock, mflags);
++
+ 			FIB_COUNTER_INCREMENT(aac_config.NormalRecved);
++			if (fib->done == 2) {
++				spin_lock_irqsave(&fib->event_lock, flagv);
++				fib->done = 0;
++				spin_unlock_irqrestore(&fib->event_lock, flagv);
++				aac_fib_complete(fib);
++				aac_fib_free(fib);
++			}
++
+ 		}
+ 		return 0;
+ 	}
+diff -ru a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+--- a/drivers/scsi/aacraid/linit.c	2009-09-16 16:40:05.000000000 +0530
++++ b/drivers/scsi/aacraid/linit.c	2009-09-16 17:41:00.000000000 +0530
+@@ -86,7 +86,13 @@
+  *
+  * Note: The last field is used to index into aac_drivers below.
+  */
+-static struct pci_device_id aac_pci_tbl[] = {
++#ifdef DECLARE_PCI_DEVICE_TABLE
++static DECLARE_PCI_DEVICE_TABLE(aac_pci_tbl) = {
++#elif defined(__devinitconst)
++static const struct pci_device_id aac_pci_tbl[] __devinitconst = {
++#else
++static const struct pci_device_id aac_pci_tbl[] __devinitdata = {
++#endif
+ 	{ 0x1028, 0x0001, 0x1028, 0x0001, 0, 0, 0 }, /* PERC 2/Si (Iguana/PERC2Si) */
+ 	{ 0x1028, 0x0002, 0x1028, 0x0002, 0, 0, 1 }, /* PERC 3/Di (Opal/PERC3Di) */
+ 	{ 0x1028, 0x0003, 0x1028, 0x0003, 0, 0, 2 }, /* PERC 3/Si (SlimFast/PERC3Si */
