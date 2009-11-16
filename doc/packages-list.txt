@@ -44,6 +44,7 @@
 * as86-0.16.17
 * asterisk-1.4.18
 * atl2-2.0.5-kmod-2.6.27.39-ipfire
+* atl2-2.0.5-kmod-2.6.27.39-ipfire-xen
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire
@@ -69,6 +70,7 @@
 * cmake-2.4.8
 * collectd-4.5.3
 * compat-wireless-2.6.32-rc6-kmod-2.6.27.39-ipfire
+* compat-wireless-2.6.32-rc6-kmod-2.6.27.39-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
@@ -84,6 +86,7 @@
 * dnsmasq-2.45
 * dosfstools-2.11
 * e1000e-1.0.2.5-kmod-2.6.27.39-ipfire
+* e1000e-1.0.2.5-kmod-2.6.27.39-ipfire-xen
 * e2fsprogs-1.39
 * ebtables-v2.0.8-2
 * ed-0.2
@@ -130,6 +133,7 @@
 * hostapd-0.6.9
 * hplip-2.7.10
 * hso-1.9-kmod-2.6.27.39-ipfire
+* hso-1.9-kmod-2.6.27.39-ipfire-xen
 * htop-0.8.1
 * httpd-2.2.11
 * hwdata
@@ -154,6 +158,7 @@
 * kbd-1.12
 * klibc-1.5.14
 * kqemu-1.4.0pre1-kmod-2.6.27.39-ipfire
+* kqemu-1.4.0pre1-kmod-2.6.27.39-ipfire-xen
 * kudzu-1.2.64
 * kvm-kmod-2.6.31.5-kmod-2.6.27.39-ipfire
 * l7-protocols-2009-05-10
@@ -186,6 +191,7 @@
 * libxml2-2.6.26
 * libxslt-1.1.17
 * linux-2.6.27.39-ipfire
+* linux-2.6.27.39-ipfire-xen
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * lm_sensors-3.0.3
@@ -196,8 +202,10 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.39-ipfire
+* mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.39-ipfire-xen
 * mISDNuser.git-54928dec57bc846f2c2186f3640e69a053cd3641
 * madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.39-ipfire
+* madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.39-ipfire-xen
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
@@ -246,6 +254,7 @@
 * openssl-0.9.8k
 * openswan-2.6.23
 * openswan-2.6.23-kmod-2.6.27.39-ipfire
+* openswan-2.6.23-kmod-2.6.27.39-ipfire-xen
 * openvpn-2.1_rc20
 * p7zip_4.65
 * pam_mysql-0.7RC1
@@ -267,8 +276,11 @@
 * psmisc-22.2
 * qemu-0.11.0
 * r8101-kmod-2.6.27.39-ipfire
+* r8101-kmod-2.6.27.39-ipfire-xen
 * r8168-8.014.00-kmod-2.6.27.39-ipfire
+* r8168-8.014.00-kmod-2.6.27.39-ipfire-xen
 * r8169-6.011.00-kmod-2.6.27.39-ipfire
+* r8169-6.011.00-kmod-2.6.27.39-ipfire-xen
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
@@ -324,6 +336,7 @@
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-aba823ecaea6-kmod-2.6.27.39-ipfire
+* v4l-dvb-aba823ecaea6-kmod-2.6.27.39-ipfire-xen
 * vdr-1.6.0
 * vdradmin-am-3.6.4
 * vim-7.0
