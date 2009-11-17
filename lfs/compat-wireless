@@ -77,34 +77,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
-	# Xen
-ifeq "$(XEN)" "1"
-#       some dirty hacks that it is building
-#	mv /usr/src/linux/include/linux/tracepoint.h /usr/src/linux/include/linux/tracepoint.h.xen
-#	touch /usr/src/linux/include/linux/tracepoint.h
-#	cd /usr/src/ &&  patch -Np1 < $(DIR_SRC)/src/patches/compat-xen-1.patch
-endif
-
 #	Apply some wlan-card patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless_rt2500pci-skb_allignment.patch
-
-#	Enable B43 NPHY / PHY_LP
-	echo "CONFIG_B43_NPHY=y" >> $(DIR_APP)/config.mk
-	echo "CONFIG_B43_PHY_LP=y" >> $(DIR_APP)/config.mk
-
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install-modules
 
 	# The makefile put the modules to a wrong place move back...
 	cp -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib /
 	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/lib
-
-	# Xen
-ifeq "$(XEN)" "1"
-#       remove dirty hacks. restores to the status before the dirty hacks
-#	cd /usr/src/ &&  patch -Np1 < $(DIR_SRC)/src/patches/compat-xen-2.patch
-#	mv /usr/src/linux/include/linux/tracepoint.h.xen /usr/src/linux/include/linux/tracepoint.h
-endif
 
 	# Set Regulatory Domain to "EU" (use Channel 1-14 max. 20db)
 	echo options cfg80211 ieee80211_regdom=EU > /etc/modprobe.d/cfg80211
