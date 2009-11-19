@@ -1,0 +1,97 @@
+From: Martin Wilck <martin.wilck@fujitsu-siemens.com>
+Subject: x86-64: Make APIC timer calibration SMI-safe
+References: bnc#410452, bnc#535947
+
+APIC timer calibration can be adversely affected if SMI are
+triggered during calibration. Make the calibration algorithm
+more robust to detect and workaround this situation.
+
+This patch isn't upstream. Explanation from Martin Wilck:
+
+"Unfortunately, while the patch got generally positive review, it hasn't been
+finally accepted. Upstream wanted to see a solution for all affected
+architectures (in particular, also i386) which was more than we were able to do
+at the time, given that the pressure had been reduced by finding a BIOS fix."
+
+Acked-by: Jean Delvare <jdelvare@suse.de>
+
+---
+ arch/x86/kernel/apic_64.c |   39 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 6 deletions(-)
+
+--- a/arch/x86/kernel/apic_64.c
++++ b/arch/x86/kernel/apic_64.c
+@@ -299,6 +299,31 @@ static void setup_APIC_timer(void)
+ }
+ 
+ /*
++ * Helper function for calibrate_APIC_clock(): Make sure that
++ * APIC TMCTT and TSC are read at the same time, to reasonable
++ * accuracy. On any sane system, the retry loop won't need more
++ * than a single retry, given that the rdtsc/apic_read/rdtsc
++ * sequence won't take more than a few cycles.
++ */
++
++#define MAX_DIFFERENCE 1000UL
++#define MAX_ITER 10
++static inline int
++__read_tsc_and_apic(unsigned long *tsc, unsigned *apic)
++{
++	unsigned long tsc0, tsc1, diff;
++	int i = 0;
++	do {
++		rdtscll(tsc0);
++		*apic = apic_read(APIC_TMCCT);
++		rdtscll(tsc1);
++		diff = tsc1 - tsc0;
++	} while (diff > MAX_DIFFERENCE && ++i < MAX_ITER);
++	*tsc = tsc0 + (diff >> 1);
++	return diff > MAX_DIFFERENCE ? -EIO : 0;
++}
++
++/*
+  * In this function we calibrate APIC bus clocks to the external
+  * timer. Unfortunately we cannot use jiffies and the timer irq
+  * to calibrate, since some later bootup code depends on getting
+@@ -317,7 +342,7 @@ static int __init calibrate_APIC_clock(v
+ {
+ 	unsigned apic, apic_start;
+ 	unsigned long tsc, tsc_start;
+-	int result;
++	int result, err_start, err;
+ 
+ 	local_irq_disable();
+ 
+@@ -328,25 +353,27 @@ static int __init calibrate_APIC_clock(v
+ 	 *
+ 	 * No interrupt enable !
+ 	 */
+-	__setup_APIC_LVTT(250000000, 0, 0);
++	__setup_APIC_LVTT(0xffffffff, 0, 0);
+ 
+-	apic_start = apic_read(APIC_TMCCT);
+ #ifdef CONFIG_X86_PM_TIMER
+ 	if (apic_calibrate_pmtmr && pmtmr_ioport) {
++		apic_start = apic_read(APIC_TMCCT);
+ 		pmtimer_wait(5000);  /* 5ms wait */
+ 		apic = apic_read(APIC_TMCCT);
+ 		result = (apic_start - apic) * 1000L / 5;
+ 	} else
+ #endif
+ 	{
+-		rdtscll(tsc_start);
++		err_start = __read_tsc_and_apic(&tsc_start, &apic_start);
+ 
+ 		do {
+-			apic = apic_read(APIC_TMCCT);
+-			rdtscll(tsc);
++			err = __read_tsc_and_apic(&tsc, &apic);
+ 		} while ((tsc - tsc_start) < TICK_COUNT &&
+ 				(apic_start - apic) < TICK_COUNT);
+ 
++		if (err_start || err)
++			printk(KERN_CRIT "calibrate_APIC_clock: SMI flood - "
++				"the APIC timer calibration may be wrong!\n");
+ 		result = (apic_start - apic) * 1000L * tsc_khz /
+ 					(tsc - tsc_start);
+ 	}

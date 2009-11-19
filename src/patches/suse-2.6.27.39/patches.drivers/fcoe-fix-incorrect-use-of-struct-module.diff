@@ -1,0 +1,51 @@
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: fcoe: fix incorrect use of struct module
+Patch-mainline: 9296e519538b77b5070d49f2f9d66032733c76d4
+References: bnc #468051
+
+This structure may not be defined if CONFIG_MODULE=n, so never deref it. Change
+uses of module->name to module_name(module) and corrects some dyslexic printks
+and docbook comments.
+    
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Robert Love <robert.w.love@intel.com>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+
+---
+ drivers/scsi/fcoe/libfcoe.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+--- a/drivers/scsi/fcoe/libfcoe.c
++++ b/drivers/scsi/fcoe/libfcoe.c
+@@ -167,7 +167,7 @@ static int fcoe_cpu_callback(struct noti
+ #endif /* CONFIG_HOTPLUG_CPU */
+ 
+ /**
+- * foce_rcv - this is the fcoe receive function called by NET_RX_SOFTIRQ
++ * fcoe_rcv - this is the fcoe receive function called by NET_RX_SOFTIRQ
+  * @skb: the receive skb
+  * @dev: associated net device
+  * @ptype: context
+@@ -992,8 +992,8 @@ static int fcoe_ethdrv_get(const struct
+ 
+ 	owner = fcoe_netdev_to_module_owner(netdev);
+ 	if (owner) {
+-		printk(KERN_DEBUG "foce:hold driver module %s for %s\n",
+-		       owner->name, netdev->name);
++		printk(KERN_DEBUG "fcoe:hold driver module %s for %s\n",
++		       module_name(owner), netdev->name);
+ 		return  try_module_get(owner);
+ 	}
+ 	return -ENODEV;
+@@ -1012,8 +1012,8 @@ static int fcoe_ethdrv_put(const struct
+ 
+ 	owner = fcoe_netdev_to_module_owner(netdev);
+ 	if (owner) {
+-		printk(KERN_DEBUG "foce:release driver module %s for %s\n",
+-		       owner->name, netdev->name);
++		printk(KERN_DEBUG "fcoe:release driver module %s for %s\n",
++		       module_name(owner), netdev->name);
+ 		module_put(owner);
+ 		return 0;
+ 	}

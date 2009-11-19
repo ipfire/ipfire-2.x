@@ -1,0 +1,41 @@
+From e7706fc691513b0f06adb3de3d6ac04293180146 Mon Sep 17 00:00:00 2001
+From: Ken'ichi Ohmichi <oomichi@mxs.nes.nec.co.jp>
+Date: Mon, 20 Oct 2008 13:51:52 +0900
+Subject: [PATCH] x86, kdump: fix invalid access on i386 sparsemem
+References: bnc#440525
+
+Impact: fix kdump crash on 32-bit sparsemem kernels
+
+Since linux-2.6.27, kdump has failed on i386 sparsemem kernel.
+1st-kernel gets a panic just before switching to 2nd-kernel.
+
+The cause is that a kernel accesses invalid mem_section by
+page_to_pfn(image->swap_page) at machine_kexec().
+image->swap_page is allocated if kexec for hibernation, but
+it is not allocated if kdump. So if kdump, a kernel should
+not access the mem_section corresponding to image->swap_page.
+
+The attached patch fixes this invalid access.
+
+Signed-off-by: Ken'ichi Ohmichi <oomichi@mxs.nes.nec.co.jp>
+Cc: kexec-ml <kexec@lists.infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+
+diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+index 0732adb..7a38574 100644
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -162,7 +162,10 @@ void machine_kexec(struct kimage *image)
+ 	page_list[VA_PTE_0] = (unsigned long)kexec_pte0;
+ 	page_list[PA_PTE_1] = __pa(kexec_pte1);
+ 	page_list[VA_PTE_1] = (unsigned long)kexec_pte1;
+-	page_list[PA_SWAP_PAGE] = (page_to_pfn(image->swap_page) << PAGE_SHIFT);
++
++	if (image->type == KEXEC_TYPE_DEFAULT)
++		page_list[PA_SWAP_PAGE] = (page_to_pfn(image->swap_page)
++						<< PAGE_SHIFT);
+ 
+ 	/* The segment registers are funny things, they have both a
+ 	 * visible and an invisible part.  Whenever the visible part is

@@ -1,0 +1,43 @@
+From: Vasu Dev <vasu.dev@intel.com>
+Subject: [FcOE] improved load balancing in rx path
+References: bnc #459142
+
+Currently incoming frame exchange id ANDing with total number of bits
+in online CPU bits mask, resulted only at most two CPUs selection in
+rx path, so instead used online CPU bits mask to direct incoming frame
+to a all cpus for better load balancing.
+
+Added code to default to first CPU in case selected CPU is offline or
+its rx thread not present.
+
+Signed-off-by: Vasu Dev <vasu.dev@intel.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/fcoe/libfcoe.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+
+--- a/drivers/scsi/fcoe/libfcoe.c
++++ b/drivers/scsi/fcoe/libfcoe.c
+@@ -230,13 +230,14 @@ int fcoe_rcv(struct sk_buff *skb, struct
+ 	cpu_idx = 0;
+ #ifdef CONFIG_SMP
+ 	/*
+-	 * The exchange ID are ANDed with num of online CPUs,
+-	 * so that will have the least lock contention in
+-	 * handling the exchange. if there is no thread
+-	 * for a given idx then use first online cpu.
++	 * The incoming frame exchange id(oxid) is ANDed with num of online
++	 * cpu bits to get cpu_idx and then this cpu_idx is used for selecting
++	 * a per cpu kernel thread from fcoe_percpu. In case the cpu is
++	 * offline or no kernel thread for derived cpu_idx then cpu_idx is
++	 * initialize to first online cpu index.
+ 	 */
+-	cpu_idx = oxid & (num_online_cpus() >> 1);
+-	if (fcoe_percpu[cpu_idx] == NULL)
++	cpu_idx = oxid & (num_online_cpus() - 1);
++	if (!fcoe_percpu[cpu_idx] || !cpu_online(cpu_idx))
+ 		cpu_idx = first_cpu(cpu_online_map);
+ #endif
+ 	fps = fcoe_percpu[cpu_idx];

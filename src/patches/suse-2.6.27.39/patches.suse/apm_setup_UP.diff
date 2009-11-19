@@ -1,0 +1,57 @@
+From: Olaf Dabrunz <od@suse.de>
+Subject: [apm] default to "power_off" when SMP kernel is used on single processor machines
+Reference: SUSE221667
+
+This patch turns on support for the APM power_off function by default when the
+SMP kernel is used on single processor machines.
+
+It is a bit ugly to use a separate variable to make sure the default value is
+only used when needed and the power_off variable is not initialized twice. But
+I did not find a better way to do this with the way the current initialization
+system works.
+
+Signed-off-by: Olaf Dabrunz <od@suse.de>
+
+
+ arch/x86/kernel/apm_32.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -389,6 +389,7 @@ static int smp __read_mostly;
+ static int apm_disabled = -1;
+ #ifdef CONFIG_SMP
+ static int power_off;
++static int power_off_set;
+ #else
+ static int power_off = 1;
+ #endif
+@@ -1797,6 +1798,14 @@ static int apm(void *unused)
+ 		}
+ 	}
+ 
++#ifdef CONFIG_SMP
++	if (!power_off_set) {
++		power_off = (num_online_cpus() == 1);
++		/* remember not to initialize (with default value) again */
++		power_off_set = 1;
++	}
++#endif
++
+ 	/* Install our power off handler.. */
+ 	if (power_off)
+ 		pm_power_off = apm_power_off;
+@@ -1840,8 +1849,12 @@ static int __init apm_setup(char *str)
+ 		if (strncmp(str, "debug", 5) == 0)
+ 			debug = !invert;
+ 		if ((strncmp(str, "power-off", 9) == 0) ||
+-		    (strncmp(str, "power_off", 9) == 0))
++		    (strncmp(str, "power_off", 9) == 0)) {
+ 			power_off = !invert;
++#ifdef CONFIG_SMP
++			power_off_set = 1;
++#endif
++		}
+ 		if (strncmp(str, "smp", 3) == 0) {
+ 			smp = !invert;
+ 			idle_threshold = 100;

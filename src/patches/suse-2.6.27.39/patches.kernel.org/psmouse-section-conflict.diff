@@ -1,0 +1,47 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] psmouse: fix section type conflict
+
+ Module parameters can't be static since the module macros explicitly
+ put those symbols in the __param section. It causes a section conflict
+ on ia64. This doesn't occur with standard types, since they are global
+ and exported.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+
+---
+
+ drivers/input/mouse/psmouse-base.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/drivers/input/mouse/psmouse-base.c
++++ b/drivers/input/mouse/psmouse-base.c
+@@ -36,8 +36,8 @@ MODULE_DESCRIPTION(DRIVER_DESC);
+ MODULE_LICENSE("GPL");
+ 
+ static unsigned int psmouse_max_proto = PSMOUSE_AUTO;
+-static int psmouse_set_maxproto(const char *val, struct kernel_param *kp);
+-static int psmouse_get_maxproto(char *buffer, struct kernel_param *kp);
++int psmouse_set_maxproto(const char *val, struct kernel_param *kp);
++int psmouse_get_maxproto(char *buffer, struct kernel_param *kp);
+ #define param_check_proto_abbrev(name, p)	__param_check(name, p, unsigned int)
+ #define param_set_proto_abbrev			psmouse_set_maxproto
+ #define param_get_proto_abbrev			psmouse_get_maxproto
+@@ -1573,7 +1573,8 @@ static ssize_t psmouse_attr_set_resoluti
+ }
+ 
+ 
+-static int psmouse_set_maxproto(const char *val, struct kernel_param *kp)
++/* These two should be static, but it causes a section type conflict */
++int psmouse_set_maxproto(const char *val, struct kernel_param *kp)
+ {
+ 	const struct psmouse_protocol *proto;
+ 
+@@ -1590,7 +1591,7 @@ static int psmouse_set_maxproto(const ch
+ 	return 0;
+ }
+ 
+-static int psmouse_get_maxproto(char *buffer, struct kernel_param *kp)
++int psmouse_get_maxproto(char *buffer, struct kernel_param *kp)
+ {
+ 	int type = *((unsigned int *)kp->arg);
+ 

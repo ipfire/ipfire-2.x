@@ -1,0 +1,26 @@
+From: Robert Love <robert.w.love@intel.com>
+Subject: [FcOE] Logoff of the fabric when destroying interface
+References: bnc #459142
+
+This line was accidentally removed by a previous patch.
+
+Signed-off-by: Robert Love <robert.w.love@intel.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/fcoe/fcoe_sw.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+
+--- a/drivers/scsi/fcoe/fcoe_sw.c
++++ b/drivers/scsi/fcoe/fcoe_sw.c
+@@ -302,6 +302,9 @@ static int fcoe_sw_destroy(struct net_de
+ 
+ 	fc = fcoe_softc(lp);
+ 
++	/* Logout of the fabric */
++	fc_fabric_logoff(lp);
++
+ 	/* Remove the instance from fcoe's list */
+ 	fcoe_hostlist_remove(lp);
+ 

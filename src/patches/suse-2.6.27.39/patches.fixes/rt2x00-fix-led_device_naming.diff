@@ -1,0 +1,44 @@
+From: Danny Kukawka <dkukawka@suse.de>
+Subject: rt2x00: fix led naming
+
+Fixed led device naming for the rt2x00 driver. Due to the
+documentation of the led subsystem/class the naming should be
+"devicename:colour:function" while not applying sections
+should be left blank.
+    
+This should lead to e.g. "%s::radio" instead of "%s:radio".
+
+Signed-off-by: Danny Kukawka <dkukawka@suse.de>
+--
+ drivers/net/wireless/rt2x00/rt2x00leds.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/net/wireless/rt2x00/rt2x00leds.c
++++ b/drivers/net/wireless/rt2x00/rt2x00leds.c
+@@ -149,7 +149,7 @@ void rt2x00leds_register(struct rt2x00_d
+ 		 rt2x00dev->ops->name, wiphy_name(rt2x00dev->hw->wiphy));
+ 
+ 	if (rt2x00dev->led_radio.flags & LED_INITIALIZED) {
+-		snprintf(name, sizeof(name), "%s:radio", dev_name);
++		snprintf(name, sizeof(name), "%s::radio", dev_name);
+ 
+ 		retval = rt2x00leds_register_led(rt2x00dev,
+ 						 &rt2x00dev->led_radio,
+@@ -159,7 +159,7 @@ void rt2x00leds_register(struct rt2x00_d
+ 	}
+ 
+ 	if (rt2x00dev->led_assoc.flags & LED_INITIALIZED) {
+-		snprintf(name, sizeof(name), "%s:assoc", dev_name);
++		snprintf(name, sizeof(name), "%s::assoc", dev_name);
+ 
+ 		retval = rt2x00leds_register_led(rt2x00dev,
+ 						 &rt2x00dev->led_assoc,
+@@ -169,7 +169,7 @@ void rt2x00leds_register(struct rt2x00_d
+ 	}
+ 
+ 	if (rt2x00dev->led_qual.flags & LED_INITIALIZED) {
+-		snprintf(name, sizeof(name), "%s:quality", dev_name);
++		snprintf(name, sizeof(name), "%s::quality", dev_name);
+ 
+ 		retval = rt2x00leds_register_led(rt2x00dev,
+ 						 &rt2x00dev->led_qual,

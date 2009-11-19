@@ -1,0 +1,29 @@
+From: Jay Lan <jlan@sgi.com>
+Subject: [PATCH] Support '\n' in KDB
+Patch-mainline: 2.6.28-rc3-*-1 patchset
+References: bnc#442808
+
+Cliff tried to use KDB on medusa to verify a UV/KDB compatibility fix and found
+KDB needs to support '\n' in kdb_read() for medusa.
+
+I have integrated his patch to kdb mainline at 2.6.28-rc3-*-1 patchset.
+
+
+Signed-off-by: Bernhard Walle <bwalle@suse.de>
+
+---
+ kdb/kdb_io.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/kdb/kdb_io.c
++++ b/kdb/kdb_io.c
+@@ -246,7 +246,8 @@ kdb_read(char *buffer, size_t bufsize)
+ 				*cp = tmp;
+ 			}
+ 			break;
+-		case 13: /* enter */
++		case 13: /* enter \r */
++		case 10: /* enter \n */
+ 			*lastchar++ = '\n';
+ 			*lastchar++ = '\0';
+ 			kdb_printf("\n");

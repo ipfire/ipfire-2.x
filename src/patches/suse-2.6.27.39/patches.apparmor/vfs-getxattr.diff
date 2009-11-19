@@ -1,0 +1,190 @@
+From: Tony Jones <tonyj@suse.de>
+Subject: Add a struct vfsmount parameter to vfs_getxattr()
+
+The vfsmount will be passed down to the LSM hook so that LSMs can compute
+pathnames.
+
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Signed-off-by: Andreas Gruenbacher <agruen@suse.de>
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ fs/nfsd/nfs4xdr.c         |    2 +-
+ fs/nfsd/vfs.c             |   21 ++++++++++++---------
+ fs/xattr.c                |   15 ++++++++-------
+ include/linux/nfsd/nfsd.h |    3 ++-
+ include/linux/xattr.h     |    2 +-
+ 5 files changed, 24 insertions(+), 19 deletions(-)
+
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -1446,7 +1446,7 @@ nfsd4_encode_fattr(struct svc_fh *fhp, s
+ 	}
+ 	if (bmval0 & (FATTR4_WORD0_ACL | FATTR4_WORD0_ACLSUPPORT
+ 			| FATTR4_WORD0_SUPPORTED_ATTRS)) {
+-		err = nfsd4_get_nfs4_acl(rqstp, dentry, &acl);
++		err = nfsd4_get_nfs4_acl(rqstp, dentry, exp->ex_path.mnt, &acl);
+ 		aclsupport = (err == 0);
+ 		if (bmval0 & FATTR4_WORD0_ACL) {
+ 			if (err == -EOPNOTSUPP)
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -420,11 +420,12 @@ out_nfserr:
+ #if defined(CONFIG_NFSD_V2_ACL) || \
+     defined(CONFIG_NFSD_V3_ACL) || \
+     defined(CONFIG_NFSD_V4)
+-static ssize_t nfsd_getxattr(struct dentry *dentry, char *key, void **buf)
++static ssize_t nfsd_getxattr(struct dentry *dentry, struct vfsmount *mnt,
++			     char *key, void **buf)
+ {
+ 	ssize_t buflen;
+ 
+-	buflen = vfs_getxattr(dentry, key, NULL, 0);
++	buflen = vfs_getxattr(dentry, mnt, key, NULL, 0);
+ 	if (buflen <= 0)
+ 		return buflen;
+ 
+@@ -432,7 +433,7 @@ static ssize_t nfsd_getxattr(struct dent
+ 	if (!*buf)
+ 		return -ENOMEM;
+ 
+-	return vfs_getxattr(dentry, key, *buf, buflen);
++	return vfs_getxattr(dentry, mnt, key, *buf, buflen);
+ }
+ #endif
+ 
+@@ -513,13 +514,13 @@ out_nfserr:
+ }
+ 
+ static struct posix_acl *
+-_get_posix_acl(struct dentry *dentry, char *key)
++_get_posix_acl(struct dentry *dentry, struct vfsmount *mnt, char *key)
+ {
+ 	void *buf = NULL;
+ 	struct posix_acl *pacl = NULL;
+ 	int buflen;
+ 
+-	buflen = nfsd_getxattr(dentry, key, &buf);
++	buflen = nfsd_getxattr(dentry, mnt, key, &buf);
+ 	if (!buflen)
+ 		buflen = -ENODATA;
+ 	if (buflen <= 0)
+@@ -531,14 +532,15 @@ _get_posix_acl(struct dentry *dentry, ch
+ }
+ 
+ int
+-nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry, struct nfs4_acl **acl)
++nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
++		   struct vfsmount *mnt, struct nfs4_acl **acl)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	int error = 0;
+ 	struct posix_acl *pacl = NULL, *dpacl = NULL;
+ 	unsigned int flags = 0;
+ 
+-	pacl = _get_posix_acl(dentry, POSIX_ACL_XATTR_ACCESS);
++	pacl = _get_posix_acl(dentry, mnt, POSIX_ACL_XATTR_ACCESS);
+ 	if (IS_ERR(pacl) && PTR_ERR(pacl) == -ENODATA)
+ 		pacl = posix_acl_from_mode(inode->i_mode, GFP_KERNEL);
+ 	if (IS_ERR(pacl)) {
+@@ -548,7 +550,7 @@ nfsd4_get_nfs4_acl(struct svc_rqst *rqst
+ 	}
+ 
+ 	if (S_ISDIR(inode->i_mode)) {
+-		dpacl = _get_posix_acl(dentry, POSIX_ACL_XATTR_DEFAULT);
++		dpacl = _get_posix_acl(dentry, mnt, POSIX_ACL_XATTR_DEFAULT);
+ 		if (IS_ERR(dpacl) && PTR_ERR(dpacl) == -ENODATA)
+ 			dpacl = NULL;
+ 		else if (IS_ERR(dpacl)) {
+@@ -2080,7 +2082,8 @@ nfsd_get_posix_acl(struct svc_fh *fhp, i
+ 		return ERR_PTR(-EOPNOTSUPP);
+ 	}
+ 
+-	size = nfsd_getxattr(fhp->fh_dentry, name, &value);
++	size = nfsd_getxattr(fhp->fh_dentry, fhp->fh_export->ex_path.mnt, name,
++			     &value);
+ 	if (size < 0)
+ 		return ERR_PTR(size);
+ 
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -131,7 +131,8 @@ out_noalloc:
+ EXPORT_SYMBOL_GPL(xattr_getsecurity);
+ 
+ ssize_t
+-vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
++vfs_getxattr(struct dentry *dentry, struct vfsmount *mnt, const char *name,
++	     void *value, size_t size)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	int error;
+@@ -314,8 +315,8 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, cons
+  * Extended attribute GET operations
+  */
+ static ssize_t
+-getxattr(struct dentry *d, const char __user *name, void __user *value,
+-	 size_t size)
++getxattr(struct dentry *dentry, struct vfsmount *mnt, const char __user *name,
++	 void __user *value, size_t size)
+ {
+ 	ssize_t error;
+ 	void *kvalue = NULL;
+@@ -335,7 +336,7 @@ getxattr(struct dentry *d, const char __
+ 			return -ENOMEM;
+ 	}
+ 
+-	error = vfs_getxattr(d, kname, kvalue, size);
++	error = vfs_getxattr(dentry, mnt, kname, kvalue, size);
+ 	if (error > 0) {
+ 		if (size && copy_to_user(value, kvalue, error))
+ 			error = -EFAULT;
+@@ -357,7 +358,7 @@ SYSCALL_DEFINE4(getxattr, const char __u
+ 	error = user_path(pathname, &path);
+ 	if (error)
+ 		return error;
+-	error = getxattr(path.dentry, name, value, size);
++	error = getxattr(path.dentry, path.mnt, name, value, size);
+ 	path_put(&path);
+ 	return error;
+ }
+@@ -371,7 +372,7 @@ SYSCALL_DEFINE4(lgetxattr, const char __
+ 	error = user_lpath(pathname, &path);
+ 	if (error)
+ 		return error;
+-	error = getxattr(path.dentry, name, value, size);
++	error = getxattr(path.dentry, path.mnt, name, value, size);
+ 	path_put(&path);
+ 	return error;
+ }
+@@ -386,7 +387,7 @@ SYSCALL_DEFINE4(fgetxattr, int, fd, cons
+ 	if (!f)
+ 		return error;
+ 	audit_inode(NULL, f->f_path.dentry);
+-	error = getxattr(f->f_path.dentry, name, value, size);
++	error = getxattr(f->f_path.dentry, f->f_path.mnt, name, value, size);
+ 	fput(f);
+ 	return error;
+ }
+--- a/include/linux/nfsd/nfsd.h
++++ b/include/linux/nfsd/nfsd.h
+@@ -85,7 +85,8 @@ __be32		nfsd_setattr(struct svc_rqst *, 
+ #ifdef CONFIG_NFSD_V4
+ __be32          nfsd4_set_nfs4_acl(struct svc_rqst *, struct svc_fh *,
+                     struct nfs4_acl *);
+-int             nfsd4_get_nfs4_acl(struct svc_rqst *, struct dentry *, struct nfs4_acl **);
++int             nfsd4_get_nfs4_acl(struct svc_rqst *, struct dentry *,
++				struct vfsmount *mnt, struct nfs4_acl **);
+ #endif /* CONFIG_NFSD_V4 */
+ __be32		nfsd_create(struct svc_rqst *, struct svc_fh *,
+ 				char *name, int len, struct iattr *attrs,
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -48,7 +48,7 @@ struct xattr_handler {
+ };
+ 
+ ssize_t xattr_getsecurity(struct inode *, const char *, void *, size_t);
+-ssize_t vfs_getxattr(struct dentry *, const char *, void *, size_t);
++ssize_t vfs_getxattr(struct dentry *, struct vfsmount *, const char *, void *, size_t);
+ ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
+ int vfs_setxattr(struct dentry *, struct vfsmount *, const char *, const void *, size_t, int);
+ int vfs_removexattr(struct dentry *, const char *);

@@ -1,0 +1,61 @@
+From: Gerald Schaefer <geraldsc@de.ibm.com>
+Subject: cio: fix subchannel multipath mode setup
+References: bnc#466462,LTC#51047
+
+Symptom:     Undefined behavior when trying to access DASD devices with more
+             than one CHPID: e.g. I/O errors due to timeouts after missing
+             interrupts, slow access to DASDs because single path mode is used.
+Problem:     Setup of subchannel multipath mode is not performed correctly
+             because changes to a local buffer are lost before they are sent
+             to the channel subsystem. In this state, the control unit assumes
+             multipath mode while the channel subsystem expects single path
+             mode. As a result, interrupts may not be correctly recognized
+             which leads to timeout situations and eventually I/O errors.
+             Also single path processing may slow down DASD access.
+Solution:    Apply changes to the subchannel configuration after modifying
+             the local buffer.
+
+Acked-by: John Jolly <jjolly@suse.de>
+
+---
+ drivers/s390/cio/device.c     |    6 ++++++
+ drivers/s390/cio/device_fsm.c |    2 ++
+ 2 files changed, 8 insertions(+)
+
+Index: linux-sles11/drivers/s390/cio/device.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/device.c
++++ linux-sles11/drivers/s390/cio/device.c
+@@ -1246,6 +1246,9 @@ static int io_subchannel_probe(struct su
+ 		return 0;
+ 	}
+ 	io_subchannel_init_fields(sch);
++	rc = cio_modify(sch);
++	if (rc)
++		goto out_schedule;
+ 	/*
+ 	 * First check if a fitting device may be found amongst the
+ 	 * disconnected devices or in the orphanage.
+@@ -1676,6 +1679,9 @@ static int ccw_device_console_enable(str
+ 	sch->private = cio_get_console_priv();
+ 	memset(sch->private, 0, sizeof(struct io_subchannel_private));
+ 	io_subchannel_init_fields(sch);
++	rc = cio_modify(sch);
++	if (rc)
++		return rc;
+ 	sch->driver = &io_subchannel_driver;
+ 	/* Initialize the ccw_device structure. */
+ 	cdev->dev.parent= &sch->dev;
+Index: linux-sles11/drivers/s390/cio/device_fsm.c
+===================================================================
+--- linux-sles11.orig/drivers/s390/cio/device_fsm.c
++++ linux-sles11/drivers/s390/cio/device_fsm.c
+@@ -1028,6 +1028,8 @@ void ccw_device_trigger_reprobe(struct c
+ 	sch->schib.pmcw.ena = 0;
+ 	if ((sch->lpm & (sch->lpm - 1)) != 0)
+ 		sch->schib.pmcw.mp = 1;
++	if (cio_modify(sch))
++		return;
+ 	/* We should also udate ssd info, but this has to wait. */
+ 	/* Check if this is another device which appeared on the same sch. */
+ 	if (sch->schib.pmcw.dev != cdev->private->dev_id.devno) {

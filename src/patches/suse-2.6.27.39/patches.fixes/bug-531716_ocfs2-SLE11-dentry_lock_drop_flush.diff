@@ -1,0 +1,198 @@
+From: Jan Kara <jack@suse.cz>
+Subject: ocfs2: Fix deadlock on umount
+References: bnc#531716
+Patch-mainline: 2.6.32
+    
+In patch patches.fixes/ocfs2-push-out-dropping-of-dentry-lock-to-ocfs2_wq.patch
+we moved the dentry lock put process into ocfs2_wq. This causes problems during
+umount because ocfs2_wq can drop references to inodes while they are being
+invalidated by invalidate_inodes() causing all sorts of nasty things
+(invalidate_inodes() ending in an infinite loop, "Busy inodes after umount"
+messages etc.).
+
+We fix the problem by stopping ocfs2_wq from doing any further releasing of
+inode references on the superblock being unmounted, wait until it finishes
+the current round of releasing and finally cleaning up all the references in
+dentry_lock_list from ocfs2_put_super().
+
+The issue was tracked down by Tao Ma <tao.ma@oracle.com>.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Joel Becker <joel.becker@oracle.com>
+
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.27-SLE11_BRANCH/fs/ocfs2/dcache.c linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/dcache.c
+--- linux-2.6.27-SLE11_BRANCH/fs/ocfs2/dcache.c	2009-08-18 15:39:32.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/dcache.c	2009-08-18 15:44:51.000000000 +0200
+@@ -295,22 +295,19 @@ out_attach:
+ 	return ret;
+ }
+ 
+-static DEFINE_SPINLOCK(dentry_list_lock);
++DEFINE_SPINLOCK(dentry_list_lock);
+ 
+ /* We limit the number of dentry locks to drop in one go. We have
+  * this limit so that we don't starve other users of ocfs2_wq. */
+ #define DL_INODE_DROP_COUNT 64
+ 
+ /* Drop inode references from dentry locks */
+-void ocfs2_drop_dl_inodes(struct work_struct *work)
++static void __ocfs2_drop_dl_inodes(struct ocfs2_super *osb, int drop_count)
+ {
+-	struct ocfs2_super *osb = container_of(work, struct ocfs2_super,
+-					       dentry_lock_work);
+ 	struct ocfs2_dentry_lock *dl;
+-	int drop_count = DL_INODE_DROP_COUNT;
+ 
+ 	spin_lock(&dentry_list_lock);
+-	while (osb->dentry_lock_list && drop_count--) {
++	while (osb->dentry_lock_list && (drop_count < 0 || drop_count--)) {
+ 		dl = osb->dentry_lock_list;
+ 		osb->dentry_lock_list = dl->dl_next;
+ 		spin_unlock(&dentry_list_lock);
+@@ -318,11 +315,32 @@ void ocfs2_drop_dl_inodes(struct work_st
+ 		kfree(dl);
+ 		spin_lock(&dentry_list_lock);
+ 	}
+-	if (osb->dentry_lock_list)
++	spin_unlock(&dentry_list_lock);
++}
++
++void ocfs2_drop_dl_inodes(struct work_struct *work)
++{
++	struct ocfs2_super *osb = container_of(work, struct ocfs2_super,
++					       dentry_lock_work);
++
++	__ocfs2_drop_dl_inodes(osb, DL_INODE_DROP_COUNT);
++	/*
++	 * Don't queue dropping if umount is in progress. We flush the
++	 * list in ocfs2_dismount_volume
++	 */
++	spin_lock(&dentry_list_lock);
++	if (osb->dentry_lock_list &&
++	    !ocfs2_test_osb_flag(osb, OCFS2_OSB_DROP_DENTRY_LOCK_IMMED))
+ 		queue_work(ocfs2_wq, &osb->dentry_lock_work);
+ 	spin_unlock(&dentry_list_lock);
+ }
+ 
++/* Flush the whole work queue */
++void ocfs2_drop_all_dl_inodes(struct ocfs2_super *osb)
++{
++	__ocfs2_drop_dl_inodes(osb, -1);
++}
++
+ /*
+  * ocfs2_dentry_iput() and friends.
+  *
+@@ -353,7 +371,8 @@ static void ocfs2_drop_dentry_lock(struc
+ 	/* We leave dropping of inode reference to ocfs2_wq as that can
+ 	 * possibly lead to inode deletion which gets tricky */
+ 	spin_lock(&dentry_list_lock);
+-	if (!osb->dentry_lock_list)
++	if (!osb->dentry_lock_list &&
++	    !ocfs2_test_osb_flag(osb, OCFS2_OSB_DROP_DENTRY_LOCK_IMMED))
+ 		queue_work(ocfs2_wq, &osb->dentry_lock_work);
+ 	dl->dl_next = osb->dentry_lock_list;
+ 	osb->dentry_lock_list = dl;
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.27-SLE11_BRANCH/fs/ocfs2/dcache.h linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/dcache.h
+--- linux-2.6.27-SLE11_BRANCH/fs/ocfs2/dcache.h	2009-08-18 15:39:32.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/dcache.h	2009-08-18 15:44:51.000000000 +0200
+@@ -49,10 +49,13 @@ struct ocfs2_dentry_lock {
+ int ocfs2_dentry_attach_lock(struct dentry *dentry, struct inode *inode,
+ 			     u64 parent_blkno);
+ 
++extern spinlock_t dentry_list_lock;
++
+ void ocfs2_dentry_lock_put(struct ocfs2_super *osb,
+ 			   struct ocfs2_dentry_lock *dl);
+ 
+ void ocfs2_drop_dl_inodes(struct work_struct *work);
++void ocfs2_drop_all_dl_inodes(struct ocfs2_super *osb);
+ 
+ struct dentry *ocfs2_find_local_alias(struct inode *inode, u64 parent_blkno,
+ 				      int skip_unhashed);
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.27-SLE11_BRANCH/fs/ocfs2/ocfs2.h linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/ocfs2.h
+--- linux-2.6.27-SLE11_BRANCH/fs/ocfs2/ocfs2.h	2009-08-18 15:39:32.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/ocfs2.h	2009-08-18 15:44:51.000000000 +0200
+@@ -201,10 +201,12 @@ enum ocfs2_mount_options
+ 	OCFS2_MOUNT_GRPQUOTA = 1 << 10, /* We support group quotas */
+ };
+ 
+-#define OCFS2_OSB_SOFT_RO	0x0001
+-#define OCFS2_OSB_HARD_RO	0x0002
+-#define OCFS2_OSB_ERROR_FS	0x0004
+-#define OCFS2_DEFAULT_ATIME_QUANTUM	60
++#define OCFS2_OSB_SOFT_RO			0x0001
++#define OCFS2_OSB_HARD_RO			0x0002
++#define OCFS2_OSB_ERROR_FS			0x0004
++#define OCFS2_OSB_DROP_DENTRY_LOCK_IMMED	0x0008
++
++#define OCFS2_DEFAULT_ATIME_QUANTUM		60
+ 
+ struct ocfs2_journal;
+ struct ocfs2_slot_info;
+@@ -400,6 +402,18 @@ static inline void ocfs2_set_osb_flag(st
+ 	spin_unlock(&osb->osb_lock);
+ }
+ 
++
++static inline unsigned long  ocfs2_test_osb_flag(struct ocfs2_super *osb,
++						 unsigned long flag)
++{
++	unsigned long ret;
++
++	spin_lock(&osb->osb_lock);
++	ret = osb->osb_flags & flag;
++	spin_unlock(&osb->osb_lock);
++	return ret;
++}
++
+ static inline void ocfs2_set_ro_flag(struct ocfs2_super *osb,
+ 				     int hard)
+ {
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.27-SLE11_BRANCH/fs/ocfs2/super.c linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/super.c
+--- linux-2.6.27-SLE11_BRANCH/fs/ocfs2/super.c	2009-08-18 15:39:33.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH-1-dentry_lock_drop//fs/ocfs2/super.c	2009-08-18 15:46:56.000000000 +0200
+@@ -1014,14 +1014,27 @@ static int ocfs2_get_sb(struct file_syst
+ 			   mnt);
+ }
+ 
++static void ocfs2_kill_sb(struct super_block *sb)
++{
++	struct ocfs2_super *osb = OCFS2_SB(sb);
++
++	/* Prevent further queueing of inode drop events */
++	spin_lock(&dentry_list_lock);
++	ocfs2_set_osb_flag(osb, OCFS2_OSB_DROP_DENTRY_LOCK_IMMED);
++	spin_unlock(&dentry_list_lock);
++	/* Wait for work to finish and/or remove it */
++	cancel_work_sync(&osb->dentry_lock_work);
++
++	kill_block_super(sb);
++}
++
+ static struct file_system_type ocfs2_fs_type = {
+ 	.owner          = THIS_MODULE,
+ 	.name           = "ocfs2",
+ 	.get_sb         = ocfs2_get_sb, /* is this called when we mount
+ 					* the fs? */
+-	.kill_sb        = kill_block_super, /* set to the generic one
+-					     * right now, but do we
+-					     * need to change that? */
++	.kill_sb        = ocfs2_kill_sb,
++
+ 	.fs_flags       = FS_REQUIRES_DEV|FS_RENAME_DOES_D_MOVE,
+ 	.next           = NULL
+ };
+@@ -1621,6 +1634,12 @@ static void ocfs2_dismount_volume(struct
+ 	osb = OCFS2_SB(sb);
+ 	BUG_ON(!osb);
+ 
++	/*
++	 * Flush inode dropping work queue so that deletes are
++	 * performed while the filesystem is still working
++	 */
++	ocfs2_drop_all_dl_inodes(osb);
++
+ 	ocfs2_disable_quotas(osb);
+ 
+ 	ocfs2_shutdown_local_alloc(osb);

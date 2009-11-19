@@ -1,0 +1,970 @@
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: reiserfs: rework reiserfs_panic
+
+ ReiserFS panics can be somewhat inconsistent.
+ In some cases:
+ * a unique identifier may be associated with it
+ * the function name may be included
+ * the device may be printed separately
+
+ This patch aims to make warnings more consistent. reiserfs_warning() prints
+ the device name, so printing it a second time is not required. The function
+ name for a warning is always helpful in debugging, so it is now automatically
+ inserted into the output. Hans has stated that every warning should have
+ a unique identifier. Some cases lack them, others really shouldn't have them.
+ reiserfs_warning() now expects an id associated with each message. In the
+ rare case where one isn't needed, "" will suffice.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+
+---
+ fs/reiserfs/do_balan.c        |   67 +++++++++++++++++++++--------------------
+ fs/reiserfs/fix_node.c        |   68 +++++++++++++++++++++---------------------
+ fs/reiserfs/ibalance.c        |   12 +++----
+ fs/reiserfs/inode.c           |    3 -
+ fs/reiserfs/item_ops.c        |    8 +++-
+ fs/reiserfs/journal.c         |   57 +++++++++++++++++------------------
+ fs/reiserfs/lbalance.c        |   27 +++++++++-------
+ fs/reiserfs/namei.c           |   18 ++++-------
+ fs/reiserfs/objectid.c        |    3 -
+ fs/reiserfs/prints.c          |   33 +++++++++-----------
+ fs/reiserfs/stree.c           |   49 ++++++++++++++----------------
+ fs/reiserfs/tail_conversion.c |   10 ++----
+ include/linux/reiserfs_fs.h   |   28 +++++++++++++----
+ 13 files changed, 200 insertions(+), 183 deletions(-)
+
+--- a/fs/reiserfs/do_balan.c
++++ b/fs/reiserfs/do_balan.c
+@@ -153,8 +153,8 @@ static int balance_leaf_when_delete(stru
+ 
+ 	default:
+ 		print_cur_tb("12040");
+-		reiserfs_panic(tb->tb_sb,
+-			       "PAP-12040: balance_leaf_when_delete: unexpectable mode: %s(%d)",
++		reiserfs_panic(tb->tb_sb, "PAP-12040",
++			       "unexpected mode: %s(%d)",
+ 			       (flag ==
+ 				M_PASTE) ? "PASTE" : ((flag ==
+ 						       M_INSERT) ? "INSERT" :
+@@ -721,8 +721,9 @@ static int balance_leaf(struct tree_bala
+ 				}
+ 				break;
+ 			default:	/* cases d and t */
+-				reiserfs_panic(tb->tb_sb,
+-					       "PAP-12130: balance_leaf: lnum > 0: unexpectable mode: %s(%d)",
++				reiserfs_panic(tb->tb_sb, "PAP-12130",
++					       "lnum > 0: unexpected mode: "
++					       " %s(%d)",
+ 					       (flag ==
+ 						M_DELETE) ? "DELETE" : ((flag ==
+ 									 M_CUT)
+@@ -1134,8 +1135,8 @@ static int balance_leaf(struct tree_bala
+ 			}
+ 			break;
+ 		default:	/* cases d and t */
+-			reiserfs_panic(tb->tb_sb,
+-				       "PAP-12175: balance_leaf: rnum > 0: unexpectable mode: %s(%d)",
++			reiserfs_panic(tb->tb_sb, "PAP-12175",
++				       "rnum > 0: unexpected mode: %s(%d)",
+ 				       (flag ==
+ 					M_DELETE) ? "DELETE" : ((flag ==
+ 								 M_CUT) ? "CUT"
+@@ -1165,8 +1166,8 @@ static int balance_leaf(struct tree_bala
+ 		   not set correctly */
+ 		if (tb->CFL[0]) {
+ 			if (!tb->CFR[0])
+-				reiserfs_panic(tb->tb_sb,
+-					       "vs-12195: balance_leaf: CFR not initialized");
++				reiserfs_panic(tb->tb_sb, "vs-12195",
++					       "CFR not initialized");
+ 			copy_key(B_N_PDELIM_KEY(tb->CFL[0], tb->lkey[0]),
+ 				 B_N_PDELIM_KEY(tb->CFR[0], tb->rkey[0]));
+ 			do_balance_mark_internal_dirty(tb, tb->CFL[0], 0);
+@@ -1472,7 +1473,10 @@ static int balance_leaf(struct tree_bala
+ 					    && (pos_in_item != ih_item_len(ih_check)
+ 						|| tb->insert_size[0] <= 0))
+ 						reiserfs_panic(tb->tb_sb,
+-							       "PAP-12235: balance_leaf: pos_in_item must be equal to ih_item_len");
++							     "PAP-12235",
++							     "pos_in_item "
++							     "must be equal "
++							     "to ih_item_len");
+ #endif				/* CONFIG_REISERFS_CHECK */
+ 
+ 					leaf_mi =
+@@ -1532,8 +1536,8 @@ static int balance_leaf(struct tree_bala
+ 			}
+ 			break;
+ 		default:	/* cases d and t */
+-			reiserfs_panic(tb->tb_sb,
+-				       "PAP-12245: balance_leaf: blknum > 2: unexpectable mode: %s(%d)",
++			reiserfs_panic(tb->tb_sb, "PAP-12245",
++				       "blknum > 2: unexpected mode: %s(%d)",
+ 				       (flag ==
+ 					M_DELETE) ? "DELETE" : ((flag ==
+ 								 M_CUT) ? "CUT"
+@@ -1678,10 +1682,11 @@ static int balance_leaf(struct tree_bala
+ 							print_cur_tb("12285");
+ 							reiserfs_panic(tb->
+ 								       tb_sb,
+-								       "PAP-12285: balance_leaf: insert_size must be 0 (%d)",
+-								       tb->
+-								       insert_size
+-								       [0]);
++							    "PAP-12285",
++							    "insert_size "
++							    "must be 0 "
++							    "(%d)",
++							    tb->insert_size[0]);
+ 						}
+ 					}
+ #endif				/* CONFIG_REISERFS_CHECK */
+@@ -1694,11 +1699,10 @@ static int balance_leaf(struct tree_bala
+ 	if (flag == M_PASTE && tb->insert_size[0]) {
+ 		print_cur_tb("12290");
+ 		reiserfs_panic(tb->tb_sb,
+-			       "PAP-12290: balance_leaf: insert_size is still not 0 (%d)",
++			       "PAP-12290", "insert_size is still not 0 (%d)",
+ 			       tb->insert_size[0]);
+ 	}
+ #endif				/* CONFIG_REISERFS_CHECK */
+-
+ 	return 0;
+ }				/* Leaf level of the tree is balanced (end of balance_leaf) */
+ 
+@@ -1729,8 +1733,7 @@ struct buffer_head *get_FEB(struct tree_
+ 			break;
+ 
+ 	if (i == MAX_FEB_SIZE)
+-		reiserfs_panic(tb->tb_sb,
+-			       "vs-12300: get_FEB: FEB list is empty");
++		reiserfs_panic(tb->tb_sb, "vs-12300", "FEB list is empty");
+ 
+ 	bi.tb = tb;
+ 	bi.bi_bh = first_b = tb->FEB[i];
+@@ -1871,8 +1874,8 @@ static void check_internal_node(struct s
+ 	for (i = 0; i <= B_NR_ITEMS(bh); i++, dc++) {
+ 		if (!is_reusable(s, dc_block_number(dc), 1)) {
+ 			print_cur_tb(mes);
+-			reiserfs_panic(s,
+-				       "PAP-12338: check_internal_node: invalid child pointer %y in %b",
++			reiserfs_panic(s, "PAP-12338",
++				       "invalid child pointer %y in %b",
+ 				       dc, bh);
+ 		}
+ 	}
+@@ -1894,9 +1897,10 @@ static int check_before_balancing(struct
+ 	int retval = 0;
+ 
+ 	if (cur_tb) {
+-		reiserfs_panic(tb->tb_sb, "vs-12335: check_before_balancing: "
+-			       "suspect that schedule occurred based on cur_tb not being null at this point in code. "
+-			       "do_balance cannot properly handle schedule occurring while it runs.");
++		reiserfs_panic(tb->tb_sb, "vs-12335", "suspect that schedule "
++			       "occurred based on cur_tb not being null at "
++			       "this point in code. do_balance cannot properly "
++			       "handle schedule occurring while it runs.");
+ 	}
+ 
+ 	/* double check that buffers that we will modify are unlocked. (fix_nodes should already have
+@@ -1928,8 +1932,8 @@ static void check_after_balance_leaf(str
+ 		    dc_size(B_N_CHILD
+ 			    (tb->FL[0], get_left_neighbor_position(tb, 0)))) {
+ 			print_cur_tb("12221");
+-			reiserfs_panic(tb->tb_sb,
+-				       "PAP-12355: check_after_balance_leaf: shift to left was incorrect");
++			reiserfs_panic(tb->tb_sb, "PAP-12355",
++				       "shift to left was incorrect");
+ 		}
+ 	}
+ 	if (tb->rnum[0]) {
+@@ -1938,8 +1942,8 @@ static void check_after_balance_leaf(str
+ 		    dc_size(B_N_CHILD
+ 			    (tb->FR[0], get_right_neighbor_position(tb, 0)))) {
+ 			print_cur_tb("12222");
+-			reiserfs_panic(tb->tb_sb,
+-				       "PAP-12360: check_after_balance_leaf: shift to right was incorrect");
++			reiserfs_panic(tb->tb_sb, "PAP-12360",
++				       "shift to right was incorrect");
+ 		}
+ 	}
+ 	if (PATH_H_PBUFFER(tb->tb_path, 1) &&
+@@ -1964,8 +1968,7 @@ static void check_after_balance_leaf(str
+ 					 (PATH_H_PBUFFER(tb->tb_path, 1),
+ 					  PATH_H_POSITION(tb->tb_path, 1))),
+ 				 right);
+-		reiserfs_panic(tb->tb_sb,
+-			       "PAP-12365: check_after_balance_leaf: S is incorrect");
++		reiserfs_panic(tb->tb_sb, "PAP-12365", "S is incorrect");
+ 	}
+ }
+ 
+@@ -2100,8 +2103,8 @@ void do_balance(struct tree_balance *tb,
+ 	tb->need_balance_dirty = 0;
+ 
+ 	if (FILESYSTEM_CHANGED_TB(tb)) {
+-		reiserfs_panic(tb->tb_sb,
+-			       "clm-6000: do_balance, fs generation has changed\n");
++		reiserfs_panic(tb->tb_sb, "clm-6000", "fs generation has "
++			       "changed");
+ 	}
+ 	/* if we have no real work to do  */
+ 	if (!tb->insert_size[0]) {
+--- a/fs/reiserfs/fix_node.c
++++ b/fs/reiserfs/fix_node.c
+@@ -135,8 +135,7 @@ static void create_virtual_node(struct t
+ 		vn->vn_free_ptr +=
+ 		    op_create_vi(vn, vi, is_affected, tb->insert_size[0]);
+ 		if (tb->vn_buf + tb->vn_buf_size < vn->vn_free_ptr)
+-			reiserfs_panic(tb->tb_sb,
+-				       "vs-8030: create_virtual_node: "
++			reiserfs_panic(tb->tb_sb, "vs-8030",
+ 				       "virtual node space consumed");
+ 
+ 		if (!is_affected)
+@@ -186,8 +185,9 @@ static void create_virtual_node(struct t
+ 			     && I_ENTRY_COUNT(B_N_PITEM_HEAD(Sh, 0)) == 1)) {
+ 				/* node contains more than 1 item, or item is not directory item, or this item contains more than 1 entry */
+ 				print_block(Sh, 0, -1, -1);
+-				reiserfs_panic(tb->tb_sb,
+-					       "vs-8045: create_virtual_node: rdkey %k, affected item==%d (mode==%c) Must be %c",
++				reiserfs_panic(tb->tb_sb, "vs-8045",
++					       "rdkey %k, affected item==%d "
++					       "(mode==%c) Must be %c",
+ 					       key, vn->vn_affected_item_num,
+ 					       vn->vn_mode, M_DELETE);
+ 			}
+@@ -1255,8 +1255,8 @@ static int ip_check_balance(struct tree_
+ 	/* Calculate balance parameters for creating new root. */
+ 	if (!Sh) {
+ 		if (!h)
+-			reiserfs_panic(tb->tb_sb,
+-				       "vs-8210: ip_check_balance: S[0] can not be 0");
++			reiserfs_panic(tb->tb_sb, "vs-8210",
++				       "S[0] can not be 0");
+ 		switch (n_ret_value = get_empty_nodes(tb, h)) {
+ 		case CARRY_ON:
+ 			set_parameters(tb, h, 0, 0, 1, NULL, -1, -1);
+@@ -1266,8 +1266,8 @@ static int ip_check_balance(struct tree_
+ 		case REPEAT_SEARCH:
+ 			return n_ret_value;
+ 		default:
+-			reiserfs_panic(tb->tb_sb,
+-				       "vs-8215: ip_check_balance: incorrect return value of get_empty_nodes");
++			reiserfs_panic(tb->tb_sb, "vs-8215", "incorrect "
++				       "return value of get_empty_nodes");
+ 		}
+ 	}
+ 
+@@ -2095,38 +2095,38 @@ static void tb_buffer_sanity_check(struc
+ 	if (p_s_bh) {
+ 		if (atomic_read(&(p_s_bh->b_count)) <= 0) {
+ 
+-			reiserfs_panic(p_s_sb,
+-				       "jmacd-1: tb_buffer_sanity_check(): negative or zero reference counter for buffer %s[%d] (%b)\n",
+-				       descr, level, p_s_bh);
++			reiserfs_panic(p_s_sb, "jmacd-1", "negative or zero "
++				       "reference counter for buffer %s[%d] "
++				       "(%b)", descr, level, p_s_bh);
+ 		}
+ 
+ 		if (!buffer_uptodate(p_s_bh)) {
+-			reiserfs_panic(p_s_sb,
+-				       "jmacd-2: tb_buffer_sanity_check(): buffer is not up to date %s[%d] (%b)\n",
++			reiserfs_panic(p_s_sb, "jmacd-2", "buffer is not up "
++				       "to date %s[%d] (%b)",
+ 				       descr, level, p_s_bh);
+ 		}
+ 
+ 		if (!B_IS_IN_TREE(p_s_bh)) {
+-			reiserfs_panic(p_s_sb,
+-				       "jmacd-3: tb_buffer_sanity_check(): buffer is not in tree %s[%d] (%b)\n",
++			reiserfs_panic(p_s_sb, "jmacd-3", "buffer is not "
++				       "in tree %s[%d] (%b)",
+ 				       descr, level, p_s_bh);
+ 		}
+ 
+ 		if (p_s_bh->b_bdev != p_s_sb->s_bdev) {
+-			reiserfs_panic(p_s_sb,
+-				       "jmacd-4: tb_buffer_sanity_check(): buffer has wrong device %s[%d] (%b)\n",
++			reiserfs_panic(p_s_sb, "jmacd-4", "buffer has wrong "
++				       "device %s[%d] (%b)",
+ 				       descr, level, p_s_bh);
+ 		}
+ 
+ 		if (p_s_bh->b_size != p_s_sb->s_blocksize) {
+-			reiserfs_panic(p_s_sb,
+-				       "jmacd-5: tb_buffer_sanity_check(): buffer has wrong blocksize %s[%d] (%b)\n",
++			reiserfs_panic(p_s_sb, "jmacd-5", "buffer has wrong "
++				       "blocksize %s[%d] (%b)",
+ 				       descr, level, p_s_bh);
+ 		}
+ 
+ 		if (p_s_bh->b_blocknr > SB_BLOCK_COUNT(p_s_sb)) {
+-			reiserfs_panic(p_s_sb,
+-				       "jmacd-6: tb_buffer_sanity_check(): buffer block number too high %s[%d] (%b)\n",
++			reiserfs_panic(p_s_sb, "jmacd-6", "buffer block "
++				       "number too high %s[%d] (%b)",
+ 				       descr, level, p_s_bh);
+ 		}
+ 	}
+@@ -2358,14 +2358,14 @@ int fix_nodes(int n_op_mode, struct tree
+ #ifdef CONFIG_REISERFS_CHECK
+ 	if (cur_tb) {
+ 		print_cur_tb("fix_nodes");
+-		reiserfs_panic(p_s_tb->tb_sb,
+-			       "PAP-8305: fix_nodes:  there is pending do_balance");
++		reiserfs_panic(p_s_tb->tb_sb, "PAP-8305",
++			       "there is pending do_balance");
+ 	}
+ 
+ 	if (!buffer_uptodate(p_s_tbS0) || !B_IS_IN_TREE(p_s_tbS0)) {
+-		reiserfs_panic(p_s_tb->tb_sb,
+-			       "PAP-8320: fix_nodes: S[0] (%b %z) is not uptodate "
+-			       "at the beginning of fix_nodes or not in tree (mode %c)",
++		reiserfs_panic(p_s_tb->tb_sb, "PAP-8320", "S[0] (%b %z) is "
++			       "not uptodate at the beginning of fix_nodes "
++			       "or not in tree (mode %c)",
+ 			       p_s_tbS0, p_s_tbS0, n_op_mode);
+ 	}
+ 
+@@ -2373,24 +2373,26 @@ int fix_nodes(int n_op_mode, struct tree
+ 	switch (n_op_mode) {
+ 	case M_INSERT:
+ 		if (n_item_num <= 0 || n_item_num > B_NR_ITEMS(p_s_tbS0))
+-			reiserfs_panic(p_s_tb->tb_sb,
+-				       "PAP-8330: fix_nodes: Incorrect item number %d (in S0 - %d) in case of insert",
+-				       n_item_num, B_NR_ITEMS(p_s_tbS0));
++			reiserfs_panic(p_s_tb->tb_sb, "PAP-8330", "Incorrect "
++				       "item number %d (in S0 - %d) in case "
++				       "of insert", n_item_num,
++				       B_NR_ITEMS(p_s_tbS0));
+ 		break;
+ 	case M_PASTE:
+ 	case M_DELETE:
+ 	case M_CUT:
+ 		if (n_item_num < 0 || n_item_num >= B_NR_ITEMS(p_s_tbS0)) {
+ 			print_block(p_s_tbS0, 0, -1, -1);
+-			reiserfs_panic(p_s_tb->tb_sb,
+-				       "PAP-8335: fix_nodes: Incorrect item number(%d); mode = %c insert_size = %d\n",
++			reiserfs_panic(p_s_tb->tb_sb, "PAP-8335", "Incorrect "
++				       "item number(%d); mode = %c "
++				       "insert_size = %d",
+ 				       n_item_num, n_op_mode,
+ 				       p_s_tb->insert_size[0]);
+ 		}
+ 		break;
+ 	default:
+-		reiserfs_panic(p_s_tb->tb_sb,
+-			       "PAP-8340: fix_nodes: Incorrect mode of operation");
++		reiserfs_panic(p_s_tb->tb_sb, "PAP-8340", "Incorrect mode "
++			       "of operation");
+ 	}
+ #endif
+ 
+--- a/fs/reiserfs/ibalance.c
++++ b/fs/reiserfs/ibalance.c
+@@ -105,8 +105,8 @@ static void internal_define_dest_src_inf
+ 		break;
+ 
+ 	default:
+-		reiserfs_panic(tb->tb_sb,
+-			       "internal_define_dest_src_infos: shift type is unknown (%d)",
++		reiserfs_panic(tb->tb_sb, "ibalance-1",
++			       "shift type is unknown (%d)",
+ 			       shift_mode);
+ 	}
+ }
+@@ -702,8 +702,8 @@ static void balance_internal_when_delete
+ 
+ 		return;
+ 	}
+-	reiserfs_panic(tb->tb_sb,
+-		       "balance_internal_when_delete: unexpected tb->lnum[%d]==%d or tb->rnum[%d]==%d",
++	reiserfs_panic(tb->tb_sb, "ibalance-2",
++		       "unexpected tb->lnum[%d]==%d or tb->rnum[%d]==%d",
+ 		       h, tb->lnum[h], h, tb->rnum[h]);
+ }
+ 
+@@ -940,8 +940,8 @@ int balance_internal(struct tree_balance
+ 		struct block_head *blkh;
+ 
+ 		if (tb->blknum[h] != 1)
+-			reiserfs_panic(NULL,
+-				       "balance_internal: One new node required for creating the new root");
++			reiserfs_panic(NULL, "ibalance-3", "One new node "
++				       "required for creating the new root");
+ 		/* S[h] = empty buffer from the list FEB. */
+ 		tbSh = get_FEB(tb);
+ 		blkh = B_BLK_HEAD(tbSh);
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1300,8 +1300,7 @@ static void update_stat_data(struct tree
+ 	ih = PATH_PITEM_HEAD(path);
+ 
+ 	if (!is_statdata_le_ih(ih))
+-		reiserfs_panic(inode->i_sb,
+-			       "vs-13065: update_stat_data: key %k, found item %h",
++		reiserfs_panic(inode->i_sb, "vs-13065", "key %k, found item %h",
+ 			       INODE_PKEY(inode), ih);
+ 
+ 	if (stat_data_v1(ih)) {
+--- a/fs/reiserfs/item_ops.c
++++ b/fs/reiserfs/item_ops.c
+@@ -517,8 +517,9 @@ static int direntry_create_vi(struct vir
+ 		    ((is_affected
+ 		      && (vn->vn_mode == M_PASTE
+ 			  || vn->vn_mode == M_CUT)) ? insert_size : 0)) {
+-			reiserfs_panic(NULL,
+-				       "vs-8025: set_entry_sizes: (mode==%c, insert_size==%d), invalid length of directory item",
++			reiserfs_panic(NULL, "vs-8025", "(mode==%c, "
++				       "insert_size==%d), invalid length of "
++				       "directory item",
+ 				       vn->vn_mode, insert_size);
+ 		}
+ 	}
+@@ -549,7 +550,8 @@ static int direntry_check_left(struct vi
+ 	}
+ 
+ 	if (entries == dir_u->entry_count) {
+-		reiserfs_panic(NULL, "free space %d, entry_count %d\n", free,
++		reiserfs_panic(NULL, "item_ops-1",
++			       "free space %d, entry_count %d", free,
+ 			       dir_u->entry_count);
+ 	}
+ 
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -436,8 +436,8 @@ void reiserfs_check_lock_depth(struct su
+ {
+ #ifdef CONFIG_SMP
+ 	if (current->lock_depth < 0) {
+-		reiserfs_panic(sb, "%s called without kernel lock held",
+-			       caller);
++		reiserfs_panic(sb, "journal-1", "%s called without kernel "
++			       "lock held", caller);
+ 	}
+ #else
+ 	;
+@@ -574,7 +574,7 @@ static inline void put_journal_list(stru
+ 				    struct reiserfs_journal_list *jl)
+ {
+ 	if (jl->j_refcount < 1) {
+-		reiserfs_panic(s, "trans id %u, refcount at %d",
++		reiserfs_panic(s, "journal-2", "trans id %u, refcount at %d",
+ 			       jl->j_trans_id, jl->j_refcount);
+ 	}
+ 	if (--jl->j_refcount == 0)
+@@ -1416,8 +1416,7 @@ static int flush_journal_list(struct sup
+ 
+ 	count = 0;
+ 	if (j_len_saved > journal->j_trans_max) {
+-		reiserfs_panic(s,
+-			       "journal-715: flush_journal_list, length is %lu, trans id %lu\n",
++		reiserfs_panic(s, "journal-715", "length is %lu, trans id %lu",
+ 			       j_len_saved, jl->j_trans_id);
+ 		return 0;
+ 	}
+@@ -1449,8 +1448,8 @@ static int flush_journal_list(struct sup
+ 	 ** or wait on a more recent transaction, or just ignore it 
+ 	 */
+ 	if (atomic_read(&(journal->j_wcount)) != 0) {
+-		reiserfs_panic(s,
+-			       "journal-844: panic journal list is flushing, wcount is not 0\n");
++		reiserfs_panic(s, "journal-844", "journal list is flushing, "
++			       "wcount is not 0");
+ 	}
+ 	cn = jl->j_realblock;
+ 	while (cn) {
+@@ -1551,13 +1550,13 @@ static int flush_journal_list(struct sup
+ 		while (cn) {
+ 			if (test_bit(BLOCK_NEEDS_FLUSH, &cn->state)) {
+ 				if (!cn->bh) {
+-					reiserfs_panic(s,
+-						       "journal-1011: cn->bh is NULL\n");
++					reiserfs_panic(s, "journal-1011",
++						       "cn->bh is NULL");
+ 				}
+ 				wait_on_buffer(cn->bh);
+ 				if (!cn->bh) {
+-					reiserfs_panic(s,
+-						       "journal-1012: cn->bh is NULL\n");
++					reiserfs_panic(s, "journal-1012",
++						       "cn->bh is NULL");
+ 				}
+ 				if (unlikely(!buffer_uptodate(cn->bh))) {
+ #ifdef CONFIG_REISERFS_CHECK
+@@ -3252,8 +3251,8 @@ int journal_mark_dirty(struct reiserfs_t
+ 
+ 	PROC_INFO_INC(p_s_sb, journal.mark_dirty);
+ 	if (th->t_trans_id != journal->j_trans_id) {
+-		reiserfs_panic(th->t_super,
+-			       "journal-1577: handle trans id %ld != current trans id %ld\n",
++		reiserfs_panic(th->t_super, "journal-1577",
++			       "handle trans id %ld != current trans id %ld",
+ 			       th->t_trans_id, journal->j_trans_id);
+ 	}
+ 
+@@ -3292,8 +3291,8 @@ int journal_mark_dirty(struct reiserfs_t
+ 	 ** Nothing can be done here, except make the FS readonly or panic.
+ 	 */
+ 	if (journal->j_len >= journal->j_trans_max) {
+-		reiserfs_panic(th->t_super,
+-			       "journal-1413: journal_mark_dirty: j_len (%lu) is too big\n",
++		reiserfs_panic(th->t_super, "journal-1413",
++			       "j_len (%lu) is too big",
+ 			       journal->j_len);
+ 	}
+ 
+@@ -3313,7 +3312,8 @@ int journal_mark_dirty(struct reiserfs_t
+ 	if (!cn) {
+ 		cn = get_cnode(p_s_sb);
+ 		if (!cn) {
+-			reiserfs_panic(p_s_sb, "get_cnode failed!\n");
++			reiserfs_panic(p_s_sb, "journal-4",
++				       "get_cnode failed!");
+ 		}
+ 
+ 		if (th->t_blocks_logged == th->t_blocks_allocated) {
+@@ -3581,8 +3581,8 @@ static int check_journal_end(struct reis
+ 	BUG_ON(!th->t_trans_id);
+ 
+ 	if (th->t_trans_id != journal->j_trans_id) {
+-		reiserfs_panic(th->t_super,
+-			       "journal-1577: handle trans id %ld != current trans id %ld\n",
++		reiserfs_panic(th->t_super, "journal-1577",
++			       "handle trans id %ld != current trans id %ld",
+ 			       th->t_trans_id, journal->j_trans_id);
+ 	}
+ 
+@@ -3661,8 +3661,8 @@ static int check_journal_end(struct reis
+ 	}
+ 
+ 	if (journal->j_start > SB_ONDISK_JOURNAL_SIZE(p_s_sb)) {
+-		reiserfs_panic(p_s_sb,
+-			       "journal-003: journal_end: j_start (%ld) is too high\n",
++		reiserfs_panic(p_s_sb, "journal-003",
++			       "j_start (%ld) is too high",
+ 			       journal->j_start);
+ 	}
+ 	return 1;
+@@ -3707,8 +3707,8 @@ int journal_mark_freed(struct reiserfs_t
+ 		/* set the bit for this block in the journal bitmap for this transaction */
+ 		jb = journal->j_current_jl->j_list_bitmap;
+ 		if (!jb) {
+-			reiserfs_panic(p_s_sb,
+-				       "journal-1702: journal_mark_freed, journal_list_bitmap is NULL\n");
++			reiserfs_panic(p_s_sb, "journal-1702",
++				       "journal_list_bitmap is NULL");
+ 		}
+ 		set_bit_in_list_bitmap(p_s_sb, blocknr, jb);
+ 
+@@ -4063,8 +4063,8 @@ static int do_journal_end(struct reiserf
+ 		if (buffer_journaled(cn->bh)) {
+ 			jl_cn = get_cnode(p_s_sb);
+ 			if (!jl_cn) {
+-				reiserfs_panic(p_s_sb,
+-					       "journal-1676, get_cnode returned NULL\n");
++				reiserfs_panic(p_s_sb, "journal-1676",
++					       "get_cnode returned NULL");
+ 			}
+ 			if (i == 0) {
+ 				jl->j_realblock = jl_cn;
+@@ -4080,8 +4080,9 @@ static int do_journal_end(struct reiserf
+ 
+ 			if (is_block_in_log_or_reserved_area
+ 			    (p_s_sb, cn->bh->b_blocknr)) {
+-				reiserfs_panic(p_s_sb,
+-					       "journal-2332: Trying to log block %lu, which is a log block\n",
++				reiserfs_panic(p_s_sb, "journal-2332",
++					       "Trying to log block %lu, "
++					       "which is a log block",
+ 					       cn->bh->b_blocknr);
+ 			}
+ 			jl_cn->blocknr = cn->bh->b_blocknr;
+@@ -4265,8 +4266,8 @@ static int do_journal_end(struct reiserf
+ 	    get_list_bitmap(p_s_sb, journal->j_current_jl);
+ 
+ 	if (!(journal->j_current_jl->j_list_bitmap)) {
+-		reiserfs_panic(p_s_sb,
+-			       "journal-1996: do_journal_end, could not get a list bitmap\n");
++		reiserfs_panic(p_s_sb, "journal-1996",
++			       "could not get a list bitmap");
+ 	}
+ 
+ 	atomic_set(&(journal->j_jlock), 0);
+--- a/fs/reiserfs/lbalance.c
++++ b/fs/reiserfs/lbalance.c
+@@ -168,10 +168,11 @@ static int leaf_copy_boundary_item(struc
+ 			if (bytes_or_entries == ih_item_len(ih)
+ 			    && is_indirect_le_ih(ih))
+ 				if (get_ih_free_space(ih))
+-					reiserfs_panic(NULL,
+-						       "vs-10020: leaf_copy_boundary_item: "
+-						       "last unformatted node must be filled entirely (%h)",
+-						       ih);
++					reiserfs_panic(sb_from_bi(dest_bi),
++						       "vs-10020",
++						       "last unformatted node "
++						       "must be filled "
++						       "entirely (%h)", ih);
+ 		}
+ #endif
+ 
+@@ -622,9 +623,8 @@ static void leaf_define_dest_src_infos(i
+ 		break;
+ 
+ 	default:
+-		reiserfs_panic(NULL,
+-			       "vs-10250: leaf_define_dest_src_infos: shift type is unknown (%d)",
+-			       shift_mode);
++		reiserfs_panic(sb_from_bi(src_bi), "vs-10250",
++			       "shift type is unknown (%d)", shift_mode);
+ 	}
+ 	RFALSE(!src_bi->bi_bh || !dest_bi->bi_bh,
+ 	       "vs-10260: mode==%d, source (%p) or dest (%p) buffer is initialized incorrectly",
+@@ -674,9 +674,9 @@ int leaf_shift_left(struct tree_balance 
+ #ifdef CONFIG_REISERFS_CHECK
+ 			if (tb->tb_mode == M_PASTE || tb->tb_mode == M_INSERT) {
+ 				print_cur_tb("vs-10275");
+-				reiserfs_panic(tb->tb_sb,
+-					       "vs-10275: leaf_shift_left: balance condition corrupted (%c)",
+-					       tb->tb_mode);
++				reiserfs_panic(tb->tb_sb, "vs-10275",
++					       "balance condition corrupted "
++					       "(%c)", tb->tb_mode);
+ 			}
+ #endif
+ 
+@@ -889,9 +889,12 @@ void leaf_paste_in_buffer(struct buffer_
+ 
+ #ifdef CONFIG_REISERFS_CHECK
+ 	if (zeros_number > paste_size) {
++		struct super_block *sb = NULL;
++		if (bi && bi->tb)
++			sb = bi->tb->tb_sb;
+ 		print_cur_tb("10177");
+-		reiserfs_panic(NULL,
+-			       "vs-10177: leaf_paste_in_buffer: ero number == %d, paste_size == %d",
++		reiserfs_panic(sb, "vs-10177",
++			       "zeros_number == %d, paste_size == %d",
+ 			       zeros_number, paste_size);
+ 	}
+ #endif				/* CONFIG_REISERFS_CHECK */
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -145,10 +145,9 @@ int search_by_entry_key(struct super_blo
+ 	if (!is_direntry_le_ih(de->de_ih) ||
+ 	    COMP_SHORT_KEYS(&(de->de_ih->ih_key), key)) {
+ 		print_block(de->de_bh, 0, -1, -1);
+-		reiserfs_panic(sb,
+-			       "vs-7005: search_by_entry_key: found item %h is not directory item or "
+-			       "does not belong to the same directory as key %K",
+-			       de->de_ih, key);
++		reiserfs_panic(sb, "vs-7005", "found item %h is not directory "
++			       "item or does not belong to the same directory "
++			       "as key %K", de->de_ih, key);
+ 	}
+ #endif				/* CONFIG_REISERFS_CHECK */
+ 
+@@ -1194,15 +1193,14 @@ static int entry_points_to_object(const 
+ 
+ 	if (inode) {
+ 		if (!de_visible(de->de_deh + de->de_entry_num))
+-			reiserfs_panic(NULL,
+-				       "vs-7042: entry_points_to_object: entry must be visible");
++			reiserfs_panic(inode->i_sb, "vs-7042",
++				       "entry must be visible");
+ 		return (de->de_objectid == inode->i_ino) ? 1 : 0;
+ 	}
+ 
+ 	/* this must be added hidden entry */
+ 	if (de_visible(de->de_deh + de->de_entry_num))
+-		reiserfs_panic(NULL,
+-			       "vs-7043: entry_points_to_object: entry must be visible");
++		reiserfs_panic(NULL, "vs-7043", "entry must be visible");
+ 
+ 	return 1;
+ }
+@@ -1316,8 +1314,8 @@ static int reiserfs_rename(struct inode 
+ 			       new_dentry->d_name.len, old_inode, 0);
+ 	if (retval == -EEXIST) {
+ 		if (!new_dentry_inode) {
+-			reiserfs_panic(old_dir->i_sb,
+-				       "vs-7050: new entry is found, new inode == 0\n");
++			reiserfs_panic(old_dir->i_sb, "vs-7050",
++				       "new entry is found, new inode == 0");
+ 		}
+ 	} else if (retval) {
+ 		int err = journal_end(&th, old_dir->i_sb, jbegin_count);
+--- a/fs/reiserfs/objectid.c
++++ b/fs/reiserfs/objectid.c
+@@ -18,8 +18,7 @@
+ static void check_objectid_map(struct super_block *s, __le32 * map)
+ {
+ 	if (le32_to_cpu(map[0]) != 1)
+-		reiserfs_panic(s,
+-			       "vs-15010: check_objectid_map: map corrupted: %lx",
++		reiserfs_panic(s, "vs-15010", "map corrupted: %lx",
+ 			       (long unsigned int)le32_to_cpu(map[0]));
+ 
+ 	// FIXME: add something else here
+--- a/fs/reiserfs/prints.c
++++ b/fs/reiserfs/prints.c
+@@ -356,14 +356,21 @@ void reiserfs_debug(struct super_block *
+ extern struct tree_balance *cur_tb;
+ #endif
+ 
+-void reiserfs_panic(struct super_block *sb, const char *fmt, ...)
++void __reiserfs_panic(struct super_block *sb, const char *id,
++		      const char *function, const char *fmt, ...)
+ {
+ 	do_reiserfs_warning(fmt);
+ 
++#ifdef CONFIG_REISERFS_CHECK
+ 	dump_stack();
+-
+-	panic(KERN_EMERG "REISERFS: panic (device %s): %s\n",
+-	       reiserfs_bdevname(sb), error_buf);
++#endif
++	if (sb)
++		panic(KERN_WARNING "REISERFS panic (device %s): %s%s%s: %s\n",
++		      sb->s_id, id ? id : "", id ? " " : "",
++		      function, error_buf);
++	else
++		panic(KERN_WARNING "REISERFS panic: %s%s%s: %s\n",
++		      id ? id : "", id ? " " : "", function, error_buf);
+ }
+ 
+ void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
+@@ -684,12 +691,10 @@ static void check_leaf_block_head(struct
+ 	blkh = B_BLK_HEAD(bh);
+ 	nr = blkh_nr_item(blkh);
+ 	if (nr > (bh->b_size - BLKH_SIZE) / IH_SIZE)
+-		reiserfs_panic(NULL,
+-			       "vs-6010: check_leaf_block_head: invalid item number %z",
++		reiserfs_panic(NULL, "vs-6010", "invalid item number %z",
+ 			       bh);
+ 	if (blkh_free_space(blkh) > bh->b_size - BLKH_SIZE - IH_SIZE * nr)
+-		reiserfs_panic(NULL,
+-			       "vs-6020: check_leaf_block_head: invalid free space %z",
++		reiserfs_panic(NULL, "vs-6020", "invalid free space %z",
+ 			       bh);
+ 
+ }
+@@ -700,21 +705,15 @@ static void check_internal_block_head(st
+ 
+ 	blkh = B_BLK_HEAD(bh);
+ 	if (!(B_LEVEL(bh) > DISK_LEAF_NODE_LEVEL && B_LEVEL(bh) <= MAX_HEIGHT))
+-		reiserfs_panic(NULL,
+-			       "vs-6025: check_internal_block_head: invalid level %z",
+-			       bh);
++		reiserfs_panic(NULL, "vs-6025", "invalid level %z", bh);
+ 
+ 	if (B_NR_ITEMS(bh) > (bh->b_size - BLKH_SIZE) / IH_SIZE)
+-		reiserfs_panic(NULL,
+-			       "vs-6030: check_internal_block_head: invalid item number %z",
+-			       bh);
++		reiserfs_panic(NULL, "vs-6030", "invalid item number %z", bh);
+ 
+ 	if (B_FREE_SPACE(bh) !=
+ 	    bh->b_size - BLKH_SIZE - KEY_SIZE * B_NR_ITEMS(bh) -
+ 	    DC_SIZE * (B_NR_ITEMS(bh) + 1))
+-		reiserfs_panic(NULL,
+-			       "vs-6040: check_internal_block_head: invalid free space %z",
+-			       bh);
++		reiserfs_panic(NULL, "vs-6040", "invalid free space %z", bh);
+ 
+ }
+ 
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -366,9 +366,8 @@ inline void decrement_bcount(struct buff
+ 			put_bh(p_s_bh);
+ 			return;
+ 		}
+-		reiserfs_panic(NULL,
+-			       "PAP-5070: decrement_bcount: trying to free free buffer %b",
+-			       p_s_bh);
++		reiserfs_panic(NULL, "PAP-5070",
++			       "trying to free free buffer %b", p_s_bh);
+ 	}
+ }
+ 
+@@ -713,8 +712,8 @@ int search_by_key(struct super_block *p_
+ #ifdef CONFIG_REISERFS_CHECK
+ 		if (cur_tb) {
+ 			print_cur_tb("5140");
+-			reiserfs_panic(p_s_sb,
+-				       "PAP-5140: search_by_key: schedule occurred in do_balance!");
++			reiserfs_panic(p_s_sb, "PAP-5140",
++				       "schedule occurred in do_balance!");
+ 		}
+ #endif
+ 
+@@ -1511,8 +1510,8 @@ static void indirect_to_direct_roll_back
+ 		/* look for the last byte of the tail */
+ 		if (search_for_position_by_key(inode->i_sb, &tail_key, path) ==
+ 		    POSITION_NOT_FOUND)
+-			reiserfs_panic(inode->i_sb,
+-				       "vs-5615: indirect_to_direct_roll_back: found invalid item");
++			reiserfs_panic(inode->i_sb, "vs-5615",
++				       "found invalid item");
+ 		RFALSE(path->pos_in_item !=
+ 		       ih_item_len(PATH_PITEM_HEAD(path)) - 1,
+ 		       "vs-5616: appended bytes found");
+@@ -1612,8 +1611,8 @@ int reiserfs_cut_from_item(struct reiser
+ 				print_block(PATH_PLAST_BUFFER(p_s_path), 3,
+ 					    PATH_LAST_POSITION(p_s_path) - 1,
+ 					    PATH_LAST_POSITION(p_s_path) + 1);
+-				reiserfs_panic(p_s_sb,
+-					       "PAP-5580: reiserfs_cut_from_item: item to convert does not exist (%K)",
++				reiserfs_panic(p_s_sb, "PAP-5580", "item to "
++					       "convert does not exist (%K)",
+ 					       p_s_item_key);
+ 			}
+ 			continue;
+@@ -1693,22 +1692,20 @@ int reiserfs_cut_from_item(struct reiser
+ 		   sure, that we exactly remove last unformatted node pointer
+ 		   of the item */
+ 		if (!is_indirect_le_ih(le_ih))
+-			reiserfs_panic(p_s_sb,
+-				       "vs-5652: reiserfs_cut_from_item: "
++			reiserfs_panic(p_s_sb, "vs-5652",
+ 				       "item must be indirect %h", le_ih);
+ 
+ 		if (c_mode == M_DELETE && ih_item_len(le_ih) != UNFM_P_SIZE)
+-			reiserfs_panic(p_s_sb,
+-				       "vs-5653: reiserfs_cut_from_item: "
+-				       "completing indirect2direct conversion indirect item %h "
+-				       "being deleted must be of 4 byte long",
+-				       le_ih);
++			reiserfs_panic(p_s_sb, "vs-5653", "completing "
++				       "indirect2direct conversion indirect "
++				       "item %h being deleted must be of "
++				       "4 byte long", le_ih);
+ 
+ 		if (c_mode == M_CUT
+ 		    && s_cut_balance.insert_size[0] != -UNFM_P_SIZE) {
+-			reiserfs_panic(p_s_sb,
+-				       "vs-5654: reiserfs_cut_from_item: "
+-				       "can not complete indirect2direct conversion of %h (CUT, insert_size==%d)",
++			reiserfs_panic(p_s_sb, "vs-5654", "can not complete "
++				       "indirect2direct conversion of %h "
++				       "(CUT, insert_size==%d)",
+ 				       le_ih, s_cut_balance.insert_size[0]);
+ 		}
+ 		/* it would be useful to make sure, that right neighboring
+@@ -1923,10 +1920,10 @@ static void check_research_for_paste(str
+ 		    || op_bytes_number(found_ih,
+ 				       get_last_bh(path)->b_size) !=
+ 		    pos_in_item(path))
+-			reiserfs_panic(NULL,
+-				       "PAP-5720: check_research_for_paste: "
+-				       "found direct item %h or position (%d) does not match to key %K",
+-				       found_ih, pos_in_item(path), p_s_key);
++			reiserfs_panic(NULL, "PAP-5720", "found direct item "
++				       "%h or position (%d) does not match "
++				       "to key %K", found_ih,
++				       pos_in_item(path), p_s_key);
+ 	}
+ 	if (is_indirect_le_ih(found_ih)) {
+ 		if (le_ih_k_offset(found_ih) +
+@@ -1935,9 +1932,9 @@ static void check_research_for_paste(str
+ 		    cpu_key_k_offset(p_s_key)
+ 		    || I_UNFM_NUM(found_ih) != pos_in_item(path)
+ 		    || get_ih_free_space(found_ih) != 0)
+-			reiserfs_panic(NULL,
+-				       "PAP-5730: check_research_for_paste: "
+-				       "found indirect item (%h) or position (%d) does not match to key (%K)",
++			reiserfs_panic(NULL, "PAP-5730", "found indirect "
++				       "item (%h) or position (%d) does not "
++				       "match to key (%K)",
+ 				       found_ih, pos_in_item(path), p_s_key);
+ 	}
+ }
+--- a/fs/reiserfs/tail_conversion.c
++++ b/fs/reiserfs/tail_conversion.c
+@@ -92,8 +92,7 @@ int direct2indirect(struct reiserfs_tran
+ 		   last item of the file */
+ 		if (search_for_position_by_key(sb, &end_key, path) ==
+ 		    POSITION_FOUND)
+-			reiserfs_panic(sb,
+-				       "PAP-14050: direct2indirect: "
++			reiserfs_panic(sb, "PAP-14050",
+ 				       "direct item (%K) not found", &end_key);
+ 		p_le_ih = PATH_PITEM_HEAD(path);
+ 		RFALSE(!is_direct_le_ih(p_le_ih),
+@@ -214,8 +213,7 @@ int indirect2direct(struct reiserfs_tran
+ 		/* re-search indirect item */
+ 		if (search_for_position_by_key(p_s_sb, p_s_item_key, p_s_path)
+ 		    == POSITION_NOT_FOUND)
+-			reiserfs_panic(p_s_sb,
+-				       "PAP-5520: indirect2direct: "
++			reiserfs_panic(p_s_sb, "PAP-5520",
+ 				       "item to be converted %K does not exist",
+ 				       p_s_item_key);
+ 		copy_item_head(&s_ih, PATH_PITEM_HEAD(p_s_path));
+@@ -224,8 +222,8 @@ int indirect2direct(struct reiserfs_tran
+ 		    (ih_item_len(&s_ih) / UNFM_P_SIZE -
+ 		     1) * p_s_sb->s_blocksize;
+ 		if (pos != pos1)
+-			reiserfs_panic(p_s_sb, "vs-5530: indirect2direct: "
+-				       "tail position changed while we were reading it");
++			reiserfs_panic(p_s_sb, "vs-5530", "tail position "
++				       "changed while we were reading it");
+ #endif
+ 	}
+ 
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -86,11 +86,14 @@ void __reiserfs_warning(struct super_blo
+ /* assertions handling */
+ 
+ /** always check a condition and panic if it's false. */
+-#define __RASSERT( cond, scond, format, args... )					\
+-if( !( cond ) ) 								\
+-  reiserfs_panic( NULL, "reiserfs[%i]: assertion " scond " failed at "	\
+-		  __FILE__ ":%i:%s: " format "\n",		\
+-		  in_interrupt() ? -1 : task_pid_nr(current), __LINE__ , __FUNCTION__ , ##args )
++#define __RASSERT(cond, scond, format, args...)			\
++do {									\
++	if (!(cond))							\
++		reiserfs_panic(NULL, "assertion failure", "(" #cond ") at " \
++			       __FILE__ ":%i:%s: " format "\n",		\
++			       in_interrupt() ? -1 : task_pid_nr(current), \
++			       __LINE__, __func__ , ##args);		\
++} while (0)
+ 
+ #define RASSERT(cond, format, args...) __RASSERT(cond, #cond, format, ##args)
+ 
+@@ -1448,6 +1451,16 @@ struct buffer_info {
+ 	int bi_position;
+ };
+ 
++static inline struct super_block *sb_from_tb(struct tree_balance *tb)
++{
++	return tb ? tb->tb_sb : NULL;
++}
++
++static inline struct super_block *sb_from_bi(struct buffer_info *bi)
++{
++	return bi ? sb_from_tb(bi->tb) : NULL;
++}
++
+ /* there are 4 types of items: stat data, directory item, indirect, direct.
+ +-------------------+------------+--------------+------------+
+ |	            |  k_offset  | k_uniqueness | mergeable? |
+@@ -1988,8 +2001,11 @@ int fix_nodes(int n_op_mode, struct tree
+ void unfix_nodes(struct tree_balance *);
+ 
+ /* prints.c */
+-void reiserfs_panic(struct super_block *s, const char *fmt, ...)
++void __reiserfs_panic(struct super_block *s, const char *id,
++		      const char *function, const char *fmt, ...)
+     __attribute__ ((noreturn));
++#define reiserfs_panic(s, id, fmt, args...) \
++	__reiserfs_panic(s, id, __func__, fmt, ##args)
+ void reiserfs_info(struct super_block *s, const char *fmt, ...);
+ void reiserfs_debug(struct super_block *s, int level, const char *fmt, ...);
+ void print_indirect_item(struct buffer_head *bh, int item_num);

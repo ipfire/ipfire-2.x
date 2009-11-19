@@ -1,0 +1,66 @@
+From: John Johansen <jjohansen@suse.de>
+Subject: fix recognition of security= boot parameter
+Patch-mainline: no
+References: bnc#442668
+
+Fix AppArmor to respect the kernel boot parameter security=, so that if a
+different lsm is choosen apparmor does not try to register its lsm hooks.
+
+Signed-off-by: John Johansen <jjohansen@suse.de>
+
+---
+ security/Kconfig        |    9 +++++++++
+ security/apparmor/lsm.c |    5 +++--
+ security/security.c     |    2 +-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -51,6 +51,15 @@ config SECURITY
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++config SECURITY_DEFAULT
++	string "Default security module"
++	depends on SECURITY
++	default ""
++	help
++          This determines the security module used if the security=
++          boot parmater is not provided.  If a security module is not
++          specified the first module to register will be used.
++
+ config SECURITY_NETWORK
+ 	bool "Socket and Networking Security Hooks"
+ 	depends on SECURITY
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -911,6 +911,7 @@ static int apparmor_task_setrlimit(unsig
+ }
+ 
+ struct security_operations apparmor_ops = {
++	.name =				"apparmor",
+ 	.ptrace_may_access =		apparmor_ptrace_may_access,
+ 	.ptrace_traceme =		apparmor_ptrace_traceme,
+ 	.capget =			cap_capget,
+@@ -989,8 +990,8 @@ static int __init apparmor_init(void)
+ {
+ 	int error;
+ 
+-	if (!apparmor_enabled) {
+-		info_message("AppArmor disabled by boottime parameter\n");
++	if (!apparmor_enabled || !security_module_enable(&apparmor_ops)) {
++		info_message("AppArmor disabled by boot time parameter\n");
+ 		return 0;
+ 	}
+ 
+--- a/security/security.c
++++ b/security/security.c
+@@ -18,7 +18,7 @@
+ #include <linux/security.h>
+ 
+ /* Boot-time LSM user choice */
+-static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1];
++static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] = CONFIG_SECURITY_DEFAULT;
+ 
+ /* things that live in capability.c */
+ extern struct security_operations default_security_ops;

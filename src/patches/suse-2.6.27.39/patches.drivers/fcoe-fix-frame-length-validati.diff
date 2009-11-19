@@ -1,0 +1,149 @@
+From: Chris Leech <christopher.leech@intel.com>
+Subject: [FcOE] fix frame length validation in the early receive path
+References: bnc #459142
+
+Validation of the frame length was missing before accessing the FC and FCoE
+headers.  Some of the later checks were bogus, because of the way the fr_len
+variable and skb->len were being manipulated they could never fail.
+
+Signed-off-by: Chris Leech <christopher.leech@intel.com>
+Acked-by: Bernhard Walle <bwalle@suse.de>
+---
+
+ drivers/scsi/fcoe/libfcoe.c |   48 +++++++++++++++++++++-----------------------
+ include/scsi/fc/fc_fcoe.h   |   12 +++++++++++
+ include/scsi/fc_frame.h     |    2 -
+ 3 files changed, 36 insertions(+), 26 deletions(-)
+
+
+--- a/drivers/scsi/fcoe/libfcoe.c
++++ b/drivers/scsi/fcoe/libfcoe.c
+@@ -184,7 +184,6 @@ int fcoe_rcv(struct sk_buff *skb, struct
+ 	struct fcoe_rcv_info *fr;
+ 	struct fcoe_softc *fc;
+ 	struct fcoe_dev_stats *stats;
+-	u8 *data;
+ 	struct fc_frame_header *fh;
+ 	unsigned short oxid;
+ 	int cpu_idx;
+@@ -211,9 +210,18 @@ int fcoe_rcv(struct sk_buff *skb, struct
+ 		FC_DBG("wrong FC type frame");
+ 		goto err;
+ 	}
+-	data = skb->data;
+-	data += sizeof(struct fcoe_hdr);
+-	fh = (struct fc_frame_header *)data;
++
++	/*
++	 * Check for minimum frame length, and make sure required FCoE
++	 * and FC headers are pulled into the linear data area.
++	 */
++	if (unlikely((skb->len < FCOE_MIN_FRAME) ||
++	    !pskb_may_pull(skb, FCOE_HEADER_LEN)))
++		goto err;
++
++	skb_set_transport_header(skb, sizeof(struct fcoe_hdr));
++	fh = (struct fc_frame_header *) skb_transport_header(skb);
++
+ 	oxid = ntohs(fh->fh_ox_id);
+ 
+ 	fr = fcoe_dev_from_skb(skb);
+@@ -514,8 +522,6 @@ int fcoe_percpu_receive_thread(void *arg
+ {
+ 	struct fcoe_percpu_s *p = arg;
+ 	u32 fr_len;
+-	unsigned int hlen;
+-	unsigned int tlen;
+ 	struct fc_lport *lp;
+ 	struct fcoe_rcv_info *fr;
+ 	struct fcoe_dev_stats *stats;
+@@ -572,10 +578,12 @@ int fcoe_percpu_receive_thread(void *arg
+ 			skb_linearize(skb);	/* not ideal */
+ 
+ 		/*
+-		 * Check the header and pull it off.
++		 * Frame length checks and setting up the header pointers
++		 * was done in fcoe_rcv already.
+ 		 */
+-		hlen = sizeof(struct fcoe_hdr);
+-		hp = (struct fcoe_hdr *)skb->data;
++		hp = (struct fcoe_hdr *) skb_network_header(skb);
++		fh = (struct fc_frame_header *) skb_transport_header(skb);
++
+ 		if (unlikely(FC_FCOE_DECAPS_VER(hp) != FC_FCOE_VER)) {
+ 			if (stats) {
+ 				if (stats->ErrorFrames < 5)
+@@ -586,22 +594,10 @@ int fcoe_percpu_receive_thread(void *arg
+ 			kfree_skb(skb);
+ 			continue;
+ 		}
++
+ 		skb_pull(skb, sizeof(struct fcoe_hdr));
+-		tlen = sizeof(struct fcoe_crc_eof);
+-		fr_len = skb->len - tlen;
+-		skb_trim(skb, fr_len);
++		fr_len = skb->len - sizeof(struct fcoe_crc_eof);
+ 
+-		if (unlikely(fr_len > skb->len)) {
+-			if (stats) {
+-				if (stats->ErrorFrames < 5)
+-					FC_DBG("length error fr_len 0x%x "
+-					       "skb->len 0x%x", fr_len,
+-					       skb->len);
+-				stats->ErrorFrames++;
+-			}
+-			kfree_skb(skb);
+-			continue;
+-		}
+ 		if (stats) {
+ 			stats->RxFrames++;
+ 			stats->RxWords += fr_len / FCOE_WORD_TO_BYTE;
+@@ -610,9 +606,11 @@ int fcoe_percpu_receive_thread(void *arg
+ 		fp = (struct fc_frame *)skb;
+ 		cp = (struct fcoe_crc_eof *)(skb->data + fr_len);
+ 		fc_frame_init(fp);
+-		fr_eof(fp) = cp->fcoe_eof;
+-		fr_sof(fp) = hp->fcoe_sof;
+ 		fr_dev(fp) = lp;
++		fr_sof(fp) = hp->fcoe_sof;
++		fr_eof(fp) = cp->fcoe_eof;
++		/* trim off the CRC and EOF trailer*/
++		skb_trim(skb, fr_len);
+ 
+ 		/*
+ 		 * We only check CRC if no offload is available and if it is
+--- a/include/scsi/fc/fc_fcoe.h
++++ b/include/scsi/fc/fc_fcoe.h
+@@ -85,6 +85,18 @@ struct fcoe_crc_eof {
+ } __attribute__((packed));
+ 
+ /*
++ * Minimum FCoE + FC header length
++ * 14 bytes FCoE header + 24 byte FC header = 38 bytes
++ */
++#define FCOE_HEADER_LEN 38
++
++/*
++ * Minimum FCoE frame size
++ * 14 bytes FCoE header + 24 byte FC header + 8 byte FCoE trailer = 46 bytes
++ */
++#define FCOE_MIN_FRAME 46
++
++/*
+  * fc_fcoe_set_mac - Store OUI + DID into MAC address field.
+  * @mac: mac address to be set
+  * @did: fc dest id to use
+--- a/include/scsi/fc_frame.h
++++ b/include/scsi/fc_frame.h
+@@ -66,10 +66,10 @@ struct fcoe_rcv_info {
+ 	struct fc_lport	*fr_dev;	/* transport layer private pointer */
+ 	struct fc_seq	*fr_seq;	/* for use with exchange manager */
+ 	struct scsi_cmnd *fr_cmd;	/* for use of scsi command */
++	u16		fr_max_payload;	/* max FC payload */
+ 	enum fc_sof	fr_sof;		/* start of frame delimiter */
+ 	enum fc_eof	fr_eof;		/* end of frame delimiter */
+ 	u8		fr_flags;	/* flags - see below */
+-	u16		fr_max_payload;	/* max FC payload */
+ };
+ 
+ /*
