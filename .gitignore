@@ -6,7 +6,7 @@
 /log
 /packages
 /tmp
-*.diff
+/*.diff
 *.img.gz
 *.iso
 *.tar.bz2
