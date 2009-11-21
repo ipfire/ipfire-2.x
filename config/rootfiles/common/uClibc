@@ -54,6 +54,10 @@
 #opt/i586-uClibc/include/asm/irq.h
 #opt/i586-uClibc/include/asm/kdebug.h
 #opt/i586-uClibc/include/asm/kprobes.h
+#opt/i586-uClibc/include/asm/kvm.h
+#opt/i586-uClibc/include/asm/kvm_host.h
+#opt/i586-uClibc/include/asm/kvm_para.h
+#opt/i586-uClibc/include/asm/kvm_x86_emulate.h
 #opt/i586-uClibc/include/asm/ldt.h
 #opt/i586-uClibc/include/asm/linkage.h
 #opt/i586-uClibc/include/asm/mach-bigsmp
@@ -167,6 +171,7 @@
 #opt/i586-uClibc/include/asm/srat.h
 #opt/i586-uClibc/include/asm/stat.h
 #opt/i586-uClibc/include/asm/suspend.h
+#opt/i586-uClibc/include/asm/svm.h
 #opt/i586-uClibc/include/asm/system.h
 #opt/i586-uClibc/include/asm/termbits.h
 #opt/i586-uClibc/include/asm/termios.h
@@ -180,7 +185,9 @@
 #opt/i586-uClibc/include/asm/user.h
 #opt/i586-uClibc/include/asm/vga.h
 #opt/i586-uClibc/include/asm/vic.h
+#opt/i586-uClibc/include/asm/virtext.h
 #opt/i586-uClibc/include/asm/vm86.h
+#opt/i586-uClibc/include/asm/vmx.h
 #opt/i586-uClibc/include/asm/voyager.h
 #opt/i586-uClibc/include/assert.h
 #opt/i586-uClibc/include/atomic.h
@@ -590,6 +597,10 @@
 #opt/i586-uClibc/include/linux/kmalloc_sizes.h
 #opt/i586-uClibc/include/linux/kmod.h
 #opt/i586-uClibc/include/linux/kprobes.h
+#opt/i586-uClibc/include/linux/kvm.h
+#opt/i586-uClibc/include/linux/kvm_host.h
+#opt/i586-uClibc/include/linux/kvm_para.h
+#opt/i586-uClibc/include/linux/kvm_types.h
 #opt/i586-uClibc/include/linux/lapb.h
 #opt/i586-uClibc/include/linux/lcd.h
 #opt/i586-uClibc/include/linux/libata.h
