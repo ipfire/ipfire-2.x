@@ -69,8 +69,8 @@
 * clamav-0.95.3
 * cmake-2.4.8
 * collectd-4.5.3
-* compat-wireless-2.6.32-rc6-kmod-2.6.27.39-ipfire
-* compat-wireless-2.6.32-rc6-kmod-2.6.27.39-ipfire-xen
+* compat-wireless-2.6.32-rc7-kmod-2.6.27.39-ipfire
+* compat-wireless-2.6.32-rc7-kmod-2.6.27.39-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
@@ -213,7 +213,7 @@
 * mc-4.6.2
 * mechanize-0.1.8
 * mediatomb-svn2020
-* memtest86+-2.11
+* memtest86+-4.00
 * miau-0.6.5
 * misc-progs
 * mkinitcpio-0.5.9
