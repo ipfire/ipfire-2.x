@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2.6.32-rc6
+VER        = 2.6.32-rc7
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4c8eafa1c35d1ab9ca6fa66974abd802
+$(DL_FILE)_MD5 = c7b9f081895c23841509a363f9ae4da2
 
 install : $(TARGET)
 
@@ -77,9 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
-#	Apply some wlan-card patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless_rt2500pci-skb_allignment.patch
-
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install-modules
 
 	# The makefile put the modules to a wrong place move back...
@@ -88,12 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Set Regulatory Domain to "EU" (use Channel 1-14 max. 20db)
 	echo options cfg80211 ieee80211_regdom=EU > /etc/modprobe.d/cfg80211
-
-	# Remove original kernel modules (compat wireless use the
-	# place of newer kernels and so not overwrite it...)
-	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/ath?k
-	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818?.ko
-	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/net/ieee80211
 
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
