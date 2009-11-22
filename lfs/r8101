@@ -30,7 +30,7 @@ else
 	VERSUFIX = ipfire
 endif
 
-VER        = ipfire-1
+VER        = ipfire-2
 
 THISAPP    = r8101
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
