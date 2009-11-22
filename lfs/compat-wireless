@@ -86,6 +86,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Set Regulatory Domain to "EU" (use Channel 1-14 max. 20db)
 	echo options cfg80211 ieee80211_regdom=EU > /etc/modprobe.d/cfg80211
 
+	# Remove ieee80211 modules. Because the conflicts with compat-wireless
+	-rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/net/ieee80211
+
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 
