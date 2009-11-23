@@ -72,6 +72,11 @@ case "$1" in
 		evaluate_retval
 		;;
 	restore)
+		if [ -e $RRDLOG.bak/cron/new.root ]; then
+			if [ -e $RRDLOG.bak/cron/root ]; then
+				rm -f $RRDLOG.bak/cron/new.root
+			fi
+		fi
 		if [ -e $RRDLOG.bak ];then
 			boot_mesg "Restore ramdisk..."
 			cp -pR $RRDLOG.bak/* $RRDLOG/
