@@ -1,3 +1,4 @@
 etc/system-release
 etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/tmpfs
 boot/grub/grub.conf
