@@ -1300,7 +1300,7 @@
 'pakfire configuration' => 'Pakfire Konfiguration',
 'pakfire core update auto' => 'Core und Addon Updates automatisch installieren:',
 'pakfire core update level' => 'Core-Update-Level',
-'pakfire health check' => 'Mirrors auf Erreichbarkeit prüfen(ping)',
+'pakfire health check' => 'Mirrors auf Erreichbarkeit prüfen (Ping):',
 'pakfire install description' => 'Wählen Sie ein oder mehrere Pakete zur Installation aus und drücken Sie auf das plus Symbol.',
 'pakfire install package' => 'Sie möchten folgende Pakete installieren: ',
 'pakfire installed addons' => 'Installierte Addons:',
