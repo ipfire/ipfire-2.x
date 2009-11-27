@@ -126,7 +126,7 @@ if ($errormessage) {
 ############################################################################################################################
 ############################################################################################################################
 
-&Header::openbox('100%', 'center', 'ExtraHD');
+&Header::openbox('100%', 'center', $Lang::tr{'extrahd'});
 	open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
 	@devices = <FILE>;
 	close FILE;
@@ -164,7 +164,7 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'center', 'Gefundene Laufwerke');
+&Header::openbox('100%', 'center', $Lang::tr{'extrahd founded drives'});
 	print <<END
 		<table border='0' width='600' cellspacing="0">
 END
