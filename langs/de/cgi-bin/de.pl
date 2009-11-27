@@ -764,6 +764,8 @@
 'external access rule changed' => 'External access Regel geändert; Der access controller wird neu gestartet.',
 'external access rule removed' => ' Regel für externen Zugang entfernt; Starte Zugangskontroller neu',
 'external aliases configuration' => 'Externe Alias-Konfiguration',
+'extrahd' => 'ExtraHD',
+'extrahd founded drives'  => 'gefundene Laufwerke',
 'false classnumber' => 'Die Klassennummer passt nicht zum angegebenen Interface.',
 'false max bandwith' => 'Maximalbandbreite ist ungültig.',
 'false min bandwith' => 'Mindestbandbreite ist ungültig.',
