@@ -22,6 +22,8 @@ struct knic knics[20] = { { "" , "" , "" , "" } };
 
 extern char *en_tr[];
 extern char *de_tr[];
+extern char *fr_tr[];
+
 
 int main(int argc, char *argv[])
 {
@@ -29,8 +31,8 @@ int main(int argc, char *argv[])
 	char *shortlangnames[] = { "en", NULL };
 	char **langtrs[] = { en_tr, NULL };
 #else
-	char *shortlangnames[] = { "de", "en", NULL };
-	char **langtrs[] = { de_tr, en_tr, NULL };
+	char *shortlangnames[] = { "de", "en", "fr", NULL };
+	char **langtrs[] = { de_tr, en_tr, fr_tr, NULL };
 #endif
 	int choice;
 	char *sections[11]; /* need to fill this out AFTER knowning lang */

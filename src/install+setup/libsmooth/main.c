@@ -287,6 +287,7 @@ int replace(char filename1[], char *from, char *to)
 #else
 	#include "lang_de.c"
 	#include "lang_en.c"
+	#include "lang_fr.c"
 #endif
 
 // returns a pointer to the actual running version number of IPFire.

@@ -8,4 +8,6 @@ srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 var/ipfire/langs/en.pl
 var/ipfire/langs/de.pl
-
+var/ipfire/langs/fr.pl
+var/ipfire/langs/list
+usr/local/sbin/setup

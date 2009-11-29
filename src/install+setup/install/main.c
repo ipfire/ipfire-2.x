@@ -30,12 +30,13 @@ struct knic knics[20] = { { "" , "" , "" , "" } }; // only defined for compile
 
 extern char *en_tr[];
 extern char *de_tr[];
+extern char *fr_tr[];
 
 int main(int argc, char *argv[])
 {
-	char *langnames[] = { "Deutsch", "English", NULL };
-	char *shortlangnames[] = { "de", "en", NULL };
-	char **langtrs[] = { de_tr, en_tr, NULL };
+	char *langnames[] = { "Deutsch", "English", "Francais", NULL };
+	char *shortlangnames[] = { "de", "en", "fr" ,NULL };
+	char **langtrs[] = { de_tr, en_tr, fr_tr,NULL };
 	char hdletter;
 	char harddrive[30], sourcedrive[5];	/* Device holder. */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
