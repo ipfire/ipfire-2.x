@@ -34,7 +34,7 @@ extern char *fr_tr[];
 
 int main(int argc, char *argv[])
 {
-	char *langnames[] = { "Deutsch", "English", "Francais", NULL };
+	char *langnames[] = { "Deutsch", "English", "Français", NULL };
 	char *shortlangnames[] = { "de", "en", "fr" ,NULL };
 	char **langtrs[] = { de_tr, en_tr, fr_tr,NULL };
 	char hdletter;

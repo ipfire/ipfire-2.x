@@ -98,7 +98,7 @@ char *fr_tr[] = {
 /* TR_CONGRATULATIONS */
 "Félicitation!",
 /* TR_CONGRATULATIONS_LONG */
-"%s a été installé avec succès. Merci de retirer les CDROMs de l'ordinateur. L'installation va maintenant commencer pendant laquelle vous pourrez configurer RNIS, les cartes réseaux et les mots de passe du système. Après la fin de l'installation, vous pourrez vous rendre avec votre navigateur web à l'adresse https://%s:444 (ou quelque soit le nom %s que vous avez donné), et configurer le réseau commuté (si nécessaire) et l'accès distant.",
+"%s a été installé avec succès. Merci de retirer les CDROMs de l'ordinateur. L'installation va maintenant commencer la configuration pendant laquelle vous pourrez configurer RNIS, les cartes réseaux et les mots de passe du système. Après la fin de l'installation, vous pourrez vous rendre avec votre navigateur web à l'adresse https://%s:444 (ou quelque soit le nom %s que vous avez donné), afin de configurer le réseau commuté (si nécessaire) et l'accès distant.",
 /* TR_CONTINUE_NO_SWAP */
 "Votre disque dur est très petit, mais vous pouvez continuer avec une petite partition d'échange. (Utiliser avec précaution).",
 /* TR_CURRENT_CONFIG */
@@ -128,7 +128,7 @@ char *fr_tr[] = {
 /* TR_DNS_AND_GATEWAY_SETTINGS */
 "Paramètres DNS et de la passerelle",
 /* TR_DNS_AND_GATEWAY_SETTINGS_LONG */
-"Saisissez les DNS et les informations de la passerelle.  Ces paramètres ne sont utilisés qu'avec une IP statique (et DHCP si les DNS sont saisis) sur l'interface rouge.",
+"Saisissez les DNS et les informations de la passerelle.  Ces paramètres ne sont utilisés qu'avec une IP statique (et DHCP si les DNS sont saisis) sur l'interface rouge (RED).",
 /* TR_DNS_GATEWAY_WITH_GREEN */
 "Votre configuration n'utilise pas d'adaptateur ethernet pour l'interface rouge.  DNS et les informations de la passerelle pour les utilisateur de réseau commuté est configuré automatiquement au moment de la connexion.",
 /* TR_DOMAINNAME */
@@ -160,7 +160,7 @@ char *fr_tr[] = {
 /* TR_ENTER_ADDITIONAL_MODULE_PARAMS */
 "Certaines cartes RNIS (particulièrement les ISA) peut nécessiter des paramètres supplémentaires pour configurer les adresses IRQ et IO. Si vous avez une telle carte, saisissez ces paramètres ici. Par exemple : \"io=0x280 irq=9\". Ils seront utilisés pendant la détection des cartes.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Saisissez le mot de passe pour l'administrateur %s 'admin'.  C'est l'utilisateur pour utiliser l'interface d'administration web %s.",
+"Saisissez le mot de passe pour l'administrateur 'admin' d'%s.  C'est l'utilisateur à utiliser pour l'interface d'administration web %s.",
 /* TR_ENTER_DOMAINNAME */
 "Entrez un nom de domaine",
 /* TR_ENTER_HOSTNAME */
@@ -170,7 +170,7 @@ char *fr_tr[] = {
 /* TR_ENTER_NETWORK_DRIVER */
 "La détection automatique de la carte réseau a échoué. Entrez les pilotes et paramètres optionnels pour la carte réseau.",
 /* TR_ENTER_ROOT_PASSWORD */
-"Entrez le mot de passe 'root'. Utilisé pour l'accès en ligne de commande.",
+"Entrez le mot de passe 'root'. Il est willy42utilisé pour l'accès en ligne de commande.",
 /* TR_ENTER_SETUP_PASSWORD */
 "A ENLEVER",
 /* TR_ENTER_THE_IP_ADDRESS_INFORMATION */
@@ -196,7 +196,7 @@ char *fr_tr[] = {
 /* TR_GERMAN_1TR6 */
 "German 1TR6",
 /* TR_HELPLINE */
-"              <Tab>/<Alt-Tab> changer d'éléments   |  <Espace> sélectionner",
+"              <Tab>/<Alt-Tab> changer d'élément   |  <Espace> sélectionner",
 /* TR_HOSTNAME */
 "Nom d'hôte",
 /* TR_HOSTNAME_CANNOT_BE_EMPTY */
@@ -350,7 +350,7 @@ char *fr_tr[] = {
 /* TR_PHONENUMBER_CANNOT_BE_EMPTY */
 "Le numéro de téléphone ne peut être vide.",
 /* TR_PREPARE_HARDDISK */
-"Le programme d'installation va maintenant préparer le disque sur %s. Il sera d'abord partitionné, puis les systèmes de fichiers seront installés.",
+"Le programme d'installation va maintenant préparer le disque %s. Il sera d'abord partitionné, puis les systèmes de fichiers seront installés.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Appuyer sur Ok pour redémarrer.",
 /* TR_PRIMARY_DNS */
@@ -534,7 +534,7 @@ char *fr_tr[] = {
 /* TR_UNKNOWN */
 "INCONNU",
 /* TR_UNSET */
-"NON DEFINI",
+"NON DEFINIE",
 /* TR_USB_KEY_VFAT_ERR */
 "La clé USB est invalide (aucune partition vfat).",
 /* TR_US_NI1 */
@@ -542,9 +542,9 @@ char *fr_tr[] = {
 /* TR_WARNING */
 "ATTENTION",
 /* TR_WARNING_LONG */
-"Si vous changez cette adresse IP et que vous êtes connecté à distance, la connexion à la machine %s sera interrompue et vous aurez à vous reconnecter avec la nouvelle IP. C'est une opération risquée et ne devrait pas être tentée si vous n'avez pas d'accès physique à la machine et que quelque chose se passe mal.",
+"Si vous changez cette adresse IP et que vous êtes connecté à distance, la connexion à la machine %s sera interrompue et vous aurez à vous reconnecter avec la nouvelle IP. C'est une opération risquée et ne devrait pas être tentée si vous n'avez pas d'accès physique à la machine dans le cas où quelque chose se passe mal.",
 /* TR_WELCOME */
-"Bienvenue dans le programme d'installation de %s. Sélectionner Annuler sur n'importe lequel des écrans suivant redémarrera l'ordinateur.",
+"Bienvenue dans le programme d'installation d'%s. Si vous sélectionnez Annuler sur n'importe lequel des écrans suivants, ceci redémarrera l'ordinateur.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */
 "Votre configuration est définie pour une interface VERTE unique, qui a déjà un pilote assigné.",
 /* TR_YES */
