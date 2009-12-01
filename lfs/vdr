@@ -30,12 +30,13 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FILE1   = vdr-streamdev-20080325-http-0_4.tgz
 DL_FILE2   = vdr-softdevice-0.5.0.tgz
 DL_FILE3   = vidix-1.0.0.tar.bz2
+DL_FILE4   = vdr-epgsearch-0.9.24.tgz
 
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "freefont fontconfig"
 
@@ -49,12 +50,13 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 $(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
 $(DL_FILE2) = $(DL_FROM)/$(DL_FILE2)
 $(DL_FILE3) = $(DL_FROM)/$(DL_FILE3)
+$(DL_FILE4) = $(DL_FROM)/$(DL_FILE4)
 
 $(DL_FILE)_MD5 = 76f4ebe6525a35e33313d27a3f8e80c0
 $(DL_FILE1)_MD5 = 874026c643601692077c42ee7a70b720
 $(DL_FILE2)_MD5 = e106876497db478f3b9ba4da0e5532f8
 $(DL_FILE3)_MD5 = 3471d1f385871f7e00e6e178ccdfff0b
-
+$(DL_FILE4)_MD5 = 4f0b1d7bdc6f24478f2670769547d7db
 
 install : $(TARGET)
 
@@ -95,6 +97,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/PLUGINS/src && tar jxf $(DIR_DL)/$(DL_FILE3)
 	cd $(DIR_APP)/PLUGINS/src && ln -s vidix-1.0.0 vidix
 	cd $(DIR_APP)/PLUGINS/src/vidix && ./configure
+	cd $(DIR_APP)/PLUGINS/src && tar xvf $(DIR_DL)/$(DL_FILE4)
+	cd $(DIR_APP)/PLUGINS/src && ln -s epgsearch-0.9.24 epgsearch
+	cd $(DIR_APP) && patch -Np1 -i PLUGINS/src/epgsearch/patches/MainMenuHooks-v1_0.patch 
 	cd $(DIR_APP) && make VIDEODIR=/var/video plugins $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make VIDEODIR=/var/video vdr $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make DFB_SUPPORT=1  FB_SUPPORT=1  VIDIX_SUPPORT=1  $(MAKETUNING) $(EXTRA_MAKE)
