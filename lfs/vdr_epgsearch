@@ -29,9 +29,9 @@ VER        = plugin
 THISAPP    = vdr_epgsearch-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = vdr_epgsearch
-PAK_VER    = 1
+PAK_VER    = 5
 
-DEPS       = "vdr ffmpeg sdl alsa dfb++"
+DEPS       = "vdr"
 
 ###############################################################################
 # Top-level Rules
