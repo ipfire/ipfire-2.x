@@ -2,3 +2,12 @@ etc/system-release
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/tmpfs
 boot/grub/grub.conf
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/mac.cgi
+srv/web/ipfire/cgi-bin/extrahd.cgi
+srv/web/ipfire/cgi-bin/chpasswd.cgi
+var/ipfire/langs/en.pl
+var/ipfire/langs/de.pl
+var/ipfire/langs/fr.pl
+var/ipfire/langs/list
+usr/local/sbin/setup

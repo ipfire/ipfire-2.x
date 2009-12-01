@@ -134,59 +134,52 @@ print <<END
 
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 
-<table width="80%" cellspacing="10" cellpadding="5" border="0">
+<table width="80%" cellspacing="10" cellpadding="5">
 
 <tr>
-	<td bgcolor="#C0C0C0">
-		<font face="verdana, arial, sans serif" color="#000000" size="2">
-		<b>&nbsp;</b>
-		</font>
-	</td>
-</tr>
-<tr>
-	<td bgcolor="#F4F4F4" align="center">
-		<table width="100%" cellspacing="10" cellpadding="10">
+	<td bgcolor="#FFFFFF" align="center">
+		<table width="100%" cellspacing="10" cellpadding="10" bordercolor="#9A9A9A" border="1">
 		<tr>
-			<td nowrap bgcolor="#0050C0" align="center">
-			<font face="verdana, arial, sans serif" color="#FFFFFF" size="3">
+			<td nowrap bgcolor="#993333" align="center" >
+			<font face="trebuchet ms, helvetica, sans-serif" color="#FFFFFF" size="4">
 			<b>$tr{'advproxy chgwebpwd change web password'}</b>
 			</font>
 			</td>
 		</tr>
 		<tr>
 			<td align="center">
-				<table width="70%" cellspacing="7" cellpadding="7">
+				<table width="50%" cellspacing="7" cellpadding="7">
 				<tr>
-					<td nowrap bgcolor="#F4F4F4" align="left">
-					<font face="verdana, arial, sans serif" color="#000000" size="2">
+					<td nowrap bgcolor="#FFFFFF" align="left">
+					<font face="trebuchet ms, helvetica, sans-serif" color="#666666" size="2">
 					<b>$tr{'advproxy chgwebpwd username'}:</b>
 					</font>
 					</td>
-					<td><input type="text" name="USERNAME" value="$cgiparams{'USERNAME'}" size="15"></td>
+					<td ><input type="text" name="USERNAME" value="$cgiparams{'USERNAME'}" size="30"></td>
 				</tr>
 				<tr>
-					<td nowrap bgcolor="#F4F4F4" align="left">
-					<font face="verdana, arial, sans serif" color="#000000" size="2">
+					<td nowrap bgcolor="#FFFFFF" align="left">
+					<font face="trebuchet ms, helvetica, sans-serif" color="#666666" size="2">
 					<b>$tr{'advproxy chgwebpwd old password'}:</b>
 					</font>
 					</td>
-					<td><input type="password" name="OLD_PASSWORD" value="$cgiparams{'OLD_PASSWORD'}" size="15"></td>
+					<td><input type="password" name="OLD_PASSWORD" value="$cgiparams{'OLD_PASSWORD'}" size="30"></td>
 				</tr>
 				<tr>
-					<td nowrap bgcolor="#F4F4F4" align="left">
-					<font face="verdana, arial, sans serif" color="#000000" size="2">
+					<td nowrap bgcolor="#FFFFFF" align="left">
+					<font face="trebuchet ms, helvetica, sans-serif" color="#666666" size="2">
 					<b>$tr{'advproxy chgwebpwd new password'}:</b>
 					</font>
 					</td>
-					<td><input type="password" name="NEW_PASSWORD_1" value="$cgiparams{'NEW_PASSWORD_1'}" size="15"></td>
+					<td><input type="password" name="NEW_PASSWORD_1" value="$cgiparams{'NEW_PASSWORD_1'}" size="30"></td>
 				</tr>
 				<tr>
-					<td nowrap bgcolor="#F4F4F4" align="left">
-					<font face="verdana, arial, sans serif" color="#000000" size="2">
+					<td nowrap bgcolor="#FFFFFF" align="left">
+					<font face="trebuchet ms, helvetica, sans-serif" color="#666666" size="2">
 					<b>$tr{'advproxy chgwebpwd new password confirm'}:</b>
 					</font>
 					</td>
-					<td><input type="password" name="NEW_PASSWORD_2" value="$cgiparams{'NEW_PASSWORD_2'}" size="15"></td>
+					<td><input type="password" name="NEW_PASSWORD_2" value="$cgiparams{'NEW_PASSWORD_2'}" size="30"></td>
 				</tr>
 				</table>
 				<table width="100%" cellspacing="7" cellpadding="7">
@@ -204,7 +197,7 @@ if ($errormessage)
 	print <<END
 	<tr>
 		<td nowrap bgcolor="#FF0000" align="center">
-		<font face="verdana, arial, sans serif" color="#FFFFFF" size="2">
+		<font face="trebuchet ms, helvetica, sans-serif" color="#FFFFFF" size="2">
 		<b>$tr{'advproxy chgwebpwd ERROR'}</b> $errormessage
 		</font>
 		</td>
@@ -218,7 +211,7 @@ if ($success)
 	print <<END
 	<tr>
 		<td nowrap bgcolor="#00C000" align="center">
-		<font face="verdana, arial, sans serif" color="#FFFFFF" size="2">
+		<font face="trebuchet ms, helvetica, sans-serif" color="#FFFFFF" size="2">
 		<b>$tr{'advproxy chgwebpwd SUCCESS'}</b> $tr{'advproxy errmsg change success'}
 		</font>
 		</td>
@@ -233,15 +226,6 @@ print <<END
 	</td>
 </tr>
 </table>
-
-<tr>
-	<td bgcolor="#C0C0C0" align="right">
-		<a href="http://www.advproxy.net" target="_blank"><b>
-		<font face="verdana,arial,sans serif" color="#FFFFFF" size="1">Advanced Proxy</b></a> running on</font>
-		<a href="http://www.ipcop.org" target="_blank"><b>
-		<font face="verdana,arial,sans serif" color="#FFFFFF" size="1">IPCop</b></a></font>
-	</td>
-</tr>
 
 </table>
 
