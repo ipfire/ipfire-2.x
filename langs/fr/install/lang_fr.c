@@ -170,7 +170,7 @@ char *fr_tr[] = {
 /* TR_ENTER_NETWORK_DRIVER */
 "La détection automatique de la carte réseau a échoué. Entrez les pilotes et paramètres optionnels pour la carte réseau.",
 /* TR_ENTER_ROOT_PASSWORD */
-"Entrez le mot de passe 'root'. Il est willy42utilisé pour l'accès en ligne de commande.",
+"Entrez le mot de passe 'root'. Il est utilisé pour l'accès en ligne de commande.",
 /* TR_ENTER_SETUP_PASSWORD */
 "A ENLEVER",
 /* TR_ENTER_THE_IP_ADDRESS_INFORMATION */
