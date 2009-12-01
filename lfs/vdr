@@ -44,7 +44,7 @@ DEPS       = "freefont fontconfig"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(DL_FILE1) $(DL_FILE2) $(DL_FILE3)
+objects = $(DL_FILE) $(DL_FILE1) $(DL_FILE2) $(DL_FILE3) $(DL_FILE4)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 $(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
