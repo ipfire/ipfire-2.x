@@ -341,6 +341,7 @@ buildipfire() {
   ipfiremake unzip
   ipfiremake which
   ipfiremake linux			XEN=1
+  ipfiremake atl1c			XEN=1
   ipfiremake atl2			XEN=1
   ipfiremake hso			XEN=1
   ipfiremake e1000e			XEN=1
@@ -356,6 +357,7 @@ buildipfire() {
   ipfiremake mISDN			XEN=1
   ipfiremake compat-wireless		XEN=1
   ipfiremake linux
+  ipfiremake atl1c
   ipfiremake atl2
   ipfiremake hso
   ipfiremake e1000e
