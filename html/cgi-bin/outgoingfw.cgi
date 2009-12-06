@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -21,8 +21,8 @@
 
 use strict;
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -73,12 +73,39 @@ $outfwsettings{'DISPLAY_SIP'} = '';
 $outfwsettings{'POLICY'} = 'MODE0';
 $outfwsettings{'MODE1LOG'} = 'off';
 
+$outfwsettings{'TIME_FROM'} = '00:00';
+$outfwsettings{'TIME_TO'} = '00:00';
+
 &General::readhash("${General::swroot}/outgoing/settings", \%outfwsettings);
 &Header::getcgihash(\%outfwsettings);
+
+$selected{'TIME_FROM'}{$outfwsettings{'TIME_FROM'}} = "selected='selected'";
+$selected{'TIME_TO'}{$outfwsettings{'TIME_TO'}} = "selected='selected'";
 
 $checked{'MODE1LOG'}{'off'} = '';
 $checked{'MODE1LOG'}{'on'} = '';
 $checked{'MODE1LOG'}{$outfwsettings{'MODE1LOG'}} = "checked='checked'";
+$checked{'TIME_MON'}{'off'} = '';
+$checked{'TIME_MON'}{'on'} = '';
+$checked{'TIME_MON'}{$outfwsettings{'TIME_MON'}} = "checked='checked'";
+$checked{'TIME_TUE'}{'off'} = '';
+$checked{'TIME_TUE'}{'on'} = '';
+$checked{'TIME_TUE'}{$outfwsettings{'TIME_TUE'}} = "checked='checked'";
+$checked{'TIME_WED'}{'off'} = '';
+$checked{'TIME_WED'}{'on'} = '';
+$checked{'TIME_WED'}{$outfwsettings{'TIME_WED'}} = "checked='checked'";
+$checked{'TIME_THU'}{'off'} = '';
+$checked{'TIME_THU'}{'on'} = '';
+$checked{'TIME_THU'}{$outfwsettings{'TIME_THU'}} = "checked='checked'";
+$checked{'TIME_FRI'}{'off'} = '';
+$checked{'TIME_FRI'}{'on'} = '';
+$checked{'TIME_FRI'}{$outfwsettings{'TIME_FRI'}} = "checked='checked'";
+$checked{'TIME_SAT'}{'off'} = '';
+$checked{'TIME_SAT'}{'on'} = '';
+$checked{'TIME_SAT'}{$outfwsettings{'TIME_SAT'}} = "checked='checked'";
+$checked{'TIME_SUN'}{'off'} = '';
+$checked{'TIME_SUN'}{'on'} = '';
+$checked{'TIME_SUN'}{$outfwsettings{'TIME_SUN'}} = "checked='checked'";
 
 if ($outfwsettings{'POLICY'} eq 'MODE0'){ $selected{'POLICY'}{'MODE0'} = 'selected'; } else { $selected{'POLICY'}{'MODE0'} = ''; }
 if ($outfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
@@ -164,7 +191,16 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'edit'})
 			($configline[6] eq $outfwsettings{'SMAC'}) && 
 			($configline[7] eq $outfwsettings{'DIP'}) &&
 			($configline[9] eq $outfwsettings{'LOG'}) &&       
-			($configline[8] eq $outfwsettings{'DPORT'}))
+			($configline[8] eq $outfwsettings{'DPORT'}) &&
+			($configline[10] eq $outfwsettings{'TIME_MON'}) &&       
+			($configline[11] eq $outfwsettings{'TIME_TUE'}) &&       
+			($configline[12] eq $outfwsettings{'TIME_WED'}) &&       
+			($configline[13] eq $outfwsettings{'TIME_THU'}) &&       
+			($configline[14] eq $outfwsettings{'TIME_FRI'}) &&       
+			($configline[15] eq $outfwsettings{'TIME_SAT'}) &&       
+			($configline[16] eq $outfwsettings{'TIME_SUN'}) &&       
+			($configline[17] eq $outfwsettings{'TIME_FROM'}) &&       
+			($configline[18] eq $outfwsettings{'TIME_TO'}))
   		{
 			print FILE $configentry;
 		}
@@ -197,7 +233,16 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'delete'})
 			($configline[6] eq $outfwsettings{'SMAC'}) && 
 			($configline[7] eq $outfwsettings{'DIP'}) && 
 			($configline[9] eq $outfwsettings{'LOG'}) &&
-			($configline[8] eq $outfwsettings{'DPORT'}))
+			($configline[8] eq $outfwsettings{'DPORT'}) &&
+			($configline[10] eq $outfwsettings{'TIME_MON'}) &&       
+			($configline[11] eq $outfwsettings{'TIME_TUE'}) &&       
+			($configline[12] eq $outfwsettings{'TIME_WED'}) &&       
+			($configline[13] eq $outfwsettings{'TIME_THU'}) &&       
+			($configline[14] eq $outfwsettings{'TIME_FRI'}) &&       
+			($configline[15] eq $outfwsettings{'TIME_SAT'}) &&       
+			($configline[16] eq $outfwsettings{'TIME_SUN'}) &&       
+			($configline[17] eq $outfwsettings{'TIME_FROM'}) &&       
+			($configline[18] eq $outfwsettings{'TIME_TO'}))
   		{
 			print FILE $configentry;
 		}
@@ -210,7 +255,7 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'add'})
 	if ( $outfwsettings{'VALID'} eq 'yes' ) {
 		open( FILE, ">> $configfile" ) or die "Unable to write $configfile";
 		print FILE <<END
-$outfwsettings{'STATE'};$outfwsettings{'ENABLED'};$outfwsettings{'SNET'};$outfwsettings{'PROT'};$outfwsettings{'NAME'};$outfwsettings{'SIP'};$outfwsettings{'SMAC'};$outfwsettings{'DIP'};$outfwsettings{'DPORT'};$outfwsettings{'LOG'};
+$outfwsettings{'STATE'};$outfwsettings{'ENABLED'};$outfwsettings{'SNET'};$outfwsettings{'PROT'};$outfwsettings{'NAME'};$outfwsettings{'SIP'};$outfwsettings{'SMAC'};$outfwsettings{'DIP'};$outfwsettings{'DPORT'};$outfwsettings{'LOG'};$outfwsettings{'TIME_MON'};$outfwsettings{'TIME_TUE'};$outfwsettings{'TIME_WED'};$outfwsettings{'TIME_THU'};$outfwsettings{'TIME_FRI'};$outfwsettings{'TIME_SAT'};$outfwsettings{'TIME_SUN'};$outfwsettings{'TIME_FROM'};$outfwsettings{'TIME_TO'};
 END
 ;
 		close FILE;
@@ -275,6 +320,16 @@ END
 				$outfwsettings{'DIP'} = $configline[7];
 				$outfwsettings{'DPORT'} = $configline[8];
 				$outfwsettings{'LOG'} = $configline[9];
+				$outfwsettings{'TIME_MON'} = $configline[10];
+				$outfwsettings{'TIME_TUE'} = $configline[11];
+				$outfwsettings{'TIME_WED'} = $configline[12];
+				$outfwsettings{'TIME_THU'} = $configline[13];
+				$outfwsettings{'TIME_FRI'} = $configline[14];
+				$outfwsettings{'TIME_SAT'} = $configline[15];
+				$outfwsettings{'TIME_SUN'} = $configline[16];
+				$outfwsettings{'TIME_FROM'} = $configline[17];
+				$outfwsettings{'TIME_TO'} = $configline[18];
+
 				if ($outfwsettings{'DIP'} eq ''){ $outfwsettings{'DISPLAY_DIP'} = 'ALL'; } else { $outfwsettings{'DISPLAY_DIP'} = $outfwsettings{'DIP'}; }
 				if ($outfwsettings{'DPORT'} eq ''){ $outfwsettings{'DISPLAY_DPORT'} = 'ALL'; } else { $outfwsettings{'DISPLAY_DPORT'} = $outfwsettings{'DPORT'}; }
 				if ($outfwsettings{'STATE'} eq 'DENY'){ $outfwsettings{'DISPLAY_STATE'} = "<img src='/images/stock_stop.png' alt='DENY' />"; }
@@ -301,6 +356,15 @@ END
 							<input type='hidden' name='SMAC' value='$outfwsettings{'SMAC'}' />
 							<input type='hidden' name='ENABLED' value='$outfwsettings{'ENABLED'}' />
 							<input type='hidden' name='LOG' value='$outfwsettings{'LOG'}' />
+							<input type='hidden' name='TIME_MON' value='$outfwsettings{'TIME_MON'}' />
+							<input type='hidden' name='TIME_TUE' value='$outfwsettings{'TIME_TUE'}' />
+							<input type='hidden' name='TIME_WED' value='$outfwsettings{'TIME_WED'}' />
+							<input type='hidden' name='TIME_THU' value='$outfwsettings{'TIME_THU'}' />
+							<input type='hidden' name='TIME_FRI' value='$outfwsettings{'TIME_FRI'}' />
+							<input type='hidden' name='TIME_SAT' value='$outfwsettings{'TIME_SAT'}' />
+							<input type='hidden' name='TIME_SUN' value='$outfwsettings{'TIME_SUN'}' />
+							<input type='hidden' name='TIME_FROM' value='$outfwsettings{'TIME_FROM'}' />
+							<input type='hidden' name='TIME_TO' value='$outfwsettings{'TIME_TO'}' />
 							<input type='hidden' name='ACTION' value=$Lang::tr{'edit'} />
 							<input type='image' src='/images/edit.gif' width="20" height="20" alt=$Lang::tr{'edit'} />
 						</form>
@@ -315,6 +379,15 @@ END
 							<input type='hidden' name='SMAC' value='$outfwsettings{'SMAC'}' />
 							<input type='hidden' name='ENABLED' value='$outfwsettings{'ENABLED'}' />
 							<input type='hidden' name='LOG' value='$outfwsettings{'LOG'}' />
+							<input type='hidden' name='TIME_MON' value='$outfwsettings{'TIME_MON'}' />
+							<input type='hidden' name='TIME_TUE' value='$outfwsettings{'TIME_TUE'}' />
+							<input type='hidden' name='TIME_WED' value='$outfwsettings{'TIME_WED'}' />
+							<input type='hidden' name='TIME_THU' value='$outfwsettings{'TIME_THU'}' />
+							<input type='hidden' name='TIME_FRI' value='$outfwsettings{'TIME_FRI'}' />
+							<input type='hidden' name='TIME_SAT' value='$outfwsettings{'TIME_SAT'}' />
+							<input type='hidden' name='TIME_SUN' value='$outfwsettings{'TIME_SUN'}' />
+							<input type='hidden' name='TIME_FROM' value='$outfwsettings{'TIME_FROM'}' />
+							<input type='hidden' name='TIME_TO' value='$outfwsettings{'TIME_TO'}' />
 							<input type='hidden' name='ACTION' value=$Lang::tr{'delete'} />
 							<input type='image' src='/images/delete.gif' width="20" height="20" alt=$Lang::tr{'delete'} />
 						</form></table>
@@ -330,7 +403,36 @@ END
 END
 ;
 					}
-					print <<END
+						print <<END
+						<tr><td width='14%' align='right'>$Lang::tr{'time'} - </td>
+						    <td width='14%' align='left'>
+END
+;
+							if ($outfwsettings{'TIME_MON'} eq 'on') { print "<font color='$Header::colourgreen'>";}
+							else { print "<font color='$Header::colourred'>";}
+								print "$Lang::tr{'advproxy monday'}</font>,"; 
+							if ($outfwsettings{'TIME_TUE'} eq 'on') { print "<font color='$Header::colourgreen'>";}
+							else { print "<font color='$Header::colourred'>";}
+								print "$Lang::tr{'advproxy tuesday'}</font>,"; 
+							if ($outfwsettings{'TIME_WED'} eq 'on') { print "<font color='$Header::colourgreen'>";}
+							else { print "<font color='$Header::colourred'>";}
+								print "$Lang::tr{'advproxy wednesday'}</font>,"; 
+							if ($outfwsettings{'TIME_THU'} eq 'on') { print "<font color='$Header::colourgreen'>";}
+							else { print "<font color='$Header::colourred'>";}
+								print "$Lang::tr{'advproxy thursday'}</font>,"; 
+							if ($outfwsettings{'TIME_FRI'} eq 'on') { print "<font color='$Header::colourgreen'>";}
+							else { print "<font color='$Header::colourred'>";}
+								print "$Lang::tr{'advproxy friday'}</font>,"; 
+							if ($outfwsettings{'TIME_SAT'} eq 'on') { print "<font color='$Header::colourgreen'>";}
+							else { print "<font color='$Header::colourred'>";}
+								print "$Lang::tr{'advproxy saturday'}</font>,"; 
+							if ($outfwsettings{'TIME_SUN'} eq 'on') { print "<font color='$Header::colourgreen'>";}
+							else { print "<font color='$Header::colourred'>";}
+								print "$Lang::tr{'advproxy sunday'}</font>";		
+							print <<END
+							</td>
+						    <td width='22%' align='center'>$Lang::tr{'advproxy from'} $outfwsettings{'TIME_FROM'}</td>
+							<td width='22%' align='center'>$Lang::tr{'advproxy to'} $outfwsettings{'TIME_TO'}</td>
 					</form>
 END
 ;
@@ -448,17 +550,19 @@ sub addrule
 {
 	&Header::openbox('100%', 'center', 'Rules hinzufuegen');
 	if ($outfwsettings{'EDIT'} eq 'no') { $selected{'ENABLED'} = 'checked'; }
+	$selected{'TIME_FROM'}{$outfwsettings{'TIME_FROM'}} = "selected='selected'";
+	$selected{'TIME_TO'}{$outfwsettings{'TIME_TO'}} = "selected='selected'";
 	print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='80%'>
 		<tr><td width='20%' align='right'>$Lang::tr{'description'}: <img src='/blob.gif' />
 		    <td width='30%' align='left'><input type='text' name='NAME' maxlength='30' value='$outfwsettings{'NAME'}' />
-		    <td width='20%' align='right'>$Lang::tr{'active'}:
-		    <td width='30%' align='left'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} />
+		    <td width='20%' align='right' colspan='2'>$Lang::tr{'active'}:
+		    <td width='30%' align='left' colspan='2'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} />
 		<tr><td width='20%' align='right'>$Lang::tr{'protocol'}:
 		    <td width='30%' align='left'><select name='PROT'><option value='all' $selected{'PROT'}{'all'}>All</option><option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option><option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option><option value='udp' $selected{'PROT'}{'udp'}>UDP</option></select>
-		    <td width='20%' align='right'>$Lang::tr{'policy'}:
-		    <td width='30%' align='left'>
+		    <td width='20%' align='right' colspan='2'>$Lang::tr{'policy'}:
+		    <td width='30%' align='left' colspan='2'>
 END
 ;
 	if ($outfwsettings{'POLICY'} eq 'MODE1'){
@@ -471,6 +575,7 @@ END
 		    <td width='30%' align='left'><select name='SNET'>
 			<option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option>
 			<option value='ip' $selected{'SNET'}{'ip'}>$Lang::tr{'source ip'}</option>
+			<option value='red' $selected{'SNET'}{'red'}>$Lang::tr{'red'} IP</option>
 			<option value='green' $selected{'SNET'}{'green'}>$Lang::tr{'green'}</option>
 END
 ;
@@ -482,8 +587,8 @@ END
 	}
 	print <<END
 			</select>
-		    <td width='20%' align='right'>$Lang::tr{'source ip'}: <img src='/blob.gif' />
-		    <td width='30%' align='left'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' />
+		    <td width='20%' align='right' colspan='2'>$Lang::tr{'source ip'}: <img src='/blob.gif' />
+		    <td width='30%' align='left' colspan='2'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' />
 		<tr><td width='20%' align='right'>$Lang::tr{'logging'}:
 END
 ;
@@ -494,15 +599,55 @@ else{
 	 print "<td width='30%' align='left'><select name='LOG'><option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option><option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option></select></td>";
 }
 print <<END
-		    <td width='20%' align='right' />
-		    <td width='30%' align='left' />
+		    <td width='20%' align='right' colspan='2' />
+		    <td width='30%' align='left' colspan='2' />
 		<tr><td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' />
 		    <td width='30%' align='left'><input type='text' name='DIP' maxlength='15' value='$outfwsettings{'DIP'}' />
-		    <td width='20%' align='right'>$Lang::tr{'destination port'}: <img src='/blob.gif' />
-		    <td width='30%' align='left'><input type='text' name='DPORT' maxlength='11' value='$outfwsettings{'DPORT'}' />
-		<tr><td colspan='4'>
+		    <td width='20%' align='right' colspan='2'>$Lang::tr{'destination port'}: <img src='/blob.gif' />
+		    <td width='30%' align='left' colspan='2'><input type='text' name='DPORT' maxlength='11' value='$outfwsettings{'DPORT'}' />
+		<tr><td width='20%' align='right'>$Lang::tr{'time'}:</td>
+			<td width='30%' align='left'>$Lang::tr{'advproxy monday'} $Lang::tr{'advproxy tuesday'} $Lang::tr{'advproxy wednesday'} $Lang::tr{'advproxy thursday'} $Lang::tr{'advproxy friday'} $Lang::tr{'advproxy saturday'} $Lang::tr{'advproxy sunday'}</td>
+			<td width='20%' align='right' colspan='2' />
+			<td width='15%' align='left'>$Lang::tr{'advproxy from'}</td>
+			<td width='15%' align='left'>$Lang::tr{'advproxy to'}</td></tr>
+		<tr><td width='20%' align='right'></td>
+			<td width='30%' align='left'><input type='checkbox' name='TIME_MON' $checked{'TIME_MON'}{'on'} />
+										 <input type='checkbox' name='TIME_TUE' $checked{'TIME_TUE'}{'on'} />
+										 <input type='checkbox' name='TIME_WED' $checked{'TIME_WED'}{'on'} />
+										 <input type='checkbox' name='TIME_THU' $checked{'TIME_THU'}{'on'} />
+										 <input type='checkbox' name='TIME_FRI' $checked{'TIME_FRI'}{'on'} />
+										 <input type='checkbox' name='TIME_SAT' $checked{'TIME_SAT'}{'on'} />
+										 <input type='checkbox' name='TIME_SUN' $checked{'TIME_SUN'}{'on'} /></td>
+			<td width='20%' align='right' colspan='2' />
+			<td width='15%' align='left'><select name='TIME_FROM'>
+END
+;
+for (my $i=0;$i<=23;$i++) {
+	$i = sprintf("%02s",$i);
+	for (my $j=0;$j<=45;$j+=15) {
+		$j = sprintf("%02s",$j);
+		my $time = $i.":".$j;
+		print "<option $selected{'TIME_FROM'}{$time}>$i:$j</option>\n";
+	}
+}
+print <<END	
+			</select></td>
+			<td width='15%' align='left'><select name='TIME_TO'>
+END
+;
+for (my $i=0;$i<=23;$i++) {
+	$i = sprintf("%02s",$i);
+	for (my $j=0;$j<=45;$j+=15) {
+		$j = sprintf("%02s",$j);
+		my $time = $i.":".$j;
+		print "<option $selected{'TIME_TO'}{$time}>$i:$j</option>\n";
+	}
+}
+print <<END	
+			</select></td></tr>
+		<tr><td colspan='6'>
 		<tr><td width='40%' align='right' colspan='2'><img src='/blob.gif' />$Lang::tr{'this field may be blank'}
-		    <td width='60%' align='left' colspan='2'><input type='submit' name='ACTION' value=$Lang::tr{'add'} />
+		    <td width='60%' align='left' colspan='4'><input type='submit' name='ACTION' value=$Lang::tr{'add'} />
 	</table></form>
 END
 ;

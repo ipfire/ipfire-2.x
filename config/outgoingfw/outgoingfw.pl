@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -64,6 +64,7 @@ $outfwsettings{'DISPLAY_DPORT'} = '';
 $outfwsettings{'DISPLAY_SMAC'} = '';
 $outfwsettings{'DISPLAY_SIP'} = '';
 $outfwsettings{'POLICY'} = 'MODE0';
+
 my $SOURCE = "";
 my $DESTINATION = "";
 my $PROTO = "";
@@ -72,12 +73,14 @@ my $DEV = "";
 my $MAC = "";
 my $POLICY = "";
 my $DO = "";
+my $DAY = "";
 
 # read files
 &General::readhash("${General::swroot}/outgoing/settings", \%outfwsettings);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 $netsettings{'RED_DEV'}=`cat /var/ipfire/red/iface`;
+$netsettings{'RED_IP'}=`cat /var/ipfire/red/local-ipaddress`;
 
 open( FILE, "< $configfile" ) or die "Unable to read $configfile";
 @configs = <FILE>;
@@ -122,6 +125,9 @@ foreach $configentry (sort @configs)
 		if ($configline[2] eq 'green') {
 			$SOURCE = "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
 			$DEV = $netsettings{'GREEN_DEV'};
+		} elsif ($configline[2] eq 'red') {
+			$SOURCE = "$netsettings{'RED_IP'}";
+			$DEV = "";
 		} elsif ($configline[2] eq 'blue') {
 			$SOURCE = "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
 			$DEV = $netsettings{'BLUE_DEV'};
@@ -142,8 +148,6 @@ foreach $configentry (sort @configs)
 			@proto = ("tcp");
 		} elsif ($configline[3] eq 'udp') {
 			@proto = ("udp");
-		} elsif ($configline[3] eq 'all') {
-			@proto = ("all");
 		} else {
 			@proto = ("tcp", "udp");
 		}
@@ -163,6 +167,17 @@ foreach $configentry (sort @configs)
 			if ($configline[6]) {
 				$MAC = "$configline[6]";
 			 	$CMD = "$CMD -m mac --mac-source $MAC";
+			}
+			
+			if ($configline[17] && $configline[18]) {
+				if ($configline[10]){$DAY = "Mon,"}
+				if ($configline[11]){$DAY .= "Tue,"}
+				if ($configline[12]){$DAY .= "Wed,"}
+				if ($configline[13]){$DAY .= "Thu,"}
+				if ($configline[14]){$DAY .= "Fri,"}
+				if ($configline[15]){$DAY .= "Sat,"}
+				if ($configline[16]){$DAY .= "Sun"}
+			 	$CMD = "$CMD -m time --timestart $configline[17] --timestop $configline[18] --weekdays $DAY";
 			}
 			
 			$CMD = "$CMD -o $netsettings{'RED_DEV'}";
