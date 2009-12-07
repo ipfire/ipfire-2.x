@@ -21,8 +21,8 @@
 
 use strict;
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -110,6 +110,23 @@ $checked{'TIME_SUN'}{$outfwsettings{'TIME_SUN'}} = "checked='checked'";
 if ($outfwsettings{'POLICY'} eq 'MODE0'){ $selected{'POLICY'}{'MODE0'} = 'selected'; } else { $selected{'POLICY'}{'MODE0'} = ''; }
 if ($outfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
 if ($outfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
+
+if ( $outfwsettings{'TIME_MON'} eq "" &&
+     $outfwsettings{'TIME_TUE'} eq "" &&
+	 $outfwsettings{'TIME_WED'} eq "" &&
+	 $outfwsettings{'TIME_THU'} eq "" &&
+	 $outfwsettings{'TIME_FRI'} eq "" &&
+	 $outfwsettings{'TIME_SAT'} eq "" &&
+	 $outfwsettings{'TIME_SUN'} eq "" )
+	 {
+		$outfwsettings{'TIME_MON'} = "on";
+		$outfwsettings{'TIME_TUE'} = "on";
+		$outfwsettings{'TIME_WED'} = "on";
+		$outfwsettings{'TIME_THU'} = "on";
+		$outfwsettings{'TIME_FRI'} = "on";
+		$outfwsettings{'TIME_SAT'} = "on";
+		$outfwsettings{'TIME_SUN'} = "on";
+	 }
 
 &Header::openpage('Ausgehende Firewall', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
