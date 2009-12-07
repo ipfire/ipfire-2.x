@@ -12,4 +12,5 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/fr.pl
 var/ipfire/langs/list
 var/ipfire/outgoing/bin/outgoingfw.pl
+var/ipfire/snort/oinkmaster.conf
 usr/local/sbin/setup
