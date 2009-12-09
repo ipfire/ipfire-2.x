@@ -43,6 +43,8 @@
 * arping-2.05
 * as86-0.16.17
 * asterisk-1.4.18
+* atl1c-kmod-2.6.27.39-ipfire
+* atl1c-kmod-2.6.27.39-ipfire-xen
 * atl2-2.0.5-kmod-2.6.27.39-ipfire
 * atl2-2.0.5-kmod-2.6.27.39-ipfire-xen
 * autoconf-2.59
