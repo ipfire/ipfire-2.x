@@ -42,9 +42,11 @@
 * applejuice-0.31
 * arping-2.05
 * as86-0.16.17
-* asterisk-1.4.18
+* asterisk-1.4.26.3
 * atl1c-kmod-2.6.27.41-ipfire
+* atl1c-kmod-2.6.27.41-ipfire-xen
 * atl2-2.0.5-kmod-2.6.27.41-ipfire
+* atl2-2.0.5-kmod-2.6.27.41-ipfire-xen
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire
@@ -70,6 +72,7 @@
 * cmake-2.4.8
 * collectd-4.5.3
 * compat-wireless-2.6.32-rc7-kmod-2.6.27.41-ipfire
+* compat-wireless-2.6.32-rc7-kmod-2.6.27.41-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
@@ -77,6 +80,9 @@
 * curl-7.19.5
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
+* dahdi-2.2.0.2
+* dahdi-2.2.0.2-kmod-2.6.27.41-ipfire
+* dahdi-2.2.0.2-kmod-2.6.27.41-ipfire-xen
 * db-4.4.20
 * dbus-1.0.3
 * dhcp-3.1.0
@@ -85,6 +91,7 @@
 * dnsmasq-2.45
 * dosfstools-2.11
 * e1000e-1.0.2.5-kmod-2.6.27.41-ipfire
+* e1000e-1.0.2.5-kmod-2.6.27.41-ipfire-xen
 * e2fsprogs-1.39
 * ebtables-v2.0.8-2
 * ed-0.2
@@ -131,6 +138,7 @@
 * hostapd-0.6.9
 * hplip-2.7.10
 * hso-1.9-kmod-2.6.27.41-ipfire
+* hso-1.9-kmod-2.6.27.41-ipfire-xen
 * htop-0.8.1
 * httpd-2.2.11
 * hwdata
@@ -155,6 +163,7 @@
 * kbd-1.12
 * klibc-1.5.14
 * kqemu-1.4.0pre1-kmod-2.6.27.41-ipfire
+* kqemu-1.4.0pre1-kmod-2.6.27.41-ipfire-xen
 * kudzu-1.2.64
 * kvm-kmod-2.6.31.5-kmod-2.6.27.41-ipfire
 * l7-protocols-2009-05-10
@@ -174,7 +183,7 @@
 * libogg-1.1.4
 * libpcap-1.0.0
 * libpng-1.2.12
-* libpri-1.4.1
+* libpri-1.4.10.1
 * libsafe_2.0-16
 * libshout-2.2.2
 * libsigc++-2.0.17
@@ -187,6 +196,7 @@
 * libxml2-2.6.26
 * libxslt-1.1.17
 * linux-2.6.27.41-ipfire
+* linux-2.6.27.41-ipfire-xen
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * lm_sensors-3.0.3
@@ -197,8 +207,10 @@
 * lzo-2.02
 * m4-1.4.4
 * mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.41-ipfire
+* mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.41-ipfire-xen
 * mISDNuser.git-54928dec57bc846f2c2186f3640e69a053cd3641
 * madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.41-ipfire
+* madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.41-ipfire-xen
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
@@ -247,6 +259,7 @@
 * openssl-0.9.8k
 * openswan-2.6.23
 * openswan-2.6.23-kmod-2.6.27.41-ipfire
+* openswan-2.6.23-kmod-2.6.27.41-ipfire-xen
 * openvpn-2.1_rc20
 * p7zip_4.65
 * pam_mysql-0.7RC1
@@ -268,8 +281,11 @@
 * psmisc-22.2
 * qemu-0.11.0
 * r8101-kmod-2.6.27.41-ipfire
+* r8101-kmod-2.6.27.41-ipfire-xen
 * r8168-8.014.00-kmod-2.6.27.41-ipfire
+* r8168-8.014.00-kmod-2.6.27.41-ipfire-xen
 * r8169-6.011.00-kmod-2.6.27.41-ipfire
+* r8169-6.011.00-kmod-2.6.27.41-ipfire-xen
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
@@ -290,7 +306,7 @@
 * smartmontools-5.39-svn_r2877
 * snort-2.8.4
 * sox-12.18.1
-* spandsp-0.0.4pre15
+* spandsp-0.0.6pre12
 * splix-2.0.0-rc2
 * sqlite-3.6.10
 * squashfs3.4
@@ -325,6 +341,7 @@
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-aba823ecaea6-kmod-2.6.27.41-ipfire
+* v4l-dvb-aba823ecaea6-kmod-2.6.27.41-ipfire-xen
 * vdr-1.6.0
 * vdradmin-am-3.6.4
 * vim-7.0

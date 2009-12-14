@@ -1,5 +1,4 @@
 #usr/include/libpri.h
 #usr/lib/libpri.a
 usr/lib/libpri.so
-usr/lib/libpri.so.1
-usr/lib/libpri.so.1.0
+usr/lib/libpri.so.1.4

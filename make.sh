@@ -353,6 +353,7 @@ buildipfire() {
   ipfiremake v4l-dvb			XEN=1
   ipfiremake madwifi			XEN=1
   #ipfiremake alsa			XEN=1 KMOD=1
+  ipfiremake dahdi			XEN=1 KMOD=1
   ipfiremake openswan			XEN=1 KMOD=1
   ipfiremake mISDN			XEN=1
   ipfiremake compat-wireless		XEN=1
@@ -369,6 +370,7 @@ buildipfire() {
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
+  ipfiremake dahdi			KMOD=1
   ipfiremake openswan			KMOD=1
   ipfiremake mISDN
   ipfiremake compat-wireless
@@ -536,8 +538,6 @@ buildipfire() {
   ipfiremake xvid
   ipfiremake libmpeg2
   ipfiremake cmake
-  ipfiremake libpri
-  ipfiremake asterisk
   ipfiremake gnump3d
   ipfiremake libsigc++
   ipfiremake applejuice
@@ -627,7 +627,6 @@ buildipfire() {
   ipfiremake netsnmpd
   ipfiremake perl-DBI
   ipfiremake perl-DBD-mysql
-  ipfiremake lcr
   ipfiremake cacti
   ipfiremake icecc
   ipfiremake open-vm-tools
@@ -637,6 +636,10 @@ buildipfire() {
   ipfiremake joe
   ipfiremake nut
   ipfiremake watchdog
+  ipfiremake libpri
+  ipfiremake dahdi
+  ipfiremake asterisk
+  ipfiremake lcr
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild

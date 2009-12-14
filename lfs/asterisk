@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.18
+VER        = 1.4.26.3
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,11 +32,17 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 4
+PAK_VER    = 5
 
-CHAN_CAPI  = chan_capi-1.0.2
+CHAN_CAPI  = chan_capi-1.1.4
 
-DEPS       = "libpri spandsp sox"
+DEPS       = "libpri spandsp sox dahdi"
+#
+# TODO: checked all needed dependencies for asterisk 1.4.26
+#       started from clean system, checked all libs with ldd and
+#       found this ones:
+#       "libpri dahdi-tools dahdi-linux alsa cyrus-sasl libogg libtiff libvorbis netsnmpd spandsp"
+#
 
 ###############################################################################
 # Top-level Rules
@@ -44,27 +50,27 @@ DEPS       = "libpri spandsp sox"
 
 objects = $(DL_FILE) \
 	   asterisk-1.4-de-prompts.tar.gz \
-	   asterisk-core-sounds-en-alaw-1.4.8.tar.gz \
-	   asterisk-extra-sounds-en-alaw-1.4.7.tar.gz \
-	   asterisk-addons-1.4.5.tar.gz \
-	   agx-ast-addons-1.4.5.tar.bz2 \
+	   asterisk-core-sounds-en-alaw-1.4.15.tar.gz \
+	   asterisk-extra-sounds-en-alaw-1.4.9.tar.gz \
+	   asterisk-addons-1.4.9.tar.gz \
+	   agx-ast-addons-svn65.tgz \
 	   $(CHAN_CAPI).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asterisk-core-sounds-en-alaw-1.4.8.tar.gz = $(URL_IPFIRE)/asterisk-core-sounds-en-alaw-1.4.8.tar.gz
-asterisk-extra-sounds-en-alaw-1.4.7.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-alaw-1.4.7.tar.gz
+asterisk-core-sounds-en-alaw-1.4.15.tar.gz = $(URL_IPFIRE)/asterisk-core-sounds-en-alaw-1.4.15.tar.gz
+asterisk-extra-sounds-en-alaw-1.4.9.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-alaw-1.4.9.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
-asterisk-addons-1.4.5.tar.gz = $(URL_IPFIRE)/asterisk-addons-1.4.5.tar.gz
-agx-ast-addons-1.4.5.tar.bz2 = $(URL_IPFIRE)/agx-ast-addons-1.4.5.tar.bz2
+asterisk-addons-1.4.9.tar.gz = $(URL_IPFIRE)/asterisk-addons-1.4.9.tar.gz
+agx-ast-addons-svn65.tgz = $(URL_IPFIRE)/agx-ast-addons-svn65.tgz
 $(CHAN_CAPI).tar.gz = $(URL_IPFIRE)/$(CHAN_CAPI).tar.gz
 
-$(DL_FILE)_MD5 = 3d8b2b2ef4f202901771663b40f19c3d
-asterisk-core-sounds-en-alaw-1.4.8.tar.gz_MD5 = e708a5510a61217725b6ad663287dfa0
-asterisk-extra-sounds-en-alaw-1.4.7.tar.gz_MD5 = ecc50bd2b9b29d8237911272248c5d35
+$(DL_FILE)_MD5 = 04017dfdc8caeb8f4663b5dc4a9e1019
+asterisk-core-sounds-en-alaw-1.4.15.tar.gz_MD5 = e9531e871d5b24e7b83d3ef946390d40
+asterisk-extra-sounds-en-alaw-1.4.9.tar.gz_MD5 = 4fa1b8d096a66b3a39b6d0e52fe3f1ad
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
-asterisk-addons-1.4.5.tar.gz_MD5 = 8de9922c0a93321941f29a77a2f1bf13
-agx-ast-addons-1.4.5.tar.bz2_MD5 = a28f73d041769ea103e59b7f96c13d5e
-$(CHAN_CAPI).tar.gz_MD5 = d4732ecc008e8ef45c38bd2f4d70ef44
+asterisk-addons-1.4.9.tar.gz_MD5 = 0c0ddf2386a9541e416e122ca082e611
+agx-ast-addons-svn65.tgz_MD5 = 9372d818cc68337658110f793d0fd8e0
+$(CHAN_CAPI).tar.gz_MD5 = 18fa835e724b7814deafbfa5b8cb01eb
 
 install : $(TARGET)
 
@@ -96,41 +102,78 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/$(CHAN_CAPI) \
-		$(DIR_SRC)/agx-ast-addons && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	# remove old directories and extract asterisk
+	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/$(CHAN_CAPI) $(DIR_SRC)/agx-ast-addons && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	# confiure asterisk
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire
-	cd $(DIR_APP) && cp -fv $(DIR_SRC)/config/asterisk/asterisk.makeopts \
-		menuselect.makeopts
-	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-core-sounds-en-alaw-1.4.8.tar.gz \
-		$(DIR_APP)/sounds/asterisk-core-sounds-en-alaw-1.4.8.tar.gz
-	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-alaw-1.4.7.tar.gz \
-		$(DIR_APP)/sounds/asterisk-extra-sounds-en-alaw-1.4.7.tar.gz
+
+	# enable additional features (include following sound-tars)
+	cd $(DIR_APP) && cp -fv $(DIR_SRC)/config/asterisk/asterisk.makeopts menuselect.makeopts
+
+	# add additional sounds
+	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-core-sounds-en-alaw-1.4.15.tar.gz $(DIR_APP)/sounds/asterisk-core-sounds-en-alaw-1.4.15.tar.gz
+	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-alaw-1.4.9.tar.gz $(DIR_APP)/sounds/asterisk-extra-sounds-en-alaw-1.4.9.tar.gz
+
+	# compile and install
 	cd $(DIR_APP) && make $(MAKETUNING) all
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make samples
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/asterisk-addons-1.4.5.tar.gz
-	cd $(DIR_SRC)/asterisk-addons-* && ./configure --prefix=/usr \
-		--sysconfdir=/var/ipfire
-	cd $(DIR_SRC)/asterisk-addons-* && cp -f $(DIR_SRC)/config/asterisk/addons.makeopts \
-		menuselect.makeopts
-	cd $(DIR_SRC)/asterisk-addons-* && make $(MAKETUNING) all install
+
+	# extract and configure asterisk-addons
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/asterisk-addons-1.4.9.tar.gz
+	cd $(DIR_SRC)/asterisk-addons-* && ./configure --prefix=/usr --sysconfdir=/var/ipfire
+	# enable additional features (--> NOT NEEDED, DEFAULT CONFIG INCLUDES ALL)
+	#cd $(DIR_SRC)/asterisk-addons-* && cp -f $(DIR_SRC)/config/asterisk/addons.makeopts menuselect.makeopts
+	# make and install asterisk-addons
+	cd $(DIR_SRC)/asterisk-addons-* && make $(MAKETUNING) all
+	cd $(DIR_SRC)/asterisk-addons-* && make install
+	cd $(DIR_SRC)/asterisk-addons-* && make samples
+
+	# add german sounds and remove README.txt
 	tar xfz $(DIR_DL)/asterisk-1.4-de-prompts.tar.gz -C /var/lib/asterisk/sounds/
 	-rm -f /var/lib/asterisk/sounds/README.txt
+
+	# remove build directories
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*
+
+	# copy additional ipfire scripts for asterisk
 	-mkdir -p /var/ipfire/asterisk
 	cp -vrf $(DIR_SRC)/config/asterisk/* /var/ipfire/asterisk/
 	chmod o+w /var/ipfire/asterisk
 	chown nobody:nobody -R /var/ipfire/asterisk
 	ln -f -s /var/ipfire/asterisk/wakeup/wakeup.sh /etc/fcron.minutely/wakeup.sh
-	
+
+	# build and install chan capi (needed for isdn)
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(CHAN_CAPI).tar.gz
 	cd $(DIR_SRC)/$(CHAN_CAPI) && make $(MAKETUNING)
 	cd $(DIR_SRC)/$(CHAN_CAPI) && make install
-	
-	cd $(DIR_SRC) && tar jxf $(DIR_DL)/agx-ast-addons-1.4.5.tar.bz2
+	@rm -rf $(DIR_SRC)/$(CHAN_CAPI)
+
+	# build FAX stuff (TODO: get newer version... where to download source?)
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/agx-ast-addons-svn65.tgz
+	# bugfix: disable app_confcall (not supported with dahdi, but we can take meetme)
+	cd $(DIR_SRC)/agx-ast-addons && echo "project (agx-ast-addons-zaptel)" > ./app-dahdi/CMakeLists.txt
+	cd $(DIR_SRC)/agx-ast-addons && echo >> ./app-dahdi/CMakeLists.txt
+	# end bugfix
+	cd $(DIR_SRC)/agx-ast-addons && ./configure.sh
 	cd $(DIR_SRC)/agx-ast-addons && ./build.sh
-	
-	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*  $(DIR_SRC)/$(CHAN_CAPI) \
-		$(DIR_SRC)/agx-ast-addons
+	@rm -rf $(DIR_SRC)/agx-ast-addons
+
+	# be sure all source is removed
+	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*
+
+	# remember backup-location
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/asterisk /var/ipfire/backup/addons/includes/asterisk
+
+	# generate softlink (or asterisk will not work properly)
+	ln -sf /var/ipfire/asterisk /etc/asterisk
+
+	# make asterisk start with reboot
+	ln -sf /etc/rc.d/init.d/asterisk /etc/rc.d/rc0.d/K30asterisk
+	ln -sf /etc/rc.d/init.d/asterisk /etc/rc.d/rc6.d/K30asterisk
+	ln -sf /etc/rc.d/init.d/asterisk /etc/rc.d/rc3.d/S30asterisk
+
+	# all done
 	@$(POSTBUILD)

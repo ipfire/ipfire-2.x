@@ -66,7 +66,8 @@ $(TARGET) :
 	
 	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,mISDN,source,misc/*,kernel/{sound,drivers/{acpi,bluetooth,cpufreq,hwmon,gpu,rtc,isdn,media,video,watchdog}}} \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan* \
-		/install/initrd/lib/modules/$(KVER)-ipfire/net/{bridge,netfilter,ipsec}
+		/install/initrd/lib/modules/$(KVER)-ipfire/net/{bridge,netfilter,ipsec} \
+		/install/initrd/lib/modules/$(KVER)-ipfire/dahdi
 
 	# ... acpi/dock.ko is needed for libata
 	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi
