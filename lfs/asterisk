@@ -36,13 +36,7 @@ PAK_VER    = 5
 
 CHAN_CAPI  = chan_capi-1.1.4
 
-DEPS       = "libpri spandsp sox dahdi"
-#
-# TODO: checked all needed dependencies for asterisk 1.4.26
-#       started from clean system, checked all libs with ldd and
-#       found this ones:
-#       "libpri dahdi-tools dahdi-linux alsa cyrus-sasl libogg libtiff libvorbis netsnmpd spandsp"
-#
+DEPS       = "libpri libtiff libvorbis libogg spandsp dahdi netsnmpd"
 
 ###############################################################################
 # Top-level Rules

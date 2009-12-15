@@ -1,4 +1,4 @@
-#etc/dahdi
+etc/dahdi
 #etc/hotplug
 #etc/hotplug/usb
 etc/hotplug/usb/xpp_fxloader
