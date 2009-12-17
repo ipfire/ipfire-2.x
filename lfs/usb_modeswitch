@@ -74,6 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	mv -f /etc/usb_modeswitch.conf /etc/usb_modeswitch.conf.default 
+	mv -f /etc/usb_modeswitch.conf /etc/usb_modeswitch.conf.example
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
