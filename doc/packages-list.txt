@@ -188,7 +188,7 @@
 * libshout-2.2.2
 * libsigc++-2.0.17
 * libtool-1.5.22
-* libtorrent-0.12.4
+* libtorrent-0.12.6
 * libupnp-1.6.6
 * libusb-0.1.12
 * libvorbis-1.2.3
@@ -293,7 +293,7 @@
 * rrdtool-1.2.15
 * rssdler-0.4.0a
 * rsync-3.0.6
-* rtorrent-0.8.4
+* rtorrent-0.8.6
 * samba-3.3.9
 * sane-1.0.19
 * screen-4.0.3
@@ -312,7 +312,7 @@
 * squashfs3.4
 * squid-2.7.STABLE7
 * squidGuard-1.4
-* squidclamav-4.0
+* squidclamav-4.1
 * sshfs-fuse-2.2
 * sslh-1.6i
 * streamripper-1.63.5
