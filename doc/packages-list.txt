@@ -338,6 +338,7 @@
 * udev-096-klibc
 * unzip552
 * urlgrabber-3.1.0
+* usb_modeswitch-1.0.5
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-aba823ecaea6-kmod-2.6.27.41-ipfire

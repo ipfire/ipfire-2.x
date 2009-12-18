@@ -1,0 +1,27 @@
+diff -Naur usb_modeswitch-1.0.5.org/usb_modeswitch.conf usb_modeswitch-1.0.5/usb_modeswitch.conf
+--- usb_modeswitch-1.0.5.org/usb_modeswitch.conf	2009-08-26 23:52:00.000000000 +0200
++++ usb_modeswitch-1.0.5/usb_modeswitch.conf	2009-12-17 23:13:39.000000000 +0100
+@@ -1191,6 +1191,23 @@
+ 
+ 
+ ########################################################
++# Huawei E1762 / Bildmobil Speedstick
++#
++# Contributor: Arne Fitzenreiter
++
++;DefaultVendor=  0x12d1
++;DefaultProduct= 0x1446
++
++;TargetVendor=   0x12d1
++;TargetProduct=  0x140c
++
++# only for reference and 0.x versions
++# MessageEndpoint=0x01
++
++;MessageContent="55534243123456780000000000000011060000000000000000000000000000"
++
++
++########################################################
+ # ZTE K3520-Z
+ #
+ # Contributor: Paul McDermott 
