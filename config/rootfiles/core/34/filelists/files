@@ -7,6 +7,7 @@ srv/web/ipfire/cgi-bin/mac.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/langs/en.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/fr.pl
