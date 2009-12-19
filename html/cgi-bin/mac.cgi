@@ -55,8 +55,21 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	} else {
 		$errormessage = $Lang::tr{'mac address error not valid'};
 	}
+	$macsettings{'MAC1'} =~ s/\-/:/g;
+	if ( not ($macsettings{'MAC1'} eq "" )) {
+		my @mac = split(/:/,$macsettings{"MAC1"});
+		if ($#mac == 5) { 
+			foreach (@mac) {
+				unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
+						$errormessage = $Lang::tr{'mac address error not valid'};
+						last;			
+				}
+			}
+		} else {
+			$errormessage = $Lang::tr{'mac address error not valid'};
+		}
+	}
 	$macsettings{'MAC2'} =~ s/\-/:/g;
-	
 	if ( not ($macsettings{'MAC2'} eq "" )) {
 		my @mac = split(/:/,$macsettings{"MAC2"});
 		if ($#mac == 5) { 
@@ -72,6 +85,7 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 	if ($errormessage eq "") {
 		$macsettings{'MAC'} =~ s/\:/-/g;
+		$macsettings{'MAC1'} =~ s/\:/-/g;
 		$macsettings{'MAC2'} =~ s/\:/-/g;
 		&General::writehash("${General::swroot}/mac/settings", \%macsettings);	
 		&Header::openbox('100%', 'left', $Lang::tr{'mac address saved'});								
@@ -140,6 +154,26 @@ print <<END
     <td>&nbsp;</td>
   </tr>
   <tr>
+    <td><font class='base'>$Lang::tr{'mac1 new'}&nbsp;</font></td><td>
+END
+;
+if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
+print <<END 
+      <input type="text" name="MAC1" maxlength="17" value=''/><img src='/blob.gif' alt='*' /></td>
+END
+;
+} else {   
+print <<END
+      <input type="text" name="MAC1" maxlength="17" value='$macsettings{"MAC1"}'/><img src='/blob.gif' alt='*' /></td>
+END
+;  
+} 
+print <<END    
+  </tr>
+    <tr>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
     <td><font class='base'>$Lang::tr{'mac2 new'}&nbsp;</font></td><td>
 END
 ;
@@ -154,6 +188,7 @@ print <<END
 END
 ;  
 } 
+
 print <<END    
   </tr>
     <tr>

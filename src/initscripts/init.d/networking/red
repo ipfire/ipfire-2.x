@@ -33,6 +33,7 @@ eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/mac/settings)
 
 MAC=$(tr - : <<<$MAC)
+MAC1=$(tr - : <<<$MAC1)
 MAC2=$(tr - : <<<$MAC2)
 
 TYPE="${RED_TYPE}"
@@ -253,6 +254,11 @@ case "${1}" in
 				boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_INET_VLAN} ..."
 				modprobe 8021q
 				vconfig add ${DEVICE} ${RED_VDSL_INET_VLAN}
+				if [ -n "$MAC1" ]; then
+					boot_mesg "Setting mac address on ${DEVICE}.${RED_VDSL_INET_VLAN} to ${MAC1}"	
+					ip link set dev ${DEVICE}.${RED_VDSL_INET_VLAN} address ${MAC1}
+					evaluate_retval
+				fi
 				PPP_NIC=${DEVICE}.${RED_VDSL_INET_VLAN}
 				sleep 0.2
 				ip link set ${PPP_NIC} up

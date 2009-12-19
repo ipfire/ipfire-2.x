@@ -1100,6 +1100,7 @@
 'mac address done' => 'The MAC address settings are going to be saved.',
 'mac desc' => 'Here you are able to change the MAC address on red0. The address must be entered in hexadecimal (0-9,a-f), a valid entry is <br />e.g. 00-01-02-0e-b8-d6 or 00:01:02:0e:b8:d6.',
 'mac new' => 'new MAC address:',
+'mac1 new' => 'new MAC address 1 (vdsl-inet):',
 'mac2 new' => 'new MAC address 2 (vdsl-iptv):',
 'magic packet send to:' => 'Magic packet send to:',
 'mailmethod' => 'Mailmethod',
