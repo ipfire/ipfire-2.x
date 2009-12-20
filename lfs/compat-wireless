@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2.6.32-rc7
+VER        = 2.6.32.2
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c7b9f081895c23841509a363f9ae4da2
+$(DL_FILE)_MD5 = 2dafe9ac35fab4b15fddf09a5302ec75
 
 install : $(TARGET)
 
@@ -92,4 +92,3 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 
-2dafe9ac35fab4b15fddf09a5302ec75  compat-wireless-2.6.32.2.tar.bz2
