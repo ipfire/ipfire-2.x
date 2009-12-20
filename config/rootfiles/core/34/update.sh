@@ -125,6 +125,10 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 rm -rf /etc/sysconfig/lm_sensors
 #
+# Delete old dhcpcd.exe...
+#
+rm -f /var/ipfire/dhcpc/dhcpcd.exe
+#
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-34 "Upgrade finished. If you use a customized grub.cfg"
 /usr/bin/logger -p syslog.emerg -t core-upgrade-34 "Check it before reboot !!!"

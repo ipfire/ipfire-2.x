@@ -40,7 +40,7 @@ if (open(FILE, "${General::swroot}/red/iface")) {
 }
 
 
-$dns = $dhcpc{'DNS'};
+$dns = $dhcpc{'domain_name_servers'};
 
 @alldns = split(',', $dns);
 

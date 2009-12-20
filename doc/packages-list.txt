@@ -86,7 +86,7 @@
 * db-4.4.20
 * dbus-1.0.3
 * dhcp-3.1.0
-* dhcpcd-2.0.8
+* dhcpcd-5.1.3
 * diffutils-2.8.1
 * dnsmasq-2.45
 * dosfstools-2.11

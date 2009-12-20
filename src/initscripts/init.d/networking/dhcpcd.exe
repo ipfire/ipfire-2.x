@@ -1,38 +1,78 @@
-#!/bin/sh
 ########################################################################
 # Begin
 #
 # Description : DHCP Client Script
 #
-# Authors     : Michael Tremer - mitch@ipfire.org
+# Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 01.00
+# Version     : 02.00
 #
 # Notes       : 
 #
 ########################################################################
 
-. /etc/sysconfig/rc 
-. ${rc_functions}
+. /etc/sysconfig/rc
+. $rc_functions
 
-eval $(/usr/local/bin/readhash "$1")
-case "$2" in
-	up)
-		logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been configured with old IP=${IPADDR}"
-		touch /var/ipfire/red/active
-		run_subdir ${rc_base}/init.d/networking/red.up/
-		;;
-	new)	
-		logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been configured with new IP=${IPADDR}"
+eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
+
+create_dhcpcd_info()
+{
+	set | grep "^new_" | sed "s|^new_||g" | \
+	sort > /var/ipfire/dhcpc/dhcpcd-$interface.info
+
+	# If interface is not red0.8 (vdsl-iptv) update /var/ipfire/red
+	if [ "$interface" != "red0.8" ]; then
+
+		#Check if we have to restart the services at update
+		[ ! -e "/var/ipfire/red/active" ] update=1;
+		if [ "$old_domain_name_service" != "$new_domain_name_service" ]; then
+			update=1;
+		fi
+		if [ "$old_ip_address" != "$new_ip_address" ]; then
+			update=1;
+		fi
+		if [ "$old_routers" != "$new_routers" ]; then
+			update=1;
+		fi
+
+		#Get DNS from dhcp
+		if [ -n "$DNS0" ] && [ -n "$DNS1" ]; then
+			logger -p local0.info -t dhcpcd.exe[$$] "Overwritting DNS-Server addresses with ${DNS0},${DNS1}"	
+			echo -n ${DNS0} > /var/ipfire/red/dns1
+			echo -n ${DNS1} > /var/ipfire/red/dns2
+		else
+			echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 1` > /var/ipfire/red/dns1
+			echo -n `/etc/rc.d/helper/getdnsfromdhcpc.pl 2` > /var/ipfire/red/dns2
+		fi
+
+		#Get IP Address
+		echo "$new_ip_address"  > /var/ipfire/red/local-ipaddress
+
+		#Get default gateway
+		grep -v " gateway$" /etc/hosts > /tmp/hosts
+		echo "$new_routers gateway"  >> /tmp/hosts
+		mv /tmp/hosts /etc/hosts
+
+	fi
+	if [ $update ]; then
 		[ -e "/var/ipfire/red/active" ] || touch /var/ipfire/red/active
-		run_subdir ${rc_base}/init.d/networking/red.down/
+		echo "$new_routers" > /var/ipfire/red/remote-ipaddress
+		logger -p local0.info -t dhcpcd.exe[$$] "$interface has been (re)configured with IP=$new_ip_address"
 		run_subdir ${rc_base}/init.d/networking/red.up/
-		;;
-	down)
-		logger -p local0.info -t dhcpcd.exe[$$] "${INTERFACE} has been brought down"
-		rm -f /var/ipfire/red/active
-		run_subdir ${rc_base}/init.d/networking/red.down/
-		;;
-esac
+		touch /var/ipfire/red/active
+	fi
+}
 
-# End
+remove_dhcpcd_info()
+{
+	rm -f /var/ipfire/dhcpc/dhcpcd-$interface.info
+	logger -p local0.info -t dhcpcd.exe[$$] "${interface} has been brought down"
+	rm -f /var/ipfire/red/active
+	run_subdir ${rc_base}/init.d/networking/red.down/
+}
+
+case "$reason" in
+BOUND|INFORM|REBIND|REBOOT|RENEW|TIMEOUT|STATIC)	create_dhcpcd_info;;
+PREINIT|EXPIRE|FAIL|IPV4LL|NAK|NOCARRIER|RELEASE|STOP)	remove_dhcpcd_info;;
+esac
