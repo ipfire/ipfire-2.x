@@ -92,3 +92,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 
+2dafe9ac35fab4b15fddf09a5302ec75  compat-wireless-2.6.32.2.tar.bz2

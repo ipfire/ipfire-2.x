@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .41
-VER        = 2.6.27.41
+PATCHLEVEL = .42
+VER        = 2.6.27.42
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -65,12 +65,12 @@ reiser4-for-2.6.27.19.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.27.19.patch.bz2
 linux-$(VER)-suse_xen_patches.tar.bz2	= $(URL_IPFIRE)/linux-$(VER)-suse_xen_patches.tar.bz2
 
 
-$(DL_FILE)_MD5				= fa7de0ac40f11864f5d13f54a18fe9ad
+$(DL_FILE)_MD5				= a33e6b22d70dd010525fc43cdda36792
 netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
 reiser4-for-2.6.27.19.patch.bz2_MD5	= 22988387f64f299489b90b484b2642cc
-linux-$(VER)-suse_xen_patches.tar.bz2_MD5 = 0d7d03f04ebfc22881a7c24ef5f1b7f5
+linux-$(VER)-suse_xen_patches.tar.bz2_MD5 = 4de1c2e6b5ca32e681acea4d907cec91
 
 install : $(TARGET)
 
