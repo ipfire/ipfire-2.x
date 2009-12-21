@@ -17,3 +17,4 @@ var/ipfire/langs/list
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/snort/oinkmaster.conf
 usr/local/sbin/setup
+usr/lib/ipsec/_updown

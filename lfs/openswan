@@ -115,6 +115,7 @@ else
 	
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.16-startklips-1.patch
 	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.16-updown.klips-1.patch
+	cd /usr/lib/ipsec && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.23-updown-add_ipfire-snat.patch
 	cd /etc/ipsec.d/policies && patch -Np0 < $(DIR_SRC)/src/patches/openswan-2.6.16-clear-1.patch
 endif	
 	#@rm -rf $(DIR_APP)
