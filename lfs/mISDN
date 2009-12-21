@@ -30,9 +30,9 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 9bf7deaa4b8829ab8fbccb34529a17aab2ddea93
+VER        = 20090906
 
-THISAPP    = mISDN.git-$(VER)
+THISAPP    = mISDN_$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a9e9aaff23cda58c4d71aab8eab9bba5
+$(DL_FILE)_MD5 = c5a9daab7fa18734127d481c8cfdac96
 
 install : $(TARGET)
 
@@ -75,13 +75,14 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/mISDN.git && make KVERS=$(KVER)-$(VERSUFIX) force
-	cd $(DIR_SRC)/mISDN.git && make KVERS=$(KVER)-$(VERSUFIX) $(MAKETUNING)
-	cd $(DIR_SRC)/mISDN.git && make KVERS=$(KVER)-$(VERSUFIX) \
-			INSTALL_PREFIX=$(DIR_SRC)/mISDN.git/dest/ \
+	@rm -rf $(DIR_SRC)/mISDN* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC)/mISDN && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-enable_disabled_cards.patch
+	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) force
+	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) $(MAKETUNING)
+	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) \
+			INSTALL_PREFIX=$(DIR_SRC)/mISDN/dest/ \
 			modules-install
-	mv $(DIR_SRC)/mISDN.git/dest/lib/modules/*/extra \
+	mv $(DIR_SRC)/mISDN/dest/lib/modules/*/extra \
 		/lib/modules/$(KVER)-$(VERSUFIX)/mISDN
 	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)

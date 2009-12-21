@@ -25,3 +25,6 @@ blacklist netjetpci
 blacklist sedlfax
 blacklist w6692pci
 blacklist xhfc
+blacklist mISDNinfineon
+blacklist avmfritz
+blacklist speedfax

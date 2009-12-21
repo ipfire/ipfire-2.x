@@ -6,7 +6,7 @@
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 00.00
+# Version     : 01.00
 #
 # Notes       :
 #
@@ -21,7 +21,7 @@ case "${1}" in
 		boot_mesg "Starting mISDNv2 ... "
 
 		# load mISDN modules
-		for module in mISDN_core hfcpci hfcsusb hfcmulti xhfc; do
+		for module in mISDN_core hfcpci hfcsusb hfcmulti avmfritz speedfax mISDNinfineon xhfc; do
 		    modprobe $module > /dev/null 2>&1;
 		done
 
@@ -39,7 +39,7 @@ case "${1}" in
 		boot_mesg "Stopping mISDNv2 ... "
 
 		# unload mISDN hardware modules
-		for module in mISDN_dsp hfcpci hfcsusb hfcmulti xhfc; do
+		for module in mISDN_dsp hfcpci hfcsusb hfcmulti avmfritz speedfax mISDNinfineon xhfc mISDNipac mISDNisar; do
 		    rmmod $module > /dev/null 2>&1;
 		done
 

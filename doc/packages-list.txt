@@ -35,8 +35,8 @@
 * URI-1.35
 * Unix-Syslog-0.100
 * XML-Parser-2.34
-* alsa-lib-1.0.21a
-* alsa-lib-1.0.21a-kmod-2.6.27.42-ipfire
+* alsa-lib-1.0.22
+* alsa-lib-1.0.22-kmod-2.6.27.42-ipfire
 * amavisd-new-2.5.2
 * apcupsd-3.14.4
 * applejuice-0.31
@@ -169,7 +169,7 @@
 * l7-protocols-2009-05-10
 * lame-3.97
 * lcd4linux-0.10.1-RC2
-* lcr.git-64143650bc9c04fadc99694c499cf34750bc2804
+* lcr_20090906
 * less-394
 * libaal-1.0.5
 * libart_lgpl-2.3.17
@@ -206,9 +206,9 @@
 * lynis-1.2.6
 * lzo-2.02
 * m4-1.4.4
-* mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.42-ipfire
-* mISDN.git-9bf7deaa4b8829ab8fbccb34529a17aab2ddea93-kmod-2.6.27.42-ipfire-xen
-* mISDNuser.git-54928dec57bc846f2c2186f3640e69a053cd3641
+* mISDN_20090906-kmod-2.6.27.42-ipfire
+* mISDN_20090906-kmod-2.6.27.42-ipfire-xen
+* mISDNuser_20090906
 * madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.42-ipfire
 * madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.42-ipfire-xen
 * make-3.81
@@ -341,8 +341,8 @@
 * usb_modeswitch-1.0.5
 * usbutils-0.72
 * util-linux-2.12r
-* v4l-dvb-aba823ecaea6-kmod-2.6.27.42-ipfire
-* v4l-dvb-aba823ecaea6-kmod-2.6.27.42-ipfire-xen
+* v4l-dvb-9defbd461e5f-kmod-2.6.27.42-ipfire
+* v4l-dvb-9defbd461e5f-kmod-2.6.27.42-ipfire-xen
 * vdr-1.6.0
 * vdradmin-am-3.6.4
 * vim-7.0
