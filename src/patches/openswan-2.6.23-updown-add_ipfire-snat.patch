@@ -9,13 +9,13 @@
 +
 +case "$PLUTO_VERB" in
 +"route-client")
-+   logger -t "ipsec_updown" "iptables -t nat -A CUSTOMPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src"
-+   /sbin/iptables -t nat -A CUSTOMPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src
++   logger -t "ipsec_updown" "iptables -t nat -A IPSECPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src"
++   /sbin/iptables -t nat -A IPSECPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src
 +   ;;
 +
 +"unroute-client")
-+   logger -t "ipsec_updown" "iptables -t nat -D CUSTOMPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src"
-+   /sbin/iptables -t nat -D CUSTOMPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src
++   logger -t "ipsec_updown" "iptables -t nat -D IPSECPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src"
++   /sbin/iptables -t nat -D IPSECPOSTROUTING -o $PLUTO_INTERFACE -s $PLUTO_ME -d $PLUTO_PEER_CLIENT -j SNAT --to $src
 +   ;;
 +esac
 +

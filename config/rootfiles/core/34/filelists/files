@@ -3,6 +3,7 @@ etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/dhcpcd.exe
 etc/rc.d/helper/getdnsfromdhcpc.pl
 etc/rc.d/init.d/tmpfs
+etc/rc.d/init.d/firewall
 boot/grub/grub.conf
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/mac.cgi
