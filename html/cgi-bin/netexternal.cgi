@@ -83,13 +83,13 @@ if ( $querry[0] ne~ ""){
 
 			&General::readhash("${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info", \%dhcpinfo);
 
-			my $DNS1=`echo $dhcpinfo{'DNS'} | cut -f 1 -d ,`;
-			my $DNS2=`echo $dhcpinfo{'DNS'} | cut -f 2 -d ,`;
+			my $DNS1=`echo $dhcpinfo{'domain_name_servers'} | cut -f 1 -d ,`;
+			my $DNS2=`echo $dhcpinfo{'domain_name_servers'} | cut -f 2 -d ,`;
 
 			my $lsetme=0;
 			my $leasetime="";
-			if ($dhcpinfo{'LEASETIME'} ne "") {
-				$lsetme=$dhcpinfo{'LEASETIME'};
+			if ($dhcpinfo{'dhcp_lease_time'} ne "") {
+				$lsetme=$dhcpinfo{'dhcp_lease_time'};
 				$lsetme=($lsetme/60);
 				
 				if ($lsetme > 59) {
@@ -106,8 +106,8 @@ if ( $querry[0] ne~ ""){
 			my $rentme=0;
 			my $rnwltime="";
 
-			if ($dhcpinfo{'RENEWALTIME'} ne "") {
-				$rentme=$dhcpinfo{'RENEWALTIME'};
+			if ($dhcpinfo{'dhcp_renewal_time'} ne "") {
+				$rentme=$dhcpinfo{'dhcp_renewal_time'};
 				$rentme=($rentme/60);
 				
 				if ($rentme > 59){
@@ -124,8 +124,8 @@ if ( $querry[0] ne~ ""){
 			my $maxtme=0;
 			my $maxtime="";
 
-			if ($dhcpinfo{'REBINDTIME'} ne "") {
-				$maxtme=$dhcpinfo{'REBINDTIME'};
+			if ($dhcpinfo{'dhcp_rebinding_time'} ne "") {
+				$maxtme=$dhcpinfo{'dhcp_rebinding_time'};
 				$maxtme=($maxtme/60);
 
 				if ($maxtme > 59){
@@ -139,19 +139,14 @@ if ( $querry[0] ne~ ""){
 				}
 			}
 
-			print "<table width='100%'>";
-
-			if ($dhcpinfo{'HOSTNAME'}) {
-				print "<tr><td width='30%'>$Lang::tr{'hostname'}</td><td>$dhcpinfo{'HOSTNAME'}.$dhcpinfo{'DOMAIN'}</td></tr>\n";
-			} else {
-				print "<tr><td width='30%'>$Lang::tr{'domain'}</td><td>$dhcpinfo{'DOMAIN'}</td></tr>\n";
-			}
 
 			print <<END
-<tr><td>$Lang::tr{'gateway'}</td><td>$dhcpinfo{'GATEWAY'}</td></tr>
+<table width='100%'>
+<tr><td width='30%'>$Lang::tr{'domain'}</td><td>$dhcpinfo{'domain_name'}</td></tr>
+<tr><td>$Lang::tr{'gateway'}</td><td>$dhcpinfo{'routers'}</td></tr>
 <tr><td>$Lang::tr{'primary dns'}</td><td>$DNS1</td></tr>
 <tr><td>$Lang::tr{'secondary dns'}</td><td>$DNS2</td></tr>
-<tr><td>$Lang::tr{'dhcp server'}</td><td>$dhcpinfo{'DHCPSIADDR'}</td></tr>
+<tr><td>$Lang::tr{'dhcp server'}</td><td>$dhcpinfo{'dhcp_server_identifier'}</td></tr>
 <tr><td>$Lang::tr{'def lease time'}</td><td>$leasetime</td></tr>
 <tr><td>$Lang::tr{'default renewal time'}</td><td>$rnwltime</td></tr>
 <tr><td>$Lang::tr{'max renewal time'}</td><td>$maxtime</td></tr>
