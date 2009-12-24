@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
+srv/web/ipfire/cgi-bin/pppsetup.cgi
 var/ipfire/langs/en.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/fr.pl

@@ -735,7 +735,7 @@ print <<END
 </tr>
 END
 ;
-	if ( -e '/usr/local/bin/igmpproxy'){
+	if ( -e '/opt/pakfire/db/installed/meta-igmpproxy'){
 print <<END
 		<tr>
 		        <td colspan='3' width='100%'><input type='radio' name='IPTV' value='enable' $checked{'IPTV'}{'enable'}>$Lang::tr{'on'}</td>
