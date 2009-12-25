@@ -42,7 +42,7 @@
 * applejuice-0.31
 * arping-2.05
 * as86-0.16.17
-* asterisk-1.4.26.3
+* asterisk-1.4.28
 * atl1c-kmod-2.6.27.42-ipfire
 * atl1c-kmod-2.6.27.42-ipfire-xen
 * atl2-2.0.5-kmod-2.6.27.42-ipfire
@@ -183,7 +183,7 @@
 * libogg-1.1.4
 * libpcap-1.0.0
 * libpng-1.2.12
-* libpri-1.4.10.1
+* libpri-1.4.10.2
 * libsafe_2.0-16
 * libshout-2.2.2
 * libsigc++-2.0.17
