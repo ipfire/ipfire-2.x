@@ -178,6 +178,7 @@
 * libid3tag-0.15.1b
 * libidn-0.6.14
 * libmad-0.15.1b
+* libmpdclient-2.1
 * libnet-1.1.2.1
 * libnl-1.1
 * libogg-1.1.4
@@ -226,8 +227,8 @@
 * mldonkey-3.0.0
 * module-init-tools-3.5
 * motion-3.2.11
-* mpc-0.17
-* mpd-0.15.3
+* mpc-0.19
+* mpd-0.15.6
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mtd-CVS-20070507
@@ -338,7 +339,7 @@
 * udev-096-klibc
 * unzip552
 * urlgrabber-3.1.0
-* usb_modeswitch-1.0.5
+* usb_modeswitch-1.0.6
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-9defbd461e5f-kmod-2.6.27.42-ipfire

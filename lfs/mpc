@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.17
+VER        = 0.19
 
 THISAPP    = mpc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpc
-PAK_VER    = 3
+PAK_VER    = 4
 
-DEPS       = "mpd"
+DEPS       = "mpd libmpdclient"
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3f642c2c2ad7a57a9be7a03351c8c558
+$(DL_FILE)_MD5 = 9ab2967d9ec719b06a86f3b4121be654
 
 install : $(TARGET)
 

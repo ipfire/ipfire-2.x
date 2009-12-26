@@ -589,6 +589,7 @@ buildipfire() {
   ipfiremake icecast
   ipfiremake icegenerator
   ipfiremake mpd
+  ipfiremake libmpdclient
   ipfiremake mpc
   ipfiremake git
   ipfiremake squidclamav
