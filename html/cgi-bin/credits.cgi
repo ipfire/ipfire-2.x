@@ -38,7 +38,26 @@ require "${General::swroot}/header.pl";
 &Header::openbox('100%', 'left', 'Version');
 print "This is ".`cat /etc/system-release`;
 print " - Pakfire ".`cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
-print "<br>".`uname -a`;
+print "<br />".`uname -a`;
+print "<br /><br /><br /><br />";
+&Header::closebox();
+
+&Header::openbox('100%', 'left', $Lang::tr{'donation'});
+
+print <<END
+<p>$Lang::tr{'donation-text'}</p>
+	<div align="center">
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="10718640">
+			<input type="image" src=$Lang::tr{'donation-link'} border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
+			<img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+		</form>
+	</div>
+<br />
+
+END
+;
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
@@ -60,15 +79,15 @@ Vice Project Leader - Christian Schmidt
 Developer - Arne Fitzenreiter
 (<a href='mailto:arne\@ipfire.org'>arne\@ipfire.org</a>)<br />
 Developer - Stefan Schantl
-(<a href='mailto:Stevee\@ipfire.org'>Stevee\@ipfire.org</a>)<br />
-Developer (Addons) - Peter Pfeiffer
-(<a href='mailto:peterman\@ipfire.org'>peterman\@ipfire.org</a>)<br />
+(<a href='mailto:Stevee\@ipfire.org'>stevee\@ipfire.org</a>)<br />
+Developer - Jan Paul T&uuml;cking
+(<a href='mailto:earl\@ipfire.org'>earl\@ipfire.org</a>)<br />
 Developer & Webmaster - Heiner Schmeling
 (<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
+Developer (Addons) - Peter Pfeiffer
+(<a href='mailto:peterman\@ipfire.org'>peterman\@ipfire.org</a>)<br />
 Supporter, Wiki-Admin & Sponsor - Ronald Wiesinger
 (<a href='mailto:rowie\@ipfire.org'>rowie\@ipfire.org</a>)<br />
-Developer, Wiki-Admin & Sponsor - Jan Paul T&uuml;cking
-(<a href='mailto:earl\@ipfire.org'>earl\@ipfire.org</a>)<br />
 Supporter & Wiki-Admin - Silvio Rechenbach
 (<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
 Sponsor - Peter Schaelchli
