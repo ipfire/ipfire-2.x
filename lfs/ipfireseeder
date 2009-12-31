@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -27,13 +27,13 @@ include Config
 VER        = 1.00
 
 THISAPP    = ipfireseeder-$(VER)
-DL_FILE    = ipfire-2.5.i586-full-core28.iso.torrent
+DL_FILE    = ipfire-2.5.i586-full-core33.iso.torrent
 
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ipfireseeder
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = "rtorrent"
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4c358851d28286606ea534f81d6b699d
+$(DL_FILE)_MD5 = 48c79391fb9bd6156f96f70c0d05d6af
 
 install : $(TARGET)
 
