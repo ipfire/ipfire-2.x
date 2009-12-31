@@ -6,6 +6,7 @@ etc/rc.d/init.d/tmpfs
 etc/rc.d/init.d/mISDN
 etc/rc.d/init.d/firewall
 boot/grub/grub.conf
+srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/mac.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
