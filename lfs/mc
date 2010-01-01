@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.6.2
+VER        = 4.7.0
 
 THISAPP    = mc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = "glib"
 
@@ -40,13 +40,11 @@ DEPS       = "glib"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(THISAPP)-utf8.patch.gz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-utf8.patch.gz = $(DL_FROM)/$(THISAPP)-utf8.patch.gz
 
-$(DL_FILE)_MD5 = ec92966f4d0c8b50c344fe901859ae2a
-$(THISAPP)-utf8.patch.gz_MD5 = 9753f1d340c7e3f6f73242afcf12edd2
+$(DL_FILE)_MD5 = 3be875c7603ab45e784026a5d13d4bb0
 
 install : $(TARGET)
 
@@ -81,10 +79,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	# Create a symlink because mc search for automake-1.10
 	ln -s automake-1.9 /usr/share/automake-1.10
-	cd $(DIR_APP) && zcat $(DIR_DL)/$(THISAPP)-utf8.patch.gz | patch -Np1
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 				--without-x --disable-nls \
-				--with-samba
+				--with-samba \
+				--with-screen=ncurses
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	rm /usr/share/automake-1.10
