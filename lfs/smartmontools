@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 5.39-svn_r2877
+VER        = 5.39
 
 THISAPP    = smartmontools-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 62fd73429d5e5295ae42a9dd8a834ddc
+$(DL_FILE)_MD5 = 63c1b5373a9ef91e9c9becb16e147571
 
 install : $(TARGET)
 
@@ -69,8 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/smartmontools-5.39-error_throw_int.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make BUILD_INFO='"($(NAME) $(VERSION))"' $(MAKETUNING)
