@@ -249,7 +249,8 @@ case "${1}" in
 				if [ "${RED_VDSL_IPTV_DISABLE}" == "0" ]; then
 					PIDFILE="/var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid"
 					LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info"
-					DHCP_START=" "
+					# Don't startup services ...
+					DHCP_START="-C 70 "
 					DHCP_STOP="-k "
 					# Test to see if there is a stale pid file
 					if [ -f "$PIDFILE" ]; then
@@ -319,7 +320,8 @@ case "${1}" in
 				ip addr flush dev $PPP_NIC >/dev/null 2>&1
 				if [ "$TYPE" == "pptp" ]; then
 					if [ "$PPTP_NICCFG" == "dhcp" ]; then
-						DHCP_START="-N -R -L /var/ipfire/dhcpc "
+						# Don't startup services ...
+						DHCP_START="-C 70 "
 						DHCP_STOP="-k "
 
 						# Test to see if there is a stale pid file
@@ -341,17 +343,17 @@ case "${1}" in
 								echo_ok
 								boot_mesg "           DHCP Assigned Settings for ${DEVICE}:"
 								boot_mesg_flush
-								boot_mesg "           IP Address:      $IPADDR"
+								boot_mesg "           IP Address:      $ip_address"
 								boot_mesg_flush
 								boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
 								boot_mesg_flush
-								boot_mesg "           Subnet Mask:     $NETMASK"
+								boot_mesg "           Subnet Mask:     $subnet_mask"
 								boot_mesg_flush
-								boot_mesg "           Default Gateway: $GATEWAY"
+								boot_mesg "           Default Gateway: $routers"
 								boot_mesg_flush
-								boot_mesg "           DNS Server:      $DNS"
+								boot_mesg "           DNS Server:      $domain_name_servers"
 								boot_mesg_flush
-								/sbin/route add $PPTP_PEER gw $GATEWAY $PPP_NIC
+								/sbin/route add $PPTP_PEER gw $routers $PPP_NIC
 							else
 								echo ""
 								$(exit "$RET")
