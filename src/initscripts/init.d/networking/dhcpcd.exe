@@ -14,6 +14,8 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 
 dhcpcd_up()
@@ -21,8 +23,8 @@ dhcpcd_up()
 	set | grep "^new_" | sed "s|^new_||g" | \
 	sort > /var/ipfire/dhcpc/dhcpcd-$interface.info
 
-	# If interface is not red0.8 (vdsl-iptv) update /var/ipfire/red
-	if [ "$interface" != "red0.8" ]; then
+	# Only if RED_TYPE=DHCP update /var/ipfire/red
+	if [ "$RED_TYPE" == "DHCP" ]; then
 
 		#Check if we have to restart the services at update
 		[ ! -e "/var/ipfire/red/active" ] update=1;
@@ -68,7 +70,9 @@ dhcpcd_down()
 {
 	set | grep "^new_" | sed "s|^new_||g" | \
 	sort > /var/ipfire/dhcpc/dhcpcd-$interface.info
-	if [ "$interface" != "red0.8" ]; then
+
+	# Only if RED_TYPE=DHCP update /var/ipfire/red
+	if [ "$RED_TYPE" == "DHCP" ]; then
 		logger -p local0.info -t dhcpcd.exe[$$] "${interface} has been brought down"
 		rm -f /var/ipfire/red/active
 		run_subdir ${rc_base}/init.d/networking/red.down/
