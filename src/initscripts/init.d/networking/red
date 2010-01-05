@@ -249,9 +249,6 @@ case "${1}" in
 				if [ "${RED_VDSL_IPTV_DISABLE}" == "0" ]; then
 					PIDFILE="/var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid"
 					LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info"
-					# Don't startup services ...
-					DHCP_START="-C 70 "
-					DHCP_STOP="-k "
 					# Test to see if there is a stale pid file
 					if [ -f "$PIDFILE" ]; then
 						ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
@@ -320,10 +317,6 @@ case "${1}" in
 				ip addr flush dev $PPP_NIC >/dev/null 2>&1
 				if [ "$TYPE" == "pptp" ]; then
 					if [ "$PPTP_NICCFG" == "dhcp" ]; then
-						# Don't startup services ...
-						DHCP_START="-C 70 "
-						DHCP_STOP="-k "
-
 						# Test to see if there is a stale pid file
 						if [ -f "$PIDFILE" ]; then
 							ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
