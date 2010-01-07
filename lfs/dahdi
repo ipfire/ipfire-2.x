@@ -58,13 +58,16 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(DL_FILE1)
+objects = $(DL_FILE) $(DL_FILE1) dahdi-linux-2.2.0.2-firmware.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 $(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
+dahdi-linux-2.2.0.2-firmware.tar.bz2 = $(DL_FROM)/dahdi-linux-2.2.0.2-firmware.tar.bz2
 
 $(DL_FILE)_MD5 = 5cbabd47cf780305e2cba6ccec42c754
 $(DL_FILE1)_MD5 = a018f452f3851a312ff51705ac44de37
+dahdi-linux-2.2.0.2-firmware.tar.bz2_MD5 = 7d7c774d214a528b49c9a08b5350a652
+ 
 
 install : $(TARGET)
 
@@ -104,6 +107,7 @@ ifeq "$(KMOD)" "1"
 	@rm -rf $(DIR_APP)
 else
 	rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/dahdi-linux-2.2.0.2-firmware.tar.bz2
 	cd $(DIR_APP) && make $(MAKETUNING) clean all KVERS=$(KVER)
 	cd $(DIR_APP) && make install-devices install-include \
 		install-firmware install-xpp-firm KVERS=$(KVER)-$(VERSUFIX)
