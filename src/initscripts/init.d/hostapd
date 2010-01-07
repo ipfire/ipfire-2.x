@@ -40,8 +40,7 @@ case "${1}" in
 		elif [ -e "/sys/class/net/$INTERFACE/madwifi_name_type" ]; then
 			DRIVER="MADWIFI"
 			driver="madwifi"
-		elif [ "$(/bin/grep hostap_pci /sys/class/net/$INTERFACE/uevent)" != "" ]; then
-		#PHYSDEVDRIVER=hostap_pci
+		elif [ "$(/bin/grep hostap /sys/class/net/$INTERFACE/uevent)" != "" ]; then
 			DRIVER="HOSTAP"
 			driver="hostap"
 		else
@@ -70,7 +69,7 @@ case "${1}" in
 		elif [ "$DRIVER" == "HOSTAP" ]; then
 			if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
 				boot_mesg "Setting HOSTAP wlan $INTERFACE to Master mode... "
-				# Set Prism 2.4 Cards to master mode
+				# Set Prism Cards to master mode
 				/usr/bin/iwconfig $INTERFACE mode master > /dev/null
 			fi
 		fi
