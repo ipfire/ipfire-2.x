@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2009 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2010 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -94,7 +94,7 @@ fi
 #
 echo
 echo Create new Initramdisks ...
-cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
+cp -f /etc/mkinitcpio.conf /etc/mkinitcpio.conf.org
 sed -i "s| autodetect | |g" /etc/mkinitcpio.conf
 mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER-emergency.img
 cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
