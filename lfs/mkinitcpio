@@ -74,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/config/mkinitcpio/virtio /lib/initcpio/install/
 	sed -i 's|^FILELIST=.*|FILELIST="$$(mktemp)"|g' /sbin/mkinitcpio
 	sed -i 's|^HOOKS=.*|HOOKS="base udev autodetect ide usb scsi pata sata virtio filesystems"|g' /etc/mkinitcpio.conf
-	sed -i 's|^MODULES=.*|MODULES="reiser4 reiserfs ext3"|g' /etc/mkinitcpio.conf
+	sed -i 's|^MODULES=.*|MODULES="reiser4 reiserfs ext3 ehci_hcd"|g' /etc/mkinitcpio.conf
 	sed -i 's|ide-cd|ide-cd ide-generic|g' /lib/initcpio/install/ide
 
 	@rm -rf $(DIR_APP)
