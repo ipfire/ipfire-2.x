@@ -33,7 +33,7 @@ endif
 VER        = 1.0.22
 UVER       = 1.0.22
 FVER       = 1.0.20
-DVER       = 1.0.22
+DVER       = 1.0.22.1
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -65,7 +65,7 @@ alsa-driver-$(DVER).tar.bz2 = $(DL_FROM)/alsa-driver-$(DVER).tar.bz2
 $(DL_FILE)_MD5 = b28a12348905fb6915bc41f0edb2ecce
 alsa-utils-$(UVER).tar.bz2_MD5 = f7180316188552ee1e6759a03f1fe98d
 alsa-firmware-$(FVER).tar.bz2_MD5 = 75fe079c35c091cac49f3a60876bc26a
-alsa-driver-$(DVER).tar.bz2_MD5 = 3ad66ab5f3d0b7174a1ddacff38c8c70
+alsa-driver-$(DVER).tar.bz2_MD5 = 8e516f2dca30acd0c4527632ef3fb36e
 
 install : $(TARGET)
 
