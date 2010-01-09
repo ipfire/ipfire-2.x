@@ -23,7 +23,7 @@ use strict;
 
 use Locale::Country;
 
-my $flagdir = '/home/httpd/html/images/flags';
+my $flagdir = '/srv/web/ipfire/html/images/flags';
 my $lines = '1';
 my $lines2 = '';
 my @flaglist=();
