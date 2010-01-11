@@ -1,1 +1,2 @@
 etc/modprobe.d/cfg80211
+etc/modprobe.d/hostap

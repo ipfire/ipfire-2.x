@@ -1,2 +1,13 @@
 etc/system-release
 srv/web/ipfire/cgi-bin/country.cgi
+etc/modprobe.d/hostap
+lib/modules/2.6.27.42-ipfire/kernel/net/ieee80211/ieee80211.off
+lib/modules/2.6.27.42-ipfire/kernel/net/ieee80211/ieee80211_crypt.off
+lib/modules/2.6.27.42-ipfire/kernel/net/ieee80211/ieee80211_crypt_ccmp.off
+lib/modules/2.6.27.42-ipfire/kernel/net/ieee80211/ieee80211_crypt_tkip.off
+lib/modules/2.6.27.42-ipfire/kernel/net/ieee80211/ieee80211_crypt_wep.off
+lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211.off
+lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt.off
+lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt_ccmp.off
+lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt_tkip.off
+lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt_wep.off
