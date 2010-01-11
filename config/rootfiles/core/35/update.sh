@@ -37,6 +37,8 @@ extract_files
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #
+#Run depmod -a to rebuld module informations
+depmod -a
 #Finish
 #Don't report the exitcode last command
 exit 0
