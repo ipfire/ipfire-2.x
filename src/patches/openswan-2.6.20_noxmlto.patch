@@ -1,25 +1,7 @@
-diff -Naur openswan-2.6.24.org/programs/_confread/Makefile openswan-2.6.24/programs/_confread/Makefile
---- openswan-2.6.24.org/programs/_confread/Makefile	2010-01-10 02:34:38.000000000 +0100
-+++ openswan-2.6.24/programs/_confread/Makefile	2010-01-10 22:44:33.000000000 +0100
-@@ -16,7 +16,13 @@
- OPENSWANSRCDIR?=$(shell cd ../..; pwd)
- include ${OPENSWANSRCDIR}/Makefile.inc
- 
--EXTRA5MAN=ipsec.conf.5
-+SUBDIRS=doc lib programs testing
-+ifeq ($(findstring $(SUBDIRS),doc),doc)
-+  EXTRA5MAN=ipsec.conf.5
-+else
-+  EXTRA5MAN=
-+endif
-+
- CONFFILES=ipsec.conf
- EXCONFILES=ipsec.win2k.conf
- SOURCEDIR=_confread
-diff -Naur openswan-2.6.24.org/programs/pluto/Makefile openswan-2.6.24/programs/pluto/Makefile
---- openswan-2.6.24.org/programs/pluto/Makefile	2010-01-10 02:34:38.000000000 +0100
-+++ openswan-2.6.24/programs/pluto/Makefile	2010-01-10 22:51:15.000000000 +0100
-@@ -172,7 +172,7 @@
+diff -Nur openswan-2.6.20dr2.old/programs/pluto/Makefile openswan-2.6.20dr2/programs/pluto/Makefile
+--- openswan-2.6.20dr2.old/programs/pluto/Makefile	2008-12-20 19:53:00.000000000 +0100
++++ openswan-2.6.20dr2/programs/pluto/Makefile	2008-12-20 20:14:07.000000000 +0100
+@@ -171,7 +171,7 @@
  all: $(BINNAMEPLUTO) $(BINNAMEADNSIFNEEDED) $(BINNAMEWHACK) #$(BINNAMEWHACKINIT) 
  programs: $(BINNAMEPLUTO) $(BINNAMEADNSIFNEEDED) $(BINNAMEWHACK) #$(BINNAMEWHACKINIT)
  clean:	cleanall
@@ -28,16 +10,16 @@ diff -Naur openswan-2.6.24.org/programs/pluto/Makefile openswan-2.6.24/programs/
  endif
  
  doinstall: all
-@@ -188,6 +188,9 @@
+@@ -187,6 +187,9 @@
  	$(INSTALL) $(INSTBINFLAGS) $(BINNAMEPLUTO) $(BINNAMEWHACK) $(LIBEXECDIR)
  	#$(INSTALL) $(INSTSUIDFLAGS) $(BINNAMEWHACKINIT) $(LIBEXECDIR)
  	if $(USE_ADNS) ; then $(INSTALL) $(INSTBINFLAGS) $(BINNAMEADNS)  $(LIBEXECDIR) ; fi
 +
 +ifeq ($(findstring $(SUBDIRS),doc),doc)
 +doinstalldoc:
+ 	( cd ${OPENSWANSRCDIR}/programs/pluto ; xmlto man pluto.8.xml ; mv ipsec_pluto.8 pluto.8; xmlto man ipsec.secrets.5.xml)
  	$(INSTALL) $(INSTMANFLAGS) ${srcdir}pluto.8 $(PMANDIR)/ipsec_pluto.8
  	sh ${OPENSWANSRCDIR}/packaging/utils/manlink ${srcdir}pluto.8 | \
- 		while read from to ; \
 @@ -201,10 +204,7 @@
  		 ln -s -f $$from $(FMANDIR)/$$to; \
  		done
@@ -66,3 +48,21 @@ diff -Naur openswan-2.6.24.org/programs/pluto/Makefile openswan-2.6.24/programs/
  
  alg_info_test: alg_info_test.o ike_alg.o constants.o defs.o log.o db_ops.o crypto.o $(LIBDESLITE) $(OPENSWANLIB)
  	$(CC) -o $@ $^ $(LDFLAGS) $(LIBSPLUTO)
+diff -Nur openswan-2.6.20dr2.old/programs/_confread/Makefile openswan-2.6.20dr2/programs/_confread/Makefile
+--- openswan-2.6.20dr2.old/programs/_confread/Makefile	2008-12-20 19:53:00.000000000 +0100
++++ openswan-2.6.20dr2/programs/_confread/Makefile	2008-12-21 00:13:23.000000000 +0100
+@@ -16,7 +16,13 @@
+ OPENSWANSRCDIR?=$(shell cd ../..; pwd)
+ include ${OPENSWANSRCDIR}/Makefile.inc
+ 
+-EXTRA5MAN=ipsec.conf.5
++SUBDIRS=doc lib programs testing
++ifeq ($(findstring $(SUBDIRS),doc),doc)
++  EXTRA5MAN=ipsec.conf.5
++else
++  EXTRA5MAN=
++endif
++
+ CONFFILES=ipsec.conf
+ EXCONFILES=ipsec.win2k.conf
+ SOURCEDIR=_confread
