@@ -148,8 +148,14 @@ foreach $configentry (sort @configs)
 			@proto = ("tcp");
 		} elsif ($configline[3] eq 'udp') {
 			@proto = ("udp");
+		} elsif ($configline[3] eq 'esp') {
+			@proto = ("esp");
+		} elsif ($configline[3] eq 'gre') {
+			@proto = ("gre");
+		} elsif ($configline[3] eq 'tcp&udp') {
+			@proto = ("tcp","udp");
 		} else {
-			@proto = ("tcp", "udp");
+			@proto = ("all");
 		}
 		
 		foreach $PROTO (@proto) {

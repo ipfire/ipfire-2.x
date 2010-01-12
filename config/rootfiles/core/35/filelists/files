@@ -1,2 +1,4 @@
 etc/system-release
 srv/web/ipfire/cgi-bin/country.cgi
+srv/web/ipfire/cgi-bin/outgoingfw.cgi
+var/ipfire/outgoing/bin/outgoingfw.pl
