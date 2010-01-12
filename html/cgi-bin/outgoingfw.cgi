@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -458,7 +458,7 @@ END
 if ($outfwsettings{'POLICY'} eq 'MODE1'){
 print <<END
 					<tr bgcolor='$color{'color20'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					    <td align='center'>tcp&udp
+					    <td align='center'>all
 					    <td align='center'>all
 					    <td align='center'>ALL
 					    <td align='center'>drop
@@ -577,7 +577,15 @@ sub addrule
 		    <td width='20%' align='right' colspan='2'>$Lang::tr{'active'}:
 		    <td width='30%' align='left' colspan='2'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} />
 		<tr><td width='20%' align='right'>$Lang::tr{'protocol'}:
-		    <td width='30%' align='left'><select name='PROT'><option value='all' $selected{'PROT'}{'all'}>All</option><option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option><option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option><option value='udp' $selected{'PROT'}{'udp'}>UDP</option></select>
+		    <td width='30%' align='left'>
+			<select name='PROT'>
+				<option value='all' $selected{'PROT'}{'all'}>All</option>
+				<option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option>
+				<option value='udp' $selected{'PROT'}{'udp'}>UDP</option>
+				<option value='gre' $selected{'PROT'}{'gre'}>GRE</option>
+				<option value='esp' $selected{'PROT'}{'esp'}>ESP</option>
+				<option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option>
+			</select>
 		    <td width='20%' align='right' colspan='2'>$Lang::tr{'policy'}:
 		    <td width='30%' align='left' colspan='2'>
 END

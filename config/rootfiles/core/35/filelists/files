@@ -11,3 +11,5 @@ lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt.off
 lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt_ccmp.off
 lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt_tkip.off
 lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt_wep.off
+srv/web/ipfire/cgi-bin/outgoingfw.cgi
+var/ipfire/outgoing/bin/outgoingfw.pl
