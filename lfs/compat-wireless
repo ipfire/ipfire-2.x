@@ -89,20 +89,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Rename ieee80211 modules Because the conflicts with compat-wireless
 	-cd /lib/modules/$(KVER)-$(VERSUFIX)/kernel/net/ieee80211 && rename .ko .off *
 
-	echo # If you want to use hostap (prism drivers) > /etc/modprobe.d/hostap
-	echo # you must rename the ieee80211 modules. Run: >> /etc/modprobe.d/hostap
-	echo # cd /lib/modules/$(uname -r)/kernel/net/ieee80211 && rename .off .ko >> /etc/modprobe.d/hostap
-	echo # depmod -a >> /etc/modprobe.d/hostap
+	echo "# If you want to use hostap (prism drivers)" > /etc/modprobe.d/hostap
+	echo "# you must rename the ieee80211 modules. Run:" >> /etc/modprobe.d/hostap
+	echo "# rename .off .ko /lib/modules/*/kernel/net/ieee80211/*" >> /etc/modprobe.d/hostap
+	echo "# depmod -a" >> /etc/modprobe.d/hostap
 	echo >> /etc/modprobe.d/hostap
-	echo # additional you need to blacklist the orinoco modules >> /etc/modprobe.d/hostap
-	echo # by uncommenting following lines >> /etc/modprobe.d/hostap
+	echo "# additional you need to blacklist the orinoco modules" >> /etc/modprobe.d/hostap
+	echo "# by uncommenting following lines" >> /etc/modprobe.d/hostap
 	echo >> /etc/modprobe.d/hostap
-	echo #blacklist orinoco >> /etc/modprobe.d/hostap
-	echo #blacklist orinoco_cs >> /etc/modprobe.d/hostap
-	echo #blacklist orinoco_plx >> /etc/modprobe.d/hostap
-	echo #blacklist orinoco_pci >> /etc/modprobe.d/hostap
-	echo #blacklist orinoco_tmd >> /etc/modprobe.d/hostap
-	echo #blacklist orinoco_nortel >> /etc/modprobe.d/hostap
+	echo "#blacklist orinoco" >> /etc/modprobe.d/hostap
+	echo "#blacklist orinoco_cs" >> /etc/modprobe.d/hostap
+	echo "#blacklist orinoco_plx" >> /etc/modprobe.d/hostap
+	echo "#blacklist orinoco_pci" >> /etc/modprobe.d/hostap
+	echo "#blacklist orinoco_tmd" >> /etc/modprobe.d/hostap
+	echo "#blacklist orinoco_nortel" >> /etc/modprobe.d/hostap
 
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)
