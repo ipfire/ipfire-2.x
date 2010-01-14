@@ -361,4 +361,5 @@
 * wpa_supplicant-0.6.9
 * xfsprogs-2.9.4
 * xvidcore-1.2.1
+* zerofree-1.0.1
 * zlib-1.2.3

@@ -188,6 +188,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	umount $(MNThdd)/boot
 	umount $(MNThdd)
 
+	# Zerofree ext3 images to get better compression
+	zerofree $(IMGboot)
+	zerofree $(IMGroot)
+	zerofree $(IMGvar)
+
 	# Compress Image
 	cd /install/images/ && tar -cvjf $(IMGinst) $(SNAME)
 

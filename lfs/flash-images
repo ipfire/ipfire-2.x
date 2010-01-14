@@ -127,6 +127,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	umount $(MNThdd)/var
 	umount $(MNThdd)
 
+	# zerofree the ext3 images to get better compression
+	zerofree $(IMGboot)
+	zerofree $(IMGroot)
+	zerofree $(IMGvar)
+
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinst)
 	# Write Partition table
@@ -158,6 +163,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	umount $(MNThdd)/boot
 	umount $(MNThdd)
+
+	# zerofree the ext3 images to get better compression
+	zerofree $(IMGboot)
+	zerofree $(IMGroot)
+	zerofree $(IMGvar)
 
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinsts)
