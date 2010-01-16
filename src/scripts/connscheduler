@@ -21,9 +21,6 @@ $weekday = ($weekday + 6) % 7;
 # get the closest thing possible
 $minute = int($minute / 5) * 5;
 
-my $swroot = "/var/ipfire";
-my %ethernetsettings;
-&readhash("${swroot}/ethernet/settings", \%ethernetsettings);
 
 if ( $ARGV[0] eq 'hangup' )
 {
@@ -120,11 +117,7 @@ sub dial
 
 
 sub reconnect
-{ 
-  if ( $ethernetsettings{'RED_TYPE'} ne 'PPPOE' ){
-	  &General::log("ConnSched skipped because not running pppoe");
-	  exit;
-  }
+{
   &hangup() if ( -e "${General::swroot}/red/active" );
   # now wait for active triggerfile and ppp daemon to disappear
   # wait maximum 60 seconds
@@ -248,32 +241,4 @@ sub timer
       # okay ? an event we don't know about
     }
   }
-}
-
-sub readhash
-{
-	my $filename = $_[0];
-	my $hash = $_[1];
-	my ($var, $val);
-
-	if (-e $filename)
-	{
-		open(FILE, $filename) or die "Unable to read file $filename";
-		while (<FILE>)
-		{
-			chop;
-			($var, $val) = split /=/, $_, 2;
-			if ($var)
-			{
-				$val =~ s/^\'//g;
-				$val =~ s/\'$//g;
-	
-				# Untaint variables read from hash
-				$var =~ /([A-Za-z0-9_-]*)/;        $var = $1;
-				$val =~ /([\w\W]*)/; $val = $1;
-				$hash->{$var} = $val;
-			}
-		}
-		close FILE;
-	}
 }
