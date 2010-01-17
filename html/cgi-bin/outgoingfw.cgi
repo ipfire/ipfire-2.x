@@ -79,6 +79,19 @@ $outfwsettings{'TIME_TO'} = '00:00';
 &General::readhash("${General::swroot}/outgoing/settings", \%outfwsettings);
 &Header::getcgihash(\%outfwsettings);
 
+###############
+# DEBUG DEBUG
+#&Header::openbox('100%', 'left', 'DEBUG');
+#my $debugCount = 0;
+#foreach my $line (sort keys %outfwsettings) {
+#print "$line = $outfwsettings{$line}<br />\n";
+# $debugCount++;
+#}
+#print "&nbsp;Count: $debugCount\n";
+#&Header::closebox();
+# DEBUG DEBUG
+###############
+
 $selected{'TIME_FROM'}{$outfwsettings{'TIME_FROM'}} = "selected='selected'";
 $selected{'TIME_TO'}{$outfwsettings{'TIME_TO'}} = "selected='selected'";
 
@@ -110,6 +123,10 @@ $checked{'TIME_SUN'}{$outfwsettings{'TIME_SUN'}} = "checked='checked'";
 if ($outfwsettings{'POLICY'} eq 'MODE0'){ $selected{'POLICY'}{'MODE0'} = 'selected'; } else { $selected{'POLICY'}{'MODE0'} = ''; }
 if ($outfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
 if ($outfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
+
+# This is a little hack if poeple don´t mark any date then all will be selected, because they might have forgotten to select
+# a valid day. A Rule without any matching day will never work, because the timeranges are new feature people might not notice
+# that they have to select a day for the rule.
 
 if ( $outfwsettings{'TIME_MON'} eq "" &&
      $outfwsettings{'TIME_TUE'} eq "" &&
@@ -199,6 +216,17 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'edit'})
 	foreach $configentry (sort @configs)
 	{
 		@configline = split( /\;/, $configentry );
+		
+		$configline[10] =  "on" if not exists $configline[11];
+		$configline[11] =  "on" if not exists $configline[11];
+		$configline[12] =  "on" if not exists $configline[12];
+		$configline[13] =  "on" if not exists $configline[13];
+		$configline[14] =  "on" if not exists $configline[14];
+		$configline[15] =  "on" if not exists $configline[15];
+		$configline[16] =  "on" if not exists $configline[16];
+		$configline[17] =  "00:00" if not exists $configline[17];
+		$configline[18] =  "00:00" if not exists $configline[18];
+
   		unless	(($configline[0] eq $outfwsettings{'STATE'}) && 
 			($configline[1] eq $outfwsettings{'ENABLED'}) && 
 			($configline[2] eq $outfwsettings{'SNET'}) && 
@@ -241,6 +269,17 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'delete'})
 	foreach $configentry (sort @configs)
 	{
 		@configline = split( /\;/, $configentry );
+		
+		$configline[10] =  "on" if not exists $configline[11];
+		$configline[11] =  "on" if not exists $configline[11];
+		$configline[12] =  "on" if not exists $configline[12];
+		$configline[13] =  "on" if not exists $configline[13];
+		$configline[14] =  "on" if not exists $configline[14];
+		$configline[15] =  "on" if not exists $configline[15];
+		$configline[16] =  "on" if not exists $configline[16];
+		$configline[17] =  "00:00" if not exists $configline[17];
+		$configline[18] =  "00:00" if not exists $configline[18];
+				
   		unless	(($configline[0] eq $outfwsettings{'STATE'}) && 
 			($configline[1] eq $outfwsettings{'ENABLED'}) && 
 			($configline[2] eq $outfwsettings{'SNET'}) && 
@@ -337,15 +376,26 @@ END
 				$outfwsettings{'DIP'} = $configline[7];
 				$outfwsettings{'DPORT'} = $configline[8];
 				$outfwsettings{'LOG'} = $configline[9];
-				$outfwsettings{'TIME_MON'} = $configline[10];
-				$outfwsettings{'TIME_TUE'} = $configline[11];
-				$outfwsettings{'TIME_WED'} = $configline[12];
-				$outfwsettings{'TIME_THU'} = $configline[13];
-				$outfwsettings{'TIME_FRI'} = $configline[14];
-				$outfwsettings{'TIME_SAT'} = $configline[15];
-				$outfwsettings{'TIME_SUN'} = $configline[16];
-				$outfwsettings{'TIME_FROM'} = $configline[17];
-				$outfwsettings{'TIME_TO'} = $configline[18];
+				
+				$configline[10] =  "on" if not exists $configline[11];
+				$configline[11] =  "on" if not exists $configline[11];
+				$configline[12] =  "on" if not exists $configline[12];
+				$configline[13] =  "on" if not exists $configline[13];
+				$configline[14] =  "on" if not exists $configline[14];
+				$configline[15] =  "on" if not exists $configline[15];
+				$configline[16] =  "on" if not exists $configline[16];
+				$configline[17] =  "00:00" if not exists $configline[17];
+				$configline[18] =  "00:00" if not exists $configline[18];
+				
+				$outfwsettings{'TIME_MON'} =  $configline[10];
+				$outfwsettings{'TIME_TUE'} =  $configline[11];
+				$outfwsettings{'TIME_WED'} =  $configline[12];
+				$outfwsettings{'TIME_THU'} =  $configline[13];
+				$outfwsettings{'TIME_FRI'} =  $configline[14];
+				$outfwsettings{'TIME_SAT'} =  $configline[15];
+				$outfwsettings{'TIME_SUN'} =  $configline[16];
+				$outfwsettings{'TIME_FROM'} =  $configline[17];
+				$outfwsettings{'TIME_TO'} =  $configline[18];
 
 				if ($outfwsettings{'DIP'} eq ''){ $outfwsettings{'DISPLAY_DIP'} = 'ALL'; } else { $outfwsettings{'DISPLAY_DIP'} = $outfwsettings{'DIP'}; }
 				if ($outfwsettings{'DPORT'} eq ''){ $outfwsettings{'DISPLAY_DPORT'} = 'ALL'; } else { $outfwsettings{'DISPLAY_DPORT'} = $outfwsettings{'DPORT'}; }
@@ -577,15 +627,15 @@ sub addrule
 		    <td width='20%' align='right' colspan='2'>$Lang::tr{'active'}:
 		    <td width='30%' align='left' colspan='2'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} />
 		<tr><td width='20%' align='right'>$Lang::tr{'protocol'}:
-		    <td width='30%' align='left'>
-			<select name='PROT'>
-				<option value='all' $selected{'PROT'}{'all'}>All</option>
-				<option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option>
-				<option value='udp' $selected{'PROT'}{'udp'}>UDP</option>
-				<option value='gre' $selected{'PROT'}{'gre'}>GRE</option>
-				<option value='esp' $selected{'PROT'}{'esp'}>ESP</option>
-				<option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option>
-			</select>
+                   <td width='30%' align='left'>
+                       <select name='PROT'>
+                               <option value='all' $selected{'PROT'}{'all'}>All</option>
+                               <option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option>
+                               <option value='udp' $selected{'PROT'}{'udp'}>UDP</option>
+                               <option value='gre' $selected{'PROT'}{'gre'}>GRE</option>
+                               <option value='esp' $selected{'PROT'}{'esp'}>ESP</option>
+                               <option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option>
+                       </select>
 		    <td width='20%' align='right' colspan='2'>$Lang::tr{'policy'}:
 		    <td width='30%' align='left' colspan='2'>
 END
@@ -615,15 +665,10 @@ END
 		    <td width='20%' align='right' colspan='2'>$Lang::tr{'source ip'}: <img src='/blob.gif' />
 		    <td width='30%' align='left' colspan='2'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' />
 		<tr><td width='20%' align='right'>$Lang::tr{'logging'}:
-END
-;
-if ($outfwsettings{'POLICY'} eq 'MODE1'){
-	 print "<td width='30%' align='left'><input type='text' name='LOG' maxlength='10' value='$Lang::tr{'inactive'}' readonly='true' /></td>";
-}
-else{
-	 print "<td width='30%' align='left'><select name='LOG'><option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option><option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option></select></td>";
-}
-print <<END
+			<td width='30%' align='left'><select name='LOG'>
+										<option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option>
+										<option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option>
+										</select></td>";
 		    <td width='20%' align='right' colspan='2' />
 		    <td width='30%' align='left' colspan='2' />
 		<tr><td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' />
