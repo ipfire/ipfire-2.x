@@ -63,7 +63,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#Create bootimage
 	dd bs=1M if=/dev/zero of=$(IMGboot) count=$(SIZEboot)
-	mkfs.ext3 -F $(IMGboot)
+	mkfs.ext2 -F $(IMGboot)
 
 	#Create swapimage
 	dd bs=1M if=/dev/zero of=$(IMGswap) count=$(SIZEswap)
