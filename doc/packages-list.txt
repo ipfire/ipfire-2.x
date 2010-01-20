@@ -295,7 +295,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.6
 * rtorrent-0.8.6
-* samba-3.3.9
+* samba-3.3.10
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
@@ -312,7 +312,7 @@
 * sqlite-3.6.10
 * squashfs3.4
 * squid-2.7.STABLE7
-* squidGuard-1.4
+* squidGuard-1.4.1
 * squidclamav-4.1
 * sshfs-fuse-2.2
 * sslh-1.6i
