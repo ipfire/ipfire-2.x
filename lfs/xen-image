@@ -146,6 +146,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#Remove root / fstab check
 	rm -rf $(MNThdd)/etc/rc.d/rcsysinit.d/S19checkfstab
+	#Remove console init
+	rm -rf $(MNThdd)/etc/rc.d/rcsysinit.d/S70console
 
 	#Add xvc0 to securetty
 	echo xvc0 >> $(MNThdd)/etc/securetty
