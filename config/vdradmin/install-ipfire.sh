@@ -14,6 +14,7 @@ BINDIR=${BINDIR:-$DESTDIR/usr/bin}
 LOCDIR=${LOCDIR:-$DESTDIR/usr/share/locale}
 MANDIR=${MANDIR:-$DESTDIR/usr/share/man/man1}
 LOGDIR=${LOGDIR:-$DESTDIR/var/log}
+CACHEDIR=${CACHEDIR:-$DESTDIR/var/cache/vdradmin}
 PIDFILE=${PIDFILE:-$DESTDIR/var/run/vdradmind.pid}
 VIDEODIR=${VIDEODIR:-/var/video}
 EPGIMAGES=${EPGIMAGES:-$VIDEODIR/epgimages}
@@ -78,7 +79,9 @@ function perlModules()
 	checkPerlModule locale
 	checkPerlModule Env
 	checkPerlModule Template
+	checkPerlModule Template::Plugin::JavaScript
 	checkPerlModule CGI
+	checkPerlModule HTTP::Date
 	checkPerlModule IO::Socket
 	checkPerlModule Time::Local
 	checkPerlModule MIME::Base64
@@ -101,8 +104,12 @@ function perlModules()
 	checkPerlModule Encode
 	echo "* Required for IPv6 support"
 	#checkPerlModule IO::Socket::INET6
+	echo "* Required for SSL support (https)"
+	#checkPerlModule IO::Socket::SSL
 	echo "* Required if you want to use gzip'ed HTTP responses"
 	checkPerlModule Compress::Zlib
+	echo "* Required if you want to log to syslog"
+	checkPerlModule Sys::Syslog
 }
 
 function makeDir()
@@ -165,6 +172,7 @@ function doInstall()
   	    -e "s:/usr/share/vdradmin/lib:${LIBDIR}/lib:" \
   	    -e "s:/usr/share/vdradmin/template:${LIBDIR}/template:" \
   	    -e "s:/var/log:${LOGDIR}:" \
+  	    -e "s:/var/cache/vdradmin:${CACHEDIR}:" \
   	    -e "s:/var/run/vdradmind.pid:${PIDFILE}:" \
   	    -e "s:\(\$ETCDIR *= \)\"/etc/vdradmin\";:\1\"${ETCDIR}\";:" \
   	    -e "s:/usr/share/locale:${LOCDIR}:" \
@@ -227,6 +235,9 @@ function doUninstall()
 	fi
 	if [ -d $LIBDIR ]; then
 		rm -rf $LIBDIR
+	fi
+	if [ -d $CACHEDIR ]; then
+		rm -rf $CACHEDIR
 	fi
 	if [ -e $MANDIR/vdradmind.pl.1 ]; then
 		rm -f $MANDIR/vdradmind.pl.1
