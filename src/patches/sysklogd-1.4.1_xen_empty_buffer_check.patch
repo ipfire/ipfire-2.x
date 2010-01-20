@@ -1,0 +1,30 @@
+diff -Naur sysklogd-1.4.1.org/klogd.c sysklogd-1.4.1/klogd.c
+--- sysklogd-1.4.1.org/klogd.c	2001-03-11 20:40:10.000000000 +0100
++++ sysklogd-1.4.1/klogd.c	2010-01-20 19:49:36.000000000 +0100
+@@ -1171,10 +1171,24 @@
+ 		switch ( logsrc )
+ 		{
+ 			case kernel:
+-	  			LogKernelLine();
++				if (ksyslog(9, NULL, 0)>0)
++				{
++					LogKernelLine();
++				}
++				else
++				{
++					usleep(100000);
++				}
+ 				break;
+ 			case proc:
+-				LogProcLine();
++				if (ksyslog(9, NULL, 0)>0)
++				{
++					LogProcLine();
++				}
++				else
++				{
++					usleep(100000);
++				}
+ 				break;
+ 		        case none:
+ 				pause();
