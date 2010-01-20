@@ -35,7 +35,7 @@ CFLAGS     =
 CXXFLAGS   =
 
 PROG	   = linux-xen
-PAK_VER    = 6
+PAK_VER    = 7
 DEPS	   = ""
 
 # Normal build or XEN build.
@@ -55,14 +55,14 @@ objects =$(DL_FILE) \
 	netfilter-layer7-v2.21.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2 \
 	reiser4-for-2.6.27.19.patch.bz2 \
-	linux-$(VER)-suse_xen_patches.tar.bz2
+	linux-$(VER)-suse_xen_patches-1.tar.bz2
 
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.21.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.21.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 squashfs3.4.tar.gz			= $(URL_IPFIRE)/squashfs3.4.tar.gz
 reiser4-for-2.6.27.19.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.27.19.patch.bz2
-linux-$(VER)-suse_xen_patches.tar.bz2	= $(URL_IPFIRE)/linux-$(VER)-suse_xen_patches.tar.bz2
+linux-$(VER)-suse_xen_patches-1.tar.bz2	= $(URL_IPFIRE)/linux-$(VER)-suse_xen_patches.tar.bz2
 
 
 $(DL_FILE)_MD5				= a33e6b22d70dd010525fc43cdda36792
@@ -70,7 +70,7 @@ netfilter-layer7-v2.21.tar.gz_MD5	= 838422e7d9a06b42e682e9064e5210b5
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 squashfs3.4.tar.gz_MD5			= 2a4d2995ad5aa6840c95a95ffa6b1da6
 reiser4-for-2.6.27.19.patch.bz2_MD5	= 22988387f64f299489b90b484b2642cc
-linux-$(VER)-suse_xen_patches.tar.bz2_MD5 = 4de1c2e6b5ca32e681acea4d907cec91
+linux-$(VER)-suse_xen_patches-1.tar.bz2_MD5 = ddbde50f3bc303d947531402017a3055
 
 install : $(TARGET)
 
@@ -106,9 +106,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 ifeq "$(XEN)" "1"
 	# Apply Xen patches (provided by SuSE)
-	cd $(DIR_SRC) && tar jxf $(DIR_DL)/linux-$(VER)-suse_xen_patches.tar.bz2
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/linux-$(VER)-suse_xen_patches-1.tar.bz2
+	cp -f $(DIR_SRC)/src/patches/suse_xen_series.conf $(DIR_SRC)/linux-$(VER)-suse_xen_patches/series.conf
 	cd $(DIR_SRC)/linux-$(VER)-suse_xen_patches && \
 		for x in $$( ./guards $$( ./arch-symbols) < ./series.conf); do \
+			echo "*********** [Patch: $$x]"; \
 			patch -d $(DIR_APP) -p1 < $$x || break; \
 		done
 	rm -rf $(DIR_SRC)/linux-*-suse_xen_patches
