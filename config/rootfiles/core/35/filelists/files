@@ -14,3 +14,4 @@ lib/modules/2.6.27.42-ipfire-xen/kernel/net/ieee80211/ieee80211_crypt_wep.off
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
 var/ipfire/outgoing/bin/outgoingfw.pl
 usr/bin/squidGuard
+usr/sbin/klogd
