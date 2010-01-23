@@ -152,19 +152,18 @@ foreach $configentry (sort @configs)
 			@proto = ("esp");
 		} elsif ($configline[3] eq 'gre') {
 			@proto = ("gre");
-		} elsif ($configline[3] eq 'tcp&udp') {
-			@proto = ("tcp","udp");
 		} else {
-			@proto = ("all");
+			@proto = ("tcp","udp");
 		}
+                 
 		
 		foreach $PROTO (@proto) {
 			$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION -p $PROTO";
 	
-			if ($configline[8]) {
+			 if ($configline[8] && $configline[3] ne 'esp' && $configline[3] ne 'gre') {
 				$DPORT = "$configline[8]";
 				$CMD = "$CMD --dport $DPORT";
-			}
+			 }
 			
 			if ($DEV) {
 				$CMD = "$CMD -i $DEV";

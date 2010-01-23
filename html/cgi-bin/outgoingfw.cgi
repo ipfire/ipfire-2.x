@@ -634,7 +634,6 @@ sub addrule
                                <option value='udp' $selected{'PROT'}{'udp'}>UDP</option>
                                <option value='gre' $selected{'PROT'}{'gre'}>GRE</option>
                                <option value='esp' $selected{'PROT'}{'esp'}>ESP</option>
-                               <option value='tcp&udp' $selected{'PROT'}{'tcp&udp'}>TCP & UDP</option>
                        </select>
 		    <td width='20%' align='right' colspan='2'>$Lang::tr{'policy'}:
 		    <td width='30%' align='left' colspan='2'>
