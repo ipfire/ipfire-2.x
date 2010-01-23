@@ -25,6 +25,7 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
 #Stop services
+/etc/init.d/squid stop
 /etc/init.d/sysklogd stop
 #
 #Extract files
@@ -32,6 +33,7 @@ extract_files
 #
 #Start services
 /etc/init.d/sysklogd start
+/etc/init.d/squid start
 #
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
