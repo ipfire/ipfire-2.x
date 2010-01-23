@@ -217,7 +217,7 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'edit'})
 	{
 		@configline = split( /\;/, $configentry );
 		
-		$configline[10] =  "on" if not exists $configline[11];
+		$configline[10] =  "on" if not exists $configline[10];
 		$configline[11] =  "on" if not exists $configline[11];
 		$configline[12] =  "on" if not exists $configline[12];
 		$configline[13] =  "on" if not exists $configline[13];
@@ -270,7 +270,7 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'delete'})
 	{
 		@configline = split( /\;/, $configentry );
 		
-		$configline[10] =  "on" if not exists $configline[11];
+		$configline[10] =  "on" if not exists $configline[10];
 		$configline[11] =  "on" if not exists $configline[11];
 		$configline[12] =  "on" if not exists $configline[12];
 		$configline[13] =  "on" if not exists $configline[13];
@@ -377,7 +377,7 @@ END
 				$outfwsettings{'DPORT'} = $configline[8];
 				$outfwsettings{'LOG'} = $configline[9];
 				
-				$configline[10] =  "on" if not exists $configline[11];
+				$configline[10] =  "on" if not exists $configline[10];
 				$configline[11] =  "on" if not exists $configline[11];
 				$configline[12] =  "on" if not exists $configline[12];
 				$configline[13] =  "on" if not exists $configline[13];
