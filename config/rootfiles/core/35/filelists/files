@@ -15,3 +15,4 @@ srv/web/ipfire/cgi-bin/outgoingfw.cgi
 var/ipfire/outgoing/bin/outgoingfw.pl
 usr/bin/squidGuard
 usr/sbin/klogd
+etc/rc.d/init.d/sysklogd

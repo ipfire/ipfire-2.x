@@ -18,7 +18,7 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting kernel log daemon..."
-		loadproc klogd
+		loadproc klogd -c 1
 
 		boot_mesg "Starting system log daemon..."
 		loadproc syslogd -m 0

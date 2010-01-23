@@ -345,7 +345,7 @@
 * v4l-dvb-9defbd461e5f-kmod-2.6.27.42-ipfire
 * v4l-dvb-9defbd461e5f-kmod-2.6.27.42-ipfire-xen
 * vdr-1.6.0
-* vdradmin-am-3.6.4
+* vdradmin-am-3.6.5
 * vim-7.0
 * vlan.1.9
 * vlc-0.8.6i
