@@ -32,6 +32,7 @@ extract_files
 #
 #Start services
 /etc/init.d/sshd start
+/etc/init.d/apache reload
 #
 #Delete cyrus-sasl metafiles
 rm -f /opt/pakfire/db/installed/meta-cyrus-sasl
