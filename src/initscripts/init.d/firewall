@@ -151,6 +151,12 @@ case "$1" in
 	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
 	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 
+	# IPTV chains for IGMPPROXY
+	/sbin/iptables -N IPTVINPUT
+	/sbin/iptables -A INPUT -j IPTVINPUT
+	/sbin/iptables -N IPTVFORWARD
+	/sbin/iptables -A FORWARD -j IPTVFORWARD
+
 	# filtering from GUI
 	/sbin/iptables -N GUIINPUT
 	/sbin/iptables -A INPUT -j GUIINPUT
