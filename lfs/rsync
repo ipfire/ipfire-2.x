@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.6
+VER        = 3.0.7
 
 THISAPP    = rsync-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rsync
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e9865d093a18e4668b9d31b635dc8e99
+$(DL_FILE)_MD5 = b53525900817cf1ba7ad3a516ab5bfe9
 
 install : $(TARGET)
 
