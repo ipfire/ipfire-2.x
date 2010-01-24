@@ -25,13 +25,13 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
 #Stop services
-
+/etc/init.d/sshd stop
 #
 #Extract files
 extract_files
 #
 #Start services
-
+/etc/init.d/sshd start
 #
 #Delete cyrus-sasl metafiles
 rm -f /opt/pakfire/db/installed/meta-cyrus-sasl
