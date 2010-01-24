@@ -33,6 +33,10 @@ extract_files
 #Start services
 
 #
+#Delete cyrus-sasl metafiles
+rm -f /opt/pakfire/db/installed/meta-cyrus-sasl
+rm -f /opt/pakfire/db/meta/meta-cyrus-sasl
+#
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 

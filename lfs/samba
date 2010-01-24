@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 22
+PAK_VER    = 23
 
-DEPS       = "cups cyrus-sasl"
+DEPS       = "cups"
 
 ###############################################################################
 # Top-level Rules
