@@ -76,7 +76,7 @@
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-005
-* cups-1.3.9
+* cups-1.4.2
 * curl-7.19.5
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
@@ -256,8 +256,8 @@
 * open-vm-tools-2009.05.22-167859
 * openldap-2.3.20
 * openmailadmin-1.0.0
-* openssh-5.2p1
-* openssl-0.9.8k
+* openssh-5.3p1
+* openssl-0.9.8l
 * openswan-2.6.23
 * openswan-2.6.23-kmod-2.6.27.42-ipfire
 * openswan-2.6.23-kmod-2.6.27.42-ipfire-xen
@@ -293,7 +293,6 @@
 * rp-pppoe-3.8
 * rrdtool-1.2.15
 * rssdler-0.4.0a
-* rsync-3.0.6
 * rsync-3.0.7
 * rtorrent-0.8.6
 * samba-3.3.10
