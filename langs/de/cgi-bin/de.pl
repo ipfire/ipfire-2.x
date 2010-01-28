@@ -1640,6 +1640,7 @@
 'tone dial' => 'Tonwahl:',
 'too long 80 char max' => ' ist zu lang, es sind maximal 80 Zeichen erlaubt',
 'total hits for log section' => 'Gesamte Treffer für Log Sektion',
+'total connection time' => 'Verbindungszeit',
 'traffic back' => 'Zurück',
 'traffic calc time' => 'Berechnungszeitpunkt',
 'traffic calc time bad' => 'Berechnungsintervall ist nicht gültig',
