@@ -9,7 +9,7 @@
 #etc/ssl/misc/c_name
 etc/ssl/openssl.cnf
 #etc/ssl/private
-#usr/bin/c_rehash
+usr/bin/c_rehash
 usr/bin/openssl
 #usr/include/openssl
 #usr/include/openssl/aes.h
