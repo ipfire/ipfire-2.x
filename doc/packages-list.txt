@@ -246,7 +246,7 @@
 * netpbm-10.26.46
 * newt-0.51.6
 * nfs-utils-1.1.1
-* nmap-4.76
+* nmap-5.20
 * noip_updater_v1.6
 * ntfs-3g-2009.4.4
 * ntp-4.2.4p7
