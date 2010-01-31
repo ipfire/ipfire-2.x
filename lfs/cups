@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "ghostscript"
 
@@ -77,7 +77,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --disable-nls --sysconfdir=/var/ipfire
+	cd $(DIR_APP) && ./configure --disable-nls --sysconfdir=/var/ipfire \
+					--enable-libusb=no
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
