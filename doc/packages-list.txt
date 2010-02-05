@@ -75,7 +75,7 @@
 * compat-wireless-2.6.32.2-kmod-2.6.27.42-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
-* cpufrequtils-005
+* cpufrequtils-007
 * cups-1.4.2
 * curl-7.19.5
 * cyrus-imapd-2.2.12
@@ -135,7 +135,7 @@
 * gzip-1.3.5
 * hddtemp-0.3-beta14
 * hdparm-8.9
-* hostapd-0.6.9
+* hostapd-0.7.1
 * hplip-2.7.10
 * hso-1.9-kmod-2.6.27.42-ipfire
 * hso-1.9-kmod-2.6.27.42-ipfire-xen
@@ -200,7 +200,7 @@
 * linux-2.6.27.42-ipfire-xen
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
-* lm_sensors-3.0.3
+* lm_sensors-3.1.2
 * logrotate-3.7.1
 * logwatch-7.3.6
 * lsof-4.78
@@ -210,13 +210,14 @@
 * mISDN_20090906-kmod-2.6.27.42-ipfire
 * mISDN_20090906-kmod-2.6.27.42-ipfire-xen
 * mISDNuser_20090906
-* madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.42-ipfire
-* madwifi-hal-0.10.5.6-r4031-20090529-kmod-2.6.27.42-ipfire-xen
+* madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.27.42-ipfire
+* madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.27.42-ipfire-xen
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
 * mbr-1.1.8
 * mc-4.7.0
+* mdadm-3.1.1
 * mechanize-0.1.8
 * mediatomb-svn2020
 * memtest86+-4.00
@@ -280,7 +281,7 @@
 * pptp-1.7.2
 * procps-3.2.6
 * psmisc-22.2
-* qemu-0.11.0
+* qemu-0.12.2
 * r8101-kmod-2.6.27.42-ipfire
 * r8101-kmod-2.6.27.42-ipfire-xen
 * r8168-8.014.00-kmod-2.6.27.42-ipfire

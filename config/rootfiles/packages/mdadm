@@ -1,0 +1,9 @@
+lib/udev/rules.d
+lib/udev/rules.d/64-md-raid.rules
+sbin/mdadm
+sbin/mdmon
+#usr/share/man/man4/md.4
+#usr/share/man/man5/mdadm.conf.5
+#usr/share/man/man8/mdadm.8
+#usr/share/man/man8/mdmon.8
+etc/rc.d/init.d/mdadm

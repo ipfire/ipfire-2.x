@@ -1,0 +1,60 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/mdadmraid
+#
+# Description : This script controls software Raid
+#
+# Authors     : Dirk Hoefle  <dhoefle@gmx.net>
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+   start)
+   
+		if [ -f /etc/mdadm.conf ]
+		then
+			boot_mesg "Starting Raid devices..."
+			
+			modprobe md
+			modprobe raid0
+			modprobe raid1
+			modprobe raid5
+			
+			sleep 1
+			
+			mdadm --assemble --scan
+		else
+			boot_mesg "Skipping raid devices, no config found..."
+			exit 1
+		fi 
+		;;
+
+   stop)
+		boot_mesg "Stopping Raid devices..."
+		mdadm --stop --scan
+		;;
+
+   restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+   status)
+		cat /proc/mdstat
+		;;
+
+   *)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/mdadmraid
