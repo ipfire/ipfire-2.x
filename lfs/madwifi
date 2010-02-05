@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = hal-0.10.5.6-r4031-20090529
+VER        = hal-0.10.5.6-r4119-20100201
 
 THISAPP    = madwifi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = af13564a45bb6fbb1d8834ed528a0a59
+$(DL_FILE)_MD5 = 937cf8f185ddd39b95e7ce026f9fba63
 
 install : $(TARGET)
 
