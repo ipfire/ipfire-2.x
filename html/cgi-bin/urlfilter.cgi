@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -2973,7 +2973,24 @@ sub writeconfigfile
 	foreach $category (@categories) {
 		$blacklist = $category;
 		$category =~ s/\//_/g;
-		#if ( $filtersettings{"FILTER_".uc($category)} ne "on" ){next;}
+		
+		if ( $filtersettings{"FILTER_".uc($category)} ne "on" ){
+			my $constraintrule = "false";
+			
+			foreach (@tclist){
+				chomp;
+				@tc = split(/\,/);
+				$tc[13] =~ s/\//_/g;
+				if ($tc[15] eq 'on' && $tc[13] =~ $category){
+					$constraintrule = "true";
+				}
+			}
+			
+			if ( $constraintrule eq "false"){
+				next;
+			}
+		}
+		
 		print FILE "dest $category {\n";
 		if (-e "$dbdir/$blacklist/domains") {
 			print FILE "    domainlist     $blacklist\/domains\n";
