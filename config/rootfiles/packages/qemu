@@ -42,6 +42,7 @@ usr/share/qemu/keymaps/sl
 usr/share/qemu/keymaps/sv
 usr/share/qemu/keymaps/th
 usr/share/qemu/keymaps/tr
+usr/share/qemu/linuxboot.bin
 usr/share/qemu/multiboot.bin
 usr/share/qemu/openbios-ppc
 usr/share/qemu/openbios-sparc32
@@ -49,9 +50,11 @@ usr/share/qemu/openbios-sparc64
 usr/share/qemu/petalogix-s3adsp1800.dtb
 usr/share/qemu/ppc_rom.bin
 usr/share/qemu/pxe-e1000.bin
+usr/share/qemu/pxe-i82559er.bin
 usr/share/qemu/pxe-ne2k_pci.bin
 usr/share/qemu/pxe-pcnet.bin
 usr/share/qemu/pxe-rtl8139.bin
+usr/share/qemu/pxe-virtio.bin
 usr/share/qemu/vgabios-cirrus.bin
 usr/share/qemu/vgabios.bin
 usr/share/qemu/video.x
