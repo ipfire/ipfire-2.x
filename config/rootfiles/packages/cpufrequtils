@@ -1,3 +1,4 @@
+usr/bin/cpufreq-aperf
 usr/bin/cpufreq-info
 usr/bin/cpufreq-set
 #usr/include/cpufreq.h
