@@ -33,6 +33,10 @@ extract_files
 #Start services
 
 #
+#Delete sensors config to force new scan
+rm -f /etc/sysconfig/lm_sensors
+
+#
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
