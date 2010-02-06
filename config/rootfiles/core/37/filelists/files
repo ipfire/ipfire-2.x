@@ -1,4 +1,6 @@
 etc/system-release
 lib/modules/2.6.27.42-ipfire/kernel/net
 lib/modules/2.6.27.42-ipfire-xen/kernel/net
+lib/modules/2.6.27.42-ipfire/mISDN/hfcsusb.ko
+lib/modules/2.6.27.42-ipfire-xen/mISDN/hfcsusb.ko
 srv/web/ipfire/cgi-bin/urlfilter.cgi

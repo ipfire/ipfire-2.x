@@ -77,6 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_SRC)/mISDN* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_SRC)/mISDN && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-enable_disabled_cards.patch
+	cd $(DIR_SRC)/mISDN && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb_bchannels.patch
 	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) force
 	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) $(MAKETUNING)
 	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) \

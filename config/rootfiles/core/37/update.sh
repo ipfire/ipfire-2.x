@@ -42,8 +42,8 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #
 #Run depmod to rebuld module informations
-#depmod 2.6.27.42-ipfire
-#depmod 2.6.27.42-ipfire-xen
+depmod 2.6.27.42-ipfire
+depmod 2.6.27.42-ipfire-xen
 #Finish
 #Don't report the exitcode last command
 exit 0
