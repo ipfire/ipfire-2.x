@@ -147,6 +147,9 @@ endif
 	# ipp2p 0.8.2-pomng
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.19-ipp2p-0.8.2-pomng.patch
 
+	# Intel Atom Coretemp Patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27-atom-coretemp.patch
+	
 	# Layer7-patch
 	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.21
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.21.tar.gz

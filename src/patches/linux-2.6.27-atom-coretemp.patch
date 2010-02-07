@@ -1,0 +1,58 @@
+diff -Naur linux-2.6.27.42.org/drivers/hwmon/coretemp.c linux-2.6.27.42/drivers/hwmon/coretemp.c
+--- linux-2.6.27.42.org/drivers/hwmon/coretemp.c	2009-12-18 22:31:34.000000000 +0100
++++ linux-2.6.27.42/drivers/hwmon/coretemp.c	2010-02-07 12:36:39.000000000 +0100
+@@ -1,7 +1,7 @@
+ /*
+  * coretemp.c - Linux kernel module for hardware monitoring
+  *
+- * Copyright (C) 2007 Rudolf Marek <r.marek@assembler.cz>
++ * Copyright (C) 2007, 2008 Rudolf Marek <r.marek@assembler.cz>
+  *
+  * Inspired from many hwmon drivers
+  *
+@@ -244,8 +244,14 @@
+ 		}
+ 	}
+ 
+-	data->tjmax = adjust_tjmax(c, data->id, &pdev->dev);
+-	platform_set_drvdata(pdev, data);
++	/* Intel Atom has only fixed TjMax at 95C */
++
++	if (c->x86_model == 0x1c) {
++		data->tjmax = 95000;
++	} else {
++		/* Adjust the TjMax for the rest of Core2 family */
++		data->tjmax = adjust_tjmax(c, data->id, &pdev->dev);
++	}
+ 
+ 	/* read the still undocumented IA32_TEMPERATURE_TARGET it exists
+ 	   on older CPUs but not in this register */
+@@ -265,6 +271,8 @@
+ 		}
+ 	}
+ 
++	platform_set_drvdata(pdev, data);
++
+ 	if ((err = sysfs_create_group(&pdev->dev.kobj, &coretemp_group)))
+ 		goto exit_dev;
+ 
+@@ -409,15 +417,15 @@
+ 	err = platform_driver_register(&coretemp_driver);
+ 	if (err)
+ 		goto exit;
+-
++		
+ 	for_each_online_cpu(i) {
+ 		struct cpuinfo_x86 *c = &cpu_data(i);
+ 
+-		/* check if family 6, models 0xe, 0xf, 0x16, 0x17, 0x1A */
++		/* check if family 6, models 0xe, 0xf, 0x16, 0x17, 0x1A, 0x1c */
+ 		if ((c->cpuid_level < 0) || (c->x86 != 0x6) ||
+ 		    !((c->x86_model == 0xe) || (c->x86_model == 0xf) ||
+-			(c->x86_model == 0x16) || (c->x86_model == 0x17) ||
+-			(c->x86_model == 0x1A))) {
++			(c->x86_model == 0x16) || (c->x86_model == 0x17)  ||
++			(c->x86_model == 0x1c) || (c->x86_model == 0x1A))) {
+ 
+ 			/* supported CPU not found, but report the unknown
+ 			   family 6 CPU */
