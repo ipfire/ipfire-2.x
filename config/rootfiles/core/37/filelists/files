@@ -5,4 +5,6 @@ lib/modules/2.6.27.42-ipfire/mISDN/hfcsusb.ko
 lib/modules/2.6.27.42-ipfire-xen/mISDN/hfcsusb.ko
 lib/modules/2.6.27.42-ipfire/kernel/driver/hwmon/coretemp.ko
 lib/modules/2.6.27.42-ipfire-xen/kernel/driver/hwmon/coretemp.ko
+lib/modules/2.6.27.42-ipfire/kernel/driver/net/e131x.ko
+lib/modules/2.6.27.42-ipfire-xen/kernel/driver/net/e131x.ko
 srv/web/ipfire/cgi-bin/urlfilter.cgi
