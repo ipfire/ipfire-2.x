@@ -345,6 +345,7 @@ buildipfire() {
   ipfiremake atl2			XEN=1
   ipfiremake hso			XEN=1
   ipfiremake e1000e			XEN=1
+  ipfiremake et131x			XEN=1
   ipfiremake r8101			XEN=1
   ipfiremake r8169			XEN=1
   ipfiremake r8168			XEN=1
@@ -362,6 +363,7 @@ buildipfire() {
   ipfiremake atl2
   ipfiremake hso
   ipfiremake e1000e
+  ipfiremake et131x
   ipfiremake r8101
   ipfiremake r8169
   ipfiremake r8168
