@@ -126,7 +126,7 @@ my $PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
 if (($sambasettings{'WIDELINKS'} eq 'on') & ($sambasettings{'UNIXEXTENSION'} eq 'on'))
-  {$errormessage="Don't enable 'Wide links' and 'Unix extension' at the same time"; }
+  {$errormessage = "$errormessage<br />Don't enable 'Wide links' and 'Unix extension' at the same time"; }
 
 &Header::openpage('Samba', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
