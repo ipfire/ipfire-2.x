@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.15.6
+VER        = 0.15.8
 
 THISAPP    = mpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = "alsa ffmpeg-libs glib lame libshout libogg libid3tag libvorbis"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e0b7a11f86f8f021a92c49a96032ff39
+$(DL_FILE)_MD5 = 824e1ce46c0f468865d9e5e403cdaf5d
 
 install : $(TARGET)
 

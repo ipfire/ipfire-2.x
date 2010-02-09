@@ -98,6 +98,8 @@
 * elinks-0.11.6
 * esniper-2-19-0
 * espgs-8.15.1
+* et131x-kmod-2.6.27.42-ipfire
+* et131x-kmod-2.6.27.42-ipfire-xen
 * etherwake-1.09
 * ethtool-3
 * expat-2.0.0
@@ -229,7 +231,7 @@
 * module-init-tools-3.5
 * motion-3.2.11
 * mpc-0.19
-* mpd-0.15.6
+* mpd-0.15.8
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mtd-CVS-20070507
