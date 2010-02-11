@@ -100,6 +100,8 @@ $sambasettings{'DOSCHARSET'} = 'CP850';
 $sambasettings{'UNIXCHARSET'} = 'UTF8';
 $sambasettings{'DISPLAYCHARSET'} = 'CP850';
 $sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
+$sambasettings{'WIDELINKS'} = 'on';
+$sambasettings{'UNIXEXTENSION'} = 'off';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
 ### Samba CUPS Variablen
@@ -122,6 +124,9 @@ my $PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 &Header::getcgihash(\%sambasettings);
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
+
+if (($sambasettings{'WIDELINKS'} eq 'on') & ($sambasettings{'UNIXEXTENSION'} eq 'on'))
+  {$errormessage = "$errormessage<br />Don't enable 'Wide links' and 'Unix extension' at the same time"; }
 
 &Header::openpage('Samba', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -171,6 +176,8 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'PRINTCAPNAME'} = 'cups';
 	$sambasettings{'PRINTERNAME'} = 'Printer';
 ### Values that have to be initialized
+	$sambasettings{'WIDELINKS'} = 'on';
+	$sambasettings{'UNIXEXTENSION'} = 'off';
 	$sambasettings{'ACTION'} = '';
 	$sambasettings{'LOCALMASTER'} = 'off';
 	$sambasettings{'DOMAINMASTER'} = 'off';
@@ -249,6 +256,8 @@ if ($sambasettings{'LOCALMASTER'} eq 'on'){ $sambasettings{'LOCALMASTER'} = "tru
 if ($sambasettings{'DOMAINMASTER'} eq 'on'){ $sambasettings{'DOMAINMASTER'} = "true";} else { $sambasettings{'DOMAINMASTER'} = "false";}
 if ($sambasettings{'PREFERREDMASTER'} eq 'on'){ $sambasettings{'PREFERREDMASTER'} = "true";} else { $sambasettings{'PREFERREDMASTER'} = "false";}
 if ($sambasettings{'SYSLOGONLY'} eq 'on'){ $sambasettings{'SYSLOGONLY'} = "yes";} else { $sambasettings{'SYSLOGONLY'} = "no";}
+if ($sambasettings{'WIDELINKS'} eq 'on'){ $sambasettings{'WIDELINKS'} = "yes";} else { $sambasettings{'WIDELINKS'} = "no";}
+if ($sambasettings{'UNIXEXTENSION'} eq 'on'){ $sambasettings{'UNIXEXTENSION'} = "yes";} else { $sambasettings{'UNIXEXTENSION'} = "no";}
 
 ############################################################################################################################
 ############################################# Schreiben der Samba globals ##################################################
@@ -263,6 +272,9 @@ print FILE <<END
 netbios name = $sambasettings{'NETBIOSNAME'}
 server string = $sambasettings{'SRVSTRING'}
 workgroup = $sambasettings{'WORKGRP'}
+
+wide links = $sambasettings{'WIDELINKS'}
+unix extensions = $sambasettings{'UNIXEXTENSION'}
 
 keep alive = 30
 os level = $sambasettings{'OSLEVEL'}
@@ -381,6 +393,12 @@ $checked{'DOMAINMASTER'}{$sambasettings{'DOMAINMASTER'}} = "checked='checked'";
 $checked{'PREFERREDMASTER'}{'off'} = '';
 $checked{'PREFERREDMASTER'}{'on'} = '';
 $checked{'PREFERREDMASTER'}{$sambasettings{'PREFERREDMASTER'}} = "checked='checked'";
+$checked{'WIDELINKS'}{'off'} = '';
+$checked{'WIDELINKS'}{'on'} = '';
+$checked{'WIDELINKS'}{$sambasettings{'WIDELINKS'}} = "checked='checked'";
+$checked{'UNIXEXTENSION'}{'off'} = '';
+$checked{'UNIXEXTENSION'}{'on'} = '';
+$checked{'UNIXEXTENSION'}{$sambasettings{'UNIXEXTENSION'}} = "checked='checked'";
 $checked{'GREEN'}{'off'} = '';
 $checked{'GREEN'}{'on'} = '';
 $checked{'GREEN'}{$sambasettings{'GREEN'}} = "checked='checked'";
@@ -480,6 +498,11 @@ END
 
 print <<END
 <tr><td align='center' width='40%'>$Lang::tr{'more'}</td><td align='left'><input type='text' name='OTHERINTERFACES' value='$sambasettings{'OTHERINTERFACES'}' size="30" /></td></tr>
+<tr><td align='left'><br /></td><td></td></tr>
+<tr><td align='left' width='40%'>Wide links</td><td align='left'>on <input type='radio' name='WIDELINKS' value='on' $checked{'WIDELINKS'}{'on'} />/
+																							<input type='radio' name='WIDELINKS' value='off' $checked{'WIDELINKS'}{'off'} /> off</td></tr>
+<tr><td align='left' width='40%'>Unix extension</td><td align='left'>on <input type='radio' name='UNIXEXTENSION' value='on' $checked{'UNIXEXTENSION'}{'on'} />/
+																							<input type='radio' name='UNIXEXTENSION' value='off' $checked{'UNIXEXTENSION'}{'off'} /> off</td></tr>
 <tr><td align='left'><br /></td><td></td></tr>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'security'}</td><td align='left'><select name='SECURITY' style="width: 165px">

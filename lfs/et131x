@@ -24,51 +24,29 @@
 
 include Config
 
-VER        = 0.15.8
+ifeq "$(XEN)" "1"
+	VERSUFIX = ipfire-xen
+else
+	VERSUFIX = ipfire
+endif
 
-THISAPP    = mpd-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/${THISAPP}
-TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = mpd
-PAK_VER    = 10
+VER        = ipfire-1
 
-DEPS       = "alsa ffmpeg-libs glib lame libshout libogg libid3tag libvorbis"
+THISAPP    = et131x
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
-
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-
-$(DL_FILE)_MD5 = 824e1ce46c0f468865d9e5e403cdaf5d
-
 install : $(TARGET)
 
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+check :
 
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
+download :
 
-md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+md5 :
 
 ###############################################################################
 # Installation Details
@@ -76,11 +54,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-ipv6
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP) && cp -r $(DIR_SRC)/src/$(THISAPP) $(DIR_APP)
+	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP) modules
+	cd $(DIR_APP) && install -m 644 et131x.ko /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net 
 	@rm -rf $(DIR_APP)
-	touch /var/log/mpd.error.log
-	touch /var/log/mpd.log
 	@$(POSTBUILD)
