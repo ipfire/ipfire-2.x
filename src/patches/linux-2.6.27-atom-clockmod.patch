@@ -1,0 +1,12 @@
+diff -Naur linux-2.6.27.45.org/arch/x86/kernel/cpu/cpufreq/p4-clockmod.c linux-2.6.27.45/arch/x86/kernel/cpu/cpufreq/p4-clockmod.c
+--- linux-2.6.27.45.org/arch/x86/kernel/cpu/cpufreq/p4-clockmod.c	2010-01-29 00:21:45.000000000 +0100
++++ linux-2.6.27.45/arch/x86/kernel/cpu/cpufreq/p4-clockmod.c	2010-02-11 15:21:39.000000000 +0100
+@@ -160,6 +160,8 @@
+ 		switch (c->x86_model) {
+ 		case 0x0E: /* Core */
+ 		case 0x0F: /* Core Duo */
++		case 0x16: /* Celeron Core */
++		case 0x1c: /* Atom */
+ 			p4clockmod_driver.flags |= CPUFREQ_CONST_LOOPS;
+ 			return speedstep_get_processor_frequency(SPEEDSTEP_PROCESSOR_PCORE);
+ 		case 0x0D: /* Pentium M (Dothan) */
