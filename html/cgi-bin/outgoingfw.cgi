@@ -667,7 +667,7 @@ END
 			<td width='30%' align='left'><select name='LOG'>
 										<option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option>
 										<option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option>
-										</select></td>";
+										</select></td>
 		    <td width='20%' align='right' colspan='2' />
 		    <td width='30%' align='left' colspan='2' />
 		<tr><td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' />
