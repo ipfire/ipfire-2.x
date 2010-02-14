@@ -24,7 +24,7 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-VERSION="2.5"							# Version number
+VERSION="2.6"							# Version number
 CORE="37"							# Core Level (Filename)
 PAKFIRE_CORE="36"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
@@ -340,42 +340,26 @@ buildipfire() {
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
-  ipfiremake linux			XEN=1
-  ipfiremake atl1c			XEN=1
-  ipfiremake atl2			XEN=1
-  ipfiremake hso			XEN=1
-  ipfiremake e1000e			XEN=1
-  ipfiremake et131x			XEN=1
-  ipfiremake r8101			XEN=1
-  ipfiremake r8169			XEN=1
-  ipfiremake r8168			XEN=1
-  ipfiremake kqemu			XEN=1
-  #ipfiremake kvm-kmod			XEN=1
-  ipfiremake v4l-dvb			XEN=1
-  ipfiremake madwifi			XEN=1
-  #ipfiremake alsa			XEN=1 KMOD=1
-  ipfiremake dahdi			XEN=1 KMOD=1
-  ipfiremake openswan			XEN=1 KMOD=1
-  ipfiremake mISDN			XEN=1
-  ipfiremake compat-wireless		XEN=1
+#  ipfiremake linux			XEN=1
+#  ipfiremake kqemu			XEN=1
+#  #ipfiremake kvm-kmod			XEN=1
+#  ipfiremake v4l-dvb			XEN=1
+#  ipfiremake madwifi			XEN=1
+#  #ipfiremake alsa			XEN=1 KMOD=1
+#  ipfiremake dahdi			XEN=1 KMOD=1
+#  ipfiremake openswan			XEN=1 KMOD=1
+#  ipfiremake mISDN			XEN=1
+#  ipfiremake compat-wireless		XEN=1
   ipfiremake linux
-  ipfiremake atl1c
-  ipfiremake atl2
-  ipfiremake hso
-  ipfiremake e1000e
-  ipfiremake et131x
-  ipfiremake r8101
-  ipfiremake r8169
-  ipfiremake r8168
   ipfiremake kqemu
-  ipfiremake kvm-kmod
+  #ipfiremake kvm-kmod
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
   ipfiremake dahdi			KMOD=1
   ipfiremake openswan			KMOD=1
-  ipfiremake mISDN
-  ipfiremake compat-wireless
+  #ipfiremake mISDN
+  #ipfiremake compat-wireless
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -655,7 +639,7 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  if [ "$GIT_BRANCH" = "master" ]; then
+  if [ "$GIT_BRANCH" = "next" ]; then
 	echo "$NAME $VERSION - (Development Build: $GIT_LASTCOMMIT)" > $BASEDIR/build/etc/system-release
   else
 	echo "$NAME $VERSION - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
@@ -740,15 +724,15 @@ buildpackages() {
 
   ipfirepackages
 
-  # Check if there is a loop device for building in virtual environments
-  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
-        cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
-        cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
-	ipfiremake xen-image ED=$IPFVER
-	rm -rf $LFS/install/packages/linux-xen-*.ipfire
-	rm -rf $LFS/install/packages/meta-linux-xen
-  fi
-  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
+#  # Check if there is a loop device for building in virtual environments
+#  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
+#        cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
+#        cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
+#	ipfiremake xen-image ED=$IPFVER
+#	rm -rf $LFS/install/packages/linux-xen-*.ipfire
+#	rm -rf $LFS/install/packages/meta-linux-xen
+#  fi
+#  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   # Cleanup
   stdumount
