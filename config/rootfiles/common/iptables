@@ -35,7 +35,6 @@ lib/xtables
 #lib/xtables/libipt_CLUSTERIP.so
 #lib/xtables/libipt_DNAT.so
 #lib/xtables/libipt_ECN.so
-#lib/xtables/libipt_IMQ.so
 #lib/xtables/libipt_LOG.so
 #lib/xtables/libipt_MASQUERADE.so
 #lib/xtables/libipt_MIRROR.so
@@ -51,6 +50,7 @@ lib/xtables
 #lib/xtables/libipt_ah.so
 #lib/xtables/libipt_ecn.so
 #lib/xtables/libipt_icmp.so
+#lib/xtables/libipt_ipp2p.so
 #lib/xtables/libipt_realm.so
 #lib/xtables/libipt_set.so
 #lib/xtables/libipt_ttl.so
@@ -59,6 +59,7 @@ lib/xtables
 #lib/xtables/libxt_CONNMARK.so
 #lib/xtables/libxt_CONNSECMARK.so
 #lib/xtables/libxt_DSCP.so
+#lib/xtables/libxt_IMQ.so
 #lib/xtables/libxt_MARK.so
 #lib/xtables/libxt_NFLOG.so
 #lib/xtables/libxt_NFQUEUE.so
