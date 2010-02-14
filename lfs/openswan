@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2.6.23
+VER        = 2.6.24
 
 THISAPP    = openswan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -51,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c83053471e639bf3b97e3cf7796b7e83
+$(DL_FILE)_MD5 = 1c76b6982c05392f7c360afb92699661
 
 install : $(TARGET)
 
@@ -92,7 +92,7 @@ else
 		-e 's%^KLIPSCOMPILE.*$$%KLIPSCOMPILE=$(CFLAGS)%' \
 		-e 's%^XMLTO.*$$%#&%' Makefile.inc
 
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/openswan-2.6.20_noxmlto.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/openswan-2.6.24_noxmlto.patch
 
 	cd $(DIR_APP) && sed -i 's/-Werror//' programs/Makefile.program
 	

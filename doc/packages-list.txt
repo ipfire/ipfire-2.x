@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.5 ==
+== List of softwares used to build IPFire Version: 2.6 ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -36,17 +36,13 @@
 * Unix-Syslog-0.100
 * XML-Parser-2.34
 * alsa-lib-1.0.22
-* alsa-lib-1.0.22-kmod-2.6.27.45-ipfire
+* alsa-lib-1.0.22-kmod-2.6.32.8-ipfire
 * amavisd-new-2.5.2
 * apcupsd-3.14.4
 * applejuice-0.31
 * arping-2.05
 * as86-0.16.17
 * asterisk-1.4.28
-* atl1c-kmod-2.6.27.45-ipfire
-* atl1c-kmod-2.6.27.45-ipfire-xen
-* atl2-2.0.5-kmod-2.6.27.45-ipfire
-* atl2-2.0.5-kmod-2.6.27.45-ipfire-xen
 * autoconf-2.59
 * automake-1.9.6
 * backup-ipfire
@@ -71,8 +67,6 @@
 * clamav-0.95.3
 * cmake-2.4.8
 * collectd-4.5.3
-* compat-wireless-2.6.32.3-kmod-2.6.27.45-ipfire
-* compat-wireless-2.6.32.3-kmod-2.6.27.45-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-007
@@ -80,9 +74,8 @@
 * curl-7.19.5
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
-* dahdi-2.2.0.2
-* dahdi-2.2.0.2-kmod-2.6.27.45-ipfire
-* dahdi-2.2.0.2-kmod-2.6.27.45-ipfire-xen
+* dahdi-2.2.1
+* dahdi-2.2.1-kmod-2.6.32.8-ipfire
 * db-4.4.20
 * dbus-1.0.3
 * dhcp-3.1.0
@@ -90,16 +83,12 @@
 * diffutils-2.8.1
 * dnsmasq-2.45
 * dosfstools-2.11
-* e1000e-1.0.2.5-kmod-2.6.27.45-ipfire
-* e1000e-1.0.2.5-kmod-2.6.27.45-ipfire-xen
 * e2fsprogs-1.39
 * ebtables-v2.0.8-2
 * ed-0.2
 * elinks-0.11.6
 * esniper-2-19-0
 * espgs-8.15.1
-* et131x-kmod-2.6.27.45-ipfire
-* et131x-kmod-2.6.27.45-ipfire-xen
 * etherwake-1.09
 * ethtool-3
 * expat-2.0.0
@@ -139,8 +128,6 @@
 * hdparm-8.9
 * hostapd-0.6.9
 * hplip-2.7.10
-* hso-1.9-kmod-2.6.27.45-ipfire
-* hso-1.9-kmod-2.6.27.45-ipfire-xen
 * htop-0.8.1
 * httpd-2.2.11
 * hwdata
@@ -155,7 +142,7 @@
 * iperf-2.0.4
 * ipfireseeder-1.00
 * iproute2-2.6.16-060323
-* iptables-1.4.2
+* iptables-1.4.6
 * iptstate-2.1
 * iputils-ss020927
 * iw-0.9.15
@@ -164,10 +151,8 @@
 * jpegsrc.v6b
 * kbd-1.12
 * klibc-1.5.14
-* kqemu-1.4.0pre1-kmod-2.6.27.45-ipfire
-* kqemu-1.4.0pre1-kmod-2.6.27.45-ipfire-xen
+* kqemu-1.4.0pre1-kmod-2.6.32.8-ipfire
 * kudzu-1.2.64
-* kvm-kmod-2.6.31.5-kmod-2.6.27.45-ipfire
 * l7-protocols-2009-05-10
 * lame-3.97
 * lcd4linux-0.10.1-RC2
@@ -198,8 +183,7 @@
 * libwww-perl-5.803
 * libxml2-2.6.26
 * libxslt-1.1.17
-* linux-2.6.27.45-ipfire
-* linux-2.6.27.45-ipfire-xen
+* linux-2.6.32.8-ipfire
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * lm_sensors-3.1.2
@@ -209,11 +193,8 @@
 * lynis-1.2.6
 * lzo-2.02
 * m4-1.4.4
-* mISDN_20090906-kmod-2.6.27.45-ipfire
-* mISDN_20090906-kmod-2.6.27.45-ipfire-xen
 * mISDNuser_20090906
-* madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.27.45-ipfire
-* madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.27.45-ipfire-xen
+* madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.32.8-ipfire
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
@@ -261,9 +242,8 @@
 * openmailadmin-1.0.0
 * openssh-5.3p1
 * openssl-0.9.8l
-* openswan-2.6.23
-* openswan-2.6.23-kmod-2.6.27.45-ipfire
-* openswan-2.6.23-kmod-2.6.27.45-ipfire-xen
+* openswan-2.6.24
+* openswan-2.6.24-kmod-2.6.32.8-ipfire
 * openvpn-2.1_rc20
 * p7zip_4.65
 * pam_mysql-0.7RC1
@@ -284,12 +264,6 @@
 * procps-3.2.6
 * psmisc-22.2
 * qemu-0.12.2
-* r8101-kmod-2.6.27.45-ipfire
-* r8101-kmod-2.6.27.45-ipfire-xen
-* r8168-8.014.00-kmod-2.6.27.45-ipfire
-* r8168-8.014.00-kmod-2.6.27.45-ipfire-xen
-* r8169-6.011.00-kmod-2.6.27.45-ipfire
-* r8169-6.011.00-kmod-2.6.27.45-ipfire-xen
 * readline-5.1
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
@@ -345,8 +319,7 @@
 * usb_modeswitch-1.0.6
 * usbutils-0.72
 * util-linux-2.12r
-* v4l-dvb-690055993011-kmod-2.6.27.45-ipfire
-* v4l-dvb-690055993011-kmod-2.6.27.45-ipfire-xen
+* v4l-dvb-9defbd461e5f-kmod-2.6.32.8-ipfire
 * vdr-1.6.0
 * vdradmin-am-3.6.5
 * vim-7.0

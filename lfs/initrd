@@ -70,9 +70,9 @@ $(TARGET) :
 		/install/initrd/lib/modules/$(KVER)-ipfire/dahdi
 
 	# ... acpi/dock.ko is needed for libata
-	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi
-	cp -a /lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko \
-		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko
+#	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi
+#	cp -a /lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko \
+#		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko
 
 	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
 

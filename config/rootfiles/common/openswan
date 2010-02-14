@@ -44,14 +44,11 @@ usr/lib/ipsec
 #usr/lib/ipsec/_realsetup
 #usr/lib/ipsec/_secretcensor
 #usr/lib/ipsec/_startklips
-#usr/lib/ipsec/_startklips.old
 #usr/lib/ipsec/_startnetkey
 #usr/lib/ipsec/_updown
 #usr/lib/ipsec/_updown.klips
-#usr/lib/ipsec/_updown.klips.old
 #usr/lib/ipsec/_updown.klips~
 #usr/lib/ipsec/_updown.mast
-#usr/lib/ipsec/_updown.mast.old
 #usr/lib/ipsec/_updown.netkey
 usr/libexec/ipsec
 #usr/libexec/ipsec/_pluto_adns
@@ -185,6 +182,7 @@ usr/sbin/ipsec
 #usr/share/doc/openswan/index.html
 #usr/share/doc/openswan/ipsec.8.html
 #usr/share/doc/openswan/ipsec.conf-sample
+#usr/share/doc/openswan/ipsec.conf.5.html
 #usr/share/doc/openswan/ipsec.secrets.5.html
 #usr/share/doc/openswan/ipsec__confread.8.html
 #usr/share/doc/openswan/ipsec__copyright.8.html
