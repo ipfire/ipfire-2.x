@@ -287,7 +287,7 @@
 * spandsp-0.0.6pre12
 * splix-2.0.0-rc2
 * sqlite-3.6.10
-* squashfs3.4
+* squashfs-lzma-cvs20100214
 * squid-2.7.STABLE7
 * squidGuard-1.4.1
 * squidclamav-4.1
@@ -319,7 +319,7 @@
 * usb_modeswitch-1.0.6
 * usbutils-0.72
 * util-linux-2.12r
-* v4l-dvb-9defbd461e5f-kmod-2.6.32.8-ipfire
+* v4l-dvb-690055993011-kmod-2.6.32.8-ipfire
 * vdr-1.6.0
 * vdradmin-am-3.6.5
 * vim-7.0
@@ -337,5 +337,6 @@
 * wpa_supplicant-0.6.9
 * xfsprogs-2.9.4
 * xvidcore-1.2.1
+* xz-4.999.9beta
 * zerofree-1.0.1
 * zlib-1.2.3
