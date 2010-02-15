@@ -37,17 +37,17 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 objects = 	$(DL_FILE) \
 			netfilter-layer7-v2.22.tar.gz \
-			libnfnetlink-0.0.41.tar.bz2 \
+			libnfnetlink-1.0.0.tar.bz2 \
 			libnetfilter_queue-0.0.17.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.22.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
-libnfnetlink-0.0.41.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-0.0.41.tar.bz2
+libnfnetlink-1.0.0.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-1.0.0.tar.bz2
 libnetfilter_queue-0.0.17.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.17.tar.bz2
 
 $(DL_FILE)_MD5 = c67cf30e281a924def6426be0973df56
 netfilter-layer7-v2.22.tar.gz_MD5 = 98dff8a3d5a31885b73341633f69501f
-libnfnetlink-0.0.41.tar.bz2_MD5 = 5d844ea1f557bad0364d5b85cd10c796
+libnfnetlink-1.0.0.tar.bz2_MD5 = 016fdec8389242615024c529acc1adb8
 libnetfilter_queue-0.0.17.tar.bz2_MD5 = 2cde35e678ead3a8f9eb896bf807a159
 
 install : $(TARGET)
@@ -102,10 +102,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-0.0.41.tar.bz2
-	cd $(DIR_SRC)/libnfnetlink-0.0.41 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnfnetlink-0.0.41 && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/libnfnetlink-0.0.41 && make install
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-1.0.0.tar.bz2
+	cd $(DIR_SRC)/libnfnetlink-1.0.0 && ./configure --prefix=/usr
+	cd $(DIR_SRC)/libnfnetlink-1.0.0 && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/libnfnetlink-1.0.0 && make install
 
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_queue-0.0.17.tar.bz2
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && ./configure --prefix=/usr

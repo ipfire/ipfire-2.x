@@ -67,6 +67,7 @@
 * clamav-0.95.3
 * cmake-2.4.8
 * collectd-4.5.3
+* collectd-4.5.4
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-007
