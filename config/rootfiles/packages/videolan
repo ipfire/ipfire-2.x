@@ -83,6 +83,7 @@ usr/lib/vlc/codec/libcmml_plugin.so
 usr/lib/vlc/codec/libcvdsub_plugin.so
 usr/lib/vlc/codec/libdts_plugin.so
 usr/lib/vlc/codec/libdvbsub_plugin.so
+usr/lib/vlc/codec/libfaad_plugin.so
 usr/lib/vlc/codec/libfake_plugin.so
 usr/lib/vlc/codec/libflacdec_plugin.so
 usr/lib/vlc/codec/liblibmpeg2_plugin.so
