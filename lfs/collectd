@@ -25,7 +25,7 @@
 include Config
 
 PKG_NAME   = collectd
-VER        = 4.5.4
+VER        = 4.9.1
 
 THISAPP    = collectd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b59500d1346c16a63ba10cbc6c0cf7df
+$(DL_FILE)_MD5 = 5753496651c8c84afaea1fe290876bfc
 
 install : $(TARGET)
 
@@ -87,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-{interface,iptables,irq,load,logfile,memory,multimeter} \
 		--enable-{network,nfs,ntpd,ping,processes,rrdtool,sensors,swap,syslog} \
 		--enable-{tcpconns,unixsock,users,wireless} \
-		--with-rrdtool=/usr/share/rrdtool-1.2.15
+		--with-librrd=/usr/share/rrdtool-1.2.30
 	cd $(DIR_APP) && make install
 	cp -vf $(DIR_SRC)/config/collectd/collectd.* /etc/
 	ln -f -s ../init.d/collectd /etc/rc.d/rc0.d/K50collectd 
