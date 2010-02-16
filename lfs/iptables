@@ -77,7 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.41 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-1.0.0 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
 
 	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	-cd /usr/include && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.6-errorno_includes.patch
@@ -102,6 +102,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
+	# Iptables doesn't install all headers
+	mkdir -p /usr/include/net/netfilter
+	cp -f $(DIR_APP)/include/net/netfilter/*.h /usr/include/net/netfilter/
+	mkdir -p /usr/include/iptables
+	cp -f $(DIR_APP)/include/iptables/*.h /usr/include/iptables/
+	cp -f $(DIR_APP)/include/iptables.h /usr/include/
+	mkdir -p /usr/include/libipulog
+	cp -f $(DIR_APP)/include/libipulog/*.h /usr/include/libipulog/
+	mkdir -p /usr/include/libiptc
+	cp -f $(DIR_APP)/include/libiptc/*.h /usr/include/libiptc/
+
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-1.0.0.tar.bz2
 	cd $(DIR_SRC)/libnfnetlink-1.0.0 && ./configure --prefix=/usr
 	cd $(DIR_SRC)/libnfnetlink-1.0.0 && make $(MAKETUNING) $(EXTRA_MAKE)
@@ -112,5 +123,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make install
 
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-0.0.41 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-1.0.0 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
 	@$(POSTBUILD)
