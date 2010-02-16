@@ -31,7 +31,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = "ffmpeg-libs sdl lame libvorbis xvid"
 
@@ -79,8 +79,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -s $(THISAPP) /usr/src/ffmpeg
 	cd $(DIR_SRC)/ffmpeg && ./configure --prefix=/usr \
                                      --enable-shared \
-				     --enable-postproc \
-				     --enable-gpl
+									 --enable-postproc \
+									 --enable-pthreads \
+									 --enable-gpl
 	cd $(DIR_SRC)/ffmpeg && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/ffmpeg && make install
 	cd $(DIR_SRC)/ffmpeg && make install-libs
