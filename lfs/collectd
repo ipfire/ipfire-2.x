@@ -77,8 +77,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && sed -i 's|with_libiptc="no (Linux iptables header.*|with_libiptc="yes"|g' \
-				./configure
+	#cd $(DIR_APP) && sed -i 's|with_libiptc="no (Linux iptables header.*|with_libiptc="yes"|g' \
+	#			./configure
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
 		--disable-{apple_sensors,csv,ipvs,mbmon,memcached,mysql} \
 		--disable-{netlink,nginx,nut,perl,serial,snmp,tape,vserver,xmms} \
