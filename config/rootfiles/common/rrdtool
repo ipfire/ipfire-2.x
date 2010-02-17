@@ -149,5 +149,5 @@ usr/lib/perl5/site_perl/5.8.8/i586-linux/ntmake.pl
 #usr/share/rrdtool-1.2.30/share/rrdtool/examples/shared-demo.pl
 #usr/share/rrdtool-1.2.30/share/rrdtool/examples/stripes.pl
 #usr/share/rrdtool-1.2.30/share/rrdtool/fonts
-#usr/share/rrdtool-1.2.30/share/rrdtool/fonts/DejaVuSansMono-Roman.ttf
+usr/share/rrdtool-1.2.30/share/rrdtool/fonts/DejaVuSansMono-Roman.ttf
 var/log/rrd
