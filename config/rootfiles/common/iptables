@@ -213,9 +213,9 @@ sbin/iptables-multi
 #usr/include/linux/netfilter/xt_tcpudp.h
 #usr/include/linux/netfilter/xt_time.h
 #usr/include/linux/netfilter/xt_u32.h
-+usr/include/net/netfilter
-+usr/include/net/netfilter/nf_conntrack_tuple.h
-+usr/include/net/netfilter/nf_nat.h
+#usr/include/net/netfilter
+#usr/include/net/netfilter/nf_conntrack_tuple.h
+#usr/include/net/netfilter/nf_nat.h
 #usr/include/xtables.h
 #usr/lib/libnetfilter_queue.a
 #usr/lib/libnetfilter_queue.la

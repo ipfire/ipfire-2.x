@@ -66,8 +66,7 @@
 * centerim-4.22.1
 * clamav-0.95.3
 * cmake-2.4.8
-* collectd-4.5.3
-* collectd-4.5.4
+* collectd-4.9.1
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-007
@@ -94,6 +93,7 @@
 * ethtool-3
 * expat-2.0.0
 * ez-ipupdate-3.0.11b8
+* faad2-2.7
 * fbset-2.1
 * fcron-3.0.4
 * feedparser-4.1
@@ -170,6 +170,7 @@
 * libnet-1.1.2.1
 * libnl-1.1
 * libogg-1.1.4
+* liboping-1.3.4
 * libpcap-1.0.0
 * libpng-1.2.12
 * libpri-1.4.10.2
@@ -269,7 +270,7 @@
 * reiser4progs-1.0.5
 * reiserfsprogs-3.6.19
 * rp-pppoe-3.8
-* rrdtool-1.2.15
+* rrdtool-1.2.30
 * rssdler-0.4.0a
 * rsync-3.0.7
 * rtorrent-0.8.6
@@ -291,13 +292,13 @@
 * squashfs-lzma-cvs20100214
 * squid-2.7.STABLE7
 * squidGuard-1.4.1
-* squidclamav-4.1
+* squidclamav-5.0
 * sshfs-fuse-2.2
 * sslh-1.6i
 * streamripper-1.63.5
 * sudo-1.6.8p12
 * sysfsutils-1.3.0
-* sysklogd-1.4.1
+* sysklogd-1.5
 * syslinux-3.62
 * sysstat-6.0.2
 * sysvinit-2.86
