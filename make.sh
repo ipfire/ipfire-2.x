@@ -550,6 +550,7 @@ buildipfire() {
   ipfiremake br2684ctl
   ipfiremake pcmciautils
   ipfiremake lm_sensors
+  ipfiremake liboping
   ipfiremake collectd
   ipfiremake lcd4linux
   ipfiremake tcptrack
@@ -569,6 +570,7 @@ buildipfire() {
   ipfiremake freefont
   ipfiremake directfb
   ipfiremake dfb++
+  ipfiremake faad2
   ipfiremake ffmpeg
   ipfiremake videolan
   ipfiremake vdr

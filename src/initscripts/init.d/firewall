@@ -132,7 +132,7 @@ case "$1" in
 	# original do nothing line
 	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -m limit --limit 10/sec
 	# the correct one, but the negative '!' do nothing...
-	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -m limit ! --limit 10/sec -j DROP
+	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN ! -m limit --limit 10/sec -j DROP
 
 	# Fix for braindead ISP's
 	/sbin/iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu

@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = videolan
-PAK_VER    = 4
+PAK_VER    = 5
 
-DEPS       = "libshout libmpeg2 libmad libdvbpsi directfb ffmpeg"
+DEPS       = "libshout libmpeg2 libmad libdvbpsi directfb ffmpeg faad2"
 
 ###############################################################################
 # Top-level Rules
@@ -96,7 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 								--with-v4l=/usr/src/v4l-dvb \
 								--enable-libdvbpsi --enable-faac --enable-mkv \
 								--enable-x264 --enable-release --enable-sout \
-								--disable-nls \
+								--disable-nls --enable-faad \
 								--enable-directfb --with-directfb=/usr/src/directfb
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
