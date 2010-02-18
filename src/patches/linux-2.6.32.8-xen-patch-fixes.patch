@@ -1,0 +1,13 @@
+diff -Naur linux-2.6.32.8.org/init/main.c linux-2.6.32.8/init/main.c
+--- linux-2.6.32.8.org/init/main.c	2010-02-17 20:30:17.000000000 +0100
++++ linux-2.6.32.8/init/main.c	2010-02-17 22:00:48.000000000 +0100
+@@ -90,9 +90,6 @@
+ extern void prio_tree_init(void);
+ extern void radix_tree_init(void);
+ extern void free_initmem(void);
+-#ifndef CONFIG_DEBUG_RODATA
+-static inline void mark_rodata_ro(void) { }
+-#endif
+ 
+ #ifdef CONFIG_TC
+ extern void tc_init(void);

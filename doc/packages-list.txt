@@ -66,7 +66,6 @@
 * centerim-4.22.1
 * clamav-0.95.3
 * cmake-2.4.8
-* collectd-4.5.3
 * collectd-4.5.4
 * coreutils-5.96
 * cpio-2.6
@@ -77,6 +76,7 @@
 * cyrus-sasl-2.1.21
 * dahdi-2.2.1
 * dahdi-2.2.1-kmod-2.6.32.8-ipfire
+* dahdi-2.2.1-kmod-2.6.32.8-ipfire-xen
 * db-4.4.20
 * dbus-1.0.3
 * dhcp-3.1.0
@@ -153,6 +153,7 @@
 * kbd-1.12
 * klibc-1.5.14
 * kqemu-1.4.0pre1-kmod-2.6.32.8-ipfire
+* kqemu-1.4.0pre1-kmod-2.6.32.8-ipfire-xen
 * kudzu-1.2.64
 * l7-protocols-2009-05-10
 * lame-3.97
@@ -185,6 +186,7 @@
 * libxml2-2.6.26
 * libxslt-1.1.17
 * linux-2.6.32.8-ipfire
+* linux-2.6.32.8-ipfire-xen
 * linux-atm-2.4.1
 * linux-libc-headers-2.6.12.0
 * lm_sensors-3.1.2
@@ -196,6 +198,7 @@
 * m4-1.4.4
 * mISDNuser_20090906
 * madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.32.8-ipfire
+* madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.32.8-ipfire-xen
 * make-3.81
 * man-db-2.4.3
 * man-pages-2.34
@@ -245,6 +248,7 @@
 * openssl-0.9.8l
 * openswan-2.6.24
 * openswan-2.6.24-kmod-2.6.32.8-ipfire
+* openswan-2.6.24-kmod-2.6.32.8-ipfire-xen
 * openvpn-2.1_rc20
 * p7zip_4.65
 * pam_mysql-0.7RC1
@@ -321,6 +325,7 @@
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-690055993011-kmod-2.6.32.8-ipfire
+* v4l-dvb-690055993011-kmod-2.6.32.8-ipfire-xen
 * vdr-1.6.0
 * vdradmin-am-3.6.5
 * vim-7.0

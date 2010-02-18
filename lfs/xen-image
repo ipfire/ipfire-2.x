@@ -130,9 +130,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
 	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
 
-	#Remove reiser4 because it is not work with xen-kernel
-	sed -i -e "s|reiser4 | |g" $(MNThdd)/etc/mkinitcpio.conf
-
 	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-xen.img -k $(KVER)-ipfire-xen
 	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf
 
