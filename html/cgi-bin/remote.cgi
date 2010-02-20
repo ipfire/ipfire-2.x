@@ -37,7 +37,7 @@ my $counter = 0;
 &Header::showhttpheaders();
 
 $remotesettings{'ENABLE_SSH'} = 'off';
-$remotesettings{'ENABLE_SSH_PROTOCOL1'} = 'off';
+$remotesettings{'ENABLE_SSH_PORTOCOL1'} = 'off';
 $remotesettings{'ENABLE_SSH_PORTFW'} = 'off';
 $remotesettings{'ACTION'} = '';
 &Header::getcgihash(\%remotesettings);
@@ -66,7 +66,7 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 		unlink "${General::swroot}/remote/enablessh";
 	}
 
-	if ($remotesettings{'ENABLE_SSH_PROTOCOL1'} eq 'on')
+	if ($remotesettings{'ENABLE_SSH_PORTOCOL1'} eq 'on')
 	{
 		&General::log($Lang::tr{'ssh1 enabled'});
 	}
@@ -74,6 +74,16 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 	{
 		&General::log($Lang::tr{'ssh1 disabled'});
 	}
+	
+	if ($remotesettings{'SSH_PORT'} eq 'on')
+	{
+		&General::log("SSH Port 22");
+	}
+	else
+	{
+		&General::log("SSH Port 222");
+	}
+	
 if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
 	if ($remotesettings{'ENABLE_SSH'} eq 'off')
 	{
@@ -101,9 +111,9 @@ else {
 $checked{'ENABLE_SSH'}{'off'} = '';
 $checked{'ENABLE_SSH'}{'on'} = '';
 $checked{'ENABLE_SSH'}{$remotesettings{'ENABLE_SSH'}} = "checked='checked'";
-$checked{'ENABLE_SSH_PROTOCOL1'}{'off'} = '';
-$checked{'ENABLE_SSH_PROTOCOL1'}{'on'} = '';
-$checked{'ENABLE_SSH_PROTOCOL1'}{$remotesettings{'ENABLE_SSH_PROTOCOL1'}} = "checked='checked'";
+$checked{'ENABLE_SSH_PORTOCOL1'}{'off'} = '';
+$checked{'ENABLE_SSH_PORTOCOL1'}{'on'} = '';
+$checked{'ENABLE_SSH_PORTOCOL1'}{$remotesettings{'ENABLE_SSH_PORTOCOL1'}} = "checked='checked'";
 $checked{'ENABLE_SSH_PORTFW'}{'off'} = '';
 $checked{'ENABLE_SSH_PORTFW'}{'on'} = '';
 $checked{'ENABLE_SSH_PORTFW'}{$remotesettings{'ENABLE_SSH_PORTFW'}} = "checked='checked'";
@@ -113,7 +123,9 @@ $checked{'ENABLE_SSH_PASSWORDS'}{$remotesettings{'ENABLE_SSH_PASSWORDS'}} = "che
 $checked{'ENABLE_SSH_KEYS'}{'off'} = '';
 $checked{'ENABLE_SSH_KEYS'}{'on'} = '';
 $checked{'ENABLE_SSH_KEYS'}{$remotesettings{'ENABLE_SSH_KEYS'}} = "checked='checked'";
-
+$checked{'SSH_PORT'}{'off'} = '';
+$checked{'SSH_PORT'}{'on'} = '';
+$checked{'SSH_PORT'}{$remotesettings{'SSH_PORT'}} = "checked='checked'";
 
 &Header::openpage($Lang::tr{'remote access'}, 1, '');
 
@@ -136,7 +148,7 @@ print <<END
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td><input type='checkbox' name='ENABLE_SSH_PROTOCOL1' $checked{'ENABLE_SSH_PROTOCOL1'}{'on'} /></td>
+	<td><input type='checkbox' name='ENABLE_SSH_PORTOCOL1' $checked{'ENABLE_SSH_PORTOCOL1'}{'on'} /></td>
 	<td width='100%' class='base'>$Lang::tr{'ssh1 support'}</td>
 </tr>
 <tr>
@@ -153,6 +165,11 @@ print <<END
 	<td>&nbsp;</td>
 	<td><input type='checkbox' name='ENABLE_SSH_KEYS' $checked{'ENABLE_SSH_KEYS'}{'on'} /></td>
 	<td width='100%' class='base'>$Lang::tr{'ssh keys'}</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+	<td><input type='checkbox' name='SSH_PORT' $checked{'SSH_PORT'}{'on'} /></td>
+	<td width='100%' class='base'>$Lang::tr{'ssh port'}</td>
 </tr>
 <tr>
 	<td align='center' colspan='3'><hr />

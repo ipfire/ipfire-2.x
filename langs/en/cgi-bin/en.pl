@@ -1595,6 +1595,7 @@
 'ssh keys' => 'Allow public key based authentication',
 'ssh no auth' => 'You have not allowed any authentication methods; this will stop you logging in',
 'ssh passwords' => 'Allow password based authentication',
+'ssh port' => 'SSH port set to 22 (default is 222)',
 'ssh portfw' => 'Allow TCP forwarding',
 'ssh tempstart15' => 'Stop SSH demon in 15 minutes',
 'ssh tempstart30' => 'Stop SSH demon in 30 minutes',
