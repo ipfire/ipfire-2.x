@@ -61,11 +61,11 @@ elsif ($ARGV[0] eq 'exclude') {
   system("rm /tmp/include");
 }
 elsif ($ARGV[0] eq 'restore') {
-  system("cd / && tar -xvz --preserve -f /tmp/restore.ipf");
+  system("cd / && tar -xvz -p -f /tmp/restore.ipf");
 }
 elsif ($ARGV[0] eq 'restoreaddon') {
   if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}
-  system("cd / && tar -xvz --preserve -f /var/ipfire/backup/addons/backup/$ARGV[1]");
+  system("cd / && tar -xvz -p -f /var/ipfire/backup/addons/backup/$ARGV[1]");
 }
 elsif ($ARGV[0] eq 'cli') {
   system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
