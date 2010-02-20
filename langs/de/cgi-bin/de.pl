@@ -1563,6 +1563,7 @@
 'ssh keys' => 'Authentifizierung auf Basis öffentlicher Schlüssel zulassen',
 'ssh no auth' => 'Sie haben keinerlei Authentifizierungverfahren zugelassen; dies wird Ihre Anmeldung verhindern',
 'ssh passwords' => 'Passwortbasierte Authentifizierung zulassen',
+'ssh port' => 'SSH Port auf 22 setzen (Standard ist 222)',
 'ssh portfw' => 'TCP-Weiterleitung zulassen',
 'ssh tempstart15' => 'SSH-Deamon in 15 Minuten beenden',
 'ssh tempstart30' => 'SSH-Deamon in 30 Minuten beenden',
