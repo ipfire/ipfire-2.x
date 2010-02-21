@@ -86,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mount -o loop $(IMGvar) $(MNThdd)/var
 
 	# Install IPFire without kernel modules
-	tar -C $(MNThdd)/ -xvjf /install/cdrom/$(SNAME)-$(VERSION).tbz2 \
+	tar -C $(MNThdd)/ -xvf /install/cdrom/$(SNAME)-$(VERSION).tlz --lzma \
 		--exclude=lib/modules* --exclude=boot*
 
 	#Install Xen Kernel

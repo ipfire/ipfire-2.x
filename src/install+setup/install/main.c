@@ -439,7 +439,7 @@ int main(int argc, char *argv[])
 	}
 
 	snprintf(commandstring, STRING_SIZE,
-		"/bin/tar -C /harddisk -xvjf /cdrom/" SNAME "-" VERSION ".tbz2");
+		"/bin/tar -C /harddisk  -xvf /cdrom/" SNAME "-" VERSION ".tlz --lzma");
 	
 	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
 		ctr[TR_INSTALLING_FILES]))
