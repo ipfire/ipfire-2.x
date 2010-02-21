@@ -10,3 +10,5 @@ lib/modules/2.6.27.42-ipfire-xen/kernel/drivers/net/et131x.ko
 lib/modules/2.6.27.42-ipfire/kernel/arch/x86/kernel/cpu/cpufreq/p4-clockmod.ko
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
+srv/web/ipfire/cgi-bin/remote.cgi
+usr/local/bin/sshctrl
