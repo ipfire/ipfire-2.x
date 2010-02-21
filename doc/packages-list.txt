@@ -67,6 +67,8 @@
 * clamav-0.95.3
 * cmake-2.4.8
 * collectd-4.9.1
+* compat-wireless-2.6.32.2-kmod-2.6.27.42-ipfire
+* compat-wireless-2.6.32.2-kmod-2.6.27.42-ipfire-xen
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-007
@@ -270,6 +272,7 @@
 * pptp-1.7.2
 * procps-3.2.6
 * psmisc-22.2
+* qemu-0.11.0-kqemu
 * qemu-0.12.2
 * readline-5.1
 * reiser4progs-1.0.5

@@ -563,6 +563,7 @@ buildipfire() {
   ipfiremake fbset
   ipfiremake sdl
   ipfiremake qemu
+  ipfiremake qemu-kqemu
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
