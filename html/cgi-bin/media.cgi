@@ -47,7 +47,7 @@ $querry[1] = 'hour' unless defined $querry[1];
 
 my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
 
-if ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" ){
+if ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" || $querry[0] =~ "xvd??"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	
