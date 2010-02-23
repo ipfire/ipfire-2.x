@@ -77,6 +77,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-ath5k_fix_setup_for_CAB_queue.patch
+
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) KMODDIR=kernel install-modules
 
 	# The makefile put the modules to a wrong place move back...
