@@ -67,7 +67,7 @@ if ( $querry[0] =~ "hwtemp"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	&Graphs::updatethermaltempgraph($querry[1]);
-}elsif ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" ){
+}elsif ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" || $querry[0] =~ "xvd??" ){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	&Graphs::updatehddgraph($querry[0],$querry[1]);
