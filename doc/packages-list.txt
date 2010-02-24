@@ -132,7 +132,7 @@
 * hostapd-0.6.9
 * hplip-2.7.10
 * htop-0.8.1
-* httpd-2.2.11
+* httpd-2.2.14
 * hwdata
 * iana-etc-2.10
 * icecast-2.3.2
