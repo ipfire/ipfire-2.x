@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .8
-VER        = 2.6.32.8
+PATCHLEVEL = .9
+VER        = 2.6.32.9
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -66,12 +66,14 @@ reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
 squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 = $(URL_IPFIRE)/squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2
 linux-$(VER)-suse_xen_patches-1.tar.bz2	= $(URL_IPFIRE)/linux-$(VER)-suse_xen_patches-1.tar.bz2
 
-$(DL_FILE)_MD5				= 82023ede52f067fcc55c5e70b02e48ae
+
+$(DL_FILE)_MD5				= 0771a9c70503c92f40d815ef76eb62fe
 netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 reiser4-for-2.6.32.patch.bz2_MD5	= 3246397973d9271eb8e6d7c97c5d2d91
 squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2_MD5 = d2a84311081023c7ffd28cdca67c45d4
-linux-$(VER)-suse_xen_patches-1.tar.bz2_MD5 = 0bf813cbfef22f37e5060daa7dad0496
+linux-$(VER)-suse_xen_patches-1.tar.bz2_MD5 = c79c4dfd069fdedbc39df478de678575
+
 
 install : $(TARGET)
 
@@ -126,9 +128,6 @@ else
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-imq-test2.patch
 endif
-
-#	# Add Vodafone K3565-Z USB ID's to option driver
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.27.25-option_add_vf-k3565-z_usbids.patch
 
 	# Add patch to fix ath5k "no txbuf available"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-ath5k_fix_setup_for_CAB_queue.patch
