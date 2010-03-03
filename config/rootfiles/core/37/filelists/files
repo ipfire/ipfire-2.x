@@ -20,3 +20,4 @@ usr/local/bin/sshctrl
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/langs/fr.pl
+opt/pakfire/lib/pakfire.pl
