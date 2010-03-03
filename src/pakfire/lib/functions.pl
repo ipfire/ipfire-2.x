@@ -116,7 +116,7 @@ sub usage {
 sub pinghost {
 	my $host = shift;
 	
-	$p = Net::Ping->new();
+	$p = Net::Ping->new("icmp");
   if ($p->ping($host)) {
  	 logger("PING INFO: $host is alive");
   	return 1;
