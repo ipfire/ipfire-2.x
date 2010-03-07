@@ -1,0 +1,34 @@
+--- grub-0.97/util/grub-install.in.install	2005-12-12 18:15:45.000000000 -0500
++++ grub-0.97/util/grub-install.in	2005-12-12 18:18:11.000000000 -0500
+@@ -324,6 +324,15 @@
+ test -d "$bootdir" || mkdir "$bootdir" || exit 1
+ test -d "$grubdir" || mkdir "$grubdir" || exit 1
+ 
++# Copy the GRUB images to the GRUB directory.
++for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
++    rm -f $file || exit 1
++done
++for file in \
++    ${pkgdatadir}/stage1 ${pkgdatadir}/stage2 ${pkgdatadir}/*stage1_5; do
++    cp -f $file ${grubdir} || exit 1
++done
++
+ # If --recheck is specified, remove the device map, if present.
+ if test $recheck = yes; then
+     rm -f $device_map
+@@ -406,15 +415,6 @@
+     exit 1
+ fi
+ 
+-# Copy the GRUB images to the GRUB directory.
+-for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
+-    rm -f $file || exit 1
+-done
+-for file in \
+-    ${pkglibdir}/stage1 ${pkglibdir}/stage2 ${pkglibdir}/*stage1_5; do
+-    cp -f $file ${grubdir} || exit 1
+-done
+-
+ # Make a default file.
+ ${grub_set_default} --root-directory=${rootdir} default
+ 

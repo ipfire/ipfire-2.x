@@ -1,0 +1,83 @@
+--- grub-0.95/docs/grub.texi.recheck-bad	2005-07-25 17:55:57.000000000 -0400
++++ grub-0.95/docs/grub.texi	2005-07-25 17:58:00.000000000 -0400
+@@ -3417,8 +3417,9 @@
+ 
+ @item --recheck
+ Recheck the device map, even if @file{/boot/grub/device.map} already
+-exists. You should use this option whenever you add/remove a disk
+-into/from your computer.
++exists.
++
++This option is unreliable and its use is strongly discouraged.
+ @end table
+ 
+ 
+--- grub-0.95/util/grub-install.in.recheck-bad	2005-07-25 17:58:19.000000000 -0400
++++ grub-0.95/util/grub-install.in	2005-07-25 18:05:14.000000000 -0400
+@@ -68,6 +68,8 @@
+   --force-lba             force GRUB to use LBA mode even for a buggy
+                           BIOS
+   --recheck               probe a device map even if it already exists
++                          This flag is unreliable and its use is
++                          strongly discouraged.
+ 
+ INSTALL_DEVICE can be a GRUB device name or a system device filename.
+ 
+@@ -328,7 +330,7 @@
+ 
+ # If --recheck is specified, remove the device map, if present.
+ if test $recheck = yes; then
+-    rm -f $device_map
++    mv $device_map ${device_map}.backup
+ fi
+ 
+ # Create the device map file if it is not present.
+@@ -357,7 +359,22 @@
+ tmp=`sed -n '/^([fh]d[0-9]*)/s/\(^(.*)\).*/\1/p' $device_map \
+     | sort | uniq -d | sed -n 1p`
+ if test -n "$tmp"; then
+-    echo "The drive $tmp is defined multiple times in the device map $device_map" 1>&2
++    echo "The drive $tmp is defined multiple times in the new device map." 1>&2
++    if test $recheck = yes; then
++        echo "Reverting to backed up copy." 1>&2
++        mv ${device_map}.backup $device_map
++    fi
++    exit 1
++fi
++
++# Make sure device.map has at least one hd device
++grep -q "^(hd[0-9]\+)" $device_map
++if [ "x$?" != "x0" ]; then
++    echo "No suitable drive was found in the generated device map." 1>&2
++    if test $recheck = yes; then
++        echo "Reverting to backed up copy." 1>&2
++        mv ${device_map}.backup $device_map
++    fi
+     exit 1
+ fi
+ 
+--- grub-0.95/docs/grub-install.8.recheck-bad	2004-06-13 13:44:59.000000000 -0400
++++ grub-0.95/docs/grub-install.8	2005-07-25 18:15:02.000000000 -0400
+@@ -30,6 +30,8 @@
+ .TP
+ \fB\-\-recheck\fR
+ probe a device map even if it already exists
++
++This option is unreliable and its use is strongly discouraged.
+ .PP
+ INSTALL_DEVICE can be a GRUB device name or a system device filename.
+ .SH "REPORTING BUGS"
+--- grub-0.95/docs/grub.info.recheck-bad	2004-05-11 08:22:54.000000000 -0400
++++ grub-0.95/docs/grub.info	2005-07-25 18:16:09.000000000 -0400
+@@ -3373,9 +3373,9 @@
+ 
+ `--recheck'
+      Recheck the device map, even if `/boot/grub/device.map' already
+-     exists. You should use this option whenever you add/remove a disk
+-     into/from your computer.
++     exists.
+ 
++     This option is unreliable and its use is strongly discouraged.
+ 
+ File: grub.info,  Node: Invoking grub-md5-crypt,  Next: Invoking grub-terminfo,  Prev: Invoking grub-install,  Up: Top
+ 

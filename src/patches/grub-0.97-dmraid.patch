@@ -1,0 +1,92 @@
+--- grub-0.97/util/grub-install.in.dmraid	2006-01-13 16:40:24.000000000 -0500
++++ grub-0.97/util/grub-install.in	2006-01-13 16:40:37.000000000 -0500
+@@ -101,17 +101,24 @@
+     # Break the device name into the disk part and the partition part.
+     case "$host_os" in
+     linux*)
+-	tmp_disk=`echo "$1" | sed -e 's%\([sh]d[a-z]\)[0-9]*$%\1%' \
++	tmp_disk=`echo "$1" | grep -v '/mapper/control$' |
++		grep -v '/mapper/[[:alnum:]]\+-[[:alnum:]]\+$' | uniq |
++		sed -e 's%\([sh]d[a-z]\)[0-9]*$%\1%' \
+ 				  -e 's%\(d[0-9]*\)p[0-9]*$%\1%' \
+ 				  -e 's%\(fd[0-9]*\)$%\1%' \
+ 				  -e 's%/part[0-9]*$%/disc%' \
+-				  -e 's%\(c[0-7]d[0-9]*\).*$%\1%'`
+-	tmp_part=`echo "$1" | sed -e 's%.*/[sh]d[a-z]\([0-9]*\)$%\1%' \
++				  -e 's%\(c[0-7]d[0-9]*\).*$%\1%' \
++	  -e 's%\(/mapper/[[:alpha:]]\+_[[:alpha:]]\+\)[[:digit:]]\+$%\1%'`
++	tmp_part=`echo "$1" | grep -v '/mapper/control$' |
++		grep -v '/mapper/[[:alnum:]]\+-[[:alnum:]]\+$' | uniq |
++		sed -e 's%.*/[sh]d[a-z]\([0-9]*\)$%\1%' \
+ 				  -e 's%.*d[0-9]*p%%' \
+ 				  -e 's%.*/fd[0-9]*$%%' \
+ 				  -e 's%.*/floppy/[0-9]*$%%' \
+ 				  -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
+-				  -e 's%.*c[0-7]d[0-9]*p%%'`
++				  -e 's%.*c[0-7]d[0-9]*p%%' \
++	  -e 's%.*/mapper/[[:alpha:]]\+_[[:alpha:]]\+\([[:digit:]]\+\)$%\1%' |
++		grep -v '.*/mapper/.*'`
+ 	;;
+     gnu*)
+ 	tmp_disk=`echo "$1" | sed 's%\([sh]d[0-9]*\).*%\1%'`
+@@ -253,6 +260,43 @@
+     return 0
+ }
+ 
++# Usage: stat_device file
++# Find major:minor of a device node.
++stat_device() {
++    majmin=`stat -c "%t:%T" "$1" 2>/dev/null`
++    if test -z "$majmin"; then
++	echo "Could not find device for $1" 2>&1
++	exit 1
++    fi
++
++    echo "$majmin"
++}
++
++# Usage: find_mapper_device file
++# Find a file in /dev/mapper with the same major:minor as the specified node.
++find_mapper_device() {
++    if [ -b "$1" ]; then
++	dev="$1"
++    else
++	mntpnt=`echo "$1" | sed 's,/,\\\\/,g'`
++	dev=`awk '($2 ~ /'$mntpnt'/) { print $1 }' /etc/mtab`
++    fi
++    if test -z "$dev"; then
++	echo "Could not find device for $1" 2>&1
++	exit 1
++    fi
++	
++    majmin=`stat_device $dev`
++    for x in /dev/mapper/* ; do
++	devmajmin=`stat_device "$x"`
++	if [ "$majmin" == "$devmajmin" ]; then
++	    echo "$x"
++	    return 0
++	fi
++    done
++    return 1
++}
++
+ # Usage: find_device file
+ # Find block device on which the file resides.
+ find_device () {
+@@ -265,9 +309,14 @@
+ 	exit 1
+     fi
+ 
+-    tmp_fname=`resolve_symlink $tmp_fname`
++    ret_fname=`resolve_symlink $tmp_fname`
++    tmp_fname=`find_mapper_device $ret_fname`
++    if test -n "$tmp_fname"; then
++	ret_fname="$tmp_fname"
++    fi
+ 
+-    echo "$tmp_fname"
++    echo "$ret_fname"
++    return 0
+ }
+ 
+ copy_images() {

@@ -1,0 +1,102 @@
+--- grub-0.97/util/grub-install.in.stderr	2006-07-07 10:56:37.000000000 -0400
++++ grub-0.97/util/grub-install.in	2006-07-07 11:01:35.000000000 -0400
+@@ -207,7 +207,7 @@
+ 	while test -L $tmp_fname; do
+ 		tmp_new_fname=`ls -al $tmp_fname | sed -n 's%.*-> \(.*\)%\1%p'`
+ 		if test -z "$tmp_new_fname"; then
+-			echo "Unrecognized ls output" 2>&1
++			echo "Unrecognized ls output" 1>&2
+ 			exit 1
+ 		fi
+ 
+@@ -264,7 +264,7 @@
+ stat_device() {
+     majmin=`stat -c "%t:%T" "$1" 2>/dev/null`
+     if test -z "$majmin"; then
+-	echo "Could not find device for $1" 2>&1
++	echo "Could not find device for $1" 1>&2
+ 	exit 1
+     fi
+ 
+@@ -281,7 +281,7 @@
+ 	dev=`awk '($2 ~ /'$mntpnt'/) { print $1 }' /etc/mtab`
+     fi
+     if test -z "$dev"; then
+-	echo "Could not find device for $1" 2>&1
++	echo "Could not find device for $1" 1>&2
+ 	exit 1
+     fi
+ 	
+@@ -304,11 +304,11 @@
+     tmp_fname=`df $1/ | sed -n 's%.*\(/dev/[^ 	]*\).*%\1%p'`
+ 
+     if test -z "$tmp_fname"; then
+-	echo "Could not find device for $1" 2>&1
++	echo "Could not find device for $1" 1>&2
+ 	exit 1
+     fi
+ 
+-    ret_fname=`resolve_symlink $tmp_fname`
++    ret_fname=`resolve_symlink $tmp_fname` || exit 1
+     tmp_fname=`find_mapper_device $ret_fname`
+     if test -n "$tmp_fname"; then
+ 	ret_fname="$tmp_fname"
+@@ -325,7 +325,7 @@
+     done
+     for file in \
+ 	${pkgdatadir}/stage1 ${pkgdatadir}/stage2 ${pkgdatadir}/*stage1_5; do
+-	cp -f $file ${grubdir} || exit 1
++	cp -f $file ${grubdir} 1>&2 || exit 1
+     done
+ }
+ 
+@@ -520,9 +520,9 @@
+ # Check for INSTALL_DEVICE.
+ case "$install_device" in
+ /dev/*)
+-    install_device=`resolve_symlink "$install_device"`
++    install_device=`resolve_symlink "$install_device"` || exit 1
+     for install_drive in `find_real_devs $install_device` ; do
+-	install_drive=`convert $install_drive`
++	install_drive=`convert $install_drive` || exit 1
+ 	if is_raid1_device $install_device; then
+ 		install_drive=`echo $install_drive | sed 's/,[0-9]*)/)/'`
+ 	fi
+@@ -550,8 +550,8 @@
+ unset install_device
+ 
+ # Get the root drive.
+-root_device=`find_device ${rootdir}`
+-bootdir_device=`find_device ${bootdir}`
++root_device=`find_device ${rootdir}` || exit 1
++bootdir_device=`find_device ${bootdir}` || exit 1
+ 
+ # Check if the boot directory is in the same device as the root directory.
+ if test "x$root_device" != "x$bootdir_device"; then
+@@ -561,7 +561,7 @@
+ fi
+ 
+ # Check if the root directory exists in the same device as the grub directory.
+-grubdir_device=`find_device ${grubdir}`
++grubdir_device=`find_device ${grubdir}` || exit 1
+ 
+ if test "x$grubdir_device" != "x$root_device"; then
+     # For now, cannot deal with this situation.
+@@ -582,7 +582,7 @@
+ fi
+ 
+ # Convert the root deviceto a GRUB drive.
+-root_drive=`convert "$root_device"`
++root_drive=`convert "$root_device"` || exit 1
+ if [ "x$root_drive" = x ]; then
+     exit 1
+ fi
+@@ -618,7 +618,7 @@
+ 
+ for install_drive in $install_drives; do 
+     # Convert the root deviceto a GRUB drive.
+-    root_drive=`convert "$root_device"`
++    root_drive=`convert "$root_device"` || exit 1
+     if [ "x$root_drive" = x ]; then
+ 	exit 1
+     fi

@@ -1,0 +1,75 @@
+diff -up grub-0.97/util/grub-install.in.cciss grub-0.97/util/grub-install.in
+--- grub-0.97/util/grub-install.in.cciss	2008-02-04 14:30:31.000000000 -0500
++++ grub-0.97/util/grub-install.in	2008-02-07 18:34:14.000000000 -0500
+@@ -100,25 +100,56 @@ convert () {
+     # Break the device name into the disk part and the partition part.
+     case "$host_os" in
+     linux*)
++    	# formats that need to be handled (disk name -> partition name):
++	# floppies: /dev/fd0
++	# normal sd/hd devices: /dev/hda -> /dev/hda3
++	# md: /dev/md0 -> /dev/md0p0
++	# ide raid devs: /dev/ide/host0/bus0/target0/lun0/disc
++	#             -> /dev/ide/host0/bus0/target0/lun0/part1
++	# cciss: /dev/cciss/c0d0 -> /dev/cciss/c0d0p1
++	# mpath devs: /dev/mapper/mpath0 -> /dev/mapper/mpath0p1
++	#             /dev/mapper/lalala -> /dev/mapper/lalalap1
++	# dmraid devs: /dev/mapper/via_abcdef -> /dev/mapper/via_abcdefp1
++	#    /dev/mapper/isw_Volume0_abcdef -> /dev/mapper/isw_Volume0_abcdefp1
++	#  the known list (to me) is (X means we should handle it):
++	#	X asr_[unfettered crap]
++	#	  hpt[0-9]+x_[0-9]+-[0-9]+
++	#	X hpt[0-9]+x_[0-9]+
++	#	  hpt[0-9]+x_SPARE
++	#	  isw_[a-z]+_[a-z]+[0-9]+
++	#	X isw_[a-z]+
++	#	  jm_[0-9]+-[0-9]+
++	#	X jm_[0-9]+
++	#	  lsi_[0-9]+-[0-9]+
++	#	X lsi_[0-9]+
++	#	  nvidia_[a-z]+-[0-9]+
++	#	X nvidia_[a-z]+
++	#	  pdc_[a-z]+-[0-9]+
++	#	X pdc_[a-z]+
++	#	  sil_[0-9]+-[0-9]+
++	#	X sil_[0-9]+
++	#	  via_[a-z]+-[0-9]+
++	#	X via_[a-z]+
++	#
++	# more? 
+ 	tmp_disk=`echo "$1" | grep -v '/mapper/control$' |
+-		grep -v '/mapper/[[:alnum:]]\+-[[:alnum:]]\+$' | uniq |
++		grep -v '/mapper/[[:alnum:]_]\+-[[:digit:]]\+$' | uniq |
+ 		sed -e 's%\([sh]d[a-z]\)[0-9]*$%\1%' \
+-				  -e 's%\(d[0-9]*\)p[0-9]*$%\1%' \
+-				  -e 's%\(fd[0-9]*\)$%\1%' \
+-				  -e 's%/part[0-9]*$%/disc%' \
+-				  -e 's%\(c[0-7]d[0-9]*\).*$%\1%' \
+-	  -e 's%\(/mapper/[[:alpha:]]\+[[:digit:]]\+\)p[[:digit:]]\+$%\1%' \
+-	  -e 's%\(/mapper/[[:alpha:]]\+_[[:alpha:]]\+\)[[:digit:]]\+$%\1%'`
++			  -e 's%\(/c[0-9]\+d[0-9]\+\).*$%\1%' \
++			  -e 's%\(fd[0-9]*\)$%\1%' \
++			  -e 's%/part[0-9]*$%/disc%' \
++  -e 's%\(/mapper/[[:alnum:]_-]\+\)\+p[[:digit:]]\+$%\1%'\
++  -e 's%\(/mapper/[[:alnum:]]\+\(_[[:alnum:]]\+\)\+\)\p[[:digit:]]\+$%\1%'`
+ 	tmp_part=`echo "$1" | grep -v '/mapper/control$' |
+-		grep -v '/mapper/[[:alnum:]]\+-[[:alnum:]]\+$' | uniq |
++		grep -v '/mapper/[[:alnum:]_]\+-[[:digit:]]\+$' | uniq |
+ 		sed -e 's%.*/[sh]d[a-z]\([0-9]*\)$%\1%' \
+-				  -e 's%.*d[0-9]*p%%' \
+-				  -e 's%.*/fd[0-9]*$%%' \
+-				  -e 's%.*/floppy/[0-9]*$%%' \
+-				  -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
+-				  -e 's%.*c[0-7]d[0-9]*p%%' \
+-	  -e 's%.*/mapper/[[:alpha:]]\+[[:digit:]]\+p\([[:digit:]]\+\)$%\1%' \
+-	  -e 's%.*/mapper/[[:alpha:]]\+_[[:alpha:]]\+\([[:digit:]]\+\)$%\1%' |
++			  -e 's%.*/c[0-9]\+d[0-9]\+p\([[:digit:]]\+\)%\1%' \
++			  -e 's%.*/c[0-9]\+d[0-9]\+$%%' \
++			  -e 's%.*/fd[0-9]\+$%%' \
++			  -e 's%.*/floppy/[0-9]*$%%' \
++			  -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
++  -e 's%.*/mapper/[[:alpha:]]\+[[:digit:]]\+p\([[:digit:]]\+\)$%\1%' \
++  -e 's%.*/mapper/[[:alnum:]]\+\(_[[:alpha:]]\+[[:digit:]]*\)\+p\([[:digit:]]\+\)$%\2%' |
+ 		grep -v '.*/mapper/.*'`
+ 	;;
+     gnu*)

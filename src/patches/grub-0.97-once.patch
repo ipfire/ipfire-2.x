@@ -1,0 +1,513 @@
+--- grub-0.97/stage2/builtins.c.bootonce	2005-12-12 18:23:12.000000000 -0500
++++ grub-0.97/stage2/builtins.c	2005-12-12 18:29:20.000000000 -0500
+@@ -3217,146 +3217,175 @@
+ };
+ 
+ 
+-/* savedefault */
++
++#if !defined(SUPPORT_DISKLESS) && !defined(GRUB_UTIL)
++/* Write specified default entry number into stage2 file. */
+ static int
+-savedefault_func (char *arg, int flags)
++savedefault_helper(int new_default)
+ {
+-#if !defined(SUPPORT_DISKLESS) && !defined(GRUB_UTIL)
+-  unsigned long tmp_drive = saved_drive;
+-  unsigned long tmp_partition = saved_partition;
+-  char *default_file = (char *) DEFAULT_FILE_BUF;
+-  char buf[10];
+-  char sect[SECTOR_SIZE];
+-  int entryno;
+-  int sector_count = 0;
+-  int saved_sectors[2];
+-  int saved_offsets[2];
+-  int saved_lengths[2];
+-
+-  /* Save sector information about at most two sectors.  */
+-  auto void disk_read_savesect_func (int sector, int offset, int length);
+-  void disk_read_savesect_func (int sector, int offset, int length)
+-    {
+-      if (sector_count < 2)
+-	{
+-	  saved_sectors[sector_count] = sector;
+-	  saved_offsets[sector_count] = offset;
+-	  saved_lengths[sector_count] = length;
+-	}
+-      sector_count++;
+-    }
+-  
+-  /* This command is only useful when you boot an entry from the menu
+-     interface.  */
+-  if (! (flags & BUILTIN_SCRIPT))
++  char buffer[512];
++  int *entryno_ptr;
++
++  /* Get the geometry of the boot drive (i.e. the disk which contains
++     this stage2).  */
++  if (get_diskinfo (boot_drive, &buf_geom))
+     {
+-      errnum = ERR_UNRECOGNIZED;
++      errnum = ERR_NO_DISK;
+       return 1;
+     }
+ 
+-  /* Determine a saved entry number.  */
+-  if (*arg)
++  /* Load the second sector of this stage2.  */
++  if (! rawread (boot_drive, install_second_sector, 0, SECTOR_SIZE, buffer))
+     {
+-      if (grub_memcmp (arg, "fallback", sizeof ("fallback") - 1) == 0)
+-	{
+-	  int i;
+-	  int index = 0;
+-	  
+-	  for (i = 0; i < MAX_FALLBACK_ENTRIES; i++)
+-	    {
+-	      if (fallback_entries[i] < 0)
+-		break;
+-	      if (fallback_entries[i] == current_entryno)
+-		{
+-		  index = i + 1;
+-		  break;
+-		}
+-	    }
+-	  
+-	  if (index >= MAX_FALLBACK_ENTRIES || fallback_entries[index] < 0)
+-	    {
+-	      /* This is the last.  */
+-	      errnum = ERR_BAD_ARGUMENT;
+-	      return 1;
+-	    }
++      return 1;
++    }
+ 
+-	  entryno = fallback_entries[index];
+-	}
+-      else if (! safe_parse_maxint (&arg, &entryno))
+-	return 1;
++  /* Sanity check.  */
++  if (buffer[STAGE2_STAGE2_ID] != STAGE2_ID_STAGE2
++      || *((short *) (buffer + STAGE2_VER_MAJ_OFFS)) != COMPAT_VERSION)
++    {
++      errnum = ERR_BAD_VERSION;
++      return 1;
+     }
+-  else
+-    entryno = current_entryno;
++  
++  entryno_ptr = (int *) (buffer + STAGE2_SAVED_ENTRYNO);
+ 
+-  /* Open the default file.  */
+-  saved_drive = boot_drive;
+-  saved_partition = install_partition;
+-  if (grub_open (default_file))
++  /* Check if the saved entry number differs from current entry number.  */
++  if (*entryno_ptr != new_default)
+     {
+-      int len;
++      /* Overwrite the saved entry number.  */
++      *entryno_ptr = new_default;
+       
+-      disk_read_hook = disk_read_savesect_func;
+-      len = grub_read (buf, sizeof (buf));
+-      disk_read_hook = 0;
+-      grub_close ();
++      /* Save the image in the disk.  */
++      if (! rawwrite (boot_drive, install_second_sector, buffer))
++	return 1;
+       
+-      if (len != sizeof (buf))
+-	{
+-	  /* This is too small. Do not modify the file manually, please!  */
+-	  errnum = ERR_READ;
+-	  goto fail;
+-	}
++      /* Clear the cache.  */
++      buf_track = -1;
++    }
+ 
+-      if (sector_count > 2)
+-	{
+-	  /* Is this possible?! Too fragmented!  */
+-	  errnum = ERR_FSYS_CORRUPT;
+-	  goto fail;
+-	}
+-      
+-      /* Set up a string to be written.  */
+-      grub_memset (buf, '\n', sizeof (buf));
+-      grub_sprintf (buf, "%d", entryno);
+-      
+-      if (saved_lengths[0] < sizeof (buf))
+-	{
+-	  /* The file is anchored to another file and the first few bytes
+-	     are spanned in two sectors. Uggh...  */
+-	  if (! rawread (current_drive, saved_sectors[0], 0, SECTOR_SIZE,
+-			 sect))
+-	    goto fail;
+-	  grub_memmove (sect + saved_offsets[0], buf, saved_lengths[0]);
+-	  if (! rawwrite (current_drive, saved_sectors[0], sect))
+-	    goto fail;
++  return 0;
++}
++#endif
+ 
+-	  if (! rawread (current_drive, saved_sectors[1], 0, SECTOR_SIZE,
+-			 sect))
+-	    goto fail;
+-	  grub_memmove (sect + saved_offsets[1],
+-			buf + saved_lengths[0],
+-			sizeof (buf) - saved_lengths[0]);
+-	  if (! rawwrite (current_drive, saved_sectors[1], sect))
+-	    goto fail;
+-	}
++#if !defined(SUPPORT_DISKLESS) && defined(GRUB_UTIL)
++/*
++ * Full implementation of new `savedefault' for GRUB shell.
++ * XXX This needs fixing for stage2 files which aren't accessible
++ *     through a mounted filesystem.
++ */
++static int
++savedefault_shell(char *arg, int flags)
++{
++  char *stage2_os_file = "/boot/grub/stage2"; /* Default filename */
++  FILE *fp;
++  char buffer[512];
++  int *entryno_ptr;
++  int new_default = 0;
++  int old_default = 0;
++
++  while (1)
++    {
++      if (grub_memcmp ("--stage2=", arg, sizeof ("--stage2=") - 1) == 0)
++        {
++          stage2_os_file = arg + sizeof ("--stage2=") - 1;
++          arg = skip_to (0, arg);
++          nul_terminate (stage2_os_file);
++        }
++      else if (grub_memcmp ("--default=", arg, sizeof ("--default=") - 1) == 0)
++        {
++          char *p = arg + sizeof ("--default=") - 1;
++          if (! safe_parse_maxint (&p, &new_default))
++            return 1;
++          arg = skip_to (0, arg);
++        }
++      else if (grub_memcmp ("--once", arg, sizeof ("--once") - 1) == 0)
++        {
++          new_default <<= 8;
++          new_default |= STAGE2_ONCEONLY_ENTRY;
++          arg = skip_to (0, arg);
++        }
+       else
+-	{
+-	  /* This is a simple case. It fits into a single sector.  */
+-	  if (! rawread (current_drive, saved_sectors[0], 0, SECTOR_SIZE,
+-			 sect))
+-	    goto fail;
+-	  grub_memmove (sect + saved_offsets[0], buf, sizeof (buf));
+-	  if (! rawwrite (current_drive, saved_sectors[0], sect))
+-	    goto fail;
+-	}
++        break;
++    }
+ 
+-      /* Clear the cache.  */
+-      buf_track = -1;
++  if (! (fp = fopen(stage2_os_file, "r+")))
++    {
++      errnum = ERR_FILE_NOT_FOUND;
++      return 1;
++    }
++  
++  if (fseek (fp, SECTOR_SIZE, SEEK_SET) != 0)
++    {
++      fclose (fp);
++      errnum = ERR_BAD_VERSION;
++      return 1;
++    }
++  
++  if (fread (buffer, 1, SECTOR_SIZE, fp) != SECTOR_SIZE)
++    {
++      fclose (fp);
++      errnum = ERR_READ;
++      return 1;
+     }
+ 
+- fail:
+-  saved_drive = tmp_drive;
+-  saved_partition = tmp_partition;
+-  return errnum;
++  /* Sanity check.  */
++  if (buffer[STAGE2_STAGE2_ID] != STAGE2_ID_STAGE2
++      || *((short *) (buffer + STAGE2_VER_MAJ_OFFS)) != COMPAT_VERSION)
++    {
++      errnum = ERR_BAD_VERSION;
++      return 1;
++    }
++  
++  entryno_ptr = (int *) (buffer + STAGE2_SAVED_ENTRYNO);
++  if (new_default & STAGE2_ONCEONLY_ENTRY)
++    {
++      old_default=*entryno_ptr;
++      *entryno_ptr = new_default + (old_default & 0xFF);
++    }
++  else
++    {
++      *entryno_ptr = new_default;
++    }
++
++  if (fseek (fp, SECTOR_SIZE, SEEK_SET) != 0)
++    {
++      fclose (fp);
++      errnum = ERR_BAD_VERSION;
++      return 1;
++    }
++  
++  if (fwrite (buffer, 1, SECTOR_SIZE, fp) != SECTOR_SIZE)
++    {
++      fclose (fp);
++      errnum = ERR_WRITE;
++      return 1;
++    }
++  
++  (void)fflush (fp);
++  fclose (fp);
++  return 0;
++}
++#endif
++
++/* savedefault */
++static int
++savedefault_func (char *arg, int flags)
++{
++#if !defined(SUPPORT_DISKLESS)
++#if !defined(GRUB_UTIL)
++  /* This command is only useful when you boot an entry from the menu
++     interface.  */
++  if (! (flags & BUILTIN_SCRIPT))
++    {
++      errnum = ERR_UNRECOGNIZED;
++      return 1;
++    }
++
++  return savedefault_helper(current_entryno);
++#else /* defined(GRUB_UTIL) */
++  return savedefault_shell(arg, flags);
++#endif
+ #else /* ! SUPPORT_DISKLESS && ! GRUB_UTIL */
+   errnum = ERR_UNRECOGNIZED;
+   return 1;
+@@ -3368,10 +3397,14 @@
+   "savedefault",
+   savedefault_func,
+   BUILTIN_CMDLINE,
+-  "savedefault [NUM | `fallback']",
+-  "Save the current entry as the default boot entry if no argument is"
+-  " specified. If a number is specified, this number is saved. If"
+-  " `fallback' is used, next fallback entry is saved."
++#ifdef GRUB_UTIL
++  "savedefault [--stage2=STAGE2_FILE] [--default=DEFAULT] [--once]",
++  "Save DEFAULT as the default boot entry in STAGE2_FILE. If '--once'"
++  " is specified, the default is reset after the next reboot."
++#else
++  "savedefault",
++  "Save the current entry as the default boot entry."
++#endif
+ };
+ 
+ 
+@@ -4598,6 +4631,15 @@
+ static int
+ timeout_func (char *arg, int flags)
+ {
++  /* One-shot default shenanigans -- don't piss around with the menu! */
++  if (grub_timeout != -1)
++    return 0;
++  if ((saved_entryno & STAGE2_ONCEONLY_ENTRY) != 0)
++    {
++      grub_timeout = 0;
++      return 0;
++    }
++
+   if (! safe_parse_maxint (&arg, &grub_timeout))
+     return 1;
+ 
+--- grub-0.97/stage2/shared.h.bootonce	2005-12-12 18:23:13.000000000 -0500
++++ grub-0.97/stage2/shared.h	2005-12-12 18:23:13.000000000 -0500
+@@ -200,6 +200,8 @@
+ #define STAGE2_FORCE_LBA	0x11
+ #define STAGE2_VER_STR_OFFS	0x12
+ 
++#define STAGE2_ONCEONLY_ENTRY   0x10000
++
+ /* Stage 2 identifiers */
+ #define STAGE2_ID_STAGE2		0
+ #define STAGE2_ID_FFS_STAGE1_5		1
+--- grub-0.97/stage2/builtins.c.bootonce	2006-03-13 16:55:11.000000000 -0500
++++ grub-0.97/stage2/builtins.c	2006-03-13 16:56:01.000000000 -0500
+@@ -761,11 +761,25 @@
+ };
+ 
+ 
++#if !defined(SUPPORT_DISKLESS) && !defined(GRUB_UTIL)
++static int savedefault_helper(int);
++#endif
+ /* default */
+ static int
+ default_func (char *arg, int flags)
+ {
+ #ifndef SUPPORT_DISKLESS
++#ifndef GRUB_UTIL
++  /* Has a forced once-only default been specified? */
++  if ((saved_entryno & STAGE2_ONCEONLY_ENTRY) != 0)
++    {
++      int old_defaults=saved_entryno & ~STAGE2_ONCEONLY_ENTRY;
++      grub_timeout = 0;
++      default_entry = old_defaults >> 8;
++      savedefault_helper(old_defaults & 0xff);
++      return 0;
++    }
++#endif
+   if (grub_strcmp (arg, "saved") == 0)
+     {
+       default_entry = saved_entryno;
+--- grub-0.97/stage2/stage2.c.bootonce	2006-03-13 17:27:40.000000000 -0500
++++ grub-0.97/stage2/stage2.c	2006-03-13 17:29:11.000000000 -0500
+@@ -960,38 +960,8 @@
+       if (use_config_file)
+ #endif /* GRUB_UTIL */
+ 	{
+-	  char *default_file = (char *) DEFAULT_FILE_BUF;
+ 	  int i;
+-	  
+-	  /* Get a saved default entry if possible.  */
+-	  saved_entryno = 0;
+-	  *default_file = 0;
+-	  grub_strncat (default_file, config_file, DEFAULT_FILE_BUFLEN);
+-	  for (i = grub_strlen(default_file); i >= 0; i--)
+-	    if (default_file[i] == '/')
+-	      {
+-		i++;
+-		break;
+-	      }
+-	  default_file[i] = 0;
+-	  grub_strncat (default_file + i, "default", DEFAULT_FILE_BUFLEN - i);
+-	  if (grub_open (default_file))
+-	    {
+-	      char buf[10]; /* This is good enough.  */
+-	      char *p = buf;
+-	      int len;
+-	      
+-	      len = grub_read (buf, sizeof (buf));
+-	      if (len > 0)
+-		{
+-		  buf[sizeof (buf) - 1] = 0;
+-		  safe_parse_maxint (&p, &saved_entryno);
+-		}
+ 
+-	      grub_close ();
+-	    }
+-	  errnum = ERR_NONE;
+-	  
+ 	  do
+ 	    {
+ 	      /* STATE 0:  Before any title command.
+--- grub-0.97/util/grub-install.in.bootonce	2006-03-13 17:39:35.000000000 -0500
++++ grub-0.97/util/grub-install.in	2006-03-13 17:39:50.000000000 -0500
+@@ -30,7 +30,6 @@
+ pkglibdir=${libdir}/${PACKAGE}/${host_cpu}-${host_vendor}
+ 
+ grub_shell=${sbindir}/grub
+-grub_set_default=${sbindir}/grub-set-default
+ log_file=/tmp/grub-install.log.$$
+ img_file=/tmp/grub-install.img.$$
+ rootdir=
+@@ -432,9 +431,6 @@
+     exit 1
+ fi
+ 
+-# Make a default file.
+-${grub_set_default} --root-directory=${rootdir} default
+-
+ # Make sure that GRUB reads the same images as the host OS.
+ test -n "$mkimg" && img_file=`$mkimg`
+ test -n "$mklog" && log_file=`$mklog`
+--- grub-0.97/configure.bootonce	2006-03-13 17:49:05.000000000 -0500
++++ grub-0.97/configure	2006-03-13 17:49:16.000000000 -0500
+@@ -6135,7 +6135,7 @@
+ 
+ 
+ 
+-                                                                                                                                  ac_config_files="$ac_config_files Makefile stage1/Makefile stage2/Makefile docs/Makefile lib/Makefile util/Makefile grub/Makefile netboot/Makefile util/grub-image util/grub-install util/grub-md5-crypt util/grub-terminfo util/grub-set-default"
++                                                                                                                                  ac_config_files="$ac_config_files Makefile stage1/Makefile stage2/Makefile docs/Makefile lib/Makefile util/Makefile grub/Makefile netboot/Makefile util/grub-image util/grub-install util/grub-md5-crypt util/grub-terminfo"
+ 
+ cat >confcache <<\_ACEOF
+ # This file is a shell script that caches the results of configure
+@@ -6754,7 +6754,6 @@
+   "util/grub-install" ) CONFIG_FILES="$CONFIG_FILES util/grub-install" ;;
+   "util/grub-md5-crypt" ) CONFIG_FILES="$CONFIG_FILES util/grub-md5-crypt" ;;
+   "util/grub-terminfo" ) CONFIG_FILES="$CONFIG_FILES util/grub-terminfo" ;;
+-  "util/grub-set-default" ) CONFIG_FILES="$CONFIG_FILES util/grub-set-default" ;;
+   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
+   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
+--- grub-0.97/configure.ac.bootonce	2006-03-13 17:47:24.000000000 -0500
++++ grub-0.97/configure.ac	2006-03-13 17:47:37.000000000 -0500
+@@ -666,5 +666,5 @@
+ 		 docs/Makefile lib/Makefile util/Makefile \
+ 		 grub/Makefile netboot/Makefile util/grub-image \
+ 		 util/grub-install util/grub-md5-crypt \
+-		 util/grub-terminfo util/grub-set-default])
++		 util/grub-terminfo])
+ AC_OUTPUT
+--- grub-0.97/util/Makefile.am.bootonce	2006-03-13 17:48:39.000000000 -0500
++++ grub-0.97/util/Makefile.am	2006-03-13 17:48:45.000000000 -0500
+@@ -1,6 +1,5 @@
+ bin_PROGRAMS = mbchk
+-sbin_SCRIPTS = grub-install grub-md5-crypt grub-terminfo \
+-	grub-set-default
++sbin_SCRIPTS = grub-install grub-md5-crypt grub-terminfo
+ noinst_SCRIPTS = grub-image mkbimage
+ 
+ EXTRA_DIST = mkbimage
+--- grub-0.97/util/Makefile.in.bootonce	2006-03-13 17:47:56.000000000 -0500
++++ grub-0.97/util/Makefile.in	2006-03-13 17:48:34.000000000 -0500
+@@ -43,8 +43,7 @@
+ subdir = util
+ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+ 	$(srcdir)/grub-image.in $(srcdir)/grub-install.in \
+-	$(srcdir)/grub-md5-crypt.in $(srcdir)/grub-set-default.in \
+-	$(srcdir)/grub-terminfo.in
++	$(srcdir)/grub-md5-crypt.in $(srcdir)/grub-terminfo.in
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+ 	$(top_srcdir)/configure.ac
+@@ -52,8 +51,7 @@
+ 	$(ACLOCAL_M4)
+ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+ CONFIG_HEADER = $(top_builddir)/config.h
+-CONFIG_CLEAN_FILES = grub-image grub-install grub-md5-crypt \
+-	grub-terminfo grub-set-default
++CONFIG_CLEAN_FILES = grub-image grub-install grub-md5-crypt grub-terminfo 
+ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)"
+ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+ PROGRAMS = $(bin_PROGRAMS)
+@@ -183,8 +181,7 @@
+ sharedstatedir = @sharedstatedir@
+ sysconfdir = @sysconfdir@
+ target_alias = @target_alias@
+-sbin_SCRIPTS = grub-install grub-md5-crypt grub-terminfo \
+-	grub-set-default
++sbin_SCRIPTS = grub-install grub-md5-crypt grub-terminfo
+ 
+ noinst_SCRIPTS = grub-image mkbimage
+ EXTRA_DIST = mkbimage
+@@ -234,8 +231,6 @@
+ 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ grub-terminfo: $(top_builddir)/config.status $(srcdir)/grub-terminfo.in
+ 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+-grub-set-default: $(top_builddir)/config.status $(srcdir)/grub-set-default.in
+-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ install-binPROGRAMS: $(bin_PROGRAMS)
+ 	@$(NORMAL_INSTALL)
+ 	test -z "$(bindir)" || $(mkdir_p) "$(DESTDIR)$(bindir)"

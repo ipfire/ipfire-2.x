@@ -1,0 +1,11 @@
+--- grub-0.95/util/grub-install.in.md-mbr	2005-02-20 17:56:48.000000000 -0500
++++ grub-0.95/util/grub-install.in	2005-02-20 17:57:12.000000000 -0500
+@@ -444,7 +444,7 @@
+ /dev/*)
+     install_device=`resolve_symlink "$install_device"`
+     for install_drive in `find_real_devs $install_device` ; do
+-	install_drive=`convert $install_drive`
++	install_drive=`convert $install_drive | sed 's/,[0-9]*)/)/'`
+ 	if [ "x$install_drive" = "x" ]; then
+ 	    exit 1
+ 	fi

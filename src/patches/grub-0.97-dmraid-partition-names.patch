@@ -1,0 +1,10 @@
+--- grub-0.97/lib/device.c.dmraid-partition-names	2006-02-13 18:53:59.000000000 -0500
++++ grub-0.97/lib/device.c	2006-02-13 18:56:04.000000000 -0500
+@@ -1106,6 +1106,7 @@
+ 	   /* Compaq smart and others */
+ 	   (strncmp(dev, "/dev/ida/", 9) == 0 ||
+ 	    strncmp(dev, "/dev/ataraid/", 13) == 0 ||
++	    strncmp(dev, "/dev/mapper/", 12) == 0 || 
+ 	    strncmp(dev, "/dev/cciss/", 11) == 0 ||
+ 	    strncmp(dev, "/dev/rd/", 8) == 0) ? "p" : "",
+ 	   ((partition >> 16) & 0xFF) + 1);

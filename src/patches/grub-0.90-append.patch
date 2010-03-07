@@ -1,0 +1,111 @@
+--- grub-0.90/stage2/stage2.c.append	Thu Dec 20 08:20:48 2001
++++ grub-0.90/stage2/stage2.c	Thu Dec 20 17:01:20 2001
+@@ -500,7 +500,8 @@
+ 	  if (config_entries)
+ 	    printf ("\
+       Press enter to boot the selected OS, \'e\' to edit the\n\
+-      commands before booting, or \'c\' for a command-line.");
++      commands before booting, \'a\' to modify the kernel arguments\n\
++      before booting, or \'c\' for a command-line.");
+ 	  else
+ 	    printf ("\
+       Press \'b\' to boot, \'e\' to edit the selected command in the\n\
+@@ -787,6 +788,98 @@
+ 		  enter_cmdline (heap, 0);
+ 		  goto restart;
+ 		}
++	      if (config_entries && c == 'a')
++		{
++		  int new_num_entries = 0, i = 0, j;
++		  int needs_padding, amount;
++		  char *new_heap;
++		  char * entries;
++		  char * entry_copy;
++		  char * append_line;
++		  char * start;
++
++		  entry_copy = new_heap = heap;
++		  cur_entry = get_entry (config_entries, first_entry + entryno,
++					 1);
++		  
++		  do
++		    {
++		      while ((*(new_heap++) = cur_entry[i++]) != 0);
++		      new_num_entries++;
++		    }
++		  while (config_entries && cur_entry[i]);
++
++		  /* this only needs to be done if config_entries is non-NULL,
++		     but it doesn't hurt to do it always */
++		  *(new_heap++) = 0;
++
++		  new_heap = heap + NEW_HEAPSIZE + 1;
++
++		  entries = entry_copy;
++		  while (*entries) 
++		    {
++		      if ((strstr(entries, "kernel") == entries) &&
++			  isspace(entries[6])) 
++			  break;
++
++		      while (*entries) entries++;
++		      entries++;
++		    }
++
++		  if (!*entries)
++		      goto restart;
++
++		  start = entries + 6;
++
++		  /* skip the white space */
++		  while (*start && isspace(*start)) start++;
++		  /* skip the kernel name */
++		  while (*start && !isspace(*start)) start++;
++
++		  /* skip the white space */
++		  needs_padding = (!*start || !isspace(*start));
++		  while (*start && isspace(*start)) start++;
++
++		  append_line = new_heap;
++		  grub_strcpy(append_line, start);
++
++		  cls();
++		  print_cmdline_message (CMDLINE_EDIT_MODE);
++
++		  if (get_cmdline(PACKAGE " append> ", 
++				    append_line, NEW_HEAPSIZE + 1, 
++				    0, 1))
++		      goto restart;
++
++		  /* have new args; append_line points to the
++		     new args and start points to the old
++		     args */
++
++		  i = grub_strlen(start);
++		  j = grub_strlen(append_line);
++
++		  if (i > (j + needs_padding))
++		      amount = i;
++		  else
++		      amount = j + needs_padding;
++
++		  /* align rest of commands properly */
++		  memmove (start + j + needs_padding, start + i,
++		       ((int) append_line) - ((int) start) - (amount));
++
++		  if (needs_padding)
++		      *start = ' ';
++
++		  /* copy command to correct area */
++		  memmove (start + needs_padding, append_line, j);
++
++		  /* set up this entry to boot */
++		  config_entries = NULL;
++		  cur_entry = entry_copy;
++		  heap = new_heap;
++
++		  break;
++		}
+ #ifdef GRUB_UTIL
+ 	      if (c == 'q')
+ 		{
