@@ -106,8 +106,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -s ipfirerd-$(KVER)-emergency.img $(MNThdd)/boot/ipfirerd-$(KVER).img
 
 	# Copy grub files manually
-	cp -f $(MNThdd)/usr/lib/grub/i386-pc/* $(MNThdd)/boot/grub/
-	chroot $(MNThdd) /usr/sbin/grub-set-default 0
+	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
+	#chroot $(MNThdd) /usr/sbin/grub-set-default 0
 
 	# Create a script for rebuild-initrd and setup
 	echo "#!/bin/bash"                                   > $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
