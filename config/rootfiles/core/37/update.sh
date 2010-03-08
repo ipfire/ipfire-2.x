@@ -36,6 +36,11 @@ extract_files
 #Delete sensors config to force new scan
 rm -f /etc/sysconfig/lm_sensors
 
+#Create cyrus-sasl autostart links
+ln -sf  ../init.d/cyrus-sasl /etc/rc.d/rc0.d/K49cyrus-sasl
+ln -sf  ../init.d/cyrus-sasl /etc/rc.d/rc3.d/S24cyrus-sasl
+ln -sf  ../init.d/cyrus-sasl /etc/rc.d/rc6.d/K49cyrus-sasl
+
 #
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
