@@ -196,3 +196,6 @@ etc/rc.d/rc6.d/K85tmpfs
 #etc/rc.d/rc6.d/K01miau
 #etc/rc.d/init.d/netsnmpd
 #etc/rc.d/init.d/mdadm
+etc/rc.d/rc0.d/K49cyrus-sasl
+etc/rc.d/rc3.d/S24cyrus-sasl
+etc/rc.d/rc6.d/K49cyrus-sasl
