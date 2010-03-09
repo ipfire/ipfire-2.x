@@ -101,8 +101,7 @@ iptables_red() {
 		# This rule enables a host on ORANGE network to connect to the outside
 		# (only if we have a red connection)
 		if [ "$IFACE" != "" ]; then
-			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -p tcp -o $IFACE -j ACCEPT
-			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -p udp -o $IFACE -j ACCEPT
+			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -o $IFACE -j ACCEPT
 		fi
 	fi
 
