@@ -740,6 +740,8 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/mod_proxy_http.html.en
 #srv/web/ipfire/manual/mod/mod_proxy_scgi.html
 #srv/web/ipfire/manual/mod/mod_proxy_scgi.html.en
+#srv/web/ipfire/manual/mod/mod_reqtimeout.html
+#srv/web/ipfire/manual/mod/mod_reqtimeout.html.en
 #srv/web/ipfire/manual/mod/mod_rewrite.html
 #srv/web/ipfire/manual/mod/mod_rewrite.html.en
 #srv/web/ipfire/manual/mod/mod_setenvif.html
@@ -1242,6 +1244,7 @@ usr/lib/apache/mod_proxy_connect.so
 usr/lib/apache/mod_proxy_ftp.so
 usr/lib/apache/mod_proxy_http.so
 usr/lib/apache/mod_proxy_scgi.so
+usr/lib/apache/mod_reqtimeout.so
 usr/lib/apache/mod_rewrite.so
 usr/lib/apache/mod_setenvif.so
 usr/lib/apache/mod_speling.so
@@ -1259,7 +1262,7 @@ usr/lib/apache/mod_vhost_alias.so
 #usr/lib/libapr-1.la
 usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.3.9
+usr/lib/libapr-1.so.0.4.2
 #usr/lib/libaprutil-1.a
 #usr/lib/libaprutil-1.la
 usr/lib/libaprutil-1.so

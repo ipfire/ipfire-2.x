@@ -132,7 +132,7 @@
 * hostapd-0.6.9
 * hplip-2.7.10
 * htop-0.8.1
-* httpd-2.2.14
+* httpd-2.2.15
 * hwdata
 * iana-etc-2.10
 * icecast-2.3.2
@@ -247,8 +247,8 @@
 * open-vm-tools-2009.05.22-167859
 * openldap-2.3.20
 * openmailadmin-1.0.0
-* openssh-5.3p1
-* openssl-0.9.8l
+* openssh-5.4p1
+* openssl-0.9.8m
 * openswan-2.6.24
 * openswan-2.6.24-kmod-2.6.32.9-ipfire
 * openswan-2.6.24-kmod-2.6.32.9-ipfire-xen
