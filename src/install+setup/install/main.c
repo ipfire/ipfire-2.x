@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
 	mysystem("/sbin/modprobe sr_mod");
 	mysystem("/sbin/modprobe usb-storage");
 	mysystem("/sbin/modprobe usbhid");
+	mysystem("/sbin/modprobe ahci");
 
 	mysystem("/sbin/modprobe iso9660"); // CDROM
 	mysystem("/sbin/modprobe ext2"); // Boot patition
