@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 2.2.14
+VER        = 2.2.15
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -47,7 +47,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 httpd-2.2.2-config-1.patch = $(DL_FROM)/httpd-2.2.2-config-1.patch
 
-$(DL_FILE)_MD5 = a5226203aaf97e5b941c41a71c112704
+$(DL_FILE)_MD5 = 016cec97337eccead2aad6a7c27f2e14
 httpd-2.2.2-config-1.patch_MD5 = e02a3ec5925eb9e111400b9aa229f822
 
 install : $(TARGET)
