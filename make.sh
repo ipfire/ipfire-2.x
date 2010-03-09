@@ -351,6 +351,7 @@ buildipfire() {
   ipfiremake openswan			XEN=1 KMOD=1
   #ipfiremake mISDN			XEN=1
   #ipfiremake compat-wireless		XEN=1
+  ipfiremake cryptodev			XEN=1
   ipfiremake linux
   ipfiremake kqemu
   #ipfiremake kvm-kmod
@@ -361,6 +362,7 @@ buildipfire() {
   ipfiremake openswan			KMOD=1
   #ipfiremake mISDN
   #ipfiremake compat-wireless
+  ipfiremake cryptodev
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
