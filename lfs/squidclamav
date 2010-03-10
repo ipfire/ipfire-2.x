@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.0
+VER        = 5.2
 
 THISAPP    = squidclamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = squidclamav
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = "clamav"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fe6456c25294653cb5f19ff7afdb5f90
+$(DL_FILE)_MD5 = 7f8d48962f139f747fa9b2050ede19a3
 
 install : $(TARGET)
 
