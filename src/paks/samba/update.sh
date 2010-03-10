@@ -17,10 +17,13 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2010 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
 ./uninstall.sh
-./install.sh
+extract_files
+restore_backup ${NAME}
+echo "passdb backend = smbpasswd" >> /var/ipfire/samba/smb.conf
+/usr/local/bin/sambactrl smbstart

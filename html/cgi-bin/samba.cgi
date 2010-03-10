@@ -272,6 +272,7 @@ print FILE <<END
 netbios name = $sambasettings{'NETBIOSNAME'}
 server string = $sambasettings{'SRVSTRING'}
 workgroup = $sambasettings{'WORKGRP'}
+passdb backend = smbpasswd
 
 wide links = $sambasettings{'WIDELINKS'}
 unix extensions = $sambasettings{'UNIXEXTENSION'}
