@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --mandir=/usr/share/man --libexecdir=/usr/lib/squid \
 	   --localstatedir=/var --sysconfdir=/etc/squid \
 	   --disable-poll --disable-icmp --disable-wccp \
-	   --disable-ident-lookups \
+	   --enable-ident-lookups \
 	   --enable-storeio="aufs,coss,diskd,ufs,null" --enable-ssl \
 	   --enable-underscores --enable-ntlm-fail-open --enable-arp-acl \
 	   --enable-http-violations --enable-auth=basic,ntlm \
