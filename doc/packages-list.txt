@@ -70,6 +70,8 @@
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-007
+* cryptodev-20091126-kmod-2.6.32.9-ipfire
+* cryptodev-20091126-kmod-2.6.32.9-ipfire-xen
 * cups-1.4.2
 * curl-7.19.5
 * cyrus-imapd-2.2.12
