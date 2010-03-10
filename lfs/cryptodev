@@ -24,13 +24,19 @@
 
 include Config
 
-VER        = 0.9.8m
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
 
-THISAPP    = openssl-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+VER        = 20091126
+
+THISAPP    = cryptodev-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 898bf125370926d5f692a2201124f8ec
+$(DL_FILE)_MD5 = 26ffa32ef75bea7e980ab66166616e95
 
 install : $(TARGET)
 
@@ -49,6 +55,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -69,18 +78,13 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8k-cryptodev.diff
-ifeq "$(PADLOCK)" "1"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8g-engine-padlock.patch
-endif
-	@rm -rf /etc/ssl
-	cd $(DIR_APP) && sed -i -e 's/mcpu/march/' config
-	cd $(DIR_APP) && sed -i -e 's/-O3/-O2/' -e 's/-march=i486/-march=i586/' Configure
-	cd $(DIR_APP) && ./config --openssldir=/etc/ssl --prefix=/usr shared
-	cd $(DIR_APP) && make MANDIR=/usr/share/man
-	cd $(DIR_APP) && make MANDIR=/usr/share/man install
-	rm -rf /etc/ssl/lib
-	install -m 0644 $(DIR_SRC)/config/ssl/openssl.cnf /etc/ssl
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && make build \
+		KERNEL_DIR=/lib/modules/$(KVER)-$(VERSUFIX)/build
+
+	-mkdir -pv /usr/include/crypto
+	cd $(DIR_APP) && make install \
+		KERNEL_DIR=/lib/modules/$(KVER)-$(VERSUFIX)/build
+	ln -svf ../crypto/cryptodev.h /usr/include/linux/cryptodev.h
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
