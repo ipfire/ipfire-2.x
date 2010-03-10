@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.3.10
+VER        = 3.5.1
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 24
+PAK_VER    = 25
 
 DEPS       = "cups"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 84645ff5f0fb213e2371e629507dc8bb
+$(DL_FILE)_MD5 = 60811195b0507fa151b602684cece743
 
 install : $(TARGET)
 
@@ -77,7 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/source && ./configure \
+	cd $(DIR_APP)/source3 && ./configure \
 				--prefix=/usr \
 				--libdir=/usr/lib/ \
 				--sysconfdir=/var/ipfire \
@@ -89,21 +89,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--enable-cups \
 				--with-cifsmount \
 				--with-syslog
-	cd $(DIR_APP)/source && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP)/source && make install
-#	cp -vfp /usr/lib/samba/{libsmbclient.so.0,libtalloc.so.1,libtdb.so.1,libwbclient.so.0} /usr/lib
-#	cd /usr/lib/ && ln -v -sf libsmbclient.so.0 libsmbclient.so
-#	cd /usr/lib/ && ln -v -sf libtalloc.so.1 libtalloc.so
-#	cd /usr/lib/ && ln -v -sf libtdb.so.1 libtdb.so
-#	cd /usr/lib/ && ln -v -sf libwbclient.so.0 libwbclient.so
-	cd $(DIR_APP)/source && chmod -v 644 /usr/include/libsmbclient.h
-	cd $(DIR_APP)/source && chmod -v 644 /usr/include/libsmbclient.h
-	cd $(DIR_APP)/source && install -v -m755 nsswitch/libnss_wins.so /lib
-	cd $(DIR_APP)/source && install -v -m755 nsswitch/libnss_winbind.so /lib
-	cd $(DIR_APP)/source && ln -v -sf libnss_winbind.so /lib/libnss_winbind.so.2
-	cd $(DIR_APP)/source && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
-#	cd $(DIR_APP)/source && install -v -m755 nsswitch/pam_winbind.so /lib/security
-	cd $(DIR_APP)/source && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
+	cd $(DIR_APP)/source3 && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/source3 && make install
+	cd $(DIR_APP)/source3 && chmod -v 644 /usr/include/libsmbclient.h
+	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_wins.so /lib
+	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_winbind.so /lib
+	#cd $(DIR_APP)/source3 && ln -v -sf libnss_winbind.so /lib/libnss_winbind.so.2
+	#cd $(DIR_APP)/source3 && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
+	cd $(DIR_APP)/source3 && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
 	-mkdir -p /var/ipfire/samba	
 	cp -vrf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
 	chown nobody:nobody -R /var/ipfire/samba/

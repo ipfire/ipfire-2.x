@@ -4,6 +4,7 @@
 netbios name = ipfire
 server string = Samba
 workgroup = homeip.net
+passdb backend = smbpasswd
 
 keep alive = 30
 os level = 33
