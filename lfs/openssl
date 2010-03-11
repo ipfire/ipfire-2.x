@@ -77,7 +77,8 @@ endif
 	@rm -rf /etc/ssl
 	cd $(DIR_APP) && sed -i -e 's/mcpu/march/' config
 	cd $(DIR_APP) && sed -i -e 's/-O3/-O2/' -e 's/-march=i486/-march=i586/' Configure
-	cd $(DIR_APP) && ./config --openssldir=/etc/ssl --prefix=/usr shared
+	cd $(DIR_APP) && ./Configure --openssldir=/etc/ssl --prefix=/usr shared linux-elf \
+		zlib-dynamic no-asm 386
 	cd $(DIR_APP) && make MANDIR=/usr/share/man
 	cd $(DIR_APP) && make MANDIR=/usr/share/man install
 	rm -rf /etc/ssl/lib
