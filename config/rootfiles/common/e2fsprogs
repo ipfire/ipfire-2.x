@@ -26,7 +26,7 @@ sbin/fsck.ext3
 sbin/mke2fs
 sbin/mkfs.ext2
 sbin/mkfs.ext3
-#sbin/resize2fs
+sbin/resize2fs
 sbin/tune2fs
 usr/bin/chattr
 #usr/bin/compile_et
