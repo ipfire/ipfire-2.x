@@ -54,10 +54,7 @@ int main(int argc, char *argv[])
 						exit(1);
 				}
 
-				if(findkey(kv, "ENABLE_SSH_PROTOCOL1", buffer) && !strcmp(buffer,"on"))
-						strlcat(command, "s/^Protocol .*$/Protocol 2,1/;", STRING_SIZE - 1 );
-				else
-						strlcat(command, "s/^Protocol .*$/Protocol 2/;", STRING_SIZE - 1 );
+				strlcat(command, "s/^Protocol .*$/Protocol 2/;", STRING_SIZE - 1 );
 
 				if(findkey(kv, "ENABLE_SSH_KEYS", buffer) && !strcmp(buffer,"off"))
 						strlcat(command, "s/^RSAAuthentication .*$/RSAAuthentication no/;"		"s/^PubkeyAuthentication .*$/PubkeyAuthentication no/;", STRING_SIZE - 1 );
