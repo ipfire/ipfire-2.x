@@ -25,13 +25,15 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
 #Stop services
-
+/etc/init.d/squid stop
 #
 #Extract files
 extract_files
 #
 #Start services
-
+/etc/init.d/squid start
+/etc/init.d/apache restart
+#
 #
 #Delete sensors config to force new scan
 rm -f /etc/sysconfig/lm_sensors
