@@ -55,7 +55,7 @@ if ( $querry[0] =~ "fwhits"){
 	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 	
-	my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/*`;
+	my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/ping-*`;
 	foreach (@pinggraphs){
 		$_ =~ /(.*)\/ping\/ping-(.*)\.rrd/;
 		push(@pings,$2);
