@@ -343,8 +343,8 @@ print <<END
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='4' align='left'><strong>$Lang::tr{'wlanap wlan settings'}</strong>
 <tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='40' value='$wlanapsettings{'SSID'}' /></td></tr>
-<tr><td width='25%' class='base'>SSID Broadcast:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> |
-			<input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> off</td></tr>
+<!--SSID Broadcast: on => HIDESSID: off -->
+<tr><td width='25%' class='base'>SSID Broadcast:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> off</td></tr>
 <tr><td width='25%' class='base'>HW Mode:&nbsp;</td><td class='base' colspan='3'>
 	<select name='HW_MODE'>
 		<option value='a' $selected{'HW_MODE'}{'a'}>802.11a</option>
