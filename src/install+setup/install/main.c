@@ -14,9 +14,9 @@
 #define INST_FILECOUNT 6200
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
-#define REISER4 0
-#define REISERFS 1
-#define EXT3 2
+#define EXT2 0
+#define REISERFS 2
+#define EXT3 1
 
 FILE *flog = NULL;
 char *mylog;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	char mkfscommand[STRING_SIZE];
-	char *fstypes[] = { "Reiser4", "ReiserFS", "ext3", NULL };
+	char *fstypes[] = { "ext2", "ext3", "ReiserFS", NULL };
 	int fstype = REISERFS;
 	int choice;
 	int i;
@@ -304,10 +304,10 @@ int main(int argc, char *argv[])
 	 /* Calculating Swap-Size dependend of Ram Size */
 	if (memory < 128)
 		swap_file = 32;
-	else if (memory >= 1024)
-		swap_file = 512;
+	else if (memory > 512)
+		swap_file = 256;
 	else 
-		swap_file = memory;
+		swap_file = memory / 4;
 	
   /* Calculating Root-Size dependend of Max Disk Space */
   if ( disk < 756 )
@@ -366,9 +366,9 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 	
-	if (fstype == REISER4) {
-		mysystem("/sbin/modprobe reiser4");
-		sprintf(mkfscommand, "/sbin/mkfs.reiser4 -y");
+	if (fstype == EXT2) {
+		mysystem("/sbin/modprobe ext2");
+		sprintf(mkfscommand, "/sbin/mke2fs -T ext2 -c");
 	} else if (fstype == REISERFS) {
 		mysystem("/sbin/modprobe reiserfs");
 		sprintf(mkfscommand, "/sbin/mkreiserfs -f");
@@ -483,9 +483,9 @@ int main(int argc, char *argv[])
 	/* Update /etc/fstab */
 	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode_part_run);
 	
-	if (fstype == REISER4) {
-		replace("/harddisk/etc/fstab", "FSTYPE", "reiser4");
-		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "rw");
+	if (fstype == EXT2) {
+		replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
+		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == REISERFS) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
