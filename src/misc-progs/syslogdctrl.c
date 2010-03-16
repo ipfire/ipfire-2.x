@@ -123,9 +123,13 @@ int main(void)
    close(config_fd);
    
    /* Replace the logging option*/
-
      safe_system("grep -v '/var/log/messages' < /etc/syslog.conf.new > /etc/syslog.conf.tmp && mv /etc/syslog.conf.tmp /etc/syslog.conf.new");
+   
+   if (strcmp(ENABLE_ASYNCLOG,"on"))
+     snprintf(command, STRING_SIZE-1, "printf '%s     -/var/log/messages' >> /etc/syslog.conf.new", varmessages );
+   else
      snprintf(command, STRING_SIZE-1, "printf '%s     /var/log/messages' >> /etc/syslog.conf.new", varmessages );
+
      safe_system(command);
 
    if (rename("/etc/syslog.conf.new", "/etc/syslog.conf") == -1)
