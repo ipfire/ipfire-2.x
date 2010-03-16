@@ -155,7 +155,9 @@ END
 print <<END
 <table width='100%'>
 <tr>
-  <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ENABLE_ASYNCLOG' $checked{'ENABLE_ASYNCLOG'}{'on'} /></td>
+  <td class='base' colspan='2'><input type='checkbox' name='ENABLE_ASYNCLOG' $checked{'ENABLE_ASYNCLOG'}{'on'} />$Lang::tr{'Async logging enabled'}</td>
+<tr>
+</tr>
   <td>$Lang::tr{'log var messages'}</td><td><input type='text' name='VARMESSAGES' size='50' value='$logsettings{'VARMESSAGES'}' /></td>
 </tr>
 </table>

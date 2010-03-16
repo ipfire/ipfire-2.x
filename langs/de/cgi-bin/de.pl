@@ -4,6 +4,7 @@
 'Act as' => 'Konfiguriert als',
 'Add Port Rule' => 'Port Regel hinzufügen',
 'Add Rule' => 'Regel hinzufügen',
+'Async logging enabled' => 'Aktiviere asynchrones schreiben des Syslogs',
 'optional at cmd' => 'zusätzlicher Modembefehl',
 'Choose Rule' => 'Wählen sie <u>eine</u> der untenstehenden Regeln aus.',
 'Class' => 'Klasse',
