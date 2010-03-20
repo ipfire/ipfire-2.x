@@ -44,7 +44,7 @@ void usage() {
 }
 
 void load_modules() {
-        safe_system("/sbin/modprobe ipsec");
+//        safe_system("/sbin/modprobe ipsec");
 }
 
 /*
@@ -55,22 +55,22 @@ void open_physical (char *interface, int nat_traversal_port) {
 
         // GRE ???
         sprintf(str, "/sbin/iptables -A " phystable " -p 47  -i %s -j ACCEPT", interface);
-        safe_system(str);
+//        safe_system(str);
         // ESP
         sprintf(str, "/sbin/iptables -A " phystable " -p 50  -i %s -j ACCEPT", interface);
-        safe_system(str);
+//        safe_system(str);
         // AH
         sprintf(str, "/sbin/iptables -A " phystable " -p 51  -i %s -j ACCEPT", interface);
-        safe_system(str);
+//        safe_system(str);
         // IKE
         sprintf(str, "/sbin/iptables -A " phystable " -p udp -i %s --sport 500 --dport 500 -j ACCEPT", interface);
-        safe_system(str);
+//        safe_system(str);
 
         if (! nat_traversal_port) 
             return;
 
         sprintf(str, "/sbin/iptables -A " phystable " -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
-        safe_system(str);
+//        safe_system(str);
 }
 
 /*
@@ -81,14 +81,14 @@ void open_physical (char *interface, int nat_traversal_port) {
 */
 void open_virtual (void) {
         // allow anything from any ipsec to go on all interface, including other ipsec
-        safe_system("/sbin/iptables -A " virtualtable " -i ipsec+ -j ACCEPT");
+//        safe_system("/sbin/iptables -A " virtualtable " -i ipsec+ -j ACCEPT");
         //todo: BOT extension?; allowing ipsec0<<==port-list-filter==>>GREEN ?
 }
 
 void ipsec_norules() {
         /* clear input rules */
-        safe_system("/sbin/iptables -F " phystable);
-        safe_system("/sbin/iptables -F " virtualtable);
+//        safe_system("/sbin/iptables -F " phystable);
+//        safe_system("/sbin/iptables -F " virtualtable);
 
         // unmap red alias ????
 }
@@ -152,7 +152,7 @@ void add_alias_interfaces(char *configtype,
                 {
                         memset(s, 0, STRING_SIZE);
                         snprintf(s, STRING_SIZE-1, "/usr/sbin/ipsec tncfg --attach --virtual ipsec%d --physical %s:%d >/dev/null", offset+alias, redif, alias);
-                        safe_system(s);
+//                        safe_system(s);
                         alias++;
                 }
         }

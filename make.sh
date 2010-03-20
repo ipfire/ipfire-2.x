@@ -348,7 +348,7 @@ buildipfire() {
   ipfiremake madwifi			XEN=1
   #ipfiremake alsa			XEN=1 KMOD=1
   ipfiremake dahdi			XEN=1 KMOD=1
-  ipfiremake openswan			XEN=1 KMOD=1
+#  ipfiremake openswan			XEN=1 KMOD=1
   #ipfiremake mISDN			XEN=1
   #ipfiremake compat-wireless		XEN=1
   ipfiremake cryptodev			XEN=1
@@ -359,7 +359,7 @@ buildipfire() {
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
   ipfiremake dahdi			KMOD=1
-  ipfiremake openswan			KMOD=1
+#  ipfiremake openswan			KMOD=1
   #ipfiremake mISDN
   #ipfiremake compat-wireless
   ipfiremake cryptodev
@@ -546,7 +546,8 @@ buildipfire() {
   ipfiremake tripwire
   ipfiremake sysstat
   ipfiremake vsftpd
-  ipfiremake openswan
+#  ipfiremake openswan
+  ipfiremake strongswan
   ipfiremake lsof
   ipfiremake centerim
   ipfiremake br2684ctl

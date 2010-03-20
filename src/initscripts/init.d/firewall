@@ -166,14 +166,17 @@ case "$1" in
 	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
 	
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
-	/sbin/iptables -N IPSECVIRTUAL
+	/sbin/iptables -N IPSECINPUT
+	/sbin/iptables -N IPSECFORWARD
+	/sbin/iptables -N IPSECOUTPUT
 	/sbin/iptables -N OPENSSLVIRTUAL
-	/sbin/iptables -A INPUT -j IPSECVIRTUAL -m comment --comment "IPSECVIRTUAL INPUT"
+	/sbin/iptables -A INPUT -j IPSECINPUT
 	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL INPUT"
-	/sbin/iptables -A FORWARD -j IPSECVIRTUAL -m comment --comment "IPSECVIRTUAL FORWARD"
+	/sbin/iptables -A FORWARD -j IPSECFORWARD
 	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
-	/sbin/iptables -t nat -N IPSECNAT
-	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
+	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
+	#/sbin/iptables -t nat -N IPSECNAT
+	#/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFW
@@ -196,10 +199,6 @@ case "$1" in
 	# allow DHCP on BLUE to be turned on/off
 	/sbin/iptables -N DHCPBLUEINPUT 
 	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
-
-	# IPSec
-	/sbin/iptables -N IPSECPHYSICAL
-	/sbin/iptables -A INPUT -j IPSECPHYSICAL
 
 	# OPenSSL
 	/sbin/iptables -N OPENSSLPHYSICAL
