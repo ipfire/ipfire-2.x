@@ -148,10 +148,10 @@ END
 ;
 		close FILE;
 	} else {
-		$qossettings{'ACTION'} = 'Parentklasse hinzufuegen';
+		$qossettings{'ACTION'} = $Lang::tr{'parentclass add'};
 	}
 }
-elsif ($qossettings{'DOCLASS'} eq 'Bearbeiten')
+elsif ($qossettings{'DOCLASS'} eq $Lang::tr{'edit'})
 {
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@classes = <FILE>;
@@ -180,7 +180,7 @@ elsif ($qossettings{'DOCLASS'} eq 'Bearbeiten')
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'DOCLASS'} eq 'Loeschen')
+elsif ($qossettings{'DOCLASS'} eq $Lang::tr{'delete'})
 {
 	open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 	@tmp = <FILE>;
@@ -226,9 +226,9 @@ END
 ;
 		close FILE;
 	} else {
-		$qossettings{'ACTION'} = 'Unterklasse hinzufuegen';
+		$qossettings{'ACTION'} = $Lang::tr{'qos add subclass'};
 	}
-} elsif ($qossettings{'DOSCLASS'} eq 'Loeschen')
+} elsif ($qossettings{'DOSCLASS'} eq $Lang::tr{'delete'})
 {
 	open( FILE, "< $subclassfile" ) or die "Unable to read $classfile";
 	@tmp = <FILE>;
@@ -254,13 +254,13 @@ if ($qossettings{'DOLEVEL7'} eq $Lang::tr{'save'})
 	if ( $qossettings{'QIP'} ne '' ) {
 		unless ( &General::validip($qossettings{'QIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Quell-IP-Adresse ist ungueltig.";
+			$message = $Lang::tr{'The source IP address is invalid.'};
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
 		unless ( &General::validip($qossettings{'DIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Ziel-IP-Adresse ist ungueltig.";
+			$message = $Lang::tr{'The destination IP address is invalid.'};
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -280,9 +280,9 @@ END
 ;
 		close FILE;
 	} else {
-		$qossettings{'ACTION'} = 'Level7-Regel hinzufuegen';
+		$qossettings{'ACTION'} = $Lang::tr{'Add Level7 rule'};
 	}
-} elsif ($qossettings{'DOLEVEL7'} eq 'Loeschen')
+} elsif ($qossettings{'DOLEVEL7'} eq $Lang::tr{'delete'})
 {
 	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 	@l7rules = <FILE>;
@@ -292,7 +292,7 @@ END
   	{
   		@l7ruleline = split( /\;/, $l7ruleentry );
   		if ( ($l7ruleline[0] eq $qossettings{'CLASS'}) && ($l7ruleline[2] eq $qossettings{'L7PROT'}))
-            {$message = "Level7-Regel ($qossettings{'CLASS'} - $qossettings{'L7PROT'}) wurde geloescht.";}
+            {$message = "$Lang::tr{'Level7 Rule'} ($qossettings{'CLASS'} - $qossettings{'L7PROT'}) $Lang::tr{'was deleted'}.";}
       else
         { open( FILE, ">> $level7file" ) or die "Unable to read $level7file";
           print FILE $l7ruleentry;
@@ -300,7 +300,7 @@ END
         }
 	  }
 	open( FILE, "< $level7file" ) or system("touch $level7file");close FILE;
-	} elsif ($qossettings{'DOLEVEL7'} eq 'Bearbeiten')
+	} elsif ($qossettings{'DOLEVEL7'} eq $Lang::tr{'edit'})
 {
 	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 	@l7rules = <FILE>;
@@ -329,13 +329,13 @@ if ($qossettings{'DOPORT'} eq $Lang::tr{'save'})
 	if ( $qossettings{'QIP'} ne '' ) {
 		unless ( &General::validip($qossettings{'QIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Quell-IP-Adresse ist ungueltig.";
+			$message = "$Lang::tr{'The source IP address is invalid.'}";
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
 		unless ( &General::validip($qossettings{'DIP'}) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "Die Ziel-IP-Adresse ist ungueltig.";
+			$message = "$Lang::tr{'The destination IP address is invalid.'}";
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -355,9 +355,9 @@ END
 ;
 		close FILE;
 	} else {
-		$qossettings{'ACTION'} = 'Port-Regel hinzufuegen';
+		$qossettings{'ACTION'} = $Lang::tr{'Add Port Rule'};
 	}
-} elsif ($qossettings{'DOPORT'} eq 'Loeschen')
+} elsif ($qossettings{'DOPORT'} eq $Lang::tr{'delete'})
 {
 	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
 	@portrules = <FILE>;
@@ -373,7 +373,7 @@ END
 	}
 	close FILE;
 	$message = "$Lang::tr{'Port Rule'} ($qossettings{'CLASS'} - $qossettings{'PPROT'}) $Lang::tr{'was deleted'}.";
-}  elsif ($qossettings{'DOPORT'} eq 'Bearbeiten')
+}  elsif ($qossettings{'DOPORT'} eq $Lang::tr{'edit'})
 {
 	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
 	@portrules = <FILE>;
@@ -431,7 +431,7 @@ elsif ($qossettings{'DOTOS'} eq 'Loeschen')
 	}
 	close FILE;
 	$message = "$Lang::tr{'TOS Rule'} ($qossettings{'CLASS'} - $qossettings{'TOS'}) $Lang::tr{'was deleted'}.";
-} elsif ($qossettings{'DOTOS'} eq 'Bearbeiten')
+} elsif ($qossettings{'DOTOS'} eq $Lang::tr{'edit'})
 {
 	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
 	@tosrules = <FILE>;
@@ -459,7 +459,7 @@ elsif ($qossettings{'DOTOS'} eq 'Loeschen')
 ############################################################################################################################
 ############################################################################################################################
 
-if ($qossettings{'ACTION'} eq 'Start')
+if ($qossettings{'ACTION'} eq $Lang::tr{'start'})
 {
 	$qossettings{'ENABLED'} = 'on';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
@@ -468,7 +468,7 @@ if ($qossettings{'ACTION'} eq 'Start')
 	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
 	system("logger -t ipfire 'QoS started'");
 }
-elsif ($qossettings{'ACTION'} eq 'Stop')
+elsif ($qossettings{'ACTION'} eq $Lang::tr{'stop'})
 {
 	system("/usr/local/bin/qosctrl stop >/dev/null 2>&1");
 	unlink "/var/ipfire/qos/bin/qos.sh";
@@ -477,7 +477,7 @@ elsif ($qossettings{'ACTION'} eq 'Stop')
 	$qossettings{'ENABLED'} = 'off';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 }
-elsif ($qossettings{'ACTION'} eq 'Neustart')
+elsif ($qossettings{'ACTION'} eq $Lang::tr{'restart'})
 {
 	if ($qossettings{'ENABLED'} eq 'on'){
 		system("/usr/local/bin/qosctrl stop >/dev/null 2>&1");
@@ -590,7 +590,7 @@ END
 	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
 	system("logger -t ipfire 'QoS started'");
 }
-elsif ($qossettings{'ACTION'} eq "$Lang::tr{'status'}" )
+elsif ($qossettings{'ACTION'} eq $Lang::tr{'status'} )
 {
 	&Header::openbox('100%', 'left', 'QoS Status');
 	if ($qossettings{'ENABLED'} eq 'on'){
@@ -604,30 +604,30 @@ elsif ($qossettings{'ACTION'} eq "$Lang::tr{'status'}" )
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq "$Lang::tr{'parentclass add'}" )
+elsif ($qossettings{'ACTION'} eq $Lang::tr{'parentclass add'} )
 {
 	&parentclass();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq 'Unterklasse hinzufuegen')
+elsif ($qossettings{'ACTION'} eq $Lang::tr{'qos add subclass'})
 {
 	&subclass();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq 'Regel hinzufuegen')
+elsif ($qossettings{'ACTION'} eq $Lang::tr{'Add Rule'})
 {
 	&Header::openbox('100%', 'center', $Lang::tr{'Add Rule'});
 	print <<END
 		<table>
 		<tr><td align='center'>$Lang::tr{'Choose Rule'}
 		<tr><td align='center'>
-			<input type="button" onClick="swapVisibility('l7rule')" value='Level7-Regel' />
-			<input type="button" onClick="swapVisibility('portrule')" value='Port-Regel' />
-			<input type="button" onClick="swapVisibility('tosrule')" value='TOS-Regel' />
+			<input type="button" onClick="swapVisibility('l7rule')" value='$Lang::tr{'Level7 Rule'}' />
+			<input type="button" onClick="swapVisibility('portrule')" value='$Lang::tr{'Port Rule'}' />
+			<input type="button" onClick="swapVisibility('tosrule')" value='$Lang::tr{'TOS rule'}' />
 		</table>
 END
 ;
@@ -716,8 +716,8 @@ END
 		<tr><td width='50%' align='left'><b>Quality of Service:</b>
 		    <td width='50%' align='center' bgcolor='$statuscolor'><font color='white'>$status</font>
 		<tr><td width='100%' align='center' colspan='2'>
-		<input type='submit' name='ACTION' value="Start" />
-		<input type='submit' name='ACTION' value="Stop" />
+		<input type='submit' name='ACTION' value="$Lang::tr{'start'}" />
+		<input type='submit' name='ACTION' value="$Lang::tr{'stop'}" />
 		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" /></table></form>
 END
 ;
@@ -1184,7 +1184,7 @@ sub showclasses {
 	  		@classline = split( /\;/, $classentry );
 	  		if ( $classline[0] eq $qossettings{'DEV'} )
 	  		{
-	  		  &Header::openbox('100%', 'center', "Klasse: $classline[1]");
+	  		  &Header::openbox('100%', 'center', "$Lang::tr{'Class'}: $classline[1]");
 	  			print <<END
 				<table border='0' width='100%' cellspacing='0'>
 				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
@@ -1208,22 +1208,22 @@ sub showclasses {
 					<table border='0'><tr>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
-						<input type='hidden' name='ACTION' value='Unterklasse hinzufuegen' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'qos add subclass'}' />
 						<input type='image' alt='$Lang::tr{'add subclass'}' src='/images/addblue.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
-						<input type='hidden' name='ACTION' value='Regel hinzufuegen' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'Add Rule'}' />
 						<input type='image' alt='$Lang::tr{'Add Rule'}' src='/images/addgreen.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
-						<input type='hidden' name='DOCLASS' value='Bearbeiten' />
+						<input type='hidden' name='DOCLASS' value='$Lang::tr{'edit'}' />
 						<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
-						<input type='hidden' name='DOCLASS' value='Loeschen' />
+						<input type='hidden' name='DOCLASS' value='$Lang::tr{'delete'}' />
 						<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 					</form>
 					</table>
@@ -1248,14 +1248,14 @@ END
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$l7ruleline[0]' />
 						<input type='hidden' name='L7PROT' value='$l7ruleline[2]' />
-						<input type='hidden' name='DOLEVEL7' value='Bearbeiten' />
-						<input type='image' alt='Bearbeiten' src='/images/edit.gif' />
+						<input type='hidden' name='DOLEVEL7' value='$Lang::tr{'edit'}' />
+						<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$l7ruleline[0]' />
 						<input type='hidden' name='L7PROT' value='$l7ruleline[2]' />
-						<input type='hidden' name='DOLEVEL7' value='Loeschen' />
-						<input type='image' alt='Loeschen' src='/images/delete.gif' />
+						<input type='hidden' name='DOLEVEL7' value='$Lang::tr{'delete'}' />
+						<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 					</form>
 					</table>
 END
@@ -1313,7 +1313,7 @@ END
 						<input type='hidden' name='QPORT' value='$portruleline[4]' />
 						<input type='hidden' name='DIP' value='$portruleline[5]' />
 						<input type='hidden' name='DPORT' value='$portruleline[6]' />
-						<input type='hidden' name='DOPORT' value='Bearbeiten' />
+						<input type='hidden' name='DOPORT' value='$Lang::tr{'edit'}' />
 						<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1323,7 +1323,7 @@ END
 						<input type='hidden' name='QPORT' value='$portruleline[4]' />
 						<input type='hidden' name='DIP' value='$portruleline[5]' />
 						<input type='hidden' name='DPORT' value='$portruleline[6]' />
-						<input type='hidden' name='DOPORT' value='Loeschen' />
+						<input type='hidden' name='DOPORT' value='$Lang::tr{'delete'}' />
 						<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 					</form>
 				    </table>
@@ -1371,14 +1371,14 @@ END
 								<input type='hidden' name='CLASS' value='$tosruleline[0]' />
 								<input type='hidden' name='DEV' value='$tosruleline[1]' />
 								<input type='hidden' name='TOS' value='$tosruleline[2]' />
-								<input type='hidden' name='DOTOS' value='Bearbeiten' />
+								<input type='hidden' name='DOTOS' value='$Lang::tr{'edit'}' />
 								<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 							</form>
 							<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 								<input type='hidden' name='CLASS' value='$tosruleline[0]' />
 								<input type='hidden' name='DEV' value='$tosruleline[1]' />
 								<input type='hidden' name='TOS' value='$tosruleline[2]' />
-								<input type='hidden' name='DOTOS' value='Loeschen' />
+								<input type='hidden' name='DOTOS' value='$Lang::tr{'delete'}' />
 								<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 							</form>
 				    		</table>
@@ -1406,17 +1406,17 @@ END
 						<table border='0'><tr>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]' />
-							<input type='hidden' name='ACTION' value='Regel hinzufuegen' />
+							<input type='hidden' name='ACTION' value='$Lang::tr{'Add Rule'}' />
 							<input type='image' alt='$Lang::tr{'Add Rule'}' src='/images/addgreen.gif' />
 						</form>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]' />
-							<input type='hidden' name='DOSCLASS' value='Bearbeiten' />
+							<input type='hidden' name='DOSCLASS' value='$Lang::tr{'edit'}' />
 							<input type='image' alt='$Lang::tr{'edit'}' src='/images/edit.gif' />
 						</form>
 						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='CLASS' value='$subclassline[2]' />
-							<input type='hidden' name='DOSCLASS' value='Loeschen' />
+							<input type='hidden' name='DOSCLASS' value='$Lang::tr{'delete'}' />
 							<input type='image' alt='$Lang::tr{'delete'}' src='/images/delete.gif' />
 						</form>
 						</table>
@@ -1496,7 +1496,7 @@ sub validclass {
 		} elsif ( $qossettings{'DEVICE'} eq $qossettings{'IMQ_DEV'} ) {
 			if ($qossettings{'CLASS'} lt 200 || $qossettings{'CLASS'} ge 221) {
 				$qossettings{'VALID'} = 'no';
-				$message = "Die Klassennummer passt nicht zum angegebenen Interface.";
+				$message = "$Lang::tr{'The class number does not match the specified interface.'}";
 			}
 		}
 		open( FILE, "< $classfile" ) or die "Unable to read $classfile";
