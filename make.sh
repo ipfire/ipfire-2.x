@@ -36,7 +36,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=1
+TOOLCHAINVER=2
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
 # Debian specific settings

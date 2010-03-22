@@ -1,0 +1,19 @@
+diff -Naur ccache-3.0pre0.org/ccache.c ccache-3.0pre0/ccache.c
+--- ccache-3.0pre0.org/ccache.c	2010-02-28 21:14:39.000000000 +0100
++++ ccache-3.0pre0/ccache.c	2010-03-22 08:08:43.000000000 +0100
+@@ -849,12 +849,14 @@
+ 
+ 	compilercheck = getenv("CCACHE_COMPILERCHECK");
+ 	if (!compilercheck) {
+-		compilercheck = "mtime";
++		compilercheck = "size";
+ 	}
+ 	if (strcmp(compilercheck, "none") == 0) {
+ 		/* Do nothing. */
+ 	} else if (strcmp(compilercheck, "content") == 0) {
+ 		hash_file(&hash, args->argv[0]);
++	} else if (strcmp(compilercheck, "size") == 0){
++		hash_int(&hash, st.st_size);
+ 	} else { /* mtime */
+ 		hash_int(&hash, st.st_size);
+ 		hash_int(&hash, st.st_mtime);

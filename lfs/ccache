@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.4
+VER        = 3.0pre0
 
 THISAPP    = ccache-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 73c1ed1e767c1752dd0f548ec1e66ce7
+$(DL_FILE)_MD5 = 3704f1cd486b1e63638fd17910c42e9f
 
 install : $(TARGET)
 
@@ -69,9 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -p0 < $(DIR_SRC)/src/patches/$(THISAPP).patch
-	cd $(DIR_APP) && CFLAGS="-O2 -static" ./configure --prefix=$(ROOT)/usr/local
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/$(THISAPP)-no_compiler_mtime.patch
+	cd $(DIR_APP) && CFLAGS="-O2 -static -DDEFAULT_MAXSIZE=2097152" ./configure --prefix=$(ROOT)/usr/local
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	ln -sf ccache $(ROOT)/usr/local/bin/gcc
