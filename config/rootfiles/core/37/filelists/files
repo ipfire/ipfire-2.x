@@ -15,9 +15,11 @@ srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 srv/web/ipfire/cgi-bin/media.cgi
+srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 usr/local/bin/sshctrl
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/langs/fr.pl
 opt/pakfire/lib/functions.pl
+opt/pakfire/lib/functions.sh
