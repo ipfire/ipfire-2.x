@@ -48,6 +48,10 @@ ln -sf  ../init.d/cyrus-sasl /etc/rc.d/rc6.d/K49cyrus-sasl
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #
+#Fix permissions of update booster
+chown -R nobody:nobody /var/ipfire/updatexlrator
+
+#
 #Run depmod to rebuld module informations
 depmod 2.6.27.42-ipfire
 depmod 2.6.27.42-ipfire-xen
