@@ -262,7 +262,7 @@
 * openldap-2.3.20
 * openmailadmin-1.0.0
 * openssh-5.4p1
-* openssl-0.9.8m
+* openssl-0.9.8n
 * openswan-2.6.23
 * openswan-2.6.23-kmod-2.6.27.42-ipfire
 * openswan-2.6.23-kmod-2.6.27.42-ipfire-xen
