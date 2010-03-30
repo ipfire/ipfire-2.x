@@ -3,10 +3,15 @@ boot/System.map-ipfire
 boot/config-KVER-ipfire
 boot/vmlinuz-KVER-ipfire
 boot/vmlinuz-ipfire
-#lib/firmware/acenic/tg1.bin
+#lib/firmware/bnx2/bnx2-mips-06-5.0.0.j3.fw
 #lib/firmware/bnx2/bnx2-mips-09-5.0.0.j3.fw
+#lib/firmware/bnx2/bnx2-rv2p-09-5.0.0.j3.fw
+#lib/firmware/bnx2/bnx2-rv2p-09ax-5.0.0.j3.fw
 #lib/firmware/bnx2x-e1-5.0.21.0.fw
 #lib/firmware/bnx2x-e1h-5.0.21.0.fw
+#lib/firmware/cxgb3/ael2005_opt_edc.bin
+#lib/firmware/keyspan/usa28x.fw
+#lib/firmware/keyspan/usa49w.fw
 lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/build
 #lib/modules/KVER-ipfire/kernel

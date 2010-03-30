@@ -21,13 +21,13 @@ boot/vmlinuz-ipfire-xen
 #lib/firmware/av7110
 #lib/firmware/av7110/bootcode.bin
 #lib/firmware/bnx2
-#lib/firmware/bnx2/bnx2-mips-06-5.0.0.j3.fw
-#lib/firmware/bnx2/bnx2-mips-09-5.0.0.j3.fw
+#lib/firmware/bnx2/bnx2-mips-06-5.0.0.j6.fw
+#lib/firmware/bnx2/bnx2-mips-09-5.0.0.j9.fw
 #lib/firmware/bnx2/bnx2-rv2p-06-5.0.0.j3.fw
-#lib/firmware/bnx2/bnx2-rv2p-09-5.0.0.j3.fw
-#lib/firmware/bnx2/bnx2-rv2p-09ax-5.0.0.j3.fw
-#lib/firmware/bnx2x-e1-5.2.7.0.fw
-#lib/firmware/bnx2x-e1h-5.2.7.0.fw
+#lib/firmware/bnx2/bnx2-rv2p-09-5.0.0.j10.fw
+#lib/firmware/bnx2/bnx2-rv2p-09ax-5.0.0.j10.fw
+#lib/firmware/bnx2x-e1-5.2.13.0.fw
+#lib/firmware/bnx2x-e1h-5.2.13.0.fw
 #lib/firmware/cis
 #lib/firmware/cis/3CCFEM556.cis
 #lib/firmware/cis/3CXEM556.cis
@@ -759,7 +759,6 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-log-userspace.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-log.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-memcache.ko
-#lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-message.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-mirror.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-mod.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-multipath.ko
@@ -1180,6 +1179,7 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/hp-wmi.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/intel_menlow.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/msi-laptop.ko
+#lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/msi-wmi.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/panasonic-laptop.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/sony-laptop.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/tc1100-wmi.ko
@@ -1291,8 +1291,6 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/megaraid/megaraid_mbox.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/megaraid/megaraid_mm.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/megaraid/megaraid_sas.ko
-#lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/mpt2sas
-#lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/mpt2sas/mpt2sas.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/mvsas
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/mvsas/mvsas.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/nsp32.ko
