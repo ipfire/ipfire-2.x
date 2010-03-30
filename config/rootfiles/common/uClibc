@@ -399,6 +399,7 @@
 #opt/i586-uClibc/include/linux/cramfs_fs_sb.h
 #opt/i586-uClibc/include/linux/crc32.h
 #opt/i586-uClibc/include/linux/crypto.h
+#opt/i586-uClibc/include/linux/cryptodev.h
 #opt/i586-uClibc/include/linux/ctype.h
 #opt/i586-uClibc/include/linux/cuda.h
 #opt/i586-uClibc/include/linux/cyclades.h
