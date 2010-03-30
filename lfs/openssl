@@ -70,7 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8k-cryptodev.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8n-cryptodev.diff
 ifeq "$(PADLOCK)" "1"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8g-engine-padlock.patch
 endif
