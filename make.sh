@@ -341,6 +341,7 @@ buildipfire() {
   ipfiremake unzip
   ipfiremake which
   ipfiremake xz
+  ipfiremake linux-firmware
   ipfiremake linux			XEN=1
   ipfiremake kqemu			XEN=1
   #ipfiremake kvm-kmod			XEN=1
