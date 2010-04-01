@@ -264,6 +264,9 @@ print <<END
 	iptables -t mangle -I POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
 	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS
 
+	### Don't change mark on traffic for the ipsec tunnel
+	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
+
 	### MARK ACKs
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j MARK --set-mark $qossettings{'ACK'}
