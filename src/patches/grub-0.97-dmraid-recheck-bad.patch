@@ -1,0 +1,17 @@
+--- grub-0.97/util/grub-install.in.dmraid-recheck-bad	2006-01-13 17:04:26.000000000 -0500
++++ grub-0.97/util/grub-install.in	2006-01-13 17:05:00.000000000 -0500
+@@ -415,6 +415,14 @@
+ grubdir=${bootdir}/grub
+ device_map=${grubdir}/device.map
+ 
++if [ "$recheck" == "yes" ]; then
++    if grep 'mapper' ${device_map} >/dev/null; then
++	echo 'grub-install does not support reprobing of device.map when' 1>&2
++	echo 'using a device-mapper based boot device.' 1>&2
++	exit 1
++    fi
++fi
++
+ # if they just want the images copied, copy the images and then exit
+ if test $justcopy = yes; then
+     copy_images

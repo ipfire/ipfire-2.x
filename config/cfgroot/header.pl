@@ -494,3 +494,29 @@ sub leasesort {
 	}
     }
 }
+
+sub colorize {
+	my $string =  $_[0];
+	my @array = split(/\//,$string);
+	my $string2 = $array[0];
+
+	if ( $string eq "*" or $string eq "" ){
+		return $string;
+	} elsif ( $string =~ "ipsec" ){
+		return "<font color='".${Header::colourvpn}."'>".$string."</font>";
+	} elsif ( $string =~ "tun" ){
+		return "<font color='".${Header::colourovpn}."'>".$string."</font>";
+	} elsif ( $string =~ "lo" or $string =~ "127.0.0.0" ){
+		return "<font color='".${Header::colourfw}."'>".$string."</font>";
+	} elsif ( $string =~ $ethsettings{'GREEN_DEV'} or &IpInSubnet($string2,$ethsettings{'GREEN_NETADDRESS'},$ethsettings{'GREEN_NETMASK'}) ){
+		return "<font color='".${Header::colourgreen}."'>".$string."</font>";
+	} elsif (  $string =~ "ppp0" or $string =~ $ethsettings{'RED_DEV'} or $string =~ "0.0.0.0" or $string =~ $ethsettings{'RED_ADDRESS'} ){
+		return "<font color='".${Header::colourred}."'>".$string."</font>";
+	} elsif ( $ethsettings{'CONFIG_TYPE'}>1 and ( $string =~ $ethsettings{'BLUE_DEV'} or &IpInSubnet($string2,$ethsettings{'BLUE_NETADDRESS'},$ethsettings{'BLUE_NETMASK'}) )){
+		return "<font color='".${Header::colourblue}."'>".$string."</font>";
+	} elsif ( $ethsettings{'CONFIG_TYPE'}>2 and ( $string =~ $ethsettings{'ORANGE_DEV'} or &IpInSubnet($string2,$ethsettings{'ORANGE_NETADDRESS'},$ethsettings{'ORANGE_NETMASK'}) )){
+		return "<font color='".${Header::colourorange}."'>".$string."</font>";
+	} else {
+		return $string;
+	}
+}

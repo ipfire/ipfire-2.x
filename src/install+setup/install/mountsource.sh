@@ -24,7 +24,7 @@ echo "Scanning source media"
 # scan CDROM devices
 for DEVICE in $(kudzu -qps -t 30 -c CDROM | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		mount /dev/${DEVICE} /cdrom 2> /dev/null
-		if [ -n "$(ls /cdrom/ipfire-*.tbz2 2>/dev/null)" ]; then
+		if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
 			echo -n ${DEVICE} > /tmp/source_device
 			echo "Found tarball on ${DEVICE}"
 			exit 0
@@ -37,7 +37,7 @@ done
 # scan HD device part1 (usb sticks, etc.)
 for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		mount /dev/${DEVICE}1 /cdrom 2> /dev/null
-		if [ -n "$(ls /cdrom/ipfire-*.tbz2 2>/dev/null)" ]; then
+		if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
 			echo -n ${DEVICE}1 > /tmp/source_device
 			echo "Found tarball on ${DEVICE}1"
 			exit 0
@@ -50,7 +50,7 @@ done
 # scan HD device unpart (usb sticks, etc.)
 for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		mount /dev/${DEVICE} /cdrom 2> /dev/null
-		if [ -n "$(ls /cdrom/ipfire-*.tbz2 2>/dev/null)" ]; then
+		if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
 			echo -n ${DEVICE} > /tmp/source_device
 			echo "Found tarball on ${DEVICE}"
 			exit 0

@@ -264,6 +264,9 @@ print <<END
 	iptables -t mangle -I POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
 	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS
 
+	### Don't change mark on traffic for the ipsec tunnel
+	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
+
 	### MARK ACKs
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j MARK --set-mark $qossettings{'ACK'}
@@ -514,7 +517,7 @@ print <<END
 
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-INC
-	iptables -t mangle -A POSTROUTING -m mark ! --mark 0 -o ! $qossettings{'RED_DEV'} -j IMQ --todev 0
+	iptables -t mangle -A POSTROUTING -m mark ! --mark 0 ! -o $qossettings{'RED_DEV'} -j IMQ --todev 0
 	iptables -t mangle -I FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
 	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
 
@@ -687,7 +690,7 @@ print <<END
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
-	iptables -t mangle --delete POSTROUTING -m mark ! --mark 0 -o ! $qossettings{'RED_DEV'} -j IMQ --todev 0 >/dev/null 2>&1
+	iptables -t mangle --delete POSTROUTING -m mark ! --mark 0 ! -o $qossettings{'RED_DEV'} -j IMQ --todev 0 >/dev/null 2>&1
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0  >/dev/null 2>&1
 	# rmmod imq # this crash on 2.6.25.xx
 	# REMOVE & FLUSH CHAINS

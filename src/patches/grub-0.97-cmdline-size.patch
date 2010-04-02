@@ -1,0 +1,45 @@
+diff --git a/stage2/boot.c b/stage2/boot.c
+index bf442e1..a6872e0 100644
+--- a/stage2/boot.c
++++ b/stage2/boot.c
+@@ -241,6 +241,7 @@ load_image (char *kernel, char *arg, kernel_t suggested_type,
+ 	    }
+ 
+ 	  if (lh->version >= 0x0202)
++	    /* version 0x0202 and higher can handle 4096 */
+ 	    lh->cmd_line_ptr = linux_data_real_addr + LINUX_CL_OFFSET;
+ 	  else
+ 	    {
+@@ -403,8 +404,10 @@ load_image (char *kernel, char *arg, kernel_t suggested_type,
+ 	  {
+ 	    char *src = skip_to (0, arg);
+ 	    char *dest = linux_data_tmp_addr + LINUX_CL_OFFSET;
+-	
+-	    while (dest < linux_data_tmp_addr + LINUX_CL_END_OFFSET && *src)
++            unsigned long cl_end_offset = lh->version < 0x0202 ? 
++                LINUX_CL_END_OFFSET : LINUX_CL_END_OFFSET_202;
++
++	    while (dest < linux_data_tmp_addr + cl_end_offset && *src)
+ 	      *(dest++) = *(src++);
+ 	
+ 	    /* Old Linux kernels have problems determining the amount of
+diff --git a/stage2/shared.h b/stage2/shared.h
+index d05644b..c052480 100644
+--- a/stage2/shared.h
++++ b/stage2/shared.h
+@@ -160,10 +160,13 @@ extern void *grub_scratch_mem;
+ #define LINUX_VID_MODE_ASK		0xFFFD
+ 
+ #define LINUX_CL_OFFSET			0x9000
+-#define LINUX_CL_END_OFFSET		0x90FF
+-#define LINUX_SETUP_MOVE_SIZE		0x9100
+ #define LINUX_CL_MAGIC			0xA33F
+ 
++#define LINUX_CL_END_OFFSET		0x90FF
++#define LINUX_CL_END_OFFSET_202		0x9FFF /* version 0x0202 or higher */
++#define LINUX_SETUP_MOVE_SIZE		0xA000 /* where am I putting it? */
++
++
+ /*
+  *  General disk stuff
+  */

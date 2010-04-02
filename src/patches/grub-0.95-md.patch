@@ -1,0 +1,183 @@
+--- grub-0.95/util/grub-install.in.support_md	2004-12-17 17:50:45.000000000 -0500
++++ grub-0.95/util/grub-install.in	2004-12-19 19:19:20.509409160 -0500
+@@ -207,6 +207,43 @@
+ 	echo "$tmp_fname"
+ }
+ 
++# Usage: is_raid1_device devicename
++# Returns 0 if devicename is a raid1 md device, 1 if it is not.
++is_raid1_device () {
++    case "$host_os" in
++    linux*)
++	level=`mdadm --query --detail $1 2>/dev/null | \
++		awk '/Raid Level :/ {print $4}'` 
++	if [ "$level" = "raid1" ]; then
++	    return 0
++	fi
++    ;;
++    esac
++    return 1
++}
++
++# Usage: find_real_devs device
++# Returns space separated list of devices for linux if device is 
++# a raid1 device. In all other cases, the provided value is returned.
++find_real_devs () {
++    source_device=$1
++    case "$host_os" in
++    linux*)
++	if is_raid1_device $source_device ; then
++	    list=""
++	    for device in `mdadm --query --detail "${source_device}" | \
++		    awk '/\/dev\/[^(md)]/ {print $7}'` ; do
++		list="$list $device"
++	    done
++	    echo $list
++	    return 0
++	fi
++    ;;
++    esac
++    echo $source_device
++    return 0
++}
++
+ # Usage: find_device file
+ # Find block device on which the file resides.
+ find_device () {
+@@ -219,7 +256,7 @@
+ 	exit 1
+     fi
+ 
+-	tmp_fname=`resolve_symlink $tmp_fname`
++    tmp_fname=`resolve_symlink $tmp_fname`
+ 
+     echo "$tmp_fname"
+ }
+@@ -379,7 +416,11 @@
+ # Check for INSTALL_DEVICE.
+ case "$install_device" in
+ /dev/*)
++    # If we are running md on a Linux box, just use the first physical device
++    # at this point.
+     install_device=`resolve_symlink "$install_device"`
++    install_device=`find_real_devs $install_device | awk '{print $1}'`
++
+     install_drive=`convert "$install_device"`
+     # I don't know why, but some shells wouldn't die if exit is
+     # called in a function.
+@@ -408,14 +449,7 @@
+     grub_prefix="/grub"
+ fi
+ 
+-# Convert the root device to a GRUB drive.
+-root_drive=`convert "$root_device"`
+-if test "x$root_drive" = x; then
+-    exit 1
+-fi
+-
+-# Check if the root directory exists in the same device as the grub
+-# directory.
++# Check if the root directory exists in the same device as the grub directory.
+ grubdir_device=`find_device ${grubdir}`
+ 
+ if test "x$grubdir_device" != "x$root_device"; then
+@@ -431,30 +465,40 @@
+ test -n "$mkimg" && img_file=`$mkimg`
+ test -n "$mklog" && log_file=`$mklog`
+ 
+-for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
+-    count=5
+-    tmp=`echo $file | sed "s|^${grubdir}|${grub_prefix}|"`
+-    while test $count -gt 0; do
+-	$grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
++for real_device in `find_real_devs $root_device`; do
++    # Convert the root deviceto a GRUB drive.
++    root_drive=`convert "$real_device"`
++    if [ "x$root_drive" = x ]; then
++	exit 1
++    fi
++
++    for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
++	count=5
++	tmp=`echo $file | sed "s|^${grubdir}|${grub_prefix}|"`
++	while test $count -gt 0; do
++	    sync
++	    $grub_shell --batch $no_floppy --device-map=$device_map \
++		<<EOF >$log_file
+ dump ${root_drive}${tmp} ${img_file}
+ quit
+ EOF
+-	if grep "Error [0-9]*: " $log_file >/dev/null; then
+-	    :
+-	elif cmp $file $img_file >/dev/null; then
+-	    break
++	    if grep "Error [0-9]*: " $log_file >/dev/null; then
++		:
++	    elif cmp $file $img_file >/dev/null; then
++		break
++	    fi
++	    sleep 1
++	    count=`expr $count - 1`    
++	done
++	if test $count -eq 0; then
++	    echo "The file $file not read correctly." 1>&2
++	    exit 1
+ 	fi
+-	sleep 1
+-	count=`expr $count - 1`    
+     done
+-    if test $count -eq 0; then
+-	echo "The file $file not read correctly." 1>&2
+-	exit 1
+-    fi
+-done
+ 
+-rm -f $img_file
+-rm -f $log_file
++    rm -f $img_file
++    rm -f $log_file
++done
+ 
+ if ! test -e ${grubdir}/grub.conf ; then
+     test -e ${grubdir}/menu.lst && ln -s ./menu.lst ${grubdir}/grub.conf
+@@ -463,21 +507,33 @@
+ # Create a safe temporary file.
+ test -n "$mklog" && log_file=`$mklog`
+ 
+-# Before all invocations of the grub shell, call sync to make sure
+-# the raw device is in sync with any bufferring in filesystems.
+-sync
++for real_device in `find_real_devs $root_device`; do
++    # Convert the root deviceto a GRUB drive.
++    root_drive=`convert "$real_device"`
++    if [ "x$root_drive" = x ]; then
++	exit 1
++    fi
++
++    # Before all invocations of the grub shell, call sync to make sure
++    # the raw device is in sync with any bufferring in filesystems.
++    sync
+ 
+-# Now perform the installation.
+-$grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
++    # Now perform the installation.
++    $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >>$log_file
+ root $root_drive
+-setup $force_lba --stage2=$grubdir/stage2 --prefix=$grub_prefix $install_drive
++setup $force_lba --stage2=$grubdir/stage2 --prefix=$grub_prefix $root_drive
+ quit
+ EOF
+ 
+-if grep "Error [0-9]*: " $log_file >/dev/null || test $debug = yes; then
++done
++
++if grep "Error [0-9]*: " $log_file >/dev/null ; then
+     cat $log_file 1>&2
+     exit 1
+ fi
++if test $debug = yes; then
++    cat $log_file 1>&2
++fi
+ 
+ rm -f $log_file
+ 

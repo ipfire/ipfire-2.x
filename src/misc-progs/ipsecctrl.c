@@ -30,21 +30,16 @@
 
 */
 
-#define phystable       "IPSECPHYSICAL"
-#define virtualtable    "IPSECVIRTUAL"
-
 void usage() {
         fprintf (stderr, "Usage:\n");
         fprintf (stderr, "\tipsecctrl S [connectionkey]\n");
         fprintf (stderr, "\tipsecctrl D [connectionkey]\n");
         fprintf (stderr, "\tipsecctrl R\n");
+        fprintf (stderr, "\tipsecctrl I\n");
         fprintf (stderr, "\t\tS : Start/Restart Connection\n");
         fprintf (stderr, "\t\tD : Stop Connection\n");
         fprintf (stderr, "\t\tR : Reload Certificates and Secrets\n");
-}
-
-void load_modules() {
-        safe_system("/sbin/modprobe ipsec");
+        fprintf (stderr, "\t\tI : Print Statusinfo\n");
 }
 
 /*
@@ -54,108 +49,31 @@ void open_physical (char *interface, int nat_traversal_port) {
         char str[STRING_SIZE];
 
         // GRE ???
-        sprintf(str, "/sbin/iptables -A " phystable " -p 47  -i %s -j ACCEPT", interface);
-        safe_system(str);
+//        sprintf(str, "/sbin/iptables -A " phystable " -p 47  -i %s -j ACCEPT", interface);
+//        safe_system(str);
         // ESP
-        sprintf(str, "/sbin/iptables -A " phystable " -p 50  -i %s -j ACCEPT", interface);
-        safe_system(str);
+//        sprintf(str, "/sbin/iptables -A " phystable " -p 50  -i %s -j ACCEPT", interface);
+//        safe_system(str);
         // AH
-        sprintf(str, "/sbin/iptables -A " phystable " -p 51  -i %s -j ACCEPT", interface);
-        safe_system(str);
+//        sprintf(str, "/sbin/iptables -A " phystable " -p 51  -i %s -j ACCEPT", interface);
+//        safe_system(str);
         // IKE
-        sprintf(str, "/sbin/iptables -A " phystable " -p udp -i %s --sport 500 --dport 500 -j ACCEPT", interface);
+        sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --sport 500 --dport 500 -j ACCEPT", interface);
         safe_system(str);
 
         if (! nat_traversal_port) 
             return;
 
-        sprintf(str, "/sbin/iptables -A " phystable " -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
+        sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
         safe_system(str);
-}
-
-/*
-    Basic control for what can flow from/to ipsecX interfaces.
-
-    rc.firewall call this chain just before ACCEPTing everything
-    from green (-i DEV_GREEN -j ACCEPT).
-*/
-void open_virtual (void) {
-        // allow anything from any ipsec to go on all interface, including other ipsec
-        safe_system("/sbin/iptables -A " virtualtable " -i ipsec+ -j ACCEPT");
-        //todo: BOT extension?; allowing ipsec0<<==port-list-filter==>>GREEN ?
 }
 
 void ipsec_norules() {
         /* clear input rules */
-        safe_system("/sbin/iptables -F " phystable);
-        safe_system("/sbin/iptables -F " virtualtable);
+        safe_system("/sbin/iptables -F IPSECINPUT");
+        safe_system("/sbin/iptables -F IPSECFORWARD");
+        safe_system("/sbin/iptables -F IPSECOUTPUT");
 
-        // unmap red alias ????
-}
-
-
-void add_alias_interfaces(char *configtype,
-                          char *redtype,
-                          char *redif,
-                          int offset)           //reserve room for ipsec0=red, ipsec1=green, ipsec2=orange,ipsec3=blue
-{
-        FILE *file = NULL;
-        char s[STRING_SIZE];
-        int alias=0;
-
-        /* Check for CONFIG_TYPE=2 or 3 i.e. RED ethernet present. If not,
-        * exit gracefully.  This is not an error... */
-        if (!((strcmp(configtype, "1")==0) || (strcmp(configtype, "2")==0) || (strcmp(configtype, "3")==0) || (strcmp(configtype, "4")==0)))
-                return;
-
-        /* Now check the RED_TYPE - aliases only work with STATIC. */
-        if (!(strcmp(redtype, "STATIC")==0))
-                return;
-
-        /* Now set up the new aliases from the config file */
-        if (!(file = fopen(CONFIG_ROOT "/ethernet/aliases", "r")))
-        {
-                fprintf(stderr, "Unable to open aliases configuration file\n");
-                return;
-        }
-        while (fgets(s, STRING_SIZE, file) != NULL && (offset+alias) < 16 )
-        {
-                if (s[strlen(s) - 1] == '\n')
-                        s[strlen(s) - 1] = '\0';
-                int count = 0;
-                char *aliasip=NULL;
-                char *enabled=NULL;
-                char *comment=NULL;
-                char *sptr = strtok(s, ",");
-                while (sptr)
-                {
-                        if (count == 0)
-                                aliasip = sptr;
-                        if (count == 1)
-                                enabled = sptr;
-                        else
-                                comment = sptr;
-                        count++;
-                        sptr = strtok(NULL, ",");
-                }
-
-                if (!(aliasip && enabled))
-                        continue;
-
-                if (!VALID_IP(aliasip))
-                {
-                        fprintf(stderr, "Bad alias : %s\n", aliasip);
-                        return;
-                }
-
-                if (strcmp(enabled, "on") == 0)
-                {
-                        memset(s, 0, STRING_SIZE);
-                        snprintf(s, STRING_SIZE-1, "/usr/sbin/ipsec tncfg --attach --virtual ipsec%d --physical %s:%d >/dev/null", offset+alias, redif, alias);
-                        safe_system(s);
-                        alias++;
-                }
-        }
 }
 
 /*
@@ -220,7 +138,7 @@ int decode_line (char *s,
 void turn_connection_on (char *name, char *type) {
         char command[STRING_SIZE];
 
-        safe_system("/usr/sbin/ipsec auto --rereadsecrets >/dev/null");
+        safe_system("/usr/sbin/ipsec whack --rereadsecrets >/dev/null");
         memset(command, 0, STRING_SIZE);
         snprintf(command, STRING_SIZE - 1, 
                 "/usr/sbin/ipsec auto --replace %s >/dev/null", name);
@@ -228,7 +146,7 @@ void turn_connection_on (char *name, char *type) {
         if (strcmp(type, "net") == 0) {
                 memset(command, 0, STRING_SIZE);
                 snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec auto --asynchronous --up %s >/dev/null", name);
+                "/usr/sbin/ipsec whack --asynchronous --name %s --initiate >/dev/null", name);
                 safe_system(command);
         }
 }
@@ -240,13 +158,13 @@ void turn_connection_off (char *name) {
 
         memset(command, 0, STRING_SIZE);
         snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec auto --down %s >/dev/null", name);
+                "/usr/sbin/ipsec whack --name %s --terminate >/dev/null", name);
         safe_system(command);
         memset(command, 0, STRING_SIZE);
         snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec auto --delete %s >/dev/null", name);
+                "/usr/sbin/ipsec whack --delete --name %s >/dev/null", name);
         safe_system(command);
-        safe_system("/usr/sbin/ipsec auto --rereadsecrets >/dev/null");
+        safe_system("/usr/sbin/ipsec whack --rereadsecrets >/dev/null");
 }
 
 
@@ -291,9 +209,15 @@ int main(int argc, char *argv[]) {
                 }
 
                 if (strcmp(argv[1], "R") == 0) {
-                        safe_system("/usr/sbin/ipsec auto --rereadall");
+                        safe_system("/usr/sbin/ipsec whack --rereadall");
                         exit(0);
                 }
+
+                if (strcmp(argv[1], "I") == 0) {
+                        safe_system("/usr/sbin/ipsec whack --status");
+                        exit(0);
+                }
+
         }
 
         /* clear iptables vpn rules */
@@ -422,15 +346,9 @@ int main(int argc, char *argv[]) {
         if (enable_blue==2)
                 open_physical(if_blue, 4500);
 
-        // then open the ipsecX
-        open_virtual();
-
         // start the system
         if ((argc == 2) && strcmp(argv[1], "S") == 0) {
-                load_modules();
-                safe_system("/usr/sbin/ipsec tncfg --clear >/dev/null");
                 safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
-                add_alias_interfaces(configtype, redtype, if_red, (enable_red+enable_green+enable_orange+enable_blue) >>1 );
                 safe_system("/usr/local/bin/vpn-watch &");
                 exit(0);
         }

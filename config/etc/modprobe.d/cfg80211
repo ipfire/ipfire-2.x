@@ -1,0 +1,2 @@
+options cfg80211 ieee80211_regdom=EU
+blacklist ieee80211

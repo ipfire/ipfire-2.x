@@ -70,7 +70,7 @@ core/%:
 		--exclude='proc/*' --exclude='tmp/ROOTFILES' \
 		--exclude-from=$(DIR_SRC)/config/rootfiles/$@/exclude
 	mv -f /tmp/ROOTFILES /install/packages/package/ROOTFILES
-	tar --preserve --numeric-owner -x  -C /tmp -f /$(SNAME).tar
+	tar -p --numeric-owner -x  -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	cd /tmp && tar cf /install/packages/package/files * && rm -rf *
 	cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp

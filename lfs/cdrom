@@ -66,7 +66,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	@mkdir /tmp/sys
-	cd /tmp && tar jcf /install/cdrom/$(SNAME)-$(VERSION).tbz2 * && rm -rf *
+	cd /tmp && tar  cf /install/cdrom/$(SNAME)-$(VERSION).tlz --lzma * && rm -rf *
 
 	# Other files
 	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt

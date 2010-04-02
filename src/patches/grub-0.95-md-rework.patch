@@ -1,0 +1,183 @@
+--- grub-0.95/util/grub-install.in.md2	2005-01-03 14:49:18.133866107 -0500
++++ grub-0.95/util/grub-install.in	2005-01-03 16:35:44.923732271 -0500
+@@ -35,6 +35,7 @@
+ rootdir=
+ grub_prefix=/boot/grub
+ 
++install_drives=
+ install_device=
+ no_floppy=
+ force_lba=
+@@ -272,6 +273,30 @@
+     done
+ }
+ 
++
++dump_boot_block () {
++    sync
++    $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >$log_file
++dump ${root_drive}${tmp} ${img_file}
++quit
++EOF
++}
++
++
++install_boot_block () {
++    # Before all invocations of the grub shell, call sync to make sure
++    # the raw device is in sync with any bufferring in filesystems.
++    sync
++
++    # Now perform the installation.
++    $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >>$log_file
++root $1
++setup $force_lba --stage2=$grubdir/stage2 --prefix=$grub_prefix $2
++quit
++EOF
++}
++
++
+ # Check the arguments.
+ for option in "$@"; do
+     case "$option" in
+@@ -416,28 +441,32 @@
+ # Check for INSTALL_DEVICE.
+ case "$install_device" in
+ /dev/*)
+-    # If we are running md on a Linux box, just use the first physical device
+-    # at this point.
+     install_device=`resolve_symlink "$install_device"`
+-    install_device=`find_real_devs $install_device | awk '{print $1}'`
+-
+-    install_drive=`convert "$install_device"`
+-    # I don't know why, but some shells wouldn't die if exit is
+-    # called in a function.
+-    if test "x$install_drive" = x; then
++    for install_drive in `find_real_devs $install_device` ; do
++	install_drive=`convert $install_drive`
++	if [ "x$install_drive" = "x" ]; then
++	    exit 1
++	fi
++	install_drives="${install_drives} ${install_drive}"
++    done
++    unset install_drive
++	
++    if test "x$install_drives" = x ; then
+ 	exit 1
+     fi ;;
+ \([hf]d[0-9]*\))
+-    install_drive="$install_device" ;;
++    install_drives="$install_device" ;;
+ [hf]d[0-9]*)
+     # The GRUB format with no parenthesis.
+-    install_drive="($install_device)" ;;
++    install_drives="($install_device)" ;;
+ *)
+     echo "Format of install_device not recognized." 1>&2
+     usage
+     exit 1 ;;
+ esac
+ 
++unset install_device
++
+ # Get the root drive.
+ root_device=`find_device ${rootdir}`
+ bootdir_device=`find_device ${bootdir}`
+@@ -465,41 +494,39 @@
+ test -n "$mkimg" && img_file=`$mkimg`
+ test -n "$mklog" && log_file=`$mklog`
+ 
+-for real_device in `find_real_devs $root_device`; do
+-    # Convert the root deviceto a GRUB drive.
+-    root_drive=`convert "$real_device"`
+-    if [ "x$root_drive" = x ]; then
+-	exit 1
+-    fi
++# There's not a real root device, so just pick the first
++if is_raid1_device $root_device ; then
++    root_device=`find_real_devs $root_device | awk '{print $1}'`
++fi
+ 
+-    for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
+-	count=5
+-	tmp=`echo $file | sed "s|^${grubdir}|${grub_prefix}|"`
+-	while test $count -gt 0; do
+-	    sync
+-	    $grub_shell --batch $no_floppy --device-map=$device_map \
+-		<<EOF >$log_file
+-dump ${root_drive}${tmp} ${img_file}
+-quit
+-EOF
+-	    if grep "Error [0-9]*: " $log_file >/dev/null; then
+-		:
+-	    elif cmp $file $img_file >/dev/null; then
+-		break
+-	    fi
+-	    sleep 1
+-	    count=`expr $count - 1`    
+-	done
+-	if test $count -eq 0; then
+-	    echo "The file $file not read correctly." 1>&2
+-	    exit 1
+-	fi
+-    done
++# Convert the root deviceto a GRUB drive.
++root_drive=`convert "$root_device"`
++if [ "x$root_drive" = x ]; then
++    exit 1
++fi
+ 
+-    rm -f $img_file
+-    rm -f $log_file
++for file in ${grubdir}/stage1 ${grubdir}/stage2 ${grubdir}/*stage1_5; do
++    count=5
++    tmp=`echo $file | sed "s|^${grubdir}|${grub_prefix}|"`
++    while test $count -gt 0; do
++        dump_boot_block $root_drive $img_file
++        if grep "Error [0-9]*: " $log_file >/dev/null; then
++    	:
++        elif cmp $file $img_file >/dev/null; then
++    	break
++        fi
++        sleep 1
++        count=`expr $count - 1`    
++    done
++    if test $count -eq 0; then
++        echo "The file $file not read correctly." 1>&2
++        exit 1
++    fi
+ done
+ 
++rm -f $img_file
++rm -f $log_file
++
+ if ! test -e ${grubdir}/grub.conf ; then
+     test -e ${grubdir}/menu.lst && ln -s ./menu.lst ${grubdir}/grub.conf
+ fi
+@@ -507,24 +534,13 @@
+ # Create a safe temporary file.
+ test -n "$mklog" && log_file=`$mklog`
+ 
+-for real_device in `find_real_devs $root_device`; do
++for install_drive in $install_drives; do 
+     # Convert the root deviceto a GRUB drive.
+-    root_drive=`convert "$real_device"`
++    root_drive=`convert "$root_device"`
+     if [ "x$root_drive" = x ]; then
+ 	exit 1
+     fi
+-
+-    # Before all invocations of the grub shell, call sync to make sure
+-    # the raw device is in sync with any bufferring in filesystems.
+-    sync
+-
+-    # Now perform the installation.
+-    $grub_shell --batch $no_floppy --device-map=$device_map <<EOF >>$log_file
+-root $root_drive
+-setup $force_lba --stage2=$grubdir/stage2 --prefix=$grub_prefix $root_drive
+-quit
+-EOF
+-
++    install_boot_block $root_drive $install_drive
+ done
+ 
+ if grep "Error [0-9]*: " $log_file >/dev/null ; then

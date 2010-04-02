@@ -4,6 +4,7 @@
 'Act as' => 'Act as:',
 'Add Port Rule' => 'Add port rule',
 'Add Rule' => 'Add rule',
+'Async logging enabled' => 'Activer écriture asynchrone de syslogs',
 'optional at cmd' => 'optional AT command',
 'Choose Rule' => 'Choose <u>one</u> of the following rules.',
 'Class' => 'Class',

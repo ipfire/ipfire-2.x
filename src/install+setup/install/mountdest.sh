@@ -25,7 +25,7 @@ echo "Scanning for possible destination drives"
 echo "--> IDE"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-		if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
 			echo "${DEVICE}1 is source drive - SKIP"
 			continue
@@ -41,14 +41,14 @@ done
 echo "--> USB/SCSI"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 | sort | uniq); do
     		mount /dev/${DEVICE} /harddisk 2> /dev/null
-		if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
 			echo "${DEVICE} is source drive - SKIP"
 			continue
 		else
 			umount /harddisk 2> /dev/null
 			mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-			if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 				umount /harddisk 2> /dev/null
 				echo "${DEVICE}1 is source drive - SKIP"
 				continue
@@ -65,21 +65,21 @@ done
 echo "--> RAID"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 | sort | uniq); do
 		mount /dev/${DEVICE}p1 /harddisk 2> /dev/null
-		if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
 			echo "${DEVICE}p1 is source drive - SKIP"
 			continue
 		else
 			umount /harddisk 2> /dev/null
 			mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-			if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 				umount /harddisk 2> /dev/null
 				echo "${DEVICE}1 is source drive - SKIP"
 				continue
 			else
 				umount /harddisk 2> /dev/null
 				mount /dev/${DEVICE} /harddisk 2> /dev/null
-				if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+				if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 					umount /harddisk 2> /dev/null
 					echo "${DEVICE} is source drive - SKIP"
 					continue
@@ -99,14 +99,14 @@ for DEVICE in vda vdb vdc vdd; do
 			continue
 		else
 			mount /dev/${DEVICE} /harddisk 2> /dev/null
-			if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 				umount /harddisk 2> /dev/null
 				echo "${DEVICE} is source drive - SKIP"
 				continue
 			else
 				umount /harddisk 2> /dev/null
 				mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-				if [ -n "$(ls /harddisk/ipfire-*.tbz2 2>/dev/null)" ]; then
+				if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 					umount /harddisk 2> /dev/null
 					echo "${DEVICE}1 is source drive - SKIP"
 					continue

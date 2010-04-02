@@ -86,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mount -o loop $(IMGvar) $(MNThdd)/var
 
 	# Install IPFire without kernel modules
-	tar -C $(MNThdd)/ -xvjf /install/cdrom/$(SNAME)-$(VERSION).tbz2 \
+	tar -C $(MNThdd)/ -xvf /install/cdrom/$(SNAME)-$(VERSION).tlz --lzma \
 		--exclude=lib/modules* --exclude=boot*
 
 	#Install Xen Kernel
@@ -129,9 +129,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|FSTYPE|ext3|g" $(MNThdd)/etc/fstab
 	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
 	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
-
-	#Remove reiser4 because it is not work with xen-kernel
-	sed -i -e "s|reiser4 | |g" $(MNThdd)/etc/mkinitcpio.conf
 
 	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-xen.img -k $(KVER)-ipfire-xen
 	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf

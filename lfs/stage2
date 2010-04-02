@@ -69,9 +69,7 @@ $(TARGET) :
 	-ln -sv bash /bin/sh
 
 	# Config files
-	for i in $(DIR_SRC)/config/etc/*; do \
-	    [ -f $$i ] && cp $$i /etc; \
-	done
+	cp -rvf $(DIR_SRC)/config/etc/* /etc;
 	touch /etc/mtab
 	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
 	echo "===============================" >> /etc/issue

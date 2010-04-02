@@ -337,7 +337,7 @@ END
 	if ( `cat /var/ipfire/vpn/settings | grep ^ENABLED=on` ||
 	     `cat /var/ipfire/vpn/settings | grep ^ENABLED_BLUE=on` ) { 
 		my $ipsecip = `cat /var/ipfire/vpn/settings | grep ^VPN_IP= | cut -c 8-`;
-		my @status = `/usr/sbin/ipsec auto --status`;
+		my @status = `/usr/local/bin/ipsecctrl I`;
 		my %confighash = ();
 		&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 		print <<END;

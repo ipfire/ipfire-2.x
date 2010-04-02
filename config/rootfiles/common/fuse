@@ -6,6 +6,7 @@ usr/bin/fusermount
 usr/bin/ulockmgr_server
 #usr/include/fuse
 #usr/include/fuse.h
+#usr/include/fuse/cuse_lowlevel.h
 #usr/include/fuse/fuse.h
 #usr/include/fuse/fuse_common.h
 #usr/include/fuse/fuse_common_compat.h
@@ -18,7 +19,7 @@ usr/bin/ulockmgr_server
 #usr/lib/libfuse.la
 usr/lib/libfuse.so
 usr/lib/libfuse.so.2
-usr/lib/libfuse.so.2.7.4
+usr/lib/libfuse.so.2.8.3
 #usr/lib/libulockmgr.a
 #usr/lib/libulockmgr.la
 usr/lib/libulockmgr.so

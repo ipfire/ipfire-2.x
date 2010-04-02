@@ -248,9 +248,9 @@ sub writeipsecfiles {
     foreach my $key (keys %lconfighash) {
 	next if ($lconfighash{$key}[0] ne 'on');
         $interfaces .= "%defaultroute " 		    if ($interfaces !~ /defaultroute/ && $lconfighash{$key}[26] eq 'RED');
-	$interfaces .= "ipsec1=$netsettings{'GREEN_DEV'} "  if ($interfaces !~ /ipsec1/	      && $lconfighash{$key}[26] eq 'GREEN');
-	$interfaces .= "ipsec2=$netsettings{'BLUE_DEV'} "   if ($interfaces !~ /ipsec2/	      && $lconfighash{$key}[26] eq 'BLUE');
-	$interfaces .= "ipsec3=$netsettings{'ORANGE_DEV'} " if ($interfaces !~ /ipsec3/	      && $lconfighash{$key}[26] eq 'ORANGE');
+	#$interfaces .= "ipsec1=$netsettings{'GREEN_DEV'} "  if ($interfaces !~ /ipsec1/	      && $lconfighash{$key}[26] eq 'GREEN');
+	#$interfaces .= "ipsec2=$netsettings{'BLUE_DEV'} "   if ($interfaces !~ /ipsec2/	      && $lconfighash{$key}[26] eq 'BLUE');
+	#$interfaces .= "ipsec3=$netsettings{'ORANGE_DEV'} " if ($interfaces !~ /ipsec3/	      && $lconfighash{$key}[26] eq 'ORANGE');
     }
     print CONF $interfaces . "\"\n";
 
@@ -264,6 +264,8 @@ sub writeipsecfiles {
     # deprecated in ipsec.conf version 2
     #print CONF "\tplutoload=%search\n";
     #print CONF "\tplutostart=%search\n";
+    #Disable IKEv2 deamon
+    print CONF "\tcharonstart=no\n";
     print CONF "\tuniqueids=yes\n";
     print CONF "\tnat_traversal=yes\n";
     print CONF "\toverridemtu=$lvpnsettings{'VPN_OVERRIDE_MTU'}\n" if ($lvpnsettings{'VPN_OVERRIDE_MTU'} ne '');
@@ -283,7 +285,8 @@ sub writeipsecfiles {
     print CONF "\n\n";
     print CONF "conn %default\n";
     print CONF "\tkeyingtries=0\n";
-    print CONF "\tdisablearrivalcheck=no\n";
+    #strongswan doesn't know this
+    #print CONF "\tdisablearrivalcheck=no\n";
     print CONF "\n";
 
     if (-f "${General::swroot}/certs/hostkey.pem") {
@@ -312,6 +315,7 @@ sub writeipsecfiles {
 	print CONF "\tleft=$localside\n";
 	print CONF "\tleftnexthop=%defaultroute\n" if ($lconfighash{$key}[26] eq 'RED' && $lvpnsettings{'VPN_IP'} ne '%defaultroute');
 	print CONF "\tleftsubnet=$lconfighash{$key}[8]\n";
+	print CONF "\tleftfirewall=yes\n";
 
 	print CONF "\tright=$lconfighash{$key}[10]\n";
 	if ($lconfighash{$key}[3] eq 'net') {
@@ -2383,7 +2387,7 @@ EOF
     &General::readhasharray("${General::swroot}/vpn/config", \%confighash);
     $cgiparams{'CA_NAME'} = '';
 
-    my @status = `/usr/sbin/ipsec auto --status`;
+    my @status = `/usr/local/bin/ipsecctrl I`;
 
     # suggest a default name for this side
     if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {

@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 #
-KVER=2.6.27.42
+KVER=2.6.32.10
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
@@ -64,8 +64,6 @@ fi
 #
 cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
 sed -i -e "s| autodetect | |g" /etc/mkinitcpio.conf
-# Remove Reiser4 (not working with xen)
-sed -i -e "s|reiser4 | |g" /etc/mkinitcpio.conf
 mkinitcpio -k $KVER-ipfire-xen -g /boot/ipfirerd-$KVER-xen.img
 #
 # Create new module depency

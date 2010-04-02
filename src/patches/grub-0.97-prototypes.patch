@@ -1,0 +1,11 @@
+--- grub-0.97/acinclude.m4.prototypes	2005-12-12 19:07:24.000000000 -0500
++++ grub-0.97/acinclude.m4	2005-12-12 19:07:56.000000000 -0500
+@@ -44,6 +44,8 @@
+ [AC_MSG_CHECKING([whether ${OBJCOPY} works for absolute addresses])
+ AC_CACHE_VAL(grub_cv_prog_objcopy_absolute,
+ [cat > conftest.c <<\EOF
++void cmain(void);
++
+ void
+ cmain (void)
+ {

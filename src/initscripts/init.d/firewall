@@ -101,8 +101,7 @@ iptables_red() {
 		# This rule enables a host on ORANGE network to connect to the outside
 		# (only if we have a red connection)
 		if [ "$IFACE" != "" ]; then
-			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -p tcp -o $IFACE -j ACCEPT
-			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -p udp -o $IFACE -j ACCEPT
+			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -o $IFACE -j ACCEPT
 		fi
 	fi
 
@@ -117,7 +116,8 @@ iptables_red() {
 			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 		fi
 
-		# Outgoing masquerading
+		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
+		/sbin/iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
 		/sbin/iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
 
 	fi
@@ -132,7 +132,7 @@ case "$1" in
 	# original do nothing line
 	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -m limit --limit 10/sec
 	# the correct one, but the negative '!' do nothing...
-	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -m limit ! --limit 10/sec -j DROP
+	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN ! -m limit --limit 10/sec -j DROP
 
 	# Fix for braindead ISP's
 	/sbin/iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
@@ -167,14 +167,17 @@ case "$1" in
 	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
 	
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
-	/sbin/iptables -N IPSECVIRTUAL
+	/sbin/iptables -N IPSECINPUT
+	/sbin/iptables -N IPSECFORWARD
+	/sbin/iptables -N IPSECOUTPUT
 	/sbin/iptables -N OPENSSLVIRTUAL
-	/sbin/iptables -A INPUT -j IPSECVIRTUAL -m comment --comment "IPSECVIRTUAL INPUT"
+	/sbin/iptables -A INPUT -j IPSECINPUT
 	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL INPUT"
-	/sbin/iptables -A FORWARD -j IPSECVIRTUAL -m comment --comment "IPSECVIRTUAL FORWARD"
+	/sbin/iptables -A FORWARD -j IPSECFORWARD
 	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
-	/sbin/iptables -t nat -N IPSECNAT
-	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
+	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
+	#/sbin/iptables -t nat -N IPSECNAT
+	#/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFW
@@ -186,7 +189,7 @@ case "$1" in
 	/sbin/iptables -A FORWARD -i lo          -m state --state NEW -j ACCEPT
 	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT -p ! icmp
+	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT ! -p icmp
 	/sbin/iptables -A FORWARD -i $GREEN_DEV  -m state --state NEW -j ACCEPT
 
 	# If a host on orange tries to initiate a connection to IPFire's red IP and
@@ -197,10 +200,6 @@ case "$1" in
 	# allow DHCP on BLUE to be turned on/off
 	/sbin/iptables -N DHCPBLUEINPUT 
 	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
-
-	# IPSec
-	/sbin/iptables -N IPSECPHYSICAL
-	/sbin/iptables -A INPUT -j IPSECPHYSICAL
 
 	# OPenSSL
 	/sbin/iptables -N OPENSSLPHYSICAL

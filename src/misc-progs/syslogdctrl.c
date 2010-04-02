@@ -30,7 +30,8 @@
 
 int main(void)
 {
-   char buffer[STRING_SIZE], command[STRING_SIZE], hostname[STRING_SIZE], varmessages[STRING_SIZE];
+   char buffer[STRING_SIZE], command[STRING_SIZE], hostname[STRING_SIZE];
+   char varmessages[STRING_SIZE], enable_asynclog[STRING_SIZE];
    int config_fd,rc,fd,pid;
    struct stat st;
    struct keyvalue *kv = NULL;
@@ -62,6 +63,13 @@ int main(void)
       fprintf(stderr, "Cannot read REMOTELOG_ADDR\n");
       exit(ERR_SETTINGS);
    }
+
+   if (!findkey(kv, "ENABLE_ASYNCLOG", enable_asynclog))
+   {
+      fprintf(stderr, "Cannot read ENABLE_ASYNCLOG\n");
+      exit(ERR_SETTINGS);
+   }
+
    
    if (!findkey(kv, "VARMESSAGES", varmessages))
    {
@@ -123,9 +131,13 @@ int main(void)
    close(config_fd);
    
    /* Replace the logging option*/
-
      safe_system("grep -v '/var/log/messages' < /etc/syslog.conf.new > /etc/syslog.conf.tmp && mv /etc/syslog.conf.tmp /etc/syslog.conf.new");
+   
+   if (strcmp(enable_asynclog,"on"))
+     snprintf(command, STRING_SIZE-1, "printf '%s     -/var/log/messages' >> /etc/syslog.conf.new", varmessages );
+   else
      snprintf(command, STRING_SIZE-1, "printf '%s     /var/log/messages' >> /etc/syslog.conf.new", varmessages );
+
      safe_system(command);
 
    if (rename("/etc/syslog.conf.new", "/etc/syslog.conf") == -1)

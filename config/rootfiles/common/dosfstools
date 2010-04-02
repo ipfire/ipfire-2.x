@@ -1,9 +1,9 @@
-#sbin/dosfsck
-#sbin/fsck.msdos
-#sbin/fsck.vfat
-#sbin/mkdosfs
-#sbin/mkfs.msdos
-#sbin/mkfs.vfat
+sbin/dosfsck
+sbin/fsck.msdos
+sbin/fsck.vfat
+sbin/mkdosfs
+sbin/mkfs.msdos
+sbin/mkfs.vfat
 #usr/man/man8/dosfsck.8
 #usr/man/man8/fsck.msdos.8
 #usr/man/man8/fsck.vfat.8

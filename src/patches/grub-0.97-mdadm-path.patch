@@ -1,0 +1,27 @@
+--- grub-0.97/util/grub-install.in.mdadm-path	2005-12-12 18:42:23.000000000 -0500
++++ grub-0.97/util/grub-install.in	2005-12-12 18:44:15.000000000 -0500
+@@ -30,5 +30,6 @@
+ pkglibdir=${libdir}/${PACKAGE}/${host_cpu}-${host_vendor}
+ 
+ grub_shell=${sbindir}/grub
++mdadm=${sbindir}/mdadm
+ log_file=/tmp/grub-install.log.$$
+ img_file=/tmp/grub-install.img.$$
+@@ -217,7 +218,7 @@
+ is_raid1_device () {
+     case "$host_os" in
+     linux*)
+-	level=`mdadm --query --detail $1 2>/dev/null | \
++	level=`$mdadm --query --detail $1 2>/dev/null | \
+ 		awk '/Raid Level :/ {print $4}'` 
+ 	if [ "$level" = "raid1" ]; then
+ 	    return 0
+@@ -236,7 +237,7 @@
+     linux*)
+ 	if is_raid1_device $source_device ; then
+ 	    list=""
+-	    for device in `mdadm --query --detail "${source_device}" | \
++	    for device in `$mdadm --query --detail "${source_device}" | \
+ 		    awk '/\/dev\/[^(md)]/ {print $7}'` ; do
+ 		list="$list $device"
+ 	    done

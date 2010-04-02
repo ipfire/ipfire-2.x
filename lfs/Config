@@ -194,12 +194,12 @@ define PAK
 	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cf /install/packages/package/files.tmp --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
-		--preserve --numeric-owner
+		-p --numeric-owner
 	# Double tar to remove double files
 	tar xf /install/packages/package/files.tmp -C /install/packages/package/tmp/ \
-		--preserve --numeric-owner
+		-p --numeric-owner
 	rm -f /install/packages/package/files.tmp
-	cd /install/packages/package/tmp/ && tar -c --preserve --numeric-owner -f /install/packages/package/files * 		
+	cd /install/packages/package/tmp/ && tar -c -p --numeric-owner -f /install/packages/package/files * 		
 	rm -r /install/packages/package/tmp
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES

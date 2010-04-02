@@ -1,0 +1,115 @@
+--- grub-0.95/grub/asmstub.c.odirect	2004-11-30 16:58:06.577019488 -0500
++++ grub-0.95/grub/asmstub.c	2004-11-30 16:59:56.057375944 -0500
+@@ -53,6 +53,9 @@
+ # ifndef BLKFLSBUF
+ #  define BLKFLSBUF	_IO (0x12,97)	/* flush buffer cache */
+ # endif /* ! BLKFLSBUF */
++# ifndef O_DIRECT
++#   define O_DIRECT 040000
++# endif /* ! O_DIRECT */
+ #endif /* __linux__ */
+ 
+ /* We want to prevent any circularararity in our stubs, as well as
+@@ -764,7 +767,7 @@
+     {
+       /* The unpartitioned device name: /dev/XdX */
+       char *devname = device_map[drive];
+-      char buf[512];
++      char * buf, * buf_unaligned;
+ 
+       if (! devname)
+ 	return -1;
+@@ -775,13 +778,13 @@
+ 
+       /* Open read/write, or read-only if that failed. */
+       if (! read_only)
+-	disks[drive].flags = open (devname, O_RDWR);
++	disks[drive].flags = open (devname, O_RDWR | O_DIRECT);
+ 
+       if (disks[drive].flags == -1)
+ 	{
+ 	  if (read_only || errno == EACCES || errno == EROFS || errno == EPERM)
+ 	    {
+-	      disks[drive].flags = open (devname, O_RDONLY);
++	      disks[drive].flags = open (devname, O_RDONLY | O_DIRECT);
+ 	      if (disks[drive].flags == -1)
+ 		{
+ 		  assign_device_name (drive, 0);
+@@ -795,6 +798,10 @@
+ 	    }
+ 	}
+ 
++      buf_unaligned = malloc((512 * sizeof(char)) + 4095);
++      buf = (char *) (((unsigned long)buf_unaligned + 4096 - 1) &
++                      (~(4096-1)));
++
+       /* Attempt to read the first sector.  */
+       if (read (disks[drive].flags, buf, 512) != 512)
+ 	{
+@@ -806,6 +813,7 @@
+ 
+       if (disks[drive].flags != -1)
+ 	get_drive_geometry (&disks[drive], device_map, drive);
++      free(buf_unaligned);
+     }
+ 
+   if (disks[drive].flags == -1)
+@@ -827,24 +835,34 @@
+ nread (int fd, char *buf, size_t len)
+ {
+   int size = len;
++  char * buf_unaligned, * buff, * obuff;
++  int ret;
++
++  buf_unaligned = malloc((len * sizeof(char)) + 4095);
++  obuff = buff = (char *) (((unsigned long)buf_unaligned + 4096 - 1) &
++                           (~(4096-1)));
++
+ 
+   while (len)
+     {
+-      int ret = read (fd, buf, len);
++      ret = read (fd, buff, len);
+ 
+       if (ret <= 0)
+ 	{
+ 	  if (errno == EINTR)
+ 	    continue;
+ 	  else
+-	    return ret;
++            break;
+ 	}
+ 
+       len -= ret;
+-      buf += ret;
++      buff += ret;
+     }
+ 
+-  return size;
++  if (!len) ret = size;
++
++  buf = memcpy(buf, obuff, size);
++  return ret;
+ }
+ 
+ /* Write LEN bytes from BUF to FD. Return less than or equal to zero if an
+@@ -853,10 +871,18 @@
+ nwrite (int fd, char *buf, size_t len)
+ {
+   int size = len;
++  char * buf_unaligned, * buff;
++
++  buf_unaligned = malloc((len * sizeof(char)) + 4095);
++  buff = (char *) (((unsigned long)buf_unaligned + 4096 - 1) &
++                   (~(4096-1)));
+ 
+   while (len)
+     {
+-      int ret = write (fd, buf, len);
++      int ret;
++
++      memcpy(buff, buf, len);
++      ret = write (fd, buff, len);
+ 
+       if (ret <= 0)
+ 	{

@@ -23,7 +23,7 @@
 #usr/bin/mrd
 #usr/bin/mren
 #usr/bin/mshowfat
-#usr/bin/mtools
+usr/bin/mtools
 #usr/bin/mtoolstest
 #usr/bin/mtype
 #usr/bin/mxtar

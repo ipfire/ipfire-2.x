@@ -65,6 +65,7 @@ usr/lib/perl5/site_perl/5.8.8/Dahdi/Xpp/Xbus.pm
 usr/lib/perl5/site_perl/5.8.8/Dahdi/Xpp/Xpd.pm
 usr/sbin/astribank_allow
 usr/sbin/astribank_hexload
+usr/sbin/astribank_is_starting
 usr/sbin/astribank_tool
 usr/sbin/dahdi_cfg
 usr/sbin/dahdi_genconf
@@ -79,6 +80,7 @@ usr/sbin/fpga_load
 usr/sbin/fxotune
 usr/sbin/lsdahdi
 usr/sbin/sethdlc
+usr/sbin/twinstar
 usr/sbin/xpp_blink
 usr/sbin/xpp_sync
 #usr/share/dahdi
@@ -101,6 +103,7 @@ usr/share/dahdi/waitfor_xpds
 usr/share/dahdi/xpp_fxloader
 #usr/share/man/man8/astribank_allow.8
 #usr/share/man/man8/astribank_hexload.8
+#usr/share/man/man8/astribank_is_starting.8
 #usr/share/man/man8/astribank_tool.8
 #usr/share/man/man8/dahdi_cfg.8
 #usr/share/man/man8/dahdi_genconf.8
@@ -113,6 +116,7 @@ usr/share/dahdi/xpp_fxloader
 #usr/share/man/man8/fpga_load.8
 #usr/share/man/man8/fxotune.8
 #usr/share/man/man8/lsdahdi.8
+#usr/share/man/man8/twinstar.8
 #usr/share/man/man8/xpp_blink.8
 #usr/share/man/man8/xpp_sync.8
 #var/ipfire/asterisk
