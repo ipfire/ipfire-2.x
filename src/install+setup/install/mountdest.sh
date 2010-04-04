@@ -24,6 +24,11 @@ echo "Scanning for possible destination drives"
 # scan IDE devices
 echo "--> IDE"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+		if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
+			umount /harddisk 2> /dev/null
+			echo "${DEVICE} is empty - SKIP"
+			continue
+		fi
 		mount /dev/${DEVICE}1 /harddisk 2> /dev/null
 		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
@@ -40,7 +45,12 @@ done
 # scan USB/SCSI devices
 echo "--> USB/SCSI"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-    		mount /dev/${DEVICE} /harddisk 2> /dev/null
+		if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
+			umount /harddisk 2> /dev/null
+			echo "${DEVICE} is empty - SKIP"
+			continue
+		fi
+		mount /dev/${DEVICE} /harddisk 2> /dev/null
 		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
 			echo "${DEVICE} is source drive - SKIP"
@@ -64,6 +74,11 @@ done
 # scan RAID devices
 echo "--> RAID"
 for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+		if [ "$(grep ${DEVICE}p1 /proc/partitions)" = "" ]; then
+			umount /harddisk 2> /dev/null
+			echo "${DEVICE}p1 is empty - SKIP"
+			continue
+		fi
 		mount /dev/${DEVICE}p1 /harddisk 2> /dev/null
 		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
@@ -71,6 +86,11 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 
 			continue
 		else
 			umount /harddisk 2> /dev/null
+			if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
+				umount /harddisk 2> /dev/null
+				echo "${DEVICE} is empty - SKIP"
+				continue
+			fi
 			mount /dev/${DEVICE}1 /harddisk 2> /dev/null
 			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 				umount /harddisk 2> /dev/null
@@ -98,6 +118,11 @@ for DEVICE in vda vdb vdc vdd; do
 		if [ ! -e /dev/${DEVICE} ]; then
 			continue
 		else
+			if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
+				umount /harddisk 2> /dev/null
+				echo "${DEVICE} is empty - SKIP"
+				continue
+			fi
 			mount /dev/${DEVICE} /harddisk 2> /dev/null
 			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 				umount /harddisk 2> /dev/null
