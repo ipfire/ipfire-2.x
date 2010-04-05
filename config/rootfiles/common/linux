@@ -3,15 +3,8 @@ boot/System.map-ipfire
 boot/config-KVER-ipfire
 boot/vmlinuz-KVER-ipfire
 boot/vmlinuz-ipfire
-#lib/firmware/bnx2/bnx2-mips-06-5.0.0.j3.fw
-#lib/firmware/bnx2/bnx2-mips-09-5.0.0.j3.fw
-#lib/firmware/bnx2/bnx2-rv2p-09-5.0.0.j3.fw
-#lib/firmware/bnx2/bnx2-rv2p-09ax-5.0.0.j3.fw
 #lib/firmware/bnx2x-e1-5.0.21.0.fw
 #lib/firmware/bnx2x-e1h-5.0.21.0.fw
-#lib/firmware/cxgb3/ael2005_opt_edc.bin
-#lib/firmware/keyspan/usa28x.fw
-#lib/firmware/keyspan/usa49w.fw
 lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/build
 #lib/modules/KVER-ipfire/kernel
@@ -549,6 +542,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/input/misc/cm109.ko
 #lib/modules/KVER-ipfire/kernel/drivers/input/misc/keyspan_remote.ko
 #lib/modules/KVER-ipfire/kernel/drivers/input/misc/pcf50633-input.ko
+#lib/modules/KVER-ipfire/kernel/drivers/input/misc/pcspkr.ko
 #lib/modules/KVER-ipfire/kernel/drivers/input/misc/powermate.ko
 #lib/modules/KVER-ipfire/kernel/drivers/input/misc/winbond-cir.ko
 #lib/modules/KVER-ipfire/kernel/drivers/input/misc/wm831x-on.ko

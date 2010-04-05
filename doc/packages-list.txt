@@ -85,8 +85,8 @@
 * dhcpcd-5.1.3
 * diffutils-2.8.1
 * dnsmasq-2.45
-* dosfstools-2.11
-* e2fsprogs-1.39
+* dosfstools-3.0.9
+* e2fsprogs-1.41.11
 * ebtables-v2.0.8-2
 * ed-0.2
 * eject-2.1.5
@@ -274,8 +274,8 @@
 * qemu-0.11.0-kqemu
 * qemu-0.12.2
 * readline-5.1
-* reiser4progs-1.0.5
-* reiserfsprogs-3.6.19
+* reiser4progs-1.0.6
+* reiserfsprogs-3.6.21
 * rp-pppoe-3.8
 * rrdtool-1.2.30
 * rssdler-0.4.0a
