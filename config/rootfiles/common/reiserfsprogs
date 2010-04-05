@@ -5,8 +5,8 @@ sbin/mkreiserfs
 sbin/reiserfsck
 sbin/reiserfstune
 sbin/resize_reiserfs
-#usr/man/man8/debugreiserfs.8
-#usr/man/man8/mkreiserfs.8
-#usr/man/man8/reiserfsck.8
-#usr/man/man8/reiserfstune.8
-#usr/man/man8/resize_reiserfs.8
+#usr/share/man/man8/debugreiserfs.8
+#usr/share/man/man8/mkreiserfs.8
+#usr/share/man/man8/reiserfsck.8
+#usr/share/man/man8/reiserfstune.8
+#usr/share/man/man8/resize_reiserfs.8
