@@ -1,4 +1,4 @@
-etc/init.d/lcr
+etc/rc.d/init.d/lcr
 usr/bin/gentones
 usr/bin/genwave
 usr/bin/lcradmin

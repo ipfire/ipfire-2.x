@@ -1,5 +1,5 @@
 var/ipfire/backup/addons/includes/mldonkey
-etc/init.d/mldonkey
+etc/rc.d/init.d/mldonkey
 #opt/mldonkey
 opt/mldonkey/.mldonkey
 #opt/mldonkey/.mldonkey/bittorrent.ini

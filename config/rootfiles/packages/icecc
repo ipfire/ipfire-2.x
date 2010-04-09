@@ -15,4 +15,4 @@
 #opt/icecream/sbin
 opt/icecream/sbin/icecc-scheduler
 opt/icecream/sbin/iceccd
-etc/init.d/icecream
+etc/rc.d/init.d/icecream

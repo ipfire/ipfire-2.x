@@ -1,5 +1,5 @@
 etc/amavisd.conf
-etc/init.d/amavisd
+etc/rc.d/init.d/amavisd
 usr/bin/amavisd
 var/amavis
 var/amavis/db

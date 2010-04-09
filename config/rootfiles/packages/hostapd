@@ -14,5 +14,5 @@ var/ipfire/wlanap/hostapd.deny
 var/ipfire/wlanap/settings
 srv/web/ipfire/cgi-bin/wlanap.cgi
 var/ipfire/menu.d/EX-wlanap.menu
-etc/init.d/hostapd
+etc/rc.d/init.d/hostapd
 usr/local/bin/wlanapctrl

@@ -1,4 +1,4 @@
-etc/init.d/spamassassin
+etc/rc.d/init.d/spamassassin
 etc/mail
 #etc/mail/spamassassin
 #etc/mail/spamassassin/init.pre

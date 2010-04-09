@@ -1,4 +1,4 @@
-etc/init.d/portmap
+etc/rc.d/init.d/portmap
 sbin/portmap
 #sbin/pmap_dump
 #sbin/pmap_set
