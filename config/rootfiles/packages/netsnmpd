@@ -586,4 +586,4 @@ usr/share/snmp/snmpconf-data/snmptrapd-data/logging
 usr/share/snmp/snmpconf-data/snmptrapd-data/runtime
 usr/share/snmp/snmpconf-data/snmptrapd-data/snmpconf-config
 usr/share/snmp/snmpconf-data/snmptrapd-data/traphandle
-etc/init.d/netsnmpd
+etc/rc.d/init.d/netsnmpd

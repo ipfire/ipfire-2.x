@@ -1,4 +1,4 @@
-etc/init.d/nfs-server
+etc/rc.d/init.d/nfs-server
 #usr/man/man5/exports.5
 #usr/man/man7/nfsd.7
 #usr/man/man8/exportfs.8

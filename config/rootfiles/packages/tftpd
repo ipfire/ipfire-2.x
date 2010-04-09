@@ -1,4 +1,4 @@
-etc/init.d/tftpd
+etc/rc.d/init.d/tftpd
 #usr/man/man1/tftp.1
 #usr/man/man8/in.tftpd.8
 #usr/man/man8/tftpd.8

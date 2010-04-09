@@ -2,7 +2,7 @@
 etc/gnump3d/file.types
 etc/gnump3d/gnump3d.conf
 etc/gnump3d/mime.types
-etc/init.d/gnump3d
+etc/rc.d/init.d/gnump3d
 etc/fcron.daily/gnump3d-index
 usr/bin/gnump3d
 usr/bin/gnump3d-index

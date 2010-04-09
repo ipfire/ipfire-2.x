@@ -1,4 +1,4 @@
-etc/init.d/fetchmail
+etc/rc.d/init.d/fetchmail
 root/.fetchmailrc
 usr/bin/fetchmail
 #usr/bin/fetchmailconf
