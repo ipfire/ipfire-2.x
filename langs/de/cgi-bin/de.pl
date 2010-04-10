@@ -956,7 +956,7 @@
 'invalid keep time' => 'Die Aufbewahrungszeit muss eine gültige Zahl sein',
 'invalid key' => 'Ungültiger Schlüssel.',
 'invalid loaded file' => 'Ungültige geladene Datei',
-'invalid local-remote id' => 'Falls verwendet, dürfen leftid und rightid nicht gleich sein, und mit einem "@"-Zeichen beginnen. Dies sind leftid und rightid in der OpenSwan-Terminologie.',
+'invalid local-remote id' => 'Local-Id und Remote-Id dürfen nicht gleich sein, und müssen einem "@"-Zeichen beginnen. Dies sind leftid und rightid in der StrongSwan-Terminologie.',
 'invalid logserver address' => 'Ungültige syslogd server Adresse',
 'invalid mac address' => 'Ungültige MAC-Adresse',
 'invalid max lease time' => 'Ungültige max. Haltezeit.',
