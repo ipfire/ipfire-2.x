@@ -1952,10 +1952,9 @@ END
 	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'remote subnet'}</td>
 	    <td><input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size='30' /></td>
 	</tr><tr>
-	    <td class='boldbase'>$Lang::tr{'vpn local id'}:&nbsp;<img src='/blob.gif' alt='*' />
-	    <br />($Lang::tr{'eg'} <tt>&#64;xy.example.com</tt>)</td>
+	    <td class='boldbase'>$Lang::tr{'vpn local id'}:<br />($Lang::tr{'eg'} <tt>&#64;xy.example.com</tt>)</td>
 	    <td><input type='text' name='LOCAL_ID' value='$cgiparams{'LOCAL_ID'}' /></td>
-	    <td class='boldbase'>$Lang::tr{'vpn remote id'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	    <td class='boldbase'>$Lang::tr{'vpn remote id'}:</td>
 	    <td><input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' /></td>
 	</tr><tr>
 	</tr><td><br /></td><tr>
