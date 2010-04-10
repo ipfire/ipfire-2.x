@@ -5,6 +5,3 @@ usr/sbin/poundctl
 #usr/share/man/man8/poundctl.8
 var/ipfire/backup/addons/includes/pound
 etc/rc.d/init.d/pound
-usr/lib/libpcreposix.so
-usr/lib/libpcreposix.so.0
-usr/lib/libpcreposix.so.0.0.0
