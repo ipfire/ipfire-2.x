@@ -349,7 +349,7 @@ buildipfire() {
   ipfiremake madwifi			XEN=1
   #ipfiremake alsa			XEN=1 KMOD=1
   ipfiremake dahdi			XEN=1 KMOD=1
-#  ipfiremake openswan			XEN=1 KMOD=1
+  #ipfiremake openswan			XEN=1 KMOD=1
   #ipfiremake mISDN			XEN=1
   #ipfiremake compat-wireless		XEN=1
   ipfiremake cryptodev			XEN=1
@@ -639,6 +639,7 @@ buildipfire() {
   ipfiremake zerofree
   ipfiremake mdadm
   ipfiremake eject
+  ipfiremake pound
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
