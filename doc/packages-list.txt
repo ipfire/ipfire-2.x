@@ -62,6 +62,7 @@
 * cacti-0.8.7e
 * calamaris-2.59
 * capi4k-utils-2005-07-18
+* ccache-2.4
 * ccache-3.0pre0
 * cdrtools-2.01.01
 * centerim-4.22.1
@@ -282,7 +283,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.7
 * rtorrent-0.8.6
-* samba-3.5.1
+* samba-3.5.2
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
@@ -298,7 +299,7 @@
 * splix-2.0.0-rc2
 * sqlite-3.6.10
 * squashfs-lzma-cvs20100214
-* squid-2.7.STABLE7
+* squid-2.7.STABLE9
 * squidGuard-1.4.1
 * squidclamav-5.2
 * sshfs-fuse-2.2
