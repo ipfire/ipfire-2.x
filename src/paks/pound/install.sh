@@ -29,6 +29,4 @@ ln -svf  ../init.d/pound /etc/rc.d/rc0.d/K20pound
 ln -svf  ../init.d/pound /etc/rc.d/rc3.d/S40pound
 ln -svf  ../init.d/pound /etc/rc.d/rc6.d/K20pound
 
-mkdir -p /var/run/pound
-
 start_service --background ${NAME}
