@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.7.STABLE7
+VER        = 2.7.STABLE9
 
 THISAPP    = squid-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c18b0371fca813d5e7c7e0baf87baa22
+$(DL_FILE)_MD5 = 7d3b8b0bdda3ae56e438d4a95a97d3b3
 
 install : $(TARGET)
 
@@ -69,7 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
 	   --datadir=/usr/lib/squid \
