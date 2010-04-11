@@ -5,5 +5,4 @@ usr/sbin/poundctl
 #usr/share/man/man8/pound.8
 #usr/share/man/man8/poundctl.8
 var/ipfire/backup/addons/includes/pound
-#var/run/pound
 etc/rc.d/init.d/pound
