@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.3.11
+VER        = 6.3.16
 
 THISAPP    = fetchmail-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fetchmail
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = ""
 
@@ -44,11 +44,12 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 43b28f296cc0024d3c727319eacae324
+$(DL_FILE)_MD5 = 1a40acb371376c7d54fe468c99dfc216
 
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
