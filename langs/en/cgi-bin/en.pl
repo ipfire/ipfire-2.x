@@ -47,6 +47,7 @@
 'mpfire search' => 'MPFire Search',
 'repeat' => 'Repeat',
 'shuffle' => 'Shuffle',
+'Set time on boot' => 'Force setting the system clock on boot',
 'Port Rule' => 'Port-Rule',
 'qos add subclass' => 'Add subclass',
 'The source IP address is invalid.' => 'The source IP address is invalid.',

@@ -14,6 +14,7 @@
 'ConnSched add action' => 'Aktion hinzufügen',
 'ConnSched change profile title' => 'Wechsle zu Profil:',
 'ConnSched days' => 'Tage:',
+'Set time on boot' => 'Erzwinge das Setzen der Systemzeit im Bootvorgang',
 'ConnSched down' => 'Runter',
 'ConnSched ipsecstart' => 'IPSec (neu)starten',
 'ConnSched ipsecstop' => 'IPSec stop',
