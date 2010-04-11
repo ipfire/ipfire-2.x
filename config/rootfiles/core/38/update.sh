@@ -66,6 +66,11 @@ rm -rf /lib/modules/*-ipfire
 #
 
 #
+# Stop Sevices
+#
+/etc/init.d/squid stop
+
+#
 # Backup grub.conf
 #
 cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
@@ -132,6 +137,10 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 # Todo convert ipsec.conf from open to strongswan...
 #
+#
+# Start Sevices
+#
+/etc/init.d/squid start
 #
 # Delete old lm-sensor modullist...
 #
