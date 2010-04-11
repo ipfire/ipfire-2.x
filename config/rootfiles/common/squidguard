@@ -1,6 +1,5 @@
 #etc/squidGuard
 etc/squidGuard/squidGuard.conf
-srv/web/ipfire/html/repository
 usr/bin/squidGuard
 usr/sbin/redirect_wrapper
 #usr/squidGuard
@@ -80,3 +79,5 @@ var/ipfire/urlfilter/version
 var/lib/squidguard
 #var/log/squidGuard
 var/log/squidGuard/squidGuard.log
+var/urlrepo
+

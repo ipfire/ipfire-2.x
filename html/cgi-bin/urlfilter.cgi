@@ -59,7 +59,7 @@ my $tcfile = "${General::swroot}/urlfilter/timeconst";
 my $uqfile = "${General::swroot}/urlfilter/userquota";
 my $dbdir = "${General::swroot}/urlfilter/blacklists";
 my $editdir = "${General::swroot}/urlfilter/editor";
-my $repository = "/home/httpd/html/repository";
+my $repository = "/var/urlrepo";
 my $hintcolour = '#FFFFCC';
 
 my $sourceurlfile = "${General::swroot}/urlfilter/autoupdate/autoupdate.urls";

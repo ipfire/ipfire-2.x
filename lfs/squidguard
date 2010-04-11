@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	# URL-Filter
-	-mkdir /etc/squidGuard /srv/web/ipfire/html/repository
+	-mkdir /etc/squidGuard /var/urlrepo
 	cp -f  $(DIR_CONF)/urlfilter/autoupdate.urls /var/ipfire/urlfilter/autoupdate/autoupdate.urls
 	ln -fs /bin/false /var/ipfire/urlfilter/autoupdate/cron.daily
 	ln -fs /bin/false /var/ipfire/urlfilter/autoupdate/cron.weekly
@@ -102,7 +102,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -R nobody:nobody /var/ipfire/urlfilter
 	chmod 755 /srv/web/ipfire/html/images/urlfilter
 	chmod 644 /srv/web/ipfire/html/images/urlfilter/*
-	chown -R nobody:nobody /srv/web/ipfire/html/repository
+	chown -R nobody:nobody /var/urlrepo
 	chown -R squid:squid /var/log/squidGuard
 
 	@rm -rf $(DIR_APP)
