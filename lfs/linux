@@ -145,6 +145,10 @@ endif
 	# Squashfs LZMA support
 	cd $(DIR_APP) && bzcat $(DIR_DL)/squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 | patch -Np1
 
+	# mISDN hfcusb fixes
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb_bchannels.patch
+	
 	# Cleanup kernel source
 
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
