@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.11.0
+VER        = 0.11.1
 
 THISAPP    = qemu-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kqemu
 PROG       = qemu-kqemu
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "sdl qemu"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4da6a3e926a0260902f0dee342a59c23
+$(DL_FILE)_MD5 = 193285b0bcf655a7f7577d05ffcb82b1
 
 install : $(TARGET)
 

@@ -103,7 +103,7 @@
 * fbset-2.1
 * fcron-3.0.4
 * feedparser-4.1
-* fetchmail-6.3.11
+* fetchmail-6.3.16
 * ffmpeg-export-2008-04-13
 * file-4.17
 * findutils-4.2.27
@@ -268,13 +268,13 @@
 * pkg-config-0.20
 * popt-1.10.4
 * portmap_6.0
-* postfix-2.6.2
+* postfix-2.6.5
 * ppp-2.4.4
 * pptp-1.7.2
 * procps-3.2.6
 * psmisc-22.2
-* qemu-0.11.0-kqemu
-* qemu-0.12.2
+* qemu-0.11.1-kqemu
+* qemu-0.12.3
 * readline-5.1
 * reiser4progs-1.0.6
 * reiserfsprogs-3.6.21
@@ -301,7 +301,7 @@
 * squashfs-lzma-cvs20100214
 * squid-2.7.STABLE9
 * squidGuard-1.4.1
-* squidclamav-5.2
+* squidclamav-5.3
 * sshfs-fuse-2.2
 * sslh-1.7a
 * streamripper-1.63.5
