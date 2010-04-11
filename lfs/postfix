@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6.2
+VER        = 2.6.5
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = "amavisd mysql"
 
@@ -40,14 +40,11 @@ DEPS       = "amavisd mysql"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	postfix-2.5.5.patch
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-postfix-2.5.5.patch = $(DL_FROM)/postfix-2.5.5.patch
 
-$(DL_FILE)_MD5 = 1f0edbd521d2b0473626f4d61e8bb4eb
-postfix-2.5.5.patch_MD5 = 36cb54665d95016af4ce0cd5f85c20a8
+$(DL_FILE)_MD5 = 6b954cfb3eb6141dac1e773281211717
 
 install : $(TARGET)
 
