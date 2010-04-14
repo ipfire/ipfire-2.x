@@ -355,7 +355,7 @@ buildipfire() {
   ipfiremake cryptodev			XEN=1
   ipfiremake linux
   ipfiremake kqemu
-  #ipfiremake kvm-kmod
+  ipfiremake kvm-kmod
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1

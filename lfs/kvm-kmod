@@ -30,7 +30,7 @@ else
 	VERSUFIX=ipfire
 endif
 
-VER        = 2.6.31.5
+VER        = 2.6.32.9
 
 THISAPP    = kvm-kmod-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1f5a9ec75efae079487be6db43e3a684
+$(DL_FILE)_MD5 = a66a126a138c1b5a16e00b1da042050c
 
 install : $(TARGET)
 

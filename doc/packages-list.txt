@@ -62,7 +62,6 @@
 * cacti-0.8.7e
 * calamaris-2.59
 * capi4k-utils-2005-07-18
-* ccache-2.4
 * ccache-3.0pre0
 * cdrtools-2.01.01
 * centerim-4.22.1
@@ -161,6 +160,8 @@
 * kqemu-1.4.0pre1-kmod-2.6.32.11-ipfire
 * kqemu-1.4.0pre1-kmod-2.6.32.11-ipfire-xen
 * kudzu-1.2.64
+* kvm-kmod-2.6.32.9-kmod-2.6.32.11-ipfire
+* kvm-kmod-2.6.32.9.tar.bz2
 * l7-protocols-2009-05-10
 * lame-3.97
 * lcd4linux-0.10.1-RC2
