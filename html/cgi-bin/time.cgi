@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team                                             #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -44,6 +44,7 @@ $timesettings{'UPDATE_METHOD'} = 'manually';
 $timesettings{'UPDATE_VALUE'} = '0';
 $timesettings{'UPDATE_PERIOD'} = '';
 $timesettings{'ENABLECLNTP'} = 'off';
+$timesettings{'ENABLESETONBOOT'} = 'off';
 
 &Header::getcgihash(\%timesettings);
 
@@ -175,6 +176,7 @@ if ($timesettings{'VALID'} eq '')
 	$timesettings{'UPDATE_PERIOD'} = 'daily';
 	$timesettings{'NTP_ADDR_1'} = 'de.pool.ntp.org';
 	$timesettings{'NTP_ADDR_2'} = 'pool.ntp.org';
+	$timesettings{'ENABLESETONBOOT'} = 'off';
 }
 
 unless ($errormessage) {
@@ -197,6 +199,10 @@ $checked{'ENABLENTP'}{$timesettings{'ENABLENTP'}} = "checked='checked'";
 $checked{'ENABLECLNTP'}{'off'} = '';
 $checked{'ENABLECLNTP'}{'on'} = '';
 $checked{'ENABLECLNTP'}{$timesettings{'ENABLECLNTP'}} = "checked='checked'";
+
+$checked{'ENABLESETONBOOT'}{'off'} = '';
+$checked{'ENABLESETONBOOT'}{'on'} = '';
+$checked{'ENABLESETONBOOT'}{$timesettings{'ENABLESETONBOOT'}} = "checked='checked'";
 
 $checked{'UPDATE_METHOD'}{'manually'} = '';
 $checked{'UPDATE_METHOD'}{'periodically'} = '';
@@ -273,7 +279,10 @@ print <<END
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td class='base' colspan='2'>$Lang::tr{'set time now help'}</td>
+	<td class='base' colspan='3'>$Lang::tr{'set time now help'}</td>
+</tr>
+<tr>
+	<td class='base' colspan='4'><input type='checkbox' name='ENABLESETONBOOT' $checked{'ENABLESETONBOOT'}{'on'} /> $Lang::tr{'Set time on boot'}</td>
 </tr>
 <tr>
 	<td class='base'><input type='radio' name='UPDATE_METHOD' value='periodically' $checked{'UPDATE_METHOD'}{'periodically'} /></td>
