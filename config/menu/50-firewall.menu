@@ -28,6 +28,12 @@
 				'title' => "$Lang::tr{'outgoing firewall'}",
 				'enabled' => 1,
 				};
+    $subfirewall->{'51.outgoinggrp'} = {
+				'caption' => $Lang::tr{'outgoing firewall groups'},
+				'uri' => '/cgi-bin/outgoinggrp.cgi',
+				'title' => "$Lang::tr{'outgoing firewall groups'}",
+				'enabled' => 1,
+				};
     $subfirewall->{'60.upnp'} = {
 				'caption' => 'UPnP',
 				'uri' => '/cgi-bin/upnp.cgi',

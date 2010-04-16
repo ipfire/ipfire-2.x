@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPTifre Team                                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -37,7 +37,6 @@ my @configline = ();
 my $p2pentry = "";
 my @p2ps = ();
 my @p2pline = ();
-my @proto = ();
 my $CMD = "";
 my $P2PSTRING = "";
 
@@ -65,8 +64,10 @@ $outfwsettings{'DISPLAY_SMAC'} = '';
 $outfwsettings{'DISPLAY_SIP'} = '';
 $outfwsettings{'POLICY'} = 'MODE0';
 
+my @SOURCE = "";
 my $SOURCE = "";
 my $DESTINATION = "";
+my @PROTO = "";
 my $PROTO = "";
 my $DPORT = "";
 my $DEV = "";
@@ -114,93 +115,112 @@ if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 
 foreach $configentry (sort @configs)
 {
-	$SOURCE = "";
+	@SOURCE = "";
 	$DESTINATION = "";
 	$PROTO = "";
 	$DPORT = "";
 	$DEV = "";
 	$MAC = "";
 	@configline = split( /\;/, $configentry );
+
 	if ($outfwsettings{'STATE'} eq $configline[0]) {
 		if ($configline[2] eq 'green') {
-			$SOURCE = "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+			@SOURCE = ("$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}");
 			$DEV = $netsettings{'GREEN_DEV'};
 		} elsif ($configline[2] eq 'red') {
-			$SOURCE = "$netsettings{'RED_IP'}";
+			@SOURCE = ("$netsettings{'RED_IP'}");
 			$DEV = "";
 		} elsif ($configline[2] eq 'blue') {
-			$SOURCE = "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
+			@SOURCE = ("$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}");
 			$DEV = $netsettings{'BLUE_DEV'};
 		} elsif ($configline[2] eq 'orange') {
-			$SOURCE = "$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}";
+			@SOURCE = ("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
 			$DEV = $netsettings{'ORANGE_DEV'};
+		} elsif ($configline[2] eq 'ipsec') {
+			@SOURCE = "";
+			$DEV = "ipsec+";
+		} elsif ($configline[2] eq 'ovpn') {
+			@SOURCE = "";
+			$DEV = "tun+";
 		} elsif ($configline[2] eq 'ip') {
-			$SOURCE = "$configline[5]";
+			@SOURCE = ("$configline[5]");
 			$DEV = "";
-		} else  {
-			$SOURCE = "0/0";
+		} 
+		} elsif ($configline[2] eq 'all') {
+			@SOURCE = ("0/0");
+			$DEV = "";
+		} else {
+			if ( -e "/var/ipfire/outgoing/groups/ipgroups/$configline[2]" )
+			{
+				@SOURCE = `cat /var/ipfire/outgoing/groups/ipgroups/$configline[2]`;
+			}
 			$DEV = "";
 		}
 
 		if ($configline[7]) { $DESTINATION = "$configline[7]"; } else { $DESTINATION = "0/0"; }
 		
 		if ($configline[3] eq 'tcp') {
-			@proto = ("tcp");
+			@PROTO = ("tcp");
 		} elsif ($configline[3] eq 'udp') {
-			@proto = ("udp");
+			@PROTO  = ("udp");
 		} elsif ($configline[3] eq 'esp') {
-			@proto = ("esp");
+			@PROTO = ("esp");
 		} elsif ($configline[3] eq 'gre') {
-			@proto = ("gre");
+			@PROTO = ("gre");
 		} else {
-			@proto = ("tcp","udp");
+			@PROTO = ("tcp","udp");
 		}
-                 
-		
-		foreach $PROTO (@proto) {
-			$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION -p $PROTO";
-	
-			 if ($configline[8] && $configline[3] ne 'esp' && $configline[3] ne 'gre') {
-				$DPORT = "$configline[8]";
-				$CMD = "$CMD --dport $DPORT";
-			 }
-			
-			if ($DEV) {
-				$CMD = "$CMD -i $DEV";
-			}
-	
-			if ($configline[6]) {
-				$MAC = "$configline[6]";
-			 	$CMD = "$CMD -m mac --mac-source $MAC";
-			}
-			
-			if ($configline[17] && $configline[18]) {
-				if ($configline[10]){$DAY = "Mon,"}
-				if ($configline[11]){$DAY .= "Tue,"}
-				if ($configline[12]){$DAY .= "Wed,"}
-				if ($configline[13]){$DAY .= "Thu,"}
-				if ($configline[14]){$DAY .= "Fri,"}
-				if ($configline[15]){$DAY .= "Sat,"}
-				if ($configline[16]){$DAY .= "Sun"}
-			 	$CMD = "$CMD -m time --timestart $configline[17] --timestop $configline[18] --weekdays $DAY";
-			}
-			
-			$CMD = "$CMD -o $netsettings{'RED_DEV'}";
 
-			if ($configline[9] eq "aktiv") {
+		foreach $PROTO (@PROTO){
+			foreach $SOURCE (@SOURCE) {
+				$SOURCE =~ s/\s//gi;
+
+				 if ( $SOURCE eq "" ){next;}
+
+				$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION -p $PROTO";
+
+				 if ($configline[8] && ( $configline[3] ne 'esp' || $configline[3] ne 'gre') ) {
+					$DPORT = "$configline[8]";
+					$CMD = "$CMD -m multiport --destination-port $DPORT";
+				 }
+
+				 if ($DEV) {
+					$CMD = "$CMD -i $DEV";
+				}
+
+				if ($configline[6]) {
+					$MAC = "$configline[6]";
+					$CMD = "$CMD -m mac --mac-source $MAC";
+				}
+
+				if ($configline[17] && $configline[18]) {
+					if ($configline[10]){$DAY = "Mon,"}
+					if ($configline[11]){$DAY .= "Tue,"}
+					if ($configline[12]){$DAY .= "Wed,"}
+					if ($configline[13]){$DAY .= "Thu,"}
+					if ($configline[14]){$DAY .= "Fri,"}
+					if ($configline[15]){$DAY .= "Sat,"}
+					if ($configline[16]){$DAY .= "Sun"}
+					$CMD = "$CMD -m time --timestart $configline[17] --timestop $configline[18] --weekdays $DAY";
+				}
+
+				$CMD = "$CMD -o $netsettings{'RED_DEV'}";
+
+				if ($configline[9] eq "aktiv") {
+					if ($DEBUG) {
+						print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW'\n";
+					} else {
+						system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW'");
+					}
+				}
+
 				if ($DEBUG) {
-					print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW'\n";
+					print "$CMD -j $DO\n";
 				} else {
-					system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW'");
+					system("$CMD -j $DO");
 				}
 			}
-			
-			if ($DEBUG) {
-				print "$CMD -j $DO\n";
-			} else {
-				system("$CMD -j $DO");
-			}
-    }
+		}
 	}
 }
 

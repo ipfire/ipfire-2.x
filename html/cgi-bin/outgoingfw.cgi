@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPTifre Team                                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -41,6 +41,7 @@ my @p2ps = ();
 my @p2pline = ();
 
 my $configfile = "/var/ipfire/outgoing/rules";
+my $configpath = "/var/ipfire/outgoing/groups/";
 my $p2pfile = "/var/ipfire/outgoing/p2protocols";
 my $servicefile = "/var/ipfire/outgoing/defaultservices";
 
@@ -145,7 +146,7 @@ if ( $outfwsettings{'TIME_MON'} eq "" &&
 		$outfwsettings{'TIME_SUN'} = "on";
 	 }
 
-&Header::openpage('Ausgehende Firewall', 1, '');
+&Header::openpage($Lang::tr{'outgoing firewall'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
@@ -607,88 +608,124 @@ END
 ;
 &Header::closebox();
 
-&Header::closebigbox();
-&Header::closepage();
-
 ############################################################################################################################
 ############################################################################################################################
 
 sub addrule
 {
-	&Header::openbox('100%', 'center', 'Rules hinzufuegen');
+	&Header::openbox('100%', 'center', $Lang::tr{'Add Rule'});
 	if ($outfwsettings{'EDIT'} eq 'no') { $selected{'ENABLED'} = 'checked'; }
 	$selected{'TIME_FROM'}{$outfwsettings{'TIME_FROM'}} = "selected='selected'";
 	$selected{'TIME_TO'}{$outfwsettings{'TIME_TO'}} = "selected='selected'";
-	print <<END
+print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='80%'>
-		<tr><td width='20%' align='right'>$Lang::tr{'description'}: <img src='/blob.gif' />
-		    <td width='30%' align='left'><input type='text' name='NAME' maxlength='30' value='$outfwsettings{'NAME'}' />
-		    <td width='20%' align='right' colspan='2'>$Lang::tr{'active'}:
-		    <td width='30%' align='left' colspan='2'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} />
-		<tr><td width='20%' align='right'>$Lang::tr{'protocol'}:
-                   <td width='30%' align='left'>
-                       <select name='PROT'>
-                               <option value='all' $selected{'PROT'}{'all'}>All</option>
-                               <option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option>
-                               <option value='udp' $selected{'PROT'}{'udp'}>UDP</option>
-                               <option value='gre' $selected{'PROT'}{'gre'}>GRE</option>
-                               <option value='esp' $selected{'PROT'}{'esp'}>ESP</option>
-                       </select>
-		    <td width='20%' align='right' colspan='2'>$Lang::tr{'policy'}:
-		    <td width='30%' align='left' colspan='2'>
+		<tr>
+			<td width='20%' align='right'>$Lang::tr{'description'}: <img src='/blob.gif' /></td>
+			<td width='30%' align='left'><input type='text' name='NAME' maxlength='30' value='$outfwsettings{'NAME'}' /></td>
+			<td width='20%' align='right' colspan='2'>$Lang::tr{'active'}:</td>
+			<td width='30%' align='left' colspan='2'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} /></td>
+		</tr>
+		<tr>
+			<td width='20%' align='right'>$Lang::tr{'protocol'}:</td>
+			<td width='30%' align='left'>
+				<select name='PROT'>
+					<option value='all' $selected{'PROT'}{'all'}>All</option>
+					<option value='tcp' $selected{'PROT'}{'tcp'}>TCP</option>
+					<option value='udp' $selected{'PROT'}{'udp'}>UDP</option>
+					<option value='gre' $selected{'PROT'}{'gre'}>GRE</option>
+					<option value='esp' $selected{'PROT'}{'esp'}>ESP</option>
+				</select>
+			</td>
+			<td width='20%' align='right' colspan='2'>$Lang::tr{'policy'}:</td>
+			<td width='30%' align='left' colspan='2'>
 END
 ;
 	if ($outfwsettings{'POLICY'} eq 'MODE1'){
-		print "\t\t\tALLOW<input type='hidden' name='STATE' value='ALLOW' />\n";
+		print "\t\t\t\tALLOW<input type='hidden' name='STATE' value='ALLOW' />\n";
 	} elsif ($outfwsettings{'POLICY'} eq 'MODE2'){
-		print "\t\t\tDENY<input type='hidden' name='STATE' value='DENY' />\n";
+		print "\t\t\t\tDENY<input type='hidden' name='STATE' value='DENY' />\n";
 	}
 	print <<END
-		<tr><td width='20%' align='right'>$Lang::tr{'source net'}:
-		    <td width='30%' align='left'><select name='SNET'>
-			<option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option>
-			<option value='ip' $selected{'SNET'}{'ip'}>$Lang::tr{'source ip'}</option>
-			<option value='red' $selected{'SNET'}{'red'}>$Lang::tr{'red'} IP</option>
-			<option value='green' $selected{'SNET'}{'green'}>$Lang::tr{'green'}</option>
+			</td>
+		</tr>
+		<tr>
+			<td width='20%' align='right'>$Lang::tr{'source'}:</td>
+			<td width='30%' align='left'>
+				<select name='SNET'>
+					<optgroup label='---'>
+						<option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option>
+					<optgroup label='$Lang::tr{'ip address'}'>
+						<option value='ip' $selected{'SNET'}{'ip'}>IPSEC $Lang::tr{'interface'}</option>
+						<option value='red' $selected{'SNET'}{'red'}>OpenVPN $Lang::tr{'interface'}</option>
+					</optgroup>
+					</optgroup>
+						<option value='ipsec' $selected{'SNET'}{'ipsec'}>$Lang::tr{'source ip'}</option>
+						<option value='ovpn' $selected{'SNET'}{'ovpn'}>$Lang::tr{'red'} IP</option>
+					<optgroup label='$Lang::tr{'network'}'>
+					<optgroup label='$Lang::tr{'network'}'>
+						<option value='green' $selected{'SNET'}{'green'}>$Lang::tr{'green'}</option>
 END
 ;
 	if (&Header::blue_used()){
-		print "\t\t\t<option value='blue' $selected{'SNET'}{'blue'}>$Lang::tr{'wireless'}</option>\n";
+		print "\t\t\t\t\t<option value='blue' $selected{'SNET'}{'blue'}>$Lang::tr{'wireless'}</option>\n";
 	}
 	if (&Header::orange_used()){
-		print "\t\t\t<option value='orange' $selected{'SNET'}{'orange'}>$Lang::tr{'dmz'}</option>\n";
+		print "\t\t\t\t\t<option value='orange' $selected{'SNET'}{'orange'}>$Lang::tr{'dmz'}</option>\n";
 	}
 	print <<END
-			</select>
-		    <td width='20%' align='right' colspan='2'>$Lang::tr{'source ip'}: <img src='/blob.gif' />
-		    <td width='30%' align='left' colspan='2'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' />
-		<tr><td width='20%' align='right'>$Lang::tr{'logging'}:
-			<td width='30%' align='left'><select name='LOG'>
-										<option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option>
-										<option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option>
-										</select></td>
-		    <td width='20%' align='right' colspan='2' />
-		    <td width='30%' align='left' colspan='2' />
-		<tr><td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' />
-		    <td width='30%' align='left'><input type='text' name='DIP' maxlength='15' value='$outfwsettings{'DIP'}' />
-		    <td width='20%' align='right' colspan='2'>$Lang::tr{'destination port'}: <img src='/blob.gif' />
-		    <td width='30%' align='left' colspan='2'><input type='text' name='DPORT' maxlength='11' value='$outfwsettings{'DPORT'}' />
-		<tr><td width='20%' align='right'>$Lang::tr{'time'}:</td>
+					</optgroup>
+					<optgroup label='$Lang::tr{'advproxy NCSA group'}'>
+END
+;
+	my @ipgroups = qx(ls $configpath/ipgroups/);
+	foreach (sort @ipgroups){
+		print "\t\t\t\t\t<option value='$_' $selected{'SNET'}{'$_'}>$_</option>\n";
+	}
+	print <<END
+					</optgroup>
+				</select>
+			</td>
+			<td width='20%' align='right' colspan='2'>$Lang::tr{'source ip'}: <img src='/blob.gif' /></td>
+			<td width='30%' align='left' colspan='2'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' /></td>
+		</tr>
+		<tr>
+			<td width='20%' align='right'>$Lang::tr{'logging'}:</td>
+			<td width='30%' align='left'>
+				<select name='LOG'>
+					<option value='$Lang::tr{'active'}' $selected{'LOG'}{$Lang::tr{'active'}}>$Lang::tr{'active'}</option>
+					<option value='$Lang::tr{'inactive'}' $selected{'LOG'}{$Lang::tr{'inactive'}}>$Lang::tr{'inactive'}</option>
+				</select>
+			</td>
+			<td width='20%' align='right' colspan='2' />
+			<td width='30%' align='left' colspan='2' />
+		<tr>
+			<td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' /></td>
+			<td width='30%' align='left'><input type='text' name='DIP' maxlength='15' value='$outfwsettings{'DIP'}' /></td>
+			<td width='20%' align='right' colspan='2'>$Lang::tr{'destination port'}: <img src='/blob.gif' /></td>
+			<td width='30%' align='left' colspan='2'><input type='text' name='DPORT' maxlength='11' value='$outfwsettings{'DPORT'}' /></td>
+		</tr>
+		<tr>
+			<td width='20%' align='right'>$Lang::tr{'time'}:</td>
 			<td width='30%' align='left'>$Lang::tr{'advproxy monday'} $Lang::tr{'advproxy tuesday'} $Lang::tr{'advproxy wednesday'} $Lang::tr{'advproxy thursday'} $Lang::tr{'advproxy friday'} $Lang::tr{'advproxy saturday'} $Lang::tr{'advproxy sunday'}</td>
 			<td width='20%' align='right' colspan='2' />
 			<td width='15%' align='left'>$Lang::tr{'advproxy from'}</td>
-			<td width='15%' align='left'>$Lang::tr{'advproxy to'}</td></tr>
-		<tr><td width='20%' align='right'></td>
-			<td width='30%' align='left'><input type='checkbox' name='TIME_MON' $checked{'TIME_MON'}{'on'} />
-										 <input type='checkbox' name='TIME_TUE' $checked{'TIME_TUE'}{'on'} />
-										 <input type='checkbox' name='TIME_WED' $checked{'TIME_WED'}{'on'} />
-										 <input type='checkbox' name='TIME_THU' $checked{'TIME_THU'}{'on'} />
-										 <input type='checkbox' name='TIME_FRI' $checked{'TIME_FRI'}{'on'} />
-										 <input type='checkbox' name='TIME_SAT' $checked{'TIME_SAT'}{'on'} />
-										 <input type='checkbox' name='TIME_SUN' $checked{'TIME_SUN'}{'on'} /></td>
+			<td width='15%' align='left'>$Lang::tr{'advproxy to'}</td>
+		</tr>
+		<tr>
+			<td width='20%' align='right'></td>
+			<td width='30%' align='left'>
+				<input type='checkbox' name='TIME_MON' $checked{'TIME_MON'}{'on'} />
+				<input type='checkbox' name='TIME_TUE' $checked{'TIME_TUE'}{'on'} />
+				<input type='checkbox' name='TIME_WED' $checked{'TIME_WED'}{'on'} />
+				<input type='checkbox' name='TIME_THU' $checked{'TIME_THU'}{'on'} />
+				<input type='checkbox' name='TIME_FRI' $checked{'TIME_FRI'}{'on'} />
+				<input type='checkbox' name='TIME_SAT' $checked{'TIME_SAT'}{'on'} />
+				<input type='checkbox' name='TIME_SUN' $checked{'TIME_SUN'}{'on'} />
+			</td>
 			<td width='20%' align='right' colspan='2' />
-			<td width='15%' align='left'><select name='TIME_FROM'>
+			<td width='15%' align='left'>
+				<select name='TIME_FROM'>
 END
 ;
 for (my $i=0;$i<=23;$i++) {
@@ -696,11 +733,12 @@ for (my $i=0;$i<=23;$i++) {
 	for (my $j=0;$j<=45;$j+=15) {
 		$j = sprintf("%02s",$j);
 		my $time = $i.":".$j;
-		print "<option $selected{'TIME_FROM'}{$time}>$i:$j</option>\n";
+		print "\t\t\t\t\t<option $selected{'TIME_FROM'}{$time}>$i:$j</option>\n";
 	}
 }
 print <<END	
-			</select></td>
+				</select>
+			</td>
 			<td width='15%' align='left'><select name='TIME_TO'>
 END
 ;
@@ -709,14 +747,19 @@ for (my $i=0;$i<=23;$i++) {
 	for (my $j=0;$j<=45;$j+=15) {
 		$j = sprintf("%02s",$j);
 		my $time = $i.":".$j;
-		print "<option $selected{'TIME_TO'}{$time}>$i:$j</option>\n";
+		print "\t\t\t\t\t<option $selected{'TIME_TO'}{$time}>$i:$j</option>\n";
 	}
 }
 print <<END	
-			</select></td></tr>
-		<tr><td colspan='6'>
-		<tr><td width='40%' align='right' colspan='2'><img src='/blob.gif' />$Lang::tr{'this field may be blank'}
-		    <td width='60%' align='left' colspan='4'><input type='submit' name='ACTION' value=$Lang::tr{'add'} />
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td colspan='6' />
+		<tr>
+		<tr>
+			<td width='40%' align='right' colspan='2'><img src='/blob.gif' />$Lang::tr{'this field may be blank'}</td>
+			<td width='60%' align='left' colspan='4'><input type='submit' name='ACTION' value=$Lang::tr{'add'} /></td>
 	</table></form>
 END
 ;
@@ -764,3 +807,6 @@ END
 	&Header::closebox();
   }
 }
+
+&Header::closebigbox();
+&Header::closepage();
