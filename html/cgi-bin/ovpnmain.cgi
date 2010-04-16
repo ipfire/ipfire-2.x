@@ -70,6 +70,8 @@ $cgiparams{'DHCP_DOMAIN'} = '';
 $cgiparams{'DHCP_DNS'} = '';
 $cgiparams{'DHCP_WINS'} = '';
 $cgiparams{'DCOMPLZO'} = 'off';
+$cgiparams{'MSSFIX'} = '';
+
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 # prepare openvpn config file
@@ -332,6 +334,12 @@ sub writeserverconf {
     if ($sovpnsettings{CLIENT2CLIENT} eq 'on') {
 	print CONF "client-to-client\n";
     }
+    if ($sovpnsettings{MSSFIX} eq 'on') {
+	print CONF "mssfix\n";
+    }
+    if ($sovpnsettings{FRAGMENT} ne '') {
+	print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
+    }
     if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {	
 	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
     }	
@@ -358,8 +366,7 @@ sub writeserverconf {
     
     if ($sovpnsettings{DHCP_WINS} eq '') {
 	print CONF "max-clients 100\n";
-    }	
-    
+    }
     if ($sovpnsettings{DHCP_WINS} ne '') {
 	print CONF "max-clients $sovpnsettings{MAX_CLIENTS}\n";
     }	
@@ -449,6 +456,21 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
     
+    if ($cgiparams{'FRAGMENT'} eq '') {
+    	delete $vpnsettings{'FRAGMENT'};
+    } else {
+    	if ($cgiparams{'FRAGMENT'} !~ /^[0-9]+$/) { 
+    	    $errormessage = "Incorrect value, please insert only numbers.";
+        goto ADV_ERROR;
+		} else {
+			$vpnsettings{'FRAGMENT'} = $cgiparams{'FRAGMENT'};
+    	}
+    }
+    if ($cgiparams{'MSSFIX'} ne 'on') {
+    	delete $vpnsettings{'MSSFIX'};
+    } else {
+    	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
+    }
     if ($cgiparams{'DHCP_DOMAIN'} ne ''){
 	unless (&General::validfqdn($cgiparams{'DHCP_DOMAIN'}) || &General::validip($cgiparams{'DHCP_DOMAIN'})) {
 		$errormessage = $Lang::tr{'invalid input for dhcp domain'};
@@ -1380,7 +1402,13 @@ END
     }
     print CLIENTCONF "verb 3\r\n";
     print CLIENTCONF "ns-cert-type server\r\n";
-    print CLIENTCONF "tls-remote $vpnsettings{ROOTCERT_HOSTNAME}\r\n";
+    print CLIENTCONF "tls-remote $vpnsettings{ROOTCERT_HOSTNAME}\r\n"; 
+    if ($vpnsettings{MSSFIX} eq 'on') {
+	print CLIENTCONF "mssfix\r\n";
+    }
+    if ($vpnsettings{FRAGMENT} ne '') {
+	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
+    }
     close(CLIENTCONF);
     $zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
     my $status = $zip->writeToFileNamed($zippathname);
@@ -1500,6 +1528,10 @@ ADV_ERROR:
     $checked{'REDIRECT_GW_DEF1'}{'off'} = '';
     $checked{'REDIRECT_GW_DEF1'}{'on'} = '';
     $checked{'REDIRECT_GW_DEF1'}{$cgiparams{'REDIRECT_GW_DEF1'}} = 'CHECKED';
+    $selected{'ENGINES'}{$cgiparams{'ENGINES'}} = 'SELECTED';
+    $checked{'MSSFIX'}{'off'} = '';
+    $checked{'MSSFIX'}{'on'} = '';
+    $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
     $selected{'LOG_VERB'}{'1'} = '';
     $selected{'LOG_VERB'}{'2'} = '';
     $selected{'LOG_VERB'}{'3'} = '';
@@ -1513,6 +1545,8 @@ ADV_ERROR:
     $selected{'LOG_VERB'}{'11'} = '';
     $selected{'LOG_VERB'}{'0'} = '';
     $selected{'LOG_VERB'}{$cgiparams{'LOG_VERB'}} = 'SELECTED';
+
+
     
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
@@ -1552,7 +1586,7 @@ ADV_ERROR:
 	<td class'base'><b>$Lang::tr{'misc-options'}</b></td>
     </tr>
     <tr>
-	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
+	<td width='20%'></td> <td width='15%'> </td><td width='15%'> </td><td width='50%'></td>
     </tr>
     <tr>
 	<td class='base'>Client-To-Client</td>
@@ -1564,20 +1598,50 @@ ADV_ERROR:
     </tr>
     <tr>	
         <td class='base'>Max-Clients</td>
-        <td><input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' size='30' /></td>
+        <td><input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' size='10' /></td>
     </tr>	
-     	<td class='base'>Keppalive (ping/ping-restart)</td>	
-	<td><input type='TEXT' name='KEEPALIVE_1' value='$cgiparams{'KEEPALIVE_1'}' size='30' /></td>
-	<td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='30' /></td>
-    </tr>	
+     	<tr>
+     	  <td class='base'>Keppalive <br />
+     	    (ping/ping-restart)</td>
+     	  <td><input type='TEXT' name='KEEPALIVE_1' value='$cgiparams{'KEEPALIVE_1'}' size='10' /></td>
+     	  <td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='10' /></td>
+    </tr>
+     	<tr>
+     	  <td class='base'>fragment <br></td>
+     	  <td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
+     	  <td>Default: <span class="base">1300</span></td>
+   	  </tr>
+     	<tr>
+     	  <td class='base'>mssfix</td>
+     	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
+     	  <td>Default: on</td>
+   	  </tr>	
 </table>
+
+<!--
+<hr size='1'>
+    <table width='100%'>
+    <tr>
+ <td class'base'><b>Crypto-Engines</b></td>
+    </tr>
+    <tr>
+	<td width='15%'></td> <td width='30%'> </td><td width='25%'> </td><td width='30%'></td>
+    </tr>	
+    <tr><td class='base'>Engines:</td>        
+        <td><select name='ENGINES'><option value="none" $selected{'ENGINES'}{'none'}>none</option>
+				    <option value="cryptodev" $selected{'ENGINES'}{'cryptodev'}>cryptodev</option>
+				    <option value="padlock" $selected{'ENGINES'}{'padlock'}>padlock</option>
+			</select>
+		</td>	
+</table>
+-->
 <hr size='1'>
     <table width='100%'>
     <tr>
 	<td class'base'><b>$Lang::tr{'log-options'}</b></td>
     </tr>
     <tr>
-	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
+	<td width='15%'></td> <td width='30%'> </td><td width='25%'> </td><td width='30%'></td>
     </tr>	
 	
     <tr><td class='base'>VERB</td>        
