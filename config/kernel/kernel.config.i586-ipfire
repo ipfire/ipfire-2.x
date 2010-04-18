@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.10
-# Tue Mar 30 18:43:57 2010
+# Linux kernel version: 2.6.32.11
+# Sun Apr 18 15:29:55 2010
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -3368,6 +3368,7 @@ CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
 #
 # iptables trigger is under Netfilter config (LED target)
 #
+CONFIG_LEDS_TRIGGER_NETDEV=m
 # CONFIG_ACCESSIBILITY is not set
 # CONFIG_INFINIBAND is not set
 # CONFIG_EDAC is not set
