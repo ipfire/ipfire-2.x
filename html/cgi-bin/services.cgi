@@ -59,6 +59,24 @@ my %servicenames =(
 	'OpenVPN' => 'openvpn'
 );
 
+my %link =(
+	$Lang::tr{'dhcp server'} => "<a href=\'dhcp.cgi\'>$Lang::tr{'dhcp server'}</a>",
+	$Lang::tr{'web server'} => $Lang::tr{'web server'},
+	$Lang::tr{'cron server'} => $Lang::tr{'cron server'},
+	$Lang::tr{'dns proxy server'} => $Lang::tr{'dns proxy server'},
+	$Lang::tr{'logging server'} => $Lang::tr{'logging server'},
+	$Lang::tr{'kernel logging server'} => $Lang::tr{'kernel logging server'},
+	$Lang::tr{'ntp server'} => "<a href=\'time.cgi\'>$Lang::tr{'ntp server'}</a>",
+	$Lang::tr{'secure shell server'} => "<a href=\'remote.cgi\'>$Lang::tr{'secure shell server'}</a>",
+	$Lang::tr{'vpn'} => "<a href=\'vpnmain.cgi\'>$Lang::tr{'vpn'}</a>",
+	$Lang::tr{'web proxy'} => "<a href=\'proxy.cgi\'>$Lang::tr{'web proxy'}</a>",
+	'OpenVPN' => "<a href=\'ovpnmain.cgi\'>OpenVPN</a>",
+	"$Lang::tr{'intrusion detection system'} (GREEN)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (GREEN)</a>",
+	"$Lang::tr{'intrusion detection system'} (RED)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (RED)</a>",
+	"$Lang::tr{'intrusion detection system'} (ORANGE)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (ORANGE)</a>",
+	"$Lang::tr{'intrusion detection system'} (BLUE)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (BLUE)</a>"
+);
+
 my $lines=0; # Used to count the outputlines to make different bgcolor
 
 my $iface = '';
@@ -106,9 +124,13 @@ END
 	foreach $key (sort keys %servicenames){
 		$lines++;
 		if ($lines % 2){
-			print "<tr bgcolor='$color{'color22'}'>\n<td align='left'>$key</td>\n";
+			print "<tr bgcolor='$color{'color22'}'>\n<td align='left'>";
+			print %link->{$key};
+			print "</td>\n";
 		}else{
-			print "<tr bgcolor='$color{'color20'}'>\n<td align='left'>$key</td>\n";
+			print "<tr bgcolor='$color{'color20'}'>\n<td align='left'>";
+			print %link->{$key};
+			print "</td>\n";
 		}
 
 		my $shortname = $servicenames{$key};
