@@ -54,14 +54,12 @@ case "${1}" in
 
 					# Attempt to load the module, making
 					# sure to pass any arguments provided.
-					modprobe ${module} ${args} 2>&1 > /dev/null
+					modprobe ${module} ${args} &>/dev/null
 
 					# Print the module name if successful,
 					# otherwise take note.
 					if [ ${?} -eq 0 ]; then
 						boot_mesg -n " ${module}" ${NORMAL}
-					else
-						failedmod="${failedmod} ${module}"
 					fi
 				done
 
@@ -69,13 +67,6 @@ case "${1}" in
 				# Print a message about successfully loaded
 				# modules on the correct line.
 				echo_ok
-
-				# Print a failure message with a list of any
-				# modules that may have failed to load.
-				if [ "${failedmod}" ]; then
-					boot_mesg "Failed to load modules:${failedmod}" ${FAILURE}
-					echo_failure
-				fi
 
 			exec 0>&9 9>&-
 
