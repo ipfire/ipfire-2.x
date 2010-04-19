@@ -97,6 +97,7 @@ var/ipfire/outgoing
 #var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/outgoing/defaultservices
 #var/ipfire/outgoing/groups
+#var/ipfire/outgoing/groups/ipgroups
 #var/ipfire/outgoing/ipgroups
 #var/ipfire/outgoing/p2protocols
 #var/ipfire/outgoing/rules
