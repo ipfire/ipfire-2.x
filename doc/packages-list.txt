@@ -160,8 +160,7 @@
 * kqemu-1.4.0pre1-kmod-2.6.32.11-ipfire
 * kqemu-1.4.0pre1-kmod-2.6.32.11-ipfire-xen
 * kudzu-1.2.64
-* kvm-kmod-2.6.32.9-kmod-2.6.32.11-ipfire
-* kvm-kmod-2.6.32.9.tar.bz2
+* kvm-kmod-2.6.33-kmod-2.6.32.11-ipfire
 * l7-protocols-2009-05-10
 * lame-3.97
 * lcd4linux-0.10.1-RC2
@@ -247,7 +246,7 @@
 * noip_updater_v1.6
 * ntfs-3g-2009.4.4
 * ntp-4.2.4p7
-* nut-2.4.1
+* nut-2.4.3
 * ocaml-3.09.2
 * oinkmaster-2.0
 * open-vm-tools-2009.05.22-167859
