@@ -1,6 +1,8 @@
 etc/system-release
 var/ipfire/backup/bin/backup.pl
 var/ipfire/header.pl
+var/ipfire/menu.d/50-firewall.menu
+var/ipfire/outgoing/bin/outgoingfw.pl
 etc/modprobe.d/cfg80211
 var/ipfire/qos/bin/makeqosscripts.pl
 srv/web/ipfire/cgi-bin/connections.cgi
@@ -14,8 +16,9 @@ var/ipfire/langs/en.pl
 var/ipfire/langs/fr.pl
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/ipsec
+etc/rc.d/init.d/ntp
+etc/rc.d/init.d/modules
 usr/local/bin/ipsecctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/wirelessctrl
 opt/pakfire/lib/functions.sh
-
