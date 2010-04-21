@@ -199,7 +199,7 @@ print <<END
 		</tr>
 		<tr>
 			<td  align='left' colspan='3'>
-				<textarea name="ipgroupcontent" cols="20" rows="5" Wrap="off">192.168.1.0/14\n192.168.0.1\n192.168.0.2\n</textarea>
+				<textarea name="ipgroupcontent" cols="20" rows="5" Wrap="off">192.168.1.0/24\n192.168.3.0/255.255.255.0\n192.168.0.1\n192.168.0.2\n</textarea>
 			</td>
 		</tr>
 	</table>

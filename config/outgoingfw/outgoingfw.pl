@@ -145,7 +145,6 @@ foreach $configentry (sort @configs)
 		} elsif ($configline[2] eq 'ip') {
 			@SOURCE = ("$configline[5]");
 			$DEV = "";
-		} 
 		} elsif ($configline[2] eq 'all') {
 			@SOURCE = ("0/0");
 			$DEV = "";

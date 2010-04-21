@@ -656,13 +656,13 @@ END
 					<optgroup label='---'>
 						<option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option>
 					<optgroup label='$Lang::tr{'ip address'}'>
-						<option value='ip' $selected{'SNET'}{'ip'}>IPSEC $Lang::tr{'interface'}</option>
-						<option value='red' $selected{'SNET'}{'red'}>OpenVPN $Lang::tr{'interface'}</option>
+						<option value='ip' $selected{'SNET'}{'ip'}>$Lang::tr{'source ip'}</option>
+						<option value='red' $selected{'SNET'}{'red'}>$Lang::tr{'red'} IP</option>
 					</optgroup>
+					<optgroup label='$Lang::tr{'alt vpns'}'>
+						<option value='ipsec' $selected{'SNET'}{'ipsec'}>IPSEC $Lang::tr{'interface'}</option>
+						<option value='ovpn' $selected{'SNET'}{'ovpn'}>OpenVPN $Lang::tr{'interface'}</option>
 					</optgroup>
-						<option value='ipsec' $selected{'SNET'}{'ipsec'}>$Lang::tr{'source ip'}</option>
-						<option value='ovpn' $selected{'SNET'}{'ovpn'}>$Lang::tr{'red'} IP</option>
-					<optgroup label='$Lang::tr{'network'}'>
 					<optgroup label='$Lang::tr{'network'}'>
 						<option value='green' $selected{'SNET'}{'green'}>$Lang::tr{'green'}</option>
 END

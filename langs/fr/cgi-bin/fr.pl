@@ -15,7 +15,7 @@
 'ConnSched change profile title' => 'Change to profile:',
 'ConnSched days' => 'Days:',
 'ConnSched down' => 'Down',
-'Set time on boot' => 'Fixé l'heure en botte',
+'Set time on boot' => 'Fixe l heure en botte',
 'ConnSched ipsecstart' => 'IPSec (re)start',
 'ConnSched ipsecstop' => 'IPSec stop',
 'ConnSched reconnect' => 'Reconnect',
