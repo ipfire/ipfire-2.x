@@ -152,6 +152,9 @@ endif
 	# Add some more LED triggers
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-netdev-1.patch
 
+	# Huawei (Vodafone) K3765 & K4505 Usbids
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-option_add_vodafone_usbids.patch
+
 	# Cleanup kernel source
 
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
