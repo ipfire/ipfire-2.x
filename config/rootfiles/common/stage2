@@ -8,6 +8,7 @@ dev/null
 dev/console
 etc/bashrc
 etc/certparams
+etc/e2fsck.conf
 etc/fstab
 etc/group
 etc/hddtemp.db
