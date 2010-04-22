@@ -138,33 +138,25 @@ int decode_line (char *s,
 void turn_connection_on (char *name, char *type) {
         char command[STRING_SIZE];
 
-        safe_system("/usr/sbin/ipsec whack --rereadsecrets >/dev/null");
+        safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
         memset(command, 0, STRING_SIZE);
         snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec auto --replace %s >/dev/null", name);
+                "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
-        if (strcmp(type, "net") == 0) {
-                memset(command, 0, STRING_SIZE);
-                snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec whack --asynchronous --name %s --initiate >/dev/null", name);
-                safe_system(command);
-        }
+        memset(command, 0, STRING_SIZE);
+        snprintf(command, STRING_SIZE - 1, 
+                "/usr/sbin/ipsec up %s >/dev/null", name);
+        safe_system(command);
 }
 /*
     issue ipsec commmands to turn off connection 'name'
 */
 void turn_connection_off (char *name) {
         char command[STRING_SIZE];
-
         memset(command, 0, STRING_SIZE);
         snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec whack --name %s --terminate >/dev/null", name);
+                "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
-        memset(command, 0, STRING_SIZE);
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec whack --delete --name %s >/dev/null", name);
-        safe_system(command);
-        safe_system("/usr/sbin/ipsec whack --rereadsecrets >/dev/null");
 }
 
 
