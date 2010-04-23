@@ -1269,7 +1269,7 @@
 'out' => 'Aus',
 'outgoing' => 'ausgehend',
 'outgoing firewall' => 'Ausgehende Firewall',
-'outgoing firewall groups' => 'Ausgehende Firewall Gruppen',
+'outgoing firewall groups' => 'Firewall Gruppen',
 'outgoing firewall add ip group' => 'IP Adressgruppen hinzufügen',
 'outgoing firewall ip groups' => 'Ausgehende Firewall IP Adressgruppen',
 'outgoing firewall view group' => 'Gruppe anzeigen',

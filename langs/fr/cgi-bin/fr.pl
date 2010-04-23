@@ -1298,7 +1298,7 @@
 'out' => 'Out',
 'outgoing' => 'sortant',
 'outgoing firewall' => 'Sortant Firewall',
-'outgoing firewall groups' => 'Sortant Firewall Groupe',
+'outgoing firewall groups' => 'Firewall Groupe',
 'outgoing firewall add ip group' => 'Ajouter IP Address Group',
 'outgoing firewall ip groups' => 'Sortant Firewall IP Groupe',
 'outgoing firewall view group' => 'Montrer groupe',

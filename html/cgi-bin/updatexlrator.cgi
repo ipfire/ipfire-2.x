@@ -1,5 +1,4 @@
 #!/usr/bin/perl
-#!/usr/bin/perl
 #
 # This code is distributed under the terms of the GPL
 #
@@ -12,7 +11,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPTifre Team                                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -549,40 +548,40 @@ END
 		print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
 		if (&getPID("\\s/usr/bin/wget\\s.*\\s".quotemeta($dlinfo{'SRCURL'})."\$"))
 		{
-			print "<img src='/images/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' />&nbsp;</td>\n";
+			print "<img src='/images/updbooster/updxl-led-blue.gif' alt='$Lang::tr{'updxlrtr condition download'}' />&nbsp;</td>\n";
 		} else {
-			print "<img src='/images/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition suspended'}' />&nbsp;</td>\n";
+			print "<img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition suspended'}' />&nbsp;</td>\n";
 		}
 
 			print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
 			if ($vendorid =~ /^Adobe$/i)
 			{
-				print "<img src='/images/updxl-src-adobe.gif' alt='Adobe'}' />&nbsp;</td>\n";
+				print "<img src='/images/updbooster/updxl-src-adobe.gif' alt='Adobe'}' />&nbsp;</td>\n";
 			} elsif ($vendorid =~ /^Microsoft$/i)
 			{
-				print "<img src='/images/updxl-src-windows.gif' alt='Microsoft'}' />&nbsp;</td>\n";
+				print "<img src='/images/updbooster/updxl-src-windows.gif' alt='Microsoft'}' />&nbsp;</td>\n";
 			} elsif ($vendorid =~ /^Symantec$/i)
 			{
-				print "<img src='/images/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</td>\n";
+				print "<img src='/images/updbooster/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</td>\n";
 			} elsif ($vendorid =~ /^Linux$/i)
 			{
-				print "<img src='/images/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</td>\n";
+				print "<img src='/images/updbooster/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</td>\n";
 			} elsif ($vendorid =~ /^TrendMicro$/i)
 			{
-				print "<img src='/images/updxl-src-trendmicro.gif' alt='Trend Micro'}' />&nbsp;</td>\n";
+				print "<img src='/images/updbooster/updxl-src-trendmicro.gif' alt='Trend Micro'}' />&nbsp;</td>\n";
 			} elsif ($vendorid =~ /^Apple$/i)
 			{
-				print "<img src='/images/updxl-src-apple.gif' alt='Apple'}' />&nbsp;</td>\n";
+				print "<img src='/images/updbooster/updxl-src-apple.gif' alt='Apple'}' />&nbsp;</td>\n";
 			} elsif ($vendorid =~ /^Avast$/i)
 			{
-				print "<img src='/images/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
+				print "<img src='/images/updbooster/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
 			} else
 			{
-				if (-e "/home/httpd/html/images/updxl-src-" . $vendorid . ".gif")
+				if (-e "/home/httpd/html/images/updbooster/updxl-src-" . $vendorid . ".gif")
 				{
-					print "<img src='/images/updxl-src-" . $vendorid . ".gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+					print "<img src='/images/updbooster/updxl-src-" . $vendorid . ".gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
 				} else {
-					print "<img src='/images/updxl-src-unknown.gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+					print "<img src='/images/updbooster/updxl-src-unknown.gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
 				}
 			}
 
