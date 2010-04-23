@@ -101,11 +101,11 @@ int main(void)
 							exit(0);
 				}
 
-				if (!(fd = fopen(CONFIG_ROOT "/wireless/nodrop", "r")))
-				{
+				if ((fd = fopen(CONFIG_ROOT "/wireless/nodrop", "r")))
+					return 0;
+
 				/* register exit handler to ensure the block rule is always present */
 				atexit(exithandler);
-				}
 
 				if (!(fd = fopen(CONFIG_ROOT "/wireless/config", "r")))
 				{
