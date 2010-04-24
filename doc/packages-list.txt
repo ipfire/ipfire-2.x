@@ -160,7 +160,7 @@
 * kqemu-1.4.0pre1-kmod-2.6.32.11-ipfire
 * kqemu-1.4.0pre1-kmod-2.6.32.11-ipfire-xen
 * kudzu-1.2.64
-* kvm-kmod-2.6.33-kmod-2.6.32.11-ipfire
+* kvm-kmod-2.6.33.1-kmod-2.6.32.11-ipfire
 * l7-protocols-2009-05-10
 * lame-3.97
 * lcd4linux-0.10.1-RC2
