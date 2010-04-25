@@ -1,0 +1,76 @@
+PreCacheChain "PreCache"
+<Chain "PostCache">
+	<Rule "ignore_ps_count">
+		<Match "regex">
+			Plugin "^processes$"
+			Type "^ps_count$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_ps_pagefaults">
+		<Match "regex">
+			Plugin "^processes$"
+			Type "^ps_pagefaults$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_ps_stacksize">
+		<Match "regex">
+			Plugin "^processes$"
+			Type "^ps_stacksize$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_ps_state">
+		<Match "regex">
+			Plugin "^processes$"
+			Type "^ps_state$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_ps_vm">
+		<Match "regex">
+			Plugin "^processes$"
+			Type "^ps_vm$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_if_errors">
+		<Match "regex">
+			Plugin "^interface$"
+			Type "^if_errors$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_if_packets">
+		<Match "regex">
+			Plugin "^interface$"
+			Type "^if_packets$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_disk_merged">
+		<Match "regex">
+			Plugin "^disk$"
+			Type "^disk_merged$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_disk_ops">
+		<Match "regex">
+			Plugin "^disk$"
+			Type "^disk_ops$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Rule "ignore_disk_time">
+		<Match "regex">
+			Plugin "^disk$"
+			Type "^disk_time$"
+		</Match>
+		Target "stop"
+	</Rule>
+	<Target "write">
+		 Plugin "rrdtool"
+	</Target>
+</Chain>
