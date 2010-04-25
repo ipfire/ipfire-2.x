@@ -32,6 +32,7 @@ SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
+BUILD_IMAGES=1							# Build USB, Flash and Xen Images
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
@@ -725,7 +726,7 @@ buildpackages() {
 	ipfiremake cdrom ED=$IPFVER
 
   # Check if there is a loop device for building in virtual environments
-  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
+  if [ $BUILD_IMAGES && -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
 	ipfiremake usb-stick ED=$IPFVER
 	ipfiremake flash-images ED=$IPFVER
   fi
@@ -735,7 +736,7 @@ buildpackages() {
   ipfirepackages
 
   # Check if there is a loop device for building in virtual environments
-  if [ -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
+  if [ $BUILD_IMAGES && -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
 	ipfiremake xen-image ED=$IPFVER

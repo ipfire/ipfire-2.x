@@ -68,6 +68,7 @@ rm -rf /lib/modules/*-ipfire
 #
 # Stop Sevices
 #
+/etc/init.d/collectd stop
 /etc/init.d/squid stop
 
 #
@@ -132,6 +133,31 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
+# Delete old lm-sensor modullist...
+#
+rm -rf /etc/sysconfig/lm_sensors
+#
+# Cleanup Collectd statistics...
+#
+PRECLEAN=`du -sh /var/log/rrd/collectd`
+#
+rm -rf /var/log/rrd*/collectd/localhost/processes-*/ps_count*
+rm -rf /var/log/rrd*/collectd/localhost/processes-*/ps_pagefaults*
+rm -rf /var/log/rrd*/collectd/localhost/processes-*/ps_stacksize*
+rm -rf /var/log/rrd*/collectd/localhost/processes-*/ps_state*
+rm -rf /var/log/rrd*/collectd/localhost/processes-*/ps_vm*
+#
+rm -rf /var/log/rrd*/collectd/localhost/interface/if_errors*
+rm -rf /var/log/rrd*/collectd/localhost/interface/if_packets*
+#
+rm -rf /var/log/rrd*/collectd/localhost/disk-*/disk_merged*
+rm -rf /var/log/rrd*/collectd/localhost/disk-*/disk_ops*
+rm -rf /var/log/rrd*/collectd/localhost/disk-*/disk_time*
+POSTCLEAN=`du -sh /var/log/rrd/collectd`
+#
+echo Cleaned up collectd directory from $PRECLEAN to $POSTCLEAN size.
+#
+#
 # Todo: rebuild qosscript if enabled...
 #
 #
@@ -141,10 +167,7 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 # Start Sevices
 #
 /etc/init.d/squid start
-#
-# Delete old lm-sensor modullist...
-#
-rm -rf /etc/sysconfig/lm_sensors
+/etc/init.d/collectd start
 #
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Upgrade finished. If you use a customized grub.cfg"
