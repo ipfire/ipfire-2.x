@@ -726,7 +726,7 @@ buildpackages() {
 	ipfiremake cdrom ED=$IPFVER
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES && -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
+  if [ $BUILD_IMAGES == 1 ] &&  ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
 	ipfiremake usb-stick ED=$IPFVER
 	ipfiremake flash-images ED=$IPFVER
   fi
@@ -736,7 +736,7 @@ buildpackages() {
   ipfirepackages
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES && -e /dev/loop/0 ] || [ -e /dev/loop0 ]; then
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
 	ipfiremake xen-image ED=$IPFVER
