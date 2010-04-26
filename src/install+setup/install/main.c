@@ -302,9 +302,9 @@ int main(int argc, char *argv[])
 	fprintf(flog, "Disksize = %ld, memory = %ld", disk, memory);
 	
 	 /* Calculating Swap-Size dependend of Ram Size */
-	if (memory =< 256)
+	if (memory <= 256)
 		swap_file = 128;
-	else if (memory =< 1024 && memory > 256)
+	else if (memory <= 1024 && memory > 256)
 		swap_file = 256;
 	else 
 		swap_file = memory / 4;
