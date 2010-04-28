@@ -26,8 +26,8 @@ use File::Temp qw/ tempfile tempdir /;
 use strict;
 
 # enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+use warnings;
+use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -264,9 +264,11 @@ if (-e "/etc/snort/snort.conf") {
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
 	$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2.8_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	#$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2853_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
 	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	#$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2853.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
 } else {
 	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";

@@ -62,6 +62,7 @@
 * cacti-0.8.7e
 * calamaris-2.59
 * capi4k-utils-2005-07-18
+* ccache-2.4
 * ccache-3.0pre0
 * cdrtools-2.01.01
 * centerim-4.22.1
@@ -293,7 +294,7 @@
 * shadow-4.0.15
 * slang-1.4.9
 * smartmontools-5.39
-* snort-2.8.4
+* snort-2.8.5.3
 * sox-12.18.1
 * spandsp-0.0.6pre12
 * splix-2.0.0-rc2
