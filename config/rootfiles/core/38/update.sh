@@ -167,7 +167,6 @@ echo Cleaned up collectd directory from $PRECLEAN to $POSTCLEAN size.
 # Start Sevices
 #
 /etc/init.d/squid start
-/etc/init.d/collectd start
 #
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Upgrade finished. If you use a customized grub.cfg"
