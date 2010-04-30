@@ -65,7 +65,7 @@
 * ccache-3.0pre0
 * cdrtools-2.01.01
 * centerim-4.22.1
-* clamav-0.95.3
+* clamav-0.96
 * cmake-2.4.8
 * collectd-4.9.1
 * coreutils-5.96
