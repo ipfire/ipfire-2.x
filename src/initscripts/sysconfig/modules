@@ -33,4 +33,8 @@ lp
 ### fusion
 # fusion
 
+### cryptodev
+#
+cryptodev
+
 # End /etc/sysconfig/modules
