@@ -1,0 +1,69 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/leds
+#
+# Description : Script to setup leds at boot.
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Load ethernet settings
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+setup_red_modem() {
+	local led1=${1}
+	local led2=${2}
+
+	modprobe ledtrig-netdev
+
+	local i
+	for i in ${led1} ${led2}; do
+		echo "netdev" > ${i}/trigger
+		echo "${RED_DEV}" > ${i}/device_name
+	done
+
+	echo "rx" > ${led1}/mode
+	echo "tx" > ${led2}/mode
+}
+
+reset_trigger() {
+	[ -d "${1}" ] || return 0
+	echo "none" > ${1}/trigger
+}
+
+start_alix2() {
+	modprobe -q leds-alix2
+
+	local i
+	for i in 1 2 3; do
+		if [ ! -d "/sys/class/leds/alix:${i}" ]; then
+			return 1
+		fi
+	done
+
+	setup_red_modem /sys/class/leds/alix:2 /sys/class/leds/alix:3
+}
+
+stop_alix2() {
+	local i
+	for i in 1 2 3; do
+		reset_trigger /sys/class/leds/alix:${i}
+	done
+}
+
+case "${1}" in
+	start|stop)
+		for i in alix2; do
+		  ${1}_${i}
+		done
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/leds
