@@ -650,7 +650,7 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  if [ "$GIT_BRANCH" = "next" ]; then
+  if [ "$GIT_BRANCH" = "master" ]; then
 	echo "$NAME $VERSION - (Development Build: $GIT_LASTCOMMIT)" > $BASEDIR/build/etc/system-release
   else
 	echo "$NAME $VERSION - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
