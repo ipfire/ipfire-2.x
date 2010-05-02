@@ -106,8 +106,9 @@ END
 		}
 
 		$lines++;
-	   
+
 	}
+	$chains{$chainname."end"} = $lines-1;
 	close (FILE);
 
 # now the chain hash is extracted to get the correct name of the chain
@@ -119,7 +120,7 @@ END
 # colored gui
 
 	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n<select name='selectedchain' style='width: 250px'>\n";
-	foreach (keys(%chains)){
+	foreach (sort(keys(%chains))){
 
 		if ( $_ =~ /end$/ ){
 			next;
@@ -229,6 +230,7 @@ END
 		$manlines++;
 	   
 	}
+	$chainsman{$chainname."end"} = $manlines-1;
 	close (FILE);
 
 # now the chain hash is extracted to get the correct name of the chain
@@ -240,7 +242,7 @@ END
 # colored gui
 
 	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n<select name='selectedchain' style='width: 250px'>\n";
-	foreach (keys(%chainsman)){
+	foreach (sort(keys(%chainsman))){
 
 		if ( $_ =~ /end$/ ){
 			next;
@@ -355,6 +357,7 @@ END
 		$natlines++;
 	   
 	}
+	$chainsnat{$chainname."end"} = $natlines-1;
 	close (FILE);
 
 # now the chain hash is extracted to get the correct name of the chain
@@ -366,7 +369,7 @@ END
 # colored gui
 
 	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n<select name='selectedchain' style='width: 250px'>\n";
-	foreach (keys(%chainsnat)){
+	foreach (sort(keys(%chainsnat))){
 
 		if ( $_ =~ /end$/ ){
 			next;
